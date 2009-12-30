@@ -1,7 +1,7 @@
 
 ########### next target ###############
 
-SET(trinityauth_STAT_SRCS
+SET(oregonauth_STAT_SRCS
    AuthCrypt.cpp
    AuthCrypt.h
    BigNumber.cpp
@@ -14,4 +14,4 @@ SET(trinityauth_STAT_SRCS
    md5.h
 )
 
-add_library(trinityauth STATIC ${trinityauth_STAT_SRCS})
+add_library(oregonauth STATIC ${oregonauth_STAT_SRCS})

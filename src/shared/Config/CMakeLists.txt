@@ -1,7 +1,7 @@
 
 ########### next target ###############
 
-SET(trinityconfig_STAT_SRCS
+SET(oregonconfig_STAT_SRCS
    dotconfpp/dotconfpp.cpp
    dotconfpp/dotconfpp.h
    dotconfpp/mempool.cpp
@@ -11,5 +11,5 @@ SET(trinityconfig_STAT_SRCS
    ConfigEnv.h
 )
 
-add_library(trinityconfig STATIC ${trinityconfig_STAT_SRCS})
+add_library(oregonconfig STATIC ${oregonconfig_STAT_SRCS})
 
