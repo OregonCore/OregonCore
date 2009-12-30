@@ -3,4 +3,4 @@
 
 FILE(GLOB _SQL_TOOLS *.sql)
 
-install(FILES ${_SQL_TOOLS} README DESTINATION share/trinity/sql/tools)
+install(FILES ${_SQL_TOOLS} README DESTINATION share/oregon/sql/tools)
