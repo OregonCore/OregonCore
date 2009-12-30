@@ -1,0 +1,31 @@
+The THANKS file:
+
+All distributions should contain a `THANKS' file containing a two column list
+of the contributors, one per line, alphabetically sorted. The left column gives
+the contributor's name, while the right column gives the last known good email
+address for this contributor. This list should be introduced with a wording
+similar to this one:
+
+ Oregon Core THANKS file
+
+ Oregon Core is a derivation/rewrite of Trinity Core, which was originally written
+ by the MaNGOS team. Many people further helped Oregon Core
+ by submitting bug reports, code patches, and suggestions. Thanks to the
+ community!
+
+ Thanks to the ImpConfig developer (dythzer) for the custom configuration patch.
+
+ Thanks to the ScriptDev2 team (http://www.scriptdev2.com) for scripts.
+
+The easiest policy with this file is to thank everyone who contributes to the
+project, without judging the value of the contribution.
+
+Unlike `AUTHORS', the `THANKS' file is not maintained for legal reasons. It is
+maintained to thank all the contributors that helped you out in your project.
+The `AUTHORS' file can not be used for this purpose because certain
+contributions, like bug reports or ideas and suggestions do not require legal
+paper exchanges.
+
+You can also decide to send some kind of special greeting when you initially
+add a name to your `THANKS' file. The mere presense of a name in `THANKS' is
+then a flag to you that the initial greeting has been sent.
