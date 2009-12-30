@@ -1,7 +1,7 @@
 
 ########### next target ###############
 
-SET(trinityscript_LIB_SRCS
+SET(oregonscript_LIB_SRCS
    ScriptMgr.cpp
    ScriptMgr.h
    include/precompiled.cpp
@@ -393,16 +393,16 @@ SET(trinityscript_LIB_SRCS
    system/system.h
 )
 
-add_library(trinityscript SHARED ${trinityscript_LIB_SRCS})
+add_library(oregonscript SHARED ${oregonscript_LIB_SRCS})
 
-add_definitions(-D_TRINITY_SCRIPT_CONFIG='"${CONF_DIR}/trinitycore.conf"')
+add_definitions(-D_OREGON_SCRIPT_CONFIG='"${CONF_DIR}/oregoncore.conf"')
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    SET_TARGET_PROPERTIES(trinityscript PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+    SET_TARGET_PROPERTIES(oregonscript PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
 ENDIF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
 
-target_link_libraries(trinityscript)
+target_link_libraries(oregonscript)
 
-set_target_properties(trinityscript PROPERTIES VERSION 4.2.0 SOVERSION 4)
-install(TARGETS trinityscript DESTINATION lib)
+set_target_properties(oregonscript PROPERTIES VERSION 4.2.0 SOVERSION 4)
+install(TARGETS oregonscript DESTINATION lib)
 

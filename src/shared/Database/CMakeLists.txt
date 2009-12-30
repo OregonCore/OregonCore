@@ -1,4 +1,4 @@
-SET(trinitydatabase_STAT_SRCS
+SET(oregondatabase_STAT_SRCS
    DBCStores.cpp
    DBCStores.h
    DBCStructure.h
@@ -34,4 +34,4 @@ SET(trinitydatabase_STAT_SRCS
    dbcfile.h
 )
 
-add_library(trinitydatabase STATIC ${trinitydatabase_STAT_SRCS})
+add_library(oregondatabase STATIC ${oregondatabase_STAT_SRCS})

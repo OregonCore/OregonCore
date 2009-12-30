@@ -1,7 +1,7 @@
 
 ########### next target ###############
 
-SET(trinity-core_SRCS
+SET(oregon-core_SRCS
 CliRunnable.cpp 
 CliRunnable.h 
 Main.cpp 
@@ -13,37 +13,37 @@ WorldRunnable.cpp
 WorldRunnable.h
 )
 
-SET(trinity-core_LINK_FLAGS "")
+SET(oregon-core_LINK_FLAGS "")
 
-add_executable(trinity-core ${trinity-core_SRCS})
+add_executable(oregon-core ${oregon-core_SRCS})
 add_definitions(
--D_TRINITY_CORE_CONFIG='"${CONF_DIR}/trinitycore.conf"'
+-D_OREGON_CORE_CONFIG='"${CONF_DIR}/oregoncore.conf"'
 )
 IF (DO_MYSQL)
-    SET(trinity-core_LINK_FLAGS "-pthread ${trinity-core_LINK_FLAGS}")
+    SET(oregon-core_LINK_FLAGS "-pthread ${oregon-core_LINK_FLAGS}")
 ENDIF(DO_MYSQL)
 IF (DO_POSTGRESQL)
-    SET(trinity-core_LINK_FLAGS "-pthread ${trinity-core_LINK_FLAGS}")
+    SET(oregon-core_LINK_FLAGS "-pthread ${oregon-core_LINK_FLAGS}")
 ENDIF(DO_POSTGRESQL)
 
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    SET(trinity-core_LINK_FLAGS "-framework Carbon ${trinity-core_LINK_FLAGS}")
+    SET(oregon-core_LINK_FLAGS "-framework Carbon ${oregon-core_LINK_FLAGS}")
     SET(SCRIPT_LIB "")
 ENDIF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
 
-SET_TARGET_PROPERTIES(trinity-core PROPERTIES LINK_FLAGS "${trinity-core_LINK_FLAGS}")
+SET_TARGET_PROPERTIES(oregon-core PROPERTIES LINK_FLAGS "${oregon-core_LINK_FLAGS}")
 
 target_link_libraries(
-trinity-core
+oregon-core
 game
 shared
 zlib
-trinityframework
-trinitysockets
-trinitydatabase
-trinityauth
-trinityconfig
+oregonframework
+oregonsockets
+oregondatabase
+oregonauth
+oregonconfig
 vmaps
 ZThread
 g3dlite
@@ -60,15 +60,15 @@ ${OSX_LIBS}
 
 IF (CENTOS)
     target_link_libraries(
-        trinity-core
+        oregon-core
         termcap
     )
 ENDIF (CENTOS)
 
-install(TARGETS trinity-core DESTINATION bin)
+install(TARGETS oregon-core DESTINATION bin)
 
 
 ########### install files ###############
 
-install(FILES  trinitycore.conf.dist DESTINATION etc)
+install(FILES  oregoncore.conf.dist DESTINATION etc)
 
