@@ -1,4 +1,4 @@
-SET(trinitysockets_STAT_SRCS
+SET(oregonsockets_STAT_SRCS
    Base64.cpp
    Exception.cpp
    Ipv4Address.cpp
@@ -19,4 +19,4 @@ SET(trinitysockets_STAT_SRCS
    socket_include.cpp
 )
 
-add_library(trinitysockets STATIC ${trinitysockets_STAT_SRCS})
+add_library(oregonsockets STATIC ${oregonsockets_STAT_SRCS})
