@@ -32,7 +32,7 @@ ADD_EXECUTABLE(genrev
 ${GENREV_SRC}
 )
 ADD_CUSTOM_TARGET("revision.h" ALL
-    COMMAND "${Trinity_BINARY_DIR}/genrev"
+    COMMAND "${Oregon_BINARY_DIR}/genrev"
     ${Oregon_SOURCE_DIR}
     WORKING_DIRECTORY "${Oregon_SOURCE_DIR}/src/shared"
     DEPENDS genrev
