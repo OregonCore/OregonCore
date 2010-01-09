@@ -2192,10 +2192,9 @@ void Player::GiveXP(uint32 xp, Unit* victim)
     for(Unit::AuraList::const_iterator i = DummyAuras.begin();i != DummyAuras.end(); ++i)
         if((*i)->GetId() == 32098 || (*i)->GetId() == 32096)
         {
-               uint32 zone_id, area_id;
-               GetZoneAndAreaId(zone_id,area_id);
-               if(area_id == 3483 || area_id == 3535 || area_id == 3562 || area_id == 3713)
-                       xp = uint32(xp*(1.0f + 5.0f / 100.0f));
+			uint32 area_id = GetAreaId();
+			if(area_id == 3483 || area_id == 3535 || area_id == 3562 || area_id == 3713)
+				xp = uint32(xp*(1.0f + 5.0f / 100.0f));
         }
 
 
@@ -5958,8 +5957,7 @@ void Player::RewardReputation(Unit *pVictim, float rate)
     for(Unit::AuraList::const_iterator i = DummyAuras.begin();i != DummyAuras.end(); ++i)
     if((*i)->GetId() == 32098 || (*i)->GetId() == 32096)
     {
-        uint32 zone_id, area_id;
-        GetZoneAndAreaId(zone_id,area_id);
+        uint32 area_id = GetAreaId();
         if(area_id == 3483 || area_id == 3535 || area_id == 3562 || area_id == 3713)
             rate = rate*(1.0f + 25.0f / 100.0f);
     }
