@@ -2775,10 +2775,18 @@ bool Unit::isSpellBlocked(Unit *pVictim, SpellEntry const *spellProto, WeaponAtt
 {
     if (pVictim->HasInArc(M_PI,this))
     {
-        float blockChance = GetUnitBlockChance();
-        blockChance += (GetWeaponSkillValue(attackType) - pVictim->GetMaxSkillValueForLevel() )*0.04;
-        if (roll_chance_f(blockChance))
-            return true;
+       float blockChance = pVictim->GetUnitBlockChance();
+
+       float fAttackerSkill = GetWeaponSkillValue(attackType, pVictim)*0.04;
+       float fDefenserSkill = pVictim->GetDefenseSkillValue(this)*0.04;
+
+       blockChance += (fDefenserSkill - fAttackerSkill);
+
+       if (blockChance < 0.0)
+		   blockChance = 0.0;
+
+       if (roll_chance_f(blockChance))
+           return true;
     }
     return false;
 }
