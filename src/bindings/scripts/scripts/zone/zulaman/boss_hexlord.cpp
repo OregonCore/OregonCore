@@ -38,7 +38,7 @@ EndScriptData */
 #define SOUND_YELL_DEATH        12051
 
 #define SPELL_SPIRIT_BOLTS      43383
-#define SPELL_DRAIN_POWER       44131
+#define SPELL_DRAIN_POWER       44132
 #define SPELL_SIPHON_SOUL       43501
 
 #define MOB_TEMP_TRIGGER        23920
