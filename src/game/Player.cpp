@@ -2187,6 +2187,17 @@ void Player::GiveXP(uint32 xp, Unit* victim)
     Unit::AuraList const& ModXPPctAuras = GetAurasByType(SPELL_AURA_MOD_XP_PCT);
     for(Unit::AuraList::const_iterator i = ModXPPctAuras.begin();i != ModXPPctAuras.end(); ++i)
         xp = uint32(xp*(1.0f + (*i)->GetModifierValue() / 100.0f));
+        
+    Unit::AuraList const& DummyAuras = GetAurasByType(SPELL_AURA_DUMMY);
+    for(Unit::AuraList::const_iterator i = DummyAuras.begin();i != DummyAuras.end(); ++i)
+        if((*i)->GetId() == 32098 || (*i)->GetId() == 32096)
+        {
+               uint32 zone_id, area_id;
+               GetZoneAndAreaId(zone_id,area_id);
+               if(area_id == 3483 || area_id == 3535 || area_id == 3562 || area_id == 3713)
+                       xp = uint32(xp*(1.0f + 5.0f / 100.0f));
+        }
+
 
     // XP resting bonus for kill
     uint32 rested_bonus_xp = victim ? GetXPRestBonus(xp) : 0;
@@ -5942,6 +5953,16 @@ void Player::RewardReputation(Unit *pVictim, float rate)
 
     if(!Rep)
         return;
+        
+    Unit::AuraList const& DummyAuras = GetAurasByType(SPELL_AURA_DUMMY);
+    for(Unit::AuraList::const_iterator i = DummyAuras.begin();i != DummyAuras.end(); ++i)
+    if((*i)->GetId() == 32098 || (*i)->GetId() == 32096)
+    {
+        uint32 zone_id, area_id;
+        GetZoneAndAreaId(zone_id,area_id);
+        if(area_id == 3483 || area_id == 3535 || area_id == 3562 || area_id == 3713)
+            rate = rate*(1.0f + 25.0f / 100.0f);
+    }
 
     if(Rep->repfaction1 && (!Rep->team_dependent || GetTeam()==ALLIANCE))
     {
