@@ -514,7 +514,7 @@ class ObjectMgr
         void LoadTransportEvents();
 
         bool LoadOregonStrings(DatabaseType& db, char const* table, int32 min_value, int32 max_value);
-        bool LoadOregonStrings() { return LoadOregonStrings(WorldDatabase,"Oregon_string",MIN_OREGON_STRING_ID,MAX_OREGON_STRING_ID); }
+        bool LoadOregonStrings() { return LoadOregonStrings(WorldDatabase,"oregon_string",MIN_OREGON_STRING_ID,MAX_OREGON_STRING_ID); }
     void LoadDbScriptStrings();
         void LoadPetCreateSpells();
         void LoadCreatureLocales();

@@ -6431,7 +6431,7 @@ const char *ObjectMgr::GetOregonString(int32 entry, int locale_idx) const
     }
 
     if(entry > 0)
-        sLog.outErrorDb("Entry %i not found in `Oregon_string` table.",entry);
+        sLog.outErrorDb("Entry %i not found in `oregon_string` table.",entry);
     else
         sLog.outErrorDb("Oregon string entry %i not found in DB.",entry);
     return "<error>";

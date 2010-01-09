@@ -842,9 +842,9 @@ bool ChatHandler::HandleReloadLootTemplatesSkinningCommand(const char*)
 
 bool ChatHandler::HandleReloadOregonStringCommand(const char*)
 {
-    sLog.outString( "Re-Loading Oregon_string Table!" );
+    sLog.outString( "Re-Loading oregon_string Table!" );
     objmgr.LoadOregonStrings();
-    SendGlobalGMSysMessage("DB table `Oregon_string` reloaded.");
+    SendGlobalGMSysMessage("DB table `oregon_string` reloaded.");
     return true;
 }
 
