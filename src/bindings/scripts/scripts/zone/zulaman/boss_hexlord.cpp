@@ -38,7 +38,7 @@ EndScriptData */
 #define SOUND_YELL_DEATH        12051
 
 #define SPELL_SPIRIT_BOLTS      43383
-#define SPELL_DRAIN_POWER       44132
+#define SPELL_DRAIN_POWER       44131 //-1% Damage
 #define SPELL_SIPHON_SOUL       43501
 
 #define MOB_TEMP_TRIGGER        23920
@@ -361,11 +361,21 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
 
         if(DrainPower_Timer < diff)
         {
-            m_creature->CastSpell(m_creature, SPELL_DRAIN_POWER, true);
+            m_creature->CastSpell(m_creature, SPELL_DRAIN_POWER, true); //-1% Damage (+1_Stack)
+            Map *map = m_creature->GetMap();
+            if(!map->IsDungeon()) return;
+            Map::PlayerList const &PlayerList = map->GetPlayers();
+            for(Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+            {
+                if (Player* i_pl = i->getSource())
+                    if(i_pl->isAlive())m_creature->AddAura(44132, m_creature); //+1% Damage for each active player on boss (+ActivePlayer_Stack)
+                        
+            }
+			//m_creature->AddAura(44132, m_creature);
             DoYell(YELL_DRAIN_POWER, LANG_UNIVERSAL, NULL);
             DoPlaySoundToSet(m_creature, SOUND_YELL_DRAIN_POWER);
             DrainPower_Timer = 40000 + rand()%15000;    // must cast in 60 sec, or buff/debuff will disappear
-        }else DrainPower_Timer -= diff;
+           }else DrainPower_Timer -= diff;
 
         if(SpiritBolts_Timer < diff)
         {
