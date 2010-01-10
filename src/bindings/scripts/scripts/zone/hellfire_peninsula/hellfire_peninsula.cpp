@@ -48,7 +48,7 @@ EndContentData */
 
 #define C_AERANAS                       17085
 
-struct OREGON_DLL_DECL npc_aeranasAI : public ScriptedAI
+struct TRINITY_DLL_DECL npc_aeranasAI : public ScriptedAI
 {
     npc_aeranasAI(Creature* c) : ScriptedAI(c) {}
 
@@ -191,7 +191,7 @@ bool GossipHello_npc_gryphoneer_windbellow(Player *player, Creature *_Creature)
     return true;
 }
 
-bool GossipSelect_npc_gryphoneer_windbellow(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_gryphoneer_windbellow(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF + 1)
     {
@@ -202,6 +202,37 @@ bool GossipSelect_npc_gryphoneer_windbellow(Player *player, Creature *_Creature,
     {
         player->CLOSE_GOSSIP_MENU();
         player->CastSpell(player,35065,true);               //TaxiPath 607 (Taxi - Hellfire Peninsula - Shatter Point to Beach Head)
+    }
+    return true;
+}
+/*######
+## npc_gryphoneer_leafbeard
+######*/
+
+enum
+{
+    SPELL_TAXI_TO_SHATTERP      = 35066
+};
+
+#define GOSSIP_ITEM1_LEAF       "Fly me to Shatter Point"
+
+bool GossipHello_npc_gryphoneer_leafbeard(Player *player, Creature *_Creature)
+{
+    //Go back to Shatter Point if player has completed the quest 10340 - Shatter Point
+    if (player->GetQuestStatus(10340) == QUEST_STATUS_COMPLETE)
+        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM1_LEAF, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+
+    player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
+    return true;
+}
+
+bool GossipSelect_npc_gryphoneer_leafbeard(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+{
+    if (action == GOSSIP_ACTION_INFO_DEF+1)
+    {
+        player->CLOSE_GOSSIP_MENU();
+        //TaxiPath 609 (3.x.x)
+        player->CastSpell(player,SPELL_TAXI_TO_SHATTERP,true);
     }
     return true;
 }
@@ -272,7 +303,7 @@ enum eWoundedBloodElf
     QUEST_ROAD_TO_FALCON_WATCH  = 9375
 };
 
-struct OREGON_DLL_DECL npc_wounded_blood_elfAI : public npc_escortAI
+struct TRINITY_DLL_DECL npc_wounded_blood_elfAI : public npc_escortAI
 {
     npc_wounded_blood_elfAI(Creature *c) : npc_escortAI(c) {}
 
@@ -400,6 +431,12 @@ void AddSC_hellfire_peninsula()
     newscript->RegisterSelf();
 
     newscript = new Script;
+    newscript->Name = "npc_gryphoneer_leafbeard";
+    newscript->pGossipHello = &GossipHello_npc_gryphoneer_leafbeard;
+    newscript->pGossipSelect = &GossipSelect_npc_gryphoneer_leafbeard;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
     newscript->Name="npc_gryphoneer_windbellow";
     newscript->pGossipHello =   &GossipHello_npc_gryphoneer_windbellow;
     newscript->pGossipSelect =  &GossipSelect_npc_gryphoneer_windbellow;
@@ -417,4 +454,3 @@ void AddSC_hellfire_peninsula()
     newscript->pQuestAccept = &QuestAccept_npc_wounded_blood_elf;
     newscript->RegisterSelf();
 }
-
