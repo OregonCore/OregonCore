@@ -6148,9 +6148,9 @@ void Aura::PeriodicDummyTick()
                         ((Player*)m_target)->UpdateManaRegen();
                         return;
                     }
-                    //**********************************************
+                    //**********************************************/
                     // This feature uses only in arenas
-                    //**********************************************
+                    //**********************************************/
                     // Here need increase mana regen per tick (6 second rule)
                     // on 0 tick -   0  (handled in 2 second)
                     // on 1 tick - 166% (handled in 4 second)
@@ -6318,8 +6318,13 @@ void Aura::PeriodicDummyTick()
 //        case 45960: break;
 //        // Darkness
 //        case 45996: break;
-//        // Summon Blood Elves Periodic
-//        case 46041: break;
+        // Summon Blood Elves Periodic
+        case 46041: 
+            m_target->CastSpell(m_target, 46037, true, NULL, this);
+            m_target->CastSpell(m_target, roll_chance_i(50) ? 46038 : 46039, true, NULL, this);
+            m_target->CastSpell(m_target, 46040, true, NULL, this);
+            return;
+        break;
 //        // Transform Visual Missile Periodic
 //        case 46205: break;
 //        // Find Opening Beam End
