@@ -1,10 +1,10 @@
-/*
+﻿/*
 MySQL Data Transfer
 Source Host: 192.168.32.218
 Source Database: world
 Target Host: 192.168.32.218
 Target Database: world
-Date: 08.01.2010 16:44:46
+Date: 10.01.2010 20:33:20
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -22,4 +22,4 @@ CREATE TABLE `spell_disabled` (
 -- ----------------------------
 -- Records 
 -- ----------------------------
-INSERT INTO `spell_disabled` VALUES ('44132', '1', '\'1% Schandeserhöhung\' Disable spell for players');
+INSERT INTO `spell_disabled` VALUES ('44132', '1', 'Disable spell for players');
