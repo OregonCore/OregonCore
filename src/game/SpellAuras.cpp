@@ -2086,28 +2086,56 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
             return;
         }
 
-        // Waiting to Resurrect
-        if(GetId()==2584)
-        {
-            // Waiting to resurrect spell cancel, we must remove player from resurrect queue
-            if(m_target->GetTypeId() == TYPEID_PLAYER)
-                if(BattleGround *bg = ((Player*)m_target)->GetBattleGround())
-                    bg->RemovePlayerFromResurrectQueue(m_target->GetGUID());
-            return;
-        }
+        switch(GetId())
+        {            
+            case 2584:                                     // Waiting to Resurrect
+            {
+                // Waiting to resurrect spell cancel, we must remove player from resurrect queue
+                if(m_target->GetTypeId() == TYPEID_PLAYER)
+                    if(BattleGround *bg = ((Player*)m_target)->GetBattleGround())
+                        bg->RemovePlayerFromResurrectQueue(m_target->GetGUID());
+                return;
+            }
+            case 28169:                                     // Mutating Injection
+            {
+                // Mutagen Explosion
+                m_target->CastSpell(m_target, 28206, true, NULL, this);
+                // Poison Cloud
+                m_target->CastSpell(m_target, 28240, true, NULL, this);
+                return;
+            }
+            case 36730:                                     // Flame Strike
+            {
+                m_target->CastSpell(m_target, 36731, true, NULL, this);
+                return;
+            }
+            case 44191:                                     // Flame Strike
+            {
+                if (m_target->GetMap()->IsDungeon())
+                {
+                    uint32 spellId = m_target->GetMap()->IsHeroic() ? 46163 : 44190;
 
-        // Burning Winds
-        if(GetId()==46308)                                  // casted only at creatures at spawn
-        {
-            m_target->CastSpell(m_target,47287,true,NULL,this);
-            return;
-        }
-
-        // Misdirection
-        if(GetId()==34477)
-        {
-            m_target->SetReducedThreatPercent(0, 0);
-            return;
+                    m_target->CastSpell(m_target, spellId, true, NULL, this);
+                }
+                return;
+            }
+            case 45934:                                     // Dark Fiend
+            {
+                // Kill target if dispelled
+                if (m_removeMode==AURA_REMOVE_BY_DISPEL)
+                    m_target->DealDamage(m_target, m_target->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                return;
+            }        
+            case 46308:                                     // Burning Winds - casted only at creatures at spawn
+            {
+                m_target->CastSpell(m_target,47287,true,NULL,this);
+                return;
+            }        
+            case 34477:                                     // Misdirection
+            {
+                m_target->SetReducedThreatPercent(0, 0);
+                return;
+            }
         }
     }
 
