@@ -68,16 +68,16 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="trinitycore.lib zthread.lib"
-				OutputFile="$(OutDir)/TrinityScript.dll"
+				AdditionalDependencies="oregoncore.lib zthread.lib"
+				OutputFile="$(OutDir)/OregonScript.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\..\win\VC90\zthread__$(PlatformName)_$(ConfigurationName);..\..\..\..\win\VC90\trinitycore__$(PlatformName)_$(ConfigurationName)"
+				AdditionalLibraryDirectories="..\..\..\..\win\VC90\zthread__$(PlatformName)_$(ConfigurationName);..\..\..\..\win\VC90\oregoncore__$(PlatformName)_$(ConfigurationName)"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/MaNGOSScript.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/TrinityScript.lib"
+				ImportLibrary="$(OutDir)/OregonScript.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -152,16 +152,16 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="trinitycore.lib zthread.lib"
-				OutputFile="$(OutDir)/TrinityScript.dll"
+				AdditionalDependencies="oregoncore.lib zthread.lib"
+				OutputFile="$(OutDir)/OregonScript.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\..\win\VC90\zthread__$(PlatformName)_$(ConfigurationName);..\..\..\..\win\VC90\trinitycore__$(PlatformName)_$(ConfigurationName)"
+				AdditionalLibraryDirectories="..\..\..\..\win\VC90\zthread__$(PlatformName)_$(ConfigurationName);..\..\..\..\win\VC90\oregoncore__$(PlatformName)_$(ConfigurationName)"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/MaNGOSScript.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/TrinityScript.lib"
+				ImportLibrary="$(OutDir)/OregonScript.lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -320,17 +320,17 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="trinitycore.lib zthread.lib"
-				OutputFile="$(OutDir)/TrinityScript.dll"
+				AdditionalDependencies="oregoncore.lib zthread.lib"
+				OutputFile="$(OutDir)/OregonScript.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\..\win\VC90\zthread__$(PlatformName)_$(ConfigurationName);..\..\..\..\win\VC90\trinitycore__$(PlatformName)_$(ConfigurationName)"
+				AdditionalLibraryDirectories="..\..\..\..\win\VC90\zthread__$(PlatformName)_$(ConfigurationName);..\..\..\..\win\VC90\oregoncore__$(PlatformName)_$(ConfigurationName)"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/TrinityScript.lib"
+				ImportLibrary="$(OutDir)/OregonScript.lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -2488,7 +2488,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\trinityscripts.rc"
+			RelativePath="..\oregonscripts.rc"
 			>
 		</File>
 	</Files>

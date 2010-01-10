@@ -46,7 +46,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\src\shared;..\..\src\framework;..\..\dep\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;TRINITY_DEBUG;_WINDOWS;_USRDLL;SCRIPT"
+				PreprocessorDefinitions="WIN32;_DEBUG;OREGON_DEBUG;_WINDOWS;_USRDLL;SCRIPT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -68,16 +68,16 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="trinitycore.lib zlib.lib zthread.lib libmySQL.lib libeay32.lib ws2_32.lib winmm.lib odbc32.lib odbccp32.lib MSVCPRTD.LIB msvcrtd.lib"
-				OutputFile="..\..\bin\$(PlatformName)_$(ConfigurationName)\TrinityScript.dll"
+				AdditionalDependencies="oregoncore.lib zlib.lib zthread.lib libmySQL.lib libeay32.lib ws2_32.lib winmm.lib odbc32.lib odbccp32.lib MSVCPRTD.LIB msvcrtd.lib"
+				OutputFile="..\..\bin\$(PlatformName)_$(ConfigurationName)\OregonScript.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;.\trinitycore__$(PlatformName)_$(ConfigurationName)&quot;;&quot;..\..\dep\lib\$(PlatformName)_$(ConfigurationName)&quot;;&quot;.\zlib__$(PlatformName)_$(ConfigurationName)&quot;;&quot;.\zthread__$(PlatformName)_$(ConfigurationName)&quot;"
+				AdditionalLibraryDirectories="&quot;.\oregoncore__$(PlatformName)_$(ConfigurationName)&quot;;&quot;..\..\dep\lib\$(PlatformName)_$(ConfigurationName)&quot;;&quot;.\zlib__$(PlatformName)_$(ConfigurationName)&quot;;&quot;.\zthread__$(PlatformName)_$(ConfigurationName)&quot;"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)\TrinityScript.pdb"
+				ProgramDatabaseFile="$(OutDir)\OregonScript.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)\TrinityScript.lib"
+				ImportLibrary="$(OutDir)\OregonScript.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -130,7 +130,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\src\shared;..\..\src\framework;..\..\dep\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;TRINITY_DEBUG;_WINDOWS;_USRDLL;SCRIPT"
+				PreprocessorDefinitions="WIN32;_DEBUG;OREGON_DEBUG;_WINDOWS;_USRDLL;SCRIPT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -152,16 +152,16 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="trinitycore.lib zlib.lib zthread.lib libmySQL.lib libeay32.lib ws2_32.lib winmm.lib odbc32.lib odbccp32.lib MSVCPRTD.LIB msvcrtd.lib"
-				OutputFile="..\..\bin\$(PlatformName)_$(ConfigurationName)\TrinityScript.dll"
+				AdditionalDependencies="oregoncore.lib zlib.lib zthread.lib libmySQL.lib libeay32.lib ws2_32.lib winmm.lib odbc32.lib odbccp32.lib MSVCPRTD.LIB msvcrtd.lib"
+				OutputFile="..\..\bin\$(PlatformName)_$(ConfigurationName)\OregonScript.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;.\trinitycore__$(PlatformName)_$(ConfigurationName)&quot;;&quot;..\..\dep\lib\$(PlatformName)_$(ConfigurationName)&quot;;&quot;.\zlib__$(PlatformName)_$(ConfigurationName)&quot;;&quot;.\zthread__$(PlatformName)_$(ConfigurationName)&quot;"
+				AdditionalLibraryDirectories="&quot;.\oregoncore__$(PlatformName)_$(ConfigurationName)&quot;;&quot;..\..\dep\lib\$(PlatformName)_$(ConfigurationName)&quot;;&quot;.\zlib__$(PlatformName)_$(ConfigurationName)&quot;;&quot;.\zthread__$(PlatformName)_$(ConfigurationName)&quot;"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)\TrinityScript.pdb"
+				ProgramDatabaseFile="$(OutDir)\OregonScript.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)\TrinityScript.lib"
+				ImportLibrary="$(OutDir)\OregonScript.lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -233,17 +233,17 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="trinitycore.lib zlib.lib zthread.lib libmySQL.lib libeay32.lib ws2_32.lib winmm.lib odbc32.lib odbccp32.lib MSVCPRT.LIB msvcrt.lib"
-				OutputFile="..\..\bin\$(PlatformName)_$(ConfigurationName)\TrinityScript.dll"
+				AdditionalDependencies="oregoncore.lib zlib.lib zthread.lib libmySQL.lib libeay32.lib ws2_32.lib winmm.lib odbc32.lib odbccp32.lib MSVCPRT.LIB msvcrt.lib"
+				OutputFile="..\..\bin\$(PlatformName)_$(ConfigurationName)\OregonScript.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;.\trinitycore__$(PlatformName)_$(ConfigurationName)&quot;;&quot;..\..\dep\lib\$(PlatformName)_$(ConfigurationName)&quot;;&quot;.\zlib__$(PlatformName)_$(ConfigurationName)&quot;;&quot;.\zthread__$(PlatformName)_$(ConfigurationName)&quot;"
+				AdditionalLibraryDirectories="&quot;.\oregoncore__$(PlatformName)_$(ConfigurationName)&quot;;&quot;..\..\dep\lib\$(PlatformName)_$(ConfigurationName)&quot;;&quot;.\zlib__$(PlatformName)_$(ConfigurationName)&quot;;&quot;.\zthread__$(PlatformName)_$(ConfigurationName)&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/TrinityScript.lib"
+				ImportLibrary="$(OutDir)/OregonScript.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -316,17 +316,17 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="trinitycore.lib zlib.lib zthread.lib libmySQL.lib libeay32.lib ws2_32.lib winmm.lib odbc32.lib odbccp32.lib MSVCPRT.LIB msvcrt.lib"
-				OutputFile="..\..\bin\$(PlatformName)_$(ConfigurationName)\TrinityScript.dll"
+				AdditionalDependencies="oregoncore.lib zlib.lib zthread.lib libmySQL.lib libeay32.lib ws2_32.lib winmm.lib odbc32.lib odbccp32.lib MSVCPRT.LIB msvcrt.lib"
+				OutputFile="..\..\bin\$(PlatformName)_$(ConfigurationName)\OregonScript.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;.\trinitycore__$(PlatformName)_$(ConfigurationName)&quot;;&quot;..\..\dep\lib\$(PlatformName)_$(ConfigurationName)&quot;;&quot;.\zlib__$(PlatformName)_$(ConfigurationName)&quot;;&quot;.\zthread__$(PlatformName)_$(ConfigurationName)&quot;"
+				AdditionalLibraryDirectories="&quot;.\oregoncore__$(PlatformName)_$(ConfigurationName)&quot;;&quot;..\..\dep\lib\$(PlatformName)_$(ConfigurationName)&quot;;&quot;.\zlib__$(PlatformName)_$(ConfigurationName)&quot;;&quot;.\zthread__$(PlatformName)_$(ConfigurationName)&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/TrinityScript.lib"
+				ImportLibrary="$(OutDir)/OregonScript.lib"
 				TargetMachine="17"
 			/>
 			<Tool
