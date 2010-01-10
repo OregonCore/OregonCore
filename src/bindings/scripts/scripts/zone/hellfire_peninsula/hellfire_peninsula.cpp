@@ -48,7 +48,7 @@ EndContentData */
 
 #define C_AERANAS                       17085
 
-struct TRINITY_DLL_DECL npc_aeranasAI : public ScriptedAI
+struct OREGON_DLL_DECL npc_aeranasAI : public ScriptedAI
 {
     npc_aeranasAI(Creature* c) : ScriptedAI(c) {}
 
@@ -303,7 +303,7 @@ enum eWoundedBloodElf
     QUEST_ROAD_TO_FALCON_WATCH  = 9375
 };
 
-struct TRINITY_DLL_DECL npc_wounded_blood_elfAI : public npc_escortAI
+struct OREGON_DLL_DECL npc_wounded_blood_elfAI : public npc_escortAI
 {
     npc_wounded_blood_elfAI(Creature *c) : npc_escortAI(c) {}
 
