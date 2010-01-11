@@ -68,7 +68,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="TrinityCore.lib zthread.lib"
+				AdditionalDependencies="oregoncore.lib zthread.lib"
 				OutputFile="$(OutDir)/TrinityScript.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\..\win\VC80\zthread__$(PlatformName)_$(ConfigurationName);..\..\..\..\win\VC80\trinitycore__$(PlatformName)_$(ConfigurationName)"
@@ -151,7 +151,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="TrinityCore.lib zthread.lib"
+				AdditionalDependencies="oregoncore.lib zthread.lib"
 				OutputFile="$(OutDir)/TrinityScript.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\..\win\VC80\zthread__$(PlatformName)_$(ConfigurationName);..\..\..\..\win\VC80\trinitycore__$(PlatformName)_$(ConfigurationName)"
@@ -236,7 +236,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="TrinityCore.lib zthread.lib"
+				AdditionalDependencies="oregoncore.lib zthread.lib"
 				OutputFile="$(OutDir)/TrinityScript.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\..\win\VC80\zthread__$(PlatformName)_$(ConfigurationName);..\..\..\..\win\VC80\trinitycore__$(PlatformName)_$(ConfigurationName)"
@@ -320,7 +320,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="TrinityCore.lib zthread.lib"
+				AdditionalDependencies="oregoncore.lib zthread.lib"
 				OutputFile="$(OutDir)/TrinityScript.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\..\win\VC80\zthread__$(PlatformName)_$(ConfigurationName);..\..\..\..\win\VC80\trinitycore__$(PlatformName)_$(ConfigurationName)"

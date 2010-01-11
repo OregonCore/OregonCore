@@ -64,7 +64,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="trinitycore.lib zthread.lib"
+				AdditionalDependencies=" zthread.lib"
 				OutputFile="$(OutDir)/TrinityScript.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\..\win\VC71\zthread__$(PlatformName)_$(ConfigurationName);..\..\..\..\win\VC71\trinitycore__$(PlatformName)_$(ConfigurationName)"
@@ -144,7 +144,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="trinitycore.lib zthread.lib"
+				AdditionalDependencies=" zthread.lib"
 				OutputFile="$(OutDir)/TrinityScript.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\..\win\VC71\zthread__$(PlatformName)_$(ConfigurationName);..\..\..\..\win\VC71\trinitycore__$(PlatformName)_$(ConfigurationName)"
