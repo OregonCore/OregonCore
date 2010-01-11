@@ -3215,11 +3215,11 @@ LOCK TABLES `transports` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `trinity_string`
+-- Table structure for table `oregon_string`
 --
 
-DROP TABLE IF EXISTS `trinity_string`;
-CREATE TABLE `trinity_string` (
+DROP TABLE IF EXISTS `oregon_string`;
+CREATE TABLE `oregon_string` (
   `entry` mediumint(8) unsigned NOT NULL default '0',
   `content_default` text NOT NULL,
   `content_loc1` text,
@@ -3234,12 +3234,12 @@ CREATE TABLE `trinity_string` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `trinity_string`
+-- Dumping data for table `oregon_string`
 --
 
-LOCK TABLES `trinity_string` WRITE;
-/*!40000 ALTER TABLE `trinity_string` DISABLE KEYS */;
-/*!40000 ALTER TABLE `trinity_string` ENABLE KEYS */;
+LOCK TABLES `oregon_string` WRITE;
+/*!40000 ALTER TABLE `oregon_string` DISABLE KEYS */;
+/*!40000 ALTER TABLE `oregon_string` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
