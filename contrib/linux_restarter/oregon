@@ -1,0 +1,115 @@
+i#! /bin/bash
+OREGON_DIR='/opt/oregon/';
+RETVAL=0;
+ 
+start(){
+	screen -AmdS oregon_restarter ${OREGON_DIR}restarter
+}
+stop(){
+	screen -dr oregon_restarter -X "quit"
+}
+ 
+start-realm(){
+	screen -AmdS oregon_realm ${OREGON_DIR}bin/oregon-realm -c ${OREGON_DIR}etc/oregonrealm.conf
+}
+stop-realm(){
+	screen -dr oregon_realm -X "quit"
+}
+ 
+start-core(){
+    cd ${OREGON_DIR}
+	screen -AmdS oregon_core ${OREGON_DIR}bin/oregon-core -c ${OREGON_DIR}etc/oregoncore.conf
+}
+stop-core(){
+	screen -dr oregon_core -X "quit"
+}
+ 
+case $1 in
+start)
+	start;
+	date;
+	echo "Restarter started";
+;;
+stop)
+	stop;
+	stop-realm;
+	stop-core;
+	date;
+	echo "Restarter stopped";
+;;
+restart)
+	stop;
+	start;
+	stop-realm;
+	stop-core;
+	start-realm;
+	start-core;
+	start;
+	date;
+	echo "Restarter restarted";
+;;
+start-realm)
+	start-realm;
+	date;
+	echo "Realm started";
+;;
+stop-realm)
+	stop-realm;
+	date;
+	echo "Realm stopped";
+;;
+restart-realm)
+	stop-realm;
+	start-realm;
+	date;
+	echo "Realm restarted";
+;;
+start-core)
+	start-core;
+	date;
+	echo "Core started";
+;;
+stop-core)
+	stop-core;
+	date;
+	echo "Core stopped";
+;;
+restart-core)
+	stop-core;
+	start-core;
+	date;
+	echo "Core restarted";
+;;
+start-restarter)
+	start;
+	date;
+	echo "Restarter Démarre";
+;;
+stop-restarter)
+	stop;
+	date;
+	echo "Restarter stopped";
+;;
+restart-restarter)
+	stop;
+	start;
+	date;
+	echo "Restarter restarted";
+;;
+status)
+	screen -ls
+;;
+restarter)
+	screen -r oregon_restarter
+;;
+realm)
+	screen -r oregon_realm
+;;
+core)
+	screen -r oregon_core
+;;
+*)
+	echo "Usage: $0 {start|stop|restart|start-realm|stop-realm|restart-realm|start-core|stop-core|restart-core|start-restarter|stop-restarter|restart-restarter|status|restarter|realm|core}"
+	RETVAL=1
+esac
+exit $RETVAL;

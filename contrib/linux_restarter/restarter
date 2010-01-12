@@ -1,0 +1,17 @@
+#! /bin/bash
+while true
+do
+  PID1=$(pidof oregon-core)
+  if (( PID1 < 1 ))
+  then
+        /etc/init.d/oregon start-core
+  fi
+ 
+  PID2=$(pidof oregon-realm)
+  if (( PID2 < 1 ))
+  then
+        /etc/init.d/oregon start-realm
+  fi
+ 
+  sleep 10
+done
