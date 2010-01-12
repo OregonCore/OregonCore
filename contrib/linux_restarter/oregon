@@ -1,4 +1,4 @@
-i#! /bin/bash
+#! /bin/bash
 OREGON_DIR='/opt/oregon/';
 RETVAL=0;
  
