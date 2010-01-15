@@ -1110,6 +1110,7 @@ UPDATE `creature_template` SET `ScriptName`='npc_cooshcoosh' WHERE `entry`=18586
 UPDATE `creature_template` SET `ScriptName`='npc_elder_kuruti' WHERE `entry`=18197;
 UPDATE `creature_template` SET `ScriptName`='npc_mortog_steamhead' WHERE `entry`=23373;
 UPDATE `creature_template` SET `ScriptName`='npc_kayra_longmane' WHERE `entry`=17969;
+UPDATE `gameobject_template` SET `ScriptName`='go_southfury_moonstone' WHERE `entry`=185566;
 
 /* ZUL'AMAN */
 UPDATE `instance_template` SET `script`='instance_zulaman' WHERE `map`=568;

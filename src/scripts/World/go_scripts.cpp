@@ -404,6 +404,28 @@ bool GOHello_go_shrine_of_the_birds(Player *pPlayer, GameObject *pGO)
     return false;
 };
 
+/*######
+## go_southfury_moonstone
+######*/
+
+enum eSouthfury
+{
+    NPC_RIZZLE                  = 23002,
+    SPELL_BLACKJACK             = 39865, //stuns player
+    SPELL_SUMMON_RIZZLE         = 39866
+};
+
+bool GOHello_go_southfury_moonstone(Player *pPlayer, GameObject * /*pGO*/)
+{
+    //implicitTarget=48 not implemented as of writing this code, and manual summon may be just ok for our purpose
+    //pPlayer->CastSpell(pPlayer,SPELL_SUMMON_RIZZLE,false);
+
+    if (Creature* pCreature = pPlayer->SummonCreature(NPC_RIZZLE, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_DEAD_DESPAWN, 0))
+        pCreature->CastSpell(pPlayer,SPELL_BLACKJACK,false);
+
+    return false;
+};
+
 void AddSC_go_scripts()
 {
     Script *newscript;
@@ -499,5 +521,10 @@ void AddSC_go_scripts()
     newscript = new Script;
     newscript->Name = "go_shrine_of_the_birds";
     newscript->pGOHello = &GOHello_go_shrine_of_the_birds;
-    newscript->RegisterSelf();    
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_southfury_moonstone";
+    newscript->pGOHello = &GOHello_go_southfury_moonstone;
+    newscript->RegisterSelf();
 }
