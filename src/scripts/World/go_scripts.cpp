@@ -221,75 +221,191 @@ bool GOHello_go_iruxos(Player *pPlayer, GameObject* /*pGO*/)
         return true;
 }
 
+/*######
+## go_fel_crystalforge
+######*/
+
+#define GOSSIP_FEL_CRYSTALFORGE_TEXT 31000
+#define GOSSIP_FEL_CRYSTALFORGE_ITEM_TEXT_RETURN 31001
+#define GOSSIP_FEL_CRYSTALFORGE_ITEM_1 "Purchase 1 Unstable Flask of the Beast for the cost of 10 Apexis Shards"
+#define GOSSIP_FEL_CRYSTALFORGE_ITEM_5 "Purchase 5 Unstable Flask of the Beast for the cost of 50 Apexis Shards"
+#define GOSSIP_FEL_CRYSTALFORGE_ITEM_RETURN "Use the fel crystalforge to make another purchase."
+
+enum eFelCrystalforge
+{
+    SPELL_CREATE_1_FLASK_OF_BEAST   = 40964,
+    SPELL_CREATE_5_FLASK_OF_BEAST   = 40965,
+};
+
+bool GOHello_go_fel_crystalforge(Player *pPlayer, GameObject *pGO)
+{
+    if (pGO->GetGoType() == GAMEOBJECT_TYPE_QUESTGIVER) /* != GAMEOBJECT_TYPE_QUESTGIVER) */
+        pPlayer->PrepareQuestMenu(pGO->GetGUID()); /* return true*/
+
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+    pPlayer->SEND_GOSSIP_MENU(GOSSIP_FEL_CRYSTALFORGE_TEXT, pGO->GetGUID());
+
+    return true;
+}
+
+bool GOSelect_go_fel_crystalforge(Player *pPlayer, GameObject *pGO, uint32 /*uiSender*/, uint32 uiAction)
+{
+    pPlayer->PlayerTalkClass->ClearMenus();
+    switch(uiAction)
+    {
+        case GOSSIP_ACTION_INFO_DEF:
+            pPlayer->CastSpell(pPlayer,SPELL_CREATE_1_FLASK_OF_BEAST,false);
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_RETURN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+            pPlayer->SEND_GOSSIP_MENU(GOSSIP_FEL_CRYSTALFORGE_ITEM_TEXT_RETURN, pGO->GetGUID());
+            break;
+        case GOSSIP_ACTION_INFO_DEF + 1:
+            pPlayer->CastSpell(pPlayer,SPELL_CREATE_5_FLASK_OF_BEAST,false);
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_RETURN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+            pPlayer->SEND_GOSSIP_MENU(GOSSIP_FEL_CRYSTALFORGE_ITEM_TEXT_RETURN, pGO->GetGUID());
+            break;
+        case GOSSIP_ACTION_INFO_DEF + 2:
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+            pPlayer->SEND_GOSSIP_MENU(GOSSIP_FEL_CRYSTALFORGE_TEXT, pGO->GetGUID());
+            break;
+    }
+    return true;
+};
+
+/*######
+## go_bashir_crystalforge
+######*/
+
+#define GOSSIP_BASHIR_CRYSTALFORGE_TEXT 31100
+#define GOSSIP_BASHIR_CRYSTALFORGE_ITEM_TEXT_RETURN 31101
+#define GOSSIP_BASHIR_CRYSTALFORGE_ITEM_1 "Purchase 1 Unstable Flask of the Sorcerer for the cost of 10 Apexis Shards"
+#define GOSSIP_BASHIR_CRYSTALFORGE_ITEM_5 "Purchase 5 Unstable Flask of the Sorcerer for the cost of 50 Apexis Shards"
+#define GOSSIP_BASHIR_CRYSTALFORGE_ITEM_RETURN "Use the bashir crystalforge to make another purchase."
+
+enum eBashirCrystalforge
+{
+    SPELL_CREATE_1_FLASK_OF_SORCERER   = 40968,
+    SPELL_CREATE_5_FLASK_OF_SORCERER   = 40970,
+};
+
+bool GOHello_go_bashir_crystalforge(Player *pPlayer, GameObject *pGO)
+{
+    if (pGO->GetGoType() == GAMEOBJECT_TYPE_QUESTGIVER) /* != GAMEOBJECT_TYPE_QUESTGIVER) */
+        pPlayer->PrepareQuestMenu(pGO->GetGUID()); /* return true*/
+
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BASHIR_CRYSTALFORGE_ITEM_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BASHIR_CRYSTALFORGE_ITEM_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+    pPlayer->SEND_GOSSIP_MENU(GOSSIP_BASHIR_CRYSTALFORGE_TEXT, pGO->GetGUID());
+
+    return true;
+}
+
+bool GOSelect_go_bashir_crystalforge(Player *pPlayer, GameObject *pGO, uint32 /*uiSender*/, uint32 uiAction)
+{
+    pPlayer->PlayerTalkClass->ClearMenus();
+    switch(uiAction)
+    {
+        case GOSSIP_ACTION_INFO_DEF:
+            pPlayer->CastSpell(pPlayer,SPELL_CREATE_1_FLASK_OF_SORCERER,false);
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BASHIR_CRYSTALFORGE_ITEM_RETURN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+            pPlayer->SEND_GOSSIP_MENU(GOSSIP_BASHIR_CRYSTALFORGE_ITEM_TEXT_RETURN, pGO->GetGUID());
+            break;
+        case GOSSIP_ACTION_INFO_DEF + 1:
+            pPlayer->CastSpell(pPlayer,SPELL_CREATE_5_FLASK_OF_SORCERER,false);
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BASHIR_CRYSTALFORGE_ITEM_RETURN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+            pPlayer->SEND_GOSSIP_MENU(GOSSIP_BASHIR_CRYSTALFORGE_ITEM_TEXT_RETURN, pGO->GetGUID());
+            break;
+        case GOSSIP_ACTION_INFO_DEF + 2:
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BASHIR_CRYSTALFORGE_ITEM_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BASHIR_CRYSTALFORGE_ITEM_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+            pPlayer->SEND_GOSSIP_MENU(GOSSIP_BASHIR_CRYSTALFORGE_TEXT, pGO->GetGUID());
+            break;
+    }
+    return true;
+};
+
 void AddSC_go_scripts()
 {
     Script *newscript;
 
     newscript = new Script;
     newscript->Name = "go_northern_crystal_pylon";
-    newscript->pGOHello =           &GOHello_go_northern_crystal_pylon;
+    newscript->pGOHello = &GOHello_go_northern_crystal_pylon;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "go_eastern_crystal_pylon";
-    newscript->pGOHello =           &GOHello_go_eastern_crystal_pylon;
+    newscript->pGOHello = &GOHello_go_eastern_crystal_pylon;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "go_western_crystal_pylon";
-    newscript->pGOHello =           &GOHello_go_western_crystal_pylon;
+    newscript->pGOHello = &GOHello_go_western_crystal_pylon;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "go_barov_journal";
-    newscript->pGOHello =           &GOHello_go_barov_journal;
+    newscript->pGOHello = &GOHello_go_barov_journal;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "go_field_repair_bot_74A";
-    newscript->pGOHello =           &GOHello_go_field_repair_bot_74A;
+    newscript->pGOHello = &GOHello_go_field_repair_bot_74A;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "go_orb_of_command";
-    newscript->pGOHello =           &GOHello_go_orb_of_command;
+    newscript->pGOHello = &GOHello_go_orb_of_command;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "go_tablet_of_madness";
-    newscript->pGOHello =           &GOHello_go_tablet_of_madness;
+    newscript->pGOHello = &GOHello_go_tablet_of_madness;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "go_tablet_of_the_seven";
-    newscript->pGOHello =           &GOHello_go_tablet_of_the_seven;
+    newscript->pGOHello = &GOHello_go_tablet_of_the_seven;
     newscript->RegisterSelf();
     /*
     //Disabled to prevent "CRASH ALERT!"
     newscript = new Script;
     newscript->Name = "go_teleporter";
-    newscript->pGOHello =           &GOHello_go_teleporter;
+    newscript->pGOHello = &GOHello_go_teleporter;
     newscript->RegisterSelf();
     */
     newscript = new Script;
     newscript->Name = "go_jump_a_tron";
-    newscript->pGOHello =           &GOHello_go_jump_a_tron;
+    newscript->pGOHello = &GOHello_go_jump_a_tron;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "go_ethereum_prison";
-    newscript->pGOHello =           &GOHello_go_ethereum_prison;
+    newscript->pGOHello = &GOHello_go_ethereum_prison;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "go_sacred_fire_of_life";
-    newscript->pGOHello =           &GOHello_go_sacred_fire_of_life;
+    newscript->pGOHello = &GOHello_go_sacred_fire_of_life;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "go_iruxos";
-    newscript->pGOHello =           &GOHello_go_iruxos;
+    newscript->pGOHello = &GOHello_go_iruxos;
     newscript->RegisterSelf();
 
-}
+    newscript = new Script;
+    newscript->Name = "go_fel_crystalforge";
+    newscript->pGOHello = &GOHello_go_fel_crystalforge;
+    newscript->pGOSelect = &GOSelect_go_fel_crystalforge;
+    newscript->RegisterSelf();
 
+    newscript = new Script;
+    newscript->Name = "go_bashir_crystalforge";
+    newscript->pGOHello = &GOHello_go_bashir_crystalforge;
+    newscript->pGOSelect = &GOSelect_go_bashir_crystalforge;
+    newscript->RegisterSelf();
+}

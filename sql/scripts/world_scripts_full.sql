@@ -307,6 +307,8 @@ UPDATE `creature_template` SET `ScriptName`='npc_saikkal_the_elder' WHERE `entry
 UPDATE `creature_template` SET `ScriptName`='npc_skyguard_handler_deesak' WHERE `entry`=23415;
 UPDATE `creature_template` SET `ScriptName`='npc_ogre_brute' WHERE `entry`=19995;
 UPDATE `creature_template` SET `ScriptName`='npc_bloodmaul_brutebane' WHERE `entry`=21241;
+UPDATE `gameobject_template` SET `ScriptName`='go_fel_crystalforge' WHERE `entry`=185919;
+UPDATE `gameobject_template` SET `ScriptName`='go_bashir_crystalforge' WHERE `entry`=185921;
 
 /* BLASTED LANDS */
 UPDATE `creature_template` SET `ScriptName`='npc_deathly_usher' WHERE `entry`=8816;
