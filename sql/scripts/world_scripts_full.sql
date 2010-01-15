@@ -42,7 +42,9 @@ UPDATE `gameobject_template` SET `scriptname`='go_sacred_fire_of_life' WHERE `en
 UPDATE `gameobject_template` SET `scriptname`='go_skull_pile' WHERE `entry`=185913;
 UPDATE `gameobject_template` SET `ScriptName`='go_iruxos' WHERE `entry`=176581;
 UPDATE `gameobject_template` SET `ScriptName`='go_veil_skith_cage' WHERE `entry` IN (185202,185203,185204,185205);
-
+UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_stasis' WHERE `entry` BETWEEN 185465 AND 185467;
+UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_stasis' WHERE `entry`=184595;
+UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_stasis' WHERE `entry` BETWEEN 185461 AND 185464;
 
 /* GUARD */
 UPDATE `creature_template` SET `ScriptName`='guard_azuremyst' WHERE `entry`=18038;

@@ -327,6 +327,26 @@ bool GOSelect_go_bashir_crystalforge(Player *pPlayer, GameObject *pGO, uint32 /*
     return true;
 };
 
+/*######
+## go_ethereum_stasis
+######*/
+
+const uint32 NpcStasisEntry[] =
+{
+    22825, 20888, 22827, 22826, 22828
+};
+
+bool GOHello_go_ethereum_stasis(Player *pPlayer, GameObject *pGO)
+{
+    int Random = rand() % (sizeof(NpcStasisEntry) / sizeof(uint32));
+
+    pPlayer->SummonCreature(NpcStasisEntry[Random],
+        pGO->GetPositionX(), pGO->GetPositionY(), pGO->GetPositionZ(), pGO->GetAngle(pPlayer),
+        TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+
+    return false;
+};
+
 void AddSC_go_scripts()
 {
     Script *newscript;
@@ -407,5 +427,10 @@ void AddSC_go_scripts()
     newscript->Name = "go_bashir_crystalforge";
     newscript->pGOHello = &GOHello_go_bashir_crystalforge;
     newscript->pGOSelect = &GOSelect_go_bashir_crystalforge;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_ethereum_stasis";
+    newscript->pGOHello = &GOHello_go_ethereum_stasis;
     newscript->RegisterSelf();
 }
