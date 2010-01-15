@@ -364,6 +364,46 @@ bool GOHello_go_resonite_cask(Player * /*pPlayer*/, GameObject *pGO)
     return false;
 };
 
+/*######
+## go_shrine_of_the_birds
+######*/
+
+enum eShrineOfTheBirds
+{
+    NPC_HAWK_GUARD      = 22992,
+    NPC_EAGLE_GUARD     = 22993,
+    NPC_FALCON_GUARD    = 22994,
+    GO_SHRINE_HAWK      = 185551,
+    GO_SHRINE_EAGLE     = 185547,
+    GO_SHRINE_FALCON    = 185553
+};
+
+bool GOHello_go_shrine_of_the_birds(Player *pPlayer, GameObject *pGO)
+{
+    uint32 BirdEntry = 0;
+
+    float fX, fY, fZ;
+    pGO->GetClosePoint(fX, fY, fZ, pGO->GetObjectSize(), INTERACTION_DISTANCE);
+
+    switch(pGO->GetEntry())
+    {
+        case GO_SHRINE_HAWK:
+            BirdEntry = NPC_HAWK_GUARD;
+            break;
+        case GO_SHRINE_EAGLE:
+            BirdEntry = NPC_EAGLE_GUARD;
+            break;
+        case GO_SHRINE_FALCON:
+            BirdEntry = NPC_FALCON_GUARD;
+            break;
+    }
+
+    if (BirdEntry)
+        pPlayer->SummonCreature(BirdEntry, fX, fY, fZ, pGO->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+
+    return false;
+};
+
 void AddSC_go_scripts()
 {
     Script *newscript;
@@ -455,4 +495,9 @@ void AddSC_go_scripts()
     newscript->Name = "go_resonite_cask";
     newscript->pGOHello = &GOHello_go_resonite_cask;
     newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_shrine_of_the_birds";
+    newscript->pGOHello = &GOHello_go_shrine_of_the_birds;
+    newscript->RegisterSelf();    
 }
