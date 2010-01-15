@@ -45,6 +45,7 @@ UPDATE `gameobject_template` SET `ScriptName`='go_veil_skith_cage' WHERE `entry`
 UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_stasis' WHERE `entry` BETWEEN 185465 AND 185467;
 UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_stasis' WHERE `entry`=184595;
 UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_stasis' WHERE `entry` BETWEEN 185461 AND 185464;
+UPDATE `gameobject_template` SET `ScriptName`='go_resonite_cask' WHERE entry=178145;
 
 /* GUARD */
 UPDATE `creature_template` SET `ScriptName`='guard_azuremyst' WHERE `entry`=18038;

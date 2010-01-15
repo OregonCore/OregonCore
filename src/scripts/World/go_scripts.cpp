@@ -347,6 +347,23 @@ bool GOHello_go_ethereum_stasis(Player *pPlayer, GameObject *pGO)
     return false;
 };
 
+/*######
+## go_resonite_cask
+######*/
+
+enum eResoniteCask
+{
+    NPC_GOGGEROC    = 11920
+};
+
+bool GOHello_go_resonite_cask(Player * /*pPlayer*/, GameObject *pGO)
+{
+    if (pGO->GetGoType() == GAMEOBJECT_TYPE_GOOBER)
+        pGO->SummonCreature(NPC_GOGGEROC, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 300000);
+
+    return false;
+};
+
 void AddSC_go_scripts()
 {
     Script *newscript;
@@ -432,5 +449,10 @@ void AddSC_go_scripts()
     newscript = new Script;
     newscript->Name = "go_ethereum_stasis";
     newscript->pGOHello = &GOHello_go_ethereum_stasis;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_resonite_cask";
+    newscript->pGOHello = &GOHello_go_resonite_cask;
     newscript->RegisterSelf();
 }
