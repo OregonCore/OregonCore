@@ -48,6 +48,9 @@ UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_stasis' WHERE `entry`
 UPDATE `gameobject_template` SET `ScriptName`='go_resonite_cask' WHERE entry=178145;
 UPDATE `gameobject_template` SET `ScriptName`='go_shrine_of_the_birds' WHERE `entry` IN (185547,185553,185551);
 UPDATE `gameobject_template` SET `ScriptName`='go_matrix_punchograph' WHERE `entry` IN (142345,142475,142476,142696);
+UPDATE `gameobject_template` SET `ScriptName`='go_hive_pod' WHERE `entry`=178553;
+UPDATE `gameobject_template` SET `ScriptName` = 'go_soulwell' WHERE `entry` IN (181621,193169);
+UPDATE `gameobject_template` SET `ScriptName`='go_blood_filled_orb' WHERE `entry`=182024;
 
 /* GUARD */
 UPDATE `creature_template` SET `ScriptName`='guard_azuremyst' WHERE `entry`=18038;

@@ -485,6 +485,77 @@ bool GOHello_go_matrix_punchograph(Player *pPlayer, GameObject *pGO)
     return false;
 };
 
+/*######
+## go_blood_filled_orb
+######*/
+
+#define NPC_ZELEMAR  17830
+
+bool GOHello_go_blood_filled_orb(Player *pPlayer, GameObject *pGO)
+{
+    if (pGO->GetGoType() == GAMEOBJECT_TYPE_GOOBER)
+        pPlayer->SummonCreature(NPC_ZELEMAR, -369.746f, 166.759f, -21.50f, 5.235f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+
+    return true;
+};
+
+/*######
+## go_soulwell
+######*/
+
+bool GOHello_go_soulwell(Player *pPlayer, GameObject* pGO)
+{
+    Unit *caster = pGO->GetOwner();
+    if (!caster || caster->GetTypeId() != TYPEID_PLAYER)
+        return true;
+
+    if (!pPlayer->IsInSameRaidWith(static_cast<Player *>(caster)))
+        return true;
+
+    // Repeating this at every use is ugly and inefficient. But as long as we don't have proper
+    // GO scripting with at least On Create and On Update events, the other options are no less
+    // ugly and hacky.
+    uint32 newSpell = 0;
+    if (pGO->GetEntry() == 193169)                                  // Soulwell for rank 2
+    {
+        if (caster->HasAura(18693,0))      // Improved Healthstone rank 2
+            newSpell = 58898;
+        else if (caster->HasAura(18692,0)) // Improved Healthstone rank 1
+            newSpell = 58896;
+        else newSpell = 58890;
+    }
+    else if (pGO->GetEntry() == 181621)                             // Soulwell for rank 1
+    {
+        if (caster->HasAura(18693,0))      // Improved Healthstone rank 2
+            newSpell = 34150;
+        else if (caster->HasAura(18692,0)) // Improved Healthstone rank 1
+            newSpell = 34149;
+        else newSpell = 34130;
+    }
+
+    pGO->AddUse();
+    pPlayer->CastSpell(pPlayer, newSpell, true);
+    return true;
+};
+
+/*######
+## Quest 1126: Hive in the Tower
+######*/
+
+enum eHives
+{
+    QUEST_HIVE_IN_THE_TOWER                       = 9544,
+    NPC_HIVE_AMBUSHER                             = 13301
+};
+
+bool GOHello_go_hive_pod(Player *pPlayer, GameObject *pGO)
+{
+    pPlayer->SendLoot(pGO->GetGUID(), LOOT_CORPSE);
+    pGO->SummonCreature(NPC_HIVE_AMBUSHER,pGO->GetPositionX()+1,pGO->GetPositionY(),pGO->GetPositionZ(),pGO->GetAngle(pPlayer),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000);
+    pGO->SummonCreature(NPC_HIVE_AMBUSHER,pGO->GetPositionX(),pGO->GetPositionY()+1,pGO->GetPositionZ(),pGO->GetAngle(pPlayer),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000);
+    return true;
+};
+
 void AddSC_go_scripts()
 {
     Script *newscript;
@@ -590,5 +661,20 @@ void AddSC_go_scripts()
     newscript = new Script;
     newscript->Name = "go_matrix_punchograph";
     newscript->pGOHello = &GOHello_go_matrix_punchograph;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_blood_filled_orb";
+    newscript->pGOHello = &GOHello_go_blood_filled_orb;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_soulwell";
+    newscript->pGOHello = &GOHello_go_soulwell;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_hive_pod";
+    newscript->pGOHello = &GOHello_go_hive_pod;
     newscript->RegisterSelf();
 }
