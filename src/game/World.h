@@ -514,6 +514,21 @@ class World
         static float GetVisibleUnitGreyDistance()       { return m_VisibleUnitGreyDistance;       }
         static float GetVisibleObjectGreyDistance()     { return m_VisibleObjectGreyDistance;     }
 
+        //movement anticheat enable flag
+        inline bool GetMvAnticheatEnable()             {return m_MvAnticheatEnable;}
+        inline bool GetMvAnticheatKick()               {return m_MvAnticheatKick;}
+        inline uint32 GetMvAnticheatAlarmCount()       {return m_MvAnticheatAlarmCount;}
+        inline uint32 GetMvAnticheatAlarmPeriod()      {return m_MvAnticheatAlarmPeriod;}
+        inline unsigned char GetMvAnticheatBan()       {return m_MvAntiCheatBan;}
+        inline std::string GetMvAnticheatBanTime()     {return m_MvAnticheatBanTime;}
+        inline unsigned char GetMvAnticheatGmLevel()   {return m_MvAnticheatGmLevel;}
+        inline bool GetMvAnticheatKill()               {return m_MvAnticheatKill;}
+        inline float GetMvAnticheatMaxXYT()            {return m_MvAnticheatMaxXYT;}
+        inline float GetMvAnticheatHighSpeedMaxXYT()   {return m_MvAnticheatHighSpeedMaxXYT;}
+        inline float GetMvAnticheatSpeedMaxXYT()       {return m_MvAnticheatSpeedMaxXYT;}
+        inline float GetMvAnticheatWalkMaxXYT()        {return m_MvAnticheatWalkMaxXYT;}
+        inline uint16 GetMvAnticheatIgnoreAfterTeleport()   {return m_MvAnticheatIgnoreAfterTeleport;}
+
         void ProcessCliCommands();
         void QueueCliCommand( CliCommandHolder::Print* zprintf, char const* input ) { cliCmdQueue.add(new CliCommandHolder(input, zprintf)); }
 
