@@ -558,11 +558,11 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
             GetPlayer()->m_anti_NextLenCheck = CurTime+500;
             GetPlayer()->m_anti_MovedLen = 0.0f;
             float MaxDeltaXYT = sWorld.GetMvAnticheatWalkMaxXYT();
-            if((GetPlayer()->IsMounted() || GetPlayer()->IsInTravelForm() || GetPlayer()->IsInFlightForm()) && GetPlayer()->getLevel() >= 30)
+            if((GetPlayer()->IsMounted() || GetPlayer()->IsInTravelForm() || GetPlayer()->IsInFlightForm() || (MovementFlags & MOVEMENTFLAG_FLYING) || (MovementFlags & MOVEMENTFLAG_FLYING2)) && GetPlayer()->getLevel() >= 30)
             {
                 if(GetPlayer()->getLevel()<60)
                 	MaxDeltaXYT = sWorld.GetMvAnticheatSpeedMaxXYT();
-                else if(!(GetPlayer()->isInFlight() || GetPlayer()->IsInFlightForm()))
+                else if(!((MovementFlags & MOVEMENTFLAG_FLYING) || (MovementFlags & MOVEMENTFLAG_FLYING2) || GetPlayer()->IsInFlightForm()) || GetPlayer()->getLevel()<70)
                 	MaxDeltaXYT = sWorld.GetMvAnticheatHighSpeedMaxXYT();
                 else
 	            	MaxDeltaXYT = sWorld.GetMvAnticheatMaxXYT();
