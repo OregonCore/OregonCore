@@ -608,6 +608,21 @@ class World
         static float m_MaxVisibleDistanceInFlight;
         static float m_VisibleUnitGreyDistance;
         static float m_VisibleObjectGreyDistance;
+        
+        //movement anticheat enable flag
+        bool m_MvAnticheatEnable;
+        bool m_MvAnticheatKick;
+        uint32 m_MvAnticheatAlarmCount;
+        uint32 m_MvAnticheatAlarmPeriod;
+        unsigned char m_MvAntiCheatBan;
+        std::string m_MvAnticheatBanTime;
+        unsigned char m_MvAnticheatGmLevel;
+        bool m_MvAnticheatKill;
+        float m_MvAnticheatMaxXYT;
+        float m_MvAnticheatHighSpeedMaxXYT;
+        float m_MvAnticheatSpeedMaxXYT;
+        float m_MvAnticheatWalkMaxXYT;
+        uint16 m_MvAnticheatIgnoreAfterTeleport;
 
         // CLI command holder to be thread safe
         ZThread::LockedQueue<CliCommandHolder*, ZThread::FastMutex> cliCmdQueue;

@@ -31,6 +31,187 @@
 #include "BattleGround.h"
 #include "WaypointMovementGenerator.h"
 #include "InstanceSaveMgr.h"
+#include "World.h"
+
+//#define __ANTI_DEBUG__
+
+#ifdef __ANTI_DEBUG__
+#include "Chat.h"
+std::string FlagsToStr(const uint32 Flags)
+{
+    std::string Ret="";
+    if(Flags==0)
+    {
+        Ret="None";
+        return Ret;
+    }
+
+    if(Flags & MOVEMENTFLAG_FORWARD)
+    {   Ret+="FW "; }
+    if(Flags & MOVEMENTFLAG_BACKWARD)
+    {   Ret+="BW "; }
+    if(Flags & MOVEMENTFLAG_STRAFE_LEFT)
+    {   Ret+="STL ";    }
+    if(Flags & MOVEMENTFLAG_STRAFE_RIGHT)
+    {   Ret+="STR ";    }
+    if(Flags & MOVEMENTFLAG_LEFT)
+    {   Ret+="LF "; }
+    if(Flags & MOVEMENTFLAG_RIGHT)
+    {   Ret+="RI "; }
+    if(Flags & MOVEMENTFLAG_PITCH_UP)
+    {   Ret+="PTUP ";   }
+    if(Flags & MOVEMENTFLAG_PITCH_DOWN)
+    {   Ret+="PTDW ";   }
+    if(Flags & MOVEMENTFLAG_WALK_MODE)
+    {   Ret+="WALK ";   }
+    if(Flags & MOVEMENTFLAG_ONTRANSPORT)
+    {   Ret+="TRANS ";  }
+    if(Flags & MOVEMENTFLAG_LEVITATING)
+    {   Ret+="LEVI ";   }
+    if(Flags & MOVEMENTFLAG_FLY_UNK1)
+    {   Ret+="FLYUNK1 ";    }
+    if(Flags & MOVEMENTFLAG_JUMPING)
+    {   Ret+="JUMP ";   }
+    if(Flags & MOVEMENTFLAG_UNK4)
+    {   Ret+="UNK4 ";   }
+    if(Flags & MOVEMENTFLAG_FALLING)
+    {   Ret+="FALL ";   }
+    if(Flags & MOVEMENTFLAG_SWIMMING)
+    {   Ret+="SWIM ";   }
+    if(Flags & MOVEMENTFLAG_FLY_UP)
+    {   Ret+="FLYUP ";  }
+    if(Flags & MOVEMENTFLAG_CAN_FLY)
+    {   Ret+="CFLY ";   }
+    if(Flags & MOVEMENTFLAG_FLYING)
+    {   Ret+="FLY ";    }
+    if(Flags & MOVEMENTFLAG_FLYING2)
+    {   Ret+="FLY2 ";   }
+    if(Flags & MOVEMENTFLAG_WATERWALKING)
+    {   Ret+="WTWALK "; }
+    if(Flags & MOVEMENTFLAG_SAFE_FALL)
+    {   Ret+="SAFE ";   }
+    if(Flags & MOVEMENTFLAG_UNK3)
+    {   Ret+="UNK3 ";   }
+    if(Flags & MOVEMENTFLAG_SPLINE)
+    {   Ret+="SPLINE ";     }
+    if(Flags & MOVEMENTFLAG_SPLINE2)
+    {   Ret+="SPLINE2 ";    }
+
+    return Ret;
+}
+#endif // __ANTI_DEBUG__
+
+bool WorldSession::Anti__ReportCheat(const char* Reason,float Speed,const char* Op,float Val1,uint32 Val2,MovementInfo* MvInfo)
+{
+    if(!Reason)
+    {
+        sLog.outError("Anti__ReportCheat: Missing Reason parameter!");
+        return false;
+    }
+    const char* Player=GetPlayer()->GetName();
+    uint32 Acc=GetPlayer()->GetSession()->GetAccountId();
+    uint32 Map=GetPlayer()->GetMapId();
+    if(!Player)
+    {
+        sLog.outError("Anti__ReportCheat: Player with no name?!?");
+        return false;
+    }
+
+    QueryResult *Res=CharacterDatabase.PQuery("SELECT speed,Val1 FROM cheaters WHERE player='%s' AND reason LIKE '%s' AND Map='%u' AND last_date >= NOW()-300",Player,Reason,Map);
+    if(Res)
+    {
+        Field* Fields = Res->Fetch();
+
+        std::stringstream Query;
+        Query << "UPDATE cheaters SET count=count+1,last_date=NOW()";
+        Query.precision(5);
+        if(Speed>0.0f && Speed > Fields[0].GetFloat())
+        {
+            Query << ",speed='";
+            Query << std::fixed << Speed;
+            Query << "'";
+        }
+
+        if(Val1>0.0f && Val1 > Fields[1].GetFloat())
+        {
+            Query << ",Val1='";
+            Query << std::fixed << Val1;
+            Query << "'";
+        }
+
+        Query << " WHERE player='" << Player << "' AND reason='" << Reason << "' AND Map='" << Map << "' AND last_date >= NOW()-300 ORDER BY entry DESC LIMIT 1";
+
+        CharacterDatabase.Execute(Query.str().c_str());
+        delete Res;
+    }
+    else
+    {
+        if(!Op)
+        {   Op="";  }
+        std::stringstream Pos;
+        Pos << "OldPos: " << GetPlayer()->GetPositionX() << " " << GetPlayer()->GetPositionY() << " "
+            << GetPlayer()->GetPositionZ();
+        if(MvInfo)
+        {
+            Pos << "\nNew: " << MvInfo->x << " " << MvInfo->y << " " << MvInfo->z << "\n"
+                << "Flags: " << MvInfo->flags << "\n"
+                << "t_guid: " << MvInfo->t_guid << " falltime: " << MvInfo->fallTime;
+        }
+        CharacterDatabase.PExecute("INSERT INTO cheaters (player,acctid,reason,speed,count,first_date,last_date,`Op`,Val1,Val2,Map,Pos,Level) "
+                                   "VALUES ('%s','%u','%s','%f','1',NOW(),NOW(),'%s','%f','%u','%u','%s','%u')",
+                                   Player,Acc,Reason,Speed,Op,Val1,Val2,Map,
+                                   Pos.str().c_str(),GetPlayer()->getLevel());
+    }
+
+    if(sWorld.GetMvAnticheatKill() && GetPlayer()->isAlive())
+    {
+        GetPlayer()->DealDamage(GetPlayer(), GetPlayer()->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+    }
+    if(sWorld.GetMvAnticheatKick())
+    {
+        GetPlayer()->GetSession()->KickPlayer();
+    }
+    if(sWorld.GetMvAnticheatBan() & 1)
+    {
+        sWorld.BanAccount(BAN_CHARACTER,Player,sWorld.GetMvAnticheatBanTime(),"Cheat","Anticheat");
+    }
+    if(sWorld.GetMvAnticheatBan() & 2)
+    {
+        QueryResult *result = loginDatabase.PQuery("SELECT last_ip FROM account WHERE id=%u", Acc);
+        if(result)
+        {
+
+            Field *fields = result->Fetch();
+            std::string LastIP = fields[0].GetCppString();
+            if(!LastIP.empty())
+            {
+                sWorld.BanAccount(BAN_IP,LastIP,sWorld.GetMvAnticheatBanTime(),"Cheat","Anticheat");
+            }
+            delete result;
+        }
+    }
+    return true;
+}
+
+bool WorldSession::Anti__CheatOccurred(uint32 CurTime,const char* Reason,float Speed,const char* Op,
+                                float Val1,uint32 Val2,MovementInfo* MvInfo)
+{
+    if(!Reason)
+    {
+        sLog.outError("Anti__CheatOccurred: Missing Reason parameter!");
+        return false;
+    }
+
+    GetPlayer()->m_anti_lastalarmtime = CurTime;
+    GetPlayer()->m_anti_alarmcount = GetPlayer()->m_anti_alarmcount + 1;
+
+    if (GetPlayer()->m_anti_alarmcount > sWorld.GetMvAnticheatAlarmCount())
+    {
+        Anti__ReportCheat(Reason,Speed,Op,Val1,Val2,MvInfo);
+        return true;
+    }
+    return false;
+}
 
 void WorldSession::HandleMoveWorldportAckOpcode( WorldPacket & /*recv_data*/ )
 {
@@ -63,6 +244,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     // relocate the player to the teleport destination
     GetPlayer()->SetMapId(loc.mapid);
     GetPlayer()->Relocate(loc.x, loc.y, loc.z, loc.o);
+    GetPlayer()->m_anti_TeleTime=time(NULL);
 
     // since the MapId is set before the GetInstance call, the InstanceId must be set to 0
     // to let GetInstance() determine the proper InstanceId based on the player's binds
@@ -166,6 +348,9 @@ void WorldSession::HandleMoveWorldportAckOpcode()
 
         GetPlayer()->m_temporaryUnsummonedPetNumber = 0;
     }
+    
+    GetPlayer()->Anti__SetLastTeleTime(::time(NULL));
+    GetPlayer()->m_anti_BeginFallZ=INVALID_HEIGHT;
 
     GetPlayer()->SetDontMove(false);
 }
@@ -173,7 +358,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
 void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 {
     CHECK_PACKET_SIZE(recv_data, 4+1+4+4+4+4+4);
-
+    Player* plMover = GetPlayer();
     /* extract packet */
     MovementInfo movementInfo;
     uint32 MovementFlags;
