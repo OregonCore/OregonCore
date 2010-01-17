@@ -154,7 +154,6 @@ bool WorldSession::Anti__ReportCheat(const char* Reason,float Speed,const char* 
         if(MvInfo)
         {
             Pos << "\nNew: " << MvInfo->x << " " << MvInfo->y << " " << MvInfo->z << "\n"
-                << "Flags: " << MvInfo->flags << "\n"
                 << "t_guid: " << MvInfo->t_guid << " falltime: " << MvInfo->fallTime;
         }
         CharacterDatabase.PExecute("INSERT INTO cheaters (player,acctid,reason,speed,count,first_date,last_date,`Op`,Val1,Val2,Map,Pos,Level) "
@@ -796,9 +795,6 @@ void WorldSession::HandleForceSpeedChangeAck(WorldPacket &recv_data)
 
     recv_data >> newspeed;
     /*----------------*/
-    
-    MovementInfo movementInfo;
-    ReadMovementInfo(recv_data, &movementInfo);
 
     // client ACK send one packet for mounted/run case and need skip all except last from its
     // in other cases anti-cheat check can be fail in false case
@@ -843,10 +839,7 @@ void WorldSession::HandleForceSpeedChangeAck(WorldPacket &recv_data)
         else                                                // must be lesser - cheating
         {
             sLog.outBasic("Player %s from account id %u kicked for incorrect speed (must be %f instead %f)",
-                _player->GetName(),_player->GetSession()->GetAccountId(),_player->GetSpeed(move_type), newspeed);
-            Anti__CheatOccurred(getMSTime(),"Incorrect Speed",0,LookupOpcodeName(opcode),
-                                (float)(GetPlayer()->GetMotionMaster()->GetCurrentMovementGeneratorType()),
-                                (newspeed-_player->GetSpeed(move_type)),&movementInfo);
+                _player->GetSession()->KickPlayer();
             
         }
     }
