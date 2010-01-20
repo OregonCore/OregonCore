@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2005-2008 MaNGOS
  *
- * Copyright (C) 2008 Oregon
+ * Copyright (C) 2008 Trinity
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
