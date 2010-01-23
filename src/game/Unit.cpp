@@ -7005,6 +7005,7 @@ bool Unit::HandleOverrideClassScriptAuraProc(Unit *pVictim, Aura *triggeredByAur
             triggered_spell_id = 28750;                     // Blessing of the Claw
             break;
         case 5497:                                          // Improved Mana Gems (Serpent-Coil Braid)
+		                                                    // ManaGems (#1 5405) (#2 10052) (#3 10057) (#4 10058) (#5 27103)
             triggered_spell_id = 37445;                     // Mana Surge
             break;
     }
