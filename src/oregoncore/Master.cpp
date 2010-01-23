@@ -200,14 +200,15 @@ int Master::Run()
     sLog.outString( "%s (core-daemon)", _FULLVERSION );
     sLog.outString( "<Ctrl-C> to stop.\n" );
 
-    sLog.outTitle( "");
-    sLog.outTitle( "");
-    sLog.outTitle( "");
-    sLog.outTitle( "");
-    sLog.outTitle( "");
-    sLog.outTitle( "");
-    sLog.outTitle( "");
-    sLog.outTitle( "");
+    sLog.outTitle( " _____                                      ");
+    sLog.outTitle( "/\  __`\                                    ");
+    sLog.outTitle( "\ \ \/\ \  _ __   __     __     ___    ___  ");
+    sLog.outTitle( " \ \ \ \ \/\`'__\'__`\ /'_ `\  / __`\/' _ `\ ");
+    sLog.outTitle( "  \ \ \_\ \ \ \/\  __//\ \L\ \/\ \L\ \\ \/\ \ ");
+    sLog.outTitle( "   \ \_____\ \_\ \____\ \____ \ \____/ \_\ \_\");
+    sLog.outTitle( "    \/_____/\/_/\/____/\/___L\ \/___/ \/_/\/_/");
+    sLog.outTitle( "                         /\____/              ");
+	sLog.outTitle( "                         \_/__/               ");
     sLog.outTitle( "http://www.OregonCore.com                    \n");
 
     /// worldd PID file creation
