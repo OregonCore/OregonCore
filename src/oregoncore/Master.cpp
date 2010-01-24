@@ -2,7 +2,9 @@
  * Copyright (C) 2005-2008 MaNGOS <http://www.mangosproject.org/>
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
- *
+ * 
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -201,16 +203,16 @@ int Master::Run()
     sLog.outString( "<Ctrl-C> to stop.\n" );
 // Remove the warnings C4129 while compiling
 #pragma warning (disable : 4129)
-    sLog.outTitle( "  _____                                          ");
-    sLog.outTitle( " /\  __`\                                        ");
-    sLog.outTitle( " \ \ \/\ \  _ __   __     __     ___    ___      ");
-    sLog.outTitle( "  \ \ \ \ \/\`'__\'__`\ /'_ `\  / __`\/' _ `\    ");
-    sLog.outTitle( "   \ \ \_\ \ \ \/\  __//\ \L\ \/\ \L\ \\ \/\ \   ");
-    sLog.outTitle( "    \ \_____\ \_\ \____\ \____ \ \____/ \_\ \_\  ");
-    sLog.outTitle( "     \/_____/\/_/\/____/\/___L\ \/___/ \/_/\/_/  ");
-    sLog.outTitle( "                          /\____/                ");
-	sLog.outTitle( "                          \_/__/                 ");
-    sLog.outTitle( " http://www.OregonCore.com                    \n ");
+    sLog.outTitle( "  _____                                          " );
+    sLog.outTitle( " /\  __`\                                        " );
+    sLog.outTitle( " \ \ \/\ \  _ __   __     __     ___    ___      " );
+    sLog.outTitle( "  \ \ \ \ \/\`'__\'__`\ /'_ `\  / __`\/' _ `\    " );
+    sLog.outTitle( "   \ \ \_\ \ \ \/\  __//\ \L\ \/\ \L\ \\ \/\ \   " );
+    sLog.outTitle( "    \ \_____\ \_\ \____\ \____ \ \____/ \_\ \_\  " );
+    sLog.outTitle( "     \/_____/\/_/\/____/\/___L\ \/___/ \/_/\/_/  " );
+    sLog.outTitle( "                          /\____/                " );
+    sLog.outTitle( "                          \_/__/                 " );
+    sLog.outTitle( " http://www.OregonCore.com                    \n " );
 
     /// worldd PID file creation
     std::string pidfile = sConfig.GetStringDefault("PidFile", "");
