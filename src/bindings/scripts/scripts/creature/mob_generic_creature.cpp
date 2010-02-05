@@ -21,7 +21,7 @@ SDComment: Should be replaced with core based AI
 SDCategory: Creatures
 EndScriptData */
 
-/* #include "precompiled.h"
+#include "precompiled.h"
 
 #define GENERIC_CREATURE_COOLDOWN   5000
 
@@ -164,10 +164,13 @@ CreatureAI* GetAI_generic_creature(Creature *_Creature)
 
 void AddSC_generic_creature()
 {
+    /*
+    [Disabled to prevent "CRASH ALERT!"]
     Script *newscript;
     newscript = new Script;
     newscript->Name="generic_creature";
     newscript->GetAI = &GetAI_generic_creature;
     newscript->RegisterSelf();
-} */
+	*/
+}
 
