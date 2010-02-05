@@ -79,7 +79,8 @@ void ScriptsFree()
 OREGON_DLL_EXPORT
 void ScriptsInit(char const* cfg_file = "oregoncore.conf")
 {
-    //Oregon Script startup
+    // Remove the warnings C4129 while compiling
+    #pragma warning (disable : 4129)
     outstring_log("   ____                              _____           _       _   ");
     outstring_log("  / __ \                            / ____|         (_)     | |  ");
     outstring_log(" | |  | |_ __ ___  __ _  ___  _ __ | (___   ___ _ __ _ _ __ | |_ ");
