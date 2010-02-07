@@ -409,7 +409,7 @@ void DatabaseMysql::InitDelayThread(const char* infoString)
 
     //New delay thread for delay execute
     m_threadBody = new MySQLDelayThread(this);
-    m_delayThread = new ACE_Based::Thread(*m_threadBody);
+    m_delayThread = new ACE_Based::Thread(m_threadBody);
 }
 
 void DatabaseMysql::HaltDelayThread()

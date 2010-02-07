@@ -73,9 +73,9 @@ void SqlQuery::Execute(Database *db)
 void SqlResultQueue::Update()
 {
     /// execute the callbacks waiting in the synchronization queue
-    while(!empty())
+    Oregon::IQueryCallback* callback;
+    while (next(callback))
     {
-        Oregon::IQueryCallback * callback = next();
         callback->Execute();
         delete callback;
     }
