@@ -974,7 +974,7 @@ void PatcherRunnable::run()
         ///- Wait until output buffer is reasonably empty
         while(mySocket->Ready() && mySocket->IsLag())
         {
-            ACE_Based::Thread::sleep(1);
+            ACE_Based::Thread::Sleep(1);
         }
         ///- And send content of the patch file to the client
         xfdata.data_size=fread(&xfdata.data,1,ChunkSize,mySocket->pPatch);

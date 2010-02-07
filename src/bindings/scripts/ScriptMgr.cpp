@@ -7,6 +7,7 @@
 #include "Database/DatabaseEnv.h"
 #include "Database/DBCStores.h"
 #include "ObjectMgr.h"
+#include "Platform/Define.h"
 #include "ProgressBar.h"
 #include "../system/ScriptLoader.h"
 #include "../system/system.h"
@@ -79,6 +80,8 @@ void ScriptsFree()
 OREGON_DLL_EXPORT
 void ScriptsInit(char const* cfg_file = "oregoncore.conf")
 {
+
+#if PLATFORM == PLATFORM_WINDOWS
     // Remove the warnings C4129 while compiling
     #pragma warning (disable : 4129)
     outstring_log("   ____                              _____           _       _   ");
@@ -89,6 +92,7 @@ void ScriptsInit(char const* cfg_file = "oregoncore.conf")
     outstring_log("  \____/|_|  \___|\__, |\___/|_| |_|_____/ \___|_|  |_| .__/ \__|");
 	outstring_log("                   __/ |                              | |        ");
 	outstring_log("                  |___/                               |_|  ");
+#endif
     outstring_log("Oregon Script initializing %s", _FULLVERSION);
 
     //Get configuration file
