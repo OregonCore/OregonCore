@@ -30,6 +30,10 @@ SqlDelayThread::SqlDelayThread(Database* db, const char* infoString) :m_running(
 
 }
 
+SqlDelayThread::SqlDelayThread(Database* db) : m_dbEngine(db), m_running(true)
+{
+}
+
 void SqlDelayThread::run()
 {
     SqlOperation* s;

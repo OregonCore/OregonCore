@@ -41,6 +41,7 @@ typedef ACE_Based::LockedQueue<SqlOperation*, ACE_Thread_Mutex> SqlQueue;
         SqlDelayThread();
     public:
         SqlDelayThread(Database* db,const char* infoString);
+	    SqlDelayThread(Database* db);
 
         ///< Put sql statement to delay queue
         inline bool Delay(SqlOperation* sql) { m_sqlQueue.add(sql); return true; }
