@@ -45,7 +45,6 @@ oregondatabase
 oregonauth
 oregonconfig
 vmaps
-ZThread
 g3dlite
 ${READLINE_LIBRARY}
 gomp

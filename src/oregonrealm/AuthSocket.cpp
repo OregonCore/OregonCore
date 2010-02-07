@@ -173,7 +173,7 @@ typedef struct AuthHandler
 #endif
 
 /// Launch a thread to transfer a patch to the client
-class PatcherRunnable: public ZThread::Runnable
+class PatcherRunnable: public ACE_Based::Runnable
 {
     public:
         PatcherRunnable(class AuthSocket *);
@@ -236,7 +236,7 @@ AuthSocket::AuthSocket(ISocketHandler &h) : TcpSocket(h)
 /// Close patch file descriptor before leaving
 AuthSocket::~AuthSocket()
 {
-    ZThread::Guard<ZThread::Mutex> g(patcherLock);
+    ACE_Guard<ACE_Thread_Mutex> g(patcherLock);
     if(pPatch)
         fclose(pPatch);
 }
@@ -912,7 +912,7 @@ bool AuthSocket::_HandleXferResume()
     ibuf.Read((char*)&start,sizeof(start));
     fseek(pPatch,start,0);
 
-    ZThread::Thread u(new PatcherRunnable(this));
+    ACE_Based::Thread u(new PatcherRunnable(this));
     return true;
 }
 
@@ -924,7 +924,7 @@ bool AuthSocket::_HandleXferCancel()
     ///- Close and delete the socket
     ibuf.Remove(1);                                         //clear input buffer
 
-    //ZThread::Thread::sleep(15);
+    //ACE_Based::Thread::sleep(15);
     SetCloseAndDelete();
 
     return true;
@@ -946,7 +946,7 @@ bool AuthSocket::_HandleXferAccept()
     ibuf.Remove(1);                                         //clear input buffer
     fseek(pPatch,0,0);
 
-    ZThread::Thread u(new PatcherRunnable(this));
+    ACE_Based::Thread u(new PatcherRunnable(this));
 
     return true;
 }
@@ -965,7 +965,7 @@ PatcherRunnable::PatcherRunnable(class AuthSocket * as)
 /// Send content of patch file to the client
 void PatcherRunnable::run()
 {
-    ZThread::Guard<ZThread::Mutex> g(mySocket->patcherLock);
+    ACE_Guard<ACE_Thread_Mutex> g(mySocket->patcherLock);
     XFER_DATA_STRUCT xfdata;
     xfdata.opcode = XFER_DATA;
 
@@ -974,7 +974,7 @@ void PatcherRunnable::run()
         ///- Wait until output buffer is reasonably empty
         while(mySocket->Ready() && mySocket->IsLag())
         {
-            ZThread::Thread::sleep(1);
+            ACE_Based::Thread::sleep(1);
         }
         ///- And send content of the patch file to the client
         xfdata.data_size=fread(&xfdata.data,1,ChunkSize,mySocket->pPatch);

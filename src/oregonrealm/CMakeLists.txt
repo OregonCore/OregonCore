@@ -36,7 +36,6 @@ oregonsockets
 oregondatabase
 oregonauth
 oregonconfig
-ZThread
 zlib
 gomp
 ${SSLLIB}

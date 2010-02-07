@@ -23,14 +23,14 @@
 
 #include "Platform/Define.h"
 #include "Policies/Singleton.h"
-#include "zthread/Mutex.h"
+#include "ace/Thread_Mutex.h"
 #include "Common.h"
 #include "Map.h"
 #include "GridStates.h"
 
 class Transport;
 
-class OREGON_DLL_DECL MapManager : public Oregon::Singleton<MapManager, Oregon::ClassLevelLockable<MapManager, ZThread::Mutex> >
+class OREGON_DLL_DECL MapManager : public Oregon::Singleton<MapManager, Oregon::ClassLevelLockable<MapManager, ACE_Thread_Mutex> >
 {
 
     friend class Oregon::OperatorNew<MapManager>;
@@ -134,7 +134,7 @@ class OREGON_DLL_DECL MapManager : public Oregon::Singleton<MapManager, Oregon::
             return (iter == i_maps.end() ? NULL : iter->second);
         }
 
-        typedef Oregon::ClassLevelLockable<MapManager, ZThread::Mutex>::Lock Guard;
+        typedef Oregon::ClassLevelLockable<MapManager, ACE_Thread_Mutex>::Lock Guard;
         uint32 i_gridCleanUpDelay;
         MapMapType i_maps;
         IntervalTimer i_timer;

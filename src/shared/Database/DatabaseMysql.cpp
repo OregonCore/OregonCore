@@ -23,7 +23,7 @@
 #include "Util.h"
 #include "Policies/SingletonImp.h"
 #include "Platform/Define.h"
-#include "../src/zthread/ThreadImpl.h"
+#include "Threading.h"
 #include "DatabaseEnv.h"
 #include "Database/MySQLDelayThread.h"
 #include "Database/SqlOperations.h"
@@ -203,7 +203,7 @@ QueryResult* DatabaseMysql::Query(const char *sql)
 
     {
         // guarded block for thread-safe mySQL request
-        ZThread::Guard<ZThread::FastMutex> query_connection_guard(mMutex);
+        ACE_Guard<ACE_Thread_Mutex> query_connection_guard(mMutex);
         #ifdef OREGON_DEBUG
         uint32 _s = getMSTime();
         #endif
@@ -251,7 +251,7 @@ bool DatabaseMysql::Execute(const char *sql)
     // don't use queued execution if it has not been initialized
     if (!m_threadBody) return DirectExecute(sql);
 
-    tranThread = ZThread::ThreadImpl::current();            // owner of this transaction
+    tranThread = ACE_Based::Thread::current();            // owner of this transaction
     TransactionQueues::iterator i = m_tranQueues.find(tranThread);
     if (i != m_tranQueues.end() && i->second != NULL)
     {                                                       // Statement for transaction
@@ -273,7 +273,7 @@ bool DatabaseMysql::DirectExecute(const char* sql)
 
     {
         // guarded block for thread-safe mySQL request
-        ZThread::Guard<ZThread::FastMutex> query_connection_guard(mMutex);
+        ACE_Guard<ACE_Thread_Mutex> query_connection_guard(mMutex);
         #ifdef OREGON_DEBUG
         uint32 _s = getMSTime();
         #endif
@@ -318,7 +318,7 @@ bool DatabaseMysql::BeginTransaction()
     // don't use queued execution if it has not been initialized
     if (!m_threadBody)
     {
-        if (tranThread==ZThread::ThreadImpl::current())
+        if (tranThread==ACE_Based::Thread::current())
             return false;                                   // huh? this thread already started transaction
         mMutex.acquire();
         if (!_TransactionCmd("START TRANSACTION"))
@@ -329,7 +329,7 @@ bool DatabaseMysql::BeginTransaction()
         return true;                                        // transaction started
     }
 
-    tranThread = ZThread::ThreadImpl::current();            // owner of this transaction
+    tranThread = ACE_Based::Thread::current();            // owner of this transaction
     TransactionQueues::iterator i = m_tranQueues.find(tranThread);
     if (i != m_tranQueues.end() && i->second != NULL)
         // If for thread exists queue and also contains transaction
@@ -349,7 +349,7 @@ bool DatabaseMysql::CommitTransaction()
     // don't use queued execution if it has not been initialized
     if (!m_threadBody)
     {
-        if (tranThread!=ZThread::ThreadImpl::current())
+        if (tranThread!=ACE_Based::Thread::current())
             return false;
         bool _res = _TransactionCmd("COMMIT");
         tranThread = NULL;
@@ -357,7 +357,7 @@ bool DatabaseMysql::CommitTransaction()
         return _res;
     }
 
-    tranThread = ZThread::ThreadImpl::current();
+    tranThread = ACE_Based::Thread::current();
     TransactionQueues::iterator i = m_tranQueues.find(tranThread);
     if (i != m_tranQueues.end() && i->second != NULL)
     {
@@ -377,7 +377,7 @@ bool DatabaseMysql::RollbackTransaction()
     // don't use queued execution if it has not been initialized
     if (!m_threadBody)
     {
-        if (tranThread!=ZThread::ThreadImpl::current())
+        if (tranThread!=ACE_Based::Thread::current())
             return false;
         bool _res = _TransactionCmd("ROLLBACK");
         tranThread = NULL;
@@ -385,7 +385,7 @@ bool DatabaseMysql::RollbackTransaction()
         return _res;
     }
 
-    tranThread = ZThread::ThreadImpl::current();
+    tranThread = ACE_Based::Thread::current();
     TransactionQueues::iterator i = m_tranQueues.find(tranThread);
     if (i != m_tranQueues.end() && i->second != NULL)
     {
@@ -408,7 +408,8 @@ void DatabaseMysql::InitDelayThread(const char* infoString)
     assert(!m_delayThread);
 
     //New delay thread for delay execute
-    m_delayThread = new ZThread::Thread(m_threadBody = new MySQLDelayThread(this,infoString));
+    m_threadBody = new MySQLDelayThread(this);
+    m_delayThread = new ACE_Based::Thread(*m_threadBody);
 }
 
 void DatabaseMysql::HaltDelayThread()

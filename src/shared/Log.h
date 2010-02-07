@@ -55,7 +55,7 @@ enum Color
 
 const int Color_count = int(WHITE)+1;
 
-class Log : public Oregon::Singleton<Log, Oregon::ClassLevelLockable<Log, ZThread::FastMutex> >
+class Log : public Oregon::Singleton<Log, Oregon::ClassLevelLockable<Log, ACE_Thread_Mutex> >
 {
     friend class Oregon::OperatorNew<Log>;
     Log();

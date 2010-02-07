@@ -32,13 +32,13 @@
 #include <stdarg.h>
 
 /// %Log packets to a file
-class OREGON_DLL_DECL WorldLog : public Oregon::Singleton<WorldLog, Oregon::ClassLevelLockable<WorldLog, ZThread::FastMutex> >
+class OREGON_DLL_DECL WorldLog : public Oregon::Singleton<WorldLog, Oregon::ClassLevelLockable<WorldLog, ACE_Thread_Mutex> >
 {
     friend class Oregon::OperatorNew<WorldLog>;
     WorldLog() : i_file(NULL) { Initialize(); }
     WorldLog(const WorldLog &);
     WorldLog& operator=(const WorldLog &);
-    typedef Oregon::ClassLevelLockable<WorldLog, ZThread::FastMutex>::Lock Guard;
+    typedef Oregon::ClassLevelLockable<WorldLog, ACE_Thread_Mutex>::Lock Guard;
 
     /// Close the file in destructor
     ~WorldLog()

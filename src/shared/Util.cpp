@@ -23,15 +23,9 @@
 #include "sockets/socket_include.h"
 #include "utf8cpp/utf8.h"
 #include "mersennetwister/MersenneTwister.h"
-#include "zthread/ThreadLocal.h"
+#include <ace/TSS_T.h>
 
-typedef ZThread::ThreadLocal<MTRand> MTRandTSS;
-
-/* NOTE: Not sure if static initialization is ok for TSS objects ,
- * as I see zthread uses custom implementation of the TSS
- * ,and in the consturctor there is no code ,so I suppose its ok
- * If its not ok ,change it to use singleton.
- */
+typedef ACE_TSS<MTRand> MTRandTSS;
 static MTRandTSS mtRand;
 
 int32 irand (int32 min, int32 max)
@@ -39,7 +33,7 @@ int32 irand (int32 min, int32 max)
 	int32 result;
 #pragma omp critical (mtrand)
 {
-	result = mtRand.get ().randInt (max-min) + min;
+	result = mtRand->randInt (max-min) + min;
 }
   return result;
 }
@@ -49,7 +43,7 @@ uint32 urand (uint32 min, uint32 max)
 	uint32 result;
 #pragma omp critical (mtrand)
 {
-  result =  mtRand.get ().randInt (max - min) + min;
+  result =  mtRand->randInt (max - min) + min;
 }
   return result;
 }
@@ -59,7 +53,7 @@ int32 rand32 ()
    int32 result;
 #pragma omp critical (mtrand)
 {
-  result =  mtRand.get ().randInt ();
+  result =  mtRand->randInt ();
 }
   return result;
 }
@@ -69,7 +63,7 @@ double rand_norm(void)
   double result;
 #pragma omp critical (mtrand)
 {
-  result = mtRand.get ().randExc ();
+  result = mtRand->randExc ();
 }
   return result;
 }
@@ -79,7 +73,7 @@ double rand_chance (void)
   double result;
 #pragma omp critical (mtrand)
 {
-  result = mtRand.get ().randExc (100.0);
+  result = mtRand->randExc (100.0);
 }
   return result;
 }

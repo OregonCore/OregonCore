@@ -760,6 +760,10 @@
 			RelativePath="..\..\src\shared\Common.h"
 			>
 		</File>
+		<File
+			RelativePath="..\..\src\shared\LockedQueue.h"
+			>
+		</File>
  		<File
 		    RelativePath="..\..\src\shared\revision.h"
 		    >
@@ -807,6 +811,14 @@
 			Outputs="revision.h"
 		    />
 		    </FileConfiguration>
+		<File
+			RelativePath="..\..\src\shared\Threading.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\shared\Threading.h"
+			>
+		</File>
 		</File>
 	        <File
 			RelativePath="..\..\src\shared\ServiceWin32.cpp"

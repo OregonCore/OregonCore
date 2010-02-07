@@ -12,12 +12,15 @@ SET(shared_STAT_SRCS
    Common.cpp
    Common.h
    Errors.h
+   LockedQueue.h
    Log.cpp
    Log.h
    Mthread.cpp
    Mthread.h
    ProgressBar.cpp
    ProgressBar.h
+   Threading.cpp
+   Threading.h
    Timer.h
    Util.cpp
    Util.h

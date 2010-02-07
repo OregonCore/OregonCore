@@ -113,7 +113,7 @@ class InstanceSave
         bool m_canReset;
 };
 
-class OREGON_DLL_DECL InstanceSaveManager : public Oregon::Singleton<InstanceSaveManager, Oregon::ClassLevelLockable<InstanceSaveManager, ZThread::Mutex> >
+class OREGON_DLL_DECL InstanceSaveManager : public Oregon::Singleton<InstanceSaveManager, Oregon::ClassLevelLockable<InstanceSaveManager, ACE_Thread_Mutex> >
 {
     friend class InstanceSave;
     public:
