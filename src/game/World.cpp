@@ -2907,15 +2907,12 @@ void World::UpdateSessions( time_t diff )
 // This handles the issued and queued CLI commands
 void World::ProcessCliCommands()
 {
-    if (cliCmdQueue.empty())
-        return;
-
-    CliCommandHolder::Print* zprint;
-
-    while (!cliCmdQueue.empty())
+    CliCommandHolder::Print* zprint = NULL;
+	
+    CliCommandHolder* command;
+    while (cliCmdQueue.next(command))
     {
         sLog.outDebug("CLI command under processing...");
-        CliCommandHolder *command = cliCmdQueue.next();
 
         zprint = command->m_print;
 
