@@ -81,7 +81,7 @@ public:
         w_lastchange = 0;
         while(!World::IsStopped())
         {
-            ACE_Based::Thread::sleep(1000);
+            ACE_Based::Thread::Sleep(1000);
             uint32 curtime = getMSTime();
             //DEBUG_LOG("anti-freeze: time=%u, counters=[%u; %u]",curtime,Master::m_masterLoopCounter,World::m_worldLoopCounter);
 
@@ -182,7 +182,7 @@ public:
     else
       while (!World::IsStopped())
         {
-          ACE_Based::Thread::sleep (static_cast<unsigned long> (socketSelecttime / 1000));
+          ACE_Based::Thread::Sleep (static_cast<unsigned long> (socketSelecttime / 1000));
           checkping ();
         }
   }
