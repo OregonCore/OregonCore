@@ -85,11 +85,11 @@ void ScriptsInit(char const* cfg_file = "oregoncore.conf")
     // Remove the warnings C4129 while compiling
     #pragma warning (disable : 4129)
     outstring_log("   ____                              _____           _       _   ");
-    outstring_log("  / __ \                            / ____|         (_)     | |  ");
+    outstring_log("  / __ \\                            / ____|         (_)     | |  ");
     outstring_log(" | |  | |_ __ ___  __ _  ___  _ __ | (___   ___ _ __ _ _ __ | |_ ");
-    outstring_log(" | |  | | '__/ _ \/ _` |/ _ \| '_ \ \___ \ / __| '__| | '_ \| __|");
+    outstring_log(" | |  | | '__/ _ \\/ _` |/ _ \\| '_ \\ \\___ \\ / __| '__| | '_ \\| __|");
     outstring_log(" | |__| | | |  __/ (_| | (_) | | | |____) | (__| |  | | |_) | |_ ");
-    outstring_log("  \____/|_|  \___|\__, |\___/|_| |_|_____/ \___|_|  |_| .__/ \__|");
+    outstring_log("  \\____/|_|  \\___|\\__, |\\___/|_| |_|_____/ \\___|_|  |_| .__/ \\__|");
 	outstring_log("                   __/ |                              | |        ");
 	outstring_log("                  |___/                               |_|  ");
 #endif
