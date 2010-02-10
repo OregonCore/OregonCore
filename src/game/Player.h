@@ -1981,7 +1981,11 @@ class OREGON_DLL_SPEC Player : public Unit
         bool isMoving() const { return HasUnitMovementFlag(movementFlagsMask); }
         bool isMovingOrTurning() const { return HasUnitMovementFlag(movementOrTurningFlagsMask); }
 
-        bool CanFly() const { return HasUnitMovementFlag(MOVEMENTFLAG_CAN_FLY); }
+        uint32 Anti__GetLastTeleTime() const { return m_anti_TeleTime; }
+        void Anti__SetLastTeleTime(uint32 TeleTime) { m_anti_TeleTime=TeleTime; }
+        //bool CanFly() const { return m_movementInfo.HasMovementFlag(MOVEMENTFLAG_CAN_FLY); }
+        bool CanFly() const { return m_CanFly;  }
+        void SetCanFly(bool CanFly) { m_CanFly=CanFly; }
         bool IsFlying() const { return HasUnitMovementFlag(MOVEMENTFLAG_FLYING2); }
 
         void HandleDrowning();
@@ -2305,6 +2309,16 @@ class OREGON_DLL_SPEC Player : public Unit
         float m_rest_bonus;
         RestType rest_type;
         ////////////////////Rest System/////////////////////
+
+        //movement anticheat
+        uint32 m_anti_lastmovetime;     //last movement time
+        float  m_anti_MovedLen;         //Length of traveled way
+        uint32 m_anti_NextLenCheck;
+        float  m_anti_BeginFallZ;    //alternative falling begin
+        uint32 m_anti_lastalarmtime;    //last time when alarm generated
+        uint32 m_anti_alarmcount;       //alarm counter
+        uint32 m_anti_TeleTime;
+        bool m_CanFly;
 
         // Transports
         Transport * m_transport;

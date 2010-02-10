@@ -116,7 +116,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\dep\lib\$(PlatformName)_$(ConfigurationName)\*.dll ..\..\bin\$(PlatformName)_$(ConfigurationName)&#x0D;&#x0A;copy ..\..\src\oregoncore\oregoncore.conf.dist ..\..\bin\$(PlatformName)_$(ConfigurationName)\OregonCore.conf.dist&#x0D;&#x0A;copy ..\..\README.* ..\..\bin\$(PlatformName)_$(ConfigurationName)&#x0D;&#x0A;"
+				CommandLine="copy ..\..\dep\lib\$(PlatformName)_$(ConfigurationName)\*.dll ..\..\bin\$(PlatformName)_$(ConfigurationName)&#x0D;&#x0A;copy ..\..\src\oregoncore\oregoncore.conf.dist ..\..\bin\$(PlatformName)_$(ConfigurationName)\oregoncore.conf.dist&#x0D;&#x0A;copy ..\..\README.* ..\..\bin\$(PlatformName)_$(ConfigurationName)&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -214,7 +214,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\dep\lib\$(PlatformName)_$(ConfigurationName)\*.dll ..\..\bin\$(PlatformName)_$(ConfigurationName)&#x0D;&#x0A;copy ..\..\src\oregoncore\oregoncore.conf.dist ..\..\bin\$(PlatformName)_$(ConfigurationName)\OregonCore.conf.dist&#x0D;&#x0A;copy ..\..\README.* ..\..\bin\$(PlatformName)_$(ConfigurationName)&#x0D;&#x0A;"
+				CommandLine="copy ..\..\dep\lib\$(PlatformName)_$(ConfigurationName)\*.dll ..\..\bin\$(PlatformName)_$(ConfigurationName)&#x0D;&#x0A;copy ..\..\src\oregoncore\oregoncore.conf.dist ..\..\bin\$(PlatformName)_$(ConfigurationName)\oregoncore.conf.dist&#x0D;&#x0A;copy ..\..\README.* ..\..\bin\$(PlatformName)_$(ConfigurationName)&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -314,7 +314,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\dep\lib\$(PlatformName)_$(ConfigurationName)\*.dll ..\..\bin\$(PlatformName)_$(ConfigurationName)&#x0D;&#x0A;copy ..\..\src\oregoncore\oregoncore.conf.dist ..\..\bin\$(PlatformName)_$(ConfigurationName)\OregonCore.conf.dist&#x0D;&#x0A;copy ..\..\README.* ..\..\bin\$(PlatformName)_$(ConfigurationName)&#x0D;&#x0A;"
+				CommandLine="copy ..\..\dep\lib\$(PlatformName)_$(ConfigurationName)\*.dll ..\..\bin\$(PlatformName)_$(ConfigurationName)&#x0D;&#x0A;copy ..\..\src\oregoncore\oregoncore.conf.dist ..\..\bin\$(PlatformName)_$(ConfigurationName)\oregoncore.conf.dist&#x0D;&#x0A;copy ..\..\README.* ..\..\bin\$(PlatformName)_$(ConfigurationName)&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -412,7 +412,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\dep\lib\$(PlatformName)_$(ConfigurationName)\*.dll ..\..\bin\$(PlatformName)_$(ConfigurationName)&#x0D;&#x0A;copy ..\..\src\oregoncore\oregoncore.conf.dist ..\..\bin\$(PlatformName)_$(ConfigurationName)\OregonCore.conf.dist&#x0D;&#x0A;copy ..\..\README.* ..\..\bin\$(PlatformName)_$(ConfigurationName)&#x0D;&#x0A;"
+				CommandLine="copy ..\..\dep\lib\$(PlatformName)_$(ConfigurationName)\*.dll ..\..\bin\$(PlatformName)_$(ConfigurationName)&#x0D;&#x0A;copy ..\..\src\oregoncore\oregoncore.conf.dist ..\..\bin\$(PlatformName)_$(ConfigurationName)\oregoncore.conf.dist&#x0D;&#x0A;copy ..\..\README.* ..\..\bin\$(PlatformName)_$(ConfigurationName)&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>

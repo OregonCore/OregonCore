@@ -1252,6 +1252,9 @@ class OREGON_DLL_SPEC Unit : public WorldObject
         uint32 m_invisibilityMask;
         uint32 m_ShapeShiftFormSpellId;
         ShapeshiftForm m_form;
+        bool IsInFeralForm() const { return m_form == FORM_CAT || m_form == FORM_BEAR || m_form == FORM_DIREBEAR; }
+        bool IsInTravelForm() const { return m_form == FORM_TRAVEL; }
+        bool IsInFlightForm() const { return m_form == FORM_FLIGHT_EPIC || m_form == FORM_FLIGHT; }
         float m_modMeleeHitChance;
         float m_modRangedHitChance;
         float m_modSpellHitChance;
