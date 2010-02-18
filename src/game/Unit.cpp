@@ -3839,6 +3839,18 @@ int32 Unit::GetMaxNegativeAuraModifierByMiscValue(AuraType auratype, int32 misc_
     return modifier;
 }
 
+bool AuraStacking(uint32 auraID)
+{
+	switch(auraID)
+	{
+		case 22959: //scorch
+		case 15258: //shadow weaving
+		return true;
+	default:
+		return false;
+	}
+}
+
 bool Unit::AddAura(Aura *Aur)
 {
     // ghost spell check, allow apply any auras at player loading in ghost mode (will be cleanup after load)
@@ -3868,7 +3880,7 @@ bool Unit::AddAura(Aura *Aur)
     {
         for(AuraMap::iterator i2 = m_Auras.lower_bound(spair); i2 != m_Auras.upper_bound(spair);)
         {
-            if(i2->second->GetCasterGUID()==Aur->GetCasterGUID())
+            if((i2->second->GetCasterGUID()==Aur->GetCasterGUID()) || AuraStacking(Aur->GetId()))
             {
                 if (!stackModified)
                 {
