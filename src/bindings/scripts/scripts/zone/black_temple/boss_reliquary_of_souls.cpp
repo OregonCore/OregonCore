@@ -100,27 +100,6 @@ static Position Coords[]=
 };
 
 
-
-struct OREGON_DLL_DECL boss_soul_essenceAI : public ScriptedAI
-{
-    boss_soul_essenceAI(Creature *c) : ScriptedAI(c) {}
-
-    uint64 ReliquaryGUID;
-
-    void Reset()
-    {
-        if(ReliquaryGUID)
-        {
-            Creature* Reliquary = (Unit::GetCreature((*m_creature), ReliquaryGUID));
-            if(Reliquary)
-                Reliquary->AI()->EnterEvadeMode();
-        }
-    }
-
-    void EnterCombat(Unit*) {}
-    void UpdateAI(const uint32 diff) {}
-};
-
 struct OREGON_DLL_DECL npc_enslaved_soulAI : public ScriptedAI
 {
     npc_enslaved_soulAI(Creature *c) : ScriptedAI(c) {}
@@ -191,13 +170,6 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
         Timer = 0;
     }
 
-    void AttackStart(Unit* who)
-    {
-        if (!m_creature->isInCombat())
-        {
-            EnterCombat(who);
-        }
-    }
 
     bool SummonSoul()
     {
@@ -218,6 +190,8 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
     {
         if(pInstance)
             pInstance->SetData(DATA_RELIQUARYOFSOULSEVENT, DONE);
+			
+		//InCombat = false;
     }
 
     void UpdateAI(const uint32 diff)
@@ -252,17 +226,16 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
                 break;
             case 1:
                 Timer = 2800;
-                m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_SUBMERGE);  // Release the cube
+               //m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_SUBMERGE);  // Release the cube
                 DoCast(m_creature,SPELL_SUBMERGE);
                 break;
             case 2:
                 Timer = 5000;
                 if(Creature* Summon = DoSpawnCreature(23417+Phase, 0, 0, 0, 0, TEMPSUMMON_DEAD_DESPAWN, 0))
                 {
-                    m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_SUBMERGED);  // Ribs: open
+                    //m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_SUBMERGED);  // Ribs: open
                     Summon->AI()->AttackStart(SelectUnit(SELECT_TARGET_TOPAGGRO, 0));
                     EssenceGUID = Summon->GetGUID();
-                    ((boss_soul_essenceAI*)Summon->AI())->ReliquaryGUID = m_creature->GetGUID();
                 }else EnterEvadeMode();
                 break;
             case 3:
@@ -287,11 +260,9 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
                 if(Essence->IsWithinDistInMap(m_creature, 10))
                 {
                     m_creature->RemoveAurasDueToSpell(SPELL_SUBMERGE);
-                    Essence->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_SUBMERGE); //rotate and disappear
-                }
                 else
                 {
-                    //Essence->AI()->EnterEvadeMode();
+                    Essence->AI()->EnterEvadeMode();
                     Essence->GetMotionMaster()->MoveFollow(m_creature, 0, 0);
                     return;
                 }
@@ -350,9 +321,9 @@ struct TargetDistanceOrder : public std::binary_function<const Unit, const Unit,
 };
 
 
-struct OREGON_DLL_DECL boss_essence_of_sufferingAI : public boss_soul_essenceAI
+struct OREGON_DLL_DECL boss_essence_of_sufferingAI : public ScriptedAI
 {
-    boss_essence_of_sufferingAI(Creature *c) : boss_soul_essenceAI(c) {}
+    boss_essence_of_sufferingAI(Creature *c) : ScriptedAI(c) {}
 
     uint64 StatAuraGUID;
 
@@ -372,7 +343,6 @@ struct OREGON_DLL_DECL boss_essence_of_sufferingAI : public boss_soul_essenceAI
         SoulDrainTimer = 45000;
         AuraTimer = 5000;
 
-        boss_soul_essenceAI::Reset();
     }
 
     void DamageTaken(Unit *done_by, uint32 &damage)
@@ -466,9 +436,9 @@ struct OREGON_DLL_DECL boss_essence_of_sufferingAI : public boss_soul_essenceAI
     }
 };
 
-struct OREGON_DLL_DECL boss_essence_of_desireAI : public boss_soul_essenceAI
+struct OREGON_DLL_DECL boss_essence_of_desireAI : public ScriptedAI
 {
-    boss_essence_of_desireAI(Creature *c) : boss_soul_essenceAI(c) {}
+    boss_essence_of_desireAI(Creature *c) : ScriptedAI(c) {}
 
     uint32 RuneShieldTimer;
     uint32 DeadenTimer;
@@ -481,7 +451,6 @@ struct OREGON_DLL_DECL boss_essence_of_desireAI : public boss_soul_essenceAI
         SoulShockTimer = 5000;
         m_creature->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_CONFUSE, true);
 
-        boss_soul_essenceAI::Reset();
     }
 
     void DamageTaken(Unit *done_by, uint32 &damage)
@@ -536,35 +505,27 @@ struct OREGON_DLL_DECL boss_essence_of_desireAI : public boss_soul_essenceAI
 
         if(RuneShieldTimer < diff)
         {
-            if(!m_creature->IsNonMeleeSpellCasted(false))
-            {
-                m_creature->CastSpell(m_creature, SPELL_RUNE_SHIELD, true);
-                SoulShockTimer += 2000;
-                DeadenTimer += 2000;
-                RuneShieldTimer = 60000;
-            }
+            m_creature->InterruptNonMeleeSpells(false);
+	        m_creature->CastSpell(m_creature, SPELL_RUNE_SHIELD, true);
+		    SoulShockTimer += 2000;
+		     eadenTimer += 2000;
+		     RuneShieldTimer = 60000;
         }else RuneShieldTimer -= diff;
 
         if(SoulShockTimer < diff)
         {
-            if (!m_creature->IsNonMeleeSpellCasted(false))
-            {
-                DoCast(m_creature->getVictim(), SPELL_SOUL_SHOCK);
-                SoulShockTimer = 5000;
-            }
+            DoCast(m_creature->getVictim(), SPELL_SOUL_SHOCK);
+		    SoulShockTimer = 5000;
         }else SoulShockTimer -= diff;
 
         if(DeadenTimer < diff)
         {
-            if(!m_creature->IsNonMeleeSpellCasted(false))
+            m_creature->InterruptNonMeleeSpells(false);
+		    DoCast(m_creature->getVictim(), SPELL_DEADEN);
+		    DeadenTimer = 25000 + rand()%10000;
+		    if(!(rand()%2))
             {
-                m_creature->InterruptNonMeleeSpells(false);
-                DoCast(m_creature->getVictim(), SPELL_DEADEN);
-                DeadenTimer = 25000 +rand()%10000;
-                if(!(rand()%2))
-                {
-                    DoScriptText(DESI_SAY_SPEC, m_creature);
-                }
+               DoScriptText(DESI_SAY_SPEC, m_creature);
             }
         }else DeadenTimer -= diff;
 
@@ -572,9 +533,9 @@ struct OREGON_DLL_DECL boss_essence_of_desireAI : public boss_soul_essenceAI
     }
 };
 
-struct OREGON_DLL_DECL boss_essence_of_angerAI : public boss_soul_essenceAI
+struct OREGON_DLL_DECL boss_essence_of_angerAI : public ScriptedAI
 {
-    boss_essence_of_angerAI(Creature *c) : boss_soul_essenceAI(c) {}
+    boss_essence_of_angerAI(Creature *c) : ScriptedAI(c) {}
 
     uint64 AggroTargetGUID;
 
@@ -598,7 +559,6 @@ struct OREGON_DLL_DECL boss_essence_of_angerAI : public boss_soul_essenceAI
 
         CheckedAggro = false;
 
-        boss_soul_essenceAI::Reset();
     }
 
     void EnterCombat(Unit *who)
