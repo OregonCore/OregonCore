@@ -258,8 +258,8 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
             case 4:
                 Timer = 1500;
                 if(Essence->IsWithinDistInMap(m_creature, 10))
-                {
-                    m_creature->RemoveAurasDueToSpell(SPELL_SUBMERGE);
+					m_creature->RemoveAurasDueToSpell(SPELL_SUBMERGE);
+                    //Essence->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_SUBMERGE); //rotate and disappear
                 else
                 {
                     Essence->AI()->EnterEvadeMode();
