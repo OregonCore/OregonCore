@@ -2937,6 +2937,7 @@ void World::ProcessCliCommands()
     }
 
     // print the console message here so it looks right
+    if(zprint)
     zprint("TC> ");
 }
 
