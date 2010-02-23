@@ -68,10 +68,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="oregoncore.lib zthread.lib"
+				AdditionalDependencies="oregoncore.lib ACE.lib"
 				OutputFile="$(OutDir)/OregonScript.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\..\win\VC90\zthread__$(PlatformName)_$(ConfigurationName);..\..\..\..\win\VC90\oregoncore__$(PlatformName)_$(ConfigurationName)"
+				AdditionalLibraryDirectories="..\..\..\..\win\VC90\ace__$(PlatformName)_$(ConfigurationName);..\..\..\..\win\VC90\oregoncore__$(PlatformName)_$(ConfigurationName)"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/MaNGOSScript.pdb"
 				SubSystem="2"
@@ -236,10 +236,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="oregoncore.lib zthread.lib"
+				AdditionalDependencies="oregoncore.lib ACE.lib"
 				OutputFile="$(OutDir)/OregonScript.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;..\..\..\..\win\VC90\zthread__$(PlatformName)_$(ConfigurationName)&quot;;&quot;..\..\..\..\win\VC90\oregoncore__$(PlatformName)_$(ConfigurationName)&quot;"
+				AdditionalLibraryDirectories="&quot;..\..\..\..\dep\lib\$(PlatformName)_$(ConfigurationName)&quot;;&quot;..\..\..\..\win\VC90\ace__$(PlatformName)_$(ConfigurationName)&quot;;&quot;..\..\..\..\win\VC90\oregoncore__$(PlatformName)_$(ConfigurationName)&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -2476,6 +2476,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\oregonscripts.rc"
+			>
+		</File>
+		<File
 			RelativePath="..\ScriptMgr.cpp"
 			>
 		</File>
@@ -2485,10 +2489,6 @@
 		</File>
 		<File
 			RelativePath="..\svn_revision.h"
-			>
-		</File>
-		<File
-			RelativePath="..\oregonscripts.rc"
 			>
 		</File>
 	</Files>

@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
 
 #include "Platform/Define.h"
 #include "Policies/Singleton.h"
-#include "zthread/Mutex.h"
+#include "ace/Thread_Mutex.h"
 #include <list>
 #include <map>
 #include "Utilities/UnorderedMap.h"
