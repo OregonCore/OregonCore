@@ -508,7 +508,7 @@ struct OREGON_DLL_DECL boss_essence_of_desireAI : public ScriptedAI
             m_creature->InterruptNonMeleeSpells(false);
 	        m_creature->CastSpell(m_creature, SPELL_RUNE_SHIELD, true);
 		    SoulShockTimer += 2000;
-		     eadenTimer += 2000;
+		     DeadenTimer += 2000;
 		     RuneShieldTimer = 60000;
         }else RuneShieldTimer -= diff;
 
