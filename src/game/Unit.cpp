@@ -5129,6 +5129,9 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                     if(!target)
                         return false;
 
+				case 1680:
+					return false;
+
                     triggered_spell_id = 12723;
                     basepoints0 = damage;
                     break;
