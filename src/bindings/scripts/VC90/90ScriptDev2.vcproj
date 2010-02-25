@@ -320,10 +320,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="oregoncore.lib zthread.lib"
+				AdditionalDependencies="oregoncore.lib ACE.lib"
 				OutputFile="$(OutDir)/OregonScript.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\..\win\VC90\zthread__$(PlatformName)_$(ConfigurationName);..\..\..\..\win\VC90\oregoncore__$(PlatformName)_$(ConfigurationName)"
+				AdditionalLibraryDirectories="&quot;..\..\..\..\win\VC90\ace__$(PlatformName)_$(ConfigurationName)&quot;;&quot;..\..\..\..\dep\lib\$(PlatformName)_$(ConfigurationName)&quot;;&quot;..\..\..\..\win\VC90\oregoncore__$(PlatformName)_$(ConfigurationName)&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"

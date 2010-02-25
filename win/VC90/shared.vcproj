@@ -137,7 +137,7 @@
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				EnableEnhancedInstructionSet="0"
+				EnableEnhancedInstructionSet="1"
 				FloatingPointModel="2"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
@@ -764,63 +764,63 @@
 			RelativePath="..\..\src\shared\LockedQueue.h"
 			>
 		</File>
- 		<File
-		    RelativePath="..\..\src\shared\revision.h"
-		    >
-		    <FileConfiguration
-		    Name="Release|Win32"
-		    >
-		    <Tool
-			Name="VCCustomBuildTool"
-			Description="Getting Version... :)"
-			CommandLine="cd $(InputDir)&#x0D;&#x0A;&quot;$(TargetDir)\..\genrevision__$(PlatformName)_$(ConfigurationName)\genrevision.exe&quot; &quot;..\..&quot;&#x0D;&#x0A;"
-			AdditionalDependencies="$(SolutionDir)../.hg/branch.cache"
-			Outputs="revision.h"
-		    />
-		    </FileConfiguration>
-		    <FileConfiguration
-		    Name="Debug|Win32"
-		    >
-		    <Tool
-			Name="VCCustomBuildTool"
-			Description="Getting Version... :)"
-			CommandLine="cd $(InputDir)&#x0D;&#x0A;&quot;$(TargetDir)\..\genrevision__$(PlatformName)_$(ConfigurationName)\genrevision.exe&quot; &quot;..\..&quot;&#x0D;&#x0A;"
-			AdditionalDependencies="$(SolutionDir)../.hg/branch.cache"
-			Outputs="revision.h"
-		    />
-		    </FileConfiguration>
-		    <FileConfiguration
-		    Name="Release|x64"
-		    >
-		    <Tool
-			Name="VCCustomBuildTool"
-			Description="Getting Version... :)"
-			CommandLine="cd $(InputDir)&#x0D;&#x0A;&quot;$(TargetDir)\..\genrevision__$(PlatformName)_$(ConfigurationName)\genrevision.exe&quot; &quot;..\..&quot;&#x0D;&#x0A;"
-			AdditionalDependencies="$(SolutionDir)../.hg/branch.cache"
-			Outputs="revision.h"
-		    />
-		    </FileConfiguration>
-		    <FileConfiguration
-		    Name="Debug|x64"
-		    >
-		    <Tool
-			Name="VCCustomBuildTool"
-			Description="Getting Version... :)"
-			CommandLine="cd $(InputDir)&#x0D;&#x0A;&quot;$(TargetDir)\..\genrevision__$(PlatformName)_$(ConfigurationName)\genrevision.exe&quot; &quot;..\..&quot;&#x0D;&#x0A;"
-			AdditionalDependencies="$(SolutionDir)../.hg/branch.cache"
-			Outputs="revision.h"
-		    />
-		    </FileConfiguration>
 		<File
-			RelativePath="..\..\src\shared\Threading.cpp"
+			RelativePath="..\..\src\shared\revision.h"
 			>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Getting Version... :)"
+					CommandLine="cd $(InputDir)&#x0D;&#x0A;&quot;$(TargetDir)\..\genrevision__$(PlatformName)_$(ConfigurationName)\genrevision.exe&quot; &quot;..\..&quot;&#x0D;&#x0A;"
+					AdditionalDependencies="$(SolutionDir)../.hg/branch.cache"
+					Outputs="revision.h"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|x64"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Getting Version... :)"
+					CommandLine="cd $(InputDir)&#x0D;&#x0A;&quot;$(TargetDir)\..\genrevision__$(PlatformName)_$(ConfigurationName)\genrevision.exe&quot; &quot;..\..&quot;&#x0D;&#x0A;"
+					AdditionalDependencies="$(SolutionDir)../.hg/branch.cache"
+					Outputs="revision.h"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Getting Version... :)"
+					CommandLine="cd $(InputDir)&#x0D;&#x0A;&quot;$(TargetDir)\..\genrevision__$(PlatformName)_$(ConfigurationName)\genrevision.exe&quot; &quot;..\..&quot;&#x0D;&#x0A;"
+					AdditionalDependencies="$(SolutionDir)../.hg/branch.cache"
+					Outputs="revision.h"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Debug|x64"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Getting Version... :)"
+					CommandLine="cd $(InputDir)&#x0D;&#x0A;&quot;$(TargetDir)\..\genrevision__$(PlatformName)_$(ConfigurationName)\genrevision.exe&quot; &quot;..\..&quot;&#x0D;&#x0A;"
+					AdditionalDependencies="$(SolutionDir)../.hg/branch.cache"
+					Outputs="revision.h"
+				/>
+			</FileConfiguration>
+			<File
+				RelativePath="..\..\src\shared\Threading.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\shared\Threading.h"
+				>
+			</File>
 		</File>
 		<File
-			RelativePath="..\..\src\shared\Threading.h"
-			>
-		</File>
-		</File>
-	        <File
 			RelativePath="..\..\src\shared\ServiceWin32.cpp"
 			>
 		</File>
