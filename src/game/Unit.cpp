@@ -8196,11 +8196,21 @@ int32 Unit::SpellBaseDamageBonusForVictim(SpellSchoolMask schoolMask, Unit *pVic
         if(creatureTypeMask & uint32((*i)->GetModifier()->m_miscvalue))
             TakenAdvertisedBenefit += (*i)->GetModifierValue();
 
+
+
     // ..taken
     AuraList const& mDamageTaken = pVictim->GetAurasByType(SPELL_AURA_MOD_DAMAGE_TAKEN);
     for(AuraList::const_iterator i = mDamageTaken.begin();i != mDamageTaken.end(); ++i)
+	{
         if(((*i)->GetModifier()->m_miscvalue & schoolMask) != 0)
             TakenAdvertisedBenefit += (*i)->GetModifierValue();
+	
+			if((*i)->GetId() == 34123) 
+ 			{ 
+ 				if((*i)->GetCaster()->GetTypeId() == TYPEID_PLAYER) 
+ 				AdvertisedBenefit += int32(0.25f * ((Player*)(*i)->GetCaster())->GetStat(STAT_SPIRIT)); 
+ 			} 
+  	} 
 
     return TakenAdvertisedBenefit;
 }
