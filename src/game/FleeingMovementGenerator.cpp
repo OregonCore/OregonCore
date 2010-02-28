@@ -45,7 +45,7 @@ FleeingMovementGenerator<T>::_setTargetLocation(T &owner)
     if(!_getPoint(owner, x, y, z))
         return;
 
-    owner.addUnitState(UNIT_STAT_FLEEING);
+    owner.addUnitState(UNIT_STAT_FLEEING | UNIT_STAT_ROAMING);
     Traveller<T> traveller(owner);
     i_destinationHolder.SetDestination(traveller, x, y, z);
 }
@@ -308,7 +308,7 @@ FleeingMovementGenerator<T>::Initialize(T &owner)
 
     _Init(owner);
     owner.CastStop();
-    owner.addUnitState(UNIT_STAT_FLEEING);
+    owner.addUnitState(UNIT_STAT_FLEEING | UNIT_STAT_ROAMING);
     owner.SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING);
     owner.SetUInt64Value(UNIT_FIELD_TARGET, 0);
     owner.RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
@@ -346,7 +346,7 @@ void
 FleeingMovementGenerator<T>::Finalize(T &owner)
 {
     owner.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING);
-    owner.clearUnitState(UNIT_STAT_FLEEING);
+    owner.addUnitState(UNIT_STAT_FLEEING | UNIT_STAT_ROAMING);
     if(owner.GetTypeId() == TYPEID_UNIT && owner.getVictim())
         owner.SetUInt64Value(UNIT_FIELD_TARGET, owner.getVictim()->GetGUID());
 }
