@@ -3471,6 +3471,23 @@ void Aura::HandleAuraModSilence(bool apply, bool Real)
 
         switch (GetId())
         {
+			// Arcane Torrent (Mana) 
+  			case 28730: 
+  			{ 
+  				Unit * caster = GetCaster(); 
+  				if (!caster) 
+  					return; 
+   
+  				Aura * dummy = caster->GetDummyAura(28734); 
+  				if (dummy) 
+  				{ 
+  					int32 bp = (5 + caster->getLevel()) * dummy->GetStackAmount(); 
+  					caster->CastCustomSpell(caster, 28733, &bp, NULL, NULL, true); 
+  					caster->RemoveAurasDueToSpell(28734); 
+  				} 
+  				return; 
+  			} 
+
             // Arcane Torrent (Energy)
             case 25046:
             {
