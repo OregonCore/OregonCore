@@ -97,6 +97,7 @@ bool DynamicObject::Create( uint32 guidlow, Unit *caster, uint32 spellId, uint32
 			scale = 2; 
  
 		break; 
+	}
  
 
     SetEntry(spellId);
