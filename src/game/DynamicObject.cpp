@@ -76,8 +76,31 @@ bool DynamicObject::Create( uint32 guidlow, Unit *caster, uint32 spellId, uint32
         return false;
     }
 
+ 	float scale = 1; 
+	switch (spellID) 
+	{ 
+		case 26573: 
+		case 20116: 
+		case 20922: 
+		case 20923: 
+		case 20924: 
+		case 27173: 
+		case 13810: 
+		case 2120: 
+		case 2121: 
+		case 8422: 
+		case 8423: 
+		case 10215: 
+		case 10216: 
+		case 27086: 
+		 
+			scale = 2; 
+ 
+		break; 
+ 
+
     SetEntry(spellId);
-    SetFloatValue( OBJECT_FIELD_SCALE_X, 1 );
+    SetFloatValue( OBJECT_FIELD_SCALE_X, scale );
     SetUInt64Value( DYNAMICOBJECT_CASTER, caster->GetGUID() );
     SetUInt32Value( DYNAMICOBJECT_BYTES, 0x00000001 );
     SetUInt32Value( DYNAMICOBJECT_SPELLID, spellId );
