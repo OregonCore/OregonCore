@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008-2009 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon  <https://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -8911,9 +8913,9 @@ void Unit::Mount(uint32 mount)
         if(pet)
         {
             BattleGround *bg = ((Player *)this)->GetBattleGround();
-            // don't unsummon pet in arena but SetFlag UNIT_FLAG_DISABLE_ROTATE to disable pet's interface
+            // don't unsummon pet in arena but SetFlag UNIT_FLAG_STUNNED to disable pet's interface
             if(bg && bg->isArena())
-                pet->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_ROTATE);
+                pet->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
             else
             {
                 if(pet->isControlled())
@@ -8953,8 +8955,8 @@ void Unit::Unmount()
         }
         else 
            if(Pet *pPet = GetPet())
-               if(pPet->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_ROTATE) && !pPet->hasUnitState(UNIT_STAT_STUNNED))
-                   pPet->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_ROTATE);
+               if(pPet->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED) && !pPet->hasUnitState(UNIT_STAT_STUNNED))
+                   pPet->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
     }
 }
 
@@ -12219,7 +12221,7 @@ void Unit::SetStunned(bool apply)
     if(apply)
     {
         SetUInt64Value(UNIT_FIELD_TARGET, 0);
-        SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_ROTATE);
+        SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
         CastStop();
 
         // Creature specific
@@ -12238,10 +12240,10 @@ void Unit::SetStunned(bool apply)
         if(isAlive() && getVictim())
             SetUInt64Value(UNIT_FIELD_TARGET, getVictim()->GetGUID());
 
-        // don't remove UNIT_FLAG_DISABLE_ROTATE for pet when owner is mounted (disabled pet's interface)
+        // don't remove UNIT_FLAG_STUNNED for pet when owner is mounted (disabled pet's interface)
         Unit *pOwner = GetOwner();
         if(!pOwner || (pOwner->GetTypeId() == TYPEID_PLAYER && !((Player *)pOwner)->IsMounted()))
-            RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_ROTATE);
+            RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
 
         if(!hasUnitState(UNIT_STAT_ROOT))         // prevent allow move if have also root effect
         {

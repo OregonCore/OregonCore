@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon  <https://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -498,7 +500,7 @@ enum UnitFlags
     UNIT_FLAG_UNKNOWN13        = 0x00008000,
     UNIT_FLAG_UNKNOWN14        = 0x00010000,
     UNIT_FLAG_PACIFIED         = 0x00020000,
-    UNIT_FLAG_DISABLE_ROTATE   = 0x00040000,                // stunned, 2.1.1
+    UNIT_FLAG_STUNNED          = 0x00040000,                // stunned, 2.1.1
     UNIT_FLAG_IN_COMBAT        = 0x00080000,
     UNIT_FLAG_TAXI_FLIGHT      = 0x00100000,                // disable casting at client side spell not allowed by taxi flight (mounted?), probably used with 0x4 flag
     UNIT_FLAG_DISARMED         = 0x00200000,                // disable melee spells casting..., "Required melee weapon" added to melee spells tooltip.

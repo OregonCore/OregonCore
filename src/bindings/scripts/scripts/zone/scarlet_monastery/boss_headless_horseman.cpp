@@ -4,6 +4,8 @@
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
+ * Copyright (C) 2010 Oregon  <https://www.oregoncore.com/>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
@@ -773,7 +775,7 @@ struct OREGON_DLL_DECL mob_pulsing_pumpkinAI : public ScriptedAI
         sprouted = false;
         DoCast(m_creature,SPELL_PUMPKIN_AURA,true);
         DoCast(m_creature,SPELL_SPROUTING);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_DISABLE_ROTATE);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_STUNNED);
     }
 
     void EnterCombat(Unit *who){}
@@ -784,7 +786,7 @@ struct OREGON_DLL_DECL mob_pulsing_pumpkinAI : public ScriptedAI
         {
             sprouted = true;
             m_creature->RemoveAllAuras();
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_DISABLE_ROTATE);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_STUNNED);
             DoCast(m_creature,SPELL_SPROUT_BODY,true);
             m_creature->UpdateEntry(PUMPKIN_FIEND);
             DoStartMovement(m_creature->getVictim());
