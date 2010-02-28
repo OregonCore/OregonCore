@@ -77,7 +77,7 @@ bool DynamicObject::Create( uint32 guidlow, Unit *caster, uint32 spellId, uint32
     }
 
  	float scale = 1; 
-	switch (spellID) 
+	switch (spellId) 
 	{ 
 		case 26573: 
 		case 20116: 
