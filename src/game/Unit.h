@@ -1325,9 +1325,9 @@ class OREGON_DLL_SPEC Unit : public WorldObject
         void TauntApply(Unit* pVictim);
         void TauntFadeOut(Unit *taunter);
         ThreatManager& getThreatManager() { return m_ThreatManager; }
-        void addHatedBy(HostilReference* pHostilReference) { m_HostilRefManager.insertFirst(pHostilReference); };
+        void addHatedBy(HostilReference* pHostilReference) { m_HostileRefManager.insertFirst(pHostilReference); };
         void removeHatedBy(HostilReference* /*pHostilReference*/ ) { /* nothing to do yet */ }
-        HostilRefManager& getHostilRefManager() { return m_HostilRefManager; }
+        HostilRefManager& getHostilRefManager() { return m_HostileRefManager; }
 
         Aura* GetAura(uint32 spellId, uint32 effindex);
         AuraMap      & GetAuras()       { return m_Auras; }
@@ -1570,7 +1570,7 @@ class OREGON_DLL_SPEC Unit : public WorldObject
         // Manage all Units threatening us
 //        ThreatManager m_ThreatManager;
         // Manage all Units that are threatened by us
-        HostilRefManager m_HostilRefManager;
+        HostilRefManager m_HostileRefManager;
 
         FollowerRefManager m_FollowingRefManager;
 
