@@ -2668,7 +2668,7 @@ bool IsSpellAllowedInLocation(SpellEntry const *spellInfo,uint32 map_id,uint32 z
             }
 
             // elixirs not have another limitations
-            return 0;
+            return true;
         }
     }
 
