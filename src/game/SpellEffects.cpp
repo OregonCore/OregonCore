@@ -5054,6 +5054,10 @@ void Spell::EffectScriptEffect(uint32 effIndex)
                 ((Player*)unitTarget)->ModifyMoney(50000000);
             break;
         }
+		// Improved Mana Gems (Serpent-Coil Braid)
+		case 5497:
+		     m_caster->CastSpell(m_caster, 37445, true); // Mana Surge
+            break;
     }
 
     if( m_spellInfo->SpellFamilyName == SPELLFAMILY_PALADIN )
