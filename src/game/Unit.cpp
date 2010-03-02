@@ -5128,7 +5128,7 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                         return false;
 
 					// prevent proc from whirl wind TEST IT
-					if(procSpell && procSpell->Id==44949)
+					if(procSpell && procSpell->Id==1680)
 						return false;
 
                     target = SelectNearbyTarget();
