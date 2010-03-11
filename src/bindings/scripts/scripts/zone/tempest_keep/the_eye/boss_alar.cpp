@@ -65,7 +65,7 @@ enum WaitEventType
     WE_SUMMON   = 10
 };
 
-struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
+struct TRINITY_DLL_DECL boss_alarAI : public ScriptedAI
 {
     boss_alarAI(Creature *c) : ScriptedAI(c)
     {
@@ -122,7 +122,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
         m_creature->setActive(false);
     }
 
-    void EnterCombat(Unit *who)
+    void Aggro(Unit *who)
     {
         if(pInstance)
             pInstance->SetData(DATA_ALAREVENT, IN_PROGRESS);
@@ -241,6 +241,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                         WaitEvent = WE_DUMMY;
                         return;
                     case WE_DIE:
+						ForceMove = false;
                         m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_DEAD);
                         WaitTimer = 5000;
                         WaitEvent = WE_REVIVE;
@@ -250,9 +251,9 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                         m_creature->SetHealth(m_creature->GetMaxHealth());
                         m_creature->SetSpeed(MOVE_RUN, DefaultMoveSpeedRate);
                         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                        DoResetThreat();
                         DoZoneInCombat();
                         m_creature->CastSpell(m_creature, SPELL_REBIRTH, true);
+                        pInstance->SetData(DATA_ALAREVENT, SPECIAL); // proszeq
                         MeltArmor_Timer = 60000;
                         Charge_Timer = 7000;
                         DiveBomb_Timer = 40000+rand()%5000;
@@ -271,7 +272,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                             m_creature->RemoveAurasDueToSpell(SPELL_DIVE_BOMB_VISUAL);
                             m_creature->CastSpell(target, SPELL_DIVE_BOMB, true);
                             float dist = m_creature->GetDistance(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ());
-                            if (dist < 5.0f) dist = 5.0f;
+							if (dist < 5.0f) dist = 5.0f;
                             WaitTimer = 1000 + floor(dist / 80 * 1000.0f);
                             m_creature->Relocate(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ());
                             m_creature->StopMoving();
@@ -282,13 +283,15 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                             EnterEvadeMode();
                             return;
                         }
-                    case WE_LAND:
+                    case WE_LAND: 
                         WaitEvent = WE_SUMMON;
-                        WaitTimer = 2000;
+                        WaitTimer = 4000; 
+						for(uint8 i = 0; i < 2; ++i)
+                            DoSpawnCreature(CREATURE_EMBER_OF_ALAR, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                         return;
                     case WE_SUMMON:
-                        for(uint8 i = 0; i < 2; ++i)
-                            DoSpawnCreature(CREATURE_EMBER_OF_ALAR, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
+                        //for(uint8 i = 0; i < 2; ++i) 
+                            //DoSpawnCreature(CREATURE_EMBER_OF_ALAR, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                         m_creature->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 10);
                         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         m_creature->SetDisplayId(m_creature->GetNativeDisplayId());
@@ -347,15 +350,12 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
         }
         else
         {
-            if(!UpdateVictim())
-                return;
-
             if(Charge_Timer < diff)
             {
                 Unit *target= SelectUnit(SELECT_TARGET_RANDOM, 1, 100, true);
                 if(target)
                     DoCast(target, SPELL_CHARGE);
-                Charge_Timer = 30000;
+                Charge_Timer = 30000+rand()%20000; 
             }else Charge_Timer -= diff;
 
             if(MeltArmor_Timer < diff)
@@ -372,7 +372,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                 m_creature->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 50);
                 WaitEvent = WE_METEOR;
                 WaitTimer = 0;
-                DiveBomb_Timer = 40000+rand()%5000;
+                DiveBomb_Timer = 30000+rand()%30000; 
                 return;
             }else DiveBomb_Timer -= diff;
 
@@ -391,7 +391,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                         Summoned->CastSpell(Summoned, SPELL_FLAME_PATCH, false);
                     }
                 }
-                FlamePatch_Timer = 30000;
+                FlamePatch_Timer = 30000+rand()%20000; //30 sec to cooldown
             }else FlamePatch_Timer -= diff;
         }
 
@@ -411,12 +411,12 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
             {
                 Unit *target = NULL;
                 target = m_creature->SelectNearestTarget(5);
-                if(Phase1 && target)
+                if (target)
                     m_creature->AI()->AttackStart(target);
                 else
                 {
                     m_creature->CastSpell(m_creature, SPELL_FLAME_BUFFET, true);
-                    m_creature->setAttackTimer(BASE_ATTACK, 1500);
+                    m_creature->setAttackTimer(BASE_ATTACK, 3000);
                 }
             }
         }
@@ -428,7 +428,7 @@ CreatureAI* GetAI_boss_alar(Creature *_Creature)
     return new boss_alarAI(_Creature);
 }
 
-struct OREGON_DLL_DECL mob_ember_of_alarAI : public ScriptedAI
+struct TRINITY_DLL_DECL mob_ember_of_alarAI : public ScriptedAI
 {
     mob_ember_of_alarAI(Creature *c) : ScriptedAI(c)
     {
@@ -441,7 +441,7 @@ struct OREGON_DLL_DECL mob_ember_of_alarAI : public ScriptedAI
     bool toDie;
 
     void Reset() {toDie = false;}
-    void EnterCombat(Unit *who) {DoZoneInCombat();}
+    void Aggro(Unit *who) {DoZoneInCombat();}
     void EnterEvadeMode() {m_creature->setDeathState(JUST_DIED);}
 
     void DamageTaken(Unit* pKiller, uint32 &damage)
@@ -452,7 +452,8 @@ struct OREGON_DLL_DECL mob_ember_of_alarAI : public ScriptedAI
             m_creature->CastSpell(m_creature, SPELL_EMBER_BLAST, true);
             m_creature->SetDisplayId(11686);
             m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            if(pInstance && pInstance->GetData(DATA_ALAREVENT) == 2)
+            //if(pInstance && pInstance->GetData(DATA_ALAREVENT) == 2)
+            if(pInstance && (pInstance->GetData(DATA_ALAREVENT) == 4 || pInstance->GetData(DATA_ALAREVENT) == 2))
             {
                 if(Unit* Alar = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_ALAR)))
                 {
@@ -488,11 +489,11 @@ CreatureAI* GetAI_mob_ember_of_alar(Creature *_Creature)
     return new mob_ember_of_alarAI(_Creature);
 }
 
-struct OREGON_DLL_DECL mob_flame_patch_alarAI : public ScriptedAI
+struct TRINITY_DLL_DECL mob_flame_patch_alarAI : public ScriptedAI
 {
     mob_flame_patch_alarAI(Creature *c) : ScriptedAI(c) {}
     void Reset() {}
-    void EnterCombat(Unit *who) {}
+    void Aggro(Unit *who) {}
     void AttackStart(Unit* who) {}
     void MoveInLineOfSight(Unit* who) {}
     void UpdateAI(const uint32 diff) {}
@@ -522,4 +523,3 @@ void AddSC_boss_alar()
     newscript->GetAI = &GetAI_mob_flame_patch_alar;
     newscript->RegisterSelf();
 }
-
