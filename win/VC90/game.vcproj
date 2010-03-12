@@ -1218,14 +1218,214 @@
 			<Filter
 				Name="Kalimdor"
 				>
+				<Filter
+					Name="Blackphatom Depths"
+					>
+				</Filter>
+				<Filter
+					Name="Caverns of Time"
+					>
+				</Filter>
+				<Filter
+					Name="Maraudon"
+					>
+				</Filter>
+				<Filter
+					Name="Onyxia&apos;s Lair"
+					>
+				</Filter>
+				<Filter
+					Name="Razorfen Downs"
+					>
+				</Filter>
+				<Filter
+					Name="Razorfen Kraul"
+					>
+				</Filter>
+				<Filter
+					Name="Ruins of Ahn&apos;qiraj"
+					>
+				</Filter>
+				<Filter
+					Name="Temple of Ahn&apos;qiraj"
+					>
+				</Filter>
+				<Filter
+					Name="Wailing Caverns"
+					>
+				</Filter>
+				<Filter
+					Name="Zul&apos;Farak"
+					>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Eastern Kingdoms"
 				>
+				<Filter
+					Name="Blackrock Depths"
+					>
+				</Filter>
+				<Filter
+					Name="Blackrock Spire"
+					>
+				</Filter>
+				<Filter
+					Name="Blackwing Lair"
+					>
+				</Filter>
+				<Filter
+					Name="Deadmines"
+					>
+				</Filter>
+				<Filter
+					Name="Gnomeregan"
+					>
+				</Filter>
+				<Filter
+					Name="Karazhan"
+					>
+				</Filter>
+				<Filter
+					Name="Magister&apos;s Terrace"
+					>
+				</Filter>
+				<Filter
+					Name="Molten Core"
+					>
+				</Filter>
+				<Filter
+					Name="Scarlet Enclave"
+					>
+				</Filter>
+				<Filter
+					Name="Scarlet Monastary"
+					>
+				</Filter>
+				<Filter
+					Name="Scholomance"
+					>
+				</Filter>
+				<Filter
+					Name="Shadowfang Keep"
+					>
+				</Filter>
+				<Filter
+					Name="Stratholme"
+					>
+				</Filter>
+				<Filter
+					Name="Sunken Temple"
+					>
+				</Filter>
+				<Filter
+					Name="Sunwell Plateau"
+					>
+				</Filter>
+				<Filter
+					Name="Uldaman"
+					>
+				</Filter>
+				<Filter
+					Name="Zul&apos;Aman"
+					>
+				</Filter>
+				<Filter
+					Name="Zuk&apos;Gurub"
+					>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Outland"
 				>
+				<Filter
+					Name="Auchindoun"
+					>
+					<Filter
+						Name="Auchenai Crypts"
+						>
+					</Filter>
+					<Filter
+						Name="Mana Tombs"
+						>
+					</Filter>
+					<Filter
+						Name="Sethekk Halls"
+						>
+					</Filter>
+					<Filter
+						Name="Shadow Labyrinth"
+						>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="Black Temple"
+					>
+				</Filter>
+				<Filter
+					Name="Coilfang Reservoir"
+					>
+					<Filter
+						Name="Serpent Shrine"
+						>
+					</Filter>
+					<Filter
+						Name="Steam Vault"
+						>
+					</Filter>
+					<Filter
+						Name="Underbog"
+						>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="Gruuls Lair"
+					>
+				</Filter>
+				<Filter
+					Name="Hellfire Citadel"
+					>
+					<Filter
+						Name="Blood Furnace"
+						>
+					</Filter>
+					<Filter
+						Name="Hellfire Ramparts"
+						>
+					</Filter>
+					<Filter
+						Name="Magtheridons Lair"
+						>
+					</Filter>
+					<Filter
+						Name="Shattered Halls"
+						>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="Naxxramas"
+					>
+				</Filter>
+				<Filter
+					Name="Tempest Keep"
+					>
+					<Filter
+						Name="Arcatraz"
+						>
+					</Filter>
+					<Filter
+						Name="Botanica"
+						>
+					</Filter>
+					<Filter
+						Name="The Eye"
+						>
+					</Filter>
+					<Filter
+						Name="The Mechanar"
+						>
+					</Filter>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Examples"
