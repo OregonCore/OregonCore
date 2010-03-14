@@ -59,7 +59,7 @@ enum SpellIds
     AURA_DEMONIC_VISUAL         =   44800,
 
     SPELL_SPECTRAL_BLAST        =   44869,
-    SPELL_TELEPORT_SPECTRAL     =   46019,
+    SPELL_TELEPORT_SPECTRAL     =   46021,
     SPELL_ARCANE_BUFFET         =   45018,
     SPELL_FROST_BREATH          =   44799,
     SPELL_TAIL_LASH             =   45122,
