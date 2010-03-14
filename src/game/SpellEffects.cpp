@@ -2728,10 +2728,6 @@ void Spell::EffectEnergize(uint32 i)
             level_diff = m_caster->getLevel() - 60;
             multiplier = 4;
             break;
-			//Elune's Touch (30% AP)
-			case 33926:
-				damage = m_caster->GetTotalAttackPowerValue(BASE_ATTACK) * 30 / 100;
-			break;
         default:
             break;
     }
