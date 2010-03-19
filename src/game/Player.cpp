@@ -17805,11 +17805,11 @@ void Player::LeaveBattleground(bool teleportToEntryPoint)
 		
 		{
 			//decrease private raiting here
-			Team Winner = GetTeam() == ALLIANCE ? HORDE : ALLIANCE;
-			Team Looser = GetTeam() == ALLIANCE ? ALLIANCE : HORDE;
+			Team Loser = (Team)bg->GetPlayerTeam(GetGUID());
+			Team Winner = Loser == ALLIANCE ? HORDE : ALLIANCE;
 			ArenaTeam* WinnerTeam = objmgr.GetArenaTeamById(bg->GetArenaTeamIdForTeam(Winner));
-			ArenaTeam* LooserTeam = objmgr.GetArenaTeamById(bg->GetArenaTeamIdForTeam(Looser));
-			LooserTeam->MemberLost(this,WinnerTeam->GetStats().rating);
+			ArenaTeam* LoserTeam = objmgr.GetArenaTeamById(bg->GetArenaTeamIdForTeam(Loser));
+			LoserTeam->MemberLost(this,WinnerTeam->GetStats().rating);
 		}
 		bg->RemovePlayerAtLeave(GetGUID(), teleportToEntryPoint, true);
 
