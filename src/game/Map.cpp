@@ -1064,6 +1064,9 @@ bool Map::CreatureCellRelocation(Creature *c, Cell new_cell)
 
             RemoveFromGrid(c,getNGrid(old_cell.GridX(), old_cell.GridY()),old_cell);
             AddToGrid(c,getNGrid(new_cell.GridX(), new_cell.GridY()),new_cell);
+			c->SetCurrentCell(new_cell);
+
+			return true;
         }
         else
         {
@@ -1103,6 +1106,7 @@ bool Map::CreatureCellRelocation(Creature *c, Cell new_cell)
         RemoveFromGrid(c,getNGrid(old_cell.GridX(), old_cell.GridY()),old_cell);
         EnsureGridCreated(GridPair(new_cell.GridX(), new_cell.GridY()));
         AddToGrid(c,getNGrid(new_cell.GridX(), new_cell.GridY()),new_cell);
+		c->SetCurrentCell(new_cell);
 
         return true;
     }
