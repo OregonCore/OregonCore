@@ -2775,17 +2775,16 @@ void Unit::SendMeleeAttackStop(Unit* victim)
 
 bool Unit::isSpellBlocked(Unit *pVictim, SpellEntry const *spellProto, WeaponAttackType attackType)
 {
-    if (pVictim->HasInArc(M_PI,this))
+	if (pVictim->HasInArc(M_PI,this) || pVictim->HasAuraType(SPELL_AURA_IGNORE_HIT_DIRECTION))
     {
-       float blockChance = pVictim->GetUnitBlockChance();
 
-       float fAttackerSkill = GetWeaponSkillValue(attackType, pVictim)*0.04;
-       float fDefenserSkill = pVictim->GetDefenseSkillValue(this)*0.04;
+     if (pVictim->GetTypeId() == TYPEID_UNIT &&
+	 
+	    ((Creature*)pVictim)->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_NO_BLOCK )
+		return false;
 
-       blockChance += (fDefenserSkill - fAttackerSkill);
-
-       if (blockChance < 0.0)
-		   blockChance = 0.0;
+    float blockChance = pVictim->GetUnitBlockChance();
+	blockChance += (int32(GetWeaponSkillValue(attackType)) - int32(pVictim->GetMaxSkillValueForLevel()))*0.04f;
 
        if (roll_chance_f(blockChance))
            return true;
