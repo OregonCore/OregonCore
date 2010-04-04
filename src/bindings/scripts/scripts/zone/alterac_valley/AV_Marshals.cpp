@@ -68,7 +68,6 @@ struct OREGON_DLL_DECL AV_MarshalsAI : public ScriptedAI
 
 	 void JustRespawned()
      {
-         InCombat = false;
          Reset();
      }
 	 

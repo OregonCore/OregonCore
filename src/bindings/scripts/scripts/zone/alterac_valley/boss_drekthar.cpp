@@ -73,7 +73,6 @@ struct OREGON_DLL_DECL boss_drektharAI : public ScriptedAI
 
     void JustRespawned()
     {
-        InCombat = false;
         Reset();
 	DoScriptText(YELL_RESPAWN, m_creature);
     }

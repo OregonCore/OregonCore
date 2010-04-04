@@ -60,7 +60,6 @@ struct OREGON_DLL_DECL boss_balindaAI : public ScriptedAI
 
     void JustRespawned()
     {
-        InCombat = false;
         Reset();
     }
 

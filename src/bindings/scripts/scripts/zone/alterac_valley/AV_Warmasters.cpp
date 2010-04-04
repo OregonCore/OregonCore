@@ -67,7 +67,6 @@ struct OREGON_DLL_DECL AV_WarmastersAI : public ScriptedAI
 
 	 void JustRespawned()
      {
-         InCombat = false;
          Reset();
      }
 	 

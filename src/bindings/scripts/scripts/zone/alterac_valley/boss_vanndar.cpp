@@ -70,7 +70,6 @@ struct OREGON_DLL_DECL boss_vanndarAI : public ScriptedAI
 
     void JustRespawned()
     {
-        InCombat = false;
         Reset();
 	switch(rand()%1)
 			{
