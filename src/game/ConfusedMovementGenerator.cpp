@@ -23,6 +23,7 @@
 #include "Opcodes.h"
 #include "ConfusedMovementGenerator.h"
 #include "DestinationHolderImp.h"
+#include "VMapFactory.h"
 
 template<class T>
 void
@@ -41,6 +42,8 @@ ConfusedMovementGenerator<T>::Initialize(T &unit)
 
     bool is_water_ok, is_land_ok;
     _InitSpecific(unit, is_water_ok, is_land_ok);
+
+	VMAP::IVMapManager *vMaps = VMAP::VMapFactory::createOrGetVMapManager();
 
     for(unsigned int idx=0; idx < MAX_CONF_WAYPOINTS+1; ++idx)
     {
@@ -61,9 +64,19 @@ ConfusedMovementGenerator<T>::Initialize(T &unit)
             i_waypoints[idx][0] = idx > 0 ? i_waypoints[idx-1][0] : x;
             i_waypoints[idx][1] = idx > 0 ? i_waypoints[idx-1][1] : y;
         }
-        unit.UpdateGroundPositionZ(i_waypoints[idx][0],i_waypoints[idx][1],z);
+        
         i_waypoints[idx][2] =  z;
-    }
+			unit.UpdateGroundPositionZ(i_waypoints[idx][0],i_waypoints[idx][1],i_waypoints[idx][2]);
+
+	// prevent falling down over an edge and check vmap if possible
+	if(z > i_waypoints[idx][2] + 3.0f || 
+	    vMaps && !vMaps->isInLineOfSight(mapid, x, y, z + 2.0f, i_waypoints[idx][0], i_waypoints[idx][1], i_waypoints[idx][2]))
+	  {
+	    i_waypoints[idx][0] = idx > 0 ? i_waypoints[idx-1][0] : x;
+	    i_waypoints[idx][1] = idx > 0 ? i_waypoints[idx-1][1] : y;
+	    i_waypoints[idx][2] = idx > 0 ? i_waypoints[idx-1][2] : z;
+	  }
+	}
 
     unit.SetUInt64Value(UNIT_FIELD_TARGET, 0);
     unit.SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_CONFUSED);
