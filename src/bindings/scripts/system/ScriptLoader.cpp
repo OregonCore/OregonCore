@@ -49,6 +49,14 @@ extern void AddSC_npc_innkeeper();
 //Alterac Mountains
 extern void AddSC_alterac_mountains();
 
+//Alterac Valley
+extern void AddSC_boss_balinda();
+extern void AddSC_boss_drekthar();
+extern void AddSC_boss_galvangar();
+extern void AddSC_boss_vanndar();
+extern void AddSC_AV_Marshals();
+extern void AddSC_AV_Warmasters();
+
 //Arathi Highlands
 extern void AddSC_arathi_highlands();
 
@@ -608,6 +616,14 @@ void AddScripts()
 
     //Alterac Mountains
     AddSC_alterac_mountains();
+	
+	    //Alterac Valley
+    AddSC_boss_balinda();
+    AddSC_boss_drekthar();
+    AddSC_boss_galvangar();
+	AddSC_AV_Marshals();
+    AddSC_boss_vanndar();
+    AddSC_AV_Warmasters();
 
     //Arathi Highlands
     AddSC_arathi_highlands();

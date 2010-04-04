@@ -34,6 +34,12 @@ SET(oregonscript_LIB_SRCS
    scripts/npc/npcs_special.cpp
    scripts/zone/arathi_highlands/arathi_highlands.cpp
    scripts/zone/alterac_mountains/alterac_mountains.cpp
+   scripts/zone/alterac_valley/boss_balinda.cpp
+   scripts/zone/alterac_valley/boss_drekthar.cpp
+   scripts/zone/alterac_valley/boss_galvangar.cpp
+   scripts/zone/alterac_valley/boss_vanndar.cpp
+   scripts/zone/alterac_valley/AV_Marshals.cpp
+   scripts/zone/alterac_valley/AV_Warmasters.cpp
    scripts/zone/ashenvale_forest/ashenvale.cpp
    scripts/zone/aunchindoun/auchenai_crypts/boss_exarch_maladaar.cpp
    scripts/zone/aunchindoun/auchenai_crypts/boss_shirrak_the_dead_watcher.cpp
