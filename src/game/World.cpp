@@ -3107,6 +3107,6 @@ void World::LoadDBVersion()
 		sLog.outError("AutoBroadcaster: You have IRC broadcasting enabled but we couldn't detect mangchat");
 	#endif
 
-		sLog.outString("AutoBroadcast: '%s'",message.c_str());
+		sLog.outDetail("AutoBroadcast: '%s'",message.c_str());
 		}
 
