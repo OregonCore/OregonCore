@@ -291,6 +291,18 @@ void ArenaTeam::Disband(WorldSession *session)
     session->BuildArenaTeamEventPacket(&data, ERR_ARENA_TEAM_DISBANDED_S, 2, session->GetPlayerName(), GetName(), "");
     BroadcastPacket(&data);
 
+
+       //not allow to disband team in arena
+       if(Player *player = session->GetPlayer())
+       if(MapEntry const* mapEntry = sMapStore.LookupEntry(player->GetMapId()))
+            if(mapEntry->IsBattleArena())
+                       {
+                               sLog.outArena("Player: %s [GUID: %u] tried to delete Arenateam in Arena, maybe cheater?", player->GetName(), player->GetGUIDLow());
+
+                       }
+                       else;
+       {
+
     while (!members.empty())
     {
         // Removing from members is done in DelMember.
@@ -306,6 +318,7 @@ void ArenaTeam::Disband(WorldSession *session)
     CharacterDatabase.PExecute("DELETE FROM arena_team_stats WHERE arenateamid = '%u'", Id);
     CharacterDatabase.CommitTransaction();
     objmgr.RemoveArenaTeam(Id);
+	   }
 }
 
 void ArenaTeam::Roster(WorldSession *session)
