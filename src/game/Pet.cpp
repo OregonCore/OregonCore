@@ -285,6 +285,10 @@ bool Pet::LoadPetFromDB( Unit* owner, uint32 petentry, uint32 petnumber, bool cu
         CharacterDatabase.PExecute("UPDATE character_pet SET slot = '0' WHERE owner = '%u' AND id = '%u'",ownerid, m_charmInfo->GetPetNumber());
         CharacterDatabase.CommitTransaction();
     }
+	 
+	 _LoadSpells(); 
+     _LoadSpellCooldowns(); 
+
 
     if(!is_temporary_summoned)
     {
@@ -373,8 +377,7 @@ bool Pet::LoadPetFromDB( Unit* owner, uint32 petentry, uint32 petnumber, bool cu
     map->Add((Creature*)this);
 
     // Spells should be loaded after pet is added to map, because in CanCast is check on it
-    _LoadSpells();
-    _LoadSpellCooldowns();
+ 
 
     owner->SetPet(this);                                    // in DB stored only full controlled creature
     sLog.outDebug("New Pet has guid %u", GetGUIDLow());
@@ -1756,12 +1759,11 @@ void Pet::ToggleAutocast(uint32 spellid, bool apply)
     if(IsPassiveSpell(spellid))
         return;
 
-    //if(const SpellEntry *tempSpell = GetSpellStore()->LookupEntry(spellid))
-    //    if(tempSpell->EffectImplicitTargetA[0] != TARGET_SRC_CASTER
-    //        && tempSpell->EffectImplicitTargetA[0] != TARGET_UNIT_TARGET_ENEMY)
-    //        return;
 
     PetSpellMap::const_iterator itr = m_spells.find((uint16)spellid);
+	if(itr == m_spells.end()) 
+	return; 
+
 
     int i;
 
