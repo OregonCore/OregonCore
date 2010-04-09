@@ -216,6 +216,11 @@ void WorldSession::HandleArenaTeamLeaveOpcode(WorldPacket & recv_data)
     ArenaTeam *at = objmgr.GetArenaTeamById(ArenaTeamId);
     if(!at)
         return;
+
+    if(MapEntry const* mapEntry = sMapStore.LookupEntry(_player->GetMapId()))
+        if(mapEntry->IsBattleArena())
+            return;
+
     if(_player->GetGUID() == at->GetCaptain() && at->GetMembersSize() > 1)
     {
         // check for correctness
@@ -301,7 +306,17 @@ void WorldSession::HandleArenaTeamRemoveFromTeamOpcode(WorldPacket & recv_data)
         SendArenaTeamCommandResult(ERR_ARENA_TEAM_QUIT_S, "", "", ERR_ARENA_TEAM_LEADER_LEAVE_S);
         return;
     }
+	
+    Player *player = objmgr.GetPlayer(member->guid);
 
+    if (!player)
+        return;
+
+    MapEntry const* mapEntry = sMapStore.LookupEntry(player->GetMapId());
+
+    if(mapEntry && mapEntry->IsBattleArena())
+           return;
+	   
     at->DelMember(member->guid);
 
     // event
