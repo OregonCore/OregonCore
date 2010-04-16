@@ -1171,6 +1171,7 @@ class OREGON_DLL_SPEC Player : public Unit
         /*********************************************************/
         /***                    QUEST SYSTEM                   ***/
         /*********************************************************/
+        uint32 GetQuestOrPlayerLevel( Quest const* pQuest ) const { return pQuest && (pQuest->GetQuestLevel()>0) ? pQuest->GetQuestLevel() : getLevel(); }
 
         void PrepareQuestMenu( uint64 guid );
         void SendPreparedQuest( uint64 guid );
