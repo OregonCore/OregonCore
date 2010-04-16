@@ -256,6 +256,21 @@ void BattleGroundQueue::RemovePlayer(uint64 guid, bool decreaseInvitedCount)
             // update the join queue, maybe now the player's group fits in a queue!
             // not yet implemented (should store bgTypeId in group queue info?)
         }
+        //if player leaves queue and he is invited to rated arena match, then he has to loose
+        if( group->IsInvitedToBGInstanceGUID && group->IsRated && decreaseInvitedCount )
+        {
+            ArenaTeam * at = objmgr.GetArenaTeamById(group->ArenaTeamId);
+            if (at)
+            {
+                sLog.outDebug("UPDATING memberLost's personal arena rating for %u by opponents rating: %u", GUID_LOPART(guid), group->OpponentsTeamRating);
+                Player *plr = objmgr.GetPlayer(guid);
+                if (plr)
+                    at->MemberLost(plr, group->OpponentsTeamRating);
+                else
+                    at->OfflineMemberLost(guid, group->OpponentsTeamRating);
+                at->SaveToDB();
+            }
+        }
         // remove player queue info
         m_QueuedPlayers[queue_id].erase(itr);
         // remove group queue info if needed
@@ -915,16 +930,6 @@ bool BGQueueRemoveEvent::Execute(uint64 /*e_time*/, uint32 /*p_time*/)
         BattleGroundQueue::QueuedPlayersMap::iterator qMapItr = sBattleGroundMgr.m_BattleGroundQueues[bgQueueTypeId].m_QueuedPlayers[plr->GetBattleGroundQueueIdFromLevel()].find(m_PlayerGuid);
         if (qMapItr != sBattleGroundMgr.m_BattleGroundQueues[bgQueueTypeId].m_QueuedPlayers[plr->GetBattleGroundQueueIdFromLevel()].end() && qMapItr->second.GroupInfo && qMapItr->second.GroupInfo->IsInvitedToBGInstanceGUID == m_BgInstanceGUID)
         {
-            if (qMapItr->second.GroupInfo->IsRated)
-            {
-                ArenaTeam * at = objmgr.GetArenaTeamById(qMapItr->second.GroupInfo->ArenaTeamId);
-                if (at)
-                {
-                    sLog.outDebug("UPDATING memberLost's personal arena rating for %u by opponents rating: %u", GUID_LOPART(plr->GetGUID()), qMapItr->second.GroupInfo->OpponentsTeamRating);
-                    at->MemberLost(plr, qMapItr->second.GroupInfo->OpponentsTeamRating);
-                    at->SaveToDB();
-                }
-            }
             plr->RemoveBattleGroundQueueId(bgQueueTypeId);
             sBattleGroundMgr.m_BattleGroundQueues[bgQueueTypeId].RemovePlayer(m_PlayerGuid, true);
             sBattleGroundMgr.m_BattleGroundQueues[bgQueueTypeId].Update(bgQueueTypeId, bg->GetQueueType());
