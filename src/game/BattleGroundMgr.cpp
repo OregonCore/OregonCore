@@ -256,21 +256,6 @@ void BattleGroundQueue::RemovePlayer(uint64 guid, bool decreaseInvitedCount)
             // update the join queue, maybe now the player's group fits in a queue!
             // not yet implemented (should store bgTypeId in group queue info?)
         }
-        //if player leaves queue and he is invited to rated arena match, then he has to loose
-        if( group->IsInvitedToBGInstanceGUID && group->IsRated && decreaseInvitedCount )
-        {
-            ArenaTeam * at = objmgr.GetArenaTeamById(group->ArenaTeamId);
-            if (at)
-            {
-                sLog.outDebug("UPDATING memberLost's personal arena rating for %u by opponents rating: %u", GUID_LOPART(guid), group->OpponentsTeamRating);
-                Player *plr = objmgr.GetPlayer(guid);
-                if (plr)
-                    at->MemberLost(plr, group->OpponentsTeamRating);
-                else
-                    at->OfflineMemberLost(guid, group->OpponentsTeamRating);
-                at->SaveToDB();
-            }
-        }
         // remove player queue info
         m_QueuedPlayers[queue_id].erase(itr);
         // remove group queue info if needed
@@ -573,11 +558,6 @@ void BattleGroundQueue::Update(uint32 bgTypeId, uint32 queue_id, uint8 arenatype
             }
         }
     }
-    else
-    {
-        if(sBattleGroundMgr.isTesting())
-            MinPlayersPerTeam = 1;
-    }
 
     // found out the minimum and maximum ratings the newly added team should battle against
     // arenaRating is the rating of the latest joined team
@@ -605,7 +585,7 @@ void BattleGroundQueue::Update(uint32 bgTypeId, uint32 queue_id, uint8 arenatype
         sLog.outDebug("Battleground: horde pool wasn't created");
 
     // if selection pools are ready, create the new bg
-    if ((bAllyOK && bHordeOK) || (sBattleGroundMgr.isTesting() && (bAllyOK || bHordeOK)))
+    if (bAllyOK && bHordeOK)
     {
         BattleGround * bg2 = 0;
         // special handling for arenas
@@ -935,6 +915,16 @@ bool BGQueueRemoveEvent::Execute(uint64 /*e_time*/, uint32 /*p_time*/)
         BattleGroundQueue::QueuedPlayersMap::iterator qMapItr = sBattleGroundMgr.m_BattleGroundQueues[bgQueueTypeId].m_QueuedPlayers[plr->GetBattleGroundQueueIdFromLevel()].find(m_PlayerGuid);
         if (qMapItr != sBattleGroundMgr.m_BattleGroundQueues[bgQueueTypeId].m_QueuedPlayers[plr->GetBattleGroundQueueIdFromLevel()].end() && qMapItr->second.GroupInfo && qMapItr->second.GroupInfo->IsInvitedToBGInstanceGUID == m_BgInstanceGUID)
         {
+            if (qMapItr->second.GroupInfo->IsRated)
+            {
+                ArenaTeam * at = objmgr.GetArenaTeamById(qMapItr->second.GroupInfo->ArenaTeamId);
+                if (at)
+                {
+                    sLog.outDebug("UPDATING memberLost's personal arena rating for %u by opponents rating: %u", GUID_LOPART(plr->GetGUID()), qMapItr->second.GroupInfo->OpponentsTeamRating);
+                    at->MemberLost(plr, qMapItr->second.GroupInfo->OpponentsTeamRating);
+                    at->SaveToDB();
+                }
+            }
             plr->RemoveBattleGroundQueueId(bgQueueTypeId);
             sBattleGroundMgr.m_BattleGroundQueues[bgQueueTypeId].RemovePlayer(m_PlayerGuid, true);
             sBattleGroundMgr.m_BattleGroundQueues[bgQueueTypeId].Update(bgQueueTypeId, bg->GetQueueType());
@@ -970,7 +960,6 @@ BattleGroundMgr::BattleGroundMgr()
     m_NextRatingDiscardUpdate = m_RatingDiscardTimer;
     m_AutoDistributionTimeChecker = 0;
     m_ArenaTesting = false;
-    m_Testing = false;
 }
 
 BattleGroundMgr::~BattleGroundMgr()
@@ -1784,15 +1773,6 @@ uint8 BattleGroundMgr::BGArenaType(uint32 bgQueueTypeId) const
     default:
         return 0;
     }
-}
-
-void BattleGroundMgr::ToggleTesting()
-{
-    m_Testing = !m_Testing;
-    if(m_Testing)
-        sWorld.SendGlobalText("Battlegrounds are set to 1v0 for debugging.", NULL);
-    else
-        sWorld.SendGlobalText("Battlegrounds are set to normal playercount.", NULL);
 }
 
 void BattleGroundMgr::ToggleArenaTesting()

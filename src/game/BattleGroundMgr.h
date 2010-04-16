@@ -233,9 +233,7 @@ class BattleGroundMgr
         void DistributeArenaPoints();
         uint32 GetPrematureFinishTime() const {return m_PrematureFinishTimer;}
         void ToggleArenaTesting();
-        void ToggleTesting();
-        bool isArenaTesting() const { return m_ArenaTesting; }
-        bool isTesting() const { return m_Testing; }
+        const bool isArenaTesting() const { return m_ArenaTesting; }
 
         void SetHolidayWeekends(uint32 mask);
     private:
@@ -250,7 +248,6 @@ class BattleGroundMgr
         uint32 m_AutoDistributionTimeChecker;
         uint32 m_PrematureFinishTimer;
         bool   m_ArenaTesting;
-        bool   m_Testing;
 };
 
 #define sBattleGroundMgr Oregon::Singleton<BattleGroundMgr>::Instance()
