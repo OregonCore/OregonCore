@@ -68,10 +68,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="oregoncore.lib ACE.lib"
+				AdditionalDependencies="oregoncore.lib ACEd.lib"
 				OutputFile="$(OutDir)/OregonScript.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\..\win\VC90\ace__$(PlatformName)_$(ConfigurationName);..\..\..\..\win\VC90\oregoncore__$(PlatformName)_$(ConfigurationName)"
+				AdditionalLibraryDirectories="&quot;..\..\..\..\dep\lib\$(PlatformName)_$(ConfigurationName)&quot;;&quot;..\..\..\..\win\VC90\ace__$(PlatformName)_$(ConfigurationName)&quot;;&quot;..\..\..\..\win\VC90\oregoncore__$(PlatformName)_$(ConfigurationName)&quot;"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/MaNGOSScript.pdb"
 				SubSystem="2"
