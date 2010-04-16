@@ -486,6 +486,7 @@ class ChatHandler
         bool HandleGetItemState(const char * args);
         bool HandleGetLootRecipient(const char * args);
         bool HandleDebugArenaCommand(const char * args);
+        bool HandleDebugBattlegroundCommand(const char * args);
         bool HandleDebugThreatList(const char * args);
         bool HandleDebugHostilRefList(const char * args);
         bool HandlePossessCommand(const char* args);

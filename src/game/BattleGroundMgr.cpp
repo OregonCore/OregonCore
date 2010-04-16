@@ -573,6 +573,11 @@ void BattleGroundQueue::Update(uint32 bgTypeId, uint32 queue_id, uint8 arenatype
             }
         }
     }
+    else
+    {
+        if(sBattleGroundMgr.isTesting())
+            MinPlayersPerTeam = 1;
+    }
 
     // found out the minimum and maximum ratings the newly added team should battle against
     // arenaRating is the rating of the latest joined team
@@ -600,7 +605,7 @@ void BattleGroundQueue::Update(uint32 bgTypeId, uint32 queue_id, uint8 arenatype
         sLog.outDebug("Battleground: horde pool wasn't created");
 
     // if selection pools are ready, create the new bg
-    if (bAllyOK && bHordeOK)
+    if ((bAllyOK && bHordeOK) || (sBattleGroundMgr.isTesting() && (bAllyOK || bHordeOK)))
     {
         BattleGround * bg2 = 0;
         // special handling for arenas
@@ -965,6 +970,7 @@ BattleGroundMgr::BattleGroundMgr()
     m_NextRatingDiscardUpdate = m_RatingDiscardTimer;
     m_AutoDistributionTimeChecker = 0;
     m_ArenaTesting = false;
+    m_Testing = false;
 }
 
 BattleGroundMgr::~BattleGroundMgr()
@@ -1778,6 +1784,15 @@ uint8 BattleGroundMgr::BGArenaType(uint32 bgQueueTypeId) const
     default:
         return 0;
     }
+}
+
+void BattleGroundMgr::ToggleTesting()
+{
+    m_Testing = !m_Testing;
+    if(m_Testing)
+        sWorld.SendGlobalText("Battlegrounds are set to 1v0 for debugging.", NULL);
+    else
+        sWorld.SendGlobalText("Battlegrounds are set to normal playercount.", NULL);
 }
 
 void BattleGroundMgr::ToggleArenaTesting()
