@@ -271,8 +271,8 @@ void FlightPathMovementGenerator::Finalize(Player & player)
             player.CastSpell(&player, 2479, true);
 
         //update z position to ground and orientation for landing point
-		//this prevent cheating with landing point at lags
-		//when client side flight end earlie in comparison server side
+        //this prevent cheating with landing point at lags
+        //when client side flight end earlie in comparison server side
         player.StopMoving();
     }
 }

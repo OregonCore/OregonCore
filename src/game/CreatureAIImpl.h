@@ -609,13 +609,13 @@ inline void UnitAI::DoCastAOE(uint32 spellId, bool triggered)
 
 inline Creature *CreatureAI::DoSummon(uint32 uiEntry, const WorldLocation &pos, uint32 uiDespawntime, TempSummonType uiType)
 {
-	return me->SummonCreature(uiEntry, pos.x, pos.y, pos.z, pos.o, uiType, uiDespawntime);
+    return me->SummonCreature(uiEntry, pos.x, pos.y, pos.z, pos.o, uiType, uiDespawntime);
 }
 
 inline Creature *CreatureAI::DoSummon(uint32 uiEntry, WorldObject* obj, float fRadius, uint32 uiDespawntime, TempSummonType uiType)
 {
     WorldLocation pos;
-	obj->GetClosePoint(pos.x,pos.y,pos.z,obj->GetObjectSize(), fRadius);
+    obj->GetClosePoint(pos.x,pos.y,pos.z,obj->GetObjectSize(), fRadius);
     return me->SummonCreature(uiEntry, pos.x, pos.y, pos.z, pos.o, uiType, uiDespawntime);
 }
 

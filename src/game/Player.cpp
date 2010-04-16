@@ -1861,9 +1861,9 @@ void Player::RemoveFromWorld()
             m_items[i]->RemoveFromWorld();
     }
 
-	// remove duel before calling Unit::RemoveFromWorld       
-	// otherwise there will be an existing duel flag pointer but no entry in m_gameObj       
-	DuelComplete(DUEL_INTERUPTED);
+    // remove duel before calling Unit::RemoveFromWorld       
+    // otherwise there will be an existing duel flag pointer but no entry in m_gameObj       
+    DuelComplete(DUEL_INTERUPTED);
 
     ///- Do not add/remove the player from the object storage
     ///- It will crash when updating the ObjectAccessor
@@ -2208,9 +2208,9 @@ void Player::GiveXP(uint32 xp, Unit* victim)
     for(Unit::AuraList::const_iterator i = DummyAuras.begin();i != DummyAuras.end(); ++i)
         if((*i)->GetId() == 32098 || (*i)->GetId() == 32096)
         {
-			uint32 area_id = GetAreaId();
-			if(area_id == 3483 || area_id == 3535 || area_id == 3562 || area_id == 3713)
-				xp = uint32(xp*(1.0f + 5.0f / 100.0f));
+            uint32 area_id = GetAreaId();
+            if(area_id == 3483 || area_id == 3535 || area_id == 3562 || area_id == 3713)
+                xp = uint32(xp*(1.0f + 5.0f / 100.0f));
         }
 
 
@@ -3751,7 +3751,7 @@ void Player::DeleteFromDB(uint64 playerguid, uint32 accountId, bool updateRealmC
     CharacterDatabase.PExecute("DELETE FROM group_instance WHERE leaderGuid = '%u'",guid);
     CharacterDatabase.PExecute("DELETE FROM character_inventory WHERE guid = '%u'",guid);
     CharacterDatabase.PExecute("DELETE FROM character_queststatus WHERE guid = '%u'",guid);
-	CharacterDatabase.PExecute("DELETE FROM character_queststatus_daily WHERE guid = '%u'",guid);
+    CharacterDatabase.PExecute("DELETE FROM character_queststatus_daily WHERE guid = '%u'",guid);
     CharacterDatabase.PExecute("DELETE FROM character_reputation WHERE guid = '%u'",guid);
     CharacterDatabase.PExecute("DELETE FROM character_spell WHERE guid = '%u'",guid);
     CharacterDatabase.PExecute("DELETE FROM character_spell_cooldown WHERE guid = '%u'",guid);
@@ -7398,8 +7398,8 @@ void Player::SendLootRelease( uint64 guid )
 
 void Player::SendLoot(uint64 guid, LootType loot_type)
 {
-	 if (uint64 lguid = GetLootGUID()) 
-		 m_session->DoLootRelease(lguid); 
+     if (uint64 lguid = GetLootGUID()) 
+         m_session->DoLootRelease(lguid); 
 
 
     Loot    *loot = 0;
@@ -17800,22 +17800,22 @@ void Player::ToggleMetaGemsActive(uint8 exceptslot, bool apply)
 
 void Player::LeaveBattleground(bool teleportToEntryPoint)
 {
-	
-	if(BattleGround *bg = GetBattleGround())
+    
+    if(BattleGround *bg = GetBattleGround())
     {
         bool need_debuf = bg->isBattleGround() && !isGameMaster() && (bg->GetStatus() == STATUS_IN_PROGRESS) && sWorld.getConfig(CONFIG_BATTLEGROUND_CAST_DESERTER);
 
         if(bg->isArena() && bg->isRated() && bg->GetStatus() != STATUS_WAIT_LEAVE) //if game has not end then make sure that personal raiting is decreased
-		
-		{
-			//decrease private raiting here
-			Team Loser = (Team)bg->GetPlayerTeam(GetGUID());
-			Team Winner = Loser == ALLIANCE ? HORDE : ALLIANCE;
-			ArenaTeam* WinnerTeam = objmgr.GetArenaTeamById(bg->GetArenaTeamIdForTeam(Winner));
-			ArenaTeam* LoserTeam = objmgr.GetArenaTeamById(bg->GetArenaTeamIdForTeam(Loser));
-			LoserTeam->MemberLost(this,WinnerTeam->GetStats().rating);
-		}
-		bg->RemovePlayerAtLeave(GetGUID(), teleportToEntryPoint, true);
+        
+        {
+            //decrease private raiting here
+            Team Loser = (Team)bg->GetPlayerTeam(GetGUID());
+            Team Winner = Loser == ALLIANCE ? HORDE : ALLIANCE;
+            ArenaTeam* WinnerTeam = objmgr.GetArenaTeamById(bg->GetArenaTeamIdForTeam(Winner));
+            ArenaTeam* LoserTeam = objmgr.GetArenaTeamById(bg->GetArenaTeamIdForTeam(Loser));
+            LoserTeam->MemberLost(this,WinnerTeam->GetStats().rating);
+        }
+        bg->RemovePlayerAtLeave(GetGUID(), teleportToEntryPoint, true);
 
         // call after remove to be sure that player resurrected for correct cast
         if(need_debuf)

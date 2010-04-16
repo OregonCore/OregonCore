@@ -206,9 +206,9 @@ void Player::UpdateMaxPower(Powers power)
     uint32 create_power = GetCreatePowers(power);
 
     // ignore classes without mana
-	float bonusPower = (power == POWER_MANA && create_power > 0) ? GetManaBonusFromIntellect() : 0;
+    float bonusPower = (power == POWER_MANA && create_power > 0) ? GetManaBonusFromIntellect() : 0;
 
-	float value = GetModifierValue(unitMod, BASE_VALUE) + create_power;
+    float value = GetModifierValue(unitMod, BASE_VALUE) + create_power;
     value *= GetModifierValue(unitMod, BASE_PCT);
     value += GetModifierValue(unitMod, TOTAL_VALUE) +  bonusPower;
     value *= GetModifierValue(unitMod, TOTAL_PCT);

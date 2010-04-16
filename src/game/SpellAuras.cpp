@@ -1162,11 +1162,11 @@ void Aura::HandleAddModifier(bool apply, bool Real)
         {
             case 17941:    // Shadow Trance
             case 22008:    // Netherwind Focus
-		    case 34754:    // Clearcasting 
+            case 34754:    // Clearcasting 
             case 34936:    // Backlash 
             case 48108:    // Hot Streak 
             case 54741:    // Firestarter 
-		    case 57761:    // Fireball! 
+            case 57761:    // Fireball! 
 
                 m_procCharges = 1;
                 break;
@@ -2895,8 +2895,8 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
     }
     else
     {
-		// FG: workaround, fix extreme regeneration bug (orb of deception + polymorph)
-		m_target->setTransForm(0);
+        // FG: workaround, fix extreme regeneration bug (orb of deception + polymorph)
+        m_target->setTransForm(0);
 
         Unit::AuraList const& otherTransforms = m_target->GetAurasByType(SPELL_AURA_TRANSFORM);
         if(otherTransforms.empty())
@@ -3479,22 +3479,22 @@ void Aura::HandleAuraModSilence(bool apply, bool Real)
 
         switch (GetId())
         {
-			// Arcane Torrent (Mana) 
-  			case 28730: 
-  			{ 
-  				Unit * caster = GetCaster(); 
-  				if (!caster) 
-  					return; 
+            // Arcane Torrent (Mana) 
+              case 28730: 
+              { 
+                  Unit * caster = GetCaster(); 
+                  if (!caster) 
+                      return; 
    
-  				Aura * dummy = caster->GetDummyAura(28734); 
-  				if (dummy) 
-  				{ 
-  					int32 bp = (5 + caster->getLevel()) * dummy->GetStackAmount(); 
-  					caster->CastCustomSpell(caster, 28733, &bp, NULL, NULL, true); 
-  					caster->RemoveAurasDueToSpell(28734); 
-  				} 
-  				return; 
-  			} 
+                  Aura * dummy = caster->GetDummyAura(28734); 
+                  if (dummy) 
+                  { 
+                      int32 bp = (5 + caster->getLevel()) * dummy->GetStackAmount(); 
+                      caster->CastCustomSpell(caster, 28733, &bp, NULL, NULL, true); 
+                      caster->RemoveAurasDueToSpell(28734); 
+                  } 
+                  return; 
+              } 
 
             // Arcane Torrent (Energy)
             case 25046:
@@ -3684,7 +3684,7 @@ void Aura::HandleAuraModDecreaseSpeed(bool /*apply*/, bool Real)
     if(!Real)
         return;
 
-	//m_target->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
+    //m_target->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
     m_target->UpdateSpeed(MOVE_RUN, true);
     m_target->UpdateSpeed(MOVE_SWIM, true);
     m_target->UpdateSpeed(MOVE_FLIGHT, true);
@@ -4910,28 +4910,28 @@ void Aura::HandleRangedAmmoHaste(bool apply, bool Real)
 void Aura::HandleAuraModAttackPower(bool apply, bool Real)
 {
     m_target->HandleStatModifier(UNIT_MOD_ATTACK_POWER, TOTAL_VALUE, float(GetModifierValue()), apply);
-	if(apply)
-	switch(m_spellProto->Id){
-	    // Warrior & Druid Demoshout should remove stealth
-	    case 1160:
-		case 6190:
-		case 11554:
-		case 11555:
-		case 11556:
-		case 25202:
-		case 25203:
-		case 47437:  //WotLK spell
-	    case 99:
-		case 1735:
-		case 9490:
-		case 9747:
-		case 9898:
-		case 26998:
-		case 48559:  //WotLK spell
-		case 48560:  //WotLK spell
-	        m_target->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
-		    break;
-	}
+    if(apply)
+    switch(m_spellProto->Id){
+        // Warrior & Druid Demoshout should remove stealth
+        case 1160:
+        case 6190:
+        case 11554:
+        case 11555:
+        case 11556:
+        case 25202:
+        case 25203:
+        case 47437:  //WotLK spell
+        case 99:
+        case 1735:
+        case 9490:
+        case 9747:
+        case 9898:
+        case 26998:
+        case 48559:  //WotLK spell
+        case 48560:  //WotLK spell
+            m_target->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
+            break;
+    }
 }
 
 void Aura::HandleAuraModRangedAttackPower(bool apply, bool Real)
@@ -5325,15 +5325,15 @@ void Aura::HandleAuraModPacify(bool apply, bool Real)
         m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED);
     else
         m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED);
-		
-	
- 	if(m_spellProto->Id == 45839){
-		if(apply){
+        
+    
+     if(m_spellProto->Id == 45839){
+        if(apply){
             m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-		}else{
+        }else{
             m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-		}
-	}
+        }
+    }
 }
 
 void Aura::HandleAuraModPacifyAndSilence(bool apply, bool Real)
@@ -5378,7 +5378,7 @@ void Aura::HandleAuraAllowFlight(bool apply, bool Real)
         data.Initialize(SMSG_MOVE_UNSET_CAN_FLY, 12);
         ((Player*)m_target)->SetCanFly(false);
     }
-		data.append(m_target->GetPackGUID());
+        data.append(m_target->GetPackGUID());
     data << uint32(0);                                      // unk
     m_target->SendMessageToSet(&data, true);
 }

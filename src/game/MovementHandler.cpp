@@ -561,11 +561,11 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
             if((GetPlayer()->IsMounted() || GetPlayer()->IsInTravelForm() || GetPlayer()->IsInFlightForm() || (MovementFlags & MOVEMENTFLAG_FLYING) || (MovementFlags & MOVEMENTFLAG_FLYING2)) && GetPlayer()->getLevel() >= 30)
             {
                 if(GetPlayer()->getLevel()<60)
-                	MaxDeltaXYT = sWorld.GetMvAnticheatSpeedMaxXYT();
+                    MaxDeltaXYT = sWorld.GetMvAnticheatSpeedMaxXYT();
                 else if(!((MovementFlags & MOVEMENTFLAG_FLYING) || (MovementFlags & MOVEMENTFLAG_FLYING2) || GetPlayer()->IsInFlightForm()) || GetPlayer()->getLevel()<70)
-                	MaxDeltaXYT = sWorld.GetMvAnticheatHighSpeedMaxXYT();
+                    MaxDeltaXYT = sWorld.GetMvAnticheatHighSpeedMaxXYT();
                 else
-	            	MaxDeltaXYT = sWorld.GetMvAnticheatMaxXYT();
+                    MaxDeltaXYT = sWorld.GetMvAnticheatMaxXYT();
             }
             
 #ifdef __ANTI_DEBUG__

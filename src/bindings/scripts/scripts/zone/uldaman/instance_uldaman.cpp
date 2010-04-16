@@ -114,23 +114,23 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
                 if (Encounters[1] == DONE) 
                     HandleGameObject(NULL,true,go);
                 break;
-	    
-	    case IRONAYA_SEAL_DOOR:
+        
+        case IRONAYA_SEAL_DOOR:
                 ironayaSealDoor = go->GetGUID();
 
                 if (Encounters[2] == DONE) 
                     HandleGameObject(NULL,true,go);
-	        break;
-	    
-	    case KEYSTONE_GO:
-	        keystoneGUID = go->GetGUID();
+            break;
+        
+        case KEYSTONE_GO:
+            keystoneGUID = go->GetGUID();
 
                 if (Encounters[2] == DONE)
                 {
-                    HandleGameObject(NULL,true,go);		
+                    HandleGameObject(NULL,true,go);        
                     go->SetUInt32Value(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
-		}
-	        break;
+        }
+            break;
         }
     }
 
@@ -295,19 +295,19 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
     void Update(uint32 diff)
     {
         if (!keystoneCheck)
-	    return;
-	    
-	if(ironayaSealDoorTimer <= diff)
+        return;
+        
+    if(ironayaSealDoorTimer <= diff)
         {
-	    ActivateIronaya();
-	    
-	    SetDoor(ironayaSealDoor, true);
-	    BlockGO(keystoneGUID);
-	    
+        ActivateIronaya();
+        
+        SetDoor(ironayaSealDoor, true);
+        BlockGO(keystoneGUID);
+        
             SetData(DATA_IRONAYA_DOOR, DONE); //save state
-	    keystoneCheck = false;
+        keystoneCheck = false;
         }
-	else
+    else
             ironayaSealDoorTimer -= diff;
     }     
 
@@ -316,40 +316,40 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         switch(type)
         {
             case DATA_ALTAR_DOORS:
-	        Encounters[0] = data;
+            Encounters[0] = data;
                 if(data == DONE)
                     SetDoor (altarOfTheKeeperTempleDoor, true);
                 break;
-	    
-	    case DATA_ANCIENT_DOOR:
-	        Encounters[1] = data;
-	        if(data == DONE) //archeadas defeat
+        
+        case DATA_ANCIENT_DOOR:
+            Encounters[1] = data;
+            if(data == DONE) //archeadas defeat
                 {
                     SetDoor (archaedasTempleDoor, true); //re open enter door
                     SetDoor (ancientVaultDoor, true);
                 }
                 break;
-	    
-	    case DATA_IRONAYA_DOOR:
-	    	Encounters[2] = data;
+        
+        case DATA_IRONAYA_DOOR:
+            Encounters[2] = data;
                 break;
-	
-	    case DATA_STONE_KEEPERS:
-	        ActivateStoneKeepers();
+    
+        case DATA_STONE_KEEPERS:
+            ActivateStoneKeepers();
                 break;
-	
-	    case DATA_MINIONS:
+    
+        case DATA_MINIONS:
                 switch(data)
                 {
                     case NOT_STARTED:
-	                if (Encounters[0] == DONE) //if players opened the doors 
+                    if (Encounters[0] == DONE) //if players opened the doors 
                             SetDoor (archaedasTempleDoor, true);
 
                         RespawnMinions();
                         break;
                     case IN_PROGRESS:
                         ActivateWallMinions();
-                	break;
+                    break;
                     case SPECIAL:
                         DeActivateMinions();
                         break;
@@ -359,10 +359,10 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
             case DATA_IRONAYA_SEAL:
                 keystoneCheck = true;
                 break;
-	}
+    }
 
-	if(data == DONE)
-	{
+    if(data == DONE)
+    {
 
             OUT_SAVE_INST_DATA;
 
@@ -373,8 +373,8 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
 
             SaveToDB();
             OUT_SAVE_INST_DATA_COMPLETE;
-	    
-	}
+        
+    }
     }
 
     void SetData64 (uint32 type, uint64 data)
@@ -407,7 +407,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
             case 7076:    // Earthen Guardian
                 earthenGuardian.push_back(creature->GetGUID());
                 break;
-		
+        
             case 7228:   // Ironaya
                 ironayaGUID = creature->GetGUID();
                 

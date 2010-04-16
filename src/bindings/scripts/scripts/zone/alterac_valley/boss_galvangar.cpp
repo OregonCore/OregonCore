@@ -47,12 +47,12 @@ struct OREGON_DLL_DECL boss_galvangarAI : public ScriptedAI
 
     void Reset()
     {
-    		CleaveTimer			= (1+rand()%10)*1000;
-    		FrighteningShoutTimer		= (2+rand()%18)*1000;
-		Whirlwind1Timer			= (1+rand()%12)*1000;
-		Whirlwind2Timer			= (5+rand()%15)*1000;
-		MortalStrikeTimer		= (5+rand()%20)*1000;
-		ResetTimer			= 5000;
+            CleaveTimer            = (1+rand()%10)*1000;
+            FrighteningShoutTimer        = (2+rand()%18)*1000;
+        Whirlwind1Timer            = (1+rand()%12)*1000;
+        Whirlwind2Timer            = (5+rand()%15)*1000;
+        MortalStrikeTimer        = (5+rand()%20)*1000;
+        ResetTimer            = 5000;
     }
 
     void Aggro(Unit *who)
@@ -110,10 +110,10 @@ struct OREGON_DLL_DECL boss_galvangarAI : public ScriptedAI
             float x, y, z;
             m_creature->GetPosition(x, y, z);
             if(x > -504)
-		{
-	    	    DoScriptText(YELL_EVADE, m_creature);
-            	    EnterEvadeMode();
-		}
+        {
+                DoScriptText(YELL_EVADE, m_creature);
+                    EnterEvadeMode();
+        }
             ResetTimer = 5000;
         }else ResetTimer -= diff;
 

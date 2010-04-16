@@ -401,8 +401,8 @@ bool Group::ChangeLeaderToFirstOnlineMember()
 
        if (player && player->IsInWorld() && player->GetGUID() != m_leaderGuid)
        {
-	    ChangeLeader(player->GetGUID());
-	    return true;
+        ChangeLeader(player->GetGUID());
+        return true;
        }
     }
     return false;

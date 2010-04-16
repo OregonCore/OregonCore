@@ -2775,16 +2775,16 @@ void Unit::SendMeleeAttackStop(Unit* victim)
 
 bool Unit::isSpellBlocked(Unit *pVictim, SpellEntry const *spellProto, WeaponAttackType attackType)
 {
-	if (pVictim->HasInArc(M_PI,this) || pVictim->HasAuraType(SPELL_AURA_IGNORE_HIT_DIRECTION))
+    if (pVictim->HasInArc(M_PI,this) || pVictim->HasAuraType(SPELL_AURA_IGNORE_HIT_DIRECTION))
     {
 
      if (pVictim->GetTypeId() == TYPEID_UNIT &&
-	 
-	    ((Creature*)pVictim)->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_NO_BLOCK )
-		return false;
+     
+        ((Creature*)pVictim)->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_NO_BLOCK )
+        return false;
 
     float blockChance = pVictim->GetUnitBlockChance();
-	blockChance += (int32(GetWeaponSkillValue(attackType)) - int32(pVictim->GetMaxSkillValueForLevel()))*0.04f;
+    blockChance += (int32(GetWeaponSkillValue(attackType)) - int32(pVictim->GetMaxSkillValueForLevel()))*0.04f;
 
        if (roll_chance_f(blockChance))
            return true;
@@ -3842,14 +3842,14 @@ int32 Unit::GetMaxNegativeAuraModifierByMiscValue(AuraType auratype, int32 misc_
 
 bool AuraStacking(uint32 auraID)
 {
-	switch(auraID)
-	{
-		case 22959: //scorch
-		case 15258: //shadow weaving
-		return true;
-	default:
-		return false;
-	}
+    switch(auraID)
+    {
+        case 22959: //scorch
+        case 15258: //shadow weaving
+        return true;
+    default:
+        return false;
+    }
 }
 
 bool Unit::AddAura(Aura *Aur)
@@ -5126,13 +5126,13 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                     if(procSpell && procSpell->Id==12723)
                         return false;
 
-					// prevent proc from whirl wind TEST IT
-					if(procSpell && procSpell->Id==1680)
-						return false;
+                    // prevent proc from whirl wind TEST IT
+                    if(procSpell && procSpell->Id==1680)
+                        return false;
 
-					// Cleave
-					if(procSpell && procSpell->Id==25231)
-						return false;
+                    // Cleave
+                    if(procSpell && procSpell->Id==25231)
+                        return false;
 
                     target = SelectNearbyTarget();
                     if(!target)
@@ -8204,16 +8204,16 @@ int32 Unit::SpellBaseDamageBonusForVictim(SpellSchoolMask schoolMask, Unit *pVic
     // ..taken
     AuraList const& mDamageTaken = pVictim->GetAurasByType(SPELL_AURA_MOD_DAMAGE_TAKEN);
     for(AuraList::const_iterator i = mDamageTaken.begin();i != mDamageTaken.end(); ++i)
-	{
+    {
         if(((*i)->GetModifier()->m_miscvalue & schoolMask) != 0)
             TakenAdvertisedBenefit += (*i)->GetModifierValue();
-	
-			if((*i)->GetId() == 34123) 
- 			{ 
- 				if((*i)->GetCaster()->GetTypeId() == TYPEID_PLAYER) 
- 				TakenAdvertisedBenefit += int32(0.25f * ((Player*)(*i)->GetCaster())->GetStat(STAT_SPIRIT)); 
- 			} 
-  	} 
+    
+            if((*i)->GetId() == 34123) 
+             { 
+                 if((*i)->GetCaster()->GetTypeId() == TYPEID_PLAYER) 
+                 TakenAdvertisedBenefit += int32(0.25f * ((Player*)(*i)->GetCaster())->GetStat(STAT_SPIRIT)); 
+             } 
+      } 
 
     return TakenAdvertisedBenefit;
 }
@@ -11333,7 +11333,7 @@ void Unit::StopMoving()
     clearUnitState(UNIT_STAT_MOVING);
 
     // player expected for correct work MOVEMENTFLAG_WALK_MODE
-	SendMonsterMove(GetPositionX(), GetPositionY(), GetPositionZ(), 0, GetTypeId()==TYPEID_PLAYER ? MOVEMENTFLAG_WALK_MODE : MOVEMENTFLAG_NONE, 0);
+    SendMonsterMove(GetPositionX(), GetPositionY(), GetPositionZ(), 0, GetTypeId()==TYPEID_PLAYER ? MOVEMENTFLAG_WALK_MODE : MOVEMENTFLAG_NONE, 0);
 
     SendMonsterStop();
 
@@ -11780,7 +11780,7 @@ void Unit::SetContestedPvP(Player *attackedPlayer)
         player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_CONTESTED_PVP);
         // call MoveInLineOfSight for nearby contested guards
         player->SetVisibility(player->GetVisibility());
-		
+        
     }
     if(!hasUnitState(UNIT_STAT_ATTACK_PLAYER))
     {

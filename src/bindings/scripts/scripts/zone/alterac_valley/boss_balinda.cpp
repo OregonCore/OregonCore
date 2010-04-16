@@ -22,14 +22,14 @@ EndScriptData */
 
 #include "precompiled.h"
 
-#define YELL_AGGRO        			    -2100019
-#define YELL_EVADE				    -2100020
+#define YELL_AGGRO                        -2100019
+#define YELL_EVADE                    -2100020
 
-#define SPELL_ARCANE_EXPLOSION	    46608
-#define SPELL_CONE_OF_COLD	    	    38384
-#define SPELL_FIREBALL	                    46988
-#define SPELL_FROSTBOLT	                    46987
-#define SPELL_WATER_ELEMENTAL	    45067
+#define SPELL_ARCANE_EXPLOSION        46608
+#define SPELL_CONE_OF_COLD                38384
+#define SPELL_FIREBALL                        46988
+#define SPELL_FROSTBOLT                        46987
+#define SPELL_WATER_ELEMENTAL        45067
 
 
 struct OREGON_DLL_DECL boss_balindaAI : public ScriptedAI
@@ -46,11 +46,11 @@ struct OREGON_DLL_DECL boss_balindaAI : public ScriptedAI
 
     void Reset()
     {
-    		ArcaneExplosionTimer		= (10+rand()%5)*1000;
-    		ConeofcoldTimer			= 8000;
-		FireboltTimer			= 1000;
-		FrostboltTimer			= 4000;
-		ResetTimer			= 5000;
+            ArcaneExplosionTimer        = (10+rand()%5)*1000;
+            ConeofcoldTimer            = 8000;
+        FireboltTimer            = 1000;
+        FrostboltTimer            = 4000;
+        ResetTimer            = 5000;
     }
 
     void Aggro(Unit *who)
@@ -97,16 +97,16 @@ struct OREGON_DLL_DECL boss_balindaAI : public ScriptedAI
         }else FrostboltTimer -= diff;
 
 
-	// check if creature is not outside of building
+    // check if creature is not outside of building
         if(ResetTimer < diff)
         {
             float x, y, z;
             m_creature->GetPosition(x, y, z);
             if(x > -6)
-		{
-		    DoScriptText(YELL_EVADE, m_creature);
-            	    EnterEvadeMode();
-		}
+        {
+            DoScriptText(YELL_EVADE, m_creature);
+                    EnterEvadeMode();
+        }
             ResetTimer = 5000;
         }else ResetTimer -= diff;
 

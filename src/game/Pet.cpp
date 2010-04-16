@@ -285,8 +285,8 @@ bool Pet::LoadPetFromDB( Unit* owner, uint32 petentry, uint32 petnumber, bool cu
         CharacterDatabase.PExecute("UPDATE character_pet SET slot = '0' WHERE owner = '%u' AND id = '%u'",ownerid, m_charmInfo->GetPetNumber());
         CharacterDatabase.CommitTransaction();
     }
-	 
-	 _LoadSpells(); 
+     
+     _LoadSpells(); 
      _LoadSpellCooldowns(); 
 
 
@@ -312,13 +312,13 @@ bool Pet::LoadPetFromDB( Unit* owner, uint32 petentry, uint32 petnumber, bool cu
             // patch for old data where some spells have ACT_DECIDE but should have ACT_CAST
             // so overwrite old state
            if(SpellEntry const *spellInfo = sSpellStore.LookupEntry(m_charmInfo->GetActionBarEntry(index)->SpellOrAction))
-		   {
-			   if (spellInfo && spellInfo->AttributesEx & SPELL_ATTR_EX_UNAUTOCASTABLE_BY_PET)
-				   m_charmInfo->GetActionBarEntry(index)->Type == ACT_DISABLED;
+           {
+               if (spellInfo && spellInfo->AttributesEx & SPELL_ATTR_EX_UNAUTOCASTABLE_BY_PET)
+                   m_charmInfo->GetActionBarEntry(index)->Type == ACT_DISABLED;
 
-			   if(m_charmInfo->GetActionBarEntry(index)->Type == ACT_ENABLED)
-				   ToggleAutocast(spellInfo->Id, true);
-		   }
+               if(m_charmInfo->GetActionBarEntry(index)->Type == ACT_ENABLED)
+                   ToggleAutocast(spellInfo->Id, true);
+           }
         }
 
         //init teach spells
@@ -1761,8 +1761,8 @@ void Pet::ToggleAutocast(uint32 spellid, bool apply)
 
 
     PetSpellMap::const_iterator itr = m_spells.find((uint16)spellid);
-	if(itr == m_spells.end()) 
-	return; 
+    if(itr == m_spells.end()) 
+    return; 
 
 
     int i;

@@ -76,28 +76,28 @@ bool DynamicObject::Create( uint32 guidlow, Unit *caster, uint32 spellId, uint32
         return false;
     }
 
- 	float scale = 1; 
-	switch (spellId) 
-	{ 
-		case 26573: 
-		case 20116: 
-		case 20922: 
-		case 20923: 
-		case 20924: 
-		case 27173: 
-		case 13810: 
-		case 2120: 
-		case 2121: 
-		case 8422: 
-		case 8423: 
-		case 10215: 
-		case 10216: 
-		case 27086: 
-		 
-			scale = 2; 
+     float scale = 1; 
+    switch (spellId) 
+    { 
+        case 26573: 
+        case 20116: 
+        case 20922: 
+        case 20923: 
+        case 20924: 
+        case 27173: 
+        case 13810: 
+        case 2120: 
+        case 2121: 
+        case 8422: 
+        case 8423: 
+        case 10215: 
+        case 10216: 
+        case 27086: 
+         
+            scale = 2; 
  
-		break; 
-	}
+        break; 
+    }
  
 
     SetEntry(spellId);

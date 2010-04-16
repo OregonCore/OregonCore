@@ -33,79 +33,79 @@ EndScriptData */
 struct OREGON_DLL_DECL AV_WarmastersAI : public ScriptedAI
 {
      AV_WarmastersAI(Creature *c) : ScriptedAI(c) {Reset();}
-	 
-	 uint32 ChargeTimer;
-	 uint32 CleaveTimer;
+     
+     uint32 ChargeTimer;
+     uint32 CleaveTimer;
      uint32 DemoralizingShoutTimer;
      uint32 Whirlwind1Timer;
      uint32 Whirlwind2Timer;
      uint32 EnrageTimer;
      uint32 ResetTimer;
-	 uint32 Aura1;
-	 uint32 Aura2;
-	 uint32 Aura3;
-	 uint32 Aura4;
-	 
-	 void Reset()
+     uint32 Aura1;
+     uint32 Aura2;
+     uint32 Aura3;
+     uint32 Aura4;
+     
+     void Reset()
      {
-		ChargeTimer             = (2+rand()%10)*1000;
-    	CleaveTimer			    = (1+rand()%10)*1000;
-    	DemoralizingShoutTimer  = (2+rand()%18)*1000;
-		Whirlwind1Timer			= (1+rand()%12)*1000;
-		Whirlwind2Timer			= (5+rand()%15)*1000;
-		EnrageTimer		        = (5+rand()%20)*1000;
-		ResetTimer			    = 5000;
+        ChargeTimer             = (2+rand()%10)*1000;
+        CleaveTimer                = (1+rand()%10)*1000;
+        DemoralizingShoutTimer  = (2+rand()%18)*1000;
+        Whirlwind1Timer            = (1+rand()%12)*1000;
+        Whirlwind2Timer            = (5+rand()%15)*1000;
+        EnrageTimer                = (5+rand()%20)*1000;
+        ResetTimer                = 5000;
 
-		//Auras switch//
-		Aura1                   = 0;
-		Aura2                   = 0;
-		Aura3                   = 0;
-		Aura4                   = 0;
+        //Auras switch//
+        Aura1                   = 0;
+        Aura2                   = 0;
+        Aura3                   = 0;
+        Aura4                   = 0;
 
      }
-	 void Aggro(Unit *who){}
+     void Aggro(Unit *who){}
 
-	 void JustRespawned()
+     void JustRespawned()
      {
          Reset();
      }
-	 
-	 void KilledUnit(Unit* victim){}
-	 
-	 void JustDied(Unit* Killer){}
-	 
-	 void UpdateAI(const uint32 diff)
+     
+     void KilledUnit(Unit* victim){}
+     
+     void JustDied(Unit* Killer){}
+     
+     void UpdateAI(const uint32 diff)
      {
-	 	//Adding the auras//
-		if(m_creature->GetEntry()== 14773 && Aura1 == 0) //Iceblood Warmaster
-		{
-			DoCast(m_creature, 45822);
-		    Aura1 = 1;
-		}
-		if(m_creature->GetEntry() == 14776 && Aura2 == 0) //Tower Point Warmaster
-		{	
-			DoCast(m_creature, 45823);
-			Aura2 = 1;
-		}
-		if(m_creature->GetEntry() == 14772 && Aura3 == 0) //East Frostwolf Warmaster
-		{
-			DoCast(m_creature, 45826);
-		    Aura3 = 1;
-		}
-		if(m_creature->GetEntry() == 14777 && Aura4 == 0) //West FRostwolf Marshal
-		{	
-			DoCast(m_creature, 45824);
-		    Aura4 = 1;
-		}  
-		if (!UpdateVictim())
+         //Adding the auras//
+        if(m_creature->GetEntry()== 14773 && Aura1 == 0) //Iceblood Warmaster
+        {
+            DoCast(m_creature, 45822);
+            Aura1 = 1;
+        }
+        if(m_creature->GetEntry() == 14776 && Aura2 == 0) //Tower Point Warmaster
+        {    
+            DoCast(m_creature, 45823);
+            Aura2 = 1;
+        }
+        if(m_creature->GetEntry() == 14772 && Aura3 == 0) //East Frostwolf Warmaster
+        {
+            DoCast(m_creature, 45826);
+            Aura3 = 1;
+        }
+        if(m_creature->GetEntry() == 14777 && Aura4 == 0) //West FRostwolf Marshal
+        {    
+            DoCast(m_creature, 45824);
+            Aura4 = 1;
+        }  
+        if (!UpdateVictim())
             return;
         if (ChargeTimer <diff)
         {
             DoCast(m_creature->getVictim(), SPELL_CHARGE);
             ChargeTimer = (10+rand()%15)*1000;
-        }else ChargeTimer -= diff;			
-		
-		if (CleaveTimer < diff)
+        }else ChargeTimer -= diff;            
+        
+        if (CleaveTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_CLEAVE);
             CleaveTimer =  (10+rand()%6)*1000;
@@ -133,8 +133,8 @@ struct OREGON_DLL_DECL AV_WarmastersAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_ENRAGE);
             EnrageTimer = (10+rand()%20)*1000;
-        }else EnrageTimer -= diff;	
-			
+        }else EnrageTimer -= diff;    
+            
 
         // check if creature is not outside of building
         if(ResetTimer < diff)
@@ -142,9 +142,9 @@ struct OREGON_DLL_DECL AV_WarmastersAI : public ScriptedAI
              float x, y, z;
              m_creature->GetPosition(x, y, z);
              if(y < -260)
-		    {
-	            EnterEvadeMode();
-		    }
+            {
+                EnterEvadeMode();
+            }
             ResetTimer = 5000;
         }else ResetTimer -= diff;
 

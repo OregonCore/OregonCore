@@ -3738,7 +3738,7 @@ void Spell::EffectAddHonor(uint32 /*i*/)
         return;
 
     // 2.4.3 honor-spells don't scale with level and won't be casted by an item
-	// also we must use damage+1 (spelldescription says +25 honor but damage is only 24)
+    // also we must use damage+1 (spelldescription says +25 honor but damage is only 24)
     ((Player*)unitTarget)->RewardHonor(NULL, 1, damage + 1);
     sLog.outDebug("SpellEffect::AddHonor (spell_id %u) rewards %u honor points (non scale) for player: %u", m_spellInfo->Id, damage, ((Player*)unitTarget)->GetGUIDLow());
 }
@@ -3792,9 +3792,9 @@ void Spell::EffectEnchantItemPerm(uint32 i)
         // add new enchanting if equipped
         item_owner->ApplyEnchantment(itemTarget,PERM_ENCHANTMENT_SLOT,true);
 
-		// update trade window for show enchantment for caster in trade window               
-		if (m_targets.m_targetMask & TARGET_FLAG_TRADE_ITEM)                       
-			p_caster->GetSession()->SendUpdateTrade();
+        // update trade window for show enchantment for caster in trade window               
+        if (m_targets.m_targetMask & TARGET_FLAG_TRADE_ITEM)                       
+            p_caster->GetSession()->SendUpdateTrade();
     }
 }
 
@@ -3927,9 +3927,9 @@ void Spell::EffectEnchantItemTmp(uint32 i)
     // add new enchanting if equipped
     item_owner->ApplyEnchantment(itemTarget,TEMP_ENCHANTMENT_SLOT,true);
 
-	// update trade window for show enchantment for caster in trade window       
-	if (m_targets.m_targetMask & TARGET_FLAG_TRADE_ITEM)               
-		p_caster->GetSession()->SendUpdateTrade(); 
+    // update trade window for show enchantment for caster in trade window       
+    if (m_targets.m_targetMask & TARGET_FLAG_TRADE_ITEM)               
+        p_caster->GetSession()->SendUpdateTrade(); 
 }
 
 void Spell::EffectTameCreature(uint32 /*i*/)
@@ -5054,9 +5054,9 @@ void Spell::EffectScriptEffect(uint32 effIndex)
                 ((Player*)unitTarget)->ModifyMoney(50000000);
             break;
         }
-		// Improved Mana Gems (Serpent-Coil Braid)
-		case 5497:
-		     m_caster->CastSpell(m_caster, 37445, true); // Mana Surge
+        // Improved Mana Gems (Serpent-Coil Braid)
+        case 5497:
+             m_caster->CastSpell(m_caster, 37445, true); // Mana Surge
             break;
     }
 

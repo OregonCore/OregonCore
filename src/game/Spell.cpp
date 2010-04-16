@@ -642,13 +642,13 @@ void Spell::prepareDataForTriggerSystem()
             break;
             case SPELLFAMILY_WARLOCK: // For Hellfire Effect / Rain of Fire / Seed of Corruption triggers need do it
                 if (m_spellInfo->SpellFamilyFlags & 0x0000800000000060LL) m_canTrigger = true;
-				if (m_spellInfo->SpellFamilyFlags & 0x0000000000000060LL)
-					{
-						m_procAttacker = PROC_FLAG_ON_DO_PERIODIC;
-						m_procVictim   = PROC_FLAG_ON_TAKE_PERIODIC;
-						m_canTrigger = true;
-						return;
-					}
+                if (m_spellInfo->SpellFamilyFlags & 0x0000000000000060LL)
+                    {
+                        m_procAttacker = PROC_FLAG_ON_DO_PERIODIC;
+                        m_procVictim   = PROC_FLAG_ON_TAKE_PERIODIC;
+                        m_canTrigger = true;
+                        return;
+                    }
             break;
             case SPELLFAMILY_HUNTER:  // Hunter Explosive Trap Effect/Immolation Trap Effect/Frost Trap Aura/Snake Trap Effect
                 if (m_spellInfo->SpellFamilyFlags & 0x0000200000000014LL) m_canTrigger = true;
@@ -3190,11 +3190,11 @@ void Spell::SendChannelStart(uint32 duration)
     }
 
     WorldPacket data( MSG_CHANNEL_START, (8+4+4) );       
-	data.append(m_caster->GetPackGUID());       
-	data << uint32(m_spellInfo->Id);       
-	data << uint32(duration);       
-	
-	m_caster->SendMessageToSet(&data, true);
+    data.append(m_caster->GetPackGUID());       
+    data << uint32(m_spellInfo->Id);       
+    data << uint32(duration);       
+    
+    m_caster->SendMessageToSet(&data, true);
 
     m_timer = duration;
     if(target)

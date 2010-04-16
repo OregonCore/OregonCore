@@ -118,8 +118,8 @@ World::World()
     m_defaultDbcLocale = LOCALE_enUS;
     m_availableDbcLocaleMask = 0;
 
-	// Initialize broadcaster nextId
-	m_nextId = 0;
+    // Initialize broadcaster nextId
+    m_nextId = 0;
 
     m_updateTimeSum = 0;
     m_updateTimeCount = 0;
@@ -1032,10 +1032,10 @@ void World::LoadConfigSettings(bool reload)
     sLog.outString( "WORLD: VMap data directory is: %svmaps",m_dataPath.c_str());
     sLog.outString( "WORLD: VMap config keys are: vmap.enableLOS, vmap.enableHeight, vmap.ignoreMapIds, vmap.ignoreSpellIds");
 
-	// Broadcaster
-	m_configs[CONFIG_BROADCAST_ENABLED] = sConfig.GetBoolDefault("Broadcast.Enabled", true);
-	m_configs[CONFIG_BROADCAST_INTERVAL] = sConfig.GetIntDefault("Broadcast.Interval", 150000);
-	m_configs[CONFIG_BROADCAST_POSITION] = sConfig.GetIntDefault("Broadcast.Position", 1);
+    // Broadcaster
+    m_configs[CONFIG_BROADCAST_ENABLED] = sConfig.GetBoolDefault("Broadcast.Enabled", true);
+    m_configs[CONFIG_BROADCAST_INTERVAL] = sConfig.GetIntDefault("Broadcast.Interval", 150000);
+    m_configs[CONFIG_BROADCAST_POSITION] = sConfig.GetIntDefault("Broadcast.Position", 1);
 
     m_configs[CONFIG_MAX_WHO] = sConfig.GetIntDefault("MaxWhoListReturns", 49);
     m_configs[CONFIG_PET_LOS] = sConfig.GetBoolDefault("vmap.petLOS", false);
@@ -1453,8 +1453,8 @@ void World::SetInitialWorldSettings()
     uint32 nextGameEvent = gameeventmgr.Initialize();
     m_timers[WUPDATE_EVENTS].SetInterval(nextGameEvent);    //depend on next event
 
-	sLog.outString("Starting Autobroadcast system..." );
-	m_timers[WUPDATE_BROADCAST].SetInterval(m_configs[CONFIG_BROADCAST_INTERVAL]);
+    sLog.outString("Starting Autobroadcast system..." );
+    m_timers[WUPDATE_BROADCAST].SetInterval(m_configs[CONFIG_BROADCAST_INTERVAL]);
 
     sLog.outString("Initialize AuctionHouseBot...");
     auctionbot.Initialize();
@@ -1673,12 +1673,12 @@ void World::Update(time_t diff)
         m_timers[WUPDATE_EVENTS].Reset();
     }
 
-	///- Process autobroadcaster
-	if(getConfig(CONFIG_BROADCAST_ENABLED) && m_timers[WUPDATE_BROADCAST].Passed())
-		{
-			m_timers[WUPDATE_BROADCAST].Reset();
-			SendBroadcast();
-		}
+    ///- Process autobroadcaster
+    if(getConfig(CONFIG_BROADCAST_ENABLED) && m_timers[WUPDATE_BROADCAST].Passed())
+        {
+            m_timers[WUPDATE_BROADCAST].Reset();
+            SendBroadcast();
+        }
 
     /// </ul>
     ///- Move all creatures with "delayed move" and remove and delete all objects with "delayed remove"
@@ -2940,7 +2940,7 @@ void World::UpdateSessions( time_t diff )
 void World::ProcessCliCommands()
 {
     CliCommandHolder::Print* zprint = NULL;
-	
+    
     CliCommandHolder* command;
     while (cliCmdQueue.next(command))
     {
@@ -3071,42 +3071,42 @@ void World::LoadDBVersion()
         m_DBVersion = "unknown world database";
 }
 
-	/// Broadcast a message
-	void World::SendBroadcast()
-	{
-		std::string message;
+    /// Broadcast a message
+    void World::SendBroadcast()
+    {
+        std::string message;
 
-		QueryResult *result;
-		if(m_nextId > 0)
-		result = LoginDatabase.PQuery("SELECT `text`, `next` FROM `broadcast_strings` WHERE `id` = %u;", m_nextId);
-		else
-		result = LoginDatabase.PQuery("SELECT `text`, `next` FROM `broadcast_strings` ORDER BY RAND();", m_nextId);
+        QueryResult *result;
+        if(m_nextId > 0)
+        result = LoginDatabase.PQuery("SELECT `text`, `next` FROM `broadcast_strings` WHERE `id` = %u;", m_nextId);
+        else
+        result = LoginDatabase.PQuery("SELECT `text`, `next` FROM `broadcast_strings` ORDER BY RAND();", m_nextId);
 
-		if(!result)
-		return;
+        if(!result)
+        return;
 
-		Field *fields = result->Fetch();
-		m_nextId  = fields[1].GetUInt32();
-		message = fields[0].GetString();
+        Field *fields = result->Fetch();
+        m_nextId  = fields[1].GetUInt32();
+        message = fields[0].GetString();
 
-		delete result, fields;
+        delete result, fields;
 
-		if((getConfig(CONFIG_BROADCAST_POSITION) & BROADCAST_LOCATION_CHAT) == BROADCAST_LOCATION_CHAT)
-		sWorld.SendWorldText(LANG_AUTO_BROADCAST, message.c_str());
-		if((getConfig(CONFIG_BROADCAST_POSITION) & BROADCAST_LOCATION_TOP) == BROADCAST_LOCATION_TOP)
-		{
-		WorldPacket data(SMSG_NOTIFICATION, (message.size()+1));
-		data << message;
-		sWorld.SendGlobalMessage(&data);
-		}
+        if((getConfig(CONFIG_BROADCAST_POSITION) & BROADCAST_LOCATION_CHAT) == BROADCAST_LOCATION_CHAT)
+        sWorld.SendWorldText(LANG_AUTO_BROADCAST, message.c_str());
+        if((getConfig(CONFIG_BROADCAST_POSITION) & BROADCAST_LOCATION_TOP) == BROADCAST_LOCATION_TOP)
+        {
+        WorldPacket data(SMSG_NOTIFICATION, (message.size()+1));
+        data << message;
+        sWorld.SendGlobalMessage(&data);
+        }
 
-		if((getConfig(CONFIG_BROADCAST_POSITION) & BROADCAST_LOCATION_IRC) == BROADCAST_LOCATION_IRC)
-	#ifdef MANGCHAT_INSTALLED
-		sIRC.Send_IRC_Channel(sIRC._irc_chan[sIRC.anchn].c_str(), "\00311[Server]: " + message);
-	#else
-		sLog.outError("AutoBroadcaster: You have IRC broadcasting enabled but we couldn't detect mangchat");
-	#endif
+        if((getConfig(CONFIG_BROADCAST_POSITION) & BROADCAST_LOCATION_IRC) == BROADCAST_LOCATION_IRC)
+    #ifdef MANGCHAT_INSTALLED
+        sIRC.Send_IRC_Channel(sIRC._irc_chan[sIRC.anchn].c_str(), "\00311[Server]: " + message);
+    #else
+        sLog.outError("AutoBroadcaster: You have IRC broadcasting enabled but we couldn't detect mangchat");
+    #endif
 
-		sLog.outDetail("AutoBroadcast: '%s'",message.c_str());
-		}
+        sLog.outDetail("AutoBroadcast: '%s'",message.c_str());
+        }
 

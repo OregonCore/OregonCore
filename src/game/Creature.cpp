@@ -2067,14 +2067,14 @@ bool Creature::IsOutOfThreatArea(Unit* pVictim) const
     if(!pVictim->IsInMap(this))
         return true;
 
-	if(!pVictim->isTargetableForAttack())
-		return true;
+    if(!pVictim->isTargetableForAttack())
+        return true;
 
     if(!pVictim->isInAccessiblePlaceFor(this))
-		return true;
+        return true;
 
     if(!pVictim->isVisibleForOrDetect(this, this, false))
-		return true;
+        return true;
 
     if(sMapStore.LookupEntry(GetMapId())->IsDungeon())
         return false;

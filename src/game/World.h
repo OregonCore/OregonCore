@@ -69,7 +69,7 @@ enum WorldTimers
     WUPDATE_CORPSES     = 5,
     WUPDATE_EVENTS      = 6,
     WUPDATE_BROADCAST   = 7,
-	WUPDATE_COUNT       = 8
+    WUPDATE_COUNT       = 8
 };
 
 /// Configuration elements
@@ -215,10 +215,10 @@ enum WorldConfigs
     CONFIG_VMAP_TOTEM,
     CONFIG_NUMTHREADS,
 
-	// Broadcaster
-	CONFIG_BROADCAST_ENABLED,
-	CONFIG_BROADCAST_INTERVAL,
-	CONFIG_BROADCAST_POSITION,
+    // Broadcaster
+    CONFIG_BROADCAST_ENABLED,
+    CONFIG_BROADCAST_INTERVAL,
+    CONFIG_BROADCAST_POSITION,
 
     CONFIG_VALUE_COUNT
 };
@@ -332,9 +332,9 @@ enum RealmZone
 
 enum BroadcastLocation
 {
-	BROADCAST_LOCATION_CHAT = 1,
-	BROADCAST_LOCATION_TOP = 2,
-	BROADCAST_LOCATION_IRC = 4,
+    BROADCAST_LOCATION_CHAT = 1,
+    BROADCAST_LOCATION_TOP = 2,
+    BROADCAST_LOCATION_IRC = 4,
 };
 
 // DB scripting commands
@@ -655,9 +655,9 @@ class World
         std::string m_DBVersion;
         std::string m_ScriptsVersion;
 
-		//Broadcaster
-		uint32 m_nextId;
-		void SendBroadcast();
+        //Broadcaster
+        uint32 m_nextId;
+        void SendBroadcast();
 };
 
 extern uint32 realmID;

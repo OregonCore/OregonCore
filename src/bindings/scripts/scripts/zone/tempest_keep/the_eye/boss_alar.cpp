@@ -241,7 +241,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                         WaitEvent = WE_DUMMY;
                         return;
                     case WE_DIE:
-						ForceMove = false;
+                        ForceMove = false;
                         m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_DEAD);
                         WaitTimer = 5000;
                         WaitEvent = WE_REVIVE;
@@ -272,7 +272,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                             m_creature->RemoveAurasDueToSpell(SPELL_DIVE_BOMB_VISUAL);
                             m_creature->CastSpell(target, SPELL_DIVE_BOMB, true);
                             float dist = m_creature->GetDistance(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ());
-							if (dist < 5.0f) dist = 5.0f;
+                            if (dist < 5.0f) dist = 5.0f;
                             WaitTimer = 1000 + floor(dist / 80 * 1000.0f);
                             m_creature->Relocate(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ());
                             m_creature->StopMoving();
@@ -286,7 +286,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                     case WE_LAND: 
                         WaitEvent = WE_SUMMON;
                         WaitTimer = 4000; 
-						for(uint8 i = 0; i < 2; ++i)
+                        for(uint8 i = 0; i < 2; ++i)
                             DoSpawnCreature(CREATURE_EMBER_OF_ALAR, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                         return;
                     case WE_SUMMON:

@@ -190,8 +190,8 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
     {
         if(pInstance)
             pInstance->SetData(DATA_RELIQUARYOFSOULSEVENT, DONE);
-			
-		//InCombat = false;
+            
+        //InCombat = false;
     }
 
     void UpdateAI(const uint32 diff)
@@ -258,7 +258,7 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
             case 4:
                 Timer = 1500;
                 if(Essence->IsWithinDistInMap(m_creature, 10))
-					m_creature->RemoveAurasDueToSpell(SPELL_SUBMERGE);
+                    m_creature->RemoveAurasDueToSpell(SPELL_SUBMERGE);
                     //Essence->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_SUBMERGE); //rotate and disappear
                 else
                 {
@@ -506,24 +506,24 @@ struct OREGON_DLL_DECL boss_essence_of_desireAI : public ScriptedAI
         if(RuneShieldTimer < diff)
         {
             m_creature->InterruptNonMeleeSpells(false);
-	        m_creature->CastSpell(m_creature, SPELL_RUNE_SHIELD, true);
-		    SoulShockTimer += 2000;
-		     DeadenTimer += 2000;
-		     RuneShieldTimer = 60000;
+            m_creature->CastSpell(m_creature, SPELL_RUNE_SHIELD, true);
+            SoulShockTimer += 2000;
+             DeadenTimer += 2000;
+             RuneShieldTimer = 60000;
         }else RuneShieldTimer -= diff;
 
         if(SoulShockTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_SOUL_SHOCK);
-		    SoulShockTimer = 5000;
+            SoulShockTimer = 5000;
         }else SoulShockTimer -= diff;
 
         if(DeadenTimer < diff)
         {
             m_creature->InterruptNonMeleeSpells(false);
-		    DoCast(m_creature->getVictim(), SPELL_DEADEN);
-		    DeadenTimer = 25000 + rand()%10000;
-		    if(!(rand()%2))
+            DoCast(m_creature->getVictim(), SPELL_DEADEN);
+            DeadenTimer = 25000 + rand()%10000;
+            if(!(rand()%2))
             {
                DoScriptText(DESI_SAY_SPEC, m_creature);
             }

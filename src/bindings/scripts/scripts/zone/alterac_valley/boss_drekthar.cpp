@@ -24,24 +24,24 @@ EndScriptData */
 
 #define YELL_AGGRO                 -2100000
 
-#define YELL_EVADE		   -2100001
-#define YELL_RESPAWN		   -2100002
+#define YELL_EVADE           -2100001
+#define YELL_RESPAWN           -2100002
 
-#define YELL_RANDOM1		   -2100003
-#define YELL_RANDOM2		   -2100004
-#define YELL_RANDOM3		   -2100005
-#define YELL_RANDOM4		   -2100006
-#define YELL_RANDOM5		   -2100007
+#define YELL_RANDOM1           -2100003
+#define YELL_RANDOM2           -2100004
+#define YELL_RANDOM3           -2100005
+#define YELL_RANDOM4           -2100006
+#define YELL_RANDOM5           -2100007
 
 
-#define SPELL_WHIRLWIND	           15589
-#define SPELL_WHIRLWIND2	   13736
-#define SPELL_KNOCKDOWN		   19128
-#define SPELL_FRENZY		   8269
+#define SPELL_WHIRLWIND               15589
+#define SPELL_WHIRLWIND2       13736
+#define SPELL_KNOCKDOWN           19128
+#define SPELL_FRENZY           8269
 #define SPELL_SWEEPING_STRIKES     18765 // not sure
-#define SPELL_CLEAVE	           20677 // not sure
-#define SPELL_WINDFURY		   35886 // not sure
-#define SPELL_STORMPIKE	           51876 // not sure
+#define SPELL_CLEAVE               20677 // not sure
+#define SPELL_WINDFURY           35886 // not sure
+#define SPELL_STORMPIKE               51876 // not sure
 
 
 struct OREGON_DLL_DECL boss_drektharAI : public ScriptedAI
@@ -58,12 +58,12 @@ struct OREGON_DLL_DECL boss_drektharAI : public ScriptedAI
 
     void Reset()
     {
-    	WhirlwindTimer		= (rand()%20)*1000;
-    	Whirlwind2Timer		= (rand()%25)*1000;
-    	KnockdownTimer		= 12000;
-	FrenzyTimer		= 6000;
-	ResetTimer		= 5000;
-	YellTimer               = (20+rand()%10)*1000; //20 to 30 seconds
+        WhirlwindTimer        = (rand()%20)*1000;
+        Whirlwind2Timer        = (rand()%25)*1000;
+        KnockdownTimer        = 12000;
+    FrenzyTimer        = 6000;
+    ResetTimer        = 5000;
+    YellTimer               = (20+rand()%10)*1000; //20 to 30 seconds
     }
 
     void Aggro(Unit *who)
@@ -74,12 +74,12 @@ struct OREGON_DLL_DECL boss_drektharAI : public ScriptedAI
     void JustRespawned()
     {
         Reset();
-	DoScriptText(YELL_RESPAWN, m_creature);
+    DoScriptText(YELL_RESPAWN, m_creature);
     }
 
     void KilledUnit(Unit* victim){}
 
-	void JustDied(Unit* Killer){}
+    void JustDied(Unit* Killer){}
 
     void UpdateAI(const uint32 diff)
     {
@@ -111,14 +111,14 @@ struct OREGON_DLL_DECL boss_drektharAI : public ScriptedAI
         }else FrenzyTimer -= diff;
 
         if (YellTimer < diff) {
-	    switch(rand()%4)
-		{
-			case 0: DoScriptText(YELL_RANDOM1, m_creature); break;
-			case 1: DoScriptText(YELL_RANDOM2, m_creature); break;
-			case 2: DoScriptText(YELL_RANDOM3, m_creature); break;
-			case 3: DoScriptText(YELL_RANDOM4, m_creature); break;
-			case 4: DoScriptText(YELL_RANDOM5, m_creature); break;
-		}
+        switch(rand()%4)
+        {
+            case 0: DoScriptText(YELL_RANDOM1, m_creature); break;
+            case 1: DoScriptText(YELL_RANDOM2, m_creature); break;
+            case 2: DoScriptText(YELL_RANDOM3, m_creature); break;
+            case 3: DoScriptText(YELL_RANDOM4, m_creature); break;
+            case 4: DoScriptText(YELL_RANDOM5, m_creature); break;
+        }
         YellTimer = (20+rand()%10)*1000; //20 to 30 seconds
         } else YellTimer -= diff;
 
@@ -128,10 +128,10 @@ struct OREGON_DLL_DECL boss_drektharAI : public ScriptedAI
             float x, y, z;
             m_creature->GetPosition(x, y, z);
             if(y < -260)
-		{
-		    DoScriptText(YELL_EVADE, m_creature);
-	            EnterEvadeMode();
-		}
+        {
+            DoScriptText(YELL_EVADE, m_creature);
+                EnterEvadeMode();
+        }
             ResetTimer = 5000;
         }else ResetTimer -= diff;
 
