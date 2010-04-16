@@ -85,6 +85,9 @@ enum ArenaTeamTypes
     ARENA_TEAM_5v5      = 5
 };
 
+#define ARENA_NEW_TEAM_RATING       1500
+#define ARENA_NEW_PERSONAL_RATING   1500
+
 struct ArenaTeamMember
 {
     uint64 guid;
@@ -96,15 +99,7 @@ struct ArenaTeamMember
     uint32 wins_season;
     uint32 personal_rating;
 
-    void ModifyPersonalRating(Player* plr, int32 mod, uint32 slot)
-    {
-        if (personal_rating + mod < 0)
-            personal_rating = 0;
-        else
-            personal_rating += mod;
-        if(plr)
-            plr->SetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (slot*6) + 5, personal_rating);
-    }
+    void ModifyPersonalRating(Player* plr, int32 mod, uint32 slot);
 };
 
 struct ArenaTeamStats
@@ -125,26 +120,26 @@ class ArenaTeam
         ArenaTeam();
         ~ArenaTeam();
 
-        bool Create(uint64 CaptainGuid, uint32 type, std::string ArenaTeamName);
+        bool Create(uint64 captainGuid, uint32 type, std::string ArenaTeamName);
         void Disband(WorldSession *session);
 
         typedef std::list<ArenaTeamMember> MemberList;
 
-        uint32 GetId() const              { return Id; }
-        uint32 GetType() const            { return Type; }
+        uint32 GetId() const              { return m_TeamId; }
+        uint32 GetType() const            { return m_Type; }
         uint8  GetSlot() const            { return GetSlotByType(GetType()); }
         static uint8 GetSlotByType(uint32 type);
-        const uint64& GetCaptain() const  { return CaptainGuid; }
-        std::string GetName() const       { return Name; }
-        const ArenaTeamStats& GetStats() const { return stats; }
+        const uint64& GetCaptain() const  { return m_CaptainGuid; }
+        std::string GetName() const       { return m_Name; }
+        const ArenaTeamStats& GetStats() const { return m_stats; }
         void SetStats(uint32 stat_type, uint32 value);
-        uint32 GetRating() const          { return stats.rating; }
+        uint32 GetRating() const          { return m_stats.rating; }
 
-        uint32 GetEmblemStyle() const     { return EmblemStyle; }
-        uint32 GetEmblemColor() const     { return EmblemColor; }
-        uint32 GetBorderStyle() const     { return BorderStyle; }
-        uint32 GetBorderColor() const     { return BorderColor; }
-        uint32 GetBackgroundColor() const { return BackgroundColor; }
+        uint32 GetEmblemStyle() const     { return m_EmblemStyle; }
+        uint32 GetEmblemColor() const     { return m_EmblemColor; }
+        uint32 GetBorderStyle() const     { return m_BorderStyle; }
+        uint32 GetBorderColor() const     { return m_BorderColor; }
+        uint32 GetBackgroundColor() const { return m_BackgroundColor; }
 
         void SetCaptain(const uint64& guid);
         bool AddMember(const uint64& PlayerGuid);
@@ -155,15 +150,15 @@ class ArenaTeam
 
         void SetEmblem(uint32 backgroundColor, uint32 emblemStyle, uint32 emblemColor, uint32 borderStyle, uint32 borderColor);
 
-        size_t GetMembersSize() const       { return members.size(); }
-        bool   Empty() const                { return members.empty(); }
-        MemberList::iterator membersBegin() { return members.begin(); }
-        MemberList::iterator membersEnd()   { return members.end(); }
+        size_t GetMembersSize() const         { return m_members.size(); }
+        bool   Empty() const                  { return m_members.empty(); }
+        MemberList::iterator m_membersBegin() { return m_members.begin(); }
+        MemberList::iterator m_membersEnd()   { return m_members.end(); }
         bool HaveMember(const uint64& guid) const;
 
         ArenaTeamMember* GetMember(const uint64& guid)
         {
-            for (MemberList::iterator itr = members.begin(); itr != members.end(); ++itr)
+            for (MemberList::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
                 if(itr->guid == guid)
                     return &(*itr);
 
@@ -172,25 +167,14 @@ class ArenaTeam
 
         ArenaTeamMember* GetMember(const std::string& name)
         {
-            for (MemberList::iterator itr = members.begin(); itr != members.end(); ++itr)
+            for (MemberList::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
                 if(itr->name == name)
                     return &(*itr);
 
             return NULL;
         }
 
-        bool IsFighting() const
-        {
-            for (MemberList::const_iterator itr = members.begin(); itr != members.end(); ++itr)
-            {
-                if (Player *p = objmgr.GetPlayer(itr->guid))
-                {
-                    if (p->GetMap()->IsBattleArena())
-                        return true;
-                }
-            }
-            return false;
-        }
+        bool IsFighting() const;
 
         bool LoadArenaTeamFromDB(uint32 ArenaTeamId);
         void LoadMembersFromDB(uint32 ArenaTeamId);
@@ -211,28 +195,30 @@ class ArenaTeam
         void MemberWon(Player * plr, uint32 againstRating);
         int32 LostAgainst(uint32 againstRating);
         void MemberLost(Player * plr, uint32 againstRating);
+        void OfflineMemberLost(uint64 guid, uint32 againstRating);
 
         void UpdateArenaPointsHelper(std::map<uint32, uint32> & PlayerPoints);
 
         void NotifyStatsChanged();
 
         void FinishWeek();
+        void FinishGame(int32 mod);
 
     protected:
 
-        uint32 Id;
-        uint32 Type;
-        std::string Name;
-        uint64 CaptainGuid;
+        uint32 m_TeamId;
+        uint32 m_Type;
+        std::string m_Name;
+        uint64 m_CaptainGuid;
 
-        uint32 BackgroundColor; // ARGB format
-        uint32 EmblemStyle;     // icon id
-        uint32 EmblemColor;     // ARGB format
-        uint32 BorderStyle;     // border image id
-        uint32 BorderColor;     // ARGB format
+        uint32 m_BackgroundColor; // ARGB format
+        uint32 m_EmblemStyle;     // icon id
+        uint32 m_EmblemColor;     // ARGB format
+        uint32 m_BorderStyle;     // border image id
+        uint32 m_BorderColor;     // ARGB format
 
-        MemberList members;
-        ArenaTeamStats stats;
+        MemberList m_members;
+        ArenaTeamStats m_stats;
 };
 #endif
 

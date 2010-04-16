@@ -231,6 +231,10 @@ void BattleGround::Update(time_t diff)
         m_ResurrectQueue.clear();
     }
 
+    /*********************************************************/
+    /***           BATTLEGROUND BALLANCE SYSTEM            ***/
+    /*********************************************************/
+
     // if less then minimum players are in on one side, then start premature finish timer
     if(GetStatus() == STATUS_IN_PROGRESS && !isArena() && sBattleGroundMgr.GetPrematureFinishTime() && (GetPlayersCountByTeam(ALLIANCE) < GetMinPlayersPerTeam() || GetPlayersCountByTeam(HORDE) < GetMinPlayersPerTeam()))
     {
@@ -309,7 +313,7 @@ void BattleGround::SendPacketToTeam(uint32 TeamID, WorldPacket *packet, Player *
         if(!self && sender == plr)
             continue;
 
-        uint32 team = itr->second.Team;//GetPlayerTeam(plr->GetGUID());
+        uint32 team = itr->second.Team;
         if(!team) team = plr->GetTeam();
 
         if(team == TeamID)
@@ -338,7 +342,7 @@ void BattleGround::PlaySoundToTeam(uint32 SoundID, uint32 TeamID)
             continue;
         }
 
-        uint32 team = itr->second.Team;//GetPlayerTeam(plr->GetGUID());
+        uint32 team = itr->second.Team;
         if(!team) team = plr->GetTeam();
 
         if(team == TeamID)
@@ -361,7 +365,7 @@ void BattleGround::CastSpellOnTeam(uint32 SpellID, uint32 TeamID)
             continue;
         }
 
-        uint32 team = itr->second.Team;//GetPlayerTeam(plr->GetGUID());
+        uint32 team = itr->second.Team;
         if(!team) team = plr->GetTeam();
 
         if(team == TeamID)
@@ -398,7 +402,7 @@ void BattleGround::RewardHonorToTeam(uint32 Honor, uint32 TeamID)
             continue;
         }
 
-        uint32 team = itr->second.Team;//GetPlayerTeam(plr->GetGUID());
+        uint32 team = itr->second.Team;
         if(!team) team = plr->GetTeam();
 
         if(team == TeamID)
@@ -423,7 +427,7 @@ void BattleGround::RewardReputationToTeam(uint32 faction_id, uint32 Reputation, 
             continue;
         }
 
-        uint32 team = itr->second.Team;//GetPlayerTeam(plr->GetGUID());
+        uint32 team = itr->second.Team;
         if(!team) team = plr->GetTeam();
 
         if(team == TeamID)
@@ -517,7 +521,6 @@ void BattleGround::EndBattleGround(uint32 winner)
                 SetArenaTeamRatingChangeForTeam(HORDE, winner_change);
                 SetArenaTeamRatingChangeForTeam(ALLIANCE, loser_change);
             }
-            sLog.outArena("Arena match Type: %u for Team1Id: %u - Team2Id: %u ended. WinnerTeamId: %u. RatingChange: %i.", m_ArenaType, m_ArenaTeamIds[BG_TEAM_ALLIANCE], m_ArenaTeamIds[BG_TEAM_HORDE], winner_arena_team->GetId(), winner_change);
         }
         else
         {
@@ -538,8 +541,18 @@ void BattleGround::EndBattleGround(uint32 winner)
     for(std::map<uint64, BattleGroundPlayer>::iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
     {
         Player *plr = objmgr.GetPlayer(itr->first);
+        uint32 team = itr->second.Team;
+
         if(!plr)
         {
+            //if rated arena match - make member lost!
+            if(isArena() && isRated() && winner_arena_team && loser_arena_team)
+            {
+                if(team == winner)
+                    winner_arena_team->OfflineMemberLost(itr->first, loser_rating);
+                else
+                    loser_arena_team->OfflineMemberLost(itr->first, winner_rating);
+            }
             sLog.outError("BattleGround: Player " I64FMTD " not found!", itr->first);
             continue;
         }
@@ -554,8 +567,8 @@ void BattleGround::EndBattleGround(uint32 winner)
             plr->SpawnCorpseBones();
         }
 
-        uint32 team = itr->second.Team;
-        if(!team) team = plr->GetTeam();
+        //this line is obsolete - team is set ALWAYS
+        //if(!team) team = plr->GetTeam();
 
         // per player calculation
         if(isArena() && isRated() && winner_arena_team && loser_arena_team)
@@ -568,27 +581,24 @@ void BattleGround::EndBattleGround(uint32 winner)
 
         if(team == winner)
         {
-            if(!Source)
-                Source = plr;
             RewardMark(plr,ITEM_WINNER_COUNT);
             UpdatePlayerScore(plr, SCORE_BONUS_HONOR, 20);
             RewardQuest(plr);
         }
-        else if(winner !=0)
+        else if(winner != 0)
         {
-        RewardMark(plr,ITEM_LOSER_COUNT);
+            RewardMark(plr,ITEM_LOSER_COUNT);
         }
-    else if(winner == 0)
-    {
-        if(sWorld.getConfig(CONFIG_PREMATURE_BG_REWARD))    // We're feeling generous, giving rewards to people who not earned them ;)
-        {    //nested ifs for the win! its boring writing that, forgive me my unfunniness
-            
-            if(almost_winning_team == team)                    //player's team had more points
-                RewardMark(plr,ITEM_WINNER_COUNT);
-            else
-                RewardMark(plr,ITEM_LOSER_COUNT);            // if scores were the same, each team gets 1 mark.
+        else if(winner == 0)
+        {
+            if(sWorld.getConfig(CONFIG_PREMATURE_BG_REWARD))
+            {
+                if(almost_winning_team == team)                  // player's team had more points
+                    RewardMark(plr,ITEM_WINNER_COUNT);
+                else
+                    RewardMark(plr,ITEM_LOSER_COUNT);            // if scores were the same, each team gets 1 mark.
+            }
         }
-    }
 
         plr->CombatStopWithPets(true);
 
@@ -614,7 +624,6 @@ void BattleGround::EndBattleGround(uint32 winner)
         // this way all arena team members will get notified, not only the ones who participated in this match
         winner_arena_team->NotifyStatsChanged();
         loser_arena_team->NotifyStatsChanged();
-    sLog.outDebug("Rated arena match between %s and %s finished, winner: %s", loser_arena_team->GetName().c_str(),winner_arena_team->GetName().c_str(),winner_arena_team->GetName().c_str());
     }
 
     // inform invited players about the removal
@@ -822,22 +831,10 @@ void BattleGround::RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPac
                 if(isRated() && GetStatus() == STATUS_IN_PROGRESS)
                 {
                     //left a rated match while the encounter was in progress, consider as loser
-                    ArenaTeam * winner_arena_team = 0;
-                    ArenaTeam * loser_arena_team = 0;
-                    if(team == HORDE)
-                    {
-                        winner_arena_team = objmgr.GetArenaTeamById(GetArenaTeamIdForTeam(ALLIANCE));
-                        loser_arena_team = objmgr.GetArenaTeamById(GetArenaTeamIdForTeam(HORDE));
-                    }
-                    else
-                    {
-                        winner_arena_team = objmgr.GetArenaTeamById(GetArenaTeamIdForTeam(HORDE));
-                        loser_arena_team = objmgr.GetArenaTeamById(GetArenaTeamIdForTeam(ALLIANCE));
-                    }
+                    ArenaTeam * winner_arena_team = objmgr.GetArenaTeamById(GetArenaTeamIdForTeam(GetOtherTeam(team)));
+                    ArenaTeam * loser_arena_team = objmgr.GetArenaTeamById(GetArenaTeamIdForTeam(team));
                     if(winner_arena_team && loser_arena_team)
-                    {
                         loser_arena_team->MemberLost(plr,winner_arena_team->GetRating());
-                    }
                 }
             }
 
@@ -877,11 +874,8 @@ void BattleGround::RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPac
         plr->SetBGTeam(0);
 
         if(Transport)
-        {
             plr->TeleportTo(plr->GetBattleGroundEntryPointMap(), plr->GetBattleGroundEntryPointX(), plr->GetBattleGroundEntryPointY(), plr->GetBattleGroundEntryPointZ(), plr->GetBattleGroundEntryPointO());
-        }
 
-        // Log
         sLog.outDetail("BATTLEGROUND: Removed player %s from BattleGround.", plr->GetName());
     }
 
@@ -930,9 +924,8 @@ void BattleGround::StartBattleGround()
 {
     ///this method should spawn spirit guides and so on
     SetStartTime(0);
+
     SetLastResurrectTime(0);
-    if(m_IsRated)
-        sLog.outArena("Arena match type: %u for Team1Id: %u - Team2Id: %u started.", m_ArenaType, m_ArenaTeamIds[BG_TEAM_ALLIANCE], m_ArenaTeamIds[BG_TEAM_HORDE]);
 }
 
 void BattleGround::AddPlayer(Player *plr)
@@ -988,7 +981,7 @@ void BattleGround::AddPlayer(Player *plr)
             }
             (plr)->RemovePet(NULL,PET_SAVE_NOT_IN_SLOT);
         }
-    else
+        else
             (plr)->SetTemporaryUnsummonedPetNumber(0);
 
         if(GetStatus() == STATUS_WAIT_JOIN)                 // not started yet
@@ -1326,7 +1319,6 @@ Creature* BattleGround::AddCreature(uint32 entry, uint32 type, uint32 teamval, f
     if(!pCreature->IsPositionValid())
     {
         sLog.outError("ERROR: Creature (guidlow %d, entry %d) not added to battleground. Suggested coordinates isn't valid (X: %f Y: %f)",pCreature->GetGUIDLow(),pCreature->GetEntry(),pCreature->GetPositionX(),pCreature->GetPositionY());
-        delete pCreature;
         return NULL;
     }
 
@@ -1551,10 +1543,15 @@ uint32 BattleGround::GetPlayerTeam(uint64 guid)
     return 0;
 }
 
+uint32 BattleGround::GetOtherTeam(uint32 teamId)
+{
+    return (teamId) ? ((teamId == ALLIANCE) ? HORDE : ALLIANCE) : 0;
+}
+
 bool BattleGround::IsPlayerInBattleGround(uint64 guid)
 {
     std::map<uint64, BattleGroundPlayer>::const_iterator itr = m_Players.find(guid);
-    if(itr!=m_Players.end())
+    if(itr != m_Players.end())
         return true;
     return false;
 }
