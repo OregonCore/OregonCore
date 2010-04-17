@@ -123,7 +123,7 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode( WorldPacket & recv_data )
     if(!GetPlayer()->isAlive())
         return;
 
-    sLog.outDebug( "WORLD: Received CMSG_QUESTGIVER_ACCEPT_QUEST npc = %u, quest = %u",uint32(GUID_LOPART(guid)),quest );
+    sLog.outDebug( "WORLD: Received CMSG_QUESTGIVER_ACCEPT_QUEST npc = %u, quest = %u", uint32(GUID_LOPART(guid)), quest );
 
     Object* pObject = ObjectAccessor::GetObjectByTypeMask(*_player, guid,TYPEMASK_UNIT|TYPEMASK_GAMEOBJECT|TYPEMASK_ITEM|TYPEMASK_PLAYER);
 
@@ -215,7 +215,7 @@ void WorldSession::HandleQuestgiverQuestQueryOpcode( WorldPacket & recv_data )
     uint64 guid;
     uint32 quest;
     recv_data >> guid >> quest;
-    sLog.outDebug( "WORLD: Received CMSG_QUESTGIVER_QUERY_QUEST npc = %u, quest = %u",uint32(GUID_LOPART(guid)),quest );
+    sLog.outDebug( "WORLD: Received CMSG_QUESTGIVER_QUERY_QUEST npc = %u, quest = %u", uint32(GUID_LOPART(guid)), quest );
 
     // Verify that the guid is valid and is a questgiver or involved in the requested quest
     Object* pObject = ObjectAccessor::GetObjectByTypeMask(*_player, guid,TYPEMASK_UNIT|TYPEMASK_GAMEOBJECT|TYPEMASK_ITEM);
@@ -398,7 +398,7 @@ void WorldSession::HandleQuestComplete(WorldPacket& recv_data)
 
     sLog.outDebug("WORLD: Received CMSG_QUESTGIVER_COMPLETE_QUEST npc = %u, quest = %u", uint32(GUID_LOPART(guid)), quest);
 
-    if (Quest const *pQuest = objmgr.GetQuestTemplate(questId))
+    if (Quest const *pQuest = objmgr.GetQuestTemplate(quest))
     {
         // TODO: need a virtual function
         if(GetPlayer()->InBattleGround())
@@ -420,7 +420,7 @@ void WorldSession::HandleQuestComplete(WorldPacket& recv_data)
 
 void WorldSession::HandleQuestAutoLaunch(WorldPacket& /*recvPacket*/)
 {
-    sLog.outDebug( "WORLD: Received CMSG_QUESTGIVER_QUEST_AUTOLAUNCH (Send your log to anakin if you see this message)" );
+    sLog.outDebug( "WORLD: Received CMSG_QUESTGIVER_QUEST_AUTOLAUNCH" );
 }
 
 void WorldSession::HandleQuestPushToParty(WorldPacket& recvPacket)
@@ -440,7 +440,7 @@ void WorldSession::HandleQuestPushToParty(WorldPacket& recvPacket)
             {
                 Player *pPlayer = itr->getSource();
 
-                if (!pPlayer || pPlayer == _player)     // skip self
+                if (!pPlayer || pPlayer == _player)         // skip self
                     continue;
 
                 // 2.4.3: can only share quests within 10 yards
