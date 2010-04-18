@@ -2416,10 +2416,6 @@
 				<Filter
 					Name="Sunstrider Isle"
 					>
-					<File
-						RelativePath="..\scripts\zone\sunstrider_island\sunstrider_isle.cpp"
-						>
-					</File>
 				</Filter>
 			</Filter>
 		</Filter>
