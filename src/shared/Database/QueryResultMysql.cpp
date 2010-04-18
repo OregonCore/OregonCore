@@ -30,7 +30,7 @@ QueryResultMysql::QueryResultMysql(MYSQL_RES *result, MYSQL_FIELD *fields, uint6
     ASSERT(mCurrentRow);
 
     for (uint32 i = 0; i < mFieldCount; i++)
-        mCurrentRow[i].SetType(ConvertNativeType(fields[i].type));
+         mCurrentRow[i].SetType(ConvertNativeType(fields[i].type));
 }
 
 QueryResultMysql::~QueryResultMysql()

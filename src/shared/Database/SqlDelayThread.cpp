@@ -22,34 +22,27 @@
 #include "Database/SqlOperations.h"
 #include "DatabaseEnv.h"
 
-SqlDelayThread::SqlDelayThread(Database* db, const char* infoString) :m_running(true)
-{
-
-  m_dbEngine = new DatabaseType;
-  ((DatabaseType*)m_dbEngine)->Initialize(infoString, false);
-
-}
-
 SqlDelayThread::SqlDelayThread(Database* db) : m_dbEngine(db), m_running(true)
 {
 }
 
 void SqlDelayThread::run()
 {
-    SqlOperation* s;
     #ifndef DO_POSTGRESQL
     mysql_thread_init();
     #endif
 
+    SqlAsyncTask * s = NULL;
+
+    ACE_Time_Value _time(2);
     while (m_running)
     {
         // if the running state gets turned off while sleeping
         // empty the queue before exiting
-        ACE_Based::Thread::Sleep(10);
-        SqlOperation* s;
-        while (m_sqlQueue.next(s))
+        s = dynamic_cast<SqlAsyncTask*> (m_sqlQueue.dequeue());
+        if (s)
         {
-            s->Execute(m_dbEngine);
+            s->call();
             delete s;
         }
     }
@@ -62,6 +55,11 @@ void SqlDelayThread::run()
 void SqlDelayThread::Stop()
 {
     m_running = false;
-    m_sqlQueue.cancel();
+    m_sqlQueue.queue()->deactivate();
 }
 
+bool SqlDelayThread::Delay(SqlOperation* sql)
+{
+    int res = m_sqlQueue.enqueue(new SqlAsyncTask(m_dbEngine, sql));
+    return (res != -1);
+}

@@ -46,8 +46,8 @@ class OREGON_DLL_SPEC DatabaseMysql : public Database
 
         //! Initializes Mysql and connects to a server.
         /*! infoString should be formated like hostname;username;password;database. */
-        bool Initialize(const char *infoString, bool initDelayThread = true);
-        void InitDelayThread(const char* infoString);
+        bool Initialize(const char *infoString);
+        void InitDelayThread();
         void HaltDelayThread();
         QueryResult_AutoPtr Query(const char *sql);
         QueryNamedResult* QueryNamed(const char *sql);
@@ -69,7 +69,7 @@ class OREGON_DLL_SPEC DatabaseMysql : public Database
     private:
         ACE_Thread_Mutex mMutex;
 
-        ACE_Based::Thread* tranThread;
+        ACE_Based::Thread * tranThread;
 
         MYSQL *mMysql;
 

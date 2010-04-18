@@ -79,14 +79,14 @@ bool DatabasePostgre::Initialize(const char *infoString)
 
     Tokens::iterator iter;
 
-    std::string host, port_or_socket, user, password, database;
+    std::string host, port_or_socket_dir, user, password, database;
 
     iter = tokens.begin();
 
     if(iter != tokens.end())
         host = *iter++;
     if(iter != tokens.end())
-        port_or_socket = *iter++;
+        port_or_socket_dir = *iter++;
     if(iter != tokens.end())
         user = *iter++;
     if(iter != tokens.end())
@@ -94,7 +94,10 @@ bool DatabasePostgre::Initialize(const char *infoString)
     if(iter != tokens.end())
         database = *iter++;
 
-    mPGconn = PQsetdbLogin(host.c_str(), port_or_socket.c_str(), NULL, NULL, database.c_str(), user.c_str(), password.c_str());
+    if (host == ".")
+        mPGconn = PQsetdbLogin(NULL, port_or_socket_dir == "." ? NULL : port_or_socket_dir.c_str(), NULL, NULL, database.c_str(), user.c_str(), password.c_str());
+    else
+        mPGconn = PQsetdbLogin(host.c_str(), port_or_socket_dir.c_str(), NULL, NULL, database.c_str(), user.c_str(), password.c_str());
 
     /* check to see that the backend connection was successfully made */
     if (PQstatus(mPGconn) != CONNECTION_OK)
@@ -121,7 +124,7 @@ bool DatabasePostgre::_Query(const char *sql, PGresult** pResult, uint64* pRowCo
 
     // guarded block for thread-safe request
     ACE_Guard<ACE_Thread_Mutex> query_connection_guard(mMutex);
-    #ifdef TRINITY_DEBUG
+    #ifdef OREGON_DEBUG
     uint32 _s = getMSTime();
     #endif
     // Send the query
@@ -138,7 +141,7 @@ bool DatabasePostgre::_Query(const char *sql, PGresult** pResult, uint64* pRowCo
     }
     else
     {
-        #ifdef TRINITY_DEBUG
+        #ifdef OREGON_DEBUG
         sLog.outDebug("[%u ms] SQL: %s", getMSTime() - _s, sql );
         #endif
     }
@@ -202,9 +205,10 @@ bool DatabasePostgre::Execute(const char *sql)
         return false;
 
     // don't use queued execution if it has not been initialized
-    if (!m_threadBody) return DirectExecute(sql);
+    if (!m_threadBody)
+        return DirectExecute(sql);
 
-    tranThread = ACE_Based::Thread::current();            // owner of this transaction
+    tranThread = ACE_Based::Thread::current();              // owner of this transaction
     TransactionQueues::iterator i = m_tranQueues.find(tranThread);
     if (i != m_tranQueues.end() && i->second != NULL)
     {                                                       // Statement for transaction
@@ -226,7 +230,7 @@ bool DatabasePostgre::DirectExecute(const char* sql)
     {
         // guarded block for thread-safe  request
         ACE_Guard<ACE_Thread_Mutex> query_connection_guard(mMutex);
-        #ifdef TRINITY_DEBUG
+        #ifdef OREGON_DEBUG
         uint32 _s = getMSTime();
         #endif
         PGresult *res = PQexec(mPGconn, sql);
@@ -238,7 +242,7 @@ bool DatabasePostgre::DirectExecute(const char* sql)
         }
         else
         {
-            #ifdef TRINITY_DEBUG
+            #ifdef OREGON_DEBUG
             sLog.outDebug("[%u ms] SQL: %s", getMSTime() - _s, sql );
             #endif
         }
@@ -286,7 +290,7 @@ bool DatabasePostgre::BeginTransaction()
         return true;
     }
     // transaction started
-    tranThread = ACE_Based::Thread::current();            // owner of this transaction
+    tranThread = ACE_Based::Thread::current();              // owner of this transaction
     TransactionQueues::iterator i = m_tranQueues.find(tranThread);
     if (i != m_tranQueues.end() && i->second != NULL)
         // If for thread exists queue and also contains transaction
@@ -306,7 +310,7 @@ bool DatabasePostgre::CommitTransaction()
     // don't use queued execution if it has not been initialized
     if (!m_threadBody)
     {
-        if (tranThread!=ACE_Based::Thread::current())
+        if (tranThread != ACE_Based::Thread::current())
             return false;
         bool _res = _TransactionCmd("COMMIT");
         tranThread = NULL;
@@ -332,7 +336,7 @@ bool DatabasePostgre::RollbackTransaction()
     // don't use queued execution if it has not been initialized
     if (!m_threadBody)
     {
-        if (tranThread!=ACE_Based::Thread::current())
+        if (tranThread != ACE_Based::Thread::current())
             return false;
         bool _res = _TransactionCmd("ROLLBACK");
         tranThread = NULL;
@@ -362,8 +366,8 @@ void DatabasePostgre::InitDelayThread()
     assert(!m_delayThread);
 
     //New delay thread for delay execute
-    m_threadBody = new PGSQLDelayThread(this);
-    m_delayThread = new ACE_Based::Thread(*m_threadBody);
+    m_threadBody = new PGSQLDelayThread(this);             // Will be deleted on m_delayThread delete
+    m_delayThread = new ACE_Based::Thread(m_threadBody);
 }
 
 void DatabasePostgre::HaltDelayThread()
