@@ -25,6 +25,7 @@
 #include "Object.h"
 #include "LootMgr.h"
 #include "ItemPrototype.h"
+#include "QueryResult.h"
 
 struct SpellEntry;
 class Bag;
