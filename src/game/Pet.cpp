@@ -274,10 +274,6 @@ bool Pet::LoadPetFromDB( Unit* owner, uint32 petentry, uint32 petnumber, bool cu
         CharacterDatabase.PExecute("UPDATE character_pet SET slot = '0' WHERE owner = '%u' AND id = '%u'",ownerid, m_charmInfo->GetPetNumber());
         CharacterDatabase.CommitTransaction();
     }
-     
-     _LoadSpells(); 
-     _LoadSpellCooldowns(); 
-
 
     if(!is_temporary_summoned)
     {
@@ -297,14 +293,8 @@ bool Pet::LoadPetFromDB( Unit* owner, uint32 petentry, uint32 petnumber, bool cu
 
             // patch for old data where some spells have ACT_DECIDE but should have ACT_CAST
             // so overwrite old state
-           if(SpellEntry const *spellInfo = sSpellStore.LookupEntry(m_charmInfo->GetActionBarEntry(index)->SpellOrAction))
-           {
-               if (spellInfo && spellInfo->AttributesEx & SPELL_ATTR_EX_UNAUTOCASTABLE_BY_PET)
-                   m_charmInfo->GetActionBarEntry(index)->Type == ACT_DISABLED;
-
-               if(m_charmInfo->GetActionBarEntry(index)->Type == ACT_ENABLED)
-                   ToggleAutocast(spellInfo->Id, true);
-           }
+            SpellEntry const *spellInfo = sSpellStore.LookupEntry(m_charmInfo->GetActionBarEntry(index)->SpellOrAction);
+            if (spellInfo && spellInfo->AttributesEx & SPELL_ATTR_EX_UNAUTOCASTABLE_BY_PET) m_charmInfo->GetActionBarEntry(index)->Type = ACT_CAST;
         }
 
         //init teach spells
@@ -361,6 +351,8 @@ bool Pet::LoadPetFromDB( Unit* owner, uint32 petentry, uint32 petnumber, bool cu
     map->Add((Creature*)this);
 
     // Spells should be loaded after pet is added to map, because in CanCast is check on it
+    _LoadSpells(); 
+    _LoadSpellCooldowns();
  
 
     owner->SetPet(this);                                    // in DB stored only full controlled creature
@@ -1737,8 +1729,7 @@ void Pet::ToggleAutocast(uint32 spellid, bool apply)
 
 
     PetSpellMap::const_iterator itr = m_spells.find((uint16)spellid);
-    if(itr == m_spells.end()) 
-    return; 
+   
 
 
     int i;
