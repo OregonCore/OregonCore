@@ -243,10 +243,8 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\shared\Database\Database.cpp" />
     <ClCompile Include="..\..\src\shared\Database\DatabaseMysql.cpp" />
-    <ClCompile Include="..\..\src\shared\Database\DatabaseSqlite.cpp" />
     <ClCompile Include="..\..\src\shared\Database\Field.cpp" />
     <ClCompile Include="..\..\src\shared\Database\QueryResultMysql.cpp" />
-    <ClCompile Include="..\..\src\shared\Database\QueryResultSqlite.cpp" />
     <ClCompile Include="..\..\src\shared\Database\SqlDelayThread.cpp" />
     <ClCompile Include="..\..\src\shared\Database\SqlOperations.cpp" />
     <ClCompile Include="..\..\src\shared\Database\SQLStorage.cpp" />
@@ -291,12 +289,10 @@
     <ClInclude Include="..\..\src\shared\Database\DatabaseEnv.h" />
     <ClInclude Include="..\..\src\shared\Database\DatabaseImpl.h" />
     <ClInclude Include="..\..\src\shared\Database\DatabaseMysql.h" />
-    <ClInclude Include="..\..\src\shared\Database\DatabaseSqlite.h" />
     <ClInclude Include="..\..\src\shared\Database\Field.h" />
     <ClInclude Include="..\..\src\shared\Database\MySQLDelayThread.h" />
     <ClInclude Include="..\..\src\shared\Database\QueryResult.h" />
     <ClInclude Include="..\..\src\shared\Database\QueryResultMysql.h" />
-    <ClInclude Include="..\..\src\shared\Database\QueryResultSqlite.h" />
     <ClInclude Include="..\..\src\shared\Database\SqlDelayThread.h" />
     <ClInclude Include="..\..\src\shared\Database\SqlOperations.h" />
     <ClInclude Include="..\..\src\shared\Database\SQLStorage.h" />
