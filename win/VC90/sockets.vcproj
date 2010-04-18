@@ -4,6 +4,8 @@
 	Version="9,00"
 	Name="sockets"
 	ProjectGUID="{04BAF755-0D67-46F8-B1C6-77AE5368F3CB}"
+	RootNamespace="sockets"
+	Keyword="Win32Proj"
 	TargetFrameworkVersion="0"
 	>
 	<Platforms>
@@ -22,7 +24,6 @@
 			OutputDirectory=".\sockets__$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory=".\sockets__$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
@@ -102,7 +103,6 @@
 			OutputDirectory=".\sockets__$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory=".\sockets__$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
@@ -181,7 +181,6 @@
 			OutputDirectory=".\sockets__$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory=".\sockets__$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
@@ -200,7 +199,6 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TargetEnvironment="3"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
@@ -214,7 +212,7 @@
 				EnableEnhancedInstructionSet="0"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\sockets__$(PlatformName)_$(ConfigurationName)/sockets.pch"
+				PrecompiledHeaderFile=".\sockets__$(PlatformName)_$(ConfigurationName)\sockets.pch"
 				AssemblerListingLocation=".\sockets__$(PlatformName)_$(ConfigurationName)\"
 				ObjectFile=".\sockets__$(PlatformName)_$(ConfigurationName)\"
 				ProgramDataBaseFileName=".\sockets__$(PlatformName)_$(ConfigurationName)\"
@@ -262,7 +260,6 @@
 			OutputDirectory=".\sockets__$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory=".\sockets__$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
@@ -281,7 +278,6 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TargetEnvironment="3"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"

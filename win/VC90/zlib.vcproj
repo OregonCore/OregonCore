@@ -4,7 +4,9 @@
 	Version="9,00"
 	Name="zlib"
 	ProjectGUID="{8F1DEA42-6A5B-4B62-839D-C141A7BFACF2}"
-	TargetFrameworkVersion="131072"
+	RootNamespace="zlib"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
@@ -22,7 +24,6 @@
 			OutputDirectory=".\zlib__$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory=".\zlib__$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
 			>
 			<Tool
@@ -91,7 +92,6 @@
 			OutputDirectory=".\zlib__$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory=".\zlib__$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
 			>
 			<Tool
@@ -158,7 +158,6 @@
 			OutputDirectory=".\zlib__$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory=".\zlib__$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
 			>
 			<Tool
@@ -228,7 +227,6 @@
 			OutputDirectory=".\zlib__$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory=".\zlib__$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
 			>
 			<Tool

@@ -78,7 +78,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies=""
 				OutputFile="$(OutDir)\ACEd.dll"
-				LinkIncremental="2"
+				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
@@ -168,7 +168,7 @@
 				AdditionalOptions="/machine:AMD64"
 				AdditionalDependencies=""
 				OutputFile="$(OutDir)\ACEd.dll"
-				LinkIncremental="2"
+				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
@@ -324,6 +324,7 @@
 				RuntimeTypeInfo="true"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="3"
 				DisableSpecificWarnings="4355"
 			/>
 			<Tool
@@ -2853,11 +2854,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dep\ACE_wrappers\ace\os_include\os_errno.h"
+				RelativePath="..\..\dep\ACE_wrappers\ace\OS_Errno.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dep\ACE_wrappers\ace\OS_Errno.h"
+				RelativePath="..\..\dep\ACE_wrappers\ace\os_include\os_errno.h"
 				>
 			</File>
 			<File
@@ -3237,11 +3238,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dep\ACE_wrappers\ace\os_include\os_string.h"
+				RelativePath="..\..\dep\ACE_wrappers\ace\OS_String.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dep\ACE_wrappers\ace\OS_String.h"
+				RelativePath="..\..\dep\ACE_wrappers\ace\os_include\os_string.h"
 				>
 			</File>
 			<File

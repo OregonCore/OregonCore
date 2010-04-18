@@ -6,7 +6,7 @@
     ProjectGUID="{803F488E-4C5A-4866-8D5C-1E6C03C007C2}"
     RootNamespace="genrevision"
     Keyword="Win32Proj"
-    TargetFrameworkVersion="196613"
+    TargetFrameworkVersion="0"
     >
     <Platforms>
         <Platform
@@ -50,7 +50,7 @@
                 RuntimeLibrary="3"
                 UsePrecompiledHeader="0"
                 WarningLevel="3"
-                DebugInformationFormat="4"
+                DebugInformationFormat="3"
                 CallingConvention="0"
             />
             <Tool

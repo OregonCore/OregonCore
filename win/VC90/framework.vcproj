@@ -5,8 +5,8 @@
 	Name="framework"
 	ProjectGUID="{BF6F5D0E-33A5-4E23-9E7D-DD481B7B5B9E}"
 	RootNamespace="framework"
-	Keyword="ManagedCProj"
-	TargetFrameworkVersion="131072"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
@@ -24,7 +24,6 @@
 			OutputDirectory=".\framework__$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory=".\framework__$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
 			ManagedExtensions="0"
 			>
@@ -100,7 +99,6 @@
 			OutputDirectory=".\framework__$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory=".\framework__$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
 			ManagedExtensions="0"
 			>
@@ -176,7 +174,6 @@
 			OutputDirectory=".\framework__$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory=".\framework__$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
 			ManagedExtensions="0"
 			>
@@ -253,7 +250,6 @@
 			OutputDirectory=".\framework__$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory=".\framework__$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
 			ManagedExtensions="0"
 			>
@@ -425,15 +421,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\framework\Utilities\UnorderedMap.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\framework\Utilities\LinkedList.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\framework\Utilities\TypeList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\framework\Utilities\UnorderedMap.h"
 				>
 			</File>
 			<Filter

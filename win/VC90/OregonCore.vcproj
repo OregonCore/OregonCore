@@ -4,8 +4,9 @@
 	Version="9,00"
 	Name="OregonCore"
 	ProjectGUID="{A3A04E47-43A2-4C08-90B3-029CEF558594}"
-	RootNamespace="mangosd"
-	TargetFrameworkVersion="131072"
+	RootNamespace="oregoncore"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
@@ -23,7 +24,6 @@
 			OutputDirectory=".\oregoncore__$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory=".\oregoncore__$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
@@ -42,13 +42,13 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\..\..\bin\Release\mangosd.tlb"
+				TypeLibraryName=".\..\..\bin\Release\oregoncore.tlb"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\shared\Database;..\..\src\shared\vmap;..\..\dep\ACE_wrappers;..\..\src\game\"
+				AdditionalIncludeDirectories="..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game;..\..\src\oregoncore;..\..\dep\ACE_wrappers;..\..\src\shared\Database"
 				PreprocessorDefinitions="VERSION=&quot;0.12.0-SVN&quot;;WIN32;NDEBUG;_CONSOLE;ENABLE_CLI"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -63,6 +63,7 @@
 				SuppressStartupBanner="true"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
+				CallingConvention="0"
 				CompileAs="0"
 			/>
 			<Tool
@@ -80,7 +81,6 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="libmySQL.lib libeay32.lib ws2_32.lib winmm.lib odbc32.lib odbccp32.lib advapi32.lib dbghelp.lib MSVCPRT.LIB msvcrt.lib"
-				ShowProgress="0"
 				OutputFile="..\..\bin\$(PlatformName)_$(ConfigurationName)\OregonCore.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -94,7 +94,7 @@
 				LinkTimeCodeGeneration="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)\oregoncore.lib"
+				ImportLibrary="$(OutDir)\OregonCore.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -124,7 +124,6 @@
 			OutputDirectory=".\oregoncore__$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory=".\oregoncore__$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
@@ -144,13 +143,13 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\..\..\bin\Release\mangosd.tlb"
+				TypeLibraryName=".\..\..\bin\Release\oregoncore.tlb"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\shared\Database;..\..\src\shared\vmap;..\..\dep\ACE_wrappers;..\..\src\game\"
+				AdditionalIncludeDirectories="..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game;..\..\src\oregoncore;..\..\dep\ACE_wrappers;..\..\src\shared\Database"
 				PreprocessorDefinitions="VERSION=&quot;0.12.0-SVN&quot;;WIN32;NDEBUG;_CONSOLE;ENABLE_CLI"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -165,6 +164,7 @@
 				SuppressStartupBanner="true"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
+				CallingConvention="0"
 				CompileAs="0"
 			/>
 			<Tool
@@ -191,7 +191,9 @@
 				MapFileName="..\..\bin\$(PlatformName)_$(ConfigurationName)\OregonCore.map"
 				SubSystem="1"
 				LinkTimeCodeGeneration="0"
-				ImportLibrary="$(OutDir)\oregoncore.lib"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				ImportLibrary="$(OutDir)\OregonCore.lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -222,7 +224,6 @@
 			OutputDirectory=".\oregoncore__$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory=".\oregoncore__$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
@@ -241,17 +242,18 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\mangosd__$(PlatformName)_$(ConfigurationName)\mangosd.tlb"
+				TypeLibraryName=".\oregoncore__$(PlatformName)_$(ConfigurationName)\oregoncore.tlb"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\shared\Database;..\..\src\shared\vmap;..\..\dep\ACE_wrappers;..\..\src\game\"
+				AdditionalIncludeDirectories="..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game;..\..\src\oregoncore;..\..\dep\ACE_wrappers;..\..\src\shared\Database"
 				PreprocessorDefinitions="VERSION=&quot;0.12.0-SVN&quot;;WIN32;_DEBUG;OREGON_DEBUG;_CONSOLE;ENABLE_CLI"
 				IgnoreStandardIncludePath="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile=".\oregoncore__$(PlatformName)_$(ConfigurationName)\oregoncore.pch"
 				AssemblerListingLocation=".\oregoncore__$(PlatformName)_$(ConfigurationName)\"
@@ -261,6 +263,7 @@
 				SuppressStartupBanner="true"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
+				CallingConvention="0"
 				CompileAs="0"
 			/>
 			<Tool
@@ -280,7 +283,7 @@
 				AdditionalDependencies="libmySQL.lib libeay32.lib ws2_32.lib winmm.lib odbc32.lib odbccp32.lib advapi32.lib dbghelp.lib MSVCPRTD.LIB msvcrtd.lib"
 				OutputFile="..\..\bin\$(PlatformName)_$(ConfigurationName)\OregonCore.exe"
 				Version=""
-				LinkIncremental="2"
+				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\dep\lib\$(PlatformName)_$(ConfigurationName)"
 				GenerateDebugInformation="true"
@@ -292,7 +295,7 @@
 				RandomizedBaseAddress="1"
 				FixedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)\oregoncore.lib"
+				ImportLibrary="$(OutDir)\OregonCore.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -322,7 +325,6 @@
 			OutputDirectory=".\oregoncore__$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory=".\oregoncore__$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
@@ -342,17 +344,18 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\mangosd__$(PlatformName)_$(ConfigurationName)\mangosd.tlb"
+				TypeLibraryName=".\oregoncore__$(PlatformName)_$(ConfigurationName)\oregoncore.tlb"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\shared\Database;..\..\src\shared\vmap;..\..\dep\ACE_wrappers;..\..\src\game\"
+				AdditionalIncludeDirectories="..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game;..\..\src\oregoncore;..\..\dep\ACE_wrappers;..\..\src\shared\Database"
 				PreprocessorDefinitions="VERSION=&quot;0.12.0-SVN&quot;;WIN32;_DEBUG;OREGON_DEBUG;_CONSOLE;ENABLE_CLI"
 				IgnoreStandardIncludePath="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile=".\oregoncore__$(PlatformName)_$(ConfigurationName)\oregoncore.pch"
 				AssemblerListingLocation=".\oregoncore__$(PlatformName)_$(ConfigurationName)\"
@@ -362,6 +365,7 @@
 				SuppressStartupBanner="true"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
+				CallingConvention="0"
 				CompileAs="0"
 			/>
 			<Tool
@@ -380,7 +384,7 @@
 				AdditionalDependencies="libmySQL.lib libeay32.lib ws2_32.lib winmm.lib odbc32.lib odbccp32.lib advapi32.lib dbghelp.lib MSVCPRTD.LIB msvcrtd.lib"
 				OutputFile="..\..\bin\$(PlatformName)_$(ConfigurationName)\OregonCore.exe"
 				Version=""
-				LinkIncremental="2"
+				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\dep\lib\$(PlatformName)_$(ConfigurationName)"
 				GenerateDebugInformation="true"
@@ -388,8 +392,10 @@
 				GenerateMapFile="true"
 				MapFileName="..\..\bin\$(PlatformName)_$(ConfigurationName)\OregonCore.map"
 				SubSystem="1"
+				RandomizedBaseAddress="1"
 				FixedBaseAddress="1"
-				ImportLibrary="$(OutDir)\oregoncore.lib"
+				DataExecutionPrevention="0"
+				ImportLibrary="$(OutDir)\OregonCore.lib"
 				TargetMachine="17"
 			/>
 			<Tool
