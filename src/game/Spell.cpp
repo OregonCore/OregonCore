@@ -1510,7 +1510,7 @@ WorldObject* Spell::SearchNearbyTarget(float range, SpellTargets TargetType)
             SpellScriptTarget::const_iterator upper = spellmgr.GetEndSpellScriptTarget(m_spellInfo->Id);
             if(lower == upper)
             {
-                sLog.outErrorDb("Spell (ID: %u) (caster Entry: %u) does not have record in `spell_script_target`", m_spellInfo->Id, m_caster->GetEntry());
+                sLog.outErrorDb("Spell (ID: %u) (caster Entry: %u) does not have record in spell_script_target", m_spellInfo->Id, m_caster->GetEntry());
                 if(IsPositiveSpell(m_spellInfo->Id))
                     return SearchNearbyTarget(range, SPELL_TARGETS_ALLY);
                 else
@@ -2035,7 +2035,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                 radius = GetSpellRadius(m_spellInfo, i, IsPositiveSpell(m_spellInfo->Id));
                 if(lower == upper)
                 {
-                    sLog.outErrorDb("Spell (ID: %u) (caster Entry: %u) does not have record in `spell_script_target`", m_spellInfo->Id, m_caster->GetEntry());
+                    sLog.outErrorDb("Spell (ID: %u) (caster Entry: %u) does not have record in spell_script_target", m_spellInfo->Id, m_caster->GetEntry());
 
                     if(IsPositiveEffect(m_spellInfo->Id, i))
                         SearchAreaTarget(unitList, radius, pushType, SPELL_TARGETS_ALLY);
@@ -3649,7 +3649,7 @@ uint8 Spell::CanCast(bool strict)
                 SpellScriptTarget::const_iterator lower = spellmgr.GetBeginSpellScriptTarget(m_spellInfo->Id);
                 SpellScriptTarget::const_iterator upper = spellmgr.GetEndSpellScriptTarget(m_spellInfo->Id);
                 if(lower==upper)
-                    sLog.outErrorDb("Spell (ID: %u) has effect EffectImplicitTargetA/EffectImplicitTargetB = TARGET_UNIT_NEARBY_ENTRY or TARGET_DST_NEARBY_ENTRY, but does not have record in `spell_script_target`",m_spellInfo->Id);
+                    sLog.outErrorDb("Spell (ID: %u) has effect EffectImplicitTargetA/EffectImplicitTargetB = TARGET_UNIT_NEARBY_ENTRY or TARGET_DST_NEARBY_ENTRY, but does not have record in spell_script_target",m_spellInfo->Id);
 
                 SpellRangeEntry const* srange = sSpellRangeStore.LookupEntry(m_spellInfo->rangeIndex);
                 float range = GetSpellMaxRange(srange);

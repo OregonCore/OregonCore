@@ -96,7 +96,7 @@ void TicketMgr::DeleteGMTicketPermanently(uint64 ticketGuid)
     }
 
     // delete database record
-    CharacterDatabase.PExecute("DELETE FROM `gm_tickets` WHERE guid= '%u'", ticketGuid);
+    CharacterDatabase.PExecute("DELETE FROM gm_tickets WHERE guid= '%u'", ticketGuid);
 }
 
 
@@ -104,7 +104,7 @@ void TicketMgr::LoadGMTickets()
 {
     // Delete all out of object holder
     GM_TicketList.clear();
-    QueryResult_AutoPtr result = CharacterDatabase.Query( "SELECT `guid`, `playerGuid`, `name`, `message`, `createtime`, `map`, `posX`, `posY`, `posZ`, `timestamp`, `closed`, `assignedto`, `comment` FROM `gm_tickets`" );
+    QueryResult_AutoPtr result = CharacterDatabase.Query( "SELECT guid, playerGuid, name, message, createtime, map, posX, posY, posZ, timestamp, closed, assignedto, comment FROM gm_tickets" );
     GM_Ticket *ticket;
 
     if(!result)
@@ -168,7 +168,7 @@ void TicketMgr::SaveGMTicket(GM_Ticket* ticket)
     std::string msg = ticket->message;
     CharacterDatabase.escape_string(msg);
     std::stringstream ss;
-    ss << "REPLACE INTO `gm_tickets` (`guid`, `playerGuid`, `name`, `message`, `createtime`, `map`, `posX`, `posY`, `posZ`, `timestamp`, `closed`, `assignedto`, `comment`) VALUES('";
+    ss << "REPLACE INTO gm_tickets (guid, playerGuid, name, message, createtime, map, posX, posY, posZ, timestamp, closed, assignedto, comment) VALUES('";
     ss << ticket->guid << "', '";
     ss << ticket->playerGuid << "', '";
     ss << ticket->name << "', '";

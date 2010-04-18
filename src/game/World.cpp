@@ -3073,9 +3073,9 @@ void World::LoadDBVersion()
 
         QueryResult_AutoPtr result;
         if(m_nextId > 0)
-        result = LoginDatabase.PQuery("SELECT `text`, `next` FROM `broadcast_strings` WHERE `id` = %u;", m_nextId);
+        result = LoginDatabase.PQuery("SELECT text, next FROM broadcast_strings WHERE id = %u;", m_nextId);
         else
-        result = LoginDatabase.PQuery("SELECT `text`, `next` FROM `broadcast_strings` ORDER BY RAND();", m_nextId);
+        result = LoginDatabase.PQuery("SELECT text, next FROM broadcast_strings ORDER BY RAND();", m_nextId);
 
         if(!result)
         return;

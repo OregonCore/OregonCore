@@ -117,7 +117,7 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, float x, float
     GameObjectInfo const* goinfo = objmgr.GetGameObjectInfo(name_id);
     if (!goinfo)
     {
-        sLog.outErrorDb("Gameobject (GUID: %u Entry: %u) not created: it have not exist entry in `gameobject_template`. Map: %u  (X: %f Y: %f Z: %f) ang: %f rotation0: %f rotation1: %f rotation2: %f rotation3: %f",guidlow, name_id, map->GetId(), x, y, z, ang, rotation0, rotation1, rotation2, rotation3);
+        sLog.outErrorDb("Gameobject (GUID: %u Entry: %u) not created: it have not exist entry in gameobject_template. Map: %u  (X: %f Y: %f Z: %f) ang: %f rotation0: %f rotation1: %f rotation2: %f rotation3: %f",guidlow, name_id, map->GetId(), x, y, z, ang, rotation0, rotation1, rotation2, rotation3);
         return false;
     }
 
@@ -127,7 +127,7 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, float x, float
 
     if (goinfo->type >= MAX_GAMEOBJECT_TYPE)
     {
-        sLog.outErrorDb("Gameobject (GUID: %u Entry: %u) not created: it have not exist GO type '%u' in `gameobject_template`. It's will crash client if created.",guidlow,name_id,goinfo->type);
+        sLog.outErrorDb("Gameobject (GUID: %u Entry: %u) not created: it have not exist GO type '%u' in gameobject_template. It's will crash client if created.",guidlow,name_id,goinfo->type);
         return false;
     }
 
@@ -595,7 +595,7 @@ bool GameObject::LoadFromDB(uint32 guid, Map *map)
 
     if( !data )
     {
-        sLog.outErrorDb("ERROR: Gameobject (GUID: %u) not found in table `gameobject`, can't load. ",guid);
+        sLog.outErrorDb("ERROR: Gameobject (GUID: %u) not found in table gameobject, can't load. ",guid);
         return false;
     }
 
@@ -1086,7 +1086,7 @@ void GameObject::Use(Unit* user)
 
                     //provide error, no fishable zone or area should be 0
                     if(!zone_skill)
-                        sLog.outErrorDb("Fishable areaId %u are not properly defined in `skill_fishing_base_level`.",subzone);
+                        sLog.outErrorDb("Fishable areaId %u are not properly defined in skill_fishing_base_level.",subzone);
 
                     int32 skill = player->GetSkillValue(SKILL_FISHING);
                     int32 chance = skill - zone_skill + 5;

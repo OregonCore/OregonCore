@@ -277,7 +277,7 @@ bool Guild::LoadRanksFromDB(uint32 GuildId)
     // guild_rank have wrong numbered ranks, repair
     if(broken_ranks)
     {
-        sLog.outError("Guild %u have broken `guild_rank` data, repairing...",GuildId);
+        sLog.outError("Guild %u have broken guild_rank data, repairing...",GuildId);
         CharacterDatabase.BeginTransaction();
         CharacterDatabase.PExecute("DELETE FROM guild_rank WHERE guildid='%u'", GuildId);
         for(size_t i =0; i < m_ranks.size(); ++i)
@@ -363,7 +363,7 @@ bool Guild::FillPlayerData(uint64 guid, MemberSlot* memslot)
             plClass = pInfo->unClass;
             if(plClass<CLASS_WARRIOR||plClass>=MAX_CLASSES)     // can be at broken `class` field
             {
-                sLog.outError("Player (GUID: %u) has a broken data in field `characters`.`class`.",GUID_LOPART(guid));
+                sLog.outError("Player (GUID: %u) has a broken data in field characters.class.",GUID_LOPART(guid));
                 return false;
             }
             plLevel = pInfo->unLevel;
@@ -387,7 +387,7 @@ bool Guild::FillPlayerData(uint64 guid, MemberSlot* memslot)
 
         if(plLevel<1||plLevel>STRONG_MAX_LEVEL)             // can be at broken `data` field
         {
-            sLog.outError("Player (GUID: %u) has a broken data in field `characters`.`data`.",GUID_LOPART(guid));
+            sLog.outError("Player (GUID: %u) has a broken data in field characters.data.",GUID_LOPART(guid));
             return false;
         }
 
@@ -402,7 +402,7 @@ bool Guild::FillPlayerData(uint64 guid, MemberSlot* memslot)
 
         if(plClass<CLASS_WARRIOR||plClass>=MAX_CLASSES)     // can be at broken `class` field
         {
-            sLog.outError("Player (GUID: %u) has a broken data in field `characters`.`class`.",GUID_LOPART(guid));
+            sLog.outError("Player (GUID: %u) has a broken data in field characters.class.",GUID_LOPART(guid));
             return false;
         }
     }

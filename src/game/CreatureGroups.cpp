@@ -78,20 +78,20 @@ void CreatureGroupManager::LoadCreatureFormations()
     CreatureGroupMap.clear();
 
     //Check Integrity of the table
-    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT MAX(`leaderGUID`) FROM `creature_formations`");
+    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT MAX(leaderGUID) FROM creature_formations");
 
     if(!result)
     {
-        sLog.outErrorDb(" ...an error occured while loading the table `creature_formations` ( maybe it doesn't exist ?)\n");
+        sLog.outErrorDb(" ...an error occured while loading the table creature_formations ( maybe it doesn't exist ?)\n");
         return;
     }
 
     //Get group data
-    result = WorldDatabase.PQuery("SELECT `leaderGUID`, `memberGUID`, `dist`, `angle`, `groupAI` FROM `creature_formations` ORDER BY `leaderGUID`");
+    result = WorldDatabase.PQuery("SELECT leaderGUID, memberGUID, dist, angle, groupAI FROM creature_formations ORDER BY leaderGUID");
 
     if(!result)
     {
-        sLog.outErrorDb("The table `creature_formations` is empty or corrupted");
+        sLog.outErrorDb("The table creature_formations is empty or corrupted");
         return;
     }
 
@@ -123,7 +123,7 @@ void CreatureGroupManager::LoadCreatureFormations()
         const CreatureData* member = objmgr.GetCreatureData(memberGUID);
         if(!leader || !member || leader->mapid != member->mapid)
         {
-            sLog.outErrorDb("Table `creature_formations` has an invalid record (leaderGUID: '%u', memberGUID: '%u')", group_member->leaderGUID, memberGUID);
+            sLog.outErrorDb("Table creature_formations has an invalid record (leaderGUID: '%u', memberGUID: '%u')", group_member->leaderGUID, memberGUID);
             delete group_member;
             continue;
         }

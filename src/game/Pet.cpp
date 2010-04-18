@@ -1276,7 +1276,7 @@ void Pet::_LoadSpellCooldowns()
 
             if(!sSpellStore.LookupEntry(spell_id))
             {
-                sLog.outError("Pet %u have unknown spell %u in `pet_spell_cooldown`, skipping.",m_charmInfo->GetPetNumber(),spell_id);
+                sLog.outError("Pet %u have unknown spell %u in pet_spell_cooldown, skipping.",m_charmInfo->GetPetNumber(),spell_id);
                 continue;
             }
 
@@ -1490,7 +1490,7 @@ bool Pet::addSpell(uint16 spell_id, uint16 active, PetSpellState state, uint16 s
         // do pet spell book cleanup
         if(state == PETSPELL_UNCHANGED)                     // spell load case
         {
-            sLog.outError("Pet::addSpell: Non-existed in SpellStore spell #%u request, deleting for all pets in `pet_spell`.",spell_id);
+            sLog.outError("Pet::addSpell: Non-existed in SpellStore spell #%u request, deleting for all pets in pet_spell.",spell_id);
             CharacterDatabase.PExecute("DELETE FROM pet_spell WHERE spell = '%u'",spell_id);
         }
         else

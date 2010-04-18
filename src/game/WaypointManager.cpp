@@ -34,19 +34,19 @@ void WaypointStore::Free()
 
 void WaypointStore::Load()
 {
-    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT MAX(`id`) FROM `waypoint_data`");
+    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT MAX(id) FROM waypoint_data");
     if(!result)
     {
-        sLog.outError(" an error occured while loading the table `waypoint_data` ( maybe it doesn't exist ?)\n");
+        sLog.outError(" an error occured while loading the table waypoint_data ( maybe it doesn't exist ?)\n");
         exit(1);                                            // Stop server at loading non exited table or not accessable table
     }
 
     records = (*result)[0].GetUInt32();
 
-    result = WorldDatabase.PQuery("SELECT `id`,`point`,`position_x`,`position_y`,`position_z`,`move_flag`,`delay`,`action`,`action_chance` FROM `waypoint_data` ORDER BY `id`, `point`");
+    result = WorldDatabase.PQuery("SELECT id,point,position_x,position_y,position_z,move_flag,delay,action,action_chance FROM waypoint_data ORDER BY id, point");
     if(!result)
     {
-        sLog.outErrorDb("The table `creature_addon` is empty or corrupted");
+        sLog.outErrorDb("The table creature_addon is empty or corrupted");
         return;
     }
 
@@ -100,7 +100,7 @@ void WaypointStore::UpdatePath(uint32 id)
     if(waypoint_map.find(id)!= waypoint_map.end())
         waypoint_map[id]->clear();
 
-    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT `id`,`point`,`position_x`,`position_y`,`position_z`,`move_flag`,`delay`,`action`,`action_chance` FROM `waypoint_data` WHERE id = %u ORDER BY `point`", id);
+    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT id,point,position_x,position_y,position_z,move_flag,delay,action,action_chance FROM waypoint_data WHERE id = %u ORDER BY point", id);
 
     if(!result)
         return;

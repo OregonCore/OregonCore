@@ -62,33 +62,33 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Texts(bool check_entry_use)
             // range negative
             if (i > MIN_CREATURE_AI_TEXT_STRING_ID || i <= MAX_CREATURE_AI_TEXT_STRING_ID)
             {
-                sLog.outErrorDb("CreatureEventAI:  Entry %i in table `creature_ai_texts` is not in valid range(%d-%d)",i,MIN_CREATURE_AI_TEXT_STRING_ID,MAX_CREATURE_AI_TEXT_STRING_ID);
+                sLog.outErrorDb("CreatureEventAI:  Entry %i in table creature_ai_texts is not in valid range(%d-%d)",i,MIN_CREATURE_AI_TEXT_STRING_ID,MAX_CREATURE_AI_TEXT_STRING_ID);
                 continue;
             }
 
             // range negative (don't must be happen, loaded from same table)
             if (!objmgr.GetOregonStringLocale(i))
             {
-                sLog.outErrorDb("CreatureEventAI:  Entry %i in table `creature_ai_texts` not found",i);
+                sLog.outErrorDb("CreatureEventAI:  Entry %i in table creature_ai_texts not found",i);
                 continue;
             }
 
             if (temp.SoundId)
             {
                 if (!sSoundEntriesStore.LookupEntry(temp.SoundId))
-                    sLog.outErrorDb("CreatureEventAI:  Entry %i in table `creature_ai_texts` has Sound %u but sound does not exist.",i,temp.SoundId);
+                    sLog.outErrorDb("CreatureEventAI:  Entry %i in table creature_ai_texts has Sound %u but sound does not exist.",i,temp.SoundId);
             }
 
             if (!GetLanguageDescByID(temp.Language))
-                sLog.outErrorDb("CreatureEventAI:  Entry %i in table `creature_ai_texts` using Language %u but Language does not exist.",i,temp.Language);
+                sLog.outErrorDb("CreatureEventAI:  Entry %i in table creature_ai_texts using Language %u but Language does not exist.",i,temp.Language);
 
             if (temp.Type > CHAT_TYPE_ZONE_YELL)
-                sLog.outErrorDb("CreatureEventAI:  Entry %i in table `creature_ai_texts` has Type %u but this Chat Type does not exist.",i,temp.Type);
+                sLog.outErrorDb("CreatureEventAI:  Entry %i in table creature_ai_texts has Type %u but this Chat Type does not exist.",i,temp.Type);
 
             if (temp.Emote)
             {
                 if (!sEmotesStore.LookupEntry(temp.Emote))
-                    sLog.outErrorDb("CreatureEventAI:  Entry %i in table `creature_ai_texts` has Emote %u but emote does not exist.",i,temp.Emote);
+                    sLog.outErrorDb("CreatureEventAI:  Entry %i in table creature_ai_texts has Emote %u but emote does not exist.",i,temp.Emote);
             }
 
             m_CreatureEventAI_TextMap[i] = temp;
@@ -106,7 +106,7 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Texts(bool check_entry_use)
         barGoLink bar(1);
         bar.step();
         sLog.outString();
-        sLog.outString(">> Loaded 0 additional CreatureEventAI Texts data. DB table `creature_ai_texts` is empty.");
+        sLog.outString(">> Loaded 0 additional CreatureEventAI Texts data. DB table creature_ai_texts is empty.");
     }
 
 }
@@ -143,7 +143,7 @@ void CreatureEventAIMgr::CheckUnusedAITexts()
     }
 
     for(std::set<int32>::const_iterator itr = idx_set.begin(); itr != idx_set.end(); ++itr)
-        sLog.outErrorDb("CreatureEventAI:  Entry %i in table `creature_ai_texts` but not used in EventAI scripts.",*itr);
+        sLog.outErrorDb("CreatureEventAI:  Entry %i in table creature_ai_texts but not used in EventAI scripts.",*itr);
 }
 
 // -------------------
@@ -196,7 +196,7 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Summons(bool check_entry_use)
         barGoLink bar(1);
         bar.step();
         sLog.outString();
-        sLog.outString(">> Loaded 0 CreatureEventAI Summon definitions. DB table `creature_ai_summons` is empty.");
+        sLog.outString(">> Loaded 0 CreatureEventAI Summon definitions. DB table creature_ai_summons is empty.");
     }
 
 }
@@ -231,7 +231,7 @@ void CreatureEventAIMgr::CheckUnusedAISummons()
     }
 
     for(std::set<int32>::const_iterator itr = idx_set.begin(); itr != idx_set.end(); ++itr)
-        sLog.outErrorDb("CreatureEventAI:  Entry %i in table `creature_ai_summons` but not used in EventAI scripts.",*itr);
+        sLog.outErrorDb("CreatureEventAI:  Entry %i in table creature_ai_summons but not used in EventAI scripts.",*itr);
 }
 
 // -------------------
@@ -808,6 +808,6 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
         barGoLink bar(1);
         bar.step();
         sLog.outString();
-        sLog.outString(">> Loaded 0 CreatureEventAI scripts. DB table `creature_ai_scripts` is empty.");
+        sLog.outString(">> Loaded 0 CreatureEventAI scripts. DB table creature_ai_scripts is empty.");
     }
 }

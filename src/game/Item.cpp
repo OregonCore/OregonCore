@@ -342,7 +342,7 @@ bool Item::LoadFromDB(uint32 guid, uint64 owner_guid, QueryResult_AutoPtr result
 
     if (!result)
     {
-        sLog.outError("ERROR: Item (GUID: %u owner: %u) not found in table `item_instance`, can't load. ",guid,GUID_LOPART(owner_guid));
+        sLog.outError("ERROR: Item (GUID: %u owner: %u) not found in table item_instance, can't load. ",guid,GUID_LOPART(owner_guid));
         return false;
     }
 
@@ -350,7 +350,7 @@ bool Item::LoadFromDB(uint32 guid, uint64 owner_guid, QueryResult_AutoPtr result
 
     if(!LoadValues(fields[0].GetString()))
     {
-        sLog.outError("ERROR: Item #%d have broken data in `data` field. Can't be loaded.",guid);
+        sLog.outError("ERROR: Item #%d have broken data in data field. Can't be loaded.",guid);
         return false;
     }
 

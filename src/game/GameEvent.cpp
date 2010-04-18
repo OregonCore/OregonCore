@@ -207,7 +207,7 @@ void GameEvent::LoadFromDB()
         uint16 event_id = fields[0].GetUInt16();
         if(event_id==0)
         {
-            sLog.outErrorDb("`game_event` game event id (%i) is reserved and can't be used.",event_id);
+            sLog.outErrorDb("game_event game event id (%i) is reserved and can't be used.",event_id);
             continue;
         }
 
@@ -224,7 +224,7 @@ void GameEvent::LoadFromDB()
 
         if(pGameEvent.length==0 && pGameEvent.state == GAMEEVENT_NORMAL)                            // length>0 is validity check
         {
-            sLog.outErrorDb("`game_event` game event id (%i) isn't a world event and has length = 0, thus it can't be used.",event_id);
+            sLog.outErrorDb("game_event game event id (%i) isn't a world event and has length = 0, thus it can't be used.",event_id);
             continue;
         }
 
@@ -260,7 +260,7 @@ void GameEvent::LoadFromDB()
 
             if(event_id >= mGameEvent.size())
             {
-                sLog.outErrorDb("`game_event_save` game event id (%i) is out of range compared to max event id in `game_event`",event_id);
+                sLog.outErrorDb("game_event_save game event id (%i) is out of range compared to max event id in game_event",event_id);
                 continue;
             }
 
@@ -306,7 +306,7 @@ void GameEvent::LoadFromDB()
 
             if(event_id >= mGameEvent.size())
             {
-                sLog.outErrorDb("`game_event_prerequisite` game event id (%i) is out of range compared to max event id in `game_event`",event_id);
+                sLog.outErrorDb("game_event_prerequisite game event id (%i) is out of range compared to max event id in game_event",event_id);
                 continue;
             }
 
@@ -316,7 +316,7 @@ void GameEvent::LoadFromDB()
                 uint16 prerequisite_event = fields[1].GetUInt16();
                 if(prerequisite_event >= mGameEvent.size())
                 {
-                    sLog.outErrorDb("`game_event_prerequisite` game event prerequisite id (%i) is out of range compared to max event id in `game_event`",prerequisite_event);
+                    sLog.outErrorDb("game_event_prerequisite game event prerequisite id (%i) is out of range compared to max event id in game_event",prerequisite_event);
                     continue;
                 }
                 mGameEvent[event_id].prerequisite_events.insert(prerequisite_event);
@@ -365,7 +365,7 @@ void GameEvent::LoadFromDB()
 
             if(internal_event_id < 0 || internal_event_id >= mGameEventCreatureGuids.size())
             {
-                sLog.outErrorDb("`game_event_creature` game event id (%i) is out of range compared to max event id in `game_event`",event_id);
+                sLog.outErrorDb("game_event_creature game event id (%i) is out of range compared to max event id in game_event",event_id);
                 continue;
             }
 
@@ -409,7 +409,7 @@ void GameEvent::LoadFromDB()
 
             if(internal_event_id < 0 || internal_event_id >= mGameEventGameobjectGuids.size())
             {
-                sLog.outErrorDb("`game_event_gameobject` game event id (%i) is out of range compared to max event id in `game_event`",event_id);
+                sLog.outErrorDb("game_event_gameobject game event id (%i) is out of range compared to max event id in game_event",event_id);
                 continue;
             }
 
@@ -452,7 +452,7 @@ void GameEvent::LoadFromDB()
 
             if(event_id >= mGameEventModelEquip.size())
             {
-                sLog.outErrorDb("`game_event_model_equip` game event id (%u) is out of range compared to max event id in `game_event`",event_id);
+                sLog.outErrorDb("game_event_model_equip game event id (%u) is out of range compared to max event id in game_event",event_id);
                 continue;
             }
 
@@ -468,7 +468,7 @@ void GameEvent::LoadFromDB()
             {
                 if(!objmgr.GetEquipmentInfo(newModelEquipSet.equipment_id))
                 {
-                    sLog.outErrorDb("Table `game_event_model_equip` have creature (Guid: %u) with equipment_id %u not found in table `creature_equip_template`, set to no equipment.", guid, newModelEquipSet.equipment_id);
+                    sLog.outErrorDb("Table game_event_model_equip have creature (Guid: %u) with equipment_id %u not found in table creature_equip_template, set to no equipment.", guid, newModelEquipSet.equipment_id);
                     continue;
                 }
             }
@@ -508,7 +508,7 @@ void GameEvent::LoadFromDB()
 
             if(event_id >= mGameEventCreatureQuests.size())
             {
-                sLog.outErrorDb("`game_event_creature_quest` game event id (%u) is out of range compared to max event id in `game_event`",event_id);
+                sLog.outErrorDb("game_event_creature_quest game event id (%u) is out of range compared to max event id in game_event",event_id);
                 continue;
             }
 
@@ -549,7 +549,7 @@ void GameEvent::LoadFromDB()
 
             if(event_id >= mGameEventGameObjectQuests.size())
             {
-                sLog.outErrorDb("`game_event_gameobject_quest` game event id (%u) is out of range compared to max event id in `game_event`",event_id);
+                sLog.outErrorDb("game_event_gameobject_quest game event id (%u) is out of range compared to max event id in game_event",event_id);
                 continue;
             }
 
@@ -591,7 +591,7 @@ void GameEvent::LoadFromDB()
 
             if(event_id >= mGameEvent.size())
             {
-                sLog.outErrorDb("`game_event_quest_condition` game event id (%u) is out of range compared to max event id in `game_event`",event_id);
+                sLog.outErrorDb("game_event_quest_condition game event id (%u) is out of range compared to max event id in game_event",event_id);
                 continue;
             }
 
@@ -632,7 +632,7 @@ void GameEvent::LoadFromDB()
 
             if(event_id >= mGameEvent.size())
             {
-                sLog.outErrorDb("`game_event_condition` game event id (%u) is out of range compared to max event id in `game_event`",event_id);
+                sLog.outErrorDb("game_event_condition game event id (%u) is out of range compared to max event id in game_event",event_id);
                 continue;
             }
 
@@ -675,7 +675,7 @@ void GameEvent::LoadFromDB()
 
             if(event_id >= mGameEvent.size())
             {
-                sLog.outErrorDb("`game_event_condition_save` game event id (%u) is out of range compared to max event id in `game_event`",event_id);
+                sLog.outErrorDb("game_event_condition_save game event id (%u) is out of range compared to max event id in game_event",event_id);
                 continue;
             }
 
@@ -726,7 +726,7 @@ void GameEvent::LoadFromDB()
 
             if(event_id >= mGameEvent.size())
             {
-                sLog.outErrorDb("`game_event_npcflag` game event id (%u) is out of range compared to max event id in `game_event`",event_id);
+                sLog.outErrorDb("game_event_npcflag game event id (%u) is out of range compared to max event id in game_event",event_id);
                 continue;
             }
 
@@ -765,7 +765,7 @@ void GameEvent::LoadFromDB()
 
             if(event_id >= mGameEventVendors.size())
             {
-                sLog.outErrorDb("`game_event_npc_vendor` game event id (%u) is out of range compared to max event id in `game_event`",event_id);
+                sLog.outErrorDb("game_event_npc_vendor game event id (%u) is out of range compared to max event id in game_event",event_id);
                 continue;
             }
 
@@ -832,7 +832,7 @@ void GameEvent::LoadFromDB()
 
             if(event_id >= mGameEvent.size())
             {
-                sLog.outErrorDb("`game_event_npc_gossip` game event id (%u) is out of range compared to max event id in `game_event`",event_id);
+                sLog.outErrorDb("game_event_npc_gossip game event id (%u) is out of range compared to max event id in game_event",event_id);
                 continue;
             }
 
@@ -874,7 +874,7 @@ void GameEvent::LoadFromDB()
 
             if(event_id >= mGameEvent.size())
             {
-                sLog.outErrorDb("`game_event_battleground_holiday` game event id (%u) is out of range compared to max event id in `game_event`",event_id);
+                sLog.outErrorDb("game_event_battleground_holiday game event id (%u) is out of range compared to max event id in game_event",event_id);
                 continue;
             }
 

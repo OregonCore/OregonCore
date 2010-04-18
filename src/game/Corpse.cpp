@@ -147,7 +147,7 @@ bool Corpse::LoadFromDB(uint32 guid, QueryResult_AutoPtr result, uint32 Instance
 
     if( ! result )
     {
-        sLog.outError("ERROR: Corpse (GUID: %u) not found in table `corpse`, can't load. ",guid);
+        sLog.outError("ERROR: Corpse (GUID: %u) not found in table corpse, can't load. ",guid);
         return false;
     }
 
@@ -171,7 +171,7 @@ bool Corpse::LoadFromDB(uint32 guid, Field *fields)
 
     if(!LoadValues( fields[5].GetString() ))
     {
-        sLog.outError("ERROR: Corpse #%d have broken data in `data` field. Can't be loaded.",guid);
+        sLog.outError("ERROR: Corpse #%d have broken data in data field. Can't be loaded.",guid);
         return false;
     }
 

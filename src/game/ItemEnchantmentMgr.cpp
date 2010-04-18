@@ -82,7 +82,7 @@ void LoadRandomEnchantmentsTable()
     else
     {
         sLog.outString();
-        sLog.outErrorDb( ">> Loaded 0 Item Enchantment definitions. DB table `item_enchantment_template` is empty.");
+        sLog.outErrorDb( ">> Loaded 0 Item Enchantment definitions. DB table item_enchantment_template is empty.");
     }
 }
 
@@ -94,7 +94,7 @@ uint32 GetItemEnchantMod(uint32 entry)
 
     if (tab == RandomItemEnch.end())
     {
-        sLog.outErrorDb("Item RandomProperty / RandomSuffix id #%u used in `item_template` but it doesn't have records in `item_enchantment_template` table.",entry);
+        sLog.outErrorDb("Item RandomProperty / RandomSuffix id #%u used in item_template but it doesn't have records in item_enchantment_template table.",entry);
         return 0;
     }
 

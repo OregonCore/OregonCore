@@ -2425,7 +2425,7 @@ void Aura::HandleAuraMounted(bool apply, bool Real)
         CreatureInfo const* ci = objmgr.GetCreatureTemplate(m_modifier.m_miscvalue);
         if(!ci)
         {
-            sLog.outErrorDb("AuraMounted: `creature_template`='%u' not found in database (only need it modelid)", m_modifier.m_miscvalue);
+            sLog.outErrorDb("AuraMounted: creature_template='%u' not found in database (only need it modelid)", m_modifier.m_miscvalue);
             return;
         }
 

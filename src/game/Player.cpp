@@ -720,7 +720,7 @@ bool Player::Create( uint32 guidlow, const std::string& name, uint8 race, uint8 
             ItemPrototype const* iProto = objmgr.GetItemPrototype(item_id);
             if(!iProto)
             {
-                sLog.outErrorDb("Initial item id %u (race %u class %u) from CharStartOutfit.dbc not listed in `item_template`, ignoring.",item_id,getRace(),getClass());
+                sLog.outErrorDb("Initial item id %u (race %u class %u) from CharStartOutfit.dbc not listed in item_template, ignoring.",item_id,getRace(),getClass());
                 continue;
             }
 
@@ -2617,7 +2617,7 @@ bool Player::addSpell(uint32 spell_id, bool active, bool learning, bool loading,
         // do character spell book cleanup (all characters)
         if(loading && !learning)                            // spell load case
         {
-            sLog.outError("Player::addSpell: Non-existed in SpellStore spell #%u request, deleting for all characters in `character_spell`.",spell_id);
+            sLog.outError("Player::addSpell: Non-existed in SpellStore spell #%u request, deleting for all characters in character_spell.",spell_id);
             CharacterDatabase.PExecute("DELETE FROM character_spell WHERE spell = '%u'",spell_id);
         }
         else
@@ -2631,7 +2631,7 @@ bool Player::addSpell(uint32 spell_id, bool active, bool learning, bool loading,
         // do character spell book cleanup (all characters)
         if(loading && !learning)                            // spell load case
         {
-            sLog.outError("Player::addSpell: Broken spell #%u learning not allowed, deleting for all characters in `character_spell`.",spell_id);
+            sLog.outError("Player::addSpell: Broken spell #%u learning not allowed, deleting for all characters in character_spell.",spell_id);
             CharacterDatabase.PExecute("DELETE FROM character_spell WHERE spell = '%u'",spell_id);
         }
         else
@@ -3162,7 +3162,7 @@ void Player::_LoadSpellCooldowns(QueryResult_AutoPtr result)
 
             if(!sSpellStore.LookupEntry(spell_id))
             {
-                sLog.outError("Player %u have unknown spell %u in `character_spell_cooldown`, skipping.",GetGUIDLow(),spell_id);
+                sLog.outError("Player %u have unknown spell %u in character_spell_cooldown, skipping.",GetGUIDLow(),spell_id);
                 continue;
             }
 
@@ -13805,7 +13805,7 @@ bool Player::MinimalLoadFromDB( QueryResult_AutoPtr result, uint32 guid )
 
     if(!LoadValues( fields[1].GetString()))
     {
-        sLog.outError("ERROR: Player #%d have broken data in `data` field. Can't be loaded.",GUID_LOPART(guid));
+        sLog.outError("ERROR: Player #%d have broken data in data field. Can't be loaded.",GUID_LOPART(guid));
         return false;
     }
 
@@ -13990,7 +13990,7 @@ bool Player::LoadFromDB( uint32 guid, SqlQueryHolder *holder )
 
     if(!result)
     {
-        sLog.outError("ERROR: Player (GUID: %u) not found in table `characters`, can't load. ",guid);
+        sLog.outError("ERROR: Player (GUID: %u) not found in table characters, can't load. ",guid);
         return false;
     }
 
@@ -14019,7 +14019,7 @@ bool Player::LoadFromDB( uint32 guid, SqlQueryHolder *holder )
 
     if(!LoadValues( fields[2].GetString()))
     {
-        sLog.outError("ERROR: Player #%d have broken data in `data` field. Can't be loaded.",GUID_LOPART(guid));
+        sLog.outError("ERROR: Player #%d have broken data in data field. Can't be loaded.",GUID_LOPART(guid));
         return false;
     }
 
@@ -15061,7 +15061,7 @@ void Player::_LoadDailyQuestStatus(QueryResult_AutoPtr result)
         {
             if(quest_daily_idx >= PLAYER_MAX_DAILY_QUESTS)  // max amount with exist data in query
             {
-                sLog.outError("Player (GUID: %u) have more 25 daily quest records in `charcter_queststatus_daily`",GetGUIDLow());
+                sLog.outError("Player (GUID: %u) have more 25 daily quest records in charcter_queststatus_daily",GetGUIDLow());
                 break;
             }
 

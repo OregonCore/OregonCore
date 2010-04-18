@@ -50,7 +50,7 @@ void SystemMgr::LoadVersion()
     }
     else
     {
-        error_log("TSCR: Missing `version`.`script_version` information.");
+        error_log("TSCR: Missing version.script_version information.");
         outstring_log("");
     }
 }
@@ -83,27 +83,27 @@ void SystemMgr::LoadScriptTexts()
 
             if (iId >= 0)
             {
-                error_db_log("TSCR: Entry %i in table `script_texts` is not a negative value.", iId);
+                error_db_log("TSCR: Entry %i in table script_texts is not a negative value.", iId);
                 continue;
             }
 
             if (iId > TEXT_SOURCE_RANGE || iId <= TEXT_SOURCE_RANGE*2)
             {
-                error_db_log("TSCR: Entry %i in table `script_texts` is out of accepted entry range for table.", iId);
+                error_db_log("TSCR: Entry %i in table script_texts is out of accepted entry range for table.", iId);
                 continue;
             }
 
             if (pTemp.uiSoundId)
             {
                 if (!GetSoundEntriesStore()->LookupEntry(pTemp.uiSoundId))
-                    error_db_log("TSCR: Entry %i in table `script_texts` has soundId %u but sound does not exist.", iId, pTemp.uiSoundId);
+                    error_db_log("TSCR: Entry %i in table script_texts has soundId %u but sound does not exist.", iId, pTemp.uiSoundId);
             }
 
             if (!GetLanguageDescByID(pTemp.uiLanguage))
-                error_db_log("TSCR: Entry %i in table `script_texts` using Language %u but Language does not exist.", iId, pTemp.uiLanguage);
+                error_db_log("TSCR: Entry %i in table script_texts using Language %u but Language does not exist.", iId, pTemp.uiLanguage);
 
             if (pTemp.uiType > CHAT_TYPE_ZONE_YELL)
-                error_db_log("TSCR: Entry %i in table `script_texts` has Type %u but this Chat Type does not exist.", iId, pTemp.uiType);
+                error_db_log("TSCR: Entry %i in table script_texts has Type %u but this Chat Type does not exist.", iId, pTemp.uiType);
 
             m_mTextDataMap[iId] = pTemp;
             ++uiCount;
@@ -117,7 +117,7 @@ void SystemMgr::LoadScriptTexts()
         barGoLink bar(1);
         bar.step();
         outstring_log("");
-        outstring_log(">> Loaded 0 additional Script Texts data. DB table `script_texts` is empty.");
+        outstring_log(">> Loaded 0 additional Script Texts data. DB table script_texts is empty.");
     }
 }
 
@@ -149,27 +149,27 @@ void SystemMgr::LoadScriptTextsCustom()
 
             if (iId >= 0)
             {
-                error_db_log("TSCR: Entry %i in table `custom_texts` is not a negative value.", iId);
+                error_db_log("TSCR: Entry %i in table custom_texts is not a negative value.", iId);
                 continue;
             }
 
             if (iId > TEXT_SOURCE_RANGE*2 || iId <= TEXT_SOURCE_RANGE*3)
             {
-                error_db_log("TSCR: Entry %i in table `custom_texts` is out of accepted entry range for table.", iId);
+                error_db_log("TSCR: Entry %i in table custom_texts is out of accepted entry range for table.", iId);
                 continue;
             }
 
             if (pTemp.uiSoundId)
             {
                 if (!GetSoundEntriesStore()->LookupEntry(pTemp.uiSoundId))
-                    error_db_log("TSCR: Entry %i in table `custom_texts` has soundId %u but sound does not exist.", iId, pTemp.uiSoundId);
+                    error_db_log("TSCR: Entry %i in table custom_texts has soundId %u but sound does not exist.", iId, pTemp.uiSoundId);
             }
 
             if (!GetLanguageDescByID(pTemp.uiLanguage))
-                error_db_log("TSCR: Entry %i in table `custom_texts` using Language %u but Language does not exist.", iId, pTemp.uiLanguage);
+                error_db_log("TSCR: Entry %i in table custom_texts using Language %u but Language does not exist.", iId, pTemp.uiLanguage);
 
             if (pTemp.uiType > CHAT_TYPE_ZONE_YELL)
-                error_db_log("TSCR: Entry %i in table `custom_texts` has Type %u but this Chat Type does not exist.", iId, pTemp.uiType);
+                error_db_log("TSCR: Entry %i in table custom_texts has Type %u but this Chat Type does not exist.", iId, pTemp.uiType);
 
             m_mTextDataMap[iId] = pTemp;
             ++uiCount;
@@ -183,7 +183,7 @@ void SystemMgr::LoadScriptTextsCustom()
         barGoLink bar(1);
         bar.step();
         outstring_log("");
-        outstring_log(">> Loaded 0 additional Custom Texts data. DB table `custom_texts` is empty.");
+        outstring_log(">> Loaded 0 additional Custom Texts data. DB table custom_texts is empty.");
     }
 }
 
@@ -245,7 +245,7 @@ void SystemMgr::LoadScriptWaypoints()
         barGoLink bar(1);
         bar.step();
         outstring_log("");
-        outstring_log(">> Loaded 0 Script Waypoints. DB table `script_waypoint` is empty.");
+        outstring_log(">> Loaded 0 Script Waypoints. DB table script_waypoint is empty.");
     }
 }
 

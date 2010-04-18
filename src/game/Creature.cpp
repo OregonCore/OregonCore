@@ -276,7 +276,7 @@ bool Creature::InitEntry(uint32 Entry, uint32 team, const CreatureData *data )
     // Cancel load if no model defined
     if (!(cinfo->GetFirstValidModelId()))
     {
-        sLog.outErrorDb("Creature (Entry: %u) has no model defined in table `creature_template`, can't load. ",Entry);
+        sLog.outErrorDb("Creature (Entry: %u) has no model defined in table creature_template, can't load. ",Entry);
         return false;
     }
 
@@ -284,7 +284,7 @@ bool Creature::InitEntry(uint32 Entry, uint32 team, const CreatureData *data )
     CreatureModelInfo const *minfo = objmgr.GetCreatureModelRandomGender(display_id);
     if (!minfo)
     {
-        sLog.outErrorDb("Creature (Entry: %u) has model %u not found in table `creature_model_info`, can't load. ", Entry, display_id);
+        sLog.outErrorDb("Creature (Entry: %u) has model %u not found in table creature_model_info, can't load. ", Entry, display_id);
         return false;
     }
     else
@@ -1394,7 +1394,7 @@ bool Creature::LoadFromDB(uint32 guid, Map *map)
 
     if(!data)
     {
-        sLog.outErrorDb("Creature (GUID: %u) not found in table `creature`, can't load. ",guid);
+        sLog.outErrorDb("Creature (GUID: %u) not found in table creature, can't load. ",guid);
         return false;
     }
 
@@ -2133,7 +2133,7 @@ bool Creature::LoadCreaturesAddon(bool reload)
             SpellEntry const *AdditionalSpellInfo = sSpellStore.LookupEntry(cAura->spell_id);
             if (!AdditionalSpellInfo)
             {
-                sLog.outErrorDb("Creature (GUIDLow: %u Entry: %u ) has wrong spell %u defined in `auras` field.",GetGUIDLow(),GetEntry(),cAura->spell_id);
+                sLog.outErrorDb("Creature (GUIDLow: %u Entry: %u ) has wrong spell %u defined in auras field.",GetGUIDLow(),GetEntry(),cAura->spell_id);
                 continue;
             }
 
@@ -2141,7 +2141,7 @@ bool Creature::LoadCreaturesAddon(bool reload)
             if(HasAura(cAura->spell_id,cAura->effect_idx))
             {
                 if(!reload)
-                    sLog.outErrorDb("Creature (GUIDLow: %u Entry: %u ) has duplicate aura (spell %u effect %u) in `auras` field.",GetGUIDLow(),GetEntry(),cAura->spell_id,cAura->effect_idx);
+                    sLog.outErrorDb("Creature (GUIDLow: %u Entry: %u ) has duplicate aura (spell %u effect %u) in auras field.",GetGUIDLow(),GetEntry(),cAura->spell_id,cAura->effect_idx);
 
                 continue;
             }

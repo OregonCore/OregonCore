@@ -171,7 +171,7 @@ void AuctionHouseMgr::SendAuctionWonMail( AuctionEntry *auction )
         uint32 itemTextId = objmgr.CreateItemText( msgAuctionWonBody.str() );
 
         // set owner to bidder (to prevent delete item with sender char deleting)
-        // owner in `data` will set at mail receive and item extracting
+        // owner in data will set at mail receive and item extracting
         CharacterDatabase.PExecute("UPDATE item_instance SET owner_guid = '%u' WHERE guid='%u'",auction->bidder,pItem->GetGUIDLow());
         CharacterDatabase.CommitTransaction();
 
@@ -368,7 +368,7 @@ void AuctionHouseMgr::LoadAuctions()
         barGoLink bar(1);
         bar.step();
         sLog.outString("");
-        sLog.outString(">> Loaded 0 auctions. DB table `auctionhouse` is empty.");
+        sLog.outString(">> Loaded 0 auctions. DB table auctionhouse is empty.");
         return;
     }
 
@@ -380,7 +380,7 @@ void AuctionHouseMgr::LoadAuctions()
         barGoLink bar(1);
         bar.step();
         sLog.outString("");
-        sLog.outString(">> Loaded 0 auctions. DB table `auctionhouse` is empty.");
+        sLog.outString(">> Loaded 0 auctions. DB table auctionhouse is empty.");
         return;
     }
 
@@ -390,7 +390,7 @@ void AuctionHouseMgr::LoadAuctions()
         barGoLink bar(1);
         bar.step();
         sLog.outString("");
-        sLog.outString(">> Loaded 0 auctions. DB table `auctionhouse` is empty.");
+        sLog.outString(">> Loaded 0 auctions. DB table auctionhouse is empty.");
         return;
     }
 

@@ -127,7 +127,7 @@ void MapManager::LoadTransports()
             uint32 guid  = fields[0].GetUInt32();
             uint32 entry = fields[1].GetUInt32();
             std::string name = fields[2].GetCppString();
-            sLog.outErrorDb("Transport %u '%s' have record (GUID: %u) in `gameobject`. Transports DON'T must have any records in `gameobject` or its behavior will be unpredictable/bugged.",entry,name.c_str(),guid);
+            sLog.outErrorDb("Transport %u '%s' have record (GUID: %u) in gameobject. Transports DON'T must have any records in gameobject or its behavior will be unpredictable/bugged.",entry,name.c_str(),guid);
         }
         while(result->NextRow());
     }
@@ -158,7 +158,7 @@ bool Transport::Create(uint32 guidlow, uint32 mapid, float x, float y, float z, 
 
     if (!goinfo)
     {
-        sLog.outErrorDb("Transport not created: entry in `gameobject_template` not found, guidlow: %u map: %u  (X: %f Y: %f Z: %f) ang: %f",guidlow, mapid, x, y, z, ang);
+        sLog.outErrorDb("Transport not created: entry in gameobject_template not found, guidlow: %u map: %u  (X: %f Y: %f Z: %f) ang: %f",guidlow, mapid, x, y, z, ang);
         return false;
     }
 

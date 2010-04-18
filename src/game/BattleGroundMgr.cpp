@@ -1464,7 +1464,7 @@ void BattleGroundMgr::CreateInitialBattleGrounds()
         bar.step();
 
         sLog.outString();
-        sLog.outErrorDb(">> Loaded 0 battlegrounds. DB table `battleground_template` is empty.");
+        sLog.outErrorDb(">> Loaded 0 battlegrounds. DB table battleground_template is empty.");
         return;
     }
 
@@ -1521,7 +1521,7 @@ void BattleGroundMgr::CreateInitialBattleGrounds()
         }
         else
         {
-            sLog.outErrorDb("Table `battleground_template` for id %u have non-existed WorldSafeLocs.dbc id %u in field `AllianceStartLoc`. BG not created.",bgTypeID,start1);
+            sLog.outErrorDb("Table battleground_template for id %u have non-existed WorldSafeLocs.dbc id %u in field AllianceStartLoc. BG not created.",bgTypeID,start1);
             continue;
         }
 
@@ -1544,7 +1544,7 @@ void BattleGroundMgr::CreateInitialBattleGrounds()
         }
         else
         {
-            sLog.outErrorDb("Table `battleground_template` for id %u have non-existed WorldSafeLocs.dbc id %u in field `HordeStartLoc`. BG not created.",bgTypeID,start2);
+            sLog.outErrorDb("Table battleground_template for id %u have non-existed WorldSafeLocs.dbc id %u in field HordeStartLoc. BG not created.",bgTypeID,start2);
             continue;
         }
 
@@ -1601,7 +1601,7 @@ void BattleGroundMgr::DistributeArenaPoints()
     for (std::map<uint32, uint32>::iterator plr_itr = PlayerPoints.begin(); plr_itr != PlayerPoints.end(); ++plr_itr)
     {
         //update to database
-        CharacterDatabase.PExecute("UPDATE characters SET arena_pending_points = '%u' WHERE `guid` = '%u'", plr_itr->second, plr_itr->first);
+        CharacterDatabase.PExecute("UPDATE characters SET arena_pending_points = '%u' WHERE guid = '%u'", plr_itr->second, plr_itr->first);
         //add points if player is online
         Player* pl = objmgr.GetPlayer(plr_itr->first);
         if (pl)
