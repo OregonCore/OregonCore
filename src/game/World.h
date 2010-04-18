@@ -29,6 +29,7 @@
 #include "Timer.h"
 #include "Policies/Singleton.h"
 #include "SharedDefines.h"
+#include "QueryResult.h"
 
 #include <map>
 #include <set>
@@ -569,7 +570,7 @@ class World
         void _UpdateGameTime();
         void ScriptsProcess();
         // callback for UpdateRealmCharacters
-        void _UpdateRealmCharCount(QueryResult *resultCharCount, uint32 accountId);
+        void _UpdateRealmCharCount(QueryResult_AutoPtr resultCharCount, uint32 accountId);
 
         void InitDailyQuestResetTime();
         void ResetDailyQuests();

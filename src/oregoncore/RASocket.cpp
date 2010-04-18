@@ -154,7 +154,7 @@ void RASocket::OnRead()
                     ///- Escape the Login to allow quotes in names
                     LoginDatabase.escape_string(login);
 
-                    QueryResult* result = LoginDatabase.PQuery("SELECT gmlevel FROM account WHERE username = '%s'",login.c_str());
+                    QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT gmlevel FROM account WHERE username = '%s'",login.c_str());
 
                     ///- If the user is not found, deny access
                     if(!result)
@@ -179,7 +179,6 @@ void RASocket::OnRead()
                         {
                             stage=LG;
                         }
-                        delete result;
                     }
                 }
                 break;
@@ -196,13 +195,12 @@ void RASocket::OnRead()
                     LoginDatabase.escape_string(login);
                     LoginDatabase.escape_string(pw);
 
-                    QueryResult *check = LoginDatabase.PQuery(
+                    QueryResult_AutoPtr check = LoginDatabase.PQuery(
                         "SELECT 1 FROM account WHERE username = '%s' AND sha_pass_hash=SHA1(CONCAT(username,':','%s'))",
                         login.c_str(), pw.c_str());
 
                     if(check)
                     {
-                        delete check;
                         r=GetSocket();
                         stage=OK;
                         ++iUsers;

@@ -682,8 +682,7 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     LoginDatabase.escape_string (safe_account);
     // No SQL injection, username escaped.
 
-    QueryResult *result =
-          LoginDatabase.PQuery ("SELECT "
+    QueryResult_AutoPtr result = LoginDatabase.PQuery ("SELECT "
                                 "id, " //0
                                 "gmlevel, " //1
                                 "sessionkey, " //2
@@ -760,7 +759,6 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
         packet.Initialize (SMSG_AUTH_RESPONSE, 1);
         packet << uint8 (AUTH_UNKNOWN_ACCOUNT);
         SendPacket (packet);
-        delete result;
         OPENSSL_free ((void*) sStr);
         OPENSSL_free ((void*) vStr);
 
@@ -780,7 +778,6 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
             packet << uint8 (AUTH_FAILED);
             SendPacket (packet);
 
-            delete result;
             sLog.outBasic ("WorldSocket::HandleAuthSession: Sent Auth Response (Account IP differs).");
             return -1;
         }
@@ -796,11 +793,8 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     if (locale >= MAX_LOCALE)
         locale = LOCALE_enUS;
 
-    delete result;
-
     // Re-check account ban (same check as in realmd)
-    QueryResult *banresult =
-          LoginDatabase.PQuery ("SELECT "
+    QueryResult_AutoPtr banresult = LoginDatabase.PQuery ("SELECT "
                                 "bandate, "
                                 "unbandate "
                                 "FROM account_banned "
@@ -813,8 +807,6 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
         packet.Initialize (SMSG_AUTH_RESPONSE, 1);
         packet << uint8 (AUTH_BANNED);
         SendPacket (packet);
-
-        delete banresult;
 
         sLog.outError ("WorldSocket::HandleAuthSession: Sent Auth Response (Account banned).");
         return -1;

@@ -33,7 +33,7 @@ class DatabaseSqlite : public Database
 
         bool Initialize(const char *infoString);
 
-        QueryResult* Query(const char *sql);
+        QueryResult_AutoPtr Query(const char *sql);
         bool Execute(const char *sql);
 
         operator bool () const { return mSqlite != NULL; }

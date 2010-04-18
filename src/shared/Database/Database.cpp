@@ -113,9 +113,9 @@ void Database::SetResultQueue(SqlResultQueue * queue)
     m_queryQueues[ACE_Based::Thread::current()] = queue;
 }
 
-QueryResult* Database::PQuery(const char *format,...)
+QueryResult_AutoPtr Database::PQuery(const char *format,...)
 {
-    if(!format) return NULL;
+    if(!format) return QueryResult_AutoPtr(NULL);
 
     va_list ap;
     char szQuery [MAX_QUERY_LEN];
@@ -126,7 +126,7 @@ QueryResult* Database::PQuery(const char *format,...)
     if(res==-1)
     {
         sLog.outError("SQL Query truncated (and not execute) for format: %s",format);
-        return false;
+        return QueryResult_AutoPtr(NULL);
     }
 
     return Query(szQuery);

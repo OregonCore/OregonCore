@@ -170,7 +170,7 @@ void GameEvent::StopEvent( uint16 event_id, bool overwrite )
 void GameEvent::LoadFromDB()
 {
     {
-        QueryResult *result = WorldDatabase.Query("SELECT MAX(entry) FROM game_event");
+        QueryResult_AutoPtr result = WorldDatabase.Query("SELECT MAX(entry) FROM game_event");
         if( !result )
         {
             sLog.outString(">> Table game_event is empty.");
@@ -181,12 +181,11 @@ void GameEvent::LoadFromDB()
         Field *fields = result->Fetch();
 
         uint32 max_event_id = fields[0].GetUInt16();
-        delete result;
 
         mGameEvent.resize(max_event_id+1);
     }
 
-    QueryResult *result = WorldDatabase.Query("SELECT entry,UNIX_TIMESTAMP(start_time),UNIX_TIMESTAMP(end_time),occurence,length,description,world_event FROM game_event");
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry,UNIX_TIMESTAMP(start_time),UNIX_TIMESTAMP(end_time),occurence,length,description,world_event FROM game_event");
     if( !result )
     {
         mGameEvent.clear();
@@ -233,7 +232,6 @@ void GameEvent::LoadFromDB()
 
     sLog.outString();
     sLog.outString( ">> Loaded %u game events", count );
-    delete result;
 
     // load game event saves
     //                                       0         1      2
@@ -282,7 +280,6 @@ void GameEvent::LoadFromDB()
         } while( result->NextRow() );
         sLog.outString();
         sLog.outString( ">> Loaded %u game event saves in game events", count );
-        delete result;
     }
 
     // load game event links (prerequisites)
@@ -335,7 +332,6 @@ void GameEvent::LoadFromDB()
         } while( result->NextRow() );
         sLog.outString();
         sLog.outString( ">> Loaded %u game event prerequisites in game events", count );
-        delete result;
     }
 
     mGameEventCreatureGuids.resize(mGameEvent.size()*2-1);
@@ -380,7 +376,6 @@ void GameEvent::LoadFromDB()
         } while( result->NextRow() );
         sLog.outString();
         sLog.outString( ">> Loaded %u creatures in game events", count );
-        delete result;
     }
 
     mGameEventGameobjectGuids.resize(mGameEvent.size()*2-1);
@@ -425,8 +420,6 @@ void GameEvent::LoadFromDB()
         } while( result->NextRow() );
         sLog.outString();
         sLog.outString( ">> Loaded %u gameobjects in game events", count );
-
-        delete result;
     }
 
     mGameEventModelEquip.resize(mGameEvent.size());
@@ -485,8 +478,6 @@ void GameEvent::LoadFromDB()
         } while( result->NextRow() );
         sLog.outString();
         sLog.outString( ">> Loaded %u model/equipment changes in game events", count );
-
-        delete result;
     }
 
     mGameEventCreatureQuests.resize(mGameEvent.size());
@@ -528,8 +519,6 @@ void GameEvent::LoadFromDB()
         } while( result->NextRow() );
         sLog.outString();
         sLog.outString( ">> Loaded %u quests additions in game events", count );
-
-        delete result;
     }
 
     mGameEventGameObjectQuests.resize(mGameEvent.size());
@@ -571,8 +560,6 @@ void GameEvent::LoadFromDB()
         } while( result->NextRow() );
         sLog.outString();
         sLog.outString( ">> Loaded %u quests additions in game events", count );
-
-        delete result;
     }
 
     // Load quest to (event,condition) mapping
@@ -616,8 +603,6 @@ void GameEvent::LoadFromDB()
         } while( result->NextRow() );
         sLog.outString();
         sLog.outString( ">> Loaded %u quest event conditions in game events", count );
-
-        delete result;
     }
 
     // load conditions of the events
@@ -661,8 +646,6 @@ void GameEvent::LoadFromDB()
         } while( result->NextRow() );
         sLog.outString();
         sLog.outString( ">> Loaded %u conditions in game events", count );
-
-        delete result;
     }
 
     // load condition saves
@@ -712,8 +695,6 @@ void GameEvent::LoadFromDB()
         } while( result->NextRow() );
         sLog.outString();
         sLog.outString( ">> Loaded %u condition saves in game events", count );
-
-        delete result;
     }
 
     mGameEventNPCFlags.resize(mGameEvent.size());
@@ -756,8 +737,6 @@ void GameEvent::LoadFromDB()
         } while( result->NextRow() );
         sLog.outString();
         sLog.outString( ">> Loaded %u npcflags in game events", count );
-
-        delete result;
     }
 
     mGameEventVendors.resize(mGameEvent.size());
@@ -823,8 +802,6 @@ void GameEvent::LoadFromDB()
         } while( result->NextRow() );
         sLog.outString();
         sLog.outString( ">> Loaded %u vendor additions in game events", count );
-
-        delete result;
     }
 
     // load game event npc gossip ids
@@ -866,8 +843,6 @@ void GameEvent::LoadFromDB()
         } while( result->NextRow() );
         sLog.outString();
         sLog.outString( ">> Loaded %u npc gossip textids in game events", count );
-
-        delete result;
     }
 
     // set all flags to 0
@@ -910,8 +885,6 @@ void GameEvent::LoadFromDB()
         } while( result->NextRow() );
         sLog.outString();
         sLog.outString( ">> Loaded %u battleground holidays in game events", count );
-
-        delete result;
     }
 }
 

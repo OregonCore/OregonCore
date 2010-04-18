@@ -139,10 +139,9 @@ void Corpse::DeleteFromDB()
         CharacterDatabase.PExecute("DELETE FROM corpse WHERE player = '%d' AND corpse_type <> '0'",  GUID_LOPART(GetOwnerGUID()));
 }
 
-bool Corpse::LoadFromDB(uint32 guid, QueryResult *result, uint32 InstanceId)
+bool Corpse::LoadFromDB(uint32 guid, QueryResult_AutoPtr result, uint32 InstanceId)
 {
-    bool external = (result != NULL);
-    if (!external)
+    if (result == QueryResult_AutoPtr(NULL))
         //                                        0          1          2          3           4   5    6    7           8
         result = CharacterDatabase.PQuery("SELECT position_x,position_y,position_z,orientation,map,data,time,corpse_type,instance FROM corpse WHERE guid = '%u'",guid);
 
@@ -155,12 +154,8 @@ bool Corpse::LoadFromDB(uint32 guid, QueryResult *result, uint32 InstanceId)
     Field *fields = result->Fetch();
 
     if(!LoadFromDB(guid,fields))
-    {
-        if (!external) delete result;
         return false;
-    }
 
-    if (!external) delete result;
     return true;
 }
 

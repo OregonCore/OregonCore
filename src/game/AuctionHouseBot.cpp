@@ -874,7 +874,7 @@ void AuctionHouseBot::Initialize()
 
     if (AHBSeller)
     {
-        QueryResult* results = (QueryResult*) NULL;
+        QueryResult_AutoPtr results = QueryResult_AutoPtr(NULL);
         char npcQuery[] = "SELECT distinct `item` FROM `npc_vendor`";
         results = WorldDatabase.PQuery(npcQuery);
         if (results != NULL)
@@ -885,8 +885,6 @@ void AuctionHouseBot::Initialize()
                 npcItems.push_back(fields[0].GetUInt32());
 
             } while (results->NextRow());
-
-            delete results;
         }
         else
         {
@@ -912,8 +910,6 @@ void AuctionHouseBot::Initialize()
                 lootItems.push_back(fields[0].GetUInt32());
 
             } while (results->NextRow());
-
-            delete results;
         }
         else
         {

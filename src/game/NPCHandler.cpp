@@ -533,8 +533,8 @@ void WorldSession::SendStablePet(uint64 guid )
         ++num;
     }
 
-    //                                                     0      1     2   3      4      5        6
-    QueryResult* result = CharacterDatabase.PQuery("SELECT owner, slot, id, entry, level, loyalty, name FROM character_pet WHERE owner = '%u' AND slot > 0 AND slot < 3",_player->GetGUIDLow());
+    //                                                            0      1     2   3      4      5        6
+    QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT owner, slot, id, entry, level, loyalty, name FROM character_pet WHERE owner = '%u' AND slot > 0 AND slot < 3",_player->GetGUIDLow());
 
     if(result)
     {
@@ -551,8 +551,6 @@ void WorldSession::SendStablePet(uint64 guid )
 
             ++num;
         }while( result->NextRow() );
-
-        delete result;
     }
 
     data.put<uint8>(8, num);                                // set real data to placeholder
@@ -596,7 +594,7 @@ void WorldSession::HandleStablePet( WorldPacket & recv_data )
 
     uint32 free_slot = 1;
 
-    QueryResult *result = CharacterDatabase.PQuery("SELECT owner,slot,id FROM character_pet WHERE owner = '%u'  AND slot > 0 AND slot < 3 ORDER BY slot ",_player->GetGUIDLow());
+    QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT owner,slot,id FROM character_pet WHERE owner = '%u'  AND slot > 0 AND slot < 3 ORDER BY slot ",_player->GetGUIDLow());
     if(result)
     {
         do
@@ -609,7 +607,6 @@ void WorldSession::HandleStablePet( WorldPacket & recv_data )
                 ++free_slot;
         }while( result->NextRow() );
     }
-    delete result;
 
     if( free_slot > 0 && free_slot <= GetPlayer()->m_stableSlots)
     {
@@ -660,7 +657,7 @@ void WorldSession::HandleUnstablePet( WorldPacket & recv_data )
 
     Pet *newpet = NULL;
 
-    QueryResult *result = CharacterDatabase.PQuery("SELECT entry FROM character_pet WHERE owner = '%u' AND id = '%u' AND slot > 0 AND slot < 3",_player->GetGUIDLow(),petnumber);
+    QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT entry FROM character_pet WHERE owner = '%u' AND id = '%u' AND slot > 0 AND slot < 3",_player->GetGUIDLow(),petnumber);
     if(result)
     {
         Field *fields = result->Fetch();
@@ -672,7 +669,6 @@ void WorldSession::HandleUnstablePet( WorldPacket & recv_data )
             delete newpet;
             newpet = NULL;
         }
-        delete result;
     }
 
     if(newpet)
@@ -756,7 +752,7 @@ void WorldSession::HandleStableSwapPet( WorldPacket & recv_data )
         return;
 
     // find swapped pet slot in stable
-    QueryResult *result = CharacterDatabase.PQuery("SELECT slot,entry FROM character_pet WHERE owner = '%u' AND id = '%u'",_player->GetGUIDLow(),pet_number);
+    QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT slot,entry FROM character_pet WHERE owner = '%u' AND id = '%u'",_player->GetGUIDLow(),pet_number);
     if(!result)
         return;
 
@@ -764,7 +760,6 @@ void WorldSession::HandleStableSwapPet( WorldPacket & recv_data )
 
     uint32 slot     = fields[0].GetUInt32();
     uint32 petentry = fields[1].GetUInt32();
-    delete result;
 
     // move alive pet to slot or delele dead pet
     _player->RemovePet(pet,pet->isAlive() ? PetSaveMode(slot) : PET_SAVE_AS_DELETED);

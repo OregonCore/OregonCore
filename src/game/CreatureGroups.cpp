@@ -78,14 +78,13 @@ void CreatureGroupManager::LoadCreatureFormations()
     CreatureGroupMap.clear();
 
     //Check Integrity of the table
-    QueryResult *result = WorldDatabase.PQuery("SELECT MAX(`leaderGUID`) FROM `creature_formations`");
+    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT MAX(`leaderGUID`) FROM `creature_formations`");
 
     if(!result)
     {
         sLog.outErrorDb(" ...an error occured while loading the table `creature_formations` ( maybe it doesn't exist ?)\n");
         return;
     }
-    delete result;
 
     //Get group data
     result = WorldDatabase.PQuery("SELECT `leaderGUID`, `memberGUID`, `dist`, `angle`, `groupAI` FROM `creature_formations` ORDER BY `leaderGUID`");
@@ -136,8 +135,6 @@ void CreatureGroupManager::LoadCreatureFormations()
     sLog.outString();
     sLog.outString( ">> Loaded %u creatures in formations", total_records );
     sLog.outString();
-    //Free some heap
-    delete result;
 }
 
 void CreatureGroup::AddMember(Creature *member)

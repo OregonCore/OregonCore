@@ -1060,15 +1060,13 @@ void Creature::OnPoiSelect(Player* player, GossipOption const *gossip)
 
 uint32 Creature::GetGossipTextId(uint32 action, uint32 zoneid)
 {
-    QueryResult *result= WorldDatabase.PQuery("SELECT textid FROM npc_gossip_textid WHERE action = '%u' AND zoneid ='%u'", action, zoneid );
+    QueryResult_AutoPtr result= WorldDatabase.PQuery("SELECT textid FROM npc_gossip_textid WHERE action = '%u' AND zoneid ='%u'", action, zoneid );
 
     if(!result)
         return 0;
 
     Field *fields = result->Fetch();
     uint32 id = fields[0].GetUInt32();
-
-    delete result;
 
     return id;
 }

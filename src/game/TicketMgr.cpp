@@ -104,7 +104,7 @@ void TicketMgr::LoadGMTickets()
 {
     // Delete all out of object holder
     GM_TicketList.clear();
-    QueryResult *result = CharacterDatabase.Query( "SELECT `guid`, `playerGuid`, `name`, `message`, `createtime`, `map`, `posX`, `posY`, `posZ`, `timestamp`, `closed`, `assignedto`, `comment` FROM `gm_tickets`" );
+    QueryResult_AutoPtr result = CharacterDatabase.Query( "SELECT `guid`, `playerGuid`, `name`, `message`, `createtime`, `map`, `posX`, `posY`, `posZ`, `timestamp`, `closed`, `assignedto`, `comment` FROM `gm_tickets`" );
     GM_Ticket *ticket;
 
     if(!result)
@@ -134,8 +134,6 @@ void TicketMgr::LoadGMTickets()
     } while( result->NextRow() );
 
     sWorld.SendGMText(LANG_COMMAND_TICKETRELOAD, result->GetRowCount());
-
-    delete result;
 }
 
 void TicketMgr::RemoveGMTicket(uint64 ticketGuid, uint64 GMguid)
@@ -197,12 +195,9 @@ void TicketMgr::UpdateGMTicket(GM_Ticket *ticket)
 
 void TicketMgr::InitTicketID()
 {
-    QueryResult *result = CharacterDatabase.Query("SELECT MAX(guid) FROM gm_tickets");
+    QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT MAX(guid) FROM gm_tickets");
     if(result)
-    {
         m_ticketid = result->Fetch()[0].GetUInt64();
-        delete result;
-    }
 }
 
 uint64 TicketMgr::GenerateTicketID()

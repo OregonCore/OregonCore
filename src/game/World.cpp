@@ -2716,7 +2716,7 @@ BanReturn World::BanAccount(BanMode mode, std::string nameOrIP, std::string dura
     LoginDatabase.escape_string(safe_author);
 
     uint32 duration_secs = TimeStringToSecs(duration);
-    QueryResult *resultAccounts = NULL;                     //used for kicking
+    QueryResult_AutoPtr resultAccounts = QueryResult_AutoPtr(NULL);                     //used for kicking
 
     ///- Update the database with ban information
     switch(mode)
@@ -2765,7 +2765,6 @@ BanReturn World::BanAccount(BanMode mode, std::string nameOrIP, std::string dura
     }
     while( resultAccounts->NextRow() );
 
-    delete resultAccounts;
     return BAN_SUCCESS;
 }
 
@@ -2975,13 +2974,12 @@ void World::UpdateRealmCharCount(uint32 accountId)
         "SELECT COUNT(guid) FROM characters WHERE account = '%u'", accountId);
 }
 
-void World::_UpdateRealmCharCount(QueryResult *resultCharCount, uint32 accountId)
+void World::_UpdateRealmCharCount(QueryResult_AutoPtr resultCharCount, uint32 accountId)
 {
     if (resultCharCount)
     {
         Field *fields = resultCharCount->Fetch();
         uint32 charCount = fields[0].GetUInt32();
-        delete resultCharCount;
         LoginDatabase.PExecute("DELETE FROM realmcharacters WHERE acctid= '%d' AND realmid = '%d'", accountId, realmID);
         LoginDatabase.PExecute("INSERT INTO realmcharacters (numchars, acctid, realmid) VALUES (%u, %u, %u)", charCount, accountId, realmID);
     }
@@ -2991,13 +2989,12 @@ void World::InitDailyQuestResetTime()
 {
     time_t mostRecentQuestTime;
 
-    QueryResult* result = CharacterDatabase.Query("SELECT MAX(time) FROM character_queststatus_daily");
+    QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT MAX(time) FROM character_queststatus_daily");
     if(result)
     {
         Field *fields = result->Fetch();
 
         mostRecentQuestTime = (time_t)fields[0].GetUInt64();
-        delete result;
     }
     else
         mostRecentQuestTime = 0;
@@ -3028,12 +3025,11 @@ void World::InitDailyQuestResetTime()
 
 void World::UpdateAllowedSecurity()
 {
-     QueryResult *result = LoginDatabase.PQuery("SELECT allowedSecurityLevel from realmlist WHERE id = '%d'", realmID);
+     QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT allowedSecurityLevel from realmlist WHERE id = '%d'", realmID);
      if (result)
      {
         m_allowedSecurityLevel = AccountTypes(result->Fetch()->GetUInt16());
         sLog.outDebug("Allowed Level: %u Result %u", m_allowedSecurityLevel, result->Fetch()->GetUInt16());
-        delete result;
      }
 }
 
@@ -3059,13 +3055,12 @@ void World::UpdateMaxSessionCounters()
 
 void World::LoadDBVersion()
 {
-    QueryResult* result = WorldDatabase.Query("SELECT db_version FROM version LIMIT 1");
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT db_version FROM version LIMIT 1");
     if(result)
     {
         Field* fields = result->Fetch();
 
         m_DBVersion = fields[0].GetString();
-        delete result;
     }
     else
         m_DBVersion = "unknown world database";
@@ -3076,7 +3071,7 @@ void World::LoadDBVersion()
     {
         std::string message;
 
-        QueryResult *result;
+        QueryResult_AutoPtr result;
         if(m_nextId > 0)
         result = LoginDatabase.PQuery("SELECT `text`, `next` FROM `broadcast_strings` WHERE `id` = %u;", m_nextId);
         else
@@ -3089,7 +3084,7 @@ void World::LoadDBVersion()
         m_nextId  = fields[1].GetUInt32();
         message = fields[0].GetString();
 
-        delete result, fields;
+        delete fields;
 
         if((getConfig(CONFIG_BROADCAST_POSITION) & BROADCAST_LOCATION_CHAT) == BROADCAST_LOCATION_CHAT)
         sWorld.SendWorldText(LANG_AUTO_BROADCAST, message.c_str());

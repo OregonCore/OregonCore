@@ -39,7 +39,7 @@ SystemMgr& SystemMgr::Instance()
 void SystemMgr::LoadVersion()
 {
     //Get Version information
-    QueryResult* pResult = TScriptDB.PQuery("SELECT script_version FROM version LIMIT 1");
+    QueryResult_AutoPtr pResult = TScriptDB.PQuery("SELECT script_version FROM version LIMIT 1");
 
     if (pResult)
     {
@@ -60,7 +60,7 @@ void SystemMgr::LoadScriptTexts()
     outstring_log("TSCR: Loading Script Texts...");
     LoadOregonStrings(TScriptDB,"script_texts",TEXT_SOURCE_RANGE,1+(TEXT_SOURCE_RANGE*2));
 
-    QueryResult* pResult = TScriptDB.PQuery("SELECT entry, sound, type, language, emote FROM script_texts");
+    QueryResult_AutoPtr pResult = TScriptDB.PQuery("SELECT entry, sound, type, language, emote FROM script_texts");
 
     outstring_log("TSCR: Loading Script Texts additional data...");
 
@@ -126,7 +126,7 @@ void SystemMgr::LoadScriptTextsCustom()
     outstring_log("TSCR: Loading Custom Texts...");
     LoadOregonStrings(TScriptDB,"custom_texts",TEXT_SOURCE_RANGE*2,1+(TEXT_SOURCE_RANGE*3));
 
-    QueryResult* pResult = TScriptDB.PQuery("SELECT entry, sound, type, language, emote FROM custom_texts");
+    QueryResult_AutoPtr pResult = TScriptDB.PQuery("SELECT entry, sound, type, language, emote FROM custom_texts");
 
     outstring_log("TSCR: Loading Custom Texts additional data...");
 
@@ -195,12 +195,9 @@ void SystemMgr::LoadScriptWaypoints()
     uint64 uiCreatureCount = 0;
 
     // Load Waypoints
-    QueryResult* pResult = TScriptDB.PQuery("SELECT COUNT(entry) FROM script_waypoint GROUP BY entry");
+    QueryResult_AutoPtr pResult = TScriptDB.PQuery("SELECT COUNT(entry) FROM script_waypoint GROUP BY entry");
     if (pResult)
-    {
         uiCreatureCount = pResult->GetRowCount();
-        delete pResult;
-    }
 
     outstring_log("TSCR: Loading Script Waypoints for %u creature(s)...", uiCreatureCount);
 
@@ -239,8 +236,6 @@ void SystemMgr::LoadScriptWaypoints()
             m_mPointMoveMap[uiEntry].push_back(pTemp);
             ++uiNodeCount;
         } while (pResult->NextRow());
-
-        delete pResult;
 
         outstring_log("");
         outstring_log(">> Loaded %u Script Waypoint nodes.", uiNodeCount);

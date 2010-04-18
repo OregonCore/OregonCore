@@ -49,7 +49,7 @@ class OREGON_DLL_SPEC DatabaseMysql : public Database
         bool Initialize(const char *infoString, bool initDelayThread = true);
         void InitDelayThread(const char* infoString);
         void HaltDelayThread();
-        QueryResult* Query(const char *sql);
+        QueryResult_AutoPtr Query(const char *sql);
         QueryNamedResult* QueryNamed(const char *sql);
         bool Execute(const char *sql);
         bool DirectExecute(const char* sql);

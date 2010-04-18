@@ -52,12 +52,12 @@ bool DatabaseSqlite::Initialize(const char *infoString)
     return true;
 }
 
-QueryResult* DatabaseSqlite::Query(const char *sql)
+QueryResult_AutoPtr DatabaseSqlite::Query(const char *sql)
 {
     char *errmsg;
 
     if (!mSqlite)
-        return 0;
+        return QueryResult_AutoPtr(NULL);
 
     char **tableData;
     int rowCount;
@@ -66,26 +66,26 @@ QueryResult* DatabaseSqlite::Query(const char *sql)
     sqlite_get_table(mSqlite, sql, &tableData, &rowCount, &fieldCount, &errmsg);
 
     if (!rowCount)
-        return 0;
+        return QueryResult_AutoPtr(NULL);
 
     if (!tableData)
     {
 
         if (errmsg)
             sqlite_freemem(errmsg);
-        return 0;
+        return QueryResult_AutoPtr(NULL);
     }
 
     QueryResultSqlite *queryResult = new QueryResultSqlite(tableData, rowCount, fieldCount);
     if(!queryResult)
     {
 
-        return 0;
+        return QueryResult_AutoPtr(NULL);
     }
 
     queryResult->NextRow();
 
-    return queryResult;
+    return QueryResult_AutoPtr(queryResult);
 }
 
 bool DatabaseSqlite::Execute(const char *sql)
