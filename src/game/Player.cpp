@@ -6015,7 +6015,7 @@ void Player::RewardReputation(Quest const *pQuest)
     {
         if(pQuest->RewRepFaction[i] && pQuest->RewRepValue[i] )
         {
-            int32 rep = CalculateReputationGain(GetQuestOrPlayerLevel(pQuest), pQuest->RewRepFaction[i], true);
+            int32 rep = CalculateReputationGain(GetQuestOrPlayerLevel(pQuest), pQuest->RewRepValue[i], true);
             FactionEntry const* factionEntry = sFactionStore.LookupEntry(pQuest->RewRepFaction[i]);
             if(factionEntry)
                 ModifyFactionReputation(factionEntry, rep);
