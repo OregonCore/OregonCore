@@ -239,11 +239,13 @@ int Master::Run()
     _HookSignals();
 
     ///- Launch WorldRunnable thread
-    ACE_Based::Thread t(new WorldRunnable);
-    t.setPriority(ACE_Based::Highest);
+    ACE_Based::Thread world_thread(new WorldRunnable);
+    world_thread.setPriority(ACE_Based::Highest);
 
     // set server online
     LoginDatabase.PExecute("UPDATE realmlist SET color = 0, population = 0 WHERE id = '%d'",realmID);
+
+    ACE_Based::Thread* cliThread = NULL;
 
 #ifdef WIN32
     if (sConfig.GetBoolDefault("Console.Enable", true) && (m_ServiceStatus == -1)/* need disable console in service mode*/)
@@ -252,10 +254,10 @@ int Master::Run()
 #endif
     {
         ///- Launch CliRunnable thread
-        ACE_Based::Thread td1(new CliRunnable);
+        cliThread = new ACE_Based::Thread(new CliRunnable);
     }
 
-    ACE_Based::Thread td2(new RARunnable);
+    ACE_Based::Thread rar_thread(new RARunnable);
 
     ///- Handle affinity for multiple processors and process priority on Windows
     #ifdef WIN32
@@ -284,7 +286,7 @@ int Master::Run()
                         sLog.outError("Can't set used processors (hex): %x",curAff);
                 }
             }
-            sLog.outString();
+            sLog.outString("");
         }
 
         bool Prio = sConfig.GetBoolDefault("ProcessPriority", false);
@@ -296,7 +298,7 @@ int Master::Run()
                 sLog.outString("OregonCore process priority class set to HIGH");
             else
                 sLog.outError("ERROR: Can't set Oregond process priority class.");
-            sLog.outString();
+            sLog.outString("");
         }
     }
     #endif
@@ -311,24 +313,23 @@ int Master::Run()
     uint32 loopCounter = 0;
 
     ///- Start up freeze catcher thread
-    uint32 freeze_delay = sConfig.GetIntDefault("MaxCoreStuckTime", 0);
-    if(freeze_delay)
+    if(uint32 freeze_delay = sConfig.GetIntDefault("MaxCoreStuckTime", 0))
     {
         FreezeDetectorRunnable *fdr = new FreezeDetectorRunnable();
         fdr->SetDelayTime(freeze_delay*1000);
-        ACE_Based::Thread t(fdr);
-        t.setPriority(ACE_Based::Highest);
+        ACE_Based::Thread freeze_thread(fdr);
+        freeze_thread.setPriority(ACE_Based::Highest);
     }
 
     ///- Launch the world listener socket
-  port_t wsport = sWorld.getConfig (CONFIG_PORT_WORLD);
-  std::string bind_ip = sConfig.GetStringDefault ("BindIP", "0.0.0.0");
+    port_t wsport = sWorld.getConfig (CONFIG_PORT_WORLD);
+    std::string bind_ip = sConfig.GetStringDefault ("BindIP", "0.0.0.0");
 
-  if (sWorldSocketMgr->StartNetwork (wsport, bind_ip.c_str ()) == -1)
+    if (sWorldSocketMgr->StartNetwork (wsport, bind_ip.c_str ()) == -1)
     {
-      sLog.outError ("Failed to start network");
-      World::StopNow(ERROR_EXIT_CODE);
-      // go down and shutdown the server
+        sLog.outError ("Failed to start network");
+        World::StopNow(ERROR_EXIT_CODE);
+        // go down and shutdown the server
     }
 
     sWorldSocketMgr->Wait ();
@@ -341,8 +342,8 @@ int Master::Run()
 
     // when the main thread closes the singletons get unloaded
     // since worldrunnable uses them, it will crash if unloaded after master
-    t.wait();
-    td2.wait ();
+    world_thread.wait();
+    rar_thread.wait ();
 
     ///- Clean database before leaving
     clearOnlineAccounts();
@@ -354,9 +355,10 @@ int Master::Run()
 
     sLog.outString( "Halting process..." );
 
-    #ifdef WIN32
-    if (sConfig.GetBoolDefault("Console.Enable", true))
+    if (cliThread)
     {
+        #ifdef WIN32
+
         // this only way to terminate CLI thread exist at Win32 (alt. way exist only in Windows Vista API)
         //_exit(1);
         // send keyboard input to safely unblock the CLI thread
@@ -391,8 +393,17 @@ int Master::Run()
         b[3].Event.KeyEvent.wRepeatCount = 1;
         DWORD numb;
         BOOL ret = WriteConsoleInput(hStdIn, b, 4, &numb);
+
+        cliThread->wait();
+
+        #else
+
+        cliThread->destroy();
+
+        #endif
+
+        delete cliThread;
     }
-    #endif
 
     // for some unknown reason, unloading scripts here and not in worldrunnable
     // fixes a memory leak related to detaching threads from the module
