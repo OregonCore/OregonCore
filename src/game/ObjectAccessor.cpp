@@ -79,7 +79,11 @@ namespace Oregon
 }
 
 ObjectAccessor::ObjectAccessor() {}
-ObjectAccessor::~ObjectAccessor() {}
+ObjectAccessor::~ObjectAccessor()
+{
+    for(Player2CorpsesMapType::const_iterator itr = i_player2corpse.begin(); itr != i_player2corpse.end(); ++itr)
+        delete itr->second;
+}
 
 Creature*
 ObjectAccessor::GetNPCIfCanInteractWith(Player const &player, uint64 guid, uint32 npcflagmask)

@@ -133,7 +133,7 @@ bool Guild::AddMember(uint64 plGuid, uint32 plRank)
     newmember.Pnote = (std::string)"";
     newmember.logout_time = time(NULL);
     newmember.BankResetTimeMoney = 0;                       // this will force update at first query
-    for (int i = 0; i < GUILD_BANK_MAX_TABS; ++i)
+    for (uint8 i = 0; i < GUILD_BANK_MAX_TABS; ++i)
         newmember.BankResetTimeTab[i] = 0;
     members[GUID_LOPART(plGuid)] = newmember;
 
@@ -286,7 +286,7 @@ bool Guild::LoadRanksFromDB(uint32 GuildId)
             std::string name = m_ranks[i].name;
             uint32 rights = m_ranks[i].rights;
             CharacterDatabase.escape_string(name);
-            CharacterDatabase.PExecute( "INSERT INTO guild_rank (guildid,rid,rname,rights) VALUES ('%u', '%u', '%s', '%u')", GuildId, i+1, name.c_str(), rights);
+            CharacterDatabase.PExecute( "INSERT INTO guild_rank (guildid,rid,rname,rights) VALUES ('%u', '%u', '%s', '%u')", GuildId, uint32(i+1), name.c_str(), rights);
         }
         CharacterDatabase.CommitTransaction();
     }
@@ -323,7 +323,7 @@ bool Guild::LoadMembersFromDB(uint32 GuildId)
         newmember.OFFnote               = fields[3].GetCppString();
         newmember.BankResetTimeMoney    = fields[4].GetUInt32();
         newmember.BankRemMoney          = fields[5].GetUInt32();
-        for (int i = 0; i < GUILD_BANK_MAX_TABS; ++i)
+        for (uint8 i = 0; i < GUILD_BANK_MAX_TABS; ++i)
         {
             newmember.BankResetTimeTab[i] = fields[6+(2*i)].GetUInt32();
             newmember.BankRemSlotsTab[i]  = fields[7+(2*i)].GetUInt32();
@@ -384,6 +384,7 @@ bool Guild::FillPlayerData(uint64 guid, MemberSlot* memslot)
 
             plZone = fields[2].GetUInt32();
             plClass = fields[3].GetUInt32();
+
 
         if(plLevel<1||plLevel>STRONG_MAX_LEVEL)             // can be at broken `data` field
         {
@@ -606,7 +607,7 @@ void Guild::CreateRank(std::string name_,uint32 rights)
 
     AddRank(name_,rights,0);
 
-    for (int i = 0; i < purchased_tabs; ++i)
+    for (uint8 i = 0; i < purchased_tabs; ++i)
     {
         CreateBankRightForTab(m_ranks.size()-1, uint8(i));
     }
@@ -718,40 +719,40 @@ void Guild::Roster(WorldSession *session)
     data << (uint32)m_ranks.size();
     for (RankList::const_iterator ritr = m_ranks.begin(); ritr != m_ranks.end(); ++ritr)
     {
-        data << (uint32)ritr->rights;
-        data << (uint32)ritr->BankMoneyPerDay;              // count of: withdraw gold(gold/day) Note: in game set gold, in packet set bronze.
+        data << uint32(ritr->rights);
+        data << uint32(ritr->BankMoneyPerDay);              // count of: withdraw gold(gold/day) Note: in game set gold, in packet set bronze.
         for (int i = 0; i < GUILD_BANK_MAX_TABS; ++i)
         {
-            data << (uint32)ritr->TabRight[i];              // for TAB_i rights: view tabs = 0x01, deposit items =0x02
-            data << (uint32)ritr->TabSlotPerDay[i];         // for TAB_i count of: withdraw items(stack/day)
+            data << uint32(ritr->TabRight[i]);              // for TAB_i rights: view tabs = 0x01, deposit items =0x02
+            data << uint32(ritr->TabSlotPerDay[i]);         // for TAB_i count of: withdraw items(stack/day)
         }
     }
     for (MemberList::const_iterator itr = members.begin(); itr != members.end(); ++itr)
     {
         if (Player *pl = ObjectAccessor::FindPlayer(MAKE_NEW_GUID(itr->first, 0, HIGHGUID_PLAYER)))
         {
-            data << (uint64)pl->GetGUID();
-            data << (uint8)1;
-            data << (std::string)pl->GetName();
-            data << (uint32)itr->second.RankId;
-            data << (uint8)pl->getLevel();
-            data << (uint8)pl->getClass();
-            data << (uint8)0;                               // new 2.4.0
-            data << (uint32)pl->GetZoneId();
+            data << uint64(pl->GetGUID());
+            data << uint8(1);
+            data << pl->GetName();
+            data << uint32(itr->second.RankId);
+            data << uint8(pl->getLevel());
+            data << uint8(pl->getClass());
+            data << uint8(0);                               // new 2.4.0
+            data << uint32(pl->GetZoneId());
             data << itr->second.Pnote;
             data << itr->second.OFFnote;
         }
         else
         {
             data << uint64(MAKE_NEW_GUID(itr->first, 0, HIGHGUID_PLAYER));
-            data << (uint8)0;
+            data << uint8(0);
             data << itr->second.name;
-            data << (uint32)itr->second.RankId;
-            data << (uint8)itr->second.level;
-            data << (uint8)itr->second.Class;
-            data << (uint8)0;                               // new 2.4.0
-            data << (uint32)itr->second.zoneId;
-            data << (float(time(NULL)-itr->second.logout_time) / DAY);
+            data << uint32(itr->second.RankId);
+            data << uint8(itr->second.level);
+            data << uint8(itr->second.Class);
+            data << uint8(0);                               // new 2.4.0
+            data << uint32(itr->second.zoneId);
+            data << float(float(time(NULL)-itr->second.logout_time) / DAY);
             data << itr->second.Pnote;
             data << itr->second.OFFnote;
         }
@@ -830,17 +831,17 @@ void Guild::DisplayGuildEventlog(WorldSession *session)
     for (GuildEventlog::const_iterator itr = m_GuildEventlog.begin(); itr != m_GuildEventlog.end(); ++itr)
     {
         // Event type
-        data << uint8((*itr)->EventType);
+        data << uint8(itr->EventType);
         // Player 1
-        data << uint64((*itr)->PlayerGuid1);
+        data << uint64(itr->PlayerGuid1);
         // Player 2 not for left/join guild events
-        if( (*itr)->EventType != GUILD_EVENT_LOG_JOIN_GUILD && (*itr)->EventType != GUILD_EVENT_LOG_LEAVE_GUILD )
-            data << uint64((*itr)->PlayerGuid2);
+        if (itr->EventType != GUILD_EVENT_LOG_JOIN_GUILD && itr->EventType != GUILD_EVENT_LOG_LEAVE_GUILD)
+            data << uint64(itr->PlayerGuid2);
         // New Rank - only for promote/demote guild events
-        if( (*itr)->EventType == GUILD_EVENT_LOG_PROMOTE_PLAYER || (*itr)->EventType == GUILD_EVENT_LOG_DEMOTE_PLAYER )
-            data << uint8((*itr)->NewRank);
+        if (itr->EventType == GUILD_EVENT_LOG_PROMOTE_PLAYER || itr->EventType == GUILD_EVENT_LOG_DEMOTE_PLAYER)
+            data << uint8(itr->NewRank);
         // Event timestamp
-        data << uint32(time(NULL)-(*itr)->TimeStamp);
+        data << uint32(time(NULL)-itr->TimeStamp);
     }
     session->SendPacket(&data);
     sLog.outDebug("WORLD: Sent (MSG_GUILD_EVENT_LOG_QUERY)");
@@ -859,14 +860,14 @@ void Guild::LoadGuildEventLogFromDB()
     do
     {
         Field *fields = result->Fetch();
-        GuildEventlogEntry *NewEvent = new GuildEventlogEntry;
+        GuildEventlogEntry NewEvent;
         // Fill entry
-        NewEvent->LogGuid = fields[0].GetUInt32();
-        NewEvent->EventType = fields[1].GetUInt8();
-        NewEvent->PlayerGuid1 = fields[2].GetUInt32();
-        NewEvent->PlayerGuid2 = fields[3].GetUInt32();
-        NewEvent->NewRank = fields[4].GetUInt8();
-        NewEvent->TimeStamp = fields[5].GetUInt64();
+        NewEvent.LogGuid = fields[0].GetUInt32();
+        NewEvent.EventType = fields[1].GetUInt8();
+        NewEvent.PlayerGuid1 = fields[2].GetUInt32();
+        NewEvent.PlayerGuid2 = fields[3].GetUInt32();
+        NewEvent.NewRank = fields[4].GetUInt8();
+        NewEvent.TimeStamp = fields[5].GetUInt64();
         // Add entry to map
         m_GuildEventlog.push_front(NewEvent);
 
@@ -875,9 +876,8 @@ void Guild::LoadGuildEventLogFromDB()
     // Check lists size in case to many event entries in db
     // This cases can happen only if a crash occured somewhere and table has too many log entries
     if (!m_GuildEventlog.empty())
-    {
-        CharacterDatabase.PExecute("DELETE FROM guild_eventlog WHERE guildid=%u AND LogGuid < %u", Id, m_GuildEventlog.front()->LogGuid);
-    }
+        CharacterDatabase.PExecute("DELETE FROM guild_eventlog WHERE guildid=%u AND LogGuid < %u", Id, m_GuildEventlog.front().LogGuid);
+
     m_eventlogloaded = true;
 }
 
@@ -886,16 +886,8 @@ void Guild::UnloadGuildEventlog()
 {
     if (!m_eventlogloaded)
         return;
-    GuildEventlogEntry *EventLogEntry;
-    if( !m_GuildEventlog.empty() )
-    {
-        do
-        {
-            EventLogEntry = *(m_GuildEventlog.begin());
-            m_GuildEventlog.pop_front();
-            delete EventLogEntry;
-        }while( !m_GuildEventlog.empty() );
-    }
+
+    m_GuildEventlog.clear();
     m_eventlogloaded = false;
 }
 
@@ -914,27 +906,25 @@ void Guild::RenumGuildEventlog()
 // Add entry to guild eventlog
 void Guild::LogGuildEvent(uint8 EventType, uint32 PlayerGuid1, uint32 PlayerGuid2, uint8 NewRank)
 {
-    GuildEventlogEntry *NewEvent = new GuildEventlogEntry;
+    GuildEventlogEntry NewEvent;
     // Fill entry
-    NewEvent->LogGuid = GuildEventlogMaxGuid++;
-    NewEvent->EventType = EventType;
-    NewEvent->PlayerGuid1 = PlayerGuid1;
-    NewEvent->PlayerGuid2 = PlayerGuid2;
-    NewEvent->NewRank = NewRank;
-    NewEvent->TimeStamp = uint32(time(NULL));
+    NewEvent.LogGuid = GuildEventlogMaxGuid++;
+    NewEvent.EventType = EventType;
+    NewEvent.PlayerGuid1 = PlayerGuid1;
+    NewEvent.PlayerGuid2 = PlayerGuid2;
+    NewEvent.NewRank = NewRank;
+    NewEvent.TimeStamp = uint32(time(NULL));
     // Check max entry limit and delete from db if needed
     if (m_GuildEventlog.size() > GUILD_EVENTLOG_MAX_ENTRIES)
     {
-        GuildEventlogEntry *OldEvent = *(m_GuildEventlog.begin());
+        CharacterDatabase.PExecute("DELETE FROM guild_eventlog WHERE guildid='%u' AND LogGuid='%u'", Id, m_GuildEventlog.front().LogGuid);
         m_GuildEventlog.pop_front();
-        CharacterDatabase.PExecute("DELETE FROM guild_eventlog WHERE guildid='%u' AND LogGuid='%u'", Id, OldEvent->LogGuid);
-        delete OldEvent;
     }
     // Add entry to map
     m_GuildEventlog.push_back(NewEvent);
     // Add new eventlog entry into DB
     CharacterDatabase.PExecute("INSERT INTO guild_eventlog (guildid, LogGuid, EventType, PlayerGuid1, PlayerGuid2, NewRank, TimeStamp) VALUES ('%u','%u','%u','%u','%u','%u','" I64FMTD "')",
-        Id, NewEvent->LogGuid, uint32(NewEvent->EventType), NewEvent->PlayerGuid1, NewEvent->PlayerGuid2, uint32(NewEvent->NewRank), NewEvent->TimeStamp);
+        Id, NewEvent.LogGuid, uint32(NewEvent.EventType), NewEvent.PlayerGuid1, NewEvent.PlayerGuid2, uint32(NewEvent.NewRank), NewEvent.TimeStamp);
 }
 
 // *************************************************
@@ -960,7 +950,7 @@ void Guild::DisplayGuildBankContent(WorldSession *session, uint8 TabId)
 
     data << uint8(GUILD_BANK_MAX_SLOTS);
 
-    for (int i=0; i<GUILD_BANK_MAX_SLOTS; ++i)
+    for (uint8 i=0; i<GUILD_BANK_MAX_SLOTS; ++i)
         AppendDisplayGuildBankSlot(data, tab, i);
 
     session->SendPacket(&data);
@@ -1095,7 +1085,7 @@ void Guild::DisplayGuildBankTabsInfo(WorldSession *session)
 
     data << uint8(purchased_tabs);                          // here is the number of tabs
 
-    for(int i = 0; i < purchased_tabs; ++i)
+    for(uint8 i = 0; i < purchased_tabs; ++i)
     {
         data << m_TabListMap[i]->Name.c_str();
         data << m_TabListMap[i]->Icon.c_str();
@@ -1434,7 +1424,7 @@ void Guild::SetBankRightsAndSlots(uint32 rankId, uint8 TabId, uint32 right, uint
     {
         for (MemberList::iterator itr = members.begin(); itr != members.end(); ++itr)
             if (itr->second.RankId == rankId)
-                for (int i = 0; i < GUILD_BANK_MAX_TABS; ++i)
+                for (uint8 i = 0; i < GUILD_BANK_MAX_TABS; ++i)
                     itr->second.BankResetTimeTab[i] = 0;
 
         CharacterDatabase.PExecute("DELETE FROM guild_bank_right WHERE guildid='%u' AND TabId='%u' AND rid='%u'", Id, uint32(TabId), rankId);
@@ -1504,30 +1494,28 @@ void Guild::LoadGuildBankEventLogFromDB()
     do
     {
         Field *fields = result->Fetch();
-        GuildBankEvent *NewEvent = new GuildBankEvent;
+        GuildBankEvent NewEvent;
 
-        NewEvent->LogGuid = fields[0].GetUInt32();
-        NewEvent->LogEntry = fields[1].GetUInt8();
+        NewEvent.LogGuid = fields[0].GetUInt32();
+        NewEvent.LogEntry = fields[1].GetUInt8();
         uint8 TabId = fields[2].GetUInt8();
-        NewEvent->PlayerGuid = fields[3].GetUInt32();
-        NewEvent->ItemOrMoney = fields[4].GetUInt32();
-        NewEvent->ItemStackCount = fields[5].GetUInt8();
-        NewEvent->DestTabId = fields[6].GetUInt8();
-        NewEvent->TimeStamp = fields[7].GetUInt64();
+        NewEvent.PlayerGuid = fields[3].GetUInt32();
+        NewEvent.ItemOrMoney = fields[4].GetUInt32();
+        NewEvent.ItemStackCount = fields[5].GetUInt8();
+        NewEvent.DestTabId = fields[6].GetUInt8();
+        NewEvent.TimeStamp = fields[7].GetUInt64();
 
         if (TabId >= GUILD_BANK_MAX_TABS)
         {
-            sLog.outError( "Guild::LoadGuildBankEventLogFromDB: Invalid tabid '%u' for guild bank log entry (guild: '%s', LogGuid: %u), skipped.", TabId, GetName().c_str(), NewEvent->LogGuid);
-            delete NewEvent;
+            sLog.outError( "Guild::LoadGuildBankEventLogFromDB: Invalid tabid '%u' for guild bank log entry (guild: '%s', LogGuid: %u), skipped.", TabId, GetName().c_str(), NewEvent.LogGuid);
             continue;
         }
-        if (NewEvent->isMoneyEvent() && m_GuildBankEventLog_Money.size() >= GUILD_BANK_MAX_LOGS
-                || m_GuildBankEventLog_Item[TabId].size() >= GUILD_BANK_MAX_LOGS)
-        {
-            delete NewEvent;
+
+        if (NewEvent.isMoneyEvent() && m_GuildBankEventLog_Money.size() >= GUILD_BANK_MAX_LOGS ||
+            m_GuildBankEventLog_Item[TabId].size() >= GUILD_BANK_MAX_LOGS)
             continue;
-        }
-        if (NewEvent->isMoneyEvent())
+
+        if (NewEvent.isMoneyEvent())
             m_GuildBankEventLog_Money.push_front(NewEvent);
         else
             m_GuildBankEventLog_Item[TabId].push_front(NewEvent);
@@ -1539,43 +1527,24 @@ void Guild::LoadGuildBankEventLogFromDB()
     if (!m_GuildBankEventLog_Money.empty())
     {
         CharacterDatabase.PExecute("DELETE FROM guild_bank_eventlog WHERE guildid=%u AND LogGuid < %u",
-            Id, m_GuildBankEventLog_Money.front()->LogGuid);
+            Id, m_GuildBankEventLog_Money.front().LogGuid);
     }
-    for (int i = 0; i < GUILD_BANK_MAX_TABS; ++i)
+    for (uint8 i = 0; i < GUILD_BANK_MAX_TABS; ++i)
     {
         if (!m_GuildBankEventLog_Item[i].empty())
         {
             CharacterDatabase.PExecute("DELETE FROM guild_bank_eventlog WHERE guildid=%u AND LogGuid < %u",
-                Id, m_GuildBankEventLog_Item[i].front()->LogGuid);
+                Id, m_GuildBankEventLog_Item[i].front().LogGuid);
         }
     }
 }
 
 void Guild::UnloadGuildBankEventLog()
 {
-    GuildBankEvent *EventLogEntry;
-    if( !m_GuildBankEventLog_Money.empty() )
-    {
-        do
-        {
-            EventLogEntry = *(m_GuildBankEventLog_Money.begin());
-            m_GuildBankEventLog_Money.pop_front();
-            delete EventLogEntry;
-        }while( !m_GuildBankEventLog_Money.empty() );
-    }
+    m_GuildBankEventLog_Money.clear();
 
     for (int i = 0; i < GUILD_BANK_MAX_TABS; ++i)
-    {
-        if( !m_GuildBankEventLog_Item[i].empty() )
-        {
-            do
-            {
-                EventLogEntry = *(m_GuildBankEventLog_Item[i].begin());
-                m_GuildBankEventLog_Item[i].pop_front();
-                delete EventLogEntry;
-            }while( !m_GuildBankEventLog_Item[i].empty() );
-        }
-    }
+        m_GuildBankEventLog_Item[i].clear();
 }
 
 void Guild::DisplayGuildBankLogs(WorldSession *session, uint8 TabId)
@@ -1591,10 +1560,10 @@ void Guild::DisplayGuildBankLogs(WorldSession *session, uint8 TabId)
         data << uint8(m_GuildBankEventLog_Money.size());    // number of log entries
         for (GuildBankEventLog::const_iterator itr = m_GuildBankEventLog_Money.begin(); itr != m_GuildBankEventLog_Money.end(); ++itr)
         {
-            data << uint8((*itr)->LogEntry);
-            data << uint64(MAKE_NEW_GUID((*itr)->PlayerGuid,0,HIGHGUID_PLAYER));
-            data << uint32((*itr)->ItemOrMoney);
-            data << uint32(time(NULL)-(*itr)->TimeStamp);
+            data << uint8(itr->LogEntry);
+            data << uint64(MAKE_NEW_GUID(itr->PlayerGuid,0,HIGHGUID_PLAYER));
+            data << uint32(itr->ItemOrMoney);
+            data << uint32(time(NULL) - itr->TimeStamp);
         }
         session->SendPacket(&data);
     }
@@ -1607,13 +1576,13 @@ void Guild::DisplayGuildBankLogs(WorldSession *session, uint8 TabId)
         data << uint8(m_GuildBankEventLog_Item[TabId].size());
         for (GuildBankEventLog::const_iterator itr = m_GuildBankEventLog_Item[TabId].begin(); itr != m_GuildBankEventLog_Item[TabId].end(); ++itr)
         {
-            data << uint8((*itr)->LogEntry);
-            data << uint64(MAKE_NEW_GUID((*itr)->PlayerGuid,0,HIGHGUID_PLAYER));
-            data << uint32((*itr)->ItemOrMoney);
-            data << uint8((*itr)->ItemStackCount);
-            if ((*itr)->LogEntry == GUILD_BANK_LOG_MOVE_ITEM || (*itr)->LogEntry == GUILD_BANK_LOG_MOVE_ITEM2)
-                data << uint8((*itr)->DestTabId);           // moved tab
-            data << uint32(time(NULL)-(*itr)->TimeStamp);
+            data << uint8(itr->LogEntry);
+            data << uint64(MAKE_NEW_GUID(itr->PlayerGuid,0,HIGHGUID_PLAYER));
+            data << uint32(itr->ItemOrMoney);
+            data << uint8(itr->ItemStackCount);
+            if (itr->LogEntry == GUILD_BANK_LOG_MOVE_ITEM || itr->LogEntry == GUILD_BANK_LOG_MOVE_ITEM2)
+                data << uint8(itr->DestTabId);           // moved tab
+            data << uint32(time(NULL) - itr->TimeStamp);
         }
         session->SendPacket(&data);
     }
@@ -1622,24 +1591,22 @@ void Guild::DisplayGuildBankLogs(WorldSession *session, uint8 TabId)
 
 void Guild::LogBankEvent(uint8 LogEntry, uint8 TabId, uint32 PlayerGuidLow, uint32 ItemOrMoney, uint8 ItemStackCount, uint8 DestTabId)
 {
-    GuildBankEvent *NewEvent = new GuildBankEvent;
+    GuildBankEvent NewEvent;
 
-    NewEvent->LogGuid = LogMaxGuid++;
-    NewEvent->LogEntry = LogEntry;
-    NewEvent->PlayerGuid = PlayerGuidLow;
-    NewEvent->ItemOrMoney = ItemOrMoney;
-    NewEvent->ItemStackCount = ItemStackCount;
-    NewEvent->DestTabId = DestTabId;
-    NewEvent->TimeStamp = uint32(time(NULL));
+    NewEvent.LogGuid = LogMaxGuid++;
+    NewEvent.LogEntry = LogEntry;
+    NewEvent.PlayerGuid = PlayerGuidLow;
+    NewEvent.ItemOrMoney = ItemOrMoney;
+    NewEvent.ItemStackCount = ItemStackCount;
+    NewEvent.DestTabId = DestTabId;
+    NewEvent.TimeStamp = uint32(time(NULL));
 
-    if (NewEvent->isMoneyEvent())
+    if (NewEvent.isMoneyEvent())
     {
         if (m_GuildBankEventLog_Money.size() > GUILD_BANK_MAX_LOGS)
         {
-            GuildBankEvent *OldEvent = *(m_GuildBankEventLog_Money.begin());
+            CharacterDatabase.PExecute("DELETE FROM guild_bank_eventlog WHERE guildid='%u' AND LogGuid='%u'", Id, m_GuildBankEventLog_Money.front().LogGuid);
             m_GuildBankEventLog_Money.pop_front();
-            CharacterDatabase.PExecute("DELETE FROM guild_bank_eventlog WHERE guildid='%u' AND LogGuid='%u'", Id, OldEvent->LogGuid);
-            delete OldEvent;
         }
         m_GuildBankEventLog_Money.push_back(NewEvent);
     }
@@ -1647,15 +1614,13 @@ void Guild::LogBankEvent(uint8 LogEntry, uint8 TabId, uint32 PlayerGuidLow, uint
     {
         if (m_GuildBankEventLog_Item[TabId].size() > GUILD_BANK_MAX_LOGS)
         {
-            GuildBankEvent *OldEvent = *(m_GuildBankEventLog_Item[TabId].begin());
+            CharacterDatabase.PExecute("DELETE FROM guild_bank_eventlog WHERE guildid='%u' AND LogGuid='%u'", Id, m_GuildBankEventLog_Item[TabId].front().LogGuid);
             m_GuildBankEventLog_Item[TabId].pop_front();
-            CharacterDatabase.PExecute("DELETE FROM guild_bank_eventlog WHERE guildid='%u' AND LogGuid='%u'", Id, OldEvent->LogGuid);
-            delete OldEvent;
         }
         m_GuildBankEventLog_Item[TabId].push_back(NewEvent);
     }
     CharacterDatabase.PExecute("INSERT INTO guild_bank_eventlog (guildid,LogGuid,LogEntry,TabId,PlayerGuid,ItemOrMoney,ItemStackCount,DestTabId,TimeStamp) VALUES ('%u','%u','%u','%u','%u','%u','%u','%u','" I64FMTD "')",
-        Id, NewEvent->LogGuid, uint32(NewEvent->LogEntry), uint32(TabId), NewEvent->PlayerGuid, NewEvent->ItemOrMoney, uint32(NewEvent->ItemStackCount), uint32(NewEvent->DestTabId), NewEvent->TimeStamp);
+        Id, NewEvent.LogGuid, uint32(NewEvent.LogEntry), uint32(TabId), NewEvent.PlayerGuid, NewEvent.ItemOrMoney, uint32(NewEvent.ItemStackCount), uint32(NewEvent.DestTabId), NewEvent.TimeStamp);
 }
 
 // This will renum guids used at load to prevent always going up until infinit
