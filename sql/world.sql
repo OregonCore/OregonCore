@@ -2652,7 +2652,7 @@ CREATE TABLE `quest_template` (
   `ZoneOrSort` smallint(6) NOT NULL default '0',
   `SkillOrClass` smallint(6) NOT NULL default '0',
   `MinLevel` tinyint(3) unsigned NOT NULL default '0',
-  `QuestLevel` tinyint(3) unsigned NOT NULL default '0',
+  `QuestLevel` smallint(6) NOT NULL default '1',
   `Type` smallint(5) unsigned NOT NULL default '0',
   `RequiredRaces` smallint(5) unsigned NOT NULL default '0',
   `RequiredSkillValue` smallint(5) unsigned NOT NULL default '0',
