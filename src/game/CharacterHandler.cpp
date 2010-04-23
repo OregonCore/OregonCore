@@ -179,16 +179,10 @@ void WorldSession::HandleCharEnumOpcode( WorldPacket & /*recv_data*/ )
 
 void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data,1+1+1+1+1+1+1+1+1+1);
-
     std::string name;
     uint8 race_,class_;
 
     recv_data >> name;
-
-    // recheck with known string size
-    CHECK_PACKET_SIZE(recv_data,(name.size()+1)+1+1+1+1+1+1+1+1+1);
-
     recv_data >> race_;
     recv_data >> class_;
 
@@ -388,8 +382,6 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 
 void WorldSession::HandleCharDeleteOpcode( WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data,8);
-
     uint64 guid;
     recv_data >> guid;
 
@@ -449,8 +441,6 @@ void WorldSession::HandleCharDeleteOpcode( WorldPacket & recv_data )
 
 void WorldSession::HandlePlayerLoginOpcode( WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data,8);
-
     if(PlayerLoading() || GetPlayer() != NULL)
     {
         sLog.outError("Player tryes to login again, AccountId = %d",GetAccountId());
@@ -776,8 +766,6 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
 
 void WorldSession::HandleSetFactionAtWar( WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data,4+1);
-
     DEBUG_LOG( "WORLD: Received CMSG_SET_FACTION_ATWAR" );
 
     uint32 repListID;
@@ -836,8 +824,6 @@ void WorldSession::HandleMeetingStoneInfo( WorldPacket & /*recv_data*/ )
 
 void WorldSession::HandleTutorialFlag( WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data,4);
-
     uint32 iFlag;
     recv_data >> iFlag;
 
@@ -870,8 +856,6 @@ void WorldSession::HandleTutorialReset( WorldPacket & /*recv_data*/ )
 
 void WorldSession::HandleSetWatchedFactionIndexOpcode(WorldPacket & recv_data)
 {
-    CHECK_PACKET_SIZE(recv_data,4);
-
     DEBUG_LOG("WORLD: Received CMSG_SET_WATCHED_FACTION");
     uint32 fact;
     recv_data >> fact;
@@ -880,8 +864,6 @@ void WorldSession::HandleSetWatchedFactionIndexOpcode(WorldPacket & recv_data)
 
 void WorldSession::HandleSetWatchedFactionInactiveOpcode(WorldPacket & recv_data)
 {
-    CHECK_PACKET_SIZE(recv_data,4+1);
-
     DEBUG_LOG("WORLD: Received CMSG_SET_FACTION_INACTIVE");
     uint32 replistid;
     uint8 inactive;
@@ -910,8 +892,6 @@ void WorldSession::HandleChangePlayerNameOpcode(WorldPacket& recv_data)
 {
     uint64 guid;
     std::string newname;
-
-    CHECK_PACKET_SIZE(recv_data, 8+1);
 
     recv_data >> guid;
     recv_data >> newname;
@@ -987,8 +967,6 @@ void WorldSession::HandleChangePlayerNameOpcodeCallBack(QueryResult_AutoPtr resu
 void WorldSession::HandleDeclinedPlayerNameOpcode(WorldPacket& recv_data)
 {
     uint64 guid;
-
-    CHECK_PACKET_SIZE(recv_data, 8);
     recv_data >> guid;
 
     // not accept declined names for unsupported languages
@@ -1023,8 +1001,6 @@ void WorldSession::HandleDeclinedPlayerNameOpcode(WorldPacket& recv_data)
 
     std::string name2;
     DeclinedName declinedname;
-
-    CHECK_PACKET_SIZE(recv_data, recv_data.rpos() + 1);
     recv_data >> name2;
 
     if(name2 != name)                                       // character have different name
@@ -1038,7 +1014,6 @@ void WorldSession::HandleDeclinedPlayerNameOpcode(WorldPacket& recv_data)
 
     for(int i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
     {
-        CHECK_PACKET_SIZE(recv_data, recv_data.rpos() + 1);
         recv_data >> declinedname.name[i];
         if(!normalizePlayerName(declinedname.name[i]))
         {

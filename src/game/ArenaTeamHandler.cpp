@@ -33,8 +33,6 @@ void WorldSession::HandleInspectArenaStatsOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("MSG_INSPECT_ARENA_TEAMS");
 
-    CHECK_PACKET_SIZE(recv_data, 8);
-
     uint64 guid;
     recv_data >> guid;
     sLog.outDebug("Inspect Arena stats (GUID: %u TypeId: %u)", GUID_LOPART(guid),GuidHigh2TypeId(GUID_HIPART(guid)));
@@ -56,8 +54,6 @@ void WorldSession::HandleArenaTeamQueryOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug( "WORLD: Received CMSG_ARENA_TEAM_QUERY" );
 
-    CHECK_PACKET_SIZE(recv_data, 4);
-
     uint32 ArenaTeamId;
     recv_data >> ArenaTeamId;
 
@@ -72,8 +68,6 @@ void WorldSession::HandleArenaTeamRosterOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug( "WORLD: Received CMSG_ARENA_TEAM_ROSTER" );
 
-    CHECK_PACKET_SIZE(recv_data, 4);
-
     uint32 ArenaTeamId;                                     // arena team id
     recv_data >> ArenaTeamId;
 
@@ -84,8 +78,6 @@ void WorldSession::HandleArenaTeamRosterOpcode(WorldPacket & recv_data)
 void WorldSession::HandleArenaTeamAddMemberOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("CMSG_ARENA_TEAM_ADD_MEMBER");
-
-    CHECK_PACKET_SIZE(recv_data, 4+1);
 
     uint32 ArenaTeamId;                                     // arena team id
     std::string Invitedname;
@@ -204,8 +196,6 @@ void WorldSession::HandleArenaTeamLeaveOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("CMSG_ARENA_TEAM_LEAVE");
 
-    CHECK_PACKET_SIZE(recv_data, 4);
-
     uint32 ArenaTeamId;                                     // arena team id
     recv_data >> ArenaTeamId;
 
@@ -247,8 +237,6 @@ void WorldSession::HandleArenaTeamDisbandOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("CMSG_ARENA_TEAM_DISBAND");
 
-    CHECK_PACKET_SIZE(recv_data, 4);
-
     uint32 ArenaTeamId;                                     // arena team id
     recv_data >> ArenaTeamId;
 
@@ -268,8 +256,6 @@ void WorldSession::HandleArenaTeamDisbandOpcode(WorldPacket & recv_data)
 void WorldSession::HandleArenaTeamRemoveFromTeamOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("CMSG_ARENA_TEAM_REMOVE_FROM_TEAM");
-
-    CHECK_PACKET_SIZE(recv_data, 4+1);
 
     uint32 ArenaTeamId;
     std::string name;
@@ -324,8 +310,6 @@ void WorldSession::HandleArenaTeamRemoveFromTeamOpcode(WorldPacket & recv_data)
 void WorldSession::HandleArenaTeamPromoteToCaptainOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("CMSG_ARENA_TEAM_PROMOTE_TO_CAPTAIN");
-
-    CHECK_PACKET_SIZE(recv_data, 4+1);
 
     uint32 ArenaTeamId;
     std::string name;

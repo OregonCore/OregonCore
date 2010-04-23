@@ -46,28 +46,14 @@ void MailItem::deleteItem( bool inDB )
 
 void WorldSession::HandleSendMail(WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data,8+1+1+1+4+4+1+4+4+8+1);
-
     uint64 mailbox, unk3;
     std::string receiver, subject, body;
     uint32 unk1, unk2, money, COD;
     uint8 unk4;
     recv_data >> mailbox;
     recv_data >> receiver;
-
-    // recheck
-    CHECK_PACKET_SIZE(recv_data, 8+(receiver.size()+1)+1+1+4+4+1+4+4+8+1);
-
     recv_data >> subject;
-
-    // recheck
-    CHECK_PACKET_SIZE(recv_data, 8+(receiver.size()+1)+(subject.size()+1)+1+4+4+1+4+4+8+1);
-
     recv_data >> body;
-
-    // recheck
-    CHECK_PACKET_SIZE(recv_data, 8+(receiver.size()+1)+(subject.size()+1)+(body.size()+1)+4+4+1+4+4+8+1);
-
     recv_data >> unk1;                                      // stationery?
     recv_data >> unk2;                                      // 0x00000000
 
@@ -78,9 +64,6 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data )
 
     if(items_count > 12)                                    // client limit
         return;
-
-    // recheck
-    CHECK_PACKET_SIZE(recv_data, 8+(receiver.size()+1)+(subject.size()+1)+(body.size()+1)+4+4+1+items_count*(1+8)+4+4+8+1);
 
     if(items_count)
     {
@@ -270,8 +253,6 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data )
 //called when mail is read
 void WorldSession::HandleMarkAsRead(WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data,8+4);
-
     uint64 mailbox;
     uint32 mailId;
     recv_data >> mailbox;
@@ -292,8 +273,6 @@ void WorldSession::HandleMarkAsRead(WorldPacket & recv_data )
 //called when client deletes mail
 void WorldSession::HandleMailDelete(WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data,8+4);
-
     uint64 mailbox;
     uint32 mailId;
     recv_data >> mailbox;
@@ -308,8 +287,6 @@ void WorldSession::HandleMailDelete(WorldPacket & recv_data )
 
 void WorldSession::HandleReturnToSender(WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data,8+4);
-
     uint64 mailbox;
     uint32 mailId;
     recv_data >> mailbox;
@@ -411,8 +388,6 @@ void WorldSession::SendReturnToSender(uint8 messageType, uint32 sender_acc, uint
 //called when player takes item attached in mail
 void WorldSession::HandleTakeItem(WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data,8+4+4);
-
     uint64 mailbox;
     uint32 mailId;
     uint32 itemId;
@@ -502,8 +477,6 @@ void WorldSession::HandleTakeItem(WorldPacket & recv_data )
 
 void WorldSession::HandleTakeMoney(WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data,8+4);
-
     uint64 mailbox;
     uint32 mailId;
     recv_data >> mailbox;
@@ -534,8 +507,6 @@ void WorldSession::HandleTakeMoney(WorldPacket & recv_data )
 //called when player lists his received mails
 void WorldSession::HandleGetMail(WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data,8);
-
     uint64 mailbox;
     recv_data >> mailbox;
 
@@ -647,8 +618,6 @@ void WorldSession::HandleGetMail(WorldPacket & recv_data )
 ///this function is called when client needs mail message body, or when player clicks on item which has ITEM_FIELD_ITEM_TEXT_ID > 0
 void WorldSession::HandleItemTextQuery(WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data,4+4+4);
-
     uint32 itemTextId;
     uint32 mailId;                                          //this value can be item id in bag, but it is also mail id
     uint32 unk;                                             //maybe something like state - 0x70000000
@@ -668,8 +637,6 @@ void WorldSession::HandleItemTextQuery(WorldPacket & recv_data )
 //used when player copies mail body to his inventory
 void WorldSession::HandleMailCreateTextItem(WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data,8+4);
-
     uint64 mailbox;
     uint32 mailId;
 

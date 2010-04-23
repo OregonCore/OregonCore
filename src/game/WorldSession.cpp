@@ -176,44 +176,57 @@ bool WorldSession::Update(uint32 /*diff*/)
         else
         {
             OpcodeHandler& opHandle = opcodeTable[packet->GetOpcode()];
-            switch (opHandle.status)
+            try
             {
-                case STATUS_LOGGEDIN:
-                    if(!_player)
-                    {
-                        // skip STATUS_LOGGEDIN opcode unexpected errors if player logout sometime ago - this can be network lag delayed packets
-                        if(!m_playerRecentlyLogout)
-                            logUnexpectedOpcode(packet, "the player has not logged in yet");
-                    }
-                    else if(_player->IsInWorld())
-                        (this->*opHandle.handler)(*packet);
-                    // lag can cause STATUS_LOGGEDIN opcodes to arrive after the player started a transfer
-                    break;
-                case STATUS_TRANSFER_PENDING:
-                    if(!_player)
-                        logUnexpectedOpcode(packet, "the player has not logged in yet");
-                    else if(_player->IsInWorld())
-                        logUnexpectedOpcode(packet, "the player is still in world");
-                    else
-                        (this->*opHandle.handler)(*packet);
-                    break;
-                case STATUS_AUTHED:
-                    // prevent cheating with skip queue wait
-                    if(m_inQueue)
-                    {
-                        logUnexpectedOpcode(packet, "the player not pass queue yet");
+                switch (opHandle.status)
+                {
+                    case STATUS_LOGGEDIN:
+                        if(!_player)
+                        {
+                            // skip STATUS_LOGGEDIN opcode unexpected errors if player logout sometime ago - this can be network lag delayed packets
+                            if(!m_playerRecentlyLogout)
+                                logUnexpectedOpcode(packet, "the player has not logged in yet");
+                        }
+                        else if(_player->IsInWorld())
+                            (this->*opHandle.handler)(*packet);
+                        // lag can cause STATUS_LOGGEDIN opcodes to arrive after the player started a transfer
                         break;
-                    }
+                    case STATUS_TRANSFER_PENDING:
+                        if(!_player)
+                            logUnexpectedOpcode(packet, "the player has not logged in yet");
+                        else if(_player->IsInWorld())
+                            logUnexpectedOpcode(packet, "the player is still in world");
+                        else
+                            (this->*opHandle.handler)(*packet);
+                        break;
+                    case STATUS_AUTHED:
+                        // prevent cheating with skip queue wait
+                        if(m_inQueue)
+                        {
+                            logUnexpectedOpcode(packet, "the player not pass queue yet");
+                            break;
+                        }
 
-                    m_playerRecentlyLogout = false;
-                    (this->*opHandle.handler)(*packet);
-                    break;
-                case STATUS_NEVER:
-                    sLog.outError( "SESSION: received not allowed opcode %s (0x%.4X)",
-                        LookupOpcodeName(packet->GetOpcode()),
-                        packet->GetOpcode());
-                    break;
+                        m_playerRecentlyLogout = false;
+                        (this->*opHandle.handler)(*packet);
+                        break;
+                    case STATUS_NEVER:
+                        sLog.outError( "SESSION: received not allowed opcode %s (0x%.4X)",
+                            LookupOpcodeName(packet->GetOpcode()),
+                            packet->GetOpcode());
+                        break;
+                }
             }
+            catch(ByteBufferException &exception)
+            {
+                sLog.outError("WorldSession::Update ByteBufferException occured while parsing a packet (opcode: %u) from client %s, accountid=%i. Skipped packet.",
+                        packet->GetOpcode(), GetRemoteAddress().c_str(), GetAccountId());
+                if(sLog.IsOutDebug())
+                {
+                    sLog.outDebug("Dumping error causing packet:");
+                    packet->hexlike();
+                }
+             }
         }
 
         delete packet;

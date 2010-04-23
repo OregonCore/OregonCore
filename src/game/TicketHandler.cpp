@@ -33,9 +33,6 @@
 
 void WorldSession::HandleGMTicketCreateOpcode( WorldPacket & recv_data )
 {
-    // always do a packet check
-    CHECK_PACKET_SIZE(recv_data, 4*4+1+2*4);
-
     uint32 map;
     float x, y, z;
     std::string ticketText = "";
@@ -88,9 +85,6 @@ void WorldSession::HandleGMTicketCreateOpcode( WorldPacket & recv_data )
 
 void WorldSession::HandleGMTicketUpdateOpcode( WorldPacket & recv_data)
 {
-    // always do a packet check
-    CHECK_PACKET_SIZE(recv_data,1);
-
     std::string message = "";
     time_t t = time(NULL);
 

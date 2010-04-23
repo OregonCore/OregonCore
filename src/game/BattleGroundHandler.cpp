@@ -37,8 +37,6 @@
 
 void WorldSession::HandleBattleGroundHelloOpcode( WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data, 8);
-
     uint64 guid;
     recv_data >> guid;
     sLog.outDebug( "WORLD: Recvd CMSG_BATTLEMASTER_HELLO Message from (GUID: %u TypeId:%u)", GUID_LOPART(guid),GuidHigh2TypeId(GUID_HIPART(guid)));
@@ -74,8 +72,6 @@ void WorldSession::SendBattlegGroundList( uint64 guid, uint32 bgTypeId )
 
 void WorldSession::HandleBattleGroundJoinOpcode( WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data, 8+4+4+1);
-
     uint64 guid;
     uint32 bgTypeId;
     uint32 instanceId;
@@ -263,8 +259,6 @@ void WorldSession::HandleBattleGroundPVPlogdataOpcode( WorldPacket & /*recv_data
 
 void WorldSession::HandleBattleGroundListOpcode( WorldPacket &recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data, 4);
-
     sLog.outDebug( "WORLD: Recvd CMSG_BATTLEFIELD_LIST Message");
 
     uint32 bgTypeId;
@@ -288,8 +282,6 @@ void WorldSession::HandleBattleGroundListOpcode( WorldPacket &recv_data )
 
 void WorldSession::HandleBattleGroundPlayerPortOpcode( WorldPacket &recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data, 1+1+4+2+1);
-
     sLog.outDebug( "WORLD: Recvd CMSG_BATTLEFIELD_PORT Message");
 
     uint8 type;                                             // arenatype if arena
@@ -604,8 +596,6 @@ void WorldSession::HandleAreaSpiritHealerQueryOpcode( WorldPacket & recv_data )
 {
     sLog.outDebug("WORLD: CMSG_AREA_SPIRIT_HEALER_QUERY");
 
-    CHECK_PACKET_SIZE(recv_data, 8);
-
     BattleGround *bg = _player->GetBattleGround();
     if(!bg)
         return;
@@ -627,8 +617,6 @@ void WorldSession::HandleAreaSpiritHealerQueueOpcode( WorldPacket & recv_data )
 {
     sLog.outDebug("WORLD: CMSG_AREA_SPIRIT_HEALER_QUEUE");
 
-    CHECK_PACKET_SIZE(recv_data, 8);
-
     BattleGround *bg = _player->GetBattleGround();
     if(!bg)
         return;
@@ -648,8 +636,6 @@ void WorldSession::HandleAreaSpiritHealerQueueOpcode( WorldPacket & recv_data )
 
 void WorldSession::HandleBattleGroundArenaJoin( WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data, 8+1+1+1);
-
     sLog.outDebug("WORLD: CMSG_BATTLEMASTER_JOIN_ARENA");
     recv_data.hexlike();
 
@@ -808,8 +794,6 @@ void WorldSession::HandleBattleGroundArenaJoin( WorldPacket & recv_data )
 
 void WorldSession::HandleBattleGroundReportAFK( WorldPacket & recv_data )
 {
-    CHECK_PACKET_SIZE(recv_data, 8);
-
     uint64 playerGuid;
     recv_data >> playerGuid;
     Player *reportedPlayer = objmgr.GetPlayer(playerGuid);

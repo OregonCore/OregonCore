@@ -590,45 +590,53 @@ int WorldSocket::ProcessIncoming (WorldPacket* new_pct)
         sWorldLog.Log ("\n\n");
     }
 
-    // like one switch ;)
-    if (opcode == CMSG_PING)
+    try
     {
-        return HandlePing (*new_pct);
-    }
-    else if (opcode == CMSG_AUTH_SESSION)
-    {
-        if (m_Session)
+        switch(opcode)
         {
-            sLog.outError ("WorldSocket::ProcessIncoming: Player send CMSG_AUTH_SESSION again");
-            return -1;
-        }
+            case CMSG_PING:
+                return HandlePing (*new_pct);
+            case CMSG_AUTH_SESSION:
+                if (m_Session)
+                {
+                    sLog.outError ("WorldSocket::ProcessIncoming: Player send CMSG_AUTH_SESSION again");
+                    return -1;
+                }
+                return HandleAuthSession (*new_pct);
+            case CMSG_KEEP_ALIVE:
+                DEBUG_LOG ("CMSG_KEEP_ALIVE ,size: %d", new_pct->size ());
+                return 0;
+            default:
+            {
+                ACE_GUARD_RETURN (LockType, Guard, m_SessionLock, -1);
 
-        return HandleAuthSession (*new_pct);
+                if (m_Session != NULL)
+                {
+                    // OK ,give the packet to WorldSession
+                    aptr.release ();
+                    // WARNINIG here we call it with locks held.
+                    // Its possible to cause deadlock if QueuePacket calls back
+                    m_Session->QueuePacket (new_pct);
+                    return 0;
+                }
+                else
+                {
+                    sLog.outError ("WorldSocket::ProcessIncoming: Client not authed opcode = ", opcode);
+                    return -1;
+                }
+            }
+        }
     }
-    else if (opcode == CMSG_KEEP_ALIVE)
+    catch(ByteBufferException &exception)
     {
-        DEBUG_LOG ("CMSG_KEEP_ALIVE ,size: %d", new_pct->size ());
-
-        return 0;
-    }
-    else
-    {
-        ACE_GUARD_RETURN (LockType, Guard, m_SessionLock, -1);
-
-        if (m_Session != NULL)
+        sLog.outError("WorldSocket::ProcessIncoming ByteBufferException occured while parsing an instant handled packet (opcode: %u) from client %s, accountid=%i. Disconnected client.",
+                opcode, GetRemoteAddress().c_str(), m_Session?m_Session->GetAccountId():-1);
+        if(sLog.IsOutDebug())
         {
-            // OK ,give the packet to WorldSession
-            aptr.release ();
-            // WARNINIG here we call it with locks held.
-            // Its possible to cause deadlock if QueuePacket calls back
-            m_Session->QueuePacket (new_pct);
-            return 0;
+            sLog.outDebug("Dumping error causing packet:");
+            new_pct->hexlike();
         }
-        else
-        {
-            sLog.outError ("WorldSocket::ProcessIncoming: Client not authed opcode = ", opcode);
-            return -1;
-        }
+        return -1;
     }
 
     ACE_NOTREACHED (return 0);
@@ -651,22 +659,10 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
 
     BigNumber K;
 
-    if (recvPacket.size () < (4 + 4 + 1 + 4 + 20))
-    {
-        sLog.outError ("WorldSocket::HandleAuthSession: wrong packet size");
-        return -1;
-    }
-
     // Read the content of the packet
     recvPacket >> BuiltNumberClient;                        // for now no use
     recvPacket >> unk2;
     recvPacket >> account;
-
-    if (recvPacket.size () < (4 + 4 + (account.size () + 1) + 4 + 20))
-    {
-        sLog.outError ("WorldSocket::HandleAuthSession: wrong packet size second check");
-        return -1;
-    }
 
     recvPacket >> clientSeed;
     recvPacket.read (digest, 20);
@@ -889,12 +885,6 @@ int WorldSocket::HandlePing (WorldPacket& recvPacket)
 {
     uint32 ping;
     uint32 latency;
-
-    if (recvPacket.size () < 8)
-    {
-        sLog.outError ("WorldSocket::_HandlePing wrong packet size");
-        return -1;
-    }
 
     // Get the ping packet content
     recvPacket >> ping;
