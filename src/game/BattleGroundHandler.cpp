@@ -41,7 +41,7 @@ void WorldSession::HandleBattleGroundHelloOpcode( WorldPacket & recv_data )
 
     uint64 guid;
     recv_data >> guid;
-    sLog.outDebug( "WORLD: Recvd CMSG_BATTLEMASTER_HELLO Message from: " I64FMT, guid);
+    sLog.outDebug( "WORLD: Recvd CMSG_BATTLEMASTER_HELLO Message from (GUID: %u TypeId:%u)", GUID_LOPART(guid),GuidHigh2TypeId(GUID_HIPART(guid)));
 
     Creature *unit = ObjectAccessor::GetCreature(*_player, guid);
     if(!unit)
@@ -93,7 +93,7 @@ void WorldSession::HandleBattleGroundJoinOpcode( WorldPacket & recv_data )
         return;
     }
 
-    sLog.outDebug( "WORLD: Recvd CMSG_BATTLEMASTER_JOIN Message from: " I64FMT, guid);
+    sLog.outDebug( "WORLD: Recvd CMSG_BATTLEMASTER_JOIN Message from (GUID: %u TypeId:%u)", GUID_LOPART(guid),GuidHigh2TypeId(GUID_HIPART(guid)));
 
     // can do this, since it's battleground, not arena
     uint32 bgQueueTypeId = sBattleGroundMgr.BGQueueTypeId(bgTypeId, 0);

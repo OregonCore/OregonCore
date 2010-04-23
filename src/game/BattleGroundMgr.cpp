@@ -1037,7 +1037,7 @@ void BattleGroundMgr::Update(time_t diff)
             {
                 DistributeArenaPoints();
                 m_NextAutoDistributionTime = time(NULL) + BATTLEGROUND_ARENA_POINT_DISTRIBUTION_DAY * sWorld.getConfig(CONFIG_ARENA_AUTO_DISTRIBUTE_INTERVAL_DAYS);
-                CharacterDatabase.PExecute("UPDATE saved_variables SET NextArenaPointDistributionTime = '"I64FMTD"'", m_NextAutoDistributionTime);
+                CharacterDatabase.PExecute("UPDATE saved_variables SET NextArenaPointDistributionTime = '"UI64FMTD"'", m_NextAutoDistributionTime);
             }
             m_AutoDistributionTimeChecker = 600000; // check 10 minutes
         }
@@ -1569,7 +1569,7 @@ void BattleGroundMgr::InitAutomaticArenaPointDistribution()
         {
             sLog.outDebug("Battleground: Next arena point distribution time not found in SavedVariables, reseting it now.");
             m_NextAutoDistributionTime = time(NULL) + BATTLEGROUND_ARENA_POINT_DISTRIBUTION_DAY * sWorld.getConfig(CONFIG_ARENA_AUTO_DISTRIBUTE_INTERVAL_DAYS);
-            CharacterDatabase.PExecute("INSERT INTO saved_variables (NextArenaPointDistributionTime) VALUES ('"I64FMTD"')", m_NextAutoDistributionTime);
+            CharacterDatabase.PExecute("INSERT INTO saved_variables (NextArenaPointDistributionTime) VALUES ('"UI64FMTD"')", m_NextAutoDistributionTime);
         }
         else
             m_NextAutoDistributionTime = (*result)[0].GetUInt64();

@@ -1045,8 +1045,8 @@ void WorldSession::HandleMoveUnRootAck(WorldPacket&/* recv_data*/)
         recv_data >> Orientation;
 
         // TODO for later may be we can use for anticheat
-        DEBUG_LOG("Guid " I64FMTD,guid);
-        DEBUG_LOG("unknown1 " I64FMTD,unknown1);
+        DEBUG_LOG("Guid " UI64FMTD,guid);
+        DEBUG_LOG("unknown1 " UI64FMTD,unknown1);
         DEBUG_LOG("unknown2 %u",unknown2);
         DEBUG_LOG("X %f",PositionX);
         DEBUG_LOG("Y %f",PositionY);
@@ -1079,8 +1079,8 @@ void WorldSession::HandleMoveRootAck(WorldPacket&/* recv_data*/)
         recv_data >> Orientation;
 
         // for later may be we can use for anticheat
-        DEBUG_LOG("Guid " I64FMTD,guid);
-        DEBUG_LOG("unknown1 " I64FMTD,unknown1);
+        DEBUG_LOG("Guid " UI64FMTD,guid);
+        DEBUG_LOG("unknown1 " UI64FMTD,unknown1);
         DEBUG_LOG("unknown1 %u",unknown2);
         DEBUG_LOG("X %f",PositionX);
         DEBUG_LOG("Y %f",PositionY);
@@ -1100,7 +1100,7 @@ void WorldSession::HandleMoveTeleportAck(WorldPacket&/* recv_data*/)
 
         recv_data >> guid;
         recv_data >> flags >> time;
-        DEBUG_LOG("Guid " I64FMTD,guid);
+        DEBUG_LOG("Guid " UI64FMTD,guid);
         DEBUG_LOG("Flags %u, time %u",flags, time/1000);
     */
 }
@@ -1151,7 +1151,7 @@ void WorldSession::HandleInspectOpcode(WorldPacket& recv_data)
 
     uint64 guid;
     recv_data >> guid;
-    DEBUG_LOG("Inspected guid is " I64FMTD, guid);
+    DEBUG_LOG("Inspected guid is " UI64FMTD, guid);
 
     _player->SetSelection(guid);
 

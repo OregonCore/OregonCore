@@ -122,7 +122,7 @@ bool ChatHandler::HandleMuteCommand(const char* args)
     if (chr)
         chr->GetSession()->m_muteTime = mutetime;
 
-    LoginDatabase.PExecute("UPDATE account SET mutetime = " I64FMTD " WHERE id = '%u'",uint64(mutetime), account_id );
+    LoginDatabase.PExecute("UPDATE account SET mutetime = " UI64FMTD " WHERE id = '%u'",uint64(mutetime), account_id );
 
     if(chr)
         ChatHandler(chr).PSendSysMessage(LANG_YOUR_CHAT_DISABLED, notspeaktime, mutereasonstr.c_str());

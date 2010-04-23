@@ -462,7 +462,7 @@ void OutdoorPvPObjective::UpdateActivePlayerProximityCheck()
                 }
                 else
                 {
-                    sLog.outError("Player ("I64FMTD") offline, bit still in outdoor pvp, this should never happen.",(*itr));
+                    sLog.outError("Player ("UI64FMTD") offline, bit still in outdoor pvp, this should never happen.",(*itr));
                 }
             }
         }
