@@ -61,7 +61,7 @@ static bool findtoknth(std::string &str, int n, std::string::size_type &s, std::
 {
     int i; s = e = 0;
     std::string::size_type size = str.size();
-    for(i = 1; s < size && i < n; s++) if(str[s] == ' ') ++i;
+    for (i = 1; s < size && i < n; s++) if(str[s] == ' ') ++i;
     if (i < n)
         return false;
 
@@ -90,7 +90,7 @@ bool findnth(std::string &str, int n, std::string::size_type &s, std::string::si
         if (e == std::string::npos) return false;
     } while(str[e-1] == '\\');
 
-    for(int i = 1; i < n; i++)
+    for (int i = 1; i < n; ++i)
     {
         do
         {
@@ -195,7 +195,7 @@ std::string CreateDumpString(char const* tableName, QueryResult_AutoPtr result)
     std::ostringstream ss;
     ss << "INSERT INTO "<< _TABLE_SIM_ << tableName << _TABLE_SIM_ << " VALUES (";
     Field *fields = result->Fetch();
-    for(uint32 i = 0; i < result->GetFieldCount(); i++)
+    for (uint32 i = 0; i < result->GetFieldCount(); ++i)
     {
         if (i == 0) ss << "'";
         else ss << ", '";
@@ -221,7 +221,7 @@ std::string PlayerDumpWriter::GenerateWhereStr(char const* field, GUIDs const& g
 {
     std::ostringstream wherestr;
     wherestr << field << " IN ('";
-    for(; itr != guids.end(); ++itr)
+    for (; itr != guids.end(); ++itr)
     {
         wherestr << *itr;
 
@@ -301,19 +301,19 @@ void PlayerDumpWriter::DumpTable(std::string& dump, uint32 guid, char const*tabl
             // collect guids
             switch ( type )
             {
-            case DTT_INVENTORY:
-                StoreGUID(result,3,items); break;           // item guid collection
-            case DTT_ITEM:
-                StoreGUID(result,0,ITEM_FIELD_ITEM_TEXT_ID,texts); break;
-                // item text id collection
-            case DTT_PET:
-                StoreGUID(result,0,pets);  break;           // pet guid collection
-            case DTT_MAIL:
-                StoreGUID(result,0,mails);                  // mail id collection
-                StoreGUID(result,6,texts); break;           // item text id collection
-            case DTT_MAIL_ITEM:
-                StoreGUID(result,1,items); break;           // item guid collection
-            default:                       break;
+                case DTT_INVENTORY:
+                    StoreGUID(result,3,items); break;       // item guid collection
+                case DTT_ITEM:
+                    StoreGUID(result,0,ITEM_FIELD_ITEM_TEXT_ID,texts); break;
+                    // item text id collection
+                case DTT_PET:
+                    StoreGUID(result,0,pets);  break;       // pet guid collection
+                case DTT_MAIL:
+                    StoreGUID(result,0,mails);              // mail id collection
+                    StoreGUID(result,6,texts); break;       // item text id collection
+                case DTT_MAIL_ITEM:
+                    StoreGUID(result,1,items); break;       // item guid collection
+                default:                       break;
             }
 
             dump += CreateDumpString(tableTo, result);
@@ -327,7 +327,11 @@ void PlayerDumpWriter::DumpTable(std::string& dump, uint32 guid, char const*tabl
 std::string PlayerDumpWriter::GetDump(uint32 guid)
 {
     std::string dump;
-    for(int i = 0; i < DUMP_TABLE_COUNT; i++)
+
+    dump += "IMPORTANT NOTE: This sql queries not created for apply directly, use '.pdump load' command in console or client chat instead.\n";
+    dump += "IMPORTANT NOTE: NOT APPLY ITS DIRECTLY to character DB or you will DAMAGE and CORRUPT character DB\n\n";
+
+    for (int i = 0; i < DUMP_TABLE_COUNT; ++i)
         DumpTable(dump, guid, dumpTables[i].name, dumpTables[i].name, dumpTables[i].type);
 
     // TODO: Add instance/group..
@@ -358,7 +362,7 @@ DumpReturn PlayerDumpReader::LoadDump(const std::string& file, uint32 account, s
     {
         QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT COUNT(guid) FROM characters WHERE account = '%d'", account);
         uint8 charcount = 0;
-        if ( result )
+        if (result)
         {
             Field *fields=result->Fetch();
             charcount = fields[0].GetUInt8();
@@ -369,7 +373,7 @@ DumpReturn PlayerDumpReader::LoadDump(const std::string& file, uint32 account, s
     }
 
     FILE *fin = fopen(file.c_str(), "r");
-    if(!fin)
+    if (!fin)
         return DUMP_FILE_OPEN_ERROR;
 
     QueryResult_AutoPtr result = QueryResult_AutoPtr(NULL);
@@ -377,9 +381,9 @@ DumpReturn PlayerDumpReader::LoadDump(const std::string& file, uint32 account, s
 
     // make sure the same guid doesn't already exist and is safe to use
     bool incHighest = true;
-    if(guid != 0 && guid < objmgr.m_hiCharGuid)
+    if (guid != 0 && guid < objmgr.m_hiCharGuid)
     {
-        result = CharacterDatabase.PQuery("SELECT * FROM characters WHERE guid = '%d'", guid);
+        result = CharacterDatabase.PQuery("SELECT 1 FROM characters WHERE guid = '%d'", guid);
         if (result)
             guid = objmgr.m_hiCharGuid;                     // use first free if exists
         else incHighest = false;
@@ -388,17 +392,18 @@ DumpReturn PlayerDumpReader::LoadDump(const std::string& file, uint32 account, s
         guid = objmgr.m_hiCharGuid;
 
     // normalize the name if specified and check if it exists
-    if(!normalizePlayerName(name))
+    if (!normalizePlayerName(name))
         name = "";
 
     if(ObjectMgr::IsValidName(name,true))
     {
         CharacterDatabase.escape_string(name);              // for safe, we use name only for sql quearies anyway
-        result = CharacterDatabase.PQuery("SELECT * FROM characters WHERE name = '%s'", name.c_str());
+        result = CharacterDatabase.PQuery("SELECT 1 FROM characters WHERE name = '%s'", name.c_str());
         if (result)
             name = "";                                      // use the one from the dump
     }
-    else name = "";
+    else
+        name = "";
 
     // name encoded or empty
 
@@ -427,7 +432,12 @@ DumpReturn PlayerDumpReader::LoadDump(const std::string& file, uint32 account, s
         std::string line; line.assign(buf);
 
         // skip empty strings
-        if(line.find_first_not_of(" \t\n\r\7")==std::string::npos)
+        size_t nw_pos = line.find_first_not_of(" \t\n\r\7");
+        if(nw_pos==std::string::npos)
+            continue;
+
+        // skip NOTE
+        if(line.substr(nw_pos,15)=="IMPORTANT NOTE:")
             continue;
 
         // determine table name and load type
@@ -440,7 +450,7 @@ DumpReturn PlayerDumpReader::LoadDump(const std::string& file, uint32 account, s
 
         DumpTableType type;
         uint8 i;
-        for(i = 0; i < DUMP_TABLE_COUNT; i++)
+        for (i = 0; i < DUMP_TABLE_COUNT; ++i)
         {
             if (tn == dumpTables[i].name)
             {
@@ -474,7 +484,7 @@ DumpReturn PlayerDumpReader::LoadDump(const std::string& file, uint32 account, s
                 std::string vals = getnth(line, 3);
                 if(!changetoknth(vals, OBJECT_FIELD_GUID+1, newguid))
                     ROLLBACK(DUMP_FILE_BROKEN);
-                for(uint16 field = PLAYER_FIELD_INV_SLOT_HEAD; field < PLAYER_FARSIGHT; field++)
+                for (uint16 field = PLAYER_FIELD_INV_SLOT_HEAD; field < PLAYER_FARSIGHT; field++)
                     if(!changetokGuid(vals, field+1, items, objmgr.m_hiItemGuid, true))
                         ROLLBACK(DUMP_FILE_BROKEN);
                 if(!changenth(line, 3, vals.c_str()))
@@ -485,7 +495,7 @@ DumpReturn PlayerDumpReader::LoadDump(const std::string& file, uint32 account, s
                     name = getnth(line, 4);
                     CharacterDatabase.escape_string(name);
 
-                    result = CharacterDatabase.PQuery("SELECT * FROM characters WHERE name = '%s'", name.c_str());
+                    result = CharacterDatabase.PQuery("SELECT 1 FROM characters WHERE name = '%s'", name.c_str());
                     if (result)
                     {
                         if(!changenth(line, 30, "1"))       // rename on login: `at_login` field 30 in raw field list
