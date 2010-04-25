@@ -90,8 +90,8 @@ void ScriptsInit(char const* cfg_file = "oregoncore.conf")
     outstring_log(" | |  | | '__/ _ \\/ _` |/ _ \\| '_ \\ \\___ \\ / __| '__| | '_ \\| __|");
     outstring_log(" | |__| | | |  __/ (_| | (_) | | | |____) | (__| |  | | |_) | |_ ");
     outstring_log("  \\____/|_|  \\___|\\__, |\\___/|_| |_|_____/ \\___|_|  |_| .__/ \\__|");
-	outstring_log("                   __/ |                              | |        ");
-	outstring_log("                  |___/                               |_|  ");
+    outstring_log("                   __/ |                              | |        ");
+    outstring_log("                  |___/                               |_|  ");
 #endif
     outstring_log("Oregon Script initializing %s", _FULLVERSION);
 

@@ -616,12 +616,12 @@ void AddScripts()
 
     //Alterac Mountains
     AddSC_alterac_mountains();
-	
-	    //Alterac Valley
+    
+    //Alterac Valley
     AddSC_boss_balinda();
     AddSC_boss_drekthar();
     AddSC_boss_galvangar();
-	AddSC_AV_Marshals();
+    AddSC_AV_Marshals();
     AddSC_boss_vanndar();
     AddSC_AV_Warmasters();
 

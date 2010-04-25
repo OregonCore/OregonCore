@@ -315,7 +315,7 @@ int WMOGroup::ConvertToVMAPGroupWmo(FILE *output, bool pPreciseVectorData)
         IndexExTr = new int[mopy_size];
         for (int i=0; i<mopy_size; i+=2)
         {
-		    // Skip no collision triangles
+            // Skip no collision triangles
             if ((int)MOPY[i]&WMO_MATERIAL_NO_COLLISION)
                 continue;
             // Use only this triangles

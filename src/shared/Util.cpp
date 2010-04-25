@@ -30,17 +30,17 @@ static MTRandTSS mtRand;
 
 int32 irand (int32 min, int32 max)
 {
-	int32 result;
+    int32 result;
 #pragma omp critical (mtrand)
 {
-	result = mtRand->randInt (max-min) + min;
+    result = mtRand->randInt (max-min) + min;
 }
   return result;
 }
 
 uint32 urand (uint32 min, uint32 max)
 {
-	uint32 result;
+    uint32 result;
 #pragma omp critical (mtrand)
 {
   result =  mtRand->randInt (max - min) + min;
