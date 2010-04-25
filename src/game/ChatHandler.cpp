@@ -83,6 +83,21 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 
     if(lang == LANG_ADDON)
     {
+        if(sWorld.getConfig(CONFIG_CHATLOG_ADDON))
+        {
+            std::string msg = "";
+            recv_data >> msg;
+
+            if(msg.empty())
+            {
+                sLog.outDebug("Player %s send empty addon msg", GetPlayer()->GetName());
+                return;
+            }
+
+            sLog.outChat("[ADDON] Player %s sends: %s",
+                GetPlayer()->GetName(), msg.c_str());
+        }
+
         // Disabled addon channel?
         if(!sWorld.getConfig(CONFIG_ADDON_CHANNEL))
             return;
@@ -239,6 +254,10 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
             WorldPacket data;
             ChatHandler::FillMessageData(&data, this, CHAT_MSG_PARTY, lang, NULL, 0, msg.c_str(),NULL);
             group->BroadcastPacket(&data, group->GetMemberGroup(GetPlayer()->GetGUID()));
+
+            if (sWorld.getConfig(CONFIG_CHATLOG_PARTY))
+                sLog.outChat("[PARTY] Player %s tells group with leader %s: %s",
+                    GetPlayer()->GetName(), group->GetLeaderName(), msg.c_str());
         }
         break;
         case CHAT_MSG_GUILD:
@@ -264,6 +283,10 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
                 Guild *guild = objmgr.GetGuildById(GetPlayer()->GetGuildId());
                 if (guild)
                     guild->BroadcastToGuild(this, msg, lang == LANG_ADDON ? LANG_ADDON : LANG_UNIVERSAL);
+
+                if (sWorld.getConfig(CONFIG_CHATLOG_GUILD))
+                    sLog.outChat("[GUILD] Player %s tells guild %s: %s",
+                        GetPlayer()->GetName(), guild->GetName().c_str(), msg.c_str());
             }
 
             break;
@@ -291,6 +314,10 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
                 Guild *guild = objmgr.GetGuildById(GetPlayer()->GetGuildId());
                 if (guild)
                     guild->BroadcastToOfficers(this, msg, lang == LANG_ADDON ? LANG_ADDON : LANG_UNIVERSAL);
+
+                if (sWorld.getConfig(CONFIG_CHATLOG_GUILD))
+                    sLog.outChat("[OFFICER] Player %s tells guild %s officers: %s",
+                        GetPlayer()->GetName(), guild->GetName().c_str(), msg.c_str());
             }
             break;
         }
@@ -319,6 +346,10 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
             WorldPacket data;
             ChatHandler::FillMessageData(&data, this, CHAT_MSG_RAID, lang, "", 0, msg.c_str(),NULL);
             group->BroadcastPacket(&data);
+
+            if (sWorld.getConfig(CONFIG_CHATLOG_RAID))
+                sLog.outChat("[RAID] Player %s tells raid with leader %s: %s",
+                    GetPlayer()->GetName(), group->GetLeaderName(), msg.c_str());
         } break;
         case CHAT_MSG_RAID_LEADER:
         {
@@ -345,6 +376,10 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
             WorldPacket data;
             ChatHandler::FillMessageData(&data, this, CHAT_MSG_RAID_LEADER, lang, "", 0, msg.c_str(),NULL);
             group->BroadcastPacket(&data);
+
+            if (sWorld.getConfig(CONFIG_CHATLOG_RAID))
+                sLog.outChat("[RAID] Leader player %s tells raid: %s",
+                    GetPlayer()->GetName(), msg.c_str());
         } break;
         case CHAT_MSG_RAID_WARNING:
         {
@@ -365,6 +400,10 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
             WorldPacket data;
             ChatHandler::FillMessageData(&data, this, CHAT_MSG_RAID_WARNING, lang, "", 0, msg.c_str(),NULL);
             group->BroadcastPacket(&data);
+
+            if (sWorld.getConfig(CONFIG_CHATLOG_RAID))
+                sLog.outChat("[RAID] Leader player %s warns raid with: %s",
+                    GetPlayer()->GetName(), msg.c_str());
         } break;
 
         case CHAT_MSG_BATTLEGROUND:
@@ -386,6 +425,10 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
             WorldPacket data;
             ChatHandler::FillMessageData(&data, this, CHAT_MSG_BATTLEGROUND, lang, "", 0, msg.c_str(),NULL);
             group->BroadcastPacket(&data);
+
+            if (sWorld.getConfig(CONFIG_CHATLOG_BGROUND))
+                sLog.outChat("[BATTLEGROUND] Player %s tells battleground with leader %s: %s",
+                    GetPlayer()->GetName(), group->GetLeaderName(), msg.c_str());
         } break;
 
         case CHAT_MSG_BATTLEGROUND_LEADER:
@@ -407,6 +450,10 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
             WorldPacket data;
             ChatHandler::FillMessageData(&data, this, CHAT_MSG_BATTLEGROUND_LEADER, lang, "", 0, msg.c_str(),NULL);
             group->BroadcastPacket(&data);
+
+            if (sWorld.getConfig(CONFIG_CHATLOG_BGROUND))
+                sLog.outChat("[RAID] Leader player %s tells battleground: %s",
+                    GetPlayer()->GetName(), msg.c_str());
         } break;
 
         case CHAT_MSG_CHANNEL:
@@ -424,8 +471,20 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 
             if(ChannelMgr* cMgr = channelMgr(_player->GetTeam()))
             {
-                if(Channel *chn = cMgr->GetChannel(channel,_player))
-                    chn->Say(_player->GetGUID(),msg.c_str(),lang);
+                Channel *chn = cMgr->GetChannel(channel,_player);
+                if(chn)
+                     chn->Say(_player->GetGUID(),msg.c_str(),lang);
+
+                if ((chn->HasFlag(CHANNEL_FLAG_TRADE) ||
+                    chn->HasFlag(CHANNEL_FLAG_GENERAL) ||
+                    chn->HasFlag(CHANNEL_FLAG_CITY) ||
+                    chn->HasFlag(CHANNEL_FLAG_LFG)) &&
+                    sWorld.getConfig(CONFIG_CHATLOG_SYSCHAN))
+                        sLog.outChat("[SYSCHAN] Player %s tells channel %s: %s",
+                            GetPlayer()->GetName(), chn->GetName().c_str(), msg.c_str());
+                else if (sWorld.getConfig(CONFIG_CHATLOG_CHANNEL))
+                        sLog.outChat("[CHANNEL] Player %s tells channel %s: %s",
+                            GetPlayer()->GetName(), chn->GetName().c_str(), msg.c_str());
             }
         } break;
 

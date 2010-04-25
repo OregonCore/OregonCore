@@ -203,16 +203,16 @@ int Master::Run()
     sLog.outString( "<Ctrl-C> to stop.\n" );
 // Remove the warnings C4129 while compiling
 #pragma warning (disable : 4129)
-    sLog.outTitle( "  _____                                          " );
-    sLog.outTitle( " /\\  __`\\                                        " );
-    sLog.outTitle( " \\ \\ \\/\\ \\  _ __   __     __     ___    ___      " );
-    sLog.outTitle( "  \\ \\ \\ \\ \\/\\`'__\\'__`\\ /'_ `\\  / __`\\/' _ `\\    " );
-    sLog.outTitle( "   \\ \\ \\_\\ \\ \\ \\/\\  __//\\ \\L\\ \\/\\ \\L\\ \\\\ \\/\\ \\   " );
-    sLog.outTitle( "    \\ \\_____\\ \\_\\ \\____\\ \\____ \\ \\____/ \\_\\ \\_\\  " );
-    sLog.outTitle( "     \\/_____/\\/_/\\/____/\\/___L\\ \\/___/ \\/_/\\/_/  " );
-    sLog.outTitle( "                          /\\____/                " );
-    sLog.outTitle( "                          \\_/__/                 " );
-    sLog.outTitle( " http://www.OregonCore.com                    \n " );
+    sLog.outString( "  _____                                          " );
+    sLog.outString( " /\\  __`\\                                        " );
+    sLog.outString( " \\ \\ \\/\\ \\  _ __   __     __     ___    ___      " );
+    sLog.outString( "  \\ \\ \\ \\ \\/\\`'__\\'__`\\ /'_ `\\  / __`\\/' _ `\\    " );
+    sLog.outString( "   \\ \\ \\_\\ \\ \\ \\/\\  __//\\ \\L\\ \\/\\ \\L\\ \\\\ \\/\\ \\   " );
+    sLog.outString( "    \\ \\_____\\ \\_\\ \\____\\ \\____ \\ \\____/ \\_\\ \\_\\  " );
+    sLog.outString( "     \\/_____/\\/_/\\/____/\\/___L\\ \\/___/ \\/_/\\/_/  " );
+    sLog.outString( "                          /\\____/                " );
+    sLog.outString( "                          \\_/__/                 " );
+    sLog.outString( " http://www.OregonCore.com                    \n " );
 
     /// worldd PID file creation
     std::string pidfile = sConfig.GetStringDefault("PidFile", "");
@@ -276,7 +276,7 @@ int Master::Run()
 
                 if(!curAff )
                 {
-                    sLog.outError("Processors marked in UseProcessors bitmask (hex) %x not accessible for Oregond. Accessible processors bitmask (hex): %x",Aff,appAff);
+                    sLog.outError("Processors marked in UseProcessors bitmask (hex) %x not accessible for Oregon. Accessible processors bitmask (hex): %x",Aff,appAff);
                 }
                 else
                 {
@@ -416,14 +416,16 @@ int Master::Run()
 /// Initialize connection to the databases
 bool Master::_StartDB()
 {
-    ///- Get world database info from configuration file
+    sLog.SetLogDB(false);
     std::string dbstring;
-    if(!sConfig.GetString("WorldDatabaseInfo", &dbstring))
+
+    ///- Get world database info from configuration file
+    dbstring = sConfig.GetStringDefault("WorldDatabaseInfo", "");
+    if(dbstring.empty())
     {
         sLog.outError("Database not specified in configuration file");
         return false;
     }
-    sLog.outDetail("World Database: %s", dbstring.c_str());
 
     ///- Initialise the world database
     if(!WorldDatabase.Initialize(dbstring.c_str()))
@@ -432,12 +434,13 @@ bool Master::_StartDB()
         return false;
     }
 
-    if(!sConfig.GetString("CharacterDatabaseInfo", &dbstring))
+    ///- Get character database info from configuration file
+    dbstring = sConfig.GetStringDefault("CharacterDatabaseInfo", "");
+    if(dbstring.empty())
     {
         sLog.outError("Character Database not specified in configuration file");
         return false;
     }
-    sLog.outDetail("Character Database: %s", dbstring.c_str());
 
     ///- Initialise the Character database
     if(!CharacterDatabase.Initialize(dbstring.c_str()))
@@ -447,14 +450,14 @@ bool Master::_StartDB()
     }
 
     ///- Get login database info from configuration file
-    if(!sConfig.GetString("LoginDatabaseInfo", &dbstring))
+    dbstring = sConfig.GetStringDefault("loginDatabaseInfo", "");
+    if(dbstring.empty())
     {
         sLog.outError("Login database not specified in configuration file");
         return false;
     }
 
     ///- Initialise the login database
-    sLog.outDetail("Login Database: %s", dbstring.c_str() );
     if(!LoginDatabase.Initialize(dbstring.c_str()))
     {
         sLog.outError("Cannot connect to login database %s",dbstring.c_str());
@@ -470,6 +473,21 @@ bool Master::_StartDB()
     }
     sLog.outString("Realm running as realm ID %d", realmID);
 
+    ///- Initialize the DB logging system
+    if(sConfig.GetBoolDefault("EnableLogDB", false))
+    {
+        // everything successful - set var to enable DB logging once startup finished.
+        sLog.SetLogDBLater(true);
+        sLog.SetLogDB(false);
+        sLog.SetRealmID(realmID);
+    }
+    else
+    {
+        sLog.SetLogDBLater(false);
+        sLog.SetLogDB(false);
+        sLog.SetRealmID(realmID);
+    }
+
     ///- Clean the database before starting
     clearOnlineAccounts();
 
@@ -478,7 +496,7 @@ bool Master::_StartDB()
 
     sWorld.LoadDBVersion();
 
-    sLog.outString("Using %s", sWorld.GetDBVersion());
+    sLog.outString("Using World DB: %s", sWorld.GetDBVersion());
     return true;
 }
 
@@ -490,7 +508,6 @@ void Master::clearOnlineAccounts()
     LoginDatabase.PExecute(
         "UPDATE account SET online = 0 WHERE online > 0 "
         "AND id IN (SELECT acctid FROM realmcharacters WHERE realmid = '%d')",realmID);
-
 
     CharacterDatabase.Execute("UPDATE characters SET online = 0 WHERE online<>0");
 }

@@ -108,12 +108,12 @@ void LoadSkillExtraItemTable()
             ++count;
         } while (result->NextRow());
 
-        sLog.outString();
+        sLog.outString("");
         sLog.outString( ">> Loaded %u spell specialization definitions", count );
     }
     else
     {
-        sLog.outString();
+        sLog.outString("");
         sLog.outString( ">> Loaded 0 spell specialization definitions. DB table skill_extra_item_template is empty." );
     }
 }

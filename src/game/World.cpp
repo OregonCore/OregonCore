@@ -807,6 +807,22 @@ void World::LoadConfigSettings(bool reload)
         m_timers[WUPDATE_UPTIME].Reset();
     }
 
+    // log db cleanup interval
+    m_configs[CONFIG_LOGDB_CLEARINTERVAL] = sConfig.GetIntDefault("LogDB.Opt.ClearInterval", 10);
+    if(int32(m_configs[CONFIG_LOGDB_CLEARINTERVAL]) <= 0)
+    {
+        sLog.outError("LogDB.Opt.ClearInterval (%i) must be > 0, set to default 10.", m_configs[CONFIG_LOGDB_CLEARINTERVAL]);
+        m_configs[CONFIG_LOGDB_CLEARINTERVAL] = 10;
+    }
+    if(reload)
+    {
+        m_timers[WUPDATE_CLEANDB].SetInterval(m_configs[CONFIG_LOGDB_CLEARINTERVAL] * MINUTE * 1000);
+        m_timers[WUPDATE_CLEANDB].Reset();
+    }
+    m_configs[CONFIG_LOGDB_CLEARTIME] = sConfig.GetIntDefault("LogDB.Opt.ClearTime", 1209600); // 14 days default
+    sLog.outString("Will clear `logs` table of entries older than %i seconds every %u minutes.",
+        m_configs[CONFIG_LOGDB_CLEARTIME], m_configs[CONFIG_LOGDB_CLEARINTERVAL]);
+
     m_configs[CONFIG_SKILL_CHANCE_ORANGE] = sConfig.GetIntDefault("SkillChance.Orange",100);
     m_configs[CONFIG_SKILL_CHANCE_YELLOW] = sConfig.GetIntDefault("SkillChance.Yellow",75);
     m_configs[CONFIG_SKILL_CHANCE_GREEN]  = sConfig.GetIntDefault("SkillChance.Green",25);
@@ -1057,6 +1073,17 @@ void World::LoadConfigSettings(bool reload)
         token = strtok(NULL,delim);
     }
     delete[] forbiddenMaps;
+
+    // chat logging
+    m_configs[CONFIG_CHATLOG_CHANNEL] = sConfig.GetBoolDefault("ChatLogs.Channel", false);
+    m_configs[CONFIG_CHATLOG_WHISPER] = sConfig.GetBoolDefault("ChatLogs.Whisper", false);
+    m_configs[CONFIG_CHATLOG_SYSCHAN] = sConfig.GetBoolDefault("ChatLogs.SysChan", false);
+    m_configs[CONFIG_CHATLOG_PARTY] = sConfig.GetBoolDefault("ChatLogs.Party", false);
+    m_configs[CONFIG_CHATLOG_RAID] = sConfig.GetBoolDefault("ChatLogs.Raid", false);
+    m_configs[CONFIG_CHATLOG_GUILD] = sConfig.GetBoolDefault("ChatLogs.Guild", false);
+    m_configs[CONFIG_CHATLOG_PUBLIC] = sConfig.GetBoolDefault("ChatLogs.Public", false);
+    m_configs[CONFIG_CHATLOG_ADDON] = sConfig.GetBoolDefault("ChatLogs.Addon", false);
+    m_configs[CONFIG_CHATLOG_BGROUND] = sConfig.GetBoolDefault("ChatLogs.BattleGround", false);
 }
 
 /// Initialize the World
@@ -1088,7 +1115,7 @@ void World::SetInitialWorldSettings()
 
     ///- Loading strings. Getting no records means core load has to be canceled because no error message can be output.
     sLog.outString( "Loading Oregon strings..." );
-    sLog.outString();
+    sLog.outString("");
     if (!objmgr.LoadOregonStrings())
         exit(1);                                            // Error message displayed in function already
 
@@ -1124,7 +1151,7 @@ void World::SetInitialWorldSettings()
     sLog.outString( "Packing instances..." );
     sInstanceSaveManager.PackInstances();
 
-    sLog.outString();
+    sLog.outString("");
     sLog.outString( "Loading Localization strings..." );
     objmgr.LoadCreatureLocales();
     objmgr.LoadGameObjectLocales();
@@ -1135,7 +1162,7 @@ void World::SetInitialWorldSettings()
     objmgr.LoadNpcOptionLocales();
     objmgr.SetDBCLocaleIndex(GetDefaultDbcLocale());        // Get once for all the locale index of DBC language (console/broadcasts)
     sLog.outString( ">>> Localization strings loaded" );
-    sLog.outString();
+    sLog.outString("");
 
     sLog.outString( "Loading Page Texts..." );
     objmgr.LoadPageTexts();
@@ -1206,11 +1233,11 @@ void World::SetInitialWorldSettings()
     sLog.outString( "Loading Creature Linked Respawn..." );
     objmgr.LoadCreatureLinkedRespawn();                     // must be after LoadCreatures()
 
-    sLog.outString();
+    sLog.outString("");
     sLog.outString( "Loading Creature Addon Data..." );
     objmgr.LoadCreatureAddons();                            // must be after LoadCreatureTemplates() and LoadCreatures()
     sLog.outString( ">>> Creature Addon Data loaded" );
-    sLog.outString();
+    sLog.outString("");
 
     sLog.outString( "Loading Creature Respawn Data..." );   // must be after PackInstances()
     objmgr.LoadCreatureRespawnTimes();
@@ -1222,10 +1249,10 @@ void World::SetInitialWorldSettings()
     objmgr.LoadGameobjectRespawnTimes();
 
     sLog.outString( "Loading Game Event Data...");
-    sLog.outString();
+    sLog.outString("");
     gameeventmgr.LoadFromDB();
     sLog.outString( ">>> Game Event Data loaded" );
-    sLog.outString();
+    sLog.outString("");
 
     sLog.outString( "Loading Weather Data..." );
     objmgr.LoadWeatherZoneChances();
@@ -1234,10 +1261,10 @@ void World::SetInitialWorldSettings()
     objmgr.LoadQuests();                                    // must be loaded after DBCs, creature_template, item_template, gameobject tables
 
     sLog.outString( "Loading Quests Relations..." );
-    sLog.outString();
+    sLog.outString("");
     objmgr.LoadQuestRelations();                            // must be after quest load
     sLog.outString( ">>> Quests Relations loaded" );
-    sLog.outString();
+    sLog.outString("");
 
     sLog.outString( "Loading AreaTrigger definitions..." );
     objmgr.LoadAreaTriggerTeleports();
@@ -1273,10 +1300,10 @@ void World::SetInitialWorldSettings()
     spellmgr.LoadSpellLinked();
 
     sLog.outString( "Loading Player Create Info & Level Stats..." );
-    sLog.outString();
+    sLog.outString("");
     objmgr.LoadPlayerInfo();
     sLog.outString( ">>> Player Create Info & Level Stats loaded" );
-    sLog.outString();
+    sLog.outString("");
 
     sLog.outString( "Loading Exploration BaseXP Data..." );
     objmgr.LoadExplorationBaseXP();
@@ -1297,10 +1324,10 @@ void World::SetInitialWorldSettings()
     objmgr.LoadSpellDisabledEntrys();
 
     sLog.outString( "Loading Loot Tables..." );
-    sLog.outString();
+    sLog.outString("");
     LoadLootTables();
     sLog.outString( ">>> Loot Tables loaded" );
-    sLog.outString();
+    sLog.outString("");
 
     sLog.outString( "Loading Skill Discovery Table..." );
     LoadSkillDiscoveryTable();
@@ -1313,11 +1340,11 @@ void World::SetInitialWorldSettings()
 
     ///- Load dynamic data tables from the database
     sLog.outString( "Loading Auctions..." );
-    sLog.outString();
+    sLog.outString("");
     auctionmgr.LoadAuctionItems();
     auctionmgr.LoadAuctions();
     sLog.outString( ">>> Auctions loaded" );
-    sLog.outString();
+    sLog.outString("");
 
     sLog.outString( "Loading Guilds..." );
     objmgr.LoadGuilds();
@@ -1353,7 +1380,7 @@ void World::SetInitialWorldSettings()
     objmgr.LoadTrainerSpell();                              // must be after load CreatureTemplate
 
     sLog.outString( "Loading Waypoints..." );
-    sLog.outString();
+    sLog.outString("");
     WaypointMgr.Load();
 
     sLog.outString( "Loading Creature Formations..." );
@@ -1368,7 +1395,7 @@ void World::SetInitialWorldSettings()
 
     ///- Load and initialize scripts
     sLog.outString( "Loading Scripts..." );
-    sLog.outString();
+    sLog.outString("");
     objmgr.LoadQuestStartScripts();                         // must be after load Creature/Gameobject(Template/Data) and QuestTemplate
     objmgr.LoadQuestEndScripts();                           // must be after load Creature/Gameobject(Template/Data) and QuestTemplate
     objmgr.LoadSpellScripts();                              // must be after load Creature/Gameobject(Template/Data)
@@ -1376,7 +1403,7 @@ void World::SetInitialWorldSettings()
     objmgr.LoadEventScripts();                              // must be after load Creature/Gameobject(Template/Data)
     objmgr.LoadWaypointScripts();
     sLog.outString( ">>> Scripts loaded" );
-    sLog.outString();
+    sLog.outString("");
 
     sLog.outString( "Loading Scripts text locales..." );    // must be after Load*Scripts calls
     objmgr.LoadDbScriptStrings();
@@ -1417,6 +1444,8 @@ void World::SetInitialWorldSettings()
     m_timers[WUPDATE_UPTIME].SetInterval(m_configs[CONFIG_UPTIME_UPDATE]*MINUTE*1000);
                                                             //Update "uptime" table based on configuration entry in minutes.
     m_timers[WUPDATE_CORPSES].SetInterval(20*MINUTE*1000);  //erase corpses every 20 minutes
+    m_timers[WUPDATE_CLEANDB].SetInterval(m_configs[CONFIG_LOGDB_CLEARINTERVAL]*MINUTE*1000);
+                                                            // clean logs table every 14 days by default
 
     //to set mailtimer to return mails every day between 4 and 5 am
     //mailtimer is increased when updating auctions
@@ -1462,6 +1491,19 @@ void World::SetInitialWorldSettings()
 
     sLog.outString("Initialize AuctionHouseBot...");
     auctionbot.Initialize();
+    
+    // possibly enable db logging; avoid massive startup spam by doing it here.
+    if (sLog.GetLogDBLater())
+    {
+        sLog.outString("Enabling database logging...");
+        sLog.SetLogDBLater(false);
+        sLog.SetLogDB(true);
+    }
+    else
+    {
+        sLog.SetLogDB(false);
+        sLog.SetLogDBLater(false);
+    }
 
     sLog.outString( "WORLD: World initialized" );
 }
@@ -1507,7 +1549,7 @@ void World::DetectDBCLang()
     m_defaultDbcLocale = LocaleConstant(default_locale);
 
     sLog.outString("Using %s DBC Locale as default. All available DBC locales: %s",localeNames[m_defaultDbcLocale],availableLocalsStr.empty() ? "<none>" : availableLocalsStr.c_str());
-    sLog.outString();
+    sLog.outString("");
 }
 
 void World::RecordTimeDiff(const char *text, ...)
@@ -1633,6 +1675,20 @@ void World::Update(time_t diff)
 
         m_timers[WUPDATE_UPTIME].Reset();
         WorldDatabase.PExecute("UPDATE uptime SET uptime = %d, maxplayers = %d WHERE starttime = " UI64FMTD, tmpDiff, maxClientsNum, uint64(m_startTime));
+    }
+
+    /// <li> Clean logs table
+    if(sWorld.getConfig(CONFIG_LOGDB_CLEARTIME) > 0) // if not enabled, ignore the timer
+    {
+        if (m_timers[WUPDATE_CLEANDB].Passed())
+        {
+            uint32 tmpDiff = (m_gameTime - m_startTime);
+            uint32 maxClientsNum = sWorld.GetMaxActiveSessionCount();
+
+            m_timers[WUPDATE_CLEANDB].Reset();
+            LoginDatabase.PExecute("DELETE FROM logs WHERE (time + %u) < "UI64FMTD";",
+                sWorld.getConfig(CONFIG_LOGDB_CLEARTIME), uint64(time(0)));
+        }
     }
 
     /// <li> Handle all other objects

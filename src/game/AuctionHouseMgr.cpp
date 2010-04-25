@@ -356,7 +356,7 @@ void AuctionHouseMgr::LoadAuctionItems()
     }
     while( result->NextRow() );
 
-    sLog.outString();
+    sLog.outString("");
     sLog.outString( ">> Loaded %u auction items", count );
 }
 
@@ -459,7 +459,7 @@ void AuctionHouseMgr::LoadAuctions()
 
     } while (result->NextRow());
 
-    sLog.outString();
+    sLog.outString("");
     sLog.outString( ">> Loaded %u auctions", AuctionCount );
 }
 

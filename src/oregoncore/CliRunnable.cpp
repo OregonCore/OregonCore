@@ -364,8 +364,8 @@ void CliRunnable::run()
     char commandbuf[256];
     bool canflush = true;
     ///- Display the list of available CLI functions then beep
-    sLog.outString();
-	#if PLATFORM != WINDOWS
+    sLog.outString("");
+    #if PLATFORM != WINDOWS
     rl_attempted_completion_function = cli_completion;
     	#endif
     if(sConfig.GetBoolDefault("BeepAtStart", true))

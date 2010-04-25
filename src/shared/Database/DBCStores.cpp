@@ -461,9 +461,9 @@ void LoadDBCStores(const std::string& dataPath)
         exit(1);
     }
 
-    sLog.outString();
+    sLog.outString("");
     sLog.outString( ">> Loaded %d data stores", DBCFilesCount );
-    sLog.outString();
+    sLog.outString("");
 }
 
 SimpleFactionsList const* GetFactionTeamList(uint32 faction)

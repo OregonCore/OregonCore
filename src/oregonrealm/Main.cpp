@@ -85,6 +85,7 @@ void usage(const char *prog)
 /// Launch the realm server
 extern int main(int argc, char **argv)
 {
+    sLog.SetLogDB(false);
     ///- Command line parsing to get the configuration file name
     char const* cfg_file = _OREGON_REALM_CONFIG;
     int c=1;
@@ -192,6 +193,22 @@ extern int main(int argc, char **argv)
     if(!StartDB(dbstring))
         return 1;
 
+    ///- Initialize the log database
+    if (sConfig.GetBoolDefault("EnableLogDB", false))
+    {
+        // everything successful - set var to enable DB logging once startup finished.
+        sLog.SetLogDBLater(true);
+        sLog.SetLogDB(false);
+        // ensure we've set realm to 0 (realmd realmid)
+        sLog.SetRealmID(0);
+    }
+    else
+    {
+        sLog.SetLogDBLater(false);
+        sLog.SetLogDB(false);
+        sLog.SetRealmID(0);
+    }
+
     ///- Get the list of realms for the server
     m_realmList.Initialize(sConfig.GetIntDefault("RealmsStateUpdateDelay", 20));
     if (m_realmList.size() == 0)
@@ -244,7 +261,7 @@ extern int main(int argc, char **argv)
                         sLog.outError("Can't set used processors (hex): %x", curAff);
                 }
             }
-            sLog.outString();
+            sLog.outString("");
         }
 
         bool Prio = sConfig.GetBoolDefault("ProcessPriority", false);
@@ -255,7 +272,7 @@ extern int main(int argc, char **argv)
                 sLog.outString("OregonRealm process priority class set to HIGH");
             else
                 sLog.outError("ERROR: Can't set realmd process priority class.");
-            sLog.outString();
+            sLog.outString("");
         }
     }
     #endif
@@ -263,6 +280,20 @@ extern int main(int argc, char **argv)
     // maximum counter for next ping
     uint32 numLoops = (sConfig.GetIntDefault( "MaxPingTime", 30 ) * (MINUTE * 1000000 / 100000));
     uint32 loopCounter = 0;
+
+    // possibly enable db logging; avoid massive startup spam by doing it here.
+    if (sLog.GetLogDBLater())
+    {
+        sLog.outString("Enabling database logging...");
+        sLog.SetLogDBLater(false);
+        // login db needs thread for logging
+        sLog.SetLogDB(true);
+    }
+    else
+    {
+        sLog.SetLogDB(false);
+        sLog.SetLogDBLater(false);
+    }
 
     ///- Wait for termination signal
     while (!stopEvent)
@@ -283,6 +314,7 @@ extern int main(int argc, char **argv)
     }
 
     ///- Wait for the delay thread to exit
+    LoginDatabase.ThreadEnd();
     LoginDatabase.HaltDelayThread();
 
     ///- Remove signal handling before leaving
@@ -327,6 +359,7 @@ bool StartDB(std::string &dbstring)
         sLog.outError("Cannot connect to database");
         return false;
     }
+    LoginDatabase.ThreadStart();
 
     return true;
 }
