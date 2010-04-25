@@ -877,7 +877,7 @@ enum OregonStrings
     LANG_NO_ENTER_CHAMPIONS_HALL        = 10057,
 
     // Use for custom patches             11000-11999
-    // Broadcaster
+    // Broadcaster - was deleted in r200 because of crash in combination with new database code but may be correctly reimplemented based on TC2 r4837 + r4867
     LANG_AUTO_BROADCAST                 = 11000,
 
     // NOT RESERVED IDS                   12000-1999999999
