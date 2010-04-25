@@ -217,7 +217,7 @@ bool WorldSession::Update(uint32 /*diff*/)
                         break;
                 }
             }
-            catch(ByteBufferException &exception)
+            catch(ByteBufferException &)
             {
                 sLog.outError("WorldSession::Update ByteBufferException occured while parsing a packet (opcode: %u) from client %s, accountid=%i. Skipped packet.",
                         packet->GetOpcode(), GetRemoteAddress().c_str(), GetAccountId());
