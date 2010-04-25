@@ -22,7 +22,6 @@
 #define _COORDMODELMAPPING_H_
 
 #include <cstdio>
-
 #include <G3D/Table.h>
 #include <G3D/Array.h>
 
@@ -76,12 +75,7 @@ namespace VMAP
             const std::string getKeyString() const;
             inline const G3D::Array<std::string>& getFilenames() const { return(iFilenames); }
 
-            static const std::string getKeyString(unsigned int pMapId, int pXPos, int pYPos)
-            {
-                char b[100];
-                sprintf(b,"%03u_%d_%d", pMapId, pXPos, pYPos);
-                return(std::string(b));
-            }
+            static const std::string getKeyString(unsigned int pMapId, int pXPos, int pYPos);
 
     };
 
