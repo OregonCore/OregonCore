@@ -53,7 +53,7 @@ class WaypointStore
             else return 0;
         }
 
-        inline uint32 GetRecordsCount() { return records; }
+        uint32 GetRecordsCount() { return records; }
 };
 
 extern WaypointStore WaypointMgr;
