@@ -3846,6 +3846,13 @@ bool AuraStacking(uint32 auraID)
     {
         case 22959: //scorch
         case 15258: //shadow weaving
+		case 25225: //sunder armor rank 6
+		case 11597: //sunder armor rank 5
+		case 11596: //sunder armor rank 4
+		case 8380: //sunder armor rank 3
+		case 7405: //sunder armor rank 2
+		case 7386: //sunder armor rank 1
+		case 27189: //Wound poison
         return true;
     default:
         return false;
