@@ -42,20 +42,20 @@ AccountMgr::~AccountMgr()
 
 AccountOpResult AccountMgr::CreateAccount(std::string username, std::string password)
 {
-    if(utf8length(username) > MAX_ACCOUNT_STR)
+    if (utf8length(username) > MAX_ACCOUNT_STR)
         return AOR_NAME_TOO_LONG;                           // username's too long
 
-    normilizeString(username);
-    normilizeString(password);
+    normalizeString(username);
+    normalizeString(password);
 
     loginDatabase.escape_string(username);
     loginDatabase.escape_string(password);
 
     QueryResult_AutoPtr result = loginDatabase.PQuery("SELECT 1 FROM account WHERE username = '%s'", username.c_str());
-    if(result)
+    if (result)
         return AOR_NAME_ALREDY_EXIST;                       // username does already exist
 
-    if(!loginDatabase.PExecute("INSERT INTO account(username,sha_pass_hash,joindate) VALUES('%s',SHA1(CONCAT('%s',':','%s')),NOW())", username.c_str(), username.c_str(), password.c_str()))
+    if (!loginDatabase.PExecute("INSERT INTO account(username,sha_pass_hash,joindate) VALUES('%s',SHA1(CONCAT('%s',':','%s')),NOW())", username.c_str(), username.c_str(), password.c_str()))
         return AOR_DB_INTERNAL_ERROR;                       // unexpected error
     loginDatabase.Execute("INSERT INTO realmcharacters (realmid, acctid, numchars) SELECT realmlist.id, account.id, 0 FROM realmlist,account LEFT JOIN realmcharacters ON acctid=account.id WHERE acctid IS NULL");
 
@@ -65,7 +65,7 @@ AccountOpResult AccountMgr::CreateAccount(std::string username, std::string pass
 AccountOpResult AccountMgr::DeleteAccount(uint32 accid)
 {
     QueryResult_AutoPtr result = loginDatabase.PQuery("SELECT 1 FROM account WHERE id='%d'", accid);
-    if(!result)
+    if (!result)
         return AOR_NAME_NOT_EXIST;                          // account doesn't exist
 
     result = CharacterDatabase.PQuery("SELECT guid FROM characters WHERE account='%d'",accid);
@@ -78,7 +78,7 @@ AccountOpResult AccountMgr::DeleteAccount(uint32 accid)
             uint64 guid = MAKE_NEW_GUID(guidlo, 0, HIGHGUID_PLAYER);
 
             // kick if player currently
-            if(Player* p = ObjectAccessor::FindPlayer(guid))
+            if (Player* p = ObjectAccessor::FindPlayer(guid))
             {
                 WorldSession* s = p->GetSession();
                 s->KickPlayer();                            // mark session to remove at next session list update
@@ -100,7 +100,7 @@ AccountOpResult AccountMgr::DeleteAccount(uint32 accid)
 
     loginDatabase.CommitTransaction();
 
-    if(!res)
+    if (!res)
         return AOR_DB_INTERNAL_ERROR;                       // unexpected error;
 
     return AOR_OK;
@@ -109,21 +109,22 @@ AccountOpResult AccountMgr::DeleteAccount(uint32 accid)
 AccountOpResult AccountMgr::ChangeUsername(uint32 accid, std::string new_uname, std::string new_passwd)
 {
     QueryResult_AutoPtr result = loginDatabase.PQuery("SELECT 1 FROM account WHERE id='%d'", accid);
-    if(!result)
+    if (!result)
         return AOR_NAME_NOT_EXIST;                          // account doesn't exist
 
-    if(utf8length(new_uname) > MAX_ACCOUNT_STR)
+    if (utf8length(new_uname) > MAX_ACCOUNT_STR)
         return AOR_NAME_TOO_LONG;
 
-    if(utf8length(new_passwd) > MAX_ACCOUNT_STR)
+    if (utf8length(new_passwd) > MAX_ACCOUNT_STR)
         return AOR_PASS_TOO_LONG;
 
-    normilizeString(new_uname);
-    normilizeString(new_passwd);
+    normalizeString(new_uname);
+    normalizeString(new_passwd);
 
     loginDatabase.escape_string(new_uname);
     loginDatabase.escape_string(new_passwd);
-    if(!loginDatabase.PExecute("UPDATE account SET username='%s',sha_pass_hash=SHA1(CONCAT('%s',':','%s')) WHERE id='%d'", new_uname.c_str(), new_uname.c_str(), new_passwd.c_str(), accid))
+
+    if (!loginDatabase.PExecute("UPDATE account SET username='%s',sha_pass_hash=SHA1(CONCAT('%s',':','%s')) WHERE id='%d'", new_uname.c_str(), new_uname.c_str(), new_passwd.c_str(), accid))
         return AOR_DB_INTERNAL_ERROR;                       // unexpected error
 
     return AOR_OK;
@@ -132,16 +133,16 @@ AccountOpResult AccountMgr::ChangeUsername(uint32 accid, std::string new_uname, 
 AccountOpResult AccountMgr::ChangePassword(uint32 accid, std::string new_passwd)
 {
     QueryResult_AutoPtr result = loginDatabase.PQuery("SELECT 1 FROM account WHERE id='%d'", accid);
-    if(!result)
+    if (!result)
         return AOR_NAME_NOT_EXIST;                          // account doesn't exist
 
     if (utf8length(new_passwd) > MAX_ACCOUNT_STR)
         return AOR_PASS_TOO_LONG;
 
-    normilizeString(new_passwd);
+    normalizeString(new_passwd);
 
     loginDatabase.escape_string(new_passwd);
-    if(!loginDatabase.PExecute("UPDATE account SET sha_pass_hash=SHA1(CONCAT(UPPER(username),':',UPPER('%s'))) WHERE id='%d'",new_passwd.c_str(),accid))
+    if (!loginDatabase.PExecute("UPDATE account SET sha_pass_hash=SHA1(CONCAT(UPPER(username),':',UPPER('%s'))) WHERE id='%d'",new_passwd.c_str(),accid))
         return AOR_DB_INTERNAL_ERROR;                       // unexpected error
 
     return AOR_OK;
@@ -151,7 +152,7 @@ uint32 AccountMgr::GetId(std::string username)
 {
     loginDatabase.escape_string(username);
     QueryResult_AutoPtr result = loginDatabase.PQuery("SELECT id FROM account WHERE username = '%s'", username.c_str());
-    if(!result)
+    if (!result)
         return 0;
     else
     {
@@ -163,7 +164,7 @@ uint32 AccountMgr::GetId(std::string username)
 uint32 AccountMgr::GetSecurity(uint32 acc_id)
 {
     QueryResult_AutoPtr result = loginDatabase.PQuery("SELECT gmlevel FROM account WHERE id = '%u'", acc_id);
-    if(result)
+    if (result)
     {
         uint32 sec = (*result)[0].GetUInt32();
         return sec;
@@ -175,7 +176,7 @@ uint32 AccountMgr::GetSecurity(uint32 acc_id)
 bool AccountMgr::GetName(uint32 acc_id, std::string &name)
 {
     QueryResult_AutoPtr result = loginDatabase.PQuery("SELECT username FROM account WHERE id = '%u'", acc_id);
-    if(result)
+    if (result)
     {
         name = (*result)[0].GetCppString();
         return true;
@@ -186,7 +187,7 @@ bool AccountMgr::GetName(uint32 acc_id, std::string &name)
 
 bool AccountMgr::CheckPassword(uint32 accid, std::string passwd)
 {
-    normilizeString(passwd);
+    normalizeString(passwd);
     loginDatabase.escape_string(passwd);
 
     QueryResult_AutoPtr result = loginDatabase.PQuery("SELECT 1 FROM account WHERE id='%d' AND sha_pass_hash=SHA1(CONCAT(UPPER(username),':',UPPER('%s')))",accid, passwd.c_str());
@@ -196,15 +197,15 @@ bool AccountMgr::CheckPassword(uint32 accid, std::string passwd)
     return false;
 }
 
-bool AccountMgr::normilizeString(std::string& utf8str)
+bool AccountMgr::normalizeString(std::string& utf8str)
 {
     wchar_t wstr_buf[MAX_ACCOUNT_STR+1];
 
     size_t wstr_len = MAX_ACCOUNT_STR;
-    if(!Utf8toWStr(utf8str,wstr_buf,wstr_len))
+    if (!Utf8toWStr(utf8str,wstr_buf,wstr_len))
         return false;
 
-    std::transform( &wstr_buf[0], wstr_buf+wstr_len, &wstr_buf[0], wcharToUpperOnlyLatin );
+    std::transform(&wstr_buf[0], wstr_buf+wstr_len, &wstr_buf[0], wcharToUpperOnlyLatin );
 
     return WStrToUtf8(wstr_buf,wstr_len,utf8str);
 }

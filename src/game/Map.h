@@ -84,7 +84,7 @@ struct CreatureMover
 };
 
 // GCC have alternative #pragma pack(N) syntax and old gcc version not support pack(push,N), also any gcc version not support it at some platform
-#if defined( __GNUC__ )
+#if defined(__GNUC__ )
 #pragma pack(1)
 #else
 #pragma pack(push,1)
@@ -109,7 +109,7 @@ enum LevelRequirementVsMode
     LEVELREQUIREMENT_HEROIC = 70
 };
 
-#if defined( __GNUC__ )
+#if defined(__GNUC__ )
 #pragma pack()
 #else
 #pragma pack(pop)
@@ -133,8 +133,8 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         // currently unused for normal maps
         bool CanUnload(uint32 diff)
         {
-            if(!m_unloadTimer) return false;
-            if(m_unloadTimer <= diff) return true;
+            if (!m_unloadTimer) return false;
+            if (m_unloadTimer <= diff) return true;
             m_unloadTimer -= diff;
             return false;
         }
@@ -159,7 +159,7 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         bool IsRemovalGrid(float x, float y) const
         {
             GridPair p = Oregon::ComputeGridPair(x, y);
-            return( !getNGrid(p.x_coord, p.y_coord) || getNGrid(p.x_coord, p.y_coord)->GetGridState() == GRID_STATE_REMOVAL );
+            return(!getNGrid(p.x_coord, p.y_coord) || getNGrid(p.x_coord, p.y_coord)->GetGridState() == GRID_STATE_REMOVAL );
         }
 
         bool GetUnloadLock(const GridPair &p) const { return getNGrid(p.x_coord, p.y_coord)->getUnloadLock(); }
@@ -306,10 +306,10 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         void SetTimer(uint32 t) { i_gridExpiry = t < MIN_GRID_DELAY ? MIN_GRID_DELAY : t; }
         //uint64 CalculateGridMask(const uint32 &y) const;
 
-        void SendInitSelf( Player * player );
+        void SendInitSelf(Player * player );
 
-        void SendInitTransports( Player * player );
-        void SendRemoveTransports( Player * player );
+        void SendInitTransports(Player * player );
+        void SendRemoveTransports(Player * player );
 
         bool CreatureCellRelocation(Creature *creature, Cell new_cell);
 
@@ -394,12 +394,12 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         void RemoveFromActiveHelper(T* obj)
         {
             // Map::Update for active object in proccess
-            if(m_activeNonPlayersIter != m_activeNonPlayers.end())
+            if (m_activeNonPlayersIter != m_activeNonPlayers.end())
             {
                 ActiveNonPlayers::iterator itr = m_activeNonPlayers.find(obj);
-                if(itr == m_activeNonPlayers.end())
+                if (itr == m_activeNonPlayers.end())
                     return;
-                if(itr==m_activeNonPlayersIter)
+                if (itr==m_activeNonPlayersIter)
                     ++m_activeNonPlayersIter;
                 m_activeNonPlayers.erase(itr);
             }
@@ -475,7 +475,7 @@ Map::Visit(const CellLock<LOCK_TYPE> &cell, TypeContainerVisitor<T, CONTAINER> &
     const uint32 cell_x = cell->CellX();
     const uint32 cell_y = cell->CellY();
 
-    if( !cell->NoCreate() || loaded(GridPair(x,y)) )
+    if (!cell->NoCreate() || loaded(GridPair(x,y)) )
     {
         EnsureGridLoaded(cell);
         //LOCK_TYPE guard(i_info[x][y]->i_lock);

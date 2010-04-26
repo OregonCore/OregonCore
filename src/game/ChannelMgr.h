@@ -34,13 +34,13 @@ class ChannelMgr
         ChannelMgr() {}
         ~ChannelMgr()
         {
-            for(ChannelMap::iterator itr = channels.begin();itr!=channels.end(); ++itr)
+            for (ChannelMap::iterator itr = channels.begin();itr!=channels.end(); ++itr)
                 delete itr->second;
             channels.clear();
         }
         Channel *GetJoinChannel(const std::string& name, uint32 channel_id)
         {
-            if(channels.count(name) == 0)
+            if (channels.count(name) == 0)
             {
                 Channel *nchan = new Channel(name,channel_id);
                 channels[name] = nchan;
@@ -51,7 +51,7 @@ class ChannelMgr
         {
             ChannelMap::const_iterator i = channels.find(name);
 
-            if(i == channels.end())
+            if (i == channels.end())
             {
                 WorldPacket data;
                 MakeNotOnPacket(&data,name);
@@ -65,12 +65,12 @@ class ChannelMgr
         {
             ChannelMap::const_iterator i = channels.find(name);
 
-            if(i == channels.end())
+            if (i == channels.end())
                 return;
 
             Channel* channel = i->second;
 
-            if(channel->GetNumPlayers() == 0 && !channel->IsConstant())
+            if (channel->GetNumPlayers() == 0 && !channel->IsConstant())
             {
                 channels.erase(name);
                 delete channel;
@@ -94,9 +94,9 @@ inline ChannelMgr* channelMgr(uint32 team)
                                                             //For Test,No Seprate Faction
         return &Oregon::Singleton<AllianceChannelMgr>::Instance();
 
-    if(team==ALLIANCE)
+    if (team==ALLIANCE)
         return &Oregon::Singleton<AllianceChannelMgr>::Instance();
-    if(team==HORDE)
+    if (team==HORDE)
         return &Oregon::Singleton<HordeChannelMgr>::Instance();
     return NULL;
 }

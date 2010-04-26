@@ -25,14 +25,12 @@ enum ArenaTeamCommandTypes
 {
     ERR_ARENA_TEAM_CREATE_S                 = 0x00,
     ERR_ARENA_TEAM_INVITE_SS                = 0x01,
-    //ERR_ARENA_TEAM_QUIT_S                   = 0x02,
     ERR_ARENA_TEAM_QUIT_S                   = 0x03,
     ERR_ARENA_TEAM_FOUNDER_S                = 0x0C          // need check, probably wrong...
 };
 
 enum ArenaTeamCommandErrors
 {
-    //ARENA_TEAM_PLAYER_NO_MORE_IN_ARENA_TEAM = 0x00,
     ERR_ARENA_TEAM_INTERNAL                 = 0x01,
     ERR_ALREADY_IN_ARENA_TEAM               = 0x02,
     ERR_ALREADY_IN_ARENA_TEAM_S             = 0x03,
@@ -159,7 +157,7 @@ class ArenaTeam
         ArenaTeamMember* GetMember(const uint64& guid)
         {
             for (MemberList::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
-                if(itr->guid == guid)
+                if (itr->guid == guid)
                     return &(*itr);
 
             return NULL;
@@ -168,7 +166,7 @@ class ArenaTeam
         ArenaTeamMember* GetMember(const std::string& name)
         {
             for (MemberList::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
-                if(itr->name == name)
+                if (itr->name == name)
                     return &(*itr);
 
             return NULL;

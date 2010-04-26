@@ -193,7 +193,7 @@ class BattleGroundMgr
         BattleGround* GetBattleGround(uint32 ID)
         {
             BattleGroundSet::iterator i = m_BattleGrounds.find(ID);
-            if(i != m_BattleGrounds.end())
+            if (i != m_BattleGrounds.end())
                 return i->second;
             else
                 return NULL;

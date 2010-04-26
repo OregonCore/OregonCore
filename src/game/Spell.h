@@ -99,8 +99,8 @@ class SpellCastTargets
         SpellCastTargets();
         ~SpellCastTargets();
 
-        bool read ( WorldPacket * data, Unit *caster );
-        void write ( WorldPacket * data );
+        bool read (WorldPacket * data, Unit *caster );
+        void write (WorldPacket * data );
 
         SpellCastTargets& operator=(const SpellCastTargets &target)
         {
@@ -152,7 +152,7 @@ class SpellCastTargets
         void setItemTarget(Item* item);
         void updateTradeSlotItem()
         {
-            if(m_itemTarget && (m_targetMask & TARGET_FLAG_TRADE_ITEM))
+            if (m_itemTarget && (m_targetMask & TARGET_FLAG_TRADE_ITEM))
             {
                 m_itemTargetGUID = m_itemTarget->GetGUID();
                 m_itemTargetEntry = m_itemTarget->GetEntry();
@@ -189,7 +189,7 @@ struct SpellValue
 {
     explicit SpellValue(SpellEntry const *proto)
     {
-        for(uint32 i = 0; i < 3; ++i)
+        for (uint32 i = 0; i < 3; ++i)
             EffectBasePoints[i] = proto->EffectBasePoints[i];
         MaxAffectedTargets = proto->MaxAffectedTargets;
     }
@@ -331,7 +331,7 @@ class Spell
         void EffectQuestFail(uint32 i);
         void EffectRedirectThreat(uint32 i);
 
-        Spell( Unit* Caster, SpellEntry const *info, bool triggered, uint64 originalCasterGUID = 0, Spell** triggeringContainer = NULL, bool skipCheck = false );
+        Spell(Unit* Caster, SpellEntry const *info, bool triggered, uint64 originalCasterGUID = 0, Spell** triggeringContainer = NULL, bool skipCheck = false );
         ~Spell();
 
         void prepare(SpellCastTargets * targets, Aura* triggeredByAura = NULL);
@@ -369,8 +369,8 @@ class Spell
 
         void DoCreateItem(uint32 i, uint32 itemtype);
 
-        void WriteSpellGoTargets( WorldPacket * data );
-        void WriteAmmoToPacket( WorldPacket * data );
+        void WriteSpellGoTargets(WorldPacket * data );
+        void WriteAmmoToPacket(WorldPacket * data );
         void FillTargetMap();
 
         void SetTargetMap(uint32 i, uint32 cur);
@@ -379,8 +379,8 @@ class Spell
         void HandleHitTriggerAura();
         bool CheckTarget(Unit* target, uint32 eff);
 
-        void CheckSrc() { if(!m_targets.HasSrc()) m_targets.setSrc(m_caster); }
-        void CheckDst() { if(!m_targets.HasDst()) m_targets.setDestination(m_caster); }
+        void CheckSrc() { if (!m_targets.HasSrc()) m_targets.setSrc(m_caster); }
+        void CheckDst() { if (!m_targets.HasDst()) m_targets.setDestination(m_caster); }
 
         void SendCastResult(uint8 result);
         void SendSpellStart();
@@ -618,43 +618,43 @@ namespace Oregon
         {
             assert(i_data);
 
-            if(!i_caster)
+            if (!i_caster)
                 return;
 
-            for(typename GridRefManager<T>::iterator itr = m.begin(); itr != m.end(); ++itr)
+            for (typename GridRefManager<T>::iterator itr = m.begin(); itr != m.end(); ++itr)
             {
-                if( !itr->getSource()->isAlive() || (itr->getSource()->GetTypeId() == TYPEID_PLAYER && ((Player*)itr->getSource())->isInFlight()))
+                if (!itr->getSource()->isAlive() || (itr->getSource()->GetTypeId() == TYPEID_PLAYER && ((Player*)itr->getSource())->isInFlight()))
                     continue;
 
                 switch (i_TargetType)
                 {
                     case SPELL_TARGETS_ALLY:
-                        if (!itr->getSource()->isAttackableByAOE() || !i_caster->IsFriendlyTo( itr->getSource() ))
+                        if (!itr->getSource()->isAttackableByAOE() || !i_caster->IsFriendlyTo(itr->getSource() ))
                             continue;
                         break;
                     case SPELL_TARGETS_ENEMY:
                     {
-                        if(itr->getSource()->GetTypeId()==TYPEID_UNIT && ((Creature*)itr->getSource())->isTotem())
+                        if (itr->getSource()->GetTypeId()==TYPEID_UNIT && ((Creature*)itr->getSource())->isTotem())
                             continue;
-                        if(!itr->getSource()->isAttackableByAOE())
+                        if (!itr->getSource()->isAttackableByAOE())
                             continue;
 
                         Unit* check = i_caster->GetCharmerOrOwnerOrSelf();
 
-                        if( check->GetTypeId()==TYPEID_PLAYER )
+                        if (check->GetTypeId()==TYPEID_PLAYER )
                         {
-                            if (check->IsFriendlyTo( itr->getSource() ))
+                            if (check->IsFriendlyTo(itr->getSource() ))
                                 continue;
                         }
                         else
                         {
-                            if (!check->IsHostileTo( itr->getSource() ))
+                            if (!check->IsHostileTo(itr->getSource() ))
                                 continue;
                         }
                     }break;
                     case SPELL_TARGETS_ENTRY:
                     {
-                        if(itr->getSource()->GetEntry()!= i_entry)
+                        if (itr->getSource()->GetEntry()!= i_entry)
                             continue;
                     }break;
                     default: continue;
@@ -663,26 +663,26 @@ namespace Oregon
                 switch(i_push_type)
                 {
                     case PUSH_IN_FRONT:
-                        if(i_caster->isInFront((Unit*)(itr->getSource()), i_radius, M_PI/3 ))
+                        if (i_caster->isInFront((Unit*)(itr->getSource()), i_radius, M_PI/3 ))
                             i_data->push_back(itr->getSource());
                         break;
                     case PUSH_IN_BACK:
-                        if(i_caster->isInBack((Unit*)(itr->getSource()), i_radius, M_PI/3 ))
+                        if (i_caster->isInBack((Unit*)(itr->getSource()), i_radius, M_PI/3 ))
                             i_data->push_back(itr->getSource());
                         break;
                     case PUSH_IN_LINE:
-                        if(i_caster->isInLine((Unit*)(itr->getSource()), i_radius ))
+                        if (i_caster->isInLine((Unit*)(itr->getSource()), i_radius ))
                             i_data->push_back(itr->getSource());
                         break;
                     default:
-                        if(i_TargetType != SPELL_TARGETS_ENTRY && i_push_type == PUSH_SRC_CENTER && i_caster) // if caster then check distance from caster to target (because of model collision)
+                        if (i_TargetType != SPELL_TARGETS_ENTRY && i_push_type == PUSH_SRC_CENTER && i_caster) // if caster then check distance from caster to target (because of model collision)
                         {
-                            if(i_caster->IsWithinDistInMap( itr->getSource(), i_radius) )
+                            if (i_caster->IsWithinDistInMap(itr->getSource(), i_radius) )
                                 i_data->push_back(itr->getSource());
                         }
                         else
                         {
-                            if((itr->getSource()->GetDistanceSq(i_x, i_y, i_z) < i_radiusSq))
+                            if ((itr->getSource()->GetDistanceSq(i_x, i_y, i_z) < i_radiusSq))
                                 i_data->push_back(itr->getSource());
                         }
                         break;

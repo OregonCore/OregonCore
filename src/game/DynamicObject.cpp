@@ -46,7 +46,7 @@ DynamicObject::DynamicObject() : WorldObject()
 void DynamicObject::AddToWorld()
 {
     ///- Register the dynamicObject for guid lookup
-    if(!IsInWorld())
+    if (!IsInWorld())
     {
         ObjectAccessor::Instance().AddObject(this);
         WorldObject::AddToWorld();
@@ -56,21 +56,21 @@ void DynamicObject::AddToWorld()
 void DynamicObject::RemoveFromWorld()
 {
     ///- Remove the dynamicObject from the accessor
-    if(IsInWorld())
+    if (IsInWorld())
     {
         ObjectAccessor::Instance().RemoveObject(this);
         WorldObject::RemoveFromWorld();
     }
 }
 
-bool DynamicObject::Create( uint32 guidlow, Unit *caster, uint32 spellId, uint32 effIndex, float x, float y, float z, int32 duration, float radius )
+bool DynamicObject::Create(uint32 guidlow, Unit *caster, uint32 spellId, uint32 effIndex, float x, float y, float z, int32 duration, float radius )
 {
     SetInstanceId(caster->GetInstanceId());
 
     WorldObject::_Create(guidlow, HIGHGUID_DYNAMICOBJECT, caster->GetMapId());
     Relocate(x,y,z,0);
 
-    if(!IsPositionValid())
+    if (!IsPositionValid())
     {
         sLog.outError("ERROR: DynamicObject (spell %u eff %u) not created. Suggested coordinates isn't valid (X: %f Y: %f)",spellId,effIndex,GetPositionX(),GetPositionY());
         return false;
@@ -101,15 +101,15 @@ bool DynamicObject::Create( uint32 guidlow, Unit *caster, uint32 spellId, uint32
  
 
     SetEntry(spellId);
-    SetFloatValue( OBJECT_FIELD_SCALE_X, scale );
-    SetUInt64Value( DYNAMICOBJECT_CASTER, caster->GetGUID() );
-    SetUInt32Value( DYNAMICOBJECT_BYTES, 0x00000001 );
-    SetUInt32Value( DYNAMICOBJECT_SPELLID, spellId );
-    SetFloatValue( DYNAMICOBJECT_RADIUS, radius);
-    SetFloatValue( DYNAMICOBJECT_POS_X, x );
-    SetFloatValue( DYNAMICOBJECT_POS_Y, y );
-    SetFloatValue( DYNAMICOBJECT_POS_Z, z );
-    SetUInt32Value( DYNAMICOBJECT_CASTTIME, getMSTime() );  // new 2.4.0
+    SetFloatValue(OBJECT_FIELD_SCALE_X, scale );
+    SetUInt64Value(DYNAMICOBJECT_CASTER, caster->GetGUID() );
+    SetUInt32Value(DYNAMICOBJECT_BYTES, 0x00000001 );
+    SetUInt32Value(DYNAMICOBJECT_SPELLID, spellId );
+    SetFloatValue(DYNAMICOBJECT_RADIUS, radius);
+    SetFloatValue(DYNAMICOBJECT_POS_X, x );
+    SetFloatValue(DYNAMICOBJECT_POS_Y, y );
+    SetFloatValue(DYNAMICOBJECT_POS_Z, z );
+    SetUInt32Value(DYNAMICOBJECT_CASTTIME, getMSTime() );  // new 2.4.0
 
     m_aliveDuration = duration;
     m_radius = radius;
@@ -130,7 +130,7 @@ void DynamicObject::Update(uint32 p_time)
 {
     // caster can be not in world at time dynamic object update, but dynamic object not yet deleted in Unit destructor
     Unit* caster = GetCaster();
-    if(!caster)
+    if (!caster)
     {
         Delete();
         return;
@@ -138,14 +138,14 @@ void DynamicObject::Update(uint32 p_time)
 
     bool deleteThis = false;
 
-    if(m_aliveDuration > int32(p_time))
+    if (m_aliveDuration > int32(p_time))
         m_aliveDuration -= p_time;
     else
         deleteThis = true;
 
-    if(m_effIndex < 4)
+    if (m_effIndex < 4)
     {
-        if(m_updateTimer < p_time)
+        if (m_updateTimer < p_time)
         {
             Oregon::DynamicObjectUpdater notifier(*this,caster);
             VisitNearbyObject(GetRadius(), notifier);
@@ -153,7 +153,7 @@ void DynamicObject::Update(uint32 p_time)
         }else m_updateTimer -= p_time;
     }
 
-    if(deleteThis)
+    if (deleteThis)
     {
         caster->RemoveDynObjectWithGUID(GetGUID());
         Delete();
@@ -169,7 +169,7 @@ void DynamicObject::Delete()
 void DynamicObject::Delay(int32 delaytime)
 {
     m_aliveDuration -= delaytime;
-    for(AffectedSet::iterator iunit= m_affected.begin();iunit != m_affected.end();++iunit)
+    for (AffectedSet::iterator iunit= m_affected.begin();iunit != m_affected.end();++iunit)
         if (*iunit)
             (*iunit)->DelayAura(m_spellId, m_effIndex, delaytime);
 }

@@ -21,9 +21,10 @@
 #ifndef _ACCMGR_H
 #define _ACCMGR_H
 
+#include <string>
+
 #include "Common.h"
 #include "Policies/Singleton.h"
-#include <string>
 
 enum AccountOpResult
 {
@@ -53,7 +54,7 @@ class AccountMgr
         uint32 GetSecurity(uint32 acc_id);
         bool GetName(uint32 acc_id, std::string &name);
 
-        static bool normilizeString(std::string& utf8str);
+        static bool normalizeString(std::string& utf8str);
 };
 
 #define accmgr Oregon::Singleton<AccountMgr>::Instance()

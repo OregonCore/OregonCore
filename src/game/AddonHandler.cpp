@@ -18,12 +18,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+#include "zlib/zlib.h"
+
 #include "AddonHandler.h"
 #include "Database/DatabaseEnv.h"
-#include "Opcodes.h"
-#include "Log.h"
 #include "Policies/SingletonImp.h"
-#include "zlib/zlib.h"
+#include "Opcodes.h"
+
+#include "Log.h"
 
 INSTANTIATE_SINGLETON_1( AddonHandler );
 
@@ -66,17 +68,17 @@ bool AddonHandler::BuildAddonPacket(WorldPacket *Source, WorldPacket *Target)
     if (Source->rpos() + 4 > Source->size())
         return false;
 
-    *Source >> TempValue;                                   //get real size of the packed structure
+    *Source >> TempValue;                                   // get real size of the packed structure
 
     // empty addon packet, nothing process, can't be received from real client
     if(!TempValue)
         return false;
 
-    AddonRealSize = TempValue;                              //temp value because ZLIB only excepts uLongf
+    AddonRealSize = TempValue;                              // temp value because ZLIB only excepts uLongf
 
-    CurrentPosition = Source->rpos();                       //get the position of the pointer in the structure
+    CurrentPosition = Source->rpos();                       // get the position of the pointer in the structure
 
-    AddOnPacked.resize(AddonRealSize);                      //resize target for zlib action
+    AddOnPacked.resize(AddonRealSize);                      // resize target for zlib action
 
     if (!uncompress(const_cast<uint8*>(AddOnPacked.contents()), &AddonRealSize, const_cast<uint8*>((*Source).contents() + CurrentPosition), (*Source).size() - CurrentPosition)!= Z_OK)
     {
@@ -105,22 +107,22 @@ bool AddonHandler::BuildAddonPacket(WorldPacket *Source, WorldPacket *Target)
             *Target << (uint8)2;
 
             uint8 unk1 = 1;
-            *Target << (uint8)unk1;
+            *Target << uint8(unk1);
             if (unk1)
             {
-                uint8 unk2 = crc != 0x1c776d01LL;           //If addon is Standard addon CRC
-                *Target << (uint8)unk2;
+                uint8 unk2 = (crc != 0x1c776d01LL);           // If addon is Standard addon CRC
+                *Target << uint8(unk2);
                 if (unk2)
                     Target->append(tdata, sizeof(tdata));
 
-                *Target << (uint32)0;
+                *Target << uint32(0);
             }
 
             uint8 unk3 = 0;
-            *Target << (uint8)unk3;
+            *Target << uint8(unk3);
             if (unk3)
             {
-                // String, 256
+                // String, 256 (null terminated?)
             }
         }
     }

@@ -24,7 +24,7 @@
 int AggressorAI::Permissible(const Creature *creature)
 {
     // have some hostile factions, it will be selected by IsHostileTo check at MoveInLineOfSight
-    if( !creature->isCivilian() && !creature->IsNeutralToAll() )
+    if (!creature->isCivilian() && !creature->IsNeutralToAll() )
         return PERMIT_BASE_PROACTIVE;
 
     return PERMIT_BASE_NO;
@@ -32,7 +32,7 @@ int AggressorAI::Permissible(const Creature *creature)
 
 void AggressorAI::UpdateAI(const uint32 /*diff*/)
 {
-    if(!UpdateVictim())
+    if (!UpdateVictim())
         return;
 
     DoMeleeAttackIfReady();
@@ -46,8 +46,8 @@ int CombatAI::Permissible(const Creature *creature)
 
 void CombatAI::InitializeAI()
 {
-    for(uint32 i = 0; i < CREATURE_MAX_SPELLS; ++i)
-        if(me->m_spells[i] && GetSpellStore()->LookupEntry(me->m_spells[i]))
+    for (uint32 i = 0; i < CREATURE_MAX_SPELLS; ++i)
+        if (me->m_spells[i] && GetSpellStore()->LookupEntry(me->m_spells[i]))
             spells.push_back(me->m_spells[i]);
 
     CreatureAI::InitializeAI();
@@ -60,33 +60,33 @@ void CombatAI::Reset()
 
 void CombatAI::JustDied(Unit *killer)
 {
-    for(SpellVct::iterator i = spells.begin(); i != spells.end(); ++i)
-        if(AISpellInfo[*i].condition == AICOND_DIE)
+    for (SpellVct::iterator i = spells.begin(); i != spells.end(); ++i)
+        if (AISpellInfo[*i].condition == AICOND_DIE)
             me->CastSpell(killer, *i, true);
 }
 
 void CombatAI::EnterCombat(Unit *who)
 {
-    for(SpellVct::iterator i = spells.begin(); i != spells.end(); ++i)
+    for (SpellVct::iterator i = spells.begin(); i != spells.end(); ++i)
     {
-        if(AISpellInfo[*i].condition == AICOND_AGGRO)
+        if (AISpellInfo[*i].condition == AICOND_AGGRO)
             me->CastSpell(who, *i, false);
-        else if(AISpellInfo[*i].condition == AICOND_COMBAT)
+        else if (AISpellInfo[*i].condition == AICOND_COMBAT)
             events.ScheduleEvent(*i, AISpellInfo[*i].cooldown + rand()%AISpellInfo[*i].cooldown);
     }
 }
 
 void CombatAI::UpdateAI(const uint32 diff)
 {
-    if(!UpdateVictim())
+    if (!UpdateVictim())
         return;
 
     events.Update(diff);
 
-    if(me->hasUnitState(UNIT_STAT_CASTING))
+    if (me->hasUnitState(UNIT_STAT_CASTING))
         return;
 
-    if(uint32 spellId = events.ExecuteEvent())
+    if (uint32 spellId = events.ExecuteEvent())
     {
         DoCast(spellId);
         events.ScheduleEvent(spellId, AISpellInfo[spellId].cooldown + rand()%AISpellInfo[spellId].cooldown);
@@ -105,7 +105,7 @@ void CasterAI::InitializeAI()
     CombatAI::InitializeAI();
 
     float m_attackDist = 30.0f;
-    for(SpellVct::iterator itr = spells.begin(); itr != spells.end(); ++itr)
+    for (SpellVct::iterator itr = spells.begin(); itr != spells.end(); ++itr)
         if (AISpellInfo[*itr].condition == AICOND_COMBAT && m_attackDist > GetAISpellInfo(*itr)->maxRange)
             m_attackDist = GetAISpellInfo(*itr)->maxRange;
     if (m_attackDist == 30.0f)
@@ -119,9 +119,9 @@ void CasterAI::EnterCombat(Unit *who)
 
     uint32 spell = rand()%spells.size();
     uint32 count = 0;
-    for(SpellVct::iterator itr = spells.begin(); itr != spells.end(); ++itr, ++count)
+    for (SpellVct::iterator itr = spells.begin(); itr != spells.end(); ++itr, ++count)
     {
-        if(AISpellInfo[*itr].condition == AICOND_AGGRO)
+        if (AISpellInfo[*itr].condition == AICOND_AGGRO)
             me->CastSpell(who, *itr, false);
         else if (AISpellInfo[*itr].condition == AICOND_COMBAT)
         {
@@ -138,15 +138,15 @@ void CasterAI::EnterCombat(Unit *who)
 
 void CasterAI::UpdateAI(const uint32 diff)
 {
-    if(!UpdateVictim())
+    if (!UpdateVictim())
         return;
 
     events.Update(diff);
 
-    if(me->hasUnitState(UNIT_STAT_CASTING))
+    if (me->hasUnitState(UNIT_STAT_CASTING))
         return;
 
-    if(uint32 spellId = events.ExecuteEvent())
+    if (uint32 spellId = events.ExecuteEvent())
     {
         DoCast(spellId);
         uint32 casttime = me->GetCurrentSpellCastTime(spellId);

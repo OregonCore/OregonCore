@@ -116,12 +116,12 @@ struct WorldLocation
 class OREGON_DLL_SPEC Object
 {
     public:
-        virtual ~Object ( );
+        virtual ~Object ();
 
         const bool& IsInWorld() const { return m_inWorld; }
         virtual void AddToWorld()
         {
-            if(m_inWorld)
+            if (m_inWorld)
                 return;
 
             assert(m_uint32Values);
@@ -133,7 +133,7 @@ class OREGON_DLL_SPEC Object
         }
         virtual void RemoveFromWorld()
         {
-            if(!m_inWorld)
+            if (!m_inWorld)
                 return;
 
             m_inWorld = false;
@@ -153,69 +153,69 @@ class OREGON_DLL_SPEC Object
         uint8 GetTypeId() const { return m_objectTypeId; }
         bool isType(uint16 mask) const { return (mask & m_objectType); }
 
-        virtual void BuildCreateUpdateBlockForPlayer( UpdateData *data, Player *target ) const;
+        virtual void BuildCreateUpdateBlockForPlayer(UpdateData *data, Player *target ) const;
         void SendUpdateToPlayer(Player* player);
 
-        void BuildValuesUpdateBlockForPlayer( UpdateData *data, Player *target ) const;
-        void BuildOutOfRangeUpdateBlock( UpdateData *data ) const;
-        void BuildMovementUpdateBlock( UpdateData * data, uint32 flags = 0 ) const;
+        void BuildValuesUpdateBlockForPlayer(UpdateData *data, Player *target ) const;
+        void BuildOutOfRangeUpdateBlock(UpdateData *data ) const;
+        void BuildMovementUpdateBlock(UpdateData * data, uint32 flags = 0 ) const;
         void BuildUpdate(UpdateDataMapType &);
 
-        virtual void DestroyForPlayer( Player *target ) const;
+        virtual void DestroyForPlayer(Player *target ) const;
 
-        const int32& GetInt32Value( uint16 index ) const
+        const int32& GetInt32Value(uint16 index ) const
         {
-            ASSERT( index < m_valuesCount || PrintIndexError( index , false) );
+            ASSERT(index < m_valuesCount || PrintIndexError(index , false) );
             return m_int32Values[ index ];
         }
 
-        const uint32& GetUInt32Value( uint16 index ) const
+        const uint32& GetUInt32Value(uint16 index ) const
         {
-            ASSERT( index < m_valuesCount || PrintIndexError( index , false) );
+            ASSERT(index < m_valuesCount || PrintIndexError(index , false) );
             return m_uint32Values[ index ];
         }
 
-        const uint64& GetUInt64Value( uint16 index ) const
+        const uint64& GetUInt64Value(uint16 index ) const
         {
-            ASSERT( index + 1 < m_valuesCount || PrintIndexError( index , false) );
+            ASSERT(index + 1 < m_valuesCount || PrintIndexError(index , false) );
             return *((uint64*)&(m_uint32Values[ index ]));
         }
 
-        const float& GetFloatValue( uint16 index ) const
+        const float& GetFloatValue(uint16 index ) const
         {
-            ASSERT( index < m_valuesCount || PrintIndexError( index , false ) );
+            ASSERT(index < m_valuesCount || PrintIndexError(index , false ) );
             return m_floatValues[ index ];
         }
 
-        uint8 GetByteValue( uint16 index, uint8 offset) const
+        uint8 GetByteValue(uint16 index, uint8 offset) const
         {
-            ASSERT( index < m_valuesCount || PrintIndexError( index , false) );
-            ASSERT( offset < 4 );
+            ASSERT(index < m_valuesCount || PrintIndexError(index , false) );
+            ASSERT(offset < 4 );
             return *(((uint8*)&m_uint32Values[ index ])+offset);
         }
 
-        uint8 GetUInt16Value( uint16 index, uint8 offset) const
+        uint8 GetUInt16Value(uint16 index, uint8 offset) const
         {
-            ASSERT( index < m_valuesCount || PrintIndexError( index , false) );
-            ASSERT( offset < 2 );
+            ASSERT(index < m_valuesCount || PrintIndexError(index , false) );
+            ASSERT(offset < 2 );
             return *(((uint16*)&m_uint32Values[ index ])+offset);
         }
 
-        void SetInt32Value(  uint16 index,        int32  value );
-        void SetUInt32Value( uint16 index,       uint32  value );
-        void SetUInt64Value( uint16 index, const uint64 &value );
-        void SetFloatValue(  uint16 index,       float   value );
-        void SetByteValue(   uint16 index, uint8 offset, uint8 value );
-        void SetUInt16Value( uint16 index, uint8 offset, uint16 value );
-        void SetInt16Value(  uint16 index, uint8 offset, int16 value ) { SetUInt16Value(index,offset,(uint16)value); }
-        void SetStatFloatValue( uint16 index, float value);
-        void SetStatInt32Value( uint16 index, int32 value);
+        void SetInt32Value( uint16 index,        int32  value );
+        void SetUInt32Value(uint16 index,       uint32  value );
+        void SetUInt64Value(uint16 index, const uint64 &value );
+        void SetFloatValue( uint16 index,       float   value );
+        void SetByteValue(  uint16 index, uint8 offset, uint8 value );
+        void SetUInt16Value(uint16 index, uint8 offset, uint16 value );
+        void SetInt16Value( uint16 index, uint8 offset, int16 value ) { SetUInt16Value(index,offset,(uint16)value); }
+        void SetStatFloatValue(uint16 index, float value);
+        void SetStatInt32Value(uint16 index, int32 value);
 
         void ApplyModUInt32Value(uint16 index, int32 val, bool apply);
         void ApplyModInt32Value(uint16 index, int32 val, bool apply);
         void ApplyModUInt64Value(uint16 index, int32 val, bool apply);
-        void ApplyModPositiveFloatValue( uint16 index, float val, bool apply);
-        void ApplyModSignedFloatValue( uint16 index, float val, bool apply);
+        void ApplyModPositiveFloatValue(uint16 index, float val, bool apply);
+        void ApplyModSignedFloatValue(uint16 index, float val, bool apply);
 
         void ApplyPercentModFloatValue(uint16 index, float val, bool apply)
         {
@@ -223,77 +223,77 @@ class OREGON_DLL_SPEC Object
             SetFloatValue(index, GetFloatValue(index) * (apply?(100.0f+val)/100.0f : 100.0f / (100.0f+val)) );
         }
 
-        void SetFlag( uint16 index, uint32 newFlag );
-        void RemoveFlag( uint16 index, uint32 oldFlag );
+        void SetFlag(uint16 index, uint32 newFlag );
+        void RemoveFlag(uint16 index, uint32 oldFlag );
 
-        void ToggleFlag( uint16 index, uint32 flag)
+        void ToggleFlag(uint16 index, uint32 flag)
         {
-            if(HasFlag(index, flag))
+            if (HasFlag(index, flag))
                 RemoveFlag(index, flag);
             else
                 SetFlag(index, flag);
         }
 
-        bool HasFlag( uint16 index, uint32 flag ) const
+        bool HasFlag(uint16 index, uint32 flag ) const
         {
-            ASSERT( index < m_valuesCount || PrintIndexError( index , false ) );
+            ASSERT(index < m_valuesCount || PrintIndexError(index , false ) );
             return (m_uint32Values[ index ] & flag) != 0;
         }
 
-        void SetByteFlag( uint16 index, uint8 offset, uint8 newFlag );
-        void RemoveByteFlag( uint16 index, uint8 offset, uint8 newFlag );
+        void SetByteFlag(uint16 index, uint8 offset, uint8 newFlag );
+        void RemoveByteFlag(uint16 index, uint8 offset, uint8 newFlag );
 
-        void ToggleFlag( uint16 index, uint8 offset, uint8 flag )
+        void ToggleFlag(uint16 index, uint8 offset, uint8 flag )
         {
-            if(HasByteFlag(index, offset, flag))
+            if (HasByteFlag(index, offset, flag))
                 RemoveByteFlag(index, offset, flag);
             else
                 SetByteFlag(index, offset, flag);
         }
 
-        bool HasByteFlag( uint16 index, uint8 offset, uint8 flag ) const
+        bool HasByteFlag(uint16 index, uint8 offset, uint8 flag ) const
         {
-            ASSERT( index < m_valuesCount || PrintIndexError( index , false ) );
-            ASSERT( offset < 4 );
+            ASSERT(index < m_valuesCount || PrintIndexError(index , false ) );
+            ASSERT(offset < 4 );
             return (((uint8*)&m_uint32Values[index])[offset] & flag) != 0;
         }
 
-        void ApplyModFlag( uint16 index, uint32 flag, bool apply)
+        void ApplyModFlag(uint16 index, uint32 flag, bool apply)
         {
-            if(apply) SetFlag(index,flag); else RemoveFlag(index,flag);
+            if (apply) SetFlag(index,flag); else RemoveFlag(index,flag);
         }
 
-        void SetFlag64( uint16 index, uint64 newFlag )
+        void SetFlag64(uint16 index, uint64 newFlag )
         {
             uint64 oldval = GetUInt64Value(index);
             uint64 newval = oldval | newFlag;
             SetUInt64Value(index,newval);
         }
 
-        void RemoveFlag64( uint16 index, uint64 oldFlag )
+        void RemoveFlag64(uint16 index, uint64 oldFlag )
         {
             uint64 oldval = GetUInt64Value(index);
             uint64 newval = oldval & ~oldFlag;
             SetUInt64Value(index,newval);
         }
 
-        void ToggleFlag64( uint16 index, uint64 flag)
+        void ToggleFlag64(uint16 index, uint64 flag)
         {
-            if(HasFlag64(index, flag))
+            if (HasFlag64(index, flag))
                 RemoveFlag64(index, flag);
             else
                 SetFlag64(index, flag);
         }
 
-        bool HasFlag64( uint16 index, uint64 flag ) const
+        bool HasFlag64(uint16 index, uint64 flag ) const
         {
-            ASSERT( index < m_valuesCount || PrintIndexError( index , false ) );
-            return (GetUInt64Value( index ) & flag) != 0;
+            ASSERT(index < m_valuesCount || PrintIndexError(index , false ) );
+            return (GetUInt64Value(index ) & flag) != 0;
         }
 
-        void ApplyModFlag64( uint16 index, uint64 flag, bool apply)
+        void ApplyModFlag64(uint16 index, uint64 flag, bool apply)
         {
-            if(apply) SetFlag64(index,flag); else RemoveFlag64(index,flag);
+            if (apply) SetFlag64(index,flag); else RemoveFlag64(index,flag);
         }
 
         void ClearUpdateMask(bool remove);
@@ -311,7 +311,7 @@ class OREGON_DLL_SPEC Object
 
     protected:
 
-        Object ( );
+        Object ();
 
         void _InitValues();
         void _Create (uint32 guidlow, uint32 entry, HighGuid guidhigh);
@@ -354,11 +354,11 @@ class OREGON_DLL_SPEC Object
 class OREGON_DLL_SPEC WorldObject : public Object, public WorldLocation
 {
     public:
-        virtual ~WorldObject ( ) {}
+        virtual ~WorldObject () {}
 
-        virtual void Update ( uint32 /*time_diff*/ ) { }
+        virtual void Update (uint32 /*time_diff*/ ) { }
 
-        void _Create( uint32 guidlow, HighGuid guidhigh, uint32 mapid );
+        void _Create(uint32 guidlow, HighGuid guidhigh, uint32 mapid );
 
         void Relocate(float x, float y, float z, float orientation)
         {
@@ -383,16 +383,16 @@ class OREGON_DLL_SPEC WorldObject : public Object, public WorldLocation
 
         void SetOrientation(float orientation) { m_orientation = orientation; }
 
-        float GetPositionX( ) const { return m_positionX; }
-        float GetPositionY( ) const { return m_positionY; }
-        float GetPositionZ( ) const { return m_positionZ; }
-        void GetPosition( float &x, float &y, float &z ) const
+        float GetPositionX() const { return m_positionX; }
+        float GetPositionY() const { return m_positionY; }
+        float GetPositionZ() const { return m_positionZ; }
+        void GetPosition(float &x, float &y, float &z ) const
             { x = m_positionX; y = m_positionY; z = m_positionZ; }
-        void GetPosition( WorldLocation &loc ) const
+        void GetPosition(WorldLocation &loc ) const
             { loc.mapid = GetMapId(); GetPosition(loc.x, loc.y, loc.z); loc.o = GetOrientation(); }
-        float GetOrientation( ) const { return m_orientation; }
-        void GetNearPoint2D( float &x, float &y, float distance, float absAngle) const;
-        void GetNearPoint( WorldObject const* searcher, float &x, float &y, float &z, float searcher_size, float distance2d,float absAngle) const;
+        float GetOrientation() const { return m_orientation; }
+        void GetNearPoint2D(float &x, float &y, float distance, float absAngle) const;
+        void GetNearPoint(WorldObject const* searcher, float &x, float &y, float &z, float searcher_size, float distance2d,float absAngle) const;
         void GetClosePoint(float &x, float &y, float &z, float size, float distance2d = 0, float angle = 0) const
         {
             // angle calculated from current orientation
@@ -404,20 +404,20 @@ class OREGON_DLL_SPEC WorldObject : public Object, public WorldLocation
             GetPosition(x, y, z);
             GetGroundPoint(x, y, z, dist, angle);
         }
-        void GetContactPoint( const WorldObject* obj, float &x, float &y, float &z, float distance2d = CONTACT_DISTANCE) const
+        void GetContactPoint(const WorldObject* obj, float &x, float &y, float &z, float distance2d = CONTACT_DISTANCE) const
         {
             // angle to face `obj` to `this` using distance includes size of `obj`
-            GetNearPoint(obj,x,y,z,obj->GetObjectSize(),distance2d,GetAngle( obj ));
+            GetNearPoint(obj,x,y,z,obj->GetObjectSize(),distance2d,GetAngle(obj ));
         }
 
         float GetObjectSize() const
         {
-            return ( m_valuesCount > UNIT_FIELD_COMBATREACH ) ? m_floatValues[UNIT_FIELD_COMBATREACH] : DEFAULT_WORLD_OBJECT_SIZE;
+            return (m_valuesCount > UNIT_FIELD_COMBATREACH ) ? m_floatValues[UNIT_FIELD_COMBATREACH] : DEFAULT_WORLD_OBJECT_SIZE;
         }
         bool IsPositionValid() const;
         void UpdateGroundPositionZ(float x, float y, float &z) const;
 
-        void GetRandomPoint( float x, float y, float z, float distance, float &rand_x, float &rand_y, float &rand_z ) const;
+        void GetRandomPoint(float x, float y, float z, float distance, float &rand_x, float &rand_y, float &rand_z ) const;
 
         void SetMapId(uint32 newMap) { m_mapId = newMap; m_map = NULL; }
         uint32 GetMapId() const { return m_mapId; }
@@ -434,7 +434,7 @@ class OREGON_DLL_SPEC WorldObject : public Object, public WorldLocation
 
         virtual const char* GetNameForLocaleIdx(int32 /*locale_idx*/) const { return GetName(); }
 
-        float GetDistance( const WorldObject* obj ) const;
+        float GetDistance(const WorldObject* obj ) const;
         float GetDistance(const float x, const float y, const float z) const;
         float GetDistanceSq(const float &x, const float &y, const float &z) const;
         float GetDistance2d(const WorldObject* obj) const;
@@ -478,14 +478,14 @@ class OREGON_DLL_SPEC WorldObject : public Object, public WorldLocation
         bool IsInRange2d(float x, float y, float minRange, float maxRange) const;
         bool IsInRange3d(float x, float y, float z, float minRange, float maxRange) const;
 
-        float GetAngle( const WorldObject* obj ) const;
-        float GetAngle( const float x, const float y ) const;
-        bool HasInArc( const float arcangle, const WorldObject* obj ) const;
+        float GetAngle(const WorldObject* obj ) const;
+        float GetAngle(const float x, const float y ) const;
+        bool HasInArc(const float arcangle, const WorldObject* obj ) const;
 
         virtual void SendMessageToSet(WorldPacket *data, bool self, bool to_possessor = true);
         virtual void SendMessageToSetInRange(WorldPacket *data, float dist, bool self, bool to_possessor = true);
-        void BuildHeartBeatMsg( WorldPacket *data ) const;
-        void BuildTeleportAckMsg( WorldPacket *data, float x, float y, float z, float ang) const;
+        void BuildHeartBeatMsg(WorldPacket *data ) const;
+        void BuildTeleportAckMsg(WorldPacket *data, float x, float y, float z, float ang) const;
         bool IsBeingTeleported() { return mSemaphoreTeleport; }
         void SetSemaphoreTeleport(bool semphsetting) { mSemaphoreTeleport = semphsetting; }
 

@@ -31,10 +31,10 @@ OutdoorPvPNA::OutdoorPvPNA()
 
 void OutdoorPvPNA::HandleKillImpl(Player *plr, Unit * killed)
 {
-    if(killed->GetTypeId() == TYPEID_PLAYER && plr->GetTeam() != ((Player*)killed)->GetTeam())
+    if (killed->GetTypeId() == TYPEID_PLAYER && plr->GetTeam() != ((Player*)killed)->GetTeam())
     {
         plr->KilledMonster(NA_CREDIT_MARKER,0); // 0 guid, btw it isn't even used in killedmonster function :S
-        if(plr->GetTeam() == ALLIANCE)
+        if (plr->GetTeam() == ALLIANCE)
             plr->CastSpell(plr,NA_KILL_TOKEN_ALLIANCE,true);
         else
             plr->CastSpell(plr,NA_KILL_TOKEN_HORDE,true);
@@ -44,7 +44,7 @@ void OutdoorPvPNA::HandleKillImpl(Player *plr, Unit * killed)
 uint32 OutdoorPvPObjectiveNA::GetAliveGuardsCount()
 {
     uint32 cnt = 0;
-    for(std::map<uint32, uint64>::iterator itr = m_Creatures.begin(); itr != m_Creatures.end(); ++itr)
+    for (std::map<uint32, uint64>::iterator itr = m_Creatures.begin(); itr != m_Creatures.end(); ++itr)
     {
         switch(itr->first)
         {
@@ -64,14 +64,14 @@ uint32 OutdoorPvPObjectiveNA::GetAliveGuardsCount()
         case NA_NPC_GUARD_14:
         case NA_NPC_GUARD_15:
             {
-                if(Creature * cr = HashMapHolder<Creature>::Find(itr->second))
+                if (Creature * cr = HashMapHolder<Creature>::Find(itr->second))
                 {
-                    if(cr->isAlive())
+                    if (cr->isAlive())
                         ++cnt;
                 }
                 else if (CreatureData const * cd = objmgr.GetCreatureData(GUID_LOPART(itr->second)))
                 {
-                    if(!cd->is_dead)
+                    if (!cd->is_dead)
                         ++cnt;
                 }
             }
@@ -85,43 +85,43 @@ uint32 OutdoorPvPObjectiveNA::GetAliveGuardsCount()
 
 void OutdoorPvPNA::BuffTeam(uint32 team)
 {
-    if(team == ALLIANCE)
+    if (team == ALLIANCE)
     {
-        for(std::set<uint64>::iterator itr = m_PlayerGuids[0].begin(); itr != m_PlayerGuids[0].end(); ++itr)
+        for (std::set<uint64>::iterator itr = m_PlayerGuids[0].begin(); itr != m_PlayerGuids[0].end(); ++itr)
         {
-            if(Player * plr = objmgr.GetPlayer(*itr))
-                if(plr->IsInWorld()) plr->CastSpell(plr,NA_CAPTURE_BUFF,true);
+            if (Player * plr = objmgr.GetPlayer(*itr))
+                if (plr->IsInWorld()) plr->CastSpell(plr,NA_CAPTURE_BUFF,true);
         }
-        for(std::set<uint64>::iterator itr = m_PlayerGuids[1].begin(); itr != m_PlayerGuids[1].end(); ++itr)
+        for (std::set<uint64>::iterator itr = m_PlayerGuids[1].begin(); itr != m_PlayerGuids[1].end(); ++itr)
         {
-            if(Player * plr = objmgr.GetPlayer(*itr))
-                if(plr->IsInWorld()) plr->RemoveAurasDueToSpell(NA_CAPTURE_BUFF);
+            if (Player * plr = objmgr.GetPlayer(*itr))
+                if (plr->IsInWorld()) plr->RemoveAurasDueToSpell(NA_CAPTURE_BUFF);
         }
     }
-    else if(team == HORDE)
+    else if (team == HORDE)
     {
-        for(std::set<uint64>::iterator itr = m_PlayerGuids[1].begin(); itr != m_PlayerGuids[1].end(); ++itr)
+        for (std::set<uint64>::iterator itr = m_PlayerGuids[1].begin(); itr != m_PlayerGuids[1].end(); ++itr)
         {
-            if(Player * plr = objmgr.GetPlayer(*itr))
-                if(plr->IsInWorld()) plr->CastSpell(plr,NA_CAPTURE_BUFF,true);
+            if (Player * plr = objmgr.GetPlayer(*itr))
+                if (plr->IsInWorld()) plr->CastSpell(plr,NA_CAPTURE_BUFF,true);
         }
-        for(std::set<uint64>::iterator itr = m_PlayerGuids[0].begin(); itr != m_PlayerGuids[0].end(); ++itr)
+        for (std::set<uint64>::iterator itr = m_PlayerGuids[0].begin(); itr != m_PlayerGuids[0].end(); ++itr)
         {
-            if(Player * plr = objmgr.GetPlayer(*itr))
-                if(plr->IsInWorld()) plr->RemoveAurasDueToSpell(NA_CAPTURE_BUFF);
+            if (Player * plr = objmgr.GetPlayer(*itr))
+                if (plr->IsInWorld()) plr->RemoveAurasDueToSpell(NA_CAPTURE_BUFF);
         }
     }
     else
     {
-        for(std::set<uint64>::iterator itr = m_PlayerGuids[0].begin(); itr != m_PlayerGuids[0].end(); ++itr)
+        for (std::set<uint64>::iterator itr = m_PlayerGuids[0].begin(); itr != m_PlayerGuids[0].end(); ++itr)
         {
-            if(Player * plr = objmgr.GetPlayer(*itr))
-                if(plr->IsInWorld()) plr->RemoveAurasDueToSpell(NA_CAPTURE_BUFF);
+            if (Player * plr = objmgr.GetPlayer(*itr))
+                if (plr->IsInWorld()) plr->RemoveAurasDueToSpell(NA_CAPTURE_BUFF);
         }
-        for(std::set<uint64>::iterator itr = m_PlayerGuids[1].begin(); itr != m_PlayerGuids[1].end(); ++itr)
+        for (std::set<uint64>::iterator itr = m_PlayerGuids[1].begin(); itr != m_PlayerGuids[1].end(); ++itr)
         {
-            if(Player * plr = objmgr.GetPlayer(*itr))
-                if(plr->IsInWorld()) plr->RemoveAurasDueToSpell(NA_CAPTURE_BUFF);
+            if (Player * plr = objmgr.GetPlayer(*itr))
+                if (plr->IsInWorld()) plr->RemoveAurasDueToSpell(NA_CAPTURE_BUFF);
         }
     }
 }
@@ -129,34 +129,34 @@ void OutdoorPvPNA::BuffTeam(uint32 team)
 void OutdoorPvPObjectiveNA::SpawnNPCsForTeam(uint32 team)
 {
     const creature_type * creatures = NULL;
-    if(team == ALLIANCE)
+    if (team == ALLIANCE)
         creatures=AllianceControlNPCs;
-    else if(team == HORDE)
+    else if (team == HORDE)
         creatures=HordeControlNPCs;
     else
         return;
-    for(int i = 0; i < NA_CONTROL_NPC_NUM; ++i)
+    for (int i = 0; i < NA_CONTROL_NPC_NUM; ++i)
         AddCreature(i,creatures[i].entry,creatures[i].teamval,creatures[i].map,creatures[i].x,creatures[i].y,creatures[i].z,creatures[i].o,1000000);
 }
 
 void OutdoorPvPObjectiveNA::DeSpawnNPCs()
 {
-    for(int i = 0; i < NA_CONTROL_NPC_NUM; ++i)
+    for (int i = 0; i < NA_CONTROL_NPC_NUM; ++i)
         DelCreature(i);
 }
 
 void OutdoorPvPObjectiveNA::SpawnGOsForTeam(uint32 team)
 {
     const go_type * gos = NULL;
-    if(team == ALLIANCE)
+    if (team == ALLIANCE)
         gos=AllianceControlGOs;
-    else if(team == HORDE)
+    else if (team == HORDE)
         gos=HordeControlGOs;
     else
         return;
-    for(int i = 0; i < NA_CONTROL_GO_NUM; ++i)
+    for (int i = 0; i < NA_CONTROL_GO_NUM; ++i)
     {
-        if( i == NA_ROOST_S ||
+        if (i == NA_ROOST_S ||
             i == NA_ROOST_W ||
             i == NA_ROOST_N ||
             i == NA_ROOST_E ||
@@ -171,7 +171,7 @@ void OutdoorPvPObjectiveNA::SpawnGOsForTeam(uint32 team)
 
 void OutdoorPvPObjectiveNA::DeSpawnGOs()
 {
-    for(int i = 0; i < NA_CONTROL_GO_NUM; ++i)
+    for (int i = 0; i < NA_CONTROL_GO_NUM; ++i)
     {
         DelObject(i);
     }
@@ -179,15 +179,15 @@ void OutdoorPvPObjectiveNA::DeSpawnGOs()
 
 void OutdoorPvPObjectiveNA::FactionTakeOver(uint32 team)
 {
-    if(m_ControllingFaction)
+    if (m_ControllingFaction)
         objmgr.RemoveGraveYardLink(NA_HALAA_GRAVEYARD,NA_HALAA_GRAVEYARD_ZONE,m_ControllingFaction,false);
-    if(m_ControllingFaction == ALLIANCE)
+    if (m_ControllingFaction == ALLIANCE)
         sWorld.SendZoneText(NA_HALAA_GRAVEYARD_ZONE,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_NA_LOOSE_A));
-    else if(m_ControllingFaction == HORDE)
+    else if (m_ControllingFaction == HORDE)
         sWorld.SendZoneText(NA_HALAA_GRAVEYARD_ZONE,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_NA_LOOSE_H));
 
     m_ControllingFaction = team;
-    if(m_ControllingFaction)
+    if (m_ControllingFaction)
         objmgr.AddGraveYardLink(NA_HALAA_GRAVEYARD,NA_HALAA_GRAVEYARD_ZONE,m_ControllingFaction,false);
     DeSpawnGOs();
     DeSpawnNPCs();
@@ -196,7 +196,7 @@ void OutdoorPvPObjectiveNA::FactionTakeOver(uint32 team)
     m_GuardsAlive = NA_GUARDS_MAX;
     m_capturable = false;
     this->UpdateHalaaWorldState();
-    if(team == ALLIANCE)
+    if (team == ALLIANCE)
     {
         m_WyvernStateSouth = WYVERN_NEU_HORDE;
         m_WyvernStateNorth = WYVERN_NEU_HORDE;
@@ -227,10 +227,10 @@ void OutdoorPvPObjectiveNA::FactionTakeOver(uint32 team)
 
 bool OutdoorPvPObjectiveNA::HandlePlayerEnter(Player *plr)
 {
-    if(OutdoorPvPObjective::HandlePlayerEnter(plr))
+    if (OutdoorPvPObjective::HandlePlayerEnter(plr))
     {
         plr->SendUpdateWorldState(NA_UI_TOWER_SLIDER_DISPLAY, 1);
-        uint32 phase = (uint32)ceil(( m_ShiftPhase + m_ShiftMaxPhase) / ( 2 * m_ShiftMaxPhase ) * 100.0f);
+        uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase ) * 100.0f);
         plr->SendUpdateWorldState(NA_UI_TOWER_SLIDER_POS, phase);
         plr->SendUpdateWorldState(NA_UI_TOWER_SLIDER_N, m_NeutralValue);
         return true;
@@ -260,7 +260,7 @@ bool OutdoorPvPNA::SetupOutdoorPvP()
 
     // halaa
     m_obj = new OutdoorPvPObjectiveNA(this);
-    if(!m_obj)
+    if (!m_obj)
         return false;
     m_OutdoorPvPObjectives.push_back(m_obj);
 
@@ -270,7 +270,7 @@ bool OutdoorPvPNA::SetupOutdoorPvP()
 void OutdoorPvPNA::HandlePlayerEnterZone(Player * plr, uint32 zone)
 {
     // add buffs
-    if(plr->GetTeam() == m_obj->m_ControllingFaction)
+    if (plr->GetTeam() == m_obj->m_ControllingFaction)
         plr->CastSpell(plr,NA_CAPTURE_BUFF,true);
     OutdoorPvP::HandlePlayerEnterZone(plr,zone);
 }
@@ -289,12 +289,12 @@ void OutdoorPvPNA::FillInitialWorldStates(WorldPacket &data)
 
 void OutdoorPvPObjectiveNA::FillInitialWorldStates(WorldPacket &data)
 {
-    if(m_ControllingFaction == ALLIANCE)
+    if (m_ControllingFaction == ALLIANCE)
     {
         data << NA_UI_HORDE_GUARDS_SHOW << uint32(0);
         data << NA_UI_ALLIANCE_GUARDS_SHOW << uint32(1);
     }
-    else if(m_ControllingFaction == HORDE)
+    else if (m_ControllingFaction == HORDE)
     {
         data << NA_UI_HORDE_GUARDS_SHOW << uint32(1);
         data << NA_UI_ALLIANCE_GUARDS_SHOW << uint32(0);
@@ -419,7 +419,7 @@ bool OutdoorPvPObjectiveNA::HandleCustomSpell(Player * plr, uint32 spellId, Game
         break;
     }
 
-    if(retval)
+    if (retval)
     {
         //Adding items
         uint32 noSpaceForCount = 0;
@@ -430,18 +430,18 @@ bool OutdoorPvPObjectiveNA::HandleCustomSpell(Player * plr, uint32 spellId, Game
         int32 count = 10;
         uint32 itemid = 24538;
                                                                 // bomb id count
-        uint8 msg = plr->CanStoreNewItem( NULL_BAG, NULL_SLOT, dest, itemid, count, &noSpaceForCount );
-        if( msg != EQUIP_ERR_OK )                               // convert to possible store amount
+        uint8 msg = plr->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemid, count, &noSpaceForCount );
+        if (msg != EQUIP_ERR_OK )                               // convert to possible store amount
             count -= noSpaceForCount;
 
-        if( count == 0 || dest.empty())                         // can't add any
+        if (count == 0 || dest.empty())                         // can't add any
         {
             return true;
         }
 
-        Item* item = plr->StoreNewItem( dest, itemid, true);
+        Item* item = plr->StoreNewItem(dest, itemid, true);
 
-        if(count > 0 && item)
+        if (count > 0 && item)
         {
             plr->SendNewItem(item,count,true,false);
         }
@@ -454,12 +454,12 @@ bool OutdoorPvPObjectiveNA::HandleCustomSpell(Player * plr, uint32 spellId, Game
 int32 OutdoorPvPObjectiveNA::HandleOpenGo(Player *plr, uint64 guid)
 {
     uint32 retval = OutdoorPvPObjective::HandleOpenGo(plr, guid);
-    if(retval>=0)
+    if (retval>=0)
     {
         const go_type * gos = NULL;
-        if(m_ControllingFaction == ALLIANCE)
+        if (m_ControllingFaction == ALLIANCE)
             gos=AllianceControlGOs;
-        else if(m_ControllingFaction == HORDE)
+        else if (m_ControllingFaction == HORDE)
             gos=HordeControlGOs;
         else
             return -1;
@@ -475,7 +475,7 @@ int32 OutdoorPvPObjectiveNA::HandleOpenGo(Player *plr, uint64 guid)
             del = NA_DESTROYED_ROOST_S;
             add = NA_ROOST_S;
             add2 = NA_BOMB_WAGON_S;
-            if(m_ControllingFaction == HORDE)
+            if (m_ControllingFaction == HORDE)
                 m_WyvernStateSouth = WYVERN_ALLIANCE;
             else
                 m_WyvernStateSouth = WYVERN_HORDE;
@@ -485,7 +485,7 @@ int32 OutdoorPvPObjectiveNA::HandleOpenGo(Player *plr, uint64 guid)
             del = NA_DESTROYED_ROOST_N;
             add = NA_ROOST_N;
             add2 = NA_BOMB_WAGON_N;
-            if(m_ControllingFaction == HORDE)
+            if (m_ControllingFaction == HORDE)
                 m_WyvernStateNorth = WYVERN_ALLIANCE;
             else
                 m_WyvernStateNorth = WYVERN_HORDE;
@@ -495,7 +495,7 @@ int32 OutdoorPvPObjectiveNA::HandleOpenGo(Player *plr, uint64 guid)
             del = NA_DESTROYED_ROOST_W;
             add = NA_ROOST_W;
             add2 = NA_BOMB_WAGON_W;
-            if(m_ControllingFaction == HORDE)
+            if (m_ControllingFaction == HORDE)
                 m_WyvernStateWest = WYVERN_ALLIANCE;
             else
                 m_WyvernStateWest = WYVERN_HORDE;
@@ -505,7 +505,7 @@ int32 OutdoorPvPObjectiveNA::HandleOpenGo(Player *plr, uint64 guid)
             del = NA_DESTROYED_ROOST_E;
             add = NA_ROOST_E;
             add2 = NA_BOMB_WAGON_E;
-            if(m_ControllingFaction == HORDE)
+            if (m_ControllingFaction == HORDE)
                 m_WyvernStateEast = WYVERN_ALLIANCE;
             else
                 m_WyvernStateEast = WYVERN_HORDE;
@@ -515,7 +515,7 @@ int32 OutdoorPvPObjectiveNA::HandleOpenGo(Player *plr, uint64 guid)
             del = NA_BOMB_WAGON_S;
             del2 = NA_ROOST_S;
             add = NA_DESTROYED_ROOST_S;
-            if(m_ControllingFaction == HORDE)
+            if (m_ControllingFaction == HORDE)
                 m_WyvernStateSouth = WYVERN_NEU_ALLIANCE;
             else
                 m_WyvernStateSouth = WYVERN_NEU_HORDE;
@@ -525,7 +525,7 @@ int32 OutdoorPvPObjectiveNA::HandleOpenGo(Player *plr, uint64 guid)
             del = NA_BOMB_WAGON_N;
             del2 = NA_ROOST_N;
             add = NA_DESTROYED_ROOST_N;
-            if(m_ControllingFaction == HORDE)
+            if (m_ControllingFaction == HORDE)
                 m_WyvernStateNorth = WYVERN_NEU_ALLIANCE;
             else
                 m_WyvernStateNorth = WYVERN_NEU_HORDE;
@@ -535,7 +535,7 @@ int32 OutdoorPvPObjectiveNA::HandleOpenGo(Player *plr, uint64 guid)
             del = NA_BOMB_WAGON_W;
             del2 = NA_ROOST_W;
             add = NA_DESTROYED_ROOST_W;
-            if(m_ControllingFaction == HORDE)
+            if (m_ControllingFaction == HORDE)
                 m_WyvernStateWest = WYVERN_NEU_ALLIANCE;
             else
                 m_WyvernStateWest = WYVERN_NEU_HORDE;
@@ -545,7 +545,7 @@ int32 OutdoorPvPObjectiveNA::HandleOpenGo(Player *plr, uint64 guid)
             del = NA_BOMB_WAGON_E;
             del2 = NA_ROOST_E;
             add = NA_DESTROYED_ROOST_E;
-            if(m_ControllingFaction == HORDE)
+            if (m_ControllingFaction == HORDE)
                 m_WyvernStateEast = WYVERN_NEU_ALLIANCE;
             else
                 m_WyvernStateEast = WYVERN_NEU_HORDE;
@@ -556,16 +556,16 @@ int32 OutdoorPvPObjectiveNA::HandleOpenGo(Player *plr, uint64 guid)
             break;
         }
 
-        if(del>-1)
+        if (del>-1)
             DelObject(del);
 
-        if(del2>-1)
+        if (del2>-1)
             DelObject(del2);
 
-        if(add>-1)
+        if (add>-1)
             AddObject(add,gos[add].entry,gos[add].map,gos[add].x,gos[add].y,gos[add].z,gos[add].o,gos[add].rot0,gos[add].rot1,gos[add].rot2,gos[add].rot3);
 
-        if(add2>-1)
+        if (add2>-1)
             AddObject(add2,gos[add2].entry,gos[add2].map,gos[add2].x,gos[add2].y,gos[add2].z,gos[add2].o,gos[add2].rot0,gos[add2].rot1,gos[add2].rot2,gos[add2].rot3);
 
         return retval;
@@ -577,37 +577,37 @@ bool OutdoorPvPObjectiveNA::Update(uint32 diff)
 {
     // let the controlling faction advance in phase
     bool capturable = false;
-    if(m_ControllingFaction == ALLIANCE && m_ActivePlayerGuids[0].size() > m_ActivePlayerGuids[1].size())
+    if (m_ControllingFaction == ALLIANCE && m_ActivePlayerGuids[0].size() > m_ActivePlayerGuids[1].size())
         capturable = true;
-    else if(m_ControllingFaction == HORDE && m_ActivePlayerGuids[0].size() < m_ActivePlayerGuids[1].size())
+    else if (m_ControllingFaction == HORDE && m_ActivePlayerGuids[0].size() < m_ActivePlayerGuids[1].size())
         capturable = true;
 
-    if(m_GuardCheckTimer < diff)
+    if (m_GuardCheckTimer < diff)
     {
         m_GuardCheckTimer = NA_GUARD_CHECK_TIME;
         uint32 cnt = GetAliveGuardsCount();
-        if(cnt != m_GuardsAlive)
+        if (cnt != m_GuardsAlive)
         {
             m_GuardsAlive = cnt;
-            if(m_GuardsAlive == 0)
+            if (m_GuardsAlive == 0)
                 m_capturable = true;
             // update the guard count for the players in zone
             m_PvP->SendUpdateWorldState(NA_UI_GUARDS_LEFT,m_GuardsAlive);
         }
     } else m_GuardCheckTimer -= diff;
 
-    if((m_capturable || capturable) && OutdoorPvPObjective::Update(diff))
+    if ((m_capturable || capturable) && OutdoorPvPObjective::Update(diff))
     {
-        if(m_RespawnTimer < diff)
+        if (m_RespawnTimer < diff)
         {
             // if the guards have been killed, then the challenger has one hour to take over halaa.
             // in case they fail to do it, the guards are respawned, and they have to start again.
-            if(m_ControllingFaction)
+            if (m_ControllingFaction)
                 FactionTakeOver(m_ControllingFaction);
             m_RespawnTimer = NA_RESPAWN_TIME;
         } else m_RespawnTimer -= diff;
 
-        if(m_OldState != m_State)
+        if (m_OldState != m_State)
         {
             uint32 artkit = 21;
             switch(m_State)
@@ -642,7 +642,7 @@ bool OutdoorPvPObjectiveNA::Update(uint32 diff)
             }
 
             GameObject* flag = HashMapHolder<GameObject>::Find(m_CapturePoint);
-            if(flag)
+            if (flag)
             {
                 flag->SetGoArtKit(artkit);
                 flag->SendUpdateObjectToAllExcept(NULL);
@@ -651,12 +651,12 @@ bool OutdoorPvPObjectiveNA::Update(uint32 diff)
             UpdateHalaaWorldState();
         }
 
-        if(m_ShiftPhase != m_OldPhase)
+        if (m_ShiftPhase != m_OldPhase)
         {
             // send this too, sometimes the slider disappears, dunno why :(
             SendUpdateWorldState(NA_UI_TOWER_SLIDER_DISPLAY, 1);
             // send these updates to only the ones in this objective
-            uint32 phase = (uint32)ceil(( m_ShiftPhase + m_ShiftMaxPhase) / ( 2 * m_ShiftMaxPhase ) * 100.0f);
+            uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase ) * 100.0f);
             SendUpdateWorldState(NA_UI_TOWER_SLIDER_POS, phase);
             SendUpdateWorldState(NA_UI_TOWER_SLIDER_N, m_NeutralValue);
         }
@@ -667,11 +667,11 @@ bool OutdoorPvPObjectiveNA::Update(uint32 diff)
 
 void OutdoorPvPObjectiveNA::UpdateHalaaWorldState()
 {
-    m_PvP->SendUpdateWorldState( NA_MAP_HALAA_NEUTRAL ,uint32(bool(m_HalaaState & HALAA_N)));
-    m_PvP->SendUpdateWorldState( NA_MAP_HALAA_NEU_A ,uint32(bool(m_HalaaState & HALAA_N_A)));
-    m_PvP->SendUpdateWorldState( NA_MAP_HALAA_NEU_H ,uint32(bool(m_HalaaState & HALAA_N_H)));
-    m_PvP->SendUpdateWorldState( NA_MAP_HALAA_HORDE ,uint32(bool(m_HalaaState & HALAA_H)));
-    m_PvP->SendUpdateWorldState( NA_MAP_HALAA_ALLIANCE ,uint32(bool(m_HalaaState & HALAA_A)));
+    m_PvP->SendUpdateWorldState(NA_MAP_HALAA_NEUTRAL ,uint32(bool(m_HalaaState & HALAA_N)));
+    m_PvP->SendUpdateWorldState(NA_MAP_HALAA_NEU_A ,uint32(bool(m_HalaaState & HALAA_N_A)));
+    m_PvP->SendUpdateWorldState(NA_MAP_HALAA_NEU_H ,uint32(bool(m_HalaaState & HALAA_N_H)));
+    m_PvP->SendUpdateWorldState(NA_MAP_HALAA_HORDE ,uint32(bool(m_HalaaState & HALAA_H)));
+    m_PvP->SendUpdateWorldState(NA_MAP_HALAA_ALLIANCE ,uint32(bool(m_HalaaState & HALAA_A)));
 }
 
 void OutdoorPvPObjectiveNA::UpdateWyvernRoostWorldState(uint32 roost)

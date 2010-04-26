@@ -31,7 +31,7 @@
 #include "Chat.h"
 
 
-void WorldSession::HandleGMTicketCreateOpcode( WorldPacket & recv_data )
+void WorldSession::HandleGMTicketCreateOpcode(WorldPacket & recv_data )
 {
     uint32 map;
     float x, y, z;
@@ -83,7 +83,7 @@ void WorldSession::HandleGMTicketCreateOpcode( WorldPacket & recv_data )
 
 }
 
-void WorldSession::HandleGMTicketUpdateOpcode( WorldPacket & recv_data)
+void WorldSession::HandleGMTicketUpdateOpcode(WorldPacket & recv_data)
 {
     std::string message = "";
     time_t t = time(NULL);
@@ -97,7 +97,7 @@ void WorldSession::HandleGMTicketUpdateOpcode( WorldPacket & recv_data)
     GM_Ticket *ticket = ticketmgr.GetGMTicketByPlayer(GetPlayer()->GetGUID());
 
     // Check if player has a GM Ticket yet
-    if(!ticket)
+    if (!ticket)
     {
         // Response - error couldnt find existing Ticket
         data << uint32(1);
@@ -122,14 +122,14 @@ void WorldSession::HandleGMTicketUpdateOpcode( WorldPacket & recv_data)
 
 }
 
-void WorldSession::HandleGMTicketDeleteOpcode( WorldPacket & /*recv_data*/)
+void WorldSession::HandleGMTicketDeleteOpcode(WorldPacket & /*recv_data*/)
 {
     // NO recv_data, NO packet check size
 
     GM_Ticket* ticket = ticketmgr.GetGMTicketByPlayer(GetPlayer()->GetGUID());
 
     // CHeck for Ticket
-    if(ticket)
+    if (ticket)
     {
         // Remove Tickets from Player
 
@@ -144,7 +144,7 @@ void WorldSession::HandleGMTicketDeleteOpcode( WorldPacket & /*recv_data*/)
     }
 }
 
-void WorldSession::HandleGMTicketGetTicketOpcode( WorldPacket & /*recv_data*/)
+void WorldSession::HandleGMTicketGetTicketOpcode(WorldPacket & /*recv_data*/)
 {
     // NO recv_data NO packet size check
 
@@ -154,7 +154,7 @@ void WorldSession::HandleGMTicketGetTicketOpcode( WorldPacket & /*recv_data*/)
     GM_Ticket *ticket = ticketmgr.GetGMTicketByPlayer(GetPlayer()->GetGUID());
 
     // check for existing ticket
-    if(!ticket)
+    if (!ticket)
     {
         data << uint32(10);
         // send packet
@@ -170,7 +170,7 @@ void WorldSession::HandleGMTicketGetTicketOpcode( WorldPacket & /*recv_data*/)
 
 }
 
-void WorldSession::HandleGMTicketSystemStatusOpcode( WorldPacket & /*recv_data*/)
+void WorldSession::HandleGMTicketSystemStatusOpcode(WorldPacket & /*recv_data*/)
 {
     // NO recv_data NO packet size check
 

@@ -223,7 +223,7 @@ WorldSocketMgr::~WorldSocketMgr ()
     if (m_NetThreads)
         delete [] m_NetThreads;
 
-    if(m_Acceptor)
+    if (m_Acceptor)
         delete m_Acceptor;
 }
 
@@ -251,7 +251,7 @@ WorldSocketMgr::StartReactiveIO (ACE_UINT16 port, const char* address)
 
     m_SockOutUBuff = sConfig.GetIntDefault ("Network.OutUBuff", 65536);
 
-    if ( m_SockOutUBuff <= 0 )
+    if (m_SockOutUBuff <= 0 )
     {
         sLog.outError ("Network.OutUBuff is wrong in your config file");
         return -1;

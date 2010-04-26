@@ -57,7 +57,7 @@ void OutdoorPvPSI::UpdateWorldState()
 
 bool OutdoorPvPSI::SetupOutdoorPvP()
 {
-    for(int i = 0; i < OutdoorPvPSIBuffZonesNum; ++i)
+    for (int i = 0; i < OutdoorPvPSIBuffZonesNum; ++i)
         sOutdoorPvPMgr.AddZone(OutdoorPvPSIBuffZones[i],this);
     return true;
 }
@@ -69,7 +69,7 @@ bool OutdoorPvPSI::Update(uint32 diff)
 
 void OutdoorPvPSI::HandlePlayerEnterZone(Player * plr, uint32 zone)
 {
-    if(plr->GetTeam() == m_LastController)
+    if (plr->GetTeam() == m_LastController)
         plr->CastSpell(plr,SI_CENARION_FAVOR,true);
     OutdoorPvP::HandlePlayerEnterZone(plr,zone);
 }
@@ -83,43 +83,43 @@ void OutdoorPvPSI::HandlePlayerLeaveZone(Player * plr, uint32 zone)
 
 void OutdoorPvPSI::BuffTeam(uint32 team)
 {
-    if(team == ALLIANCE)
+    if (team == ALLIANCE)
     {
-        for(std::set<uint64>::iterator itr = m_PlayerGuids[0].begin(); itr != m_PlayerGuids[0].end(); ++itr)
+        for (std::set<uint64>::iterator itr = m_PlayerGuids[0].begin(); itr != m_PlayerGuids[0].end(); ++itr)
         {
-            if(Player * plr = objmgr.GetPlayer(*itr))
-                if(plr->IsInWorld()) plr->CastSpell(plr,SI_CENARION_FAVOR,true);
+            if (Player * plr = objmgr.GetPlayer(*itr))
+                if (plr->IsInWorld()) plr->CastSpell(plr,SI_CENARION_FAVOR,true);
         }
-        for(std::set<uint64>::iterator itr = m_PlayerGuids[1].begin(); itr != m_PlayerGuids[1].end(); ++itr)
+        for (std::set<uint64>::iterator itr = m_PlayerGuids[1].begin(); itr != m_PlayerGuids[1].end(); ++itr)
         {
-            if(Player * plr = objmgr.GetPlayer(*itr))
-                if(plr->IsInWorld()) plr->RemoveAurasDueToSpell(SI_CENARION_FAVOR);
+            if (Player * plr = objmgr.GetPlayer(*itr))
+                if (plr->IsInWorld()) plr->RemoveAurasDueToSpell(SI_CENARION_FAVOR);
         }
     }
-    else if(team == HORDE)
+    else if (team == HORDE)
     {
-        for(std::set<uint64>::iterator itr = m_PlayerGuids[1].begin(); itr != m_PlayerGuids[1].end(); ++itr)
+        for (std::set<uint64>::iterator itr = m_PlayerGuids[1].begin(); itr != m_PlayerGuids[1].end(); ++itr)
         {
-            if(Player * plr = objmgr.GetPlayer(*itr))
-                if(plr->IsInWorld()) plr->CastSpell(plr,SI_CENARION_FAVOR,true);
+            if (Player * plr = objmgr.GetPlayer(*itr))
+                if (plr->IsInWorld()) plr->CastSpell(plr,SI_CENARION_FAVOR,true);
         }
-        for(std::set<uint64>::iterator itr = m_PlayerGuids[0].begin(); itr != m_PlayerGuids[0].end(); ++itr)
+        for (std::set<uint64>::iterator itr = m_PlayerGuids[0].begin(); itr != m_PlayerGuids[0].end(); ++itr)
         {
-            if(Player * plr = objmgr.GetPlayer(*itr))
-                if(plr->IsInWorld()) plr->RemoveAurasDueToSpell(SI_CENARION_FAVOR);
+            if (Player * plr = objmgr.GetPlayer(*itr))
+                if (plr->IsInWorld()) plr->RemoveAurasDueToSpell(SI_CENARION_FAVOR);
         }
     }
     else
     {
-        for(std::set<uint64>::iterator itr = m_PlayerGuids[0].begin(); itr != m_PlayerGuids[0].end(); ++itr)
+        for (std::set<uint64>::iterator itr = m_PlayerGuids[0].begin(); itr != m_PlayerGuids[0].end(); ++itr)
         {
-            if(Player * plr = objmgr.GetPlayer(*itr))
-                if(plr->IsInWorld()) plr->RemoveAurasDueToSpell(SI_CENARION_FAVOR);
+            if (Player * plr = objmgr.GetPlayer(*itr))
+                if (plr->IsInWorld()) plr->RemoveAurasDueToSpell(SI_CENARION_FAVOR);
         }
-        for(std::set<uint64>::iterator itr = m_PlayerGuids[1].begin(); itr != m_PlayerGuids[1].end(); ++itr)
+        for (std::set<uint64>::iterator itr = m_PlayerGuids[1].begin(); itr != m_PlayerGuids[1].end(); ++itr)
         {
-            if(Player * plr = objmgr.GetPlayer(*itr))
-                if(plr->IsInWorld()) plr->RemoveAurasDueToSpell(SI_CENARION_FAVOR);
+            if (Player * plr = objmgr.GetPlayer(*itr))
+                if (plr->IsInWorld()) plr->RemoveAurasDueToSpell(SI_CENARION_FAVOR);
         }
     }
 }
@@ -129,12 +129,12 @@ bool OutdoorPvPSI::HandleAreaTrigger(Player *plr, uint32 trigger)
     switch(trigger)
     {
     case SI_AREATRIGGER_A:
-        if(plr->GetTeam() == ALLIANCE && plr->HasAura(SI_SILITHYST_FLAG,0))
+        if (plr->GetTeam() == ALLIANCE && plr->HasAura(SI_SILITHYST_FLAG,0))
         {
             // remove aura
             plr->RemoveAurasDueToSpell(SI_SILITHYST_FLAG);
             ++ m_Gathered_A;
-            if(m_Gathered_A >= SI_MAX_RESOURCES)
+            if (m_Gathered_A >= SI_MAX_RESOURCES)
             {
                 BuffTeam(ALLIANCE);
                 sWorld.SendZoneText(OutdoorPvPSIBuffZones[0],objmgr.GetOregonStringForDBCLocale(LANG_OPVP_SI_CAPTURE_A));
@@ -154,12 +154,12 @@ bool OutdoorPvPSI::HandleAreaTrigger(Player *plr, uint32 trigger)
         }
         return true;
     case SI_AREATRIGGER_H:
-        if(plr->GetTeam() == HORDE && plr->HasAura(SI_SILITHYST_FLAG,0))
+        if (plr->GetTeam() == HORDE && plr->HasAura(SI_SILITHYST_FLAG,0))
         {
             // remove aura
             plr->RemoveAurasDueToSpell(SI_SILITHYST_FLAG);
             ++ m_Gathered_H;
-            if(m_Gathered_H >= SI_MAX_RESOURCES)
+            if (m_Gathered_H >= SI_MAX_RESOURCES)
             {
                 BuffTeam(HORDE);
                 sWorld.SendZoneText(OutdoorPvPSIBuffZones[0],objmgr.GetOregonStringForDBCLocale(LANG_OPVP_SI_CAPTURE_H));
@@ -184,7 +184,7 @@ bool OutdoorPvPSI::HandleAreaTrigger(Player *plr, uint32 trigger)
 
 bool OutdoorPvPSI::HandleDropFlag(Player *plr, uint32 spellId)
 {
-    if(spellId == SI_SILITHYST_FLAG)
+    if (spellId == SI_SILITHYST_FLAG)
     {
         // if it was dropped away from the player's turn-in point, then create a silithyst mound, if it was dropped near the areatrigger, then it was dispelled by the outdoorpvp, so do nothing
         switch(plr->GetTeam())
@@ -192,22 +192,22 @@ bool OutdoorPvPSI::HandleDropFlag(Player *plr, uint32 spellId)
         case ALLIANCE:
             {
                 AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(SI_AREATRIGGER_A);
-                if(atEntry)
+                if (atEntry)
                 {
                     // 5.0f is safe-distance
-                    if(plr->GetDistance(atEntry->x,atEntry->y,atEntry->z) > 5.0f + atEntry->radius)
+                    if (plr->GetDistance(atEntry->x,atEntry->y,atEntry->z) > 5.0f + atEntry->radius)
                     {
                         // he dropped it further, summon mound
                         GameObject * go = new GameObject;
                         Map * map = MapManager::Instance().GetMap(plr->GetMapId(), plr);
-                        if(!map){
+                        if (!map){
 
                           delete go;
                           return true;
                           
                         }
                         
-                        if(!go->Create(objmgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT),SI_SILITHYST_MOUND, map,plr->GetPositionX(),plr->GetPositionY(),plr->GetPositionZ(),plr->GetOrientation(),0,0,0,0,100,1))
+                        if (!go->Create(objmgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT),SI_SILITHYST_MOUND, map,plr->GetPositionX(),plr->GetPositionY(),plr->GetPositionZ(),plr->GetOrientation(),0,0,0,0,100,1))
                         {
                             delete go;
                         }
@@ -223,20 +223,20 @@ bool OutdoorPvPSI::HandleDropFlag(Player *plr, uint32 spellId)
         case HORDE:
             {
                 AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(SI_AREATRIGGER_H);
-                if(atEntry)
+                if (atEntry)
                 {
                     // 5.0f is safe-distance
-                    if(plr->GetDistance(atEntry->x,atEntry->y,atEntry->z) > 5.0f + atEntry->radius)
+                    if (plr->GetDistance(atEntry->x,atEntry->y,atEntry->z) > 5.0f + atEntry->radius)
                     {
                         // he dropped it further, summon mound
                         GameObject * go = new GameObject;
                         Map * map = MapManager::Instance().GetMap(plr->GetMapId(), plr);
-                        if(!map)
+                        if (!map)
                         {
                           delete go;
                           return true;
                         }
-                        if(!go->Create(objmgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT),SI_SILITHYST_MOUND, map ,plr->GetPositionX(),plr->GetPositionY(),plr->GetPositionZ(),plr->GetOrientation(),0,0,0,0,100,1))
+                        if (!go->Create(objmgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT),SI_SILITHYST_MOUND, map ,plr->GetPositionX(),plr->GetPositionY(),plr->GetPositionZ(),plr->GetOrientation(),0,0,0,0,100,1))
                         {
                             delete go;
                         }
@@ -257,10 +257,10 @@ bool OutdoorPvPSI::HandleDropFlag(Player *plr, uint32 spellId)
 
 bool OutdoorPvPSI::HandleCustomSpell(Player *plr, uint32 spellId, GameObject *go)
 {
-    if(!go || spellId != SI_SILITHYST_FLAG_GO_SPELL)
+    if (!go || spellId != SI_SILITHYST_FLAG_GO_SPELL)
         return false;
     plr->CastSpell(plr,SI_SILITHYST_FLAG,true);
-    if(go->GetGOInfo()->id == SI_SILITHYST_MOUND)
+    if (go->GetGOInfo()->id == SI_SILITHYST_MOUND)
     {
         // despawn go
         go->SetRespawnTime(0);

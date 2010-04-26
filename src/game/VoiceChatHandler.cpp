@@ -25,21 +25,21 @@
 #include "Opcodes.h"
 #include "Log.h"
 
-void WorldSession::HandleVoiceSettingsOpcode( WorldPacket & recv_data )
+void WorldSession::HandleVoiceSettingsOpcode(WorldPacket & recv_data )
 {
     sLog.outDebug("WORLD: CMSG_VOICE_SETTINGS");
     // uint8 isVoiceEnabled, uint8 isMicrophoneEnabled
     recv_data.hexlike();
 }
 
-void WorldSession::HandleChannelEnableVoiceOpcode( WorldPacket & recv_data )
+void WorldSession::HandleChannelEnableVoiceOpcode(WorldPacket & recv_data )
 {
     sLog.outDebug("WORLD: CMSG_CHANNEL_ENABLE_VOICE");
     // Enable Voice button in channel context menu
     recv_data.hexlike();
 }
 
-void WorldSession::HandleChannelVoiceChatQuery( WorldPacket & recv_data )
+void WorldSession::HandleChannelVoiceChatQuery(WorldPacket & recv_data )
 {
     sLog.outDebug("WORLD: CMSG_CHANNEL_VOICE_CHAT_QUERY");
     // uint32, string

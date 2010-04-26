@@ -27,30 +27,30 @@
 #include "CreatureAI.h"
 #include "ObjectDefines.h"
 
-void WorldSession::HandleAttackSwingOpcode( WorldPacket & recv_data )
+void WorldSession::HandleAttackSwingOpcode(WorldPacket & recv_data )
 {
     uint64 guid;
     recv_data >> guid;
 
-    DEBUG_LOG( "WORLD: Recvd CMSG_ATTACKSWING Message guidlow:%u guidhigh:%u", GUID_LOPART(guid), GUID_HIPART(guid) );
+    DEBUG_LOG("WORLD: Recvd CMSG_ATTACKSWING Message guidlow:%u guidhigh:%u", GUID_LOPART(guid), GUID_HIPART(guid) );
 
     Unit *pEnemy = ObjectAccessor::GetUnit(*_player, guid);
 
-    if(!pEnemy)
+    if (!pEnemy)
     {
-        if(!IS_UNIT_GUID(guid))
+        if (!IS_UNIT_GUID(guid))
             sLog.outError("WORLD: Object %u (TypeID: %u) isn't player, pet or creature",GUID_LOPART(guid),GuidHigh2TypeId(GUID_HIPART(guid)));
         else
-            sLog.outError( "WORLD: Enemy %s %u not found",GetLogNameForGuid(guid),GUID_LOPART(guid));
+            sLog.outError("WORLD: Enemy %s %u not found",GetLogNameForGuid(guid),GUID_LOPART(guid));
 
         // stop attack state at client
         SendAttackStop(NULL);
         return;
     }
 
-    if(!_player->canAttack(pEnemy))
+    if (!_player->canAttack(pEnemy))
     {
-        sLog.outError( "WORLD: Enemy %s %u is friendly",(IS_PLAYER_GUID(guid) ? "player" : "creature"),GUID_LOPART(guid));
+        sLog.outError("WORLD: Enemy %s %u is friendly",(IS_PLAYER_GUID(guid) ? "player" : "creature"),GUID_LOPART(guid));
 
         // stop attack state at client
         SendAttackStop(pEnemy);
@@ -60,17 +60,17 @@ void WorldSession::HandleAttackSwingOpcode( WorldPacket & recv_data )
     _player->Attack(pEnemy,true);
 }
 
-void WorldSession::HandleAttackStopOpcode( WorldPacket & /*recv_data*/ )
+void WorldSession::HandleAttackStopOpcode(WorldPacket & /*recv_data*/ )
 {
     GetPlayer()->AttackStop();
 }
 
-void WorldSession::HandleSetSheathedOpcode( WorldPacket & recv_data )
+void WorldSession::HandleSetSheathedOpcode(WorldPacket & recv_data )
 {
     uint32 sheathed;
     recv_data >> sheathed;
 
-    if(sheathed >= MAX_SHEATH_STATE)
+    if (sheathed >= MAX_SHEATH_STATE)
     {
         sLog.outError("Unknown sheath state %u ??",sheathed);
         return;
@@ -81,7 +81,7 @@ void WorldSession::HandleSetSheathedOpcode( WorldPacket & recv_data )
 
 void WorldSession::SendAttackStop(Unit const* enemy)
 {
-    WorldPacket data( SMSG_ATTACKSTOP, (4+20) );            // we guess size
+    WorldPacket data(SMSG_ATTACKSTOP, (4+20) );            // we guess size
     data.append(GetPlayer()->GetPackGUID());
     data.append(enemy ? enemy->GetPackGUID() : 0);          // must be packed guid
     data << uint32(0);                                      // unk, can be 1 also

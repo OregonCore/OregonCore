@@ -60,7 +60,7 @@ class OREGON_DLL_DECL MapManager : public Oregon::Singleton<MapManager, Oregon::
 
         void SetGridCleanUpDelay(uint32 t)
         {
-            if( t < MIN_GRID_DELAY )
+            if (t < MIN_GRID_DELAY )
                 i_gridCleanUpDelay = MIN_GRID_DELAY;
             else
                 i_gridCleanUpDelay = t;
@@ -68,7 +68,7 @@ class OREGON_DLL_DECL MapManager : public Oregon::Singleton<MapManager, Oregon::
 
         void SetMapUpdateInterval(uint32 t)
         {
-            if( t > MIN_MAP_UPDATE_DELAY )
+            if (t > MIN_MAP_UPDATE_DELAY )
                 t = MIN_MAP_UPDATE_DELAY;
 
             i_timer.SetInterval(t);

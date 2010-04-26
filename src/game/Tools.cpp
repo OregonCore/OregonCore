@@ -23,7 +23,7 @@
 // THIS CAN BE A LOT FASTER
 bool readGUID(WorldPacket & data, uint64& guid)
 {
-    if(data.rpos()+1 > data.size())
+    if (data.rpos()+1 > data.size())
         return false;
 
     uint8 guidmark=0;
@@ -34,13 +34,13 @@ bool readGUID(WorldPacket & data, uint64& guid)
     guid = 0;
 
     data >> guidmark;
-    for(int i=0;i<8;i++)
+    for (int i=0;i<8;i++)
     {
-        if(guidmark & shiftdata)
+        if (guidmark & shiftdata)
         {
             Temp = 0;
 
-            if(data.rpos()+1 > data.size())
+            if (data.rpos()+1 > data.size())
                 return false;
 
             data >> bit;

@@ -113,7 +113,7 @@ class OREGON_DLL_SPEC InstanceData
         std::string GetBossSave()
         {
             std::ostringstream saveStream;
-            for(std::vector<BossInfo>::iterator i = bosses.begin(); i != bosses.end(); ++i)
+            for (std::vector<BossInfo>::iterator i = bosses.begin(); i != bosses.end(); ++i)
                 saveStream << (uint32)i->state << " ";
             return saveStream.str();
         }        

@@ -120,14 +120,14 @@ class OREGON_DLL_SPEC GossipMenu
             return m_gItems.empty();
         }
 
-        GossipMenuItem const& GetItem( unsigned int Id )
+        GossipMenuItem const& GetItem(unsigned int Id )
         {
             return m_gItems[ Id ];
         }
 
-        uint32 MenuItemSender( unsigned int ItemId );
-        uint32 MenuItemAction( unsigned int ItemId );
-        bool MenuItemCoded( unsigned int ItemId );
+        uint32 MenuItemSender(unsigned int ItemId );
+        uint32 MenuItemAction(unsigned int ItemId );
+        bool MenuItemCoded(unsigned int ItemId );
 
         void ClearMenu();
 
@@ -141,7 +141,7 @@ class QuestMenu
         QuestMenu();
         ~QuestMenu();
 
-        void AddMenuItem( uint32 QuestId, uint8 Icon);
+        void AddMenuItem(uint32 QuestId, uint8 Icon);
         void ClearMenu();
 
         uint8 MenuItemCount() const
@@ -154,9 +154,9 @@ class QuestMenu
             return m_qItems.empty();
         }
 
-        bool HasItem( uint32 questid );
+        bool HasItem(uint32 questid );
 
-        QuestMenuItem const& GetItem( uint16 Id )
+        QuestMenuItem const& GetItem(uint16 Id )
         {
             return m_qItems[ Id ];
         }
@@ -173,7 +173,7 @@ class OREGON_DLL_SPEC PlayerMenu
         WorldSession* pSession;
 
     public:
-        PlayerMenu( WorldSession *Session );
+        PlayerMenu(WorldSession *Session );
         ~PlayerMenu();
 
         GossipMenu& GetGossipMenu() { return mGossipMenu; }
@@ -182,28 +182,28 @@ class OREGON_DLL_SPEC PlayerMenu
         bool Empty() const { return mGossipMenu.Empty() && mQuestMenu.Empty(); }
 
         void ClearMenus();
-        uint32 GossipOptionSender( unsigned int Selection );
-        uint32 GossipOptionAction( unsigned int Selection );
-        bool GossipOptionCoded( unsigned int Selection );
+        uint32 GossipOptionSender(unsigned int Selection );
+        uint32 GossipOptionAction(unsigned int Selection );
+        bool GossipOptionCoded(unsigned int Selection );
 
-        void SendGossipMenu( uint32 TitleTextId, uint64 npcGUID );
+        void SendGossipMenu(uint32 TitleTextId, uint64 npcGUID );
         void CloseGossip();
-        void SendPointOfInterest( float X, float Y, uint32 Icon, uint32 Flags, uint32 Data, const char * locName );
-        void SendTalking( uint32 textID );
-        void SendTalking( char const * title, char const * text );
+        void SendPointOfInterest(float X, float Y, uint32 Icon, uint32 Flags, uint32 Data, const char * locName );
+        void SendTalking(uint32 textID );
+        void SendTalking(char const * title, char const * text );
 
         /*********************************************************/
         /***                    QUEST SYSTEM                   ***/
         /*********************************************************/
-        void SendQuestGiverStatus( uint8 questStatus, uint64 npcGUID );
+        void SendQuestGiverStatus(uint8 questStatus, uint64 npcGUID );
 
-        void SendQuestGiverQuestList( QEmote eEmote, const std::string& Title, uint64 npcGUID );
+        void SendQuestGiverQuestList(QEmote eEmote, const std::string& Title, uint64 npcGUID );
 
-        void SendQuestQueryResponse ( Quest const *pQuest );
-        void SendQuestGiverQuestDetails( Quest const *pQuest, uint64 npcGUID, bool ActivateAccept);
+        void SendQuestQueryResponse (Quest const *pQuest );
+        void SendQuestGiverQuestDetails(Quest const *pQuest, uint64 npcGUID, bool ActivateAccept);
 
-        void SendQuestGiverOfferReward( Quest const* pQuest, uint64 npcGUID, bool EnbleNext );
-        void SendQuestGiverRequestItems( Quest const *pQuest, uint64 npcGUID, bool Completable, bool CloseOnCancel );
+        void SendQuestGiverOfferReward(Quest const* pQuest, uint64 npcGUID, bool EnbleNext );
+        void SendQuestGiverRequestItems(Quest const *pQuest, uint64 npcGUID, bool Completable, bool CloseOnCancel );
 };
 #endif
 

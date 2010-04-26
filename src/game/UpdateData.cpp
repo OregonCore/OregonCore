@@ -110,12 +110,12 @@ bool UpdateData::BuildPacket(WorldPacket *packet, bool hasTransport)
     buf << (uint32) (!m_outOfRangeGUIDs.empty() ? m_blockCount + 1 : m_blockCount);
     buf << (uint8) (hasTransport ? 1 : 0);
 
-    if(!m_outOfRangeGUIDs.empty())
+    if (!m_outOfRangeGUIDs.empty())
     {
         buf << (uint8) UPDATETYPE_OUT_OF_RANGE_OBJECTS;
         buf << (uint32) m_outOfRangeGUIDs.size();
 
-        for(std::set<uint64>::const_iterator i = m_outOfRangeGUIDs.begin();
+        for (std::set<uint64>::const_iterator i = m_outOfRangeGUIDs.begin();
             i != m_outOfRangeGUIDs.end(); i++)
         {
             //buf.appendPackGUID(*i);
@@ -131,7 +131,7 @@ bool UpdateData::BuildPacket(WorldPacket *packet, bool hasTransport)
     if (m_data.size() > 50 )
     {
         uint32 destsize = buf.size() + buf.size()/10 + 16;
-        packet->resize( destsize );
+        packet->resize(destsize );
 
         packet->put(0, (uint32)buf.size());
 
@@ -142,13 +142,13 @@ bool UpdateData::BuildPacket(WorldPacket *packet, bool hasTransport)
         if (destsize == 0)
             return false;
 
-        packet->resize( destsize + sizeof(uint32) );
-        packet->SetOpcode( SMSG_COMPRESSED_UPDATE_OBJECT );
+        packet->resize(destsize + sizeof(uint32) );
+        packet->SetOpcode(SMSG_COMPRESSED_UPDATE_OBJECT );
     }
     else
     {
-        packet->append( buf );
-        packet->SetOpcode( SMSG_UPDATE_OBJECT );
+        packet->append(buf );
+        packet->SetOpcode(SMSG_UPDATE_OBJECT );
     }
 
     return true;

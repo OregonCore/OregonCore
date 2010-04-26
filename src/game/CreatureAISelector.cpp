@@ -38,47 +38,47 @@ namespace FactorySelector
         const CreatureAICreator *ai_factory = NULL;
         CreatureAIRegistry &ai_registry(CreatureAIRepository::Instance());
 
-        if(creature->isPet())
+        if (creature->isPet())
           ai_factory = ai_registry.GetRegistryItem("PetAI");
 
         //scriptname in db
         // Allow scripting AI for normal creatures and not controlled pets (guardians and mini-pets)
-        if((!creature->isPet() || !((Pet*)creature)->isControlled()) && !creature->isCharmed())
-            if(CreatureAI* scriptedAI = Script->GetAI(creature))
+        if ((!creature->isPet() || !((Pet*)creature)->isControlled()) && !creature->isCharmed())
+            if (CreatureAI* scriptedAI = Script->GetAI(creature))
                 return scriptedAI;
 
         // AIname in db
         std::string ainame=creature->GetAIName();
-        if(!ai_factory && !ainame.empty())
-            ai_factory = ai_registry.GetRegistryItem( ainame.c_str() );
+        if (!ai_factory && !ainame.empty())
+            ai_factory = ai_registry.GetRegistryItem(ainame.c_str() );
 
         // select by NPC flags
-        if(!ai_factory)
+        if (!ai_factory)
         {
-            if(creature->isGuard() && creature->GetOwner() && creature->GetOwner()->GetTypeId() == TYPEID_PLAYER)
+            if (creature->isGuard() && creature->GetOwner() && creature->GetOwner()->GetTypeId() == TYPEID_PLAYER)
                 ai_factory = ai_registry.GetRegistryItem("PetAI");
-            else if(creature->isGuard())
+            else if (creature->isGuard())
                 ai_factory = ai_registry.GetRegistryItem("GuardAI");
-            else if(creature->isPet() || (creature->isCharmed() && !creature->isPossessed()))
+            else if (creature->isPet() || (creature->isCharmed() && !creature->isPossessed()))
                 ai_factory = ai_registry.GetRegistryItem("PetAI");
-            else if(creature->isTotem())
+            else if (creature->isTotem())
                 ai_factory = ai_registry.GetRegistryItem("TotemAI");
-            else if(creature->isTrigger())
+            else if (creature->isTrigger())
             {
-                if(creature->m_spells[0])
+                if (creature->m_spells[0])
                     ai_factory = ai_registry.GetRegistryItem("TriggerAI");
                 else
                     ai_factory = ai_registry.GetRegistryItem("NullCreatureAI");
             }
-            else if(creature->GetCreatureType() == CREATURE_TYPE_CRITTER)
+            else if (creature->GetCreatureType() == CREATURE_TYPE_CRITTER)
                 ai_factory = ai_registry.GetRegistryItem("CritterAI");
         }
 
-        if(!ai_factory)
+        if (!ai_factory)
         {
-            for(uint32 i = 0; i < CREATURE_MAX_SPELLS; ++i)
+            for (uint32 i = 0; i < CREATURE_MAX_SPELLS; ++i)
             {
-                if(creature->m_spells[i])
+                if (creature->m_spells[i])
                 {
                     ai_factory = ai_registry.GetRegistryItem("CombatAI");
                     break;
@@ -87,18 +87,18 @@ namespace FactorySelector
         }
 
         // select by permit check
-        if(!ai_factory)
+        if (!ai_factory)
         {
             int best_val = -1;
             typedef CreatureAIRegistry::RegistryMapType RMT;
             RMT const &l = ai_registry.GetRegisteredItems();
-            for( RMT::const_iterator iter = l.begin(); iter != l.end(); ++iter)
+            for (RMT::const_iterator iter = l.begin(); iter != l.end(); ++iter)
             {
                 const CreatureAICreator *factory = iter->second;
                 const SelectableAI *p = dynamic_cast<const SelectableAI *>(factory);
-                assert( p != NULL );
+                assert(p != NULL );
                 int val = p->Permit(creature);
-                if( val > best_val )
+                if (val > best_val )
                 {
                     best_val = val;
                     ai_factory = p;
@@ -110,27 +110,27 @@ namespace FactorySelector
         ainame = (ai_factory == NULL) ? "NullCreatureAI" : ai_factory->key();
 
         DEBUG_LOG("Creature %u used AI is %s.", creature->GetGUIDLow(), ainame.c_str() );
-        return ( ai_factory == NULL ? new NullCreatureAI(creature) : ai_factory->Create(creature) );
+        return (ai_factory == NULL ? new NullCreatureAI(creature) : ai_factory->Create(creature) );
     }
 
     MovementGenerator* selectMovementGenerator(Creature *creature)
     {
         MovementGeneratorRegistry &mv_registry(MovementGeneratorRepository::Instance());
-        assert( creature->GetCreatureInfo() != NULL );
-        const MovementGeneratorCreator *mv_factory = mv_registry.GetRegistryItem( creature->GetDefaultMovementType());
+        assert(creature->GetCreatureInfo() != NULL );
+        const MovementGeneratorCreator *mv_factory = mv_registry.GetRegistryItem(creature->GetDefaultMovementType());
 
-        /* if( mv_factory == NULL  )
+        /* if (mv_factory == NULL  )
         {
             int best_val = -1;
             std::vector<std::string> l;
             mv_registry.GetRegisteredItems(l);
-            for( std::vector<std::string>::iterator iter = l.begin(); iter != l.end(); ++iter)
+            for (std::vector<std::string>::iterator iter = l.begin(); iter != l.end(); ++iter)
             {
             const MovementGeneratorCreator *factory = mv_registry.GetRegistryItem((*iter).c_str());
             const SelectableMovement *p = dynamic_cast<const SelectableMovement *>(factory);
-            assert( p != NULL );
+            assert(p != NULL );
             int val = p->Permit(creature);
-            if( val > best_val )
+            if (val > best_val )
             {
                 best_val = val;
                 mv_factory = p;
@@ -138,7 +138,7 @@ namespace FactorySelector
             }
         }*/
 
-        return ( mv_factory == NULL ? NULL : mv_factory->Create(creature) );
+        return (mv_factory == NULL ? NULL : mv_factory->Create(creature) );
 
     }
 }

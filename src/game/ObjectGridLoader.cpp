@@ -53,7 +53,7 @@ ObjectGridRespawnMover::Visit(CreatureMapType &m)
     // creature in unloading grid can have respawn point in another grid
     // if it will be unloaded then it will not respawn in original grid until unload/load original grid
     // move to respawn point to prevent this case. For player view in respawn grid this will be normal respawn.
-    for(CreatureMapType::iterator iter = m.begin(); iter != m.end();)
+    for (CreatureMapType::iterator iter = m.begin(); iter != m.end();)
     {
         Creature * c = iter->getSource();
         ++iter;
@@ -67,7 +67,7 @@ ObjectGridRespawnMover::Visit(CreatureMapType &m)
         CellPair resp_val = Oregon::ComputeCellPair(resp_x, resp_y);
         Cell resp_cell(resp_val);
 
-        if(cur_cell.DiffGrid(resp_cell))
+        if (cur_cell.DiffGrid(resp_cell))
         {
             c->GetMap()->CreatureRespawnRelocation(c);
             // false result ignored: will be unload with other creatures at grid
@@ -104,19 +104,19 @@ template<> void addUnitState(Creature *obj, CellPair const& cell_pair)
     Cell cell(cell_pair);
 
     obj->SetCurrentCell(cell);
-    if(obj->isSpiritService())
+    if (obj->isSpiritService())
         obj->setDeathState(DEAD);
 }
 
 template <class T>
 void LoadHelper(CellGuidSet const& guid_set, CellPair &cell, GridRefManager<T> &m, uint32 &count, Map* map)
 {
-    for(CellGuidSet::const_iterator i_guid = guid_set.begin(); i_guid != guid_set.end(); ++i_guid)
+    for (CellGuidSet::const_iterator i_guid = guid_set.begin(); i_guid != guid_set.end(); ++i_guid)
     {
         T* obj = new T;
         uint32 guid = *i_guid;
         //sLog.outString("DEBUG: LoadHelper from table: %s for (guid: %u) Loading",table,guid);
-        if(!obj->LoadFromDB(guid, map))
+        if (!obj->LoadFromDB(guid, map))
         {
             delete obj;
             continue;
@@ -126,7 +126,7 @@ void LoadHelper(CellGuidSet const& guid_set, CellPair &cell, GridRefManager<T> &
 
         addUnitState(obj,cell);
         obj->AddToWorld();
-        if(obj->isActiveObject())
+        if (obj->isActiveObject())
             map->AddToActive(obj);
 
         ++count;
@@ -136,25 +136,25 @@ void LoadHelper(CellGuidSet const& guid_set, CellPair &cell, GridRefManager<T> &
 
 void LoadHelper(CellCorpseSet const& cell_corpses, CellPair &cell, CorpseMapType &m, uint32 &count, Map* map)
 {
-    if(cell_corpses.empty())
+    if (cell_corpses.empty())
         return;
 
-    for(CellCorpseSet::const_iterator itr = cell_corpses.begin(); itr != cell_corpses.end(); ++itr)
+    for (CellCorpseSet::const_iterator itr = cell_corpses.begin(); itr != cell_corpses.end(); ++itr)
     {
-        if(itr->second != map->GetInstanceId())
+        if (itr->second != map->GetInstanceId())
             continue;
 
         uint32 player_guid = itr->first;
 
         Corpse *obj = ObjectAccessor::Instance().GetCorpseForPlayerGUID(player_guid);
-        if(!obj)
+        if (!obj)
             continue;
 
         obj->GetGridRef().link(&m, obj);
 
         addUnitState(obj,cell);
         obj->AddToWorld();
-        if(obj->isActiveObject())
+        if (obj->isActiveObject())
             map->AddToActive(obj);
 
         ++count;
@@ -220,10 +220,10 @@ void ObjectGridLoader::LoadN(void)
 {
     i_gameObjects = 0; i_creatures = 0; i_corpses = 0;
     i_cell.data.Part.cell_y = 0;
-    for(unsigned int x=0; x < MAX_NUMBER_OF_CELLS; ++x)
+    for (unsigned int x=0; x < MAX_NUMBER_OF_CELLS; ++x)
     {
         i_cell.data.Part.cell_x = x;
-        for(unsigned int y=0; y < MAX_NUMBER_OF_CELLS; ++y)
+        for (unsigned int y=0; y < MAX_NUMBER_OF_CELLS; ++y)
         {
             i_cell.data.Part.cell_y = y;
             GridLoader<Player, AllWorldObjectTypes, AllGridObjectTypes> loader;
@@ -235,9 +235,9 @@ void ObjectGridLoader::LoadN(void)
 
 void ObjectGridUnloader::MoveToRespawnN()
 {
-    for(unsigned int x=0; x < MAX_NUMBER_OF_CELLS; ++x)
+    for (unsigned int x=0; x < MAX_NUMBER_OF_CELLS; ++x)
     {
-        for(unsigned int y=0; y < MAX_NUMBER_OF_CELLS; ++y)
+        for (unsigned int y=0; y < MAX_NUMBER_OF_CELLS; ++y)
         {
             ObjectGridRespawnMover mover;
             mover.Move(i_grid(x, y));
@@ -256,11 +256,11 @@ template<class T>
 void
 ObjectGridUnloader::Visit(GridRefManager<T> &m)
 {
-    while(!m.isEmpty())
+    while (!m.isEmpty())
     {
         T *obj = m.getFirst()->getSource();
         // if option set then object already saved at this moment
-        if(!sWorld.getConfig(CONFIG_SAVE_RESPAWN_TIME_IMMEDIATELY))
+        if (!sWorld.getConfig(CONFIG_SAVE_RESPAWN_TIME_IMMEDIATELY))
             obj->SaveRespawnTime();
         ///- object will get delinked from the manager when deleted
         delete obj;
@@ -278,10 +278,10 @@ void
 ObjectGridStoper::Visit(CreatureMapType &m)
 {
     // stop any fights at grid de-activation and remove dynobjects created at cast by creatures
-    for(CreatureMapType::iterator iter=m.begin(); iter != m.end(); ++iter)
+    for (CreatureMapType::iterator iter=m.begin(); iter != m.end(); ++iter)
     {
         iter->getSource()->RemoveAllDynObjects();
-        if(iter->getSource()->isInCombat())
+        if (iter->getSource()->isInCombat())
         {
             iter->getSource()->CombatStop();
             iter->getSource()->DeleteThreatList();
@@ -300,7 +300,7 @@ ObjectGridCleaner::Stop(GridType &grid)
 void
 ObjectGridCleaner::Visit(CreatureMapType &m)
 {
-    for(CreatureMapType::iterator iter=m.begin(); iter != m.end(); ++iter)
+    for (CreatureMapType::iterator iter=m.begin(); iter != m.end(); ++iter)
         iter->getSource()->CleanupsBeforeDelete();
 }
 
@@ -308,7 +308,7 @@ template<class T>
 void
 ObjectGridCleaner::Visit(GridRefManager<T> &m)
 {
-    for(typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
+    for (typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
         iter->getSource()->RemoveFromWorld();
 }
 

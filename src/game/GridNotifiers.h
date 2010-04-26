@@ -91,7 +91,7 @@ namespace Oregon
 
         template<class T> void updateObjects(GridRefManager<T> &m)
         {
-            for(typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
+            for (typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
                 iter->getSource()->Update(i_timeDiff);
         }
 
@@ -167,12 +167,12 @@ namespace Oregon
 
         void Visit(GridRefManager<T> &m )
         {
-            if( i_object == NULL )
+            if (i_object == NULL )
             {
                 GridRefManager<T> *iter = m.find(i_id);
-                if( iter != m.end() )
+                if (iter != m.end() )
                 {
-                    assert( iter->second != NULL );
+                    assert(iter->second != NULL );
                     i_object = iter->second;
                 }
             }
@@ -189,7 +189,7 @@ namespace Oregon
         {
             i_check = caster;
             Unit* owner = i_check->GetOwner();
-            if(owner)
+            if (owner)
                 i_check = owner;
         }
 
@@ -249,30 +249,30 @@ namespace Oregon
 
         void Visit(GameObjectMapType &m)
         {
-            for(GameObjectMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+            for (GameObjectMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
                 i_do(itr->getSource());
         }
 
         void Visit(PlayerMapType &m)
         {
-            for(PlayerMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+            for (PlayerMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
                 i_do(itr->getSource());
         }
         void Visit(CreatureMapType &m)
         {
-            for(CreatureMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+            for (CreatureMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
                 i_do(itr->getSource());
         }
 
         void Visit(CorpseMapType &m)
         {
-            for(CorpseMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+            for (CorpseMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
                 i_do(itr->getSource());
         }
 
         void Visit(DynamicObjectMapType &m)
         {
-            for(DynamicObjectMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+            for (DynamicObjectMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
                 i_do(itr->getSource());
         }
 
@@ -420,7 +420,7 @@ namespace Oregon
 
         void Visit(CreatureMapType &m)
         {
-            for(CreatureMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+            for (CreatureMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
                     i_do(itr->getSource());
         }
 
@@ -451,7 +451,7 @@ namespace Oregon
 
         void Visit(PlayerMapType &m)
         {
-            for(PlayerMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
+            for (PlayerMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
                 i_do(itr->getSource());
         }
 
@@ -467,10 +467,10 @@ namespace Oregon
             CannibalizeObjectCheck(Unit* funit, float range) : i_funit(funit), i_range(range) {}
             bool operator()(Player* u)
             {
-                if( i_funit->IsFriendlyTo(u) || u->isAlive() || u->isInFlight() )
+                if (i_funit->IsFriendlyTo(u) || u->isAlive() || u->isInFlight() )
                     return false;
 
-                if(i_funit->IsWithinDistInMap(u, i_range) )
+                if (i_funit->IsWithinDistInMap(u, i_range) )
                     return true;
 
                 return false;
@@ -478,11 +478,11 @@ namespace Oregon
             bool operator()(Corpse* u);
             bool operator()(Creature* u)
             {
-                if( i_funit->IsFriendlyTo(u) || u->isAlive() || u->isInFlight() ||
+                if (i_funit->IsFriendlyTo(u) || u->isAlive() || u->isInFlight() ||
                     (u->GetCreatureTypeMask() & CREATURE_TYPEMASK_HUMANOID_OR_UNDEAD)==0)
                     return false;
 
-                if(i_funit->IsWithinDistInMap(u, i_range) )
+                if (i_funit->IsWithinDistInMap(u, i_range) )
                     return true;
 
                 return false;
@@ -513,10 +513,10 @@ namespace Oregon
             GameObjectFocusCheck(Unit const* unit,uint32 focusId) : i_unit(unit), i_focusId(focusId) {}
             bool operator()(GameObject* go) const
             {
-                if(go->GetGOInfo()->type != GAMEOBJECT_TYPE_SPELL_FOCUS)
+                if (go->GetGOInfo()->type != GAMEOBJECT_TYPE_SPELL_FOCUS)
                     return false;
 
-                if(go->GetGOInfo()->spellFocus.focusId != i_focusId)
+                if (go->GetGOInfo()->spellFocus.focusId != i_focusId)
                     return false;
 
                 float dist = go->GetGOInfo()->spellFocus.dist;
@@ -535,7 +535,7 @@ namespace Oregon
             NearestGameObjectFishingHole(WorldObject const& obj, float range) : i_obj(obj), i_range(range) {}
             bool operator()(GameObject* go)
             {
-                if(go->GetGOInfo()->type == GAMEOBJECT_TYPE_FISHINGHOLE && go->isSpawned() && i_obj.IsWithinDistInMap(go, i_range) && i_obj.IsWithinDistInMap(go, go->GetGOInfo()->fishinghole.radius))
+                if (go->GetGOInfo()->type == GAMEOBJECT_TYPE_FISHINGHOLE && go->isSpawned() && i_obj.IsWithinDistInMap(go, i_range) && i_obj.IsWithinDistInMap(go, go->GetGOInfo()->fishinghole.radius))
                 {
                     i_range = i_obj.GetDistance(go);
                     return true;
@@ -558,7 +558,7 @@ namespace Oregon
             NearestGameObjectEntryInObjectRangeCheck(WorldObject const& obj,uint32 entry, float range) : i_obj(obj), i_entry(entry), i_range(range) {}
             bool operator()(GameObject* go)
             {
-                if(go->GetEntry() == i_entry && i_obj.IsWithinDistInMap(go, i_range))
+                if (go->GetEntry() == i_entry && i_obj.IsWithinDistInMap(go, i_range))
                 {
                     i_range = i_obj.GetDistance(go);        // use found GO range as new range limit for next check
                     return true;
@@ -596,7 +596,7 @@ namespace Oregon
             AnyUnfriendlyUnitInObjectRangeCheck(WorldObject const* obj, Unit const* funit, float range) : i_obj(obj), i_funit(funit), i_range(range) {}
             bool operator()(Unit* u)
             {
-                if(u->isAlive() && i_obj->IsWithinDistInMap(u, i_range) && !i_funit->IsFriendlyTo(u))
+                if (u->isAlive() && i_obj->IsWithinDistInMap(u, i_range) && !i_funit->IsFriendlyTo(u))
                     return true;
                 else
                     return false;
@@ -613,10 +613,10 @@ namespace Oregon
             AnyUnfriendlyNoTotemUnitInObjectRangeCheck(WorldObject const* obj, Unit const* funit, float range) : i_obj(obj), i_funit(funit), i_range(range) {}
             bool operator()(Unit* u)
             {
-                if(!u->isAlive())
+                if (!u->isAlive())
                     return false;
 
-                if(u->GetTypeId()==TYPEID_UNIT && ((Creature*)u)->isTotem())
+                if (u->GetTypeId()==TYPEID_UNIT && ((Creature*)u)->isTotem())
                     return false;
 
                 return i_obj->IsWithinDistInMap(u, i_range) && !i_funit->IsFriendlyTo(u);
@@ -646,7 +646,7 @@ namespace Oregon
             AnyFriendlyUnitInObjectRangeCheck(WorldObject const* obj, Unit const* funit, float range) : i_obj(obj), i_funit(funit), i_range(range) {}
             bool operator()(Unit* u)
             {
-                if(u->isAlive() && i_obj->IsWithinDistInMap(u, i_range) && i_funit->IsFriendlyTo(u))
+                if (u->isAlive() && i_obj->IsWithinDistInMap(u, i_range) && i_funit->IsFriendlyTo(u))
                     return true;
                 else
                     return false;
@@ -663,7 +663,7 @@ namespace Oregon
             AnyUnitInObjectRangeCheck(WorldObject const* obj, float range) : i_obj(obj), i_range(range) {}
             bool operator()(Unit* u)
             {
-                if(u->isAlive() && i_obj->IsWithinDistInMap(u, i_range))
+                if (u->isAlive() && i_obj->IsWithinDistInMap(u, i_range))
                     return true;
 
                 return false;
@@ -680,7 +680,7 @@ namespace Oregon
             NearestAttackableUnitInObjectRangeCheck(WorldObject const* obj, Unit const* funit, float range) : i_obj(obj), i_funit(funit), i_range(range) {}
             bool operator()(Unit* u)
             {
-                if( u->isTargetableForAttack() && i_obj->IsWithinDistInMap(u, i_range) &&
+                if (u->isTargetableForAttack() && i_obj->IsWithinDistInMap(u, i_range) &&
                     !i_funit->IsFriendlyTo(u) && u->isVisibleForOrDetect(i_funit,false)  )
                 {
                     i_range = i_obj->GetDistance(u);        // use found unit range as new range limit for next check
@@ -706,19 +706,19 @@ namespace Oregon
             {
                 Unit const* check = i_funit;
                 Unit const* owner = i_funit->GetOwner();
-                if(owner)
+                if (owner)
                     check = owner;
-                i_targetForPlayer = ( check->GetTypeId()==TYPEID_PLAYER );
+                i_targetForPlayer = (check->GetTypeId()==TYPEID_PLAYER );
             }
             bool operator()(Unit* u)
             {
                 // Check contains checks for: live, non-selectable, non-attackable flags, flight check and GM check, ignore totems
                 if (!u->isTargetableForAttack())
                     return false;
-                if(u->GetTypeId()==TYPEID_UNIT && ((Creature*)u)->isTotem())
+                if (u->GetTypeId()==TYPEID_UNIT && ((Creature*)u)->isTotem())
                     return false;
 
-                if(( i_targetForPlayer ? !i_funit->IsFriendlyTo(u) : i_funit->IsHostileTo(u) )&& i_obj->IsWithinDistInMap(u, i_range))
+                if ((i_targetForPlayer ? !i_funit->IsFriendlyTo(u) : i_funit->IsHostileTo(u) )&& i_obj->IsWithinDistInMap(u, i_range))
                     return true;
 
                 return false;
@@ -785,17 +785,17 @@ namespace Oregon
             bool operator()(Unit* u)
             {
                 // TODO: addthreat for every enemy in range?
-                if(!m_creature->IsWithinDistInMap(u, m_range))
+                if (!m_creature->IsWithinDistInMap(u, m_range))
                     return false;
 
-                if(m_force)
+                if (m_force)
                 {
-                    if(!m_creature->canAttack(u))
+                    if (!m_creature->canAttack(u))
                         return false;
                 }
                 else
                 {
-                    if(!m_creature->canStartAttack(u))
+                    if (!m_creature->canStartAttack(u))
                         return false;
                 }
 
@@ -818,7 +818,7 @@ namespace Oregon
 
             bool operator()(Creature* u)
             {
-                if(u->getFaction() == i_obj->getFaction() && !u->isInCombat() && !u->GetCharmerOrOwnerGUID() && u->IsHostileTo(i_enemy) && u->isAlive()&& i_obj->IsWithinDistInMap(u, i_range) && i_obj->IsWithinLOSInMap(u))
+                if (u->getFaction() == i_obj->getFaction() && !u->isInCombat() && !u->GetCharmerOrOwnerGUID() && u->IsHostileTo(i_enemy) && u->isAlive()&& i_obj->IsWithinDistInMap(u, i_range) && i_obj->IsWithinLOSInMap(u))
                 {
                     i_range = i_obj->GetDistance(u);         // use found unit range as new range limit for next check
                     return true;
@@ -844,18 +844,18 @@ namespace Oregon
             }
             bool operator()(Creature* u)
             {
-                if(u == i_funit)
+                if (u == i_funit)
                     return false;
 
-                if ( !u->CanAssistTo(i_funit, i_enemy) )
+                if (!u->CanAssistTo(i_funit, i_enemy) )
                     return false;
 
                 // too far
-                if( !i_funit->IsWithinDistInMap(u, i_range) )
+                if (!i_funit->IsWithinDistInMap(u, i_range) )
                     return false;
 
                 // only if see assisted creature
-                if( !i_funit->IsWithinLOSInMap(u) )
+                if (!i_funit->IsWithinLOSInMap(u) )
                     return false;
 
                 return true;
@@ -875,7 +875,7 @@ namespace Oregon
 
             bool operator()(Creature* u)
             {
-                if(u->GetEntry() == i_entry && u->isAlive()==i_alive && i_obj.IsWithinDistInMap(u, i_range))
+                if (u->GetEntry() == i_entry && u->isAlive()==i_alive && i_obj.IsWithinDistInMap(u, i_range))
                 {
                     i_range = i_obj.GetDistance(u);         // use found unit range as new range limit for next check
                     return true;
@@ -899,7 +899,7 @@ namespace Oregon
         AnyPlayerInObjectRangeCheck(WorldObject const* obj, float range) : i_obj(obj), i_range(range) {}
         bool operator()(Player* u)
         {
-            if(u->isAlive() && i_obj->IsWithinDistInMap(u, i_range))
+            if (u->isAlive() && i_obj->IsWithinDistInMap(u, i_range))
                 return true;
 
             return false;
@@ -916,7 +916,7 @@ namespace Oregon
         MostHPMissingInRange(Unit const* obj, float range, uint32 hp) : i_obj(obj), i_range(range), i_hp(hp) {}
         bool operator()(Unit* u)
         {
-            if(u->isAlive() && u->isInCombat() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) && u->GetMaxHealth() - u->GetHealth() > i_hp)
+            if (u->isAlive() && u->isInCombat() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) && u->GetMaxHealth() - u->GetHealth() > i_hp)
             {
                 i_hp = u->GetMaxHealth() - u->GetHealth();
                 return true;
@@ -935,7 +935,7 @@ namespace Oregon
         FriendlyCCedInRange(Unit const* obj, float range) : i_obj(obj), i_range(range) {}
         bool operator()(Unit* u)
         {
-            if(u->isAlive() && u->isInCombat() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) &&
+            if (u->isAlive() && u->isInCombat() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) &&
                 (u->isFeared() || u->isCharmed() || u->isFrozen() || u->hasUnitState(UNIT_STAT_STUNNED) || u->hasUnitState(UNIT_STAT_CONFUSED)))
             {
                 return true;
@@ -953,7 +953,7 @@ namespace Oregon
         FriendlyMissingBuffInRange(Unit const* obj, float range, uint32 spellid) : i_obj(obj), i_range(range), i_spell(spellid) {}
         bool operator()(Unit* u)
         {
-            if(u->isAlive() && u->isInCombat() && /*!i_obj->IsHostileTo(u)*/ i_obj->IsFriendlyTo(u) && i_obj->IsWithinDistInMap(u, i_range) &&
+            if (u->isAlive() && u->isInCombat() && /*!i_obj->IsHostileTo(u)*/ i_obj->IsFriendlyTo(u) && i_obj->IsWithinDistInMap(u, i_range) &&
                 !(u->HasAura(i_spell, 0) || u->HasAura(i_spell, 1) || u->HasAura(i_spell, 2)))
             {
                 return true;
@@ -972,7 +972,7 @@ namespace Oregon
         AllFriendlyCreaturesInGrid(Unit const* obj) : pUnit(obj) {}
         bool operator() (Unit* u)
         {
-            if(u->isAlive() && u->GetVisibility() == VISIBILITY_ON && u->IsFriendlyTo(pUnit))
+            if (u->isAlive() && u->GetVisibility() == VISIBILITY_ON && u->IsFriendlyTo(pUnit))
                 return true;
 
             return false;
@@ -987,7 +987,7 @@ namespace Oregon
         AllGameObjectsWithEntryInGrid(uint32 ent) : entry(ent) {}
         bool operator() (GameObject* g)
         {
-            if(g->GetEntry() == entry)
+            if (g->GetEntry() == entry)
                 return true;
 
             return false;
@@ -1002,7 +1002,7 @@ namespace Oregon
         AllCreaturesOfEntryInRange(Unit const* obj, uint32 ent, float ran) : pUnit(obj), entry(ent), range(ran) {}
         bool operator() (Unit* u)
         {
-            if(u->GetEntry() == entry && pUnit->IsWithinDistInMap(u, range))
+            if (u->GetEntry() == entry && pUnit->IsWithinDistInMap(u, range))
                 return true;
 
             return false;

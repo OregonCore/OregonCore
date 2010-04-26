@@ -33,15 +33,15 @@ using namespace Oregon;
 void
 VisibleChangesNotifier::Visit(PlayerMapType &m)
 {
-    for(PlayerMapType::iterator iter=m.begin(); iter != m.end(); ++iter)
+    for (PlayerMapType::iterator iter=m.begin(); iter != m.end(); ++iter)
     {
-        if(iter->getSource() == &i_object)
+        if (iter->getSource() == &i_object)
             continue;
 
         iter->getSource()->UpdateVisibilityOf(&i_object);
 
-        if(!iter->getSource()->GetSharedVisionList().empty())
-            for(SharedVisionList::const_iterator i = iter->getSource()->GetSharedVisionList().begin();
+        if (!iter->getSource()->GetSharedVisionList().empty())
+            for (SharedVisionList::const_iterator i = iter->getSource()->GetSharedVisionList().begin();
                 i != iter->getSource()->GetSharedVisionList().end(); ++i)
                     (*i)->UpdateVisibilityOf(&i_object);
     }
@@ -52,11 +52,11 @@ PlayerVisibilityNotifier::Notify()
 {
     // at this moment i_clientGUIDs have guids that not iterate at grid level checks
     // but exist one case when this possible and object not out of range: transports
-    if(Transport* transport = i_player.GetTransport())
+    if (Transport* transport = i_player.GetTransport())
     {
-        for(Transport::PlayerSet::const_iterator itr = transport->GetPassengers().begin();itr!=transport->GetPassengers().end();++itr)
+        for (Transport::PlayerSet::const_iterator itr = transport->GetPassengers().begin();itr!=transport->GetPassengers().end();++itr)
         {
-            if(i_clientGUIDs.find((*itr)->GetGUID())!=i_clientGUIDs.end())
+            if (i_clientGUIDs.find((*itr)->GetGUID())!=i_clientGUIDs.end())
             {
                 (*itr)->UpdateVisibilityOf(&i_player);
                 i_player.UpdateVisibilityOf((*itr),i_data,i_visibleNow);
@@ -67,17 +67,17 @@ PlayerVisibilityNotifier::Notify()
 
     // generate outOfRange for not iterate objects
     i_data.AddOutOfRangeGUID(i_clientGUIDs);
-    for(Player::ClientGUIDs::iterator itr = i_clientGUIDs.begin();itr!=i_clientGUIDs.end();++itr)
+    for (Player::ClientGUIDs::iterator itr = i_clientGUIDs.begin();itr!=i_clientGUIDs.end();++itr)
     {
         i_player.m_clientGUIDs.erase(*itr);
 
         #ifdef OREGON_DEBUG
-        if((sLog.getLogFilter() & LOG_FILTER_VISIBILITY_CHANGES)==0)
+        if ((sLog.getLogFilter() & LOG_FILTER_VISIBILITY_CHANGES)==0)
             sLog.outDebug("Object %u (Type: %u) is out of range (no in active cells set) now for player %u",GUID_LOPART(*itr),GuidHigh2TypeId(GUID_HIPART(*itr)),i_player.GetGUIDLow());
         #endif
     }
 
-    if( i_data.HasData() )
+    if (i_data.HasData() )
     {
         // send create/outofrange packet to player (except player create updates that already sent using SendUpdateToPlayer)
         WorldPacket packet;
@@ -86,13 +86,13 @@ PlayerVisibilityNotifier::Notify()
 
         // send out of range to other players if need
         std::set<uint64> const& oor = i_data.GetOutOfRangeGUIDs();
-        for(std::set<uint64>::const_iterator iter = oor.begin(); iter != oor.end(); ++iter)
+        for (std::set<uint64>::const_iterator iter = oor.begin(); iter != oor.end(); ++iter)
         {
-            if(!IS_PLAYER_GUID(*iter))
+            if (!IS_PLAYER_GUID(*iter))
                 continue;
 
             Player* plr = ObjectAccessor::GetPlayer(i_player,*iter);
-            if(plr)
+            if (plr)
                 plr->UpdateVisibilityOf(&i_player);
         }
     }
@@ -101,11 +101,11 @@ PlayerVisibilityNotifier::Notify()
 
     // target aura duration for caster show only if target exist at caster client
     // send data at target visibility change (adding to client)
-    for(std::set<WorldObject*>::const_iterator vItr = i_visibleNow.begin(); vItr != i_visibleNow.end(); ++vItr)
-        if((*vItr)!=&i_player && (*vItr)->isType(TYPEMASK_UNIT))
+    for (std::set<WorldObject*>::const_iterator vItr = i_visibleNow.begin(); vItr != i_visibleNow.end(); ++vItr)
+        if ((*vItr)!=&i_player && (*vItr)->isType(TYPEMASK_UNIT))
             i_player.SendInitialVisiblePackets((Unit*)(*vItr));
 
-    if(i_visibleNow.size() >= 30)
+    if (i_visibleNow.size() >= 30)
         i_player.SetToNotify();
 }
 
@@ -120,7 +120,7 @@ Deliverer::Visit(PlayerMapType &m)
             if (!iter->getSource()->GetSharedVisionList().empty())
             {
                 SharedVisionList::const_iterator it = iter->getSource()->GetSharedVisionList().begin();
-                for ( ; it != iter->getSource()->GetSharedVisionList().end(); ++it)
+                for (; it != iter->getSource()->GetSharedVisionList().end(); ++it)
                     SendPacket(*it);
             }
 
@@ -140,7 +140,7 @@ Deliverer::Visit(CreatureMapType &m)
             if (!iter->getSource()->GetSharedVisionList().empty())
             {
                 SharedVisionList::const_iterator it = iter->getSource()->GetSharedVisionList().begin();
-                for ( ; it != iter->getSource()->GetSharedVisionList().end(); ++it)
+                for (; it != iter->getSource()->GetSharedVisionList().end(); ++it)
                     SendPacket(*it);
             }
         }
@@ -194,7 +194,7 @@ MessageDeliverer::VisitObject(Player* plr)
 void
 MessageDistDeliverer::VisitObject(Player* plr)
 {
-    if( !i_ownTeamOnly || (i_source.GetTypeId() == TYPEID_PLAYER && plr->GetTeam() == ((Player&)i_source).GetTeam()) )
+    if (!i_ownTeamOnly || (i_source.GetTypeId() == TYPEID_PLAYER && plr->GetTeam() == ((Player&)i_source).GetTeam()) )
     {
         SendPacket(plr);
     }
@@ -203,9 +203,9 @@ MessageDistDeliverer::VisitObject(Player* plr)
 template<class T> void
 ObjectUpdater::Visit(GridRefManager<T> &m)
 {
-    for(typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
+    for (typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
-        if(iter->getSource()->IsInWorld())
+        if (iter->getSource()->IsInWorld())
             iter->getSource()->Update(i_timeDiff);
     }
 }
@@ -213,15 +213,15 @@ ObjectUpdater::Visit(GridRefManager<T> &m)
 bool CannibalizeObjectCheck::operator()(Corpse* u)
 {
     // ignore bones
-    if(u->GetType()==CORPSE_BONES)
+    if (u->GetType()==CORPSE_BONES)
         return false;
 
     Player* owner = ObjectAccessor::FindPlayer(u->GetOwnerGUID());
 
-    if( !owner || i_funit->IsFriendlyTo(owner))
+    if (!owner || i_funit->IsFriendlyTo(owner))
         return false;
 
-    if(i_funit->IsWithinDistInMap(u, i_range) )
+    if (i_funit->IsWithinDistInMap(u, i_range) )
         return true;
 
     return false;

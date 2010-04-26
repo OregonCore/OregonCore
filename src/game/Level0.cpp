@@ -37,14 +37,14 @@
 bool ChatHandler::HandleHelpCommand(const char* args)
 {
     char* cmd = strtok((char*)args, " ");
-    if(!cmd)
+    if (!cmd)
     {
         ShowHelpForCommand(getCommandTable(), "help");
         ShowHelpForCommand(getCommandTable(), "");
     }
     else
     {
-        if(!ShowHelpForCommand(getCommandTable(), cmd))
+        if (!ShowHelpForCommand(getCommandTable(), cmd))
             SendSysMessage(LANG_NO_HELP_CMD);
     }
 
@@ -68,14 +68,14 @@ bool ChatHandler::HandleStartCommand(const char* /*args*/)
 {
     Player *chr = m_session->GetPlayer();
 
-    if(chr->isInFlight())
+    if (chr->isInFlight())
     {
         SendSysMessage(LANG_YOU_IN_FLIGHT);
         SetSentErrorMessage(true);
         return false;
     }
 
-    if(chr->isInCombat())
+    if (chr->isInCombat())
     {
         SendSysMessage(LANG_YOU_IN_COMBAT);
         SetSentErrorMessage(true);
@@ -97,7 +97,7 @@ bool ChatHandler::HandleServerInfoCommand(const char* /*args*/)
     uint32 updateTime = sWorld.GetUpdateTime();
 
     PSendSysMessage(_FULLVERSION);
-    //if(m_session)
+    //if (m_session)
     //    full = _FULLVERSION(REVISION_DATE,REVISION_TIME,"|cffffffff|Hurl:" REVISION_ID "|h" REVISION_ID "|h|r");
     //else
     //    full = _FULLVERSION(REVISION_DATE,REVISION_TIME,REVISION_ID);
@@ -115,14 +115,14 @@ bool ChatHandler::HandleServerInfoCommand(const char* /*args*/)
 bool ChatHandler::HandleDismountCommand(const char* /*args*/)
 {
     //If player is not mounted, so go out :)
-    if (!m_session->GetPlayer( )->IsMounted())
+    if (!m_session->GetPlayer()->IsMounted())
     {
         SendSysMessage(LANG_CHAR_NON_MOUNTED);
         SetSentErrorMessage(true);
         return false;
     }
 
-    if(m_session->GetPlayer( )->isInFlight())
+    if (m_session->GetPlayer()->isInFlight())
     {
         SendSysMessage(LANG_YOU_IN_FLIGHT);
         SetSentErrorMessage(true);
@@ -139,7 +139,7 @@ bool ChatHandler::HandleSaveCommand(const char* /*args*/)
     Player *player=m_session->GetPlayer();
 
     // save GM account without delay and output message (testing, etc)
-    if(m_session->GetSecurity())
+    if (m_session->GetSecurity())
     {
         player->SaveToDB();
         SendSysMessage(LANG_PLAYER_SAVED);
@@ -148,7 +148,7 @@ bool ChatHandler::HandleSaveCommand(const char* /*args*/)
 
     // save or plan save after 20 sec (logout delay) if current next save time more this value and _not_ output any messages to prevent cheat planning
     uint32 save_interval = sWorld.getConfig(CONFIG_INTERVAL_SAVE);
-    if(save_interval==0 || save_interval > 20*1000 && player->GetSaveTimer() <= save_interval - 20*1000)
+    if (save_interval==0 || save_interval > 20*1000 && player->GetSaveTimer() <= save_interval - 20*1000)
         player->SaveToDB();
 
     return true;
@@ -160,13 +160,13 @@ bool ChatHandler::HandleGMListIngameCommand(const char* /*args*/)
 
     HashMapHolder<Player>::MapType &m = HashMapHolder<Player>::GetContainer();
     HashMapHolder<Player>::MapType::iterator itr = m.begin();
-    for(; itr != m.end(); ++itr)
+    for (; itr != m.end(); ++itr)
     {
         if (itr->second->GetSession()->GetSecurity() &&
             (itr->second->isGameMaster() || sWorld.getConfig(CONFIG_GM_IN_GM_LIST)) &&
             (!m_session || itr->second->IsVisibleGloballyFor(m_session->GetPlayer())) )
         {
-            if(first)
+            if (first)
             {
                 SendSysMessage(LANG_GMS_ON_SRV);
                 first = false;
@@ -176,7 +176,7 @@ bool ChatHandler::HandleGMListIngameCommand(const char* /*args*/)
         }
     }
 
-    if(first)
+    if (first)
         SendSysMessage(LANG_GMS_NOT_LOGGED);
 
     return true;
@@ -184,7 +184,7 @@ bool ChatHandler::HandleGMListIngameCommand(const char* /*args*/)
 
 bool ChatHandler::HandlePasswordCommand(const char* args)
 {
-    if(!*args)
+    if (!*args)
         return false;
 
     char *old_pass = strtok ((char*)args, " ");
@@ -244,14 +244,14 @@ bool ChatHandler::HandleLockAccountCommand(const char* args)
     std::string argstr = (char*)args;
     if (argstr == "on")
     {
-        loginDatabase.PExecute( "UPDATE account SET locked = '1' WHERE id = '%d'",m_session->GetAccountId());
+        loginDatabase.PExecute("UPDATE account SET locked = '1' WHERE id = '%d'",m_session->GetAccountId());
         PSendSysMessage(LANG_COMMAND_ACCLOCKLOCKED);
         return true;
     }
 
     if (argstr == "off")
     {
-        loginDatabase.PExecute( "UPDATE account SET locked = '0' WHERE id = '%d'",m_session->GetAccountId());
+        loginDatabase.PExecute("UPDATE account SET locked = '0' WHERE id = '%d'",m_session->GetAccountId());
         PSendSysMessage(LANG_COMMAND_ACCLOCKUNLOCKED);
         return true;
     }

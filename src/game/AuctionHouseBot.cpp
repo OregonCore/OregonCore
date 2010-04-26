@@ -1,6 +1,6 @@
-#include "AuctionHouseBot.h"
 #include "ObjectMgr.h"
 #include "AuctionHouseMgr.h"
+#include "AuctionHouseBot.h"
 #include <vector>
 
 #include "Policies/SingletonImp.h"
@@ -23,7 +23,6 @@ vector<uint32> blueItemsBin;
 vector<uint32> purpleItemsBin;
 vector<uint32> orangeItemsBin;
 vector<uint32> yellowItemsBin;
-
 AuctionHouseBot::AuctionHouseBot()
 {
     debug_Out = false;
@@ -252,11 +251,11 @@ void AuctionHouseBot::addNewAuctions(Player *AHBplayer, AHBConfig *config)
     }
 
     // only insert a few at a time, so as not to peg the processor
-    for (uint32 cnt = 1;cnt <= items;cnt++)
+    for (uint32 cnt = 1; cnt <= items; cnt++)
     {
         uint32 itemID = 0;
-        uint32 loopBreaker = 0;
         uint32 itemColor = 99;
+        uint32 loopBreaker = 0;
         while (itemID == 0 && loopBreaker < 50)
         {
             uint32 choice = urand(0, 13);
@@ -368,6 +367,7 @@ void AuctionHouseBot::addNewAuctions(Player *AHBplayer, AHBConfig *config)
                 }
                 ++loopBreaker;
             }
+
             if (itemID == 0)
             {
                 if (debug_Out) sLog.outError("AHSeller: Item::CreateItem() - ItemID is 0");
@@ -382,12 +382,12 @@ void AuctionHouseBot::addNewAuctions(Player *AHBplayer, AHBConfig *config)
             }
 
             Item* item = Item::CreateItem(itemID, 1, AHBplayer);
-            item->AddToUpdateQueueOf(AHBplayer);
             if (item == NULL)
             {
                 if (debug_Out) sLog.outError("AHSeller: Item::CreateItem() returned NULL");
                 break;
             }
+            item->AddToUpdateQueueOf(AHBplayer);
 
             uint32 randomPropertyId = Item::GenerateItemRandomPropertyId(itemID);
             if (randomPropertyId != 0)
@@ -550,7 +550,7 @@ void AuctionHouseBot::addNewAuctionBuyerBotBid(Player *AHBplayer, AHBConfig *con
         }
     }
 
-    for (uint32 count = 1;count <= config->GetBidsPerInterval();++count)
+    for (uint32 count = 1; count <= config->GetBidsPerInterval(); ++count)
     {
         // Do we have anything to bid? If not, stop here.
         if (possibleBids.empty())
@@ -805,7 +805,6 @@ void AuctionHouseBot::Initialize()
     AHBplayerAccount = sConfig.GetIntDefault("AuctionHouseBot.Account", 0);
     AHBplayerGUID = sConfig.GetIntDefault("AuctionHouseBot.GUID", 0);
     ItemsPerCycle = sConfig.GetIntDefault("AuctionHouseBot.ItemsPerCycle", 200);
-
 
     //Begin Filters
 
@@ -1390,6 +1389,7 @@ void AuctionHouseBot::Initialize()
             sLog.outError("AuctionHouseBot: No items");
             AHBSeller = 0;
         }
+
         sLog.outString("AuctionHouseBot:");
         sLog.outString("loaded %u grey trade goods", greyTradeGoodsBin.size());
         sLog.outString("loaded %u white trade goods", whiteTradeGoodsBin.size());
