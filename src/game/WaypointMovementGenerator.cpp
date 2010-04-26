@@ -18,7 +18,6 @@
 //Basic headers
 #include "WaypointMovementGenerator.h"
 #include "DestinationHolderImp.h"
-#include "WorldPacket.h"
 //Extended headers
 #include "ObjectMgr.h"
 #include "World.h"
@@ -270,9 +269,7 @@ void FlightPathMovementGenerator::Finalize(Player & player)
         if (player.pvpInfo.inHostileArea)
             player.CastSpell(&player, 2479, true);
 
-        //update z position to ground and orientation for landing point
-        //this prevent cheating with landing point at lags
-        //when client side flight end earlie in comparison server side
+        player.SetUnitMovementFlags(MOVEMENTFLAG_WALK_MODE);
         player.StopMoving();
     }
 }

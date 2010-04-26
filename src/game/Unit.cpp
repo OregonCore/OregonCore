@@ -11339,8 +11339,12 @@ void Unit::StopMoving()
 {
     clearUnitState(UNIT_STAT_MOVING);
 
-    // player expected for correct work MOVEMENTFLAG_WALK_MODE
-    SendMonsterMove(GetPositionX(), GetPositionY(), GetPositionZ(), 0, GetTypeId()==TYPEID_PLAYER ? MOVEMENTFLAG_WALK_MODE : MOVEMENTFLAG_NONE, 0);
+    // send explicit stop packet
+    // rely on vmaps here because for example stormwind is in air
+    //float z = MapManager::Instance().GetBaseMap(GetMapId())->GetHeight(GetPositionX(), GetPositionY(), GetPositionZ(), true);
+    //if (fabs(GetPositionZ() - z) < 2.0f)
+    //    Relocate(GetPositionX(), GetPositionY(), z);
+    Relocate(GetPositionX(), GetPositionY(),GetPositionZ());
 
     SendMonsterStop();
 
