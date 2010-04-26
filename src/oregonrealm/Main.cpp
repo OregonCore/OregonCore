@@ -65,7 +65,7 @@ void HookSignals();
 bool stopEvent = false;                                     ///< Setting it to true stops the server
 RealmList m_realmList;                                      ///< Holds the list of realms for this server
 
-DatabaseType LoginDatabase;                                 ///< Accessor to the realm server database
+DatabaseType loginDatabase;                                 ///< Accessor to the realm server database
 
 /// Print out the usage string for this program on the console.
 void usage(const char *prog)
@@ -305,7 +305,7 @@ extern int main(int argc, char **argv)
         {
             loopCounter = 0;
             sLog.outDetail("Ping MySQL to keep connection alive");
-            LoginDatabase.Query("SELECT 1 FROM realmlist LIMIT 1");
+            loginDatabase.Query("SELECT 1 FROM realmlist LIMIT 1");
         }
 #ifdef WIN32
         if (m_ServiceStatus == 0) stopEvent = true;
@@ -314,8 +314,8 @@ extern int main(int argc, char **argv)
     }
 
     ///- Wait for the delay thread to exit
-    LoginDatabase.ThreadEnd();
-    LoginDatabase.HaltDelayThread();
+    loginDatabase.ThreadEnd();
+    loginDatabase.HaltDelayThread();
 
     ///- Remove signal handling before leaving
     UnhookSignals();
@@ -347,19 +347,19 @@ void OnSignal(int s)
 /// Initialize connection to the database
 bool StartDB(std::string &dbstring)
 {
-    if(!sConfig.GetString("LoginDatabaseInfo", &dbstring))
+    if(!sConfig.GetString("loginDatabaseInfo", &dbstring))
     {
         sLog.outError("Database not specified");
         return false;
     }
 
     sLog.outString("Database: %s", dbstring.c_str() );
-    if(!LoginDatabase.Initialize(dbstring.c_str()))
+    if(!loginDatabase.Initialize(dbstring.c_str()))
     {
         sLog.outError("Cannot connect to database");
         return false;
     }
-    LoginDatabase.ThreadStart();
+    loginDatabase.ThreadStart();
 
     return true;
 }

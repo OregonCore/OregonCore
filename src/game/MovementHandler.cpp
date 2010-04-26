@@ -175,7 +175,7 @@ bool WorldSession::Anti__ReportCheat(const char* Reason,float Speed,const char* 
     }
     if(sWorld.GetMvAnticheatBan() & 2)
     {
-        QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT last_ip FROM account WHERE id=%u", Acc);
+        QueryResult_AutoPtr result = loginDatabase.PQuery("SELECT last_ip FROM account WHERE id=%u", Acc);
         if(result)
         {
 
