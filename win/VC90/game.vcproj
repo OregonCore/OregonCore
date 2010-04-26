@@ -1148,14 +1148,6 @@
 				RelativePath="..\..\src\game\ScriptCalls.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\game\Tools.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\game\Tools.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="References"

@@ -929,11 +929,13 @@ void WorldSession::HandleNextCinematicCamera(WorldPacket & /*recv_data*/ )
     DEBUG_LOG("WORLD: Which movie to play");
 }
 
-void WorldSession::HandleMoveTimeSkippedOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleMoveTimeSkippedOpcode(WorldPacket & recv_data )
 {
     /*  WorldSession::Update(getMSTime());*/
     DEBUG_LOG("WORLD: Time Lag/Synchronization Resent/Update");
 
+    recv_data.read_skip<uint64>();
+    recv_data.read_skip<uint32>();
     /*
         CHECK_PACKET_SIZE(recv_data,8+4);
         uint64 guid;
@@ -955,20 +957,20 @@ void WorldSession::HandleFeatherFallAck(WorldPacket &/*recv_data*/)
     DEBUG_LOG("WORLD: CMSG_MOVE_FEATHER_FALL_ACK");
 }
 
-void WorldSession::HandleMoveUnRootAck(WorldPacket&/* recv_data*/)
+void WorldSession::HandleMoveUnRootAck(WorldPacket& recv_data)
 {
-    /*
-        CHECK_PACKET_SIZE(recv_data,8+8+4+4+4+4+4);
+    sLog.outDebug( "WORLD: CMSG_FORCE_MOVE_UNROOT_ACK" );
 
-        sLog.outDebug("WORLD: CMSG_FORCE_MOVE_UNROOT_ACK");
+    recv_data.read_skip<uint64>();                          // guid
+    recv_data.read_skip<uint64>();                          // unknown1
+    recv_data.read_skip<uint32>();                          // unknown2
+    recv_data.read_skip<float>();                           // PositionX
+    recv_data.read_skip<float>();                           // PositionY
+    recv_data.read_skip<float>();                           // PositionZ
+    recv_data.read_skip<float>();                           // Orientation
+
+    /*
         recv_data.hexlike();
-        uint64 guid;
-        uint64 unknown1;
-        uint32 unknown2;
-        float PositionX;
-        float PositionY;
-        float PositionZ;
-        float Orientation;
 
         recv_data >> guid;
         recv_data >> unknown1;
@@ -989,20 +991,18 @@ void WorldSession::HandleMoveUnRootAck(WorldPacket&/* recv_data*/)
     */
 }
 
-void WorldSession::HandleMoveRootAck(WorldPacket&/* recv_data*/)
+void WorldSession::HandleMoveRootAck(WorldPacket& recv_data)
 {
-    /*
-        CHECK_PACKET_SIZE(recv_data,8+8+4+4+4+4+4);
+    recv_data.read_skip<uint64>();                          // guid
+    recv_data.read_skip<uint64>();                          // unknown1
+    recv_data.read_skip<uint32>();                          // unknown2
+    recv_data.read_skip<float>();                           // PositionX
+    recv_data.read_skip<float>();                           // PositionY
+    recv_data.read_skip<float>();                           // PositionZ
+    recv_data.read_skip<float>();                           // Orientation
 
+    /*
         sLog.outDebug("WORLD: CMSG_FORCE_MOVE_ROOT_ACK");
-        recv_data.hexlike();
-        uint64 guid;
-        uint64 unknown1;
-        uint32 unknown2;
-        float PositionX;
-        float PositionY;
-        float PositionZ;
-        float Orientation;
 
         recv_data >> guid;
         recv_data >> unknown1;
@@ -1054,11 +1054,10 @@ void WorldSession::HandleSetActionBar(WorldPacket& recv_data)
     GetPlayer()->SetByteValue(PLAYER_FIELD_BYTES, 2, ActionBar);
 }
 
-void WorldSession::HandleWardenDataOpcode(WorldPacket& /*recv_data*/)
+void WorldSession::HandleWardenDataOpcode(WorldPacket& recv_data)
 {
+    recv_data.read_skip<uint8>();
     /*
-        CHECK_PACKET_SIZE(recv_data,1);
-
         uint8 tmp;
         recv_data >> tmp;
         sLog.outDebug("Received opcode CMSG_WARDEN_DATA, not resolve.uint8 = %u",tmp);

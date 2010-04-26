@@ -62,7 +62,7 @@ uint32 GuidHigh2TypeId(uint32 guid_hi)
     return 10;                                              // unknown
 }
 
-Object::Object()
+Object::Object() : m_PackGUID(sizeof(uint64)+1)
 {
     m_objectTypeId      = TYPEID_OBJECT;
     m_objectType        = TYPEMASK_OBJECT;
@@ -74,7 +74,6 @@ Object::Object()
     m_inWorld           = false;
     m_objectUpdated     = false;
 
-    m_PackGUID.clear();
     m_PackGUID.appendPackGUID(0);
 }
 
@@ -121,7 +120,7 @@ void Object::_Create(uint32 guidlow, uint32 entry, HighGuid guidhigh )
     uint64 guid = MAKE_NEW_GUID(guidlow, entry, guidhigh);  // required more changes to make it working
     SetUInt64Value(OBJECT_FIELD_GUID, guid);
     SetUInt32Value(OBJECT_FIELD_TYPE, m_objectType);
-    m_PackGUID.clear();
+    m_PackGUID.wpos(0);
     m_PackGUID.appendPackGUID(GetGUID());
 }
 

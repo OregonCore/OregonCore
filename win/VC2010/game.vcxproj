@@ -269,7 +269,6 @@
     <ClCompile Include="..\..\src\game\Level3.cpp" />
     <ClCompile Include="..\..\src\game\PlayerDump.cpp" />
     <ClCompile Include="..\..\src\game\ScriptCalls.cpp" />
-    <ClCompile Include="..\..\src\game\Tools.cpp" />
     <ClCompile Include="..\..\src\game\FollowerReference.cpp" />
     <ClCompile Include="..\..\src\game\GroupReference.cpp" />
     <ClCompile Include="..\..\src\game\HostilRefManager.cpp" />
@@ -414,7 +413,6 @@
     <ClInclude Include="..\..\src\game\Language.h" />
     <ClInclude Include="..\..\src\game\PlayerDump.h" />
     <ClInclude Include="..\..\src\game\ScriptCalls.h" />
-    <ClInclude Include="..\..\src\game\Tools.h" />
     <ClInclude Include="..\..\src\game\FollowerReference.h" />
     <ClInclude Include="..\..\src\game\FollowerRefManager.h" />
     <ClInclude Include="..\..\src\game\GroupReference.h" />

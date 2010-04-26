@@ -29,6 +29,8 @@ void WorldSession::HandleVoiceSettingsOpcode(WorldPacket & recv_data )
 {
     sLog.outDebug("WORLD: CMSG_VOICE_SETTINGS");
     // uint8 isVoiceEnabled, uint8 isMicrophoneEnabled
+    recv_data.read_skip<uint8>();
+    recv_data.read_skip<uint8>();
     recv_data.hexlike();
 }
 
@@ -42,7 +44,8 @@ void WorldSession::HandleChannelEnableVoiceOpcode(WorldPacket & recv_data )
 void WorldSession::HandleChannelVoiceChatQuery(WorldPacket & recv_data )
 {
     sLog.outDebug("WORLD: CMSG_CHANNEL_VOICE_CHAT_QUERY");
-    // uint32, string
+    recv_data.read_skip<uint32>();
+    recv_data.read_skip<char*>();
     recv_data.hexlike();
 }
 
