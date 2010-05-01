@@ -53,7 +53,7 @@ _logoutTime(0), m_inQueue(false), m_playerLoading(false), m_playerLogout(false),
     {
         m_Address = sock->GetRemoteAddress ();
         sock->AddReference ();
-        loginDatabase.PExecute("UPDATE account SET online = 1 WHERE id = %u;", GetAccountId());
+        loginDatabase.PExecute("UPDATE account SET active_realm_id = %d WHERE id = '%u'", realmID, GetAccountId());
     }
 }
 
@@ -76,7 +76,7 @@ WorldSession::~WorldSession()
     WorldPacket* packet;
     while (_recvQueue.next(packet))
         delete packet;
-    loginDatabase.PExecute("UPDATE account SET online = 0 WHERE id = %u;", GetAccountId());
+    loginDatabase.PExecute("UPDATE account SET active_realm_id = 0 WHERE id = '%u'", GetAccountId());
     CharacterDatabase.PExecute("UPDATE characters SET online = 0 WHERE account = %u;", GetAccountId());
 }
 
