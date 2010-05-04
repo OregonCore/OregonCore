@@ -19,11 +19,11 @@
  */
 
 #include "Creature.h"
+#include "CreatureAI.h"
 #include "MapManager.h"
 #include "FleeingMovementGenerator.h"
 #include "DestinationHolderImp.h"
 #include "ObjectAccessor.h"
-#include "CreatureAI.h"
 
 #define MIN_QUIET_DISTANCE 28.0f
 #define MAX_QUIET_DISTANCE 43.0f
@@ -32,10 +32,10 @@ template<class T>
 void
 FleeingMovementGenerator<T>::_setTargetLocation(T &owner)
 {
-    if (!&owner )
+    if (!&owner)
         return;
 
-    if (owner.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED) )
+    if (owner.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED))
         return;
 
     if (!_setMoveData(owner))
@@ -61,7 +61,7 @@ bool FleeingMovementGenerator<Creature>::GetDestination(float &x, float &y, floa
 }
 
 template<>
-bool FleeingMovementGenerator<Player>::GetDestination(float &x, float &y, float &z) const
+bool FleeingMovementGenerator<Player>::GetDestination(float & /*x*/, float & /*y*/, float & /*z*/) const
 {
     return false;
 }
@@ -77,10 +77,10 @@ FleeingMovementGenerator<T>::_getPoint(T &owner, float &x, float &y, float &z)
     y = owner.GetPositionY();
     z = owner.GetPositionZ();
 
-    float temp_x, temp_y, angle;
+    float temp_x, temp_y, angle = 0;
     const Map * _map = MapManager::Instance().GetBaseMap(owner.GetMapId());
     //primitive path-finding
-    for (uint8 i = 0; i < 18; i++)
+    for (uint8 i = 0; i < 18; ++i)
     {
         if (i_only_forward && i > 2)
             break;
@@ -215,7 +215,7 @@ FleeingMovementGenerator<T>::_setMoveData(T &owner)
            (i_last_distance_from_caster < i_to_distance_from_caster && cur_dist_xyz > i_to_distance_from_caster)   ||
                                                             // if we reach bigger distance
            (cur_dist_xyz > MAX_QUIET_DISTANCE) ||           // if we are too far
-           (i_last_distance_from_caster > MIN_QUIET_DISTANCE && cur_dist_xyz < MIN_QUIET_DISTANCE) )
+           (i_last_distance_from_caster > MIN_QUIET_DISTANCE && cur_dist_xyz < MIN_QUIET_DISTANCE))
                                                             // if we leave 'quiet zone'
         {
             // we are very far or too close, stopping
@@ -302,19 +302,26 @@ FleeingMovementGenerator<T>::Initialize(T &owner)
     if (!&owner)
         return;
 
-    Unit * fright = ObjectAccessor::GetUnit(owner, i_frightGUID);
-    if (!fright)
-        return;
-
     _Init(owner);
     owner.CastStop();
     owner.addUnitState(UNIT_STAT_FLEEING | UNIT_STAT_ROAMING);
     owner.SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING);
     owner.SetUInt64Value(UNIT_FIELD_TARGET, 0);
     owner.RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
-    i_caster_x = fright->GetPositionX();
-    i_caster_y = fright->GetPositionY();
-    i_caster_z = fright->GetPositionZ();
+
+    if (Unit * fright = ObjectAccessor::GetUnit(owner, i_frightGUID))
+    {
+        i_caster_x = fright->GetPositionX();
+        i_caster_y = fright->GetPositionY();
+        i_caster_z = fright->GetPositionZ();
+    }
+    else
+    {
+        i_caster_x = owner.GetPositionX();
+        i_caster_y = owner.GetPositionY();
+        i_caster_z = owner.GetPositionZ();
+    }
+
     i_only_forward = true;
     i_cur_angle = 0.0f;
     i_last_distance_from_caster = 0.0f;
@@ -346,7 +353,7 @@ void
 FleeingMovementGenerator<T>::Finalize(T &owner)
 {
     owner.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING);
-    owner.addUnitState(UNIT_STAT_FLEEING | UNIT_STAT_ROAMING);
+    owner.clearUnitState(UNIT_STAT_FLEEING | UNIT_STAT_ROAMING);
     if (owner.GetTypeId() == TYPEID_UNIT && owner.getVictim())
         owner.SetUInt64Value(UNIT_FIELD_TARGET, owner.getVictim()->GetGUID());
 }
@@ -362,16 +369,16 @@ template<class T>
 bool
 FleeingMovementGenerator<T>::Update(T &owner, const uint32 & time_diff)
 {
-    if (!&owner || !owner.isAlive() )
+    if (!&owner || !owner.isAlive())
         return false;
-    if (owner.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED) )
+    if (owner.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED))
         return true;
 
     Traveller<T> traveller(owner);
 
     i_nextCheckTime.Update(time_diff);
 
-    if ((owner.IsStopped() && !i_destinationHolder.HasArrived()) || !i_destinationHolder.HasDestination() )
+    if ((owner.IsStopped() && !i_destinationHolder.HasArrived()) || !i_destinationHolder.HasDestination())
     {
         _setTargetLocation(owner);
         return true;
@@ -420,10 +427,10 @@ void TimedFleeingMovementGenerator::Finalize(Unit &owner)
 
 bool TimedFleeingMovementGenerator::Update(Unit & owner, const uint32 & time_diff)
 {
-    if (!owner.isAlive() )
+    if (!owner.isAlive())
         return false;
 
-    if (owner.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED) )
+    if (owner.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED))
         return true;
 
     i_totalFleeTime.Update(time_diff);
