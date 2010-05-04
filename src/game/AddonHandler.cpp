@@ -27,7 +27,7 @@
 
 #include "Log.h"
 
-INSTANTIATE_SINGLETON_1( AddonHandler );
+INSTANTIATE_SINGLETON_1( AddonHandler);
 
 AddonHandler::AddonHandler()
 {

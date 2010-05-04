@@ -780,7 +780,7 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
 
         case ACTION_T_SET_SHEATH:
         {
-            m_creature->SetByteValue(UNIT_FIELD_BYTES_2, 0, SheathState(action.set_sheath.sheath) );
+            m_creature->SetByteValue(UNIT_FIELD_BYTES_2, 0, SheathState(action.set_sheath.sheath));
             break;
         }
         case ACTION_T_FORCE_DESPAWN:

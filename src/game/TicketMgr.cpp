@@ -26,7 +26,7 @@
 #include "Player.h"
 #include "Common.h"
 #include "ObjectAccessor.h"
-INSTANTIATE_SINGLETON_1(TicketMgr );
+INSTANTIATE_SINGLETON_1(TicketMgr);
 
 GM_Ticket* TicketMgr::GetGMTicket(uint64 ticketGuid)
 {
@@ -77,7 +77,7 @@ GM_Ticket* TicketMgr::GetGMTicketByName(const char* name)
 
 void TicketMgr::AddGMTicket(GM_Ticket *ticket, bool startup)
 {
-    ASSERT(ticket );
+    ASSERT(ticket);
     GM_TicketList.push_back(ticket);
 
     // save
@@ -104,7 +104,7 @@ void TicketMgr::LoadGMTickets()
 {
     // Delete all out of object holder
     GM_TicketList.clear();
-    QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT guid, playerGuid, name, message, createtime, map, posX, posY, posZ, timestamp, closed, assignedto, comment FROM gm_tickets" );
+    QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT guid, playerGuid, name, message, createtime, map, posX, posY, posZ, timestamp, closed, assignedto, comment FROM gm_tickets");
     GM_Ticket *ticket;
 
     if (!result)
@@ -131,7 +131,7 @@ void TicketMgr::LoadGMTickets()
 
         AddGMTicket(ticket, true);
 
-    } while (result->NextRow() );
+    } while (result->NextRow());
 
     sWorld.SendGMText(LANG_COMMAND_TICKETRELOAD, result->GetRowCount());
 }

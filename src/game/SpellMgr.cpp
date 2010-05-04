@@ -938,16 +938,16 @@ void SpellMgr::LoadSpellTargetPositions()
     if (!result )
     {
 
-        barGoLink bar(1 );
+        barGoLink bar(1);
 
         bar.step();
 
         sLog.outString("");
-        sLog.outString(">> Loaded %u spell target coordinates", count );
+        sLog.outString(">> Loaded %u spell target coordinates", count);
         return;
     }
 
-    barGoLink bar(result->GetRowCount() );
+    barGoLink bar(result->GetRowCount());
 
     do
     {
@@ -1004,10 +1004,10 @@ void SpellMgr::LoadSpellTargetPositions()
 
         mSpellTargetPositions[Spell_ID] = st;
 
-    } while (result->NextRow() );
+    } while (result->NextRow());
 
     sLog.outString("");
-    sLog.outString(">> Loaded %u spell teleport coordinates", count );
+    sLog.outString(">> Loaded %u spell teleport coordinates", count);
 }
 
 void SpellMgr::LoadSpellAffects()
@@ -1021,16 +1021,16 @@ void SpellMgr::LoadSpellAffects()
     if (!result )
     {
 
-        barGoLink bar(1 );
+        barGoLink bar(1);
 
         bar.step();
 
         sLog.outString("");
-        sLog.outString(">> Loaded %u spell affect definitions", count );
+        sLog.outString(">> Loaded %u spell affect definitions", count);
         return;
     }
 
-    barGoLink bar(result->GetRowCount() );
+    barGoLink bar(result->GetRowCount());
 
     do
     {
@@ -1086,10 +1086,10 @@ void SpellMgr::LoadSpellAffects()
         mSpellAffectMap.insert(SpellAffectMap::value_type((entry<<8) + effectId,spellAffectMask));
 
         ++count;
-    } while (result->NextRow() );
+    } while (result->NextRow());
 
     sLog.outString("");
-    sLog.outString(">> Loaded %u spell affect definitions", count );
+    sLog.outString(">> Loaded %u spell affect definitions", count);
 
     for (uint32 id = 0; id < sSpellStore.GetNumRows(); ++id)
     {
@@ -1159,16 +1159,16 @@ void SpellMgr::LoadSpellProcEvents()
     if (!result )
     {
 
-        barGoLink bar(1 );
+        barGoLink bar(1);
 
         bar.step();
 
         sLog.outString("");
-        sLog.outString(">> Loaded %u spell proc event conditions", count  );
+        sLog.outString(">> Loaded %u spell proc event conditions", count );
         return;
     }
 
-    barGoLink bar(result->GetRowCount() );
+    barGoLink bar(result->GetRowCount());
     uint32 customProc = 0;
     do
     {
@@ -1208,13 +1208,13 @@ void SpellMgr::LoadSpellProcEvents()
             customProc++;
         }
         ++count;
-    } while (result->NextRow() );
+    } while (result->NextRow());
 
     sLog.outString("");
     if (customProc)
-        sLog.outString(">> Loaded %u custom spell proc event conditions +%u custom",  count, customProc );
+        sLog.outString(">> Loaded %u custom spell proc event conditions +%u custom",  count, customProc);
     else
-        sLog.outString(">> Loaded %u spell proc event conditions", count );
+        sLog.outString(">> Loaded %u spell proc event conditions", count);
 
     /*
     // Commented for now, as it still produces many errors (still quite many spells miss spell_proc_event)
@@ -1399,16 +1399,16 @@ void SpellMgr::LoadSpellElixirs()
     if (!result )
     {
 
-        barGoLink bar(1 );
+        barGoLink bar(1);
 
         bar.step();
 
         sLog.outString("");
-        sLog.outString(">> Loaded %u spell elixir definitions", count );
+        sLog.outString(">> Loaded %u spell elixir definitions", count);
         return;
     }
 
-    barGoLink bar(result->GetRowCount() );
+    barGoLink bar(result->GetRowCount());
 
     do
     {
@@ -1430,10 +1430,10 @@ void SpellMgr::LoadSpellElixirs()
         mSpellElixirs[entry] = mask;
 
         ++count;
-    } while (result->NextRow() );
+    } while (result->NextRow());
 
     sLog.outString("");
-    sLog.outString(">> Loaded %u spell elixir definitions", count );
+    sLog.outString(">> Loaded %u spell elixir definitions", count);
 }
 
 void SpellMgr::LoadSpellThreats()
@@ -1442,7 +1442,7 @@ void SpellMgr::LoadSpellThreats()
 
     sSpellThreatStore.Load();
 
-    sLog.outString(">> Loaded %u aggro generating spells", sSpellThreatStore.RecordCount );
+    sLog.outString(">> Loaded %u aggro generating spells", sSpellThreatStore.RecordCount);
     sLog.outString("");
 }
 
@@ -1457,16 +1457,16 @@ void SpellMgr::LoadSpellEnchantProcData()
     if (!result )
     {
 
-        barGoLink bar(1 );
+        barGoLink bar(1);
 
         bar.step();
 
         sLog.outString("");
-        sLog.outString(">> Loaded %u spell enchant proc event conditions", count );
+        sLog.outString(">> Loaded %u spell enchant proc event conditions", count);
         return;
     }
 
-    barGoLink bar(result->GetRowCount() );
+    barGoLink bar(result->GetRowCount());
     do
     {
         Field *fields = result->Fetch();
@@ -1491,7 +1491,7 @@ void SpellMgr::LoadSpellEnchantProcData()
         mSpellEnchantProcEventMap[enchantId] = spe;
 
         ++count;
-    } while (result->NextRow() );
+    } while (result->NextRow());
 
     sLog.outString(">> Loaded %u enchant proc data definitions", count);
 }
@@ -1696,17 +1696,17 @@ void SpellMgr::LoadSpellRequired()
 
     if (result == NULL)
     {
-        barGoLink bar(1 );
+        barGoLink bar(1);
         bar.step();
 
         sLog.outString("");
-        sLog.outString(">> Loaded 0 spell required records" );
+        sLog.outString(">> Loaded 0 spell required records");
         sLog.outErrorDb("spell_required table is empty!");
         return;
     }
     uint32 rows = 0;
 
-    barGoLink bar(result->GetRowCount() );
+    barGoLink bar(result->GetRowCount());
     do
     {
         bar.step();
@@ -1718,10 +1718,10 @@ void SpellMgr::LoadSpellRequired()
         mSpellsReqSpell.insert (std::pair<uint32, uint32>(spell_req, spell_id));
         mSpellReq[spell_id] = spell_req;
         ++rows;
-    } while (result->NextRow() );
+    } while (result->NextRow());
 
     sLog.outString("");
-    sLog.outString(">> Loaded %u spell required records", rows );
+    sLog.outString(">> Loaded %u spell required records", rows);
 }
 
 struct SpellRankEntry
@@ -1747,7 +1747,7 @@ struct SpellRankEntry
             : (_Left.DurationIndex!=_Right.DurationIndex) && (!_Left.DurationIndex || !_Right.DurationIndex)? _Left.DurationIndex < _Right.DurationIndex
             : (_Left.RangeIndex!=_Right.RangeIndex) && (!_Left.RangeIndex || !_Right.RangeIndex || _Left.RangeIndex==1 || !_Right.RangeIndex==1) ? _Left.RangeIndex < _Right.RangeIndex
             : _Left.TargetAuraState < _Right.TargetAuraState
-            );
+           );
     }
 };
 
@@ -1981,7 +1981,7 @@ void SpellMgr::LoadSpellLearnSkills()
     }
 
     sLog.outString("");
-    sLog.outString(">> Loaded %u Spell Learn Skills from DBC", dbc_count );
+    sLog.outString(">> Loaded %u Spell Learn Skills from DBC", dbc_count);
 }
 
 void SpellMgr::LoadSpellLearnSpells()
@@ -1991,18 +1991,18 @@ void SpellMgr::LoadSpellLearnSpells()
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, SpellID FROM spell_learn_spell");
     if (!result)
     {
-        barGoLink bar(1 );
+        barGoLink bar(1);
         bar.step();
 
         sLog.outString("");
-        sLog.outString(">> Loaded 0 spell learn spells" );
+        sLog.outString(">> Loaded 0 spell learn spells");
         sLog.outErrorDb("spell_learn_spell table is empty!");
         return;
     }
 
     uint32 count = 0;
 
-    barGoLink bar(result->GetRowCount() );
+    barGoLink bar(result->GetRowCount());
     do
     {
         bar.step();
@@ -2029,7 +2029,7 @@ void SpellMgr::LoadSpellLearnSpells()
         mSpellLearnSpells.insert(SpellLearnSpellMap::value_type(spell_id,node));
 
         ++count;
-    } while (result->NextRow() );
+    } while (result->NextRow());
 
     // search auto-learned spells and add its to map also for use in unlearn spells/talents
     uint32 dbc_count = 0;
@@ -2073,7 +2073,7 @@ void SpellMgr::LoadSpellLearnSpells()
     }
 
     sLog.outString("");
-    sLog.outString(">> Loaded %u spell learn spells + %u found in DBC", count, dbc_count );
+    sLog.outString(">> Loaded %u spell learn spells + %u found in DBC", count, dbc_count);
 }
 
 void SpellMgr::LoadSpellScriptTarget()
@@ -2091,7 +2091,7 @@ void SpellMgr::LoadSpellScriptTarget()
         bar.step();
 
         sLog.outString("");
-        sLog.outString(">> Loaded 0 spell script target" );
+        sLog.outString(">> Loaded 0 spell script target");
         sLog.outErrorDb("spell_script_target table is empty!");
         return;
     }
@@ -2222,16 +2222,16 @@ void SpellMgr::LoadSpellPetAuras()
     if (!result )
     {
 
-        barGoLink bar(1 );
+        barGoLink bar(1);
 
         bar.step();
 
         sLog.outString("");
-        sLog.outString(">> Loaded %u spell pet auras", count );
+        sLog.outString(">> Loaded %u spell pet auras", count);
         return;
     }
 
-    barGoLink bar(result->GetRowCount() );
+    barGoLink bar(result->GetRowCount());
 
     do
     {
@@ -2281,10 +2281,10 @@ void SpellMgr::LoadSpellPetAuras()
         }
 
         ++count;
-    } while (result->NextRow() );
+    } while (result->NextRow());
 
     sLog.outString("");
-    sLog.outString(">> Loaded %u spell pet auras", count );
+    sLog.outString(">> Loaded %u spell pet auras", count);
 }
 
 // set data in core for now
@@ -2477,14 +2477,14 @@ void SpellMgr::LoadSpellLinked()
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT spell_trigger, spell_effect, type FROM spell_linked_spell");
     if (!result )
     {
-        barGoLink bar(1 );
+        barGoLink bar(1);
         bar.step();
         sLog.outString("");
-        sLog.outString(">> Loaded %u linked spells", count );
+        sLog.outString(">> Loaded %u linked spells", count);
         return;
     }
 
-    barGoLink bar(result->GetRowCount() );
+    barGoLink bar(result->GetRowCount());
 
     do
     {
@@ -2533,10 +2533,10 @@ void SpellMgr::LoadSpellLinked()
         mSpellLinkedMap[trigger].push_back(effect);
 
         ++count;
-    } while (result->NextRow() );
+    } while (result->NextRow());
 
     sLog.outString("");
-    sLog.outString(">> Loaded %u linked spells", count );
+    sLog.outString(">> Loaded %u linked spells", count);
 }
 
 /// Some checks for spells, to prevent adding depricated/broken spells for trainers, spell book, etc

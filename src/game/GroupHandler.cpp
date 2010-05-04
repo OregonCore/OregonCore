@@ -51,7 +51,7 @@ void WorldSession::SendPartyResult(PartyOperation operation, const std::string& 
     data << member;
     data << (uint32)res;
 
-    SendPacket(&data );
+    SendPacket(&data);
 }
 
 void WorldSession::HandleGroupInviteOpcode(WorldPacket & recv_data )
@@ -250,9 +250,9 @@ void WorldSession::HandleGroupDeclineOpcode(WorldPacket & /*recv_data*/ )
 
     GetPlayer()->SetGroupInvite(NULL);
 
-    WorldPacket data(SMSG_GROUP_DECLINE, 10 );             // guess size
+    WorldPacket data(SMSG_GROUP_DECLINE, 10);             // guess size
     data << GetPlayer()->GetName();
-    leader->GetSession()->SendPacket(&data );
+    leader->GetSession()->SendPacket(&data);
 }
 
 void WorldSession::HandleGroupUninviteGuidOpcode(WorldPacket & recv_data)
@@ -890,7 +890,7 @@ void WorldSession::HandleRequestPartyMemberStatsOpcode(WorldPacket &recv_data )
 
 /*void WorldSession::HandleGroupCancelOpcode(WorldPacket & recv_data )
 {
-    sLog.outDebug("WORLD: got CMSG_GROUP_CANCEL." );
+    sLog.outDebug("WORLD: got CMSG_GROUP_CANCEL.");
 }*/
 
 void WorldSession::HandleGroupPassOnLootOpcode(WorldPacket & recv_data )

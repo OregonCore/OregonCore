@@ -45,7 +45,7 @@
 #include "Policies/Singleton.h"
 #include "Policies/SingletonImp.h"
 
-INSTANTIATE_SINGLETON_1(InstanceSaveManager );
+INSTANTIATE_SINGLETON_1(InstanceSaveManager);
 
 InstanceSaveManager::InstanceSaveManager() : lock_instLists(false)
 {
@@ -132,7 +132,7 @@ void InstanceSaveManager::DeleteInstanceFromDB(uint32 instanceid)
 
 void InstanceSaveManager::RemoveInstanceSave(uint32 InstanceId)
 {
-    InstanceSaveHashMap::iterator itr = m_instanceSaveById.find(InstanceId );
+    InstanceSaveHashMap::iterator itr = m_instanceSaveById.find(InstanceId);
     if (itr != m_instanceSaveById.end())
     {
         // save the resettime for normal instances only when they get unloaded
@@ -226,7 +226,7 @@ void InstanceSaveManager::_DelHelper(DatabaseType &db, const char *fields, const
     va_list ap;
     char szQueryTail [MAX_QUERY_LEN];
     va_start(ap, queryTail);
-    int res = vsnprintf(szQueryTail, MAX_QUERY_LEN, queryTail, ap );
+    int res = vsnprintf(szQueryTail, MAX_QUERY_LEN, queryTail, ap);
     va_end(ap);
 
     QueryResult_AutoPtr result = db.PQuery("SELECT %s FROM %s %s", fields, table, szQueryTail);
@@ -358,7 +358,7 @@ void InstanceSaveManager::PackInstances()
     }
 
     sLog.outString("");
-    sLog.outString(">> Instance numbers remapped, next instance id is %u", InstanceNumber );
+    sLog.outString(">> Instance numbers remapped, next instance id is %u", InstanceNumber);
 }
 
 void InstanceSaveManager::LoadResetTimes()

@@ -488,7 +488,7 @@ class World
 
         void Update(time_t diff);
 
-        void UpdateSessions(time_t diff );
+        void UpdateSessions(time_t diff);
         /// Set a server rate (see #Rates)
         void setRate(Rates rate,float value) { rate_values[rate]=value; }
         /// Get a server rate (see #Rates)

@@ -404,14 +404,14 @@ void WorldSession::LogoutPlayer(bool Save)
         _player = NULL;
 
         ///- Send the 'logout complete' packet to the client
-        WorldPacket data(SMSG_LOGOUT_COMPLETE, 0 );
-        SendPacket(&data );
+        WorldPacket data(SMSG_LOGOUT_COMPLETE, 0);
+        SendPacket(&data);
 
         ///- Since each account can only have one online character at any given time, ensure all characters for active account are marked as offline
         //No SQL injection as AccountId is uint32
         CharacterDatabase.PExecute("UPDATE characters SET online = 0 WHERE account = '%u'",
             GetAccountId());
-        sLog.outDebug("SESSION: Sent SMSG_LOGOUT_COMPLETE Message" );
+        sLog.outDebug("SESSION: Sent SMSG_LOGOUT_COMPLETE Message");
     }
 
     m_playerLogout = false;
@@ -435,7 +435,7 @@ void WorldSession::SendAreaTriggerMessage(const char* Text, ...)
     szStr[0] = '\0';
 
     va_start(ap, Text);
-    vsnprintf(szStr, 1024, Text, ap );
+    vsnprintf(szStr, 1024, Text, ap);
     va_end(ap);
 
     uint32 length = strlen(szStr)+1;
@@ -453,7 +453,7 @@ void WorldSession::SendNotification(const char *format,...)
         char szStr [1024];
         szStr[0] = '\0';
         va_start(ap, format);
-        vsnprintf(szStr, 1024, format, ap );
+        vsnprintf(szStr, 1024, format, ap);
         va_end(ap);
 
         WorldPacket data(SMSG_NOTIFICATION, (strlen(szStr)+1));
@@ -471,7 +471,7 @@ void WorldSession::SendNotification(int32 string_id,...)
         char szStr [1024];
         szStr[0] = '\0';
         va_start(ap, string_id);
-        vsnprintf(szStr, 1024, format, ap );
+        vsnprintf(szStr, 1024, format, ap);
         va_end(ap);
 
         WorldPacket data(SMSG_NOTIFICATION, (strlen(szStr)+1));
@@ -517,14 +517,14 @@ void WorldSession::SendAuthWaitQue(uint32 position)
 {
     if (position == 0)
     {
-        WorldPacket packet(SMSG_AUTH_RESPONSE, 1 );
-        packet << uint8(AUTH_OK );
+        WorldPacket packet(SMSG_AUTH_RESPONSE, 1);
+        packet << uint8(AUTH_OK);
         SendPacket(&packet);
     }
     else
     {
-        WorldPacket packet(SMSG_AUTH_RESPONSE, 5 );
-        packet << uint8(AUTH_WAIT_QUEUE );
+        WorldPacket packet(SMSG_AUTH_RESPONSE, 5);
+        packet << uint8(AUTH_WAIT_QUEUE);
         packet << uint32 (position);
         SendPacket(&packet);
     }

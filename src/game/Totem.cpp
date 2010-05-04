@@ -51,7 +51,7 @@ void Totem::Update(uint32 time )
     else
         m_duration -= time;
 
-    Creature::Update(time );
+    Creature::Update(time);
 }
 
 void Totem::Summon(Unit* owner)

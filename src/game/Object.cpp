@@ -119,8 +119,8 @@ void Object::_Create(uint32 guidlow, uint32 entry, HighGuid guidhigh )
     if (!m_uint32Values) _InitValues();
 
     uint64 guid = MAKE_NEW_GUID(guidlow, entry, guidhigh);  // required more changes to make it working
-    SetUInt64Value(OBJECT_FIELD_GUID, guid );
-    SetUInt32Value(OBJECT_FIELD_TYPE, m_objectType );
+    SetUInt64Value(OBJECT_FIELD_GUID, guid);
+    SetUInt32Value(OBJECT_FIELD_TYPE, m_objectType);
     m_PackGUID.clear();
     m_PackGUID.appendPackGUID(GetGUID());
 }
@@ -129,7 +129,7 @@ void Object::BuildMovementUpdateBlock(UpdateData * data, uint32 flags ) const
 {
     ByteBuffer buf(500);
 
-    buf << uint8(UPDATETYPE_MOVEMENT );
+    buf << uint8(UPDATETYPE_MOVEMENT);
     buf << GetGUID();
 
     _BuildMovementUpdate(&buf, flags, 0x00000000);
@@ -191,9 +191,9 @@ void Object::BuildCreateUpdateBlockForPlayer(UpdateData *data, Player *target) c
     _BuildMovementUpdate(&buf, flags, flags2);
 
     UpdateMask updateMask;
-    updateMask.SetCount(m_valuesCount );
-    _SetCreateBits(&updateMask, target );
-    _BuildValuesUpdate(updatetype, &buf, &updateMask, target );
+    updateMask.SetCount(m_valuesCount);
+    _SetCreateBits(&updateMask, target);
+    _BuildValuesUpdate(updatetype, &buf, &updateMask, target);
     data->AddUpdateBlock(buf);
 }
 
@@ -229,10 +229,10 @@ void Object::BuildValuesUpdateBlockForPlayer(UpdateData *data, Player *target) c
     buf << GetGUID();
 
     UpdateMask updateMask;
-    updateMask.SetCount(m_valuesCount );
+    updateMask.SetCount(m_valuesCount);
 
-    _SetUpdateBits(&updateMask, target );
-    _BuildValuesUpdate(UPDATETYPE_VALUES, &buf, &updateMask, target );
+    _SetUpdateBits(&updateMask, target);
+    _BuildValuesUpdate(UPDATETYPE_VALUES, &buf, &updateMask, target);
 
     data->AddUpdateBlock(buf);
 }
@@ -248,7 +248,7 @@ void Object::DestroyForPlayer(Player *target) const
 
     WorldPacket data(SMSG_DESTROY_OBJECT, 8);
     data << GetGUID();
-    target->GetSession()->SendPacket(&data );
+    target->GetSession()->SendPacket(&data);
 }
 
 void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 flags, uint32 flags2 ) const
@@ -373,14 +373,14 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 flags, uint32 flags2 
                 *data << (float)0;
         }
 
-        *data << ((Unit*)this)->GetSpeed(MOVE_WALK );
-        *data << ((Unit*)this)->GetSpeed(MOVE_RUN );
-        *data << ((Unit*)this)->GetSpeed(MOVE_SWIM_BACK );
-        *data << ((Unit*)this)->GetSpeed(MOVE_SWIM );
-        *data << ((Unit*)this)->GetSpeed(MOVE_RUN_BACK );
-        *data << ((Unit*)this)->GetSpeed(MOVE_FLIGHT );
-        *data << ((Unit*)this)->GetSpeed(MOVE_FLIGHT_BACK );
-        *data << ((Unit*)this)->GetSpeed(MOVE_TURN_RATE );
+        *data << ((Unit*)this)->GetSpeed(MOVE_WALK);
+        *data << ((Unit*)this)->GetSpeed(MOVE_RUN);
+        *data << ((Unit*)this)->GetSpeed(MOVE_SWIM_BACK);
+        *data << ((Unit*)this)->GetSpeed(MOVE_SWIM);
+        *data << ((Unit*)this)->GetSpeed(MOVE_RUN_BACK);
+        *data << ((Unit*)this)->GetSpeed(MOVE_FLIGHT);
+        *data << ((Unit*)this)->GetSpeed(MOVE_FLIGHT_BACK);
+        *data << ((Unit*)this)->GetSpeed(MOVE_TURN_RATE);
 
         // 0x08000000
         if (flags2 & MOVEMENTFLAG_SPLINE2)
@@ -559,7 +559,7 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer * data, UpdateMask 
     WPAssert(updateMask && updateMask->GetCount() == m_valuesCount);
 
     *data << (uint8)updateMask->GetBlockCount();
-    data->append(updateMask->GetMask(), updateMask->GetLength() );
+    data->append(updateMask->GetMask(), updateMask->GetLength());
 
     // 2 specialized loops for speed optimization in non-unit case
     if (isType(TYPEMASK_UNIT))                               // unit (creature/player) case
@@ -633,7 +633,7 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer * data, UpdateMask 
                         if (index == UNIT_FIELD_BYTES_2)
                         {
                             DEBUG_LOG("-- VALUES_UPDATE: Sending '%s' the blue-group-fix from '%s' (flag)", target->GetName(), ((Player*)this)->GetName());
-                            *data << (m_uint32Values[ index ] & ((UNIT_BYTE2_FLAG_SANCTUARY | UNIT_BYTE2_FLAG_AURAS | UNIT_BYTE2_FLAG_UNK5) << 8) ); // this flag is at uint8 offset 1 !!
+                            *data << (m_uint32Values[ index ] & ((UNIT_BYTE2_FLAG_SANCTUARY | UNIT_BYTE2_FLAG_AURAS | UNIT_BYTE2_FLAG_UNK5) << 8)); // this flag is at uint8 offset 1 !!
 
                             ch = true;
                         }
@@ -776,7 +776,7 @@ void Object::_SetCreateBits(UpdateMask *updateMask, Player* /*target*/) const
 
 void Object::SetInt32Value(uint16 index, int32 value )
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ) );
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
 
     if (m_int32Values[ index ] != value)
     {
@@ -795,7 +795,7 @@ void Object::SetInt32Value(uint16 index, int32 value )
 
 void Object::SetUInt32Value(uint16 index, uint32 value )
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ) );
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
 
     if (m_uint32Values[ index ] != value)
     {
@@ -814,7 +814,7 @@ void Object::SetUInt32Value(uint16 index, uint32 value )
 
 void Object::SetUInt64Value(uint16 index, const uint64 &value )
 {
-    ASSERT(index + 1 < m_valuesCount || PrintIndexError(index , true ) );
+    ASSERT(index + 1 < m_valuesCount || PrintIndexError(index , true ));
     if (*((uint64*)&(m_uint32Values[ index ])) != value)
     {
         m_uint32Values[ index ] = *((uint32*)&value);
@@ -833,7 +833,7 @@ void Object::SetUInt64Value(uint16 index, const uint64 &value )
 
 void Object::SetFloatValue(uint16 index, float value )
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ) );
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
 
     if (m_floatValues[ index ] != value)
     {
@@ -852,7 +852,7 @@ void Object::SetFloatValue(uint16 index, float value )
 
 void Object::SetByteValue(uint16 index, uint8 offset, uint8 value )
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ) );
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
 
     if (offset > 4)
     {
@@ -878,7 +878,7 @@ void Object::SetByteValue(uint16 index, uint8 offset, uint8 value )
 
 void Object::SetUInt16Value(uint16 index, uint8 offset, uint16 value )
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ) );
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
 
     if (offset > 2)
     {
@@ -952,7 +952,7 @@ void Object::ApplyModPositiveFloatValue(uint16 index, float  val, bool apply)
 
 void Object::SetFlag(uint16 index, uint32 newFlag )
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ) );
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
     uint32 oldval = m_uint32Values[ index ];
     uint32 newval = oldval | newFlag;
 
@@ -973,7 +973,7 @@ void Object::SetFlag(uint16 index, uint32 newFlag )
 
 void Object::RemoveFlag(uint16 index, uint32 oldFlag )
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ) );
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
     uint32 oldval = m_uint32Values[ index ];
     uint32 newval = oldval & ~oldFlag;
 
@@ -994,7 +994,7 @@ void Object::RemoveFlag(uint16 index, uint32 oldFlag )
 
 void Object::SetByteFlag(uint16 index, uint8 offset, uint8 newFlag )
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ) );
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
 
     if (offset > 4)
     {
@@ -1019,7 +1019,7 @@ void Object::SetByteFlag(uint16 index, uint8 offset, uint8 newFlag )
 
 void Object::RemoveByteFlag(uint16 index, uint8 offset, uint8 oldFlag )
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ) );
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
 
     if (offset > 4)
     {
@@ -1325,7 +1325,7 @@ bool WorldObject::IsInRange3d(float x, float y, float z, float minRange, float m
 float WorldObject::GetAngle(const WorldObject* obj) const
 {
     if (!obj) return 0;
-    return GetAngle(obj->GetPositionX(), obj->GetPositionY() );
+    return GetAngle(obj->GetPositionX(), obj->GetPositionY());
 }
 
 // Return angle in range 0..2*pi
@@ -1353,7 +1353,7 @@ bool WorldObject::HasInArc(const float arcangle, const WorldObject* obj) const
     while (arc < 0 )
         arc +=  2.0f * M_PI;
 
-    float angle = GetAngle(obj );
+    float angle = GetAngle(obj);
     angle -= m_orientation;
 
     // move angle to range -pi ... +pi
@@ -1440,9 +1440,9 @@ void WorldObject::SendPlaySound(uint32 Sound, bool OnlySelf)
     WorldPacket data(SMSG_PLAY_SOUND, 4);
     data << Sound;
     if (OnlySelf && GetTypeId() == TYPEID_PLAYER )
-        ((Player*)this)->GetSession()->SendPacket(&data );
+        ((Player*)this)->GetSession()->SendPacket(&data);
     else
-        SendMessageToSet(&data, true ); // ToSelf ignored in this case
+        SendMessageToSet(&data, true); // ToSelf ignored in this case
 }
 
 void Object::ForceValuesUpdateAtIndex(uint32 i)

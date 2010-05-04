@@ -165,48 +165,48 @@ class OREGON_DLL_SPEC Object
 
         const int32& GetInt32Value(uint16 index ) const
         {
-            ASSERT(index < m_valuesCount || PrintIndexError(index , false) );
+            ASSERT(index < m_valuesCount || PrintIndexError(index , false));
             return m_int32Values[ index ];
         }
 
         const uint32& GetUInt32Value(uint16 index ) const
         {
-            ASSERT(index < m_valuesCount || PrintIndexError(index , false) );
+            ASSERT(index < m_valuesCount || PrintIndexError(index , false));
             return m_uint32Values[ index ];
         }
 
         const uint64& GetUInt64Value(uint16 index ) const
         {
-            ASSERT(index + 1 < m_valuesCount || PrintIndexError(index , false) );
+            ASSERT(index + 1 < m_valuesCount || PrintIndexError(index , false));
             return *((uint64*)&(m_uint32Values[ index ]));
         }
 
         const float& GetFloatValue(uint16 index ) const
         {
-            ASSERT(index < m_valuesCount || PrintIndexError(index , false ) );
+            ASSERT(index < m_valuesCount || PrintIndexError(index , false ));
             return m_floatValues[ index ];
         }
 
         uint8 GetByteValue(uint16 index, uint8 offset) const
         {
-            ASSERT(index < m_valuesCount || PrintIndexError(index , false) );
-            ASSERT(offset < 4 );
+            ASSERT(index < m_valuesCount || PrintIndexError(index , false));
+            ASSERT(offset < 4);
             return *(((uint8*)&m_uint32Values[ index ])+offset);
         }
 
         uint8 GetUInt16Value(uint16 index, uint8 offset) const
         {
-            ASSERT(index < m_valuesCount || PrintIndexError(index , false) );
-            ASSERT(offset < 2 );
+            ASSERT(index < m_valuesCount || PrintIndexError(index , false));
+            ASSERT(offset < 2);
             return *(((uint16*)&m_uint32Values[ index ])+offset);
         }
 
-        void SetInt32Value( uint16 index,        int32  value );
-        void SetUInt32Value(uint16 index,       uint32  value );
-        void SetUInt64Value(uint16 index, const uint64 &value );
-        void SetFloatValue( uint16 index,       float   value );
-        void SetByteValue(  uint16 index, uint8 offset, uint8 value );
-        void SetUInt16Value(uint16 index, uint8 offset, uint16 value );
+        void SetInt32Value( uint16 index,        int32  value);
+        void SetUInt32Value(uint16 index,       uint32  value);
+        void SetUInt64Value(uint16 index, const uint64 &value);
+        void SetFloatValue( uint16 index,       float   value);
+        void SetByteValue(  uint16 index, uint8 offset, uint8 value);
+        void SetUInt16Value(uint16 index, uint8 offset, uint16 value);
         void SetInt16Value( uint16 index, uint8 offset, int16 value ) { SetUInt16Value(index,offset,(uint16)value); }
         void SetStatFloatValue(uint16 index, float value);
         void SetStatInt32Value(uint16 index, int32 value);
@@ -220,11 +220,11 @@ class OREGON_DLL_SPEC Object
         void ApplyPercentModFloatValue(uint16 index, float val, bool apply)
         {
             val = val != -100.0f ? val : -99.9f ;
-            SetFloatValue(index, GetFloatValue(index) * (apply?(100.0f+val)/100.0f : 100.0f / (100.0f+val)) );
+            SetFloatValue(index, GetFloatValue(index) * (apply?(100.0f+val)/100.0f : 100.0f / (100.0f+val)));
         }
 
-        void SetFlag(uint16 index, uint32 newFlag );
-        void RemoveFlag(uint16 index, uint32 oldFlag );
+        void SetFlag(uint16 index, uint32 newFlag);
+        void RemoveFlag(uint16 index, uint32 oldFlag);
 
         void ToggleFlag(uint16 index, uint32 flag)
         {
@@ -236,12 +236,12 @@ class OREGON_DLL_SPEC Object
 
         bool HasFlag(uint16 index, uint32 flag ) const
         {
-            ASSERT(index < m_valuesCount || PrintIndexError(index , false ) );
+            ASSERT(index < m_valuesCount || PrintIndexError(index , false ));
             return (m_uint32Values[ index ] & flag) != 0;
         }
 
-        void SetByteFlag(uint16 index, uint8 offset, uint8 newFlag );
-        void RemoveByteFlag(uint16 index, uint8 offset, uint8 newFlag );
+        void SetByteFlag(uint16 index, uint8 offset, uint8 newFlag);
+        void RemoveByteFlag(uint16 index, uint8 offset, uint8 newFlag);
 
         void ToggleFlag(uint16 index, uint8 offset, uint8 flag )
         {
@@ -253,8 +253,8 @@ class OREGON_DLL_SPEC Object
 
         bool HasByteFlag(uint16 index, uint8 offset, uint8 flag ) const
         {
-            ASSERT(index < m_valuesCount || PrintIndexError(index , false ) );
-            ASSERT(offset < 4 );
+            ASSERT(index < m_valuesCount || PrintIndexError(index , false ));
+            ASSERT(offset < 4);
             return (((uint8*)&m_uint32Values[index])[offset] & flag) != 0;
         }
 
@@ -287,7 +287,7 @@ class OREGON_DLL_SPEC Object
 
         bool HasFlag64(uint16 index, uint64 flag ) const
         {
-            ASSERT(index < m_valuesCount || PrintIndexError(index , false ) );
+            ASSERT(index < m_valuesCount || PrintIndexError(index , false ));
             return (GetUInt64Value(index ) & flag) != 0;
         }
 
@@ -358,7 +358,7 @@ class OREGON_DLL_SPEC WorldObject : public Object, public WorldLocation
 
         virtual void Update (uint32 /*time_diff*/ ) { }
 
-        void _Create(uint32 guidlow, HighGuid guidhigh, uint32 mapid );
+        void _Create(uint32 guidlow, HighGuid guidhigh, uint32 mapid);
 
         void Relocate(float x, float y, float z, float orientation)
         {

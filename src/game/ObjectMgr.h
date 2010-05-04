@@ -331,8 +331,8 @@ class ObjectMgr
         void AddGameobjectInfo(GameObjectInfo *goinfo);
 
         Group * GetGroupByLeader(const uint64 &guid) const;
-        void AddGroup(Group* group) { mGroupSet.insert(group ); }
-        void RemoveGroup(Group* group) { mGroupSet.erase(group ); }
+        void AddGroup(Group* group) { mGroupSet.insert(group); }
+        void RemoveGroup(Group* group) { mGroupSet.erase(group); }
         GroupSet::iterator GetGroupSetBegin() { return mGroupSet.begin(); }
         GroupSet::iterator GetGroupSetEnd()   { return mGroupSet.end(); }
 
@@ -352,11 +352,11 @@ class ObjectMgr
         ArenaTeamMap::iterator GetArenaTeamMapBegin() { return mArenaTeamMap.begin(); }
         ArenaTeamMap::iterator GetArenaTeamMapEnd()   { return mArenaTeamMap.end(); }
 
-        static CreatureInfo const *GetCreatureTemplate(uint32 id );
-        CreatureModelInfo const *GetCreatureModelInfo(uint32 modelid );
+        static CreatureInfo const *GetCreatureTemplate(uint32 id);
+        CreatureModelInfo const *GetCreatureModelInfo(uint32 modelid);
         CreatureModelInfo const* GetCreatureModelRandomGender(uint32 display_id);
         uint32 ChooseDisplayId(uint32 team, const CreatureInfo *cinfo, const CreatureData *data = NULL);
-        EquipmentInfo const *GetEquipmentInfo(uint32 entry );
+        EquipmentInfo const *GetEquipmentInfo(uint32 entry);
         static CreatureDataAddon const *GetCreatureAddon(uint32 lowguid )
         {
             return sCreatureDataAddonStorage.LookupEntry<CreatureDataAddon>(lowguid);
@@ -399,11 +399,11 @@ class ObjectMgr
         uint32 GetPlayerAccountIdByGUID(const uint64 &guid) const;
         uint32 GetPlayerAccountIdByPlayerName(const std::string& name) const;
 
-        uint32 GetNearestTaxiNode(float x, float y, float z, uint32 mapid );
+        uint32 GetNearestTaxiNode(float x, float y, float z, uint32 mapid);
         void GetTaxiPath(uint32 source, uint32 destination, uint32 &path, uint32 &cost);
-        uint16 GetTaxiMount(uint32 id, uint32 team );
-        void GetTaxiPathNodes(uint32 path, Path &pathnodes, std::vector<uint32>& mapIds );
-        void GetTransportPathNodes(uint32 path, TransportPath &pathnodes );
+        uint16 GetTaxiMount(uint32 id, uint32 team);
+        void GetTaxiPathNodes(uint32 path, Path &pathnodes, std::vector<uint32>& mapIds);
+        void GetTransportPathNodes(uint32 path, TransportPath &pathnodes);
 
         Quest const* GetQuestTemplate(uint32 quest_id) const
         {
@@ -448,7 +448,7 @@ class ObjectMgr
 
         AreaTrigger const* GetAreaTrigger(uint32 trigger) const
         {
-            AreaTriggerMap::const_iterator itr = mAreaTriggers.find(trigger );
+            AreaTriggerMap::const_iterator itr = mAreaTriggers.find(trigger);
             if (itr != mAreaTriggers.end() )
                 return &itr->second;
             return NULL;
@@ -456,7 +456,7 @@ class ObjectMgr
 
         AccessRequirement const* GetAccessRequirement(uint32 requirement) const
         {
-            AccessRequirementMap::const_iterator itr = mAccessRequirements.find(requirement );
+            AccessRequirementMap::const_iterator itr = mAccessRequirements.find(requirement);
             if (itr != mAccessRequirements.end() )
                 return &itr->second;
             return NULL;
@@ -596,7 +596,7 @@ class ObjectMgr
         uint32 CreateItemText(std::string text);
         std::string GetItemText(uint32 id )
         {
-            ItemTextMap::const_iterator itr = mItemTexts.find(id );
+            ItemTextMap::const_iterator itr = mItemTexts.find(id);
             if (itr != mItemTexts.end() )
                 return itr->second;
             else
@@ -720,9 +720,9 @@ class ObjectMgr
         }
 
         // name with valid structure and symbols
-        static bool IsValidName(const std::string& name, bool create = false );
-        static bool IsValidCharterName(const std::string& name );
-        static bool IsValidPetName(const std::string& name );
+        static bool IsValidName(const std::string& name, bool create = false);
+        static bool IsValidCharterName(const std::string& name);
+        static bool IsValidPetName(const std::string& name);
 
         static bool CheckDeclinedNames(std::wstring mainpart, DeclinedName const& names);
 

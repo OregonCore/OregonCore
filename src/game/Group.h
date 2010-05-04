@@ -169,7 +169,7 @@ class OREGON_DLL_SPEC Group
         bool   ChangeLeaderToFirstOnlineMember();
         void   SetLootMethod(LootMethod method) { m_lootMethod = method; }
         void   SetLooterGuid(const uint64 &guid) { m_looterGuid = guid; }
-        void   UpdateLooterGuid(WorldObject* object, bool ifneed = false );
+        void   UpdateLooterGuid(WorldObject* object, bool ifneed = false);
         void   SetLootThreshold(ItemQualities threshold) { m_lootThreshold = threshold; }
         void   Disband(bool hideDestroy=false);
 

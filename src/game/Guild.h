@@ -364,8 +364,8 @@ class Guild
 
         Item*  GetItem(uint8 TabId, uint8 SlotId);
         uint8  CanStoreItem(uint8 tab, uint8 slot, GuildItemPosCountVec& dest, uint32 count, Item *pItem, bool swap = false) const;
-        Item*  StoreItem(uint8 tab, GuildItemPosCountVec const& pos, Item *pItem );
-        void   RemoveItem(uint8 tab, uint8 slot );
+        Item*  StoreItem(uint8 tab, GuildItemPosCountVec const& pos, Item *pItem);
+        void   RemoveItem(uint8 tab, uint8 slot);
 
         // Tabs
         void   DisplayGuildBankTabsInfo(WorldSession *session);
@@ -404,7 +404,7 @@ class Guild
         void   DisplayGuildBankLogs(WorldSession *session, uint8 TabId);
         void   LogBankEvent(uint8 LogEntry, uint8 TabId, uint32 PlayerGuidLow, uint32 ItemOrMoney, uint8 ItemStackCount=0, uint8 DestTabId=0);
         void   RenumBankLogs();
-        bool   AddGBankItemToDB(uint32 GuildId, uint32 BankTab , uint32 BankTabSlot , uint32 GUIDLow, uint32 Entry );
+        bool   AddGBankItemToDB(uint32 GuildId, uint32 BankTab , uint32 BankTabSlot , uint32 GUIDLow, uint32 Entry);
 
     protected:
         void AddRank(const std::string& name,uint32 rights,uint32 money);
@@ -448,10 +448,10 @@ class Guild
         uint32 GuildEventlogMaxGuid;
     private:
         // internal common parts for CanStore/StoreItem functions
-        void AppendDisplayGuildBankSlot(WorldPacket& data, GuildBankTab const *tab, int32 slot );
+        void AppendDisplayGuildBankSlot(WorldPacket& data, GuildBankTab const *tab, int32 slot);
         uint8 _CanStoreItem_InSpecificSlot(uint8 tab, uint8 slot, GuildItemPosCountVec& dest, uint32& count, bool swap, Item *pSrcItem ) const;
         uint8 _CanStoreItem_InTab(uint8 tab, GuildItemPosCountVec& dest, uint32& count, bool merge, Item *pSrcItem, uint8 skip_slot ) const;
-        Item* _StoreItem(uint8 tab, uint8 slot, Item *pItem, uint32 count, bool clone );
+        Item* _StoreItem(uint8 tab, uint8 slot, Item *pItem, uint32 count, bool clone);
 };
 #endif
 

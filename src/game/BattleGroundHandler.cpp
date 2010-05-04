@@ -67,7 +67,7 @@ void WorldSession::SendBattlegGroundList(uint64 guid, uint32 bgTypeId )
 {
     WorldPacket data;
     sBattleGroundMgr.BuildBattleGroundListPacket(&data, guid, _player, bgTypeId);
-    SendPacket(&data );
+    SendPacket(&data);
 }
 
 void WorldSession::HandleBattleGroundJoinOpcode(WorldPacket & recv_data )
@@ -277,7 +277,7 @@ void WorldSession::HandleBattleGroundListOpcode(WorldPacket &recv_data )
 
     WorldPacket data;
     sBattleGroundMgr.BuildBattleGroundListPacket(&data, _player->GetGUID(), _player, bgTypeId);
-    SendPacket(&data );
+    SendPacket(&data);
 }
 
 void WorldSession::HandleBattleGroundPlayerPortOpcode(WorldPacket &recv_data )
@@ -512,7 +512,7 @@ void WorldSession::HandleBattleGroundLeaveOpcode(WorldPacket & /*recv_data*/ )
 void WorldSession::HandleBattlefieldStatusOpcode(WorldPacket & /*recv_data*/ )
 {
     // empty opcode
-    sLog.outDebug("WORLD: Battleground status" );
+    sLog.outDebug("WORLD: Battleground status");
 
     WorldPacket data;
 

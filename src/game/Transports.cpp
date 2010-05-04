@@ -39,15 +39,15 @@ void MapManager::LoadTransports()
 
     if (!result )
     {
-        barGoLink bar(1 );
+        barGoLink bar(1);
         bar.step();
 
         sLog.outString("");
-        sLog.outString(">> Loaded %u transports", count );
+        sLog.outString(">> Loaded %u transports", count);
         return;
     }
 
-    barGoLink bar(result->GetRowCount() );
+    barGoLink bar(result->GetRowCount());
 
     do
     {
@@ -114,7 +114,7 @@ void MapManager::LoadTransports()
     } while (result->NextRow());
 
     sLog.outString("");
-    sLog.outString(">> Loaded %u transports", count );
+    sLog.outString(">> Loaded %u transports", count);
 
     // check transport data DB integrity
     result = WorldDatabase.Query("SELECT gameobject.guid,gameobject.id,transports.name FROM gameobject,transports WHERE gameobject.id = transports.entry");
@@ -538,7 +538,7 @@ void Transport::Update(uint32 /*p_time*/)
         {
             PlayerSet::iterator it2 = itr;
             ++itr;
-            //(*it2)->SetPosition(m_curr->second.x + (*it2)->GetTransOffsetX(), m_curr->second.y + (*it2)->GetTransOffsetY(), m_curr->second.z + (*it2)->GetTransOffsetZ(), (*it2)->GetTransOffsetO() );
+            //(*it2)->SetPosition(m_curr->second.x + (*it2)->GetTransOffsetX(), m_curr->second.y + (*it2)->GetTransOffsetY(), m_curr->second.z + (*it2)->GetTransOffsetZ(), (*it2)->GetTransOffsetO());
         }
         */
 

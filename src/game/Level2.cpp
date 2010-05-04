@@ -122,7 +122,7 @@ bool ChatHandler::HandleMuteCommand(const char* args)
     if (chr)
         chr->GetSession()->m_muteTime = mutetime;
 
-    loginDatabase.PExecute("UPDATE account SET mutetime = " UI64FMTD " WHERE id = '%u'",uint64(mutetime), account_id );
+    loginDatabase.PExecute("UPDATE account SET mutetime = " UI64FMTD " WHERE id = '%u'",uint64(mutetime), account_id);
 
     if (chr)
         ChatHandler(chr).PSendSysMessage(LANG_YOUR_CHAT_DISABLED, notspeaktime, mutereasonstr.c_str());
@@ -195,7 +195,7 @@ bool ChatHandler::HandleUnmuteCommand(const char* args)
         chr->GetSession()->m_muteTime = 0;
     }
 
-    loginDatabase.PExecute("UPDATE account SET mutetime = '0' WHERE id = '%u'", account_id );
+    loginDatabase.PExecute("UPDATE account SET mutetime = '0' WHERE id = '%u'", account_id);
 
     if (chr)
         ChatHandler(chr).PSendSysMessage(LANG_YOUR_CHAT_ENABLED);
@@ -548,7 +548,7 @@ bool ChatHandler::HandleGoCreatureCommand(const char* args)
     }
     //sLog.outError("DEBUG: %s", whereClause.c_str());
 
-    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT position_x,position_y,position_z,orientation,map FROM creature %s", whereClause.str().c_str() );
+    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT position_x,position_y,position_z,orientation,map FROM creature %s", whereClause.str().c_str());
     if (!result)
     {
         SendSysMessage(LANG_COMMAND_GOCREATNOTFOUND);
@@ -733,7 +733,7 @@ bool ChatHandler::HandleModifyRepCommand(const char * args)
         std::wstring wrankStr;
         if (!Utf8toWStr(rankStr,wrankStr))
             return false;
-        wstrToLower(wrankStr );
+        wstrToLower(wrankStr);
 
         int r = 0;
         amount = -42000;
@@ -919,7 +919,7 @@ bool ChatHandler::HandleItemMoveCommand(const char* args)
     uint16 src = ((INVENTORY_SLOT_BAG_0 << 8) | srcslot);
     uint16 dst = ((INVENTORY_SLOT_BAG_0 << 8) | dstslot);
 
-    m_session->GetPlayer()->SwapItem(src, dst );
+    m_session->GetPlayer()->SwapItem(src, dst);
 
     return true;
 }
@@ -1940,7 +1940,7 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
     uint32 gold = money /GOLD;
     uint32 silv = (money % GOLD) / SILVER;
     uint32 copp = (money % GOLD) % SILVER;
-    PSendSysMessage(LANG_PINFO_LEVEL,  timeStr.c_str(), level, gold,silv,copp );
+    PSendSysMessage(LANG_PINFO_LEVEL,  timeStr.c_str(), level, gold,silv,copp);
 
     if (py && strncmp(py, "rep", 3) == 0 )
     {
@@ -2535,7 +2535,7 @@ bool ChatHandler::HandleWpModifyCommand(const char* args)
             pathid = fields[0].GetUInt32();
             point  = fields[1].GetUInt32();
         }
-        while (result->NextRow() );
+        while (result->NextRow());
 
         // We have the waypoint number and the GUID of the "master npc"
         // Text is enclosed in "<>", all other arguments not
@@ -2618,7 +2618,7 @@ bool ChatHandler::HandleWpModifyCommand(const char* args)
             }
 
             WorldDatabase.PExecuteLog("UPDATE waypoint_data SET position_x = '%f',position_y = '%f',position_z = '%f' where id = '%u' AND point='%u'",
-                chr->GetPositionX(), chr->GetPositionY(), chr->GetPositionZ(), pathid, point );
+                chr->GetPositionX(), chr->GetPositionY(), chr->GetPositionZ(), pathid, point);
 
             PSendSysMessage(LANG_WAYPOINT_CHANGED);
         }
@@ -2754,7 +2754,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
             PSendSysMessage("|cff00ff00Show info: Move flag: |r|cff00ffff%u|r", flag);
             PSendSysMessage("|cff00ff00Show info: Waypoint event: |r|cff00ffff%u|r", ev_id);
             PSendSysMessage("|cff00ff00Show info: Event chance: |r|cff00ffff%u|r", ev_chance);
-            }while (result->NextRow() );
+            }while (result->NextRow());
 
         return true;
     }
@@ -2797,7 +2797,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
                     pCreature->AddObjectToRemoveList();
                 }
 
-            }while (result2->NextRow() );
+            }while (result2->NextRow());
 
             if (hasError )
             {
@@ -2852,7 +2852,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
                 wpCreature->SetFloatValue(OBJECT_FIELD_SCALE_X, 0.5);
             }
         }
-        while (result->NextRow() );
+        while (result->NextRow());
 
         SendSysMessage("|cff00ff00Showing the current creature's path.|r");
         return true;
@@ -3163,7 +3163,7 @@ bool ChatHandler::HandleStandStateCommand(const char* args)
         return false;
 
     uint32 anim_id = atoi((char*)args);
-    m_session->GetPlayer()->SetUInt32Value(UNIT_NPC_EMOTESTATE , anim_id );
+    m_session->GetPlayer()->SetUInt32Value(UNIT_NPC_EMOTESTATE , anim_id);
 
     return true;
 }
@@ -3246,9 +3246,9 @@ bool ChatHandler::HandleLookupEventCommand(const char* args)
             char const* active = activeEvents.find(id) != activeEvents.end() ? GetOregonString(LANG_ACTIVE) : "";
 
             if (m_session)
-                PSendSysMessage(LANG_EVENT_ENTRY_LIST_CHAT,id,id,eventData.description.c_str(),active );
+                PSendSysMessage(LANG_EVENT_ENTRY_LIST_CHAT,id,id,eventData.description.c_str(),active);
             else
-                PSendSysMessage(LANG_EVENT_ENTRY_LIST_CONSOLE,id,eventData.description.c_str(),active );
+                PSendSysMessage(LANG_EVENT_ENTRY_LIST_CONSOLE,id,eventData.description.c_str(),active);
 
             ++counter;
         }
@@ -3275,9 +3275,9 @@ bool ChatHandler::HandleEventActiveListCommand(const char* args)
         GameEventData const& eventData = events[event_id];
 
         if (m_session)
-            PSendSysMessage(LANG_EVENT_ENTRY_LIST_CHAT,event_id,event_id,eventData.description.c_str(),active );
+            PSendSysMessage(LANG_EVENT_ENTRY_LIST_CHAT,event_id,event_id,eventData.description.c_str(),active);
         else
-            PSendSysMessage(LANG_EVENT_ENTRY_LIST_CONSOLE,event_id,eventData.description.c_str(),active );
+            PSendSysMessage(LANG_EVENT_ENTRY_LIST_CONSOLE,event_id,eventData.description.c_str(),active);
 
         ++counter;
     }
@@ -3522,7 +3522,7 @@ bool ChatHandler::HandleLearnAllRecipesCommand(const char* args)
     uint32 counter = 0;                                     // Counter for figure out that we found smth.
 
     // converting string that we try to find to lower case
-    wstrToLower(wnamepart );
+    wstrToLower(wnamepart);
 
     uint32 classmask = m_session->GetPlayer()->getClassMask();
 
@@ -3662,7 +3662,7 @@ bool ChatHandler::LookupPlayerSearchCommand(QueryResult_AutoPtr result, int32 li
                 PSendSysMessage(LANG_LOOKUP_PLAYER_CHARACTER,name.c_str(),guid);
                 ++i;
 
-            } while (chars->NextRow() && (limit == -1 || i < limit ) );
+            } while (chars->NextRow() && (limit == -1 || i < limit ));
         }
     } while (result->NextRow());
 

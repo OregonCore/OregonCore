@@ -86,12 +86,12 @@ bool Corpse::Create(uint32 guidlow, Player *owner, uint32 mapid, float x, float 
         return false;
     }
 
-    SetFloatValue(OBJECT_FIELD_SCALE_X, 1 );
-    SetFloatValue(CORPSE_FIELD_POS_X, x );
-    SetFloatValue(CORPSE_FIELD_POS_Y, y );
-    SetFloatValue(CORPSE_FIELD_POS_Z, z );
-    SetFloatValue(CORPSE_FIELD_FACING, ang );
-    SetUInt64Value(CORPSE_FIELD_OWNER, owner->GetGUID() );
+    SetFloatValue(OBJECT_FIELD_SCALE_X, 1);
+    SetFloatValue(CORPSE_FIELD_POS_X, x);
+    SetFloatValue(CORPSE_FIELD_POS_Y, y);
+    SetFloatValue(CORPSE_FIELD_POS_Z, z);
+    SetFloatValue(CORPSE_FIELD_FACING, ang);
+    SetUInt64Value(CORPSE_FIELD_OWNER, owner->GetGUID());
 
     m_grid = Oregon::ComputeGridPair(GetPositionX(), GetPositionY());
 
@@ -111,7 +111,7 @@ void Corpse::SaveToDB()
     for (uint16 i = 0; i < m_valuesCount; i++ )
         ss << GetUInt32Value(i) << " ";
     ss << "'," << uint64(m_time) <<", " << uint32(GetType()) << ", " << int(GetInstanceId()) << ")";
-    CharacterDatabase.Execute(ss.str().c_str() );
+    CharacterDatabase.Execute(ss.str().c_str());
     CharacterDatabase.CommitTransaction();
 }
 

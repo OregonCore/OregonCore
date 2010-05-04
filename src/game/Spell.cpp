@@ -898,14 +898,14 @@ void Spell::doTriggers(SpellMissInfo missInfo, uint32 damage, SpellSchoolMask da
                 if (m_caster->GetTypeId() == TYPEID_PLAYER && m_caster->getClass() == CLASS_WARRIOR)
                 {
                     ((Player*) m_caster)->AddComboPoints(unitTarget, 1);
-                    m_caster->StartReactiveTimer(REACTIVE_OVERPOWER );
+                    m_caster->StartReactiveTimer(REACTIVE_OVERPOWER);
                 }
 
                 // Riposte
                 if (unitTarget->getClass() != CLASS_ROGUE)
                 {
                     unitTarget->ModifyAuraState(AURA_STATE_DEFENSE, true);
-                    unitTarget->StartReactiveTimer(REACTIVE_DEFENSE );
+                    unitTarget->StartReactiveTimer(REACTIVE_DEFENSE);
                 }
 
                 m_caster->CastMeleeProcDamageAndSpell(unitTarget, 0, damageSchoolMask, m_attackType, MELEE_HIT_DODGE, m_spellInfo, m_IsTriggeredSpell);
@@ -918,18 +918,18 @@ void Spell::doTriggers(SpellMissInfo missInfo, uint32 damage, SpellSchoolMask da
                 if (unitTarget->getClass() == CLASS_HUNTER)
                 {
                     unitTarget->ModifyAuraState(AURA_STATE_HUNTER_PARRY,true);
-                    unitTarget->StartReactiveTimer(REACTIVE_HUNTER_PARRY );
+                    unitTarget->StartReactiveTimer(REACTIVE_HUNTER_PARRY);
                 }
                 else
                 {
                     unitTarget->ModifyAuraState(AURA_STATE_DEFENSE, true);
-                    unitTarget->StartReactiveTimer(REACTIVE_DEFENSE );
+                    unitTarget->StartReactiveTimer(REACTIVE_DEFENSE);
                 }
                 m_caster->CastMeleeProcDamageAndSpell(unitTarget, 0, damageSchoolMask, m_attackType, MELEE_HIT_PARRY, m_spellInfo, m_IsTriggeredSpell);
                 break;
             case SPELL_MISS_BLOCK:
                 unitTarget->ModifyAuraState(AURA_STATE_DEFENSE, true);
-                unitTarget->StartReactiveTimer(REACTIVE_DEFENSE );
+                unitTarget->StartReactiveTimer(REACTIVE_DEFENSE);
 
                 m_caster->CastMeleeProcDamageAndSpell(unitTarget, 0, damageSchoolMask, m_attackType, MELEE_HIT_BLOCK, m_spellInfo, m_IsTriggeredSpell);
                 break;
@@ -1028,7 +1028,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
         if (missInfo != SPELL_MISS_REFLECT)
             caster->ProcDamageAndSpell(unitTarget, procAttacker, procVictim, procEx, addhealth, m_attackType, m_spellInfo, m_canTrigger);
 
-        int32 gain = unitTarget->ModifyHealth(int32(addhealth) );
+        int32 gain = unitTarget->ModifyHealth(int32(addhealth));
 
         unitTarget->getHostilRefManager().threatAssist(caster, float(gain) * 0.5f, m_spellInfo);
         if (caster->GetTypeId()==TYPEID_PLAYER)
@@ -1477,7 +1477,7 @@ void Spell::SearchAreaTarget(std::list<Unit*> &TagUnitMap, float radius, const u
             Unit *target = m_targets.getUnitTarget();
             if (!target)
             {
-                sLog.outError("SPELL: cannot find unit target for spell ID %u\n", m_spellInfo->Id );
+                sLog.outError("SPELL: cannot find unit target for spell ID %u\n", m_spellInfo->Id);
                 return;
             }
             x = target->GetPositionX();
@@ -1876,7 +1876,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                             m_targets.setDestination(st->target_X, st->target_Y, st->target_Z);
                     }
                     else
-                        sLog.outError("SPELL: unknown target coordinates for spell ID %u\n", m_spellInfo->Id );
+                        sLog.outError("SPELL: unknown target coordinates for spell ID %u\n", m_spellInfo->Id);
                     break;
                 case TARGET_DST_HOME:
                     if (m_caster->GetTypeId() == TYPEID_PLAYER)
@@ -1901,7 +1901,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
         {
             if (!m_originalCaster || !m_originalCaster->m_currentSpells[CURRENT_CHANNELED_SPELL])
             {
-                sLog.outError("SPELL: no current channeled spell for spell ID %u", m_spellInfo->Id );
+                sLog.outError("SPELL: no current channeled spell for spell ID %u", m_spellInfo->Id);
                 break;
             }
 
@@ -1911,13 +1911,13 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                     if (Unit* target = m_originalCaster->m_currentSpells[CURRENT_CHANNELED_SPELL]->m_targets.getUnitTarget())
                         AddUnitTarget(target, i);
                     else
-                        sLog.outError("SPELL: cannot find channel spell target for spell ID %u", m_spellInfo->Id );
+                        sLog.outError("SPELL: cannot find channel spell target for spell ID %u", m_spellInfo->Id);
                     break;
                 case TARGET_DEST_CHANNEL:
                     if (m_originalCaster->m_currentSpells[CURRENT_CHANNELED_SPELL]->m_targets.HasDst())
                         m_targets = m_originalCaster->m_currentSpells[CURRENT_CHANNELED_SPELL]->m_targets;
                     else
-                        sLog.outError("SPELL: cannot find channel spell destination for spell ID %u", m_spellInfo->Id );
+                        sLog.outError("SPELL: cannot find channel spell destination for spell ID %u", m_spellInfo->Id);
                     break;
             }
             break;
@@ -2196,7 +2196,7 @@ void Spell::prepare(SpellCastTargets * targets, Aura* triggeredByAura)
         if (isSpellBreakStealth(m_spellInfo) )
             m_caster->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_CAST);
 
-        m_caster->SetCurrentCastedSpell(this );
+        m_caster->SetCurrentCastedSpell(this);
         m_selfContainer = &(m_caster->m_currentSpells[GetCurrentContainer()]);
         SendSpellStart();
 
@@ -2962,7 +2962,7 @@ void Spell::WriteAmmoToPacket(WorldPacket * data )
 
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
     {
-        Item *pItem = ((Player*)m_caster)->GetWeaponForAttack(RANGED_ATTACK );
+        Item *pItem = ((Player*)m_caster)->GetWeaponForAttack(RANGED_ATTACK);
         if (pItem)
         {
             ammoInventoryType = pItem->GetProto()->InventoryType;
@@ -2973,7 +2973,7 @@ void Spell::WriteAmmoToPacket(WorldPacket * data )
                 uint32 ammoID = ((Player*)m_caster)->GetUInt32Value(PLAYER_AMMO_ID);
                 if (ammoID)
                 {
-                    ItemPrototype const *pProto = objmgr.GetItemPrototype(ammoID );
+                    ItemPrototype const *pProto = objmgr.GetItemPrototype(ammoID);
                     if (pProto)
                     {
                         ammoDisplayID = pProto->DisplayInfoID;
@@ -3154,7 +3154,7 @@ void Spell::SendChannelUpdate(uint32 time)
 
    
 
-    WorldPacket data(MSG_CHANNEL_UPDATE, 8+4 );
+    WorldPacket data(MSG_CHANNEL_UPDATE, 8+4);
     data.append(m_caster->GetPackGUID());
     data << uint32(time);
 
@@ -3189,7 +3189,7 @@ void Spell::SendChannelStart(uint32 duration)
         }
     }
 
-    WorldPacket data(MSG_CHANNEL_START, (8+4+4) );       
+    WorldPacket data(MSG_CHANNEL_START, (8+4+4));       
     data.append(m_caster->GetPackGUID());       
     data << uint32(m_spellInfo->Id);       
     data << uint32(duration);       
@@ -3311,7 +3311,7 @@ void Spell::TakePower()
     // health as power used
     if (m_spellInfo->powerType == POWER_HEALTH)
     {
-        m_caster->ModifyHealth(-(int32)m_powerCost );
+        m_caster->ModifyHealth(-(int32)m_powerCost);
         return;
     }
 
@@ -4798,10 +4798,10 @@ uint8 Spell::CheckItems()
                 if (!m_IsTriggeredSpell && m_spellInfo->EffectItemType[i])
                 {
                     ItemPosCountVec dest;
-                    uint8 msg = p_caster->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, m_spellInfo->EffectItemType[i], 1 );
+                    uint8 msg = p_caster->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, m_spellInfo->EffectItemType[i], 1);
                     if (msg != EQUIP_ERR_OK )
                     {
-                        p_caster->SendEquipError(msg, NULL, NULL );
+                        p_caster->SendEquipError(msg, NULL, NULL);
                         return SPELL_FAILED_DONT_REPORT;
                     }
                 }
@@ -4930,7 +4930,7 @@ uint8 Spell::CheckItems()
                             return SPELL_FAILED_NO_AMMO;
                         }
 
-                        ItemPrototype const *ammoProto = objmgr.GetItemPrototype(ammo );
+                        ItemPrototype const *ammoProto = objmgr.GetItemPrototype(ammo);
                         if (!ammoProto)
                             return SPELL_FAILED_NO_AMMO;
 

@@ -156,7 +156,7 @@ void TemporarySummon::Update(uint32 diff )
             break;
     }
 
-    Creature::Update(diff );
+    Creature::Update(diff);
 }
 
 void TemporarySummon::Summon(TempSummonType type, uint32 lifetime)

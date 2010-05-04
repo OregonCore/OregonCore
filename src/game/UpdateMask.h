@@ -38,12 +38,12 @@ class UpdateMask
 
         void SetBit (uint32 index)
         {
-            ((uint8 *)mUpdateMask )[ index >> 3 ] |= 1 << (index & 0x7 );
+            ((uint8 *)mUpdateMask )[ index >> 3 ] |= 1 << (index & 0x7);
         }
 
         void UnsetBit (uint32 index)
         {
-            ((uint8 *)mUpdateMask )[ index >> 3 ] &= (0xff ^ (1 <<  (index & 0x7 ) ) );
+            ((uint8 *)mUpdateMask )[ index >> 3 ] &= (0xff ^ (1 <<  (index & 0x7 ) ));
         }
 
         bool GetBit (uint32 index)

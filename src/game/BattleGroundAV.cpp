@@ -661,9 +661,9 @@ void BattleGroundAV::EventPlayerDestroyedPoint(BG_AV_Nodes node)
     //send a nice message to all :)
     char buf[256];
     if (IsTower(node))
-        sprintf(buf, GetOregonString(LANG_BG_AV_TOWER_TAKEN) , GetNodeName(node),(owner == ALLIANCE ) ? GetOregonString(LANG_BG_AV_ALLY) : GetOregonString(LANG_BG_AV_HORDE)  );
+        sprintf(buf, GetOregonString(LANG_BG_AV_TOWER_TAKEN) , GetNodeName(node),(owner == ALLIANCE ) ? GetOregonString(LANG_BG_AV_ALLY) : GetOregonString(LANG_BG_AV_HORDE) );
     else
-        sprintf(buf, GetOregonString(LANG_BG_AV_GRAVE_TAKEN) , GetNodeName(node),(owner == ALLIANCE ) ? GetOregonString(LANG_BG_AV_ALLY) :GetOregonString(LANG_BG_AV_HORDE)  );
+        sprintf(buf, GetOregonString(LANG_BG_AV_GRAVE_TAKEN) , GetNodeName(node),(owner == ALLIANCE ) ? GetOregonString(LANG_BG_AV_ALLY) :GetOregonString(LANG_BG_AV_HORDE) );
 
     Creature* creature = GetBGCreature(AV_CPLACE_HERALD);
     if (creature)
@@ -729,7 +729,7 @@ void BattleGroundAV::ChangeMineOwner(uint8 mine, uint32 team, bool initial)
         for (uint16 i=AV_CPLACE_MINE_S_S_MIN; i <= AV_CPLACE_MINE_S_S_MAX; i++)
             AddAVCreature(cinfo,i);
     }
-    for (uint16 i=((mine==AV_NORTH_MINE)?AV_CPLACE_MINE_N_1_MIN:AV_CPLACE_MINE_S_1_MIN ); i <= ((mine==AV_NORTH_MINE)?AV_CPLACE_MINE_N_1_MAX:AV_CPLACE_MINE_S_1_MAX); i++)
+    for (uint16 i=((mine==AV_NORTH_MINE)?AV_CPLACE_MINE_N_1_MIN:AV_CPLACE_MINE_S_1_MIN); i <= ((mine==AV_NORTH_MINE)?AV_CPLACE_MINE_N_1_MAX:AV_CPLACE_MINE_S_1_MAX); i++)
         AddAVCreature(miner,i);
     //the next chooses randomly between 2 cretures
     for (uint16 i=((mine==AV_NORTH_MINE)?AV_CPLACE_MINE_N_2_MIN:AV_CPLACE_MINE_S_2_MIN); i <= ((mine==AV_NORTH_MINE)?AV_CPLACE_MINE_N_2_MAX:AV_CPLACE_MINE_S_2_MAX); i++)
@@ -774,7 +774,7 @@ void BattleGroundAV::PopulateNode(BG_AV_Nodes node)
     uint32 owner = m_Nodes[node].Owner;
     assert(owner);
 
-    uint32 c_place = AV_CPLACE_DEFENSE_STORM_AID + (4 * node );
+    uint32 c_place = AV_CPLACE_DEFENSE_STORM_AID + (4 * node);
     uint32 creatureid;
     if (IsTower(node))
         creatureid=(owner==ALLIANCE)?AV_NPC_A_TOWERDEFENSE:AV_NPC_H_TOWERDEFENSE;
@@ -803,7 +803,7 @@ void BattleGroundAV::PopulateNode(BG_AV_Nodes node)
 }
 void BattleGroundAV::DePopulateNode(BG_AV_Nodes node)
 {
-    uint32 c_place = AV_CPLACE_DEFENSE_STORM_AID + (4 * node );
+    uint32 c_place = AV_CPLACE_DEFENSE_STORM_AID + (4 * node);
     for (uint8 i=0; i<4; i++)
         if (m_BgCreatures[c_place+i] )
             DelCreature(c_place+i);
@@ -1191,7 +1191,7 @@ WorldSafeLocsEntry const* BattleGroundAV::GetClosestGraveYard(float x, float y, 
         {
             if (m_Nodes[i].Owner != team || m_Nodes[i].State != POINT_CONTROLED)
                 continue;
-            WorldSafeLocsEntry const*entry = sWorldSafeLocsStore.LookupEntry(BG_AV_GraveyardIds[i] );
+            WorldSafeLocsEntry const*entry = sWorldSafeLocsStore.LookupEntry(BG_AV_GraveyardIds[i]);
             if (!entry )
                 continue;
             float dist = (entry->x - x)*(entry->x - x)+(entry->y - y)*(entry->y - y);
@@ -1204,7 +1204,7 @@ WorldSafeLocsEntry const* BattleGroundAV::GetClosestGraveYard(float x, float y, 
     }
     // If not, place ghost on starting location
     if (!good_entry )
-        good_entry = sWorldSafeLocsStore.LookupEntry(BG_AV_GraveyardIds[GetTeamIndexByTeamId(team)+7] );
+        good_entry = sWorldSafeLocsStore.LookupEntry(BG_AV_GraveyardIds[GetTeamIndexByTeamId(team)+7]);
 
     return good_entry;
 }
@@ -1370,7 +1370,7 @@ void BattleGroundAV::AssaultNode(BG_AV_Nodes node, uint16 team)
     assert(m_Nodes[node].TotalOwner != team);
     assert(m_Nodes[node].Owner != team);
     assert(m_Nodes[node].State != POINT_DESTROYED);
-    assert(m_Nodes[node].State != POINT_ASSAULTED || !m_Nodes[node].TotalOwner ); //only assault an assaulted node if no totalowner exists
+    assert(m_Nodes[node].State != POINT_ASSAULTED || !m_Nodes[node].TotalOwner); //only assault an assaulted node if no totalowner exists
     //the timer gets another time, if the previous owner was 0==Neutral
     m_Nodes[node].Timer      = (m_Nodes[node].PrevOwner)? BG_AV_CAPTIME : BG_AV_SNOWFALL_FIRSTCAP;
     m_Nodes[node].PrevOwner  = m_Nodes[node].Owner;

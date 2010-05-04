@@ -940,11 +940,11 @@ class OREGON_DLL_SPEC Player : public Unit
         }
         void SummonIfPossible(bool agree);
 
-        bool Create(uint32 guidlow, const std::string& name, uint8 race, uint8 class_, uint8 gender, uint8 skin, uint8 face, uint8 hairStyle, uint8 hairColor, uint8 facialHair, uint8 outfitId );
+        bool Create(uint32 guidlow, const std::string& name, uint8 race, uint8 class_, uint8 gender, uint8 skin, uint8 face, uint8 hairStyle, uint8 hairColor, uint8 facialHair, uint8 outfitId);
 
-        void Update(uint32 time );
+        void Update(uint32 time);
 
-        void BuildEnumData(QueryResult_AutoPtr result,  WorldPacket * p_data );
+        void BuildEnumData(QueryResult_AutoPtr result,  WorldPacket * p_data);
 
         void SetInWater(bool apply);
 
@@ -1042,7 +1042,7 @@ class OREGON_DLL_SPEC Player : public Unit
         /*********************************************************/
 
         void SetVirtualItemSlot(uint8 i, Item* item);
-        void SetSheath(uint32 sheathed );
+        void SetSheath(uint32 sheathed);
         uint8 FindEquipSlot(ItemPrototype const* proto, uint32 slot, bool swap ) const;
         uint32 GetItemCount(uint32 item, bool inBankAlso = false, Item* skipItem = NULL ) const;
         Item* GetItemByGuid(uint64 guid ) const;
@@ -1050,15 +1050,15 @@ class OREGON_DLL_SPEC Player : public Unit
         Item* GetItemByPos(uint8 bag, uint8 slot ) const;
         Item* GetWeaponForAttack(WeaponAttackType attackType, bool useable = false) const;
         Item* GetShield(bool useable = false) const;
-        static uint32 GetAttackBySlot(uint8 slot );        // MAX_ATTACK if not weapon slot
+        static uint32 GetAttackBySlot(uint8 slot);        // MAX_ATTACK if not weapon slot
         std::vector<Item *> &GetItemUpdateQueue() { return m_itemUpdateQueue; }
         static bool IsInventoryPos(uint16 pos ) { return IsInventoryPos(pos >> 8,pos & 255); }
-        static bool IsInventoryPos(uint8 bag, uint8 slot );
+        static bool IsInventoryPos(uint8 bag, uint8 slot);
         static bool IsEquipmentPos(uint16 pos ) { return IsEquipmentPos(pos >> 8,pos & 255); }
-        static bool IsEquipmentPos(uint8 bag, uint8 slot );
-        static bool IsBagPos(uint16 pos );
+        static bool IsEquipmentPos(uint8 bag, uint8 slot);
+        static bool IsBagPos(uint16 pos);
         static bool IsBankPos(uint16 pos ) { return IsBankPos(pos >> 8,pos & 255); }
-        static bool IsBankPos(uint8 bag, uint8 slot );
+        static bool IsBankPos(uint8 bag, uint8 slot);
         bool IsValidPos(uint16 pos ) { return IsBankPos(pos >> 8,pos & 255); }
         bool IsValidPos(uint8 bag, uint8 slot ) const;
         bool HasBankBagSlot(uint8 slot ) const;
@@ -1069,14 +1069,14 @@ class OREGON_DLL_SPEC Player : public Unit
         uint8 CanTakeMoreSimilarItems(uint32 entry, uint32 count) const { return _CanTakeMoreSimilarItems(entry,count,NULL); }
         uint8 CanStoreNewItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, uint32 item, uint32 count, uint32* no_space_count = NULL ) const
         {
-            return _CanStoreItem(bag, slot, dest, item, count, NULL, false, no_space_count );
+            return _CanStoreItem(bag, slot, dest, item, count, NULL, false, no_space_count);
         }
         uint8 CanStoreItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, Item *pItem, bool swap = false ) const
         {
             if (!pItem)
                 return EQUIP_ERR_ITEM_NOT_FOUND;
             uint32 count = pItem->GetCount();
-            return _CanStoreItem(bag, slot, dest, pItem->GetEntry(), count, pItem, swap, NULL );
+            return _CanStoreItem(bag, slot, dest, pItem->GetEntry(), count, pItem, swap, NULL);
 
         }
         uint8 CanStoreItems(Item **pItem,int count) const;
@@ -1087,20 +1087,20 @@ class OREGON_DLL_SPEC Player : public Unit
         uint8 CanBankItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, Item *pItem, bool swap, bool not_loading = true ) const;
         uint8 CanUseItem(Item *pItem, bool not_loading = true ) const;
         bool HasItemTotemCategory(uint32 TotemCategory ) const;
-        bool CanUseItem(ItemPrototype const *pItem );
+        bool CanUseItem(ItemPrototype const *pItem);
         uint8 CanUseAmmo(uint32 item ) const;
-        Item* StoreNewItem(ItemPosCountVec const& pos, uint32 item, bool update,int32 randomPropertyId = 0 );
-        Item* StoreItem(ItemPosCountVec const& pos, Item *pItem, bool update );
-        Item* EquipNewItem(uint16 pos, uint32 item, bool update );
-        Item* EquipItem(uint16 pos, Item *pItem, bool update );
+        Item* StoreNewItem(ItemPosCountVec const& pos, uint32 item, bool update,int32 randomPropertyId = 0);
+        Item* StoreItem(ItemPosCountVec const& pos, Item *pItem, bool update);
+        Item* EquipNewItem(uint16 pos, uint32 item, bool update);
+        Item* EquipItem(uint16 pos, Item *pItem, bool update);
         void AutoUnequipOffhandIfNeed();
         bool StoreNewItemInBestSlots(uint32 item_id, uint32 item_count);
 
         uint8 _CanTakeMoreSimilarItems(uint32 entry, uint32 count, Item* pItem, uint32* no_space_count = NULL) const;
         uint8 _CanStoreItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, uint32 entry, uint32 count, Item *pItem = NULL, bool swap = false, uint32* no_space_count = NULL ) const;
 
-        void ApplyEquipCooldown(Item * pItem );
-        void SetAmmo(uint32 item );
+        void ApplyEquipCooldown(Item * pItem);
+        void SetAmmo(uint32 item);
         void RemoveAmmo();
         float GetAmmoDPS() const { return m_ammoDPS; }
         bool CheckAmmoCompatibility(const ItemPrototype *ammo_proto) const;
@@ -1111,27 +1111,27 @@ class OREGON_DLL_SPEC Player : public Unit
         {
             return StoreItem(dest, pItem, update);
         }
-        Item* BankItem(uint16 pos, Item *pItem, bool update );
-        void RemoveItem(uint8 bag, uint8 slot, bool update );
+        Item* BankItem(uint16 pos, Item *pItem, bool update);
+        void RemoveItem(uint8 bag, uint8 slot, bool update);
         void MoveItemFromInventory(uint8 bag, uint8 slot, bool update);
                                                             // in trade, auction, guild bank, mail....
         void MoveItemToInventory(ItemPosCountVec const& dest, Item* pItem, bool update, bool in_characterInventoryDB = false);
                                                             // in trade, guild bank, mail....
-        void RemoveItemDependentAurasAndCasts(Item * pItem );
-        void DestroyItem(uint8 bag, uint8 slot, bool update );
+        void RemoveItemDependentAurasAndCasts(Item * pItem);
+        void DestroyItem(uint8 bag, uint8 slot, bool update);
         void DestroyItemCount(uint32 item, uint32 count, bool update, bool unequip_check = false);
-        void DestroyItemCount(Item* item, uint32& count, bool update );
-        void DestroyConjuredItems(bool update );
-        void DestroyZoneLimitedItem(bool update, uint32 new_zone );
-        void SplitItem(uint16 src, uint16 dst, uint32 count );
-        void SwapItem(uint16 src, uint16 dst );
-        void AddItemToBuyBackSlot(Item *pItem );
-        Item* GetItemFromBuyBackSlot(uint32 slot );
-        void RemoveItemFromBuyBackSlot(uint32 slot, bool del );
+        void DestroyItemCount(Item* item, uint32& count, bool update);
+        void DestroyConjuredItems(bool update);
+        void DestroyZoneLimitedItem(bool update, uint32 new_zone);
+        void SplitItem(uint16 src, uint16 dst, uint32 count);
+        void SwapItem(uint16 src, uint16 dst);
+        void AddItemToBuyBackSlot(Item *pItem);
+        Item* GetItemFromBuyBackSlot(uint32 slot);
+        void RemoveItemFromBuyBackSlot(uint32 slot, bool del);
         uint32 GetMaxKeyringSize() const { return KEYRING_SLOT_END-KEYRING_SLOT_START; }
-        void SendEquipError(uint8 msg, Item* pItem, Item *pItem2 );
-        void SendBuyError(uint8 msg, Creature* pCreature, uint32 item, uint32 param );
-        void SendSellError(uint8 msg, Creature* pCreature, uint64 guid, uint32 param );
+        void SendEquipError(uint8 msg, Item* pItem, Item *pItem2);
+        void SendBuyError(uint8 msg, Creature* pCreature, uint32 item, uint32 param);
+        void SendSellError(uint8 msg, Creature* pCreature, uint64 guid, uint32 param);
         void AddWeaponProficiency(uint32 newflag) { m_WeaponProficiency |= newflag; }
         void AddArmorProficiency(uint32 newflag) { m_ArmorProficiency |= newflag; }
         uint32 GetWeaponProficiency() const { return m_WeaponProficiency; }
@@ -1140,9 +1140,9 @@ class OREGON_DLL_SPEC Player : public Unit
         bool IsUseEquipedWeapon(bool mainhand ) const
         {
             // disarm applied only to mainhand weapon
-            return !IsInFeralForm() && (!mainhand || !HasFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_DISARMED) );
+            return !IsInFeralForm() && (!mainhand || !HasFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_DISARMED));
         }
-        void SendNewItem(Item *item, uint32 count, bool received, bool created, bool broadcast = false );
+        void SendNewItem(Item *item, uint32 count, bool received, bool created, bool broadcast = false);
         bool BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint64 bagguid, uint8 slot);
 
         float GetReputationPriceDiscount(Creature const* pCreature ) const;
@@ -1173,42 +1173,42 @@ class OREGON_DLL_SPEC Player : public Unit
         /*********************************************************/
         uint32 GetQuestOrPlayerLevel(Quest const* pQuest ) const { return pQuest && (pQuest->GetQuestLevel()>0) ? pQuest->GetQuestLevel() : getLevel(); }
 
-        void PrepareQuestMenu(uint64 guid );
-        void SendPreparedQuest(uint64 guid );
+        void PrepareQuestMenu(uint64 guid);
+        void SendPreparedQuest(uint64 guid);
         bool IsActiveQuest(uint32 quest_id ) const;
-        Quest const *GetNextQuest(uint64 guid, Quest const *pQuest );
-        bool CanSeeStartQuest(Quest const *pQuest );
-        bool CanTakeQuest(Quest const *pQuest, bool msg );
-        bool CanAddQuest(Quest const *pQuest, bool msg );
-        bool CanCompleteQuest(uint32 quest_id );
+        Quest const *GetNextQuest(uint64 guid, Quest const *pQuest);
+        bool CanSeeStartQuest(Quest const *pQuest);
+        bool CanTakeQuest(Quest const *pQuest, bool msg);
+        bool CanAddQuest(Quest const *pQuest, bool msg);
+        bool CanCompleteQuest(uint32 quest_id);
         bool CanCompleteRepeatableQuest(Quest const *pQuest);
-        bool CanRewardQuest(Quest const *pQuest, bool msg );
-        bool CanRewardQuest(Quest const *pQuest, uint32 reward, bool msg );
-        void AddQuest(Quest const *pQuest, Object *questGiver );
-        void CompleteQuest(uint32 quest_id );
-        void IncompleteQuest(uint32 quest_id );
-        void RewardQuest(Quest const *pQuest, uint32 reward, Object* questGiver, bool announce = true );
-        void FailQuest(uint32 quest_id );
-        void FailTimedQuest(uint32 quest_id );
-        bool SatisfyQuestSkillOrClass(Quest const* qInfo, bool msg );
-        bool SatisfyQuestLevel(Quest const* qInfo, bool msg );
-        bool SatisfyQuestLog(bool msg );
-        bool SatisfyQuestPreviousQuest(Quest const* qInfo, bool msg );
-        bool SatisfyQuestRace(Quest const* qInfo, bool msg );
-        bool SatisfyQuestReputation(Quest const* qInfo, bool msg );
-        bool SatisfyQuestStatus(Quest const* qInfo, bool msg );
-        bool SatisfyQuestTimed(Quest const* qInfo, bool msg );
-        bool SatisfyQuestExclusiveGroup(Quest const* qInfo, bool msg );
-        bool SatisfyQuestNextChain(Quest const* qInfo, bool msg );
-        bool SatisfyQuestPrevChain(Quest const* qInfo, bool msg );
-        bool SatisfyQuestDay(Quest const* qInfo, bool msg );
-        bool GiveQuestSourceItem(Quest const *pQuest );
-        bool TakeQuestSourceItem(uint32 quest_id, bool msg );
+        bool CanRewardQuest(Quest const *pQuest, bool msg);
+        bool CanRewardQuest(Quest const *pQuest, uint32 reward, bool msg);
+        void AddQuest(Quest const *pQuest, Object *questGiver);
+        void CompleteQuest(uint32 quest_id);
+        void IncompleteQuest(uint32 quest_id);
+        void RewardQuest(Quest const *pQuest, uint32 reward, Object* questGiver, bool announce = true);
+        void FailQuest(uint32 quest_id);
+        void FailTimedQuest(uint32 quest_id);
+        bool SatisfyQuestSkillOrClass(Quest const* qInfo, bool msg);
+        bool SatisfyQuestLevel(Quest const* qInfo, bool msg);
+        bool SatisfyQuestLog(bool msg);
+        bool SatisfyQuestPreviousQuest(Quest const* qInfo, bool msg);
+        bool SatisfyQuestRace(Quest const* qInfo, bool msg);
+        bool SatisfyQuestReputation(Quest const* qInfo, bool msg);
+        bool SatisfyQuestStatus(Quest const* qInfo, bool msg);
+        bool SatisfyQuestTimed(Quest const* qInfo, bool msg);
+        bool SatisfyQuestExclusiveGroup(Quest const* qInfo, bool msg);
+        bool SatisfyQuestNextChain(Quest const* qInfo, bool msg);
+        bool SatisfyQuestPrevChain(Quest const* qInfo, bool msg);
+        bool SatisfyQuestDay(Quest const* qInfo, bool msg);
+        bool GiveQuestSourceItem(Quest const *pQuest);
+        bool TakeQuestSourceItem(uint32 quest_id, bool msg);
         bool GetQuestRewardStatus(uint32 quest_id ) const;
         QuestStatus GetQuestStatus(uint32 quest_id ) const;
-        void SetQuestStatus(uint32 quest_id, QuestStatus status );
+        void SetQuestStatus(uint32 quest_id, QuestStatus status);
 
-        void SetDailyQuestStatus(uint32 quest_id );
+        void SetDailyQuestStatus(uint32 quest_id);
         void ResetDailyQuestStatus();
 
         uint16 FindQuestSlot(uint32 quest_id ) const;
@@ -1240,28 +1240,28 @@ class OREGON_DLL_SPEC Player : public Unit
             }
         }
         uint32 GetReqKillOrCastCurrentCount(uint32 quest_id, int32 entry);
-        void AdjustQuestReqItemCount(Quest const* pQuest );
-        void AreaExploredOrEventHappens(uint32 questId );
-        void GroupEventHappens(uint32 questId, WorldObject const* pEventObject );
-        void ItemAddedQuestCheck(uint32 entry, uint32 count );
-        void ItemRemovedQuestCheck(uint32 entry, uint32 count );
-        void KilledMonster(uint32 entry, uint64 guid );
-        void CastedCreatureOrGO(uint32 entry, uint64 guid, uint32 spell_id );
-        void TalkedToCreature(uint32 entry, uint64 guid );
-        void MoneyChanged(uint32 value );
+        void AdjustQuestReqItemCount(Quest const* pQuest);
+        void AreaExploredOrEventHappens(uint32 questId);
+        void GroupEventHappens(uint32 questId, WorldObject const* pEventObject);
+        void ItemAddedQuestCheck(uint32 entry, uint32 count);
+        void ItemRemovedQuestCheck(uint32 entry, uint32 count);
+        void KilledMonster(uint32 entry, uint64 guid);
+        void CastedCreatureOrGO(uint32 entry, uint64 guid, uint32 spell_id);
+        void TalkedToCreature(uint32 entry, uint64 guid);
+        void MoneyChanged(uint32 value);
         bool HasQuestForItem(uint32 itemid ) const;
         bool HasQuestForGO(int32 GOId);
         void UpdateForQuestsGO();
         bool CanShareQuest(uint32 quest_id) const;
 
-        void SendQuestComplete(uint32 quest_id );
-        void SendQuestReward(Quest const *pQuest, uint32 XP, Object* questGiver );
-        void SendQuestFailed(uint32 quest_id );
-        void SendQuestTimerFailed(uint32 quest_id );
-        void SendCanTakeQuestResponse(uint32 msg );
-        void SendPushToPartyResponse(Player *pPlayer, uint32 msg );
-        void SendQuestUpdateAddItem(Quest const* pQuest, uint32 item_idx, uint32 count );
-        void SendQuestUpdateAddCreatureOrGo(Quest const* pQuest, uint64 guid, uint32 creatureOrGO_idx, uint32 old_count, uint32 add_count );
+        void SendQuestComplete(uint32 quest_id);
+        void SendQuestReward(Quest const *pQuest, uint32 XP, Object* questGiver);
+        void SendQuestFailed(uint32 quest_id);
+        void SendQuestTimerFailed(uint32 quest_id);
+        void SendCanTakeQuestResponse(uint32 msg);
+        void SendPushToPartyResponse(Player *pPlayer, uint32 msg);
+        void SendQuestUpdateAddItem(Quest const* pQuest, uint32 item_idx, uint32 count);
+        void SendQuestUpdateAddCreatureOrGo(Quest const* pQuest, uint64 guid, uint32 creatureOrGO_idx, uint32 old_count, uint32 add_count);
 
         uint64 GetDivider() { return m_divider; };
         void SetDivider(uint64 guid ) { m_divider = guid; };
@@ -1305,9 +1305,9 @@ class OREGON_DLL_SPEC Player : public Unit
 
         void SetBindPoint(uint64 guid);
         void SendTalentWipeConfirm(uint64 guid);
-        void RewardRage(uint32 damage, uint32 weaponSpeedHitFactor, bool attacker );
+        void RewardRage(uint32 damage, uint32 weaponSpeedHitFactor, bool attacker);
         void SendPetSkillWipeConfirm();
-        void CalcRage(uint32 damage,bool attacker );
+        void CalcRage(uint32 damage,bool attacker);
         void RegenerateAll();
         void Regenerate(Powers power);
         void RegenerateHealth();
@@ -1329,18 +1329,18 @@ class OREGON_DLL_SPEC Player : public Unit
         void SetMoney(uint32 value )
         {
             SetUInt32Value (PLAYER_FIELD_COINAGE, value);
-            MoneyChanged(value );
+            MoneyChanged(value);
         }
 
         uint32 GetTutorialInt(uint32 intId )
         {
-            ASSERT((intId < 8) );
+            ASSERT((intId < 8));
             return m_Tutorials[intId];
         }
 
         void SetTutorialInt(uint32 intId, uint32 value)
         {
-            ASSERT((intId < 8) );
+            ASSERT((intId < 8));
             if (m_Tutorials[intId]!=value)
             {
                 m_Tutorials[intId] = value;
@@ -1398,7 +1398,7 @@ class OREGON_DLL_SPEC Player : public Unit
 
         void AddMItem(Item* it)
         {
-            ASSERT(it );
+            ASSERT(it);
             //assert deleted, because items can be added before loading
             mMitems[it->GetGUIDLow()] = it;
         }
@@ -1464,7 +1464,7 @@ class OREGON_DLL_SPEC Player : public Unit
         }
         void AddSpellCooldown(uint32 spell_id, uint32 itemid, time_t end_time);
         void SendCooldownEvent(SpellEntry const *spellInfo);
-        void ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs );
+        void ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs);
         void RemoveSpellCooldown(uint32 spell_id) { m_spellCooldowns.erase(spell_id); }
         void RemoveArenaSpellCooldowns();
         void RemoveAllSpellCooldown();
@@ -1509,8 +1509,8 @@ class OREGON_DLL_SPEC Player : public Unit
         void UpdateZone(uint32 newZone);
         void UpdateArea(uint32 newArea);
 
-        void UpdateZoneDependentAuras(uint32 zone_id );    // zones
-        void UpdateAreaDependentAuras(uint32 area_id );    // subzones
+        void UpdateZoneDependentAuras(uint32 zone_id);    // zones
+        void UpdateAreaDependentAuras(uint32 area_id);    // subzones
 
         void UpdateAfkReport(time_t currTime);
         void UpdatePvPFlag(time_t currTime);
@@ -1645,7 +1645,7 @@ class OREGON_DLL_SPEC Player : public Unit
         void SendResetFailedNotify(uint32 mapid);
 
         bool SetPosition(float x, float y, float z, float orientation, bool teleport = false);
-        void UpdateUnderwaterState(Map * m, float x, float y, float z );
+        void UpdateUnderwaterState(Map * m, float x, float y, float z);
 
         void SendMessageToSet(WorldPacket *data, bool self, bool to_possessor = true);// overwrite Object::SendMessageToSet
         void SendMessageToSetInRange(WorldPacket *data, float fist, bool self, bool to_possessor = true);// overwrite Object::SendMessageToSetInRange
@@ -1682,7 +1682,7 @@ class OREGON_DLL_SPEC Player : public Unit
         void JoinedChannel(Channel *c);
         void LeftChannel(Channel *c);
         void CleanupChannels();
-        void UpdateLocalChannels(uint32 newZone );
+        void UpdateLocalChannels(uint32 newZone);
         void LeaveLFGChannel();
 
         void UpdateDefense();
@@ -1697,7 +1697,7 @@ class OREGON_DLL_SPEC Player : public Unit
         uint16 GetPureSkillValue(uint32 skill) const;       // skill value
         int16 GetSkillTempBonusValue(uint32 skill) const;
         bool HasSkill(uint32 skill) const;
-        void learnSkillRewardedSpells(uint32 id );
+        void learnSkillRewardedSpells(uint32 id);
         void learnSkillRewardedSpells();
 
         void SetDontMove(bool dontMove);
@@ -1759,8 +1759,8 @@ class OREGON_DLL_SPEC Player : public Unit
         bool RewardHonor(Unit *pVictim, uint32 groupsize, float honor = -1, bool pvptoken = false);
         uint32 GetHonorPoints() { return GetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY); }
         uint32 GetArenaPoints() { return GetUInt32Value(PLAYER_FIELD_ARENA_CURRENCY); }
-        void ModifyHonorPoints(int32 value );
-        void ModifyArenaPoints(int32 value );
+        void ModifyHonorPoints(int32 value);
+        void ModifyArenaPoints(int32 value);
         uint32 GetMaxPersonalArenaRatingRequirement();
 
         //End of PvP System
@@ -1819,7 +1819,7 @@ class OREGON_DLL_SPEC Player : public Unit
         std::vector<ItemSetEffect *> ItemSetEff;
 
         void SendLoot(uint64 guid, LootType loot_type);
-        void SendLootRelease(uint64 guid );
+        void SendLootRelease(uint64 guid);
         void SendNotifyLootItemRemoved(uint8 lootSlot);
         void SendNotifyLootMoneyRemoved();
 
@@ -2362,7 +2362,7 @@ class OREGON_DLL_SPEC Player : public Unit
         uint8 _CanStoreItem_InSpecificSlot(uint8 bag, uint8 slot, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool swap, Item *pSrcItem ) const;
         uint8 _CanStoreItem_InBag(uint8 bag, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool merge, bool non_specialized, Item *pSrcItem, uint8 skip_bag, uint8 skip_slot ) const;
         uint8 _CanStoreItem_InInventorySlots(uint8 slot_begin, uint8 slot_end, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool merge, Item *pSrcItem, uint8 skip_bag, uint8 skip_slot ) const;
-        Item* _StoreItem(uint16 pos, Item *pItem, uint32 count, bool clone, bool update );
+        Item* _StoreItem(uint16 pos, Item *pItem, uint32 count, bool clone, bool update);
 
         GridReference<Player> m_gridRef;
         MapReference m_mapRef;

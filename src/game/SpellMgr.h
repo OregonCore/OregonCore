@@ -366,7 +366,7 @@ inline bool IsSealSpell(SpellEntry const *spellInfo)
 {
     //Collection of all the seal family flags. No other paladin spell has any of those.
     return spellInfo->SpellFamilyName == SPELLFAMILY_PALADIN &&
-        (spellInfo->SpellFamilyFlags & 0x4000A000200LL );
+        (spellInfo->SpellFamilyFlags & 0x4000A000200LL);
 }
 
 inline bool IsElementalShield(SpellEntry const *spellInfo)
@@ -856,7 +856,7 @@ class SpellMgr
         // Spell target coordinates
         SpellTargetPosition const* GetSpellTargetPosition(uint32 spell_id) const
         {
-            SpellTargetPositionMap::const_iterator itr = mSpellTargetPositions.find(spell_id );
+            SpellTargetPositionMap::const_iterator itr = mSpellTargetPositions.find(spell_id);
             if (itr != mSpellTargetPositions.end() )
                 return &itr->second;
             return NULL;

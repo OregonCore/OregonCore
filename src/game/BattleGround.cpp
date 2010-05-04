@@ -677,7 +677,7 @@ void BattleGround::RewardMark(Player *plr,uint32 count)
     {
         ItemPosCountVec dest;
         uint32 no_space_count = 0;
-        uint8 msg = plr->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, mark, count, &no_space_count );
+        uint8 msg = plr->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, mark, count, &no_space_count);
         if (msg != EQUIP_ERR_OK )                       // convert to possible store amount
             count -= no_space_count;
 
@@ -721,7 +721,7 @@ void BattleGround::SendRewardMarkByMail(Player *plr,uint32 mark, uint32 count)
         std::string textFormat = plr->GetSession()->GetOregonString(LANG_BG_MARK_BY_MAIL);
         char textBuf[300];
         snprintf(textBuf,300,textFormat.c_str(),GetName(),GetName());
-        uint32 itemTextId = objmgr.CreateItemText(textBuf );
+        uint32 itemTextId = objmgr.CreateItemText(textBuf);
 
         WorldSession::SendMailTo(plr, MAIL_CREATURE, MAIL_STATIONERY_NORMAL, bmEntry, plr->GetGUIDLow(), subject, itemTextId , &mi, 0, 0, MAIL_CHECK_MASK_NONE);
     }
@@ -1142,7 +1142,7 @@ void BattleGround::AddPlayerToResurrectQueue(uint64 npc_guid, uint64 player_guid
         return;
 
     plr->CastSpell(plr, SPELL_WAITING_FOR_RESURRECT, true);
-    SpellEntry const *spellInfo = sSpellStore.LookupEntry(SPELL_WAITING_FOR_RESURRECT );
+    SpellEntry const *spellInfo = sSpellStore.LookupEntry(SPELL_WAITING_FOR_RESURRECT);
     if (spellInfo)
     {
         Aura *Aur = CreateAura(spellInfo, 0, NULL, plr);
@@ -1529,7 +1529,7 @@ void BattleGround::HandleKillPlayer(Player *player, Player *killer )
 
     // to be able to remove insignia -- ONLY IN BattleGrounds
     if (!isArena() )
-        player->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE );
+        player->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
 }
 
 // return the player's team based on battlegroundplayer info

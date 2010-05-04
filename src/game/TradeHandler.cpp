@@ -315,9 +315,9 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& /*recvPacket*/)
         {
             if (_player->tradeItems[i] != NULL_SLOT )
             {
-                sLog.outDebug("player trade item bag: %u slot: %u",_player->tradeItems[i] >> 8, _player->tradeItems[i] & 255 );
+                sLog.outDebug("player trade item bag: %u slot: %u",_player->tradeItems[i] >> 8, _player->tradeItems[i] & 255);
                                                             //Can return NULL
-                myItems[i]=_player->GetItemByPos(_player->tradeItems[i] );
+                myItems[i]=_player->GetItemByPos(_player->tradeItems[i]);
                 if (myItems[i])
                     myItems[i]->SetInTrade();
             }
@@ -398,10 +398,10 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& /*recvPacket*/)
         }
 
         // update money
-        _player->ModifyMoney(-int32(_player->tradeGold) );
-        _player->ModifyMoney(_player->pTrader->tradeGold );
-        _player->pTrader->ModifyMoney(-int32(_player->pTrader->tradeGold) );
-        _player->pTrader->ModifyMoney(_player->tradeGold );
+        _player->ModifyMoney(-int32(_player->tradeGold));
+        _player->ModifyMoney(_player->pTrader->tradeGold);
+        _player->pTrader->ModifyMoney(-int32(_player->pTrader->tradeGold));
+        _player->pTrader->ModifyMoney(_player->tradeGold);
 
         _player->ClearTrade();
         _player->pTrader->ClearTrade();
@@ -490,7 +490,7 @@ void WorldSession::HandleInitiateTradeOpcode(WorldPacket& recvPacket)
 
     recvPacket >> ID;
 
-    Player* pOther = ObjectAccessor::FindPlayer(ID );
+    Player* pOther = ObjectAccessor::FindPlayer(ID);
 
     if (!pOther )
     {

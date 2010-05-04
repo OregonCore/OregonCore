@@ -29,7 +29,7 @@
 #include "World.h"
 #include "Util.h"
 
-INSTANTIATE_SINGLETON_1(SocialMgr );
+INSTANTIATE_SINGLETON_1(SocialMgr);
 
 PlayerSocial::PlayerSocial()
 {
@@ -326,7 +326,7 @@ PlayerSocial *SocialMgr::LoadFromDB(QueryResult_AutoPtr result, uint32 guid)
         if (social->m_playerSocialMap.size() >= 50)
             break;
     }
-    while (result->NextRow() );
+    while (result->NextRow());
     return social;
 }
 

@@ -380,7 +380,7 @@ m_periodicTimer(0), m_amplitude(0), m_PeriodicEventId(0), m_AuraDRGroup(DIMINISH
                         for (int t=0; t<3; t++)
                             if (pEnchant->spellid[t] == m_spellProto->Id)
                         {
-                            damage = uint32((item_rand_suffix->prefix[k]*castItem->GetItemSuffixFactor()) / 10000 );
+                            damage = uint32((item_rand_suffix->prefix[k]*castItem->GetItemSuffixFactor()) / 10000);
                             break;
                         }
                     }
@@ -957,7 +957,7 @@ void Aura::_AddAura()
                 }
             }
 
-            SetAuraSlot(slot );
+            SetAuraSlot(slot);
 
             // Not update fields for not first spell's aura, all data already in fields
             if (slot < MAX_AURAS)                        // slot found
@@ -973,7 +973,7 @@ void Aura::_AddAura()
         }
         else                                                // use found slot
         {
-            SetAuraSlot(slot );
+            SetAuraSlot(slot);
         }
 
         UpdateSlotCounterAndDuration();
@@ -1321,14 +1321,14 @@ void Aura::TriggerSpell()
                     case 23493:
                     {
                         int32 heal = caster->GetMaxHealth() / 10;
-                        caster->ModifyHealth(heal );
+                        caster->ModifyHealth(heal);
                         caster->SendHealSpellLog(caster, 23493, heal);
 
                         int32 mana = caster->GetMaxPower(POWER_MANA);
                         if (mana)
                         {
                             mana /= 10;
-                            caster->ModifyPower(POWER_MANA, mana );
+                            caster->ModifyPower(POWER_MANA, mana);
                             caster->SendEnergizeSpellLog(caster, 23493, mana, POWER_MANA);
                         }
                         break;
@@ -1378,7 +1378,7 @@ void Aura::TriggerSpell()
                     {
                         if (caster->GetPower(POWER_MANA) >= 10)
                         {
-                            caster->ModifyPower(POWER_MANA, -10 );
+                            caster->ModifyPower(POWER_MANA, -10);
                             caster->SendEnergizeSpellLog(caster, 27746, -10, POWER_MANA);
                         } else
                         {
@@ -1454,7 +1454,7 @@ void Aura::TriggerSpell()
                             {
                                 LootItem *item = loot->LootItemInSlot(i,player);
                                 ItemPosCountVec dest;
-                                uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, item->itemid, item->count );
+                                uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, item->itemid, item->count);
                                 if (msg == EQUIP_ERR_OK )
                                 {
                                     Item * newitem = player->StoreNewItem(dest, item->itemid, true, item->randomPropertyId);
@@ -1462,7 +1462,7 @@ void Aura::TriggerSpell()
                                     player->SendNewItem(newitem, uint32(item->count), false, false, true);
                                 }
                                 else
-                                    player->SendEquipError(msg, NULL, NULL );
+                                    player->SendEquipError(msg, NULL, NULL);
                             }
                             creature->setDeathState(JUST_DIED);
                             creature->RemoveCorpse();
@@ -3010,10 +3010,10 @@ void Aura::HandleChannelDeathItem(bool apply, bool Real)
              victim->GetTypeId()==TYPEID_UNIT && !((Player*)caster)->isAllowedToLoot((Creature*)victim)) )
             return;
         ItemPosCountVec dest;
-        uint8 msg = ((Player*)caster)->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, spellInfo->EffectItemType[m_effIndex], 1 );
+        uint8 msg = ((Player*)caster)->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, spellInfo->EffectItemType[m_effIndex], 1);
         if (msg != EQUIP_ERR_OK )
         {
-            ((Player*)caster)->SendEquipError(msg, NULL, NULL );
+            ((Player*)caster)->SendEquipError(msg, NULL, NULL);
             return;
         }
 
@@ -3050,7 +3050,7 @@ void Aura::HandleAuraTrackCreatures(bool apply, bool Real)
 
     if (apply)
         m_target->RemoveNoStackAurasDueToAura(this);
-    m_target->SetUInt32Value(PLAYER_TRACK_CREATURES, apply ? ((uint32)1)<<(m_modifier.m_miscvalue-1) : 0 );
+    m_target->SetUInt32Value(PLAYER_TRACK_CREATURES, apply ? ((uint32)1)<<(m_modifier.m_miscvalue-1) : 0);
 }
 
 void Aura::HandleAuraTrackResources(bool apply, bool Real)
@@ -3060,7 +3060,7 @@ void Aura::HandleAuraTrackResources(bool apply, bool Real)
 
     if (apply)
         m_target->RemoveNoStackAurasDueToAura(this);
-    m_target->SetUInt32Value(PLAYER_TRACK_RESOURCES, apply ? ((uint32)1)<<(m_modifier.m_miscvalue-1): 0 );
+    m_target->SetUInt32Value(PLAYER_TRACK_RESOURCES, apply ? ((uint32)1)<<(m_modifier.m_miscvalue-1): 0);
 }
 
 void Aura::HandleAuraTrackStealthed(bool apply, bool Real)
@@ -4486,7 +4486,7 @@ void Aura::HandleModTotalPercentStat(bool apply, bool Real)
         {
             m_target->HandleStatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_PCT, float(GetModifierValue()), apply);
             if (m_target->GetTypeId() == TYPEID_PLAYER || ((Creature*)m_target)->isPet())
-                m_target->ApplyStatPercentBuffMod(Stats(i), GetModifierValue(), apply );
+                m_target->ApplyStatPercentBuffMod(Stats(i), GetModifierValue(), apply);
         }
     }
 
@@ -5233,7 +5233,7 @@ void Aura::HandleShapeshiftBoosts(bool apply)
 
     if (apply)
     {
-        if (spellId) m_target->CastSpell(m_target, spellId, true, NULL, this );
+        if (spellId) m_target->CastSpell(m_target, spellId, true, NULL, this);
         if (spellId2) m_target->CastSpell(m_target, spellId2, true, NULL, this);
 
         if (m_target->GetTypeId() == TYPEID_PLAYER)
@@ -5663,7 +5663,7 @@ void Aura::PeriodicTick()
             // ignore non positive values (can be result apply spellmods to aura damage
             uint32 amount = GetModifierValuePerStack() > 0 ? GetModifierValuePerStack() : 0;
 
-            CleanDamage cleanDamage =  CleanDamage(0, BASE_ATTACK, MELEE_HIT_NORMAL );
+            CleanDamage cleanDamage =  CleanDamage(0, BASE_ATTACK, MELEE_HIT_NORMAL);
 
             uint32 pdamage;
 
@@ -5763,7 +5763,7 @@ void Aura::PeriodicTick()
 
             uint32 pdamage = GetModifierValuePerStack() > 0 ? GetModifierValuePerStack() : 0;
 
-            CleanDamage cleanDamage =  CleanDamage(pdamage, BASE_ATTACK, MELEE_HIT_NORMAL );
+            CleanDamage cleanDamage =  CleanDamage(pdamage, BASE_ATTACK, MELEE_HIT_NORMAL);
 
             pdamage = pCaster->SpellDamageBonus(m_target,GetSpellProto(),pdamage,DOT);
 
@@ -5959,7 +5959,7 @@ void Aura::PeriodicTick()
                 {
                     pCaster->SendSpellNonMeleeDamageLog(pCaster, GetId(), gain, GetSpellSchoolMask(GetSpellProto()), 0, 0, false, 0, false);
 
-                    CleanDamage cleanDamage =  CleanDamage(0, BASE_ATTACK, MELEE_HIT_NORMAL );
+                    CleanDamage cleanDamage =  CleanDamage(0, BASE_ATTACK, MELEE_HIT_NORMAL);
                     pCaster->DealDamage(pCaster, gain, &cleanDamage, NODAMAGE, GetSpellSchoolMask(GetSpellProto()), GetSpellProto(), true);
                 }
             }

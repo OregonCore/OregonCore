@@ -72,7 +72,7 @@ void GuardAI::EnterEvadeMode()
         return;
     }
 
-    Unit* victim = ObjectAccessor::GetUnit(*m_creature, i_victimGuid );
+    Unit* victim = ObjectAccessor::GetUnit(*m_creature, i_victimGuid);
 
     if (!victim  )
     {

@@ -146,7 +146,7 @@ bool ArenaTeam::AddMember(const uint64& PlayerGuid)
     {
         pl->SetInArenaTeam(m_TeamId, GetSlot());
         pl->SetArenaTeamIdInvited(0);
-        pl->SetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (GetSlot()*6) + 5, newmember.personal_rating );
+        pl->SetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (GetSlot()*6) + 5, newmember.personal_rating);
 
         // hide promote/remove buttons
         if (m_CaptainGuid != PlayerGuid)
@@ -234,7 +234,7 @@ void ArenaTeam::LoadMembersFromDB(uint32 ArenaTeamId)
         newmember.name          = fields[6].GetCppString();
         newmember.Class         = fields[7].GetUInt8();
         m_members.push_back(newmember);
-    }while (result->NextRow() );
+    }while (result->NextRow());
 }
 
 void ArenaTeam::SetCaptain(const uint64& guid)

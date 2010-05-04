@@ -285,7 +285,7 @@ std::string ChatHandler::PGetParseString(int32 entry, ...)
         va_list ap;
         char str [1024];
         va_start(ap, entry);
-        vsnprintf(str,1024,format, ap );
+        vsnprintf(str,1024,format, ap);
         va_end(ap);
         return (std::string)str;
 }
@@ -453,7 +453,7 @@ bool ChatHandler::HandleGMTicketCloseByIdCommand(const char* args)
     // send abandon ticket
     WorldPacket data(SMSG_GMTICKET_DELETETICKET, 4);
     data << uint32(9);
-    plr->GetSession()->SendPacket(&data );
+    plr->GetSession()->SendPacket(&data);
     return true;
 }
 
@@ -625,7 +625,7 @@ bool ChatHandler::HandleGMTicketDeleteByIdCommand(const char* args)
         // Force abandon ticket
         WorldPacket data(SMSG_GMTICKET_DELETETICKET, 4);
         data << uint32(9);
-        plr->GetSession()->SendPacket(&data );
+        plr->GetSession()->SendPacket(&data);
     }
 
     ticket = NULL;
@@ -728,19 +728,19 @@ bool ChatHandler::HandleGPSCommand(const char* args)
         area_id, (areaEntry ? areaEntry->area_name[m_session->GetSessionDbcLocale()] : "<unknown>" ),
         obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), obj->GetOrientation(),
         cell.GridX(), cell.GridY(), cell.CellX(), cell.CellY(), obj->GetInstanceId(),
-        zone_x, zone_y, ground_z, floor_z, have_map, have_vmap );
+        zone_x, zone_y, ground_z, floor_z, have_map, have_vmap);
 
     sLog.outDebug("Player %s GPS call for %s '%s' (%s: %u):",
         GetName(),
         (obj->GetTypeId() == TYPEID_PLAYER ? "player" : "creature"), obj->GetName(),
-        (obj->GetTypeId() == TYPEID_PLAYER ? "GUID" : "Entry"), (obj->GetTypeId() == TYPEID_PLAYER ? obj->GetGUIDLow(): obj->GetEntry()) );
+        (obj->GetTypeId() == TYPEID_PLAYER ? "GUID" : "Entry"), (obj->GetTypeId() == TYPEID_PLAYER ? obj->GetGUIDLow(): obj->GetEntry()));
     sLog.outDebug(GetOregonString(LANG_MAP_POSITION),
         obj->GetMapId(), (mapEntry ? mapEntry->name[sWorld.GetDefaultDbcLocale()] : "<unknown>" ),
         zone_id, (zoneEntry ? zoneEntry->area_name[sWorld.GetDefaultDbcLocale()] : "<unknown>" ),
         area_id, (areaEntry ? areaEntry->area_name[sWorld.GetDefaultDbcLocale()] : "<unknown>" ),
         obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), obj->GetOrientation(),
         cell.GridX(), cell.GridY(), cell.CellX(), cell.CellY(), obj->GetInstanceId(),
-        zone_x, zone_y, ground_z, floor_z, have_map, have_vmap );
+        zone_x, zone_y, ground_z, floor_z, have_map, have_vmap);
 
     return true;
 }
@@ -1106,8 +1106,8 @@ bool ChatHandler::HandleModifyHPCommand(const char* args)
     if (needReportToTarget(chr))
         ChatHandler(chr).PSendSysMessage(LANG_YOURS_HP_CHANGED, GetName(), hp, hpm);
 
-    chr->SetMaxHealth(hpm );
-    chr->SetHealth(hp );
+    chr->SetMaxHealth(hpm);
+    chr->SetHealth(hp);
 
     return true;
 }
@@ -1150,8 +1150,8 @@ bool ChatHandler::HandleModifyManaCommand(const char* args)
     if (needReportToTarget(chr))
         ChatHandler(chr).PSendSysMessage(LANG_YOURS_MANA_CHANGED, GetName(), mana, manam);
 
-    chr->SetMaxPower(POWER_MANA,manam );
-    chr->SetPower(POWER_MANA, mana );
+    chr->SetMaxPower(POWER_MANA,manam);
+    chr->SetPower(POWER_MANA, mana);
 
     return true;
 }
@@ -1195,8 +1195,8 @@ bool ChatHandler::HandleModifyEnergyCommand(const char* args)
     if (needReportToTarget(chr))
         ChatHandler(chr).PSendSysMessage(LANG_YOURS_ENERGY_CHANGED, GetName(), energy/10, energym/10);
 
-    chr->SetMaxPower(POWER_ENERGY,energym );
-    chr->SetPower(POWER_ENERGY, energy );
+    chr->SetMaxPower(POWER_ENERGY,energym);
+    chr->SetPower(POWER_ENERGY, energy);
 
     sLog.outDetail(GetOregonString(LANG_CURRENT_ENERGY),chr->GetMaxPower(POWER_ENERGY));
 
@@ -1242,8 +1242,8 @@ bool ChatHandler::HandleModifyRageCommand(const char* args)
     if (needReportToTarget(chr))
         ChatHandler(chr).PSendSysMessage(LANG_YOURS_RAGE_CHANGED, GetName(), rage/10, ragem/10);
 
-    chr->SetMaxPower(POWER_RAGE,ragem );
-    chr->SetPower(POWER_RAGE, rage );
+    chr->SetMaxPower(POWER_RAGE,ragem);
+    chr->SetPower(POWER_RAGE, rage);
 
     return true;
 }
@@ -1900,21 +1900,21 @@ bool ChatHandler::HandleModifyMountCommand(const char* args)
     if (needReportToTarget(chr))
         ChatHandler(chr).PSendSysMessage(LANG_MOUNT_GIVED, GetName());
 
-    chr->SetUInt32Value(UNIT_FIELD_FLAGS , 0x001000 );
+    chr->SetUInt32Value(UNIT_FIELD_FLAGS , 0x001000);
     chr->Mount(mId);
 
-    WorldPacket data(SMSG_FORCE_RUN_SPEED_CHANGE, (8+4+1+4) );
+    WorldPacket data(SMSG_FORCE_RUN_SPEED_CHANGE, (8+4+1+4));
     data.append(chr->GetPackGUID());
     data << (uint32)0;
     data << (uint8)0;                                       //new 2.1.0
     data << float(speed);
-    chr->SendMessageToSet(&data, true );
+    chr->SendMessageToSet(&data, true);
 
-    data.Initialize(SMSG_FORCE_SWIM_SPEED_CHANGE, (8+4+4) );
+    data.Initialize(SMSG_FORCE_SWIM_SPEED_CHANGE, (8+4+4));
     data.append(chr->GetPackGUID());
     data << (uint32)0;
     data << float(speed);
-    chr->SendMessageToSet(&data, true );
+    chr->SendMessageToSet(&data, true);
 
     return true;
 }
@@ -1955,7 +1955,7 @@ bool ChatHandler::HandleModifyMoneyCommand(const char* args)
             PSendSysMessage(LANG_YOU_TAKE_MONEY, abs(addmoney), chr->GetName());
             if (needReportToTarget(chr))
                 ChatHandler(chr).PSendSysMessage(LANG_YOURS_MONEY_TAKEN, GetName(), abs(addmoney));
-            chr->SetMoney(newmoney );
+            chr->SetMoney(newmoney);
         }
     }
     else
@@ -1963,10 +1963,10 @@ bool ChatHandler::HandleModifyMoneyCommand(const char* args)
         PSendSysMessage(LANG_YOU_GIVE_MONEY, addmoney, chr->GetName());
         if (needReportToTarget(chr))
             ChatHandler(chr).PSendSysMessage(LANG_YOURS_MONEY_GIVEN, GetName(), addmoney);
-        chr->ModifyMoney(addmoney );
+        chr->ModifyMoney(addmoney);
     }
 
-    sLog.outDetail(GetOregonString(LANG_NEW_MONEY), moneyuser, addmoney, chr->GetMoney() );
+    sLog.outDetail(GetOregonString(LANG_NEW_MONEY), moneyuser, addmoney, chr->GetMoney());
 
     return true;
 }
@@ -2012,12 +2012,12 @@ bool ChatHandler::HandleModifyBitCommand(const char* args)
 
     if (chr->HasFlag(field, (1<<(bit-1)) ) )
     {
-        chr->RemoveFlag(field, (1<<(bit-1)) );
+        chr->RemoveFlag(field, (1<<(bit-1)));
         PSendSysMessage(LANG_REMOVE_BIT, bit, field);
     }
     else
     {
-        chr->SetFlag(field, (1<<(bit-1)) );
+        chr->SetFlag(field, (1<<(bit-1)));
         PSendSysMessage(LANG_SET_BIT, bit, field);
     }
 
@@ -2170,7 +2170,7 @@ bool ChatHandler::HandleLookupTeleCommand(const char * args)
         return false;
 
     // converting string that we try to find to lower case
-    wstrToLower(wnamepart );
+    wstrToLower(wnamepart);
 
     std::ostringstream reply;
 

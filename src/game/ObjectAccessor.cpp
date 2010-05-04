@@ -65,7 +65,7 @@ namespace Oregon
                 UpdateDataMapType::iterator iter2 = i_updatePlayers.find(iter->getSource());
                 if (iter2 == i_updatePlayers.end() )
                 {
-                    std::pair<UpdateDataMapType::iterator, bool> p = i_updatePlayers.insert(ObjectAccessor::UpdateDataValueType(iter->getSource(), UpdateData()) );
+                    std::pair<UpdateDataMapType::iterator, bool> p = i_updatePlayers.insert(ObjectAccessor::UpdateDataValueType(iter->getSource(), UpdateData()));
                     assert(p.second);
                     iter2 = p.first;
                 }
@@ -211,7 +211,7 @@ Object* ObjectAccessor::GetObjectByTypeMask(Player const &p, uint64 guid, uint32
 
     if (typemask & TYPEMASK_ITEM)
     {
-        obj = p.GetItemByGuid(guid );
+        obj = p.GetItemByGuid(guid);
         if (obj) return obj;
     }
 
@@ -293,7 +293,7 @@ ObjectAccessor::RemoveUpdateObject(Object *obj)
     Guard guard(i_updateGuard);
     std::set<Object *>::iterator iter = i_objects.find(obj);
     if (iter != i_objects.end() )
-        i_objects.erase(iter );
+        i_objects.erase(iter);
 }
 
 void
@@ -332,7 +332,7 @@ ObjectAccessor::_buildPacket(Player *pl, Object *obj, UpdateDataMapType &update_
 
     if (iter == update_players.end() )
     {
-        std::pair<UpdateDataMapType::iterator, bool> p = update_players.insert(UpdateDataValueType(pl, UpdateData()) );
+        std::pair<UpdateDataMapType::iterator, bool> p = update_players.insert(UpdateDataValueType(pl, UpdateData()));
         assert(p.second);
         iter = p.first;
     }

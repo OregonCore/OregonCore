@@ -371,7 +371,7 @@ struct VendorItemData
     {
         m_items.push_back(new VendorItem(item, maxcount, ptime, ExtendedCost));
     }
-    bool RemoveItem(uint32 item_id );
+    bool RemoveItem(uint32 item_id);
     VendorItem const* FindItem(uint32 item_id) const;
     size_t FindItemSlot(uint32 item_id) const;
 
@@ -446,7 +446,7 @@ class OREGON_DLL_SPEC Creature : public Unit
         uint32 GetDBTableGUIDLow() const { return m_DBTableGuid; }
         char const* GetSubName() const { return GetCreatureInfo()->SubName; }
 
-        void Update(uint32 time );                         // overwrited Unit::Update
+        void Update(uint32 time);                         // overwrited Unit::Update
         void GetRespawnCoord(float &x, float &y, float &z, float* ori = NULL, float* dist =NULL) const;
         uint32 GetEquipmentId() const { return m_equipmentId; }
 
@@ -538,8 +538,8 @@ class OREGON_DLL_SPEC Creature : public Unit
         std::string GetScriptName();
         uint32 GetScriptId();
 
-        void prepareGossipMenu(Player *pPlayer, uint32 gossipid = 0 );
-        void sendPreparedGossip(Player* player );
+        void prepareGossipMenu(Player *pPlayer, uint32 gossipid = 0);
+        void sendPreparedGossip(Player* player);
         void OnGossipSelect(Player* player, uint32 option);
         void OnPoiSelect(Player* player, GossipOption const *gossip);
 

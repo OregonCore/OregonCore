@@ -169,7 +169,7 @@ bool Group::LoadGroupFromDB(const uint64 &leaderGuid, QueryResult_AutoPtr result
         do
         {
             LoadMemberFromDB((*result)[0].GetUInt32(), (*result)[2].GetUInt8(), (*result)[1].GetBool());
-        } while (result->NextRow() );
+        } while (result->NextRow());
         // group too small
         if (GetMembersCount() < 2)
             return false;
@@ -309,8 +309,8 @@ uint32 Group::RemoveMember(const uint64 &guid, const uint8 &method)
 
             if (method == 1)
             {
-                data.Initialize(SMSG_GROUP_UNINVITE, 0 );
-                player->GetSession()->SendPacket(&data );
+                data.Initialize(SMSG_GROUP_UNINVITE, 0);
+                player->GetSession()->SendPacket(&data);
             }
 
             data.Initialize(SMSG_GROUP_LIST, 24);
@@ -473,7 +473,7 @@ void Group::SendLootStartRoll(uint32 CountDown, const Roll &r)
             continue;
 
         if (itr->second != NOT_VALID)
-            p->GetSession()->SendPacket(&data );
+            p->GetSession()->SendPacket(&data);
     }
 }
 
@@ -497,7 +497,7 @@ void Group::SendLootRoll(const uint64& SourceGuid, const uint64& TargetGuid, uin
             continue;
 
         if (itr->second != NOT_VALID)
-            p->GetSession()->SendPacket(&data );
+            p->GetSession()->SendPacket(&data);
     }
 }
 
@@ -520,7 +520,7 @@ void Group::SendLootRollWon(const uint64& SourceGuid, const uint64& TargetGuid, 
             continue;
 
         if (itr->second != NOT_VALID)
-            p->GetSession()->SendPacket(&data );
+            p->GetSession()->SendPacket(&data);
     }
 }
 
@@ -540,7 +540,7 @@ void Group::SendLootAllPassed(uint32 NumberOfPlayers, const Roll &r)
             continue;
 
         if (itr->second != NOT_VALID)
-            p->GetSession()->SendPacket(&data );
+            p->GetSession()->SendPacket(&data);
     }
 }
 
@@ -786,7 +786,7 @@ void Group::CountTheRoll(Rolls::iterator rollI, uint32 NumberOfPlayers)
             {
                 ItemPosCountVec dest;
                 LootItem *item = &(roll->getLoot()->items[roll->itemSlot]);
-                uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, roll->itemid, item->count );
+                uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, roll->itemid, item->count);
                 if (msg == EQUIP_ERR_OK )
                 {
                     item->is_looted = true;
@@ -797,7 +797,7 @@ void Group::CountTheRoll(Rolls::iterator rollI, uint32 NumberOfPlayers)
                 else
                 {
                     item->is_blocked = false;
-                    player->SendEquipError(msg, NULL, NULL );
+                    player->SendEquipError(msg, NULL, NULL);
                 }
             }
         }
@@ -831,7 +831,7 @@ void Group::CountTheRoll(Rolls::iterator rollI, uint32 NumberOfPlayers)
             {
                 ItemPosCountVec dest;
                 LootItem *item = &(roll->getLoot()->items[roll->itemSlot]);
-                uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, roll->itemid, item->count );
+                uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, roll->itemid, item->count);
                 if (msg == EQUIP_ERR_OK )
                 {
                     item->is_looted = true;
@@ -842,7 +842,7 @@ void Group::CountTheRoll(Rolls::iterator rollI, uint32 NumberOfPlayers)
                 else
                 {
                     item->is_blocked = false;
-                    player->SendEquipError(msg, NULL, NULL );
+                    player->SendEquipError(msg, NULL, NULL);
                 }
             }
         }
@@ -963,7 +963,7 @@ void Group::SendUpdate()
             data << (uint8)m_difficulty;                    // Heroic Mod Group
 
         }
-        player->GetSession()->SendPacket(&data );
+        player->GetSession()->SendPacket(&data);
     }
 }
 
@@ -1156,7 +1156,7 @@ void Group::_setLeader(const uint64 &guid)
             "DELETE FROM group_instance WHERE leaderguid='%u' AND (permanent = 1 OR "
             "instance IN (SELECT instance FROM character_instance WHERE guid = '%u')"
             ")", GUID_LOPART(m_leaderGuid), GUID_LOPART(slot->guid)
-        );
+       );
 
         Player *player = objmgr.GetPlayer(slot->guid);
         if (player)

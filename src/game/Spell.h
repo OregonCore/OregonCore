@@ -99,8 +99,8 @@ class SpellCastTargets
         SpellCastTargets();
         ~SpellCastTargets();
 
-        bool read (WorldPacket * data, Unit *caster );
-        void write (WorldPacket * data );
+        bool read (WorldPacket * data, Unit *caster);
+        void write (WorldPacket * data);
 
         SpellCastTargets& operator=(const SpellCastTargets &target)
         {
@@ -228,8 +228,8 @@ class Spell
     friend struct Oregon::SpellNotifierCreatureAndPlayer;
     public:
 
-        void EffectNULL(uint32 );
-        void EffectUnused(uint32 );
+        void EffectNULL(uint32);
+        void EffectUnused(uint32);
         void EffectDistract(uint32 i);
         void EffectPull(uint32 i);
         void EffectSchoolDMG(uint32 i);
@@ -331,7 +331,7 @@ class Spell
         void EffectQuestFail(uint32 i);
         void EffectRedirectThreat(uint32 i);
 
-        Spell(Unit* Caster, SpellEntry const *info, bool triggered, uint64 originalCasterGUID = 0, Spell** triggeringContainer = NULL, bool skipCheck = false );
+        Spell(Unit* Caster, SpellEntry const *info, bool triggered, uint64 originalCasterGUID = 0, Spell** triggeringContainer = NULL, bool skipCheck = false);
         ~Spell();
 
         void prepare(SpellCastTargets * targets, Aura* triggeredByAura = NULL);
@@ -369,8 +369,8 @@ class Spell
 
         void DoCreateItem(uint32 i, uint32 itemtype);
 
-        void WriteSpellGoTargets(WorldPacket * data );
-        void WriteAmmoToPacket(WorldPacket * data );
+        void WriteSpellGoTargets(WorldPacket * data);
+        void WriteAmmoToPacket(WorldPacket * data);
         void FillTargetMap();
 
         void SetTargetMap(uint32 i, uint32 cur);

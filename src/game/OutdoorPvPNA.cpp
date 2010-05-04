@@ -430,7 +430,7 @@ bool OutdoorPvPObjectiveNA::HandleCustomSpell(Player * plr, uint32 spellId, Game
         int32 count = 10;
         uint32 itemid = 24538;
                                                                 // bomb id count
-        uint8 msg = plr->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemid, count, &noSpaceForCount );
+        uint8 msg = plr->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemid, count, &noSpaceForCount);
         if (msg != EQUIP_ERR_OK )                               // convert to possible store amount
             count -= noSpaceForCount;
 

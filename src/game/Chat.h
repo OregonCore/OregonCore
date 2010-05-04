@@ -57,7 +57,7 @@ class ChatHandler
 
         void FillSystemMessageData(WorldPacket *data, const char* message )
         {
-            FillMessageData(data, CHAT_MSG_SYSTEM, LANG_UNIVERSAL, 0, message );
+            FillMessageData(data, CHAT_MSG_SYSTEM, LANG_UNIVERSAL, 0, message);
         }
 
         static char* LineFromMessage(char*& pos) { char* start = strtok(pos,"\n"); pos = NULL; return start; }
@@ -67,7 +67,7 @@ class ChatHandler
         virtual void SendSysMessage( const char *str);
         void SendSysMessage(         int32     entry);
         void PSendSysMessage(        const char *format, ...) ATTR_PRINTF(2,3);
-        void PSendSysMessage(        int32     entry, ...  );
+        void PSendSysMessage(        int32     entry, ... );
         std::string PGetParseString(int32 entry, ...);
 
         int ParseCommands(const char* text);
@@ -538,7 +538,7 @@ class CliHandler : public ChatHandler
         Print* m_print;
 };
 
-char const *fmtstring(char const *format, ... );
+char const *fmtstring(char const *format, ...);
 
 #endif
 

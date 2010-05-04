@@ -162,7 +162,7 @@ void LootStore::LoadLootTable()
     else
     {
         sLog.outString("");
-        sLog.outErrorDb(">> Loaded 0 loot definitions. DB table %s is empty.",GetName() );
+        sLog.outErrorDb(">> Loaded 0 loot definitions. DB table %s is empty.",GetName());
     }
 }
 

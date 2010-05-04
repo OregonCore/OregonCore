@@ -113,7 +113,7 @@ Cell::Visit(const CellLock<LOCK_TYPE> &l, TypeContainerVisitor<T, CONTAINER> &vi
         }
         default:
         {
-            assert(false );
+            assert(false);
             break;
         }
     }

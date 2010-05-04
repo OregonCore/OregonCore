@@ -43,12 +43,12 @@ void WorldSession::HandleLearnTalentOpcode(WorldPacket & recv_data )
     if (requested_rank > 4)
         return;
 
-    TalentEntry const *talentInfo = sTalentStore.LookupEntry(talent_id );
+    TalentEntry const *talentInfo = sTalentStore.LookupEntry(talent_id);
 
     if (!talentInfo)
         return;
 
-    TalentTabEntry const *talentTabInfo = sTalentTabStore.LookupEntry(talentInfo->TalentTab );
+    TalentTabEntry const *talentTabInfo = sTalentTabStore.LookupEntry(talentInfo->TalentTab);
 
     if (!talentTabInfo)
         return;
@@ -147,7 +147,7 @@ void WorldSession::HandleTalentWipeOpcode(WorldPacket & recv_data )
     Creature *unit = ObjectAccessor::GetNPCIfCanInteractWith(*_player, guid,UNIT_NPC_FLAG_TRAINER);
     if (!unit)
     {
-        sLog.outDebug("WORLD: HandleTalentWipeOpcode - Unit (GUID: %u) not found or you can't interact with him.", uint32(GUID_LOPART(guid)) );
+        sLog.outDebug("WORLD: HandleTalentWipeOpcode - Unit (GUID: %u) not found or you can't interact with him.", uint32(GUID_LOPART(guid)));
         return;
     }
 
@@ -160,7 +160,7 @@ void WorldSession::HandleTalentWipeOpcode(WorldPacket & recv_data )
         WorldPacket data(MSG_TALENT_WIPE_CONFIRM, 8+4);    //you have not any talent
         data << uint64(0);
         data << uint32(0);
-        SendPacket(&data );
+        SendPacket(&data);
         return;
     }
 

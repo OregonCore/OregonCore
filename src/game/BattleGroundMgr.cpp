@@ -40,7 +40,7 @@
 #include "Chat.h"
 #include "ArenaTeam.h"
 
-INSTANTIATE_SINGLETON_1(BattleGroundMgr );
+INSTANTIATE_SINGLETON_1(BattleGroundMgr);
 
 /*********************************************************/
 /***            BATTLEGROUND QUEUE SYSTEM              ***/
@@ -872,7 +872,7 @@ void BattleGroundQueue::Update(uint32 bgTypeId, uint32 queue_id, uint8 arenatype
 
 bool BGQueueInviteEvent::Execute(uint64 /*e_time*/, uint32 /*p_time*/)
 {
-    Player* plr = objmgr.GetPlayer(m_PlayerGuid );
+    Player* plr = objmgr.GetPlayer(m_PlayerGuid);
 
     // player logged off (we should do nothing, he is correctly removed from queue in another procedure)
     if (!plr)
@@ -916,7 +916,7 @@ void BGQueueInviteEvent::Abort(uint64 /*e_time*/)
 
 bool BGQueueRemoveEvent::Execute(uint64 /*e_time*/, uint32 /*p_time*/)
 {
-    Player* plr = objmgr.GetPlayer(m_PlayerGuid );
+    Player* plr = objmgr.GetPlayer(m_PlayerGuid);
     if (!plr)
         // player logged off (we should do nothing, he is correctly removed from queue in another procedure)
         return true;
@@ -1060,7 +1060,7 @@ void BattleGroundMgr::BuildBattleGroundStatusPacket(WorldPacket *data, BattleGro
     data->Initialize(SMSG_BATTLEFIELD_STATUS, (4+1+1+4+2+4+1+4+4+4));
     *data << uint32(QueueSlot);                             // queue id (0...2) - player can be in 3 queues in time
     // uint64 in client
-    *data << uint64(uint64(arenatype ? arenatype : bg->GetArenaType()) | (uint64(0x0D) << 8) | (uint64(bg->GetTypeID()) << 16) | (uint64(0x1F90) << 48) );
+    *data << uint64(uint64(arenatype ? arenatype : bg->GetArenaType()) | (uint64(0x0D) << 8) | (uint64(bg->GetTypeID()) << 16) | (uint64(0x1F90) << 48));
     *data << uint32(0);                                     // unknown
     // alliance/horde for BG and skirmish/rated for Arenas
     *data << uint8(bg->isArena() ? (israted ? israted : bg->isRated() ) : bg->GetTeamIndexByTeamId(team));
@@ -1556,7 +1556,7 @@ void BattleGroundMgr::CreateInitialBattleGrounds()
     } while (result->NextRow());
 
     sLog.outString("");
-    sLog.outString(">> Loaded %u battlegrounds", count );
+    sLog.outString(">> Loaded %u battlegrounds", count);
 }
 
 void BattleGroundMgr::InitAutomaticArenaPointDistribution()
@@ -1706,7 +1706,7 @@ bool BattleGroundMgr::IsArenaType(uint32 bgTypeId) const
     return (bgTypeId == BATTLEGROUND_AA ||
         bgTypeId == BATTLEGROUND_BE ||
         bgTypeId == BATTLEGROUND_NA ||
-        bgTypeId == BATTLEGROUND_RL );
+        bgTypeId == BATTLEGROUND_RL);
 }
 
 bool BattleGroundMgr::IsBattleGroundType(uint32 bgTypeId) const

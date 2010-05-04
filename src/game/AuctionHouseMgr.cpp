@@ -35,7 +35,7 @@
 
 #include "Policies/SingletonImp.h"
 
-INSTANTIATE_SINGLETON_1(AuctionHouseMgr );
+INSTANTIATE_SINGLETON_1(AuctionHouseMgr);
 
 AuctionHouseMgr::AuctionHouseMgr()
 {
@@ -85,7 +85,7 @@ uint32 AuctionHouseMgr::GetAuctionDeposit(AuctionHouseEntry const* entry, uint32
             else
                 faction_pct = (0.75 * (double)sWorld.getRate(RATE_AUCTION_DEPOSIT));
         }
-        deposit = ((double)MSV * faction_pct * (double)pItem->GetCount()) * (double)(time / MIN_AUCTION_TIME );
+        deposit = ((double)MSV * faction_pct * (double)pItem->GetCount()) * (double)(time / MIN_AUCTION_TIME);
     }
     else
     {
@@ -165,10 +165,10 @@ void AuctionHouseMgr::SendAuctionWonMail(AuctionEntry *auction )
         msgAuctionWonBody.width(16);
         msgAuctionWonBody << std::right << std::hex << auction->owner;
         msgAuctionWonBody << std::dec << ":" << auction->bid << ":" << auction->buyout;
-        sLog.outDebug("AuctionWon body string : %s", msgAuctionWonBody.str().c_str() );
+        sLog.outDebug("AuctionWon body string : %s", msgAuctionWonBody.str().c_str());
 
         //prepare mail data... :
-        uint32 itemTextId = objmgr.CreateItemText(msgAuctionWonBody.str() );
+        uint32 itemTextId = objmgr.CreateItemText(msgAuctionWonBody.str());
 
         // set owner to bidder (to prevent delete item with sender char deleting)
         // owner in data will set at mail receive and item extracting
@@ -219,7 +219,7 @@ void AuctionHouseMgr::SendAuctionSalePendingMail(AuctionEntry * auction )
 
         sLog.outDebug("AuctionSalePending body string : %s", msgAuctionSalePendingBody.str().c_str());
 
-        uint32 itemTextId = objmgr.CreateItemText(msgAuctionSalePendingBody.str() );
+        uint32 itemTextId = objmgr.CreateItemText(msgAuctionSalePendingBody.str());
 
         WorldSession::SendMailTo(owner, MAIL_AUCTION, MAIL_STATIONERY_AUCTION, auction->GetHouseId(), auction->owner, msgAuctionSalePendingSubject.str(), itemTextId, NULL, 0, 0, MAIL_CHECK_MASK_AUCTION);
     }
@@ -251,14 +251,14 @@ void AuctionHouseMgr::SendAuctionSuccessfulMail(AuctionEntry * auction )
 
         sLog.outDebug("AuctionSuccessful body string : %s", auctionSuccessfulBody.str().c_str());
 
-        uint32 itemTextId = objmgr.CreateItemText(auctionSuccessfulBody.str() );
+        uint32 itemTextId = objmgr.CreateItemText(auctionSuccessfulBody.str());
 
         uint32 profit = auction->bid + auction->deposit - auctionCut;
 
         if (owner)
         {
             //send auction owner notification, bidder must be current!
-            owner->GetSession()->SendAuctionOwnerNotification(auction );
+            owner->GetSession()->SendAuctionOwnerNotification(auction);
         }
 
         WorldSession::SendMailTo(owner, MAIL_AUCTION, MAIL_STATIONERY_AUCTION, auction->GetHouseId(), auction->owner, msgAuctionSuccessfulSubject.str(), itemTextId, NULL, profit, 0, MAIL_CHECK_MASK_AUCTION, sWorld.getConfig(CONFIG_MAIL_DELIVERY_DELAY));
@@ -289,7 +289,7 @@ void AuctionHouseMgr::SendAuctionExpiredMail(AuctionEntry * auction )
         subject << auction->item_template << ":0:" << AUCTION_EXPIRED;
 
         if (owner )
-            owner->GetSession()->SendAuctionOwnerNotification(auction );
+            owner->GetSession()->SendAuctionOwnerNotification(auction);
         else
             RemoveAItem(pItem->GetGUIDLow()); // we have to remove the item, before we delete it !!
 
@@ -322,7 +322,7 @@ void AuctionHouseMgr::LoadAuctionItems()
         return;
     }
 
-    barGoLink bar(result->GetRowCount() );
+    barGoLink bar(result->GetRowCount());
 
     uint32 count = 0;
 
@@ -354,10 +354,10 @@ void AuctionHouseMgr::LoadAuctionItems()
 
         ++count;
     }
-    while (result->NextRow() );
+    while (result->NextRow());
 
     sLog.outString("");
-    sLog.outString(">> Loaded %u auction items", count );
+    sLog.outString(">> Loaded %u auction items", count);
 }
 
 void AuctionHouseMgr::LoadAuctions()
@@ -384,7 +384,7 @@ void AuctionHouseMgr::LoadAuctions()
         return;
     }
 
-    result = CharacterDatabase.Query("SELECT id,auctioneerguid,itemguid,item_template,itemowner,buyoutprice,time,buyguid,lastbid,startbid,deposit FROM auctionhouse" );
+    result = CharacterDatabase.Query("SELECT id,auctioneerguid,itemguid,item_template,itemowner,buyoutprice,time,buyguid,lastbid,startbid,deposit FROM auctionhouse");
     if (!result )
     {
         barGoLink bar(1);
@@ -394,7 +394,7 @@ void AuctionHouseMgr::LoadAuctions()
         return;
     }
 
-    barGoLink bar(AuctionCount );
+    barGoLink bar(AuctionCount);
 
     AuctionEntry *aItem;
 
@@ -460,12 +460,12 @@ void AuctionHouseMgr::LoadAuctions()
     } while (result->NextRow());
 
     sLog.outString("");
-    sLog.outString(">> Loaded %u auctions", AuctionCount );
+    sLog.outString(">> Loaded %u auctions", AuctionCount);
 }
 
 void AuctionHouseMgr::AddAItem(Item* it )
 {
-    ASSERT(it );
+    ASSERT(it);
     ASSERT(mAitems.find(it->GetGUIDLow()) == mAitems.end());
     mAitems[it->GetGUIDLow()] = it;
 }
@@ -542,7 +542,7 @@ void AuctionHouseObject::Update()
             ///- Either cancel the auction if there was no bidder
             if (itr->second->bidder == 0)
             {
-                auctionmgr.SendAuctionExpiredMail(itr->second );
+                auctionmgr.SendAuctionExpiredMail(itr->second);
             }
             ///- Or perform the transaction
             else
@@ -550,8 +550,8 @@ void AuctionHouseObject::Update()
                 //we should send an "item sold" message if the seller is online
                 //we send the item to the winner
                 //we send the money to the seller
-                auctionmgr.SendAuctionSuccessfulMail(itr->second );
-                auctionmgr.SendAuctionWonMail(itr->second );
+                auctionmgr.SendAuctionSuccessfulMail(itr->second);
+                auctionmgr.SendAuctionWonMail(itr->second);
             }
 
             ///- In any case clear the auction

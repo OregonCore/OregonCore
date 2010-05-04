@@ -585,7 +585,7 @@ void GameObject::SaveToDB(uint32 mapid, uint8 spawnMask)
 
     WorldDatabase.BeginTransaction();
     WorldDatabase.PExecuteLog("DELETE FROM gameobject WHERE guid = '%u'", m_DBTableGuid);
-    WorldDatabase.PExecuteLog(ss.str().c_str() );
+    WorldDatabase.PExecuteLog(ss.str().c_str());
     WorldDatabase.CommitTransaction();
 }
 
@@ -949,8 +949,8 @@ void GameObject::Use(Unit* user)
 
             Player* player = (Player*)user;
 
-            player->PrepareQuestMenu(GetGUID() );
-            player->SendPreparedQuest(GetGUID() );
+            player->PrepareQuestMenu(GetGUID());
+            player->SendPreparedQuest(GetGUID());
             return;
         }
         //Sitting: Wooden bench, chairs enzz
@@ -1080,9 +1080,9 @@ void GameObject::Use(Unit* user)
 
                     uint32 subzone = GetAreaId();
 
-                    int32 zone_skill = objmgr.GetFishingBaseSkillLevel(subzone );
+                    int32 zone_skill = objmgr.GetFishingBaseSkillLevel(subzone);
                     if (!zone_skill)
-                        zone_skill = objmgr.GetFishingBaseSkillLevel(GetZoneId() );
+                        zone_skill = objmgr.GetFishingBaseSkillLevel(GetZoneId());
 
                     //provide error, no fishable zone or area should be 0
                     if (!zone_skill)
@@ -1313,7 +1313,7 @@ void GameObject::Use(Unit* user)
     if (!spellId)
         return;
 
-    SpellEntry const *spellInfo = sSpellStore.LookupEntry(spellId );
+    SpellEntry const *spellInfo = sSpellStore.LookupEntry(spellId);
     if (!spellInfo)
     {
         if (user->GetTypeId()!=TYPEID_PLAYER || !sOutdoorPvPMgr.HandleCustomSpell((Player*)user,spellId,this))
@@ -1327,7 +1327,7 @@ void GameObject::Use(Unit* user)
 
     // spell target is user of GO
     SpellCastTargets targets;
-    targets.setUnitTarget(user );
+    targets.setUnitTarget(user);
 
     spell->prepare(&targets);
 }

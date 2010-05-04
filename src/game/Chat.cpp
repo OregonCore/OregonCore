@@ -780,7 +780,7 @@ void ChatHandler::PSendSysMessage(int32 entry, ...)
     va_list ap;
     char str [1024];
     va_start(ap, entry);
-    vsnprintf(str,1024,format, ap );
+    vsnprintf(str,1024,format, ap);
     va_end(ap);
     SendSysMessage(str);
 }
@@ -790,7 +790,7 @@ void ChatHandler::PSendSysMessage(const char *format, ...)
     va_list ap;
     char str [1024];
     va_start(ap, format);
-    vsnprintf(str,1024,format, ap );
+    vsnprintf(str,1024,format, ap);
     va_end(ap);
     SendSysMessage(str);
 }
@@ -1235,7 +1235,7 @@ char const *fmtstring(char const *format, ... )
     }
 
     buf = &string[index];
-    memcpy(buf, temp_buffer, len+1 );
+    memcpy(buf, temp_buffer, len+1);
 
     index += len + 1;
 

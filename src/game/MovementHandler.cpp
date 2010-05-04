@@ -212,7 +212,7 @@ bool WorldSession::Anti__CheatOccurred(uint32 CurTime,const char* Reason,float S
 
 void WorldSession::HandleMoveWorldportAckOpcode(WorldPacket & /*recv_data*/ )
 {
-    sLog.outDebug("WORLD: got MSG_MOVE_WORLDPORT_ACK." );
+    sLog.outDebug("WORLD: got MSG_MOVE_WORLDPORT_ACK.");
     HandleMoveWorldportAckOpcode();
 }
 
@@ -472,7 +472,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data )
     if (((MovementFlags & MOVEMENTFLAG_SWIMMING) != 0) != GetPlayer()->IsInWater())
     {
         // now client not include swimming flag in case jumping under water
-        GetPlayer()->SetInWater(!GetPlayer()->IsInWater() || GetPlayer()->GetBaseMap()->IsUnderWater(movementInfo.x, movementInfo.y, movementInfo.z) );
+        GetPlayer()->SetInWater(!GetPlayer()->IsInWater() || GetPlayer()->GetBaseMap()->IsUnderWater(movementInfo.x, movementInfo.y, movementInfo.z));
             if (plMover->GetBaseMap()->IsUnderWater(movementInfo.x, movementInfo.y, movementInfo.z-7.0f))
         {
             plMover->m_anti_BeginFallZ=INVALID_HEIGHT;
@@ -678,7 +678,7 @@ void WorldSession::HandlePossessedMovement(WorldPacket& recv_data, MovementInfo&
         if (((MovementFlags & MOVEMENTFLAG_SWIMMING) != 0) != plr->IsInWater())
         {
             // Now client not include swimming flag in case jumping under water
-            plr->SetInWater(!plr->IsInWater() || plr->GetBaseMap()->IsUnderWater(movementInfo.x, movementInfo.y, movementInfo.z) );
+            plr->SetInWater(!plr->IsInWater() || plr->GetBaseMap()->IsUnderWater(movementInfo.x, movementInfo.y, movementInfo.z));
         }
 
         plr->SetPosition(movementInfo.x, movementInfo.y, movementInfo.z, movementInfo.o, false);

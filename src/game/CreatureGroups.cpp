@@ -133,7 +133,7 @@ void CreatureGroupManager::LoadCreatureFormations()
     while (result->NextRow()) ;
 
     sLog.outString("");
-    sLog.outString(">> Loaded %u creatures in formations", total_records );
+    sLog.outString(">> Loaded %u creatures in formations", total_records);
     sLog.outString("");
 }
 

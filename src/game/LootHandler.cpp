@@ -58,7 +58,7 @@ void WorldSession::HandleAutostoreLootItemOpcode(WorldPacket & recv_data )
     }
     else if (IS_ITEM_GUID(lguid))
     {
-        Item *pItem = player->GetItemByGuid(lguid );
+        Item *pItem = player->GetItemByGuid(lguid);
 
         if (!pItem)
         {
@@ -102,7 +102,7 @@ void WorldSession::HandleAutostoreLootItemOpcode(WorldPacket & recv_data )
 
     if (!item)
     {
-        player->SendEquipError(EQUIP_ERR_ALREADY_LOOTED, NULL, NULL );
+        player->SendEquipError(EQUIP_ERR_ALREADY_LOOTED, NULL, NULL);
         return;
     }
 
@@ -114,7 +114,7 @@ void WorldSession::HandleAutostoreLootItemOpcode(WorldPacket & recv_data )
     }
 
     ItemPosCountVec dest;
-    uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, item->itemid, item->count );
+    uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, item->itemid, item->count);
     if (msg == EQUIP_ERR_OK )
     {
         Item * newitem = player->StoreNewItem(dest, item->itemid, true, item->randomPropertyId);
@@ -154,7 +154,7 @@ void WorldSession::HandleAutostoreLootItemOpcode(WorldPacket & recv_data )
         player->SendNewItem(newitem, uint32(item->count), false, false, true);
     }
     else
-        player->SendEquipError(msg, NULL, NULL );
+        player->SendEquipError(msg, NULL, NULL);
 }
 
 void WorldSession::HandleLootMoneyOpcode(WorldPacket & /*recv_data*/ )
@@ -230,15 +230,15 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket & /*recv_data*/ )
 
             for (std::vector<Player*>::iterator i = playersNear.begin(); i != playersNear.end(); ++i)
             {
-                (*i)->ModifyMoney(money_per_player );
+                (*i)->ModifyMoney(money_per_player);
                 //Offset surely incorrect, but works
-                WorldPacket data(SMSG_LOOT_MONEY_NOTIFY, 4 );
+                WorldPacket data(SMSG_LOOT_MONEY_NOTIFY, 4);
                 data << uint32(money_per_player);
-                (*i)->GetSession()->SendPacket(&data );
+                (*i)->GetSession()->SendPacket(&data);
             }
         }
         else
-            player->ModifyMoney(pLoot->gold );
+            player->ModifyMoney(pLoot->gold);
         pLoot->gold = 0;
         pLoot->NotifyMoneyRemoved();
     }
@@ -374,7 +374,7 @@ void WorldSession::DoLootRelease(uint64 lguid )
     }
     else if (IS_ITEM_GUID(lguid))
     {
-        Item *pItem = player->GetItemByGuid(lguid );
+        Item *pItem = player->GetItemByGuid(lguid);
         if (!pItem)
             return;
         if ((pItem->GetProto()->BagFamily & BAG_FAMILY_MASK_MINING_SUPP) &&
@@ -476,17 +476,17 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket & recv_data )
     LootItem& item = pLoot->items[slotid];
 
     ItemPosCountVec dest;
-    uint8 msg = target->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, item.itemid, item.count );
+    uint8 msg = target->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, item.itemid, item.count);
     if (msg != EQUIP_ERR_OK )
     {
-        target->SendEquipError(msg, NULL, NULL );
-        _player->SendEquipError(msg, NULL, NULL );         // send duplicate of error massage to master looter
+        target->SendEquipError(msg, NULL, NULL);
+        _player->SendEquipError(msg, NULL, NULL);         // send duplicate of error massage to master looter
         return;
     }
 
     // not move item from loot to target inventory
-    Item * newitem = target->StoreNewItem(dest, item.itemid, true, item.randomPropertyId );
-    target->SendNewItem(newitem, uint32(item.count), false, false, true );
+    Item * newitem = target->StoreNewItem(dest, item.itemid, true, item.randomPropertyId);
+    target->SendNewItem(newitem, uint32(item.count), false, false, true);
 
     // mark as looted
     item.count=0;

@@ -172,7 +172,7 @@ namespace Oregon
                 GridRefManager<T> *iter = m.find(i_id);
                 if (iter != m.end() )
                 {
-                    assert(iter->second != NULL );
+                    assert(iter->second != NULL);
                     i_object = iter->second;
                 }
             }
@@ -708,7 +708,7 @@ namespace Oregon
                 Unit const* owner = i_funit->GetOwner();
                 if (owner)
                     check = owner;
-                i_targetForPlayer = (check->GetTypeId()==TYPEID_PLAYER );
+                i_targetForPlayer = (check->GetTypeId()==TYPEID_PLAYER);
             }
             bool operator()(Unit* u)
             {

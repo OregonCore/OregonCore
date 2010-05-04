@@ -188,10 +188,10 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data )
     uint32 itemTextId = 0;
     if (!body.empty())
     {
-        itemTextId = objmgr.CreateItemText(body );
+        itemTextId = objmgr.CreateItemText(body);
     }
 
-    pl->ModifyMoney(-int32(reqmoney) );
+    pl->ModifyMoney(-int32(reqmoney));
 
     bool needItemDelay = false;
 
@@ -413,7 +413,7 @@ void WorldSession::HandleTakeItem(WorldPacket & recv_data )
     Item *it = pl->GetMItem(itemId);
 
     ItemPosCountVec dest;
-    uint8 msg = _player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, it, false );
+    uint8 msg = _player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, it, false);
     if (msg == EQUIP_ERR_OK )
     {
         m->RemoveItem(itemId);
@@ -454,7 +454,7 @@ void WorldSession::HandleTakeItem(WorldPacket & recv_data )
                 WorldSession::SendMailTo(receive, MAIL_NORMAL, MAIL_STATIONERY_NORMAL, m->receiver, m->sender, m->subject, 0, NULL, m->COD, 0, MAIL_CHECK_MASK_COD_PAYMENT);
             }
 
-            pl->ModifyMoney(-int32(m->COD) );
+            pl->ModifyMoney(-int32(m->COD));
         }
         m->COD = 0;
         m->state = MAIL_STATE_CHANGED;
@@ -630,7 +630,7 @@ void WorldSession::HandleItemTextQuery(WorldPacket & recv_data )
 
     WorldPacket data(SMSG_ITEM_TEXT_QUERY_RESPONSE, (4+10));// guess size
     data << itemTextId;
-    data << objmgr.GetItemText(itemTextId );
+    data << objmgr.GetItemText(itemTextId);
     SendPacket(&data);
 }
 
@@ -658,13 +658,13 @@ void WorldSession::HandleMailCreateTextItem(WorldPacket & recv_data )
         return;
     }
 
-    bodyItem->SetUInt32Value(ITEM_FIELD_ITEM_TEXT_ID , m->itemTextId );
+    bodyItem->SetUInt32Value(ITEM_FIELD_ITEM_TEXT_ID , m->itemTextId);
     bodyItem->SetUInt32Value(ITEM_FIELD_CREATOR, m->sender);
 
     sLog.outDetail("HandleMailCreateTextItem mailid=%u",mailId);
 
     ItemPosCountVec dest;
-    uint8 msg = _player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, bodyItem, false );
+    uint8 msg = _player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, bodyItem, false);
     if (msg == EQUIP_ERR_OK )
     {
         m->itemTextId = 0;

@@ -307,13 +307,13 @@ bool Creature::InitEntry(uint32 Entry, uint32 team, const CreatureData *data )
     SetName(normalInfo->Name);                              // at normal entry always
 
     SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS,minfo->bounding_radius);
-    SetFloatValue(UNIT_FIELD_COMBATREACH,minfo->combat_reach );
+    SetFloatValue(UNIT_FIELD_COMBATREACH,minfo->combat_reach);
 
     SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);
 
-    SetSpeed(MOVE_WALK,     cinfo->speed );
-    SetSpeed(MOVE_RUN,      cinfo->speed );
-    SetSpeed(MOVE_SWIM,     cinfo->speed );
+    SetSpeed(MOVE_WALK,     cinfo->speed);
+    SetSpeed(MOVE_RUN,      cinfo->speed);
+    SetSpeed(MOVE_SWIM,     cinfo->speed);
 
     SetFloatValue(OBJECT_FIELD_SCALE_X, cinfo->scale);
 
@@ -338,8 +338,8 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData *data )
     m_regenHealth = GetCreatureInfo()->RegenHealth;
 
     // creatures always have melee weapon ready if any
-    SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE );
-    SetByteValue(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_AURAS );
+    SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE);
+    SetByteValue(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_AURAS);
 
     SelectLevel(GetCreatureInfo());
     if (team == HORDE)
@@ -490,7 +490,7 @@ void Creature::Update(uint32 diff)
                 }
             }
 
-            Unit::Update(diff );
+            Unit::Update(diff);
 
             // creature can be dead after Unit::Update call
             // CORPSE/DEAD state will processed at next tick (in other case death timer will be updated unexpectedly)
@@ -940,11 +940,11 @@ void Creature::OnGossipSelect(Player* player, uint32 option)
     uint32 zoneid=GetZoneId();
     uint64 guid=GetGUID();
 
-    GossipOption const *gossip=GetGossipOption(action );
+    GossipOption const *gossip=GetGossipOption(action);
     if (!gossip)
     {
         zoneid=0;
-        gossip=GetGossipOption(action );
+        gossip=GetGossipOption(action);
         if (!gossip)
             return;
     }
@@ -969,8 +969,8 @@ void Creature::OnGossipSelect(Player* player, uint32 option)
                 CastSpell(this,17251,true,NULL,NULL,player->GetGUID());
             break;
         case GOSSIP_OPTION_QUESTGIVER:
-            player->PrepareQuestMenu(guid );
-            player->SendPreparedQuest(guid );
+            player->PrepareQuestMenu(guid);
+            player->SendPreparedQuest(guid);
             break;
         case GOSSIP_OPTION_VENDOR:
         case GOSSIP_OPTION_ARMORER:
@@ -995,36 +995,36 @@ void Creature::OnGossipSelect(Player* player, uint32 option)
             break;
         case GOSSIP_OPTION_INNKEEPER:
             player->PlayerTalkClass->CloseGossip();
-            player->SetBindPoint(guid );
+            player->SetBindPoint(guid);
             break;
         case GOSSIP_OPTION_BANKER:
-            player->GetSession()->SendShowBank(guid );
+            player->GetSession()->SendShowBank(guid);
             break;
         case GOSSIP_OPTION_PETITIONER:
             player->PlayerTalkClass->CloseGossip();
-            player->GetSession()->SendPetitionShowList(guid );
+            player->GetSession()->SendPetitionShowList(guid);
             break;
         case GOSSIP_OPTION_TABARDDESIGNER:
             player->PlayerTalkClass->CloseGossip();
-            player->GetSession()->SendTabardVendorActivate(guid );
+            player->GetSession()->SendTabardVendorActivate(guid);
             break;
         case GOSSIP_OPTION_AUCTIONEER:
-            player->GetSession()->SendAuctionHello(guid, this );
+            player->GetSession()->SendAuctionHello(guid, this);
             break;
         case GOSSIP_OPTION_SPIRITGUIDE:
         case GOSSIP_GUARD_SPELLTRAINER:
         case GOSSIP_GUARD_SKILLTRAINER:
-            prepareGossipMenu(player,gossip->Id );
-            sendPreparedGossip(player );
+            prepareGossipMenu(player,gossip->Id);
+            sendPreparedGossip(player);
             break;
         case GOSSIP_OPTION_BATTLEFIELD:
         {
             uint32 bgTypeId = objmgr.GetBattleMasterBG(GetEntry());
-            player->GetSession()->SendBattlegGroundList(GetGUID(), bgTypeId );
+            player->GetSession()->SendBattlegGroundList(GetGUID(), bgTypeId);
             break;
         }
         default:
-            OnPoiSelect(player, gossip );
+            OnPoiSelect(player, gossip);
             break;
     }
 
@@ -1051,16 +1051,16 @@ void Creature::OnPoiSelect(Player* player, GossipOption const *gossip)
                 icon=ICON_POI_TOWER;
                 break;
         }
-        uint32 textid = GetGossipTextId(gossip->Action, GetZoneId() );
+        uint32 textid = GetGossipTextId(gossip->Action, GetZoneId());
         player->PlayerTalkClass->SendTalking(textid);
         // std::string areaname= gossip->OptionText;
-        // how this could worked player->PlayerTalkClass->SendPointOfInterest(x, y, icon, 2, 15, areaname.c_str() );
+        // how this could worked player->PlayerTalkClass->SendPointOfInterest(x, y, icon, 2, 15, areaname.c_str());
     }
 }
 
 uint32 Creature::GetGossipTextId(uint32 action, uint32 zoneid)
 {
-    QueryResult_AutoPtr result= WorldDatabase.PQuery("SELECT textid FROM npc_gossip_textid WHERE action = '%u' AND zoneid ='%u'", action, zoneid );
+    QueryResult_AutoPtr result= WorldDatabase.PQuery("SELECT textid FROM npc_gossip_textid WHERE action = '%u' AND zoneid ='%u'", action, zoneid);
 
     if (!result)
         return 0;
@@ -1123,8 +1123,8 @@ void Creature::AI_SendMoveToPacket(float x, float y, float z, uint32 time, uint3
     /*    uint32 timeElap = getMSTime();
         if ((timeElap - m_startMove) < m_moveTime)
         {
-            oX = (dX - oX) * ((timeElap - m_startMove) / m_moveTime );
-            oY = (dY - oY) * ((timeElap - m_startMove) / m_moveTime );
+            oX = (dX - oX) * ((timeElap - m_startMove) / m_moveTime);
+            oY = (dY - oY) * ((timeElap - m_startMove) / m_moveTime);
         }
         else
         {
@@ -1246,7 +1246,7 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask)
         << (m_isDeadByDefault ? 1 : 0) << ","               //is_dead
         << GetDefaultMovementType() << ")";                 //default movement generator type
 
-    WorldDatabase.PExecuteLog(ss.str().c_str() );
+    WorldDatabase.PExecuteLog(ss.str().c_str());
 
     WorldDatabase.CommitTransaction();
 }
@@ -1730,7 +1730,7 @@ void Creature::Respawn()
             LoadCreaturesAddon(true);
         }
         else
-            setDeathState(JUST_ALIVED );
+            setDeathState(JUST_ALIVED);
 
         //Call AI respawn virtual function
         AI()->JustRespawned();
@@ -1774,7 +1774,7 @@ SpellEntry const *Creature::reachWithSpellAttack(Unit *pVictim)
     {
         if (!m_spells[i])
             continue;
-        SpellEntry const *spellInfo = sSpellStore.LookupEntry(m_spells[i] );
+        SpellEntry const *spellInfo = sSpellStore.LookupEntry(m_spells[i]);
         if (!spellInfo)
         {
             sLog.outError("WORLD: unknown spell id %i\n", m_spells[i]);
@@ -1822,7 +1822,7 @@ SpellEntry const *Creature::reachWithSpellCure(Unit *pVictim)
     {
         if (!m_spells[i])
             continue;
-        SpellEntry const *spellInfo = sSpellStore.LookupEntry(m_spells[i] );
+        SpellEntry const *spellInfo = sSpellStore.LookupEntry(m_spells[i]);
         if (!spellInfo)
         {
             sLog.outError("WORLD: unknown spell id %i\n", m_spells[i]);

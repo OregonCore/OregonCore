@@ -26,7 +26,7 @@
 #include "Player.h"
 #include "Policies/SingletonImp.h"
 
-INSTANTIATE_SINGLETON_1(OutdoorPvPMgr );
+INSTANTIATE_SINGLETON_1(OutdoorPvPMgr);
 
 OutdoorPvPMgr::OutdoorPvPMgr()
 {

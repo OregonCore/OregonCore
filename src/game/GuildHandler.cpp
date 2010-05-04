@@ -1111,22 +1111,22 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data )
             uint8 msg = pGuild->CanStoreItem(BankTabDst,BankTabSlotDst,dest,SplitedAmount,pItemSrc,false);
             if (msg != EQUIP_ERR_OK )
             {
-                pl->SendEquipError(msg, pItemSrc, NULL );
+                pl->SendEquipError(msg, pItemSrc, NULL);
                 return;
             }
 
-            Item *pNewItem = pItemSrc->CloneItem(SplitedAmount );
+            Item *pNewItem = pItemSrc->CloneItem(SplitedAmount);
             if (!pNewItem )
             {
-                pl->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, pItemSrc, NULL );
+                pl->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, pItemSrc, NULL);
                 return;
             }
 
             CharacterDatabase.BeginTransaction();
             pGuild->LogBankEvent(GUILD_BANK_LOG_MOVE_ITEM, BankTab, pl->GetGUIDLow(), pItemSrc->GetEntry(), SplitedAmount, BankTabDst);
 
-            pl->ItemRemovedQuestCheck(pItemSrc->GetEntry(), SplitedAmount );
-            pItemSrc->SetCount(pItemSrc->GetCount() - SplitedAmount );
+            pl->ItemRemovedQuestCheck(pItemSrc->GetEntry(), SplitedAmount);
+            pItemSrc->SetCount(pItemSrc->GetCount() - SplitedAmount);
             pItemSrc->FSetState(ITEM_CHANGED);
             pItemSrc->SaveToDB();                           // not in inventory and can be save standalone
             pGuild->StoreItem(BankTabDst,dest,pNewItem);
@@ -1151,7 +1151,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data )
                 uint8 msg = pGuild->CanStoreItem(BankTabDst,BankTabSlotDst,gDest,pItemSrc->GetCount(),pItemSrc,true);
                 if (msg != EQUIP_ERR_OK )
                 {
-                    pl->SendEquipError(msg, pItemSrc, NULL );
+                    pl->SendEquipError(msg, pItemSrc, NULL);
                     return;
                 }
 
@@ -1159,7 +1159,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data )
                 msg = pGuild->CanStoreItem(BankTab,BankTabSlot,gSrc,pItemDst->GetCount(),pItemDst,true);
                 if (msg != EQUIP_ERR_OK )
                 {
-                    pl->SendEquipError(msg, pItemDst, NULL );
+                    pl->SendEquipError(msg, pItemDst, NULL);
                     return;
                 }
 
@@ -1205,7 +1205,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data )
     // allow work with inventory only
     if (!Player::IsInventoryPos(PlayerBag,PlayerSlot) && !(PlayerBag == NULL_BAG && PlayerSlot == NULL_SLOT) )
     {
-        _player->SendEquipError(EQUIP_ERR_NONE, NULL, NULL );
+        _player->SendEquipError(EQUIP_ERR_NONE, NULL, NULL);
         return;
     }
 
@@ -1231,10 +1231,10 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data )
 
         if (SplitedAmount)
         {                                                   // Bank -> Char split to slot (patly move)
-            Item *pNewItem = pItemBank->CloneItem(SplitedAmount );
+            Item *pNewItem = pItemBank->CloneItem(SplitedAmount);
             if (!pNewItem )
             {
-                pl->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, pItemBank, NULL );
+                pl->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, pItemBank, NULL);
                 return;
             }
 
@@ -1242,7 +1242,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data )
             uint8 msg = pl->CanStoreItem(PlayerBag, PlayerSlot, dest, pNewItem, false);
             if (msg != EQUIP_ERR_OK )
             {
-                pl->SendEquipError(msg, pNewItem, NULL );
+                pl->SendEquipError(msg, pNewItem, NULL);
                 delete pNewItem;
                 return;
             }
@@ -1298,7 +1298,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data )
                 {
                     if (!pItemChar->CanBeTraded())
                     {
-                        _player->SendEquipError(EQUIP_ERR_ITEMS_CANT_BE_SWAPPED, pItemChar, NULL );
+                        _player->SendEquipError(EQUIP_ERR_ITEMS_CANT_BE_SWAPPED, pItemChar, NULL);
                         return;
                     }
                 }
@@ -1307,7 +1307,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data )
                 msg = pl->CanStoreItem(PlayerBag, PlayerSlot, iDest, pItemBank, true);
                 if (msg != EQUIP_ERR_OK )
                 {
-                    pl->SendEquipError(msg, pItemBank, NULL );
+                    pl->SendEquipError(msg, pItemBank, NULL);
                     return;
                 }
 
@@ -1317,7 +1317,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data )
                     msg = pGuild->CanStoreItem(BankTab,BankTabSlot,gDest,pItemChar->GetCount(),pItemChar,true);
                     if (msg != EQUIP_ERR_OK )
                     {
-                        pl->SendEquipError(msg, pItemChar, NULL );
+                        pl->SendEquipError(msg, pItemChar, NULL);
                         return;
                     }
                 }
@@ -1368,7 +1368,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data )
 
     if (!pItemChar->CanBeTraded())
     {
-        _player->SendEquipError(EQUIP_ERR_ITEMS_CANT_BE_SWAPPED, pItemChar, NULL );
+        _player->SendEquipError(EQUIP_ERR_ITEMS_CANT_BE_SWAPPED, pItemChar, NULL);
         return;
     }
 
@@ -1387,14 +1387,14 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data )
         uint8 msg = pGuild->CanStoreItem(BankTab,BankTabSlot,dest,SplitedAmount,pItemChar,false);
         if (msg != EQUIP_ERR_OK )
         {
-            pl->SendEquipError(msg, pItemChar, NULL );
+            pl->SendEquipError(msg, pItemChar, NULL);
             return;
         }
 
-        Item *pNewItem = pItemChar->CloneItem(SplitedAmount );
+        Item *pNewItem = pItemChar->CloneItem(SplitedAmount);
         if (!pNewItem )
         {
-            pl->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, pItemChar, NULL );
+            pl->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, pItemChar, NULL);
             return;
         }
 
@@ -1409,7 +1409,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data )
         CharacterDatabase.BeginTransaction();
         pGuild->LogBankEvent(GUILD_BANK_LOG_DEPOSIT_ITEM, BankTab, pl->GetGUIDLow(), pItemChar->GetEntry(), SplitedAmount);
 
-        pl->ItemRemovedQuestCheck(pItemChar->GetEntry(), SplitedAmount );
+        pl->ItemRemovedQuestCheck(pItemChar->GetEntry(), SplitedAmount);
         pItemChar->SetCount(pItemChar->GetCount()-SplitedAmount);
         pItemChar->SetState(ITEM_CHANGED);
         pl->SaveInventoryAndGoldToDB();
@@ -1453,7 +1453,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data )
                 msg = pl->CanStoreItem(PlayerBag, PlayerSlot, iDest, pItemBank, true);
                 if (msg != EQUIP_ERR_OK )
                 {
-                    pl->SendEquipError(msg, pItemBank, NULL );
+                    pl->SendEquipError(msg, pItemBank, NULL);
                     return;
                 }
             }
@@ -1462,7 +1462,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data )
             msg = pGuild->CanStoreItem(BankTab,BankTabSlot,gDest,pItemChar->GetCount(),pItemChar,true);
             if (msg != EQUIP_ERR_OK )
             {
-                pl->SendEquipError(msg, pItemChar, NULL );
+                pl->SendEquipError(msg, pItemChar, NULL);
                 return;
             }
 
@@ -1648,6 +1648,6 @@ void WorldSession::SendSaveGuildEmblem(uint32 msg )
 {
     WorldPacket data(MSG_SAVE_GUILD_EMBLEM, 4);
     data << uint32(msg);                                    // not part of guild
-    SendPacket(&data );
+    SendPacket(&data);
 }
 

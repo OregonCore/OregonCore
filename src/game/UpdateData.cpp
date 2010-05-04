@@ -131,7 +131,7 @@ bool UpdateData::BuildPacket(WorldPacket *packet, bool hasTransport)
     if (m_data.size() > 50 )
     {
         uint32 destsize = buf.size() + buf.size()/10 + 16;
-        packet->resize(destsize );
+        packet->resize(destsize);
 
         packet->put(0, (uint32)buf.size());
 
@@ -142,13 +142,13 @@ bool UpdateData::BuildPacket(WorldPacket *packet, bool hasTransport)
         if (destsize == 0)
             return false;
 
-        packet->resize(destsize + sizeof(uint32) );
-        packet->SetOpcode(SMSG_COMPRESSED_UPDATE_OBJECT );
+        packet->resize(destsize + sizeof(uint32));
+        packet->SetOpcode(SMSG_COMPRESSED_UPDATE_OBJECT);
     }
     else
     {
-        packet->append(buf );
-        packet->SetOpcode(SMSG_UPDATE_OBJECT );
+        packet->append(buf);
+        packet->SetOpcode(SMSG_UPDATE_OBJECT);
     }
 
     return true;

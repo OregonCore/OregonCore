@@ -259,7 +259,7 @@ bool Guild::LoadRanksFromDB(uint32 GuildId)
             rankRights |= GR_RIGHT_ALL;
 
         AddRank(rankName,rankRights,rankMoney);
-    }while (result->NextRow() );
+    }while (result->NextRow());
 
     if (m_ranks.size()==0)                                   // empty rank table?
     {
@@ -324,7 +324,7 @@ bool Guild::LoadMembersFromDB(uint32 GuildId)
         newmember.logout_time           = fields[18].GetUInt64();
         members[GUID_LOPART(guid)]      = newmember;
 
-    }while (result->NextRow() );
+    }while (result->NextRow());
 
     if (members.empty())
         return false;
@@ -482,7 +482,7 @@ void Guild::DelMember(uint64 guid, bool isDisbanding)
             BroadcastPacket(&data);
         }
 
-        sLog.outDebug("WORLD: Sent (SMSG_GUILD_EVENT)" );
+        sLog.outDebug("WORLD: Sent (SMSG_GUILD_EVENT)");
     }
 
     members.erase(GUID_LOPART(guid));
@@ -509,7 +509,7 @@ void Guild::ChangeRank(uint64 guid, uint32 newRank)
     if (player)
         player->SetRank(newRank);
 
-    CharacterDatabase.PExecute("UPDATE guild_member SET rank='%u' WHERE guid='%u'", newRank, GUID_LOPART(guid) );
+    CharacterDatabase.PExecute("UPDATE guild_member SET rank='%u' WHERE guid='%u'", newRank, GUID_LOPART(guid));
 }
 
 void Guild::SetPNOTE(uint64 guid,std::string pnote)
@@ -609,7 +609,7 @@ void Guild::CreateRank(std::string name_,uint32 rights)
 
     // name now can be used for encoding to DB
     CharacterDatabase.escape_string(name_);
-    CharacterDatabase.PExecute("INSERT INTO guild_rank (guildid,rid,rname,rights) VALUES ('%u', '%u', '%s', '%u')", Id, m_ranks.size(), name_.c_str(), rights );
+    CharacterDatabase.PExecute("INSERT INTO guild_rank (guildid,rid,rname,rights) VALUES ('%u', '%u', '%s', '%u')", Id, m_ranks.size(), name_.c_str(), rights);
 }
 
 void Guild::AddRank(const std::string& name_,uint32 rights, uint32 money)
@@ -751,7 +751,7 @@ void Guild::Roster(WorldSession *session)
         }
     }
     session->SendPacket(&data);;
-    sLog.outDebug("WORLD: Sent (SMSG_GUILD_ROSTER)" );
+    sLog.outDebug("WORLD: Sent (SMSG_GUILD_ROSTER)");
 }
 
 void Guild::Query(WorldSession *session)
@@ -775,8 +775,8 @@ void Guild::Query(WorldSession *session)
     data << uint32(BorderColor);
     data << uint32(BackgroundColor);
 
-    session->SendPacket(&data );
-    sLog.outDebug("WORLD: Sent (SMSG_GUILD_QUERY_RESPONSE)" );
+    session->SendPacket(&data);
+    sLog.outDebug("WORLD: Sent (SMSG_GUILD_QUERY_RESPONSE)");
 }
 
 void Guild::SetEmblem(uint32 emblemStyle, uint32 emblemColor, uint32 borderStyle, uint32 borderColor, uint32 backgroundColor)
@@ -864,7 +864,7 @@ void Guild::LoadGuildEventLogFromDB()
         // Add entry to map
         m_GuildEventlog.push_front(NewEvent);
 
-    } while (result->NextRow() );
+    } while (result->NextRow());
 
     // Check lists size in case to many event entries in db
     // This cases can happen only if a crash occured somewhere and table has too many log entries
@@ -1184,7 +1184,7 @@ void Guild::LoadGuildBankFromDB()
         NewTab->Text = fields[3].GetCppString();
 
         m_TabListMap[TabId] = NewTab;
-    }while (result->NextRow() );
+    }while (result->NextRow());
 
     // data needs to be at first place for Item::LoadFromDB
     //                                        0     1      2       3          4
@@ -1231,7 +1231,7 @@ void Guild::LoadGuildBankFromDB()
 
         pItem->AddToWorld();
         m_TabListMap[TabId]->Slots[SlotId] = pItem;
-    }while (result->NextRow() );
+    }while (result->NextRow());
 }
 
 // This unload should be called when the last member of the guild gets offline
@@ -1468,7 +1468,7 @@ void Guild::LoadBankRightsFromDB(uint32 GuildId)
 
         SetBankRightsAndSlots(rankId, TabId, right, SlotPerDay, false);
 
-    }while (result->NextRow() );
+    }while (result->NextRow());
 
     return;
 }
@@ -1513,7 +1513,7 @@ void Guild::LoadGuildBankEventLogFromDB()
         else
             m_GuildBankEventLog_Item[TabId].push_front(NewEvent);
 
-    }while (result->NextRow() );
+    }while (result->NextRow());
 
     // Check lists size in case to many event entries in db for a tab or for money
     // This cases can happen only if a crash occured somewhere and table has too many log entries
@@ -1723,7 +1723,7 @@ Item* Guild::_StoreItem(uint8 tab, uint8 slot, Item *pItem, uint32 count, bool c
     }
     else
     {
-        pItem2->SetCount(pItem2->GetCount() + count );
+        pItem2->SetCount(pItem2->GetCount() + count);
         pItem2->FSetState(ITEM_CHANGED);
         pItem2->SaveToDB();                                 // not in onventory and can be save standalone
 
