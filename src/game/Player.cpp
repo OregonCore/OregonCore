@@ -9709,8 +9709,8 @@ uint8 Player::CanStoreItems(Item **pItems,int count) const
 
             for (int t = INVENTORY_SLOT_BAG_START; !b_found && t < INVENTORY_SLOT_BAG_END; t++)
             {
-                pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, t );
-                if (pBag )
+                pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, t);
+                if (pBag && ItemCanGoIntoBag(pItem->GetProto(), pBag->GetProto()))
                 {
                     for (uint32 j = 0; j < pBag->GetBagSize(); j++)
                     {
