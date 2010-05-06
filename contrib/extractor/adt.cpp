@@ -16,6 +16,8 @@
 #include "mpq_libmpq.h"
 
 extern uint16 *areas;
+extern uint16 *LiqType;
+extern uint32 maxAreaId;
 
 vec wmoc;
 
@@ -34,6 +36,15 @@ bool LoadADT(char* filename)
         //printf("No such file %s\n", filename);
         return false;
     }
+
+    MapLiqFlag = new uint8[256];
+    for(uint32 j = 0; j < 256; ++j)
+        MapLiqFlag[j] = 0;                                  // no water
+
+    MapLiqHeight = new float[16384];
+    for(uint32 j = 0; j < 16384; ++j)
+        MapLiqHeight[j] = -999999;                          // no water
+
     mcells = new mcell;
 
     wmoc.x = 65 * TILESIZE;
@@ -41,6 +52,9 @@ bool LoadADT(char* filename)
 
     size_t mcnk_offsets[256], mcnk_sizes[256];
 
+    chunk_num = 0;
+    k = 0;
+    m = 0;
     while (!mf.isEof())
     {
         uint32 fourcc;
@@ -48,6 +62,9 @@ bool LoadADT(char* filename)
         mf.read(&size, 4);
 
         size_t nextpos = mf.getPos() + size;
+
+        //if(fourcc==0x4d484452)                            // MHDR header
+        //if(fourcc==0x4d564552)                            // MVER
         if(fourcc == 0x4d43494e)                            // MCIN
         {
             for (uint32 i = 0; i < 256; ++i)
@@ -70,18 +87,21 @@ bool LoadADT(char* filename)
         //if(fourcc == 0x4d564552)                          // MVER
         //if(fourcc == 0x4d484452)                          // MHDR header
 
-
         mf.seek(nextpos);
     }
 
     //printf("Loading chunks info\n");
     // read individual map chunks
+    chunk_num = 0;
+    k = 0;
+    m = 0;
     for (int j = 0; j < 16; ++j)
     {
         for (int i = 0; i < 16; ++i)
         {
             mf.seek((int)mcnk_offsets[j * 16 + i]);
             LoadMapChunk(mf, &(mcells->ch[i][j]));
+            ++chunk_num;
         }
     }
     mf.close();
@@ -110,7 +130,6 @@ inline void LoadMapChunk(MPQFile &mf, chunk *_chunk)
     size_t lastpos = mf.getPos() + size;
     mf.read(&header, 0x80);                                 // what if header size got changed?
     _chunk->area_id = header.areaid;
-    _chunk->flag =0;
 
     float xbase = header.xpos;
     float ybase = header.ypos;
@@ -120,6 +139,7 @@ inline void LoadMapChunk(MPQFile &mf, chunk *_chunk)
     if(wmoc.x > xbase) wmoc.x = xbase;
     if(wmoc.z > zbase) wmoc.z = zbase;
     int chunkflags = header.flags;
+    //printf("LMC: flags %X\n", chunkflags);
     float zmin = 999999999.0f;
     float zmax = -999999999.0f;
     // must be there, bl!zz uses some crazy format
@@ -167,55 +187,56 @@ inline void LoadMapChunk(MPQFile &mf, chunk *_chunk)
             mf.read(fcc1, 4);
             flipcc(fcc1);
             fcc1[4] = 0;
+            float *ChunkLiqHeight = new float[81];
 
             if (!strcmp(fcc1, "MCSE"))
             {
-                for(int i=0;i<9;i++)
-                    for(int j=0;j<9;j++)
-                        _chunk->waterlevel[i][j]=-999999; // no liquid/water
+                for(int j = 0; j < 81; ++j)
+                {
+                    ChunkLiqHeight[j] = -999999;            // no liquid/water
+                }
             }
             else
             {
                 float maxheight;
                 mf.read(&maxheight, 4);
+                for(int j = 0; j < 81; ++j)
+                {
+                    LiqData liq;
+                    mf.read(&liq, 8);
 
-                for(int j=0;j<9;j++)
-                    for(int i=0;i<9;i++)
-                    {
-                        mf.read(&h, 4);
-                        mf.read(&h, 4);
-                        if(h > maxheight)
-                            _chunk->waterlevel[i][j]=-999999;
-                        else
-                            _chunk->waterlevel[i][j]=h;
-                    }
+                    if(liq.height > maxheight)
+                        ChunkLiqHeight[j] = -999999;
+                    else
+                        ChunkLiqHeight[j] = h;
+                }
 
                 if(chunkflags & 4 || chunkflags & 8)
-                    _chunk->flag |=1;
+                    MapLiqFlag[chunk_num] |= 1;             // water
                 if(chunkflags & 16)
-                    _chunk->flag |=2;
-
+                    MapLiqFlag[chunk_num] |= 2;             // magma/slime
             }
+            if(!(chunk_num % 16))
+                m = 1024 * (chunk_num / 16);
+            k = m + (chunk_num % 16) * 8;
+            
+            for(int p = 0; p < 72; p += 9)
+            {
+                for(int s = 0; s < 8; ++s)
+                {
+                    MapLiqHeight[k] = ChunkLiqHeight[p + s];
+                    ++k;    
+                }
+                k = k + 120;
+            }
+            delete []ChunkLiqHeight;
             break;
         }
         mf.seek(nextpos);
     }
 }
 
-inline void TransformWaterData()
-{
-    cell = new Cell;
-
-    for(uint32 x = 0; x < 128; ++x)
-        for(int y=0;y<128;y++)
-            cell->v9[x][y] = mcells->ch[x/8][y/8].waterlevel[x%8][y%8];
-
-    //and the last 1
-    cell->v9[128][128] = mcells->ch[15][15].waterlevel[8][8];
-}
-
-inline
-void TransformData()
+inline void TransformData()
 {
     cell = new Cell;
 
@@ -239,7 +260,7 @@ void TransformData()
     delete mcells;
 }
 
-const char MAP_MAGIC[] = "MAP_2.50";
+const char MAP_MAGIC[] = "MAP_2.90";
 
 bool ConvertADT(char *filename, char *filename2)
 {
@@ -250,6 +271,8 @@ bool ConvertADT(char *filename, char *filename2)
     if(!output)
     {
         printf("Can't create the output file '%s'\n", filename2);
+        delete [] MapLiqHeight;
+        delete [] MapLiqFlag;
         return false;
     }
 
@@ -260,7 +283,7 @@ bool ConvertADT(char *filename, char *filename2)
     {
         for(uint32 y = 0; y < 16; ++y)
         {
-            if(mcells->ch[y][x].area_id && mcells->ch[y][x].area_id < 0x102D)
+            if(mcells->ch[y][x].area_id && mcells->ch[y][x].area_id <= maxAreaId)
             {
                 if(areas[mcells->ch[y][x].area_id] == 0xffff)
                     printf("\nCan't find area flag for areaid %u.\n", mcells->ch[y][x].area_id);
@@ -275,17 +298,12 @@ bool ConvertADT(char *filename, char *filename2)
         }
     }
 
-    for(unsigned int x=0;x<16;x++)
-        for(unsigned int y=0;y<16;y++)
-            fwrite(&mcells->ch[y][x].flag,1,1,output);
+    fwrite(MapLiqFlag, 1, 256, output);
+    delete [] MapLiqFlag;
 
-    TransformWaterData();
+    fwrite(MapLiqHeight, sizeof(float), 16384, output);
+    delete [] MapLiqHeight;
 
-    for(unsigned int x=0;x<128;x++)
-        for(unsigned int y=0;y<128;y++)
-            fwrite(&cell->v9[y][x],1,sizeof(float),output);
-
-    delete cell;
     TransformData();
 
     fwrite(&cell->v9, 1, sizeof(cell->v9), output);

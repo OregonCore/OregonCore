@@ -39,8 +39,6 @@ typedef struct
     double v9[9][9];
     double v8[8][8];
     uint16 area_id;
-    float waterlevel[9][9];
-    uint8 flag;
 } chunk;
 
 typedef struct
@@ -85,10 +83,47 @@ struct MapChunkHeader
     uint32 effectId;
 };
 
-class WMO;
-class WMOManager;
+typedef struct
+{
+    uint32 offsData1;
+    uint32 used;
+    uint32 offsData2;
+} MH2O_offsData;
+
+typedef struct
+{
+    uint16 LiquidTypeId;
+    uint16 type;
+    float heightLevel1;
+    float heightLevel2;
+    uint8 xOffset;
+    uint8 yOffset;
+    uint8 width;
+    uint8 height;
+    uint32 ofsData2a;
+    uint32 ofsData2b;
+} MH2O_Data1;
+
+typedef struct
+{
+    uint16 unk1;
+    uint16 unk2;
+    float height;
+} LiqData;
+
+enum LiquidType
+{
+    LIQUID_TYPE_WATER = 0,
+    LIQUID_TYPE_OCEAN = 1,
+    LIQUID_TYPE_MAGMA = 2,
+    LIQUID_TYPE_SLIME = 3
+};
+
 class MPQFile;
 
+float *MapLiqHeight;
+uint8 *MapLiqFlag;
+uint32 k, m, chunk_num;
 void LoadMapChunk(MPQFile &, chunk*);
 #endif
 
