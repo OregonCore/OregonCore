@@ -861,12 +861,26 @@ void Player::StopMirrorTimer(MirrorTimerType Type)
 
 void Player::EnvironmentalDamage(uint64 guid, EnviromentalDamage type, uint32 damage)
 {
+    if(!isAlive() || isGameMaster())
+        return;
+
+    // Absorb, resist some environmental damage type
+    uint32 absorb = 0;
+    uint32 resist = 0;
+
+    if (type == DAMAGE_LAVA)
+        CalcAbsorbResist(this, SPELL_SCHOOL_MASK_FIRE, DIRECT_DAMAGE, damage, &absorb, &resist);
+    else if (type == DAMAGE_SLIME)
+        CalcAbsorbResist(this, SPELL_SCHOOL_MASK_NATURE, DIRECT_DAMAGE, damage, &absorb, &resist);
+
+    damage-=absorb+resist;
+
     WorldPacket data(SMSG_ENVIRONMENTALDAMAGELOG, (21));
     data << (uint64)guid;
     data << (uint8)(type!=DAMAGE_FALL_TO_VOID ? type : DAMAGE_FALL);
     data << (uint32)damage;
-    data << (uint32)0;
-    data << (uint32)0;
+    data << (uint32)absorb; // absorb
+    data << (uint32)resist; // resist
     SendMessageToSet(&data, true);
 
     DealDamage(this, damage, NULL, SELF_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
