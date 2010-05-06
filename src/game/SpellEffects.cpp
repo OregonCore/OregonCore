@@ -5718,41 +5718,38 @@ void Spell::EffectMomentMove(uint32 i)
     desty = y + dist * sin(orientation);
     ground = unitTarget->GetMap()->GetHeight(destx,desty,MAX_HEIGHT,true);
     floor = unitTarget->GetMap()->GetHeight(destx,desty,z, true);
-    destz = fabs(ground - z) <= fabs(floor - z) ? ground:floor;
+    destz = fabs(ground - z) <= fabs(floor - z) ? ground : floor;
 
     bool col = VMAP::VMapFactory::createOrGetVMapManager()->getObjectHitPos(mapid,x,y,z+0.5f,destx,desty,destz+0.5f,destx,desty,destz,-0.5f);
 
-    if (col)    // We had a collision!
+    if (col) // We had a collision!
     {
-      destx -= 0.6 * cos(orientation);
-      desty -= 0.6 * sin(orientation);
-      dist = sqrt((x-destx)*(x-destx) + (y-desty)*(y-desty));
-      step = dist/10.0f;
+        destx -= 0.6 * cos(orientation);
+        desty -= 0.6 * sin(orientation);
+        dist = sqrt((x-destx)*(x-destx) + (y-desty)*(y-desty));
+        step = dist/10.0f;
     }
 
     int j = 0;
-    for (j; j<10 ;j++)
-      {
-    if (fabs(z - destz) > 6)
-      {
-      destx -= step * cos(orientation);
-      desty -= step * sin(orientation);
-      ground = unitTarget->GetMap()->GetHeight(destx,desty,MAX_HEIGHT,true);
-      floor = unitTarget->GetMap()->GetHeight(destx,desty,z, true);
-      destz = fabs(ground - z) <= fabs(floor - z) ? ground:floor;
-      }else
-      break;
-      }
-    if (j == 9)
-      {
-    return;
-      }
+    for (j; j < 10; j++)
+    {
+        if (fabs(z - destz) > 6)
+        {
+            destx -= step * cos(orientation);
+            desty -= step * sin(orientation);
+            ground = unitTarget->GetMap()->GetHeight(destx,desty,MAX_HEIGHT,true);
+            floor = unitTarget->GetMap()->GetHeight(destx,desty,z, true);
+            destz = fabs(ground - z) <= fabs(floor - z) ? ground:floor;
+        } else break;
+    }
 
-    if (unitTarget->GetTypeId() == TYPEID_PLAYER)
-      ((Player*)unitTarget)->TeleportTo(mapid, destx, desty, destz+0.07531f, unitTarget->GetOrientation(), TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET | (unitTarget==m_caster ? TELE_TO_SPELL : 0));
-    else
-        unitTarget->GetMap()->CreatureRelocation((Creature*)unitTarget, destx, desty, destz,unitTarget->GetOrientation());
-
+    if(j < 10)
+    {
+        if(unitTarget->GetTypeId() == TYPEID_PLAYER)
+          ((Player*)unitTarget)->TeleportTo(mapid, destx, desty, destz + 0.07531f, unitTarget->GetOrientation(), TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET | (unitTarget==m_caster ? TELE_TO_SPELL : 0));
+        else
+             unitTarget->GetMap()->CreatureRelocation((Creature*)unitTarget, destx, desty, destz,unitTarget->GetOrientation());
+    }
 }
 
 void Spell::EffectReputation(uint32 i)
