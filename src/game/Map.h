@@ -305,7 +305,7 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         // some calls like isInWater should not use vmaps due to processor power
         // can return INVALID_HEIGHT if under z+2 z coord not found height
         float GetHeight(float x, float y, float z, bool pCheckVMap=true) const;
-        float GetVmapHeight(float x, float y, float z, bool useMaps) const;
+        float GetVmapHeight(float x, float y, float z) const;
         bool IsInWater(float x, float y, float z) const;    // does not use z pos. This is for future use
 
         ZLiquidStatus getLiquidStatus(float x, float y, float z, uint8 ReqLiquidType, LiquidData *data = 0) const;

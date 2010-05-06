@@ -1685,7 +1685,7 @@ bool Creature::FallGround()
 
     float x, y, z;
     GetPosition(x, y, z);
-    float ground_Z = GetMap()->GetVmapHeight(x, y, z, true);
+    float ground_Z = GetMap()->GetVmapHeight(x, y, z);
     if (fabs(ground_Z - z) < 0.1f)
         return false;
 
