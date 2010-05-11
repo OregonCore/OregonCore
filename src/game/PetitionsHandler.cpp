@@ -53,13 +53,12 @@ void WorldSession::HandlePetitionBuyOpcode(WorldPacket & recv_data)
     sLog.outDebug("Received opcode CMSG_PETITION_BUY");
 
     uint64 guidNPC;
+    uint32 clientIndex;                                     // 1 for guild and arenaslot+1 for arenas in client
     uint64 unk1, unk3, unk4, unk5, unk6, unk7;
-    uint32 unk2;
+    uint32 unk2, unk10;
     std::string name;
     uint16 unk8;
     uint8  unk9;
-    uint32 unk10;                                           // selected index
-    uint32 unk11;
     recv_data >> guidNPC;                                   // NPC GUID
     recv_data >> unk1;                                      // 0
     recv_data >> unk2;                                      // 0
@@ -71,8 +70,8 @@ void WorldSession::HandlePetitionBuyOpcode(WorldPacket & recv_data)
     recv_data >> unk7;                                      // 0
     recv_data >> unk8;                                      // 0
     recv_data >> unk9;                                      // 0
-    recv_data >> unk10;                                     // index
-    recv_data >> unk11;                                     // 0
+    recv_data >> clientIndex;                                     // index
+    recv_data >> unk10;                                     // 0
     sLog.outDebug("Petitioner with GUID %u tried sell petition: name %s", GUID_LOPART(guidNPC), name.c_str());
 
     // prevent cheating
@@ -110,7 +109,7 @@ void WorldSession::HandlePetitionBuyOpcode(WorldPacket & recv_data)
             return;
         }
 
-        switch(unk10)
+        switch(clientIndex)                                 // arenaSlot+1 as received from client (1 from 3 case)
         {
             case 1:
                 charterid = ARENA_TEAM_CHARTER_2v2;
@@ -128,11 +127,11 @@ void WorldSession::HandlePetitionBuyOpcode(WorldPacket & recv_data)
                 type = 5;                                   // 5v5
                 break;
             default:
-                sLog.outDebug("unknown selection at buy petition: %u", unk10);
+                sLog.outDebug("unknown selection at buy arena petition: %u", clientIndex);
                 return;
         }
 
-        if (_player->GetArenaTeamId(unk10-1))
+        if (_player->GetArenaTeamId(clientIndex - 1))        // arenaSlot+1 as received from client
         {
             SendArenaTeamCommandResult(ERR_ARENA_TEAM_CREATE_S, name, "", ERR_ALREADY_IN_ARENA_TEAM);
             return;
@@ -207,7 +206,6 @@ void WorldSession::HandlePetitionBuyOpcode(WorldPacket & recv_data)
 
     if (result)
     {
-
         do
         {
             Field *fields = result->Fetch();
@@ -221,8 +219,8 @@ void WorldSession::HandlePetitionBuyOpcode(WorldPacket & recv_data)
     sLog.outDebug("Invalid petition GUIDs: %s", ssInvalidPetitionGUIDs.str().c_str());
     CharacterDatabase.escape_string(name);
     CharacterDatabase.BeginTransaction();
-    CharacterDatabase.PExecute("DELETE FROM petition WHERE petitionguid IN (%s )",  ssInvalidPetitionGUIDs.str().c_str());
-    CharacterDatabase.PExecute("DELETE FROM petition_sign WHERE petitionguid IN (%s )", ssInvalidPetitionGUIDs.str().c_str());
+    CharacterDatabase.PExecute("DELETE FROM petition WHERE petitionguid IN (%s)",  ssInvalidPetitionGUIDs.str().c_str());
+    CharacterDatabase.PExecute("DELETE FROM petition_sign WHERE petitionguid IN (%s)", ssInvalidPetitionGUIDs.str().c_str());
     CharacterDatabase.PExecute("INSERT INTO petition (ownerguid, petitionguid, name, type) VALUES ('%u', '%u', '%s', '%u')",
         _player->GetGUIDLow(), charter->GetGUIDLow(), name.c_str(), type);
     CharacterDatabase.CommitTransaction();
@@ -230,6 +228,7 @@ void WorldSession::HandlePetitionBuyOpcode(WorldPacket & recv_data)
 
 void WorldSession::HandlePetitionShowSignOpcode(WorldPacket & recv_data)
 {
+                                                            // ok
     sLog.outDebug("Received opcode CMSG_PETITION_SHOW_SIGNATURES");
 
     uint8 signs = 0;
@@ -249,12 +248,12 @@ void WorldSession::HandlePetitionShowSignOpcode(WorldPacket & recv_data)
     uint32 type = fields[0].GetUInt32();
 
     // if guild petition and has guild => error, return;
-    if (type==9 && _player->GetGuildId())
+    if (type == 9 && _player->GetGuildId())
         return;
 
     result = CharacterDatabase.PQuery("SELECT playerguid FROM petition_sign WHERE petitionguid = '%u'", petitionguid_low);
 
-    // result==NULL also correct in case no sign yet
+    // result == NULL also correct in case no sign yet
     if (result)
         signs = result->GetRowCount();
 
@@ -266,7 +265,7 @@ void WorldSession::HandlePetitionShowSignOpcode(WorldPacket & recv_data)
     data << petitionguid_low;                               // guild guid (in Oregon always same as GUID_LOPART(petitionguid)
     data << signs;                                          // sign's count
 
-    for (uint8 i = 1; i <= signs; i++)
+    for (uint8 i = 1; i <= signs; ++i)
     {
         Field *fields = result->Fetch();
         uint64 plguid = fields[0].GetUInt64();
@@ -345,10 +344,12 @@ void WorldSession::SendPetitionQueryOpcode(uint64 petitionguid)
     data << uint32(0);                                      // 11
     data << uint32(0);                                      // 13 count of next strings?
     data << uint32(0);                                      // 14
+
     if (type == 9)
         data << uint32(0);                                  // 15 0 - guild, 1 - arena team
     else
         data << uint32(1);
+
     SendPacket(&data);
 }
 
@@ -593,7 +594,7 @@ void WorldSession::HandleOfferPetitionOpcode(WorldPacket & recv_data)
 
     sLog.outDebug("OFFER PETITION: type %u, GUID1 %u, to player id: %u", type, GUID_LOPART(petitionguid), GUID_LOPART(plguid));
 
-    if (!sWorld.getConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GUILD) && GetPlayer()->GetTeam() != player->GetTeam() )
+    if (!sWorld.getConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GUILD) && GetPlayer()->GetTeam() != player->GetTeam())
     {
         if (type != 9)
             SendArenaTeamCommandResult(ERR_ARENA_TEAM_INVITE_SS, "", "", ERR_ARENA_TEAM_NOT_ALLIED);
@@ -644,7 +645,7 @@ void WorldSession::HandleOfferPetitionOpcode(WorldPacket & recv_data)
     }
 
     result = CharacterDatabase.PQuery("SELECT playerguid FROM petition_sign WHERE petitionguid = '%u'", GUID_LOPART(petitionguid));
-    // result==NULL also correct charter without signs
+    // result == NULL also correct charter without signs
     if (result)
         signs = result->GetRowCount();
 
@@ -654,7 +655,7 @@ void WorldSession::HandleOfferPetitionOpcode(WorldPacket & recv_data)
     data << GUID_LOPART(petitionguid);                      // guild guid (in Oregon always same as GUID_LOPART(petition guid)
     data << signs;                                          // sign's count
 
-    for (uint8 i = 1; i <= signs; i++)
+    for (uint8 i = 1; i <= signs; ++i)
     {
         Field *fields = result->Fetch();
         uint64 plguid = fields[0].GetUInt64();
@@ -905,7 +906,7 @@ void WorldSession::SendPetitionShowList(uint64 guid)
         data << uint32(5);                                  // unknown
         data << uint32(5);                                  // required signs?
     }
-    //for (uint8 i = 0; i < count; i++)
+    //for (uint8 i = 0; i < count; ++i)
     //{
     //    data << uint32(i);                      // index
     //    data << uint32(GUILD_CHARTER);          // charter entry
@@ -917,4 +918,3 @@ void WorldSession::SendPetitionShowList(uint64 guid)
     SendPacket(&data);
     sLog.outDebug("Sent SMSG_PETITION_SHOWLIST");
 }
-
