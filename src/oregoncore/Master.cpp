@@ -120,72 +120,74 @@ public:
 class RARunnable : public ACE_Based::Runnable
 {
 public:
-  uint32 numLoops, loopCounter;
+    uint32 numLoops, loopCounter;
 
-  RARunnable ()
-  {
-    uint32 socketSelecttime = sWorld.getConfig (CONFIG_SOCKET_SELECTTIME);
-    numLoops = (sConfig.GetIntDefault ("MaxPingTime", 30) * (MINUTE * 1000000 / socketSelecttime));
-    loopCounter = 0;
-  }
-
-  void
-  checkping ()
-  {
-    // ping if need
-    if ((++loopCounter) == numLoops)
-      {
+    RARunnable ()
+    {
+        uint32 socketSelecttime = sWorld.getConfig (CONFIG_SOCKET_SELECTTIME);
+        numLoops = (sConfig.GetIntDefault ("MaxPingTime", 30) * (MINUTE * 1000000 / socketSelecttime));
         loopCounter = 0;
-        sLog.outDetail ("Ping MySQL to keep connection alive");
-        WorldDatabase.Query ("SELECT 1 FROM command LIMIT 1");
-        loginDatabase.Query ("SELECT 1 FROM realmlist LIMIT 1");
-        CharacterDatabase.Query ("SELECT 1 FROM bugreport LIMIT 1");
-      }
-  }
+    }
 
-  void
-  run (void)
-  {
-    SocketHandler h;
+    void checkping ()
+    {
+        // ping if need
+        if ((++loopCounter) == numLoops)
+        {
+            loopCounter = 0;
+            sLog.outDetail ("Ping MySQL to keep connection alive");
+            WorldDatabase.Query ("SELECT 1 FROM command LIMIT 1");
+            loginDatabase.Query ("SELECT 1 FROM realmlist LIMIT 1");
+            CharacterDatabase.Query ("SELECT 1 FROM bugreport LIMIT 1");
+        }
+    }
 
-    // Launch the RA listener socket
-    ListenSocket<RASocket> RAListenSocket (h);
-    bool usera = sConfig.GetBoolDefault ("Ra.Enable", false);
+    void run ()
+    {
+        SocketHandler h;
 
-    if (usera)
-      {
-        port_t raport = sConfig.GetIntDefault ("Ra.Port", 3443);
-        std::string stringip = sConfig.GetStringDefault ("Ra.IP", "0.0.0.0");
-        ipaddr_t raip;
-        if (!Utility::u2ip (stringip, raip))
-          sLog.outError ("Oregon RA can not bind to ip %s", stringip.c_str ());
-        else if (RAListenSocket.Bind (raip, raport))
-          sLog.outError ("Oregon RA can not bind to port %d on %s", raport, stringip.c_str ());
+        // Launch the RA listener socket
+        ListenSocket<RASocket> RAListenSocket (h);
+        bool usera = sConfig.GetBoolDefault ("Ra.Enable", false);
+
+        if (usera)
+        {
+            port_t raport = sConfig.GetIntDefault ("Ra.Port", 3443);
+            std::string stringip = sConfig.GetStringDefault ("Ra.IP", "0.0.0.0");
+            ipaddr_t raip;
+            if (!Utility::u2ip (stringip, raip))
+                sLog.outError ("Oregon RA can not bind to ip %s", stringip.c_str ());
+            else if (RAListenSocket.Bind (raip, raport))
+                sLog.outError ("Oregon RA can not bind to port %d on %s", raport, stringip.c_str ());
+            else
+            {
+                h.Add (&RAListenSocket);
+
+                sLog.outString ("Starting Remote access listner on port %d on %s", raport, stringip.c_str ());
+            }
+        }
+
+        // Socket Selet time is in microseconds , not miliseconds!!
+        uint32 socketSelecttime = sWorld.getConfig (CONFIG_SOCKET_SELECTTIME);
+
+        // if use ra spend time waiting for io, if not use ra ,just sleep
+        if (usera)
+        {
+            while (!World::IsStopped())
+            {
+                h.Select (0, socketSelecttime);
+                checkping ();
+            }
+        }
         else
-          {
-            h.Add (&RAListenSocket);
-
-            sLog.outString ("Starting Remote access listner on port %d on %s", raport, stringip.c_str ());
-          }
-      }
-
-    // Socket Selet time is in microseconds , not miliseconds!!
-    uint32 socketSelecttime = sWorld.getConfig (CONFIG_SOCKET_SELECTTIME);
-
-    // if use ra spend time waiting for io, if not use ra ,just sleep
-    if (usera)
-      while (!World::IsStopped())
         {
-          h.Select (0, socketSelecttime);
-          checkping ();
+            while (!World::IsStopped())
+            {
+                ACE_Based::Thread::Sleep(static_cast<unsigned long> (socketSelecttime / 1000));
+                checkping ();
+            }
         }
-    else
-      while (!World::IsStopped())
-        {
-          ACE_Based::Thread::Sleep (static_cast<unsigned long> (socketSelecttime / 1000));
-          checkping ();
-        }
-  }
+    }
 };
 
 Master::Master()
@@ -201,8 +203,7 @@ int Master::Run()
 {
     sLog.outString( "%s (core-daemon)", _FULLVERSION );
     sLog.outString( "<Ctrl-C> to stop.\n" );
-// Remove the warnings C4129 while compiling
-#pragma warning (disable : 4129)
+
     sLog.outString( "  _____                                          " );
     sLog.outString( " /\\  __`\\                                        " );
     sLog.outString( " \\ \\ \\/\\ \\  _ __   __     __     ___    ___      " );
@@ -212,7 +213,7 @@ int Master::Run()
     sLog.outString( "     \\/_____/\\/_/\\/____/\\/___L\\ \\/___/ \\/_/\\/_/  " );
     sLog.outString( "                          /\\____/                " );
     sLog.outString( "                          \\_/__/                 " );
-    sLog.outString( " http://www.OregonCore.com                    \n " );
+    sLog.outString( " http://www.oregoncore.com                    \n " );
 
     /// worldd PID file creation
     std::string pidfile = sConfig.GetStringDefault("PidFile", "");
@@ -307,10 +308,6 @@ int Master::Run()
     realCurrTime = realPrevTime = getMSTime();
 
     uint32 socketSelecttime = sWorld.getConfig(CONFIG_SOCKET_SELECTTIME);
-
-    // maximum counter for next ping
-    uint32 numLoops = (sConfig.GetIntDefault( "MaxPingTime", 30 ) * (MINUTE * 1000000 / socketSelecttime));
-    uint32 loopCounter = 0;
 
     ///- Start up freeze catcher thread
     if(uint32 freeze_delay = sConfig.GetIntDefault("MaxCoreStuckTime", 0))
@@ -548,4 +545,3 @@ void Master::_UnhookSignals()
     signal(SIGBREAK, 0);
     #endif
 }
-

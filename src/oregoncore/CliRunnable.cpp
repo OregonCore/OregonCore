@@ -18,24 +18,24 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/// \addtogroup Oregond
+/// \addtogroup Oregon
 /// @{
 /// \file
 
 #include "Common.h"
-#include "Language.h"
-#include "Log.h"
-#include "World.h"
-#include "ScriptCalls.h"
 #include "ObjectMgr.h"
+#include "World.h"
 #include "WorldSession.h"
 #include "Config/ConfigEnv.h"
-#include "Util.h"
+
 #include "AccountMgr.h"
+#include "Chat.h"
 #include "CliRunnable.h"
+#include "Language.h"
+#include "Log.h"
 #include "MapManager.h"
 #include "Player.h"
-#include "Chat.h"
+#include "Util.h"
 
 #if PLATFORM != WINDOWS
 #include <readline/readline.h>
@@ -43,48 +43,46 @@
 
 char * command_finder(const char* text, int state)
 {
-  static int idx,len;
-  const char* ret;
-  ChatCommand *cmd = ChatHandler::getCommandTable();
+    static int idx,len;
+    const char* ret;
+    ChatCommand *cmd = ChatHandler::getCommandTable();
 
-  if(!state)
+    if(!state)
     {
-      idx = 0;
-      len = strlen(text);
+        idx = 0;
+        len = strlen(text);
     }
 
-  while(ret = cmd[idx].Name)
+    while(ret = cmd[idx].Name)
     {
-      if(!cmd[idx].AllowConsole)
-	{
-	idx++;
-	continue;
-	}
+        if(!cmd[idx].AllowConsole)
+        {
+            idx++;
+            continue;
+        }
 
-      idx++;
-      //printf("Checking %s \n", cmd[idx].Name);
-      if (strncmp(ret, text, len) == 0)
-	return strdup(ret);
-      if(cmd[idx].Name == NULL)
-	break;
+        idx++;
+        //printf("Checking %s \n", cmd[idx].Name);
+        if (strncmp(ret, text, len) == 0)
+            return strdup(ret);
+        if(cmd[idx].Name == NULL)
+            break;
     }
 
-  return ((char*)NULL);
-
+    return ((char*)NULL);
 }
 
 char ** cli_completion(const char * text, int start, int end)
 {
-  char ** matches;
-  matches = (char**)NULL;
-  
-  if(start == 0)
-    matches = rl_completion_matches((char*)text,&command_finder);
-  else
-    rl_bind_key('\t',rl_abort);
-  return (matches);
-}
+    char ** matches;
+    matches = (char**)NULL;
 
+    if(start == 0)
+        matches = rl_completion_matches((char*)text,&command_finder);
+    else
+        rl_bind_key('\t',rl_abort);
+    return (matches);
+}
 #endif
 
 void utf8print(const char* str)
@@ -214,7 +212,7 @@ bool ChatHandler::HandleCharacterDeleteCommand(const char* args)
 }
 
 /// Exit the realm
-bool ChatHandler::HandleServerExitCommand(const char* args)
+bool ChatHandler::HandleServerExitCommand(const char* /*args*/)
 {
     SendSysMessage(LANG_COMMAND_EXIT);
     World::StopNow(SHUTDOWN_EXIT_CODE);
@@ -222,7 +220,7 @@ bool ChatHandler::HandleServerExitCommand(const char* args)
 }
 
 /// Display info on users currently in the realm
-bool ChatHandler::HandleAccountOnlineListCommand(const char* args)
+bool ChatHandler::HandleAccountOnlineListCommand(const char* /*args*/)
 {
     ///- Get the list of accounts ID logged to the realm
     QueryResult_AutoPtr resultDB = CharacterDatabase.Query("SELECT name,account FROM characters WHERE online > 0");
@@ -273,7 +271,7 @@ bool ChatHandler::HandleAccountCreateCommand(const char* args)
     if(!szAcc || !szPassword)
         return false;
 
-    // normilized in accmgr.CreateAccount
+    // normalized in accmgr.CreateAccount
     std::string account_name = szAcc;
     std::string password = szPassword;
 
@@ -337,7 +335,6 @@ bool ChatHandler::HandleServerSetDiffTimeCommand(const char *args)
     return true;
 }
 
-
 /// @}
 
 #ifdef linux
@@ -367,7 +364,7 @@ void CliRunnable::run()
     sLog.outString("");
     #if PLATFORM != WINDOWS
     rl_attempted_completion_function = cli_completion;
-    	#endif
+    #endif
     if(sConfig.GetBoolDefault("BeepAtStart", true))
         printf("\a");                                       // \a = Alert
 
@@ -382,45 +379,44 @@ void CliRunnable::run()
 
         char *command_str ;             // = fgets(commandbuf,sizeof(commandbuf),stdin);
 
-	#if PLATFORM == WINDOWS
-	command_str = fgets(commandbuf,sizeof(commandbuf),stdin);
-	#else
-	command_str = readline("Oregon>");
-	rl_bind_key('\t',rl_complete);
-	#endif
-	if (command_str != NULL)
+        #if PLATFORM == WINDOWS
+        command_str = fgets(commandbuf,sizeof(commandbuf),stdin);
+        #else
+        command_str = readline("Oregon>");
+        rl_bind_key('\t',rl_complete);
+        #endif
+        if (command_str != NULL)
         {
-            for(int x=0;command_str[x];x++)
+            for (int x=0; command_str[x]; x++)
                 if(command_str[x]=='\r'||command_str[x]=='\n')
-            {
-                command_str[x]=0;
-                break;
-            }
-
+                {
+                    command_str[x]=0;
+                    break;
+                }
 
             if(!*command_str)
             {
-	      #if PLATFORM == WINDOWS
-	        printf("Oregon>");
-	      #endif
+                #if PLATFORM == WINDOWS
+                printf("Oregon>");
+                #endif
                 continue;
             }
 
             std::string command;
             if(!consoleToUtf8(command_str,command))         // convert from console encoding to utf8
             {
-	      #if PLATFORM == WINDOWS
-	        printf("Oregon>");
-	      #endif
+                #if PLATFORM == WINDOWS
+                printf("Oregon>");
+                #endif
                 continue;
             }
-	    fflush(stdout);
+            fflush(stdout);
             sWorld.QueueCliCommand(&utf8print,command.c_str());
-	     #if PLATFORM != WINDOWS
-	    add_history(command.c_str());
-	     #endif
+            #if PLATFORM != WINDOWS
+            add_history(command.c_str());
+            #endif
 
-	}
+        }
         else if (feof(stdin))
         {
             World::StopNow(SHUTDOWN_EXIT_CODE);
@@ -431,4 +427,3 @@ void CliRunnable::run()
     ///- End the database thread
     WorldDatabase.ThreadEnd();                                  // free mySQL thread resources
 }
-
