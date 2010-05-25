@@ -897,15 +897,14 @@ void Player::EnvironmentalDamage(uint64 guid, EnviromentalDamage type, uint32 da
 
 void Player::HandleDrowning()
 {
-    if(!m_isunderwater&~UNDERWATER_INLAVA)
+    if (!m_isunderwater)
         return;
 
     //if player is GM, have waterbreath, is dead or if breathing is disabled then return
-    if(isGameMaster() || !isAlive() || HasAuraType(SPELL_AURA_WATER_BREATHING) || GetSession()->GetSecurity() >= sWorld.getConfig(CONFIG_DISABLE_BREATHING))
+    if (waterbreath || isGameMaster() || !isAlive() || GetSession()->GetSecurity() >= sWorld.getConfig(CONFIG_DISABLE_BREATHING))
     {
         StopMirrorTimer(BREATH_TIMER);
-        // drop every flag _except_ LAVA - otherwise waterbreathing will prevent lava damage
-        m_isunderwater &= UNDERWATER_INLAVA;
+        m_isunderwater = UNDERWATER_NONE;
         return;
     }
 
@@ -941,10 +940,11 @@ void Player::HandleDrowning()
         }
     }
     //single trigger retract bar
-    else if (!(m_isunderwater & UNDERWATER_INWATER) && (m_isunderwater & UNDERWATER_WATER_TRIGGER) && (m_breathTimer > 0) && isAlive())
+    else if (!(m_isunderwater & UNDERWATER_INWATER) && !(m_isunderwater & 0x08) && (m_isunderwater & UNDERWATER_WATER_TRIGGER) && (m_breathTimer > 0) && isAlive())
     {
+        m_isunderwater = 0x08;
+
         uint32 BreathRegen = 10;
-        // m_breathTimer will be reduced in ModifyMirrorTimer
         ModifyMirrorTimer(BREATH_TIMER, UnderWaterTime, m_breathTimer,BreathRegen);
         m_isunderwater = UNDERWATER_WATER_BREATHB_RETRACTING;
     }
@@ -962,14 +962,12 @@ void Player::HandleLava()
 
     if ((m_isunderwater & UNDERWATER_INLAVA) && isAlive())
     {
-        /*
         //Single trigger Set BreathTimer
         if (!(m_isunderwater & UNDERWATER_INLAVA))
         {
             m_isunderwater|= UNDERWATER_WATER_BREATHB;
             m_breathTimer = 1000;
         }
-        */
         //Reset BreathTimer and still in the lava
         if (!m_breathTimer)
         {
@@ -19322,18 +19320,18 @@ PartyResult Player::CanUninviteFromGroup() const
 void Player::UpdateUnderwaterState(Map* m, float x, float y, float z )
 {
     float water_z  = m->GetWaterLevel(x,y);
-    float height_z = m->GetHeight(x,y,z, false);            // use .map base surface height
+    float terrain_z = m->GetHeight(x,y,z, false);            // use .map base surface height
     uint8 flag1    = m->GetTerrainType(x,y);
 
     //!Underwater check, not in water if underground or above water level
-    if (height_z <= INVALID_HEIGHT || z < (height_z-2) || z > (water_z - 2) )
+    if (terrain_z <= INVALID_HEIGHT || z < (terrain_z-2) || z > (water_z - 2) )
         m_isunderwater &= 0x7A;
     else if ((z < (water_z - 2)) && (flag1 & 0x01))
-        m_isunderwater |= 0x01;
+        m_isunderwater |= UNDERWATER_INWATER;
 
     //!in lava check, anywhere under lava level
-    if ((height_z <= INVALID_HEIGHT || z < (height_z - 0)) && (flag1 == 0x00) && IsInWater())
-        m_isunderwater |= 0x80;
+    if ((terrain_z <= INVALID_HEIGHT || z < (terrain_z - 0)) && (flag1 == 0x00) && IsInWater())
+        m_isunderwater |= UNDERWATER_INLAVA;
 }
 
 void Player::SetCanParry(bool value )
