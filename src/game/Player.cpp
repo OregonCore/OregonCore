@@ -836,8 +836,8 @@ void Player::StartMirrorTimer(MirrorTimerType Type, uint32 MaxValue)
 
 void Player::ModifyMirrorTimer(MirrorTimerType Type, uint32 MaxValue, uint32 CurrentValue, uint32 Regen)
 {
-    if (Type==BREATH_TIMER)
-        m_breathTimer = ((MaxValue + 1000) - CurrentValue) / Regen;
+    if (Type == BREATH_TIMER)
+        m_breathTimer = ((MaxValue + 1*IN_MILISECONDS) - CurrentValue) / Regen;
 
     WorldPacket data(SMSG_START_MIRROR_TIMER, (21));
     data << (uint32)Type;
@@ -851,7 +851,7 @@ void Player::ModifyMirrorTimer(MirrorTimerType Type, uint32 MaxValue, uint32 Cur
 
 void Player::StopMirrorTimer(MirrorTimerType Type)
 {
-    if (Type==BREATH_TIMER)
+    if (Type == BREATH_TIMER)
         m_breathTimer = 0;
 
     WorldPacket data(SMSG_STOP_MIRROR_TIMER, 4);
@@ -861,7 +861,7 @@ void Player::StopMirrorTimer(MirrorTimerType Type)
 
 void Player::EnvironmentalDamage(uint64 guid, EnviromentalDamage type, uint32 damage)
 {
-    if(!isAlive() || isGameMaster())
+    if (!isAlive() || isGameMaster())
         return;
 
     // Absorb, resist some environmental damage type
@@ -879,8 +879,8 @@ void Player::EnvironmentalDamage(uint64 guid, EnviromentalDamage type, uint32 da
     data << (uint64)guid;
     data << (uint8)(type!=DAMAGE_FALL_TO_VOID ? type : DAMAGE_FALL);
     data << (uint32)damage;
-    data << (uint32)absorb; // absorb
-    data << (uint32)resist; // resist
+    data << (uint32)absorb;
+    data << (uint32)resist;
     SendMessageToSet(&data, true);
 
     DealDamage(this, damage, NULL, SELF_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -897,14 +897,15 @@ void Player::EnvironmentalDamage(uint64 guid, EnviromentalDamage type, uint32 da
 
 void Player::HandleDrowning()
 {
-    if (!m_isunderwater)
+    if(!(m_isunderwater&~UNDERWATER_INLAVA))
         return;
 
     //if player is GM, have waterbreath, is dead or if breathing is disabled then return
     if (waterbreath || isGameMaster() || !isAlive() || GetSession()->GetSecurity() >= sWorld.getConfig(CONFIG_DISABLE_BREATHING))
     {
         StopMirrorTimer(BREATH_TIMER);
-        m_isunderwater = UNDERWATER_NONE;
+        // drop every flag _except_ LAVA - otherwise waterbreathing will prevent lava damage
+        m_isunderwater &= UNDERWATER_INLAVA;
         return;
     }
 
@@ -920,7 +921,7 @@ void Player::HandleDrowning()
         if (!(m_isunderwater & UNDERWATER_WATER_TRIGGER))
         {
             m_isunderwater|= UNDERWATER_WATER_TRIGGER;
-            m_breathTimer = UnderWaterTime + 1000;
+            m_breathTimer = UnderWaterTime + 1*IN_MILISECONDS;
         }
         //single trigger "show Breathbar"
         if ( m_breathTimer <= UnderWaterTime && !(m_isunderwater & UNDERWATER_WATER_BREATHB))
@@ -945,6 +946,7 @@ void Player::HandleDrowning()
         m_isunderwater = 0x08;
 
         uint32 BreathRegen = 10;
+        // m_breathTimer will be reduced in ModifyMirrorTimer
         ModifyMirrorTimer(BREATH_TIMER, UnderWaterTime, m_breathTimer,BreathRegen);
         m_isunderwater = UNDERWATER_WATER_BREATHB_RETRACTING;
     }
@@ -958,53 +960,20 @@ void Player::HandleDrowning()
 
 void Player::HandleLava()
 {
-    bool ValidArea = false;
-
     if ((m_isunderwater & UNDERWATER_INLAVA) && isAlive())
     {
-        //Single trigger Set BreathTimer
-        if (!(m_isunderwater & UNDERWATER_INLAVA))
-        {
-            m_isunderwater|= UNDERWATER_WATER_BREATHB;
-            m_breathTimer = 1000;
-        }
-        //Reset BreathTimer and still in the lava
+        // Reset BreathTimer and still in the lava
         if (!m_breathTimer)
         {
             uint64 guid = GetGUID();
-            uint32 damage = GetMap()->urand(600, 700);                // TODO: Get more detailed information about lava damage
-            uint32 dmgZone = GetZoneId();                   // TODO: Find correct "lava dealing zone" flag in Area Table
+            uint32 damage = GetMap()->urand(600, 700);      // TODO: Get more detailed information about lava damage
 
-            // Deal lava damage only in lava zones.
-            switch(dmgZone)
-            {
-                case 0x8D:
-                    ValidArea = false;
-                    break;
-                case 0x94:
-                    ValidArea = false;
-                    break;
-                case 0x2CE:
-                    ValidArea = false;
-                    break;
-                case 0x2CF:
-                    ValidArea = false;
-                    break;
-                default:
-                    if (dmgZone / 5 & 0x408)
-                        ValidArea = true;
-            }
+            EnvironmentalDamage(guid, DAMAGE_LAVA, damage);
 
-            // if is valid area and is not gamemaster then deal damage
-            if (ValidArea && !isGameMaster() )
-                EnvironmentalDamage(guid, DAMAGE_LAVA, damage);
-
-            m_breathTimer = 1000;
+            m_breathTimer = 1*IN_MILISECONDS;
         }
-
     }
-    //Death timer disabled and WaterFlags reset
-    else if (!isAlive())
+    else if (!isAlive())                                    // Disable breath timer and reset underwater flags
     {
         m_breathTimer = 0;
         m_isunderwater = UNDERWATER_NONE;
@@ -19317,21 +19286,36 @@ PartyResult Player::CanUninviteFromGroup() const
     return PARTY_RESULT_OK;
 }
 
-void Player::UpdateUnderwaterState(Map* m, float x, float y, float z )
+void Player::UpdateUnderwaterState(Map* m, float x, float y, float z)
 {
-    float water_z  = m->GetWaterLevel(x,y);
-    float terrain_z = m->GetHeight(x,y,z, false);            // use .map base surface height
-    uint8 flag1    = m->GetTerrainType(x,y);
+    LiquidData liquid_status;
+    ZLiquidStatus res = m->getLiquidStatus(x, y, z, MAP_ALL_LIQUIDS, &liquid_status);
+    if (!res)
+    {
+        m_isunderwater &= ~(UNDERWATER_INWATER|UNDERWATER_INLAVA);
+        // Small hack for enable breath in WMO
+        if (IsInWater())
+            m_isunderwater |= UNDERWATER_INWATER;
+        return;
+    }
 
-    //!Underwater check, not in water if underground or above water level
-    if (terrain_z <= INVALID_HEIGHT || z < (terrain_z-2) || z > (water_z - 2) )
-        m_isunderwater &= 0x7A;
-    else if ((z < (water_z - 2)) && (flag1 & 0x01))
-        m_isunderwater |= UNDERWATER_INWATER;
+    // All liquids type - check under water position
+    if (liquid_status.type&(MAP_LIQUID_TYPE_WATER|MAP_LIQUID_TYPE_OCEAN))
+    {
+        if (res & LIQUID_MAP_UNDER_WATER)
+            m_isunderwater |= UNDERWATER_INWATER;
+        else
+            m_isunderwater &= ~UNDERWATER_INWATER;
+    }
 
-    //!in lava check, anywhere under lava level
-    if ((terrain_z <= INVALID_HEIGHT || z < (terrain_z - 0)) && (flag1 == 0x00) && IsInWater())
-        m_isunderwater |= UNDERWATER_INLAVA;
+    // in lava check, anywhere in lava level (or slime level)
+    if (liquid_status.type&(MAP_LIQUID_TYPE_MAGMA|MAP_LIQUID_TYPE_SLIME))
+    {
+        if (res & (LIQUID_MAP_UNDER_WATER|LIQUID_MAP_IN_WATER|LIQUID_MAP_WATER_WALK))
+            m_isunderwater |= UNDERWATER_INLAVA;
+        else
+            m_isunderwater &= ~UNDERWATER_INLAVA;
+    }
 }
 
 void Player::SetCanParry(bool value )
