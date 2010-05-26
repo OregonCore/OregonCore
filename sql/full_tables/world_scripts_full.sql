@@ -699,6 +699,7 @@ UPDATE `creature_template` SET `Scriptname`='npc_willix' WHERE entry=4508;
 
 /* RUINS OF AHN'QIRAJ */
 UPDATE `instance_template` SET `script`='instance_ruins_of_ahnqiraj' WHERE `map`=509;
+UPDATE `creature_template` SET `ScriptName`='boss_kurinnaxx' WHERE `entry`=15348;
 
 /* SCARLET MONASTERY */
 UPDATE `instance_template` SET `script`='instance_scarlet_monastery' WHERE `map`=189;
