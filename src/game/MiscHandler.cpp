@@ -984,52 +984,36 @@ void WorldSession::HandleMoveUnRootAck(WorldPacket& recv_data)
 {
     // no used
     recv_data.rpos(recv_data.wpos());                       // prevent warnings spam
-/*
-    uint64 guid;
-    recv_data >> guid;
 
-    // now can skip not our packet
-    if (_player->GetGUID() != guid)
-    {
-        recv_data.rpos(recv_data.wpos());                   // prevent warnings spam
-        return;
-    }
+    /*
+        recv_data.hexlike();
 
-    sLog.outDebug("WORLD: CMSG_FORCE_MOVE_UNROOT_ACK");
-
-    recv_data.read_skip<uint32>();                          // unk
-
-    MovementInfo movementInfo;
-    movementInfo.guid = guid;
-    ReadMovementInfo(recv_data, &movementInfo);
-    recv_data.read_skip<float>();                           // unk2
-*/
+        recv_data >> guid;
+        recv_data >> unknown1;
+        recv_data >> unknown2;
+        recv_data >> PositionX;
+        recv_data >> PositionY;
+        recv_data >> PositionZ;
+        recv_data >> Orientation;
+    */
 }
 
 void WorldSession::HandleMoveRootAck(WorldPacket& recv_data)
 {
-    recv_data.read_skip<uint64>();                          // guid
-    recv_data.read_skip<uint64>();                          // unknown1
-    recv_data.read_skip<uint32>();                          // unknown2
-    recv_data.read_skip<float>();                           // PositionX
-    recv_data.read_skip<float>();                           // PositionY
-    recv_data.read_skip<float>();                           // PositionZ
-    recv_data.read_skip<float>();                           // Orientation
+    // no used
+    recv_data.rpos(recv_data.wpos());                       // prevent warnings spam
 
-    // now can skip not our packet
-    if (_player->GetGUID() != guid)
-    {
-        recv_data.rpos(recv_data.wpos());                   // prevent warnings spam
-        return;
-    }
+    /*
+        sLog.outDebug("WORLD: CMSG_FORCE_MOVE_ROOT_ACK");
 
-    sLog.outDebug("WORLD: CMSG_FORCE_MOVE_ROOT_ACK");
-
-    recv_data.read_skip<uint32>();                          // unk
-
-    MovementInfo movementInfo;
-    ReadMovementInfo(recv_data, &movementInfo);
-*/
+        recv_data >> guid;
+        recv_data >> unknown1;
+        recv_data >> unknown2;
+        recv_data >> PositionX;
+        recv_data >> PositionY;
+        recv_data >> PositionZ;
+        recv_data >> Orientation;
+    */
 }
 
 void WorldSession::HandleMoveTeleportAck(WorldPacket&/* recv_data*/)
