@@ -2505,8 +2505,7 @@ void Aura::HandleWaterBreathing(bool apply, bool Real)
         // update for enable timer in case not moving target
         if (m_target->GetTypeId()==TYPEID_PLAYER && m_target->IsInWorld())
         {
-            m_target->ToPlayer()->UpdateUnderwaterState(m_target->GetMap(),m_target->GetPositionX(),m_target->GetPositionY(),m_target->GetPositionZ());
-            m_target->ToPlayer()->HandleDrowning();
+            m_target->ToPlayer()->UpdateMirrorTimers();
         }
     }
 }

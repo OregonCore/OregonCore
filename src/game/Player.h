@@ -67,10 +67,11 @@ enum PlayerUnderwaterState
 {
     UNDERWATER_NONE                     = 0x00,
     UNDERWATER_INWATER                  = 0x01,             // terrain type is water and player is afflicted by it
-    UNDERWATER_WATER_TRIGGER            = 0x02,             // m_breathTimer has been initialized
-    UNDERWATER_WATER_BREATHB            = 0x04,             // breathbar has been send to client
-    UNDERWATER_WATER_BREATHB_RETRACTING = 0x10,             // breathbar is currently refilling - the player is above water level
-    UNDERWATER_INLAVA                   = 0x80              // terrain type is lava and player is afflicted by it
+    UNDERWATER_INLAVA                   = 0x02,             // terrain type is lava and player is afflicted by it
+    UNDERWATER_INSLIME                  = 0x04,             // terrain type is lava and player is afflicted by it
+    UNDERWARER_INDARKWATER              = 0x08,             // terrain type is dark water and player is afflicted by it
+
+    UNDERWATER_EXIST_TIMERS             = 0x10
 };
 
 enum PlayerSpellState
@@ -501,6 +502,7 @@ enum MirrorTimerType
     BREATH_TIMER       = 1,
     FIRE_TIMER         = 2
 };
+#define DISABLED_MIRROR_TIMER   -1
 
 // 2^n values
 enum PlayerExtraFlags
@@ -1681,6 +1683,7 @@ class OREGON_DLL_SPEC Player : public Unit
         uint32 DurabilityRepairAll(bool cost, float discountMod, bool guildBank);
         uint32 DurabilityRepair(uint16 pos, bool cost, float discountMod, bool guildBank);
 
+        void UpdateMirrorTimers();
         void StopMirrorTimers()
         {
             StopMirrorTimer(FATIGUE_TIMER);
@@ -2000,7 +2003,7 @@ class OREGON_DLL_SPEC Player : public Unit
         void SetCanFly(bool CanFly) { m_CanFly=CanFly; }
         bool IsFlying() const { return HasUnitMovementFlag(MOVEMENTFLAG_FLYING2); }
 
-        void HandleDrowning();
+        void HandleDrowning(uint32 time_diff);
         void HandleFallDamage(MovementInfo& movementInfo);
         void HandleFallUnderMap();
 
@@ -2208,10 +2211,9 @@ class OREGON_DLL_SPEC Player : public Unit
         /*********************************************************/
         void HandleLava();
         void HandleSobering();
-        void StartMirrorTimer(MirrorTimerType Type, uint32 MaxValue);
-        void ModifyMirrorTimer(MirrorTimerType Type, uint32 MaxValue, uint32 CurrentValue, uint32 Regen);
+        void SendMirrorTimer(MirrorTimerType Type, uint32 MaxValue, uint32 CurrentValue, int32 Regen);
         void StopMirrorTimer(MirrorTimerType Type);
-        uint8 m_isunderwater;
+        int32 getMaxTimer(MirrorTimerType timer);
         bool m_isInWater;
 
         /*********************************************************/
@@ -2292,7 +2294,6 @@ class OREGON_DLL_SPEC Player : public Unit
         time_t m_lastDailyQuestTime;
 
         uint32 m_regenTimer;
-        uint32 m_breathTimer;
         uint32 m_drunkTimer;
         uint16 m_drunk;
         uint32 m_weaponChangeTimer;
@@ -2374,6 +2375,12 @@ class OREGON_DLL_SPEC Player : public Unit
         uint8 _CanStoreItem_InBag(uint8 bag, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool merge, bool non_specialized, Item *pSrcItem, uint8 skip_bag, uint8 skip_slot ) const;
         uint8 _CanStoreItem_InInventorySlots(uint8 slot_begin, uint8 slot_end, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool merge, Item *pSrcItem, uint8 skip_bag, uint8 skip_slot ) const;
         Item* _StoreItem(uint16 pos, Item *pItem, uint32 count, bool clone, bool update);
+
+        int32 m_MirrorTimerFatigue;
+        int32 m_MirrorTimerBreath;
+        int32 m_MirrorTimerFire;
+        uint8 m_MirrorTimerFlags;
+        uint8 m_MirrorTimerFlagsLast;
 
         GridReference<Player> m_gridRef;
         MapReference m_mapRef;
