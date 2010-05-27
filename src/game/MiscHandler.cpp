@@ -950,12 +950,7 @@ void WorldSession::HandleMoveTimeSkippedOpcode(WorldPacket & recv_data)
     /*  WorldSession::Update(getMSTime());*/
     DEBUG_LOG("WORLD: Time Lag/Synchronization Resent/Update");
 
-    uint64 guid;
-    if (!recv_data.readPackGUID(guid))
-    {
-        recv_data.rpos(recv_data.wpos());
-        return;
-    }
+    recv_data.read_skip<uint64>();
     recv_data.read_skip<uint32>();
     /*
         uint64 guid;
