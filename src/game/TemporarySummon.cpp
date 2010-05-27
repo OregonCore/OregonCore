@@ -176,9 +176,9 @@ void TemporarySummon::UnSummon()
     AddObjectToRemoveList();
 
     Unit* sum = m_summoner ? ObjectAccessor::GetUnit(*this, m_summoner) : NULL;
-    if (sum  && sum->GetTypeId() == TYPEID_UNIT && ((Creature*)sum)->IsAIEnabled)
+    if (sum  && sum->GetTypeId() == TYPEID_UNIT && sum->ToCreature()->IsAIEnabled)
     {
-        ((Creature*)sum)->AI()->SummonedCreatureDespawn(this);
+        sum->ToCreature()->AI()->SummonedCreatureDespawn(this);
     }
 }
 

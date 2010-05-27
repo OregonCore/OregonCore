@@ -360,9 +360,9 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
 
     if (owner->GetTypeId() == TYPEID_PLAYER)
     {
-        ((Player*)owner)->PetSpellInitialize();
-        if (((Player*)owner)->GetGroup())
-            ((Player*)owner)->SetGroupUpdateFlag(GROUP_UPDATE_PET);
+        owner->ToPlayer()->PetSpellInitialize();
+        if (owner->ToPlayer()->GetGroup())
+            owner->ToPlayer()->SetGroupUpdateFlag(GROUP_UPDATE_PET);
     }
 
     if (owner->GetTypeId() == TYPEID_PLAYER && getPetType() == HUNTER_PET)
@@ -679,10 +679,10 @@ void Pet::ModifyLoyalty(int32 addvalue)
             if (owner && owner->GetTypeId() == TYPEID_PLAYER)
             {
                 WorldPacket data(SMSG_PET_BROKEN, 0);
-                ((Player*)owner)->GetSession()->SendPacket(&data);
+                owner->ToPlayer()->GetSession()->SendPacket(&data);
 
                 //run away
-                ((Player*)owner)->RemovePet(this,PET_SAVE_AS_DELETED);
+                owner->ToPlayer()->RemovePet(this,PET_SAVE_AS_DELETED);
             }
         }
     }
@@ -856,7 +856,7 @@ void Pet::Remove(PetSaveMode mode, bool returnreagent)
     {
         if (owner->GetTypeId()==TYPEID_PLAYER)
         {
-            ((Player*)owner)->RemovePet(this,mode,returnreagent);
+            owner->ToPlayer()->RemovePet(this,mode,returnreagent);
             return;
         }
 
@@ -1294,9 +1294,7 @@ void Pet::_LoadSpellCooldowns()
         while (result->NextRow());
 
         if (!m_CreatureSpellCooldowns.empty() && GetOwner())
-        {
-            ((Player*)GetOwner())->GetSession()->SendPacket(&data);
-        }
+            GetOwner()->ToPlayer()->GetSession()->SendPacket(&data);
     }
 }
 
@@ -1593,7 +1591,7 @@ bool Pet::learnSpell(uint16 spell_id)
 
     Unit* owner = GetOwner();
     if (owner->GetTypeId()==TYPEID_PLAYER)
-        ((Player*)owner)->PetSpellInitialize();
+        owner->ToPlayer()->PetSpellInitialize();
     return true;
 }
 
@@ -1651,10 +1649,10 @@ void Pet::InitPetCreateSpells()
             {
                 petspellid = learn_spellproto->EffectTriggerSpell[0];
                 Unit* owner = GetOwner();
-                if (owner->GetTypeId() == TYPEID_PLAYER && !((Player*)owner)->HasSpell(learn_spellproto->Id))
+                if (owner->GetTypeId() == TYPEID_PLAYER && !owner->ToPlayer()->HasSpell(learn_spellproto->Id))
                 {
                     if (IsPassiveSpell(petspellid))          //learn passive skills when tamed, not sure if thats right
-                        ((Player*)owner)->learnSpell(learn_spellproto->Id);
+                        owner->ToPlayer()->learnSpell(learn_spellproto->Id);
                     else
                         AddTeachSpell(learn_spellproto->EffectTriggerSpell[0], learn_spellproto->Id);
                 }
@@ -1699,7 +1697,7 @@ void Pet::CheckLearning(uint32 spellid)
 
     if (urand(0, 100) < 10)
     {
-        ((Player*)owner)->learnSpell(itr->second);
+        owner->ToPlayer()->learnSpell(itr->second);
         m_teachspells.erase(itr);
     }
 }

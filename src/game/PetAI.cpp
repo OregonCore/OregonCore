@@ -236,7 +236,7 @@ void PetAI::UpdateAllies()
     if (!owner)
         return;
     else if (owner->GetTypeId() == TYPEID_PLAYER)
-        pGroup = ((Player*)owner)->GetGroup();
+        pGroup = owner->ToPlayer()->GetGroup();
 
     //only pet and owner/not in group->ok
     if (m_AllySet.size() == 2 && !pGroup)

@@ -129,7 +129,7 @@ TotemAI::AttackStart(Unit *)
         data << i_totem.GetGUID();
         data << i_totem.GetPositionX();
         data << i_totem.GetPositionY();
-        ((Player*)i_totem.GetOwner())->GetSession()->SendPacket(&data);
+        i_totem.GetOwner()->ToPlayer()->GetSession()->SendPacket(&data);
     }
 }
 

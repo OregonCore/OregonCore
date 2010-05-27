@@ -637,13 +637,13 @@ void Map::RelocationNotify()
 
         if (unit->GetTypeId() == TYPEID_PLAYER)
         {
-            Oregon::PlayerRelocationNotifier notifier(*((Player*)unit));
+            Oregon::PlayerRelocationNotifier notifier(*unit->ToPlayer());
             VisitAll(unit->GetPositionX(), unit->GetPositionY(), World::GetMaxVisibleDistance() + dist, notifier);
             notifier.Notify();
         }
         else
         {
-            Oregon::CreatureRelocationNotifier notifier(*((Creature*)unit));
+            Oregon::CreatureRelocationNotifier notifier(*unit->ToCreature());
             VisitAll(unit->GetPositionX(), unit->GetPositionY(), World::GetMaxVisibleDistance() + dist, notifier);
         }
     }
@@ -760,7 +760,7 @@ void Map::Update(const uint32 &t_diff)
                 if (Unit *caster = ((DynamicObject*)obj)->GetCaster())
                     if (caster->GetTypeId() == TYPEID_PLAYER && caster->GetUInt64Value(PLAYER_FARSIGHT) == obj->GetGUID())
                     {
-                        Oregon::PlayerVisibilityNotifier notifier(*((Player*)caster));
+                        Oregon::PlayerVisibilityNotifier notifier(*caster->ToPlayer());
                         VisitAll(obj->GetPositionX(), obj->GetPositionY(), World::GetMaxVisibleDistance(), notifier);
                         notifier.Notify();
                     }
@@ -2048,7 +2048,7 @@ void Map::RemoveAllObjectsInRemoveList()
         switch(obj->GetTypeId())
         {
         case TYPEID_UNIT:
-            if (!((Creature*)obj)->isPet())
+            if (!obj->ToCreature()->isPet())
                 SwitchGridContainers((Creature*)obj, on);
             break;
         }
@@ -2080,7 +2080,7 @@ void Map::RemoveAllObjectsInRemoveList()
         case TYPEID_UNIT:
             // in case triggered sequence some spell can continue casting after prev CleanupsBeforeDelete call
             // make sure that like sources auras/etc removed before destructor start
-            ((Creature*)obj)->CleanupsBeforeDelete ();
+            obj->ToCreature()->CleanupsBeforeDelete ();
             Remove((Creature*)obj,true);
             break;
         default:

@@ -36,7 +36,7 @@ void OutdoorPvPObjectiveAI::MoveInLineOfSight(Unit *u)
     // IsVisible only passes for players in range, so no need to check again
     // leaving/entering distance will be checked based on go range data
     if ((u->GetTypeId() == TYPEID_PLAYER) && me->IsWithinDistInMap(u, MAX_OUTDOOR_PVP_DISTANCE))
-        sOutdoorPvPMgr.HandleCaptureCreaturePlayerMoveInLos(((Player*)u), me);
+        sOutdoorPvPMgr.HandleCaptureCreaturePlayerMoveInLos(u->ToPlayer(), me);
 }
 
 int OutdoorPvPObjectiveAI::Permissible(const Creature * c)

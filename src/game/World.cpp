@@ -2505,15 +2505,15 @@ void World::ScriptsProcess()
 
             case SCRIPT_COMMAND_KILL:
             {
-                if (!source || ((Creature*)source)->isDead())
+                if (!source || source->ToCreature()->isDead())
                     break;
 
-                ((Creature*)source)->DealDamage(((Creature*)source), ((Creature*)source)->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                source->ToCreature()->DealDamage(source->ToCreature(), source->ToCreature()->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 
                 switch(step.script->dataint)
                 {
                 case 0: break; //return false not remove corpse
-                case 1: ((Creature*)source)->RemoveCorpse(); break;
+                case 1: source->ToCreature()->RemoveCorpse(); break;
                 }
                 break;
             }

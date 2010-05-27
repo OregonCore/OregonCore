@@ -124,7 +124,7 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode(WorldPacket & recv_data )
     // no or incorrect quest giver
     if (!pObject
         || (pObject->GetTypeId() != TYPEID_PLAYER && !pObject->hasQuest(quest))
-        || (pObject->GetTypeId() == TYPEID_PLAYER && !((Player*)pObject)->CanShareQuest(quest))
+        || (pObject->GetTypeId() == TYPEID_PLAYER && !pObject->ToPlayer()->CanShareQuest(quest))
         )
     {
         _player->PlayerTalkClass->CloseGossip();
@@ -163,7 +163,7 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode(WorldPacket & recv_data )
             switch(pObject->GetTypeId())
             {
                 case TYPEID_UNIT:
-                    Script->QuestAccept(_player, ((Creature*)pObject), qInfo);
+                    Script->QuestAccept(_player, pObject->ToCreature(), qInfo);
                     break;
                 case TYPEID_ITEM:
                 case TYPEID_CONTAINER:
@@ -269,7 +269,7 @@ void WorldSession::HandleQuestgiverChooseRewardOpcode(WorldPacket & recv_data )
             switch(pObject->GetTypeId())
             {
                 case TYPEID_UNIT:
-                    if (!(Script->ChooseReward(_player, ((Creature*)pObject), pQuest, reward )) )
+                    if (!(Script->ChooseReward(_player, pObject->ToCreature(), pQuest, reward )) )
                     {
                         // Send next quest
                         if (Quest const* nextquest = _player->GetNextQuest(guid ,pQuest ) )

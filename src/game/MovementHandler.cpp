@@ -647,7 +647,7 @@ void WorldSession::HandlePossessedMovement(WorldPacket& recv_data, MovementInfo&
 
     Unit* pos_unit = GetPlayer()->GetCharm();
 
-    if (pos_unit->GetTypeId() == TYPEID_PLAYER && ((Player*)pos_unit)->GetDontMove())
+    if (pos_unit->GetTypeId() == TYPEID_PLAYER && pos_unit->ToPlayer()->GetDontMove())
         return;
 
     //Save movement flags

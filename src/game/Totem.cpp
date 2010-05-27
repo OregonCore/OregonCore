@@ -60,7 +60,7 @@ void Totem::Summon(Unit* owner)
     if (owner->GetTypeId()==TYPEID_PLAYER && cinfo)
     {
         uint32 modelid = 0;
-        if (((Player*)owner)->GetTeam() == HORDE)
+        if (owner->ToPlayer()->GetTeam() == HORDE)
         {
             if (cinfo->Modelid_H1)
                 modelid = cinfo->Modelid_H1;
@@ -77,7 +77,7 @@ void Totem::Summon(Unit* owner)
         if (modelid)
             SetDisplayId(modelid);
         else
-            sLog.outErrorDb("Totem::Summon: Missing modelid information for entry %u, team %u, totem will use default values.",GetEntry(),((Player*)owner)->GetTeam());
+            sLog.outErrorDb("Totem::Summon: Missing modelid information for entry %u, team %u, totem will use default values.",GetEntry(),owner->ToPlayer()->GetTeam());
     }
 
     // Only add if a display exists.
@@ -128,7 +128,7 @@ void Totem::UnSummon()
         if (owner->GetTypeId() == TYPEID_PLAYER)
         {
             // Not only the player can summon the totem (scripted AI)
-            pGroup = ((Player*)owner)->GetGroup();
+            pGroup = owner->ToPlayer()->GetGroup();
             if (pGroup)
             {
                 for (GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())

@@ -190,7 +190,7 @@ void GameObject::Update(uint32 diff)
                 {
                     // Arming Time for GAMEOBJECT_TYPE_TRAP (6)
                     Unit* owner = GetOwner();
-                    if (owner && ((Player*)owner)->isInCombat())
+                    if (owner && owner->ToPlayer()->isInCombat())
                         m_cooldownTime = time(NULL) + GetGOInfo()->trap.startDelay;
                     m_lootState = GO_READY;
                     break;
@@ -209,14 +209,14 @@ void GameObject::Update(uint32 diff)
 
                             UpdateData udata;
                             WorldPacket packet;
-                            BuildValuesUpdateBlockForPlayer(&udata,((Player*)caster));
+                            BuildValuesUpdateBlockForPlayer(&udata,caster->ToPlayer());
                             udata.BuildPacket(&packet);
-                            ((Player*)caster)->GetSession()->SendPacket(&packet);
+                            caster->ToPlayer()->GetSession()->SendPacket(&packet);
 
                             WorldPacket data(SMSG_GAMEOBJECT_CUSTOM_ANIM,8+4);
                             data << GetGUID();
                             data << (uint32)(0);
-                            ((Player*)caster)->SendMessageToSet(&data,true);
+                            caster->ToPlayer()->SendMessageToSet(&data,true);
                         }
 
                         m_lootState = GO_READY;                 // can be successfully open with some chance
@@ -253,7 +253,7 @@ void GameObject::Update(uint32 diff)
                                 }
 
                                 WorldPacket data(SMSG_FISH_NOT_HOOKED,0);
-                                ((Player*)caster)->GetSession()->SendPacket(&data);
+                                caster->ToPlayer()->GetSession()->SendPacket(&data);
                             }
                             // can be delete
                             m_lootState = GO_JUST_DEACTIVATED;
@@ -372,8 +372,8 @@ void GameObject::Update(uint32 diff)
                     if (IsBattleGroundTrap && ok->GetTypeId() == TYPEID_PLAYER)
                     {
                         //BattleGround gameobjects case
-                        if (((Player*)ok)->InBattleGround())
-                            if (BattleGround *bg = ((Player*)ok)->GetBattleGround())
+                        if (ok->ToPlayer()->InBattleGround())
+                            if (BattleGround *bg = ok->ToPlayer()->GetBattleGround())
                                 bg->HandleTriggerBuff(GetGUID());
                     }
                 }
@@ -1157,7 +1157,7 @@ void GameObject::Use(Unit* user)
                 return;
 
             // accept only use by player from same group for caster except caster itself
-            if (((Player*)caster)==player || !((Player*)caster)->IsInSameRaidWith(player))
+            if (caster->ToPlayer()==player || !caster->ToPlayer()->IsInSameRaidWith(player))
                 return;
 
             AddUniqueUse(player);
@@ -1198,7 +1198,7 @@ void GameObject::Use(Unit* user)
                 if (!caster || caster->GetTypeId()!=TYPEID_PLAYER )
                     return;
 
-                if (user->GetTypeId()!=TYPEID_PLAYER || !((Player*)user)->IsInSameRaidWith((Player*)caster))
+                if (user->GetTypeId()!=TYPEID_PLAYER || !user->ToPlayer()->IsInSameRaidWith((Player*)caster))
                     return;
             }
 

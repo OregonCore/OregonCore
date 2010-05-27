@@ -5988,7 +5988,7 @@ bool ChatHandler::HandleRespawnCommand(const char* /*args*/)
         }
 
         if (target->isDead())
-            ((Creature*)target)->Respawn();
+            target->ToCreature()->Respawn();
         return true;
     }
 
@@ -6020,12 +6020,12 @@ bool ChatHandler::HandleFlyModeCommand(const char* args)
     if (strncmp(args, "on", 3) == 0)
     {
         data.SetOpcode(SMSG_MOVE_SET_CAN_FLY);
-        ((Player*)(unit))->SetCanFly(true);
+        (unit->ToPlayer())->SetCanFly(true);
     }
     else if (strncmp(args, "off", 4) == 0)
     {
         data.SetOpcode(SMSG_MOVE_UNSET_CAN_FLY);
-        ((Player*)(unit))->SetCanFly(false);
+        (unit->ToPlayer())->SetCanFly(false);
     }
     else
     {
