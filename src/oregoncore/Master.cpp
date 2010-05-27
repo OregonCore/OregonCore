@@ -203,6 +203,8 @@ int Master::Run()
 {
     sLog.outString( "%s (core-daemon)", _FULLVERSION );
     sLog.outString( "<Ctrl-C> to stop.\n" );
+    // Remove the warnings C4129 while compiling
+    #pragma warning (disable : 4129)
 
     sLog.outString( "  _____                                          " );
     sLog.outString( " /\\  __`\\                                        " );
