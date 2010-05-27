@@ -5,7 +5,6 @@ cmake_policy(SET CMP0005 OLD)
 include(CheckIncludeFiles)
 include(cmake/FindAce.cmake)
 include(cmake/FindMySql.cmake)
-include(cmake/FindPostgreSql.cmake)
 include(cmake/FindReadline.cmake)
 CONFIGURE_FILE(
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
@@ -14,7 +13,6 @@ CONFIGURE_FILE(
 ADD_CUSTOM_TARGET(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
 
 OPTION(DO_MYSQL "With MySQL support" 1)
-OPTION(DO_POSTGRESQL "With PostgreSQL support" 0) # not complete yet, may not link properly.
 OPTION(DO_SCRIPTS "With oregonscripts" 1)
 OPTION(DO_CLI "With CLI" 1)
 OPTION(DO_RA "With RA" 0)
@@ -63,12 +61,6 @@ message("* Libs install dir at: ${LIBSDIR}")
 
 FIND_LIBRARY(SSLLIB NAMES ssl DOC "SSL library")
 FIND_LIBRARY(ZLIB z "Zlib library")
-
-IF(DO_POSTGRESQL)
-    MESSAGE("* With PostgreSQL")
-    FIND_PostgreSQL()
-    ADD_DEFINITIONS(-DDO_POSTGRESQL)
-ENDIF(DO_POSTGRESQL)
 
 IF(DO_MYSQL)
     MESSAGE("* With MySQL")

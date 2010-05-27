@@ -22,9 +22,6 @@ add_definitions(
 IF (DO_MYSQL)
     SET(oregon-core_LINK_FLAGS "-pthread ${oregon-core_LINK_FLAGS}")
 ENDIF(DO_MYSQL)
-IF (DO_POSTGRESQL)
-    SET(oregon-core_LINK_FLAGS "-pthread ${oregon-core_LINK_FLAGS}")
-ENDIF(DO_POSTGRESQL)
 
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
@@ -50,7 +47,6 @@ ${READLINE_LIBRARY}
 gomp
 ${SCRIPT_LIB}
 ${MYSQL_LIBRARIES}
-${POSTGRESQL_LIBRARIES}
 ${SSLLIB}
 ${ACE_LIBRARY}
 ${ZLIB}

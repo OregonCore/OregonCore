@@ -18,9 +18,6 @@ add_definitions(
 IF (DO_MYSQL)
    SET(oregon-realm_LINK_FLAGS "-pthread ${oregon-realm_LINK_FLAGS}")
 ENDIF(DO_MYSQL)
-IF (DO_POSTGRESQL)
-   SET(oregon-realm_LINK_FLAGS "-pthread ${oregon-realm_LINK_FLAGS}")
-ENDIF(DO_POSTGRESQL)
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
    SET(oregon-realm_LINK_FLAGS "-framework Carbon ${oregon-realm_LINK_FLAGS}")
@@ -40,7 +37,6 @@ zlib
 gomp
 ${SSLLIB}
 ${MYSQL_LIBRARIES}
-${POSTGRESQL_LIBRARIES}
 ${OSX_LIBS}
 )
 

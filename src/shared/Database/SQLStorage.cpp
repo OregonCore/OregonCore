@@ -21,11 +21,7 @@
 #include "SQLStorage.h"
 #include "SQLStorageImpl.h"
 
-#ifdef DO_POSTGRESQL
-extern DatabasePostgre  WorldDatabase;
-#else
 extern DatabaseMysql  WorldDatabase;
-#endif
 
 const char CreatureInfosrcfmt[]="iiiiiisssiiiiiiiiiiffiffiiiiiiiiiiiffiiiiiiiiiiiiiiiiiiisiilliiis";
 const char CreatureInfodstfmt[]="iiiiiisssiiiiiiiiiiffiffiiiiiiiiiiiffiiiiiiiiiiiiiiiiiiisiilliiii";
@@ -81,4 +77,3 @@ void SQLStorage::Load()
     SQLStorageLoader loader;
     loader.Load(*this);
 }
-
