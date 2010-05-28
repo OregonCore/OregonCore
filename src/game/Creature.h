@@ -669,7 +669,7 @@ class OREGON_DLL_SPEC Creature : public Unit
 
         void SetDisableReputationGain(bool disable) { DisableReputationGain = disable; }
         bool IsReputationGainDisabled() { return DisableReputationGain; }
-        bool IsDamageEnoughForLootingAndReward() { return m_PlayerDamageReq == 0; }
+        bool IsDamageEnoughForLootingAndReward() const { return m_PlayerDamageReq == 0; }
         void LowerPlayerDamageReq(uint32 unDamage)
         {
             if (m_PlayerDamageReq)

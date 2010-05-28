@@ -567,7 +567,7 @@ ObjectAccessor::WorldObjectChangeAccumulator::Visit(DynamicObjectMapType &m)
     {
         if (IS_PLAYER_GUID(iter->getSource()->GetCasterGUID()))
         {
-            Player* caster = (Player*)iter->getSource()->GetCaster();
+            Player* caster = iter->getSource()->GetCaster()->ToPlayer();
             if (caster->GetUInt64Value(PLAYER_FARSIGHT) == iter->getSource()->GetGUID())
                 BuildPacket(caster);
         }

@@ -947,7 +947,7 @@ void GameObject::Use(Unit* user)
             if (user->GetTypeId()!=TYPEID_PLAYER)
                 return;
 
-            Player* player = (Player*)user;
+            Player* player = user->ToPlayer();
 
             player->PrepareQuestMenu(GetGUID());
             player->SendPreparedQuest(GetGUID());
@@ -963,7 +963,7 @@ void GameObject::Use(Unit* user)
             if (user->GetTypeId()!=TYPEID_PLAYER)
                 return;
 
-            Player* player = (Player*)user;
+            Player* player = user->ToPlayer();
 
             // a chair may have n slots. we have to calculate their positions and teleport the player to the nearest one
 
@@ -1021,7 +1021,7 @@ void GameObject::Use(Unit* user)
 
             if (user->GetTypeId()==TYPEID_PLAYER)
             {
-                Player* player = (Player*)user;
+                Player* player = user->ToPlayer();
 
                 // show page
                 if (info->goober.pageId)
@@ -1049,7 +1049,7 @@ void GameObject::Use(Unit* user)
             if (user->GetTypeId()!=TYPEID_PLAYER)
                 return;
 
-            Player* player = (Player*)user;
+            Player* player = user->ToPlayer();
 
             if (info->camera.cinematicId)
             {
@@ -1065,7 +1065,7 @@ void GameObject::Use(Unit* user)
             if (user->GetTypeId()!=TYPEID_PLAYER)
                 return;
 
-            Player* player = (Player*)user;
+            Player* player = user->ToPlayer();
 
             if (player->GetGUID() != GetOwnerGUID())
                 return;
@@ -1147,7 +1147,7 @@ void GameObject::Use(Unit* user)
             if (user->GetTypeId()!=TYPEID_PLAYER)
                 return;
 
-            Player* player = (Player*)user;
+            Player* player = user->ToPlayer();
 
             Unit* caster = GetOwner();
 
@@ -1198,7 +1198,7 @@ void GameObject::Use(Unit* user)
                 if (!caster || caster->GetTypeId()!=TYPEID_PLAYER )
                     return;
 
-                if (user->GetTypeId()!=TYPEID_PLAYER || !user->ToPlayer()->IsInSameRaidWith((Player*)caster))
+                if (user->GetTypeId()!=TYPEID_PLAYER || !user->ToPlayer()->IsInSameRaidWith(caster->ToPlayer()))
                     return;
             }
 
@@ -1214,7 +1214,7 @@ void GameObject::Use(Unit* user)
             if (user->GetTypeId()!=TYPEID_PLAYER)
                 return;
 
-            Player* player = (Player*)user;
+            Player* player = user->ToPlayer();
 
             Player* targetPlayer = ObjectAccessor::FindPlayer(player->GetSelection());
 
@@ -1240,7 +1240,7 @@ void GameObject::Use(Unit* user)
             if (user->GetTypeId()!=TYPEID_PLAYER)
                 return;
 
-            Player* player = (Player*)user;
+            Player* player = user->ToPlayer();
 
             if (player->isAllowUseBattleGroundObject() )
             {
@@ -1265,7 +1265,7 @@ void GameObject::Use(Unit* user)
             if (user->GetTypeId()!=TYPEID_PLAYER)
                 return;
 
-            Player* player = (Player*)user;
+            Player* player = user->ToPlayer();
 
             if (player->isAllowUseBattleGroundObject() )
             {
@@ -1316,7 +1316,7 @@ void GameObject::Use(Unit* user)
     SpellEntry const *spellInfo = sSpellStore.LookupEntry(spellId);
     if (!spellInfo)
     {
-        if (user->GetTypeId()!=TYPEID_PLAYER || !sOutdoorPvPMgr.HandleCustomSpell((Player*)user,spellId,this))
+        if (user->GetTypeId()!=TYPEID_PLAYER || !sOutdoorPvPMgr.HandleCustomSpell(user->ToPlayer(),spellId,this))
             sLog.outError("WORLD: unknown spell id %u at use action for gameobject (Entry: %u GoType: %u )", spellId,GetEntry(),GetGoType());
         else
             sLog.outDebug("WORLD: %u non-dbc spell was handled by OutdoorPvP", spellId);

@@ -399,7 +399,7 @@ void ThreatManager::modifyThreatPercent(Unit *pVictim, int32 pPercent)
 Unit* ThreatManager::getHostilTarget()
 {
     iThreatContainer.update();
-    HostilReference* nextVictim = iThreatContainer.selectNextVictim((Creature*) getOwner(), getCurrentVictim());
+    HostilReference* nextVictim = iThreatContainer.selectNextVictim(getOwner()->ToCreature(), getCurrentVictim());
     setCurrentVictim(nextVictim);
     return getCurrentVictim() != NULL ? getCurrentVictim()->getTarget() : NULL;
 }

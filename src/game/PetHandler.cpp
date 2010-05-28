@@ -253,10 +253,10 @@ void WorldSession::HandlePetAction(WorldPacket & recv_data )
             {
                 pet->SetInFront(unit_target);
                 if (unit_target->GetTypeId() == TYPEID_PLAYER )
-                    pet->SendUpdateToPlayer((Player*)unit_target);
+                    pet->SendUpdateToPlayer(unit_target->ToPlayer());
                 if (Unit* powner = pet->GetCharmerOrOwner())
                     if (powner->GetTypeId() == TYPEID_PLAYER)
-                        pet->SendUpdateToPlayer((Player*)powner);
+                        pet->SendUpdateToPlayer(powner->ToPlayer());
                 result = -1;
             }
 
@@ -692,7 +692,7 @@ void WorldSession::HandlePetCastSpellOpcode(WorldPacket& recvPacket )
     {
         if (caster->GetTypeId() == TYPEID_UNIT)
         {
-            Creature* pet = (Creature*)caster;
+            Creature* pet = caster->ToCreature();
             pet->AddCreatureSpellCooldown(spellid);
             if (pet->isPet())
             {

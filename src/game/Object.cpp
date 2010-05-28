@@ -616,7 +616,7 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer * data, UpdateMask 
                 // hide lootable animation for unallowed players
                 else if (index == UNIT_DYNAMIC_FLAGS && GetTypeId() == TYPEID_UNIT)
                 {
-                    if (!target->isAllowedToLoot((Creature*)this))
+                    if (!target->isAllowedToLoot(ToCreature()))
                         *data << (m_uint32Values[ index ] & ~UNIT_DYNFLAG_LOOTABLE);
                     else
                         *data << (m_uint32Values[ index ] & ~UNIT_DYNFLAG_OTHER_TAGGER);
@@ -627,7 +627,7 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer * data, UpdateMask 
                 bool ch = false;
                     if (target->GetTypeId() == TYPEID_PLAYER && GetTypeId() == TYPEID_PLAYER && target != this)
                     {
-                    if (target->IsInSameGroupWith((Player*)this) || target->IsInSameRaidWith((Player*)this))
+                    if (target->IsInSameGroupWith(this->ToPlayer()) || target->IsInSameRaidWith(this->ToPlayer()))
                     {
                         if (index == UNIT_FIELD_BYTES_2)
                         {
@@ -1099,14 +1099,14 @@ void WorldObject::setActive(bool on )
     if (on)
     {
         if (GetTypeId() == TYPEID_UNIT)
-            map->AddToActive((Creature*)this);
+            map->AddToActive(this->ToCreature());
         else if (GetTypeId() == TYPEID_DYNAMICOBJECT)
             map->AddToActive((DynamicObject*)this);
     }
     else
     {
         if (GetTypeId() == TYPEID_UNIT)
-            map->RemoveFromActive((Creature*)this);
+            map->RemoveFromActive(this->ToCreature());
         else if (GetTypeId() == TYPEID_DYNAMICOBJECT)
             map->RemoveFromActive((DynamicObject*)this);
     }
@@ -1796,7 +1796,7 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
 
     pet->AIM_Initialize();
 
-    map->Add((Creature*)pet);
+    map->Add(pet->ToCreature());
 
     pet->setPowerType(POWER_MANA);
     pet->SetUInt32Value(UNIT_NPC_FLAGS , 0);

@@ -209,10 +209,10 @@ void PetAI::UpdateAI(const uint32 diff)
             {
                 m_creature->SetInFront(target);
                 if (target->GetTypeId() == TYPEID_PLAYER )
-                    m_creature->SendUpdateToPlayer((Player*)target);
+                    m_creature->SendUpdateToPlayer(target->ToPlayer());
 
                 if (owner && owner->GetTypeId() == TYPEID_PLAYER)
-                    m_creature->SendUpdateToPlayer((Player*)owner);
+                    m_creature->SendUpdateToPlayer(owner->ToPlayer());
             }
 
             m_creature->AddCreatureSpellCooldown(spell->m_spellInfo->Id);
@@ -252,7 +252,7 @@ void PetAI::UpdateAllies()
         for (GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
         {
             Player* Target = itr->getSource();
-            if (!Target || !pGroup->SameSubGroup((Player*)owner, Target))
+            if (!Target || !pGroup->SameSubGroup(owner->ToPlayer(), Target))
                 continue;
 
             if (Target->GetGUID() == owner->GetGUID())

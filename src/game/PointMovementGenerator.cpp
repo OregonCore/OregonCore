@@ -98,8 +98,8 @@ template void PointMovementGenerator<Creature>::Finalize(Creature&);
 
 void AssistanceMovementGenerator::Finalize(Unit &unit)
 {
-    (&unit)->ToCreature()->SetNoCallAssistance(false);
-    (&unit)->ToCreature()->CallAssistance();
+    unit.ToCreature()->SetNoCallAssistance(false);
+    unit.ToCreature()->CallAssistance();
     if (unit.isAlive())
         unit.GetMotionMaster()->MoveSeekAssistanceDistract(sWorld.getConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_DELAY));
 }

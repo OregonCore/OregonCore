@@ -835,7 +835,7 @@ void Aura::UpdateAuraDuration()
 
     if (caster && caster->GetTypeId() == TYPEID_PLAYER)
     {
-        SendAuraDurationForCaster((Player*)caster);
+        SendAuraDurationForCaster(caster->ToPlayer());
 
         Group* CasterGroup = caster->ToPlayer()->GetGroup();
         if (CasterGroup && (spellmgr.GetSpellCustomAttr(GetId()) & SPELL_ATTR_CU_AURA_CC))
@@ -1440,8 +1440,8 @@ void Aura::TriggerSpell()
                                 target->GetTypeId() == TYPEID_UNIT &&
                                 target->ToCreature()->GetCreatureInfo()->type == CREATURE_TYPE_GAS_CLOUD)
                         {
-                            Player* player = (Player*)caster;
-                            Creature* creature = (Creature*)target;
+                            Player* player = caster->ToPlayer();
+                            Creature* creature = target->ToCreature();
                             // missing lootid has been reported on startup - just return
                             if (!creature->GetCreatureInfo()->SkinLootId)
                             {
@@ -1621,7 +1621,7 @@ void Aura::TriggerSpell()
 
                         caster->CastSpell(caster, 38495, true);
 
-                        Creature* creatureTarget = (Creature*)m_target;
+                        Creature* creatureTarget = m_target->ToCreature();
 
                         creatureTarget->setDeathState(JUST_DIED);
                         creatureTarget->RemoveCorpse();
@@ -2951,7 +2951,7 @@ void Aura::HandleForceReaction(bool apply, bool Real)
     if (!Real)
         return;
 
-    Player* player = (Player*)m_target;
+    Player* player = m_target->ToPlayer();
 
     uint32 faction_id = m_modifier.m_miscvalue;
     uint32 faction_rank = m_modifier.m_amount;
@@ -3006,7 +3006,7 @@ void Aura::HandleChannelDeathItem(bool apply, bool Real)
         // Soul Shard only from non-grey units
         if (spellInfo->EffectItemType[m_effIndex] == 6265 &&
             (victim->getLevel() <= Oregon::XP::GetGrayLevel(caster->getLevel()) ||
-             victim->GetTypeId()==TYPEID_UNIT && !caster->ToPlayer()->isAllowedToLoot((Creature*)victim)) )
+             victim->GetTypeId()==TYPEID_UNIT && !caster->ToPlayer()->isAllowedToLoot(victim->ToCreature())) )
             return;
         ItemPosCountVec dest;
         uint8 msg = caster->ToPlayer()->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, spellInfo->EffectItemType[m_effIndex], 1);
@@ -3028,9 +3028,9 @@ void Aura::HandleBindSight(bool apply, bool Real)
         return;
 
     if (apply)
-        m_target->AddPlayerToVision((Player*)caster);
+        m_target->AddPlayerToVision(caster->ToPlayer());
     else
-        m_target->RemovePlayerFromVision((Player*)caster);
+        m_target->RemovePlayerFromVision(caster->ToPlayer());
 }
 
 void Aura::HandleFarSight(bool apply, bool Real)
@@ -3292,7 +3292,7 @@ void Aura::HandleModStealth(bool apply, bool Real)
 
             // remove player from the objective's active player count at stealth
             if (OutdoorPvP * pvp = m_target->ToPlayer()->GetOutdoorPvP())
-                pvp->HandlePlayerActivityChanged((Player*)m_target);
+                pvp->HandlePlayerActivityChanged(m_target->ToPlayer());
         }
 
         // only at real aura add
@@ -3343,7 +3343,7 @@ void Aura::HandleModStealth(bool apply, bool Real)
                     m_target->SetVisibility(VISIBILITY_ON);
                     if (m_target->GetTypeId() == TYPEID_PLAYER)
                         if (OutdoorPvP * pvp = m_target->ToPlayer()->GetOutdoorPvP())
-                            pvp->HandlePlayerActivityChanged((Player*)m_target);
+                            pvp->HandlePlayerActivityChanged(m_target->ToPlayer());
                 }
             }
         }
@@ -3381,7 +3381,7 @@ void Aura::HandleInvisibility(bool apply, bool Real)
             m_target->SetFlag(PLAYER_FIELD_BYTES2,PLAYER_FIELD_BYTE2_INVISIBILITY_GLOW);
             // remove player from the objective's active player count at invisibility
             if (OutdoorPvP * pvp = m_target->ToPlayer()->GetOutdoorPvP())
-                pvp->HandlePlayerActivityChanged((Player*)m_target);
+                pvp->HandlePlayerActivityChanged(m_target->ToPlayer());
         }
 
         // apply only if not in GM invisibility and not stealth
@@ -3417,7 +3417,7 @@ void Aura::HandleInvisibility(bool apply, bool Real)
                     m_target->SetVisibility(VISIBILITY_ON);
                     if (m_target->GetTypeId() == TYPEID_PLAYER)
                         if (OutdoorPvP * pvp = m_target->ToPlayer()->GetOutdoorPvP())
-                            pvp->HandlePlayerActivityChanged((Player*)m_target);
+                            pvp->HandlePlayerActivityChanged(m_target->ToPlayer());
                 }
             }
         }
@@ -3439,7 +3439,6 @@ void Aura::HandleInvisibilityDetect(bool apply, bool Real)
             m_target->m_detectInvisibilityMask |= (1 << m_modifier.m_miscvalue);
     }
     if (Real && m_target->GetTypeId()==TYPEID_PLAYER)
-        //ObjectAccessor::UpdateVisibilityForPlayer((Player*)m_target);
         m_target->SetToNotify();
 }
 
@@ -3830,7 +3829,7 @@ void Aura::HandleAuraModEffectImmunity(bool apply, bool Real)
                 }
             }
             else
-                sOutdoorPvPMgr.HandleDropFlag((Player*)m_target,GetSpellProto()->Id);
+                sOutdoorPvPMgr.HandleDropFlag(m_target->ToPlayer(),GetSpellProto()->Id);
         }
     }
 
@@ -5450,7 +5449,7 @@ void Aura::HandleAuraRetainComboPoints(bool apply, bool Real)
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    Player *target = (Player*)m_target;
+    Player *target = m_target->ToPlayer();
 
     // combo points was added in SPELL_EFFECT_ADD_COMBO_POINTS handler
     // remove only if aura expire by time (in case combo points amount change aura removed without combo points lost)

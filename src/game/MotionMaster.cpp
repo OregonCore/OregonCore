@@ -53,7 +53,7 @@ MotionMaster::Initialize()
     // set new default movement generator
     if (i_owner->GetTypeId() == TYPEID_UNIT)
     {
-        MovementGenerator* movement = FactorySelector::selectMovementGenerator((Creature*)i_owner);
+        MovementGenerator* movement = FactorySelector::selectMovementGenerator(i_owner->ToCreature());
         push( movement == NULL ? &si_idleMovement : movement);
         InitTop();
     }

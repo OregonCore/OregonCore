@@ -458,7 +458,7 @@ void OutdoorPvPObjective::UpdateActivePlayerProximityCheck()
                 if (Player * pl = objmgr.GetPlayer(*itr))
                 {
                     if (!cp->IsWithinDistInMap(pl,cp->GetGOInfo()->raw.data[0]))
-                        HandleCapturePointEvent(pl, cp->GetGOInfo()->raw.data[9]); //i_objective->HandlePlayerLeave((Player*)u);
+                        HandleCapturePointEvent(pl, cp->GetGOInfo()->raw.data[9]);
                 }
                 else
                 {
@@ -558,12 +558,12 @@ bool OutdoorPvPObjective::HandleCaptureCreaturePlayerMoveInLos(Player * p, Creat
     if (cp->IsWithinDistInMap(p,cp->GetGOInfo()->raw.data[0]) && p->IsOutdoorPvPActive())
     {
         // data[8] will be used for player enter
-        return HandleCapturePointEvent(p, cp->GetGOInfo()->raw.data[8]); //i_objective->HandlePlayerEnter((Player*)u);
+        return HandleCapturePointEvent(p, cp->GetGOInfo()->raw.data[8]);
     }
     else
     {
         // data[9] will be used for player leave
-        return HandleCapturePointEvent(p, cp->GetGOInfo()->raw.data[9]); //i_objective->HandlePlayerLeave((Player*)u);
+        return HandleCapturePointEvent(p, cp->GetGOInfo()->raw.data[9]);
     }
 }
 

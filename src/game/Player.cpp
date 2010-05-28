@@ -2155,7 +2155,7 @@ bool Player::IsInSameGroupWith(Player const* p) const
 {
     return  p==this || GetGroup() != NULL &&
         GetGroup() == p->GetGroup() &&
-        GetGroup()->SameSubGroup((Player*)this, (Player*)p);
+        GetGroup()->SameSubGroup(this->ToPlayer(), p->ToPlayer());
 }
 
 ///- If the player is invited, remove him. If the group if then only 1 person, disband the group.
@@ -14556,7 +14556,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder )
     return true;
 }
 
-bool Player::isAllowedToLoot(Creature* creature)
+bool Player::isAllowedToLoot(const Creature* creature)
 {
     if (creature->isDead() && !creature->IsDamageEnoughForLootingAndReward())
        return false;
@@ -19591,7 +19591,7 @@ bool Player::isTotalImmunity()
 void Player::UpdateCharmedAI()
 {
     //This should only called in Player::Update
-    Creature *charmer = (Creature*)GetCharmer();
+    Creature *charmer = GetCharmer()->ToCreature();
 
     //kill self if charm aura has infinite duration
     if (charmer->IsInEvadeMode())

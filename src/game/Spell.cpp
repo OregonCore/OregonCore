@@ -2064,7 +2064,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
             case TARGET_UNIT_CLASS_TARGET:
             {
                 Player* targetPlayer = m_targets.getUnitTarget() && m_targets.getUnitTarget()->GetTypeId() == TYPEID_PLAYER
-                    ? (Player*)m_targets.getUnitTarget() : NULL;
+                    ? m_targets.getUnitTarget()->ToPlayer() : NULL;
 
                 Group* pGroup = targetPlayer ? targetPlayer->GetGroup() : NULL;
                 if (pGroup)
@@ -2553,7 +2553,7 @@ void Spell::SendSpellCooldown()
     if (m_caster->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    Player* _player = (Player*)m_caster;
+    Player* _player = m_caster->ToPlayer();
     // Add cooldown for max (disable spell)
     // Cooldown started on SendCooldownEvent call
     if (m_spellInfo->Attributes & SPELL_ATTR_DISABLED_WHILE_ACTIVE)
@@ -3261,7 +3261,7 @@ void Spell::TakeCastItem()
                     (charges > 0) ? --charges : ++charges;  // abs(charges) less at 1 after use
                     if (proto->Stackable < 2)
                         m_CastItem->SetSpellCharges(i, charges);
-                    m_CastItem->SetState(ITEM_CHANGED, (Player*)m_caster);
+                    m_CastItem->SetState(ITEM_CHANGED, m_caster->ToPlayer());
                 }
 
                 // all charges used
@@ -3344,7 +3344,7 @@ void Spell::TakeReagents()
         m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PREPARATION))
         return;
 
-    Player* p_caster = (Player*)m_caster;
+    Player* p_caster = m_caster->ToPlayer();
 
     for (uint32 x=0;x<8;x++)
     {
@@ -3922,7 +3922,7 @@ uint8 Spell::CanCast(bool strict)
                 if (!(m_targets.getUnitTarget()->GetUInt32Value(UNIT_FIELD_FLAGS) & UNIT_FLAG_SKINNABLE) )
                     return SPELL_FAILED_TARGET_UNSKINNABLE;
 
-                Creature* creature = (Creature*)m_targets.getUnitTarget();
+                Creature* creature = m_targets.getUnitTarget()->ToCreature();
                 if (creature->GetCreatureType() != CREATURE_TYPE_CRITTER && (!creature->lootForBody || !creature->loot.empty() ) )
                 {
                     return SPELL_FAILED_TARGET_NOT_LOOTED;
@@ -4159,7 +4159,7 @@ uint8 Spell::CanCast(bool strict)
                     return SPELL_FAILED_BAD_TARGETS;
 
                 Player* target = objmgr.GetPlayer(m_caster->ToPlayer()->GetSelection());
-                if (!target || m_caster->ToPlayer()==target || !target->IsInSameRaidWith((Player*)m_caster) )
+                if (!target || m_caster->ToPlayer()==target || !target->IsInSameRaidWith(m_caster->ToPlayer()) )
                     return SPELL_FAILED_BAD_TARGETS;
 
                 // check if our map is dungeon
@@ -4603,7 +4603,7 @@ uint8 Spell::CheckItems()
         return 0;
 
     uint32 itemid, itemcount;
-    Player* p_caster = (Player*)m_caster;
+    Player* p_caster = m_caster->ToPlayer();
 
     if (!m_CastItem)
     {

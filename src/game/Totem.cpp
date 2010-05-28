@@ -83,7 +83,7 @@ void Totem::Summon(Unit* owner)
     // Only add if a display exists.
     sLog.outDebug("AddObject at Totem.cpp line 49");
     SetInstanceId(owner->GetInstanceId());
-    owner->GetMap()->Add((Creature*)this);
+    owner->GetMap()->Add(this->ToCreature());
 
     WorldPacket data(SMSG_GAMEOBJECT_SPAWN_ANIM_OBSOLETE, 8);
     data << GetGUID();
@@ -134,7 +134,7 @@ void Totem::UnSummon()
                 for (GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
                 {
                     Player* Target = itr->getSource();
-                    if (Target && pGroup->SameSubGroup((Player*)owner, Target))
+                    if (Target && pGroup->SameSubGroup(owner->ToPlayer(), Target))
                         Target->RemoveAurasDueToSpell(GetSpell());
                 }
             }

@@ -136,7 +136,7 @@ bool ChatHandler::HandleSendOpcodeCommand(const char* /*args*/)
     if (!unit || (unit->GetTypeId() != TYPEID_PLAYER))
         player = m_session->GetPlayer();
     else
-        player = (Player*)unit;
+        player = unit->ToPlayer();
     if (!unit) unit = player;
 
     std::ifstream ifs("opcode.txt");

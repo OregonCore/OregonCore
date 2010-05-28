@@ -53,7 +53,7 @@ void WorldSession::HandleQuestgiverStatusQueryOpcode(WorldPacket & recv_data )
         case TYPEID_UNIT:
         {
             sLog.outDebug("WORLD: Received CMSG_QUESTGIVER_STATUS_QUERY for npc, guid = %u",uint32(GUID_LOPART(guid)));
-            Creature* cr_questgiver=(Creature*)questgiver;
+            Creature* cr_questgiver=questgiver->ToCreature();
             if (!cr_questgiver->IsHostileTo(_player))       // not show quest status to enemies
             {
                 questStatus = Script->NPCDialogStatus(_player, cr_questgiver);

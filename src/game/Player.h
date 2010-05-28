@@ -2118,7 +2118,7 @@ class OREGON_DLL_SPEC Player : public Unit
         GridReference<Player> &GetGridRef() { return m_gridRef; }
         MapReference &GetMapRef() { return m_mapRef; }
 
-        bool isAllowedToLoot(Creature* creature);
+        bool isAllowedToLoot(const Creature* creature);
 
         WorldLocation& GetTeleportDest() { return m_teleport_dest; }
 

@@ -3818,7 +3818,7 @@ bool ChatHandler::HandleCreatePetCommand(const char* args)
      pet->InitPetCreateSpells();
      pet->SetHealth(pet->GetMaxHealth());
 
-     MapManager::Instance().GetMap(pet->GetMapId(), pet)->Add((Creature*)pet);
+     MapManager::Instance().GetMap(pet->GetMapId(), pet)->Add(pet->ToCreature());
 
      // visual effect for levelup
      pet->SetUInt32Value(UNIT_FIELD_LEVEL,creatureTarget->getLevel());

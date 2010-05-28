@@ -2047,7 +2047,7 @@ void Map::RemoveAllObjectsInRemoveList()
         {
         case TYPEID_UNIT:
             if (!obj->ToCreature()->isPet())
-                SwitchGridContainers((Creature*)obj, on);
+                SwitchGridContainers(obj->ToCreature(), on);
             break;
         }
     }
@@ -2078,8 +2078,8 @@ void Map::RemoveAllObjectsInRemoveList()
         case TYPEID_UNIT:
             // in case triggered sequence some spell can continue casting after prev CleanupsBeforeDelete call
             // make sure that like sources auras/etc removed before destructor start
-            obj->ToCreature()->CleanupsBeforeDelete ();
-            Remove((Creature*)obj,true);
+            obj->ToCreature()->CleanupsBeforeDelete();
+            Remove(obj->ToCreature(),true);
             break;
         default:
             sLog.outError("Non-grid object (TypeId: %u) in grid object removing list, ignored.",obj->GetTypeId());

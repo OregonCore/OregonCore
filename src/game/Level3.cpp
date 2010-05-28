@@ -6166,7 +6166,7 @@ bool ChatHandler::HandleNpcChangeEntryCommand(const char *args)
         SetSentErrorMessage(true);
         return false;
     }
-    Creature* creature = (Creature*)unit;
+    Creature* creature = unit->ToCreature();
     if (creature->UpdateEntry(newEntryNum))
         SendSysMessage(LANG_DONE);
     else

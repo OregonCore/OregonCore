@@ -348,7 +348,7 @@ void Unit::SendMonsterMoveWithSpeed(float x, float y, float z, uint32 transitTim
         }
         else
         {
-            Traveller<Creature> traveller(*(Creature*)this);
+            Traveller<Creature> traveller(*this->ToCreature());
             transitTime = traveller.GetTotalTrevelTimeTo(x,y,z);
         }
     }
@@ -962,7 +962,7 @@ uint32 Unit::DealDamage(Unit *pVictim, uint32 damage, CleanDamage const* cleanDa
         if (duel_hasEnded)
         {
             assert(pVictim->GetTypeId()==TYPEID_PLAYER);
-            Player *he = (Player*)pVictim;
+            Player *he = pVictim->ToPlayer();
 
             assert(he->duel);
 
@@ -9022,7 +9022,7 @@ void Unit::CombatStart(Unit* target, bool initialAggro)
             target->ToCreature()->AI()->AttackStart(this);
             if (target->ToCreature()->GetFormation())
             {   
-                target->ToCreature()->GetFormation()->MemberAttackStart((Creature*)target, this);
+                target->ToCreature()->GetFormation()->MemberAttackStart(target->ToCreature(), this);
                 sLog.outDebug("Unit::CombatStart() calls CreatureGroups::MemberHasAttacked(this);");
             }
         }
@@ -9032,7 +9032,7 @@ void Unit::CombatStart(Unit* target, bool initialAggro)
 
     Unit *who = target->GetCharmerOrOwnerOrSelf();
     if (who->GetTypeId() == TYPEID_PLAYER)
-        SetContestedPvP((Player*)who);
+        SetContestedPvP(who->ToPlayer());
 
     Player *me = GetCharmerOrOwnerPlayerOrPlayerItself();
     if (me && who->IsPvP()
@@ -9091,7 +9091,7 @@ void Unit::ClearInCombat()
     // Player's state will be cleared in Player::UpdateContestedPvP
     if (GetTypeId()!=TYPEID_PLAYER)
     {
-        Creature* creature = (Creature*)this;
+        Creature* creature = this->ToCreature();
         if (creature->GetCreatureInfo() && creature->GetCreatureInfo()->unit_flags & UNIT_FLAG_NOT_ATTACKABLE_2)
             SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
                              
@@ -9345,7 +9345,7 @@ void Unit::DestroyForNearbyPlayers()
         if (*iter != this && (*iter)->GetTypeId() == TYPEID_PLAYER
             && ((*iter)->ToPlayer())->HaveAtClient(this))
         {
-            DestroyForPlayer((Player*)(*iter));
+            DestroyForPlayer((*iter)->ToPlayer());
             ((*iter)->ToPlayer())->m_clientGUIDs.erase(GetGUID());
         }
 }
@@ -9759,7 +9759,7 @@ Unit* Creature::SelectVictim()
     {
         for (AttackerSet::const_iterator itr = m_attackers.begin(); itr != m_attackers.end(); ++itr)
         {
-            if ((*itr)->IsInMap(this) && canAttack(*itr) && (*itr)->isInAccessiblePlaceFor((Creature*)this) )
+            if ((*itr)->IsInMap(this) && canAttack(*itr) && (*itr)->isInAccessiblePlaceFor(this->ToCreature()) )
                 return NULL;
         }
     }*/
@@ -9799,7 +9799,7 @@ Unit* Creature::SelectVictim()
 
 int32 Unit::CalculateSpellDamage(SpellEntry const* spellProto, uint8 effect_index, int32 effBasePoints, Unit const* /*target*/)
 {
-    Player* unitPlayer = (GetTypeId() == TYPEID_PLAYER) ? (Player*)this : NULL;
+    Player* unitPlayer = (GetTypeId() == TYPEID_PLAYER) ? this->ToPlayer() : NULL;
 
     uint8 comboPoints = unitPlayer ? unitPlayer->GetComboPoints() : 0;
 
@@ -9856,7 +9856,7 @@ int32 Unit::CalculateSpellDamage(SpellEntry const* spellProto, uint8 effect_inde
 
 int32 Unit::CalculateSpellDuration(SpellEntry const* spellProto, uint8 effect_index, Unit const* target)
 {
-    Player* unitPlayer = (GetTypeId() == TYPEID_PLAYER) ? (Player*)this : NULL;
+    Player* unitPlayer = (GetTypeId() == TYPEID_PLAYER) ? this->ToPlayer() : NULL;
 
     uint8 comboPoints = unitPlayer ? unitPlayer->GetComboPoints() : 0;
 
@@ -10505,9 +10505,9 @@ void Unit::UpdateCharmAI()
         {
             i_disabledAI = i_AI;
             if (isPossessed())
-                i_AI = new PossessedAI((Creature*)this);
+                i_AI = new PossessedAI(this->ToCreature());
             else
-                i_AI = new PetAI((Creature*)this);
+                i_AI = new PetAI(this->ToCreature());
         }
     }
 }
@@ -12117,7 +12117,7 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
     else                                                // creature died
     {
         DEBUG_LOG("DealDamageNotPlayer");
-        Creature *cVictim = (Creature*)pVictim;
+        Creature *cVictim = pVictim->ToCreature();
 
         if (!cVictim->isPet())
         {
@@ -12167,7 +12167,7 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
 
     if (pVictim->GetTypeId() == TYPEID_PLAYER)
         if (OutdoorPvP * pvp = pVictim->ToPlayer()->GetOutdoorPvP())
-            pvp->HandlePlayerActivityChanged((Player*)pVictim);
+            pvp->HandlePlayerActivityChanged(pVictim->ToPlayer());
 
     // battleground things (do this at the end, so the death state flag will be properly set to handle in the bg->handlekill)
     if (player && player->InBattleGround())
@@ -12175,9 +12175,9 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
         if (BattleGround *bg = player->GetBattleGround())
         {
             if (pVictim->GetTypeId() == TYPEID_PLAYER)
-                bg->HandleKillPlayer((Player*)pVictim, player);
+                bg->HandleKillPlayer(pVictim->ToPlayer(), player);
             else
-                bg->HandleKillUnit((Creature*)pVictim, player);
+                bg->HandleKillUnit(pVictim->ToCreature(), player);
         }
     }
 }
@@ -12437,7 +12437,7 @@ void Unit::SetCharmedOrPossessedBy(Unit* charmer, bool possess)
     {
         addUnitState(UNIT_STAT_POSSESSED);
         SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_UNKNOWN5);
-        AddPlayerToVision((Player*)charmer);
+        AddPlayerToVision(charmer->ToPlayer());
         charmer->ToPlayer()->SetViewport(GetGUID(), true);
         charmer->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
     }
@@ -12519,7 +12519,7 @@ void Unit::RemoveCharmedOrPossessedBy(Unit *charmer)
     charmer->SetCharm(0);
     if (possess)
     {
-        RemovePlayerFromVision((Player*)charmer);
+        RemovePlayerFromVision(charmer->ToPlayer());
         charmer->ToPlayer()->SetViewport(charmer->GetGUID(), true);
         charmer->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
     }
@@ -12587,7 +12587,7 @@ bool Unit::IsInPartyWith(Unit const *unit) const
         return true;
 
     if (u1->GetTypeId() == TYPEID_PLAYER && u2->GetTypeId() == TYPEID_PLAYER)
-        return u1->ToPlayer()->IsInSameGroupWith((Player*)u2);
+        return u1->ToPlayer()->IsInSameGroupWith(u2->ToPlayer());
     else
         return false;
 }
@@ -12603,7 +12603,7 @@ bool Unit::IsInRaidWith(Unit const *unit) const
         return true;
 
     if (u1->GetTypeId() == TYPEID_PLAYER && u2->GetTypeId() == TYPEID_PLAYER)
-        return u1->ToPlayer()->IsInSameRaidWith((Player*)u2);
+        return u1->ToPlayer()->IsInSameRaidWith(u2->ToPlayer());
     else
         return false;
 }

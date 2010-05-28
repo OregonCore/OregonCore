@@ -81,7 +81,7 @@ void RotateMovementGenerator::Finalize(Unit &unit)
 {
     unit.clearUnitState(UNIT_STAT_ROTATING);
     if (unit.GetTypeId() == TYPEID_UNIT)
-        (&unit)->ToCreature()->AI()->MovementInform(ROTATE_MOTION_TYPE, 0);
+        unit.ToCreature()->AI()->MovementInform(ROTATE_MOTION_TYPE, 0);
 }
 
 
@@ -111,6 +111,6 @@ void
 AssistanceDistractMovementGenerator::Finalize(Unit &unit)
 {
     unit.clearUnitState(UNIT_STAT_DISTRACTED);
-    (&unit)->ToCreature()->SetReactState(REACT_AGGRESSIVE);
+    unit.ToCreature()->SetReactState(REACT_AGGRESSIVE);
 }
 

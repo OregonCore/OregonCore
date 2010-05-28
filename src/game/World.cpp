@@ -2037,7 +2037,7 @@ void World::ScriptsProcess()
                     break;
                 }
 
-                Player* pSource = target && target->GetTypeId() == TYPEID_PLAYER ? (Player*)target : (Player*)source;
+                Player* pSource = target && target->GetTypeId() == TYPEID_PLAYER ? target->ToPlayer() : source->ToPlayer();
 
                 pSource->TeleportTo(step.script->datalong, step.script->x, step.script->y, step.script->z, step.script->o);
                 break;
@@ -2281,7 +2281,7 @@ void World::ScriptsProcess()
                     }
 
                     worldObject = (WorldObject*)source;
-                    player = (Player*)target;
+                    player = target->ToPlayer();
                 }
                 else
                 {
@@ -2298,7 +2298,7 @@ void World::ScriptsProcess()
                     }
 
                     worldObject = (WorldObject*)target;
-                    player = (Player*)source;
+                    player = source->ToPlayer();
                 }
 
                 // quest id and flags checked at script loading
