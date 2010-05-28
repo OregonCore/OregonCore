@@ -2189,7 +2189,7 @@ if (!id)
     return false;
 
     PSendSysMessage("%s%s|r|cff00ffff%u|r", "|cff00ff00", "Loading Path: ", id);
-    WaypointMgr.UpdatePath(id);
+    sWaypointMgr->UpdatePath(id);
         return true;
 }
 
