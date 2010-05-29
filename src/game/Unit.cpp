@@ -342,7 +342,7 @@ void Unit::SendMonsterMoveWithSpeed(float x, float y, float z, uint32 transitTim
     {
         if (GetTypeId() == TYPEID_PLAYER)
         {
-            Traveller<Player> traveller(*(Player*)this);
+            Traveller<Player> traveller(*this->ToPlayer());
             transitTime = traveller.GetTotalTrevelTimeTo(x,y,z);
         }
         else
@@ -697,9 +697,9 @@ uint32 Unit::DealDamage(Unit *pVictim, uint32 damage, CleanDamage const* cleanDa
     }
 
     //Script Event damage taken
-    if (pVictim->GetTypeId()== TYPEID_UNIT && ((Creature *)pVictim)->IsAIEnabled )
+    if (pVictim->GetTypeId()== TYPEID_UNIT && (pVictim->ToCreature())->IsAIEnabled )
     {
-        ((Creature *)pVictim)->AI()->DamageTaken(this, damage);
+        pVictim->ToCreature()->AI()->DamageTaken(this, damage);
 
         // Set tagging
         if (!pVictim->HasFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER) && !pVictim->ToCreature()->isPet())
@@ -709,17 +709,17 @@ uint32 Unit::DealDamage(Unit *pVictim, uint32 damage, CleanDamage const* cleanDa
             {
                 case TYPEID_PLAYER:
                 {
-                    ((Creature *)pVictim)->SetLootRecipient(this);
+                    pVictim->ToCreature()->SetLootRecipient(this);
                     //Set tagged
-                    ((Creature *)pVictim)->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER);
+                    pVictim->ToCreature()->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER);
                     break;
                 }
                 case TYPEID_UNIT:
                 {
                     if (this->ToCreature()->isPet())
                     {
-                        ((Creature *)pVictim)->SetLootRecipient(this->GetOwner());
-                        ((Creature *)pVictim)->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER);
+                        pVictim->ToCreature()->SetLootRecipient(this->GetOwner());
+                        pVictim->ToCreature()->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER);
                     }
                     break;
                 }
@@ -1662,7 +1662,7 @@ void Unit::DealMeleeDamage(CalcDamageInfo *damageInfo, bool durabilityLoss)
     }
 
     if (GetTypeId() == TYPEID_PLAYER)
-        ((Player *)this)->CastItemCombatSpell(pVictim, damageInfo->attackType, damageInfo->procVictim, damageInfo->procEx);
+        this->ToPlayer()->CastItemCombatSpell(pVictim, damageInfo->attackType, damageInfo->procVictim, damageInfo->procEx);
 
     // Do effect if any damage done to target
     if (damageInfo->procVictim & PROC_FLAG_TAKEN_ANY_DAMAGE)
@@ -5360,14 +5360,14 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                         return false;
 
                     // Get Aldor reputation rank
-                    if (((Player *)this)->GetReputationRank(932) == REP_EXALTED)
+                    if (this->ToPlayer()->GetReputationRank(932) == REP_EXALTED)
                     {
                         target = this;
                         triggered_spell_id = 45479;
                         break;
                     }
                     // Get Scryers reputation rank
-                    if (((Player *)this)->GetReputationRank(934) == REP_EXALTED)
+                    if (this->ToPlayer()->GetReputationRank(934) == REP_EXALTED)
                     {
                         if (this->IsFriendlyTo(target))
                             return false;
@@ -5386,14 +5386,14 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                         return false;
 
                     // Get Aldor reputation rank
-                    if (((Player *)this)->GetReputationRank(932) == REP_EXALTED)
+                    if (this->ToPlayer()->GetReputationRank(932) == REP_EXALTED)
                     {
                         target = this;
                         triggered_spell_id = 45480;
                         break;
                     }
                     // Get Scryers reputation rank
-                    if (((Player *)this)->GetReputationRank(934) == REP_EXALTED)
+                    if (this->ToPlayer()->GetReputationRank(934) == REP_EXALTED)
                     {
                         triggered_spell_id = 45428;
                         break;
@@ -5409,14 +5409,14 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                         return false;
 
                     // Get Aldor reputation rank
-                    if (((Player *)this)->GetReputationRank(932) == REP_EXALTED)
+                    if (this->ToPlayer()->GetReputationRank(932) == REP_EXALTED)
                     {
                         target = this;
                         triggered_spell_id = 45432;
                         break;
                     }
                     // Get Scryers reputation rank
-                    if (((Player *)this)->GetReputationRank(934) == REP_EXALTED)
+                    if (this->ToPlayer()->GetReputationRank(934) == REP_EXALTED)
                     {
                         target = this;
                         triggered_spell_id = 45431;
@@ -5433,14 +5433,14 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                         return false;
 
                     // Get Aldor reputation rank
-                    if (((Player *)this)->GetReputationRank(932) == REP_EXALTED)
+                    if (this->ToPlayer()->GetReputationRank(932) == REP_EXALTED)
                     {
                         target = this;
                         triggered_spell_id = 45478;
                         break;
                     }
                     // Get Scryers reputation rank
-                    if (((Player *)this)->GetReputationRank(934) == REP_EXALTED)
+                    if (this->ToPlayer()->GetReputationRank(934) == REP_EXALTED)
                     {
                         triggered_spell_id = 45430;
                         break;
@@ -8938,7 +8938,7 @@ void Unit::Mount(uint32 mount)
         Pet* pet = GetPet();
         if (pet)
         {
-            BattleGround *bg = ((Player *)this)->GetBattleGround();
+            BattleGround *bg = this->ToPlayer()->GetBattleGround();
             // don't unsummon pet in arena but SetFlag UNIT_FLAG_STUNNED to disable pet's interface
             if (bg && bg->isArena())
                 pet->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
@@ -9160,7 +9160,7 @@ bool Unit::isAttackableByAOE() const
         UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NOT_ATTACKABLE_2))
         return false;
 
-    if (GetTypeId()==TYPEID_PLAYER && ((Player *)this)->isGameMaster())
+    if (GetTypeId()==TYPEID_PLAYER && this->ToPlayer()->isGameMaster())
         return false;
 
     return !isInFlight();
@@ -11256,7 +11256,7 @@ Player* Unit::GetSpellModOwner() const
 {
     if (GetTypeId()==TYPEID_PLAYER)
         return (Player*)this;
-    if (this->ToCreature()->isPet() || this->ToCreature()->isTotem())
+    if (ToCreature()->isPet() || ToCreature()->isTotem())
     {
         Unit* owner = GetOwner();
         if (owner && owner->GetTypeId()==TYPEID_PLAYER)
@@ -11721,7 +11721,7 @@ void Unit::UpdateAuraForGroup(uint8 slot)
 {
     if (GetTypeId() == TYPEID_PLAYER)
     {
-        Player* player = (Player*)this;
+        Player* player = this->ToPlayer();
         if (player->GetGroup())
         {
             player->SetGroupUpdateFlag(GROUP_UPDATE_FLAG_AURAS);
@@ -12275,7 +12275,7 @@ void Unit::SetStunned(bool apply)
 
         // don't remove UNIT_FLAG_STUNNED for pet when owner is mounted (disabled pet's interface)
         Unit *pOwner = GetOwner();
-        if (!pOwner || (pOwner->GetTypeId() == TYPEID_PLAYER && !((Player *)pOwner)->IsMounted()))
+        if (!pOwner || (pOwner->GetTypeId() == TYPEID_PLAYER && !pOwner->ToPlayer()->IsMounted()))
             RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
 
         if (!hasUnitState(UNIT_STAT_ROOT))         // prevent allow move if have also root effect
@@ -12305,7 +12305,7 @@ void Unit::SetRooted(bool apply)
             SendMessageToSet(&data,true);
         }
         else
-            ((Creature *)this)->StopMoving();
+            ToCreature()->StopMoving();
     }
     else
     {

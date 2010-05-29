@@ -1056,7 +1056,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
         {
             caster->ProcDamageAndSpell(unitTarget, procAttacker, procVictim, procEx, damageInfo.damage, m_attackType, m_spellInfo, m_canTrigger);
             if (caster->GetTypeId() == TYPEID_PLAYER)
-                ((Player *)caster)->CastItemCombatSpell(unitTarget, m_attackType, procVictim, procEx, m_spellInfo);
+                caster->ToPlayer()->CastItemCombatSpell(unitTarget, m_attackType, procVictim, procEx, m_spellInfo);
         }
 
         // Shadow Word: Death - deals damage equal to damage done to caster if victim is not killed

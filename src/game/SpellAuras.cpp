@@ -2668,7 +2668,7 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
                     // Stance mastery + Tactical mastery (both passive, and last have aura only in defense stance, but need apply at any stance switch)
                     if (m_target->GetTypeId() == TYPEID_PLAYER)
                     {
-                        PlayerSpellMap const& sp_list = ((Player *)m_target)->GetSpellMap();
+                        PlayerSpellMap const& sp_list = m_target->ToPlayer()->GetSpellMap();
                         for (PlayerSpellMap::const_iterator itr = sp_list.begin(); itr != sp_list.end(); ++itr)
                         {
                             if (itr->second->state == PLAYERSPELL_REMOVED) continue;
@@ -3246,13 +3246,13 @@ void Aura::HandleAuraModDisarm(bool apply, bool Real)
     if (m_target->GetTypeId() == TYPEID_PLAYER)
     {
         // main-hand attack speed already set to special value for feral form already and don't must change and reset at remove.
-        if (((Player *)m_target)->IsInFeralForm())
+        if (m_target->ToPlayer()->IsInFeralForm())
             return;
 
         if (apply)
             m_target->SetAttackTime(BASE_ATTACK,BASE_ATTACK_TIME);
         else
-            ((Player *)m_target)->SetRegularAttackTime();
+            m_target->ToPlayer()->SetRegularAttackTime();
     }
     else
     {
@@ -5227,7 +5227,7 @@ void Aura::HandleShapeshiftBoosts(bool apply)
 
         if (m_target->GetTypeId() == TYPEID_PLAYER)
         {
-            const PlayerSpellMap& sp_list = ((Player *)m_target)->GetSpellMap();
+            const PlayerSpellMap& sp_list = m_target->ToPlayer()->GetSpellMap();
             for (PlayerSpellMap::const_iterator itr = sp_list.begin(); itr != sp_list.end(); ++itr)
             {
                 if (itr->second->state == PLAYERSPELL_REMOVED) continue;

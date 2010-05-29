@@ -823,7 +823,7 @@ void Spell::EffectDummy(uint32 i)
                         return;
 
                     //immediately finishes the cooldown on certain Rogue abilities
-                    const PlayerSpellMap& sp_list = ((Player *)m_caster)->GetSpellMap();
+                    const PlayerSpellMap& sp_list = m_caster->ToPlayer()->GetSpellMap();
                     for (PlayerSpellMap::const_iterator itr = sp_list.begin(); itr != sp_list.end(); ++itr)
                     {
                         uint32 classspell = itr->first;
@@ -1296,7 +1296,7 @@ void Spell::EffectDummy(uint32 i)
                         return;
 
                     // immediately finishes the cooldown on Frost spells
-                    const PlayerSpellMap& sp_list = ((Player *)m_caster)->GetSpellMap();
+                    const PlayerSpellMap& sp_list = m_caster->ToPlayer()->GetSpellMap();
                     for (PlayerSpellMap::const_iterator itr = sp_list.begin(); itr != sp_list.end(); ++itr)
                     {
                         if (itr->second->state == PLAYERSPELL_REMOVED)
@@ -1518,7 +1518,7 @@ void Spell::EffectDummy(uint32 i)
                         return;
 
                     //immediately finishes the cooldown for hunter abilities
-                    const PlayerSpellMap& sp_list = ((Player *)m_caster)->GetSpellMap();
+                    const PlayerSpellMap& sp_list = m_caster->ToPlayer()->GetSpellMap();
                     for (PlayerSpellMap::const_iterator itr = sp_list.begin(); itr != sp_list.end(); ++itr)
                     {
                         uint32 classspell = itr->first;
@@ -2316,7 +2316,7 @@ void Spell::EffectSendEvent(uint32 EffectIndex)
 {
     if (m_caster->GetTypeId() == TYPEID_PLAYER && m_caster->ToPlayer()->InBattleGround())
     {
-        BattleGround* bg = ((Player *)m_caster)->GetBattleGround();
+        BattleGround* bg = m_caster->ToPlayer()->GetBattleGround();
         if (bg && bg->GetStatus() == STATUS_IN_PROGRESS)
         {
             switch(m_spellInfo->Id)
@@ -4486,7 +4486,7 @@ void Spell::EffectSummonObjectWild(uint32 i)
         if (m_caster->GetTypeId() == TYPEID_PLAYER)
         {
             Player *pl = m_caster->ToPlayer();
-            BattleGround* bg = ((Player *)m_caster)->GetBattleGround();
+            BattleGround* bg = m_caster->ToPlayer()->GetBattleGround();
             if (bg && bg->GetTypeID()==BATTLEGROUND_WS && bg->GetStatus() == STATUS_IN_PROGRESS)
             {
                  uint32 team = ALLIANCE;
@@ -4503,7 +4503,7 @@ void Spell::EffectSummonObjectWild(uint32 i)
     {
         if (m_caster->GetTypeId() == TYPEID_PLAYER)
         {
-            BattleGround* bg = ((Player *)m_caster)->GetBattleGround();
+            BattleGround* bg = m_caster->ToPlayer()->GetBattleGround();
             if (bg && bg->GetTypeID()==BATTLEGROUND_EY && bg->GetStatus() == STATUS_IN_PROGRESS)
             {
                 ((BattleGroundEY*)bg)->SetDroppedFlagGUID(pGameObj->GetGUID());
@@ -5150,7 +5150,7 @@ void Spell::EffectSanctuary(uint32 /*i*/)
     // Vanish allows to remove all threat and cast regular stealth so other spells can be used
     if (m_spellInfo->SpellFamilyName == SPELLFAMILY_ROGUE && (m_spellInfo->SpellFamilyFlags & SPELLFAMILYFLAG_ROGUE_VANISH))
     {
-        ((Player *)m_caster)->RemoveSpellsCausingAura(SPELL_AURA_MOD_ROOT);
+        m_caster->ToPlayer()->RemoveSpellsCausingAura(SPELL_AURA_MOD_ROOT);
     }
 }
 

@@ -1923,7 +1923,7 @@ void World::ScriptsProcess()
                 switch(step.script->datalong)
                 {
                     case 0:                                 // Say
-                        ((Creature *)source)->Say(step.script->dataint, LANG_UNIVERSAL, unit_target);
+                        source->ToCreature()->Say(step.script->dataint, LANG_UNIVERSAL, unit_target);
                         break;
                     case 1:                                 // Whisper
                         if (!unit_target)
@@ -1931,13 +1931,13 @@ void World::ScriptsProcess()
                             sLog.outError("SCRIPT_COMMAND_TALK attempt to whisper (%u) NULL, skipping.",step.script->datalong);
                             break;
                         }
-                        ((Creature *)source)->Whisper(step.script->dataint,unit_target);
+                        source->ToCreature()->Whisper(step.script->dataint,unit_target);
                         break;
                     case 2:                                 // Yell
-                        ((Creature *)source)->Yell(step.script->dataint, LANG_UNIVERSAL, unit_target);
+                        source->ToCreature()->Yell(step.script->dataint, LANG_UNIVERSAL, unit_target);
                         break;
                     case 3:                                 // Emote text
-                        ((Creature *)source)->TextEmote(step.script->dataint, unit_target);
+                        source->ToCreature()->TextEmote(step.script->dataint, unit_target);
                         break;
                     default:
                         break;                              // must be already checked at load
@@ -1958,7 +1958,7 @@ void World::ScriptsProcess()
                     break;
                 }
 
-                ((Creature *)source)->HandleEmoteCommand(step.script->datalong);
+                source->ToCreature()->HandleEmoteCommand(step.script->datalong);
                 break;
             case SCRIPT_COMMAND_FIELD_SET:
                 if (!source)
@@ -1988,7 +1988,7 @@ void World::ScriptsProcess()
                     break;
                 }
                 ((Unit *)source)->SendMonsterMoveWithSpeed(step.script->x, step.script->y, step.script->z, step.script->datalong2);
-                ((Unit *)source)->GetMap()->CreatureRelocation(((Creature *)source), step.script->x, step.script->y, step.script->z, 0);
+                ((Unit *)source)->GetMap()->CreatureRelocation(source->ToCreature(), step.script->x, step.script->y, step.script->z, 0);
                 break;
             case SCRIPT_COMMAND_FLAG_SET:
                 if (!source)
@@ -2123,7 +2123,6 @@ void World::ScriptsProcess()
                 }
 
                 if (go->GetGoType()==GAMEOBJECT_TYPE_FISHINGNODE ||
-                    go->GetGoType()==GAMEOBJECT_TYPE_FISHINGNODE ||
                     go->GetGoType()==GAMEOBJECT_TYPE_DOOR        ||
                     go->GetGoType()==GAMEOBJECT_TYPE_BUTTON      ||
                     go->GetGoType()==GAMEOBJECT_TYPE_TRAP )
