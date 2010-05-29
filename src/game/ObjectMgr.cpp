@@ -2647,7 +2647,7 @@ void ObjectMgr::LoadQuests()
     //   120            121
         "StartScript, CompleteScript"
         " FROM quest_template");
-    if (result == QueryResult_AutoPtr(NULL))
+    if (result == NULL)
     {
         barGoLink bar(1);
         bar.step();
