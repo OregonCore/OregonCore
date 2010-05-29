@@ -21,11 +21,27 @@
 #ifndef OREGONCORE_ERRORS_H
 #define OREGONCORE_ERRORS_H
 
-#define WPAssert( assertion ) { if( !(assertion) ) { fprintf( stderr, "\n%s:%i ASSERTION FAILED:\n  %s\n", __FILE__, __LINE__, #assertion ); assert( #assertion &&0 ); } }
-#define WPError( assertion, errmsg ) if( ! (assertion) ) { sLog.outError( "%s:%i ERROR:\n  %s\n", __FILE__, __LINE__, (char *)errmsg ); assert( false ); }
-#define WPWarning( assertion, errmsg ) if( ! (assertion) ) { sLog.outError( "%s:%i WARNING:\n  %s\n", __FILE__, __LINE__, (char *)errmsg ); }
+#include "Common.h"
 
-#define WPFatal( assertion, errmsg ) if( ! (assertion) ) { sLog.outError( "%s:%i FATAL ERROR:\n  %s\n", __FILE__, __LINE__, (char *)errmsg ); assert( #assertion &&0 ); abort(); }
+#if PLATFORM != PLATFORM_WINDOWS
+#ifndef HAVE_CONFIG_H
+#include <config.h>
+#endif
+#endif
+
+#ifdef HAVE_ACE_STACK_TRACE_H
+#include "ace/Stack_Trace.h"
+#endif
+
+#ifdef HAVE_ACE_STACK_TRACE_H                               // old versions ACE not have Stack_Trace.h but used at some oS for better compatibility
+#define WPAssert( assertion ) { if (!(assertion)) { ACE_Stack_Trace st; fprintf( stderr, "\n%s:%i in %s ASSERTION FAILED:\n  %s\n%s\n", __FILE__, __LINE__,__FUNCTION__,  #assertion, st.c_str()); assert( #assertion &&0 ); } }
+#else
+#define WPAssert( assertion ) { if (!(assertion)) { fprintf( stderr, "\n%s:%i in %s ASSERTION FAILED2:\n  %s\n", __FILE__, __LINE__,__FUNCTION__,  #assertion); assert( #assertion &&0 ); } }
+#endif
+#define WPError( assertion, errmsg ) if( ! (assertion) ) { sLog.outError( "%\n%s:%i in %s ERROR:\n  %s\n", __FILE__, __LINE__, __FUNCTION__, (char *)errmsg ); assert( false ); }
+#define WPWarning( assertion, errmsg ) if( ! (assertion) ) { sLog.outError( "\n%s:%i in %s WARNING:\n  %s\n", __FILE__, __LINE__, __FUNCTION__, (char *)errmsg ); }
+
+#define WPFatal( assertion, errmsg ) if( ! (assertion) ) { sLog.outError( "\n%s:%i in %s FATAL ERROR:\n  %s\n", __FILE__, __LINE__, __FUNCTION__, (char *)errmsg ); assert( #assertion &&0 ); abort(); }
 
 #define ASSERT WPAssert
 #endif
