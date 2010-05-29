@@ -62,24 +62,17 @@
 #include "Platform/Define.h"
 
 #if COMPILER == COMPILER_MICROSOFT
-
-#pragma warning(disable:4996)
-
+#   pragma warning(disable:4996)                            // 'function': was declared deprecated
 #ifndef __SHOW_STUPID_WARNINGS__
-
-#pragma warning(disable:4244)
-
-#pragma warning(disable:4267)
-
-#pragma warning(disable:4800)
-
-#pragma warning(disable:4018)
-
-#pragma warning(disable:4311)
-
-#pragma warning(disable:4305)
-
-#pragma warning(disable:4005)
+#   pragma warning(disable:4005)                            // 'identifier' : macro redefinition
+#   pragma warning(disable:4018)                            // 'expression' : signed/unsigned mismatch
+#   pragma warning(disable:4244)                            // 'argument' : conversion from 'type1' to 'type2', possible loss of data
+#   pragma warning(disable:4267)                            // 'var' : conversion from 'size_t' to 'type', possible loss of data
+#   pragma warning(disable:4305)                            // 'identifier' : truncation from 'type1' to 'type2'
+#   pragma warning(disable:4311)                            // 'variable' : pointer truncation from 'type' to 'type'
+#   pragma warning(disable:4355)                            // 'this' : used in base member initializer list
+#   pragma warning(disable:4800)                            // 'type' : forcing value to bool 'true' or 'false' (performance warning)
+#   pragma warning(disable:4522)                            //warning when class has 2 constructors
 #endif                                                      // __SHOW_STUPID_WARNINGS__
 #endif                                                      // __GNUC__
 
@@ -91,6 +84,7 @@
 #include <math.h>
 #include <errno.h>
 #include <signal.h>
+#include <assert.h>
 
 #if PLATFORM == PLATFORM_WINDOWS
 #define STRCASECMP stricmp
@@ -147,6 +141,7 @@
 #define stricmp strcasecmp
 #define strnicmp strncasecmp
 #define I64FMT "%016llX"
+
 #endif
 
 #define UI64FMTD ACE_UINT64_FORMAT_SPECIFIER
@@ -168,6 +163,7 @@ enum TimeConstants
     MINUTE = 60,
     HOUR   = MINUTE*60,
     DAY    = HOUR*24,
+    WEEK   = DAY*7,
     MONTH  = DAY*30,
     YEAR   = MONTH*12,
     IN_MILISECONDS = 1000
@@ -195,13 +191,13 @@ enum LocaleConstant
     LOCALE_ruRU = 8
 };
 
-#define MAX_LOCALE 9
+const uint8 MAX_LOCALE = 9;
 
 extern char const* localeNames[MAX_LOCALE];
 
 LocaleConstant GetLocaleByName(const std::string& name);
 
-// we always use stdlibc++ std::max/std::min, undefine some not C++ standard defines (Win API and some pother platforms)
+// we always use stdlibc++ std::max/std::min, undefine some not C++ standard defines (Win API and some other platforms)
 #ifdef max
 #undef max
 #endif
