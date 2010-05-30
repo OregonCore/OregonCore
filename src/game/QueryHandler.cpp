@@ -40,7 +40,7 @@ void WorldSession::SendNameQueryOpcode(Player *p)
         return;
                                                             // guess size
     WorldPacket data(SMSG_NAME_QUERY_RESPONSE, (8+1+4+4+4+10));
-    data.append(p->GetPackGUID());                          // player guid
+    data << p->GetGUID();                                   // player guid
     data << p->GetName();                                   // played name
     data << uint8(0);                                       // realm name for cross realm BG usage
     data << uint32(p->getRace());
