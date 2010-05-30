@@ -2496,18 +2496,9 @@ void Aura::HandleAuraHover(bool apply, bool Real)
 
 void Aura::HandleWaterBreathing(bool apply, bool Real)
 {
-    if (apply)
-        m_target->waterbreath = true;
-
-    else if (m_target->GetAurasByType(SPELL_AURA_WATER_BREATHING).empty())
-    {
-        m_target->waterbreath = false;
-        // update for enable timer in case not moving target
-        if (m_target->GetTypeId()==TYPEID_PLAYER && m_target->IsInWorld())
-        {
-            m_target->ToPlayer()->UpdateMirrorTimers();
-        }
-    }
+    // update timers in client
+    if (m_target->GetTypeId() == TYPEID_PLAYER && m_target->IsInWorld())
+        m_target->ToPlayer()->UpdateMirrorTimers();
 }
 
 void Aura::HandleAuraModShapeshift(bool apply, bool Real)

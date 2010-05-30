@@ -297,7 +297,7 @@ void Spell::EffectEnvironmentalDMG(uint32 i)
 
     m_caster->SendSpellNonMeleeDamageLog(m_caster, m_spellInfo->Id, damage, GetSpellSchoolMask(m_spellInfo), absorb, resist, false, 0, false);
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
-        m_caster->ToPlayer()->EnvironmentalDamage(m_caster->GetGUID(),DAMAGE_FIRE,damage);
+        m_caster->ToPlayer()->EnvironmentalDamage(DAMAGE_FIRE,damage);
 }
 
 void Spell::EffectSchoolDMG(uint32 effect_idx)

@@ -190,7 +190,6 @@ Unit::Unit()
     //m_AurasCheck = 2000;
     //m_removeAuraTimer = 4;
     //tmpAura = NULL;
-    waterbreath = false;
 
     m_AurasUpdateIterator = m_Auras.end();
     m_Visibility = VISIBILITY_ON;
@@ -287,7 +286,7 @@ void Unit::Update(uint32 p_time )
     _UpdateSpells(p_time);
 
     // update combat timer only for players and pets
-    if (isInCombat() && (GetTypeId() == TYPEID_PLAYER || this->ToCreature()->isPet() || this->ToCreature()->isCharmed()))
+    if (isInCombat() && (GetTypeId() == TYPEID_PLAYER || ToCreature()->isPet() || this->ToCreature()->isCharmed()))
     {
         // Check UNIT_STAT_MELEE_ATTACKING or UNIT_STAT_CHASE (without UNIT_STAT_FOLLOW in this case) so pets can reach far away
         // targets without stopping half way there and running off.
