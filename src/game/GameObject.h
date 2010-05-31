@@ -436,14 +436,6 @@ class OREGON_DLL_SPEC GameObject : public WorldObject
 
         bool IsTransport() const;
 
-        void SetOwnerGUID(uint64 owner)
-        {
-            m_spawnedByDefault = false;                     // all object with owner is despawned after delay
-            SetUInt64Value(OBJECT_FIELD_CREATED_BY, owner);
-        }
-        uint64 GetOwnerGUID() const { return GetUInt64Value(OBJECT_FIELD_CREATED_BY); }
-        Unit* GetOwner() const;
-
         uint32 GetDBTableGUIDLow() const { return m_DBTableGuid; }
 
         void Say(const char* text, uint32 language, uint64 TargetGuid) { MonsterSay(text,language,TargetGuid); }
@@ -462,6 +454,20 @@ class OREGON_DLL_SPEC GameObject : public WorldObject
         void SaveToDB(uint32 mapid, uint8 spawnMask);
         bool LoadFromDB(uint32 guid, Map *map);
         void DeleteFromDB();
+
+        void SetOwnerGUID(uint64 owner)
+        {
+            // Owner already found and different than expected owner - remove object from old owner
+            if (owner && GetOwnerGUID() && GetOwnerGUID() != owner)
+            {
+                assert(false);
+            }
+            m_spawnedByDefault = false;                     // all object with owner is despawned after delay
+            SetUInt64Value(OBJECT_FIELD_CREATED_BY, owner);
+        }
+        uint64 GetOwnerGUID() const { return GetUInt64Value(OBJECT_FIELD_CREATED_BY); }
+        Unit* GetOwner() const;
+
         void SetLootState(LootState s) { m_lootState = s; }
         static uint32 GetLootId(GameObjectInfo const* info);
         uint32 GetLootId() const { return GetLootId(GetGOInfo()); }
