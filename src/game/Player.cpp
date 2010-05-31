@@ -8828,7 +8828,7 @@ bool Player::IsBagPos(uint16 pos)
     return false;
 }
 
-bool Player::IsValidPos(uint8 bag, uint8 slot) const
+bool Player::IsValidPos(uint8 bag, uint8 slot)
 {
     // post selected
     if (bag == NULL_BAG)
@@ -9088,7 +9088,10 @@ uint8 Player::_CanStoreItem_InSpecificSlot(uint8 bag, uint8 slot, ItemPosCountVe
             if (!pBagProto)
                 return EQUIP_ERR_ITEM_DOESNT_GO_INTO_BAG;
 
-            if (!ItemCanGoIntoBag(pProto,pBagProto) )
+            if (slot >= pBagProto->ContainerSlots)
+                return EQUIP_ERR_ITEM_DOESNT_GO_INTO_BAG;
+
+            if (!ItemCanGoIntoBag(pProto,pBagProto))
                 return EQUIP_ERR_ITEM_DOESNT_GO_INTO_BAG;
         }
 
@@ -9290,8 +9293,6 @@ uint8 Player::_CanStoreItem(uint8 bag, uint8 slot, ItemPosCountVec &dest, uint32
     // in specific slot
     if (bag != NULL_BAG && slot != NULL_SLOT)
     {
-        if (!IsValidPos(bag, slot))
-            return EQUIP_ERR_ITEM_DOESNT_GO_TO_SLOT;
         res = _CanStoreItem_InSpecificSlot(bag,slot,dest,pProto,count,swap,pItem);
         if (res != EQUIP_ERR_OK)
         {
@@ -10033,6 +10034,12 @@ uint8 Player::CanBankItem(uint8 bag, uint8 slot, ItemPosCountVec &dest, Item *pI
     if (!pItem)
         return swap ? EQUIP_ERR_ITEMS_CANT_BE_SWAPPED : EQUIP_ERR_ITEM_NOT_FOUND;
 
+    if (pItem->m_lootGenerated)
+    {
+        GetSession()->DoLootRelease(GetLootGUID());
+        return EQUIP_ERR_OK;
+    }
+
     uint32 count = pItem->GetCount();
 
     sLog.outDebug("STORAGE: CanBankItem bag = %u, slot = %u, item = %u, count = %u", bag, slot, pItem->GetEntry(), pItem->GetCount());
@@ -10051,29 +10058,16 @@ uint8 Player::CanBankItem(uint8 bag, uint8 slot, ItemPosCountVec &dest, Item *pI
     // in specific slot
     if (bag != NULL_BAG && slot != NULL_SLOT)
     {
-        if (pProto->InventoryType == INVTYPE_BAG )
+        if (slot >= BANK_SLOT_BAG_START && slot < BANK_SLOT_BAG_END)
         {
-            Bag *pBag = (Bag*)pItem;
-            if (pBag )
-            {
-                if (slot >= BANK_SLOT_BAG_START && slot < BANK_SLOT_BAG_END )
-                {
-                    if (!HasBankBagSlot(slot ) )
-                        return EQUIP_ERR_MUST_PURCHASE_THAT_BAG_SLOT;
-                    if (uint8 cantuse = CanUseItem(pItem, not_loading ) != EQUIP_ERR_OK )
-                        return cantuse;
-                }
-                else
-                {
-                    if (!pBag->IsEmpty() )
-                        return EQUIP_ERR_NONEMPTY_BAG_OVER_OTHER_BAG;
-                }
-            }
-        }
-        else
-        {
-            if (slot >= BANK_SLOT_BAG_START && slot < BANK_SLOT_BAG_END )
+            if (!pItem->IsBag())
                 return EQUIP_ERR_ITEM_DOESNT_GO_TO_SLOT;
+
+            if (slot - BANK_SLOT_BAG_START >= GetBankBagSlotCount())
+                return EQUIP_ERR_MUST_PURCHASE_THAT_BAG_SLOT;
+
+            if (uint8 cantuse = CanUseItem(pItem, not_loading) != EQUIP_ERR_OK)
+                return cantuse;
         }
 
         res = _CanStoreItem_InSpecificSlot(bag,slot,dest,pProto,count,swap,pItem);
@@ -10400,22 +10394,22 @@ Item* Player::StoreItem(ItemPosCountVec const& dest, Item* pItem, bool update )
 }
 
 // Return stored item (if stored to stack, it can diff. from pItem). And pItem ca be deleted in this case.
-Item* Player::_StoreItem(uint16 pos, Item *pItem, uint32 count, bool clone, bool update )
+Item* Player::_StoreItem(uint16 pos, Item *pItem, uint32 count, bool clone, bool update)
 {
-    if (!pItem )
+    if (!pItem)
         return NULL;
 
     uint8 bag = pos >> 8;
     uint8 slot = pos & 255;
 
-    sLog.outDebug("STORAGE: StoreItem bag = %u, slot = %u, item = %u, count = %u", bag, slot, pItem->GetEntry(), count);
+    sLog.outDebug("STORAGE: StoreItem bag = %u, slot = %u, item = %u, count = %u, guid = %u", bag, slot, pItem->GetEntry(), count, pItem->GetGUIDLow());
 
     Item *pItem2 = GetItemByPos(bag, slot);
 
-    if (!pItem2 )
+    if (!pItem2)
     {
         if (clone)
-            pItem = pItem->CloneItem(count,this);
+            pItem = pItem->CloneItem(count, this);
         else
             pItem->SetCount(count);
 
@@ -10424,10 +10418,10 @@ Item* Player::_StoreItem(uint16 pos, Item *pItem, uint32 count, bool clone, bool
 
         if (pItem->GetProto()->Bonding == BIND_WHEN_PICKED_UP ||
             pItem->GetProto()->Bonding == BIND_QUEST_ITEM ||
-            pItem->GetProto()->Bonding == BIND_WHEN_EQUIPED && IsBagPos(pos) )
+            (pItem->GetProto()->Bonding == BIND_WHEN_EQUIPED && IsBagPos(pos)))
             pItem->SetBinding(true);
 
-        if (bag == INVENTORY_SLOT_BAG_0 )
+        if (bag == INVENTORY_SLOT_BAG_0)
         {
             m_items[slot] = pItem;
             SetUInt64Value((uint16)(PLAYER_FIELD_INV_SLOT_HEAD + (slot * 2) ), pItem->GetGUID());
@@ -10437,7 +10431,7 @@ Item* Player::_StoreItem(uint16 pos, Item *pItem, uint32 count, bool clone, bool
             pItem->SetSlot(slot);
             pItem->SetContainer(NULL);
 
-            if (IsInWorld() && update )
+            if (IsInWorld() && update)
             {
                 pItem->AddToWorld();
                 pItem->SendUpdateToPlayer(this);
@@ -10445,20 +10439,16 @@ Item* Player::_StoreItem(uint16 pos, Item *pItem, uint32 count, bool clone, bool
 
             pItem->SetState(ITEM_CHANGED, this);
         }
-        else
+        else if (Bag *pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, bag))
         {
-            Bag *pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, bag);
-            if (pBag )
+            pBag->StoreItem(slot, pItem, update);
+            if (IsInWorld() && update)
             {
-                pBag->StoreItem(slot, pItem, update);
-                if (IsInWorld() && update )
-                {
-                    pItem->AddToWorld();
-                    pItem->SendUpdateToPlayer(this);
-                }
-                pItem->SetState(ITEM_CHANGED, this);
-                pBag->SetState(ITEM_CHANGED, this);
+                pItem->AddToWorld();
+                pItem->SendUpdateToPlayer(this);
             }
+            pItem->SetState(ITEM_CHANGED, this);
+            pBag->SetState(ITEM_CHANGED, this);
         }
 
         AddEnchantmentDurations(pItem);
@@ -10470,17 +10460,17 @@ Item* Player::_StoreItem(uint16 pos, Item *pItem, uint32 count, bool clone, bool
     {
         if (pItem2->GetProto()->Bonding == BIND_WHEN_PICKED_UP ||
             pItem2->GetProto()->Bonding == BIND_QUEST_ITEM ||
-            pItem2->GetProto()->Bonding == BIND_WHEN_EQUIPED && IsBagPos(pos) )
+            (pItem2->GetProto()->Bonding == BIND_WHEN_EQUIPED && IsBagPos(pos)))
             pItem2->SetBinding(true);
 
         pItem2->SetCount(pItem2->GetCount() + count);
-        if (IsInWorld() && update )
+        if (IsInWorld() && update)
             pItem2->SendUpdateToPlayer(this);
 
         if (!clone)
         {
             // delete item (it not in any slot currently)
-            if (IsInWorld() && update )
+            if (IsInWorld() && update)
             {
                 pItem->RemoveFromWorld();
                 pItem->DestroyForPlayer(this);
@@ -10501,108 +10491,103 @@ Item* Player::_StoreItem(uint16 pos, Item *pItem, uint32 count, bool clone, bool
     }
 }
 
-Item* Player::EquipNewItem(uint16 pos, uint32 item, bool update )
+Item* Player::EquipNewItem(uint16 pos, uint32 item, bool update)
 {
-    Item *pItem = Item::CreateItem(item, 1, this);
-    if (pItem )
+    if (Item *pItem = Item::CreateItem(item, 1, this))
     {
         ItemAddedQuestCheck(item, 1);
-        Item * retItem = EquipItem(pos, pItem, update);
-
-        return retItem;
+        return EquipItem(pos, pItem, update);
     }
+
     return NULL;
 }
 
-Item* Player::EquipItem(uint16 pos, Item *pItem, bool update )
+Item* Player::EquipItem(uint16 pos, Item *pItem, bool update)
 {
-    if (pItem )
+    AddEnchantmentDurations(pItem);
+    AddItemDurations(pItem);
+
+    uint8 bag = pos >> 8;
+    uint8 slot = pos & 255;
+
+    Item *pItem2 = GetItemByPos(bag, slot);
+
+    if (!pItem2)
     {
-        AddEnchantmentDurations(pItem);
-        AddItemDurations(pItem);
+        VisualizeItem(slot, pItem);
 
-        uint8 bag = pos >> 8;
-        uint8 slot = pos & 255;
-
-        Item *pItem2 = GetItemByPos(bag, slot);
-
-        if (!pItem2 )
+        if (isAlive())
         {
-            VisualizeItem(slot, pItem);
+            ItemPrototype const *pProto = pItem->GetProto();
 
-            if (isAlive())
+            // item set bonuses applied only at equip and removed at unequip, and still active for broken items
+            if (pProto && pProto->ItemSet)
+                AddItemsSetItem(this, pItem);
+
+            _ApplyItemMods(pItem, slot, true);
+
+            if (pProto && isInCombat()&& pProto->Class == ITEM_CLASS_WEAPON && m_weaponChangeTimer == 0)
             {
-                ItemPrototype const *pProto = pItem->GetProto();
+                uint32 cooldownSpell = SPELL_ID_WEAPON_SWITCH_COOLDOWN_1_5s;
 
-                // item set bonuses applied only at equip and removed at unequip, and still active for broken items
-                if (pProto && pProto->ItemSet)
-                    AddItemsSetItem(this,pItem);
+                if (getClass() == CLASS_ROGUE)
+                    cooldownSpell = SPELL_ID_WEAPON_SWITCH_COOLDOWN_1_0s;
 
-                _ApplyItemMods(pItem, slot, true);
+                SpellEntry const* spellProto = sSpellStore.LookupEntry(cooldownSpell);
 
-                if (pProto && isInCombat()&& pProto->Class == ITEM_CLASS_WEAPON && m_weaponChangeTimer == 0)
+                if (!spellProto)
+                    sLog.outError("Weapon switch cooldown spell %u couldn't be found in Spell.dbc", cooldownSpell);
+                else
                 {
-                    uint32 cooldownSpell = SPELL_ID_WEAPON_SWITCH_COOLDOWN_1_5s;
+                    m_weaponChangeTimer = spellProto->StartRecoveryTime;
 
-                    if (getClass() == CLASS_ROGUE)
-                        cooldownSpell = SPELL_ID_WEAPON_SWITCH_COOLDOWN_1_0s;
-
-                    SpellEntry const* spellProto = sSpellStore.LookupEntry(cooldownSpell);
-
-                    if (!spellProto)
-                        sLog.outError("Weapon switch cooldown spell %u couldn't be found in Spell.dbc", cooldownSpell);
-                    else
-                    {
-                        m_weaponChangeTimer = spellProto->StartRecoveryTime;
-
-                        WorldPacket data(SMSG_SPELL_COOLDOWN, 8+1+4);
-                        data << uint64(GetGUID());
-                        data << uint8(1);
-                        data << uint32(cooldownSpell);
-                        data << uint32(0);
-                        GetSession()->SendPacket(&data);
-                    }
+                    WorldPacket data(SMSG_SPELL_COOLDOWN, 8+1+4);
+                    data << uint64(GetGUID());
+                    data << uint8(1);
+                    data << uint32(cooldownSpell);
+                    data << uint32(0);
+                    GetSession()->SendPacket(&data);
                 }
             }
-
-            if (IsInWorld() && update )
-            {
-                pItem->AddToWorld();
-                pItem->SendUpdateToPlayer(this);
-            }
-
-            ApplyEquipCooldown(pItem);
-
-            if (slot == EQUIPMENT_SLOT_MAINHAND )
-                UpdateExpertise(BASE_ATTACK);
-            else if (slot == EQUIPMENT_SLOT_OFFHAND )
-                UpdateExpertise(OFF_ATTACK);
         }
-        else
+
+        if (IsInWorld() && update)
         {
-            pItem2->SetCount(pItem2->GetCount() + pItem->GetCount());
-            if (IsInWorld() && update )
-                pItem2->SendUpdateToPlayer(this);
-
-            // delete item (it not in any slot currently)
-            //pItem->DeleteFromDB();
-            if (IsInWorld() && update )
-            {
-                pItem->RemoveFromWorld();
-                pItem->DestroyForPlayer(this);
-            }
-
-            RemoveEnchantmentDurations(pItem);
-            RemoveItemDurations(pItem);
-
-            pItem->SetOwnerGUID(GetGUID());                 // prevent error at next SetState in case trade/mail/buy from vendor
-            pItem->SetState(ITEM_REMOVED, this);
-            pItem2->SetState(ITEM_CHANGED, this);
-
-            ApplyEquipCooldown(pItem2);
-
-            return pItem2;
+            pItem->AddToWorld();
+            pItem->SendUpdateToPlayer(this);
         }
+
+        ApplyEquipCooldown(pItem);
+
+        if (slot == EQUIPMENT_SLOT_MAINHAND )
+            UpdateExpertise(BASE_ATTACK);
+        else if (slot == EQUIPMENT_SLOT_OFFHAND )
+            UpdateExpertise(OFF_ATTACK);
+    }
+    else
+    {
+        pItem2->SetCount(pItem2->GetCount() + pItem->GetCount());
+        if (IsInWorld() && update)
+            pItem2->SendUpdateToPlayer(this);
+
+        // delete item (it not in any slot currently)
+        //pItem->DeleteFromDB();
+        if (IsInWorld() && update)
+        {
+            pItem->RemoveFromWorld();
+            pItem->DestroyForPlayer(this);
+        }
+
+        RemoveEnchantmentDurations(pItem);
+        RemoveItemDurations(pItem);
+
+        pItem->SetOwnerGUID(GetGUID());                     // prevent error at next SetState in case trade/mail/buy from vendor
+        pItem->SetState(ITEM_REMOVED, this);
+        pItem2->SetState(ITEM_CHANGED, this);
+
+        ApplyEquipCooldown(pItem2);
+
+        return pItem2;
     }
 
     return pItem;
@@ -10610,7 +10595,7 @@ Item* Player::EquipItem(uint16 pos, Item *pItem, bool update )
 
 void Player::QuickEquipItem(uint16 pos, Item *pItem)
 {
-    if (pItem )
+    if (pItem)
     {
         AddEnchantmentDurations(pItem);
         AddItemDurations(pItem);
@@ -10618,7 +10603,7 @@ void Player::QuickEquipItem(uint16 pos, Item *pItem)
         uint8 slot = pos & 255;
         VisualizeItem(slot, pItem);
 
-        if (IsInWorld() )
+        if (IsInWorld())
         {
             pItem->AddToWorld();
             pItem->SendUpdateToPlayer(this);
@@ -10868,92 +10853,94 @@ void Player::DestroyItem(uint8 bag, uint8 slot, bool update )
 void Player::DestroyItemCount(uint32 item, uint32 count, bool update, bool unequip_check)
 {
     sLog.outDebug("STORAGE: DestroyItemCount item = %u, count = %u", item, count);
-    Item *pItem;
-    ItemPrototype const *pProto;
     uint32 remcount = 0;
 
     // in inventory
-    for (int i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; i++)
+    for (uint8 i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; ++i)
     {
-        pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-        if (pItem && pItem->GetEntry() == item )
+        if (Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
         {
-            if (pItem->GetCount() + remcount <= count )
+            if (pItem->GetEntry() == item)
             {
-                // all items in inventory can unequipped
-                remcount += pItem->GetCount();
-                DestroyItem(INVENTORY_SLOT_BAG_0, i, update);
+                if (pItem->GetCount() + remcount <= count)
+                {
+                    // all items in inventory can unequipped
+                    remcount += pItem->GetCount();
+                    DestroyItem(INVENTORY_SLOT_BAG_0, i, update);
 
-                if (remcount >=count)
+                    if (remcount >= count)
+                        return;
+                }
+                else
+                {
+                    ItemRemovedQuestCheck(pItem->GetEntry(), count - remcount);
+                    pItem->SetCount(pItem->GetCount() - count + remcount);
+                    if (IsInWorld() & update)
+                        pItem->SendUpdateToPlayer(this);
+                    pItem->SetState(ITEM_CHANGED, this);
                     return;
-            }
-            else
-            {
-                pProto = pItem->GetProto();
-                ItemRemovedQuestCheck(pItem->GetEntry(), count - remcount);
-                pItem->SetCount(pItem->GetCount() - count + remcount);
-                if (IsInWorld() & update )
-                    pItem->SendUpdateToPlayer(this);
-                pItem->SetState(ITEM_CHANGED, this);
-                return;
+                }
             }
         }
     }
-    for (int i = KEYRING_SLOT_START; i < KEYRING_SLOT_END; i++)
-    {
-        pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-        if (pItem && pItem->GetEntry() == item )
-        {
-            if (pItem->GetCount() + remcount <= count )
-            {
-                // all keys can be unequipped
-                remcount += pItem->GetCount();
-                DestroyItem(INVENTORY_SLOT_BAG_0, i, update);
 
-                if (remcount >=count)
-                    return;
-            }
-            else
+    for (uint8 i = KEYRING_SLOT_START; i < KEYRING_SLOT_END; ++i)
+    {
+        if (Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+        {
+            if (pItem->GetEntry() == item)
             {
-                pProto = pItem->GetProto();
-                ItemRemovedQuestCheck(pItem->GetEntry(), count - remcount);
-                pItem->SetCount(pItem->GetCount() - count + remcount);
-                if (IsInWorld() & update )
-                    pItem->SendUpdateToPlayer(this);
-                pItem->SetState(ITEM_CHANGED, this);
-                return;
+                if (pItem->GetCount() + remcount <= count)
+                {
+                    // all keys can be unequipped
+                    remcount += pItem->GetCount();
+                    DestroyItem(INVENTORY_SLOT_BAG_0, i, update);
+
+                    if (remcount >= count)
+                        return;
+                }
+                else
+                {
+                    ItemRemovedQuestCheck(pItem->GetEntry(), count - remcount);
+                    pItem->SetCount(pItem->GetCount() - count + remcount);
+                    if (IsInWorld() & update)
+                        pItem->SendUpdateToPlayer(this);
+                    pItem->SetState(ITEM_CHANGED, this);
+                    return;
+                }
             }
         }
     }
 
     // in inventory bags
-    for (int i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; i++)
+    for (uint8 i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; i++)
     {
-        if (Bag *pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, i ))
+        if (Bag *pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, i))
         {
             for (uint32 j = 0; j < pBag->GetBagSize(); j++)
             {
-                pItem = pBag->GetItemByPos(j);
-                if (pItem && pItem->GetEntry() == item )
+                if (Item* pItem = pBag->GetItemByPos(j))
                 {
-                    // all items in bags can be unequipped
-                    if (pItem->GetCount() + remcount <= count )
+                    if (pItem->GetEntry() == item)
                     {
-                        remcount += pItem->GetCount();
-                        DestroyItem(i, j, update);
+                        // all items in bags can be unequipped
+                        if (pItem->GetCount() + remcount <= count)
+                        {
+                            remcount += pItem->GetCount();
+                            DestroyItem(i, j, update);
 
-                        if (remcount >=count)
+                            if (remcount >= count)
+                                return;
+                        }
+                        else
+                        {
+                            ItemRemovedQuestCheck(pItem->GetEntry(), count - remcount);
+                            pItem->SetCount(pItem->GetCount() - count + remcount);
+                            if (IsInWorld() && update)
+                                pItem->SendUpdateToPlayer(this);
+                            pItem->SetState(ITEM_CHANGED, this);
                             return;
-                    }
-                    else
-                    {
-                        pProto = pItem->GetProto();
-                        ItemRemovedQuestCheck(pItem->GetEntry(), count - remcount);
-                        pItem->SetCount(pItem->GetCount() - count + remcount);
-                        if (IsInWorld() && update )
-                            pItem->SendUpdateToPlayer(this);
-                        pItem->SetState(ITEM_CHANGED, this);
-                        return;
+                        }
                     }
                 }
             }
@@ -10961,31 +10948,32 @@ void Player::DestroyItemCount(uint32 item, uint32 count, bool update, bool unequ
     }
 
     // in equipment and bag list
-    for (int i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_BAG_END; i++)
+    for (uint8 i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_BAG_END; i++)
     {
-        pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-        if (pItem && pItem->GetEntry() == item )
+        if (Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
         {
-            if (pItem->GetCount() + remcount <= count )
+            if (pItem && pItem->GetEntry() == item)
             {
-                if (!unequip_check || CanUnequipItem(INVENTORY_SLOT_BAG_0 << 8 | i,false) == EQUIP_ERR_OK )
+                if (pItem->GetCount() + remcount <= count)
                 {
-                    remcount += pItem->GetCount();
-                    DestroyItem(INVENTORY_SLOT_BAG_0, i, update);
+                    if (!unequip_check || CanUnequipItem(INVENTORY_SLOT_BAG_0 << 8 | i, false) == EQUIP_ERR_OK)
+                    {
+                        remcount += pItem->GetCount();
+                        DestroyItem(INVENTORY_SLOT_BAG_0, i, update);
 
-                    if (remcount >=count)
-                        return;
+                        if (remcount >= count)
+                            return;
+                    }
                 }
-            }
-            else
-            {
-                pProto = pItem->GetProto();
-                ItemRemovedQuestCheck(pItem->GetEntry(), count - remcount);
-                pItem->SetCount(pItem->GetCount() - count + remcount);
-                if (IsInWorld() & update )
-                    pItem->SendUpdateToPlayer(this);
-                pItem->SetState(ITEM_CHANGED, this);
-                return;
+                else
+                {
+                    ItemRemovedQuestCheck(pItem->GetEntry(), count - remcount);
+                    pItem->SetCount(pItem->GetCount() - count + remcount);
+                    if (IsInWorld() & update)
+                        pItem->SendUpdateToPlayer(this);
+                    pItem->SetState(ITEM_CHANGED, this);
+                    return;
+                }
             }
         }
     }
@@ -11240,10 +11228,10 @@ void Player::SwapItem(uint16 src, uint16 dst)
     }
 
     // check unequip potability for equipped items and bank bags
-    if (IsEquipmentPos (src ) || IsBagPos (src ))
+    if (IsEquipmentPos (src) || IsBagPos (src))
     {
-        // bags can be swapped with empty bag slots
-        uint8 msg = CanUnequipItem(src, !IsBagPos (src ) || IsBagPos (dst ));
+        // bags can be swapped with empty bag slots, or with empty bag (items move possibility checked later)
+        uint8 msg = CanUnequipItem(src, !IsBagPos (src) || IsBagPos (dst) || (pDstItem && pDstItem->IsBag() && ((Bag*)pDstItem)->IsEmpty()));
         if (msg != EQUIP_ERR_OK)
         {
             SendEquipError(msg, pSrcItem, pDstItem);
@@ -11258,50 +11246,9 @@ void Player::SwapItem(uint16 src, uint16 dst)
         return;
     }
 
-    if (!pDstItem )
-    {
-        if (IsInventoryPos(dst ) )
-        {
-            ItemPosCountVec dest;
-            uint8 msg = CanStoreItem(dstbag, dstslot, dest, pSrcItem, false);
-            if (msg != EQUIP_ERR_OK )
-            {
-                SendEquipError(msg, pSrcItem, NULL);
-                return;
-            }
+    // DST checks
 
-            RemoveItem(srcbag, srcslot, true);
-            StoreItem(dest, pSrcItem, true);
-        }
-        else if (IsBankPos (dst ) )
-        {
-            ItemPosCountVec dest;
-            uint8 msg = CanBankItem(dstbag, dstslot, dest, pSrcItem, false);
-            if (msg != EQUIP_ERR_OK )
-            {
-                SendEquipError(msg, pSrcItem, NULL);
-                return;
-            }
-
-            RemoveItem(srcbag, srcslot, true);
-            BankItem(dest, pSrcItem, true);
-        }
-        else if (IsEquipmentPos (dst ) )
-        {
-            uint16 dest;
-            uint8 msg = CanEquipItem(dstslot, dest, pSrcItem, false);
-            if (msg != EQUIP_ERR_OK )
-            {
-                SendEquipError(msg, pSrcItem, NULL);
-                return;
-            }
-
-            RemoveItem(srcbag, srcslot, true);
-            EquipItem(dest, pSrcItem, true);
-            AutoUnequipOffhandIfNeed();
-        }
-    }
-    else                                                    // if (!pDstItem)
+    if (pDstItem)
     {
         if (pDstItem->m_lootGenerated)                       // prevent swap looting item
         {
@@ -11311,134 +11258,289 @@ void Player::SwapItem(uint16 src, uint16 dst)
         }
 
         // check unequip potability for equipped items and bank bags
-        if (IsEquipmentPos (dst ) || IsBagPos (dst ))
+        if (IsEquipmentPos (dst) || IsBagPos (dst))
         {
-            // bags can be swapped with empty bag slots
-            uint8 msg = CanUnequipItem(dst, !IsBagPos (dst ) || IsBagPos (src ));
+            // bags can be swapped with empty bag slots, or with empty bag (items move possibility checked later)
+            uint8 msg = CanUnequipItem(dst, !IsBagPos (dst) || IsBagPos (src) || (pSrcItem->IsBag() && ((Bag*)pSrcItem)->IsEmpty()));
             if (msg != EQUIP_ERR_OK)
             {
                 SendEquipError(msg, pSrcItem, pDstItem);
                 return;
             }
         }
+    }
 
-        // attempt merge to / fill target item
+    // NOW this is or item move (swap with empty), or swap with another item (including bags in bag possitions)
+    // or swap empty bag with another empty or not empty bag (with items exchange)
+
+    // Move case
+    if (!pDstItem)
+    {
+        if (IsInventoryPos(dst))
         {
-            uint8 msg;
-            ItemPosCountVec sDest;
-            uint16 eDest;
-            if (IsInventoryPos(dst ) )
-                msg = CanStoreItem(dstbag, dstslot, sDest, pSrcItem, false);
-            else if (IsBankPos (dst ) )
-                msg = CanBankItem(dstbag, dstslot, sDest, pSrcItem, false);
-            else if (IsEquipmentPos (dst ) )
-                msg = CanEquipItem(dstslot, eDest, pSrcItem, false);
-            else
-                return;
-
-            // can be merge/fill
-            if (msg == EQUIP_ERR_OK)
+            ItemPosCountVec dest;
+            uint8 msg = CanStoreItem(dstbag, dstslot, dest, pSrcItem, false);
+            if (msg != EQUIP_ERR_OK)
             {
-                if (pSrcItem->GetCount() + pDstItem->GetCount() <= pSrcItem->GetProto()->Stackable )
-                {
-                    RemoveItem(srcbag, srcslot, true);
-
-                    if (IsInventoryPos(dst ) )
-                        StoreItem(sDest, pSrcItem, true);
-                    else if (IsBankPos (dst ) )
-                        BankItem(sDest, pSrcItem, true);
-                    else if (IsEquipmentPos (dst ) )
-                    {
-                        EquipItem(eDest, pSrcItem, true);
-                        AutoUnequipOffhandIfNeed();
-                    }
-                }
-                else
-                {
-                    pSrcItem->SetCount(pSrcItem->GetCount() + pDstItem->GetCount() - pSrcItem->GetProto()->Stackable);
-                    pDstItem->SetCount(pSrcItem->GetProto()->Stackable);
-                    pSrcItem->SetState(ITEM_CHANGED, this);
-                    pDstItem->SetState(ITEM_CHANGED, this);
-                    if (IsInWorld() )
-                    {
-                        pSrcItem->SendUpdateToPlayer(this);
-                        pDstItem->SendUpdateToPlayer(this);
-                    }
-                }
+                SendEquipError(msg, pSrcItem, NULL);
                 return;
+            }
+
+            RemoveItem(srcbag, srcslot, true);
+            StoreItem(dest, pSrcItem, true);
+        }
+        else if (IsBankPos (dst))
+        {
+            ItemPosCountVec dest;
+            uint8 msg = CanBankItem(dstbag, dstslot, dest, pSrcItem, false);
+            if (msg != EQUIP_ERR_OK)
+            {
+                SendEquipError(msg, pSrcItem, NULL);
+                return;
+            }
+
+            RemoveItem(srcbag, srcslot, true);
+            BankItem(dest, pSrcItem, true);
+        }
+        else if (IsEquipmentPos (dst))
+        {
+            uint16 dest;
+            uint8 msg = CanEquipItem(dstslot, dest, pSrcItem, false);
+            if (msg != EQUIP_ERR_OK)
+            {
+                SendEquipError(msg, pSrcItem, NULL);
+                return;
+            }
+
+            RemoveItem(srcbag, srcslot, true);
+            EquipItem(dest, pSrcItem, true);
+            AutoUnequipOffhandIfNeed();
+        }
+
+        return;
+    }
+
+    // attempt merge to / fill target item
+    if (!pSrcItem->IsBag() && !pDstItem->IsBag())
+    {
+        uint8 msg;
+        ItemPosCountVec sDest;
+        uint16 eDest = 0;
+        if (IsInventoryPos(dst))
+            msg = CanStoreItem(dstbag, dstslot, sDest, pSrcItem, false);
+        else if (IsBankPos (dst))
+            msg = CanBankItem(dstbag, dstslot, sDest, pSrcItem, false);
+        else if (IsEquipmentPos (dst))
+            msg = CanEquipItem(dstslot, eDest, pSrcItem, false);
+        else
+            return;
+
+        // can be merge/fill
+        if (msg == EQUIP_ERR_OK)
+        {
+            if (pSrcItem->GetCount() + pDstItem->GetCount() <= pSrcItem->GetProto()->Stackable )
+            {
+                RemoveItem(srcbag, srcslot, true);
+
+                if (IsInventoryPos(dst))
+                    StoreItem(sDest, pSrcItem, true);
+                else if (IsBankPos (dst))
+                    BankItem(sDest, pSrcItem, true);
+                else if (IsEquipmentPos (dst))
+                {
+                    EquipItem(eDest, pSrcItem, true);
+                    AutoUnequipOffhandIfNeed();
+                }
+            }
+            else
+            {
+                pSrcItem->SetCount(pSrcItem->GetCount() + pDstItem->GetCount() - pSrcItem->GetProto()->Stackable);
+                pDstItem->SetCount(pSrcItem->GetProto()->Stackable);
+                pSrcItem->SetState(ITEM_CHANGED, this);
+                pDstItem->SetState(ITEM_CHANGED, this);
+                if (IsInWorld())
+                {
+                    pSrcItem->SendUpdateToPlayer(this);
+                    pDstItem->SendUpdateToPlayer(this);
+                }
+            }
+            return;
+        }
+    }
+
+    // impossible merge/fill, do real swap
+    uint8 msg = EQUIP_ERR_OK;
+
+    // check src->dest move possibility
+    ItemPosCountVec sDest;
+    uint16 eDest = 0;
+    if (IsInventoryPos(dst))
+        msg = CanStoreItem(dstbag, dstslot, sDest, pSrcItem, true);
+    else if (IsBankPos(dst))
+        msg = CanBankItem(dstbag, dstslot, sDest, pSrcItem, true);
+    else if (IsEquipmentPos(dst))
+    {
+        msg = CanEquipItem(dstslot, eDest, pSrcItem, true);
+        if (msg == EQUIP_ERR_OK)
+            msg = CanUnequipItem(eDest, true);
+    }
+
+    if (msg != EQUIP_ERR_OK)
+    {
+        SendEquipError(msg, pSrcItem, pDstItem);
+        return;
+    }
+
+    // check dest->src move possibility
+    ItemPosCountVec sDest2;
+    uint16 eDest2 = 0;
+    if (IsInventoryPos(src))
+        msg = CanStoreItem(srcbag, srcslot, sDest2, pDstItem, true);
+    else if (IsBankPos(src))
+        msg = CanBankItem(srcbag, srcslot, sDest2, pDstItem, true);
+    else if (IsEquipmentPos(src))
+    {
+        msg = CanEquipItem(srcslot, eDest2, pDstItem, true);
+        if (msg == EQUIP_ERR_OK)
+            msg = CanUnequipItem(eDest2, true);
+    }
+
+    if (msg != EQUIP_ERR_OK)
+    {
+        SendEquipError(msg, pDstItem, pSrcItem);
+        return;
+    }
+
+    // Check bag swap with item exchange (one from empty in not bag possition (equipped (not possible in fact) or store)
+    if (pSrcItem->IsBag() && pDstItem->IsBag())
+    {
+        Bag* emptyBag = NULL;
+        Bag* fullBag = NULL;
+        if (((Bag*)pSrcItem)->IsEmpty() && !IsBagPos(src))
+        {
+            emptyBag = (Bag*)pSrcItem;
+            fullBag  = (Bag*)pDstItem;
+        }
+        else if (((Bag*)pDstItem)->IsEmpty() && !IsBagPos(dst))
+        {
+            emptyBag = (Bag*)pDstItem;
+            fullBag  = (Bag*)pSrcItem;
+        }
+
+        // bag swap (with items exchange) case
+        if (emptyBag && fullBag)
+        {
+            ItemPrototype const* emptyProto = emptyBag->GetProto();
+
+            uint32 count = 0;
+
+            for (uint32 i=0; i < fullBag->GetBagSize(); ++i)
+            {
+                Item *bagItem = fullBag->GetItemByPos(i);
+                if (!bagItem)
+                    continue;
+
+                ItemPrototype const* bagItemProto = bagItem->GetProto();
+                if (!bagItemProto || !ItemCanGoIntoBag(bagItemProto, emptyProto))
+                {
+                    // one from items not go to empty target bag
+                    SendEquipError(EQUIP_ERR_NONEMPTY_BAG_OVER_OTHER_BAG, pSrcItem, pDstItem);
+                    return;
+                }
+
+                ++count;
+            }
+
+            if (count > emptyBag->GetBagSize())
+            {
+                // too small targeted bag
+                SendEquipError(EQUIP_ERR_ITEMS_CANT_BE_SWAPPED, pSrcItem, pDstItem);
+                return;
+            }
+
+            // Items swap
+            count = 0;                                      // will pos in new bag
+            for (uint32 i = 0; i< fullBag->GetBagSize(); ++i)
+            {
+                Item *bagItem = fullBag->GetItemByPos(i);
+                if (!bagItem)
+                    continue;
+
+                fullBag->RemoveItem(i, true);
+                emptyBag->StoreItem(count, bagItem, true);
+                bagItem->SetState(ITEM_CHANGED, this);
+
+                ++count;
+            }
+        }
+    }
+
+    // now do moves, remove...
+    RemoveItem(dstbag, dstslot, false);
+    RemoveItem(srcbag, srcslot, false);
+
+    // add to dest
+    if (IsInventoryPos(dst))
+        StoreItem(sDest, pSrcItem, true);
+    else if (IsBankPos(dst))
+        BankItem(sDest, pSrcItem, true);
+    else if (IsEquipmentPos(dst))
+        EquipItem(eDest, pSrcItem, true);
+
+    // add to src
+    if (IsInventoryPos(src))
+        StoreItem(sDest2, pDstItem, true);
+    else if (IsBankPos(src))
+        BankItem(sDest2, pDstItem, true);
+    else if (IsEquipmentPos(src))
+        EquipItem(eDest2, pDstItem, true);
+
+    // if player is moving bags and is looting an item inside this bag
+    // release the loot
+    if (GetLootGUID())
+    {
+        bool released = false;
+        if (IsBagPos(src))
+        {
+            Bag* bag = (Bag*)pSrcItem;
+            for (int i=0; i < bag->GetBagSize(); ++i)
+            {
+                if (Item *bagItem = bag->GetItemByPos(i))
+                {
+                    if (bagItem->m_lootGenerated)
+                    {
+                        m_session->DoLootRelease(GetLootGUID());
+                        released = true;                    // so we don't need to look at dstBag
+                        break;
+                    }
+                }
             }
         }
 
-        // impossible merge/fill, do real swap
-        uint8 msg;
-
-        // check src->dest move possibility
-        ItemPosCountVec sDest;
-        uint16 eDest;
-        if (IsInventoryPos(dst ) )
-            msg = CanStoreItem(dstbag, dstslot, sDest, pSrcItem, true);
-        else if (IsBankPos(dst ) )
-            msg = CanBankItem(dstbag, dstslot, sDest, pSrcItem, true);
-        else if (IsEquipmentPos(dst ) )
+        if (!released && IsBagPos(dst) && pDstItem)
         {
-            msg = CanEquipItem(dstslot, eDest, pSrcItem, true);
-            if (msg == EQUIP_ERR_OK )
-                msg = CanUnequipItem(eDest, true);
+            Bag* bag = (Bag*)pDstItem;
+            for (int i=0; i < bag->GetBagSize(); ++i)
+            {
+                if (Item *bagItem = bag->GetItemByPos(i))
+                {
+                    if (bagItem->m_lootGenerated)
+                    {
+                        m_session->DoLootRelease(GetLootGUID());
+                        released = true;                    // not realy needed here
+                        break;
+                    }
+                }
+            }
         }
-
-        if (msg != EQUIP_ERR_OK )
-        {
-            SendEquipError(msg, pSrcItem, pDstItem);
-            return;
-        }
-
-        // check dest->src move possibility
-        ItemPosCountVec sDest2;
-        uint16 eDest2;
-        if (IsInventoryPos(src ) )
-            msg = CanStoreItem(srcbag, srcslot, sDest2, pDstItem, true);
-        else if (IsBankPos(src ) )
-            msg = CanBankItem(srcbag, srcslot, sDest2, pDstItem, true);
-        else if (IsEquipmentPos(src ) )
-        {
-            msg = CanEquipItem(srcslot, eDest2, pDstItem, true);
-            if (msg == EQUIP_ERR_OK )
-                msg = CanUnequipItem(eDest2, true);
-        }
-
-        if (msg != EQUIP_ERR_OK )
-        {
-            SendEquipError(msg, pDstItem, pSrcItem);
-            return;
-        }
-
-        // now do moves, remove...
-        RemoveItem(dstbag, dstslot, false);
-        RemoveItem(srcbag, srcslot, false);
-
-        // add to dest
-        if (IsInventoryPos(dst ) )
-            StoreItem(sDest, pSrcItem, true);
-        else if (IsBankPos(dst ) )
-            BankItem(sDest, pSrcItem, true);
-        else if (IsEquipmentPos(dst ) )
-            EquipItem(eDest, pSrcItem, true);
-
-        // add to src
-        if (IsInventoryPos(src ) )
-            StoreItem(sDest2, pDstItem, true);
-        else if (IsBankPos(src ) )
-            BankItem(sDest2, pDstItem, true);
-        else if (IsEquipmentPos(src ) )
-            EquipItem(eDest2, pDstItem, true);
-
-        AutoUnequipOffhandIfNeed();
     }
+
+    AutoUnequipOffhandIfNeed();
 }
 
-void Player::AddItemToBuyBackSlot(Item *pItem )
+void Player::AddItemToBuyBackSlot(Item *pItem)
 {
-    if (pItem )
+    if (pItem)
     {
         uint32 slot = m_currentBuybackSlot;
         // if current back slot non-empty search oldest or free
@@ -11447,7 +11549,7 @@ void Player::AddItemToBuyBackSlot(Item *pItem )
             uint32 oldest_time = GetUInt32Value(PLAYER_FIELD_BUYBACK_TIMESTAMP_1);
             uint32 oldest_slot = BUYBACK_SLOT_START;
 
-            for (uint32 i = BUYBACK_SLOT_START+1; i < BUYBACK_SLOT_END; ++i )
+            for (uint32 i = BUYBACK_SLOT_START+1; i < BUYBACK_SLOT_END; ++i)
             {
                 // found empty
                 if (!m_items[i])
@@ -15819,20 +15921,24 @@ void Player::_SaveInventory()
         itr->item->SetEnchantmentDuration(itr->slot,itr->leftduration, this);
 
     // if no changes
-    if (m_itemUpdateQueue.empty()) return;
+    if (m_itemUpdateQueue.empty())
+        return;
 
     // do not save if the update queue is corrupt
     bool error = false;
-    for (size_t i = 0; i < m_itemUpdateQueue.size(); i++)
+    for (size_t i = 0; i < m_itemUpdateQueue.size(); ++i)
     {
         Item *item = m_itemUpdateQueue[i];
-        if (!item || item->GetState() == ITEM_REMOVED) continue;
+        if (!item || item->GetState() == ITEM_REMOVED)
+            continue;
+
         Item *test = GetItemByPos(item->GetBagSlot(), item->GetSlot());
 
         if (test == NULL)
         {
-            sLog.outError("Player(GUID: %u Name: %s)::_SaveInventory - the bag(%d) and slot(%d) values for the item with guid %d are incorrect, the player doesn't have an item at that position!", GetGUIDLow(), GetName(), item->GetBagSlot(), item->GetSlot(), item->GetGUIDLow());
-            error = true;
+            sLog.outCrash("Player(GUID: %u Name: %s)::_SaveInventory - the bag(%d) and slot(%d) values for the item with guid %d (state %d) are incorrect, the player doesn't have an item at that position!", GetGUIDLow(), GetName(), item->GetBagSlot(), item->GetSlot(), item->GetGUIDLow(), (int32)item->GetState());
+            //error = true;
+            //Should the above line really be commented out?
         }
         else if (test != item)
         {

@@ -1074,7 +1074,8 @@ class OREGON_DLL_SPEC Player : public Unit
         static bool IsBankPos(uint16 pos) { return IsBankPos(pos >> 8,pos & 255); }
         static bool IsBankPos(uint8 bag, uint8 slot);
         bool IsValidPos(uint16 pos) { return IsBankPos(pos >> 8,pos & 255); }
-        bool IsValidPos(uint8 bag, uint8 slot) const;
+        bool IsValidPos(uint8 bag, uint8 slot);
+        uint8 GetBankBagSlotCount() const { return GetByteValue(PLAYER_BYTES_2, 2); }
         bool HasBankBagSlot(uint8 slot ) const;
         bool HasItemCount(uint32 item, uint32 count, bool inBankAlso = false) const;
         bool HasItemFitToSpellReqirements(SpellEntry const* spellInfo, Item const* ignoreItem = NULL);
