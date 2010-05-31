@@ -218,23 +218,6 @@ enum ConditionType
 
 #define MAX_CONDITION                 14                    // maximum value in ConditionType enum
 
-//Player's info
-typedef struct _tagCachePlayerInfo
-{
-    std::string sPlayerName;
-    uint32 unfield;
-    uint32 unLevel;
-    uint8 unClass;
-//Arena
-    uint32 unArenaInfoId0;
-    uint32 unArenaInfoId1;
-    uint32 unArenaInfoId2;
-    uint32 unArenaInfoSlot0;
-    uint32 unArenaInfoSlot1;
-    uint32 unArenaInfoSlot2;
-}CachePlayerInfo, *PCachePlayerInfo;
-typedef UNORDERED_MAP<uint32, PCachePlayerInfo> CachePlayerInfoMap;
-
 struct PlayerCondition
 {
     ConditionType condition;                                // additional condition type
@@ -588,10 +571,6 @@ class ObjectMgr
         uint32 GeneratePetNumber();
         uint32 GenerateArenaTeamId();
         uint32 GenerateGuildId();
-
-        void LoadPlayerInfoInCache();
-        PCachePlayerInfo GetPlayerInfoFromCache(uint32 unPlayerGuid) const;
-        CachePlayerInfoMap m_mPlayerInfoMap;
 
         uint32 CreateItemText(std::string text);
         std::string GetItemText(uint32 id )

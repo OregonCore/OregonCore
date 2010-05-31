@@ -177,9 +177,6 @@ ObjectMgr::~ObjectMgr()
         delete itr->second;
     mGuildMap.clear();
 
-    for (CachePlayerInfoMap::iterator itr = m_mPlayerInfoMap.begin(); itr != m_mPlayerInfoMap.end(); ++itr)
-        delete itr->second;
-
     for (ArenaTeamMap::iterator itr = mArenaTeamMap.begin(); itr != mArenaTeamMap.end(); ++itr)
         delete itr->second;
 
@@ -188,60 +185,6 @@ ObjectMgr::~ObjectMgr()
 
     for (CacheTrainerSpellMap::iterator itr = m_mCacheTrainerSpellMap.begin(); itr != m_mCacheTrainerSpellMap.end(); ++itr)
         itr->second.Clear();
-}
-
-void ObjectMgr::LoadPlayerInfoInCache()
-{
-    QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT guid, name, data, class  FROM characters");
-    if (!result)
-    {
-        sLog.outError("Loading Player Cache failed.");
-        return;
-    }
-
-    PCachePlayerInfo pPPlayerInfo = NULL;
-    Field *fields = NULL;
-    Tokens tdata;
-    barGoLink bar(result->GetRowCount());
-    do
-    {
-        bar.step();
-        fields = result->Fetch();
-        pPPlayerInfo = new CachePlayerInfo();
-
-        pPPlayerInfo->sPlayerName = fields[1].GetString();
-
-        tdata.clear();
-        tdata = StrSplit(fields[2].GetCppString(), " ");
-
-        pPPlayerInfo->unLevel = Player::GetUInt32ValueFromArray(tdata,UNIT_FIELD_LEVEL);
-        pPPlayerInfo->unfield = Player::GetUInt32ValueFromArray(tdata,UNIT_FIELD_BYTES_0);
-
-        pPPlayerInfo->unArenaInfoId0 = Player::GetUInt32ValueFromArray(tdata,PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + 0 * 6);
-        pPPlayerInfo->unArenaInfoId1 = Player::GetUInt32ValueFromArray(tdata,PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + 1 * 6);
-        pPPlayerInfo->unArenaInfoId2 = Player::GetUInt32ValueFromArray(tdata,PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + 2 * 6);
-
-        pPPlayerInfo->unArenaInfoSlot0 = Player::GetUInt32ValueFromArray(tdata,PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + 0 * 6 + 5);
-        pPPlayerInfo->unArenaInfoSlot1 = Player::GetUInt32ValueFromArray(tdata,PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + 1 * 6 + 5);
-        pPPlayerInfo->unArenaInfoSlot2 = Player::GetUInt32ValueFromArray(tdata,PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + 2 * 6 + 5);
-
-        pPPlayerInfo->unClass = (uint32)fields[3].GetUInt32();
-        m_mPlayerInfoMap[fields[0].GetUInt32()] = pPPlayerInfo;
-    }
-    while (result->NextRow());
-
-    sLog.outString("");
-    sLog.outString(">> Loaded info about %d players", m_mPlayerInfoMap.size());
-}
-
-PCachePlayerInfo ObjectMgr::GetPlayerInfoFromCache(uint32 unPlayerGuid) const
-{
-    //Now m_mPlayerInfoMap is using only for search, but when dinamic inserting/removing
-    //will be implemented we should lock it to prevent simultaneous access.
-    //Inserting - when new created player is saving
-    //Removing - when player has been deleted
-    CachePlayerInfoMap::const_iterator ipos = m_mPlayerInfoMap.find(unPlayerGuid);
-    return ipos == m_mPlayerInfoMap.end() ? NULL : ipos->second;
 }
 
 Group * ObjectMgr::GetGroupByLeader(const uint64 &guid) const
@@ -1271,13 +1214,6 @@ bool ObjectMgr::GetPlayerNameByGUID(const uint64 &guid, std::string &name) const
     if (Player* player = GetPlayer(guid))
     {
         name = player->GetName();
-        return true;
-    }
-
-    PCachePlayerInfo pInfo = GetPlayerInfoFromCache(GUID_LOPART(guid));
-    if (pInfo)
-    {
-        name = pInfo->sPlayerName.c_str();
         return true;
     }
 
