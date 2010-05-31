@@ -1057,35 +1057,35 @@ class OREGON_DLL_SPEC Player : public Unit
 
         void SetVirtualItemSlot(uint8 i, Item* item);
         void SetSheath(uint32 sheathed);
-        uint8 FindEquipSlot(ItemPrototype const* proto, uint32 slot, bool swap ) const;
-        uint32 GetItemCount(uint32 item, bool inBankAlso = false, Item* skipItem = NULL ) const;
-        Item* GetItemByGuid(uint64 guid ) const;
-        Item* GetItemByPos(uint16 pos ) const;
-        Item* GetItemByPos(uint8 bag, uint8 slot ) const;
+        uint8 FindEquipSlot(ItemPrototype const* proto, uint32 slot, bool swap) const;
+        uint32 GetItemCount(uint32 item, bool inBankAlso = false, Item* skipItem = NULL) const;
+        Item* GetItemByGuid(uint64 guid) const;
+        Item* GetItemByPos(uint16 pos) const;
+        Item* GetItemByPos(uint8 bag, uint8 slot) const;
         Item* GetWeaponForAttack(WeaponAttackType attackType, bool useable = false) const;
         Item* GetShield(bool useable = false) const;
         static uint32 GetAttackBySlot(uint8 slot);        // MAX_ATTACK if not weapon slot
         std::vector<Item *> &GetItemUpdateQueue() { return m_itemUpdateQueue; }
-        static bool IsInventoryPos(uint16 pos ) { return IsInventoryPos(pos >> 8,pos & 255); }
+        static bool IsInventoryPos(uint16 pos) { return IsInventoryPos(pos >> 8,pos & 255); }
         static bool IsInventoryPos(uint8 bag, uint8 slot);
-        static bool IsEquipmentPos(uint16 pos ) { return IsEquipmentPos(pos >> 8,pos & 255); }
+        static bool IsEquipmentPos(uint16 pos) { return IsEquipmentPos(pos >> 8,pos & 255); }
         static bool IsEquipmentPos(uint8 bag, uint8 slot);
         static bool IsBagPos(uint16 pos);
-        static bool IsBankPos(uint16 pos ) { return IsBankPos(pos >> 8,pos & 255); }
+        static bool IsBankPos(uint16 pos) { return IsBankPos(pos >> 8,pos & 255); }
         static bool IsBankPos(uint8 bag, uint8 slot);
-        bool IsValidPos(uint16 pos ) { return IsBankPos(pos >> 8,pos & 255); }
-        bool IsValidPos(uint8 bag, uint8 slot ) const;
+        bool IsValidPos(uint16 pos) { return IsBankPos(pos >> 8,pos & 255); }
+        bool IsValidPos(uint8 bag, uint8 slot) const;
         bool HasBankBagSlot(uint8 slot ) const;
-        bool HasItemCount(uint32 item, uint32 count, bool inBankAlso = false ) const;
+        bool HasItemCount(uint32 item, uint32 count, bool inBankAlso = false) const;
         bool HasItemFitToSpellReqirements(SpellEntry const* spellInfo, Item const* ignoreItem = NULL);
         Item* GetItemOrItemWithGemEquipped(uint32 item ) const;
         uint8 CanTakeMoreSimilarItems(Item* pItem) const { return _CanTakeMoreSimilarItems(pItem->GetEntry(),pItem->GetCount(),pItem); }
         uint8 CanTakeMoreSimilarItems(uint32 entry, uint32 count) const { return _CanTakeMoreSimilarItems(entry,count,NULL); }
-        uint8 CanStoreNewItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, uint32 item, uint32 count, uint32* no_space_count = NULL ) const
+        uint8 CanStoreNewItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, uint32 item, uint32 count, uint32* no_space_count = NULL) const
         {
             return _CanStoreItem(bag, slot, dest, item, count, NULL, false, no_space_count);
         }
-        uint8 CanStoreItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, Item *pItem, bool swap = false ) const
+        uint8 CanStoreItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, Item *pItem, bool swap = false) const
         {
             if (!pItem)
                 return EQUIP_ERR_ITEM_NOT_FOUND;
@@ -1094,8 +1094,8 @@ class OREGON_DLL_SPEC Player : public Unit
 
         }
         uint8 CanStoreItems(Item **pItem,int count) const;
-        uint8 CanEquipNewItem(uint8 slot, uint16 &dest, uint32 item, bool swap ) const;
-        uint8 CanEquipItem(uint8 slot, uint16 &dest, Item *pItem, bool swap, bool not_loading = true ) const;
+        uint8 CanEquipNewItem(uint8 slot, uint16 &dest, uint32 item, bool swap) const;
+        uint8 CanEquipItem(uint8 slot, uint16 &dest, Item *pItem, bool swap, bool not_loading = true) const;
         uint8 CanUnequipItems(uint32 item, uint32 count ) const;
         uint8 CanUnequipItem(uint16 src, bool swap ) const;
         uint8 CanBankItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, Item *pItem, bool swap, bool not_loading = true ) const;
@@ -1111,7 +1111,7 @@ class OREGON_DLL_SPEC Player : public Unit
         bool StoreNewItemInBestSlots(uint32 item_id, uint32 item_count);
 
         uint8 _CanTakeMoreSimilarItems(uint32 entry, uint32 count, Item* pItem, uint32* no_space_count = NULL) const;
-        uint8 _CanStoreItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, uint32 entry, uint32 count, Item *pItem = NULL, bool swap = false, uint32* no_space_count = NULL ) const;
+        uint8 _CanStoreItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, uint32 entry, uint32 count, Item *pItem = NULL, bool swap = false, uint32* no_space_count = NULL) const;
 
         void ApplyEquipCooldown(Item * pItem);
         void SetAmmo(uint32 item);
@@ -1121,7 +1121,7 @@ class OREGON_DLL_SPEC Player : public Unit
         void QuickEquipItem(uint16 pos, Item *pItem);
         void VisualizeItem(uint8 slot, Item *pItem);
         void SetVisibleItemSlot(uint8 slot, Item *pItem);
-        Item* BankItem(ItemPosCountVec const& dest, Item *pItem, bool update )
+        Item* BankItem(ItemPosCountVec const& dest, Item *pItem, bool update)
         {
             return StoreItem(dest, pItem, update);
         }
