@@ -9002,12 +9002,15 @@ Item* Player::GetItemOrItemWithGemEquipped(uint32 item ) const
 uint8 Player::_CanTakeMoreSimilarItems(uint32 entry, uint32 count, Item* pItem, uint32* no_space_count ) const
 {
     ItemPrototype const *pProto = objmgr.GetItemPrototype(entry);
-    if (!pProto )
+    if (!pProto)
     {
         if (no_space_count)
             *no_space_count = count;
         return EQUIP_ERR_CANT_CARRY_MORE_OF_THIS;
     }
+
+    if (pItem && pItem->m_lootGenerated)
+        return EQUIP_ERR_ALREADY_LOOTED;
 
     // no maximum
     if (pProto->MaxCount == 0)
@@ -9101,13 +9104,10 @@ uint8 Player::_CanStoreItem_InSpecificSlot(uint8 bag, uint8 slot, ItemPosCountVe
     // non empty slot, check item type
     else
     {
-        // check item type
-        if (pItem2->GetEntry() != pProto->ItemId)
-            return EQUIP_ERR_ITEM_CANT_STACK;
-
-        // check free space
-        if (pItem2->GetCount() >= pProto->Stackable)
-            return EQUIP_ERR_ITEM_CANT_STACK;
+        // can be merged at least partly
+        uint8 res  = pItem2->CanBeMergedPartlyWith(pProto);
+        if (res != EQUIP_ERR_OK)
+            return res;
 
         // free stack space or infinity
         need_space = pProto->Stackable - pItem2->GetCount();
@@ -9162,40 +9162,30 @@ uint8 Player::_CanStoreItem_InBag(uint8 bag, ItemPosCountVec &dest, ItemPrototyp
         if ((pItem2 != NULL) != merge)
             continue;
 
+        uint32 need_space = pProto->Stackable;
+
         if (pItem2)
         {
-            if (pItem2->GetEntry() == pProto->ItemId && pItem2->GetCount() < pProto->Stackable)
-            {
-                uint32 need_space = pProto->Stackable - pItem2->GetCount();
-                if (need_space > count)
-                    need_space = count;
+            // can be merged at least partly
+            uint8 res  = pItem2->CanBeMergedPartlyWith(pProto);
+            if (res != EQUIP_ERR_OK)
+                continue;
 
-                ItemPosCount newPosition = ItemPosCount((bag << 8) | j, need_space);
-                if (!newPosition.isContainedIn(dest))
-                {
-                    dest.push_back(newPosition);
-                    count -= need_space;
-
-                    if (count == 0)
-                        return EQUIP_ERR_OK;
-                }
-            }
+            // descrease at current stacksize
+            need_space -= pItem2->GetCount();
         }
-        else
+
+        if (need_space > count)
+            need_space = count;
+
+        ItemPosCount newPosition = ItemPosCount((bag << 8) | j, need_space);
+        if (!newPosition.isContainedIn(dest))
         {
-            uint32 need_space = pProto->Stackable;
-            if (need_space > count)
-                need_space = count;
+            dest.push_back(newPosition);
+            count -= need_space;
 
-            ItemPosCount newPosition = ItemPosCount((bag << 8) | j, need_space);
-            if (!newPosition.isContainedIn(dest))
-            {
-                dest.push_back(newPosition);
-                count -= need_space;
-
-                if (count == 0)
-                    return EQUIP_ERR_OK;
-            }
+            if (count==0)
+                return EQUIP_ERR_OK;
         }
     }
     return EQUIP_ERR_OK;
@@ -9219,39 +9209,30 @@ uint8 Player::_CanStoreItem_InInventorySlots(uint8 slot_begin, uint8 slot_end, I
         if ((pItem2 != NULL) != merge)
             continue;
 
+        uint32 need_space = pProto->Stackable;
+
         if (pItem2)
         {
-            if (pItem2->GetEntry() == pProto->ItemId && pItem2->GetCount() < pProto->Stackable)
-            {
-                uint32 need_space = pProto->Stackable - pItem2->GetCount();
-                if (need_space > count)
-                    need_space = count;
-                ItemPosCount newPosition = ItemPosCount((INVENTORY_SLOT_BAG_0 << 8) | j, need_space);
-                if (!newPosition.isContainedIn(dest))
-                {
-                    dest.push_back(newPosition);
-                    count -= need_space;
+            // can be merged at least partly
+            uint8 res  = pItem2->CanBeMergedPartlyWith(pProto);
+            if (res != EQUIP_ERR_OK)
+                continue;
 
-                    if (count == 0)
-                        return EQUIP_ERR_OK;
-                }
-            }
+            // descrease at current stacksize
+            need_space -= pItem2->GetCount();
         }
-        else
+
+        if (need_space > count)
+            need_space = count;
+
+        ItemPosCount newPosition = ItemPosCount((INVENTORY_SLOT_BAG_0 << 8) | j, need_space);
+        if (!newPosition.isContainedIn(dest))
         {
-            uint32 need_space = pProto->Stackable;
-            if (need_space > count)
-                need_space = count;
+            dest.push_back(newPosition);
+            count -= need_space;
 
-            ItemPosCount newPosition = ItemPosCount((INVENTORY_SLOT_BAG_0 << 8) | j, need_space);
-            if (!newPosition.isContainedIn(dest))
-            {
-                dest.push_back(newPosition);
-                count -= need_space;
-
-                if (count == 0)
-                    return EQUIP_ERR_OK;
-            }
+            if (count==0)
+                return EQUIP_ERR_OK;
         }
     }
     return EQUIP_ERR_OK;
@@ -9269,11 +9250,22 @@ uint8 Player::_CanStoreItem(uint8 bag, uint8 slot, ItemPosCountVec &dest, uint32
         return swap ? EQUIP_ERR_ITEMS_CANT_BE_SWAPPED :EQUIP_ERR_ITEM_NOT_FOUND;
     }
 
-    if (pItem && pItem->IsBindedNotWith(GetGUID()))
+    if (pItem)
     {
-        if (no_space_count)
-            *no_space_count = count;
-        return EQUIP_ERR_DONT_OWN_THAT_ITEM;
+        // item used
+        if (pItem->m_lootGenerated)
+        {
+            if (no_space_count)
+                *no_space_count = count;
+            return EQUIP_ERR_ALREADY_LOOTED;
+        }
+
+        if (pItem->IsBindedNotWith(GetGUID()))
+        {
+            if (no_space_count)
+                *no_space_count = count;
+            return EQUIP_ERR_DONT_OWN_THAT_ITEM;
+        }
     }
 
     // check count of items (skip for auto move for same player from bank)
@@ -9681,6 +9673,10 @@ uint8 Player::CanStoreItems(Item **pItems,int count) const
         if (!pProto)
             return EQUIP_ERR_ITEM_NOT_FOUND;
 
+        // item used
+        if (pItem->m_lootGenerated)
+            return EQUIP_ERR_ALREADY_LOOTED;
+
         // item it 'bind'
         if (pItem->IsBindedNotWith(GetGUID()))
             return EQUIP_ERR_DONT_OWN_THAT_ITEM;
@@ -9701,7 +9697,7 @@ uint8 Player::CanStoreItems(Item **pItems,int count) const
             for (int t = KEYRING_SLOT_START; t < KEYRING_SLOT_END; ++t)
             {
                 pItem2 = GetItemByPos(INVENTORY_SLOT_BAG_0, t);
-                if (pItem2 && pItem2->GetEntry() == pItem->GetEntry() && inv_keys[t-KEYRING_SLOT_START] + pItem->GetCount() <= pProto->Stackable)
+                if (pItem2 && pItem2->CanBeMergedPartlyWith(pProto) == EQUIP_ERR_OK && inv_keys[t-KEYRING_SLOT_START] + pItem->GetCount() <= pProto->Stackable)
                 {
                     inv_keys[t-KEYRING_SLOT_START] += pItem->GetCount();
                     b_found = true;
@@ -9713,7 +9709,7 @@ uint8 Player::CanStoreItems(Item **pItems,int count) const
             for (int t = INVENTORY_SLOT_ITEM_START; t < INVENTORY_SLOT_ITEM_END; t++)
             {
                 pItem2 = GetItemByPos(INVENTORY_SLOT_BAG_0, t);
-                if (pItem2 && pItem2->GetEntry() == pItem->GetEntry() && inv_slot_items[t-INVENTORY_SLOT_ITEM_START] + pItem->GetCount() <= pProto->Stackable )
+                if (pItem2 && pItem2->CanBeMergedPartlyWith(pProto) == EQUIP_ERR_OK && inv_slot_items[t-INVENTORY_SLOT_ITEM_START] + pItem->GetCount() <= pProto->Stackable )
                 {
                     inv_slot_items[t-INVENTORY_SLOT_ITEM_START] += pItem->GetCount();
                     b_found = true;
@@ -9730,7 +9726,7 @@ uint8 Player::CanStoreItems(Item **pItems,int count) const
                     for (uint32 j = 0; j < pBag->GetBagSize(); j++)
                     {
                         pItem2 = GetItemByPos(t, j);
-                        if (pItem2 && pItem2->GetEntry() == pItem->GetEntry() && inv_bags[t-INVENTORY_SLOT_BAG_START][j] + pItem->GetCount() <= pProto->Stackable )
+                        if (pItem2 && pItem2->CanBeMergedPartlyWith(pProto) == EQUIP_ERR_OK && inv_bags[t-INVENTORY_SLOT_BAG_START][j] + pItem->GetCount() <= pProto->Stackable )
                         {
                             inv_bags[t-INVENTORY_SLOT_BAG_START][j] += pItem->GetCount();
                             b_found = true;
@@ -9834,11 +9830,11 @@ uint8 Player::CanStoreItems(Item **pItems,int count) const
 }
 
 //////////////////////////////////////////////////////////////////////////
-uint8 Player::CanEquipNewItem(uint8 slot, uint16 &dest, uint32 item, bool swap ) const
+uint8 Player::CanEquipNewItem(uint8 slot, uint16 &dest, uint32 item, bool swap) const
 {
     dest = 0;
     Item *pItem = Item::CreateItem(item, 1, this);
-    if (pItem )
+    if (pItem)
     {
         uint8 result = CanEquipItem(slot, dest, pItem, swap);
         delete pItem;
@@ -9848,15 +9844,19 @@ uint8 Player::CanEquipNewItem(uint8 slot, uint16 &dest, uint32 item, bool swap )
     return EQUIP_ERR_ITEM_NOT_FOUND;
 }
 
-uint8 Player::CanEquipItem(uint8 slot, uint16 &dest, Item *pItem, bool swap, bool not_loading ) const
+uint8 Player::CanEquipItem(uint8 slot, uint16 &dest, Item *pItem, bool swap, bool not_loading) const
 {
     dest = 0;
-    if (pItem )
+    if (pItem)
     {
         sLog.outDebug("STORAGE: CanEquipItem slot = %u, item = %u, count = %u", slot, pItem->GetEntry(), pItem->GetCount());
         ItemPrototype const *pProto = pItem->GetProto();
-        if (pProto )
+        if (pProto)
         {
+            // item used
+            if (pItem->m_lootGenerated)
+                return EQUIP_ERR_ALREADY_LOOTED;
+
             if (pItem->IsBindedNotWith(GetGUID()))
                 return EQUIP_ERR_DONT_OWN_THAT_ITEM;
 
@@ -9876,13 +9876,13 @@ uint8 Player::CanEquipItem(uint8 slot, uint16 &dest, Item *pItem, bool swap, boo
                 // do not allow equipping gear except weapons, offhands, projectiles, relics in
                 // - combat
                 // - in-progress arenas
-                if (!pProto->CanChangeEquipStateInCombat() )
+                if (!pProto->CanChangeEquipStateInCombat())
                 {
-                    if (isInCombat() )
+                    if (isInCombat())
                         return EQUIP_ERR_NOT_IN_COMBAT;
 
                     if (BattleGround* bg = GetBattleGround())
-                        if (bg->isArena() && bg->GetStatus() == STATUS_IN_PROGRESS )
+                        if (bg->isArena() && bg->GetStatus() == STATUS_IN_PROGRESS)
                             return EQUIP_ERR_NOT_DURING_ARENA_MATCH;
                 }
 
@@ -9894,13 +9894,13 @@ uint8 Player::CanEquipItem(uint8 slot, uint16 &dest, Item *pItem, bool swap, boo
             }
 
             uint8 eslot = FindEquipSlot(pProto, slot, swap);
-            if (eslot == NULL_SLOT )
+            if (eslot == NULL_SLOT)
                 return EQUIP_ERR_ITEM_CANT_BE_EQUIPPED;
 
             uint8 msg = CanUseItem(pItem , not_loading);
-            if (msg != EQUIP_ERR_OK )
+            if (msg != EQUIP_ERR_OK)
                 return msg;
-            if (!swap && GetItemByPos(INVENTORY_SLOT_BAG_0, eslot ) )
+            if (!swap && GetItemByPos(INVENTORY_SLOT_BAG_0, eslot))
                 return EQUIP_ERR_NO_EQUIPMENT_SLOT_AVAILABLE;
 
             // check unique-equipped on item
@@ -9934,18 +9934,18 @@ uint8 Player::CanEquipItem(uint8 slot, uint16 &dest, Item *pItem, bool swap, boo
             // check unique-equipped special item classes
             if (pProto->Class == ITEM_CLASS_QUIVER)
             {
-                for (int i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; ++i)
+                for (uint8 i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; ++i)
                 {
-                    if (Item* pBag = GetItemByPos(INVENTORY_SLOT_BAG_0, i ) )
+                    if (Item* pBag = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
                     {
-                        if (ItemPrototype const* pBagProto = pBag->GetProto() )
+                        if (pBag != pItem)
                         {
-                            if (pBagProto->Class==pProto->Class && (!swap || pBag->GetSlot() != eslot ) )
+                            if (ItemPrototype const* pBagProto = pBag->GetProto())
                             {
-                                if (pBagProto->SubClass == ITEM_SUBCLASS_AMMO_POUCH)
-                                    return EQUIP_ERR_CAN_EQUIP_ONLY1_AMMOPOUCH;
-                                else
-                                    return EQUIP_ERR_CAN_EQUIP_ONLY1_QUIVER;
+                                if (pBagProto->Class == pProto->Class && (!swap || pBag->GetSlot() != eslot))
+                                    return (pBagProto->SubClass == ITEM_SUBCLASS_AMMO_POUCH)
+                                        ? EQUIP_ERR_CAN_EQUIP_ONLY1_AMMOPOUCH
+                                        : EQUIP_ERR_CAN_EQUIP_ONLY1_QUIVER;
                             }
                         }
                     }
@@ -10010,6 +10010,10 @@ uint8 Player::CanUnequipItem(uint16 pos, bool swap) const
     if (!pProto)
         return EQUIP_ERR_ITEM_NOT_FOUND;
 
+    // item used
+    if (pItem->m_lootGenerated)
+        return EQUIP_ERR_ALREADY_LOOTED;
+
     // do not allow unequipping gear except weapons, offhands, projectiles, relics in
     // - combat
     // - in-progress arenas
@@ -10034,18 +10038,16 @@ uint8 Player::CanBankItem(uint8 bag, uint8 slot, ItemPosCountVec &dest, Item *pI
     if (!pItem)
         return swap ? EQUIP_ERR_ITEMS_CANT_BE_SWAPPED : EQUIP_ERR_ITEM_NOT_FOUND;
 
-    if (pItem->m_lootGenerated)
-    {
-        GetSession()->DoLootRelease(GetLootGUID());
-        return EQUIP_ERR_OK;
-    }
-
     uint32 count = pItem->GetCount();
 
     sLog.outDebug("STORAGE: CanBankItem bag = %u, slot = %u, item = %u, count = %u", bag, slot, pItem->GetEntry(), pItem->GetCount());
     ItemPrototype const *pProto = pItem->GetProto();
     if (!pProto)
         return swap ? EQUIP_ERR_ITEMS_CANT_BE_SWAPPED : EQUIP_ERR_ITEM_NOT_FOUND;
+
+    // item used
+    if (pItem->m_lootGenerated)
+        return EQUIP_ERR_ALREADY_LOOTED;
 
     if (pItem->IsBindedNotWith(GetGUID()) )
         return EQUIP_ERR_DONT_OWN_THAT_ITEM;
@@ -10093,7 +10095,7 @@ uint8 Player::CanBankItem(uint8 bag, uint8 slot, ItemPosCountVec &dest, Item *pI
         // search stack in bag for merge to
         if (pProto->Stackable > 1 )
         {
-            if (bag == INVENTORY_SLOT_BAG_0 )
+            if (bag == INVENTORY_SLOT_BAG_0)
             {
                 res = _CanStoreItem_InInventorySlots(BANK_SLOT_ITEM_START,BANK_SLOT_ITEM_END,dest,pProto,count,true,pItem,bag,slot);
                 if (res != EQUIP_ERR_OK)
@@ -10212,40 +10214,51 @@ uint8 Player::CanBankItem(uint8 bag, uint8 slot, ItemPosCountVec &dest, Item *pI
     return EQUIP_ERR_BANK_FULL;
 }
 
-uint8 Player::CanUseItem(Item *pItem, bool not_loading ) const
+uint8 Player::CanUseItem(Item *pItem, bool not_loading) const
 {
-    if (pItem )
+    if (pItem)
     {
         sLog.outDebug("STORAGE: CanUseItem item = %u", pItem->GetEntry());
-        if (!isAlive() && not_loading )
+
+        if (!isAlive() && not_loading)
             return EQUIP_ERR_YOU_ARE_DEAD;
-        //if (isStunned() )
+
+        //if (isStunned())
         //    return EQUIP_ERR_YOU_ARE_STUNNED;
+
         ItemPrototype const *pProto = pItem->GetProto();
-        if (pProto )
+        if (pProto)
         {
             if (pItem->IsBindedNotWith(GetGUID()) )
                 return EQUIP_ERR_DONT_OWN_THAT_ITEM;
-            if ((pProto->AllowableClass & getClassMask()) == 0 || (pProto->AllowableRace & getRaceMask()) == 0 )
+
+            if ((pProto->AllowableClass & getClassMask()) == 0 || (pProto->AllowableRace & getRaceMask()) == 0)
                 return EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM;
-            if (pItem->GetSkill() != 0  )
+
+            if (pItem->GetSkill() != 0)
             {
-                if (GetSkillValue(pItem->GetSkill() ) == 0 )
+                if (GetSkillValue(pItem->GetSkill()) == 0)
                     return EQUIP_ERR_NO_REQUIRED_PROFICIENCY;
             }
-            if (pProto->RequiredSkill != 0  )
+
+            if (pProto->RequiredSkill != 0)
             {
-                if (GetSkillValue(pProto->RequiredSkill ) == 0 )
+                if (GetSkillValue(pProto->RequiredSkill) == 0)
                     return EQUIP_ERR_NO_REQUIRED_PROFICIENCY;
-                else if (GetSkillValue(pProto->RequiredSkill ) < pProto->RequiredSkillRank )
+
+                if (GetSkillValue(pProto->RequiredSkill) < pProto->RequiredSkillRank)
                     return EQUIP_ERR_ERR_CANT_EQUIP_SKILL;
             }
-            if (pProto->RequiredSpell != 0 && !HasSpell(pProto->RequiredSpell ) )
+
+            if (pProto->RequiredSpell != 0 && !HasSpell(pProto->RequiredSpell))
                 return EQUIP_ERR_NO_REQUIRED_PROFICIENCY;
-            if (pProto->RequiredReputationFaction && uint32(GetReputationRank(pProto->RequiredReputationFaction)) < pProto->RequiredReputationRank )
+
+            if (pProto->RequiredReputationFaction && uint32(GetReputationRank(pProto->RequiredReputationFaction)) < pProto->RequiredReputationRank)
                 return EQUIP_ERR_CANT_EQUIP_REPUTATION;
-            if (getLevel() < pProto->RequiredLevel )
+
+            if (getLevel() < pProto->RequiredLevel)
                 return EQUIP_ERR_CANT_EQUIP_LEVEL_I;
+
             return EQUIP_ERR_OK;
         }
     }

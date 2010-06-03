@@ -149,20 +149,20 @@ enum SellFailure
 // -1 from client enchantment slot number
 enum EnchantmentSlot
 {
-    PERM_ENCHANTMENT_SLOT       = 0,
-    TEMP_ENCHANTMENT_SLOT       = 1,
-    SOCK_ENCHANTMENT_SLOT       = 2,
-    SOCK_ENCHANTMENT_SLOT_2     = 3,
-    SOCK_ENCHANTMENT_SLOT_3     = 4,
-    BONUS_ENCHANTMENT_SLOT      = 5,
+    PERM_ENCHANTMENT_SLOT           = 0,
+    TEMP_ENCHANTMENT_SLOT           = 1,
+    SOCK_ENCHANTMENT_SLOT           = 2,
+    SOCK_ENCHANTMENT_SLOT_2         = 3,
+    SOCK_ENCHANTMENT_SLOT_3         = 4,
+    BONUS_ENCHANTMENT_SLOT          = 5,
     MAX_INSPECTED_ENCHANTMENT_SLOT = 6,
 
-    PROP_ENCHANTMENT_SLOT_0     = 6,                        // used with RandomSuffix
-    PROP_ENCHANTMENT_SLOT_1     = 7,                        // used with RandomSuffix
-    PROP_ENCHANTMENT_SLOT_2     = 8,                        // used with RandomSuffix and RandomProperty
-    PROP_ENCHANTMENT_SLOT_3     = 9,                        // used with RandomProperty
-    PROP_ENCHANTMENT_SLOT_4     = 10,                       // used with RandomProperty
-    MAX_ENCHANTMENT_SLOT        = 11
+    PROP_ENCHANTMENT_SLOT_0         = 6,                    // used with RandomSuffix
+    PROP_ENCHANTMENT_SLOT_1         = 7,                    // used with RandomSuffix
+    PROP_ENCHANTMENT_SLOT_2         = 8,                    // used with RandomSuffix and RandomProperty
+    PROP_ENCHANTMENT_SLOT_3         = 9,                    // used with RandomProperty
+    PROP_ENCHANTMENT_SLOT_4         = 10,                   // used with RandomProperty
+    MAX_ENCHANTMENT_SLOT            = 11
 };
 
 #define MAX_VISIBLE_ITEM_OFFSET   16                        // 16 fields per visible item (creator(2) + enchantments(12) + properties(1) + pad(1))
@@ -198,7 +198,7 @@ class OREGON_DLL_SPEC Item : public Object
 {
     public:
         static Item* CreateItem(uint32 item, uint32 count, Player const* player = NULL);
-        Item* CloneItem(uint32 count, Player const* player = NULL ) const;
+        Item* CloneItem(uint32 count, Player const* player = NULL) const;
 
         Item ();
 
@@ -229,15 +229,16 @@ class OREGON_DLL_SPEC Item : public Object
         bool IsLimitedToAnotherMapOrZone(uint32 cur_mapId, uint32 cur_zoneId) const;
         bool GemsFitSockets() const;
 
-        uint32 GetCount() const { return GetUInt32Value (ITEM_FIELD_STACK_COUNT); }
-        void SetCount(uint32 value) { SetUInt32Value (ITEM_FIELD_STACK_COUNT, value); }
+        uint32 GetCount() const { return GetUInt32Value(ITEM_FIELD_STACK_COUNT); }
+        void SetCount(uint32 value) { SetUInt32Value(ITEM_FIELD_STACK_COUNT, value); }
         uint32 GetMaxStackCount() const { return GetProto()->Stackable; }
         uint8 GetGemCountWithID(uint32 GemID) const;
+        uint8 CanBeMergedPartlyWith(ItemPrototype const* proto) const;
 
         uint8 GetSlot() const {return m_slot;}
         Bag *GetContainer() { return m_container; }
         uint8 GetBagSlot() const;
-        void SetSlot(uint8 slot) {m_slot = slot;}
+        void SetSlot(uint8 slot) { m_slot = slot; }
         uint16 GetPos() const { return uint16(GetBagSlot()) << 8 | GetSlot(); }
         void SetContainer(Bag *container) { m_container = container; }
 
@@ -298,4 +299,3 @@ class OREGON_DLL_SPEC Item : public Object
         bool mb_in_trade;                                   // true if item is currently in trade-window
 };
 #endif
-
