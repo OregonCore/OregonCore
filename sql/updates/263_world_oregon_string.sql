@@ -1,0 +1,1 @@
+UPDATE `oregon_world`.`oregon_string` SET `content_default` = '%s does not wish to be disturbed: %s' WHERE `oregon_string`.`entry` = 707;

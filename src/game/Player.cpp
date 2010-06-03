@@ -16619,22 +16619,13 @@ void Player::Whisper(const std::string& text, uint32 language,uint64 receiver)
         sLog.outChat("[WHISPER] Player %s tells %s: %s",
             GetName(), rPlayer->GetName(), text.c_str());
 
-    // when player you are whispering to is dnd, he cannot receive your message, unless you are in gm mode
-    if (!rPlayer->isDND() || isGameMaster())
-    {
-        WorldPacket data(SMSG_MESSAGECHAT, 200);
-        BuildPlayerChat(&data, CHAT_MSG_WHISPER, text, language);
-        rPlayer->GetSession()->SendPacket(&data);
+    WorldPacket data(SMSG_MESSAGECHAT, 200);
+    BuildPlayerChat(&data, CHAT_MSG_WHISPER, text, language);
+    rPlayer->GetSession()->SendPacket(&data);
 
-        data.Initialize(SMSG_MESSAGECHAT, 200);
-        rPlayer->BuildPlayerChat(&data, CHAT_MSG_REPLY, text, language);
-        GetSession()->SendPacket(&data);
-    }
-    else
-    {
-        // announce to player that player he is whispering to is dnd and cannot receive his message
-        ChatHandler(this).PSendSysMessage(LANG_PLAYER_DND, rPlayer->GetName(), rPlayer->dndMsg.c_str());
-    }
+    data.Initialize(SMSG_MESSAGECHAT, 200);
+    rPlayer->BuildPlayerChat(&data, CHAT_MSG_REPLY, text, language);
+    GetSession()->SendPacket(&data);
 
     if (!isAcceptWhispers() && !isGameMaster() && !rPlayer->isGameMaster())
     {
@@ -16642,13 +16633,11 @@ void Player::Whisper(const std::string& text, uint32 language,uint64 receiver)
         ChatHandler(this).SendSysMessage(LANG_COMMAND_WHISPERON);
     }
 
-    // announce to player that player he is whispering to is afk
+    // announce afk or dnd message if whispered player is either afk or dnd
     if (rPlayer->isAFK())
         ChatHandler(this).PSendSysMessage(LANG_PLAYER_AFK, rPlayer->GetName(), rPlayer->afkMsg.c_str());
-
-    // if player whisper someone, auto turn of dnd to be able to receive an answer
-    if (isDND() && !rPlayer->isGameMaster())
-        ToggleDND();
+    else if (rPlayer->isDND())
+        ChatHandler(this).PSendSysMessage(LANG_PLAYER_DND, rPlayer->GetName(), rPlayer->dndMsg.c_str());
 }
 
 void Player::PetSpellInitialize()
