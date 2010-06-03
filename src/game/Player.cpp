@@ -17335,7 +17335,7 @@ void Player::InitDataForForm(bool reapplyMods)
 }
 
 // Return true is the bought item has a max count to force refresh of window by caller
-bool Player::BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint64 bagguid, uint8 slot)
+bool Player::BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint8 bag, uint8 slot)
 {
     // cheating attempt
     if (count < 1) count = 1;
@@ -17344,7 +17344,7 @@ bool Player::BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint
         return false;
 
     ItemPrototype const *pProto = objmgr.GetItemPrototype(item);
-    if (!pProto )
+    if (!pProto)
     {
         SendBuyError(BUY_ERR_CANT_FIND_ITEM, NULL, item, 0);
         return false;
@@ -17365,19 +17365,25 @@ bool Player::BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint
         return false;
     }
 
-    size_t vendor_slot = vItems->FindItemSlot(item);
-    if (vendor_slot >= vItems->GetItemCount())
+    size_t vendorslot = vItems->FindItemSlot(item);
+    if (vendorslot >= vItems->GetItemCount())
     {
         SendBuyError(BUY_ERR_CANT_FIND_ITEM, pCreature, item, 0);
         return false;
     }
 
-    VendorItem const* crItem = vItems->m_items[vendor_slot];
+    VendorItem const* crItem = vItems->m_items[vendorslot];
+    // store diff item (cheating)
+    if(!crItem || crItem->item != item)
+    {
+        SendBuyError(BUY_ERR_CANT_FIND_ITEM, pCreature, item, 0);
+        return false;
+    }
 
     // check current item amount if it limited
-    if (crItem->maxcount != 0 )
+    if (crItem->maxcount != 0)
     {
-        if (pCreature->GetVendorItemCurrentCount(crItem) < pProto->BuyCount * count )
+        if (pCreature->GetVendorItemCurrentCount(crItem) < pProto->BuyCount * count)
         {
             SendBuyError(BUY_ERR_ITEM_ALREADY_SOLD, pCreature, item, 0);
             return false;
@@ -17437,56 +17443,33 @@ bool Player::BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint
     // reputation discount
     price = uint32(floor(price * GetReputationPriceDiscount(pCreature)));
 
-    if (GetMoney() < price )
+    if (GetMoney() < price)
     {
         SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY, pCreature, item, 0);
         return false;
     }
 
-    uint8 bag = 0;                                          // init for case invalid bagGUID
-
-    if (bagguid != NULL_BAG && slot != NULL_SLOT)
-    {
-        Bag *pBag;
-        if (bagguid == GetGUID() )
-        {
-            bag = INVENTORY_SLOT_BAG_0;
-        }
-        else
-        {
-            for (int i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END;i++)
-            {
-                pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0,i);
-                if (pBag )
-                {
-                    if (bagguid == pBag->GetGUID() )
-                    {
-                        bag = i;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    if (IsInventoryPos(bag, slot ) || (bagguid == NULL_BAG && slot == NULL_SLOT) )
+    if ((bag == NULL_BAG && slot == NULL_SLOT) || IsInventoryPos(bag, slot))
     {
         ItemPosCountVec dest;
         uint8 msg = CanStoreNewItem(bag, slot, dest, item, pProto->BuyCount * count);
-        if (msg != EQUIP_ERR_OK )
+        if (msg != EQUIP_ERR_OK)
         {
             SendEquipError(msg, NULL, NULL);
             return false;
         }
 
         ModifyMoney(-(int32)price);
+
         if (crItem->ExtendedCost)                            // case for new honor system
         {
             ItemExtendedCostEntry const* iece = sItemExtendedCostStore.LookupEntry(crItem->ExtendedCost);
             if (iece->reqhonorpoints)
                 ModifyHonorPoints(- int32(iece->reqhonorpoints * count));
+
             if (iece->reqarenapoints)
                 ModifyArenaPoints(- int32(iece->reqarenapoints * count));
+
             for (uint8 i = 0; i < 5; ++i)
             {
                 if (iece->reqitem[i])
@@ -17494,21 +17477,20 @@ bool Player::BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint
             }
         }
 
-        if (Item *it = StoreNewItem(dest, item, true ))
+        if (Item *it = StoreNewItem(dest, item, true))
         {
             uint32 new_count = pCreature->UpdateVendorItemCurrentCount(crItem,pProto->BuyCount * count);
 
             WorldPacket data(SMSG_BUY_ITEM, (8+4+4+4));
             data << pCreature->GetGUID();
-            data << (uint32)(vendor_slot+1);                // numbered from 1 at client
-            data << (uint32)(crItem->maxcount > 0 ? new_count : 0xFFFFFFFF);
-            data << (uint32)count;
+            data << uint32(vendorslot+1);                   // numbered from 1 at client
+            data << uint32(crItem->maxcount > 0 ? new_count : 0xFFFFFFFF);
+            data << uint32(count);
             GetSession()->SendPacket(&data);
-
             SendNewItem(it, pProto->BuyCount*count, true, false, false);
         }
     }
-    else if (IsEquipmentPos(bag, slot ) )
+    else if (IsEquipmentPos(bag, slot))
     {
         if (pProto->BuyCount * count != 1)
         {
@@ -17518,7 +17500,7 @@ bool Player::BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint
 
         uint16 dest;
         uint8 msg = CanEquipNewItem(slot, dest, item, false);
-        if (msg != EQUIP_ERR_OK )
+        if (msg != EQUIP_ERR_OK)
         {
             SendEquipError(msg, NULL, NULL);
             return false;
@@ -17530,8 +17512,10 @@ bool Player::BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint
             ItemExtendedCostEntry const* iece = sItemExtendedCostStore.LookupEntry(crItem->ExtendedCost);
             if (iece->reqhonorpoints)
                 ModifyHonorPoints(- int32(iece->reqhonorpoints));
+
             if (iece->reqarenapoints)
                 ModifyArenaPoints(- int32(iece->reqarenapoints));
+
             for (uint8 i = 0; i < 5; ++i)
             {
                 if (iece->reqitem[i])
@@ -17539,15 +17523,15 @@ bool Player::BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint
             }
         }
 
-        if (Item *it = EquipNewItem(dest, item, true ))
+        if (Item *it = EquipNewItem(dest, item, true))
         {
             uint32 new_count = pCreature->UpdateVendorItemCurrentCount(crItem,pProto->BuyCount * count);
 
             WorldPacket data(SMSG_BUY_ITEM, (8+4+4+4));
             data << pCreature->GetGUID();
-            data << (uint32)(vendor_slot+1);                // numbered from 1 at client
-            data << (uint32)(crItem->maxcount > 0 ? new_count : 0xFFFFFFFF);
-            data << (uint32)count;
+            data << uint32(vendorslot + 1);                 // numbered from 1 at client
+            data << uint32(crItem->maxcount > 0 ? new_count : 0xFFFFFFFF);
+            data << uint32(count);
             GetSession()->SendPacket(&data);
 
             SendNewItem(it, pProto->BuyCount*count, true, false, false);
@@ -17561,7 +17545,7 @@ bool Player::BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint
         return false;
     }
 
-    return crItem->maxcount!=0;
+    return crItem->maxcount != 0;
 }
 
 uint32 Player::GetMaxPersonalArenaRatingRequirement()
@@ -17576,7 +17560,7 @@ uint32 Player::GetMaxPersonalArenaRatingRequirement()
         {
             uint32 p_rating = GetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (i * 6) + 5);
             uint32 t_rating = at->GetRating();
-            p_rating = p_rating<t_rating? p_rating : t_rating;
+            p_rating = p_rating < t_rating ? p_rating : t_rating;
             if (max_personal_rating < p_rating)
                 max_personal_rating = p_rating;
         }
