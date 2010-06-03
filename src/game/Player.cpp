@@ -8368,7 +8368,7 @@ void Player::SetSheath(uint32 sheathed )
     SetByteValue(UNIT_FIELD_BYTES_2, 0, sheathed);          // this must visualize Sheath changing for other players...
 }
 
-uint8 Player::FindEquipSlot(ItemPrototype const* proto, uint32 slot, bool swap ) const
+uint8 Player::FindEquipSlot(ItemPrototype const* proto, uint32 slot, bool swap) const
 {
     uint8 pClass = getClass();
 
@@ -8377,7 +8377,7 @@ uint8 Player::FindEquipSlot(ItemPrototype const* proto, uint32 slot, bool swap )
     slots[1] = NULL_SLOT;
     slots[2] = NULL_SLOT;
     slots[3] = NULL_SLOT;
-    switch(proto->InventoryType )
+    switch (proto->InventoryType)
     {
         case INVTYPE_HEAD:
             slots[0] = EQUIPMENT_SLOT_HEAD;
@@ -8431,7 +8431,8 @@ uint8 Player::FindEquipSlot(ItemPrototype const* proto, uint32 slot, bool swap )
             // (this will be replace mainhand weapon at auto equip instead unwonted "you don't known dual wielding" ...
             if (CanDualWield())
                 slots[1] = EQUIPMENT_SLOT_OFFHAND;
-        };break;
+            break;
+        };
         case INVTYPE_SHIELD:
             slots[0] = EQUIPMENT_SLOT_OFFHAND;
             break;
@@ -8460,10 +8461,10 @@ uint8 Player::FindEquipSlot(ItemPrototype const* proto, uint32 slot, bool swap )
             slots[0] = EQUIPMENT_SLOT_RANGED;
             break;
         case INVTYPE_BAG:
-            slots[0] = INVENTORY_SLOT_BAG_1;
-            slots[1] = INVENTORY_SLOT_BAG_2;
-            slots[2] = INVENTORY_SLOT_BAG_3;
-            slots[3] = INVENTORY_SLOT_BAG_4;
+            slots[0] = INVENTORY_SLOT_BAG_START + 0;
+            slots[1] = INVENTORY_SLOT_BAG_START + 1;
+            slots[2] = INVENTORY_SLOT_BAG_START + 2;
+            slots[3] = INVENTORY_SLOT_BAG_START + 3;
             break;
         case INVTYPE_RELIC:
         {
@@ -8488,27 +8489,22 @@ uint8 Player::FindEquipSlot(ItemPrototype const* proto, uint32 slot, bool swap )
             }
             break;
         }
-        default :
+        default:
             return NULL_SLOT;
     }
 
-    if (slot != NULL_SLOT )
+    if (slot != NULL_SLOT)
     {
-        if (swap || !GetItemByPos(INVENTORY_SLOT_BAG_0, slot ) )
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                if (slots[i] == slot )
+        if (swap || !GetItemByPos(INVENTORY_SLOT_BAG_0, slot))
+            for (uint8 i = 0; i < 4; ++i)
+                if (slots[i] == slot)
                     return slot;
-            }
-        }
     }
     else
     {
         // search free slot at first
-        for (int i = 0; i < 4; i++)
-        {
-            if (slots[i] != NULL_SLOT && !GetItemByPos(INVENTORY_SLOT_BAG_0, slots[i] ) )
+        for (uint8 i = 0; i < 4; ++i)
+            if (slots[i] != NULL_SLOT && !GetItemByPos(INVENTORY_SLOT_BAG_0, slots[i]))
             {
                 // in case 2hand equipped weapon offhand slot empty but not free
                 if (slots[i]==EQUIPMENT_SLOT_OFFHAND)
@@ -8520,188 +8516,141 @@ uint8 Player::FindEquipSlot(ItemPrototype const* proto, uint32 slot, bool swap )
                 else
                     return slots[i];
             }
-        }
 
         // if not found free and can swap return first appropriate from used
-        for (int i = 0; i < 4; i++)
-        {
-            if (slots[i] != NULL_SLOT && swap )
+        for (uint8 i = 0; i < 4; ++i)
+            if (slots[i] != NULL_SLOT && swap)
                 return slots[i];
-        }
     }
 
     // no free position
     return NULL_SLOT;
 }
 
-uint8 Player::CanUnequipItems(uint32 item, uint32 count ) const
+uint8 Player::CanUnequipItems(uint32 item, uint32 count) const
 {
     Item *pItem;
     uint32 tempcount = 0;
 
     uint8 res = EQUIP_ERR_OK;
 
-    for (int i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_BAG_END; i++)
-    {
-        pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-        if (pItem && pItem->GetEntry() == item )
-        {
-            uint8 ires = CanUnequipItem(INVENTORY_SLOT_BAG_0 << 8 | i, false);
-            if (ires==EQUIP_ERR_OK)
+    for (uint8 i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_BAG_END; ++i)
+        if (Item *pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+            if (pItem->GetEntry() == item)
             {
-                tempcount += pItem->GetCount();
-                if (tempcount >= count )
-                    return EQUIP_ERR_OK;
-            }
-            else
-                res = ires;
-        }
-    }
-    for (int i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; i++)
-    {
-        pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-        if (pItem && pItem->GetEntry() == item )
-        {
-            tempcount += pItem->GetCount();
-            if (tempcount >= count )
-                return EQUIP_ERR_OK;
-        }
-    }
-    for (int i = KEYRING_SLOT_START; i < KEYRING_SLOT_END; i++)
-    {
-        pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-        if (pItem && pItem->GetEntry() == item )
-        {
-            tempcount += pItem->GetCount();
-            if (tempcount >= count )
-                return EQUIP_ERR_OK;
-        }
-    }
-    Bag *pBag;
-    for (int i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; i++)
-    {
-        pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-        if (pBag )
-        {
-            for (uint32 j = 0; j < pBag->GetBagSize(); j++)
-            {
-                pItem = GetItemByPos(i, j);
-                if (pItem && pItem->GetEntry() == item )
+                uint8 ires = CanUnequipItem(INVENTORY_SLOT_BAG_0 << 8 | i, false);
+                if (ires == EQUIP_ERR_OK)
                 {
                     tempcount += pItem->GetCount();
-                    if (tempcount >= count )
+                    if (tempcount >= count)
                         return EQUIP_ERR_OK;
                 }
+                else
+                    res = ires;
             }
-        }
-    }
+
+    for (uint8 i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; ++i)
+        if (Item *pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+            if (pItem->GetEntry() == item)
+            {
+                tempcount += pItem->GetCount();
+                if (tempcount >= count)
+                    return EQUIP_ERR_OK;
+            }
+
+    for (uint8 i = KEYRING_SLOT_START; i < KEYRING_SLOT_END; ++i)
+        if (Item *pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+            if (pItem->GetEntry() == item)
+            {
+                tempcount += pItem->GetCount();
+                if (tempcount >= count)
+                    return EQUIP_ERR_OK;
+            }
+
+    for (uint8 i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; ++i)
+        if (Bag *pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+            for (uint32 j = 0; j < pBag->GetBagSize(); ++j)
+                if (Item *pItem = GetItemByPos(i, j))
+                    if (pItem->GetEntry() == item)
+                    {
+                        tempcount += pItem->GetCount();
+                        if (tempcount >= count)
+                            return EQUIP_ERR_OK;
+                    }
 
     // not found req. item count and have unequippable items
     return res;
 }
 
-uint32 Player::GetItemCount(uint32 item, bool inBankAlso, Item* skipItem ) const
+uint32 Player::GetItemCount(uint32 item, bool inBankAlso, Item* skipItem) const
 {
     uint32 count = 0;
-    for (int i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_ITEM_END; i++)
-    {
-        Item *pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-        if (pItem && pItem != skipItem &&  pItem->GetEntry() == item )
-            count += pItem->GetCount();
-    }
-    for (int i = KEYRING_SLOT_START; i < KEYRING_SLOT_END; i++)
-    {
-        Item *pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-        if (pItem && pItem != skipItem && pItem->GetEntry() == item )
-            count += pItem->GetCount();
-    }
-    for (int i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; i++)
-    {
-        Bag* pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-        if (pBag )
+    for (uint8 i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_ITEM_END; i++)
+        if (Item *pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+            if (pItem != skipItem &&  pItem->GetEntry() == item)
+                count += pItem->GetCount();
+
+    for (uint8 i = KEYRING_SLOT_START; i < KEYRING_SLOT_END; ++i)
+        if (Item *pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+            if (pItem != skipItem && pItem->GetEntry() == item)
+                count += pItem->GetCount();
+
+    for (uint8 i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; ++i)
+        if (Bag* pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, i))
             count += pBag->GetItemCount(item,skipItem);
-    }
 
     if (skipItem && skipItem->GetProto()->GemProperties)
-    {
-        for (int i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_ITEM_END; i++)
-        {
-            Item *pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-            if (pItem && pItem != skipItem && pItem->GetProto()->Socket[0].Color )
-                count += pItem->GetGemCountWithID(item);
-        }
-    }
+        for (uint8 i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_ITEM_END; ++i)
+            if (Item *pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+                if (pItem != skipItem && pItem->GetProto()->Socket[0].Color)
+                    count += pItem->GetGemCountWithID(item);
 
     if (inBankAlso)
     {
-        for (int i = BANK_SLOT_ITEM_START; i < BANK_SLOT_ITEM_END; i++)
-        {
-            Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-            if (pItem && pItem != skipItem && pItem->GetEntry() == item )
-                count += pItem->GetCount();
-        }
-        for (int i = BANK_SLOT_BAG_START; i < BANK_SLOT_BAG_END; i++)
-        {
-            Bag* pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-            if (pBag )
+        for (uint8 i = BANK_SLOT_ITEM_START; i < BANK_SLOT_ITEM_END; ++i)
+            if (Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+                if (pItem != skipItem && pItem->GetEntry() == item)
+                    count += pItem->GetCount();
+
+        for (uint8 i = BANK_SLOT_BAG_START; i < BANK_SLOT_BAG_END; ++i)
+            if (Bag* pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, i))
                 count += pBag->GetItemCount(item,skipItem);
-        }
 
         if (skipItem && skipItem->GetProto()->GemProperties)
-        {
-            for (int i = BANK_SLOT_ITEM_START; i < BANK_SLOT_ITEM_END; i++)
-            {
-                Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-                if (pItem && pItem != skipItem && pItem->GetProto()->Socket[0].Color )
-                    count += pItem->GetGemCountWithID(item);
-            }
-        }
+            for (uint8 i = BANK_SLOT_ITEM_START; i < BANK_SLOT_ITEM_END; ++i)
+                if (Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+                    if (pItem != skipItem && pItem->GetProto()->Socket[0].Color)
+                        count += pItem->GetGemCountWithID(item);
     }
 
     return count;
 }
 
-Item* Player::GetItemByGuid(uint64 guid ) const
+Item* Player::GetItemByGuid(uint64 guid) const
 {
-    for (int i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_ITEM_END; i++)
-    {
-        Item *pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-        if (pItem && pItem->GetGUID() == guid )
-            return pItem;
-    }
-    for (int i = KEYRING_SLOT_START; i < KEYRING_SLOT_END; i++)
-    {
-        Item *pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-        if (pItem && pItem->GetGUID() == guid )
-            return pItem;
-    }
+    for (uint8 i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_ITEM_END; ++i)
+        if (Item *pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+            if (pItem->GetGUID() == guid)
+                return pItem;
 
-    for (int i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; i++)
-    {
-        Bag *pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-        if (pBag )
-        {
-            for (uint32 j = 0; j < pBag->GetBagSize(); j++)
-            {
-                Item* pItem = pBag->GetItemByPos(j);
-                if (pItem && pItem->GetGUID() == guid )
-                    return pItem;
-            }
-        }
-    }
-    for (int i = BANK_SLOT_BAG_START; i < BANK_SLOT_BAG_END; i++)
-    {
-        Bag *pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-        if (pBag )
-        {
-            for (uint32 j = 0; j < pBag->GetBagSize(); j++)
-            {
-                Item* pItem = pBag->GetItemByPos(j);
-                if (pItem && pItem->GetGUID() == guid )
-                    return pItem;
-            }
-        }
-    }
+    for (uint8 i = KEYRING_SLOT_START; i < KEYRING_SLOT_END; ++i)
+        if (Item *pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+            if (pItem->GetGUID() == guid)
+                return pItem;
+
+    for (uint8 i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; ++i)
+        if (Bag *pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+            for (uint32 j = 0; j < pBag->GetBagSize(); ++j)
+                if (Item* pItem = pBag->GetItemByPos(j))
+                    if (pItem->GetGUID() == guid)
+                        return pItem;
+
+    for (uint8 i = BANK_SLOT_BAG_START; i < BANK_SLOT_BAG_END; ++i)
+        if (Bag *pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+            for (uint32 j = 0; j < pBag->GetBagSize(); ++j)
+                if (Item* pItem = pBag->GetItemByPos(j))
+                    if (pItem->GetGUID() == guid)
+                        return pItem;
 
     return NULL;
 }
@@ -8792,7 +8741,7 @@ bool Player::IsInventoryPos(uint8 bag, uint8 slot)
         return true;
     if (bag >= INVENTORY_SLOT_BAG_START && bag < INVENTORY_SLOT_BAG_END)
         return true;
-    if (bag == INVENTORY_SLOT_BAG_0 && (slot >= KEYRING_SLOT_START && slot < KEYRING_SLOT_END ) )
+    if (bag == INVENTORY_SLOT_BAG_0 && (slot >= KEYRING_SLOT_START && slot < KEYRING_SLOT_END))
         return true;
     return false;
 }
@@ -8975,7 +8924,7 @@ bool Player::HasItemCount(uint32 item, uint32 count, bool inBankAlso) const
 Item* Player::GetItemOrItemWithGemEquipped(uint32 item ) const
 {
     Item *pItem;
-    for (int i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; i++)
+    for (uint8 i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; ++i)
     {
         pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
         if (pItem && pItem->GetEntry() == item )
@@ -8985,7 +8934,7 @@ Item* Player::GetItemOrItemWithGemEquipped(uint32 item ) const
     ItemPrototype const *pProto = objmgr.GetItemPrototype(item);
     if (pProto && pProto->GemProperties)
     {
-        for (int i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; i++)
+        for (uint8 i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; ++i)
         {
             pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
             if (pItem && pItem->GetProto()->Socket[0].Color )
@@ -8999,7 +8948,7 @@ Item* Player::GetItemOrItemWithGemEquipped(uint32 item ) const
     return NULL;
 }
 
-uint8 Player::_CanTakeMoreSimilarItems(uint32 entry, uint32 count, Item* pItem, uint32* no_space_count ) const
+uint8 Player::_CanTakeMoreSimilarItems(uint32 entry, uint32 count, Item* pItem, uint32* no_space_count) const
 {
     ItemPrototype const *pProto = objmgr.GetItemPrototype(entry);
     if (!pProto)
@@ -9028,29 +8977,29 @@ uint8 Player::_CanTakeMoreSimilarItems(uint32 entry, uint32 count, Item* pItem, 
     return EQUIP_ERR_OK;
 }
 
-bool Player::HasItemTotemCategory(uint32 TotemCategory ) const
+bool Player::HasItemTotemCategory(uint32 TotemCategory) const
 {
     Item *pItem;
     for (uint8 i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_ITEM_END; ++i)
     {
         pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-        if (pItem && IsTotemCategoryCompatiableWith(pItem->GetProto()->TotemCategory,TotemCategory ))
+        if (pItem && IsTotemCategoryCompatiableWith(pItem->GetProto()->TotemCategory,TotemCategory))
             return true;
     }
     for (uint8 i = KEYRING_SLOT_START; i < KEYRING_SLOT_END; ++i)
     {
         pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-        if (pItem && IsTotemCategoryCompatiableWith(pItem->GetProto()->TotemCategory,TotemCategory ))
+        if (pItem && IsTotemCategoryCompatiableWith(pItem->GetProto()->TotemCategory,TotemCategory))
             return true;
     }
     for (uint8 i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; ++i)
     {
-        if (Bag *pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, i ))
+        if (Bag *pBag = (Bag*)GetItemByPos(INVENTORY_SLOT_BAG_0, i))
         {
             for (uint32 j = 0; j < pBag->GetBagSize(); ++j)
             {
                 pItem = GetItemByPos(i, j);
-                if (pItem && IsTotemCategoryCompatiableWith(pItem->GetProto()->TotemCategory,TotemCategory ))
+                if (pItem && IsTotemCategoryCompatiableWith(pItem->GetProto()->TotemCategory,TotemCategory))
                     return true;
             }
         }
@@ -16484,7 +16433,7 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
                 {
                     ItemPosCountVec dest;                   //for succubus, voidwalker, felhunter and felguard credit soulshard when despawn reason other than death (out of range, logout)
                     uint8 msg = CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, spellInfo->Reagent[i], spellInfo->ReagentCount[i]);
-                    if (msg == EQUIP_ERR_OK )
+                    if (msg == EQUIP_ERR_OK)
                     {
                         Item* item = StoreNewItem(dest, spellInfo->Reagent[i], true);
                         if (IsInWorld())
@@ -16496,7 +16445,7 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
         m_temporaryUnsummonedPetNumber = 0;
     }
 
-    if (!pet || pet->GetOwnerGUID()!=GetGUID())
+    if (!pet || pet->GetOwnerGUID() != GetGUID())
         return;
 
     // only if current pet in slot
@@ -16642,7 +16591,7 @@ void Player::Yell(const std::string& text, const uint32 language)
     WorldPacket data(SMSG_MESSAGECHAT, 200);
     BuildPlayerChat(&data, CHAT_MSG_YELL, text, language);
     SendMessageToSetInRange(&data,sWorld.getConfig(CONFIG_LISTEN_RANGE_YELL),true);
-    
+
     if (sWorld.getConfig(CONFIG_CHATLOG_PUBLIC))
         sLog.outChat("[YELL] Player %s yells (language %u): %s",
             GetName(), language, text.c_str());
@@ -16653,7 +16602,7 @@ void Player::TextEmote(const std::string& text)
     WorldPacket data(SMSG_MESSAGECHAT, 200);
     BuildPlayerChat(&data, CHAT_MSG_EMOTE, text, LANG_UNIVERSAL);
     SendMessageToSetInRange(&data,sWorld.getConfig(CONFIG_LISTEN_RANGE_TEXTEMOTE),true, !sWorld.getConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_CHAT), true);
-    
+
     if (sWorld.getConfig(CONFIG_CHATLOG_PUBLIC))
         sLog.outChat("[TEXTEMOTE] Player %s emotes: %s",
             GetName(), text.c_str());
