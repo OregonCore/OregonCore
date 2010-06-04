@@ -30,7 +30,7 @@
 #include "UpdateMask.h"
 #include "SpellAuras.h"
 
-void WorldSession::HandleLearnTalentOpcode(WorldPacket & recv_data )
+void WorldSession::HandleLearnTalentOpcode(WorldPacket & recv_data)
 {
     uint32 talent_id, requested_rank;
     recv_data >> talent_id >> requested_rank;
@@ -144,7 +144,7 @@ void WorldSession::HandleTalentWipeOpcode(WorldPacket & recv_data )
     uint64 guid;
     recv_data >> guid;
 
-    Creature *unit = ObjectAccessor::GetNPCIfCanInteractWith(*_player, guid,UNIT_NPC_FLAG_TRAINER);
+    Creature *unit = GetPlayer()->GetNPCIfCanInteractWith(guid,UNIT_NPC_FLAG_TRAINER);
     if (!unit)
     {
         sLog.outDebug("WORLD: HandleTalentWipeOpcode - Unit (GUID: %u) not found or you can't interact with him.", uint32(GUID_LOPART(guid)));

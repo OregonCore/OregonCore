@@ -743,6 +743,14 @@ enum EnviromentalDamage
     DAMAGE_FALL_TO_VOID = 6                                 // custom case for fall without durability loss
 };
 
+enum PlayedTimeIndex
+{
+    PLAYED_TIME_TOTAL = 0,
+    PLAYED_TIME_LEVEL = 1
+};
+
+#define MAX_PLAYED_TIME_INDEX 2
+
 // used at player loading query list preparing, and later result selection
 enum PlayerLoginQueryIndex
 {
@@ -819,7 +827,7 @@ class OREGON_DLL_SPEC PlayerTaxi
         {
             uint8  field   = uint8((nodeidx - 1) / 32);
             uint32 submask = 1<<((nodeidx-1)%32);
-            if ((m_taximask[field] & submask) != submask )
+            if ((m_taximask[field] & submask) != submask)
             {
                 m_taximask[field] |= submask;
                 return true;
@@ -909,12 +917,13 @@ class OREGON_DLL_SPEC Player : public Unit
         void SendTransferAborted(uint32 mapid, uint16 reason);
         void SendInstanceResetWarning(uint32 mapid, uint32 time);
 
+        Creature* GetNPCIfCanInteractWith(uint64 guid, uint32 npcflagmask);
         bool CanInteractWithNPCs(bool alive = true) const;
 
         bool ToggleAFK();
         bool ToggleDND();
-        bool isAFK() const { return HasFlag(PLAYER_FLAGS,PLAYER_FLAGS_AFK); };
-        bool isDND() const { return HasFlag(PLAYER_FLAGS,PLAYER_FLAGS_DND); };
+        bool isAFK() const { return HasFlag(PLAYER_FLAGS,PLAYER_FLAGS_AFK); }
+        bool isDND() const { return HasFlag(PLAYER_FLAGS,PLAYER_FLAGS_DND); }
         uint8 chatTag() const;
         std::string afkMsg;
         std::string dndMsg;
@@ -944,9 +953,9 @@ class OREGON_DLL_SPEC Player : public Unit
         // Played Time Stuff
         time_t m_logintime;
         time_t m_Last_tick;
-        uint32 m_Played_time[2];
-        uint32 GetTotalPlayedTime() { return m_Played_time[0]; };
-        uint32 GetLevelPlayedTime() { return m_Played_time[1]; };
+        uint32 m_Played_time[MAX_PLAYED_TIME_INDEX];
+        uint32 GetTotalPlayedTime() { return m_Played_time[PLAYED_TIME_TOTAL]; }
+        uint32 GetLevelPlayedTime() { return m_Played_time[PLAYED_TIME_LEVEL]; }
 
         void setDeathState(DeathState s);                   // overwrite Unit::setDeathState
 
@@ -957,21 +966,21 @@ class OREGON_DLL_SPEC Player : public Unit
             inn_pos_y = y;
             inn_pos_z = z;
             time_inn_enter = time;
-        };
+        }
 
-        float GetRestBonus() const { return m_rest_bonus; };
+        float GetRestBonus() const { return m_rest_bonus; }
         void SetRestBonus(float rest_bonus_new);
 
-        RestType GetRestType() const { return rest_type; };
-        void SetRestType(RestType n_r_type) { rest_type = n_r_type; };
+        RestType GetRestType() const { return rest_type; }
+        void SetRestType(RestType n_r_type) { rest_type = n_r_type; }
 
-        uint32 GetInnPosMapId() const { return inn_pos_mapid; };
-        float GetInnPosX() const { return inn_pos_x; };
-        float GetInnPosY() const { return inn_pos_y; };
-        float GetInnPosZ() const { return inn_pos_z; };
+        uint32 GetInnPosMapId() const { return inn_pos_mapid; }
+        float GetInnPosX() const { return inn_pos_x; }
+        float GetInnPosY() const { return inn_pos_y; }
+        float GetInnPosZ() const { return inn_pos_z; }
 
-        int GetTimeInnEnter() const { return time_inn_enter; };
-        void UpdateInnerTime (int time) { time_inn_enter = time; };
+        int GetTimeInnEnter() const { return time_inn_enter; }
+        void UpdateInnerTime (int time) { time_inn_enter = time; }
 
         Pet* SummonPet(uint32 entry, float x, float y, float z, float ang, PetType petType, uint32 despwtime);
         void RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent = false);

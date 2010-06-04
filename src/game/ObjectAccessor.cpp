@@ -85,57 +85,7 @@ ObjectAccessor::~ObjectAccessor()
         delete itr->second;
 }
 
-Creature* ObjectAccessor::GetNPCIfCanInteractWith(Player const &player, uint64 guid, uint32 npcflagmask)
-{
-    // unit checks
-    if (!guid)
-        return NULL;
-
-    // exist
-    Creature *unit = player.GetMap()->GetCreature(guid);
-    if (!unit)
-        return NULL;
-
-    // player check
-    if (!player.CanInteractWithNPCs(!unit->isSpiritService()))
-        return NULL;
-
-    if (player.IsHostileTo(unit))
-        return NULL;
-    
-    // appropriate npc type
-    if (npcflagmask && !unit->HasFlag(UNIT_NPC_FLAGS, npcflagmask ))
-        return NULL;
-
-    // alive or spirit healer
-    if (!unit->isAlive() && (!unit->isSpiritService() || player.isAlive() ))
-        return NULL;
-
-    // not allow interaction under control
-    if (unit->GetCharmerGUID())
-        return NULL;
-
-    // not enemy
-    if (unit->IsHostileTo(&player))
-        return NULL;
-
-    // not unfriendly
-    FactionTemplateEntry const* factionTemplate = sFactionTemplateStore.LookupEntry(unit->getFaction());
-    if (factionTemplate)
-    {
-        FactionEntry const* faction = sFactionStore.LookupEntry(factionTemplate->faction);
-        if (faction->reputationListID >= 0 && player.GetReputationRank(faction) <= REP_UNFRIENDLY)
-            return NULL;
-    }
-
-    // not too far
-    if (!unit->IsWithinDistInMap(&player,INTERACTION_DISTANCE))
-        return NULL;
-
-    return unit;
-}
-
-Creature* ObjectAccessor::GetCreatureOrPet(WorldObject const &u, uint64 guid)
+Creature* ObjectAccessor::GetCreatureOrPet(WorldObject const& u, uint64 guid)
 {
     if (Creature *unit = GetPet(guid))
         return unit;
@@ -163,7 +113,7 @@ ObjectAccessor::GetCorpse(WorldObject const &u, uint64 guid)
     return ret;
 }
 
-Object* ObjectAccessor::GetObjectByTypeMask(Player const &p, uint64 guid, uint32 typemask)
+Object* ObjectAccessor::GetObjectByTypeMask(Player const& p, uint64 guid, uint32 typemask)
 {
     Object *obj = NULL;
 
@@ -326,14 +276,15 @@ Corpse* ObjectAccessor::GetCorpseForPlayerGUID(uint64 guid)
     Guard guard(i_corpseGuard);
 
     Player2CorpsesMapType::iterator iter = i_player2corpse.find(guid);
-    if (iter == i_player2corpse.end() ) return NULL;
+    if (iter == i_player2corpse.end())
+        return NULL;
 
     assert(iter->second->GetType() != CORPSE_BONES);
 
     return iter->second;
 }
 
-void ObjectAccessor::RemoveCorpse(Corpse *corpse)
+void ObjectAccessor::RemoveCorpse(Corpse* corpse)
 {
     assert(corpse && corpse->GetType() != CORPSE_BONES);
 
@@ -352,7 +303,7 @@ void ObjectAccessor::RemoveCorpse(Corpse *corpse)
     i_player2corpse.erase(iter);
 }
 
-void ObjectAccessor::AddCorpse(Corpse *corpse)
+void ObjectAccessor::AddCorpse(Corpse* corpse)
 {
     assert(corpse && corpse->GetType() != CORPSE_BONES);
 
@@ -367,9 +318,10 @@ void ObjectAccessor::AddCorpse(Corpse *corpse)
     objmgr.AddCorpseCellData(corpse->GetMapId(),cell_id,corpse->GetOwnerGUID(),corpse->GetInstanceId());
 }
 
-void ObjectAccessor::AddCorpsesToGrid(GridPair const& gridpair,GridType& grid,Map* map)
+void ObjectAccessor::AddCorpsesToGrid(GridPair const& gridpair, GridType& grid, Map* map)
 {
     Guard guard(i_corpseGuard);
+
     for (Player2CorpsesMapType::iterator iter = i_player2corpse.begin(); iter != i_player2corpse.end(); ++iter)
         if (iter->second->GetGrid()==gridpair)
     {
@@ -390,7 +342,7 @@ void ObjectAccessor::AddCorpsesToGrid(GridPair const& gridpair,GridType& grid,Ma
 
 Corpse* ObjectAccessor::ConvertCorpseForPlayer(uint64 player_guid, bool insignia)
 {
-    Corpse *corpse = GetCorpseForPlayerGUID(player_guid);
+    Corpse* corpse = GetCorpseForPlayerGUID(player_guid);
     if (!corpse)
     {
         //in fact this function is called from several places
@@ -399,7 +351,7 @@ Corpse* ObjectAccessor::ConvertCorpseForPlayer(uint64 player_guid, bool insignia
         return NULL;
     }
 
-    DEBUG_LOG("Deleting Corpse and spawning bones.\n");
+    DEBUG_LOG("Deleting Corpse and spawned bones.");
 
     // remove corpse from player_guid -> corpse map
     RemoveCorpse(corpse);
@@ -416,14 +368,14 @@ Corpse* ObjectAccessor::ConvertCorpseForPlayer(uint64 player_guid, bool insignia
     // create the bones only if the map and the grid is loaded at the corpse's location
     // ignore bones creating option in case insignia
     if (map && (insignia ||
-       (map->IsBattleGroundOrArena() ? sWorld.getConfig(CONFIG_DEATH_BONES_BG_OR_ARENA) : sWorld.getConfig(CONFIG_DEATH_BONES_WORLD))) &&
+        (map->IsBattleGroundOrArena() ? sWorld.getConfig(CONFIG_DEATH_BONES_BG_OR_ARENA) : sWorld.getConfig(CONFIG_DEATH_BONES_WORLD))) &&
         !map->IsRemovalGrid(corpse->GetPositionX(), corpse->GetPositionY()))
     {
         // Create bones, don't change Corpse
         bones = new Corpse;
         bones->Create(corpse->GetGUIDLow());
 
-        for (int i = 3; i < CORPSE_END; i++)                    // don't overwrite guid and object type
+        for (int i = 3; i < CORPSE_END; ++i)                    // don't overwrite guid and object type
             bones->SetUInt32Value(i, corpse->GetUInt32Value(i));
 
         bones->SetGrid(corpse->GetGrid());
@@ -580,4 +532,3 @@ template Creature* ObjectAccessor::GetObjectInWorld<Creature>(uint32 mapid, floa
 template Corpse* ObjectAccessor::GetObjectInWorld<Corpse>(uint32 mapid, float x, float y, uint64 guid, Corpse* /*fake*/);
 template GameObject* ObjectAccessor::GetObjectInWorld<GameObject>(uint32 mapid, float x, float y, uint64 guid, GameObject* /*fake*/);
 template DynamicObject* ObjectAccessor::GetObjectInWorld<DynamicObject>(uint32 mapid, float x, float y, uint64 guid, DynamicObject* /*fake*/);
-

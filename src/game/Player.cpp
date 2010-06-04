@@ -657,8 +657,8 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
 
     // Played time
     m_Last_tick = time(NULL);
-    m_Played_time[0] = 0;
-    m_Played_time[1] = 0;
+    m_Played_time[PLAYED_TIME_TOTAL] = 0;
+    m_Played_time[PLAYED_TIME_LEVEL] = 0;
 
     // base stats and related field values
     InitStatsForLevel();
@@ -669,7 +669,7 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
     // apply original stats mods before spell loading or item equipment that call before equip _RemoveStatsMods()
     UpdateMaxHealth();                                      // Update max Health (for add bonus from stamina)
     SetHealth(GetMaxHealth());
-    if (getPowerType()==POWER_MANA)
+    if (getPowerType() == POWER_MANA)
     {
         UpdateMaxPower(POWER_MANA);                         // Update max Mana (for add bonus from intellect)
         SetPower(POWER_MANA,GetMaxPower(POWER_MANA));
@@ -1320,8 +1320,8 @@ void Player::Update(uint32 p_time )
     if (now > m_Last_tick)
     {
         uint32 elapsed = uint32(now - m_Last_tick);
-        m_Played_time[0] += elapsed;                        // Total played time
-        m_Played_time[1] += elapsed;                        // Level played time
+        m_Played_time[PLAYED_TIME_TOTAL] += elapsed;        // Total played time
+        m_Played_time[PLAYED_TIME_LEVEL] += elapsed;        // Level played time
         m_Last_tick = now;
     }
 
@@ -1329,12 +1329,12 @@ void Player::Update(uint32 p_time )
     {
         m_drunkTimer += p_time;
 
-        if (m_drunkTimer > 10000)
+        if (m_drunkTimer > 10*IN_MILISECONDS)
             HandleSobering();
     }
 
     // not auto-free ghost from body in instances
-    if (m_deathTimer > 0  && !GetBaseMap()->Instanceable())
+    if (m_deathTimer > 0 && !GetBaseMap()->Instanceable())
     {
         if (p_time >= m_deathTimer)
         {
@@ -2045,6 +2045,55 @@ bool Player::CanInteractWithNPCs(bool alive) const
     return true;
 }
 
+Creature*
+Player::GetNPCIfCanInteractWith(uint64 guid, uint32 npcflagmask)
+{
+    // unit checks
+    if (!guid)
+        return NULL;
+
+    if (!IsInWorld())
+        return NULL;
+
+    // exist
+    Creature *unit = player.GetMap()->GetCreature(guid);
+    if (!unit)
+        return NULL;
+
+    // player check
+    if (!CanInteractWithNPCs(!unit->isSpiritService()))
+        return NULL;
+
+    // appropriate npc type
+    if (npcflagmask && !unit->HasFlag(UNIT_NPC_FLAGS, npcflagmask))
+        return NULL;
+
+    // alive or spirit healer
+    if (!unit->isAlive() && (!unit->isSpiritService() || isAlive()))
+        return NULL;
+
+    // not allow interaction under control
+    if (unit->GetCharmerGUID())
+        return NULL;
+
+    // not enemy
+    if (unit->IsHostileTo(this))
+        return NULL;
+
+    // not unfriendly
+    if (FactionTemplateEntry const* factionTemplate = sFactionTemplateStore.LookupEntry(unit->getFaction()))
+        if (factionTemplate->faction)
+            if (FactionEntry const* faction = sFactionStore.LookupEntry(factionTemplate->faction))
+                if (faction->reputationListID >= 0 && GetReputationRank(faction) <= REP_UNFRIENDLY)
+                    return NULL;
+
+    // not too far
+    if (!unit->IsWithinDistInMap(this,INTERACTION_DISTANCE))
+        return NULL;
+
+    return unit;
+}
+
 bool Player::IsUnderWater() const
 {
     return IsInWater() &&
@@ -2283,7 +2332,7 @@ void Player::GiveLevel(uint32 level)
 
     //update level, max level of skills
     if (getLevel()!= level)
-        m_Played_time[1] = 0;                               // Level Played Time reset
+        m_Played_time[PLAYED_TIME_LEVEL] = 0;                               // Level Played Time reset
     SetLevel(level);
     UpdateSkillsForLevel ();
 
@@ -8525,7 +8574,6 @@ uint8 Player::FindEquipSlot(ItemPrototype const* proto, uint32 slot, bool swap) 
 
 uint8 Player::CanUnequipItems(uint32 item, uint32 count) const
 {
-    Item *pItem;
     uint32 tempcount = 0;
 
     uint8 res = EQUIP_ERR_OK;
@@ -13892,8 +13940,8 @@ bool Player::MinimalLoadFromDB(QueryResult_AutoPtr result, uint32 guid )
     SetMapId(fields[6].GetUInt32());
     // the instance id is not needed at character enum
 
-    m_Played_time[0] = fields[7].GetUInt32();
-    m_Played_time[1] = fields[8].GetUInt32();
+    m_Played_time[PLAYED_TIME_TOTAL] = fields[7].GetUInt32();
+    m_Played_time[PLAYED_TIME_LEVEL] = fields[8].GetUInt32();
 
     m_atLoginFlags = fields[9].GetUInt32();
 
@@ -14326,8 +14374,8 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder )
     }
 
     m_cinematic = fields[12].GetUInt32();
-    m_Played_time[0]= fields[13].GetUInt32();
-    m_Played_time[1]= fields[14].GetUInt32();
+    m_Played_time[PLAYED_TIME_TOTAL]= fields[13].GetUInt32();
+    m_Played_time[PLAYED_TIME_LEVEL]= fields[14].GetUInt32();
 
     m_resetTalentsCost = fields[18].GetUInt32();
     m_resetTalentsTime = time_t(fields[19].GetUInt64());
@@ -15659,11 +15707,10 @@ void Player::SaveToDB()
     ss << m_cinematic;
 
     ss << ", ";
-    ss << m_Played_time[0];
-    ss << ", ";
-    ss << m_Played_time[1];
 
-    ss << ", ";
+    ss << m_Played_time[PLAYED_TIME_TOTAL] << ", ";
+    ss << m_Played_time[PLAYED_TIME_LEVEL] << ", ";
+
     ss << finiteAlways(m_rest_bonus);
     ss << ", ";
     ss << (uint64)time(NULL);
@@ -17284,7 +17331,7 @@ bool Player::BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint
         return false;
     }
 
-    Creature *pCreature = ObjectAccessor::GetNPCIfCanInteractWith(*this, vendorguid,UNIT_NPC_FLAG_VENDOR);
+    Creature *pCreature = GetNPCIfCanInteractWith(vendorguid,UNIT_NPC_FLAG_VENDOR);
     if (!pCreature)
     {
         sLog.outDebug("WORLD: BuyItemFromVendor - Unit (GUID: %u) not found or you can't interact with him.", uint32(GUID_LOPART(vendorguid)));
