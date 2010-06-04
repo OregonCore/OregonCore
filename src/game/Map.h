@@ -73,7 +73,8 @@ typedef Oregon::SingleThreaded<GridRWLock>::Lock NullGuard;
 #define MAP_HEIGHT_MAGIC      'TGHM'
 #define MAP_LIQUID_MAGIC      'QILM'
 
-struct map_fileheader{
+struct map_fileheader
+{
     uint32 mapMagic;
     uint32 versionMagic;
     uint32 areaMapOffset;
@@ -85,7 +86,9 @@ struct map_fileheader{
 };
 
 #define MAP_AREA_NO_AREA      0x0001
-struct map_areaHeader{
+
+struct map_areaHeader
+{
     uint32 fourcc;
     uint16 flags;
     uint16 gridArea;
@@ -95,7 +98,8 @@ struct map_areaHeader{
 #define MAP_HEIGHT_AS_INT16   0x0002
 #define MAP_HEIGHT_AS_INT8    0x0004
 
-struct map_heightHeader{
+struct map_heightHeader
+{
     uint32 fourcc;
     uint32 flags;
     float  gridHeight;
@@ -104,7 +108,9 @@ struct map_heightHeader{
 
 #define MAP_LIQUID_NO_TYPE    0x0001
 #define MAP_LIQUID_NO_HEIGHT  0x0002
-struct map_liquidHeader{
+
+struct map_liquidHeader
+{
     uint32 fourcc;
     uint16 flags;
     uint16 liquidType;
@@ -115,7 +121,8 @@ struct map_liquidHeader{
     float  liquidLevel;
 };
 
-enum ZLiquidStatus{
+enum ZLiquidStatus
+{
     LIQUID_MAP_NO_WATER     = 0x00000000,
     LIQUID_MAP_ABOVE_WATER  = 0x00000001,
     LIQUID_MAP_WATER_WALK   = 0x00000002,
@@ -134,7 +141,8 @@ enum ZLiquidStatus{
 #define MAP_LIQUID_TYPE_DARK_WATER  0x10
 #define MAP_LIQUID_TYPE_WMO_WATER   0x20
 
-struct LiquidData{
+struct LiquidData
+{
     uint32 type;
     float  level;
     float  depth_level;
@@ -174,7 +182,7 @@ class GridMap
     bool  loadLiquidData(FILE *in, uint32 offset, uint32 size);
 
     // Get height functions and pointers
-    typedef float (GridMap::*pGetHeightPtr) (float x, float y) const; 
+    typedef float (GridMap::*pGetHeightPtr) (float x, float y) const;
     pGetHeightPtr m_gridGetHeight;
     float  getHeightFromFloat(float x, float y) const;
     float  getHeightFromUint16(float x, float y) const;
@@ -203,7 +211,7 @@ struct CreatureMover
 };
 
 // GCC have alternative #pragma pack(N) syntax and old gcc version not support pack(push,N), also any gcc version not support it at some platform
-#if defined(__GNUC__ )
+#if defined(__GNUC__)
 #pragma pack(1)
 #else
 #pragma pack(push,1)
@@ -212,7 +220,7 @@ struct CreatureMover
 struct InstanceTemplate
 {
     uint32 map;
-    uint32 parent;    
+    uint32 parent;
     uint32 maxPlayers;
     uint32 reset_delay;
     uint32 access_id;
@@ -228,7 +236,7 @@ enum LevelRequirementVsMode
     LEVELREQUIREMENT_HEROIC = 70
 };
 
-#if defined(__GNUC__ )
+#if defined(__GNUC__)
 #pragma pack()
 #else
 #pragma pack(pop)
@@ -278,7 +286,7 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         bool IsRemovalGrid(float x, float y) const
         {
             GridPair p = Oregon::ComputeGridPair(x, y);
-            return(!getNGrid(p.x_coord, p.y_coord) || getNGrid(p.x_coord, p.y_coord)->GetGridState() == GRID_STATE_REMOVAL);
+            return !getNGrid(p.x_coord, p.y_coord) || getNGrid(p.x_coord, p.y_coord)->GetGridState() == GRID_STATE_REMOVAL;
         }
 
         bool GetUnloadLock(const GridPair &p) const { return getNGrid(p.x_coord, p.y_coord)->getUnloadLock(); }
@@ -289,7 +297,7 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
 
         void ResetGridExpiry(NGridType &grid, float factor = 1) const
         {
-            grid.ResetTimeTracker((time_t)((float)i_gridExpiry*factor));
+            grid.ResetTimeTracker(time_t(float(i_gridExpiry)*factor));
         }
 
         time_t GetGridExpiry(void) const { return i_gridExpiry; }
@@ -311,8 +319,8 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         ZLiquidStatus getLiquidStatus(float x, float y, float z, uint8 ReqLiquidType, LiquidData *data = 0) const;
 
         uint16 GetAreaFlag(float x, float y) const;
-        uint8 GetTerrainType(float x, float y ) const;
-        float GetWaterLevel(float x, float y ) const;
+        uint8 GetTerrainType(float x, float y) const;
+        float GetWaterLevel(float x, float y) const;
         bool IsUnderWater(float x, float y, float z) const;
 
         static uint32 GetAreaId(uint16 areaflag,uint32 map_id);
@@ -361,8 +369,6 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         void resetMarkedCells() { marked_cells.reset(); }
         bool isCellMarked(uint32 pCellId) { return marked_cells.test(pCellId); }
         void markCell(uint32 pCellId) { marked_cells.set(pCellId); }
-        Creature* GetCreatureInMap(uint64 guid);
-        GameObject* GetGameObjectInMap(uint64 guid);
 
         bool HavePlayers() const { return !m_mapRefManager.isEmpty(); }
         uint32 GetPlayersCountExceptGMs() const;
@@ -419,14 +425,15 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         {
           return mtRand.randExc(100.0);
         }
-
+        Creature* GetCreature(uint64 guid);
+        GameObject* GetGameObject(uint64 guid);
+        DynamicObject* GetDynamicObject(uint64 guid);
     private:
         void LoadVMap(int pX, int pY);
         void LoadMap(uint32 mapid, uint32 instanceid, int x,int y);
         GridMap *GetGrid(float x, float y);
 
         void SetTimer(uint32 t) { i_gridExpiry = t < MIN_GRID_DELAY ? MIN_GRID_DELAY : t; }
-        //uint64 CalculateGridMask(const uint32 &y) const;
 
         void SendInitSelf(Player * player);
 

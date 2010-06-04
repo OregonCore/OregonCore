@@ -139,7 +139,7 @@ struct OREGON_DLL_DECL instance_zulaman : public ScriptedInstance
 
     void OpenDoor(uint64 DoorGUID, bool open)
     {
-        if(GameObject *Door = instance->GetGameObjectInMap(DoorGUID))
+        if(GameObject *Door = instance->GetGameObject(DoorGUID))
             Door->SetUInt32Value(GAMEOBJECT_STATE, open ? 0 : 1);
     }
 

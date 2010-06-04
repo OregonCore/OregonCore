@@ -145,7 +145,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
 
     void SetDoor(uint64 guid, bool open)
     {
-        GameObject *go = instance->GetGameObjectInMap(guid);
+        GameObject *go = instance->GetGameObject(guid);
         if(!go)
             return;
 
@@ -154,7 +154,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
     
     void BlockGO(uint64 guid)
     {
-        GameObject *go = instance->GetGameObjectInMap(guid);
+        GameObject *go = instance->GetGameObject(guid);
         if(!go)
             return;
         go->SetUInt32Value(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
@@ -165,7 +165,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
     {
         for(std::vector<uint64>::iterator i = stoneKeeper.begin(); i != stoneKeeper.end(); ++i)
         {
-            Creature *target = instance->GetCreatureInMap(*i);
+            Creature *target = instance->GetCreature(*i);
             if (!target || !target->isAlive() || target->getFaction()==14)
                 continue;
             target->RemoveFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_DISABLE_MOVE);
@@ -180,13 +180,13 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
 
     void ActivateWallMinions()
     {
-        Creature *archaedas = instance->GetCreatureInMap(archaedasGUID);
+        Creature *archaedas = instance->GetCreature(archaedasGUID);
         if(!archaedas)
             return;
 
         for(std::vector<uint64>::iterator i = archaedasWallMinions.begin(); i != archaedasWallMinions.end(); ++i)
         {
-            Creature *target = instance->GetCreatureInMap(*i);
+            Creature *target = instance->GetCreature(*i);
             if (!target || !target->isAlive() || target->getFaction()==14)
                 continue;
             archaedas->CastSpell(target, SPELL_AWAKEN_VAULT_WALKER, true);
@@ -201,7 +201,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         // first despawn any aggroed wall minions
         for(std::vector<uint64>::iterator i = archaedasWallMinions.begin(); i != archaedasWallMinions.end(); ++i)
         {
-            Creature *target = instance->GetCreatureInMap(*i);
+            Creature *target = instance->GetCreature(*i);
             if (!target || target->isDead() || target->getFaction()!=14)
                 continue;
             target->setDeathState(JUST_DIED);
@@ -211,7 +211,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         // Vault Walkers
         for(std::vector<uint64>::iterator i = vaultWalker.begin(); i != vaultWalker.end(); ++i)
         {
-            Creature *target = instance->GetCreatureInMap(*i);
+            Creature *target = instance->GetCreature(*i);
             if (!target || target->isDead() || target->getFaction()!=14)
                 continue;
             target->setDeathState(JUST_DIED);
@@ -221,7 +221,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         // Earthen Guardians
         for(std::vector<uint64>::iterator i = earthenGuardian.begin(); i != earthenGuardian.end(); ++i)
         {
-            Creature *target = instance->GetCreatureInMap(*i);
+            Creature *target = instance->GetCreature(*i);
             if (!target || target->isDead() || target->getFaction()!=14)
                 continue;
             target->setDeathState(JUST_DIED);
@@ -231,7 +231,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
 
     void ActivateArchaedas(uint64 target)
     {
-        Creature *archaedas = instance->GetCreatureInMap(archaedasGUID);
+        Creature *archaedas = instance->GetCreature(archaedasGUID);
         if(!archaedas)
             return;
 
@@ -244,7 +244,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
     
     void ActivateIronaya()
     {
-        Creature *ironaya = instance->GetCreatureInMap(ironayaGUID);
+        Creature *ironaya = instance->GetCreature(ironayaGUID);
         if(!ironaya)
             return;
 
@@ -258,7 +258,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         // first respawn any aggroed wall minions
         for(std::vector<uint64>::iterator i = archaedasWallMinions.begin(); i != archaedasWallMinions.end(); ++i)
         {
-            Creature *target = instance->GetCreatureInMap(*i);
+            Creature *target = instance->GetCreature(*i);
             if (target && target->isDead())
             {
                 target->Respawn();
@@ -270,7 +270,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         // Vault Walkers
         for(std::vector<uint64>::iterator i = vaultWalker.begin(); i != vaultWalker.end(); ++i)
         {
-            Creature *target = instance->GetCreatureInMap(*i);
+            Creature *target = instance->GetCreature(*i);
             if (target && target->isDead())
             {
                 target->Respawn();
@@ -282,7 +282,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         // Earthen Guardians
         for(std::vector<uint64>::iterator i = earthenGuardian.begin(); i != earthenGuardian.end(); ++i)
         {
-            Creature *target = instance->GetCreatureInMap(*i);
+            Creature *target = instance->GetCreature(*i);
             if (target && target->isDead())
             {
                 target->Respawn();

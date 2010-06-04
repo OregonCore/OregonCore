@@ -392,7 +392,7 @@ Map::EnsureGridCreated(const GridPair &p)
         Guard guard(*this);
         if (!getNGrid(p.x_coord, p.y_coord))
         {
-            sLog.outDebug("Loading grid[%u,%u] for map %u", p.x_coord, p.y_coord, i_id);
+            sLog.outDebug("Creating grid[%u,%u] for map %u instance %u", p.x_coord, p.y_coord, GetId(), i_InstanceId);
 
             setNGrid(new NGridType(p.x_coord*MAX_NUMBER_OF_GRIDS + p.y_coord, p.x_coord, p.y_coord, i_gridExpiry, sWorld.getConfig(CONFIG_GRID_UNLOAD)),
                 p.x_coord, p.y_coord);
@@ -2369,20 +2369,6 @@ void InstanceMap::Remove(Player *player, bool remove)
     SetResetSchedule(true);
 }
 
-Creature * Map::GetCreatureInMap(uint64 guid)
-{
-    Creature * obj = HashMapHolder<Creature>::Find(guid);
-    if (obj && obj->GetInstanceId() != GetInstanceId()) obj = NULL;
-    return obj;
-}
-
-GameObject * Map::GetGameObjectInMap(uint64 guid)
-{
-    GameObject * obj = HashMapHolder<GameObject>::Find(guid);
-    if (obj && obj->GetInstanceId() != GetInstanceId()) obj = NULL;
-    return obj;
-}
-
 void InstanceMap::CreateInstanceData(bool load)
 {
     if (i_data != NULL)
@@ -2600,5 +2586,46 @@ void BattleGroundMap::UnloadAll()
     Map::UnloadAll();
 }
 
-/*--------------------------OREGON-------------------------*/
+Creature*
+Map::GetCreature(uint64 guid)
+{
+    Creature * ret = ObjectAccessor::GetObjectInWorld(guid, (Creature*)NULL);
+
+    if (!ret)
+        return NULL;
+
+    if (ret->GetMapId() != GetId())
+        return NULL;
+
+    if (ret->GetInstanceId() != GetInstanceId())
+        return NULL;
+
+    return ret;
+}
+
+GameObject*
+Map::GetGameObject(uint64 guid)
+{
+    GameObject * ret = ObjectAccessor::GetObjectInWorld(guid, (GameObject*)NULL);
+    if (!ret)
+        return NULL;
+    if (ret->GetMapId() != GetId())
+        return NULL;
+    if (ret->GetInstanceId() != GetInstanceId())
+        return NULL;
+    return ret;
+}
+
+DynamicObject*
+Map::GetDynamicObject(uint64 guid)
+{
+    DynamicObject * ret = ObjectAccessor::GetObjectInWorld(guid, (DynamicObject*)NULL);
+    if (!ret)
+        return NULL;
+    if (ret->GetMapId() != GetId())
+        return NULL;
+    if (ret->GetInstanceId() != GetInstanceId())
+        return NULL;
+    return ret;
+}
 

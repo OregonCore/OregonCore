@@ -141,18 +141,15 @@ class OREGON_DLL_DECL ObjectAccessor : public Oregon::Singleton<ObjectAccessor, 
 
         static Object*   GetObjectByTypeMask(Player const &, uint64, uint32 typemask);
         static Creature* GetNPCIfCanInteractWith(Player const &player, uint64 guid, uint32 npcflagmask);
-        static Creature* GetCreature(WorldObject const &, uint64);
-        static Creature* GetCreatureOrPet(WorldObject const &, uint64);
+        static Creature* GetCreatureOrPet(WorldObject const&, uint64);
         static Unit* GetUnit(WorldObject const &, uint64);
-        static Pet* GetPet(Unit const &, uint64 guid) { return GetPet(guid); }
-        static Player* GetPlayer(Unit const &, uint64 guid) { return FindPlayer(guid); }
-        static GameObject* GetGameObject(WorldObject const &, uint64);
-        static DynamicObject* GetDynamicObject(Unit const &, uint64);
-        static Corpse* GetCorpse(WorldObject const &u, uint64 guid);
+        static Pet* GetPet(Unit const&, uint64 guid) { return GetPet(guid); }
+        static Player* GetPlayer(Unit const&, uint64 guid) { return FindPlayer(guid); }
+        static Corpse* GetCorpse(WorldObject const& u, uint64 guid);
         static Pet* GetPet(uint64 guid);
         static Player* FindPlayer(uint64);
 
-        Player* FindPlayerByName(const char *name) ;
+        Player* FindPlayerByName(const char* name) ;
 
         HashMapHolder<Player>::MapType& GetPlayers()
         {

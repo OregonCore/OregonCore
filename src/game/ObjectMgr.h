@@ -406,7 +406,7 @@ class ObjectMgr
         bool IsGameObjectForQuests(uint32 entry) const { return mGameObjectForQuestSet.count(entry) != 0; }
         bool IsGuildVaultGameObject(Player *player, uint64 guid) const
         {
-            if (GameObject *go = ObjectAccessor::GetGameObject(*player, guid))
+            if (GameObject *go = player->GetMap()->GetGameObject(guid))
                 if (go->GetGoType() == GAMEOBJECT_TYPE_GUILD_BANK)
                     return true;
             return false;

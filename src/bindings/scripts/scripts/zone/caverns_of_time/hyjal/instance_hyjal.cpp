@@ -114,7 +114,7 @@ struct OREGON_DLL_DECL instance_mount_hyjal : public ScriptedInstance
 
     void OpenDoor(uint64 DoorGUID, bool open)
     {
-        if(GameObject *Door = instance->GetGameObjectInMap(DoorGUID))
+        if(GameObject *Door = instance->GetGameObject(DoorGUID))
             Door->SetUInt32Value(GAMEOBJECT_STATE, open ? 0 : 1);
     }
 
@@ -167,7 +167,7 @@ struct OREGON_DLL_DECL instance_mount_hyjal : public ScriptedInstance
                         if(ArchiYell)break;
                         ArchiYell = true;
 
-                        Creature* pCreature = instance->GetCreatureInMap(Azgalor);
+                        Creature* pCreature = instance->GetCreature(Azgalor);
                         if(pCreature)
                         {
                             Creature* pUnit = pCreature->SummonCreature(21987,pCreature->GetPositionX(),pCreature->GetPositionY(),pCreature->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN,10000);

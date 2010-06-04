@@ -667,7 +667,7 @@ void GameObject::DeleteFromDB()
 
 GameObject* GameObject::GetGameObject(WorldObject& object, uint64 guid)
 {
-    return ObjectAccessor::GetGameObject(object,guid);
+    return object.GetMap()->GetGameObject(guid);
 }
 
 GameObjectInfo const *GameObject::GetGOInfo() const

@@ -42,10 +42,10 @@ void WorldSession::HandleTaxiNodeStatusQueryOpcode(WorldPacket & recv_data )
     SendTaxiStatus(guid);
 }
 
-void WorldSession::SendTaxiStatus(uint64 guid )
+void WorldSession::SendTaxiStatus(uint64 guid)
 {
     // cheating checks
-    Creature *unit = ObjectAccessor::GetCreature(*_player, guid);
+    Creature *unit = GetPlayer()->GetMap()->GetCreature(guid);
     if (!unit)
     {
         sLog.outDebug("WorldSession::SendTaxiStatus - Unit (GUID: %u) not found.", uint32(GUID_LOPART(guid)));

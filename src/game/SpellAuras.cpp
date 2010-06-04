@@ -2354,7 +2354,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                     uint64 guid = caster->m_TotemSlot[3];
                     if (guid)
                     {
-                        Creature *totem = ObjectAccessor::GetCreature(*caster, guid);
+                        Creature *totem = caster->GetMap()->GetCreature(guid);
                         if (totem && totem->isTotem())
                             caster->ToPlayer()->CastSpell(totem, 6277, true);
                     }

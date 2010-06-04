@@ -85,15 +85,14 @@ ObjectAccessor::~ObjectAccessor()
         delete itr->second;
 }
 
-Creature*
-ObjectAccessor::GetNPCIfCanInteractWith(Player const &player, uint64 guid, uint32 npcflagmask)
+Creature* ObjectAccessor::GetNPCIfCanInteractWith(Player const &player, uint64 guid, uint32 npcflagmask)
 {
     // unit checks
     if (!guid)
         return NULL;
 
     // exist
-    Creature *unit = GetCreature(player, guid);
+    Creature *unit = player.GetMap()->GetCreature(guid);
     if (!unit)
         return NULL;
 
@@ -136,29 +135,12 @@ ObjectAccessor::GetNPCIfCanInteractWith(Player const &player, uint64 guid, uint3
     return unit;
 }
 
-Creature*
-ObjectAccessor::GetCreatureOrPet(WorldObject const &u, uint64 guid)
+Creature* ObjectAccessor::GetCreatureOrPet(WorldObject const &u, uint64 guid)
 {
     if (Creature *unit = GetPet(guid))
         return unit;
 
-    return GetCreature(u, guid);
-}
-
-Creature*
-ObjectAccessor::GetCreature(WorldObject const &u, uint64 guid)
-{
-    Creature * ret = GetObjectInWorld(guid, (Creature*)NULL);
-    if (!ret)
-        return NULL;
-
-    if (ret->GetMapId() != u.GetMapId())
-        return NULL;
-
-    if (ret->GetInstanceId() != u.GetInstanceId())
-        return NULL;
-
-    return ret;
+    u.GetMap()->GetCreature(guid);
 }
 
 Unit*
@@ -199,13 +181,13 @@ Object* ObjectAccessor::GetObjectByTypeMask(Player const &p, uint64 guid, uint32
 
     if (typemask & TYPEMASK_GAMEOBJECT)
     {
-        obj = GetGameObject(p,guid);
+        obj = p.GetMap()->GetGameObject(guid);
         if (obj) return obj;
     }
 
     if (typemask & TYPEMASK_DYNAMICOBJECT)
     {
-        obj = GetDynamicObject(p,guid);
+        obj = p.GetMap()->GetDynamicObject(guid);
         if (obj) return obj;
     }
 
@@ -218,30 +200,12 @@ Object* ObjectAccessor::GetObjectByTypeMask(Player const &p, uint64 guid, uint32
     return NULL;
 }
 
-GameObject*
-ObjectAccessor::GetGameObject(WorldObject const &u, uint64 guid)
-{
-    GameObject * ret = GetObjectInWorld(guid, (GameObject*)NULL);
-    if (ret && ret->GetMapId() != u.GetMapId()) ret = NULL;
-    return ret;
-}
-
-DynamicObject*
-ObjectAccessor::GetDynamicObject(Unit const &u, uint64 guid)
-{
-    DynamicObject * ret = GetObjectInWorld(guid, (DynamicObject*)NULL);
-    if (ret && ret->GetMapId() != u.GetMapId()) ret = NULL;
-    return ret;
-}
-
-Player*
-ObjectAccessor::FindPlayer(uint64 guid)
+Player* ObjectAccessor::FindPlayer(uint64 guid)
 {
     return GetObjectInWorld(guid, (Player*)NULL);
 }
 
-Player*
-ObjectAccessor::FindPlayerByName(const char *name)
+Player* ObjectAccessor::FindPlayerByName(const char *name)
 {
     //TODO: Player Guard
     HashMapHolder<Player>::MapType& m = HashMapHolder<Player>::GetContainer();
@@ -252,8 +216,7 @@ ObjectAccessor::FindPlayerByName(const char *name)
     return NULL;
 }
 
-void
-ObjectAccessor::SaveAllPlayers()
+void ObjectAccessor::SaveAllPlayers()
 {
     Guard guard(*HashMapHolder<Player*>::GetLock());
     HashMapHolder<Player>::MapType& m = HashMapHolder<Player>::GetContainer();
@@ -262,8 +225,7 @@ ObjectAccessor::SaveAllPlayers()
         itr->second->SaveToDB();
 }
 
-void
-ObjectAccessor::UpdateObject(Object* obj, Player* exceptPlayer)
+void ObjectAccessor::UpdateObject(Object* obj, Player* exceptPlayer)
 {
     UpdateDataMapType update_players;
     obj->BuildUpdate(update_players);
@@ -359,8 +321,7 @@ ObjectAccessor::GetPet(uint64 guid)
     return GetObjectInWorld(guid, (Pet*)NULL);
 }
 
-Corpse*
-ObjectAccessor::GetCorpseForPlayerGUID(uint64 guid)
+Corpse* ObjectAccessor::GetCorpseForPlayerGUID(uint64 guid)
 {
     Guard guard(i_corpseGuard);
 
@@ -372,8 +333,7 @@ ObjectAccessor::GetCorpseForPlayerGUID(uint64 guid)
     return iter->second;
 }
 
-void
-ObjectAccessor::RemoveCorpse(Corpse *corpse)
+void ObjectAccessor::RemoveCorpse(Corpse *corpse)
 {
     assert(corpse && corpse->GetType() != CORPSE_BONES);
 
@@ -392,8 +352,7 @@ ObjectAccessor::RemoveCorpse(Corpse *corpse)
     i_player2corpse.erase(iter);
 }
 
-void
-ObjectAccessor::AddCorpse(Corpse *corpse)
+void ObjectAccessor::AddCorpse(Corpse *corpse)
 {
     assert(corpse && corpse->GetType() != CORPSE_BONES);
 
@@ -408,8 +367,7 @@ ObjectAccessor::AddCorpse(Corpse *corpse)
     objmgr.AddCorpseCellData(corpse->GetMapId(),cell_id,corpse->GetOwnerGUID(),corpse->GetInstanceId());
 }
 
-void
-ObjectAccessor::AddCorpsesToGrid(GridPair const& gridpair,GridType& grid,Map* map)
+void ObjectAccessor::AddCorpsesToGrid(GridPair const& gridpair,GridType& grid,Map* map)
 {
     Guard guard(i_corpseGuard);
     for (Player2CorpsesMapType::iterator iter = i_player2corpse.begin(); iter != i_player2corpse.end(); ++iter)
@@ -430,8 +388,7 @@ ObjectAccessor::AddCorpsesToGrid(GridPair const& gridpair,GridType& grid,Map* ma
     }
 }
 
-Corpse*
-ObjectAccessor::ConvertCorpseForPlayer(uint64 player_guid, bool insignia)
+Corpse* ObjectAccessor::ConvertCorpseForPlayer(uint64 player_guid, bool insignia)
 {
     Corpse *corpse = GetCorpseForPlayerGUID(player_guid);
     if (!corpse)
@@ -496,8 +453,7 @@ ObjectAccessor::ConvertCorpseForPlayer(uint64 player_guid, bool insignia)
     return bones;
 }
 
-void
-ObjectAccessor::Update(uint32 diff)
+void ObjectAccessor::Update(uint32 diff)
 {
     UpdateDataMapType update_players;
     {
