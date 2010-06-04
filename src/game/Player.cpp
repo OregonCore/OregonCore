@@ -2056,7 +2056,7 @@ Player::GetNPCIfCanInteractWith(uint64 guid, uint32 npcflagmask)
         return NULL;
 
     // exist
-    Creature *unit = player.GetMap()->GetCreature(guid);
+    Creature *unit = GetMap()->GetCreature(guid);
     if (!unit)
         return NULL;
 

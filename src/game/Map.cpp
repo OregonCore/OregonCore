@@ -51,24 +51,24 @@ Map::~Map()
     UnloadAll();
 }
 
-bool Map::ExistMap(uint32 mapid,int x,int y)
+bool Map::ExistMap(uint32 mapid,int gx,int gy)
 {
     int len = sWorld.GetDataPath().length()+strlen("maps/%03u%02u%02u.map")+1;
     char* tmp = new char[len];
-    snprintf(tmp, len, (char *)(sWorld.GetDataPath()+"maps/%03u%02u%02u.map").c_str(),mapid,x,y);
+    snprintf(tmp, len, (char *)(sWorld.GetDataPath()+"maps/%03u%02u%02u.map").c_str(),mapid,gx,gy);
 
     FILE *pf=fopen(tmp,"rb");
 
     if (!pf)
     {
-        sLog.outError("Check existing of map file '%s': not exist!",tmp);
+        sLog.outError("Map file '%s': does not exist!",tmp);
         delete[] tmp;
         return false;
     }
 
     map_fileheader header;
     fread(&header, sizeof(header), 1, pf);
-    if (header.mapMagic     != uint32(MAP_MAGIC) ||
+    if (header.mapMagic != uint32(MAP_MAGIC) ||
         header.versionMagic != uint32(MAP_VERSION_MAGIC))
     {
         sLog.outError("Map file '%s' is non-compatible version (outdated?). Please, create new using ad.exe program.",tmp);
@@ -82,18 +82,18 @@ bool Map::ExistMap(uint32 mapid,int x,int y)
     return true;
 }
 
-bool Map::ExistVMap(uint32 mapid,int x,int y)
+bool Map::ExistVMap(uint32 mapid,int gx,int gy)
 {
     if (VMAP::IVMapManager* vmgr = VMAP::VMapFactory::createOrGetVMapManager())
     {
         if (vmgr->isMapLoadingEnabled())
         {
                                                             // x and y are swapped !! => fixed now
-            bool exists = vmgr->existsMap((sWorld.GetDataPath()+ "vmaps").c_str(),  mapid, x,y);
+            bool exists = vmgr->existsMap((sWorld.GetDataPath()+ "vmaps").c_str(),  mapid, gx,gy);
             if (!exists)
             {
-                std::string name = vmgr->getDirFileName(mapid,x,y);
-                sLog.outError("VMap file '%s' is missing or point to wrong version vmap file, redo vmaps with latest vmap_assembler.exe program", (sWorld.GetDataPath()+"vmaps/"+name).c_str());
+                std::string name = vmgr->getDirFileName(mapid,gx,gy);
+                sLog.outError("VMap file '%s' is missing or points to wrong version of vmap file. Redo vmaps with latest version of vmap_assembler.exe.", (sWorld.GetDataPath()+"vmaps/"+name).c_str());
                 return false;
             }
         }
@@ -102,75 +102,73 @@ bool Map::ExistVMap(uint32 mapid,int x,int y)
     return true;
 }
 
-void Map::LoadVMap(int x,int y)
+void Map::LoadVMap(int gx,int gy)
 {
                                                             // x and y are swapped !!
-    int vmapLoadResult = VMAP::VMapFactory::createOrGetVMapManager()->loadMap((sWorld.GetDataPath()+ "vmaps").c_str(),  GetId(), x,y);
+    int vmapLoadResult = VMAP::VMapFactory::createOrGetVMapManager()->loadMap((sWorld.GetDataPath()+ "vmaps").c_str(),  GetId(), gx,gy);
     switch(vmapLoadResult)
     {
         case VMAP::VMAP_LOAD_RESULT_OK:
-            sLog.outDetail("VMAP loaded name:%s, id:%d, x:%d, y:%d (vmap rep.: x:%d, y:%d)", GetMapName(), GetId(), x,y, x,y);
+            sLog.outDetail("VMAP loaded name:%s, id:%d, x:%d, y:%d (vmap rep.: x:%d, y:%d)", GetMapName(), GetId(), gx,gy,gx,gy);
             break;
         case VMAP::VMAP_LOAD_RESULT_ERROR:
-            sLog.outDetail("Could not load VMAP name:%s, id:%d, x:%d, y:%d (vmap rep.: x:%d, y:%d)", GetMapName(), GetId(), x,y, x,y);
+            sLog.outDetail("Could not load VMAP name:%s, id:%d, x:%d, y:%d (vmap rep.: x:%d, y:%d)", GetMapName(), GetId(), gx,gy,gx,gy);
             break;
         case VMAP::VMAP_LOAD_RESULT_IGNORED:
-            DEBUG_LOG("Ignored VMAP name:%s, id:%d, x:%d, y:%d (vmap rep.: x:%d, y:%d)", GetMapName(), GetId(), x,y, x,y);
+            DEBUG_LOG("Ignored VMAP name:%s, id:%d, x:%d, y:%d (vmap rep.: x:%d, y:%d)", GetMapName(), GetId(), gx,gy,gx,gy);
             break;
     }
 }
 
-void Map::LoadMap(uint32 mapid, uint32 instanceid, int x,int y)
+void Map::LoadMap(uint32 mapid, uint32 instanceid, int gx,int gy)
 {
     if (instanceid != 0)
     {
-        if (GridMaps[x][y])
+        if (GridMaps[gx][gy])
             return;
 
         Map* baseMap = const_cast<Map*>(MapManager::Instance().GetBaseMap(mapid));
 
-        // load gridmap for base map
-        if (!baseMap->GridMaps[x][y])
-            baseMap->EnsureGridCreated(GridPair(63-x,63-y));
+        // load grid map for base map
+        if (!baseMap->GridMaps[gx][gy])
+            baseMap->EnsureGridCreated(GridPair(63-gx,63-gy));
 
 //+++        if (!baseMap->GridMaps[x][y])  don't check for GridMaps[gx][gy], we need the management for vmaps
 //            return;
 
-        ((MapInstanced*)(baseMap))->AddGridMapReference(GridPair(x,y));
-        GridMaps[x][y] = baseMap->GridMaps[x][y];
+        ((MapInstanced*)(baseMap))->AddGridMapReference(GridPair(gx,gy));
+        GridMaps[gx][gy] = baseMap->GridMaps[gx][gy];
         return;
     }
 
     //map already load, delete it before reloading (Is it necessary? Do we really need the ability the reload maps during runtime?)
-    if (GridMaps[x][y])
+    if (GridMaps[gx][gy])
     {
         sLog.outDetail("Unloading already loaded map %u before reloading.",mapid);
-        delete (GridMaps[x][y]);
-        GridMaps[x][y]=NULL;
+        delete (GridMaps[gx][gy]);
+        GridMaps[gx][gy]=NULL;
     }
 
     // map file name
     char *tmp=NULL;
-    // Pihhan: dataPath length + "maps/" + 3+2+2+ ".map" length may be > 32 !
     int len = sWorld.GetDataPath().length()+strlen("maps/%03u%02u%02u.map")+1;
     tmp = new char[len];
-    snprintf(tmp, len, (char *)(sWorld.GetDataPath()+"maps/%03u%02u%02u.map").c_str(),mapid,x,y);
+    snprintf(tmp, len, (char *)(sWorld.GetDataPath()+"maps/%03u%02u%02u.map").c_str(),mapid,gx,gy);
     sLog.outDetail("Loading map %s",tmp);
     // loading data
-    GridMaps[x][y] = new GridMap();
-    if (!GridMaps[x][y]->loadData(tmp))
+    GridMaps[gx][gy] = new GridMap();
+    if (!GridMaps[gx][gy]->loadData(tmp))
     {
-        sLog.outError("Error load map file: \n %s\n", tmp);
+        sLog.outError("Error loading map file: \n %s\n", tmp);
     }
     delete [] tmp;
-    return;
 }
 
-void Map::LoadMapAndVMap(uint32 mapid, uint32 instanceid, int x,int y)
+void Map::LoadMapAndVMap(uint32 mapid, uint32 instanceid, int gx,int gy)
 {
-    LoadMap(mapid,instanceid,x,y);
+    LoadMap(mapid,instanceid,gx,gy);
     if (instanceid == 0)
-        LoadVMap(x, y);                                     // Only load the data for the base map
+        LoadVMap(gx, gy);                                   // Only load the data for the base map
 }
 
 void Map::InitStateMachine()
@@ -316,7 +314,7 @@ void Map::SwitchGridContainers(T* obj, bool on)
     CellPair p = Oregon::ComputeCellPair(obj->GetPositionX(), obj->GetPositionY());
     if (p.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || p.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
     {
-        sLog.outError("Map::SwitchGridContainers: Object " I64FMT " have invalid coordinates X:%f Y:%f grid cell [%u:%u]", obj->GetGUID(), obj->GetPositionX(), obj->GetPositionY(), p.x_coord, p.y_coord);
+        sLog.outError("Map::SwitchGridContainers: Object " I64FMT " has invalid coordinates X:%f Y:%f grid cell [%u:%u]", obj->GetGUID(), obj->GetPositionX(), obj->GetPositionY(), p.x_coord, p.y_coord);
         return;
     }
 
@@ -1241,7 +1239,7 @@ bool GridMap::loadData(char *filename)
     if (!in)
         return true;
     fread(&header, sizeof(header),1,in);
-    if (header.mapMagic     == uint32(MAP_MAGIC) &&
+    if (header.mapMagic == uint32(MAP_MAGIC) &&
         header.versionMagic == uint32(MAP_VERSION_MAGIC))
     {
         // loadup area data
@@ -1268,7 +1266,7 @@ bool GridMap::loadData(char *filename)
         fclose(in);
         return true;
     }
-    sLog.outError("Map file '%s' is non-compatible version (outdated?). Please, create new using ad.exe program.", filename);
+    sLog.outError("Map file '%s' is a non-compatible version (outdated?). Please, create new using the ad.exe program.", filename);
     fclose(in);
     return false;
 }
@@ -1288,7 +1286,7 @@ void GridMap::unloadData()
     m_gridGetHeight = &GridMap::getHeightFromFlat;
 }
 
-bool GridMap::loadAreaData(FILE *in, uint32 offset, uint32 size)
+bool GridMap::loadAreaData(FILE *in, uint32 offset, uint32 /*size*/)
 {
     map_areaHeader header;
     fseek(in, offset, SEEK_SET);
@@ -1305,7 +1303,7 @@ bool GridMap::loadAreaData(FILE *in, uint32 offset, uint32 size)
     return true;
 }
 
-bool  GridMap::loadHeightData(FILE *in, uint32 offset, uint32 size)
+bool  GridMap::loadHeightData(FILE *in, uint32 offset, uint32 /*size*/)
 {
     map_heightHeader header;
     fseek(in, offset, SEEK_SET);
@@ -1348,7 +1346,7 @@ bool  GridMap::loadHeightData(FILE *in, uint32 offset, uint32 size)
     return true;
 }
 
-bool  GridMap::loadLiquidData(FILE *in, uint32 offset, uint32 size)
+bool  GridMap::loadLiquidData(FILE *in, uint32 offset, uint32 /*size*/)
 {
     map_liquidHeader header;
     fseek(in, offset, SEEK_SET);
@@ -1388,7 +1386,7 @@ uint16 GridMap::getArea(float x, float y)
     return m_area_map[lx*16 + ly];
 }
 
-float  GridMap::getHeightFromFlat(float x, float y) const
+float  GridMap::getHeightFromFlat(float /*x*/, float /*y*/) const
 {
     return m_gridHeight;
 }
@@ -1430,7 +1428,7 @@ float  GridMap::getHeightFromFloat(float x, float y) const
         if (x > y)
         {
             // 1 triangle (h1, h2, h5 points)
-            float h1 = m_V9[(x_int  )*129 + y_int];
+            float h1 = m_V9[(x_int)*129 + y_int];
             float h2 = m_V9[(x_int+1)*129 + y_int];
             float h5 = 2 * m_V8[x_int*128 + y_int];
             a = h2-h1;
@@ -1463,7 +1461,7 @@ float  GridMap::getHeightFromFloat(float x, float y) const
         else
         {
             // 4 triangle (h3, h4, h5 points)
-            float h3 = m_V9[(x_int  )*129 + y_int+1];
+            float h3 = m_V9[(x_int)*129 + y_int+1];
             float h4 = m_V9[(x_int+1)*129 + y_int+1];
             float h5 = 2 * m_V8[x_int*128 + y_int];
             a = h4 - h3;
@@ -1622,7 +1620,7 @@ float  GridMap::getLiquidLevel(float x, float y)
 
     if (cx_int < 0 || cx_int >=m_liquid_height)
         return INVALID_HEIGHT;
-    if (cy_int < 0 || cy_int >=m_liquid_width )
+    if (cy_int < 0 || cy_int >=m_liquid_width)
         return INVALID_HEIGHT;
 
     return m_liquid_map[cx_int*m_liquid_width + cy_int];
@@ -1669,7 +1667,7 @@ inline ZLiquidStatus GridMap::getLiquidStatus(float x, float y, float z, uint8 R
     int ly_int = y_int - m_liquid_offX;
     if (lx_int < 0 || lx_int >=m_liquid_height)
         return LIQUID_MAP_NO_WATER;
-    if (ly_int < 0 || ly_int >=m_liquid_width )
+    if (ly_int < 0 || ly_int >=m_liquid_width)
         return LIQUID_MAP_NO_WATER;
 
     // Get water level
@@ -1695,7 +1693,7 @@ inline ZLiquidStatus GridMap::getLiquidStatus(float x, float y, float z, uint8 R
     // Get position delta
     if (delta > 20)                   // Under water
         return LIQUID_MAP_UNDER_WATER;
-    if (delta > 0 )                   // In water
+    if (delta > 0)                   // In water
         return LIQUID_MAP_IN_WATER;
     if (delta > -1)                   // Walk on water
         return LIQUID_MAP_WATER_WALK;
@@ -1850,15 +1848,15 @@ uint32 Map::GetZoneId(uint16 areaflag,uint32 map_id)
         return 0;
 }
 
-bool Map::IsInWater(float x, float y, float pZ) const
+bool Map::IsInWater(float x, float y, float pZ, float min_depth) const
 {
     // Check surface in x, y point for liquid
-    if (GridMap* gmap = const_cast<Map*>(this)->GetGrid(x, y))
+    if (const_cast<Map*>(this)->GetGrid(x, y))
     {
         LiquidData liquid_status;
         if (getLiquidStatus(x, y, pZ, MAP_ALL_LIQUIDS, &liquid_status))
         {
-            if (liquid_status.level - liquid_status.depth_level > 2)
+            if (liquid_status.level - liquid_status.depth_level > min_depth)
                 return true;
         }
     }
@@ -1867,7 +1865,7 @@ bool Map::IsInWater(float x, float y, float pZ) const
 
 bool Map::IsUnderWater(float x, float y, float z) const
 {
-    if (GridMap* gmap = const_cast<Map*>(this)->GetGrid(x, y))
+    if (const_cast<Map*>(this)->GetGrid(x, y))
     {
         if (getLiquidStatus(x, y, z, MAP_LIQUID_TYPE_WATER|MAP_LIQUID_TYPE_OCEAN)&LIQUID_MAP_UNDER_WATER)
             return true;
@@ -2015,7 +2013,7 @@ void Map::DoDelayedMovesAndRemoves()
 
 void Map::AddObjectToRemoveList(WorldObject *obj)
 {
-    assert(obj->GetMapId()==GetId() && obj->GetInstanceId()==GetInstanceId());
+    assert(obj->GetMapId() == GetId() && obj->GetInstanceId() == GetInstanceId());
 
     i_objectsToRemove.insert(obj);
     //sLog.outDebug("Object (GUID: %u TypeId: %u) added to removing list.",obj->GetGUIDLow(),obj->GetTypeId());
@@ -2023,7 +2021,7 @@ void Map::AddObjectToRemoveList(WorldObject *obj)
 
 void Map::AddObjectToSwitchList(WorldObject *obj, bool on)
 {
-    assert(obj->GetMapId()==GetId() && obj->GetInstanceId()==GetInstanceId());
+    assert(obj->GetMapId() == GetId() && obj->GetInstanceId() == GetInstanceId());
 
     std::map<WorldObject*, bool>::iterator itr = i_objectsToSwitch.find(obj);
     if (itr == i_objectsToSwitch.end())
@@ -2064,7 +2062,7 @@ void Map::RemoveAllObjectsInRemoveList()
             {
                 Corpse* corpse = ObjectAccessor::Instance().GetCorpse(*obj, obj->GetGUID());
                 if (!corpse)
-                    sLog.outError("Try delete corpse/bones %u that not in map", obj->GetGUIDLow());
+                    sLog.outError("Tried to delete corpse/bones %u that is not in map.", obj->GetGUIDLow());
                 else
                     Remove(corpse,true);
                 break;
@@ -2082,12 +2080,13 @@ void Map::RemoveAllObjectsInRemoveList()
             Remove(obj->ToCreature(),true);
             break;
         default:
-            sLog.outError("Non-grid object (TypeId: %u) in grid object removing list, ignored.",obj->GetTypeId());
+            sLog.outError("Non-grid object (TypeId: %u) is in grid object remove list, ignored.",obj->GetTypeId());
             break;
         }
 
         i_objectsToRemove.erase(itr);
     }
+
     //sLog.outDebug("Object remover 2 check.");
 }
 

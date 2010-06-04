@@ -25,6 +25,7 @@
 #include "Policies/ThreadingModel.h"
 #include "ace/RW_Thread_Mutex.h"
 #include "ace/Thread_Mutex.h"
+
 #include "Database/DBCStructure.h"
 #include "GridDefines.h"
 #include "Cell.h"
@@ -303,9 +304,8 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         time_t GetGridExpiry(void) const { return i_gridExpiry; }
         uint32 GetId(void) const { return i_id; }
 
-        static bool ExistMap(uint32 mapid, int x, int y);
-        static bool ExistVMap(uint32 mapid, int x, int y);
-        void LoadMapAndVMap(uint32 mapid, uint32 instanceid, int x, int y);
+        static bool ExistMap(uint32 mapid, int gx, int gy);
+        static bool ExistVMap(uint32 mapid, int gx, int gy);
 
         static void InitStateMachine();
         static void DeleteStateMachine();
@@ -314,7 +314,7 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         // can return INVALID_HEIGHT if under z+2 z coord not found height
         float GetHeight(float x, float y, float z, bool pCheckVMap=true) const;
         float GetVmapHeight(float x, float y, float z) const;
-        bool IsInWater(float x, float y, float z) const;    // does not use z pos. This is for future use
+        bool IsInWater(float x, float y, float z, float min_depth = 2.0f) const;
 
         ZLiquidStatus getLiquidStatus(float x, float y, float z, uint8 ReqLiquidType, LiquidData *data = 0) const;
 
@@ -429,8 +429,9 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         GameObject* GetGameObject(uint64 guid);
         DynamicObject* GetDynamicObject(uint64 guid);
     private:
-        void LoadVMap(int pX, int pY);
-        void LoadMap(uint32 mapid, uint32 instanceid, int x,int y);
+        void LoadMapAndVMap(uint32 mapid, uint32 instanceid, int gx, int gy);
+        void LoadVMap(int gx, int gy);
+        void LoadMap(uint32 mapid, uint32 instanceid, int gx,int gy);
         GridMap *GetGrid(float x, float y);
 
         void SetTimer(uint32 t) { i_gridExpiry = t < MIN_GRID_DELAY ? MIN_GRID_DELAY : t; }
@@ -526,7 +527,7 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
                 ActiveNonPlayers::iterator itr = m_activeNonPlayers.find(obj);
                 if (itr == m_activeNonPlayers.end())
                     return;
-                if (itr==m_activeNonPlayersIter)
+                if (itr == m_activeNonPlayersIter)
                     ++m_activeNonPlayersIter;
                 m_activeNonPlayers.erase(itr);
             }
@@ -605,7 +606,6 @@ Map::Visit(const CellLock<LOCK_TYPE> &cell, TypeContainerVisitor<T, CONTAINER> &
     if (!cell->NoCreate() || loaded(GridPair(x,y)) )
     {
         EnsureGridLoaded(cell);
-        //LOCK_TYPE guard(i_info[x][y]->i_lock);
         getNGrid(x, y)->Visit(cell_x, cell_y, visitor);
     }
 }
@@ -657,4 +657,3 @@ Map::VisitGrid(const float &x, const float &y, float radius, NOTIFIER &notifier)
     cell_lock->Visit(cell_lock, grid_object_notifier, *this, radius, x_off, y_off);
 }
 #endif
-
