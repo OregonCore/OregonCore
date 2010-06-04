@@ -90,7 +90,7 @@ Creature* ObjectAccessor::GetCreatureOrPet(WorldObject const& u, uint64 guid)
     if (Creature *unit = GetPet(guid))
         return unit;
 
-    u.GetMap()->GetCreature(guid);
+    return u.GetMap()->GetCreature(guid);
 }
 
 Unit*
