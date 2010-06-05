@@ -429,9 +429,9 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         GameObject* GetGameObject(uint64 guid);
         DynamicObject* GetDynamicObject(uint64 guid);
     private:
-        void LoadMapAndVMap(uint32 mapid, uint32 instanceid, int gx, int gy);
+        void LoadMapAndVMap(int gx, int gy);
         void LoadVMap(int gx, int gy);
-        void LoadMap(uint32 mapid, uint32 instanceid, int gx,int gy);
+        void LoadMap(int gx,int gy, bool reload = false);
         GridMap *GetGrid(float x, float y);
 
         void SetTimer(uint32 t) { i_gridExpiry = t < MIN_GRID_DELAY ? MIN_GRID_DELAY : t; }
@@ -447,8 +447,9 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         CreatureMoveList i_creaturesToMove;
 
         bool loaded(const GridPair &) const;
-        void EnsureGridLoaded(const Cell&, Player* player = NULL);
-        void  EnsureGridCreated(const GridPair &);
+        void EnsureGridCreated(const GridPair &);
+        bool EnsureGridLoaded(Cell const&);
+        void EnsureGridLoadedAtEnter(Cell const&, Player* player = NULL);
 
         void buildNGridLinkage(NGridType* pNGridType) { pNGridType->link(this); }
 
