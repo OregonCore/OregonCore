@@ -338,6 +338,7 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
 
         virtual void MoveAllCreaturesInMoveList();
         virtual void RemoveAllObjectsInRemoveList();
+        virtual void RelocationNotify();
 
         bool CreatureRespawnRelocation(Creature *c);        // used only in MoveAllCreaturesInMoveList and ObjectGridUnloader
 
@@ -360,7 +361,6 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
 
         void AddObjectToRemoveList(WorldObject *obj);
         void AddObjectToSwitchList(WorldObject *obj, bool on);
-        void DoDelayedMovesAndRemoves();
 
         virtual bool RemoveBones(uint64 guid, float x, float y);
 
@@ -376,7 +376,6 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
 
         void AddUnitToNotify(Unit* unit);
         void RemoveUnitFromNotify(int32 slot);
-        void RelocationNotify();
 
         void SendToPlayers(WorldPacket const* data) const;
 

@@ -838,7 +838,6 @@ void Map::Update(const uint32 &t_diff)
     }
 
     MoveAllCreaturesInMoveList();
-    RelocationNotify();
     RemoveAllObjectsInRemoveList();
 
     // Don't unload grids if it's battleground, since we may have manually added GOs,creatures, those doesn't load from DB at grid re-load !
@@ -2040,12 +2039,6 @@ inline void Map::setNGrid(NGridType *grid, uint32 x, uint32 y)
         assert(false);
     }
     i_grids[x][y] = grid;
-}
-
-void Map::DoDelayedMovesAndRemoves()
-{
-    MoveAllCreaturesInMoveList();
-    RemoveAllObjectsInRemoveList();
 }
 
 void Map::AddObjectToRemoveList(WorldObject *obj)

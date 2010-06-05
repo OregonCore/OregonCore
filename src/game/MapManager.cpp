@@ -263,7 +263,6 @@ MapManager::Update(time_t diff)
 #pragma omp parallel for schedule(dynamic) private(i) shared(update_queue)
     for (int32 i = 0; i < i_maps.size(); ++i)
     {
-        checkAndCorrectGridStatesArray();                   // debugging code, should be deleted some day
         update_queue[i]->Update(i_timer.GetCurrent());
         sWorld.RecordTimeDiff("UpdateMap %u", update_queue[i]->GetId());
     //  sLog.outError("This is thread %d out of %d threads,updating map %u",omp_get_thread_num(),omp_get_num_threads(),iter->second->GetId());
@@ -280,17 +279,17 @@ MapManager::Update(time_t diff)
 
 void MapManager::DoDelayedMovesAndRemoves()
 {
-    int i =0;
+    /*
     std::vector<Map*> update_queue(i_maps.size());
-    MapMapType::iterator iter;
-    for (iter = i_maps.begin();iter != i_maps.end(); ++iter, i++)
+    for (MapMapType::iterator iter = i_maps.begin(), uint32 i = 0; iter != i_maps.end(); ++iter, ++i)
     update_queue[i] = iter->second;
 
     omp_set_num_threads(sWorld.getConfig(CONFIG_NUMTHREADS));
-    
+
 #pragma omp parallel for schedule(dynamic) private(i) shared(update_queue)
-    for (i=0;i<i_maps.size();i++)
-    update_queue[i]->DoDelayedMovesAndRemoves();
+    for (uint32 i = 0; i < i_maps.size(); ++i)
+        update_queue[i]->DoDelayedMovesAndRemoves();
+    */
 }
 
 bool MapManager::ExistMapAndVMap(uint32 mapid, float x,float y)
@@ -308,13 +307,6 @@ bool MapManager::IsValidMAP(uint32 mapid)
     MapEntry const* mEntry = sMapStore.LookupEntry(mapid);
     return mEntry && (!mEntry->Instanceable() || objmgr.GetInstanceTemplate(mapid));
 }
-
-/*void MapManager::LoadGrid(int mapid, float x, float y, const WorldObject* obj, bool no_unload)
-{
-    CellPair p = Oregon::ComputeCellPair(x,y);
-    Cell cell(p);
-    GetMap(mapid, obj)->LoadGrid(cell,no_unload);
-}*/
 
 void MapManager::UnloadAll()
 {

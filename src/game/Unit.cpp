@@ -12015,7 +12015,7 @@ void Unit::RemoveAurasAtChanneledTarget(SpellEntry const* spellInfo, Unit * cast
 void Unit::SetToNotify()
 {
     // it is called somewhere when obj is not in world (crash when log in instance)
-    if (m_NotifyListPos < 0 && IsInWorld())
+    if (m_NotifyListPos < 0)
         GetMap()->AddUnitToNotify(this);
 }
 
