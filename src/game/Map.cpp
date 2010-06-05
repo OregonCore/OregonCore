@@ -369,16 +369,16 @@ void Map::AddNotifier(T*)
 template<>
 void Map::AddNotifier(Player* obj)
 {
-    obj->m_Notified = false;
-    obj->m_IsInNotifyList = false;
+    //obj->m_Notified = false;
+    //obj->m_IsInNotifyList = false;
     AddUnitToNotify(obj);
 }
 
 template<>
 void Map::AddNotifier(Creature* obj)
 {
-    obj->m_Notified = false;
-    obj->m_IsInNotifyList = false;
+    //obj->m_Notified = false;
+    //obj->m_IsInNotifyList = false;
     AddUnitToNotify(obj);
 }
 
@@ -623,25 +623,21 @@ bool Map::loaded(const GridPair &p) const
 
 void Map::RelocationNotify()
 {
-    //Move backlog to notify list
-    for (std::vector<uint64>::iterator iter = i_unitsToNotifyBacklog.begin(); iter != i_unitsToNotifyBacklog.end(); ++iter)
-    {
-        if (Unit *unit = ObjectAccessor::GetObjectInWorld(*iter, (Unit*)NULL))
-        {
-            i_unitsToNotify.push_back(unit);
-        }
-    }
-    i_unitsToNotifyBacklog.clear();
+    i_lock = true;
 
     //Notify
     for (std::vector<Unit*>::iterator iter = i_unitsToNotify.begin(); iter != i_unitsToNotify.end(); ++iter)
     {
         Unit *unit = *iter;
-        if (unit->m_Notified || !unit->IsInWorld() || unit->GetMapId() != GetId())
+        if (!unit)
+            continue;
+
+        unit->m_NotifyListPos = -1;
+
+        if(unit->m_Notified)
             continue;
 
         unit->m_Notified = true;
-        unit->m_IsInNotifyList = false;
 
         float dist = abs(unit->GetPositionX() - unit->oldX) + abs(unit->GetPositionY() - unit->oldY);
         if (dist > 10.0f)
@@ -664,31 +660,55 @@ void Map::RelocationNotify()
         }
     }
     for (std::vector<Unit*>::iterator iter = i_unitsToNotify.begin(); iter != i_unitsToNotify.end(); ++iter)
-    {
-        (*iter)->m_Notified = false;
-    }
+        if(*iter)
+            (*iter)->m_Notified = false;
     i_unitsToNotify.clear();
+
+    i_lock = false;
+
+    if(!i_unitsToNotifyBacklog.empty())
+    {
+        i_unitsToNotify.insert(i_unitsToNotify.end(), i_unitsToNotifyBacklog.begin(), i_unitsToNotifyBacklog.end());
+        i_unitsToNotifyBacklog.clear();
+    }
 }
 
 void Map::AddUnitToNotify(Unit* u)
 {
-    if (u->m_IsInNotifyList)
-        return;
+    if(u->m_NotifyListPos < 0 && u->IsInWorld())
+    {
+        u->oldX = u->GetPositionX();
+        u->oldY = u->GetPositionY();
 
-    u->m_IsInNotifyList = true;
-    u->oldX = u->GetPositionX();
-    u->oldY = u->GetPositionY();
-
-    if (i_lock)
-        i_unitsToNotifyBacklog.push_back(u->GetGUID());
-    else
-        i_unitsToNotify.push_back(u);
+        if (i_lock)
+        {
+            u->m_NotifyListPos = i_unitsToNotifyBacklog.size();
+            i_unitsToNotifyBacklog.push_back(u);
+        }
+        else
+        {
+            u->m_NotifyListPos = i_unitsToNotify.size();
+            i_unitsToNotify.push_back(u);
+        }
+    }
 }
 
+void Map::RemoveUnitFromNotify(int32 slot)
+{
+     if(i_lock)
+    {
+        assert(slot < i_unitsToNotifyBacklog.size());
+        i_unitsToNotifyBacklog[slot] = NULL;
+    }
+    else
+    {
+        assert(slot < i_unitsToNotify.size());
+        i_unitsToNotify[slot] = NULL;
+    }
+}
 void Map::Update(const uint32 &t_diff)
 {
-    i_lock = false;
-
+    /// update active cells around players and active objects
     resetMarkedCells();
 
     Oregon::ObjectUpdater updater(t_diff);
@@ -816,8 +836,6 @@ void Map::Update(const uint32 &t_diff)
             }
         }
     }
-
-    i_lock = true;
 
     MoveAllCreaturesInMoveList();
     RelocationNotify();

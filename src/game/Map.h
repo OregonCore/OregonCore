@@ -375,6 +375,7 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         bool ActiveObjectsNearGrid(uint32 x, uint32 y) const;
 
         void AddUnitToNotify(Unit* unit);
+        void RemoveUnitFromNotify(int32 slot);
         void RelocationNotify();
 
         void SendToPlayers(WorldPacket const* data) const;
@@ -495,7 +496,7 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         time_t i_gridExpiry;
 
         bool i_lock;
-        std::vector<uint64> i_unitsToNotifyBacklog;
+        std::vector<Unit*> i_unitsToNotifyBacklog;
         std::vector<Unit*> i_unitsToNotify;
         std::set<WorldObject *> i_objectsToRemove;
         std::map<WorldObject*, bool> i_objectsToSwitch;
