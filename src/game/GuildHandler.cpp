@@ -997,7 +997,7 @@ void WorldSession::HandleGuildBankWithdraw(WorldPacket & recv_data )
     }
 
     GetPlayer()->ModifyMoney(money);
-    GetPlayer()->SaveDataFieldToDB();                       // contains money
+    GetPlayer()->SaveGoldToDB();
 
     CharacterDatabase.CommitTransaction();
 
