@@ -30,7 +30,6 @@
 #include "Opcodes.h"
 #include "Player.h"
 #include "WorldPacket.h"
-#include "WorldSession.h"
 
 enum ChatNotify
 {
@@ -208,8 +207,6 @@ class Channel
         bool IsOn(uint64 who) const { return players.count(who) != 0; }
 
         bool IsBanned(const uint64 guid) const {return banned.count(guid) != 0; }
-
-        bool IsFirst() const { return !(players.size() > 1); }
 
         uint8 GetPlayerFlags(uint64 p) const
         {
