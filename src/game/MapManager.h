@@ -96,6 +96,11 @@ class OREGON_DLL_DECL MapManager : public Oregon::Singleton<MapManager, Oregon::
             return IsValidMAP(mapid) && Oregon::IsValidMapCoord(x,y,z,o);
         }
 
+        static bool IsValidMapCoord(WorldLocation const& loc)
+        {
+            return IsValidMapCoord(loc.mapid,loc.x,loc.y,loc.z,loc.o);
+        }
+
         void DoDelayedMovesAndRemoves();
 
         void LoadTransports();
