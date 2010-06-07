@@ -84,12 +84,12 @@ EndScriptData */
 #define CREATURE_ENSLAVED_SOUL          23469
 #define NUMBER_ENSLAVED_SOUL            8
 
-struct Position
+struct Position2d
 {
     float x,y;
 };
 
-static Position Coords[]=
+static Position2d Coords[]=
 {
     {450.4, 212.3},
     {542.1, 212.3},
@@ -98,7 +98,6 @@ static Position Coords[]=
     {450.4, 137.4},
     {450.4, 168.3}
 };
-
 
 struct OREGON_DLL_DECL npc_enslaved_soulAI : public ScriptedAI
 {
@@ -170,7 +169,6 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
         Timer = 0;
     }
 
-
     bool SummonSoul()
     {
         uint32 random = rand()%6;
@@ -190,8 +188,6 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
     {
         if(pInstance)
             pInstance->SetData(DATA_RELIQUARYOFSOULSEVENT, DONE);
-            
-        //InCombat = false;
     }
 
     void UpdateAI(const uint32 diff)
@@ -320,7 +316,6 @@ struct TargetDistanceOrder : public std::binary_function<const Unit, const Unit,
     }
 };
 
-
 struct OREGON_DLL_DECL boss_essence_of_sufferingAI : public ScriptedAI
 {
     boss_essence_of_sufferingAI(Creature *c) : ScriptedAI(c) {}
@@ -342,7 +337,6 @@ struct OREGON_DLL_DECL boss_essence_of_sufferingAI : public ScriptedAI
         EnrageTimer = 30000;
         SoulDrainTimer = 45000;
         AuraTimer = 5000;
-
     }
 
     void DamageTaken(Unit *done_by, uint32 &damage)
@@ -450,7 +444,6 @@ struct OREGON_DLL_DECL boss_essence_of_desireAI : public ScriptedAI
         DeadenTimer = 30000;
         SoulShockTimer = 5000;
         m_creature->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_CONFUSE, true);
-
     }
 
     void DamageTaken(Unit *done_by, uint32 &damage)
@@ -508,8 +501,8 @@ struct OREGON_DLL_DECL boss_essence_of_desireAI : public ScriptedAI
             m_creature->InterruptNonMeleeSpells(false);
             m_creature->CastSpell(m_creature, SPELL_RUNE_SHIELD, true);
             SoulShockTimer += 2000;
-             DeadenTimer += 2000;
-             RuneShieldTimer = 60000;
+            DeadenTimer += 2000;
+            RuneShieldTimer = 60000;
         }else RuneShieldTimer -= diff;
 
         if(SoulShockTimer < diff)
@@ -525,7 +518,7 @@ struct OREGON_DLL_DECL boss_essence_of_desireAI : public ScriptedAI
             DeadenTimer = 25000 + rand()%10000;
             if(!(rand()%2))
             {
-               DoScriptText(DESI_SAY_SPEC, m_creature);
+                DoScriptText(DESI_SAY_SPEC, m_creature);
             }
         }else DeadenTimer -= diff;
 
@@ -558,7 +551,6 @@ struct OREGON_DLL_DECL boss_essence_of_angerAI : public ScriptedAI
         SpiteTargetGUID.clear();
 
         CheckedAggro = false;
-
     }
 
     void EnterCombat(Unit *who)

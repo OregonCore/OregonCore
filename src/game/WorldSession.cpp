@@ -34,11 +34,10 @@
 #include "Group.h"
 #include "Guild.h"
 #include "World.h"
-#include "MapManager.h"
 #include "ObjectAccessor.h"
 #include "BattleGroundMgr.h"
 #include "OutdoorPvPMgr.h"
-#include "Language.h"                                       // for CMSG_CANCEL_MOUNT_AURA handler
+#include "MapManager.h"
 #include "Chat.h"
 #include "SocialMgr.h"
 

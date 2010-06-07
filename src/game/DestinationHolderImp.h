@@ -21,7 +21,6 @@
 #ifndef OREGON_DESTINATIONHOLDERIMP_H
 #define OREGON_DESTINATIONHOLDERIMP_H
 
-#include "Creature.h"
 #include "MapManager.h"
 #include "DestinationHolder.h"
 
@@ -37,7 +36,7 @@ DestinationHolder<TRAVELLER>::_findOffSetPoint(float x1, float y1, float x2, flo
      * hence x = x2 - (offset/d)*(x2-x1)
      * like wise offset/d = (y2-y)/(y2-y1);
      */
-    if (offset == 0 )
+    if (offset == 0)
     {
         x = x2;
         y = y2;
@@ -116,9 +115,9 @@ DestinationHolder<TRAVELLER>::UpdateTraveller(TRAVELLER &traveller, uint32 diff,
             return true;
 
         if (traveller.GetTraveller().hasUnitState(UNIT_STAT_IN_FLIGHT))
-            GetLocationNow(traveller.GetTraveller().GetMapId() ,x, y, z, true);                  // Should repositione Object with right Coord, so I can bypass some Grid Relocation
+            GetLocationNow(traveller.GetTraveller().GetBaseMap() ,x, y, z, true);                  // Should reposition Object with right Coord, so I can bypass some Grid Relocation
         else
-            GetLocationNow(traveller.GetTraveller().GetMapId(), x, y, z, false);
+            GetLocationNow(traveller.GetTraveller().GetBaseMap(), x, y, z, false);
 
         // Change movement computation to micro movement based on last tick coords, this makes system work
         // even on multiple floors zones without hugh vmaps usage ;)
@@ -146,9 +145,9 @@ DestinationHolder<TRAVELLER>::UpdateTraveller(TRAVELLER &traveller, uint32 diff,
 
 template<typename TRAVELLER>
 void
-DestinationHolder<TRAVELLER>::GetLocationNow(uint32 mapid, float &x, float &y, float &z, bool is3D) const
+DestinationHolder<TRAVELLER>::GetLocationNow(const Map * map, float &x, float &y, float &z, bool is3D) const
 {
-    if (HasArrived() )
+    if (HasArrived())
     {
         x = i_destX;
         y = i_destY;
@@ -169,7 +168,7 @@ DestinationHolder<TRAVELLER>::GetLocationNow(uint32 mapid, float &x, float &y, f
         else
         {
             //That part is good for mob Walking on the floor. But the floor is not always what we thought.
-            z = MapManager::Instance().GetBaseMap(mapid)->GetHeight(x,y,i_fromZ,false); // Disable cave check
+            z = map->GetHeight(x,y,i_fromZ,false); // Disable cave check
             const float groundDist = sqrt(distanceX*distanceX + distanceY*distanceY);
             const float zDist = fabs(i_fromZ - z) + 0.000001f;
             const float slope = groundDist / zDist;
@@ -199,7 +198,7 @@ template<typename TRAVELLER>
 void
 DestinationHolder<TRAVELLER>::GetLocationNowNoMicroMovement(float &x, float &y, float &z) const
 {
-    if (HasArrived() )
+    if (HasArrived())
     {
         x = i_destX;
         y = i_destY;

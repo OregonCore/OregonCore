@@ -29,14 +29,13 @@ template<class T>
 void
 ConfusedMovementGenerator<T>::Initialize(T &unit)
 {
-    const float wander_distance=11;
+    const float wander_distance = 11;
     float x,y,z;
     x = unit.GetPositionX();
     y = unit.GetPositionY();
     z = unit.GetPositionZ();
-    uint32 mapid=unit.GetMapId();
 
-    Map const* map = MapManager::Instance().GetBaseMap(mapid);
+    Map const* map = unit.GetBaseMap();
 
     i_nextMove = 1;
 
@@ -47,8 +46,8 @@ ConfusedMovementGenerator<T>::Initialize(T &unit)
 
     for (unsigned int idx=0; idx < MAX_CONF_WAYPOINTS+1; ++idx)
     {
-      const float wanderX=wander_distance*rand_norm() - wander_distance/2;
-      const float wanderY=wander_distance*rand_norm() - wander_distance/2;
+        const float wanderX=wander_distance*rand_norm() - wander_distance/2;
+        const float wanderY=wander_distance*rand_norm() - wander_distance/2;
 
         i_waypoints[idx][0] = x + wanderX;
         i_waypoints[idx][1] = y + wanderY;
@@ -59,23 +58,23 @@ ConfusedMovementGenerator<T>::Initialize(T &unit)
 
         bool is_water = map->IsInWater(i_waypoints[idx][0],i_waypoints[idx][1],z);
         // if generated wrong path just ignore
-        if (is_water && !is_water_ok || !is_water && !is_land_ok )
+        if ((is_water && !is_water_ok) || (!is_water && !is_land_ok))
         {
             i_waypoints[idx][0] = idx > 0 ? i_waypoints[idx-1][0] : x;
             i_waypoints[idx][1] = idx > 0 ? i_waypoints[idx-1][1] : y;
         }
-        
+
         i_waypoints[idx][2] =  z;
             unit.UpdateGroundPositionZ(i_waypoints[idx][0],i_waypoints[idx][1],i_waypoints[idx][2]);
 
-    // prevent falling down over an edge and check vmap if possible
-    if (z > i_waypoints[idx][2] + 3.0f || 
-        vMaps && !vMaps->isInLineOfSight(mapid, x, y, z + 2.0f, i_waypoints[idx][0], i_waypoints[idx][1], i_waypoints[idx][2]))
-      {
-        i_waypoints[idx][0] = idx > 0 ? i_waypoints[idx-1][0] : x;
-        i_waypoints[idx][1] = idx > 0 ? i_waypoints[idx-1][1] : y;
-        i_waypoints[idx][2] = idx > 0 ? i_waypoints[idx-1][2] : z;
-      }
+        // prevent falling down over an edge and check vmap if possible
+        if (z > i_waypoints[idx][2] + 3.0f || 
+            vMaps && !vMaps->isInLineOfSight(map->GetId(), x, y, z + 2.0f, i_waypoints[idx][0], i_waypoints[idx][1], i_waypoints[idx][2]))
+        {
+            i_waypoints[idx][0] = idx > 0 ? i_waypoints[idx-1][0] : x;
+            i_waypoints[idx][1] = idx > 0 ? i_waypoints[idx-1][1] : y;
+            i_waypoints[idx][2] = idx > 0 ? i_waypoints[idx-1][2] : z;
+        }
     }
 
     unit.SetUInt64Value(UNIT_FIELD_TARGET, 0);

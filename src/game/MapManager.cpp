@@ -101,7 +101,7 @@ void MapManager::checkAndCorrectGridStatesArray()
 }
 
 Map*
-MapManager::_GetBaseMap(uint32 id)
+MapManager::_createBaseMap(uint32 id)
 {
     Map *m = _findMap(id);
 
@@ -127,19 +127,24 @@ MapManager::_GetBaseMap(uint32 id)
 
 Map* MapManager::GetMap(uint32 id, const WorldObject* obj)
 {
+    ASSERT(obj);
     //if (!obj->IsInWorld()) sLog.outError("GetMap: called for map %d with object (typeid %d, guid %d, mapid %d, instanceid %d) who is not in world!", id, obj->GetTypeId(), obj->GetGUIDLow(), obj->GetMapId(), obj->GetInstanceId());
-    Map *m = _GetBaseMap(id);
+    Map *m = _createBaseMap(id);
 
     if (m && obj && m->Instanceable()) m = ((MapInstanced*)m)->GetInstance(obj);
 
     return m;
 }
 
-Map* MapManager::FindMap(uint32 mapid, uint32 instanceId)
+Map* MapManager::FindMap(uint32 mapid, uint32 instanceId) const
 {
-    Map *map = FindMap(mapid);
-    if (!map) return NULL;
-    if (!map->Instanceable()) return instanceId == 0 ? map : NULL;
+    Map *map = _findMap(mapid);
+    if (!map)
+        return NULL;
+
+    if (!map->Instanceable())
+        return instanceId == 0 ? map : NULL;
+
     return ((MapInstanced*)map)->FindMap(instanceId);
 }
 
@@ -176,7 +181,8 @@ bool MapManager::CanPlayerEnter(uint32 mapid, Player* player)
         //The player has a heroic mode and tries to enter into instance which has no a heroic mode
         if (!entry->SupportsHeroicMode() && player->GetDifficulty() == DIFFICULTY_HEROIC)
         {
-            player->SendTransferAborted(mapid, TRANSFER_ABORT_DIFFICULTY2);      //Send aborted message
+            //Send aborted message
+            player->SendTransferAborted(mapid, TRANSFER_ABORT_DIFFICULTY2);
             return false;
         }
 
@@ -214,7 +220,7 @@ bool MapManager::CanPlayerEnter(uint32 mapid, Player* player)
         InstanceTemplate const* instance = objmgr.GetInstanceTemplate(mapid);
         if (!instance)
             return false;
-        
+
         return player->Satisfy(objmgr.GetAccessRequirement(instance->access_id), mapid, true);
     }
     else
@@ -223,14 +229,14 @@ bool MapManager::CanPlayerEnter(uint32 mapid, Player* player)
 
 void MapManager::DeleteInstance(uint32 mapid, uint32 instanceId)
 {
-    Map *m = _GetBaseMap(mapid);
+    Map *m = _createBaseMap(mapid);
     if (m && m->Instanceable())
         ((MapInstanced*)m)->DestroyInstance(instanceId);
 }
 
 void MapManager::RemoveBonesFromMap(uint32 mapid, uint64 guid, float x, float y)
 {
-    bool remove_result = _GetBaseMap(mapid)->RemoveBones(guid, x, y);
+    bool remove_result = _createBaseMap(mapid)->RemoveBones(guid, x, y);
 
     if (!remove_result)
     {
@@ -259,7 +265,6 @@ MapManager::Update(time_t diff)
     gomp in gcc <4.4 version cannot parallelise loops using random access iterators
     so until gcc 4.4 isnt standard, we need the update_queue workaround
 */
-    
 #pragma omp parallel for schedule(dynamic) private(i) shared(update_queue)
     for (int32 i = 0; i < i_maps.size(); ++i)
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2008 MaNGOS <http://www.mangosproject.org/>
+CreateBaseMap * Copyright (C) 2005-2008 MaNGOS <http://www.mangosproject.org/>
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
@@ -40,16 +40,15 @@ class OREGON_DLL_DECL MapManager : public Oregon::Singleton<MapManager, Oregon::
     public:
 
         Map* GetMap(uint32, const WorldObject* obj);
-        Map* FindMap(uint32 mapid) { return _findMap(mapid); }
-        Map* FindMap(uint32 mapid, uint32 instanceId);
+        Map const* CreateBaseMap(uint32 id) const { return const_cast<MapManager*>(this)->_createBaseMap(id); }
+        Map* FindMap(uint32 mapid, uint32 instanceId = 0) const;
 
         // only const version for outer users
-        Map const* GetBaseMap(uint32 id) const { return const_cast<MapManager*>(this)->_GetBaseMap(id); }
         void DeleteInstance(uint32 mapid, uint32 instanceId);
 
         uint16 GetAreaFlag(uint32 mapid, float x, float y) const
         {
-            Map const* m = GetBaseMap(mapid);
+            Map const* m = CreateBaseMap(mapid);
             return m->GetAreaFlag(x, y);
         }
         uint32 GetAreaId(uint32 mapid, float x, float y) { return Map::GetAreaId(GetAreaFlag(mapid, x, y),mapid); }
@@ -98,7 +97,7 @@ class OREGON_DLL_DECL MapManager : public Oregon::Singleton<MapManager, Oregon::
 
         static bool IsValidMapCoord(WorldLocation const& loc)
         {
-            return IsValidMapCoord(loc.mapid,loc.x,loc.y,loc.z,loc.o);
+            return IsValidMapCoord(loc.mapid,loc.coord_x,loc.coord_y,loc.coord_z,loc.orientation);
         }
 
         void DoDelayedMovesAndRemoves();
@@ -132,7 +131,7 @@ class OREGON_DLL_DECL MapManager : public Oregon::Singleton<MapManager, Oregon::
         MapManager(const MapManager &);
         MapManager& operator=(const MapManager &);
 
-        Map* _GetBaseMap(uint32 id);
+        Map* _createBaseMap(uint32 id);
         Map* _findMap(uint32 id) const
         {
             MapMapType::const_iterator iter = i_maps.find(id);
