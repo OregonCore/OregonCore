@@ -1449,7 +1449,7 @@ bool Player::BuildEnumData(QueryResult_AutoPtr result, WorldPacket * p_data)
     *p_data << fields[11].GetFloat();                       // y
     *p_data << fields[12].GetFloat();                       // z
 
-    *p_data << (result ? result->Fetch()[13].GetUInt32() : 0);
+    *p_data << uint32(fields[13].GetUInt32());              // guild id
 
     uint32 char_flags = 0;
     uint32 playerFlags = fields[14].GetUInt32();
