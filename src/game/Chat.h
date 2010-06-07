@@ -72,6 +72,8 @@ class ChatHandler
 
         int ParseCommands(const char* text);
 
+        bool isValidChatMessage(const char* msg);
+
         virtual char const* GetName() const;
         static ChatCommand* getCommandTable();
     protected:
