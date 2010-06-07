@@ -172,7 +172,6 @@ void TemporarySummon::Summon(TempSummonType type, uint32 lifetime)
 
 void TemporarySummon::UnSummon()
 {
-    CleanupsBeforeDelete();
     AddObjectToRemoveList();
 
     Unit* sum = m_summoner ? ObjectAccessor::GetUnit(*this, m_summoner) : NULL;

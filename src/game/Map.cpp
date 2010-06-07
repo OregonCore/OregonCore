@@ -1071,7 +1071,6 @@ void Map::MoveAllCreaturesInMoveList()
                 if ((sLog.getLogFilter() & LOG_FILTER_CREATURE_MOVES)==0)
                     sLog.outDebug("Creature (GUID: %u Entry: %u) can't be move to unloaded respawn grid.",c->GetGUIDLow(),c->GetEntry());
                 #endif
-                c->CleanupsBeforeDelete();
                 AddObjectToRemoveList(c);
             }
         }
@@ -2066,6 +2065,8 @@ void Map::AddObjectToRemoveList(WorldObject *obj)
 void Map::AddObjectToSwitchList(WorldObject *obj, bool on)
 {
     assert(obj->GetMapId() == GetId() && obj->GetInstanceId() == GetInstanceId());
+
+    obj->CleanupsBeforeDelete();                            // remove or simplify at least cross referenced links
 
     std::map<WorldObject*, bool>::iterator itr = i_objectsToSwitch.find(obj);
     if (itr == i_objectsToSwitch.end())

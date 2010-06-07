@@ -1173,10 +1173,7 @@ void GameEvent::GameEventUnspawn(int16 event_id)
             objmgr.RemoveCreatureFromGrid(*itr, data);
 
             if (Creature* pCreature = ObjectAccessor::Instance().GetObjectInWorld(MAKE_NEW_GUID(*itr, data->id, HIGHGUID_UNIT), (Creature*)NULL) )
-            {
-                pCreature->CleanupsBeforeDelete();
                 pCreature->AddObjectToRemoveList();
-            }
         }
     }
 

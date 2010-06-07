@@ -1112,6 +1112,10 @@ void WorldObject::setActive(bool on )
     }
 }
 
+void WorldObject::CleanupsBeforeDelete()
+{
+}
+
 void WorldObject::_Create(uint32 guidlow, HighGuid guidhigh, uint32 mapid )
 {
     Object::_Create(guidlow, 0, guidhigh);

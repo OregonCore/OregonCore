@@ -64,18 +64,22 @@ GameObject::GameObject() : WorldObject()
 
 GameObject::~GameObject()
 {
+    //if(m_uint32Values)                                      // field array can be not exist if GameOBject not loaded
+    //    CleanupsBeforeDelete();
+}
+
+void GameObject::CleanupsBeforeDelete()
+{
     if (m_uint32Values)                                      // field array can be not exist if GameOBject not loaded
     {
-        // crash possible at access to deleted GO in Unit::m_gameobj
-        uint64 owner_guid = GetOwnerGUID();
-        if (owner_guid)
+        // Possible crash at access to deleted GO in Unit::m_gameobj
+        if (uint64 owner_guid = GetOwnerGUID())
         {
-            Unit* owner = ObjectAccessor::GetUnit(*this,owner_guid);
-            if (owner)
+            if (Unit* owner = ObjectAccessor::GetUnit(*this,owner_guid))
                 owner->RemoveGameObject(this,false);
             else
             {
-                const char * ownerType = "creature";
+                char * ownerType = "creature";
                 if (IS_PLAYER_GUID(owner_guid))
                     ownerType = "player";
                 else if (IS_PET_GUID(owner_guid))
