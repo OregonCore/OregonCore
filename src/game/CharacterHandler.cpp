@@ -468,7 +468,6 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
     uint64 playerGuid = holder->GetGuid();
 
     Player* pCurrChar = new Player(this);
-    pCurrChar->GetMotionMaster()->Initialize();
      // for send server info and strings (config)
     ChatHandler chH = ChatHandler(pCurrChar);
 
@@ -481,6 +480,8 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
         m_playerLoading = false;
         return;
     }
+
+    pCurrChar->GetMotionMaster()->Initialize();
 
     SetPlayer(pCurrChar);
 
