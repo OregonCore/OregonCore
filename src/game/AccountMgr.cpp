@@ -138,7 +138,8 @@ AccountOpResult AccountMgr::ChangePassword(uint32 accid, std::string new_passwd)
     normalizeString(new_passwd);
 
     LoginDatabase.escape_string(new_passwd);
-    if (!LoginDatabase.PExecute("UPDATE account SET sha_pass_hash=SHA1(CONCAT(UPPER(username),':',UPPER('%s'))) WHERE id='%d'",new_passwd.c_str(),accid))
+    // also reset s and v to force update at next realmd login
+    if (!LoginDatabase.PExecute("UPDATE account SET v='0', s='0', sha_pass_hash=SHA1("_CONCAT3_("username","':'","'%s'")") WHERE id='%d'", new_passwd.c_str(), accid))
         return AOR_DB_INTERNAL_ERROR;                       // unexpected error
 
     return AOR_OK;

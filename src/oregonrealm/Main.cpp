@@ -170,6 +170,7 @@ extern int main(int argc, char **argv)
 
         while (pause > clock()) {}
     }
+    sLog.Initialize();
 
     sLog.outString( "%s (realm-daemon)", _FULLVERSION );
     sLog.outString( "<Ctrl-C> to stop.\n" );
