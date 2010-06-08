@@ -6172,9 +6172,6 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
             // Earth Shield
             if (dummySpell->SpellFamilyFlags==0x40000000000LL)
             {
-                if (GetTypeId() != TYPEID_PLAYER)
-                    return false;
-
                 // heal
                 basepoints0 = triggeredByAura->GetModifier()->m_amount;
                 target = this;
