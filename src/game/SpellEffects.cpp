@@ -1679,6 +1679,15 @@ void Spell::EffectDummy(uint32 i)
             }
             break;
         case SPELLFAMILY_SHAMAN:
+            
+            // Flametongue Totem Proc
+            if (m_spellInfo->SpellFamilyFlags & 0x400000000)
+            {
+                bp = m_caster->GetAttackTime(BASE_ATTACK) * (m_spellInfo->EffectBasePoints[0]+1) / 100000;
+                spell_id = 16368;
+                break;
+            }
+
             //Shaman Rockbiter Weapon
             if (m_spellInfo->SpellFamilyFlags == 0x400000)
             {
