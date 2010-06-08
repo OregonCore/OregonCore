@@ -42,7 +42,8 @@ enum eAuthResults
     REALM_AUTH_ACCOUNT_FREEZED      = 0x0c,                 ///< This <game> account has been temporarily suspended. Please go to <site>/banned.html for further information
     REALM_AUTH_UNKNOWN4             = 0x0d,                 ///< Unable to connect
     REALM_AUTH_UNKNOWN5             = 0x0e,                 ///< Connected.
-    REALM_AUTH_PARENTAL_CONTROL     = 0x0f                  ///< Access to this account has been blocked by parental controls. Your settings may be changed in your account preferences at <site>
+    REALM_AUTH_PARENTAL_CONTROL     = 0x0f,                 ///< Access to this account has been blocked by parental controls. Your settings may be changed in your account preferences at <site>
+    REALM_AUTH_ACCOUNT_LOCKED       = 0x10                  ///< This account is locked(...)
 };
 
 enum LoginResult

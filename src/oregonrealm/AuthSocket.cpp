@@ -414,7 +414,7 @@ bool AuthSocket::_HandleLogonChallenge()
                 if ( strcmp((*result)[3].GetString(),GetRemoteAddress().c_str()) )
                 {
                     DEBUG_LOG("[AuthChallenge] Account IP differs");
-                    pkt << (uint8) REALM_AUTH_ACCOUNT_FREEZED;
+                    pkt << (uint8) REALM_AUTH_ACCOUNT_LOCKED;
                     locked=true;
                 }
                 else
