@@ -1916,9 +1916,12 @@ void Unit::CalcAbsorbResist(Unit *pVictim,SpellSchoolMask schoolMask, DamageEffe
         if (Player *modOwner = GetSpellModOwner())
             modOwner->ApplySpellMod((*i)->GetId(), SPELLMOD_MULTIPLE_VALUE, manaMultiplier);
 
-        int32 maxAbsorb = int32(pVictim->GetPower(POWER_MANA) / manaMultiplier);
-        if (currentAbsorb > maxAbsorb)
-            currentAbsorb = maxAbsorb;
+        if(manaMultiplier)
+        {
+            int32 maxAbsorb = int32(pVictim->GetPower(POWER_MANA) / manaMultiplier);
+            if (currentAbsorb > maxAbsorb)
+                currentAbsorb = maxAbsorb;
+        }
 
         *p_absorbAmount -= currentAbsorb;
         if (*p_absorbAmount <= 0)
