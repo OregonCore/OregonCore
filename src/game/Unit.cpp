@@ -5510,6 +5510,12 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                             return false;
                     }
 
+                    AuraList const &DoT = pVictim->GetAurasByType(SPELL_AURA_PERIODIC_DAMAGE);
+                    for (AuraList::const_iterator itr = DoT.begin(); itr != DoT.end(); ++itr)
+                        if ((*itr)->GetId() == 12654 && (*itr)->GetCaster() == this)
+                            if ((*itr)->GetBasePoints() > 0)
+                                basepoints0 += int((*itr)->GetBasePoints()/((*itr)->GetTickNumber() + 1));
+
                     triggered_spell_id = 12654;
                     break;
                 }
