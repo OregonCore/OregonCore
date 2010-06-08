@@ -55,32 +55,34 @@ class ChatHandler
             FillMessageData(data, m_session, type, language, NULL, target_guid, message, NULL);
         }
 
-        void FillSystemMessageData(WorldPacket *data, const char* message )
+        void FillSystemMessageData(WorldPacket *data, const char* message)
         {
             FillMessageData(data, CHAT_MSG_SYSTEM, LANG_UNIVERSAL, 0, message);
         }
 
         static char* LineFromMessage(char*& pos) { char* start = strtok(pos,"\n"); pos = NULL; return start; }
 
+        // function with different implementation for chat/console
         virtual const char *GetOregonString(int32 entry) const;
+        virtual void SendSysMessage(const char *str);
 
-        virtual void SendSysMessage( const char *str);
-        void SendSysMessage(         int32     entry);
-        void PSendSysMessage(        const char *format, ...) ATTR_PRINTF(2,3);
-        void PSendSysMessage(        int32     entry, ... );
+        void SendSysMessage(int32     entry);
+        void PSendSysMessage(const char *format, ...) ATTR_PRINTF(2,3);
+        void PSendSysMessage(int32     entry, ...);
         std::string PGetParseString(int32 entry, ...);
 
         int ParseCommands(const char* text);
 
-        bool isValidChatMessage(const char* msg);
-
-        virtual char const* GetName() const;
         static ChatCommand* getCommandTable();
+
+        bool isValidChatMessage(const char* msg);
+        virtual char const* GetName() const;
     protected:
         explicit ChatHandler() : m_session(NULL) {}      // for CLI subclass
 
         bool hasStringAbbr(const char* name, const char* part);
 
+        // function with different implementation for chat/console
         virtual bool isAvailable(ChatCommand const& cmd) const;
         virtual bool needReportToTarget(Player* chr) const;
 
@@ -184,6 +186,7 @@ class ChatHandler
         bool HandleModifyArenaCommand(const char* args);
         bool HandleModifyGenderCommand(const char* args);
 
+        //-----------------------Npc Commands-----------------------
         bool HandleNpcAddCommand(const char* args);
         bool HandleNpcAddMoveCommand(const char* args);
         bool HandleNpcChangeEntryCommand(const char *args);
@@ -206,6 +209,8 @@ class ChatHandler
         bool HandleNpcYellCommand(const char* args);
         bool HandleNpcAddFormationCommand(const char* args);
         bool HandleNpcSetLinkCommand(const char* args);
+
+        //----------------------------------------------------------
 
         bool HandleReloadCommand(const char* args);
         bool HandleReloadAllCommand(const char* args);

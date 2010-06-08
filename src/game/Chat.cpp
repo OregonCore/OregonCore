@@ -19,21 +19,21 @@
  */
 
 #include "Common.h"
-#include "Language.h"
-#include "Database/DatabaseEnv.h"
+#include "ObjectMgr.h"
+#include "World.h"
 #include "WorldPacket.h"
 #include "WorldSession.h"
-#include "Opcodes.h"
+#include "Database/DatabaseEnv.h"
+
+#include "CellImpl.h"
+#include "Chat.h"
+#include "GridNotifiersImpl.h"
+#include "Language.h"
 #include "Log.h"
-#include "World.h"
-#include "ObjectMgr.h"
+#include "Opcodes.h"
 #include "Player.h"
 #include "UpdateMask.h"
-#include "Chat.h"
 #include "MapManager.h"
-#include "GridNotifiersImpl.h"
-#include "CellImpl.h"
-#include "TicketMgr.h"
 #include "SpellMgr.h"
 
 bool ChatHandler::load_command_table = true;
@@ -696,19 +696,19 @@ bool ChatHandler::isAvailable(ChatCommand const& cmd) const
 bool ChatHandler::hasStringAbbr(const char* name, const char* part)
 {
     // non "" command
-    if (*name )
+    if (*name)
     {
         // "" part from non-"" command
-        if (!*part )
+        if (!*part)
             return false;
 
         for (;;)
         {
-            if (!*part )
+            if (!*part)
                 return true;
-            else if (!*name )
+            else if (!*name)
                 return false;
-            else if (tolower(*name ) != tolower(*part ) )
+            else if (tolower(*name) != tolower(*part))
                 return false;
             ++name; ++part;
         }
@@ -809,9 +809,9 @@ bool ChatHandler::ExecuteCommandInTable(ChatCommand *table, const char* text, co
 
     while (*text == ' ') ++text;
 
-    for (uint32 i = 0; table[i].Name != NULL; i++)
+    for (uint32 i = 0; table[i].Name != NULL; ++i)
     {
-        if (!hasStringAbbr(table[i].Name, cmd.c_str()) )
+        if (!hasStringAbbr(table[i].Name, cmd.c_str()))
             continue;
 
         // select subcommand from child commands list
@@ -836,7 +836,7 @@ bool ChatHandler::ExecuteCommandInTable(ChatCommand *table, const char* text, co
 
         SetSentErrorMessage(false);
         // table[i].Name == "" is special case: send original command to handler
-        if ((this->*(table[i].Handler))(strlen(table[i].Name)!=0 ? text : oldtext))
+        if ((this->*(table[i].Handler))(strlen(table[i].Name) != 0 ? text : oldtext))
         {
             if (table[i].SecurityLevel > SEC_PLAYER)
             {
@@ -886,7 +886,7 @@ int ChatHandler::ParseCommands(const char* text)
     // original `text` can't be used. It content destroyed in command code processing.
 
     /// ignore messages staring from many dots.
-    if (text[0] == '.' && text[1] == '.' || text[0] == '!' && text[1] == '!')
+    if ((text[0] == '.' && text[1] == '.') || (text[0] == '!' && text[1] == '!'))
         return 0;
 
     /// skip first . or ! (in console allowed use command with . and ! and without its)
@@ -916,7 +916,7 @@ valid examples:
 | will be escaped to ||
 */
 
-    if(strlen(message) > 255)
+    if (strlen(message) > 255)
         return false;
 
     const char validSequence[6] = "cHhhr";
@@ -927,24 +927,24 @@ valid examples:
     {
         const std::string validCommands = "cHhr|";
 
-        while(*message)
+        while (*message)
         {
             // find next pipe command
             message = strchr(message, '|');
 
-            if(!message)
+            if (!message)
                 return true;
 
             ++message;
             char commandChar = *message;
-            if(validCommands.find(commandChar) == std::string::npos)
+            if (validCommands.find(commandChar) == std::string::npos)
                 return false;
 
             ++message;
             // validate sequence
-            if(sWorld.getConfig(CONFIG_CHAT_STRICT_LINK_CHECKING_SEVERITY) == 2)
+            if (sWorld.getConfig(CONFIG_CHAT_STRICT_LINK_CHECKING_SEVERITY) == 2)
             {
-                if(commandChar == *validSequenceIterator)
+                if (commandChar == *validSequenceIterator)
                 {
                     if (validSequenceIterator == validSequence+4)
                         validSequenceIterator = validSequence;
@@ -967,7 +967,7 @@ valid examples:
     Quest const* linkedQuest;
     SpellEntry const *linkedSpell;
 
-    while(!reader.eof())
+    while (!reader.eof())
     {
         if (validSequence == validSequenceIterator)
         {
@@ -977,18 +977,18 @@ valid examples:
 
             reader.ignore(255, '|');
         }
-        else if(reader.get() != '|')
+        else if (reader.get() != '|')
         {
-#ifdef MANGOS_DEBUG
+#ifdef OREGON_DEBUG
             sLog.outBasic("ChatHandler::isValidChatMessage sequence aborted unexpectedly");
 #endif
             return false;
         }
 
         // pipe has always to be followed by at least one char
-        if ( reader.peek() == '\0')
+        if (reader.peek() == '\0')
         {
-#ifdef MANGOS_DEBUG
+#ifdef OREGON_DEBUG
             sLog.outBasic("ChatHandler::isValidChatMessage pipe followed by \\0");
 #endif
             return false;
@@ -1004,7 +1004,7 @@ valid examples:
         // | in normal messages is escaped by ||
         if (commandChar != '|')
         {
-            if(commandChar == *validSequenceIterator)
+            if (commandChar == *validSequenceIterator)
             {
                 if (validSequenceIterator == validSequence+4)
                     validSequenceIterator = validSequence;
@@ -1013,16 +1013,16 @@ valid examples:
             }
             else
             {
-#ifdef MANGOS_DEBUG
+#ifdef OREGON_DEBUG
                 sLog.outBasic("ChatHandler::isValidChatMessage invalid sequence, expected %c but got %c", *validSequenceIterator, commandChar);
 #endif
                 return false;
             }
         }
-        else if(validSequence != validSequenceIterator)
+        else if (validSequence != validSequenceIterator)
         {
             // no escaped pipes in sequences
-#ifdef MANGOS_DEBUG
+#ifdef OREGON_DEBUG
             sLog.outBasic("ChatHandler::isValidChatMessage got escaped pipe in sequence");
 #endif
             return false;
@@ -1033,13 +1033,13 @@ valid examples:
             case 'c':
                 color = 0;
                 // validate color, expect 8 hex chars
-                for(int i=0; i<8; i++)
+                for (int i=0; i<8; i++)
                 {
                     char c;
                     reader >> c;
-                    if(!c)
+                    if (!c)
                     {
-#ifdef MANGOS_DEBUG
+#ifdef OREGON_DEBUG
                         sLog.outBasic("ChatHandler::isValidChatMessage got \\0 while reading color in |c command");
 #endif
                         return false;
@@ -1047,17 +1047,17 @@ valid examples:
 
                     color <<= 4;
                     // check for hex char
-                    if(c >= '0' && c <='9')
+                    if (c >= '0' && c <= '9')
                     {
                         color |= c-'0';
                         continue;
                     }
-                    if(c >= 'a' && c <='f')
+                    if (c >= 'a' && c <= 'f')
                     {
                         color |= 10+c-'a';
                         continue;
                     }
-#ifdef MANGOS_DEBUG
+#ifdef OREGON_DEBUG
                     sLog.outBasic("ChatHandler::isValidChatMessage got non hex char '%c' while reading color", c);
 #endif
                     return false;
@@ -1073,9 +1073,9 @@ valid examples:
                     reader.getline(buffer, 256, ':');
 
                     linkedItem= objmgr.GetItemPrototype(atoi(buffer));
-                    if(!linkedItem)
+                    if (!linkedItem)
                     {
-#ifdef MANGOS_DEBUG
+#ifdef OREGON_DEBUG
                         sLog.outBasic("ChatHandler::isValidChatMessage got invalid itemID %u in |item command", atoi(buffer));
 #endif
                         return false;
@@ -1083,7 +1083,7 @@ valid examples:
 
                     if (color != ItemQualityColors[linkedItem->Quality])
                     {
-#ifdef MANGOS_DEBUG
+#ifdef OREGON_DEBUG
                         sLog.outBasic("ChatHandler::isValidChatMessage linked item has color %u, but user claims %u", ItemQualityColors[linkedItem->Quality],
                                 color);
 #endif
@@ -1093,19 +1093,19 @@ valid examples:
                     char c = reader.peek();
 
                     // ignore enchants etc.
-                    while(c >='0' && c <='9' || c==':')
+                    while (c >='0' && c <='9' || c==':')
                     {
                         reader.ignore(1);
                         c = reader.peek();
                     }
                 }
-                else if(strcmp(buffer, "quest") == 0)
+                else if (strcmp(buffer, "quest") == 0)
                 {
                     // no color check for questlinks, each client will adapt it anyway
                     uint32 questid= 0;
                     // read questid
                     char c = reader.peek();
-                    while(c >='0' && c<='9')
+                    while (c >='0' && c <= '9')
                     {
                         reader.ignore(1);
                         questid *= 10;
@@ -1115,7 +1115,7 @@ valid examples:
 
                     linkedQuest = objmgr.GetQuestTemplate(questid);
 
-                    if(!linkedQuest)
+                    if (!linkedQuest)
                     {
 #ifdef OREGON_DEBUG
                         sLog.outBasic("ChatHandler::isValidChatMessage Questtemplate %u not found", questid);
@@ -1124,45 +1124,45 @@ valid examples:
                     }
                     c = reader.peek();
                     // level
-                    while(c !='|' && c!='\0')
+                    while (c !='|' && c != '\0')
                     {
                         reader.ignore(1);
                         c = reader.peek();
                     }
                 }
-                else if(strcmp(buffer, "talent") == 0)
+                else if (strcmp(buffer, "talent") == 0)
                 {
                     // talent links are always supposed to be blue
-                    if(color != CHAT_LINK_COLOR_TALENT)
+                    if (color != CHAT_LINK_COLOR_TALENT)
                         return false;
 
                     // read talent entry
                     reader.getline(buffer, 256, ':');
                     TalentEntry const *talentInfo = sTalentStore.LookupEntry(atoi(buffer));
-                    if(!talentInfo)
+                    if (!talentInfo)
                         return false;
 
                     linkedSpell = sSpellStore.LookupEntry(talentInfo->RankID[0]);
-                    if(!linkedSpell)
+                    if (!linkedSpell)
                         return false;
 
                     char c = reader.peek();
                     // skillpoints? whatever, drop it
-                    while(c !='|' && c!='\0')
+                    while (c !='|' && c != '\0')
                     {
                         reader.ignore(1);
                         c = reader.peek();
                     }
                 }
-                else if(strcmp(buffer, "spell") == 0)
+                else if (strcmp(buffer, "spell") == 0)
                 {
-                    if(color != CHAT_LINK_COLOR_SPELL)
+                    if (color != CHAT_LINK_COLOR_SPELL)
                         return false;
 
                     uint32 spellid = 0;
                     // read spell entry
                     char c = reader.peek();
-                    while(c >='0' && c<='9')
+                    while (c >='0' && c <= '9')
                     {
                         reader.ignore(1);
                         spellid *= 10;
@@ -1170,18 +1170,18 @@ valid examples:
                         c = reader.peek();
                     }
                     linkedSpell = sSpellStore.LookupEntry(spellid);
-                    if(!linkedSpell)
+                    if (!linkedSpell)
                         return false;
                 }
-                else if(strcmp(buffer, "enchant") == 0)
+                else if (strcmp(buffer, "enchant") == 0)
                 {
-                    if(color != CHAT_LINK_COLOR_ENCHANT)
+                    if (color != CHAT_LINK_COLOR_ENCHANT)
                         return false;
 
                     uint32 spellid = 0;
                     // read spell entry
                     char c = reader.peek();
-                    while(c >='0' && c<='9')
+                    while (c >='0' && c <= '9')
                     {
                         reader.ignore(1);
                         spellid *= 10;
@@ -1189,12 +1189,12 @@ valid examples:
                         c = reader.peek();
                     }
                     linkedSpell = sSpellStore.LookupEntry(spellid);
-                    if(!linkedSpell)
+                    if (!linkedSpell)
                         return false;
                 }
                 else
                 {
-#ifdef MANGOS_DEBUG
+#ifdef OREGON_DEBUG
                     sLog.outBasic("ChatHandler::isValidChatMessage user sent unsupported link type '%s'", buffer);
 #endif
                     return false;
@@ -1202,12 +1202,12 @@ valid examples:
                 break;
             case 'h':
                 // if h is next element in sequence, this one must contain the linked text :)
-                if(*validSequenceIterator == 'h')
+                if (*validSequenceIterator == 'h')
                 {
                     // links start with '['
-                    if(reader.get() != '[')
+                    if (reader.get() != '[')
                     {
-#ifdef MANGOS_DEBUG
+#ifdef OREGON_DEBUG
                         sLog.outBasic("ChatHandler::isValidChatMessage link caption doesn't start with '['");
 #endif
                         return false;
@@ -1218,13 +1218,13 @@ valid examples:
                     if (linkedSpell)
                     {
                         // spells with that flag have a prefix of "$PROFESSION: "
-                        if(linkedSpell->Attributes & SPELL_ATTR_TRADESPELL)
+                        if (linkedSpell->Attributes & SPELL_ATTR_TRADESPELL)
                         {
                             // lookup skillid
                             SkillLineAbilityMap::const_iterator lower = spellmgr.GetBeginSkillLineAbilityMap(linkedSpell->Id);
                             SkillLineAbilityMap::const_iterator upper = spellmgr.GetEndSkillLineAbilityMap(linkedSpell->Id);
 
-                            if(lower == upper)
+                            if (lower == upper)
                             {
                                 return false;
                             }
@@ -1237,15 +1237,15 @@ valid examples:
                             }
 
                             SkillLineEntry const *skillLine = sSkillLineStore.LookupEntry(skillInfo->skillId);
-                            if(!skillLine)
+                            if (!skillLine)
                             {
                                 return false;
                             }
 
-                            for(uint8 i=0; i<MAX_LOCALE; ++i)
+                            for (uint8 i=0; i<MAX_LOCALE; ++i)
                             {
                                 uint32 skillLineNameLength = strlen(skillLine->name[i]);
-                                if(skillLineNameLength > 0 && strncmp(skillLine->name[i], buffer, skillLineNameLength) == 0)
+                                if (skillLineNameLength > 0 && strncmp(skillLine->name[i], buffer, skillLineNameLength) == 0)
                                 {
                                     // found the prefix, remove it to perform spellname validation below
                                     // -2 = strlen(": ")
@@ -1255,24 +1255,24 @@ valid examples:
                             }
                         }
                         bool foundName = false;
-                        for(uint8 i=0; i<MAX_LOCALE; ++i)
+                        for (uint8 i=0; i<MAX_LOCALE; ++i)
                         {
-                            if(*linkedSpell->SpellName[i] && strcmp(linkedSpell->SpellName[i], buffer) == 0)
+                            if (*linkedSpell->SpellName[i] && strcmp(linkedSpell->SpellName[i], buffer) == 0)
                             {
                                 foundName = true;
                                 break;
                             }
                         }
-                        if(!foundName)
+                        if (!foundName)
                             return false;
                     }
-                    else if(linkedQuest)
+                    else if (linkedQuest)
                     {
                         if (linkedQuest->GetTitle() != buffer)
                         {
                             QuestLocale const *ql = objmgr.GetQuestLocale(linkedQuest->GetQuestId());
 
-                            if(!ql)
+                            if (!ql)
                             {
 #ifdef OREGON_DEBUG
                                 sLog.outBasic("ChatHandler::isValidChatMessage default questname didn't match and there is no locale");
@@ -1281,15 +1281,15 @@ valid examples:
                             }
 
                             bool foundName = false;
-                            for(uint8 i=0; i<ql->Title.size(); i++)
+                            for (uint8 i=0; i<ql->Title.size(); i++)
                             {
-                                if(ql->Title[i] == buffer)
+                                if (ql->Title[i] == buffer)
                                 {
                                     foundName = true;
                                     break;
                                 }
                             }
-                            if(!foundName)
+                            if (!foundName)
                             {
 #ifdef OREGON_DEBUG
                                 sLog.outBasic("ChatHandler::isValidChatMessage no quest locale title matched");
@@ -1298,32 +1298,32 @@ valid examples:
                             }
                         }
                     }
-                    else if(linkedItem)
+                    else if (linkedItem)
                     {
-                        if(strcmp(linkedItem->Name1, buffer) != 0)
+                        if (strcmp(linkedItem->Name1, buffer) != 0)
                         {
                             ItemLocale const *il = objmgr.GetItemLocale(linkedItem->ItemId);
 
-                            if(!il)
+                            if (!il)
                             {
-#ifdef MANGOS_DEBUG
+#ifdef OREGON_DEBUG
                                 sLog.outBasic("ChatHandler::isValidChatMessage linked item name doesn't is wrong and there is no localization");
 #endif
                                 return false;
                             }
 
                             bool foundName = false;
-                            for(uint8 i=0; i<il->Name.size(); ++i)
+                            for (uint8 i=0; i<il->Name.size(); ++i)
                             {
-                                if(il->Name[i] == buffer)
+                                if (il->Name[i] == buffer)
                                 {
                                     foundName = true;
                                     break;
                                 }
                             }
-                            if(!foundName)
+                            if (!foundName)
                             {
-#ifdef MANGOS_DEBUG
+#ifdef OREGON_DEBUG
                                 sLog.outBasic("ChatHandler::isValidChatMessage linked item name wasn't found in any localization");
 #endif
                                 return false;
@@ -1341,7 +1341,7 @@ valid examples:
                 // no further payload
                 break;
             default:
-#ifdef MANGOS_DEBUG
+#ifdef OREGON_DEBUG
                 sLog.outBasic("ChatHandler::isValidChatMessage got invalid command |%c", commandChar);
 #endif
                 return false;
@@ -1349,8 +1349,8 @@ valid examples:
     }
 
     // check if every opened sequence was also closed properly
-#ifdef MANGOS_DEBUG
-    if(validSequence != validSequenceIterator)
+#ifdef OREGON_DEBUG
+    if (validSequence != validSequenceIterator)
         sLog.outBasic("ChatHandler::isValidChatMessage EOF in active sequence");
 #endif
     return validSequence == validSequenceIterator;
@@ -1383,7 +1383,7 @@ bool ChatHandler::ShowHelpForSubCommands(ChatCommand *table, char const* cmd, ch
     if (list.empty())
         return false;
 
-    if (table==getCommandTable())
+    if (table == getCommandTable())
     {
         SendSysMessage(LANG_AVIABLE_CMD);
         PSendSysMessage("%s",list.c_str());
@@ -1571,14 +1571,14 @@ char* ChatHandler::extractKeyFromLink(char* text, char const* linkType, char** s
         return NULL;
 
     // skip spaces
-    while (*text==' '||*text=='\t'||*text=='\b')
+    while (*text == ' '||*text == '\t'||*text == '\b')
         ++text;
 
     if (!*text)
         return NULL;
 
     // return non link case
-    if (text[0]!='|')
+    if (text[0] != '|')
         return strtok(text, " ");
 
     // [name] Shift-click form |color|linkType:key|h[name]|h|r
@@ -1608,7 +1608,7 @@ char* ChatHandler::extractKeyFromLink(char* text, char const* linkType, char** s
         *something1 = strtok(NULL, ":|");                   // extract something
 
     strtok(cKeysTail, "]");                                 // restart scan tail and skip name with possible spaces
-    strtok(NULL, " ");                                      // skip link tail (to allow continue strtok(NULL,s) use after retturn from function
+    strtok(NULL, " ");                                      // skip link tail (to allow continue strtok(NULL,s) use after return from function
     return cKey;
 }
 
@@ -1619,14 +1619,14 @@ char* ChatHandler::extractKeyFromLink(char* text, char const* const* linkTypes, 
         return NULL;
 
     // skip spaces
-    while (*text==' '||*text=='\t'||*text=='\b')
+    while (*text == ' '||*text == '\t'||*text == '\b')
         ++text;
 
     if (!*text)
         return NULL;
 
     // return non link case
-    if (text[0]!='|')
+    if (text[0] != '|')
         return strtok(text, " ");
 
     // [name] Shift-click form |color|linkType:key|h[name]|h|r
@@ -1665,7 +1665,7 @@ char* ChatHandler::extractKeyFromLink(char* text, char const* const* linkTypes, 
     return NULL;
 }
 
-char const *fmtstring(char const *format, ... )
+char const *fmtstring(char const *format, ...)
 {
     va_list        argptr;
     #define    MAX_FMT_STRING    32000
@@ -1681,7 +1681,7 @@ char const *fmtstring(char const *format, ... )
 
     len = strlen(temp_buffer);
 
-    if (len >= MAX_FMT_STRING )
+    if (len >= MAX_FMT_STRING)
         return "ERROR";
 
     if (len + index >= MAX_FMT_STRING-1)
