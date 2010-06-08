@@ -6456,17 +6456,30 @@ void Spell::EffectStealBeneficialBuff(uint32 i)
     // Ok if exist some buffs for dispel try dispel it
     if (!steal_list.empty())
     {
-        std::list < std::pair<uint32,uint64> > success_list;
-        int32 list_size = steal_list.size();
-        // dispel N = damage buffs (or while exist buffs for dispel)
-        for (int32 count=0; count < damage && list_size > 0; ++count)
-        {
-            // Random select buff for dispel
+         std::list < std::pair<uint32,uint64> > success_list;    // (spellId, casterGUID)
+         std::list < uint32 > fail_list;                         // spellId
+         int32 list_size = steal_list.size();
+         // dispel N = damage buffs (or while exist buffs for dispel)
+         for (int32 count=0; count < damage && list_size > 0; ++count)
+         {
+             // Random select buff for dispel
             Aura *aur = steal_list[m_caster->GetMap()->urand(0, list_size-1)];
-            // Not use chance for steal
-            // TODO possible need do it
-            success_list.push_back(std::pair<uint32,uint64>(aur->GetId(),aur->GetCasterGUID()));
 
+            // Base dispel chance
+            // TODO: possible chance depend from spell level??
+            int32 miss_chance = 0;
+            // Apply dispel mod from aura caster
+            if (Unit *caster = aur->GetCaster())
+            {
+                if ( Player* modOwner = caster->GetSpellModOwner() )
+                    modOwner->ApplySpellMod(aur->GetSpellProto()->Id, SPELLMOD_RESIST_DISPEL_CHANCE, miss_chance, this);
+            }
+            // Try dispel
+            if (roll_chance_i(miss_chance))
+                fail_list.push_back(aur->GetId());
+            else
+                success_list.push_back( std::pair<uint32,uint64>(aur->GetId(),aur->GetCasterGUID())); 
+ 
             // Remove buff from list for prevent doubles
             for (std::vector<Aura *>::iterator j = steal_list.begin(); j != steal_list.end(); )
             {
@@ -6497,6 +6510,20 @@ void Spell::EffectStealBeneficialBuff(uint32 i)
                 data << uint8(0);                    // 0 - steals !=0 transfers
                 unitTarget->RemoveAurasDueToSpellBySteal(spellInfo->Id, j->second, m_caster);
             }
+            m_caster->SendMessageToSet(&data, true);
+        }
+
+        // Is there other way to send spellsteal resists?
+        // Send fail log to client
+        if (!fail_list.empty())
+        {
+            // Failed to dispell
+            WorldPacket data(SMSG_DISPEL_FAILED, 8+8+4+4*fail_list.size());
+            data << uint64(m_caster->GetGUID());            // Caster GUID
+            data << uint64(unitTarget->GetGUID());          // Victim GUID
+            data << uint32(m_spellInfo->Id);                // dispel spell id
+            for (std::list< uint32 >::iterator j = fail_list.begin(); j != fail_list.end(); ++j)
+                data << uint32(*j);                         // Spell Id
             m_caster->SendMessageToSet(&data, true);
         }
     }
