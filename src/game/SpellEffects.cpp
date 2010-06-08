@@ -6440,7 +6440,7 @@ void Spell::EffectStealBeneficialBuff(uint32 i)
         if (aur && (1<<aur->GetSpellProto()->Dispel) & dispelMask)
         {
             // Need check for passive? this
-            if (aur->IsPositive() && !aur->IsPassive())
+            if (aur->IsPositive() && !aur->IsPassive() && !(aur->GetSpellProto()->AttributesEx4 & SPELL_ATTR_EX4_NOT_STEALABLE))
                 steal_list.push_back(aur);
         }
     }
@@ -6453,7 +6453,7 @@ void Spell::EffectStealBeneficialBuff(uint32 i)
         for (int32 count=0; count < damage && list_size > 0; ++count)
         {
             // Random select buff for dispel
-          Aura *aur = steal_list[m_caster->GetMap()->urand(0, list_size-1)];
+            Aura *aur = steal_list[m_caster->GetMap()->urand(0, list_size-1)];
             // Not use chance for steal
             // TODO possible need do it
             success_list.push_back(std::pair<uint32,uint64>(aur->GetId(),aur->GetCasterGUID()));
