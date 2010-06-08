@@ -3351,7 +3351,7 @@ uint32 Unit::GetWeaponSkillValue (WeaponAttackType attType, Unit const* target) 
         uint32  skill = item ? item->GetSkill() : SKILL_UNARMED;
 
         // in PvP use full skill instead current skill value
-        value = (target && target->GetTypeId() == TYPEID_PLAYER)
+        value = (target && target->isCharmedOwnedByPlayerOrPlayer())
             ? ToPlayer()->GetMaxSkillValue(skill)
             : ToPlayer()->GetSkillValue(skill);
         // Modify value from ratings
