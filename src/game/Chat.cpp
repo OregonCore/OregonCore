@@ -1292,7 +1292,7 @@ valid examples:
                             if(!foundName)
                             {
 #ifdef OREGON_DEBUG
-                                sLog.outBasic("ChatHandler::isValidChatMessage no quest locale title matched")
+                                sLog.outBasic("ChatHandler::isValidChatMessage no quest locale title matched");
 #endif
                                 return false;
                             }
