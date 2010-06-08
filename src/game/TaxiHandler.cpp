@@ -241,10 +241,10 @@ void WorldSession::HandleTaxiNextDestinationOpcode(WorldPacket& /*recv_data*/)
         if (path && MountId)
             SendDoFlight(MountId, path, 1);               // skip start fly node
         else
-            GetPlayer()->m_taxi.ClearTaxiDestinations();    // clear problematic path and next
+            GetPlayer()->CleanupAfterTaxiFlight();    // clear problematic path and next
     }
     else
-        GetPlayer()->m_taxi.ClearTaxiDestinations();        // not destinations, clear source node
+        GetPlayer()->CleanupAfterTaxiFlight();        // not destinations, clear source node
 }
 
 void WorldSession::HandleActivateTaxiOpcode(WorldPacket & recv_data)

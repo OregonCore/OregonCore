@@ -429,7 +429,7 @@ void WorldSession::HandleBattleGroundPlayerPortOpcode(WorldPacket &recv_data )
                 if (_player->isInFlight())
                 {
                     _player->GetMotionMaster()->MovementExpired();
-                    _player->m_taxi.ClearTaxiDestinations();
+                    _player->CleanupAfterTaxiFlight();
                 }
                 _player->RemoveFromGroup();
                 queueSlot = _player->GetBattleGroundQueueIndex(bgQueueTypeId);
