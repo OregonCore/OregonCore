@@ -58,10 +58,18 @@ class SqlStatement : public SqlOperation
 class SqlTransaction : public SqlOperation
 {
     private:
-        std::queue<const char *> m_queue;
+        std::queue<const char*> m_queue;
+        ACE_Thread_Mutex m_Mutex;
     public:
         SqlTransaction() {}
-        void DelayExecute(const char *sql) { m_queue.push(strdup(sql)); }
+        void DelayExecute(const char *sql)
+        {
+            m_Mutex.acquire();
+            char* _sql = strdup(sql);
+            if (_sql)
+                m_queue.push(_sql);
+            m_Mutex.release();
+        }
         void Execute(Database *db);
 };
 
@@ -125,23 +133,30 @@ class SqlQueryHolderEx : public SqlOperation
 class SqlAsyncTask : public ACE_Method_Request
 {
 public:
-    SqlAsyncTask(Database * db, SqlOperation * op) : m_db(db), m_op(op) {}
-    ~SqlAsyncTask() { if(!m_op) return; delete m_op; }
+    SqlAsyncTask(Database * db, SqlOperation * op) : m_db(db), m_op(op){}
+    ~SqlAsyncTask()
+    { 
+        if (!m_op)
+            return; 
+        
+        delete m_op;
+        m_op = NULL;
+    }
 
     int call()
     {
-        if(m_db == NULL || m_op == NULL)
+        if (m_db == NULL || m_op == NULL)
         return -1;
 
         try
         {
-        m_op->Execute(m_db);
+            m_op->Execute(m_db);
         }
         catch(...)
         {
-        return -1;
+            return -1;
         }
-        
+
         return 0;
     }
 

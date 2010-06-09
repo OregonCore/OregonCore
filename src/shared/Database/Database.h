@@ -134,7 +134,8 @@ class OREGON_DLL_SPEC Database
     private:
         bool m_logSQL;
         std::string m_logsDir;
-        ACE_Thread_Mutex mMutex;
+        ACE_Thread_Mutex mMutex;        // For thread safe operations between core and mySQL server
+        ACE_Thread_Mutex nMutex;        // For thread safe operations on m_transQueues
 
         ACE_Based::Thread * tranThread;
 

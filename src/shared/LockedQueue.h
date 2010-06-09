@@ -68,7 +68,8 @@ namespace ACE_Based
             //! Gets the next result in the queue, if any.
             bool next(T& result)
             {
-                ACE_Guard<LockType> g(this->_lock);
+               // ACE_Guard<LockType> g(this->_lock);
+                ACE_GUARD_RETURN (LockType, g, this->_lock, false);
 
                 if (_queue.empty())
                     return false;
@@ -85,7 +86,6 @@ namespace ACE_Based
             T& peek()
             {
                 lock();
-
 
                 T& result = _queue.front();
 
@@ -119,6 +119,20 @@ namespace ACE_Based
             void unlock()
             {
                 this->_lock.release();
+            }
+            
+            ///! Calls pop_front of the queue
+            void pop_front()
+            {
+                ACE_GUARD (LockType, g, this->_lock);
+                _queue.pop_front();
+            }
+            
+            ///! Checks if we're empty or not with locks held
+            bool empty()
+            {
+                ACE_GUARD_RETURN (LockType, g, this->_lock, false);
+                return _queue.empty();
             }
     };
 }
