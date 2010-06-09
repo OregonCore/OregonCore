@@ -27,23 +27,24 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-INSTANTIATE_SINGLETON_1( Log );
+INSTANTIATE_SINGLETON_1(Log);
 
 Log::Log() :
     raLogfile(NULL), logfile(NULL), gmLogfile(NULL), charLogfile(NULL),
-    dberLogfile(NULL), chatLogfile(NULL), m_gmlog_per_account(false), m_colored(false)
-    , arenaLogFile(NULL)
+    dberLogfile(NULL), chatLogfile(NULL), m_gmlog_per_account(false), 
+    m_enableLogDBLater(false), m_enableLogDB(false), m_colored(false),
+    arenaLogFile(NULL)
 {
     Initialize();
 }
 
 Log::~Log()
 {
-    if( logfile != NULL )
+    if (logfile != NULL)
         fclose(logfile);
     logfile = NULL;
 
-    if( gmLogfile != NULL )
+    if (gmLogfile != NULL)
         fclose(gmLogfile);
     gmLogfile = NULL;
 
@@ -51,7 +52,7 @@ Log::~Log()
         fclose(charLogfile);
     charLogfile = NULL;
 
-    if( dberLogfile != NULL )
+    if (dberLogfile != NULL)
         fclose(dberLogfile);
     dberLogfile = NULL;
 
@@ -71,31 +72,31 @@ Log::~Log()
 void Log::SetLogLevel(char *Level)
 {
     int32 NewLevel =atoi((char*)Level);
-    if ( NewLevel <0 )
+    if (NewLevel <0)
         NewLevel = 0;
     m_logLevel = NewLevel;
 
-    outString( "LogLevel is %u",m_logLevel );
+    outString ("LogLevel is %u",m_logLevel);
 }
 
 void Log::SetLogFileLevel(char *Level)
 {
     int32 NewLevel =atoi((char*)Level);
-    if ( NewLevel <0 )
+    if (NewLevel <0)
         NewLevel = 0;
     m_logFileLevel = NewLevel;
 
-    outString( "LogFileLevel is %u",m_logFileLevel );
+    outString ("LogFileLevel is %u",m_logFileLevel);
 }
 
 void Log::SetDBLogLevel(char *Level)
 {
     int32 NewLevel = atoi((char*)Level);
-    if ( NewLevel < 0 )
+    if (NewLevel < 0)
         NewLevel = 0;
     m_dbLogLevel = NewLevel;
 
-    outString( "DBLogLevel is %u",m_dbLogLevel );
+    outString ("DBLogLevel is %u",m_dbLogLevel);
 }
 
 void Log::Initialize()
@@ -111,11 +112,9 @@ void Log::Initialize()
 
     /// Common log files data
     m_logsDir = sConfig.GetStringDefault("LogsDir","");
-    if(!m_logsDir.empty())
-    {
-        if((m_logsDir.at(m_logsDir.length()-1)!='/') && (m_logsDir.at(m_logsDir.length()-1)!='\\'))
+    if (!m_logsDir.empty())
+        if ((m_logsDir.at(m_logsDir.length() - 1) != '/') && (m_logsDir.at(m_logsDir.length() - 1) != '\\'))
             m_logsDir.append("/");
-    }
 
     m_logsTimestamp = "_" + GetTimestampStr();
 
@@ -177,7 +176,6 @@ void Log::Initialize()
 
     // Char log settings
     m_charLog_Dump = sConfig.GetBoolDefault("CharLogDump", false);
-
 }
 
 FILE* Log::openLogFile(char const* configFileName,char const* configTimeStampFlag, char const* mode)
@@ -233,7 +231,7 @@ void Log::InitColors(const std::string& str)
 
     std::istringstream ss(str);
 
-    for(uint8 i = 0; i < LogLevels; ++i)
+    for (uint8 i = 0; i < LogLevels; ++i)
     {
         ss >> color[i];
 
@@ -244,7 +242,7 @@ void Log::InitColors(const std::string& str)
             return;
     }
 
-    for(uint8 i = 0; i < LogLevels; ++i)
+    for (uint8 i = 0; i < LogLevels; ++i)
         m_colors[i] = ColorTypes(color[i]);
 
     m_colored = true;
@@ -278,7 +276,7 @@ void Log::SetColor(bool stdout_stream, ColorTypes color)
         FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY
     };
 
-    HANDLE hConsole = GetStdHandle(stdout_stream ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE );
+    HANDLE hConsole = GetStdHandle(stdout_stream ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
     SetConsoleTextAttribute(hConsole, WinColorFG[color]);
     #else
     enum ANSITextAttr
@@ -327,10 +325,10 @@ void Log::SetColor(bool stdout_stream, ColorTypes color)
 void Log::ResetColor(bool stdout_stream)
 {
     #if PLATFORM == PLATFORM_WINDOWS
-    HANDLE hConsole = GetStdHandle(stdout_stream ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE );
-    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED );
+    HANDLE hConsole = GetStdHandle(stdout_stream ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
+    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
     #else
-    fprintf(( stdout_stream ? stdout : stderr ), "\x1b[0m");
+    fprintf((stdout_stream ? stdout : stderr), "\x1b[0m");
     #endif
 }
 
@@ -349,7 +347,7 @@ std::string Log::GetTimestampStr()
     return std::string(buf);
 }
 
-void Log::outDB( LogTypes type, const char * str )
+void Log::outDB(LogTypes type, const char * str)
 {
     if (!str || type >= MAX_LOG_TYPES)
          return;
@@ -363,16 +361,16 @@ void Log::outDB( LogTypes type, const char * str )
         "VALUES (" UI64FMTD ", %u, %u, '%s');", uint64(time(0)), realm, type, new_str.c_str());
 }
 
-void Log::outString( const char * str, ... )
+void Log::outString(const char * str, ...)
 {
-    if( !str )
+    if (!str)
         return;
 
     if (m_enableLogDB)
     {
         // we don't want empty strings in the DB
         std::string s(str);
-        if(s.empty() || s == " ")
+        if (s.empty() || s == " ")
             return;
 
         va_list ap2;
@@ -383,7 +381,7 @@ void Log::outString( const char * str, ... )
         va_end(ap2);
     }
 
-    if(m_colored)
+    if (m_colored)
         SetColor(true,m_colors[LOGL_NORMAL]);
 
     UTF8PRINTF(stdout,str,);
@@ -391,14 +389,14 @@ void Log::outString( const char * str, ... )
     if(m_colored)
         ResetColor(true);
 
-    printf( "\n" );
+    printf("\n");
     if(logfile)
     {
         outTimestamp(logfile);
         va_list ap;
         va_start(ap, str);
         vfprintf(logfile, str, ap);
-        fprintf(logfile, "\n" );
+        fprintf(logfile, "\n");
         va_end(ap);
 
         fflush(logfile);
@@ -406,21 +404,21 @@ void Log::outString( const char * str, ... )
     fflush(stdout);
 }
 
-void Log::outString( )
+void Log::outString()
 {
-    printf( "\n" );
-    if(logfile)
+    printf("\n");
+    if (logfile)
     {
         outTimestamp(logfile);
-        fprintf(logfile, "\n" );
+        fprintf(logfile, "\n");
         fflush(logfile);
     }
     fflush(stdout);
 }
 
-void Log::outCrash( const char * err, ... )
+void Log::outCrash(const char * err, ...)
 {
-    if( !err )
+    if (!err)
         return;
 
     if (m_enableLogDB)
@@ -433,7 +431,7 @@ void Log::outCrash( const char * err, ... )
         va_end(ap2);
     }
 
-    if(m_colored)
+    if (m_colored)
         SetColor(false,LRED);
 
     UTF8PRINTF(stderr,err,);
@@ -441,26 +439,26 @@ void Log::outCrash( const char * err, ... )
     if(m_colored)
         ResetColor(false);
 
-    fprintf( stderr, "\n" );
-    if(logfile)
+    fprintf(stderr, "\n");
+    if (logfile)
     {
         outTimestamp(logfile);
-        fprintf(logfile, "CRASH ALERT: " );
+        fprintf(logfile, "CRASH ALERT: ");
 
         va_list ap;
         va_start(ap, err);
         vfprintf(logfile, err, ap);
         va_end(ap);
 
-        fprintf(logfile, "\n" );
+        fprintf(logfile, "\n");
         fflush(logfile);
     }
     fflush(stderr);
 }
 
-void Log::outError( const char * err, ... )
+void Log::outError(const char * err, ...)
 {
-    if( !err )
+    if (!err)
         return;
 
     if (m_enableLogDB)
@@ -473,7 +471,7 @@ void Log::outError( const char * err, ... )
         va_end(ap2);
     }
 
-    if(m_colored)
+    if (m_colored)
         SetColor(false,LRED);
 
     UTF8PRINTF(stderr,err,);
@@ -481,47 +479,47 @@ void Log::outError( const char * err, ... )
     if(m_colored)
         ResetColor(false);
 
-    fprintf( stderr, "\n" );
-    if(logfile)
+    fprintf (stderr, "\n");
+    if (logfile)
     {
         outTimestamp(logfile);
-        fprintf(logfile, "ERROR: " );
+        fprintf(logfile, "ERROR: ");
 
         va_list ap;
         va_start(ap, err);
         vfprintf(logfile, err, ap);
         va_end(ap);
 
-        fprintf(logfile, "\n" );
+        fprintf(logfile, "\n");
         fflush(logfile);
     }
     fflush(stderr);
 }
 
-void Log::outArena( const char * str, ... )
+void Log::outArena(const char * str, ...)
 {
-    if( !str )
+    if (!str)
         return;
 
-    if(arenaLogFile)
+    if (arenaLogFile)
     {
         va_list ap;
         outTimestamp(arenaLogFile);
         va_start(ap, str);
         vfprintf(arenaLogFile, str, ap);
-        fprintf(arenaLogFile, "\n" );
+        fprintf(arenaLogFile, "\n");
         va_end(ap);
         fflush(arenaLogFile);
     }
     fflush(stdout);
 }
 
-void Log::outErrorDb( const char * err, ... )
+void Log::outErrorDb(const char * err, ...)
 {
-    if( !err )
+    if (!err)
         return;
 
-    if(m_colored)
+    if (m_colored)
         SetColor(false,LRED);
 
     UTF8PRINTF(stderr,err,);
@@ -529,23 +527,23 @@ void Log::outErrorDb( const char * err, ... )
     if(m_colored)
         ResetColor(false);
 
-    fprintf( stderr, "\n" );
+    fprintf (stderr, "\n");
 
-    if(logfile)
+    if (logfile)
     {
         outTimestamp(logfile);
-        fprintf(logfile, "ERROR: " );
+        fprintf(logfile, "ERROR: ");
 
         va_list ap;
         va_start(ap, err);
         vfprintf(logfile, err, ap);
         va_end(ap);
 
-        fprintf(logfile, "\n" );
+        fprintf(logfile, "\n");
         fflush(logfile);
     }
 
-    if(dberLogfile)
+    if (dberLogfile)
     {
         outTimestamp(dberLogfile);
         va_list ap;
@@ -553,15 +551,15 @@ void Log::outErrorDb( const char * err, ... )
         vfprintf(dberLogfile, err, ap);
         va_end(ap);
 
-        fprintf(dberLogfile, "\n" );
+        fprintf(dberLogfile, "\n");
         fflush(dberLogfile);
     }
     fflush(stderr);
 }
 
-void Log::outBasic( const char * str, ... )
+void Log::outBasic(const char * str, ...)
 {
-    if( !str )
+    if (!str)
         return;
 
     if (m_enableLogDB && m_dbLogLevel > LOGL_NORMAL)
@@ -574,35 +572,35 @@ void Log::outBasic( const char * str, ... )
         va_end(ap2);
     }
 
-    if( m_logLevel > LOGL_NORMAL )
+    if (m_logLevel > LOGL_NORMAL)
     {
-        if(m_colored)
+        if (m_colored)
             SetColor(true,m_colors[LOGL_BASIC]);
 
         UTF8PRINTF(stdout,str,);
 
-        if(m_colored)
+        if (m_colored)
             ResetColor(true);
 
-        printf( "\n" );
-    }
+        printf("\n");
 
-    if(logfile && m_logFileLevel > LOGL_NORMAL)
-    {
-        outTimestamp(logfile);
-        va_list ap;
-        va_start(ap, str);
-        vfprintf(logfile, str, ap);
-        fprintf(logfile, "\n" );
-        va_end(ap);
-        fflush(logfile);
+        if (logfile)
+        {
+            outTimestamp(logfile);
+            va_list ap;
+            va_start(ap, str);
+            vfprintf(logfile, str, ap);
+            fprintf(logfile, "\n");
+            va_end(ap);
+            fflush(logfile);
+        }
     }
     fflush(stdout);
 }
 
-void Log::outDetail( const char * str, ... )
+void Log::outDetail(const char * str, ...)
 {
-    if( !str )
+    if (!str)
         return;
 
     if (m_enableLogDB && m_dbLogLevel > LOGL_BASIC)
@@ -615,53 +613,56 @@ void Log::outDetail( const char * str, ... )
         va_end(ap2);
     }
 
-    if( m_logLevel > LOGL_BASIC )
+    if (m_logLevel > LOGL_BASIC)
     {
-        if(m_colored)
+        if (m_colored)
             SetColor(true,m_colors[LOGL_DETAIL]);
 
         UTF8PRINTF(stdout,str,);
 
-        if(m_colored)
+        if (m_colored)
             ResetColor(true);
 
-        printf( "\n" );
-    }
-    if(logfile && m_logFileLevel > LOGL_BASIC)
-    {
-        outTimestamp(logfile);
-        va_list ap;
-        va_start(ap, str);
-        vfprintf(logfile, str, ap);
-        fprintf(logfile, "\n" );
-        va_end(ap);
-        fflush(logfile);
+        printf("\n");
+
+        if (logfile)
+        {
+            outTimestamp(logfile);
+            va_list ap;
+            va_start(ap, str);
+            vfprintf(logfile, str, ap);
+            va_end(ap);
+
+            fprintf(logfile, "\n");
+            fflush(logfile);
+        }
     }
 
     fflush(stdout);
 }
 
-void Log::outDebugInLine( const char * str, ... )
+void Log::outDebugInLine(const char * str, ...)
 {
-    if( !str )
+    if (!str)
         return;
 
-    if( m_logLevel > LOGL_DETAIL )
+    if (m_logLevel > LOGL_DETAIL)
     {
         UTF8PRINTF(stdout,str,);
-    }
-    if(logfile && m_logFileLevel > LOGL_DETAIL)
-    {
-        va_list ap;
-        va_start(ap, str);
-        vfprintf(logfile, str, ap);
-        va_end(ap);
+
+        if (logfile)
+        {
+            va_list ap;
+            va_start(ap, str);
+            vfprintf(logfile, str, ap);
+            va_end(ap);
+        }
     }
 }
 
-void Log::outDebug( const char * str, ... )
+void Log::outDebug(const char * str, ...)
 {
-    if( !str )
+    if (!str)
         return;
 
     if (m_enableLogDB && m_dbLogLevel > LOGL_DETAIL)
@@ -674,9 +675,9 @@ void Log::outDebug( const char * str, ... )
         va_end(ap2);
     }
 
-    if( m_logLevel > LOGL_DETAIL )
+    if (m_logLevel > LOGL_DETAIL)
     {
-        if(m_colored)
+        if (m_colored)
             SetColor(true,m_colors[LOGL_DEBUG]);
 
         UTF8PRINTF(stdout,str,);
@@ -684,25 +685,26 @@ void Log::outDebug( const char * str, ... )
         if(m_colored)
             ResetColor(true);
 
-        printf( "\n" );
-    }
-    if(logfile && m_logFileLevel > LOGL_DETAIL)
-    {
-        outTimestamp(logfile);
-        va_list ap;
-        va_start(ap, str);
-        vfprintf(logfile, str, ap);
-        va_end(ap);
+        printf ("\n");
 
-        fprintf(logfile, "\n" );
-        fflush(logfile);
+        if (logfile)
+        {
+            outTimestamp(logfile);
+            va_list ap;
+            va_start(ap, str);
+            vfprintf(logfile, str, ap);
+            va_end(ap);
+
+            fprintf(logfile, "\n");
+            fflush(logfile);
+        }
     }
     fflush(stdout);
 }
 
-void Log::outStringInLine( const char * str, ... )
+void Log::outStringInLine(const char * str, ...)
 {
-    if( !str )
+    if (!str)
         return;
 
     UTF8PRINTF(stdout,str,);
@@ -716,9 +718,9 @@ void Log::outStringInLine( const char * str, ... )
     }
 }
 
-void Log::outCommand( uint32 account, const char * str, ... )
+void Log::outCommand(uint32 account, const char * str, ...)
 {
-    if( !str )
+    if (!str)
         return;
 
     // TODO: support accountid
@@ -732,17 +734,17 @@ void Log::outCommand( uint32 account, const char * str, ... )
         va_end(ap2);
     }
 
-    if( m_logLevel > LOGL_NORMAL )
+    if (m_logLevel > LOGL_NORMAL)
     {
-        if(m_colored)
+        if (m_colored)
             SetColor(true,m_colors[LOGL_BASIC]);
 
         UTF8PRINTF(stdout,str,);
 
-        if(m_colored)
+        if (m_colored)
             ResetColor(true);
 
-        printf( "\n" );
+        printf("\n");
     }
     if(logfile && m_logFileLevel > LOGL_NORMAL)
     {
@@ -750,7 +752,7 @@ void Log::outCommand( uint32 account, const char * str, ... )
         va_list ap;
         va_start(ap, str);
         vfprintf(logfile, str, ap);
-        fprintf(logfile, "\n" );
+        fprintf(logfile, "\n");
         va_end(ap);
         fflush(logfile);
     }
@@ -763,7 +765,7 @@ void Log::outCommand( uint32 account, const char * str, ... )
             va_list ap;
             va_start(ap, str);
             vfprintf(per_file, str, ap);
-            fprintf(per_file, "\n" );
+            fprintf(per_file, "\n");
             va_end(ap);
             fclose(per_file);
         }
@@ -774,7 +776,7 @@ void Log::outCommand( uint32 account, const char * str, ... )
         va_list ap;
         va_start(ap, str);
         vfprintf(gmLogfile, str, ap);
-        fprintf(gmLogfile, "\n" );
+        fprintf(gmLogfile, "\n");
         va_end(ap);
         fflush(gmLogfile);
     }
@@ -782,7 +784,7 @@ void Log::outCommand( uint32 account, const char * str, ... )
     fflush(stdout);
 }
 
-void Log::outChar(const char * str, ... )
+void Log::outChar(const char * str, ...)
 {
     if (!str)
         return;
@@ -797,30 +799,30 @@ void Log::outChar(const char * str, ... )
         va_end(ap2);
     }
 
-    if(charLogfile)
+    if (charLogfile)
     {
         outTimestamp(charLogfile);
         va_list ap;
         va_start(ap, str);
         vfprintf(charLogfile, str, ap);
-        fprintf(charLogfile, "\n" );
+        fprintf(charLogfile, "\n");
         va_end(ap);
         fflush(charLogfile);
     }
 }
 
-void Log::outCharDump( const char * str, uint32 account_id, uint32 guid, const char * name )
+void Log::outCharDump(const char * str, uint32 account_id, uint32 guid, const char * name)
 {
     if(charLogfile)
     {
-        fprintf(charLogfile, "== START DUMP == (account: %u guid: %u name: %s )\n%s\n== END DUMP ==\n",account_id,guid,name,str );
+        fprintf(charLogfile, "== START DUMP == (account: %u guid: %u name: %s)\n%s\n== END DUMP ==\n",account_id,guid,name,str);
         fflush(charLogfile);
     }
 }
 
-void Log::outRemote(    const char * str, ... )
+void Log::outRemote(const char * str, ...)
 {
-    if( !str )
+    if (!str)
         return;
 
     if (m_enableLogDB && m_dbRA)
@@ -839,16 +841,16 @@ void Log::outRemote(    const char * str, ... )
         va_list ap;
         va_start(ap, str);
         vfprintf(raLogfile, str, ap);
-        fprintf(raLogfile, "\n" );
+        fprintf(raLogfile, "\n");
         va_end(ap);
         fflush(raLogfile);
     }
     fflush(stdout);
 }
 
-void Log::outChat( const char * str, ... )
+void Log::outChat(const char * str, ...)
 {
-    if( !str )
+    if (!str)
         return;
 
     if (m_enableLogDB && m_dbChat)
@@ -867,7 +869,7 @@ void Log::outChat( const char * str, ... )
         va_list ap;
         va_start(ap, str);
         vfprintf(chatLogfile, str, ap);
-        fprintf(chatLogfile, "\n" );
+        fprintf(chatLogfile, "\n");
         fflush(chatLogfile);
         va_end(ap);
     }
@@ -876,7 +878,7 @@ void Log::outChat( const char * str, ... )
 
 void outstring_log(const char * str, ...)
 {
-    if( !str )
+    if (!str)
         return;
 
     char buf[256];
@@ -890,7 +892,7 @@ void outstring_log(const char * str, ...)
 
 void detail_log(const char * str, ...)
 {
-    if( !str )
+    if (!str)
         return;
 
     char buf[256];
@@ -904,7 +906,7 @@ void detail_log(const char * str, ...)
 
 void debug_log(const char * str, ...)
 {
-    if( !str )
+    if (!str)
         return;
 
     char buf[256];
@@ -918,7 +920,7 @@ void debug_log(const char * str, ...)
 
 void error_log(const char * str, ...)
 {
-    if( !str )
+    if (!str)
         return;
 
     char buf[256];
@@ -932,7 +934,7 @@ void error_log(const char * str, ...)
 
 void error_db_log(const char * str, ...)
 {
-    if( !str )
+    if (!str)
         return;
 
     char buf[256];

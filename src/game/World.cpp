@@ -1499,10 +1499,7 @@ void World::SetInitialWorldSettings()
         sLog.SetLogDB(true);
     }
     else
-    {
         sLog.SetLogDB(false);
-        sLog.SetLogDBLater(false);
-    }
 
     sLog.outString("WORLD: World initialized");
 }

@@ -195,21 +195,10 @@ extern int main(int argc, char **argv)
         return 1;
 
     ///- Initialize the log database
-    if (sConfig.GetBoolDefault("EnableLogDB", false))
-    {
-        // everything successful - set var to enable DB logging once startup finished.
-        sLog.SetLogDBLater(true);
-        sLog.SetLogDB(false);
-        // ensure we've set realm to 0 (realmd realmid)
-        sLog.SetRealmID(0);
-    }
-    else
-    {
-        sLog.SetLogDBLater(false);
-        sLog.SetLogDB(false);
-        sLog.SetRealmID(0);
-    }
-
+    sLog.SetLogDBLater(sConfig.GetBoolDefault("EnableLogDB", false)); // set var to enable DB logging once startup finished.
+    sLog.SetLogDB(false);
+    sLog.SetRealmID(0);                                               // ensure we've set realm to 0 (realmd realmid)
+ 
     ///- Get the list of realms for the server
     m_realmList.Initialize(sConfig.GetIntDefault("RealmsStateUpdateDelay", 20));
     if (m_realmList.size() == 0)
@@ -291,10 +280,7 @@ extern int main(int argc, char **argv)
         sLog.SetLogDB(true);
     }
     else
-    {
         sLog.SetLogDB(false);
-        sLog.SetLogDBLater(false);
-    }
 
     ///- Wait for termination signal
     while (!stopEvent)
