@@ -26,7 +26,7 @@
 #include "Player.h"
 #include "Util.h"
 
-extern DatabaseMysql LoginDatabase;
+extern DatabaseType LoginDatabase;
 
 INSTANTIATE_SINGLETON_1(AccountMgr);
 
