@@ -29,7 +29,7 @@
 #include "UpdateMask.h"
 #include "Unit.h"
 #include "Language.h"
-#include "Database/DBCStores.h"
+#include "DBCStores.h"
 #include "AuctionHouseBot.h"
 
 void MailItem::deleteItem(bool inDB )

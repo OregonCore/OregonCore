@@ -10,8 +10,7 @@
 
 #include "Common.h"
 #include "Platform/CompilerDefs.h"
-#include "Database/DBCStructure.h"
-//#include "Unit.h"
+#include "DBCStructure.h"
 
 class Player;
 class Creature;
@@ -69,7 +68,7 @@ struct Script
 };
 
 //Generic scripting text function
-void DoScriptText(int32 textEntry, WorldObject* pSource, Unit* target = NULL);
+void DoScriptText(int32 textEntry, WorldObject* pSource, Unit *pTarget = NULL);
 
 #if COMPILER == COMPILER_GNU
 #define FUNC_PTR(name,callconvention,returntype,parameters)    typedef returntype(*name)parameters __attribute__ ((callconvention));

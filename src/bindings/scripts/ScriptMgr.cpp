@@ -5,9 +5,8 @@
 #include "precompiled.h"
 #include "Config/Config.h"
 #include "Database/DatabaseEnv.h"
-#include "Database/DBCStores.h"
+#include "DBCStores.h"
 #include "ObjectMgr.h"
-#include "Platform/Define.h"
 #include "ProgressBar.h"
 #include "../system/ScriptLoader.h"
 #include "../system/system.h"
@@ -34,14 +33,14 @@ void LoadDatabase()
 
     if (dbstring.empty())
     {
-        error_log("TSCR: Missing world database info from configuration file. Load database aborted.");
+        error_log("OSCR: Missing world database info from configuration file. Load database aborted.");
         return;
     }
 
     //Initialize connection to DB
     if (!dbstring.empty() && TScriptDB.Initialize(dbstring.c_str()))
     {
-        outstring_log("TSCR: OregonScript database initialized successfully.");
+        outstring_log("OSCR: OregonScript database initialized successfully.");
         outstring_log("");
 
         pSystemMgr.LoadVersion();
@@ -71,14 +70,14 @@ void ScriptsFree()
     delete []SpellSummary;
 
     // Free resources before library unload
-    for(uint16 i =0;i<MAX_SCRIPTS;++i)
+    for (uint16 i =0; i<MAX_SCRIPTS; ++i)
         delete m_scripts[i];
 
     num_sc_scripts = 0;
 }
 
 OREGON_DLL_EXPORT
-void ScriptsInit(char const* cfg_file = "oregoncore.conf")
+void ScriptsInit(char const* cfg_file = _OREGON_SCRIPT_CONFIG)
 {
 
 #if PLATFORM == PLATFORM_WINDOWS
@@ -97,21 +96,21 @@ void ScriptsInit(char const* cfg_file = "oregoncore.conf")
 
     //Get configuration file
     if (!TScriptConfig.SetSource(cfg_file))
-        error_log("TSCR: Unable to open configuration file. Database will be unaccessible. Configuration values will use default.");
-    else 
-        outstring_log("TSCR: Using configuration file %s",cfg_file);
+        error_log("OSCR: Unable to open configuration file. Database will be unaccessible. Configuration values will use default.");
+    else
+        outstring_log("OSCR: Using configuration file %s",cfg_file);
 
     outstring_log("");
 
     //Load database (must be called after SD2Config.SetSource).
     LoadDatabase();
 
-    outstring_log("TSCR: Loading C++ scripts");
+    outstring_log("OSCR: Loading C++ scripts");
     barGoLink bar(1);
     bar.step();
     outstring_log("");
 
-    for(uint16 i =0;i<MAX_SCRIPTS;++i)
+    for (uint16 i =0; i<MAX_SCRIPTS; ++i)
         m_scripts[i]=NULL;
 
     FillSpellSummary();
@@ -190,15 +189,17 @@ void DoScriptText(int32 iTextEntry, WorldObject* pSource, Unit* pTarget)
                 if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
                     pSource->MonsterWhisper(iTextEntry, pTarget->GetGUID());
                 else
-                    error_log("TSCR: DoScriptText entry %i cannot whisper without target unit (TYPEID_PLAYER).", iTextEntry);
-            }break;
+                    error_log("OSCR: DoScriptText entry %i cannot whisper without target unit (TYPEID_PLAYER).", iTextEntry);
+            }
+            break;
         case CHAT_TYPE_BOSS_WHISPER:
             {
                 if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
                     pSource->MonsterWhisper(iTextEntry, pTarget->GetGUID(), true);
                 else
                     error_log("OSCR: DoScriptText entry %i cannot whisper without target unit (TYPEID_PLAYER).", iTextEntry);
-            }break;
+            }
+            break;
         case CHAT_TYPE_ZONE_YELL:
             pSource->MonsterYellToZone(iTextEntry, pData->uiLanguage, pTarget ? pTarget->GetGUID() : 0);
             break;
@@ -231,212 +232,213 @@ char const* ScriptsVersion()
 {
     return "Default Oregon scripting library";
 }
+
 OREGON_DLL_EXPORT
-bool GossipHello ( Player * player, Creature *_Creature )
+bool GossipHello (Player * pPlayer, Creature* pCreature)
 {
-    Script *tmpscript = m_scripts[_Creature->GetScriptId()];
+    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pGossipHello) return false;
 
-    player->PlayerTalkClass->ClearMenus();
-    return tmpscript->pGossipHello(player,_Creature);
+    pPlayer->PlayerTalkClass->ClearMenus();
+    return tmpscript->pGossipHello(pPlayer, pCreature);
 }
 
 OREGON_DLL_EXPORT
-bool GossipSelect( Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
 {
-    debug_log("OSCR: Gossip selection, sender: %d, action: %d",sender, action);
+    debug_log("OSCR: Gossip selection, sender: %d, action: %d", uiSender, uiAction);
 
-    Script *tmpscript = m_scripts[_Creature->GetScriptId()];
+    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pGossipSelect) return false;
 
-    player->PlayerTalkClass->ClearMenus();
-    return tmpscript->pGossipSelect(player,_Creature,sender,action);
+    pPlayer->PlayerTalkClass->ClearMenus();
+    return tmpscript->pGossipSelect(pPlayer, pCreature, uiSender, uiAction);
 }
 
 OREGON_DLL_EXPORT
-bool GossipSelectWithCode( Player *player, Creature *_Creature, uint32 sender, uint32 action, const char* sCode )
+bool GossipSelectWithCode(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction, const char* sCode)
 {
-    debug_log("OSCR: Gossip selection with code, sender: %d, action: %d",sender, action);
+    debug_log("OSCR: Gossip selection with code, sender: %d, action: %d", uiSender, uiAction);
 
-    Script *tmpscript = m_scripts[_Creature->GetScriptId()];
+    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pGossipSelectWithCode) return false;
 
-    player->PlayerTalkClass->ClearMenus();
-    return tmpscript->pGossipSelectWithCode(player,_Creature,sender,action,sCode);
+    pPlayer->PlayerTalkClass->ClearMenus();
+    return tmpscript->pGossipSelectWithCode(pPlayer, pCreature, uiSender, uiAction, sCode);
 }
 
 OREGON_DLL_EXPORT
-bool GOSelect( Player *player, GameObject *_GO, uint32 sender, uint32 action )
+bool GOSelect(Player* pPlayer, GameObject* pGO, uint32 uiSender, uint32 uiAction)
 {
-    if(!_GO)
+    if(!pGO)
     return false;
-    debug_log("OSCR: Gossip selection, sender: %d, action: %d",sender, action);
+    debug_log("OSCR: Gossip selection, sender: %d, action: %d", uiSender, uiAction);
 
-    Script *tmpscript = m_scripts[_GO->GetGOInfo()->ScriptId];
+    Script *tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
     if(!tmpscript || !tmpscript->pGOSelect) return false;
 
-    player->PlayerTalkClass->ClearMenus();
-    return tmpscript->pGOSelect(player,_GO,sender,action);
+    pPlayer->PlayerTalkClass->ClearMenus();
+    return tmpscript->pGOSelect(pPlayer, pGO, uiSender, uiAction);
 }
 
 OREGON_DLL_EXPORT
-bool GOSelectWithCode( Player *player, GameObject *_GO, uint32 sender, uint32 action, const char* sCode )
+bool GOSelectWithCode(Player* pPlayer, GameObject* pGO, uint32 uiSender, uint32 uiAction, const char* sCode)
 {
-    if(!_GO)
+    if(!pGO)
     return false;
-    debug_log("OSCR: Gossip selection, sender: %d, action: %d",sender, action);
+    debug_log("OSCR: Gossip selection, sender: %d, action: %d",uiSender, uiAction);
 
-    Script *tmpscript = m_scripts[_GO->GetGOInfo()->ScriptId];
+    Script *tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
     if(!tmpscript || !tmpscript->pGOSelectWithCode) return false;
 
-    player->PlayerTalkClass->ClearMenus();
-    return tmpscript->pGOSelectWithCode(player,_GO,sender,action,sCode);
+    pPlayer->PlayerTalkClass->ClearMenus();
+    return tmpscript->pGOSelectWithCode(pPlayer, pGO, uiSender ,uiAction, sCode);
 }
 
 OREGON_DLL_EXPORT
-bool QuestAccept( Player *player, Creature *_Creature, Quest const *_Quest )
+bool QuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
-    Script *tmpscript = m_scripts[_Creature->GetScriptId()];
+    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pQuestAccept) return false;
 
-    player->PlayerTalkClass->ClearMenus();
-    return tmpscript->pQuestAccept(player,_Creature,_Quest);
+    pPlayer->PlayerTalkClass->ClearMenus();
+    return tmpscript->pQuestAccept(pPlayer, pCreature, pQuest);
 }
 
 OREGON_DLL_EXPORT
-bool QuestSelect( Player *player, Creature *_Creature, Quest const *_Quest )
+bool QuestSelect(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
-    Script *tmpscript = m_scripts[_Creature->GetScriptId()];
+    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pQuestSelect) return false;
 
-    player->PlayerTalkClass->ClearMenus();
-    return tmpscript->pQuestSelect(player,_Creature,_Quest);
+    pPlayer->PlayerTalkClass->ClearMenus();
+    return tmpscript->pQuestSelect(pPlayer, pCreature, pQuest);
 }
 
 OREGON_DLL_EXPORT
-bool QuestComplete( Player *player, Creature *_Creature, Quest const *_Quest )
+bool QuestComplete(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
-    Script *tmpscript = m_scripts[_Creature->GetScriptId()];
+    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pQuestComplete) return false;
 
-    player->PlayerTalkClass->ClearMenus();
-    return tmpscript->pQuestComplete(player,_Creature,_Quest);
+    pPlayer->PlayerTalkClass->ClearMenus();
+    return tmpscript->pQuestComplete(pPlayer, pCreature, pQuest);
 }
 
 OREGON_DLL_EXPORT
-bool ChooseReward( Player *player, Creature *_Creature, Quest const *_Quest, uint32 opt )
+bool ChooseReward(Player* pPlayer, Creature* pCreature, Quest const* pQuest, uint32 opt)
 {
-    Script *tmpscript = m_scripts[_Creature->GetScriptId()];
+    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pChooseReward) return false;
 
-    player->PlayerTalkClass->ClearMenus();
-    return tmpscript->pChooseReward(player,_Creature,_Quest,opt);
+    pPlayer->PlayerTalkClass->ClearMenus();
+    return tmpscript->pChooseReward(pPlayer, pCreature, pQuest, opt);
 }
 
 OREGON_DLL_EXPORT
-uint32 NPCDialogStatus( Player *player, Creature *_Creature )
+uint32 NPCDialogStatus(Player* pPlayer, Creature* pCreature)
 {
-    Script *tmpscript = m_scripts[_Creature->GetScriptId()];
+    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pNPCDialogStatus) return 100;
 
-    player->PlayerTalkClass->ClearMenus();
-    return tmpscript->pNPCDialogStatus(player,_Creature);
+    pPlayer->PlayerTalkClass->ClearMenus();
+    return tmpscript->pNPCDialogStatus(pPlayer, pCreature);
 }
 
 OREGON_DLL_EXPORT
-uint32 GODialogStatus( Player *player, GameObject *_GO )
+uint32 GODialogStatus(Player* pPlayer, GameObject* pGO)
 {
-    Script *tmpscript = m_scripts[_GO->GetGOInfo()->ScriptId];
+    Script *tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGODialogStatus) return 100;
 
-    player->PlayerTalkClass->ClearMenus();
-    return tmpscript->pGODialogStatus(player,_GO);
+    pPlayer->PlayerTalkClass->ClearMenus();
+    return tmpscript->pGODialogStatus(pPlayer, pGO);
 }
 
 OREGON_DLL_EXPORT
-bool ItemHello( Player *player, Item *_Item, Quest const *_Quest )
+bool ItemHello(Player* pPlayer, Item* pItem, Quest const* pQuest)
 {
-    Script *tmpscript = m_scripts[_Item->GetProto()->ScriptId];
+    Script *tmpscript = m_scripts[pItem->GetProto()->ScriptId];
     if (!tmpscript || !tmpscript->pItemHello) return false;
 
-    player->PlayerTalkClass->ClearMenus();
-    return tmpscript->pItemHello(player,_Item,_Quest);
+    pPlayer->PlayerTalkClass->ClearMenus();
+    return tmpscript->pItemHello(pPlayer, pItem, pQuest);
 }
 
 OREGON_DLL_EXPORT
-bool ItemQuestAccept( Player *player, Item *_Item, Quest const *_Quest )
+bool ItemQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest)
 {
-    Script *tmpscript = m_scripts[_Item->GetProto()->ScriptId];
+    Script *tmpscript = m_scripts[pItem->GetProto()->ScriptId];
     if (!tmpscript || !tmpscript->pItemQuestAccept) return false;
 
-    player->PlayerTalkClass->ClearMenus();
-    return tmpscript->pItemQuestAccept(player,_Item,_Quest);
+    pPlayer->PlayerTalkClass->ClearMenus();
+    return tmpscript->pItemQuestAccept(pPlayer, pItem, pQuest);
 }
 
 OREGON_DLL_EXPORT
-bool GOHello( Player *player, GameObject *_GO )
+bool GOHello(Player* pPlayer, GameObject* pGO)
 {
-    Script *tmpscript = m_scripts[_GO->GetGOInfo()->ScriptId];
+    Script *tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGOHello) return false;
 
-    player->PlayerTalkClass->ClearMenus();
-    return tmpscript->pGOHello(player,_GO);
+    pPlayer->PlayerTalkClass->ClearMenus();
+    return tmpscript->pGOHello(pPlayer, pGO);
 }
 
 OREGON_DLL_EXPORT
-bool GOQuestAccept( Player *player, GameObject *_GO, Quest const *_Quest )
+bool GOQuestAccept(Player* pPlayer, GameObject* pGO, Quest const* pQuest)
 {
-    Script *tmpscript = m_scripts[_GO->GetGOInfo()->ScriptId];
+    Script *tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGOQuestAccept) return false;
 
-    player->PlayerTalkClass->ClearMenus();
-    return tmpscript->pGOQuestAccept(player,_GO,_Quest);
+    pPlayer->PlayerTalkClass->ClearMenus();
+    return tmpscript->pGOQuestAccept(pPlayer, pGO, pQuest);
 }
 
 OREGON_DLL_EXPORT
-bool GOChooseReward( Player *player, GameObject *_GO, Quest const *_Quest, uint32 opt )
+bool GOChooseReward(Player* pPlayer, GameObject* pGO, Quest const* pQuest, uint32 opt)
 {
-    Script *tmpscript = m_scripts[_GO->GetGOInfo()->ScriptId];
+    Script *tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGOChooseReward) return false;
 
-    player->PlayerTalkClass->ClearMenus();
-    return tmpscript->pGOChooseReward(player,_GO,_Quest,opt);
+    pPlayer->PlayerTalkClass->ClearMenus();
+    return tmpscript->pGOChooseReward(pPlayer, pGO, pQuest, opt);
 }
 
 OREGON_DLL_EXPORT
-bool AreaTrigger( Player *player, AreaTriggerEntry * atEntry)
+bool AreaTrigger(Player* pPlayer, AreaTriggerEntry * atEntry)
 {
     Script *tmpscript = m_scripts[GetAreaTriggerScriptId(atEntry->id)];
     if (!tmpscript || !tmpscript->pAreaTrigger) return false;
 
-    return tmpscript->pAreaTrigger(player, atEntry);
+    return tmpscript->pAreaTrigger(pPlayer, atEntry);
 }
 
 OREGON_DLL_EXPORT
-CreatureAI* GetAI(Creature *_Creature)
+CreatureAI* GetAI(Creature* pCreature)
 {
-    Script *tmpscript = m_scripts[_Creature->GetScriptId()];
+    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->GetAI) return NULL;
 
-    return tmpscript->GetAI(_Creature);
+    return tmpscript->GetAI(pCreature);
 }
 
 OREGON_DLL_EXPORT
-bool ItemUse( Player *player, Item* _Item, SpellCastTargets const& targets)
+bool ItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets)
 {
-    Script *tmpscript = m_scripts[_Item->GetProto()->ScriptId];
+    Script *tmpscript = m_scripts[pItem->GetProto()->ScriptId];
     if (!tmpscript || !tmpscript->pItemUse) return false;
 
-    return tmpscript->pItemUse(player,_Item,targets);
+    return tmpscript->pItemUse(pPlayer, pItem, targets);
 }
 
 OREGON_DLL_EXPORT
-bool ReceiveEmote( Player *player, Creature *_Creature, uint32 emote )
+bool ReceiveEmote(Player* pPlayer, Creature* pCreature, uint32 emote)
 {
-    Script *tmpscript = m_scripts[_Creature->GetScriptId()];
+    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pReceiveEmote) return false;
 
-    return tmpscript->pReceiveEmote(player, _Creature, emote);
+    return tmpscript->pReceiveEmote(pPlayer, pCreature, emote);
 }
 
 OREGON_DLL_EXPORT
