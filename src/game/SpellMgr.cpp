@@ -624,6 +624,7 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
         case 31582:                                         // Arcane Empowerment Rank2
         case 31583:                                         // Arcane Empowerment Rank3
             return true;
+        case  1852:                                         // Silenced (GM)
         case 46392:                                         // Focused Assault
         case 46393:                                         // Brutal Assault
         case 43437:                                         // Paralyzed
