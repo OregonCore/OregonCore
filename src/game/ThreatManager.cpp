@@ -379,11 +379,11 @@ void ThreatManager::_addThreat(Unit *pVictim, float threat)
     if (!ref)                                                // there was no ref => create a new one
     {
                                                             // threat has to be 0 here
-        HostileReference* HostileReference = new HostileReference(pVictim, this, 0);
-        iThreatContainer.addReference(HostileReference);
-        HostileReference->addThreat(threat);                 // now we add the real threat
+        HostileReference* hostileReference = new HostileReference(pVictim, this, 0);
+        iThreatContainer.addReference(hostileReference);
+        hostileReference->addThreat(threat);                 // now we add the real threat
         if (pVictim->GetTypeId() == TYPEID_PLAYER && pVictim->ToPlayer()->isGameMaster())
-            HostileReference->setOnlineOfflineState(false);  // GM is always offline
+            hostileReference->setOnlineOfflineState(false);  // GM is always offline
     }
 }
 
@@ -455,48 +455,48 @@ bool ThreatManager::processThreatEvent(const UnitBaseEvent* pUnitBaseEvent)
     bool consumed = false;
 
     ThreatRefStatusChangeEvent* threatRefStatusChangeEvent;
-    HostileReference* HostileReference;
+    HostileReference* hostileReference;
 
     threatRefStatusChangeEvent = (ThreatRefStatusChangeEvent*) pUnitBaseEvent;
     threatRefStatusChangeEvent->setThreatManager(this);     // now we can set the threat manager
-    HostileReference = threatRefStatusChangeEvent->getReference();
+    hostileReference = threatRefStatusChangeEvent->getReference();
 
     switch(pUnitBaseEvent->getType())
     {
         case UEV_THREAT_REF_THREAT_CHANGE:
-            if ((getCurrentVictim() == HostileReference && threatRefStatusChangeEvent->getFValue()<0.0f) ||
-                (getCurrentVictim() != HostileReference && threatRefStatusChangeEvent->getFValue()>0.0f))
+            if ((getCurrentVictim() == hostileReference && threatRefStatusChangeEvent->getFValue()<0.0f) ||
+                (getCurrentVictim() != hostileReference && threatRefStatusChangeEvent->getFValue()>0.0f))
                 setDirty(true);                             // the order in the threat list might have changed
             break;
         case UEV_THREAT_REF_ONLINE_STATUS:
-            if (!HostileReference->isOnline())
+            if (!hostileReference->isOnline())
             {
-                if (HostileReference == getCurrentVictim())
+                if (hostileReference == getCurrentVictim())
                 {
                     setCurrentVictim(NULL);
                     setDirty(true);
                 }
-                iThreatContainer.remove(HostileReference);
-                iThreatOfflineContainer.addReference(HostileReference);
+                iThreatContainer.remove(hostileReference);
+                iThreatOfflineContainer.addReference(hostileReference);
             }
             else
             {
-                if (getCurrentVictim() && HostileReference->getThreat() > (1.1f * getCurrentVictim()->getThreat()))
+                if (getCurrentVictim() && hostileReference->getThreat() > (1.1f * getCurrentVictim()->getThreat()))
                     setDirty(true);
-                iThreatContainer.addReference(HostileReference);
-                iThreatOfflineContainer.remove(HostileReference);
+                iThreatContainer.addReference(hostileReference);
+                iThreatOfflineContainer.remove(hostileReference);
             }
             break;
         case UEV_THREAT_REF_REMOVE_FROM_LIST:
-            if (HostileReference == getCurrentVictim())
+            if (hostileReference == getCurrentVictim())
             {
                 setCurrentVictim(NULL);
                 setDirty(true);
             }
-            if (HostileReference->isOnline())
-                iThreatContainer.remove(HostileReference);
+            if (hostileReference->isOnline())
+                iThreatContainer.remove(hostileReference);
             else
-                iThreatOfflineContainer.remove(HostileReference);
+                iThreatOfflineContainer.remove(hostileReference);
             break;
     }
     return consumed;
