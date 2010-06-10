@@ -96,7 +96,9 @@ class ChatHandler
         bool HandleAccountCommand(const char* args);
         bool HandleAccountCreateCommand(const char* args);
         bool HandleAccountDeleteCommand(const char* args);
+        bool HandleAccountLockCommand(const char* args);
         bool HandleAccountOnlineListCommand(const char* args);
+        bool HandleAccountPasswordCommand(const char* args);
         bool HandleAccountSetAddonCommand(const char* args);
         bool HandleAccountSetGmLevelCommand(const char* args);
         bool HandleAccountSetPasswordCommand(const char* args);
@@ -296,9 +298,10 @@ class ChatHandler
         bool HandleServerIdleShutDownCommand(const char* args);
         bool HandleServerInfoCommand(const char* args);
         bool HandleServerMotdCommand(const char* args);
+        bool HandleServerPLimitCommand(const char* args);
         bool HandleServerRestartCommand(const char* args);
-        bool HandleServerSetMotdCommand(const char* args);
         bool HandleServerSetLogLevelCommand(const char* args);
+        bool HandleServerSetMotdCommand(const char* args);
         bool HandleServerSetDiffTimeCommand(const char* args);
         bool HandleServerShutDownCommand(const char* args);
         bool HandleServerShutDownCancelCommand(const char* args);
@@ -335,7 +338,6 @@ class ChatHandler
         bool HandleTurnObjectCommand(const char* args);
         bool HandleObjectStateCommand(const char* args);
         bool HandlePInfoCommand(const char* args);
-        bool HandlePLimitCommand(const char* args);
         bool HandleMuteCommand(const char* args);
         bool HandleUnmuteCommand(const char* args);
         bool HandleMovegensCommand(const char* args);
@@ -343,7 +345,6 @@ class ChatHandler
         bool HandleUnFreezeCommand(const char *args);
         bool HandleListFreezeCommand(const char* args);
 
-        bool HandleCharacterDeleteCommand(const char* args);
         bool HandleBanAccountCommand(const char* args);
         bool HandleBanCharacterCommand(const char* args);
         bool HandleBanIPCommand(const char* args);
@@ -441,8 +442,6 @@ class ChatHandler
         bool HandleListItemCommand(const char* args);
         bool HandleListObjectCommand(const char* args);
         bool HandleNearObjectCommand(const char* args);
-        bool HandlePasswordCommand(const char* args);
-        bool HandleLockAccountCommand(const char* args);
         bool HandleRespawnCommand(const char* args);
 
         //New Wp Commands
@@ -462,7 +461,6 @@ class ChatHandler
         bool HandlePlaySound2Command(const char* args);
         bool HandleSendChannelNotifyCommand(const char* args);
         bool HandleSendChatMsgCommand(const char* args);
-        bool HandleRenameCommand(const char * args);
         bool HandleLoadPDumpCommand(const char *args);
         bool HandleWritePDumpCommand(const char *args);
         bool HandleCastCommand(const char *args);
@@ -470,6 +468,8 @@ class ChatHandler
         bool HandleCastDistCommand(const char *args);
         bool HandleCastSelfCommand(const char *args);
         bool HandleCastTargetCommand(const char *args);
+        bool HandleCharacterDeleteCommand(const char* args);
+        bool HandleCharacterRenameCommand(const char * args);
         bool HandleComeToMeCommand(const char *args);
         bool HandleCombatStopCommand(const char *args);
         bool HandleCharDeleteCommand(const char *args);
