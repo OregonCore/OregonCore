@@ -130,8 +130,8 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
             // Thundering Storm
             if(ThunderingStorm_Timer < diff)
             {
-                std::list<HostilReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
-                for(std::list<HostilReference*>::iterator i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
+                std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
+                for(std::list<HostileReference*>::iterator i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
                     if(Unit* target = Unit::GetUnit((*m_creature),(*i)->getUnitGuid()))
                         if(target->isAlive() && m_creature->GetDistance2d(target) > 35)
                             DoCast(target, SPELL_THUNDERING_STORM, true);
@@ -153,8 +153,8 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
             return;
         if(!m_creature->IsWithinMeleeRange(m_creature->getVictim()))
         {
-            std::list<HostilReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
-            for(std::list<HostilReference*>::iterator i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
+            std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
+            for(std::list<HostileReference*>::iterator i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
                 if(Unit* target = Unit::GetUnit((*m_creature),(*i)->getUnitGuid()))
                     if(target->isAlive() && m_creature->IsWithinMeleeRange(target))
                     {

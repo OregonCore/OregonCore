@@ -910,7 +910,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                     //GravityLapse_Timer
                     if(GravityLapse_Timer < diff)
                     {
-                        std::list<HostilReference*>::iterator i = m_creature->getThreatManager().getThreatList().begin();
+                        std::list<HostileReference*>::iterator i = m_creature->getThreatManager().getThreatList().begin();
                         switch(GravityLapse_Phase)
                         {
                             case 0:
@@ -1262,8 +1262,8 @@ struct OREGON_DLL_DECL boss_grand_astromancer_capernianAI : public advisorbase_a
         {
             bool InMeleeRange = false;
             Unit *target = NULL;
-            std::list<HostilReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
-            for (std::list<HostilReference*>::iterator i = m_threatlist.begin(); i!= m_threatlist.end();++i)
+            std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
+            for (std::list<HostileReference*>::iterator i = m_threatlist.begin(); i!= m_threatlist.end();++i)
             {
                 Unit* pUnit = Unit::GetUnit((*m_creature), (*i)->getUnitGuid());
                                                             //if in melee range

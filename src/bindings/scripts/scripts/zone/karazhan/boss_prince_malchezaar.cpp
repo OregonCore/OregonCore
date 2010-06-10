@@ -307,14 +307,14 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
         if(!info)
             return;
 
-        std::list<HostilReference *> t_list = m_creature->getThreatManager().getThreatList();
+        std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
         std::vector<Unit *> targets;
 
         if(!t_list.size())
             return;
 
         //begin + 1 , so we don't target the one with the highest threat
-        std::list<HostilReference *>::iterator itr = t_list.begin();
+        std::list<HostileReference *>::iterator itr = t_list.begin();
         std::advance(itr, 1);
         for( ; itr!= t_list.end(); ++itr)                   //store the threat list in a different container
         {

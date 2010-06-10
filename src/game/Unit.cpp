@@ -9580,7 +9580,7 @@ void Unit::setDeathState(DeathState s)
     {
         CombatStop();
         DeleteThreatList();
-        getHostilRefManager().deleteReferences();
+        getHostileRefManager().deleteReferences();
         ClearComboPointHolders();                           // any combo points pointed to unit lost at it death
 
         if (IsNonMeleeSpellCasted(false))
@@ -10489,7 +10489,7 @@ void Unit::CleanupsBeforeDelete()
     CombatStop();
     ClearComboPointHolders();
     DeleteThreatList();
-    getHostilRefManager().setOnlineOfflineState(false);
+    getHostileRefManager().setOnlineOfflineState(false);
     RemoveAllGameObjects();
     RemoveAllDynObjects();
     GetMotionMaster()->Clear(false);                    // remove different non-standard movement generators.
@@ -12490,7 +12490,7 @@ void Unit::RemoveCharmedOrPossessedBy(Unit *charmer)
 
     CastStop();
     CombatStop(); //TODO: CombatStop(true) may cause crash (interrupt spells)
-    getHostilRefManager().deleteReferences();
+    getHostileRefManager().deleteReferences();
     DeleteThreatList();
     SetCharmerGUID(0);
     RestoreFaction();

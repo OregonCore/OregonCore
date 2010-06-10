@@ -131,12 +131,12 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
                     case 0:
                     {
                         //Begin the whole ordeal
-                        std::list<HostilReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
+                        std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
 
                         std::vector<Unit*> knockback_targets;
 
                         //First limit the list to only players
-                        for(std::list<HostilReference*>::iterator itr = m_threatlist.begin(); itr!= m_threatlist.end(); ++itr)
+                        for(std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr!= m_threatlist.end(); ++itr)
                         {
                             Unit *target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
 
@@ -167,9 +167,9 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
                     case 1:
                     {
                         //Players are going to get stoned
-                        std::list<HostilReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
+                        std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
 
-                        for(std::list<HostilReference*>::iterator itr = m_threatlist.begin(); itr!= m_threatlist.end(); ++itr)
+                        for(std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr!= m_threatlist.end(); ++itr)
                         {
                             Unit *target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
 
@@ -196,8 +196,8 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
                     {
                         //Shatter takes effect
                         // Not Needet Anymore Handled in Spell SPELL_SHATTER
-                        //std::list<HostilReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
-                        //for(std::list<HostilReference*>::iterator itr = m_threatlist.begin(); itr!= m_threatlist.end(); ++itr)
+                        //std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
+                        //for(std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr!= m_threatlist.end(); ++itr)
                         //{
                         //    Unit *target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
                         //    if(target)

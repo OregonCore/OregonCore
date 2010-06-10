@@ -92,7 +92,7 @@ struct OREGON_DLL_DECL boss_patchwerkAI : public ScriptedAI
             uint32 MostHP = 0;
             Unit* pMostHPTarget = NULL;
             Unit* pTemp = NULL;
-            std::list<HostilReference*>::iterator i = m_creature->getThreatManager().getThreatList().begin();
+            std::list<HostileReference*>::iterator i = m_creature->getThreatManager().getThreatList().begin();
 
             for (i = m_creature->getThreatManager().getThreatList().begin(); i!=m_creature->getThreatManager().getThreatList().end();)
             {

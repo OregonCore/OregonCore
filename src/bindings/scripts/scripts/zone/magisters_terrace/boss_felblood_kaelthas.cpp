@@ -177,8 +177,8 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
         if(!SummonedUnit)
             return;
 
-        std::list<HostilReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
-        std::list<HostilReference*>::iterator i = m_threatlist.begin();
+        std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
+        std::list<HostileReference*>::iterator i = m_threatlist.begin();
         for(i = m_threatlist.begin(); i != m_threatlist.end(); i++)
         {
             Unit* pUnit = Unit::GetUnit((*m_creature), (*i)->getUnitGuid());

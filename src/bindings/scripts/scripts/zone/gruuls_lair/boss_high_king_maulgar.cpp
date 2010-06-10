@@ -692,9 +692,9 @@ struct OREGON_DLL_DECL boss_krosh_firehandAI : public ScriptedAI
         if(BlastWave_Timer < diff)
         {
                        Unit *target;
-            std::list<HostilReference *> t_list = m_creature->getThreatManager().getThreatList();
+            std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
             std::vector<Unit *> target_list;
-            for(std::list<HostilReference *>::iterator itr = t_list.begin(); itr!= t_list.end(); ++itr)
+            for(std::list<HostileReference *>::iterator itr = t_list.begin(); itr!= t_list.end(); ++itr)
             {
                 target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
                                                             //15 yard radius minimum

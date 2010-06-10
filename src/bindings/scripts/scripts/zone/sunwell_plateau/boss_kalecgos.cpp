@@ -412,7 +412,7 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
         {
             if ( ( m_creature->getVictim()->HasAura(AURA_SPECTRAL_EXHAUSTION,0)) && (m_creature->getVictim()->GetTypeId() == TYPEID_PLAYER) )
             {
-                for(std::list<HostilReference*>::iterator itr = m_creature->getThreatManager().getThreatList().begin(); itr != m_creature->getThreatManager().getThreatList().end(); ++itr)
+                for(std::list<HostileReference*>::iterator itr = m_creature->getThreatManager().getThreatList().begin(); itr != m_creature->getThreatManager().getThreatList().end(); ++itr)
                 {
                     if(((*itr)->getUnitGuid()) ==  (m_creature->getVictim()->GetGUID()))
                     {

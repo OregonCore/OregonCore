@@ -122,12 +122,12 @@ Unit* UnitAI::SelectTarget(SelectAggroTarget targetType, uint32 position, float 
 {
     if (targetType == SELECT_TARGET_NEAREST || targetType == SELECT_TARGET_FARTHEST)
     {
-        std::list<HostilReference*> &m_threatlist = me->getThreatManager().getThreatList();
+        std::list<HostileReference*> &m_threatlist = me->getThreatManager().getThreatList();
         if (position >= m_threatlist.size())
             return NULL;
 
         std::list<Unit*> targetList;
-        for (std::list<HostilReference*>::iterator itr = m_threatlist.begin(); itr!= m_threatlist.end(); ++itr)
+        for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr!= m_threatlist.end(); ++itr)
             if (SelectTargetHelper(me, (*itr)->getTarget(), playerOnly, dist, aura))
                 targetList.push_back((*itr)->getTarget());
 
@@ -151,8 +151,8 @@ Unit* UnitAI::SelectTarget(SelectAggroTarget targetType, uint32 position, float 
     }
     else
     {
-        std::list<HostilReference*> m_threatlist = me->getThreatManager().getThreatList();
-        std::list<HostilReference*>::iterator i;
+        std::list<HostileReference*> m_threatlist = me->getThreatManager().getThreatList();
+        std::list<HostileReference*>::iterator i;
         while (position < m_threatlist.size())
         {
             if (targetType == SELECT_TARGET_BOTTOMAGGRO)
@@ -192,11 +192,11 @@ void UnitAI::SelectTargetList(std::list<Unit*> &targetList, uint32 num, SelectAg
 {
     if (targetType == SELECT_TARGET_NEAREST || targetType == SELECT_TARGET_FARTHEST)
     {
-        std::list<HostilReference*> &m_threatlist = me->getThreatManager().getThreatList();
+        std::list<HostileReference*> &m_threatlist = me->getThreatManager().getThreatList();
         if (m_threatlist.empty())
             return;
 
-        for (std::list<HostilReference*>::iterator itr = m_threatlist.begin(); itr!= m_threatlist.end(); ++itr)
+        for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr!= m_threatlist.end(); ++itr)
             if (SelectTargetHelper(me, (*itr)->getTarget(), playerOnly, dist, aura))
                 targetList.push_back((*itr)->getTarget());
 
@@ -207,8 +207,8 @@ void UnitAI::SelectTargetList(std::list<Unit*> &targetList, uint32 num, SelectAg
     }
     else
     {
-        std::list<HostilReference*> m_threatlist = me->getThreatManager().getThreatList();
-        std::list<HostilReference*>::iterator i;
+        std::list<HostileReference*> m_threatlist = me->getThreatManager().getThreatList();
+        std::list<HostileReference*>::iterator i;
         while (!m_threatlist.empty() && num)
         {
             if (targetType == SELECT_TARGET_BOTTOMAGGRO)

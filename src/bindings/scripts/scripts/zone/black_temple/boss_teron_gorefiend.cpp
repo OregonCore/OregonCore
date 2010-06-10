@@ -154,10 +154,10 @@ struct OREGON_DLL_DECL mob_shadowy_constructAI : public ScriptedAI
 
     void CheckPlayers()
     {
-        std::list<HostilReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
+        std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
         if(m_threatlist.empty())
             return;                                         // No threat list. Don't continue.
-        std::list<HostilReference*>::iterator itr = m_threatlist.begin();
+        std::list<HostileReference*>::iterator itr = m_threatlist.begin();
         std::list<Unit*> targets;
         for( ; itr != m_threatlist.end(); ++itr)
         {
@@ -306,8 +306,8 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
     {
         if(!Blossom) return;
 
-        std::list<HostilReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
-        std::list<HostilReference*>::iterator i = m_threatlist.begin();
+        std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
+        std::list<HostileReference*>::iterator i = m_threatlist.begin();
         for(i = m_threatlist.begin(); i != m_threatlist.end(); i++)
         {
             Unit* pUnit = Unit::GetUnit((*m_creature), (*i)->getUnitGuid());
