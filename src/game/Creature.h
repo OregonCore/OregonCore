@@ -655,6 +655,8 @@ class OREGON_DLL_SPEC Creature : public Unit
 
         uint32 GetGlobalCooldown() const { return m_GlobalCooldown; }
 
+        void SetDeadByDefault (bool death_state) {m_isDeadByDefault = death_state;}
+
         uint32 GetWaypointPath(){return m_path_id;}
         void LoadPath(uint32 pathid) { m_path_id = pathid; }
 
