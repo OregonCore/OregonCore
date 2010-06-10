@@ -69,6 +69,11 @@ SET(game_STAT_SRCS
    Creature.h
    CreatureGroups.cpp
    CreatureGroups.h
+   DBCEnums.h
+   DBCStores.cpp
+   DBCStores.h
+   DBCStructure.h
+   DBCfmt.h
    Debugcmds.cpp
    DestinationHolder.cpp
    DestinationHolder.h
