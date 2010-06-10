@@ -53,6 +53,12 @@ void WorldSession::HandleDuelAcceptedOpcode(WorldPacket& recvPacket)
     pl->duel->startTimer = now;
     plTarget->duel->startTimer = now;
 
+    if (sWorld.getConfig(CONFIG_DUEL_MOD))
+    {
+        pl->DuelMod();
+        plTarget->DuelMod();
+    }
+
     WorldPacket data(SMSG_DUEL_COUNTDOWN, 4);
     data << (uint32)3000;                                   // 3 seconds
     pl->GetSession()->SendPacket(&data);
@@ -85,5 +91,19 @@ void WorldSession::HandleDuelCancelledOpcode(WorldPacket& recvPacket)
     recvPacket >> guid;
 
     GetPlayer()->DuelComplete(DUEL_INTERUPTED);
+}
+
+void Player::DuelMod()
+{
+    if (sWorld.getConfig(CONFIG_DUEL_FULL_POWER))
+    {
+        SetHealth(GetMaxHealth());
+
+        if (getPowerType() == POWER_MANA)
+            SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
+    }
+
+    if (sWorld.getConfig(CONFIG_DUEL_CD_RESET) && !GetMap()->IsDungeon())
+        RemoveArenaSpellCooldowns();
 }
 
