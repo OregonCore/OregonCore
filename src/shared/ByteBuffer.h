@@ -386,9 +386,6 @@ class ByteBuffer
 
         void appendPackGUID(uint64 guid)
         {
-            if (_storage.size() < _wpos + sizeof(guid) + 1)
-                _storage.resize(_wpos + sizeof(guid) + 1);
-
             size_t mask_position = wpos();
             *this << uint8(0);
             for(uint8 i = 0; i < 8; ++i)
