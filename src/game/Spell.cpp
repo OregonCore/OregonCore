@@ -950,7 +950,7 @@ void Spell::doTriggers(SpellMissInfo missInfo, uint32 damage, SpellSchoolMask da
 
 void Spell::DoAllEffectOnTarget(TargetInfo *target)
 {
-    if (target->processed)                                  // Check target
+    if (!target || target->processed)                                  // Check target
         return;
     target->processed = true;                               // Target checked in apply effects procedure
 
