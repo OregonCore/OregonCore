@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <omp.h>
 #include "MapManager.h"
 #include "InstanceSaveMgr.h"
 #include "Policies/SingletonImp.h"
@@ -69,6 +68,10 @@ MapManager::Initialize()
         }
         i_GridStateErrorCount = 0;
     }
+    int num_threads(sWorld.getConfig(CONFIG_NUMTHREADS));
+    // Start mtmaps if needed.
+    if (num_threads > 0 && m_updater.activate(num_threads) == -1)
+        abort();
 
     InitMaxInstanceId();
 }
@@ -100,8 +103,7 @@ void MapManager::checkAndCorrectGridStatesArray()
         assert(false);                                      // force a crash. Too many errors
 }
 
-Map*
-MapManager::_createBaseMap(uint32 id)
+Map* MapManager::_createBaseMap(uint32 id)
 {
     Map *m = _findMap(id);
 
@@ -155,7 +157,8 @@ Map* MapManager::FindMap(uint32 mapid, uint32 instanceId) const
 bool MapManager::CanPlayerEnter(uint32 mapid, Player* player)
 {
     const MapEntry *entry = sMapStore.LookupEntry(mapid);
-    if (!entry) return false;
+    if(!entry)
+       return false;
     const char *mapName = entry->name[player->GetSession()->GetSessionDbcLocale()];
 
     if (entry->map_type == MAP_INSTANCE || entry->map_type == MAP_RAID)
@@ -248,26 +251,21 @@ void
 MapManager::Update(time_t diff)
 {
     i_timer.Update(diff);
-    if (!i_timer.Passed() )
+    if (!i_timer.Passed())
         return;
 
-    uint32 i=0;
-    MapMapType::iterator iter;
-    std::vector<Map*> update_queue(i_maps.size());
-    omp_set_num_threads(sWorld.getConfig(CONFIG_NUMTHREADS));
-    for (iter = i_maps.begin(), i=0;iter != i_maps.end(); ++iter, i++)
-        update_queue[i]=iter->second;
-/*
-    gomp in gcc <4.4 version cannot parallelise loops using random access iterators
-    so until gcc 4.4 isnt standard, we need the update_queue workaround
-*/
-#pragma omp parallel for schedule(dynamic) private(i) shared(update_queue)
-    for (int32 i = 0; i < i_maps.size(); ++i)
+    MapMapType::iterator iter = i_maps.begin();
+    for (; iter != i_maps.end(); ++iter)
     {
-        update_queue[i]->Update(i_timer.GetCurrent());
-        sWorld.RecordTimeDiff("UpdateMap %u", update_queue[i]->GetId());
-    //  sLog.outError("This is thread %d out of %d threads,updating map %u",omp_get_thread_num(),omp_get_num_threads(),iter->second->GetId());
+	 if (m_updater.activated())
+            m_updater.schedule_update(*iter->second, i_timer.GetCurrent());
+	 else
+        {
+	     iter->second->Update(i_timer.GetCurrent());
+	 }
     }
+    if (m_updater.activated())
+	 m_updater.wait();
 
     ObjectAccessor::Instance().Update(i_timer.GetCurrent());
     sWorld.RecordTimeDiff("UpdateObjectAccessor");
@@ -280,17 +278,6 @@ MapManager::Update(time_t diff)
 
 void MapManager::DoDelayedMovesAndRemoves()
 {
-    /*
-    std::vector<Map*> update_queue(i_maps.size());
-    for (MapMapType::iterator iter = i_maps.begin(), uint32 i = 0; iter != i_maps.end(); ++iter, ++i)
-    update_queue[i] = iter->second;
-
-    omp_set_num_threads(sWorld.getConfig(CONFIG_NUMTHREADS));
-
-#pragma omp parallel for schedule(dynamic) private(i) shared(update_queue)
-    for (uint32 i = 0; i < i_maps.size(); ++i)
-        update_queue[i]->DoDelayedMovesAndRemoves();
-    */
 }
 
 bool MapManager::ExistMapAndVMap(uint32 mapid, float x,float y)
@@ -319,6 +306,9 @@ void MapManager::UnloadAll()
         delete i_maps.begin()->second;
         i_maps.erase(i_maps.begin());
     }
+
+    if (m_updater.activated())
+        m_updater.deactivate();
 }
 
 void MapManager::InitMaxInstanceId()
@@ -326,17 +316,20 @@ void MapManager::InitMaxInstanceId()
     i_MaxInstanceId = 0;
 
     QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT MAX(id) FROM instance");
-    if (result )
+    if (result)
         i_MaxInstanceId = result->Fetch()[0].GetUInt32();
 }
 
 uint32 MapManager::GetNumInstances()
 {
+    Guard guard(*this);
+
     uint32 ret = 0;
     for (MapMapType::iterator itr = i_maps.begin(); itr != i_maps.end(); ++itr)
     {
         Map *map = itr->second;
-        if (!map->Instanceable()) continue;
+        if (!map->Instanceable())
+            continue;
         MapInstanced::InstancedMaps &maps = ((MapInstanced *)map)->GetInstancedMaps();
         for (MapInstanced::InstancedMaps::iterator mitr = maps.begin(); mitr != maps.end(); ++mitr)
             if (mitr->second->IsDungeon()) ret++;
@@ -346,11 +339,14 @@ uint32 MapManager::GetNumInstances()
 
 uint32 MapManager::GetNumPlayersInInstances()
 {
+    Guard guard(*this);
+
     uint32 ret = 0;
     for (MapMapType::iterator itr = i_maps.begin(); itr != i_maps.end(); ++itr)
     {
         Map *map = itr->second;
-        if (!map->Instanceable()) continue;
+        if (!map->Instanceable())
+            continue;
         MapInstanced::InstancedMaps &maps = ((MapInstanced *)map)->GetInstancedMaps();
         for (MapInstanced::InstancedMaps::iterator mitr = maps.begin(); mitr != maps.end(); ++mitr)
             if (mitr->second->IsDungeon())
@@ -358,4 +354,3 @@ uint32 MapManager::GetNumPlayersInInstances()
     }
     return ret;
 }
-

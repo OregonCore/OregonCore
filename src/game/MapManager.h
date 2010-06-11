@@ -27,6 +27,7 @@ CreateBaseMap * Copyright (C) 2005-2008 MaNGOS <http://www.mangosproject.org/>
 #include "Common.h"
 #include "Map.h"
 #include "GridStates.h"
+#include "MapUpdater.h"
 
 class Transport;
 
@@ -144,6 +145,6 @@ class OREGON_DLL_DECL MapManager : public Oregon::Singleton<MapManager, Oregon::
         IntervalTimer i_timer;
 
         uint32 i_MaxInstanceId;
+        MapUpdater m_updater;
 };
 #endif
-

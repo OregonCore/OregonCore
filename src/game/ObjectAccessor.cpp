@@ -158,6 +158,7 @@ Player* ObjectAccessor::FindPlayer(uint64 guid)
 Player* ObjectAccessor::FindPlayerByName(const char *name)
 {
     //TODO: Player Guard
+    Guard guard(*HashMapHolder<Player>::GetLock());
     HashMapHolder<Player>::MapType& m = HashMapHolder<Player>::GetContainer();
     HashMapHolder<Player>::MapType::iterator iter = m.begin();
     for (; iter != m.end(); ++iter)

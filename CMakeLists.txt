@@ -42,7 +42,7 @@ EXECUTE_PROCESS(
         OUTPUT_VARIABLE HG_REVISION
 )
 
-message("* Oregon Core revision: ${HG_REVISION}")
+message("* OregonCore revision: ${HG_REVISION}")
 
 IF (PREFIX)
     SET(CMAKE_INSTALL_PREFIX ${PREFIX})
@@ -186,7 +186,7 @@ src/bindings/scripts/scripts/npc
 ${CMAKE_BINARY_DIR}
 ${SCRIPT_INCLUDE}
 ${MYSQL_INCLUDE_DIR} 
-${POSTGRESQL_INCLUDE_DIR} 
+${POSTGRESQL_INCLUDE_DIR}
 ${CMAKE_CURRENT_BINARY_DIR}/src/shared 
 ${CMAKE_CURRENT_SOURCE_DIR}/..
 ${ACE_INCLUDE_DIR}
@@ -199,6 +199,6 @@ SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 add_subdirectory(dep)
-add_subdirectory(doc)
+#add_subdirectory(doc)
 add_subdirectory(src)
 add_subdirectory(sql)
