@@ -253,8 +253,8 @@ MotionMaster::MoveChase(Unit* target, float dist, float angle)
     {
         DEBUG_LOG("Player (GUID: %u) chase to %s (GUID: %u)",
             i_owner->GetGUIDLow(),
-            target->GetTypeId()==TYPEID_PLAYER ? "player" : "creature",
-            target->GetTypeId()==TYPEID_PLAYER ? i_owner->GetGUIDLow() : i_owner->ToCreature()->GetDBTableGUIDLow());
+            target->GetTypeId() == TYPEID_PLAYER ? "player" : "creature",
+            target->GetTypeId() == TYPEID_PLAYER ? target->GetGUIDLow() : target->ToCreature()->GetDBTableGUIDLow());
         Mutate(new TargetedMovementGenerator<Player>(*target,dist,angle), MOTION_SLOT_ACTIVE);
     }
     else
@@ -278,8 +278,8 @@ MotionMaster::MoveFollow(Unit* target, float dist, float angle, MovementSlot slo
     if (i_owner->GetTypeId()==TYPEID_PLAYER)
     {
         DEBUG_LOG("Player (GUID: %u) follow to %s (GUID: %u)", i_owner->GetGUIDLow(),
-            target->GetTypeId()==TYPEID_PLAYER ? "player" : "creature",
-            target->GetTypeId()==TYPEID_PLAYER ? i_owner->GetGUIDLow() : i_owner->ToCreature()->GetDBTableGUIDLow());
+            target->GetTypeId() == TYPEID_PLAYER ? "player" : "creature",
+            target->GetTypeId() == TYPEID_PLAYER ? target->GetGUIDLow() : target->ToCreature()->GetDBTableGUIDLow());
         Mutate(new TargetedMovementGenerator<Player>(*target,dist,angle), slot);
     }
     else
