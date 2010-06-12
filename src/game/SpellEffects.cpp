@@ -5160,7 +5160,9 @@ void Spell::EffectSanctuary(uint32 /*i*/)
     unitTarget->CombatStop();
     unitTarget->getHostileRefManager().deleteReferences();   // stop all fighting
     // Vanish allows to remove all threat and cast regular stealth so other spells can be used
-    if (m_spellInfo->SpellFamilyName == SPELLFAMILY_ROGUE && (m_spellInfo->SpellFamilyFlags & SPELLFAMILYFLAG_ROGUE_VANISH))
+    if (m_caster->GetTypeId() == TYPEID_PLAYER
+        && m_spellInfo->SpellFamilyName == SPELLFAMILY_ROGUE
+        && (m_spellInfo->SpellFamilyFlags & SPELLFAMILYFLAG_ROGUE_VANISH))
     {
         m_caster->ToPlayer()->RemoveSpellsCausingAura(SPELL_AURA_MOD_ROOT);
     }
