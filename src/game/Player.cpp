@@ -2172,15 +2172,15 @@ bool Player::IsGroupVisibleFor(Player* p) const
     {
         default: return IsInSameGroupWith(p);
         case 1:  return IsInSameRaidWith(p);
-        case 2:  return GetTeam()==p->GetTeam();
+        case 2:  return GetTeam() == p->GetTeam();
     }
 }
 
 bool Player::IsInSameGroupWith(Player const* p) const
 {
-    return  p==this || GetGroup() != NULL &&
+    return p == this || (GetGroup() != NULL &&
         GetGroup() == p->GetGroup() &&
-        GetGroup()->SameSubGroup(ToPlayer(), p->ToPlayer());
+        GetGroup()->SameSubGroup(this, p));
 }
 
 ///- If the player is invited, remove him. If the group if then only 1 person, disband the group.
@@ -6108,7 +6108,7 @@ bool Player::RewardHonor(Unit *uVictim, uint32 groupsize, float honor, bool pvpt
         if (!uVictim || uVictim == this || uVictim->GetTypeId() != TYPEID_PLAYER)
             return false;
 
-        if (GetBGTeam() == uVictim->ToPlayer()->GetBGTeam() )
+        if (GetBGTeam() == uVictim->ToPlayer()->GetBGTeam())
             return false;
 
         return true;
@@ -6136,11 +6136,11 @@ bool Player::RewardHonor(Unit *uVictim, uint32 groupsize, float honor, bool pvpt
 
         victim_guid = uVictim->GetGUID();
 
-        if (uVictim->GetTypeId() == TYPEID_PLAYER )
+        if (uVictim->GetTypeId() == TYPEID_PLAYER)
         {
             Player *pVictim = uVictim->ToPlayer();
 
-            if (GetTeam() == pVictim->GetTeam() && !sWorld.IsFFAPvPRealm() )
+            if (GetTeam() == pVictim->GetTeam() && !sWorld.IsFFAPvPRealm())
                 return false;
 
             float f = 1;                                    //need for total kills (?? need more info)
@@ -7078,15 +7078,15 @@ void Player::CastItemCombatSpell(Unit *target, WeaponAttackType attType, uint32 
     if (!target || !target->isAlive() || target == this)
         return;
 
-    for (int i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; i++)
+    for (uint8 i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; ++i)
     {
         // If usable, try to cast item spell
-        if (Item * item = ToPlayer()->GetItemByPos(INVENTORY_SLOT_BAG_0,i))
+        if (Item * item = GetItemByPos(INVENTORY_SLOT_BAG_0,i))
             if (!item->IsBroken())
                 if (ItemPrototype const *proto = item->GetProto())
                 {
                     // Additional check for weapons
-                    if (proto->Class==ITEM_CLASS_WEAPON)
+                    if (proto->Class == ITEM_CLASS_WEAPON)
                     {
                         // offhand item cannot proc from main hand hit etc
                         EquipmentSlots slot;
@@ -7102,16 +7102,16 @@ void Player::CastItemCombatSpell(Unit *target, WeaponAttackType attType, uint32 
                         // Check if item is useable (forms or disarm)
                         if (attType == BASE_ATTACK)
                         {
-                            if (!ToPlayer()->IsUseEquipedWeapon(true))
+                            if (!IsUseEquipedWeapon(true))
                                 continue;
                         }
                         else
                         {
-                            if (ToPlayer()->IsInFeralForm())
+                            if (IsInFeralForm())
                                 continue;
                         }
                     }
-                    ToPlayer()->CastItemCombatSpell(target, attType, procVictim, procEx, item, proto, spellInfo);
+                    CastItemCombatSpell(target, attType, procVictim, procEx, item, proto, spellInfo);
                 }
     }
 }
@@ -7121,12 +7121,12 @@ void Player::CastItemCombatSpell(Unit *target, WeaponAttackType attType, uint32 
     // Can do effect if any damage done to target
     if (procVictim & PROC_FLAG_TAKEN_ANY_DAMAGE)
     {
-        for (int i = 0; i < 5; i++)
+        for (uint8 i = 0; i < 5; ++i)
         {
             _Spell const& spellData = proto->Spells[i];
 
             // no spell
-            if (!spellData.SpellId )
+            if (!spellData.SpellId)
                 continue;
 
             // wrong triggering type
@@ -7479,7 +7479,7 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
                 //if chest apply 2.1.x rules
                 if ((go->GetGoType() == GAMEOBJECT_TYPE_CHEST)&&(go->GetGOInfo()->chest.groupLootRules))
                 {
-                    if (Group* group = this->GetGroup())
+                    if (Group* group = GetGroup())
                     {
                         group->UpdateLooterGuid((WorldObject*)go, true);
 
@@ -7487,13 +7487,13 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
                         {
                             case GROUP_LOOT:
                                 // we dont use a recipient, because any char at the correct distance can open a chest
-                                group->GroupLoot(this->GetGUID(), loot, (WorldObject*) go);
+                                group->GroupLoot(GetGUID(), loot, (WorldObject*) go);
                                 break;
                             case NEED_BEFORE_GREED:
-                                group->NeedBeforeGreed(this->GetGUID(), loot, (WorldObject*) go);
+                                group->NeedBeforeGreed(GetGUID(), loot, (WorldObject*) go);
                                 break;
                             case MASTER_LOOT:
-                                group->MasterLoot(this->GetGUID(), loot, (WorldObject*) go);
+                                group->MasterLoot(GetGUID(), loot, (WorldObject*) go);
                                 break;
                             default:
                                 break;
@@ -11876,7 +11876,7 @@ void Player::ApplyEnchantment(Item *item,EnchantmentSlot slot,bool apply, bool a
     if (!pEnchant)
         return;
 
-    if (!ignore_condition && pEnchant->EnchantmentCondition && !ToPlayer()->EnchantmentFitsRequirements(pEnchant->EnchantmentCondition, -1))
+    if (!ignore_condition && pEnchant->EnchantmentCondition && !EnchantmentFitsRequirements(pEnchant->EnchantmentCondition, -1))
         return;
 
     for (int s=0; s<3; s++)
@@ -11999,111 +11999,111 @@ void Player::ApplyEnchantment(Item *item,EnchantmentSlot slot,bool apply, bool a
                         ApplyStatBuffMod(STAT_STAMINA, enchant_amount, apply);
                         break;
                     case ITEM_MOD_DEFENSE_SKILL_RATING:
-                        ToPlayer()->ApplyRatingMod(CR_DEFENSE_SKILL, enchant_amount, apply);
+                        ApplyRatingMod(CR_DEFENSE_SKILL, enchant_amount, apply);
                         sLog.outDebug("+ %u DEFENCE", enchant_amount);
                         break;
                     case  ITEM_MOD_DODGE_RATING:
-                        ToPlayer()->ApplyRatingMod(CR_DODGE, enchant_amount, apply);
+                        ApplyRatingMod(CR_DODGE, enchant_amount, apply);
                         sLog.outDebug("+ %u DODGE", enchant_amount);
                         break;
                     case ITEM_MOD_PARRY_RATING:
-                        ToPlayer()->ApplyRatingMod(CR_PARRY, enchant_amount, apply);
+                        ApplyRatingMod(CR_PARRY, enchant_amount, apply);
                         sLog.outDebug("+ %u PARRY", enchant_amount);
                         break;
                     case ITEM_MOD_BLOCK_RATING:
-                        ToPlayer()->ApplyRatingMod(CR_BLOCK, enchant_amount, apply);
+                        ApplyRatingMod(CR_BLOCK, enchant_amount, apply);
                         sLog.outDebug("+ %u SHIELD_BLOCK", enchant_amount);
                         break;
                     case ITEM_MOD_HIT_MELEE_RATING:
-                        ToPlayer()->ApplyRatingMod(CR_HIT_MELEE, enchant_amount, apply);
+                        ApplyRatingMod(CR_HIT_MELEE, enchant_amount, apply);
                         sLog.outDebug("+ %u MELEE_HIT", enchant_amount);
                         break;
                     case ITEM_MOD_HIT_RANGED_RATING:
-                        ToPlayer()->ApplyRatingMod(CR_HIT_RANGED, enchant_amount, apply);
+                        ApplyRatingMod(CR_HIT_RANGED, enchant_amount, apply);
                         sLog.outDebug("+ %u RANGED_HIT", enchant_amount);
                         break;
                     case ITEM_MOD_HIT_SPELL_RATING:
-                        ToPlayer()->ApplyRatingMod(CR_HIT_SPELL, enchant_amount, apply);
+                        ApplyRatingMod(CR_HIT_SPELL, enchant_amount, apply);
                         sLog.outDebug("+ %u SPELL_HIT", enchant_amount);
                         break;
                     case ITEM_MOD_CRIT_MELEE_RATING:
-                        ToPlayer()->ApplyRatingMod(CR_CRIT_MELEE, enchant_amount, apply);
+                        ApplyRatingMod(CR_CRIT_MELEE, enchant_amount, apply);
                         sLog.outDebug("+ %u MELEE_CRIT", enchant_amount);
                         break;
                     case ITEM_MOD_CRIT_RANGED_RATING:
-                        ToPlayer()->ApplyRatingMod(CR_CRIT_RANGED, enchant_amount, apply);
+                        ApplyRatingMod(CR_CRIT_RANGED, enchant_amount, apply);
                         sLog.outDebug("+ %u RANGED_CRIT", enchant_amount);
                         break;
                     case ITEM_MOD_CRIT_SPELL_RATING:
-                        ToPlayer()->ApplyRatingMod(CR_CRIT_SPELL, enchant_amount, apply);
+                        ApplyRatingMod(CR_CRIT_SPELL, enchant_amount, apply);
                         sLog.outDebug("+ %u SPELL_CRIT", enchant_amount);
                         break;
 //                    Values from ITEM_STAT_MELEE_HA_RATING to ITEM_MOD_HASTE_RANGED_RATING are never used
 //                    in Enchantments
 //                    case ITEM_MOD_HIT_TAKEN_MELEE_RATING:
-//                        ToPlayer()->ApplyRatingMod(CR_HIT_TAKEN_MELEE, enchant_amount, apply);
+//                        ApplyRatingMod(CR_HIT_TAKEN_MELEE, enchant_amount, apply);
 //                        break;
 //                    case ITEM_MOD_HIT_TAKEN_RANGED_RATING:
-//                        ToPlayer()->ApplyRatingMod(CR_HIT_TAKEN_RANGED, enchant_amount, apply);
+//                        ApplyRatingMod(CR_HIT_TAKEN_RANGED, enchant_amount, apply);
 //                        break;
 //                    case ITEM_MOD_HIT_TAKEN_SPELL_RATING:
-//                        ToPlayer()->ApplyRatingMod(CR_HIT_TAKEN_SPELL, enchant_amount, apply);
+//                        ApplyRatingMod(CR_HIT_TAKEN_SPELL, enchant_amount, apply);
 //                        break;
 //                    case ITEM_MOD_CRIT_TAKEN_MELEE_RATING:
-//                        ToPlayer()->ApplyRatingMod(CR_CRIT_TAKEN_MELEE, enchant_amount, apply);
+//                        ApplyRatingMod(CR_CRIT_TAKEN_MELEE, enchant_amount, apply);
 //                        break;
 //                    case ITEM_MOD_CRIT_TAKEN_RANGED_RATING:
-//                        ToPlayer()->ApplyRatingMod(CR_CRIT_TAKEN_RANGED, enchant_amount, apply);
+//                        ApplyRatingMod(CR_CRIT_TAKEN_RANGED, enchant_amount, apply);
 //                        break;
 //                    case ITEM_MOD_CRIT_TAKEN_SPELL_RATING:
-//                        ToPlayer()->ApplyRatingMod(CR_CRIT_TAKEN_SPELL, enchant_amount, apply);
+//                        ApplyRatingMod(CR_CRIT_TAKEN_SPELL, enchant_amount, apply);
 //                        break;
 //                    case ITEM_MOD_HASTE_MELEE_RATING:
-//                        ToPlayer()->ApplyRatingMod(CR_HASTE_MELEE, enchant_amount, apply);
+//                        ApplyRatingMod(CR_HASTE_MELEE, enchant_amount, apply);
 //                        break;
 //                    case ITEM_MOD_HASTE_RANGED_RATING:
-//                        ToPlayer()->ApplyRatingMod(CR_HASTE_RANGED, enchant_amount, apply);
+//                        ApplyRatingMod(CR_HASTE_RANGED, enchant_amount, apply);
 //                        break;
                     case ITEM_MOD_HASTE_SPELL_RATING:
-                        ToPlayer()->ApplyRatingMod(CR_HASTE_SPELL, enchant_amount, apply);
+                        ApplyRatingMod(CR_HASTE_SPELL, enchant_amount, apply);
                         break;
                     case ITEM_MOD_HIT_RATING:
-                        ToPlayer()->ApplyRatingMod(CR_HIT_MELEE, enchant_amount, apply);
-                        ToPlayer()->ApplyRatingMod(CR_HIT_RANGED, enchant_amount, apply);
-                        //ToPlayer()->ApplyRatingMod(CR_HIT_SPELL, enchant_amount, apply); //pre WotLK only for melee and ranged
+                        ApplyRatingMod(CR_HIT_MELEE, enchant_amount, apply);
+                        ApplyRatingMod(CR_HIT_RANGED, enchant_amount, apply);
+                        //ApplyRatingMod(CR_HIT_SPELL, enchant_amount, apply); //pre WotLK only for melee and ranged
                         sLog.outDebug("+ %u HIT", enchant_amount);
                         break;
                     case ITEM_MOD_CRIT_RATING:
-                        ToPlayer()->ApplyRatingMod(CR_CRIT_MELEE, enchant_amount, apply);
-                        ToPlayer()->ApplyRatingMod(CR_CRIT_RANGED, enchant_amount, apply);
-                        //ToPlayer()->ApplyRatingMod(CR_CRIT_SPELL, enchant_amount, apply); //pre WotLK only for melee and ranged
+                        ApplyRatingMod(CR_CRIT_MELEE, enchant_amount, apply);
+                        ApplyRatingMod(CR_CRIT_RANGED, enchant_amount, apply);
+                        //ApplyRatingMod(CR_CRIT_SPELL, enchant_amount, apply); //pre WotLK only for melee and ranged
                         sLog.outDebug("+ %u CRITICAL", enchant_amount);
                         break;
 //                    Values ITEM_MOD_HIT_TAKEN_RATING and ITEM_MOD_CRIT_TAKEN_RATING are never used in Enchantment
 //                    case ITEM_MOD_HIT_TAKEN_RATING:
-//                          ToPlayer()->ApplyRatingMod(CR_HIT_TAKEN_MELEE, enchant_amount, apply);
-//                          ToPlayer()->ApplyRatingMod(CR_HIT_TAKEN_RANGED, enchant_amount, apply);
-//                          ToPlayer()->ApplyRatingMod(CR_HIT_TAKEN_SPELL, enchant_amount, apply);
+//                          ApplyRatingMod(CR_HIT_TAKEN_MELEE, enchant_amount, apply);
+//                          ApplyRatingMod(CR_HIT_TAKEN_RANGED, enchant_amount, apply);
+//                          ApplyRatingMod(CR_HIT_TAKEN_SPELL, enchant_amount, apply);
 //                        break;
 //                    case ITEM_MOD_CRIT_TAKEN_RATING:
-//                          ToPlayer()->ApplyRatingMod(CR_CRIT_TAKEN_MELEE, enchant_amount, apply);
-//                          ToPlayer()->ApplyRatingMod(CR_CRIT_TAKEN_RANGED, enchant_amount, apply);
-//                          ToPlayer()->ApplyRatingMod(CR_CRIT_TAKEN_SPELL, enchant_amount, apply);
+//                          ApplyRatingMod(CR_CRIT_TAKEN_MELEE, enchant_amount, apply);
+//                          ApplyRatingMod(CR_CRIT_TAKEN_RANGED, enchant_amount, apply);
+//                          ApplyRatingMod(CR_CRIT_TAKEN_SPELL, enchant_amount, apply);
 //                        break;
                     case ITEM_MOD_RESILIENCE_RATING:
-                        ToPlayer()->ApplyRatingMod(CR_CRIT_TAKEN_MELEE, enchant_amount, apply);
-                        ToPlayer()->ApplyRatingMod(CR_CRIT_TAKEN_RANGED, enchant_amount, apply);
-                        ToPlayer()->ApplyRatingMod(CR_CRIT_TAKEN_SPELL, enchant_amount, apply);
+                        ApplyRatingMod(CR_CRIT_TAKEN_MELEE, enchant_amount, apply);
+                        ApplyRatingMod(CR_CRIT_TAKEN_RANGED, enchant_amount, apply);
+                        ApplyRatingMod(CR_CRIT_TAKEN_SPELL, enchant_amount, apply);
                         sLog.outDebug("+ %u RESILIENCE", enchant_amount);
                         break;
                     case ITEM_MOD_HASTE_RATING:
-                        ToPlayer()->ApplyRatingMod(CR_HASTE_MELEE, enchant_amount, apply);
-                        ToPlayer()->ApplyRatingMod(CR_HASTE_RANGED, enchant_amount, apply);
-                        //ToPlayer()->ApplyRatingMod(CR_HASTE_SPELL, enchant_amount, apply); //pre WotLK only for melee and ranged
+                        ApplyRatingMod(CR_HASTE_MELEE, enchant_amount, apply);
+                        ApplyRatingMod(CR_HASTE_RANGED, enchant_amount, apply);
+                        //ApplyRatingMod(CR_HASTE_SPELL, enchant_amount, apply); //pre WotLK only for melee and ranged
                         sLog.outDebug("+ %u HASTE", enchant_amount);
                         break;
                     case ITEM_MOD_EXPERTISE_RATING:
-                        ToPlayer()->ApplyRatingMod(CR_EXPERTISE, enchant_amount, apply);
+                        ApplyRatingMod(CR_EXPERTISE, enchant_amount, apply);
                         sLog.outDebug("+ %u EXPERTISE", enchant_amount);
                         break;
                     default:
@@ -12635,8 +12635,8 @@ void Player::AddQuest(Quest const *pQuest, Object *questGiver )
         uint32 limittime = pQuest->GetLimitTime();
 
         // shared timed quest
-        if (questGiver && questGiver->GetTypeId()==TYPEID_PLAYER)
-            limittime = questGiver->ToPlayer()->getQuestStatusMap()[quest_id].m_timer / 1000;
+        if (questGiver && questGiver->GetTypeId() == TYPEID_PLAYER)
+            limittime = questGiver->ToPlayer()->getQuestStatusMap()[quest_id].m_timer / IN_MILISECONDS;
 
         AddTimedQuest(quest_id);
         questStatusData.m_timer = limittime * 1000;
