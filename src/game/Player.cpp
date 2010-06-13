@@ -7558,7 +7558,7 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
     {
         Corpse *bones = ObjectAccessor::GetCorpse(*this, guid);
 
-        if (!bones || !((loot_type == LOOT_CORPSE) || (loot_type == LOOT_INSIGNIA)) || (bones->GetType() != CORPSE_BONES) )
+        if (!bones || !(loot_type == LOOT_CORPSE || loot_type == LOOT_INSIGNIA) || bones->GetType() != CORPSE_BONES)
         {
             SendLootRelease(guid);
             return;
@@ -7571,8 +7571,9 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
             bones->lootForBody = true;
             uint32 pLevel = bones->loot.gold;
             bones->loot.clear();
-            if (GetBattleGround()->GetTypeID() == BATTLEGROUND_AV)
-                loot->FillLoot(1, LootTemplates_Creature, this);
+            if (BattleGround *bg = GetBattleGround())
+                if (bg->GetTypeID() == BATTLEGROUND_AV)
+                    loot->FillLoot(1, LootTemplates_Creature, this);
             // It may need a better formula
             // Now it works like this: lvl10: ~6copper, lvl70: ~9silver
             bones->loot.gold = (uint32)(GetMap()->urand(50, 150) * 0.016f * pow(((float)pLevel)/5.76f, 2.5f) * sWorld.getRate(RATE_DROP_MONEY));
@@ -7586,7 +7587,7 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
         Creature *creature = GetMap()->GetCreature(guid);
 
         // must be in range and creature must be alive for pickpocket and must be dead for another loot
-        if (!creature || creature->isAlive()!=(loot_type == LOOT_PICKPOCKETING) || !creature->IsWithinDistInMap(this,INTERACTION_DISTANCE))
+        if (!creature || creature->isAlive() != (loot_type == LOOT_PICKPOCKETING) || !creature->IsWithinDistInMap(this,INTERACTION_DISTANCE))
         {
             SendLootRelease(guid);
             return;
@@ -7598,11 +7599,11 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
             return;
         }
 
-        loot   = &creature->loot;
+        loot = &creature->loot;
 
         if (loot_type == LOOT_PICKPOCKETING)
         {
-            if (!creature->lootForPickPocketed )
+            if (!creature->lootForPickPocketed)
             {
                 creature->lootForPickPocketed = true;
                 loot->clear();
