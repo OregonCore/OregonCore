@@ -3147,11 +3147,12 @@ void Spell::SendChannelUpdate(uint32 time)
 {
     if (time == 0)
     {
-        m_caster->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT,0);
-        m_caster->SetUInt32Value(UNIT_CHANNEL_SPELL,0);
+        m_caster->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, 0);
+        m_caster->SetUInt32Value(UNIT_CHANNEL_SPELL, 0);
     }
 
-   
+    if (m_caster->GetTypeId() != TYPEID_PLAYER)
+        return;
 
     WorldPacket data(MSG_CHANNEL_UPDATE, 8+4);
     data.append(m_caster->GetPackGUID());
@@ -3192,7 +3193,7 @@ void Spell::SendChannelStart(uint32 duration)
     data.append(m_caster->GetPackGUID());       
     data << uint32(m_spellInfo->Id);       
     data << uint32(duration);       
-    
+
     m_caster->SendMessageToSet(&data, true);
 
     m_timer = duration;
