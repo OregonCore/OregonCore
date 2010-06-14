@@ -1473,7 +1473,7 @@ bool ChatHandler::HandleSetSkillCommand(const char* args)
 
     if (!target->GetSkillValue(skill))
     {
-        PSendSysMessage(LANG_SET_SKILL_ERROR, target->GetName(), skill, sl->name[0]);
+        PSendSysMessage(LANG_SET_SKILL_ERROR, target->GetName(), skill, sl->name[m_session->GetSessionDbcLocale()]);
         SetSentErrorMessage(true);
         return false;
     }
@@ -1484,7 +1484,7 @@ bool ChatHandler::HandleSetSkillCommand(const char* args)
         return false;
 
     target->SetSkill(skill, level, max);
-    PSendSysMessage(LANG_SET_SKILL, skill, sl->name[0], target->GetName(), level, max);
+    PSendSysMessage(LANG_SET_SKILL, skill, sl->name[m_session->GetSessionDbcLocale()], target->GetName(), level, max);
 
     return true;
 }

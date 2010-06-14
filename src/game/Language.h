@@ -323,7 +323,16 @@ enum OregonStrings
     LANG_CREATURE_NOT_FOLLOW_YOU_NOW    = 342,
     LANG_CREATURE_NON_TAMEABLE          = 343,
     LANG_YOU_ALREADY_HAVE_PET           = 344,
-    // Room for more level 2              345-399 not used
+    // Room for more level 2              345-349 not used
+    LANG_TITLE_LIST_CHAT                = 349,
+    LANG_TITLE_LIST_CONSOLE             = 350,
+    LANG_COMMAND_NOTITLEFOUND           = 351,
+    LANG_INVALID_TITLE_ID               = 352,
+    LANG_TITLE_ADD_RES                  = 353,
+    LANG_TITLE_REMOVE_RES               = 354,
+    LANG_TITLE_CURRENT_RES              = 355,
+    LANG_CURRENT_TITLE_RESET            = 356,
+    // Room for more level 2              357-399 not used
 
     // level 3 chat
     LANG_SCRIPTS_RELOADED               = 400,

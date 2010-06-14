@@ -2079,7 +2079,7 @@ class OREGON_DLL_SPEC Player : public Unit
         DeclinedName const* GetDeclinedNames() const { return m_declinedname; }
         bool HasTitle(uint32 bitIndex);
         bool HasTitle(CharTitlesEntry const* title) { return HasTitle(title->bit_index); }
-        void SetTitle(CharTitlesEntry const* title);
+        void SetTitle(CharTitlesEntry const* title, bool lost = false);
 
     protected:
 
