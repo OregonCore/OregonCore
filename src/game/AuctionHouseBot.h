@@ -3,8 +3,7 @@
 
 #include "World.h"
 #include "Config/ConfigEnv.h"
-//#include "ace/Vector_T.h"
-#include <vector>
+#include "ItemPrototype.h"
 
 #define AHB_GREY        0
 #define AHB_WHITE       1
@@ -111,6 +110,22 @@ private:
     uint32 orangeip;
     uint32 yellowip;
 
+    uint32 greyTGoods;
+    uint32 whiteTGoods;
+    uint32 greenTGoods;
+    uint32 blueTGoods;
+    uint32 purpleTGoods;
+    uint32 orangeTGoods;
+    uint32 yellowTGoods;
+
+    uint32 greyItems;
+    uint32 whiteItems;
+    uint32 greenItems;
+    uint32 blueItems;
+    uint32 purpleItems;
+    uint32 orangeItems;
+    uint32 yellowItems;
+
 public:
     AHBConfig(uint32 ahid)
     {
@@ -148,7 +163,7 @@ public:
     }
     uint32 GetMinItems()
     {
-        if ((minItems  == 0) && (maxItems))
+        if ((minItems == 0) && (maxItems))
             return maxItems;
         else if ((maxItems) && (minItems > maxItems))
             return maxItems;
@@ -877,6 +892,225 @@ public:
             break;
         }
     }
+
+    void DecItemCounts(uint32 Class, uint32 Quality)
+    {
+        switch(Class)
+        {
+        case ITEM_CLASS_TRADE_GOODS:
+            DecItemCounts(Quality);
+            break;
+        default:
+            DecItemCounts(Quality + 7);
+            break;
+        }
+    }
+
+    void DecItemCounts(uint32 color)
+    {
+        switch(color)
+        {
+        case AHB_GREY_TG:
+            --greyTGoods;
+            break;
+        case AHB_WHITE_TG:
+            --whiteTGoods;
+            break;
+        case AHB_GREEN_TG:
+            --greenTGoods;
+            break;
+        case AHB_BLUE_TG:
+            --blueTGoods;
+            break;
+        case AHB_PURPLE_TG:
+            --purpleTGoods;
+            break;
+        case AHB_ORANGE_TG:
+            --orangeTGoods;
+            break;
+        case AHB_YELLOW_TG:
+            --yellowTGoods;
+            break;
+        case AHB_GREY_I:
+            --greyItems;
+            break;
+        case AHB_WHITE_I:
+            --whiteItems;
+            break;
+        case AHB_GREEN_I:
+            --greenItems;
+            break;
+        case AHB_BLUE_I:
+            --blueItems;
+            break;
+        case AHB_PURPLE_I:
+            --purpleItems;
+            break;
+        case AHB_ORANGE_I:
+            --orangeItems;
+            break;
+        case AHB_YELLOW_I:
+            --yellowItems;
+            break;
+        default:
+            break;
+        }
+    }
+
+    void IncItemCounts(uint32 Class, uint32 Quality)
+    {
+        switch(Class)
+        {
+        case ITEM_CLASS_TRADE_GOODS:
+            IncItemCounts(Quality);
+            break;
+        default:
+            IncItemCounts(Quality + 7);
+            break;
+        }
+    }
+
+    void IncItemCounts(uint32 color)
+    {
+        switch(color)
+        {
+        case AHB_GREY_TG:
+            ++greyTGoods;
+            break;
+        case AHB_WHITE_TG:
+            ++whiteTGoods;
+            break;
+        case AHB_GREEN_TG:
+            ++greenTGoods;
+            break;
+        case AHB_BLUE_TG:
+            ++blueTGoods;
+            break;
+        case AHB_PURPLE_TG:
+            ++purpleTGoods;
+            break;
+        case AHB_ORANGE_TG:
+            ++orangeTGoods;
+            break;
+        case AHB_YELLOW_TG:
+            ++yellowTGoods;
+            break;
+        case AHB_GREY_I:
+            ++greyItems;
+            break;
+        case AHB_WHITE_I:
+            ++whiteItems;
+            break;
+        case AHB_GREEN_I:
+            ++greenItems;
+            break;
+        case AHB_BLUE_I:
+            ++blueItems;
+            break;
+        case AHB_PURPLE_I:
+            ++purpleItems;
+            break;
+        case AHB_ORANGE_I:
+            ++orangeItems;
+            break;
+        case AHB_YELLOW_I:
+            ++yellowItems;
+            break;
+        default:
+            break;
+        }
+    }
+
+    void ResetItemCounts()
+    {
+        greyTGoods = 0;
+        whiteTGoods = 0;
+        greenTGoods = 0;
+        blueTGoods = 0;
+        purpleTGoods = 0;
+        orangeTGoods = 0;
+        yellowTGoods = 0;
+
+        greyItems = 0;
+        whiteItems = 0;
+        greenItems = 0;
+        blueItems = 0;
+        purpleItems = 0;
+        orangeItems = 0;
+        yellowItems = 0;
+    }
+
+    uint32 TotalItemCounts()
+    {
+        return(
+        greyTGoods +
+        whiteTGoods +
+        greenTGoods +
+        blueTGoods +
+        purpleTGoods +
+        orangeTGoods +
+        yellowTGoods +
+
+        greyItems +
+        whiteItems +
+        greenItems +
+        blueItems +
+        purpleItems +
+        orangeItems +
+        yellowItems);
+    }
+
+    uint32 GetItemCounts(uint32 color)
+    {
+        switch(color)
+        {
+        case AHB_GREY_TG:
+            return greyTGoods;
+            break;
+        case AHB_WHITE_TG:
+            return whiteTGoods;
+            break;
+        case AHB_GREEN_TG:
+            return greenTGoods;
+            break;
+        case AHB_BLUE_TG:
+            return blueTGoods;
+            break;
+        case AHB_PURPLE_TG:
+            return purpleTGoods;
+            break;
+        case AHB_ORANGE_TG:
+            return orangeTGoods;
+            break;
+        case AHB_YELLOW_TG:
+            return yellowTGoods;
+            break;
+        case AHB_GREY_I:
+            return greyItems;
+            break;
+        case AHB_WHITE_I:
+            return whiteItems;
+            break;
+        case AHB_GREEN_I:
+            return greenItems;
+            break;
+        case AHB_BLUE_I:
+            return blueItems;
+            break;
+        case AHB_PURPLE_I:
+            return purpleItems;
+            break;
+        case AHB_ORANGE_I:
+            return orangeItems;
+            break;
+        case AHB_YELLOW_I:
+            return yellowItems;
+            break;
+        default:
+            return 0;
+            break;
+        }
+    }
     void SetBidsPerInterval(uint32 value)
     {
         buyerBidsPerInterval = value;
@@ -922,9 +1156,6 @@ private:
 
     bool DisableBeta_PTR_Unused;
     bool DisablePermEnchant;
-    /* Doesn't exist before 3.x
-    bool DisableConjured;
-    */
     bool DisableGems;
     bool DisableMoney;
     bool DisableMoneyLoot;
@@ -972,7 +1203,7 @@ private:
     time_t _lastrun_h;
     time_t _lastrun_n;
 
-    uint32 minValue(uint32 a, uint32 b) { return a <= b ? a : b; };
+    inline uint32 minValue(uint32 a, uint32 b) { return a <= b ? a : b; };
     void addNewAuctions(Player *AHBplayer, AHBConfig *config);
     void addNewAuctionBuyerBotBid(Player *AHBplayer, AHBConfig *config, WorldSession *session);
 
@@ -982,6 +1213,8 @@ public:
     void Update();
     void Initialize();
     void LoadValues(AHBConfig*);
+    void DecrementItemCounts(AuctionEntry* ah, uint32 item_template);
+    void IncrementItemCounts(AuctionEntry* ah);
     void Commands(uint32, uint32, uint32, char*);
     uint32 GetAHBplayerGUID() { return AHBplayerGUID; };
 };

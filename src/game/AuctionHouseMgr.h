@@ -21,8 +21,11 @@
 #ifndef _AUCTION_HOUSE_MGR_H
 #define _AUCTION_HOUSE_MGR_H
 
-#include "SharedDefines.h"
 #include "Policies/Singleton.h"
+
+#include "SharedDefines.h"
+
+#include "AuctionHouseBot.h"
 
 class Item;
 class Player;
@@ -75,7 +78,8 @@ struct AuctionEntry
 class AuctionHouseObject
 {
   public:
-    AuctionHouseObject() {}
+    // Initialize storage
+    AuctionHouseObject() { next = AuctionsMap.begin(); }
     ~AuctionHouseObject()
     {
         for (AuctionEntryMap::iterator itr = AuctionsMap.begin(); itr != AuctionsMap.end(); ++itr)
@@ -89,22 +93,15 @@ class AuctionHouseObject
     AuctionEntryMap::iterator GetAuctionsBegin() {return AuctionsMap.begin();}
     AuctionEntryMap::iterator GetAuctionsEnd() {return AuctionsMap.end();}
 
-    void AddAuction(AuctionEntry *ah)
-    {
-        ASSERT(ah);
-        AuctionsMap[ah->Id] = ah;
-    }
-
     AuctionEntry* GetAuction(uint32 id) const
     {
         AuctionEntryMap::const_iterator itr = AuctionsMap.find(id);
         return itr != AuctionsMap.end() ? itr->second : NULL;
     }
 
-    bool RemoveAuction(uint32 id)
-    {
-        return AuctionsMap.erase(id) ? true : false;
-    }
+    void AddAuction(AuctionEntry *ah);
+
+    bool RemoveAuction(AuctionEntry *auction, uint32 item_template);
 
     void Update();
 
@@ -117,6 +114,9 @@ class AuctionHouseObject
 
   private:
     AuctionEntryMap AuctionsMap;
+
+    // storage for "next" auction item for next Update()
+    AuctionEntryMap::const_iterator next;
 };
 
 class AuctionHouseMgr
@@ -128,6 +128,7 @@ class AuctionHouseMgr
     typedef UNORDERED_MAP<uint32, Item*> ItemMap;
 
     AuctionHouseObject* GetAuctionsMap(uint32 factionTemplateId);
+    AuctionHouseObject* GetBidsMap(uint32 factionTemplateId);
 
     Item* GetAItem(uint32 id)
     {

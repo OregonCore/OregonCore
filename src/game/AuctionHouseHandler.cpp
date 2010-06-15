@@ -263,9 +263,9 @@ void WorldSession::HandleAuctionSellItem(WorldPacket & recv_data)
     AH->auctionHouseEntry = auctionHouseEntry;
 
     sLog.outDetail("selling item %u to auctioneer %u with initial bid %u with buyout %u and with time %u (in sec) in auctionhouse %u", GUID_LOPART(item), AH->auctioneer, bid, buyout, auction_time, AH->GetHouseId());
+    auctionmgr.AddAItem(it);
     auctionHouse->AddAuction(AH);
 
-    auctionmgr.AddAItem(it);
     pl->MoveItemFromInventory(it->GetBagSlot(), it->GetSlot(), true);
 
     CharacterDatabase.BeginTransaction();
@@ -323,7 +323,7 @@ void WorldSession::HandleAuctionPlaceBid(WorldPacket & recv_data)
     }
 
     // cheating
-    if (price <= auction->bid)
+    if (price <= auction->bid || price < auction->startbid)
         return;
 
     // price too low for next bid if not buyout
@@ -361,6 +361,7 @@ void WorldSession::HandleAuctionPlaceBid(WorldPacket & recv_data)
         auction->bid = price;
 
         // after this update we should save player's money ...
+        CharacterDatabase.BeginTransaction();
         CharacterDatabase.PExecute("UPDATE auctionhouse SET buyguid = '%u',lastbid = '%u' WHERE id = '%u'", auction->bidder, auction->bid, auction->Id);
 
         SendAuctionCommandResult(auction->Id, AUCTION_PLACE_BID, AUCTION_OK, 0);
@@ -385,13 +386,12 @@ void WorldSession::HandleAuctionPlaceBid(WorldPacket & recv_data)
 
         SendAuctionCommandResult(auction->Id, AUCTION_PLACE_BID, AUCTION_OK);
 
-        auctionmgr.RemoveAItem(auction->item_guidlow);
-        auctionHouse->RemoveAuction(auction->Id);
+        CharacterDatabase.BeginTransaction();
         auction->DeleteFromDB();
-
-        delete auction;
+        uint32 item_template = auction->item_template;
+        auctionmgr.RemoveAItem(auction->item_guidlow);
+        auctionHouse->RemoveAuction(auction, item_template);
     }
-    CharacterDatabase.BeginTransaction();
     pl->SaveInventoryAndGoldToDB();
     CharacterDatabase.CommitTransaction();
 }
@@ -465,12 +465,12 @@ void WorldSession::HandleAuctionRemoveItem(WorldPacket & recv_data)
 
     // Now remove the auction
     CharacterDatabase.BeginTransaction();
-    auction->DeleteFromDB();
     pl->SaveInventoryAndGoldToDB();
-    CharacterDatabase.CommitTransaction();
+    auction->DeleteFromDB();
+    uint32 item_template = auction->item_template;
     auctionmgr.RemoveAItem(auction->item_guidlow);
-    auctionHouse->RemoveAuction(auction->Id);
-    delete auction;
+    auctionHouse->RemoveAuction(auction, item_template);
+    CharacterDatabase.CommitTransaction();
 }
 
 //called when player lists his bids
@@ -485,7 +485,7 @@ void WorldSession::HandleAuctionListBidderItems(WorldPacket & recv_data)
     recv_data >> outbiddedCount;
     if (recv_data.size() != (16 + outbiddedCount * 4))
     {
-        sLog.outError("Client sent bad opcode!!! with count: %u and size : %d (mustbe: %d", outbiddedCount, recv_data.size(),(16 + outbiddedCount * 4 ));
+        sLog.outError("Client sent bad opcode!!! with count: %u and size : %lu (must be: %u)", outbiddedCount, (unsigned long)recv_data.size(),(16 + outbiddedCount * 4));
         outbiddedCount = 0;
     }
 
