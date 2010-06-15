@@ -44,7 +44,7 @@ enum Races
     RACE_TROLL          = 8,
     //RACE_GOBLIN         = 9,
     RACE_BLOODELF       = 10,
-    RACE_DRAENEI        = 11,
+    RACE_DRAENEI        = 11
     //RACE_FEL_ORC        = 12,
     //RACE_NAGA           = 13,
     //RACE_BROKEN         = 14,
@@ -64,7 +64,7 @@ enum Races
     ((1<<(RACE_HUMAN-1))   |(1<<(RACE_ORC-1))          |(1<<(RACE_DWARF-1))   | \
     (1<<(RACE_NIGHTELF-1))|(1<<(RACE_UNDEAD_PLAYER-1))|(1<<(RACE_TAUREN-1))  | \
     (1<<(RACE_GNOME-1))   |(1<<(RACE_TROLL-1))        |(1<<(RACE_BLOODELF-1))| \
-    (1<<(RACE_DRAENEI-1)) )
+    (1<<(RACE_DRAENEI-1)))
 
 // Class value is index in ChrClasses.dbc
 enum Classes
@@ -78,8 +78,8 @@ enum Classes
     CLASS_SHAMAN        = 7,
     CLASS_MAGE          = 8,
     CLASS_WARLOCK       = 9,
-    // CLASS_UNK2       = 10,unused
-    CLASS_DRUID         = 11,
+    //CLASS_UNK           = 10,
+    CLASS_DRUID         = 11
 };
 
 // max+1 for player class
@@ -157,10 +157,10 @@ enum SpellSchoolMask
 {
     SPELL_SCHOOL_MASK_NONE    = 0x00,                       // not exist
     SPELL_SCHOOL_MASK_NORMAL  = (1 << SPELL_SCHOOL_NORMAL), // PHYSICAL (Armor)
-    SPELL_SCHOOL_MASK_HOLY    = (1 << SPELL_SCHOOL_HOLY  ),
-    SPELL_SCHOOL_MASK_FIRE    = (1 << SPELL_SCHOOL_FIRE  ),
+    SPELL_SCHOOL_MASK_HOLY    = (1 << SPELL_SCHOOL_HOLY),
+    SPELL_SCHOOL_MASK_FIRE    = (1 << SPELL_SCHOOL_FIRE),
     SPELL_SCHOOL_MASK_NATURE  = (1 << SPELL_SCHOOL_NATURE),
-    SPELL_SCHOOL_MASK_FROST   = (1 << SPELL_SCHOOL_FROST ),
+    SPELL_SCHOOL_MASK_FROST   = (1 << SPELL_SCHOOL_FROST),
     SPELL_SCHOOL_MASK_SHADOW  = (1 << SPELL_SCHOOL_SHADOW),
     SPELL_SCHOOL_MASK_ARCANE  = (1 << SPELL_SCHOOL_ARCANE),
 
@@ -169,12 +169,12 @@ enum SpellSchoolMask
     // 124, not include normal and holy damage
     SPELL_SCHOOL_MASK_SPELL   = (SPELL_SCHOOL_MASK_FIRE   |
                                   SPELL_SCHOOL_MASK_NATURE | SPELL_SCHOOL_MASK_FROST  |
-                                  SPELL_SCHOOL_MASK_SHADOW | SPELL_SCHOOL_MASK_ARCANE ),
+                                  SPELL_SCHOOL_MASK_SHADOW | SPELL_SCHOOL_MASK_ARCANE),
     // 126
-    SPELL_SCHOOL_MASK_MAGIC   = (SPELL_SCHOOL_MASK_HOLY | SPELL_SCHOOL_MASK_SPELL ),
+    SPELL_SCHOOL_MASK_MAGIC   = (SPELL_SCHOOL_MASK_HOLY | SPELL_SCHOOL_MASK_SPELL),
 
     // 127
-    SPELL_SCHOOL_MASK_ALL     = (SPELL_SCHOOL_MASK_NORMAL | SPELL_SCHOOL_MASK_MAGIC )
+    SPELL_SCHOOL_MASK_ALL     = (SPELL_SCHOOL_MASK_NORMAL | SPELL_SCHOOL_MASK_MAGIC)
 };
 
 #define SPELL_SCHOOL_MASK_MAGIC                            \
@@ -204,6 +204,12 @@ enum ItemQualities
 
 #define MAX_ITEM_QUALITY                 7
 
+enum SpellCategory
+{
+    SPELL_CATEGORY_FOOD             = 11,
+    SPELL_CATEGORY_DRINK            = 59,
+};
+
 const uint32 ItemQualityColors[MAX_ITEM_QUALITY] = {
     0xff9d9d9d,        //GREY
     0xffffffff,        //WHITE
@@ -212,12 +218,6 @@ const uint32 ItemQualityColors[MAX_ITEM_QUALITY] = {
     0xffa335ee,        //PURPLE
     0xffff8000,        //ORANGE
     0xffe6cc80         //LIGHT YELLOW
-};
-
-enum SpellCategory
-{
-    SPELL_CATEGORY_FOOD             = 11,
-    SPELL_CATEGORY_DRINK            = 59,
 };
 
 // ***********************************
@@ -754,14 +754,14 @@ enum Mechanics
 
 // Used for spell 42292 Immune Movement Impairment and Loss of Control (0x49967da6)
 #define IMMUNE_TO_MOVEMENT_IMPAIRMENT_AND_LOSS_CONTROL_MASK (\
-    (1<<MECHANIC_CHARM   )|(1<<MECHANIC_CONFUSED )|(1<<MECHANIC_FEAR  )| \
-    (1<<MECHANIC_ROOT    )|(1<<MECHANIC_PACIFY   )|(1<<MECHANIC_SLEEP )| \
-    (1<<MECHANIC_SNARE   )|(1<<MECHANIC_STUN     )|(1<<MECHANIC_FREEZE)| \
+    (1<<MECHANIC_CHARM)|(1<<MECHANIC_CONFUSED)|(1<<MECHANIC_FEAR)| \
+    (1<<MECHANIC_ROOT)|(1<<MECHANIC_PACIFY)|(1<<MECHANIC_SLEEP)| \
+    (1<<MECHANIC_SNARE)|(1<<MECHANIC_STUN)|(1<<MECHANIC_FREEZE)| \
     (1<<MECHANIC_KNOCKOUT)|(1<<MECHANIC_POLYMORPH)|(1<<MECHANIC_BANISH)| \
-    (1<<MECHANIC_SHACKLE )|(1<<MECHANIC_TURN     )|(1<<MECHANIC_HORROR)| \
-    (1<<MECHANIC_DAZE    )|(1<<MECHANIC_SAPPED   ) )
+    (1<<MECHANIC_SHACKLE)|(1<<MECHANIC_TURN)|(1<<MECHANIC_HORROR)| \
+    (1<<MECHANIC_DAZE)|(1<<MECHANIC_SAPPED))
 
-// Spell dispel type
+// Spell dispell type
 enum DispelType
 {
     DISPEL_NONE         = 0,
@@ -777,7 +777,7 @@ enum DispelType
     DISPEL_ZG_TICKET    = 10
 };
 
-#define DISPEL_ALL_MASK ((1<<DISPEL_MAGIC) | (1<<DISPEL_CURSE) | (1<<DISPEL_DISEASE) | (1<<DISPEL_POISON) )
+#define DISPEL_ALL_MASK ((1<<DISPEL_MAGIC) | (1<<DISPEL_CURSE) | (1<<DISPEL_DISEASE) | (1<<DISPEL_POISON))
 
 //To all Immune system,if target has immunes,
 //some spell that related to ImmuneToDispel or ImmuneToSchool or ImmuneToDamage type can't cast to it,
@@ -851,7 +851,7 @@ enum Targets
     TARGET_DST_TARGET_ENEMY            = 53, // set unit coordinates as dest, only 16 target B imlemented
     TARGET_UNIT_CONE_ENEMY_UNKNOWN     = 54, // 180 degree, or different angle
     TARGET_DEST_CASTER_FRONT_LEAP      = 55, // for a leap spell
-    TARGET_UNIT_RAID_CASTER                   = 56,
+    TARGET_UNIT_RAID_CASTER            = 56,
     TARGET_UNIT_TARGET_RAID            = 57,
     TARGET_UNIT_NEARBY_RAID            = 58,
     TARGET_UNIT_CONE_ALLY              = 59,
@@ -1722,8 +1722,8 @@ enum SkillType
     SKILL_BEAST_MASTERY            = 50,
     SKILL_SURVIVAL                 = 51,
     SKILL_MACES                    = 54,
-    SKILL_HOLY                     = 56,
     SKILL_2H_SWORDS                = 55,
+    SKILL_HOLY                     = 56,
     SKILL_SHADOW                   = 78,
     SKILL_DEFENSE                  = 95,
     SKILL_LANG_COMMON              = 98,
@@ -1779,8 +1779,8 @@ enum SkillType
     SKILL_PET_BOAR                 = 211,
     SKILL_PET_CROCILISK            = 212,
     SKILL_PET_CARRION_BIRD         = 213,
-    SKILL_PET_GORILLA              = 215,
     SKILL_PET_CRAB                 = 214,
+    SKILL_PET_GORILLA              = 215,
     SKILL_PET_RAPTOR               = 217,
     SKILL_PET_TALLSTRIDER          = 218,
     SKILL_RACIAL_UNDED             = 220,
@@ -1870,11 +1870,11 @@ inline uint32 SkillByQuestSort(int32 QuestSort)
 
 enum SkillCategory
 {
-    SKILL_CATEGORY_ATTRIBUTES    =  5,
-    SKILL_CATEGORY_WEAPON        =  6,
-    SKILL_CATEGORY_CLASS         =  7,
-    SKILL_CATEGORY_ARMOR         =  8,
-    SKILL_CATEGORY_SECONDARY     =  9,                      // secondary professions
+    SKILL_CATEGORY_ATTRIBUTES    = 5,
+    SKILL_CATEGORY_WEAPON        = 6,
+    SKILL_CATEGORY_CLASS         = 7,
+    SKILL_CATEGORY_ARMOR         = 8,
+    SKILL_CATEGORY_SECONDARY     = 9,                       // secondary professions
     SKILL_CATEGORY_LANGUAGES     = 10,
     SKILL_CATEGORY_PROFESSION    = 11,                      // primary professions
     SKILL_CATEGORY_NOT_DISPLAYED = 12
@@ -2229,4 +2229,3 @@ enum BanReturn
     BAN_NOTFOUND
 };
 #endif
-

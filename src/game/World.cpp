@@ -276,7 +276,7 @@ bool World::HasRecentlyDisconnected(WorldSession* session)
 
     if (uint32 tolerance = getConfig(CONFIG_INTERVAL_DISCONNECT_TOLERANCE))
     {
-        for (DisconnectMap::iterator i = m_disconnects.begin(); i != m_disconnects.end(); )
+        for (DisconnectMap::iterator i = m_disconnects.begin(); i != m_disconnects.end();)
         {
             if (difftime(i->second, time(NULL)) < tolerance)
             {
@@ -331,9 +331,9 @@ bool World::RemoveQueuedPlayer(WorldSession* sess)
     // search to remove and count skipped positions
     bool found = false;
 
-    for (;iter != m_QueuedPlayer.end(); ++iter, ++position)
+    for (; iter != m_QueuedPlayer.end(); ++iter, ++position)
     {
-        if (*iter==sess)
+        if (*iter == sess)
         {
             sess->SetInQueue(false);
             iter = m_QueuedPlayer.erase(iter);
@@ -350,7 +350,7 @@ bool World::RemoveQueuedPlayer(WorldSession* sess)
         --sessions;
 
     // accept first in queue
-    if ((!m_playerLimit || sessions < m_playerLimit) && !m_QueuedPlayer.empty() )
+    if ((!m_playerLimit || sessions < m_playerLimit) && !m_QueuedPlayer.empty())
     {
         WorldSession* pop_sess = m_QueuedPlayer.front();
         pop_sess->SetInQueue(false);
@@ -420,12 +420,11 @@ void World::LoadConfigSettings(bool reload)
             sLog.outError("World settings reload fail: can't read settings from %s.",sConfig.GetFilename().c_str());
             return;
         }
-        //TODO Check if config is outdated
     }
 
     ///- Read the player limit and the Message of the day from the config file
     SetPlayerLimit(sConfig.GetIntDefault("PlayerLimit", DEFAULT_PLAYER_LIMIT), true);
-    SetMotd(sConfig.GetStringDefault("Motd", "Welcome to a Oregon Core Server." ));
+    SetMotd(sConfig.GetStringDefault("Motd", "Welcome to a Oregon Core Server."));
 
     ///- Get string for new logins (newly created characters)
     SetNewCharString(sConfig.GetStringDefault("PlayerStart.String", ""));
@@ -500,7 +499,7 @@ void World::LoadConfigSettings(bool reload)
     rate_values[RATE_TALENT] = sConfig.GetFloatDefault("Rate.Talent",1.0f);
     if (rate_values[RATE_TALENT] < 0.0f)
     {
-        sLog.outError("Rate.Talent (%f) mustbe > 0. Using 1 instead.",rate_values[RATE_TALENT]);
+        sLog.outError("Rate.Talent (%f) must be > 0. Using 1 instead.",rate_values[RATE_TALENT]);
         rate_values[RATE_TALENT] = 1.0f;
     }
     rate_values[RATE_CORPSE_DECAY_LOOTED] = sConfig.GetFloatDefault("Rate.Corpse.Decay.Looted",0.5f);
@@ -556,7 +555,6 @@ void World::LoadConfigSettings(bool reload)
         sLog.outError("Anticheat.Movement.TeleportToPlaneAlarms (%d) must be <=100. Using 100 instead.", m_TeleportToPlaneAlarms);
         m_TeleportToPlaneAlarms = 100;
     }
-
     ///- Read other configuration items from the config file
 
     m_configs[CONFIG_COMPRESSION] = sConfig.GetIntDefault("Compression", 1);
@@ -588,12 +586,12 @@ void World::LoadConfigSettings(bool reload)
     if (reload)
         MapManager::Instance().SetMapUpdateInterval(m_configs[CONFIG_INTERVAL_MAPUPDATE]);
 
-    m_configs[CONFIG_INTERVAL_CHANGEWEATHER] = sConfig.GetIntDefault("ChangeWeatherInterval", 600000);
+    m_configs[CONFIG_INTERVAL_CHANGEWEATHER] = sConfig.GetIntDefault("ChangeWeatherInterval", 10 * MINUTE * IN_MILISECONDS);
 
     if (reload)
     {
         uint32 val = sConfig.GetIntDefault("WorldServerPort", DEFAULT_WORLDSERVER_PORT);
-        if (val!=m_configs[CONFIG_PORT_WORLD])
+        if (val != m_configs[CONFIG_PORT_WORLD])
             sLog.outError("WorldServerPort option can't be changed at Oregond.conf reload, using current value (%u).",m_configs[CONFIG_PORT_WORLD]);
     }
     else
@@ -602,7 +600,7 @@ void World::LoadConfigSettings(bool reload)
     if (reload)
     {
         uint32 val = sConfig.GetIntDefault("SocketSelectTime", DEFAULT_SOCKET_SELECT_TIME);
-        if (val!=m_configs[CONFIG_SOCKET_SELECTTIME])
+        if (val != m_configs[CONFIG_SOCKET_SELECTTIME])
             sLog.outError("SocketSelectTime option can't be changed at Oregond.conf reload, using current value (%u).",m_configs[DEFAULT_SOCKET_SELECT_TIME]);
     }
     else
@@ -616,7 +614,7 @@ void World::LoadConfigSettings(bool reload)
     if (reload)
     {
         uint32 val = sConfig.GetIntDefault("GameType", 0);
-        if (val!=m_configs[CONFIG_GAME_TYPE])
+        if (val != m_configs[CONFIG_GAME_TYPE])
             sLog.outError("GameType option can't be changed at Oregond.conf reload, using current value (%u).",m_configs[CONFIG_GAME_TYPE]);
     }
     else
@@ -625,7 +623,7 @@ void World::LoadConfigSettings(bool reload)
     if (reload)
     {
         uint32 val = sConfig.GetIntDefault("RealmZone", REALM_ZONE_DEVELOPMENT);
-        if (val!=m_configs[CONFIG_REALM_ZONE])
+        if (val != m_configs[CONFIG_REALM_ZONE])
             sLog.outError("RealmZone option can't be changed at Oregond.conf reload, using current value (%u).",m_configs[CONFIG_REALM_ZONE]);
     }
     else
@@ -671,12 +669,12 @@ void World::LoadConfigSettings(bool reload)
 
     if (reload)
     {
-        uint32 val = sConfig.GetIntDefault("MaxPlayerLevel", 70);
-        if (val!=m_configs[CONFIG_MAX_PLAYER_LEVEL])
+        uint32 val = sConfig.GetIntDefault("MaxPlayerLevel", DEFAULT_MAX_LEVEL);
+        if (val != m_configs[CONFIG_MAX_PLAYER_LEVEL])
             sLog.outError("MaxPlayerLevel option can't be changed at config reload, using current value (%u).",m_configs[CONFIG_MAX_PLAYER_LEVEL]);
     }
     else
-        m_configs[CONFIG_MAX_PLAYER_LEVEL] = sConfig.GetIntDefault("MaxPlayerLevel", 70);
+        m_configs[CONFIG_MAX_PLAYER_LEVEL] = sConfig.GetIntDefault("MaxPlayerLevel", DEFAULT_MAX_LEVEL);
 
     if (m_configs[CONFIG_MAX_PLAYER_LEVEL] > MAX_LEVEL)
     {
