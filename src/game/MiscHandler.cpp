@@ -490,7 +490,7 @@ void WorldSession::HandleSetSelectionOpcode(WorldPacket & recv_data)
 void WorldSession::HandleStandStateChangeOpcode(WorldPacket & recv_data)
 {
     // sLog.outDebug("WORLD: Received CMSG_STANDSTATECHANGE"); -- too many spam in log at lags/debug stop
-    uint8 animstate;
+    uint32 animstate;
     recv_data >> animstate;
 
     _player->SetStandState(animstate);
