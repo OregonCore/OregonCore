@@ -1,7 +1,7 @@
 ##########################################
 # Oregon Core world configuration file #
 ##########################################
-ConfVersion=2010042601
+ConfVersion=2010061601
 
 ###################################################################################################################
 # CONNECTIONS AND DIRECTORIES
@@ -1779,8 +1779,8 @@ DuelMod.Cooldowns = 0
 #
 #    Anticheat.Movement.Enable
 #        Enable Movement Anticheat
-#        Default: 1 - on
-#                 0 - off
+#        Default: 0 (Disabled)
+#                 1 - Enabled
 #
 #    Anticheat.Movement.TeleportToPlaneAlarms
 #        maximum alarms before player will be kicked (default 50, allowed 20 - 100)
