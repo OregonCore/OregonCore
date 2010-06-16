@@ -80,14 +80,14 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("WORLD: CMSG_GOSSIP_SELECT_OPTION");
 
-    uint32 option;
-    uint32 unk;
+    uint32 gossipListId;
+    uint32 menuId;
     uint64 guid;
     std::string code = "";
 
-    recv_data >> guid >> unk >> option;
+    recv_data >> guid >> menuId >> gossipListId;
 
-    if (_player->PlayerTalkClass->GossipOptionCoded(option ))
+    if (_player->PlayerTalkClass->GossipOptionCoded(gossipListId))
     {
         // recheck
         sLog.outBasic("reading string");
@@ -129,21 +129,21 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket & recv_data)
     {
         if (unit)
         {
-            if (!Script->GossipSelectWithCode(_player, unit, _player->PlayerTalkClass->GossipOptionSender(option ), _player->PlayerTalkClass->GossipOptionAction(option ), code.c_str()) )
-                unit->OnGossipSelect(_player, option);
+            if (!Script->GossipSelectWithCode(_player, unit, _player->PlayerTalkClass->GossipOptionSender(gossipListId), _player->PlayerTalkClass->GossipOptionAction(gossipListId), code.c_str()))
+                unit->OnGossipSelect(_player, gossipListId);
         }
         else
-            Script->GOSelectWithCode(_player, go, _player->PlayerTalkClass->GossipOptionSender(option ), _player->PlayerTalkClass->GossipOptionAction(option ), code.c_str());
+            Script->GOSelectWithCode(_player, go, _player->PlayerTalkClass->GossipOptionSender(gossipListId), _player->PlayerTalkClass->GossipOptionAction(gossipListId), code.c_str());
     }
     else
     {
         if (unit)
         {
-            if (!Script->GossipSelect(_player, unit, _player->PlayerTalkClass->GossipOptionSender(option ), _player->PlayerTalkClass->GossipOptionAction(option )) )
-                unit->OnGossipSelect(_player, option);
+            if (!Script->GossipSelect(_player, unit, _player->PlayerTalkClass->GossipOptionSender(gossipListId), _player->PlayerTalkClass->GossipOptionAction(gossipListId)))
+                unit->OnGossipSelect(_player, gossipListId);
         }
         else
-            Script->GOSelect(_player, go, _player->PlayerTalkClass->GossipOptionSender(option ), _player->PlayerTalkClass->GossipOptionAction(option ));
+            Script->GOSelect(_player, go, _player->PlayerTalkClass->GossipOptionSender(gossipListId), _player->PlayerTalkClass->GossipOptionAction(gossipListId));
     }
 }
 
@@ -218,8 +218,8 @@ void WorldSession::HandleWhoOpcode(WorldPacket & recv_data)
     bool gmInWhoList         = sWorld.getConfig(CONFIG_GM_IN_WHO_LIST);
 
     WorldPacket data(SMSG_WHO, 50);                       // guess size
-    data << clientcount;                                    // clientcount place holder
-    data << clientcount;                                    // clientcount place holder
+    data << uint32(clientcount);                            // clientcount place holder, listed count
+    data << uint32(clientcount);                            // clientcount place holder, online count
 
     //TODO: Guard Player map
     HashMapHolder<Player>::MapType& m = ObjectAccessor::Instance().GetPlayers();
@@ -325,14 +325,14 @@ void WorldSession::HandleWhoOpcode(WorldPacket & recv_data)
             break;
     }
 
-    data.put(0,              clientcount);                //insert right count
-    data.put(sizeof(uint32), clientcount);                //insert right count
+    data.put(0,              clientcount);                // insert right count, listed count
+    data.put(sizeof(uint32), clientcount);                // insert right count, online count
 
     SendPacket(&data);
     sLog.outDebug("WORLD: Send SMSG_WHO Message");
 }
 
-void WorldSession::HandleLogoutRequestOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleLogoutRequestOpcode(WorldPacket & /*recv_data*/)
 {
     sLog.outDebug("WORLD: Recvd CMSG_LOGOUT_REQUEST Message, security - %u", GetSecurity());
 
@@ -487,9 +487,9 @@ void WorldSession::HandleSetSelectionOpcode(WorldPacket & recv_data)
     _player->SetFactionVisibleForFactionTemplateId(unit->getFaction());
 }
 
-void WorldSession::HandleStandStateChangeOpcode(WorldPacket & recv_data )
+void WorldSession::HandleStandStateChangeOpcode(WorldPacket & recv_data)
 {
-    sLog.outDebug("WORLD: Received CMSG_STAND_STATE_CHANGE" );
+    // sLog.outDebug("WORLD: Received CMSG_STANDSTATECHANGE"); -- too many spam in log at lags/debug stop
     uint8 animstate;
     recv_data >> animstate;
 
@@ -679,10 +679,8 @@ void WorldSession::HandleSetFriendNoteOpcode(WorldPacket & recv_data)
 
 void WorldSession::HandleBugOpcode(WorldPacket & recv_data)
 {
-    uint32 suggestion, contentlen;
-    std::string content;
-    uint32 typelen;
-    std::string type;
+    uint32 suggestion, contentlen, typelen;
+    std::string content, type;
 
     recv_data >> suggestion >> contentlen >> content;
 
@@ -1054,12 +1052,9 @@ void WorldSession::HandleWardenDataOpcode(WorldPacket& recv_data)
 
 void WorldSession::HandlePlayedTime(WorldPacket& /*recv_data*/)
 {
-    uint32 TotalTimePlayed = GetPlayer()->GetTotalPlayedTime();
-    uint32 LevelPlayedTime = GetPlayer()->GetLevelPlayedTime();
-
     WorldPacket data(SMSG_PLAYED_TIME, 4 + 4);
-    data << TotalTimePlayed;
-    data << LevelPlayedTime;
+    data << uint32(_player->GetTotalPlayedTime());
+    data << uint32(_player->GetLevelPlayedTime());
     SendPacket(&data);
 }
 
@@ -1305,7 +1300,7 @@ void WorldSession::HandleReportSpamOpcode(WorldPacket & recv_data)
     sLog.outDebug("REPORT SPAM: type %u, guid %u, unk1 %u, unk2 %u, unk3 %u, unk4 %u, message %s", spam_type, GUID_LOPART(spammer_guid), unk1, unk2, unk3, unk4, description.c_str());
 }
 
-void WorldSession::HandleRealmStateRequestOpcode(WorldPacket & recv_data )
+void WorldSession::HandleRealmStateRequestOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("CMSG_REALM_SPLIT");
 
@@ -1359,7 +1354,7 @@ void WorldSession::HandleFarSightOpcode(WorldPacket & recv_data)
     GetPlayer()->SetToNotify();
 }
 
-void WorldSession::HandleChooseTitleOpcode(WorldPacket & recv_data )
+void WorldSession::HandleChooseTitleOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("CMSG_SET_TITLE");
 
@@ -1367,7 +1362,7 @@ void WorldSession::HandleChooseTitleOpcode(WorldPacket & recv_data )
     recv_data >> title;
 
     // -1 at none
-    if (title > 0 && title < 128)
+    if (title > 0 && title < MAX_TITLE_INDEX)
     {
        if (!GetPlayer()->HasTitle(title))
             return;
@@ -1378,7 +1373,7 @@ void WorldSession::HandleChooseTitleOpcode(WorldPacket & recv_data )
     GetPlayer()->SetUInt32Value(PLAYER_CHOSEN_TITLE, title);
 }
 
-void WorldSession::HandleAllowMoveAckOpcode(WorldPacket & recv_data )
+void WorldSession::HandleAllowMoveAckOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("CMSG_ALLOW_MOVE_ACK");
 
@@ -1391,7 +1386,7 @@ void WorldSession::HandleAllowMoveAckOpcode(WorldPacket & recv_data )
     sLog.outDebug("response sent: counter %u, time %u (HEX: %X), ms. time %u, diff %u", counter, time_, time_, getMSTime(), diff);
 }
 
-void WorldSession::HandleResetInstancesOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleResetInstancesOpcode(WorldPacket & /*recv_data*/)
 {
     sLog.outDebug("WORLD: CMSG_RESET_INSTANCES");
     Group *pGroup = _player->GetGroup();
@@ -1404,7 +1399,7 @@ void WorldSession::HandleResetInstancesOpcode(WorldPacket & /*recv_data*/ )
         _player->ResetInstances(INSTANCE_RESET_ALL);
 }
 
-void WorldSession::HandleDungeonDifficultyOpcode(WorldPacket & recv_data )
+void WorldSession::HandleDungeonDifficultyOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("MSG_SET_DUNGEON_DIFFICULTY");
 
@@ -1469,10 +1464,9 @@ void WorldSession::HandleNewUnknownOpcode(WorldPacket & recv_data)
     */
 }
 
-void WorldSession::HandleDismountOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleDismountOpcode(WorldPacket & /*recv_data*/)
 {
     sLog.outDebug("WORLD: CMSG_CANCEL_MOUNT_AURA");
-    //recv_data.hexlike();
 
     //If player is not mounted, so go out :)
     if (!_player->IsMounted())                              // not blizz like; no any messages on blizz
@@ -1524,7 +1518,7 @@ void WorldSession::HandleRequestPetInfoOpcode(WorldPacket & /*recv_data */)
     */
 }
 
-void WorldSession::HandleSetTaxiBenchmarkOpcode(WorldPacket & recv_data )
+void WorldSession::HandleSetTaxiBenchmarkOpcode(WorldPacket & recv_data)
 {
     uint8 mode;
     recv_data >> mode;
