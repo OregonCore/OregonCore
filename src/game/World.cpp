@@ -81,6 +81,10 @@ float World::m_MaxVisibleDistanceInFlight     = DEFAULT_VISIBILITY_DISTANCE;
 float World::m_VisibleUnitGreyDistance        = 0;
 float World::m_VisibleObjectGreyDistance      = 0;
 
+// movement anticheat
+bool World::m_EnableMvAnticheat = true;
+uint32  World::m_TeleportToPlaneAlarms = 50;
+
 struct ScriptAction
 {
     uint64 sourceGUID;
@@ -539,22 +543,21 @@ void World::LoadConfigSettings(bool reload)
         rate_values[RATE_DURABILITY_LOSS_BLOCK] = 0.0f;
     }
 
-    ///- Read other configuration items from the config file
-
     // movement anticheat
-    m_MvAnticheatEnable                     = sConfig.GetBoolDefault("Anticheat.Movement.Enable",false);
-    m_MvAnticheatKick                       = sConfig.GetBoolDefault("Anticheat.Movement.Kick",false);
-    m_MvAnticheatAlarmCount                 = (uint32)sConfig.GetIntDefault("Anticheat.Movement.AlarmCount", 5);
-    m_MvAnticheatAlarmPeriod                = (uint32)sConfig.GetIntDefault("Anticheat.Movement.AlarmTime", 5000);
-    m_MvAntiCheatBan                        = (unsigned char)sConfig.GetIntDefault("Anticheat.Movement.BanType",0);
-    m_MvAnticheatBanTime                    = sConfig.GetStringDefault("Anticheat.Movement.BanTime","1m");
-    m_MvAnticheatGmLevel                    = (unsigned char)sConfig.GetIntDefault("Anticheat.Movement.GmLevel",0);
-    m_MvAnticheatKill                       = sConfig.GetBoolDefault("Anticheat.Movement.Kill",false);
-    m_MvAnticheatMaxXYT                     = sConfig.GetFloatDefault("Anticheat.Movement.MaxXYT",0.04f);
-    m_MvAnticheatHighSpeedMaxXYT            = sConfig.GetFloatDefault("Anticheat.Movement.HighSpeedMaxXYT",0.025f);
-    m_MvAnticheatSpeedMaxXYT                = sConfig.GetFloatDefault("Anticheat.Movement.SpeedMaxXYT",0.020f);
-    m_MvAnticheatWalkMaxXYT                 = sConfig.GetFloatDefault("Anticheat.Movement.WalkMaxXYT",0.015f);
-    m_MvAnticheatIgnoreAfterTeleport        = (uint16)sConfig.GetIntDefault("Anticheat.Movement.IgnoreSecAfterTeleport",10);
+    m_EnableMvAnticheat = sConfig.GetBoolDefault("Anticheat.Movement.Enable", true);
+    m_TeleportToPlaneAlarms = sConfig.GetIntDefault("Anticheat.Movement.TeleportToPlaneAlarms", 50);
+    if (m_TeleportToPlaneAlarms < 20)
+    {
+        sLog.outError("Anticheat.Movement.TeleportToPlaneAlarms (%d) must be >=20. Using 20 instead.", m_TeleportToPlaneAlarms);
+        m_TeleportToPlaneAlarms = 20;
+    }
+    if (m_TeleportToPlaneAlarms > 100)
+    {
+        sLog.outError("Anticheat.Movement.TeleportToPlaneAlarms (%d) must be <=100. Using 100 instead.", m_TeleportToPlaneAlarms);
+        m_TeleportToPlaneAlarms = 100;
+    }
+
+    ///- Read other configuration items from the config file
 
     m_configs[CONFIG_COMPRESSION] = sConfig.GetIntDefault("Compression", 1);
     if (m_configs[CONFIG_COMPRESSION] < 1 || m_configs[CONFIG_COMPRESSION] > 9)

@@ -541,20 +541,10 @@ class World
         static float GetVisibleUnitGreyDistance()       { return m_VisibleUnitGreyDistance;       }
         static float GetVisibleObjectGreyDistance()     { return m_VisibleObjectGreyDistance;     }
 
-        //movement anticheat enable flag
-        inline bool GetMvAnticheatEnable()             {return m_MvAnticheatEnable;}
-        inline bool GetMvAnticheatKick()               {return m_MvAnticheatKick;}
-        inline uint32 GetMvAnticheatAlarmCount()       {return m_MvAnticheatAlarmCount;}
-        inline uint32 GetMvAnticheatAlarmPeriod()      {return m_MvAnticheatAlarmPeriod;}
-        inline unsigned char GetMvAnticheatBan()       {return m_MvAntiCheatBan;}
-        inline std::string GetMvAnticheatBanTime()     {return m_MvAnticheatBanTime;}
-        inline unsigned char GetMvAnticheatGmLevel()   {return m_MvAnticheatGmLevel;}
-        inline bool GetMvAnticheatKill()               {return m_MvAnticheatKill;}
-        inline float GetMvAnticheatMaxXYT()            {return m_MvAnticheatMaxXYT;}
-        inline float GetMvAnticheatHighSpeedMaxXYT()   {return m_MvAnticheatHighSpeedMaxXYT;}
-        inline float GetMvAnticheatSpeedMaxXYT()       {return m_MvAnticheatSpeedMaxXYT;}
-        inline float GetMvAnticheatWalkMaxXYT()        {return m_MvAnticheatWalkMaxXYT;}
-        inline uint16 GetMvAnticheatIgnoreAfterTeleport()   {return m_MvAnticheatIgnoreAfterTeleport;}
+        // movement anticheat
+        static bool GetEnableMvAnticheat()              {return m_EnableMvAnticheat;     }
+        static uint32 GetTeleportToPlaneAlarms()        {return m_TeleportToPlaneAlarms; }
+        //<<< end movement anticheat
 
         void ProcessCliCommands();
         void QueueCliCommand(CliCommandHolder::Print* zprintf, char const* input ) { cliCmdQueue.add(new CliCommandHolder(input, zprintf)); }
@@ -637,21 +627,10 @@ class World
         static float m_MaxVisibleDistanceInFlight;
         static float m_VisibleUnitGreyDistance;
         static float m_VisibleObjectGreyDistance;
-        
-        //movement anticheat enable flag
-        bool m_MvAnticheatEnable;
-        bool m_MvAnticheatKick;
-        uint32 m_MvAnticheatAlarmCount;
-        uint32 m_MvAnticheatAlarmPeriod;
-        unsigned char m_MvAntiCheatBan;
-        std::string m_MvAnticheatBanTime;
-        unsigned char m_MvAnticheatGmLevel;
-        bool m_MvAnticheatKill;
-        float m_MvAnticheatMaxXYT;
-        float m_MvAnticheatHighSpeedMaxXYT;
-        float m_MvAnticheatSpeedMaxXYT;
-        float m_MvAnticheatWalkMaxXYT;
-        uint16 m_MvAnticheatIgnoreAfterTeleport;
+
+        // movement anticheat enable flag
+        static bool m_EnableMvAnticheat;
+        static uint32 m_TeleportToPlaneAlarms;
 
         // CLI command holder to be thread safe
         ACE_Based::LockedQueue<CliCommandHolder*, ACE_Thread_Mutex> cliCmdQueue;

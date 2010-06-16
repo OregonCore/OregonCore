@@ -183,7 +183,7 @@ void WorldSession::HandleActivateTaxiFarOpcode (WorldPacket & recv_data)
     GetPlayer()->ActivateTaxiPathTo(nodes, 0, npc);
 }
 
-void WorldSession::HandleTaxiNextDestinationOpcode(WorldPacket& /*recv_data*/)
+void WorldSession::HandleTaxiNextDestinationOpcode(WorldPacket& recv_data)
 {
     sLog.outDebug("WORLD: Received CMSG_MOVE_SPLINE_DONE");
 
@@ -192,11 +192,44 @@ void WorldSession::HandleTaxiNextDestinationOpcode(WorldPacket& /*recv_data*/)
     // 2) switch from one map to other in case multim-map taxi path
     // we need process only (1)
 
+    // movement anticheat code
+    MovementInfo movementInfo;
+    uint32 MovementFlags;
+
+    recv_data >> MovementFlags;
+    recv_data >> movementInfo.unk1;
+    recv_data >> movementInfo.time;
+    recv_data >> movementInfo.x;
+    recv_data >> movementInfo.y;
+    recv_data >> movementInfo.z;
+    recv_data >> movementInfo.o;
+    //<<< end movement anticheat
+
     uint32 curDest = GetPlayer()->m_taxi.GetTaxiDestination();
     if (!curDest)
+    {
+        // movement anticheat code
+        GetPlayer()->SetPosition(movementInfo.x, movementInfo.y, movementInfo.z, movementInfo.o);
+        GetPlayer()->m_movementInfo = movementInfo;
+        GetPlayer()->m_anti_lastmovetime = movementInfo.time;
+        GetPlayer()->m_anti_justteleported = 1;
+        //<<< end movement anticheat
         return;
+    }
 
     TaxiNodesEntry const* curDestNode = sTaxiNodesStore.LookupEntry(curDest);
+
+    if (curDestNode && curDestNode->map_id == GetPlayer()->GetMapId())
+    {
+        while(GetPlayer()->GetMotionMaster()->GetCurrentMovementGeneratorType()==FLIGHT_MOTION_TYPE)
+            GetPlayer()->GetMotionMaster()->MovementExpired(false);
+    }
+
+    //movement anticheat code
+    GetPlayer()->SetPosition(movementInfo.x, movementInfo.y, movementInfo.z, movementInfo.o);
+    GetPlayer()->m_movementInfo = movementInfo;
+    GetPlayer()->m_anti_lastmovetime = movementInfo.time;
+    //<<< end movement anticheat
 
     // far teleport case
     if (curDestNode && curDestNode->map_id != GetPlayer()->GetMapId())

@@ -1949,11 +1949,7 @@ class OREGON_DLL_SPEC Player : public Unit
         bool isMoving() const { return HasUnitMovementFlag(movementFlagsMask); }
         bool isMovingOrTurning() const { return HasUnitMovementFlag(movementOrTurningFlagsMask); }
 
-        uint32 Anti__GetLastTeleTime() const { return m_anti_TeleTime; }
-        void Anti__SetLastTeleTime(uint32 TeleTime) { m_anti_TeleTime=TeleTime; }
-        //bool CanFly() const { return m_movementInfo.HasMovementFlag(MOVEMENTFLAG_CAN_FLY); }
-        bool CanFly() const { return m_CanFly;  }
-        void SetCanFly(bool CanFly) { m_CanFly=CanFly; }
+        bool CanFly() const { return HasUnitMovementFlag(MOVEMENTFLAG_CAN_FLY); }
         bool IsFlying() const { return HasUnitMovementFlag(MOVEMENTFLAG_FLYING2); }
 
         void HandleFallDamage(MovementInfo& movementInfo);
@@ -2274,13 +2270,20 @@ class OREGON_DLL_SPEC Player : public Unit
         RestType rest_type;
         ////////////////////Rest System/////////////////////
 
-        //movement anticheat
-        uint32 m_anti_lastmovetime;     //last movement time
-        float  m_anti_MovedLen;         //Length of traveled way
+        // movement anticheat
+        uint32 m_anti_lastmovetime;          // last movement time
+        uint64 m_anti_transportGUID;         // current transport GUID
+        float  m_anti_last_hspeed;           // horizontal speed, default RUN speed
+        uint32 m_anti_lastspeed_changetime;  // last speed change time
+        float  m_anti_last_vspeed;           // vertical speed, default max jump height
+        uint32 m_anti_beginfalltime;         // alternative falling begin time
+        uint32 m_anti_justteleported;        // seted when player was teleported
+        uint32 m_anti_teletoplane_count;     // Teleport To Plane alarm counter
+        float  m_anti_BeginFallZ;            // alternative falling begin time
+        uint64 m_anti_alarmcount;            // alarm counter
+        float  m_anti_MovedLen;              // Length of traveled way
         uint32 m_anti_NextLenCheck;
-        float  m_anti_BeginFallZ;    //alternative falling begin
-        uint32 m_anti_lastalarmtime;    //last time when alarm generated
-        uint32 m_anti_alarmcount;       //alarm counter
+        uint32 m_anti_lastalarmtime;         // last time when alarm generated
         uint32 m_anti_TeleTime;
         bool m_CanFly;
 
