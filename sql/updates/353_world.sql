@@ -1,4 +1,4 @@
-DELETE FROM command where name IN ('character titles','modify titles','titles add','titles current','titles remove','lookup title');
+DELETE FROM command where name IN ('character titles','modify titles','titles add','titles current','titles remove','titles setmask','lookup title');
 
 INSERT INTO `command` VALUES
 ('character titles',2,'Syntax: .character titles [$player_name]\r\n\r\nShow known titles list for selected player or player find by $player_name.'),
