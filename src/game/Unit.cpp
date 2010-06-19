@@ -3230,7 +3230,7 @@ float Unit::GetUnitParryChance() const
     if (GetTypeId() == TYPEID_PLAYER)
     {
         Player const* player = (Player const*)this;
-        if (player->CanParry() )
+        if (player->CanParry())
         {
             Item *tmpitem = player->GetWeaponForAttack(BASE_ATTACK,true);
             if (!tmpitem)
@@ -3260,7 +3260,7 @@ float Unit::GetUnitBlockChance() const
     if (GetTypeId() == TYPEID_PLAYER)
     {
         Player const* player = (Player const*)this;
-        if (player->CanBlock() )
+        if (player->CanBlock())
         {
             Item *tmpitem = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND);
             if (tmpitem && !tmpitem->IsBroken() && tmpitem->GetProto()->Block)
@@ -3341,7 +3341,7 @@ uint32 Unit::GetWeaponSkillValue (WeaponAttackType attType, Unit const* target) 
         Item* item = ToPlayer()->GetWeaponForAttack(attType,true);
 
         // feral or unarmed skill only for base attack
-        if (attType != BASE_ATTACK && !item )
+        if (attType != BASE_ATTACK && !item)
         {
             if (attType == RANGED_ATTACK && getClass() == CLASS_PALADIN) //hammer
                 return GetMaxSkillValueForLevel();
@@ -3351,8 +3351,8 @@ uint32 Unit::GetWeaponSkillValue (WeaponAttackType attType, Unit const* target) 
         if (ToPlayer()->IsInFeralForm())
             return GetMaxSkillValueForLevel();              // always maximized SKILL_FERAL_COMBAT in fact
 
-        // weapon skill or (unarmed for base attack)
-        uint32  skill = item ? item->GetSkill() : SKILL_UNARMED;
+        // weapon skill or (unarmed for base attack and fist weapons)
+        uint32  skill = item && item->GetSkill() != SKILL_FIST_WEAPONS ? item->GetSkill() : SKILL_UNARMED;
 
         // in PvP use full skill instead current skill value
         value = (target && target->isCharmedOwnedByPlayerOrPlayer())
@@ -3362,9 +3362,9 @@ uint32 Unit::GetWeaponSkillValue (WeaponAttackType attType, Unit const* target) 
         value += uint32(ToPlayer()->GetRatingBonusValue(CR_WEAPON_SKILL));
         switch (attType)
         {
-            case BASE_ATTACK:   value+=uint32(ToPlayer()->GetRatingBonusValue(CR_WEAPON_SKILL_MAINHAND));break;
-            case OFF_ATTACK:    value+=uint32(ToPlayer()->GetRatingBonusValue(CR_WEAPON_SKILL_OFFHAND));break;
-            case RANGED_ATTACK: value+=uint32(ToPlayer()->GetRatingBonusValue(CR_WEAPON_SKILL_RANGED));break;
+            case BASE_ATTACK:   value += uint32(ToPlayer()->GetRatingBonusValue(CR_WEAPON_SKILL_MAINHAND)); break;
+            case OFF_ATTACK:    value += uint32(ToPlayer()->GetRatingBonusValue(CR_WEAPON_SKILL_OFFHAND));  break;
+            case RANGED_ATTACK: value += uint32(ToPlayer()->GetRatingBonusValue(CR_WEAPON_SKILL_RANGED));   break;
         }
     }
     else
