@@ -1862,12 +1862,6 @@ void Player::RemoveFromWorld()
         RemoveGuardians();
     }
 
-    for (int i = PLAYER_SLOT_START; i < PLAYER_SLOT_END; i++)
-    {
-        if (m_items[i])
-            m_items[i]->RemoveFromWorld();
-    }
-
     // remove duel before calling Unit::RemoveFromWorld       
     // otherwise there will be an existing duel flag pointer but no entry in m_gameObj       
     DuelComplete(DUEL_INTERUPTED);
@@ -1876,6 +1870,12 @@ void Player::RemoveFromWorld()
     ///- It will crash when updating the ObjectAccessor
     ///- The player should only be removed when logging out
     Unit::RemoveFromWorld();
+
+    for (uint8 i = PLAYER_SLOT_START; i < PLAYER_SLOT_END; ++i)
+    {
+        if (m_items[i])
+            m_items[i]->RemoveFromWorld();
+    }
 }
 
 void Player::RewardRage(uint32 damage, uint32 weaponSpeedHitFactor, bool attacker )
