@@ -17352,6 +17352,10 @@ bool Player::BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint
     // cheating attempt
     if (count < 1) count = 1;
 
+    // cheating attempt
+    if (slot > MAX_BAG_SIZE && slot != NULL_SLOT)
+        return false;
+
     if (!isAlive())
         return false;
 
@@ -17442,7 +17446,7 @@ bool Player::BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint
         }
 
         // check for personal arena rating requirement
-        if (GetMaxPersonalArenaRatingRequirement() < iece->reqpersonalarenarating )
+        if (GetMaxPersonalArenaRatingRequirement() < iece->reqpersonalarenarating)
         {
             // probably not the proper equip err
             SendEquipError(EQUIP_ERR_CANT_EQUIP_RANK,NULL,NULL);
@@ -17494,7 +17498,7 @@ bool Player::BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint
             uint32 new_count = pCreature->UpdateVendorItemCurrentCount(crItem,pProto->BuyCount * count);
 
             WorldPacket data(SMSG_BUY_ITEM, (8+4+4+4));
-            data << pCreature->GetGUID();
+            data << uint64(pCreature->GetGUID());
             data << uint32(vendorslot+1);                   // numbered from 1 at client
             data << uint32(crItem->maxcount > 0 ? new_count : 0xFFFFFFFF);
             data << uint32(count);
@@ -17540,7 +17544,7 @@ bool Player::BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint
             uint32 new_count = pCreature->UpdateVendorItemCurrentCount(crItem,pProto->BuyCount * count);
 
             WorldPacket data(SMSG_BUY_ITEM, (8+4+4+4));
-            data << pCreature->GetGUID();
+            data << uint64(pCreature->GetGUID());
             data << uint32(vendorslot + 1);                 // numbered from 1 at client
             data << uint32(crItem->maxcount > 0 ? new_count : 0xFFFFFFFF);
             data << uint32(count);
@@ -17566,7 +17570,7 @@ uint32 Player::GetMaxPersonalArenaRatingRequirement()
     // the personal rating of the arena team must match the required limit as well
     // so return max[in arenateams](min(personalrating[teamtype], teamrating[teamtype]))
     uint32 max_personal_rating = 0;
-    for (int i = 0; i < MAX_ARENA_SLOT; ++i)
+    for (uint8 i = 0; i < MAX_ARENA_SLOT; ++i)
     {
         if (ArenaTeam * at = objmgr.GetArenaTeamById(GetArenaTeamId(i)))
         {
@@ -17671,7 +17675,7 @@ void Player::SendCooldownEvent(SpellEntry const *spellInfo)
     // Send activate
     WorldPacket data(SMSG_COOLDOWN_EVENT, (4+8));
     data << spellInfo->Id;
-    data << GetGUID();
+    data << uint64(GetGUID());
     SendDirectMessage(&data);
 }
                                                            //slot to be excluded while counting
@@ -17730,7 +17734,7 @@ bool Player::EnchantmentFitsRequirements(uint32 enchantmentcondition, int8 slot)
 
     bool activate = true;
 
-    for (int i = 0; i < 5; i++)
+    for (uint8 i = 0; i < 5; i++)
     {
         if (!Condition->Color[i])
             continue;
@@ -17935,7 +17939,7 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
         target = this;
 
     // different visible distance checks
-    if (isInFlight())                                     // what see player in flight
+    if (isInFlight())                                           // what see player in flight
     {
         if (!target->IsWithinDistInMap(u,World::GetMaxVisibleDistanceInFlight()+(inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), is3dDistance))
             return false;
@@ -17945,7 +17949,7 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
         if (!target->IsWithinDistInMap(u,World::GetMaxVisibleDistanceForObject()+(inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), is3dDistance))
             return false;
     }
-    else if (u->GetTypeId()==TYPEID_PLAYER)                     // distance for show player
+    else if (u->GetTypeId() == TYPEID_PLAYER)                     // distance for show player
     {
         // Players far than max visible distance for player or not in our map are not visible too
         if (!at_same_transport && !target->IsWithinDistInMap(u,World::GetMaxVisibleDistanceForPlayer()+(inVisibleList ? World::GetVisibleUnitGreyDistance() : 0.0f), is3dDistance))
@@ -18017,7 +18021,7 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
     return true;
 }
 
-bool Player::IsVisibleInGridForPlayer(Player const * pl ) const
+bool Player::IsVisibleInGridForPlayer(Player const * pl) const
 {
     // gamemaster in GM mode see all, including ghosts
     if (pl->isGameMaster() && GetSession()->GetSecurity() <= pl->GetSession()->GetSecurity())
@@ -18026,7 +18030,7 @@ bool Player::IsVisibleInGridForPlayer(Player const * pl ) const
     // It seems in battleground everyone sees everyone, except the enemy-faction ghosts
     if (InBattleGround())
     {
-        if (!(isAlive() || m_deathTimer > 0) && !IsFriendlyTo(pl) )
+        if (!(isAlive() || m_deathTimer > 0) && !IsFriendlyTo(pl))
             return false;
         return true;
     }
@@ -18057,13 +18061,13 @@ bool Player::IsVisibleInGridForPlayer(Player const * pl ) const
     return false;
 }
 
-bool Player::IsVisibleGloballyFor(Player* u ) const
+bool Player::IsVisibleGloballyFor(Player* u) const
 {
     if (!u)
         return false;
 
     // Always can see self
-    if (u==this)
+    if (u == this)
         return true;
 
     // Visible units, always are visible for all players
@@ -18086,7 +18090,7 @@ void Player::UpdateVisibilityOf(WorldObject* target)
 {
     if (HaveAtClient(target))
     {
-        if (!target->isVisibleForInState(this,true))
+        if (!target->isVisibleForInState(this, true))
         {
             target->DestroyForPlayer(this);
             m_clientGUIDs.erase(target->GetGUID());
@@ -18260,7 +18264,7 @@ void Player::AddComboPoints(Unit* target, int8 count)
     }
 
     if (m_comboPoints > 5) m_comboPoints = 5;
-    if (m_comboPoints < 0) m_comboPoints = 0;
+    else if (m_comboPoints < 0) m_comboPoints = 0;
 
     SendComboPoints();
 }
@@ -18285,7 +18289,8 @@ void Player::ClearComboPoints()
 
 void Player::SetGroup(Group *group, int8 subgroup)
 {
-    if (group == NULL) m_group.unlink();
+    if (group == NULL)
+        m_group.unlink();
     else
     {
         // never use SetGroup without a subgroup unless you specify NULL for group
@@ -18330,7 +18335,7 @@ void Player::SendInitialPacketsBeforeAddToMap()
 
     // SMSG_SET_AURA_SINGLE
 
-    data.Initialize(SMSG_LOGIN_SETTIMESPEED, 8);
+    data.Initialize(SMSG_LOGIN_SETTIMESPEED, 4 + 4);
     data << uint32(secsToTimeBitFields(sWorld.GetGameTime()));
     data << (float)0.01666667f;                             // game speed
     GetSession()->SendPacket(&data);
@@ -18443,6 +18448,7 @@ void Player::SendInstanceResetWarning(uint32 mapid, uint32 time)
         type = RAID_INSTANCE_WARNING_MIN;
     else
         type = RAID_INSTANCE_WARNING_MIN_SOON;
+
     WorldPacket data(SMSG_RAID_INSTANCE_MESSAGE, 4+4+4);
     data << uint32(type);
     data << uint32(mapid);
@@ -18450,18 +18456,18 @@ void Player::SendInstanceResetWarning(uint32 mapid, uint32 time)
     GetSession()->SendPacket(&data);
 }
 
-void Player::ApplyEquipCooldown(Item * pItem )
+void Player::ApplyEquipCooldown(Item * pItem)
 {
-    for (int i = 0; i <5; ++i)
+    for (uint8 i = 0; i < 5; ++i)
     {
         _Spell const& spellData = pItem->GetProto()->Spells[i];
 
         // no spell
-        if (!spellData.SpellId )
+        if (!spellData.SpellId)
             continue;
 
         // wrong triggering type (note: ITEM_SPELLTRIGGER_ON_NO_DELAY_USE not have cooldown)
-        if (spellData.SpellTrigger != ITEM_SPELLTRIGGER_ON_USE )
+        if (spellData.SpellTrigger != ITEM_SPELLTRIGGER_ON_USE)
             continue;
 
         AddSpellCooldown(spellData.SpellId, pItem->GetEntry(), time(NULL) + 30);
@@ -18517,7 +18523,7 @@ void Player::learnQuestRewardedSpells(Quest const* quest)
     uint32 spell_id = quest->GetRewSpellCast();
 
     // skip quests without rewarded spell
-    if (!spell_id )
+    if (!spell_id)
         return;
 
     SpellEntry const *spellInfo = sSpellStore.LookupEntry(spell_id);
@@ -18526,7 +18532,7 @@ void Player::learnQuestRewardedSpells(Quest const* quest)
 
     // check learned spells state
     bool found = false;
-    for (int i=0; i < 3; ++i)
+    for (uint8 i = 0; i < 3; ++i)
     {
         if (spellInfo->Effect[i] == SPELL_EFFECT_LEARN_SPELL && !HasSpell(spellInfo->EffectTriggerSpell[i]))
         {
@@ -18541,11 +18547,11 @@ void Player::learnQuestRewardedSpells(Quest const* quest)
 
     // prevent learn non first rank unknown profession and second specialization for same profession)
     uint32 learned_0 = spellInfo->EffectTriggerSpell[0];
-    if (spellmgr.GetSpellRank(learned_0) > 1 && !HasSpell(learned_0) )
+    if (spellmgr.GetSpellRank(learned_0) > 1 && !HasSpell(learned_0))
     {
         // not have first rank learned (unlearned prof?)
         uint32 first_spell = spellmgr.GetFirstSpellInChain(learned_0);
-        if (!HasSpell(first_spell) )
+        if (!HasSpell(first_spell))
             return;
 
         SpellEntry const *learnedInfo = sSpellStore.LookupEntry(learned_0);
@@ -18593,7 +18599,7 @@ void Player::learnQuestRewardedSpells()
             continue;
 
         Quest const* quest = objmgr.GetQuestTemplate(itr->first);
-        if (!quest )
+        if (!quest)
             continue;
 
         learnQuestRewardedSpells(quest);
@@ -18607,7 +18613,7 @@ void Player::learnSkillRewardedSpells(uint32 skill_id )
     for (uint32 j=0; j<sSkillLineAbilityStore.GetNumRows(); ++j)
     {
         SkillLineAbilityEntry const *pAbility = sSkillLineAbilityStore.LookupEntry(j);
-        if (!pAbility || pAbility->skillId!=skill_id || pAbility->learnOnGetSkill != ABILITY_LEARNED_ON_GET_PROFESSION_SKILL)
+        if (!pAbility || pAbility->skillId != skill_id || pAbility->learnOnGetSkill != ABILITY_LEARNED_ON_GET_PROFESSION_SKILL)
             continue;
         // Check race if set
         if (pAbility->racemask && !(pAbility->racemask & raceMask))
@@ -18649,7 +18655,7 @@ void Player::SendAuraDurationsForTarget(Unit* target)
     }
 }
 
-void Player::SetDailyQuestStatus(uint32 quest_id )
+void Player::SetDailyQuestStatus(uint32 quest_id)
 {
     for (uint32 quest_daily_idx = 0; quest_daily_idx < PLAYER_MAX_DAILY_QUESTS; ++quest_daily_idx)
     {
@@ -18675,7 +18681,7 @@ void Player::ResetDailyQuestStatus()
 
 BattleGround* Player::GetBattleGround() const
 {
-    if (GetBattleGroundId()==0)
+    if (GetBattleGroundId() == 0)
         return NULL;
 
     return sBattleGroundMgr.GetBattleGround(GetBattleGroundId());
@@ -18752,7 +18758,7 @@ float Player::GetReputationPriceDiscount(Creature const* pCreature ) const
     return 1.0f - 0.05f* (rank - REP_NEUTRAL);
 }
 
-bool Player::IsSpellFitByClassAndRace(uint32 spell_id ) const
+bool Player::IsSpellFitByClassAndRace(uint32 spell_id) const
 {
     uint32 racemask  = getRaceMask();
     uint32 classmask = getClassMask();
@@ -18787,9 +18793,9 @@ bool Player::HasQuestForGO(int32 GOId)
             if (GetGroup() && GetGroup()->isRaidGroup() && qinfo->GetType() != QUEST_TYPE_RAID)
                 continue;
 
-            for (int j = 0; j < QUEST_OBJECTIVES_COUNT; j++)
+            for (uint8 j = 0; j < QUEST_OBJECTIVES_COUNT; ++j)
             {
-                if (qinfo->ReqCreatureOrGOId[j]>=0)         //skip non GO case
+                if (qinfo->ReqCreatureOrGOId[j] >= 0)       //skip non GO case
                     continue;
 
                 if ((-1)*GOId == qinfo->ReqCreatureOrGOId[j] && qs.m_creatureOrGOcount[j] < qinfo->ReqCreatureOrGOCount[j])
@@ -18807,12 +18813,11 @@ void Player::UpdateForQuestsGO()
 
     UpdateData udata;
     WorldPacket packet;
-    for (ClientGUIDs::iterator itr=m_clientGUIDs.begin(); itr!=m_clientGUIDs.end(); ++itr)
+    for (ClientGUIDs::iterator itr=m_clientGUIDs.begin(); itr != m_clientGUIDs.end(); ++itr)
     {
         if (IS_GAMEOBJECT_GUID(*itr))
         {
-            GameObject *obj = HashMapHolder<GameObject>::Find(*itr);
-            if (obj)
+            if (GameObject *obj = HashMapHolder<GameObject>::Find(*itr))
                 obj->BuildValuesUpdateBlockForPlayer(&udata,this);
         }
     }
@@ -18848,11 +18853,11 @@ void Player::SummonIfPossible(bool agree)
     TeleportTo(m_summon_mapid, m_summon_x, m_summon_y, m_summon_z,GetOrientation());
 }
 
-void Player::RemoveItemDurations(Item *item )
+void Player::RemoveItemDurations(Item *item)
 {
-    for (ItemDurationList::iterator itr = m_itemDuration.begin();itr != m_itemDuration.end(); ++itr)
+    for (ItemDurationList::iterator itr = m_itemDuration.begin(); itr != m_itemDuration.end(); ++itr)
     {
-        if (*itr==item)
+        if (*itr == item)
         {
             m_itemDuration.erase(itr);
             break;
@@ -18860,7 +18865,7 @@ void Player::RemoveItemDurations(Item *item )
     }
 }
 
-void Player::AddItemDurations(Item *item )
+void Player::AddItemDurations(Item *item)
 {
     if (item->GetUInt32Value(ITEM_FIELD_DURATION))
     {
@@ -18882,7 +18887,7 @@ void Player::AutoUnequipOffhandIfNeed()
 
     ItemPosCountVec off_dest;
     uint8 off_msg = CanStoreItem(NULL_BAG, NULL_SLOT, off_dest, offItem, false);
-    if (off_msg == EQUIP_ERR_OK )
+    if (off_msg == EQUIP_ERR_OK)
     {
         RemoveItem(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND, true);
         StoreItem(off_dest, offItem, true);
@@ -18905,32 +18910,32 @@ bool Player::HasItemFitToSpellReqirements(SpellEntry const* spellInfo, Item cons
 
     // scan other equipped items for same requirements (mostly 2 daggers/etc)
     // for optimize check 2 used cases only
-    switch(spellInfo->EquippedItemClass)
+    switch (spellInfo->EquippedItemClass)
     {
         case ITEM_CLASS_WEAPON:
         {
-            for (int i= EQUIPMENT_SLOT_MAINHAND; i < EQUIPMENT_SLOT_TABARD; ++i)
-                if (Item *item = GetItemByPos(INVENTORY_SLOT_BAG_0, i ))
-                    if (item!=ignoreItem && item->IsFitToSpellRequirements(spellInfo))
+            for (uint8 i= EQUIPMENT_SLOT_MAINHAND; i < EQUIPMENT_SLOT_TABARD; ++i)
+                if (Item *item = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+                    if (item != ignoreItem && item->IsFitToSpellRequirements(spellInfo))
                         return true;
             break;
         }
         case ITEM_CLASS_ARMOR:
         {
             // tabard not have dependent spells
-            for (int i= EQUIPMENT_SLOT_START; i< EQUIPMENT_SLOT_MAINHAND; ++i)
-                if (Item *item = GetItemByPos(INVENTORY_SLOT_BAG_0, i ))
-                    if (item!=ignoreItem && item->IsFitToSpellRequirements(spellInfo))
+            for (uint8 i= EQUIPMENT_SLOT_START; i< EQUIPMENT_SLOT_MAINHAND; ++i)
+                if (Item *item = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+                    if (item != ignoreItem && item->IsFitToSpellRequirements(spellInfo))
                         return true;
 
             // shields can be equipped to offhand slot
             if (Item *item = GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND))
-                if (item!=ignoreItem && item->IsFitToSpellRequirements(spellInfo))
+                if (item != ignoreItem && item->IsFitToSpellRequirements(spellInfo))
                     return true;
 
             // ranged slot can have some armor subclasses
             if (Item *item = GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_RANGED))
-                if (item!=ignoreItem && item->IsFitToSpellRequirements(spellInfo))
+                if (item != ignoreItem && item->IsFitToSpellRequirements(spellInfo))
                     return true;
 
             break;
