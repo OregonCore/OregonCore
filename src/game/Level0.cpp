@@ -164,7 +164,7 @@ bool ChatHandler::HandleGMListIngameCommand(const char* /*args*/)
     {
         if (itr->second->GetSession()->GetSecurity() &&
             (itr->second->isGameMaster() || sWorld.getConfig(CONFIG_GM_IN_GM_LIST)) &&
-            (!m_session || itr->second->IsVisibleGloballyFor(m_session->GetPlayer())) )
+            (!m_session || itr->second->IsVisibleGloballyFor(m_session->GetPlayer())))
         {
             if (first)
             {

@@ -66,14 +66,14 @@ static void AttemptJoin(Player* _player)
         // stop at success join
         if (plr->GetGroup()->AddMember(_player->GetGUID(), _player->GetName()))
         {
-            if (sWorld.getConfig(CONFIG_RESTRICTED_LFG_CHANNEL) && _player->GetSession()->GetSecurity() == SEC_PLAYER )
+            if (sWorld.getConfig(CONFIG_RESTRICTED_LFG_CHANNEL) && _player->GetSession()->GetSecurity() == SEC_PLAYER)
                 _player->LeaveLFGChannel();
             break;
         }
         // full
         else
         {
-            if (sWorld.getConfig(CONFIG_RESTRICTED_LFG_CHANNEL) && plr->GetSession()->GetSecurity() == SEC_PLAYER )
+            if (sWorld.getConfig(CONFIG_RESTRICTED_LFG_CHANNEL) && plr->GetSession()->GetSecurity() == SEC_PLAYER)
                 plr->LeaveLFGChannel();
         }
     }
@@ -99,7 +99,7 @@ static void AttemptAddMore(Player* _player)
             continue;
 
         // skip not auto join or in group
-        if (!plr->GetSession()->LookingForGroup_auto_join || plr->GetGroup() )
+        if (!plr->GetSession()->LookingForGroup_auto_join || plr->GetGroup())
             continue;
 
         if (!plr->m_lookingForGroup.HaveInSlot(_player->m_lookingForGroup.more))
@@ -119,22 +119,22 @@ static void AttemptAddMore(Player* _player)
         }
 
         // stop at join fail (full)
-        if (!_player->GetGroup()->AddMember(plr->GetGUID(), plr->GetName()) )
+        if (!_player->GetGroup()->AddMember(plr->GetGUID(), plr->GetName()))
         {
-            if (sWorld.getConfig(CONFIG_RESTRICTED_LFG_CHANNEL) && _player->GetSession()->GetSecurity() == SEC_PLAYER )
+            if (sWorld.getConfig(CONFIG_RESTRICTED_LFG_CHANNEL) && _player->GetSession()->GetSecurity() == SEC_PLAYER)
                 _player->LeaveLFGChannel();
 
             break;
         }
 
         // joined
-        if (sWorld.getConfig(CONFIG_RESTRICTED_LFG_CHANNEL) && plr->GetSession()->GetSecurity() == SEC_PLAYER )
+        if (sWorld.getConfig(CONFIG_RESTRICTED_LFG_CHANNEL) && plr->GetSession()->GetSecurity() == SEC_PLAYER)
             plr->LeaveLFGChannel();
 
         // and group full
-        if (_player->GetGroup()->IsFull() )
+        if (_player->GetGroup()->IsFull())
         {
-            if (sWorld.getConfig(CONFIG_RESTRICTED_LFG_CHANNEL) && _player->GetSession()->GetSecurity() == SEC_PLAYER )
+            if (sWorld.getConfig(CONFIG_RESTRICTED_LFG_CHANNEL) && _player->GetSession()->GetSecurity() == SEC_PLAYER)
                 _player->LeaveLFGChannel();
 
             break;
@@ -142,7 +142,7 @@ static void AttemptAddMore(Player* _player)
     }
 }
 
-void WorldSession::HandleLfgAutoJoinOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleLfgAutoJoinOpcode(WorldPacket & /*recv_data*/)
 {
     sLog.outDebug("CMSG_SET_LFG_AUTO_JOIN");
     LookingForGroup_auto_join = true;
@@ -153,13 +153,13 @@ void WorldSession::HandleLfgAutoJoinOpcode(WorldPacket & /*recv_data*/ )
     AttemptJoin(_player);
 }
 
-void WorldSession::HandleLfgCancelAutoJoinOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleLfgCancelAutoJoinOpcode(WorldPacket & /*recv_data*/)
 {
     sLog.outDebug("CMSG_UNSET_LFG_AUTO_JOIN");
     LookingForGroup_auto_join = false;
 }
 
-void WorldSession::HandleLfmAutoAddMembersOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleLfmAutoAddMembersOpcode(WorldPacket & /*recv_data*/)
 {
     sLog.outDebug("CMSG_SET_LFM_AUTOADD");
     LookingForGroup_auto_add = true;
@@ -170,20 +170,20 @@ void WorldSession::HandleLfmAutoAddMembersOpcode(WorldPacket & /*recv_data*/ )
     AttemptAddMore(_player);
 }
 
-void WorldSession::HandleLfmCancelAutoAddmembersOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleLfmCancelAutoAddmembersOpcode(WorldPacket & /*recv_data*/)
 {
     sLog.outDebug("CMSG_UNSET_LFM_AUTOADD");
     LookingForGroup_auto_add = false;
 }
 
-void WorldSession::HandleLfgClearOpcode(WorldPacket & /*recv_data */ )
+void WorldSession::HandleLfgClearOpcode(WorldPacket & /*recv_data */)
 {
     sLog.outDebug("CMSG_LOOKING_FOR_GROUP_CLEAR");
 
     for (int i = 0; i < MAX_LOOKING_FOR_GROUP_SLOT; ++i)
         _player->m_lookingForGroup.slots[i].Clear();
 
-    if (sWorld.getConfig(CONFIG_RESTRICTED_LFG_CHANNEL) && _player->GetSession()->GetSecurity() == SEC_PLAYER )
+    if (sWorld.getConfig(CONFIG_RESTRICTED_LFG_CHANNEL) && _player->GetSession()->GetSecurity() == SEC_PLAYER)
         _player->LeaveLFGChannel();
 }
 
@@ -194,7 +194,7 @@ void WorldSession::HandleLfmSetNoneOpcode(WorldPacket & /*recv_data */)
     _player->m_lookingForGroup.more.Clear();
 }
 
-void WorldSession::HandleLfmSetOpcode(WorldPacket & recv_data )
+void WorldSession::HandleLfmSetOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("CMSG_SET_LOOKING_FOR_MORE");
 
@@ -213,7 +213,7 @@ void WorldSession::HandleLfmSetOpcode(WorldPacket & recv_data )
     SendLfgResult(type, entry, 1);
 }
 
-void WorldSession::HandleLfgSetCommentOpcode(WorldPacket & recv_data )
+void WorldSession::HandleLfgSetCommentOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("CMSG_SET_COMMENTARY");
     //recv_data.hexlike();
@@ -306,7 +306,7 @@ void WorldSession::SendLfgResult(uint32 type, uint32 entry, uint8 lfg_type)
     SendPacket(&data);
 }
 
-void WorldSession::HandleSetLfgOpcode(WorldPacket & recv_data )
+void WorldSession::HandleSetLfgOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("CMSG_SET_LOOKING_FOR_GROUP");
     //recv_data.hexlike();

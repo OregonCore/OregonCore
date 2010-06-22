@@ -31,7 +31,7 @@
 // Structures using to access raw DBC data and required packing to portability
 
 // GCC have alternative #pragma pack(N) syntax and old gcc version not support pack(push,N), also any gcc version not support it at some platform
-#if defined( __GNUC__ )
+#if defined( __GNUC__)
 #pragma pack(1)
 #else
 #pragma pack(push,1)
@@ -267,9 +267,9 @@ struct FactionTemplateEntry
     {
         if(ID == entry.ID)
             return true;
-        if(enemyFaction1  == entry.faction || enemyFaction2  == entry.faction || enemyFaction3 == entry.faction || enemyFaction4 == entry.faction )
+        if(enemyFaction1  == entry.faction || enemyFaction2  == entry.faction || enemyFaction3 == entry.faction || enemyFaction4 == entry.faction)
             return false;
-        if(friendFaction1 == entry.faction || friendFaction2 == entry.faction || friendFaction3 == entry.faction || friendFaction4 == entry.faction )
+        if(friendFaction1 == entry.faction || friendFaction2 == entry.faction || friendFaction3 == entry.faction || friendFaction4 == entry.faction)
             return true;
         return (friendlyMask & entry.ourMask) || (ourMask & entry.friendlyMask);
     }
@@ -277,9 +277,9 @@ struct FactionTemplateEntry
     {
         if(ID == entry.ID)
             return false;
-        if(enemyFaction1  == entry.faction || enemyFaction2  == entry.faction || enemyFaction3 == entry.faction || enemyFaction4 == entry.faction )
+        if(enemyFaction1  == entry.faction || enemyFaction2  == entry.faction || enemyFaction3 == entry.faction || enemyFaction4 == entry.faction)
             return true;
-        if(friendFaction1 == entry.faction || friendFaction2 == entry.faction || friendFaction3 == entry.faction || friendFaction4 == entry.faction )
+        if(friendFaction1 == entry.faction || friendFaction2 == entry.faction || friendFaction3 == entry.faction || friendFaction4 == entry.faction)
             return false;
         return (hostileMask & entry.ourMask) != 0;
     }
@@ -865,7 +865,7 @@ struct WorldSafeLocsEntry
 };
 
 // GCC have alternative #pragma pack() syntax and old gcc version not support pack(pop), also any gcc version not support it at some platform
-#if defined( __GNUC__ )
+#if defined( __GNUC__)
 #pragma pack()
 #else
 #pragma pack(pop)

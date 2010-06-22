@@ -281,7 +281,7 @@ bool Group::AddMember(const uint64 &guid, const char* name)
             // including raid/heroic instances that they are not permanently bound to!
             player->ResetInstances(INSTANCE_RESET_GROUP_JOIN);
 
-            if (player->getLevel() >= LEVELREQUIREMENT_HEROIC && player->GetDifficulty() != GetDifficulty() )
+            if (player->getLevel() >= LEVELREQUIREMENT_HEROIC && player->GetDifficulty() != GetDifficulty())
             {
                 player->SetDifficulty(m_difficulty);
                 player->SendDungeonDifficulty(true);
@@ -303,7 +303,7 @@ uint32 Group::RemoveMember(const uint64 &guid, const uint8 &method)
     {
         bool leaderChanged = _removeMember(guid);
 
-        if (Player *player = objmgr.GetPlayer(guid ))
+        if (Player *player = objmgr.GetPlayer(guid))
         {
             WorldPacket data;
 
@@ -573,7 +573,7 @@ void Group::GroupLoot(const uint64& playerGUID, Loot *loot, WorldObject* object)
                 Player *member = itr->getSource();
                 if (!member || !member->GetSession())
                     continue;
-                if (i->AllowedForPlayer(member) )
+                if (i->AllowedForPlayer(member))
                 {
                     if (member->GetDistance2d(object) < sWorld.getConfig(CONFIG_GROUP_XP_DISTANCE))
                     {
@@ -623,7 +623,7 @@ void Group::NeedBeforeGreed(const uint64& playerGUID, Loot *loot, WorldObject* o
                 if (!playerToRoll || !playerToRoll->GetSession())
                     continue;
 
-                if (playerToRoll->CanUseItem(item) && i->AllowedForPlayer(playerToRoll) )
+                if (playerToRoll->CanUseItem(item) && i->AllowedForPlayer(playerToRoll))
                 {
                     if (playerToRoll->GetDistance2d(object) < sWorld.getConfig(CONFIG_GROUP_XP_DISTANCE))
                     {
@@ -787,7 +787,7 @@ void Group::CountTheRoll(Rolls::iterator rollI, uint32 NumberOfPlayers)
                 ItemPosCountVec dest;
                 LootItem *item = &(roll->getLoot()->items[roll->itemSlot]);
                 uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, roll->itemid, item->count);
-                if (msg == EQUIP_ERR_OK )
+                if (msg == EQUIP_ERR_OK)
                 {
                     item->is_looted = true;
                     roll->getLoot()->NotifyItemRemoved(roll->itemSlot);
@@ -832,7 +832,7 @@ void Group::CountTheRoll(Rolls::iterator rollI, uint32 NumberOfPlayers)
                 ItemPosCountVec dest;
                 LootItem *item = &(roll->getLoot()->items[roll->itemSlot]);
                 uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, roll->itemid, item->count);
-                if (msg == EQUIP_ERR_OK )
+                if (msg == EQUIP_ERR_OK)
                 {
                     item->is_looted = true;
                     roll->getLoot()->NotifyItemRemoved(roll->itemSlot);
@@ -863,9 +863,9 @@ void Group::SetTargetIcon(uint8 id, uint64 guid)
         return;
 
     // clean other icons
-    if (guid != 0 )
+    if (guid != 0)
         for (int i=0; i<TARGETICONCOUNT; i++)
-            if (m_targetIcons[i] == guid )
+            if (m_targetIcons[i] == guid)
                 SetTargetIcon(i, 0);
 
     m_targetIcons[id] = guid;
@@ -1156,7 +1156,7 @@ void Group::_setLeader(const uint64 &guid)
             "DELETE FROM group_instance WHERE leaderguid='%u' AND (permanent = 1 OR "
             "instance IN (SELECT instance FROM character_instance WHERE guid = '%u')"
             ")", GUID_LOPART(m_leaderGuid), GUID_LOPART(slot->guid)
-       );
+);
 
         Player *player = objmgr.GetPlayer(slot->guid);
         if (player)
@@ -1312,7 +1312,7 @@ void Group::ChangeMembersGroup(Player *player, const uint8 &group)
     }
 }
 
-void Group::UpdateLooterGuid(WorldObject* object, bool ifneed )
+void Group::UpdateLooterGuid(WorldObject* object, bool ifneed)
 {
     switch (GetLootMethod())
     {

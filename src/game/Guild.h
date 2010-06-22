@@ -449,8 +449,8 @@ class Guild
     private:
         // internal common parts for CanStore/StoreItem functions
         void AppendDisplayGuildBankSlot(WorldPacket& data, GuildBankTab const *tab, int32 slot);
-        uint8 _CanStoreItem_InSpecificSlot(uint8 tab, uint8 slot, GuildItemPosCountVec& dest, uint32& count, bool swap, Item *pSrcItem ) const;
-        uint8 _CanStoreItem_InTab(uint8 tab, GuildItemPosCountVec& dest, uint32& count, bool merge, Item *pSrcItem, uint8 skip_slot ) const;
+        uint8 _CanStoreItem_InSpecificSlot(uint8 tab, uint8 slot, GuildItemPosCountVec& dest, uint32& count, bool swap, Item *pSrcItem) const;
+        uint8 _CanStoreItem_InTab(uint8 tab, GuildItemPosCountVec& dest, uint32& count, bool merge, Item *pSrcItem, uint8 skip_slot) const;
         Item* _StoreItem(uint8 tab, uint8 slot, Item *pItem, uint32 count, bool clone);
 };
 #endif

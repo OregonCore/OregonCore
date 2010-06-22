@@ -56,7 +56,7 @@ void WorldSession::HandleLearnTalentOpcode(WorldPacket & recv_data)
     Player * player = GetPlayer();
 
     // prevent learn talent for different class (cheating)
-    if ((player->getClassMask() & talentTabInfo->ClassMask) == 0 )
+    if ((player->getClassMask() & talentTabInfo->ClassMask) == 0)
         return;
 
     // prevent skip talent ranks (cheating)
@@ -81,7 +81,7 @@ void WorldSession::HandleLearnTalentOpcode(WorldPacket & recv_data)
     }
 
     // Check if it requires spell
-    if (talentInfo->DependsOnSpell && !player->HasSpell(talentInfo->DependsOnSpell) )
+    if (talentInfo->DependsOnSpell && !player->HasSpell(talentInfo->DependsOnSpell))
         return;
 
     // Find out how many points we have in this field
@@ -120,7 +120,7 @@ void WorldSession::HandleLearnTalentOpcode(WorldPacket & recv_data)
 
     // spell not set in talent.dbc
     uint32 spellid = talentInfo->RankID[requested_rank];
-    if (spellid == 0 )
+    if (spellid == 0)
     {
         sLog.outError("Talent.dbc have for talent: %u Rank: %u spell id = 0", talent_id, requested_rank);
         return;
@@ -138,7 +138,7 @@ void WorldSession::HandleLearnTalentOpcode(WorldPacket & recv_data)
     GetPlayer()->SetFreeTalentPoints(CurTalentPoints - 1);
 }
 
-void WorldSession::HandleTalentWipeOpcode(WorldPacket & recv_data )
+void WorldSession::HandleTalentWipeOpcode(WorldPacket & recv_data)
 {
     sLog.outDetail("MSG_TALENT_WIPE_CONFIRM");
     uint64 guid;

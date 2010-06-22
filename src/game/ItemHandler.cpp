@@ -734,7 +734,7 @@ void WorldSession::SendListInventory(uint64 vendorguid)
 
     float discountMod = _player->GetReputationPriceDiscount(pCreature);
 
-    for (uint8 vendorslot = 0; vendorslot < numitems; ++vendorslot )
+    for (uint8 vendorslot = 0; vendorslot < numitems; ++vendorslot)
     {
         if (VendorItem const* crItem = vItems->GetItem(vendorslot))
         {
@@ -1134,7 +1134,7 @@ void WorldSession::HandleSocketOpcode(WorldPacket& recv_data)
         // tried to put meta gem in normal socket
         if (GemProps[i] && (!itemTarget->GetProto()->Socket[i].Color ||
             itemTarget->GetProto()->Socket[i].Color == SOCKET_COLOR_META && GemProps[i]->color != SOCKET_COLOR_META ||
-            itemTarget->GetProto()->Socket[i].Color != SOCKET_COLOR_META && GemProps[i]->color == SOCKET_COLOR_META ) )
+            itemTarget->GetProto()->Socket[i].Color != SOCKET_COLOR_META && GemProps[i]->color == SOCKET_COLOR_META))
             return;
     }
 

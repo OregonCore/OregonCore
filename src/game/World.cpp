@@ -155,7 +155,7 @@ Player* World::FindPlayerInZone(uint32 zone)
         Player *player = itr->second->GetPlayer();
         if (!player)
             continue;
-        if (player->IsInWorld() && player->GetZoneId() == zone )
+        if (player->IsInWorld() && player->GetZoneId() == zone)
         {
             // Used by the weather system. We return the player to broadcast the change weather message to him and all players in the zone.
             return player;
@@ -241,7 +241,7 @@ World::AddSession_ (WorldSession* s)
     if (decrease_session)
         --Sessions;
 
-    if (pLimit > 0 && Sessions >= pLimit && s->GetSecurity () == SEC_PLAYER && !HasRecentlyDisconnected(s) )
+    if (pLimit > 0 && Sessions >= pLimit && s->GetSecurity () == SEC_PLAYER && !HasRecentlyDisconnected(s))
     {
         AddQueuedPlayer (s);
         UpdateMaxSessionCounters ();
@@ -1012,7 +1012,7 @@ void World::LoadConfigSettings(bool reload)
 
     ///- Read the "Data" directory from the config file
     std::string dataPath = sConfig.GetStringDefault("DataDir","./");
-    if (dataPath.at(dataPath.length()-1)!='/' && dataPath.at(dataPath.length()-1)!='\\' )
+    if (dataPath.at(dataPath.length()-1)!='/' && dataPath.at(dataPath.length()-1)!='\\')
         dataPath.append("/");
 
     if (reload)
@@ -1113,7 +1113,7 @@ void World::SetInitialWorldSettings()
         ||!MapManager::ExistMapAndVMap(1, 10311.3f, 832.463f)
         ||!MapManager::ExistMapAndVMap(1,-2917.58f,-257.98f)
         ||m_configs[CONFIG_EXPANSION] && (
-        !MapManager::ExistMapAndVMap(530,10349.6f,-6357.29f) || !MapManager::ExistMapAndVMap(530,-3961.64f,-13931.2f) ) )
+        !MapManager::ExistMapAndVMap(530,10349.6f,-6357.29f) || !MapManager::ExistMapAndVMap(530,-3961.64f,-13931.2f)))
     {
         sLog.outError("Correct *.map files not found in path '%smaps' or *.vmap/*vmdir files in '%svmaps'. Please place *.map/*.vmap/*.vmdir files in appropriate directories or correct the DataDir value in the Oregond.conf file.",m_dataPath.c_str(),m_dataPath.c_str());
         exit(1);
@@ -1453,7 +1453,7 @@ void World::SetInitialWorldSettings()
     //to set mailtimer to return mails every day between 4 and 5 am
     //mailtimer is increased when updating auctions
     //one second is 1000 -(tested on win system)
-    mail_timer = ((((localtime(&m_gameTime )->tm_hour + 20) % 24)* HOUR * 1000) / m_timers[WUPDATE_AUCTIONS].GetInterval());
+    mail_timer = ((((localtime(&m_gameTime)->tm_hour + 20) % 24)* HOUR * 1000) / m_timers[WUPDATE_AUCTIONS].GetInterval());
                                                             //1440
     mail_timer_expires = ((DAY * 1000) / (m_timers[WUPDATE_AUCTIONS].GetInterval()));
     sLog.outDebug("Mail timer set to: %u, mail return is called every %u minutes", mail_timer, mail_timer_expires);
@@ -1535,7 +1535,7 @@ void World::DetectDBCLang()
     }
 
     if (default_locale != m_lang_confid && m_lang_confid < MAX_LOCALE &&
-        (m_availableDbcLocaleMask & (1 << m_lang_confid)) )
+        (m_availableDbcLocaleMask & (1 << m_lang_confid)))
     {
         default_locale = m_lang_confid;
     }
@@ -2115,7 +2115,7 @@ void World::ScriptsProcess()
                 CellLock<GridReadGuard> cell_lock(cell, p);
                 cell_lock->Visit(cell_lock, object_checker, *MapManager::Instance().GetMap(summoner->GetMapId(), summoner));
 
-                if (!go )
+                if (!go)
                 {
                     sLog.outError("SCRIPT_COMMAND_RESPAWN_GAMEOBJECT failed for gameobject(guid: %u).", step.script->datalong);
                     break;
@@ -2124,13 +2124,13 @@ void World::ScriptsProcess()
                 if (go->GetGoType()==GAMEOBJECT_TYPE_FISHINGNODE ||
                     go->GetGoType()==GAMEOBJECT_TYPE_DOOR        ||
                     go->GetGoType()==GAMEOBJECT_TYPE_BUTTON      ||
-                    go->GetGoType()==GAMEOBJECT_TYPE_TRAP )
+                    go->GetGoType()==GAMEOBJECT_TYPE_TRAP)
                 {
                     sLog.outError("SCRIPT_COMMAND_RESPAWN_GAMEOBJECT can not be used with gameobject of type %u (guid: %u).", uint32(go->GetGoType()), step.script->datalong);
                     break;
                 }
 
-                if (go->isSpawned() )
+                if (go->isSpawned())
                     break;                                  //gameobject already spawned
 
                 go->SetLootState(GO_READY);
@@ -2175,18 +2175,18 @@ void World::ScriptsProcess()
                 CellLock<GridReadGuard> cell_lock(cell, p);
                 cell_lock->Visit(cell_lock, object_checker, *MapManager::Instance().GetMap(caster->GetMapId(), (Unit*)source));
 
-                if (!door )
+                if (!door)
                 {
                     sLog.outError("SCRIPT_COMMAND_OPEN_DOOR failed for gameobject(guid: %u).", step.script->datalong);
                     break;
                 }
-                if (door->GetGoType() != GAMEOBJECT_TYPE_DOOR )
+                if (door->GetGoType() != GAMEOBJECT_TYPE_DOOR)
                 {
                     sLog.outError("SCRIPT_COMMAND_OPEN_DOOR failed for non-door(GoType: %u).", door->GetGoType());
                     break;
                 }
 
-                if (!door->GetGoState() )
+                if (!door->GetGoState())
                     break;                                  //door already  open
 
                 door->UseDoorOrButton(time_to_close);
@@ -2231,18 +2231,18 @@ void World::ScriptsProcess()
                 CellLock<GridReadGuard> cell_lock(cell, p);
                 cell_lock->Visit(cell_lock, object_checker, *MapManager::Instance().GetMap(caster->GetMapId(), (Unit*)source));
 
-                if (!door )
+                if (!door)
                 {
                     sLog.outError("SCRIPT_COMMAND_CLOSE_DOOR failed for gameobject(guid: %u).", step.script->datalong);
                     break;
                 }
-                if (door->GetGoType() != GAMEOBJECT_TYPE_DOOR )
+                if (door->GetGoType() != GAMEOBJECT_TYPE_DOOR)
                 {
                     sLog.outError("SCRIPT_COMMAND_CLOSE_DOOR failed for non-door(GoType: %u).", door->GetGoType());
                     break;
                 }
 
-                if (door->GetGoState() )
+                if (door->GetGoState())
                     break;                                  //door already closed
 
                 door->UseDoorOrButton(time_to_open);
@@ -2301,7 +2301,7 @@ void World::ScriptsProcess()
 
                 // quest id and flags checked at script loading
                 if ((worldObject->GetTypeId()!=TYPEID_UNIT || ((Unit*)worldObject)->isAlive()) &&
-                    (step.script->datalong2==0 || worldObject->IsWithinDistInMap(player,float(step.script->datalong2))) )
+                    (step.script->datalong2==0 || worldObject->IsWithinDistInMap(player,float(step.script->datalong2))))
                     player->AreaExploredOrEventHappens(step.script->datalong);
                 else
                     player->FailQuest(step.script->datalong);
@@ -2538,7 +2538,7 @@ void World::SendGlobalMessage(WorldPacket *packet, WorldSession *self, uint32 te
             itr->second->GetPlayer() &&
             itr->second->GetPlayer()->IsInWorld() &&
             itr->second != self &&
-            (team == 0 || itr->second->GetPlayer()->GetTeam() == team) )
+            (team == 0 || itr->second->GetPlayer()->GetTeam() == team))
         {
             itr->second->SendPacket(packet);
         }
@@ -2555,7 +2555,7 @@ void World::SendGlobalGMMessage(WorldPacket *packet, WorldSession *self, uint32 
             itr->second->GetPlayer()->IsInWorld() &&
             itr->second != self &&
             itr->second->GetSecurity() >SEC_PLAYER &&
-            (team == 0 || itr->second->GetPlayer()->GetTeam() == team) )
+            (team == 0 || itr->second->GetPlayer()->GetTeam() == team))
         {
             itr->second->SendPacket(packet);
         }
@@ -2569,7 +2569,7 @@ void World::SendWorldText(int32 string_id, ...)
 
     for (SessionMap::iterator itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
     {
-        if (!itr->second || !itr->second->GetPlayer() || !itr->second->GetPlayer()->IsInWorld() )
+        if (!itr->second || !itr->second->GetPlayer() || !itr->second->GetPlayer()->IsInWorld())
             continue;
 
         uint32 loc_idx = itr->second->GetSessionDbLocaleIndex();
@@ -2622,7 +2622,7 @@ void World::SendGMText(int32 string_id, ...)
 
     for (SessionMap::iterator itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
     {
-        if (!itr->second || !itr->second->GetPlayer() || !itr->second->GetPlayer()->IsInWorld() )
+        if (!itr->second || !itr->second->GetPlayer() || !itr->second->GetPlayer()->IsInWorld())
             continue;
 
         uint32 loc_idx = itr->second->GetSessionDbLocaleIndex();
@@ -2699,7 +2699,7 @@ void World::SendZoneMessage(uint32 zone, WorldPacket *packet, WorldSession *self
             itr->second->GetPlayer()->IsInWorld() &&
             itr->second->GetPlayer()->GetZoneId() == zone &&
             itr->second != self &&
-            (team == 0 || itr->second->GetPlayer()->GetTeam() == team) )
+            (team == 0 || itr->second->GetPlayer()->GetTeam() == team))
         {
             itr->second->SendPacket(packet);
         }
@@ -2746,7 +2746,7 @@ bool World::KickPlayer(const std::string& playerName)
         Player *player = itr->second->GetPlayer();
         if (!player)
             continue;
-        if (player->IsInWorld() )
+        if (player->IsInWorld())
         {
             if (playerName == player->GetName())
             {
@@ -2856,7 +2856,7 @@ void World::_UpdateGameTime()
     if (!m_stopEvent && m_ShutdownTimer > 0 && elapsed > 0)
     {
         ///- ... and it is overdue, stop the world (set m_stopEvent)
-        if (m_ShutdownTimer <= elapsed )
+        if (m_ShutdownTimer <= elapsed)
         {
             if (!(m_ShutdownMask & SHUTDOWN_MASK_IDLE) || GetActiveAndQueuedSessionCount()==0)
                 m_stopEvent = true;                         // exist code already set
@@ -2910,15 +2910,15 @@ void World::ShutdownMsg(bool show, Player* player)
     if (show ||
         (m_ShutdownTimer < 10) ||
                                                             // < 30 sec; every 5 sec
-        (m_ShutdownTimer<30        && (m_ShutdownTimer % 5         )==0) ||
+        (m_ShutdownTimer<30        && (m_ShutdownTimer % 5)==0) ||
                                                             // < 5 min ; every 1 min
-        (m_ShutdownTimer<5*MINUTE  && (m_ShutdownTimer % MINUTE    )==0) ||
+        (m_ShutdownTimer<5*MINUTE  && (m_ShutdownTimer % MINUTE)==0) ||
                                                             // < 30 min ; every 5 min
         (m_ShutdownTimer<30*MINUTE && (m_ShutdownTimer % (5*MINUTE))==0) ||
                                                             // < 12 h ; every 1 h
-        (m_ShutdownTimer<12*HOUR   && (m_ShutdownTimer % HOUR      )==0) ||
+        (m_ShutdownTimer<12*HOUR   && (m_ShutdownTimer % HOUR)==0) ||
                                                             // > 12 h ; every 12 h
-        (m_ShutdownTimer>12*HOUR   && (m_ShutdownTimer % (12*HOUR) )==0))
+        (m_ShutdownTimer>12*HOUR   && (m_ShutdownTimer % (12*HOUR))==0))
     {
         std::string str = secsToTimeString(m_ShutdownTimer);
 
@@ -2960,7 +2960,7 @@ void World::SendServerMessage(ServerMessageType type, const char *text, Player* 
         SendGlobalMessage(&data);
 }
 
-void World::UpdateSessions(time_t diff )
+void World::UpdateSessions(time_t diff)
 {
     WorldSession* sess;
     while (addSessQueue.next(sess))
@@ -3093,7 +3093,7 @@ void World::ResetDailyQuests()
             itr->second->GetPlayer()->ResetDailyQuestStatus();
 }
 
-void World::SetPlayerLimit(int32 limit, bool needUpdate )
+void World::SetPlayerLimit(int32 limit, bool needUpdate)
 {
     m_playerLimit = limit;
 }

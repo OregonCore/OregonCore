@@ -165,12 +165,12 @@ namespace Oregon
             i_object = NULL;
         }
 
-        void Visit(GridRefManager<T> &m )
+        void Visit(GridRefManager<T> &m)
         {
-            if (i_object == NULL )
+            if (i_object == NULL)
             {
                 GridRefManager<T> *iter = m.find(i_id);
-                if (iter != m.end() )
+                if (iter != m.end())
                 {
                     assert(iter->second != NULL);
                     i_object = iter->second;
@@ -467,10 +467,10 @@ namespace Oregon
             CannibalizeObjectCheck(Unit* funit, float range) : i_funit(funit), i_range(range) {}
             bool operator()(Player* u)
             {
-                if (i_funit->IsFriendlyTo(u) || u->isAlive() || u->isInFlight() )
+                if (i_funit->IsFriendlyTo(u) || u->isAlive() || u->isInFlight())
                     return false;
 
-                if (i_funit->IsWithinDistInMap(u, i_range) )
+                if (i_funit->IsWithinDistInMap(u, i_range))
                     return true;
 
                 return false;
@@ -482,7 +482,7 @@ namespace Oregon
                     (u->GetCreatureTypeMask() & CREATURE_TYPEMASK_HUMANOID_OR_UNDEAD)==0)
                     return false;
 
-                if (i_funit->IsWithinDistInMap(u, i_range) )
+                if (i_funit->IsWithinDistInMap(u, i_range))
                     return true;
 
                 return false;
@@ -681,7 +681,7 @@ namespace Oregon
             bool operator()(Unit* u)
             {
                 if (u->isTargetableForAttack() && i_obj->IsWithinDistInMap(u, i_range) &&
-                    !i_funit->IsFriendlyTo(u) && u->isVisibleForOrDetect(i_funit,false)  )
+                    !i_funit->IsFriendlyTo(u) && u->isVisibleForOrDetect(i_funit,false))
                 {
                     i_range = i_obj->GetDistance(u);        // use found unit range as new range limit for next check
                     return true;
@@ -718,7 +718,7 @@ namespace Oregon
                 if (u->GetTypeId()==TYPEID_UNIT && ((Creature*)u)->isTotem())
                     return false;
 
-                if ((i_targetForPlayer ? !i_funit->IsFriendlyTo(u) : i_funit->IsHostileTo(u) )&& i_obj->IsWithinDistInMap(u, i_range))
+                if ((i_targetForPlayer ? !i_funit->IsFriendlyTo(u) : i_funit->IsHostileTo(u))&& i_obj->IsWithinDistInMap(u, i_range))
                     return true;
 
                 return false;
@@ -847,15 +847,15 @@ namespace Oregon
                 if (u == i_funit)
                     return false;
 
-                if (!u->CanAssistTo(i_funit, i_enemy) )
+                if (!u->CanAssistTo(i_funit, i_enemy))
                     return false;
 
                 // too far
-                if (!i_funit->IsWithinDistInMap(u, i_range) )
+                if (!i_funit->IsWithinDistInMap(u, i_range))
                     return false;
 
                 // only if see assisted creature
-                if (!i_funit->IsWithinLOSInMap(u) )
+                if (!i_funit->IsWithinLOSInMap(u))
                     return false;
 
                 return true;

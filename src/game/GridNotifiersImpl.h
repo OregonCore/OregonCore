@@ -45,7 +45,7 @@ inline void PlayerCreatureRelocationWorker(Player* pl, Creature* c)
     // Creature AI reaction
     if (c->HasReactState(REACT_AGGRESSIVE) && !c->hasUnitState(UNIT_STAT_SIGHTLESS))
     {
-        if (c->IsAIEnabled && c->IsWithinSightDist(pl) && !c->IsInEvadeMode() )
+        if (c->IsAIEnabled && c->IsWithinSightDist(pl) && !c->IsInEvadeMode())
             c->AI()->MoveInLineOfSight(pl);
     }
 }
@@ -54,13 +54,13 @@ inline void CreatureCreatureRelocationWorker(Creature* c1, Creature* c2)
 {
     if (c1->HasReactState(REACT_AGGRESSIVE) && !c1->hasUnitState(UNIT_STAT_SIGHTLESS))
     {
-        if (c1->IsAIEnabled && c1->IsWithinSightDist(c2) && !c1->IsInEvadeMode() )
+        if (c1->IsAIEnabled && c1->IsWithinSightDist(c2) && !c1->IsInEvadeMode())
             c1->AI()->MoveInLineOfSight(c2);
     }
 
     if (c2->HasReactState(REACT_AGGRESSIVE) && !c2->hasUnitState(UNIT_STAT_SIGHTLESS))
     {
-        if (c2->IsAIEnabled && c1->IsWithinSightDist(c2) && !c2->IsInEvadeMode() )
+        if (c2->IsAIEnabled && c1->IsWithinSightDist(c2) && !c2->IsInEvadeMode())
             c2->AI()->MoveInLineOfSight(c1);
     }
 }
@@ -154,7 +154,7 @@ Oregon::CreatureRelocationNotifier::Visit(CreatureMapType &m)
 
 inline void Oregon::DynamicObjectUpdater::VisitHelper(Unit* target)
 {
-    if (!target->isAlive() || target->isInFlight() )
+    if (!target->isAlive() || target->isInFlight())
         return;
 
     if (target->GetTypeId()==TYPEID_UNIT && ((Creature*)target)->isTotem())
@@ -168,11 +168,11 @@ inline void Oregon::DynamicObjectUpdater::VisitHelper(Unit* target)
         return;
 
     // Evade target
-    if (target->GetTypeId()==TYPEID_UNIT && ((Creature*)target)->IsInEvadeMode() )
+    if (target->GetTypeId()==TYPEID_UNIT && ((Creature*)target)->IsInEvadeMode())
         return;
 
     //Check player targets and remove if in GM mode or GM invisibility (for not self casting case)
-    if (target->GetTypeId()==TYPEID_PLAYER && target != i_check && (((Player*)target)->isGameMaster() || ((Player*)target)->GetVisibility()==VISIBILITY_OFF) )
+    if (target->GetTypeId()==TYPEID_PLAYER && target != i_check && (((Player*)target)->isGameMaster() || ((Player*)target)->GetVisibility()==VISIBILITY_OFF))
         return;
 
     if (i_dynobject.IsAffecting(target))
@@ -186,16 +186,16 @@ inline void Oregon::DynamicObjectUpdater::VisitHelper(Unit* target)
         if (!i_check->IsFriendlyTo(target))
             return;
     }
-    else if (i_check->GetTypeId()==TYPEID_PLAYER )
+    else if (i_check->GetTypeId()==TYPEID_PLAYER)
     {
-        if (i_check->IsFriendlyTo(target ))
+        if (i_check->IsFriendlyTo(target))
             return;
 
         i_check->CombatStart(target);
     }
     else
     {
-        if (!i_check->IsHostileTo(target ))
+        if (!i_check->IsHostileTo(target))
             return;
 
         i_check->CombatStart(target);

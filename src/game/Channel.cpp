@@ -85,7 +85,7 @@ void Channel::Join(uint64 p, const char *pass)
     {
         if (HasFlag(CHANNEL_FLAG_LFG) &&
             sWorld.getConfig(CONFIG_RESTRICTED_LFG_CHANNEL) && plr->GetSession()->GetSecurity() == SEC_PLAYER &&
-            (plr->GetGroup() || plr->m_lookingForGroup.Empty()) )
+            (plr->GetGroup() || plr->m_lookingForGroup.Empty()))
         {
             MakeNotInLfg(&data);
             SendToOne(&data, p);
@@ -458,7 +458,7 @@ void Channel::List(Player* player)
 
             // PLAYER can't see MODERATOR, GAME MASTER, ADMINISTRATOR characters
             // MODERATOR, GAME MASTER, ADMINISTRATOR can see all
-            if (plr && (plr->GetSession()->GetSecurity() == SEC_PLAYER || gmInWhoList && plr->IsVisibleGloballyFor(player) ) )
+            if (plr && (plr->GetSession()->GetSecurity() == SEC_PLAYER || gmInWhoList && plr->IsVisibleGloballyFor(player)))
             {
                 data << uint64(i->first);
                 data << uint8(i->second.flags);             // flags seems to be changed...

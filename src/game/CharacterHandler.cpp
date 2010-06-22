@@ -760,7 +760,7 @@ void WorldSession::HandleSetFactionAtWar(WorldPacket & recv_data)
         return;
 
     // always invisible or hidden faction can't change war state
-    if (itr->second.Flags & (FACTION_FLAG_INVISIBLE_FORCED|FACTION_FLAG_HIDDEN) )
+    if (itr->second.Flags & (FACTION_FLAG_INVISIBLE_FORCED|FACTION_FLAG_HIDDEN))
         return;
 
     GetPlayer()->SetFactionAtWar(&itr->second,flag);

@@ -116,7 +116,7 @@ void WorldSession::SendNameQueryOpcodeFromDBCallBack(QueryResult_AutoPtr result,
     session->SendPacket(&data);
 }
 
-void WorldSession::HandleNameQueryOpcode(WorldPacket & recv_data )
+void WorldSession::HandleNameQueryOpcode(WorldPacket & recv_data)
 {
     uint64 guid;
 
@@ -364,7 +364,7 @@ void WorldSession::HandleNpcTextQueryOpcode(WorldPacket & recv_data)
     sLog.outDebug("WORLD: Sent SMSG_NPC_TEXT_UPDATE");
 }
 
-void WorldSession::HandlePageQueryOpcode(WorldPacket & recv_data )
+void WorldSession::HandlePageQueryOpcode(WorldPacket & recv_data)
 {
     sLog.outDetail("WORLD: Received CMSG_PAGE_TEXT_QUERY");
     recv_data.hexlike();

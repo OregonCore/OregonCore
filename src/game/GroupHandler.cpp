@@ -54,7 +54,7 @@ void WorldSession::SendPartyResult(PartyOperation operation, const std::string& 
     SendPacket(&data);
 }
 
-void WorldSession::HandleGroupInviteOpcode(WorldPacket & recv_data )
+void WorldSession::HandleGroupInviteOpcode(WorldPacket & recv_data)
 {
     std::string membername;
     recv_data >> membername;
@@ -114,7 +114,7 @@ void WorldSession::HandleGroupInviteOpcode(WorldPacket & recv_data )
     }
 
     // player already in another group or invited
-    if (player->GetGroup() || player->GetGroupInvite() )
+    if (player->GetGroup() || player->GetGroupInvite())
     {
         SendPartyResult(PARTY_OP_INVITE, membername, PARTY_RESULT_ALREADY_IN_GROUP);
         return;
@@ -173,7 +173,7 @@ void WorldSession::HandleGroupInviteOpcode(WorldPacket & recv_data )
     SendPartyResult(PARTY_OP_INVITE, membername, PARTY_RESULT_OK);
 }
 
-void WorldSession::HandleGroupAcceptOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleGroupAcceptOpcode(WorldPacket & /*recv_data*/)
 {
     Group *group = GetPlayer()->GetGroupInvite();
     if (!group) return;
@@ -208,7 +208,7 @@ void WorldSession::HandleGroupAcceptOpcode(WorldPacket & /*recv_data*/ )
     // forming a new group, create it
     if (!group->IsCreated())
     {
-        if (leader )
+        if (leader)
             group->RemoveInvite(leader);
         group->Create(group->GetLeaderGUID(), group->GetLeaderName());
         objmgr.AddGroup(group);
@@ -225,7 +225,7 @@ void WorldSession::HandleGroupAcceptOpcode(WorldPacket & /*recv_data*/ )
     group->BroadcastGroupUpdate();
 }
 
-void WorldSession::HandleGroupDeclineOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleGroupDeclineOpcode(WorldPacket & /*recv_data*/)
 {
     Group  *group  = GetPlayer()->GetGroupInvite();
     if (!group) return;
@@ -335,7 +335,7 @@ void WorldSession::HandleGroupUninviteNameOpcode(WorldPacket & recv_data)
     SendPartyResult(PARTY_OP_LEAVE, membername, PARTY_RESULT_NOT_IN_YOUR_PARTY);
 }
 
-void WorldSession::HandleGroupSetLeaderOpcode(WorldPacket & recv_data )
+void WorldSession::HandleGroupSetLeaderOpcode(WorldPacket & recv_data)
 {
     Group *group = GetPlayer()->GetGroup();
     if (!group)
@@ -355,7 +355,7 @@ void WorldSession::HandleGroupSetLeaderOpcode(WorldPacket & recv_data )
     group->ChangeLeader(guid);
 }
 
-void WorldSession::HandleGroupLeaveOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleGroupLeaveOpcode(WorldPacket & /*recv_data*/)
 {
     if (!GetPlayer()->GetGroup())
         return;
@@ -375,7 +375,7 @@ void WorldSession::HandleGroupLeaveOpcode(WorldPacket & /*recv_data*/ )
     GetPlayer()->RemoveFromGroup();
 }
 
-void WorldSession::HandleLootMethodOpcode(WorldPacket & recv_data )
+void WorldSession::HandleLootMethodOpcode(WorldPacket & recv_data)
 {
     Group *group = GetPlayer()->GetGroup();
     if (!group)
@@ -398,7 +398,7 @@ void WorldSession::HandleLootMethodOpcode(WorldPacket & recv_data )
     group->SendUpdate();
 }
 
-void WorldSession::HandleLootRoll(WorldPacket &recv_data )
+void WorldSession::HandleLootRoll(WorldPacket &recv_data)
 {
     if (!GetPlayer()->GetGroup())
         return;
@@ -469,7 +469,7 @@ void WorldSession::HandleRandomRollOpcode(WorldPacket& recv_data)
         SendPacket(&data);
 }
 
-void WorldSession::HandleRaidIconTargetOpcode(WorldPacket & recv_data )
+void WorldSession::HandleRaidIconTargetOpcode(WorldPacket & recv_data)
 {
     Group *group = GetPlayer()->GetGroup();
     if (!group)
@@ -497,7 +497,7 @@ void WorldSession::HandleRaidIconTargetOpcode(WorldPacket & recv_data )
     }
 }
 
-void WorldSession::HandleRaidConvertOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleRaidConvertOpcode(WorldPacket & /*recv_data*/)
 {
     Group *group = GetPlayer()->GetGroup();
     if (!group)
@@ -516,7 +516,7 @@ void WorldSession::HandleRaidConvertOpcode(WorldPacket & /*recv_data*/ )
     group->ConvertToRaid();
 }
 
-void WorldSession::HandleGroupChangeSubGroupOpcode(WorldPacket & recv_data )
+void WorldSession::HandleGroupChangeSubGroupOpcode(WorldPacket & recv_data)
 {
     // we will get correct pointer for group here, so we don't have to check if group is BG raid
     Group *group = GetPlayer()->GetGroup();
@@ -540,7 +540,7 @@ void WorldSession::HandleGroupChangeSubGroupOpcode(WorldPacket & recv_data )
     group->ChangeMembersGroup(objmgr.GetPlayer(name.c_str()), groupNr);
 }
 
-void WorldSession::HandleGroupAssistantOpcode(WorldPacket & recv_data )
+void WorldSession::HandleGroupAssistantOpcode(WorldPacket & recv_data)
 {
     Group *group = GetPlayer()->GetGroup();
     if (!group)
@@ -560,7 +560,7 @@ void WorldSession::HandleGroupAssistantOpcode(WorldPacket & recv_data )
     group->SetAssistant(guid, (flag==0?false:true));
 }
 
-void WorldSession::HandleGroupPromoteOpcode(WorldPacket & recv_data )
+void WorldSession::HandleGroupPromoteOpcode(WorldPacket & recv_data)
 {
     Group *group = GetPlayer()->GetGroup();
     if (!group)
@@ -587,7 +587,7 @@ void WorldSession::HandleGroupPromoteOpcode(WorldPacket & recv_data )
         group->SetMainTank(guid);
 }
 
-void WorldSession::HandleRaidReadyCheckOpcode(WorldPacket & recv_data )
+void WorldSession::HandleRaidReadyCheckOpcode(WorldPacket & recv_data)
 {
     Group *group = GetPlayer()->GetGroup();
     if (!group)
@@ -620,7 +620,7 @@ void WorldSession::HandleRaidReadyCheckOpcode(WorldPacket & recv_data )
     }
 }
 
-void WorldSession::HandleRaidReadyCheckFinishOpcode(WorldPacket & recv_data )
+void WorldSession::HandleRaidReadyCheckFinishOpcode(WorldPacket & recv_data)
 {
     //Group* group = GetPlayer()->GetGroup();
     //if (!group)
@@ -794,7 +794,7 @@ void WorldSession::BuildPartyMemberStatsChangedPacket(Player *player, WorldPacke
 }
 
 /*this procedure handles clients CMSG_REQUEST_PARTY_MEMBER_STATS request*/
-void WorldSession::HandleRequestPartyMemberStatsOpcode(WorldPacket &recv_data )
+void WorldSession::HandleRequestPartyMemberStatsOpcode(WorldPacket &recv_data)
 {
     sLog.outDebug("WORLD: Received CMSG_REQUEST_PARTY_MEMBER_STATS");
     uint64 Guid;
@@ -882,18 +882,18 @@ void WorldSession::HandleRequestPartyMemberStatsOpcode(WorldPacket &recv_data )
     SendPacket(&data);
 }
 
-/*!*/void WorldSession::HandleRequestRaidInfoOpcode(WorldPacket & /*recv_data*/ )
+/*!*/void WorldSession::HandleRequestRaidInfoOpcode(WorldPacket & /*recv_data*/)
 {
     // every time the player checks the character screen
     _player->SendRaidInfo();
 }
 
-/*void WorldSession::HandleGroupCancelOpcode(WorldPacket & recv_data )
+/*void WorldSession::HandleGroupCancelOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("WORLD: got CMSG_GROUP_CANCEL.");
 }*/
 
-void WorldSession::HandleGroupPassOnLootOpcode(WorldPacket & recv_data )
+void WorldSession::HandleGroupPassOnLootOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("WORLD: Received CMSG_GROUP_PASS_ON_LOOT");
 

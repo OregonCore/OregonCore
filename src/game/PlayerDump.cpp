@@ -262,7 +262,7 @@ void PlayerDumpWriter::DumpTable(std::string& dump, uint32 guid, char const*tabl
     GUIDs const* guids = NULL;
     char const* fieldname = NULL;
 
-    switch (type )
+    switch (type)
     {
         case DTT_ITEM:      fieldname = "guid";      guids = &items; break;
         case DTT_ITEM_GIFT: fieldname = "item_guid"; guids = &items; break;
@@ -299,7 +299,7 @@ void PlayerDumpWriter::DumpTable(std::string& dump, uint32 guid, char const*tabl
         do
         {
             // collect guids
-            switch (type )
+            switch (type)
             {
                 case DTT_INVENTORY:
                     StoreGUID(result,3,items); break;       // item guid collection

@@ -37,7 +37,7 @@ float ThreatCalcHelper::calcThreat(Unit* pHatedUnit, Unit* pHatingUnit, float pT
 {
     if (pThreatSpell)
     {
-        if (Player* modOwner = pHatedUnit->GetSpellModOwner() )
+        if (Player* modOwner = pHatedUnit->GetSpellModOwner())
             modOwner->ApplySpellMod(pThreatSpell->Id, SPELLMOD_THREAT, pThreat);
     }
 
@@ -131,7 +131,7 @@ void HostileReference::updateOnlineStatus()
         ((getTarget()->GetTypeId() != TYPEID_PLAYER || !getTarget()->ToPlayer()->isGameMaster()) ||
         !getTarget()->hasUnitState(UNIT_STAT_IN_FLIGHT)))
     {
-        Creature* creature = (Creature* ) getSourceUnit();
+        Creature* creature = (Creature*) getSourceUnit();
         online = getTarget()->isInAccessiblePlaceFor(creature);
         if (!online)
         {
@@ -281,7 +281,7 @@ HostileReference* ThreatContainer::selectNextVictim(Creature* pAttacker, Hostile
         // some units are preferred in comparison to others
         if (iter != lastRef && (target->IsImmunedToDamage(pAttacker->GetMeleeDamageSchoolMask(), false) ||
                 target->hasUnitState(UNIT_STAT_CONFUSED)
-                ) )
+))
         {
             // current victim is a second choice target, so don't compare threat with it below
             if (currentRef == pCurrentVictim)
@@ -294,7 +294,7 @@ HostileReference* ThreatContainer::selectNextVictim(Creature* pAttacker, Hostile
             if (pCurrentVictim)                              // select 1.3/1.1 better target in comparison current target
             {
                 // list sorted and and we check current target, then this is best case
-                if (pCurrentVictim == currentRef || currentRef->getThreat() <= 1.1f * pCurrentVictim->getThreat() )
+                if (pCurrentVictim == currentRef || currentRef->getThreat() <= 1.1f * pCurrentVictim->getThreat())
                 {
                     currentRef = pCurrentVictim;            // for second case
                     found = true;
@@ -302,7 +302,7 @@ HostileReference* ThreatContainer::selectNextVictim(Creature* pAttacker, Hostile
                 }
 
                 if (currentRef->getThreat() > 1.3f * pCurrentVictim->getThreat() ||
-                    currentRef->getThreat() > 1.1f * pCurrentVictim->getThreat() && pAttacker->IsWithinMeleeRange(target) )
+                    currentRef->getThreat() > 1.1f * pCurrentVictim->getThreat() && pAttacker->IsWithinMeleeRange(target))
                 {                                           //implement 110% threat rule for targets in melee range
                     found = true;                           //and 130% rule for targets in ranged distances
                     break;                                  //for selecting alive targets
@@ -350,7 +350,7 @@ void ThreatManager::addThreat(Unit* pVictim, float pThreat, SpellSchoolMask scho
     if (pVictim == getOwner())                              // only for same creatures :)
         return;
 
-    if (!pVictim || (pVictim->GetTypeId() == TYPEID_PLAYER && pVictim->ToPlayer()->isGameMaster()) )
+    if (!pVictim || (pVictim->GetTypeId() == TYPEID_PLAYER && pVictim->ToPlayer()->isGameMaster()))
         return;
 
     assert(getOwner()->GetTypeId()== TYPEID_UNIT);

@@ -59,11 +59,11 @@ namespace Oregon
         {
             for (PlayerMapType::iterator iter=m.begin(); iter != m.end(); ++iter)
             {
-                if (iter->getSource() == &i_player )
+                if (iter->getSource() == &i_player)
                     continue;
 
                 UpdateDataMapType::iterator iter2 = i_updatePlayers.find(iter->getSource());
-                if (iter2 == i_updatePlayers.end() )
+                if (iter2 == i_updatePlayers.end())
                 {
                     std::pair<UpdateDataMapType::iterator, bool> p = i_updatePlayers.insert(ObjectAccessor::UpdateDataValueType(iter->getSource(), UpdateData()));
                     assert(p.second);
@@ -162,7 +162,7 @@ Player* ObjectAccessor::FindPlayerByName(const char *name)
     HashMapHolder<Player>::MapType& m = HashMapHolder<Player>::GetContainer();
     HashMapHolder<Player>::MapType::iterator iter = m.begin();
     for (; iter != m.end(); ++iter)
-        if (::strcmp(name, iter->second->GetName()) == 0 )
+        if (::strcmp(name, iter->second->GetName()) == 0)
             return iter->second;
     return NULL;
 }
@@ -205,7 +205,7 @@ ObjectAccessor::RemoveUpdateObject(Object *obj)
 {
     Guard guard(i_updateGuard);
     std::set<Object *>::iterator iter = i_objects.find(obj);
-    if (iter != i_objects.end() )
+    if (iter != i_objects.end())
         i_objects.erase(iter);
 }
 
@@ -214,19 +214,19 @@ ObjectAccessor::_buildUpdateObject(Object *obj, UpdateDataMapType &update_player
 {
     bool build_for_all = true;
     Player *pl = NULL;
-    if (obj->isType(TYPEMASK_ITEM) )
+    if (obj->isType(TYPEMASK_ITEM))
     {
         Item *item = static_cast<Item *>(obj);
         pl = item->GetOwner();
         build_for_all = false;
     }
 
-    if (pl != NULL )
+    if (pl != NULL)
         _buildPacket(pl, obj, update_players);
 
     // Capt: okey for all those fools who think its a real fix
     //       THIS IS A TEMP FIX
-    if (build_for_all )
+    if (build_for_all)
     {
         WorldObject * temp = dynamic_cast<WorldObject*>(obj);
 
@@ -243,7 +243,7 @@ ObjectAccessor::_buildPacket(Player *pl, Object *obj, UpdateDataMapType &update_
 {
     UpdateDataMapType::iterator iter = update_players.find(pl);
 
-    if (iter == update_players.end() )
+    if (iter == update_players.end())
     {
         std::pair<UpdateDataMapType::iterator, bool> p = update_players.insert(UpdateDataValueType(pl, UpdateData()));
         assert(p.second);
@@ -291,7 +291,7 @@ void ObjectAccessor::RemoveCorpse(Corpse* corpse)
 
     Guard guard(i_corpseGuard);
     Player2CorpsesMapType::iterator iter = i_player2corpse.find(corpse->GetOwnerGUID());
-    if (iter == i_player2corpse.end() )
+    if (iter == i_player2corpse.end())
         return;
 
     // build mapid*cellid -> guid_set map
@@ -494,7 +494,7 @@ ObjectAccessor::UpdateObjectVisibility(WorldObject *obj)
     obj->GetMap()->UpdateObjectVisibility(obj,cell,p);
 }
 
-/*void ObjectAccessor::UpdateVisibilityForPlayer(Player* player )
+/*void ObjectAccessor::UpdateVisibilityForPlayer(Player* player)
 {
     CellPair p = Oregon::ComputeCellPair(player->GetPositionX(), player->GetPositionY());
     Cell cell(p);

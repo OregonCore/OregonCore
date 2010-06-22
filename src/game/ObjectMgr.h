@@ -152,7 +152,7 @@ typedef std::multimap<uint32,uint32> QuestRelations;
 
 struct PetLevelInfo
 {
-    PetLevelInfo() : health(0), mana(0) { for (int i=0; i < MAX_STATS; ++i ) stats[i] = 0; }
+    PetLevelInfo() : health(0), mana(0) { for (int i=0; i < MAX_STATS; ++i) stats[i] = 0; }
 
     uint16 stats[MAX_STATS];
     uint16 health;
@@ -255,7 +255,7 @@ enum SkillRangeType
 SkillRangeType GetSkillRangeType(SkillLineEntry const *pSkill, bool racial);
 
 #define MAX_PLAYER_NAME 12                                  // max allowed by client name length
-#define MAX_INTERNAL_PLAYER_NAME 15                         // max server internal player name length (> MAX_PLAYER_NAME for support declined names )
+#define MAX_INTERNAL_PLAYER_NAME 15                         // max server internal player name length (> MAX_PLAYER_NAME for support declined names)
 
 bool normalizePlayerName(std::string& name);
 
@@ -340,12 +340,12 @@ class ObjectMgr
         CreatureModelInfo const* GetCreatureModelRandomGender(uint32 display_id);
         uint32 ChooseDisplayId(uint32 team, const CreatureInfo *cinfo, const CreatureData *data = NULL);
         EquipmentInfo const *GetEquipmentInfo(uint32 entry);
-        static CreatureDataAddon const *GetCreatureAddon(uint32 lowguid )
+        static CreatureDataAddon const *GetCreatureAddon(uint32 lowguid)
         {
             return sCreatureDataAddonStorage.LookupEntry<CreatureDataAddon>(lowguid);
         }
 
-        static CreatureDataAddon const *GetCreatureTemplateAddon(uint32 entry )
+        static CreatureDataAddon const *GetCreatureTemplateAddon(uint32 entry)
         {
             return sCreatureInfoAddonStorage.LookupEntry<CreatureDataAddon>(entry);
         }
@@ -432,7 +432,7 @@ class ObjectMgr
         AreaTrigger const* GetAreaTrigger(uint32 trigger) const
         {
             AreaTriggerMap::const_iterator itr = mAreaTriggers.find(trigger);
-            if (itr != mAreaTriggers.end() )
+            if (itr != mAreaTriggers.end())
                 return &itr->second;
             return NULL;
         }
@@ -440,7 +440,7 @@ class ObjectMgr
         AccessRequirement const* GetAccessRequirement(uint32 requirement) const
         {
             AccessRequirementMap::const_iterator itr = mAccessRequirements.find(requirement);
-            if (itr != mAccessRequirements.end() )
+            if (itr != mAccessRequirements.end())
                 return &itr->second;
             return NULL;
         }
@@ -573,10 +573,10 @@ class ObjectMgr
         uint32 GenerateGuildId();
 
         uint32 CreateItemText(std::string text);
-        std::string GetItemText(uint32 id )
+        std::string GetItemText(uint32 id)
         {
             ItemTextMap::const_iterator itr = mItemTexts.find(id);
-            if (itr != mItemTexts.end() )
+            if (itr != mItemTexts.end())
                 return itr->second;
             else
                 return "There is no info for this item";
@@ -765,7 +765,7 @@ class ObjectMgr
         }
         void AddVendorItem(uint32 entry,uint32 item, uint32 maxcount, uint32 incrtime, uint32 ExtendedCost, bool savetodb = true); // for event
         bool RemoveVendorItem(uint32 entry,uint32 item, bool savetodb = true); // for event
-        bool IsVendorItemValid(uint32 vendor_entry, uint32 item, uint32 maxcount, uint32 ptime, uint32 ExtendedCost, Player* pl = NULL, std::set<uint32>* skip_vendors = NULL, uint32 ORnpcflag = 0 ) const;
+        bool IsVendorItemValid(uint32 vendor_entry, uint32 item, uint32 maxcount, uint32 ptime, uint32 ExtendedCost, Player* pl = NULL, std::set<uint32>* skip_vendors = NULL, uint32 ORnpcflag = 0) const;
 
         void LoadScriptNames();
         ScriptNameMap &GetScriptNames() { return m_scriptNames; }

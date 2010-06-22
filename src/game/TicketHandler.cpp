@@ -31,7 +31,7 @@
 #include "Chat.h"
 
 
-void WorldSession::HandleGMTicketCreateOpcode(WorldPacket & recv_data )
+void WorldSession::HandleGMTicketCreateOpcode(WorldPacket & recv_data)
 {
     uint32 map;
     float x, y, z;

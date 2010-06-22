@@ -32,7 +32,7 @@
 #include "DBCStores.h"
 #include "AuctionHouseBot.h"
 
-void MailItem::deleteItem(bool inDB )
+void MailItem::deleteItem(bool inDB)
 {
     if (item)
     {
@@ -44,7 +44,7 @@ void MailItem::deleteItem(bool inDB )
     }
 }
 
-void WorldSession::HandleSendMail(WorldPacket & recv_data )
+void WorldSession::HandleSendMail(WorldPacket & recv_data)
 {
     uint64 mailbox, unk3;
     std::string receiver, subject, body;
@@ -213,7 +213,7 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data )
 
                 mailItem.item_template = mailItem.item ? mailItem.item->GetEntry() : 0;
 
-                if (GetSecurity() > SEC_PLAYER && sWorld.getConfig(CONFIG_GM_LOG_TRADE) )
+                if (GetSecurity() > SEC_PLAYER && sWorld.getConfig(CONFIG_GM_LOG_TRADE))
                 {
                     sLog.outCommand(GetAccountId(), "GM %s (Account: %u) mail item: %s (Entry: %u Count: %u) to player: %s (Account: %u)",
                         GetPlayerName(), GetAccountId(), mailItem.item->GetProto()->Name1, mailItem.item->GetEntry(), mailItem.item->GetCount(), receiver.c_str(), rc_account);
@@ -251,7 +251,7 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data )
 }
 
 // called when mail is read
-void WorldSession::HandleMarkAsRead(WorldPacket & recv_data )
+void WorldSession::HandleMarkAsRead(WorldPacket & recv_data)
 {
     uint64 mailbox;
     uint32 mailId;
@@ -271,7 +271,7 @@ void WorldSession::HandleMarkAsRead(WorldPacket & recv_data )
 }
 
 // called when client deletes mail
-void WorldSession::HandleMailDelete(WorldPacket & recv_data )
+void WorldSession::HandleMailDelete(WorldPacket & recv_data)
 {
     uint64 mailbox;
     uint32 mailId;
@@ -285,7 +285,7 @@ void WorldSession::HandleMailDelete(WorldPacket & recv_data )
     pl->SendMailResult(mailId, MAIL_DELETED, 0);
 }
 
-void WorldSession::HandleReturnToSender(WorldPacket & recv_data )
+void WorldSession::HandleReturnToSender(WorldPacket & recv_data)
 {
     uint64 mailbox;
     uint32 mailId;
@@ -338,7 +338,7 @@ void WorldSession::HandleReturnToSender(WorldPacket & recv_data )
     pl->SendMailResult(mailId, MAIL_RETURNED_TO_SENDER, 0);
 }
 
-void WorldSession::SendReturnToSender(uint8 messageType, uint32 sender_acc, uint32 sender_guid, uint32 receiver_guid, const std::string& subject, uint32 itemTextId, MailItemsInfo *mi, uint32 money, uint16 mailTemplateId )
+void WorldSession::SendReturnToSender(uint8 messageType, uint32 sender_acc, uint32 sender_guid, uint32 receiver_guid, const std::string& subject, uint32 itemTextId, MailItemsInfo *mi, uint32 money, uint16 mailTemplateId)
 {
     if (messageType != MAIL_NORMAL)                          // return only to players
     {
@@ -386,7 +386,7 @@ void WorldSession::SendReturnToSender(uint8 messageType, uint32 sender_acc, uint
 }
 
 //called when player takes item attached in mail
-void WorldSession::HandleTakeItem(WorldPacket & recv_data )
+void WorldSession::HandleTakeItem(WorldPacket & recv_data)
 {
     uint64 mailbox;
     uint32 mailId;
@@ -414,7 +414,7 @@ void WorldSession::HandleTakeItem(WorldPacket & recv_data )
 
     ItemPosCountVec dest;
     uint8 msg = _player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, it, false);
-    if (msg == EQUIP_ERR_OK )
+    if (msg == EQUIP_ERR_OK)
     {
         m->RemoveItem(itemId);
         m->removedItems.push_back(itemId);
@@ -426,7 +426,7 @@ void WorldSession::HandleTakeItem(WorldPacket & recv_data )
 
             uint32 sender_accId = 0;
 
-            if (GetSecurity() > SEC_PLAYER && sWorld.getConfig(CONFIG_GM_LOG_TRADE) )
+            if (GetSecurity() > SEC_PLAYER && sWorld.getConfig(CONFIG_GM_LOG_TRADE))
             {
                 std::string sender_name;
                 if (receive)
@@ -475,7 +475,7 @@ void WorldSession::HandleTakeItem(WorldPacket & recv_data )
         pl->SendMailResult(mailId, MAIL_ITEM_TAKEN, MAIL_ERR_BAG_FULL, msg);
 }
 
-void WorldSession::HandleTakeMoney(WorldPacket & recv_data )
+void WorldSession::HandleTakeMoney(WorldPacket & recv_data)
 {
     uint64 mailbox;
     uint32 mailId;
@@ -505,7 +505,7 @@ void WorldSession::HandleTakeMoney(WorldPacket & recv_data )
 }
 
 //called when player lists his received mails
-void WorldSession::HandleGetMail(WorldPacket & recv_data )
+void WorldSession::HandleGetMail(WorldPacket & recv_data)
 {
     uint64 mailbox;
     recv_data >> mailbox;
@@ -616,7 +616,7 @@ void WorldSession::HandleGetMail(WorldPacket & recv_data )
 }
 
 ///this function is called when client needs mail message body, or when player clicks on item which has ITEM_FIELD_ITEM_TEXT_ID > 0
-void WorldSession::HandleItemTextQuery(WorldPacket & recv_data )
+void WorldSession::HandleItemTextQuery(WorldPacket & recv_data)
 {
     uint32 itemTextId;
     uint32 mailId;                                          //this value can be item id in bag, but it is also mail id
@@ -635,7 +635,7 @@ void WorldSession::HandleItemTextQuery(WorldPacket & recv_data )
 }
 
 //used when player copies mail body to his inventory
-void WorldSession::HandleMailCreateTextItem(WorldPacket & recv_data )
+void WorldSession::HandleMailCreateTextItem(WorldPacket & recv_data)
 {
     uint64 mailbox;
     uint32 mailId;
@@ -665,7 +665,7 @@ void WorldSession::HandleMailCreateTextItem(WorldPacket & recv_data )
 
     ItemPosCountVec dest;
     uint8 msg = _player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, bodyItem, false);
-    if (msg == EQUIP_ERR_OK )
+    if (msg == EQUIP_ERR_OK)
     {
         m->itemTextId = 0;
         m->state = MAIL_STATE_CHANGED;
@@ -683,14 +683,14 @@ void WorldSession::HandleMailCreateTextItem(WorldPacket & recv_data )
 }
 
 //TODO Fix me! ... this void has probably bad condition, but good data are sent
-void WorldSession::HandleMsgQueryNextMailtime(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleMsgQueryNextMailtime(WorldPacket & /*recv_data*/)
 {
     WorldPacket data(MSG_QUERY_NEXT_MAIL_TIME, 8);
 
     if (!_player->m_mailsLoaded)
         _player->_LoadMail();
 
-    if (_player->unReadMails > 0 )
+    if (_player->unReadMails > 0)
     {
         data << (uint32) 0;                                 // float
         data << (uint32) 0;                                 // count
@@ -770,7 +770,7 @@ void WorldSession::SendMailTo(Player* receiver, uint8 messageType, uint8 station
     {
         receiver->AddNewMailDeliverTime(deliver_time);
 
-        if (receiver->IsMailsLoaded() )
+        if (receiver->IsMailsLoaded())
         {
             Mail * m = new Mail;
             m->messageID = mailId;

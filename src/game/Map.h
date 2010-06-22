@@ -605,7 +605,7 @@ Map::Visit(const CellLock<LOCK_TYPE> &cell, TypeContainerVisitor<T, CONTAINER> &
     const uint32 cell_x = cell->CellX();
     const uint32 cell_y = cell->CellY();
 
-    if (!cell->NoCreate() || loaded(GridPair(x,y)) )
+    if (!cell->NoCreate() || loaded(GridPair(x,y)))
     {
         EnsureGridLoaded(cell);
         getNGrid(x, y)->Visit(cell_x, cell_y, visitor);

@@ -42,12 +42,12 @@ bool OutdoorPvPObjectiveEP_EWT::Update(uint32 diff)
         if (m_OldState != m_State || fabs(m_ShiftPhase) == m_ShiftMaxPhase)  // state won't change, only phase when maxed out!
         {
             // if changing from controlling alliance to horde or vice versa
-            if (m_OldState == OBJECTIVESTATE_ALLIANCE && m_OldState != m_State )
+            if (m_OldState == OBJECTIVESTATE_ALLIANCE && m_OldState != m_State)
             {
                 sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_EWT_A));
                 ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_EWT] = 0;
             }
-            else if (m_OldState == OBJECTIVESTATE_HORDE && m_OldState != m_State )
+            else if (m_OldState == OBJECTIVESTATE_HORDE && m_OldState != m_State)
             {
                 sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_EWT_H));
                 ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_EWT] = 0;
@@ -116,7 +116,7 @@ bool OutdoorPvPObjectiveEP_EWT::Update(uint32 diff)
             // send this too, sometimes the slider disappears, dunno why :(
             SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 1);
             // send these updates to only the ones in this objective
-            uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase ) * 100.0f);
+            uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase) * 100.0f);
             SendUpdateWorldState(EP_UI_TOWER_SLIDER_POS, phase);
             // send this too, sometimes it resets :S
             SendUpdateWorldState(EP_UI_TOWER_SLIDER_N, m_NeutralValue);
@@ -153,7 +153,7 @@ bool OutdoorPvPObjectiveEP_EWT::HandlePlayerEnter(Player *plr)
     if (OutdoorPvPObjective::HandlePlayerEnter(plr))
     {
         plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 1);
-        uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase ) * 100.0f);
+        uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase) * 100.0f);
         plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_POS, phase);
         plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_N, m_NeutralValue);
         return true;
@@ -216,12 +216,12 @@ bool OutdoorPvPObjectiveEP_NPT::Update(uint32 diff)
         if (m_OldState != m_State || fabs(m_ShiftPhase) == m_ShiftMaxPhase)  // state won't change, only phase when maxed out!
         {
             // if changing from controlling alliance to horde or vice versa
-            if (m_OldState == OBJECTIVESTATE_ALLIANCE && m_OldState != m_State )
+            if (m_OldState == OBJECTIVESTATE_ALLIANCE && m_OldState != m_State)
             {
                 sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_NPT_A));
                 ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_NPT] = 0;
             }
-            else if (m_OldState == OBJECTIVESTATE_HORDE && m_OldState != m_State )
+            else if (m_OldState == OBJECTIVESTATE_HORDE && m_OldState != m_State)
             {
                 sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_NPT_H));
                 ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_NPT] = 0;
@@ -291,7 +291,7 @@ bool OutdoorPvPObjectiveEP_NPT::Update(uint32 diff)
             // send this too, sometimes the slider disappears, dunno why :(
             SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 1);
             // send these updates to only the ones in this objective
-            uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase ) * 100.0f);
+            uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase) * 100.0f);
             SendUpdateWorldState(EP_UI_TOWER_SLIDER_POS, phase);
             // send this too, sometimes it resets :S
             SendUpdateWorldState(EP_UI_TOWER_SLIDER_N, m_NeutralValue);
@@ -328,7 +328,7 @@ bool OutdoorPvPObjectiveEP_NPT::HandlePlayerEnter(Player *plr)
     if (OutdoorPvPObjective::HandlePlayerEnter(plr))
     {
         plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 1);
-        uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase ) * 100.0f);
+        uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase) * 100.0f);
         plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_POS, phase);
         plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_N, m_NeutralValue);
         return true;
@@ -385,12 +385,12 @@ bool OutdoorPvPObjectiveEP_CGT::Update(uint32 diff)
         if (m_OldState != m_State || fabs(m_ShiftPhase) == m_ShiftMaxPhase)  // state won't change, only phase when maxed out!
         {
             // if changing from controlling alliance to horde or vice versa
-            if (m_OldState == OBJECTIVESTATE_ALLIANCE && m_OldState != m_State )
+            if (m_OldState == OBJECTIVESTATE_ALLIANCE && m_OldState != m_State)
             {
                 sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_CGT_A));
                 ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_CGT] = 0;
             }
-            else if (m_OldState == OBJECTIVESTATE_HORDE && m_OldState != m_State )
+            else if (m_OldState == OBJECTIVESTATE_HORDE && m_OldState != m_State)
             {
                 sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_CGT_H));
                 ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_CGT] = 0;
@@ -458,7 +458,7 @@ bool OutdoorPvPObjectiveEP_CGT::Update(uint32 diff)
             // send this too, sometimes the slider disappears, dunno why :(
             SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 1);
             // send these updates to only the ones in this objective
-            uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase ) * 100.0f);
+            uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase) * 100.0f);
             SendUpdateWorldState(EP_UI_TOWER_SLIDER_POS, phase);
             // send this too, sometimes it resets :S
             SendUpdateWorldState(EP_UI_TOWER_SLIDER_N, m_NeutralValue);
@@ -495,7 +495,7 @@ bool OutdoorPvPObjectiveEP_CGT::HandlePlayerEnter(Player *plr)
     if (OutdoorPvPObjective::HandlePlayerEnter(plr))
     {
         plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 1);
-        uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase ) * 100.0f);
+        uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase) * 100.0f);
         plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_POS, phase);
         plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_N, m_NeutralValue);
         return true;
@@ -549,12 +549,12 @@ bool OutdoorPvPObjectiveEP_PWT::Update(uint32 diff)
         if (m_OldState != m_State || fabs(m_ShiftPhase) == m_ShiftMaxPhase)  // state won't change, only phase when maxed out!
         {
             // if changing from controlling alliance to horde or vice versa
-            if (m_OldState == OBJECTIVESTATE_ALLIANCE && m_OldState != m_State )
+            if (m_OldState == OBJECTIVESTATE_ALLIANCE && m_OldState != m_State)
             {
                 sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_PWT_A));
                 ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_PWT] = 0;
             }
-            else if (m_OldState == OBJECTIVESTATE_HORDE && m_OldState != m_State )
+            else if (m_OldState == OBJECTIVESTATE_HORDE && m_OldState != m_State)
             {
                 sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_PWT_H));
                 ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_PWT] = 0;
@@ -624,7 +624,7 @@ bool OutdoorPvPObjectiveEP_PWT::Update(uint32 diff)
             // send this too, sometimes the slider disappears, dunno why :(
             SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 1);
             // send these updates to only the ones in this objective
-            uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase ) * 100.0f);
+            uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase) * 100.0f);
             SendUpdateWorldState(EP_UI_TOWER_SLIDER_POS, phase);
             // send this too, sometimes it resets :S
             SendUpdateWorldState(EP_UI_TOWER_SLIDER_N, m_NeutralValue);
@@ -661,7 +661,7 @@ bool OutdoorPvPObjectiveEP_PWT::HandlePlayerEnter(Player *plr)
     if (OutdoorPvPObjective::HandlePlayerEnter(plr))
     {
         plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 1);
-        uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase ) * 100.0f);
+        uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase) * 100.0f);
         plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_POS, phase);
         plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_N, m_NeutralValue);
         return true;
@@ -732,7 +732,7 @@ bool OutdoorPvPObjectiveEP_PWT::CanTalkTo(Player * p, Creature * c, GossipOption
 {
     if (p->GetTeam() == m_FlightMasterSpawned &&
         c->GetGUID() == m_Creatures[EP_PWT_FLIGHTMASTER] &&
-        gso.Id == 50 )
+        gso.Id == 50)
         return true;
     return false;
 }

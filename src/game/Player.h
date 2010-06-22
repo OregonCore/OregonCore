@@ -131,8 +131,8 @@ enum ActionButtonUpdateState
 
 struct ActionButton
 {
-    ActionButton() : action(0), type(0), misc(0), uState(ACTIONBUTTON_NEW ) {}
-    ActionButton(uint16 _action, uint8 _type, uint8 _misc) : action(_action), type(_type), misc(_misc), uState(ACTIONBUTTON_NEW ) {}
+    ActionButton() : action(0), type(0), misc(0), uState(ACTIONBUTTON_NEW) {}
+    ActionButton(uint16 _action, uint8 _type, uint8 _misc) : action(_action), type(_type), misc(_misc), uState(ACTIONBUTTON_NEW) {}
 
     uint16 action;
     uint8 type;
@@ -180,7 +180,7 @@ struct PlayerClassInfo
 
 struct PlayerLevelInfo
 {
-    PlayerLevelInfo() { for (int i=0; i < MAX_STATS; ++i ) stats[i] = 0; }
+    PlayerLevelInfo() { for (int i=0; i < MAX_STATS; ++i) stats[i] = 0; }
 
     uint8 stats[MAX_STATS];
 };
@@ -242,7 +242,7 @@ enum FactionFlags
     FACTION_FLAG_HIDDEN             = 0x04,                 // hidden faction from reputation pane in client (player can gain reputation, but this update not sent to client)
     FACTION_FLAG_INVISIBLE_FORCED   = 0x08,                 // always overwrite FACTION_FLAG_VISIBLE and hide faction in rep.list, used for hide opposite team factions
     FACTION_FLAG_PEACE_FORCED       = 0x10,                 // always overwrite FACTION_FLAG_AT_WAR, used for prevent war with own team factions
-    FACTION_FLAG_INACTIVE           = 0x20,                 // player controlled, state stored in characters.data (CMSG_SET_FACTION_INACTIVE )
+    FACTION_FLAG_INACTIVE           = 0x20,                 // player controlled, state stored in characters.data (CMSG_SET_FACTION_INACTIVE)
     FACTION_FLAG_RIVAL              = 0x40                  // flag for the two competing outland factions
 };
 
@@ -280,7 +280,7 @@ struct LookingForGroupSlot
     LookingForGroupSlot() : entry(0), type(0) {}
     bool Empty() const { return !entry && !type; }
     void Clear() { entry = 0; type = 0; }
-    void Set(uint32 _entry, uint32 _type ) { entry = _entry; type = _type; }
+    void Set(uint32 _entry, uint32 _type) { entry = _entry; type = _type; }
     bool Is(uint32 _entry, uint32 _type) const { return entry==_entry && type==_type; }
     bool canAutoJoin() const { return entry && (type == 1 || type == 5); }
 
@@ -818,7 +818,7 @@ class OREGON_DLL_SPEC PlayerTaxi
         void LoadTaxiMask(const char* data);
         void SaveTaxiMask(const char* data);
 
-        uint32 GetTaximask(uint8 index ) const { return m_taximask[index]; }
+        uint32 GetTaximask(uint8 index) const { return m_taximask[index]; }
         bool IsTaximaskNodeKnown(uint32 nodeidx) const
         {
             uint8  field   = uint8((nodeidx - 1) / 32);
@@ -1027,10 +1027,10 @@ class OREGON_DLL_SPEC Player : public Unit
         bool IsValidPos(uint16 pos) { return IsBankPos(pos >> 8,pos & 255); }
         bool IsValidPos(uint8 bag, uint8 slot);
         uint8 GetBankBagSlotCount() const { return GetByteValue(PLAYER_BYTES_2, 2); }
-        bool HasBankBagSlot(uint8 slot ) const;
+        bool HasBankBagSlot(uint8 slot) const;
         bool HasItemCount(uint32 item, uint32 count, bool inBankAlso = false) const;
         bool HasItemFitToSpellReqirements(SpellEntry const* spellInfo, Item const* ignoreItem = NULL);
-        Item* GetItemOrItemWithGemEquipped(uint32 item ) const;
+        Item* GetItemOrItemWithGemEquipped(uint32 item) const;
         uint8 CanTakeMoreSimilarItems(Item* pItem) const { return _CanTakeMoreSimilarItems(pItem->GetEntry(),pItem->GetCount(),pItem); }
         uint8 CanTakeMoreSimilarItems(uint32 entry, uint32 count) const { return _CanTakeMoreSimilarItems(entry,count,NULL); }
         uint8 CanStoreNewItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, uint32 item, uint32 count, uint32* no_space_count = NULL) const
@@ -1048,13 +1048,13 @@ class OREGON_DLL_SPEC Player : public Unit
         uint8 CanStoreItems(Item **pItem,int count) const;
         uint8 CanEquipNewItem(uint8 slot, uint16 &dest, uint32 item, bool swap) const;
         uint8 CanEquipItem(uint8 slot, uint16 &dest, Item *pItem, bool swap, bool not_loading = true) const;
-        uint8 CanUnequipItems(uint32 item, uint32 count ) const;
-        uint8 CanUnequipItem(uint16 src, bool swap ) const;
-        uint8 CanBankItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, Item *pItem, bool swap, bool not_loading = true ) const;
-        uint8 CanUseItem(Item *pItem, bool not_loading = true ) const;
-        bool HasItemTotemCategory(uint32 TotemCategory ) const;
+        uint8 CanUnequipItems(uint32 item, uint32 count) const;
+        uint8 CanUnequipItem(uint16 src, bool swap) const;
+        uint8 CanBankItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, Item *pItem, bool swap, bool not_loading = true) const;
+        uint8 CanUseItem(Item *pItem, bool not_loading = true) const;
+        bool HasItemTotemCategory(uint32 TotemCategory) const;
         bool CanUseItem(ItemPrototype const *pItem);
-        uint8 CanUseAmmo(uint32 item ) const;
+        uint8 CanUseAmmo(uint32 item) const;
         Item* StoreNewItem(ItemPosCountVec const& pos, uint32 item, bool update,int32 randomPropertyId = 0);
         Item* StoreItem(ItemPosCountVec const& pos, Item *pItem, bool update);
         Item* EquipNewItem(uint16 pos, uint32 item, bool update);
@@ -1137,7 +1137,7 @@ class OREGON_DLL_SPEC Player : public Unit
         /*********************************************************/
         /***                    QUEST SYSTEM                   ***/
         /*********************************************************/
-        uint32 GetQuestOrPlayerLevel(Quest const* pQuest ) const { return pQuest && (pQuest->GetQuestLevel()>0) ? pQuest->GetQuestLevel() : getLevel(); }
+        uint32 GetQuestOrPlayerLevel(Quest const* pQuest) const { return pQuest && (pQuest->GetQuestLevel()>0) ? pQuest->GetQuestLevel() : getLevel(); }
 
         void PrepareQuestMenu(uint64 guid);
         void SendPreparedQuest(uint64 guid);
@@ -1215,7 +1215,7 @@ class OREGON_DLL_SPEC Player : public Unit
         void CastedCreatureOrGO(uint32 entry, uint64 guid, uint32 spell_id);
         void TalkedToCreature(uint32 entry, uint64 guid);
         void MoneyChanged(uint32 value);
-        bool HasQuestForItem(uint32 itemid ) const;
+        bool HasQuestForItem(uint32 itemid) const;
         bool HasQuestForGO(int32 GOId);
         void UpdateForQuestsGO();
         bool CanShareQuest(uint32 quest_id) const;
@@ -1300,7 +1300,7 @@ class OREGON_DLL_SPEC Player : public Unit
             MoneyChanged(value);
         }
 
-        uint32 GetTutorialInt(uint32 intId )
+        uint32 GetTutorialInt(uint32 intId)
         {
             ASSERT((intId < 8));
             return m_Tutorials[intId];
@@ -1386,7 +1386,7 @@ class OREGON_DLL_SPEC Player : public Unit
         void PossessSpellInitialize();
         bool HasSpell(uint32 spell) const;
         TrainerSpellState GetTrainerSpellState(TrainerSpell const* trainer_spell) const;
-        bool IsSpellFitByClassAndRace(uint32 spell_id ) const;
+        bool IsSpellFitByClassAndRace(uint32 spell_id) const;
 
         void SendProficiency(uint8 pr1, uint32 pr2);
         void SendInitialSpells();
@@ -1590,8 +1590,8 @@ class OREGON_DLL_SPEC Player : public Unit
         WorldSession* GetSession() const { return m_session; }
         void SetSession(WorldSession *s) { m_session = s; }
 
-        void BuildCreateUpdateBlockForPlayer(UpdateData *data, Player *target ) const;
-        void DestroyForPlayer(Player *target ) const;
+        void BuildCreateUpdateBlockForPlayer(UpdateData *data, Player *target) const;
+        void DestroyForPlayer(Player *target) const;
         void SendDelayResponse(const uint32);
         void SendLogXPGain(uint32 GivenXP,Unit* victim,uint32 RestXP);
 
@@ -1885,7 +1885,7 @@ class OREGON_DLL_SPEC Player : public Unit
         float GetBattleGroundEntryPointY() const { return m_bgEntryPointY; }
         float GetBattleGroundEntryPointZ() const { return m_bgEntryPointZ; }
         float GetBattleGroundEntryPointO() const { return m_bgEntryPointO; }
-        void SetBattleGroundEntryPoint(uint32 Map, float PosX, float PosY, float PosZ, float PosO )
+        void SetBattleGroundEntryPoint(uint32 Map, float PosX, float PosY, float PosZ, float PosO)
         {
             m_bgEntryPointMap = Map;
             m_bgEntryPointX = PosX;
@@ -2328,9 +2328,9 @@ class OREGON_DLL_SPEC Player : public Unit
         DeclinedName *m_declinedname;
     private:
         // internal common parts for CanStore/StoreItem functions
-        uint8 _CanStoreItem_InSpecificSlot(uint8 bag, uint8 slot, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool swap, Item *pSrcItem ) const;
-        uint8 _CanStoreItem_InBag(uint8 bag, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool merge, bool non_specialized, Item *pSrcItem, uint8 skip_bag, uint8 skip_slot ) const;
-        uint8 _CanStoreItem_InInventorySlots(uint8 slot_begin, uint8 slot_end, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool merge, Item *pSrcItem, uint8 skip_bag, uint8 skip_slot ) const;
+        uint8 _CanStoreItem_InSpecificSlot(uint8 bag, uint8 slot, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool swap, Item *pSrcItem) const;
+        uint8 _CanStoreItem_InBag(uint8 bag, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool merge, bool non_specialized, Item *pSrcItem, uint8 skip_bag, uint8 skip_slot) const;
+        uint8 _CanStoreItem_InInventorySlots(uint8 slot_begin, uint8 slot_end, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool merge, Item *pSrcItem, uint8 skip_bag, uint8 skip_slot) const;
         Item* _StoreItem(uint16 pos, Item *pItem, uint32 count, bool clone, bool update);
 
         int32 m_MirrorTimer[MAX_TIMERS];
@@ -2365,7 +2365,7 @@ template <class T> T Player::ApplySpellMod(uint32 spellId, SpellModOp op, T &bas
             totalflat += mod->value;
         else if (mod->type == SPELLMOD_PCT)
         {
-            // skip percent mods for null basevalue (most important for spell mods with charges )
+            // skip percent mods for null basevalue (most important for spell mods with charges)
             if (basevalue == T(0))
                 continue;
 
@@ -2376,9 +2376,9 @@ template <class T> T Player::ApplySpellMod(uint32 spellId, SpellModOp op, T &bas
             totalpct += mod->value;
         }
 
-        if (mod->charges > 0 )
+        if (mod->charges > 0)
         {
-          if (!(spellInfo->SpellFamilyName == 8 && spellInfo->SpellFamilyFlags & 0x200000000LL) )
+          if (!(spellInfo->SpellFamilyName == 8 && spellInfo->SpellFamilyFlags & 0x200000000LL))
             --mod->charges;
             if (mod->charges == 0)
             {

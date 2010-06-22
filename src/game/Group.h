@@ -326,7 +326,7 @@ class OREGON_DLL_SPEC Group
         void EndRoll();
 
         void LinkMember(GroupReference *pRef) { m_memberMgr.insertFirst(pRef); }
-        void DelinkMember(GroupReference* /*pRef*/ ) { }
+        void DelinkMember(GroupReference* /*pRef*/) { }
 
         InstanceGroupBind* BindToInstance(InstanceSave *save, bool permanent, bool load = false);
         void UnbindInstance(uint32 mapid, uint8 difficulty, bool unload = false);

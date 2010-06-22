@@ -34,7 +34,7 @@
 #include "Pet.h"
 #include "Language.h"
 
-void WorldSession::HandlePetAction(WorldPacket & recv_data )
+void WorldSession::HandlePetAction(WorldPacket & recv_data)
 {
     uint64 guid1;
     uint16 spellid;
@@ -134,7 +134,7 @@ void WorldSession::HandlePetAction(WorldPacket & recv_data )
                     
                     pet->clearUnitState(UNIT_STAT_FOLLOW);
                     // This is true if pet has no target or has target but targets differs.
-                    if (pet->getVictim() != TargetUnit || (pet->getVictim() == TargetUnit && !pet->GetCharmInfo()->IsCommandAttack() ))
+                    if (pet->getVictim() != TargetUnit || (pet->getVictim() == TargetUnit && !pet->GetCharmInfo()->IsCommandAttack()))
                     {
                         if (pet->getVictim())
                             pet->AttackStop();
@@ -252,7 +252,7 @@ void WorldSession::HandlePetAction(WorldPacket & recv_data )
             if (result == SPELL_FAILED_UNIT_NOT_INFRONT && !pet->isPossessed())
             {
                 pet->SetInFront(unit_target);
-                if (unit_target->GetTypeId() == TYPEID_PLAYER )
+                if (unit_target->GetTypeId() == TYPEID_PLAYER)
                     pet->SendUpdateToPlayer(unit_target->ToPlayer());
                 if (Unit* powner = pet->GetCharmerOrOwner())
                     if (powner->GetTypeId() == TYPEID_PLAYER)
@@ -330,7 +330,7 @@ void WorldSession::HandlePetAction(WorldPacket & recv_data )
     }
 }
 
-void WorldSession::HandlePetNameQuery(WorldPacket & recv_data )
+void WorldSession::HandlePetNameQuery(WorldPacket & recv_data)
 {
     sLog.outDetail("HandlePetNameQuery. CMSG_PET_NAME_QUERY\n");
 
@@ -356,7 +356,7 @@ void WorldSession::SendPetNameQuery(uint64 petguid, uint32 petnumber)
     data << name.c_str();
     data << uint32(pet->GetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP));
 
-    if (pet->isPet() && ((Pet*)pet)->GetDeclinedNames() )
+    if (pet->isPet() && ((Pet*)pet)->GetDeclinedNames())
     {
         data << uint8(1);
         for (int i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
@@ -368,7 +368,7 @@ void WorldSession::SendPetNameQuery(uint64 petguid, uint32 petnumber)
     _player->GetSession()->SendPacket(&data);
 }
 
-void WorldSession::HandlePetSetAction(WorldPacket & recv_data )
+void WorldSession::HandlePetSetAction(WorldPacket & recv_data)
 {
     sLog.outDetail("HandlePetSetAction. CMSG_PET_SET_ACTION\n");
 
@@ -435,7 +435,7 @@ void WorldSession::HandlePetSetAction(WorldPacket & recv_data )
     }
 }
 
-void WorldSession::HandlePetRename(WorldPacket & recv_data )
+void WorldSession::HandlePetRename(WorldPacket & recv_data)
 {
     sLog.outDetail("HandlePetRename. CMSG_PET_RENAME\n");
 
@@ -453,7 +453,7 @@ void WorldSession::HandlePetRename(WorldPacket & recv_data )
                                                             // check it!
     if (!pet || !pet->isPet() || ((Pet*)pet)->getPetType()!= HUNTER_PET ||
         pet->GetByteValue(UNIT_FIELD_BYTES_2, 2) != UNIT_RENAME_ALLOWED ||
-        pet->GetOwnerGUID() != _player->GetGUID() || !pet->GetCharmInfo() )
+        pet->GetOwnerGUID() != _player->GetGUID() || !pet->GetCharmInfo())
         return;
 
     if (!ObjectMgr::IsValidPetName(name))
@@ -507,7 +507,7 @@ void WorldSession::HandlePetRename(WorldPacket & recv_data )
     pet->SetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP, time(NULL));
 }
 
-void WorldSession::HandlePetAbandon(WorldPacket & recv_data )
+void WorldSession::HandlePetAbandon(WorldPacket & recv_data)
 {
     uint64 guid;
     recv_data >> guid;                                      //pet guid
@@ -592,7 +592,7 @@ void WorldSession::HandlePetUnlearnOpcode(WorldPacket& recvPacket)
     GetPlayer()->PetSpellInitialize();
 }
 
-void WorldSession::HandlePetSpellAutocastOpcode(WorldPacket& recvPacket )
+void WorldSession::HandlePetSpellAutocastOpcode(WorldPacket& recvPacket)
 {
     sLog.outDetail("CMSG_PET_SPELL_AUTOCAST");
     uint64 guid;
@@ -639,7 +639,7 @@ void WorldSession::HandlePetSpellAutocastOpcode(WorldPacket& recvPacket )
     }
 }
 
-void WorldSession::HandlePetCastSpellOpcode(WorldPacket& recvPacket )
+void WorldSession::HandlePetCastSpellOpcode(WorldPacket& recvPacket)
 {
     sLog.outDetail("WORLD: CMSG_PET_CAST_SPELL");
 

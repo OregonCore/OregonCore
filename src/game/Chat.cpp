@@ -685,7 +685,7 @@ ChatCommand * ChatHandler::getCommandTable()
                         {
                             // first case for "" named subcommand
                             if (ptable[j].Name[0]=='\0' && name == commandTable[i].Name ||
-                                name == fmtstring("%s %s", commandTable[i].Name, ptable[j].Name) )
+                                name == fmtstring("%s %s", commandTable[i].Name, ptable[j].Name))
                             {
                                 ptable[j].SecurityLevel = (uint16)fields[1].GetUInt16();
                                 ptable[j].Help = fields[2].GetCppString();
@@ -1422,7 +1422,7 @@ bool ChatHandler::ShowHelpForCommand(ChatCommand *table, const char* cmd)
             if (!isAvailable(table[i]))
                 continue;
 
-            if (!hasStringAbbr(table[i].Name, cmd) )
+            if (!hasStringAbbr(table[i].Name, cmd))
                 continue;
 
             // have subcommand

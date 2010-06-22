@@ -51,38 +51,38 @@ bool LoadScriptingModule(char const* libName)
 
     testScript->hScriptsLib=OREGON_LOAD_LIBRARY(name.c_str());
 
-    if (!testScript->hScriptsLib )
+    if (!testScript->hScriptsLib)
     {
         printf("Error loading Scripts Library %s !\n",name.c_str());
         delete testScript;
         return false;
     }
 
-    if ( !(testScript->ScriptsInit         =(scriptCallScriptsInit         )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"ScriptsInit"         ))
-        ||!(testScript->ScriptsFree         =(scriptCallScriptsFree         )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"ScriptsFree"         ))
-        ||!(testScript->ScriptsVersion      =(scriptCallScriptsVersion      )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"ScriptsVersion"      ))
-        ||!(testScript->GossipHello         =(scriptCallGossipHello         )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GossipHello"         ))
-        ||!(testScript->GOChooseReward      =(scriptCallGOChooseReward      )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GOChooseReward"      ))
-        ||!(testScript->QuestAccept         =(scriptCallQuestAccept         )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"QuestAccept"         ))
-        ||!(testScript->GossipSelect        =(scriptCallGossipSelect        )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GossipSelect"        ))
+    if ( !(testScript->ScriptsInit         =(scriptCallScriptsInit)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"ScriptsInit"))
+        ||!(testScript->ScriptsFree         =(scriptCallScriptsFree)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"ScriptsFree"))
+        ||!(testScript->ScriptsVersion      =(scriptCallScriptsVersion)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"ScriptsVersion"))
+        ||!(testScript->GossipHello         =(scriptCallGossipHello)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GossipHello"))
+        ||!(testScript->GOChooseReward      =(scriptCallGOChooseReward)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GOChooseReward"))
+        ||!(testScript->QuestAccept         =(scriptCallQuestAccept)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"QuestAccept"))
+        ||!(testScript->GossipSelect        =(scriptCallGossipSelect)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GossipSelect"))
         ||!(testScript->GossipSelectWithCode=(scriptCallGossipSelectWithCode)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GossipSelectWithCode"))
-        ||!(testScript->GOSelect            =(scriptCallGOSelect            )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GOSelect"            ))
-        ||!(testScript->GOSelectWithCode    =(scriptCallGOSelectWithCode    )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GOSelectWithCode"    ))
-        ||!(testScript->QuestSelect         =(scriptCallQuestSelect         )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"QuestSelect"         ))
-        ||!(testScript->QuestComplete       =(scriptCallQuestComplete       )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"QuestComplete"       ))
-        ||!(testScript->NPCDialogStatus     =(scriptCallNPCDialogStatus     )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"NPCDialogStatus"     ))
-        ||!(testScript->GODialogStatus      =(scriptCallGODialogStatus      )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GODialogStatus"     ))
-        ||!(testScript->ChooseReward        =(scriptCallChooseReward        )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"ChooseReward"        ))
-        ||!(testScript->ItemHello           =(scriptCallItemHello           )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"ItemHello"           ))
-        ||!(testScript->GOHello             =(scriptCallGOHello             )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GOHello"             ))
-        ||!(testScript->scriptAreaTrigger   =(scriptCallAreaTrigger         )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"AreaTrigger"         ))
-        ||!(testScript->ItemQuestAccept     =(scriptCallItemQuestAccept     )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"ItemQuestAccept"     ))
-        ||!(testScript->GOQuestAccept       =(scriptCallGOQuestAccept       )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GOQuestAccept"       ))
-        ||!(testScript->ReceiveEmote        =(scriptCallReceiveEmote        )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"ReceiveEmote"        ))
-        ||!(testScript->ItemUse             =(scriptCallItemUse             )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"ItemUse"             ))
-        ||!(testScript->GetAI               =(scriptCallGetAI               )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GetAI"               ))
-        ||!(testScript->CreateInstanceData  =(scriptCallCreateInstanceData  )OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"CreateInstanceData"  ))
-        )
+        ||!(testScript->GOSelect            =(scriptCallGOSelect)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GOSelect"))
+        ||!(testScript->GOSelectWithCode    =(scriptCallGOSelectWithCode)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GOSelectWithCode"))
+        ||!(testScript->QuestSelect         =(scriptCallQuestSelect)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"QuestSelect"))
+        ||!(testScript->QuestComplete       =(scriptCallQuestComplete)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"QuestComplete"))
+        ||!(testScript->NPCDialogStatus     =(scriptCallNPCDialogStatus)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"NPCDialogStatus"))
+        ||!(testScript->GODialogStatus      =(scriptCallGODialogStatus)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GODialogStatus"))
+        ||!(testScript->ChooseReward        =(scriptCallChooseReward)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"ChooseReward"))
+        ||!(testScript->ItemHello           =(scriptCallItemHello)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"ItemHello"))
+        ||!(testScript->GOHello             =(scriptCallGOHello)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GOHello"))
+        ||!(testScript->scriptAreaTrigger   =(scriptCallAreaTrigger)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"AreaTrigger"))
+        ||!(testScript->ItemQuestAccept     =(scriptCallItemQuestAccept)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"ItemQuestAccept"))
+        ||!(testScript->GOQuestAccept       =(scriptCallGOQuestAccept)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GOQuestAccept"))
+        ||!(testScript->ReceiveEmote        =(scriptCallReceiveEmote)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"ReceiveEmote"))
+        ||!(testScript->ItemUse             =(scriptCallItemUse)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"ItemUse"))
+        ||!(testScript->GetAI               =(scriptCallGetAI)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"GetAI"))
+        ||!(testScript->CreateInstanceData  =(scriptCallCreateInstanceData)OREGON_GET_PROC_ADDR(testScript->hScriptsLib,"CreateInstanceData"))
+)
     {
         printf("Error loading Scripts Library %s !\n Library missing required functions.",name.c_str());
         OREGON_CLOSE_LIBRARY(testScript->hScriptsLib);

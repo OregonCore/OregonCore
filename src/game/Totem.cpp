@@ -34,7 +34,7 @@ Totem::Totem() : Creature()
     m_type = TOTEM_PASSIVE;
 }
 
-void Totem::Update(uint32 time )
+void Totem::Update(uint32 time)
 {
     Unit *owner = GetOwner();
     if (!owner || !owner->isAlive() || !this->isAlive())

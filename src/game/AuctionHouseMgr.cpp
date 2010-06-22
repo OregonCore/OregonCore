@@ -95,7 +95,7 @@ uint32 AuctionHouseMgr::GetAuctionDeposit(AuctionHouseEntry const* entry, uint32
     sLog.outDebug("Deposit Percent:\t%f", faction_pct);
     sLog.outDebug("Auction Time1:\t\t%u", time);
     sLog.outDebug("Auction Time2:\t\t%u", MIN_AUCTION_TIME);
-    sLog.outDebug("Auction Time3:\t\t%u", (time / MIN_AUCTION_TIME ));
+    sLog.outDebug("Auction Time3:\t\t%u", (time / MIN_AUCTION_TIME));
     sLog.outDebug("Count:\t\t\t%u", pItem->GetCount());
     sLog.outDebug("Deposit:\t\t%f", deposit);
     if (deposit > 0)
@@ -326,7 +326,7 @@ void AuctionHouseMgr::LoadAuctionItems()
 void AuctionHouseMgr::LoadAuctions()
 {
     QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT COUNT(*) FROM auctionhouse");
-    if (!result )
+    if (!result)
     {
         barGoLink bar(1);
         bar.step();

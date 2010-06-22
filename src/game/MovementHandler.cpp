@@ -35,7 +35,7 @@
 // Set to true to see anti cheat debug messages in console
 #define MOVEMENT_ANTICHEAT_DEBUG false // Default: false
 
-void WorldSession::HandleMoveWorldportAckOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleMoveWorldportAckOpcode(WorldPacket & /*recv_data*/)
 {
     sLog.outDebug("WORLD: got MSG_MOVE_WORLDPORT_ACK.");
     HandleMoveWorldportAckOpcode();
@@ -138,7 +138,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     Corpse *corpse = GetPlayer()->GetCorpse();
     if (corpse && corpse->GetType() != CORPSE_BONES && corpse->GetMapId() == GetPlayer()->GetMapId())
     {
-        if (mEntry->IsDungeon() )
+        if (mEntry->IsDungeon())
         {
             GetPlayer()->ResurrectPlayer(0.5f,false);
             GetPlayer()->SpawnCorpseBones();
@@ -175,7 +175,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     GetPlayer()->SetDontMove(false);
 }
 
-void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data )
+void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 {
     if (GetPlayer()->GetDontMove())
     {
@@ -253,11 +253,11 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data )
     {
         // transports size limited
         // (also received at zeppelin leave by some reason with t_* as absolute in continent coordinates, can be safely skipped)
-        if (movementInfo.t_x > 60 || movementInfo.t_y > 60 || movementInfo.t_z > 60 )
+        if (movementInfo.t_x > 60 || movementInfo.t_y > 60 || movementInfo.t_z > 60)
             return;
 
         if (!Oregon::IsValidMapCoord(movementInfo.x+movementInfo.t_x, movementInfo.y+movementInfo.t_y,
-            movementInfo.z+movementInfo.t_z, movementInfo.o+movementInfo.t_o) )
+            movementInfo.z+movementInfo.t_z, movementInfo.o+movementInfo.t_o))
             return;
 
         if ((GetPlayer()->m_anti_transportGUID == 0) && (movementInfo.t_guid !=0))
@@ -375,7 +375,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data )
        // sLog.outBasic("%s newcoord: tm:%d ftm:%d | %f,%f,%fo(%f) [%X][%s]$%s",GetPlayer()->GetName(),movementInfo.time,movementInfo.fallTime,movementInfo.x,movementInfo.y,movementInfo.z,movementInfo.o,MovementFlags, LookupOpcodeName(opcode),move_type_name[move_type]);
        // sLog.outBasic("%f",tg_z);
 
-        if ((real_delta > allowed_delta) && (delta_z < 1)) // If you're wanting to enable wall-walking check, comment out "&& (delta_z < 1))" and add a ) after allowed_delta
+        if ((real_delta > allowed_delta) && (delta_z < 1)) // If you're wanting to enable wall-walking check, comment out "&& (delta_z < 1))" and add a) after allowed_delta
         {
             #ifdef MOVEMENT_ANTICHEAT_DEBUG
             sLog.outDebug("Movement anticheat: %s is speed exception. {real_delta=%f allowed_delta=%f | current_speed=%f preview_speed=%f time=%f}(%f %f %f %d)[%s]",GetPlayer()->GetName(),real_delta, allowed_delta, current_speed, GetPlayer()->m_anti_last_hspeed,time_delta,GetPlayer()->GetPositionX(),GetPlayer()->GetPositionY(),GetPlayer()->GetPositionZ(), GetPlayer()->GetMapId(),LookupOpcodeName(opcode));
@@ -779,7 +779,7 @@ void WorldSession::HandleMoveKnockBackAck(WorldPacket & recv_data)
     GetPlayer()->m_anti_lastspeed_changetime = movementInfo.time + 1750;
 }
 
-void WorldSession::HandleMoveHoverAck(WorldPacket& /*recv_data*/ )
+void WorldSession::HandleMoveHoverAck(WorldPacket& /*recv_data*/)
 {
     sLog.outDebug("CMSG_MOVE_HOVER_ACK");
 }
@@ -791,7 +791,7 @@ void WorldSession::HandleMoveWaterWalkAck(WorldPacket& /*recv_data*/)
 
 void WorldSession::HandleSummonResponseOpcode(WorldPacket& recv_data)
 {
-    if (!_player->isAlive() || _player->isInCombat() )
+    if (!_player->isAlive() || _player->isInCombat())
         return;
 
     uint64 summoner_guid;

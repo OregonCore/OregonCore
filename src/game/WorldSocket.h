@@ -178,7 +178,7 @@ class WorldSocket : protected WorldHandler
         /// Flush m_PacketQueue if there are packets in it
         /// Need to be called with m_OutBufferLock lock held
         /// @return true if it wrote to the buffer (AKA you need
-        /// to mark the socket for output ).
+        /// to mark the socket for output).
         bool iFlushPacketQueue ();
 
     private:

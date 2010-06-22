@@ -107,7 +107,7 @@ Map* MapManager::_createBaseMap(uint32 id)
 {
     Map *m = _findMap(id);
 
-    if (m == NULL )
+    if (m == NULL)
     {
         Guard guard(*this);
 

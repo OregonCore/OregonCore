@@ -181,7 +181,7 @@ void LoadDBCStores(const std::string& dataPath)
 
     const uint32 DBCFilesCount = 57;
 
-    barGoLink bar( DBCFilesCount );
+    barGoLink bar( DBCFilesCount);
 
     StoreProblemList bad_dbc_files;
     uint32 availableDbcLocales = 0xFFFFFFFF;
@@ -196,8 +196,8 @@ void LoadDBCStores(const std::string& dataPath)
             // fill AreaId->DBC records
             sAreaFlagByAreaID.insert(AreaFlagByAreaID::value_type(uint16(area->ID),area->exploreFlag));
 
-            // fill MapId->DBC records ( skip sub zones and continents )
-            if(area->zone==0 && area->mapid != 0 && area->mapid != 1 && area->mapid != 530 )
+            // fill MapId->DBC records ( skip sub zones and continents)
+            if(area->zone==0 && area->mapid != 0 && area->mapid != 1 && area->mapid != 530)
                 sAreaFlagByMapID.insert(AreaFlagByMapID::value_type(area->mapid,area->exploreFlag));
         }
     }
@@ -333,7 +333,7 @@ void LoadDBCStores(const std::string& dataPath)
             TalentEntry const *talentInfo = sTalentStore.LookupEntry(i);
             if (!talentInfo) continue;
 
-            TalentTabEntry const *talentTabInfo = sTalentTabStore.LookupEntry( talentInfo->TalentTab );
+            TalentTabEntry const *talentTabInfo = sTalentTabStore.LookupEntry( talentInfo->TalentTab);
             if(!talentTabInfo)
                 continue;
 
@@ -355,7 +355,7 @@ void LoadDBCStores(const std::string& dataPath)
         // now have all max ranks (and then bit amount used for store talent ranks in inspect)
         for(uint32 talentTabId = 1; talentTabId < sTalentTabStore.GetNumRows(); ++talentTabId)
         {
-            TalentTabEntry const *talentTabInfo = sTalentTabStore.LookupEntry( talentTabId );
+            TalentTabEntry const *talentTabInfo = sTalentTabStore.LookupEntry( talentTabId);
             if(!talentTabInfo)
                 continue;
 
@@ -370,7 +370,7 @@ void LoadDBCStores(const std::string& dataPath)
             for(TalentBitSize::iterator itr = sTalentBitSize.begin(); itr != sTalentBitSize.end(); ++itr)
             {
                 uint32 talentId = itr->first & 0xFFFF;
-                TalentEntry const *talentInfo = sTalentStore.LookupEntry( talentId );
+                TalentEntry const *talentInfo = sTalentStore.LookupEntry( talentId);
                 if(!talentInfo)
                     continue;
 
@@ -426,12 +426,12 @@ void LoadDBCStores(const std::string& dataPath)
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sWorldSafeLocsStore,       dbcPath,"WorldSafeLocs.dbc");
 
     // error checks
-    if(bad_dbc_files.size() >= DBCFilesCount )
+    if(bad_dbc_files.size() >= DBCFilesCount)
     {
         sLog.outError("\nIncorrect DataDir value in Oregond.conf or ALL required *.dbc files (%d) not found by path: %sdbc",DBCFilesCount,dataPath.c_str());
         exit(1);
     }
-    else if(!bad_dbc_files.empty() )
+    else if(!bad_dbc_files.empty())
     {
         std::string str;
         for(std::list<std::string>::iterator i = bad_dbc_files.begin(); i != bad_dbc_files.end(); ++i)
@@ -454,14 +454,14 @@ void LoadDBCStores(const std::string& dataPath)
         !sGemPropertiesStore.LookupEntry(1127)     ||
         !sItemExtendedCostStore.LookupEntry(2425)  ||
         !sCharTitlesStore.LookupEntry(71)          ||
-        !sAreaStore.LookupEntry(1768)              )
+        !sAreaStore.LookupEntry(1768))
     {
         sLog.outError("\nYou have _outdated_ DBC files. Please extract correct versions from current using client.");
         exit(1);
     }
 
     sLog.outString("");
-    sLog.outString( ">> Initialized %d data stores", DBCFilesCount );
+    sLog.outString( ">> Initialized %d data stores", DBCFilesCount);
 }
 
 SimpleFactionsList const* GetFactionTeamList(uint32 faction)
@@ -514,7 +514,7 @@ AreaTableEntry const* GetAreaEntryByAreaID(uint32 area_id)
     if(areaflag < 0)
         return NULL;
 
-    return sAreaStore.LookupEntry(areaflag );
+    return sAreaStore.LookupEntry(areaflag);
 }
 
 AreaTableEntry const* GetAreaEntryByAreaFlagAndMap(uint32 area_flag,uint32 map_id)

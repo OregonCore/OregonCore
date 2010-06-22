@@ -163,7 +163,7 @@ void OutdoorPvPObjectiveNA::SpawnGOsForTeam(uint32 team)
             i == NA_BOMB_WAGON_S ||
             i == NA_BOMB_WAGON_W ||
             i == NA_BOMB_WAGON_N ||
-            i == NA_BOMB_WAGON_E )
+            i == NA_BOMB_WAGON_E)
             continue;   // roosts and bomb wagons are spawned when someone uses the matching destroyed roost
         AddObject(i,gos[i].entry,gos[i].map,gos[i].x,gos[i].y,gos[i].z,gos[i].o,gos[i].rot0,gos[i].rot1,gos[i].rot2,gos[i].rot3);
     }
@@ -230,7 +230,7 @@ bool OutdoorPvPObjectiveNA::HandlePlayerEnter(Player *plr)
     if (OutdoorPvPObjective::HandlePlayerEnter(plr))
     {
         plr->SendUpdateWorldState(NA_UI_TOWER_SLIDER_DISPLAY, 1);
-        uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase ) * 100.0f);
+        uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase) * 100.0f);
         plr->SendUpdateWorldState(NA_UI_TOWER_SLIDER_POS, phase);
         plr->SendUpdateWorldState(NA_UI_TOWER_SLIDER_N, m_NeutralValue);
         return true;
@@ -431,7 +431,7 @@ bool OutdoorPvPObjectiveNA::HandleCustomSpell(Player * plr, uint32 spellId, Game
         uint32 itemid = 24538;
                                                                 // bomb id count
         uint8 msg = plr->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemid, count, &noSpaceForCount);
-        if (msg != EQUIP_ERR_OK )                               // convert to possible store amount
+        if (msg != EQUIP_ERR_OK)                               // convert to possible store amount
             count -= noSpaceForCount;
 
         if (count == 0 || dest.empty())                         // can't add any
@@ -656,7 +656,7 @@ bool OutdoorPvPObjectiveNA::Update(uint32 diff)
             // send this too, sometimes the slider disappears, dunno why :(
             SendUpdateWorldState(NA_UI_TOWER_SLIDER_DISPLAY, 1);
             // send these updates to only the ones in this objective
-            uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase ) * 100.0f);
+            uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase) * 100.0f);
             SendUpdateWorldState(NA_UI_TOWER_SLIDER_POS, phase);
             SendUpdateWorldState(NA_UI_TOWER_SLIDER_N, m_NeutralValue);
         }

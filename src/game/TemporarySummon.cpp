@@ -25,12 +25,12 @@
 #include "ObjectAccessor.h"
 #include "CreatureAI.h"
 
-TemporarySummon::TemporarySummon(uint64 summoner ) :
+TemporarySummon::TemporarySummon(uint64 summoner) :
 Creature(), m_type(TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN), m_timer(0), m_lifetime(0), m_summoner(summoner)
 {
 }
 
-void TemporarySummon::Update(uint32 diff )
+void TemporarySummon::Update(uint32 diff)
 {
     if (m_deathState == DEAD)
     {
@@ -97,7 +97,7 @@ void TemporarySummon::Update(uint32 diff )
         }
         case TEMPSUMMON_DEAD_DESPAWN:
         {
-            if (m_deathState == DEAD )
+            if (m_deathState == DEAD)
             {
                 UnSummon();
                 return;
@@ -136,7 +136,7 @@ void TemporarySummon::Update(uint32 diff )
                 return;
             }
 
-            if (!isInCombat() && isAlive() )
+            if (!isInCombat() && isAlive())
             {
                 if (m_timer <= diff)
                 {

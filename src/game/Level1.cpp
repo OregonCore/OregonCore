@@ -723,9 +723,9 @@ bool ChatHandler::HandleGPSCommand(const char* args)
     uint32 have_vmap = Map::ExistVMap(obj->GetMapId(),gx,gy) ? 1 : 0;
 
     PSendSysMessage(LANG_MAP_POSITION,
-        obj->GetMapId(), (mapEntry ? mapEntry->name[m_session->GetSessionDbcLocale()] : "<unknown>" ),
-        zone_id, (zoneEntry ? zoneEntry->area_name[m_session->GetSessionDbcLocale()] : "<unknown>" ),
-        area_id, (areaEntry ? areaEntry->area_name[m_session->GetSessionDbcLocale()] : "<unknown>" ),
+        obj->GetMapId(), (mapEntry ? mapEntry->name[m_session->GetSessionDbcLocale()] : "<unknown>"),
+        zone_id, (zoneEntry ? zoneEntry->area_name[m_session->GetSessionDbcLocale()] : "<unknown>"),
+        area_id, (areaEntry ? areaEntry->area_name[m_session->GetSessionDbcLocale()] : "<unknown>"),
         obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), obj->GetOrientation(),
         cell.GridX(), cell.GridY(), cell.CellX(), cell.CellY(), obj->GetInstanceId(),
         zone_x, zone_y, ground_z, floor_z, have_map, have_vmap);
@@ -1266,7 +1266,7 @@ bool ChatHandler::HandleModifyFactionCommand(const char* args)
         return true;
     }
 
-    if (!chr )
+    if (!chr)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
         SetSentErrorMessage(true);
@@ -1931,7 +1931,7 @@ bool ChatHandler::HandleModifyMoneyCommand(const char* args)
         int32 newmoney = moneyuser + addmoney;
 
         sLog.outDetail(GetOregonString(LANG_CURRENT_MONEY), moneyuser, addmoney, newmoney);
-        if (newmoney <= 0 )
+        if (newmoney <= 0)
         {
             PSendSysMessage(LANG_YOU_TAKE_ALL_MONEY, chr->GetName());
             if (needReportToTarget(chr))
@@ -1963,7 +1963,7 @@ bool ChatHandler::HandleModifyMoneyCommand(const char* args)
 //Edit Player field
 bool ChatHandler::HandleModifyBitCommand(const char* args)
 {
-    if (!*args )
+    if (!*args)
         return false;
 
     Player *chr = getSelectedPlayer();
@@ -1999,7 +1999,7 @@ bool ChatHandler::HandleModifyBitCommand(const char* args)
         return false;
     }
 
-    if (chr->HasFlag(field, (1<<(bit-1)) ) )
+    if (chr->HasFlag(field, (1<<(bit-1))))
     {
         chr->RemoveFlag(field, (1<<(bit-1)));
         PSendSysMessage(LANG_REMOVE_BIT, bit, field);
@@ -2223,11 +2223,11 @@ bool ChatHandler::HandlePlaySoundCommand(const char* args)
     // #soundid - ID decimal number from SoundEntries.dbc (1st column)
     // this file have about 5000 sounds.
     // In this realization only caller can hear this sound.
-    if (*args )
+    if (*args)
     {
         uint32 dwSoundId = atoi((char*)args);
 
-        if (!sSoundEntriesStore.LookupEntry(dwSoundId) )
+        if (!sSoundEntriesStore.LookupEntry(dwSoundId))
         {
             PSendSysMessage(LANG_SOUND_NOT_EXIST, dwSoundId);
             SetSentErrorMessage(true);
@@ -2327,7 +2327,7 @@ bool ChatHandler::HandleSendMailCommand(const char* args)
 
     uint32 messagetype = MAIL_NORMAL;
     uint32 stationery = MAIL_STATIONERY_GM;
-    uint32 itemTextId = !text.empty() ? objmgr.CreateItemText(text ) : 0;
+    uint32 itemTextId = !text.empty() ? objmgr.CreateItemText(text) : 0;
 
     Player *receiver = objmgr.GetPlayer(receiver_guid);
 
@@ -2458,7 +2458,7 @@ bool ChatHandler::HandleGroupTeleCommand(const char * args)
     {
         Player *pl = itr->getSource();
 
-        if (!pl || !pl->GetSession() )
+        if (!pl || !pl->GetSession())
             continue;
 
         if (pl->IsBeingTeleported())
@@ -2525,7 +2525,7 @@ bool ChatHandler::HandleGroupgoCommand(const char* args)
     // we are in instance, and can summon only player in our group with us as lead
     if (to_instance && (
         !m_session->GetPlayer()->GetGroup() || (grp->GetLeaderGUID() != m_session->GetPlayer()->GetGUID()) ||
-        (m_session->GetPlayer()->GetGroup()->GetLeaderGUID() != m_session->GetPlayer()->GetGUID()) ) )
+        (m_session->GetPlayer()->GetGroup()->GetLeaderGUID() != m_session->GetPlayer()->GetGUID())))
         // the last check is a bit excessive, but let it be, just in case
     {
         SendSysMessage(LANG_CANNOT_SUMMON_TO_INST);
@@ -2537,7 +2537,7 @@ bool ChatHandler::HandleGroupgoCommand(const char* args)
     {
         Player *pl = itr->getSource();
 
-        if (!pl || pl==m_session->GetPlayer() || !pl->GetSession() )
+        if (!pl || pl==m_session->GetPlayer() || !pl->GetSession())
             continue;
 
         if (pl->IsBeingTeleported()==true)
@@ -2551,7 +2551,7 @@ bool ChatHandler::HandleGroupgoCommand(const char* args)
         {
             Map* plMap = MapManager::Instance().GetMap(pl->GetMapId(),pl);
 
-            if (plMap->Instanceable() && plMap->GetInstanceId() != gmMap->GetInstanceId() )
+            if (plMap->Instanceable() && plMap->GetInstanceId() != gmMap->GetInstanceId())
             {
                 // cannot summon from instance to instance
                 PSendSysMessage(LANG_CANNOT_SUMMON_TO_INST,pl->GetName());
@@ -2700,7 +2700,7 @@ bool ChatHandler::HandleGoZoneXYCommand(const char* args)
 
     AreaTableEntry const* areaEntry = GetAreaEntryByAreaID(areaid);
 
-    if (x<0 || x>100 || y<0 || y>100 || !areaEntry )
+    if (x<0 || x>100 || y<0 || y>100 || !areaEntry)
     {
         PSendSysMessage(LANG_INVALID_ZONE_COORD,x,y,areaid);
         SetSentErrorMessage(true);

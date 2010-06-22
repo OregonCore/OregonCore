@@ -119,7 +119,7 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, float x, float
 
     if (!IsPositionValid())
     {
-        sLog.outError("ERROR: Gameobject (GUID: %u Entry: %u ) not created. Suggested coordinates isn't valid (X: %f Y: %f)",guidlow,name_id,x,y);
+        sLog.outError("ERROR: Gameobject (GUID: %u Entry: %u) not created. Suggested coordinates isn't valid (X: %f Y: %f)",guidlow,name_id,x,y);
         return false;
     }
 
@@ -207,7 +207,7 @@ void GameObject::Update(uint32 diff)
                 case GAMEOBJECT_TYPE_FISHINGNODE:
                 {
                     // fishing code (bobber ready)
-                    if (time(NULL) > m_respawnTime - FISHING_BOBBER_READY_TIME )
+                    if (time(NULL) > m_respawnTime - FISHING_BOBBER_READY_TIME)
                     {
                         // splash bobber (bobber ready now)
                         Unit* caster = GetOwner();
@@ -271,7 +271,7 @@ void GameObject::Update(uint32 diff)
                         case GAMEOBJECT_TYPE_DOOR:
                         case GAMEOBJECT_TYPE_BUTTON:
                             //we need to open doors if they are closed (add there another condition if this code breaks some usage, but it need to be here for battlegrounds)
-                            if (!GetGoState() )
+                            if (!GetGoState())
                                 SwitchDoorOrButton(false);
                             //flags in AB are type_button and we need to add them here so no break!
                         default:
@@ -602,7 +602,7 @@ bool GameObject::LoadFromDB(uint32 guid, Map *map)
 {
     GameObjectData const* data = objmgr.GetGOData(guid);
 
-    if (!data )
+    if (!data)
     {
         sLog.outErrorDb("ERROR: Gameobject (GUID: %u) not found in table gameobject, can't load. ",guid);
         return false;
@@ -627,7 +627,7 @@ bool GameObject::LoadFromDB(uint32 guid, Map *map)
     m_DBTableGuid = guid;
     if (map->GetInstanceId() != 0) guid = objmgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT);
 
-    if (!Create(guid,entry, map, x, y, z, ang, rotation0, rotation1, rotation2, rotation3, animprogress, go_state, ArtKit) )
+    if (!Create(guid,entry, map, x, y, z, ang, rotation0, rotation1, rotation2, rotation3, animprogress, go_state, ArtKit))
         return false;
 
     switch(GetGOInfo()->type)
@@ -1162,7 +1162,7 @@ void GameObject::Use(Unit* user)
 
             GameObjectInfo const* info = GetGOInfo();
 
-            if (!caster || caster->GetTypeId()!=TYPEID_PLAYER )
+            if (!caster || caster->GetTypeId()!=TYPEID_PLAYER)
                 return;
 
             // accept only use by player from same group for caster except caster itself
@@ -1204,7 +1204,7 @@ void GameObject::Use(Unit* user)
             if (info->spellcaster.partyOnly)
             {
                 Unit* caster = GetOwner();
-                if (!caster || caster->GetTypeId()!=TYPEID_PLAYER )
+                if (!caster || caster->GetTypeId()!=TYPEID_PLAYER)
                     return;
 
                 if (user->GetTypeId()!=TYPEID_PLAYER || !user->ToPlayer()->IsInSameRaidWith(caster->ToPlayer()))
@@ -1251,7 +1251,7 @@ void GameObject::Use(Unit* user)
 
             Player* player = user->ToPlayer();
 
-            if (player->isAllowUseBattleGroundObject() )
+            if (player->isAllowUseBattleGroundObject())
             {
                 // in battleground check
                 BattleGround *bg = player->GetBattleGround();
@@ -1276,7 +1276,7 @@ void GameObject::Use(Unit* user)
 
             Player* player = user->ToPlayer();
 
-            if (player->isAllowUseBattleGroundObject() )
+            if (player->isAllowUseBattleGroundObject())
             {
                 // in battleground check
                 BattleGround *bg = player->GetBattleGround();
@@ -1326,7 +1326,7 @@ void GameObject::Use(Unit* user)
     if (!spellInfo)
     {
         if (user->GetTypeId()!=TYPEID_PLAYER || !sOutdoorPvPMgr.HandleCustomSpell(user->ToPlayer(),spellId,this))
-            sLog.outError("WORLD: unknown spell id %u at use action for gameobject (Entry: %u GoType: %u )", spellId,GetEntry(),GetGoType());
+            sLog.outError("WORLD: unknown spell id %u at use action for gameobject (Entry: %u GoType: %u)", spellId,GetEntry(),GetGoType());
         else
             sLog.outDebug("WORLD: %u non-dbc spell was handled by OutdoorPvP", spellId);
         return;

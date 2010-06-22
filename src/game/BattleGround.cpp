@@ -673,12 +673,12 @@ void BattleGround::RewardMark(Player *plr,uint32 count)
             return;
     }
 
-    if (objmgr.GetItemPrototype(mark ) )
+    if (objmgr.GetItemPrototype(mark))
     {
         ItemPosCountVec dest;
         uint32 no_space_count = 0;
         uint8 msg = plr->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, mark, count, &no_space_count);
-        if (msg != EQUIP_ERR_OK )                       // convert to possible store amount
+        if (msg != EQUIP_ERR_OK)                       // convert to possible store amount
             count -= no_space_count;
 
         if (!dest.empty())                // can add some
@@ -712,7 +712,7 @@ void BattleGround::SendRewardMarkByMail(Player *plr,uint32 mark, uint32 count)
         // subject: item name
         std::string subject = markProto->Name1;
         int loc_idx = plr->GetSession()->GetSessionDbLocaleIndex();
-        if (loc_idx >= 0 )
+        if (loc_idx >= 0)
             if (ItemLocale const *il = objmgr.GetItemLocale(markProto->ItemId))
                 if (il->Name.size() > size_t(loc_idx) && !il->Name[loc_idx].empty())
                     subject = il->Name[loc_idx];
@@ -1225,7 +1225,7 @@ void BattleGround::DoorClose(uint32 type)
     if (obj)
     {
         //if doors are open, close it
-        if (obj->getLootState() == GO_ACTIVATED && !obj->GetGoState() )
+        if (obj->getLootState() == GO_ACTIVATED && !obj->GetGoState())
         {
             //change state to allow door to be closed
             obj->SetLootState(GO_READY);
@@ -1274,13 +1274,13 @@ void BattleGround::SpawnBGObject(uint32 type, uint32 respawntime)
     Map * map = MapManager::Instance().FindMap(GetMapId(),GetInstanceID());
     if (!map)
         return;
-    if (respawntime == 0 )
+    if (respawntime == 0)
     {
         GameObject *obj = HashMapHolder<GameObject>::Find(m_BgObjects[type]);
         if (obj)
         {
             //we need to change state from GO_JUST_DEACTIVATED to GO_READY in case battleground is starting again
-            if (obj->getLootState() == GO_JUST_DEACTIVATED )
+            if (obj->getLootState() == GO_JUST_DEACTIVATED)
                 obj->SetLootState(GO_READY);
             obj->SetRespawnTime(0);
             map->Add(obj);
@@ -1486,13 +1486,13 @@ void BattleGround::HandleTriggerBuff(uint64 const& go_guid)
     //randomly select new buff
     uint8 buff = urand(0, 2);
     uint32 entry = obj->GetEntry();
-    if (m_BuffChange && entry != Buff_Entries[buff] )
+    if (m_BuffChange && entry != Buff_Entries[buff])
     {
         //despawn current buff
         SpawnBGObject(index, RESPAWN_ONE_DAY);
         //set index for new one
         for (uint8 currBuffTypeIndex = 0; currBuffTypeIndex < 3; ++currBuffTypeIndex)
-            if (entry == Buff_Entries[currBuffTypeIndex] )
+            if (entry == Buff_Entries[currBuffTypeIndex])
             {
                 index -= currBuffTypeIndex;
                 index += buff;
@@ -1502,7 +1502,7 @@ void BattleGround::HandleTriggerBuff(uint64 const& go_guid)
     SpawnBGObject(index, BUFF_RESPAWN_TIME);
 }
 
-void BattleGround::HandleKillPlayer(Player *player, Player *killer )
+void BattleGround::HandleKillPlayer(Player *player, Player *killer)
 {
     //keep in mind that for arena this will have to be changed a bit
 
@@ -1510,7 +1510,7 @@ void BattleGround::HandleKillPlayer(Player *player, Player *killer )
     UpdatePlayerScore(player, SCORE_DEATHS, 1);
 
     // add +1 kills to group and +1 killing_blows to killer
-    if (killer )
+    if (killer)
     {
         UpdatePlayerScore(killer, SCORE_HONORABLE_KILLS, 1);
         UpdatePlayerScore(killer, SCORE_KILLING_BLOWS, 1);
@@ -1522,13 +1522,13 @@ void BattleGround::HandleKillPlayer(Player *player, Player *killer )
             if (!plr || plr == killer)
                 continue;
 
-            if (plr->GetTeam() == killer->GetTeam() && plr->IsAtGroupRewardDistance(player) )
+            if (plr->GetTeam() == killer->GetTeam() && plr->IsAtGroupRewardDistance(player))
                 UpdatePlayerScore(plr, SCORE_HONORABLE_KILLS, 1);
         }
     }
 
     // to be able to remove insignia -- ONLY IN BattleGrounds
-    if (!isArena() )
+    if (!isArena())
         player->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
 }
 
@@ -1618,12 +1618,12 @@ void BattleGround::HandleKillUnit(Creature *creature, Player *killer)
 // This method should be called when player logs out from running battleground
 void BattleGround::EventPlayerLoggedOut(Player* player)
 {
-    if (GetStatus() == STATUS_IN_PROGRESS )
+    if (GetStatus() == STATUS_IN_PROGRESS)
     {
-        if (isBattleGround() )
+        if (isBattleGround())
             EventPlayerDroppedFlag(player);
     }
 
-    if (isArena() )
+    if (isArena())
         player->LeaveBattleground();
 }

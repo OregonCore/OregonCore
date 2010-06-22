@@ -823,7 +823,7 @@ void WorldSession::HandleAreaTriggerOpcode(WorldPacket & recv_data)
 
         if ((fabs(rotateDx) > atEntry->box_x/2 + delta) ||
             (fabs(rotateDy) > atEntry->box_y/2 + delta) ||
-            (fabs(dz) > atEntry->box_z/2 + delta) )
+            (fabs(dz) > atEntry->box_z/2 + delta))
         {
             sLog.outDebug("Player '%s' (GUID: %u) too far (1/2 box X: %f 1/2 box Y: %f 1/2 box Z: %f rotate dX: %f rotate dY: %f dZ:%f), ignore Area Trigger ID: %u",
                 pl->GetName(), pl->GetGUIDLow(), atEntry->box_x/2, atEntry->box_y/2, atEntry->box_z/2, rotateDx, rotateDy, dz, Trigger_ID);
@@ -1485,7 +1485,7 @@ void WorldSession::HandleDismountOpcode(WorldPacket & /*recv_data*/)
     _player->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
 }
 
-void WorldSession::HandleMoveFlyModeChangeAckOpcode(WorldPacket & recv_data )
+void WorldSession::HandleMoveFlyModeChangeAckOpcode(WorldPacket & recv_data)
 {
     // fly mode on/off
     sLog.outDebug("WORLD: CMSG_MOVE_SET_CAN_FLY_ACK");

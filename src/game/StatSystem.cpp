@@ -216,7 +216,7 @@ void Player::UpdateMaxPower(Powers power)
     SetMaxPower(power, uint32(value));
 }
 
-void Player::UpdateAttackPowerAndDamage(bool ranged )
+void Player::UpdateAttackPowerAndDamage(bool ranged)
 {
     float val2 = 0.0f;
     float level = float(getLevel());
@@ -384,7 +384,7 @@ void Player::CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, fl
     if (IsInFeralForm())                                    //check if player is druid and in cat or bear forms
     {
         uint32 lvl = getLevel();
-        if (lvl > 60 ) lvl = 60;
+        if (lvl > 60) lvl = 60;
 
         weapon_mindamage = lvl*0.85*att_speed;
         weapon_maxdamage = lvl*1.25*att_speed;
@@ -800,15 +800,15 @@ bool Pet::UpdateStats(Stats stat)
     float value  = GetTotalStatValue(stat);
 
     Unit *owner = GetOwner();
-    if (stat == STAT_STAMINA )
+    if (stat == STAT_STAMINA)
     {
         if (owner && (getPetType() == HUNTER_PET || owner->getClass() == CLASS_WARLOCK))
             value += float(owner->GetStat(stat)) * 0.3f;
     }
                                                             //warlock's and mage's pets gain 30% of owner's intellect
-    else if (stat == STAT_INTELLECT && getPetType() == SUMMON_PET )
+    else if (stat == STAT_INTELLECT && getPetType() == SUMMON_PET)
     {
-        if (owner && (owner->getClass() == CLASS_WARLOCK || owner->getClass() == CLASS_MAGE) )
+        if (owner && (owner->getClass() == CLASS_WARLOCK || owner->getClass() == CLASS_MAGE))
             value += float(owner->GetStat(stat)) * 0.3f;
     }
 

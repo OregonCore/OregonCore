@@ -33,7 +33,7 @@
 #include "SpellMgr.h"
 #include "CreatureAIImpl.h"
 
-bool CreatureEventAIHolder::UpdateRepeatTimer(Creature* creature, uint32 repeatMin, uint32 repeatMax )
+bool CreatureEventAIHolder::UpdateRepeatTimer(Creature* creature, uint32 repeatMin, uint32 repeatMax)
 {
     if (repeatMin == repeatMax)
         Time = repeatMin;
@@ -51,12 +51,12 @@ bool CreatureEventAIHolder::UpdateRepeatTimer(Creature* creature, uint32 repeatM
 
 int CreatureEventAI::Permissible(const Creature *creature)
 {
-    if (creature->GetAIName() == "EventAI" )
+    if (creature->GetAIName() == "EventAI")
         return PERMIT_BASE_SPECIAL;
     return PERMIT_BASE_NO;
 }
 
-CreatureEventAI::CreatureEventAI(Creature *c ) : CreatureAI(c)
+CreatureEventAI::CreatureEventAI(Creature *c) : CreatureAI(c)
 {
     // Need make copy for filter unneeded steps and safe in case table reload
     CreatureEventAI_Event_Map::const_iterator CreatureEvents = CreatureEAI_Mgr.GetCreatureEventAIMap().find(m_creature->GetEntry());
@@ -71,7 +71,7 @@ CreatureEventAI::CreatureEventAI(Creature *c ) : CreatureAI(c)
             if ((*i).event_flags & EFLAG_DEBUG_ONLY)
                 continue;
             #endif
-            if (((*i).event_flags & (EFLAG_HEROIC | EFLAG_NORMAL)) && m_creature->GetMap()->IsDungeon() )
+            if (((*i).event_flags & (EFLAG_HEROIC | EFLAG_NORMAL)) && m_creature->GetMap()->IsDungeon())
             {
                 if ((m_creature->GetMap()->IsHeroic() && (*i).event_flags & EFLAG_HEROIC) ||
                     (!m_creature->GetMap()->IsHeroic() && (*i).event_flags & EFLAG_NORMAL))
@@ -1092,7 +1092,7 @@ inline Unit* CreatureEventAI::SelectUnit(AttackingTarget target, uint32 position
     {
         case ATTACKING_TARGET_RANDOM:
         {
-            advance (i , position +  (rand() % (m_threatlist.size() - position ) ));
+            advance (i , position +  (rand() % (m_threatlist.size() - position)));
             return Unit::GetUnit(*m_creature,(*i)->getUnitGuid());
         }
         case ATTACKING_TARGET_TOPAGGRO:
@@ -1337,7 +1337,7 @@ void CreatureEventAI::ReceiveEmote(Player* pPlayer, uint32 text_emote)
     }
 }
 
-void CreatureEventAI::DamageTaken(Unit* done_by, uint32& damage )
+void CreatureEventAI::DamageTaken(Unit* done_by, uint32& damage)
 {
     if (InvinceabilityHpLevel > 0 && m_creature->GetHealth() < InvinceabilityHpLevel+damage)
     {

@@ -60,7 +60,7 @@ bool WorldSession::processChatmessageFurtherAfterSecurityChecks(std::string& msg
     return true;
 }
 
-void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data )
+void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
 {
     uint32 type;
     uint32 lang;
@@ -244,11 +244,11 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data )
                 return;
             }
 
-            if (!sWorld.getConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_CHAT) && tSecurity == SEC_PLAYER && pSecurity == SEC_PLAYER )
+            if (!sWorld.getConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_CHAT) && tSecurity == SEC_PLAYER && pSecurity == SEC_PLAYER)
             {
                 uint32 sidea = GetPlayer()->GetTeam();
                 uint32 sideb = player->GetTeam();
-                if (sidea != sideb )
+                if (sidea != sideb)
                 {
                     WorldPacket data(SMSG_CHAT_PLAYER_NOT_FOUND, (to.size()+1));
                     data<<to;
@@ -530,7 +530,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data )
             std::string msg;
             recv_data >> msg;
 
-            if ((msg.empty() || !_player->isAFK()) && !_player->isInCombat() )
+            if ((msg.empty() || !_player->isAFK()) && !_player->isInCombat())
             {
                 if (!_player->isAFK())
                 {
@@ -569,7 +569,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data )
     }
 }
 
-void WorldSession::HandleEmoteOpcode(WorldPacket & recv_data )
+void WorldSession::HandleEmoteOpcode(WorldPacket & recv_data)
 {
     if (!GetPlayer()->isAlive())
         return;
@@ -579,7 +579,7 @@ void WorldSession::HandleEmoteOpcode(WorldPacket & recv_data )
     GetPlayer()->HandleEmoteCommand(emote);
 }
 
-void WorldSession::HandleTextEmoteOpcode(WorldPacket & recv_data )
+void WorldSession::HandleTextEmoteOpcode(WorldPacket & recv_data)
 {
     if (!GetPlayer()->isAlive())
         return;
@@ -633,7 +633,7 @@ void WorldSession::HandleTextEmoteOpcode(WorldPacket & recv_data )
         data << (uint32)text_emote;
         data << emoteNum;
         data << (uint32)namlen;
-        if (namlen > 1 )
+        if (namlen > 1)
         {
             data.append(nam, namlen);
         }
@@ -650,7 +650,7 @@ void WorldSession::HandleTextEmoteOpcode(WorldPacket & recv_data )
     }
 }
 
-void WorldSession::HandleChatIgnoredOpcode(WorldPacket& recv_data )
+void WorldSession::HandleChatIgnoredOpcode(WorldPacket& recv_data)
 {
     uint64 iguid;
     uint8 unk;

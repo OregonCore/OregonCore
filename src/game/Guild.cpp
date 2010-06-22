@@ -215,7 +215,7 @@ bool Guild::LoadGuildFromDB(uint32 GuildId)
     CreatedYear  = (dTime/10000)%10000;
 
     // If the leader does not exist attempt to promote another member
-    if (!objmgr.GetPlayerAccountIdByGUID(leaderGuid ))
+    if (!objmgr.GetPlayerAccountIdByGUID(leaderGuid))
     {
         DelMember(leaderGuid);
 
@@ -393,7 +393,7 @@ bool Guild::FillPlayerData(uint64 guid, MemberSlot* memslot)
 void Guild::LoadPlayerStatsByGuid(uint64 guid)
 {
     MemberList::iterator itr = members.find(GUID_LOPART(guid));
-    if (itr == members.end() )
+    if (itr == members.end())
         return;
 
     Player *pl = ObjectAccessor::FindPlayer(guid);
@@ -481,7 +481,7 @@ void Guild::DelMember(uint64 guid, bool isDisbanding)
 void Guild::ChangeRank(uint64 guid, uint32 newRank)
 {
     MemberList::iterator itr = members.find(GUID_LOPART(guid));
-    if (itr != members.end() )
+    if (itr != members.end())
         itr->second.RankId = newRank;
 
     Player *player = objmgr.GetPlayer(guid);
@@ -495,7 +495,7 @@ void Guild::ChangeRank(uint64 guid, uint32 newRank)
 void Guild::SetPNOTE(uint64 guid,std::string pnote)
 {
     MemberList::iterator itr = members.find(GUID_LOPART(guid));
-    if (itr == members.end() )
+    if (itr == members.end())
         return;
 
     itr->second.Pnote = pnote;
@@ -508,7 +508,7 @@ void Guild::SetPNOTE(uint64 guid,std::string pnote)
 void Guild::SetOFFNOTE(uint64 guid,std::string offnote)
 {
     MemberList::iterator itr = members.find(GUID_LOPART(guid));
-    if (itr == members.end() )
+    if (itr == members.end())
         return;
     itr->second.OFFnote = offnote;
     // offnote now can be used for encoding to DB
@@ -527,7 +527,7 @@ void Guild::BroadcastToGuild(WorldSession *session, const std::string& msg, uint
         {
             Player *pl = ObjectAccessor::FindPlayer(MAKE_NEW_GUID(itr->first, 0, HIGHGUID_PLAYER));
 
-            if (pl && pl->GetSession() && HasRankRight(pl->GetRank(),GR_RIGHT_GCHATLISTEN) && !pl->GetSocial()->HasIgnore(session->GetPlayer()->GetGUIDLow()) )
+            if (pl && pl->GetSession() && HasRankRight(pl->GetRank(),GR_RIGHT_GCHATLISTEN) && !pl->GetSocial()->HasIgnore(session->GetPlayer()->GetGUIDLow()))
                 pl->GetSession()->SendPacket(&data);
         }
     }
@@ -773,7 +773,7 @@ void Guild::SetEmblem(uint32 emblemStyle, uint32 emblemColor, uint32 borderStyle
 void Guild::UpdateLogoutTime(uint64 guid)
 {
     MemberList::iterator itr = members.find(GUID_LOPART(guid));
-    if (itr == members.end() )
+    if (itr == members.end())
         return;
 
     itr->second.logout_time = time(NULL);
@@ -1219,7 +1219,7 @@ void Guild::UnloadGuildBank()
 {
     if (!m_bankloaded)
         return;
-    for (uint8 i = 0 ; i < purchased_tabs ; ++i )
+    for (uint8 i = 0 ; i < purchased_tabs ; ++i)
     {
         for (uint8 j = 0 ; j < GUILD_BANK_MAX_SLOTS ; ++j)
         {
@@ -1260,7 +1260,7 @@ bool Guild::MemberMoneyWithdraw(uint32 amount, uint32 LowGuid)
     if (MoneyWithDrawRight < WITHDRAW_MONEY_UNLIMITED)
     {
         MemberList::iterator itr = members.find(LowGuid);
-        if (itr == members.end() )
+        if (itr == members.end())
             return false;
         itr->second.BankRemMoney -= amount;
         CharacterDatabase.PExecute("UPDATE guild_member SET BankRemMoney='%u' WHERE guildid='%u' AND guid='%u'",
@@ -1291,7 +1291,7 @@ bool Guild::MemberItemWithdraw(uint8 TabId, uint32 LowGuid)
     if (SlotsWithDrawRight < WITHDRAW_SLOT_UNLIMITED)
     {
         MemberList::iterator itr = members.find(LowGuid);
-        if (itr == members.end() )
+        if (itr == members.end())
             return false;
         --itr->second.BankRemSlotsTab[TabId];
         CharacterDatabase.PExecute("UPDATE guild_member SET BankRemSlotsTab%u='%u' WHERE guildid='%u' AND guid='%u'",
@@ -1303,7 +1303,7 @@ bool Guild::MemberItemWithdraw(uint8 TabId, uint32 LowGuid)
 bool Guild::IsMemberHaveRights(uint32 LowGuid, uint8 TabId, uint32 rights) const
 {
     MemberList::const_iterator itr = members.find(LowGuid);
-    if (itr == members.end() )
+    if (itr == members.end())
         return false;
 
     if (itr->second.RankId == GR_GUILDMASTER)
@@ -1315,7 +1315,7 @@ bool Guild::IsMemberHaveRights(uint32 LowGuid, uint8 TabId, uint32 rights) const
 uint32 Guild::GetMemberSlotWithdrawRem(uint32 LowGuid, uint8 TabId)
 {
     MemberList::iterator itr = members.find(LowGuid);
-    if (itr == members.end() )
+    if (itr == members.end())
         return 0;
 
     if (itr->second.RankId == GR_GUILDMASTER)
@@ -1338,7 +1338,7 @@ uint32 Guild::GetMemberSlotWithdrawRem(uint32 LowGuid, uint8 TabId)
 uint32 Guild::GetMemberMoneyWithdrawRem(uint32 LowGuid)
 {
     MemberList::iterator itr = members.find(LowGuid);
-    if (itr == members.end() )
+    if (itr == members.end())
         return 0;
 
     if (itr->second.RankId == GR_GUILDMASTER)
@@ -1608,7 +1608,7 @@ void Guild::RenumBankLogs()
     LogMaxGuid = fields[1].GetUInt32()+1;
 }
 
-bool Guild::AddGBankItemToDB(uint32 GuildId, uint32 BankTab , uint32 BankTabSlot , uint32 GUIDLow, uint32 Entry )
+bool Guild::AddGBankItemToDB(uint32 GuildId, uint32 BankTab , uint32 BankTabSlot , uint32 GUIDLow, uint32 Entry)
 {
     CharacterDatabase.PExecute("DELETE FROM guild_bank_item WHERE guildid = '%u' AND TabId = '%u'AND SlotId = '%u'", GuildId, BankTab, BankTabSlot);
     CharacterDatabase.PExecute("INSERT INTO guild_bank_item (guildid,TabId,SlotId,item_guid,item_entry) "
@@ -1616,7 +1616,7 @@ bool Guild::AddGBankItemToDB(uint32 GuildId, uint32 BankTab , uint32 BankTabSlot
     return true;
 }
 
-void Guild::AppendDisplayGuildBankSlot(WorldPacket& data, GuildBankTab const *tab, int slot )
+void Guild::AppendDisplayGuildBankSlot(WorldPacket& data, GuildBankTab const *tab, int slot)
 {
     Item *pItem = tab->Slots[slot];
     uint32 entry = pItem ? pItem->GetEntry() : 0;
@@ -1645,14 +1645,14 @@ void Guild::AppendDisplayGuildBankSlot(WorldPacket& data, GuildBankTab const *ta
     }
 }
 
-Item* Guild::StoreItem(uint8 tabId, GuildItemPosCountVec const& dest, Item* pItem )
+Item* Guild::StoreItem(uint8 tabId, GuildItemPosCountVec const& dest, Item* pItem)
 {
-    if (!pItem )
+    if (!pItem)
         return NULL;
 
     Item* lastItem = pItem;
 
-    for (GuildItemPosCountVec::const_iterator itr = dest.begin(); itr != dest.end(); )
+    for (GuildItemPosCountVec::const_iterator itr = dest.begin(); itr != dest.end();)
     {
         uint8 slot = itr->slot;
         uint32 count = itr->count;
@@ -1672,16 +1672,16 @@ Item* Guild::StoreItem(uint8 tabId, GuildItemPosCountVec const& dest, Item* pIte
 }
 
 // Return stored item (if stored to stack, it can diff. from pItem). And pItem ca be deleted in this case.
-Item* Guild::_StoreItem(uint8 tab, uint8 slot, Item *pItem, uint32 count, bool clone )
+Item* Guild::_StoreItem(uint8 tab, uint8 slot, Item *pItem, uint32 count, bool clone)
 {
-    if (!pItem )
+    if (!pItem)
         return NULL;
 
     sLog.outDebug("GUILD STORAGE: StoreItem tab = %u, slot = %u, item = %u, count = %u", tab, slot, pItem->GetEntry(), count);
 
     Item* pItem2 = m_TabListMap[tab]->Slots[slot];
 
-    if (!pItem2 )
+    if (!pItem2)
     {
         if (clone)
             pItem = pItem->CloneItem(count);
@@ -1718,14 +1718,14 @@ Item* Guild::_StoreItem(uint8 tab, uint8 slot, Item *pItem, uint32 count, bool c
     }
 }
 
-void Guild::RemoveItem(uint8 tab, uint8 slot )
+void Guild::RemoveItem(uint8 tab, uint8 slot)
 {
     m_TabListMap[tab]->Slots[slot] = NULL;
     CharacterDatabase.PExecute("DELETE FROM guild_bank_item WHERE guildid='%u' AND TabId='%u' AND SlotId='%u'",
         GetId(), uint32(tab), uint32(slot));
 }
 
-uint8 Guild::_CanStoreItem_InSpecificSlot(uint8 tab, uint8 slot, GuildItemPosCountVec &dest, uint32& count, bool swap, Item* pSrcItem ) const
+uint8 Guild::_CanStoreItem_InSpecificSlot(uint8 tab, uint8 slot, GuildItemPosCountVec &dest, uint32& count, bool swap, Item* pSrcItem) const
 {
     Item* pItem2 = m_TabListMap[tab]->Slots[slot];
 
@@ -1736,7 +1736,7 @@ uint8 Guild::_CanStoreItem_InSpecificSlot(uint8 tab, uint8 slot, GuildItemPosCou
     uint32 need_space;
 
     // empty specific slot - check item fit to slot
-    if (!pItem2 || swap )
+    if (!pItem2 || swap)
     {
         // non empty stack with space
         need_space = pSrcItem->GetMaxStackCount();
@@ -1768,7 +1768,7 @@ uint8 Guild::_CanStoreItem_InSpecificSlot(uint8 tab, uint8 slot, GuildItemPosCou
     return EQUIP_ERR_OK;
 }
 
-uint8 Guild::_CanStoreItem_InTab(uint8 tab, GuildItemPosCountVec &dest, uint32& count, bool merge, Item* pSrcItem, uint8 skip_slot ) const
+uint8 Guild::_CanStoreItem_InTab(uint8 tab, GuildItemPosCountVec &dest, uint32& count, bool merge, Item* pSrcItem, uint8 skip_slot) const
 {
     for (uint32 j = 0; j < GUILD_BANK_MAX_SLOTS; j++)
     {
@@ -1786,9 +1786,9 @@ uint8 Guild::_CanStoreItem_InTab(uint8 tab, GuildItemPosCountVec &dest, uint32& 
         if ((pItem2!=NULL)!=merge)
             continue;
 
-        if (pItem2 )
+        if (pItem2)
         {
-            if (pItem2->GetEntry() == pSrcItem->GetEntry() && pItem2->GetCount() < pSrcItem->GetMaxStackCount() )
+            if (pItem2->GetEntry() == pSrcItem->GetEntry() && pItem2->GetCount() < pSrcItem->GetMaxStackCount())
             {
                 uint32 need_space = pSrcItem->GetMaxStackCount() - pItem2->GetCount();
                 if (need_space > count)
@@ -1825,7 +1825,7 @@ uint8 Guild::_CanStoreItem_InTab(uint8 tab, GuildItemPosCountVec &dest, uint32& 
     return EQUIP_ERR_OK;
 }
 
-uint8 Guild::CanStoreItem(uint8 tab, uint8 slot, GuildItemPosCountVec &dest, uint32 count, Item *pItem, bool swap ) const
+uint8 Guild::CanStoreItem(uint8 tab, uint8 slot, GuildItemPosCountVec &dest, uint32 count, Item *pItem, bool swap) const
 {
     sLog.outDebug("GUILD STORAGE: CanStoreItem tab = %u, slot = %u, item = %u, count = %u", tab, slot, pItem->GetEntry(), count);
 
@@ -1836,7 +1836,7 @@ uint8 Guild::CanStoreItem(uint8 tab, uint8 slot, GuildItemPosCountVec &dest, uin
         return EQUIP_ERR_CANT_DROP_SOULBOUND;
 
     // in specific slot
-    if (slot != NULL_SLOT )
+    if (slot != NULL_SLOT)
     {
         uint8 res = _CanStoreItem_InSpecificSlot(tab,slot,dest,count,swap,pItem);
         if (res!=EQUIP_ERR_OK)
@@ -1849,7 +1849,7 @@ uint8 Guild::CanStoreItem(uint8 tab, uint8 slot, GuildItemPosCountVec &dest, uin
     // not specific slot or have spece for partly store only in specific slot
 
     // search stack in tab for merge to
-    if (pItem->GetMaxStackCount() > 1 )
+    if (pItem->GetMaxStackCount() > 1)
     {
         uint8 res = _CanStoreItem_InTab(tab,dest,count,true,pItem,slot);
         if (res!=EQUIP_ERR_OK)

@@ -272,7 +272,7 @@ void InstanceSaveManager::CleanupInstances()
     // first, obtain total instance set
     std::set< uint32 > InstanceSet;
     QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT id FROM instance");
-    if (result )
+    if (result)
     {
         do
         {
@@ -284,7 +284,7 @@ void InstanceSaveManager::CleanupInstances()
 
     // creature_respawn
     result = WorldDatabase.Query("SELECT DISTINCT(instance) FROM creature_respawn WHERE instance <> 0");
-    if (result )
+    if (result)
     {
         do
         {
@@ -297,7 +297,7 @@ void InstanceSaveManager::CleanupInstances()
 
     // gameobject_respawn
     result = WorldDatabase.Query("SELECT DISTINCT(instance) FROM gameobject_respawn WHERE instance <> 0");
-    if (result )
+    if (result)
     {
         do
         {
@@ -325,7 +325,7 @@ void InstanceSaveManager::PackInstances()
     // any associations to ids not in this table are assumed to be
     // cleaned already in CleanupInstances
     QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT id FROM instance");
-    if (result )
+    if (result)
     {
         do
         {
@@ -375,7 +375,7 @@ void InstanceSaveManager::LoadResetTimes()
     typedef std::map<uint32, std::pair<uint32, uint64> > ResetTimeMapType;
     ResetTimeMapType InstResetTime;
     QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT id, map, resettime FROM instance WHERE resettime > 0");
-    if (result )
+    if (result)
     {
         do
         {
@@ -390,7 +390,7 @@ void InstanceSaveManager::LoadResetTimes()
 
         // update reset time for normal instances with the max creature respawn time + X hours
         result = WorldDatabase.Query("SELECT MAX(respawntime), instance FROM creature_respawn WHERE instance > 0 GROUP BY instance");
-        if (result )
+        if (result)
         {
             do
             {

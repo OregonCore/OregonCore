@@ -57,7 +57,7 @@ bool OutdoorPvPObjectiveZM_Beacon::HandlePlayerEnter(Player *plr)
     if (OutdoorPvPObjective::HandlePlayerEnter(plr))
     {
         plr->SendUpdateWorldState(ZMBeaconInfo[m_TowerType].slider_disp, 1);
-        uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase ) * 100.0f);
+        uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase) * 100.0f);
         plr->SendUpdateWorldState(ZMBeaconInfo[m_TowerType].slider_pos, phase);
         plr->SendUpdateWorldState(ZMBeaconInfo[m_TowerType].slider_n, m_NeutralValue);
         return true;
@@ -93,14 +93,14 @@ bool OutdoorPvPObjectiveZM_Beacon::Update(uint32 diff)
         if (m_OldState != m_State)
         {
             // if changing from controlling alliance to horde
-            if (m_OldState == OBJECTIVESTATE_ALLIANCE )
+            if (m_OldState == OBJECTIVESTATE_ALLIANCE)
             {
                 if (((OutdoorPvPZM*)m_PvP)->m_AllianceTowersControlled)
                     ((OutdoorPvPZM*)m_PvP)->m_AllianceTowersControlled--;
                 sWorld.SendZoneText(ZM_GRAVEYARD_ZONE,objmgr.GetOregonStringForDBCLocale(ZMBeaconLooseA[m_TowerType]));
             }
             // if changing from controlling horde to alliance
-            else if (m_OldState == OBJECTIVESTATE_HORDE )
+            else if (m_OldState == OBJECTIVESTATE_HORDE)
             {
                 if (((OutdoorPvPZM*)m_PvP)->m_HordeTowersControlled)
                     ((OutdoorPvPZM*)m_PvP)->m_HordeTowersControlled--;
@@ -138,7 +138,7 @@ bool OutdoorPvPObjectiveZM_Beacon::Update(uint32 diff)
             // send this too, sometimes the slider disappears, dunno why :(
             SendUpdateWorldState(ZMBeaconInfo[m_TowerType].slider_disp, 1);
             // send these updates to only the ones in this objective
-            uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase ) * 100.0f);
+            uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase) * 100.0f);
             SendUpdateWorldState(ZMBeaconInfo[m_TowerType].slider_pos, phase);
             SendUpdateWorldState(ZMBeaconInfo[m_TowerType].slider_n, m_NeutralValue);
         }

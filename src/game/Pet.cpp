@@ -144,7 +144,7 @@ void Pet::RemoveFromWorld()
     }
 }
 
-bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool current )
+bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool current)
 {
     uint32 ownerid = owner->GetGUIDLow();
 
@@ -260,7 +260,7 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
     SetUInt32Value(UNIT_FIELD_PETEXPERIENCE, fields[5].GetUInt32());
     SetUInt64Value(UNIT_FIELD_CREATEDBY, owner->GetGUID());
 
-    SetReactState(ReactStates(fields[6].GetUInt8() ));
+    SetReactState(ReactStates(fields[6].GetUInt8()));
     m_loyaltyPoints = fields[7].GetInt32();
 
     uint32 savedhealth = fields[13].GetUInt32();
@@ -285,7 +285,7 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
 
         int index;
         Tokens::iterator iter;
-        for (iter = tokens.begin(), index = 0; index < 10; ++iter, ++index )
+        for (iter = tokens.begin(), index = 0; index < 10; ++iter, ++index)
         {
             m_charmInfo->GetActionBarEntry(index)->Type = atol((*iter).c_str());
             ++iter;
@@ -543,11 +543,11 @@ void Pet::Update(uint32 diff)
     if (m_removed)                                           // pet already removed, just wait in remove queue, no updates
         return;
 
-    switch(m_deathState )
+    switch(m_deathState)
     {
         case CORPSE:
         {
-            if (m_deathTimer <= diff )
+            if (m_deathTimer <= diff)
             {
                 assert(getPetType()!=SUMMON_PET && "Must be already removed.");
                 Remove(PET_SAVE_NOT_IN_SLOT);               //hunters' pets never get removed because of death, NEVER!
@@ -567,7 +567,7 @@ void Pet::Update(uint32 diff)
 
             if (isControlled())
             {
-                if (owner->GetPetGUID() != GetGUID() )
+                if (owner->GetPetGUID() != GetGUID())
                 {
                     Remove(getPetType()==HUNTER_PET?PET_SAVE_AS_DELETED:PET_SAVE_NOT_IN_SLOT);
                     return;
@@ -875,7 +875,7 @@ void Pet::GivePetXP(uint32 xp)
     if (getPetType() != HUNTER_PET)
         return;
 
-    if (xp < 1 )
+    if (xp < 1)
         return;
 
     if (!isAlive())
@@ -897,7 +897,7 @@ void Pet::GivePetXP(uint32 xp)
         return;
     }
 
-    while (newXP >= nextLvlXP && level < sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL) )
+    while (newXP >= nextLvlXP && level < sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL))
     {
         newXP -= nextLvlXP;
 
@@ -975,7 +975,7 @@ bool Pet::CreateBaseAtCreature(Creature* creature)
     SetUInt32Value(UNIT_NPC_FLAGS, 0);
 
     CreatureFamilyEntry const* cFamily = sCreatureFamilyStore.LookupEntry(creature->GetCreatureInfo()->family);
-    if (char* familyname = cFamily->Name[sWorld.GetDefaultDbcLocale()] )
+    if (char* familyname = cFamily->Name[sWorld.GetDefaultDbcLocale()])
         SetName(familyname);
     else
         SetName(creature->GetName());
@@ -1455,7 +1455,7 @@ void Pet::_SaveAuras()
                     for (i = 0; i < 3; i++)
                         if (spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_STEALTH ||
                             spellInfo->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA_OWNER ||
-                            spellInfo->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA_PET )
+                            spellInfo->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA_PET)
                             break;
 
                     if (i == 3)

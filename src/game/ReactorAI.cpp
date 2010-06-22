@@ -30,7 +30,7 @@
 int
 ReactorAI::Permissible(const Creature *creature)
 {
-    if (creature->isCivilian() || creature->IsNeutralToAll() )
+    if (creature->isCivilian() || creature->IsNeutralToAll())
         return PERMIT_BASE_REACTIVE;
 
     return PERMIT_BASE_NO;
@@ -48,7 +48,7 @@ ReactorAI::UpdateAI(const uint32 /*time_diff*/)
     if (!UpdateVictim())
         return;
 
-    if (m_creature->isAttackReady() )
+    if (m_creature->isAttackReady())
     {
         if (m_creature->IsWithinMeleeRange(m_creature->getVictim()))
         {

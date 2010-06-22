@@ -124,14 +124,14 @@ class OREGON_DLL_DECL ObjectAccessor : public Oregon::Singleton<ObjectAccessor, 
             if (!obj || obj->GetMapId() != mapid) return NULL;
 
             CellPair p = Oregon::ComputeCellPair(x,y);
-            if (p.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || p.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP )
+            if (p.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || p.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
             {
                 sLog.outError("ObjectAccessor::GetObjectInWorld: invalid coordinates supplied X:%f Y:%f grid cell [%u:%u]", x, y, p.x_coord, p.y_coord);
                 return NULL;
             }
 
             CellPair q = Oregon::ComputeCellPair(obj->GetPositionX(),obj->GetPositionY());
-            if (q.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || q.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP )
+            if (q.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || q.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
             {
                 sLog.outError("ObjectAccessor::GetObjecInWorld: object (GUID: %u TypeId: %u) has invalid coordinates X:%f Y:%f grid cell [%u:%u]", obj->GetGUIDLow(), obj->GetTypeId(), obj->GetPositionX(), obj->GetPositionY(), q.x_coord, q.y_coord);
                 return NULL;
@@ -177,7 +177,7 @@ class OREGON_DLL_DECL ObjectAccessor : public Oregon::Singleton<ObjectAccessor, 
             Guard guard(i_updateGuard);
 
             std::set<Object *>::iterator iter2 = std::find(i_objects.begin(), i_objects.end(), (Object *)pl);
-            if (iter2 != i_objects.end() )
+            if (iter2 != i_objects.end())
                 i_objects.erase(iter2);
         }
 

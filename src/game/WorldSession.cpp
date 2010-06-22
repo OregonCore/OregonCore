@@ -498,33 +498,33 @@ void WorldSession::SendNotification(int32 string_id,...)
     }
 }
 
-const char * WorldSession::GetOregonString(int32 entry ) const
+const char * WorldSession::GetOregonString(int32 entry) const
 {
     return objmgr.GetOregonString(entry,GetSessionDbLocaleIndex());
 }
 
-void WorldSession::Handle_NULL(WorldPacket& recvPacket )
+void WorldSession::Handle_NULL(WorldPacket& recvPacket)
 {
     sLog.outError("SESSION: received unhandled opcode %s (0x%.4X)",
         LookupOpcodeName(recvPacket.GetOpcode()),
         recvPacket.GetOpcode());
 }
 
-void WorldSession::Handle_EarlyProccess(WorldPacket& recvPacket )
+void WorldSession::Handle_EarlyProccess(WorldPacket& recvPacket)
 {
     sLog.outError("SESSION: received opcode %s (0x%.4X) that must be processed in WorldSocket::OnRead",
         LookupOpcodeName(recvPacket.GetOpcode()),
         recvPacket.GetOpcode());
 }
 
-void WorldSession::Handle_ServerSide(WorldPacket& recvPacket )
+void WorldSession::Handle_ServerSide(WorldPacket& recvPacket)
 {
     sLog.outError("SESSION: received server-side opcode %s (0x%.4X)",
         LookupOpcodeName(recvPacket.GetOpcode()),
         recvPacket.GetOpcode());
 }
 
-void WorldSession::Handle_Deprecated(WorldPacket& recvPacket )
+void WorldSession::Handle_Deprecated(WorldPacket& recvPacket)
 {
     sLog.outError("SESSION: received deprecated opcode %s (0x%.4X)",
         LookupOpcodeName(recvPacket.GetOpcode()),

@@ -449,7 +449,7 @@ void ArenaTeam::BroadcastPacket(WorldPacket *packet)
     }
 }
 
-uint8 ArenaTeam::GetSlotByType(uint32 type )
+uint8 ArenaTeam::GetSlotByType(uint32 type)
 {
     switch(type)
     {

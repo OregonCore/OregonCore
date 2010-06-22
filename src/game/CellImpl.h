@@ -57,7 +57,7 @@ Cell::Visit(const CellLock<LOCK_TYPE> &l, TypeContainerVisitor<T, CONTAINER> &vi
     CellPair begin_cell = standing_cell;
     CellPair end_cell = standing_cell;
 
-    switch(district )
+    switch(district)
     {
         case ALL_DISTRICT:
         {

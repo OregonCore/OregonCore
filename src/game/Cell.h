@@ -87,22 +87,22 @@ struct OREGON_DLL_DECL Cell
             return;
         }
 
-        if (x < old_x )
+        if (x < old_x)
         {
             data.Part.reserved |= LEFT_DISTRICT;
             cell.data.Part.reserved |= RIGHT_DISTRICT;
         }
-        else if (old_x < x )
+        else if (old_x < x)
         {
             data.Part.reserved |= RIGHT_DISTRICT;
             cell.data.Part.reserved |= LEFT_DISTRICT;
         }
-        if (y < old_y )
+        if (y < old_y)
         {
             data.Part.reserved |= UPPER_DISTRICT;
             cell.data.Part.reserved |= LOWER_DISTRICT;
         }
-        else if (old_y < y )
+        else if (old_y < y)
         {
             data.Part.reserved |= LOWER_DISTRICT;
             cell.data.Part.reserved |= UPPER_DISTRICT;
@@ -170,7 +170,7 @@ struct OREGON_DLL_DECL Cell
     static CellArea CalculateCellArea(const WorldObject &obj, float radius);
 
 private:
-    template<class LOCK_TYPE, class T, class CONTAINER> void VisitCircle(const CellLock<LOCK_TYPE> &, TypeContainerVisitor<T, CONTAINER> &, Map &, const CellPair& , const CellPair& ) const;
+    template<class LOCK_TYPE, class T, class CONTAINER> void VisitCircle(const CellLock<LOCK_TYPE> &, TypeContainerVisitor<T, CONTAINER> &, Map &, const CellPair& , const CellPair&) const;
 
 };
 

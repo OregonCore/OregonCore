@@ -110,7 +110,7 @@ void Object::_InitValues()
     m_objectUpdated = false;
 }
 
-void Object::_Create(uint32 guidlow, uint32 entry, HighGuid guidhigh )
+void Object::_Create(uint32 guidlow, uint32 entry, HighGuid guidhigh)
 {
     if (!m_uint32Values) _InitValues();
 
@@ -121,7 +121,7 @@ void Object::_Create(uint32 guidlow, uint32 entry, HighGuid guidhigh )
     m_PackGUID.appendPackGUID(GetGUID());
 }
 
-void Object::BuildMovementUpdateBlock(UpdateData * data, uint32 flags ) const
+void Object::BuildMovementUpdateBlock(UpdateData * data, uint32 flags) const
 {
     ByteBuffer buf(500);
 
@@ -247,7 +247,7 @@ void Object::DestroyForPlayer(Player *target) const
     target->GetSession()->SendPacket(&data);
 }
 
-void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 flags, uint32 flags2 ) const
+void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 flags, uint32 flags2) const
 {
     *data << (uint8)flags;                                  // update flags
 
@@ -560,12 +560,12 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer * data, UpdateMask 
     // 2 specialized loops for speed optimization in non-unit case
     if (isType(TYPEMASK_UNIT))                               // unit (creature/player) case
     {
-        for (uint16 index = 0; index < m_valuesCount; index ++ )
+        for (uint16 index = 0; index < m_valuesCount; index ++)
         {
-            if (updateMask->GetBit(index ) )
+            if (updateMask->GetBit(index))
             {
                 // remove custom flag before send
-                if (index == UNIT_NPC_FLAGS )
+                if (index == UNIT_NPC_FLAGS)
                     *data << uint32(m_uint32Values[ index ] & ~(UNIT_NPC_FLAG_GUARD + UNIT_NPC_FLAG_OUTDOORPVP));
                 // FIXME: Some values at server stored in float format but must be sent to client in uint32 format
                 else if (index >= UNIT_FIELD_BASEATTACKTIME && index <= UNIT_FIELD_RANGEDATTACKTIME)
@@ -661,14 +661,14 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer * data, UpdateMask 
     }
     else if (isType(TYPEMASK_GAMEOBJECT))                    // gameobject case
     {
-        for (uint16 index = 0; index < m_valuesCount; index ++ )
+        for (uint16 index = 0; index < m_valuesCount; index ++)
         {
-            if (updateMask->GetBit(index ) )
+            if (updateMask->GetBit(index))
             {
                 // send in current format (float as float, uint32 as uint32)
-                if (index == GAMEOBJECT_DYN_FLAGS )
+                if (index == GAMEOBJECT_DYN_FLAGS)
                 {
-                    if (IsActivateToQuest )
+                    if (IsActivateToQuest)
                     {
                         switch(((GameObject*)this)->GetGoType())
                         {
@@ -693,9 +693,9 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer * data, UpdateMask 
     }
     else                                                    // other objects case (no special index checks)
     {
-        for (uint16 index = 0; index < m_valuesCount; index ++ )
+        for (uint16 index = 0; index < m_valuesCount; index ++)
         {
-            if (updateMask->GetBit(index ) )
+            if (updateMask->GetBit(index))
             {
                 // send in current format (float as float, uint32 as uint32)
                 *data << m_uint32Values[ index ];
@@ -706,7 +706,7 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer * data, UpdateMask 
 
 void Object::ClearUpdateMask(bool remove)
 {
-    for (uint16 index = 0; index < m_valuesCount; index ++ )
+    for (uint16 index = 0; index < m_valuesCount; index ++)
     {
         if (m_uint32Values_mirror[index]!= m_uint32Values[index])
             m_uint32Values_mirror[index] = m_uint32Values[index];
@@ -754,7 +754,7 @@ bool Object::LoadValues(const char* data)
 
 void Object::_SetUpdateBits(UpdateMask *updateMask, Player* /*target*/) const
 {
-    for (uint16 index = 0; index < m_valuesCount; index ++ )
+    for (uint16 index = 0; index < m_valuesCount; index ++)
     {
         if (m_uint32Values_mirror[index]!= m_uint32Values[index])
             updateMask->SetBit(index);
@@ -763,16 +763,16 @@ void Object::_SetUpdateBits(UpdateMask *updateMask, Player* /*target*/) const
 
 void Object::_SetCreateBits(UpdateMask *updateMask, Player* /*target*/) const
 {
-    for (uint16 index = 0; index < m_valuesCount; index++ )
+    for (uint16 index = 0; index < m_valuesCount; index++)
     {
         if (GetUInt32Value(index) != 0)
             updateMask->SetBit(index);
     }
 }
 
-void Object::SetInt32Value(uint16 index, int32 value )
+void Object::SetInt32Value(uint16 index, int32 value)
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true));
 
     if (m_int32Values[ index ] != value)
     {
@@ -789,9 +789,9 @@ void Object::SetInt32Value(uint16 index, int32 value )
     }
 }
 
-void Object::SetUInt32Value(uint16 index, uint32 value )
+void Object::SetUInt32Value(uint16 index, uint32 value)
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true));
 
     if (m_uint32Values[ index ] != value)
     {
@@ -808,9 +808,9 @@ void Object::SetUInt32Value(uint16 index, uint32 value )
     }
 }
 
-void Object::SetUInt64Value(uint16 index, const uint64 &value )
+void Object::SetUInt64Value(uint16 index, const uint64 &value)
 {
-    ASSERT(index + 1 < m_valuesCount || PrintIndexError(index , true ));
+    ASSERT(index + 1 < m_valuesCount || PrintIndexError(index , true));
     if (*((uint64*)&(m_uint32Values[ index ])) != value)
     {
         m_uint32Values[ index ] = *((uint32*)&value);
@@ -827,9 +827,9 @@ void Object::SetUInt64Value(uint16 index, const uint64 &value )
     }
 }
 
-void Object::SetFloatValue(uint16 index, float value )
+void Object::SetFloatValue(uint16 index, float value)
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true));
 
     if (m_floatValues[ index ] != value)
     {
@@ -846,9 +846,9 @@ void Object::SetFloatValue(uint16 index, float value )
     }
 }
 
-void Object::SetByteValue(uint16 index, uint8 offset, uint8 value )
+void Object::SetByteValue(uint16 index, uint8 offset, uint8 value)
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true));
 
     if (offset > 4)
     {
@@ -872,9 +872,9 @@ void Object::SetByteValue(uint16 index, uint8 offset, uint8 value )
     }
 }
 
-void Object::SetUInt16Value(uint16 index, uint8 offset, uint16 value )
+void Object::SetUInt16Value(uint16 index, uint8 offset, uint16 value)
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true));
 
     if (offset > 2)
     {
@@ -946,9 +946,9 @@ void Object::ApplyModPositiveFloatValue(uint16 index, float  val, bool apply)
     SetFloatValue(index,cur);
 }
 
-void Object::SetFlag(uint16 index, uint32 newFlag )
+void Object::SetFlag(uint16 index, uint32 newFlag)
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true));
     uint32 oldval = m_uint32Values[ index ];
     uint32 newval = oldval | newFlag;
 
@@ -967,9 +967,9 @@ void Object::SetFlag(uint16 index, uint32 newFlag )
     }
 }
 
-void Object::RemoveFlag(uint16 index, uint32 oldFlag )
+void Object::RemoveFlag(uint16 index, uint32 oldFlag)
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true));
     uint32 oldval = m_uint32Values[ index ];
     uint32 newval = oldval & ~oldFlag;
 
@@ -988,9 +988,9 @@ void Object::RemoveFlag(uint16 index, uint32 oldFlag )
     }
 }
 
-void Object::SetByteFlag(uint16 index, uint8 offset, uint8 newFlag )
+void Object::SetByteFlag(uint16 index, uint8 offset, uint8 newFlag)
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true));
 
     if (offset > 4)
     {
@@ -1013,9 +1013,9 @@ void Object::SetByteFlag(uint16 index, uint8 offset, uint8 newFlag )
     }
 }
 
-void Object::RemoveByteFlag(uint16 index, uint8 offset, uint8 oldFlag )
+void Object::RemoveByteFlag(uint16 index, uint8 offset, uint8 oldFlag)
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true ));
+    ASSERT(index < m_valuesCount || PrintIndexError(index , true));
 
     if (offset > 4)
     {
@@ -1076,7 +1076,7 @@ void WorldObject::SetWorldObject(bool on)
     GetMap()->AddObjectToSwitchList(this, on); 
 }
 
-void WorldObject::setActive(bool on )
+void WorldObject::setActive(bool on)
 {
     if (m_isActive == on)
         return;
@@ -1109,7 +1109,7 @@ void WorldObject::setActive(bool on )
     }
 }
 
-void WorldObject::_Create(uint32 guidlow, HighGuid guidhigh, uint32 mapid )
+void WorldObject::_Create(uint32 guidlow, HighGuid guidhigh, uint32 mapid)
 {
     Object::_Create(guidlow, 0, guidhigh);
 
@@ -1216,10 +1216,10 @@ bool WorldObject::IsWithinLOSInMap(const WorldObject* obj) const
     if (!IsInMap(obj)) return false;
     float ox,oy,oz;
     obj->GetPosition(ox,oy,oz);
-    return(IsWithinLOS(ox, oy, oz ));
+    return(IsWithinLOS(ox, oy, oz));
 }
 
-bool WorldObject::IsWithinLOS(const float ox, const float oy, const float oz ) const
+bool WorldObject::IsWithinLOS(const float ox, const float oy, const float oz) const
 {
     float x,y,z;
     GetPosition(x,y,z);
@@ -1325,7 +1325,7 @@ float WorldObject::GetAngle(const WorldObject* obj) const
 }
 
 // Return angle in range 0..2*pi
-float WorldObject::GetAngle(const float x, const float y ) const
+float WorldObject::GetAngle(const float x, const float y) const
 {
     float dx = x - GetPositionX();
     float dy = y - GetPositionY();
@@ -1344,9 +1344,9 @@ bool WorldObject::HasInArc(const float arcangle, const WorldObject* obj) const
     float arc = arcangle;
 
     // move arc to range 0.. 2*pi
-    while (arc >= 2.0f * M_PI )
+    while (arc >= 2.0f * M_PI)
         arc -=  2.0f * M_PI;
-    while (arc < 0 )
+    while (arc < 0)
         arc +=  2.0f * M_PI;
 
     float angle = GetAngle(obj);
@@ -1360,7 +1360,7 @@ bool WorldObject::HasInArc(const float arcangle, const WorldObject* obj) const
 
     float lborder =  -1 * (arc/2.0f);                       // in range -pi..0
     float rborder = (arc/2.0f);                             // in range 0..pi
-    return ((angle >= lborder ) && (angle <= rborder ));
+    return ((angle >= lborder) && (angle <= rborder));
 }
 
 void WorldObject::GetRandomPoint(float x, float y, float z, float distance, float &rand_x, float &rand_y, float &rand_z) const
@@ -1435,7 +1435,7 @@ void WorldObject::SendPlaySound(uint32 Sound, bool OnlySelf)
 {
     WorldPacket data(SMSG_PLAY_SOUND, 4);
     data << Sound;
-    if (OnlySelf && GetTypeId() == TYPEID_PLAYER )
+    if (OnlySelf && GetTypeId() == TYPEID_PLAYER)
         ToPlayer()->GetSession()->SendPacket(&data);
     else
         SendMessageToSet(&data, true); // ToSelf ignored in this case
@@ -1596,7 +1596,7 @@ void WorldObject::BuildMonsterChat(WorldPacket *data, uint8 msgtype, char const*
     *data << (uint32)(strlen(name)+1);
     *data << name;
     *data << (uint64)targetGuid;                            //Unit Target
-    if (targetGuid && !IS_PLAYER_GUID(targetGuid) )
+    if (targetGuid && !IS_PLAYER_GUID(targetGuid))
     {
         *data << (uint32)1;                                 // target name length
         *data << (uint8)0;                                  // target name
@@ -1889,7 +1889,7 @@ Creature* WorldObject::SummonTrigger(float x, float y, float z, float ang, uint3
     return summon;
 }
 
-void WorldObject::GetNearPoint2D(float &x, float &y, float distance2d, float absAngle ) const
+void WorldObject::GetNearPoint2D(float &x, float &y, float distance2d, float absAngle) const
 {
     x = GetPositionX() + (GetObjectSize() + distance2d) * cos(absAngle);
     y = GetPositionY() + (GetObjectSize() + distance2d) * sin(absAngle);
@@ -1898,7 +1898,7 @@ void WorldObject::GetNearPoint2D(float &x, float &y, float distance2d, float abs
     Oregon::NormalizeMapCoord(y);
 }
 
-void WorldObject::GetNearPoint(WorldObject const* searcher, float &x, float &y, float &z, float searcher_size, float distance2d, float absAngle ) const
+void WorldObject::GetNearPoint(WorldObject const* searcher, float &x, float &y, float &z, float searcher_size, float distance2d, float absAngle) const
 {
     GetNearPoint2D(x,y,distance2d+searcher_size,absAngle);
 

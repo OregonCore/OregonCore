@@ -297,16 +297,16 @@ void Item::SaveToDB()
             CharacterDatabase.PExecute("DELETE FROM item_instance WHERE guid = '%u'", guid);
             std::ostringstream ss;
             ss << "INSERT INTO item_instance (guid,owner_guid,data) VALUES (" << guid << "," << GUID_LOPART(GetOwnerGUID()) << ",'";
-            for (uint16 i = 0; i < m_valuesCount; i++ )
+            for (uint16 i = 0; i < m_valuesCount; i++)
                 ss << GetUInt32Value(i) << " ";
-            ss << "' )";
+            ss << "')";
             CharacterDatabase.Execute(ss.str().c_str());
         } break;
         case ITEM_CHANGED:
         {
             std::ostringstream ss;
             ss << "UPDATE item_instance SET data = '";
-            for (uint16 i = 0; i < m_valuesCount; i++ )
+            for (uint16 i = 0; i < m_valuesCount; i++)
                 ss << GetUInt32Value(i) << " ";
             ss << "', owner_guid = '" << GUID_LOPART(GetOwnerGUID()) << "' WHERE guid = '" << guid << "'";
 
@@ -317,7 +317,7 @@ void Item::SaveToDB()
         } break;
         case ITEM_REMOVED:
         {
-            if (GetUInt32Value(ITEM_FIELD_ITEM_TEXT_ID) > 0 )
+            if (GetUInt32Value(ITEM_FIELD_ITEM_TEXT_ID) > 0)
                 CharacterDatabase.PExecute("DELETE FROM item_text WHERE id = '%u'", GetUInt32Value(ITEM_FIELD_ITEM_TEXT_ID));
             CharacterDatabase.PExecute("DELETE FROM item_instance WHERE guid = '%u'", guid);
             if (HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_WRAPPED))
@@ -882,7 +882,7 @@ Item* Item::CreateItem(uint32 item, uint32 count, Player const* player)
     ItemPrototype const *pProto = objmgr.GetItemPrototype(item);
     if (pProto)
     {
-        if (count > pProto->Stackable )
+        if (count > pProto->Stackable)
             count = pProto->Stackable;
 
         assert(count !=0 && "pProto->Stackable == 0 but checked at loading already");

@@ -547,7 +547,7 @@ class World
         //<<< end movement anticheat
 
         void ProcessCliCommands();
-        void QueueCliCommand(CliCommandHolder::Print* zprintf, char const* input ) { cliCmdQueue.add(new CliCommandHolder(input, zprintf)); }
+        void QueueCliCommand(CliCommandHolder::Print* zprintf, char const* input) { cliCmdQueue.add(new CliCommandHolder(input, zprintf)); }
 
         void UpdateResultQueue();
         void InitResultQueue();

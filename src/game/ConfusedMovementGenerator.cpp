@@ -121,7 +121,7 @@ ConfusedMovementGenerator<T>::Update(T &unit, const uint32 &diff)
     if (unit.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED | UNIT_STAT_DISTRACTED))
         return true;
 
-    if (i_nextMoveTime.Passed() )
+    if (i_nextMoveTime.Passed())
     {
         // currently moving, update location
         Traveller<T> traveller(unit);
@@ -141,7 +141,7 @@ ConfusedMovementGenerator<T>::Update(T &unit, const uint32 &diff)
     {
         // waiting for next move
         i_nextMoveTime.Update(diff);
-        if (i_nextMoveTime.Passed() )
+        if (i_nextMoveTime.Passed())
         {
             // start moving
             assert(i_nextMove <= MAX_CONF_WAYPOINTS);

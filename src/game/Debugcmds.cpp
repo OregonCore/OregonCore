@@ -89,7 +89,7 @@ bool ChatHandler::HandleSetPoiCommand(const char* args)
         return false;
 
     uint32 icon = atol(icon_text);
-    if (icon < 0 )
+    if (icon < 0)
         icon = 0;
 
     uint32 flags = atol(flags_text);

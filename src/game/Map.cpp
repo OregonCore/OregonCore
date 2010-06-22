@@ -1853,7 +1853,7 @@ uint16 Map::GetAreaFlag(float x, float y) const
         return GetAreaFlagByMapId(GetId());
 }
 
-uint8 Map::GetTerrainType(float x, float y ) const
+uint8 Map::GetTerrainType(float x, float y) const
 {
     if (GridMap *gmap = const_cast<Map*>(this)->GetGrid(x, y))
         return gmap->getTerrainType(x, y);

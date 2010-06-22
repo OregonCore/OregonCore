@@ -629,7 +629,7 @@ namespace Oregon
                 switch (i_TargetType)
                 {
                     case SPELL_TARGETS_ALLY:
-                        if (!itr->getSource()->isAttackableByAOE() || !i_caster->IsFriendlyTo(itr->getSource() ))
+                        if (!itr->getSource()->isAttackableByAOE() || !i_caster->IsFriendlyTo(itr->getSource()))
                             continue;
                         break;
                     case SPELL_TARGETS_ENEMY:
@@ -641,14 +641,14 @@ namespace Oregon
 
                         Unit* check = i_caster->GetCharmerOrOwnerOrSelf();
 
-                        if (check->GetTypeId()==TYPEID_PLAYER )
+                        if (check->GetTypeId()==TYPEID_PLAYER)
                         {
-                            if (check->IsFriendlyTo(itr->getSource() ))
+                            if (check->IsFriendlyTo(itr->getSource()))
                                 continue;
                         }
                         else
                         {
-                            if (!check->IsHostileTo(itr->getSource() ))
+                            if (!check->IsHostileTo(itr->getSource()))
                                 continue;
                         }
                     }break;
@@ -663,21 +663,21 @@ namespace Oregon
                 switch(i_push_type)
                 {
                     case PUSH_IN_FRONT:
-                        if (i_caster->isInFront((Unit*)(itr->getSource()), i_radius, M_PI/3 ))
+                        if (i_caster->isInFront((Unit*)(itr->getSource()), i_radius, M_PI/3))
                             i_data->push_back(itr->getSource());
                         break;
                     case PUSH_IN_BACK:
-                        if (i_caster->isInBack((Unit*)(itr->getSource()), i_radius, M_PI/3 ))
+                        if (i_caster->isInBack((Unit*)(itr->getSource()), i_radius, M_PI/3))
                             i_data->push_back(itr->getSource());
                         break;
                     case PUSH_IN_LINE:
-                        if (i_caster->isInLine((Unit*)(itr->getSource()), i_radius ))
+                        if (i_caster->isInLine((Unit*)(itr->getSource()), i_radius))
                             i_data->push_back(itr->getSource());
                         break;
                     default:
                         if (i_TargetType != SPELL_TARGETS_ENTRY && i_push_type == PUSH_SRC_CENTER && i_caster) // if caster then check distance from caster to target (because of model collision)
                         {
-                            if (i_caster->IsWithinDistInMap(itr->getSource(), i_radius) )
+                            if (i_caster->IsWithinDistInMap(itr->getSource(), i_radius))
                                 i_data->push_back(itr->getSource());
                         }
                         else
@@ -691,16 +691,16 @@ namespace Oregon
         }
 
         #ifdef WIN32
-        template<> inline void Visit(CorpseMapType & ) {}
-        template<> inline void Visit(GameObjectMapType & ) {}
-        template<> inline void Visit(DynamicObjectMapType & ) {}
+        template<> inline void Visit(CorpseMapType &) {}
+        template<> inline void Visit(GameObjectMapType &) {}
+        template<> inline void Visit(DynamicObjectMapType &) {}
         #endif
     };
 
     #ifndef WIN32
-    template<> inline void SpellNotifierCreatureAndPlayer::Visit(CorpseMapType& ) {}
-    template<> inline void SpellNotifierCreatureAndPlayer::Visit(GameObjectMapType& ) {}
-    template<> inline void SpellNotifierCreatureAndPlayer::Visit(DynamicObjectMapType& ) {}
+    template<> inline void SpellNotifierCreatureAndPlayer::Visit(CorpseMapType&) {}
+    template<> inline void SpellNotifierCreatureAndPlayer::Visit(GameObjectMapType&) {}
+    template<> inline void SpellNotifierCreatureAndPlayer::Visit(DynamicObjectMapType&) {}
     #endif
 }
 

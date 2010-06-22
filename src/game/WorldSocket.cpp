@@ -46,7 +46,7 @@
 #include "Log.h"
 #include "WorldLog.h"
 
-#if defined(__GNUC__ )
+#if defined(__GNUC__)
 #pragma pack(1)
 #else
 #pragma pack(push,1)
@@ -64,7 +64,7 @@ struct ClientPktHeader
     uint32 cmd;
 };
 
-#if defined(__GNUC__ )
+#if defined(__GNUC__)
 #pragma pack()
 #else
 #pragma pack(pop)
@@ -381,7 +381,7 @@ int WorldSocket::handle_input_header (void)
     EndianConvert(header.cmd);
 
     if ((header.size < 4) || (header.size > 10240) ||
-        (header.cmd  < 0) || (header.cmd  > 10240) )
+        (header.cmd  < 0) || (header.cmd  > 10240))
     {
         sLog.outError ("WorldSocket::handle_input_header: client sent malformed packet size = %d , cmd = %d",
                        header.size, header.cmd);

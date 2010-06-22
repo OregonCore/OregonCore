@@ -790,7 +790,7 @@ class SpellMgr
         uint64 GetSpellAffectMask(uint16 spellId, uint8 effectId) const
         {
             SpellAffectMap::const_iterator itr = mSpellAffectMap.find((spellId<<8) + effectId);
-            if (itr != mSpellAffectMap.end() )
+            if (itr != mSpellAffectMap.end())
                 return itr->second;
             return 0;
         }
@@ -839,7 +839,7 @@ class SpellMgr
         SpellProcEventEntry const* GetSpellProcEvent(uint32 spellId) const
         {
             SpellProcEventMap::const_iterator itr = mSpellProcEventMap.find(spellId);
-            if (itr != mSpellProcEventMap.end() )
+            if (itr != mSpellProcEventMap.end())
                 return &itr->second;
             return NULL;
         }
@@ -849,7 +849,7 @@ class SpellMgr
         SpellEnchantProcEntry const* GetSpellEnchantProcEvent(uint32 enchId) const
         {
             SpellEnchantProcEventMap::const_iterator itr = mSpellEnchantProcEventMap.find(enchId);
-            if (itr != mSpellEnchantProcEventMap.end() )
+            if (itr != mSpellEnchantProcEventMap.end())
                 return &itr->second;
             return NULL;
         }
@@ -858,7 +858,7 @@ class SpellMgr
         SpellTargetPosition const* GetSpellTargetPosition(uint32 spell_id) const
         {
             SpellTargetPositionMap::const_iterator itr = mSpellTargetPositions.find(spell_id);
-            if (itr != mSpellTargetPositions.end() )
+            if (itr != mSpellTargetPositions.end())
                 return &itr->second;
             return NULL;
         }

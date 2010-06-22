@@ -87,12 +87,12 @@ void BattleGroundQueue::EligibleGroups::Init(BattleGroundQueue::QueuedGroupsList
             (*itr)->IsInvitedToBGInstanceGUID == 0 && // leave out already invited groups
             (*itr)->Team == side &&             // match side
             (*itr)->Players.size() <= MaxPlayers &&   // the group must fit in the bg
-            (!excludeTeam || (*itr)->ArenaTeamId != excludeTeam ) && // if excludeTeam is specified, leave out those arena team ids
-            (!IsRated || (*itr)->Players.size() == MaxPlayers ) &&   // if rated, then pass only if the player count is exact NEEDS TESTING! (but now this should never happen)
+            (!excludeTeam || (*itr)->ArenaTeamId != excludeTeam) && // if excludeTeam is specified, leave out those arena team ids
+            (!IsRated || (*itr)->Players.size() == MaxPlayers) &&   // if rated, then pass only if the player count is exact NEEDS TESTING! (but now this should never happen)
             (!DisregardTime || (*itr)->JoinTime <= DisregardTime              // pass if disregard time is greater than join time
                || (*itr)->ArenaTeamRating == 0                 // pass if no rating info
                || ((*itr)->ArenaTeamRating >= MinRating       // pass if matches the rating range
-                     && (*itr)->ArenaTeamRating <= MaxRating ) ) )
+                     && (*itr)->ArenaTeamRating <= MaxRating)))
         {
             // the group matches the conditions
             // using push_back for proper selecting when inviting
@@ -257,7 +257,7 @@ void BattleGroundQueue::RemovePlayer(uint64 guid, bool decreaseInvitedCount)
             // not yet implemented (should store bgTypeId in group queue info?)
         }
         //if player leaves queue and he is invited to rated arena match, then he has to loose
-        if (group->IsInvitedToBGInstanceGUID && group->IsRated && decreaseInvitedCount )
+        if (group->IsInvitedToBGInstanceGUID && group->IsRated && decreaseInvitedCount)
         {
             ArenaTeam * at = objmgr.GetArenaTeamById(group->ArenaTeamId);
             if (at)
@@ -616,7 +616,7 @@ void BattleGroundQueue::Update(uint32 bgTypeId, uint32 queue_id, uint8 arenatype
             uint32 arena_num = urand(0,2);
             if (!(bg2 = sBattleGroundMgr.CreateNewBattleGround(arenas[arena_num%3])) &&
                 !(bg2 = sBattleGroundMgr.CreateNewBattleGround(arenas[(arena_num+1)%3])) &&
-                !(bg2 = sBattleGroundMgr.CreateNewBattleGround(arenas[(arena_num+2)%3])) )
+                !(bg2 = sBattleGroundMgr.CreateNewBattleGround(arenas[(arena_num+2)%3])))
             {
                 sLog.outError("Battleground: couldn't create any arena instance!");
                 return;
@@ -765,7 +765,7 @@ void BattleGroundQueue::Update(uint32 bgTypeId, uint32 queue_id, uint8 arenatype
         }
         // 1-sided BuildSelectionPool() will work, because the MinPlayersPerTeam == MaxPlayersPerTeam in every arena!!!!
         if ((bOneSideHordeTeam1 && bOneSideHordeTeam2) ||
-            (bOneSideAllyTeam1 && bOneSideAllyTeam2) )
+            (bOneSideAllyTeam1 && bOneSideAllyTeam2))
         {
             // which side has enough players?
             uint32 side = 0;
@@ -790,7 +790,7 @@ void BattleGroundQueue::Update(uint32 bgTypeId, uint32 queue_id, uint8 arenatype
             BattleGround* bg2 = NULL;
             if (!(bg2 = sBattleGroundMgr.CreateNewBattleGround(arenas[arena_num%3])) &&
                 !(bg2 = sBattleGroundMgr.CreateNewBattleGround(arenas[(arena_num+1)%3])) &&
-                !(bg2 = sBattleGroundMgr.CreateNewBattleGround(arenas[(arena_num+2)%3])) )
+                !(bg2 = sBattleGroundMgr.CreateNewBattleGround(arenas[(arena_num+2)%3])))
             {
                 sLog.outError("Could not create arena.");
                 return;
@@ -1063,7 +1063,7 @@ void BattleGroundMgr::BuildBattleGroundStatusPacket(WorldPacket *data, BattleGro
     *data << uint64(uint64(arenatype ? arenatype : bg->GetArenaType()) | (uint64(0x0D) << 8) | (uint64(bg->GetTypeID()) << 16) | (uint64(0x1F90) << 48));
     *data << uint32(0);                                     // unknown
     // alliance/horde for BG and skirmish/rated for Arenas
-    *data << uint8(bg->isArena() ? (israted ? israted : bg->isRated() ) : bg->GetTeamIndexByTeamId(team));
+    *data << uint8(bg->isArena() ? (israted ? israted : bg->isRated()) : bg->GetTeamIndexByTeamId(team));
 /*    *data << uint8(arenatype ? arenatype : bg->GetArenaType());                     // team type (0=BG, 2=2x2, 3=3x3, 5=5x5), for arenas    // NOT PROPER VALUE IF ARENA ISN'T RUNNING YET!!!!
     switch(bg->GetTypeID())                                 // value depends on bg id
     {

@@ -139,7 +139,7 @@ enum CreatureFlagsExtra
 };
 
 // GCC have alternative #pragma pack(N) syntax and old gcc version not support pack(push,N), also any gcc version not support it at some platform
-#if defined(__GNUC__ )
+#if defined(__GNUC__)
 #pragma pack(1)
 #else
 #pragma pack(push,1)
@@ -337,7 +337,7 @@ enum AttackingTarget
 };
 
 // GCC have alternative #pragma pack() syntax and old gcc version not support pack(pop), also any gcc version not support it at some platform
-#if defined(__GNUC__ )
+#if defined(__GNUC__)
 #pragma pack()
 #else
 #pragma pack(pop)
@@ -547,7 +547,7 @@ class OREGON_DLL_SPEC Creature : public Unit
         uint32 GetNpcTextId();
         void LoadGossipOptions();
         void ResetGossipOptions();
-        GossipOption const* GetGossipOption(uint32 id ) const;
+        GossipOption const* GetGossipOption(uint32 id) const;
         void addGossipOption(GossipOption const& gso) { m_goptions.push_back(gso); }
 
         void setEmoteState(uint8 emote) { m_emoteState = emote; };

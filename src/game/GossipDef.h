@@ -120,7 +120,7 @@ class OREGON_DLL_SPEC GossipMenu
             return m_gItems.empty();
         }
 
-        GossipMenuItem const& GetItem(unsigned int Id )
+        GossipMenuItem const& GetItem(unsigned int Id)
         {
             return m_gItems[ Id ];
         }
@@ -156,7 +156,7 @@ class QuestMenu
 
         bool HasItem(uint32 questid);
 
-        QuestMenuItem const& GetItem(uint16 Id )
+        QuestMenuItem const& GetItem(uint16 Id)
         {
             return m_qItems[ Id ];
         }

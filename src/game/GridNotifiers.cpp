@@ -77,7 +77,7 @@ PlayerVisibilityNotifier::Notify()
         #endif
     }
 
-    if (i_data.HasData() )
+    if (i_data.HasData())
     {
         // send create/outofrange packet to player (except player create updates that already sent using SendUpdateToPlayer)
         WorldPacket packet;
@@ -194,7 +194,7 @@ MessageDeliverer::VisitObject(Player* plr)
 void
 MessageDistDeliverer::VisitObject(Player* plr)
 {
-    if (!i_ownTeamOnly || (i_source.GetTypeId() == TYPEID_PLAYER && plr->GetTeam() == ((Player&)i_source).GetTeam()) )
+    if (!i_ownTeamOnly || (i_source.GetTypeId() == TYPEID_PLAYER && plr->GetTeam() == ((Player&)i_source).GetTeam()))
     {
         SendPacket(plr);
     }
@@ -221,7 +221,7 @@ bool CannibalizeObjectCheck::operator()(Corpse* u)
     if (!owner || i_funit->IsFriendlyTo(owner))
         return false;
 
-    if (i_funit->IsWithinDistInMap(u, i_range) )
+    if (i_funit->IsWithinDistInMap(u, i_range))
         return true;
 
     return false;

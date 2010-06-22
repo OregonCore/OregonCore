@@ -178,7 +178,7 @@ enum ShapeshiftForm
     FORM_SPIRITOFREDEMPTION = 0x20
 };
 
-// low byte (0 from 0..3 ) of UNIT_FIELD_BYTES_2
+// low byte (0 from 0..3) of UNIT_FIELD_BYTES_2
 enum SheathState
 {
     SHEATH_STATE_UNARMED  = 0,                              // non prepared weapon
@@ -850,7 +850,7 @@ class OREGON_DLL_SPEC Unit : public WorldObject
         float GetMeleeReach() const { float reach = m_floatValues[UNIT_FIELD_COMBATREACH]; return reach > MIN_MELEE_REACH ? reach : MIN_MELEE_REACH; }
         bool IsWithinCombatRange(const Unit *obj, float dist2compare) const;
         bool IsWithinMeleeRange(Unit *obj, float dist = MELEE_RANGE) const;
-        void GetRandomContactPoint(const Unit* target, float &x, float &y, float &z, float distance2dMin, float distance2dMax ) const;
+        void GetRandomContactPoint(const Unit* target, float &x, float &y, float &z, float distance2dMin, float distance2dMax) const;
         uint32 m_extraAttacks;
         bool m_canDualWield;
 
@@ -895,7 +895,7 @@ class OREGON_DLL_SPEC Unit : public WorldObject
         bool CanFreeMove() const
         {
             return !hasUnitState(UNIT_STAT_CONFUSED | UNIT_STAT_FLEEING | UNIT_STAT_IN_FLIGHT |
-                UNIT_STAT_ROOT | UNIT_STAT_STUNNED | UNIT_STAT_DISTRACTED ) && GetOwnerGUID()==0;
+                UNIT_STAT_ROOT | UNIT_STAT_STUNNED | UNIT_STAT_DISTRACTED) && GetOwnerGUID()==0;
         }
 
         uint32 getLevel() const { return GetUInt32Value(UNIT_FIELD_LEVEL); }
@@ -1012,7 +1012,7 @@ class OREGON_DLL_SPEC Unit : public WorldObject
         float GetPPMProcChance(uint32 WeaponSpeed, float PPM) const;
 
         MeleeHitOutcome RollMeleeOutcomeAgainst (const Unit *pVictim, WeaponAttackType attType) const;
-        MeleeHitOutcome RollMeleeOutcomeAgainst (const Unit *pVictim, WeaponAttackType attType, int32 crit_chance, int32 miss_chance, int32 dodge_chance, int32 parry_chance, int32 block_chance, bool SpellCasted ) const;
+        MeleeHitOutcome RollMeleeOutcomeAgainst (const Unit *pVictim, WeaponAttackType attType, int32 crit_chance, int32 miss_chance, int32 dodge_chance, int32 parry_chance, int32 block_chance, bool SpellCasted) const;
 
         bool isVendor()       const { return HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_VENDOR); }
         bool isTrainer()      const { return HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_TRAINER); }
@@ -1230,7 +1230,7 @@ class OREGON_DLL_SPEC Unit : public WorldObject
         float GetCreateStat(Stats stat) const { return m_createStats[stat]; }
 
         void SetCurrentCastedSpell(Spell * pSpell);
-        virtual void ProhibitSpellSchool(SpellSchoolMask /*idSchoolMask*/, uint32 /*unTimeMs*/ ) { }
+        virtual void ProhibitSpellSchool(SpellSchoolMask /*idSchoolMask*/, uint32 /*unTimeMs*/) { }
         void InterruptSpell(uint32 spellType, bool withDelayed = true, bool withInstant = true);
 
         // set withDelayed to true to account delayed spells as casted
@@ -1325,7 +1325,7 @@ class OREGON_DLL_SPEC Unit : public WorldObject
         void TauntFadeOut(Unit *taunter);
         ThreatManager& getThreatManager() { return m_ThreatManager; }
         void addHatedBy(HostileReference* pHostileReference) { m_HostileRefManager.insertFirst(pHostileReference); };
-        void removeHatedBy(HostileReference* /*pHostileReference*/ ) { /* nothing to do yet */ }
+        void removeHatedBy(HostileReference* /*pHostileReference*/) { /* nothing to do yet */ }
         HostileRefManager& getHostileRefManager() { return m_HostileRefManager; }
 
         Aura* GetAura(uint32 spellId, uint32 effindex);
@@ -1405,8 +1405,8 @@ class OREGON_DLL_SPEC Unit : public WorldObject
         void CalcAbsorbResist(Unit *pVictim, SpellSchoolMask schoolMask, DamageEffectType damagetype, const uint32 damage, uint32 *absorb, uint32 *resist);
 
         void  UpdateSpeed(UnitMoveType mtype, bool forced);
-        float GetSpeed(UnitMoveType mtype ) const;
-        float GetSpeedRate(UnitMoveType mtype ) const { return m_speed_rate[mtype]; }
+        float GetSpeed(UnitMoveType mtype) const;
+        float GetSpeedRate(UnitMoveType mtype) const { return m_speed_rate[mtype]; }
         void SetSpeed(UnitMoveType mtype, float rate, bool forced = false);
         float m_TempSpeed;
 
@@ -1422,7 +1422,7 @@ class OREGON_DLL_SPEC Unit : public WorldObject
         void ModSpellCastTime(SpellEntry const* spellProto, int32 & castTime, Spell * spell);
 
         void addFollower(FollowerReference* pRef) { m_FollowingRefManager.insertFirst(pRef); }
-        void removeFollower(FollowerReference* /*pRef*/ ) { /* nothing to do yet */ }
+        void removeFollower(FollowerReference* /*pRef*/) { /* nothing to do yet */ }
         static Unit* GetUnit(WorldObject& object, uint64 guid);
         static Player* GetPlayer(uint64 guid);
         static Creature* GetCreature(WorldObject& object, uint64 guid);
@@ -1465,7 +1465,7 @@ class OREGON_DLL_SPEC Unit : public WorldObject
 
         // reactive attacks
         void ClearAllReactives();
-        void StartReactiveTimer(ReactiveType reactive ) { m_reactiveTimer[reactive] = REACTIVE_TIMER_START;}
+        void StartReactiveTimer(ReactiveType reactive) { m_reactiveTimer[reactive] = REACTIVE_TIMER_START;}
         void UpdateReactives(uint32 p_time);
 
         // group updates

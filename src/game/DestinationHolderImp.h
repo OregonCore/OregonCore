@@ -134,7 +134,7 @@ DestinationHolder<TRAVELLER>::UpdateTraveller(TRAVELLER &traveller, uint32 diff,
         i_fromZ = z;
     }
 
-    if (traveller.GetTraveller().GetPositionX() != x || traveller.GetTraveller().GetPositionY() != y )
+    if (traveller.GetTraveller().GetPositionX() != x || traveller.GetTraveller().GetPositionY() != y)
     {
         float ori = traveller.GetTraveller().GetAngle(x, y);
         traveller.Relocation(x, y, z, ori);

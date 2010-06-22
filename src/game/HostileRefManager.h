@@ -52,7 +52,7 @@ class HostileRefManager : public RefManager<Unit, ThreatManager>
         // tell the source to remove them from the list and free the mem
         void deleteReferences();
 
-        HostileReference* getFirst() { return ((HostileReference* ) RefManager<Unit, ThreatManager>::getFirst()); }
+        HostileReference* getFirst() { return ((HostileReference*) RefManager<Unit, ThreatManager>::getFirst()); }
 
         void updateThreatTables();
 

@@ -71,7 +71,7 @@ void LoadSkillDiscoveryTable()
             int32  reqSkillOrSpell = fields[1].GetInt32();
             float  chance          = fields[2].GetFloat();
 
-            if (chance <= 0 )                               // chance
+            if (chance <= 0)                               // chance
             {
                 ssNonDiscoverableEntries << "spellId = " << spellId << " reqSkillOrSpell = " << reqSkillOrSpell << " chance = " << chance << "\n";
                 continue;
@@ -80,13 +80,13 @@ void LoadSkillDiscoveryTable()
             if (reqSkillOrSpell > 0)                         // spell case
             {
                 SpellEntry const* spellEntry = sSpellStore.LookupEntry(reqSkillOrSpell);
-                if (!spellEntry )
+                if (!spellEntry)
                 {
                     sLog.outErrorDb("Spell (ID: %u) have not existed spell (ID: %i) in reqSpell field in skill_discovery_template table",spellId,reqSkillOrSpell);
                     continue;
                 }
 
-                if (spellEntry->Mechanic != MECHANIC_DISCOVERY )
+                if (spellEntry->Mechanic != MECHANIC_DISCOVERY)
                 {
                     sLog.outErrorDb("Spell (ID: %u) not have have MECHANIC_DISCOVERY (28) value in Mechanic field in spell.dbc but listed in skill_discovery_template table",spellId);
                     continue;
@@ -94,7 +94,7 @@ void LoadSkillDiscoveryTable()
 
                 SkillDiscoveryStore[reqSkillOrSpell].push_back(SkillDiscoveryEntry(spellId, chance));
             }
-            else if (reqSkillOrSpell == 0 )                 // skill case
+            else if (reqSkillOrSpell == 0)                 // skill case
             {
                 SkillLineAbilityMap::const_iterator lower = spellmgr.GetBeginSkillLineAbilityMap(spellId);
                 SkillLineAbilityMap::const_iterator upper = spellmgr.GetEndSkillLineAbilityMap(spellId);
@@ -140,7 +140,7 @@ uint32 GetSkillDiscoverySpell(uint32 skillId, uint32 spellId, Player* player)
         for (SkillDiscoveryList::iterator item_iter = tab->second.begin(); item_iter != tab->second.end(); ++item_iter)
         {
             if (roll_chance_f(item_iter->chance * sWorld.getRate(RATE_SKILL_DISCOVERY))
-                && !player->HasSpell(item_iter->spellId) )
+                && !player->HasSpell(item_iter->spellId))
                 return item_iter->spellId;
         }
 
@@ -154,7 +154,7 @@ uint32 GetSkillDiscoverySpell(uint32 skillId, uint32 spellId, Player* player)
         for (SkillDiscoveryList::iterator item_iter = tab->second.begin(); item_iter != tab->second.end(); ++item_iter)
         {
             if (roll_chance_f(item_iter->chance * sWorld.getRate(RATE_SKILL_DISCOVERY))
-                && !player->HasSpell(item_iter->spellId) )
+                && !player->HasSpell(item_iter->spellId))
                 return item_iter->spellId;
         }
 

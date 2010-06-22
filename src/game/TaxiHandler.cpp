@@ -67,7 +67,7 @@ void WorldSession::SendTaxiStatus(uint64 guid)
     sLog.outDebug("WORLD: Sent SMSG_TAXINODE_STATUS");
 }
 
-void WorldSession::HandleTaxiQueryAvailableNodesOpcode(WorldPacket & recv_data )
+void WorldSession::HandleTaxiQueryAvailableNodesOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("WORLD: Received CMSG_TAXIQUERYAVAILABLENODES");
 
@@ -114,7 +114,7 @@ void WorldSession::SendTaxiMenu(Creature* unit)
     sLog.outDebug("WORLD: Sent SMSG_SHOWTAXINODES");
 }
 
-void WorldSession::SendDoFlight(uint16 MountId, uint32 path, uint32 pathNode )
+void WorldSession::SendDoFlight(uint16 MountId, uint32 path, uint32 pathNode)
 {
     // remove fake death
     if (GetPlayer()->hasUnitState(UNIT_STAT_DIED))

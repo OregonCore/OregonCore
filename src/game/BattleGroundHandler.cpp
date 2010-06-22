@@ -35,7 +35,7 @@
 #include "ArenaTeam.h"
 #include "Language.h"
 
-void WorldSession::HandleBattleGroundHelloOpcode(WorldPacket & recv_data )
+void WorldSession::HandleBattleGroundHelloOpcode(WorldPacket & recv_data)
 {
     uint64 guid;
     recv_data >> guid;
@@ -63,14 +63,14 @@ void WorldSession::HandleBattleGroundHelloOpcode(WorldPacket & recv_data )
     SendBattlegGroundList(guid, bgTypeId);
 }
 
-void WorldSession::SendBattlegGroundList(uint64 guid, uint32 bgTypeId )
+void WorldSession::SendBattlegGroundList(uint64 guid, uint32 bgTypeId)
 {
     WorldPacket data;
     sBattleGroundMgr.BuildBattleGroundListPacket(&data, guid, _player, bgTypeId);
     SendPacket(&data);
 }
 
-void WorldSession::HandleBattleGroundJoinOpcode(WorldPacket & recv_data )
+void WorldSession::HandleBattleGroundJoinOpcode(WorldPacket & recv_data)
 {
     uint64 guid;
     uint32 bgTypeId;
@@ -120,7 +120,7 @@ void WorldSession::HandleBattleGroundJoinOpcode(WorldPacket & recv_data )
     if (!joinAsGroup)
     {
         // check Deserter debuff
-        if (!_player->CanJoinToBattleground() )
+        if (!_player->CanJoinToBattleground())
         {
             WorldPacket data(SMSG_GROUP_JOINED_BATTLEGROUND, 4);
             data << (uint32) 0xFFFFFFFE;
@@ -196,7 +196,7 @@ void WorldSession::HandleBattleGroundJoinOpcode(WorldPacket & recv_data )
     }
 }
 
-void WorldSession::HandleBattleGroundPlayerPositionsOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleBattleGroundPlayerPositionsOpcode(WorldPacket & /*recv_data*/)
 {
                                                             // empty opcode
     sLog.outDebug("WORLD: Recvd MSG_BATTLEGROUND_PLAYER_POSITIONS Message");
@@ -242,7 +242,7 @@ void WorldSession::HandleBattleGroundPlayerPositionsOpcode(WorldPacket & /*recv_
     }
 }
 
-void WorldSession::HandleBattleGroundPVPlogdataOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleBattleGroundPVPlogdataOpcode(WorldPacket & /*recv_data*/)
 {
     sLog.outDebug("WORLD: Recvd MSG_PVP_LOG_DATA Message");
 
@@ -257,7 +257,7 @@ void WorldSession::HandleBattleGroundPVPlogdataOpcode(WorldPacket & /*recv_data*
     sLog.outDebug("WORLD: Sent MSG_PVP_LOG_DATA Message");
 }
 
-void WorldSession::HandleBattleGroundListOpcode(WorldPacket &recv_data )
+void WorldSession::HandleBattleGroundListOpcode(WorldPacket &recv_data)
 {
     sLog.outDebug("WORLD: Recvd CMSG_BATTLEFIELD_LIST Message");
 
@@ -280,7 +280,7 @@ void WorldSession::HandleBattleGroundListOpcode(WorldPacket &recv_data )
     SendPacket(&data);
 }
 
-void WorldSession::HandleBattleGroundPlayerPortOpcode(WorldPacket &recv_data )
+void WorldSession::HandleBattleGroundPlayerPortOpcode(WorldPacket &recv_data)
 {
     sLog.outDebug("WORLD: Recvd CMSG_BATTLEFIELD_PORT Message");
 
@@ -400,7 +400,7 @@ void WorldSession::HandleBattleGroundPlayerPortOpcode(WorldPacket &recv_data )
         // get the team info from the queue
         BattleGroundQueue::QueuedPlayersMap::iterator pitr = sBattleGroundMgr.m_BattleGroundQueues[bgQueueTypeId].m_QueuedPlayers[_player->GetBattleGroundQueueIdFromLevel()].find(_player->GetGUID());
         if (pitr !=sBattleGroundMgr.m_BattleGroundQueues[bgQueueTypeId].m_QueuedPlayers[_player->GetBattleGroundQueueIdFromLevel()].end()
-            && pitr->second.GroupInfo )
+            && pitr->second.GroupInfo)
         {
             team = pitr->second.GroupInfo->Team;
             arenatype = pitr->second.GroupInfo->ArenaType;
@@ -439,7 +439,7 @@ void WorldSession::HandleBattleGroundPlayerPortOpcode(WorldPacket &recv_data )
                 sBattleGroundMgr.m_BattleGroundQueues[bgQueueTypeId].RemovePlayer(_player->GetGUID(), false);
                 // this is still needed here if battleground "jumping" shouldn't add deserter debuff
                 // also this required to prevent stuck at old battleground after SetBattleGroundId set to new
-                if (BattleGround *currentBg = _player->GetBattleGround() )
+                if (BattleGround *currentBg = _player->GetBattleGround())
                     currentBg->RemovePlayerAtLeave(_player->GetGUID(), false, true);
 
                 // set the destination instance id
@@ -485,7 +485,7 @@ void WorldSession::HandleBattleGroundPlayerPortOpcode(WorldPacket &recv_data )
     }
 }
 
-void WorldSession::HandleBattleGroundLeaveOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleBattleGroundLeaveOpcode(WorldPacket & /*recv_data*/)
 {
     //CHECK_PACKET_SIZE(recv_data, 1+1+4+2);
 
@@ -509,7 +509,7 @@ void WorldSession::HandleBattleGroundLeaveOpcode(WorldPacket & /*recv_data*/ )
     _player->LeaveBattleground();
 }
 
-void WorldSession::HandleBattlefieldStatusOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleBattlefieldStatusOpcode(WorldPacket & /*recv_data*/)
 {
     // empty opcode
     sLog.outDebug("WORLD: Battleground status");
@@ -592,7 +592,7 @@ void WorldSession::HandleBattlefieldStatusOpcode(WorldPacket & /*recv_data*/ )
     }*/
 }
 
-void WorldSession::HandleAreaSpiritHealerQueryOpcode(WorldPacket & recv_data )
+void WorldSession::HandleAreaSpiritHealerQueryOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("WORLD: CMSG_AREA_SPIRIT_HEALER_QUERY");
 
@@ -613,7 +613,7 @@ void WorldSession::HandleAreaSpiritHealerQueryOpcode(WorldPacket & recv_data )
     sBattleGroundMgr.SendAreaSpiritHealerQueryOpcode(_player, bg, guid);
 }
 
-void WorldSession::HandleAreaSpiritHealerQueueOpcode(WorldPacket & recv_data )
+void WorldSession::HandleAreaSpiritHealerQueueOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("WORLD: CMSG_AREA_SPIRIT_HEALER_QUEUE");
 
@@ -634,7 +634,7 @@ void WorldSession::HandleAreaSpiritHealerQueueOpcode(WorldPacket & recv_data )
     bg->AddPlayerToResurrectQueue(guid, _player->GetGUID());
 }
 
-void WorldSession::HandleBattleGroundArenaJoin(WorldPacket & recv_data )
+void WorldSession::HandleBattleGroundArenaJoin(WorldPacket & recv_data)
 {
     sLog.outDebug("WORLD: CMSG_BATTLEMASTER_JOIN_ARENA");
     //recv_data.hexlike();
@@ -679,7 +679,7 @@ void WorldSession::HandleBattleGroundArenaJoin(WorldPacket & recv_data )
 
     //check existance
     BattleGround* bg = NULL;
-    if (!(bg = sBattleGroundMgr.GetBattleGroundTemplate(BATTLEGROUND_AA)) )
+    if (!(bg = sBattleGroundMgr.GetBattleGroundTemplate(BATTLEGROUND_AA)))
     {
         sLog.outError("Battleground: template bg (all arenas) not found");
         return;
@@ -738,7 +738,7 @@ void WorldSession::HandleBattleGroundArenaJoin(WorldPacket & recv_data )
             avg_pers_rating += member->GetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (type*6) + 5);
         }
 
-        if (arenatype )
+        if (arenatype)
             avg_pers_rating /= arenatype;
 
         // if avg personal rating is more than 150 points below the teams rating, the team will be queued against an opponent matching or similar to the average personal rating
@@ -792,7 +792,7 @@ void WorldSession::HandleBattleGroundArenaJoin(WorldPacket & recv_data )
     }
 }
 
-void WorldSession::HandleBattleGroundReportAFK(WorldPacket & recv_data )
+void WorldSession::HandleBattleGroundReportAFK(WorldPacket & recv_data)
 {
     uint64 playerGuid;
     recv_data >> playerGuid;

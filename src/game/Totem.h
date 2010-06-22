@@ -54,7 +54,7 @@ class Totem : public Creature
         void UpdateArmor() {}
         void UpdateMaxHealth() {}
         void UpdateMaxPower(Powers /*power*/) {}
-        void UpdateAttackPowerAndDamage(bool /*ranged*/ ) {}
+        void UpdateAttackPowerAndDamage(bool /*ranged*/) {}
         void UpdateDamagePhysical(WeaponAttackType /*attType*/) {}
 
         bool IsImmunedToSpell(SpellEntry const* spellInfo, bool useCharges = false);

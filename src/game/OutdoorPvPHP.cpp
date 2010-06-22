@@ -272,7 +272,7 @@ bool OutdoorPvPObjectiveHP::Update(uint32 diff)
         {
             SendUpdateWorldState(HP_UI_TOWER_SLIDER_N, m_NeutralValue);
             // send these updates to only the ones in this objective
-            uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase ) * 100.0f);
+            uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase) * 100.0f);
             SendUpdateWorldState(HP_UI_TOWER_SLIDER_POS, phase);
             // send this too, sometimes the slider disappears, dunno why :(
             SendUpdateWorldState(HP_UI_TOWER_SLIDER_DISPLAY, 1);
@@ -314,7 +314,7 @@ bool OutdoorPvPObjectiveHP::HandlePlayerEnter(Player *plr)
     if (OutdoorPvPObjective::HandlePlayerEnter(plr))
     {
         plr->SendUpdateWorldState(HP_UI_TOWER_SLIDER_DISPLAY, 1);
-        uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase ) * 100.0f);
+        uint32 phase = (uint32)ceil((m_ShiftPhase + m_ShiftMaxPhase) / (2 * m_ShiftMaxPhase) * 100.0f);
         plr->SendUpdateWorldState(HP_UI_TOWER_SLIDER_POS, phase);
         plr->SendUpdateWorldState(HP_UI_TOWER_SLIDER_N, m_NeutralValue);
         return true;

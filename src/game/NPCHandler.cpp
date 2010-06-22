@@ -229,7 +229,7 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket & recv_data)
     uint32 nSpellCost = uint32(floor(trainer_spell->spellcost * _player->GetReputationPriceDiscount(unit)));
 
     // check money requirement
-    if (_player->GetMoney() < nSpellCost )
+    if (_player->GetMoney() < nSpellCost)
         return;
 
     WorldPacket data(SMSG_PLAY_SPELL_VISUAL, 12);           // visual effect on trainer
@@ -286,7 +286,7 @@ void WorldSession::HandleGossipHelloOpcode(WorldPacket & recv_data)
         }
     }
 
-    if (!Script->GossipHello(_player, unit ))
+    if (!Script->GossipHello(_player, unit))
     {
         _player->TalkedToCreature(unit->GetEntry(),unit->GetGUID());
         unit->prepareGossipMenu(_player);
@@ -465,7 +465,7 @@ void WorldSession::SendBindPoint(Creature *npc)
 }
 
 //Need fix
-void WorldSession::HandleListStabledPetsOpcode(WorldPacket & recv_data )
+void WorldSession::HandleListStabledPetsOpcode(WorldPacket & recv_data)
 {
     sLog.outDebug("WORLD: Recv MSG_LIST_STABLED_PETS");
     uint64 npcGUID;

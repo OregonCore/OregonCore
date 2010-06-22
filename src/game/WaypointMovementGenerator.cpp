@@ -276,17 +276,17 @@ void FlightPathMovementGenerator::Finalize(Player & player)
 bool
 FlightPathMovementGenerator::Update(Player &player, const uint32 &diff)
 {
-    if (MovementInProgress() )
+    if (MovementInProgress())
     {
         Traveller<Player> traveller(player);
-        if (i_destinationHolder.UpdateTraveller(traveller, diff) )
+        if (i_destinationHolder.UpdateTraveller(traveller, diff))
         {
             i_destinationHolder.ResetUpdate(FLIGHT_TRAVEL_UPDATE);
-            if (i_destinationHolder.HasArrived() )
+            if (i_destinationHolder.HasArrived())
             {
                 uint32 curMap = i_mapIds[i_currentNode];
                 ++i_currentNode;
-                if (MovementInProgress() )
+                if (MovementInProgress())
                 {
                     DEBUG_LOG("loading node %u for player %s", i_currentNode, player.GetName());
                     if (i_mapIds[i_currentNode]==curMap)

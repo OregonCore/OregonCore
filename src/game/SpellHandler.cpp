@@ -283,7 +283,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
     sLog.outDebug("WORLD: got cast spell packet, spellId - %u, cast_count: %u data length = %i",
         spellId, cast_count, recvPacket.size());
 
-    SpellEntry const *spellInfo = sSpellStore.LookupEntry(spellId );
+    SpellEntry const *spellInfo = sSpellStore.LookupEntry(spellId);
 
     if (!spellInfo)
     {
@@ -292,7 +292,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
     }
 
     // not have spell or spell passive and not casted by client
-    if (!_player->HasSpell (spellId) || IsPassiveSpell(spellId) )
+    if (!_player->HasSpell (spellId) || IsPassiveSpell(spellId))
     {
         //cheater? kick? ban?
         return;

@@ -50,7 +50,7 @@ TargetedMovementGenerator<T>::_setTargetLocation(T &owner)
     if (!i_target.isValid() || !i_target->IsInWorld())
         return false;
 
-    if (owner.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED | UNIT_STAT_DISTRACTED) )
+    if (owner.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED | UNIT_STAT_DISTRACTED))
         return false;
 
     // prevent redundant micro-movement for pets, other followers.
@@ -132,7 +132,7 @@ TargetedMovementGenerator<T>::_setTargetLocation(T &owner)
 
         //We don't update Mob Movement, if the difference between New destination and last destination is < BothObjectSize
         float  bothObjectSize = i_target->GetObjectSize() + owner.GetObjectSize() + CONTACT_DISTANCE;
-        if (i_destinationHolder.HasDestination() && i_destinationHolder.GetDestinationDiff(x,y,z) < bothObjectSize )
+        if (i_destinationHolder.HasDestination() && i_destinationHolder.GetDestinationDiff(x,y,z) < bothObjectSize)
             return;
     */
     i_destinationHolder.SetDestination(traveller, x, y, z);
@@ -179,7 +179,7 @@ TargetedMovementGenerator<T>::Update(T &owner, const uint32 & time_diff)
     if (!&owner || !owner.isAlive())
         return true;
 
-    if (owner.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED | UNIT_STAT_FLEEING | UNIT_STAT_DISTRACTED) )
+    if (owner.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED | UNIT_STAT_FLEEING | UNIT_STAT_DISTRACTED))
         return true;
 
     // prevent movement while casting spells with cast time or channel time
@@ -196,9 +196,9 @@ TargetedMovementGenerator<T>::Update(T &owner, const uint32 & time_diff)
 
     Traveller<T> traveller(owner);
 
-    if (!i_destinationHolder.HasDestination() )
+    if (!i_destinationHolder.HasDestination())
         _setTargetLocation(owner);
-    else if (owner.IsStopped() && !i_destinationHolder.HasArrived() )
+    else if (owner.IsStopped() && !i_destinationHolder.HasArrived())
     {
         owner.addUnitState(UNIT_STAT_CHASE);
         if (owner.GetTypeId() == TYPEID_UNIT && (&owner)->ToCreature()->canFly())

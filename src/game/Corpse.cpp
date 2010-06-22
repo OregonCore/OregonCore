@@ -65,13 +65,13 @@ void Corpse::RemoveFromWorld()
     Object::RemoveFromWorld();
 }
 
-bool Corpse::Create(uint32 guidlow )
+bool Corpse::Create(uint32 guidlow)
 {
     Object::_Create(guidlow, 0, HIGHGUID_CORPSE);
     return true;
 }
 
-bool Corpse::Create(uint32 guidlow, Player *owner, uint32 mapid, float x, float y, float z, float ang )
+bool Corpse::Create(uint32 guidlow, Player *owner, uint32 mapid, float x, float y, float z, float ang)
 {
     SetInstanceId(owner->GetInstanceId());
 
@@ -108,7 +108,7 @@ void Corpse::SaveToDB()
     ss  << "INSERT INTO corpse (guid,player,position_x,position_y,position_z,orientation,zone,map,data,time,corpse_type,instance) VALUES ("
         << GetGUIDLow() << ", " << GUID_LOPART(GetOwnerGUID()) << ", " << GetPositionX() << ", " << GetPositionY() << ", " << GetPositionZ() << ", "
         << GetOrientation() << ", "  << GetZoneId() << ", "  << GetMapId() << ", '";
-    for (uint16 i = 0; i < m_valuesCount; i++ )
+    for (uint16 i = 0; i < m_valuesCount; i++)
         ss << GetUInt32Value(i) << " ";
     ss << "'," << uint64(m_time) <<", " << uint32(GetType()) << ", " << int(GetInstanceId()) << ")";
     CharacterDatabase.Execute(ss.str().c_str());
@@ -145,7 +145,7 @@ bool Corpse::LoadFromDB(uint32 guid, QueryResult_AutoPtr result, uint32 Instance
         //                                        0          1          2          3           4   5    6    7           8
         result = CharacterDatabase.PQuery("SELECT position_x,position_y,position_z,orientation,map,data,time,corpse_type,instance FROM corpse WHERE guid = '%u'",guid);
 
-    if (! result )
+    if (! result)
     {
         sLog.outError("ERROR: Corpse (GUID: %u) not found in table corpse, can't load. ",guid);
         return false;
@@ -169,7 +169,7 @@ bool Corpse::LoadFromDB(uint32 guid, Field *fields)
     float ort       = fields[3].GetFloat();
     uint32 mapid    = fields[4].GetUInt32();
 
-    if (!LoadValues(fields[5].GetString() ))
+    if (!LoadValues(fields[5].GetString()))
     {
         sLog.outError("ERROR: Corpse #%d have broken data in data field. Can't be loaded.",guid);
         return false;

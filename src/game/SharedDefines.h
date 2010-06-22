@@ -88,7 +88,7 @@ enum Classes
 #define CLASSMASK_ALL_PLAYABLE \
     ((1<<(CLASS_WARRIOR-1))|(1<<(CLASS_PALADIN-1))|(1<<(CLASS_HUNTER-1))| \
     (1<<(CLASS_ROGUE-1))  |(1<<(CLASS_PRIEST-1)) |(1<<(CLASS_SHAMAN-1))| \
-    (1<<(CLASS_MAGE-1))   |(1<<(CLASS_WARLOCK-1))|(1<<(CLASS_DRUID-1))   )
+    (1<<(CLASS_MAGE-1))   |(1<<(CLASS_WARLOCK-1))|(1<<(CLASS_DRUID-1)))
 
 #define CLASSMASK_WAND_USERS ((1<<(CLASS_PRIEST-1))|(1<<(CLASS_MAGE-1))|(1<<(CLASS_WARLOCK-1)))
 
@@ -180,7 +180,7 @@ enum SpellSchoolMask
 #define SPELL_SCHOOL_MASK_MAGIC                            \
     (SPELL_SCHOOL_MASK_HOLY | SPELL_SCHOOL_MASK_FIRE | SPELL_SCHOOL_MASK_NATURE |  \
       SPELL_SCHOOL_MASK_FROST | SPELL_SCHOOL_MASK_SHADOW | \
-      SPELL_SCHOOL_MASK_ARCANE )
+      SPELL_SCHOOL_MASK_ARCANE)
 
 inline SpellSchools GetFirstSchoolInMask(SpellSchoolMask mask)
 {

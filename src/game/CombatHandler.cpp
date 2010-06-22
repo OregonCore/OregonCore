@@ -27,7 +27,7 @@
 #include "CreatureAI.h"
 #include "ObjectDefines.h"
 
-void WorldSession::HandleAttackSwingOpcode(WorldPacket & recv_data )
+void WorldSession::HandleAttackSwingOpcode(WorldPacket & recv_data)
 {
     uint64 guid;
     recv_data >> guid;
@@ -60,12 +60,12 @@ void WorldSession::HandleAttackSwingOpcode(WorldPacket & recv_data )
     _player->Attack(pEnemy,true);
 }
 
-void WorldSession::HandleAttackStopOpcode(WorldPacket & /*recv_data*/ )
+void WorldSession::HandleAttackStopOpcode(WorldPacket & /*recv_data*/)
 {
     GetPlayer()->AttackStop();
 }
 
-void WorldSession::HandleSetSheathedOpcode(WorldPacket & recv_data )
+void WorldSession::HandleSetSheathedOpcode(WorldPacket & recv_data)
 {
     uint32 sheathed;
     recv_data >> sheathed;
