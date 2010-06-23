@@ -21,9 +21,8 @@
 #include "ByteBuffer.h"
 #include "TargetedMovementGenerator.h"
 #include "Errors.h"
-#include "CreatureAI.h"
 #include "Creature.h"
-#include "MapManager.h"
+#include "CreatureAI.h"
 #include "DestinationHolderImp.h"
 #include "World.h"
 
@@ -52,10 +51,6 @@ TargetedMovementGenerator<T>::_setTargetLocation(T &owner)
 
     if (owner.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED | UNIT_STAT_DISTRACTED))
         return false;
-
-    // prevent redundant micro-movement for pets, other followers.
-    //if (i_offset && i_target->IsWithinDistInMap(&owner,2*i_offset))
-    //    return;
 
     float x, y, z;
     Traveller<T> traveller(owner);
@@ -139,6 +134,7 @@ TargetedMovementGenerator<T>::_setTargetLocation(T &owner)
     owner.addUnitState(UNIT_STAT_CHASE);
     if (owner.GetTypeId() == TYPEID_UNIT && (&owner)->ToCreature()->canFly())
         owner.AddUnitMovementFlag(MOVEMENTFLAG_FLYING2);
+    return true;
 }
 
 template<class T>
@@ -250,7 +246,7 @@ TargetedMovementGenerator<T>::GetTarget() const
 }
 
 template<class T>
-void TargetedMovementGenerator<T>::MovementInform(T &unit)
+void TargetedMovementGenerator<T>::MovementInform(T & /*unit*/)
 {
 }
 
