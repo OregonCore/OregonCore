@@ -3444,7 +3444,7 @@ void Spell::EffectDistract(uint32 /*i*/)
         // Set creature Distracted, Stop it, And turn it
         unitTarget->SetOrientation(angle);
         unitTarget->StopMoving();
-        unitTarget->GetMotionMaster()->MoveDistract(damage*1000);
+        unitTarget->GetMotionMaster()->MoveDistract(damage*IN_MILISECONDS);
     }
 }
 
@@ -3908,7 +3908,7 @@ void Spell::EffectEnchantItemTmp(uint32 i)
     // remove old enchanting before applying new if equipped
     item_owner->ApplyEnchantment(itemTarget,TEMP_ENCHANTMENT_SLOT,false);
 
-    itemTarget->SetEnchantment(TEMP_ENCHANTMENT_SLOT, enchant_id, duration*1000, 0);
+    itemTarget->SetEnchantment(TEMP_ENCHANTMENT_SLOT, enchant_id, duration*IN_MILISECONDS, 0);
 
     // add new enchanting if equipped
     item_owner->ApplyEnchantment(itemTarget,TEMP_ENCHANTMENT_SLOT,true);
@@ -4455,7 +4455,7 @@ void Spell::EffectSummonObjectWild(uint32 i)
     }
 
     int32 duration = GetSpellDuration(m_spellInfo);
-    pGameObj->SetRespawnTime(duration > 0 ? duration/1000 : 0);
+    pGameObj->SetRespawnTime(duration > 0 ? duration/IN_MILISECONDS : 0);
     pGameObj->SetSpellId(m_spellInfo->Id);
 
     if (pGameObj->GetGoType() != GAMEOBJECT_TYPE_FLAGDROP)   // make dropped flag clickable for other players (not set owner guid (created by) for this)...
@@ -4503,7 +4503,7 @@ void Spell::EffectSummonObjectWild(uint32 i)
         if (linkedGO->Create(objmgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), linkedEntry, map,
             x, y, z, target->GetOrientation(), 0, 0, 0, 0, 100, 1))
         {
-            linkedGO->SetRespawnTime(duration > 0 ? duration/1000 : 0);
+            linkedGO->SetRespawnTime(duration > 0 ? duration/IN_MILISECONDS : 0);
             linkedGO->SetSpellId(m_spellInfo->Id);
 
             m_caster->AddGameObject(linkedGO);
@@ -5209,7 +5209,7 @@ void Spell::EffectDuel(uint32 i)
     pGameObj->SetUInt32Value(GAMEOBJECT_FACTION, m_caster->getFaction());
     pGameObj->SetUInt32Value(GAMEOBJECT_LEVEL, m_caster->getLevel()+1);
     int32 duration = GetSpellDuration(m_spellInfo);
-    pGameObj->SetRespawnTime(duration > 0 ? duration/1000 : 0);
+    pGameObj->SetRespawnTime(duration > 0 ? duration/IN_MILISECONDS : 0);
     pGameObj->SetSpellId(m_spellInfo->Id);
 
     m_caster->AddGameObject(pGameObj);
@@ -5286,7 +5286,7 @@ void Spell::EffectSummonPlayer(uint32 /*i*/)
     WorldPacket data(SMSG_SUMMON_REQUEST, 8+4+4);
     data << uint64(m_caster->GetGUID());                    // summoner guid
     data << uint32(m_caster->GetZoneId());                  // summoner zone
-    data << uint32(MAX_PLAYER_SUMMON_DELAY*1000);           // auto decline after msecs
+    data << uint32(MAX_PLAYER_SUMMON_DELAY*IN_MILISECONDS);           // auto decline after msecs
     unitTarget->ToPlayer()->GetSession()->SendPacket(&data);
 }
 
@@ -5459,7 +5459,7 @@ void Spell::EffectEnchantHeldItem(uint32 i)
             return;
 
         // Apply the temporary enchantment
-        item->SetEnchantment(slot, enchant_id, duration*1000, 0);
+        item->SetEnchantment(slot, enchant_id, duration*IN_MILISECONDS, 0);
         item_owner->ApplyEnchantment(item,slot,true);
     }
 }
@@ -5588,7 +5588,7 @@ void Spell::EffectSummonObject(uint32 i)
 
     //pGameObj->SetUInt32Value(GAMEOBJECT_LEVEL,m_caster->getLevel());
     int32 duration = GetSpellDuration(m_spellInfo);
-    pGameObj->SetRespawnTime(duration > 0 ? duration/1000 : 0);
+    pGameObj->SetRespawnTime(duration > 0 ? duration/IN_MILISECONDS : 0);
     pGameObj->SetSpellId(m_spellInfo->Id);
     m_caster->AddGameObject(pGameObj);
 
@@ -6272,7 +6272,7 @@ void Spell::EffectTransmitted(uint32 effIndex)
                 case 3: lastSec = 17; break;
             }
 
-            duration = duration - lastSec*1000 + FISHING_BOBBER_READY_TIME*1000;
+            duration = duration - lastSec*IN_MILISECONDS + FISHING_BOBBER_READY_TIME*IN_MILISECONDS;
             break;
         }
         case GAMEOBJECT_TYPE_SUMMONING_RITUAL:
@@ -6292,7 +6292,7 @@ void Spell::EffectTransmitted(uint32 effIndex)
         }
     }
 
-    pGameObj->SetRespawnTime(duration > 0 ? duration/1000 : 0);
+    pGameObj->SetRespawnTime(duration > 0 ? duration/IN_MILISECONDS : 0);
 
     pGameObj->SetOwnerGUID(m_caster->GetGUID());
 
@@ -6315,7 +6315,7 @@ void Spell::EffectTransmitted(uint32 effIndex)
         if (linkedGO->Create(objmgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), linkedEntry, cMap,
             fx, fy, fz, m_caster->GetOrientation(), 0, 0, 0, 0, 100, 1))
         {
-            linkedGO->SetRespawnTime(duration > 0 ? duration/1000 : 0);
+            linkedGO->SetRespawnTime(duration > 0 ? duration/IN_MILISECONDS : 0);
             //linkedGO->SetUInt32Value(GAMEOBJECT_LEVEL, m_caster->getLevel());
             linkedGO->SetSpellId(m_spellInfo->Id);
             linkedGO->SetOwnerGUID(m_caster->GetGUID());

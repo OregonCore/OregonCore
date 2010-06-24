@@ -68,7 +68,7 @@
 
 #include <cmath>
 
-#define ZONE_UPDATE_INTERVAL 1000
+#define ZONE_UPDATE_INTERVAL (1*IN_MILISECONDS)
 
 #define PLAYER_SKILL_INDEX(x)       (PLAYER_SKILL_INFO_1_1 + ((x)*3))
 #define PLAYER_SKILL_VALUE_INDEX(x) (PLAYER_SKILL_INDEX(x)+1)
@@ -347,7 +347,7 @@ Player::Player (WorldSession *session): Unit()
 
     m_swingErrorMsg = 0;
 
-    m_DetectInvTimer = 1000;
+    m_DetectInvTimer = (1*IN_MILISECONDS);
 
     m_bgBattleGroundID = 0;
     for (int j=0; j < PLAYER_MAX_BATTLEGROUND_QUEUES; j++)
@@ -2572,7 +2572,7 @@ void Player::SendInitialSpells()
         time_t cooldown = 0;
         time_t curTime = time(NULL);
         if (itr->second.end > curTime)
-            cooldown = (itr->second.end-curTime)*1000;
+            cooldown = (itr->second.end-curTime)*IN_MILISECONDS;
 
         data << uint16(itr->second.itemid);                 // cast item id
         data << uint16(sEntry->Category);                   // spell category
@@ -3156,15 +3156,15 @@ void Player::RemoveArenaSpellCooldowns()
     // remove cooldowns on spells that has < 15 min CD
     SpellCooldowns::iterator itr, next;
     // iterate spell cooldowns
-    for (itr = m_spellCooldowns.begin();itr != m_spellCooldowns.end(); itr = next)
+    for (itr = m_spellCooldowns.begin(); itr != m_spellCooldowns.end(); itr = next)
     {
         next = itr;
         ++next;
         SpellEntry const * entry = sSpellStore.LookupEntry(itr->first);
         // check if spellentry is present and if the cooldown is less than 15 mins
         if (entry &&
-            entry->RecoveryTime <= 15 * MINUTE * 1000 &&
-            entry->CategoryRecoveryTime <= 15 * MINUTE * 1000)
+            entry->RecoveryTime <= 15 * MINUTE * IN_MILISECONDS &&
+            entry->CategoryRecoveryTime <= 15 * MINUTE * IN_MILISECONDS)
         {
             // notify player
             WorldPacket data(SMSG_CLEAR_COOLDOWN, (4+8));
@@ -3181,7 +3181,7 @@ void Player::RemoveAllSpellCooldown()
 {
     if (!m_spellCooldowns.empty())
     {
-        for (SpellCooldowns::const_iterator itr = m_spellCooldowns.begin();itr != m_spellCooldowns.end(); ++itr)
+        for (SpellCooldowns::const_iterator itr = m_spellCooldowns.begin(); itr != m_spellCooldowns.end(); ++itr)
         {
             WorldPacket data(SMSG_CLEAR_COOLDOWN, (4+8));
             data << uint32(itr->first);
@@ -3952,7 +3952,7 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
             {
                 if (Aura* Aur = GetAura(SPELL_ID_PASSIVE_RESURRECTION_SICKNESS,i))
                 {
-                    Aur->SetAuraDuration(delta*1000);
+                    Aur->SetAuraDuration(delta*IN_MILISECONDS);
                     Aur->UpdateAuraDuration();
                 }
             }
@@ -3973,7 +3973,7 @@ void Player::KillPlayer()
     ApplyModFlag(PLAYER_FIELD_BYTES, PLAYER_FIELD_BYTE_RELEASE_TIMER, !sMapStore.LookupEntry(GetMapId())->Instanceable());
 
     // 6 minutes until repop at graveyard
-    m_deathTimer = 6*MINUTE*1000;
+    m_deathTimer = 6*MINUTE*IN_MILISECONDS;
 
     UpdateCorpseReclaimDelay();                             // dependent at use SetDeathPvP() call before kill
     SendCorpseReclaimDelay();
@@ -11867,7 +11867,7 @@ void Player::AddEnchantmentDuration(Item *item,EnchantmentSlot slot,uint32 durat
     }
     if (item && duration > 0)
     {
-        GetSession()->SendItemEnchantTimeUpdate(GetGUID(), item->GetGUID(),slot,uint32(duration/1000));
+        GetSession()->SendItemEnchantTimeUpdate(GetGUID(), item->GetGUID(),slot,uint32(duration/IN_MILISECONDS));
         m_enchantDuration.push_back(EnchantDuration(item,slot,duration));
     }
 }
@@ -12184,7 +12184,7 @@ void Player::SendEnchantmentDurations()
 {
     for (EnchantDurationList::iterator itr = m_enchantDuration.begin();itr != m_enchantDuration.end();++itr)
     {
-        GetSession()->SendItemEnchantTimeUpdate(GetGUID(), itr->item->GetGUID(),itr->slot,uint32(itr->leftduration)/1000);
+        GetSession()->SendItemEnchantTimeUpdate(GetGUID(), itr->item->GetGUID(),itr->slot,uint32(itr->leftduration)/IN_MILISECONDS);
     }
 }
 
@@ -12660,7 +12660,7 @@ void Player::AddQuest(Quest const *pQuest, Object *questGiver)
             limittime = questGiver->ToPlayer()->getQuestStatusMap()[quest_id].m_timer / IN_MILISECONDS;
 
         AddTimedQuest(quest_id);
-        questStatusData.m_timer = limittime * 1000;
+        questStatusData.m_timer = limittime * IN_MILISECONDS;
         qtime = static_cast<uint32>(time(NULL)) + limittime;
     }
     else
@@ -15091,7 +15091,7 @@ void Player::_LoadQuestStatus(QueryResult_AutoPtr result)
                     if (quest_time <= sWorld.GetGameTime())
                         questStatusData.m_timer = 1;
                     else
-                        questStatusData.m_timer = (quest_time - sWorld.GetGameTime()) * 1000;
+                        questStatusData.m_timer = (quest_time - sWorld.GetGameTime()) * IN_MILISECONDS;
                 }
                 else
                     quest_time = 0;
@@ -16076,11 +16076,11 @@ void Player::_SaveQuestStatus()
             case QUEST_NEW :
                 CharacterDatabase.PExecute("INSERT INTO character_queststatus (guid,quest,status,rewarded,explored,timer,mobcount1,mobcount2,mobcount3,mobcount4,itemcount1,itemcount2,itemcount3,itemcount4) "
                     "VALUES ('%u', '%u', '%u', '%u', '%u', '" UI64FMTD "', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u')",
-                    GetGUIDLow(), i->first, i->second.m_status, i->second.m_rewarded, i->second.m_explored, uint64(i->second.m_timer / 1000 + sWorld.GetGameTime()), i->second.m_creatureOrGOcount[0], i->second.m_creatureOrGOcount[1], i->second.m_creatureOrGOcount[2], i->second.m_creatureOrGOcount[3], i->second.m_itemcount[0], i->second.m_itemcount[1], i->second.m_itemcount[2], i->second.m_itemcount[3]);
+                    GetGUIDLow(), i->first, i->second.m_status, i->second.m_rewarded, i->second.m_explored, uint64(i->second.m_timer / IN_MILISECONDS + sWorld.GetGameTime()), i->second.m_creatureOrGOcount[0], i->second.m_creatureOrGOcount[1], i->second.m_creatureOrGOcount[2], i->second.m_creatureOrGOcount[3], i->second.m_itemcount[0], i->second.m_itemcount[1], i->second.m_itemcount[2], i->second.m_itemcount[3]);
                 break;
             case QUEST_CHANGED :
                 CharacterDatabase.PExecute("UPDATE character_queststatus SET status = '%u',rewarded = '%u',explored = '%u',timer = '" UI64FMTD "',mobcount1 = '%u',mobcount2 = '%u',mobcount3 = '%u',mobcount4 = '%u',itemcount1 = '%u',itemcount2 = '%u',itemcount3 = '%u',itemcount4 = '%u'  WHERE guid = '%u' AND quest = '%u' ",
-                    i->second.m_status, i->second.m_rewarded, i->second.m_explored, uint64(i->second.m_timer / 1000 + sWorld.GetGameTime()), i->second.m_creatureOrGOcount[0], i->second.m_creatureOrGOcount[1], i->second.m_creatureOrGOcount[2], i->second.m_creatureOrGOcount[3], i->second.m_itemcount[0], i->second.m_itemcount[1], i->second.m_itemcount[2], i->second.m_itemcount[3], GetGUIDLow(), i->first);
+                    i->second.m_status, i->second.m_rewarded, i->second.m_explored, uint64(i->second.m_timer / IN_MILISECONDS + sWorld.GetGameTime()), i->second.m_creatureOrGOcount[0], i->second.m_creatureOrGOcount[1], i->second.m_creatureOrGOcount[2], i->second.m_creatureOrGOcount[3], i->second.m_itemcount[0], i->second.m_itemcount[1], i->second.m_itemcount[2], i->second.m_itemcount[3], GetGUIDLow(), i->first);
                 break;
             case QUEST_UNCHANGED:
                 break;
@@ -17311,7 +17311,7 @@ void Player::ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs)
         {
             data << unSpellId;
             data << unTimeMs;                               // in m.secs
-            AddSpellCooldown(unSpellId, 0, curTime + unTimeMs/1000);
+            AddSpellCooldown(unSpellId, 0, curTime + unTimeMs/IN_MILISECONDS);
         }
     }
     GetSession()->SendPacket(&data);
@@ -17686,7 +17686,7 @@ void Player::SendCooldownEvent(SpellEntry const *spellInfo)
     if (cooldown < 0)
         cooldown = 0;
     // Add cooldown
-    AddSpellCooldown(spellInfo->Id, 0, time(NULL) +  cooldown / 1000);
+    AddSpellCooldown(spellInfo->Id, 0, time(NULL) +  cooldown / IN_MILISECONDS);
     // Send activate
     WorldPacket data(SMSG_COOLDOWN_EVENT, (4+8));
     data << spellInfo->Id;
@@ -19357,7 +19357,7 @@ void Player::SendCorpseReclaimDelay(bool load)
 
     //! corpse reclaim delay 30 * 1000ms or longer at often deaths
     WorldPacket data(SMSG_CORPSE_RECLAIM_DELAY, 4);
-    data << uint32(delay*1000);
+    data << uint32(delay*IN_MILISECONDS);
     GetSession()->SendPacket(&data);
 }
 

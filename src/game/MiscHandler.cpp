@@ -1021,7 +1021,7 @@ void WorldSession::HandleMoveTeleportAck(WorldPacket&/* recv_data*/)
         recv_data >> guid;
         recv_data >> flags >> time;
         DEBUG_LOG("Guid " UI64FMTD,guid);
-        DEBUG_LOG("Flags %u, time %u",flags, time/1000);
+        DEBUG_LOG("Flags %u, time %u",flags, time/IN_MILISECONDS);
     */
 }
 
@@ -1195,7 +1195,7 @@ void WorldSession::HandleWorldTeleportOpcode(WorldPacket& recv_data)
         return;
     }
 
-    DEBUG_LOG("Time %u sec, map=%u, x=%f, y=%f, z=%f, orient=%f", time/1000, mapid, PositionX, PositionY, PositionZ, Orientation);
+    DEBUG_LOG("Time %u sec, map=%u, x=%f, y=%f, z=%f, orient=%f", time/IN_MILISECONDS, mapid, PositionX, PositionY, PositionZ, Orientation);
 
     if (GetSecurity() >= SEC_ADMINISTRATOR)
         GetPlayer()->TeleportTo(mapid,PositionX,PositionY,PositionZ,Orientation);

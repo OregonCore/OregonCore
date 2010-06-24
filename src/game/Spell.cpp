@@ -49,7 +49,7 @@
 #include "Util.h"
 #include "TemporarySummon.h"
 
-#define SPELL_CHANNEL_UPDATE_INTERVAL 1000
+#define SPELL_CHANNEL_UPDATE_INTERVAL (1*IN_MILISECONDS)
 
 extern pEffect SpellEffects[TOTAL_SPELL_EFFECTS];
 
@@ -2611,8 +2611,8 @@ void Spell::SendSpellCooldown()
 
     time_t curTime = time(NULL);
 
-    time_t catrecTime = catrec ? curTime+catrec/1000 : 0;   // in secs
-    time_t recTime    = rec ? curTime+rec/1000 : catrecTime;// in secs
+    time_t catrecTime = catrec ? curTime+catrec/IN_MILISECONDS : 0;   // in secs
+    time_t recTime    = rec ? curTime+rec/IN_MILISECONDS : catrecTime;// in secs
 
     // self spell cooldown
     if (recTime > 0)
@@ -3604,7 +3604,7 @@ uint8 Spell::CanCast(bool strict)
     // - with greater than 15 min CD without SPELL_ATTR_EX4_USABLE_IN_ARENA flag
     // - with SPELL_ATTR_EX4_NOT_USABLE_IN_ARENA flag
     if ((m_spellInfo->AttributesEx4 & SPELL_ATTR_EX4_NOT_USABLE_IN_ARENA) ||
-        GetSpellRecoveryTime(m_spellInfo) > 15 * MINUTE * 1000 && !(m_spellInfo->AttributesEx4 & SPELL_ATTR_EX4_USABLE_IN_ARENA))
+        GetSpellRecoveryTime(m_spellInfo) > 15 * MINUTE * IN_MILISECONDS && !(m_spellInfo->AttributesEx4 & SPELL_ATTR_EX4_USABLE_IN_ARENA))
         if (MapEntry const* mapEntry = sMapStore.LookupEntry(m_caster->GetMapId()))
             if (mapEntry->IsBattleArena())
                 return SPELL_FAILED_NOT_IN_ARENA;
