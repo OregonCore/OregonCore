@@ -830,14 +830,7 @@ void Spell::EffectDummy(uint32 i)
                         SpellEntry const *spellInfo = sSpellStore.LookupEntry(classspell);
 
                         if (spellInfo->SpellFamilyName == SPELLFAMILY_ROGUE && (spellInfo->SpellFamilyFlags & 0x26000000860LL))
-                        {
-                            m_caster->ToPlayer()->RemoveSpellCooldown(classspell);
-
-                            WorldPacket data(SMSG_CLEAR_COOLDOWN, (4+8));
-                            data << uint32(classspell);
-                            data << uint64(m_caster->GetGUID());
-                            m_caster->ToPlayer()->GetSession()->SendPacket(&data);
-                        }
+                            m_caster->ToPlayer()->RemoveSpellCooldown(classspell,true);
                     }
                     return;
                 }
@@ -1309,12 +1302,7 @@ void Spell::EffectDummy(uint32 i)
                             (GetSpellSchoolMask(spellInfo) & SPELL_SCHOOL_MASK_FROST) &&
                             spellInfo->Id != 11958 && GetSpellRecoveryTime(spellInfo) > 0)
                         {
-                            m_caster->ToPlayer()->RemoveSpellCooldown(classspell);
-
-                            WorldPacket data(SMSG_CLEAR_COOLDOWN, (4+8));
-                            data << uint32(classspell);
-                            data << uint64(m_caster->GetGUID());
-                            m_caster->ToPlayer()->GetSession()->SendPacket(&data);
+                            m_caster->ToPlayer()->RemoveSpellCooldown(classspell,true);
                         }
                     }
                     return;
@@ -1523,14 +1511,7 @@ void Spell::EffectDummy(uint32 i)
                         SpellEntry const *spellInfo = sSpellStore.LookupEntry(classspell);
 
                         if (spellInfo->SpellFamilyName == SPELLFAMILY_HUNTER && spellInfo->Id != 23989 && GetSpellRecoveryTime(spellInfo) > 0)
-                        {
-                            m_caster->ToPlayer()->RemoveSpellCooldown(classspell);
-
-                            WorldPacket data(SMSG_CLEAR_COOLDOWN, (4+8));
-                            data << uint32(classspell);
-                            data << uint64(m_caster->GetGUID());
-                            m_caster->ToPlayer()->GetSession()->SendPacket(&data);
-                        }
+                            m_caster->ToPlayer()->RemoveSpellCooldown(classspell,true);
                     }
                     return;
                 }
@@ -1623,14 +1604,7 @@ void Spell::EffectDummy(uint32 i)
                     {
                         // clear cooldown at fail
                         if (m_caster->GetTypeId()==TYPEID_PLAYER)
-                        {
-                            m_caster->ToPlayer()->RemoveSpellCooldown(m_spellInfo->Id);
-
-                            WorldPacket data(SMSG_CLEAR_COOLDOWN, (4+8));
-                            data << uint32(m_spellInfo->Id);
-                            data << uint64(m_caster->GetGUID());
-                            m_caster->ToPlayer()->GetSession()->SendPacket(&data);
-                        }
+                            m_caster->ToPlayer()->RemoveSpellCooldown(m_spellInfo->Id,true);
 
                         SendCastResult(SPELL_FAILED_TARGET_AFFECTING_COMBAT);
                         return;

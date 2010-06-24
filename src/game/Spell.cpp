@@ -482,16 +482,8 @@ void Spell::FillTargetMap()
                             else
                             {
                                 // clear cooldown at fail
-                                if (m_caster->GetTypeId()==TYPEID_PLAYER)
-                                {
-                                    m_caster->ToPlayer()->RemoveSpellCooldown(m_spellInfo->Id);
-
-                                    WorldPacket data(SMSG_CLEAR_COOLDOWN, (4+8));
-                                    data << uint32(m_spellInfo->Id);
-                                    data << uint64(m_caster->GetGUID());
-                                    m_caster->ToPlayer()->GetSession()->SendPacket(&data);
-                                }
-
+                                if (m_caster->GetTypeId() == TYPEID_PLAYER)
+                                    m_caster->ToPlayer()->RemoveSpellCooldown(m_spellInfo->Id, true);
                                 SendCastResult(SPELL_FAILED_NO_EDIBLE_CORPSES);
                                 finish(false);
                             }
