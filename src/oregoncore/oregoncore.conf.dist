@@ -601,10 +601,6 @@ ChatLogTimestamp = 0
 #        Enable or disable instant logout for security level (0..4) or high (NOT in combat/while dueling/while falling)
 #        Default: 1 (Mods/GMs/Admins)
 #
-#    GroupLeaderReconnectPeriod
-#        The time the leader of a group has to reconnect before the lead goes to another player (also applies for a server crash)
-#        Default: 180 (seconds)
-#
 #    DisableWaterBreath
 #        Disable/enable waterbreathing for security level (0..4) or high
 #        Default: 4 (None)
@@ -722,7 +718,6 @@ StartHonorPoints = 0
 MaxArenaPoints = 5000
 StartArenaPoints = 0
 InstantLogout = 1
-GroupLeaderReconnectPeriod = 180
 DisableWaterBreath = 4
 AllFlightPaths = 0
 AlwaysMaxSkillForLevel = 0
