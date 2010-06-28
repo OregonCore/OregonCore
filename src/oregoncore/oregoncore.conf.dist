@@ -13,7 +13,7 @@ ConfVersion=2010061601
 #        Data directory setting.
 #        Important: DataDir needs to be quoted, as it is a string which may
 #         contain space characters.
-#        Example: "@prefix@/share/trinitycore"
+#        Example: "@prefix@/share/oregoncore"
 #
 #    LogsDir
 #        Logs directory setting.
@@ -378,8 +378,8 @@ MapUpdate.Threads = 1
 #        Log level of DB logging.
 #                 0 = Minimum
 #                 1 = Basic
-#                 2 = Detail
-#        Default: 3 = Full/Debug
+#        Default: 2 = Detail
+#                 3 = Full/Debug
 #
 #    LogDB.Char
 #        Enable/disable logging character outputs to DB.
