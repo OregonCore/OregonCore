@@ -229,7 +229,7 @@ struct OREGON_DLL_DECL instance_karazhan : public ScriptedInstance
     void SetData64(uint32 identifier, uint64 data)
     {
         switch(identifier)
-        {        
+        {
             case DATA_IMAGE_OF_MEDIVH: ImageGUID = data;
             case DATA_NIGHTBANE:       NightBaneGUID = data;
         }
@@ -306,7 +306,7 @@ struct OREGON_DLL_DECL instance_karazhan : public ScriptedInstance
             Encounters[4] >> Encounters[5] >>
             Encounters[6] >> Encounters[7] >>
             Encounters[8] >> Encounters[9] >>
-            Encounters[10] >> Encounters[11]; 
+            Encounters[10] >> Encounters[11];
         if(dataHead1 != 'K' || dataHead2 != 'Z')
         {
             error_log("SD2: Karazhan corrupted save data.");

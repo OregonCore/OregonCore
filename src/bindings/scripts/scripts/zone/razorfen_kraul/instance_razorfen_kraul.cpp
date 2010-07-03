@@ -89,7 +89,7 @@ struct OREGON_DLL_DECL instance_razorfen_kraul : public ScriptedInstance
             WardCheck_Timer = 4000;
         }else
             WardCheck_Timer -= diff;
-    }     
+    }
 
     void SetData(uint32 type, uint32 data)
     {

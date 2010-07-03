@@ -655,7 +655,7 @@ void BattleGround::RewardMark(Player *plr,uint32 count)
     if (!plr || !count)
         return;
 
-    BattleGroundMarks mark;    
+    BattleGroundMarks mark;
     switch(GetTypeID())
     {
         case BATTLEGROUND_AV:
@@ -667,7 +667,7 @@ void BattleGround::RewardMark(Player *plr,uint32 count)
         case BATTLEGROUND_AB:
             mark = ITEM_AB_MARK_OF_HONOR;
             break;
-        case BATTLEGROUND_EY:            
+        case BATTLEGROUND_EY:
             mark = ITEM_EY_MARK_OF_HONOR;
             break;
         default:
@@ -911,7 +911,7 @@ void BattleGround::Reset()
     m_InBGFreeSlotQueue = false;
 
     m_Players.clear();
-    
+
     for (BattleGroundScoreMap::const_iterator itr = m_PlayerScores.begin(); itr != m_PlayerScores.end(); ++itr)
         delete itr->second;
     m_PlayerScores.clear();

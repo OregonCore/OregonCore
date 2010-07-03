@@ -32,7 +32,7 @@ class OREGON_DLL_SPEC instance_blackfathom_deeps : public ScriptedInstance
 public:
 
     instance_blackfathom_deeps(Map *map) : ScriptedInstance(map) {Initialize();}
-    
+
     uint32 CandlesLighted;
 
     uint64 AkumaiDoorGUID;
@@ -74,25 +74,25 @@ public:
 
     void Update(uint32 diff)
     {
-    
+
     }
-    
+
     bool IsEncouterInProgress() const
     {
         return false;
     };
-        
+
     uint64 GetData64 (uint32 identifier)
     {
         return 0;
     }
-    
+
     uint32 GetData(uint32 type)
     {
-        if(type == DATA_CANDLES) 
+        if(type == DATA_CANDLES)
             return CandlesLighted;
     }
-    
+
     void SetData(uint32 type, uint32 data)
     {
         switch(type)
@@ -106,8 +106,8 @@ public:
                 break;
         }
     }
-    
- 
+
+
 };
 
 InstanceData* GetInstance_instance_blackfathom_deeps(Map *_Map)
@@ -118,7 +118,7 @@ InstanceData* GetInstance_instance_blackfathom_deeps(Map *_Map)
 void AddSC_instance_blackfathom_deeps()
 {
     Script *newscript;
-    
+
     newscript = new Script;
     newscript->Name="instance_blackfathom_deeps";
     newscript->GetInstanceData = &GetInstance_instance_blackfathom_deeps;

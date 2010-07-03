@@ -519,7 +519,7 @@ class BattleGround
         bool   m_PrematureCountDown;
         uint32 m_PrematureCountDownTimer;
         char const *m_Name;
-                    
+
 
         /* Player lists */
         std::vector<uint64> m_ResurrectQueue;               // Player GUID

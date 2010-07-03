@@ -978,7 +978,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
 
                             //Spells with this flag cannot trigger if effect is casted on self
                             // Slice and Dice, relentless strikes, eviscerate
-    //bool canEffectTrigger = (m_spellInfo->AttributesEx4 & (SPELL_ATTR_EX4_CANT_PROC_FROM_SELFCAST | SPELL_ATTR_EX4_UNK4) ? m_caster!=unitTarget : true) 
+    //bool canEffectTrigger = (m_spellInfo->AttributesEx4 & (SPELL_ATTR_EX4_CANT_PROC_FROM_SELFCAST | SPELL_ATTR_EX4_UNK4) ? m_caster!=unitTarget : true)
     //    && m_canTrigger;
 
     if (missInfo==SPELL_MISS_NONE)                          // In case spell hit target, do all effect on that target
@@ -1152,7 +1152,7 @@ void Spell::DoSpellHitOnUnit(Unit *unit, const uint32 effectMask)
         {
             // reset damage to 0 if target has Invisibility or Vanish aura (_only_ vanish, not stealth) and isn't visible for caster
             bool isVisibleForHit = ((unit->HasAuraType(SPELL_AURA_MOD_INVISIBILITY) || unit->HasAuraTypeWithFamilyFlags(SPELL_AURA_MOD_STEALTH, SPELLFAMILY_ROGUE ,SPELLFAMILYFLAG_ROGUE_VANISH)) && !unit->isVisibleForOrDetect(m_caster, true)) ? false : true;
-            
+
             // for delayed spells ignore not visible explicit target
             if (m_spellInfo->speed > 0.0f && unit==m_targets.getUnitTarget() && !isVisibleForHit)
             {
@@ -1725,7 +1725,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
             else
                 pushType = PUSH_IN_FRONT;
             break;
-           
+
         case TARGET_TYPE_DEST_CASTER: //4+8+2
         {
             if (cur == TARGET_SRC_CASTER)
@@ -1977,7 +1977,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                     SearchChainTarget(unitList, range, maxTargets, SPELL_TARGETS_CHAINHEAL);
                     break;
             }
-            
+
             for (std::list<Unit*>::iterator itr = unitList.begin(); itr != unitList.end(); ++itr)
                 AddUnitTarget(*itr, i);
         }
@@ -2920,7 +2920,7 @@ void Spell::SendSpellGo()
 
     // triggered spells with spell visual != 0 and not auto shot
     if ((m_IsTriggeredSpell && (m_spellInfo->AttributesEx4 & SPELL_ATTR_EX4_AUTOSHOT) == 0) || m_triggeredByAuraSpell)
-        castFlags |= CAST_FLAG_UNKNOWN0; 
+        castFlags |= CAST_FLAG_UNKNOWN0;
 
     if (IsRangedSpell())
         castFlags |= CAST_FLAG_AMMO;                        // arrows/bullets visual
@@ -3045,7 +3045,7 @@ void Spell::SendLogExecute()
                         data.append(unit->GetPackGUID());
                     else
                         data << uint8(0);
-                    data << uint32(m_caster->m_extraAttacks); 
+                    data << uint32(m_caster->m_extraAttacks);
                     break;
                 case SPELL_EFFECT_INTERRUPT_CAST:
                     if (Unit *unit = m_targets.getUnitTarget())
@@ -3181,10 +3181,10 @@ void Spell::SendChannelStart(uint32 duration)
         }
     }
 
-    WorldPacket data(MSG_CHANNEL_START, (8+4+4));       
-    data.append(m_caster->GetPackGUID());       
-    data << uint32(m_spellInfo->Id);       
-    data << uint32(duration);       
+    WorldPacket data(MSG_CHANNEL_START, (8+4+4));
+    data.append(m_caster->GetPackGUID());
+    data << uint32(m_spellInfo->Id);
+    data << uint32(duration);
 
     m_caster->SendMessageToSet(&data, true);
 
@@ -5446,7 +5446,7 @@ void Spell::CalculateDamageDoneForAllTargets()
 
         if (target.missCondition==SPELL_MISS_NONE)                          // In case spell hit target, do all effect on that target
         {
-            target.damage += CalculateDamageDone(unit, mask, multiplier);   
+            target.damage += CalculateDamageDone(unit, mask, multiplier);
             target.crit = m_caster->isSpellCrit(unit, m_spellInfo, m_spellSchoolMask, m_attackType);
         }
         else if (target.missCondition == SPELL_MISS_REFLECT)                // In case spell reflect from target, do all effect on caster (if hit)

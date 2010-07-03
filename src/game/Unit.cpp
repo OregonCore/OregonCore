@@ -836,7 +836,7 @@ uint32 Unit::DealDamage(Unit *pVictim, uint32 damage, CleanDamage const* cleanDa
         if (GetCharmerOrOwnerPlayerOrPlayerItself())
             pVictim->ToCreature()->LowerPlayerDamageReq(health < damage ?  health : damage);
     }
-    
+
     if (health <= damage)
     {
         DEBUG_LOG("DealDamage: victim just died");
@@ -4487,7 +4487,7 @@ void Unit::RemoveAura(AuraMap::iterator &i, AuraRemoveMode mode)
                     {
                         caster->m_currentSpells[CURRENT_CHANNELED_SPELL]->cancel();
                         caster->m_currentSpells[CURRENT_CHANNELED_SPELL]=NULL;
-            
+
                     }
                 }
 
@@ -6842,7 +6842,7 @@ bool Unit::HandleProcTriggerSpell(Unit *pVictim, uint32 damage, Aura* triggeredB
     }
 
     // check if triggering spell can stack with current target's auras (if not - don't proc)
-    // don't check if 
+    // don't check if
     // aura is passive (talent's aura)
     // trigger_spell_id's aura is already active (allow to refresh triggered auras)
     // trigger_spell_id's triggeredByAura is already active (for example shaman's shields)
@@ -8234,13 +8234,13 @@ int32 Unit::SpellBaseDamageBonusForVictim(SpellSchoolMask schoolMask, Unit *pVic
     {
         if (((*i)->GetModifier()->m_miscvalue & schoolMask) != 0)
             TakenAdvertisedBenefit += (*i)->GetModifierValue();
-    
-            if ((*i)->GetId() == 34123) 
-             { 
-                 if ((*i)->GetCaster()->GetTypeId() == TYPEID_PLAYER) 
-                 TakenAdvertisedBenefit += int32(0.25f * ((Player*)(*i)->GetCaster())->GetStat(STAT_SPIRIT)); 
-             } 
-      } 
+
+            if ((*i)->GetId() == 34123)
+             {
+                 if ((*i)->GetCaster()->GetTypeId() == TYPEID_PLAYER)
+                 TakenAdvertisedBenefit += int32(0.25f * ((Player*)(*i)->GetCaster())->GetStat(STAT_SPIRIT));
+             }
+      }
 
     return TakenAdvertisedBenefit;
 }
@@ -8997,7 +8997,7 @@ void Unit::Unmount()
                 delete NewPet;
             ToPlayer()->SetTemporaryUnsummonedPetNumber(0);
         }
-        else 
+        else
            if (Pet *pPet = GetPet())
                if (pPet->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED) && !pPet->hasUnitState(UNIT_STAT_STUNNED))
                    pPet->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
@@ -9038,7 +9038,7 @@ void Unit::CombatStart(Unit* target, bool initialAggro)
         {
             target->ToCreature()->AI()->AttackStart(this);
             if (target->ToCreature()->GetFormation())
-            {   
+            {
                 target->ToCreature()->GetFormation()->MemberAttackStart(target->ToCreature(), this);
                 sLog.outDebug("Unit::CombatStart() calls CreatureGroups::MemberHasAttacked(this);");
             }
@@ -9073,7 +9073,7 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
 
     //if (isInCombat())
     //    return;
-    
+
     bool creatureNotInCombat = GetTypeId()==TYPEID_UNIT && !HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
 
     SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
@@ -9093,7 +9093,7 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
         if (enemy && ToCreature()->AI())
             ToCreature()->AI()->EnterCombat(enemy);
     }
-    
+
     if (GetTypeId() != TYPEID_PLAYER && ToCreature()->isPet())
     {
         UpdateSpeed(MOVE_RUN, true);
@@ -9101,9 +9101,9 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
         UpdateSpeed(MOVE_FLIGHT, true);
     }else if (!isCharmed())
         return;
-    
+
     SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PET_IN_COMBAT);
-    
+
 }
 
 void Unit::ClearInCombat()
@@ -9117,7 +9117,7 @@ void Unit::ClearInCombat()
         Creature* creature = ToCreature();
         if (creature->GetCreatureInfo() && creature->GetCreatureInfo()->unit_flags & UNIT_FLAG_NOT_ATTACKABLE_2)
             SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
-                             
+
         clearUnitState(UNIT_STAT_ATTACK_PLAYER);
     }
 
@@ -9130,7 +9130,7 @@ void Unit::ClearInCombat()
         }
     }else if (!isCharmed())
         return;
-    
+
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PET_IN_COMBAT);
 }
 
@@ -9864,7 +9864,7 @@ int32 Unit::CalculateSpellDamage(SpellEntry const* spellProto, uint8 effect_inde
 
     if (!basePointsPerLevel && (spellProto->Attributes & SPELL_ATTR_LEVEL_DAMAGE_CALCULATION && spellProto->spellLevel) &&
             spellProto->Effect[effect_index] != SPELL_EFFECT_WEAPON_PERCENT_DAMAGE &&
-            spellProto->Effect[effect_index] != SPELL_EFFECT_KNOCK_BACK && 
+            spellProto->Effect[effect_index] != SPELL_EFFECT_KNOCK_BACK &&
             spellProto->EffectApplyAuraName[effect_index] != SPELL_AURA_MOD_SPEED_ALWAYS &&
             spellProto->EffectApplyAuraName[effect_index] != SPELL_AURA_MOD_SPEED_NOT_STACK &&
             spellProto->EffectApplyAuraName[effect_index] != SPELL_AURA_MOD_INCREASE_SPEED &&
@@ -11827,7 +11827,7 @@ void Unit::SetContestedPvP(Player *attackedPlayer)
         player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_CONTESTED_PVP);
         // call MoveInLineOfSight for nearby contested guards
         player->SetVisibility(player->GetVisibility());
-        
+
     }
     if (!hasUnitState(UNIT_STAT_ATTACK_PLAYER))
     {
@@ -12067,7 +12067,7 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
         if (!bRewardIsAllowed)
             pVictim->ToCreature()->SetLootRecipient(NULL);
     }
-    
+
     if (bRewardIsAllowed && pVictim->GetTypeId() == TYPEID_UNIT && pVictim->ToCreature()->GetLootRecipient())
         player = pVictim->ToCreature()->GetLootRecipient();
     // Reward player, his pets, and group/raid members

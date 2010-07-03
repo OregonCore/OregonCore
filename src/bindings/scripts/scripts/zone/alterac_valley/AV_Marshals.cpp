@@ -33,7 +33,7 @@ EndScriptData */
 struct OREGON_DLL_DECL AV_MarshalsAI : public ScriptedAI
 {
      AV_MarshalsAI(Creature *c) : ScriptedAI(c) {Reset();}
-     
+
      uint32 ChargeTimer;
      uint32 CleaveTimer;
      uint32 DemoralizingShoutTimer;
@@ -45,8 +45,8 @@ struct OREGON_DLL_DECL AV_MarshalsAI : public ScriptedAI
      uint32 Aura2;
      uint32 Aura3;
      uint32 Aura4;
-     
-     
+
+
      void Reset()
      {
         ChargeTimer             = (2+rand()%10)*1000;
@@ -70,21 +70,21 @@ struct OREGON_DLL_DECL AV_MarshalsAI : public ScriptedAI
      {
          Reset();
      }
-     
+
      void KilledUnit(Unit* victim){}
-     
+
      void JustDied(Unit* Killer){}
-     
+
      void UpdateAI(const uint32 diff)
      {
           //Adding the auras//
         if(m_creature->GetEntry() == 14762 && Aura1 == 0) //North Marshal
-        {        
+        {
             DoCast(m_creature, 45828);
             Aura1 = 1;
         }
         if(m_creature->GetEntry() == 14763 && Aura2 == 0) //South Marshal
-        {    
+        {
             DoCast(m_creature, 45829);
             Aura2 = 1;
         }
@@ -104,8 +104,8 @@ struct OREGON_DLL_DECL AV_MarshalsAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_CHARGE);
             ChargeTimer = (10+rand()%15)*1000;
-        }else ChargeTimer -= diff;            
-        
+        }else ChargeTimer -= diff;
+
         if (CleaveTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_CLEAVE);
@@ -134,8 +134,8 @@ struct OREGON_DLL_DECL AV_MarshalsAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_ENRAGE);
             EnrageTimer = (10+rand()%20)*1000;
-        }else EnrageTimer -= diff;    
-            
+        }else EnrageTimer -= diff;
+
 
         // check if creature is not outside of building
         if(ResetTimer < diff)

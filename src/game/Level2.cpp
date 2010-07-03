@@ -75,7 +75,7 @@ bool ChatHandler::HandleMuteCommand(const char* args)
         mutereasonstr = "No reason.";
     else
         mutereasonstr = mutereason;
-        
+
     uint32 notspeaktime = (uint32) atoi(timetonotspeak);
 
     if (!normalizePlayerName(cname))
@@ -3806,7 +3806,7 @@ bool ChatHandler::HandleCreatePetCommand(const char* args)
 
     if (!pet)
       return false;
-    
+
     if (!pet->CreateBaseAtCreature(creatureTarget))
     {
         delete pet;

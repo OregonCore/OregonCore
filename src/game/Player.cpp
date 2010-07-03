@@ -1862,8 +1862,8 @@ void Player::RemoveFromWorld()
         RemoveGuardians();
     }
 
-    // remove duel before calling Unit::RemoveFromWorld       
-    // otherwise there will be an existing duel flag pointer but no entry in m_gameObj       
+    // remove duel before calling Unit::RemoveFromWorld
+    // otherwise there will be an existing duel flag pointer but no entry in m_gameObj
     DuelComplete(DUEL_INTERUPTED);
 
     ///- Do not add/remove the player from the object storage
@@ -2256,7 +2256,7 @@ void Player::GiveXP(uint32 xp, Unit* victim)
     Unit::AuraList const& ModXPPctAuras = GetAurasByType(SPELL_AURA_MOD_XP_PCT);
     for (Unit::AuraList::const_iterator i = ModXPPctAuras.begin();i != ModXPPctAuras.end(); ++i)
         xp = uint32(xp*(1.0f + (*i)->GetModifierValue() / 100.0f));
-        
+
     Unit::AuraList const& DummyAuras = GetAurasByType(SPELL_AURA_DUMMY);
     for (Unit::AuraList::const_iterator i = DummyAuras.begin();i != DummyAuras.end(); ++i)
         if ((*i)->GetId() == 32098 || (*i)->GetId() == 32096)
@@ -6015,7 +6015,7 @@ void Player::RewardReputation(Unit *pVictim, float rate)
 
     if (!Rep)
         return;
-        
+
     Unit::AuraList const& DummyAuras = GetAurasByType(SPELL_AURA_DUMMY);
     for (Unit::AuraList::const_iterator i = DummyAuras.begin();i != DummyAuras.end(); ++i)
     if ((*i)->GetId() == 32098 || (*i)->GetId() == 32096)
@@ -7449,8 +7449,8 @@ void Player::SendLootRelease(uint64 guid)
 
 void Player::SendLoot(uint64 guid, LootType loot_type)
 {
-     if (uint64 lguid = GetLootGUID()) 
-         m_session->DoLootRelease(lguid); 
+     if (uint64 lguid = GetLootGUID())
+         m_session->DoLootRelease(lguid);
 
 
     Loot    *loot = 0;
@@ -17855,13 +17855,13 @@ void Player::ToggleMetaGemsActive(uint8 exceptslot, bool apply)
 
 void Player::LeaveBattleground(bool teleportToEntryPoint)
 {
-    
+
     if (BattleGround *bg = GetBattleGround())
     {
         bool need_debuf = bg->isBattleGround() && !isGameMaster() && (bg->GetStatus() == STATUS_IN_PROGRESS) && sWorld.getConfig(CONFIG_BATTLEGROUND_CAST_DESERTER);
 
         if (bg->isArena() && bg->isRated() && bg->GetStatus() != STATUS_WAIT_LEAVE) //if game has not end then make sure that personal raiting is decreased
-        
+
         {
             //decrease private raiting here
             Team Loser = (Team)bg->GetPlayerTeam(GetGUID());

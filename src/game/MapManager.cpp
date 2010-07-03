@@ -257,15 +257,15 @@ MapManager::Update(time_t diff)
     MapMapType::iterator iter = i_maps.begin();
     for (; iter != i_maps.end(); ++iter)
     {
-	 if (m_updater.activated())
+     if (m_updater.activated())
             m_updater.schedule_update(*iter->second, i_timer.GetCurrent());
-	 else
+     else
         {
-	     iter->second->Update(i_timer.GetCurrent());
-	 }
+         iter->second->Update(i_timer.GetCurrent());
+     }
     }
     if (m_updater.activated())
-	 m_updater.wait();
+     m_updater.wait();
 
     ObjectAccessor::Instance().Update(i_timer.GetCurrent());
     sWorld.RecordTimeDiff("UpdateObjectAccessor");

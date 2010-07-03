@@ -29,7 +29,7 @@ enum BG_WS_TimerOrScore
     BG_WS_FLAG_RESPAWN_TIME = (23*IN_MILISECONDS),
     BG_WS_FLAG_DROP_TIME    = (10*IN_MILISECONDS),
     BG_WS_SPELL_FORCE_TIME  = (600*IN_MILISECONDS),
-    BG_WS_SPELL_BRUTAL_TIME = (900*IN_MILISECONDS) 
+    BG_WS_SPELL_BRUTAL_TIME = (900*IN_MILISECONDS)
 };
 
 enum BG_WS_Sound
@@ -202,7 +202,7 @@ class BattleGroundWS : public BattleGround
         uint32 m_TeamScores[2];
         int32 m_FlagsTimer[2];
         int32 m_FlagsDropTimer[2];
-        
+
         int32 m_FlagSpellForceTimer;
         int32 m_FlagSpellBrutalTimer;
         bool m_BothFlagsKept;

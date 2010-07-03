@@ -446,7 +446,7 @@ Unit *caster, Item* castItem) : Aura(spellproto, eff, currentBasePoints, target,
         m_radius = GetSpellRadius(spellproto,m_effIndex,false);
     else
         m_radius = GetSpellRadius(spellproto,m_effIndex,true);
-    
+
     if (Player* modOwner = caster_ptr->GetSpellModOwner())
         modOwner->ApplySpellMod(GetId(), SPELLMOD_RADIUS, m_radius);
 
@@ -1162,11 +1162,11 @@ void Aura::HandleAddModifier(bool apply, bool Real)
         {
             case 17941:    // Shadow Trance
             case 22008:    // Netherwind Focus
-            case 34754:    // Clearcasting 
-            case 34936:    // Backlash 
-            case 48108:    // Hot Streak 
-            case 54741:    // Firestarter 
-            case 57761:    // Fireball! 
+            case 34754:    // Clearcasting
+            case 34936:    // Backlash
+            case 48108:    // Hot Streak
+            case 54741:    // Firestarter
+            case 57761:    // Fireball!
 
                 m_procCharges = 1;
                 break;
@@ -2098,7 +2098,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
         }
 
         switch(GetId())
-        {            
+        {
             case 2584:                                     // Waiting to Resurrect
             {
                 // Waiting to resurrect spell cancel, we must remove player from resurrect queue
@@ -2136,12 +2136,12 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                 if (m_removeMode==AURA_REMOVE_BY_DISPEL)
                     m_target->DealDamage(m_target, m_target->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 return;
-            }        
+            }
             case 46308:                                     // Burning Winds - casted only at creatures at spawn
             {
                 m_target->CastSpell(m_target,47287,true,NULL,this);
                 return;
-            }        
+            }
             case 34477:                                     // Misdirection
             {
                 m_target->SetReducedThreatPercent(0, 0);
@@ -3468,22 +3468,22 @@ void Aura::HandleAuraModSilence(bool apply, bool Real)
 
         switch (GetId())
         {
-            // Arcane Torrent (Mana) 
-              case 28730: 
-              { 
-                  Unit * caster = GetCaster(); 
-                  if (!caster) 
-                      return; 
-   
-                  Aura * dummy = caster->GetDummyAura(28734); 
-                  if (dummy) 
-                  { 
-                      int32 bp = (5 + caster->getLevel()) * dummy->GetStackAmount(); 
-                      caster->CastCustomSpell(caster, 28733, &bp, NULL, NULL, true); 
-                      caster->RemoveAurasDueToSpell(28734); 
-                  } 
-                  return; 
-              } 
+            // Arcane Torrent (Mana)
+              case 28730:
+              {
+                  Unit * caster = GetCaster();
+                  if (!caster)
+                      return;
+
+                  Aura * dummy = caster->GetDummyAura(28734);
+                  if (dummy)
+                  {
+                      int32 bp = (5 + caster->getLevel()) * dummy->GetStackAmount();
+                      caster->CastCustomSpell(caster, 28733, &bp, NULL, NULL, true);
+                      caster->RemoveAurasDueToSpell(28734);
+                  }
+                  return;
+              }
 
             // Arcane Torrent (Energy)
             case 25046:
@@ -3897,10 +3897,10 @@ void Aura::HandleAuraModDispelImmunity(bool apply, bool Real)
     m_target->ApplySpellDispelImmunity(m_spellProto, DispelType(m_modifier.m_miscvalue), apply);
 
     if (GetId()==20594)   //stoneform
-    {   
+    {
         //handle diseases
         m_target->ApplySpellDispelImmunity(m_spellProto,DISPEL_DISEASE,apply);
-  
+
         //remove bleed auras
         const uint32 mechanic = 1 << MECHANIC_BLEED;
 
@@ -4593,7 +4593,7 @@ void Aura::HandleModPowerRegen(bool apply, bool Real)       // drinking
         Powers pt = m_target->getPowerType();
         if (pt == POWER_RAGE)
             m_periodicTimer = 3000;
-        else 
+        else
             m_periodicTimer = 2000;
 
         if (int32(pt) != m_modifier.m_miscvalue)
@@ -4612,7 +4612,7 @@ void Aura::HandleModPowerRegen(bool apply, bool Real)       // drinking
 
         // Warrior talent, gain 1 rage every 3 seconds while in combat
         // Anger Menagement
-        // amount = 1+ 16 = 17 = 3,4*5 = 10,2*5/3 
+        // amount = 1+ 16 = 17 = 3,4*5 = 10,2*5/3
         // so 17 is rounded amount for 5 sec tick grow ~ 1 range grow in 3 sec
         if (pt == POWER_RAGE)
         {
@@ -5309,8 +5309,8 @@ void Aura::HandleAuraModPacify(bool apply, bool Real)
         m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED);
     else
         m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED);
-        
-    
+
+
      if (m_spellProto->Id == 45839){
         if (apply){
             m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -6376,7 +6376,7 @@ void Aura::PeriodicDummyTick()
 //        // Darkness
 //        case 45996: break;
         // Summon Blood Elves Periodic
-        case 46041: 
+        case 46041:
             m_target->CastSpell(m_target, 46037, true, NULL, this);
             m_target->CastSpell(m_target, roll_chance_i(50) ? 46038 : 46039, true, NULL, this);
             m_target->CastSpell(m_target, 46040, true, NULL, this);

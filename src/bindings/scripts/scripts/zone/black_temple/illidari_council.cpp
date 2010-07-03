@@ -524,7 +524,7 @@ struct OREGON_DLL_DECL boss_gathios_the_shattererAI : public boss_illidari_counc
             {
                 if(Unit* pUnit = SelectCouncilMember())
                 {
-                    
+
                     switch(rand()%2)
                     {
                         case 0: DoCast(pUnit, SPELL_BLESS_SPELLWARD);  break;

@@ -111,7 +111,7 @@ struct OREGON_DLL_DECL mob_ashtongue_channelerAI : public ScriptedAI
 
     uint64 ShadeGUID;
 
-    void Reset() 
+    void Reset()
     {
         m_creature->setActive(true);
     }
@@ -248,12 +248,12 @@ struct OREGON_DLL_DECL boss_shade_of_akamaAI : public ScriptedAI
     {
         summons.DespawnAll();
     }
-    void JustSummoned(Creature *summon) 
+    void JustSummoned(Creature *summon)
     {
         if(summon->GetEntry() == CREATURE_DEFENDER || summon->GetEntry() == 23523 || summon->GetEntry() == 23318 || summon->GetEntry() == 23524)
             summons.Summon(summon);
     }
-    void SummonedCreatureDespawn(Creature *summon) 
+    void SummonedCreatureDespawn(Creature *summon)
     {
         if(summon->GetEntry() == CREATURE_DEFENDER || summon->GetEntry() == 23523 || summon->GetEntry() == 23318 || summon->GetEntry() == 23524)
             summons.Despawn(summon);
@@ -587,12 +587,12 @@ struct OREGON_DLL_DECL npc_akamaAI : public ScriptedAI
         m_creature->setActive(true);
     }
 
-    void JustSummoned(Creature *summon) 
+    void JustSummoned(Creature *summon)
     {
         if(summon->GetEntry() == CREATURE_BROKEN)
             summons.Summon(summon);
     }
-    void SummonedCreatureDespawn(Creature *summon) 
+    void SummonedCreatureDespawn(Creature *summon)
     {
         if(summon->GetEntry() == CREATURE_BROKEN)
             summons.Despawn(summon);

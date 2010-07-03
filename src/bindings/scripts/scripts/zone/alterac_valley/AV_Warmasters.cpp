@@ -33,7 +33,7 @@ EndScriptData */
 struct OREGON_DLL_DECL AV_WarmastersAI : public ScriptedAI
 {
      AV_WarmastersAI(Creature *c) : ScriptedAI(c) {Reset();}
-     
+
      uint32 ChargeTimer;
      uint32 CleaveTimer;
      uint32 DemoralizingShoutTimer;
@@ -45,7 +45,7 @@ struct OREGON_DLL_DECL AV_WarmastersAI : public ScriptedAI
      uint32 Aura2;
      uint32 Aura3;
      uint32 Aura4;
-     
+
      void Reset()
      {
         ChargeTimer             = (2+rand()%10)*1000;
@@ -69,11 +69,11 @@ struct OREGON_DLL_DECL AV_WarmastersAI : public ScriptedAI
      {
          Reset();
      }
-     
+
      void KilledUnit(Unit* victim){}
-     
+
      void JustDied(Unit* Killer){}
-     
+
      void UpdateAI(const uint32 diff)
      {
          //Adding the auras//
@@ -83,7 +83,7 @@ struct OREGON_DLL_DECL AV_WarmastersAI : public ScriptedAI
             Aura1 = 1;
         }
         if(m_creature->GetEntry() == 14776 && Aura2 == 0) //Tower Point Warmaster
-        {    
+        {
             DoCast(m_creature, 45823);
             Aura2 = 1;
         }
@@ -93,18 +93,18 @@ struct OREGON_DLL_DECL AV_WarmastersAI : public ScriptedAI
             Aura3 = 1;
         }
         if(m_creature->GetEntry() == 14777 && Aura4 == 0) //West FRostwolf Marshal
-        {    
+        {
             DoCast(m_creature, 45824);
             Aura4 = 1;
-        }  
+        }
         if (!UpdateVictim())
             return;
         if (ChargeTimer <diff)
         {
             DoCast(m_creature->getVictim(), SPELL_CHARGE);
             ChargeTimer = (10+rand()%15)*1000;
-        }else ChargeTimer -= diff;            
-        
+        }else ChargeTimer -= diff;
+
         if (CleaveTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_CLEAVE);
@@ -133,8 +133,8 @@ struct OREGON_DLL_DECL AV_WarmastersAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_ENRAGE);
             EnrageTimer = (10+rand()%20)*1000;
-        }else EnrageTimer -= diff;    
-            
+        }else EnrageTimer -= diff;
+
 
         // check if creature is not outside of building
         if(ResetTimer < diff)

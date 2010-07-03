@@ -446,7 +446,7 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
             break;
         case 19:
             m_creature->RemoveUnitMovementFlag(MOVEMENTFLAG_FLYING2);break;
-        case 20: 
+        case 20:
             {
                 Phase = 1;
                 IsFlying = false;
@@ -852,7 +852,7 @@ bool GOReward_go_loosely_turned_soil(Player *plr, GameObject* soil, Quest const*
         {
             ((boss_headless_horsemanAI*)horseman->AI())->playerGUID = plr->GetGUID();
             ((boss_headless_horsemanAI*)horseman->AI())->FlyMode();
-            soil->SetUInt32Value(GAMEOBJECT_FACTION,14); 
+            soil->SetUInt32Value(GAMEOBJECT_FACTION,14);
         }
     }
     return true;

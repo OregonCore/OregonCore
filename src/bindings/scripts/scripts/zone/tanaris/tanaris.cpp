@@ -569,27 +569,27 @@ bool GOHello_go_landmark_treasure(Player *player, GameObject* _GO)
 {
     if (player->GetQuestStatus(QUEST_CUERGOS_GOLD) != QUEST_STATUS_INCOMPLETE)
         return false;
-    
+
     Creature * spawn = NULL;
-    
+
     spawn = player->SummonCreature(NPC_PIRATE, -10029.78, -4032.54, 19.41, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
     if(spawn)
         spawn->GetMotionMaster()->MovePath(PATH_ENTRY_1, true);
     spawn = player->SummonCreature(NPC_PIRATE, -10031.64, -4032.14, 19.11, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
     if(spawn)
         spawn->GetMotionMaster()->MovePath(PATH_ENTRY_3, true);
-    
+
     spawn = player->SummonCreature(NPC_SWASHBUCKLER, -10029.86, -4030.51, 20.02, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
     if(spawn)
         spawn->GetMotionMaster()->MovePath(PATH_ENTRY_4, true);
     spawn = player->SummonCreature(NPC_SWASHBUCKLER, -10031.83, -4030.70, 19.52, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
     if(spawn)
         spawn->GetMotionMaster()->MovePath(PATH_ENTRY_5, true);
-    
+
     spawn = player->SummonCreature(NPC_BUCCANEER, -10028.90, -4029.65, 20.53, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
     if(spawn)
         spawn->GetMotionMaster()->MovePath(PATH_ENTRY_2, true);
-    
+
     player->SummonGameObject(GO_TREASURE, -10119.70, -4050.45, 5.33, 0, 0, 0, 0, 0, 240);
 
     return true;

@@ -128,7 +128,7 @@ Oregon::CreatureRelocationNotifier::Visit(PlayerMapType &m)
             continue;
 
         iter->getSource()->UpdateVisibilityOf(&i_creature);
-        
+
         PlayerCreatureRelocationWorker(iter->getSource(), &i_creature);
     }
 }
@@ -144,7 +144,7 @@ Oregon::CreatureRelocationNotifier::Visit(CreatureMapType &m)
     {
         if (iter->getSource()->m_Notified)
             continue;
-        
+
         if (!iter->getSource()->isAlive())
             continue;
 

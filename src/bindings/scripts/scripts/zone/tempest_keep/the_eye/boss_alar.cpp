@@ -283,14 +283,14 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                             EnterEvadeMode();
                             return;
                         }
-                    case WE_LAND: 
+                    case WE_LAND:
                         WaitEvent = WE_SUMMON;
-                        WaitTimer = 4000; 
+                        WaitTimer = 4000;
                         for(uint8 i = 0; i < 2; ++i)
                             DoSpawnCreature(CREATURE_EMBER_OF_ALAR, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                         return;
                     case WE_SUMMON:
-                        //for(uint8 i = 0; i < 2; ++i) 
+                        //for(uint8 i = 0; i < 2; ++i)
                             //DoSpawnCreature(CREATURE_EMBER_OF_ALAR, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                         m_creature->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 10);
                         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -355,7 +355,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                 Unit *target= SelectUnit(SELECT_TARGET_RANDOM, 1, 100, true);
                 if(target)
                     DoCast(target, SPELL_CHARGE);
-                Charge_Timer = 30000+rand()%20000; 
+                Charge_Timer = 30000+rand()%20000;
             }else Charge_Timer -= diff;
 
             if(MeltArmor_Timer < diff)
@@ -372,7 +372,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                 m_creature->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 50);
                 WaitEvent = WE_METEOR;
                 WaitTimer = 0;
-                DiveBomb_Timer = 30000+rand()%30000; 
+                DiveBomb_Timer = 30000+rand()%30000;
                 return;
             }else DiveBomb_Timer -= diff;
 

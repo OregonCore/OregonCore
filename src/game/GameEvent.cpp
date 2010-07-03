@@ -1505,7 +1505,7 @@ OREGON_DLL_SPEC bool isGameEventActive(uint16 event_id)
     for (GameEvent::ActiveEvents::const_iterator itr = ae.begin(); itr != ae.end(); ++itr)
         if (*itr == event_id)
         return true;
-        
+
     return false;
 }
 

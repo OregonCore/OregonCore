@@ -131,7 +131,7 @@ void WorldSession::HandlePetAction(WorldPacket & recv_data)
                         return;
 
                     }
-                    
+
                     pet->clearUnitState(UNIT_STAT_FOLLOW);
                     // This is true if pet has no target or has target but targets differs.
                     if (pet->getVictim() != TargetUnit || (pet->getVictim() == TargetUnit && !pet->GetCharmInfo()->IsCommandAttack()))

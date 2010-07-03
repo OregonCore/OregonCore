@@ -168,7 +168,7 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
 
         if (m_creature->Attack(who, true))
         {
-            if (Phase) 
+            if (Phase)
                 DoStartNoMovement(who);
             else
                 DoStartMovement(who);

@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: Boss_Vanndar
-SD%Complete: 
+SD%Complete:
 SDComment: Some spells listed on wowwiki but doesn't exist on wowhead
 EndScriptData */
 

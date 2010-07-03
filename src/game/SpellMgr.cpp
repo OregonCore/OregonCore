@@ -2697,7 +2697,7 @@ bool IsSpellAllowedInLocation(SpellEntry const *spellInfo,uint32 map_id,uint32 z
             MapEntry const* mapEntry = sMapStore.LookupEntry(map_id);
             if (!mapEntry)
                 return false;
-            
+
             //the follow code doesn't work.
             //if (!mapEntry->IsBattleArena())
             //    return false;

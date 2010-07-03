@@ -61,14 +61,14 @@ void SummonCreatureWithRandomTarget(uint32 creatureId, int position, float mod, 
 bool GOHello_go_fire_akumai(Player *player, GameObject* pGO)
 {
     uint32 candlesNumber;
-    
+
     ScriptedInstance *pInstance = (player->GetInstanceData()) ? ((ScriptedInstance*)player->GetInstanceData()) : NULL;
 
     if(!pInstance)
     {
         player->GetSession()->SendNotification("Instance script not initialized.");
         return true;
-    }    
+    }
     candlesNumber = pInstance->GetData(DATA_CANDLES);
     candlesNumber++;
 
@@ -113,7 +113,7 @@ bool GOHello_go_fire_akumai(Player *player, GameObject* pGO)
 void AddSC_blackfathom_deeps()
 {
     Script *newscript;
-    
+
     newscript = new Script;
     newscript->Name="go_fire_akumai";
     newscript->pGOHello = &GOHello_go_fire_akumai;

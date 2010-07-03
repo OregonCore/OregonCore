@@ -51,7 +51,7 @@ struct OREGON_DLL_DECL CellArea
     CellArea() : right_offset(0), left_offset(0), upper_offset(0), lower_offset(0) {}
     CellArea(int right, int left, int upper, int lower) : right_offset(right), left_offset(left), upper_offset(upper), lower_offset(lower) {}
     bool operator!() const { return !right_offset && !left_offset && !upper_offset && !lower_offset; }
- 
+
     void ResizeBorders(CellPair& begin_cell, CellPair& end_cell) const
     {
         begin_cell << left_offset;
@@ -59,7 +59,7 @@ struct OREGON_DLL_DECL CellArea
         end_cell >> right_offset;
         end_cell += upper_offset;
     }
- 
+
     int right_offset;
     int left_offset;
     int upper_offset;

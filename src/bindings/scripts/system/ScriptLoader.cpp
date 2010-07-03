@@ -616,7 +616,7 @@ void AddScripts()
 
     //Alterac Mountains
     AddSC_alterac_mountains();
-    
+
     //Alterac Valley
     AddSC_boss_balinda();
     AddSC_boss_drekthar();

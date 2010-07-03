@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: Boss_Balinda
-SD%Complete: 
+SD%Complete:
 SDComment: Timers should be adjusted
 EndScriptData */
 

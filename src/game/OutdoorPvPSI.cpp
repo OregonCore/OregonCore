@@ -204,9 +204,9 @@ bool OutdoorPvPSI::HandleDropFlag(Player *plr, uint32 spellId)
 
                           delete go;
                           return true;
-                          
+
                         }
-                        
+
                         if (!go->Create(objmgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT),SI_SILITHYST_MOUND, map,plr->GetPositionX(),plr->GetPositionY(),plr->GetPositionZ(),plr->GetOrientation(),0,0,0,0,100,1))
                         {
                             delete go;

@@ -147,4 +147,4 @@ void CreatureAI::EnterEvadeMode()
     if (!m_creature->getVictim())
             AttackStart(attacker);
 }*/
-            
+

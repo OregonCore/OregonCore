@@ -119,7 +119,7 @@ void Pet::AddToWorld()
 {
     ///- Register the pet for guid lookup
     if (!IsInWorld())
-    {   
+    {
         ObjectAccessor::Instance().AddObject(this);
         Unit::AddToWorld();
     }
@@ -353,9 +353,9 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
     map->Add(ToCreature());
 
     // Spells should be loaded after pet is added to map, because in CanCast is check on it
-    _LoadSpells(); 
+    _LoadSpells();
     _LoadSpellCooldowns();
- 
+
 
     owner->SetPet(this);                                    // in DB stored only full controlled creature
     sLog.outDebug("New Pet has guid %u", GetGUIDLow());
@@ -379,7 +379,7 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
             m_declinedname = new DeclinedName;
             Field *fields = result->Fetch();
             for (int i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
-            
+
                 m_declinedname->name[i] = fields[i].GetCppString();
         }
     }
@@ -1716,7 +1716,7 @@ void Pet::ToggleAutocast(uint32 spellid, bool apply)
 
 
     PetSpellMap::const_iterator itr = m_spells.find((uint16)spellid);
-   
+
 
 
     int i;

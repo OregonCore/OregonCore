@@ -292,7 +292,7 @@ void WorldSession::HandleArenaTeamRemoveFromTeamOpcode(WorldPacket & recv_data)
         SendArenaTeamCommandResult(ERR_ARENA_TEAM_QUIT_S, "", "", ERR_ARENA_TEAM_LEADER_LEAVE_S);
         return;
     }
-    
+
     Player *player = objmgr.GetPlayer(member->guid);
 
     if (!player)
@@ -302,7 +302,7 @@ void WorldSession::HandleArenaTeamRemoveFromTeamOpcode(WorldPacket & recv_data)
 
     if (mapEntry && mapEntry->IsBattleArena())
            return;
-       
+
     at->DelMember(member->guid);
 
     // event

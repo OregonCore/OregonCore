@@ -188,7 +188,7 @@ void npc_escortAI::EnterEvadeMode()
         debug_log("TSCR: EscortAI has left combat and is now returning to THE home");
         m_creature->GetMotionMaster()->MoveTargetedHome();
     }
-    
+
     Reset();
 }
 

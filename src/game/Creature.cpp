@@ -1898,7 +1898,7 @@ void Creature::DoFleeToGetAssistance()
 
     if (HasAuraType(SPELL_AURA_PREVENTS_FLEEING))
         return;
-    
+
     float radius = sWorld.getConfig(CONFIG_CREATURE_FAMILY_FLEE_ASSISTANCE_RADIUS);
     if (radius >0)
     {

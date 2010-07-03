@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: Boss_Galvangar
-SD%Complete: 
+SD%Complete:
 SDComment: timers should be adjusted
 EndScriptData */
 

@@ -52,7 +52,7 @@ class OREGON_DLL_SPEC TargetedMovementGenerator
         void Reset(T &);
         bool Update(T &, const uint32 &);
         MovementGeneratorType GetMovementGeneratorType() { return TARGETED_MOTION_TYPE; }
-        
+
         void MovementInform(T &);
 
         Unit* GetTarget() const;

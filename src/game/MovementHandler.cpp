@@ -443,7 +443,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
                 }
             }
         }
-        else 
+        else
         {
             if (GetPlayer()->m_anti_teletoplane_count !=0)
                 GetPlayer()->m_anti_teletoplane_count = 0;
@@ -478,7 +478,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
                     if (delta_go > 3600.0f)
                         check_passed = false;
                 }
-            
+
             }
             else
             {
@@ -696,9 +696,9 @@ void WorldSession::HandleForceSpeedChangeAck(WorldPacket &recv_data)
         else                                                // must be lesser - cheating
         {
             sLog.outBasic("Player %s from account id %u kicked for incorrect speed (must be %f instead %f)",
-                _player->GetName(),_player->GetSession()->GetAccountId(),_player->GetSpeed(move_type), newspeed);    
+                _player->GetName(),_player->GetSession()->GetAccountId(),_player->GetSpeed(move_type), newspeed);
             _player->GetSession()->KickPlayer();
-            
+
         }
     }
 }

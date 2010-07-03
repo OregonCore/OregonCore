@@ -134,7 +134,7 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
             }
         }else SANDTRAP_Timer -= diff;
 
-        
+
         DoMeleeAttackIfReady();
     }
 };

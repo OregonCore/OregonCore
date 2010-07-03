@@ -129,7 +129,7 @@ void CreatureGroupManager::LoadCreatureFormations()
         }
 
         CreatureGroupMap[memberGUID] = group_member;
-    } 
+    }
     while (result->NextRow()) ;
 
     sLog.outString("");
@@ -227,7 +227,7 @@ void CreatureGroup::LeaderMoveTo(float x, float y, float z)
             continue;
 
         float angle = itr->second->follow_angle;
-        float dist = itr->second->follow_dist;    
+        float dist = itr->second->follow_dist;
 
         float dx = x + cos(angle + pathangle) * dist;
         float dy = y + sin(angle + pathangle) * dist;
