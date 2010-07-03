@@ -32,8 +32,8 @@
 #include "WaypointMovementGenerator.h"
 #include "InstanceSaveMgr.h"
 
-// Set to true to see anti cheat debug messages in console
-#define MOVEMENT_ANTICHEAT_DEBUG false // Default: false
+//Uncomment to see anti cheat debug messages in console
+//#define MOVEMENT_ANTICHEAT_DEBUG
 
 void WorldSession::HandleMoveWorldportAckOpcode(WorldPacket & /*recv_data*/)
 {

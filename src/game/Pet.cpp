@@ -35,6 +35,8 @@
 #include "Unit.h"
 #include "Util.h"
 
+#define SPELL_WATER_ELEMENTAL_WATERBOLT 31707
+
 char const* petTypeSuffix[MAX_PET_TYPE] =
 {
     "'s Minion",                                            // SUMMON_PET
@@ -1644,7 +1646,10 @@ void Pet::InitPetCreateSpells()
             else
                 petspellid = learn_spellproto->Id;
 
-            addSpell(petspellid);
+            if (petspellid == SPELL_WATER_ELEMENTAL_WATERBOLT)
+                addSpell(petspellid,ACT_ENABLED);
+            else
+                addSpell(petspellid);
 
             SkillLineAbilityMap::const_iterator lower = spellmgr.GetBeginSkillLineAbilityMap(learn_spellproto->EffectTriggerSpell[0]);
             SkillLineAbilityMap::const_iterator upper = spellmgr.GetEndSkillLineAbilityMap(learn_spellproto->EffectTriggerSpell[0]);

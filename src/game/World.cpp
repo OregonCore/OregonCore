@@ -945,8 +945,6 @@ void World::LoadConfigSettings(bool reload)
 
     m_configs[CONFIG_BATTLEGROUND_PREMATURE_FINISH_TIMER] = sConfig.GetIntDefault("BattleGround.PrematureFinishTimer", 0);
     m_configs[CONFIG_INSTANT_LOGOUT] = sConfig.GetIntDefault("InstantLogout", SEC_MODERATOR);
-    
-    m_configs[CONFIG_GROUPLEADER_RECONNECT_PERIOD] = sConfig.GetIntDefault("GroupLeaderReconnectPeriod", 180);
 
     m_VisibleUnitGreyDistance = sConfig.GetFloatDefault("Visibility.Distance.Grey.Unit", 1);
     if (m_VisibleUnitGreyDistance >  MAX_VISIBILITY_DISTANCE)
@@ -1633,17 +1631,6 @@ void World::Update(time_t diff)
 
     /// <li> Handle session updates when the timer has passed
     RecordTimeDiff(NULL);
-    if (m_timers[WUPDATE_SESSIONS].Passed())
-    {
-        m_timers[WUPDATE_SESSIONS].Reset();
-
-        UpdateSessions(diff);
-
-        // Update groups
-        for (ObjectMgr::GroupSet::iterator itr = objmgr.GetGroupSetBegin(); itr != objmgr.GetGroupSetEnd(); ++itr)
-            (*itr)->Update(diff);
-
-    }
     UpdateSessions(diff);
     RecordTimeDiff("UpdateSessions");
 

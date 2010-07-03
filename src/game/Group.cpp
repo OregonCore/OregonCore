@@ -39,15 +39,14 @@ Group::Group()
     m_leaderGuid        = 0;
     m_mainTank          = 0;
     m_mainAssistant     = 0;
-    m_groupType         = (GroupType)0;
+    m_groupType         = GroupType(0);
     m_bgGroup           = NULL;
-    m_lootMethod        = (LootMethod)0;
+    m_lootMethod        = LootMethod(0);
     m_looterGuid        = 0;
     m_lootThreshold     = ITEM_QUALITY_UNCOMMON;
     m_subGroupsCounts   = NULL;
-    m_leaderLogoutTime  = 0;
 
-    for (int i=0; i<TARGETICONCOUNT; i++)
+    for (uint8 i = 0; i < TARGETICONCOUNT; ++i)
         m_targetIcons[i] = 0;
 }
 
@@ -137,13 +136,10 @@ bool Group::LoadGroupFromDB(const uint64 &leaderGuid, QueryResult_AutoPtr result
     }
 
     m_leaderGuid = leaderGuid;
-    m_leaderLogoutTime = time(NULL); // Give the leader a chance to keep his position after a server crash
 
     // group leader not exist
     if (!objmgr.GetPlayerNameByGUID(m_leaderGuid, m_leaderName))
-    {
         return false;
-    }
 
     m_groupType  = (*result)[13].GetBool() ? GROUPTYPE_RAID : GROUPTYPE_NORMAL;
 
@@ -181,14 +177,15 @@ bool Group::LoadGroupFromDB(const uint64 &leaderGuid, QueryResult_AutoPtr result
 bool Group::LoadMemberFromDB(uint32 guidLow, uint8 subgroup, bool assistant)
 {
     MemberSlot member;
-    member.guid      = MAKE_NEW_GUID(guidLow, 0, HIGHGUID_PLAYER);
+    member.guid = MAKE_NEW_GUID(guidLow, 0, HIGHGUID_PLAYER);
 
     // skip non-existed member
     if (!objmgr.GetPlayerNameByGUID(member.guid, member.name))
         return false;
 
-    member.group     = subgroup;
+    member.group = subgroup;
     member.assistant = assistant;
+
     m_memberSlots.push_back(member);
 
     SubGroupCounterIncrease(subgroup);
@@ -349,61 +346,6 @@ void Group::ChangeLeader(const uint64 &guid)
     data << slot->name;
     BroadcastPacket(&data);
     SendUpdate();
-}
-
-void Group::CheckLeader(const uint64 &guid, bool isLogout)
-{
-
-    if (IsLeader(guid))
-    {
-        if (isLogout)
-        {
-            m_leaderLogoutTime = time(NULL);
-        }
-        else
-        {
-            m_leaderLogoutTime = 0;
-        }
-    }
-    else
-    {
-        if (!isLogout && !m_leaderLogoutTime) //normal member logins
-        {
-            Player *leader = NULL;
-            
-            //find the leader from group members
-            for (GroupReference *itr = GetFirstMember(); itr != NULL; itr = itr->next())
-            {
-                if (itr->getSource()->GetGUID() == m_leaderGuid)
-                {
-                    leader = itr->getSource();
-                    break;
-                }
-            }
-
-            if (!leader || !leader->IsInWorld())
-            {
-                m_leaderLogoutTime = time(NULL);
-            }
-        }
-    }
-}
-
-bool Group::ChangeLeaderToFirstOnlineMember()
-{
-
-    for (GroupReference *itr = GetFirstMember(); itr != NULL; itr = itr->next())
-    {
-        Player* player = itr->getSource();
-
-       if (player && player->IsInWorld() && player->GetGUID() != m_leaderGuid)
-       {
-        ChangeLeader(player->GetGUID());
-        return true;
-       }
-    }
-    return false;
-
 }
 
 void Group::Disband(bool hideDestroy)
@@ -926,7 +868,6 @@ void Group::SendTargetIconList(WorldSession *session)
 void Group::SendUpdate()
 {
     Player *player;
-
     for (member_citerator citr = m_memberSlots.begin(); citr != m_memberSlots.end(); ++citr)
     {
         player = objmgr.GetPlayer(citr->guid);
@@ -957,28 +898,12 @@ void Group::SendUpdate()
         data << uint64(m_leaderGuid);                       // leader guid
         if (GetMembersCount()-1)
         {
-            data << (uint8)m_lootMethod;                    // loot method
-            data << (uint64)m_looterGuid;                   // looter guid
-            data << (uint8)m_lootThreshold;                 // loot threshold
-            data << (uint8)m_difficulty;                    // Heroic Mod Group
-
+            data << uint8(m_lootMethod);                    // loot method
+            data << uint64(m_looterGuid);                   // looter guid
+            data << uint8(m_lootThreshold);                 // loot threshold
+            data << uint8(m_difficulty);                    // Heroic Mod Group
         }
         player->GetSession()->SendPacket(&data);
-    }
-}
-
-// Automatic Update by World thread
-void Group::Update(time_t diff)
-{
-    if (m_leaderLogoutTime)
-    {
-        time_t thisTime = time(NULL);
-    
-        if (thisTime > m_leaderLogoutTime + sWorld.getConfig(CONFIG_GROUPLEADER_RECONNECT_PERIOD))
-        {
-            ChangeLeaderToFirstOnlineMember();
-            m_leaderLogoutTime = 0;
-        }
     }
 }
 

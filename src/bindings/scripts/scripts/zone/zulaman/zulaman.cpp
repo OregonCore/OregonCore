@@ -100,9 +100,9 @@ CreatureAI* GetAI_npc_forest_frog(Creature *_Creature)
 ## npc_zulaman_hostage
 ######*/
 
-#define GOSSIP_HOSTAGE1        "I am glad to help you."
+#define GOSSIP_HOSTAGE1        "I am glad to have helped you."
 
-static uint32 HostageEntry[] = {23790, 23999, 24024, 24001};
+static uint32 HostageEntry[] = {23790, 23999, 24001, 24024};
 static uint32 ChestEntry[] = {186648, 187021, 186672, 186667};
 
 struct OREGON_DLL_DECL npc_zulaman_hostageAI : public ScriptedAI
