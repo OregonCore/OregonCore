@@ -1058,9 +1058,12 @@ void Unit::CastSpell(Unit* Victim,SpellEntry const *spellInfo, bool triggered, I
 void Unit::CastCustomSpell(Unit* target, uint32 spellId, int32 const* bp0, int32 const* bp1, int32 const* bp2, bool triggered, Item *castItem, Aura* triggeredByAura, uint64 originalCaster)
 {
     CustomSpellValues values;
-    if (bp0) values.AddSpellMod(SPELLVALUE_BASE_POINT0, *bp0);
-    if (bp1) values.AddSpellMod(SPELLVALUE_BASE_POINT1, *bp1);
-    if (bp2) values.AddSpellMod(SPELLVALUE_BASE_POINT2, *bp2);
+    if (bp0)
+        values.AddSpellMod(SPELLVALUE_BASE_POINT0, *bp0);
+    if (bp1)
+        values.AddSpellMod(SPELLVALUE_BASE_POINT1, *bp1);
+    if (bp2)
+        values.AddSpellMod(SPELLVALUE_BASE_POINT2, *bp2);
     CastCustomSpell(spellId, values, target, triggered, castItem, triggeredByAura, originalCaster);
 }
 
@@ -5104,6 +5107,7 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
     uint32 triggered_spell_id = 0;
     Unit* target = pVictim;
     int32 basepoints0 = 0;
+    uint64 originalCaster = 0;
 
     switch(dummySpell->SpellFamilyName)
     {
@@ -5111,7 +5115,7 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
         {
             switch (dummySpell->Id)
             {
-                // Eye of Eye
+                // Eye for an Eye
                 case 9799:
                 case 25988:
                 {
@@ -6185,9 +6189,10 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
             // Earth Shield
             if (dummySpell->SpellFamilyFlags==0x40000000000LL)
             {
-                // heal
-                basepoints0 = triggeredByAura->GetModifier()->m_amount;
+                // Now correctly uses the Shaman's own spell critical strike chance to determine the chance of a critical heal.
+                originalCaster = triggeredByAura->GetCasterGUID();
                 target = this;
+                basepoints0 = triggeredByAura->GetModifier()->m_amount;
                 triggered_spell_id = 379;
                 break;
             }
@@ -6263,6 +6268,7 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
         }
         case SPELLFAMILY_POTION:
         {
+            // alchemist's stone
             if (dummySpell->Id == 17619)
             {
                 if (procSpell->SpellFamilyName == SPELLFAMILY_POTION)
@@ -6277,7 +6283,9 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                         {
                             triggered_spell_id = 21400;
                         }
-                        else continue;
+                        else
+                            continue;
+
                         basepoints0 = CalculateSpellDamage(procSpell,i,procSpell->EffectBasePoints[i],this) * 0.4f;
                         CastCustomSpell(this,triggered_spell_id,&basepoints0,NULL,NULL,true,castItem,triggeredByAura);
                     }
@@ -8241,6 +8249,7 @@ bool Unit::isSpellCrit(Unit *pVictim, SpellEntry const *spellProto, SpellSchoolM
 {
     if (IS_CREATURE_GUID(GetGUID())) // creatures cannot spell crit in TBC
         return false;
+
     // not critting spell
     if ((spellProto->AttributesEx2 & SPELL_ATTR_EX2_CANT_CRIT))
         return false;
@@ -8248,8 +8257,9 @@ bool Unit::isSpellCrit(Unit *pVictim, SpellEntry const *spellProto, SpellSchoolM
     float crit_chance = 0.0f;
     switch(spellProto->DmgClass)
     {
-        case SPELL_DAMAGE_CLASS_NONE:
-            return false;
+        case SPELL_DAMAGE_CLASS_NONE:  // Exception for Earth Shield and Lifebloom Final Bloom
+            if (spellProto->Id != 379 && spellProto->Id != 33778) // We need more spells to find a general way (if there is any)
+                return false;
         case SPELL_DAMAGE_CLASS_MAGIC:
         {
             if (schoolMask & SPELL_SCHOOL_MASK_NORMAL)
