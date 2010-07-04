@@ -59,34 +59,34 @@ struct OREGON_DLL_DECL npc_sergeant_blyAI : public ScriptedAI
 
         m_creature->setFaction(FACTION_FRIENDLY);
 
-        /*if( pInstance )
+        /*if (pInstance)
             pInstance->SetData(0, NOT_STARTED);*/
     }
 
     void EnterCombat(Unit *who)
     {
-        /*if( pInstance )
+        /*if (pInstance)
             pInstance->SetData(0, IN_PROGRESS);*/
     }
 
     void JustDied(Unit *victim)
     {
-        /*if( pInstance )
+        /*if (pInstance)
             pInstance->SetData(0, DONE);*/
     }
 
     void UpdateAI(const uint32 diff)
     {
-        if( !UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
-        if( ShieldBash_Timer < diff )
+        if (ShieldBash_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_SHIELD_BASH);
             ShieldBash_Timer = 15000;
         }else ShieldBash_Timer -= diff;
 
-        if( Revenge_Timer < diff )
+        if (Revenge_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_REVENGE);
             Revenge_Timer = 10000;
@@ -100,14 +100,14 @@ CreatureAI* GetAI_npc_sergeant_bly(Creature *_Creature)
     return new npc_sergeant_blyAI (_Creature);
 }
 
-bool GossipHello_npc_sergeant_bly(Player *player, Creature *_Creature )
+bool GossipHello_npc_sergeant_bly(Player *player, Creature *_Creature)
 {
-    /*if( pInstance->GetData(0) == DONE )
+    /*if (pInstance->GetData(0) == DONE)
     {*/
     player->ADD_GOSSIP_ITEM(1, GOSSIP_BLY, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
     player->SEND_GOSSIP_MENU(1517, _Creature->GetGUID());
     /*}
-    else if( pInstance->GetData(0) == IN_PROGRESS )
+    else if (pInstance->GetData(0) == IN_PROGRESS)
         player->SEND_GOSSIP_MENU(1516, _Creature->GetGUID());
     else
         player->SEND_GOSSIP_MENU(1515, _Creature->GetGUID());*/
@@ -115,9 +115,9 @@ bool GossipHello_npc_sergeant_bly(Player *player, Creature *_Creature )
     return true;
 }
 
-bool GossipSelect_npc_sergeant_bly(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_sergeant_bly(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if( action == GOSSIP_ACTION_INFO_DEF+1 )
+    if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
         player->CLOSE_GOSSIP_MENU();
         _Creature->setFaction(FACTION_HOSTILE);
@@ -148,25 +148,25 @@ struct OREGON_DLL_DECL npc_weegli_blastfuseAI : public ScriptedAI
 
     void Reset()
     {
-        /*if( pInstance )
+        /*if (pInstance)
             pInstance->SetData(0, NOT_STARTED);*/
     }
 
     void EnterCombat(Unit *who)
     {
-        /*if( pInstance )
+        /*if (pInstance)
             pInstance->SetData(0, IN_PROGRESS);*/
     }
 
     void JustDied(Unit *victim)
     {
-        /*if( pInstance )
+        /*if (pInstance)
             pInstance->SetData(0, DONE);*/
     }
 
     void UpdateAI(const uint32 diff)
     {
-        if( !UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         DoMeleeAttackIfReady();
@@ -177,24 +177,24 @@ CreatureAI* GetAI_npc_weegli_blastfuse(Creature *_Creature)
     return new npc_weegli_blastfuseAI (_Creature);
 }
 
-bool GossipHello_npc_weegli_blastfuse(Player *player, Creature *_Creature )
+bool GossipHello_npc_weegli_blastfuse(Player *player, Creature *_Creature)
 {
     //event not implemented yet, this is only placeholder for future developement
-    /*if( pInstance->GetData(0) == DONE )
+    /*if (pInstance->GetData(0) == DONE)
     {
         player->ADD_GOSSIP_ITEM(1, GOSSIP_WEEGLI, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
         player->SEND_GOSSIP_MENU(1514, _Creature->GetGUID());//if event can proceed to end
     }
-    else if( pInstance->GetData(0) == IN_PROGRESS )
+    else if (pInstance->GetData(0) == IN_PROGRESS)
         player->SEND_GOSSIP_MENU(1513, _Creature->GetGUID());//if event are in progress
     else*/
     player->SEND_GOSSIP_MENU(1511, _Creature->GetGUID());   //if event not started
     return true;
 }
 
-bool GossipSelect_npc_weegli_blastfuse(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_weegli_blastfuse(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if( action == GOSSIP_ACTION_INFO_DEF+1 )
+    if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
         player->CLOSE_GOSSIP_MENU();
         //here we make him run to door, set the charge and run away off to nowhere

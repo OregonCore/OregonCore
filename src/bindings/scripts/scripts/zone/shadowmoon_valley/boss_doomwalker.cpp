@@ -65,7 +65,7 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
 
     void KilledUnit(Unit* Victim)
     {
-        if(rand()%5)
+        if (rand()%5)
             return;
 
         switch(rand()%3)
@@ -96,7 +96,7 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
         //Spell Enrage, when hp <= 20% gain enrage
         if (((m_creature->GetHealth()*100)/ m_creature->GetMaxHealth()) <= 20)
         {
-            if(Enrage_Timer < diff)
+            if (Enrage_Timer < diff)
             {
                 DoCast(m_creature,SPELL_ENRAGE);
                 Enrage_Timer = 6000;

@@ -44,7 +44,7 @@ struct OREGON_DLL_DECL mobs_ghoul_flayerAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        if( Killer->GetTypeId() == TYPEID_PLAYER )
+        if (Killer->GetTypeId() == TYPEID_PLAYER)
             DoSpawnCreature(11064, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 60000);
     }
 };
@@ -60,20 +60,20 @@ CreatureAI* GetAI_mobs_ghoul_flayer(Creature *_Creature)
 
 bool GossipHello_npc_augustus_the_touched(Player *player, Creature *_Creature)
 {
-    if( _Creature->isQuestGiver() )
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+    if (_Creature->isQuestGiver())
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
-    if( _Creature->isVendor() && player->GetQuestRewardStatus(6164) )
+    if (_Creature->isVendor() && player->GetQuestRewardStatus(6164))
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
 
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(),_Creature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_augustus_the_touched(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_augustus_the_touched(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if( action == GOSSIP_ACTION_TRADE )
-        player->SEND_VENDORLIST( _Creature->GetGUID() );
+    if (action == GOSSIP_ACTION_TRADE)
+        player->SEND_VENDORLIST(_Creature->GetGUID());
     return true;
 }
 
@@ -116,10 +116,10 @@ bool GossipHello_npc_darrowshire_spirit(Player *player, Creature *_Creature)
 bool GossipHello_npc_tirion_fordring(Player *player, Creature *_Creature)
 {
     if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
-    if (player->GetQuestStatus(5742) == QUEST_STATUS_INCOMPLETE && player->getStandState() == PLAYER_STATE_SIT )
-        player->ADD_GOSSIP_ITEM( 0, "I am ready to hear your tale, Tirion.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    if (player->GetQuestStatus(5742) == QUEST_STATUS_INCOMPLETE && player->getStandState() == PLAYER_STATE_SIT)
+        player->ADD_GOSSIP_ITEM(0, "I am ready to hear your tale, Tirion.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
 
@@ -131,15 +131,15 @@ bool GossipSelect_npc_tirion_fordring(Player *player, Creature *_Creature, uint3
     switch (action)
     {
         case GOSSIP_ACTION_INFO_DEF+1:
-            player->ADD_GOSSIP_ITEM( 0, "Thank you, Tirion.  What of your identity?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+            player->ADD_GOSSIP_ITEM(0, "Thank you, Tirion.  What of your identity?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
             player->SEND_GOSSIP_MENU(4493, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
-            player->ADD_GOSSIP_ITEM( 0, "That is terrible.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+            player->ADD_GOSSIP_ITEM(0, "That is terrible.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
             player->SEND_GOSSIP_MENU(4494, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+3:
-            player->ADD_GOSSIP_ITEM( 0, "I will, Tirion.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+            player->ADD_GOSSIP_ITEM(0, "I will, Tirion.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
             player->SEND_GOSSIP_MENU(4495, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+4:

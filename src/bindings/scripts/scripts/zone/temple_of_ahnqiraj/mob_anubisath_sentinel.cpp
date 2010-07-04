@@ -157,7 +157,7 @@ struct OREGON_DLL_DECL aqsentinelAI : public ScriptedAI
                 if (!c->isInCombat())
                 {
                     c->SetNoCallAssistance(true);
-                    if(c->AI())
+                    if (c->AI())
                         c->AI()->AttackStart(who);
                 }
             }
@@ -179,7 +179,7 @@ struct OREGON_DLL_DECL aqsentinelAI : public ScriptedAI
         CellLock<GridReadGuard> cell_lock(cell, p);
         cell_lock->Visit(cell_lock, grid_creature_searcher, *(nears->GetMap()));
 
-        for(std::list<Creature*>::iterator iter = assistList.begin(); iter != assistList.end(); ++iter)
+        for (std::list<Creature*>::iterator iter = assistList.begin(); iter != assistList.end(); ++iter)
             AddBuddyToList((*iter));
     }
 

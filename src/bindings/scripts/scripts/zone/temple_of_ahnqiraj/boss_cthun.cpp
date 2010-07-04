@@ -549,7 +549,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
 
         //Get random but only if we have more than one unit on threat list
         if (temp.size() > 1)
-            advance ( j , rand() % (temp.size() - 1) );
+            advance (j , rand() % (temp.size() - 1));
 
         return (*j);
     }
@@ -564,7 +564,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
             if (WisperTimer < diff)
             {
                 Map *map = m_creature->GetMap();
-                if(!map->IsDungeon()) return;
+                if (!map->IsDungeon()) return;
 
                 Map::PlayerList const &PlayerList = map->GetPlayers();
                 for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
@@ -866,7 +866,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
     void JustDied(Unit* pKiller)
     {
         //Switch
-        if( pInst )
+        if (pInst)
             pInst->SetData(DATA_CTHUN_PHASE, 5);
     }
 

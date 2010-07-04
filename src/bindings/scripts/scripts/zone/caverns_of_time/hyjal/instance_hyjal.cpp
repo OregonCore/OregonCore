@@ -75,7 +75,7 @@ struct OREGON_DLL_DECL instance_mount_hyjal : public ScriptedInstance
         RaidDamage = 0;
 
         Trash = 0;
-        for(uint8 i = 0; i < ENCOUNTERS; ++i)
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
             Encounters[i] = NOT_STARTED;
 
         hordeRetreat = 0;
@@ -85,8 +85,8 @@ struct OREGON_DLL_DECL instance_mount_hyjal : public ScriptedInstance
 
     bool IsEncounterInProgress() const
     {
-        for(uint8 i = 0; i < ENCOUNTERS; ++i)
-            if(Encounters[i] == IN_PROGRESS) return true;
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
+            if (Encounters[i] == IN_PROGRESS) return true;
 
         return false;
     }
@@ -97,14 +97,14 @@ struct OREGON_DLL_DECL instance_mount_hyjal : public ScriptedInstance
         {
             case 182060:
                 HordeGate = go->GetGUID();
-                if(allianceRetreat)
+                if (allianceRetreat)
                     go->SetGoState(0);
                 else
                     go->SetGoState(1);
                 break;
             case 182061:
                 ElfGate = go->GetGUID();
-                if(hordeRetreat)
+                if (hordeRetreat)
                     go->SetGoState(0);
                 else
                     go->SetGoState(1);
@@ -114,7 +114,7 @@ struct OREGON_DLL_DECL instance_mount_hyjal : public ScriptedInstance
 
     void OpenDoor(uint64 DoorGUID, bool open)
     {
-        if(GameObject *Door = instance->GetGameObject(DoorGUID))
+        if (GameObject *Door = instance->GetGameObject(DoorGUID))
             Door->SetUInt32Value(GAMEOBJECT_STATE, open ? 0 : 1);
     }
 
@@ -162,13 +162,13 @@ struct OREGON_DLL_DECL instance_mount_hyjal : public ScriptedInstance
             case DATA_AZGALOREVENT:
                 {
                     Encounters[3] = data;
-                    if(data == DONE)
+                    if (data == DONE)
                     {
-                        if(ArchiYell)break;
+                        if (ArchiYell)break;
                         ArchiYell = true;
 
                         Creature* pCreature = instance->GetCreature(Azgalor);
-                        if(pCreature)
+                        if (pCreature)
                         {
                             Creature* pUnit = pCreature->SummonCreature(21987,pCreature->GetPositionX(),pCreature->GetPositionY(),pCreature->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN,10000);
 
@@ -202,7 +202,7 @@ struct OREGON_DLL_DECL instance_mount_hyjal : public ScriptedInstance
             case DATA_RESET_TRASH_COUNT:    Trash = 0;            break;
 
             case DATA_TRASH:
-                if(data) Trash = data;
+                if (data) Trash = data;
                 else     Trash--;
                 UpdateWorldState(WORLD_STATE_ENEMYCOUNT, Trash);
                 break;
@@ -218,7 +218,7 @@ struct OREGON_DLL_DECL instance_mount_hyjal : public ScriptedInstance
                 break;
             case DATA_RAIDDAMAGE:
                 RaidDamage += data;
-                if(RaidDamage >= MINRAIDDAMAGE)
+                if (RaidDamage >= MINRAIDDAMAGE)
                     RaidDamage = MINRAIDDAMAGE;
                 break;
             case DATA_RESET_RAIDDAMAGE:
@@ -228,7 +228,7 @@ struct OREGON_DLL_DECL instance_mount_hyjal : public ScriptedInstance
 
          debug_log("TSCR: Instance Hyjal: Instance data updated for event %u (Data=%u)",type,data);
 
-        if(data == DONE)
+        if (data == DONE)
             SaveToDB();
     }
 
@@ -255,7 +255,7 @@ struct OREGON_DLL_DECL instance_mount_hyjal : public ScriptedInstance
 
         if (!players.isEmpty())
         {
-                for(Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+                for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
                 {
                     if (Player* player = itr->getSource())
                         player->SendUpdateWorldState(id,state);
@@ -271,7 +271,7 @@ struct OREGON_DLL_DECL instance_mount_hyjal : public ScriptedInstance
             << Encounters[3] << " " << Encounters[4] << " " << allianceRetreat << " " << hordeRetreat << " " << RaidDamage;
         char* out = new char[stream.str().length() + 1];
         strcpy(out, stream.str().c_str());
-        if(out)
+        if (out)
         {
             OUT_SAVE_INST_DATA_COMPLETE;
             return out;
@@ -292,8 +292,8 @@ struct OREGON_DLL_DECL instance_mount_hyjal : public ScriptedInstance
         std::istringstream loadStream;
         loadStream.str(in);
         loadStream >> Encounters[0] >> Encounters[1] >> Encounters[2] >> Encounters[3] >> Encounters[4] >> allianceRetreat >> hordeRetreat >> RaidDamage;
-        for(uint8 i = 0; i < ENCOUNTERS; ++i)
-            if(Encounters[i] == IN_PROGRESS)                // Do not load an encounter as IN_PROGRESS - reset it instead.
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
+            if (Encounters[i] == IN_PROGRESS)                // Do not load an encounter as IN_PROGRESS - reset it instead.
                 Encounters[i] = NOT_STARTED;
         OUT_LOAD_INST_DATA_COMPLETE;
     }

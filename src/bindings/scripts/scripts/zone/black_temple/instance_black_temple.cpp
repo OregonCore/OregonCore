@@ -100,14 +100,14 @@ struct OREGON_DLL_DECL instance_black_temple : public ScriptedInstance
         IllidanDoor[0]  = 0;
         IllidanDoor[1]  = 0;
 
-        for(uint8 i = 0; i < ENCOUNTERS; ++i)
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
             Encounters[i] = NOT_STARTED;
     }
 
     bool IsEncounterInProgress() const
     {
-        for(uint8 i = 0; i < ENCOUNTERS; ++i)
-            if(Encounters[i] == IN_PROGRESS) return true;
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
+            if (Encounters[i] == IN_PROGRESS) return true;
 
         return false;
     }
@@ -118,7 +118,7 @@ struct OREGON_DLL_DECL instance_black_temple : public ScriptedInstance
 
         if (!players.isEmpty())
         {
-            for(Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+            for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
                 if (Player* plr = itr->getSource())
                     return plr;
@@ -153,24 +153,24 @@ struct OREGON_DLL_DECL instance_black_temple : public ScriptedInstance
         switch(go->GetEntry())
         {
         case 185483: NajentusGate = go->GetGUID();// Gate past Naj'entus (at the entrance to Supermoose's courtyards)
-            if(Encounters[0] == DONE)HandleGameObject(NULL,true,go);break;
+            if (Encounters[0] == DONE)HandleGameObject(NULL,true,go);break;
         case 185882: MainTempleDoors = go->GetGUID();// Main Temple Doors - right past Supermoose (Supremus)
-            if(Encounters[1] == DONE)HandleGameObject(NULL,true,go);break;
+            if (Encounters[1] == DONE)HandleGameObject(NULL,true,go);break;
         case 185478: ShadeOfAkamaDoor = go->GetGUID();break;
         case 185480: CommonDoor = go->GetGUID();
-            if(Encounters[3] == DONE)HandleGameObject(NULL,true,go);;break;
+            if (Encounters[3] == DONE)HandleGameObject(NULL,true,go);;break;
         case 186153: TeronDoor = go->GetGUID();
-            if(Encounters[3] == DONE)HandleGameObject(NULL,true,go);;break;
+            if (Encounters[3] == DONE)HandleGameObject(NULL,true,go);;break;
         case 185892: GuurtogDoor = go->GetGUID();
-            if(Encounters[4] == DONE)HandleGameObject(NULL,true,go);break;
+            if (Encounters[4] == DONE)HandleGameObject(NULL,true,go);break;
         case 185479: TempleDoor = go->GetGUID();
-            if(Encounters[5] == DONE)HandleGameObject(NULL,true,go);break;
+            if (Encounters[5] == DONE)HandleGameObject(NULL,true,go);break;
         case 185482: MotherDoor = go->GetGUID();
-            if(Encounters[6] == DONE)HandleGameObject(NULL,true,go);break;
+            if (Encounters[6] == DONE)HandleGameObject(NULL,true,go);break;
         case 185481: CouncilDoor = go->GetGUID();
-            if(Encounters[7] == DONE)HandleGameObject(NULL,true,go);break;
+            if (Encounters[7] == DONE)HandleGameObject(NULL,true,go);break;
         case 186152: SimpleDoor = go->GetGUID();
-            if(Encounters[7] == DONE)HandleGameObject(NULL,true,go);break;
+            if (Encounters[7] == DONE)HandleGameObject(NULL,true,go);break;
         case 185905: IllidanGate = go->GetGUID(); break; // Gate leading to Temple Summit
         case 186261: IllidanDoor[0] = go->GetGUID(); break; // Right door at Temple Summit
         case 186262: IllidanDoor[1] = go->GetGUID(); break; // Left door at Temple Summit
@@ -208,31 +208,31 @@ struct OREGON_DLL_DECL instance_black_temple : public ScriptedInstance
         switch(type)
         {
         case DATA_HIGHWARLORDNAJENTUSEVENT:
-            if(data == DONE)
+            if (data == DONE)
             {
                 HandleGameObject(NajentusGate, true);
             }
-            if(Encounters[0] != DONE)
+            if (Encounters[0] != DONE)
                 Encounters[0] = data;
             break;
         case DATA_SUPREMUSEVENT:
-            if(data == DONE)
+            if (data == DONE)
             {
                 HandleGameObject(NajentusGate, true);
             }
-            if(Encounters[1] != DONE)
+            if (Encounters[1] != DONE)
                 Encounters[1] = data;
             break;
         case DATA_SHADEOFAKAMAEVENT:
-            if(data == IN_PROGRESS)
+            if (data == IN_PROGRESS)
             {
                 HandleGameObject(ShadeOfAkamaDoor, false);
             }else HandleGameObject(ShadeOfAkamaDoor, true);
-            if(Encounters[2] != DONE)
+            if (Encounters[2] != DONE)
                 Encounters[2] = data;
             break;
         case DATA_TERONGOREFIENDEVENT:
-            if(data == IN_PROGRESS)
+            if (data == IN_PROGRESS)
             {
                 HandleGameObject(TeronDoor, false);
                 HandleGameObject(CommonDoor, false);
@@ -241,35 +241,35 @@ struct OREGON_DLL_DECL instance_black_temple : public ScriptedInstance
                 HandleGameObject(TeronDoor, true);
                 HandleGameObject(CommonDoor, true);
             }
-            if(Encounters[3] != DONE)
+            if (Encounters[3] != DONE)
                 Encounters[3] = data;
             break;
         case DATA_GURTOGGBLOODBOILEVENT:
-            if(data == DONE)
+            if (data == DONE)
             {
                 HandleGameObject(GuurtogDoor, true);
             }
-            if(Encounters[4] != DONE)
+            if (Encounters[4] != DONE)
                 Encounters[4] = data;
             break;
         case DATA_RELIQUARYOFSOULSEVENT:
-            if(data == DONE)
+            if (data == DONE)
             {
                 HandleGameObject(TempleDoor, true);
             }
-            if(Encounters[5] != DONE)
+            if (Encounters[5] != DONE)
                 Encounters[5] = data;
             break;
         case DATA_MOTHERSHAHRAZEVENT:
-            if(data == DONE)
+            if (data == DONE)
             {
                 HandleGameObject(MotherDoor, true);
             }
-            if(Encounters[6] != DONE)
+            if (Encounters[6] != DONE)
                 Encounters[6] = data;
             break;
         case DATA_ILLIDARICOUNCILEVENT:
-            if(data == IN_PROGRESS)
+            if (data == IN_PROGRESS)
             {
                 HandleGameObject(CouncilDoor, false);
                 HandleGameObject(SimpleDoor, false);
@@ -278,11 +278,11 @@ struct OREGON_DLL_DECL instance_black_temple : public ScriptedInstance
                 HandleGameObject(CouncilDoor, true);
                 HandleGameObject(SimpleDoor, true);
             }
-            if(Encounters[7] != DONE)
+            if (Encounters[7] != DONE)
                 Encounters[7] = data;
             break;
         case DATA_ILLIDANSTORMRAGEEVENT:
-            if(Encounters[8] != DONE)
+            if (Encounters[8] != DONE)
                 Encounters[8] = data;
             break;
         }
@@ -321,7 +321,7 @@ struct OREGON_DLL_DECL instance_black_temple : public ScriptedInstance
 
         char* out = new char[saveStream.str().length() + 1];
         strcpy(out, saveStream.str().c_str());
-        if(out)
+        if (out)
         {
             OUT_SAVE_INST_DATA_COMPLETE;
             return out;
@@ -345,7 +345,7 @@ struct OREGON_DLL_DECL instance_black_temple : public ScriptedInstance
         >> Encounters[3] >> Encounters[4] >> Encounters[5] >> Encounters[6]
         >> Encounters[7] >> Encounters[8];
 
-        for(uint8 i = 0; i < ENCOUNTERS; ++i)
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
             if (Encounters[i] == IN_PROGRESS)
                 Encounters[i] = NOT_STARTED;
 

@@ -65,9 +65,9 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
         if (Invisible_Timer < diff)
         {
             m_creature->InterruptSpell(CURRENT_GENERIC_SPELL);
-            m_creature->SetUInt32Value( UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
-            m_creature->SetUInt32Value( UNIT_VIRTUAL_ITEM_INFO , 218171138);
-            m_creature->SetUInt32Value( UNIT_VIRTUAL_ITEM_INFO  + 1, 3);
+            m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
+            m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO , 218171138);
+            m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO  + 1, 3);
             m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID,11686);
             Invisible = true;
@@ -99,9 +99,9 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
                 m_creature->InterruptSpell(CURRENT_GENERIC_SPELL);
                 m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID,15268);
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                m_creature->SetUInt32Value( UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 31818);
-                m_creature->SetUInt32Value( UNIT_VIRTUAL_ITEM_INFO , 218171138);
-                m_creature->SetUInt32Value( UNIT_VIRTUAL_ITEM_INFO  + 1, 3);
+                m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 31818);
+                m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO , 218171138);
+                m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO  + 1, 3);
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 Invisible = false;
 
@@ -110,13 +110,13 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
         }
 
         //Resetting some aggro so he attacks other gamers
-        if(!Invisible)
+        if (!Invisible)
             if (Aggro_Timer < diff)
         {
             Unit* target = NULL;
             target = SelectUnit(SELECT_TARGET_RANDOM,1);
 
-            if(DoGetThreat(m_creature->getVictim()))
+            if (DoGetThreat(m_creature->getVictim()))
                 DoModifyThreatPercent(m_creature->getVictim(),-50);
 
             if (target)
@@ -126,7 +126,7 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
         }else Aggro_Timer -= diff;
 
         if (!Invisible)
-            if(ThousandBlades_Timer < diff)
+            if (ThousandBlades_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_THOUSANDBLADES);
             ThousandBlades_Timer = 7000 + rand()%5000;

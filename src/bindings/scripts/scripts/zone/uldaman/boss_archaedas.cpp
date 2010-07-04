@@ -120,7 +120,7 @@ struct OREGON_DLL_DECL boss_archaedasAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(!pInstance)
+        if (!pInstance)
             return;
         // we're still doing awaken animation
         if (wakingUp && Awaken_Timer >= 0) {
@@ -145,7 +145,7 @@ struct OREGON_DLL_DECL boss_archaedasAI : public ScriptedAI
         } else WallMinionTimer -= diff;
 
         //If we are <66 summon the guardians
-        if ( !guardiansAwake && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 66) {
+        if (!guardiansAwake && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 66) {
             ActivateMinion(pInstance->GetData64(5),true);   // EarthenGuardian1
             ActivateMinion(pInstance->GetData64(6),true);   // EarthenGuardian2
             ActivateMinion(pInstance->GetData64(7),true);   // EarthenGuardian3
@@ -158,7 +158,7 @@ struct OREGON_DLL_DECL boss_archaedasAI : public ScriptedAI
         }
 
         //If we are <33 summon the vault walkers
-        if ( !vaultWalkersAwake && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 33) {
+        if (!vaultWalkersAwake && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 33) {
             ActivateMinion(pInstance->GetData64(1),true);    // VaultWalker1
             ActivateMinion(pInstance->GetData64(2),true);    // VaultWalker2
             ActivateMinion(pInstance->GetData64(3),true);    // VaultWalker3
@@ -182,7 +182,7 @@ struct OREGON_DLL_DECL boss_archaedasAI : public ScriptedAI
     }
 
     void JustDied (Unit *killer) {
-        if(pInstance)
+        if (pInstance)
         {
             pInstance->SetData(DATA_ANCIENT_DOOR, DONE);        // open the vault door
             pInstance->SetData(DATA_MINIONS, SPECIAL);        // deactivate his minions
@@ -255,7 +255,7 @@ struct OREGON_DLL_DECL mob_archaedas_minionsAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit *who)
     {
-        if(amIAwake)
+        if (amIAwake)
             ScriptedAI::MoveInLineOfSight(who);
     }
 
@@ -392,7 +392,7 @@ struct OREGON_DLL_DECL mob_stonekeepersAI : public ScriptedAI
 
     void JustDied (Unit *killer) {
         DoCast (m_creature, SPELL_SELF_DESTRUCT,true);
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_STONE_KEEPERS, IN_PROGRESS);    // activate next stonekeeper
     }
 

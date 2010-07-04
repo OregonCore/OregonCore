@@ -80,7 +80,7 @@ struct OREGON_DLL_DECL boss_venoxisAI : public ScriptedAI
     void JustDied(Unit* Killer)
     {
         DoScriptText(SAY_DEATH, m_creature);
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_VENOXIS_DEATH, 0);
     }
 
@@ -112,14 +112,14 @@ struct OREGON_DLL_DECL boss_venoxisAI : public ScriptedAI
                 if (HolyNova_Timer < diff)
                 {
                     TargetInRange = 0;
-                    for(int i=0; i<10; i++)
+                    for (int i=0; i<10; i++)
                     {
                         if (Unit* target = SelectUnit(SELECT_TARGET_TOPAGGRO,i))
-                            if(m_creature->IsWithinMeleeRange(target))
+                            if (m_creature->IsWithinMeleeRange(target))
                                 TargetInRange++;
                     }
 
-                    if(TargetInRange > 1)
+                    if (TargetInRange > 1)
                     {
                         DoCast(m_creature->getVictim(),SPELL_HOLY_NOVA);
                         HolyNova_Timer = 1000;
@@ -141,7 +141,7 @@ struct OREGON_DLL_DECL boss_venoxisAI : public ScriptedAI
             }
             else
             {
-                if(!PhaseTwo)
+                if (!PhaseTwo)
                 {
                     DoScriptText(SAY_TRANSFORM, m_creature);
                     m_creature->InterruptNonMeleeSpells(false);
@@ -155,7 +155,7 @@ struct OREGON_DLL_DECL boss_venoxisAI : public ScriptedAI
                     PhaseTwo = true;
                 }
 
-                if(PhaseTwo && PoisonCloud_Timer < diff)
+                if (PhaseTwo && PoisonCloud_Timer < diff)
                 {
                     DoCast(m_creature->getVictim(), SPELL_POISON_CLOUD);
                     PoisonCloud_Timer = 15000;

@@ -177,7 +177,7 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit *who)
     {
-        if (!m_creature->getVictim() && who->isTargetableForAttack() && ( m_creature->IsHostileTo( who )) && who->isInAccessiblePlaceFor(m_creature) )
+        if (!m_creature->getVictim() && who->isTargetableForAttack() && (m_creature->IsHostileTo(who)) && who->isInAccessiblePlacefor (m_creature))
         {
             if (!IntroOnce && m_creature->IsWithinDistInMap(who, 75))
             {
@@ -189,14 +189,14 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
                     pInstance->SetData(TYPE_NETHEKURSE,IN_PROGRESS);
             }
 
-            if (!m_creature->canFly() && m_creature->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE )
+            if (!m_creature->canFly() && m_creature->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
                 return;
 
             if (IsIntroEvent || !IsMainEvent)
                 return;
 
             float attackRadius = m_creature->GetAttackDistance(who);
-            if (m_creature->IsWithinDistInMap(who, attackRadius) && m_creature->IsWithinLOSInMap(who) )
+            if (m_creature->IsWithinDistInMap(who, attackRadius) && m_creature->IsWithinLOSInMap(who))
             {
                 //who->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
                 AttackStart(who);
@@ -262,7 +262,7 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
             }
         }
 
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         if (!IsMainEvent)
@@ -338,7 +338,7 @@ struct OREGON_DLL_DECL mob_fel_orc_convertAI : public ScriptedAI
                     ((boss_grand_warlock_nethekurseAI*)pKurse->AI())->DoYellForPeonEnterCombat();
             }
 
-            if (pInstance->GetData(TYPE_NETHEKURSE) == IN_PROGRESS )
+            if (pInstance->GetData(TYPE_NETHEKURSE) == IN_PROGRESS)
                 return;
             else pInstance->SetData(TYPE_NETHEKURSE,IN_PROGRESS);
         }

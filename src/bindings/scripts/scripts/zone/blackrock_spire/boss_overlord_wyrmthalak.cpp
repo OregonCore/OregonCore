@@ -65,7 +65,7 @@ struct OREGON_DLL_DECL boss_overlordwyrmthalakAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //Return since we have no target
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         //BlastWave_Timer
@@ -97,7 +97,7 @@ struct OREGON_DLL_DECL boss_overlordwyrmthalakAI : public ScriptedAI
         }else Knockaway_Timer -= diff;
 
         //Summon two Beserks
-        if ( !Summoned && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 51 )
+        if (!Summoned && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 51)
         {
             Unit* target = NULL;
             target = SelectUnit(SELECT_TARGET_RANDOM,0);

@@ -39,14 +39,14 @@ struct OREGON_DLL_DECL instance_mechanar : public ScriptedInstance
 
     void Initialize()
     {
-        for(uint8 i = 0; i < ENCOUNTERS; ++i)
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
             Encounters[i] = NOT_STARTED;
     }
 
     bool IsEncounterInProgress() const
     {
-        for(uint8 i = 0; i < ENCOUNTERS; ++i)
-            if(Encounters[i] == IN_PROGRESS)
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
+            if (Encounters[i] == IN_PROGRESS)
                 return true;
 
         return false;

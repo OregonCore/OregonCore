@@ -40,19 +40,19 @@ EndContentData */
 
 bool GossipHello_npc_beaten_corpse(Player *player, Creature *_Creature)
 {
-    if( player->GetQuestStatus(4921) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(4921) == QUEST_STATUS_COMPLETE)
+    if (player->GetQuestStatus(4921) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(4921) == QUEST_STATUS_COMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_CORPSE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
     player->SEND_GOSSIP_MENU(3557, _Creature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_beaten_corpse(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_beaten_corpse(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if(action == GOSSIP_ACTION_INFO_DEF +1)
+    if (action == GOSSIP_ACTION_INFO_DEF +1)
     {
         player->SEND_GOSSIP_MENU(3558, _Creature->GetGUID());
-        player->KilledMonster( 10668,_Creature->GetGUID() );
+        player->KilledMonster(10668,_Creature->GetGUID());
     }
     return true;
 }
@@ -66,18 +66,18 @@ bool GossipSelect_npc_beaten_corpse(Player *player, Creature *_Creature, uint32 
 bool GossipHello_npc_sputtervalve(Player *player, Creature *_Creature)
 {
     if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
-    if( player->GetQuestStatus(6981) == QUEST_STATUS_INCOMPLETE)
+    if (player->GetQuestStatus(6981) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_SPUTTERVALVE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_sputtervalve(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_sputtervalve(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if(action == GOSSIP_ACTION_INFO_DEF)
+    if (action == GOSSIP_ACTION_INFO_DEF)
     {
         player->SEND_GOSSIP_MENU(2013, _Creature->GetGUID());
         player->AreaExploredOrEventHappens(6981);
@@ -124,11 +124,11 @@ struct OREGON_DLL_DECL npc_taskmaster_fizzuleAI : public ScriptedAI
 
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {
-        if( spell->Id == SPELL_FLARE || spell->Id == SPELL_FOLLY )
+        if (spell->Id == SPELL_FLARE || spell->Id == SPELL_FOLLY)
         {
             DoUglyHack();
             ++FlareCount;
-            if( FlareCount >= 2 )
+            if (FlareCount >= 2)
             {
                 m_creature->setFaction(FACTION_FRIENDLY_F);
                 IsFriend = true;
@@ -140,9 +140,9 @@ struct OREGON_DLL_DECL npc_taskmaster_fizzuleAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if( IsFriend )
+        if (IsFriend)
         {
-            if( Reset_Timer < diff )
+            if (Reset_Timer < diff)
             {
                 EnterEvadeMode();
                 return;
@@ -162,9 +162,9 @@ CreatureAI* GetAI_npc_taskmaster_fizzule(Creature *_Creature)
 
 bool ReciveEmote_npc_taskmaster_fizzule(Player *player, Creature *_Creature, uint32 emote)
 {
-    if( emote == TEXTEMOTE_SALUTE )
+    if (emote == TEXTEMOTE_SALUTE)
     {
-        if( ((npc_taskmaster_fizzuleAI*)_Creature->AI())->FlareCount >= 2 )
+        if (((npc_taskmaster_fizzuleAI*)_Creature->AI())->FlareCount >= 2)
         {
             _Creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
             _Creature->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
@@ -219,7 +219,7 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
         Wave = 0;
         PlayerGUID = 0;
 
-        for(uint8 i = 0; i < 6; ++i)
+        for (uint8 i = 0; i < 6; ++i)
         {
             AffrayChallenger[i] = 0;
             Challenger_down[i] = false;
@@ -231,7 +231,7 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit *who)
     {
-        if(!who || (!who->isAlive())) return;
+        if (!who || (!who->isAlive())) return;
 
         if (m_creature->IsWithinDistInMap(who, 10.0f) && (who->GetTypeId() == TYPEID_PLAYER) && ((Player*)who)->GetQuestStatus(1719) == QUEST_STATUS_INCOMPLETE && !EventInProgress)
         {
@@ -247,24 +247,24 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
         if (EventInProgress) {
             Player* pWarrior = NULL;
 
-            if(PlayerGUID)
+            if (PlayerGUID)
                 pWarrior = Unit::GetPlayer(PlayerGUID);
 
-            if(!pWarrior)
+            if (!pWarrior)
                 return;
 
-            if(!pWarrior->isAlive() && pWarrior->GetQuestStatus(1719) == QUEST_STATUS_INCOMPLETE) {
+            if (!pWarrior->isAlive() && pWarrior->GetQuestStatus(1719) == QUEST_STATUS_INCOMPLETE) {
                 EventInProgress = false;
                 DoScriptText(SAY_TWIGGY_FLATHEAD_DOWN, m_creature);
                 pWarrior->FailQuest(1719);
 
-                for(uint8 i = 0; i < 6; ++i)
+                for (uint8 i = 0; i < 6; ++i)
                 {
                     if (AffrayChallenger[i])
                     {
                         Creature* pCreature = Unit::GetCreature((*m_creature), AffrayChallenger[i]);
-                        if(pCreature) {
-                            if(pCreature->isAlive())
+                        if (pCreature) {
+                            if (pCreature->isAlive())
                             {
                                 pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
                                 pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -279,8 +279,8 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
                 if (BigWill)
                 {
                     Creature* pCreature = Unit::GetCreature((*m_creature), BigWill);
-                    if(pCreature) {
-                        if(pCreature->isAlive()) {
+                    if (pCreature) {
+                        if (pCreature->isAlive()) {
                             pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
                             pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                             pCreature->setDeathState(JUST_DIED);
@@ -299,10 +299,10 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
                     pWarrior->AreaExploredOrEventHappens(1719);
                     DoScriptText(SAY_TWIGGY_FLATHEAD_BEGIN, m_creature);
 
-                    for(uint8 i = 0; i < 6; ++i)
+                    for (uint8 i = 0; i < 6; ++i)
                     {
                         Creature* pCreature = m_creature->SummonCreature(AFFRAY_CHALLENGER, AffrayChallengerLoc[i][0], AffrayChallengerLoc[i][1], AffrayChallengerLoc[i][2], AffrayChallengerLoc[i][3], TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
-                        if(!pCreature)
+                        if (!pCreature)
                             continue;
                         pCreature->setFaction(35);
                         pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -319,12 +319,12 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
             {
                 if (Challenger_checker < diff)
                 {
-                    for(uint8 i = 0; i < 6; ++i)
+                    for (uint8 i = 0; i < 6; ++i)
                     {
                         if (AffrayChallenger[i])
                         {
                             Creature* pCreature = Unit::GetCreature((*m_creature), AffrayChallenger[i]);
-                            if((!pCreature || (!pCreature->isAlive())) && !Challenger_down[i])
+                            if ((!pCreature || (!pCreature->isAlive())) && !Challenger_down[i])
                             {
                                 DoScriptText(SAY_TWIGGY_FLATHEAD_DOWN, m_creature);
                                 Challenger_down[i] = true;
@@ -334,13 +334,13 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
                     Challenger_checker = 1000;
                 } else Challenger_checker -= diff;
 
-                if(Wave_Timer < diff)
+                if (Wave_Timer < diff)
                 {
                     if (AffrayChallenger[Wave] && Wave < 6 && !EventBigWill)
                     {
                         DoScriptText(SAY_TWIGGY_FLATHEAD_FRAY, m_creature);
                         Creature* pCreature = Unit::GetCreature((*m_creature), AffrayChallenger[Wave]);
-                        if(pCreature && (pCreature->isAlive()))
+                        if (pCreature && (pCreature->isAlive()))
                         {
                             pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                             pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -352,7 +352,7 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
                         }
                     }
                     else if (Wave >= 6 && !EventBigWill) {
-                        if(Creature* pCreature = m_creature->SummonCreature(BIG_WILL, -1722, -4341, 6.12, 6.26, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 480000))
+                        if (Creature* pCreature = m_creature->SummonCreature(BIG_WILL, -1722, -4341, 6.12, 6.26, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 480000))
                         {
                             BigWill = pCreature->GetGUID();
                             //pCreature->GetMotionMaster()->MovePoint(0, -1693, -4343, 4.32);

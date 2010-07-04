@@ -335,7 +335,7 @@ CreatureAI* GetAI_npc_barnesAI(Creature* _Creature)
 {
     npc_barnesAI* Barnes_AI = new npc_barnesAI(_Creature);
 
-    for(uint8 i = 0; i < 6; ++i)
+    for (uint8 i = 0; i < 6; ++i)
         Barnes_AI->AddWaypoint(i, StageLocations[i][0], StageLocations[i][1], 90.465);
 
     return ((CreatureAI*)Barnes_AI);
@@ -419,7 +419,7 @@ bool GossipHello_npc_berthold(Player* player, Creature* _Creature)
 {
     ScriptedInstance* pInstance = ((ScriptedInstance*)_Creature->GetInstanceData());
      // Check if Shade of Aran is dead or not
-    if(pInstance && (pInstance->GetData(DATA_SHADEOFARAN_EVENT) == DONE))
+    if (pInstance && (pInstance->GetData(DATA_SHADEOFARAN_EVENT) == DONE))
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_TELEPORT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
@@ -428,7 +428,7 @@ bool GossipHello_npc_berthold(Player* player, Creature* _Creature)
 
 bool GossipSelect_npc_berthold(Player* player, Creature* _Creature, uint32 sender, uint32 action)
 {
-    if(action == GOSSIP_ACTION_INFO_DEF + 1)
+    if (action == GOSSIP_ACTION_INFO_DEF + 1)
         player->CastSpell(player, SPELL_TELEPORT, true);
 
     player->CLOSE_GOSSIP_MENU();
@@ -480,7 +480,7 @@ struct OREGON_DLL_DECL npc_image_of_medivhAI : public ScriptedAI
     {
         ArcanagosGUID = 0;
 
-        if(pInstance && pInstance->GetData64(DATA_IMAGE_OF_MEDIVH) == 0)
+        if (pInstance && pInstance->GetData64(DATA_IMAGE_OF_MEDIVH) == 0)
         {
             pInstance->SetData64(DATA_IMAGE_OF_MEDIVH, m_creature->GetGUID());
             (*m_creature).GetMotionMaster()->MovePoint(1,MedivPos[0],MedivPos[1],MedivPos[2]);
@@ -495,9 +495,9 @@ struct OREGON_DLL_DECL npc_image_of_medivhAI : public ScriptedAI
 
     void MovementInform(uint32 type, uint32 id)
     {
-        if(type != POINT_MOTION_TYPE)
+        if (type != POINT_MOTION_TYPE)
             return;
-        if(id == 1)
+        if (id == 1)
         {
             StartEvent();
             m_creature->SetOrientation(MedivPos[3]);
@@ -510,7 +510,7 @@ struct OREGON_DLL_DECL npc_image_of_medivhAI : public ScriptedAI
         Step = 1;
         EventStarted = true;
         Creature* Arcanagos = m_creature->SummonCreature(MOB_ARCANAGOS,ArcanagosPos[0],ArcanagosPos[1],ArcanagosPos[2],0,TEMPSUMMON_CORPSE_TIMED_DESPAWN,20000);
-        if(!Arcanagos)
+        if (!Arcanagos)
             return;
         ArcanagosGUID = Arcanagos->GetGUID();
         Arcanagos->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
@@ -532,21 +532,21 @@ struct OREGON_DLL_DECL npc_image_of_medivhAI : public ScriptedAI
             m_creature->Yell(SAY_DIALOG_MEDIVH_1,LANG_UNIVERSAL,NULL);
             return 10000;
         case 2:
-            if(arca)
+            if (arca)
                 ((Creature*)arca)->Yell(SAY_DIALOG_ARCANAGOS_2,LANG_UNIVERSAL,NULL);
             return 20000;
         case 3:
             m_creature->Yell(SAY_DIALOG_MEDIVH_3,LANG_UNIVERSAL,NULL);
             return 10000;
         case 4:
-            if(arca)
+            if (arca)
                 ((Creature*)arca)->Yell(SAY_DIALOG_ARCANAGOS_4, LANG_UNIVERSAL, NULL);
             return 20000;
         case 5:
             m_creature->Yell(SAY_DIALOG_MEDIVH_5, LANG_UNIVERSAL, NULL);
             return 20000;
         case 6:
-            if(arca)
+            if (arca)
                 ((Creature*)arca)->Yell(SAY_DIALOG_ARCANAGOS_6, LANG_UNIVERSAL, NULL);
             return 10000;
         case 7:
@@ -560,11 +560,11 @@ struct OREGON_DLL_DECL npc_image_of_medivhAI : public ScriptedAI
             m_creature->TextEmote(EMOTE_DIALOG_MEDIVH_7, 0, false);
             return 10000;
         case 10:
-            if(arca)
+            if (arca)
                 m_creature->CastSpell(arca, SPELL_CONFLAGRATION_BLAST, false);
             return 1000;
         case 11:
-            if(arca)
+            if (arca)
                 ((Creature*)arca)->Yell(SAY_DIALOG_ARCANAGOS_8, LANG_UNIVERSAL, NULL);
             return 5000;
         case 12:
@@ -580,14 +580,14 @@ struct OREGON_DLL_DECL npc_image_of_medivhAI : public ScriptedAI
             m_creature->SetVisibility(VISIBILITY_OFF);
             m_creature->ClearInCombat();
 
-            if(map->IsDungeon())
+            if (map->IsDungeon())
             {
                 InstanceMap::PlayerList const &PlayerList = ((InstanceMap*)map)->GetPlayers();
                 for (InstanceMap::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                 {
-                    if(i->getSource()->isAlive())
+                    if (i->getSource()->isAlive())
                     {
-                        if(i->getSource()->GetQuestStatus(9645) == QUEST_STATUS_INCOMPLETE)
+                        if (i->getSource()->GetQuestStatus(9645) == QUEST_STATUS_INCOMPLETE)
                             i->getSource()->CompleteQuest(9645);
                     }
                 }
@@ -604,28 +604,28 @@ struct OREGON_DLL_DECL npc_image_of_medivhAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
 
-        if(YellTimer < diff)
+        if (YellTimer < diff)
         {
-            if(EventStarted)
+            if (EventStarted)
             {
                 YellTimer = NextStep(Step++);
             }
         }else YellTimer -= diff;
 
-        if(Step >= 7 && Step <= 12 )
+        if (Step >= 7 && Step <= 12)
         {
             Unit* arca = Unit::GetUnit((*m_creature),ArcanagosGUID);
 
-            if(FireArcanagosTimer < diff)
+            if (FireArcanagosTimer < diff)
             {
-                if(arca)
+                if (arca)
                     arca->CastSpell(m_creature, SPELL_FIRE_BALL, false);
                 FireArcanagosTimer = 6000;
             }else FireArcanagosTimer -= diff;
 
-            if(FireMedivhTimer < diff)
+            if (FireMedivhTimer < diff)
             {
-                if(arca)
+                if (arca)
                     DoCast(arca, SPELL_FIRE_BALL);
                 FireMedivhTimer = 5000;
             }else FireMedivhTimer -= diff;

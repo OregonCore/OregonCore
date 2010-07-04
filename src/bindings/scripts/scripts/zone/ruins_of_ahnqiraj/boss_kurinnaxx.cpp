@@ -66,7 +66,7 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
         {
             enraged = true;
             DoCast(m_creature,SPELL_ENRAGE,true);
-        }else if(enraged && !m_creature->HasAura(SPELL_ENRAGE,0))
+        }else if (enraged && !m_creature->HasAura(SPELL_ENRAGE,0))
         {
             DoCast(m_creature,SPELL_ENRAGE,true);
         }
@@ -79,22 +79,22 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
             MORTALWOUND_Timer = 6000 + rand()%2000;
         }else MORTALWOUND_Timer -= diff;
 
-        if(THRASH_Timer < diff)
+        if (THRASH_Timer < diff)
         {
             DoCast(m_creature,SPELL_THRASH);
             THRASH_Timer = 3000+ rand()%5000;
         }else THRASH_Timer -= diff;
 
-        if(SLASH_Timer < diff)
+        if (SLASH_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_SLASH);
             SLASH_Timer = 5000 + rand()%5000;
         }else SLASH_Timer -= diff;
 
-        if( SUMMON_Timer < diff)
+        if (SUMMON_Timer < diff)
         {
             Unit *target = SelectUnit(SELECT_TARGET_RANDOM,1,70,true);
-            if(target)
+            if (target)
             {
                 DoCast(target,SPELL_SUMMON);
             }
@@ -104,11 +104,11 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
         //SANDTRAP_Timer
         if (SANDTRAP_Timer < diff)
         {
-            if(!sandtrap)
+            if (!sandtrap)
             {
                 Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0,50,true);
 
-                if(target)
+                if (target)
                 {
                     target->CastSpell(target,SPELL_SANDTRAP,true,0,0,m_creature->GetGUID());
                     sandtrap = true;
@@ -118,7 +118,7 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
             {
                 GameObject* trap = FindGameObject(180647,100,m_creature);
 
-                if(trap)
+                if (trap)
                 {
                     float x,y,z;
                     trap->GetPosition(x,y,z);

@@ -103,7 +103,7 @@ struct OREGON_DLL_DECL boss_aeonusAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //Return since we have no target
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         //Sand Breath

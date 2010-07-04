@@ -62,7 +62,7 @@ CreatureAI* GetAI_npc_astor_hadren(Creature *_creature)
 bool GossipHello_npc_astor_hadren(Player *player, Creature *_Creature)
 {
     if (player->GetQuestStatus(1886) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM( 0, GOSSIP_HAH, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_HAH, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     player->SEND_GOSSIP_MENU(623, _Creature->GetGUID());
 
@@ -74,13 +74,13 @@ bool GossipSelect_npc_astor_hadren(Player *player, Creature *_Creature, uint32 s
     switch (action)
     {
         case GOSSIP_ACTION_INFO_DEF + 1:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_SAH, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_SAH, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
             player->SEND_GOSSIP_MENU(624, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF + 2:
             player->CLOSE_GOSSIP_MENU();
             _Creature->setFaction(21);
-            if(player)
+            if (player)
                 ((npc_astor_hadrenAI*)_Creature->AI())->AttackStart(player);
             break;
     }
@@ -246,7 +246,7 @@ struct OREGON_DLL_DECL pyrewood_ambushAI : public ScriptedAI
     {
         WaitTimer = WAIT_SECS;
 
-        if(!QuestInProgress) //fix reset values (see UpdateVictim)
+        if (!QuestInProgress) //fix reset values (see UpdateVictim)
         {
             Phase = 0;
             KillCount = 0;
@@ -272,7 +272,7 @@ struct OREGON_DLL_DECL pyrewood_ambushAI : public ScriptedAI
     void SummonCreatureWithRandomTarget(uint32 creatureId, int position)
     {
         Creature *pSummoned = m_creature->SummonCreature(creatureId, SpawnPoints[position][0], SpawnPoints[position][1], SpawnPoints[position][2], SpawnPoints[position][3], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 15000);
-        if(pSummoned)
+        if (pSummoned)
         {
             Player* pPlayer = NULL;
             Unit* pTarget = NULL;
@@ -309,12 +309,12 @@ struct OREGON_DLL_DECL pyrewood_ambushAI : public ScriptedAI
 
         //sLog.outString("DEBUG: p(%i) k(%i) d(%u) W(%i)", Phase, KillCount, diff, WaitTimer);
 
-        if(!QuestInProgress)
+        if (!QuestInProgress)
             return;
 
-        if(KillCount && (Phase < 6))
+        if (KillCount && (Phase < 6))
         {
-            if(!UpdateVictim() ) //reset() on target Despawn...
+            if (!UpdateVictim()) //reset() on target Despawn...
                 return;
 
             DoMeleeAttackIfReady();
@@ -324,10 +324,10 @@ struct OREGON_DLL_DECL pyrewood_ambushAI : public ScriptedAI
 
         switch(Phase){
             case 0:
-                if(WaitTimer == WAIT_SECS)
+                if (WaitTimer == WAIT_SECS)
                     m_creature->Say(NPCSAY_INIT, LANG_UNIVERSAL, 0); //no blizzlike
 
-                if(WaitTimer <= diff)
+                if (WaitTimer <= diff)
                 {
                     WaitTimer -= diff;
                     return;
@@ -354,7 +354,7 @@ struct OREGON_DLL_DECL pyrewood_ambushAI : public ScriptedAI
                 if (PlayerGUID)
                 {
                     Unit* player = Unit::GetUnit((*m_creature), PlayerGUID);
-                    if( player && player->GetTypeId() == TYPEID_PLAYER )
+                    if (player && player->GetTypeId() == TYPEID_PLAYER)
                     {
                         m_creature->Say(NPCSAY_END, LANG_UNIVERSAL, 0); //no blizzlike
                         ((Player*)player)->GroupEventHappens(QUEST_PYREWOOD_AMBUSH, m_creature);
@@ -375,7 +375,7 @@ CreatureAI* GetAI_pyrewood_ambush(Creature *pCreature)
     return new pyrewood_ambushAI (pCreature);
 }
 
-bool QuestAccept_pyrewood_ambush(Player *pPlayer, Creature *pCreature, const Quest *pQuest )
+bool QuestAccept_pyrewood_ambush(Player *pPlayer, Creature *pCreature, const Quest *pQuest)
 {
     if ((pQuest->GetQuestId() == QUEST_PYREWOOD_AMBUSH) && (!((pyrewood_ambushAI*)(pCreature->AI()))->QuestInProgress))
     {

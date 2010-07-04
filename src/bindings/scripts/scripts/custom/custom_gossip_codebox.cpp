@@ -35,9 +35,9 @@ bool GossipHello_custom_gossip_codebox(Player *player, Creature *_Creature)
 }
 
 //This function is called when the player clicks an option on the gossip menubool
-bool GossipSelect_custom_gossip_codebox(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_custom_gossip_codebox(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if(action == GOSSIP_ACTION_INFO_DEF+2)
+    if (action == GOSSIP_ACTION_INFO_DEF+2)
     {
         _Creature->Say("Normal select, guess you're not interested.", LANG_UNIVERSAL, 0);
         player->CLOSE_GOSSIP_MENU();
@@ -45,13 +45,13 @@ bool GossipSelect_custom_gossip_codebox(Player *player, Creature *_Creature, uin
     return true;
 }
 
-bool GossipSelectWithCode_custom_gossip_codebox( Player *player, Creature *_Creature, uint32 sender, uint32 action, const char* sCode )
+bool GossipSelectWithCode_custom_gossip_codebox(Player *player, Creature *_Creature, uint32 sender, uint32 action, const char* sCode)
 {
-    if(sender == GOSSIP_SENDER_MAIN)
+    if (sender == GOSSIP_SENDER_MAIN)
     {
-        if(action == GOSSIP_ACTION_INFO_DEF+1)
+        if (action == GOSSIP_ACTION_INFO_DEF+1)
         {
-            if(std::strcmp(sCode, player->GetName()) != 0)
+            if (std::strcmp(sCode, player->GetName()) != 0)
             {
                 _Creature->Say("Wrong!", LANG_UNIVERSAL, 0);
                 _Creature->CastSpell(player, 12826, true);

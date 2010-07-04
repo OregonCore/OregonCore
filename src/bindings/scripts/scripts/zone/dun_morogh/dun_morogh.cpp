@@ -61,7 +61,7 @@ struct OREGON_DLL_DECL npc_narm_faulkAI : public ScriptedAI
     {
         if (!m_creature->GetUInt32Value(UNIT_FIELD_BYTES_1))
         {
-            if(lifeTimer < diff)
+            if (lifeTimer < diff)
             {
                 EnterEvadeMode();
                 return;
@@ -73,7 +73,7 @@ struct OREGON_DLL_DECL npc_narm_faulkAI : public ScriptedAI
 
     void SpellHit(Unit *Hitter, const SpellEntry *Spellkind)
     {
-        if(Spellkind->Id == 8593 && !spellHit)
+        if (Spellkind->Id == 8593 && !spellHit)
         {
             DoCast(m_creature,32343);
             m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1,0);

@@ -136,7 +136,7 @@ bool GOHello_go_haaleshi_altar(Player *player, GameObject* _GO)
 bool GossipHello_npc_wing_commander_dabiree(Player *player, Creature *_Creature)
 {
     if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
     //Mission: The Murketh and Shaadraz Gateways
     if (player->GetQuestStatus(10146) == QUEST_STATUS_INCOMPLETE)
@@ -151,7 +151,7 @@ bool GossipHello_npc_wing_commander_dabiree(Player *player, Creature *_Creature)
     return true;
 }
 
-bool GossipSelect_npc_wing_commander_dabiree(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_wing_commander_dabiree(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF + 1)
     {
@@ -176,7 +176,7 @@ bool GossipSelect_npc_wing_commander_dabiree(Player *player, Creature *_Creature
 bool GossipHello_npc_gryphoneer_windbellow(Player *player, Creature *_Creature)
 {
     if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
     //Mission: The Abyssal Shelf || Return to the Abyssal Shelf
     if (player->GetQuestStatus(10163) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(10346) == QUEST_STATUS_INCOMPLETE)
@@ -248,7 +248,7 @@ bool GossipSelect_npc_gryphoneer_leafbeard(Player *player, Creature *_Creature, 
 bool GossipHello_npc_wing_commander_brack(Player *player, Creature *_Creature)
 {
     if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
     //Mission: The Murketh and Shaadraz Gateways
     if (player->GetQuestStatus(10129) == QUEST_STATUS_INCOMPLETE)
@@ -267,7 +267,7 @@ bool GossipHello_npc_wing_commander_brack(Player *player, Creature *_Creature)
     return true;
 }
 
-bool GossipSelect_npc_wing_commander_brack(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_wing_commander_brack(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     switch(action)
     {

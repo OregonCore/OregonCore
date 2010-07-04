@@ -49,8 +49,8 @@ struct OREGON_DLL_DECL instance_scholomance : public ScriptedInstance
 
     uint32 GetData(uint32 type)
     {
-        if(type == DATA_CANSPAWNGANDLING)
-            if(IsBossDied[0] && IsBossDied[1] && IsBossDied[2] && IsBossDied[3] && IsBossDied[4] && IsBossDied[5])
+        if (type == DATA_CANSPAWNGANDLING)
+            if (IsBossDied[0] && IsBossDied[1] && IsBossDied[2] && IsBossDied[3] && IsBossDied[4] && IsBossDied[5])
                 return 1;
 
         return 0;

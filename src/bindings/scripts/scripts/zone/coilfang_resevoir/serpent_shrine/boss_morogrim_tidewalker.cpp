@@ -182,7 +182,7 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //Return since we have no target
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         //Earthquake_Timer
@@ -202,11 +202,11 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
                     case 1: DoScriptText(SAY_SUMMON2, m_creature); break;
                 }
 
-                for(uint8 i = 0; i < 10; i++)
+                for (uint8 i = 0; i < 10; i++)
                 {
                     Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0);
                     Creature* Murloc = m_creature->SummonCreature(MurlocCords[i][0],MurlocCords[i][1],MurlocCords[i][2],MurlocCords[i][3],MurlocCords[i][4], TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
-                    if(target && Murloc)
+                    if (target && Murloc)
                         Murloc->AI()->AttackStart(target);
                 }
                 DoScriptText(EMOTE_EARTHQUAKE, m_creature);
@@ -232,16 +232,16 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
                 using std::set;
                 set<int>list;
                 set<int>::iterator itr;
-                for(uint8 i = 0; i < 4; i++)
+                for (uint8 i = 0; i < 4; i++)
                 {
                     counter = 0;
                     do{target = SelectUnit(SELECT_TARGET_RANDOM, 1, 50, true);    //target players only
-                    if(counter < Playercount)
+                    if (counter < Playercount)
                         break;
-                    if(target) itr = list.find(target->GetGUID());
+                    if (target) itr = list.find(target->GetGUID());
                     counter++;
-                    }while(itr != list.end());
-                    if(target){list.insert(target->GetGUID());
+                    }while (itr != list.end());
+                    if (target){list.insert(target->GetGUID());
                     ApplyWateryGrave(target, i);
                     }
                 }
@@ -273,12 +273,12 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
                 {
                     counter = 0;
                     do {globuletarget = SelectUnit(SELECT_TARGET_RANDOM, 0,50,true);
-                    if(globuletarget) itr = globulelist.find(globuletarget->GetGUID());
+                    if (globuletarget) itr = globulelist.find(globuletarget->GetGUID());
                     if (counter > Playercount)
                         break;
                     counter++;
                     } while (itr != globulelist.end());
-                    if(globuletarget)globulelist.insert(globuletarget->GetGUID());
+                    if (globuletarget)globulelist.insert(globuletarget->GetGUID());
                     globuletarget->CastSpell(globuletarget, globulespell[g], true);
                 }
                 DoScriptText(EMOTE_WATERY_GLOBULES, m_creature);
@@ -315,7 +315,7 @@ struct OREGON_DLL_DECL mob_water_globuleAI : public ScriptedAI
         if (!who || m_creature->getVictim())
             return;
 
-        if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor(m_creature) && m_creature->IsHostileTo(who))
+        if (who->isTargetableForAttack() && who->isInAccessiblePlacefor (m_creature) && m_creature->IsHostileTo(who))
         {
             //no attack radius check - it attacks the first target that moves in his los
             //who->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
@@ -326,7 +326,7 @@ struct OREGON_DLL_DECL mob_water_globuleAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //Return since we have no target
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         if (Check_Timer < diff)

@@ -39,7 +39,7 @@ bool GossipHello_npc_spirit_of_olum(Player* player, Creature* _Creature)
 {
     ScriptedInstance* pInstance = ((ScriptedInstance*)_Creature->GetInstanceData());
 
-    if(pInstance && (pInstance->GetData(DATA_SUPREMUSEVENT) >= DONE) && (pInstance->GetData(DATA_HIGHWARLORDNAJENTUSEVENT) >= DONE))
+    if (pInstance && (pInstance->GetData(DATA_SUPREMUSEVENT) >= DONE) && (pInstance->GetData(DATA_HIGHWARLORDNAJENTUSEVENT) >= DONE))
         player->ADD_GOSSIP_ITEM(0, GOSSIP_OLUM1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
@@ -48,7 +48,7 @@ bool GossipHello_npc_spirit_of_olum(Player* player, Creature* _Creature)
 
 bool GossipSelect_npc_spirit_of_olum(Player* player, Creature* _Creature, uint32 sender, uint32 action)
 {
-    if(action == GOSSIP_ACTION_INFO_DEF + 1)
+    if (action == GOSSIP_ACTION_INFO_DEF + 1)
         player->CLOSE_GOSSIP_MENU();
 
     player->InterruptNonMeleeSpells(false);

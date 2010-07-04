@@ -57,7 +57,7 @@ struct OREGON_DLL_DECL instance_blood_furnace : public ScriptedInstance
 
         if (!players.isEmpty())
         {
-            for(Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+            for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
                 if (Player* plr = itr->getSource())
                     return plr;
@@ -87,7 +87,7 @@ struct OREGON_DLL_DECL instance_blood_furnace : public ScriptedInstance
         switch(type)
         {
             case DATA_KELIDANEVENT:
-                if( data == DONE )
+                if (data == DONE)
                 {
                     HandleGameObject(Sewer1GUID,0);
                     HandleGameObject(Sewer2GUID,0);

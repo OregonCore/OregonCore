@@ -65,7 +65,7 @@ struct OREGON_DLL_DECL boss_high_inquisitor_fairbanksAI : public ScriptedAI
             return;
 
         //If we are <45% hp cast Renew rank 6 or Flash heal rank 4
-        if ( m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 45 && !m_creature->IsNonMeleeSpellCasted(false) && Healing_Timer < diff)
+        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 45 && !m_creature->IsNonMeleeSpellCasted(false) && Healing_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_RENEW6 || SPELL_FLASHHEAL4);
             Healing_Timer = 30000;

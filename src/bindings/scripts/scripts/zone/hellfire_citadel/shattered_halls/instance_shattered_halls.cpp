@@ -41,13 +41,13 @@ struct OREGON_DLL_DECL instance_shattered_halls : public ScriptedInstance
         nethekurseGUID = 0;
         nethekurseDoorGUID = 0;
 
-        for(uint8 i = 0; i < ENCOUNTERS; i++)
+        for (uint8 i = 0; i < ENCOUNTERS; i++)
             Encounter[i] = NOT_STARTED;
     }
 
     void OnObjectCreate(GameObject *go)
     {
-        switch( go->GetEntry() )
+        switch(go->GetEntry())
         {
             case DOOR_NETHEKURSE: nethekurseDoorGUID = go->GetGUID(); break;
         }
@@ -55,7 +55,7 @@ struct OREGON_DLL_DECL instance_shattered_halls : public ScriptedInstance
 
     void OnCreatureCreate(Creature *creature, uint32 creature_entry)
     {
-        switch( creature_entry )
+        switch(creature_entry)
         {
             case 16807: nethekurseGUID = creature->GetGUID(); break;
         }
@@ -63,14 +63,14 @@ struct OREGON_DLL_DECL instance_shattered_halls : public ScriptedInstance
 
     void SetData(uint32 type, uint32 data)
     {
-        switch( type )
+        switch(type)
         {
             case TYPE_NETHEKURSE:
-                if(Encounter[0] != DONE)
+                if (Encounter[0] != DONE)
                     Encounter[0] = data;
                 break;
             case TYPE_OMROGG:
-                if(Encounter[1] != DONE)
+                if (Encounter[1] != DONE)
                     Encounter[1] = data;
                 break;
         }
@@ -78,7 +78,7 @@ struct OREGON_DLL_DECL instance_shattered_halls : public ScriptedInstance
 
     uint32 GetData(uint32 type)
     {
-        switch( type )
+        switch(type)
         {
             case TYPE_NETHEKURSE:
                 return Encounter[0];

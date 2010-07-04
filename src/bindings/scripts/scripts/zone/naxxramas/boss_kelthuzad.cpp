@@ -185,9 +185,9 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
         FrostBlast_Timer = (rand()%30+30)*1000;             //Random time between 30-60 seconds
         GuardiansOfIcecrown_Timer = 5000;                   //5 seconds for summoning each Guardian of Icecrown in phase 3
 
-        for(int i=0; i<5; i++)
+        for (int i=0; i<5; i++)
         {
-            if(GuardiansOfIcecrown[i])
+            if (GuardiansOfIcecrown[i])
         {
             //delete creature
             Unit* pUnit = Unit::GetUnit((*m_creature), GuardiansOfIcecrown[i]);
@@ -213,8 +213,8 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
     void JustDied(Unit* Killer)
     {
         DoScriptText(SAY_DEATH, m_creature);
-        for(int i=0; i<5; i++)
-            if(GuardiansOfIcecrown[i])
+        for (int i=0; i<5; i++)
+            if (GuardiansOfIcecrown[i])
         {
             Unit* pUnit = Unit::GetUnit((*m_creature), GuardiansOfIcecrown[i]);
             if (!pUnit || !pUnit->isAlive())
@@ -276,10 +276,10 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
          if (!UpdateVictim())
             return;
 
-        if(m_creature->getVictim() && m_creature->isAlive())
+        if (m_creature->getVictim() && m_creature->isAlive())
         {
             //Check for Frost Bolt
-            if(FrostBolt_Timer < diff)
+            if (FrostBolt_Timer < diff)
             {
                 DoCast(m_creature->getVictim(),SPELL_FROST_BOLT);
                 //Cast again on time
@@ -287,18 +287,18 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             }else FrostBolt_Timer -= diff;
 
             //Check for Frost Bolt Nova
-            if(FrostBoltNova_Timer < diff)
+            if (FrostBoltNova_Timer < diff)
             {
                 DoCast(m_creature->getVictim(),SPELL_FROST_BOLT_NOVA);
                 FrostBoltNova_Timer = 15000;
             }else FrostBoltNova_Timer -= diff;
 
             //Check for Chains Of Kelthuzad
-            if(ChainsOfKelthuzad_Timer < diff)
+            if (ChainsOfKelthuzad_Timer < diff)
             {
                 //DoCast(m_creature->getVictim(),SPELL_CHAINS_OF_KELTHUZAD);
 
-                //if(rand()%2 == 0)
+                //if (rand()%2 == 0)
                    //DoScriptText(SAY_CHAIN1, m_creature);
                 //else
                     //DoScriptText(SAY_CHAIN2, m_creature);
@@ -306,7 +306,7 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             }else ChainsOfKelthuzad_Timer -= diff;
 
             //Check for Mana Detonation
-            if(ManaDetonation_Timer < diff)
+            if (ManaDetonation_Timer < diff)
             {
                 //time to cast
                 DoCast(m_creature->getVictim(),SPELL_MANA_DETONATION);
@@ -317,7 +317,7 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             }else ManaDetonation_Timer -= diff;
 
             //Check for Shadow Fissure
-            if(ShadowFisure_Timer < diff)
+            if (ShadowFisure_Timer < diff)
             {
                 DoCast(m_creature->getVictim(),SPELL_SHADOW_FISURE);
 
@@ -327,18 +327,18 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             }else ShadowFisure_Timer -= diff;
 
             //Check for Frost Blast
-            if(FrostBlast_Timer < diff)
+            if (FrostBlast_Timer < diff)
             {
                 //time to cast
                 DoCast(m_creature->getVictim(),SPELL_FROST_BLAST);
 
-                if(rand()%2 == 0)
+                if (rand()%2 == 0)
                     DoScriptText(SAY_FROST_BLAST, m_creature);
                 FrostBlast_Timer = (rand()%30+30)*1000;
             }else FrostBlast_Timer -= diff;
 
             //start phase 3 when we are 40% health
-            if(!Phase3 && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 40)
+            if (!Phase3 && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 40)
             {
                 Phase3 = true;
                     DoScriptText(SAY_REQUEST_AID, m_creature);
@@ -347,8 +347,8 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                 DoScriptText(SAY_ANSWER_REQUEST, m_creature);
             }
 
-            if(Phase3 && (GuardiansOfIcecrown_Count < 5))
-                if(GuardiansOfIcecrown_Timer < diff)
+            if (Phase3 && (GuardiansOfIcecrown_Count < 5))
+                if (GuardiansOfIcecrown_Timer < diff)
             {
                 //Summon a Guardian of Icecrown in a random alcove (Creature # 16441)
                 //uint32 TimeToWalk;
@@ -406,7 +406,7 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                 if (pUnit)
                 {
                     //if we find no one to figth walk to the center
-                    if(!pUnit->isInCombat())
+                    if (!pUnit->isInCombat())
                         pUnit->SendMonsterMoveWithSpeed(Walk_Pos_X,Walk_Pos_Y,Walk_Pos_Z,MOVEMENTFLAG_WALK_MODE);
 
                     //Safe storing of creatures

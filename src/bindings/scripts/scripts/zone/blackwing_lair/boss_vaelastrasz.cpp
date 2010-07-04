@@ -143,7 +143,7 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
         }
 
         //Return since we have no target
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         // Yell if hp lower than 15%
@@ -208,7 +208,7 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
         if (TailSwipe_Timer < diff)
         {
             //Only cast if we are behind
-            /*if (!m_creature->HasInArc( M_PI, m_creature->getVictim()))
+            /*if (!m_creature->HasInArc(M_PI, m_creature->getVictim()))
             {
             DoCast(m_creature->getVictim(),SPELL_TAILSWIPE);
             }*/
@@ -229,7 +229,7 @@ void SendDefaultMenu_boss_vael(Player *player, Creature *_Creature, uint32 actio
     }
 }
 
-bool GossipSelect_boss_vael(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_boss_vael(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     if (sender == GOSSIP_SENDER_MAIN)
         SendDefaultMenu_boss_vael(player, _Creature, action);
@@ -239,7 +239,7 @@ bool GossipSelect_boss_vael(Player *player, Creature *_Creature, uint32 sender, 
 
 bool GossipHello_boss_vael(Player *player, Creature *_Creature)
 {
-    player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM        , GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+    player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM        , GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
     player->SEND_GOSSIP_MENU(907,_Creature->GetGUID());
 
     return true;

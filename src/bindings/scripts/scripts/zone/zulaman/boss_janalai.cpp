@@ -104,7 +104,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
         pInstance =((ScriptedInstance*)c->GetInstanceData());
 
         SpellEntry *TempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_HATCH_EGG);
-        if(TempSpell && TempSpell->EffectImplicitTargetA[0] != 1)
+        if (TempSpell && TempSpell->EffectImplicitTargetA[0] != 1)
         {
             TempSpell->EffectImplicitTargetA[0] = 1;
             TempSpell->EffectImplicitTargetB[0] = 0;
@@ -131,7 +131,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
 
     void Reset()
     {
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_JANALAIEVENT, NOT_STARTED);
 
         FireBreathTimer = 8000;
@@ -148,7 +148,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
 
         isFlameBreathing = false;
 
-        for(uint8 i = 0; i < 40; i++)
+        for (uint8 i = 0; i < 40; i++)
             FireBombGUIDs[i] = 0;
 
         HatchAllEggs(1);
@@ -158,7 +158,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
     {
         DoScriptText(SAY_DEATH, m_creature);
 
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_JANALAIEVENT, DONE);
     }
 
@@ -173,7 +173,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_JANALAIEVENT, IN_PROGRESS);
 
         DoScriptText(SAY_AGGRO, m_creature);
@@ -182,9 +182,9 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
 
     void DamageDeal(Unit* target, uint32 &damage)
     {
-        if(isFlameBreathing)
+        if (isFlameBreathing)
         {
-            if(!m_creature->HasInArc(M_PI/6, target))
+            if (!m_creature->HasInArc(M_PI/6, target))
                 damage = 0;
         }
     }
@@ -193,20 +193,20 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
     {
         uint8 WallNum;
         Creature* wall = NULL;
-        for(uint8 i = 0; i < 4; i++)
+        for (uint8 i = 0; i < 4; i++)
         {
-            if(i == 0 || i == 2)
+            if (i == 0 || i == 2)
                 WallNum = 3;
             else
                 WallNum = 2;
 
-            for(uint8 j = 0; j < WallNum; j++)
+            for (uint8 j = 0; j < WallNum; j++)
             {
-                if(WallNum == 3)
+                if (WallNum == 3)
                     wall = m_creature->SummonCreature(MOB_FIRE_BOMB, FireWallCoords[i][0],FireWallCoords[i][1]+5*(j-1),FireWallCoords[i][2],FireWallCoords[i][3],TEMPSUMMON_TIMED_DESPAWN,15000);
                 else
                     wall = m_creature->SummonCreature(MOB_FIRE_BOMB, FireWallCoords[i][0]-2+4*j,FireWallCoords[i][1],FireWallCoords[i][2],FireWallCoords[i][3],TEMPSUMMON_TIMED_DESPAWN,15000);
-                if(wall) wall->CastSpell(wall, SPELL_FIRE_WALL, true);
+                if (wall) wall->CastSpell(wall, SPELL_FIRE_WALL, true);
             }
         }
     }
@@ -214,13 +214,13 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
     void SpawnBombs()
     {
         float dx, dy;
-        for( int i(0); i < 40; i++)
+        for (int i(0); i < 40; i++)
         {
             dx =(rand()%(area_dx))-(area_dx/2);
             dy =(rand()%(area_dy))-(area_dy/2);
 
             Creature* bomb = DoSpawnCreature(MOB_FIRE_BOMB, dx, dy, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 15000);
-            if(bomb) FireBombGUIDs[i] = bomb->GetGUID();
+            if (bomb) FireBombGUIDs[i] = bomb->GetGUID();
         }
         BombCount = 0;
     }
@@ -247,14 +247,14 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
         }
 
         //error_log("Eggs %d at middle", templist.size());
-        if(!templist.size())
+        if (!templist.size())
             return false;
 
-        for(std::list<Creature*>::iterator i = templist.begin(); i != templist.end(); ++i)
+        for (std::list<Creature*>::iterator i = templist.begin(); i != templist.end(); ++i)
         {
-            if(action == 1)
+            if (action == 1)
                (*i)->SetDisplayId(10056);
-            else if(action == 2 &&(*i)->GetDisplayId() != 11686)
+            else if (action == 2 &&(*i)->GetDisplayId() != 11686)
                (*i)->CastSpell(*i, SPELL_HATCH_EGG, false);
         }
         return true;
@@ -280,7 +280,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
             CellLock<GridReadGuard> cell_lock(cell, pair);
             cell_lock->Visit(cell_lock, cSearcher, *(m_creature->GetMap()));
         }
-        for(std::list<Creature*>::iterator i = templist.begin(); i != templist.end(); ++i)
+        for (std::list<Creature*>::iterator i = templist.begin(); i != templist.end(); ++i)
         {
            (*i)->CastSpell(*i, SPELL_FIRE_BOMB_DAMAGE, true);
            (*i)->RemoveAllAuras();
@@ -289,16 +289,16 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
 
     void HandleBombSequence()
     {
-        if(BombCount < 40)
+        if (BombCount < 40)
         {
-            if(Unit *FireBomb = Unit::GetUnit((*m_creature), FireBombGUIDs[BombCount]))
+            if (Unit *FireBomb = Unit::GetUnit((*m_creature), FireBombGUIDs[BombCount]))
             {
                 FireBomb->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 DoCast(FireBomb, SPELL_FIRE_BOMB_THROW, true);
                 FireBomb->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             }
             BombCount++;
-            if(BombCount == 40)
+            if (BombCount == 40)
             {
                 BombSequenceTimer = 5000;
             }else BombSequenceTimer = 100;
@@ -309,7 +309,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
             isBombing = false;
             BombTimer = 20000+rand()%20000;
             m_creature->RemoveAurasDueToSpell(SPELL_FIRE_BOMB_CHANNEL);
-            if(EnrageTimer <= 10000)
+            if (EnrageTimer <= 10000)
                 EnrageTimer = 0;
             else
                 EnrageTimer -= 10000;
@@ -318,33 +318,33 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(isFlameBreathing)
+        if (isFlameBreathing)
         {
-            if(!m_creature->IsNonMeleeSpellCasted(false))
+            if (!m_creature->IsNonMeleeSpellCasted(false))
             {
                 isFlameBreathing = false;
             }else return;
         }
 
-        if(isBombing)
+        if (isBombing)
         {
-            if(BombSequenceTimer < diff)
+            if (BombSequenceTimer < diff)
             {
                 HandleBombSequence();
             }else BombSequenceTimer -= diff;
             return;
         }
 
-        if(!UpdateVictim())
+        if (!UpdateVictim())
             return;
 
         //enrage if under 25% hp before 5 min.
-        if(!enraged && m_creature->GetHealth() * 4 < m_creature->GetMaxHealth())
+        if (!enraged && m_creature->GetHealth() * 4 < m_creature->GetMaxHealth())
             EnrageTimer = 0;
 
-        if(EnrageTimer < diff)
+        if (EnrageTimer < diff)
         {
-            if(!enraged)
+            if (!enraged)
             {
                 m_creature->CastSpell(m_creature, SPELL_ENRAGE, true);
                 enraged = true;
@@ -358,7 +358,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
             }
         }else EnrageTimer -= diff;
 
-        if(BombTimer < diff)
+        if (BombTimer < diff)
         {
             DoScriptText(SAY_FIRE_BOMBS, m_creature);
 
@@ -377,21 +377,21 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
 
             //Teleport every Player into the middle
             Map *map = m_creature->GetMap();
-            if(!map->IsDungeon()) return;
+            if (!map->IsDungeon()) return;
             Map::PlayerList const &PlayerList = map->GetPlayers();
-            for(Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+            for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
             {
                 if (Player* i_pl = i->getSource())
-                    if(i_pl->isAlive())
+                    if (i_pl->isAlive())
                         DoTeleportPlayer(i_pl, JanalainPos[0][0]-5+rand()%10, JanalainPos[0][1]-5+rand()%10, JanalainPos[0][2], 0);
             }
             //m_creature->CastSpell(Temp, SPELL_SUMMON_PLAYERS, true); // core bug, spell does not work if too far
             return;
         }else BombTimer -= diff;
 
-        if(!noeggs)
+        if (!noeggs)
         {
-            if(100 * m_creature->GetHealth() < 35 * m_creature->GetMaxHealth())
+            if (100 * m_creature->GetHealth() < 35 * m_creature->GetMaxHealth())
             {
                 DoScriptText(SAY_ALL_EGGS, m_creature);
 
@@ -403,9 +403,9 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
                 HatchAllEggs(2);
                 noeggs = true;
             }
-            else if(HatcherTimer < diff)
+            else if (HatcherTimer < diff)
             {
-                if(HatchAllEggs(0))
+                if (HatchAllEggs(0))
                 {
                     DoScriptText(SAY_SUMMON_HATCHER, m_creature);
                     m_creature->SummonCreature(MOB_AMANI_HATCHER,hatcherway[0][0][0],hatcherway[0][0][1],hatcherway[0][0][2],0,TEMPSUMMON_CORPSE_TIMED_DESPAWN,10000);
@@ -417,11 +417,11 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
             }else HatcherTimer -= diff;
         }
 
-        if(ResetTimer < diff)
+        if (ResetTimer < diff)
         {
             float x, y, z, o;
             m_creature->GetHomePosition(x, y, z, o);
-            if(m_creature->GetPositionZ() <= z-7)
+            if (m_creature->GetPositionZ() <= z-7)
             {
                 EnterEvadeMode();
                 return;
@@ -431,9 +431,9 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
 
         DoMeleeAttackIfReady();
 
-        if(FireBreathTimer < diff)
+        if (FireBreathTimer < diff)
         {
-            if(Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
             {
                 m_creature->AttackStop();
                 m_creature->GetMotionMaster()->Clear();
@@ -459,7 +459,7 @@ struct OREGON_DLL_DECL mob_janalai_firebombAI : public ScriptedAI
 
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {
-        if(spell->Id == SPELL_FIRE_BOMB_THROW)
+        if (spell->Id == SPELL_FIRE_BOMB_THROW)
             m_creature->CastSpell(m_creature, SPELL_FIRE_BOMB_DUMMY, true);
     }
 
@@ -527,16 +527,16 @@ struct OREGON_DLL_DECL mob_amanishi_hatcherAI : public ScriptedAI
 
         //error_log("Eggs %d at %d", templist.size(), side);
 
-        for(std::list<Creature*>::iterator i = templist.begin(); i != templist.end() && num > 0; ++i)
+        for (std::list<Creature*>::iterator i = templist.begin(); i != templist.end() && num > 0; ++i)
         {
-            if((*i)->GetDisplayId() != 11686)
+            if ((*i)->GetDisplayId() != 11686)
             {
                (*i)->CastSpell(*i, SPELL_HATCH_EGG, false);
                 num--;
             }
         }
 
-        if(num)
+        if (num)
             return false;   // no more templist
         else
             return true;
@@ -547,7 +547,7 @@ struct OREGON_DLL_DECL mob_amanishi_hatcherAI : public ScriptedAI
     void MoveInLineOfSight(Unit*) {}
     void MovementInform(uint32, uint32)
     {
-        if(waypoint == 5)
+        if (waypoint == 5)
         {
             isHatching = true;
             HatchNum = 1;
@@ -559,16 +559,16 @@ struct OREGON_DLL_DECL mob_amanishi_hatcherAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(!pInstance || !(pInstance->GetData(DATA_JANALAIEVENT) == IN_PROGRESS))
+        if (!pInstance || !(pInstance->GetData(DATA_JANALAIEVENT) == IN_PROGRESS))
         {
             m_creature->SetVisibility(VISIBILITY_OFF);
             m_creature->setDeathState(JUST_DIED);
             return;
         }
 
-        if(!isHatching)
+        if (!isHatching)
         {
-            if(WaitTimer)
+            if (WaitTimer)
             {
                 m_creature->GetMotionMaster()->Clear();
                 m_creature->GetMotionMaster()->MovePoint(0,hatcherway[side][waypoint][0],hatcherway[side][waypoint][1],hatcherway[side][waypoint][2]);
@@ -578,14 +578,14 @@ struct OREGON_DLL_DECL mob_amanishi_hatcherAI : public ScriptedAI
         }
         else
         {
-            if(WaitTimer < diff)
+            if (WaitTimer < diff)
             {
-                if(HatchEggs(HatchNum))
+                if (HatchEggs(HatchNum))
                 {
                     HatchNum++;
                     WaitTimer = 10000;
                 }
-                else if(!hasChangedSide)
+                else if (!hasChangedSide)
                 {
                     side = side ? 0 : 1;
                     isHatching = false;
@@ -621,7 +621,7 @@ struct OREGON_DLL_DECL mob_hatchlingAI : public ScriptedAI
     void Reset()
     {
         BuffetTimer = 7000;
-        if(m_creature->GetPositionY() > 1150)
+        if (m_creature->GetPositionY() > 1150)
             m_creature->GetMotionMaster()->MovePoint(0, hatcherway[0][3][0]+rand()%4-2,1150+rand()%4-2,hatcherway[0][3][2]);
         else
             m_creature->GetMotionMaster()->MovePoint(0,hatcherway[1][3][0]+rand()%4-2,1150+rand()%4-2,hatcherway[1][3][2]);
@@ -633,17 +633,17 @@ struct OREGON_DLL_DECL mob_hatchlingAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(!pInstance || !(pInstance->GetData(DATA_JANALAIEVENT) == IN_PROGRESS))
+        if (!pInstance || !(pInstance->GetData(DATA_JANALAIEVENT) == IN_PROGRESS))
         {
             m_creature->SetVisibility(VISIBILITY_OFF);
             m_creature->setDeathState(JUST_DIED);
             return;
         }
 
-        if(!UpdateVictim())
+        if (!UpdateVictim())
             return;
 
-        if(BuffetTimer < diff)
+        if (BuffetTimer < diff)
         {
             m_creature->CastSpell(m_creature->getVictim(), SPELL_FLAMEBUFFET, false);
             BuffetTimer = 10000;
@@ -669,7 +669,7 @@ struct OREGON_DLL_DECL mob_eggAI : public ScriptedAI
 
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {
-        if(spell->Id == SPELL_HATCH_EGG)
+        if (spell->Id == SPELL_HATCH_EGG)
         {
             DoSpawnCreature(MOB_HATCHLING, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
             m_creature->SetDisplayId(11686);

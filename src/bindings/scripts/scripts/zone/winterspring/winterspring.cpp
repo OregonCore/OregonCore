@@ -44,10 +44,10 @@ EndContentData */
 bool GossipHello_npc_lorax(Player *player, Creature *_Creature)
 {
     if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
     if (player->GetQuestStatus(5126) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM( 0, GOSSIP_HL, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_HL, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
 
@@ -59,23 +59,23 @@ bool GossipSelect_npc_lorax(Player *player, Creature *_Creature, uint32 sender, 
     switch (action)
     {
         case GOSSIP_ACTION_INFO_DEF:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_SL1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_SL1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
             player->SEND_GOSSIP_MENU(3759, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+1:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_SL2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_SL2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
             player->SEND_GOSSIP_MENU(3760, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_SL3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_SL3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
             player->SEND_GOSSIP_MENU(3761, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+3:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_SL4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_SL4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
             player->SEND_GOSSIP_MENU(3762, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+4:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_SL5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_SL5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
             player->SEND_GOSSIP_MENU(3763, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+5:
@@ -93,7 +93,7 @@ bool GossipSelect_npc_lorax(Player *player, Creature *_Creature, uint32 sender, 
 bool GossipHello_npc_rivern_frostwind(Player *player, Creature *_Creature)
 {
     if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
     if (_Creature->isVendor() && player->GetReputationRank(589) == REP_EXALTED)
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
@@ -106,7 +106,7 @@ bool GossipHello_npc_rivern_frostwind(Player *player, Creature *_Creature)
 bool GossipSelect_npc_rivern_frostwind(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_TRADE)
-        player->SEND_VENDORLIST( _Creature->GetGUID() );
+        player->SEND_VENDORLIST(_Creature->GetGUID());
 
     return true;
 }
@@ -119,10 +119,10 @@ bool GossipSelect_npc_rivern_frostwind(Player *player, Creature *_Creature, uint
 
 bool GossipHello_npc_witch_doctor_mauari(Player *player, Creature *_Creature)
 {
-    if(_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+    if (_Creature->isQuestGiver())
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
-    if(player->GetQuestRewardStatus(975))
+    if (player->GetQuestRewardStatus(975))
     {
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HWDM, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
         player->SEND_GOSSIP_MENU(3377, _Creature->GetGUID());

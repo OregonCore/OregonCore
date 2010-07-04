@@ -73,9 +73,9 @@ struct OREGON_DLL_DECL mob_aquementasAI : public ScriptedAI
             !((Player*)receiver)->HasItemCount(11522,1,true))
         {
             ItemPosCountVec dest;
-            uint8 msg = ((Player*)receiver)->CanStoreNewItem( NULL_BAG, NULL_SLOT, dest, 11522, 1, false);
-            if( msg == EQUIP_ERR_OK )
-                ((Player*)receiver)->StoreNewItem( dest, 11522, 1, true);
+            uint8 msg = ((Player*)receiver)->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 11522, 1, false);
+            if (msg == EQUIP_ERR_OK)
+                ((Player*)receiver)->StoreNewItem(dest, 11522, 1, true);
         }
     }
 
@@ -86,9 +86,9 @@ struct OREGON_DLL_DECL mob_aquementasAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if( isFriendly )
+        if (isFriendly)
         {
-            if( SwitchFaction_Timer < diff )
+            if (SwitchFaction_Timer < diff)
             {
                 m_creature->setFaction(91);
                 isFriendly = false;
@@ -98,23 +98,23 @@ struct OREGON_DLL_DECL mob_aquementasAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if( !isFriendly )
+        if (!isFriendly)
         {
-            if( SendItem_Timer < diff )
+            if (SendItem_Timer < diff)
             {
-                if( m_creature->getVictim()->GetTypeId() == TYPEID_PLAYER )
+                if (m_creature->getVictim()->GetTypeId() == TYPEID_PLAYER)
                     SendItem(m_creature->getVictim());
                 SendItem_Timer = 5000;
             }else SendItem_Timer -= diff;
         }
 
-        if( FrostShock_Timer < diff )
+        if (FrostShock_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_FROST_SHOCK);
             FrostShock_Timer = 15000;
         }else FrostShock_Timer -= diff;
 
-        if( AquaJet_Timer < diff )
+        if (AquaJet_Timer < diff)
         {
             DoCast(m_creature,SPELL_AQUA_JET);
             AquaJet_Timer = 15000;
@@ -252,10 +252,10 @@ CreatureAI* GetAI_npc_custodian_of_time(Creature *_Creature)
 
 bool GossipHello_npc_marin_noggenfogger(Player *player, Creature *_Creature)
 {
-    if( _Creature->isQuestGiver() )
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+    if (_Creature->isQuestGiver())
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
-    if( _Creature->isVendor() && player->GetQuestRewardStatus(2662) )
+    if (_Creature->isVendor() && player->GetQuestRewardStatus(2662))
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
 
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
@@ -265,8 +265,8 @@ bool GossipHello_npc_marin_noggenfogger(Player *player, Creature *_Creature)
 
 bool GossipSelect_npc_marin_noggenfogger(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if( action == GOSSIP_ACTION_TRADE )
-        player->SEND_VENDORLIST( _Creature->GetGUID() );
+    if (action == GOSSIP_ACTION_TRADE)
+        player->SEND_VENDORLIST(_Creature->GetGUID());
 
     return true;
 }
@@ -279,10 +279,10 @@ bool GossipSelect_npc_marin_noggenfogger(Player *player, Creature *_Creature, ui
 
 bool GossipHello_npc_steward_of_time(Player *player, Creature *_Creature)
 {
-    if( _Creature->isQuestGiver() )
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+    if (_Creature->isQuestGiver())
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
-    if( player->GetQuestStatus(10279) == QUEST_STATUS_INCOMPLETE || player->GetQuestRewardStatus(10279) )
+    if (player->GetQuestStatus(10279) == QUEST_STATUS_INCOMPLETE || player->GetQuestRewardStatus(10279))
     {
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_FLIGHT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
         player->SEND_GOSSIP_MENU(9978,_Creature->GetGUID());
@@ -293,17 +293,17 @@ bool GossipHello_npc_steward_of_time(Player *player, Creature *_Creature)
     return true;
 }
 
-bool QuestAccept_npc_steward_of_time(Player *player, Creature *creature, Quest const *quest )
+bool QuestAccept_npc_steward_of_time(Player *player, Creature *creature, Quest const *quest)
 {
-    if( quest->GetQuestId() == 10279 )                      //Quest: To The Master's Lair
+    if (quest->GetQuestId() == 10279)                      //Quest: To The Master's Lair
         player->CastSpell(player,34891,true);               //(Flight through Caverns)
 
     return false;
 }
 
-bool GossipSelect_npc_steward_of_time(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_steward_of_time(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if( action == GOSSIP_ACTION_INFO_DEF + 1 )
+    if (action == GOSSIP_ACTION_INFO_DEF + 1)
         player->CastSpell(player,34891,true);               //(Flight through Caverns)
 
     return true;
@@ -322,11 +322,11 @@ bool GossipSelect_npc_steward_of_time(Player *player, Creature *_Creature, uint3
 
 bool GossipHello_npc_stone_watcher_of_norgannon(Player *player, Creature *_Creature)
 {
-    if( _Creature->isQuestGiver() )
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+    if (_Creature->isQuestGiver())
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
-    if( player->GetQuestStatus(2954) == QUEST_STATUS_INCOMPLETE )
-        player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM_NORGANNON_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+    if (player->GetQuestStatus(2954) == QUEST_STATUS_INCOMPLETE)
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_NORGANNON_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
     player->SEND_GOSSIP_MENU(1674, _Creature->GetGUID());
 
@@ -338,23 +338,23 @@ bool GossipSelect_npc_stone_watcher_of_norgannon(Player *player, Creature *_Crea
     switch (action)
     {
         case GOSSIP_ACTION_INFO_DEF:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM_NORGANNON_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_NORGANNON_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
             player->SEND_GOSSIP_MENU(1675, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+1:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM_NORGANNON_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_NORGANNON_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
             player->SEND_GOSSIP_MENU(1676, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM_NORGANNON_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_NORGANNON_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
             player->SEND_GOSSIP_MENU(1677, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+3:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM_NORGANNON_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_NORGANNON_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
             player->SEND_GOSSIP_MENU(1678, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+4:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM_NORGANNON_6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_NORGANNON_6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
             player->SEND_GOSSIP_MENU(1679, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+5:
@@ -573,21 +573,21 @@ bool GOHello_go_landmark_treasure(Player *player, GameObject* _GO)
     Creature * spawn = NULL;
 
     spawn = player->SummonCreature(NPC_PIRATE, -10029.78, -4032.54, 19.41, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
-    if(spawn)
+    if (spawn)
         spawn->GetMotionMaster()->MovePath(PATH_ENTRY_1, true);
     spawn = player->SummonCreature(NPC_PIRATE, -10031.64, -4032.14, 19.11, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
-    if(spawn)
+    if (spawn)
         spawn->GetMotionMaster()->MovePath(PATH_ENTRY_3, true);
 
     spawn = player->SummonCreature(NPC_SWASHBUCKLER, -10029.86, -4030.51, 20.02, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
-    if(spawn)
+    if (spawn)
         spawn->GetMotionMaster()->MovePath(PATH_ENTRY_4, true);
     spawn = player->SummonCreature(NPC_SWASHBUCKLER, -10031.83, -4030.70, 19.52, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
-    if(spawn)
+    if (spawn)
         spawn->GetMotionMaster()->MovePath(PATH_ENTRY_5, true);
 
     spawn = player->SummonCreature(NPC_BUCCANEER, -10028.90, -4029.65, 20.53, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
-    if(spawn)
+    if (spawn)
         spawn->GetMotionMaster()->MovePath(PATH_ENTRY_2, true);
 
     player->SummonGameObject(GO_TREASURE, -10119.70, -4050.45, 5.33, 0, 0, 0, 0, 0, 240);

@@ -55,7 +55,7 @@ struct OREGON_DLL_DECL instance_old_hillsbrad : public ScriptedInstance
         TarethaGUID         = 0;
     EpochGUID        = 0;
 
-        for(uint8 i = 0; i < ENCOUNTERS; i++)
+        for (uint8 i = 0; i < ENCOUNTERS; i++)
             Encounter[i] = NOT_STARTED;
     }
 
@@ -65,7 +65,7 @@ struct OREGON_DLL_DECL instance_old_hillsbrad : public ScriptedInstance
 
         if (!players.isEmpty())
         {
-            for(Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+            for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
                 if (Player* plr = itr->getSource())
                     return plr;
@@ -82,7 +82,7 @@ struct OREGON_DLL_DECL instance_old_hillsbrad : public ScriptedInstance
 
         if (!players.isEmpty())
         {
-            for(Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+            for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
                 if (Player* player = itr->getSource())
                 {
@@ -148,9 +148,9 @@ struct OREGON_DLL_DECL instance_old_hillsbrad : public ScriptedInstance
             }
             case TYPE_THRALL_EVENT:
             {
-                if( data == FAIL )
+                if (data == FAIL)
                 {
-                    if( mThrallEventCount <= 20 )
+                    if (mThrallEventCount <= 20)
                     {
                         mThrallEventCount++;
                         Encounter[1] = NOT_STARTED;
@@ -160,7 +160,7 @@ struct OREGON_DLL_DECL instance_old_hillsbrad : public ScriptedInstance
                         Encounter[4] = NOT_STARTED;
                         Encounter[5] = NOT_STARTED;
                     }
-                    else if( mThrallEventCount > 20 )
+                    else if (mThrallEventCount > 20)
                     {
                         Encounter[1] = data;
                         Encounter[2] = data;

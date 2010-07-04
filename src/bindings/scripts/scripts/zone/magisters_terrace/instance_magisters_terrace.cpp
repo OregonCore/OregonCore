@@ -57,10 +57,10 @@ struct OREGON_DLL_DECL instance_magisters_terrace : public ScriptedInstance
 
     void Initialize()
     {
-        for(uint8 i = 0; i < 3; i++)
+        for (uint8 i = 0; i < 3; i++)
             DoorState[i] = 1;//1 closed, 0 opened
 
-        for(uint8 i = 0; i < NUMBER_OF_ENCOUNTERS; i++)
+        for (uint8 i = 0; i < NUMBER_OF_ENCOUNTERS; i++)
             Encounters[i] = NOT_STARTED;
 
         FelCrystals.clear();
@@ -82,8 +82,8 @@ struct OREGON_DLL_DECL instance_magisters_terrace : public ScriptedInstance
 
     bool IsEncounterInProgress() const
     {
-        for(uint8 i = 0; i < NUMBER_OF_ENCOUNTERS; i++)
-            if(Encounters[i] == IN_PROGRESS)
+        for (uint8 i = 0; i < NUMBER_OF_ENCOUNTERS; i++)
+            if (Encounters[i] == IN_PROGRESS)
                 return true;
         return false;
     }
@@ -108,27 +108,27 @@ struct OREGON_DLL_DECL instance_magisters_terrace : public ScriptedInstance
         {
             case DATA_SELIN_EVENT:
                 Encounters[0] = data;
-                if(data == DONE)
+                if (data == DONE)
                     DoorState[0] = 0;
                 break;
             case DATA_VEXALLUS_EVENT:
                 Encounters[1] = data;
-                if(data == DONE)
+                if (data == DONE)
                     DoorState[1] = 0;
                 break;
             case DATA_DELRISSA_EVENT:
                 Encounters[2] = data;
-                if(data == DONE)
+                if (data == DONE)
                     DoorState[2] = 0;
                 break;
             case DATA_KAELTHAS_EVENT:    Encounters[3] = data;  break;
 
             case DATA_DELRISSA_DEATH_COUNT:
-                if(data)  ++DelrissaDeathCount;
+                if (data)  ++DelrissaDeathCount;
                 else      DelrissaDeathCount = 0;
         }
 
-        if(data == DONE)
+        if (data == DONE)
             SaveToDB();
     }
 
@@ -143,12 +143,12 @@ struct OREGON_DLL_DECL instance_magisters_terrace : public ScriptedInstance
 
     void Load(const char* load)
     {
-        if(!load) return;
+        if (!load) return;
         std::istringstream ss(load);
         char dataHead; // S
         uint32 data1, data2, data3;
         ss >> dataHead >> data1 >> data2 >> data3;
-        if(dataHead == 'S')
+        if (dataHead == 'S')
         {
             DoorState[0] = data1;
             DoorState[1] = data2;
@@ -207,13 +207,13 @@ struct OREGON_DLL_DECL instance_magisters_terrace : public ScriptedInstance
 
             case DATA_FEL_CRYSTAL:
             {
-                if(FelCrystals.empty())
+                if (FelCrystals.empty())
                 {
                     error_log("TSCR: Magisters Terrace: No Fel Crystals loaded in Inst Data");
                     return 0;
                 }
 
-                if(!InitializedItr)
+                if (!InitializedItr)
                 {
                     CrystalItr = FelCrystals.begin();
                     InitializedItr = true;

@@ -40,7 +40,7 @@ EndContentData */
 bool GossipHello_npc_blood_knight_dawnstar(Player *player, Creature *_Creature)
 {
     if (player->GetQuestStatus(9692) == QUEST_STATUS_INCOMPLETE && !player->HasItemCount(24226,1,true))
-        player->ADD_GOSSIP_ITEM( 0, GOSSIP_H_BKD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_H_BKD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
 
@@ -52,10 +52,10 @@ bool GossipSelect_npc_blood_knight_dawnstar(Player *player, Creature *_Creature,
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
         ItemPosCountVec dest;
-        uint8 msg = player->CanStoreNewItem( NULL_BAG, NULL_SLOT, dest, 24226, 1, false);
-        if( msg == EQUIP_ERR_OK )
+        uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 24226, 1, false);
+        if (msg == EQUIP_ERR_OK)
         {
-            player->StoreNewItem( dest, 24226, 1, true);
+            player->StoreNewItem(dest, 24226, 1, true);
             player->PlayerTalkClass->ClearMenus();
         }
     }
@@ -70,19 +70,19 @@ bool GossipSelect_npc_blood_knight_dawnstar(Player *player, Creature *_Creature,
 
 bool GossipHello_npc_budd_nedreck(Player *player, Creature *_Creature)
 {
-    if( _Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+    if (_Creature->isQuestGiver())
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
-    if( player->GetQuestStatus(11166) == QUEST_STATUS_INCOMPLETE)
+    if (player->GetQuestStatus(11166) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HBN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_budd_nedreck(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_budd_nedreck(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if( action == GOSSIP_ACTION_INFO_DEF )
+    if (action == GOSSIP_ACTION_INFO_DEF)
     {
         player->CLOSE_GOSSIP_MENU();
         _Creature->CastSpell(player, 42540, false);
@@ -96,10 +96,10 @@ bool GossipSelect_npc_budd_nedreck(Player *player, Creature *_Creature, uint32 s
 
 bool GossipHello_npc_rathis_tomber(Player *player, Creature *_Creature)
 {
-    if( _Creature->isQuestGiver() )
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+    if (_Creature->isQuestGiver())
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
-    if( _Creature->isVendor() && player->GetQuestRewardStatus(9152) )
+    if (_Creature->isVendor() && player->GetQuestRewardStatus(9152))
     {
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
         player->SEND_GOSSIP_MENU(8432, _Creature->GetGUID());
@@ -109,10 +109,10 @@ bool GossipHello_npc_rathis_tomber(Player *player, Creature *_Creature)
     return true;
 }
 
-bool GossipSelect_npc_rathis_tomber(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_rathis_tomber(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if( action == GOSSIP_ACTION_TRADE )
-        player->SEND_VENDORLIST( _Creature->GetGUID() );
+    if (action == GOSSIP_ACTION_TRADE)
+        player->SEND_VENDORLIST(_Creature->GetGUID());
     return true;
 }
 

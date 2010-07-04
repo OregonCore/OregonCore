@@ -106,12 +106,12 @@ struct OREGON_DLL_DECL boss_pathaleon_the_calculatorAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //Return since we have no target
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
-        if(Summon_Timer < diff)
+        if (Summon_Timer < diff)
         {
-            for(int i = 0; i < 3;i++)
+            for (int i = 0; i < 3;i++)
             {
                 Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 Creature* Wraith = m_creature->SummonCreature(21062,m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ(),0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
@@ -122,19 +122,19 @@ struct OREGON_DLL_DECL boss_pathaleon_the_calculatorAI : public ScriptedAI
             Summon_Timer = 30000 + rand()%15000;
         }else Summon_Timer -= diff;
 
-        if(ManaTap_Timer < diff)
+        if (ManaTap_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_MANA_TAP);
             ManaTap_Timer = 14000 + rand()%8000;
         }else ManaTap_Timer -= diff;
 
-        if(ArcaneTorrent_Timer < diff)
+        if (ArcaneTorrent_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_ARCANE_TORRENT);
             ArcaneTorrent_Timer = 12000 + rand()%6000;
         }else ArcaneTorrent_Timer -= diff;
 
-        if(Domination_Timer < diff)
+        if (Domination_Timer < diff)
         {
             if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
             {
@@ -152,7 +152,7 @@ struct OREGON_DLL_DECL boss_pathaleon_the_calculatorAI : public ScriptedAI
         //Only casting if Heroic Mode is used
         if (HeroicMode)
         {
-            if(ArcaneExplosion_Timer < diff)
+            if (ArcaneExplosion_Timer < diff)
             {
                 DoCast(m_creature->getVictim(),H_SPELL_ARCANE_EXPLOSION);
                 ArcaneExplosion_Timer = 10000 + rand()%4000;
@@ -204,7 +204,7 @@ struct OREGON_DLL_DECL mob_nether_wraithAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if(ArcaneMissiles_Timer < diff)
+        if (ArcaneMissiles_Timer < diff)
         {
             if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
                 DoCast(target,SPELL_ARCANE_MISSILES);
@@ -216,7 +216,7 @@ struct OREGON_DLL_DECL mob_nether_wraithAI : public ScriptedAI
 
         if (!Detonation)
         {
-            if(Detonation_Timer < diff)
+            if (Detonation_Timer < diff)
             {
                 DoCast(m_creature,SPELL_DETONATION);
                 Detonation = true;

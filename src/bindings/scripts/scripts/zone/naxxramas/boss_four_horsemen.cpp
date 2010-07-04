@@ -92,7 +92,7 @@
             // Shield Wall - All 4 horsemen will shield wall at 50% hp and 20% hp for 20 seconds
             if (ShieldWall1 && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 50)
             {
-                if(ShieldWall1)
+                if (ShieldWall1)
                 {
                     DoCast(m_creature,SPELL_SHIELDWALL);
                     ShieldWall1 = false;

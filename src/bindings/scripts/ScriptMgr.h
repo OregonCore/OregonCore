@@ -41,25 +41,25 @@ struct Script
     std::string Name;
 
     //Methods to be scripted
-    bool (*pGossipHello         )(Player*, Creature*);
-    bool (*pQuestAccept         )(Player*, Creature*, Quest const* );
-    bool (*pGossipSelect        )(Player*, Creature*, uint32 , uint32 );
-    bool (*pGossipSelectWithCode)(Player*, Creature*, uint32 , uint32 , const char* );
-    bool (*pGOSelect            )(Player*, GameObject*, uint32 , uint32 );
-    bool (*pGOSelectWithCode    )(Player*, GameObject*, uint32 , uint32 , const char* );
-    bool (*pQuestSelect         )(Player*, Creature*, Quest const* );
-    bool (*pQuestComplete       )(Player*, Creature*, Quest const* );
-    uint32 (*pNPCDialogStatus   )(Player*, Creature* );
-    uint32 (*pGODialogStatus    )(Player*, GameObject * _GO );
-    bool (*pChooseReward        )(Player*, Creature*, Quest const*, uint32 );
-    bool (*pItemHello           )(Player*, Item*, Quest const* );
-    bool (*pGOHello             )(Player*, GameObject* );
-    bool (*pAreaTrigger         )(Player*, AreaTriggerEntry* );
-    bool (*pItemQuestAccept     )(Player*, Item *, Quest const* );
-    bool (*pGOQuestAccept       )(Player*, GameObject*, Quest const* );
-    bool (*pGOChooseReward      )(Player*, GameObject*, Quest const*, uint32 );
-    bool (*pReceiveEmote        )(Player*, Creature*, uint32 );
-    bool (*pItemUse             )(Player*, Item*, SpellCastTargets const& );
+    bool (*pGossipHello        )(Player*, Creature*);
+    bool (*pQuestAccept        )(Player*, Creature*, Quest const*);
+    bool (*pGossipSelect       )(Player*, Creature*, uint32 , uint32);
+    bool (*pGossipSelectWithCode)(Player*, Creature*, uint32 , uint32 , const char*);
+    bool (*pGOSelect           )(Player*, GameObject*, uint32 , uint32);
+    bool (*pGOSelectWithCode   )(Player*, GameObject*, uint32 , uint32 , const char*);
+    bool (*pQuestSelect        )(Player*, Creature*, Quest const*);
+    bool (*pQuestComplete      )(Player*, Creature*, Quest const*);
+    uint32 (*pNPCDialogStatus  )(Player*, Creature*);
+    uint32 (*pGODialogStatus   )(Player*, GameObject * _GO);
+    bool (*pChooseReward       )(Player*, Creature*, Quest const*, uint32);
+    bool (*pItemHello          )(Player*, Item*, Quest const*);
+    bool (*pGOHello            )(Player*, GameObject*);
+    bool (*pAreaTrigger        )(Player*, AreaTriggerEntry*);
+    bool (*pItemQuestAccept    )(Player*, Item *, Quest const*);
+    bool (*pGOQuestAccept      )(Player*, GameObject*, Quest const*);
+    bool (*pGOChooseReward     )(Player*, GameObject*, Quest const*, uint32);
+    bool (*pReceiveEmote       )(Player*, Creature*, uint32);
+    bool (*pItemUse            )(Player*, Item*, SpellCastTargets const&);
 
     CreatureAI* (*GetAI)(Creature*);
     InstanceData* (*GetInstanceData)(Map*);
@@ -78,7 +78,7 @@ void DoScriptText(int32 textEntry, WorldObject* pSource, Unit *pTarget = NULL);
 
 #ifdef WIN32
   #define OREGON_DLL_EXPORT extern "C" __declspec(dllexport)
-#elif defined( __GNUC__ )
+#elif defined(__GNUC__)
 #define OREGON_DLL_EXPORT extern "C"
 #else
 #define OREGON_DLL_EXPORT extern "C" export

@@ -49,11 +49,11 @@ struct OREGON_DLL_DECL boss_illuciabarovAI : public ScriptedAI
     void JustDied(Unit *killer)
     {
         ScriptedInstance *pInstance = (m_creature->GetInstanceData()) ? ((ScriptedInstance*)m_creature->GetInstanceData()) : NULL;
-        if(pInstance)
+        if (pInstance)
         {
             pInstance->SetData(DATA_LADYILLUCIABAROV_DEATH, 0);
 
-            if(pInstance->GetData(DATA_CANSPAWNGANDLING))
+            if (pInstance->GetData(DATA_CANSPAWNGANDLING))
                 m_creature->SummonCreature(1853, 180.73, -9.43856, 75.507, 1.61399, TEMPSUMMON_DEAD_DESPAWN, 0);
         }
     }

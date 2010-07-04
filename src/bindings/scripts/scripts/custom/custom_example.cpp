@@ -228,7 +228,7 @@ void SendDefaultMenu_custom_example(Player *player, Creature *_Creature, uint32 
 }
 
 //This function is called when the player clicks an option on the gossip menu
-bool GossipSelect_custom_example(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_custom_example(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     if (sender == GOSSIP_SENDER_MAIN)
         SendDefaultMenu_custom_example(player, _Creature, action);
@@ -239,7 +239,7 @@ bool GossipSelect_custom_example(Player *player, Creature *_Creature, uint32 sen
 //This function is called when the player opens the gossip menu
 bool GossipHello_custom_example(Player *player, Creature *_Creature)
 {
-    player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM        , GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+    player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM        , GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
     player->PlayerTalkClass->SendGossipMenu(907,_Creature->GetGUID());
 
     return true;

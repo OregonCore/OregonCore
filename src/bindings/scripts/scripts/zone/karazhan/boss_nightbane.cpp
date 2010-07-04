@@ -95,23 +95,23 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
 
     void Reset()
     {
-        if(pInstance)
+        if (pInstance)
         {
             bool isCorrectSpawned = true;
 
-            if(pInstance->GetData(DATA_NIGHTBANE_EVENT) != DONE)
+            if (pInstance->GetData(DATA_NIGHTBANE_EVENT) != DONE)
             {
                 uint64 NightbaneGUID = 0;
                 NightbaneGUID = pInstance->GetData64(DATA_NIGHTBANE);
 
-                if(NightbaneGUID)
-                    if(Creature* Nightbane = Creature::GetCreature((*m_creature),NightbaneGUID))
+                if (NightbaneGUID)
+                    if (Creature* Nightbane = Creature::GetCreature((*m_creature),NightbaneGUID))
                         isCorrectSpawned = false;
             }
             else
                 isCorrectSpawned = false;
 
-            if(!isCorrectSpawned)
+            if (!isCorrectSpawned)
             {
                 (*m_creature).GetMotionMaster()->Clear(false);
                 isReseted = true;
@@ -123,7 +123,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                 pInstance->SetData64(DATA_NIGHTBANE,m_creature->GetGUID());
             }
 
-            if(!Intro)
+            if (!Intro)
             {
                 (*m_creature).GetMotionMaster()->Clear(false);
                 isReseted = true;
@@ -168,15 +168,15 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
 
     void HandleTerraceDoors(bool open)
     {
-        if(GameObject *Door = GameObject::GetGameObject((*m_creature),pInstance->GetData64(DATA_MASTERS_TERRACE_DOOR_1)))
+        if (GameObject *Door = GameObject::GetGameObject((*m_creature),pInstance->GetData64(DATA_MASTERS_TERRACE_DOOR_1)))
             Door->SetUInt32Value(GAMEOBJECT_STATE, open ? 0 : 1);
-        if(GameObject *Door = GameObject::GetGameObject((*m_creature),pInstance->GetData64(DATA_MASTERS_TERRACE_DOOR_2)))
+        if (GameObject *Door = GameObject::GetGameObject((*m_creature),pInstance->GetData64(DATA_MASTERS_TERRACE_DOOR_2)))
             Door->SetUInt32Value(GAMEOBJECT_STATE, open ? 0 : 1);
     }
 
     void EnterCombat(Unit *who)
     {
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_NIGHTBANE_EVENT, IN_PROGRESS);
 
         HandleTerraceDoors(false);
@@ -185,15 +185,15 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
 
     void AttackStart(Unit* who)
     {
-        if(!Intro && !Flying)
-            if(Phase == 1) ScriptedAI::AttackStart(who);
+        if (!Intro && !Flying)
+            if (Phase == 1) ScriptedAI::AttackStart(who);
             else ScriptedAI::AttackStart(who,false);
     }
 
     void JustDied(Unit* killer)
     {
-        if(!isReseted)
-            if(pInstance)
+        if (!isReseted)
+            if (pInstance)
                 pInstance->SetData(DATA_NIGHTBANE_EVENT, DONE);
 
         HandleTerraceDoors(true);
@@ -201,22 +201,22 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit *who)
     {
-        if(!Intro && !Flying)
+        if (!Intro && !Flying)
         {
-            if(!m_creature->getVictim() && m_creature->canStartAttack(who))
-                if(Phase == 1) ScriptedAI::AttackStart(who);
+            if (!m_creature->getVictim() && m_creature->canStartAttack(who))
+                if (Phase == 1) ScriptedAI::AttackStart(who);
                 else ScriptedAI::AttackStart(who,false);
         }
     }
 
     void MovementInform(uint32 type, uint32 id)
     {
-        if(type != POINT_MOTION_TYPE)
+        if (type != POINT_MOTION_TYPE)
                 return;
 
-        if(Intro)
+        if (Intro)
         {
-            if(id >= 8)
+            if (id >= 8)
             {
                 Intro = false;
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -228,9 +228,9 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
             WaitTimer = 1;
         }
 
-        if(Flying)
+        if (Flying)
         {
-            if(id == 0)
+            if (id == 0)
             {
                 DoResetThreat();
                 DoStartNoMovement(m_creature->getVictim());
@@ -241,14 +241,14 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                 return;
             }
 
-            if(id == 3)
+            if (id == 3)
             {
                 MovePhase = 4;
                 WaitTimer = 1;
                 return;
             }
 
-            if(id == 8)
+            if (id == 8)
             {
                 DoResetThreat();
                 Flying = false;
@@ -286,12 +286,12 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(WaitTimer)
-        if(WaitTimer < diff)
+        if (WaitTimer)
+        if (WaitTimer < diff)
         {
-            if(Intro)
+            if (Intro)
             {
-                if(MovePhase >= 7)
+                if (MovePhase >= 7)
                 {
                     m_creature->RemoveUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
                     m_creature->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
@@ -304,9 +304,9 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                 }
             }
 
-            if(Flying)
+            if (Flying)
             {
-                if(MovePhase >= 7)
+                if (MovePhase >= 7)
                 {
                     m_creature->RemoveUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
                     m_creature->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
@@ -322,16 +322,16 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
             WaitTimer = 0;
         }else WaitTimer -= diff;
 
-        if(!UpdateVictim())
+        if (!UpdateVictim())
             return;
 
-        if(Flying)
+        if (Flying)
             return;
 
         //  Phase 1 "GROUND FIGHT"
-        if(Phase == 1)
+        if (Phase == 1)
         {
-            if(Movement)
+            if (Movement)
             {
                 DoStartMovement(m_creature->getVictim());
                 Movement = false;
@@ -359,7 +359,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
             if (TailSweepTimer < diff)
             {
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    if (!m_creature->HasInArc( M_PI, target))
+                    if (!m_creature->HasInArc(M_PI, target))
                         DoCast(target,SPELL_TAIL_SWEEP);
                 TailSweepTimer = 15000;//timer
             }else TailSweepTimer -= diff;
@@ -396,7 +396,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
 
                     if (!Skeletons)
                     {
-                        for(int i = 0; i < 5; i++)
+                        for (int i = 0; i < 5; i++)
                             DoCast(m_creature->getVictim(), SPELL_SUMMON_SKELETON, true);
                         Skeletons = true;
                     }
@@ -426,12 +426,12 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
             if (FireballBarrageTimer < diff)
             {
                 Map *map = m_creature->GetMap();
-                if(!map->IsDungeon()) return;
+                if (!map->IsDungeon()) return;
                 Map::PlayerList const &PlayerList = map->GetPlayers();
-                for(Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+                for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                 {
                     if (Player* i_pl = i->getSource())
-                        if(i_pl->isAlive() && !m_creature->IsWithinDistInMap(i_pl,80))
+                        if (i_pl->isAlive() && !m_creature->IsWithinDistInMap(i_pl,80))
                         {
                             DoCast(i_pl,SPELL_FIREBALL_BARRAGE);
                         }
@@ -441,7 +441,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
 
             if (FlyTimer < diff) //landing
             {
-                if(rand()%2 == 0)
+                if (rand()%2 == 0)
                     DoYell(YELL_LAND_PHASE_1, LANG_UNIVERSAL, NULL);
                 else
                     DoYell(YELL_LAND_PHASE_2, LANG_UNIVERSAL, NULL);

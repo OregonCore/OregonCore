@@ -69,7 +69,7 @@ struct OREGON_DLL_DECL boss_scarlet_commander_mograineAI : public ScriptedAI
         BlessingOfWisdom_Timer = 45000;
         BlessingOfProtection3_Timer = 45000;
 
-        if(pInstance)
+        if (pInstance)
             pInstance->HandleGameObject(pInstance->GetData64(DATA_DOOR_WHITEMANE), false);
 
     }
@@ -87,7 +87,7 @@ struct OREGON_DLL_DECL boss_scarlet_commander_mograineAI : public ScriptedAI
 
     void JustDied(Unit *who)
     {
-        if(!pInstance)
+        if (!pInstance)
             return;
 
         pInstance->HandleGameObject(pInstance->GetData64(DATA_DOOR_WHITEMANE), true);
@@ -240,7 +240,7 @@ struct OREGON_DLL_DECL boss_high_inquisitor_whitemaneAI : public ScriptedAI
         */
 
         //If we are <75% hp cast healing spells at self and Mograine
-        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 75 )
+        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 75)
         {
             if (Healing_Timer < diff)
             {

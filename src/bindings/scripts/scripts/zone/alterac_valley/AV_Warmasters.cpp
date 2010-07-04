@@ -77,22 +77,22 @@ struct OREGON_DLL_DECL AV_WarmastersAI : public ScriptedAI
      void UpdateAI(const uint32 diff)
      {
          //Adding the auras//
-        if(m_creature->GetEntry() == 14773 && Aura1 == 0) //Iceblood Warmaster
+        if (m_creature->GetEntry() == 14773 && Aura1 == 0) //Iceblood Warmaster
         {
             DoCast(m_creature, 45822);
             Aura1 = 1;
         }
-        if(m_creature->GetEntry() == 14776 && Aura2 == 0) //Tower Point Warmaster
+        if (m_creature->GetEntry() == 14776 && Aura2 == 0) //Tower Point Warmaster
         {
             DoCast(m_creature, 45823);
             Aura2 = 1;
         }
-        if(m_creature->GetEntry() == 14772 && Aura3 == 0) //East Frostwolf Warmaster
+        if (m_creature->GetEntry() == 14772 && Aura3 == 0) //East Frostwolf Warmaster
         {
             DoCast(m_creature, 45826);
             Aura3 = 1;
         }
-        if(m_creature->GetEntry() == 14777 && Aura4 == 0) //West FRostwolf Marshal
+        if (m_creature->GetEntry() == 14777 && Aura4 == 0) //West FRostwolf Marshal
         {
             DoCast(m_creature, 45824);
             Aura4 = 1;
@@ -137,11 +137,11 @@ struct OREGON_DLL_DECL AV_WarmastersAI : public ScriptedAI
 
 
         // check if creature is not outside of building
-        if(ResetTimer < diff)
+        if (ResetTimer < diff)
         {
              float x, y, z;
              m_creature->GetPosition(x, y, z);
-             if(y < -260)
+             if (y < -260)
             {
                 EnterEvadeMode();
             }

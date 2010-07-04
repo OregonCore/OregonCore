@@ -78,22 +78,22 @@ struct OREGON_DLL_DECL AV_MarshalsAI : public ScriptedAI
      void UpdateAI(const uint32 diff)
      {
           //Adding the auras//
-        if(m_creature->GetEntry() == 14762 && Aura1 == 0) //North Marshal
+        if (m_creature->GetEntry() == 14762 && Aura1 == 0) //North Marshal
         {
             DoCast(m_creature, 45828);
             Aura1 = 1;
         }
-        if(m_creature->GetEntry() == 14763 && Aura2 == 0) //South Marshal
+        if (m_creature->GetEntry() == 14763 && Aura2 == 0) //South Marshal
         {
             DoCast(m_creature, 45829);
             Aura2 = 1;
         }
-        if(m_creature->GetEntry() == 14764 && Aura3 == 0) //Icewing Marshal
+        if (m_creature->GetEntry() == 14764 && Aura3 == 0) //Icewing Marshal
         {
             DoCast(m_creature, 45831);
             Aura3 = 1;
         }
-        if(m_creature->GetEntry() == 14765 && Aura4 == 0) //Stonehearth Marshal
+        if (m_creature->GetEntry() == 14765 && Aura4 == 0) //Stonehearth Marshal
         {
             DoCast(m_creature, 45830);
             Aura4 = 1;
@@ -138,11 +138,11 @@ struct OREGON_DLL_DECL AV_MarshalsAI : public ScriptedAI
 
 
         // check if creature is not outside of building
-        if(ResetTimer < diff)
+        if (ResetTimer < diff)
         {
             float x, y, z;
             m_creature->GetPosition(x, y, z);
-            if(x < 678)
+            if (x < 678)
             {
                 EnterEvadeMode();
             }

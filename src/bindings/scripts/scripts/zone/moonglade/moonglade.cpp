@@ -41,28 +41,28 @@ EndContentData */
 
 bool GossipHello_npc_bunthen_plainswind(Player *player, Creature *_Creature)
 {
-    if(player->getClass() != CLASS_DRUID)
+    if (player->getClass() != CLASS_DRUID)
         player->SEND_GOSSIP_MENU(4916,_Creature->GetGUID());
-    else if(player->GetTeam() != HORDE)
+    else if (player->GetTeam() != HORDE)
     {
-        if(player->GetQuestStatus(272) == QUEST_STATUS_INCOMPLETE)
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_BP1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+        if (player->GetQuestStatus(272) == QUEST_STATUS_INCOMPLETE)
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_BP1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
 
         player->SEND_GOSSIP_MENU(4917,_Creature->GetGUID());
     }
-    else if(player->getClass() == CLASS_DRUID && player->GetTeam() == HORDE)
+    else if (player->getClass() == CLASS_DRUID && player->GetTeam() == HORDE)
     {
-        player->ADD_GOSSIP_ITEM( 0, GOSSIP_BP2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_BP2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
-        if(player->GetQuestStatus(30) == QUEST_STATUS_INCOMPLETE)
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_BP1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+        if (player->GetQuestStatus(30) == QUEST_STATUS_INCOMPLETE)
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_BP1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
 
         player->SEND_GOSSIP_MENU(4918,_Creature->GetGUID());
     }
     return true;
 }
 
-bool GossipSelect_npc_bunthen_plainswind(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_bunthen_plainswind(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     switch(action)
     {
@@ -104,7 +104,7 @@ bool GossipHello_npc_great_bear_spirit(Player *player, Creature *_Creature)
     //ally or horde quest
     if (player->GetQuestStatus(5929) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(5930) == QUEST_STATUS_INCOMPLETE)
     {
-        player->ADD_GOSSIP_ITEM( 0, GOSSIP_BEAR1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_BEAR1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
         player->SEND_GOSSIP_MENU(4719, _Creature->GetGUID());
     }
     else
@@ -113,20 +113,20 @@ bool GossipHello_npc_great_bear_spirit(Player *player, Creature *_Creature)
     return true;
 }
 
-bool GossipSelect_npc_great_bear_spirit(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_great_bear_spirit(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     switch (action)
     {
         case GOSSIP_ACTION_INFO_DEF:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_BEAR2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_BEAR2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
             player->SEND_GOSSIP_MENU(4721, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF + 1:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_BEAR3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_BEAR3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
             player->SEND_GOSSIP_MENU(4733, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF + 2:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_BEAR4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_BEAR4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
             player->SEND_GOSSIP_MENU(4734, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF + 3:
@@ -148,28 +148,28 @@ bool GossipSelect_npc_great_bear_spirit(Player *player, Creature *_Creature, uin
 #define GOSSIP_SF2 "I'd like to fly to Rut'theran Village."
 bool GossipHello_npc_silva_filnaveth(Player *player, Creature *_Creature)
 {
-    if(player->getClass() != CLASS_DRUID)
+    if (player->getClass() != CLASS_DRUID)
         player->SEND_GOSSIP_MENU(4913,_Creature->GetGUID());
-    else if(player->GetTeam() != ALLIANCE)
+    else if (player->GetTeam() != ALLIANCE)
     {
-        if(player->GetQuestStatus(30) == QUEST_STATUS_INCOMPLETE)
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_SF1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+        if (player->GetQuestStatus(30) == QUEST_STATUS_INCOMPLETE)
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_SF1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
 
         player->SEND_GOSSIP_MENU(4915,_Creature->GetGUID());
     }
-    else if(player->getClass() == CLASS_DRUID && player->GetTeam() == ALLIANCE)
+    else if (player->getClass() == CLASS_DRUID && player->GetTeam() == ALLIANCE)
     {
-        player->ADD_GOSSIP_ITEM( 0, GOSSIP_SF2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_SF2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
-        if(player->GetQuestStatus(272) == QUEST_STATUS_INCOMPLETE)
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_SF1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+        if (player->GetQuestStatus(272) == QUEST_STATUS_INCOMPLETE)
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_SF1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
 
         player->SEND_GOSSIP_MENU(4914,_Creature->GetGUID());
     }
     return true;
 }
 
-bool GossipSelect_npc_silva_filnaveth(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_silva_filnaveth(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     switch(action)
     {

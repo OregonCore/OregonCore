@@ -62,10 +62,10 @@ struct OREGON_DLL_DECL npc_raliq_the_drunkAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(!UpdateVictim())
+        if (!UpdateVictim())
             return;
 
-        if( Uppercut_Timer < diff )
+        if (Uppercut_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_UPPERCUT);
             Uppercut_Timer = 15000;
@@ -79,18 +79,18 @@ CreatureAI* GetAI_npc_raliq_the_drunk(Creature *_Creature)
     return new npc_raliq_the_drunkAI (_Creature);
 }
 
-bool GossipHello_npc_raliq_the_drunk(Player *player, Creature *_Creature )
+bool GossipHello_npc_raliq_the_drunk(Player *player, Creature *_Creature)
 {
-    if( player->GetQuestStatus(10009) == QUEST_STATUS_INCOMPLETE )
+    if (player->GetQuestStatus(10009) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(1, GOSSIP_RALIQ, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
     player->SEND_GOSSIP_MENU(9440, _Creature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_raliq_the_drunk(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_raliq_the_drunk(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if( action == GOSSIP_ACTION_INFO_DEF+1 )
+    if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
         player->CLOSE_GOSSIP_MENU();
         _Creature->setFaction(FACTION_HOSTILE_RD);
@@ -125,8 +125,8 @@ struct OREGON_DLL_DECL npc_salsalabimAI : public ScriptedAI
 
     void DamageTaken(Unit *done_by, uint32 &damage)
     {
-        if( done_by->GetTypeId() == TYPEID_PLAYER )
-            if( (m_creature->GetHealth()-damage)*100 / m_creature->GetMaxHealth() < 20 )
+        if (done_by->GetTypeId() == TYPEID_PLAYER)
+            if ((m_creature->GetHealth()-damage)*100 / m_creature->GetMaxHealth() < 20)
         {
             ((Player*)done_by)->GroupEventHappens(QUEST_10004,m_creature);
             damage = 0;
@@ -136,10 +136,10 @@ struct OREGON_DLL_DECL npc_salsalabimAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(!UpdateVictim())
+        if (!UpdateVictim())
             return;
 
-        if( MagneticPull_Timer < diff )
+        if (MagneticPull_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_MAGNETIC_PULL);
             MagneticPull_Timer = 15000;
@@ -155,15 +155,15 @@ CreatureAI* GetAI_npc_salsalabim(Creature *_Creature)
 
 bool GossipHello_npc_salsalabim(Player *player, Creature *_Creature)
 {
-    if( player->GetQuestStatus(QUEST_10004) == QUEST_STATUS_INCOMPLETE )
+    if (player->GetQuestStatus(QUEST_10004) == QUEST_STATUS_INCOMPLETE)
     {
         _Creature->setFaction(FACTION_HOSTILE_SA);
         ((npc_salsalabimAI*)_Creature->AI())->AttackStart(player);
     }
     else
     {
-        if( _Creature->isQuestGiver() )
-            player->PrepareQuestMenu( _Creature->GetGUID() );
+        if (_Creature->isQuestGiver())
+            player->PrepareQuestMenu(_Creature->GetGUID());
         player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
     }
     return true;
@@ -182,10 +182,10 @@ Purchase requires exalted reputation with Scryers/Aldor, Cenarion Expedition and
 
 bool GossipHello_npc_shattrathflaskvendors(Player *player, Creature *_Creature)
 {
-    if(_Creature->GetEntry() == 23484)
+    if (_Creature->GetEntry() == 23484)
     {
         // Aldor vendor
-        if( _Creature->isVendor() && (player->GetReputationRank(932) == REP_EXALTED) && (player->GetReputationRank(935) == REP_EXALTED) && (player->GetReputationRank(942) == REP_EXALTED) )
+        if (_Creature->isVendor() && (player->GetReputationRank(932) == REP_EXALTED) && (player->GetReputationRank(935) == REP_EXALTED) && (player->GetReputationRank(942) == REP_EXALTED))
         {
             player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
             player->SEND_GOSSIP_MENU(11085, _Creature->GetGUID());
@@ -196,10 +196,10 @@ bool GossipHello_npc_shattrathflaskvendors(Player *player, Creature *_Creature)
         }
     }
 
-    if(_Creature->GetEntry() == 23483)
+    if (_Creature->GetEntry() == 23483)
     {
         // Scryers vendor
-        if( _Creature->isVendor() && (player->GetReputationRank(934) == REP_EXALTED) && (player->GetReputationRank(935) == REP_EXALTED) && (player->GetReputationRank(942) == REP_EXALTED) )
+        if (_Creature->isVendor() && (player->GetReputationRank(934) == REP_EXALTED) && (player->GetReputationRank(935) == REP_EXALTED) && (player->GetReputationRank(942) == REP_EXALTED))
         {
             player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
             player->SEND_GOSSIP_MENU(11085, _Creature->GetGUID());
@@ -215,8 +215,8 @@ bool GossipHello_npc_shattrathflaskvendors(Player *player, Creature *_Creature)
 
 bool GossipSelect_npc_shattrathflaskvendors(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if( action == GOSSIP_ACTION_TRADE )
-        player->SEND_VENDORLIST( _Creature->GetGUID() );
+    if (action == GOSSIP_ACTION_TRADE)
+        player->SEND_VENDORLIST(_Creature->GetGUID());
 
     return true;
 }
@@ -229,7 +229,7 @@ bool GossipSelect_npc_shattrathflaskvendors(Player *player, Creature *_Creature,
 
 bool GossipHello_npc_zephyr(Player *player, Creature *_Creature)
 {
-    if( player->GetReputationRank(989) >= REP_REVERED )
+    if (player->GetReputationRank(989) >= REP_REVERED)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HZ, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
@@ -239,7 +239,7 @@ bool GossipHello_npc_zephyr(Player *player, Creature *_Creature)
 
 bool GossipSelect_npc_zephyr(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if( action == GOSSIP_ACTION_INFO_DEF+1 )
+    if (action == GOSSIP_ACTION_INFO_DEF+1)
         player->CastSpell(player,37778,false);
 
     return true;
@@ -446,14 +446,14 @@ struct OREGON_DLL_DECL npc_dirty_larryAI : public ScriptedAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->setFaction(1194);
         Unit* Creepjack = FindCreature(NPC_CREEPJACK, 20, m_creature);
-        if(Creepjack)
+        if (Creepjack)
         {
             ((Creature*)Creepjack)->AI()->EnterEvadeMode();
             Creepjack->setFaction(1194);
             Creepjack->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
         Unit* Malone = FindCreature(NPC_MALONE, 20, m_creature);
-        if(Malone)
+        if (Malone)
         {
             ((Creature*)Malone)->AI()->EnterEvadeMode();
             Malone->setFaction(1194);
@@ -469,10 +469,10 @@ struct OREGON_DLL_DECL npc_dirty_larryAI : public ScriptedAI
         {
         case 0:{ m_creature->SetInFront(player);
             Unit* Creepjack = FindCreature(NPC_CREEPJACK, 20, m_creature);
-            if(Creepjack)
+            if (Creepjack)
                 Creepjack->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
             Unit* Malone = FindCreature(NPC_MALONE, 20, m_creature);
-            if(Malone)
+            if (Malone)
                 Malone->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
             m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP); }return 2000;
         case 1: DoScriptText(SAY_1, m_creature, player); return 3000;
@@ -489,21 +489,21 @@ struct OREGON_DLL_DECL npc_dirty_larryAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(SayTimer < diff)
+        if (SayTimer < diff)
         {
-            if(Event)
+            if (Event)
                 SayTimer = NextStep(++Step);
         }else SayTimer -= diff;
 
-        if(Attack)
+        if (Attack)
         {
             Player* player = Unit::GetPlayer(PlayerGUID);
             m_creature->setFaction(14);
             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            if(player)
+            if (player)
             {
             Unit* Creepjack = FindCreature(NPC_CREEPJACK, 20, m_creature);
-            if(Creepjack)
+            if (Creepjack)
             {
                 Creepjack->Attack(player, true);
                 Creepjack->setFaction(14);
@@ -511,7 +511,7 @@ struct OREGON_DLL_DECL npc_dirty_larryAI : public ScriptedAI
                 Creepjack->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             }
             Unit* Malone = FindCreature(NPC_MALONE, 20, m_creature);
-            if(Malone)
+            if (Malone)
             {
                 Malone->Attack(player, true);
                 Malone->setFaction(14);
@@ -524,10 +524,10 @@ struct OREGON_DLL_DECL npc_dirty_larryAI : public ScriptedAI
             Attack = false;
         }
 
-        if((m_creature->GetHealth()*100)/m_creature->GetMaxHealth() < 1 && !Done)
+        if ((m_creature->GetHealth()*100)/m_creature->GetMaxHealth() < 1 && !Done)
         {
             Unit* Creepjack = FindCreature(NPC_CREEPJACK, 20, m_creature);
-            if(Creepjack)
+            if (Creepjack)
             {
                 ((Creature*)Creepjack)->AI()->EnterEvadeMode();
                 Creepjack->setFaction(1194);
@@ -535,7 +535,7 @@ struct OREGON_DLL_DECL npc_dirty_larryAI : public ScriptedAI
                 Creepjack->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             }
             Unit* Malone = FindCreature(NPC_MALONE, 20, m_creature);
-            if(Malone)
+            if (Malone)
             {
                 ((Creature*)Malone)->AI()->EnterEvadeMode();
                 Malone->setFaction(1194);
@@ -550,7 +550,7 @@ struct OREGON_DLL_DECL npc_dirty_larryAI : public ScriptedAI
             m_creature->CombatStop();
             m_creature->GetMotionMaster()->MoveTargetedHome();
             Player* player = Unit::GetPlayer(PlayerGUID);
-            if(player)
+            if (player)
                 player->GroupEventHappens(QUEST_WBI, m_creature);
         }
         DoMeleeAttackIfReady();
@@ -562,14 +562,14 @@ bool GossipHello_npc_dirty_larry(Player *player, Creature *creature)
     if (creature->isQuestGiver())
         player->PrepareQuestMenu(creature->GetGUID());
 
-    if(player->GetQuestStatus(QUEST_WBI) == QUEST_STATUS_INCOMPLETE)
+    if (player->GetQuestStatus(QUEST_WBI) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_BOOK, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
     player->SEND_GOSSIP_MENU(creature->GetNpcTextId(), creature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_dirty_larry(Player *player, Creature *creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_dirty_larry(Player *player, Creature *creature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
@@ -608,9 +608,9 @@ bool GossipHello_npc_ishanah(Player *player, Creature *_Creature)
 
 bool GossipSelect_npc_ishanah(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if(action == GOSSIP_ACTION_INFO_DEF+1)
+    if (action == GOSSIP_ACTION_INFO_DEF+1)
         player->SEND_GOSSIP_MENU(9458, _Creature->GetGUID());
-    else if(action == GOSSIP_ACTION_INFO_DEF+2)
+    else if (action == GOSSIP_ACTION_INFO_DEF+2)
         player->SEND_GOSSIP_MENU(9459, _Creature->GetGUID());
 
     return true;
@@ -632,7 +632,7 @@ bool GossipHello_npc_khadgar(Player *player, Creature *creature)
     if (creature->isQuestGiver())
         player->PrepareQuestMenu(creature->GetGUID());
 
-    if(!player->hasQuest(10211))
+    if (!player->hasQuest(10211))
         player->ADD_GOSSIP_ITEM(0, KHADGAR_GOSSIP_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
         player->SEND_GOSSIP_MENU(9243, creature->GetGUID());

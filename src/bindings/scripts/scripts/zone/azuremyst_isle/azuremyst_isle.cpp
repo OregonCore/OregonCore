@@ -89,7 +89,7 @@ struct OREGON_DLL_DECL npc_draenei_survivorAI : public ScriptedAI
         if (!who)
             return;
 
-        if(who->GetTypeId() == TYPEID_PLAYER && m_creature->IsFriendlyTo(who) && m_creature->IsWithinDistInMap(who, 15) && say && !isRun)
+        if (who->GetTypeId() == TYPEID_PLAYER && m_creature->IsFriendlyTo(who) && m_creature->IsWithinDistInMap(who, 15) && say && !isRun)
         {
             switch (rand()%4)                               //Random switch between 4 texts
             {
@@ -125,7 +125,7 @@ struct OREGON_DLL_DECL npc_draenei_survivorAI : public ScriptedAI
     {
         if (m_creature->GetHealth() > 50)
         {
-            if(ResetlifeTimer < diff)
+            if (ResetlifeTimer < diff)
             {
                 ResetlifeTimer = 60000;
                 m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
@@ -137,7 +137,7 @@ struct OREGON_DLL_DECL npc_draenei_survivorAI : public ScriptedAI
             else ResetlifeTimer -= diff;
         }
 
-        if(HealSay)
+        if (HealSay)
         {
             if (HealSayTimer < diff)
             {
@@ -147,9 +147,9 @@ struct OREGON_DLL_DECL npc_draenei_survivorAI : public ScriptedAI
             }else HealSayTimer -= diff;
         }
 
-        if(UnSpawn)
+        if (UnSpawn)
         {
-            if(isMove)
+            if (isMove)
             {
                 m_creature->GetMotionMaster()->Clear();
                 m_creature->GetMotionMaster()->MovePoint(0, -4115.053711f, -13754.831055f, 73.508949f);
@@ -166,7 +166,7 @@ struct OREGON_DLL_DECL npc_draenei_survivorAI : public ScriptedAI
             }else UnSpawnTimer -= diff;
         }
 
-        if(SayingTimer < diff)
+        if (SayingTimer < diff)
         {
             say = true;
         }else SayingTimer -= diff;
@@ -225,7 +225,7 @@ struct OREGON_DLL_DECL npc_engineer_spark_overgrindAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if( !m_creature->isInCombat() )
+        if (!m_creature->isInCombat())
         {
             if (Emote_Timer < diff)
             {
@@ -235,7 +235,7 @@ struct OREGON_DLL_DECL npc_engineer_spark_overgrindAI : public ScriptedAI
             }else Emote_Timer -= diff;
         }
 
-        if(!UpdateVictim())
+        if (!UpdateVictim())
             return;
 
         if (Dynamite_Timer < diff)
@@ -255,16 +255,16 @@ CreatureAI* GetAI_npc_engineer_spark_overgrind(Creature *_Creature)
 
 bool GossipHello_npc_engineer_spark_overgrind(Player *player, Creature *_Creature)
 {
-    if( player->GetQuestStatus(9537) == QUEST_STATUS_INCOMPLETE )
+    if (player->GetQuestStatus(9537) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_FIGHT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_engineer_spark_overgrind(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_engineer_spark_overgrind(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if( action == GOSSIP_ACTION_INFO_DEF )
+    if (action == GOSSIP_ACTION_INFO_DEF)
     {
         player->CLOSE_GOSSIP_MENU();
         _Creature->setFaction(14);
@@ -423,7 +423,7 @@ CreatureAI* GetAI_npc_magwinAI(Creature *_Creature)
 bool GossipHello_npc_susurrus(Player *player, Creature *_Creature)
 {
     if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
     if (player->HasItemCount(23843,1,true))
         player->ADD_GOSSIP_ITEM(0, "I am ready.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
@@ -433,7 +433,7 @@ bool GossipHello_npc_susurrus(Player *player, Creature *_Creature)
     return true;
 }
 
-bool GossipSelect_npc_susurrus(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_susurrus(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF)
     {
@@ -496,7 +496,7 @@ struct OREGON_DLL_DECL npc_geezleAI : public ScriptedAI
         Step = 1;
         EventStarted = true;
         Creature* Spark = m_creature->SummonCreature(MOB_SPARK, SparkPos[0], SparkPos[1], SparkPos[2], 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 1000);
-        if(Spark)
+        if (Spark)
         {
             SparkGUID = Spark->GetGUID();
             Spark->setActive(true);
@@ -520,7 +520,7 @@ struct OREGON_DLL_DECL npc_geezleAI : public ScriptedAI
             return 1000;
         case 2:
             DoScriptText(GEEZLE_SAY_1, m_creature, Spark);
-            if(Spark)
+            if (Spark)
             {
                 Spark->SetInFront(m_creature);
                 m_creature->SetInFront(Spark);
@@ -534,11 +534,11 @@ struct OREGON_DLL_DECL npc_geezleAI : public ScriptedAI
         case 8: DoScriptText(GEEZLE_SAY_7, m_creature, Spark); return 2000;
         case 9:
             m_creature->GetMotionMaster()->MoveTargetedHome();
-            if(Spark)
+            if (Spark)
                 Spark->GetMotionMaster()->MovePoint(0, -5030.95, -11291.99, 7.97);
             return 20000;
         case 10:
-            if(Spark)
+            if (Spark)
                 Spark->DealDamage(Spark,Spark->GetHealth(),NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             //DespawnNagaFlag(false);
             m_creature->SetVisibility(VISIBILITY_OFF);
@@ -563,10 +563,10 @@ struct OREGON_DLL_DECL npc_geezleAI : public ScriptedAI
         Player* player = NULL;
         if (!FlagList.empty())
         {
-            for(std::list<GameObject*>::iterator itr = FlagList.begin(); itr != FlagList.end(); ++itr)
+            for (std::list<GameObject*>::iterator itr = FlagList.begin(); itr != FlagList.end(); ++itr)
             {
                 //TODO: Found how to despawn and respawn
-                if(despawn)
+                if (despawn)
                     (*itr)->RemoveFromWorld();
                 else
                     (*itr)->Respawn();
@@ -576,9 +576,9 @@ struct OREGON_DLL_DECL npc_geezleAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(SayTimer < diff)
+        if (SayTimer < diff)
         {
-            if(EventStarted)
+            if (EventStarted)
             {
                 SayTimer = NextStep(++Step);
             }
@@ -617,10 +617,10 @@ struct OREGON_DLL_DECL mob_nestlewood_owlkinAI : public ScriptedAI
 
     void SpellHit(Unit* caster, const SpellEntry* spell)
     {
-        if(!caster)
+        if (!caster)
             return;
 
-        if(caster->GetTypeId() == TYPEID_PLAYER && spell->Id == INOCULATION_CHANNEL)
+        if (caster->GetTypeId() == TYPEID_PLAYER && spell->Id == INOCULATION_CHANNEL)
         {
             ChannelTimer = 3000;
             Hitted = true;
@@ -629,7 +629,7 @@ struct OREGON_DLL_DECL mob_nestlewood_owlkinAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(ChannelTimer < diff && !Channeled && Hitted)
+        if (ChannelTimer < diff && !Channeled && Hitted)
         {
             m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             m_creature->RemoveCorpse();

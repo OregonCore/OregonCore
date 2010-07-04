@@ -59,14 +59,14 @@ struct OREGON_DLL_DECL instance_gruuls_lair : public ScriptedInstance
         MaulgarDoor = 0;
         GruulDoor = 0;
 
-        for(uint8 i = 0; i < ENCOUNTERS; i++)
+        for (uint8 i = 0; i < ENCOUNTERS; i++)
             Encounters[i] = NOT_STARTED;
     }
 
     bool IsEncounterInProgress() const
     {
-        for(uint8 i = 0; i < ENCOUNTERS; i++)
-            if(Encounters[i] == IN_PROGRESS) return true;
+        for (uint8 i = 0; i < ENCOUNTERS; i++)
+            if (Encounters[i] == IN_PROGRESS) return true;
 
         return false;
     }
@@ -89,7 +89,7 @@ struct OREGON_DLL_DECL instance_gruuls_lair : public ScriptedInstance
         {
             case 184468:
                 MaulgarDoor = go->GetGUID();
-                if(Encounters[0] == DONE) HandleGameObject(NULL, true, go);
+                if (Encounters[0] == DONE) HandleGameObject(NULL, true, go);
                 break;
             case 184662: GruulDoor = go->GetGUID(); break;
         }
@@ -97,7 +97,7 @@ struct OREGON_DLL_DECL instance_gruuls_lair : public ScriptedInstance
 
     void SetData64(uint32 type, uint64 data)
     {
-        if(type == DATA_MAULGAREVENT_TANK)
+        if (type == DATA_MAULGAREVENT_TANK)
             MaulgarEvent_Tank = data;
     }
 
@@ -122,22 +122,22 @@ struct OREGON_DLL_DECL instance_gruuls_lair : public ScriptedInstance
         switch(type)
         {
             case DATA_MAULGAREVENT:
-                if(data == DONE)
+                if (data == DONE)
                     HandleGameObject(MaulgarDoor, true);
-                if(Encounters[0] != DONE)
+                if (Encounters[0] != DONE)
                     Encounters[0] = data;
                 break;
             case DATA_GRUULEVENT:
-                if(data == IN_PROGRESS)
+                if (data == IN_PROGRESS)
                     HandleGameObject(GruulDoor, false);
                 else
                     HandleGameObject(GruulDoor, true);
-                if(Encounters[1] != DONE)
+                if (Encounters[1] != DONE)
                 Encounters[1] = data;
                 break;
         }
 
-        if(data == DONE)
+        if (data == DONE)
             SaveToDB();
     }
 
@@ -158,7 +158,7 @@ struct OREGON_DLL_DECL instance_gruuls_lair : public ScriptedInstance
         stream << Encounters[0] << " " << Encounters[1];
         char* out = new char[stream.str().length() + 1];
         strcpy(out, stream.str().c_str());
-        if(out)
+        if (out)
         {
             OUT_SAVE_INST_DATA_COMPLETE;
             return out;
@@ -169,7 +169,7 @@ struct OREGON_DLL_DECL instance_gruuls_lair : public ScriptedInstance
 
     void Load(const char* in)
     {
-        if(!in)
+        if (!in)
         {
             OUT_LOAD_INST_DATA_FAIL;
             return;
@@ -178,8 +178,8 @@ struct OREGON_DLL_DECL instance_gruuls_lair : public ScriptedInstance
         OUT_LOAD_INST_DATA(in);
         std::istringstream stream(in);
         stream >> Encounters[0] >> Encounters[1];
-        for(uint8 i = 0; i < ENCOUNTERS; ++i)
-            if(Encounters[i] == IN_PROGRESS)                // Do not load an encounter as "In Progress" - reset it instead.
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
+            if (Encounters[i] == IN_PROGRESS)                // Do not load an encounter as "In Progress" - reset it instead.
                 Encounters[i] = NOT_STARTED;
         OUT_LOAD_INST_DATA_COMPLETE;
     }

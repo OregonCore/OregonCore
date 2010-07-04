@@ -86,7 +86,7 @@ struct OREGON_DLL_DECL boss_curatorAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         if (Evocating && !m_creature->HasAura(SPELL_EVOCATION, 0))
@@ -130,7 +130,7 @@ struct OREGON_DLL_DECL boss_curatorAI : public ScriptedAI
             {
                 Unit* target = NULL;
                 target = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
-                if(target)
+                if (target)
                     DoCast(target, SPELL_HATEFUL_BOLT);
 
                 HatefulBoltTimer = 15000;

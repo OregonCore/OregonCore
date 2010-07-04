@@ -76,10 +76,10 @@ struct OREGON_DLL_DECL instance_stratholme : public ScriptedInstance
 
     void Initialize()
     {
-        for(uint8 i = 0; i < ENCOUNTERS; i++)
+        for (uint8 i = 0; i < ENCOUNTERS; i++)
             Encounter[i] = NOT_STARTED;
 
-        for(uint8 i = 0; i < 5; i++)
+        for (uint8 i = 0; i < 5; i++)
             IsSilverHandDead[5] = false;
 
         BaronRun_Timer = 0;
@@ -108,7 +108,7 @@ struct OREGON_DLL_DECL instance_stratholme : public ScriptedInstance
 
         if (!players.isEmpty())
         {
-            for(Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+            for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
                 if (Player* plr = itr->getSource())
                     return plr;
@@ -243,7 +243,7 @@ struct OREGON_DLL_DECL instance_stratholme : public ScriptedInstance
                     UpdateGoState(portGauntletGUID,1,false);
 
                 uint32 count = abomnationGUID.size();
-                for(std::set<uint64>::iterator i = abomnationGUID.begin(); i != abomnationGUID.end(); ++i)
+                for (std::set<uint64>::iterator i = abomnationGUID.begin(); i != abomnationGUID.end(); ++i)
                 {
                     if (Unit* abom = Unit::GetUnit(*player, *i))
                     {
@@ -274,7 +274,7 @@ struct OREGON_DLL_DECL instance_stratholme : public ScriptedInstance
                 {
                     if (Group *pGroup = player->GetGroup())
                     {
-                        for(GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
+                        for (GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
                         {
                             Player* pGroupie = itr->getSource();
                             if (!pGroupie)
@@ -317,7 +317,7 @@ struct OREGON_DLL_DECL instance_stratholme : public ScriptedInstance
           switch(type)
           {
           case TYPE_SH_QUEST:
-              if(IsSilverHandDead[0] && IsSilverHandDead[1] && IsSilverHandDead[2] && IsSilverHandDead[3] && IsSilverHandDead[4])
+              if (IsSilverHandDead[0] && IsSilverHandDead[1] && IsSilverHandDead[2] && IsSilverHandDead[3] && IsSilverHandDead[4])
                   return 1;
               return 0;
           case TYPE_BARON_RUN:
@@ -367,7 +367,7 @@ struct OREGON_DLL_DECL instance_stratholme : public ScriptedInstance
             {
                 if (Player *p = GetPlayerInMap())
                 {
-                    for(uint8 i = 0; i < 4; i++)
+                    for (uint8 i = 0; i < 4; i++)
                         p->SummonCreature(C_BLACK_GUARD,4032.84,-3390.24,119.73,4.71,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,1800000);
 
                     UpdateGoState(ziggurat4GUID,0,false);

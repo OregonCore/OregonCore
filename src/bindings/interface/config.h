@@ -26,7 +26,7 @@
 #ifdef WIN32
 //#include <windows.h>
 #define TRINITY_DLL_EXPORT extern "C" __declspec(dllexport)
-#elif defined( __GNUC__ )
+#elif defined(__GNUC__)
 #define TRINITY_DLL_EXPORT extern "C"
 #else
 #define TRINITY_DLL_EXPORT extern "C" export

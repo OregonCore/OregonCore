@@ -46,7 +46,7 @@ struct OREGON_DLL_DECL boss_grizzleAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //Return since we have no target
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         //GroundTremor_Timer
@@ -57,7 +57,7 @@ struct OREGON_DLL_DECL boss_grizzleAI : public ScriptedAI
         }else GroundTremor_Timer -= diff;
 
         //Frenzy_Timer
-        if ( m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 51 )
+        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 51)
         {
             if (Frenzy_Timer < diff)
             {

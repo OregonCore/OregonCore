@@ -220,7 +220,7 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         //Only do this if we haven't spawned nef yet
@@ -358,7 +358,7 @@ bool GossipHello_boss_victor_nefarius(Player *player, Creature *_Creature)
     return true;
 }
 
-bool GossipSelect_boss_victor_nefarius(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_boss_victor_nefarius(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     switch (action)
     {

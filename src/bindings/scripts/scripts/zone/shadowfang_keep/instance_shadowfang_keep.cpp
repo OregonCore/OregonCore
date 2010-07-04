@@ -43,7 +43,7 @@ struct OREGON_DLL_DECL instance_shadowfang_keep : public ScriptedInstance
         DoorSorcererGUID = 0;
         DoorArugalGUID = 0;
 
-         for(uint8 i=0; i < ENCOUNTERS; ++i)
+         for (uint8 i=0; i < ENCOUNTERS; ++i)
              Encounters[i] = NOT_STARTED;
     }
 
@@ -52,11 +52,11 @@ struct OREGON_DLL_DECL instance_shadowfang_keep : public ScriptedInstance
         switch(go->GetEntry())
         {
         case 18895: DoorCourtyardGUID = go->GetGUID();
-            if(Encounters[0] == DONE) HandleGameObject(NULL,true,go); break;
+            if (Encounters[0] == DONE) HandleGameObject(NULL,true,go); break;
         case 18972: DoorSorcererGUID = go->GetGUID();
-            if(Encounters[2] == DONE) HandleGameObject(NULL,true,go); break;
+            if (Encounters[2] == DONE) HandleGameObject(NULL,true,go); break;
         case 18971: DoorArugalGUID = go->GetGUID();
-            if(Encounters[3] == DONE) HandleGameObject(NULL,true,go); break;
+            if (Encounters[3] == DONE) HandleGameObject(NULL,true,go); break;
 
         }
     }
@@ -66,7 +66,7 @@ struct OREGON_DLL_DECL instance_shadowfang_keep : public ScriptedInstance
         switch(type)
         {
             case TYPE_FREE_NPC:
-                if(data == DONE)
+                if (data == DONE)
                     HandleGameObject(DoorCourtyardGUID,true);
                 Encounters[0] = data;
                 break;
@@ -74,12 +74,12 @@ struct OREGON_DLL_DECL instance_shadowfang_keep : public ScriptedInstance
                 Encounters[1] = data;
                 break;
             case TYPE_FENRUS:
-                if(data == DONE)
+                if (data == DONE)
                     HandleGameObject(DoorSorcererGUID,true);
                 Encounters[2] = data;
                 break;
             case TYPE_NANDOS:
-                if(data == DONE)
+                if (data == DONE)
                     HandleGameObject(DoorArugalGUID,true);
                 Encounters[3] = data;
                 break;
@@ -133,7 +133,7 @@ struct OREGON_DLL_DECL instance_shadowfang_keep : public ScriptedInstance
         std::istringstream loadStream(in);
         loadStream >> Encounters[0] >> Encounters[1] >> Encounters[2] >> Encounters[3];
 
-        for(uint8 i = 0; i < ENCOUNTERS; ++i)
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
         {
             if (Encounters[i] == IN_PROGRESS)
                 Encounters[i] = NOT_STARTED;

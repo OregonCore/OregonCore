@@ -89,17 +89,17 @@ struct OREGON_DLL_DECL mob_voidtravelerAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(!Vorpil)
+        if (!Vorpil)
         {
             m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             return;
         }
-        if(move < diff)
+        if (move < diff)
         {
-            if(sacrificed)
+            if (sacrificed)
             {
                 SpellEntry *spell = (SpellEntry *)GetSpellStore()->LookupEntry(HeroicMode?H_SPELL_EMPOWERING_SHADOWS:SPELL_EMPOWERING_SHADOWS);
-                if( spell )
+                if (spell)
                     Vorpil->AddAura(new EmpoweringShadowsAura(spell, 0, NULL, Vorpil, m_creature));
                 Vorpil->SetHealth(Vorpil->GetHealth()+Vorpil->GetMaxHealth()/25);
                 DoCast(m_creature, SPELL_SHADOW_NOVA, true);
@@ -107,14 +107,14 @@ struct OREGON_DLL_DECL mob_voidtravelerAI : public ScriptedAI
                 return;
             }
             m_creature->GetMotionMaster()->MoveFollow(Vorpil,0,0);
-            if(m_creature->GetDistance(Vorpil) < 3)
+            if (m_creature->GetDistance(Vorpil) < 3)
             {
                 DoCast(m_creature, SPELL_SACRIFICE, false);
                 sacrificed = true;
                 move = 500;
                 return;
             }
-            if(!Vorpil->isInCombat() || Vorpil->isDead())
+            if (!Vorpil->isInCombat() || Vorpil->isDead())
             {
                 m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 return;
@@ -157,19 +157,19 @@ struct OREGON_DLL_DECL boss_grandmaster_vorpilAI : public ScriptedAI
         HelpYell = false;
         destroyPortals();
 
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_GRANDMASTERVORPILEVENT, NOT_STARTED);
     }
 
     void summonPortals()
     {
-        if(!sumportals)
+        if (!sumportals)
         {
             for (int i = 0;i<5;i++)
             {
                 Creature *Portal = NULL;
                 Portal = m_creature->SummonCreature(MOB_VOID_PORTAL,VoidPortalCoords[i][0],VoidPortalCoords[i][1],VoidPortalCoords[i][2],0,TEMPSUMMON_CORPSE_DESPAWN,3000000);
-                if(Portal)
+                if (Portal)
                 {
                     PortalsGuid[i] = Portal->GetGUID();
                     Portal->CastSpell(Portal,SPELL_VOID_PORTAL_VISUAL,false);
@@ -182,7 +182,7 @@ struct OREGON_DLL_DECL boss_grandmaster_vorpilAI : public ScriptedAI
 
     void destroyPortals()
     {
-        if(sumportals)
+        if (sumportals)
         {
             for (int i = 0;i < 5; i ++)
             {
@@ -199,7 +199,7 @@ struct OREGON_DLL_DECL boss_grandmaster_vorpilAI : public ScriptedAI
     {
         int pos = rand()%5;
         m_creature->SummonCreature(MOB_VOID_TRAVELER,VoidPortalCoords[pos][0],VoidPortalCoords[pos][1],VoidPortalCoords[pos][2],0,TEMPSUMMON_CORPSE_TIMED_DESPAWN,5000);
-        if(!HelpYell)
+        if (!HelpYell)
         {
             DoScriptText(SAY_HELP, m_creature);
             HelpYell = true;
@@ -226,7 +226,7 @@ struct OREGON_DLL_DECL boss_grandmaster_vorpilAI : public ScriptedAI
         DoScriptText(SAY_DEATH, m_creature);
         destroyPortals();
 
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_GRANDMASTERVORPILEVENT, DONE);
     }
 
@@ -240,13 +240,13 @@ struct OREGON_DLL_DECL boss_grandmaster_vorpilAI : public ScriptedAI
         }
         summonPortals();
 
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_GRANDMASTERVORPILEVENT, IN_PROGRESS);
     }
 
     void MoveInLineOfSight(Unit *who)
     {
-        if(who && !m_creature->getVictim() && m_creature->canStartAttack(who))
+        if (who && !m_creature->getVictim() && m_creature->canStartAttack(who))
             AttackStart(who);
         if (!Intro && who && m_creature->IsWithinLOSInMap(who)&& m_creature->IsWithinDistInMap(who, 100) && m_creature->IsHostileTo(who))
         {
@@ -276,11 +276,11 @@ struct OREGON_DLL_DECL boss_grandmaster_vorpilAI : public ScriptedAI
             }
         }else banish_Timer -= diff;
 
-        if ( DrawShadows_Timer < diff)
+        if (DrawShadows_Timer < diff)
         {
             Map *map = m_creature->GetMap();
             Map::PlayerList const &PlayerList = map->GetPlayers();
-            for(Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+            for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                 if (Player* i_pl = i->getSource())
                     if (i_pl->isAlive() && !i_pl->HasAura(SPELL_BANISH,0))
                         i_pl->TeleportTo(m_creature->GetMapId(), VorpilPosition[0],VorpilPosition[1],VorpilPosition[2], 0, TELE_TO_NOT_LEAVE_COMBAT);
@@ -294,12 +294,12 @@ struct OREGON_DLL_DECL boss_grandmaster_vorpilAI : public ScriptedAI
             DrawShadows_Timer = 30000;
         }else DrawShadows_Timer -= diff;
 
-        if ( summonTraveler_Timer < diff)
+        if (summonTraveler_Timer < diff)
         {
             spawnVoidTraveler();
             summonTraveler_Timer = 10000;
             //enrage at 20%
-            if((m_creature->GetHealth()*5) < m_creature->GetMaxHealth())
+            if ((m_creature->GetHealth()*5) < m_creature->GetMaxHealth())
                 summonTraveler_Timer = 5000;
         }else summonTraveler_Timer -=diff;
 

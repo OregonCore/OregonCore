@@ -70,7 +70,7 @@ struct OREGON_DLL_DECL boss_bloodmage_thalnosAI : public ScriptedAI
             return;
 
         //If we are <35% hp
-        if ( m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 35)
+        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 35)
         {
             Yell_Timer -= diff;
 

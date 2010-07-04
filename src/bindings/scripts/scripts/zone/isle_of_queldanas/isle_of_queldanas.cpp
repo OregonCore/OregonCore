@@ -38,17 +38,17 @@ EndContentData */
 #define GOSSIP_FLY2 "I need to intercept the Dawnblade reinforcements."
 bool GossipHello_npc_ayren_cloudbreaker(Player *player, Creature *_Creature)
 {
-    if( player->GetQuestStatus(11532) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(11533) == QUEST_STATUS_INCOMPLETE)
+    if (player->GetQuestStatus(11532) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(11533) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_FLY1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    if( player->GetQuestStatus(11542) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(11543) == QUEST_STATUS_INCOMPLETE)
+    if (player->GetQuestStatus(11542) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(11543) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_FLY2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
 
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(),_Creature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_ayren_cloudbreaker(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_ayren_cloudbreaker(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
@@ -92,16 +92,16 @@ struct OREGON_DLL_DECL npc_converted_sentryAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if( !Credit )
+        if (!Credit)
         {
-            if( Timer <= diff )
+            if (Timer <= diff)
             {
                 uint32 i = urand(1,2);
-                if( i=1 ) DoScriptText(SAY_CONVERTED_1, m_creature);
+                if (i=1) DoScriptText(SAY_CONVERTED_1, m_creature);
                 else DoScriptText(SAY_CONVERTED_2, m_creature);
 
                 DoCast(m_creature, SPELL_CONVERT_CREDIT);
-                if(m_creature->isPet())
+                if (m_creature->isPet())
                     ((Pet*)m_creature)->SetDuration(7500);
                 Credit = true;
             }else Timer -= diff;
@@ -121,14 +121,14 @@ CreatureAI* GetAI_npc_converted_sentry(Creature *_Creature)
 
 bool GossipHello_npc_unrestrained_dragonhawk(Player *player, Creature *_Creature)
 {
-    if( player->GetQuestStatus(11542) == QUEST_STATUS_COMPLETE || player->GetQuestStatus(11543) == QUEST_STATUS_COMPLETE )
+    if (player->GetQuestStatus(11542) == QUEST_STATUS_COMPLETE || player->GetQuestStatus(11543) == QUEST_STATUS_COMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_UD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(),_Creature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_unrestrained_dragonhawk(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_unrestrained_dragonhawk(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
@@ -162,21 +162,21 @@ struct OREGON_DLL_DECL npc_greengill_slaveAI : public ScriptedAI
 
     void SpellHit(Unit* caster, const SpellEntry* spell)
     {
-        if(!caster)
+        if (!caster)
             return;
 
-        if(caster->GetTypeId() == TYPEID_PLAYER && spell->Id == ORB && !m_creature->HasAura(ENRAGE, 0))
+        if (caster->GetTypeId() == TYPEID_PLAYER && spell->Id == ORB && !m_creature->HasAura(ENRAGE, 0))
         {
             PlayerGUID = caster->GetGUID();
-            if(PlayerGUID)
+            if (PlayerGUID)
             {
                 Player* plr = Unit::GetPlayer(PlayerGUID);
-                if(plr && plr->GetQuestStatus(QUESTG) == QUEST_STATUS_INCOMPLETE)
+                if (plr && plr->GetQuestStatus(QUESTG) == QUEST_STATUS_INCOMPLETE)
                     plr->KilledMonster(25086, m_creature->GetGUID());
             }
             DoCast(m_creature, ENRAGE);
             Unit* Myrmidon = FindCreature(DM, 70, m_creature);
-            if(Myrmidon)
+            if (Myrmidon)
             {
                 m_creature->AddThreat(Myrmidon, 100000.0f);
                 AttackStart(Myrmidon);

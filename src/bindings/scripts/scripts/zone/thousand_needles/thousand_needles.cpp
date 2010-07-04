@@ -234,7 +234,7 @@ struct OREGON_DLL_DECL npc_pluckyAI : public ScriptedAI
             else Timer-=diff;
         }
 
-       if(Chicken)
+       if (Chicken)
        {
            if (ChickenTimer < diff)
            {
@@ -243,17 +243,17 @@ struct OREGON_DLL_DECL npc_pluckyAI : public ScriptedAI
            }else ChickenTimer-=diff;
        }
 
-        if(!UpdateVictim())
+        if (!UpdateVictim())
             return;
 
         DoMeleeAttackIfReady();
    }
 };
 
-bool ReceiveEmote_npc_plucky( Player *player, Creature *_Creature, uint32 emote )
+bool ReceiveEmote_npc_plucky(Player *player, Creature *_Creature, uint32 emote)
 {
-    if( (emote == TEXTEMOTE_BECKON || emote == TEXTEMOTE_CHICKEN &&
-        player->GetQuestStatus(QUEST_GET_THE_SCOOP) == QUEST_STATUS_INCOMPLETE) )
+    if ((emote == TEXTEMOTE_BECKON || emote == TEXTEMOTE_CHICKEN &&
+        player->GetQuestStatus(QUEST_GET_THE_SCOOP) == QUEST_STATUS_INCOMPLETE))
     {
         _Creature->SetInFront(player);
         ((npc_pluckyAI*)((Creature*)_Creature)->AI())->TransformHuman(emote);
@@ -264,7 +264,7 @@ bool ReceiveEmote_npc_plucky( Player *player, Creature *_Creature, uint32 emote 
 
 bool GossipHello_npc_plucky(Player *player, Creature *_Creature)
 {
-    if(player->GetQuestStatus(QUEST_GET_THE_SCOOP) == QUEST_STATUS_INCOMPLETE)
+    if (player->GetQuestStatus(QUEST_GET_THE_SCOOP) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_P, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
     player->SEND_GOSSIP_MENU(738, _Creature->GetGUID());
 
@@ -273,7 +273,7 @@ bool GossipHello_npc_plucky(Player *player, Creature *_Creature)
 
 bool GossipSelect_npc_plucky(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    switch( action )
+    switch(action)
     {
         case GOSSIP_ACTION_INFO_DEF+1:
             player->CLOSE_GOSSIP_MENU();

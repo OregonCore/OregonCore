@@ -81,7 +81,7 @@ struct OREGON_DLL_DECL boss_amnennar_the_coldbringerAI : public ScriptedAI
         }
         Rand = 0;
         Summoned = DoSpawnCreature(8585, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
-        if(Summoned)
+        if (Summoned)
             ((CreatureAI*)Summoned->AI())->AttackStart(victim);
     }
 
@@ -107,7 +107,7 @@ struct OREGON_DLL_DECL boss_amnennar_the_coldbringerAI : public ScriptedAI
             FrostBolt_Timer = 8000;
         } else FrostBolt_Timer -= diff;
 
-        if ( !Spectrals && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 50 )
+        if (!Spectrals && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 50)
         {
             DoYell(SAY_1, LANG_UNIVERSAL, NULL);
             DoPlaySoundToSet(m_creature, SOUND_SUMMON);
@@ -115,7 +115,7 @@ struct OREGON_DLL_DECL boss_amnennar_the_coldbringerAI : public ScriptedAI
             Unit* target = NULL;
             target = SelectUnit(SELECT_TARGET_RANDOM,0);
 
-            if(target)
+            if (target)
             {
                 SummonSpectrals(target);
                 SummonSpectrals(target);

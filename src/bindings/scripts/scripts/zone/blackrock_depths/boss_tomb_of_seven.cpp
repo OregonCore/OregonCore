@@ -391,7 +391,7 @@ struct OREGON_DLL_DECL boss_gloomrelAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         //Hamstring_Timer
@@ -430,7 +430,7 @@ CreatureAI* GetAI_boss_gloomrel(Creature *_Creature)
 
 bool GossipHello_boss_gloomrel(Player *player, Creature *_Creature)
 {
-    if (player->GetQuestRewardStatus(4083) == 1 && player->GetSkillValue(SKILL_MINING) >= 230 && !player->HasSpell(14891) )
+    if (player->GetQuestRewardStatus(4083) == 1 && player->GetSkillValue(SKILL_MINING) >= 230 && !player->HasSpell(14891))
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_TEACH_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     if (player->GetQuestRewardStatus(4083) == 0 && player->GetSkillValue(SKILL_MINING) >= 230)
@@ -439,7 +439,7 @@ bool GossipHello_boss_gloomrel(Player *player, Creature *_Creature)
     return true;
 }
 
-bool GossipSelect_boss_gloomrel(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_boss_gloomrel(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     switch (action)
     {
@@ -514,13 +514,13 @@ struct OREGON_DLL_DECL boss_doomrelAI : public ScriptedAI
         }
         Rand = 0;
         Summoned = DoSpawnCreature(16119, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000);
-        if(Summoned)
+        if (Summoned)
             ((CreatureAI*)Summoned->AI())->AttackStart(victim);
     }
 
     void UpdateAI(const uint32 diff)
     {
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         //ShadowVolley_Timer
@@ -554,7 +554,7 @@ struct OREGON_DLL_DECL boss_doomrelAI : public ScriptedAI
         }else DemonArmor_Timer -= diff;
 
         //Summon Voidwalkers
-        if (!Voidwalkers && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 51 )
+        if (!Voidwalkers && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 51)
         {
             SummonVoidwalkers(m_creature->getVictim());
             SummonVoidwalkers(m_creature->getVictim());
@@ -581,12 +581,12 @@ bool GossipHello_boss_doomrel(Player *player, Creature *_Creature)
     return true;
 }
 
-bool GossipSelect_boss_doomrel(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_boss_doomrel(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     switch (action)
     {
         case GOSSIP_ACTION_INFO_DEF+1:
-            player->ADD_GOSSIP_ITEM( 0, "[PH] Continue...", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+            player->ADD_GOSSIP_ITEM(0, "[PH] Continue...", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
             player->SEND_GOSSIP_MENU(2605, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:

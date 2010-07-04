@@ -73,7 +73,7 @@ bool GossipHello_npc_innkeeper(Player *player, Creature *_Creature)
     return true;
 }
 
-bool GossipSelect_npc_innkeeper(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_innkeeper(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+HALLOWEEN_EVENTID && isEventActive() && !player->GetAura(SPELL_TRICK_OR_TREATED,0))
     {
@@ -81,7 +81,7 @@ bool GossipSelect_npc_innkeeper(Player *player, Creature *_Creature, uint32 send
         player->CastSpell(player, SPELL_TRICK_OR_TREATED, true);
 
         // either trick or treat, 50% chance
-        if(rand()%2)
+        if (rand()%2)
         {
             player->CastSpell(player, SPELL_TREAT, true);
         }
@@ -125,13 +125,13 @@ bool GossipSelect_npc_innkeeper(Player *player, Creature *_Creature, uint32 send
     //Trininty Gossip core handling dont work...
     else if (action == GOSSIP_OPTION_VENDOR)
     {
-        player->SEND_VENDORLIST( _Creature->GetGUID() );
+        player->SEND_VENDORLIST(_Creature->GetGUID());
     return true;
     }
     else if (action == GOSSIP_OPTION_INNKEEPER)
     {
         player->PlayerTalkClass->CloseGossip();
-        player->SetBindPoint( _Creature->GetGUID() );
+        player->SetBindPoint(_Creature->GetGUID());
     return true;
     }
 

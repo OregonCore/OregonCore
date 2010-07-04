@@ -121,7 +121,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
         Wrath_Timer = 20000+rand()%5000;//twice in phase one
         Phase = 1;
 
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_HIGHASTROMANCERSOLARIANEVENT, NOT_STARTED);
 
         m_creature->SetArmor(defaultarmor);
@@ -137,7 +137,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
     {
         DoScriptText(SAY_AGGRO, m_creature);
 
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_HIGHASTROMANCERSOLARIANEVENT, IN_PROGRESS);
     }
 
@@ -157,7 +157,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
         m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_HUMAN);
         DoScriptText(SAY_DEATH, m_creature);
 
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_HIGHASTROMANCERSOLARIANEVENT, DONE);
     }
 
@@ -169,7 +169,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
     void SummonMinion(uint32 entry, float x, float y, float z)
     {
         Creature* Summoned = m_creature->SummonCreature(entry, x, y, z, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
-        if(Summoned)
+        if (Summoned)
         {
             if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 Summoned->AI()->AttackStart(target);
@@ -200,7 +200,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         if (AppearDelay)
@@ -226,7 +226,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
                 BlindingLight_Timer = 45000;
             }else BlindingLight_Timer -= diff;
 
-            if( Wrath_Timer < diff)
+            if (Wrath_Timer < diff)
             {
                 m_creature->InterruptNonMeleeSpells(false);
                 DoCast(SelectUnit(SELECT_TARGET_RANDOM,1,100,true), SPELL_WRATH_OF_THE_ASTROMANCER, true);
@@ -235,17 +235,17 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
 
             if (ArcaneMissiles_Timer < diff)
             {
-                if(BlindingLight)
+                if (BlindingLight)
                 {
                     DoCast(m_creature->getVictim(), SPELL_BLINDING_LIGHT);
                     BlindingLight = false;
                 }else{
                     Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
-                    if(!m_creature->HasInArc(2.5f, target))
+                    if (!m_creature->HasInArc(2.5f, target))
                         target = m_creature->getVictim();
 
-                    if(target)
+                    if (target)
                         DoCast(target, SPELL_ARCANE_MISSILES);
                 }
                 ArcaneMissiles_Timer = 3000;
@@ -260,7 +260,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
             if (MarkOfTheAstromancer_Timer < diff) //A debuff that lasts for 5 seconds, cast several times each phase on a random raid member, but not the main tank
             {
                 Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1, 100, true);
-                if(target)
+                if (target)
                     DoCast(target, SPELL_MARK_OF_THE_ASTROMANCER);
                 else DoCast(m_creature->getVictim(), SPELL_MARK_OF_THE_ASTROMANCER);
                 MarkOfTheAstromancer_Timer = 15000;
@@ -274,7 +274,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
                 //After these 50 seconds she portals to the middle of the room and disappears, leaving 3 light portals behind.
                 m_creature->GetMotionMaster()->Clear();
                 m_creature->Relocate(SolarianPos[0], SolarianPos[1], SolarianPos[2], SolarianPos[3]);
-                for(int i=0; i<=2; ++i)
+                for (int i=0; i<=2; ++i)
                 {
                     if (!i)
                     {
@@ -289,10 +289,10 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
                         Portals[i][2] = PORTAL_Z;
                     }
                 }
-                if((abs(Portals[2][0] - Portals[1][0]) < 7) && (abs(Portals[2][1] - Portals[1][1]) < 7))
+                if ((abs(Portals[2][0] - Portals[1][0]) < 7) && (abs(Portals[2][1] - Portals[1][1]) < 7))
                 {
                     int i=1;
-                    if(abs(CENTER_X + 26.0f - Portals[2][0]) < 7)
+                    if (abs(CENTER_X + 26.0f - Portals[2][0]) < 7)
                         i = -1;
                     Portals[2][0] = Portals[2][0]+7*i;
                     Portals[2][1] = Portal_Y(Portals[2][0], LARGE_PORTAL_RADIUS);
@@ -300,7 +300,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
                 for (int i=0; i<=2; i++)
                 {
                     Creature* Summoned = m_creature->SummonCreature(ASTROMANCER_SOLARIAN_SPOTLIGHT, Portals[i][0], Portals[i][1], Portals[i][2], CENTER_O, TEMPSUMMON_TIMED_DESPAWN, Phase2_Timer+Phase3_Timer+AppearDelay_Timer+1700);
-                    if(Summoned)
+                    if (Summoned)
                     {
                         Summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         Summoned->CastSpell(Summoned, SPELL_SPOTLIGHT, false);
@@ -309,7 +309,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
                 AppearDelay = true;
             }else Phase1_Timer-=diff;
         }
-        else if(Phase == 2)
+        else if (Phase == 2)
         {
             //10 seconds after Solarian disappears, 12 mobs spawn out of the three portals.
             m_creature->AttackStop();
@@ -325,13 +325,13 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
                 Phase2_Timer = 10000;
             } else Phase2_Timer -= diff;
         }
-        else if(Phase == 3)
+        else if (Phase == 3)
         {
             m_creature->AttackStop();
             m_creature->StopMoving();
 
             //Check Phase3_Timer
-            if(Phase3_Timer < diff)
+            if (Phase3_Timer < diff)
             {
                 Phase = 1;
 
@@ -352,7 +352,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
                 Phase3_Timer = 15000;
             }else Phase3_Timer -= diff;
         }
-        else if(Phase == 4)
+        else if (Phase == 4)
         {
             //Fear_Timer
             if (Fear_Timer < diff)
@@ -370,7 +370,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
         }
 
         //When Solarian reaches 20% she will transform into a huge void walker.
-        if(Phase != 4 && ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth())<20))
+        if (Phase != 4 && ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth())<20))
         {
             Phase = 4;
 
@@ -424,7 +424,7 @@ struct OREGON_DLL_DECL mob_solarium_priestAI : public ScriptedAI
             switch(rand()%2)
             {
                 case 0:
-                    if(pInstance)
+                    if (pInstance)
                         target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_ASTROMANCER));
                     break;
                 case 1:
@@ -432,14 +432,14 @@ struct OREGON_DLL_DECL mob_solarium_priestAI : public ScriptedAI
                     break;
             }
 
-            if(target)
+            if (target)
             {
                 DoCast(target,SOLARIUM_HEAL);
                 healTimer = 9000;
             }
         } else healTimer -= diff;
 
-        if(holysmiteTimer < diff)
+        if (holysmiteTimer < diff)
         {
             DoCast(m_creature->getVictim(), SOLARIUM_SMITE);
             holysmiteTimer = 4000;

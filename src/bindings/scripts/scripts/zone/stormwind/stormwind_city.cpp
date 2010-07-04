@@ -39,10 +39,10 @@ EndContentData */
 
 bool GossipHello_npc_archmage_malin(Player *player, Creature *_Creature)
 {
-    if(_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+    if (_Creature->isQuestGiver())
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
-    if(player->GetQuestStatus(11223) == QUEST_STATUS_COMPLETE && !player->GetQuestRewardStatus(11223))
+    if (player->GetQuestStatus(11223) == QUEST_STATUS_COMPLETE && !player->GetQuestRewardStatus(11223))
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_MALIN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
@@ -52,7 +52,7 @@ bool GossipHello_npc_archmage_malin(Player *player, Creature *_Creature)
 
 bool GossipSelect_npc_archmage_malin(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if(action = GOSSIP_ACTION_INFO_DEF)
+    if (action = GOSSIP_ACTION_INFO_DEF)
     {
         player->CLOSE_GOSSIP_MENU();
         _Creature->CastSpell(player, 42711, true);
@@ -86,7 +86,7 @@ struct OREGON_DLL_DECL npc_bartlebyAI : public ScriptedAI
 
     void DamageTaken(Unit *done_by, uint32 & damage)
     {
-        if(damage > m_creature->GetHealth() || ((m_creature->GetHealth() - damage)*100 / m_creature->GetMaxHealth() < 15))
+        if (damage > m_creature->GetHealth() || ((m_creature->GetHealth() - damage)*100 / m_creature->GetMaxHealth() < 15))
         {
             //Take 0 damage
             damage = 0;
@@ -106,7 +106,7 @@ struct OREGON_DLL_DECL npc_bartlebyAI : public ScriptedAI
 
 bool QuestAccept_npc_bartleby(Player *player, Creature *_Creature, Quest const *_Quest)
 {
-    if(_Quest->GetQuestId() == 1640)
+    if (_Quest->GetQuestId() == 1640)
     {
         _Creature->setFaction(168);
         ((npc_bartlebyAI*)_Creature->AI())->PlayerGUID = player->GetGUID();
@@ -136,7 +136,7 @@ struct OREGON_DLL_DECL npc_dashel_stonefistAI : public ScriptedAI
 
     void DamageTaken(Unit *done_by, uint32 & damage)
     {
-        if((damage > m_creature->GetHealth()) || (m_creature->GetHealth() - damage)*100 / m_creature->GetMaxHealth() < 15)
+        if ((damage > m_creature->GetHealth()) || (m_creature->GetHealth() - damage)*100 / m_creature->GetMaxHealth() < 15)
         {
             //Take 0 damage
             damage = 0;
@@ -156,7 +156,7 @@ struct OREGON_DLL_DECL npc_dashel_stonefistAI : public ScriptedAI
 
 bool QuestAccept_npc_dashel_stonefist(Player *player, Creature *_Creature, Quest const *_Quest)
 {
-    if(_Quest->GetQuestId() == 1447)
+    if (_Quest->GetQuestId() == 1447)
     {
         _Creature->setFaction(168);
         ((npc_dashel_stonefistAI*)_Creature->AI())->AttackStart(player);
@@ -175,7 +175,7 @@ CreatureAI* GetAI_npc_dashel_stonefist(Creature *_creature)
 
 bool ReceiveEmote_npc_general_marcus_jonathan(Player *player, Creature *_Creature, uint32 emote)
 {
-    if(player->GetTeam() == ALLIANCE)
+    if (player->GetTeam() == ALLIANCE)
     {
         if (emote == TEXTEMOTE_SALUTE)
         {
@@ -202,10 +202,10 @@ bool ReceiveEmote_npc_general_marcus_jonathan(Player *player, Creature *_Creatur
 bool GossipHello_npc_lady_katrana_prestor(Player *player, Creature *_Creature)
 {
     if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
     if (player->GetQuestStatus(4185) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM_KAT_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_KAT_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
     player->SEND_GOSSIP_MENU(2693, _Creature->GetGUID());
 
@@ -217,15 +217,15 @@ bool GossipSelect_npc_lady_katrana_prestor(Player *player, Creature *_Creature, 
     switch (action)
     {
         case GOSSIP_ACTION_INFO_DEF:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM_KAT_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_KAT_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
             player->SEND_GOSSIP_MENU(2694, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+1:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM_KAT_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_KAT_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
             player->SEND_GOSSIP_MENU(2695, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM_KAT_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_KAT_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
             player->SEND_GOSSIP_MENU(2696, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+3:

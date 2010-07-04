@@ -98,10 +98,10 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
 
     void Reset()
     {
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_MOTHERSHAHRAZEVENT, NOT_STARTED);
 
-        for(uint8 i = 0; i<3; i++)
+        for (uint8 i = 0; i<3; i++)
             TargetGUID[i] = 0;
 
         BeamTimer = 5000; // Timers may be incorrect
@@ -119,7 +119,7 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_MOTHERSHAHRAZEVENT, IN_PROGRESS);
 
         DoZoneInCombat();
@@ -139,7 +139,7 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
 
     void JustDied(Unit *victim)
     {
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_MOTHERSHAHRAZEVENT, DONE);
 
         DoScriptText(SAY_DEATH, m_creature);
@@ -151,10 +151,10 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
         float X = TeleportPoint[random].x;
         float Y = TeleportPoint[random].y;
         float Z = TeleportPoint[random].z;
-        for(uint8 i = 0; i < 3; i++)
+        for (uint8 i = 0; i < 3; i++)
         {
             Unit* pUnit = SelectUnit(SELECT_TARGET_RANDOM, 1,300,true);
-            if(pUnit && pUnit->isAlive() && (pUnit->GetTypeId() == TYPEID_PLAYER) && !pUnit->HasAura(SPELL_SABER_LASH_IMM,0))
+            if (pUnit && pUnit->isAlive() && (pUnit->GetTypeId() == TYPEID_PLAYER) && !pUnit->HasAura(SPELL_SABER_LASH_IMM,0))
             {
                 TargetGUID[i] = pUnit->GetGUID();
                 pUnit->CastSpell(pUnit, SPELL_TELEPORT_VISUAL, true);
@@ -165,7 +165,7 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
 
     bool TryDoCast(Unit *victim, uint32 spellId, bool triggered = false)
     {
-        if(m_creature->IsNonMeleeSpellCasted(false)) return false;
+        if (m_creature->IsNonMeleeSpellCasted(false)) return false;
 
         DoCast(victim,spellId,triggered);
         return true;
@@ -173,19 +173,19 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(!UpdateVictim())
+        if (!UpdateVictim())
             return;
 
-        if(((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 10) && !Enraged)
+        if (((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 10) && !Enraged)
         {
             Enraged = true;
             DoCast(m_creature, SPELL_ENRAGE, true);
             DoScriptText(SAY_ENRAGE, m_creature);
         }
 
-        if(BeamTimer < diff)
+        if (BeamTimer < diff)
         {
-            if(!m_creature->IsNonMeleeSpellCasted(false))
+            if (!m_creature->IsNonMeleeSpellCasted(false))
             {
                 switch(CurrentBeam)
                 {
@@ -203,7 +203,7 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
                         break;
                 }
                 uint32 Beam = CurrentBeam;
-                while(CurrentBeam == Beam)
+                while (CurrentBeam == Beam)
                     CurrentBeam = rand()%4;
 
                 BeamTimer = 30000;
@@ -211,7 +211,7 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
         }else BeamTimer -= diff;
 
         // Select 3 random targets (can select same target more than once), teleport to a random location then make them cast explosions until they get away from each other.
-        if(FatalAttractionTimer < diff)
+        if (FatalAttractionTimer < diff)
         {
             TeleportPlayers();
 
@@ -224,28 +224,28 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
             FatalAttractionTimer = 30000;
         }else FatalAttractionTimer -= diff;
 
-        if(FatalAttractionExplodeTimer < diff)
+        if (FatalAttractionExplodeTimer < diff)
         {
             Player* targets[3];
-            for(uint8 i = 0; i < 3; ++i)
+            for (uint8 i = 0; i < 3; ++i)
             {
-                if(TargetGUID[i])
+                if (TargetGUID[i])
                     targets[i] = Player::GetPlayer(TargetGUID[i]);
                 else
                     targets[i] = NULL;
             }
 
-            if(targets[0] && targets[0]->isAlive())
+            if (targets[0] && targets[0]->isAlive())
             {
                 bool isNear = false;
-                if(targets[1] && targets[1]->isAlive() && targets[0]->GetDistance2d(targets[1]) < 25)
+                if (targets[1] && targets[1]->isAlive() && targets[0]->GetDistance2d(targets[1]) < 25)
                     isNear = true;
 
-                if(!isNear)
-                    if(targets[2] && targets[2]->isAlive() && targets[0]->GetDistance2d(targets[2]) < 25)
+                if (!isNear)
+                    if (targets[2] && targets[2]->isAlive() && targets[0]->GetDistance2d(targets[2]) < 25)
                         isNear = true;
 
-                if(isNear)
+                if (isNear)
                     targets[0]->CastSpell(targets[0],SPELL_ATTRACTION,true);
                 else
                 {
@@ -256,17 +256,17 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
             }
 
 
-            if(targets[1] && targets[1]->isAlive())
+            if (targets[1] && targets[1]->isAlive())
             {
                 bool isNear = false;
-                if(targets[0] && targets[0]->isAlive() && targets[1]->GetDistance2d(targets[0]) < 25)
+                if (targets[0] && targets[0]->isAlive() && targets[1]->GetDistance2d(targets[0]) < 25)
                     isNear = true;
 
-                if(!isNear)
-                    if(targets[2] && targets[2]->isAlive() && targets[1]->GetDistance2d(targets[2]) < 25)
+                if (!isNear)
+                    if (targets[2] && targets[2]->isAlive() && targets[1]->GetDistance2d(targets[2]) < 25)
                         isNear = true;
 
-                if(isNear)
+                if (isNear)
                     targets[1]->CastSpell(targets[1],SPELL_ATTRACTION,true);
                 else
                 {
@@ -276,17 +276,17 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
                 }
             }
 
-            if(targets[2] && targets[2]->isAlive())
+            if (targets[2] && targets[2]->isAlive())
             {
                 bool isNear = false;
-                if(targets[0] && targets[0]->isAlive() && targets[2]->GetDistance2d(targets[0]) < 25)
+                if (targets[0] && targets[0]->isAlive() && targets[2]->GetDistance2d(targets[0]) < 25)
                     isNear = true;
 
-                if(!isNear)
-                    if(targets[1] && targets[1]->isAlive() && targets[2]->GetDistance2d(targets[1]) < 25)
+                if (!isNear)
+                    if (targets[1] && targets[1]->isAlive() && targets[2]->GetDistance2d(targets[1]) < 25)
                         isNear = true;
 
-                if(isNear)
+                if (isNear)
                     targets[2]->CastSpell(targets[1],SPELL_ATTRACTION,true);
                 else
                 {
@@ -297,35 +297,35 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
             }
 
             bool allClear = true;
-            for(uint8 i = 0; i < 3; i++)
+            for (uint8 i = 0; i < 3; i++)
             {
-                if(TargetGUID[i] != 0)
+                if (TargetGUID[i] != 0)
                     allClear = false;
             }
 
-            if(allClear)
+            if (allClear)
                 FatalAttractionExplodeTimer = 60000;
             else
                 FatalAttractionExplodeTimer = 1000;
 
         }else FatalAttractionExplodeTimer -= diff;
 
-        if(ShriekTimer < diff)
+        if (ShriekTimer < diff)
         {
-            if(TryDoCast(m_creature->getVictim(), SPELL_SILENCING_SHRIEK))
+            if (TryDoCast(m_creature->getVictim(), SPELL_SILENCING_SHRIEK))
                 ShriekTimer = 20000;
         }else ShriekTimer -= diff;
 
         //Enrage
-        if(!m_creature->HasAura(SPELL_BERSERK, 0))
-            if(EnrageTimer < diff)
+        if (!m_creature->HasAura(SPELL_BERSERK, 0))
+            if (EnrageTimer < diff)
             {
                 DoCast(m_creature, SPELL_BERSERK);
                 DoScriptText(SAY_ENRAGE, m_creature);
             }else EnrageTimer -= diff;
 
         //Random taunts
-        if(RandomYellTimer < diff)
+        if (RandomYellTimer < diff)
         {
             switch(rand()%3)
             {

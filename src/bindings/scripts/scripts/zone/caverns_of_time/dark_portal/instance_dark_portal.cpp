@@ -82,7 +82,7 @@ struct OREGON_DLL_DECL instance_dark_portal : public ScriptedInstance
 
     void Clear()
     {
-        for(uint8 i = 0; i < ENCOUNTERS; i++)
+        for (uint8 i = 0; i < ENCOUNTERS; i++)
             Encounter[i] = NOT_STARTED;
 
         mRiftPortalCount    = 0;
@@ -101,7 +101,7 @@ struct OREGON_DLL_DECL instance_dark_portal : public ScriptedInstance
 
         if (!players.isEmpty())
         {
-            for(Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+            for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
                 if (Player* plr = itr->getSource())
                     return plr;
@@ -118,7 +118,7 @@ struct OREGON_DLL_DECL instance_dark_portal : public ScriptedInstance
 
         if (!players.isEmpty())
         {
-            for(Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+            for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
                 if (Player* player = itr->getSource())
                     player->SendUpdateWorldState(id,state);
@@ -302,7 +302,7 @@ struct OREGON_DLL_DECL instance_dark_portal : public ScriptedInstance
 
         if (Unit *medivh = Unit::GetUnit(*player,MedivhGUID))
         {
-            for(uint8 i = 0; i < 4; i++)
+            for (uint8 i = 0; i < 4; i++)
             {
                 int tmp = rand()%4;
                 if (tmp != CurrentRiftId)

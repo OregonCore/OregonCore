@@ -75,7 +75,7 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
 
         SpineTargetGUID = 0;
 
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_HIGHWARLORDNAJENTUSEVENT, NOT_STARTED);
 
         DeleteSpine();
@@ -92,7 +92,7 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
 
     void JustDied(Unit *victim)
     {
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_HIGHWARLORDNAJENTUSEVENT, DONE);
 
         DoScriptText(SAY_DEATH, m_creature);
@@ -101,7 +101,7 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
 
     bool TryDoCast(Unit *victim, uint32 spellId, bool triggered = false)
     {
-        if(m_creature->IsNonMeleeSpellCasted(false)) return false;
+        if (m_creature->IsNonMeleeSpellCasted(false)) return false;
 
         DoCast(victim,spellId,triggered);
         return true;
@@ -109,7 +109,7 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
 
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {
-        if(spell->Id == SPELL_HURL_SPINE && m_creature->HasAura(SPELL_TIDAL_SHIELD, 0))
+        if (spell->Id == SPELL_HURL_SPINE && m_creature->HasAura(SPELL_TIDAL_SHIELD, 0))
         {
             m_creature->RemoveAurasDueToSpell(SPELL_TIDAL_SHIELD);
             m_creature->CastSpell(m_creature, SPELL_TIDAL_BURST, true);
@@ -129,7 +129,7 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_HIGHWARLORDNAJENTUSEVENT, IN_PROGRESS);
 
         DoScriptText(SAY_AGGRO, m_creature);
@@ -138,9 +138,9 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
 
     bool RemoveImpalingSpine()
     {
-        if(!SpineTargetGUID) return false;
+        if (!SpineTargetGUID) return false;
         Unit* target = Unit::GetUnit(*m_creature, SpineTargetGUID);
-        if(target && target->HasAura(SPELL_IMPALING_SPINE, 1))
+        if (target && target->HasAura(SPELL_IMPALING_SPINE, 1))
             target->RemoveAurasDueToSpell(SPELL_IMPALING_SPINE);
         SpineTargetGUID=0;
         return true;
@@ -158,10 +158,10 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
         InstanceMap::PlayerList::const_iterator it;
 
         Map::PlayerList const &PlayerList = ((InstanceMap*)m_creature->GetMap())->GetPlayers();
-        for(Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+        for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
         {
             Player* i_pl = i->getSource();
-            if(i_pl)
+            if (i_pl)
                 i_pl->DestroyItemCount(32408, i_pl->GetItemCount(32408), true);
         }
     }
@@ -171,25 +171,25 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if(TidalShieldTimer < diff)
+        if (TidalShieldTimer < diff)
         {
-            if(TryDoCast(m_creature, SPELL_TIDAL_SHIELD, true))
+            if (TryDoCast(m_creature, SPELL_TIDAL_SHIELD, true))
             {
                 ResetTimer(45000);
                 TidalShieldTimer = 60000;
             }
         }else TidalShieldTimer -= diff;
 
-        if(!m_creature->HasAura(SPELL_BERSERK,0))
+        if (!m_creature->HasAura(SPELL_BERSERK,0))
         {
-            if(EnrageTimer < diff)
+            if (EnrageTimer < diff)
             {
                 DoScriptText(SAY_ENRAGE2, m_creature);
                 DoCast(m_creature, SPELL_BERSERK, true);
             }else EnrageTimer -= diff;
         }
 
-        if(SpecialYellTimer < diff)
+        if (SpecialYellTimer < diff)
         {
             switch(rand()%2)
             {
@@ -199,13 +199,13 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
             SpecialYellTimer = 25000 + (rand()%76)*1000;
         }else SpecialYellTimer -= diff;
 
-        if(ImpalingSpineTimer < diff)
+        if (ImpalingSpineTimer < diff)
         {
-            if(!m_creature->IsNonMeleeSpellCasted(false))
+            if (!m_creature->IsNonMeleeSpellCasted(false))
             {
                 Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1, 80,true);
-                if(!target) target = m_creature->getVictim();
-                if(target)
+                if (!target) target = m_creature->getVictim();
+                if (target)
                 {
                     DoCast(target, SPELL_IMPALING_SPINE);
                     SpineTargetGUID = target->GetGUID();
@@ -222,13 +222,13 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
             }
         }else ImpalingSpineTimer -= diff;
 
-        if(NeedleSpineTimer < diff)
+        if (NeedleSpineTimer < diff)
         {
-            if(TryDoCast(m_creature, SPELL_NEEDLE_SPINE, true))
+            if (TryDoCast(m_creature, SPELL_NEEDLE_SPINE, true))
             {
                 //std::list<Unit*> target;
                 //SelectUnitList(target, 3, SELECT_TARGET_RANDOM, 100, true);
-                //for(std::list<Unit*>::iterator i = target.begin(); i != target.end(); ++i)
+                //for (std::list<Unit*>::iterator i = target.begin(); i != target.end(); ++i)
                 //    m_creature->CastSpell(*i, 39835, true);
                 NeedleSpineTimer = 3000;
             }
@@ -241,9 +241,9 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
 
 bool GOHello_go_najentus_spine(Player *player, GameObject* _GO)
 {
-    if(ScriptedInstance* pInstance = (ScriptedInstance*)_GO->GetInstanceData())
-        if(Creature* Najentus = Unit::GetCreature(*_GO, pInstance->GetData64(DATA_HIGHWARLORDNAJENTUS)))
-            if(((boss_najentusAI*)Najentus->AI())->RemoveImpalingSpine())
+    if (ScriptedInstance* pInstance = (ScriptedInstance*)_GO->GetInstanceData())
+        if (Creature* Najentus = Unit::GetCreature(*_GO, pInstance->GetData64(DATA_HIGHWARLORDNAJENTUS)))
+            if (((boss_najentusAI*)Najentus->AI())->RemoveImpalingSpine())
             {
                 player->CastSpell(player, SPELL_CREATE_NAJENTUS_SPINE, true);
                 //_GO->SetLootState(GO_NOT_READY);

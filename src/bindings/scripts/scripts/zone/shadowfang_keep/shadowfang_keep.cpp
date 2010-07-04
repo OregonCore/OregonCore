@@ -47,7 +47,7 @@ struct OREGON_DLL_DECL npc_shadowfang_prisonerAI : public npc_escortAI
 
     void WaypointReached(uint32 i)
     {
-        if( pInstance && i == 6)
+        if (pInstance && i == 6)
         {
             m_creature->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
             DoScriptText(SAY_FREE, m_creature);
@@ -65,9 +65,9 @@ CreatureAI* GetAI_npc_shadowfang_prisoner(Creature *_Creature)
 
     uint32 eCreature = _Creature->GetEntry();
 
-    if( eCreature == 3849)                                    //adamant
+    if (eCreature == 3849)                                    //adamant
         prisonerAI->AddWaypoint(0, -254.47, 2117.48, 81.17);
-    if( eCreature == 3850)                                    //ashcrombe
+    if (eCreature == 3850)                                    //ashcrombe
         prisonerAI->AddWaypoint(0, -252.35, 2126.71, 81.17);
 
     prisonerAI->AddWaypoint(1, -253.63, 2131.27, 81.28);
@@ -88,7 +88,7 @@ bool GossipHello_npc_shadowfang_prisoner(Player *player, Creature *_Creature)
         return false;
 
     if (pInstance->GetData(TYPE_FREE_NPC) != DONE && pInstance->GetData(TYPE_RETHILGORE) == DONE)
-        player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM_DOOR, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_DOOR, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
 

@@ -221,13 +221,13 @@ struct OREGON_DLL_DECL boss_ragnarosAI : public Scripted_NoMovementAI
 
                 // summon 10 elementals
                 Unit* target = NULL;
-                for(int i = 0; i < 9;i++)
+                for (int i = 0; i < 9;i++)
                 {
                     target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                    if(target)
+                    if (target)
                     {
                         Summoned = m_creature->SummonCreature(12143,target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(),0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,900000);
-                        if(Summoned)
+                        if (Summoned)
                             ((CreatureAI*)Summoned->AI())->AttackStart(target);
                     }
                 }
@@ -242,13 +242,13 @@ struct OREGON_DLL_DECL boss_ragnarosAI : public Scripted_NoMovementAI
                 DoScriptText(SAY_REINFORCEMENTS2, m_creature);
 
                 Unit* target = NULL;
-                for(int i = 0; i < 9;i++)
+                for (int i = 0; i < 9;i++)
                 {
                     target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                    if(target)
+                    if (target)
                     {
                         Summoned = m_creature->SummonCreature(12143,target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(),0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,900000);
-                        if(Summoned)
+                        if (Summoned)
                             ((CreatureAI*)Summoned->AI())->AttackStart(target);
                     }
                 }
@@ -262,10 +262,10 @@ struct OREGON_DLL_DECL boss_ragnarosAI : public Scripted_NoMovementAI
         }else Submerge_Timer -= diff;
 
         //If we are within range melee the target
-        if( m_creature->IsWithinMeleeRange(m_creature->getVictim()))
+        if (m_creature->IsWithinMeleeRange(m_creature->getVictim()))
         {
             //Make sure our attack is ready and we arn't currently casting
-            if( m_creature->isAttackReady() && !m_creature->IsNonMeleeSpellCasted(false))
+            if (m_creature->isAttackReady() && !m_creature->IsNonMeleeSpellCasted(false))
             {
                 m_creature->AttackerStateUpdate(m_creature->getVictim());
                 m_creature->resetAttackTimer();

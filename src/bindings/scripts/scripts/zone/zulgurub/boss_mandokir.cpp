@@ -97,7 +97,7 @@ struct OREGON_DLL_DECL boss_mandokirAI : public ScriptedAI
 
     void KilledUnit(Unit* victim)
     {
-        if(victim->GetTypeId() == TYPEID_PLAYER)
+        if (victim->GetTypeId() == TYPEID_PLAYER)
         {
             ++KillCount;
 
@@ -130,12 +130,12 @@ struct OREGON_DLL_DECL boss_mandokirAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(!UpdateVictim())
+        if (!UpdateVictim())
             return;
 
-        if( m_creature->getVictim() && m_creature->isAlive())
+        if (m_creature->getVictim() && m_creature->isAlive())
         {
-            if(!CombatStart)
+            if (!CombatStart)
             {
                 //At combat Start Mandokir is mounted so we must unmount it first
                 m_creature->Unmount();
@@ -147,17 +147,17 @@ struct OREGON_DLL_DECL boss_mandokirAI : public ScriptedAI
 
             if (Watch_Timer < diff)                         //Every 20 Sec Mandokir will check this
             {
-                if(WatchTarget)                             //If someone is watched and If the Position of the watched target is different from the one stored, or are attacking, mandokir will charge him
+                if (WatchTarget)                             //If someone is watched and If the Position of the watched target is different from the one stored, or are attacking, mandokir will charge him
                 {
                     Unit* pUnit = Unit::GetUnit(*m_creature, WatchTarget);
 
-                    if( pUnit && (
+                    if (pUnit && (
                         targetX != pUnit->GetPositionX() ||
                         targetY != pUnit->GetPositionY() ||
                         targetZ != pUnit->GetPositionZ() ||
                         pUnit->isInCombat()))
                     {
-                        if(m_creature->IsWithinMeleeRange(pUnit))
+                        if (m_creature->IsWithinMeleeRange(pUnit))
                         {
                             DoCast(pUnit,24316);
                         }
@@ -197,7 +197,7 @@ struct OREGON_DLL_DECL boss_mandokirAI : public ScriptedAI
                 endWatch = false;
             }
 
-            if(!someWatched)
+            if (!someWatched)
             {
                 //Cleave
                 if (Cleave_Timer < diff)
@@ -219,14 +219,14 @@ struct OREGON_DLL_DECL boss_mandokirAI : public ScriptedAI
                     TargetInRange = 0;
 
                     std::list<HostileReference*>::iterator i = m_creature->getThreatManager().getThreatList().begin();
-                    for(; i != m_creature->getThreatManager().getThreatList().end(); ++i)
+                    for (; i != m_creature->getThreatManager().getThreatList().end(); ++i)
                     {
                         Unit* pUnit = Unit::GetUnit(*m_creature, (*i)->getUnitGuid());
-                        if(pUnit && m_creature->IsWithinMeleeRange(pUnit))
+                        if (pUnit && m_creature->IsWithinMeleeRange(pUnit))
                             TargetInRange++;
                     }
 
-                    if(TargetInRange > 3)
+                    if (TargetInRange > 3)
                         DoCast(m_creature->getVictim(),SPELL_FEAR);
 
                     Fear_Timer = 4000;
@@ -243,11 +243,11 @@ struct OREGON_DLL_DECL boss_mandokirAI : public ScriptedAI
                 }
             }
             //Checking if Ohgan is dead. If yes Mandokir will enrage.
-            if(Check_Timer < diff)
+            if (Check_Timer < diff)
             {
-                if(pInstance)
+                if (pInstance)
                 {
-                    if(pInstance->GetData(DATA_OHGANISDEAD))
+                    if (pInstance->GetData(DATA_OHGANISDEAD))
                     {
                         if (!RaptorDead)
                         {
@@ -285,18 +285,18 @@ struct OREGON_DLL_DECL mob_ohganAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_OHGAN_DEATH, 0);
     }
 
     void UpdateAI (const uint32 diff)
     {
         //Return since we have no target
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         //SunderArmor_Timer
-        if(SunderArmor_Timer < diff)
+        if (SunderArmor_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_SUNDERARMOR);
             SunderArmor_Timer = 10000 + rand()%5000;

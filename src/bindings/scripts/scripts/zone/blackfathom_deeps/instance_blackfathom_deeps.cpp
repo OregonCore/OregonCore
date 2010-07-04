@@ -51,7 +51,7 @@ public:
 
         if (!players.isEmpty())
         {
-            for(Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+            for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
                 if (Player* plr = itr->getSource())
                     return plr;
@@ -89,7 +89,7 @@ public:
 
     uint32 GetData(uint32 type)
     {
-        if(type == DATA_CANDLES)
+        if (type == DATA_CANDLES)
             return CandlesLighted;
     }
 
@@ -100,7 +100,7 @@ public:
             case DATA_CANDLES:
                 CandlesLighted = data;
 
-                if(CandlesLighted == 4)
+                if (CandlesLighted == 4)
                    HandleGameObject(AkumaiDoorGUID,true);
 
                 break;

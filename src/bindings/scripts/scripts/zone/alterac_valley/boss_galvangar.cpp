@@ -71,7 +71,7 @@ struct OREGON_DLL_DECL boss_galvangarAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(!UpdateVictim())
+        if (!UpdateVictim())
             return;
 
         if (CleaveTimer < diff)
@@ -105,11 +105,11 @@ struct OREGON_DLL_DECL boss_galvangarAI : public ScriptedAI
         }else MortalStrikeTimer -= diff;
 
         // check if creature is not outside of building
-        if(ResetTimer < diff)
+        if (ResetTimer < diff)
         {
             float x, y, z;
             m_creature->GetPosition(x, y, z);
-            if(x > -504)
+            if (x > -504)
         {
                 DoScriptText(YELL_EVADE, m_creature);
                     EnterEvadeMode();

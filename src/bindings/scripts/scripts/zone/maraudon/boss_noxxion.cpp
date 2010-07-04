@@ -70,7 +70,7 @@ struct OREGON_DLL_DECL boss_noxxionAI : public ScriptedAI
         }
         Rand = 0;
         Summoned = DoSpawnCreature(13456, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000);
-        if(Summoned)
+        if (Summoned)
             ((CreatureAI*)Summoned->AI())->AttackStart(victim);
     }
 
@@ -93,7 +93,7 @@ struct OREGON_DLL_DECL boss_noxxionAI : public ScriptedAI
         }
 
         //Return since we have no target
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         //ToxicVolley_Timer

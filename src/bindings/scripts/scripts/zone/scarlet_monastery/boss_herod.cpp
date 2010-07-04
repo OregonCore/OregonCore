@@ -68,7 +68,7 @@ struct OREGON_DLL_DECL boss_herodAI : public ScriptedAI
 
      void JustDied(Unit* killer)
      {
-         for(uint8 i = 0; i < 20; ++i)
+         for (uint8 i = 0; i < 20; ++i)
              m_creature->SummonCreature(ENTRY_SCARLET_TRAINEE, 1939.18, -431.58, 17.09, 6.22, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
      }
 
@@ -165,7 +165,7 @@ CreatureAI* GetAI_mob_scarlet_trainee(Creature* _Creature)
 {
     mob_scarlet_traineeAI* thisAI = new mob_scarlet_traineeAI(_Creature);
 
-    for(uint32 i = 0; i < 12; ++i)
+    for (uint32 i = 0; i < 12; ++i)
         thisAI->AddWaypoint(i, Location[i][0], Location[i][1], Location[i][2], Wait[i][0]);
 
     return ((CreatureAI*)thisAI);

@@ -75,13 +75,13 @@ struct OREGON_DLL_DECL instance_steam_vault : public ScriptedInstance
         AccessPanelHydro = 0;
         AccessPanelMek = 0;
 
-        for(uint8 i = 0; i < ENCOUNTERS; i++)
+        for (uint8 i = 0; i < ENCOUNTERS; i++)
             Encounter[i] = NOT_STARTED;
     }
 
     bool IsEncounterInProgress() const
     {
-        for(uint8 i = 0; i < ENCOUNTERS; i++)
+        for (uint8 i = 0; i < ENCOUNTERS; i++)
              if (Encounter[i] == IN_PROGRESS)
                  return true;
 
@@ -94,7 +94,7 @@ struct OREGON_DLL_DECL instance_steam_vault : public ScriptedInstance
 
         if (!players.isEmpty())
         {
-            for(Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+            for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
                 if (Player* plr = itr->getSource())
                     return plr;
@@ -175,7 +175,7 @@ struct OREGON_DLL_DECL instance_steam_vault : public ScriptedInstance
                 break;
         }
 
-        if(data == DONE || data == SPECIAL)
+        if (data == DONE || data == SPECIAL)
             SaveToDB();
     }
 
@@ -216,7 +216,7 @@ struct OREGON_DLL_DECL instance_steam_vault : public ScriptedInstance
         stream << Encounter[0] << " " << Encounter[1] << " " << Encounter[2] << " " << Encounter[3];
         char* out = new char[stream.str().length() + 1];
         strcpy(out, stream.str().c_str());
-        if(out)
+        if (out)
         {
             OUT_SAVE_INST_DATA_COMPLETE;
             return out;
@@ -226,7 +226,7 @@ struct OREGON_DLL_DECL instance_steam_vault : public ScriptedInstance
 
     void Load(const char* in)
     {
-        if(!in)
+        if (!in)
         {
             OUT_LOAD_INST_DATA_FAIL;
             return;
@@ -234,8 +234,8 @@ struct OREGON_DLL_DECL instance_steam_vault : public ScriptedInstance
         OUT_LOAD_INST_DATA(in);
         std::istringstream stream(in);
         stream >> Encounter[0] >> Encounter[1] >> Encounter[2] >> Encounter[3];
-        for(uint8 i = 0; i < ENCOUNTERS; ++i)
-            if(Encounter[i] == IN_PROGRESS)
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
+            if (Encounter[i] == IN_PROGRESS)
                 Encounter[i] = NOT_STARTED;
         OUT_LOAD_INST_DATA_COMPLETE;
     }

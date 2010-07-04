@@ -80,7 +80,7 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
     {
         DoScriptText(SAY_DEATH, m_creature);
 
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_VOIDREAVEREVENT, DONE);
     }
 
@@ -88,17 +88,17 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
     {
         DoScriptText(SAY_AGGRO, m_creature);
 
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_VOIDREAVEREVENT, IN_PROGRESS);
     }
 
     void UpdateAI(const uint32 diff)
     {
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         // Pounding
-        if(Pounding_Timer < diff)
+        if (Pounding_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_POUNDING);
 
@@ -111,20 +111,20 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
         }else Pounding_Timer -= diff;
 
         // Arcane Orb
-        if(ArcaneOrb_Timer < diff)
+        if (ArcaneOrb_Timer < diff)
         {
             Unit *target = NULL;
             std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
             std::vector<Unit *> target_list;
-            for(std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
+            for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
                 target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
                                                             //18 yard radius minimum
-                if(target && target->GetTypeId() == TYPEID_PLAYER && target->isAlive() && target->GetDistance2d(m_creature) >= 18)
+                if (target && target->GetTypeId() == TYPEID_PLAYER && target->isAlive() && target->GetDistance2d(m_creature) >= 18)
                     target_list.push_back(target);
                 target = NULL;
             }
-            if(target_list.size())
+            if (target_list.size())
                 target = *(target_list.begin()+rand()%target_list.size());
 
             if (target)
@@ -134,19 +134,19 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
         }else ArcaneOrb_Timer -= diff;
 
         // Single Target knock back, reduces aggro
-        if(KnockAway_Timer < diff)
+        if (KnockAway_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_KNOCK_AWAY);
 
             //Drop 25% aggro
-            if(DoGetThreat(m_creature->getVictim()))
+            if (DoGetThreat(m_creature->getVictim()))
                 DoModifyThreatPercent(m_creature->getVictim(),-25);
 
             KnockAway_Timer = 30000;
         }else KnockAway_Timer -= diff;
 
         //Berserk
-        if(Berserk_Timer < diff && !Enraged)
+        if (Berserk_Timer < diff && !Enraged)
         {
             DoCast(m_creature,SPELL_BERSERK);
             Enraged = true;

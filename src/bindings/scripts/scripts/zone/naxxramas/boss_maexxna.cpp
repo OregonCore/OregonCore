@@ -60,7 +60,7 @@ struct OREGON_DLL_DECL mob_webwrapAI : public ScriptedAI
 
     void SetVictim(Unit* victim)
     {
-        if(victim)
+        if (victim)
         {
             victimGUID = victim->GetGUID();
             victim->CastSpell(victim, SPELL_WEBTRAP, true);
@@ -69,13 +69,13 @@ struct OREGON_DLL_DECL mob_webwrapAI : public ScriptedAI
 
     void DamageTaken(Unit *done_by, uint32 &damage)
     {
-        if(damage > m_creature->GetHealth())
+        if (damage > m_creature->GetHealth())
         {
-            if(victimGUID)
+            if (victimGUID)
             {
                 Unit* victim = NULL;
                 victim = Unit::GetUnit((*m_creature), victimGUID);
-                if(victim)
+                if (victim)
                     victim->RemoveAurasDueToSpell(SPELL_WEBTRAP);
             }
         }
@@ -125,31 +125,31 @@ struct OREGON_DLL_DECL boss_maexxnaAI : public ScriptedAI
         std::vector<Unit *> targets;
 
         //This spell doesn't work if we only have 1 player on threat list
-        if(t_list.size() < 2)
+        if (t_list.size() < 2)
             return;
 
         //begin + 1 , so we don't target the one with the highest threat
         std::list<HostileReference *>::iterator itr = t_list.begin();
         std::advance(itr, 1);
-        for( ; itr != t_list.end(); ++itr)                   //store the threat list in a different container
+        for (; itr != t_list.end(); ++itr)                   //store the threat list in a different container
         {
             Unit *target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
                                                             //only on alive players
-            if(target && target->isAlive() && target->GetTypeId() == TYPEID_PLAYER )
-                targets.push_back( target);
+            if (target && target->isAlive() && target->GetTypeId() == TYPEID_PLAYER)
+                targets.push_back(target);
         }
 
-        while(targets.size() > 3)
+        while (targets.size() > 3)
                                                             //cut down to size if we have more than 3 targets
             targets.erase(targets.begin()+rand()%targets.size());
 
         int i = 0;
-        for(std::vector<Unit *>::iterator itr = targets.begin(); itr != targets.end(); ++itr, ++i)
+        for (std::vector<Unit *>::iterator itr = targets.begin(); itr != targets.end(); ++itr, ++i)
         {
             // Teleport the 3 targets to a location on the wall and summon a Web Wrap on them
             Unit *target = *itr;
             Creature* Wrap = NULL;
-            if(target)
+            if (target)
             {
                 switch(i)
                 {
@@ -166,7 +166,7 @@ struct OREGON_DLL_DECL boss_maexxnaAI : public ScriptedAI
                         Wrap = m_creature->SummonCreature(16486, LOC_X3, LOC_Y3, LOC_Z3, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
                         break;
                 }
-                if(Wrap)
+                if (Wrap)
                 {
                     Wrap->setFaction(m_creature->getFaction());
                     ((mob_webwrapAI*)Wrap->AI())->SetVictim(target);

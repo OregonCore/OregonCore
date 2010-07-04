@@ -58,7 +58,7 @@ struct OREGON_DLL_DECL instance_scarlet_monastery : public ScriptedInstance
         WhitemaneGUID = 0;
         DoorHighInquisitorGUID = 0;
 
-        for(uint8 i = 0; i < ENCOUNTERS; i++)
+        for (uint8 i = 0; i < ENCOUNTERS; i++)
             Encounter[i] = NOT_STARTED;
     }
 
@@ -91,21 +91,21 @@ struct OREGON_DLL_DECL instance_scarlet_monastery : public ScriptedInstance
         case GAMEOBJECT_PUMPKIN_SHRINE:
             {
             GameObject *Shrine = instance->GetGameObject(PumpkinShrineGUID);
-            if(Shrine)
+            if (Shrine)
                 Shrine->SetUInt32Value(GAMEOBJECT_STATE,1);
             }break;
         case DATA_HORSEMAN_EVENT:
             if (data == DONE)
             {
-                for(std::set<uint64>::iterator itr = HorsemanAdds.begin(); itr != HorsemanAdds.end(); ++itr)
+                for (std::set<uint64>::iterator itr = HorsemanAdds.begin(); itr != HorsemanAdds.end(); ++itr)
                 {
                     Creature* add = instance->GetCreature(*itr);
-                    if(add && add->isAlive())
+                    if (add && add->isAlive())
                         add->DealDamage(add, add->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 }
                 HorsemanAdds.clear();
                 GameObject *Shrine = instance->GetGameObject(PumpkinShrineGUID);
-                if(Shrine)
+                if (Shrine)
                     Shrine->SetUInt32Value(GAMEOBJECT_STATE,1);
             }
             break;

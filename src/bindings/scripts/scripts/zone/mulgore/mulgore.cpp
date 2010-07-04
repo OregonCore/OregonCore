@@ -38,17 +38,17 @@ EndContentData */
 bool GossipHello_npc_skorn_whitecloud(Player *player, Creature *_Creature)
 {
     if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
     if (!player->GetQuestRewardStatus(770))
-        player->ADD_GOSSIP_ITEM( 0, GOSSIP_SW, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF );
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_SW, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
     player->SEND_GOSSIP_MENU(522,_Creature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_skorn_whitecloud(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_skorn_whitecloud(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF)
         player->SEND_GOSSIP_MENU(523,_Creature->GetGUID());
@@ -78,7 +78,7 @@ struct OREGON_DLL_DECL npc_kyle_frenziedAI : public ScriptedAI
 
     void SpellHit(Unit *caster, const SpellEntry* spell)
     {   // we can feed him without any quest
-        if(spell->Id == 42222 && caster->GetTypeId() == TYPEID_PLAYER && ((Player*)caster)->GetTeam() == HORDE)
+        if (spell->Id == 42222 && caster->GetTypeId() == TYPEID_PLAYER && ((Player*)caster)->GetTeam() == HORDE)
         {
             STATE = 1;
             player = caster->GetGUID();
@@ -97,14 +97,14 @@ struct OREGON_DLL_DECL npc_kyle_frenziedAI : public ScriptedAI
 
     void MovementInform(uint32 type, uint32 id)
     {
-        if(type == POINT_MOTION_TYPE)
+        if (type == POINT_MOTION_TYPE)
         {
             switch(STATE)
             {
             case 1:
                 {
                 Unit *plr = Unit::GetUnit((*m_creature),player);
-                if(plr)
+                if (plr)
                     m_creature->SetOrientation(m_creature->GetAngle(plr));
                 m_creature->HandleEmoteCommand(EMOTE_STATE_USESTANDING);    //eat
                 WorldPacket data;
@@ -126,7 +126,7 @@ struct OREGON_DLL_DECL npc_kyle_frenziedAI : public ScriptedAI
     {
         if (!STATE || STATE == 4)
             return;
-        if(wait < diff)
+        if (wait < diff)
         {
             switch(STATE)
             {
@@ -138,7 +138,7 @@ struct OREGON_DLL_DECL npc_kyle_frenziedAI : public ScriptedAI
             case 3:
                 STATE = 4;  //go home
                 Player *plr = Unit::GetPlayer(player);
-                if(plr && plr->GetQuestStatus(11129) == QUEST_STATUS_INCOMPLETE)
+                if (plr && plr->GetQuestStatus(11129) == QUEST_STATUS_INCOMPLETE)
                     plr->CompleteQuest(11129);
                 float x, y, z, z2, angle;
                 angle = m_creature->GetAngle(-2146, -430);
@@ -236,7 +236,7 @@ struct OREGON_DLL_DECL npc_plains_visionAI  : public ScriptedAI
 
     void MovementInform(uint32 type, uint32 id)
     {
-        if(type != POINT_MOTION_TYPE)
+        if (type != POINT_MOTION_TYPE)
             return;
 
         if (id < amountWP)

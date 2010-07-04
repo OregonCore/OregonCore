@@ -137,12 +137,12 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
         Drinking = false;
         DrinkInturrupted = false;
 
-        if(pInstance)
+        if (pInstance)
         {
             // Not in progress
             pInstance->SetData(DATA_SHADEOFARAN_EVENT, NOT_STARTED);
 
-            if(GameObject* Door = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
+            if (GameObject* Door = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
                 Door->SetGoState(0);
         }
     }
@@ -160,11 +160,11 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
     {
         DoScriptText(SAY_DEATH, m_creature);
 
-        if(pInstance)
+        if (pInstance)
         {
             pInstance->SetData(DATA_SHADEOFARAN_EVENT, DONE);
 
-            if(GameObject* Door = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
+            if (GameObject* Door = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
                 Door->SetGoState(0);
         }
     }
@@ -178,10 +178,10 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
         case 2: DoScriptText(SAY_AGGRO3, m_creature); break;
         }
 
-        if(pInstance)
+        if (pInstance)
         {
             pInstance->SetData(DATA_SHADEOFARAN_EVENT, IN_PROGRESS);
-            if(GameObject* Door = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
+            if (GameObject* Door = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
                 Door->SetGoState(1);
         }
     }
@@ -191,26 +191,26 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
         std::vector<Unit*> targets;
         std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
 
-        if(!t_list.size())
+        if (!t_list.size())
             return;
 
         //store the threat list in a different container
-        for(std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
+        for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
         {
             Unit *target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
             //only on alive players
-            if(target && target->isAlive() && target->GetTypeId() == TYPEID_PLAYER )
-                targets.push_back( target);
+            if (target && target->isAlive() && target->GetTypeId() == TYPEID_PLAYER)
+                targets.push_back(target);
         }
 
         //cut down to size if we have more than 3 targets
-        while(targets.size() > 3)
+        while (targets.size() > 3)
             targets.erase(targets.begin()+rand()%targets.size());
 
         uint32 i = 0;
-        for(std::vector<Unit*>::iterator itr = targets.begin(); itr != targets.end(); ++itr)
+        for (std::vector<Unit*>::iterator itr = targets.begin(); itr != targets.end(); ++itr)
         {
-            if(*itr)
+            if (*itr)
             {
                 FlameWreathTarget[i] = (*itr)->GetGUID();
                 FWTargPosX[i] = (*itr)->GetPositionX();
@@ -223,16 +223,16 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
-        if(CloseDoorTimer)
+        if (CloseDoorTimer)
         {
-            if(CloseDoorTimer <= diff)
+            if (CloseDoorTimer <= diff)
             {
-                if(pInstance)
+                if (pInstance)
                 {
-                    if(GameObject* Door = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
+                    if (GameObject* Door = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
                         Door->SetGoState(1);
                     CloseDoorTimer = 0;
                 }
@@ -261,7 +261,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
         else FrostCooldown = 0;
         }
 
-        if(!Drinking && m_creature->GetMaxPower(POWER_MANA) && (m_creature->GetPower(POWER_MANA)*100 / m_creature->GetMaxPower(POWER_MANA)) < 20)
+        if (!Drinking && m_creature->GetMaxPower(POWER_MANA) && (m_creature->GetPower(POWER_MANA)*100 / m_creature->GetMaxPower(POWER_MANA)) < 20)
         {
             Drinking = true;
             m_creature->InterruptNonMeleeSpells(false);
@@ -307,7 +307,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
             return;
 
         //Normal casts
-        if(NormalCastTimer < diff)
+        if (NormalCastTimer < diff)
         {
             if (!m_creature->IsNonMeleeSpellCasted(false))
             {
@@ -346,7 +346,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
             NormalCastTimer = 1000;
         }else NormalCastTimer -= diff;
 
-        if(SecondarySpellTimer < diff)
+        if (SecondarySpellTimer < diff)
         {
             switch (rand()%2)
             {
@@ -362,7 +362,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
             SecondarySpellTimer = 5000 + (rand()%15000);
         }else SecondarySpellTimer -= diff;
 
-        if(SuperCastTimer < diff)
+        if (SuperCastTimer < diff)
         {
             uint8 Available[2];
 
@@ -435,7 +435,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
             SuperCastTimer = 35000 + (rand()%5000);
         }else SuperCastTimer -= diff;
 
-        if(!ElementalsSpawned && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 40)
+        if (!ElementalsSpawned && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 40)
         {
             ElementalsSpawned = true;
 
@@ -452,7 +452,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
             DoScriptText(SAY_ELEMENTALS, m_creature);
         }
 
-        if(BerserkTimer < diff)
+        if (BerserkTimer < diff)
         {
             for (uint32 i = 0; i < 5; i++)
             {
@@ -543,10 +543,10 @@ struct OREGON_DLL_DECL water_elementalAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
-        if(CastTimer < diff)
+        if (CastTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_WATERBOLT);
             CastTimer = 2000 + (rand()%3000);

@@ -73,7 +73,7 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
 
         Enraged = false;
 
-        if(pInstance)
+        if (pInstance)
         {
             if (m_creature->isDead())
                 pInstance->SetData(DATA_VEXALLUS_EVENT, DONE);
@@ -95,7 +95,7 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
 
             GameObject* Door = NULL;
             Door = GameObject::GetGameObject((*m_creature), pInstance->GetData64(DATA_VEXALLUS_DOOR));
-            if(Door)
+            if (Door)
                 Door->SetGoState(0);
         }
     }
@@ -109,15 +109,15 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
-        if(m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 11)
+        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 11)
         {
             Enraged = true;
         }
 
-        if(!Enraged)
+        if (!Enraged)
         {
             //used for check, when Vexallus cast adds 85%, 70%, 55%, 40%, 25%
             if ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < (100-(SpawnAddInterval*(AlreadySpawnedAmount+1))))
@@ -131,7 +131,7 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
                 if (PureEnergyCreature && target)
                     PureEnergyCreature->AI()->AttackStart(target);
 
-                if(Heroic)                                  // *Heroic mode only - he summons two instead of one.
+                if (Heroic)                                  // *Heroic mode only - he summons two instead of one.
                 {
                     PureEnergyCreature = DoSpawnCreature(CREATURE_PURE_ENERGY, -10, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                     target = SelectUnit(SELECT_TARGET_RANDOM, 0);
@@ -142,24 +142,24 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
                 ++AlreadySpawnedAmount;
             };
 
-            if(ChainLightningTimer < diff)
+            if (ChainLightningTimer < diff)
             {
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(target, SPELL_CHAIN_LIGHTNING);
                 ChainLightningTimer = 10000;
             }else ChainLightningTimer -= diff;
 
-            if(ArcaneShockTimer < diff)
+            if (ArcaneShockTimer < diff)
             {
                 Unit* target = NULL;
                 target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                if(target)
+                if (target)
                     DoCast(target, SPELL_ARCANE_SHOCK);
                 ArcaneShockTimer = 8000;
             }else ArcaneShockTimer -= diff;
         }else
         {
-            if(OverloadTimer < diff)
+            if (OverloadTimer < diff)
             {
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(target, SPELL_OVERLOAD);
@@ -199,15 +199,15 @@ struct OREGON_DLL_DECL mob_pure_energyAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(!UpdateVictim())
+        if (!UpdateVictim())
             return;
 
-        if(EnergyBoltTimer < diff)
+        if (EnergyBoltTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_ENERGY_BOLT);
             EnergyBoltTimer = 1700;
         }else   EnergyBoltTimer -= diff;
-        if(VisualTimer < diff)
+        if (VisualTimer < diff)
         {
             DoCast(m_creature->getVictim(), ASTRAL_FLARE_VISUAL, true);
             VisualTimer = 1000;

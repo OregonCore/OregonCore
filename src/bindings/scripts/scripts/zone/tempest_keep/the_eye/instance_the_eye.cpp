@@ -63,14 +63,14 @@ struct OREGON_DLL_DECL instance_the_eye : public ScriptedInstance
         KaelthasEventPhase = 0;
         AlarEventPhase = 0;
 
-        for(uint8 i = 0; i < ENCOUNTERS; i++)
+        for (uint8 i = 0; i < ENCOUNTERS; i++)
             Encounters[i] = NOT_STARTED;
     }
 
     bool IsEncounterInProgress() const
     {
-        for(uint8 i = 0; i < ENCOUNTERS; i++)
-            if(Encounters[i] == IN_PROGRESS) return true;
+        for (uint8 i = 0; i < ENCOUNTERS; i++)
+            if (Encounters[i] == IN_PROGRESS) return true;
 
         return false;
     }
@@ -110,24 +110,24 @@ struct OREGON_DLL_DECL instance_the_eye : public ScriptedInstance
         {
             case DATA_ALAREVENT:
                 AlarEventPhase = data;
-                if(Encounters[0] != DONE)
+                if (Encounters[0] != DONE)
                     Encounters[0] = data;
                 break;
             case DATA_HIGHASTROMANCERSOLARIANEVENT:
-                if(Encounters[1] != DONE)
+                if (Encounters[1] != DONE)
                     Encounters[1] = data;
                 break;
             case DATA_VOIDREAVEREVENT:
-                if(Encounters[2] != DONE)
+                if (Encounters[2] != DONE)
                     Encounters[2] = data;
                 break;
             case DATA_KAELTHASEVENT:
                 KaelthasEventPhase = data;
-                if(Encounters[3] != DONE)
+                if (Encounters[3] != DONE)
                     Encounters[3] = data;
                 break;
         }
-        if(data == DONE)
+        if (data == DONE)
             SaveToDB();
     }
 
@@ -150,7 +150,7 @@ struct OREGON_DLL_DECL instance_the_eye : public ScriptedInstance
         stream << Encounters[0] << " " << Encounters[1] << " " << Encounters[2] << " " << Encounters[3];
         char* out = new char[stream.str().length() + 1];
         strcpy(out, stream.str().c_str());
-        if(out)
+        if (out)
         {
             OUT_SAVE_INST_DATA_COMPLETE;
             return out;
@@ -160,7 +160,7 @@ struct OREGON_DLL_DECL instance_the_eye : public ScriptedInstance
 
     void Load(const char* in)
     {
-        if(!in)
+        if (!in)
         {
             OUT_LOAD_INST_DATA_FAIL;
             return;
@@ -168,8 +168,8 @@ struct OREGON_DLL_DECL instance_the_eye : public ScriptedInstance
         OUT_LOAD_INST_DATA(in);
         std::istringstream stream(in);
         stream >> Encounters[0] >> Encounters[1] >> Encounters[2] >> Encounters[3];
-        for(uint8 i = 0; i < ENCOUNTERS; ++i)
-            if(Encounters[i] == IN_PROGRESS)                // Do not load an encounter as "In Progress" - reset it instead.
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
+            if (Encounters[i] == IN_PROGRESS)                // Do not load an encounter as "In Progress" - reset it instead.
                 Encounters[i] = NOT_STARTED;
         OUT_LOAD_INST_DATA_COMPLETE;
     }

@@ -20,11 +20,11 @@ struct TSpellSummary
 
 void SummonList::DoZoneInCombat(uint32 entry)
 {
-    for (iterator i = begin(); i != end(); )
+    for (iterator i = begin(); i != end();)
     {
         Creature *summon = Unit::GetCreature(*m_creature, *i);
         ++i;
-        if(summon && summon->IsAIEnabled
+        if (summon && summon->IsAIEnabled
             && (!entry || summon->GetEntry() == entry))
             summon->AI()->DoZoneInCombat();
     }
@@ -32,11 +32,11 @@ void SummonList::DoZoneInCombat(uint32 entry)
 
 void SummonList::DoAction(uint32 entry, uint32 info)
 {
-    for (iterator i = begin(); i != end(); )
+    for (iterator i = begin(); i != end();)
     {
         Creature *summon = Unit::GetCreature(*m_creature, *i);
         ++i;
-        if(summon && summon->IsAIEnabled
+        if (summon && summon->IsAIEnabled
             && (!entry || summon->GetEntry() == entry))
             summon->AI()->DoAction(info);
     }
@@ -44,12 +44,12 @@ void SummonList::DoAction(uint32 entry, uint32 info)
 
 void SummonList::DespawnEntry(uint32 entry)
 {
-    for (iterator i = begin(); i != end(); )
+    for (iterator i = begin(); i != end();)
     {
         Creature *summon = Unit::GetCreature(*m_creature, *i);
-        if(!summon)
+        if (!summon)
             erase(i++);
-        else if(summon->GetEntry() == entry)
+        else if (summon->GetEntry() == entry)
         {
             erase(i++);
             summon->setDeathState(JUST_DIED);
@@ -62,9 +62,9 @@ void SummonList::DespawnEntry(uint32 entry)
 
 void SummonList::DespawnAll()
 {
-    for(iterator i = begin(); i != end(); ++i)
+    for (iterator i = begin(); i != end(); ++i)
     {
-        if(Creature *summon = Unit::GetCreature(*m_creature, *i))
+        if (Creature *summon = Unit::GetCreature(*m_creature, *i))
         {
             summon->setDeathState(JUST_DIED);
             summon->RemoveCorpse();
@@ -87,7 +87,7 @@ void ScriptedAI::AttackStartNoMove(Unit* pWho)
     if (!pWho)
         return;
 
-    if(m_creature->Attack(pWho, false))
+    if (m_creature->Attack(pWho, false))
         DoStartNoMovement(pWho);
 }
 
@@ -165,7 +165,7 @@ void ScriptedAI::DoSay(const char* text, uint32 language, Unit* target, bool Say
     if (target)
     {
         m_creature->Say(text, language, target->GetGUID());
-        if(SayEmote)
+        if (SayEmote)
             m_creature->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
     }
     else m_creature->Say(text, language, 0);
@@ -226,7 +226,7 @@ Unit* ScriptedAI::SelectUnit(SelectAggroTarget target, uint32 uiPosition)
     switch (target)
     {
     case SELECT_TARGET_RANDOM:
-        advance (itr , uiPosition +  (rand() % (threatlist.size() - uiPosition ) ));
+        advance (itr , uiPosition +  (rand() % (threatlist.size() - uiPosition)));
         return Unit::GetUnit((*m_creature),(*itr)->getUnitGuid());
         break;
 
@@ -386,19 +386,19 @@ void FillSpellSummary()
         for (uint32 j = 0; j < 3; ++j)
         {
             //Spell targets self
-            if (pTempSpell->EffectImplicitTargetA[j] == TARGET_UNIT_CASTER )
+            if (pTempSpell->EffectImplicitTargetA[j] == TARGET_UNIT_CASTER)
                 SpellSummary[i].Targets |= 1 << (SELECT_TARGET_SELF-1);
 
             //Spell targets a single enemy
             if (pTempSpell->EffectImplicitTargetA[j] == TARGET_UNIT_TARGET_ENEMY ||
-                pTempSpell->EffectImplicitTargetA[j] == TARGET_DST_TARGET_ENEMY )
+                pTempSpell->EffectImplicitTargetA[j] == TARGET_DST_TARGET_ENEMY)
                 SpellSummary[i].Targets |= 1 << (SELECT_TARGET_SINGLE_ENEMY-1);
 
             //Spell targets AoE at enemy
             if (pTempSpell->EffectImplicitTargetA[j] == TARGET_UNIT_AREA_ENEMY_SRC ||
                 pTempSpell->EffectImplicitTargetA[j] == TARGET_UNIT_AREA_ENEMY_DST ||
                 pTempSpell->EffectImplicitTargetA[j] == TARGET_SRC_CASTER ||
-                pTempSpell->EffectImplicitTargetA[j] == TARGET_DEST_DYNOBJ_ENEMY )
+                pTempSpell->EffectImplicitTargetA[j] == TARGET_DEST_DYNOBJ_ENEMY)
                 SpellSummary[i].Targets |= 1 << (SELECT_TARGET_AOE_ENEMY-1);
 
             //Spell targets an enemy
@@ -407,13 +407,13 @@ void FillSpellSummary()
                 pTempSpell->EffectImplicitTargetA[j] == TARGET_UNIT_AREA_ENEMY_SRC ||
                 pTempSpell->EffectImplicitTargetA[j] == TARGET_UNIT_AREA_ENEMY_DST ||
                 pTempSpell->EffectImplicitTargetA[j] == TARGET_SRC_CASTER ||
-                pTempSpell->EffectImplicitTargetA[j] == TARGET_DEST_DYNOBJ_ENEMY )
+                pTempSpell->EffectImplicitTargetA[j] == TARGET_DEST_DYNOBJ_ENEMY)
                 SpellSummary[i].Targets |= 1 << (SELECT_TARGET_ANY_ENEMY-1);
 
             //Spell targets a single friend(or self)
             if (pTempSpell->EffectImplicitTargetA[j] == TARGET_UNIT_CASTER ||
                 pTempSpell->EffectImplicitTargetA[j] == TARGET_UNIT_TARGET_ALLY ||
-                pTempSpell->EffectImplicitTargetA[j] == TARGET_UNIT_TARGET_PARTY )
+                pTempSpell->EffectImplicitTargetA[j] == TARGET_UNIT_TARGET_PARTY)
                 SpellSummary[i].Targets |= 1 << (SELECT_TARGET_SINGLE_FRIEND-1);
 
             //Spell targets aoe friends
@@ -435,18 +435,18 @@ void FillSpellSummary()
             if (pTempSpell->Effect[j] == SPELL_EFFECT_SCHOOL_DAMAGE ||
                 pTempSpell->Effect[j] == SPELL_EFFECT_INSTAKILL ||
                 pTempSpell->Effect[j] == SPELL_EFFECT_ENVIRONMENTAL_DAMAGE ||
-                pTempSpell->Effect[j] == SPELL_EFFECT_HEALTH_LEECH )
+                pTempSpell->Effect[j] == SPELL_EFFECT_HEALTH_LEECH)
                 SpellSummary[i].Effects |= 1 << (SELECT_EFFECT_DAMAGE-1);
 
             //Make sure that this spell includes a healing effect (or an apply aura with a periodic heal)
             if (pTempSpell->Effect[j] == SPELL_EFFECT_HEAL ||
                 pTempSpell->Effect[j] == SPELL_EFFECT_HEAL_MAX_HEALTH ||
                 pTempSpell->Effect[j] == SPELL_EFFECT_HEAL_MECHANICAL ||
-                (pTempSpell->Effect[j] == SPELL_EFFECT_APPLY_AURA  && pTempSpell->EffectApplyAuraName[j] == 8 ))
+                (pTempSpell->Effect[j] == SPELL_EFFECT_APPLY_AURA  && pTempSpell->EffectApplyAuraName[j] == 8))
                 SpellSummary[i].Effects |= 1 << (SELECT_EFFECT_HEALING-1);
 
             //Make sure that this spell applies an aura
-            if (pTempSpell->Effect[j] == SPELL_EFFECT_APPLY_AURA )
+            if (pTempSpell->Effect[j] == SPELL_EFFECT_APPLY_AURA)
                 SpellSummary[i].Effects |= 1 << (SELECT_EFFECT_AURA-1);
         }
     }
@@ -466,20 +466,20 @@ void ScriptedAI::DoResetThreat()
     {
         Unit* pUnit = Unit::GetUnit((*m_creature), (*itr)->getUnitGuid());
 
-        if(pUnit && DoGetThreat(pUnit))
+        if (pUnit && DoGetThreat(pUnit))
             DoModifyThreatPercent(pUnit, -100);
     }
 }
 
 float ScriptedAI::DoGetThreat(Unit* pUnit)
 {
-    if(!pUnit) return 0.0f;
+    if (!pUnit) return 0.0f;
     return m_creature->getThreatManager().getThreat(pUnit);
 }
 
 void ScriptedAI::DoModifyThreatPercent(Unit* pUnit, int32 pct)
 {
-    if(!pUnit) return;
+    if (!pUnit) return;
     m_creature->getThreatManager().modifyThreatPercent(pUnit, pct);
 }
 
@@ -497,9 +497,9 @@ void ScriptedAI::DoTeleportTo(const float fPos[4])
 
 void ScriptedAI::DoTeleportPlayer(Unit* pUnit, float fX, float fY, float fZ, float fO)
 {
-    if(!pUnit || pUnit->GetTypeId() != TYPEID_PLAYER)
+    if (!pUnit || pUnit->GetTypeId() != TYPEID_PLAYER)
     {
-        if(pUnit)
+        if (pUnit)
             error_log("TSCR: Creature %u (Entry: %u) Tried to teleport non-player unit (Type: %u GUID: %u) to x: %f y:%f z: %f o: %f. Aborted.", m_creature->GetGUID(), m_creature->GetEntry(), pUnit->GetTypeId(), pUnit->GetGUID(), fX, fY, fZ, fO);
         return;
     }
@@ -522,7 +522,7 @@ void ScriptedAI::DoTeleportAll(float fX, float fY, float fZ, float fO)
 
 Unit* FindCreature(uint32 entry, float range, Unit* Finder)
 {
-    if(!Finder)
+    if (!Finder)
         return NULL;
     Creature* target = NULL;
     Oregon::AllCreaturesOfEntryInRange check(Finder, entry, range);
@@ -533,7 +533,7 @@ Unit* FindCreature(uint32 entry, float range, Unit* Finder)
 
 GameObject* FindGameObject(uint32 entry, float range, Unit* Finder)
 {
-    if(!Finder)
+    if (!Finder)
         return NULL;
     GameObject* target = NULL;
     Oregon::AllGameObjectsWithEntryInGrid go_check(entry);
@@ -691,13 +691,13 @@ void LoadOverridenSQLData()
     GameObjectInfo *goInfo;
 
     // Sunwell Plateau : Kalecgos : Spectral Rift
-    if(goInfo = GOBJECT(187055))
-        if(goInfo->type == GAMEOBJECT_TYPE_GOOBER)
+    if (goInfo = GOBJECT(187055))
+        if (goInfo->type == GAMEOBJECT_TYPE_GOOBER)
             goInfo->goober.lockId = 57; // need LOCKTYPE_QUICK_OPEN
 
     // Naxxramas : Sapphiron Birth
-    if(goInfo = GOBJECT(181356))
-        if(goInfo->type == GAMEOBJECT_TYPE_TRAP)
+    if (goInfo = GOBJECT(181356))
+        if (goInfo->type == GAMEOBJECT_TYPE_TRAP)
             goInfo->trap.radius = 50;
 }
 
@@ -707,7 +707,7 @@ void LoadOverridenDBCData()
     for (uint32 i = 0; i < GetSpellStore()->GetNumRows(); ++i)
     {
         spellInfo = GET_SPELL(i);
-        if(!spellInfo)
+        if (!spellInfo)
             continue;
 
         switch(i)

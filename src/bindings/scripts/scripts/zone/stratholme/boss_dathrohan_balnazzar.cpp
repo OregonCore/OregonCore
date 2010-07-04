@@ -247,7 +247,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
                 if (rand()%100 < 60) //60% chance to cast
                 {
                     DoCast(m_creature->getVictim(),SPELL_PSYCHICSCREAM);
-                    if(DoGetThreat(m_creature->getVictim()))
+                    if (DoGetThreat(m_creature->getVictim()))
                         DoModifyThreatPercent(m_creature->getVictim(),-50);
                 }
                 //15 seconds until we should cast this again

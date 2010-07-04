@@ -49,11 +49,11 @@ bool GossipHello_npc_brazen(Player *player, Creature *_Creature)
     return true;
 }
 
-bool GossipSelect_npc_brazen(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_brazen(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
-        if( !player->HasItemCount(ITEM_ENTRY_BOMBS,1) )
+        if (!player->HasItemCount(ITEM_ENTRY_BOMBS,1))
             player->SEND_GOSSIP_MENU(9780, _Creature->GetGUID());
         else
         {
@@ -76,15 +76,15 @@ bool GossipSelect_npc_brazen(Player *player, Creature *_Creature, uint32 sender,
 
 bool GossipHello_npc_erozion(Player *player, Creature *_Creature)
 {
-    if( _Creature->isQuestGiver() )
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+    if (_Creature->isQuestGiver())
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
     ScriptedInstance* pInstance = ((ScriptedInstance*)_Creature->GetInstanceData());
-    if( pInstance && pInstance->GetData(TYPE_BARREL_DIVERSION) != DONE && !player->HasItemCount(ITEM_ENTRY_BOMBS,1) )
-        player->ADD_GOSSIP_ITEM( 0, "I need a pack of Incendiary Bombs.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    if (pInstance && pInstance->GetData(TYPE_BARREL_DIVERSION) != DONE && !player->HasItemCount(ITEM_ENTRY_BOMBS,1))
+        player->ADD_GOSSIP_ITEM(0, "I need a pack of Incendiary Bombs.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    if( !player->GetQuestRewardStatus(QUEST_ENTRY_RETURN) && player->GetQuestStatus(QUEST_ENTRY_RETURN) == QUEST_STATUS_COMPLETE )
-        player->ADD_GOSSIP_ITEM( 0, "[PH] Teleport please, i'm tired.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+    if (!player->GetQuestRewardStatus(QUEST_ENTRY_RETURN) && player->GetQuestStatus(QUEST_ENTRY_RETURN) == QUEST_STATUS_COMPLETE)
+        player->ADD_GOSSIP_ITEM(0, "[PH] Teleport please, i'm tired.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
 
     player->SEND_GOSSIP_MENU(9778, _Creature->GetGUID());
 
@@ -93,17 +93,17 @@ bool GossipHello_npc_erozion(Player *player, Creature *_Creature)
 
 bool GossipSelect_npc_erozion(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if( action == GOSSIP_ACTION_INFO_DEF+1 )
+    if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
         ItemPosCountVec dest;
         uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_ENTRY_BOMBS, 1);
-        if( msg == EQUIP_ERR_OK )
+        if (msg == EQUIP_ERR_OK)
         {
              player->StoreNewItem(dest, ITEM_ENTRY_BOMBS, true);
         }
         player->SEND_GOSSIP_MENU(9515, _Creature->GetGUID());
     }
-    if( action == GOSSIP_ACTION_INFO_DEF+2 )
+    if (action == GOSSIP_ACTION_INFO_DEF+2)
     {
         player->CLOSE_GOSSIP_MENU();
     }

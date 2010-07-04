@@ -42,7 +42,7 @@ void npc_escortAI::AttackStart(Unit* pWho)
 
     if (m_creature->Attack(pWho, true))
     {
-        if(HasEscortState(STATE_ESCORT_ESCORTING))
+        if (HasEscortState(STATE_ESCORT_ESCORTING))
             m_creature->SetHomePosition(m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ(), m_creature->GetOrientation());
 
         if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() == POINT_MOTION_TYPE)
@@ -93,7 +93,7 @@ bool npc_escortAI::AssistPlayerInCombat(Unit* pWho)
 
 void npc_escortAI::MoveInLineOfSight(Unit* pWho)
 {
-    if (!m_creature->hasUnitState(UNIT_STAT_STUNNED) && pWho->isTargetableForAttack() && pWho->isInAccessiblePlaceFor(m_creature))
+    if (!m_creature->hasUnitState(UNIT_STAT_STUNNED) && pWho->isTargetableForAttack() && pWho->isInAccessiblePlacefor (m_creature))
     {
         if (HasEscortState(STATE_ESCORT_ESCORTING) && AssistPlayerInCombat(pWho))
             return;
@@ -446,7 +446,7 @@ void npc_escortAI::Start(bool bIsActiveAttacker, bool bRun, uint64 uiPlayerGUID,
         return;
     }
 
-    if(!ScriptWP) // sd2 never adds wp in script, but tc does
+    if (!ScriptWP) // sd2 never adds wp in script, but tc does
     {
 
     if (!WaypointList.empty())

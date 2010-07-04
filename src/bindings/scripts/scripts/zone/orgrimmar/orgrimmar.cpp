@@ -40,7 +40,7 @@ EndContentData */
 bool GossipHello_npc_neeru_fireblade(Player *player, Creature *_Creature)
 {
     if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
     if (player->GetQuestStatus(QUEST_5727) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HNF, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
@@ -94,16 +94,16 @@ struct OREGON_DLL_DECL npc_shenthulAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if( CanEmote )
-            if( Reset_Timer < diff )
+        if (CanEmote)
+            if (Reset_Timer < diff)
         {
-            if( Player* temp = Unit::GetPlayer(playerGUID) )
+            if (Player* temp = Unit::GetPlayer(playerGUID))
                 temp->FailQuest(QUEST_2460);
             Reset();
         } else Reset_Timer -= diff;
 
-        if( CanTalk && !CanEmote )
-            if( Salute_Timer < diff )
+        if (CanTalk && !CanEmote)
+            if (Salute_Timer < diff)
         {
             m_creature->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
             CanEmote = true;
@@ -123,7 +123,7 @@ CreatureAI* GetAI_npc_shenthul(Creature *_Creature)
 
 bool QuestAccept_npc_shenthul(Player* player, Creature* creature, Quest const* quest)
 {
-    if( quest->GetQuestId() == QUEST_2460 )
+    if (quest->GetQuestId() == QUEST_2460)
     {
         ((npc_shenthulAI*)creature->AI())->CanTalk = true;
         ((npc_shenthulAI*)creature->AI())->playerGUID = player->GetGUID();
@@ -133,8 +133,8 @@ bool QuestAccept_npc_shenthul(Player* player, Creature* creature, Quest const* q
 
 bool ReciveEmote_npc_shenthul(Player *player, Creature *_Creature, uint32 emote)
 {
-    if( emote == TEXTEMOTE_SALUTE && player->GetQuestStatus(QUEST_2460) == QUEST_STATUS_INCOMPLETE )
-        if( ((npc_shenthulAI*)_Creature->AI())->CanEmote )
+    if (emote == TEXTEMOTE_SALUTE && player->GetQuestStatus(QUEST_2460) == QUEST_STATUS_INCOMPLETE)
+        if (((npc_shenthulAI*)_Creature->AI())->CanEmote)
     {
         player->AreaExploredOrEventHappens(QUEST_2460);
         ((npc_shenthulAI*)_Creature->AI())->Reset();
@@ -177,16 +177,16 @@ struct OREGON_DLL_DECL npc_thrall_warchiefAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(!UpdateVictim())
+        if (!UpdateVictim())
             return;
 
-        if( ChainLightning_Timer < diff )
+        if (ChainLightning_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_CHAIN_LIGHTNING);
             ChainLightning_Timer = 9000;
         }else ChainLightning_Timer -= diff;
 
-        if( Shock_Timer < diff )
+        if (Shock_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_SHOCK);
             Shock_Timer = 15000;
@@ -203,7 +203,7 @@ CreatureAI* GetAI_npc_thrall_warchief(Creature *_Creature)
 bool GossipHello_npc_thrall_warchief(Player *player, Creature *_Creature)
 {
     if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
     if (player->GetQuestStatus(QUEST_6566) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HTW, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);

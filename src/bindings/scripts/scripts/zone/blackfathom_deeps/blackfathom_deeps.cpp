@@ -44,10 +44,10 @@ static float SpawnPoints[5][4] =
 void SummonCreatureWithRandomTarget(uint32 creatureId, int position, float mod, Unit* pTarget, GameObject* pGO)
 {
     Creature *pSummoned = pGO->SummonCreature(creatureId, SpawnPoints[position][0], SpawnPoints[position][1] + mod, SpawnPoints[position][2], SpawnPoints[position][3], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 250000);
-    if(pSummoned)
+    if (pSummoned)
     {
 
-        if(pTarget)
+        if (pTarget)
         {
             pSummoned->AddThreat(pTarget, 32.0f);
             ((Creature*)pSummoned)->AI()->AttackStart(pTarget);
@@ -64,7 +64,7 @@ bool GOHello_go_fire_akumai(Player *player, GameObject* pGO)
 
     ScriptedInstance *pInstance = (player->GetInstanceData()) ? ((ScriptedInstance*)player->GetInstanceData()) : NULL;
 
-    if(!pInstance)
+    if (!pInstance)
     {
         player->GetSession()->SendNotification("Instance script not initialized.");
         return true;

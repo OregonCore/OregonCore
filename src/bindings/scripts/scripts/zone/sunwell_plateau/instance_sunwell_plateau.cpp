@@ -85,7 +85,7 @@ struct OREGON_DLL_DECL instance_sunwell_plateau : public ScriptedInstance
         Gate[4]     = 0;
 
         /*** Encounters ***/
-        for(uint8 i = 0; i < ENCOUNTERS; ++i)
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
             Encounters[i] = NOT_STARTED;
 
         /*** Misc ***/
@@ -94,8 +94,8 @@ struct OREGON_DLL_DECL instance_sunwell_plateau : public ScriptedInstance
 
     bool IsEncounterInProgress() const
     {
-        for(uint8 i = 0; i < ENCOUNTERS; ++i)
-            if(Encounters[i] == IN_PROGRESS)
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
+            if (Encounters[i] == IN_PROGRESS)
                 return true;
 
         return false;
@@ -107,7 +107,7 @@ struct OREGON_DLL_DECL instance_sunwell_plateau : public ScriptedInstance
 
         if (!players.isEmpty())
         {
-            for(Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+            for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
                 Player* plr = itr->getSource();
                 if (plr && !plr->HasAura(45839,0))
@@ -213,21 +213,21 @@ struct OREGON_DLL_DECL instance_sunwell_plateau : public ScriptedInstance
         switch(id)
         {
             case DATA_KALECGOS_EVENT:
-                if(Encounters[0] != DONE)
+                if (Encounters[0] != DONE)
                     Encounters[0] = data;
                 break;
             case DATA_BRUTALLUS_EVENT:
-                if(Encounters[1] != DONE)
+                if (Encounters[1] != DONE)
                     Encounters[1] = data;
                 break;
             case DATA_FELMYST_EVENT:
-                if(data == DONE)
+                if (data == DONE)
                     HandleGameObject(FireBarrier, OPEN);
-                if(Encounters[2] != DONE)
+                if (Encounters[2] != DONE)
                     Encounters[2] = data;
                 break;
             case DATA_EREDAR_TWINS_EVENT:
-                if(Encounters[3] != DONE)
+                if (Encounters[3] != DONE)
                     Encounters[3] = data;
                 break;
             case DATA_MURU_EVENT:
@@ -245,16 +245,16 @@ struct OREGON_DLL_DECL instance_sunwell_plateau : public ScriptedInstance
                         HandleGameObject(Gate[3], OPEN);
                         break;
                 }
-                if(Encounters[4] != DONE)
+                if (Encounters[4] != DONE)
                     Encounters[4] = data;
                 break;
             case DATA_KILJAEDEN_EVENT:
-                if(Encounters[5] != DONE)
+                if (Encounters[5] != DONE)
                     Encounters[5] = data;
                 break;
         }
 
-        if(data == DONE)
+        if (data == DONE)
             SaveToDB();
     }
 
@@ -274,7 +274,7 @@ struct OREGON_DLL_DECL instance_sunwell_plateau : public ScriptedInstance
             << Encounters[4] << " "  << Encounters[5];
         char* out = new char[stream.str().length() + 1];
         strcpy(out, stream.str().c_str());
-        if(out)
+        if (out)
         {
             OUT_SAVE_INST_DATA_COMPLETE;
             return out;
@@ -285,7 +285,7 @@ struct OREGON_DLL_DECL instance_sunwell_plateau : public ScriptedInstance
 
     void Load(const char* in)
     {
-        if(!in)
+        if (!in)
         {
             OUT_LOAD_INST_DATA_FAIL;
             return;
@@ -295,8 +295,8 @@ struct OREGON_DLL_DECL instance_sunwell_plateau : public ScriptedInstance
         std::istringstream stream(in);
         stream >> Encounters[0] >> Encounters[1] >> Encounters[2] >> Encounters[3]
             >> Encounters[4] >> Encounters[5];
-        for(uint8 i = 0; i < ENCOUNTERS; ++i)
-            if(Encounters[i] == IN_PROGRESS)                // Do not load an encounter as "In Progress" - reset it instead.
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
+            if (Encounters[i] == IN_PROGRESS)                // Do not load an encounter as "In Progress" - reset it instead.
                 Encounters[i] = NOT_STARTED;
         OUT_LOAD_INST_DATA_COMPLETE;
     }

@@ -164,7 +164,7 @@ struct OREGON_DLL_DECL npc_deaths_head_ward_keeperAI : public ScriptedAI
 
         if (QuillboarChanneling_Timer < diff)
         {
-            if( m_creature->IsNonMeleeSpellCasted(false) )
+            if (m_creature->IsNonMeleeSpellCasted(false))
                 m_creature->InterruptNonMeleeSpells(true);
             DoCast(m_creature, SPELL_QUILLBOAR_CHANNELING);
             QuillboarChanneling_Timer = 1100;

@@ -72,9 +72,9 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
 
     void Reset()
     {
-        if(pInstance)
+        if (pInstance)
         {
-            if(m_creature->isAlive())
+            if (m_creature->isAlive())
             {
                 pInstance->SetData(DATA_SUPREMUSEVENT, NOT_STARTED);
             }
@@ -98,22 +98,22 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
     {
         DoZoneInCombat();
 
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_SUPREMUSEVENT, IN_PROGRESS);
     }
 
     void ToggleDoors(bool close)
     {
-        if(GameObject* Doors = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_GAMEOBJECT_SUPREMUS_DOORS)))
+        if (GameObject* Doors = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_GAMEOBJECT_SUPREMUS_DOORS)))
         {
-            if(close) Doors->SetGoState(1);                 // Closed
+            if (close) Doors->SetGoState(1);                 // Closed
             else Doors->SetGoState(0);                      // Open
         }
     }
 
     void JustDied(Unit *killer)
     {
-        if(pInstance)
+        if (pInstance)
         {
             pInstance->SetData(DATA_SUPREMUSEVENT, DONE);
             ToggleDoors(false);
@@ -134,9 +134,9 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
         for (i = m_threatlist.begin(); i != m_threatlist.end();++i)
         {
             Unit* pUnit = Unit::GetUnit((*m_creature), (*i)->getUnitGuid());
-            if(pUnit && m_creature->IsWithinMeleeRange(pUnit))
+            if (pUnit && m_creature->IsWithinMeleeRange(pUnit))
             {
-                if(pUnit->GetHealth() > health)
+                if (pUnit->GetHealth() > health)
                 {
                     health = pUnit->GetHealth();
                     target = pUnit;
@@ -152,24 +152,24 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if(!m_creature->HasAura(SPELL_BERSERK, 0))
+        if (!m_creature->HasAura(SPELL_BERSERK, 0))
         {
-            if(BerserkTimer < diff)
+            if (BerserkTimer < diff)
                 DoCast(m_creature, SPELL_BERSERK);
             else BerserkTimer -= diff;
         }
 
-        if(SummonFlameTimer < diff)
+        if (SummonFlameTimer < diff)
         {
             DoCast(m_creature, SPELL_MOLTEN_PUNCH);
             SummonFlameTimer = 10000;
         }else SummonFlameTimer -= diff;
 
-        if(Phase1)
+        if (Phase1)
         {
-            if(HatefulStrikeTimer < diff)
+            if (HatefulStrikeTimer < diff)
             {
-                if(Unit* target = CalculateHatefulStrikeTarget())
+                if (Unit* target = CalculateHatefulStrikeTarget())
                 {
                     DoCast(target, SPELL_HATEFUL_STRIKE);
                     HatefulStrikeTimer = 5000;
@@ -177,13 +177,13 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
             }else HatefulStrikeTimer -= diff;
         }
 
-        if(!Phase1)
+        if (!Phase1)
         {
-            if(SwitchTargetTimer < diff)
+            if (SwitchTargetTimer < diff)
             {
-                if(Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1, 100, true))
+                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1, 100, true))
                 {
-                    if(m_creature->GetDistance2d(m_creature->getVictim()) < 40)
+                    if (m_creature->GetDistance2d(m_creature->getVictim()) < 40)
                         m_creature->CastSpell(m_creature->getVictim(),SPELL_CHARGE,false);
 
                     DoResetThreat();
@@ -193,9 +193,9 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
                 }
             }else SwitchTargetTimer -= diff;
 
-            if(SummonVolcanoTimer < diff)
+            if (SummonVolcanoTimer < diff)
             {
-                if(Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0, 999, true))
+                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0, 999, true))
                 {
                     DoCast(target, SPELL_VOLCANIC_SUMMON);
                     DoScriptText(EMOTE_GROUND_CRACK, m_creature);
@@ -204,9 +204,9 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
             }else SummonVolcanoTimer -= diff;
         }
 
-        if(PhaseSwitchTimer < diff)
+        if (PhaseSwitchTimer < diff)
         {
-            if(!Phase1)
+            if (!Phase1)
             {
                 Phase1 = true;
                 DoResetThreat();
@@ -264,18 +264,18 @@ struct OREGON_DLL_DECL npc_volcanoAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(CheckTimer < diff)
+        if (CheckTimer < diff)
         {
             uint64 SupremusGUID = pInstance->GetData64(DATA_SUPREMUS);
             Creature* Supremus = (Unit::GetCreature((*m_creature), SupremusGUID));
-            if(!Eruption && Supremus && !((boss_supremusAI*)Supremus->AI())->Phase1)
+            if (!Eruption && Supremus && !((boss_supremusAI*)Supremus->AI())->Phase1)
             {
                 Eruption = true;
                 DoCast(m_creature, SPELL_VOLCANIC_ERUPTION);
             }
-            else if((Eruption && Supremus && ((boss_supremusAI*)Supremus->AI())->Phase1) || !Supremus)
+            else if ((Eruption && Supremus && ((boss_supremusAI*)Supremus->AI())->Phase1) || !Supremus)
             {
-                if(m_creature->HasAura(SPELL_VOLCANIC_ERUPTION, 0))
+                if (m_creature->HasAura(SPELL_VOLCANIC_ERUPTION, 0))
                     m_creature->RemoveAura(SPELL_VOLCANIC_ERUPTION, 0);
             }
             CheckTimer = 1500;

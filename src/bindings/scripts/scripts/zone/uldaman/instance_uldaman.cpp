@@ -60,7 +60,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         ironayaSealDoorTimer = 26000;
         keystoneCheck = false;
 
-        for(uint8 i=0; i < ENCOUNTERS; ++i)
+        for (uint8 i=0; i < ENCOUNTERS; ++i)
             Encounters[i] = NOT_STARTED;
 
     }
@@ -146,7 +146,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
     void SetDoor(uint64 guid, bool open)
     {
         GameObject *go = instance->GetGameObject(guid);
-        if(!go)
+        if (!go)
             return;
 
         HandleGameObject(NULL,open,go);
@@ -155,7 +155,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
     void BlockGO(uint64 guid)
     {
         GameObject *go = instance->GetGameObject(guid);
-        if(!go)
+        if (!go)
             return;
         go->SetUInt32Value(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
 
@@ -163,7 +163,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
 
     void ActivateStoneKeepers()
     {
-        for(std::vector<uint64>::iterator i = stoneKeeper.begin(); i != stoneKeeper.end(); ++i)
+        for (std::vector<uint64>::iterator i = stoneKeeper.begin(); i != stoneKeeper.end(); ++i)
         {
             Creature *target = instance->GetCreature(*i);
             if (!target || !target->isAlive() || target->getFaction() == 14)
@@ -181,10 +181,10 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
     void ActivateWallMinions()
     {
         Creature *archaedas = instance->GetCreature(archaedasGUID);
-        if(!archaedas)
+        if (!archaedas)
             return;
 
-        for(std::vector<uint64>::iterator i = archaedasWallMinions.begin(); i != archaedasWallMinions.end(); ++i)
+        for (std::vector<uint64>::iterator i = archaedasWallMinions.begin(); i != archaedasWallMinions.end(); ++i)
         {
             Creature *target = instance->GetCreature(*i);
             if (!target || !target->isAlive() || target->getFaction() == 14)
@@ -199,7 +199,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
     void DeActivateMinions()
     {
         // first despawn any aggroed wall minions
-        for(std::vector<uint64>::iterator i = archaedasWallMinions.begin(); i != archaedasWallMinions.end(); ++i)
+        for (std::vector<uint64>::iterator i = archaedasWallMinions.begin(); i != archaedasWallMinions.end(); ++i)
         {
             Creature *target = instance->GetCreature(*i);
             if (!target || target->isDead() || target->getFaction() != 14)
@@ -209,7 +209,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         }
 
         // Vault Walkers
-        for(std::vector<uint64>::iterator i = vaultWalker.begin(); i != vaultWalker.end(); ++i)
+        for (std::vector<uint64>::iterator i = vaultWalker.begin(); i != vaultWalker.end(); ++i)
         {
             Creature *target = instance->GetCreature(*i);
             if (!target || target->isDead() || target->getFaction() != 14)
@@ -219,7 +219,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         }
 
         // Earthen Guardians
-        for(std::vector<uint64>::iterator i = earthenGuardian.begin(); i != earthenGuardian.end(); ++i)
+        for (std::vector<uint64>::iterator i = earthenGuardian.begin(); i != earthenGuardian.end(); ++i)
         {
             Creature *target = instance->GetCreature(*i);
             if (!target || target->isDead() || target->getFaction() != 14)
@@ -232,10 +232,10 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
     void ActivateArchaedas(uint64 target)
     {
         Creature *archaedas = instance->GetCreature(archaedasGUID);
-        if(!archaedas)
+        if (!archaedas)
             return;
 
-        if(Unit *victim = Unit::GetUnit(*archaedas, target))
+        if (Unit *victim = Unit::GetUnit(*archaedas, target))
         {
             archaedas->CastSpell(archaedas, SPELL_ARCHAEDAS_AWAKEN,false);
             whoWokeArchaedasGUID = target;
@@ -245,7 +245,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
     void ActivateIronaya()
     {
         Creature *ironaya = instance->GetCreature(ironayaGUID);
-        if(!ironaya)
+        if (!ironaya)
             return;
 
         ironaya->setFaction(415);
@@ -256,7 +256,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
     void RespawnMinions()
     {
         // first respawn any aggroed wall minions
-        for(std::vector<uint64>::iterator i = archaedasWallMinions.begin(); i != archaedasWallMinions.end(); ++i)
+        for (std::vector<uint64>::iterator i = archaedasWallMinions.begin(); i != archaedasWallMinions.end(); ++i)
         {
             Creature *target = instance->GetCreature(*i);
             if (target && target->isDead())
@@ -268,7 +268,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         }
 
         // Vault Walkers
-        for(std::vector<uint64>::iterator i = vaultWalker.begin(); i != vaultWalker.end(); ++i)
+        for (std::vector<uint64>::iterator i = vaultWalker.begin(); i != vaultWalker.end(); ++i)
         {
             Creature *target = instance->GetCreature(*i);
             if (target && target->isDead())
@@ -280,7 +280,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         }
 
         // Earthen Guardians
-        for(std::vector<uint64>::iterator i = earthenGuardian.begin(); i != earthenGuardian.end(); ++i)
+        for (std::vector<uint64>::iterator i = earthenGuardian.begin(); i != earthenGuardian.end(); ++i)
         {
             Creature *target = instance->GetCreature(*i);
             if (target && target->isDead())
@@ -297,7 +297,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         if (!keystoneCheck)
         return;
 
-    if(ironayaSealDoorTimer <= diff)
+    if (ironayaSealDoorTimer <= diff)
         {
         ActivateIronaya();
 
@@ -317,13 +317,13 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         {
             case DATA_ALTAR_DOORS:
             Encounters[0] = data;
-                if(data == DONE)
+                if (data == DONE)
                     SetDoor (altarOfTheKeeperTempleDoor, true);
                 break;
 
         case DATA_ANCIENT_DOOR:
             Encounters[1] = data;
-            if(data == DONE) //archeadas defeat
+            if (data == DONE) //archeadas defeat
                 {
                     SetDoor (archaedasTempleDoor, true); //re open enter door
                     SetDoor (ancientVaultDoor, true);
@@ -361,7 +361,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
                 break;
     }
 
-    if(data == DONE)
+    if (data == DONE)
     {
 
             OUT_SAVE_INST_DATA;
@@ -380,7 +380,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
     void SetData64 (uint32 type, uint64 data)
     {
         // Archaedas
-        if (type == 0 )
+        if (type == 0)
         {
             ActivateArchaedas (data);
             SetDoor (archaedasTempleDoor, false); //close when event is started
@@ -411,7 +411,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
             case 7228:   // Ironaya
                 ironayaGUID = creature->GetGUID();
 
-                if(Encounters[2] != DONE)
+                if (Encounters[2] != DONE)
                     SetFrozenState (creature);
                 break;
 
@@ -463,7 +463,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         std::istringstream loadStream(in);
         loadStream >> Encounters[0] >> Encounters[1] >> Encounters[2];
 
-        for(uint8 i = 0; i < ENCOUNTERS; ++i)
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
             if (Encounters[i] == IN_PROGRESS)
                 Encounters[i] = NOT_STARTED;
 

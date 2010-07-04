@@ -52,7 +52,7 @@ struct OREGON_DLL_DECL instance_sethekk_halls : public ScriptedInstance
         switch(type)
         {
             case DATA_IKISSDOOREVENT:
-                if( IkissDoor )
+                if (IkissDoor)
                     IkissDoor->SetGoState(0);
                 break;
         }

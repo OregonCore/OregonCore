@@ -47,7 +47,7 @@ bool GOHello_go_gauntlet_gate(Player *player, GameObject* _GO)
 
     if (Group *pGroup = player->GetGroup())
     {
-        for(GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
+        for (GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
         {
             Player* pGroupie = itr->getSource();
             if (!pGroupie)
@@ -199,7 +199,7 @@ struct OREGON_DLL_DECL mobs_spectral_ghostly_citizenAI : public ScriptedAI
     {
         if (Tagged)
         {
-            for(uint32 i = 1; i <= 4; i++)
+            for (uint32 i = 1; i <= 4; i++)
             {
                 float x,y,z;
                  m_creature->GetRandomPoint(m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),20.0f,x,y,z);

@@ -120,16 +120,16 @@ bool GossipSelect_npc_highlord_demitrian(Player *player, Creature *_Creature, ui
 bool GossipHello_npcs_rutgar_and_frankal(Player *player, Creature *_Creature)
 {
     if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
     if (player->GetQuestStatus(8304) == QUEST_STATUS_INCOMPLETE &&
         _Creature->GetEntry() == 15170 &&
-        !player->GetReqKillOrCastCurrentCount(8304, TRIGGER_RUTGAR ))
+        !player->GetReqKillOrCastCurrentCount(8304, TRIGGER_RUTGAR))
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
     if (player->GetQuestStatus(8304) == QUEST_STATUS_INCOMPLETE &&
         _Creature->GetEntry() == 15171 &&
-        player->GetReqKillOrCastCurrentCount(8304, TRIGGER_RUTGAR ))
+        player->GetReqKillOrCastCurrentCount(8304, TRIGGER_RUTGAR))
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+9);
 
     player->SEND_GOSSIP_MENU(7754, _Creature->GetGUID());
@@ -137,64 +137,64 @@ bool GossipHello_npcs_rutgar_and_frankal(Player *player, Creature *_Creature)
     return true;
 }
 
-bool GossipSelect_npcs_rutgar_and_frankal(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npcs_rutgar_and_frankal(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     switch (action)
     {
         case GOSSIP_ACTION_INFO_DEF:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
             player->SEND_GOSSIP_MENU(7755, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF + 1:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
             player->SEND_GOSSIP_MENU(7756, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF + 2:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
             player->SEND_GOSSIP_MENU(7757, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF + 3:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
             player->SEND_GOSSIP_MENU(7758, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF + 4:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
             player->SEND_GOSSIP_MENU(7759, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF + 5:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
             player->SEND_GOSSIP_MENU(7760, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF + 6:
             player->SEND_GOSSIP_MENU(7761, _Creature->GetGUID());
                                                             //'kill' our trigger to update quest status
-            player->KilledMonster( TRIGGER_RUTGAR, _Creature->GetGUID() );
+            player->KilledMonster(TRIGGER_RUTGAR, _Creature->GetGUID());
             break;
 
         case GOSSIP_ACTION_INFO_DEF + 9:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM11, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM11, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
             player->SEND_GOSSIP_MENU(7762, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF + 10:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM12, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM12, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
             player->SEND_GOSSIP_MENU(7763, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF + 11:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM13, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 12);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM13, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 12);
             player->SEND_GOSSIP_MENU(7764, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF + 12:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM14, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM14, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
             player->SEND_GOSSIP_MENU(7765, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF + 13:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM15, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 14);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM15, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 14);
             player->SEND_GOSSIP_MENU(7766, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF + 14:
             player->SEND_GOSSIP_MENU(7767, _Creature->GetGUID());
                                                             //'kill' our trigger to update quest status
-            player->KilledMonster( TRIGGER_FRANKAL, _Creature->GetGUID() );
+            player->KilledMonster(TRIGGER_FRANKAL, _Creature->GetGUID());
             break;
     }
     return true;

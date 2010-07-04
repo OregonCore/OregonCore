@@ -83,7 +83,7 @@ struct OREGON_DLL_DECL instance_molten_core : public ScriptedInstance
             IsBossDied[7] = false;
             IsBossDied[8] = false;
 
-             for(uint8 i = 0; i < ENCOUNTERS; i++)
+             for (uint8 i = 0; i < ENCOUNTERS; i++)
                   Encounter[i] = NOT_STARTED;
 
 
@@ -195,47 +195,47 @@ struct OREGON_DLL_DECL instance_molten_core : public ScriptedInstance
             switch(type)
             {
                 case DATA_LUCIFRONISDEAD:
-                    if(IsBossDied[0])
+                    if (IsBossDied[0])
                         return 1;
                     break;
 
                 case DATA_MAGMADARISDEAD:
-                    if(IsBossDied[1])
+                    if (IsBossDied[1])
                         return 1;
                     break;
 
                 case DATA_GEHENNASISDEAD:
-                    if(IsBossDied[2])
+                    if (IsBossDied[2])
                         return 1;
                     break;
 
                 case DATA_GARRISDEAD:
-                    if(IsBossDied[3])
+                    if (IsBossDied[3])
                         return 1;
                     break;
 
                 case DATA_GEDDONISDEAD:
-                    if(IsBossDied[4])
+                    if (IsBossDied[4])
                         return 1;
                     break;
 
                 case DATA_SHAZZRAHISDEAD:
-                    if(IsBossDied[5])
+                    if (IsBossDied[5])
                         return 1;
                     break;
 
                 case DATA_SULFURONISDEAD:
-                    if(IsBossDied[6])
+                    if (IsBossDied[6])
                         return 1;
                     break;
 
                 case DATA_GOLEMAGGISDEAD:
-                    if(IsBossDied[7])
+                    if (IsBossDied[7])
                         return 1;
                     break;
 
                 case DATA_MAJORDOMOISDEAD:
-                    if(IsBossDied[8])
+                    if (IsBossDied[8])
                         return 1;
                     break;
             }

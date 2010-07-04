@@ -72,7 +72,7 @@ struct OREGON_DLL_DECL boss_jandicebarovAI : public ScriptedAI
         }
         Rand = 0;
         Summoned = DoSpawnCreature(11439, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
-        if(Summoned)
+        if (Summoned)
             ((CreatureAI*)Summoned->AI())->AttackStart(victim);
     }
 
@@ -119,10 +119,10 @@ struct OREGON_DLL_DECL boss_jandicebarovAI : public ScriptedAI
 
             //Summon 10 Illusions attacking random gamers
             Unit* target = NULL;
-            for(int i = 0; i < 10;i++)
+            for (int i = 0; i < 10;i++)
             {
                 target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                if(target)
+                if (target)
                     SummonIllusions(target);
             }
             Invisible = true;

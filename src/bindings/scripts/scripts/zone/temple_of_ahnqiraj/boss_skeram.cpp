@@ -139,10 +139,10 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
         }else ArcaneExplosion_Timer -= diff;
 
         //If we are within range melee the target
-        if( m_creature->IsWithinMeleeRange(m_creature->getVictim()))
+        if (m_creature->IsWithinMeleeRange(m_creature->getVictim()))
         {
             //Make sure our attack is ready and we arn't currently casting
-            if( m_creature->isAttackReady() && !m_creature->IsNonMeleeSpellCasted(false))
+            if (m_creature->isAttackReady() && !m_creature->IsNonMeleeSpellCasted(false))
             {
                 m_creature->AttackerStateUpdate(m_creature->getVictim());
                 m_creature->resetAttackTimer();
@@ -184,16 +184,16 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
         int procent = (int) (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() +0.5);
 
         //Summoning 2 Images and teleporting to a random position on 75% health
-        if ( (!Images75 && !IsImage) && (procent <= 75 && procent > 70) )
+        if ((!Images75 && !IsImage) && (procent <= 75 && procent > 70))
             DoSplit(75);
 
         //Summoning 2 Images and teleporting to a random position on 50% health
-        if ( (!Images50 && !IsImage) &&
-            (procent <= 50 && procent > 45) )
+        if ((!Images50 && !IsImage) &&
+            (procent <= 50 && procent > 45))
             DoSplit(50);
 
         //Summoning 2 Images and teleporting to a random position on 25% health
-        if ( (!Images25 && !IsImage) && (procent <= 25 && procent > 20) )
+        if ((!Images25 && !IsImage) && (procent <= 25 && procent > 20))
             DoSplit(25);
 
         //Invisible_Timer
@@ -278,7 +278,7 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
         Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0);
 
         Image1 = m_creature->SummonCreature(15263, i1->x, i1->y, i1->z, i1->r, TEMPSUMMON_CORPSE_DESPAWN, 30000);
-        if(!Image1)
+        if (!Image1)
         {
           PLACES_CLEANUP
           return;
@@ -289,7 +289,7 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
             Image1->AI()->AttackStart(target);
 
         Image2 = m_creature->SummonCreature(15263,i2->x, i2->y, i2->z, i2->r, TEMPSUMMON_CORPSE_DESPAWN, 30000);
-        if(!Image2)
+        if (!Image2)
         {
           PLACES_CLEANUP
           return;

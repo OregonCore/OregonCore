@@ -74,7 +74,7 @@ struct OREGON_DLL_DECL boss_kelidan_the_breakerAI : public ScriptedAI
     {
         pInstance = ((ScriptedInstance*)c->GetInstanceData());
         HeroicMode = m_creature->GetMap()->IsHeroic();
-        for(int i=0; i<5; ++i) Channelers[i] = 0;
+        for (int i=0; i<5; ++i) Channelers[i] = 0;
     }
 
     ScriptedInstance* pInstance;
@@ -122,7 +122,7 @@ struct OREGON_DLL_DECL boss_kelidan_the_breakerAI : public ScriptedAI
 
     void ChannelerEngaged(Unit* who)
     {
-        if(who && !addYell)
+        if (who && !addYell)
         {
             addYell = true;
             switch(rand()%3)
@@ -132,36 +132,36 @@ struct OREGON_DLL_DECL boss_kelidan_the_breakerAI : public ScriptedAI
                 default: DoScriptText(SAY_ADD_AGGRO_3, m_creature); break;
             }
         }
-        for(int i=0; i<5; ++i)
+        for (int i=0; i<5; ++i)
         {
             Creature *channeler = Unit::GetCreature(*m_creature, Channelers[i]);
-            if(who && channeler && !channeler->isInCombat())
+            if (who && channeler && !channeler->isInCombat())
                 channeler->AI()->AttackStart(who);
         }
     }
 
     void ChannelerDied(Unit* killer)
     {
-        for(int i=0; i<5; ++i)
+        for (int i=0; i<5; ++i)
         {
             Creature *channeler = Unit::GetCreature(*m_creature, Channelers[i]);
-            if(channeler && channeler->isAlive())
+            if (channeler && channeler->isAlive())
                 return;
         }
 
-        if(killer)
+        if (killer)
             m_creature->AI()->AttackStart(killer);
     }
 
     uint64 GetChanneled(Creature *channeler1)
     {
         SummonChannelers();
-        if(!channeler1) return NULL;
+        if (!channeler1) return NULL;
         int i;
-        for(i=0; i<5; ++i)
+        for (i=0; i<5; ++i)
         {
             Creature *channeler = Unit::GetCreature(*m_creature, Channelers[i]);
-            if(channeler && channeler->GetGUID() == channeler1->GetGUID())
+            if (channeler && channeler->GetGUID() == channeler1->GetGUID())
                 break;
         }
         return Channelers[(i+2)%5];
@@ -169,12 +169,12 @@ struct OREGON_DLL_DECL boss_kelidan_the_breakerAI : public ScriptedAI
 
     void SummonChannelers()
     {
-        for(int i=0; i<5; ++i)
+        for (int i=0; i<5; ++i)
         {
             Creature *channeler = Unit::GetCreature(*m_creature, Channelers[i]);
-            if(!channeler || channeler->isDead())
+            if (!channeler || channeler->isDead())
                 channeler = m_creature->SummonCreature(ENTRY_CHANNELER,ShadowmoonChannelers[i][0],ShadowmoonChannelers[i][1],ShadowmoonChannelers[i][2],ShadowmoonChannelers[i][3],TEMPSUMMON_CORPSE_TIMED_DESPAWN,300000);
-            if(channeler)
+            if (channeler)
                 Channelers[i] = channeler->GetGUID();
             else
                 Channelers[i] = 0;
@@ -184,7 +184,7 @@ struct OREGON_DLL_DECL boss_kelidan_the_breakerAI : public ScriptedAI
     void JustDied(Unit* Killer)
     {
         DoScriptText(SAY_DIE, m_creature);
-       if(pInstance)
+       if (pInstance)
            pInstance->SetData(DATA_KELIDANEVENT, DONE);
     }
 
@@ -192,7 +192,7 @@ struct OREGON_DLL_DECL boss_kelidan_the_breakerAI : public ScriptedAI
     {
         if (!UpdateVictim())
         {
-            if(check_Timer < diff)
+            if (check_Timer < diff)
             {
                 if (!m_creature->IsNonMeleeSpellCasted(false))
                     DoCast(m_creature,SPELL_EVOCATION);
@@ -232,10 +232,10 @@ struct OREGON_DLL_DECL boss_kelidan_the_breakerAI : public ScriptedAI
 
             DoScriptText(SAY_NOVA, m_creature);
 
-            if(SpellEntry *nova = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_BURNING_NOVA))
+            if (SpellEntry *nova = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_BURNING_NOVA))
             {
-                for(uint32 i = 0; i < 3; ++i)
-                    if(nova->Effect[i] == SPELL_EFFECT_APPLY_AURA)
+                for (uint32 i = 0; i < 3; ++i)
+                    if (nova->Effect[i] == SPELL_EFFECT_APPLY_AURA)
                     {
                         Aura *Aur = new BurningNovaAura(nova, i, m_creature, m_creature);
                         m_creature->AddAura(Aur);
@@ -295,7 +295,7 @@ struct OREGON_DLL_DECL mob_shadowmoon_channelerAI : public ScriptedAI
 
     void EnterCombat(Unit* who)
     {
-        if(Creature *Kelidan = (Creature *)FindCreature(ENTRY_KELIDAN, 100, m_creature))
+        if (Creature *Kelidan = (Creature *)FindCreature(ENTRY_KELIDAN, 100, m_creature))
             ((boss_kelidan_the_breakerAI*)Kelidan->AI())->ChannelerEngaged(who);
         if (m_creature->IsNonMeleeSpellCasted(false))
             m_creature->InterruptNonMeleeSpells(true);
@@ -304,7 +304,7 @@ struct OREGON_DLL_DECL mob_shadowmoon_channelerAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-       if(Creature *Kelidan = (Creature *)FindCreature(ENTRY_KELIDAN, 100, m_creature))
+       if (Creature *Kelidan = (Creature *)FindCreature(ENTRY_KELIDAN, 100, m_creature))
            ((boss_kelidan_the_breakerAI*)Kelidan->AI())->ChannelerDied(Killer);
     }
 
@@ -312,13 +312,13 @@ struct OREGON_DLL_DECL mob_shadowmoon_channelerAI : public ScriptedAI
     {
         if (!UpdateVictim())
         {
-            if(check_Timer < diff)
+            if (check_Timer < diff)
             {
                 if (!m_creature->IsNonMeleeSpellCasted(false))
-                    if(Creature *Kelidan = (Creature *)FindCreature(ENTRY_KELIDAN, 100, m_creature))
+                    if (Creature *Kelidan = (Creature *)FindCreature(ENTRY_KELIDAN, 100, m_creature))
                     {
                         uint64 channeler = ((boss_kelidan_the_breakerAI*)Kelidan->AI())->GetChanneled(m_creature);
-                        if(Unit *channeled = Unit::GetUnit(*m_creature, channeler))
+                        if (Unit *channeled = Unit::GetUnit(*m_creature, channeler))
                             DoCast(channeled,SPELL_CHANNELING);
                     }
                 check_Timer = 5000;

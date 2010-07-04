@@ -98,7 +98,7 @@ struct OREGON_DLL_DECL mobs_nether_drakeAI : public ScriptedAI
     {
         NihilSpeech_Timer = 2000;
         IsNihil = false;
-        if( m_creature->GetEntry() == ENTRY_NIHIL )
+        if (m_creature->GetEntry() == ENTRY_NIHIL)
         {
             m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             IsNihil = true;
@@ -114,11 +114,11 @@ struct OREGON_DLL_DECL mobs_nether_drakeAI : public ScriptedAI
 
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {
-        if( spell->Id == SPELL_T_PHASE_MODULATOR && caster->GetTypeId() == TYPEID_PLAYER )
+        if (spell->Id == SPELL_T_PHASE_MODULATOR && caster->GetTypeId() == TYPEID_PLAYER)
         {
             uint32 cEntry = 0;
 
-            switch( m_creature->GetEntry() )
+            switch(m_creature->GetEntry())
             {
                 case ENTRY_WHELP:
                     switch(rand()%4)
@@ -154,7 +154,7 @@ struct OREGON_DLL_DECL mobs_nether_drakeAI : public ScriptedAI
                     }
                     break;
                 case ENTRY_NIHIL:
-                    if( NihilSpeech_Phase )
+                    if (NihilSpeech_Phase)
                     {
                         DoScriptText(SAY_NIHIL_INTERRUPT, m_creature);
                         IsNihil = false;
@@ -168,11 +168,11 @@ struct OREGON_DLL_DECL mobs_nether_drakeAI : public ScriptedAI
                     break;
             }
 
-            if( cEntry )
+            if (cEntry)
             {
                 m_creature->UpdateEntry(cEntry);
 
-                if( cEntry == ENTRY_NIHIL )
+                if (cEntry == ENTRY_NIHIL)
                 {
                     m_creature->InterruptNonMeleeSpells(true);
                     m_creature->RemoveAllAuras();
@@ -186,13 +186,13 @@ struct OREGON_DLL_DECL mobs_nether_drakeAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if( IsNihil )
+        if (IsNihil)
         {
-            if( NihilSpeech_Phase )
+            if (NihilSpeech_Phase)
             {
-                if(NihilSpeech_Timer <= diff)
+                if (NihilSpeech_Timer <= diff)
                 {
-                    switch( NihilSpeech_Phase )
+                    switch(NihilSpeech_Phase)
                     {
                         case 1:
                             DoScriptText(SAY_NIHIL_1, m_creature);
@@ -225,24 +225,24 @@ struct OREGON_DLL_DECL mobs_nether_drakeAI : public ScriptedAI
             return;                                         //anything below here is not interesting for Nihil, so skip it
         }
 
-        if( !UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
-        if( IntangiblePresence_Timer <= diff )
+        if (IntangiblePresence_Timer <= diff)
         {
             DoCast(m_creature->getVictim(),SPELL_INTANGIBLE_PRESENCE);
             IntangiblePresence_Timer = 15000+rand()%15000;
         }else IntangiblePresence_Timer -= diff;
 
-        if( ManaBurn_Timer <= diff )
+        if (ManaBurn_Timer <= diff)
         {
             Unit* target = m_creature->getVictim();
-            if( target && target->getPowerType() == POWER_MANA )
+            if (target && target->getPowerType() == POWER_MANA)
                 DoCast(target,SPELL_MANA_BURN);
             ManaBurn_Timer = 8000+rand()%8000;
         }else ManaBurn_Timer -= diff;
 
-        if( ArcaneBlast_Timer <= diff )
+        if (ArcaneBlast_Timer <= diff)
         {
             DoCast(m_creature->getVictim(),SPELL_ARCANE_BLAST);
             ArcaneBlast_Timer = 2500+rand()%5000;
@@ -278,7 +278,7 @@ struct OREGON_DLL_DECL npc_daranelleAI : public ScriptedAI
     {
         if (who->GetTypeId() == TYPEID_PLAYER)
         {
-            if(who->HasAura(36904,0))
+            if (who->HasAura(36904,0))
             {
                 DoScriptText(SAY_DARANELLE, m_creature, who);
                 //TODO: Move the below to updateAI and run if this statement == true
@@ -305,7 +305,7 @@ CreatureAI* GetAI_npc_daranelle(Creature *_Creature)
 bool GossipHello_npc_overseer_nuaar(Player *player, Creature *_Creature)
 {
     if (player->GetQuestStatus(10682) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM( 0, GOSSIP_HON, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_HON, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
     player->SEND_GOSSIP_MENU(10532, _Creature->GetGUID());
 
@@ -332,7 +332,7 @@ bool GossipSelect_npc_overseer_nuaar(Player *player, Creature *_Creature, uint32
 bool GossipHello_npc_saikkal_the_elder(Player *player, Creature *_Creature)
 {
     if (player->GetQuestStatus(10980) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM( 0, GOSSIP_HSTE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_HSTE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
     player->SEND_GOSSIP_MENU(10794, _Creature->GetGUID());
 
@@ -344,7 +344,7 @@ bool GossipSelect_npc_saikkal_the_elder(Player *player, Creature *_Creature, uin
     switch (action)
     {
         case GOSSIP_ACTION_INFO_DEF+1:
-            player->ADD_GOSSIP_ITEM( 0, GOSSIP_SSTE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+            player->ADD_GOSSIP_ITEM(0, GOSSIP_SSTE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
             player->SEND_GOSSIP_MENU(10795, _Creature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
@@ -361,20 +361,20 @@ bool GossipSelect_npc_saikkal_the_elder(Player *player, Creature *_Creature, uin
 
 #define GOSSIP_SKYGUARD "Fly me to Skettis please"
 
-bool GossipHello_npc_skyguard_handler_irena(Player *player, Creature *_Creature )
+bool GossipHello_npc_skyguard_handler_irena(Player *player, Creature *_Creature)
 {
     if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
     if (player->GetReputationRank(1031) >= REP_HONORED)
-        player->ADD_GOSSIP_ITEM( 2, GOSSIP_SKYGUARD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        player->ADD_GOSSIP_ITEM(2, GOSSIP_SKYGUARD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_skyguard_handler_irena(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_skyguard_handler_irena(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {

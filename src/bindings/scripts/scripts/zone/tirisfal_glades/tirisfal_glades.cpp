@@ -51,8 +51,8 @@ struct OREGON_DLL_DECL npc_calvin_montagueAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        if( Killer->GetTypeId() == TYPEID_PLAYER )
-            if( ((Player*)Killer)->GetQuestStatus(QUEST_590) == QUEST_STATUS_INCOMPLETE )
+        if (Killer->GetTypeId() == TYPEID_PLAYER)
+            if (((Player*)Killer)->GetQuestStatus(QUEST_590) == QUEST_STATUS_INCOMPLETE)
                 ((Player*)Killer)->AreaExploredOrEventHappens(QUEST_590);
     }
 
@@ -71,7 +71,7 @@ CreatureAI* GetAI_npc_calvin_montague(Creature *_Creature)
 
 bool QuestAccept_npc_calvin_montague(Player* player, Creature* creature, Quest const* quest)
 {
-    if( quest->GetQuestId() == QUEST_590 )
+    if (quest->GetQuestId() == QUEST_590)
     {
         creature->setFaction(FACTION_HOSTILE);
         creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);

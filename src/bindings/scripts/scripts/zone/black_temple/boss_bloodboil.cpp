@@ -108,7 +108,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
 
     void Reset()
     {
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_GURTOGGBLOODBOILEVENT, NOT_STARTED);
 
         TargetGUID = 0;
@@ -142,7 +142,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
     {
         DoZoneInCombat();
         DoScriptText(SAY_AGGRO, m_creature);
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_GURTOGGBLOODBOILEVENT, IN_PROGRESS);
     }
 
@@ -157,7 +157,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
 
     void JustDied(Unit *victim)
     {
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_GURTOGGBLOODBOILEVENT, DONE);
 
         DoScriptText(SAY_DEATH, m_creature);
@@ -168,14 +168,14 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
     {
         std::list<Unit *> targets;
         Map *map = m_creature->GetMap();
-        if(map->IsDungeon())
+        if (map->IsDungeon())
         {
             InstanceMap::PlayerList const &PlayerList = ((InstanceMap*)map)->GetPlayers();
             for (InstanceMap::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
             {
                 if (Player* i_pl = i->getSource())
                 {
-                     if(i_pl && i_pl->isAlive())
+                     if (i_pl && i_pl->isAlive())
                         targets.push_back(i_pl);
                 }
             }
@@ -187,10 +187,10 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
         targets.resize(5);
 
         //Aura each player in the targets list with Bloodboil.
-        for(std::list<Unit *>::iterator itr = targets.begin(); itr != targets.end(); ++itr)
+        for (std::list<Unit *>::iterator itr = targets.begin(); itr != targets.end(); ++itr)
         {
             Unit* target = *itr;
-            if(target && target->isAlive())
+            if (target && target->isAlive())
                 m_creature->AddAura(SPELL_BLOODBOIL, target);
         }
         targets.clear();
@@ -200,23 +200,23 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
     {
         Unit* pUnit = NULL;
         pUnit = Unit::GetUnit((*m_creature), guid);
-        if(pUnit)
+        if (pUnit)
         {
-            if(DoGetThreat(pUnit))
+            if (DoGetThreat(pUnit))
                 DoModifyThreatPercent(pUnit, -100);
-            if(TargetThreat)
+            if (TargetThreat)
                 m_creature->AddThreat(pUnit, TargetThreat);
         }
     }
 
     void UpdateAI(const uint32 diff)
     {
-        if(!UpdateVictim())
+        if (!UpdateVictim())
             return;
 
-        if(!m_creature->HasAura(SPELL_BERSERK, 0))
+        if (!m_creature->HasAura(SPELL_BERSERK, 0))
         {
-            if(EnrageTimer < diff)
+            if (EnrageTimer < diff)
             {
                 DoCast(m_creature, SPELL_BERSERK);
                 switch(rand()%2)
@@ -227,43 +227,43 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
             }else EnrageTimer -= diff;
         }
 
-        if(ArcingSmashTimer < diff)
+        if (ArcingSmashTimer < diff)
         {
             DoCast(m_creature->getVictim(),Phase1 ? SPELL_ARCING_SMASH_1 : SPELL_ARCING_SMASH_2);
             ArcingSmashTimer = 10000;
         }else ArcingSmashTimer -= diff;
 
-        if(FelBreathTimer < diff)
+        if (FelBreathTimer < diff)
         {
             DoCast(m_creature->getVictim(),Phase1 ? SPELL_FELBREATH_1 : SPELL_FELBREATH_2);
             FelBreathTimer = 25000;
         }else FelBreathTimer -= diff;
 
-        if(EjectTimer < diff)
+        if (EjectTimer < diff)
         {
             DoCast(m_creature->getVictim(),Phase1 ? SPELL_EJECT_1 : SPELL_EJECT_2);
             EjectTimer = 15000;
         }else EjectTimer -= diff;
 
 
-        if(Charge_Timer < diff)
+        if (Charge_Timer < diff)
         {
-            if(m_creature->GetDistance2d(m_creature->getVictim()) > 15)
+            if (m_creature->GetDistance2d(m_creature->getVictim()) > 15)
                 DoCast(m_creature->getVictim(),SPELL_CHARGE);
             Charge_Timer = 10000;
         }else Charge_Timer -= diff;
 
-        if(Phase1)
+        if (Phase1)
         {
-            if(BewilderingStrikeTimer < diff)
+            if (BewilderingStrikeTimer < diff)
             {
                 DoCast(m_creature->getVictim(), SPELL_BEWILDERING_STRIKE);
                 BewilderingStrikeTimer = 20000;
             }else BewilderingStrikeTimer -= diff;
 
-            if(BloodboilTimer < diff)
+            if (BloodboilTimer < diff)
             {
-                if(BloodboilCount < 5)                      // Only cast it five times.
+                if (BloodboilCount < 5)                      // Only cast it five times.
                 {
                     CastBloodboil(); // Causes issues on windows, so is commented out.
                     //DoCast(m_creature->getVictim(), SPELL_BLOODBOIL);
@@ -273,30 +273,30 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
             }else BloodboilTimer -= diff;
         }
 
-        if(!Phase1)
+        if (!Phase1)
         {
-            if(FelGeyserTimer < diff)
+            if (FelGeyserTimer < diff)
             {
                 DoCast(m_creature->getVictim(), SPELL_FEL_GEYSER);
                 FelGeyserTimer = 30000;
             }else FelGeyserTimer -= diff;
 
-            if(m_creature->getVictim()->IsImmunedToDamage(SPELL_SCHOOL_MASK_ALL,true))
+            if (m_creature->getVictim()->IsImmunedToDamage(SPELL_SCHOOL_MASK_ALL,true))
                 m_creature->getThreatManager().modifyThreatPercent(m_creature->getVictim(),-100);
         }
 
-        if(PhaseChangeTimer < diff)
+        if (PhaseChangeTimer < diff)
         {
-            if(Phase1)
+            if (Phase1)
             {
                 Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0,100,true);
-                if(target && target->isAlive())
+                if (target && target->isAlive())
                 {
                     Phase1 = false;
 
                     TargetThreat = DoGetThreat(target);
                     TargetGUID = target->GetGUID();
-                    if(DoGetThreat(target))
+                    if (DoGetThreat(target))
                         DoModifyThreatPercent(target, -100);
                     m_creature->AddThreat(target, 50000000.0f);
                     target->CastSpell(m_creature, SPELL_TAUNT_GURTOGG, true);
@@ -324,7 +324,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
                 }
             }else                                           // Encounter is a loop pretty much. Phase 1 -> Phase 2 -> Phase 1 -> Phase 2 till death or enrage
             {
-                if(TargetGUID)
+                if (TargetGUID)
                     RevertThreatOnTarget(TargetGUID);
                 TargetGUID = 0;
                 Phase1 = true;

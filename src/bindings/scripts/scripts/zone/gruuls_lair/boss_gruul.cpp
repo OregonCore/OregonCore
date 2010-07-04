@@ -76,7 +76,7 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
         HurtfulStrike_Timer= 8000;
         Reverberation_Timer= 60000+45000;
 
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_GRUULEVENT, NOT_STARTED);
     }
 
@@ -84,7 +84,7 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
     {
         DoScriptText(SAY_DEATH, m_creature);
 
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_GRUULEVENT, DONE);
     }
 
@@ -93,7 +93,7 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
         DoScriptText(SAY_AGGRO, m_creature);
         DoZoneInCombat();
 
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_GRUULEVENT, IN_PROGRESS);
     }
 
@@ -110,7 +110,7 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //Return since we have no target
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         // Growth
@@ -122,9 +122,9 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
             Growth_Timer = 30000;
         }else Growth_Timer -= diff;
 
-        if(PerformingGroundSlam)
+        if (PerformingGroundSlam)
         {
-            if(GroundSlamTimer < diff)
+            if (GroundSlamTimer < diff)
             {
                 switch(GroundSlamStage)
                 {
@@ -136,21 +136,21 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
                         std::vector<Unit*> knockback_targets;
 
                         //First limit the list to only players
-                        for(std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
+                        for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
                         {
                             Unit *target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
 
-                            if(target && target->GetTypeId() == TYPEID_PLAYER)
+                            if (target && target->GetTypeId() == TYPEID_PLAYER)
                                 knockback_targets.push_back(target);
                         }
 
                         //Now to totally disoriend those players
-                        for(std::vector<Unit*>::iterator itr = knockback_targets.begin(); itr != knockback_targets.end(); ++itr)
+                        for (std::vector<Unit*>::iterator itr = knockback_targets.begin(); itr != knockback_targets.end(); ++itr)
                         {
                             Unit *target = *itr;
                             Unit *target2 = *(knockback_targets.begin() + rand()%knockback_targets.size());
 
-                            if(target && target2)
+                            if (target && target2)
                             {
                                 switch(rand()%2)
                                 {
@@ -169,11 +169,11 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
                         //Players are going to get stoned
                         std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
 
-                        for(std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
+                        for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
                         {
                             Unit *target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
 
-                            if(target)
+                            if (target)
                             {
                                 target->RemoveAurasDueToSpell(SPELL_GRONN_LORDS_GRASP);
                                 target->CastSpell(target, SPELL_STONED, true, NULL, NULL, m_creature->GetGUID());
@@ -197,13 +197,13 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
                         //Shatter takes effect
                         // Not Needet Anymore Handled in Spell SPELL_SHATTER
                         //std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
-                        //for(std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
+                        //for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
                         //{
                         //    Unit *target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
-                        //    if(target)
+                        //    if (target)
                         //    {
                         //        target->RemoveAurasDueToSpell(SPELL_STONED);
-                        //        if(target->GetTypeId() == TYPEID_PLAYER)
+                        //        if (target->GetTypeId() == TYPEID_PLAYER)
                         //            target->CastSpell(target, SPELL_SHATTER_EFFECT, false, NULL, NULL, m_creature->GetGUID());
                         //    }
                         //}
@@ -211,7 +211,7 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
                         m_creature->GetMotionMaster()->Clear();
 
                         Unit *victim = m_creature->getVictim();
-                        if(victim)
+                        if (victim)
                         {
                             m_creature->GetMotionMaster()->MoveChase(victim);
                             m_creature->SetUInt64Value(UNIT_FIELD_TARGET, victim->GetGUID());
@@ -221,7 +221,7 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
 
                         GroundSlamTimer =120000;
                         HurtfulStrike_Timer= 8000;
-                        if(Reverberation_Timer < 10000)     //Give a little time to the players to undo the damage from shatter
+                        if (Reverberation_Timer < 10000)     //Give a little time to the players to undo the damage from shatter
                             Reverberation_Timer += 10000;
 
                      break;

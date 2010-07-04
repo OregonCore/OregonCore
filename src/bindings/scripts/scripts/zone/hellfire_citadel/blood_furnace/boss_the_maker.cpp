@@ -95,7 +95,7 @@ struct OREGON_DLL_DECL boss_the_makerAI : public ScriptedAI
         }else ExplodingBreaker_Timer -=diff;
 
         /* // Disabled until Core Support for mind control
-        if(domination_timer_timer < diff)
+        if (domination_timer_timer < diff)
         {
         Unit* target;
         target = SelectUnit(SELECT_TARGET_RANDOM,0);

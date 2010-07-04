@@ -170,51 +170,51 @@ struct OREGON_DLL_DECL instance_karazhan : public ScriptedInstance
         switch (type)
         {
             case DATA_ATTUMEN_EVENT:
-                if(Encounters[0] != DONE)
+                if (Encounters[0] != DONE)
                     Encounters[0]  = data;
                 break;
             case DATA_MOROES_EVENT:
-                if(Encounters[1] != DONE)
+                if (Encounters[1] != DONE)
                     Encounters[1] = data;
                 break;
             case DATA_MAIDENOFVIRTUE_EVENT:
-                if(Encounters[2] != DONE)
+                if (Encounters[2] != DONE)
                     Encounters[2]  = data;
                 break;
             case DATA_OPTIONAL_BOSS_EVENT:
-                if(Encounters[3] != DONE)
+                if (Encounters[3] != DONE)
                     Encounters[3]  = data;
                 break;
             case DATA_OPERA_EVENT:
-                if(Encounters[4] != DONE)
+                if (Encounters[4] != DONE)
                     Encounters[4]  = data;
                 break;
             case DATA_CURATOR_EVENT:
-                if(Encounters[5] != DONE)
+                if (Encounters[5] != DONE)
                     Encounters[5]  = data;
                 break;
             case DATA_SHADEOFARAN_EVENT:
-                if(Encounters[6] != DONE)
+                if (Encounters[6] != DONE)
                     Encounters[6]  = data;
                 break;
             case DATA_TERESTIAN_EVENT:
-                if(Encounters[7] != DONE)
+                if (Encounters[7] != DONE)
                     Encounters[7]  = data;
                 break;
             case DATA_NETHERSPITE_EVENT:
-                if(Encounters[8] != DONE)
+                if (Encounters[8] != DONE)
                     Encounters[8]  = data;
                 break;
             case DATA_CHESS_EVENT:
-                if(Encounters[9] != DONE)
+                if (Encounters[9] != DONE)
                     Encounters[9]  = data;
                 break;
             case DATA_MALCHEZZAR_EVENT:
-                if(Encounters[10] != DONE)
+                if (Encounters[10] != DONE)
                     Encounters[10] = data;
                 break;
             case DATA_NIGHTBANE_EVENT:
-                if(Encounters[11] != DONE)
+                if (Encounters[11] != DONE)
                     Encounters[11] = data;
                 break;
             case DATA_OPERA_OZ_DEATHCOUNT:
@@ -222,7 +222,7 @@ struct OREGON_DLL_DECL instance_karazhan : public ScriptedInstance
                 break;
         }
 
-        if(data == DONE)
+        if (data == DONE)
             SaveToDB();
     }
 
@@ -280,7 +280,7 @@ struct OREGON_DLL_DECL instance_karazhan : public ScriptedInstance
             << Encounters[10] << " " << Encounters[11];
         char* out = new char[stream.str().length() + 1];
         strcpy(out, stream.str().c_str());
-        if(out)
+        if (out)
         {
             OUT_SAVE_INST_DATA_COMPLETE;
             return out;
@@ -291,7 +291,7 @@ struct OREGON_DLL_DECL instance_karazhan : public ScriptedInstance
 
     void Load(const char* in)
     {
-        if(!in)
+        if (!in)
         {
             OUT_LOAD_INST_DATA_FAIL;
             return;
@@ -307,10 +307,10 @@ struct OREGON_DLL_DECL instance_karazhan : public ScriptedInstance
             Encounters[6] >> Encounters[7] >>
             Encounters[8] >> Encounters[9] >>
             Encounters[10] >> Encounters[11];
-        if(dataHead1 != 'K' || dataHead2 != 'Z')
+        if (dataHead1 != 'K' || dataHead2 != 'Z')
         {
             error_log("SD2: Karazhan corrupted save data.");
-            for(int i = 0; i < ENCOUNTERS; i++)
+            for (int i = 0; i < ENCOUNTERS; i++)
                 Encounters[i] = 0;
         } else OUT_LOAD_INST_DATA_COMPLETE;
     }

@@ -116,9 +116,9 @@ struct OREGON_DLL_DECL boss_nefarianAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if(DespawnTimer < diff)
+        if (DespawnTimer < diff)
         {
-            if(!UpdateVictim())
+            if (!UpdateVictim())
             {
                 m_creature->SetHealth(0);
                 m_creature->setDeathState(JUST_DIED);
@@ -127,7 +127,7 @@ struct OREGON_DLL_DECL boss_nefarianAI : public ScriptedAI
             DespawnTimer = 5000;
         }else DespawnTimer -= diff;
 
-        if (!UpdateVictim() )
+        if (!UpdateVictim())
             return;
 
         //ShadowFlame_Timer

@@ -70,7 +70,7 @@ struct OREGON_DLL_DECL boss_broodlordAI : public ScriptedAI
             float rx,ry,rz;
             m_creature->GetRespawnCoord(rx, ry, rz);
             float spawndist = m_creature->GetDistance(rx,ry,rz);
-            if ( spawndist > 250 )
+            if (spawndist > 250)
             {
                 DoScriptText(SAY_LEASH, m_creature);
                 EnterEvadeMode();

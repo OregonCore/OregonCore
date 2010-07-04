@@ -56,8 +56,8 @@ struct OREGON_DLL_DECL mobs_risen_husk_spiritAI : public ScriptedAI
 
     void DamageTaken(Unit *done_by, uint32 &damage)
     {
-        if( done_by->GetTypeId() == TYPEID_PLAYER )
-            if( damage >= m_creature->GetHealth() && ((Player*)done_by)->GetQuestStatus(11180) == QUEST_STATUS_INCOMPLETE )
+        if (done_by->GetTypeId() == TYPEID_PLAYER)
+            if (damage >= m_creature->GetHealth() && ((Player*)done_by)->GetQuestStatus(11180) == QUEST_STATUS_INCOMPLETE)
                 m_creature->CastSpell(done_by,SPELL_SUMMON_RESTLESS_APPARITION,false);
     }
 
@@ -66,16 +66,16 @@ struct OREGON_DLL_DECL mobs_risen_husk_spiritAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if( ConsumeFlesh_Timer < diff )
+        if (ConsumeFlesh_Timer < diff)
         {
-            if( m_creature->GetEntry() == 23555 )
+            if (m_creature->GetEntry() == 23555)
                 DoCast(m_creature->getVictim(),SPELL_CONSUME_FLESH);
             ConsumeFlesh_Timer = 15000;
         } else ConsumeFlesh_Timer -= diff;
 
-        if( IntangiblePresence_Timer < diff )
+        if (IntangiblePresence_Timer < diff)
         {
-            if( m_creature->GetEntry() == 23554 )
+            if (m_creature->GetEntry() == 23554)
                 DoCast(m_creature->getVictim(),SPELL_INTANGIBLE_PRESENCE);
             IntangiblePresence_Timer = 20000;
         } else IntangiblePresence_Timer -= diff;
@@ -145,22 +145,22 @@ bool GossipHello_npc_deserter_agitator(Player *player, Creature *_Creature)
 bool GossipHello_npc_lady_jaina_proudmoore(Player *player, Creature *_Creature)
 {
     if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
-    if( player->GetQuestStatus(558) == QUEST_STATUS_INCOMPLETE )
-        player->ADD_GOSSIP_ITEM( 0, GOSSIP_ITEM_JAINA, GOSSIP_SENDER_MAIN, GOSSIP_SENDER_INFO );
+    if (player->GetQuestStatus(558) == QUEST_STATUS_INCOMPLETE)
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_JAINA, GOSSIP_SENDER_MAIN, GOSSIP_SENDER_INFO);
 
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_lady_jaina_proudmoore(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_npc_lady_jaina_proudmoore(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if( action == GOSSIP_SENDER_INFO )
+    if (action == GOSSIP_SENDER_INFO)
     {
-        player->SEND_GOSSIP_MENU( 7012, _Creature->GetGUID() );
-        player->CastSpell( player, 23122, false);
+        player->SEND_GOSSIP_MENU(7012, _Creature->GetGUID());
+        player->CastSpell(player, 23122, false);
     }
     return true;
 }
@@ -171,24 +171,24 @@ bool GossipSelect_npc_lady_jaina_proudmoore(Player *player, Creature *_Creature,
 
 bool GossipHello_npc_nat_pagle(Player *player, Creature *_Creature)
 {
-    if(_Creature->isQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+    if (_Creature->isQuestGiver())
+        player->PrepareQuestMenu(_Creature->GetGUID());
 
-    if(_Creature->isVendor() && player->GetQuestRewardStatus(8227))
+    if (_Creature->isVendor() && player->GetQuestRewardStatus(8227))
     {
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
-        player->SEND_GOSSIP_MENU( 7640, _Creature->GetGUID() );
+        player->SEND_GOSSIP_MENU(7640, _Creature->GetGUID());
     }
     else
-        player->SEND_GOSSIP_MENU( 7638, _Creature->GetGUID() );
+        player->SEND_GOSSIP_MENU(7638, _Creature->GetGUID());
 
     return true;
 }
 
 bool GossipSelect_npc_nat_pagle(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if(action == GOSSIP_ACTION_TRADE)
-        player->SEND_VENDORLIST( _Creature->GetGUID() );
+    if (action == GOSSIP_ACTION_TRADE)
+        player->SEND_VENDORLIST(_Creature->GetGUID());
 
     return true;
 }

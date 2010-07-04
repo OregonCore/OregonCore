@@ -57,14 +57,14 @@ struct OREGON_DLL_DECL instance_shadow_labyrinth : public ScriptedInstance
         GrandmasterVorpil = 0;
         FelOverseerCount = 0;
 
-        for(uint8 i = 0; i < ENCOUNTERS; i++)
+        for (uint8 i = 0; i < ENCOUNTERS; i++)
             Encounter[i] = NOT_STARTED;
     }
 
     bool IsEncounterInProgress() const
     {
-        for(uint8 i = 0; i < ENCOUNTERS; i++)
-            if(Encounter[i] == IN_PROGRESS) return true;
+        for (uint8 i = 0; i < ENCOUNTERS; i++)
+            if (Encounter[i] == IN_PROGRESS) return true;
 
         return false;
     }
@@ -98,7 +98,7 @@ struct OREGON_DLL_DECL instance_shadow_labyrinth : public ScriptedInstance
 
         if (!players.isEmpty())
         {
-            for(Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+            for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
                 if (Player* plr = itr->getSource())
                     return plr;
@@ -128,18 +128,18 @@ struct OREGON_DLL_DECL instance_shadow_labyrinth : public ScriptedInstance
         switch(type)
         {
             case TYPE_HELLMAW:
-                if(Encounter[0] != DONE)
+                if (Encounter[0] != DONE)
                     Encounter[0] = data;
                 break;
             case TYPE_OVERSEER:
-                if( data != DONE )
+                if (data != DONE)
                     error_log("TSCR: Shadow Labyrinth: TYPE_OVERSEER did not expect other data than DONE");
-                if( FelOverseerCount )
+                if (FelOverseerCount)
                 {
                     --FelOverseerCount;
                     debug_log("TSCR: Shadow Labyrinth: %u Fel Overseers left to kill.",FelOverseerCount);
                 }
-                if( FelOverseerCount == 0 )
+                if (FelOverseerCount == 0)
                 {
                     Encounter[1] = DONE;
                     debug_log("TSCR: Shadow Labyrinth: TYPE_OVERSEER == DONE");
@@ -147,25 +147,25 @@ struct OREGON_DLL_DECL instance_shadow_labyrinth : public ScriptedInstance
                 break;
 
             case DATA_BLACKHEARTTHEINCITEREVENT:
-                if( data == DONE )
+                if (data == DONE)
                 {
                     HandleGameObject(RefectoryDoorGUID,0);
                 }
-                if(Encounter[2] != DONE)
+                if (Encounter[2] != DONE)
                     Encounter[2] = data;
                 break;
 
             case DATA_GRANDMASTERVORPILEVENT:
-                if( data == DONE )
+                if (data == DONE)
                 {
                     HandleGameObject(ScreamingHallDoorGUID,0);
                 }
-                if(Encounter[3] != DONE)
+                if (Encounter[3] != DONE)
                     Encounter[3] = data;
                 break;
 
             case DATA_MURMUREVENT:
-                if(Encounter[4] != DONE)
+                if (Encounter[4] != DONE)
                     Encounter[4] = data;
                 break;
         }
@@ -184,7 +184,7 @@ struct OREGON_DLL_DECL instance_shadow_labyrinth : public ScriptedInstance
 
     uint32 GetData(uint32 type)
     {
-        switch( type )
+        switch(type)
         {
             case TYPE_HELLMAW: return Encounter[0];
             case TYPE_OVERSEER: return Encounter[1];
@@ -196,7 +196,7 @@ struct OREGON_DLL_DECL instance_shadow_labyrinth : public ScriptedInstance
 
     uint64 GetData64(uint32 identifier)
     {
-        if(identifier == DATA_GRANDMASTERVORPIL)
+        if (identifier == DATA_GRANDMASTERVORPIL)
             return GrandmasterVorpil;
 
         return 0;
@@ -212,7 +212,7 @@ struct OREGON_DLL_DECL instance_shadow_labyrinth : public ScriptedInstance
 
         char* out = new char[saveStream.str().length() + 1];
         strcpy(out, saveStream.str().c_str());
-        if(out)
+        if (out)
         {
             OUT_SAVE_INST_DATA_COMPLETE;
             return out;
@@ -234,7 +234,7 @@ struct OREGON_DLL_DECL instance_shadow_labyrinth : public ScriptedInstance
         std::istringstream loadStream(in);
         loadStream >> Encounter[0] >> Encounter[1] >> Encounter[2] >> Encounter[3] >> Encounter[4];
 
-        for(uint8 i = 0; i < ENCOUNTERS; ++i)
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
             if (Encounter[i] == IN_PROGRESS)
                 Encounter[i] = NOT_STARTED;
 

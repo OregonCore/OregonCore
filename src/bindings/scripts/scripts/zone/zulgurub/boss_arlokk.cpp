@@ -89,7 +89,7 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
         m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID,15218);
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
-        if(pInstance)
+        if (pInstance)
             pInstance->SetData(DATA_ARLOKK_DEATH, 0);
     }
 
@@ -98,7 +98,7 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if( m_creature->getVictim() && m_creature->isAlive())
+        if (m_creature->getVictim() && m_creature->isAlive())
         {
             if (!PhaseTwo && ShadowWordPain_Timer < diff)
             {
@@ -121,17 +121,17 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
 
                 Panther = m_creature->SummonCreature(15101,-11532.79980,-1649.6734,41.4800,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
 
-                if(markedTarget && Panther )
+                if (markedTarget && Panther)
                 {
                     DoScriptText(SAY_FEAST_PANTHER, m_creature, markedTarget);
                     Panther ->AI()->AttackStart(markedTarget);
-                }else if(Panther && target) Panther ->AI()->AttackStart(target);
+                }else if (Panther && target) Panther ->AI()->AttackStart(target);
 
                 Panther = m_creature->SummonCreature(15101,-11532.9970,-1606.4840,41.2979,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
 
-                if(markedTarget && Panther )
+                if (markedTarget && Panther)
                     Panther ->AI()->AttackStart(markedTarget);
-                else if(Panther && target)
+                else if (Panther && target)
                      Panther ->AI()->AttackStart(target);
 
                 Counter++;
@@ -152,7 +152,7 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
 
             if (VanishedOnce)
             {
-                if(Visible_Timer < diff)
+                if (Visible_Timer < diff)
                 {
                     Unit* target = NULL;
                     target = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -164,7 +164,7 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
                     m_creature->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg +((cinfo->mindmg/100) * 35)));
                     m_creature->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg/100) * 35)));
                     m_creature->UpdateDamagePhysical(BASE_ATTACK);
-                    if(target)
+                    if (target)
                         AttackStart(target);
                     //The Panther Model
                     m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID,15215);
@@ -174,17 +174,17 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
             }
 
             //Cleave_Timer
-            if(PhaseTwo && Cleave_Timer < diff)
+            if (PhaseTwo && Cleave_Timer < diff)
             {
                 DoCast(m_creature->getVictim(), SPELL_CLEAVE);
                 Cleave_Timer = 16000;
             }Cleave_Timer -=diff;
 
             //Gouge_Timer
-            if(PhaseTwo && Gouge_Timer < diff)
+            if (PhaseTwo && Gouge_Timer < diff)
             {
                 DoCast(m_creature->getVictim(), SPELL_GOUGE);
-                if(DoGetThreat(m_creature->getVictim()))
+                if (DoGetThreat(m_creature->getVictim()))
                     DoModifyThreatPercent(m_creature->getVictim(),-80);
 
                 Gouge_Timer = 17000+rand()%10000;

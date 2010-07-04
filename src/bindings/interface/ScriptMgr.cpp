@@ -36,7 +36,7 @@ extern void AddSC_default();
 TRINITY_DLL_EXPORT
 void ScriptsFree()
 {                                                           // Free resources before library unload
-    for(int i = 0; i < num_sc_scripts; i++)
+    for (int i = 0; i < num_sc_scripts; i++)
         delete m_scripts[i];
 
     num_sc_scripts = 0;
@@ -46,7 +46,7 @@ TRINITY_DLL_EXPORT
 void ScriptsInit(char const* cfg_file = "trinitycore.conf")
 {
     num_sc_scripts = 0;
-    for(int i=0;i<MAX_SCRIPTS;i++)
+    for (int i=0;i<MAX_SCRIPTS;i++)
         m_scripts[i]=NULL;
 
     // -- Inicialize the Scripts to be Added --
@@ -57,11 +57,11 @@ void ScriptsInit(char const* cfg_file = "trinitycore.conf")
 
 Script* GetScriptByName(std::string Name)
 {
-    if(Name.empty())
+    if (Name.empty())
         return NULL;
-    for(int i=0;i<MAX_SCRIPTS;i++)
+    for (int i=0;i<MAX_SCRIPTS;i++)
     {
-        if( m_scripts[i] && m_scripts[i]->Name == Name )
+        if (m_scripts[i] && m_scripts[i]->Name == Name)
             return m_scripts[i];
     }
     return NULL;
@@ -73,7 +73,7 @@ Script* GetScriptByName(std::string Name)
 void Script::RegisterSelf()
 {
     int id = GetScriptId(Name.c_str());
-    if(id)
+    if (id)
     {
         m_scripts[id] = this;
         ++num_sc_scripts;
@@ -90,7 +90,7 @@ char const* ScriptsVersion()
 }
 
 TRINITY_DLL_EXPORT
-bool GossipHello ( Player * player, Creature *_Creature )
+bool GossipHello (Player * player, Creature *_Creature)
 {
     Script *tmpscript = m_scripts[_Creature->GetScriptId()];
     if (!tmpscript || !tmpscript->pGossipHello) return false;
@@ -100,7 +100,7 @@ bool GossipHello ( Player * player, Creature *_Creature )
 }
 
 TRINITY_DLL_EXPORT
-bool GossipSelect( Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
     debug_log("TSCR: Gossip selection, sender: %d, action: %d",sender, action);
 
@@ -112,7 +112,7 @@ bool GossipSelect( Player *player, Creature *_Creature, uint32 sender, uint32 ac
 }
 
 TRINITY_DLL_EXPORT
-bool GossipSelectWithCode( Player *player, Creature *_Creature, uint32 sender, uint32 action, const char* sCode )
+bool GossipSelectWithCode(Player *player, Creature *_Creature, uint32 sender, uint32 action, const char* sCode)
 {
     debug_log("TSCR: Gossip selection with code, sender: %d, action: %d",sender, action);
 
@@ -124,35 +124,35 @@ bool GossipSelectWithCode( Player *player, Creature *_Creature, uint32 sender, u
 }
 
 TRINITY_DLL_EXPORT
-bool GOSelect( Player *player, GameObject *_GO, uint32 sender, uint32 action )
+bool GOSelect(Player *player, GameObject *_GO, uint32 sender, uint32 action)
 {
-    if(!_GO)
+    if (!_GO)
     return false;
     debug_log("TSCR: Gossip selection, sender: %d, action: %d",sender, action);
 
     Script *tmpscript = m_scripts[_GO->GetGOInfo()->ScriptId];
-    if(!tmpscript || !tmpscript->pGOSelect) return false;
+    if (!tmpscript || !tmpscript->pGOSelect) return false;
 
     player->PlayerTalkClass->ClearMenus();
     return tmpscript->pGOSelect(player,_GO,sender,action);
 }
 
 TRINITY_DLL_EXPORT
-bool GOSelectWithCode( Player *player, GameObject *_GO, uint32 sender, uint32 action, const char* sCode )
+bool GOSelectWithCode(Player *player, GameObject *_GO, uint32 sender, uint32 action, const char* sCode)
 {
-    if(!_GO)
+    if (!_GO)
     return false;
     debug_log("TSCR: Gossip selection, sender: %d, action: %d",sender, action);
 
     Script *tmpscript = m_scripts[_GO->GetGOInfo()->ScriptId];
-    if(!tmpscript || !tmpscript->pGOSelectWithCode) return false;
+    if (!tmpscript || !tmpscript->pGOSelectWithCode) return false;
 
     player->PlayerTalkClass->ClearMenus();
     return tmpscript->pGOSelectWithCode(player,_GO,sender,action,sCode);
 }
 
 TRINITY_DLL_EXPORT
-bool QuestAccept( Player *player, Creature *_Creature, Quest const *_Quest )
+bool QuestAccept(Player *player, Creature *_Creature, Quest const *_Quest)
 {
     Script *tmpscript = m_scripts[_Creature->GetScriptId()];
     if (!tmpscript || !tmpscript->pQuestAccept) return false;
@@ -162,7 +162,7 @@ bool QuestAccept( Player *player, Creature *_Creature, Quest const *_Quest )
 }
 
 TRINITY_DLL_EXPORT
-bool QuestSelect( Player *player, Creature *_Creature, Quest const *_Quest )
+bool QuestSelect(Player *player, Creature *_Creature, Quest const *_Quest)
 {
     Script *tmpscript = m_scripts[_Creature->GetScriptId()];
     if (!tmpscript || !tmpscript->pQuestSelect) return false;
@@ -172,7 +172,7 @@ bool QuestSelect( Player *player, Creature *_Creature, Quest const *_Quest )
 }
 
 TRINITY_DLL_EXPORT
-bool QuestComplete( Player *player, Creature *_Creature, Quest const *_Quest )
+bool QuestComplete(Player *player, Creature *_Creature, Quest const *_Quest)
 {
     Script *tmpscript = m_scripts[_Creature->GetScriptId()];
     if (!tmpscript || !tmpscript->pQuestComplete) return false;
@@ -182,7 +182,7 @@ bool QuestComplete( Player *player, Creature *_Creature, Quest const *_Quest )
 }
 
 TRINITY_DLL_EXPORT
-bool ChooseReward( Player *player, Creature *_Creature, Quest const *_Quest, uint32 opt )
+bool ChooseReward(Player *player, Creature *_Creature, Quest const *_Quest, uint32 opt)
 {
     Script *tmpscript = m_scripts[_Creature->GetScriptId()];
     if (!tmpscript || !tmpscript->pChooseReward) return false;
@@ -192,7 +192,7 @@ bool ChooseReward( Player *player, Creature *_Creature, Quest const *_Quest, uin
 }
 
 TRINITY_DLL_EXPORT
-uint32 NPCDialogStatus( Player *player, Creature *_Creature )
+uint32 NPCDialogStatus(Player *player, Creature *_Creature)
 {
     Script *tmpscript = m_scripts[_Creature->GetScriptId()];
     if (!tmpscript || !tmpscript->pNPCDialogStatus) return 100;
@@ -202,7 +202,7 @@ uint32 NPCDialogStatus( Player *player, Creature *_Creature )
 }
 
 TRINITY_DLL_EXPORT
-uint32 GODialogStatus( Player *player, GameObject *_GO )
+uint32 GODialogStatus(Player *player, GameObject *_GO)
 {
     Script *tmpscript = m_scripts[_GO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGODialogStatus) return 100;
@@ -212,7 +212,7 @@ uint32 GODialogStatus( Player *player, GameObject *_GO )
 }
 
 TRINITY_DLL_EXPORT
-bool ItemHello( Player *player, Item *_Item, Quest const *_Quest )
+bool ItemHello(Player *player, Item *_Item, Quest const *_Quest)
 {
     Script *tmpscript = m_scripts[_Item->GetProto()->ScriptId];
     if (!tmpscript || !tmpscript->pItemHello) return false;
@@ -222,7 +222,7 @@ bool ItemHello( Player *player, Item *_Item, Quest const *_Quest )
 }
 
 TRINITY_DLL_EXPORT
-bool ItemQuestAccept( Player *player, Item *_Item, Quest const *_Quest )
+bool ItemQuestAccept(Player *player, Item *_Item, Quest const *_Quest)
 {
     Script *tmpscript = m_scripts[_Item->GetProto()->ScriptId];
     if (!tmpscript || !tmpscript->pItemQuestAccept) return false;
@@ -232,7 +232,7 @@ bool ItemQuestAccept( Player *player, Item *_Item, Quest const *_Quest )
 }
 
 TRINITY_DLL_EXPORT
-bool GOHello( Player *player, GameObject *_GO )
+bool GOHello(Player *player, GameObject *_GO)
 {
     Script *tmpscript = m_scripts[_GO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGOHello) return false;
@@ -242,7 +242,7 @@ bool GOHello( Player *player, GameObject *_GO )
 }
 
 TRINITY_DLL_EXPORT
-bool GOQuestAccept( Player *player, GameObject *_GO, Quest const *_Quest )
+bool GOQuestAccept(Player *player, GameObject *_GO, Quest const *_Quest)
 {
     Script *tmpscript = m_scripts[_GO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGOQuestAccept) return false;
@@ -252,7 +252,7 @@ bool GOQuestAccept( Player *player, GameObject *_GO, Quest const *_Quest )
 }
 
 TRINITY_DLL_EXPORT
-bool GOChooseReward( Player *player, GameObject *_GO, Quest const *_Quest, uint32 opt )
+bool GOChooseReward(Player *player, GameObject *_GO, Quest const *_Quest, uint32 opt)
 {
     Script *tmpscript = m_scripts[_GO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGOChooseReward) return false;
@@ -262,7 +262,7 @@ bool GOChooseReward( Player *player, GameObject *_GO, Quest const *_Quest, uint3
 }
 
 TRINITY_DLL_EXPORT
-bool AreaTrigger( Player *player, AreaTriggerEntry * atEntry)
+bool AreaTrigger(Player *player, AreaTriggerEntry * atEntry)
 {
     Script *tmpscript = m_scripts[GetAreaTriggerScriptId(atEntry->id)];
     if (!tmpscript || !tmpscript->pAreaTrigger) return false;
@@ -280,7 +280,7 @@ CreatureAI* GetAI(Creature *_Creature)
 }
 
 TRINITY_DLL_EXPORT
-bool ItemUse( Player *player, Item* _Item, SpellCastTargets const& targets)
+bool ItemUse(Player *player, Item* _Item, SpellCastTargets const& targets)
 {
     Script *tmpscript = m_scripts[_Item->GetProto()->ScriptId];
     if (!tmpscript || !tmpscript->pItemUse) return false;
@@ -289,7 +289,7 @@ bool ItemUse( Player *player, Item* _Item, SpellCastTargets const& targets)
 }
 
 TRINITY_DLL_EXPORT
-bool ReceiveEmote( Player *player, Creature *_Creature, uint32 emote )
+bool ReceiveEmote(Player *player, Creature *_Creature, uint32 emote)
 {
     Script *tmpscript = m_scripts[_Creature->GetScriptId()];
     if (!tmpscript || !tmpscript->pReceiveEmote) return false;
