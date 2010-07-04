@@ -53,51 +53,50 @@ struct AreaTableEntry
 
 struct AreaTriggerEntry
 {
-    uint32    id;                                           // 0
-    uint32    mapid;                                        // 1
-    float     x;                                            // 2
-    float     y;                                            // 3
-    float     z;                                            // 4
-    float     radius;                                       // 5
-    float     box_x;                                        // 6 extent x edge
-    float     box_y;                                        // 7 extent y edge
-    float     box_z;                                        // 8 extent z edge
-    float     box_orientation;                              // 9 extent rotation by about z axis
+    uint32  id;                                             // 0        m_ID
+    uint32  mapid;                                          // 1        m_ContinentID
+    float   x;                                              // 2        m_x
+    float   y;                                              // 3        m_y
+    float   z;                                              // 4        m_z
+    float   radius;                                         // 5        m_radius
+    float   box_x;                                          // 6        m_box_length
+    float   box_y;                                          // 7        m_box_width
+    float   box_z;                                          // 8        m_box_heigh
+    float   box_orientation;                                // 9        m_box_yaw
 };
 
 struct AuctionHouseEntry
 {
-    uint32 houseId; // 0 index
-    uint32 faction; // 1 id of faction.dbc for player factions associated with city
-    uint32 depositPercent; // 2 1/3 from real
-    uint32 cutPercent; // 3
-    //char* name[16]; // 4-19
+    uint32    houseId;                                      // 0 index
+    uint32    faction;                                      // 1 id of faction.dbc for player factions associated with city
+    uint32    depositPercent;                               // 2 1/3 from real
+    uint32    cutPercent;                                   // 3
+    //char*     name[16];                                   // 4-19
                                                             // 20 string flag, unused
 };
 
 struct BankBagSlotPricesEntry
 {
-    uint32      ID;
-    uint32      price;
+    uint32  ID;
+    uint32  price;
 };
 
 struct BattlemasterListEntry
 {
-    uint32      id;                                         // 0
-    uint32      mapid[3];                                   // 1-3 mapid
+    uint32  id;                                             // 0
+    uint32  mapid[3];                                       // 1-3 mapid
                                                             // 4-8 unused
-    uint32      type;                                       // 9 (3 - BG, 4 - arena)
-    uint32      minlvl;                                     // 10
-    uint32      maxlvl;                                     // 11
-    uint32      maxplayersperteam;                          // 12
+    uint32  type;                                           // 9 (3 - BG, 4 - arena)
+    uint32  minlvl;                                         // 10
+    uint32  maxlvl;                                         // 11
+    uint32  maxplayersperteam;                              // 12
                                                             // 13-14 unused
-    char*       name[16];                                   // 15-30
+    char*   name[16];                                       // 15-30
                                                             // 31 string flag, unused
                                                             // 32 unused
 };
 
 #define MAX_OUTFIT_ITEMS 12
-// #define MAX_OUTFIT_ITEMS 24                              // 12->24 in 3.0.x
 
 struct CharStartOutfitEntry
 {
@@ -113,20 +112,20 @@ struct CharStartOutfitEntry
 
 struct CharTitlesEntry
 {
-    uint32      ID;                                         // 0, title ids, for example in Quest::GetCharTitleId()
+    uint32  ID;                                             // 0, title ids, for example in Quest::GetCharTitleId()
     //uint32      unk1;                                     // 1 flags?
-    char*       name[16];                                   // 2-17
+    char*   name[16];                                       // 2-17
                                                             // 18 string flag, unused
     //char*       name2[16];                                // 19-34, unused
                                                             // 35 string flag, unused
-    uint32      bit_index;                                  // 36 used in PLAYER_CHOSEN_TITLE and 1<<index in PLAYER__FIELD_KNOWN_TITLES
+    uint32  bit_index;                                      // 36 used in PLAYER_CHOSEN_TITLE and 1<<index in PLAYER__FIELD_KNOWN_TITLES
 };
 
 struct ChatChannelsEntry
 {
-    uint32      ChannelID;                                  // 0
-    uint32      flags;                                      // 1
-    char*       pattern[16];                                // 3-18
+    uint32  ChannelID;                                      // 0
+    uint32  flags;                                          // 1
+    char*   pattern[16];                                    // 3-18
                                                             // 19 string flags, unused
     //char*       name[16];                                 // 20-35 unused
                                                             // 36 string flag, unused
@@ -134,19 +133,19 @@ struct ChatChannelsEntry
 
 struct ChrClassesEntry
 {
-    uint32      ClassID;                                    // 0
+    uint32  ClassID;                                        // 0
                                                             // 1-2, unused
-    uint32      powerType;                                  // 3
+    uint32  powerType;                                      // 3
                                                             // 4, unused
     //char*       name[16];                                 // 5-20 unused
-    char*       name[16];                                   // 5-20 unused
+    char*   name[16];                                       // 5-20 unused
                                                             // 21 string flag, unused
     //char*       nameFemale[16];                           // 21-36 unused, if different from base (male) case
                                                             // 37 string flag, unused
     //char*       nameNeutralGender[16];                    // 38-53 unused, if different from base (male) case
                                                             // 54 string flag, unused
                                                             // 55, unused
-    uint32      spellfamily;                                // 56
+    uint32  spellfamily;                                    // 56
                                                             // 57, unused
 };
 
@@ -225,8 +224,8 @@ struct EmotesEntry
 
 struct EmotesTextEntry
 {
-    uint32    Id;
-    uint32    textid;
+    uint32  Id;
+    uint32  textid;
 };
 
 struct FactionEntry
@@ -265,21 +264,21 @@ struct FactionTemplateEntry
     // helpers
     bool IsFriendlyTo(FactionTemplateEntry const& entry) const
     {
-        if(ID == entry.ID)
+        if (ID == entry.ID)
             return true;
-        if(enemyFaction1 == entry.faction || enemyFaction2 == entry.faction || enemyFaction3 == entry.faction || enemyFaction4 == entry.faction)
+        if (enemyFaction1 == entry.faction || enemyFaction2 == entry.faction || enemyFaction3 == entry.faction || enemyFaction4 == entry.faction)
             return false;
-        if(friendFaction1 == entry.faction || friendFaction2 == entry.faction || friendFaction3 == entry.faction || friendFaction4 == entry.faction)
+        if (friendFaction1 == entry.faction || friendFaction2 == entry.faction || friendFaction3 == entry.faction || friendFaction4 == entry.faction)
             return true;
         return (friendlyMask & entry.ourMask) || (ourMask & entry.friendlyMask);
     }
     bool IsHostileTo(FactionTemplateEntry const& entry) const
     {
-        if(ID == entry.ID)
+        if (ID == entry.ID)
             return false;
-        if(enemyFaction1 == entry.faction || enemyFaction2 == entry.faction || enemyFaction3 == entry.faction || enemyFaction4 == entry.faction)
+        if (enemyFaction1 == entry.faction || enemyFaction2 == entry.faction || enemyFaction3 == entry.faction || enemyFaction4 == entry.faction)
             return true;
-        if(friendFaction1 == entry.faction || friendFaction2 == entry.faction || friendFaction3 == entry.faction || friendFaction4 == entry.faction)
+        if (friendFaction1 == entry.faction || friendFaction2 == entry.faction || friendFaction3 == entry.faction || friendFaction4 == entry.faction)
             return false;
         return (hostileMask & entry.ourMask) != 0;
     }
@@ -360,9 +359,9 @@ struct ItemDisplayInfoEntry
 //struct ItemCondExtCostsEntry
 //{
 //    uint32      ID;
-//    uint32      condExtendedCost;                           // ItemPrototype::CondExtendedCost
-//    uint32      itemextendedcostentry;                      // ItemPrototype::ExtendedCost
-//    uint32      arenaseason;                                // arena season number(1-4)
+//    uint32      condExtendedCost;                         // ItemPrototype::CondExtendedCost
+//    uint32      itemextendedcostentry;                    // ItemPrototype::ExtendedCost
+//    uint32      arenaseason;                              // arena season number(1-4)
 //};
 
 struct ItemExtendedCostEntry
@@ -463,7 +462,6 @@ struct MapEntry
     // Helpers
     uint32 Expansion() const { return addon; }
 
-
     bool IsDungeon() const { return map_type == MAP_INSTANCE || map_type == MAP_RAID; }
     bool Instanceable() const { return map_type == MAP_INSTANCE || map_type == MAP_RAID || map_type == MAP_BATTLEGROUND || map_type == MAP_ARENA; }
     bool IsRaid() const { return map_type == MAP_RAID; }
@@ -483,9 +481,9 @@ struct MapEntry
 
 struct QuestSortEntry
 {
-    uint32      id;                                         // 0, sort id
-    //char*       name[16];                                 // 1-16, unused
-                                                            // 17 name flags, unused
+    uint32      id;                                         // 0        m_ID
+    //char*       name[16];                                 // 1-16     m_SortName_lang
+                                                            // 17 name flags
 };
 
 struct RandomPropertiesPointsEntry
@@ -562,9 +560,11 @@ struct SoundEntriesEntry
                                                             // 24-28, unknown
 };
 
+#define MAX_SPELL_EFFECTS 3
+
 struct SpellEntry
 {
-    uint32    Id;                                           // 0 normally counted from 0 field (but some tools start counting from 1, check this before tool use for data view!)
+    uint32    Id;                                           // 0
     uint32    Category;                                     // 1
     //uint32     castUI                                     // 2 not used
     uint32    Dispel;                                       // 3
@@ -614,25 +614,25 @@ struct SpellEntry
     int32     EquippedItemClass;                            // 62 (value)
     int32     EquippedItemSubClassMask;                     // 63 (mask)
     int32     EquippedItemInventoryTypeMask;                // 64 (mask)
-    uint32    Effect[3];                                    // 65-67
-    int32     EffectDieSides[3];                            // 68-70
-    int32     EffectBaseDice[3];                            // 71-73
-    float     EffectDicePerLevel[3];                        // 74-76
-    float     EffectRealPointsPerLevel[3];                  // 77-79
-    int32     EffectBasePoints[3];                          // 80-82 (don't must be used in spell/auras explicitly, must be used cached Spell::m_currentBasePoints)
-    uint32    EffectMechanic[3];                            // 83-85
-    uint32    EffectImplicitTargetA[3];                     // 86-88
-    uint32    EffectImplicitTargetB[3];                     // 89-91
-    uint32    EffectRadiusIndex[3];                         // 92-94 - spellradius.dbc
-    uint32    EffectApplyAuraName[3];                       // 95-97
-    uint32    EffectAmplitude[3];                           // 98-100
-    float     EffectMultipleValue[3];                       // 101-103
-    uint32    EffectChainTarget[3];                         // 104-106
-    uint32    EffectItemType[3];                            // 107-109
-    int32     EffectMiscValue[3];                           // 110-112
-    int32     EffectMiscValueB[3];                          // 113-115
-    uint32    EffectTriggerSpell[3];                        // 116-118
-    float     EffectPointsPerComboPoint[3];                 // 119-121
+    uint32    Effect[MAX_SPELL_EFFECTS];                    // 65-67
+    int32     EffectDieSides[MAX_SPELL_EFFECTS];            // 68-70
+    int32     EffectBaseDice[MAX_SPELL_EFFECTS];            // 71-73
+    float     EffectDicePerLevel[MAX_SPELL_EFFECTS];        // 74-76
+    float     EffectRealPointsPerLevel[MAX_SPELL_EFFECTS];  // 77-79
+    int32     EffectBasePoints[MAX_SPELL_EFFECTS];          // 80-82 (don't must be used in spell/auras explicitly, must be used cached Spell::m_currentBasePoints)
+    uint32    EffectMechanic[MAX_SPELL_EFFECTS];            // 83-85
+    uint32    EffectImplicitTargetA[MAX_SPELL_EFFECTS];     // 86-88
+    uint32    EffectImplicitTargetB[MAX_SPELL_EFFECTS];     // 89-91
+    uint32    EffectRadiusIndex[MAX_SPELL_EFFECTS];         // 92-94 - spellradius.dbc
+    uint32    EffectApplyAuraName[MAX_SPELL_EFFECTS];       // 95-97
+    uint32    EffectAmplitude[MAX_SPELL_EFFECTS];           // 98-100
+    float     EffectMultipleValue[MAX_SPELL_EFFECTS];       // 101-103
+    uint32    EffectChainTarget[MAX_SPELL_EFFECTS];         // 104-106
+    uint32    EffectItemType[MAX_SPELL_EFFECTS];            // 107-109
+    int32     EffectMiscValue[MAX_SPELL_EFFECTS];           // 110-112
+    int32     EffectMiscValueB[MAX_SPELL_EFFECTS];          // 113-115
+    uint32    EffectTriggerSpell[MAX_SPELL_EFFECTS];        // 116-118
+    float     EffectPointsPerComboPoint[MAX_SPELL_EFFECTS]; // 119-121
     uint32    SpellVisual;                                  // 122
                                                             // 123 not used
     uint32    SpellIconID;                                  // 124
@@ -718,7 +718,7 @@ struct SpellShapeshiftEntry
     //char*  Name[16];                                      // 2-17 unused
     //uint32 NameFlags;                                     // 18 unused
     uint32 flags1;                                          // 19
-    int32  creatureType;                                    // 20 <=0 humanoid, other normal creature types
+    int32  creatureType;                                    // 20 <= 0 humanoid, other normal creature types
     //uint32 unk1;                                          // 21 unused
     uint32 attackSpeed;                                     // 22
     //uint32 modelID;                                       // 23 unused, alliance modelid (where horde case?)
