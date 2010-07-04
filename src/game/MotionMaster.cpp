@@ -201,12 +201,12 @@ MotionMaster::MoveTargetedHome()
 
     Clear(false);
 
-    if (i_owner->GetTypeId()==TYPEID_UNIT && !i_owner->ToCreature()->GetCharmerOrOwnerGUID())
+    if (i_owner->GetTypeId() == TYPEID_UNIT && !i_owner->ToCreature()->GetCharmerOrOwnerGUID())
     {
         DEBUG_LOG("Creature (Entry: %u GUID: %u) targeted home", i_owner->GetEntry(), i_owner->GetGUIDLow());
         Mutate(new HomeMovementGenerator<Creature>(), MOTION_SLOT_ACTIVE);
     }
-    else if (i_owner->GetTypeId()==TYPEID_UNIT && i_owner->ToCreature()->GetCharmerOrOwnerGUID())
+    else if (i_owner->GetTypeId() == TYPEID_UNIT && i_owner->ToCreature()->GetCharmerOrOwnerGUID())
     {
         DEBUG_LOG("Pet or controlled creature (Entry: %u GUID: %u) targeting home",
             i_owner->GetEntry(), i_owner->GetGUIDLow());
@@ -215,8 +215,8 @@ MotionMaster::MoveTargetedHome()
         {
             i_owner->addUnitState(UNIT_STAT_FOLLOW);
             DEBUG_LOG("Following %s (GUID: %u)",
-                target->GetTypeId()==TYPEID_PLAYER ? "player" : "creature",
-                target->GetTypeId()==TYPEID_PLAYER ? target->GetGUIDLow() : target->ToCreature()->GetDBTableGUIDLow());
+                target->GetTypeId() == TYPEID_PLAYER ? "player" : "creature",
+                target->GetTypeId() == TYPEID_PLAYER ? target->GetGUIDLow() : target->ToCreature()->GetDBTableGUIDLow());
             Mutate(new TargetedMovementGenerator<Creature>(*target,PET_FOLLOW_DIST,PET_FOLLOW_ANGLE), MOTION_SLOT_ACTIVE);
         }
     }

@@ -77,7 +77,7 @@ struct OREGON_DLL_DECL AV_WarmastersAI : public ScriptedAI
      void UpdateAI(const uint32 diff)
      {
          //Adding the auras//
-        if(m_creature->GetEntry()== 14773 && Aura1 == 0) //Iceblood Warmaster
+        if(m_creature->GetEntry() == 14773 && Aura1 == 0) //Iceblood Warmaster
         {
             DoCast(m_creature, 45822);
             Aura1 = 1;

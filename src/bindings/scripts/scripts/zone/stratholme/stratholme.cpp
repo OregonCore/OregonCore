@@ -206,7 +206,7 @@ struct OREGON_DLL_DECL mobs_spectral_ghostly_citizenAI : public ScriptedAI
 
                  //100%, 50%, 33%, 25% chance to spawn
                  uint32 j = urand(1,i);
-                 if (j==1)
+                 if (j == 1)
                      m_creature->SummonCreature(ENTRY_RESTLESS,x,y,z,0,TEMPSUMMON_CORPSE_DESPAWN,600000);
             }
         }

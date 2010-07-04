@@ -172,8 +172,8 @@ class OREGON_DLL_SPEC Group
         void   Disband(bool hideDestroy=false);
 
         // properties accessories
-        bool IsFull() const { return (m_groupType==GROUPTYPE_NORMAL) ? (m_memberSlots.size()>=MAXGROUPSIZE) : (m_memberSlots.size()>=MAXRAIDSIZE); }
-        bool isRaidGroup() const { return m_groupType==GROUPTYPE_RAID; }
+        bool IsFull() const { return (m_groupType == GROUPTYPE_NORMAL) ? (m_memberSlots.size()>=MAXGROUPSIZE) : (m_memberSlots.size()>=MAXRAIDSIZE); }
+        bool isRaidGroup() const { return m_groupType == GROUPTYPE_RAID; }
         bool isBGGroup()   const { return m_bgGroup != NULL; }
         bool IsCreated()   const { return GetMembersCount() > 0; }
         const uint64& GetLeaderGUID() const { return m_leaderGuid; }
@@ -199,7 +199,7 @@ class OREGON_DLL_SPEC Group
         bool IsAssistant(uint64 guid) const
         {
             member_citerator mslot = _getMemberCSlot(guid);
-            if (mslot==m_memberSlots.end())
+            if (mslot == m_memberSlots.end())
                 return false;
 
             return mslot->assistant;
@@ -210,7 +210,7 @@ class OREGON_DLL_SPEC Group
         bool SameSubGroup(uint64 guid1,const uint64& guid2) const
         {
             member_citerator mslot2 = _getMemberCSlot(guid2);
-            if (mslot2==m_memberSlots.end())
+            if (mslot2 == m_memberSlots.end())
                 return false;
 
             return SameSubGroup(guid1,&*mslot2);
@@ -219,10 +219,10 @@ class OREGON_DLL_SPEC Group
         bool SameSubGroup(uint64 guid1, MemberSlot const* slot2) const
         {
             member_citerator mslot1 = _getMemberCSlot(guid1);
-            if (mslot1==m_memberSlots.end() || !slot2)
+            if (mslot1 == m_memberSlots.end() || !slot2)
                 return false;
 
-            return (mslot1->group==slot2->group);
+            return (mslot1->group == slot2->group);
         }
 
         bool HasFreeSlotSubGroup(uint8 subgroup) const
@@ -239,7 +239,7 @@ class OREGON_DLL_SPEC Group
         uint8  GetMemberGroup(uint64 guid) const
         {
             member_citerator mslot = _getMemberCSlot(guid);
-            if (mslot==m_memberSlots.end())
+            if (mslot == m_memberSlots.end())
                 return (MAXRAIDSIZE/MAXGROUPSIZE+1);
 
             return mslot->group;

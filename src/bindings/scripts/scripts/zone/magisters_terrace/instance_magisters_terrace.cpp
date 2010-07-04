@@ -108,17 +108,17 @@ struct OREGON_DLL_DECL instance_magisters_terrace : public ScriptedInstance
         {
             case DATA_SELIN_EVENT:
                 Encounters[0] = data;
-                if(data==DONE)
+                if(data == DONE)
                     DoorState[0] = 0;
                 break;
             case DATA_VEXALLUS_EVENT:
                 Encounters[1] = data;
-                if(data==DONE)
+                if(data == DONE)
                     DoorState[1] = 0;
                 break;
             case DATA_DELRISSA_EVENT:
                 Encounters[2] = data;
-                if(data==DONE)
+                if(data == DONE)
                     DoorState[2] = 0;
                 break;
             case DATA_KAELTHAS_EVENT:    Encounters[3] = data;  break;
@@ -128,7 +128,7 @@ struct OREGON_DLL_DECL instance_magisters_terrace : public ScriptedInstance
                 else      DelrissaDeathCount = 0;
         }
 
-        if(data==DONE)
+        if(data == DONE)
             SaveToDB();
     }
 

@@ -580,7 +580,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
             }else EnfeebleTimer -= diff;
         }
 
-        if(phase==2)
+        if(phase == 2)
             DoMeleeAttacksIfReady();
         else
             DoMeleeAttackIfReady();

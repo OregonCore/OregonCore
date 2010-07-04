@@ -57,7 +57,7 @@ void Totem::Update(uint32 time)
 void Totem::Summon(Unit* owner)
 {
     CreatureInfo const *cinfo = GetCreatureInfo();
-    if (owner->GetTypeId()==TYPEID_PLAYER && cinfo)
+    if (owner->GetTypeId() == TYPEID_PLAYER && cinfo)
     {
         uint32 modelid = 0;
         if (owner->ToPlayer()->GetTeam() == HORDE)
@@ -114,7 +114,7 @@ void Totem::UnSummon()
         // clear owenr's totem slot
         for (int i = 0; i < MAX_TOTEM; ++i)
         {
-            if (owner->m_TotemSlot[i]==GetGUID())
+            if (owner->m_TotemSlot[i] == GetGUID())
             {
                 owner->m_TotemSlot[i] = 0;
                 break;
@@ -174,7 +174,7 @@ void Totem::SetTypeBySummonSpell(SpellEntry const * spellProto)
         if (GetSpellCastTime(totemSpell))
             m_type = TOTEM_ACTIVE;
     }
-    if (spellProto->SpellIconID==2056)
+    if (spellProto->SpellIconID == 2056)
         m_type = TOTEM_STATUE;                              //Jewelery statue
 }
 

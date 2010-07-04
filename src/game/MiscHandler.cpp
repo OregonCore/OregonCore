@@ -906,24 +906,24 @@ void WorldSession::HandleSetActionButtonOpcode(WorldPacket& recv_data)
     uint16 action;
     recv_data >> button >> action >> misc >> type;
     sLog.outDetail("BUTTON: %u ACTION: %u TYPE: %u MISC: %u", button, action, type, misc);
-    if (action==0)
+    if (action == 0)
     {
         sLog.outDetail("MISC: Remove action from button %u", button);
         GetPlayer()->removeActionButton(button);
     }
     else
     {
-        if (type==ACTION_BUTTON_MACRO || type==ACTION_BUTTON_CMACRO)
+        if (type == ACTION_BUTTON_MACRO || type == ACTION_BUTTON_CMACRO)
         {
             sLog.outDetail("MISC: Added Macro %u into button %u", action, button);
             GetPlayer()->addActionButton(button,action,type,misc);
         }
-        else if (type==ACTION_BUTTON_SPELL)
+        else if (type == ACTION_BUTTON_SPELL)
         {
             sLog.outDetail("MISC: Added Action %u into button %u", action, button);
             GetPlayer()->addActionButton(button,action,type,misc);
         }
-        else if (type==ACTION_BUTTON_ITEM)
+        else if (type == ACTION_BUTTON_ITEM)
         {
             sLog.outDetail("MISC: Added Item %u into button %u", action, button);
             GetPlayer()->addActionButton(button,action,type,misc);

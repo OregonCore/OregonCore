@@ -162,7 +162,7 @@ struct OREGON_DLL_DECL instance_mount_hyjal : public ScriptedInstance
             case DATA_AZGALOREVENT:
                 {
                     Encounters[3] = data;
-                    if(data==DONE)
+                    if(data == DONE)
                     {
                         if(ArchiYell)break;
                         ArchiYell = true;

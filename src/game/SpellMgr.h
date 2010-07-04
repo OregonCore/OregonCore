@@ -356,7 +356,7 @@ inline float GetSpellMaxRange(uint32 id)
 inline bool IsSpellHaveEffect(SpellEntry const *spellInfo, SpellEffects effect)
 {
     for (int i= 0; i < 3; ++i)
-        if (spellInfo->Effect[i]==effect)
+        if (spellInfo->Effect[i] == effect)
             return true;
     return false;
 }
@@ -816,7 +816,7 @@ class SpellMgr
         uint32 GetSpellElixirMask(uint32 spellid) const
         {
             SpellElixirMap::const_iterator itr = mSpellElixirs.find(spellid);
-            if (itr==mSpellElixirs.end())
+            if (itr == mSpellElixirs.end())
                 return 0x0;
 
             return itr->second;
@@ -825,7 +825,7 @@ class SpellMgr
         SpellSpecific GetSpellElixirSpecific(uint32 spellid) const
         {
             uint32 mask = GetSpellElixirMask(spellid);
-            if ((mask & ELIXIR_FLASK_MASK)==ELIXIR_FLASK_MASK)
+            if ((mask & ELIXIR_FLASK_MASK) == ELIXIR_FLASK_MASK)
                 return SPELL_FLASK_ELIXIR;
             else if (mask & ELIXIR_BATTLE_MASK)
                 return SPELL_BATTLE_ELIXIR;
@@ -930,7 +930,7 @@ class SpellMgr
 
             // check present in same rank chain
             for (; itr != mSpellChains.end(); itr = mSpellChains.find(itr->second.prev))
-                if (itr->second.prev==spell2)
+                if (itr->second.prev == spell2)
                     return true;
 
             return false;
@@ -972,7 +972,7 @@ class SpellMgr
             SpellLearnSpellMap::const_iterator b = GetBeginSpellLearnSpell(spell_id1);
             SpellLearnSpellMap::const_iterator e = GetEndSpellLearnSpell(spell_id1);
             for (SpellLearnSpellMap::const_iterator i = b; i != e; ++i)
-                if (i->second.spell==spell_id2)
+                if (i->second.spell == spell_id2)
                     return true;
             return false;
         }

@@ -50,7 +50,7 @@ uint32 GuidHigh2TypeId(uint32 guid_hi)
     switch(guid_hi)
     {
         case HIGHGUID_ITEM:         return TYPEID_ITEM;
-        //case HIGHGUID_CONTAINER:    return TYPEID_CONTAINER; HIGHGUID_CONTAINER==HIGHGUID_ITEM currently
+        //case HIGHGUID_CONTAINER:    return TYPEID_CONTAINER; HIGHGUID_CONTAINER == HIGHGUID_ITEM currently
         case HIGHGUID_UNIT:         return TYPEID_UNIT;
         case HIGHGUID_PET:          return TYPEID_UNIT;
         case HIGHGUID_PLAYER:       return TYPEID_PLAYER;
@@ -1365,7 +1365,7 @@ bool WorldObject::HasInArc(const float arcangle, const WorldObject* obj) const
 
 void WorldObject::GetRandomPoint(float x, float y, float z, float distance, float &rand_x, float &rand_y, float &rand_z) const
 {
-    if (distance==0)
+    if (distance == 0)
     {
         rand_x = x;
         rand_y = y;
@@ -1551,7 +1551,7 @@ void WorldObject::MonsterYellToZone(int32 textId, uint32 language, uint64 Target
 
     Map::PlayerList const& pList = GetMap()->GetPlayers();
     for (Map::PlayerList::const_iterator itr = pList.begin(); itr != pList.end(); ++itr)
-        if (itr->getSource()->GetZoneId()==zoneid)
+        if (itr->getSource()->GetZoneId() == zoneid)
             say_do(itr->getSource());
 }
 
@@ -1587,7 +1587,7 @@ void WorldObject::MonsterWhisper(int32 textId, uint64 receiver, bool IsBossWhisp
 
 void WorldObject::BuildMonsterChat(WorldPacket *data, uint8 msgtype, char const* text, uint32 language, char const* name, uint64 targetGuid) const
 {
-    bool pre = (msgtype==CHAT_MSG_MONSTER_EMOTE || msgtype==CHAT_MSG_RAID_BOSS_EMOTE);
+    bool pre = (msgtype == CHAT_MSG_MONSTER_EMOTE || msgtype == CHAT_MSG_RAID_BOSS_EMOTE);
 
     *data << (uint8)msgtype;
     *data << (uint32)language;
@@ -1696,7 +1696,7 @@ Creature* WorldObject::SummonCreature(uint32 id, float x, float y, float z, floa
     TemporarySummon* pCreature = new TemporarySummon(GetGUID());
 
     uint32 team = 0;
-    if (GetTypeId()==TYPEID_PLAYER)
+    if (GetTypeId() == TYPEID_PLAYER)
         team = ToPlayer()->GetTeam();
 
     if (!pCreature->Create(objmgr.GenerateLowGuid(HIGHGUID_UNIT), GetMap(), id, team))
@@ -1720,7 +1720,7 @@ Creature* WorldObject::SummonCreature(uint32 id, float x, float y, float z, floa
     pCreature->SetHomePosition(x, y, z, ang);
     pCreature->Summon(spwtype, despwtime);
 
-    if (GetTypeId()==TYPEID_UNIT && ToCreature()->IsAIEnabled)
+    if (GetTypeId() == TYPEID_UNIT && ToCreature()->IsAIEnabled)
         ToCreature()->AI()->JustSummoned(pCreature);
 
     if (pCreature->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_TRIGGER && pCreature->m_spells[0])
@@ -1744,7 +1744,7 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
         Unit::AuraList const& auraClassScripts = GetAurasByType(SPELL_AURA_OVERRIDE_CLASS_SCRIPTS);
         for (Unit::AuraList::const_iterator itr = auraClassScripts.begin();itr != auraClassScripts.end();)
         {
-            if ((*itr)->GetModifier()->m_miscvalue==2228)
+            if ((*itr)->GetModifier()->m_miscvalue == 2228)
             {
                 RemoveAurasDueToSpell((*itr)->GetId());
                 itr = auraClassScripts.begin();
@@ -1759,7 +1759,7 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
         return NULL;
     }
 
-    // petentry==0 for hunter "call pet" (current pet summoned if any)
+    // petentry == 0 for hunter "call pet" (current pet summoned if any)
     if (!entry)
     {
         delete pet;
@@ -1826,7 +1826,7 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
         Unit::AuraList const& auraClassScripts = GetAurasByType(SPELL_AURA_OVERRIDE_CLASS_SCRIPTS);
         for (Unit::AuraList::const_iterator itr = auraClassScripts.begin();itr != auraClassScripts.end();)
         {
-            if ((*itr)->GetModifier()->m_miscvalue==2228)
+            if ((*itr)->GetModifier()->m_miscvalue == 2228)
             {
                 RemoveAurasDueToSpell((*itr)->GetId());
                 itr = auraClassScripts.begin();
@@ -1861,7 +1861,7 @@ GameObject* WorldObject::SummonGameObject(uint32 entry, float x, float y, float 
         return NULL;
     }
     go->SetRespawnTime(respawnTime);
-    if (GetTypeId()==TYPEID_PLAYER || GetTypeId()==TYPEID_UNIT) //not sure how to handle this
+    if (GetTypeId() == TYPEID_PLAYER || GetTypeId() == TYPEID_UNIT) //not sure how to handle this
         ((Unit*)this)->AddGameObject(go);
     else
         go->SetSpawnedByDefault(false);
@@ -1878,7 +1878,7 @@ Creature* WorldObject::SummonTrigger(float x, float y, float z, float ang, uint3
         return NULL;
 
     //summon->SetName(GetName());
-    if (GetTypeId()==TYPEID_PLAYER || GetTypeId()==TYPEID_UNIT)
+    if (GetTypeId() == TYPEID_PLAYER || GetTypeId() == TYPEID_UNIT)
     {
         summon->setFaction(((Unit*)this)->getFaction());
         summon->SetLevel(((Unit*)this)->getLevel());

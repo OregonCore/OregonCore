@@ -211,7 +211,7 @@ void GameObject::Update(uint32 diff)
                     {
                         // splash bobber (bobber ready now)
                         Unit* caster = GetOwner();
-                        if (caster && caster->GetTypeId()==TYPEID_PLAYER)
+                        if (caster && caster->GetTypeId() == TYPEID_PLAYER)
                         {
                             SetGoState(0);
                             SetUInt32Value(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
@@ -253,7 +253,7 @@ void GameObject::Update(uint32 diff)
                         case GAMEOBJECT_TYPE_FISHINGNODE:   //  can't fish now
                         {
                             Unit* caster = GetOwner();
-                            if (caster && caster->GetTypeId()==TYPEID_PLAYER)
+                            if (caster && caster->GetTypeId() == TYPEID_PLAYER)
                             {
                                 if (caster->m_currentSpells[CURRENT_CHANNELED_SPELL])
                                 {
@@ -710,7 +710,7 @@ bool GameObject::hasQuest(uint32 quest_id) const
     QuestRelations const& qr = objmgr.mGOQuestRelations;
     for (QuestRelations::const_iterator itr = qr.lower_bound(GetEntry()); itr != qr.upper_bound(GetEntry()); ++itr)
     {
-        if (itr->second==quest_id)
+        if (itr->second == quest_id)
             return true;
     }
     return false;
@@ -721,7 +721,7 @@ bool GameObject::hasInvolvedQuest(uint32 quest_id) const
     QuestRelations const& qr = objmgr.mGOQuestInvolvedRelations;
     for (QuestRelations::const_iterator itr = qr.lower_bound(GetEntry()); itr != qr.upper_bound(GetEntry()); ++itr)
     {
-        if (itr->second==quest_id)
+        if (itr->second == quest_id)
             return true;
     }
     return false;
@@ -772,7 +772,7 @@ bool GameObject::isVisibleForInState(Player const* u, bool inVisibleList) const
         }
 
         // Smuggled Mana Cell required 10 invisibility type detection/state
-        if (GetEntry()==187039 && ((u->m_detectInvisibilityMask | u->m_invisibilityMask) & (1<<10))==0)
+        if (GetEntry() == 187039 && ((u->m_detectInvisibilityMask | u->m_invisibilityMask) & (1<<10)) == 0)
             return false;
     }
 
@@ -1028,7 +1028,7 @@ void GameObject::Use(Unit* user)
         {
             GameObjectInfo const* info = GetGOInfo();
 
-            if (user->GetTypeId()==TYPEID_PLAYER)
+            if (user->GetTypeId() == TYPEID_PLAYER)
             {
                 Player* player = user->ToPlayer();
 
@@ -1166,7 +1166,7 @@ void GameObject::Use(Unit* user)
                 return;
 
             // accept only use by player from same group for caster except caster itself
-            if (caster->ToPlayer()==player || !caster->ToPlayer()->IsInSameRaidWith(player))
+            if (caster->ToPlayer() == player || !caster->ToPlayer()->IsInSameRaidWith(player))
                 return;
 
             AddUniqueUse(player);

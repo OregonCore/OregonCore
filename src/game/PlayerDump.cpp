@@ -433,11 +433,11 @@ DumpReturn PlayerDumpReader::LoadDump(const std::string& file, uint32 account, s
 
         // skip empty strings
         size_t nw_pos = line.find_first_not_of(" \t\n\r\7");
-        if (nw_pos==std::string::npos)
+        if (nw_pos == std::string::npos)
             continue;
 
         // skip NOTE
-        if (line.substr(nw_pos,15)=="IMPORTANT NOTE:")
+        if (line.substr(nw_pos,15) == "IMPORTANT NOTE:")
             continue;
 
         // determine table name and load type
@@ -548,7 +548,7 @@ DumpReturn PlayerDumpReader::LoadDump(const std::string& file, uint32 account, s
             {
                 //store a map of old pet id to new inserted pet id for use by type 5 tables
                 snprintf(currpetid, 20, "%s", getnth(line, 1).c_str());
-                if (strlen(lastpetid)==0) snprintf(lastpetid, 20, "%s", currpetid);
+                if (strlen(lastpetid) == 0) snprintf(lastpetid, 20, "%s", currpetid);
                 if (strcmp(lastpetid,currpetid) != 0)
                 {
                     snprintf(newpetid, 20, "%d", objmgr.GeneratePetNumber());

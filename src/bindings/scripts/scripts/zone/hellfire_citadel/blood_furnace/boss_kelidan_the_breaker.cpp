@@ -161,7 +161,7 @@ struct OREGON_DLL_DECL boss_kelidan_the_breakerAI : public ScriptedAI
         for(i=0; i<5; ++i)
         {
             Creature *channeler = Unit::GetCreature(*m_creature, Channelers[i]);
-            if(channeler && channeler->GetGUID()==channeler1->GetGUID())
+            if(channeler && channeler->GetGUID() == channeler1->GetGUID())
                 break;
         }
         return Channelers[(i+2)%5];

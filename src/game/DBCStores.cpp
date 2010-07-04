@@ -197,7 +197,7 @@ void LoadDBCStores(const std::string& dataPath)
             sAreaFlagByAreaID.insert(AreaFlagByAreaID::value_type(uint16(area->ID),area->exploreFlag));
 
             // fill MapId->DBC records ( skip sub zones and continents)
-            if(area->zone==0 && area->mapid != 0 && area->mapid != 1 && area->mapid != 530)
+            if(area->zone == 0 && area->mapid != 0 && area->mapid != 1 && area->mapid != 530)
                 sAreaFlagByMapID.insert(AreaFlagByMapID::value_type(area->mapid,area->exploreFlag));
         }
     }
@@ -467,7 +467,7 @@ void LoadDBCStores(const std::string& dataPath)
 SimpleFactionsList const* GetFactionTeamList(uint32 faction)
 {
     FactionTeamMap::const_iterator itr = sFactionTeamMap.find(faction);
-    if(itr==sFactionTeamMap.end())
+    if(itr == sFactionTeamMap.end())
         return NULL;
     return &itr->second;
 }
@@ -485,7 +485,7 @@ char* GetPetName(uint32 petfamily, uint32 dbclang)
 TalentSpellPos const* GetTalentSpellPos(uint32 spellId)
 {
     TalentSpellPosMap::const_iterator itr = sTalentSpellPosMap.find(spellId);
-    if(itr==sTalentSpellPosMap.end())
+    if(itr == sTalentSpellPosMap.end())
         return NULL;
 
     return &itr->second;
@@ -580,9 +580,9 @@ ChatChannelsEntry const* GetChannelEntryFor(uint32 channel_id)
 
 bool IsTotemCategoryCompatiableWith(uint32 itemTotemCategoryId, uint32 requiredTotemCategoryId)
 {
-    if(requiredTotemCategoryId==0)
+    if(requiredTotemCategoryId == 0)
         return true;
-    if(itemTotemCategoryId==0)
+    if(itemTotemCategoryId == 0)
         return false;
 
     TotemCategoryEntry const* itemEntry = sTotemCategoryStore.LookupEntry(itemTotemCategoryId);
@@ -595,7 +595,7 @@ bool IsTotemCategoryCompatiableWith(uint32 itemTotemCategoryId, uint32 requiredT
     if(itemEntry->categoryType != reqEntry->categoryType)
         return false;
 
-    return (itemEntry->categoryMask & reqEntry->categoryMask)==reqEntry->categoryMask;
+    return (itemEntry->categoryMask & reqEntry->categoryMask) == reqEntry->categoryMask;
 }
 
 void Zone2MapCoordinates(float& x,float& y,uint32 zone)

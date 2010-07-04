@@ -70,7 +70,7 @@ bool VendorItemData::RemoveItem(uint32 item_id)
 {
     for (VendorItemList::iterator i = m_items.begin(); i != m_items.end(); ++i)
     {
-        if ((*i)->item==item_id)
+        if ((*i)->item == item_id)
         {
             m_items.erase(i);
             return true;
@@ -82,7 +82,7 @@ bool VendorItemData::RemoveItem(uint32 item_id)
 size_t VendorItemData::FindItemSlot(uint32 item_id) const
 {
     for (size_t i = 0; i < m_items.size(); ++i)
-        if (m_items[i]->item==item_id)
+        if (m_items[i]->item == item_id)
             return i;
     return m_items.size();
 }
@@ -90,7 +90,7 @@ size_t VendorItemData::FindItemSlot(uint32 item_id) const
 VendorItem const* VendorItemData::FindItem(uint32 item_id) const
 {
     for (VendorItemList::const_iterator i = m_items.begin(); i != m_items.end(); ++i)
-        if ((*i)->item==item_id)
+        if ((*i)->item == item_id)
             return *i;
     return NULL;
 }
@@ -319,7 +319,7 @@ bool Creature::InitEntry(uint32 Entry, uint32 team, const CreatureData *data)
 
     // checked at loading
     m_defaultMovementType = MovementGeneratorType(cinfo->MovementType);
-    if (!m_respawnradius && m_defaultMovementType==RANDOM_MOTION_TYPE)
+    if (!m_respawnradius && m_defaultMovementType == RANDOM_MOTION_TYPE)
         m_defaultMovementType = IDLE_MOTION_TYPE;
 
     m_spells[0] = GetCreatureInfo()->spell1;
@@ -798,7 +798,7 @@ void Creature::prepareGossipMenu(Player *pPlayer,uint32 gossipid)
         if (gso->GossipId == gossipid)
         {
             bool cantalking=true;
-            if (gso->Id==1)
+            if (gso->Id == 1)
             {
                 uint32 textid=GetNpcTextId();
                 GossipText * gossiptext=objmgr.GetGossipText(textid);
@@ -1032,7 +1032,7 @@ void Creature::OnGossipSelect(Player* player, uint32 option)
 
 void Creature::OnPoiSelect(Player* player, GossipOption const *gossip)
 {
-    if (gossip->GossipId==GOSSIP_GUARD_SPELLTRAINER || gossip->GossipId==GOSSIP_GUARD_SKILLTRAINER)
+    if (gossip->GossipId == GOSSIP_GUARD_SPELLTRAINER || gossip->GossipId == GOSSIP_GUARD_SKILLTRAINER)
     {
         Poi_Icon icon = ICON_POI_0;
         //need add more case.
@@ -1091,7 +1091,7 @@ GossipOption const* Creature::GetGossipOption(uint32 id) const
 {
     for (GossipOptionList::const_iterator i = m_goptions.begin(); i != m_goptions.end(); ++i)
     {
-        if (i->Action==id)
+        if (i->Action == id)
             return &*i;
     }
     return NULL;
@@ -1211,13 +1211,13 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask)
     data.orientation = GetOrientation();
     data.spawntimesecs = m_respawnDelay;
     // prevent add data integrity problems
-    data.spawndist = GetDefaultMovementType()==IDLE_MOTION_TYPE ? 0 : m_respawnradius;
+    data.spawndist = GetDefaultMovementType() == IDLE_MOTION_TYPE ? 0 : m_respawnradius;
     data.currentwaypoint = 0;
     data.curhealth = GetHealth();
     data.curmana = GetPower(POWER_MANA);
     data.is_dead = m_isDeadByDefault;
     // prevent add data integrity problems
-    data.movementType = !m_respawnradius && GetDefaultMovementType()==RANDOM_MOTION_TYPE
+    data.movementType = !m_respawnradius && GetDefaultMovementType() == RANDOM_MOTION_TYPE
         ? IDLE_MOTION_TYPE : GetDefaultMovementType();
     data.spawnMask = spawnMask;
 
@@ -1486,7 +1486,7 @@ bool Creature::hasQuest(uint32 quest_id) const
     QuestRelations const& qr = objmgr.mCreatureQuestRelations;
     for (QuestRelations::const_iterator itr = qr.lower_bound(GetEntry()); itr != qr.upper_bound(GetEntry()); ++itr)
     {
-        if (itr->second==quest_id)
+        if (itr->second == quest_id)
             return true;
     }
     return false;
@@ -1497,7 +1497,7 @@ bool Creature::hasInvolvedQuest(uint32 quest_id) const
     QuestRelations const& qr = objmgr.mCreatureQuestInvolvedRelations;
     for (QuestRelations::const_iterator itr = qr.lower_bound(GetEntry()); itr != qr.upper_bound(GetEntry()); ++itr)
     {
-        if (itr->second==quest_id)
+        if (itr->second == quest_id)
             return true;
     }
     return false;
@@ -1586,7 +1586,7 @@ bool Creature::canStartAttack(Unit const* who) const
 float Creature::GetAttackDistance(Unit const* pl) const
 {
     float aggroRate = sWorld.getRate(RATE_CREATURE_AGGRO);
-    if (aggroRate==0)
+    if (aggroRate == 0)
         return 0.0f;
 
     int32 playerlevel   = pl->getLevelForTarget(this);
@@ -1705,7 +1705,7 @@ void Creature::Respawn()
     SetVisibility(currentVis);                              // restore visibility state
     ObjectAccessor::UpdateObjectVisibility(this);
 
-    if (getDeathState()==DEAD)
+    if (getDeathState() == DEAD)
     {
         if (m_DBTableGuid)
             objmgr.SaveCreatureRespawnTime(m_DBTableGuid,GetInstanceId(),0);
@@ -1868,7 +1868,7 @@ bool Creature::IsVisibleInGridForPlayer(Player const* pl) const
     {
         if (GetEntry() == VISUAL_WAYPOINT && !pl->isGameMaster())
             return false;
-        return isAlive() || m_deathTimer > 0 || m_isDeadByDefault && m_deathState==CORPSE;
+        return isAlive() || m_deathTimer > 0 || m_isDeadByDefault && m_deathState == CORPSE;
     }
 
     // Dead player see live creatures near own corpse
@@ -2161,7 +2161,7 @@ void Creature::SendZoneUnderAttackMessage(Player* attacker)
 
     WorldPacket data(SMSG_ZONE_UNDER_ATTACK,4);
     data << (uint32)GetZoneId();
-    sWorld.SendGlobalMessage(&data,NULL,(enemy_team==ALLIANCE ? HORDE : ALLIANCE));
+    sWorld.SendGlobalMessage(&data,NULL,(enemy_team == ALLIANCE ? HORDE : ALLIANCE));
 }
 
 void Creature::SetInCombatWithZone()
@@ -2360,7 +2360,7 @@ uint32 Creature::GetVendorItemCurrentCount(VendorItem const* vItem)
 
     VendorItemCounts::iterator itr = m_vendorItemCounts.begin();
     for (; itr != m_vendorItemCounts.end(); ++itr)
-        if (itr->itemId==vItem->item)
+        if (itr->itemId == vItem->item)
             break;
 
     if (itr == m_vendorItemCounts.end())
@@ -2395,7 +2395,7 @@ uint32 Creature::UpdateVendorItemCurrentCount(VendorItem const* vItem, uint32 us
 
     VendorItemCounts::iterator itr = m_vendorItemCounts.begin();
     for (; itr != m_vendorItemCounts.end(); ++itr)
-        if (itr->itemId==vItem->item)
+        if (itr->itemId == vItem->item)
             break;
 
     if (itr == m_vendorItemCounts.end())

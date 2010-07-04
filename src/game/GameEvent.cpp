@@ -205,7 +205,7 @@ void GameEvent::LoadFromDB()
         bar.step();
 
         uint16 event_id = fields[0].GetUInt16();
-        if (event_id==0)
+        if (event_id == 0)
         {
             sLog.outErrorDb("game_event game event id (%i) is reserved and can't be used.",event_id);
             continue;
@@ -222,7 +222,7 @@ void GameEvent::LoadFromDB()
         pGameEvent.state        = (GameEventState)(fields[6].GetUInt8());
         pGameEvent.nextstart    = 0;
 
-        if (pGameEvent.length==0 && pGameEvent.state == GAMEEVENT_NORMAL)                            // length>0 is validity check
+        if (pGameEvent.length == 0 && pGameEvent.state == GAMEEVENT_NORMAL)                            // length>0 is validity check
         {
             sLog.outErrorDb("game_event game event id (%i) isn't a world event and has length = 0, thus it can't be used.",event_id);
             continue;

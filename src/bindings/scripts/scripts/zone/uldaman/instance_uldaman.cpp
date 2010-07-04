@@ -166,7 +166,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         for(std::vector<uint64>::iterator i = stoneKeeper.begin(); i != stoneKeeper.end(); ++i)
         {
             Creature *target = instance->GetCreature(*i);
-            if (!target || !target->isAlive() || target->getFaction()==14)
+            if (!target || !target->isAlive() || target->getFaction() == 14)
                 continue;
             target->RemoveFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_DISABLE_MOVE);
             target->setFaction(14);
@@ -187,7 +187,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         for(std::vector<uint64>::iterator i = archaedasWallMinions.begin(); i != archaedasWallMinions.end(); ++i)
         {
             Creature *target = instance->GetCreature(*i);
-            if (!target || !target->isAlive() || target->getFaction()==14)
+            if (!target || !target->isAlive() || target->getFaction() == 14)
                 continue;
             archaedas->CastSpell(target, SPELL_AWAKEN_VAULT_WALKER, true);
             target->CastSpell(target, SPELL_ARCHAEDAS_AWAKEN,true);
@@ -380,7 +380,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
     void SetData64 (uint32 type, uint64 data)
     {
         // Archaedas
-        if (type==0 )
+        if (type == 0 )
         {
             ActivateArchaedas (data);
             SetDoor (archaedasTempleDoor, false); //close when event is started

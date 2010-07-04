@@ -180,7 +180,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
 
     float Portal_X(float radius)
     {
-        if ((rand()%2)==1)
+        if ((rand()%2) == 1)
             radius = -radius;
 
         return (radius * (float)(rand()%100)/100.0f + CENTER_X);

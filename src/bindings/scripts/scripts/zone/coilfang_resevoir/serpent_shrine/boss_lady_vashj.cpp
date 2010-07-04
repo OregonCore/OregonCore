@@ -980,7 +980,7 @@ bool ItemUse_item_tainted_core(Player *player, Item* _Item, SpellCastTargets con
     Vashj = (Creature*)(Unit::GetUnit((*player), pInstance->GetData64(DATA_LADYVASHJ)));
     if(Vashj && ((boss_lady_vashjAI*)Vashj->AI())->Phase == 2)
     {
-        if(targets.getGOTarget() && targets.getGOTarget()->GetTypeId()==TYPEID_GAMEOBJECT)
+        if(targets.getGOTarget() && targets.getGOTarget()->GetTypeId() == TYPEID_GAMEOBJECT)
         {
             uint32 identifier;
             uint8 channel_identifier;

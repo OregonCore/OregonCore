@@ -95,7 +95,7 @@ Oregon::PlayerRelocationNotifier::Visit(PlayerMapType &m)
         //        (*it)->UpdateVisibilityOf(iter->getSource());
 
         // Cancel Trade
-        if (i_player.GetTrader()==iter->getSource())
+        if (i_player.GetTrader() == iter->getSource())
             if (!i_player.IsWithinDistInMap(iter->getSource(), 5)) // iteraction distance
                 i_player.GetSession()->SendCancelTrade();   // will clode both side trade windows
     }
@@ -157,7 +157,7 @@ inline void Oregon::DynamicObjectUpdater::VisitHelper(Unit* target)
     if (!target->isAlive() || target->isInFlight())
         return;
 
-    if (target->GetTypeId()==TYPEID_UNIT && ((Creature*)target)->isTotem())
+    if (target->GetTypeId() == TYPEID_UNIT && ((Creature*)target)->isTotem())
         return;
 
     if (!i_dynobject.IsWithinDistInMap(target, i_dynobject.GetRadius()))
@@ -168,11 +168,11 @@ inline void Oregon::DynamicObjectUpdater::VisitHelper(Unit* target)
         return;
 
     // Evade target
-    if (target->GetTypeId()==TYPEID_UNIT && ((Creature*)target)->IsInEvadeMode())
+    if (target->GetTypeId() == TYPEID_UNIT && ((Creature*)target)->IsInEvadeMode())
         return;
 
     //Check player targets and remove if in GM mode or GM invisibility (for not self casting case)
-    if (target->GetTypeId()==TYPEID_PLAYER && target != i_check && (((Player*)target)->isGameMaster() || ((Player*)target)->GetVisibility()==VISIBILITY_OFF))
+    if (target->GetTypeId() == TYPEID_PLAYER && target != i_check && (((Player*)target)->isGameMaster() || ((Player*)target)->GetVisibility() == VISIBILITY_OFF))
         return;
 
     if (i_dynobject.IsAffecting(target))
@@ -186,7 +186,7 @@ inline void Oregon::DynamicObjectUpdater::VisitHelper(Unit* target)
         if (!i_check->IsFriendlyTo(target))
             return;
     }
-    else if (i_check->GetTypeId()==TYPEID_PLAYER)
+    else if (i_check->GetTypeId() == TYPEID_PLAYER)
     {
         if (i_check->IsFriendlyTo(target))
             return;

@@ -131,9 +131,9 @@ bool GossipSelect_npc_great_bear_spirit(Player *player, Creature *_Creature, uin
             break;
         case GOSSIP_ACTION_INFO_DEF + 3:
             player->SEND_GOSSIP_MENU(4735, _Creature->GetGUID());
-            if (player->GetQuestStatus(5929)==QUEST_STATUS_INCOMPLETE)
+            if (player->GetQuestStatus(5929) == QUEST_STATUS_INCOMPLETE)
                 player->AreaExploredOrEventHappens(5929);
-            if (player->GetQuestStatus(5930)==QUEST_STATUS_INCOMPLETE)
+            if (player->GetQuestStatus(5930) == QUEST_STATUS_INCOMPLETE)
                 player->AreaExploredOrEventHappens(5930);
             break;
     }

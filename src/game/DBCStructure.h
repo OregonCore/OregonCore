@@ -267,7 +267,7 @@ struct FactionTemplateEntry
     {
         if(ID == entry.ID)
             return true;
-        if(enemyFaction1  == entry.faction || enemyFaction2  == entry.faction || enemyFaction3 == entry.faction || enemyFaction4 == entry.faction)
+        if(enemyFaction1 == entry.faction || enemyFaction2 == entry.faction || enemyFaction3 == entry.faction || enemyFaction4 == entry.faction)
             return false;
         if(friendFaction1 == entry.faction || friendFaction2 == entry.faction || friendFaction3 == entry.faction || friendFaction4 == entry.faction)
             return true;
@@ -277,14 +277,14 @@ struct FactionTemplateEntry
     {
         if(ID == entry.ID)
             return false;
-        if(enemyFaction1  == entry.faction || enemyFaction2  == entry.faction || enemyFaction3 == entry.faction || enemyFaction4 == entry.faction)
+        if(enemyFaction1 == entry.faction || enemyFaction2 == entry.faction || enemyFaction3 == entry.faction || enemyFaction4 == entry.faction)
             return true;
         if(friendFaction1 == entry.faction || friendFaction2 == entry.faction || friendFaction3 == entry.faction || friendFaction4 == entry.faction)
             return false;
         return (hostileMask & entry.ourMask) != 0;
     }
     bool IsHostileToPlayers() const { return (hostileMask & FACTION_MASK_PLAYER) != 0; }
-    bool IsNeutralToAll() const { return hostileMask == 0 && friendlyMask == 0 && enemyFaction1==0 && enemyFaction2==0 && enemyFaction3==0 && enemyFaction4==0; }
+    bool IsNeutralToAll() const { return hostileMask == 0 && friendlyMask == 0 && enemyFaction1 == 0 && enemyFaction2 == 0 && enemyFaction3 == 0 && enemyFaction4 == 0; }
     bool IsContestedGuardFaction() const { return (factionFlags & FACTION_TEMPLATE_FLAG_CONTESTED_GUARD) != 0; }
 };
 
@@ -476,8 +476,8 @@ struct MapEntry
     bool IsMountAllowed() const
     {
         return !IsDungeon() ||
-            MapID==568 || MapID==309 || MapID==209 || MapID==534 ||
-            MapID==560 || MapID==509 || MapID==269;
+            MapID == 568 || MapID == 309 || MapID == 209 || MapID == 534 ||
+            MapID == 560 || MapID == 509 || MapID == 269;
     }
 };
 

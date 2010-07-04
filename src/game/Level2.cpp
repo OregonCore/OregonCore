@@ -908,7 +908,7 @@ bool ChatHandler::HandleModifyRepCommand(const char * args)
 
             wstrToLower(wrank);
 
-            if (wrank.substr(0,wrankStr.size())==wrankStr)
+            if (wrank.substr(0,wrankStr.size()) == wrankStr)
             {
                 char *deltaTxt = strtok(NULL, " ");
                 if (deltaTxt)
@@ -1877,7 +1877,7 @@ bool ChatHandler::HandleKickPlayerCommand(const char *args)
             return false;
         }
 
-        if (player==m_session->GetPlayer())
+        if (player == m_session->GetPlayer())
         {
             SendSysMessage(LANG_COMMAND_KICKSELF);
             SetSentErrorMessage(true);
@@ -1907,7 +1907,7 @@ bool ChatHandler::HandleKickPlayerCommand(const char *args)
             return false;
         }
 
-        if (m_session && name==m_session->GetPlayer()->GetName())
+        if (m_session && name == m_session->GetPlayer()->GetName())
         {
             SendSysMessage(LANG_COMMAND_KICKSELF);
             SetSentErrorMessage(true);
@@ -3166,7 +3166,7 @@ bool ChatHandler::HandleLookupFactionCommand(const char* args)
                 loc = 0;
                 for (; loc < MAX_LOCALE; ++loc)
                 {
-                    if (m_session && loc==m_session->GetSessionDbcLocale())
+                    if (m_session && loc == m_session->GetSessionDbcLocale())
                         continue;
 
                     name = factionEntry->name[loc];
@@ -3331,7 +3331,7 @@ bool ChatHandler::HandleLookupEventCommand(const char* args)
         }
     }
 
-    if (counter==0)
+    if (counter == 0)
         SendSysMessage(LANG_NOEVENTFOUND);
 
     return true;
@@ -3359,7 +3359,7 @@ bool ChatHandler::HandleEventActiveListCommand(const char* args)
         ++counter;
     }
 
-    if (counter==0)
+    if (counter == 0)
         SendSysMessage(LANG_NOEVENTFOUND);
 
     return true;
@@ -4149,7 +4149,7 @@ bool ChatHandler::HandleLookupTitleCommand(const char* args)
                 loc = 0;
                 for(; loc < MAX_LOCALE; ++loc)
                 {
-                    if(loc==m_session->GetSessionDbcLocale())
+                    if(loc == m_session->GetSessionDbcLocale())
                         continue;
 
                     name = titleInfo->name[loc];
@@ -4165,7 +4165,7 @@ bool ChatHandler::HandleLookupTitleCommand(const char* args)
             {
                 char const* knownStr = target && target->HasTitle(titleInfo) ? GetOregonString(LANG_KNOWN) : "";
 
-                char const* activeStr = target && target->GetUInt32Value(PLAYER_CHOSEN_TITLE)==titleInfo->bit_index
+                char const* activeStr = target && target->GetUInt32Value(PLAYER_CHOSEN_TITLE) == titleInfo->bit_index
                     ? GetOregonString(LANG_ACTIVE)
                     : "";
 
@@ -4341,7 +4341,7 @@ bool ChatHandler::HandleCharacterTitlesCommand(const char* args)
             if(name.empty())
                 continue;
 
-            char const* activeStr = target && target->GetUInt32Value(PLAYER_CHOSEN_TITLE)==titleInfo->bit_index
+            char const* activeStr = target && target->GetUInt32Value(PLAYER_CHOSEN_TITLE) == titleInfo->bit_index
                 ? GetOregonString(LANG_ACTIVE)
                 : "";
 

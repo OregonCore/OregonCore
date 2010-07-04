@@ -169,7 +169,7 @@ struct OREGON_DLL_DECL boss_ragnarosAI : public Scripted_NoMovementAI
         {
             DoCast(m_creature,SPELL_HANDOFRAGNAROS);
 
-            if (rand()%2==0)
+            if (rand()%2 == 0)
             {
                 DoScriptText(SAY_HAND, m_creature);
             }

@@ -125,7 +125,7 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
         // no script or script not process request by self
 
         // special learning case
-        if (pItem->GetProto()->Spells[0].SpellId==SPELL_ID_GENERIC_LEARN)
+        if (pItem->GetProto()->Spells[0].SpellId == SPELL_ID_GENERIC_LEARN)
         {
             uint32 learning_spell_id = pItem->GetProto()->Spells[1].SpellId;
 
@@ -349,7 +349,7 @@ void WorldSession::HandleCancelAuraOpcode(WorldPacket& recvPacket)
     {
         if (Spell* spell = _player->m_currentSpells[CURRENT_CHANNELED_SPELL])
         {
-            if (spell->m_spellInfo->Id==spellId)
+            if (spell->m_spellInfo->Id == spellId)
             {
                 spell->cancel();
             }

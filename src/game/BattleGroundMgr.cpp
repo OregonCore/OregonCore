@@ -115,7 +115,7 @@ void BattleGroundQueue::SelectionPool::RemoveGroup(GroupQueueInfo *ginfo)
     // find what to remove
     for (std::list<GroupQueueInfo *>::iterator itr = SelectedGroups.begin(); itr != SelectedGroups.end(); ++itr)
     {
-        if ((*itr)==ginfo)
+        if ((*itr) == ginfo)
         {
             SelectedGroups.erase(itr);
             // decrease selected players count
@@ -1671,7 +1671,7 @@ void BattleGroundMgr::SendToBattleGround(Player *pl, uint32 instanceId)
         uint32 mapid = bg->GetMapId();
         float x, y, z, O;
         uint32 team = pl->GetBGTeam();
-        if (team==0)
+        if (team == 0)
             team = pl->GetTeam();
         bg->GetTeamStartLoc(team, x, y, z, O);
 

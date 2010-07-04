@@ -703,7 +703,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
     }
 
     // Load pet if any and player is alive and not in taxi flight
-    if (pCurrChar->isAlive() && pCurrChar->m_taxi.GetTaxiSource()==0)
+    if (pCurrChar->isAlive() && pCurrChar->m_taxi.GetTaxiSource() == 0)
         pCurrChar->LoadPet();
 
     // Set FFA PvP for non GM in non-rest mode

@@ -243,7 +243,7 @@ void ThreatContainer::modifyThreatPercent(Unit *pVictim, int32 pPercent)
 
 bool HostileReferenceSortPredicate(const HostileReference* lhs, const HostileReference* rhs)
 {
-    // std::list::sort ordering predicate must be: (Pred(x,y)&&Pred(y,x))==false
+    // std::list::sort ordering predicate must be: (Pred(x,y)&&Pred(y,x)) == false
     return lhs->getThreat() > rhs->getThreat();             // reverse sorting
 }
 
@@ -353,7 +353,7 @@ void ThreatManager::addThreat(Unit* pVictim, float pThreat, SpellSchoolMask scho
     if (!pVictim || (pVictim->GetTypeId() == TYPEID_PLAYER && pVictim->ToPlayer()->isGameMaster()))
         return;
 
-    assert(getOwner()->GetTypeId()== TYPEID_UNIT);
+    assert(getOwner()->GetTypeId() == TYPEID_UNIT);
 
     float threat = ThreatCalcHelper::calcThreat(pVictim, iOwner, pThreat, schoolMask, pThreatSpell);
 

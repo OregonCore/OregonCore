@@ -906,7 +906,7 @@ struct OREGON_DLL_DECL npc_marshal_reginald_windsorAI : public npc_escortAI
     void UpdateAI(const uint32 diff)
     {
         if(pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_NOT_STARTED) return;
-        if(wp==7)
+        if(wp == 7)
             {
             if(!pInstance->GetData(DATA_GATE_J) && pInstance->GetData(DATA_JAZ) == ENCOUNTER_STATE_NOT_STARTED )
                 {
@@ -919,7 +919,7 @@ struct OREGON_DLL_DECL npc_marshal_reginald_windsorAI : public npc_escortAI
                     pInstance->SetData(DATA_JAZ,ENCOUNTER_STATE_ENDED);
                 }
             }
-        else if(wp==11)
+        else if(wp == 11)
             {
             if(!pInstance->GetData(DATA_GATE_S) && pInstance->GetData(DATA_SHILL) == ENCOUNTER_STATE_NOT_STARTED )
                 {
@@ -932,7 +932,7 @@ struct OREGON_DLL_DECL npc_marshal_reginald_windsorAI : public npc_escortAI
                     IsOnHold = false;
                 }
             }
-        else if(wp==20)
+        else if(wp == 20)
             {
             if(!pInstance->GetData(DATA_GATE_C) && pInstance->GetData(DATA_CREST) == ENCOUNTER_STATE_NOT_STARTED)
                 {
@@ -946,7 +946,7 @@ struct OREGON_DLL_DECL npc_marshal_reginald_windsorAI : public npc_escortAI
                     pInstance->SetData(DATA_CREST,ENCOUNTER_STATE_ENDED);
                 }
             }
-        if( pInstance->GetData(DATA_TOBIAS)==ENCOUNTER_STATE_OBJECTIVE_COMPLETED ) IsOnHold = false;
+        if( pInstance->GetData(DATA_TOBIAS) == ENCOUNTER_STATE_OBJECTIVE_COMPLETED ) IsOnHold = false;
         npc_escortAI::UpdateAI(diff);
     }
 };

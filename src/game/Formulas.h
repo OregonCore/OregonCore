@@ -103,7 +103,7 @@ namespace Oregon
 
         inline uint32 Gain(Player *pl, Unit *u)
         {
-            if (u->GetTypeId()==TYPEID_UNIT && (
+            if (u->GetTypeId() == TYPEID_UNIT && (
                 ((Creature*)u)->isTotem() || ((Creature*)u)->isPet() ||
                 (((Creature*)u)->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_NO_XP_AT_KILL)))
                 return 0;
@@ -112,7 +112,7 @@ namespace Oregon
             if (xp_gain == 0)
                 return 0;
 
-            if (u->GetTypeId()==TYPEID_UNIT && ((Creature*)u)->isElite())
+            if (u->GetTypeId() == TYPEID_UNIT && ((Creature*)u)->isElite())
                 xp_gain *= 2;
 
             return (uint32)(xp_gain*sWorld.getRate(RATE_XP_KILL));

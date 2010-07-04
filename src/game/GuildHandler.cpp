@@ -633,7 +633,7 @@ void WorldSession::HandleGuildRankOpcode(WorldPacket& recvPacket)
     guild->SetBankMoneyPerDay(rankId, MoneyPerDay);
     guild->SetRankName(rankId, rankname);
 
-    if (rankId==GR_GUILDMASTER)                              // prevent loss leader rights
+    if (rankId == GR_GUILDMASTER)                              // prevent loss leader rights
         rights |= GR_RIGHT_ALL;
 
     guild->SetRankRights(rankId, rights);
@@ -1079,7 +1079,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
     if (BankToBank)
     {
         // empty operation
-        if (BankTab==BankTabDst && BankTabSlot==BankTabSlotDst)
+        if (BankTab == BankTabDst && BankTabSlot == BankTabSlotDst)
             return;
 
         Item *pItemSrc = pGuild->GetItem(BankTab, BankTabSlot);
@@ -1186,7 +1186,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
                 CharacterDatabase.CommitTransaction();
             }
         }
-        pGuild->DisplayGuildBankContentUpdate(BankTab,BankTabSlot,BankTab==BankTabDst ? BankTabSlotDst : -1);
+        pGuild->DisplayGuildBankContentUpdate(BankTab,BankTabSlot,BankTab == BankTabDst ? BankTabSlotDst : -1);
         if (BankTab != BankTabDst)
             pGuild->DisplayGuildBankContentUpdate(BankTabDst,BankTabSlotDst);
         return;
@@ -1520,7 +1520,7 @@ void WorldSession::HandleGuildBankBuyTab(WorldPacket & recv_data)
         return;
 
     uint32 GuildId = GetPlayer()->GetGuildId();
-    if (GuildId==0)
+    if (GuildId == 0)
         return;
 
     Guild *pGuild = objmgr.GetGuildById(GuildId);
@@ -1576,7 +1576,7 @@ void WorldSession::HandleGuildBankModifyTab(WorldPacket & recv_data)
         return;
 
     uint32 GuildId = GetPlayer()->GetGuildId();
-    if (GuildId==0)
+    if (GuildId == 0)
         return;
 
     Guild *pGuild = objmgr.GetGuildById(GuildId);

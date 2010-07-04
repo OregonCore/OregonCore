@@ -357,7 +357,7 @@ void Loot::AddItem(LootStoreItem const & item)
         if (!item.conditionId)
         {
             ItemPrototype const* proto = objmgr.GetItemPrototype(item.itemid);
-            if (!proto || (proto->Flags & ITEM_FLAGS_PARTY_LOOT)==0)
+            if (!proto || (proto->Flags & ITEM_FLAGS_PARTY_LOOT) == 0)
                 ++unlootedCount;
         }
     }
@@ -602,7 +602,7 @@ LootItem* Loot::LootItemInSlot(uint32 lootSlot, Player* player, QuestItem **qite
             if (itr != PlayerFFAItems.end())
             {
                 for (QuestItemList::iterator iter=itr->second->begin(); iter != itr->second->end(); ++iter)
-                    if (iter->index==lootSlot)
+                    if (iter->index == lootSlot)
                     {
                         QuestItem *ffaitem2 = (QuestItem*)&(*iter);
                         if (ffaitem)
@@ -619,7 +619,7 @@ LootItem* Loot::LootItemInSlot(uint32 lootSlot, Player* player, QuestItem **qite
             {
                 for (QuestItemList::iterator iter=itr->second->begin(); iter != itr->second->end(); ++iter)
                 {
-                    if (iter->index==lootSlot)
+                    if (iter->index == lootSlot)
                     {
                         QuestItem *conditem2 = (QuestItem*)&(*iter);
                         if (conditem)
@@ -683,7 +683,7 @@ ByteBuffer& operator<<(ByteBuffer& b, LootView const& lv)
         case ALL_PERMISSION:
         case MASTER_PERMISSION:
         {
-            uint8 slot_type = (lv.permission==MASTER_PERMISSION) ? 2 : 0;
+            uint8 slot_type = (lv.permission == MASTER_PERMISSION) ? 2 : 0;
             for (uint8 i = 0; i < l.items.size(); ++i)
             {
                 if (!l.items[i].is_looted && !l.items[i].freeforall && !l.items[i].conditionId && l.items[i].AllowedForPlayer(lv.viewer))
@@ -949,7 +949,7 @@ bool LootTemplate::HasQuestDrop(LootTemplateMap const& store, uint8 groupId) con
         if (i->mincountOrRef < 0)                           // References
         {
             LootTemplateMap::const_iterator Referenced = store.find(-i->mincountOrRef);
-            if (Referenced ==store.end())
+            if (Referenced == store.end())
                 continue;                                   // Error message [should be] already printed at loading stage
             if (Referenced->second->HasQuestDrop(store, i->group))
                 return true;

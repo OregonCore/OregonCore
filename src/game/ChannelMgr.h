@@ -94,9 +94,9 @@ inline ChannelMgr* channelMgr(uint32 team)
                                                             //For Test,No Seprate Faction
         return &Oregon::Singleton<AllianceChannelMgr>::Instance();
 
-    if (team==ALLIANCE)
+    if (team == ALLIANCE)
         return &Oregon::Singleton<AllianceChannelMgr>::Instance();
-    if (team==HORDE)
+    if (team == HORDE)
         return &Oregon::Singleton<HordeChannelMgr>::Instance();
     return NULL;
 }

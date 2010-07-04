@@ -414,7 +414,7 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
             {
                 for(std::list<HostileReference*>::iterator itr = m_creature->getThreatManager().getThreatList().begin(); itr != m_creature->getThreatManager().getThreatList().end(); ++itr)
                 {
-                    if(((*itr)->getUnitGuid()) ==  (m_creature->getVictim()->GetGUID()))
+                    if(((*itr)->getUnitGuid()) == (m_creature->getVictim()->GetGUID()))
                     {
                         (*itr)->removeReference();
                         break;

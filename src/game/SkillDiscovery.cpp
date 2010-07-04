@@ -99,7 +99,7 @@ void LoadSkillDiscoveryTable()
                 SkillLineAbilityMap::const_iterator lower = spellmgr.GetBeginSkillLineAbilityMap(spellId);
                 SkillLineAbilityMap::const_iterator upper = spellmgr.GetEndSkillLineAbilityMap(spellId);
 
-                if (lower==upper)
+                if (lower == upper)
                 {
                     sLog.outErrorDb("Spell (ID: %u) not listed in SkillLineAbility.dbc but listed with reqSpell=0 in skill_discovery_template table",spellId);
                     continue;

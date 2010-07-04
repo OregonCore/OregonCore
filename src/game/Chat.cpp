@@ -684,7 +684,7 @@ ChatCommand * ChatHandler::getCommandTable()
                         for (uint32 j = 0; ptable[j].Name != NULL; j++)
                         {
                             // first case for "" named subcommand
-                            if (ptable[j].Name[0]=='\0' && name == commandTable[i].Name ||
+                            if (ptable[j].Name[0] == '\0' && name == commandTable[i].Name ||
                                 name == fmtstring("%s %s", commandTable[i].Name, ptable[j].Name))
                             {
                                 ptable[j].SecurityLevel = (uint16)fields[1].GetUInt16();
@@ -1111,7 +1111,7 @@ valid examples:
                     char c = reader.peek();
 
                     // ignore enchants etc.
-                    while (c >='0' && c <='9' || c==':')
+                    while (c >='0' && c <='9' || c == ':')
                     {
                         reader.ignore(1);
                         c = reader.peek();
@@ -1761,7 +1761,7 @@ uint32 ChatHandler::extractSpellIdFromLink(char* text)
     uint32 id = (uint32)atol(idS);
 
     // spell
-    if (type==0)
+    if (type == 0)
         return id;
 
     // talent

@@ -368,7 +368,7 @@ class ObjectMgr
             if (race   >= MAX_RACES)   return NULL;
             if (class_ >= MAX_CLASSES) return NULL;
             PlayerInfo const* info = &playerInfo[race][class_];
-            if (info->displayId_m==0 || info->displayId_f==0) return NULL;
+            if (info->displayId_m == 0 || info->displayId_f == 0) return NULL;
             return info;
         }
         void GetPlayerLevelInfo(uint32 race, uint32 class_,uint32 level, PlayerLevelInfo* info) const;
@@ -599,7 +599,7 @@ class ObjectMgr
         CreatureData const* GetCreatureData(uint32 guid) const
         {
             CreatureDataMap::const_iterator itr = mCreatureDataMap.find(guid);
-            if (itr==mCreatureDataMap.end()) return NULL;
+            if (itr == mCreatureDataMap.end()) return NULL;
             return &itr->second;
         }
         CreatureData& NewOrExistCreatureData(uint32 guid) { return mCreatureDataMap[guid]; }
@@ -613,50 +613,50 @@ class ObjectMgr
         CreatureLocale const* GetCreatureLocale(uint32 entry) const
         {
             CreatureLocaleMap::const_iterator itr = mCreatureLocaleMap.find(entry);
-            if (itr==mCreatureLocaleMap.end()) return NULL;
+            if (itr == mCreatureLocaleMap.end()) return NULL;
             return &itr->second;
         }
         GameObjectLocale const* GetGameObjectLocale(uint32 entry) const
         {
             GameObjectLocaleMap::const_iterator itr = mGameObjectLocaleMap.find(entry);
-            if (itr==mGameObjectLocaleMap.end()) return NULL;
+            if (itr == mGameObjectLocaleMap.end()) return NULL;
             return &itr->second;
         }
         ItemLocale const* GetItemLocale(uint32 entry) const
         {
             ItemLocaleMap::const_iterator itr = mItemLocaleMap.find(entry);
-            if (itr==mItemLocaleMap.end()) return NULL;
+            if (itr == mItemLocaleMap.end()) return NULL;
             return &itr->second;
         }
         QuestLocale const* GetQuestLocale(uint32 entry) const
         {
             QuestLocaleMap::const_iterator itr = mQuestLocaleMap.find(entry);
-            if (itr==mQuestLocaleMap.end()) return NULL;
+            if (itr == mQuestLocaleMap.end()) return NULL;
             return &itr->second;
         }
         NpcTextLocale const* GetNpcTextLocale(uint32 entry) const
         {
             NpcTextLocaleMap::const_iterator itr = mNpcTextLocaleMap.find(entry);
-            if (itr==mNpcTextLocaleMap.end()) return NULL;
+            if (itr == mNpcTextLocaleMap.end()) return NULL;
             return &itr->second;
         }
         PageTextLocale const* GetPageTextLocale(uint32 entry) const
         {
             PageTextLocaleMap::const_iterator itr = mPageTextLocaleMap.find(entry);
-            if (itr==mPageTextLocaleMap.end()) return NULL;
+            if (itr == mPageTextLocaleMap.end()) return NULL;
             return &itr->second;
         }
         NpcOptionLocale const* GetNpcOptionLocale(uint32 entry) const
         {
             NpcOptionLocaleMap::const_iterator itr = mNpcOptionLocaleMap.find(entry);
-            if (itr==mNpcOptionLocaleMap.end()) return NULL;
+            if (itr == mNpcOptionLocaleMap.end()) return NULL;
             return &itr->second;
         }
 
         GameObjectData const* GetGOData(uint32 guid) const
         {
             GameObjectDataMap::const_iterator itr = mGameObjectDataMap.find(guid);
-            if (itr==mGameObjectDataMap.end()) return NULL;
+            if (itr == mGameObjectDataMap.end()) return NULL;
             return &itr->second;
         }
         GameObjectData& NewGOData(uint32 guid) { return mGameObjectDataMap[guid]; }
@@ -665,7 +665,7 @@ class ObjectMgr
         OregonStringLocale const* GetOregonStringLocale(int32 entry) const
         {
             OregonStringLocaleMap::const_iterator itr = mOregonStringLocaleMap.find(entry);
-            if (itr==mOregonStringLocaleMap.end()) return NULL;
+            if (itr == mOregonStringLocaleMap.end()) return NULL;
             return &itr->second;
         }
         const char *GetOregonString(int32 entry, int locale_idx) const;
@@ -724,7 +724,7 @@ class ObjectMgr
         GameTele const* GetGameTele(uint32 id) const
         {
             GameTeleMap::const_iterator itr = m_GameTeleMap.find(id);
-            if (itr==m_GameTeleMap.end()) return NULL;
+            if (itr == m_GameTeleMap.end()) return NULL;
             return &itr->second;
         }
         GameTele const* GetGameTele(const std::string& name) const;

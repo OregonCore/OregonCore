@@ -324,7 +324,7 @@ void ObjectAccessor::AddCorpsesToGrid(GridPair const& gridpair, GridType& grid, 
     Guard guard(i_corpseGuard);
 
     for (Player2CorpsesMapType::iterator iter = i_player2corpse.begin(); iter != i_player2corpse.end(); ++iter)
-        if (iter->second->GetGrid()==gridpair)
+        if (iter->second->GetGrid() == gridpair)
     {
         // verify, if the corpse in our instance (add only corpses which are)
         if (map->Instanceable())

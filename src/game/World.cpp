@@ -1749,7 +1749,7 @@ void World::ScriptsStart(ScriptMapMap const& scripts, uint32 id, Object* source,
     // prepare static data
     uint64 sourceGUID = source ? source->GetGUID() : (uint64)0; //some script commands doesn't have source
     uint64 targetGUID = target ? target->GetGUID() : (uint64)0;
-    uint64 ownerGUID  = (source->GetTypeId()==TYPEID_ITEM) ? ((Item*)source)->GetOwnerGUID() : (uint64)0;
+    uint64 ownerGUID  = (source->GetTypeId() == TYPEID_ITEM) ? ((Item*)source)->GetOwnerGUID() : (uint64)0;
 
     ///- Schedule script execution for all scripts in the script map
     ScriptMap const *s2 = &(s->second);
@@ -1778,7 +1778,7 @@ void World::ScriptCommandStart(ScriptInfo const& script, uint32 delay, Object* s
     // prepare static data
     uint64 sourceGUID = source ? source->GetGUID() : (uint64)0;
     uint64 targetGUID = target ? target->GetGUID() : (uint64)0;
-    uint64 ownerGUID  = (source->GetTypeId()==TYPEID_ITEM) ? ((Item*)source)->GetOwnerGUID() : (uint64)0;
+    uint64 ownerGUID  = (source->GetTypeId() == TYPEID_ITEM) ? ((Item*)source)->GetOwnerGUID() : (uint64)0;
 
     ScriptAction sa;
     sa.sourceGUID = sourceGUID;
@@ -1813,7 +1813,7 @@ void World::ScriptsProcess()
             switch(GUID_HIPART(step.sourceGUID))
             {
                 case HIGHGUID_ITEM:
-                    // case HIGHGUID_CONTAINER: ==HIGHGUID_ITEM
+                    // case HIGHGUID_CONTAINER: == HIGHGUID_ITEM
                     {
                         Player* player = HashMapHolder<Player>::Find(step.ownerGUID);
                         if (player)
@@ -2108,10 +2108,10 @@ void World::ScriptsProcess()
                     break;
                 }
 
-                if (go->GetGoType()==GAMEOBJECT_TYPE_FISHINGNODE ||
-                    go->GetGoType()==GAMEOBJECT_TYPE_DOOR        ||
-                    go->GetGoType()==GAMEOBJECT_TYPE_BUTTON      ||
-                    go->GetGoType()==GAMEOBJECT_TYPE_TRAP)
+                if (go->GetGoType() == GAMEOBJECT_TYPE_FISHINGNODE ||
+                    go->GetGoType() == GAMEOBJECT_TYPE_DOOR        ||
+                    go->GetGoType() == GAMEOBJECT_TYPE_BUTTON      ||
+                    go->GetGoType() == GAMEOBJECT_TYPE_TRAP)
                 {
                     sLog.outError("SCRIPT_COMMAND_RESPAWN_GAMEOBJECT can not be used with gameobject of type %u (guid: %u).", uint32(go->GetGoType()), step.script->datalong);
                     break;
@@ -2178,7 +2178,7 @@ void World::ScriptsProcess()
 
                 door->UseDoorOrButton(time_to_close);
 
-                if (target && target->isType(TYPEMASK_GAMEOBJECT) && ((GameObject*)target)->GetGoType()==GAMEOBJECT_TYPE_BUTTON)
+                if (target && target->isType(TYPEMASK_GAMEOBJECT) && ((GameObject*)target)->GetGoType() == GAMEOBJECT_TYPE_BUTTON)
                     ((GameObject*)target)->UseDoorOrButton(time_to_close);
                 break;
             }
@@ -2234,7 +2234,7 @@ void World::ScriptsProcess()
 
                 door->UseDoorOrButton(time_to_open);
 
-                if (target && target->isType(TYPEMASK_GAMEOBJECT) && ((GameObject*)target)->GetGoType()==GAMEOBJECT_TYPE_BUTTON)
+                if (target && target->isType(TYPEMASK_GAMEOBJECT) && ((GameObject*)target)->GetGoType() == GAMEOBJECT_TYPE_BUTTON)
                     ((GameObject*)target)->UseDoorOrButton(time_to_open);
 
                 break;
@@ -2257,7 +2257,7 @@ void World::ScriptsProcess()
                 WorldObject* worldObject;
                 Player* player;
 
-                if (target->GetTypeId()==TYPEID_PLAYER)
+                if (target->GetTypeId() == TYPEID_PLAYER)
                 {
                     if (source->GetTypeId() != TYPEID_UNIT && source->GetTypeId() != TYPEID_GAMEOBJECT)
                     {
@@ -2288,7 +2288,7 @@ void World::ScriptsProcess()
 
                 // quest id and flags checked at script loading
                 if ((worldObject->GetTypeId() != TYPEID_UNIT || ((Unit*)worldObject)->isAlive()) &&
-                    (step.script->datalong2==0 || worldObject->IsWithinDistInMap(player,float(step.script->datalong2))))
+                    (step.script->datalong2 == 0 || worldObject->IsWithinDistInMap(player,float(step.script->datalong2))))
                     player->AreaExploredOrEventHappens(step.script->datalong);
                 else
                     player->FailQuest(step.script->datalong);
@@ -2778,7 +2778,7 @@ BanReturn World::BanAccount(BanMode mode, std::string nameOrIP, std::string dura
 
     if (!resultAccounts)
     {
-        if (mode==BAN_IP)
+        if (mode == BAN_IP)
             return BAN_SUCCESS;                             // ip correctly banned but nobody affected (yet)
         else
             return BAN_NOTFOUND;                                // Nobody to ban
@@ -2845,7 +2845,7 @@ void World::_UpdateGameTime()
         ///- ... and it is overdue, stop the world (set m_stopEvent)
         if (m_ShutdownTimer <= elapsed)
         {
-            if (!(m_ShutdownMask & SHUTDOWN_MASK_IDLE) || GetActiveAndQueuedSessionCount()==0)
+            if (!(m_ShutdownMask & SHUTDOWN_MASK_IDLE) || GetActiveAndQueuedSessionCount() == 0)
                 m_stopEvent = true;                         // exist code already set
             else
                 m_ShutdownTimer = 1;                        // minimum timer value to wait idle state
@@ -2871,9 +2871,9 @@ void World::ShutdownServ(uint32 time, uint32 options, uint8 exitcode)
     m_ExitCode = exitcode;
 
     ///- If the shutdown time is 0, set m_stopEvent (except if shutdown is 'idle' with remaining sessions)
-    if (time==0)
+    if (time == 0)
     {
-        if (!(options & SHUTDOWN_MASK_IDLE) || GetActiveAndQueuedSessionCount()==0)
+        if (!(options & SHUTDOWN_MASK_IDLE) || GetActiveAndQueuedSessionCount() == 0)
             m_stopEvent = true;                             // exist code already set
         else
             m_ShutdownTimer = 1;                            //So that the session count is re-evaluated at next world tick
@@ -2897,15 +2897,15 @@ void World::ShutdownMsg(bool show, Player* player)
     if (show ||
         (m_ShutdownTimer < 10) ||
                                                             // < 30 sec; every 5 sec
-        (m_ShutdownTimer<30        && (m_ShutdownTimer % 5)==0) ||
+        (m_ShutdownTimer<30        && (m_ShutdownTimer % 5) == 0) ||
                                                             // < 5 min ; every 1 min
-        (m_ShutdownTimer<5*MINUTE  && (m_ShutdownTimer % MINUTE)==0) ||
+        (m_ShutdownTimer<5*MINUTE  && (m_ShutdownTimer % MINUTE) == 0) ||
                                                             // < 30 min ; every 5 min
-        (m_ShutdownTimer<30*MINUTE && (m_ShutdownTimer % (5*MINUTE))==0) ||
+        (m_ShutdownTimer<30*MINUTE && (m_ShutdownTimer % (5*MINUTE)) == 0) ||
                                                             // < 12 h ; every 1 h
-        (m_ShutdownTimer<12*HOUR   && (m_ShutdownTimer % HOUR)==0) ||
+        (m_ShutdownTimer<12*HOUR   && (m_ShutdownTimer % HOUR) == 0) ||
                                                             // > 12 h ; every 12 h
-        (m_ShutdownTimer>12*HOUR   && (m_ShutdownTimer % (12*HOUR))==0))
+        (m_ShutdownTimer>12*HOUR   && (m_ShutdownTimer % (12*HOUR)) == 0))
     {
         std::string str = secsToTimeString(m_ShutdownTimer);
 

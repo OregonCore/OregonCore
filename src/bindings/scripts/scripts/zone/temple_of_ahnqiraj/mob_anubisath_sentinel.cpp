@@ -117,7 +117,7 @@ struct OREGON_DLL_DECL aqsentinelAI : public ScriptedAI
 
     void AddBuddyToList(Creature *c)
     {
-        if (c==m_creature)
+        if (c == m_creature)
             return;
         for (int i=0; i<3; i++)
         {
@@ -291,7 +291,7 @@ struct OREGON_DLL_DECL aqsentinelAI : public ScriptedAI
         for (i = m_creature->getThreatManager().getThreatList().begin();i != m_creature->getThreatManager().getThreatList().end(); ++i)
         {
             Unit* pUnit = Unit::GetUnit((*m_creature), (*i)->getUnitGuid());
-            if (pUnit->getPowerType()==POWER_MANA)
+            if (pUnit->getPowerType() == POWER_MANA)
                 return pUnit;
         }
         return NULL;

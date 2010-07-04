@@ -699,7 +699,7 @@ void WorldSession::HandleMsgQueryNextMailtime(WorldPacket & /*recv_data*/)
         {
             Mail *m = (*itr);
             // not checked yet, already must be delivered
-            if ((m->checked & MAIL_CHECK_MASK_READ)==0 && (m->deliver_time <= time(NULL)))
+            if ((m->checked & MAIL_CHECK_MASK_READ) == 0 && (m->deliver_time <= time(NULL)))
             {
                 ++count;
 

@@ -769,7 +769,7 @@ bool ChatHandler::HandleNamegoCommand(const char* args)
     Player *target = objmgr.GetPlayer(name.c_str());
     if (target)
     {
-        if (target->IsBeingTeleported()==true)
+        if (target->IsBeingTeleported() == true)
         {
             PSendSysMessage(LANG_IS_TELEPORTED, target->GetName());
             SetSentErrorMessage(true);
@@ -2106,7 +2106,7 @@ bool ChatHandler::HandleLookupAreaCommand(const char* args)
                 loc = 0;
                 for (; loc < MAX_LOCALE; ++loc)
                 {
-                    if (m_session && loc==m_session->GetSessionDbcLocale ())
+                    if (m_session && loc == m_session->GetSessionDbcLocale ())
                         continue;
 
                     name = areaEntry->area_name[loc];
@@ -2270,7 +2270,7 @@ bool ChatHandler::HandleSendMailCommand(const char* args)
         return false;
 
     char* msgSubject;
-    if (*tail1=='"')
+    if (*tail1 == '"')
         msgSubject = strtok(tail1+1, "\"");
     else
     {
@@ -2288,7 +2288,7 @@ bool ChatHandler::HandleSendMailCommand(const char* args)
         return false;
 
     char* msgText;
-    if (*tail2=='"')
+    if (*tail2 == '"')
         msgText = strtok(tail2+1, "\"");
     else
     {
@@ -2382,7 +2382,7 @@ bool ChatHandler::HandleNameTeleCommand(const char * args)
     if (chr)
     {
 
-        if (chr->IsBeingTeleported()==true)
+        if (chr->IsBeingTeleported() == true)
         {
             PSendSysMessage(LANG_IS_TELEPORTED, chr->GetName());
             SetSentErrorMessage(true);
@@ -2537,10 +2537,10 @@ bool ChatHandler::HandleGroupgoCommand(const char* args)
     {
         Player *pl = itr->getSource();
 
-        if (!pl || pl==m_session->GetPlayer() || !pl->GetSession())
+        if (!pl || pl == m_session->GetPlayer() || !pl->GetSession())
             continue;
 
-        if (pl->IsBeingTeleported()==true)
+        if (pl->IsBeingTeleported() == true)
         {
             PSendSysMessage(LANG_IS_TELEPORTED, pl->GetName());
             SetSentErrorMessage(true);

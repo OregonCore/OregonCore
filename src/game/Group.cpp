@@ -337,7 +337,7 @@ void Group::ChangeLeader(const uint64 &guid)
 {
     member_citerator slot = _getMemberCSlot(guid);
 
-    if (slot==m_memberSlots.end())
+    if (slot == m_memberSlots.end())
         return;
 
     _setLeader(guid);
@@ -932,7 +932,7 @@ void Group::BroadcastPacket(WorldPacket *packet, int group, uint64 ignore)
         if (!pl || (ignore != 0 && pl->GetGUID() == ignore))
             continue;
 
-        if (pl->GetSession() && (group==-1 || itr->getSubGroup()==group))
+        if (pl->GetSession() && (group == -1 || itr->getSubGroup() == group))
             pl->GetSession()->SendPacket(packet);
     }
 }
@@ -1024,7 +1024,7 @@ bool Group::_addMember(const uint64 &guid, const char* name, bool isAssistant, u
     if (!isBGGroup())
     {
         // insert into group table
-        CharacterDatabase.PExecute("INSERT INTO group_member(leaderGuid,memberGuid,assistant,subgroup) VALUES('%u','%u','%u','%u')", GUID_LOPART(m_leaderGuid), GUID_LOPART(member.guid), ((member.assistant==1)?1:0), member.group);
+        CharacterDatabase.PExecute("INSERT INTO group_member(leaderGuid,memberGuid,assistant,subgroup) VALUES('%u','%u','%u','%u')", GUID_LOPART(m_leaderGuid), GUID_LOPART(member.guid), ((member.assistant == 1)?1:0), member.group);
     }
 
     return true;
@@ -1064,7 +1064,7 @@ bool Group::_removeMember(const uint64 &guid)
 void Group::_setLeader(const uint64 &guid)
 {
     member_citerator slot = _getMemberCSlot(guid);
-    if (slot==m_memberSlots.end())
+    if (slot == m_memberSlots.end())
         return;
 
     if (!isBGGroup())
@@ -1142,7 +1142,7 @@ void Group::_removeRolls(const uint64 &guid)
 bool Group::_setMembersGroup(const uint64 &guid, const uint8 &group)
 {
     member_witerator slot = _getMemberWSlot(guid);
-    if (slot==m_memberSlots.end())
+    if (slot == m_memberSlots.end())
         return false;
 
     slot->group = group;
@@ -1157,18 +1157,18 @@ bool Group::_setMembersGroup(const uint64 &guid, const uint8 &group)
 bool Group::_setAssistantFlag(const uint64 &guid, const bool &state)
 {
     member_witerator slot = _getMemberWSlot(guid);
-    if (slot==m_memberSlots.end())
+    if (slot == m_memberSlots.end())
         return false;
 
     slot->assistant = state;
-    if (!isBGGroup()) CharacterDatabase.PExecute("UPDATE group_member SET assistant='%u' WHERE memberGuid='%u'", (state==true)?1:0, GUID_LOPART(guid));
+    if (!isBGGroup()) CharacterDatabase.PExecute("UPDATE group_member SET assistant='%u' WHERE memberGuid='%u'", (state == true)?1:0, GUID_LOPART(guid));
     return true;
 }
 
 bool Group::_setMainTank(const uint64 &guid)
 {
     member_citerator slot = _getMemberCSlot(guid);
-    if (slot==m_memberSlots.end())
+    if (slot == m_memberSlots.end())
         return false;
 
     if (m_mainAssistant == guid)
@@ -1181,7 +1181,7 @@ bool Group::_setMainTank(const uint64 &guid)
 bool Group::_setMainAssistant(const uint64 &guid)
 {
     member_witerator slot = _getMemberWSlot(guid);
-    if (slot==m_memberSlots.end())
+    if (slot == m_memberSlots.end())
         return false;
 
     if (m_mainTank == guid)
@@ -1272,7 +1272,7 @@ void Group::UpdateLooterGuid(WorldObject* object, bool ifneed)
             {
                 if (pl->GetDistance2d(object) < sWorld.getConfig(CONFIG_GROUP_XP_DISTANCE))
                 {
-                    bool refresh = pl->GetLootGUID()==object->GetGUID();
+                    bool refresh = pl->GetLootGUID() == object->GetGUID();
 
                     //if (refresh)                             // update loot for new looter
                     //    pl->GetSession()->DoLootRelease(pl->GetLootGUID());
@@ -1293,7 +1293,7 @@ void Group::UpdateLooterGuid(WorldObject* object, bool ifneed)
         {
             if (pl->GetDistance2d(object) < sWorld.getConfig(CONFIG_GROUP_XP_DISTANCE))
             {
-                bool refresh = pl->GetLootGUID()==object->GetGUID();
+                bool refresh = pl->GetLootGUID() == object->GetGUID();
 
                 //if (refresh)                               // update loot for new looter
                 //    pl->GetSession()->DoLootRelease(pl->GetLootGUID());

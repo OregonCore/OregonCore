@@ -40,19 +40,19 @@ bool GossipHello_npcs_riverbreeze_and_silversky(Player *player, Creature *_Creat
     if( _Creature->isQuestGiver() )
         player->PrepareQuestMenu( _Creature->GetGUID() );
 
-    if( eCreature==9528 )
+    if( eCreature == 9528 )
     {
         if( player->GetQuestRewardStatus(4101) )
         {
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_BEACON, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
             player->SEND_GOSSIP_MENU(2848, _Creature->GetGUID());
-        }else if( player->GetTeam()==HORDE )
+        }else if( player->GetTeam() == HORDE )
         player->SEND_GOSSIP_MENU(2845, _Creature->GetGUID());
         else
             player->SEND_GOSSIP_MENU(2844, _Creature->GetGUID());
     }
 
-    if( eCreature==9529 )
+    if( eCreature == 9529 )
     {
         if( player->GetQuestRewardStatus(4102) )
         {
@@ -69,7 +69,7 @@ bool GossipHello_npcs_riverbreeze_and_silversky(Player *player, Creature *_Creat
 
 bool GossipSelect_npcs_riverbreeze_and_silversky(Player *player, Creature *_Creature, uint32 sender, uint32 action)
 {
-    if( action==GOSSIP_ACTION_INFO_DEF+1 )
+    if( action == GOSSIP_ACTION_INFO_DEF+1 )
     {
         player->CLOSE_GOSSIP_MENU();
         _Creature->CastSpell(player, 15120, false);

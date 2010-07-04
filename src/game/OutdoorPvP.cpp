@@ -414,7 +414,7 @@ OutdoorPvP::~OutdoorPvP()
 
 void OutdoorPvP::HandlePlayerEnterZone(Player * plr, uint32 zone)
 {
-    if (plr->GetTeam()==ALLIANCE)
+    if (plr->GetTeam() == ALLIANCE)
         m_PlayerGuids[0].insert(plr->GetGUID());
     else
         m_PlayerGuids[1].insert(plr->GetGUID());
@@ -428,7 +428,7 @@ void OutdoorPvP::HandlePlayerLeaveZone(Player * plr, uint32 zone)
     // remove the world state information from the player (we can't keep everyone up to date, so leave out those who are not in the concerning zones)
     if (zone != plr->GetZoneId())
         SendRemoveWorldStates(plr);
-    if (plr->GetTeam()==ALLIANCE)
+    if (plr->GetTeam() == ALLIANCE)
         m_PlayerGuids[0].erase(plr->GetGUID());
     else
         m_PlayerGuids[1].erase(plr->GetGUID());
@@ -496,7 +496,7 @@ bool OutdoorPvPObjective::Update(uint32 diff)
             if (m_State == OBJECTIVESTATE_ALLIANCE && m_ShiftPhase == m_ShiftMaxPhase)
                 return false;
         }
-        else /*if (fact_diff==0)*/ // no change
+        else /*if (fact_diff == 0)*/ // no change
             return false;
 
         m_OldPhase = m_ShiftPhase;

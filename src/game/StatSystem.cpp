@@ -57,7 +57,7 @@ bool Player::UpdateStats(Stats stat)
         case STAT_AGILITY:
             UpdateArmor();
             UpdateAttackPowerAndDamage(true);
-            if (getClass() == CLASS_ROGUE || getClass() == CLASS_HUNTER || getClass() == CLASS_DRUID && m_form==FORM_CAT)
+            if (getClass() == CLASS_ROGUE || getClass() == CLASS_HUNTER || getClass() == CLASS_DRUID && m_form == FORM_CAT)
                 UpdateAttackPowerAndDamage();
 
             UpdateAllCritPercentages();
@@ -312,7 +312,7 @@ void Player::UpdateAttackPowerAndDamage(bool ranged)
     float attPowerMod = GetModifierValue(unitMod, TOTAL_VALUE);
 
     //add dynamic flat mods
-    if (ranged && (getClassMask() & CLASSMASK_WAND_USERS)==0)
+    if (ranged && (getClassMask() & CLASSMASK_WAND_USERS) == 0)
     {
         AuraList const& mRAPbyIntellect = GetAurasByType(SPELL_AURA_MOD_RANGED_ATTACK_POWER_OF_STAT_PERCENT);
         for (AuraList::const_iterator i = mRAPbyIntellect.begin();i != mRAPbyIntellect.end(); ++i)
@@ -389,7 +389,7 @@ void Player::CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, fl
         weapon_mindamage = lvl*0.85*att_speed;
         weapon_maxdamage = lvl*1.25*att_speed;
     }
-    else if (!IsUseEquipedWeapon(attType==BASE_ATTACK))      //check if player not in form but still can't use weapon (broken/etc)
+    else if (!IsUseEquipedWeapon(attType == BASE_ATTACK))      //check if player not in form but still can't use weapon (broken/etc)
     {
         weapon_mindamage = BASE_MINDAMAGE;
         weapon_maxdamage = BASE_MAXDAMAGE;
@@ -565,7 +565,7 @@ void Player::UpdateAllSpellCritChances()
 
 void Player::UpdateExpertise(WeaponAttackType attack)
 {
-    if (attack==RANGED_ATTACK)
+    if (attack == RANGED_ATTACK)
         return;
 
     int32 expertise = int32(GetRatingBonusValue(CR_EXPERTISE));
@@ -921,7 +921,7 @@ void Pet::UpdateAttackPowerAndDamage(bool ranged)
         val = 2 * GetStat(STAT_STRENGTH) - 20.0f;
 
     Unit* owner = GetOwner();
-    if (owner && owner->GetTypeId()==TYPEID_PLAYER)
+    if (owner && owner->GetTypeId() == TYPEID_PLAYER)
     {
         if (getPetType() == HUNTER_PET)                      //hunter pets benefit from owner's attack power
         {

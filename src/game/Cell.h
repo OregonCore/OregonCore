@@ -147,8 +147,8 @@ struct OREGON_DLL_DECL Cell
         return *this;
     }
 
-    bool operator==(const Cell &cell) const { return (data.All == cell.data.All); }
-    bool operator != (const Cell &cell) const { return !operator==(cell); }
+    bool operator == (const Cell &cell) const { return (data.All == cell.data.All); }
+    bool operator != (const Cell &cell) const { return !operator == (cell); }
     union
     {
         struct

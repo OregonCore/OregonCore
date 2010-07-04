@@ -65,9 +65,9 @@ CreatureAI* GetAI_npc_shadowfang_prisoner(Creature *_Creature)
 
     uint32 eCreature = _Creature->GetEntry();
 
-    if( eCreature==3849)                                    //adamant
+    if( eCreature == 3849)                                    //adamant
         prisonerAI->AddWaypoint(0, -254.47, 2117.48, 81.17);
-    if( eCreature==3850)                                    //ashcrombe
+    if( eCreature == 3850)                                    //ashcrombe
         prisonerAI->AddWaypoint(0, -252.35, 2126.71, 81.17);
 
     prisonerAI->AddWaypoint(1, -253.63, 2131.27, 81.28);

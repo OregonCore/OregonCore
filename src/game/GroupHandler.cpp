@@ -560,7 +560,7 @@ void WorldSession::HandleGroupAssistantOpcode(WorldPacket & recv_data)
     /********************/
 
     // everything's fine, do it
-    group->SetAssistant(guid, (flag==0?false:true));
+    group->SetAssistant(guid, (flag == 0?false:true));
 }
 
 void WorldSession::HandleGroupPromoteOpcode(WorldPacket & recv_data)

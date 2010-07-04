@@ -255,13 +255,13 @@ bool Guild::LoadRanksFromDB(uint32 GuildId)
         if (rankRID != m_ranks.size()+1)                     // guild_rank.rid always store rank+1
             broken_ranks =  true;
 
-        if (m_ranks.size()==GR_GUILDMASTER)                  // prevent loss leader rights
+        if (m_ranks.size() == GR_GUILDMASTER)                  // prevent loss leader rights
             rankRights |= GR_RIGHT_ALL;
 
         AddRank(rankName,rankRights,rankMoney);
     }while (result->NextRow());
 
-    if (m_ranks.size()==0)                                   // empty rank table?
+    if (m_ranks.size() == 0)                                   // empty rank table?
     {
         AddRank("Guild Master",GR_RIGHT_ALL,0);
         broken_ranks = true;
@@ -651,7 +651,7 @@ void Guild::SetRankRights(uint32 rankId, uint32 rights)
 int32 Guild::GetRank(uint32 LowGuid)
 {
     MemberList::iterator itr = members.find(LowGuid);
-    if (itr==members.end())
+    if (itr == members.end())
         return -1;
 
     return itr->second.RankId;
@@ -961,7 +961,7 @@ void Guild::DisplayGuildBankContentUpdate(uint8 TabId, int32 slot1, int32 slot2)
     data << uint32(0);                                      // will be filled later
     data << uint8(0);                                       // Tell client this is a tab content packet
 
-    if (slot2==-1)                                           // single item in slot1
+    if (slot2 == -1)                                           // single item in slot1
     {
         data << uint8(1);
 
@@ -1309,7 +1309,7 @@ bool Guild::IsMemberHaveRights(uint32 LowGuid, uint8 TabId, uint32 rights) const
     if (itr->second.RankId == GR_GUILDMASTER)
         return true;
 
-    return (GetBankRights(itr->second.RankId,TabId) & rights)==rights;
+    return (GetBankRights(itr->second.RankId,TabId) & rights) == rights;
 }
 
 uint32 Guild::GetMemberSlotWithdrawRem(uint32 LowGuid, uint8 TabId)
@@ -1730,7 +1730,7 @@ uint8 Guild::_CanStoreItem_InSpecificSlot(uint8 tab, uint8 slot, GuildItemPosCou
     Item* pItem2 = m_TabListMap[tab]->Slots[slot];
 
     // ignore move item (this slot will be empty at move)
-    if (pItem2==pSrcItem)
+    if (pItem2 == pSrcItem)
         pItem2 = NULL;
 
     uint32 need_space;
@@ -1773,13 +1773,13 @@ uint8 Guild::_CanStoreItem_InTab(uint8 tab, GuildItemPosCountVec &dest, uint32& 
     for (uint32 j = 0; j < GUILD_BANK_MAX_SLOTS; j++)
     {
         // skip specific slot already processed in first called _CanStoreItem_InSpecificSlot
-        if (j==skip_slot)
+        if (j == skip_slot)
             continue;
 
         Item* pItem2 = m_TabListMap[tab]->Slots[j];
 
         // ignore move item (this slot will be empty at move)
-        if (pItem2==pSrcItem)
+        if (pItem2 == pSrcItem)
             pItem2 = NULL;
 
         // if merge skip empty, if !merge skip non-empty
@@ -1800,7 +1800,7 @@ uint8 Guild::_CanStoreItem_InTab(uint8 tab, GuildItemPosCountVec &dest, uint32& 
                     dest.push_back(newPosition);
                     count -= need_space;
 
-                    if (count==0)
+                    if (count == 0)
                         return EQUIP_ERR_OK;
                 }
             }
@@ -1817,7 +1817,7 @@ uint8 Guild::_CanStoreItem_InTab(uint8 tab, GuildItemPosCountVec &dest, uint32& 
                 dest.push_back(newPosition);
                 count -= need_space;
 
-                if (count==0)
+                if (count == 0)
                     return EQUIP_ERR_OK;
             }
         }
@@ -1842,7 +1842,7 @@ uint8 Guild::CanStoreItem(uint8 tab, uint8 slot, GuildItemPosCountVec &dest, uin
         if (res != EQUIP_ERR_OK)
             return res;
 
-        if (count==0)
+        if (count == 0)
             return EQUIP_ERR_OK;
     }
 
@@ -1855,7 +1855,7 @@ uint8 Guild::CanStoreItem(uint8 tab, uint8 slot, GuildItemPosCountVec &dest, uin
         if (res != EQUIP_ERR_OK)
             return res;
 
-        if (count==0)
+        if (count == 0)
             return EQUIP_ERR_OK;
     }
 
@@ -1864,7 +1864,7 @@ uint8 Guild::CanStoreItem(uint8 tab, uint8 slot, GuildItemPosCountVec &dest, uin
     if (res != EQUIP_ERR_OK)
         return res;
 
-    if (count==0)
+    if (count == 0)
         return EQUIP_ERR_OK;
 
     return EQUIP_ERR_BANK_FULL;
@@ -1879,7 +1879,7 @@ void Guild::SetGuildBankTabText(uint8 TabId, std::string text)
     if (!m_TabListMap[TabId])
         return;
 
-    if (m_TabListMap[TabId]->Text==text)
+    if (m_TabListMap[TabId]->Text == text)
         return;
 
     utf8truncate(text,500);                                 // DB and client size limitation

@@ -479,7 +479,7 @@ namespace Oregon
             bool operator()(Creature* u)
             {
                 if (i_funit->IsFriendlyTo(u) || u->isAlive() || u->isInFlight() ||
-                    (u->GetCreatureTypeMask() & CREATURE_TYPEMASK_HUMANOID_OR_UNDEAD)==0)
+                    (u->GetCreatureTypeMask() & CREATURE_TYPEMASK_HUMANOID_OR_UNDEAD) == 0)
                     return false;
 
                 if (i_funit->IsWithinDistInMap(u, i_range))
@@ -616,7 +616,7 @@ namespace Oregon
                 if (!u->isAlive())
                     return false;
 
-                if (u->GetTypeId()==TYPEID_UNIT && ((Creature*)u)->isTotem())
+                if (u->GetTypeId() == TYPEID_UNIT && ((Creature*)u)->isTotem())
                     return false;
 
                 return i_obj->IsWithinDistInMap(u, i_range) && !i_funit->IsFriendlyTo(u);
@@ -708,14 +708,14 @@ namespace Oregon
                 Unit const* owner = i_funit->GetOwner();
                 if (owner)
                     check = owner;
-                i_targetForPlayer = (check->GetTypeId()==TYPEID_PLAYER);
+                i_targetForPlayer = (check->GetTypeId() == TYPEID_PLAYER);
             }
             bool operator()(Unit* u)
             {
                 // Check contains checks for: live, non-selectable, non-attackable flags, flight check and GM check, ignore totems
                 if (!u->isTargetableForAttack())
                     return false;
-                if (u->GetTypeId()==TYPEID_UNIT && ((Creature*)u)->isTotem())
+                if (u->GetTypeId() == TYPEID_UNIT && ((Creature*)u)->isTotem())
                     return false;
 
                 if ((i_targetForPlayer ? !i_funit->IsFriendlyTo(u) : i_funit->IsHostileTo(u))&& i_obj->IsWithinDistInMap(u, i_range))
@@ -769,7 +769,7 @@ namespace Oregon
 
     struct AnyStealthedCheck
     {
-        bool operator()(Unit* u) { return u->GetVisibility()==VISIBILITY_GROUP_STEALTH; }
+        bool operator()(Unit* u) { return u->GetVisibility() == VISIBILITY_GROUP_STEALTH; }
     };
 
     // Creature checks
@@ -875,7 +875,7 @@ namespace Oregon
 
             bool operator()(Creature* u)
             {
-                if (u->GetEntry() == i_entry && u->isAlive()==i_alive && i_obj.IsWithinDistInMap(u, i_range))
+                if (u->GetEntry() == i_entry && u->isAlive() == i_alive && i_obj.IsWithinDistInMap(u, i_range))
                 {
                     i_range = i_obj.GetDistance(u);         // use found unit range as new range limit for next check
                     return true;

@@ -584,7 +584,7 @@ void WorldSession::HandleStablePet(WorldPacket & recv_data)
 
             uint32 slot = fields[1].GetUInt32();
 
-            if (slot==free_slot)                             // this slot not free
+            if (slot == free_slot)                             // this slot not free
                 ++free_slot;
         }while (result->NextRow());
     }

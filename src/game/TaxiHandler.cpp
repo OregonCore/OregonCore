@@ -221,7 +221,7 @@ void WorldSession::HandleTaxiNextDestinationOpcode(WorldPacket& recv_data)
 
     if (curDestNode && curDestNode->map_id == GetPlayer()->GetMapId())
     {
-        while(GetPlayer()->GetMotionMaster()->GetCurrentMovementGeneratorType()==FLIGHT_MOTION_TYPE)
+        while(GetPlayer()->GetMotionMaster()->GetCurrentMovementGeneratorType() == FLIGHT_MOTION_TYPE)
             GetPlayer()->GetMotionMaster()->MovementExpired(false);
     }
 

@@ -159,7 +159,7 @@ class SpellCastTargets
             }
         }
 
-        bool IsEmpty() const { return m_GOTargetGUID==0 && m_unitTargetGUID==0 && m_itemTarget==0 && m_CorpseTargetGUID==0; }
+        bool IsEmpty() const { return m_GOTargetGUID == 0 && m_unitTargetGUID == 0 && m_itemTarget == 0 && m_CorpseTargetGUID == 0; }
         bool HasSrc() const { return m_targetMask & TARGET_FLAG_SOURCE_LOCATION; }
         bool HasDst() const { return m_targetMask & TARGET_FLAG_DEST_LOCATION; }
 
@@ -634,14 +634,14 @@ namespace Oregon
                         break;
                     case SPELL_TARGETS_ENEMY:
                     {
-                        if (itr->getSource()->GetTypeId()==TYPEID_UNIT && ((Creature*)itr->getSource())->isTotem())
+                        if (itr->getSource()->GetTypeId() == TYPEID_UNIT && ((Creature*)itr->getSource())->isTotem())
                             continue;
                         if (!itr->getSource()->isAttackableByAOE())
                             continue;
 
                         Unit* check = i_caster->GetCharmerOrOwnerOrSelf();
 
-                        if (check->GetTypeId()==TYPEID_PLAYER)
+                        if (check->GetTypeId() == TYPEID_PLAYER)
                         {
                             if (check->IsFriendlyTo(itr->getSource()))
                                 continue;
