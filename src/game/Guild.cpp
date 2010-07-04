@@ -1321,7 +1321,7 @@ uint32 Guild::GetMemberSlotWithdrawRem(uint32 LowGuid, uint8 TabId)
     if (itr->second.RankId == GR_GUILDMASTER)
         return WITHDRAW_SLOT_UNLIMITED;
 
-    if ((GetBankRights(itr->second.RankId,TabId) & GUILD_BANK_RIGHT_VIEW_TAB)!=GUILD_BANK_RIGHT_VIEW_TAB)
+    if ((GetBankRights(itr->second.RankId,TabId) & GUILD_BANK_RIGHT_VIEW_TAB) != GUILD_BANK_RIGHT_VIEW_TAB)
         return 0;
 
     uint32 curTime = uint32(time(NULL)/MINUTE);
@@ -1783,7 +1783,7 @@ uint8 Guild::_CanStoreItem_InTab(uint8 tab, GuildItemPosCountVec &dest, uint32& 
             pItem2 = NULL;
 
         // if merge skip empty, if !merge skip non-empty
-        if ((pItem2!=NULL)!=merge)
+        if ((pItem2 != NULL) != merge)
             continue;
 
         if (pItem2)
@@ -1839,7 +1839,7 @@ uint8 Guild::CanStoreItem(uint8 tab, uint8 slot, GuildItemPosCountVec &dest, uin
     if (slot != NULL_SLOT)
     {
         uint8 res = _CanStoreItem_InSpecificSlot(tab,slot,dest,count,swap,pItem);
-        if (res!=EQUIP_ERR_OK)
+        if (res != EQUIP_ERR_OK)
             return res;
 
         if (count==0)
@@ -1852,7 +1852,7 @@ uint8 Guild::CanStoreItem(uint8 tab, uint8 slot, GuildItemPosCountVec &dest, uin
     if (pItem->GetMaxStackCount() > 1)
     {
         uint8 res = _CanStoreItem_InTab(tab,dest,count,true,pItem,slot);
-        if (res!=EQUIP_ERR_OK)
+        if (res != EQUIP_ERR_OK)
             return res;
 
         if (count==0)
@@ -1861,7 +1861,7 @@ uint8 Guild::CanStoreItem(uint8 tab, uint8 slot, GuildItemPosCountVec &dest, uin
 
     // search free slot in bag for place to
     uint8 res = _CanStoreItem_InTab(tab,dest,count,false,pItem,slot);
-    if (res!=EQUIP_ERR_OK)
+    if (res != EQUIP_ERR_OK)
         return res;
 
     if (count==0)

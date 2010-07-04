@@ -427,7 +427,7 @@ void Pet::SavePetToDB(PetSaveMode mode)
         case PET_SAVE_NOT_IN_SLOT:
         {
             uint32 loyalty =1;
-            if (getPetType()!=HUNTER_PET)
+            if (getPetType() != HUNTER_PET)
                 loyalty = GetLoyaltyLevel();
 
             uint32 owner = GUID_LOPART(GetOwnerGUID());
@@ -438,7 +438,7 @@ void Pet::SavePetToDB(PetSaveMode mode)
             CharacterDatabase.PExecute("DELETE FROM character_pet WHERE owner = '%u' AND id = '%u'", owner,m_charmInfo->GetPetNumber());
 
             // prevent duplicate using slot (except PET_SAVE_NOT_IN_SLOT)
-            if (mode!=PET_SAVE_NOT_IN_SLOT)
+            if (mode != PET_SAVE_NOT_IN_SLOT)
                 CharacterDatabase.PExecute("UPDATE character_pet SET slot = 3 WHERE owner = '%u' AND slot = '%u'", owner, uint32(mode));
 
             // prevent existence another hunter pet in PET_SAVE_AS_CURRENT and PET_SAVE_NOT_IN_SLOT
@@ -551,7 +551,7 @@ void Pet::Update(uint32 diff)
         {
             if (m_deathTimer <= diff)
             {
-                assert(getPetType()!=SUMMON_PET && "Must be already removed.");
+                assert(getPetType() != SUMMON_PET && "Must be already removed.");
                 Remove(PET_SAVE_NOT_IN_SLOT);               //hunters' pets never get removed because of death, NEVER!
                 return;
             }
@@ -842,7 +842,7 @@ void Pet::SetTP(int32 TP)
 
 int32 Pet::GetDispTP()
 {
-    if (getPetType()!= HUNTER_PET)
+    if (getPetType() != HUNTER_PET)
         return(0);
     if (m_TrainingPoints < 0)
         return -m_TrainingPoints;

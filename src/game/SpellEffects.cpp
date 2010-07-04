@@ -512,7 +512,7 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
 
                         // remove consumed poison doses
                         Unit::AuraList const& auras = unitTarget->GetAurasByType(SPELL_AURA_PERIODIC_DAMAGE);
-                        for (Unit::AuraList::const_iterator itr = auras.begin(); itr!=auras.end() && combo;)
+                        for (Unit::AuraList::const_iterator itr = auras.begin(); itr != auras.end() && combo;)
                         {
                             // Deadly poison (only attacker applied)
                             if ((*itr)->GetSpellProto()->SpellFamilyName==SPELLFAMILY_ROGUE && ((*itr)->GetSpellProto()->SpellFamilyFlags & 0x10000) &&
@@ -600,7 +600,7 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
                 {
                     uint32 stacks = 0;
                     Unit::AuraList const& auras = unitTarget->GetAurasByType(SPELL_AURA_PERIODIC_DAMAGE);
-                    for (Unit::AuraList::const_iterator itr = auras.begin(); itr!=auras.end(); ++itr)
+                    for (Unit::AuraList::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
                         if ((*itr)->GetId() == 31803 && (*itr)->GetCasterGUID()==m_caster->GetGUID())
                             ++stacks;
                     if (!stacks)
@@ -741,7 +741,7 @@ void Spell::EffectDummy(uint32 i)
                 case 8593:                                  // Symbol of life (restore creature to life)
                 case 31225:                                 // Shimmering Vessel (restore creature to life)
                 {
-                    if (!unitTarget || unitTarget->GetTypeId()!=TYPEID_UNIT)
+                    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_UNIT)
                         return;
                     unitTarget->ToCreature()->setDeathState(JUST_ALIVED);
                     return;
@@ -819,7 +819,7 @@ void Spell::EffectDummy(uint32 i)
                 }
                 case 14185:                                 // Preparation Rogue
                 {
-                    if (m_caster->GetTypeId()!=TYPEID_PLAYER)
+                    if (m_caster->GetTypeId() != TYPEID_PLAYER)
                         return;
 
                     //immediately finishes the cooldown on certain Rogue abilities
@@ -848,7 +848,7 @@ void Spell::EffectDummy(uint32 i)
                 }
                 case 16589:                                 // Noggenfogger Elixir
                 {
-                    if (m_caster->GetTypeId()!=TYPEID_PLAYER)
+                    if (m_caster->GetTypeId() != TYPEID_PLAYER)
                         return;
 
                     uint32 spell_id = 0;
@@ -877,7 +877,7 @@ void Spell::EffectDummy(uint32 i)
                 }
                 case 17271:                                 // Test Fetid Skull
                 {
-                    if (!itemTarget && m_caster->GetTypeId()!=TYPEID_PLAYER)
+                    if (!itemTarget && m_caster->GetTypeId() != TYPEID_PLAYER)
                         return;
 
                     uint32 spell_id = roll_chance_i(50) ? 17269 : 17270;
@@ -951,7 +951,7 @@ void Spell::EffectDummy(uint32 i)
                     m_caster->CastSpell(m_caster,23783,true);
                     return;
                 case 24930:                                 // Hallow's End Candy
-                    if (m_caster->GetTypeId()!=TYPEID_PLAYER)
+                    if (m_caster->GetTypeId() != TYPEID_PLAYER)
                         return;
 
                     switch(m_caster->GetMap()->irand(0,3))
@@ -1041,7 +1041,7 @@ void Spell::EffectDummy(uint32 i)
                     return;
                 case 33060:                                         // Make a Wish
                 {
-                    if (m_caster->GetTypeId()!=TYPEID_PLAYER)
+                    if (m_caster->GetTypeId() != TYPEID_PLAYER)
                         return;
 
                     uint32 spell_id = 0;
@@ -1285,7 +1285,7 @@ void Spell::EffectDummy(uint32 i)
             {
                 case 11958:                                 // Cold Snap
                 {
-                    if (m_caster->GetTypeId()!=TYPEID_PLAYER)
+                    if (m_caster->GetTypeId() != TYPEID_PLAYER)
                         return;
 
                     // immediately finishes the cooldown on Frost spells
@@ -1451,7 +1451,7 @@ void Spell::EffectDummy(uint32 i)
                         {
                             for (int s=0;s<3;s++)
                             {
-                                if (pEnchant->type[s]!=ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL)
+                                if (pEnchant->type[s] != ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL)
                                     continue;
 
                                 SpellEntry const* combatEntry = sSpellStore.LookupEntry(pEnchant->spellid[s]);
@@ -1472,7 +1472,7 @@ void Spell::EffectDummy(uint32 i)
             // Kill command
             if (m_spellInfo->SpellFamilyFlags & 0x00080000000000LL)
             {
-                if (m_caster->getClass()!=CLASS_HUNTER)
+                if (m_caster->getClass() != CLASS_HUNTER)
                     return;
 
                 // clear hunter crit aura state
@@ -1500,7 +1500,7 @@ void Spell::EffectDummy(uint32 i)
             {
                 case 23989:                                 //Readiness talent
                 {
-                    if (m_caster->GetTypeId()!=TYPEID_PLAYER)
+                    if (m_caster->GetTypeId() != TYPEID_PLAYER)
                         return;
 
                     //immediately finishes the cooldown for hunter abilities
@@ -1517,7 +1517,7 @@ void Spell::EffectDummy(uint32 i)
                 }
                 case 37506:                                 // Scatter Shot
                 {
-                    if (m_caster->GetTypeId()!=TYPEID_PLAYER)
+                    if (m_caster->GetTypeId() != TYPEID_PLAYER)
                         return;
 
                     // break Auto Shot and autohit
@@ -2152,7 +2152,7 @@ void Spell::EffectApplyAura(uint32 i)
 
     // ghost spell check, allow apply any auras at player loading in ghost mode (will be cleanup after load)
     if (!unitTarget->isAlive() && m_spellInfo->Id != 20584 && m_spellInfo->Id != 8326 &&
-        (unitTarget->GetTypeId()!=TYPEID_PLAYER || !unitTarget->ToPlayer()->GetSession()->PlayerLoading()))
+        (unitTarget->GetTypeId() != TYPEID_PLAYER || !unitTarget->ToPlayer()->GetSession()->PlayerLoading()))
         return;
 
     Unit* caster = m_originalCasterGUID ? m_originalCaster : m_caster;
@@ -2364,7 +2364,7 @@ void Spell::EffectPowerBurn(uint32 i)
         return;
     if (!unitTarget->isAlive())
         return;
-    if (unitTarget->getPowerType()!=powertype)
+    if (unitTarget->getPowerType() != powertype)
         return;
     if (damage < 0)
         return;
@@ -3035,7 +3035,7 @@ void Spell::EffectSummonChangeItem(uint32 i)
         return;
 
     // ... only to item in own inventory/bank/equip_slot
-    if (m_CastItem->GetOwnerGUID()!=player->GetGUID())
+    if (m_CastItem->GetOwnerGUID() != player->GetGUID())
         return;
 
     uint32 newitemid = m_spellInfo->EffectItemType[i];
@@ -3359,8 +3359,8 @@ void Spell::EffectDispel(uint32 i)
             {
                 SpellEntry const* spellInfo = sSpellStore.LookupEntry(j->first);
                 data << uint32(spellInfo->Id);              // Spell Id
-                data << uint8(0);                           // 0 - dispelled !=0 cleansed
-                if (spellInfo->StackAmount!= 0)
+                data << uint8(0);                           // 0 - dispelled != 0 cleansed
+                if (spellInfo->StackAmount != 0)
                 {
                     //Why are Aura's Removed by EffIndex? Auras should be removed as a whole.....
                     unitTarget->RemoveSingleAuraFromStackByDispel(spellInfo->Id);
@@ -3762,7 +3762,7 @@ void Spell::EffectEnchantItemPerm(uint32 i)
         if (!item_owner)
             return;
 
-        if (item_owner!=p_caster && p_caster->GetSession()->GetSecurity() > SEC_PLAYER && sWorld.getConfig(CONFIG_GM_LOG_TRADE))
+        if (item_owner != p_caster && p_caster->GetSession()->GetSecurity() > SEC_PLAYER && sWorld.getConfig(CONFIG_GM_LOG_TRADE))
         {
             sLog.outCommand(p_caster->GetSession()->GetAccountId(),"GM %s (Account: %u) enchanting(perm): %s (Entry: %d) for player: %s (Account: %u)",
                 p_caster->GetName(),p_caster->GetSession()->GetAccountId(),
@@ -3897,7 +3897,7 @@ void Spell::EffectEnchantItemTmp(uint32 i)
     if (!item_owner)
         return;
 
-    if (item_owner!=p_caster && p_caster->GetSession()->GetSecurity() > SEC_PLAYER && sWorld.getConfig(CONFIG_GM_LOG_TRADE))
+    if (item_owner != p_caster && p_caster->GetSession()->GetSecurity() > SEC_PLAYER && sWorld.getConfig(CONFIG_GM_LOG_TRADE))
     {
         sLog.outCommand(p_caster->GetSession()->GetAccountId(),"GM %s (Account: %u) enchanting(temp): %s (Entry: %d) for player: %s (Account: %u)",
             p_caster->GetName(),p_caster->GetSession()->GetAccountId(),
@@ -4143,7 +4143,7 @@ void Spell::SpellDamageWeaponDmg(uint32 i)
                 uint32 stack = 0;
 
                 Unit::AuraList const& list = unitTarget->GetAurasByType(SPELL_AURA_MOD_RESISTANCE);
-                for (Unit::AuraList::const_iterator itr=list.begin();itr!=list.end();++itr)
+                for (Unit::AuraList::const_iterator itr=list.begin();itr != list.end();++itr)
                 {
                     SpellEntry const *proto = (*itr)->GetSpellProto();
                     if (proto->SpellFamilyName == SPELLFAMILY_WARRIOR
@@ -4204,7 +4204,7 @@ void Spell::SpellDamageWeaponDmg(uint32 i)
             else if (m_spellInfo->SpellFamilyFlags & 0x600000000LL)
             {
                 Unit::AuraMap const& auras = unitTarget->GetAuras();
-                for (Unit::AuraMap::const_iterator itr = auras.begin(); itr!=auras.end(); ++itr)
+                for (Unit::AuraMap::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
                 {
                     if (itr->second->GetSpellProto()->Dispel == DISPEL_POISON)
                     {
@@ -4560,7 +4560,7 @@ void Spell::EffectScriptEffect(uint32 effIndex)
         // Bending Shinbone
         case 8856:
         {
-            if (!itemTarget && m_caster->GetTypeId()!=TYPEID_PLAYER)
+            if (!itemTarget && m_caster->GetTypeId() != TYPEID_PLAYER)
                 return;
 
             uint32 spell_id = 0;
@@ -5938,7 +5938,7 @@ void Spell::EffectKnockBack(uint32 i)
         return;
 
     // Effect only works on players
-    if (unitTarget->GetTypeId()!=TYPEID_PLAYER)
+    if (unitTarget->GetTypeId() != TYPEID_PLAYER)
         return;
 
     float x, y;
@@ -6025,7 +6025,7 @@ void Spell::EffectPlayerPull(uint32 i)
         return;
 
     // Effect only works on players
-    if (unitTarget->GetTypeId()!=TYPEID_PLAYER)
+    if (unitTarget->GetTypeId() != TYPEID_PLAYER)
         return;
 
     float vsin = sin(unitTarget->GetAngle(m_caster));
@@ -6489,7 +6489,7 @@ void Spell::EffectStealBeneficialBuff(uint32 i)
             {
                 SpellEntry const* spellInfo = sSpellStore.LookupEntry(j->first);
                 data << uint32(spellInfo->Id);       // Spell Id
-                data << uint8(0);                    // 0 - steals !=0 transfers
+                data << uint8(0);                    // 0 - steals != 0 transfers
                 unitTarget->RemoveAurasDueToSpellBySteal(spellInfo->Id, j->second, m_caster);
             }
             m_caster->SendMessageToSet(&data, true);

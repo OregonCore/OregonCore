@@ -94,7 +94,7 @@ struct OREGON_DLL_DECL boss_patchwerkAI : public ScriptedAI
             Unit* pTemp = NULL;
             std::list<HostileReference*>::iterator i = m_creature->getThreatManager().getThreatList().begin();
 
-            for (i = m_creature->getThreatManager().getThreatList().begin(); i!=m_creature->getThreatManager().getThreatList().end();)
+            for (i = m_creature->getThreatManager().getThreatList().begin(); i != m_creature->getThreatManager().getThreatList().end();)
             {
                 pTemp = Unit::GetUnit((*m_creature),(*i)->getUnitGuid());
                 ++i;

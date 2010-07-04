@@ -263,7 +263,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
     void InfernalCleanup()
     {
         //Infernal Cleanup
-        for(std::vector<uint64>::iterator itr = infernals.begin(); itr!= infernals.end(); ++itr)
+        for(std::vector<uint64>::iterator itr = infernals.begin(); itr != infernals.end(); ++itr)
         {
             Unit *pInfernal = Unit::GetUnit(*m_creature, *itr);
             if(pInfernal && pInfernal->isAlive())
@@ -316,7 +316,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
         //begin + 1 , so we don't target the one with the highest threat
         std::list<HostileReference *>::iterator itr = t_list.begin();
         std::advance(itr, 1);
-        for( ; itr!= t_list.end(); ++itr)                   //store the threat list in a different container
+        for( ; itr != t_list.end(); ++itr)                   //store the threat list in a different container
         {
             Unit *target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
                                                             //only on alive players
@@ -329,7 +329,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
             targets.erase(targets.begin()+rand()%targets.size());
 
         int i = 0;
-        for(std::vector<Unit *>::iterator itr = targets.begin(); itr!= targets.end(); ++itr, ++i)
+        for(std::vector<Unit *>::iterator itr = targets.begin(); itr != targets.end(); ++itr, ++i)
         {
             Unit *target = *itr;
             if(target)
@@ -411,7 +411,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
         if(m_creature->hasUnitState(UNIT_STAT_STUNNED))     //While shifting to phase 2 malchezaar stuns himself
             return;
 
-        if(m_creature->GetUInt64Value(UNIT_FIELD_TARGET)!=m_creature->getVictim()->GetGUID())
+        if(m_creature->GetUInt64Value(UNIT_FIELD_TARGET) != m_creature->getVictim()->GetGUID())
             m_creature->SetUInt64Value(UNIT_FIELD_TARGET, m_creature->getVictim()->GetGUID());
 
         if(phase == 1)
@@ -607,7 +607,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
 
     void Cleanup(Creature *infernal, InfernalPoint *point)
     {
-        for(std::vector<uint64>::iterator itr = infernals.begin(); itr!= infernals.end(); ++itr)
+        for(std::vector<uint64>::iterator itr = infernals.begin(); itr != infernals.end(); ++itr)
             if(*itr == infernal->GetGUID())
         {
             infernals.erase(itr);

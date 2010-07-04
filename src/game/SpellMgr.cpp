@@ -1077,7 +1077,7 @@ void SpellMgr::LoadSpellAffects()
             }
 
             // 24429 have wrong data in EffectItemType and overwrites by DB, possible bug in client
-            if (spellInfo->Id!=24429 && spellInfo->EffectItemType[effectId] != spellAffectMask)
+            if (spellInfo->Id != 24429 && spellInfo->EffectItemType[effectId] != spellAffectMask)
             {
                 sLog.outErrorDb("Spell %u listed in spell_affect have different low part from EffectItemType%d for effect index (%u) and not needed, skipped.", entry,effectId+1,effectId);
                 continue;
@@ -1109,7 +1109,7 @@ void SpellMgr::LoadSpellAffects()
             if (spellInfo->EffectItemType[effectId] != 0)
                 continue;
 
-            if (mSpellAffectMap.find((id<<8) + effectId) !=  mSpellAffectMap.end())
+            if (mSpellAffectMap.find((id<<8) + effectId) != mSpellAffectMap.end())
                 continue;
 
             sLog.outErrorDb("Spell %u (%s) misses spell_affect for effect %u",id,spellInfo->SpellName[sWorld.GetDefaultDbcLocale()], effectId);
@@ -1740,13 +1740,13 @@ struct SpellRankEntry
     bool operator()(const SpellRankEntry & _Left,const SpellRankEntry & _Right)const
     {
         return (_Left.SkillId != _Right.SkillId ? _Left.SkillId < _Right.SkillId
-            : _Left.SpellName!=_Right.SpellName ? _Left.SpellName < _Right.SpellName
-            : _Left.ProcFlags!=_Right.ProcFlags ? _Left.ProcFlags < _Right.ProcFlags
-            : _Left.SpellFamilyFlags!=_Right.SpellFamilyFlags ? _Left.SpellFamilyFlags < _Right.SpellFamilyFlags
-            : (_Left.SpellVisual!=_Right.SpellVisual) && (!_Left.SpellVisual || !_Right.SpellVisual) ? _Left.SpellVisual < _Right.SpellVisual
-            : (_Left.ManaCost!=_Right.ManaCost) && (!_Left.ManaCost || !_Right.ManaCost) ? _Left.ManaCost < _Right.ManaCost
-            : (_Left.DurationIndex!=_Right.DurationIndex) && (!_Left.DurationIndex || !_Right.DurationIndex)? _Left.DurationIndex < _Right.DurationIndex
-            : (_Left.RangeIndex!=_Right.RangeIndex) && (!_Left.RangeIndex || !_Right.RangeIndex || _Left.RangeIndex==1 || !_Right.RangeIndex==1) ? _Left.RangeIndex < _Right.RangeIndex
+            : _Left.SpellName != _Right.SpellName ? _Left.SpellName < _Right.SpellName
+            : _Left.ProcFlags != _Right.ProcFlags ? _Left.ProcFlags < _Right.ProcFlags
+            : _Left.SpellFamilyFlags != _Right.SpellFamilyFlags ? _Left.SpellFamilyFlags < _Right.SpellFamilyFlags
+            : (_Left.SpellVisual != _Right.SpellVisual) && (!_Left.SpellVisual || !_Right.SpellVisual) ? _Left.SpellVisual < _Right.SpellVisual
+            : (_Left.ManaCost != _Right.ManaCost) && (!_Left.ManaCost || !_Right.ManaCost) ? _Left.ManaCost < _Right.ManaCost
+            : (_Left.DurationIndex != _Right.DurationIndex) && (!_Left.DurationIndex || !_Right.DurationIndex)? _Left.DurationIndex < _Right.DurationIndex
+            : (_Left.RangeIndex != _Right.RangeIndex) && (!_Left.RangeIndex || !_Right.RangeIndex || _Left.RangeIndex==1 || !_Right.RangeIndex==1) ? _Left.RangeIndex < _Right.RangeIndex
             : _Left.TargetAuraState < _Right.TargetAuraState
 );
     }
@@ -1796,7 +1796,7 @@ void SpellMgr::LoadSpellChains()
         if (found)
             continue;
 
-        if (mSkillLineAbilityMap.lower_bound(spell_id)->second->id!=ability_id)
+        if (mSkillLineAbilityMap.lower_bound(spell_id)->second->id != ability_id)
             continue;
         SpellEntry const *SpellInfo=sSpellStore.LookupEntry(spell_id);
         if (!SpellInfo)
@@ -1805,7 +1805,7 @@ void SpellMgr::LoadSpellChains()
         if (sRank.empty())
             continue;
         //exception to polymorph spells-make pig and turtle other chain than sheep
-        if ((SpellInfo->SpellFamilyName==SPELLFAMILY_MAGE) && (SpellInfo->SpellFamilyFlags & 0x1000000) && (SpellInfo->SpellIconID!=82))
+        if ((SpellInfo->SpellFamilyName==SPELLFAMILY_MAGE) && (SpellInfo->SpellFamilyFlags & 0x1000000) && (SpellInfo->SpellIconID != 82))
             continue;
 
         SpellRankEntry entry;
@@ -1837,22 +1837,22 @@ void SpellMgr::LoadSpellChains()
 
     uint32 count=0;
 
-    for (std::multimap<SpellRankEntry, SpellRankValue,SpellRankEntry>::iterator itr = RankMap.begin();itr!=RankMap.end();)
+    for (std::multimap<SpellRankEntry, SpellRankValue,SpellRankEntry>::iterator itr = RankMap.begin();itr != RankMap.end();)
     {
         SpellRankEntry entry=itr->first;
         //trac errors in extracted data
         std::multimap<char const *, std::multimap<SpellRankEntry, SpellRankValue,SpellRankEntry>::iterator> RankErrorMap;
-        for (std::multimap<SpellRankEntry, SpellRankValue,SpellRankEntry>::iterator itr2 = RankMap.lower_bound(entry);itr2!=RankMap.upper_bound(entry);itr2++)
+        for (std::multimap<SpellRankEntry, SpellRankValue,SpellRankEntry>::iterator itr2 = RankMap.lower_bound(entry);itr2 != RankMap.upper_bound(entry);itr2++)
         {
             bar.step();
             RankErrorMap.insert(std::pair<char const *, std::multimap<SpellRankEntry, SpellRankValue,SpellRankEntry>::iterator>(itr2->second.Rank,itr2));
         }
-        for (std::multimap<char const *, std::multimap<SpellRankEntry, SpellRankValue,SpellRankEntry>::iterator>::iterator itr2 = RankErrorMap.begin();itr2!=RankErrorMap.end();)
+        for (std::multimap<char const *, std::multimap<SpellRankEntry, SpellRankValue,SpellRankEntry>::iterator>::iterator itr2 = RankErrorMap.begin();itr2 != RankErrorMap.end();)
         {
             char const * err_entry=itr2->first;
             uint32 rank_count=RankErrorMap.count(itr2->first);
             if (rank_count>1)
-            for (itr2 = RankErrorMap.lower_bound(err_entry);itr2!=RankErrorMap.upper_bound(err_entry);itr2++)
+            for (itr2 = RankErrorMap.lower_bound(err_entry);itr2 != RankErrorMap.upper_bound(err_entry);itr2++)
             {
                 sLog.outDebug("There is a duplicate rank entry (%s) for spell: %u",itr2->first,itr2->second->second.Id);
                 sLog.outDebug("Spell %u removed from chain data.",itr2->second->second.Id);
@@ -1878,7 +1878,7 @@ void SpellMgr::LoadSpellChains()
         std::multimap<SpellRankEntry, SpellRankValue,SpellRankEntry>::iterator min_itr;
         for (;RankMap.count(entry);)
         {
-            for (std::multimap<SpellRankEntry, SpellRankValue,SpellRankEntry>::iterator itr2 = RankMap.lower_bound(entry);itr2!=RankMap.upper_bound(entry);itr2++)
+            for (std::multimap<SpellRankEntry, SpellRankValue,SpellRankEntry>::iterator itr2 = RankMap.lower_bound(entry);itr2 != RankMap.upper_bound(entry);itr2++)
             {
                 SpellEntry const *SpellInfo=sSpellStore.LookupEntry(itr2->second.Id);
                 if (SpellInfo->spellLevel<min_spell_lvl || itr2==RankMap.lower_bound(entry))
@@ -1893,7 +1893,7 @@ void SpellMgr::LoadSpellChains()
 
         //use data from talent.dbc
         uint16 talent_id=0;
-        for (std::list<uint32>::iterator itr2 = RankedSpells.begin();itr2!=RankedSpells.end();)
+        for (std::list<uint32>::iterator itr2 = RankedSpells.begin();itr2 != RankedSpells.end();)
         {
             if (TalentSpellPos const* TalentPos=GetTalentSpellPos(*itr2))
             {
@@ -1918,7 +1918,7 @@ void SpellMgr::LoadSpellChains()
 
         itr=RankMap.upper_bound(entry);
         uint32 spell_rank=1;
-        for (std::list<uint32>::iterator itr2 = RankedSpells.begin();itr2!=RankedSpells.end();spell_rank++)
+        for (std::list<uint32>::iterator itr2 = RankedSpells.begin();itr2 != RankedSpells.end();spell_rank++)
         {
             uint32 spell_id=*itr2;
             mSpellChains[spell_id].rank=spell_rank;
@@ -1940,7 +1940,7 @@ void SpellMgr::LoadSpellChains()
     }
 
 //uncomment these two lines to print yourself list of spell_chains on startup
-//    for (UNORDERED_MAP<uint32, SpellChainNode>::iterator itr=mSpellChains.begin();itr!=mSpellChains.end();itr++)
+//    for (UNORDERED_MAP<uint32, SpellChainNode>::iterator itr=mSpellChains.begin();itr != mSpellChains.end();itr++)
 //       sLog.outString("Id: %u, Rank: %d , %s",itr->first,itr->second.rank, sSpellStore.LookupEntry(itr->first)->Rank[sWorld.GetDefaultDbcLocale()]);
 
     sLog.outString("");

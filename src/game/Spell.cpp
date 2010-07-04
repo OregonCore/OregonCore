@@ -866,7 +866,7 @@ void Spell::doTriggers(SpellMissInfo missInfo, uint32 damage, SpellSchoolMask da
 {
     // Do triggers depends from hit result (triggers on hit do in effects)
     // Set aura states depends from hit result
-    if (missInfo!=SPELL_MISS_NONE)
+    if (missInfo != SPELL_MISS_NONE)
     {
         // Miss/dodge/parry/block only for melee based spells
         // Resist only for magic based spells
@@ -964,7 +964,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
     SpellMissInfo missInfo = target->missCondition;
 
     // Need init unitTarget by default unit (can changed in code on reflect)
-    // Or on missInfo!=SPELL_MISS_NONE unitTarget undefined (but need in trigger subsystem)
+    // Or on missInfo != SPELL_MISS_NONE unitTarget undefined (but need in trigger subsystem)
     unitTarget = unit;
 
     // Reset damage/healing counter
@@ -978,7 +978,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
 
                             //Spells with this flag cannot trigger if effect is casted on self
                             // Slice and Dice, relentless strikes, eviscerate
-    //bool canEffectTrigger = (m_spellInfo->AttributesEx4 & (SPELL_ATTR_EX4_CANT_PROC_FROM_SELFCAST | SPELL_ATTR_EX4_UNK4) ? m_caster!=unitTarget : true)
+    //bool canEffectTrigger = (m_spellInfo->AttributesEx4 & (SPELL_ATTR_EX4_CANT_PROC_FROM_SELFCAST | SPELL_ATTR_EX4_UNK4) ? m_caster != unitTarget : true)
     //    && m_canTrigger;
 
     if (missInfo==SPELL_MISS_NONE)                          // In case spell hit target, do all effect on that target
@@ -1551,7 +1551,7 @@ WorldObject* Spell::SearchNearbyTarget(float range, SpellTargets TargetType)
                     {
                         Creature *p_Creature = NULL;
 
-                        Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck u_check(*m_caster,i_spellST->second.targetEntry,i_spellST->second.type!=SPELL_TARGET_TYPE_DEAD,range);
+                        Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck u_check(*m_caster,i_spellST->second.targetEntry,i_spellST->second.type != SPELL_TARGET_TYPE_DEAD,range);
                         Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(p_Creature, u_check);
                         m_caster->VisitNearbyObject(range, searcher);
 
@@ -3289,7 +3289,7 @@ void Spell::TakePower()
                 for (std::list<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
                     if (ihit->targetGUID == targetGUID)
                     {
-                        if (ihit->missCondition != SPELL_MISS_NONE && ihit->missCondition != SPELL_MISS_MISS/* && ihit->targetGUID!=m_caster->GetGUID()*/)
+                        if (ihit->missCondition != SPELL_MISS_NONE && ihit->missCondition != SPELL_MISS_MISS/* && ihit->targetGUID != m_caster->GetGUID()*/)
                             hit = false;
                         break;
                     }
@@ -3433,7 +3433,7 @@ void Spell::HandleEffects(Unit *pUnitTarget,Item *pItemTarget,GameObject *pGOTar
 
 void Spell::TriggerSpell()
 {
-    for (TriggerSpells::iterator si=m_TriggerSpells.begin(); si!=m_TriggerSpells.end(); ++si)
+    for (TriggerSpells::iterator si=m_TriggerSpells.begin(); si != m_TriggerSpells.end(); ++si)
     {
         Spell* spell = new Spell(m_caster, (*si), true, m_originalCasterGUID, m_selfContainer, true);
         spell->prepare(&m_targets);                         // use original spell original targets
@@ -3701,7 +3701,7 @@ uint8 Spell::CanCast(bool strict)
                             cell.data.Part.reserved = ALL_DISTRICT;
                             cell.SetNoCreate();             // Really don't know what is that???
 
-                            MaNGOS::NearestCreatureEntryWithLiveStateInObjectRangeCheck u_check(*m_caster,i_spellST->second.targetEntry,i_spellST->second.type!=SPELL_TARGET_TYPE_DEAD,range);
+                            MaNGOS::NearestCreatureEntryWithLiveStateInObjectRangeCheck u_check(*m_caster,i_spellST->second.targetEntry,i_spellST->second.type != SPELL_TARGET_TYPE_DEAD,range);
                             MaNGOS::CreatureLastSearcher<MaNGOS::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(p_Creature, u_check);
 
                             TypeContainerVisitor<MaNGOS::CreatureLastSearcher<MaNGOS::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer >  grid_creature_searcher(searcher);
@@ -3728,7 +3728,7 @@ uint8 Spell::CanCast(bool strict)
                     {
                         m_targets.setDestination(creatureScriptTarget->GetPositionX(),creatureScriptTarget->GetPositionY(),creatureScriptTarget->GetPositionZ());
 
-                        if (m_spellInfo->EffectImplicitTargetA[j] == TARGET_DST_NEARBY_ENTRY && m_spellInfo->EffectImplicitTargetB[j] == 0 && m_spellInfo->Effect[j]!=SPELL_EFFECT_PERSISTENT_AREA_AURA)
+                        if (m_spellInfo->EffectImplicitTargetA[j] == TARGET_DST_NEARBY_ENTRY && m_spellInfo->EffectImplicitTargetB[j] == 0 && m_spellInfo->Effect[j] != SPELL_EFFECT_PERSISTENT_AREA_AURA)
                             AddUnitTarget(creatureScriptTarget, j);
                     }
                     // store explicit target for TARGET_UNIT_NEARBY_ENTRY
@@ -3743,7 +3743,7 @@ uint8 Spell::CanCast(bool strict)
                     {
                         m_targets.setDestination(goScriptTarget->GetPositionX(),goScriptTarget->GetPositionY(),goScriptTarget->GetPositionZ());
 
-                        if (m_spellInfo->EffectImplicitTargetA[j] == TARGET_DST_NEARBY_ENTRY && m_spellInfo->EffectImplicitTargetB[j] == 0 && m_spellInfo->Effect[j]!=SPELL_EFFECT_PERSISTENT_AREA_AURA)
+                        if (m_spellInfo->EffectImplicitTargetA[j] == TARGET_DST_NEARBY_ENTRY && m_spellInfo->EffectImplicitTargetB[j] == 0 && m_spellInfo->Effect[j] != SPELL_EFFECT_PERSISTENT_AREA_AURA)
                             AddGOTarget(goScriptTarget, j);
                     }
                     // store explicit target for TARGET_UNIT_NEARBY_ENTRY
@@ -3896,7 +3896,7 @@ uint8 Spell::CanCast(bool strict)
                 // Can be area effect, Check only for players and not check if target - caster (spell can have multiply drain/burn effects)
                 if (m_caster->GetTypeId() == TYPEID_PLAYER)
                     if (Unit* target = m_targets.getUnitTarget())
-                        if (target!=m_caster && target->getPowerType()!=m_spellInfo->EffectMiscValue[i])
+                        if (target != m_caster && target->getPowerType() != m_spellInfo->EffectMiscValue[i])
                             return SPELL_FAILED_BAD_TARGETS;
                 break;
             }
@@ -3986,7 +3986,7 @@ uint8 Spell::CanCast(bool strict)
                             }
                             case LOCK_KEY_SKILL:
                             {
-                                if (uint32(m_spellInfo->EffectMiscValue[i])!=lockInfo->key[it])
+                                if (uint32(m_spellInfo->EffectMiscValue[i]) != lockInfo->key[it])
                                     break;
 
                                 switch(lockInfo->key[it])
@@ -4146,7 +4146,7 @@ uint8 Spell::CanCast(bool strict)
             }
             case SPELL_EFFECT_SUMMON_PLAYER:
             {
-                if (m_caster->GetTypeId()!=TYPEID_PLAYER)
+                if (m_caster->GetTypeId() != TYPEID_PLAYER)
                     return SPELL_FAILED_BAD_TARGETS;
                 if (!m_caster->ToPlayer()->GetSelection())
                     return SPELL_FAILED_BAD_TARGETS;
@@ -4296,10 +4296,10 @@ uint8 Spell::CanCast(bool strict)
                 if (!m_targets.getUnitTarget())
                     return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
 
-                if (m_caster->GetTypeId()!=TYPEID_PLAYER || m_CastItem)
+                if (m_caster->GetTypeId() != TYPEID_PLAYER || m_CastItem)
                     break;
 
-                if (m_targets.getUnitTarget()->getPowerType()!=POWER_MANA)
+                if (m_targets.getUnitTarget()->getPowerType() != POWER_MANA)
                     return SPELL_FAILED_BAD_TARGETS;
 
                 break;
@@ -4934,11 +4934,11 @@ uint8 Spell::CheckItems()
                         {
                             case ITEM_SUBCLASS_WEAPON_BOW:
                             case ITEM_SUBCLASS_WEAPON_CROSSBOW:
-                                if (ammoProto->SubClass!=ITEM_SUBCLASS_ARROW)
+                                if (ammoProto->SubClass != ITEM_SUBCLASS_ARROW)
                                     return SPELL_FAILED_NO_AMMO;
                                 break;
                             case ITEM_SUBCLASS_WEAPON_GUN:
-                                if (ammoProto->SubClass!=ITEM_SUBCLASS_BULLET)
+                                if (ammoProto->SubClass != ITEM_SUBCLASS_BULLET)
                                     return SPELL_FAILED_NO_AMMO;
                                 break;
                             default:
@@ -5112,7 +5112,7 @@ CurrentSpellTypes Spell::GetCurrentContainer()
 bool Spell::CheckTarget(Unit* target, uint32 eff)
 {
     // Check targets for creature type mask and remove not appropriate (skip explicit self target case, maybe need other explicit targets)
-    if (m_spellInfo->EffectImplicitTargetA[eff]!=TARGET_UNIT_CASTER)
+    if (m_spellInfo->EffectImplicitTargetA[eff] != TARGET_UNIT_CASTER)
     {
         if (!CheckTargetCreatureType(target))
             return false;
@@ -5154,12 +5154,12 @@ bool Spell::CheckTarget(Unit* target, uint32 eff)
         case SPELL_EFFECT_SUMMON_PLAYER:                    // from anywhere
             break;
         case SPELL_EFFECT_DUMMY:
-            if (m_spellInfo->Id!=20577)                      // Cannibalize
+            if (m_spellInfo->Id != 20577)                      // Cannibalize
                 break;
             //fall through
         case SPELL_EFFECT_RESURRECT_NEW:
             // player far away, maybe his corpse near?
-            if (target!=m_caster && !target->IsWithinLOSInMap(m_caster))
+            if (target != m_caster && !target->IsWithinLOSInMap(m_caster))
             {
                 if (!m_targets.getCorpseTargetGUID())
                     return false;
@@ -5168,7 +5168,7 @@ bool Spell::CheckTarget(Unit* target, uint32 eff)
                 if (!corpse)
                     return false;
 
-                if (target->GetGUID()!=corpse->GetOwnerGUID())
+                if (target->GetGUID() != corpse->GetOwnerGUID())
                     return false;
 
                 if (!corpse->IsWithinLOSInMap(m_caster))
@@ -5178,7 +5178,7 @@ bool Spell::CheckTarget(Unit* target, uint32 eff)
             // all ok by some way or another, skip normal check
             break;
         default:                                            // normal case
-            if (target!=m_caster && !target->IsWithinLOSInMap(m_caster))
+            if (target != m_caster && !target->IsWithinLOSInMap(m_caster))
                 return false;
             break;
     }
@@ -5248,7 +5248,7 @@ void Spell::HandleHitTriggerAura()
 
 bool Spell::IsNeedSendToClient() const
 {
-    return m_spellInfo->SpellVisual!=0 || IsChanneledSpell(m_spellInfo) ||
+    return m_spellInfo->SpellVisual != 0 || IsChanneledSpell(m_spellInfo) ||
         m_spellInfo->speed > 0.0f || !m_triggeredByAuraSpell && !m_IsTriggeredSpell;
 }
 

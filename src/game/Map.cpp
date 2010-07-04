@@ -223,7 +223,7 @@ template<>
 void Map::AddToGrid(Corpse *obj, NGridType *grid, Cell const& cell)
 {
     // add to world object registry in grid
-    if (obj->GetType()!=CORPSE_BONES)
+    if (obj->GetType() != CORPSE_BONES)
     {
         (*grid)(cell.CellX(), cell.CellY()).AddWorldObject(obj, obj->GetGUID());
     }
@@ -275,7 +275,7 @@ template<>
 void Map::RemoveFromGrid(Corpse *obj, NGridType *grid, Cell const& cell)
 {
     // remove from world object registry in grid
-    if (obj->GetType()!=CORPSE_BONES)
+    if (obj->GetType() != CORPSE_BONES)
     {
         (*grid)(cell.CellX(), cell.CellY()).RemoveWorldObject(obj, obj->GetGUID());
     }
@@ -995,7 +995,7 @@ Map::PlayerRelocation(Player *player, float x, float y, float z, float orientati
     AddUnitToNotify(player);
 
     NGridType* newGrid = getNGrid(new_cell.GridX(), new_cell.GridY());
-    if (!same_cell && newGrid->GetGridState()!= GRID_STATE_ACTIVE)
+    if (!same_cell && newGrid->GetGridState() != GRID_STATE_ACTIVE)
     {
         ResetGridExpiry(*newGrid, 0.1f);
         newGrid->SetGridState(GRID_STATE_ACTIVE);
@@ -1977,9 +1977,9 @@ void Map::SendInitSelf(Player * player)
     // build other passengers at transport also (they always visible and marked as visible and will not send at visibility update at add to map
     if (Transport* transport = player->GetTransport())
     {
-        for (Transport::PlayerSet::const_iterator itr = transport->GetPassengers().begin();itr!=transport->GetPassengers().end();++itr)
+        for (Transport::PlayerSet::const_iterator itr = transport->GetPassengers().begin();itr != transport->GetPassengers().end();++itr)
         {
-            if (player!=(*itr) && player->HaveAtClient(*itr))
+            if (player != (*itr) && player->HaveAtClient(*itr))
             {
                 hasTransport = true;
                 (*itr)->BuildCreateUpdateBlockForPlayer(&data, player);
@@ -2037,7 +2037,7 @@ void Map::SendRemoveTransports(Player * player)
 
     // except used transport
     for (MapManager::TransportSet::iterator i = tset.begin(); i != tset.end(); ++i)
-        if ((*i) != player->GetTransport() && (*i)->GetMapId()!=GetId())
+        if ((*i) != player->GetTransport() && (*i)->GetMapId() != GetId())
             (*i)->BuildOutOfRangeUpdateBlock(&transData);
 
     WorldPacket packet;

@@ -682,7 +682,7 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
     for (int i=0; i<4; i++)
         action_itr[i] = info->action[i].begin();
 
-    for (; action_itr[0]!=info->action[0].end() && action_itr[1]!=info->action[1].end();)
+    for (; action_itr[0] != info->action[0].end() && action_itr[1] != info->action[1].end();)
     {
         uint16 taction[4];
         for (int i=0; i<4 ;i++)
@@ -744,7 +744,7 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
         }
     }
 
-    for (PlayerCreateInfoItems::const_iterator item_id_itr = info->item.begin(); item_id_itr!=info->item.end(); ++item_id_itr++)
+    for (PlayerCreateInfoItems::const_iterator item_id_itr = info->item.begin(); item_id_itr != info->item.end(); ++item_id_itr++)
         StoreNewItemInBestSlots(item_id_itr->item_id, item_id_itr->item_amount);
 
     // bags and main-hand weapon must equipped at this moment
@@ -2322,7 +2322,7 @@ void Player::GiveLevel(uint32 level)
     SetUInt32Value(PLAYER_NEXT_LEVEL_XP, Oregon::XP::xp_to_level(level));
 
     //update level, max level of skills
-    if (getLevel()!= level)
+    if (getLevel() != level)
         m_Played_time[PLAYED_TIME_LEVEL] = 0;                               // Level Played Time reset
     SetLevel(level);
     UpdateSkillsForLevel ();
@@ -2561,7 +2561,7 @@ void Player::SendInitialSpells()
 
     uint16 spellCooldowns = m_spellCooldowns.size();
     data << uint16(spellCooldowns);
-    for (SpellCooldowns::const_iterator itr=m_spellCooldowns.begin(); itr!=m_spellCooldowns.end(); ++itr)
+    for (SpellCooldowns::const_iterator itr=m_spellCooldowns.begin(); itr != m_spellCooldowns.end(); ++itr)
     {
         SpellEntry const *sEntry = sSpellStore.LookupEntry(itr->first);
         if (!sEntry)
@@ -2933,7 +2933,7 @@ bool Player::addSpell(uint32 spell_id, bool active, bool learning, bool loading,
                 // lockpicking special case, not have ABILITY_LEARNED_ON_GET_RACE_OR_CLASS_SKILL
                 pSkill->id==SKILL_LOCKPICKING && _spell_idx->second->max_value==0)
             {
-                switch(GetSkillRangeType(pSkill,_spell_idx->second->racemask!=0))
+                switch(GetSkillRangeType(pSkill,_spell_idx->second->racemask != 0))
                 {
                     case SKILL_RANGE_LANGUAGE:
                         SetSkill(pSkill->id, 300, 300);
@@ -3122,7 +3122,7 @@ void Player::removeSpell(uint32 spell_id, bool disabled)
             {
                 // not reset skills for professions and racial abilities
                 if ((pSkill->categoryId==SKILL_CATEGORY_SECONDARY || pSkill->categoryId==SKILL_CATEGORY_PROFESSION) &&
-                    (IsProfessionSkill(pSkill->id) || _spell_idx->second->racemask!=0))
+                    (IsProfessionSkill(pSkill->id) || _spell_idx->second->racemask != 0))
                     continue;
 
                 SetSkill(pSkill->id, 0, 0);
@@ -4387,7 +4387,7 @@ void Player::UpdateLocalChannels(uint32 newZone)
         snprintf(new_channel_name_buf,100,ch->pattern[m_session->GetSessionDbcLocale()],current_zone_name.c_str());
         Channel* new_channel = cMgr->GetJoinChannel(new_channel_name_buf,ch->ChannelID);
 
-        if ((*i)!=new_channel)
+        if ((*i) != new_channel)
         {
             new_channel->Join(GetGUID(),"");                // will output Changed Channel: N. Name
 
@@ -5080,7 +5080,7 @@ void Player::UpdateSkillsForLevel()
         uint32 val = SKILL_VALUE(data);
 
         /// update only level dependent max skill values
-        if (max!=1)
+        if (max != 1)
         {
             /// miximize skill always
             if (alwaysMaxSkill)
@@ -6504,7 +6504,7 @@ void Player::UpdateZone(uint32 newZone)
         {
             if (GetRestType()==REST_TYPE_IN_TAVERN)          // has been in tavern. Is still in?
             {
-                if (GetMapId()!=GetInnPosMapId() || sqrt((GetPositionX()-GetInnPosX())*(GetPositionX()-GetInnPosX())+(GetPositionY()-GetInnPosY())*(GetPositionY()-GetInnPosY())+(GetPositionZ()-GetInnPosZ())*(GetPositionZ()-GetInnPosZ()))>40)
+                if (GetMapId() != GetInnPosMapId() || sqrt((GetPositionX()-GetInnPosX())*(GetPositionX()-GetInnPosX())+(GetPositionY()-GetInnPosY())*(GetPositionY()-GetInnPosY())+(GetPositionZ()-GetInnPosZ())*(GetPositionZ()-GetInnPosZ()))>40)
                 {
                     RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING);
                     SetRestType(REST_TYPE_NO);
@@ -6912,15 +6912,15 @@ void Player::_ApplyItemBonuses(ItemPrototype const *proto,uint8 slot,bool apply)
 void Player::_ApplyWeaponDependentAuraMods(Item *item,WeaponAttackType attackType,bool apply)
 {
     AuraList const& auraCritList = GetAurasByType(SPELL_AURA_MOD_CRIT_PERCENT);
-    for (AuraList::const_iterator itr = auraCritList.begin(); itr!=auraCritList.end();++itr)
+    for (AuraList::const_iterator itr = auraCritList.begin(); itr != auraCritList.end();++itr)
         _ApplyWeaponDependentAuraCritMod(item,attackType,*itr,apply);
 
     AuraList const& auraDamageFlatList = GetAurasByType(SPELL_AURA_MOD_DAMAGE_DONE);
-    for (AuraList::const_iterator itr = auraDamageFlatList.begin(); itr!=auraDamageFlatList.end();++itr)
+    for (AuraList::const_iterator itr = auraDamageFlatList.begin(); itr != auraDamageFlatList.end();++itr)
         _ApplyWeaponDependentAuraDamageMod(item,attackType,*itr,apply);
 
     AuraList const& auraDamagePCTList = GetAurasByType(SPELL_AURA_MOD_DAMAGE_PERCENT_DONE);
-    for (AuraList::const_iterator itr = auraDamagePCTList.begin(); itr!=auraDamagePCTList.end();++itr)
+    for (AuraList::const_iterator itr = auraDamagePCTList.begin(); itr != auraDamagePCTList.end();++itr)
         _ApplyWeaponDependentAuraDamageMod(item,attackType,*itr,apply);
 }
 
@@ -7014,7 +7014,7 @@ void Player::ApplyEquipSpell(SpellEntry const* spellInfo, Item* item, bool apply
     if (apply)
     {
         // Cannot be used in this stance/form
-        if (GetErrorAtShapeshiftedCast(spellInfo, m_form)!=0)
+        if (GetErrorAtShapeshiftedCast(spellInfo, m_form) != 0)
             return;
 
         if (form_change)                                     // check aura active state from other form
@@ -7352,7 +7352,7 @@ void Player::_ApplyAmmoBonuses()
     float currentAmmoDPS;
 
     ItemPrototype const *ammo_proto = objmgr.GetItemPrototype(ammo_id);
-    if (!ammo_proto || ammo_proto->Class!=ITEM_CLASS_PROJECTILE || !CheckAmmoCompatibility(ammo_proto))
+    if (!ammo_proto || ammo_proto->Class != ITEM_CLASS_PROJECTILE || !CheckAmmoCompatibility(ammo_proto))
         currentAmmoDPS = 0.0f;
     else
         currentAmmoDPS = ammo_proto->Damage[0].DamageMin;
@@ -7377,7 +7377,7 @@ bool Player::CheckAmmoCompatibility(const ItemPrototype *ammo_proto) const
         return false;
 
     ItemPrototype const* weapon_proto = weapon->GetProto();
-    if (!weapon_proto || weapon_proto->Class!=ITEM_CLASS_WEAPON)
+    if (!weapon_proto || weapon_proto->Class != ITEM_CLASS_WEAPON)
         return false;
 
     // check ammo ws. weapon compatibility
@@ -7385,11 +7385,11 @@ bool Player::CheckAmmoCompatibility(const ItemPrototype *ammo_proto) const
     {
         case ITEM_SUBCLASS_WEAPON_BOW:
         case ITEM_SUBCLASS_WEAPON_CROSSBOW:
-            if (ammo_proto->SubClass!=ITEM_SUBCLASS_ARROW)
+            if (ammo_proto->SubClass != ITEM_SUBCLASS_ARROW)
                 return false;
             break;
         case ITEM_SUBCLASS_WEAPON_GUN:
-            if (ammo_proto->SubClass!=ITEM_SUBCLASS_BULLET)
+            if (ammo_proto->SubClass != ITEM_SUBCLASS_BULLET)
                 return false;
             break;
         default:
@@ -9978,8 +9978,8 @@ uint8 Player::CanEquipItem(uint8 slot, uint16 &dest, Item *pItem, bool swap, boo
                 Item *offItem = GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND);
                 ItemPosCountVec off_dest;
                 if (offItem && (!not_loading ||
-                    CanUnequipItem(uint16(INVENTORY_SLOT_BAG_0) << 8 | EQUIPMENT_SLOT_OFFHAND,false) !=  EQUIP_ERR_OK ||
-                    CanStoreItem(NULL_BAG, NULL_SLOT, off_dest, offItem, false) !=  EQUIP_ERR_OK))
+                    CanUnequipItem(uint16(INVENTORY_SLOT_BAG_0) << 8 | EQUIPMENT_SLOT_OFFHAND,false) != EQUIP_ERR_OK ||
+                    CanStoreItem(NULL_BAG, NULL_SLOT, off_dest, offItem, false) != EQUIP_ERR_OK))
                     return swap ? EQUIP_ERR_ITEMS_CANT_BE_SWAPPED : EQUIP_ERR_INVENTORY_FULL;
             }
             dest = ((INVENTORY_SLOT_BAG_0 << 8) | eslot);
@@ -10297,7 +10297,7 @@ uint8 Player::CanUseAmmo(uint32 item) const
     ItemPrototype const *pProto = objmgr.GetItemPrototype(item);
     if (pProto)
     {
-        if (pProto->InventoryType!= INVTYPE_AMMO)
+        if (pProto->InventoryType != INVTYPE_AMMO)
             return EQUIP_ERR_ONLY_AMMO_CAN_GO_HERE;
         if ((pProto->AllowableClass & getClassMask()) == 0 || (pProto->AllowableRace & getRaceMask()) == 0)
             return EQUIP_ERR_YOU_CAN_NEVER_USE_THAT_ITEM;
@@ -12482,7 +12482,7 @@ bool Player::CanCompleteQuest(uint32 quest_id)
             {
                 for (int i = 0; i < QUEST_OBJECTIVES_COUNT; i++)
                 {
-                    if (qInfo->ReqItemCount[i]!= 0 && q_status.m_itemcount[i] < qInfo->ReqItemCount[i])
+                    if (qInfo->ReqItemCount[i] != 0 && q_status.m_itemcount[i] < qInfo->ReqItemCount[i])
                         return false;
                 }
             }
@@ -12559,7 +12559,7 @@ bool Player::CanRewardQuest(Quest const *pQuest, bool msg)
     {
         for (int i = 0; i < QUEST_OBJECTIVES_COUNT; i++)
         {
-            if (pQuest->ReqItemCount[i]!= 0 &&
+            if (pQuest->ReqItemCount[i] != 0 &&
                 GetItemCount(pQuest->ReqItemId[i]) < pQuest->ReqItemCount[i])
             {
                 if (msg)
@@ -12669,7 +12669,7 @@ void Player::AddQuest(Quest const *pQuest, Object *questGiver)
     SetQuestSlot(log_slot, quest_id, qtime);
 
     //starting initial quest script
-    if (questGiver && pQuest->GetQuestStartScript()!=0)
+    if (questGiver && pQuest->GetQuestStartScript() != 0)
         sWorld.ScriptsStart(sQuestStartScripts, pQuest->GetQuestStartScript(), questGiver, this);
 
     UpdateForQuestsGO();
@@ -13000,7 +13000,7 @@ bool Player::SatisfyQuestPreviousQuest(Quest const* qInfo, bool msg)
                 ObjectMgr::ExclusiveQuestGroups::iterator iter = objmgr.mExclusiveQuestGroups.lower_bound(qPrevInfo->GetExclusiveGroup());
                 ObjectMgr::ExclusiveQuestGroups::iterator end  = objmgr.mExclusiveQuestGroups.upper_bound(qPrevInfo->GetExclusiveGroup());
 
-                assert(iter!=end);                          // always must be found if qPrevInfo->ExclusiveGroup != 0
+                assert(iter != end);                          // always must be found if qPrevInfo->ExclusiveGroup != 0
 
                 for (; iter != end; ++iter)
                 {
@@ -13035,7 +13035,7 @@ bool Player::SatisfyQuestPreviousQuest(Quest const* qInfo, bool msg)
                 ObjectMgr::ExclusiveQuestGroups::iterator iter = objmgr.mExclusiveQuestGroups.lower_bound(qPrevInfo->GetExclusiveGroup());
                 ObjectMgr::ExclusiveQuestGroups::iterator end  = objmgr.mExclusiveQuestGroups.upper_bound(qPrevInfo->GetExclusiveGroup());
 
-                assert(iter!=end);                          // always must be found if qPrevInfo->ExclusiveGroup != 0
+                assert(iter != end);                          // always must be found if qPrevInfo->ExclusiveGroup != 0
 
                 for (; iter != end; ++iter)
                 {
@@ -13137,7 +13137,7 @@ bool Player::SatisfyQuestExclusiveGroup(Quest const* qInfo, bool msg)
     ObjectMgr::ExclusiveQuestGroups::iterator iter = objmgr.mExclusiveQuestGroups.lower_bound(qInfo->GetExclusiveGroup());
     ObjectMgr::ExclusiveQuestGroups::iterator end  = objmgr.mExclusiveQuestGroups.upper_bound(qInfo->GetExclusiveGroup());
 
-    assert(iter!=end);                                      // always must be found if qInfo->ExclusiveGroup != 0
+    assert(iter != end);                                      // always must be found if qInfo->ExclusiveGroup != 0
 
     for (; iter != end; ++iter)
     {
@@ -13555,7 +13555,7 @@ void Player::KilledMonster(uint32 entry, uint64 guid)
                         continue;
 
                     // skip Cast at creature objective
-                    if (qInfo->ReqSpell[j] !=0)
+                    if (qInfo->ReqSpell[j] != 0)
                         continue;
 
                     uint32 reqkill = qInfo->ReqCreatureOrGOId[j];
@@ -17333,14 +17333,14 @@ void Player::InitDataForForm(bool reapplyMods)
     {
         case FORM_CAT:
         {
-            if (getPowerType()!=POWER_ENERGY)
+            if (getPowerType() != POWER_ENERGY)
                 setPowerType(POWER_ENERGY);
             break;
         }
         case FORM_BEAR:
         case FORM_DIREBEAR:
         {
-            if (getPowerType()!=POWER_RAGE)
+            if (getPowerType() != POWER_RAGE)
                 setPowerType(POWER_RAGE);
             break;
         }
@@ -18121,7 +18121,7 @@ void Player::UpdateVisibilityOf(WorldObject* target)
         if (target->isVisibleForInState(this,false))
         {
             target->SendUpdateToPlayer(this);
-            if (target->GetTypeId()!=TYPEID_GAMEOBJECT||!((GameObject*)target)->IsTransport())
+            if (target->GetTypeId() != TYPEID_GAMEOBJECT||!((GameObject*)target)->IsTransport())
                 m_clientGUIDs.insert(target->GetGUID());
 
             #ifdef OREGON_DEBUG
@@ -18519,7 +18519,7 @@ void Player::learnDefaultSpells(bool loading)
     // learn default race/class spells
     PlayerInfo const *info = objmgr.GetPlayerInfo(getRace(),getClass());
     std::list<CreateSpellPair>::const_iterator spell_itr;
-    for (spell_itr = info->spell.begin(); spell_itr!=info->spell.end(); ++spell_itr)
+    for (spell_itr = info->spell.begin(); spell_itr != info->spell.end(); ++spell_itr)
     {
         uint16 tspell = spell_itr->first;
         if (tspell)
@@ -18587,7 +18587,7 @@ void Player::learnQuestRewardedSpells(Quest const* quest)
                     return;
 
                 // compare only specializations
-                if (itrInfo->Effect[0]!=SPELL_EFFECT_TRADE_SKILL || itrInfo->Effect[1]!=0)
+                if (itrInfo->Effect[0] != SPELL_EFFECT_TRADE_SKILL || itrInfo->Effect[1] != 0)
                     continue;
 
                 // compare same chain spells
@@ -18663,7 +18663,7 @@ void Player::SendAuraDurationsForTarget(Unit* target)
     for (Unit::AuraMap::const_iterator itr = target->GetAuras().begin(); itr != target->GetAuras().end(); ++itr)
     {
         Aura* aura = itr->second;
-        if (aura->GetAuraSlot() >= MAX_AURAS || aura->IsPassive() || aura->GetCasterGUID()!=GetGUID())
+        if (aura->GetAuraSlot() >= MAX_AURAS || aura->IsPassive() || aura->GetCasterGUID() != GetGUID())
             continue;
 
         aura->SendAuraDurationForCaster(this);
@@ -18972,7 +18972,7 @@ void Player::RemoveItemDependentAurasAndCasts(Item * pItem)
 
         // skip passive (passive item dependent spells work in another way) and not self applied auras
         SpellEntry const* spellInfo = aura->GetSpellProto();
-        if (aura->IsPassive() ||  aura->GetCasterGUID()!=GetGUID())
+        if (aura->IsPassive() ||  aura->GetCasterGUID() != GetGUID())
         {
             ++itr;
             continue;
@@ -18993,7 +18993,7 @@ void Player::RemoveItemDependentAurasAndCasts(Item * pItem)
     // currently casted spells can be dependent from item
     for (uint32 i = 0; i < CURRENT_MAX_SPELL; i++)
     {
-        if (m_currentSpells[i] && m_currentSpells[i]->getState()!=SPELL_STATE_DELAYED &&
+        if (m_currentSpells[i] && m_currentSpells[i]->getState() != SPELL_STATE_DELAYED &&
             !HasItemFitToSpellReqirements(m_currentSpells[i]->m_spellInfo,pItem))
             InterruptSpell(i);
     }
@@ -19657,15 +19657,15 @@ bool Player::isTotalImmunity()
 
     for (AuraList::const_iterator itr = immune.begin(); itr != immune.end(); ++itr)
     {
-        if (((*itr)->GetModifier()->m_miscvalue & SPELL_SCHOOL_MASK_ALL) !=0)   // total immunity
+        if (((*itr)->GetModifier()->m_miscvalue & SPELL_SCHOOL_MASK_ALL) != 0)   // total immunity
         {
             return true;
         }
-        if (((*itr)->GetModifier()->m_miscvalue & SPELL_SCHOOL_MASK_NORMAL) !=0)   // physical damage immunity
+        if (((*itr)->GetModifier()->m_miscvalue & SPELL_SCHOOL_MASK_NORMAL) != 0)   // physical damage immunity
         {
             for (AuraList::const_iterator i = immune.begin(); i != immune.end(); ++i)
             {
-                if (((*i)->GetModifier()->m_miscvalue & SPELL_SCHOOL_MASK_MAGIC) !=0)   // magic immunity
+                if (((*i)->GetModifier()->m_miscvalue & SPELL_SCHOOL_MASK_MAGIC) != 0)   // magic immunity
                 {
                     return true;
                 }

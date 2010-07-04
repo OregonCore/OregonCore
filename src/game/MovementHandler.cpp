@@ -260,7 +260,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
             movementInfo.z+movementInfo.t_z, movementInfo.o+movementInfo.t_o))
             return;
 
-        if ((GetPlayer()->m_anti_transportGUID == 0) && (movementInfo.t_guid !=0))
+        if ((GetPlayer()->m_anti_transportGUID == 0) && (movementInfo.t_guid != 0))
 
         // if we boarded a transport, add us to it
         if (!GetPlayer()->m_transport)
@@ -445,7 +445,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         }
         else
         {
-            if (GetPlayer()->m_anti_teletoplane_count !=0)
+            if (GetPlayer()->m_anti_teletoplane_count != 0)
                 GetPlayer()->m_anti_teletoplane_count = 0;
         }
     }
@@ -771,7 +771,7 @@ void WorldSession::HandleMoveKnockBackAck(WorldPacket & recv_data)
     #endif
 
     // skip not personal message;
-    if (GetPlayer()->GetGUID()!=guid)
+    if (GetPlayer()->GetGUID() != guid)
         return;
     GetPlayer()->m_movementInfo = movementInfo;
     GetPlayer()->m_anti_last_hspeed = hspeed;

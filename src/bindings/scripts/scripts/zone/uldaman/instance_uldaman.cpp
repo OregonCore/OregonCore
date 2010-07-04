@@ -202,7 +202,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         for(std::vector<uint64>::iterator i = archaedasWallMinions.begin(); i != archaedasWallMinions.end(); ++i)
         {
             Creature *target = instance->GetCreature(*i);
-            if (!target || target->isDead() || target->getFaction()!=14)
+            if (!target || target->isDead() || target->getFaction() != 14)
                 continue;
             target->setDeathState(JUST_DIED);
             target->RemoveCorpse();
@@ -212,7 +212,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         for(std::vector<uint64>::iterator i = vaultWalker.begin(); i != vaultWalker.end(); ++i)
         {
             Creature *target = instance->GetCreature(*i);
-            if (!target || target->isDead() || target->getFaction()!=14)
+            if (!target || target->isDead() || target->getFaction() != 14)
                 continue;
             target->setDeathState(JUST_DIED);
             target->RemoveCorpse();
@@ -222,7 +222,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         for(std::vector<uint64>::iterator i = earthenGuardian.begin(); i != earthenGuardian.end(); ++i)
         {
             Creature *target = instance->GetCreature(*i);
-            if (!target || target->isDead() || target->getFaction()!=14)
+            if (!target || target->isDead() || target->getFaction() != 14)
                 continue;
             target->setDeathState(JUST_DIED);
             target->RemoveCorpse();

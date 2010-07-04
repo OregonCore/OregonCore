@@ -399,7 +399,7 @@ void WorldSession::HandleBattleGroundPlayerPortOpcode(WorldPacket &recv_data)
         uint32 opponentsRating = 0;
         // get the team info from the queue
         BattleGroundQueue::QueuedPlayersMap::iterator pitr = sBattleGroundMgr.m_BattleGroundQueues[bgQueueTypeId].m_QueuedPlayers[_player->GetBattleGroundQueueIdFromLevel()].find(_player->GetGUID());
-        if (pitr !=sBattleGroundMgr.m_BattleGroundQueues[bgQueueTypeId].m_QueuedPlayers[_player->GetBattleGroundQueueIdFromLevel()].end()
+        if (pitr != sBattleGroundMgr.m_BattleGroundQueues[bgQueueTypeId].m_QueuedPlayers[_player->GetBattleGroundQueueIdFromLevel()].end()
             && pitr->second.GroupInfo)
         {
             team = pitr->second.GroupInfo->Team;

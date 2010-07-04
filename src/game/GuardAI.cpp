@@ -108,7 +108,7 @@ void GuardAI::EnterEvadeMode()
 
 void GuardAI::UpdateAI(const uint32 /*diff*/)
 {
-    // update i_victimGuid if m_creature->getVictim() !=0 and changed
+    // update i_victimGuid if m_creature->getVictim() != 0 and changed
     if (!UpdateVictim())
         return;
 

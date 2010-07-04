@@ -519,14 +519,14 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                         break;
                     }
                     case ACTION_T_SET_FACTION:
-                        if (action.set_faction.factionId !=0 && !sFactionStore.LookupEntry(action.set_faction.factionId))
+                        if (action.set_faction.factionId != 0 && !sFactionStore.LookupEntry(action.set_faction.factionId))
                         {
                             sLog.outErrorDb("CreatureEventAI:  Event %u Action %u uses non-existent FactionId %u.", i, j+1, action.set_faction.factionId);
                             action.set_faction.factionId = 0;
                         }
                         break;
                     case ACTION_T_MORPH_TO_ENTRY_OR_MODEL:
-                        if (action.morph.creatureId !=0 || action.morph.modelId !=0)
+                        if (action.morph.creatureId != 0 || action.morph.modelId != 0)
                         {
                             if (action.morph.creatureId && !sCreatureStorage.LookupEntry<CreatureInfo>(action.morph.creatureId))
                             {

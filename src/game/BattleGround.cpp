@@ -1539,7 +1539,7 @@ void BattleGround::HandleKillPlayer(Player *player, Player *killer)
 uint32 BattleGround::GetPlayerTeam(uint64 guid)
 {
     std::map<uint64, BattleGroundPlayer>::const_iterator itr = m_Players.find(guid);
-    if (itr!=m_Players.end())
+    if (itr != m_Players.end())
         return itr->second.Team;
     return 0;
 }

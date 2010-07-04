@@ -1142,7 +1142,7 @@ valid examples:
                     }
                     c = reader.peek();
                     // level
-                    while (c !='|' && c != '\0')
+                    while (c != '|' && c != '\0')
                     {
                         reader.ignore(1);
                         c = reader.peek();
@@ -1166,7 +1166,7 @@ valid examples:
 
                     char c = reader.peek();
                     // skillpoints? whatever, drop it
-                    while (c !='|' && c != '\0')
+                    while (c != '|' && c != '\0')
                     {
                         reader.ignore(1);
                         c = reader.peek();

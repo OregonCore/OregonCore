@@ -1489,7 +1489,7 @@ void GameEvent::HandleWorldEventGossip(Player *plr, Creature *c)
 void GameEvent::SendWorldStateUpdate(Player * plr, uint16 event_id)
 {
     std::map<uint32,GameEventFinishCondition>::iterator itr;
-    for (itr = mGameEvent[event_id].conditions.begin(); itr !=mGameEvent[event_id].conditions.end(); ++itr)
+    for (itr = mGameEvent[event_id].conditions.begin(); itr != mGameEvent[event_id].conditions.end(); ++itr)
     {
         if (itr->second.done_world_state)
             plr->SendUpdateWorldState(itr->second.done_world_state, (uint32)(itr->second.done));

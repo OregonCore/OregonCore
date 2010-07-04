@@ -601,7 +601,7 @@ LootItem* Loot::LootItemInSlot(uint32 lootSlot, Player* player, QuestItem **qite
             QuestItemMap::const_iterator itr = PlayerFFAItems.find(player->GetGUIDLow());
             if (itr != PlayerFFAItems.end())
             {
-                for (QuestItemList::iterator iter=itr->second->begin(); iter!= itr->second->end(); ++iter)
+                for (QuestItemList::iterator iter=itr->second->begin(); iter != itr->second->end(); ++iter)
                     if (iter->index==lootSlot)
                     {
                         QuestItem *ffaitem2 = (QuestItem*)&(*iter);
@@ -617,7 +617,7 @@ LootItem* Loot::LootItemInSlot(uint32 lootSlot, Player* player, QuestItem **qite
             QuestItemMap::const_iterator itr = PlayerNonQuestNonFFAConditionalItems.find(player->GetGUIDLow());
             if (itr != PlayerNonQuestNonFFAConditionalItems.end())
             {
-                for (QuestItemList::iterator iter=itr->second->begin(); iter!= itr->second->end(); ++iter)
+                for (QuestItemList::iterator iter=itr->second->begin(); iter != itr->second->end(); ++iter)
                 {
                     if (iter->index==lootSlot)
                     {
@@ -656,7 +656,7 @@ ByteBuffer& operator<<(ByteBuffer& b, LootView const& lv)
     uint8 itemsShown = 0;
 
     //gold
-    b << uint32(lv.permission!=NONE_PERMISSION ? l.gold : 0);
+    b << uint32(lv.permission != NONE_PERMISSION ? l.gold : 0);
 
     size_t count_pos = b.wpos();                            // pos of item count byte
     b << uint8(0);                                          // item count placeholder

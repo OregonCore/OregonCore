@@ -135,7 +135,7 @@ struct OREGON_DLL_DECL aqsentinelAI : public ScriptedAI
     {
         aqsentinelAI *cai = (aqsentinelAI *)(c->AI());
         for (int i=0; i<3; i++)
-            if (nearby[i] && nearby[i]!=c)
+            if (nearby[i] && nearby[i] != c)
                 cai->AddBuddyToList(nearby[i]);
         cai->AddBuddyToList(m_creature);
     }

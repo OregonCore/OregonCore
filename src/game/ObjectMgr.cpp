@@ -446,19 +446,19 @@ void ObjectMgr::LoadCreatureTemplates()
                 continue;
             }
 
-            if (heroicEntries.find(i)!=heroicEntries.end())
+            if (heroicEntries.find(i) != heroicEntries.end())
             {
                 sLog.outErrorDb("Creature (Entry: %u) listed as heroic but have value in heroic_entry.",i);
                 continue;
             }
 
-            if (heroicEntries.find(cInfo->HeroicEntry)!=heroicEntries.end())
+            if (heroicEntries.find(cInfo->HeroicEntry) != heroicEntries.end())
             {
                 sLog.outErrorDb("Creature (Entry: %u) already listed as heroic for another entry.",cInfo->HeroicEntry);
                 continue;
             }
 
-            if (hasHeroicEntries.find(cInfo->HeroicEntry)!=hasHeroicEntries.end())
+            if (hasHeroicEntries.find(cInfo->HeroicEntry) != hasHeroicEntries.end())
             {
                 sLog.outErrorDb("Creature (Entry: %u) have heroic_entry=%u but creature entry %u have heroic entry also.",i,cInfo->HeroicEntry,cInfo->HeroicEntry);
                 continue;
@@ -589,7 +589,7 @@ void ObjectMgr::ConvertCreatureAddonAuras(CreatureDataAddon* addon, char const* 
     s=p=(char*)reinterpret_cast<char const*>(addon->auras);
     if (p)
     {
-        while (p[0]!=0)
+        while (p[0] != 0)
         {
             ++p;
             if (p[0]==' ')
@@ -598,7 +598,7 @@ void ObjectMgr::ConvertCreatureAddonAuras(CreatureDataAddon* addon, char const* 
                 s=++p;
             }
         }
-        if (p!=s)
+        if (p != s)
             val.push_back(atoi(s));
 
         // free char* loaded memory
@@ -927,7 +927,7 @@ void ObjectMgr::LoadCreatures()
             continue;
         }
 
-        if (heroicCreatures.find(data.id)!=heroicCreatures.end())
+        if (heroicCreatures.find(data.id) != heroicCreatures.end())
         {
             sLog.outErrorDb("Table creature have creature (GUID: %u) that listed as heroic template in creature_template_substitution, skipped.",guid,data.id);
             continue;
@@ -3102,7 +3102,7 @@ void ObjectMgr::LoadQuests()
                     qinfo->RewRepFaction[j] = 0;            // quest will not reward this
                 }
             }
-            else if (qinfo->RewRepValue[j]!=0)
+            else if (qinfo->RewRepValue[j] != 0)
             {
                 sLog.outErrorDb("Quest %u has RewRepFaction%d = 0 but RewRepValue%d = %u.",
                     qinfo->GetQuestId(),j+1,j+1,qinfo->RewRepValue[j]);
@@ -3575,7 +3575,7 @@ void ObjectMgr::LoadScripts(ScriptMapMap& scripts, char const* tablename)
                     continue;
                 }
 
-                if (info->type!=GAMEOBJECT_TYPE_DOOR)
+                if (info->type != GAMEOBJECT_TYPE_DOOR)
                 {
                     sLog.outErrorDb("Table %s has gameobject type (%u) non supported by command %s for script id %u",tablename,info->id,(tmp.command==SCRIPT_COMMAND_OPEN_DOOR ? "SCRIPT_COMMAND_OPEN_DOOR" : "SCRIPT_COMMAND_CLOSE_DOOR"),tmp.id);
                     continue;
@@ -3851,11 +3851,11 @@ void ObjectMgr::LoadPageTexts()
             if (!pageItr->Next_Page)
                 break;
             checkedPages.insert(pageItr->Page_ID);
-            if (checkedPages.find(pageItr->Next_Page)!=checkedPages.end())
+            if (checkedPages.find(pageItr->Next_Page) != checkedPages.end())
             {
                 std::ostringstream ss;
                 ss<< "The text page(s) ";
-                for (std::set<uint32>::iterator itr= checkedPages.begin();itr!=checkedPages.end(); ++itr)
+                for (std::set<uint32>::iterator itr= checkedPages.begin();itr != checkedPages.end(); ++itr)
                     ss << *itr << " ";
                 ss << "create(s) a circular reference, which can cause the server to freeze. Changing Next_Page of page "
                     << pageItr->Page_ID <<" to 0";
@@ -4438,7 +4438,7 @@ uint16 ObjectMgr::GetTaxiMount(uint32 id, uint32 team)
 
         return false;
     }
-    if (minfo->modelid_other_gender!=0)
+    if (minfo->modelid_other_gender != 0)
         mount_id = urand(0,1) ? mount_id : minfo->modelid_other_gender;
 
     return mount_id;
@@ -4535,7 +4535,7 @@ void ObjectMgr::LoadGraveyardZones()
             continue;
         }
 
-        if (team!=0 && team!=HORDE && team!=ALLIANCE)
+        if (team != 0 && team != HORDE && team != ALLIANCE)
         {
             sLog.outErrorDb("Table game_graveyard_zone has record for non player faction (%u), skipped.",team);
             continue;
@@ -5258,7 +5258,7 @@ void ObjectMgr::LoadGameobjectInfo()
                 {
                     if (GameObjectInfo const* trapInfo = sGOStorage.LookupEntry<GameObjectInfo>(goInfo->chest.linkedTrapId))
                     {
-                        if (trapInfo->type!=GAMEOBJECT_TYPE_TRAP)
+                        if (trapInfo->type != GAMEOBJECT_TYPE_TRAP)
                             sLog.outErrorDb("Gameobject (Entry: %u GoType: %u) have data7=%u but GO (Entry %u) have not GAMEOBJECT_TYPE_TRAP (%u) type.",
                                 id,goInfo->type,goInfo->chest.linkedTrapId,goInfo->chest.linkedTrapId,GAMEOBJECT_TYPE_TRAP);
                     }
@@ -5305,7 +5305,7 @@ void ObjectMgr::LoadGameobjectInfo()
                 {
                     if (GameObjectInfo const* trapInfo = sGOStorage.LookupEntry<GameObjectInfo>(goInfo->spellFocus.linkedTrapId))
                     {
-                        if (trapInfo->type!=GAMEOBJECT_TYPE_TRAP)
+                        if (trapInfo->type != GAMEOBJECT_TYPE_TRAP)
                             sLog.outErrorDb("Gameobject (Entry: %u GoType: %u) have data2=%u but GO (Entry %u) have not GAMEOBJECT_TYPE_TRAP (%u) type.",
                                 id,goInfo->type,goInfo->spellFocus.linkedTrapId,goInfo->spellFocus.linkedTrapId,GAMEOBJECT_TYPE_TRAP);
                     }
@@ -5337,7 +5337,7 @@ void ObjectMgr::LoadGameobjectInfo()
                 {
                     if (GameObjectInfo const* trapInfo = sGOStorage.LookupEntry<GameObjectInfo>(goInfo->goober.linkedTrapId))
                     {
-                        if (trapInfo->type!=GAMEOBJECT_TYPE_TRAP)
+                        if (trapInfo->type != GAMEOBJECT_TYPE_TRAP)
                             sLog.outErrorDb("Gameobject (Entry: %u GoType: %u) have data12=%u but GO (Entry %u) have not GAMEOBJECT_TYPE_TRAP (%u) type.",
                                 id,goInfo->type,goInfo->goober.linkedTrapId,goInfo->goober.linkedTrapId,GAMEOBJECT_TYPE_TRAP);
                     }
@@ -6383,7 +6383,7 @@ bool ObjectMgr::CheckDeclinedNames(std::wstring mainpart, DeclinedName const& na
         if (!Utf8toWStr(names.name[i],wname))
             return false;
 
-        if (mainpart!=GetMainPartOfName(wname,i+1))
+        if (mainpart != GetMainPartOfName(wname,i+1))
             return false;
     }
     return true;
@@ -6392,7 +6392,7 @@ bool ObjectMgr::CheckDeclinedNames(std::wstring mainpart, DeclinedName const& na
 uint32 ObjectMgr::GetAreaTriggerScriptId(uint32 trigger_id)
 {
     AreaTriggerScriptMap::const_iterator i = mAreaTriggerScripts.find(trigger_id);
-    if (i!= mAreaTriggerScripts.end())
+    if (i != mAreaTriggerScripts.end())
         return i->second;
     return 0;
 }
@@ -6606,7 +6606,7 @@ SkillRangeType GetSkillRangeType(SkillLineEntry const *pSkill, bool racial)
     {
         case SKILL_CATEGORY_LANGUAGES: return SKILL_RANGE_LANGUAGE;
         case SKILL_CATEGORY_WEAPON:
-            if (pSkill->id!=SKILL_FIST_WEAPONS)
+            if (pSkill->id != SKILL_FIST_WEAPONS)
                 return SKILL_RANGE_LEVEL;
             else
                 return SKILL_RANGE_MONO;
@@ -6987,7 +6987,7 @@ void ObjectMgr::LoadNpcOptions()
         go.Icon             = fields[3].GetUInt32();
         go.Action           = fields[4].GetUInt32();
         go.BoxMoney         = fields[5].GetUInt32();
-        go.Coded            = fields[6].GetUInt8()!=0;
+        go.Coded            = fields[6].GetUInt8() != 0;
         go.OptionText       = fields[7].GetCppString();
         go.BoxText          = fields[8].GetCppString();
 
@@ -7071,7 +7071,7 @@ bool ObjectMgr::IsVendorItemValid(uint32 vendor_entry, uint32 item_id, uint32 ma
     if (maxcount > 0 && incrtime == 0)
     {
         if (pl)
-            ChatHandler(pl).PSendSysMessage("MaxCount!=0 (%u) but IncrTime==0", maxcount);
+            ChatHandler(pl).PSendSysMessage("MaxCount != 0 (%u) but IncrTime==0", maxcount);
         else
             sLog.outErrorDb("Table (game_event_)npc_vendor has maxcount (%u) for item %u of vendor (Entry: %u) but incrtime=0, ignore", maxcount, item_id, vendor_entry);
         return false;

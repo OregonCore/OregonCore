@@ -463,7 +463,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
                 bool InMeleeRange = false;
                 Unit *target;
                 std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
-                for(std::list<HostileReference *>::iterator itr = t_list.begin(); itr!= t_list.end(); ++itr)
+                for(std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
                 {
                     target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
                                                             //if in melee range

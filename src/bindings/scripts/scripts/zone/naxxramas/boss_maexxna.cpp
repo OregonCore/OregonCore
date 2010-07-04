@@ -131,7 +131,7 @@ struct OREGON_DLL_DECL boss_maexxnaAI : public ScriptedAI
         //begin + 1 , so we don't target the one with the highest threat
         std::list<HostileReference *>::iterator itr = t_list.begin();
         std::advance(itr, 1);
-        for( ; itr!= t_list.end(); ++itr)                   //store the threat list in a different container
+        for( ; itr != t_list.end(); ++itr)                   //store the threat list in a different container
         {
             Unit *target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
                                                             //only on alive players
@@ -144,7 +144,7 @@ struct OREGON_DLL_DECL boss_maexxnaAI : public ScriptedAI
             targets.erase(targets.begin()+rand()%targets.size());
 
         int i = 0;
-        for(std::vector<Unit *>::iterator itr = targets.begin(); itr!= targets.end(); ++itr, ++i)
+        for(std::vector<Unit *>::iterator itr = targets.begin(); itr != targets.end(); ++itr, ++i)
         {
             // Teleport the 3 targets to a location on the wall and summon a Web Wrap on them
             Unit *target = *itr;

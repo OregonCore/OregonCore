@@ -43,7 +43,7 @@ static void AttemptJoin(Player* _player)
             continue;
 
         // skip not auto add, not group leader cases
-        if (!plr->GetSession()->LookingForGroup_auto_add || plr->GetGroup() && plr->GetGroup()->GetLeaderGUID()!=plr->GetGUID())
+        if (!plr->GetSession()->LookingForGroup_auto_add || plr->GetGroup() && plr->GetGroup()->GetLeaderGUID() != plr->GetGUID())
             continue;
 
         // skip non auto-join or empty slots, or non compatible slots
@@ -82,7 +82,7 @@ static void AttemptJoin(Player* _player)
 static void AttemptAddMore(Player* _player)
 {
     // skip not group leader case
-    if (_player->GetGroup() && _player->GetGroup()->GetLeaderGUID()!=_player->GetGUID())
+    if (_player->GetGroup() && _player->GetGroup()->GetLeaderGUID() != _player->GetGUID())
         return;
 
     if (!_player->m_lookingForGroup.more.canAutoJoin())

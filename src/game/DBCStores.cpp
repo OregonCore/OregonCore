@@ -592,7 +592,7 @@ bool IsTotemCategoryCompatiableWith(uint32 itemTotemCategoryId, uint32 requiredT
     if(!reqEntry)
         return false;
 
-    if(itemEntry->categoryType!=reqEntry->categoryType)
+    if(itemEntry->categoryType != reqEntry->categoryType)
         return false;
 
     return (itemEntry->categoryMask & reqEntry->categoryMask)==reqEntry->categoryMask;

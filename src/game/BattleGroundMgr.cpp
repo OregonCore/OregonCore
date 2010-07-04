@@ -62,7 +62,7 @@ BattleGroundQueue::~BattleGroundQueue()
     for (int i = 0; i < MAX_BATTLEGROUND_QUEUES; i++)
     {
         m_QueuedPlayers[i].clear();
-        for (QueuedGroupsList::iterator itr = m_QueuedGroups[i].begin(); itr!= m_QueuedGroups[i].end(); ++itr)
+        for (QueuedGroupsList::iterator itr = m_QueuedGroups[i].begin(); itr != m_QueuedGroups[i].end(); ++itr)
         {
             delete (*itr);
         }
@@ -77,7 +77,7 @@ void BattleGroundQueue::EligibleGroups::Init(BattleGroundQueue::QueuedGroupsList
     clear();
     BattleGroundQueue::QueuedGroupsList::iterator itr, next;
     // iterate through the source
-    for (itr = source->begin(); itr!= source->end(); itr = next)
+    for (itr = source->begin(); itr != source->end(); itr = next)
     {
         next = itr;
         ++next;
@@ -1697,7 +1697,7 @@ void BattleGroundMgr::SendAreaSpiritHealerQueryOpcode(Player *pl, BattleGround *
 void BattleGroundMgr::RemoveBattleGround(uint32 instanceID)
 {
     BattleGroundSet::iterator itr = m_BattleGrounds.find(instanceID);
-    if (itr!=m_BattleGrounds.end())
+    if (itr != m_BattleGrounds.end())
         m_BattleGrounds.erase(itr);
 }
 

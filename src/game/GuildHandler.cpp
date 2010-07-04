@@ -1093,7 +1093,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
 
         Item *pItemDst = pGuild->GetItem(BankTabDst, BankTabSlotDst);
 
-        if (BankTab!=BankTabDst)
+        if (BankTab != BankTabDst)
         {
             // check dest pos rights (if different tabs)
             if (!pGuild->IsMemberHaveRights(pl->GetGUIDLow(), BankTabDst, GUILD_BANK_RIGHT_DEPOSIT_ITEM))
@@ -1163,7 +1163,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
                     return;
                 }
 
-                if (BankTab!=BankTabDst)
+                if (BankTab != BankTabDst)
                 {
                     // check source pos rights (item swapped to src)
                     if (!pGuild->IsMemberHaveRights(pl->GetGUIDLow(), BankTab, GUILD_BANK_RIGHT_DEPOSIT_ITEM))
@@ -1187,7 +1187,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
             }
         }
         pGuild->DisplayGuildBankContentUpdate(BankTab,BankTabSlot,BankTab==BankTabDst ? BankTabSlotDst : -1);
-        if (BankTab!=BankTabDst)
+        if (BankTab != BankTabDst)
             pGuild->DisplayGuildBankContentUpdate(BankTabDst,BankTabSlotDst);
         return;
     }

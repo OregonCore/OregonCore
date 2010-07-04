@@ -689,7 +689,7 @@ bool Item::CanBeTraded() const
 
     if (Player* owner = GetOwner())
     {
-        if (owner->CanUnequipItem(GetPos(),false) !=  EQUIP_ERR_OK)
+        if (owner->CanUnequipItem(GetPos(),false) != EQUIP_ERR_OK)
             return false;
         if (owner->GetLootGUID() == GetGUID())
             return false;
@@ -885,7 +885,7 @@ Item* Item::CreateItem(uint32 item, uint32 count, Player const* player)
         if (count > pProto->Stackable)
             count = pProto->Stackable;
 
-        assert(count !=0 && "pProto->Stackable == 0 but checked at loading already");
+        assert(count != 0 && "pProto->Stackable == 0 but checked at loading already");
 
         Item *pItem = NewItemOrBag(pProto);
         if (pItem->Create(objmgr.GenerateLowGuid(HIGHGUID_ITEM), item, player))

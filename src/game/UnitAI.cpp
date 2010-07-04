@@ -127,7 +127,7 @@ Unit* UnitAI::SelectTarget(SelectAggroTarget targetType, uint32 position, float 
             return NULL;
 
         std::list<Unit*> targetList;
-        for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr!= m_threatlist.end(); ++itr)
+        for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
             if (SelectTargetHelper(me, (*itr)->getTarget(), playerOnly, dist, aura))
                 targetList.push_back((*itr)->getTarget());
 
@@ -196,7 +196,7 @@ void UnitAI::SelectTargetList(std::list<Unit*> &targetList, uint32 num, SelectAg
         if (m_threatlist.empty())
             return;
 
-        for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr!= m_threatlist.end(); ++itr)
+        for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
             if (SelectTargetHelper(me, (*itr)->getTarget(), playerOnly, dist, aura))
                 targetList.push_back((*itr)->getTarget());
 

@@ -708,7 +708,7 @@ void Object::ClearUpdateMask(bool remove)
 {
     for (uint16 index = 0; index < m_valuesCount; index ++)
     {
-        if (m_uint32Values_mirror[index]!= m_uint32Values[index])
+        if (m_uint32Values_mirror[index] != m_uint32Values[index])
             m_uint32Values_mirror[index] = m_uint32Values[index];
     }
     if (m_objectUpdated)
@@ -756,7 +756,7 @@ void Object::_SetUpdateBits(UpdateMask *updateMask, Player* /*target*/) const
 {
     for (uint16 index = 0; index < m_valuesCount; index ++)
     {
-        if (m_uint32Values_mirror[index]!= m_uint32Values[index])
+        if (m_uint32Values_mirror[index] != m_uint32Values[index])
             updateMask->SetBit(index);
     }
 }
@@ -1742,7 +1742,7 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
     {
         // Remove Demonic Sacrifice auras (known pet)
         Unit::AuraList const& auraClassScripts = GetAurasByType(SPELL_AURA_OVERRIDE_CLASS_SCRIPTS);
-        for (Unit::AuraList::const_iterator itr = auraClassScripts.begin();itr!=auraClassScripts.end();)
+        for (Unit::AuraList::const_iterator itr = auraClassScripts.begin();itr != auraClassScripts.end();)
         {
             if ((*itr)->GetModifier()->m_miscvalue==2228)
             {
@@ -1824,7 +1824,7 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
     {
         // Remove Demonic Sacrifice auras (known pet)
         Unit::AuraList const& auraClassScripts = GetAurasByType(SPELL_AURA_OVERRIDE_CLASS_SCRIPTS);
-        for (Unit::AuraList::const_iterator itr = auraClassScripts.begin();itr!=auraClassScripts.end();)
+        for (Unit::AuraList::const_iterator itr = auraClassScripts.begin();itr != auraClassScripts.end();)
         {
             if ((*itr)->GetModifier()->m_miscvalue==2228)
             {

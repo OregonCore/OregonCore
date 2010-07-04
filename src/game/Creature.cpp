@@ -226,7 +226,7 @@ void Creature::SearchFormation()
 
 void Creature::RemoveCorpse()
 {
-    if (getDeathState()!=CORPSE && !m_isDeadByDefault || getDeathState()!=ALIVE && m_isDeadByDefault)
+    if (getDeathState() != CORPSE && !m_isDeadByDefault || getDeathState() != ALIVE && m_isDeadByDefault)
         return;
 
     m_deathTimer = 0;
@@ -674,7 +674,7 @@ bool Creature::isCanTrainingOf(Player* pPlayer, bool msg) const
     switch(GetCreatureInfo()->trainer_type)
     {
         case TRAINER_TYPE_CLASS:
-            if (pPlayer->getClass()!=GetCreatureInfo()->classNum)
+            if (pPlayer->getClass() != GetCreatureInfo()->classNum)
             {
                 if (msg)
                 {
@@ -696,7 +696,7 @@ bool Creature::isCanTrainingOf(Player* pPlayer, bool msg) const
             }
             break;
         case TRAINER_TYPE_PETS:
-            if (pPlayer->getClass()!=CLASS_HUNTER)
+            if (pPlayer->getClass() != CLASS_HUNTER)
             {
                 pPlayer->PlayerTalkClass->ClearMenus();
                 pPlayer->PlayerTalkClass->SendGossipMenu(3620,GetGUID());

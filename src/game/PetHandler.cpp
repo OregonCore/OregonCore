@@ -451,7 +451,7 @@ void WorldSession::HandlePetRename(WorldPacket & recv_data)
 
     Pet* pet = ObjectAccessor::GetPet(petguid);
                                                             // check it!
-    if (!pet || !pet->isPet() || ((Pet*)pet)->getPetType()!= HUNTER_PET ||
+    if (!pet || !pet->isPet() || ((Pet*)pet)->getPetType() != HUNTER_PET ||
         pet->GetByteValue(UNIT_FIELD_BYTES_2, 2) != UNIT_RENAME_ALLOWED ||
         pet->GetOwnerGUID() != _player->GetGUID() || !pet->GetCharmInfo())
         return;

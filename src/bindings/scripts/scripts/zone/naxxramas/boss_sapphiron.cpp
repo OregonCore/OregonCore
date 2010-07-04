@@ -160,7 +160,7 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
                     }else Beserk_Timer -= diff;
                 }
 
-                 if (phase!=2)
+                 if (phase != 2)
                      DoMeleeAttackIfReady();
     }
 };

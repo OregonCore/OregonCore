@@ -806,7 +806,7 @@ struct OREGON_DLL_DECL boss_yazzaiAI : public boss_priestess_guestAI
         {
             bool InMeleeRange = false;
             std::list<HostileReference*>& t_list = m_creature->getThreatManager().getThreatList();
-            for(std::list<HostileReference*>::iterator itr = t_list.begin(); itr!= t_list.end(); ++itr)
+            for(std::list<HostileReference*>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
                 if(Unit* target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid()))
                     //if in melee range
@@ -884,7 +884,7 @@ struct OREGON_DLL_DECL boss_warlord_salarisAI : public boss_priestess_guestAI
         {
             bool InMeleeRange = false;
             std::list<HostileReference*>& t_list = m_creature->getThreatManager().getThreatList();
-            for(std::list<HostileReference*>::iterator itr = t_list.begin(); itr!= t_list.end(); ++itr)
+            for(std::list<HostileReference*>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
                 if(Unit* target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid()))
                                                             //if in melee range

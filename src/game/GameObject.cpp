@@ -849,7 +849,7 @@ bool GameObject::ActivateToQuest(Player *pTarget)const
 void GameObject::TriggeringLinkedGameObject(uint32 trapEntry, Unit* target)
 {
     GameObjectInfo const* trapInfo = sGOStorage.LookupEntry<GameObjectInfo>(trapEntry);
-    if (!trapInfo || trapInfo->type!=GAMEOBJECT_TYPE_TRAP)
+    if (!trapInfo || trapInfo->type != GAMEOBJECT_TYPE_TRAP)
         return;
 
     SpellEntry const* trapSpell = sSpellStore.LookupEntry(trapInfo->trap.spellId);
@@ -953,7 +953,7 @@ void GameObject::Use(Unit* user)
 
         case GAMEOBJECT_TYPE_QUESTGIVER:                    //2
         {
-            if (user->GetTypeId()!=TYPEID_PLAYER)
+            if (user->GetTypeId() != TYPEID_PLAYER)
                 return;
 
             Player* player = user->ToPlayer();
@@ -969,7 +969,7 @@ void GameObject::Use(Unit* user)
             if (!info)
                 return;
 
-            if (user->GetTypeId()!=TYPEID_PLAYER)
+            if (user->GetTypeId() != TYPEID_PLAYER)
                 return;
 
             Player* player = user->ToPlayer();
@@ -1055,7 +1055,7 @@ void GameObject::Use(Unit* user)
             if (!info)
                 return;
 
-            if (user->GetTypeId()!=TYPEID_PLAYER)
+            if (user->GetTypeId() != TYPEID_PLAYER)
                 return;
 
             Player* player = user->ToPlayer();
@@ -1071,7 +1071,7 @@ void GameObject::Use(Unit* user)
         //fishing bobber
         case GAMEOBJECT_TYPE_FISHINGNODE:                   //17
         {
-            if (user->GetTypeId()!=TYPEID_PLAYER)
+            if (user->GetTypeId() != TYPEID_PLAYER)
                 return;
 
             Player* player = user->ToPlayer();
@@ -1153,7 +1153,7 @@ void GameObject::Use(Unit* user)
 
         case GAMEOBJECT_TYPE_SUMMONING_RITUAL:              //18
         {
-            if (user->GetTypeId()!=TYPEID_PLAYER)
+            if (user->GetTypeId() != TYPEID_PLAYER)
                 return;
 
             Player* player = user->ToPlayer();
@@ -1162,7 +1162,7 @@ void GameObject::Use(Unit* user)
 
             GameObjectInfo const* info = GetGOInfo();
 
-            if (!caster || caster->GetTypeId()!=TYPEID_PLAYER)
+            if (!caster || caster->GetTypeId() != TYPEID_PLAYER)
                 return;
 
             // accept only use by player from same group for caster except caster itself
@@ -1204,10 +1204,10 @@ void GameObject::Use(Unit* user)
             if (info->spellcaster.partyOnly)
             {
                 Unit* caster = GetOwner();
-                if (!caster || caster->GetTypeId()!=TYPEID_PLAYER)
+                if (!caster || caster->GetTypeId() != TYPEID_PLAYER)
                     return;
 
-                if (user->GetTypeId()!=TYPEID_PLAYER || !user->ToPlayer()->IsInSameRaidWith(caster->ToPlayer()))
+                if (user->GetTypeId() != TYPEID_PLAYER || !user->ToPlayer()->IsInSameRaidWith(caster->ToPlayer()))
                     return;
             }
 
@@ -1220,7 +1220,7 @@ void GameObject::Use(Unit* user)
         {
             GameObjectInfo const* info = GetGOInfo();
 
-            if (user->GetTypeId()!=TYPEID_PLAYER)
+            if (user->GetTypeId() != TYPEID_PLAYER)
                 return;
 
             Player* player = user->ToPlayer();
@@ -1246,7 +1246,7 @@ void GameObject::Use(Unit* user)
 
         case GAMEOBJECT_TYPE_FLAGSTAND:                     // 24
         {
-            if (user->GetTypeId()!=TYPEID_PLAYER)
+            if (user->GetTypeId() != TYPEID_PLAYER)
                 return;
 
             Player* player = user->ToPlayer();
@@ -1271,7 +1271,7 @@ void GameObject::Use(Unit* user)
         }
         case GAMEOBJECT_TYPE_FLAGDROP:                      // 26
         {
-            if (user->GetTypeId()!=TYPEID_PLAYER)
+            if (user->GetTypeId() != TYPEID_PLAYER)
                 return;
 
             Player* player = user->ToPlayer();
@@ -1325,7 +1325,7 @@ void GameObject::Use(Unit* user)
     SpellEntry const *spellInfo = sSpellStore.LookupEntry(spellId);
     if (!spellInfo)
     {
-        if (user->GetTypeId()!=TYPEID_PLAYER || !sOutdoorPvPMgr.HandleCustomSpell(user->ToPlayer(),spellId,this))
+        if (user->GetTypeId() != TYPEID_PLAYER || !sOutdoorPvPMgr.HandleCustomSpell(user->ToPlayer(),spellId,this))
             sLog.outError("WORLD: unknown spell id %u at use action for gameobject (Entry: %u GoType: %u)", spellId,GetEntry(),GetGoType());
         else
             sLog.outDebug("WORLD: %u non-dbc spell was handled by OutdoorPvP", spellId);

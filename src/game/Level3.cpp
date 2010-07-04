@@ -1017,12 +1017,12 @@ bool ChatHandler::HandleReloadGameObjectScriptsCommand(const char* arg)
         return false;
     }
 
-    if (*arg!='a')
+    if (*arg != 'a')
         sLog.outString("Re-Loading Scripts from gameobject_scripts...");
 
     objmgr.LoadGameObjectScripts();
 
-    if (*arg!='a')
+    if (*arg != 'a')
         SendGlobalGMSysMessage("DB table gameobject_scripts reloaded.");
 
     return true;
@@ -1037,12 +1037,12 @@ bool ChatHandler::HandleReloadEventScriptsCommand(const char* arg)
         return false;
     }
 
-    if (*arg!='a')
+    if (*arg != 'a')
         sLog.outString("Re-Loading Scripts from event_scripts...");
 
     objmgr.LoadEventScripts();
 
-    if (*arg!='a')
+    if (*arg != 'a')
         SendGlobalGMSysMessage("DB table event_scripts reloaded.");
 
     return true;
@@ -1057,12 +1057,12 @@ bool ChatHandler::HandleReloadWpScriptsCommand(const char* arg)
         return false;
     }
 
-    if (*arg!='a')
+    if (*arg != 'a')
         sLog.outString("Re-Loading Scripts from waypoint_scripts...");
 
     objmgr.LoadWaypointScripts();
 
-    if (*arg!='a')
+    if (*arg != 'a')
         SendGlobalGMSysMessage("DB table waypoint_scripts reloaded.");
 
     return true;
@@ -1077,12 +1077,12 @@ bool ChatHandler::HandleReloadQuestEndScriptsCommand(const char* arg)
         return false;
     }
 
-    if (*arg!='a')
+    if (*arg != 'a')
         sLog.outString("Re-Loading Scripts from quest_end_scripts...");
 
     objmgr.LoadQuestEndScripts();
 
-    if (*arg!='a')
+    if (*arg != 'a')
         SendGlobalGMSysMessage("DB table quest_end_scripts reloaded.");
 
     return true;
@@ -1097,12 +1097,12 @@ bool ChatHandler::HandleReloadQuestStartScriptsCommand(const char* arg)
         return false;
     }
 
-    if (*arg!='a')
+    if (*arg != 'a')
         sLog.outString("Re-Loading Scripts from quest_start_scripts...");
 
     objmgr.LoadQuestStartScripts();
 
-    if (*arg!='a')
+    if (*arg != 'a')
         SendGlobalGMSysMessage("DB table quest_start_scripts reloaded.");
 
     return true;
@@ -1117,12 +1117,12 @@ bool ChatHandler::HandleReloadSpellScriptsCommand(const char* arg)
         return false;
     }
 
-    if (*arg!='a')
+    if (*arg != 'a')
         sLog.outString("Re-Loading Scripts from spell_scripts...");
 
     objmgr.LoadSpellScripts();
 
-    if (*arg!='a')
+    if (*arg != 'a')
         SendGlobalGMSysMessage("DB table spell_scripts reloaded.");
 
     return true;
@@ -1272,7 +1272,7 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char* args)
         }
 
         // Decide which string to show
-        if (m_session->GetPlayer()!=targetPlayer)
+        if (m_session->GetPlayer() != targetPlayer)
         {
             PSendSysMessage(LANG_YOU_CHANGE_SECURITY, targetAccountName.c_str(), gm);
         }else{
@@ -2322,7 +2322,7 @@ bool ChatHandler::HandleLearnAllMyTalentsCommand(const char* /*args*/)
         int rank = 4;
         for (; rank >= 0; --rank)
         {
-            if (talentInfo->RankID[rank]!=0)
+            if (talentInfo->RankID[rank] != 0)
             {
                 spellid = talentInfo->RankID[rank];
                 break;
@@ -2525,7 +2525,7 @@ bool ChatHandler::HandleAddItemCommand(const char* args)
     if (count > 0 && item)
     {
         pl->SendNewItem(item,count,false,true);
-        if (pl!=plTarget)
+        if (pl != plTarget)
             plTarget->SendNewItem(item,count,true,false);
     }
 
@@ -2582,7 +2582,7 @@ bool ChatHandler::HandleAddItemSetCommand(const char* args)
                     item->SetBinding(false);
 
                 pl->SendNewItem(item,1,false,true);
-                if (pl!=plTarget)
+                if (pl != plTarget)
                     plTarget->SendNewItem(item,1,true,false);
             }
             else
@@ -4098,7 +4098,7 @@ bool ChatHandler::HandleLinkGraveCommand(const char* args)
     uint32 zoneId = player->GetZoneId();
 
     AreaTableEntry const *areaEntry = GetAreaEntryByAreaID(zoneId);
-    if (!areaEntry || areaEntry->zone !=0)
+    if (!areaEntry || areaEntry->zone != 0)
     {
         PSendSysMessage(LANG_COMMAND_GRAVEYARDWRONGZONE, g_id,zoneId);
         SetSentErrorMessage(true);
@@ -5076,7 +5076,7 @@ bool ChatHandler::HandleResetSpellsCommand(const char * args)
 
         ChatHandler(player).SendSysMessage(LANG_RESET_SPELLS);
 
-        if (m_session->GetPlayer()!=player)
+        if (m_session->GetPlayer() != player)
             PSendSysMessage(LANG_RESET_SPELLS_ONLINE,player->GetName());
     }
     else
@@ -5123,7 +5123,7 @@ bool ChatHandler::HandleResetTalentsCommand(const char * args)
 
         ChatHandler(player).SendSysMessage(LANG_RESET_TALENTS);
 
-        if (m_session->GetPlayer()!=player)
+        if (m_session->GetPlayer() != player)
             PSendSysMessage(LANG_RESET_TALENTS_ONLINE,player->GetName());
     }
     else
@@ -5187,7 +5187,7 @@ bool ChatHandler::HandleServerShutDownCommand(const char* args)
     int32 time = atoi (time_str);
 
     ///- Prevent interpret wrong arg value as 0 secs shutdown time
-    if (time == 0 && (time_str[0]!='0' || time_str[1]!='\0') || time < 0)
+    if (time == 0 && (time_str[0] != '0' || time_str[1] != '\0') || time < 0)
         return false;
 
     if (exitcode_str)
@@ -5222,7 +5222,7 @@ bool ChatHandler::HandleServerRestartCommand(const char* args)
     int32 time = atoi (time_str);
 
     ///- Prevent interpret wrong arg value as 0 secs shutdown time
-    if (time == 0 && (time_str[0]!='0' || time_str[1]!='\0') || time < 0)
+    if (time == 0 && (time_str[0] != '0' || time_str[1] != '\0') || time < 0)
         return false;
 
     if (exitcode_str)
@@ -5257,7 +5257,7 @@ bool ChatHandler::HandleServerIdleRestartCommand(const char* args)
     int32 time = atoi (time_str);
 
     ///- Prevent interpret wrong arg value as 0 secs shutdown time
-    if (time == 0 && (time_str[0]!='0' || time_str[1]!='\0') || time < 0)
+    if (time == 0 && (time_str[0] != '0' || time_str[1] != '\0') || time < 0)
         return false;
 
     if (exitcode_str)
@@ -5292,7 +5292,7 @@ bool ChatHandler::HandleServerIdleShutDownCommand(const char* args)
     int32 time = atoi (time_str);
 
     ///- Prevent interpret wrong arg value as 0 secs shutdown time
-    if (time == 0 && (time_str[0]!='0' || time_str[1]!='\0') || time < 0)
+    if (time == 0 && (time_str[0] != '0' || time_str[1] != '\0') || time < 0)
         return false;
 
     if (exitcode_str)
@@ -5983,7 +5983,7 @@ bool ChatHandler::HandleRespawnCommand(const char* /*args*/)
     Unit* target = getSelectedUnit();
     if (pl->GetSelection() && target)
     {
-        if (target->GetTypeId()!=TYPEID_UNIT)
+        if (target->GetTypeId() != TYPEID_UNIT)
         {
             SendSysMessage(LANG_SELECT_CREATURE);
             SetSentErrorMessage(true);

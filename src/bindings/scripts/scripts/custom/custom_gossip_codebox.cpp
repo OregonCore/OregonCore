@@ -51,7 +51,7 @@ bool GossipSelectWithCode_custom_gossip_codebox( Player *player, Creature *_Crea
     {
         if(action == GOSSIP_ACTION_INFO_DEF+1)
         {
-            if(std::strcmp(sCode, player->GetName())!=0)
+            if(std::strcmp(sCode, player->GetName()) != 0)
             {
                 _Creature->Say("Wrong!", LANG_UNIVERSAL, 0);
                 _Creature->CastSpell(player, 12826, true);

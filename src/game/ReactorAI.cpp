@@ -44,7 +44,7 @@ ReactorAI::MoveInLineOfSight(Unit *)
 void
 ReactorAI::UpdateAI(const uint32 /*time_diff*/)
 {
-    // update i_victimGuid if m_creature->getVictim() !=0 and changed
+    // update i_victimGuid if m_creature->getVictim() != 0 and changed
     if (!UpdateVictim())
         return;
 

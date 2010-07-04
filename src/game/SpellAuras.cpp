@@ -1256,7 +1256,7 @@ void Aura::TriggerSpell()
                     case 17949:
                     case 27252:
                     {
-                        if (caster->GetTypeId()!=TYPEID_PLAYER)
+                        if (caster->GetTypeId() != TYPEID_PLAYER)
                             return;
                         Item* item = caster->ToPlayer()->GetWeaponForAttack(BASE_ATTACK);
                         if (!item)
@@ -2052,7 +2052,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
         if (caster && GetSpellProto()->SpellFamilyName == SPELLFAMILY_SHAMAN && (GetSpellProto()->SpellFamilyFlags & 0x40000000000LL))
         {
             // prevent double apply bonuses
-            if (m_target->GetTypeId()!=TYPEID_PLAYER || !m_target->ToPlayer()->GetSession()->PlayerLoading())
+            if (m_target->GetTypeId() != TYPEID_PLAYER || !m_target->ToPlayer()->GetSession()->PlayerLoading())
                 m_modifier.m_amount = caster->SpellHealingBonus(GetSpellProto(), m_modifier.m_amount, SPELL_DIRECT_DAMAGE, m_target);
             return;
         }
@@ -2243,7 +2243,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                 {
                     if (caster)
                         // prevent double apply bonuses
-                        if (m_target->GetTypeId()!=TYPEID_PLAYER || !m_target->ToPlayer()->GetSession()->PlayerLoading())
+                        if (m_target->GetTypeId() != TYPEID_PLAYER || !m_target->ToPlayer()->GetSession()->PlayerLoading())
                             m_modifier.m_amount = caster->SpellHealingBonus(GetSpellProto(), m_modifier.m_amount, SPELL_DIRECT_DAMAGE, m_target);
                 }
                 // Do final heal for real !apply
@@ -2625,7 +2625,7 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
         if (PowerType != POWER_MANA)
         {
             // reset power to default values only at power change
-            if (m_target->getPowerType()!=PowerType)
+            if (m_target->getPowerType() != PowerType)
                 m_target->setPowerType(PowerType);
 
             switch(form)
@@ -2737,7 +2737,7 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
         if (m_modifier.m_miscvalue==0)
         {
             // player applied only
-            if (m_target->GetTypeId()!=TYPEID_PLAYER)
+            if (m_target->GetTypeId() != TYPEID_PLAYER)
                 return;
 
             switch(GetId())
@@ -2982,7 +2982,7 @@ void Aura::HandleChannelDeathItem(bool apply, bool Real)
     {
         Unit* caster = GetCaster();
         Unit* victim = GetTarget();
-        if (!caster || caster->GetTypeId() != TYPEID_PLAYER || !victim)// || m_removeMode!=AURA_REMOVE_BY_DEATH)
+        if (!caster || caster->GetTypeId() != TYPEID_PLAYER || !victim)// || m_removeMode != AURA_REMOVE_BY_DEATH)
             return;
 
         //we cannot check removemode = death
@@ -3035,7 +3035,7 @@ void Aura::HandleFarSight(bool apply, bool Real)
 
 void Aura::HandleAuraTrackCreatures(bool apply, bool Real)
 {
-    if (m_target->GetTypeId()!=TYPEID_PLAYER)
+    if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
 
     if (apply)
@@ -3045,7 +3045,7 @@ void Aura::HandleAuraTrackCreatures(bool apply, bool Real)
 
 void Aura::HandleAuraTrackResources(bool apply, bool Real)
 {
-    if (m_target->GetTypeId()!=TYPEID_PLAYER)
+    if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
 
     if (apply)
@@ -3055,7 +3055,7 @@ void Aura::HandleAuraTrackResources(bool apply, bool Real)
 
 void Aura::HandleAuraTrackStealthed(bool apply, bool Real)
 {
-    if (m_target->GetTypeId()!=TYPEID_PLAYER)
+    if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
 
     if (apply)
@@ -3294,7 +3294,7 @@ void Aura::HandleModStealth(bool apply, bool Real)
                 m_target->SetFlag(PLAYER_FIELD_BYTES2, 0x2000);
 
             // apply only if not in GM invisibility (and overwrite invisibility state)
-            if (m_target->GetVisibility()!=VISIBILITY_OFF)
+            if (m_target->GetVisibility() != VISIBILITY_OFF)
             {
                 //m_target->SetVisibility(VISIBILITY_GROUP_NO_DETECT);
                 //m_target->SetVisibility(VISIBILITY_OFF);
@@ -3316,7 +3316,7 @@ void Aura::HandleModStealth(bool apply, bool Real)
                 m_target->RemoveAurasDueToSpell(21009);
 
             // if last SPELL_AURA_MOD_STEALTH and no GM invisibility
-            if (!m_target->HasAuraType(SPELL_AURA_MOD_STEALTH) && m_target->GetVisibility()!=VISIBILITY_OFF)
+            if (!m_target->HasAuraType(SPELL_AURA_MOD_STEALTH) && m_target->GetVisibility() != VISIBILITY_OFF)
             {
                 m_target->SetByteValue(UNIT_FIELD_BYTES_1, 2, 0x00);
                 if (m_target->GetTypeId()==TYPEID_PLAYER)
@@ -3400,7 +3400,7 @@ void Aura::HandleInvisibility(bool apply, bool Real)
                 m_target->RemoveFlag(PLAYER_FIELD_BYTES2,PLAYER_FIELD_BYTE2_INVISIBILITY_GLOW);
 
             // apply only if not in GM invisibility & not stealthed while invisible
-            if (m_target->GetVisibility()!=VISIBILITY_OFF)
+            if (m_target->GetVisibility() != VISIBILITY_OFF)
             {
                 // if have stealth aura then already have stealth visibility
                 if (!m_target->HasAuraType(SPELL_AURA_MOD_STEALTH))
@@ -3561,7 +3561,7 @@ void Aura::HandleAuraModTotalThreat(bool apply, bool Real)
     if (!Real)
         return;
 
-    if (!m_target->isAlive() || m_target->GetTypeId()!= TYPEID_PLAYER)
+    if (!m_target->isAlive() || m_target->GetTypeId() != TYPEID_PLAYER)
         return;
 
     Unit* caster = GetCaster();
@@ -3966,7 +3966,7 @@ void Aura::HandlePeriodicTriggerSpell(bool apply, bool Real)
     m_isTrigger = apply;
 
     // Curse of the Plaguebringer
-    if (!apply && m_spellProto->Id == 29213 && m_removeMode!=AURA_REMOVE_BY_DISPEL)
+    if (!apply && m_spellProto->Id == 29213 && m_removeMode != AURA_REMOVE_BY_DISPEL)
     {
         // Cast Wrath of the Plaguebringer if not dispelled
         m_target->CastSpell(m_target, 29214, true, 0, this);
@@ -4730,7 +4730,7 @@ void Aura::HandleAuraModIncreaseHealthPercent(bool apply, bool /*Real*/)
 
 void Aura::HandleAuraModParryPercent(bool /*apply*/, bool Real)
 {
-    if (m_target->GetTypeId()!=TYPEID_PLAYER)
+    if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
 
     m_target->ToPlayer()->UpdateParryPercentage();
@@ -4738,7 +4738,7 @@ void Aura::HandleAuraModParryPercent(bool /*apply*/, bool Real)
 
 void Aura::HandleAuraModDodgePercent(bool /*apply*/, bool Real)
 {
-    if (m_target->GetTypeId()!=TYPEID_PLAYER)
+    if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
 
     m_target->ToPlayer()->UpdateDodgePercentage();
@@ -4747,7 +4747,7 @@ void Aura::HandleAuraModDodgePercent(bool /*apply*/, bool Real)
 
 void Aura::HandleAuraModBlockPercent(bool /*apply*/, bool Real)
 {
-    if (m_target->GetTypeId()!=TYPEID_PLAYER)
+    if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
 
     m_target->ToPlayer()->UpdateBlockPercentage();
@@ -4760,7 +4760,7 @@ void Aura::HandleAuraModRegenInterrupt(bool /*apply*/, bool Real)
     if (!Real)
         return;
 
-    if (m_target->GetTypeId()!=TYPEID_PLAYER)
+    if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
 
     m_target->ToPlayer()->UpdateManaRegen();
@@ -4768,7 +4768,7 @@ void Aura::HandleAuraModRegenInterrupt(bool /*apply*/, bool Real)
 
 void Aura::HandleAuraModCritPercent(bool apply, bool Real)
 {
-    if (m_target->GetTypeId()!=TYPEID_PLAYER)
+    if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
 
     // apply item specific bonuses for already equipped weapon
@@ -4920,7 +4920,7 @@ void Aura::HandleAuraModAttackPower(bool apply, bool Real)
 
 void Aura::HandleAuraModRangedAttackPower(bool apply, bool Real)
 {
-    if ((m_target->getClassMask() & CLASSMASK_WAND_USERS)!=0)
+    if ((m_target->getClassMask() & CLASSMASK_WAND_USERS) != 0)
         return;
 
     m_target->HandleStatModifier(UNIT_MOD_ATTACK_POWER_RANGED, TOTAL_VALUE, float(GetModifierValue()), apply);
@@ -4934,7 +4934,7 @@ void Aura::HandleAuraModAttackPowerPercent(bool apply, bool Real)
 
 void Aura::HandleAuraModRangedAttackPowerPercent(bool apply, bool Real)
 {
-    if ((m_target->getClassMask() & CLASSMASK_WAND_USERS)!=0)
+    if ((m_target->getClassMask() & CLASSMASK_WAND_USERS) != 0)
         return;
 
     //UNIT_FIELD_RANGED_ATTACK_POWER_MULTIPLIER = multiplier - 1
@@ -4947,7 +4947,7 @@ void Aura::HandleAuraModRangedAttackPowerOfStatPercent(bool apply, bool Real)
     if (!Real)
         return;
 
-    if (m_target->GetTypeId() == TYPEID_PLAYER && (m_target->getClassMask() & CLASSMASK_WAND_USERS)!=0)
+    if (m_target->GetTypeId() == TYPEID_PLAYER && (m_target->getClassMask() & CLASSMASK_WAND_USERS) != 0)
         return;
 
     if (m_modifier.m_miscvalue != STAT_INTELLECT)
@@ -5511,7 +5511,7 @@ void Aura::HandleSchoolAbsorb(bool apply, bool Real)
         return;
 
     // prevent double apply bonuses
-    if (apply && (m_target->GetTypeId()!=TYPEID_PLAYER || !m_target->ToPlayer()->GetSession()->PlayerLoading()))
+    if (apply && (m_target->GetTypeId() != TYPEID_PLAYER || !m_target->ToPlayer()->GetSession()->PlayerLoading()))
     {
         if (Unit* caster = GetCaster())
         {
@@ -5570,7 +5570,7 @@ void Aura::PeriodicTick()
                 return;
 
             if (GetSpellProto()->Effect[GetEffIndex()]==SPELL_EFFECT_PERSISTENT_AREA_AURA &&
-                pCaster->SpellHitResult(m_target,GetSpellProto(),false)!=SPELL_MISS_NONE)
+                pCaster->SpellHitResult(m_target,GetSpellProto(),false) != SPELL_MISS_NONE)
                 return;
 
             // Check for immune (not use charges)
@@ -5730,7 +5730,7 @@ void Aura::PeriodicTick()
                 return;
 
             if (GetSpellProto()->Effect[GetEffIndex()]==SPELL_EFFECT_PERSISTENT_AREA_AURA &&
-                pCaster->SpellHitResult(m_target,GetSpellProto(),false)!=SPELL_MISS_NONE)
+                pCaster->SpellHitResult(m_target,GetSpellProto(),false) != SPELL_MISS_NONE)
                 return;
 
             // Check for immune (not use charges)
@@ -5765,7 +5765,7 @@ void Aura::PeriodicTick()
                 {
                     if ((*i)->GetModifier()->m_miscvalue == 4992 || (*i)->GetModifier()->m_miscvalue == 4993)
                     {
-                        if ((*i)->GetEffIndex()!=1)
+                        if ((*i)->GetEffIndex() != 1)
                         {
                             sLog.outError("Expected spell %u structure change, need code update",(*i)->GetId());
                             break;
@@ -5913,10 +5913,10 @@ void Aura::PeriodicTick()
 
             Unit* target = m_target;                        // aura can be deleted in DealDamage
             SpellEntry const* spellProto = GetSpellProto();
-            bool haveCastItem = GetCastItemGUID()!=0;
+            bool haveCastItem = GetCastItemGUID() != 0;
 
             // heal for caster damage
-            if (m_target!=pCaster && spellProto->SpellVisual==163)
+            if (m_target != pCaster && spellProto->SpellVisual==163)
             {
                 uint32 dmg = spellProto->manaPerSecond;
                 if (pCaster->GetHealth() <= dmg && pCaster->GetTypeId()==TYPEID_PLAYER)
@@ -5961,7 +5961,7 @@ void Aura::PeriodicTick()
                 return;
 
             if (GetSpellProto()->Effect[GetEffIndex()]==SPELL_EFFECT_PERSISTENT_AREA_AURA &&
-                pCaster->SpellHitResult(m_target,GetSpellProto(),false)!=SPELL_MISS_NONE)
+                pCaster->SpellHitResult(m_target,GetSpellProto(),false) != SPELL_MISS_NONE)
                 return;
 
             // Check for immune (not use charges)
@@ -6253,7 +6253,7 @@ void Aura::PeriodicDummyTick()
             if (m_target->GetTypeId() != TYPEID_PLAYER)
                 return;
             // Should be manauser
-            if (m_target->getPowerType()!=POWER_MANA)
+            if (m_target->getPowerType() != POWER_MANA)
                 return;
             Unit *caster = GetCaster();
             if (!caster)
@@ -6441,7 +6441,7 @@ void Aura::HandleManaShield(bool apply, bool Real)
         return;
 
     // prevent double apply bonuses
-    if (apply && (m_target->GetTypeId()!=TYPEID_PLAYER || !m_target->ToPlayer()->GetSession()->PlayerLoading()))
+    if (apply && (m_target->GetTypeId() != TYPEID_PLAYER || !m_target->ToPlayer()->GetSession()->PlayerLoading()))
     {
         if (Unit* caster = GetCaster())
         {

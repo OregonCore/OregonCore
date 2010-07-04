@@ -202,7 +202,7 @@ struct OREGON_DLL_DECL boss_vazrudenAI : public ScriptedAI
 
     void KilledUnit(Unit* who)
     {
-        if(who && who->GetEntry()!=ENTRY_VAZRUDEN)
+        if(who && who->GetEntry() != ENTRY_VAZRUDEN)
             switch(rand()%2)
             {
                 case 0: DoScriptText(SAY_KILL_1, m_creature); break;

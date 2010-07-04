@@ -73,7 +73,7 @@ struct OREGON_DLL_DECL boss_azuregosAI : public ScriptedAI
             DoScriptText(SAY_TELEPORT, m_creature);
             std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
             std::list<HostileReference*>::iterator i = m_threatlist.begin();
-            for (i = m_threatlist.begin(); i!= m_threatlist.end();++i)
+            for (i = m_threatlist.begin(); i != m_threatlist.end();++i)
             {
                 Unit* pUnit = Unit::GetUnit((*m_creature), (*i)->getUnitGuid());
                 if(pUnit && (pUnit->GetTypeId() == TYPEID_PLAYER))

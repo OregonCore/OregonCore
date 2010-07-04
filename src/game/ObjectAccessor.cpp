@@ -230,7 +230,7 @@ ObjectAccessor::_buildUpdateObject(Object *obj, UpdateDataMapType &update_player
     {
         WorldObject * temp = dynamic_cast<WorldObject*>(obj);
 
-        //assert(dynamic_cast<WorldObject*>(obj)!=NULL);
+        //assert(dynamic_cast<WorldObject*>(obj) != NULL);
         if (temp)
             _buildChangeObjectForPlayer(temp, update_players);
         else

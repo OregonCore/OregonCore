@@ -212,7 +212,7 @@ class OREGON_DLL_SPEC Item : public Object
 
         void SetBinding(bool val) { ApplyModFlag(ITEM_FIELD_FLAGS,ITEM_FLAGS_BINDED,val); }
         bool IsSoulBound() const { return HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_BINDED); }
-        bool IsBindedNotWith(uint64 guid) const { return IsSoulBound() && GetOwnerGUID()!= guid; }
+        bool IsBindedNotWith(uint64 guid) const { return IsSoulBound() && GetOwnerGUID() != guid; }
         bool IsBoundByEnchant() const;
         virtual void SaveToDB();
         virtual bool LoadFromDB(uint32 guid, uint64 owner_guid, QueryResult_AutoPtr result = QueryResult_AutoPtr(NULL));

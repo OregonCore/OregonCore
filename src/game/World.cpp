@@ -879,7 +879,7 @@ void World::LoadConfigSettings(bool reload)
     if (reload)
     {
         uint32 val = sConfig.GetIntDefault("Expansion",1);
-        if (val!=m_configs[CONFIG_EXPANSION])
+        if (val != m_configs[CONFIG_EXPANSION])
             sLog.outError("Expansion option can't be changed at Oregond.conf reload, using current value (%u).",m_configs[CONFIG_EXPANSION]);
     }
     else
@@ -1010,12 +1010,12 @@ void World::LoadConfigSettings(bool reload)
 
     ///- Read the "Data" directory from the config file
     std::string dataPath = sConfig.GetStringDefault("DataDir","./");
-    if (dataPath.at(dataPath.length()-1)!='/' && dataPath.at(dataPath.length()-1)!='\\')
+    if (dataPath.at(dataPath.length()-1) != '/' && dataPath.at(dataPath.length()-1) != '\\')
         dataPath.append("/");
 
     if (reload)
     {
-        if (dataPath!=m_dataPath)
+        if (dataPath != m_dataPath)
             sLog.outError("DataDir option can't be changed at Oregond.conf reload, using current value (%s).",m_dataPath.c_str());
     }
     else
@@ -1892,7 +1892,7 @@ void World::ScriptsProcess()
                     break;
                 }
 
-                if (source->GetTypeId()!=TYPEID_UNIT)
+                if (source->GetTypeId() != TYPEID_UNIT)
                 {
                     sLog.outError("SCRIPT_COMMAND_TALK call for non-creature (TypeId: %u), skipping.",source->GetTypeId());
                     break;
@@ -1938,7 +1938,7 @@ void World::ScriptsProcess()
                     break;
                 }
 
-                if (source->GetTypeId()!=TYPEID_UNIT)
+                if (source->GetTypeId() != TYPEID_UNIT)
                 {
                     sLog.outError("SCRIPT_COMMAND_EMOTE call for non-creature (TypeId: %u), skipping.",source->GetTypeId());
                     break;
@@ -1968,7 +1968,7 @@ void World::ScriptsProcess()
                     break;
                 }
 
-                if (source->GetTypeId()!=TYPEID_UNIT)
+                if (source->GetTypeId() != TYPEID_UNIT)
                 {
                     sLog.outError("SCRIPT_COMMAND_MOVE_TO call for non-creature (TypeId: %u), skipping.",source->GetTypeId());
                     break;
@@ -2259,7 +2259,7 @@ void World::ScriptsProcess()
 
                 if (target->GetTypeId()==TYPEID_PLAYER)
                 {
-                    if (source->GetTypeId()!=TYPEID_UNIT && source->GetTypeId()!=TYPEID_GAMEOBJECT)
+                    if (source->GetTypeId() != TYPEID_UNIT && source->GetTypeId() != TYPEID_GAMEOBJECT)
                     {
                         sLog.outError("SCRIPT_COMMAND_QUEST_EXPLORED call for non-creature and non-gameobject (TypeId: %u), skipping.",source->GetTypeId());
                         break;
@@ -2270,13 +2270,13 @@ void World::ScriptsProcess()
                 }
                 else
                 {
-                    if (target->GetTypeId()!=TYPEID_UNIT && target->GetTypeId()!=TYPEID_GAMEOBJECT)
+                    if (target->GetTypeId() != TYPEID_UNIT && target->GetTypeId() != TYPEID_GAMEOBJECT)
                     {
                         sLog.outError("SCRIPT_COMMAND_QUEST_EXPLORED call for non-creature and non-gameobject (TypeId: %u), skipping.",target->GetTypeId());
                         break;
                     }
 
-                    if (source->GetTypeId()!=TYPEID_PLAYER)
+                    if (source->GetTypeId() != TYPEID_PLAYER)
                     {
                         sLog.outError("SCRIPT_COMMAND_QUEST_EXPLORED call for non-player(TypeId: %u), skipping.",source->GetTypeId());
                         break;
@@ -2287,7 +2287,7 @@ void World::ScriptsProcess()
                 }
 
                 // quest id and flags checked at script loading
-                if ((worldObject->GetTypeId()!=TYPEID_UNIT || ((Unit*)worldObject)->isAlive()) &&
+                if ((worldObject->GetTypeId() != TYPEID_UNIT || ((Unit*)worldObject)->isAlive()) &&
                     (step.script->datalong2==0 || worldObject->IsWithinDistInMap(player,float(step.script->datalong2))))
                     player->AreaExploredOrEventHappens(step.script->datalong);
                 else
@@ -2316,7 +2316,7 @@ void World::ScriptsProcess()
                     break;
                 }
 
-                if (target->GetTypeId()!=TYPEID_GAMEOBJECT)
+                if (target->GetTypeId() != TYPEID_GAMEOBJECT)
                 {
                     sLog.outError("SCRIPT_COMMAND_ACTIVATE_OBJECT call for non-gameobject (TypeId: %u), skipping.",target->GetTypeId());
                     break;
@@ -2790,7 +2790,7 @@ BanReturn World::BanAccount(BanMode mode, std::string nameOrIP, std::string dura
         Field* fieldsAccount = resultAccounts->Fetch();
         uint32 account = fieldsAccount->GetUInt32();
 
-        if (mode!=BAN_IP)
+        if (mode != BAN_IP)
         {
             //No SQL injection as strings are escaped
             LoginDatabase.PExecute("INSERT INTO account_banned VALUES ('%u', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()+%u, '%s', '%s', '1')",

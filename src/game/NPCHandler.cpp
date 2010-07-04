@@ -566,7 +566,7 @@ void WorldSession::HandleStablePet(WorldPacket & recv_data)
     WorldPacket data(SMSG_STABLE_RESULT, 200);              // guess size
 
     // can't place in stable dead pet
-    if (!pet||!pet->isAlive()||pet->getPetType()!=HUNTER_PET)
+    if (!pet||!pet->isAlive()||pet->getPetType() != HUNTER_PET)
     {
         data << uint8(0x06);
         SendPacket(&data);

@@ -105,7 +105,7 @@ void WaypointStore::Load()
 
 void WaypointStore::UpdatePath(uint32 id)
 {
-    if (waypoint_map.find(id)!= waypoint_map.end())
+    if (waypoint_map.find(id) != waypoint_map.end())
         waypoint_map[id]->clear();
 
     QueryResult_AutoPtr result;

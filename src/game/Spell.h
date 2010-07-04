@@ -654,7 +654,7 @@ namespace Oregon
                     }break;
                     case SPELL_TARGETS_ENTRY:
                     {
-                        if (itr->getSource()->GetEntry()!= i_entry)
+                        if (itr->getSource()->GetEntry() != i_entry)
                             continue;
                     }break;
                     default: continue;

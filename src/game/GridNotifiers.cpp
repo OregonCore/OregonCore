@@ -54,9 +54,9 @@ PlayerVisibilityNotifier::Notify()
     // but exist one case when this possible and object not out of range: transports
     if (Transport* transport = i_player.GetTransport())
     {
-        for (Transport::PlayerSet::const_iterator itr = transport->GetPassengers().begin();itr!=transport->GetPassengers().end();++itr)
+        for (Transport::PlayerSet::const_iterator itr = transport->GetPassengers().begin();itr != transport->GetPassengers().end();++itr)
         {
-            if (i_clientGUIDs.find((*itr)->GetGUID())!=i_clientGUIDs.end())
+            if (i_clientGUIDs.find((*itr)->GetGUID()) != i_clientGUIDs.end())
             {
                 (*itr)->UpdateVisibilityOf(&i_player);
                 i_player.UpdateVisibilityOf((*itr),i_data,i_visibleNow);
@@ -67,7 +67,7 @@ PlayerVisibilityNotifier::Notify()
 
     // generate outOfRange for not iterate objects
     i_data.AddOutOfRangeGUID(i_clientGUIDs);
-    for (Player::ClientGUIDs::iterator itr = i_clientGUIDs.begin();itr!=i_clientGUIDs.end();++itr)
+    for (Player::ClientGUIDs::iterator itr = i_clientGUIDs.begin();itr != i_clientGUIDs.end();++itr)
     {
         i_player.m_clientGUIDs.erase(*itr);
 
@@ -102,7 +102,7 @@ PlayerVisibilityNotifier::Notify()
     // target aura duration for caster show only if target exist at caster client
     // send data at target visibility change (adding to client)
     for (std::set<WorldObject*>::const_iterator vItr = i_visibleNow.begin(); vItr != i_visibleNow.end(); ++vItr)
-        if ((*vItr)!=&i_player && (*vItr)->isType(TYPEMASK_UNIT))
+        if ((*vItr) != &i_player && (*vItr)->isType(TYPEMASK_UNIT))
             i_player.SendInitialVisiblePackets((Unit*)(*vItr));
 
     if (i_visibleNow.size() >= 30)

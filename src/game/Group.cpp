@@ -237,7 +237,7 @@ uint32 Group::RemoveInvite(Player *player)
 
 void Group::RemoveAllInvites()
 {
-    for (InvitesList::iterator itr=m_invitees.begin(); itr!=m_invitees.end(); ++itr)
+    for (InvitesList::iterator itr=m_invitees.begin(); itr != m_invitees.end(); ++itr)
         (*itr)->SetGroupInvite(NULL);
 
     m_invitees.clear();
@@ -408,7 +408,7 @@ void Group::SendLootStartRoll(uint32 CountDown, const Roll &r)
     data << uint32(r.itemRandomPropId);                     // item random property ID
     data << uint32(CountDown);                              // the countdown time to choose "need" or "greed"
 
-    for (Roll::PlayerVote::const_iterator itr=r.playerVote.begin(); itr!=r.playerVote.end(); ++itr)
+    for (Roll::PlayerVote::const_iterator itr=r.playerVote.begin(); itr != r.playerVote.end(); ++itr)
     {
         Player *p = objmgr.GetPlayer(itr->first);
         if (!p || !p->GetSession())
@@ -432,7 +432,7 @@ void Group::SendLootRoll(const uint64& SourceGuid, const uint64& TargetGuid, uin
     data << uint8(RollType);                                // 0: "Need for: [item name]" 0: "You have selected need for [item name] 1: need roll 2: greed roll
     data << uint8(0);                                       // 2.4.0
 
-    for (Roll::PlayerVote::const_iterator itr=r.playerVote.begin(); itr!=r.playerVote.end(); ++itr)
+    for (Roll::PlayerVote::const_iterator itr=r.playerVote.begin(); itr != r.playerVote.end(); ++itr)
     {
         Player *p = objmgr.GetPlayer(itr->first);
         if (!p || !p->GetSession())
@@ -455,7 +455,7 @@ void Group::SendLootRollWon(const uint64& SourceGuid, const uint64& TargetGuid, 
     data << uint8(RollNumber);                              // rollnumber realted to SMSG_LOOT_ROLL
     data << uint8(RollType);                                // Rolltype related to SMSG_LOOT_ROLL
 
-    for (Roll::PlayerVote::const_iterator itr=r.playerVote.begin(); itr!=r.playerVote.end(); ++itr)
+    for (Roll::PlayerVote::const_iterator itr=r.playerVote.begin(); itr != r.playerVote.end(); ++itr)
     {
         Player *p = objmgr.GetPlayer(itr->first);
         if (!p || !p->GetSession())
@@ -475,7 +475,7 @@ void Group::SendLootAllPassed(uint32 NumberOfPlayers, const Roll &r)
     data << uint32(r.itemRandomPropId);                     // Item random property ID
     data << uint32(r.itemRandomSuffix);                     // Item random suffix ID
 
-    for (Roll::PlayerVote::const_iterator itr=r.playerVote.begin(); itr!=r.playerVote.end(); ++itr)
+    for (Roll::PlayerVote::const_iterator itr=r.playerVote.begin(); itr != r.playerVote.end(); ++itr)
     {
         Player *p = objmgr.GetPlayer(itr->first);
         if (!p || !p->GetSession())
@@ -708,7 +708,7 @@ void Group::CountTheRoll(Rolls::iterator rollI, uint32 NumberOfPlayers)
             uint64 maxguid  = (*roll->playerVote.begin()).first;
             Player *player;
 
-            for (Roll::PlayerVote::const_iterator itr=roll->playerVote.begin(); itr!=roll->playerVote.end(); ++itr)
+            for (Roll::PlayerVote::const_iterator itr=roll->playerVote.begin(); itr != roll->playerVote.end(); ++itr)
             {
                 if (itr->second != NEED)
                     continue;
@@ -753,7 +753,7 @@ void Group::CountTheRoll(Rolls::iterator rollI, uint32 NumberOfPlayers)
             Player *player;
 
             Roll::PlayerVote::iterator itr;
-            for (itr=roll->playerVote.begin(); itr!=roll->playerVote.end(); ++itr)
+            for (itr=roll->playerVote.begin(); itr != roll->playerVote.end(); ++itr)
             {
                 if (itr->second != GREED)
                     continue;
@@ -1389,7 +1389,7 @@ bool Group::InCombatToInstance(uint32 instanceId)
     {
         Player *pPlayer = itr->getSource();
         if (pPlayer && pPlayer->getAttackers().size() && pPlayer->GetInstanceId() == instanceId && (pPlayer->GetMap()->IsRaid() || pPlayer->GetMap()->IsHeroic()))
-            for (std::set<Unit*>::const_iterator i = pPlayer->getAttackers().begin(); i!=pPlayer->getAttackers().end(); ++i)
+            for (std::set<Unit*>::const_iterator i = pPlayer->getAttackers().begin(); i != pPlayer->getAttackers().end(); ++i)
                 if ((*i) && (*i)->GetTypeId() == TYPEID_UNIT && (const_cast<Creature*>((*i)->ToCreature()))->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_INSTANCE_BIND)
                     return true;
     }
