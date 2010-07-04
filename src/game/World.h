@@ -568,8 +568,6 @@ class World
         char const* GetScriptsVersion() { return m_ScriptsVersion.c_str(); }
 
         void RecordTimeDiff(const char * text, ...);
-
-        ACE_Thread_Mutex m_spellUpdateLock;
     protected:
         void _UpdateGameTime();
         void ScriptsProcess();
