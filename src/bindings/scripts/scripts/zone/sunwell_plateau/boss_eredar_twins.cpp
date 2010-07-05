@@ -441,7 +441,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
         if (!who || m_creature->getVictim())
             return;
 
-        if (who->isTargetableForAttack() && who->isInAccessiblePlacefor (m_creature) && m_creature->IsHostileTo(who))
+        if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (m_creature) && m_creature->IsHostileTo(who))
         {
 
             float attackRadius = m_creature->GetAttackDistance(who);

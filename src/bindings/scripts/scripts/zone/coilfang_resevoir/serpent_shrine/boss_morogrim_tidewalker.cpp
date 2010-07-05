@@ -315,7 +315,7 @@ struct OREGON_DLL_DECL mob_water_globuleAI : public ScriptedAI
         if (!who || m_creature->getVictim())
             return;
 
-        if (who->isTargetableForAttack() && who->isInAccessiblePlacefor (m_creature) && m_creature->IsHostileTo(who))
+        if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (m_creature) && m_creature->IsHostileTo(who))
         {
             //no attack radius check - it attacks the first target that moves in his los
             //who->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
