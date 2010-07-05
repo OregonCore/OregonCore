@@ -57,12 +57,12 @@ void SystemMgr::LoadVersion()
 
 void SystemMgr::LoadScriptTexts()
 {
-    outstring_log("TSCR: Loading Script Texts...");
-    LoadOregonStrings(TScriptDB,"script_texts",TEXT_SOURCE_RANGE,1+(TEXT_SOURCE_RANGE*2));
+    outstring_log("OISS: Loading Script Texts...");
+    LoadOregonStrings(TScriptDB,"script_texts",TEXT_SOURCE_RANGE,1+(TEXT_SOURCE_RANGE*3));
 
     QueryResult_AutoPtr pResult = TScriptDB.PQuery("SELECT entry, sound, type, language, emote FROM script_texts");
 
-    outstring_log("TSCR: Loading Script Texts additional data...");
+    outstring_log("OISS: Loading Script Texts additional data...");
 
     if (pResult)
     {
@@ -87,7 +87,7 @@ void SystemMgr::LoadScriptTexts()
                 continue;
             }
 
-            if (iId > TEXT_SOURCE_RANGE || iId <= TEXT_SOURCE_RANGE*2)
+            if (iId > TEXT_SOURCE_RANGE || iId <= TEXT_SOURCE_RANGE*3)
             {
                 error_db_log("TSCR: Entry %i in table script_texts is out of accepted entry range for table.", iId);
                 continue;
