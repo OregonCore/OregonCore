@@ -1009,8 +1009,11 @@ void WorldSession::HandleMoveRootAck(WorldPacket& recv_data)
     */
 }
 
-void WorldSession::HandleMoveTeleportAck(WorldPacket&/* recv_data*/)
+void WorldSession::HandleMoveTeleportAck(WorldPacket& recv_data)
 {
+    // not yet used -> TC2 has implemented it @ MovementHandler.cpp
+    recv_data.rpos(recv_data.wpos());                       // prevent warnings spam
+
     /*
         CHECK_PACKET_SIZE(recv_data,8+4);
 

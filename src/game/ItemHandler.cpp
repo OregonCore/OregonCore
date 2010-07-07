@@ -21,7 +21,6 @@
 #include "Common.h"
 #include "WorldPacket.h"
 #include "WorldSession.h"
-#include "World.h"
 #include "Opcodes.h"
 #include "Log.h"
 #include "ObjectMgr.h"
@@ -931,10 +930,10 @@ void WorldSession::HandleSetAmmoOpcode(WorldPacket & recv_data)
 void WorldSession::SendEnchantmentLog(uint64 Target, uint64 Caster,uint32 ItemID,uint32 SpellID)
 {
     WorldPacket data(SMSG_ENCHANTMENTLOG, (8+8+4+4+1));     // last check 2.0.10
-    data << Target;
-    data << Caster;
-    data << ItemID;
-    data << SpellID;
+    data << uint64(Target);
+    data << uint64(Caster);
+    data << uint32(ItemID);
+    data << uint32(SpellID);
     data << uint8(0);
     SendPacket(&data);
 }
@@ -954,6 +953,8 @@ void WorldSession::HandleItemNameQueryOpcode(WorldPacket & recv_data)
 {
     uint32 itemid;
     recv_data >> itemid;
+    recv_data.read_skip<uint64>();                          // guid
+
     sLog.outDebug("WORLD: CMSG_ITEM_NAME_QUERY %u", itemid);
     ItemPrototype const *pProto = objmgr.GetItemPrototype(itemid);
     if (pProto)

@@ -413,14 +413,9 @@ void WorldSession::HandleCancelAutoRepeatSpellOpcode(WorldPacket& /*recvPacket*/
 }
 
 /// \todo Complete HandleCancelChanneling function
-void WorldSession::HandleCancelChanneling(WorldPacket & /*recv_data */)
+void WorldSession::HandleCancelChanneling(WorldPacket & recv_data)
 {
-    /*
-        CHECK_PACKET_SIZE(recv_data, 4);
-
-        uint32 spellid;
-        recv_data >> spellid;
-    */
+    recv_data.read_skip<uint32>();                          // spellid, not used
 }
 
 void WorldSession::HandleTotemDestroy(WorldPacket& recvPacket)

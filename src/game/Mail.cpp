@@ -130,8 +130,7 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data)
     else
     {
         rc_team = objmgr.GetPlayerTeamByGUID(rc);
-        QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT COUNT(*) FROM mail WHERE receiver = '%u'", GUID_LOPART(rc));
-        if (result)
+        if (QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT COUNT(*) FROM mail WHERE receiver = '%u'", GUID_LOPART(rc)))
         {
             Field *fields = result->Fetch();
             mails_count = fields[0].GetUInt32();
@@ -264,7 +263,6 @@ void WorldSession::HandleMarkAsRead(WorldPacket & recv_data)
         if (pl->unReadMails)
             --pl->unReadMails;
         m->checked = m->checked | MAIL_CHECK_MASK_READ;
-        // m->expire_time = time(NULL) + (30 * DAY);        // Expire time do not change at reading mail
         pl->m_mailsUpdated = true;
         m->state = MAIL_STATE_CHANGED;
     }
@@ -277,9 +275,11 @@ void WorldSession::HandleMailDelete(WorldPacket & recv_data)
     uint32 mailId;
     recv_data >> mailbox;
     recv_data >> mailId;
+    recv_data.read_skip<uint32>();                          // mailTemplateId
+
+    Mail *m = _player->GetMail(mailId);
     Player* pl = _player;
     pl->m_mailsUpdated = true;
-    Mail *m = pl->GetMail(mailId);
     if (m)
         m->state = MAIL_STATE_DELETED;
     pl->SendMailResult(mailId, MAIL_DELETED, 0);
