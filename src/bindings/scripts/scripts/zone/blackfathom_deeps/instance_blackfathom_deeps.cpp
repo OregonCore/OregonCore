@@ -82,15 +82,17 @@ public:
         return false;
     };
 
-    uint64 GetData64 (uint32 identifier)
-    {
-        return 0;
-    }
-
     uint32 GetData(uint32 type)
     {
         if (type == DATA_CANDLES)
             return CandlesLighted;
+
+        return 0;
+    }
+
+    uint64 GetData64(uint32 identifier)
+    {
+        return 0;
     }
 
     void SetData(uint32 type, uint32 data)
