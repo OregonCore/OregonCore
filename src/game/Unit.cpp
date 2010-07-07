@@ -7715,10 +7715,10 @@ uint32 Unit::SpellDamageBonus(Unit *pVictim, SpellEntry const *spellProto, uint3
                 else
                    CastingTime = uint32(wspeed*3500*0.098f);
             }
-            // Judgement of Righteousness - 73%
+            // Judgement of Righteousness - 71.43%
             else if ((spellProto->SpellFamilyFlags & 1024) && spellProto->SpellIconID == 25)
             {
-                CastingTime = 2555;
+                CastingTime = 2500;
             }
             // Seal of Vengeance - 17% per Fully Stacked Tick - 5 Applications
             else if ((spellProto->SpellFamilyFlags & 0x80000000000LL) && spellProto->SpellIconID == 2292)
@@ -7763,16 +7763,16 @@ uint32 Unit::SpellDamageBonus(Unit *pVictim, SpellEntry const *spellProto, uint3
             {
                 CastingTime = 0;
             }
-            // Mind Flay - 59% of Shadow Damage
+            // Mind Flay - 57.1% of Shadow Damage
             else if ((spellProto->SpellFamilyFlags & 0x800000LL) && spellProto->SpellIconID == 548)
             {
-                CastingTime = 2065;
+                CastingTime = 2000;
             }
-            // Holy Fire - 86.71%, DoT - 16.5%
+            // Holy Fire - 85.71%, DoT - 16.5%
             else if ((spellProto->SpellFamilyFlags & 0x100000LL) && spellProto->SpellIconID == 156)
             {
                 DotFactor = damagetype == DOT ? 0.165f : 1.0f;
-                CastingTime = damagetype == DOT ? 3500 : 3035;
+                CastingTime = damagetype == DOT ? 3500 : 3000;
             }
             // Shadowguard - 28% per charge
             else if ((spellProto->SpellFamilyFlags & 0x2000000LL) && spellProto->SpellIconID == 19)
