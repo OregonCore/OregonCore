@@ -23,6 +23,7 @@ vector<uint32> blueItemsBin;
 vector<uint32> purpleItemsBin;
 vector<uint32> orangeItemsBin;
 vector<uint32> yellowItemsBin;
+
 AuctionHouseBot::AuctionHouseBot()
 {
     debug_Out = false;
@@ -822,7 +823,7 @@ void AuctionHouseBot::Initialize()
     {
         QueryResult_AutoPtr results = QueryResult_AutoPtr(NULL);
         char npcQuery[] = "SELECT distinct item FROM npc_vendor";
-        results = WorldDatabase.PQuery(npcQuery);
+        results = WorldDatabase.Query(npcQuery);
         if (results != NULL)
         {
             do
@@ -847,7 +848,7 @@ void AuctionHouseBot::Initialize()
             "SELECT item FROM prospecting_loot_template UNION "
             "SELECT item FROM skinning_loot_template";
 
-        results = WorldDatabase.PQuery(lootQuery);
+        results = WorldDatabase.Query(lootQuery);
         if (results != NULL)
         {
             do

@@ -409,9 +409,7 @@ bool ChatHandler::HandleGoCreatureCommand(const char* args)
         return false;
     }
     if (result->GetRowCount() > 1)
-    {
         SendSysMessage(LANG_COMMAND_GOCREATMULTIPLE);
-    }
 
     Field *fields = result->Fetch();
     float x = fields[0].GetFloat();
@@ -617,7 +615,7 @@ bool ChatHandler::HandleDelObjectCommand(const char* args)
     if (owner_guid)
     {
         Unit* owner = ObjectAccessor::GetUnit(*m_session->GetPlayer(),owner_guid);
-        if (!owner && !IS_PLAYER_GUID(owner_guid))
+        if (!owner || !IS_PLAYER_GUID(owner_guid))
         {
             PSendSysMessage(LANG_COMMAND_DELOBJREFERCREATURE, GUID_LOPART(owner_guid), obj->GetGUIDLow());
             SetSentErrorMessage(true);
@@ -790,9 +788,9 @@ bool ChatHandler::HandleGameObjectCommand(const char* args)
 
     char* spawntimeSecs = strtok(NULL, " ");
 
-    const GameObjectInfo *goI = objmgr.GetGameObjectInfo(id);
+    const GameObjectInfo *gInfo = objmgr.GetGameObjectInfo(id);
 
-    if (!goI)
+    if (!gInfo)
     {
         PSendSysMessage(LANG_GAMEOBJECT_NOT_EXIST,id);
         SetSentErrorMessage(true);
@@ -812,7 +810,7 @@ bool ChatHandler::HandleGameObjectCommand(const char* args)
     GameObject* pGameObj = new GameObject;
     uint32 db_lowGUID = objmgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT);
 
-    if (!pGameObj->Create(db_lowGUID, goI->id, map, x, y, z, o, 0, 0, rot2, rot3, 0, 1))
+    if (!pGameObj->Create(db_lowGUID, gInfo->id, map, x, y, z, o, 0, 0, rot2, rot3, 0, 1))
     {
         delete pGameObj;
         return false;
@@ -835,14 +833,14 @@ bool ChatHandler::HandleGameObjectCommand(const char* args)
         return false;
     }
 
-    sLog.outDebug(GetOregonString(LANG_GAMEOBJECT_CURRENT), goI->name, db_lowGUID, x, y, z, o);
+    sLog.outDebug(GetOregonString(LANG_GAMEOBJECT_CURRENT), gInfo->name, db_lowGUID, x, y, z, o);
 
     map->Add(pGameObj);
 
     // TODO: is it really necessary to add both the real and DB table guid here ?
     objmgr.AddGameobjectToGrid(db_lowGUID, objmgr.GetGOData(db_lowGUID));
 
-    PSendSysMessage(LANG_GAMEOBJECT_ADD,id,goI->name,db_lowGUID,x,y,z);
+    PSendSysMessage(LANG_GAMEOBJECT_ADD,id,gInfo->name,db_lowGUID,x,y,z);
     return true;
 }
 bool ChatHandler::HandleGUIDCommand(const char* /*args*/)
@@ -1077,7 +1075,6 @@ bool ChatHandler::HandleDelVendorItemCommand(const char* args)
     }
     uint32 itemId = atol(pitem);
 
-
     if (!objmgr.RemoveVendorItem(vendor->GetEntry(),itemId))
     {
         PSendSysMessage(LANG_ITEM_NOT_IN_LIST,itemId);
@@ -1131,7 +1128,7 @@ bool ChatHandler::HandleNpcAddMoveCommand(const char* args)
     if (wait < 0)
         wait = 0;
 
-    Player* player = m_session->GetPlayer();
+    //Player* player = m_session->GetPlayer();
 
     // update movement type
     WorldDatabase.PExecuteLog("UPDATE creature SET MovementType = '%u' WHERE guid = '%u'", WAYPOINT_MOTION_TYPE,lowguid);
@@ -1266,7 +1263,7 @@ bool ChatHandler::HandleNpcMoveCommand(const char* args)
         if (!cId)
             return false;
 
-        uint32 lowguid = atoi(cId);
+        lowguid = atoi(cId);
 
         /* FIXME: impossibel without entry
         if (lowguid)
@@ -1331,7 +1328,7 @@ bool ChatHandler::HandleNpcMoveCommand(const char* args)
     return true;
 }
 
-/**
+/**HandleNpcSetMoveTypeCommand
  * Set the movement type for an NPC.<br/>
  * <br/>
  * Valid movement types are:
@@ -1674,7 +1671,7 @@ bool ChatHandler::HandleNpcSetDeathStateCommand(const char* args)
         return false;
 
     Creature* pCreature = getSelectedCreature();
-    if(!pCreature || pCreature->isPet())
+    if (!pCreature || pCreature->isPet())
     {
         SendSysMessage(LANG_SELECT_CREATURE);
         SetSentErrorMessage(true);
@@ -1698,7 +1695,9 @@ bool ChatHandler::HandleNpcSetDeathStateCommand(const char* args)
     return true;
 }
 
-bool ChatHandler::HandleNameCommand(const char* args)
+//TODO: NpcCommands that need to be fixed :
+
+bool ChatHandler::HandleNameCommand(const char* /*args*/)
 {
     /* Temp. disabled
     if (!*args)
@@ -1868,7 +1867,7 @@ bool ChatHandler::HandleKickPlayerCommand(const char *args)
         kicker = m_session->GetPlayer()->GetName();
 
     if (!kickName)
-     {
+    {
         Player* player = getSelectedPlayer();
         if (!player)
         {
@@ -1886,12 +1885,10 @@ bool ChatHandler::HandleKickPlayerCommand(const char *args)
 
         if (sWorld.getConfig(CONFIG_SHOW_KICK_IN_WORLD) == 1)
         {
-
             sWorld.SendWorldText(LANG_COMMAND_KICKMESSAGE, player->GetName(), kicker.c_str(), reason.c_str());
         }
         else
         {
-
             PSendSysMessage(LANG_COMMAND_KICKMESSAGE, player->GetName(), kicker.c_str(), reason.c_str());
         }
 
@@ -2125,20 +2122,20 @@ bool ChatHandler::HandleWpAddCommand(const char* args)
     Creature* target = getSelectedCreature();
 
     if (!path_number)
-        {
+    {
         if (target)
             pathid = target->GetWaypointPath();
-                else
-                {
-                    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT MAX(id) FROM waypoint_data");
-                    uint32 maxpathid = result->Fetch()->GetInt32();
-                    pathid = maxpathid+1;
-                    sLog.outDebug("DEBUG: HandleWpAddCommand - New path started.");
-                    PSendSysMessage("%s%s|r", "|cff00ff00", "New path started.");
-                }
-        }
         else
-            pathid = atoi(path_number);
+        {
+            QueryResult_AutoPtr result = WorldDatabase.Query("SELECT MAX(id) FROM waypoint_data");
+            uint32 maxpathid = result->Fetch()->GetInt32();
+            pathid = maxpathid+1;
+            sLog.outDebug("DEBUG: HandleWpAddCommand - New path started.");
+            PSendSysMessage("%s%s|r", "|cff00ff00", "New path started.");
+        }
+    }
+    else
+        pathid = atoi(path_number);
 
     // path_id -> ID of the Path
     // point   -> number of the waypoint (if not 0)
@@ -2158,13 +2155,12 @@ bool ChatHandler::HandleWpAddCommand(const char* args)
         point = (*result)[0].GetUInt32();
 
     Player* player = m_session->GetPlayer();
-    Map *map = player->GetMap();
+    //Map *map = player->GetMap();
 
     WorldDatabase.PExecuteLog("INSERT INTO waypoint_data (id, point, position_x, position_y, position_z) VALUES ('%u','%u','%f', '%f', '%f')",
         pathid, point+1, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ());
 
-        PSendSysMessage("%s%s%u%s%u%s|r", "|cff00ff00", "PathID: |r|cff00ffff", pathid, "|r|cff00ff00: Waypoint |r|cff00ffff", point,"|r|cff00ff00 created. ");
-
+    PSendSysMessage("%s%s%u%s%u%s|r", "|cff00ff00", "PathID: |r|cff00ffff", pathid, "|r|cff00ff00: Waypoint |r|cff00ffff", point,"|r|cff00ff00 created. ");
     return true;
 }                                                           // HandleWpAddCommand
 
@@ -2178,7 +2174,6 @@ bool ChatHandler::HandleWpLoadPathCommand(const char *args)
 
     if (*args)
         path_number = strtok((char*)args, " ");
-
 
     uint32 pathid = 0;
     uint32 guidlow = 0;
@@ -2228,23 +2223,22 @@ bool ChatHandler::HandleWpLoadPathCommand(const char *args)
     return true;
 }
 
-
 bool ChatHandler::HandleReloadAllPaths(const char* args)
 {
-if (!*args)
-    return false;
+    if (!*args)
+        return false;
 
-uint32 id = atoi(args);
+    uint32 id = atoi(args);
 
-if (!id)
-    return false;
+    if (!id)
+        return false;
 
     PSendSysMessage("%s%s|r|cff00ffff%u|r", "|cff00ff00", "Loading Path: ", id);
     sWaypointMgr->UpdatePath(id);
-        return true;
+    return true;
 }
 
-bool ChatHandler::HandleWpUnLoadPathCommand(const char *args)
+bool ChatHandler::HandleWpUnLoadPathCommand(const char * /*args*/)
 {
     uint32 guidlow = 0;
     Creature* target = getSelectedCreature();
@@ -2270,231 +2264,225 @@ bool ChatHandler::HandleWpUnLoadPathCommand(const char *args)
             return true;
         }
         PSendSysMessage("%s%s|r", "|cffff33ff", "Target have no loaded path.");
-        return true;
     }
-    PSendSysMessage("%s%s|r", "|cffff33ff", "Target have no loaded path.");
     return true;
 }
 
 bool ChatHandler::HandleWpEventCommand(const char* args)
 {
-if (!*args)
-     return false;
+    if (!*args)
+        return false;
 
     char* show_str = strtok((char*)args, " ");
-
     std::string show = show_str;
 
     // Check
     if ((show != "add") && (show != "mod") && (show != "del") && (show != "listid")) return false;
 
+    char* arg_id = strtok(NULL, " ");
+    uint32 id = 0;
 
     if (show == "add")
     {
-    uint32 id = 0;
-    char* arg_id = strtok(NULL, " ");
+        if (arg_id)
+            id = atoi(arg_id);
 
-    if (arg_id)
-        uint32 id = atoi(arg_id);
-
-    if (id)
-    {
-        QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT id FROM waypoint_scripts WHERE guid = %u", id);
-
-        if (!result)
+        if (id)
         {
-        WorldDatabase.PExecute("INSERT INTO waypoint_scripts(guid)VALUES(%u)", id);
-        PSendSysMessage("%s%s%u|r", "|cff00ff00", "Wp Event: New waypoint event added: ", id);
+            QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT id FROM waypoint_scripts WHERE guid = %u", id);
+
+            if (!result)
+            {
+                WorldDatabase.PExecute("INSERT INTO waypoint_scripts(guid)VALUES(%u)", id);
+                PSendSysMessage("%s%s%u|r", "|cff00ff00", "Wp Event: New waypoint event added: ", id);
+            }
+            else
+                PSendSysMessage("|cff00ff00Wp Event: You have choosed an existing waypoint script guid: %u|r", id);
         }
         else
-        PSendSysMessage("|cff00ff00Wp Event: You have choosed an existing waypoint script guid: %u|r", id);
-    }
-    else
-    {
-        QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT MAX(guid) FROM waypoint_scripts");
-        id = result->Fetch()->GetUInt32();
-        WorldDatabase.PExecute("INSERT INTO waypoint_scripts(guid)VALUES(%u)", id+1);
-        PSendSysMessage("%s%s%u|r", "|cff00ff00","Wp Event: New waypoint event added: |r|cff00ffff", id+1);
-    }
+        {
+            QueryResult_AutoPtr result = WorldDatabase.Query("SELECT MAX(guid) FROM waypoint_scripts");
+            id = result->Fetch()->GetUInt32();
+            WorldDatabase.PExecute("INSERT INTO waypoint_scripts(guid)VALUES(%u)", id+1);
+            PSendSysMessage("%s%s%u|r", "|cff00ff00","Wp Event: New waypoint event added: |r|cff00ffff", id+1);
+        }
 
-    return true;
-    }
-
-
-    if (show == "listid")
-    {
-    uint32 id;
-    char* arg_id = strtok(NULL, " ");
-
-    if (!arg_id)
-    {
-    PSendSysMessage("%s%s|r", "|cff33ffff","Wp Event: You must provide waypoint script id.");
-    return true;
-    }
-
-    id = atoi(arg_id);
-
-    uint32 a2, a3, a4, a5, a6;
-    float a8, a9, a10, a11;
-    char const* a7;
-
-    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT guid, delay, command, datalong, datalong2, dataint, x, y, z, o FROM waypoint_scripts WHERE id = %u", id);
-
-    if (!result)
-    {
-        PSendSysMessage("%s%s%u|r", "|cff33ffff", "Wp Event: No waypoint scripts found on id: ", id);
         return true;
     }
 
-    Field *fields;
-
-    do
+    if (show == "listid")
     {
-        fields = result->Fetch();
-        a2 = fields[0].GetUInt32();
-        a3 = fields[1].GetUInt32();
-        a4 = fields[2].GetUInt32();
-        a5 = fields[3].GetUInt32();
-        a6 = fields[4].GetUInt32();
-        a7 = fields[5].GetString();
-        a8 = fields[6].GetFloat();
-        a9 = fields[7].GetFloat();
-        a10 = fields[8].GetFloat();
-        a11 = fields[9].GetFloat();
+        if (!arg_id)
+        {
+            PSendSysMessage("%s%s|r", "|cff33ffff","Wp Event: You must provide waypoint script id.");
+            return true;
+        }
 
-        PSendSysMessage("|cffff33ffid:|r|cff00ffff %u|r|cff00ff00, guid: |r|cff00ffff%u|r|cff00ff00, delay: |r|cff00ffff%u|r|cff00ff00, command: |r|cff00ffff%u|r|cff00ff00, datalong: |r|cff00ffff%u|r|cff00ff00, datalong2: |r|cff00ffff%u|r|cff00ff00, datatext: |r|cff00ffff%s|r|cff00ff00, posx: |r|cff00ffff%f|r|cff00ff00, posy: |r|cff00ffff%f|r|cff00ff00, posz: |r|cff00ffff%f|r|cff00ff00, orientation: |r|cff00ffff%f|r", id, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
-    }while (result->NextRow());
+        id = atoi(arg_id);
+
+        uint32 a2, a3, a4, a5, a6;
+        float a8, a9, a10, a11;
+        char const* a7;
+
+        QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT guid, delay, command, datalong, datalong2, dataint, x, y, z, o FROM waypoint_scripts WHERE id = %u", id);
+
+        if (!result)
+        {
+            PSendSysMessage("%s%s%u|r", "|cff33ffff", "Wp Event: No waypoint scripts found on id: ", id);
+            return true;
+        }
+
+        Field *fields;
+
+        do
+        {
+            fields = result->Fetch();
+            a2 = fields[0].GetUInt32();
+            a3 = fields[1].GetUInt32();
+            a4 = fields[2].GetUInt32();
+            a5 = fields[3].GetUInt32();
+            a6 = fields[4].GetUInt32();
+            a7 = fields[5].GetString();
+            a8 = fields[6].GetFloat();
+            a9 = fields[7].GetFloat();
+            a10 = fields[8].GetFloat();
+            a11 = fields[9].GetFloat();
+
+            PSendSysMessage("|cffff33ffid:|r|cff00ffff %u|r|cff00ff00, guid: |r|cff00ffff%u|r|cff00ff00, delay: |r|cff00ffff%u|r|cff00ff00, command: |r|cff00ffff%u|r|cff00ff00, datalong: |r|cff00ffff%u|r|cff00ff00, datalong2: |r|cff00ffff%u|r|cff00ff00, datatext: |r|cff00ffff%s|r|cff00ff00, posx: |r|cff00ffff%f|r|cff00ff00, posy: |r|cff00ffff%f|r|cff00ff00, posz: |r|cff00ffff%f|r|cff00ff00, orientation: |r|cff00ffff%f|r", id, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
+        }
+        while (result->NextRow());
     }
 
     if (show == "del")
     {
+        id = atoi(arg_id);
 
-    char* arg_id = strtok(NULL, " ");
-    uint32 id = atoi(arg_id);
+        QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT guid FROM waypoint_scripts WHERE guid = %u", id);
 
-    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT guid FROM waypoint_scripts WHERE guid = %u", id);
+        if (result)
+        {
+           WorldDatabase.PExecuteLog("DELETE FROM waypoint_scripts WHERE guid = %u", id);
+           PSendSysMessage("%s%s%u|r","|cff00ff00","Wp Event: Waypoint script removed: ", id);
+        }
+        else
+            PSendSysMessage("|cffff33ffWp Event: ERROR: you have selected a non existing script: %u|r", id);
 
-    if (result)
-    {
-
-       WorldDatabase.PExecuteLog("DELETE FROM waypoint_scripts WHERE guid = %u", id);
-       PSendSysMessage("%s%s%u|r","|cff00ff00","Wp Event: Waypoint script removed: ", id);
+        return true;
     }
-    else
-        PSendSysMessage("|cffff33ffWp Event: ERROR: you have selected a non existing script: %u|r", id);
-
-    return true;
-    }
-
 
     if (show == "mod")
     {
-    char* arg_1 = strtok(NULL," ");
+        if (!arg_id)
+        {
+            SendSysMessage("|cffff33ffERROR: Waypoint script guid not present.|r");
+            return true;
+        }
 
-    if (!arg_1)
-    {
-        SendSysMessage("|cffff33ffERROR: Waypoint script guid not present.|r");
-        return true;
+        id = atoi(arg_id);
+
+        if (!id)
+        {
+            SendSysMessage("|cffff33ffERROR: No vallid waypoint script id not present.|r");
+            return true;
+        }
+
+        char* arg_2 = strtok(NULL," ");
+
+        if (!arg_2)
+        {
+            SendSysMessage("|cffff33ffERROR: No argument present.|r");
+            return true;
+        }
+
+        std::string arg_string  = arg_2;
+
+        if ((arg_string != "setid") && (arg_string != "delay") && (arg_string != "command")
+        && (arg_string != "datalong") && (arg_string != "datalong2") && (arg_string != "dataint") && (arg_string != "posx")
+        && (arg_string != "posy") && (arg_string != "posz") && (arg_string != "orientation"))
+        {
+            SendSysMessage("|cffff33ffERROR: No valid argument present.|r");
+            return true;
+        }
+
+        char* arg_3;
+        std::string arg_str_2 = arg_2;
+        arg_3 = strtok(NULL," ");
+
+        if (!arg_3)
+        {
+            SendSysMessage("|cffff33ffERROR: No additional argument present.|r");
+            return true;
+        }
+
+        float coord;
+
+        if (arg_str_2 == "setid")
+        {
+            uint32 newid = atoi(arg_3);
+            PSendSysMessage("%s%s|r|cff00ffff%u|r|cff00ff00%s|r|cff00ffff%u|r","|cff00ff00","Wp Event: Wypoint scipt guid: ", newid," id changed: ", id);
+            WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET id='%u' WHERE guid='%u'",
+            newid, id); return true;
+        }
+        else
+        {
+            QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT id FROM waypoint_scripts WHERE guid='%u'",id);
+
+            if (!result)
+            {
+                SendSysMessage("|cffff33ffERROR: You have selected an non existing waypoint script guid.|r");
+                return true;
+            }
+
+            if (arg_str_2 == "posx")
+            {
+                coord = atof(arg_3);
+                WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET x='%f' WHERE guid='%u'",
+                    coord, id);
+                PSendSysMessage("|cff00ff00Waypoint script:|r|cff00ffff %u|r|cff00ff00 position_x updated.|r", id);
+                return true;
+            }
+            else if (arg_str_2 == "posy")
+            {
+                coord = atof(arg_3);
+                WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET y='%f' WHERE guid='%u'",
+                    coord, id);
+                PSendSysMessage("|cff00ff00Waypoint script: %u position_y updated.|r", id);
+                return true;
+            }
+            else if (arg_str_2 == "posz")
+            {
+                coord = atof(arg_3);
+                WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET z='%f' WHERE guid='%u'",
+                    coord, id);
+                PSendSysMessage("|cff00ff00Waypoint script: |r|cff00ffff%u|r|cff00ff00 position_z updated.|r", id);
+                return true;
+            }
+            else if (arg_str_2 == "orientation")
+            {
+                coord = atof(arg_3);
+                WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET o='%f' WHERE guid='%u'",
+                    coord, id);
+                PSendSysMessage("|cff00ff00Waypoint script: |r|cff00ffff%u|r|cff00ff00 orientation updated.|r", id);
+                return true;
+            }
+            else if (arg_str_2 == "dataint")
+            {
+                    WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET %s='%u' WHERE guid='%u'",
+                    arg_2, atoi(arg_3), id);
+                    PSendSysMessage("|cff00ff00Waypoint script: |r|cff00ffff%u|r|cff00ff00 dataint updated.|r", id);
+                    return true;
+            }
+            else
+            {
+                    std::string arg_str_3 = arg_3;
+                    WorldDatabase.escape_string(arg_str_3);
+                    WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET %s='%s' WHERE guid='%u'",
+                    arg_2, arg_str_3.c_str(), id);
+            }
+        }
+        PSendSysMessage("%s%s|r|cff00ffff%u:|r|cff00ff00 %s %s|r","|cff00ff00","Waypoint script:", id, arg_2,"updated.");
     }
-
-    uint32 id = atoi(arg_1);
-
-    if (!id)
-    {
-        SendSysMessage("|cffff33ffERROR: No vallid waypoint script id not present.|r");
-        return true;
-    }
-
-    char* arg_2 = strtok(NULL," ");
-
-    if (!arg_2)
-        {   SendSysMessage("|cffff33ffERROR: No argument present.|r");
-    return true;}
-
-
-    std::string arg_string  = arg_2;
-
-
-if ((arg_string != "setid") && (arg_string != "delay") && (arg_string != "command")
-&& (arg_string != "datalong") && (arg_string != "datalong2") && (arg_string != "dataint") && (arg_string != "posx")
-&& (arg_string != "posy") && (arg_string != "posz") && (arg_string != "orientation")
-) { SendSysMessage("|cffff33ffERROR: No valid argument present.|r");
-    return true;}
-
-
-char* arg_3;
-std::string arg_str_2 = arg_2;
-arg_3 = strtok(NULL," ");
-
-if (!arg_3)
-{SendSysMessage("|cffff33ffERROR: No additional argument present.|r");
-    return true;}
-
-float coord;
-
-    if (arg_str_2 == "setid")
-    {
-        uint32 newid = atoi(arg_3);
-        PSendSysMessage("%s%s|r|cff00ffff%u|r|cff00ff00%s|r|cff00ffff%u|r","|cff00ff00","Wp Event: Wypoint scipt guid: ", newid," id changed: ", id);
-        WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET id='%u' WHERE guid='%u'",
-        newid, id); return true;
-    }
-    else
-    {
-
-    QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT id FROM waypoint_scripts WHERE guid='%u'",id);
-
-    if (!result)
-    {
-        SendSysMessage("|cffff33ffERROR: You have selected an non existing waypoint script guid.|r");
-        return true;
-    }
-
-if (arg_str_2 == "posx")
-{
-    coord = atof(arg_3);
-    WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET x='%f' WHERE guid='%u'",
-        coord, id);
-    PSendSysMessage("|cff00ff00Waypoint script:|r|cff00ffff %u|r|cff00ff00 position_x updated.|r", id);
     return true;
-}else if (arg_str_2 == "posy")
-{
-    coord = atof(arg_3);
-    WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET y='%f' WHERE guid='%u'",
-        coord, id);
-    PSendSysMessage("|cff00ff00Waypoint script: %u position_y updated.|r", id);
-    return true;
-} else if (arg_str_2 == "posz")
-{
-    coord = atof(arg_3);
-    WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET z='%f' WHERE guid='%u'",
-        coord, id);
-    PSendSysMessage("|cff00ff00Waypoint script: |r|cff00ffff%u|r|cff00ff00 position_z updated.|r", id);
-    return true;
-} else if (arg_str_2 == "orientation")
-{
-    coord = atof(arg_3);
-    WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET o='%f' WHERE guid='%u'",
-        coord, id);
-    PSendSysMessage("|cff00ff00Waypoint script: |r|cff00ffff%u|r|cff00ff00 orientation updated.|r", id);
-    return true;
-} else if (arg_str_2 == "dataint")
-{
-        WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET %s='%u' WHERE guid='%u'",
-        arg_2, atoi(arg_3), id);
-        PSendSysMessage("|cff00ff00Waypoint script: |r|cff00ffff%u|r|cff00ff00 dataint updated.|r", id);
-        return true;
-}else
-{
-        std::string arg_str_3 = arg_3;
-        WorldDatabase.escape_string(arg_str_3);
-        WorldDatabase.PExecuteLog("UPDATE waypoint_scripts SET %s='%s' WHERE guid='%u'",
-        arg_2, arg_str_3.c_str(), id);
-}
-}
-    PSendSysMessage("%s%s|r|cff00ffff%u:|r|cff00ff00 %s %s|r","|cff00ff00","Waypoint script:", id, arg_2,"updated.");
-}
-return true;
 }
 
 bool ChatHandler::HandleWpModifyCommand(const char* args)
@@ -2676,7 +2664,6 @@ bool ChatHandler::HandleWpModifyCommand(const char* args)
         return true;
     }                                                       // move
 
-
     const char *text = arg_str;
 
     if (text == 0)
@@ -2695,10 +2682,8 @@ bool ChatHandler::HandleWpModifyCommand(const char* args)
     }
 
     PSendSysMessage(LANG_WAYPOINT_CHANGED_NO, show_str);
-
     return true;
 }
-
 
 bool ChatHandler::HandleWpShowCommand(const char* args)
 {
@@ -2710,9 +2695,8 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
     // first arg: on, off, first, last
     char* show_str = strtok((char*)args, " ");
     if (!show_str)
-    {
         return false;
-    }
+
     // second arg: GUID (optional, if a creature is selected)
     char* guid_str = strtok((char*)NULL, " ");
     sLog.outDebug("DEBUG: HandleWpShowCommand: show_str: %s guid_str: %s", show_str, guid_str);
@@ -2737,7 +2721,6 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
 
         pathid = target->GetWaypointPath();
     }
-
     else
     {
         sLog.outDebug("|cff00ff00DEBUG: HandleWpShowCommand: PathID provided|r");
@@ -2745,17 +2728,12 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         // Warn if player also selected a creature
         // -> Creature selection is ignored <-
         if (target)
-        {
             SendSysMessage(LANG_WAYPOINT_CREATSELECTED);
-        }
 
         pathid = atoi((char*)guid_str);
     }
 
-
     sLog.outDebug("DEBUG: HandleWpShowCommand: danach");
-
-
 
     std::string show = show_str;
     uint32 Maxpoint;
@@ -2766,30 +2744,24 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
 
     // Show info for the selected waypoint
     if (show == "info")
-
     {
-
         // Check if the user did specify a visual waypoint
         if (target->GetEntry() != VISUAL_WAYPOINT)
-
         {
             PSendSysMessage(LANG_WAYPOINT_VP_SELECT);
             SetSentErrorMessage(true);
             return false;
         }
 
-
         QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT id, point, delay, move_flag, action, action_chance FROM waypoint_data WHERE wpguid = %u", target->GetGUIDLow());
 
         if (!result)
-
         {
             SendSysMessage(LANG_WAYPOINT_NOTFOUNDDBPROBLEM);
             return true;
         }
 
         SendSysMessage("|cff00ffffDEBUG: wp show info:|r");
-
         do
         {
             Field *fields = result->Fetch();
@@ -2805,7 +2777,8 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
             PSendSysMessage("|cff00ff00Show info: Move flag: |r|cff00ffff%u|r", flag);
             PSendSysMessage("|cff00ff00Show info: Waypoint event: |r|cff00ffff%u|r", ev_id);
             PSendSysMessage("|cff00ff00Show info: Event chance: |r|cff00ffff%u|r", ev_chance);
-            }while (result->NextRow());
+            }
+            while (result->NextRow());
 
         return true;
     }
@@ -2848,7 +2821,8 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
                     pCreature->AddObjectToRemoveList();
                 }
 
-            }while (result2->NextRow());
+            }
+            while (result2->NextRow());
 
             if (hasError)
             {
@@ -3033,7 +3007,6 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
             Field *fields = result->Fetch();
             uint32 guid = fields[0].GetUInt32();
             Creature* pCreature = m_session->GetPlayer()->GetMap()->GetCreature(MAKE_NEW_GUID(guid,VISUAL_WAYPOINT,HIGHGUID_UNIT));
-
             if (!pCreature)
             {
                 PSendSysMessage(LANG_WAYPOINT_NOTREMOVED, guid);
@@ -3043,12 +3016,11 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
             else
             {
                 pCreature->CombatStop();
-
                 pCreature->DeleteFromDB();
-
                 pCreature->AddObjectToRemoveList();
             }
-        }while (result->NextRow());
+        }
+        while (result->NextRow());
         // set "wpguid" column to "empty" - no visual waypoint spawned
         WorldDatabase.PExecuteLog("UPDATE waypoint_data SET wpguid = '0'");
         //WorldDatabase.PExecuteLog("UPDATE creature_movement SET wpguid = '0' WHERE wpguid <> '0'");
@@ -3061,12 +3033,10 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         }
 
         SendSysMessage(LANG_WAYPOINT_VP_ALLREMOVED);
-
         return true;
     }
 
     PSendSysMessage("|cffff33ffDEBUG: wpshow - no valid command found|r");
-
     return true;
 }
 
@@ -3305,7 +3275,7 @@ bool ChatHandler::HandleLookupEventCommand(const char* args)
 
     wstrToLower(wnamepart);
 
-    uint32 counter = 0;
+    bool found = false;
 
     GameEvent::GameEventDataMap const& events = gameeventmgr.GetEventMap();
     GameEvent::ActiveEvents const& activeEvents = gameeventmgr.GetActiveEventList();
@@ -3327,17 +3297,18 @@ bool ChatHandler::HandleLookupEventCommand(const char* args)
             else
                 PSendSysMessage(LANG_EVENT_ENTRY_LIST_CONSOLE,id,eventData.description.c_str(),active);
 
-            ++counter;
+            if (!found)
+                found = true;
         }
     }
 
-    if (counter == 0)
+    if (!found)
         SendSysMessage(LANG_NOEVENTFOUND);
 
     return true;
 }
 
-bool ChatHandler::HandleEventActiveListCommand(const char* args)
+bool ChatHandler::HandleEventActiveListCommand(const char* /*args*/)
 {
     uint32 counter = 0;
 
@@ -3773,7 +3744,7 @@ bool ChatHandler::HandleRepairitemsCommand(const char* /*args*/)
     return true;
 }
 
-bool ChatHandler::HandleCreatePetCommand(const char* args)
+bool ChatHandler::HandleCreatePetCommand(const char* /*args*/)
 {
     Player *player = m_session->GetPlayer();
     Creature *creatureTarget = getSelectedCreature();
@@ -4113,7 +4084,7 @@ bool ChatHandler::HandleNpcSetLinkCommand(const char* args)
 
 bool ChatHandler::HandleLookupTitleCommand(const char* args)
 {
-    if(!*args)
+    if (!*args)
         return false;
 
     // can be NULL in console call
@@ -4125,11 +4096,11 @@ bool ChatHandler::HandleLookupTitleCommand(const char* args)
     std::string namepart = args;
     std::wstring wnamepart;
 
-    if(!Utf8toWStr(namepart,wnamepart))
+    if (!Utf8toWStr(namepart,wnamepart))
         return false;
 
     // converting string that we try to find to lower case
-    wstrToLower( wnamepart);
+    wstrToLower(wnamepart);
 
     uint32 counter = 0;                                     // Counter for figure out that we found smth.
 
@@ -4137,23 +4108,23 @@ bool ChatHandler::HandleLookupTitleCommand(const char* args)
     for (uint32 id = 0; id < sCharTitlesStore.GetNumRows(); id++)
     {
         CharTitlesEntry const *titleInfo = sCharTitlesStore.LookupEntry(id);
-        if(titleInfo)
+        if (titleInfo)
         {
             int loc = m_session->GetSessionDbcLocale();
             std::string name = titleInfo->name[loc];
-            if(name.empty())
+            if (name.empty())
                 continue;
 
             if (!Utf8FitTo(name, wnamepart))
             {
                 loc = 0;
-                for(; loc < MAX_LOCALE; ++loc)
+                for (; loc < MAX_LOCALE; ++loc)
                 {
-                    if(loc == m_session->GetSessionDbcLocale())
+                    if (loc == m_session->GetSessionDbcLocale())
                         continue;
 
                     name = titleInfo->name[loc];
-                    if(name.empty())
+                    if (name.empty())
                         continue;
 
                     if (Utf8FitTo(name, wnamepart))
@@ -4161,7 +4132,7 @@ bool ChatHandler::HandleLookupTitleCommand(const char* args)
                 }
             }
 
-            if(loc < MAX_LOCALE)
+            if (loc < MAX_LOCALE)
             {
                 char const* knownStr = target && target->HasTitle(titleInfo) ? GetOregonString(LANG_KNOWN) : "";
 
@@ -4191,7 +4162,7 @@ bool ChatHandler::HandleTitlesAddCommand(const char* args)
 {
     // number or [name] Shift-click form |color|Htitle:title_id|h[name]|h|r
     char* id_p = extractKeyFromLink((char*)args,"Htitle");
-    if(!id_p)
+    if (!id_p)
         return false;
 
     int32 id = atoi(id_p);
@@ -4203,7 +4174,7 @@ bool ChatHandler::HandleTitlesAddCommand(const char* args)
     }
 
     Player * target = getSelectedPlayer();
-    if(!target)
+    if (!target)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
         SetSentErrorMessage(true);
@@ -4211,7 +4182,7 @@ bool ChatHandler::HandleTitlesAddCommand(const char* args)
     }
 
     CharTitlesEntry const* titleInfo = sCharTitlesStore.LookupEntry(id);
-    if(!titleInfo)
+    if (!titleInfo)
     {
         PSendSysMessage(LANG_INVALID_TITLE_ID, id);
         SetSentErrorMessage(true);
@@ -4234,7 +4205,7 @@ bool ChatHandler::HandleTitlesRemoveCommand(const char* args)
 {
     // number or [name] Shift-click form |color|Htitle:title_id|h[name]|h|r
     char* id_p = extractKeyFromLink((char*)args,"Htitle");
-    if(!id_p)
+    if (!id_p)
         return false;
 
     int32 id = atoi(id_p);
@@ -4246,7 +4217,7 @@ bool ChatHandler::HandleTitlesRemoveCommand(const char* args)
     }
 
     Player * target = getSelectedPlayer();
-    if(!target)
+    if (!target)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
         SetSentErrorMessage(true);
@@ -4254,7 +4225,7 @@ bool ChatHandler::HandleTitlesRemoveCommand(const char* args)
     }
 
     CharTitlesEntry const* titleInfo = sCharTitlesStore.LookupEntry(id);
-    if(!titleInfo)
+    if (!titleInfo)
     {
         PSendSysMessage(LANG_INVALID_TITLE_ID, id);
         SetSentErrorMessage(true);
@@ -4281,7 +4252,7 @@ bool ChatHandler::HandleTitlesRemoveCommand(const char* args)
 //Edit Player KnownTitles
 bool ChatHandler::HandleTitlesSetMaskCommand(const char* args)
 {
-    if(!*args)
+    if (!*args)
         return false;
 
     uint64 titles = 0;
@@ -4298,8 +4269,8 @@ bool ChatHandler::HandleTitlesSetMaskCommand(const char* args)
 
     uint64 titles2 = titles;
 
-    for(uint32 i = 1; i < sCharTitlesStore.GetNumRows(); ++i)
-        if(CharTitlesEntry const* tEntry = sCharTitlesStore.LookupEntry(i))
+    for (uint32 i = 1; i < sCharTitlesStore.GetNumRows(); ++i)
+        if (CharTitlesEntry const* tEntry = sCharTitlesStore.LookupEntry(i))
             titles2 &= ~(uint64(1) << tEntry->bit_index);
 
     titles &= ~titles2;                                     // remove not existed titles
@@ -4338,7 +4309,7 @@ bool ChatHandler::HandleCharacterTitlesCommand(const char* args)
         if (titleInfo && target->HasTitle(titleInfo))
         {
             std::string name = titleInfo->name[loc];
-            if(name.empty())
+            if (name.empty())
                 continue;
 
             char const* activeStr = target && target->GetUInt32Value(PLAYER_CHOSEN_TITLE) == titleInfo->bit_index
@@ -4362,7 +4333,7 @@ bool ChatHandler::HandleTitlesCurrentCommand(const char* args)
 {
     // number or [name] Shift-click form |color|Htitle:title_id|h[name]|h|r
     char* id_p = extractKeyFromLink((char*)args,"Htitle");
-    if(!id_p)
+    if (!id_p)
         return false;
 
     int32 id = atoi(id_p);
@@ -4374,7 +4345,7 @@ bool ChatHandler::HandleTitlesCurrentCommand(const char* args)
     }
 
     Player * target = getSelectedPlayer();
-    if(!target)
+    if (!target)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
         SetSentErrorMessage(true);
@@ -4382,7 +4353,7 @@ bool ChatHandler::HandleTitlesCurrentCommand(const char* args)
     }
 
     CharTitlesEntry const* titleInfo = sCharTitlesStore.LookupEntry(id);
-    if(!titleInfo)
+    if (!titleInfo)
     {
         PSendSysMessage(LANG_INVALID_TITLE_ID, id);
         SetSentErrorMessage(true);
