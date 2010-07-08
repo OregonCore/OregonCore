@@ -1521,7 +1521,7 @@ void World::DetectDBCLang()
     std::string availableLocalsStr;
 
     uint8 default_locale = MAX_LOCALE;
-    for (uint8 i = MAX_LOCALE-1; i >= 0; --i)
+    for (uint8 i = default_locale-1; i < MAX_LOCALE; --i)  // -1 will be 255 due to uint8
     {
         if (strlen(race->name[i]) > 0)                     // check by race names
         {
