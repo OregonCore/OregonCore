@@ -109,20 +109,6 @@ struct OREGON_DLL_DECL instance_shadow_labyrinth : public ScriptedInstance
         return NULL;
     }
 
-    void HandleGameObject(uint64 guid, uint32 state)
-    {
-        Player *player = GetPlayerInMap();
-
-        if (!player || !guid)
-        {
-            debug_log("TSCR: Shadow Labyrinth: HandleGameObject fail");
-            return;
-        }
-
-        if (GameObject *go = GameObject::GetGameObject(*player,guid))
-            go->SetGoState(state);
-    }
-
     void SetData(uint32 type, uint32 data)
     {
         switch(type)
@@ -149,7 +135,7 @@ struct OREGON_DLL_DECL instance_shadow_labyrinth : public ScriptedInstance
             case DATA_BLACKHEARTTHEINCITEREVENT:
                 if (data == DONE)
                 {
-                    HandleGameObject(RefectoryDoorGUID,0);
+                    HandleGameObject(RefectoryDoorGUID, true);
                 }
                 if (Encounter[2] != DONE)
                     Encounter[2] = data;
@@ -158,7 +144,7 @@ struct OREGON_DLL_DECL instance_shadow_labyrinth : public ScriptedInstance
             case DATA_GRANDMASTERVORPILEVENT:
                 if (data == DONE)
                 {
-                    HandleGameObject(ScreamingHallDoorGUID,0);
+                    HandleGameObject(ScreamingHallDoorGUID, true);
                 }
                 if (Encounter[3] != DONE)
                     Encounter[3] = data;

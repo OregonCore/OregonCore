@@ -127,7 +127,7 @@ struct OREGON_DLL_DECL instance_magtheridons_lair : public ScriptedInstance
             if (data != IN_PROGRESS)
             {
                 if (GameObject *Door = instance->GetGameObject(DoorGUID))
-                    Door->SetGoState(0);
+                    Door->SetGoState(GO_STATE_ACTIVE);
             }
             break;
         case DATA_CHANNELER_EVENT:
@@ -149,7 +149,7 @@ struct OREGON_DLL_DECL instance_magtheridons_lair : public ScriptedInstance
                     }
                     CageTimer = 0;
                     if (GameObject *Door = instance->GetGameObject(DoorGUID))
-                        Door->SetGoState(0);
+                        Door->SetGoState(GO_STATE_ACTIVE);
                 }break;
             case IN_PROGRESS: // Event start.
                 if (Encounters[1] != IN_PROGRESS)
@@ -170,7 +170,7 @@ struct OREGON_DLL_DECL instance_magtheridons_lair : public ScriptedInstance
                         CageTimer = 120000;
                     }
                     if (GameObject *Door = instance->GetGameObject(DoorGUID))
-                        Door->SetGoState(1);
+                        Door->SetGoState(GO_STATE_READY);
                 }break;
             case DONE: // Add buff and check if all channelers are dead.
                 for (std::set<uint64>::iterator i = ChannelerGUID.begin(); i != ChannelerGUID.end(); ++i)
@@ -189,10 +189,7 @@ struct OREGON_DLL_DECL instance_magtheridons_lair : public ScriptedInstance
         case DATA_COLLAPSE:
             // true - collapse / false - reset
             for (std::set<uint64>::iterator i = ColumnGUID.begin(); i != ColumnGUID.end(); ++i)
-            {
-                if (GameObject *Column = instance->GetGameObject(*i))
-                    Column->SetGoState(!data);
-            }
+                HandleGameObject(*i, data);
             break;
         default:
             break;

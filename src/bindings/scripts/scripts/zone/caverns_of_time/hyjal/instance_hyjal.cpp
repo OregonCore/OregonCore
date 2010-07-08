@@ -98,24 +98,23 @@ struct OREGON_DLL_DECL instance_mount_hyjal : public ScriptedInstance
             case 182060:
                 HordeGate = go->GetGUID();
                 if (allianceRetreat)
-                    go->SetGoState(0);
+                    go->SetGoState(GO_STATE_ACTIVE);
                 else
-                    go->SetGoState(1);
+                    go->SetGoState(GO_STATE_READY);
                 break;
             case 182061:
                 ElfGate = go->GetGUID();
                 if (hordeRetreat)
-                    go->SetGoState(0);
+                    go->SetGoState(GO_STATE_ACTIVE);
                 else
-                    go->SetGoState(1);
+                    go->SetGoState(GO_STATE_READY);
                 break;
         }
     }
 
     void OpenDoor(uint64 DoorGUID, bool open)
     {
-        if (GameObject *Door = instance->GetGameObject(DoorGUID))
-            Door->SetUInt32Value(GAMEOBJECT_STATE, open ? 0 : 1);
+        HandleGameObject(DoorGUID, open, NULL);
     }
 
     void OnCreatureCreate(Creature *creature, uint32 creature_entry)

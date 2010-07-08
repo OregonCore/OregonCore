@@ -384,9 +384,9 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                                 if (pInstance)
                                 {
                                     GameObject* KaelLeft = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_KAEL_STATUE_LEFT));
-                                    if (KaelLeft) KaelLeft->SetGoState(0);
+                                    if (KaelLeft) KaelLeft->SetGoState(GO_STATE_ACTIVE);
                                     GameObject* KaelRight = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_KAEL_STATUE_RIGHT));
-                                    if (KaelRight) KaelRight->SetGoState(0);
+                                    if (KaelRight) KaelRight->SetGoState(GO_STATE_ACTIVE);
                                 }
                             }else
                             {

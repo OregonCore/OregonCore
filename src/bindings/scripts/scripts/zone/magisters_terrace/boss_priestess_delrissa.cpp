@@ -241,7 +241,7 @@ struct OREGON_DLL_DECL boss_priestess_delrissaAI : public ScriptedAI
         pInstance->SetData(DATA_DELRISSA_DEATH_COUNT, 1);
         pInstance->SetData(DATA_DELRISSA_EVENT, DONE);
         if (GameObject* Door = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_DELRISSA_DOOR)))
-            Door->SetGoState(0);
+            Door->SetGoState(GO_STATE_ACTIVE);
     }
 
     void CheckLootable()

@@ -139,14 +139,6 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
 
     void EnterCombat(Unit *who) { }
 
-    void DoGate(uint32 id, uint32 state)
-    {
-        if (GameObject *go = GameObject::GetGameObject(*m_creature,pInstance->GetData64(id)))
-            go->SetGoState(state);
-
-        debug_log("TSCR: npc_grimstone, arena gate update state.");
-    }
-
     //TODO: move them to center
     void SummonRingMob()
     {
@@ -203,6 +195,11 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
         }
     }
 
+    void HandleGameObject(uint32 id, bool open)
+    {
+        pInstance->HandleGameObject(pInstance->GetData64(id), open);
+    }
+
     void UpdateAI(const uint32 diff)
     {
         if (!pInstance)
@@ -254,7 +251,7 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
                 {
                 case 0:
                     DoScriptText(-1000000, m_creature);//1
-                    DoGate(DATA_ARENA4,1);
+                    HandleGameObject(DATA_ARENA4, false);
                     Start(false, false, false);
                     CanWalk = true;
                     Event_Timer = 0;
@@ -267,7 +264,7 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
                     Event_Timer = 2000;
                     break;
                 case 3:
-                    DoGate(DATA_ARENA1,0);
+                    HandleGameObject(DATA_ARENA1, true);
                     Event_Timer = 3000;
                     break;
                 case 4:
@@ -287,13 +284,13 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
                     break;
                 case 7:
                     m_creature->SetVisibility(VISIBILITY_ON);
-                    DoGate(DATA_ARENA1,1);
+                    HandleGameObject(DATA_ARENA1, false);
                     DoScriptText(-1000000, m_creature);//4
                     CanWalk = true;
                     Event_Timer = 0;
                     break;
                 case 8:
-                    DoGate(DATA_ARENA2,0);
+                    HandleGameObject(DATA_ARENA2, true);
                     Event_Timer = 5000;
                     break;
                 case 9:
@@ -303,9 +300,9 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
                     break;
                 case 10:
                     //if quest, complete
-                    DoGate(DATA_ARENA2,1);
-                    DoGate(DATA_ARENA3,0);
-                    DoGate(DATA_ARENA4,0);
+                    HandleGameObject(DATA_ARENA2, false);
+                    HandleGameObject(DATA_ARENA3, true);
+                    HandleGameObject(DATA_ARENA4, true);
                     CanWalk = true;
                     Event_Timer = 0;
                     break;
@@ -1146,7 +1143,7 @@ struct OREGON_DLL_DECL npc_rocknotAI : public npc_escortAI
     void DoGo(uint32 id, uint32 state)
     {
         if (GameObject *go = GameObject::GetGameObject(*m_creature,pInstance->GetData64(id)))
-            go->SetGoState(state);
+            go->SetGoState((GOState)state);
     }
 
     void WaypointReached(uint32 i)

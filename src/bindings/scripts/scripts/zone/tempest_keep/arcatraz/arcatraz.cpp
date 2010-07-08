@@ -309,7 +309,7 @@ struct OREGON_DLL_DECL npc_warden_mellicharAI : public ScriptedAI
         {
             pInstance->SetData(TYPE_HARBINGERSKYRISS,IN_PROGRESS);
             if (GameObject* Sphere = GameObject::GetGameObject(*m_creature,pInstance->GetData64(DATA_SPHERE_SHIELD)))
-                Sphere->SetGoState(1);
+                Sphere->SetGoState(GO_STATE_READY);
             IsRunning = true;
         }
     }
@@ -350,7 +350,7 @@ struct OREGON_DLL_DECL npc_warden_mellicharAI : public ScriptedAI
                     DoCast(m_creature,SPELL_TARGET_ALPHA);
                     pInstance->SetData(TYPE_WARDEN_1,IN_PROGRESS);
                     if (GameObject *Sphere = GameObject::GetGameObject(*m_creature,pInstance->GetData64(DATA_SPHERE_SHIELD)))
-                        Sphere->SetGoState(1);
+                        Sphere->SetGoState(GO_STATE_READY);
                     break;
                 case 3:
                     DoCast(m_creature,SPELL_TARGET_BETA);

@@ -171,7 +171,7 @@ struct OREGON_DLL_DECL npc_barnesAI : public npc_escortAI
             case 0:
                 m_creature->CastSpell(m_creature, SPELL_TUXEDO, false);
                 if (GameObject* Go = GameObject::GetGameObject((*m_creature), pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORLEFT)))
-                    Go->SetGoState(1);
+                    Go->SetGoState(GO_STATE_READY);
                 break;
             case 4:
                 TalkCount = 0;
@@ -189,12 +189,12 @@ struct OREGON_DLL_DECL npc_barnesAI : public npc_escortAI
             case 8:
                 PerformanceReady = true;
                 if (GameObject* Go = GameObject::GetGameObject((*m_creature), pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORLEFT)))
-                    Go->SetGoState(1);
+                    Go->SetGoState(GO_STATE_READY);
                 break;
             case 9:
                 PrepareEncounter();
                 if (GameObject* Go = GameObject::GetGameObject((*m_creature), pInstance->GetData64(DATA_GAMEOBJECT_CURTAINS)))
-                    Go->SetGoState(1);
+                    Go->SetGoState(GO_STATE_READY);
                 break;
         }
     }

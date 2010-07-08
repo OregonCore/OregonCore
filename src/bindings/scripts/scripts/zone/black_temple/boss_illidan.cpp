@@ -458,7 +458,7 @@ struct OREGON_DLL_DECL boss_illidan_stormrageAI : public ScriptedAI
         {
             GameObject* Door = GameObject::GetGameObject((*m_creature), pInstance->GetData64(i));
             if (Door)
-                Door->SetUInt32Value(GAMEOBJECT_STATE, 0); // Open Doors
+                Door->SetGoState(GO_STATE_ACTIVE); // Open Doors
         }
     }
 
@@ -1093,7 +1093,7 @@ struct OREGON_DLL_DECL npc_akama_illidanAI : public ScriptedAI
 
         for (uint8 i = 0; i < 2; i++)
             if (GETGO(Door, DoorGUID[i]))
-                Door->SetUInt32Value(GAMEOBJECT_STATE, 1);
+                Door->SetGoState(GO_STATE_READY);
 
         if (GETCRE(Illidan, IllidanGUID))
         {
@@ -1264,7 +1264,7 @@ struct OREGON_DLL_DECL npc_akama_illidanAI : public ScriptedAI
             Spirit[0]->InterruptNonMeleeSpells(true);
             Spirit[1]->InterruptNonMeleeSpells(true);
             if (GETGO(Gate, GateGUID))
-                Gate->SetUInt32Value(GAMEOBJECT_STATE, 0);
+                Gate->SetGoState(GO_STATE_ACTIVE);
             Timer = 2000;
             break;
         case 4:
@@ -1295,7 +1295,7 @@ struct OREGON_DLL_DECL npc_akama_illidanAI : public ScriptedAI
         case 6:
             for (uint8 i = 0; i < 2; i++)
                 if (GETGO(Door, DoorGUID[i]))
-                    Door->SetUInt32Value(GAMEOBJECT_STATE, 0);
+                    Door->SetGoState(GO_STATE_ACTIVE);
             break;
         case 8:
             if (Phase == PHASE_WALK)
@@ -1712,7 +1712,7 @@ bool GOHello_cage_trap(Player* plr, GameObject* go)
 
     if (trigger)
         ((cage_trap_triggerAI*)trigger->AI())->Active = true;
-    go->SetUInt32Value(GAMEOBJECT_STATE, 0);
+    go->SetGoState(GO_STATE_ACTIVE);
     return true;
 }
 

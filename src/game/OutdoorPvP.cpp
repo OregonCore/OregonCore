@@ -83,7 +83,7 @@ bool OutdoorPvPObjective::AddObject(uint32 type, uint32 entry, uint32 map, float
     data.spawntimesecs  = 0;
     data.animprogress   = 100;
     data.spawnMask      = 1;
-    data.go_state       = 1;
+    data.go_state       = GO_STATE_READY;
 
     objmgr.AddGameobjectToGrid(guid, &data);
 
@@ -95,7 +95,7 @@ bool OutdoorPvPObjective::AddObject(uint32 type, uint32 entry, uint32 map, float
     if (!pMap)
         return true;
     GameObject * go = new GameObject;
-    if (!go->Create(guid,entry, pMap,x,y,z,o,rotation0,rotation1,rotation2,rotation3,100,1))
+    if (!go->Create(guid,entry, pMap,x,y,z,o,rotation0,rotation1,rotation2,rotation3,100,GO_STATE_READY))
     {
         sLog.outError("Gameobject template %u not found in database.", entry);
         delete go;
@@ -241,7 +241,7 @@ bool OutdoorPvPObjective::AddCapturePoint(uint32 entry, uint32 map, float x, flo
     data.spawntimesecs  = 1;
     data.animprogress   = 100;
     data.spawnMask      = 1;
-    data.go_state       = 1;
+    data.go_state       = GO_STATE_READY;
 
     objmgr.AddGameobjectToGrid(guid, &data);
 
@@ -258,7 +258,7 @@ bool OutdoorPvPObjective::AddCapturePoint(uint32 entry, uint32 map, float x, flo
         return true;
     // add GO...
     GameObject * go = new GameObject;
-    if (!go->Create(guid,entry, pMap,x,y,z,o,rotation0,rotation1,rotation2,rotation3,100,1))
+    if (!go->Create(guid,entry, pMap,x,y,z,o,rotation0,rotation1,rotation2,rotation3,100,GO_STATE_READY))
     {
         sLog.outError("Gameobject template %u not found in database.", entry);
         delete go;
@@ -432,7 +432,7 @@ void OutdoorPvP::HandlePlayerLeaveZone(Player * plr, uint32 zone)
         m_PlayerGuids[0].erase(plr->GetGUID());
     else
         m_PlayerGuids[1].erase(plr->GetGUID());
-    sLog.outDebug("player left an outdoorpvp zone");
+    sLog.outDebug("Player %s left an outdoorpvp zone", plr->GetName());
 }
 
 bool OutdoorPvP::Update(uint32 diff)
@@ -613,7 +613,6 @@ void OutdoorPvPObjective::SendObjectiveComplete(uint32 id,uint64 guid)
         break;
     default:
         return;
-        break;
     }
 
     // send to all players present in the area
@@ -669,10 +668,8 @@ void OutdoorPvP::HandleKill(Player *killer, Unit * killed)
 bool OutdoorPvP::IsInsideObjective(Player *plr)
 {
     for (OutdoorPvPObjectiveSet::iterator itr = m_OutdoorPvPObjectives.begin(); itr != m_OutdoorPvPObjectives.end(); ++itr)
-    {
         if ((*itr)->IsInsideObjective(plr))
             return true;
-    }
     return false;
 }
 

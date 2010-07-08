@@ -126,13 +126,13 @@ struct OREGON_DLL_DECL instance_deadmines : public ScriptedInstance
 
     void ShootCannon()
     {
-        DefiasCannon->SetUInt32Value(GAMEOBJECT_STATE, 0);
+        DefiasCannon->SetGoState(GO_STATE_ACTIVE);
         DoPlaySound(DefiasCannon, SOUND_CANNONFIRE);
     }
 
     void BlastOutDoor()
     {
-        IronCladDoor->SetUInt32Value(GAMEOBJECT_STATE, 2);
+        IronCladDoor->SetGoState(GO_STATE_ACTIVE_ALTERNATIVE);
         DoPlaySound(IronCladDoor, SOUND_DESTROYDOOR);
     }
 

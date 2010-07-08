@@ -92,7 +92,7 @@ struct OREGON_DLL_DECL instance_scarlet_monastery : public ScriptedInstance
             {
             GameObject *Shrine = instance->GetGameObject(PumpkinShrineGUID);
             if (Shrine)
-                Shrine->SetUInt32Value(GAMEOBJECT_STATE,1);
+                Shrine->SetGoState(GO_STATE_READY);
             }break;
         case DATA_HORSEMAN_EVENT:
             if (data == DONE)
@@ -106,7 +106,7 @@ struct OREGON_DLL_DECL instance_scarlet_monastery : public ScriptedInstance
                 HorsemanAdds.clear();
                 GameObject *Shrine = instance->GetGameObject(PumpkinShrineGUID);
                 if (Shrine)
-                    Shrine->SetUInt32Value(GAMEOBJECT_STATE,1);
+                    Shrine->SetGoState(GO_STATE_READY);
             }
             break;
         }

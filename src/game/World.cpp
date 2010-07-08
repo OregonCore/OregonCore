@@ -2173,7 +2173,7 @@ void World::ScriptsProcess()
                     break;
                 }
 
-                if (!door->GetGoState())
+                if (door->GetGoState() != GO_STATE_READY)
                     break;                                  //door already  open
 
                 door->UseDoorOrButton(time_to_close);
@@ -2229,7 +2229,7 @@ void World::ScriptsProcess()
                     break;
                 }
 
-                if (door->GetGoState())
+                if (door->GetGoState() == GO_STATE_READY)
                     break;                                  //door already closed
 
                 door->UseDoorOrButton(time_to_open);

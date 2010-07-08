@@ -24,7 +24,6 @@ EndScriptData */
 #include "precompiled.h"
 #include "def_razorfen_kraul.h"
 
-
 #define WARD_KEEPERS_NR 2
 
 struct OREGON_DLL_DECL instance_razorfen_kraul : public ScriptedInstance
@@ -64,20 +63,6 @@ struct OREGON_DLL_DECL instance_razorfen_kraul : public ScriptedInstance
         {
         case 21099: DoorWardGUID = go->GetGUID(); break;
         }
-    }
-
-    void HandleGameObject(uint64 guid, uint32 state)
-    {
-        Player *player = GetPlayerInMap();
-
-        if (!player || !guid)
-        {
-            debug_log("SD2: Instance Razorfen Kraul: HandleGameObject fail");
-            return;
-        }
-
-        if (GameObject *go = GameObject::GetGameObject(*player,guid))
-            go->SetGoState(state);
     }
 
     void Update(uint32 diff)

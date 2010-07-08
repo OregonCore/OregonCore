@@ -140,8 +140,7 @@ struct OREGON_DLL_DECL instance_serpentshrine_cavern : public ScriptedInstance
 
     void OpenDoor(uint64 DoorGUID, bool open)
     {
-        if (GameObject *Door = instance->GetGameObject(DoorGUID))
-            Door->SetUInt32Value(GAMEOBJECT_STATE, open ? 0 : 1);
+        HandleGameObject(DoorGUID, open, NULL);
     }
 
     void OnCreatureCreate(Creature *creature, uint32 creature_entry)

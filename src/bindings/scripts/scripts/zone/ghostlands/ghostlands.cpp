@@ -170,7 +170,7 @@ struct OREGON_DLL_DECL npc_ranger_lilathaAI : public npc_escortAI
             {
             m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
             if (GameObject* Cage = FindGameObject(GO_CAGE, 20, m_creature))
-                Cage->SetGoState(0);
+                Cage->SetGoState(GO_STATE_ACTIVE);
             DoScriptText(SAY_START, m_creature, pPlayer);
             break;
             }
@@ -218,7 +218,7 @@ struct OREGON_DLL_DECL npc_ranger_lilathaAI : public npc_escortAI
     void Reset()
     {
         if (GameObject* Cage = FindGameObject(GO_CAGE, 20, m_creature))
-            Cage->SetGoState(1);
+            Cage->SetGoState(GO_STATE_READY);
     }
 };
 

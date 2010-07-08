@@ -388,7 +388,7 @@ struct OREGON_DLL_DECL npc_isla_starmaneAI : public npc_escortAI
             {
             GameObject* Cage = FindGameObject(GO_CAGE, 10, me);
             if (Cage)
-                Cage->SetGoState(0);
+                Cage->SetGoState(GO_STATE_ACTIVE);
             }break;
         case 2: DoScriptText(SAY_PROGRESS_1, m_creature, pPlayer); break;
         case 5: DoScriptText(SAY_PROGRESS_2, m_creature, pPlayer); break;

@@ -252,7 +252,7 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
     void HandleDoors(bool open) // Massive Door switcher
     {
         if (GameObject *Door = GameObject::GetGameObject((*m_creature),pInstance->GetData64(DATA_GAMEOBJECT_MASSIVE_DOOR)))
-            Door->SetUInt32Value(GAMEOBJECT_STATE, open ? 0 : 1);
+            Door->SetGoState(open ? GO_STATE_ACTIVE : GO_STATE_READY);
     }
 
     void Aggro(Unit *who)

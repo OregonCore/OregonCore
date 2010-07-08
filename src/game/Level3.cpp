@@ -2944,7 +2944,7 @@ bool ChatHandler::HandleObjectStateCommand(const char *args)
     if (state < 0)
         gobj->SendObjectDeSpawnAnim(gobj->GetGUID());
     else
-        gobj->SetGoState(state);
+        gobj->SetGoState((GOState)state);
 
     return true;
 
