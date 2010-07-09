@@ -27,6 +27,7 @@
 class Player;
 class GameObject;
 class Creature;
+class ZoneScript;
 struct GossipOption;
 
 // class to handle player enter / leave / areatrigger / GO use events
@@ -51,11 +52,11 @@ public:
     // handle custom go if registered
     bool HandleOpenGo(Player * plr, uint64 guid);
 
+    ZoneScript * GetZoneScript(uint32 zoneId);
+
     void AddZone(uint32 zoneid, OutdoorPvP * handle);
 
     void Update(uint32 diff);
-
-    bool HandleCaptureCreaturePlayerMoveInLos(Player * plr, Creature * c);
 
     void HandleGossipOption(Player * player, uint64 guid, uint32 gossipid);
 

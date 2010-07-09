@@ -93,6 +93,9 @@ void GameObject::AddToWorld()
     ///- Register the gameobject for guid lookup
     if (!IsInWorld())
     {
+        if (m_zoneScript)
+            m_zoneScript->OnGameObjectCreate(this, true);
+
         ObjectAccessor::Instance().AddObject(this);
         WorldObject::AddToWorld();
     }
@@ -103,9 +106,9 @@ void GameObject::RemoveFromWorld()
     ///- Remove the gameobject from the accessor
     if (IsInWorld())
     {
-        if (Map *map = FindMap())
-            if (map->IsDungeon() && ((InstanceMap*)map)->GetInstanceData())
-                ((InstanceMap*)map)->GetInstanceData()->OnObjectCreate(this, false);
+        if (m_zoneScript)
+            m_zoneScript->OnGameObjectCreate(this, false);
+
         ObjectAccessor::Instance().RemoveObject(this);
         WorldObject::RemoveFromWorld();
     }
@@ -164,19 +167,13 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, float x, float
 
     SetGoAnimProgress(animprogress);
 
-    SetUInt32Value (GAMEOBJECT_ARTKIT, ArtKit);
+    SetUInt32Value(GAMEOBJECT_ARTKIT, ArtKit);
 
     // Spell charges for GAMEOBJECT_TYPE_SPELLCASTER (22)
     if (goinfo->type == GAMEOBJECT_TYPE_SPELLCASTER)
         m_charges = goinfo->spellcaster.charges;
 
-    //Notify the map's instance data.
-    //Only works if you create the object in it, not if it is moves to that map.
-    //Normally non-players do not teleport to other maps.
-    if (map->IsDungeon() && ((InstanceMap*)map)->GetInstanceData())
-    {
-        ((InstanceMap*)map)->GetInstanceData()->OnObjectCreate(this, true);
-    }
+    SetZoneScript();
 
     return true;
 }

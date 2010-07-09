@@ -1860,6 +1860,7 @@ void Player::RemoveFromWorld()
         UnsummonAllTotems();
         RemoveMiniPet();
         RemoveGuardians();
+        sOutdoorPvPMgr.HandlePlayerLeaveZone(this, m_zoneUpdateId);
     }
 
     // remove duel before calling Unit::RemoveFromWorld

@@ -136,26 +136,27 @@ void OutdoorPvPMgr::AddZone(uint32 zoneid, OutdoorPvP *handle)
 void OutdoorPvPMgr::HandlePlayerEnterZone(Player *plr, uint32 zoneid)
 {
     OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(zoneid);
-    if (itr == m_OutdoorPvPMap.end())
-    {
-        // no handle for this zone, return
+    if(itr == m_OutdoorPvPMap.end())
         return;
-    }
-    // add possibly beneficial buffs to plr for zone
+
+    if(itr->second->HasPlayer(plr))
+        return;
+
     itr->second->HandlePlayerEnterZone(plr, zoneid);
     plr->SendInitWorldStates();
-    sLog.outDebug("Player %u entered outdoorpvp id %u",plr->GetGUIDLow(), itr->second->GetTypeId());
+    sLog.outDebug("Player %u entered outdoorpvp id %u", plr->GetGUIDLow(), itr->second->GetTypeId());
 }
 
 void OutdoorPvPMgr::HandlePlayerLeaveZone(Player *plr, uint32 zoneid)
 {
     OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(zoneid);
-    if (itr == m_OutdoorPvPMap.end())
-    {
-        // no handle for this zone, return
+    if(itr == m_OutdoorPvPMap.end())
         return;
-    }
-    // inform the OutdoorPvP class of the leaving, it should remove the player from all objectives
+
+    // teleport: remove once in removefromworld, once in updatezone
+    if(!itr->second->HasPlayer(plr))
+        return;
+
     itr->second->HandlePlayerLeaveZone(plr, zoneid);
     sLog.outDebug("Player %u left outdoorpvp id %u",plr->GetGUIDLow(), itr->second->GetTypeId());
 }
@@ -193,21 +194,20 @@ bool OutdoorPvPMgr::HandleCustomSpell(Player *plr, uint32 spellId, GameObject * 
     return false;
 }
 
+ZoneScript * OutdoorPvPMgr::GetZoneScript(uint32 zoneId)
+{
+    OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(zoneId);
+    if (itr != m_OutdoorPvPMap.end())
+        return itr->second;
+    else
+        return NULL;
+}
+
 bool OutdoorPvPMgr::HandleOpenGo(Player *plr, uint64 guid)
 {
     for (OutdoorPvPSet::iterator itr = m_OutdoorPvPSet.begin(); itr != m_OutdoorPvPSet.end(); ++itr)
     {
         if ((*itr)->HandleOpenGo(plr,guid))
-            return true;
-    }
-    return false;
-}
-
-bool OutdoorPvPMgr::HandleCaptureCreaturePlayerMoveInLos(Player * plr, Creature * c)
-{
-    for (OutdoorPvPSet::iterator itr = m_OutdoorPvPSet.begin(); itr != m_OutdoorPvPSet.end(); ++itr)
-    {
-        if ((*itr)->HandleCaptureCreaturePlayerMoveInLos(plr,c))
             return true;
     }
     return false;
@@ -240,4 +240,3 @@ void OutdoorPvPMgr::HandleDropFlag(Player *plr, uint32 spellId)
             return;
     }
 }
-

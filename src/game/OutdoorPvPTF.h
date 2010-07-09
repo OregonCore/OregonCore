@@ -13,7 +13,7 @@ const uint32 TF_LOCK_TIME = 3600 * 6 * 1000;
 const uint32 TF_LOCK_TIME_UPDATE = 15000;
 
 // blessing of auchindoun
-const uint32 TF_CAPTURE_BUFF = 33377;
+#define TF_CAPTURE_BUFF 33377
 
 const uint32 TF_ALLY_QUEST = 11505;
 const uint32 TF_HORDE_QUEST = 11506;
@@ -76,10 +76,10 @@ enum TFTowerStates {
     TF_TOWERSTATE_A = 4
 };
 
-class OutdoorPvPObjectiveTF : public OutdoorPvPObjective
+class OPvPCapturePointTF : public OPvPCapturePoint
 {
 public:
-    OutdoorPvPObjectiveTF(OutdoorPvP * pvp, OutdoorPvPTF_TowerType type);
+    OPvPCapturePointTF(OutdoorPvP * pvp, OutdoorPvPTF_TowerType type);
     bool Update(uint32 diff);
     void FillInitialWorldStates(WorldPacket & data);
     // used when player is activated/inactivated in the area
@@ -87,15 +87,13 @@ public:
     void HandlePlayerLeave(Player * plr);
     void UpdateTowerState();
 protected:
-    virtual bool HandleCapturePointEvent(Player * plr, uint32 eventId);
-protected:
     OutdoorPvPTF_TowerType m_TowerType;
     uint32 m_TowerState;
 };
 
 class OutdoorPvPTF : public OutdoorPvP
 {
-friend class OutdoorPvPObjectiveTF;
+friend class OPvPCapturePointTF;
 public:
     OutdoorPvPTF();
     bool SetupOutdoorPvP();
@@ -104,7 +102,6 @@ public:
     bool Update(uint32 diff);
     void FillInitialWorldStates(WorldPacket &data);
     void SendRemoveWorldStates(Player * plr);
-    void BuffTeam(uint32 team);
 private:
     bool m_IsLocked;
     uint32 m_LockTimer;

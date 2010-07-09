@@ -191,9 +191,8 @@ void Creature::RemoveFromWorld()
     ///- Remove the creature from the accessor
     if (IsInWorld())
     {
-        if (Map *map = FindMap())
-            if (map->IsDungeon() && ((InstanceMap*)map)->GetInstanceData())
-                ((InstanceMap*)map)->GetInstanceData()->OnCreatureCreate(this, false);
+        if (m_zoneScript)
+            m_zoneScript->OnCreatureCreate(this, false);
         if (m_formation)
             formation_mgr.RemoveCreatureFromGroup(m_formation, this);
         ObjectAccessor::Instance().RemoveObject(this);
@@ -623,11 +622,17 @@ bool Creature::AIM_Initialize(CreatureAI* ai)
     return true;
 }
 
-bool Creature::Create (uint32 guidlow, Map *map, uint32 Entry, uint32 team, const CreatureData *data)
+bool Creature::Create(uint32 guidlow, Map *map, uint32 Entry, uint32 team, float x, float y, float z, float ang, const CreatureData *data)
 {
+    Relocate(x, y, z, ang);
+    if (!IsPositionValid())
+    {
+        sLog.outError("Creature (guidlow %d, entry %d) not loaded. Suggested coordinates isn't valid (X: %f Y: %f)",guidlow,Entry,x,y);
+        return false;
+    }
+
     SetMapId(map->GetId());
     SetInstanceId(map->GetInstanceId());
-    //m_DBTableGuid = guidlow;
 
     //oX = x;     oY = y;    dX = x;    dY = y;    m_moveTime = 0;    m_startMove = 0;
     const bool bResult = CreateFromProto(guidlow, Entry, team, data);
@@ -1363,27 +1368,27 @@ float Creature::GetSpellDamageMod(int32 Rank)
 
 bool Creature::CreateFromProto(uint32 guidlow, uint32 Entry, uint32 team, const CreatureData *data)
 {
+    SetZoneScript();
+    if (m_zoneScript && data)
+    {
+        Entry = m_zoneScript->GetCreatureEntry(guidlow, data);
+        if (!Entry)
+            return false;
+    }
+
     CreatureInfo const *cinfo = objmgr.GetCreatureTemplate(Entry);
     if (!cinfo)
     {
         sLog.outErrorDb("Error: creature entry %u does not exist.", Entry);
         return false;
     }
+
     m_originalEntry = Entry;
 
     Object::_Create(guidlow, Entry, HIGHGUID_UNIT);
 
     if (!UpdateEntry(Entry, team, data))
         return false;
-
-    //Notify the map's instance data.
-    //Only works if you create the object in it, not if it is moves to that map.
-    //Normally non-players do not teleport to other maps.
-    Map *map = FindMap();
-    if (map && map->IsDungeon() && ((InstanceMap*)map)->GetInstanceData())
-    {
-        ((InstanceMap*)map)->GetInstanceData()->OnCreatureCreate(this, true);
-    }
 
     return true;
 }
@@ -1402,16 +1407,9 @@ bool Creature::LoadFromDB(uint32 guid, Map *map)
     if (map->GetInstanceId() != 0) guid = objmgr.GenerateLowGuid(HIGHGUID_UNIT);
 
     uint16 team = 0;
-    if (!Create(guid,map,data->id,team,data))
+    if (!Create(guid,map,data->id,team,data->posX,data->posY,data->posZ,data->orientation,data))
         return false;
 
-    Relocate(data->posX,data->posY,data->posZ,data->orientation);
-
-    if (!IsPositionValid())
-    {
-        sLog.outError("ERROR: Creature (guidlow %d, entry %d) not loaded. Suggested coordinates isn't valid (X: %f Y: %f)",GetGUIDLow(),GetEntry(),GetPositionX(),GetPositionY());
-        return false;
-    }
     //We should set first home position, because then AI calls home movement
     SetHomePosition(data->posX,data->posY,data->posZ,data->orientation);
 
@@ -1457,7 +1455,7 @@ void Creature::LoadEquipment(uint32 equip_entry, bool force)
     {
         if (force)
         {
-            for (uint8 i = 0; i < 3; i++)
+            for (uint8 i = 0; i < 3; ++i)
             {
                 SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY + i, 0);
                 SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO + (i * 2), 0);
@@ -1473,7 +1471,7 @@ void Creature::LoadEquipment(uint32 equip_entry, bool force)
         return;
 
     m_equipmentId = equip_entry;
-    for (uint8 i = 0; i < 3; i++)
+    for (uint8 i = 0; i < 3; ++i)
     {
         SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY + i, einfo->equipmodel[i]);
         SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO + (i * 2), einfo->equipinfo[i]);

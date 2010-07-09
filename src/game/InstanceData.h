@@ -21,7 +21,7 @@
 #ifndef OREGON_INSTANCE_DATA_H
 #define OREGON_INSTANCE_DATA_H
 
-#include "Common.h"
+#include "ZoneScript.h"
 //#include "GameObject.h"
 //#include "Map.h"
 
@@ -73,7 +73,7 @@ struct DoorData
     DoorType type;
 };
 
-class OREGON_DLL_SPEC InstanceData
+class OREGON_DLL_SPEC InstanceData : public ZoneScript
 {
     public:
 
@@ -93,7 +93,7 @@ class OREGON_DLL_SPEC InstanceData
 
         void SaveToDB();
 
-        virtual void Update(uint32 /*diff*/) {}
+        virtual void Update(uint32 diff) {}
 
         //Used by the map's CanEnter function.
         //This is to prevent players from entering during boss encounters.
@@ -103,18 +103,10 @@ class OREGON_DLL_SPEC InstanceData
         virtual void OnPlayerEnter(Player *) {}
 
         //Called when a gameobject is created
-        virtual void OnObjectCreate(GameObject *go, bool add) { OnObjectCreate(go); }
+        void OnGameObjectCreate(GameObject *go, bool add) { OnObjectCreate(go); }
 
         //called on creature creation
-        virtual void OnCreatureCreate(Creature *, bool add);
-
-        //All-purpose data storage 64 bit
-        virtual uint64 GetData64(uint32 /*DataId*/) { return 0; }
-        virtual void SetData64(uint32 /*DataId*/, uint64 /*Value*/) {}
-
-        //All-purpose data storage 32 bit
-        virtual uint32 GetData(uint32) { return 0; }
-        virtual void SetData(uint32, uint32 data) {}
+        void OnCreatureCreate(Creature *, bool add);
 
         //Handle open / close objects
         //use HandleGameObject(NULL,boolen,GO); in OnObjectCreate in instance scripts

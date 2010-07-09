@@ -171,8 +171,6 @@ SET(game_STAT_SRCS
    OutdoorPvPMgr.h
    OutdoorPvPNA.cpp
    OutdoorPvPNA.h
-   OutdoorPvPObjectiveAI.cpp
-   OutdoorPvPObjectiveAI.h
    OutdoorPvPSI.cpp
    OutdoorPvPSI.h
    OutdoorPvPTF.cpp
@@ -272,6 +270,7 @@ SET(game_STAT_SRCS
    GroupReference.cpp
    GroupReference.h
    GroupRefManager.h
+   ZoneScript.h
 )
 add_library(game STATIC ${game_STAT_SRCS})
 ADD_DEPENDENCIES(game revision.h)

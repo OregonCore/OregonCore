@@ -44,6 +44,7 @@
 #include "GridNotifiersImpl.h"
 
 #include "TemporarySummon.h"
+#include "OutdoorPvPMgr.h"
 
 uint32 GuidHigh2TypeId(uint32 guid_hi)
 {
@@ -1047,25 +1048,16 @@ bool Object::PrintIndexError(uint32 index, bool set) const
 }
 
 WorldObject::WorldObject()
+    : m_mapId(0), m_InstanceId(0),
+    m_positionX(0.0f), m_positionY(0.0f), m_positionZ(0.0f), m_orientation(0.0f)
+    , m_map(NULL), m_zoneScript(NULL)
+    , m_isActive(false), IsTempWorldObject(false)
+    , m_name("")
 {
-    m_positionX         = 0.0f;
-    m_positionY         = 0.0f;
-    m_positionZ         = 0.0f;
-    m_orientation       = 0.0f;
-
-    m_mapId             = 0;
-    m_InstanceId        = 0;
-    m_map               = NULL;
-
-    m_name = "";
-
     m_groupLootTimer    = 0;
     lootingGroupLeaderGUID = 0;
 
     mSemaphoreTeleport  = false;
-
-    m_isActive          = false;
-    IsTempWorldObject   = false;
 }
 
 void WorldObject::SetWorldObject(bool on)
@@ -1699,7 +1691,7 @@ Creature* WorldObject::SummonCreature(uint32 id, float x, float y, float z, floa
     if (GetTypeId() == TYPEID_PLAYER)
         team = ToPlayer()->GetTeam();
 
-    if (!pCreature->Create(objmgr.GenerateLowGuid(HIGHGUID_UNIT), GetMap(), id, team))
+    if (!pCreature->Create(objmgr.GenerateLowGuid(HIGHGUID_UNIT), GetMap(), id, team, x, y, z, ang))
     {
         delete pCreature;
         return NULL;
@@ -1707,15 +1699,6 @@ Creature* WorldObject::SummonCreature(uint32 id, float x, float y, float z, floa
 
     if (x == 0.0f && y == 0.0f && z == 0.0f)
         GetClosePoint(x, y, z, pCreature->GetObjectSize());
-
-    pCreature->Relocate(x, y, z, ang);
-
-    if (!pCreature->IsPositionValid())
-    {
-        sLog.outError("ERROR: Creature (guidlow %d, entry %d) not summoned. Suggested coordinates isn't valid (X: %f Y: %f)",pCreature->GetGUIDLow(),pCreature->GetEntry(),pCreature->GetPositionX(),pCreature->GetPositionY());
-        delete pCreature;
-        return NULL;
-    }
 
     pCreature->SetHomePosition(x, y, z, ang);
     pCreature->Summon(spwtype, despwtime);
@@ -1732,6 +1715,17 @@ Creature* WorldObject::SummonCreature(uint32 id, float x, float y, float z, floa
 
     //return the creature therewith the summoner has access to it
     return pCreature;
+}
+
+void WorldObject::SetZoneScript()
+{
+    if (Map *map = FindMap())
+    {
+        if (map->IsDungeon())
+            m_zoneScript = (ZoneScript*)((InstanceMap*)map)->GetInstanceData();
+        else if (!map->IsBattleGroundOrArena())
+            m_zoneScript = sOutdoorPvPMgr.GetZoneScript(GetZoneId());
+    }
 }
 
 Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetType petType, uint32 duration)

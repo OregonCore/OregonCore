@@ -442,6 +442,21 @@ namespace Oregon
         template<class NOT_INTERESTED> void Visit(GridRefManager<NOT_INTERESTED> &) {}
     };
 
+    template<class Check>
+        struct OREGON_DLL_DECL PlayerListSearcher
+    {
+        uint32 i_phaseMask;
+        std::list<Player*> &i_objects;
+        Check& i_check;
+
+        PlayerListSearcher(WorldObject const* searcher, std::list<Player*> &objects, Check & check)
+            : i_objects(objects),i_check(check) {}
+
+        void Visit(PlayerMapType &m);
+
+        template<class NOT_INTERESTED> void Visit(GridRefManager<NOT_INTERESTED> &) {}
+    };
+
     template<class Do>
     struct OREGON_DLL_DECL PlayerWorker
     {

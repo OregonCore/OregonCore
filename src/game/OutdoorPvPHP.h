@@ -25,9 +25,9 @@
                                                          //  HP, citadel, ramparts, blood furnace, shattered halls, mag's lair
 const uint32 OutdoorPvPHPBuffZones[OutdoorPvPHPBuffZonesNum] = { 3483, 3563, 3562, 3713, 3714, 3836 };
 
-const uint32 AllianceBuff = 32071;
+#define AllianceBuff 32071
 
-const uint32 HordeBuff = 32049;
+#define HordeBuff 32049
 
 const uint32 AlliancePlayerKillReward = 32155;
 
@@ -82,23 +82,22 @@ const go_type HPTowerFlags[HP_TOWER_NUM] = {
     {183515,530,-289.610,3696.83,75.9447,3.12414,0,0,0.999962,0.008727} // 2 stadium
 };
 
-class OutdoorPvPObjectiveHP : public OutdoorPvPObjective
+class OPvPCapturePointHP : public OPvPCapturePoint
 {
 public:
-    OutdoorPvPObjectiveHP(OutdoorPvP * pvp, OutdoorPvPHPTowerType type);
+    OPvPCapturePointHP(OutdoorPvP * pvp, OutdoorPvPHPTowerType type);
     bool Update(uint32 diff);
     void FillInitialWorldStates(WorldPacket & data);
     // used when player is activated/inactivated in the area
     bool HandlePlayerEnter(Player * plr);
     void HandlePlayerLeave(Player * plr);
-    bool HandleCapturePointEvent(Player * plr, uint32 eventId);
 private:
     OutdoorPvPHPTowerType m_TowerType;
 };
 
 class OutdoorPvPHP : public OutdoorPvP
 {
-friend class OutdoorPvPObjectiveHP;
+friend class OPvPCapturePointHP;
 public:
     OutdoorPvPHP();
     bool SetupOutdoorPvP();
@@ -108,7 +107,6 @@ public:
     void FillInitialWorldStates(WorldPacket &data);
     void SendRemoveWorldStates(Player * plr);
     void HandleKillImpl(Player * plr, Unit * killed);
-    void BuffTeam(uint32 team);
 private:
     // how many towers are controlled
     uint32 m_AllianceTowersControlled;

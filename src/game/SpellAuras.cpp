@@ -3282,8 +3282,8 @@ void Aura::HandleModStealth(bool apply, bool Real)
             m_target->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_UNATTACKABLE);
 
             // remove player from the objective's active player count at stealth
-            if (OutdoorPvP * pvp = m_target->ToPlayer()->GetOutdoorPvP())
-                pvp->HandlePlayerActivityChanged(m_target->ToPlayer());
+            //if (OutdoorPvP * pvp = m_target->ToPlayer()->GetOutdoorPvP())
+            //    pvp->HandlePlayerActivityChanged(m_target->ToPlayer());
         }
 
         // only at real aura add
@@ -3332,9 +3332,9 @@ void Aura::HandleModStealth(bool apply, bool Real)
                 else
                 {
                     m_target->SetVisibility(VISIBILITY_ON);
-                    if (m_target->GetTypeId() == TYPEID_PLAYER)
-                        if (OutdoorPvP * pvp = m_target->ToPlayer()->GetOutdoorPvP())
-                            pvp->HandlePlayerActivityChanged(m_target->ToPlayer());
+                    //if (m_target->GetTypeId() == TYPEID_PLAYER)
+                    //    if (OutdoorPvP * pvp = m_target->ToPlayer()->GetOutdoorPvP())
+                    //        pvp->HandlePlayerActivityChanged(m_target->ToPlayer());
                 }
             }
         }
@@ -3371,8 +3371,8 @@ void Aura::HandleInvisibility(bool apply, bool Real)
             // apply glow vision
             m_target->SetFlag(PLAYER_FIELD_BYTES2,PLAYER_FIELD_BYTE2_INVISIBILITY_GLOW);
             // remove player from the objective's active player count at invisibility
-            if (OutdoorPvP * pvp = m_target->ToPlayer()->GetOutdoorPvP())
-                pvp->HandlePlayerActivityChanged(m_target->ToPlayer());
+            //if (OutdoorPvP * pvp = m_target->ToPlayer()->GetOutdoorPvP())
+            //    pvp->HandlePlayerActivityChanged(m_target->ToPlayer());
         }
 
         // apply only if not in GM invisibility and not stealth
@@ -3406,9 +3406,9 @@ void Aura::HandleInvisibility(bool apply, bool Real)
                 if (!m_target->HasAuraType(SPELL_AURA_MOD_STEALTH))
                 {
                     m_target->SetVisibility(VISIBILITY_ON);
-                    if (m_target->GetTypeId() == TYPEID_PLAYER)
-                        if (OutdoorPvP * pvp = m_target->ToPlayer()->GetOutdoorPvP())
-                            pvp->HandlePlayerActivityChanged(m_target->ToPlayer());
+                    //if (m_target->GetTypeId() == TYPEID_PLAYER)
+                    //    if (OutdoorPvP * pvp = m_target->ToPlayer()->GetOutdoorPvP())
+                    //        pvp->HandlePlayerActivityChanged(m_target->ToPlayer());
                 }
             }
         }

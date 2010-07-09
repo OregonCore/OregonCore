@@ -5340,20 +5340,12 @@ void Spell::EffectSummonTotem(uint32 i)
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
         team = m_caster->ToPlayer()->GetTeam();
 
-    Totem* pTotem = new Totem;
-
-    if (!pTotem->Create(objmgr.GenerateLowGuid(HIGHGUID_UNIT), m_caster->GetMap(), m_spellInfo->EffectMiscValue[i], team))
-    {
-        delete pTotem;
-        return;
-    }
-
     float angle = slot < MAX_TOTEM ? M_PI/MAX_TOTEM - (slot*2*M_PI/MAX_TOTEM) : 0;
 
     float x,y,z;
 
     //totem size is 0, take care.
-    m_caster->GetClosePoint(x,y,z,pTotem->GetObjectSize(),2.0f,angle);
+    m_caster->GetClosePoint(x,y,z,0.0f,2.0f,angle);
 
     if (sWorld.getConfig(CONFIG_VMAP_TOTEM))
     {
@@ -5384,7 +5376,13 @@ void Spell::EffectSummonTotem(uint32 i)
             z = m_caster->GetPositionZ();
     }
 
-    pTotem->Relocate(x, y, z, m_caster->GetOrientation());
+    Totem* pTotem = new Totem;
+
+    if (!pTotem->Create(objmgr.GenerateLowGuid(HIGHGUID_UNIT), m_caster->GetMap(), m_spellInfo->EffectMiscValue[i], team, x, y, z, m_caster->GetOrientation()))
+    {
+        delete pTotem;
+        return;
+    }
 
     if (slot < MAX_TOTEM)
         m_caster->m_TotemSlot[slot] = pTotem->GetGUID();

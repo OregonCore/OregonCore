@@ -637,19 +637,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\MapUpdater.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\game\MapUpdater.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\game\MapReference.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\game\MapRefManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\MapUpdater.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\MapUpdater.h"
 				>
 			</File>
 			<File
@@ -970,6 +970,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\game\UpdateMask.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\ZoneScript.h"
 				>
 			</File>
 			<Filter
@@ -1490,14 +1494,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\game\OutdoorPvPNA.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\game\OutdoorPvPObjectiveAI.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\game\OutdoorPvPObjectiveAI.h"
 				>
 			</File>
 			<File

@@ -97,6 +97,7 @@ class UpdateMask;
 class InstanceData;
 class GameObject;
 class CreatureAI;
+class ZoneScript;
 
 typedef UNORDERED_MAP<Player*, UpdateData> UpdateDataMapType;
 
@@ -525,9 +526,11 @@ class OREGON_DLL_SPEC WorldObject : public Object, public WorldLocation
         Map      * GetMap() const   { return m_map ? m_map : const_cast<WorldObject*>(this)->_getMap(); }
         Map      * FindMap() const  { return m_map ? m_map : const_cast<WorldObject*>(this)->_findMap(); }
         Map const* GetBaseMap() const;
-        Creature* SummonCreature(uint32 id, float x, float y, float z, float ang,TempSummonType spwtype,uint32 despwtime);
+        void SetZoneScript();
+
+        Creature*   SummonCreature(uint32 id, float x, float y, float z, float ang,TempSummonType spwtype,uint32 despwtime);
         GameObject* SummonGameObject(uint32 entry, float x, float y, float z, float ang, float rotation0, float rotation1, float rotation2, float rotation3, uint32 respawnTime);
-        Creature* SummonTrigger(float x, float y, float z, float ang, uint32 dur, CreatureAI* (*GetAI)(Creature*) = NULL);
+        Creature*   SummonTrigger(float x, float y, float z, float ang, uint32 dur, CreatureAI* (*GetAI)(Creature*) = NULL);
         bool isActiveObject() const { return m_isActive; }
         void setActive(bool isActiveObject);
         void SetWorldObject(bool apply);
@@ -543,6 +546,7 @@ class OREGON_DLL_SPEC WorldObject : public Object, public WorldLocation
         explicit WorldObject();
         std::string m_name;
         bool m_isActive;
+        ZoneScript *m_zoneScript;
 
     private:
         uint32 m_mapId;
