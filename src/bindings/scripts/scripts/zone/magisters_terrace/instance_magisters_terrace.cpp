@@ -132,7 +132,7 @@ struct OREGON_DLL_DECL instance_magisters_terrace : public ScriptedInstance
             SaveToDB();
     }
 
-    const char* Save()
+    std::string GetSaveData()
     {
         std::ostringstream ss;
         ss << "S " << DoorState[0] << " " << DoorState[1] << " " << DoorState[2];

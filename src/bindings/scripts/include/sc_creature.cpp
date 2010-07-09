@@ -672,9 +672,10 @@ void Scripted_NoMovementAI::AttackStart(Unit* pWho)
 }
 
 BossAI::BossAI(Creature *c, uint32 id) : ScriptedAI(c)
-, bossId(id), summons(me), instance((ScriptedInstance*)c->GetInstanceData())
+, bossId(id), summons(me), instance(c->GetInstanceData())
 {
 }
+
 void BossAI::_Reset()
 {
     events.Reset();

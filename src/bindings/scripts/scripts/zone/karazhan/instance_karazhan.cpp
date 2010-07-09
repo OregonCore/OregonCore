@@ -267,7 +267,7 @@ struct OREGON_DLL_DECL instance_karazhan : public ScriptedInstance
         }
     }
 
-    const char* Save()
+    std::string GetSaveData()
     {
         OUT_SAVE_INST_DATA;
         std::ostringstream stream;

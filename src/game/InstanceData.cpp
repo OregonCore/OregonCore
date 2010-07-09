@@ -26,8 +26,9 @@
 
 void InstanceData::SaveToDB()
 {
-    if (!Save()) return;
-    std::string data = Save();
+    std::string data = GetSaveData();
+    if (data.empty())
+        return;
     CharacterDatabase.escape_string(data);
     CharacterDatabase.PExecute("UPDATE instance SET data = '%s' WHERE id = '%d'", data.c_str(), instance->GetInstanceId());
 }
@@ -119,18 +120,52 @@ void InstanceData::AddDoor(GameObject *door, bool add)
         UpdateDoorState(door);
 }
 
-void InstanceData::SetBossState(uint32 id, EncounterState state)
+bool InstanceData::SetBossState(uint32 id, EncounterState state)
 {
     if (id < bosses.size())
     {
         BossInfo *bossInfo = &bosses[id];
-        if (bossInfo->state == state)
-            return;
+        if (bossInfo->state == TO_BE_DECIDED) // loading
+        {
+            bossInfo->state = state;
+            return false;
+        }
+        else
+        {
+            if (bossInfo->state == state)
+                return false;
+            bossInfo->state = state;
+            SaveToDB();
+        }
 
-        bossInfo->state = state;
         for (uint32 type = 0; type < MAX_DOOR_TYPES; ++type)
             for (DoorSet::iterator i = bossInfo->door[type].begin(); i != bossInfo->door[type].end(); ++i)
                 UpdateDoorState(*i);
+
+        return true;
     }
+    return false;
 }
 
+std::string InstanceData::LoadBossState(const char * data)
+{
+    if (!data) return NULL;
+    std::istringstream loadStream(data);
+    uint32 buff;
+    uint32 bossId = 0;
+    for (std::vector<BossInfo>::iterator i = bosses.begin(); i != bosses.end(); ++i, ++bossId)
+    {
+        loadStream >> buff;
+        if (buff < TO_BE_DECIDED)
+            SetBossState(bossId, (EncounterState)buff);
+    }
+    return loadStream.str();
+}
+
+std::string InstanceData::GetBossSaveData()
+{
+    std::ostringstream saveStream;
+    for (std::vector<BossInfo>::iterator i = bosses.begin(); i != bosses.end(); ++i)
+        saveStream << (uint32)i->state << " ";
+    return saveStream.str();
+}

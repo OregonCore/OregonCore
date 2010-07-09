@@ -270,7 +270,7 @@ struct OREGON_DLL_DECL instance_blackrock_depths : public ScriptedInstance
         return 0;
     }
 
-    const char* Save()
+    std::string GetSaveData()
     {
         return str_data.c_str();
     }

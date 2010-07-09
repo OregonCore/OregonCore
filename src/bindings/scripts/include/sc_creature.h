@@ -211,7 +211,7 @@ struct OREGON_DLL_DECL BossAI : public ScriptedAI
     uint32 bossId;
     EventMap events;
     SummonList summons;
-    ScriptedInstance *instance;
+    InstanceData *instance;
 
     void JustSummoned(Creature *summon);
     void SummonedCreatureDespawn(Creature *summon);

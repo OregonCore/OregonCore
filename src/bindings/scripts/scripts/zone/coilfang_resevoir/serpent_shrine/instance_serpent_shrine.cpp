@@ -256,7 +256,7 @@ struct OREGON_DLL_DECL instance_serpentshrine_cavern : public ScriptedInstance
         }
         return 0;
     }
-    const char* Save()
+    std::string GetSaveData()
     {
         OUT_SAVE_INST_DATA;
         std::ostringstream stream;

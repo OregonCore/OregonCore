@@ -143,7 +143,7 @@ struct OREGON_DLL_DECL instance_the_eye : public ScriptedInstance
         return 0;
     }
 
-    const char* Save()
+    std::string GetSaveData()
     {
         OUT_SAVE_INST_DATA;
         std::ostringstream stream;

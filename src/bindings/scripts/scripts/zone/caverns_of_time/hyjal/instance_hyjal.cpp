@@ -262,7 +262,7 @@ struct OREGON_DLL_DECL instance_mount_hyjal : public ScriptedInstance
         } else debug_log("TSCR: Instance Hyjal: UpdateWorldState, but PlayerList is empty!");
     }
 
-    const char* Save()
+    std::string GetSaveData()
     {
         OUT_SAVE_INST_DATA;
         std::ostringstream stream;

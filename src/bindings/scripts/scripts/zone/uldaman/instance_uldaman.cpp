@@ -445,7 +445,7 @@ struct OREGON_DLL_DECL instance_uldaman : public ScriptedInstance
         return 0;
     } // end GetData64
 
-    const char* Save()
+    std::string GetSaveData()
     {
         return str_data.c_str();
     }
