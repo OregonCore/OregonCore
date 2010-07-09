@@ -22,8 +22,8 @@
 #define OREGON_INSTANCE_DATA_H
 
 #include "Common.h"
-#include "GameObject.h"
-#include "Map.h"
+//#include "GameObject.h"
+//#include "Map.h"
 
 class Map;
 class Unit;
@@ -42,11 +42,34 @@ enum EncounterState
 
 typedef std::set<GameObject*> DoorSet;
 
+enum DoorType
+{
+    DOOR_TYPE_ROOM = 0,
+    DOOR_TYPE_PASSAGE,
+    MAX_DOOR_TYPES,
+};
+
 struct BossInfo
 {
     BossInfo() : state(NOT_STARTED) {}
     EncounterState state;
-    DoorSet roomDoor, passageDoor;
+    DoorSet door[MAX_DOOR_TYPES];
+};
+
+struct DoorInfo
+{
+    explicit DoorInfo(BossInfo *_bossInfo, DoorType _type)
+        : bossInfo(_bossInfo), type(_type) {}
+    BossInfo *bossInfo;
+    DoorType type;
+};
+
+typedef std::multimap<uint32 /*entry*/, DoorInfo> DoorInfoMap;
+
+struct DoorData
+{
+    uint32 entry, bossId;
+    DoorType type;
 };
 
 class OREGON_DLL_SPEC InstanceData
@@ -79,20 +102,14 @@ class OREGON_DLL_SPEC InstanceData
         virtual void OnPlayerEnter(Player *) {}
 
         //Called when a gameobject is created
-        virtual void OnObjectCreate(GameObject *go, bool add)
-        {
-            OnObjectCreate(go);
-        }
-        virtual void OnObjectCreate(GameObject *) {}
+        virtual void OnObjectCreate(GameObject *go, bool add) { OnObjectCreate(go); }
 
         //called on creature creation
         virtual void OnCreatureCreate(Creature *, bool add);
-        virtual void OnCreatureCreate(Creature *, uint32 entry) {}
 
         //All-purpose data storage 64 bit
         virtual uint64 GetData64(uint32 /*DataId*/) { return 0; }
         virtual void SetData64(uint32 /*DataId*/, uint64 /*Value*/) {}
-
 
         //All-purpose data storage 32 bit
         virtual uint32 GetData(uint32) { return 0; }
@@ -105,9 +122,11 @@ class OREGON_DLL_SPEC InstanceData
 
         void SetBossState(uint32 id, EncounterState state);
     protected:
+        void LoadDoorData(const DoorData *data);
+
         void SetBossNumber(uint32 number) { bosses.resize(number); }
-        void SetBossRoomDoor(uint32 id, GameObject *door, bool add);
-        void SetBossPassageDoor(uint32 id, GameObject *door, bool add);
+        void AddDoor(GameObject *door, bool add);
+        void UpdateDoorState(GameObject *door);
 
         std::string GetBossSave()
         {
@@ -119,7 +138,10 @@ class OREGON_DLL_SPEC InstanceData
 
     private:
         std::vector<BossInfo> bosses;
+        DoorInfoMap doors;
 
+        virtual void OnObjectCreate(GameObject *) {}
+        virtual void OnCreatureCreate(Creature *, uint32 entry) {}
 };
 #endif
 
