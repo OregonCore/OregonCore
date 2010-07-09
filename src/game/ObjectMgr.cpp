@@ -241,6 +241,7 @@ void ObjectMgr::RemoveGuild(uint32 Id)
 {
     mGuildMap.erase(Id);
 }
+
 ArenaTeam* ObjectMgr::GetArenaTeamById(const uint32 arenateamid) const
 {
     ArenaTeamMap::const_iterator itr = mArenaTeamMap.find(arenateamid);
