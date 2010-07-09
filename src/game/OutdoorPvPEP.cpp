@@ -729,7 +729,7 @@ OutdoorPvPEP::OutdoorPvPEP()
 bool OutdoorPvPEP::SetupOutdoorPvP()
 {
     for (int i = 0; i < EPBuffZonesNum; ++i)
-        sOutdoorPvPMgr.AddZone(EPBuffZones[i],this);
+        RegisterZone(EPBuffZones[i]);
 
     m_capturePoints.push_back(new OPvPCapturePointEP_EWT(this));
     m_capturePoints.push_back(new OPvPCapturePointEP_PWT(this));

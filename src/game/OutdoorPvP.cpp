@@ -17,6 +17,7 @@
  */
 
 #include "OutdoorPvP.h"
+#include "OutdoorPvPImpl.h"
 #include "OutdoorPvPMgr.h"
 #include "ObjectAccessor.h"
 #include "ObjectMgr.h"
@@ -354,7 +355,7 @@ bool OPvPCapturePoint::Update(uint32 diff)
     }
 
     // get the difference of numbers
-    float fact_diff = (float)m_activePlayers[0].size() - (float)m_activePlayers[1].size();
+    float fact_diff = ((float)m_activePlayers[0].size() - (float)m_activePlayers[1].size()) * diff / OUTDOORPVP_OBJECTIVE_UPDATE_INTERVAL;
     if (!fact_diff)
         return false;
 
@@ -390,16 +391,16 @@ bool OPvPCapturePoint::Update(uint32 diff)
     m_ShiftPhase += fact_diff;
 
     // check limits, these are over the grey part
-    if (m_ShiftPhase <= -m_ShiftMaxPhase * (float)(m_NeutralValue) / 100.0f)
+    if (m_ShiftPhase < -m_ShiftMaxPhase * (float)(m_NeutralValue) / 100.0f)
     {
-        if (m_ShiftPhase <= -m_ShiftMaxPhase)
+        if (m_ShiftPhase < -m_ShiftMaxPhase)
             m_ShiftPhase = -m_ShiftMaxPhase;
         m_State = OBJECTIVESTATE_HORDE;
         return true;
     }
-    else if (m_ShiftPhase >= m_ShiftMaxPhase * (float)(m_NeutralValue) / 100.0f)
+    else if (m_ShiftPhase > m_ShiftMaxPhase * (float)(m_NeutralValue) / 100.0f)
     {
-        if (m_ShiftPhase >= m_ShiftMaxPhase)
+        if (m_ShiftPhase > m_ShiftMaxPhase)
             m_ShiftPhase = m_ShiftMaxPhase;
         m_State = OBJECTIVESTATE_ALLIANCE;
         return true;
@@ -620,7 +621,7 @@ void OutdoorPvP::TeamCastSpell(TeamId team, int32 spellId)
     else
         for (PlayerSet::iterator itr = m_players[team].begin(); itr != m_players[team].end(); ++itr)
             //(*itr)->RemoveAura((uint32)-spellId); // by stack?
-			(*itr)->RemoveAurasDueToSpell((uint32)spellId);
+            (*itr)->RemoveAurasDueToSpell((uint32)spellId);
 }
 
 void OutdoorPvP::TeamApplyBuff(TeamId team, uint32 spellId, uint32 spellId2)

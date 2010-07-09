@@ -270,6 +270,7 @@ SET(game_STAT_SRCS
    GroupReference.cpp
    GroupReference.h
    GroupRefManager.h
+   OutdoorPvPImpl.h
    ZoneScript.h
 )
 add_library(game STATIC ${game_STAT_SRCS})

@@ -1481,6 +1481,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\game\OutdoorPvPImpl.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\game\OutdoorPvPMgr.cpp"
 				>
 			</File>

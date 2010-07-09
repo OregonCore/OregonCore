@@ -188,7 +188,7 @@ bool OutdoorPvPZM::SetupOutdoorPvP()
 
     // add the zones affected by the pvp buff
     for (int i = 0; i < OutdoorPvPZMBuffZonesNum; ++i)
-        sOutdoorPvPMgr.AddZone(OutdoorPvPZMBuffZones[i],this);
+        RegisterZone(OutdoorPvPZMBuffZones[i]);
 
     m_capturePoints.push_back(new OPvPCapturePointZM_Beacon(this,ZM_BEACON_WEST));
     m_capturePoints.push_back(new OPvPCapturePointZM_Beacon(this,ZM_BEACON_EAST));
