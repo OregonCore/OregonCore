@@ -77,7 +77,7 @@ float RingLocations[6][3]=
 
 bool AreaTrigger_at_ring_of_law(Player *player, AreaTriggerEntry *at)
 {
-    ScriptedInstance* pInstance = ((ScriptedInstance*)player->GetInstanceData());
+    ScriptedInstance* pInstance = (player->GetInstanceData());
 
     if (pInstance)
     {
@@ -101,7 +101,7 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
 {
     npc_grimstoneAI(Creature *c) : npc_escortAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
         MobSpawnId = rand()%6;
     }
 
@@ -640,7 +640,7 @@ struct OREGON_DLL_DECL npc_marshal_windsorAI : public npc_escortAI
 {
     npc_marshal_windsorAI(Creature *c) : npc_escortAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
     }
 
     void WaypointReached(uint32 i)
@@ -1121,7 +1121,7 @@ struct OREGON_DLL_DECL npc_rocknotAI : public npc_escortAI
 {
     npc_rocknotAI(Creature *c) : npc_escortAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
     }
 
     ScriptedInstance* pInstance;
@@ -1222,7 +1222,7 @@ CreatureAI* GetAI_npc_rocknot(Creature *_Creature)
 
 bool ChooseReward_npc_rocknot(Player *player, Creature *_Creature, const Quest *_Quest, uint32 item)
 {
-    ScriptedInstance* pInstance = ((ScriptedInstance*)_Creature->GetInstanceData());
+    ScriptedInstance* pInstance = (_Creature->GetInstanceData());
 
     if (!pInstance)
         return true;

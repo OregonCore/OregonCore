@@ -102,7 +102,7 @@ struct OREGON_DLL_DECL boss_kalecgosAI : public ScriptedAI
 {
     boss_kalecgosAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
         SathGUID = 0;
         DoorGUID = 0;
     }
@@ -256,7 +256,7 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
 {
     boss_sathrovarrAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
         KalecGUID = 0;
         KalecgosGUID = 0;
     }
@@ -464,7 +464,7 @@ struct OREGON_DLL_DECL boss_kalecAI : public ScriptedAI
     bool isEnraged; // if demon is enraged
 
     boss_kalecAI(Creature *c) : ScriptedAI(c){
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
     }
 
     void Reset()

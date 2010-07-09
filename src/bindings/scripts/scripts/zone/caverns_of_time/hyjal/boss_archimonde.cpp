@@ -40,9 +40,9 @@ EndScriptData */
 #define SAY_SOUL_CHARGE1            -1534029
 #define SAY_SOUL_CHARGE2            -1534030
 
-#define SPELL_DENOUEMENT_WISP      32124
-#define SPELL_ANCIENT_SPARK        39349
-#define SPELL_PROTECTION_OF_ELUNE  38528
+#define SPELL_DENOUEMENT_WISP       32124
+#define SPELL_ANCIENT_SPARK         39349
+#define SPELL_PROTECTION_OF_ELUNE   38528
 
 #define SPELL_DRAIN_WORLD_TREE      39140
 #define SPELL_DRAIN_WORLD_TREE_2    39141
@@ -77,7 +77,7 @@ struct mob_ancient_wispAI : public ScriptedAI
 {
     mob_ancient_wispAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -234,8 +234,6 @@ struct OREGON_DLL_DECL mob_doomfire_targettingAI : public ScriptedAI
         ArchimondeGUID = 0;
     }
 
-    void EnterCombat(Unit* who) {}
-
     void MoveInLineOfSight(Unit* who)
     {
         // Do not do anything if who does not exist, or who is Doomfire, Archimonde or Doomfire targetting
@@ -245,6 +243,8 @@ struct OREGON_DLL_DECL mob_doomfire_targettingAI : public ScriptedAI
 
         m_creature->AddThreat(who, 0.0f);
     }
+
+    void EnterCombat(Unit* who) {}
 
     void DamageTaken(Unit *done_by, uint32 &damage) { damage = 0; }
 
@@ -298,10 +298,10 @@ struct OREGON_DLL_DECL mob_doomfire_targettingAI : public ScriptedAI
                     m_creature->GetMotionMaster()->MovePoint(0, x, y, z);
                     break;
             }
+
             ChangeTargetTimer = 5000;
         } else ChangeTargetTimer -= diff;
     }
-
 };
 
 /* Finally, Archimonde's script. His script isn't extremely complex, most are simply spells on timers.
@@ -328,7 +328,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
 {
     boss_archimondeAI(Creature *c) : hyjal_trashAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -459,13 +459,13 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
             return false;
 
         targets.sort(TargetDistanceOrder(m_creature));
-        Unit* target = targets.front();
-        if (target)
+        Unit *pTarget = targets.front();
+        if (pTarget)
         {
-            if (!m_creature->IsWithinDistInMap(target, m_creature->GetAttackDistance(target)))
+            if (!m_creature->IsWithinDistInMap(pTarget, m_creature->GetAttackDistance(pTarget)))
                 return true;                                // Cast Finger of Death
             else                                            // This target is closest, he is our new tank
-                m_creature->AddThreat(target, DoGetThreat(m_creature->getVictim()));
+                m_creature->AddThreat(pTarget, DoGetThreat(m_creature->getVictim()));
         }
 
         return false;
@@ -498,9 +498,11 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
     void UnleashSoulCharge()
     {
         m_creature->InterruptNonMeleeSpells(false);
+
         bool HasCast = false;
         uint32 chargeSpell = 0;
         uint32 unleashSpell = 0;
+
         switch(rand()%3)
         {
             case 0:
@@ -516,6 +518,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
                 unleashSpell = SPELL_UNLEASH_SOUL_GREEN;
                 break;
         }
+
         if (m_creature->HasAura(chargeSpell, 0))
         {
             m_creature->RemoveSingleAuraFromStack(chargeSpell, 0);
@@ -523,6 +526,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
             HasCast = true;
             SoulChargeCount--;
         }
+
         if (HasCast)
             SoulChargeTimer = 2000 + rand()%28000;
     }
@@ -596,6 +600,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
                 if (Check)
                 {
                     Check->SetVisibility(VISIBILITY_OFF);
+
                     if (m_creature->IsWithinDistInMap(Check, 75))
                     {
                         m_creature->GetMotionMaster()->Clear(false);
@@ -614,6 +619,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
             {
                 m_creature->GetMotionMaster()->Clear(false);
                 m_creature->GetMotionMaster()->MoveIdle();
+
                 //all members of raid must get this buff
                 DoCast(m_creature->getVictim(), SPELL_PROTECTION_OF_ELUNE);
                 HasProtected = true;
@@ -666,7 +672,6 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
             else
                 DoScriptText(SAY_AIR_BURST2, m_creature);
 
-
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 1), SPELL_AIR_BURST);//not on tank
             AirBurstTimer = 25000 + rand()%15000;
         } else AirBurstTimer -= diff;
@@ -699,31 +704,31 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
     void WaypointReached(uint32 i){}
 };
 
-CreatureAI* GetAI_boss_archimonde(Creature *_Creature)
+CreatureAI* GetAI_boss_archimonde(Creature* pCreature)
 {
-    return new boss_archimondeAI (_Creature);
+    return new boss_archimondeAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_doomfire(Creature* _Creature)
+CreatureAI* GetAI_mob_doomfire(Creature* pCreature)
 {
-    return new mob_doomfireAI(_Creature);
+    return new mob_doomfireAI(pCreature);
 }
 
-CreatureAI* GetAI_mob_doomfire_targetting(Creature* _Creature)
+CreatureAI* GetAI_mob_doomfire_targetting(Creature* pCreature)
 {
-    return new mob_doomfire_targettingAI(_Creature);
+    return new mob_doomfire_targettingAI(pCreature);
 }
 
-CreatureAI* GetAI_mob_ancient_wisp(Creature* _Creature)
+CreatureAI* GetAI_mob_ancient_wisp(Creature* pCreature)
 {
-    return new mob_ancient_wispAI(_Creature);
+    return new mob_ancient_wispAI(pCreature);
 }
 
 void AddSC_boss_archimonde()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_archimonde";
+    newscript->Name = "boss_archimonde";
     newscript->GetAI = &GetAI_boss_archimonde;
     newscript->RegisterSelf();
 
@@ -742,4 +747,3 @@ void AddSC_boss_archimonde()
     newscript->GetAI = &GetAI_mob_ancient_wisp;
     newscript->RegisterSelf();
 }
-

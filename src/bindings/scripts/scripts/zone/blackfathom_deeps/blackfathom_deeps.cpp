@@ -62,7 +62,7 @@ bool GOHello_go_fire_akumai(Player *player, GameObject* pGO)
 {
     uint32 candlesNumber;
 
-    ScriptedInstance *pInstance = (player->GetInstanceData()) ? ((ScriptedInstance*)player->GetInstanceData()) : NULL;
+    ScriptedInstance *pInstance = (player->GetInstanceData()) ? (player->GetInstanceData()) : NULL;
 
     if (!pInstance)
     {

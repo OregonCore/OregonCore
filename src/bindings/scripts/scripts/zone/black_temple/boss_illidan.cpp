@@ -363,7 +363,7 @@ struct OREGON_DLL_DECL boss_illidan_stormrageAI : public ScriptedAI
 {
     boss_illidan_stormrageAI(Creature* c) : ScriptedAI(c), Summons(m_creature)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
         m_creature->CastSpell(m_creature, SPELL_DUAL_WIELD, true);
 
         SpellEntry *TempSpell = GET_SPELL(SPELL_SHADOWFIEND_PASSIVE);
@@ -971,7 +971,7 @@ struct OREGON_DLL_DECL npc_akama_illidanAI : public ScriptedAI
 {
     npc_akama_illidanAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
         JustCreated = true;
     }
 
@@ -1760,7 +1760,7 @@ struct OREGON_DLL_DECL mob_parasitic_shadowfiendAI : public ScriptedAI
 {
     mob_parasitic_shadowfiendAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
     }
 
     ScriptedInstance* pInstance;

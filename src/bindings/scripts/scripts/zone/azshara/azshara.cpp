@@ -328,7 +328,7 @@ struct OREGON_DLL_DECL mob_rizzle_sprysprocketAI : public ScriptedAI
 
         if (Grenade_Timer < diff)
         {
-            Player *player = (Player *)Unit::GetUnit((*m_creature), PlayerGUID);
+            Player *player = Unit::GetPlayer(PlayerGUID);
             if (player)
             {
                DoScriptText(SAY_RIZZLE_GRENADE, m_creature, player);
@@ -339,7 +339,7 @@ struct OREGON_DLL_DECL mob_rizzle_sprysprocketAI : public ScriptedAI
 
         if (Check_Timer < diff)
         {
-            Player *player = (Player *)Unit::GetUnit((*m_creature), PlayerGUID);
+            Player *player = Unit::GetPlayer(PlayerGUID);
             if (!player)
             {
                 Despawn();

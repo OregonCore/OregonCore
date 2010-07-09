@@ -96,7 +96,7 @@ struct OREGON_DLL_DECL boss_priestess_delrissaAI : public ScriptedAI
 {
     boss_priestess_delrissaAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
         Adds.clear();
         //SummonAdds();
         Heroic = c->GetMap()->IsHeroic();
@@ -367,7 +367,7 @@ struct OREGON_DLL_DECL boss_priestess_guestAI : public ScriptedAI
     boss_priestess_guestAI(Creature* c) : ScriptedAI(c)
     {
         Group.clear();
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
         AcquireGUIDs();
     }
 

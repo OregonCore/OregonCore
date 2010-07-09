@@ -46,7 +46,7 @@ struct OREGON_DLL_DECL boss_scarlet_commander_mograineAI : public ScriptedAI
 {
     boss_scarlet_commander_mograineAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (ScriptedInstance*)m_creature->GetInstanceData();
+        pInstance = m_creature->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -185,7 +185,7 @@ struct OREGON_DLL_DECL boss_high_inquisitor_whitemaneAI : public ScriptedAI
 {
     boss_high_inquisitor_whitemaneAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (ScriptedInstance*)m_creature->GetInstanceData();
+        pInstance = m_creature->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

@@ -57,7 +57,7 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
 {
     boss_skeramAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
         IsImage = false;
     }
 

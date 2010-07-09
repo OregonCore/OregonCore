@@ -40,7 +40,7 @@ struct OREGON_DLL_DECL boss_anetheronAI : public hyjal_trashAI
 {
     boss_anetheronAI(Creature *c) : hyjal_trashAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         go = false;
         pos = 0;
         SpellEntry *TempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_SLEEP);
@@ -102,9 +102,9 @@ struct OREGON_DLL_DECL boss_anetheronAI : public hyjal_trashAI
         pos = i;
         if (i == 7 && pInstance)
         {
-            Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_JAINAPROUDMOORE));
-            if (target && target->isAlive())
-                m_creature->AddThreat(target,0.0);
+            Unit *pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_JAINAPROUDMOORE));
+            if (pTarget && pTarget->isAlive())
+                m_creature->AddThreat(pTarget,0.0);
         }
     }
 
@@ -148,9 +148,8 @@ struct OREGON_DLL_DECL boss_anetheronAI : public hyjal_trashAI
 
         if (SwarmTimer < diff)
         {
-            Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0,100,true);
-            if (target)
-                DoCast(target,SPELL_CARRION_SWARM);
+            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,100,true))
+                DoCast(pTarget, SPELL_CARRION_SWARM);
 
             SwarmTimer = 45000+rand()%15000;
             switch(rand()%2)
@@ -168,11 +167,10 @@ struct OREGON_DLL_DECL boss_anetheronAI : public hyjal_trashAI
 
         if (SleepTimer < diff)
         {
-            for (uint8 i=0;i<3;++i)
+            for (uint8 i = 0; i < 3; ++i)
             {
-                Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0,100,true);
-                if (target)
-                    target->CastSpell(target,SPELL_SLEEP,true);
+                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,100,true))
+                    pTarget->CastSpell(pTarget,SPELL_SLEEP,true);
             }
             SleepTimer = 60000;
             switch(rand()%2)
@@ -189,12 +187,12 @@ struct OREGON_DLL_DECL boss_anetheronAI : public hyjal_trashAI
         } else SleepTimer -= diff;
         if (AuraTimer < diff)
         {
-            DoCast(m_creature, SPELL_VAMPIRIC_AURA,true);
+            DoCast(m_creature, SPELL_VAMPIRIC_AURA, true);
             AuraTimer = 10000+rand()%10000;
         } else AuraTimer -= diff;
         if (InfernoTimer < diff)
         {
-            DoCast(SelectTarget(SELECT_TARGET_RANDOM,0,100,true), SPELL_INFERNO);
+            DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true), SPELL_INFERNO);
             InfernoTimer = 45000;
             switch(rand()%2)
             {
@@ -213,19 +211,19 @@ struct OREGON_DLL_DECL boss_anetheronAI : public hyjal_trashAI
     }
 };
 
-CreatureAI* GetAI_boss_anetheron(Creature *_Creature)
+CreatureAI* GetAI_boss_anetheron(Creature* pCreature)
 {
-    return new boss_anetheronAI (_Creature);
+    return new boss_anetheronAI (pCreature);
 }
 
-#define SPELL_IMMOLATION 31303
+#define SPELL_IMMOLATION     31303
 #define SPELL_INFERNO_EFFECT 31302
 
 struct OREGON_DLL_DECL mob_towering_infernalAI : public ScriptedAI
 {
     mob_towering_infernalAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         if (pInstance)
             AnetheronGUID = pInstance->GetData64(DATA_ANETHERON);
     }
@@ -244,26 +242,20 @@ struct OREGON_DLL_DECL mob_towering_infernalAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-
     }
 
     void KilledUnit(Unit *victim)
     {
-
     }
 
     void JustDied(Unit *victim)
     {
-
     }
 
     void MoveInLineOfSight(Unit *who)
     {
         if (m_creature->GetDistance(who) <= 50 && !m_creature->isInCombat() && m_creature->IsHostileTo(who))
-        {
-            m_creature->AddThreat(who,0.0);
             m_creature->Attack(who,false);
-        }
     }
 
     void UpdateAI(const uint32 diff)
@@ -297,21 +289,21 @@ struct OREGON_DLL_DECL mob_towering_infernalAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_towering_infernal(Creature *_Creature)
+CreatureAI* GetAI_mob_towering_infernal(Creature* pCreature)
 {
-    return new mob_towering_infernalAI (_Creature);
+    return new mob_towering_infernalAI (pCreature);
 }
 
 void AddSC_boss_anetheron()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_anetheron";
+    newscript->Name = "boss_anetheron";
     newscript->GetAI = &GetAI_boss_anetheron;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_towering_infernal";
+    newscript->Name = "mob_towering_infernal";
     newscript->GetAI = &GetAI_mob_towering_infernal;
     newscript->RegisterSelf();
 }

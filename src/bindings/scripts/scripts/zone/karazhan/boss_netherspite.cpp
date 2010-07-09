@@ -60,7 +60,7 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
 {
     boss_netherspiteAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
 
         for (int i=0; i<3; ++i)
         {

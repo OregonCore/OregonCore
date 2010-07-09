@@ -158,7 +158,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
 {
     boss_malchezaarAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
     }
 
     ScriptedInstance *pInstance;

@@ -51,7 +51,7 @@ struct OREGON_DLL_DECL boss_archaedasAI : public ScriptedAI
 {
     boss_archaedasAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = ((ScriptedInstance*)m_creature->GetInstanceData());
+        pInstance = (m_creature->GetInstanceData());
     }
 
     uint32 Tremor_Timer;
@@ -210,7 +210,7 @@ struct OREGON_DLL_DECL mob_archaedas_minionsAI : public ScriptedAI
 {
     mob_archaedas_minionsAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = ((ScriptedInstance*)m_creature->GetInstanceData());
+        pInstance = (m_creature->GetInstanceData());
     }
 
     uint32 Arcing_Timer;
@@ -336,7 +336,7 @@ bool GOHello_go_altar_of_archaedas(Player *player, GameObject* go)
         return false;            // not enough people
     }
 
-    ScriptedInstance* pInstance = ((ScriptedInstance*)player->GetInstanceData());
+    ScriptedInstance* pInstance = (player->GetInstanceData());
     if (!pInstance) return false;
     pInstance->SetData64(0,player->GetGUID());     // activate archaedas
 
@@ -358,7 +358,7 @@ struct OREGON_DLL_DECL mob_stonekeepersAI : public ScriptedAI
 {
     mob_stonekeepersAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = ((ScriptedInstance*)m_creature->GetInstanceData());
+        pInstance = (m_creature->GetInstanceData());
     }
 
     bool InCombat;
@@ -420,7 +420,7 @@ static uint32 altarOfTheKeeperCounter=0;
 
 bool GOHello_go_altar_of_the_keepers(Player *player, GameObject* go)
 {
-    ScriptedInstance* pInstance = ((ScriptedInstance*)player->GetInstanceData());
+    ScriptedInstance* pInstance = (player->GetInstanceData());
     if (!pInstance) return true;
 
     bool alreadyUsed;

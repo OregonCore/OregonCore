@@ -269,7 +269,7 @@ public:
 bool GOHello_go_orb_of_the_blue_flight(Player *plr, GameObject* go)
 {
     if (go->GetUInt32Value(GAMEOBJECT_FACTION) == 35){
-        ScriptedInstance* pInstance = ((ScriptedInstance*)go->GetInstanceData());
+        ScriptedInstance* pInstance = (go->GetInstanceData());
         float x,y,z, dx,dy,dz;
         go->SummonCreature(CREATURE_POWER_OF_THE_BLUE_DRAGONFLIGHT, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN, 121000);
         plr->CastSpell(plr, SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT, true);
@@ -296,7 +296,7 @@ bool GOHello_go_orb_of_the_blue_flight(Player *plr, GameObject* go)
 struct OREGON_DLL_DECL boss_kalecgos_kjAI : public ScriptedAI
 {
     boss_kalecgos_kjAI(Creature* c) : ScriptedAI(c){
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
     }
 
     GameObject* Orb[4];
@@ -411,7 +411,7 @@ CreatureAI* GetAI_boss_kalecgos_kj(Creature *_Creature)
 struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
 {
     boss_kiljaedenAI(Creature* c) : Scripted_NoMovementAI(c), Summons(m_creature){
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
     }
 
     ScriptedInstance* pInstance;
@@ -726,7 +726,7 @@ CreatureAI* GetAI_boss_kiljaeden(Creature *_Creature)
 struct OREGON_DLL_DECL mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
 {
     mob_kiljaeden_controllerAI(Creature* c) : Scripted_NoMovementAI(c), Summons(m_creature){
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
     }
 
     ScriptedInstance* pInstance;
@@ -817,7 +817,7 @@ CreatureAI* GetAI_mob_kiljaeden_controller(Creature *_Creature)
 struct OREGON_DLL_DECL mob_hand_of_the_deceiverAI : public ScriptedAI
 {
     mob_hand_of_the_deceiverAI(Creature* c) : ScriptedAI(c){
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
     }
     ScriptedInstance* pInstance;
 
@@ -1045,7 +1045,7 @@ CreatureAI* GetAI_mob_armageddon(Creature *_Creature)
 struct OREGON_DLL_DECL mob_shield_orbAI : public ScriptedAI
 {
     mob_shield_orbAI(Creature* c) : ScriptedAI(c) {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
     }
 
     bool PointReached;

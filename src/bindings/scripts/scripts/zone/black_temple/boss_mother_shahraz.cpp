@@ -78,7 +78,7 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
 {
     boss_shahrazAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
     }
 
     ScriptedInstance* pInstance;

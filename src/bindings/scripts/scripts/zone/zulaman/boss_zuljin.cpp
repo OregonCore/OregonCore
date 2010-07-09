@@ -143,7 +143,7 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
 {
     boss_zuljinAI(Creature *c) : ScriptedAI(c), Summons(m_creature)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
     }
     ScriptedInstance *pInstance;
 

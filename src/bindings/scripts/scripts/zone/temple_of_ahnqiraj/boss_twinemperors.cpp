@@ -75,7 +75,7 @@ struct OREGON_DLL_DECL boss_twinemperorsAI : public ScriptedAI
 
     boss_twinemperorsAI(Creature *c): ScriptedAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
     }
 
     void TwinReset()

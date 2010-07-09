@@ -116,7 +116,7 @@ struct OREGON_DLL_DECL npc_barnesAI : public npc_escortAI
     {
         RaidWiped = false;
         m_uiEventId = 0;
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
     }
 
     ScriptedInstance* pInstance;
@@ -343,7 +343,7 @@ CreatureAI* GetAI_npc_barnesAI(Creature* _Creature)
 
 bool GossipHello_npc_barnes(Player* pPlayer, Creature* pCreature)
 {
-    if (ScriptedInstance* pInstance = ((ScriptedInstance*)pCreature->GetInstanceData()))
+    if (ScriptedInstance* pInstance = (pCreature->GetInstanceData()))
     {
         // Check for death of Moroes and if opera event is not done already
         if (pInstance->GetData(DATA_MOROES_EVENT) == DONE && pInstance->GetData(DATA_OPERA_EVENT) != DONE)
@@ -417,7 +417,7 @@ bool GossipSelect_npc_barnes(Player* pPlayer, Creature* pCreature, uint32 uiSend
 
 bool GossipHello_npc_berthold(Player* player, Creature* _Creature)
 {
-    ScriptedInstance* pInstance = ((ScriptedInstance*)_Creature->GetInstanceData());
+    ScriptedInstance* pInstance = (_Creature->GetInstanceData());
      // Check if Shade of Aran is dead or not
     if (pInstance && (pInstance->GetData(DATA_SHADEOFARAN_EVENT) == DONE))
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_TELEPORT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
@@ -462,7 +462,7 @@ struct OREGON_DLL_DECL npc_image_of_medivhAI : public ScriptedAI
 {
     npc_image_of_medivhAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
     }
 
     ScriptedInstance *pInstance;

@@ -40,7 +40,7 @@ struct OREGON_DLL_DECL npc_shadowfang_prisonerAI : public npc_escortAI
 {
     npc_shadowfang_prisonerAI(Creature *c) : npc_escortAI(c)
     {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        pInstance = (c->GetInstanceData());
     }
 
     ScriptedInstance *pInstance;
@@ -82,7 +82,7 @@ CreatureAI* GetAI_npc_shadowfang_prisoner(Creature *_Creature)
 
 bool GossipHello_npc_shadowfang_prisoner(Player *player, Creature *_Creature)
 {
-    ScriptedInstance* pInstance = ((ScriptedInstance*)_Creature->GetInstanceData());
+    ScriptedInstance* pInstance = (_Creature->GetInstanceData());
 
     if (!pInstance)
         return false;
