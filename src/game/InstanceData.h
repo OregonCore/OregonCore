@@ -69,7 +69,6 @@ class OREGON_DLL_SPEC InstanceData
 
         void SaveToDB();
 
-        //Called every map update
         virtual void Update(uint32 /*diff*/) {}
 
         //Used by the map's CanEnter function.
@@ -80,13 +79,15 @@ class OREGON_DLL_SPEC InstanceData
         virtual void OnPlayerEnter(Player *) {}
 
         //Called when a gameobject is created
+        virtual void OnObjectCreate(GameObject *go, bool add)
+        {
+            OnObjectCreate(go);
+        }
         virtual void OnObjectCreate(GameObject *) {}
 
         //called on creature creation
-        virtual void OnCreatureCreate(Creature * /*creature*/, uint32 /*creature_entry*/) {}
-
-        virtual void OnCreatureRemove(Creature*) {}
-        virtual void OnObjectRemove(GameObject*) {}
+        virtual void OnCreatureCreate(Creature *, bool add);
+        virtual void OnCreatureCreate(Creature *, uint32 entry) {}
 
         //All-purpose data storage 64 bit
         virtual uint64 GetData64(uint32 /*DataId*/) { return 0; }
@@ -102,13 +103,11 @@ class OREGON_DLL_SPEC InstanceData
         //use HandleGameObject(GUID,boolen,NULL); in any other script
         void HandleGameObject(uint64 GUID, bool open, GameObject *go = NULL);
 
-    protected:
-        void AddBossRoomDoor(uint32 id, GameObject *door);
-        void AddBossPassageDoor(uint32 id, GameObject *door);
-        void RemoveBossRoomDoor(uint32 id, GameObject *door);
-        void RemoveBossPassageDoor(uint32 id, GameObject *door);
-
         void SetBossState(uint32 id, EncounterState state);
+    protected:
+        void SetBossNumber(uint32 number) { bosses.resize(number); }
+        void SetBossRoomDoor(uint32 id, GameObject *door, bool add);
+        void SetBossPassageDoor(uint32 id, GameObject *door, bool add);
 
         std::string GetBossSave()
         {

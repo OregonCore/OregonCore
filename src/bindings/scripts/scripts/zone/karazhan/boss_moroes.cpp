@@ -298,7 +298,7 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
 
             if (Blind_Timer < diff)
             {
-                Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0, 25, true);
+                Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 25, true);
                 if (target && m_creature->IsWithinMeleeRange(target))
                     DoCast(target, SPELL_BLIND);
 

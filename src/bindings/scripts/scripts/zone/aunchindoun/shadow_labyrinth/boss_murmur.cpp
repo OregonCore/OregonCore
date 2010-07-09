@@ -99,7 +99,7 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
         // Murmur's Touch
         if (MurmursTouch_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0,80,true))
+            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0,80,true))
                 DoCast(target, SPELL_MURMURS_TOUCH);
             MurmursTouch_Timer = 30000;
         } else MurmursTouch_Timer -= diff;
@@ -107,7 +107,7 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
         // Resonance
         if (Resonance_Timer < diff)
         {
-            if (!m_creature->IsWithinMeleeRange(SelectUnit(SELECT_TARGET_NEAREST,0,20,true)))
+            if (!m_creature->IsWithinMeleeRange(SelectTarget(SELECT_TARGET_NEAREST,0,20,true)))
                 DoCast(m_creature, SPELL_RESONANCE);
             Resonance_Timer = 5000;
         } else Resonance_Timer -= diff;
@@ -141,7 +141,7 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
             // Sonic Shock
             if (SonicShock_Timer < diff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0,20,false))
+                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0,20,false))
                     if (target->isAlive())
                         DoCast(target, SPELL_SONIC_SHOCK);
                 SonicShock_Timer = 10000+rand()%10000;

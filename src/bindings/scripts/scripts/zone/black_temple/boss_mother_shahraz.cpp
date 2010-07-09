@@ -153,7 +153,7 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
         float Z = TeleportPoint[random].z;
         for (uint8 i = 0; i < 3; i++)
         {
-            Unit* pUnit = SelectUnit(SELECT_TARGET_RANDOM, 1,300,true);
+            Unit* pUnit = SelectTarget(SELECT_TARGET_RANDOM, 1,300,true);
             if (pUnit && pUnit->isAlive() && (pUnit->GetTypeId() == TYPEID_PLAYER) && !pUnit->HasAura(SPELL_SABER_LASH_IMM,0))
             {
                 TargetGUID[i] = pUnit->GetGUID();

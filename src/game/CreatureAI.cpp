@@ -100,8 +100,6 @@ void CreatureAI::DoZoneInCombat(Creature* creature)
     }
 }
 
-
-
 void CreatureAI::MoveInLineOfSight(Unit *who)
 {
     if (me->getVictim())
@@ -145,6 +143,5 @@ void CreatureAI::EnterEvadeMode()
 /*void CreatureAI::AttackedBy(Unit* attacker)
 {
     if (!m_creature->getVictim())
-            AttackStart(attacker);
+        AttackStart(attacker);
 }*/
-

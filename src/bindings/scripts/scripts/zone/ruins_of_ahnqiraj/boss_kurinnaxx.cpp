@@ -93,7 +93,7 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
 
         if (SUMMON_Timer < diff)
         {
-            Unit *target = SelectUnit(SELECT_TARGET_RANDOM,1,70,true);
+            Unit *target = SelectTarget(SELECT_TARGET_RANDOM,1,70,true);
             if (target)
             {
                 DoCast(target,SPELL_SUMMON);
@@ -106,7 +106,7 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
         {
             if (!sandtrap)
             {
-                Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0,50,true);
+                Unit *target = SelectTarget(SELECT_TARGET_RANDOM,0,50,true);
 
                 if (target)
                 {

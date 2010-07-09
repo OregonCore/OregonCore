@@ -105,7 +105,7 @@ void GameObject::RemoveFromWorld()
     {
         if (Map *map = FindMap())
             if (map->IsDungeon() && ((InstanceMap*)map)->GetInstanceData())
-                ((InstanceMap*)map)->GetInstanceData()->OnObjectRemove(this);
+                ((InstanceMap*)map)->GetInstanceData()->OnObjectCreate(this, false);
         ObjectAccessor::Instance().RemoveObject(this);
         WorldObject::RemoveFromWorld();
     }
@@ -433,10 +433,10 @@ void GameObject::Update(uint32 diff)
                 {
                     std::set<uint32>::iterator it = m_unique_users.begin();
                     std::set<uint32>::iterator end = m_unique_users.end();
-                    for (; it != end; it++)
+                    for (; it != end; ++it)
                     {
-                        Unit* owner = Unit::GetUnit(*this, uint64(*it));
-                        if (owner) owner->CastSpell(owner, spellId, false);
+                        if (Unit* owner = Unit::GetUnit(*this, uint64(*it)))
+                            owner->CastSpell(owner, spellId, false);
                     }
 
                     m_unique_users.clear();
@@ -1362,7 +1362,7 @@ void GameObject::CastSpell(Unit* target, uint32 spell)
     else
     {
         trigger->setFaction(14);
-        trigger->CastSpell(target, spell, true, 0, 0, target->GetGUID());
+        trigger->CastSpell(target, spell, true, 0, 0, target ? target->GetGUID() : 0);
     }
     //trigger->setDeathState(JUST_DIED);
     //trigger->RemoveCorpse();

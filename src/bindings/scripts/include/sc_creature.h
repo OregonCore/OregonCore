@@ -55,7 +55,7 @@ struct OREGON_DLL_DECL ScriptedAI : public CreatureAI
     //CreatureAI Functions
     //*************
 
-    void AttackStartNoMove(Unit *target);
+    void AttackStartNoMove(Unit *pTarget);
     void AttackStart(Unit *);
     void AttackStart(Unit *, bool melee);
 
@@ -81,7 +81,7 @@ struct OREGON_DLL_DECL ScriptedAI : public CreatureAI
     void SpellHit(Unit* caster, const SpellEntry *spell) {}
 
     // Called when spell hits a target
-    void SpellHitTarget(Unit* target, const SpellEntry *spell) {}
+    void SpellHitTarget(Unit *pTarget, const SpellEntry *spell) {}
 
     //Called at waypoint reached or PointMovement end
     void MovementInform(uint32 type, uint32 id){}
@@ -173,9 +173,7 @@ struct OREGON_DLL_DECL ScriptedAI : public CreatureAI
     Creature* DoSpawnCreature(uint32 uiId, float fX, float fY, float fZ, float fAngle, uint32 uiType, uint32 uiDespawntime);
 
     //Selects a unit from the creature's current aggro list
-    Unit* SelectUnit(SelectAggroTarget target, uint32 uiPosition);
-    Unit* SelectUnit(SelectAggroTarget target, uint32 position, float dist, bool playerOnly);
-    void SelectUnitList(std::list<Unit*> &targetList, uint32 num, SelectAggroTarget target, float dist, bool playerOnly);
+    Unit* SelectUnit(SelectAggroTarget pTarget, uint32 uiPosition);
 
     bool HealthBelowPct(uint32 pct) const { return me->GetHealth() * 100 < m_creature->GetMaxHealth() * pct; }
 
@@ -206,8 +204,31 @@ struct OREGON_DLL_DECL Scripted_NoMovementAI : public ScriptedAI
     void AttackStart(Unit* who);
 };
 
-// SD2's grid searchers
+struct OREGON_DLL_DECL BossAI : public ScriptedAI
+{
+    BossAI(Creature *c, uint32 id);
 
+    uint32 bossId;
+    EventMap events;
+    SummonList summons;
+    ScriptedInstance *instance;
+
+    void JustSummoned(Creature *summon);
+    void SummonedCreatureDespawn(Creature *summon);
+
+    void UpdateAI(const uint32 diff) = 0;
+
+    void Reset() { _Reset(); }
+    void EnterCombat(Unit *who) { _EnterCombat(); }
+    void JustDied(Unit *killer) { _JustDied(); }
+
+    protected:
+        void _Reset();
+        void _EnterCombat();
+        void _JustDied();
+};
+
+// SD2 grid searchers
 //return closest creature alive in grid, with range from pSource
 Creature* GetClosestCreatureWithEntry(WorldObject* pSource, uint32 Entry, float MaxSearchRange);
 

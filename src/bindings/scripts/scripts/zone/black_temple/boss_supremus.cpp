@@ -181,7 +181,7 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
         {
             if (SwitchTargetTimer < diff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1, 100, true))
+                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true))
                 {
                     if (m_creature->GetDistance2d(m_creature->getVictim()) < 40)
                         m_creature->CastSpell(m_creature->getVictim(),SPELL_CHARGE,false);
@@ -195,7 +195,7 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
 
             if (SummonVolcanoTimer < diff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0, 999, true))
+                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true))
                 {
                     DoCast(target, SPELL_VOLCANIC_SUMMON);
                     DoScriptText(EMOTE_GROUND_CRACK, m_creature);

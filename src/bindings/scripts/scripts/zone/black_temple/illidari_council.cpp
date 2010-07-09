@@ -567,7 +567,7 @@ struct OREGON_DLL_DECL boss_gathios_the_shattererAI : public boss_illidari_counc
 
         if (HammerOfJusticeTimer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0,40,true))
+            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0,40,true))
             {
                 // is in ~10-40 yd range
                 if (m_creature->GetDistance2d(target) > 10)

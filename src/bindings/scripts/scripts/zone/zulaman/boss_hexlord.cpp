@@ -395,7 +395,7 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
 
         if (SiphonSoul_Timer < diff)
         {
-            Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0, 70, true);
+            Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 70, true);
             Unit *trigger = DoSpawnCreature(MOB_TEMP_TRIGGER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 30000);
             if (!target || !trigger)
             {
@@ -588,7 +588,7 @@ struct OREGON_DLL_DECL boss_alyson_antilleAI : public boss_hexlord_addAI
         m_creature->CastSpell(target, SPELL_DISPEL_MAGIC, false);
         }
         else
-        m_creature->CastSpell(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_DISPEL_MAGIC, false);
+        m_creature->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_DISPEL_MAGIC, false);
 
         dispelmagic_timer = 12000;
         } else dispelmagic_timer -= diff;*/

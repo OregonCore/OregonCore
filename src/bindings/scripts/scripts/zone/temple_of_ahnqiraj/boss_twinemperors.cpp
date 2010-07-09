@@ -470,7 +470,7 @@ struct OREGON_DLL_DECL boss_veknilashAI : public boss_twinemperorsAI
 
         if (UpperCut_Timer < diff)
         {
-            Unit* randomMelee = SelectUnit(SELECT_TARGET_RANDOM, 0, NOMINAL_MELEE_RANGE, true);
+            Unit* randomMelee = SelectTarget(SELECT_TARGET_RANDOM, 0, NOMINAL_MELEE_RANGE, true);
             if (randomMelee)
                 DoCast(randomMelee,SPELL_UPPERCUT);
             UpperCut_Timer = 15000+rand()%15000;
@@ -563,7 +563,7 @@ struct OREGON_DLL_DECL boss_veklorAI : public boss_twinemperorsAI
         if (Blizzard_Timer < diff)
         {
             Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM, 0, 45, true);
+            target = SelectTarget(SELECT_TARGET_RANDOM, 0, 45, true);
             if (target)
                 DoCast(target,SPELL_BLIZZARD);
             Blizzard_Timer = 15000+rand()%15000;
@@ -572,7 +572,7 @@ struct OREGON_DLL_DECL boss_veklorAI : public boss_twinemperorsAI
         if (ArcaneBurst_Timer < diff)
         {
             Unit *mvic;
-            if ((mvic=SelectUnit(SELECT_TARGET_NEAREST, 0, NOMINAL_MELEE_RANGE, true)) != NULL)
+            if ((mvic=SelectTarget(SELECT_TARGET_NEAREST, 0, NOMINAL_MELEE_RANGE, true)) != NULL)
             {
                 DoCast(mvic,SPELL_ARCANEBURST);
                 ArcaneBurst_Timer = 5000;

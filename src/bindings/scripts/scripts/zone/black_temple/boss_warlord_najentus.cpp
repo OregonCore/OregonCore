@@ -203,7 +203,7 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
         {
             if (!m_creature->IsNonMeleeSpellCasted(false))
             {
-                Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1, 80,true);
+                Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 80,true);
                 if (!target) target = m_creature->getVictim();
                 if (target)
                 {

@@ -213,7 +213,7 @@ Creature* ScriptedAI::DoSpawnCreature(uint32 uiId, float fX, float fY, float fZ,
     return m_creature->SummonCreature(uiId, m_creature->GetPositionX()+fX, m_creature->GetPositionY()+fY, m_creature->GetPositionZ()+fZ, fAngle, (TempSummonType)uiType, uiDespawntime);
 }
 
-Unit* ScriptedAI::SelectUnit(SelectAggroTarget target, uint32 uiPosition)
+Unit* ScriptedAI::SelectUnit(SelectAggroTarget pTarget, uint32 uiPosition)
 {
     //ThreatList m_threatlist;
     std::list<HostileReference*>& threatlist = m_creature->getThreatManager().getThreatList();
@@ -223,7 +223,7 @@ Unit* ScriptedAI::SelectUnit(SelectAggroTarget target, uint32 uiPosition)
     if (uiPosition >= threatlist.size() || !threatlist.size())
         return NULL;
 
-    switch (target)
+    switch (pTarget)
     {
     case SELECT_TARGET_RANDOM:
         advance (itr , uiPosition +  (rand() % (threatlist.size() - uiPosition)));
@@ -242,16 +242,6 @@ Unit* ScriptedAI::SelectUnit(SelectAggroTarget target, uint32 uiPosition)
     }
 
     return NULL;
-}
-
-Unit* ScriptedAI::SelectUnit(SelectAggroTarget targetType, uint32 position, float dist, bool playerOnly)
-{
-    return SelectTarget(targetType, position, dist, playerOnly);
-}
-
-void ScriptedAI::SelectUnitList(std::list<Unit*> &targetList, uint32 num, SelectAggroTarget targetType, float dist, bool playerOnly)
-{
-    return SelectTargetList(targetList, num, targetType, dist, playerOnly);
 }
 
 SpellEntry const* ScriptedAI::SelectSpell(Unit* pTarget, int32 uiSchool, int32 uiMechanic, SelectTargetType selectTargets, uint32 uiPowerCostMin, uint32 uiPowerCostMax, float fRangeMin, float fRangeMax, SelectEffect selectEffects)
@@ -322,7 +312,6 @@ SpellEntry const* ScriptedAI::SelectSpell(Unit* pTarget, int32 uiSchool, int32 u
             continue;
         if (fRangeMax && pTempRange->maxRange > fRangeMax)
             continue;
-
 
         //Check if our target is in range
          if (m_creature->IsWithinDistInMap(pTarget, pTempRange->minRange) || !m_creature->IsWithinDistInMap(pTarget, pTempRange->maxRange))
@@ -572,7 +561,6 @@ std::list<Creature*> ScriptedAI::DoFindFriendlyMissingBuff(float fRange, uint32 
 
 Player* ScriptedAI::GetPlayerAtMinimumRange(float fMinimumRange)
 {
-
     Player* pPlayer = NULL;
 
     //NO IMPLEMENTED IN TC1 YET...
@@ -591,7 +579,6 @@ Player* ScriptedAI::GetPlayerAtMinimumRange(float fMinimumRange)
     */
 
     return pPlayer;
-
 }
 
 void ScriptedAI::SetEquipmentSlots(bool bLoadDefault, int32 uiMainHand, int32 uiOffHand, int32 uiRanged)
@@ -682,6 +669,44 @@ void Scripted_NoMovementAI::AttackStart(Unit* pWho)
     {
         DoStartNoMovement(pWho);
     }
+}
+
+BossAI::BossAI(Creature *c, uint32 id) : ScriptedAI(c)
+, bossId(id), summons(me), instance((ScriptedInstance*)c->GetInstanceData())
+{
+}
+void BossAI::_Reset()
+{
+    events.Reset();
+    summons.DespawnAll();
+    if (instance)
+        instance->SetBossState(bossId, NOT_STARTED);
+}
+
+void BossAI::_JustDied()
+{
+    events.Reset();
+    summons.DespawnAll();
+    if (instance)
+        instance->SetBossState(bossId, DONE);
+}
+
+void BossAI::_EnterCombat()
+{
+    DoZoneInCombat();
+    if (instance)
+        instance->SetBossState(bossId, IN_PROGRESS);
+}
+
+void BossAI::JustSummoned(Creature *summon)
+{
+    summons.Summon(summon);
+    DoZoneInCombat(summon);
+}
+
+void BossAI::SummonedCreatureDespawn(Creature *summon)
+{
+    summons.Despawn(summon);
 }
 
 #define GOBJECT(x) (const_cast<GameObjectInfo*>(GetGameObjectInfo(x)))

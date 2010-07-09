@@ -656,7 +656,7 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
             case 2:
                 if (conflagrate < diff)
                 {
-                    Unit *plr = SelectUnit(SELECT_TARGET_RANDOM, 1,30,true);
+                    Unit *plr = SelectTarget(SELECT_TARGET_RANDOM, 1,30,true);
                     if (!plr)
                         plr = m_creature->getVictim();
 

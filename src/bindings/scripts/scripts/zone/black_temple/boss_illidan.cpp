@@ -782,7 +782,7 @@ struct OREGON_DLL_DECL boss_illidan_stormrageAI : public ScriptedAI
 
             case EVENT_PARASITIC_SHADOWFIEND:
                 {
-                    if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1, 200, true))
+                    if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 200, true))
                         m_creature->CastSpell(target, SPELL_PARASITIC_SHADOWFIEND, true);
                     Timer[EVENT_PARASITIC_SHADOWFIEND] = 35000 + rand()%10000;
                 }break;
@@ -904,7 +904,7 @@ struct OREGON_DLL_DECL flame_of_azzinothAI : public ScriptedAI
 
     void ChargeCheck()
     {
-        Unit* target = SelectUnit(SELECT_TARGET_FARTHEST, 0, 200, false);
+        Unit* target = SelectTarget(SELECT_TARGET_FARTHEST, 0, 200, false);
         if (target && (!m_creature->IsWithinCombatRange(target, FLAME_CHARGE_DISTANCE)))
         {
             m_creature->AddThreat(target, 5000000.0f);
@@ -1798,7 +1798,7 @@ struct OREGON_DLL_DECL mob_parasitic_shadowfiendAI : public ScriptedAI
     {
         if (!m_creature->getVictim())
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0, 999, true))
+            if (Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true))
                 AttackStart(target);
             else
             {
@@ -1897,15 +1897,15 @@ void boss_illidan_stormrageAI::JustSummoned(Creature* summon)
                 summon->setDeathState(JUST_DIED);
                 return;
             }
-            Unit *target = SelectUnit(SELECT_TARGET_TOPAGGRO, 0, 999, true);
+            Unit *target = SelectTarget(SELECT_TARGET_TOPAGGRO, 0, 999, true);
             if (!target || target->HasAura(SPELL_PARASITIC_SHADOWFIEND, 0)
                 || target->HasAura(SPELL_PARASITIC_SHADOWFIEND2, 0))
-                target = SelectUnit(SELECT_TARGET_RANDOM, 0, 999, true);
+                target = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true);
             if (target)
                 summon->AI()->AttackStart(target);
         }break;
     case SHADOW_DEMON:
-        if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0, 999, true)) // only on players.
+        if (Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true)) // only on players.
         {
             summon->AddThreat(target, 5000000.0f);
             summon->AI()->AttackStart(target);

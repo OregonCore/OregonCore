@@ -275,7 +275,7 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
         // Void Zone
         if (VoidZoneTimer < diff)
         {
-            DoCast(SelectUnit(SELECT_TARGET_RANDOM,1,45,true),SPELL_VOIDZONE,true);
+            DoCast(SelectTarget(SELECT_TARGET_RANDOM,1,45,true),SPELL_VOIDZONE,true);
             VoidZoneTimer = 15000;
         } else VoidZoneTimer -= diff;
 
@@ -318,7 +318,7 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
             // Netherbreath
             if (NetherbreathTimer < diff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0,40,true))
+                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0,40,true))
                     DoCast(target,SPELL_NETHERBREATH);
                 NetherbreathTimer = 5000+rand()%2000;
             } else NetherbreathTimer -= diff;
