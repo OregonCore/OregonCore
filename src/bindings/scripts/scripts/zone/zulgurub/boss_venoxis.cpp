@@ -95,19 +95,19 @@ struct OREGON_DLL_DECL boss_venoxisAI : public ScriptedAI
                 {
                     DoCast(m_creature, SPELL_DISPELL);
                     Dispell_Timer = 15000 + rand()%15000;
-                }else Dispell_Timer -= diff;
+                } else Dispell_Timer -= diff;
 
                 if (Renew_Timer < diff)
                 {
                     DoCast(m_creature, SPELL_RENEW);
                     Renew_Timer = 20000 + rand()%10000;
-                }else Renew_Timer -= diff;
+                } else Renew_Timer -= diff;
 
                 if (HolyWrath_Timer < diff)
                 {
                     DoCast(m_creature->getVictim(), SPELL_HOLY_WRATH);
                     HolyWrath_Timer = 15000 + rand()%10000;
-                }else HolyWrath_Timer -= diff;
+                } else HolyWrath_Timer -= diff;
 
                 if (HolyNova_Timer < diff)
                 {
@@ -129,7 +129,7 @@ struct OREGON_DLL_DECL boss_venoxisAI : public ScriptedAI
                         HolyNova_Timer = 2000;
                     }
 
-                }else HolyNova_Timer -= diff;
+                } else HolyNova_Timer -= diff;
 
                 if (HolyFire_Timer < diff && TargetInRange < 3)
                 {
@@ -137,7 +137,7 @@ struct OREGON_DLL_DECL boss_venoxisAI : public ScriptedAI
                         DoCast(target, SPELL_HOLY_FIRE);
 
                     HolyFire_Timer = 8000;
-                }else HolyFire_Timer -= diff;
+                } else HolyFire_Timer -= diff;
             }
             else
             {
@@ -167,7 +167,7 @@ struct OREGON_DLL_DECL boss_venoxisAI : public ScriptedAI
                         DoCast(target, SPELL_VENOMSPIT);
 
                     VenomSpit_Timer = 15000 + rand()%5000;
-                }else VenomSpit_Timer -= diff;
+                } else VenomSpit_Timer -= diff;
 
                 if (PhaseTwo && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 11))
                 {

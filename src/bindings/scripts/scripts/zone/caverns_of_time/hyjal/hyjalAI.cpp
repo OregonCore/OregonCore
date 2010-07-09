@@ -401,7 +401,7 @@ void hyjalAI::Reset()
             UpdateWorldState(WORLD_STATE_ENEMYCOUNT, 0);
             pInstance->SetData(DATA_RESET_TRASH_COUNT, 0);
         }
-    }else error_log(ERROR_INST_DATA);
+    } else error_log(ERROR_INST_DATA);
 
     //Visibility
     DoHide = true;
@@ -459,7 +459,7 @@ void hyjalAI::SummonCreature(uint32 entry, float Base[4][3])
                     pCreature = m_creature->SummonCreature(entry, SpawnPointSpecial[SPAWN_NEAR_TOWER][0]+irand(-20,20), SpawnPointSpecial[SPAWN_NEAR_TOWER][1]+irand(-20,20), SpawnPointSpecial[SPAWN_NEAR_TOWER][2]+irand(-10,10), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
                     if (pCreature)
                         ((hyjal_trashAI*)pCreature->AI())->useFlyPath = true;
-                }else{//summon at gate
+                } else{//summon at gate
                     pCreature = m_creature->SummonCreature(entry, SpawnPointSpecial[SPAWN_GARG_GATE][0]+irand(-10,10), SpawnPointSpecial[SPAWN_GARG_GATE][1]+irand(-10,10), SpawnPointSpecial[SPAWN_GARG_GATE][2]+irand(-10,10), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
                 }
                 break;
@@ -467,7 +467,7 @@ void hyjalAI::SummonCreature(uint32 entry, float Base[4][3])
                 if (FirstBossDead && WaveCount == 1)
                 {//summon at gate
                     pCreature = m_creature->SummonCreature(entry, SpawnPointSpecial[SPAWN_WYRM_GATE][0],SpawnPointSpecial[SPAWN_WYRM_GATE][1],SpawnPointSpecial[SPAWN_WYRM_GATE][2], 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
-                }else{
+                } else{
                     pCreature = m_creature->SummonCreature(entry, SpawnPointSpecial[SPAWN_NEAR_TOWER][0], SpawnPointSpecial[SPAWN_NEAR_TOWER][1],SpawnPointSpecial[SPAWN_NEAR_TOWER][2], 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
                     if (pCreature)
                         ((hyjal_trashAI*)pCreature->AI())->useFlyPath = true;
@@ -656,7 +656,7 @@ void hyjalAI::UpdateWorldState(uint32 id, uint32 state)
                 if (Player* player = itr->getSource())
                     player->SendUpdateWorldState(id,state);
             }
-    }else debug_log("TSCR: HyjalAI: UpdateWorldState, but PlayerList is empty");
+    } else debug_log("TSCR: HyjalAI: UpdateWorldState, but PlayerList is empty");
 }
 
 void hyjalAI::Retreat()
@@ -704,7 +704,7 @@ void hyjalAI::SpawnVeins()
                 VeinGUID[i]=gem->GetGUID();
         }
         VeinsSpawned[0] = true;
-    }else{
+    } else{
         if (VeinsSpawned[1])
             return;
         for (uint8 i = 7; i<14; i++)
@@ -732,7 +732,7 @@ void hyjalAI::DeSpawnVeins()
             if (gem)
                 gem->RemoveFromWorld();
         }
-    }else if (Faction)
+    } else if (Faction)
     {
         Creature* pUnit=Unit::GetCreature((*m_creature),pInstance->GetData64(DATA_THRALL));
         if (!pUnit)return;
@@ -755,7 +755,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
         {
             m_creature->CastSpell(m_creature,SPELL_MASS_TELEPORT,false);
             DoMassTeleport = false;
-        }else MassTeleportTimer -= diff;
+        } else MassTeleportTimer -= diff;
         return;
     }
     if (DoHide)
@@ -799,13 +799,13 @@ void hyjalAI::UpdateAI(const uint32 diff)
             if (Faction == 0)
             {
                 RespawnNearPos(5037.76, -1889.71);
-            }else if (Faction == 1)
+            } else if (Faction == 1)
             {
                 RespawnNearPos(5563, -2763.19);
                 RespawnNearPos(5542.2, -2629.36);
             }
             m_creature->SetVisibility(VISIBILITY_ON);
-        }else{
+        } else{
             RespawnTimer -= diff;
             m_creature->SetVisibility(VISIBILITY_OFF);
         }
@@ -832,7 +832,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
                     break;
             }
             m_creature->SetVisibility(VISIBILITY_OFF);
-        }else RetreatTimer -= diff;
+        } else RetreatTimer -= diff;
     }
 
     if (!EventBegun)
@@ -854,7 +854,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
             else if (Faction == 1)
                 SummonNextWave(HordeWaves, WaveCount, HordeBase);
             ++WaveCount;
-        }else NextWaveTimer -= diff;
+        } else NextWaveTimer -= diff;
     }
 
     if (CheckTimer < diff)
@@ -885,7 +885,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
             }
         }
         CheckTimer = 5000;
-    }else CheckTimer -= diff;
+    } else CheckTimer -= diff;
 
     if (!UpdateVictim())
         return;
@@ -913,7 +913,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
                     DoCast(target, Spell[i].SpellId);
                     SpellTimer[i] = Spell[i].Cooldown;
                 }
-            }else SpellTimer[i] -= diff;
+            } else SpellTimer[i] -= diff;
         }
     }
 

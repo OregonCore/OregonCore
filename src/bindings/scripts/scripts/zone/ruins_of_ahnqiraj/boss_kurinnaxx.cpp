@@ -66,7 +66,7 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
         {
             enraged = true;
             DoCast(m_creature,SPELL_ENRAGE,true);
-        }else if (enraged && !m_creature->HasAura(SPELL_ENRAGE,0))
+        } else if (enraged && !m_creature->HasAura(SPELL_ENRAGE,0))
         {
             DoCast(m_creature,SPELL_ENRAGE,true);
         }
@@ -77,19 +77,19 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_MORTALWOUND);
             MORTALWOUND_Timer = 6000 + rand()%2000;
-        }else MORTALWOUND_Timer -= diff;
+        } else MORTALWOUND_Timer -= diff;
 
         if (THRASH_Timer < diff)
         {
             DoCast(m_creature,SPELL_THRASH);
             THRASH_Timer = 3000+ rand()%5000;
-        }else THRASH_Timer -= diff;
+        } else THRASH_Timer -= diff;
 
         if (SLASH_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_SLASH);
             SLASH_Timer = 5000 + rand()%5000;
-        }else SLASH_Timer -= diff;
+        } else SLASH_Timer -= diff;
 
         if (SUMMON_Timer < diff)
         {
@@ -99,7 +99,7 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
                 DoCast(target,SPELL_SUMMON);
             }
             SUMMON_Timer = 8000 + rand()%2000;
-        }else SUMMON_Timer -= diff;
+        } else SUMMON_Timer -= diff;
 
         //SANDTRAP_Timer
         if (SANDTRAP_Timer < diff)
@@ -114,7 +114,7 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
                     sandtrap = true;
                 }
                 SANDTRAP_Timer = 5000;
-            }else
+            } else
             {
                 GameObject* trap = FindGameObject(180647,100,m_creature);
 
@@ -132,7 +132,7 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
                 SANDTRAP_Timer = 5000;
                 sandtrap = false;
             }
-        }else SANDTRAP_Timer -= diff;
+        } else SANDTRAP_Timer -= diff;
 
 
         DoMeleeAttackIfReady();

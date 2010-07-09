@@ -61,7 +61,7 @@ struct OREGON_DLL_DECL boss_shazzrahAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_ARCANEEXPLOSION);
             ArcaneExplosion_Timer = 5000 + rand()%4000;
-        }else ArcaneExplosion_Timer -= diff;
+        } else ArcaneExplosion_Timer -= diff;
 
         //ShazzrahCurse_Timer
         if (ShazzrahCurse_Timer < diff)
@@ -71,21 +71,21 @@ struct OREGON_DLL_DECL boss_shazzrahAI : public ScriptedAI
             if (target) DoCast(target,SPELL_SHAZZRAHCURSE);
 
             ShazzrahCurse_Timer = 25000 + rand()%5000;
-        }else ShazzrahCurse_Timer -= diff;
+        } else ShazzrahCurse_Timer -= diff;
 
         //DeadenMagic_Timer
         if (DeadenMagic_Timer < diff)
         {
             DoCast(m_creature,SPELL_DEADENMAGIC);
             DeadenMagic_Timer = 35000;
-        }else DeadenMagic_Timer -= diff;
+        } else DeadenMagic_Timer -= diff;
 
         //Countspell_Timer
         if (Countspell_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_COUNTERSPELL);
             Countspell_Timer = 16000 + rand()%4000;
-        }else Countspell_Timer -= diff;
+        } else Countspell_Timer -= diff;
 
         //Blink_Timer
         if (Blink_Timer < diff)
@@ -103,7 +103,7 @@ struct OREGON_DLL_DECL boss_shazzrahAI : public ScriptedAI
             }
 
             Blink_Timer = 45000;
-        }else Blink_Timer -= diff;
+        } else Blink_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

@@ -68,7 +68,7 @@ struct OREGON_DLL_DECL boss_baron_geddonAI : public ScriptedAI
         {
             DoCast(m_creature,SPELL_INFERNO);
             Inferno_Timer = 45000;
-        }else Inferno_Timer -= diff;
+        } else Inferno_Timer -= diff;
 
         //IgniteMana_Timer
         if (IgniteMana_Timer < diff)
@@ -77,7 +77,7 @@ struct OREGON_DLL_DECL boss_baron_geddonAI : public ScriptedAI
                 DoCast(target,SPELL_IGNITEMANA);
 
             IgniteMana_Timer = 30000;
-        }else IgniteMana_Timer -= diff;
+        } else IgniteMana_Timer -= diff;
 
         //LivingBomb_Timer
         if (LivingBomb_Timer < diff)
@@ -86,7 +86,7 @@ struct OREGON_DLL_DECL boss_baron_geddonAI : public ScriptedAI
                DoCast(target,SPELL_LIVINGBOMB);
 
             LivingBomb_Timer = 35000;
-        }else LivingBomb_Timer -= diff;
+        } else LivingBomb_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

@@ -73,7 +73,7 @@ struct OREGON_DLL_DECL boss_baroness_anastariAI : public ScriptedAI
                 DoCast(m_creature->getVictim(),SPELL_BANSHEEWAIL);
             //4 seconds until we should cast this again
             BansheeWail_Timer = 4000;
-        }else BansheeWail_Timer -= diff;
+        } else BansheeWail_Timer -= diff;
 
         //BansheeCurse
         if (BansheeCurse_Timer < diff)
@@ -82,7 +82,7 @@ struct OREGON_DLL_DECL boss_baroness_anastariAI : public ScriptedAI
                 DoCast(m_creature->getVictim(),SPELL_BANSHEECURSE);
             //18 seconds until we should cast this again
             BansheeCurse_Timer = 18000;
-        }else BansheeCurse_Timer -= diff;
+        } else BansheeCurse_Timer -= diff;
 
         //Silence
         if (Silence_Timer < diff)
@@ -91,7 +91,7 @@ struct OREGON_DLL_DECL boss_baroness_anastariAI : public ScriptedAI
                 DoCast(m_creature->getVictim(),SPELL_SILENCE);
             //13 seconds until we should cast this again
             Silence_Timer = 13000;
-        }else Silence_Timer -= diff;
+        } else Silence_Timer -= diff;
 
         //Possess
         /*            if (Possess_Timer < diff)
@@ -105,7 +105,7 @@ struct OREGON_DLL_DECL boss_baroness_anastariAI : public ScriptedAI
         }
         //50 seconds until we should cast this again
         Possess_Timer = 50000;
-        }else Possess_Timer -= diff;
+        } else Possess_Timer -= diff;
         */
 
         DoMeleeAttackIfReady();

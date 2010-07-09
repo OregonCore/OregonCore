@@ -255,7 +255,7 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
 
             if (StormSequenceTimer < diff) {
                 HandleStormSequence(target);
-            }else StormSequenceTimer -= diff;
+            } else StormSequenceTimer -= diff;
             return;
         }
 
@@ -264,7 +264,7 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
             DoPlaySoundToSet(m_creature, SOUND_ONENRAGE);
             m_creature->CastSpell(m_creature, SPELL_BERSERK, true);
             Enrage_Timer = 600000;
-        }else Enrage_Timer -= diff;
+        } else Enrage_Timer -= diff;
 
         if (StaticDisruption_Timer < diff) {
             Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1);
@@ -277,7 +277,7 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
             /*float dist = m_creature->GetDistance(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ());
             if (dist < 5.0f) dist = 5.0f;
             SDisruptAOEVisual_Timer = 1000 + floor(dist / 30 * 1000.0f);*/
-        }else StaticDisruption_Timer -= diff;
+        } else StaticDisruption_Timer -= diff;
 
         if (GustOfWind_Timer < diff) {
             Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1);

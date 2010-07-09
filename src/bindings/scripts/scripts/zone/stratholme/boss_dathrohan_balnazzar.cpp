@@ -152,7 +152,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
                 }
                 //15 seconds until we should cast this again
                 CrusadersHammer_Timer = 12000;
-            }else CrusadersHammer_Timer -= diff;
+            } else CrusadersHammer_Timer -= diff;
 
             //CrusaderStrike
             if (CrusaderStrike_Timer < diff && !m_creature->IsNonMeleeSpellCasted(false))
@@ -164,7 +164,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
                 }
                 //15 seconds until we should cast this again
                 CrusaderStrike_Timer = 15000;
-            }else CrusaderStrike_Timer -= diff;
+            } else CrusaderStrike_Timer -= diff;
 
             //MindBlast
             if (MindBlast_Timer < diff && !m_creature->IsNonMeleeSpellCasted(false))
@@ -176,7 +176,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
                 }
                 //15 seconds until we should cast this again
                 MindBlast_Timer = 10000;
-            }else MindBlast_Timer -= diff;
+            } else MindBlast_Timer -= diff;
 
             //HolyStrike
             if (HolyStrike_Timer < diff && !m_creature->IsNonMeleeSpellCasted(false))
@@ -188,7 +188,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
                 }
                 //15 seconds until we should cast this again
                 HolyStrike_Timer = 15000;
-            }else HolyStrike_Timer -= diff;
+            } else HolyStrike_Timer -= diff;
 
             //Dazed
             if (Dazed_Timer < diff && !m_creature->IsNonMeleeSpellCasted(false))
@@ -200,7 +200,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
                 }
                 //15 seconds until we should cast this again
                 Dazed_Timer = 15000;
-            }else Dazed_Timer -= diff;
+            } else Dazed_Timer -= diff;
 
             //BalnazzarTransform
             if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 40)
@@ -226,7 +226,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
                 }
                 //15 seconds until we should cast this again
                 MindBlast_Timer = 10000;
-            }else MindBlast_Timer -= diff;
+            } else MindBlast_Timer -= diff;
 
             //ShadowShock
             if (ShadowShock_Timer < diff)
@@ -238,7 +238,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
                 }
                 //15 seconds until we should cast this again
                 ShadowShock_Timer = 11000;
-            }else ShadowShock_Timer -= diff;
+            } else ShadowShock_Timer -= diff;
 
             //PsychicScream
             if (PsychicScream_Timer < diff)
@@ -252,7 +252,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
                 }
                 //15 seconds until we should cast this again
                 PsychicScream_Timer = 20000;
-            }else PsychicScream_Timer -= diff;
+            } else PsychicScream_Timer -= diff;
 
             //DeepSleep
             if (DeepSleep_Timer < diff)
@@ -269,7 +269,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
                 }
                 //15 seconds until we should cast this again
                 DeepSleep_Timer = 15000;
-            }else DeepSleep_Timer -= diff;
+            } else DeepSleep_Timer -= diff;
 
             //ShadowBoltVolley
             if (ShadowBoltVolley_Timer < diff)
@@ -281,7 +281,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
                 }
                 //15 seconds until we should cast this again
                 ShadowBoltVolley_Timer = 13000;
-            }else ShadowBoltVolley_Timer -= diff;
+            } else ShadowBoltVolley_Timer -= diff;
 
             //MindControl
             //            if (MindControl_Timer < diff)
@@ -293,7 +293,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
             //                }
             //15 seconds until we should cast this again
             //                MindControl_Timer = 15000;
-            //            }else MindControl_Timer -= diff;
+            //            } else MindControl_Timer -= diff;
 
             //END ELSE TRANSFORMED
         }

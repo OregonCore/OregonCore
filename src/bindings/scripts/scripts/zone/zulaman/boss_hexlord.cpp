@@ -347,7 +347,7 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
                 return;
             }
             ResetTimer = 5000;
-        }else ResetTimer -= diff;
+        } else ResetTimer -= diff;
 
         if (CheckAddState_Timer < diff)
         {
@@ -358,7 +358,7 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
                     ((Creature*)Temp)->AI()->AttackStart(m_creature->getVictim());
             }
             CheckAddState_Timer = 5000;
-        }else CheckAddState_Timer -= diff;
+        } else CheckAddState_Timer -= diff;
 
         if (DrainPower_Timer < diff)
         {
@@ -376,7 +376,7 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
             DoYell(YELL_DRAIN_POWER, LANG_UNIVERSAL, NULL);
             DoPlaySoundToSet(m_creature, SOUND_YELL_DRAIN_POWER);
             DrainPower_Timer = 40000 + rand()%15000;    // must cast in 60 sec, or buff/debuff will disappear
-           }else DrainPower_Timer -= diff;
+           } else DrainPower_Timer -= diff;
 
         if (SpiritBolts_Timer < diff)
         {
@@ -391,7 +391,7 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
                 SiphonSoul_Timer = 10000;  // ready to drain
                 PlayerAbility_Timer = 99999;
             }
-        }else SpiritBolts_Timer -= diff;
+        } else SpiritBolts_Timer -= diff;
 
         if (SiphonSoul_Timer < diff)
         {
@@ -420,7 +420,7 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
                 if (PlayerClass == 4 && target->HasSpell(15473)) PlayerClass = 5; // shadow priest
                 SiphonSoul_Timer = 99999;   // buff lasts 30 sec
             }
-        }else SiphonSoul_Timer -= diff;
+        } else SiphonSoul_Timer -= diff;
 
         if (PlayerAbility_Timer < diff)
         {
@@ -430,7 +430,7 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
                 UseAbility();
                 PlayerAbility_Timer = 8000 + rand()%2000;
             }
-        }else PlayerAbility_Timer -= diff;
+        } else PlayerAbility_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -499,13 +499,13 @@ struct OREGON_DLL_DECL boss_thurgAI : public boss_hexlord_addAI
                     m_creature->CastSpell(target, SPELL_BLOODLUST, false);
             }
             bloodlust_timer = 12000;
-        }else bloodlust_timer -= diff;
+        } else bloodlust_timer -= diff;
 
         if (cleave_timer < diff)
         {
             m_creature->CastSpell(m_creature->getVictim(),SPELL_CLEAVE, false);
             cleave_timer = 12000; //3 sec cast
-        }else cleave_timer -= diff;
+        } else cleave_timer -= diff;
 
         boss_hexlord_addAI::UpdateAI(diff);
     }
@@ -577,7 +577,7 @@ struct OREGON_DLL_DECL boss_alyson_antilleAI : public boss_hexlord_addAI
                     m_creature->CastSpell(target, SPELL_DISPEL_MAGIC, false);
             }
             flashheal_timer = 2500;
-        }else flashheal_timer -= diff;
+        } else flashheal_timer -= diff;
 
         /*if (dispelmagic_timer < diff)
         {
@@ -591,7 +591,7 @@ struct OREGON_DLL_DECL boss_alyson_antilleAI : public boss_hexlord_addAI
         m_creature->CastSpell(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_DISPEL_MAGIC, false);
 
         dispelmagic_timer = 12000;
-        }else dispelmagic_timer -= diff;*/
+        } else dispelmagic_timer -= diff;*/
 
         boss_hexlord_addAI::UpdateAI(diff);
     }
@@ -635,7 +635,7 @@ struct OREGON_DLL_DECL boss_gazakrothAI : public boss_hexlord_addAI
         {
             m_creature->CastSpell(m_creature->getVictim(),SPELL_FIREBOLT, false);
             firebolt_timer = 700;
-        }else firebolt_timer -= diff;
+        } else firebolt_timer -= diff;
 
         boss_hexlord_addAI::UpdateAI(diff);
     }
@@ -668,13 +668,13 @@ struct OREGON_DLL_DECL boss_lord_raadanAI : public boss_hexlord_addAI
         {
             m_creature->CastSpell(m_creature->getVictim(),SPELL_THUNDERCLAP, false);
             thunderclap_timer = 12000;
-        }else thunderclap_timer -= diff;
+        } else thunderclap_timer -= diff;
 
         if (flamebreath_timer < diff)
         {
             m_creature->CastSpell(m_creature->getVictim(),SPELL_FLAME_BREATH, false);
             flamebreath_timer = 12000;
-        }else flamebreath_timer -= diff;
+        } else flamebreath_timer -= diff;
 
         boss_hexlord_addAI::UpdateAI(diff);
     }
@@ -704,7 +704,7 @@ struct OREGON_DLL_DECL boss_darkheartAI : public boss_hexlord_addAI
         {
             m_creature->CastSpell(m_creature->getVictim(),SPELL_PSYCHIC_WAIL, false);
             psychicwail_timer = 12000;
-        }else psychicwail_timer -= diff;
+        } else psychicwail_timer -= diff;
 
         boss_hexlord_addAI::UpdateAI(diff);
     }
@@ -750,7 +750,7 @@ struct OREGON_DLL_DECL boss_slitherAI : public boss_hexlord_addAI
             if (Unit* victim = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 m_creature->CastSpell(victim,SPELL_VENOM_SPIT, false);
             venomspit_timer = 2500;
-        }else venomspit_timer -= diff;
+        } else venomspit_timer -= diff;
 
         boss_hexlord_addAI::UpdateAI(diff);
     }
@@ -782,7 +782,7 @@ struct OREGON_DLL_DECL boss_fenstalkerAI : public boss_hexlord_addAI
             // core bug
             m_creature->getVictim()->CastSpell(m_creature->getVictim(),SPELL_VOLATILE_INFECTION, false);
             volatileinf_timer = 12000;
-        }else volatileinf_timer -= diff;
+        } else volatileinf_timer -= diff;
 
         boss_hexlord_addAI::UpdateAI(diff);
     }

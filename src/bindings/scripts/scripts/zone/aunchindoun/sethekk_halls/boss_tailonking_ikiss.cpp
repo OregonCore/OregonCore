@@ -148,7 +148,7 @@ struct OREGON_DLL_DECL boss_talon_king_ikissAI : public ScriptedAI
         {
             DoCast(m_creature,HeroicMode ? H_SPELL_ARCANE_VOLLEY : SPELL_ARCANE_VOLLEY);
             ArcaneVolley_Timer = 10000+rand()%5000;
-        }else ArcaneVolley_Timer -= diff;
+        } else ArcaneVolley_Timer -= diff;
 
         if (Sheep_Timer < diff)
         {
@@ -158,7 +158,7 @@ struct OREGON_DLL_DECL boss_talon_king_ikissAI : public ScriptedAI
             if (target)
                 DoCast(target,HeroicMode ? H_SPELL_POLYMORPH : SPELL_POLYMORPH);
             Sheep_Timer = 15000+rand()%2500;
-        }else Sheep_Timer -= diff;
+        } else Sheep_Timer -= diff;
 
         //may not be correct time to cast
         if (!ManaShield && ((m_creature->GetHealth()*100) / m_creature->GetMaxHealth() < 20))
@@ -173,7 +173,7 @@ struct OREGON_DLL_DECL boss_talon_king_ikissAI : public ScriptedAI
             {
                 DoCast(m_creature,H_SPELL_SLOW);
                 Slow_Timer = 15000+rand()%25000;
-            }else Slow_Timer -= diff;
+            } else Slow_Timer -= diff;
         }
 
         if (Blink_Timer < diff)
@@ -198,7 +198,7 @@ struct OREGON_DLL_DECL boss_talon_king_ikissAI : public ScriptedAI
                 Blink = true;
             }
             Blink_Timer = 35000+rand()%5000;
-        }else Blink_Timer -= diff;
+        } else Blink_Timer -= diff;
 
         if (!Blink)
             DoMeleeAttackIfReady();

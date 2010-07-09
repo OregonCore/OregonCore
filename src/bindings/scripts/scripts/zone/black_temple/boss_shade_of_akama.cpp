@@ -162,7 +162,7 @@ struct OREGON_DLL_DECL mob_ashtongue_sorcererAI : public ScriptedAI
                 }
             }
             CheckTimer = 2000;
-        }else CheckTimer -= diff;
+        } else CheckTimer -= diff;
     }
 };
 
@@ -289,7 +289,7 @@ struct OREGON_DLL_DECL boss_shade_of_akamaAI : public ScriptedAI
                         }
                     }
                 }
-            }else error_log("SD2 ERROR: No Channelers are stored in the list. This encounter will not work properly");
+            } else error_log("SD2 ERROR: No Channelers are stored in the list. This encounter will not work properly");
         }
     }
 
@@ -436,19 +436,19 @@ struct OREGON_DLL_DECL boss_shade_of_akamaAI : public ScriptedAI
                             // They move towards AKama
                             Defender->GetMotionMaster()->MovePoint(0, x, y, z);
                             Defender->AI()->AttackStart(Akama);
-                        }else move = false;
-                    }else move = false;
+                        } else move = false;
+                    } else move = false;
                     if (!move)
                         Defender->GetMotionMaster()->MovePoint(0, AKAMA_X, AKAMA_Y, AKAMA_Z);
                 }
                 DefenderTimer = 15000;
-            }else DefenderTimer -= diff;
+            } else DefenderTimer -= diff;
 
             if (SummonTimer < diff)
             {
                 SummonCreature();
                 SummonTimer = 35000;
-            }else SummonTimer -= diff;
+            } else SummonTimer -= diff;
 
             if (DeathCount >= 6)
             {
@@ -487,7 +487,7 @@ struct OREGON_DLL_DECL boss_shade_of_akamaAI : public ScriptedAI
                         ReduceHealthTimer = 12000;
                     }
                 }
-            }else ReduceHealthTimer -= diff;
+            } else ReduceHealthTimer -= diff;
 
             if (HasKilledAkama)
             {
@@ -505,7 +505,7 @@ struct OREGON_DLL_DECL boss_shade_of_akamaAI : public ScriptedAI
                 {
                     EnterEvadeMode();// Reset a little while after killing Akama, evade and respawn Akama
                     return;
-                }else ResetTimer -= diff;
+                } else ResetTimer -= diff;
             }
 
             DoMeleeAttackIfReady();
@@ -690,7 +690,7 @@ struct OREGON_DLL_DECL npc_akamaAI : public ScriptedAI
                     {
                         DoCast(Shade, SPELL_AKAMA_SOUL_CHANNEL);
                         CastSoulRetrieveTimer = 60000;
-                    }else CastSoulRetrieveTimer -= diff;
+                    } else CastSoulRetrieveTimer -= diff;
                 }
                 else
                 {
@@ -728,7 +728,7 @@ struct OREGON_DLL_DECL npc_akamaAI : public ScriptedAI
                     }
                 }
                 CheckTimer = 5000;
-            }else CheckTimer -= diff;
+            } else CheckTimer -= diff;
         }
 
         if (SummonBrokenTimer && BrokenSummonIndex < 4)
@@ -754,7 +754,7 @@ struct OREGON_DLL_DECL npc_akamaAI : public ScriptedAI
                 }
                 ++BrokenSummonIndex;
                 SummonBrokenTimer = 1000;
-            }else SummonBrokenTimer -= diff;
+            } else SummonBrokenTimer -= diff;
         }
 
         if (SoulRetrieveTimer)
@@ -812,7 +812,7 @@ struct OREGON_DLL_DECL npc_akamaAI : public ScriptedAI
                     SoulRetrieveTimer = 0;
                     break;
                 }
-            }else SoulRetrieveTimer -= diff;
+            } else SoulRetrieveTimer -= diff;
 
         if (!UpdateVictim())
             return;
@@ -823,13 +823,13 @@ struct OREGON_DLL_DECL npc_akamaAI : public ScriptedAI
             if (Shade && Shade->isAlive())
                 DoCast(Shade, SPELL_DESTRUCTIVE_POISON);
             DestructivePoisonTimer = 15000;
-        }else DestructivePoisonTimer -= diff;
+        } else DestructivePoisonTimer -= diff;
 
         if (LightningBoltTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_LIGHTNING_BOLT);
             LightningBoltTimer = 10000;
-        }else LightningBoltTimer -= diff;
+        } else LightningBoltTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

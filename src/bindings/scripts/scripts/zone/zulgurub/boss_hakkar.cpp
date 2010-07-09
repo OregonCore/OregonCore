@@ -109,14 +109,14 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_BLOODSIPHON);
             BloodSiphon_Timer = 90000;
-        }else BloodSiphon_Timer -= diff;
+        } else BloodSiphon_Timer -= diff;
 
         //CorruptedBlood_Timer
         if (CorruptedBlood_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_CORRUPTEDBLOOD);
             CorruptedBlood_Timer = 30000 + rand()%15000;
-        }else CorruptedBlood_Timer -= diff;
+        } else CorruptedBlood_Timer -= diff;
 
         //CauseInsanity_Timer
         /*if (CauseInsanity_Timer < diff)
@@ -125,7 +125,7 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
         DoCast(target,SPELL_CAUSEINSANITY);
 
         CauseInsanity_Timer = 35000 + rand()%8000;
-        }else CauseInsanity_Timer -= diff;*/
+        } else CauseInsanity_Timer -= diff;*/
 
         //WillOfHakkar_Timer
         if (WillOfHakkar_Timer < diff)
@@ -134,13 +134,13 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
                 DoCast(target,SPELL_WILLOFHAKKAR);
 
             WillOfHakkar_Timer = 25000 + rand()%10000;
-        }else WillOfHakkar_Timer -= diff;
+        } else WillOfHakkar_Timer -= diff;
 
         if (!Enraged && Enrage_Timer < diff)
         {
             DoCast(m_creature, SPELL_ENRAGE);
             Enraged = true;
-        }else Enrage_Timer -= diff;
+        } else Enrage_Timer -= diff;
 
         //Checking if Jeklik is dead. If not we cast her Aspect
         if (CheckJeklik_Timer < diff)
@@ -153,11 +153,11 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
                     {
                         DoCast(m_creature->getVictim(),SPELL_ASPECT_OF_JEKLIK);
                         AspectOfJeklik_Timer = 10000 + rand()%4000;
-                    }else AspectOfJeklik_Timer -= diff;
+                    } else AspectOfJeklik_Timer -= diff;
                 }
             }
             CheckJeklik_Timer = 1000;
-        }else CheckJeklik_Timer -= diff;
+        } else CheckJeklik_Timer -= diff;
 
         //Checking if Venoxis is dead. If not we cast his Aspect
         if (CheckVenoxis_Timer < diff)
@@ -170,11 +170,11 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
                     {
                         DoCast(m_creature->getVictim(),SPELL_ASPECT_OF_VENOXIS);
                         AspectOfVenoxis_Timer = 8000;
-                    }else AspectOfVenoxis_Timer -= diff;
+                    } else AspectOfVenoxis_Timer -= diff;
                 }
             }
             CheckVenoxis_Timer = 1000;
-        }else CheckVenoxis_Timer -= diff;
+        } else CheckVenoxis_Timer -= diff;
 
         //Checking if Marli is dead. If not we cast her Aspect
         if (CheckMarli_Timer < diff)
@@ -187,12 +187,12 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
                     {
                         DoCast(m_creature->getVictim(),SPELL_ASPECT_OF_MARLI);
                         AspectOfMarli_Timer = 10000;
-                    }else AspectOfMarli_Timer -= diff;
+                    } else AspectOfMarli_Timer -= diff;
 
                 }
             }
             CheckMarli_Timer = 1000;
-        }else CheckMarli_Timer -= diff;
+        } else CheckMarli_Timer -= diff;
 
         //Checking if Thekal is dead. If not we cast his Aspect
         if (CheckThekal_Timer < diff)
@@ -205,11 +205,11 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
                     {
                         DoCast(m_creature,SPELL_ASPECT_OF_THEKAL);
                         AspectOfThekal_Timer = 15000;
-                    }else AspectOfThekal_Timer -= diff;
+                    } else AspectOfThekal_Timer -= diff;
                 }
             }
             CheckThekal_Timer = 1000;
-        }else CheckThekal_Timer -= diff;
+        } else CheckThekal_Timer -= diff;
 
         //Checking if Arlokk is dead. If yes we cast her Aspect
         if (CheckArlokk_Timer < diff)
@@ -224,11 +224,11 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
                         DoResetThreat();
 
                         AspectOfArlokk_Timer = 10000 + rand()%5000;
-                    }else AspectOfArlokk_Timer -= diff;
+                    } else AspectOfArlokk_Timer -= diff;
                 }
             }
             CheckArlokk_Timer = 1000;
-        }else CheckArlokk_Timer -= diff;
+        } else CheckArlokk_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

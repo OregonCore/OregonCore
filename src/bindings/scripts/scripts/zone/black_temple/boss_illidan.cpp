@@ -951,14 +951,14 @@ struct OREGON_DLL_DECL flame_of_azzinothAI : public ScriptedAI
             DoCast(m_creature->getVictim(), SPELL_FLAME_BLAST);
             FlameBlastTimer = 15000; //10000 is official-like?
             DoZoneInCombat(); //in case someone is revived
-        }else FlameBlastTimer -= diff;
+        } else FlameBlastTimer -= diff;
 
         if (CheckTimer < diff)
         {
             ChargeCheck();
             EnrageCheck();
             CheckTimer = 1000;
-        }else CheckTimer -= diff;
+        } else CheckTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -1011,7 +1011,7 @@ struct OREGON_DLL_DECL npc_akama_illidanAI : public ScriptedAI
 
                 for (uint8 i = 0; i < 2; ++i)
                     pInstance->HandleGameObject(DoorGUID[i], false);
-            }else
+            } else
             {//open all doors, raid wiped
                 pInstance->HandleGameObject(GateGUID, true);
                 WalkCount = 1;//skip first wp
@@ -1326,7 +1326,7 @@ struct OREGON_DLL_DECL npc_akama_illidanAI : public ScriptedAI
                     m_creature->SetVisibility(VISIBILITY_ON);
 
                 Check_Timer = 5000;
-            }else Check_Timer -= diff;
+            } else Check_Timer -= diff;
         }
         Event = false;
         if (Timer)
@@ -1816,8 +1816,8 @@ struct OREGON_DLL_DECL mob_parasitic_shadowfiendAI : public ScriptedAI
                 m_creature->SetVisibility(VISIBILITY_OFF);
                 m_creature->setDeathState(JUST_DIED);
                 return;
-            }else CheckTimer = 5000;
-        }else CheckTimer -= diff;
+            } else CheckTimer = 5000;
+        } else CheckTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

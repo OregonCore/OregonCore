@@ -75,21 +75,21 @@ struct OREGON_DLL_DECL boss_razorgoreAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 7000 + rand()%3000;
-        }else Cleave_Timer -= diff;
+        } else Cleave_Timer -= diff;
 
         //WarStomp_Timer
         if (WarStomp_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_WARSTOMP);
             WarStomp_Timer = 15000 + rand()%10000;
-        }else WarStomp_Timer -= diff;
+        } else WarStomp_Timer -= diff;
 
         //FireballVolley_Timer
         if (FireballVolley_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_FIREBALLVOLLEY);
             FireballVolley_Timer = 12000 + rand()%3000;
-        }else FireballVolley_Timer -= diff;
+        } else FireballVolley_Timer -= diff;
 
         //Conflagration_Timer
         if (Conflagration_Timer < diff)
@@ -101,7 +101,7 @@ struct OREGON_DLL_DECL boss_razorgoreAI : public ScriptedAI
             //DoModifyThreatPercent(m_creature->getVictim(),-50);
 
             Conflagration_Timer = 12000;
-        }else Conflagration_Timer -= diff;
+        } else Conflagration_Timer -= diff;
 
         // Aura Check. If the gamer is affected by confliguration we attack a random gamer.
         if (m_creature->getVictim()->HasAura(SPELL_CONFLAGRATION,0))

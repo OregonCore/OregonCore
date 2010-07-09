@@ -72,7 +72,7 @@ struct OREGON_DLL_DECL boss_sulfuronAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_DEMORALIZINGSHOUT);
             DemoralizingShout_Timer = 15000 + rand()%5000;
-        }else DemoralizingShout_Timer -= diff;
+        } else DemoralizingShout_Timer -= diff;
 
         //Inspire_Timer
         if (Inspire_Timer < diff)
@@ -92,14 +92,14 @@ struct OREGON_DLL_DECL boss_sulfuronAI : public ScriptedAI
             DoCast(m_creature,SPELL_INSPIRE);
 
             Inspire_Timer = 20000 + rand()%6000;
-        }else Inspire_Timer -= diff;
+        } else Inspire_Timer -= diff;
 
         //Knockdown_Timer
         if (Knockdown_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_KNOCKDOWN);
             Knockdown_Timer = 12000 + rand()%3000;
-        }else Knockdown_Timer -= diff;
+        } else Knockdown_Timer -= diff;
 
         //Flamespear_Timer
         if (Flamespear_Timer < diff)
@@ -109,14 +109,14 @@ struct OREGON_DLL_DECL boss_sulfuronAI : public ScriptedAI
             if (target) DoCast(target,SPELL_FLAMESPEAR);
 
             Flamespear_Timer = 12000 + rand()%4000;
-        }else Flamespear_Timer -= diff;
+        } else Flamespear_Timer -= diff;
 
         //DarkStrike_Timer
         if (Darkstrike_Timer < diff)
         {
             DoCast(m_creature, SPELL_DARKSTRIKE);
             Darkstrike_Timer = 15000 + rand()%3000;
-        }else Darkstrike_Timer -= diff;
+        } else Darkstrike_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -161,7 +161,7 @@ struct OREGON_DLL_DECL mob_flamewaker_priestAI : public ScriptedAI
             DoCast(pUnit, SPELL_HEAL);
 
             Heal_Timer = 15000+rand()%5000;
-        }else Heal_Timer -= diff;
+        } else Heal_Timer -= diff;
 
         //ShadowWordPain_Timer
         if (ShadowWordPain_Timer < diff)
@@ -171,7 +171,7 @@ struct OREGON_DLL_DECL mob_flamewaker_priestAI : public ScriptedAI
             if (target) DoCast(target,SPELL_SHADOWWORDPAIN);
 
             ShadowWordPain_Timer = 18000+rand()%8000;
-        }else ShadowWordPain_Timer -= diff;
+        } else ShadowWordPain_Timer -= diff;
 
         //Immolate_Timer
         if (Immolate_Timer < diff)
@@ -181,7 +181,7 @@ struct OREGON_DLL_DECL mob_flamewaker_priestAI : public ScriptedAI
             if (target) DoCast(target,SPELL_IMMOLATE);
 
             Immolate_Timer = 15000+rand()%10000;
-        }else Immolate_Timer -= diff;
+        } else Immolate_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

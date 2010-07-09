@@ -186,7 +186,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
         {
             CanAttack = false;
             JustCreated = false;
-        }else CanAttack = true;
+        } else CanAttack = true;
 
         Unit *remo;
         for (uint8 i = 0; i < 4; i++)
@@ -340,7 +340,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
                 CanAttack = true;
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 AggroTimer=19000;
-            }else
+            } else
             {
                 AggroTimer-=diff;
                 return;
@@ -367,7 +367,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
                 m_creature->TauntApply(m_creature->getVictim());
 
                 ShockBlast_Timer = 1000+rand()%14000;       //random cooldown
-            }else ShockBlast_Timer -= diff;
+            } else ShockBlast_Timer -= diff;
 
             //StaticCharge_Timer
             if (StaticCharge_Timer < diff)
@@ -382,7 +382,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
                         DoCast(target, SPELL_STATIC_CHARGE_TRIGGER);
 
                 StaticCharge_Timer = 10000+rand()%20000;    //blizzlike
-            }else StaticCharge_Timer -= diff;
+            } else StaticCharge_Timer -= diff;
 
             //Entangle_Timer
             if (Entangle_Timer < diff)
@@ -401,7 +401,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
                     Entangle = false;
                     Entangle_Timer = 20000+rand()%5000;
                 }
-            }else Entangle_Timer -= diff;
+            } else Entangle_Timer -= diff;
 
             //Phase 1
             if (Phase == 1)
@@ -451,7 +451,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
                     if (SummonSporebat_Timer < 5000)
                         SummonSporebat_Timer = 5000;
 
-                }else SummonSporebat_Timer -= diff;
+                } else SummonSporebat_Timer -= diff;
             }
 
             //Melee attack
@@ -479,7 +479,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
                     CastShootOrMultishot();
 
                 Check_Timer = 5000;
-            }else Check_Timer -= diff;
+            } else Check_Timer -= diff;
         }
         //Phase 2
         else
@@ -498,7 +498,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
                 DoCast(target, SPELL_FORKED_LIGHTNING);
 
                 ForkedLightning_Timer = 2000+rand()%6000;   //blizzlike
-            }else ForkedLightning_Timer -= diff;
+            } else ForkedLightning_Timer -= diff;
 
             //EnchantedElemental_Timer
             if (EnchantedElemental_Timer < diff)
@@ -512,7 +512,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
                     EnchantedElemental_Pos++;
 
                 EnchantedElemental_Timer = 10000+rand()%5000;
-            }else EnchantedElemental_Timer -= diff;
+            } else EnchantedElemental_Timer -= diff;
 
             //TaintedElemental_Timer
             if (TaintedElemental_Timer < diff)
@@ -522,7 +522,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
                 Tain_Elemental = m_creature->SummonCreature(TAINTED_ELEMENTAL, ElementPos[pos][0], ElementPos[pos][1], ElementPos[pos][2], ElementPos[pos][3], TEMPSUMMON_DEAD_DESPAWN, 0);
 
                 TaintedElemental_Timer = 120000;
-            }else TaintedElemental_Timer -= diff;
+            } else TaintedElemental_Timer -= diff;
 
             //CoilfangElite_Timer
             if (CoilfangElite_Timer < diff)
@@ -540,7 +540,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
                         CoilfangElite->AI()->AttackStart(m_creature->getVictim());
                 }
                 CoilfangElite_Timer = 45000+rand()%5000;
-            }else CoilfangElite_Timer -= diff;
+            } else CoilfangElite_Timer -= diff;
 
             //CoilfangStrider_Timer
             if (CoilfangStrider_Timer < diff)
@@ -558,7 +558,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
                         CoilfangStrider->AI()->AttackStart(m_creature->getVictim());
                 }
                 CoilfangStrider_Timer = 60000+rand()%10000;
-            }else CoilfangStrider_Timer -= diff;
+            } else CoilfangStrider_Timer -= diff;
 
             //Check_Timer
             if (Check_Timer < diff)
@@ -579,7 +579,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
                     m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
                 }
                 Check_Timer = 1000;
-            }else Check_Timer -= diff;
+            } else Check_Timer -= diff;
         }
     }
 };
@@ -689,7 +689,7 @@ struct OREGON_DLL_DECL mob_enchanted_elementalAI : public ScriptedAI
                 m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             }
             move = 1000;
-        }else move -= diff;
+        } else move -= diff;
     }
 };
 
@@ -742,7 +742,7 @@ struct OREGON_DLL_DECL mob_tainted_elementalAI : public ScriptedAI
                 DoCast(target, SPELL_POISON_BOLT);
 
             PoisonBolt_Timer = 5000+rand()%5000;
-        }else PoisonBolt_Timer -= diff;
+        } else PoisonBolt_Timer -= diff;
 
         //Despawn_Timer
         if (Despawn_Timer < diff)
@@ -752,7 +752,7 @@ struct OREGON_DLL_DECL mob_tainted_elementalAI : public ScriptedAI
 
             //to prevent crashes
             Despawn_Timer = 1000;
-        }else Despawn_Timer -= diff;
+        } else Despawn_Timer -= diff;
     }
 };
 
@@ -814,7 +814,7 @@ struct OREGON_DLL_DECL mob_toxic_sporebatAI : public ScriptedAI
             uint32 rndpos = rand()%8;
             m_creature->GetMotionMaster()->MovePoint(1,SporebatWPPos[rndpos][0], SporebatWPPos[rndpos][1], SporebatWPPos[rndpos][2]);
             movement_timer = 6000;
-        }else movement_timer -= diff;
+        } else movement_timer -= diff;
 
         //toxic spores
         if (bolt_timer < diff)
@@ -852,7 +852,7 @@ struct OREGON_DLL_DECL mob_toxic_sporebatAI : public ScriptedAI
             }
 
             Check_Timer = 1000;
-        }else Check_Timer -= diff;
+        } else Check_Timer -= diff;
     }
 };
 
@@ -908,7 +908,7 @@ struct OREGON_DLL_DECL mob_coilfang_striderAI : public ScriptedAI
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0),SPELL_MINDBLAST);
             Blast_Timer = 30000+rand()% 10000;
-        }else Blast_Timer -= diff;
+        } else Blast_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -962,7 +962,7 @@ struct OREGON_DLL_DECL mob_shield_generator_channelAI : public ScriptedAI
                 }
             }
             Check_Timer = 1000;
-        }else Check_Timer -= diff;
+        } else Check_Timer -= diff;
     }
 };
 

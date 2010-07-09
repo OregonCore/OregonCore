@@ -89,26 +89,26 @@ struct OREGON_DLL_DECL boss_arcanist_doanAI : public ScriptedAI
                 target = SelectUnit(SELECT_TARGET_RANDOM,0);
                 if (target)DoCast(target,SPELL_POLYMORPH);
                 Polymorph_Timer = 40000;
-            }else Polymorph_Timer -= diff;
+            } else Polymorph_Timer -= diff;
 
             if (Yell_Timer < diff)
             {
                 DoYell(SAY_SPECIALAE,LANG_UNIVERSAL,NULL);
                 DoPlaySoundToSet(m_creature,SOUND_SPECIALAE);
                 Yell_Timer = 40000;
-            }else Yell_Timer -= diff;
+            } else Yell_Timer -= diff;
 
             if (ArcaneBubble_Timer < diff)
             {
                 DoCast(m_creature,SPELL_ARCANEBUBBLE);
                 ArcaneBubble_Timer = 40000;
-            }else ArcaneBubble_Timer -= diff;
+            } else ArcaneBubble_Timer -= diff;
 
             if (FullAOE_Timer < diff)
             {
                 DoCast(m_creature->getVictim(),SPELL_FIREAOE);
                 FullAOE_Timer = 40000;
-            }else FullAOE_Timer -= diff;
+            } else FullAOE_Timer -= diff;
         }
 
         //AoESilence_Timer
@@ -116,42 +116,42 @@ struct OREGON_DLL_DECL boss_arcanist_doanAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_AOESILENCE);
             AoESilence_Timer = 30000;
-        }else AoESilence_Timer -= diff;
+        } else AoESilence_Timer -= diff;
 
         //ArcaneExplosion3_Timer
         if (ArcaneExplosion3_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_ARCANEEXPLOSION3);
             ArcaneExplosion3_Timer = 8000;
-        }else ArcaneExplosion3_Timer -= diff;
+        } else ArcaneExplosion3_Timer -= diff;
 
         //ArcaneExplosion4_Timer
         if (ArcaneExplosion4_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_ARCANEEXPLOSION4);
             ArcaneExplosion4_Timer = 10000;
-        }else ArcaneExplosion4_Timer -= diff;
+        } else ArcaneExplosion4_Timer -= diff;
 
         //Blink_Timer
         if (Blink_Timer < diff)
         {
             DoCast(m_creature,SPELL_BLINK);
             Blink_Timer = 30000;
-        }else Blink_Timer -= diff;
+        } else Blink_Timer -= diff;
 
         //Fireball_Timer
         if (Fireball_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_FIREBALL);
             Fireball_Timer = 12000;
-        }else Fireball_Timer -= diff;
+        } else Fireball_Timer -= diff;
 
         //ManaShiled4_Timer
         if (ManaShield4_Timer < diff)
         {
             DoCast(m_creature,SPELL_MANASHIELD4);
             ManaShield4_Timer = 70000;
-        }else ManaShield4_Timer -= diff;
+        } else ManaShield4_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

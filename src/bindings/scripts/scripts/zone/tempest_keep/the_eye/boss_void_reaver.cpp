@@ -108,7 +108,7 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
             case 1: DoScriptText(SAY_POUNDING2, m_creature); break;
             }
              Pounding_Timer = 15000;                         //cast time(3000) + cooldown time(12000)
-        }else Pounding_Timer -= diff;
+        } else Pounding_Timer -= diff;
 
         // Arcane Orb
         if (ArcaneOrb_Timer < diff)
@@ -131,7 +131,7 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
                 m_creature->CastSpell(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), SPELL_ARCANE_ORB, false);
 
             ArcaneOrb_Timer = 3000;
-        }else ArcaneOrb_Timer -= diff;
+        } else ArcaneOrb_Timer -= diff;
 
         // Single Target knock back, reduces aggro
         if (KnockAway_Timer < diff)
@@ -143,14 +143,14 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
                 DoModifyThreatPercent(m_creature->getVictim(),-25);
 
             KnockAway_Timer = 30000;
-        }else KnockAway_Timer -= diff;
+        } else KnockAway_Timer -= diff;
 
         //Berserk
         if (Berserk_Timer < diff && !Enraged)
         {
             DoCast(m_creature,SPELL_BERSERK);
             Enraged = true;
-        }else Berserk_Timer -= diff;
+        } else Berserk_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

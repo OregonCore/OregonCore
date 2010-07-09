@@ -87,7 +87,7 @@
             {
                 DoCast(m_creature->getVictim(),SPELL_MARK_OF_BLAUMEUX);
                 Mark_Timer = 12000;
-            }else Mark_Timer -= diff;
+            } else Mark_Timer -= diff;
 
             // Shield Wall - All 4 horsemen will shield wall at 50% hp and 20% hp for 20 seconds
             if (ShieldWall1 && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 50)
@@ -112,7 +112,7 @@
            {
                DoCast(m_creature->getVictim(),SPELL_VOIDZONE);
                VoidZone_Timer = 12000;
-           }else VoidZone_Timer -= diff;
+           } else VoidZone_Timer -= diff;
 
            DoMeleeAttackIfReady();
        }
@@ -243,7 +243,7 @@
            {
                DoCast(m_creature->getVictim(),SPELL_MARK_OF_KORTHAZZ);
                Mark_Timer = 12000;
-           }else Mark_Timer -= diff;
+           } else Mark_Timer -= diff;
 
            // Shield Wall - All 4 horsemen will shield wall at 50% hp and 20% hp for 20 seconds
            if (ShieldWall1 && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 50)
@@ -268,7 +268,7 @@
            {
                DoCast(m_creature->getVictim(),SPELL_METEOR);
                Meteor_Timer = 20000;                           // wrong
-          }else Meteor_Timer -= diff;
+          } else Meteor_Timer -= diff;
 
            DoMeleeAttackIfReady();
        }
@@ -339,7 +339,7 @@
            {
                DoCast(m_creature->getVictim(),SPELL_MARK_OF_ZELIEK);
                Mark_Timer = 12000;
-           }else Mark_Timer -= diff;
+           } else Mark_Timer -= diff;
 
            // Shield Wall - All 4 horsemen will shield wall at 50% hp and 20% hp for 20 seconds
            if (ShieldWall1 && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 50)
@@ -364,7 +364,7 @@
            {
                DoCast(m_creature->getVictim(),SPELL_HOLY_WRATH);
                HolyWrath_Timer = 12000;
-           }else HolyWrath_Timer -= diff;
+           } else HolyWrath_Timer -= diff;
 
            DoMeleeAttackIfReady();
        }

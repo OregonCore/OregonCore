@@ -235,7 +235,7 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
                     DoCast(target,SPELL_SHADOWBOLT);
 
                 ShadowBoltTimer = 3000 + (rand()%7000);
-            }else ShadowBoltTimer -= diff;
+            } else ShadowBoltTimer -= diff;
 
             //FearTimer
             if (FearTimer < diff)
@@ -246,7 +246,7 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
                     DoCast(target,SPELL_FEAR);
 
                 FearTimer = 10000 + (rand()%10000);
-            }else FearTimer -= diff;
+            } else FearTimer -= diff;
 
             //Add spawning mechanism
             if (AddSpawnTimer < diff)
@@ -323,7 +323,7 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
                 }
 
                 AddSpawnTimer = 4000;
-            }else AddSpawnTimer -= diff;
+            } else AddSpawnTimer -= diff;
         }
         else if (NefarianGUID)
         {
@@ -341,7 +341,7 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
                 }
 
                 NefCheckTime = 2000;
-            }else NefCheckTime -= diff;
+            } else NefCheckTime -= diff;
         }
     }
 };

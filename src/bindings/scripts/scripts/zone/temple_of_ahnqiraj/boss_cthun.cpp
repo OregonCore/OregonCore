@@ -232,7 +232,7 @@ struct OREGON_DLL_DECL eye_of_cthunAI : public Scripted_NoMovementAI
 
                     //Beam every 3 seconds
                     BeamTimer = 3000;
-                }else BeamTimer -= diff;
+                } else BeamTimer -= diff;
 
                 //ClawTentacleTimer
                 if (ClawTentacleTimer < diff)
@@ -252,7 +252,7 @@ struct OREGON_DLL_DECL eye_of_cthunAI : public Scripted_NoMovementAI
 
                     //One claw tentacle every 12.5 seconds
                     ClawTentacleTimer = 12500;
-                }else ClawTentacleTimer -= diff;
+                } else ClawTentacleTimer -= diff;
 
                 //EyeTentacleTimer
                 if (EyeTentacleTimer < diff)
@@ -271,7 +271,7 @@ struct OREGON_DLL_DECL eye_of_cthunAI : public Scripted_NoMovementAI
                     //No point actually putting a timer here since
                     //These shouldn't trigger agian until after phase shifts
                     EyeTentacleTimer = 45000;
-                }else EyeTentacleTimer -= diff;
+                } else EyeTentacleTimer -= diff;
 
                 //PhaseTimer
                 if (PhaseTimer < diff)
@@ -305,7 +305,7 @@ struct OREGON_DLL_DECL eye_of_cthunAI : public Scripted_NoMovementAI
 
                     //Darkbeam for 35 seconds
                     PhaseTimer = 35000;
-                }else PhaseTimer -= diff;
+                } else PhaseTimer -= diff;
 
             }
             break;
@@ -333,7 +333,7 @@ struct OREGON_DLL_DECL eye_of_cthunAI : public Scripted_NoMovementAI
 
                     //1 second per tick
                     DarkGlareTickTimer = 1000;
-                }else DarkGlareTickTimer -= diff;
+                } else DarkGlareTickTimer -= diff;
 
                 //PhaseTimer
                 if (PhaseTimer < diff)
@@ -356,7 +356,7 @@ struct OREGON_DLL_DECL eye_of_cthunAI : public Scripted_NoMovementAI
 
                     //Eye Beam for 50 seconds
                     PhaseTimer = 50000;
-                }else PhaseTimer -= diff;
+                } else PhaseTimer -= diff;
             }break;
 
             //Transition phase
@@ -578,7 +578,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
 
                 //One random wisper every 90 - 300 seconds
                 WisperTimer = 90000 + (rand()% 210000);
-            }else WisperTimer -= diff;
+            } else WisperTimer -= diff;
 
             return;
         }
@@ -643,7 +643,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
                         ((flesh_tentacleAI*)(Spawned->AI()))->SpawnedByCthun(m_creature->GetGUID());
 
                     PhaseTimer = 0;
-                }else PhaseTimer -= diff;
+                } else PhaseTimer -= diff;
 
             }break;
 
@@ -727,7 +727,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
                     }
 
                     StomachAcidTimer = 4000;
-                }else StomachAcidTimer -= diff;
+                } else StomachAcidTimer -= diff;
 
                 //Stomach Enter Timer
                 if (StomachEnterTimer < diff)
@@ -746,7 +746,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
                     }
 
                     StomachEnterTimer = 13800;
-                }else StomachEnterTimer -= diff;
+                } else StomachEnterTimer -= diff;
 
                 if (StomachEnterVisTimer && StomachEnterTarget)
                     if (StomachEnterVisTimer <= diff)
@@ -761,7 +761,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
 
                     StomachEnterTarget = 0;
                     StomachEnterVisTimer = 0;
-                }else StomachEnterVisTimer -= diff;
+                } else StomachEnterVisTimer -= diff;
 
                 //GientClawTentacleTimer
                 if (GiantClawTentacleTimer < diff)
@@ -781,7 +781,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
 
                     //One giant claw tentacle every minute
                     GiantClawTentacleTimer = 60000;
-                }else GiantClawTentacleTimer -= diff;
+                } else GiantClawTentacleTimer -= diff;
 
                 //GiantEyeTentacleTimer
                 if (GiantEyeTentacleTimer < diff)
@@ -802,7 +802,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
 
                     //One giant eye tentacle every minute
                     GiantEyeTentacleTimer = 60000;
-                }else GiantEyeTentacleTimer -= diff;
+                } else GiantEyeTentacleTimer -= diff;
 
                 //EyeTentacleTimer
                 if (EyeTentacleTimer < diff)
@@ -820,7 +820,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
 
                     //These spawn at every 30 seconds
                     EyeTentacleTimer = 30000;
-                }else EyeTentacleTimer -= diff;
+                } else EyeTentacleTimer -= diff;
 
             }break;
 
@@ -858,7 +858,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
                         ((flesh_tentacleAI*)(Spawned->AI()))->SpawnedByCthun(m_creature->GetGUID());
 
                     PhaseTimer = 0;
-                }else PhaseTimer -= diff;
+                } else PhaseTimer -= diff;
             }
         }
     }
@@ -956,7 +956,7 @@ struct OREGON_DLL_DECL eye_tentacleAI : public Scripted_NoMovementAI
             m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
 
             return;
-        }else KillSelfTimer -= diff;
+        } else KillSelfTimer -= diff;
 
         //MindflayTimer
         if (MindflayTimer < diff)
@@ -968,7 +968,7 @@ struct OREGON_DLL_DECL eye_tentacleAI : public Scripted_NoMovementAI
 
             //Mindflay every 10 seconds
             MindflayTimer = 10100;
-        }else MindflayTimer -= diff;
+        } else MindflayTimer -= diff;
     }
 };
 
@@ -1046,21 +1046,21 @@ struct OREGON_DLL_DECL claw_tentacleAI : public Scripted_NoMovementAI
 
             m_creature->SetVisibility(VISIBILITY_ON);
 
-        }else EvadeTimer -= diff;
+        } else EvadeTimer -= diff;
 
         //GroundRuptureTimer
         if (GroundRuptureTimer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_GROUND_RUPTURE);
             GroundRuptureTimer = 30000;
-        }else GroundRuptureTimer -= diff;
+        } else GroundRuptureTimer -= diff;
 
         //HamstringTimer
         if (HamstringTimer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_HAMSTRING);
             HamstringTimer = 5000;
-        }else HamstringTimer -= diff;
+        } else HamstringTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -1143,28 +1143,28 @@ struct OREGON_DLL_DECL giant_claw_tentacleAI : public Scripted_NoMovementAI
 
             m_creature->SetVisibility(VISIBILITY_ON);
 
-        }else EvadeTimer -= diff;
+        } else EvadeTimer -= diff;
 
         //GroundRuptureTimer
         if (GroundRuptureTimer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_GROUND_RUPTURE);
             GroundRuptureTimer = 30000;
-        }else GroundRuptureTimer -= diff;
+        } else GroundRuptureTimer -= diff;
 
         //ThrashTimer
         if (ThrashTimer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_THRASH);
             ThrashTimer = 10000;
-        }else ThrashTimer -= diff;
+        } else ThrashTimer -= diff;
 
         //HamstringTimer
         if (HamstringTimer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_HAMSTRING);
             HamstringTimer = 10000;
-        }else HamstringTimer -= diff;
+        } else HamstringTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -1216,7 +1216,7 @@ struct OREGON_DLL_DECL giant_eye_tentacleAI : public Scripted_NoMovementAI
 
             //Beam every 2 seconds
             BeamTimer = 2100;
-        }else BeamTimer -= diff;
+        } else BeamTimer -= diff;
     }
 };
 
@@ -1240,7 +1240,7 @@ void flesh_tentacleAI::UpdateAI(const uint32 diff)
         }
 
         CheckTimer = 1000;
-    }else CheckTimer -= diff;
+    } else CheckTimer -= diff;
 
     DoMeleeAttackIfReady();
 }

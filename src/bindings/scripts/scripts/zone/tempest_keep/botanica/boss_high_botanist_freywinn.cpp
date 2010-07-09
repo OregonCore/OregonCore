@@ -126,7 +126,7 @@ struct OREGON_DLL_DECL boss_high_botanist_freywinnAI : public ScriptedAI
             MoveFree = false;
 
             TreeForm_Timer = 75000;
-        }else TreeForm_Timer -= diff;
+        } else TreeForm_Timer -= diff;
 
         if (!MoveFree)
         {
@@ -176,7 +176,7 @@ struct OREGON_DLL_DECL boss_high_botanist_freywinnAI : public ScriptedAI
         {
             DoSummonSeedling();
             SummonSeedling_Timer = 6000;
-        }else SummonSeedling_Timer -= diff;
+        } else SummonSeedling_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

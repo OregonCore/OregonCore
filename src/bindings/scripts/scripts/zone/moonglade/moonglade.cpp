@@ -362,7 +362,7 @@ public:
                 if (pPlayer && pPlayer->isInCombat() && pPlayer->getAttackerForHelper())
                     AttackStart(pPlayer->getAttackerForHelper());
                 checkPlayer_Timer = 1000;
-            }else checkPlayer_Timer -= diff;
+            } else checkPlayer_Timer -= diff;
         }
 
         if (Event_onWait && Event_Timer < diff)

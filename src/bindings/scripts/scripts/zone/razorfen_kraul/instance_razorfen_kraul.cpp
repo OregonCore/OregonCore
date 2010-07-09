@@ -72,7 +72,7 @@ struct OREGON_DLL_DECL instance_razorfen_kraul : public ScriptedInstance
             HandleGameObject(DoorWardGUID, WardKeeperAlive);
             WardKeeperAlive = 0;
             WardCheck_Timer = 4000;
-        }else
+        } else
             WardCheck_Timer -= diff;
     }
 

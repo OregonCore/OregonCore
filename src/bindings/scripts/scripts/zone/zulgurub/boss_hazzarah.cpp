@@ -57,14 +57,14 @@ struct OREGON_DLL_DECL boss_hazzarahAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_MANABURN);
             ManaBurn_Timer = 8000 + rand()%8000;
-        }else ManaBurn_Timer -= diff;
+        } else ManaBurn_Timer -= diff;
 
         //Sleep_Timer
         if (Sleep_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_SLEEP);
             Sleep_Timer = 12000 + rand()%8000;
-        }else Sleep_Timer -= diff;
+        } else Sleep_Timer -= diff;
 
         //Illusions_Timer
         if (Illusions_Timer < diff)
@@ -84,7 +84,7 @@ struct OREGON_DLL_DECL boss_hazzarahAI : public ScriptedAI
             }
 
             Illusions_Timer = 15000 + rand()%10000;
-        }else Illusions_Timer -= diff;
+        } else Illusions_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

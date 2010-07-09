@@ -60,21 +60,21 @@ struct OREGON_DLL_DECL boss_ebonrocAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_SHADOWFLAME);
             ShadowFlame_Timer = 12000 + rand()%3000;
-        }else ShadowFlame_Timer -= diff;
+        } else ShadowFlame_Timer -= diff;
 
         //Wing Buffet Timer
         if (WingBuffet_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_WINGBUFFET);
             WingBuffet_Timer = 25000;
-        }else WingBuffet_Timer -= diff;
+        } else WingBuffet_Timer -= diff;
 
         //Shadow of Ebonroc Timer
         if (ShadowOfEbonroc_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_SHADOWOFEBONROC);
             ShadowOfEbonroc_Timer = 25000 + rand()%10000;
-        }else ShadowOfEbonroc_Timer -= diff;
+        } else ShadowOfEbonroc_Timer -= diff;
 
         if (m_creature->getVictim()->HasAura(SPELL_SHADOWOFEBONROC,0))
         {
@@ -82,7 +82,7 @@ struct OREGON_DLL_DECL boss_ebonrocAI : public ScriptedAI
             {
                 DoCast(m_creature, SPELL_HEAL);
                 Heal_Timer = 1000 + rand()%2000;
-            }else Heal_Timer -= diff;
+            } else Heal_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();

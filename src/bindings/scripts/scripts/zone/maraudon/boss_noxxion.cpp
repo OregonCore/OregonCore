@@ -101,14 +101,14 @@ struct OREGON_DLL_DECL boss_noxxionAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_TOXICVOLLEY);
             ToxicVolley_Timer = 9000;
-        }else ToxicVolley_Timer -= diff;
+        } else ToxicVolley_Timer -= diff;
 
         //Uppercut_Timer
         if (Uppercut_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_UPPERCUT);
             Uppercut_Timer = 12000;
-        }else Uppercut_Timer -= diff;
+        } else Uppercut_Timer -= diff;
 
         //Adds_Timer
         if (!Invisible && Adds_Timer < diff)
@@ -129,7 +129,7 @@ struct OREGON_DLL_DECL boss_noxxionAI : public ScriptedAI
             Invisible_Timer = 15000;
 
             Adds_Timer = 40000;
-        }else Adds_Timer -= diff;
+        } else Adds_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

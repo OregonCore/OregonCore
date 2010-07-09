@@ -116,7 +116,7 @@ struct OREGON_DLL_DECL npc_lady_sylvanas_windrunnerAI : public ScriptedAI
                     DoScriptText(EMOTE_LAMENT_END, m_creature);
                     LamentEvent = false;
                 }
-            }else LamentEvent_Timer -= diff;
+            } else LamentEvent_Timer -= diff;
         }
 
         if (!UpdateVictim())
@@ -178,7 +178,7 @@ struct OREGON_DLL_DECL npc_highborne_lamenterAI : public ScriptedAI
                 m_creature->SendMonsterMoveWithSpeed(m_creature->GetPositionX(),m_creature->GetPositionY(),HIGHBORNE_LOC_Y_NEW,5000);
                 m_creature->GetMap()->CreatureRelocation(m_creature,m_creature->GetPositionX(),m_creature->GetPositionY(),HIGHBORNE_LOC_Y_NEW,m_creature->GetOrientation());
                 EventMove = false;
-            }else EventMove_Timer -= diff;
+            } else EventMove_Timer -= diff;
         }
         if (EventCast)
         {
@@ -186,7 +186,7 @@ struct OREGON_DLL_DECL npc_highborne_lamenterAI : public ScriptedAI
             {
                 DoCast(m_creature,SPELL_HIGHBORNE_AURA);
                 EventCast = false;
-            }else EventCast_Timer -= diff;
+            } else EventCast_Timer -= diff;
         }
     }
 };

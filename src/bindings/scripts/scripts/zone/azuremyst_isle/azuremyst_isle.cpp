@@ -144,7 +144,7 @@ struct OREGON_DLL_DECL npc_draenei_survivorAI : public ScriptedAI
                 UnSpawn = true;
                 isRun = true;
                 isMove = true;
-            }else HealSayTimer -= diff;
+            } else HealSayTimer -= diff;
         }
 
         if (UnSpawn)
@@ -163,13 +163,13 @@ struct OREGON_DLL_DECL npc_draenei_survivorAI : public ScriptedAI
                 //set creature health
                 m_creature->SetHealth(int(m_creature->GetMaxHealth()*.1));
                 return;
-            }else UnSpawnTimer -= diff;
+            } else UnSpawnTimer -= diff;
         }
 
         if (SayingTimer < diff)
         {
             say = true;
-        }else SayingTimer -= diff;
+        } else SayingTimer -= diff;
     }
 
     void SpellHit(Unit *Hitter, const SpellEntry *Spellkind)//Called if you cast a spell and do some things if Specified spell is true!
@@ -232,7 +232,7 @@ struct OREGON_DLL_DECL npc_engineer_spark_overgrindAI : public ScriptedAI
                 DoScriptText(SAY_TEXT, m_creature);
                 DoScriptText(SAY_EMOTE, m_creature);
                 Emote_Timer = 120000 + rand()%30000;
-            }else Emote_Timer -= diff;
+            } else Emote_Timer -= diff;
         }
 
         if (!UpdateVictim())
@@ -582,7 +582,7 @@ struct OREGON_DLL_DECL npc_geezleAI : public ScriptedAI
             {
                 SayTimer = NextStep(++Step);
             }
-        }else SayTimer -= diff;
+        } else SayTimer -= diff;
     }
 };
 
@@ -635,7 +635,7 @@ struct OREGON_DLL_DECL mob_nestlewood_owlkinAI : public ScriptedAI
             m_creature->RemoveCorpse();
             m_creature->SummonCreature(INOCULATED_OWLKIN, m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN, 180000);
             Channeled = true;
-        }else ChannelTimer -= diff;
+        } else ChannelTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

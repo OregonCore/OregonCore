@@ -120,7 +120,7 @@ struct OREGON_DLL_DECL mob_omrogg_headsAI : public ScriptedAI
         {
             DoScriptText(YELL_DIE_R, m_creature);
             DeathYell = false;
-        }else Death_Timer -= diff;
+        } else Death_Timer -= diff;
     }
 };
 
@@ -325,7 +325,7 @@ struct OREGON_DLL_DECL boss_warbringer_omroggAI : public ScriptedAI
                 DoScriptText(KillingDelay[ikilling].id, source);
                 KillingYell = false;
             }
-        }else Delay_Timer -= diff;
+        } else Delay_Timer -= diff;
 
         if (!UpdateVictim())
             return;
@@ -338,7 +338,7 @@ struct OREGON_DLL_DECL boss_warbringer_omroggAI : public ScriptedAI
 
             if (BlastCount == 3)
                 BlastCount = 0;
-        }else BlastWave_Timer -= diff;
+        } else BlastWave_Timer -= diff;
 
         if (BurningMaul_Timer < diff)
         {
@@ -347,7 +347,7 @@ struct OREGON_DLL_DECL boss_warbringer_omroggAI : public ScriptedAI
             BurningMaul_Timer = 40000;
             BlastWave_Timer = 16000;
             BlastCount = 1;
-        }else BurningMaul_Timer -= diff;
+        } else BurningMaul_Timer -= diff;
 
         if (ResetThreat_Timer < diff)
         {
@@ -358,19 +358,19 @@ struct OREGON_DLL_DECL boss_warbringer_omroggAI : public ScriptedAI
                 m_creature->AddThreat(target, 0.0f);
             }
             ResetThreat_Timer = 35000+rand()%10000;
-        }else ResetThreat_Timer -= diff;
+        } else ResetThreat_Timer -= diff;
 
         if (Fear_Timer < diff)
         {
             DoCast(m_creature,SPELL_FEAR);
             Fear_Timer = 15000+rand()%25000;
-        }else Fear_Timer -= diff;
+        } else Fear_Timer -= diff;
 
         if (ThunderClap_Timer < diff)
         {
             DoCast(m_creature,SPELL_THUNDERCLAP);
             ThunderClap_Timer = 25000+rand()%15000;
-        }else ThunderClap_Timer -= diff;
+        } else ThunderClap_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

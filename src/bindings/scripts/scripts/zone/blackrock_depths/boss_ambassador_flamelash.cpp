@@ -75,7 +75,7 @@ struct OREGON_DLL_DECL boss_ambassador_flamelashAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_FIREBLAST);
             FireBlast_Timer = 7000;
-        }else FireBlast_Timer -= diff;
+        } else FireBlast_Timer -= diff;
 
         //Spirit_Timer
         if (Spirit_Timer < diff)
@@ -86,7 +86,7 @@ struct OREGON_DLL_DECL boss_ambassador_flamelashAI : public ScriptedAI
             SummonSpirits(m_creature->getVictim());
 
             Spirit_Timer = 30000;
-        }else Spirit_Timer -= diff;
+        } else Spirit_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

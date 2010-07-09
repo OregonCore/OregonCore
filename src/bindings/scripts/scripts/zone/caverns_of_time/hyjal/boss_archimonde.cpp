@@ -118,7 +118,7 @@ struct mob_ancient_wispAI : public ScriptedAI
                 }
             }
             CheckTimer = 1000;
-        }else CheckTimer -= diff;
+        } else CheckTimer -= diff;
     }
 };
 
@@ -212,7 +212,7 @@ struct OREGON_DLL_DECL mob_doomfireAI : public ScriptedAI
                 CheckTimer = 5000;
             }
             else m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-        }else CheckTimer -= diff;
+        } else CheckTimer -= diff;
     }
 };
 
@@ -274,7 +274,7 @@ struct OREGON_DLL_DECL mob_doomfire_targettingAI : public ScriptedAI
             }
             else
                 m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-        }else SummonTimer -= diff;
+        } else SummonTimer -= diff;
 
         if (ChangeTargetTimer < diff)
         {
@@ -299,7 +299,7 @@ struct OREGON_DLL_DECL mob_doomfire_targettingAI : public ScriptedAI
                     break;
             }
             ChangeTargetTimer = 5000;
-        }else ChangeTargetTimer -= diff;
+        } else ChangeTargetTimer -= diff;
     }
 
 };
@@ -567,7 +567,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
                     Nordrassil->CastSpell(m_creature, SPELL_DRAIN_WORLD_TREE_2, true);
                     DrainNordrassilTimer = 1000;
                 }
-            }else DrainNordrassilTimer -= diff;
+            } else DrainNordrassilTimer -= diff;
         }
 
         if (!UpdateVictim())
@@ -587,7 +587,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
                     Enraged = true;
                     DoScriptText(SAY_ENRAGE, m_creature);
                 }
-            }else EnrageTimer -= diff;
+            } else EnrageTimer -= diff;
 
             if (CheckDistanceTimer < diff)
             {
@@ -605,7 +605,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
                     }
                 }
                 CheckDistanceTimer = 5000;
-            }else CheckDistanceTimer -= diff;
+            } else CheckDistanceTimer -= diff;
         }
 
         if (BelowTenPercent)
@@ -630,7 +630,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
                 }
                 SummonWispTimer = 1500;
                 ++WispCount;
-            }else SummonWispTimer -= diff;
+            } else SummonWispTimer -= diff;
 
             if (WispCount >= 30)
                 m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -642,7 +642,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
             {
                 DoCast(m_creature->getVictim(), SPELL_HAND_OF_DEATH);
                 HandOfDeathTimer = 2000;
-            }else HandOfDeathTimer -= diff;
+            } else HandOfDeathTimer -= diff;
             return;                                         // Don't do anything after this point.
         }
 
@@ -657,7 +657,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_GRIP_OF_THE_LEGION);
             GripOfTheLegionTimer = 5000 + rand()%20000;
-        }else GripOfTheLegionTimer -= diff;
+        } else GripOfTheLegionTimer -= diff;
 
         if (AirBurstTimer < diff)
         {
@@ -669,19 +669,19 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
 
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 1), SPELL_AIR_BURST);//not on tank
             AirBurstTimer = 25000 + rand()%15000;
-        }else AirBurstTimer -= diff;
+        } else AirBurstTimer -= diff;
 
         if (FearTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_FEAR);
             FearTimer = 42000;
-        }else FearTimer -= diff;
+        } else FearTimer -= diff;
 
         if (DoomfireTimer < diff)
         {
             SummonDoomfire(SelectUnit(SELECT_TARGET_RANDOM, 1));
             DoomfireTimer = 40000;
-        }else DoomfireTimer -= diff;
+        } else DoomfireTimer -= diff;
 
         if (MeleeRangeCheckTimer < diff)
         {
@@ -692,7 +692,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
             }
 
             MeleeRangeCheckTimer = 5000;
-        }else MeleeRangeCheckTimer -= diff;
+        } else MeleeRangeCheckTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

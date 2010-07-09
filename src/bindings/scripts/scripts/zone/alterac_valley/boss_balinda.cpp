@@ -76,25 +76,25 @@ struct OREGON_DLL_DECL boss_balindaAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_ARCANE_EXPLOSION);
             ArcaneExplosionTimer =  (10+rand()%5)*1000;
-        }else ArcaneExplosionTimer -= diff;
+        } else ArcaneExplosionTimer -= diff;
 
         if (ConeofcoldTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_CONE_OF_COLD);
             ConeofcoldTimer = (10+rand()%10)*1000;
-        }else ConeofcoldTimer -= diff;
+        } else ConeofcoldTimer -= diff;
 
         if (FireboltTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_FIREBALL);
             FireboltTimer = (5+rand()%4)*1000;
-        }else FireboltTimer -= diff;
+        } else FireboltTimer -= diff;
 
         if (FrostboltTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_FROSTBOLT);
             FrostboltTimer = (4+rand()%8)*1000;
-        }else FrostboltTimer -= diff;
+        } else FrostboltTimer -= diff;
 
 
     // check if creature is not outside of building
@@ -108,7 +108,7 @@ struct OREGON_DLL_DECL boss_balindaAI : public ScriptedAI
                     EnterEvadeMode();
         }
             ResetTimer = 5000;
-        }else ResetTimer -= diff;
+        } else ResetTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

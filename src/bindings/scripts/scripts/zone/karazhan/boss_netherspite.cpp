@@ -277,7 +277,7 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM,1,45,true),SPELL_VOIDZONE,true);
             VoidZoneTimer = 15000;
-        }else VoidZoneTimer -= diff;
+        } else VoidZoneTimer -= diff;
 
         // NetherInfusion Berserk
         if (!Berserk && NetherInfusionTimer < diff)
@@ -285,7 +285,7 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
             m_creature->AddAura(SPELL_NETHER_INFUSION, m_creature);
             DoCast(m_creature, SPELL_NETHERSPITE_ROAR);
             Berserk = true;
-        }else NetherInfusionTimer -= diff;
+        } else NetherInfusionTimer -= diff;
 
         if (PortalPhase) // PORTAL PHASE
         {
@@ -294,7 +294,7 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
             {
                 UpdatePortals();
                 PortalTimer = 1000;
-            }else PortalTimer -= diff;
+            } else PortalTimer -= diff;
 
             // Empowerment & Nether Burn
             if (EmpowermentTimer < diff)
@@ -302,7 +302,7 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
                 DoCast(m_creature, SPELL_EMPOWERMENT);
                 m_creature->AddAura(SPELL_NETHERBURN_AURA, m_creature);
                 EmpowermentTimer = 90000;
-            }else EmpowermentTimer -= diff;
+            } else EmpowermentTimer -= diff;
 
             if (PhaseTimer < diff)
             {
@@ -311,7 +311,7 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
                     SwitchToBanishPhase();
                     return;
                 }
-            }else PhaseTimer -= diff;
+            } else PhaseTimer -= diff;
         }
         else // BANISH PHASE
         {
@@ -321,7 +321,7 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0,40,true))
                     DoCast(target,SPELL_NETHERBREATH);
                 NetherbreathTimer = 5000+rand()%2000;
-            }else NetherbreathTimer -= diff;
+            } else NetherbreathTimer -= diff;
 
             if (PhaseTimer < diff)
             {
@@ -330,7 +330,7 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
                     SwitchToPortalPhase();
                     return;
                 }
-            }else PhaseTimer -= diff;
+            } else PhaseTimer -= diff;
         }
 
         DoMeleeAttackIfReady();

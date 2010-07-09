@@ -163,7 +163,7 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
         {
             DoCast(m_creature, SPELL_MOLTEN_PUNCH);
             SummonFlameTimer = 10000;
-        }else SummonFlameTimer -= diff;
+        } else SummonFlameTimer -= diff;
 
         if (Phase1)
         {
@@ -174,7 +174,7 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
                     DoCast(target, SPELL_HATEFUL_STRIKE);
                     HatefulStrikeTimer = 5000;
                 }
-            }else HatefulStrikeTimer -= diff;
+            } else HatefulStrikeTimer -= diff;
         }
 
         if (!Phase1)
@@ -191,7 +191,7 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
                     DoScriptText(EMOTE_NEW_TARGET, m_creature);
                     SwitchTargetTimer = 10000;
                 }
-            }else SwitchTargetTimer -= diff;
+            } else SwitchTargetTimer -= diff;
 
             if (SummonVolcanoTimer < diff)
             {
@@ -201,7 +201,7 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
                     DoScriptText(EMOTE_GROUND_CRACK, m_creature);
                     SummonVolcanoTimer = 10000;
                 }
-            }else SummonVolcanoTimer -= diff;
+            } else SummonVolcanoTimer -= diff;
         }
 
         if (PhaseSwitchTimer < diff)
@@ -228,7 +228,7 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
                 m_creature->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
                 m_creature->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
             }
-        }else PhaseSwitchTimer -= diff;
+        } else PhaseSwitchTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -279,7 +279,7 @@ struct OREGON_DLL_DECL npc_volcanoAI : public ScriptedAI
                     m_creature->RemoveAura(SPELL_VOLCANIC_ERUPTION, 0);
             }
             CheckTimer = 1500;
-        }else CheckTimer -= diff;
+        } else CheckTimer -= diff;
     }
 };
 

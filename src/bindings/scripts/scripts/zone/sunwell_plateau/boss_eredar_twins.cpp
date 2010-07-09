@@ -122,7 +122,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
                 if (Temp->isDead())
                 {
                     ((Creature*)Temp)->Respawn();
-                }else
+                } else
                 {
                     if (Temp->getVictim())
                     {
@@ -216,7 +216,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
                 {
                     target->RemoveAurasDueToSpell(SPELL_DARK_TOUCHED);
                     target->CastSpell(target, SPELL_DARK_FLAME, true);
-                }else target->CastSpell(target, SPELL_FLAME_TOUCHED, true);
+                } else target->CastSpell(target, SPELL_FLAME_TOUCHED, true);
             }
             break;
         case SPELL_DARK_TOUCHED:
@@ -226,7 +226,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
                 {
                     target->RemoveAurasDueToSpell(SPELL_FLAME_TOUCHED);
                     target->CastSpell(target, SPELL_DARK_FLAME, true);
-                }else target->CastSpell(target, SPELL_DARK_TOUCHED, true);
+                } else target->CastSpell(target, SPELL_DARK_TOUCHED, true);
             }
             break;
         }
@@ -266,7 +266,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
                         DoCast(target, SPELL_CONFLAGRATION);
                     ConflagrationTimer = 30000+(rand()%5000);
                 }
-            }else ConflagrationTimer -= diff;
+            } else ConflagrationTimer -= diff;
         }
         else
         {
@@ -287,7 +287,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
                     }
                     ShadownovaTimer = 30000+(rand()%5000);
                 }
-            }else ShadownovaTimer -=diff;
+            } else ShadownovaTimer -=diff;
         }
 
         if (ConfoundingblowTimer < diff)
@@ -300,7 +300,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
                     DoCast(target, SPELL_CONFOUNDING_BLOW);
                 ConfoundingblowTimer = 20000 + (rand()%5000);
             }
-        }else ConfoundingblowTimer -=diff;
+        } else ConfoundingblowTimer -=diff;
 
         if (ShadowimageTimer < diff)
         {
@@ -314,7 +314,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
                     temp->AI()->AttackStart(target);
             }
             ShadowimageTimer = 20000;
-        }else ShadowimageTimer -=diff;
+        } else ShadowimageTimer -=diff;
 
         if (ShadowbladesTimer < diff)
         {
@@ -323,7 +323,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
                 DoCast(m_creature, SPELL_SHADOW_BLADES);
                 ShadowbladesTimer = 10000;
             }
-        }else ShadowbladesTimer -=diff;
+        } else ShadowbladesTimer -=diff;
 
         if (EnrageTimer < diff && !Enraged)
         {
@@ -331,7 +331,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
             DoScriptText(YELL_ENRAGE, m_creature);
             DoCast(m_creature,SPELL_ENRAGE);
             Enraged = true;
-        }else EnrageTimer -= diff;
+        } else EnrageTimer -= diff;
 
         if (m_creature->isAttackReady() && !m_creature->IsNonMeleeSpellCasted(false))
         {
@@ -386,7 +386,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
                 if (Temp->isDead())
                 {
                     ((Creature*)Temp)->Respawn();
-                }else
+                } else
                 {
                     if (Temp->getVictim())
                     {
@@ -514,7 +514,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
                 {
                     target->RemoveAurasDueToSpell(SPELL_DARK_TOUCHED);
                     target->CastSpell(target, SPELL_DARK_FLAME, true);
-                }else
+                } else
                 {
                     target->CastSpell(target, SPELL_FLAME_TOUCHED, true);
                 }
@@ -527,7 +527,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
                 {
                     target->RemoveAurasDueToSpell(SPELL_FLAME_TOUCHED);
                     target->CastSpell(target, SPELL_DARK_FLAME, true);
-                }else target->CastSpell(target, SPELL_DARK_TOUCHED, true);
+                } else target->CastSpell(target, SPELL_DARK_TOUCHED, true);
             }
             break;
         }
@@ -570,7 +570,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
             if (IntroYellTimer < diff)
             {
                 IntroYellTimer = IntroStep(++IntroStepCounter);
-            }else IntroYellTimer -= diff;
+            } else IntroYellTimer -= diff;
         }
 
         if (!SisterDeath)
@@ -604,7 +604,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
                         DoCast(target, SPELL_SHADOW_NOVA);
                     ShadownovaTimer= 30000+(rand()%5000);
                 }
-            }else ShadownovaTimer -=diff;
+            } else ShadownovaTimer -=diff;
         }
         else
         {
@@ -628,7 +628,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
 
                     BlazeTimer = 4000;
                 }
-            }else ConflagrationTimer -= diff;
+            } else ConflagrationTimer -= diff;
         }
 
         if (FlamesearTimer < diff)
@@ -638,7 +638,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
                 DoCast(m_creature, SPELL_FLAME_SEAR);
                 FlamesearTimer = 15000;
             }
-        }else FlamesearTimer -=diff;
+        } else FlamesearTimer -=diff;
 
         if (PyrogenicsTimer < diff)
         {
@@ -647,7 +647,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
                 DoCast(m_creature, SPELL_PYROGENICS,true);
                 PyrogenicsTimer = 15000;
             }
-        }else PyrogenicsTimer -= diff;
+        } else PyrogenicsTimer -= diff;
 
         if (BlazeTimer < diff)
         {
@@ -656,7 +656,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
                 DoCast(m_creature->getVictim(), SPELL_BLAZE);
                 BlazeTimer = 3800;
             }
-        }else BlazeTimer -= diff;
+        } else BlazeTimer -= diff;
 
         if (EnrageTimer < diff && !Enraged)
         {
@@ -664,7 +664,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
             DoScriptText(YELL_BERSERK, m_creature);
             DoCast(m_creature, SPELL_ENRAGE);
             Enraged = true;
-        }else EnrageTimer -= diff;
+        } else EnrageTimer -= diff;
     }
 };
 
@@ -703,7 +703,7 @@ struct OREGON_DLL_DECL mob_shadow_imageAI : public ScriptedAI
                 {
                     target->RemoveAurasDueToSpell(SPELL_FLAME_TOUCHED);
                     target->CastSpell(target, SPELL_DARK_FLAME, true);
-                }else target->CastSpell(target,SPELL_DARK_TOUCHED,true);
+                } else target->CastSpell(target,SPELL_DARK_TOUCHED,true);
             }
             break;
         }
@@ -718,7 +718,7 @@ struct OREGON_DLL_DECL mob_shadow_imageAI : public ScriptedAI
         {
             m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             KillTimer = 9999999;
-        }else KillTimer -=diff;
+        } else KillTimer -=diff;
 
         if (!UpdateVictim())
             return;
@@ -727,7 +727,7 @@ struct OREGON_DLL_DECL mob_shadow_imageAI : public ScriptedAI
         {
             DoCast(m_creature, SPELL_SHADOW_FURY);
             ShadowfuryTimer = 10000;
-        }else ShadowfuryTimer -=diff;
+        } else ShadowfuryTimer -=diff;
 
         if (DarkstrikeTimer < diff)
         {

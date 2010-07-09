@@ -81,21 +81,21 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
                 {
                     DoCast(m_creature->getVictim(),SPELL_FROST_AURA);
                     FrostAura_Timer = 5000;
-                }else FrostAura_Timer -= diff;
+                } else FrostAura_Timer -= diff;
 
                 if (LifeDrain_Timer < diff)
                 {
                     if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
                         DoCast(target,SPELL_LIFE_DRAIN);
                     LifeDrain_Timer = 24000;
-                }else LifeDrain_Timer -= diff;
+                } else LifeDrain_Timer -= diff;
 
                 if (Blizzard_Timer < diff)
                 {
                     if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
                         DoCast(target,SPELL_BLIZZARD);
                     Blizzard_Timer = 20000;
-                }else Blizzard_Timer -= diff;
+                } else Blizzard_Timer -= diff;
 
                 if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() > 10)
                 {
@@ -110,7 +110,7 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
                         Icebolt_Timer = 4000;
                         Icebolt_Count = 0;
                         IsInFly = true;
-                    }else Fly_Timer -= diff;
+                    } else Fly_Timer -= diff;
                 }
             }
 
@@ -126,7 +126,7 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
                         }
                         FrostBreath_Timer = 6000;
                         Icebolt_Timer = 4000;
-                    }else Icebolt_Timer -= diff;
+                    } else Icebolt_Timer -= diff;
 
                     if (Icebolt_Count == 5 && IsInFly && FrostBreath_Timer < diff)
                     {
@@ -135,7 +135,7 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
                         land_Timer = 2000;
                         IsInFly = false;
                         FrostBreath_Timer = 6000;
-                    }else FrostBreath_Timer -= diff;
+                    } else FrostBreath_Timer -= diff;
 
                     if (!IsInFly && land_Timer < diff)
                     {
@@ -147,7 +147,7 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
                         m_creature->SetHover(true);
                         land_Timer = 0;
                         Fly_Timer = 67000;
-                    }else land_Timer -= diff;
+                    } else land_Timer -= diff;
                 }
 
                 if ((m_creature->GetHealth()*100) / m_creature->GetMaxHealth() <= 10)
@@ -157,7 +157,7 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
                         DoScriptText(EMOTE_ENRAGE, m_creature);
                         DoCast(m_creature,SPELL_BESERK);
                         Beserk_Timer = 300000;
-                    }else Beserk_Timer -= diff;
+                    } else Beserk_Timer -= diff;
                 }
 
                  if (phase != 2)

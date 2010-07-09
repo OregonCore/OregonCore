@@ -125,7 +125,7 @@ struct OREGON_DLL_DECL mob_inner_demonAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_SOUL_LINK, true);
             Link_Timer = 1000;
-        }else Link_Timer -= diff;
+        } else Link_Timer -= diff;
 
 
         if (!m_creature->HasAura(AURA_DEMONIC_ALIGNMENT, 0))
@@ -135,7 +135,7 @@ struct OREGON_DLL_DECL mob_inner_demonAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_SHADOWBOLT, false);
             ShadowBolt_Timer = 10000;
-        }else ShadowBolt_Timer -= diff;
+        } else ShadowBolt_Timer -= diff;
 
        DoMeleeAttackIfReady();
     }
@@ -211,7 +211,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
             {
                 add->setDeathState(DEAD);
                 add->RemoveCorpse();
-            }else{
+            } else{
                 if (add && add->isDead())
                     add->RemoveCorpse();
             }
@@ -405,7 +405,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
             {
                 CheckBanish();//no need to check every update tick
                 BanishTimer = 1000;
-            }else BanishTimer -= diff;
+            } else BanishTimer -= diff;
             return;
         }
         if (m_creature->HasAura(SPELL_WHIRLWIND, 0))
@@ -419,7 +419,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
                     m_creature->GetMotionMaster()->MovePoint(0,newTarget->GetPositionX(),newTarget->GetPositionY(),newTarget->GetPositionZ());
                 }
                 Whirlwind_Timer = 2000;
-            }else Whirlwind_Timer -= diff;
+            } else Whirlwind_Timer -= diff;
 
         // reseting after changing forms and after ending whirlwind
         if (NeedThreatReset && !m_creature->HasAura(SPELL_WHIRLWIND, 0))
@@ -441,7 +441,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
         {
             DoCast(m_creature, SPELL_BERSERK);
             EnrageUsed = true;
-        }else Berserk_Timer -= diff;
+        } else Berserk_Timer -= diff;
 
         if (!DemonForm)
         {
@@ -454,7 +454,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
                     // while whirlwinding this variable is used to countdown target's change
                     Whirlwind_Timer = 2000;
                     NeedThreatReset = true;
-                }else Whirlwind_Timer -= diff;
+                } else Whirlwind_Timer -= diff;
             }
             //Switch_Timer
 
@@ -470,7 +470,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
                     DemonForm = true;
                     NeedThreatReset = true;
                     SwitchToDemon_Timer = 45000;
-                }else SwitchToDemon_Timer -= diff;
+                } else SwitchToDemon_Timer -= diff;
             DoMeleeAttackIfReady();
         }
         else
@@ -490,7 +490,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
                     m_creature->CastCustomSpell(m_creature->getVictim(), SPELL_CHAOS_BLAST, &damage, NULL, NULL, false, NULL, NULL, m_creature->GetGUID());
                 }
                 ChaosBlast_Timer = 3000;
-            }else ChaosBlast_Timer -= diff;
+            } else ChaosBlast_Timer -= diff;
             //Summon Inner Demon
             if (InnerDemons_Timer < diff)
             {
@@ -532,7 +532,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
                 DoScriptText(SAY_INNER_DEMONS, m_creature);
 
                 InnerDemons_Timer = 999999;
-            }else InnerDemons_Timer -= diff;
+            } else InnerDemons_Timer -= diff;
 
             //Switch_Timer
             if (SwitchToHuman_Timer < diff)
@@ -548,7 +548,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
                 NeedThreatReset = true;
 
                 SwitchToHuman_Timer = 60000;
-            }else SwitchToHuman_Timer -= diff;
+            } else SwitchToHuman_Timer -= diff;
         }
 
         if (!IsFinalForm && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 15)
@@ -635,7 +635,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blind_demonformAI : public ScriptedAI
                 m_creature->CastCustomSpell(m_creature->getVictim(), SPELL_CHAOS_BLAST, &damage, NULL, NULL, false, NULL, NULL, m_creature->GetGUID());
                 ChaosBlast_Timer = 3000;
             }
-         }else ChaosBlast_Timer -= diff;
+         } else ChaosBlast_Timer -= diff;
 
         //Do NOT deal any melee damage to the target.
     }
@@ -734,7 +734,7 @@ struct OREGON_DLL_DECL mob_greyheart_spellbinderAI : public ScriptedAI
             if (target)DoCast(target, SPELL_MINDBLAST);
 
             Mindblast_Timer = 10000 + rand()%5000;
-        }else Mindblast_Timer -= diff;
+        } else Mindblast_Timer -= diff;
 
         if (Earthshock_Timer < diff)
         {
@@ -757,7 +757,7 @@ struct OREGON_DLL_DECL mob_greyheart_spellbinderAI : public ScriptedAI
                 }
             }
             Earthshock_Timer = 8000 + rand()%7000;
-        }else Earthshock_Timer -= diff;
+        } else Earthshock_Timer -= diff;
         DoMeleeAttackIfReady();
     }
 

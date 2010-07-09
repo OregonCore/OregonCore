@@ -118,7 +118,7 @@ struct OREGON_DLL_DECL boss_watchkeeper_gargolmarAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),HeroicMode ? H_SPELL_MORTAL_WOUND : SPELL_MORTAL_WOUND);
             MortalWound_Timer = 5000+rand()%8000;
-        }else MortalWound_Timer -= diff;
+        } else MortalWound_Timer -= diff;
 
         if (Surge_Timer < diff)
         {
@@ -128,7 +128,7 @@ struct OREGON_DLL_DECL boss_watchkeeper_gargolmarAI : public ScriptedAI
                 DoCast(target,SPELL_SURGE);
 
             Surge_Timer = 5000+rand()%8000;
-        }else Surge_Timer -= diff;
+        } else Surge_Timer -= diff;
 
         if ((m_creature->GetHealth()*100) / m_creature->GetMaxHealth() < 20)
         {
@@ -136,7 +136,7 @@ struct OREGON_DLL_DECL boss_watchkeeper_gargolmarAI : public ScriptedAI
             {
                 DoCast(m_creature,SPELL_RETALIATION);
                 Retaliation_Timer = 30000;
-            }else Retaliation_Timer -= diff;
+            } else Retaliation_Timer -= diff;
         }
 
         if (!YelledForHeal)

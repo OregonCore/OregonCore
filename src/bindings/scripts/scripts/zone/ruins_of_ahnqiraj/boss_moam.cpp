@@ -83,7 +83,7 @@ struct OREGON_DLL_DECL boss_moamAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_SUMMONMANA);
             SUMMONMANA_Timer = 90000;
-        }else SUMMONMANA_Timer -= diff;
+        } else SUMMONMANA_Timer -= diff;
 
         //TRAMPLE_Timer
         if (TRAMPLE_Timer < diff)
@@ -92,14 +92,14 @@ struct OREGON_DLL_DECL boss_moamAI : public ScriptedAI
             j=1;
 
             TRAMPLE_Timer = 30000;
-        }else TRAMPLE_Timer -= diff;
+        } else TRAMPLE_Timer -= diff;
 
         //DRAINMANA_Timer
         if (DRAINMANA_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_DRAINMANA);
             DRAINMANA_Timer = 30000;
-        }else DRAINMANA_Timer -= diff;
+        } else DRAINMANA_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

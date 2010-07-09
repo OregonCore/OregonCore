@@ -66,7 +66,7 @@ struct OREGON_DLL_DECL mob_treantAI  : public ScriptedAI
                     m_creature->GetMotionMaster()->MoveFollow(Warp,0,0);
                 }
                 check_Timer = 1000;
-            }else check_Timer -= diff;
+            } else check_Timer -= diff;
             return;
         }
 
@@ -179,21 +179,21 @@ struct OREGON_DLL_DECL boss_warp_splinterAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),WAR_STOMP);
             War_Stomp_Timer = 25000 + rand()%15000;
-        }else War_Stomp_Timer -= diff;
+        } else War_Stomp_Timer -= diff;
 
         //Check for Arcane Volley
         if (Arcane_Volley_Timer < diff)
         {
             DoCast(m_creature->getVictim(),ARCANE_VOLLEY);
             Arcane_Volley_Timer = 20000 + rand()%15000;
-        }else Arcane_Volley_Timer -= diff;
+        } else Arcane_Volley_Timer -= diff;
 
         //Check for Summon Treants
         if (Summon_Treants_Timer < diff)
         {
             SummonTreants();
             Summon_Treants_Timer = 45000;
-        }else Summon_Treants_Timer -= diff;
+        } else Summon_Treants_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

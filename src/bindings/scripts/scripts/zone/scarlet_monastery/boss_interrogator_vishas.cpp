@@ -71,7 +71,7 @@ struct OREGON_DLL_DECL boss_interrogator_vishasAI : public ScriptedAI
 
                 //60 seconds until we should cast this agian
                 Yell_Timer = 60000;
-            }else Yell_Timer -= diff;
+            } else Yell_Timer -= diff;
         }
 
         if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 30 && !m_creature->IsNonMeleeSpellCasted(false))
@@ -85,7 +85,7 @@ struct OREGON_DLL_DECL boss_interrogator_vishasAI : public ScriptedAI
 
                 //60 seconds until we should cast this agian
                 Yell_Timer = 6000000;
-            }else Yell_Timer -= diff;
+            } else Yell_Timer -= diff;
         }
 
         //PowerWordShield_Timer
@@ -93,7 +93,7 @@ struct OREGON_DLL_DECL boss_interrogator_vishasAI : public ScriptedAI
         {
             DoCast(m_creature,SPELL_POWERWORDSHIELD);
             PowerWordShield_Timer = 60000;
-        }else PowerWordShield_Timer -= diff;
+        } else PowerWordShield_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

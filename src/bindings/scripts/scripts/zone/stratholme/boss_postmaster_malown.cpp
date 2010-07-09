@@ -75,7 +75,7 @@ struct OREGON_DLL_DECL boss_postmaster_malownAI : public ScriptedAI
             }
             //19 seconds until we should cast this again
             WailingDead_Timer = 19000;
-        }else WailingDead_Timer -= diff;
+        } else WailingDead_Timer -= diff;
 
         //Backhand
         if (Backhand_Timer < diff)
@@ -87,7 +87,7 @@ struct OREGON_DLL_DECL boss_postmaster_malownAI : public ScriptedAI
             }
             //8 seconds until we should cast this again
             Backhand_Timer = 8000;
-        }else Backhand_Timer -= diff;
+        } else Backhand_Timer -= diff;
 
         //CurseOfWeakness
         if (CurseOfWeakness_Timer < diff)
@@ -99,7 +99,7 @@ struct OREGON_DLL_DECL boss_postmaster_malownAI : public ScriptedAI
             }
             //20 seconds until we should cast this again
             CurseOfWeakness_Timer = 20000;
-        }else CurseOfWeakness_Timer -= diff;
+        } else CurseOfWeakness_Timer -= diff;
 
         //CurseOfTongues
         if (CurseOfTongues_Timer < diff)
@@ -111,7 +111,7 @@ struct OREGON_DLL_DECL boss_postmaster_malownAI : public ScriptedAI
             }
             //22 seconds until we should cast this again
             CurseOfTongues_Timer = 22000;
-        }else CurseOfTongues_Timer -= diff;
+        } else CurseOfTongues_Timer -= diff;
 
         //CallOfTheGrave
         if (CallOfTheGrave_Timer < diff)
@@ -123,7 +123,7 @@ struct OREGON_DLL_DECL boss_postmaster_malownAI : public ScriptedAI
             }
             //25 seconds until we should cast this again
             CallOfTheGrave_Timer = 25000;
-        }else CallOfTheGrave_Timer -= diff;
+        } else CallOfTheGrave_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

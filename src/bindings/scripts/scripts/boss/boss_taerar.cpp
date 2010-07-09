@@ -129,7 +129,7 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
             if (target) DoCast(target,SPELL_SLEEP);
 
             Sleep_Timer = 8000 + rand()%7000;
-        }else Sleep_Timer -= diff;
+        } else Sleep_Timer -= diff;
 
         //NoxiousBreath_Timer
         if (NoxiousBreath_Timer < diff)
@@ -145,21 +145,21 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
                 DoCast(target,SPELL_TAILSWEEP);
 
             TailSweep_Timer = 2000;
-        }else TailSweep_Timer -= diff;
+        } else TailSweep_Timer -= diff;
 
         //MarkOfNature_Timer
         //if (MarkOfNature_Timer < diff)
         //{
         //    DoCast(m_creature->getVictim(),SPELL_MARKOFNATURE);
         //    MarkOfNature_Timer = 45000;
-        //}else MarkOfNature_Timer -= diff;
+        //} else MarkOfNature_Timer -= diff;
 
         //ArcaneBlast_Timer
         if (ArcaneBlast_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_ARCANEBLAST);
             ArcaneBlast_Timer = 7000 + rand()%5000;
-        }else ArcaneBlast_Timer -= diff;
+        } else ArcaneBlast_Timer -= diff;
 
         //BellowingRoar_Timer
         if (BellowingRoar_Timer < diff)
@@ -270,14 +270,14 @@ struct OREGON_DLL_DECL boss_shadeoftaerarAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_POSIONCLOUD);
             PoisonCloud_Timer = 30000;
-        }else PoisonCloud_Timer -= diff;
+        } else PoisonCloud_Timer -= diff;
 
         //PosionBreath_Timer
         if (PosionBreath_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_POSIONBREATH);
             PosionBreath_Timer = 12000;
-        }else PosionBreath_Timer -= diff;
+        } else PosionBreath_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

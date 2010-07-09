@@ -92,7 +92,7 @@ struct OREGON_DLL_DECL instance_old_hillsbrad : public ScriptedInstance
                         player->KilledMonster(LODGE_QUEST_TRIGGER,0);
                 }
             }
-        }else
+        } else
             debug_log("TSCR: Instance Old Hillsbrad: UpdateOHWorldState, but PlayerList is empty!");
     }
 

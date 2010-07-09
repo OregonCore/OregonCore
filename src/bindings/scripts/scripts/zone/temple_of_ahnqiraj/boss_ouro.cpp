@@ -75,14 +75,14 @@ struct OREGON_DLL_DECL boss_ouroAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_SWEEP);
             Sweep_Timer = 15000 + rand()%15000;
-        }else Sweep_Timer -= diff;
+        } else Sweep_Timer -= diff;
 
         //SandBlast_Timer
         if (!Submerged && SandBlast_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_SANDBLAST);
             SandBlast_Timer = 20000 + rand()%15000;
-        }else SandBlast_Timer -= diff;
+        } else SandBlast_Timer -= diff;
 
         //Submerge_Timer
         if (!Submerged && Submerge_Timer < diff)
@@ -95,7 +95,7 @@ struct OREGON_DLL_DECL boss_ouroAI : public ScriptedAI
 
             Submerged = true;
             Back_Timer = 30000 + rand()%15000;
-        }else Submerge_Timer -= diff;
+        } else Submerge_Timer -= diff;
 
         //ChangeTarget_Timer
         if (Submerged && ChangeTarget_Timer < diff)
@@ -107,7 +107,7 @@ struct OREGON_DLL_DECL boss_ouroAI : public ScriptedAI
                 DoTeleportTo(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ());
 
             ChangeTarget_Timer = 10000 + rand()%10000;
-        }else ChangeTarget_Timer -= diff;
+        } else ChangeTarget_Timer -= diff;
 
         //Back_Timer
         if (Submerged && Back_Timer < diff)
@@ -119,7 +119,7 @@ struct OREGON_DLL_DECL boss_ouroAI : public ScriptedAI
 
             Submerged = false;
             Submerge_Timer = 60000 + rand()%60000;
-        }else Back_Timer -= diff;
+        } else Back_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

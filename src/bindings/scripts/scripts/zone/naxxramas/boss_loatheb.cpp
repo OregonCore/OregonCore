@@ -149,35 +149,35 @@ struct OREGON_DLL_DECL boss_loathebAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_CORRUPTED_MIND);
             CorruptedMind_Timer = 62000;
-        }else CorruptedMind_Timer -= diff;
+        } else CorruptedMind_Timer -= diff;
 
         //PoisonAura_Timer
         if (PoisonAura_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_POISON_AURA);
             PoisonAura_Timer = 60000;
-        }else PoisonAura_Timer -= diff;
+        } else PoisonAura_Timer -= diff;
 
         //InevitableDoom_Timer
         if (InevitableDoom_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_INEVITABLE_DOOM);
             InevitableDoom_Timer = 120000;
-        }else InevitableDoom_Timer -= diff;
+        } else InevitableDoom_Timer -= diff;
 
         //InevitableDoom5mins_Timer
         if (InevitableDoom5mins_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_INEVITABLE_DOOM);
             InevitableDoom5mins_Timer = 15000;
-        }else InevitableDoom5mins_Timer -= diff;
+        } else InevitableDoom5mins_Timer -= diff;
 
         //RemoveCurse_Timer
         if (RemoveCurse_Timer < diff)
         {
             DoCast(m_creature,SPELL_REMOVE_CURSE);
             RemoveCurse_Timer = 30000;
-        }else RemoveCurse_Timer -= diff;
+        } else RemoveCurse_Timer -= diff;
 
         //Summon_Timer
         if (Summon_Timer < diff)

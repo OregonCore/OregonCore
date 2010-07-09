@@ -198,13 +198,13 @@ struct OREGON_DLL_DECL npc_millhouse_manastormAI : public ScriptedAI
 
             DoCast(m_creature->getVictim(),SPELL_PYROBLAST);
             Pyroblast_Timer = 40000;
-        }else Pyroblast_Timer -=diff;
+        } else Pyroblast_Timer -=diff;
 
         if (Fireball_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_FIREBALL);
             Fireball_Timer = 4000;
-        }else Fireball_Timer -=diff;
+        } else Fireball_Timer -=diff;
 
         DoMeleeAttackIfReady();
     }

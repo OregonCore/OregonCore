@@ -114,7 +114,7 @@ struct OREGON_DLL_DECL boss_nazanAI : public ScriptedAI
                 m_creature->SetVisibility(VISIBILITY_OFF);
                 m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 m_creature->RemoveCorpse();
-            }else UnsummonCheck -= diff;
+            } else UnsummonCheck -= diff;
             return;
         }
 
@@ -123,7 +123,7 @@ struct OREGON_DLL_DECL boss_nazanAI : public ScriptedAI
             if (Unit *victim = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(victim, SPELL_FIREBALL,true);
             Fireball_Timer = 4000+rand()%3000;
-        }else Fireball_Timer -= diff;
+        } else Fireball_Timer -= diff;
 
         if (flight) // phase 1 - the flight
         {
@@ -141,7 +141,7 @@ struct OREGON_DLL_DECL boss_nazanAI : public ScriptedAI
                 DoStartMovement(m_creature->getVictim());
                 DoScriptText(EMOTE, m_creature);
                 return;
-            }else Fly_Timer -= diff;
+            } else Fly_Timer -= diff;
 
             if (Turn_Timer < diff)
             {
@@ -149,7 +149,7 @@ struct OREGON_DLL_DECL boss_nazanAI : public ScriptedAI
                 if (m_creature->GetDistance(VazrudenRing[waypoint][0],VazrudenRing[waypoint][1],VazrudenRing[waypoint][2]) > 5)
                     m_creature->GetMotionMaster()->MovePoint(0,VazrudenRing[waypoint][0],VazrudenRing[waypoint][1],VazrudenRing[waypoint][2]);
                 Turn_Timer = 10000;
-            }else Turn_Timer -= diff;
+            } else Turn_Timer -= diff;
         }
         else // phase 2 - land fight
         {
@@ -158,13 +158,13 @@ struct OREGON_DLL_DECL boss_nazanAI : public ScriptedAI
                 DoCast(m_creature, SPELL_CONE_OF_FIRE);
                 ConeOfFire_Timer = 12000;
                 Fireball_Timer = 4000;
-            }else ConeOfFire_Timer -= diff;
+            } else ConeOfFire_Timer -= diff;
 
             if (HeroicMode && BellowingRoar_Timer < diff)
             {
                 DoCast(m_creature, SPELL_BELLOWING_ROAR);
                 BellowingRoar_Timer = 45000;
-            }else BellowingRoar_Timer -= diff;
+            } else BellowingRoar_Timer -= diff;
 
             DoMeleeAttackIfReady();
         }
@@ -231,7 +231,7 @@ struct OREGON_DLL_DECL boss_vazrudenAI : public ScriptedAI
                 m_creature->SetVisibility(VISIBILITY_OFF);
                 m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 m_creature->RemoveCorpse();
-            }else UnsummonCheck -= diff;
+            } else UnsummonCheck -= diff;
             return;
         }
 
@@ -240,7 +240,7 @@ struct OREGON_DLL_DECL boss_vazrudenAI : public ScriptedAI
             if (Unit *victim = m_creature->getVictim())
                 DoCast(victim, SPELL_REVENGE);
             Revenge_Timer = 5000;
-        }else Revenge_Timer -= diff;
+        } else Revenge_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -378,7 +378,7 @@ struct OREGON_DLL_DECL boss_vazruden_the_heraldAI : public ScriptedAI
                     phase = 2;
                     return;
                 }
-            }else check -= diff;
+            } else check -= diff;
             break;
         default: // adds do the job now
             if (check < diff)
@@ -395,14 +395,14 @@ struct OREGON_DLL_DECL boss_vazruden_the_heraldAI : public ScriptedAI
                         EnterEvadeMode();
                         return;
                     }
-                }else
+                } else
                 {
                     m_creature->SummonGameObject(ENTRY_REINFORCED_FEL_IRON_CHEST,VazrudenMiddle[0],VazrudenMiddle[1],VazrudenMiddle[2],0,0,0,0,0,0);
                     m_creature->SetLootRecipient(NULL);
                     m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 }
                 check = 2000;
-            }else check -= diff;
+            } else check -= diff;
             break;
         }
     }
@@ -437,7 +437,7 @@ struct OREGON_DLL_DECL mob_hellfire_sentryAI : public ScriptedAI
             if (Unit *victim = m_creature->getVictim())
                 DoCast(victim, SPELL_KIDNEY_SHOT);
             KidneyShot_Timer = 20000;
-        }else KidneyShot_Timer -= diff;
+        } else KidneyShot_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

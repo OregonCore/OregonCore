@@ -69,49 +69,49 @@ struct OREGON_DLL_DECL boss_high_inquisitor_fairbanksAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_RENEW6 || SPELL_FLASHHEAL4);
             Healing_Timer = 30000;
-        }else Healing_Timer -= diff;
+        } else Healing_Timer -= diff;
 
         //Sleep2_Timer
         if (Sleep2_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_SLEEP2);
             Sleep2_Timer = 45000;
-        }else Sleep2_Timer -= diff;
+        } else Sleep2_Timer -= diff;
 
         //Smite_Timer
         if (Smite_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_SMITE);
             Smite_Timer = 20000;
-        }else Smite_Timer -= diff;
+        } else Smite_Timer -= diff;
 
         //ShadowWordPain_Timer
         if (ShadowWordPain_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_SHADOWWORDPAIN);
             ShadowWordPain_Timer = 30000;
-        }else ShadowWordPain_Timer -= diff;
+        } else ShadowWordPain_Timer -= diff;
 
         //CurseOfBlood_Timer
         if (CurseOfBlood_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_CURSEOFBLOOD);
             CurseOfBlood_Timer = 25000;
-        }else CurseOfBlood_Timer -= diff;
+        } else CurseOfBlood_Timer -= diff;
 
         //DevouringPlague3_Timer
         if (DevouringPlague3_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_DEVOURINGPLAGUE3);
             DevouringPlague3_Timer = 35000;
-        }else DevouringPlague3_Timer -= diff;
+        } else DevouringPlague3_Timer -= diff;
 
         //MindBlast5_Timer
         if (MindBlast5_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_MINDBLAST5);
             MindBlast5_Timer = 30000;
-        }else MindBlast5_Timer -= diff;
+        } else MindBlast5_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

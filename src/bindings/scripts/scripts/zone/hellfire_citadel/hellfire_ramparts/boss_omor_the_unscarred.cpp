@@ -121,7 +121,7 @@ struct OREGON_DLL_DECL boss_omor_the_unscarredAI : public Scripted_NoMovementAI
                 m_creature->InterruptNonMeleeSpells(false);
                 DoCast(m_creature,SPELL_SUMMON_FIENDISH_HOUND);
                 Summon_Timer = 15000+rand()%15000;
-            }else Summon_Timer -= diff;
+            } else Summon_Timer -= diff;
         }
 
         if (CanPullBack)
@@ -140,7 +140,7 @@ struct OREGON_DLL_DECL boss_omor_the_unscarredAI : public Scripted_NoMovementAI
                 playerGUID = 0;
                 ShadowWhip_Timer = 2000;
                 CanPullBack = false;
-            }else ShadowWhip_Timer -= diff;
+            } else ShadowWhip_Timer -= diff;
         }
         else if (OrbitalStrike_Timer < diff)
         {
@@ -158,7 +158,7 @@ struct OREGON_DLL_DECL boss_omor_the_unscarredAI : public Scripted_NoMovementAI
                 if (playerGUID)
                     CanPullBack = true;
             }
-        }else OrbitalStrike_Timer -= diff;
+        } else OrbitalStrike_Timer -= diff;
 
         if ((m_creature->GetHealth()*100) / m_creature->GetMaxHealth() < 20)
         {
@@ -166,7 +166,7 @@ struct OREGON_DLL_DECL boss_omor_the_unscarredAI : public Scripted_NoMovementAI
             {
                 DoCast(m_creature,SPELL_DEMONIC_SHIELD);
                 DemonicShield_Timer = 15000;
-            }else DemonicShield_Timer -= diff;
+            } else DemonicShield_Timer -= diff;
         }
 
         if (Aura_Timer < diff)
@@ -178,7 +178,7 @@ struct OREGON_DLL_DECL boss_omor_the_unscarredAI : public Scripted_NoMovementAI
                 DoCast(target,HeroicMode ? H_SPELL_BANE_OF_TREACHERY : SPELL_TREACHEROUS_AURA);
                 Aura_Timer = 8000+rand()%8000;
             }
-        }else Aura_Timer -= diff;
+        } else Aura_Timer -= diff;
 
         if (Shadowbolt_Timer < diff)
         {
@@ -190,7 +190,7 @@ struct OREGON_DLL_DECL boss_omor_the_unscarredAI : public Scripted_NoMovementAI
                 DoCast(target,HeroicMode ? H_SPELL_SHADOW_BOLT : SPELL_SHADOW_BOLT);
                 Shadowbolt_Timer = 4000+rand()%2500;
             }
-        }else Shadowbolt_Timer -= diff;
+        } else Shadowbolt_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

@@ -185,14 +185,14 @@ struct OREGON_DLL_DECL boss_warlord_kalithreshAI : public ScriptedAI
                 ((mob_naga_distillerAI*)distiller->AI())->StartRageGen(m_creature);
             }
             Rage_Timer = 3000+rand()%15000;
-        }else Rage_Timer -= diff;
+        } else Rage_Timer -= diff;
 
         //Reflection_Timer
         if (Reflection_Timer < diff)
         {
             DoCast(m_creature, SPELL_SPELL_REFLECTION);
             Reflection_Timer = 15000+rand()%10000;
-        }else Reflection_Timer -= diff;
+        } else Reflection_Timer -= diff;
 
         //Impale_Timer
         if (Impale_Timer < diff)
@@ -201,7 +201,7 @@ struct OREGON_DLL_DECL boss_warlord_kalithreshAI : public ScriptedAI
                 DoCast(target,SPELL_IMPALE);
 
             Impale_Timer = 7500+rand()%5000;
-        }else Impale_Timer -= diff;
+        } else Impale_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

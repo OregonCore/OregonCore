@@ -224,26 +224,26 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
                 case 0: DoScriptText(SAY_ENRAGE1, m_creature); break;
                 case 1: DoScriptText(SAY_ENRAGE2, m_creature); break;
                 }
-            }else EnrageTimer -= diff;
+            } else EnrageTimer -= diff;
         }
 
         if (ArcingSmashTimer < diff)
         {
             DoCast(m_creature->getVictim(),Phase1 ? SPELL_ARCING_SMASH_1 : SPELL_ARCING_SMASH_2);
             ArcingSmashTimer = 10000;
-        }else ArcingSmashTimer -= diff;
+        } else ArcingSmashTimer -= diff;
 
         if (FelBreathTimer < diff)
         {
             DoCast(m_creature->getVictim(),Phase1 ? SPELL_FELBREATH_1 : SPELL_FELBREATH_2);
             FelBreathTimer = 25000;
-        }else FelBreathTimer -= diff;
+        } else FelBreathTimer -= diff;
 
         if (EjectTimer < diff)
         {
             DoCast(m_creature->getVictim(),Phase1 ? SPELL_EJECT_1 : SPELL_EJECT_2);
             EjectTimer = 15000;
-        }else EjectTimer -= diff;
+        } else EjectTimer -= diff;
 
 
         if (Charge_Timer < diff)
@@ -251,7 +251,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
             if (m_creature->GetDistance2d(m_creature->getVictim()) > 15)
                 DoCast(m_creature->getVictim(),SPELL_CHARGE);
             Charge_Timer = 10000;
-        }else Charge_Timer -= diff;
+        } else Charge_Timer -= diff;
 
         if (Phase1)
         {
@@ -259,7 +259,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
             {
                 DoCast(m_creature->getVictim(), SPELL_BEWILDERING_STRIKE);
                 BewilderingStrikeTimer = 20000;
-            }else BewilderingStrikeTimer -= diff;
+            } else BewilderingStrikeTimer -= diff;
 
             if (BloodboilTimer < diff)
             {
@@ -270,7 +270,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
                     ++BloodboilCount;
                     BloodboilTimer = 10000;
                 }
-            }else BloodboilTimer -= diff;
+            } else BloodboilTimer -= diff;
         }
 
         if (!Phase1)
@@ -279,7 +279,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
             {
                 DoCast(m_creature->getVictim(), SPELL_FEL_GEYSER);
                 FelGeyserTimer = 30000;
-            }else FelGeyserTimer -= diff;
+            } else FelGeyserTimer -= diff;
 
             if (m_creature->getVictim()->IsImmunedToDamage(SPELL_SCHOOL_MASK_ALL,true))
                 m_creature->getThreatManager().modifyThreatPercent(m_creature->getVictim(),-100);
@@ -322,7 +322,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
                     FelGeyserTimer = 1000;
                     PhaseChangeTimer = 30000;
                 }
-            }else                                           // Encounter is a loop pretty much. Phase 1 -> Phase 2 -> Phase 1 -> Phase 2 till death or enrage
+            } else                                           // Encounter is a loop pretty much. Phase 1 -> Phase 2 -> Phase 1 -> Phase 2 till death or enrage
             {
                 if (TargetGUID)
                     RevertThreatOnTarget(TargetGUID);
@@ -337,7 +337,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
                 m_creature->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, false);
                 m_creature->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, false);
             }
-        }else PhaseChangeTimer -= diff;
+        } else PhaseChangeTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

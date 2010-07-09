@@ -245,21 +245,21 @@ struct OREGON_DLL_DECL boss_high_king_maulgarAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_ARCING_SMASH);
             ArcingSmash_Timer = 10000;
-        }else ArcingSmash_Timer -= diff;
+        } else ArcingSmash_Timer -= diff;
 
         //Whirlwind_Timer
                if (Whirlwind_Timer < diff)
                {
                     DoCast(m_creature->getVictim(), SPELL_WHIRLWIND);
                     Whirlwind_Timer = 55000;
-               }else Whirlwind_Timer -= diff;
+               } else Whirlwind_Timer -= diff;
 
         //MightyBlow_Timer
         if (MightyBlow_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_MIGHTY_BLOW);
             MightyBlow_Timer = 30000+rand()%10000;
-        }else MightyBlow_Timer -= diff;
+        } else MightyBlow_Timer -= diff;
 
         //Entering Phase 2
         if (!Phase2 && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 50)
@@ -285,14 +285,14 @@ struct OREGON_DLL_DECL boss_high_king_maulgarAI : public ScriptedAI
                     DoCast(target, SPELL_BERSERKER_C);
                 }
                 Charging_Timer = 20000;
-            }else Charging_Timer -= diff;
+            } else Charging_Timer -= diff;
 
             //Intimidating Roar
             if (Roar_Timer < diff)
             {
                 DoCast(m_creature, SPELL_ROAR);
                 Roar_Timer = 40000+(rand()%10000);
-            }else Roar_Timer -= diff;
+            } else Roar_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -377,14 +377,14 @@ struct OREGON_DLL_DECL boss_olm_the_summonerAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_DARK_DECAY);
             DarkDecay_Timer = 20000;
-        }else DarkDecay_Timer -= diff;
+        } else DarkDecay_Timer -= diff;
 
         //Summon_Timer
         if (Summon_Timer < diff)
         {
             DoCast(m_creature, SPELL_SUMMON_WFH);
             Summon_Timer = 30000;
-        }else Summon_Timer -= diff;
+        } else Summon_Timer -= diff;
 
         //DeathCoil Timer /need correct timer
         if (DeathCoil_Timer < diff)
@@ -394,7 +394,7 @@ struct OREGON_DLL_DECL boss_olm_the_summonerAI : public ScriptedAI
             if (target)
                 DoCast(target, SPELL_DEATH_COIL);
             DeathCoil_Timer = 20000;
-        }else DeathCoil_Timer -= diff;
+        } else DeathCoil_Timer -= diff;
 
 
         DoMeleeAttackIfReady();
@@ -484,28 +484,28 @@ struct OREGON_DLL_DECL boss_kiggler_the_crazedAI : public ScriptedAI
                 DoCast(target, SPELL_GREATER_POLYMORPH);
 
             GreaterPolymorph_Timer = 20000;
-        }else GreaterPolymorph_Timer -= diff;
+        } else GreaterPolymorph_Timer -= diff;
 
         //LightningBolt_Timer
         if (LightningBolt_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_LIGHTNING_BOLT);
             LightningBolt_Timer = 15000;
-        }else LightningBolt_Timer -= diff;
+        } else LightningBolt_Timer -= diff;
 
         //ArcaneShock_Timer
         if (ArcaneShock_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_ARCANE_SHOCK);
             ArcaneShock_Timer = 20000;
-        }else ArcaneShock_Timer -= diff;
+        } else ArcaneShock_Timer -= diff;
 
         //ArcaneExplosion_Timer
         if (ArcaneExplosion_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_ARCANE_EXPLOSION);
             ArcaneExplosion_Timer = 30000;
-        }else ArcaneExplosion_Timer -= diff;
+        } else ArcaneExplosion_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -587,14 +587,14 @@ struct OREGON_DLL_DECL boss_blindeye_the_seerAI : public ScriptedAI
         {
             DoCast(m_creature, SPELL_GREATER_PW_SHIELD);
             GreaterPowerWordShield_Timer = 40000;
-        }else GreaterPowerWordShield_Timer -= diff;
+        } else GreaterPowerWordShield_Timer -= diff;
 
         //Heal_Timer
         if (Heal_Timer < diff)
         {
             DoCast(m_creature, SPELL_HEAL);
             Heal_Timer = 60000;
-        }else Heal_Timer -= diff;
+        } else Heal_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -678,7 +678,7 @@ struct OREGON_DLL_DECL boss_krosh_firehandAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_GREATER_FIREBALL);
             GreaterFireball_Timer = 2000;
-        }else GreaterFireball_Timer -= diff;
+        } else GreaterFireball_Timer -= diff;
 
         //SpellShield_Timer
         if (SpellShield_Timer < diff)
@@ -686,7 +686,7 @@ struct OREGON_DLL_DECL boss_krosh_firehandAI : public ScriptedAI
             m_creature->InterruptNonMeleeSpells(false);
             DoCast(m_creature->getVictim(), SPELL_SPELLSHIELD);
             SpellShield_Timer = 30000;
-        }else SpellShield_Timer -= diff;
+        } else SpellShield_Timer -= diff;
 
         //BlastWave_Timer
         if (BlastWave_Timer < diff)
@@ -708,7 +708,7 @@ struct OREGON_DLL_DECL boss_krosh_firehandAI : public ScriptedAI
             m_creature->InterruptNonMeleeSpells(false);
                        DoCast(target, SPELL_BLAST_WAVE);
             BlastWave_Timer = 60000;
-        }else BlastWave_Timer -= diff;
+        } else BlastWave_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

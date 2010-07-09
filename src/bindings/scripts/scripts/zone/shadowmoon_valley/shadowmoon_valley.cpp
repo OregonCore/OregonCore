@@ -136,14 +136,14 @@ struct OREGON_DLL_DECL mob_mature_netherwing_drakeAI : public ScriptedAI
                     PlayerGUID = 0;
                 }
             }
-        }else EatTimer -= diff;
+        } else EatTimer -= diff;
 
         if (Evade)
             if (ResetTimer < diff)
             {
                 EnterEvadeMode();
                 return;
-            }else ResetTimer -= diff;
+            } else ResetTimer -= diff;
 
         if (!UpdateVictim())
             return;
@@ -152,7 +152,7 @@ struct OREGON_DLL_DECL mob_mature_netherwing_drakeAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_NETHER_BREATH);
             CastTimer = 5000;
-        }else CastTimer -= diff;
+        } else CastTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -286,7 +286,7 @@ struct OREGON_DLL_DECL mob_enslaved_netherwing_drakeAI : public ScriptedAI
                         m_creature->GetMotionMaster()->MovePoint(1, dx, dy, dz);
                     }
                 }
-            }else FlyTimer -= diff;
+            } else FlyTimer -= diff;
             return;
         }
 
@@ -363,7 +363,7 @@ struct OREGON_DLL_DECL mob_dragonmaw_peonAI : public ScriptedAI
             }
             PoisonTimer = 0;
             m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-        }else PoisonTimer -= diff;
+        } else PoisonTimer -= diff;
     }
 };
 
@@ -568,7 +568,7 @@ bool GossipHello_npc_oronok_tornheart(Player *player, Creature *_Creature)
     {
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
         player->SEND_GOSSIP_MENU(10312, _Creature->GetGUID());
-    }else
+    } else
     player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
 
     return true;
@@ -830,7 +830,7 @@ struct OREGON_DLL_DECL npc_overlord_morghorAI : public ScriptedAI
             {
                 ConversationTimer = NextStep(++Step);
             }
-        }else ConversationTimer -= diff;
+        } else ConversationTimer -= diff;
     }
 };
 
@@ -1212,7 +1212,7 @@ struct OREGON_DLL_DECL mob_illidari_spawnAI : public ScriptedAI
             {
                 DoCast(m_creature->getVictim(), SpawnCast[0].SpellId);//Spellbreaker
                 SpellTimer1 = SpawnCast[0].Timer2 + (rand()%5 * 1000);
-            }else SpellTimer1 -= diff;
+            } else SpellTimer1 -= diff;
         }
         //Illidari Mind Breaker
         if (m_creature->GetEntry() == 22074)
@@ -1225,21 +1225,21 @@ struct OREGON_DLL_DECL mob_illidari_spawnAI : public ScriptedAI
                     {
                         DoCast(target, SpawnCast[1].SpellId); //Focused Bursts
                         SpellTimer1 = SpawnCast[1].Timer2 + (rand()%5 * 1000);
-                    }else SpellTimer1 = 2000;
+                    } else SpellTimer1 = 2000;
                 }
-            }else SpellTimer1 -= diff;
+            } else SpellTimer1 -= diff;
 
             if (SpellTimer2 < diff)
             {
                 DoCast(m_creature->getVictim(), SpawnCast[2].SpellId);//Psychic Scream
                 SpellTimer2 = SpawnCast[2].Timer2 + (rand()%13 * 1000);
-            }else SpellTimer2 -= diff;
+            } else SpellTimer2 -= diff;
 
             if (SpellTimer3 < diff)
             {
                 DoCast(m_creature->getVictim(), SpawnCast[3].SpellId);//Mind Blast
                 SpellTimer3 = SpawnCast[3].Timer2 + (rand()%8 * 1000);
-            }else SpellTimer3 -= diff;
+            } else SpellTimer3 -= diff;
         }
         //Illidari Highlord
         if (m_creature->GetEntry() == 19797)
@@ -1248,13 +1248,13 @@ struct OREGON_DLL_DECL mob_illidari_spawnAI : public ScriptedAI
             {
                 DoCast(m_creature->getVictim(), SpawnCast[4].SpellId);//Curse Of Flames
                 SpellTimer1 = SpawnCast[4].Timer2 + (rand()%10 * 1000);
-            }else SpellTimer1 -= diff;
+            } else SpellTimer1 -= diff;
 
             if (SpellTimer2 < diff)
             {
                 DoCast(m_creature->getVictim(), SpawnCast[5].SpellId);//Flamestrike
                 SpellTimer2 = SpawnCast[5].Timer2 + (rand()%7 * 13000);
-            }else SpellTimer2 -= diff;
+            } else SpellTimer2 -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -1348,13 +1348,13 @@ struct OREGON_DLL_DECL mob_torloth_the_magnificentAI : public ScriptedAI
             if (AnimationTimer <= diff)
             {
                 HandleAnimation();
-            }else AnimationTimer -= diff;
+            } else AnimationTimer -= diff;
         }
 
         if (AnimationCount < 6)
         {
             m_creature->CombatStop();
-        }else if (!Timers)
+        } else if (!Timers)
         {
 
             SpellTimer1 = SpawnCast[6].Timer1;
@@ -1369,19 +1369,19 @@ struct OREGON_DLL_DECL mob_torloth_the_magnificentAI : public ScriptedAI
             {
                 DoCast(m_creature->getVictim(), SpawnCast[6].SpellId);//Cleave
                 SpellTimer1 = SpawnCast[6].Timer2 + (rand()%10 * 1000);
-            }else SpellTimer1 -= diff;
+            } else SpellTimer1 -= diff;
 
             if (SpellTimer2 < diff)
             {
                 DoCast(m_creature->getVictim(), SpawnCast[7].SpellId);//Shadowfury
                 SpellTimer2 = SpawnCast[7].Timer2 + (rand()%5 * 1000);
-            }else SpellTimer2 -= diff;
+            } else SpellTimer2 -= diff;
 
             if (SpellTimer3 < diff)
             {
                 DoCast(m_creature, SpawnCast[8].SpellId);
                 SpellTimer3 = SpawnCast[8].Timer2 + (rand()%7 * 1000);//Spell Reflection
-            }else SpellTimer3 -= diff;
+            } else SpellTimer3 -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -1573,7 +1573,7 @@ struct OREGON_DLL_DECL npc_lord_illidan_stormrageAI : public ScriptedAI
                 }
                 Failed = true;
             }
-        }else if (pPlayer->isDead() || !pPlayer->IsWithinDistInMap(m_creature, EVENT_AREA_RADIUS))
+        } else if (pPlayer->isDead() || !pPlayer->IsWithinDistInMap(m_creature, EVENT_AREA_RADIUS))
         {
             pPlayer->FailQuest(QUEST_BATTLE_OF_THE_CRIMSON_WATCH);
             Failed = true;
@@ -1598,12 +1598,12 @@ struct OREGON_DLL_DECL npc_lord_illidan_stormrageAI : public ScriptedAI
             {
                 DoScriptText(WavesInfo[WaveCount].WaveTextId, m_creature);
                 Announced = true;
-            }else AnnounceTimer -= diff;
+            } else AnnounceTimer -= diff;
 
             if (WaveTimer < diff)
             {
                 SummonNextWave();
-            }else WaveTimer -= diff;
+            } else WaveTimer -= diff;
         }
         CheckEventFail();
 

@@ -236,7 +236,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
                         Door->SetGoState(GO_STATE_READY);
                     CloseDoorTimer = 0;
                 }
-            }else CloseDoorTimer -= diff;
+            } else CloseDoorTimer -= diff;
         }
 
         //Cooldowns for casts
@@ -344,7 +344,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
                 }
             }
             NormalCastTimer = 1000;
-        }else NormalCastTimer -= diff;
+        } else NormalCastTimer -= diff;
 
         if (SecondarySpellTimer < diff)
         {
@@ -360,7 +360,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
                     break;
             }
             SecondarySpellTimer = 5000 + (rand()%15000);
-        }else SecondarySpellTimer -= diff;
+        } else SecondarySpellTimer -= diff;
 
         if (SuperCastTimer < diff)
         {
@@ -433,7 +433,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
             }
 
             SuperCastTimer = 35000 + (rand()%5000);
-        }else SuperCastTimer -= diff;
+        } else SuperCastTimer -= diff;
 
         if (!ElementalsSpawned && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 40)
         {
@@ -467,7 +467,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
             DoScriptText(SAY_TIMEOVER, m_creature);
 
             BerserkTimer = 60000;
-        }else BerserkTimer -= diff;
+        } else BerserkTimer -= diff;
 
         //Flame Wreath check
         if (FlameWreathTimer)
@@ -492,7 +492,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
                     }
                 }
                 FlameWreathCheckTime = 500;
-            }else FlameWreathCheckTime -= diff;
+            } else FlameWreathCheckTime -= diff;
         }
 
         if (ArcaneCooldown && FireCooldown && FrostCooldown)
@@ -550,7 +550,7 @@ struct OREGON_DLL_DECL water_elementalAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_WATERBOLT);
             CastTimer = 2000 + (rand()%3000);
-        }else CastTimer -= diff;
+        } else CastTimer -= diff;
     }
 };
 

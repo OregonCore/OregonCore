@@ -139,7 +139,7 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
                         DoingSpeach = false;
                         break;
                 }
-            }else SpeachTimer -= diff;
+            } else SpeachTimer -= diff;
         }
 
         //Return since we have no target
@@ -158,14 +158,14 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 15000;
-        }else Cleave_Timer -= diff;
+        } else Cleave_Timer -= diff;
 
         //FlameBreath_Timer
         if (FlameBreath_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_FLAMEBREATH);
             FlameBreath_Timer = 4000 + rand()%4000;
-        }else FlameBreath_Timer -= diff;
+        } else FlameBreath_Timer -= diff;
 
         //BurningAdrenalineCaster_Timer
         if (BurningAdrenalineCaster_Timer < diff)
@@ -185,7 +185,7 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
                 target->CastSpell(target,SPELL_BURNINGADRENALINE,1);
 
             BurningAdrenalineCaster_Timer = 15000;
-        }else BurningAdrenalineCaster_Timer -= diff;
+        } else BurningAdrenalineCaster_Timer -= diff;
 
         //BurningAdrenalineTank_Timer
         if (BurningAdrenalineTank_Timer < diff)
@@ -195,14 +195,14 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
             m_creature->getVictim()->CastSpell(m_creature->getVictim(),SPELL_BURNINGADRENALINE,1);
 
             BurningAdrenalineTank_Timer = 45000;
-        }else BurningAdrenalineTank_Timer -= diff;
+        } else BurningAdrenalineTank_Timer -= diff;
 
         //FireNova_Timer
         if (FireNova_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_FIRENOVA);
             FireNova_Timer = 5000;
-        }else FireNova_Timer -= diff;
+        } else FireNova_Timer -= diff;
 
         //TailSwipe_Timer
         if (TailSwipe_Timer < diff)
@@ -214,7 +214,7 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
             }*/
 
             TailSwipe_Timer = 20000;
-        }else TailSwipe_Timer -= diff;
+        } else TailSwipe_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

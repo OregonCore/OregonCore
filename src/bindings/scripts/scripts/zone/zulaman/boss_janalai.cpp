@@ -301,7 +301,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
             if (BombCount == 40)
             {
                 BombSequenceTimer = 5000;
-            }else BombSequenceTimer = 100;
+            } else BombSequenceTimer = 100;
         }
         else
         {
@@ -323,7 +323,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
             if (!m_creature->IsNonMeleeSpellCasted(false))
             {
                 isFlameBreathing = false;
-            }else return;
+            } else return;
         }
 
         if (isBombing)
@@ -331,7 +331,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
             if (BombSequenceTimer < diff)
             {
                 HandleBombSequence();
-            }else BombSequenceTimer -= diff;
+            } else BombSequenceTimer -= diff;
             return;
         }
 
@@ -356,7 +356,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
                 m_creature->CastSpell(m_creature, SPELL_BERSERK, true);
                 EnrageTimer = 300000;
             }
-        }else EnrageTimer -= diff;
+        } else EnrageTimer -= diff;
 
         if (BombTimer < diff)
         {
@@ -387,7 +387,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
             }
             //m_creature->CastSpell(Temp, SPELL_SUMMON_PLAYERS, true); // core bug, spell does not work if too far
             return;
-        }else BombTimer -= diff;
+        } else BombTimer -= diff;
 
         if (!noeggs)
         {
@@ -414,7 +414,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
                 }
                 else
                     noeggs = true;
-            }else HatcherTimer -= diff;
+            } else HatcherTimer -= diff;
         }
 
         if (ResetTimer < diff)
@@ -427,7 +427,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
                 return;
             }
             ResetTimer = 5000;
-        }else ResetTimer -= diff;
+        } else ResetTimer -= diff;
 
         DoMeleeAttackIfReady();
 
@@ -442,7 +442,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
                 isFlameBreathing = true;
             }
             FireBreathTimer = 8000;
-        }else FireBreathTimer -= diff;
+        } else FireBreathTimer -= diff;
     }
 };
 
@@ -598,7 +598,7 @@ struct OREGON_DLL_DECL mob_amanishi_hatcherAI : public ScriptedAI
                     m_creature->SetVisibility(VISIBILITY_OFF);
                     m_creature->setDeathState(JUST_DIED);
                 }
-            }else WaitTimer -= diff;
+            } else WaitTimer -= diff;
         }
     }
 };
@@ -647,7 +647,7 @@ struct OREGON_DLL_DECL mob_hatchlingAI : public ScriptedAI
         {
             m_creature->CastSpell(m_creature->getVictim(), SPELL_FLAMEBUFFET, false);
             BuffetTimer = 10000;
-        }else BuffetTimer -= diff;
+        } else BuffetTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

@@ -116,21 +116,21 @@ struct OREGON_DLL_DECL boss_anubrekhanAI : public ScriptedAI
             }
 
             Impale_Timer = 15000;
-        }else Impale_Timer -= diff;
+        } else Impale_Timer -= diff;
 
         //LocustSwarm_Timer
         if (LocustSwarm_Timer < diff)
         {
             DoCast(m_creature, SPELL_LOCUSTSWARM);
             LocustSwarm_Timer = 90000;
-        }else LocustSwarm_Timer -= diff;
+        } else LocustSwarm_Timer -= diff;
 
         //Summon_Timer
         if (Summon_Timer < diff)
         {
             DoCast(m_creature, SPELL_SUMMONGUARD);
             Summon_Timer = 45000;
-        }else Summon_Timer -= diff;
+        } else Summon_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

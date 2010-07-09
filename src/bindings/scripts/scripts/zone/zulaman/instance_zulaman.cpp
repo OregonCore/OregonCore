@@ -203,7 +203,7 @@ struct OREGON_DLL_DECL instance_zulaman : public ScriptedInstance
             BossKilled = data1;
             ChestLooted = data2;
             QuestMinute = data3;
-        }else error_log("TSCR: Zul'aman: corrupted save data.");
+        } else error_log("TSCR: Zul'aman: corrupted save data.");
     }
 
     void SetData(uint32 type, uint32 data)
@@ -310,7 +310,7 @@ struct OREGON_DLL_DECL instance_zulaman : public ScriptedInstance
                 {
                     UpdateWorldState(3104, 1);
                     UpdateWorldState(3106, QuestMinute);
-                }else UpdateWorldState(3104, 0);
+                } else UpdateWorldState(3104, 0);
             }
             QuestTimer -= diff;
         }

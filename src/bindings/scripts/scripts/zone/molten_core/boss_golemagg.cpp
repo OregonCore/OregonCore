@@ -81,7 +81,7 @@ struct OREGON_DLL_DECL boss_golemaggAI : public ScriptedAI
                 DoCast(target,SPELL_PYROBLAST);
 
             Pyroblast_Timer = 7000;
-        }else Pyroblast_Timer -= diff;
+        } else Pyroblast_Timer -= diff;
 
         //Enrage_Timer
         if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 11)
@@ -90,7 +90,7 @@ struct OREGON_DLL_DECL boss_golemaggAI : public ScriptedAI
             {
                 DoCast(m_creature,SPELL_ENRAGE);
                 Enrage_Timer = 62000;
-            }else Enrage_Timer -= diff;
+            } else Enrage_Timer -= diff;
         }
 
         //EarthQuake_Timer
@@ -100,7 +100,7 @@ struct OREGON_DLL_DECL boss_golemaggAI : public ScriptedAI
             {
                 DoCast(m_creature->getVictim(),SPELL_EARTHQUAKE);
                 EarthQuake_Timer = 3000;
-            }else EarthQuake_Timer -= diff;
+            } else EarthQuake_Timer -= diff;
         }
 
         //Casting Buff for Coreragers. Spell is not working right. Players get the buff...
@@ -108,7 +108,7 @@ struct OREGON_DLL_DECL boss_golemaggAI : public ScriptedAI
         //        {
         //            DoCast(m_creature, SPELL_BUFF);
         //            Buff_Timer = 2500;
-        //        }else Buff_Timer -= diff;
+        //        } else Buff_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -145,7 +145,7 @@ struct OREGON_DLL_DECL mob_core_ragerAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_MANGLE);
             Mangle_Timer = 10000;
-        }else Mangle_Timer -= diff;
+        } else Mangle_Timer -= diff;
 
         //Cast AEGIS
         if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 50)
@@ -167,7 +167,7 @@ struct OREGON_DLL_DECL mob_core_ragerAI : public ScriptedAI
             }
 
             Check_Timer = 1000;
-        }else Check_Timer -= diff;
+        } else Check_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

@@ -137,13 +137,13 @@ struct OREGON_DLL_DECL boss_kazrogalAI : public hyjal_trashAI
         {
             DoCast(m_creature, SPELL_CLEAVE);
             CleaveTimer = 6000+rand()%15000;
-        }else CleaveTimer -= diff;
+        } else CleaveTimer -= diff;
 
         if (WarStompTimer < diff)
         {
             DoCast(m_creature, SPELL_WARSTOMP);
             WarStompTimer = 60000;
-        }else WarStompTimer -= diff;
+        } else WarStompTimer -= diff;
 
         if (m_creature->HasAura(SPELL_MARK,0))
             m_creature->RemoveAurasDueToSpell(SPELL_MARK);
@@ -176,7 +176,7 @@ struct OREGON_DLL_DECL boss_kazrogalAI : public hyjal_trashAI
                     DoYell(SAY_MARK2, LANG_UNIVERSAL, NULL);
                     break;
             }
-        }else MarkTimer -= diff;
+        } else MarkTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

@@ -406,7 +406,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
         {
             EnfeebleResetHealth();
             EnfeebleResetTimer=0;
-        }else EnfeebleResetTimer -= diff;
+        } else EnfeebleResetTimer -= diff;
 
         if (m_creature->hasUnitState(UNIT_STAT_STUNNED))     //While shifting to phase 2 malchezaar stuns himself
             return;
@@ -501,7 +501,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
                 DoCast(m_creature->getVictim(), SPELL_SUNDER_ARMOR);
                 SunderArmorTimer = 15000;
 
-            }else SunderArmorTimer -= diff;
+            } else SunderArmorTimer -= diff;
         }
         else
         {
@@ -536,7 +536,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
             {
                 DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_AMPLIFY_DAMAGE);
                 AmplifyDamageTimer = 20000 + rand()%10000;
-            }else AmplifyDamageTimer -= diff;
+            } else AmplifyDamageTimer -= diff;
         }
 
         //Time for global and double timers
@@ -544,13 +544,13 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
         {
             SummonInfernal(diff);
             InfernalTimer =  phase == 3 ? 15000 : 45000;    //15 secs in phase 3, 45 otherwise
-        }else InfernalTimer -= diff;
+        } else InfernalTimer -= diff;
 
         if (ShadowNovaTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_SHADOWNOVA);
             ShadowNovaTimer = phase == 3 ? 35000 : -1;
-        }else ShadowNovaTimer -= diff;
+        } else ShadowNovaTimer -= diff;
 
         if (phase != 2)
         {
@@ -566,7 +566,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
                     DoCast(target, SPELL_SW_PAIN);
 
                 SWPainTimer = 20000;
-            }else SWPainTimer -= diff;
+            } else SWPainTimer -= diff;
         }
 
         if (phase != 3)
@@ -577,7 +577,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
                 EnfeebleTimer = 30000;
                 ShadowNovaTimer = 5000;
                 EnfeebleResetTimer = 9000;
-            }else EnfeebleTimer -= diff;
+            } else EnfeebleTimer -= diff;
         }
 
         if (phase == 2)

@@ -147,7 +147,7 @@ struct OREGON_DLL_DECL mob_blood_elf_council_voice_triggerAI : public ScriptedAI
             Council[1] = pInstance->GetData64(DATA_VERASDARKSHADOW);
             Council[2] = pInstance->GetData64(DATA_LADYMALANDE);
             Council[3] = pInstance->GetData64(DATA_HIGHNETHERMANCERZEREVOR);
-        }else error_log(ERROR_INST_DATA);
+        } else error_log(ERROR_INST_DATA);
     }
 
     void EnterCombat(Unit* who) {}
@@ -175,7 +175,7 @@ struct OREGON_DLL_DECL mob_blood_elf_council_voice_triggerAI : public ScriptedAI
             ++YellCounter;
             if (YellCounter > 3)
                 YellCounter = 0;                            // Reuse for Enrage Yells
-        }else AggroYellTimer -= diff;
+        } else AggroYellTimer -= diff;
         }
 
         if (EnrageTimer)
@@ -189,7 +189,7 @@ struct OREGON_DLL_DECL mob_blood_elf_council_voice_triggerAI : public ScriptedAI
                 EnrageTimer = CouncilEnrage[YellCounter].timer;
             }
             ++YellCounter;
-        }else EnrageTimer -= diff;
+        } else EnrageTimer -= diff;
         }
     }
 };
@@ -313,7 +313,7 @@ struct OREGON_DLL_DECL mob_illidari_councilAI : public ScriptedAI
                     pMember->DealDamage(pMember, pMember->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 ++DeathCount;
                 EndEventTimer = 1500;
-            }else EndEventTimer -= diff;
+            } else EndEventTimer -= diff;
         }
 
         if (CheckTimer)
@@ -344,7 +344,7 @@ struct OREGON_DLL_DECL mob_illidari_councilAI : public ScriptedAI
                     Reset();
 
                 CheckTimer = 2000;
-            }else CheckTimer -= diff;
+            } else CheckTimer -= diff;
         }
 
     }
@@ -533,7 +533,7 @@ struct OREGON_DLL_DECL boss_gathios_the_shattererAI : public boss_illidari_counc
                 }
                 BlessingTimer = 15000;
             }
-        }else BlessingTimer -= diff;
+        } else BlessingTimer -= diff;
 
         if (JudgeTimer < diff)
         {
@@ -557,13 +557,13 @@ struct OREGON_DLL_DECL boss_gathios_the_shattererAI : public boss_illidari_counc
                 }
                 JudgeTimer = 15000;
            }
-        }else JudgeTimer -= diff;
+        } else JudgeTimer -= diff;
 
         if (ConsecrationTimer < diff)
         {
             if (TryDoCast(m_creature, SPELL_CONSECRATION))
                 ConsecrationTimer = 30000;
-        }else ConsecrationTimer -= diff;
+        } else ConsecrationTimer -= diff;
 
         if (HammerOfJusticeTimer < diff)
         {
@@ -576,7 +576,7 @@ struct OREGON_DLL_DECL boss_gathios_the_shattererAI : public boss_illidari_counc
                         HammerOfJusticeTimer = 20000;
                 }
             }
-        }else HammerOfJusticeTimer -= diff;
+        } else HammerOfJusticeTimer -= diff;
 
         if (SealTimer < diff)
         {
@@ -589,7 +589,7 @@ struct OREGON_DLL_DECL boss_gathios_the_shattererAI : public boss_illidari_counc
                 }
                 SealTimer = 30000;
             }
-        }else SealTimer -= diff;
+        } else SealTimer -= diff;
 
         if (AuraTimer < diff)
         {
@@ -598,7 +598,7 @@ struct OREGON_DLL_DECL boss_gathios_the_shattererAI : public boss_illidari_counc
                 CastAuraOnCouncil();
                 AuraTimer = 60000;
             }
-        }else AuraTimer -= diff;
+        } else AuraTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -646,7 +646,7 @@ struct OREGON_DLL_DECL boss_high_nethermancer_zerevorAI : public boss_illidari_c
                 DampenMagicTimer = 30000;
                 ArcaneBoltTimer += 1000;                        // Give the Mage some time to spellsteal Dampen.
            }
-        }else DampenMagicTimer -= diff;
+        } else DampenMagicTimer -= diff;
 
         if (ArcaneExplosionTimer < diff)
         {
@@ -658,7 +658,7 @@ struct OREGON_DLL_DECL boss_high_nethermancer_zerevorAI : public boss_illidari_c
                     ArcaneExplosionTimer = 14000;
                 }
             }
-        }else ArcaneExplosionTimer -= diff;
+        } else ArcaneExplosionTimer -= diff;
 
         if (ArcaneBoltTimer < diff)
         {
@@ -667,7 +667,7 @@ struct OREGON_DLL_DECL boss_high_nethermancer_zerevorAI : public boss_illidari_c
                 DoCast(m_creature->getVictim(), SPELL_ARCANE_BOLT);
                 ArcaneBoltTimer = 500;
             }
-        }else ArcaneBoltTimer -= diff;
+        } else ArcaneBoltTimer -= diff;
 
         if (BlizzardTimer < diff)
         {
@@ -680,7 +680,7 @@ struct OREGON_DLL_DECL boss_high_nethermancer_zerevorAI : public boss_illidari_c
                     FlamestrikeTimer += 10000;
                 }
             }
-        }else BlizzardTimer -= diff;
+        } else BlizzardTimer -= diff;
 
         if (FlamestrikeTimer < diff)
         {
@@ -693,7 +693,7 @@ struct OREGON_DLL_DECL boss_high_nethermancer_zerevorAI : public boss_illidari_c
                     BlizzardTimer += 10000;
                 }
             }
-        }else FlamestrikeTimer -= diff;
+        } else FlamestrikeTimer -= diff;
     }
 };
 
@@ -736,13 +736,13 @@ struct OREGON_DLL_DECL boss_lady_malandeAI : public boss_illidari_councilAI
                 DoCast(m_creature->getVictim(), SPELL_EMPOWERED_SMITE);
                 EmpoweredSmiteTimer = 30000;
             }
-        }else EmpoweredSmiteTimer -= diff;
+        } else EmpoweredSmiteTimer -= diff;
 
         if (CircleOfHealingTimer < diff)
         {
             if (TryDoCast(m_creature, SPELL_CIRCLE_OF_HEALING))
                 CircleOfHealingTimer = 30000;
-        }else CircleOfHealingTimer -= diff;
+        } else CircleOfHealingTimer -= diff;
 
         if (DivineWrathTimer < diff)
         {
@@ -751,13 +751,13 @@ struct OREGON_DLL_DECL boss_lady_malandeAI : public boss_illidari_councilAI
                 if (TryDoCast(target, SPELL_DIVINE_WRATH))
                     DivineWrathTimer = 20000 + rand()%20 * 1000;
             }
-        }else DivineWrathTimer -= diff;
+        } else DivineWrathTimer -= diff;
 
         if (ReflectiveShieldTimer < diff)
         {
             if (TryDoCast(m_creature, SPELL_REFLECTIVE_SHIELD))
                 ReflectiveShieldTimer = 45000;
-        }else ReflectiveShieldTimer -= diff;
+        } else ReflectiveShieldTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -829,7 +829,7 @@ struct OREGON_DLL_DECL boss_veras_darkshadowAI : public boss_illidari_councilAI
                     DoResetThreat();
                     return;
                 }
-            }else VanishTimer -= diff;
+            } else VanishTimer -= diff;
 
             DoMeleeAttackIfReady();
         }
@@ -848,7 +848,7 @@ struct OREGON_DLL_DECL boss_veras_darkshadowAI : public boss_illidari_councilAI
                         }
                     }
                 }
-            }else EnvenomTimer -= diff;
+            } else EnvenomTimer -= diff;
         }
     }
 };

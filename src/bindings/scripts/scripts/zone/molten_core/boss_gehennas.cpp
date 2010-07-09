@@ -55,7 +55,7 @@ struct OREGON_DLL_DECL boss_gehennasAI : public ScriptedAI
             if (Unit* bTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
                 DoCast(bTarget,SPELL_SHADOWBOLT);
             ShadowBolt_Timer = 7000;
-        }else ShadowBolt_Timer -= diff;
+        } else ShadowBolt_Timer -= diff;
 
         //RainOfFire_Timer
         if (RainOfFire_Timer < diff)
@@ -64,14 +64,14 @@ struct OREGON_DLL_DECL boss_gehennasAI : public ScriptedAI
                 DoCast(target,SPELL_RAINOFFIRE);
 
             RainOfFire_Timer = 4000 + rand()%8000;
-        }else RainOfFire_Timer -= diff;
+        } else RainOfFire_Timer -= diff;
 
         //GehennasCurse_Timer
         if (GehennasCurse_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_GEHENNASCURSE);
             GehennasCurse_Timer = 22000 + rand()%8000;
-        }else GehennasCurse_Timer -= diff;
+        } else GehennasCurse_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

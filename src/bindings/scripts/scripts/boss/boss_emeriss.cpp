@@ -70,14 +70,14 @@ struct OREGON_DLL_DECL boss_emerissAI : public ScriptedAI
                 DoCast(target,SPELL_SLEEP);
 
             Sleep_Timer = 8000 + rand()%8000;
-        }else Sleep_Timer -= diff;
+        } else Sleep_Timer -= diff;
 
         //NoxiousBreath_Timer
         if (NoxiousBreath_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_NOXIOUSBREATH);
             NoxiousBreath_Timer = 14000 + rand()%6000;
-        }else NoxiousBreath_Timer -= diff;
+        } else NoxiousBreath_Timer -= diff;
 
         //Tailsweep every 2 seconds
         if (TailSweep_Timer < diff)
@@ -86,21 +86,21 @@ struct OREGON_DLL_DECL boss_emerissAI : public ScriptedAI
                 DoCast(target,SPELL_TAILSWEEP);
 
             TailSweep_Timer = 2000;
-        }else TailSweep_Timer -= diff;
+        } else TailSweep_Timer -= diff;
 
         //MarkOfNature_Timer
         //if (MarkOfNature_Timer < diff)
         //{
         //    DoCast(m_creature->getVictim(),SPELL_MARKOFNATURE);
         //    MarkOfNature_Timer = 45000;
-        //}else MarkOfNature_Timer -= diff;
+        //} else MarkOfNature_Timer -= diff;
 
         //VolatileInfection_Timer
         if (VolatileInfection_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_VOLATILEINFECTION);
             VolatileInfection_Timer = 7000 + rand()%5000;
-        }else VolatileInfection_Timer -= diff;
+        } else VolatileInfection_Timer -= diff;
 
         //CorruptionofEarth_Timer
         if ((int) (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() +0.5) == 75)

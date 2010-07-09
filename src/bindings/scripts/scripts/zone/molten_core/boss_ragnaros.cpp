@@ -162,7 +162,7 @@ struct OREGON_DLL_DECL boss_ragnarosAI : public Scripted_NoMovementAI
             }
 
             WrathOfRagnaros_Timer = 30000;
-        }else WrathOfRagnaros_Timer -= diff;
+        } else WrathOfRagnaros_Timer -= diff;
 
         //HandOfRagnaros_Timer
         if (HandOfRagnaros_Timer < diff)
@@ -175,28 +175,28 @@ struct OREGON_DLL_DECL boss_ragnarosAI : public Scripted_NoMovementAI
             }
 
             HandOfRagnaros_Timer = 25000;
-        }else HandOfRagnaros_Timer -= diff;
+        } else HandOfRagnaros_Timer -= diff;
 
         //LavaBurst_Timer
         if (LavaBurst_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_LAVABURST);
             LavaBurst_Timer = 10000;
-        }else LavaBurst_Timer -= diff;
+        } else LavaBurst_Timer -= diff;
 
         //Erruption_Timer
         if (LavaBurst_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_ERRUPTION);
             Erruption_Timer = 20000 + rand()%25000;
-        }else Erruption_Timer -= diff;
+        } else Erruption_Timer -= diff;
 
         //ElementalFire_Timer
         if (ElementalFire_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_ELEMENTALFIRE);
             ElementalFire_Timer = 10000 + rand()%4000;
-        }else ElementalFire_Timer -= diff;
+        } else ElementalFire_Timer -= diff;
 
         //Submerge_Timer
         if (!WasBanished && Submerge_Timer < diff)
@@ -237,7 +237,7 @@ struct OREGON_DLL_DECL boss_ragnarosAI : public Scripted_NoMovementAI
                 DoCast(m_creature,SPELL_RAGSUBMERGE);
                 Attack_Timer = 90000;
 
-            }else
+            } else
             {
                 DoScriptText(SAY_REINFORCEMENTS2, m_creature);
 
@@ -259,7 +259,7 @@ struct OREGON_DLL_DECL boss_ragnarosAI : public Scripted_NoMovementAI
             }
 
             Submerge_Timer = 180000;
-        }else Submerge_Timer -= diff;
+        } else Submerge_Timer -= diff;
 
         //If we are within range melee the target
         if (m_creature->IsWithinMeleeRange(m_creature->getVictim()))
@@ -270,7 +270,7 @@ struct OREGON_DLL_DECL boss_ragnarosAI : public Scripted_NoMovementAI
                 m_creature->AttackerStateUpdate(m_creature->getVictim());
                 m_creature->resetAttackTimer();
             }
-        }else
+        } else
         {
             //MagmaBurst_Timer
             if (MagmaBurst_Timer < diff)
@@ -285,7 +285,7 @@ struct OREGON_DLL_DECL boss_ragnarosAI : public Scripted_NoMovementAI
                 }
 
                 MagmaBurst_Timer = 2500;
-            }else MagmaBurst_Timer -= diff;
+            } else MagmaBurst_Timer -= diff;
         }
     }
 };

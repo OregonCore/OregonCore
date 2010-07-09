@@ -125,7 +125,7 @@ struct OREGON_DLL_DECL boss_nefarianAI : public ScriptedAI
                 m_creature->RemoveCorpse();
             }
             DespawnTimer = 5000;
-        }else DespawnTimer -= diff;
+        } else DespawnTimer -= diff;
 
         if (!UpdateVictim())
             return;
@@ -135,28 +135,28 @@ struct OREGON_DLL_DECL boss_nefarianAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_SHADOWFLAME);
             ShadowFlame_Timer = 12000;
-        }else ShadowFlame_Timer -= diff;
+        } else ShadowFlame_Timer -= diff;
 
         //BellowingRoar_Timer
         if (BellowingRoar_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_BELLOWINGROAR);
             BellowingRoar_Timer = 30000;
-        }else BellowingRoar_Timer -= diff;
+        } else BellowingRoar_Timer -= diff;
 
         //VeilOfShadow_Timer
         if (VeilOfShadow_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_VEILOFSHADOW);
             VeilOfShadow_Timer = 15000;
-        }else VeilOfShadow_Timer -= diff;
+        } else VeilOfShadow_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 7000;
-        }else Cleave_Timer -= diff;
+        } else Cleave_Timer -= diff;
 
         //TailLash_Timer
         if (TailLash_Timer < diff)
@@ -165,7 +165,7 @@ struct OREGON_DLL_DECL boss_nefarianAI : public ScriptedAI
             //DoCast(m_creature->getVictim(),SPELL_TAILLASH);
 
             TailLash_Timer = 10000;
-        }else TailLash_Timer -= diff;
+        } else TailLash_Timer -= diff;
 
         //ClassCall_Timer
         if (ClassCall_Timer < diff)
@@ -215,7 +215,7 @@ struct OREGON_DLL_DECL boss_nefarianAI : public ScriptedAI
             }
 
             ClassCall_Timer = 35000 + (rand() % 5000);
-        }else ClassCall_Timer -= diff;
+        } else ClassCall_Timer -= diff;
 
         //Phase3 begins when we are below X health
         if (!Phase3 && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 20)

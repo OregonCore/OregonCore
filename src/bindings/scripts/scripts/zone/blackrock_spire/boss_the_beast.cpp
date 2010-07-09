@@ -57,7 +57,7 @@ struct OREGON_DLL_DECL boss_thebeastAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_FLAMEBREAK);
             Flamebreak_Timer = 10000;
-        }else Flamebreak_Timer -= diff;
+        } else Flamebreak_Timer -= diff;
 
         //Immolate_Timer
         if (Immolate_Timer < diff)
@@ -66,14 +66,14 @@ struct OREGON_DLL_DECL boss_thebeastAI : public ScriptedAI
             target = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (target) DoCast(target,SPELL_IMMOLATE);
             Immolate_Timer = 8000;
-        }else Immolate_Timer -= diff;
+        } else Immolate_Timer -= diff;
 
         //TerrifyingRoar_Timer
         if (TerrifyingRoar_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_TERRIFYINGROAR);
             TerrifyingRoar_Timer = 20000;
-        }else TerrifyingRoar_Timer -= diff;
+        } else TerrifyingRoar_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

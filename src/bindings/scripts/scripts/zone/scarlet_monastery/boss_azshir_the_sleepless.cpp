@@ -61,7 +61,7 @@ struct OREGON_DLL_DECL boss_azshir_the_sleeplessAI : public ScriptedAI
                 return;
 
                 SoulSiphon_Timer = 20000;
-            }else SoulSiphon_Timer -= diff;
+            } else SoulSiphon_Timer -= diff;
         }
 
         //CallOfTheGrave_Timer
@@ -69,14 +69,14 @@ struct OREGON_DLL_DECL boss_azshir_the_sleeplessAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_CALLOFTHEGRAVE);
             CallOftheGrave_Timer = 30000;
-        }else CallOftheGrave_Timer -= diff;
+        } else CallOftheGrave_Timer -= diff;
 
         //Terrify_Timer
         if (Terrify_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_TERRIFY);
             Terrify_Timer = 20000;
-        }else Terrify_Timer -= diff;
+        } else Terrify_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

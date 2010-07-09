@@ -56,21 +56,21 @@ struct OREGON_DLL_DECL boss_lucifronAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_IMPENDINGDOOM);
             ImpendingDoom_Timer = 20000;
-        }else ImpendingDoom_Timer -= diff;
+        } else ImpendingDoom_Timer -= diff;
 
         //Lucifron's curse timer
         if (LucifronCurse_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_LUCIFRONCURSE);
             LucifronCurse_Timer = 15000;
-        }else LucifronCurse_Timer -= diff;
+        } else LucifronCurse_Timer -= diff;
 
         //Shadowshock
         if (ShadowShock_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_SHADOWSHOCK);
             ShadowShock_Timer = 6000;
-        }else ShadowShock_Timer -= diff;
+        } else ShadowShock_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

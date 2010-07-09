@@ -133,7 +133,7 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
         {
             m_creature->SetReactState(REACT_PASSIVE);
             m_creature->SetVisibility(VISIBILITY_OFF);
-        }else {
+        } else {
             m_creature->SetVisibility(VISIBILITY_ON);
             m_creature->SetReactState(REACT_AGGRESSIVE);
         }*/
@@ -213,13 +213,13 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
              m_creature->InterruptNonMeleeSpells(false);
              WhirlTimer = 4000; //whirl directly after spout ends
              return;
-         }else RotTimer-=diff;
+         } else RotTimer-=diff;
 
          if (SpoutAnimTimer<diff)
          {
              DoCast(m_creature,SPELL_SPOUT_ANIM,true);
              SpoutAnimTimer = 1000;
-         }else SpoutAnimTimer-=diff;
+         } else SpoutAnimTimer-=diff;
 
          Map *map = m_creature->GetMap();
          if (map->IsDungeon() && pInstance->GetData(DATA_THELURKERBELOWEVENT) == IN_PROGRESS)
@@ -283,7 +283,7 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
                  DoCast(m_creature,SPELL_SUBMERGE);
                  PhaseTimer = 60000;//60secs submerged
                  Submerged = true;
-             }else PhaseTimer-=diff;
+             } else PhaseTimer-=diff;
          }
 
          if (!Submerged && RotType == NOROTATE)//is not spouting and not submerged
@@ -295,7 +295,7 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
 
                  SpoutTimer= 35000;
                  return;
-             }else SpoutTimer -= diff;
+             } else SpoutTimer -= diff;
 
              //Whirl directly after a Spout and at random times
              if (WhirlTimer < diff)
@@ -303,7 +303,7 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
                  WhirlTimer = rand()%5000 + 15000;
                  DoCast(m_creature,SPELL_WHIRL);
                  WaterboltTimer += 5000;//add 5secs to waterbolt timer, to add some time to run back to boss
-             }else WhirlTimer -= diff;
+             } else WhirlTimer -= diff;
 
              if (GeyserTimer < diff)
              {
@@ -318,7 +318,7 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
                      DoCast(target,SPELL_GEYSER,true);
 
                  GeyserTimer = rand()%5000 + 15000;
-             }else GeyserTimer -= diff;
+             } else GeyserTimer -= diff;
 
              if (WaterboltTimer < diff)
              {
@@ -330,14 +330,14 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
                          DoCast(target,SPELL_WATERBOLT);
                  }
                  WaterboltTimer = 3000;
-             }else WaterboltTimer -= diff;
+             } else WaterboltTimer -= diff;
 
              if (!UpdateVictim())
                 return;
 
              DoMeleeAttackIfReady();
 
-         }else if (!Submerged)
+         } else if (!Submerged)
              return;
          else if (Submerged)//phase 2, submerged
          {
@@ -355,7 +355,7 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
                  WhirlTimer = 26000;
                  PhaseTimer = 120000;
                  return;
-             }else PhaseTimer-=diff;
+             } else PhaseTimer-=diff;
 
              if (!m_creature->isInCombat())
                  m_creature->SetInCombatState(false);
@@ -442,7 +442,7 @@ struct OREGON_DLL_DECL mob_coilfang_ambusherAI : public Scripted_NoMovementAI
 
             MultiShotTimer = 10000;
             ShootBowTimer += 1500;//add global cooldown
-        }else MultiShotTimer -= diff;
+        } else MultiShotTimer -= diff;
 
         if (ShootBowTimer < diff)
         {
@@ -453,7 +453,7 @@ struct OREGON_DLL_DECL mob_coilfang_ambusherAI : public Scripted_NoMovementAI
                 m_creature->CastCustomSpell(target,SPELL_SHOOT,&bp0,NULL,NULL,true);
             ShootBowTimer = 4000;
             MultiShotTimer += 1500;//add global cooldown
-        }else ShootBowTimer -= diff;
+        } else ShootBowTimer -= diff;
     }
 };
 

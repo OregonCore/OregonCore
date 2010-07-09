@@ -846,7 +846,7 @@ struct OREGON_DLL_DECL mob_phase_hunterAI : public ScriptedAI
                 DoCast(m_creature->getVictim(), SPELL_MANA_BURN);
                 ManaBurnTimer = 8000 + (rand()%10 * 1000); // 8-18 sec cd
             }
-        }else ManaBurnTimer -= diff;
+        } else ManaBurnTimer -= diff;
 
         if (PlayerGUID) // start: support for quest 10190
         {

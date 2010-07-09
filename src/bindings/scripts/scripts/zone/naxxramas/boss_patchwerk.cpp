@@ -109,7 +109,7 @@ struct OREGON_DLL_DECL boss_patchwerkAI : public ScriptedAI
                 DoCast(pMostHPTarget, SPELL_HATEFULSTRIKE);
 
             HatefullStrike_Timer = 1200;
-        }else HatefullStrike_Timer -= diff;
+        } else HatefullStrike_Timer -= diff;
 
         //Enrage_Timer
         if (Enrage_Timer < diff)
@@ -118,14 +118,14 @@ struct OREGON_DLL_DECL boss_patchwerkAI : public ScriptedAI
              DoScriptText(EMOTE_BERSERK, m_creature);
 
             Enrage_Timer = 300000;
-        }else Enrage_Timer -= diff;
+        } else Enrage_Timer -= diff;
 
         //Slimebolt_Timer
         if (Slimebolt_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_SLIMEBOLT);
             Slimebolt_Timer = 5000;
-        }else Slimebolt_Timer -= diff;
+        } else Slimebolt_Timer -= diff;
 
         //Enrage if not already enraged and below 5%
         if (!Enraged && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 5)

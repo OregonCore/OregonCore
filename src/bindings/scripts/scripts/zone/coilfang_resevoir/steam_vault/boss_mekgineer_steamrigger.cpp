@@ -133,7 +133,7 @@ struct OREGON_DLL_DECL boss_mekgineer_steamriggerAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_SUPER_SHRINK_RAY);
             Shrink_Timer = 20000;
-        }else Shrink_Timer -= diff;
+        } else Shrink_Timer -= diff;
 
         if (Saw_Blade_Timer < diff)
         {
@@ -247,8 +247,8 @@ struct OREGON_DLL_DECL mob_steamrigger_mechanicAI : public ScriptedAI
                         //m_creature->GetMotionMaster()->MoveFollow(pMekgineer,0,0);
                     }
                 }
-            }else Repair_Timer = 5000;
-        }else Repair_Timer -= diff;
+            } else Repair_Timer = 5000;
+        } else Repair_Timer -= diff;
 
         if (!UpdateVictim())
             return;

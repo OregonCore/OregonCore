@@ -123,7 +123,7 @@ struct OREGON_DLL_DECL boss_cannon_master_willeyAI : public ScriptedAI
             }
             //12 seconds until we should cast this again
             Pummel_Timer = 12000;
-        }else Pummel_Timer -= diff;
+        } else Pummel_Timer -= diff;
 
         //KnockAway
         if (KnockAway_Timer < diff)
@@ -135,7 +135,7 @@ struct OREGON_DLL_DECL boss_cannon_master_willeyAI : public ScriptedAI
             }
             //14 seconds until we should cast this again
             KnockAway_Timer = 14000;
-        }else KnockAway_Timer -= diff;
+        } else KnockAway_Timer -= diff;
 
         //Shoot
         if (Shoot_Timer < diff)
@@ -144,7 +144,7 @@ struct OREGON_DLL_DECL boss_cannon_master_willeyAI : public ScriptedAI
             DoCast(m_creature->getVictim(),SPELL_SHOOT);
             //1 seconds until we should cast this again
             Shoot_Timer = 1000;
-        }else Shoot_Timer -= diff;
+        } else Shoot_Timer -= diff;
 
         //SummonRifleman
         if (SummonRifleman_Timer < diff)
@@ -200,7 +200,7 @@ struct OREGON_DLL_DECL boss_cannon_master_willeyAI : public ScriptedAI
             }
             //30 seconds until we should cast this again
             SummonRifleman_Timer = 30000;
-        }else SummonRifleman_Timer -= diff;
+        } else SummonRifleman_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

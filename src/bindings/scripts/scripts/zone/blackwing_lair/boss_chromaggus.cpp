@@ -215,21 +215,21 @@ struct OREGON_DLL_DECL boss_chromaggusAI : public ScriptedAI
 
             DoScriptText(EMOTE_SHIMMER, m_creature);
             Shimmer_Timer = 45000;
-        }else Shimmer_Timer -= diff;
+        } else Shimmer_Timer -= diff;
 
         //Breath1_Timer
         if (Breath1_Timer < diff)
         {
             DoCast(m_creature->getVictim(),Breath1_Spell);
             Breath1_Timer = 60000;
-        }else Breath1_Timer -= diff;
+        } else Breath1_Timer -= diff;
 
         //Breath2_Timer
         if (Breath2_Timer < diff)
         {
             DoCast(m_creature->getVictim(),Breath2_Spell);
             Breath2_Timer = 60000;
-        }else Breath2_Timer -= diff;
+        } else Breath2_Timer -= diff;
 
         //Affliction_Timer
         if (Affliction_Timer < diff)
@@ -280,7 +280,7 @@ struct OREGON_DLL_DECL boss_chromaggusAI : public ScriptedAI
             }
 
             Affliction_Timer = 10000;
-        }else Affliction_Timer -= diff;
+        } else Affliction_Timer -= diff;
 
         //Frenzy_Timer
         if (Frenzy_Timer < diff)
@@ -288,7 +288,7 @@ struct OREGON_DLL_DECL boss_chromaggusAI : public ScriptedAI
             DoCast(m_creature,SPELL_FRENZY);
             DoScriptText(EMOTE_FRENZY, m_creature);
             Frenzy_Timer = 10000 + (rand() % 5000);
-        }else Frenzy_Timer -= diff;
+        } else Frenzy_Timer -= diff;
 
         //Enrage if not already enraged and below 20%
         if (!Enraged && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 20)

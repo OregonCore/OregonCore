@@ -126,7 +126,7 @@ bool GossipHello_npc_witch_doctor_mauari(Player *player, Creature *_Creature)
     {
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HWDM, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
         player->SEND_GOSSIP_MENU(3377, _Creature->GetGUID());
-    }else
+    } else
         player->SEND_GOSSIP_MENU(3375, _Creature->GetGUID());
 
     return true;

@@ -130,7 +130,7 @@ struct OREGON_DLL_DECL boss_highlord_mograineAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_MARK_OF_MOGRAINE);
             Mark_Timer = 12000;
-        }else Mark_Timer -= diff;
+        } else Mark_Timer -= diff;
 
         // Shield Wall - All 4 horsemen will shield wall at 50% hp and 20% hp for 20 seconds
         if (ShieldWall1 && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 50)
@@ -158,7 +158,7 @@ struct OREGON_DLL_DECL boss_highlord_mograineAI : public ScriptedAI
                 DoCast(m_creature->getVictim(),SPELL_RIGHTEOUS_FIRE);
             }
             RighteousFire_Timer = 2000;
-        }else RighteousFire_Timer -= diff;
+        } else RighteousFire_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

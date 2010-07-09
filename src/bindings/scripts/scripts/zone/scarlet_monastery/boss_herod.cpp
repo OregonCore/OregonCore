@@ -91,7 +91,7 @@ struct OREGON_DLL_DECL boss_herodAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 12000;
-        }else Cleave_Timer -= diff;
+        } else Cleave_Timer -= diff;
 
         // Whirlwind_Timer
         if (Whirlwind_Timer < diff)
@@ -99,7 +99,7 @@ struct OREGON_DLL_DECL boss_herodAI : public ScriptedAI
             DoScriptText(SAY_WHIRLWIND, m_creature);
             DoCast(m_creature->getVictim(),SPELL_WHIRLWIND);
             Whirlwind_Timer = 30000;
-        }else Whirlwind_Timer -= diff;
+        } else Whirlwind_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -154,7 +154,7 @@ struct OREGON_DLL_DECL mob_scarlet_traineeAI : public npc_escortAI
             {
                 Start(true,true);
                 Start_Timer = 0;
-            }else Start_Timer -= diff;
+            } else Start_Timer -= diff;
         }
 
         npc_escortAI::UpdateAI(diff);

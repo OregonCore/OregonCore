@@ -213,14 +213,14 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
                 Earthquake = false;
                 Earthquake_Timer = 40000+rand()%5000;
             }
-        }else Earthquake_Timer -= diff;
+        } else Earthquake_Timer -= diff;
 
         //TidalWave_Timer
         if (TidalWave_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_TIDAL_WAVE);
             TidalWave_Timer = 20000;
-        }else TidalWave_Timer -= diff;
+        } else TidalWave_Timer -= diff;
 
         if (!Phase2)
         {
@@ -254,7 +254,7 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
 
                 DoScriptText(EMOTE_WATERY_GRAVE, m_creature);
                 WateryGrave_Timer = 30000;
-            }else WateryGrave_Timer -= diff;
+            } else WateryGrave_Timer -= diff;
 
             //Start Phase2
             if ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 25)
@@ -283,7 +283,7 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
                 }
                 DoScriptText(EMOTE_WATERY_GLOBULES, m_creature);
                 WateryGlobules_Timer = 25000;
-            }else WateryGlobules_Timer -= diff;
+            } else WateryGlobules_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -339,7 +339,7 @@ struct OREGON_DLL_DECL mob_water_globuleAI : public ScriptedAI
                 m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             }
             Check_Timer = 500;
-        }else Check_Timer -= diff;
+        } else Check_Timer -= diff;
 
         //do NOT deal any melee damage to the target.
     }

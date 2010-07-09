@@ -130,7 +130,7 @@ struct OREGON_DLL_DECL boss_entropiusAI : public ScriptedAI
         if (!Combat){
             BlackHoleSummonTimer = 15000;
             DoCastAOE(SPELL_NEGATIVE_ENERGY_E, false);
-        }else{
+        } else{
             if (pInstance)
                 pInstance->SetData(DATA_MURU_EVENT, NOT_STARTED);
             Summons.DespawnAll();
@@ -177,7 +177,7 @@ struct OREGON_DLL_DECL boss_entropiusAI : public ScriptedAI
 
         if (EnrageTimer < diff && !m_creature->HasAura(SPELL_ENRAGE, 0)){
             DoCast(m_creature,SPELL_ENRAGE, false);
-        }else EnrageTimer -= diff;
+        } else EnrageTimer -= diff;
 
         if (BlackHoleSummonTimer < diff){
             Unit* random = SelectUnit(SELECT_TARGET_RANDOM, 0, 100, true);
@@ -187,7 +187,7 @@ struct OREGON_DLL_DECL boss_entropiusAI : public ScriptedAI
             if (!random)return;
             random->CastSpell(random, SPELL_BLACKHOLE, false);
             BlackHoleSummonTimer = 15000;
-        }else BlackHoleSummonTimer -= diff;
+        } else BlackHoleSummonTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -282,7 +282,7 @@ struct OREGON_DLL_DECL boss_muruAI : public Scripted_NoMovementAI
                         break;
                 }
                 Timer[TIMER_PHASE] = 3000;
-            }else Timer[TIMER_PHASE] -= diff;
+            } else Timer[TIMER_PHASE] -= diff;
             return;
         }
 
@@ -298,7 +298,7 @@ struct OREGON_DLL_DECL boss_muruAI : public Scripted_NoMovementAI
                             DoCastAOE(SPELL_DARKNESS, false);
                             Timer[TIMER_DARKNESS] = 3000;
                             DarkFiend = true;
-                        }else{
+                        } else{
                             DarkFiend = false;
                             for (uint8 i = 0; i < 8; ++i)
                                 m_creature->SummonCreature(CREATURE_DARK_FIENDS,DarkFiends[i][0],DarkFiends[i][1],DarkFiends[i][2], DarkFiends[i][3], TEMPSUMMON_CORPSE_DESPAWN, 0);
@@ -395,7 +395,7 @@ struct OREGON_DLL_DECL npc_muru_portalAI : public Scripted_NoMovementAI
             DoCastAOE(SPELL_SUMMON_VOID_SENTINEL, false);
             SummonTimer = 5000;
             SummonSentinel = false;
-        }else SummonTimer -= diff;
+        } else SummonTimer -= diff;
     }
 
 
@@ -444,7 +444,7 @@ struct OREGON_DLL_DECL npc_dark_fiendAI : public ScriptedAI
                 AttackStart(SelectUnit(SELECT_TARGET_RANDOM, 0, 100, true));
                 InAction = true;
                 WaitTimer = 500;
-            }else{
+            } else{
                 if (m_creature->GetDistance(m_creature->getVictim()) < 5){
                     DoCastAOE(SPELL_DARKFIEND_AOE, false);
                     m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -498,12 +498,12 @@ struct OREGON_DLL_DECL npc_void_sentinelAI : public ScriptedAI
         if (PulseTimer < diff){
             DoCastAOE(SPELL_SHADOW_PULSE, true);
             PulseTimer = 3000;
-        }else PulseTimer -= diff;
+        } else PulseTimer -= diff;
 
         if (VoidBlastTimer < diff){
             DoCast(m_creature->getVictim(), SPELL_VOID_BLAST, false);
             VoidBlastTimer = 45000;
-        }else VoidBlastTimer -= diff;
+        } else VoidBlastTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -568,12 +568,12 @@ struct OREGON_DLL_DECL npc_blackholeAI : public ScriptedAI
                     if (Temp->GetPositionZ() > 73 && Victim)
                         AttackStart(Victim);
             }
-        }else SpellTimer -= diff;
+        } else SpellTimer -= diff;
 
         if (DespawnTimer < diff){
             m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             m_creature->RemoveCorpse();
-        }else DespawnTimer -= diff;
+        } else DespawnTimer -= diff;
     }
 };
 

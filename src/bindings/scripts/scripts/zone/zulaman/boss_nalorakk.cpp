@@ -127,7 +127,7 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
             waitTimer = 0;
             m_creature->SetSpeed(MOVE_RUN,2);
             m_creature->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
-        }else
+        } else
         {
             (*m_creature).GetMotionMaster()->MovePoint(0,NalorakkWay[7][0],NalorakkWay[7][1],NalorakkWay[7][2]);
         }
@@ -342,7 +342,7 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
                     (*m_creature).GetMotionMaster()->MovementExpired();
                     (*m_creature).GetMotionMaster()->MovePoint(MovePhase,NalorakkWay[MovePhase][0],NalorakkWay[MovePhase][1],NalorakkWay[MovePhase][2]);
                     waitTimer = 0;
-                }else waitTimer -= diff;
+                } else waitTimer -= diff;
         }
 
         if (!UpdateVictim())
@@ -354,7 +354,7 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
             DoYell(YELL_BERSERK, LANG_UNIVERSAL, NULL);
             DoPlaySoundToSet(m_creature, SOUND_YELL_BERSERK);
             Berserk_Timer = 600000;
-        }else Berserk_Timer -= diff;
+        } else Berserk_Timer -= diff;
 
         if (ShapeShift_Timer < diff)
         {
@@ -382,7 +382,7 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
                 ShapeShift_Timer = 20000 + rand()%5000; // dur 30s
                 inBearForm = true;
             }
-        }else ShapeShift_Timer -= diff;
+        } else ShapeShift_Timer -= diff;
 
         if (!inBearForm)
         {
@@ -390,7 +390,7 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
             {
                 DoCast(m_creature->getVictim(), SPELL_BRUTALSWIPE);
                 BrutalSwipe_Timer = 7000 + rand()%5000;
-            }else BrutalSwipe_Timer -= diff;
+            } else BrutalSwipe_Timer -= diff;
 
             if (Mangle_Timer < diff)
             {
@@ -400,7 +400,7 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
                     Mangle_Timer = 1000;
                 }
                 else Mangle_Timer = 10000 + rand()%5000;
-            }else Mangle_Timer -= diff;
+            } else Mangle_Timer -= diff;
 
             if (Surge_Timer < diff)
             {
@@ -410,7 +410,7 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
                 if (target)
                     DoCast(target, SPELL_SURGE);
                 Surge_Timer = 15000 + rand()%5000;
-            }else Surge_Timer -= diff;
+            } else Surge_Timer -= diff;
         }
         else
         {
@@ -418,19 +418,19 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
             {
                 DoCast(m_creature->getVictim(), SPELL_LACERATINGSLASH);
                 LaceratingSlash_Timer = 18000 + rand()%5000;
-            }else LaceratingSlash_Timer -= diff;
+            } else LaceratingSlash_Timer -= diff;
 
             if (RendFlesh_Timer < diff)
             {
                 DoCast(m_creature->getVictim(), SPELL_RENDFLESH);
                 RendFlesh_Timer = 5000 + rand()%5000;
-            }else RendFlesh_Timer -= diff;
+            } else RendFlesh_Timer -= diff;
 
             if (DeafeningRoar_Timer < diff)
             {
                 DoCast(m_creature->getVictim(), SPELL_DEAFENINGROAR);
                 DeafeningRoar_Timer = 15000 + rand()%5000;
-            }else DeafeningRoar_Timer -= diff;
+            } else DeafeningRoar_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();

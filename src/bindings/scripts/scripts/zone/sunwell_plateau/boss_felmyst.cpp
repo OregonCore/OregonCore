@@ -367,7 +367,7 @@ struct OREGON_DLL_DECL boss_felmystAI : public ScriptedAI
                 float x, y, z;
                 target->GetContactPoint(m_creature, x, y, z, 70);
                 m_creature->GetMotionMaster()->MovePoint(0, x, y, z+10);
-            }else
+            } else
             {
                 EnterEvadeMode();
                 return;
@@ -443,7 +443,7 @@ struct OREGON_DLL_DECL boss_felmystAI : public ScriptedAI
                 {
                     if (!Event)
                         Event = (EventFelmyst)i;
-                }else Timer[i] -= diff;
+                } else Timer[i] -= diff;
         }
 
         if (m_creature->IsNonMeleeSpellCasted(false))

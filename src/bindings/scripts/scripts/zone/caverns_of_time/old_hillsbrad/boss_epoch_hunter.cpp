@@ -109,26 +109,26 @@ struct OREGON_DLL_DECL boss_epoch_hunterAI : public ScriptedAI
             }
 
             SandBreath_Timer = 25000+rand()%5000;
-        }else SandBreath_Timer -= diff;
+        } else SandBreath_Timer -= diff;
 
         if (ImpendingDeath_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_IMPENDING_DEATH);
             ImpendingDeath_Timer = 30000+rand()%5000;
-        }else ImpendingDeath_Timer -= diff;
+        } else ImpendingDeath_Timer -= diff;
 
         if (WingBuffet_Timer < diff)
         {
             if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(target,SPELL_WING_BUFFET);
             WingBuffet_Timer = 25000+rand()%10000;
-        }else WingBuffet_Timer -= diff;
+        } else WingBuffet_Timer -= diff;
 
         if (Mda_Timer < diff)
         {
             DoCast(m_creature,SPELL_MAGIC_DISRUPTION_AURA);
             Mda_Timer = 15000;
-        }else Mda_Timer -= diff;
+        } else Mda_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

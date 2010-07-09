@@ -58,7 +58,7 @@ struct OREGON_DLL_DECL boss_houndmaster_lokseyAI : public ScriptedAI
         {
             DoCast(m_creature,SPELL_ENRAGE);
             Enrage_Timer = 900000;
-        }else Enrage_Timer -= diff;
+        } else Enrage_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

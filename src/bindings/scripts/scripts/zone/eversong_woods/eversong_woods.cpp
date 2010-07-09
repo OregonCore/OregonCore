@@ -725,7 +725,7 @@ struct OREGON_DLL_DECL npc_infused_crystalAI : public Scripted_NoMovementAI
             }
             m_creature->DealDamage(m_creature,m_creature->GetHealth(),NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             m_creature->RemoveCorpse();
-        }else EndTimer -= diff;
+        } else EndTimer -= diff;
 
         if (WaveTimer < diff && !Completed && Progress)
         {
@@ -736,7 +736,7 @@ struct OREGON_DLL_DECL npc_infused_crystalAI : public Scripted_NoMovementAI
             m_creature->SummonCreature(MOB_ENRAGED_WRAITH, SpawnLocations[ran2].x, SpawnLocations[ran2].y, SpawnLocations[ran2].z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 10000);
             m_creature->SummonCreature(MOB_ENRAGED_WRAITH, SpawnLocations[ran3].x, SpawnLocations[ran3].y, SpawnLocations[ran3].z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 10000);
             WaveTimer = 30000;
-        }else WaveTimer -= diff;
+        } else WaveTimer -= diff;
     }
 };
 

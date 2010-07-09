@@ -57,14 +57,14 @@ struct OREGON_DLL_DECL boss_pyroguard_emberseerAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_FIRENOVA);
             FireNova_Timer = 6000;
-        }else FireNova_Timer -= diff;
+        } else FireNova_Timer -= diff;
 
         //FlameBuffet_Timer
         if (FlameBuffet_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_FLAMEBUFFET);
             FlameBuffet_Timer = 14000;
-        }else FlameBuffet_Timer -= diff;
+        } else FlameBuffet_Timer -= diff;
 
         //PyroBlast_Timer
         if (PyroBlast_Timer < diff)
@@ -73,7 +73,7 @@ struct OREGON_DLL_DECL boss_pyroguard_emberseerAI : public ScriptedAI
             target = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (target) DoCast(target,SPELL_PYROBLAST);
             PyroBlast_Timer = 15000;
-        }else PyroBlast_Timer -= diff;
+        } else PyroBlast_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

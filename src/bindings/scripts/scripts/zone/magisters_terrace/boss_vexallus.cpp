@@ -147,7 +147,7 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(target, SPELL_CHAIN_LIGHTNING);
                 ChainLightningTimer = 10000;
-            }else ChainLightningTimer -= diff;
+            } else ChainLightningTimer -= diff;
 
             if (ArcaneShockTimer < diff)
             {
@@ -156,15 +156,15 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
                 if (target)
                     DoCast(target, SPELL_ARCANE_SHOCK);
                 ArcaneShockTimer = 8000;
-            }else ArcaneShockTimer -= diff;
-        }else
+            } else ArcaneShockTimer -= diff;
+        } else
         {
             if (OverloadTimer < diff)
             {
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(target, SPELL_OVERLOAD);
                 OverloadTimer = 2200;
-            }else OverloadTimer -= diff;
+            } else OverloadTimer -= diff;
         }
         DoMeleeAttackIfReady();
     }
@@ -206,12 +206,12 @@ struct OREGON_DLL_DECL mob_pure_energyAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_ENERGY_BOLT);
             EnergyBoltTimer = 1700;
-        }else   EnergyBoltTimer -= diff;
+        } else   EnergyBoltTimer -= diff;
         if (VisualTimer < diff)
         {
             DoCast(m_creature->getVictim(), ASTRAL_FLARE_VISUAL, true);
             VisualTimer = 1000;
-        }else   VisualTimer -= diff;
+        } else   VisualTimer -= diff;
     }
 };
 

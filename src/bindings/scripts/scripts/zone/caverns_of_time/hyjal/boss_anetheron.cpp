@@ -164,7 +164,7 @@ struct OREGON_DLL_DECL boss_anetheronAI : public hyjal_trashAI
                     DoYell(SAY_SWARM2, LANG_UNIVERSAL, NULL);
                     break;
             }
-        }else SwarmTimer -= diff;
+        } else SwarmTimer -= diff;
 
         if (SleepTimer < diff)
         {
@@ -186,12 +186,12 @@ struct OREGON_DLL_DECL boss_anetheronAI : public hyjal_trashAI
                     DoYell(SAY_SLEEP2, LANG_UNIVERSAL, NULL);
                     break;
             }
-        }else SleepTimer -= diff;
+        } else SleepTimer -= diff;
         if (AuraTimer < diff)
         {
             DoCast(m_creature, SPELL_VAMPIRIC_AURA,true);
             AuraTimer = 10000+rand()%10000;
-        }else AuraTimer -= diff;
+        } else AuraTimer -= diff;
         if (InfernoTimer < diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM,0,100,true), SPELL_INFERNO);
@@ -207,7 +207,7 @@ struct OREGON_DLL_DECL boss_anetheronAI : public hyjal_trashAI
                     DoYell(SAY_INFERNO2, LANG_UNIVERSAL, NULL);
                     break;
             }
-        }else InfernoTimer -= diff;
+        } else InfernoTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -281,7 +281,7 @@ struct OREGON_DLL_DECL mob_towering_infernalAI : public ScriptedAI
                 }
             }
             CheckTimer = 5000;
-        }else CheckTimer -= diff;
+        } else CheckTimer -= diff;
 
         //Return since we have no target
         if (!UpdateVictim())
@@ -291,7 +291,7 @@ struct OREGON_DLL_DECL mob_towering_infernalAI : public ScriptedAI
         {
             DoCast(m_creature, SPELL_IMMOLATION);
             ImmolationTimer = 5000;
-        }else ImmolationTimer -= diff;
+        } else ImmolationTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

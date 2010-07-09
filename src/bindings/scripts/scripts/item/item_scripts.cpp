@@ -157,7 +157,7 @@ bool ItemUse_item_draenei_fishing_net(Player *player, Item* _Item, SpellCastTarg
                 Item* item = player->StoreNewItem(dest,23614,true);
                 if (item)
                     player->SendNewItem(item,1,false,true);
-            }else
+            } else
             player->SendEquipError(msg,NULL,NULL);
         }
     }

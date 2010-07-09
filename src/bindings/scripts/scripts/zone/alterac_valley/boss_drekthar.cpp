@@ -90,25 +90,25 @@ struct OREGON_DLL_DECL boss_drektharAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_WHIRLWIND);
             WhirlwindTimer =  (8+rand()%10)*1000;
-        }else WhirlwindTimer -= diff;
+        } else WhirlwindTimer -= diff;
 
         if (Whirlwind2Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_WHIRLWIND2);
             Whirlwind2Timer = (7+rand()%18)*1000;
-        }else Whirlwind2Timer -= diff;
+        } else Whirlwind2Timer -= diff;
 
         if (KnockdownTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_KNOCKDOWN);
             KnockdownTimer = (10+rand()%5)*1000;
-        }else KnockdownTimer -= diff;
+        } else KnockdownTimer -= diff;
 
         if (FrenzyTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_FRENZY);
             FrenzyTimer = (20+rand()%5)*1000;
-        }else FrenzyTimer -= diff;
+        } else FrenzyTimer -= diff;
 
         if (YellTimer < diff) {
         switch(rand()%4)
@@ -133,7 +133,7 @@ struct OREGON_DLL_DECL boss_drektharAI : public ScriptedAI
                 EnterEvadeMode();
         }
             ResetTimer = 5000;
-        }else ResetTimer -= diff;
+        } else ResetTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

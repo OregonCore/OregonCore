@@ -80,7 +80,7 @@ struct OREGON_DLL_DECL mob_jadespine_basiliskAI : public ScriptedAI
             if (Target)
                 m_creature->TauntApply(Target);
 
-        }else Cslumber_Timer -= diff;
+        } else Cslumber_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

@@ -105,7 +105,7 @@ struct OREGON_DLL_DECL mob_kilrekAI : public ScriptedAI
                 if (Terestian && Terestian->isAlive())
                     DoCast(Terestian, SPELL_BROKEN_PACT, true);
             }
-        }else ERROR_INST_DATA(m_creature);
+        } else ERROR_INST_DATA(m_creature);
     }
 
     void UpdateAI(const uint32 diff)
@@ -120,7 +120,7 @@ struct OREGON_DLL_DECL mob_kilrekAI : public ScriptedAI
             DoCast(m_creature->getVictim(),SPELL_AMPLIFY_FLAMES);
 
             AmplifyTimer = 20000;
-        }else AmplifyTimer -= diff;
+        } else AmplifyTimer -= diff;
 
         //Chain cast
         if (!m_creature->IsNonMeleeSpellCasted(false) && m_creature->IsWithinDistInMap(m_creature->getVictim(), 30))
@@ -216,7 +216,7 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
                 Kilrek->AddThreat(who, 1.0f);
 
             pInstance->SetData(DATA_TERESTIAN_EVENT, IN_PROGRESS);
-        }else ERROR_INST_DATA(m_creature);
+        } else ERROR_INST_DATA(m_creature);
     }
 
     void KilledUnit(Unit *victim)
@@ -276,7 +276,7 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
                 SummonKilrek = true;
                 CheckKilrekTimer = 45000;
             }
-        }else CheckKilrekTimer -= diff;
+        } else CheckKilrekTimer -= diff;
 
         if (SacrificeTimer < diff)
         {
@@ -297,13 +297,13 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
                     SacrificeTimer = 30000;
                 }
             }
-        }else SacrificeTimer -= diff;
+        } else SacrificeTimer -= diff;
 
         if (ShadowboltTimer < diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_TOPAGGRO, 0), SPELL_SHADOW_BOLT);
             ShadowboltTimer = 10000;
-        }else ShadowboltTimer -= diff;
+        } else ShadowboltTimer -= diff;
 
         if (SummonTimer < diff)
         {
@@ -330,7 +330,7 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
                 Imp->AI()->AttackStart(SelectUnit(SELECT_TARGET_RANDOM, 1));
             }
             SummonTimer = 5000;
-        }else SummonTimer -= diff;
+        } else SummonTimer -= diff;
 
         if (!Berserk)
         {
@@ -338,7 +338,7 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
             {
                 DoCast(m_creature, SPELL_BERSERK);
                 Berserk = true;
-            }else BerserkTimer -= diff;
+            } else BerserkTimer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -370,7 +370,7 @@ struct OREGON_DLL_DECL mob_fiendish_impAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_FIREBOLT);
             FireboltTimer = 1500;
-        }else FireboltTimer -= diff;
+        } else FireboltTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

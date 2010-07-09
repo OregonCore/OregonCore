@@ -206,7 +206,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
         {
             m_creature->CastSpell(m_creature, SPELL_BERSERK, true);
             Berserk_Timer = 60000;
-        }else Berserk_Timer -= diff;
+        } else Berserk_Timer -= diff;
 
         if (ForceMove)
         {
@@ -214,7 +214,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
             {
                 m_creature->GetMotionMaster()->MovePoint(0, waypoint[cur_wp][0], waypoint[cur_wp][1], waypoint[cur_wp][2]);
                 ForceTimer = 5000;
-            }else ForceTimer -= diff;
+            } else ForceTimer -= diff;
 
         }
         if (WaitEvent)
@@ -304,7 +304,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
 
                     WaitEvent = WE_NONE;
                     WaitTimer = 0;
-                }else WaitTimer -= diff;
+                } else WaitTimer -= diff;
             }
             return;
         }
@@ -346,7 +346,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                 m_creature->GetMotionMaster()->MovePoint(0, waypoint[cur_wp][0], waypoint[cur_wp][1], waypoint[cur_wp][2]);
                 WaitTimer = 0;
                 return;
-            }else Platforms_Move_Timer -= diff;
+            } else Platforms_Move_Timer -= diff;
         }
         else
         {
@@ -356,13 +356,13 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                 if (target)
                     DoCast(target, SPELL_CHARGE);
                 Charge_Timer = 30000+rand()%20000;
-            }else Charge_Timer -= diff;
+            } else Charge_Timer -= diff;
 
             if (MeltArmor_Timer < diff)
             {
                 DoCast(m_creature->getVictim(), SPELL_MELT_ARMOR);
                 MeltArmor_Timer = 60000;
-            }else MeltArmor_Timer -= diff;
+            } else MeltArmor_Timer -= diff;
 
             if (DiveBomb_Timer < diff)
             {
@@ -374,7 +374,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                 WaitTimer = 0;
                 DiveBomb_Timer = 30000+rand()%30000;
                 return;
-            }else DiveBomb_Timer -= diff;
+            } else DiveBomb_Timer -= diff;
 
             if (FlamePatch_Timer < diff)
             {
@@ -392,7 +392,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                     }
                 }
                 FlamePatch_Timer = 30000+rand()%20000; //30 sec to cooldown
-            }else FlamePatch_Timer -= diff;
+            } else FlamePatch_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();

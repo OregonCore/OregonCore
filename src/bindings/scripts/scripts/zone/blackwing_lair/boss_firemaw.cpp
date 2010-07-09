@@ -57,7 +57,7 @@ struct OREGON_DLL_DECL boss_firemawAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_SHADOWFLAME);
             ShadowFlame_Timer = 15000 + rand()%3000;
-        }else ShadowFlame_Timer -= diff;
+        } else ShadowFlame_Timer -= diff;
 
         //WingBuffet_Timer
         if (WingBuffet_Timer < diff)
@@ -67,14 +67,14 @@ struct OREGON_DLL_DECL boss_firemawAI : public ScriptedAI
                 DoModifyThreatPercent(m_creature->getVictim(),-75);
 
             WingBuffet_Timer = 25000;
-        }else WingBuffet_Timer -= diff;
+        } else WingBuffet_Timer -= diff;
 
         //FlameBuffet_Timer
         if (FlameBuffet_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_FLAMEBUFFET);
             FlameBuffet_Timer = 5000;
-        }else FlameBuffet_Timer -= diff;
+        } else FlameBuffet_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

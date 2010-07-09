@@ -136,14 +136,14 @@ struct OREGON_DLL_DECL custom_exampleAI : public ScriptedAI
                 }
 
                 Say_Timer = 45000;                          //Say something agian in 45 seconds
-            }else Say_Timer -= diff;
+            } else Say_Timer -= diff;
 
             //Rebuff timer
             if (Rebuff_Timer < diff)
             {
                 DoCast(m_creature,SPELL_BUFF);
                 Rebuff_Timer = 900000;                      //Rebuff agian in 15 minutes
-            }else Rebuff_Timer -= diff;
+            } else Rebuff_Timer -= diff;
         }
 
         //Return since we have no target
@@ -160,7 +160,7 @@ struct OREGON_DLL_DECL custom_exampleAI : public ScriptedAI
                 DoCast(m_creature->getVictim(),SPELL_ONE);
 
             Spell_1_Timer = 5000;
-        }else Spell_1_Timer -= diff;
+        } else Spell_1_Timer -= diff;
 
         //Spell 2 timer
         if (Spell_2_Timer < diff)
@@ -169,7 +169,7 @@ struct OREGON_DLL_DECL custom_exampleAI : public ScriptedAI
             DoCast(m_creature->getVictim(),SPELL_TWO);
 
             Spell_2_Timer = 37000;
-        }else Spell_2_Timer -= diff;
+        } else Spell_2_Timer -= diff;
 
         //Spell 3 timer
         if (Phase > 1)
@@ -179,7 +179,7 @@ struct OREGON_DLL_DECL custom_exampleAI : public ScriptedAI
             DoCast(m_creature->getVictim(),SPELL_THREE);
 
             Spell_3_Timer = 19000;
-        }else Spell_3_Timer -= diff;
+        } else Spell_3_Timer -= diff;
 
         //Beserk timer
         if (Phase > 1)
@@ -192,7 +192,7 @@ struct OREGON_DLL_DECL custom_exampleAI : public ScriptedAI
 
             //Cast our beserk spell agian in 12 seconds if we didn't kill everyone
             Beserk_Timer = 12000;
-        }else Beserk_Timer -= diff;
+        } else Beserk_Timer -= diff;
 
         //Phase timer
         if (Phase == 1)
@@ -202,7 +202,7 @@ struct OREGON_DLL_DECL custom_exampleAI : public ScriptedAI
             Phase++;
             DoYell(SAY_PHASE,LANG_UNIVERSAL,NULL);
             DoCast(m_creature,SPELL_ENRAGE);
-        }else Phase_Timer -= diff;
+        } else Phase_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

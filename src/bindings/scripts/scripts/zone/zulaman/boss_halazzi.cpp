@@ -213,7 +213,7 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
             DoPlaySoundToSet(m_creature, SOUND_BERSERK);
             DoCast(m_creature, SPELL_BERSERK, true);
             BerserkTimer = 60000;
-        }else BerserkTimer -= diff;
+        } else BerserkTimer -= diff;
 
         if (Phase == PHASE_LYNX || Phase == PHASE_ENRAGE)
         {
@@ -224,13 +224,13 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
                 m_creature->CastSpell(m_creature->getVictim(), SPELL_SABER_LASH, true);
                 //m_creature->RemoveAurasDueToSpell(41296);
                 SaberlashTimer = 30000;
-            }else SaberlashTimer -= diff;
+            } else SaberlashTimer -= diff;
 
             if (FrenzyTimer < diff)
             {
                 DoCast(m_creature, SPELL_FRENZY);
                 FrenzyTimer = (10+rand()%5)*1000;
-            }else FrenzyTimer -= diff;
+            } else FrenzyTimer -= diff;
 
             if (Phase == PHASE_LYNX)
                 if (CheckTimer < diff)
@@ -238,7 +238,7 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
                     if (m_creature->GetHealth() * 4 < m_creature->GetMaxHealth() * (3 - TransformCount))
                         EnterPhase(PHASE_SPLIT);
                     CheckTimer = 1000;
-                }else CheckTimer -= diff;
+                } else CheckTimer -= diff;
         }
 
         if (Phase == PHASE_HUMAN || Phase == PHASE_ENRAGE)
@@ -247,7 +247,7 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
             {
                 DoCast(m_creature, SPELL_SUMMON_TOTEM);
                 TotemTimer = 20000;
-            }else TotemTimer -= diff;
+            } else TotemTimer -= diff;
 
             if (ShockTimer < diff)
             {
@@ -259,7 +259,7 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
                         DoCast(target,SPELL_FLAMESHOCK);
                     ShockTimer = 10000 + rand()%5000;
                 }
-            }else ShockTimer -= diff;
+            } else ShockTimer -= diff;
 
             if (Phase == PHASE_HUMAN)
                 if (CheckTimer < diff)
@@ -273,7 +273,7 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
                             EnterPhase(PHASE_MERGE);
                     }
                     CheckTimer = 1000;
-                }else CheckTimer -= diff;
+                } else CheckTimer -= diff;
         }
 
         if (Phase == PHASE_MERGE)
@@ -294,7 +294,7 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
                     }
                 }
                 CheckTimer = 1000;
-            }else CheckTimer -= diff;
+            } else CheckTimer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -364,13 +364,13 @@ struct OREGON_DLL_DECL boss_spiritlynxAI : public ScriptedAI
         {
             DoCast(m_creature, SPELL_LYNX_FRENZY);
             FrenzyTimer = (30+rand()%20)*1000;
-        }else FrenzyTimer -= diff;
+        } else FrenzyTimer -= diff;
 
         if (shredder_timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_SHRED_ARMOR);
             shredder_timer = 4000;
-        }else shredder_timer -= diff;
+        } else shredder_timer -= diff;
 
         DoMeleeAttackIfReady();
     }

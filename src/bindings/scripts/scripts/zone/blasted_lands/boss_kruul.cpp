@@ -105,7 +105,7 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
             }
 
             ShadowVolley_Timer = 5000;
-        }else ShadowVolley_Timer -= diff;
+        } else ShadowVolley_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer < diff)
@@ -116,7 +116,7 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
             }
 
             Cleave_Timer = 10000;
-        }else Cleave_Timer -= diff;
+        } else Cleave_Timer -= diff;
 
         //ThunderClap_Timer
         if (ThunderClap_Timer < diff)
@@ -127,14 +127,14 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
             }
 
             ThunderClap_Timer = 12000;
-        }else ThunderClap_Timer -= diff;
+        } else ThunderClap_Timer -= diff;
 
         //TwistedReflection_Timer
         if (TwistedReflection_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_TWISTEDREFLECTION);
             TwistedReflection_Timer = 30000;
-        }else TwistedReflection_Timer -= diff;
+        } else TwistedReflection_Timer -= diff;
 
         //VoidBolt_Timer
         if (VoidBolt_Timer < diff)
@@ -145,14 +145,14 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
             }
 
             VoidBolt_Timer = 18000;
-        }else VoidBolt_Timer -= diff;
+        } else VoidBolt_Timer -= diff;
 
         //Rage_Timer
         if (Rage_Timer < diff)
         {
             DoCast(m_creature,SPELL_RAGE);
             Rage_Timer = 70000;
-        }else Rage_Timer -= diff;
+        } else Rage_Timer -= diff;
 
         //Hound_Timer
         if (Hound_Timer < diff)
@@ -162,7 +162,7 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
             SummonHounds(m_creature->getVictim());
 
             Hound_Timer = 45000;
-        }else Hound_Timer -= diff;
+        } else Hound_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

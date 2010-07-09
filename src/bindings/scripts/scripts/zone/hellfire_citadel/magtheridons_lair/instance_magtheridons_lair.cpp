@@ -216,7 +216,7 @@ struct OREGON_DLL_DECL instance_magtheridons_lair : public ScriptedInstance
                     Magtheridon->AI()->AttackStart(Magtheridon->SelectNearestTarget(999));
                 }
                 CageTimer = 0;
-            }else CageTimer -= diff;
+            } else CageTimer -= diff;
         }
 
         if (RespawnTimer)
@@ -234,7 +234,7 @@ struct OREGON_DLL_DECL instance_magtheridons_lair : public ScriptedInstance
                     }
                 }
                 RespawnTimer = 0;
-            }else RespawnTimer -= diff;
+            } else RespawnTimer -= diff;
         }
     }
 };

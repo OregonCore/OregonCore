@@ -101,7 +101,7 @@ struct OREGON_DLL_DECL boss_gatewatcher_iron_handAI : public ScriptedAI
         {
             DoCast(m_creature,HeroicMode ? H_SPELL_SHADOW_POWER : SPELL_SHADOW_POWER);
             Shadow_Power_Timer = 20000 + rand()%8000;
-        }else Shadow_Power_Timer -= diff;
+        } else Shadow_Power_Timer -= diff;
 
         //Jack Hammer
         if (Jackhammer_Timer < diff)
@@ -120,14 +120,14 @@ struct OREGON_DLL_DECL boss_gatewatcher_iron_handAI : public ScriptedAI
             case 1: DoScriptText(SAY_HAMMER_2, m_creature); break;
             }
             Jackhammer_Timer = 30000;
-        }else Jackhammer_Timer -= diff;
+        } else Jackhammer_Timer -= diff;
 
         //Stream of Machine Fluid
         if (Stream_of_Machine_Fluid_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_STREAM_OF_MACHINE_FLUID);
             Stream_of_Machine_Fluid_Timer = 35000 + rand()%15000;
-        }else Stream_of_Machine_Fluid_Timer -= diff;
+        } else Stream_of_Machine_Fluid_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

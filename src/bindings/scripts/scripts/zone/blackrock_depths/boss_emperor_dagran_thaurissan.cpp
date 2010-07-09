@@ -77,14 +77,14 @@ struct OREGON_DLL_DECL boss_draganthaurissanAI : public ScriptedAI
                 HandOfThaurissan_Timer = 5000;
                 //Counter=0;
             //}
-        }else HandOfThaurissan_Timer -= diff;
+        } else HandOfThaurissan_Timer -= diff;
 
         //AvatarOfFlame_Timer
         if (AvatarOfFlame_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_AVATAROFFLAME);
             AvatarOfFlame_Timer = 18000;
-        }else AvatarOfFlame_Timer -= diff;
+        } else AvatarOfFlame_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

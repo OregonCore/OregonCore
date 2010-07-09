@@ -166,7 +166,7 @@ struct OREGON_DLL_DECL npc_medivh_bmAI : public ScriptedAI
                     SpellCorrupt_Timer = 3000;
                 else
                     SpellCorrupt_Timer = 0;
-            }else SpellCorrupt_Timer -= diff;
+            } else SpellCorrupt_Timer -= diff;
         }
 
         if (Check_Timer)
@@ -209,7 +209,7 @@ struct OREGON_DLL_DECL npc_medivh_bmAI : public ScriptedAI
                     Check_Timer = 0;
                     //TODO: start the post-event here
                 }
-            }else Check_Timer -= diff;
+            } else Check_Timer -= diff;
         }
 
         //if (!UpdateVictim())
@@ -314,7 +314,7 @@ struct OREGON_DLL_DECL npc_time_riftAI : public ScriptedAI
         {
             for (uint8 i = 0; i < 3; i++)
                 DoSummonAtRift(entry);
-        }else DoSummonAtRift(entry);
+        } else DoSummonAtRift(entry);
     }
 
     void UpdateAI(const uint32 diff)
@@ -326,7 +326,7 @@ struct OREGON_DLL_DECL npc_time_riftAI : public ScriptedAI
         {
             DoSelectSummon();
             TimeRiftWave_Timer = 15000;
-        }else TimeRiftWave_Timer -= diff;
+        } else TimeRiftWave_Timer -= diff;
 
         if (m_creature->IsNonMeleeSpellCasted(false))
             return;

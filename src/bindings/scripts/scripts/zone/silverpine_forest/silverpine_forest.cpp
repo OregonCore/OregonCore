@@ -284,7 +284,7 @@ struct OREGON_DLL_DECL pyrewood_ambushAI : public ScriptedAI
                     case 0: pTarget = m_creature; break;
                     case 1: pTarget = pPlayer; break;
                 }
-            }else
+            } else
                 pTarget = m_creature;
 
             pSummoned->setFaction(168);

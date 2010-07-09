@@ -56,14 +56,14 @@ struct OREGON_DLL_DECL boss_vectusAI : public ScriptedAI
         {
             DoCast(m_creature, SPELL_FIRESHIELD);
             FireShield_Timer = 90000;
-        }else FireShield_Timer -= diff;
+        } else FireShield_Timer -= diff;
 
         //BlastWave_Timer
         if (BlastWave_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_BLASTWAVE);
             BlastWave_Timer = 12000;
-        }else BlastWave_Timer -= diff;
+        } else BlastWave_Timer -= diff;
 
         //Frenzy_Timer
         if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 25)
@@ -74,7 +74,7 @@ struct OREGON_DLL_DECL boss_vectusAI : public ScriptedAI
                 DoTextEmote("goes into a killing frenzy!",NULL);
 
                 Frenzy_Timer = 24000;
-            }else Frenzy_Timer -= diff;
+            } else Frenzy_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();

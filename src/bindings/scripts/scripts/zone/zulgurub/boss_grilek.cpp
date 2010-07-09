@@ -65,14 +65,14 @@ struct OREGON_DLL_DECL boss_grilekAI : public ScriptedAI
                 AttackStart(target);
 
             Avartar_Timer = 25000 + rand()%10000;
-        }else Avartar_Timer -= diff;
+        } else Avartar_Timer -= diff;
 
         //GroundTremor_Timer
         if (GroundTremor_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_GROUNDTREMOR);
             GroundTremor_Timer = 12000 + rand()%4000;
-        }else GroundTremor_Timer -= diff;
+        } else GroundTremor_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

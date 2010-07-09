@@ -102,7 +102,7 @@ struct OREGON_DLL_DECL boss_majordomoAI : public ScriptedAI
 
         //60 seconds until we should cast this agian
         //            MagicReflection_Timer = 30000;
-        //        }else MagicReflection_Timer -= diff;
+        //        } else MagicReflection_Timer -= diff;
 
         //DamageReflection_Timer
         //        if (DamageReflection_Timer < diff)
@@ -111,14 +111,14 @@ struct OREGON_DLL_DECL boss_majordomoAI : public ScriptedAI
 
         //60 seconds until we should cast this agian
         //            DamageReflection_Timer = 30000;
-        //        }else DamageReflection_Timer -= diff;
+        //        } else DamageReflection_Timer -= diff;
 
         //Blastwave_Timer
         if (Blastwave_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_BLASTWAVE);
             Blastwave_Timer = 10000;
-        }else Blastwave_Timer -= diff;
+        } else Blastwave_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

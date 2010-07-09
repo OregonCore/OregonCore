@@ -95,7 +95,7 @@ struct OREGON_DLL_DECL boss_fankrissAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_MORTAL_WOUND);
             MortalWound_Timer = 10000 + rand()%10000;
-        }else MortalWound_Timer -= diff;
+        } else MortalWound_Timer -= diff;
 
         //Summon 1-3 Spawns of Fankriss at random time.
         if (SpawnSpawns_Timer < diff)
@@ -116,7 +116,7 @@ struct OREGON_DLL_DECL boss_fankrissAI : public ScriptedAI
                     break;
             }
             SpawnSpawns_Timer = 30000 + rand()%30000;
-        }else SpawnSpawns_Timer -= diff;
+        } else SpawnSpawns_Timer -= diff;
 
         // Teleporting Random Target to one of the three tunnels and spawn 4 hatchlings near the gamer.
         //We will only telport if fankriss has more than 3% of hp so teleported gamers can always loot.
@@ -183,7 +183,7 @@ struct OREGON_DLL_DECL boss_fankrissAI : public ScriptedAI
                     }
                 }
                 SpawnHatchlings_Timer = 45000 + rand()%15000;
-            }else SpawnHatchlings_Timer -= diff;
+            } else SpawnHatchlings_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();

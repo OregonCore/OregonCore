@@ -363,7 +363,7 @@ struct OREGON_DLL_DECL boss_kalecgos_kjAI : public ScriptedAI
                 Orb[i]->setActive(true);
                 Orb[i]->Refresh();
             }
-        }else{
+        } else{
             float x,y,z, dx,dy,dz;
             Orb[random]->GetPosition(x,y,z);
             for (uint8 i = 0; i < 4; ++i){
@@ -487,7 +487,7 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
         {
             summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        }else{
+        } else{
             summoned->SetLevel(m_creature->getLevel());
         }
         summoned->setFaction(m_creature->getFaction());
@@ -634,7 +634,7 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
                             TimerIsDeactiveted[TIMER_DARKNESS] = false;
                             if (Phase == PHASE_SACRIFICE) TimerIsDeactiveted[TIMER_ARMAGEDDON] = false;
                             IsInDarkness = true;
-                        }else{
+                        } else{
                             Timer[TIMER_DARKNESS] = (Phase == PHASE_SACRIFICE) ? 20000 + rand()%15000 : 40000 + rand()%30000;
                             IsInDarkness = false;
                             DoCastAOE(SPELL_DARKNESS_OF_A_THOUSAND_SOULS_DAMAGE);
@@ -650,7 +650,7 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
                     case TIMER_ORBS_EMPOWER: //Phase 3
                         if (Phase == PHASE_SACRIFICE){
                             if (Kalec)((boss_kalecgos_kjAI*)Kalec->AI())->EmpowerOrb(true);
-                        }else if (Kalec)((boss_kalecgos_kjAI*)Kalec->AI())->EmpowerOrb(false);
+                        } else if (Kalec)((boss_kalecgos_kjAI*)Kalec->AI())->EmpowerOrb(false);
                         Timer[TIMER_ORBS_EMPOWER]= (Phase == PHASE_SACRIFICE) ? 45000 : 35000;
                         OrbActivated = true;
                         TimerIsDeactiveted[TIMER_ORBS_EMPOWER] = true;
@@ -789,7 +789,7 @@ struct OREGON_DLL_DECL mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
                 case 4: DoScriptText(SAY_KJ_OFFCOMBAT5, m_creature); break;
             }
             RandomSayTimer = 30000;
-        }else RandomSayTimer -= diff;
+        } else RandomSayTimer -= diff;
 
         if (!SummonedDeceivers){
             for (uint8 i = 0; i < 3; ++i)
@@ -870,7 +870,7 @@ struct OREGON_DLL_DECL mob_hand_of_the_deceiverAI : public ScriptedAI
         if (ShadowBoltVolleyTimer < diff){
             DoCast(m_creature->getVictim(), SPELL_SHADOW_BOLT_VOLLEY);
             ShadowBoltVolleyTimer = 12000;
-        }else ShadowBoltVolleyTimer -= diff;
+        } else ShadowBoltVolleyTimer -= diff;
 
         // Felfire Portal - Creatres a portal, that spawns Volatile Felfire Fiends, which do suicide bombing.
         if (FelfirePortalTimer < diff){
@@ -886,7 +886,7 @@ struct OREGON_DLL_DECL mob_hand_of_the_deceiverAI : public ScriptedAI
                 }
             }
             FelfirePortalTimer = 20000;
-        }else FelfirePortalTimer -= diff;
+        } else FelfirePortalTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -934,7 +934,7 @@ struct OREGON_DLL_DECL mob_felfire_portalAI : public Scripted_NoMovementAI
             if (Fiend)
                 Fiend->AddThreat(SelectUnit(SELECT_TARGET_RANDOM,0), 100000.0f);
             SpawnFiendTimer = 4000 + rand()%4000;
-        }else SpawnFiendTimer -= diff;
+        } else SpawnFiendTimer -= diff;
     }
 };
 
@@ -1032,7 +1032,7 @@ struct OREGON_DLL_DECL mob_armageddonAI : public Scripted_NoMovementAI
                     m_creature->RemoveCorpse();
                     break;
             }
-        }else Timer -=diff;
+        } else Timer -=diff;
     }
 };
 
@@ -1078,7 +1078,7 @@ struct OREGON_DLL_DECL mob_shield_orbAI : public ScriptedAI
             if (Clockwise){
                 y = my - r * sin(c);
                 x = mx - r * cos(c);
-            }else{
+            } else{
                 y = my + r * sin(c);
                 x = mx + r * cos(c);
             }
@@ -1087,11 +1087,11 @@ struct OREGON_DLL_DECL mob_shield_orbAI : public ScriptedAI
             m_creature->GetMotionMaster()->MovePoint(1,x, y, SHIELD_ORB_Z);
             c += 3.1415926535/32;
             if (c > 2*3.1415926535) c = 0;
-        }else{
+        } else{
             if (CheckTimer < diff){
                 DoTeleportTo(x,y,SHIELD_ORB_Z);
                 PointReached = true;
-            }else CheckTimer -= diff;
+            } else CheckTimer -= diff;
 
         }
 
@@ -1099,7 +1099,7 @@ struct OREGON_DLL_DECL mob_shield_orbAI : public ScriptedAI
             Unit* random = (Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_PLAYER_GUID)));
             if (random)DoCast(random, SPELL_SHADOW_BOLT, false);
             Timer = 500+ rand()%500;
-        }else Timer -= diff;
+        } else Timer -= diff;
     }
 
     void MovementInform(uint32 type, uint32 id){

@@ -240,7 +240,7 @@ struct OREGON_DLL_DECL npc_pluckyAI : public ScriptedAI
            {
                m_creature->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
                Chicken = false;
-           }else ChickenTimer-=diff;
+           } else ChickenTimer-=diff;
        }
 
         if (!UpdateVictim())

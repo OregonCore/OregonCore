@@ -424,7 +424,7 @@ struct mob_giant_infernalAI : public hyjal_trashAI
         if (Delay<diff)
         {
             Delay=0;
-        }else{
+        } else{
             Delay-=diff;
             return;
         }
@@ -442,7 +442,7 @@ struct mob_giant_infernalAI : public hyjal_trashAI
             }
             m_creature->GetMotionMaster()->Clear();
             meteor = true;
-        }else if (!CanMove){
+        } else if (!CanMove){
             if (spawnTimer<diff)
             {
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -456,11 +456,11 @@ struct mob_giant_infernalAI : public hyjal_trashAI
                         Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_THRALL));
                         if (target && target->isAlive())
                             m_creature->AddThreat(target,0.0);
-                    }else if (pInstance->GetData(DATA_ALLIANCE_RETREAT) && pInstance->GetData(DATA_HORDE_RETREAT)){
+                    } else if (pInstance->GetData(DATA_ALLIANCE_RETREAT) && pInstance->GetData(DATA_HORDE_RETREAT)){
                         //do overrun
                     }
                 }
-            }else spawnTimer -= diff;
+            } else spawnTimer -= diff;
         }
         if (!CanMove)return;
         hyjal_trashAI::UpdateAI(diff);
@@ -491,7 +491,7 @@ struct mob_giant_infernalAI : public hyjal_trashAI
         {
             DoCast(m_creature->getVictim(),SPELL_FLAME_BUFFET,true);
             FlameBuffetTimer = 7000;
-        }else FlameBuffetTimer -= diff;
+        } else FlameBuffetTimer -= diff;
         DoMeleeAttackIfReady();
     }
 };
@@ -533,7 +533,7 @@ struct mob_abominationAI : public hyjal_trashAI
                 Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_THRALL));
                 if (target && target->isAlive())
                     m_creature->AddThreat(target,0.0);
-            }else{
+            } else{
                 Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_JAINAPROUDMOORE));
                 if (target && target->isAlive())
                     m_creature->AddThreat(target,0.0);
@@ -569,7 +569,7 @@ struct mob_abominationAI : public hyjal_trashAI
                             AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
                         Start(false, true);
                         SetDespawnAtEnd(false);
-                    }else//use alliance WPs
+                    } else//use alliance WPs
                     {
                         for (uint8 i = 0; i < 8; ++i)
                             AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
@@ -587,7 +587,7 @@ struct mob_abominationAI : public hyjal_trashAI
         {
             DoCast(m_creature->getVictim(),SPELL_KNOCKDOWN);
             KnockDownTimer = 15000+rand()%10000;
-        }else KnockDownTimer -= diff;
+        } else KnockDownTimer -= diff;
         DoMeleeAttackIfReady();
     }
 };
@@ -632,7 +632,7 @@ struct mob_ghoulAI : public hyjal_trashAI
                 Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_THRALL));
                 if (target && target->isAlive())
                     m_creature->AddThreat(target,0.0);
-            }else{
+            } else{
                 Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_JAINAPROUDMOORE));
                 if (target && target->isAlive())
                     m_creature->AddThreat(target,0.0);
@@ -670,7 +670,7 @@ struct mob_ghoulAI : public hyjal_trashAI
                             AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
                         Start(false, true);
                         SetDespawnAtEnd(false);
-                    }else//use alliance WPs
+                    } else//use alliance WPs
                     {
                         for (uint8 i = 0; i < 8; ++i)
                             AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
@@ -684,7 +684,7 @@ struct mob_ghoulAI : public hyjal_trashAI
         {
             DoCast(m_creature,SPELL_FRENZY);
             FrenzyTimer = 15000+rand()%15000;
-        }else FrenzyTimer -= diff;
+        } else FrenzyTimer -= diff;
         if (!UpdateVictim())
             return;
 
@@ -740,7 +740,7 @@ struct mob_necromancerAI : public hyjal_trashAI
                 Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_THRALL));
                 if (target && target->isAlive())
                     m_creature->AddThreat(target,0.0);
-            }else{
+            } else{
                 Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_JAINAPROUDMOORE));
                 if (target && target->isAlive())
                     m_creature->AddThreat(target,0.0);
@@ -789,7 +789,7 @@ struct mob_necromancerAI : public hyjal_trashAI
                             AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
                         Start(true, true);
                         SetDespawnAtEnd(false);
-                    }else//use alliance WPs
+                    } else//use alliance WPs
                     {
                         for (uint8 i = 0; i < 8; ++i)
                             AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
@@ -805,7 +805,7 @@ struct mob_necromancerAI : public hyjal_trashAI
         {
             DoCast(m_creature->getVictim(),SPELL_SHADOW_BOLT);
             ShadowBoltTimer = 20000+rand()%10000;
-        }else ShadowBoltTimer -= diff;
+        } else ShadowBoltTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -853,7 +853,7 @@ struct mob_bansheeAI : public hyjal_trashAI
                 Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_THRALL));
                 if (target && target->isAlive())
                     m_creature->AddThreat(target,0.0);
-            }else{
+            } else{
                 Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_JAINAPROUDMOORE));
                 if (target && target->isAlive())
                     m_creature->AddThreat(target,0.0);
@@ -881,7 +881,7 @@ struct mob_bansheeAI : public hyjal_trashAI
                             AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
                         Start(false, true);
                         SetDespawnAtEnd(false);
-                    }else//use alliance WPs
+                    } else//use alliance WPs
                     {
                         for (uint8 i = 0; i < 8; ++i)
                             AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
@@ -897,17 +897,17 @@ struct mob_bansheeAI : public hyjal_trashAI
         {
             DoCast(m_creature->getVictim(),SPELL_BANSHEE_CURSE);
             CourseTimer = 20000+rand()%5000;
-        }else CourseTimer -= diff;
+        } else CourseTimer -= diff;
         if (WailTimer<diff)
         {
             DoCast(m_creature->getVictim(),SPELL_BANSHEE_WAIL);
             WailTimer = 15000+rand()%5000;
-        }else WailTimer -= diff;
+        } else WailTimer -= diff;
         if (ShellTimer<diff)
         {
             DoCast(m_creature,SPELL_ANTI_MAGIC_SHELL);
             ShellTimer = 50000+rand()%10000;
-        }else ShellTimer -= diff;
+        } else ShellTimer -= diff;
         DoMeleeAttackIfReady();
     }
 };
@@ -948,7 +948,7 @@ struct mob_crypt_fiendAI : public hyjal_trashAI
                 Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_THRALL));
                 if (target && target->isAlive())
                     m_creature->AddThreat(target,0.0);
-            }else{
+            } else{
                 Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_JAINAPROUDMOORE));
                 if (target && target->isAlive())
                     m_creature->AddThreat(target,0.0);
@@ -976,7 +976,7 @@ struct mob_crypt_fiendAI : public hyjal_trashAI
                             AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
                         Start(false, true);
                         SetDespawnAtEnd(false);
-                    }else//use alliance WPs
+                    } else//use alliance WPs
                     {
                         for (uint8 i = 0; i < 8; ++i)
                             AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
@@ -993,7 +993,7 @@ struct mob_crypt_fiendAI : public hyjal_trashAI
         {
             DoCast(m_creature->getVictim(),SPELL_WEB);
             WebTimer = 20000+rand()%5000;
-        }else WebTimer -= diff;
+        } else WebTimer -= diff;
         DoMeleeAttackIfReady();
     }
 };
@@ -1034,7 +1034,7 @@ struct mob_fel_stalkerAI : public hyjal_trashAI
                 Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_THRALL));
                 if (target && target->isAlive())
                     m_creature->AddThreat(target,0.0);
-            }else{
+            } else{
                 Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_JAINAPROUDMOORE));
                 if (target && target->isAlive())
                     m_creature->AddThreat(target,0.0);
@@ -1062,7 +1062,7 @@ struct mob_fel_stalkerAI : public hyjal_trashAI
                             AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
                         Start(false, true);
                         SetDespawnAtEnd(false);
-                    }else//use alliance WPs
+                    } else//use alliance WPs
                     {
                         for (uint8 i = 0; i < 8; ++i)
                             AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
@@ -1079,7 +1079,7 @@ struct mob_fel_stalkerAI : public hyjal_trashAI
         {
             DoCast(m_creature->getVictim(),SPELL_MANA_BURN);
             ManaBurnTimer = 9000+rand()%5000;
-        }else ManaBurnTimer -= diff;
+        } else ManaBurnTimer -= diff;
         DoMeleeAttackIfReady();
     }
 };
@@ -1163,7 +1163,7 @@ struct mob_frost_wyrmAI : public hyjal_trashAI
                             AddWaypoint(i, FrostWyrmWPs[i][0],    FrostWyrmWPs[i][1],    FrostWyrmWPs[i][2]);
                         Start(false, true);
                         SetDespawnAtEnd(false);
-                    }else{//fly path FlyPathWPs
+                    } else{//fly path FlyPathWPs
                         for (uint8 i = 0; i < 3; ++i)
                             AddWaypoint(i, FlyPathWPs[i][0]+irand(-10,10),    FlyPathWPs[i][1]+irand(-10,10),    FlyPathWPs[i][2]);
                         Start(false, true);
@@ -1179,7 +1179,7 @@ struct mob_frost_wyrmAI : public hyjal_trashAI
             {
                 m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
                 MoveTimer = 2000;
-            }else MoveTimer-=diff;
+            } else MoveTimer-=diff;
         }
 
         if (FrostBreathTimer<diff)
@@ -1191,7 +1191,7 @@ struct mob_frost_wyrmAI : public hyjal_trashAI
                 m_creature->GetMotionMaster()->Clear();
                 FrostBreathTimer = 4000;
             }
-        }else FrostBreathTimer -= diff;
+        } else FrostBreathTimer -= diff;
     }
 };
 
@@ -1275,7 +1275,7 @@ struct mob_gargoyleAI : public hyjal_trashAI
                             AddWaypoint(i, GargoyleWPs[i][0]+irand(-10,10), GargoyleWPs[i][1]+irand(-10,10), GargoyleWPs[i][2]);
                         Start(false, true);
                         SetDespawnAtEnd(false);
-                    }else{//fly path FlyPathWPs
+                    } else{//fly path FlyPathWPs
                         for (uint8 i = 0; i < 3; ++i)
                             AddWaypoint(i, FlyPathWPs[i][0]+irand(-10,10),    FlyPathWPs[i][1]+irand(-10,10),    FlyPathWPs[i][2]);
                         Start(false, true);
@@ -1292,7 +1292,7 @@ struct mob_gargoyleAI : public hyjal_trashAI
                 {
                     m_creature->CastSpell(DummyTarget[0],DummyTarget[1],DummyTarget[2],SPELL_GARGOYLE_STRIKE,false);
                     StrikeTimer = 2000+rand()%1000;
-                }else StrikeTimer -= diff;
+                } else StrikeTimer -= diff;
                 }
         }
         if (!UpdateVictim())
@@ -1314,7 +1314,7 @@ struct mob_gargoyleAI : public hyjal_trashAI
                 Zpos-=1.0;
                 if (Zpos<=0)Zpos=0;
                 MoveTimer = 2000;
-            }else MoveTimer-=diff;
+            } else MoveTimer-=diff;
         }
         if (StrikeTimer<diff)
         {
@@ -1324,8 +1324,8 @@ struct mob_gargoyleAI : public hyjal_trashAI
                 m_creature->StopMoving();
                 m_creature->GetMotionMaster()->Clear();
                 StrikeTimer = 2000+rand()%1000;
-            }else StrikeTimer=0;
-        }else StrikeTimer -= diff;
+            } else StrikeTimer=0;
+        } else StrikeTimer -= diff;
     }
 };
 
@@ -1389,7 +1389,7 @@ struct OREGON_DLL_DECL alliance_riflemanAI : public Scripted_NoMovementAI
             int dmg = 500+rand()%700;
             m_creature->CastCustomSpell(m_creature->getVictim(), SPELL_EXPLODING_SHOT, &dmg, 0, 0, false);
             ExplodeTimer = 5000+rand()%5000;
-        }else ExplodeTimer -= diff;
+        } else ExplodeTimer -= diff;
         DoMeleeAttackIfReady();
     }
 };

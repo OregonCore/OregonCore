@@ -142,7 +142,7 @@ struct OREGON_DLL_DECL mob_abyssalAI : public ScriptedAI
                 {
                     m_creature->CastSpell(m_creature, SPELL_DEBRIS_DAMAGE, true);
                     trigger = 3;
-                }else FireBlast_Timer -= diff;
+                } else FireBlast_Timer -= diff;
             }
             return;
         }
@@ -151,7 +151,7 @@ struct OREGON_DLL_DECL mob_abyssalAI : public ScriptedAI
         {
             m_creature->SetVisibility(VISIBILITY_OFF);
             m_creature->setDeathState(JUST_DIED);
-        }else Despawn_Timer -= diff;
+        } else Despawn_Timer -= diff;
 
         if (!UpdateVictim())
             return;
@@ -160,7 +160,7 @@ struct OREGON_DLL_DECL mob_abyssalAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_FIRE_BLAST);
             FireBlast_Timer = 5000+rand()%10000;
-        }else FireBlast_Timer -= diff;
+        } else FireBlast_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -261,7 +261,7 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
             {
                 DebuffClicker(clicker);
                 (*i).second = 0;
-            }else ClickerNum++;
+            } else ClickerNum++;
         }
 
         // if 5 clickers from other cubes apply shadow cage
@@ -317,7 +317,7 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
             {
                 DoScriptText(RandomTaunt[rand()%6].id, m_creature);
                 RandChat_Timer = 90000;
-            }else RandChat_Timer -= diff;
+            } else RandChat_Timer -= diff;
         }
 
         if (!UpdateVictim())
@@ -330,13 +330,13 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
             m_creature->CastSpell(m_creature, SPELL_BERSERK, true);
             DoScriptText(EMOTE_BERSERK, m_creature);
             Berserk_Timer = 60000;
-        }else Berserk_Timer -= diff;
+        } else Berserk_Timer -= diff;
 
         if (Cleave_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 10000;
-        }else Cleave_Timer -= diff;
+        } else Cleave_Timer -= diff;
 
         if (BlastNova_Timer < diff)
         {
@@ -347,7 +347,7 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
                 DoCast(m_creature, SPELL_BLASTNOVA);
                 BlastNova_Timer = 60000;
             }
-        }else BlastNova_Timer -= diff;
+        } else BlastNova_Timer -= diff;
 
         if (Quake_Timer < diff)
         {
@@ -357,7 +357,7 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
                 m_creature->CastSpell(m_creature, SPELL_QUAKE_TRIGGER, true);
                 Quake_Timer = 50000;
             }
-        }else Quake_Timer -= diff;
+        } else Quake_Timer -= diff;
 
         if (Blaze_Timer < diff)
         {
@@ -374,7 +374,7 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
                 }
             }
             Blaze_Timer = 20000 + rand()%20000;
-        }else Blaze_Timer -= diff;
+        } else Blaze_Timer -= diff;
 
         if (!Phase3 && m_creature->GetHealth()*10 < m_creature->GetMaxHealth()*3
             && !m_creature->IsNonMeleeSpellCasted(false) // blast nova
@@ -401,7 +401,7 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
                     if (summon) ((mob_abyssalAI*)summon->AI())->SetTrigger(1);
                 }
                 Debris_Timer = 10000;
-            }else Debris_Timer -= diff;
+            } else Debris_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -473,28 +473,28 @@ struct OREGON_DLL_DECL mob_hellfire_channelerAI : public ScriptedAI
         {
             DoCast(m_creature, SPELL_SHADOW_BOLT_VOLLEY);
             ShadowBoltVolley_Timer = 10000 + rand()%10000;
-        }else ShadowBoltVolley_Timer -= diff;
+        } else ShadowBoltVolley_Timer -= diff;
 
         if (DarkMending_Timer < diff)
         {
             if ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 50)
                 DoCast(m_creature, SPELL_DARK_MENDING);
             DarkMending_Timer = 10000 +(rand() % 10000);
-        }else DarkMending_Timer -= diff;
+        } else DarkMending_Timer -= diff;
 
         if (Fear_Timer < diff)
         {
             if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1))
                 DoCast(target, SPELL_FEAR);
             Fear_Timer = 25000 + rand()%15000;
-        }else Fear_Timer -= diff;
+        } else Fear_Timer -= diff;
 
         if (Infernal_Timer < diff)
         {
             if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 m_creature->CastSpell(target, SPELL_BURNING_ABYSSAL, true);
             Infernal_Timer = 30000 + rand()%10000;
-        }else Infernal_Timer -= diff;
+        } else Infernal_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

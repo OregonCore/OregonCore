@@ -406,7 +406,7 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
                 }
             }
             CheckTimer = 1000;
-        }else CheckTimer -= diff;
+        } else CheckTimer -= diff;
 
         if (ResetThreat < diff)
         {
@@ -422,14 +422,14 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
                 }
             }
             ResetThreat = 1000;
-        }else ResetThreat -= diff;
+        } else ResetThreat -= diff;
 
         if (ShadowBoltTimer < diff)
         {
             DoScriptText(SAY_SATH_SPELL1, m_creature);
             DoCast(m_creature, SPELL_SHADOW_BOLT);
             ShadowBoltTimer = 7000+(rand()%3000);
-        }else ShadowBoltTimer -= diff;
+        } else ShadowBoltTimer -= diff;
 
         if (AgonyCurseTimer < diff)
         {
@@ -437,14 +437,14 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
             if (!target) target = m_creature->getVictim();
             DoCast(target, SPELL_AGONY_CURSE);
             AgonyCurseTimer = 20000;
-        }else AgonyCurseTimer -= diff;
+        } else AgonyCurseTimer -= diff;
 
         if (CorruptionStrikeTimer < diff)
         {
             DoScriptText(SAY_SATH_SPELL2, m_creature);
             DoCast(m_creature->getVictim(), SPELL_CORRUPTION_STRIKE);
             CorruptionStrikeTimer = 13000;
-        }else CorruptionStrikeTimer -= diff;
+        } else CorruptionStrikeTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -527,13 +527,13 @@ struct OREGON_DLL_DECL boss_kalecAI : public ScriptedAI
         {
             DoCast(m_creature, SPELL_REVITALIZE);
             RevitalizeTimer = 5000;
-        }else RevitalizeTimer -= diff;
+        } else RevitalizeTimer -= diff;
 
         if (HeroicStrikeTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_HEROIC_STRIKE);
             HeroicStrikeTimer = 2000;
-        }else HeroicStrikeTimer -= diff;
+        } else HeroicStrikeTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -561,7 +561,7 @@ void boss_kalecgosAI::UpdateAI(const uint32 diff)
             else
                 BadEnding();
             TalkSequence++;
-        }else TalkTimer -= diff;
+        } else TalkTimer -= diff;
     }
     else
     {
@@ -605,31 +605,31 @@ void boss_kalecgosAI::UpdateAI(const uint32 diff)
                  }
              }
              CheckTimer = 1000;
-        }else CheckTimer -= diff;
+        } else CheckTimer -= diff;
 
         if (ArcaneBuffetTimer < diff)
         {
             DoCastAOE(SPELL_ARCANE_BUFFET);
             ArcaneBuffetTimer = 8000;
-        }else ArcaneBuffetTimer -= diff;
+        } else ArcaneBuffetTimer -= diff;
 
         if (FrostBreathTimer < diff)
         {
             DoCastAOE(SPELL_FROST_BREATH);
             FrostBreathTimer = 15000;
-        }else FrostBreathTimer -= diff;
+        } else FrostBreathTimer -= diff;
 
         if (TailLashTimer < diff)
         {
             DoCastAOE(SPELL_TAIL_LASH);
             TailLashTimer = 15000;
-        }else TailLashTimer -= diff;
+        } else TailLashTimer -= diff;
 
         if (WildMagicTimer < diff)
         {
             DoCastAOE(WildMagic[rand()%6]);
             WildMagicTimer = 20000;
-        }else WildMagicTimer -= diff;
+        } else WildMagicTimer -= diff;
 
         if (SpectralBlastTimer < diff)
         {
@@ -644,7 +644,7 @@ void boss_kalecgosAI::UpdateAI(const uint32 diff)
             {
                 SpectralBlastTimer = 1000;
             }
-        }else SpectralBlastTimer -= diff;
+        } else SpectralBlastTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

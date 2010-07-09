@@ -216,7 +216,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
                     m_creature->SetVisibility(VISIBILITY_OFF);
                 }
                 AppearDelay_Timer = 2000;
-            }else AppearDelay_Timer -= diff;
+            } else AppearDelay_Timer -= diff;
         }
 
         if (Phase == 1)
@@ -224,14 +224,14 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
             if (BlindingLight_Timer < diff){
                 BlindingLight = true;
                 BlindingLight_Timer = 45000;
-            }else BlindingLight_Timer -= diff;
+            } else BlindingLight_Timer -= diff;
 
             if (Wrath_Timer < diff)
             {
                 m_creature->InterruptNonMeleeSpells(false);
                 DoCast(SelectUnit(SELECT_TARGET_RANDOM,1,100,true), SPELL_WRATH_OF_THE_ASTROMANCER, true);
                 Wrath_Timer = 20000+rand()%5000;
-            }else Wrath_Timer -= diff;
+            } else Wrath_Timer -= diff;
 
             if (ArcaneMissiles_Timer < diff)
             {
@@ -239,7 +239,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
                 {
                     DoCast(m_creature->getVictim(), SPELL_BLINDING_LIGHT);
                     BlindingLight = false;
-                }else{
+                } else{
                     Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
                     if (!m_creature->HasInArc(2.5f, target))
@@ -249,13 +249,13 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
                         DoCast(target, SPELL_ARCANE_MISSILES);
                 }
                 ArcaneMissiles_Timer = 3000;
-            }else ArcaneMissiles_Timer -= diff;
+            } else ArcaneMissiles_Timer -= diff;
 
             if (MarkOfTheSolarian_Timer < diff)
             {
                 DoCast(m_creature->getVictim(), MARK_OF_SOLARIAN);
                 MarkOfTheSolarian_Timer = 45000;
-            }else MarkOfTheSolarian_Timer -= diff;
+            } else MarkOfTheSolarian_Timer -= diff;
 
             if (MarkOfTheAstromancer_Timer < diff) //A debuff that lasts for 5 seconds, cast several times each phase on a random raid member, but not the main tank
             {
@@ -264,7 +264,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
                     DoCast(target, SPELL_MARK_OF_THE_ASTROMANCER);
                 else DoCast(m_creature->getVictim(), SPELL_MARK_OF_THE_ASTROMANCER);
                 MarkOfTheAstromancer_Timer = 15000;
-            }else MarkOfTheAstromancer_Timer -= diff;
+            } else MarkOfTheAstromancer_Timer -= diff;
 
             //Phase1_Timer
             if (Phase1_Timer < diff)
@@ -307,7 +307,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
                     }
                 }
                 AppearDelay = true;
-            }else Phase1_Timer-=diff;
+            } else Phase1_Timer-=diff;
         }
         else if (Phase == 2)
         {
@@ -350,7 +350,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
                 DoScriptText(SAY_SUMMON2, m_creature);
                 AppearDelay = true;
                 Phase3_Timer = 15000;
-            }else Phase3_Timer -= diff;
+            } else Phase3_Timer -= diff;
         }
         else if (Phase == 4)
         {
@@ -359,14 +359,14 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
             {
                 DoCast(m_creature->getVictim(), SPELL_FEAR);
                 Fear_Timer = 20000;
-            }else Fear_Timer -= diff;
+            } else Fear_Timer -= diff;
 
             //VoidBolt_Timer
             if (VoidBolt_Timer < diff)
             {
                 DoCast(m_creature->getVictim(), SPELL_VOID_BOLT);
                 VoidBolt_Timer = 10000;
-            }else VoidBolt_Timer -= diff;
+            } else VoidBolt_Timer -= diff;
         }
 
         //When Solarian reaches 20% she will transform into a huge void walker.

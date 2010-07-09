@@ -120,7 +120,7 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
             DoCast(m_creature,SPELL_GROWTH);
             DoScriptText(EMOTE_GROW, m_creature);
             Growth_Timer = 30000;
-        }else Growth_Timer -= diff;
+        } else Growth_Timer -= diff;
 
         if (PerformingGroundSlam)
         {
@@ -247,14 +247,14 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
                     DoCast(m_creature->getVictim(),SPELL_HURTFUL_STRIKE);
 
                 HurtfulStrike_Timer= 8000;
-            }else HurtfulStrike_Timer -= diff;
+            } else HurtfulStrike_Timer -= diff;
 
             // Reverberation
             if (Reverberation_Timer < diff)
             {
                 DoCast(m_creature->getVictim(), SPELL_REVERBERATION, true);
                 Reverberation_Timer = 30000;
-            }else Reverberation_Timer -= diff;
+            } else Reverberation_Timer -= diff;
 
             // Cave In
             if (CaveIn_Timer < diff)
@@ -263,7 +263,7 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
                     DoCast(target,SPELL_CAVE_IN);
 
                 CaveIn_Timer = 20000;
-            }else CaveIn_Timer -= diff;
+            } else CaveIn_Timer -= diff;
 
             // Ground Slam, Gronn Lord's Grasp, Stoned, Shatter
             if (GroundSlamTimer < diff)

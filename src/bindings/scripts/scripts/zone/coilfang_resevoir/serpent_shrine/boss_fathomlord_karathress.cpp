@@ -253,21 +253,21 @@ struct OREGON_DLL_DECL boss_fathomlord_karathressAI : public ScriptedAI
             if (target)
                 DoCast(target, SPELL_CATACLYSMIC_BOLT);
             CataclysmicBolt_Timer = 10000;
-        }else CataclysmicBolt_Timer -= diff;
+        } else CataclysmicBolt_Timer -= diff;
 
         //SearNova_Timer
         if (SearNova_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_SEAR_NOVA);
             SearNova_Timer = 20000+rand()%40000;
-        }else SearNova_Timer -= diff;
+        } else SearNova_Timer -= diff;
 
         //Enrage_Timer
         if (Enrage_Timer < diff)
         {
             DoCast(m_creature, SPELL_ENRAGE);
             Enrage_Timer = 90000;
-        }else Enrage_Timer -= diff;
+        } else Enrage_Timer -= diff;
 
         //Blessing of Tides Trigger
         if ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) <= 75 && !BlessingOfTides)
@@ -392,14 +392,14 @@ struct OREGON_DLL_DECL boss_fathomguard_sharkkisAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_LEECHING_THROW);
             LeechingThrow_Timer = 20000;
-        }else LeechingThrow_Timer -= diff;
+        } else LeechingThrow_Timer -= diff;
 
         //Multishot_Timer
         if (Multishot_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_MULTISHOT);
             Multishot_Timer = 20000;
-        }else Multishot_Timer -= diff;
+        } else Multishot_Timer -= diff;
 
         //TheBeastWithin_Timer
         if (TheBeastWithin_Timer < diff)
@@ -411,7 +411,7 @@ struct OREGON_DLL_DECL boss_fathomguard_sharkkisAI : public ScriptedAI
                 Pet->CastSpell(Pet, SPELL_PET_ENRAGE, true);
             }
             TheBeastWithin_Timer = 30000;
-        }else TheBeastWithin_Timer -= diff;
+        } else TheBeastWithin_Timer -= diff;
 
         //Pet_Timer
         if (Pet_Timer < diff && pet == false)
@@ -438,7 +438,7 @@ struct OREGON_DLL_DECL boss_fathomguard_sharkkisAI : public ScriptedAI
                 Pet->AI()->AttackStart(target);
                 SummonedPet = Pet->GetGUID();
             }
-        }else Pet_Timer -= diff;
+        } else Pet_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -527,7 +527,7 @@ struct OREGON_DLL_DECL boss_fathomguard_tidalvessAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_FROST_SHOCK);
             FrostShock_Timer = 25000+rand()%5000;
-        }else FrostShock_Timer -= diff;
+        } else FrostShock_Timer -= diff;
 
         //Spitfire_Timer
         if (Spitfire_Timer < diff)
@@ -539,21 +539,21 @@ struct OREGON_DLL_DECL boss_fathomguard_tidalvessAI : public ScriptedAI
                 ((Creature*)SpitfireTotem)->AI()->AttackStart(m_creature->getVictim());
             }
             Spitfire_Timer = 60000;
-        }else Spitfire_Timer -= diff;
+        } else Spitfire_Timer -= diff;
 
         //PoisonCleansing_Timer
         if (PoisonCleansing_Timer < diff)
         {
             DoCast(m_creature, SPELL_POISON_CLEANSING_TOTEM);
             PoisonCleansing_Timer = 30000;
-        }else PoisonCleansing_Timer -= diff;
+        } else PoisonCleansing_Timer -= diff;
 
         //Earthbind_Timer
         if (Earthbind_Timer < diff)
         {
             DoCast(m_creature, SPELL_EARTHBIND_TOTEM);
             Earthbind_Timer = 45000;
-        }else Earthbind_Timer -= diff;
+        } else Earthbind_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -636,7 +636,7 @@ struct OREGON_DLL_DECL boss_fathomguard_caribdisAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_WATER_BOLT_VOLLEY);
             WaterBoltVolley_Timer = 30000;
-        }else WaterBoltVolley_Timer -= diff;
+        } else WaterBoltVolley_Timer -= diff;
 
         //TidalSurge_Timer
         if (TidalSurge_Timer < diff)
@@ -645,7 +645,7 @@ struct OREGON_DLL_DECL boss_fathomguard_caribdisAI : public ScriptedAI
             // Hacky way to do it - won't trigger elseways
             m_creature->getVictim()->CastSpell(m_creature->getVictim(), SPELL_TIDAL_SURGE_FREEZE, true);
             TidalSurge_Timer = 15000+rand()%5000;
-        }else TidalSurge_Timer -= diff;
+        } else TidalSurge_Timer -= diff;
 
         //Cyclone_Timer
         if (Cyclone_Timer < diff)
@@ -665,7 +665,7 @@ struct OREGON_DLL_DECL boss_fathomguard_caribdisAI : public ScriptedAI
                     Cyclone->AI()->AttackStart(target);
                 }
             }
-        }else Cyclone_Timer -= diff;
+        } else Cyclone_Timer -= diff;
 
         //Heal_Timer
         if (Heal_Timer < diff)
@@ -681,7 +681,7 @@ struct OREGON_DLL_DECL boss_fathomguard_caribdisAI : public ScriptedAI
             if (pUnit && pUnit->isAlive())
                 DoCast(pUnit, SPELL_HEAL);
             Heal_Timer = 60000;
-        }else Heal_Timer -= diff;
+        } else Heal_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -706,7 +706,7 @@ struct OREGON_DLL_DECL boss_fathomguard_caribdisAI : public ScriptedAI
                 pUnit = m_creature;
                 break;
             }
-        }else pUnit = m_creature;
+        } else pUnit = m_creature;
 
                 return pUnit;
         }

@@ -111,14 +111,14 @@ struct OREGON_DLL_DECL boss_aeonusAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_SAND_BREATH);
             SandBreath_Timer = 30000;
-        }else SandBreath_Timer -= diff;
+        } else SandBreath_Timer -= diff;
 
         //Time Stop
         if (TimeStop_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_TIME_STOP);
             TimeStop_Timer = 40000;
-        }else TimeStop_Timer -= diff;
+        } else TimeStop_Timer -= diff;
 
         //Frenzy
         if (Frenzy_Timer < diff)
@@ -126,7 +126,7 @@ struct OREGON_DLL_DECL boss_aeonusAI : public ScriptedAI
             DoScriptText(EMOTE_FRENZY, m_creature);
             DoCast(m_creature, SPELL_ENRAGE);
             Frenzy_Timer = 120000;
-        }else Frenzy_Timer -= diff;
+        } else Frenzy_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

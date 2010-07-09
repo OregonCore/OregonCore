@@ -208,7 +208,7 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
 
                 BeamTimer = 30000;
             }
-        }else BeamTimer -= diff;
+        } else BeamTimer -= diff;
 
         // Select 3 random targets (can select same target more than once), teleport to a random location then make them cast explosions until they get away from each other.
         if (FatalAttractionTimer < diff)
@@ -222,7 +222,7 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
             }
             FatalAttractionExplodeTimer = 2000;
             FatalAttractionTimer = 30000;
-        }else FatalAttractionTimer -= diff;
+        } else FatalAttractionTimer -= diff;
 
         if (FatalAttractionExplodeTimer < diff)
         {
@@ -308,13 +308,13 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
             else
                 FatalAttractionExplodeTimer = 1000;
 
-        }else FatalAttractionExplodeTimer -= diff;
+        } else FatalAttractionExplodeTimer -= diff;
 
         if (ShriekTimer < diff)
         {
             if (TryDoCast(m_creature->getVictim(), SPELL_SILENCING_SHRIEK))
                 ShriekTimer = 20000;
-        }else ShriekTimer -= diff;
+        } else ShriekTimer -= diff;
 
         //Enrage
         if (!m_creature->HasAura(SPELL_BERSERK, 0))
@@ -322,7 +322,7 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
             {
                 DoCast(m_creature, SPELL_BERSERK);
                 DoScriptText(SAY_ENRAGE, m_creature);
-            }else EnrageTimer -= diff;
+            } else EnrageTimer -= diff;
 
         //Random taunts
         if (RandomYellTimer < diff)
@@ -334,7 +334,7 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
             case 2: DoScriptText(SAY_TAUNT3, m_creature); break;
             }
             RandomYellTimer = 60000 + rand()%91 * 1000;
-        }else RandomYellTimer -= diff;
+        } else RandomYellTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

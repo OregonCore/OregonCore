@@ -71,14 +71,14 @@ struct OREGON_DLL_DECL boss_lordalexeibarovAI : public ScriptedAI
             if (target) DoCast(target,SPELL_IMMOLATE);
 
             Immolate_Timer = 12000;
-        }else Immolate_Timer -= diff;
+        } else Immolate_Timer -= diff;
 
         //VeilofShadow_Timer
         if (VeilofShadow_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_VEILOFSHADOW);
             VeilofShadow_Timer = 20000;
-        }else VeilofShadow_Timer -= diff;
+        } else VeilofShadow_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

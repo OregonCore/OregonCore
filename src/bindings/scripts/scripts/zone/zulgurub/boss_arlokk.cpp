@@ -104,7 +104,7 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
             {
                 DoCast(m_creature->getVictim(),SPELL_SHADOWWORDPAIN);
                 ShadowWordPain_Timer = 15000;
-            }else ShadowWordPain_Timer -= diff;
+            } else ShadowWordPain_Timer -= diff;
 
             if (!PhaseTwo && Mark_Timer < diff)
             {
@@ -112,7 +112,7 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
 
                 DoCast(markedTarget,SPELL_MARK);
                 Mark_Timer = 15000;
-            }else Mark_Timer -= diff;
+            } else Mark_Timer -= diff;
 
             if (Summon_Timer < diff && Counter < 31)
             {
@@ -125,7 +125,7 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
                 {
                     DoScriptText(SAY_FEAST_PANTHER, m_creature, markedTarget);
                     Panther ->AI()->AttackStart(markedTarget);
-                }else if (Panther && target) Panther ->AI()->AttackStart(target);
+                } else if (Panther && target) Panther ->AI()->AttackStart(target);
 
                 Panther = m_creature->SummonCreature(15101,-11532.9970,-1606.4840,41.2979,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
 
@@ -136,7 +136,7 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
 
                 Counter++;
                 Summon_Timer = 5000;
-            }else Summon_Timer -= diff;
+            } else Summon_Timer -= diff;
 
             if (Vanish_Timer < diff)
             {
@@ -148,7 +148,7 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
                 VanishedOnce = true;
                 Vanish_Timer = 45000;
                 Visible_Timer = 6000;
-            }else Vanish_Timer -= diff;
+            } else Vanish_Timer -= diff;
 
             if (VanishedOnce)
             {
@@ -170,7 +170,7 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
                     m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID,15215);
                     m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     PhaseTwo = true;
-                }else Visible_Timer -= diff;
+                } else Visible_Timer -= diff;
             }
 
             //Cleave_Timer
@@ -188,7 +188,7 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
                     DoModifyThreatPercent(m_creature->getVictim(),-80);
 
                 Gouge_Timer = 17000+rand()%10000;
-            }else Gouge_Timer -= diff;
+            } else Gouge_Timer -= diff;
 
             DoMeleeAttackIfReady();
         }

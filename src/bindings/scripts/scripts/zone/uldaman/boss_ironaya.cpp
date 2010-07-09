@@ -80,7 +80,7 @@ struct OREGON_DLL_DECL boss_ironayaAI : public ScriptedAI
         {
             DoCast(m_creature,SPELL_ARCINGSMASH);
             Arcing_Timer = 13000;
-        }else Arcing_Timer -= diff;
+        } else Arcing_Timer -= diff;
 
         if (!hasCastedWstomp && m_creature->GetHealth()*4 < m_creature->GetMaxHealth())
         {

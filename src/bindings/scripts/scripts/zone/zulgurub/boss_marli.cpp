@@ -99,13 +99,13 @@ struct OREGON_DLL_DECL boss_marliAI : public ScriptedAI
             {
                 DoCast(m_creature->getVictim(),SPELL_POISONVOLLEY);
                 PoisonVolley_Timer = 10000 + rand()%10000;
-            }else PoisonVolley_Timer -= diff;
+            } else PoisonVolley_Timer -= diff;
 
             if (!PhaseTwo && Aspect_Timer < diff)
             {
                 DoCast(m_creature->getVictim(),SPELL_ASPECT_OF_MARLI);
                 Aspect_Timer = 13000 + rand()%5000;
-            }else Aspect_Timer -= diff;
+            } else Aspect_Timer -= diff;
 
             if (!Spawned && SpawnStartSpiders_Timer < diff)
             {
@@ -129,7 +129,7 @@ struct OREGON_DLL_DECL boss_marliAI : public ScriptedAI
                     Spider->AI()->AttackStart(target);
 
                 Spawned = true;
-            }else SpawnStartSpiders_Timer -= diff;
+            } else SpawnStartSpiders_Timer -= diff;
 
             if (SpawnSpider_Timer < diff)
             {
@@ -141,7 +141,7 @@ struct OREGON_DLL_DECL boss_marliAI : public ScriptedAI
                 if (Spider)
                     Spider->AI()->AttackStart(target);
                 SpawnSpider_Timer = 12000 + rand()%5000;
-            }else SpawnSpider_Timer -= diff;
+            } else SpawnSpider_Timer -= diff;
 
             if (!PhaseTwo && Transform_Timer < diff)
             {
@@ -158,7 +158,7 @@ struct OREGON_DLL_DECL boss_marliAI : public ScriptedAI
 
                 PhaseTwo = true;
                 Transform_Timer = 35000 + rand()%25000;
-            }else Transform_Timer -= diff;
+            } else Transform_Timer -= diff;
 
             if (PhaseTwo)
             {
@@ -183,7 +183,7 @@ struct OREGON_DLL_DECL boss_marliAI : public ScriptedAI
                     }
 
                     Charge_Timer = 8000;
-                }else Charge_Timer -= diff;
+                } else Charge_Timer -= diff;
 
                 if (TransformBack_Timer < diff)
                 {
@@ -195,7 +195,7 @@ struct OREGON_DLL_DECL boss_marliAI : public ScriptedAI
 
                     PhaseTwo = false;
                     TransformBack_Timer = 25000 + rand()%15000;
-                }else TransformBack_Timer -= diff;
+                } else TransformBack_Timer -= diff;
 
             }
 
@@ -231,7 +231,7 @@ struct OREGON_DLL_DECL mob_spawn_of_marliAI : public ScriptedAI
         {
             DoCast(m_creature,SPELL_LEVELUP);
             LevelUp_Timer = 3000;
-        }else LevelUp_Timer -= diff;
+        } else LevelUp_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

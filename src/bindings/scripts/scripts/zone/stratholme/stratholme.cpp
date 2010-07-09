@@ -158,7 +158,7 @@ struct OREGON_DLL_DECL mob_restless_soulAI : public ScriptedAI
             {
                 if (Unit* temp = Unit::GetUnit(*m_creature,Tagger))
                     temp->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-            }else Die_Timer -= diff;
+            } else Die_Timer -= diff;
         }
     }
 };
@@ -219,7 +219,7 @@ struct OREGON_DLL_DECL mobs_spectral_ghostly_citizenAI : public ScriptedAI
             if (Die_Timer < diff)
             {
                 m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-            }else Die_Timer -= diff;
+            } else Die_Timer -= diff;
         }
 
         if (!UpdateVictim())

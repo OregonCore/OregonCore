@@ -124,7 +124,7 @@ struct OREGON_DLL_DECL boss_curatorAI : public ScriptedAI
                     case 1: DoScriptText(SAY_SUMMON2, m_creature);break;
                 }
                 AddTimer = 10000;
-            }else AddTimer -= diff;
+            } else AddTimer -= diff;
 
             if (HatefulBoltTimer < diff)
             {
@@ -134,7 +134,7 @@ struct OREGON_DLL_DECL boss_curatorAI : public ScriptedAI
                     DoCast(target, SPELL_HATEFUL_BOLT);
 
                 HatefulBoltTimer = 15000;
-            }else HatefulBoltTimer -= diff;
+            } else HatefulBoltTimer -= diff;
 
             if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 15)
             {
@@ -148,7 +148,7 @@ struct OREGON_DLL_DECL boss_curatorAI : public ScriptedAI
         {
             DoCast(m_creature, SPELL_BERSERK);
             DoScriptText(SAY_ENRAGE, m_creature);
-        }else BerserkTimer -= diff;
+        } else BerserkTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

@@ -466,7 +466,7 @@ struct OREGON_DLL_DECL boss_veknilashAI : public boss_twinemperorsAI
         {
             DoCast(m_creature->getVictim(),SPELL_UNBALANCING_STRIKE);
             UnbalancingStrike_Timer = 8000+rand()%12000;
-        }else UnbalancingStrike_Timer -= diff;
+        } else UnbalancingStrike_Timer -= diff;
 
         if (UpperCut_Timer < diff)
         {
@@ -474,7 +474,7 @@ struct OREGON_DLL_DECL boss_veknilashAI : public boss_twinemperorsAI
             if (randomMelee)
                 DoCast(randomMelee,SPELL_UPPERCUT);
             UpperCut_Timer = 15000+rand()%15000;
-        }else UpperCut_Timer -= diff;
+        } else UpperCut_Timer -= diff;
 
         HandleBugs(diff);
 
@@ -485,7 +485,7 @@ struct OREGON_DLL_DECL boss_veknilashAI : public boss_twinemperorsAI
         if (Teleport_Timer < diff)
         {
             TeleportToMyBrother();
-        }else Teleport_Timer -= diff;
+        } else Teleport_Timer -= diff;
 
         CheckEnrage(diff);
 
@@ -557,7 +557,7 @@ struct OREGON_DLL_DECL boss_veklorAI : public boss_twinemperorsAI
             else
                 DoCast(m_creature->getVictim(),SPELL_SHADOWBOLT);
             ShadowBolt_Timer = 2000;
-        }else ShadowBolt_Timer -= diff;
+        } else ShadowBolt_Timer -= diff;
 
         //Blizzard_Timer
         if (Blizzard_Timer < diff)
@@ -567,7 +567,7 @@ struct OREGON_DLL_DECL boss_veklorAI : public boss_twinemperorsAI
             if (target)
                 DoCast(target,SPELL_BLIZZARD);
             Blizzard_Timer = 15000+rand()%15000;
-        }else Blizzard_Timer -= diff;
+        } else Blizzard_Timer -= diff;
 
         if (ArcaneBurst_Timer < diff)
         {
@@ -577,7 +577,7 @@ struct OREGON_DLL_DECL boss_veklorAI : public boss_twinemperorsAI
                 DoCast(mvic,SPELL_ARCANEBURST);
                 ArcaneBurst_Timer = 5000;
             }
-        }else ArcaneBurst_Timer -= diff;
+        } else ArcaneBurst_Timer -= diff;
 
         HandleBugs(diff);
 
@@ -588,7 +588,7 @@ struct OREGON_DLL_DECL boss_veklorAI : public boss_twinemperorsAI
         if (Teleport_Timer < diff)
         {
             TeleportToMyBrother();
-        }else Teleport_Timer -= diff;
+        } else Teleport_Timer -= diff;
 
         CheckEnrage(diff);
 

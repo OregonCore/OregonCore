@@ -171,7 +171,7 @@ struct OREGON_DLL_DECL mob_lumpAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_SPEAR_THROW);
             Spear_Throw_Timer = 20000;
-        }else Spear_Throw_Timer -= diff;
+        } else Spear_Throw_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

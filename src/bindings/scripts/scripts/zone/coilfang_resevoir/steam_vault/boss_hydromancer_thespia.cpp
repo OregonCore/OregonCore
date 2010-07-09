@@ -111,7 +111,7 @@ struct OREGON_DLL_DECL boss_thespiaAI : public ScriptedAI
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
                     DoCast(target, SPELL_LIGHTNING_CLOUD);
             LightningCloud_Timer = 15000+rand()%10000;
-        }else LightningCloud_Timer -=diff;
+        } else LightningCloud_Timer -=diff;
 
         //LungBurst_Timer
         if (LungBurst_Timer < diff)
@@ -119,7 +119,7 @@ struct OREGON_DLL_DECL boss_thespiaAI : public ScriptedAI
             if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(target, SPELL_LUNG_BURST);
             LungBurst_Timer = 7000+rand()%5000;
-        }else LungBurst_Timer -=diff;
+        } else LungBurst_Timer -=diff;
 
         //EnvelopingWinds_Timer
         if (EnvelopingWinds_Timer < diff)
@@ -131,7 +131,7 @@ struct OREGON_DLL_DECL boss_thespiaAI : public ScriptedAI
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
                     DoCast(target, SPELL_ENVELOPING_WINDS);
             EnvelopingWinds_Timer = 10000+rand()%5000;
-        }else EnvelopingWinds_Timer -=diff;
+        } else EnvelopingWinds_Timer -=diff;
 
         DoMeleeAttackIfReady();
     }
@@ -164,7 +164,7 @@ struct OREGON_DLL_DECL mob_coilfang_waterelementalAI : public ScriptedAI
         {
             DoCast(m_creature, HeroicMode ? H_SPELL_WATER_BOLT_VOLLEY : SPELL_WATER_BOLT_VOLLEY);
             WaterBoltVolley_Timer = 7000+rand()%5000;
-        }else WaterBoltVolley_Timer -= diff;
+        } else WaterBoltVolley_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

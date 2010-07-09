@@ -184,7 +184,7 @@ struct OREGON_DLL_DECL boss_harbinger_skyrissAI : public ScriptedAI
                         Intro = true;
                         break;
                 }
-            }else Intro_Timer -=diff;
+            } else Intro_Timer -=diff;
         }
 
         if (!UpdateVictim())
@@ -209,7 +209,7 @@ struct OREGON_DLL_DECL boss_harbinger_skyrissAI : public ScriptedAI
                 DoCast(m_creature->getVictim(),HeroicMode ? H_SPELL_MIND_REND : SPELL_MIND_REND);
 
             MindRend_Timer = 8000;
-        }else MindRend_Timer -=diff;
+        } else MindRend_Timer -=diff;
 
         if (Fear_Timer < diff)
         {
@@ -228,7 +228,7 @@ struct OREGON_DLL_DECL boss_harbinger_skyrissAI : public ScriptedAI
                 DoCast(m_creature->getVictim(),SPELL_FEAR);
 
             Fear_Timer = 25000;
-        }else Fear_Timer -=diff;
+        } else Fear_Timer -=diff;
 
         if (Domination_Timer < diff)
         {
@@ -247,7 +247,7 @@ struct OREGON_DLL_DECL boss_harbinger_skyrissAI : public ScriptedAI
                 DoCast(m_creature->getVictim(),HeroicMode ? H_SPELL_DOMINATION : SPELL_DOMINATION);
 
             Domination_Timer = 16000+rand()%16000;
-        }else Domination_Timer -=diff;
+        } else Domination_Timer -=diff;
 
         if (HeroicMode)
         {
@@ -260,7 +260,7 @@ struct OREGON_DLL_DECL boss_harbinger_skyrissAI : public ScriptedAI
                     DoCast(target,H_SPELL_MANA_BURN);
 
                 ManaBurn_Timer = 16000+rand()%16000;
-            }else ManaBurn_Timer -=diff;
+            } else ManaBurn_Timer -=diff;
         }
 
         DoMeleeAttackIfReady();

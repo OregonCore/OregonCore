@@ -91,19 +91,19 @@ struct OREGON_DLL_DECL boss_vanndarAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_AVATAR);
             AvatarTimer =  (15+rand()%5)*1000;
-        }else AvatarTimer -= diff;
+        } else AvatarTimer -= diff;
 
         if (ThunderclapTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_THUNDERCLAP);
             ThunderclapTimer = (5+rand()%10)*1000;
-        }else ThunderclapTimer -= diff;
+        } else ThunderclapTimer -= diff;
 
         if (StormboltTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_STORMBOLT);
             StormboltTimer = (10+rand()%15)*1000;
-        }else StormboltTimer -= diff;
+        } else StormboltTimer -= diff;
 
         if (YellTimer < diff) {
             switch(rand()%6)
@@ -130,7 +130,7 @@ struct OREGON_DLL_DECL boss_vanndarAI : public ScriptedAI
                 EnterEvadeMode();
         }
             ResetTimer = 5000;
-        }else ResetTimer -= diff;
+        } else ResetTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

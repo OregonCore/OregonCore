@@ -79,21 +79,21 @@ struct OREGON_DLL_DECL boss_darkmaster_gandlingAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_ARCANEMISSILES);
             ArcaneMissiles_Timer = 8000;
-        }else ArcaneMissiles_Timer -= diff;
+        } else ArcaneMissiles_Timer -= diff;
 
         //ShadowShield_Timer
         if (ShadowShield_Timer < diff)
         {
             DoCast(m_creature,SPELL_SHADOWSHIELD);
             ShadowShield_Timer = 14000 + rand()%14000;
-        }else ShadowShield_Timer -= diff;
+        } else ShadowShield_Timer -= diff;
 
         //Curse_Timer
         if (Curse_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_CURSE);
             Curse_Timer = 15000 + rand()%12000;
-        }else Curse_Timer -= diff;
+        } else Curse_Timer -= diff;
 
         //Teleporting Random Target to one of the six pre boss rooms and spawn 3-4 skeletons near the gamer.
         //We will only telport if gandling has more than 3% of hp so teleported gamers can always loot.
@@ -191,7 +191,7 @@ struct OREGON_DLL_DECL boss_darkmaster_gandlingAI : public ScriptedAI
                     }
                 }
                 Teleport_Timer = 20000 + rand()%15000;
-            }else Teleport_Timer -= diff;
+            } else Teleport_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();

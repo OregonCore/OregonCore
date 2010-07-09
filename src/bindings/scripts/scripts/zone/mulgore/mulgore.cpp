@@ -150,7 +150,7 @@ struct OREGON_DLL_DECL npc_kyle_frenziedAI : public ScriptedAI
                 m_creature->GetMotionMaster()->MovePoint(0,x,y,z);
                 break;
             }
-        }else wait -= diff;
+        } else wait -= diff;
     }
 };
 

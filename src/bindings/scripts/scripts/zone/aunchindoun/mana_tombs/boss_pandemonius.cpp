@@ -102,7 +102,7 @@ struct OREGON_DLL_DECL boss_pandemoniusAI : public ScriptedAI
                 VoidBlast_Timer = 25000+rand()%10000;
                 VoidBlast_Counter = 0;
             }
-        }else VoidBlast_Timer -= diff;
+        } else VoidBlast_Timer -= diff;
 
         if (!VoidBlast_Counter)
         {
@@ -115,7 +115,7 @@ struct OREGON_DLL_DECL boss_pandemoniusAI : public ScriptedAI
 
                 DoCast(m_creature,HeroicMode ? H_SPELL_DARK_SHELL : SPELL_DARK_SHELL);
                 DarkShell_Timer = 20000;
-            }else DarkShell_Timer -= diff;
+            } else DarkShell_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();

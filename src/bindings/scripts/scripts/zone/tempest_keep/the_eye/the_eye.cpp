@@ -77,7 +77,7 @@ struct OREGON_DLL_DECL mob_crystalcore_devastatorAI : public ScriptedAI
         {
             DoCast(this->m_creature,SPELL_COUNTERCHARGE);
             Countercharge_Timer = 45000;
-        }else Countercharge_Timer -= diff;
+        } else Countercharge_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

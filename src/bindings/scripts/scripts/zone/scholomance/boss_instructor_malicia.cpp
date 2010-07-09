@@ -79,7 +79,7 @@ struct OREGON_DLL_DECL boss_instructormaliciaAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_CALLOFGRAVES);
             CallOfGraves_Timer = 65000;
-        }else CallOfGraves_Timer -= diff;
+        } else CallOfGraves_Timer -= diff;
 
         //Corruption_Timer
         if (Corruption_Timer < diff)
@@ -89,14 +89,14 @@ struct OREGON_DLL_DECL boss_instructormaliciaAI : public ScriptedAI
             if (target) DoCast(target,SPELL_CORRUPTION);
 
             Corruption_Timer = 24000;
-        }else Corruption_Timer -= diff;
+        } else Corruption_Timer -= diff;
 
         //Renew_Timer
         if (Renew_Timer < diff)
         {
             DoCast(m_creature, SPELL_RENEW);
             Renew_Timer = 10000;
-        }else Renew_Timer -= diff;
+        } else Renew_Timer -= diff;
 
         //FlashHeal_Timer
         if (FlashHeal_Timer < diff)
@@ -114,7 +114,7 @@ struct OREGON_DLL_DECL boss_instructormaliciaAI : public ScriptedAI
                 FlashCounter=0;
                 FlashHeal_Timer = 30000;
             }
-        }else FlashHeal_Timer -= diff;
+        } else FlashHeal_Timer -= diff;
 
         //HealingTouch_Timer
         if (HealingTouch_Timer < diff)
@@ -132,7 +132,7 @@ struct OREGON_DLL_DECL boss_instructormaliciaAI : public ScriptedAI
                 TouchCounter=0;
                 HealingTouch_Timer = 30000;
             }
-        }else HealingTouch_Timer -= diff;
+        } else HealingTouch_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

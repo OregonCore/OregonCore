@@ -153,7 +153,7 @@ struct OREGON_DLL_DECL boss_ambassador_hellmawAI : public ScriptedAI
                         DoIntro();
                 }
                 EventCheck_Timer = 5000;
-            }else EventCheck_Timer -= diff;
+            } else EventCheck_Timer -= diff;
         }
 
         if (!m_creature->isInCombat() && !IsBanished)
@@ -175,20 +175,20 @@ struct OREGON_DLL_DECL boss_ambassador_hellmawAI : public ScriptedAI
         {
             DoCast(m_creature,SPELL_CORROSIVE_ACID);
             CorrosiveAcid_Timer = 25000;
-        }else CorrosiveAcid_Timer -= diff;
+        } else CorrosiveAcid_Timer -= diff;
 
         if (Fear_Timer < diff)
         {
             DoCast(m_creature,SPELL_FEAR);
             Fear_Timer = 35000;
-        }else Fear_Timer -= diff;
+        } else Fear_Timer -= diff;
 
         /*if (HeroicMode)
         {
             if (Enrage_Timer < diff)
             {
                 DoCast(m_creature,SPELL_ENRAGE);
-            }else Enrage_Timer -= diff;
+            } else Enrage_Timer -= diff;
         }*/
 
         DoMeleeAttackIfReady();

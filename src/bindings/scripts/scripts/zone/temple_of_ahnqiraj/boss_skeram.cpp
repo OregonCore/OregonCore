@@ -136,7 +136,7 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_ARCANE_EXPLOSION);
             ArcaneExplosion_Timer = 8000 + rand()%10000;
-        }else ArcaneExplosion_Timer -= diff;
+        } else ArcaneExplosion_Timer -= diff;
 
         //If we are within range melee the target
         if (m_creature->IsWithinMeleeRange(m_creature->getVictim()))
@@ -147,14 +147,14 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
                 m_creature->AttackerStateUpdate(m_creature->getVictim());
                 m_creature->resetAttackTimer();
             }
-        }else
+        } else
         {
             //EarthShock_Timer
             if (EarthShock_Timer < diff)
             {
                 DoCast(m_creature->getVictim(),SPELL_EARTH_SHOCK);
                 EarthShock_Timer = 1000;
-            }else EarthShock_Timer -= diff;
+            } else EarthShock_Timer -= diff;
         }
 
         //Blink_Timer
@@ -179,7 +179,7 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
             DoStopAttack();
 
             Blink_Timer= 20000 + rand()%20000;
-        }else Blink_Timer -= diff;
+        } else Blink_Timer -= diff;
 
         int procent = (int) (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() +0.5);
 
@@ -207,7 +207,7 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
 
                 Invisible_Timer = 2500;
                 Invisible = false;
-            }else Invisible_Timer -= diff;
+            } else Invisible_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();

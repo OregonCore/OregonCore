@@ -151,7 +151,7 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
             {
                 DoCast(m_creature->getVictim(), SPELL_FLAMEBREATH);
                 FlameBreathTimer = 15000;
-            }else FlameBreathTimer -= diff;
+            } else FlameBreathTimer -= diff;
 
             if (TailSweepTimer < diff)
             {
@@ -160,19 +160,19 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
                     DoCast(target, SPELL_TAILSWEEP);
 
                 TailSweepTimer = 10000;
-            }else TailSweepTimer -= diff;
+            } else TailSweepTimer -= diff;
 
             if (CleaveTimer < diff)
             {
                 DoCast(m_creature->getVictim(), SPELL_CLEAVE);
                 CleaveTimer = 10000;
-            }else CleaveTimer -= diff;
+            } else CleaveTimer -= diff;
 
             if (WingBuffetTimer < diff)
             {
                 DoCast(m_creature->getVictim(), SPELL_WINGBUFFET);
                 WingBuffetTimer = 7000 + ((rand()%8)*1000);
-            }else WingBuffetTimer -= diff;
+            } else WingBuffetTimer -= diff;
 
             if (KnockAwayTimer < diff)
             {
@@ -181,7 +181,7 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
                     DoCast(m_creature->getVictim(), SPELL_KNOCK_AWAY);
                 }
                 KnockAwayTimer = 15000;
-            }else KnockAwayTimer -= diff;
+            } else KnockAwayTimer -= diff;
 
             if (Phase == 3)
             {
@@ -190,14 +190,14 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
                     DoCast(m_creature->getVictim(), SPELL_BELLOWINGROAR);
 
                     BellowingRoarTimer = 30000;
-                }else BellowingRoarTimer -= diff;
+                } else BellowingRoarTimer -= diff;
 
                 if (SummonWhelpsTimer < diff)
                 {
                     SummonWhelps(Phase);
 
                     SummonWhelpsTimer = 45000;
-                }else SummonWhelpsTimer -= diff;
+                } else SummonWhelpsTimer -= diff;
             }
 
             DoMeleeAttackIfReady();
@@ -245,7 +245,7 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
                 else ChangePosition();
 
                 MovementTimer = 25000;
-            }else MovementTimer -= diff;
+            } else MovementTimer -= diff;
 
             if (SummonWhelpsTimer < diff)
             {

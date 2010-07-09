@@ -192,7 +192,7 @@ struct OREGON_DLL_DECL mob_wisp_invisAI : public ScriptedAI
                 if (spell2)
                     DoCast(m_creature,spell2);
                 delay = 0;
-            }else delay -= diff;
+            } else delay -= diff;
         }
     }
 };
@@ -302,7 +302,7 @@ struct OREGON_DLL_DECL mob_headAI : public ScriptedAI
                 if (!m_creature->getVictim()) return;
                 m_creature->GetMotionMaster()->Clear(false);
                 m_creature->GetMotionMaster()->MoveFleeing(m_creature->getVictim());
-            }else wait -= diff;
+            } else wait -= diff;
             if (laugh < diff)
             {
                 laugh = 15000 + (rand()%16)*1000;
@@ -633,8 +633,8 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
                                 break;
                             }
                             ++count;
-                        }else say_timer -= diff;
-                    }else{
+                        } else say_timer -= diff;
+                    } else{
                         if (wp_reached) {
                             wp_reached = false;
                             m_creature->GetMotionMaster()->Clear(false);
@@ -651,7 +651,7 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
                     if (flame)
                         ((mob_wisp_invisAI*)flame->AI())->SetType(2);
                     burned = true;
-                }else burn -= diff;
+                } else burn -= diff;
                 break;
             case 2:
                 if (conflagrate < diff)
@@ -667,7 +667,7 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
                         m_creature->CastCustomSpell(plr,SPELL_CONFLAGRATION,&damage,NULL,NULL,false);
                     }
                     conflagrate = 10000 + rand()%7 * 1000;
-                }else conflagrate -= diff;
+                } else conflagrate -= diff;
                 break;
             case 3:
                 if (summonadds < diff)
@@ -676,7 +676,7 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
                     DoCast(m_creature,SPELL_SUMMON_PUMPKIN);
                     SaySound(SAY_SPROUTING_PUMPKINS);
                     summonadds = 25000 + rand()%11 *1000;
-                }else summonadds -= diff;
+                } else summonadds -= diff;
                 break;
             }
 
@@ -722,9 +722,9 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
                     m_creature->RemoveAurasDueToSpell(SPELL_CONFUSE);
                     DoCast(m_creature,SPELL_WHIRLWIND,true);
                     DoCast(m_creature,SPELL_CONFUSE);
-                }else
+                } else
                     m_creature->RemoveAurasDueToSpell(SPELL_WHIRLWIND);
-            }else whirlwind -= diff;
+            } else whirlwind -= diff;
         }
     }
 };

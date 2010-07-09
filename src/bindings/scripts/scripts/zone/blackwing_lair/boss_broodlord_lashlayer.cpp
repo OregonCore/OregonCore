@@ -77,28 +77,28 @@ struct OREGON_DLL_DECL boss_broodlordAI : public ScriptedAI
                 return;
             }
             LeashCheck_Timer = 2000;
-        }else LeashCheck_Timer -= diff;
+        } else LeashCheck_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 7000;
-        }else Cleave_Timer -= diff;
+        } else Cleave_Timer -= diff;
 
         // BlastWave
         if (BlastWave_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_BLASTWAVE);
             BlastWave_Timer = 8000 + rand()%8000;
-        }else BlastWave_Timer -= diff;
+        } else BlastWave_Timer -= diff;
 
         //MortalStrike_Timer
         if (MortalStrike_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_MORTALSTRIKE);
             MortalStrike_Timer = 25000 + rand()%10000;
-        }else MortalStrike_Timer -= diff;
+        } else MortalStrike_Timer -= diff;
 
         if (KnockBack_Timer < diff)
         {
@@ -108,7 +108,7 @@ struct OREGON_DLL_DECL boss_broodlordAI : public ScriptedAI
                 DoModifyThreatPercent(m_creature->getVictim(),-50);
 
             KnockBack_Timer = 15000 + rand()%15000;
-        }else KnockBack_Timer -= diff;
+        } else KnockBack_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

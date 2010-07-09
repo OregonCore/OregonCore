@@ -142,25 +142,25 @@ struct OREGON_DLL_DECL boss_azgalorAI : public hyjal_trashAI
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM,0,30,true), SPELL_RAIN_OF_FIRE);
             RainTimer = 20000+rand()%15000;
-        }else RainTimer -= diff;
+        } else RainTimer -= diff;
 
         if (DoomTimer < diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM,1,100,true), SPELL_DOOM);//never on tank
             DoomTimer = 45000+rand()%5000;
-        }else DoomTimer -= diff;
+        } else DoomTimer -= diff;
 
         if (HowlTimer < diff)
         {
             DoCast(m_creature, SPELL_HOWL_OF_AZGALOR);
             HowlTimer = 30000;
-        }else HowlTimer -= diff;
+        } else HowlTimer -= diff;
 
         if (CleaveTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_CLEAVE);
             CleaveTimer = 10000+rand()%5000;
-        }else CleaveTimer -= diff;
+        } else CleaveTimer -= diff;
 
         if (EnrageTimer < diff && !enraged)
         {
@@ -168,7 +168,7 @@ struct OREGON_DLL_DECL boss_azgalorAI : public hyjal_trashAI
             DoCast(m_creature, SPELL_BERSERK, true);
             enraged = true;
             EnrageTimer = 600000;
-        }else EnrageTimer -= diff;
+        } else EnrageTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -249,7 +249,7 @@ struct OREGON_DLL_DECL mob_lesser_doomguardAI : public hyjal_trashAI
                 }
             }
             CheckTimer = 5000;
-        }else CheckTimer -= diff;
+        } else CheckTimer -= diff;
 
         //Return since we have no target
         if (!UpdateVictim())
@@ -259,13 +259,13 @@ struct OREGON_DLL_DECL mob_lesser_doomguardAI : public hyjal_trashAI
         {
             DoCast(m_creature, SPELL_WARSTOMP);
             WarstompTimer = 10000+rand()%5000;
-        }else WarstompTimer -= diff;
+        } else WarstompTimer -= diff;
 
         if (CrippleTimer < diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM,0,100,true), SPELL_CRIPPLE);
             CrippleTimer = 25000+rand()%5000;
-        }else CrippleTimer -= diff;
+        } else CrippleTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

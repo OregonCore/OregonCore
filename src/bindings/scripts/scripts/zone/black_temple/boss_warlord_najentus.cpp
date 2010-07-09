@@ -178,7 +178,7 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
                 ResetTimer(45000);
                 TidalShieldTimer = 60000;
             }
-        }else TidalShieldTimer -= diff;
+        } else TidalShieldTimer -= diff;
 
         if (!m_creature->HasAura(SPELL_BERSERK,0))
         {
@@ -186,7 +186,7 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
             {
                 DoScriptText(SAY_ENRAGE2, m_creature);
                 DoCast(m_creature, SPELL_BERSERK, true);
-            }else EnrageTimer -= diff;
+            } else EnrageTimer -= diff;
         }
 
         if (SpecialYellTimer < diff)
@@ -197,7 +197,7 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
             case 1: DoScriptText(SAY_SPECIAL2, m_creature); break;
             }
             SpecialYellTimer = 25000 + (rand()%76)*1000;
-        }else SpecialYellTimer -= diff;
+        } else SpecialYellTimer -= diff;
 
         if (ImpalingSpineTimer < diff)
         {
@@ -220,7 +220,7 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
                     ImpalingSpineTimer = 21000;
                 }
             }
-        }else ImpalingSpineTimer -= diff;
+        } else ImpalingSpineTimer -= diff;
 
         if (NeedleSpineTimer < diff)
         {
@@ -232,7 +232,7 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
                 //    m_creature->CastSpell(*i, 39835, true);
                 NeedleSpineTimer = 3000;
             }
-        }else NeedleSpineTimer -= diff;
+        } else NeedleSpineTimer -= diff;
 
 
         DoMeleeAttackIfReady();

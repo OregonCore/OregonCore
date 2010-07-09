@@ -109,14 +109,14 @@ struct OREGON_DLL_DECL boss_temporusAI : public ScriptedAI
         {
             DoCast(m_creature, SPELL_HASTE);
             Haste_Timer = 20000+rand()%5000;
-        }else Haste_Timer -= diff;
+        } else Haste_Timer -= diff;
 
         //Spell Reflection
         if (SpellReflection_Timer < diff)
         {
             DoCast(m_creature, SPELL_REFLECT);
             SpellReflection_Timer = 40000+rand()%10000;
-        }else SpellReflection_Timer -= diff;
+        } else SpellReflection_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

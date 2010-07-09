@@ -90,13 +90,13 @@ struct OREGON_DLL_DECL mob_doom_blossomAI : public ScriptedAI
                 Despawn();
 
             CheckTeronTimer = 5000;
-        }else CheckTeronTimer -= diff;
+        } else CheckTeronTimer -= diff;
 
         if (ShadowBoltTimer < diff && m_creature->isInCombat())
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_SHADOWBOLT);
             ShadowBoltTimer = 10000;
-        }else ShadowBoltTimer -= diff;
+        } else ShadowBoltTimer -= diff;
         return;
     }
 
@@ -180,7 +180,7 @@ struct OREGON_DLL_DECL mob_shadowy_constructAI : public ScriptedAI
         {
             CheckPlayers();
             CheckPlayerTimer = 3000;
-        }else CheckPlayerTimer -= diff;
+        } else CheckPlayerTimer -= diff;
 
         if (CheckTeronTimer < diff)
         {
@@ -189,7 +189,7 @@ struct OREGON_DLL_DECL mob_shadowy_constructAI : public ScriptedAI
                 m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 
             CheckTeronTimer = 5000;
-        }else CheckTeronTimer -= diff;
+        } else CheckTeronTimer -= diff;
     }
 };
 
@@ -388,7 +388,7 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
                     EnterEvadeMode();
                     return;
                 }
-            }else AggroTimer -= diff;
+            } else AggroTimer -= diff;
         }
 
         if (!UpdateVictim() || Intro)
@@ -414,7 +414,7 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
                 }
             }
             SummonShadowsTimer = 60000;
-        }else SummonShadowsTimer -= diff;
+        } else SummonShadowsTimer -= diff;
 
         if (SummonDoomBlossomTimer < diff)
         {
@@ -437,7 +437,7 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
                     SummonDoomBlossomTimer = 35000;
                 }
             }
-        }else SummonDoomBlossomTimer -= diff;
+        } else SummonDoomBlossomTimer -= diff;
 
         if (IncinerateTimer < diff)
         {
@@ -455,7 +455,7 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
                 DoCast(target, SPELL_INCINERATE);
                 IncinerateTimer = 20000 + rand()%31 * 1000;
             }
-        }else IncinerateTimer -= diff;
+        } else IncinerateTimer -= diff;
 
         if (CrushingShadowsTimer < diff)
         {
@@ -463,7 +463,7 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
             if (target && target->isAlive())
                 DoCast(target, SPELL_CRUSHING_SHADOWS);
             CrushingShadowsTimer = 10000 + rand()%16 * 1000;
-        }else CrushingShadowsTimer -= diff;
+        } else CrushingShadowsTimer -= diff;
 
         /*** NOTE FOR FUTURE DEV: UNCOMMENT BELOW ONLY IF MIND CONTROL IS FULLY IMPLEMENTED **/
         /*if (ShadowOfDeathTimer < diff)
@@ -480,7 +480,7 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
                 ShadowOfDeathTimer = 30000;
                 SummonShadowsTimer = 53000; // Make it VERY close but slightly less so that we can check if the aura is still on the player
             }
-        }else ShadowOfDeathTimer -= diff;*/
+        } else ShadowOfDeathTimer -= diff;*/
 
         if (RandomYellTimer < diff)
         {
@@ -490,7 +490,7 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
             case 1: DoScriptText(SAY_SPELL2, m_creature); break;
             }
             RandomYellTimer = 50000 + rand()%51 * 1000;
-        }else RandomYellTimer -= diff;
+        } else RandomYellTimer -= diff;
 
         if (!m_creature->HasAura(SPELL_BERSERK, 0))
         {
@@ -498,7 +498,7 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
         {
             DoCast(m_creature, SPELL_BERSERK);
             DoScriptText(SAY_ENRAGE, m_creature);
-        }else EnrageTimer -= diff;
+        } else EnrageTimer -= diff;
         }
 
         DoMeleeAttackIfReady();

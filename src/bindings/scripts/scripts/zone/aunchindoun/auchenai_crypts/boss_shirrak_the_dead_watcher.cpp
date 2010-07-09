@@ -98,7 +98,7 @@ struct OREGON_DLL_DECL boss_shirrak_the_dead_watcherAI : public ScriptedAI
                             m_creature->AddAura(SPELL_INHIBITMAGIC, i_pl);
                     }
             Inhibitmagic_Timer = 3000+(rand()%1000);
-        }else Inhibitmagic_Timer -= diff;
+        } else Inhibitmagic_Timer -= diff;
 
         //Return since we have no target
         if (!UpdateVictim())
@@ -110,14 +110,14 @@ struct OREGON_DLL_DECL boss_shirrak_the_dead_watcherAI : public ScriptedAI
             DoCast(m_creature,SPELL_ATTRACTMAGIC);
             Attractmagic_Timer = 30000;
             Carnivorousbite_Timer = 1500;
-        }else Attractmagic_Timer -= diff;
+        } else Attractmagic_Timer -= diff;
 
         //Carnivorousbite_Timer
         if (Carnivorousbite_Timer < diff)
         {
             DoCast(m_creature,SPELL_CARNIVOROUSBITE);
             Carnivorousbite_Timer = 10000;
-        }else Carnivorousbite_Timer -= diff;
+        } else Carnivorousbite_Timer -= diff;
 
         //FocusFire_Timer
         if (FocusFire_Timer < diff)
@@ -137,7 +137,7 @@ struct OREGON_DLL_DECL boss_shirrak_the_dead_watcherAI : public ScriptedAI
                 delete emote;
             }
             FocusFire_Timer = 15000+(rand()%5000);
-        }else FocusFire_Timer -= diff;
+        } else FocusFire_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -183,7 +183,7 @@ struct OREGON_DLL_DECL mob_focus_fireAI : public ScriptedAI
             else if (fiery2) fiery2 = false;
 
             FieryBlast_Timer = 1000;
-        }else FieryBlast_Timer -= diff;
+        } else FieryBlast_Timer -= diff;
 
         //DoMeleeAttackIfReady();
     }

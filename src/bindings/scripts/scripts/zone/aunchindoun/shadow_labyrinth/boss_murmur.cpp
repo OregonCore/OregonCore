@@ -94,7 +94,7 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
             SonicBoom_Timer = 30000;
             SonicBoom = true;
             return;
-        }else SonicBoom_Timer -= diff;
+        } else SonicBoom_Timer -= diff;
 
         // Murmur's Touch
         if (MurmursTouch_Timer < diff)
@@ -102,7 +102,7 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
             if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0,80,true))
                 DoCast(target, SPELL_MURMURS_TOUCH);
             MurmursTouch_Timer = 30000;
-        }else MurmursTouch_Timer -= diff;
+        } else MurmursTouch_Timer -= diff;
 
         // Resonance
         if (Resonance_Timer < diff)
@@ -110,7 +110,7 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
             if (!m_creature->IsWithinMeleeRange(SelectUnit(SELECT_TARGET_NEAREST,0,20,true)))
                 DoCast(m_creature, SPELL_RESONANCE);
             Resonance_Timer = 5000;
-        }else Resonance_Timer -= diff;
+        } else Resonance_Timer -= diff;
 
         // Magnetic Pull
         if (MagneticPull_Timer < diff)
@@ -123,7 +123,7 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
                     return;
                 }
             MagneticPull_Timer = 500;
-        }else MagneticPull_Timer -= diff;
+        } else MagneticPull_Timer -= diff;
 
         if (HeroicMode)
         {
@@ -136,7 +136,7 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
                         if (target->isAlive() && m_creature->GetDistance2d(target) > 35)
                             DoCast(target, SPELL_THUNDERING_STORM, true);
                 ThunderingStorm_Timer = 15000;
-            }else ThunderingStorm_Timer -= diff;
+            } else ThunderingStorm_Timer -= diff;
 
             // Sonic Shock
             if (SonicShock_Timer < diff)
@@ -145,7 +145,7 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
                     if (target->isAlive())
                         DoCast(target, SPELL_SONIC_SHOCK);
                 SonicShock_Timer = 10000+rand()%10000;
-            }else SonicShock_Timer -= diff;
+            } else SonicShock_Timer -= diff;
         }
 
         // Select nearest most aggro target if top aggro too far

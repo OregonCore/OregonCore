@@ -153,7 +153,7 @@ struct OREGON_DLL_DECL instance_magisters_terrace : public ScriptedInstance
             DoorState[0] = data1;
             DoorState[1] = data2;
             DoorState[2] = data3;
-        }else error_log("TSCR: Magister's Terrace: corrupted save data.");
+        } else error_log("TSCR: Magister's Terrace: corrupted save data.");
     }
 
     void OnCreatureCreate(Creature *creature, uint32 entry)

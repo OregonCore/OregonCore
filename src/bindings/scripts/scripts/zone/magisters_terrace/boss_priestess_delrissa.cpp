@@ -143,7 +143,7 @@ struct OREGON_DLL_DECL boss_priestess_delrissaAI : public ScriptedAI
             if (m_creature->isDead())
                 pInstance->SetData(DATA_DELRISSA_EVENT, DONE);
             else pInstance->SetData(DATA_DELRISSA_EVENT, NOT_STARTED);
-        }else error_log(ERROR_INST_DATA);
+        } else error_log(ERROR_INST_DATA);
     }
 
     void EnterCombat(Unit* who)
@@ -267,7 +267,7 @@ struct OREGON_DLL_DECL boss_priestess_delrissaAI : public ScriptedAI
                 return;
             }
             ResetTimer = 5000;
-        }else ResetTimer -= diff;
+        } else ResetTimer -= diff;
 
         if (HealTimer < diff)
         {
@@ -280,7 +280,7 @@ struct OREGON_DLL_DECL boss_priestess_delrissaAI : public ScriptedAI
 
             DoCast(target, SPELL_FLASH_HEAL);
             HealTimer = 15000;
-        }else HealTimer -= diff;
+        } else HealTimer -= diff;
 
         if (RenewTimer < diff)
         {
@@ -294,7 +294,7 @@ struct OREGON_DLL_DECL boss_priestess_delrissaAI : public ScriptedAI
             }
             DoCast(target,Heroic ? SPELL_RENEW_HEROIC : SPELL_RENEW_NORMAL);
             RenewTimer = 5000;
-        }else RenewTimer -= diff;
+        } else RenewTimer -= diff;
 
         if (ShieldTimer < diff)
         {
@@ -308,7 +308,7 @@ struct OREGON_DLL_DECL boss_priestess_delrissaAI : public ScriptedAI
             }
             DoCast(target, SPELL_SHIELD);
             ShieldTimer = 7500;
-        }else ShieldTimer -= diff;
+        } else ShieldTimer -= diff;
 
         if (DispelTimer < diff)
         {
@@ -334,13 +334,13 @@ struct OREGON_DLL_DECL boss_priestess_delrissaAI : public ScriptedAI
                 DoCast(target, SPELL_DISPEL_MAGIC);
                 DispelTimer = 12000;
             }
-        }else DispelTimer -= diff;
+        } else DispelTimer -= diff;
 
         if (SWPainTimer < diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0),Heroic ? SPELL_SW_PAIN_HEROIC : SPELL_SW_PAIN_NORMAL);
             SWPainTimer = 10000;
-        }else SWPainTimer -= diff;
+        } else SWPainTimer -= diff;
 
         /*
         if (CombatPulseTimer < diff)
@@ -354,7 +354,7 @@ struct OREGON_DLL_DECL boss_priestess_delrissaAI : public ScriptedAI
             }
 
             CombatPulseTimer = 10000;
-        }else CombatPulseTimer -= diff;*/
+        } else CombatPulseTimer -= diff;*/
 
         DoMeleeAttackIfReady();
     }
@@ -454,7 +454,7 @@ struct OREGON_DLL_DECL boss_priestess_guestAI : public ScriptedAI
         {
             DoResetThreat();
             ResetThreatTimer = 5000 + rand()%15000;
-        }else ResetThreatTimer -= diff;
+        } else ResetThreatTimer -= diff;
     }
 };
 
@@ -506,7 +506,7 @@ struct OREGON_DLL_DECL boss_kagani_nightstrikeAI : public boss_priestess_guestAI
             Wait_Timer = 10000;
             DoResetThreat();
             m_creature->AddThreat(SelectUnit(SELECT_TARGET_RANDOM, 0), 1000.0f);
-        }else Vanish_Timer -= diff;
+        } else Vanish_Timer -= diff;
 
         if (InVanish)
             if (Wait_Timer < diff)
@@ -515,26 +515,26 @@ struct OREGON_DLL_DECL boss_kagani_nightstrikeAI : public boss_priestess_guestAI
             DoCast(m_creature->getVictim(), SPELL_KIDNEY_SHOT, true);
             m_creature->SetVisibility(VISIBILITY_ON);       // ...? Hacklike
             InVanish = false;
-        }else Wait_Timer -= diff;
+        } else Wait_Timer -= diff;
 
         if (Gouge_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_GOUGE);
             DoModifyThreatPercent(m_creature->getVictim(),-100);
             Gouge_Timer = 5500;
-        }else Gouge_Timer -= diff;
+        } else Gouge_Timer -= diff;
 
         if (Kick_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_KICK);
             Kick_Timer = 7000;
-        }else Kick_Timer -= diff;
+        } else Kick_Timer -= diff;
 
         if (Eviscerate_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_EVISCERATE);
             Eviscerate_Timer = 4000;
-        }else Eviscerate_Timer -= diff;
+        } else Eviscerate_Timer -= diff;
 
         if (!InVanish)
             DoMeleeAttackIfReady();
@@ -629,31 +629,31 @@ struct OREGON_DLL_DECL boss_ellris_duskhallowAI : public boss_priestess_guestAI
         {
             DoCast(m_creature->getVictim(),SPELL_IMMOLATE);
             Immolate_Timer = 6000;
-        }else Immolate_Timer -= diff;
+        } else Immolate_Timer -= diff;
 
         if (Shadow_Bolt_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_SHADOW_BOLT);
             Shadow_Bolt_Timer = 5000;
-        }else Shadow_Bolt_Timer -= diff;
+        } else Shadow_Bolt_Timer -= diff;
 
         if (Seed_of_Corruption_Timer < diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_SEED_OF_CORRUPTION);
             Seed_of_Corruption_Timer = 10000;
-        }else Seed_of_Corruption_Timer -= diff;
+        } else Seed_of_Corruption_Timer -= diff;
 
         if (Curse_of_Agony_Timer < diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_CURSE_OF_AGONY);
             Curse_of_Agony_Timer = 13000;
-        }else Curse_of_Agony_Timer -= diff;
+        } else Curse_of_Agony_Timer -= diff;
 
         if (Fear_Timer < diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_FEAR);
             Fear_Timer = 10000;
-        }else Fear_Timer -= diff;
+        } else Fear_Timer -= diff;
 
         if (m_creature->GetDistance(m_creature->getVictim()) <= 10)
             m_creature->StopMoving();
@@ -703,13 +703,13 @@ struct OREGON_DLL_DECL boss_eramas_brightblazeAI : public boss_priestess_guestAI
         {
             DoCast(m_creature->getVictim(),SPELL_KNOCKDOWN);
             Knockdown_Timer = 6000;
-        }else Knockdown_Timer -= diff;
+        } else Knockdown_Timer -= diff;
 
         if (Snap_Kick_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_SNAP_KICK);
             Snap_Kick_Timer  = 4500;
-        }else Snap_Kick_Timer -= diff;
+        } else Snap_Kick_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -770,7 +770,7 @@ struct OREGON_DLL_DECL boss_yazzaiAI : public boss_priestess_guestAI
                 DoModifyThreatPercent(target,-100);
                 Polymorph_Timer = 20000;
             }
-        }else Polymorph_Timer -= diff;
+        } else Polymorph_Timer -= diff;
 
         if (((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 35) && !HasIceBlocked)
         {
@@ -782,25 +782,25 @@ struct OREGON_DLL_DECL boss_yazzaiAI : public boss_priestess_guestAI
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_BLIZZARD);
             Blizzard_Timer = 8000;
-        }else Blizzard_Timer -= diff;
+        } else Blizzard_Timer -= diff;
 
         if (Ice_Lance_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_ICE_LANCE);
             Ice_Lance_Timer = 12000;
-        }else Ice_Lance_Timer -= diff;
+        } else Ice_Lance_Timer -= diff;
 
         if (Cone_of_Cold_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_CONE_OF_COLD);
             Cone_of_Cold_Timer = 10000;
-        }else Cone_of_Cold_Timer -= diff;
+        } else Cone_of_Cold_Timer -= diff;
 
         if (Frostbolt_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_FROSTBOLT);
             Frostbolt_Timer = 8000;
-        }else Frostbolt_Timer -= diff;
+        } else Frostbolt_Timer -= diff;
 
         if (Blink_Timer < diff)
         {
@@ -827,7 +827,7 @@ struct OREGON_DLL_DECL boss_yazzaiAI : public boss_priestess_guestAI
                 DoTeleportTo(x, y, z);
             }
             Blink_Timer = 8000;
-        }else Blink_Timer -= diff;
+        } else Blink_Timer -= diff;
 
         if (m_creature->getVictim() && m_creature->GetDistance(m_creature->getVictim()) <= 10)
             m_creature->StopMoving();
@@ -898,37 +898,37 @@ struct OREGON_DLL_DECL boss_warlord_salarisAI : public boss_priestess_guestAI
             if (!InMeleeRange)
                 DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_INTERCEPT_STUN);
             Intercept_Stun_Timer = 10000;
-        }else Intercept_Stun_Timer -= diff;
+        } else Intercept_Stun_Timer -= diff;
 
         if (Disarm_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_DISARM);
             Disarm_Timer = 6000;
-        }else Disarm_Timer -= diff;
+        } else Disarm_Timer -= diff;
 
         if (Hamstring_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_HAMSTRING);
             Hamstring_Timer = 4500;
-        }else Hamstring_Timer -= diff;
+        } else Hamstring_Timer -= diff;
 
         if (Mortal_Strike_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_MORTAL_STRIKE);
             Mortal_Strike_Timer = 4500;
-        }else Mortal_Strike_Timer -= diff;
+        } else Mortal_Strike_Timer -= diff;
 
         if (Piercing_Howl_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_PIERCING_HOWL);
             Piercing_Howl_Timer = 10000;
-        }else Piercing_Howl_Timer -= diff;
+        } else Piercing_Howl_Timer -= diff;
 
         if (Frightening_Shout_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_FRIGHTENING_SHOUT);
             Frightening_Shout_Timer = 18000;
-        }else Frightening_Shout_Timer -= diff;
+        } else Frightening_Shout_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -1022,42 +1022,42 @@ struct OREGON_DLL_DECL boss_garaxxasAI : public boss_priestess_guestAI
             {
                 DoCast(m_creature->getVictim(), SPELL_WING_CLIP);
                 Wing_Clip_Timer = 4000;
-            }else Wing_Clip_Timer -= diff;
+            } else Wing_Clip_Timer -= diff;
 
             if (Freezing_Trap_Timer < diff)
             {
                 DoCast(m_creature->getVictim(), SPELL_FREEZING_TRAP);
                 DoModifyThreatPercent(m_creature->getVictim(),-100);
                 Freezing_Trap_Timer = 30000;
-            }else Freezing_Trap_Timer -= diff;
+            } else Freezing_Trap_Timer -= diff;
 
             if (!m_creature->getVictim()->hasUnitState(UNIT_STAT_STUNNED | UNIT_STAT_ROOT | UNIT_STAT_CONFUSED | UNIT_STAT_DISTRACTED))
                 DoMeleeAttackIfReady();
-        }else
+        } else
         {
             if (Concussive_Shot_Timer < diff)
             {
                 DoCast(m_creature->getVictim(), SPELL_CONCUSSIVE_SHOT);
                 Concussive_Shot_Timer = 8000;
-            }else Concussive_Shot_Timer -= diff;
+            } else Concussive_Shot_Timer -= diff;
 
             if (Multi_Shot_Timer < diff)
             {
                 DoCast(m_creature->getVictim(), SPELL_MULTI_SHOT);
                 Multi_Shot_Timer = 10000;
-            }else Multi_Shot_Timer -= diff;
+            } else Multi_Shot_Timer -= diff;
 
             if (Aimed_Shot_Timer < diff)
             {
                 DoCast(m_creature->getVictim(), SPELL_AIMED_SHOT);
                 Aimed_Shot_Timer = 6000;
-            }else Aimed_Shot_Timer -= diff;
+            } else Aimed_Shot_Timer -= diff;
 
             if (Shoot_Timer < diff)
             {
                 DoCast(m_creature->getVictim(), SPELL_SHOOT);
                 Shoot_Timer = 2500;
-            }else Shoot_Timer -= diff;
+            } else Shoot_Timer -= diff;
         }
         if (StopMoving < diff)
         {
@@ -1066,7 +1066,7 @@ struct OREGON_DLL_DECL boss_garaxxasAI : public boss_priestess_guestAI
             else
                 Stopped = true;
             StopMoving = 2000+rand()%5000;
-        }else StopMoving -= diff;
+        } else StopMoving -= diff;
         if (Stopped)
             m_creature->StopMoving();
     }
@@ -1133,25 +1133,25 @@ struct OREGON_DLL_DECL boss_apokoAI : public boss_priestess_guestAI
             }
             ++Totem_Amount;
             Totem_Timer = Totem_Amount*2000;
-        }else Totem_Timer -= diff;
+        } else Totem_Timer -= diff;
 
         if (War_Stomp_Timer < diff)
         {
             DoCast(m_creature, SPELL_WAR_STOMP);
             War_Stomp_Timer = 10000;
-        }else War_Stomp_Timer -= diff;
+        } else War_Stomp_Timer -= diff;
 
         if (Purge_Timer < diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_PURGE);
             Purge_Timer = 15000;
-        }else Purge_Timer -= diff;
+        } else Purge_Timer -= diff;
 
         if (Frost_Shock_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_FROST_SHOCK);
             Frost_Shock_Timer = 7000;
-        }else Frost_Shock_Timer -= diff;
+        } else Frost_Shock_Timer -= diff;
 
         if (Healing_Wave_Timer < diff)
         {
@@ -1166,7 +1166,7 @@ struct OREGON_DLL_DECL boss_apokoAI : public boss_priestess_guestAI
             Healing_Wave_Timer = 5000;
             //    }
             // }
-        }else Healing_Wave_Timer -= diff;
+        } else Healing_Wave_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -1216,20 +1216,20 @@ struct OREGON_DLL_DECL boss_zelfanAI : public boss_priestess_guestAI
             {
                 Goblin_Dragon_Gun_Timer = 10000;
                 DoCast(m_creature->getVictim(), SPELL_GOBLIN_DRAGON_GUN);
-            }else Goblin_Dragon_Gun_Timer = 2000;
-        }else Goblin_Dragon_Gun_Timer -= diff;
+            } else Goblin_Dragon_Gun_Timer = 2000;
+        } else Goblin_Dragon_Gun_Timer -= diff;
 
         if (Rocket_Launch_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_ROCKET_LAUNCH);
             Rocket_Launch_Timer = 9000;
-        }else Rocket_Launch_Timer -= diff;
+        } else Rocket_Launch_Timer -= diff;
 
         if (Fel_Iron_Bomb_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_FEL_IRON_BOMB);
             Fel_Iron_Bomb_Timer = 15000;
-        }else Fel_Iron_Bomb_Timer -= diff;
+        } else Fel_Iron_Bomb_Timer -= diff;
 
         if (Recombobulate_Timer < diff)
         {
@@ -1240,13 +1240,13 @@ struct OREGON_DLL_DECL boss_zelfanAI : public boss_priestess_guestAI
                         DoCast(pAdd, SPELL_RECOMBOBULATE);
                         break;
                     }
-        }else Recombobulate_Timer -= diff;
+        } else Recombobulate_Timer -= diff;
 
         if (High_Explosive_Sheep_Timer < diff)
         {
             DoCast(m_creature, SPELL_HIGH_EXPLOSIVE_SHEEP);
             High_Explosive_Sheep_Timer = 65000;
-        }else High_Explosive_Sheep_Timer -= diff;
+        } else High_Explosive_Sheep_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -1272,7 +1272,7 @@ struct OREGON_DLL_DECL boss_zelfanAI : public boss_priestess_guestAI
 //        if (Explosion_Timer < diff)
 //        {
 //            DoCast(m_creature->getVictim(), SPELL_SHEEP_EXPLOSION);
-//        }else
+//        } else
 //            Explosion_Timer -= diff;
 //    }
 //};

@@ -109,7 +109,7 @@ struct OREGON_DLL_DECL npc_ameAI : public npc_escortAI
         {
             DoCast(m_creature->getVictim(),SPELL_DEMORALIZINGSHOUT);
             DEMORALIZINGSHOUT_Timer = 70000;
-        }else DEMORALIZINGSHOUT_Timer -= diff;
+        } else DEMORALIZINGSHOUT_Timer -= diff;
 
     }
 };

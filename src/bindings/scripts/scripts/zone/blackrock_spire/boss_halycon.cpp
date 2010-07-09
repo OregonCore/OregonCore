@@ -61,14 +61,14 @@ struct OREGON_DLL_DECL boss_halyconAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_CROWDPUMMEL);
             CrowdPummel_Timer = 14000;
-        }else CrowdPummel_Timer -= diff;
+        } else CrowdPummel_Timer -= diff;
 
         //MightyBlow_Timer
         if (MightyBlow_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_MIGHTYBLOW);
             MightyBlow_Timer = 10000;
-        }else MightyBlow_Timer -= diff;
+        } else MightyBlow_Timer -= diff;
 
         //Summon Gizrul
         if (!Summoned && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 25)

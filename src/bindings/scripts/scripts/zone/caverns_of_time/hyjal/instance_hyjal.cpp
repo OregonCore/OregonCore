@@ -259,7 +259,7 @@ struct OREGON_DLL_DECL instance_mount_hyjal : public ScriptedInstance
                     if (Player* player = itr->getSource())
                         player->SendUpdateWorldState(id,state);
                 }
-        }else debug_log("TSCR: Instance Hyjal: UpdateWorldState, but PlayerList is empty!");
+        } else debug_log("TSCR: Instance Hyjal: UpdateWorldState, but PlayerList is empty!");
     }
 
     const char* Save()

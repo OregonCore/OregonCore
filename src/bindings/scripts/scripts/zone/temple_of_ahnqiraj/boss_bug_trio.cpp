@@ -87,14 +87,14 @@ struct OREGON_DLL_DECL boss_kriAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 5000 + rand()%7000;
-        }else Cleave_Timer -= diff;
+        } else Cleave_Timer -= diff;
 
         //ToxicVolley_Timer
         if (ToxicVolley_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_TOXIC_VOLLEY);
             ToxicVolley_Timer = 10000 + rand()%5000;
-        }else ToxicVolley_Timer -= diff;
+        } else ToxicVolley_Timer -= diff;
 
         if (m_creature->GetHealth() <= m_creature->GetMaxHealth() * 0.05 && !Death)
         {
@@ -113,7 +113,7 @@ struct OREGON_DLL_DECL boss_kriAI : public ScriptedAI
                     VemDead = true;
                 }
                 Check_Timer = 2000;
-            }else Check_Timer -=diff;
+            } else Check_Timer -=diff;
         }
 
         DoMeleeAttackIfReady();
@@ -179,7 +179,7 @@ struct OREGON_DLL_DECL boss_vemAI : public ScriptedAI
             }
 
             Charge_Timer = 8000 + rand()%8000;
-        }else Charge_Timer -= diff;
+        } else Charge_Timer -= diff;
 
         //KnockBack_Timer
         if (KnockBack_Timer < diff)
@@ -188,14 +188,14 @@ struct OREGON_DLL_DECL boss_vemAI : public ScriptedAI
             if (DoGetThreat(m_creature->getVictim()))
                 DoModifyThreatPercent(m_creature->getVictim(),-80);
             KnockBack_Timer = 15000 + rand()%10000;
-        }else KnockBack_Timer -= diff;
+        } else KnockBack_Timer -= diff;
 
         //Enrage_Timer
         if (!Enraged && Enrage_Timer < diff)
         {
             DoCast(m_creature,SPELL_ENRAGE);
             Enraged = true;
-        }else Charge_Timer -= diff;
+        } else Charge_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -260,7 +260,7 @@ struct OREGON_DLL_DECL boss_yaujAI : public ScriptedAI
             DoCast(m_creature->getVictim(),SPELL_FEAR);
             DoResetThreat();
             Fear_Timer = 20000;
-        }else Fear_Timer -= diff;
+        } else Fear_Timer -= diff;
 
         //Casting Heal to other twins or herself.
         if (Heal_Timer < diff)
@@ -287,7 +287,7 @@ struct OREGON_DLL_DECL boss_yaujAI : public ScriptedAI
             }
 
             Heal_Timer = 15000+rand()%15000;
-        }else Heal_Timer -= diff;
+        } else Heal_Timer -= diff;
 
         //Checking if Vem is dead. If yes we will enrage.
         if (Check_Timer < diff)
@@ -304,7 +304,7 @@ struct OREGON_DLL_DECL boss_yaujAI : public ScriptedAI
                 }
             }
             Check_Timer = 2000;
-        }else Check_Timer -= diff;
+        } else Check_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

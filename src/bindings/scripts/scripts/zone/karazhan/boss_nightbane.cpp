@@ -131,7 +131,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                 m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 m_creature->RemoveCorpse();
                 return;
-            }else
+            } else
             {
 
                 BellowingRoarTimer = 30000;
@@ -320,7 +320,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
             }
 
             WaitTimer = 0;
-        }else WaitTimer -= diff;
+        } else WaitTimer -= diff;
 
         if (!UpdateVictim())
             return;
@@ -341,20 +341,20 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
             {
                 DoCast(m_creature->getVictim(),SPELL_BELLOWING_ROAR);
                 BellowingRoarTimer = 30000+rand()%10000 ; //Timer
-            }else BellowingRoarTimer -= diff;
+            } else BellowingRoarTimer -= diff;
 
             if (SmolderingBreathTimer < diff)
             {
                 DoCast(m_creature->getVictim(),SPELL_SMOLDERING_BREATH);
                 SmolderingBreathTimer = 20000;//timer
-            }else SmolderingBreathTimer -= diff;
+            } else SmolderingBreathTimer -= diff;
 
             if (CharredEarthTimer < diff)
             {
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1))
                     DoCast(target,SPELL_CHARRED_EARTH);
                 CharredEarthTimer = 20000; //timer
-            }else CharredEarthTimer -= diff;
+            } else CharredEarthTimer -= diff;
 
             if (TailSweepTimer < diff)
             {
@@ -362,14 +362,14 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                     if (!m_creature->HasInArc(M_PI, target))
                         DoCast(target,SPELL_TAIL_SWEEP);
                 TailSweepTimer = 15000;//timer
-            }else TailSweepTimer -= diff;
+            } else TailSweepTimer -= diff;
 
             if (SearingCindersTimer < diff)
             {
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(target,SPELL_SEARING_CINDERS);
                 SearingCindersTimer = 10000; //timer
-            }else SearingCindersTimer -= diff;
+            } else SearingCindersTimer -= diff;
 
             uint32 Prozent;
             Prozent = (m_creature->GetHealth()*100) / m_creature->GetMaxHealth();
@@ -404,14 +404,14 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                     DoCast(m_creature->getVictim(),SPELL_RAIN_OF_BONES);
                     RainBones = true;
                     SmokingBlastTimer = 20000;
-                }else RainofBonesTimer -= diff;
+                } else RainofBonesTimer -= diff;
 
                 if (DistractingAshTimer < diff)
                 {
                     if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
                         DoCast(target,SPELL_DISTRACTING_ASH);
                     DistractingAshTimer = 2000;//timer wrong
-                }else DistractingAshTimer -= diff;
+                } else DistractingAshTimer -= diff;
             }
 
             if (RainBones)
@@ -420,7 +420,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                  {
                     DoCast(m_creature->getVictim(),SPELL_SMOKING_BLAST);
                     SmokingBlastTimer = 1500 ; //timer wrong
-                 }else SmokingBlastTimer -= diff;
+                 } else SmokingBlastTimer -= diff;
             }
 
             if (FireballBarrageTimer < diff)
@@ -437,7 +437,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                         }
                 }
                 FireballBarrageTimer = 2000; //Timer fehlen noch
-            }else FireballBarrageTimer -= diff;
+            } else FireballBarrageTimer -= diff;
 
             if (FlyTimer < diff) //landing
             {
@@ -450,7 +450,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                 m_creature->GetMotionMaster()->MovePoint(3,IntroWay[3][0],IntroWay[3][1],IntroWay[3][2]);
                 Flying = true;
 
-            }else FlyTimer -= diff;
+            } else FlyTimer -= diff;
         }
     }
 };

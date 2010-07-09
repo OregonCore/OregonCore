@@ -73,7 +73,7 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
             Invisible = true;
 
             Invisible_Timer = 15000 + rand()%15000;
-        }else Invisible_Timer -= diff;
+        } else Invisible_Timer -= diff;
 
         if (Invisible)
         {
@@ -89,7 +89,7 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
 
                 Ambushed = true;
                 Ambush_Timer = 3000;
-            }else Ambush_Timer -= diff;
+            } else Ambush_Timer -= diff;
         }
 
         if (Ambushed)
@@ -106,7 +106,7 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
                 Invisible = false;
 
                 Visible_Timer = 4000;
-            }else Visible_Timer -= diff;
+            } else Visible_Timer -= diff;
         }
 
         //Resetting some aggro so he attacks other gamers
@@ -123,14 +123,14 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
                 AttackStart(target);
 
             Aggro_Timer = 7000 + rand()%13000;
-        }else Aggro_Timer -= diff;
+        } else Aggro_Timer -= diff;
 
         if (!Invisible)
             if (ThousandBlades_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_THOUSANDBLADES);
             ThousandBlades_Timer = 7000 + rand()%5000;
-        }else ThousandBlades_Timer -= diff;
+        } else ThousandBlades_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

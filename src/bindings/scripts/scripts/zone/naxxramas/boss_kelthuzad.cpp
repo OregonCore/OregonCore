@@ -284,14 +284,14 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                 DoCast(m_creature->getVictim(),SPELL_FROST_BOLT);
                 //Cast again on time
                 FrostBolt_Timer = (rand()%60)*1000;
-            }else FrostBolt_Timer -= diff;
+            } else FrostBolt_Timer -= diff;
 
             //Check for Frost Bolt Nova
             if (FrostBoltNova_Timer < diff)
             {
                 DoCast(m_creature->getVictim(),SPELL_FROST_BOLT_NOVA);
                 FrostBoltNova_Timer = 15000;
-            }else FrostBoltNova_Timer -= diff;
+            } else FrostBoltNova_Timer -= diff;
 
             //Check for Chains Of Kelthuzad
             if (ChainsOfKelthuzad_Timer < diff)
@@ -303,7 +303,7 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                 //else
                     //DoScriptText(SAY_CHAIN2, m_creature);
                 ChainsOfKelthuzad_Timer = (rand()%30+30)*1000;
-            }else ChainsOfKelthuzad_Timer -= diff;
+            } else ChainsOfKelthuzad_Timer -= diff;
 
             //Check for Mana Detonation
             if (ManaDetonation_Timer < diff)
@@ -314,7 +314,7 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                  if (rand()%2)
                      DoScriptText(SAY_SPECIAL1_MANA_DET, m_creature);
                 ManaDetonation_Timer = 20000;
-            }else ManaDetonation_Timer -= diff;
+            } else ManaDetonation_Timer -= diff;
 
             //Check for Shadow Fissure
             if (ShadowFisure_Timer < diff)
@@ -324,7 +324,7 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                if (rand()%2)
                    DoScriptText(SAY_SPECIAL3_MANA_DET, m_creature);
                 ShadowFisure_Timer = 25000;
-            }else ShadowFisure_Timer -= diff;
+            } else ShadowFisure_Timer -= diff;
 
             //Check for Frost Blast
             if (FrostBlast_Timer < diff)
@@ -335,7 +335,7 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                 if (rand()%2 == 0)
                     DoScriptText(SAY_FROST_BLAST, m_creature);
                 FrostBlast_Timer = (rand()%30+30)*1000;
-            }else FrostBlast_Timer -= diff;
+            } else FrostBlast_Timer -= diff;
 
             //start phase 3 when we are 40% health
             if (!Phase3 && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 40)

@@ -120,19 +120,19 @@ struct OREGON_DLL_DECL boss_pathaleon_the_calculatorAI : public ScriptedAI
             }
             DoScriptText(SAY_SUMMON, m_creature);
             Summon_Timer = 30000 + rand()%15000;
-        }else Summon_Timer -= diff;
+        } else Summon_Timer -= diff;
 
         if (ManaTap_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_MANA_TAP);
             ManaTap_Timer = 14000 + rand()%8000;
-        }else ManaTap_Timer -= diff;
+        } else ManaTap_Timer -= diff;
 
         if (ArcaneTorrent_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_ARCANE_TORRENT);
             ArcaneTorrent_Timer = 12000 + rand()%6000;
-        }else ArcaneTorrent_Timer -= diff;
+        } else ArcaneTorrent_Timer -= diff;
 
         if (Domination_Timer < diff)
         {
@@ -147,7 +147,7 @@ struct OREGON_DLL_DECL boss_pathaleon_the_calculatorAI : public ScriptedAI
                 DoCast(target,SPELL_DOMINATION);
             }
                 Domination_Timer = 25000 + rand()%5000;
-            }else Domination_Timer -= diff;
+            } else Domination_Timer -= diff;
 
         //Only casting if Heroic Mode is used
         if (HeroicMode)
@@ -156,7 +156,7 @@ struct OREGON_DLL_DECL boss_pathaleon_the_calculatorAI : public ScriptedAI
             {
                 DoCast(m_creature->getVictim(),H_SPELL_ARCANE_EXPLOSION);
                 ArcaneExplosion_Timer = 10000 + rand()%4000;
-            }else ArcaneExplosion_Timer -= diff;
+            } else ArcaneExplosion_Timer -= diff;
         }
 
         if (!Enraged && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 21)
@@ -212,7 +212,7 @@ struct OREGON_DLL_DECL mob_nether_wraithAI : public ScriptedAI
                 DoCast(m_creature->getVictim(),SPELL_ARCANE_MISSILES);
 
             ArcaneMissiles_Timer = 5000 + rand()%5000;
-        }else ArcaneMissiles_Timer -=diff;
+        } else ArcaneMissiles_Timer -=diff;
 
         if (!Detonation)
         {
@@ -220,7 +220,7 @@ struct OREGON_DLL_DECL mob_nether_wraithAI : public ScriptedAI
             {
                 DoCast(m_creature,SPELL_DETONATION);
                 Detonation = true;
-            }else Detonation_Timer -= diff;
+            } else Detonation_Timer -= diff;
         }
 
         if (Detonation)
@@ -229,7 +229,7 @@ struct OREGON_DLL_DECL mob_nether_wraithAI : public ScriptedAI
             {
                 m_creature->setDeathState(JUST_DIED);
                 m_creature->RemoveCorpse();
-            }else Die_Timer -= diff;
+            } else Die_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();

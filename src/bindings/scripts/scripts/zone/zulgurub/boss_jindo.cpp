@@ -82,7 +82,7 @@ struct OREGON_DLL_DECL boss_jindoAI : public ScriptedAI
         {
             DoCast(m_creature, SPELL_BRAINWASHTOTEM);
             BrainWashTotem_Timer = 18000 + rand()%8000;
-        }else BrainWashTotem_Timer -= diff;
+        } else BrainWashTotem_Timer -= diff;
 
         //HealingWard_Timer
         if (HealingWard_Timer < diff)
@@ -90,7 +90,7 @@ struct OREGON_DLL_DECL boss_jindoAI : public ScriptedAI
             //DoCast(m_creature, SPELL_POWERFULLHEALINGWARD);
             HealingWard = m_creature->SummonCreature(14987, m_creature->GetPositionX()+3, m_creature->GetPositionY()-2, m_creature->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,30000);
             HealingWard_Timer = 14000 + rand()%6000;
-        }else HealingWard_Timer -= diff;
+        } else HealingWard_Timer -= diff;
 
         //Hex_Timer
         if (Hex_Timer < diff)
@@ -101,7 +101,7 @@ struct OREGON_DLL_DECL boss_jindoAI : public ScriptedAI
                 DoModifyThreatPercent(m_creature->getVictim(),-80);
 
             Hex_Timer = 12000 + rand()%8000;
-        }else Hex_Timer -= diff;
+        } else Hex_Timer -= diff;
 
         //Casting the delusion curse with a shade. So shade will attack the same target with the curse.
         if (Delusions_Timer < diff)
@@ -116,7 +116,7 @@ struct OREGON_DLL_DECL boss_jindoAI : public ScriptedAI
             }
 
             Delusions_Timer = 4000 + rand()%8000;
-        }else Delusions_Timer -= diff;
+        } else Delusions_Timer -= diff;
 
         //Teleporting a random gamer and spawning 9 skeletons that will attack this gamer
         if (Teleport_Timer < diff)
@@ -160,7 +160,7 @@ struct OREGON_DLL_DECL boss_jindoAI : public ScriptedAI
             }
 
             Teleport_Timer = 15000 + rand()%8000;
-        }else Teleport_Timer -= diff;
+        } else Teleport_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -199,7 +199,7 @@ struct OREGON_DLL_DECL mob_healing_wardAI : public ScriptedAI
                     DoCast(pJindo, SPELL_HEAL);
             }
             Heal_Timer = 3000;
-        }else Heal_Timer -= diff;
+        } else Heal_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -235,7 +235,7 @@ struct OREGON_DLL_DECL mob_shade_of_jindoAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_SHADOWSHOCK);
             ShadowShock_Timer = 2000;
-        }else ShadowShock_Timer -= diff;
+        } else ShadowShock_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

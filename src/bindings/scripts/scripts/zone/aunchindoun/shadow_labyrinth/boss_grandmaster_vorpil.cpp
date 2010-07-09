@@ -120,7 +120,7 @@ struct OREGON_DLL_DECL mob_voidtravelerAI : public ScriptedAI
                 return;
             }
             move = 1000;
-        }else move -= diff;
+        } else move -= diff;
     }
 };
 CreatureAI* GetAI_mob_voidtraveler(Creature *_Creature)
@@ -264,7 +264,7 @@ struct OREGON_DLL_DECL boss_grandmaster_vorpilAI : public ScriptedAI
         {
             DoCast(m_creature,SPELL_SHADOWBOLT_VOLLEY);
             ShadowBoltVolley_Timer = 15000;
-        }else ShadowBoltVolley_Timer -= diff;
+        } else ShadowBoltVolley_Timer -= diff;
 
         if (HeroicMode && banish_Timer < diff)
         {
@@ -274,7 +274,7 @@ struct OREGON_DLL_DECL boss_grandmaster_vorpilAI : public ScriptedAI
                 DoCast(target,SPELL_BANISH);
                 banish_Timer = 16000;
             }
-        }else banish_Timer -= diff;
+        } else banish_Timer -= diff;
 
         if (DrawShadows_Timer < diff)
         {
@@ -292,7 +292,7 @@ struct OREGON_DLL_DECL boss_grandmaster_vorpilAI : public ScriptedAI
 
             ShadowBoltVolley_Timer = 6000;
             DrawShadows_Timer = 30000;
-        }else DrawShadows_Timer -= diff;
+        } else DrawShadows_Timer -= diff;
 
         if (summonTraveler_Timer < diff)
         {
@@ -301,7 +301,7 @@ struct OREGON_DLL_DECL boss_grandmaster_vorpilAI : public ScriptedAI
             //enrage at 20%
             if ((m_creature->GetHealth()*5) < m_creature->GetMaxHealth())
                 summonTraveler_Timer = 5000;
-        }else summonTraveler_Timer -=diff;
+        } else summonTraveler_Timer -=diff;
 
         DoMeleeAttackIfReady();
     }

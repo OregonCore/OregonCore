@@ -63,14 +63,14 @@ struct OREGON_DLL_DECL boss_magmadarAI : public ScriptedAI
             DoScriptText(EMOTE_FRENZY, m_creature);
             DoCast(m_creature,SPELL_FRENZY);
             Frenzy_Timer = 15000;
-        }else Frenzy_Timer -= diff;
+        } else Frenzy_Timer -= diff;
 
         //Panic_Timer
         if (Panic_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_PANIC);
             Panic_Timer = 35000;
-        }else Panic_Timer -= diff;
+        } else Panic_Timer -= diff;
 
         //Lavabomb_Timer
         if (Lavabomb_Timer < diff)
@@ -79,7 +79,7 @@ struct OREGON_DLL_DECL boss_magmadarAI : public ScriptedAI
                 DoCast(target,SPELL_LAVABOMB_ALT);
 
             Lavabomb_Timer = 12000;
-        }else Lavabomb_Timer -= diff;
+        } else Lavabomb_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

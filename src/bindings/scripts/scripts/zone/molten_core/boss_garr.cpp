@@ -63,14 +63,14 @@ struct OREGON_DLL_DECL boss_garrAI : public ScriptedAI
         {
             DoCast(m_creature,SPELL_ANTIMAGICPULSE);
             AntiMagicPulse_Timer = 10000 + rand()%5000;
-        }else AntiMagicPulse_Timer -= diff;
+        } else AntiMagicPulse_Timer -= diff;
 
         //MagmaShackles_Timer
         if (MagmaShackles_Timer < diff)
         {
             DoCast(m_creature,SPELL_MAGMASHACKLES);
             MagmaShackles_Timer = 8000 + rand()%4000;
-        }else MagmaShackles_Timer -= diff;
+        } else MagmaShackles_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -103,7 +103,7 @@ struct OREGON_DLL_DECL mob_fireswornAI : public ScriptedAI
                 DoCast(target,SPELL_IMMOLATE);
 
             Immolate_Timer = 5000 + rand()%5000;
-        }else Immolate_Timer -= diff;
+        } else Immolate_Timer -= diff;
 
         //Cast Erruption and let them die
         if (m_creature->GetHealth() <= m_creature->GetMaxHealth() * 0.10)

@@ -69,7 +69,7 @@ struct OREGON_DLL_DECL npc_raliq_the_drunkAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_UPPERCUT);
             Uppercut_Timer = 15000;
-        }else Uppercut_Timer -= diff;
+        } else Uppercut_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -143,7 +143,7 @@ struct OREGON_DLL_DECL npc_salsalabimAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_MAGNETIC_PULL);
             MagneticPull_Timer = 15000;
-        }else MagneticPull_Timer -= diff;
+        } else MagneticPull_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -493,7 +493,7 @@ struct OREGON_DLL_DECL npc_dirty_larryAI : public ScriptedAI
         {
             if (Event)
                 SayTimer = NextStep(++Step);
-        }else SayTimer -= diff;
+        } else SayTimer -= diff;
 
         if (Attack)
         {

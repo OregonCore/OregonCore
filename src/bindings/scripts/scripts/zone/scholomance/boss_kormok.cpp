@@ -109,14 +109,14 @@ struct OREGON_DLL_DECL boss_kormokAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_SHADOWBOLTVOLLEY);
             ShadowVolley_Timer = 15000;
-        }else ShadowVolley_Timer -= diff;
+        } else ShadowVolley_Timer -= diff;
 
         //BoneShield_Timer
         if (BoneShield_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_BONESHIELD);
             BoneShield_Timer = 45000;
-        }else BoneShield_Timer -= diff;
+        } else BoneShield_Timer -= diff;
 
         //Minion_Timer
         if (Minion_Timer < diff)
@@ -128,7 +128,7 @@ struct OREGON_DLL_DECL boss_kormokAI : public ScriptedAI
             SummonMinion(m_creature->getVictim());
 
             Minion_Timer = 12000;
-        }else Minion_Timer -= diff;
+        } else Minion_Timer -= diff;
 
         //Summon 2 Bone Mages
         if (!Mages && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 26)

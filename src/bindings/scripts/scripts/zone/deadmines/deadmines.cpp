@@ -87,7 +87,7 @@ struct OREGON_DLL_DECL instance_deadmines : public ScriptedInstance
                     IronCladDoor->Yell(SAY_MR_SMITE_ALARM2, LANG_UNIVERSAL, 0);
                     DoPlaySound(IronCladDoor, SOUND_MR_SMITE_ALARM2);
                     State = PIRATES_ATTACK;
-                }else
+                } else
                     CannonBlast_Timer-=diff;
                 break;
             case PIRATES_ATTACK:
@@ -95,7 +95,7 @@ struct OREGON_DLL_DECL instance_deadmines : public ScriptedInstance
                 {
                     MoveCreaturesInside();
                     State = EVENT_DONE;
-                }else
+                } else
                     PiratesDelay_Timer-=diff;
                 break;
         }

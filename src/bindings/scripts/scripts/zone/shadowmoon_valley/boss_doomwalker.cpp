@@ -101,7 +101,7 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
                 DoCast(m_creature,SPELL_ENRAGE);
                 Enrage_Timer = 6000;
                 InEnrage = true;
-            }else Enrage_Timer -= diff;
+            } else Enrage_Timer -= diff;
         }
 
         //Spell Overrun
@@ -115,7 +115,7 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
 
             DoCast(m_creature->getVictim(),SPELL_OVERRUN);
             Overrun_Timer = 25000 + rand()%15000;
-        }else Overrun_Timer -= diff;
+        } else Overrun_Timer -= diff;
 
         //Spell Earthquake
         if (Quake_Timer < diff)
@@ -135,7 +135,7 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
 
             DoCast(m_creature,SPELL_EARTHQUAKE);
             Quake_Timer = 30000 + rand()%25000;
-        }else Quake_Timer -= diff;
+        } else Quake_Timer -= diff;
 
         //Spell Chain Lightning
         if (Chain_Timer < diff)
@@ -150,14 +150,14 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
                 DoCast(target,SPELL_CHAIN_LIGHTNING);
 
             Chain_Timer = 10000 + rand()%25000;
-        }else Chain_Timer -= diff;
+        } else Chain_Timer -= diff;
 
         //Spell Sunder Armor
         if (Armor_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_SUNDER_ARMOR);
             Armor_Timer = 10000 + rand()%15000;
-        }else Armor_Timer -= diff;
+        } else Armor_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

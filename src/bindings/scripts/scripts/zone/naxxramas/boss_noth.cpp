@@ -106,14 +106,14 @@ struct OREGON_DLL_DECL boss_nothAI : public ScriptedAI
             DoCast(m_creature,SPELL_BLINK);
 
             Blink_Timer = 25000;
-        }else Blink_Timer -= diff;
+        } else Blink_Timer -= diff;
 
         //Curse_Timer
         if (Curse_Timer < diff)
         {
              DoCast(m_creature->getVictim(),SPELL_CURSE_PLAGUEBRINGER);
             Curse_Timer = 28000;
-        }else Curse_Timer -= diff;
+        } else Curse_Timer -= diff;
 
         //Summon_Timer
         if (Summon_Timer < diff)

@@ -98,13 +98,13 @@ struct OREGON_DLL_DECL boss_sarturaAI : public ScriptedAI
                     AttackStart(target);
 
                 WhirlWindRandom_Timer = 3000 + rand()%4000;
-            }else WhirlWindRandom_Timer -= diff;
+            } else WhirlWindRandom_Timer -= diff;
 
             if (WhirlWindEnd_Timer < diff)
             {
                 WhirlWind = false;
                 WhirlWind_Timer = 25000 + rand()%15000;
-            }else WhirlWindEnd_Timer -= diff;
+            } else WhirlWindEnd_Timer -= diff;
         }
 
         if (!WhirlWind)
@@ -114,7 +114,7 @@ struct OREGON_DLL_DECL boss_sarturaAI : public ScriptedAI
                 DoCast(m_creature, SPELL_WHIRLWIND);
                 WhirlWind = true;
                 WhirlWindEnd_Timer = 15000;
-            }else WhirlWind_Timer -= diff;
+            } else WhirlWind_Timer -= diff;
 
             if (AggroReset_Timer < diff)
             {
@@ -124,7 +124,7 @@ struct OREGON_DLL_DECL boss_sarturaAI : public ScriptedAI
 
                     AggroReset = true;
                     AggroReset_Timer = 2000 + rand()%3000;
-            }else AggroReset_Timer -= diff;
+            } else AggroReset_Timer -= diff;
 
             if (AggroReset)
             {
@@ -204,7 +204,7 @@ struct OREGON_DLL_DECL mob_sartura_royal_guardAI : public ScriptedAI
             WhirlWind = true;
             WhirlWind_Timer = 25000 + rand()%15000;
             WhirlWindEnd_Timer = 15000;
-        }else WhirlWind_Timer -= diff;
+        } else WhirlWind_Timer -= diff;
 
         if (WhirlWind)
         {
@@ -215,12 +215,12 @@ struct OREGON_DLL_DECL mob_sartura_royal_guardAI : public ScriptedAI
                     m_creature->TauntApply(target);
 
                 WhirlWindRandom_Timer = 3000 + rand()%4000;
-            }else WhirlWindRandom_Timer -= diff;
+            } else WhirlWindRandom_Timer -= diff;
 
             if (WhirlWindEnd_Timer < diff)
             {
                 WhirlWind = false;
-            }else WhirlWindEnd_Timer -= diff;
+            } else WhirlWindEnd_Timer -= diff;
         }
 
         if (!WhirlWind)
@@ -233,13 +233,13 @@ struct OREGON_DLL_DECL mob_sartura_royal_guardAI : public ScriptedAI
 
                 AggroReset = true;
                 AggroReset_Timer = 2000 + rand()%3000;
-            }else AggroReset_Timer -= diff;
+            } else AggroReset_Timer -= diff;
 
             if (KnockBack_Timer < diff)
             {
                 DoCast(m_creature, SPELL_WHIRLWINDADD);
                 KnockBack_Timer = 10000 + rand()%10000;
-            }else KnockBack_Timer -= diff;
+            } else KnockBack_Timer -= diff;
         }
 
         if (AggroReset)

@@ -128,8 +128,8 @@ struct OREGON_DLL_DECL npc_testAI : public npc_escortAI
                     m_creature->CastSpell(m_creature->getVictim(), 33130, false);
 
                     DeathCoilTimer = 4000;
-                }else DeathCoilTimer -= diff;
-            }else
+                } else DeathCoilTimer -= diff;
+            } else
             {
                 //Out of combat but being escorted
                 if (HasEscortState(STATE_ESCORT_ESCORTING))
@@ -139,14 +139,14 @@ struct OREGON_DLL_DECL npc_testAI : public npc_escortAI
                     {
                         m_creature->Say(SAY_FIREWORKS, LANG_UNIVERSAL, 0);
                         m_creature->CastSpell(m_creature, 11540, false);
-                    }else
+                    } else
                     {
                         m_creature->Say(SAY_BUFF, LANG_UNIVERSAL, 0);
                         m_creature->CastSpell(m_creature, 3593, false);
                     }
 
                     ChatTimer = 12000;
-                }else ChatTimer -= diff;
+                } else ChatTimer -= diff;
             }
         }
 };

@@ -121,7 +121,7 @@ struct OREGON_DLL_DECL mob_unkor_the_ruthlessAI : public ScriptedAI
                 {
                     EnterEvadeMode();
                     return;
-                }else UnkorUnfriendly_Timer -= diff;
+                } else UnkorUnfriendly_Timer -= diff;
             }
         }
 
@@ -132,7 +132,7 @@ struct OREGON_DLL_DECL mob_unkor_the_ruthlessAI : public ScriptedAI
         {
             DoCast(m_creature,SPELL_PULVERIZE);
             Pulverize_Timer = 9000;
-        }else Pulverize_Timer -= diff;
+        } else Pulverize_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -222,7 +222,7 @@ struct OREGON_DLL_DECL mob_netherweb_victimAI : public ScriptedAI
                 {
                     DoSpawnCreature(QUEST_TARGET,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,60000);
                     ((Player*)Killer)->KilledMonster(QUEST_TARGET, m_creature->GetGUID());
-                }else
+                } else
                 DoSpawnCreature(netherwebVictims[rand()%6],0,0,0,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,60000);
 
                 if (rand()%100 < 75)
@@ -280,19 +280,19 @@ struct OREGON_DLL_DECL npc_floonAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_SILENCE);
             Silence_Timer = 30000;
-        }else Silence_Timer -= diff;
+        } else Silence_Timer -= diff;
 
         if (FrostNova_Timer < diff)
         {
             DoCast(m_creature,SPELL_FROST_NOVA);
             FrostNova_Timer = 20000;
-        }else FrostNova_Timer -= diff;
+        } else FrostNova_Timer -= diff;
 
         if (Frostbolt_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_FROSTBOLT);
             Frostbolt_Timer = 5000;
-        }else Frostbolt_Timer -= diff;
+        } else Frostbolt_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

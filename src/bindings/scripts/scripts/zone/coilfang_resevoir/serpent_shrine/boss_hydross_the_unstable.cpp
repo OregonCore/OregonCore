@@ -252,7 +252,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
                 }
 
                 MarkOfCorruption_Timer = 15000;
-            }else MarkOfCorruption_Timer -= diff;
+            } else MarkOfCorruption_Timer -= diff;
 
             //VileSludge_Timer
             if (VileSludge_Timer < diff)
@@ -262,7 +262,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
                     DoCast(target, SPELL_VILE_SLUDGE);
 
                 VileSludge_Timer = 15000;
-            }else VileSludge_Timer -= diff;
+            } else VileSludge_Timer -= diff;
 
             //PosCheck_Timer
             if (PosCheck_Timer < diff)
@@ -290,7 +290,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
                 }
 
                 PosCheck_Timer = 2500;
-            }else PosCheck_Timer -=diff;
+            } else PosCheck_Timer -=diff;
         }
         // clean form
         else
@@ -319,7 +319,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
                 }
 
                 MarkOfHydross_Timer = 15000;
-            }else MarkOfHydross_Timer -= diff;
+            } else MarkOfHydross_Timer -= diff;
 
             //WaterTomb_Timer
             if (WaterTomb_Timer < diff)
@@ -329,7 +329,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
                     DoCast(target, SPELL_WATER_TOMB);
 
                 WaterTomb_Timer = 7000;
-            }else WaterTomb_Timer -= diff;
+            } else WaterTomb_Timer -= diff;
 
             //PosCheck_Timer
             if (PosCheck_Timer < diff)
@@ -357,7 +357,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
                 }
 
                 PosCheck_Timer = 2500;
-            }else PosCheck_Timer -=diff;
+            } else PosCheck_Timer -=diff;
         }
 
         //EnrageTimer
@@ -365,7 +365,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
         {
             DoCast(m_creature, SPELL_ENRAGE);
             EnrageTimer = 60000;
-        }else EnrageTimer -= diff;
+        } else EnrageTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

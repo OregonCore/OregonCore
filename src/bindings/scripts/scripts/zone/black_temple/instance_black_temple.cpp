@@ -227,7 +227,7 @@ struct OREGON_DLL_DECL instance_black_temple : public ScriptedInstance
             if (data == IN_PROGRESS)
             {
                 HandleGameObject(ShadeOfAkamaDoor, false);
-            }else HandleGameObject(ShadeOfAkamaDoor, true);
+            } else HandleGameObject(ShadeOfAkamaDoor, true);
             if (Encounters[2] != DONE)
                 Encounters[2] = data;
             break;
@@ -236,7 +236,7 @@ struct OREGON_DLL_DECL instance_black_temple : public ScriptedInstance
             {
                 HandleGameObject(TeronDoor, false);
                 HandleGameObject(CommonDoor, false);
-            }else
+            } else
             {
                 HandleGameObject(TeronDoor, true);
                 HandleGameObject(CommonDoor, true);
@@ -273,7 +273,7 @@ struct OREGON_DLL_DECL instance_black_temple : public ScriptedInstance
             {
                 HandleGameObject(CouncilDoor, false);
                 HandleGameObject(SimpleDoor, false);
-            }else
+            } else
             {
                 HandleGameObject(CouncilDoor, true);
                 HandleGameObject(SimpleDoor, true);

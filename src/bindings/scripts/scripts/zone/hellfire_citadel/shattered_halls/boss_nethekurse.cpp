@@ -258,7 +258,7 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
                 if (IntroEvent_Timer < diff)
                 {
                     DoTauntPeons();
-                }else IntroEvent_Timer -= diff;
+                } else IntroEvent_Timer -= diff;
             }
         }
 
@@ -280,7 +280,7 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
             {
                 DoCast(m_creature->getVictim(),(HeroicMode ? H_SPELL_SHADOW_SLAM : SPELL_SHADOW_CLEAVE));
                 Cleave_Timer = 6000+rand()%2500;
-            }else Cleave_Timer -= diff;
+            } else Cleave_Timer -= diff;
         }
         else
         {
@@ -289,14 +289,14 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
                 if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
                     DoCast(target,SPELL_SHADOW_FISSURE);
                 ShadowFissure_Timer = 7500+rand()%7500;
-            }else ShadowFissure_Timer -= diff;
+            } else ShadowFissure_Timer -= diff;
 
             if (DeathCoil_Timer < diff)
             {
                 if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
                     DoCast(target,SPELL_DEATH_COIL);
                 DeathCoil_Timer = 15000+rand()%5000;
-            }else DeathCoil_Timer -= diff;
+            } else DeathCoil_Timer -= diff;
 
             if ((m_creature->GetHealth()*100) / m_creature->GetMaxHealth() <= 20)
                 Phase = true;
@@ -366,7 +366,7 @@ struct OREGON_DLL_DECL mob_fel_orc_convertAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_HEMORRHAGE);
             Hemorrhage_Timer = 15000;
-        }else Hemorrhage_Timer -= diff;
+        } else Hemorrhage_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -408,7 +408,7 @@ struct OREGON_DLL_DECL mob_lesser_shadow_fissureAI : public ScriptedAI
             m_creature->SetHealth(0);
             m_creature->CombatStop();
             m_creature->DeleteThreatList();
-        }else Stop_Timer -= diff;
+        } else Stop_Timer -= diff;
     }
 };
 

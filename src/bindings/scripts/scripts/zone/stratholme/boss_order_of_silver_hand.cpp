@@ -125,7 +125,7 @@ struct OREGON_DLL_DECL boss_silver_hand_bossesAI : public ScriptedAI
                 DoCast(m_creature, SPELL_HOLY_LIGHT);
                 HolyLight_Timer = 20000;
             }
-        }else HolyLight_Timer -= diff;
+        } else HolyLight_Timer -= diff;
 
         if (DivineShield_Timer < diff)
         {
@@ -134,7 +134,7 @@ struct OREGON_DLL_DECL boss_silver_hand_bossesAI : public ScriptedAI
                 DoCast(m_creature, SPELL_DIVINE_SHIELD);
                 DivineShield_Timer = 40000;
             }
-        }else DivineShield_Timer -= diff;
+        } else DivineShield_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

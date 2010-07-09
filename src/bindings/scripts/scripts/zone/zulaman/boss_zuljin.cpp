@@ -278,7 +278,7 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                         m_creature->CastSpell(m_creature->getVictim(), SPELL_OVERPOWER, false);
                         Overpower_Timer = 5000;
                     }
-                }else m_creature->AttackerStateUpdate(m_creature->getVictim());
+                } else m_creature->AttackerStateUpdate(m_creature->getVictim());
                 m_creature->resetAttackTimer();
             }
         }
@@ -401,7 +401,7 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
             DoYell(YELL_BERSERK, LANG_UNIVERSAL, NULL);
             DoPlaySoundToSet(m_creature, SOUND_BERSERK);
             Berserk_Timer = 60000;
-        }else Berserk_Timer -= diff;
+        } else Berserk_Timer -= diff;
 
         switch (Phase)
         {
@@ -413,21 +413,21 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                     DoYell(YELL_AGGRO, LANG_UNIVERSAL, NULL);
                     DoPlaySoundToSet(m_creature, SOUND_AGGRO);
                     Intro_Timer = 0;
-                }else Intro_Timer -= diff;
+                } else Intro_Timer -= diff;
             }
 
             if (Whirlwind_Timer < diff)
             {
                 DoCast(m_creature, SPELL_WHIRLWIND);
                 Whirlwind_Timer = 15000 + rand()%5000;
-            }else Whirlwind_Timer -= diff;
+            } else Whirlwind_Timer -= diff;
 
             if (Grievous_Throw_Timer < diff)
             {
                 if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     m_creature->CastSpell(target, SPELL_GRIEVOUS_THROW, false);
                 Grievous_Throw_Timer = 10000;
-            }else Grievous_Throw_Timer -= diff;
+            } else Grievous_Throw_Timer -= diff;
             break;
 
         case 1:
@@ -435,13 +435,13 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
             {
                 DoCast(m_creature, SPELL_CREEPING_PARALYSIS);
                 Creeping_Paralysis_Timer = 20000;
-            }else Creeping_Paralysis_Timer -= diff;
+            } else Creeping_Paralysis_Timer -= diff;
 
             if (Overpower_Timer < diff)
             {
                 // implemented in DoMeleeAttackIfReady()
                 Overpower_Timer = 0;
-            }else Overpower_Timer -= diff;
+            } else Overpower_Timer -= diff;
             break;
 
         case 2:
@@ -493,9 +493,9 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                             EnterEvadeMode(); // if (target)
                             return;
                         }
-                    }else Claw_Loop_Timer -= diff;
+                    } else Claw_Loop_Timer -= diff;
                 } //if (TankGUID)
-            }else Claw_Rage_Timer -= diff;
+            } else Claw_Rage_Timer -= diff;
 
             if (Lynx_Rush_Timer <= diff)
             {
@@ -541,7 +541,7 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                         return;
                     }
                 } //if (TankGUID)
-            }else Lynx_Rush_Timer -= diff;
+            } else Lynx_Rush_Timer -= diff;
 
             break;
         case 4:
@@ -556,7 +556,7 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(target, SPELL_SUMMON_PILLAR);
                 Pillar_Of_Fire_Timer = 10000;
-            }else Pillar_Of_Fire_Timer -= diff;
+            } else Pillar_Of_Fire_Timer -= diff;
 
             if (Flame_Breath_Timer < diff)
             {
@@ -564,7 +564,7 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                     m_creature->SetInFront(target);
                 DoCast(m_creature, SPELL_FLAME_BREATH);
                 Flame_Breath_Timer = 10000;
-            }else Flame_Breath_Timer -= diff;
+            } else Flame_Breath_Timer -= diff;
             break;
 
         default:

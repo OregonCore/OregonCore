@@ -104,7 +104,7 @@ struct OREGON_DLL_DECL npc_converted_sentryAI : public ScriptedAI
                 if (m_creature->isPet())
                     ((Pet*)m_creature)->SetDuration(7500);
                 Credit = true;
-            }else Timer -= diff;
+            } else Timer -= diff;
         }
     }
 };

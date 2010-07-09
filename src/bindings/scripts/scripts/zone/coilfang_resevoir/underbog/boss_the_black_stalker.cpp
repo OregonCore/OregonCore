@@ -105,14 +105,14 @@ struct OREGON_DLL_DECL boss_the_black_stalkerAI : public ScriptedAI
                 return;
             }
             check_Timer = 1000;
-        }else check_Timer -= diff;
+        } else check_Timer -= diff;
 
         // Spore Striders
         if (HeroicMode && SporeStriders_Timer < diff)
         {
             DoCast(m_creature,SPELL_SUMMON_SPORE_STRIDER);
             SporeStriders_Timer = 10000+rand()%5000;
-        }else SporeStriders_Timer -= diff;
+        } else SporeStriders_Timer -= diff;
 
         // Levitate
         if (LevitatedTarget)
@@ -140,7 +140,7 @@ struct OREGON_DLL_DECL boss_the_black_stalkerAI : public ScriptedAI
                 }
                 else
                     LevitatedTarget = 0;
-            }else LevitatedTarget_Timer -= diff;
+            } else LevitatedTarget_Timer -= diff;
         }
         if (Levitate_Timer < diff)
         {
@@ -152,7 +152,7 @@ struct OREGON_DLL_DECL boss_the_black_stalkerAI : public ScriptedAI
                 InAir = false;
             }
             Levitate_Timer = 12000+rand()%3000;
-        }else Levitate_Timer -= diff;
+        } else Levitate_Timer -= diff;
 
         // Chain Lightning
         if (ChainLightning_Timer < diff)
@@ -160,7 +160,7 @@ struct OREGON_DLL_DECL boss_the_black_stalkerAI : public ScriptedAI
             if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(target, SPELL_CHAIN_LIGHTNING);
             ChainLightning_Timer = 7000;
-        }else ChainLightning_Timer -= diff;
+        } else ChainLightning_Timer -= diff;
 
         // Static Charge
         if (StaticCharge_Timer < diff)
@@ -168,7 +168,7 @@ struct OREGON_DLL_DECL boss_the_black_stalkerAI : public ScriptedAI
             if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0,30,true))
                 DoCast(target, SPELL_STATIC_CHARGE);
             StaticCharge_Timer = 10000;
-        }else StaticCharge_Timer -= diff;
+        } else StaticCharge_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

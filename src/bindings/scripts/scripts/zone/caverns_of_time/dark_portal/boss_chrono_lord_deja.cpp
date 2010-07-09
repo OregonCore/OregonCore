@@ -106,7 +106,7 @@ struct OREGON_DLL_DECL boss_chrono_lord_dejaAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_ARCANE_BLAST);
             ArcaneBlast_Timer = 20000+rand()%5000;
-        }else ArcaneBlast_Timer -= diff;
+        } else ArcaneBlast_Timer -= diff;
 
         //Time Lapse
         if (TimeLapse_Timer < diff)
@@ -114,7 +114,7 @@ struct OREGON_DLL_DECL boss_chrono_lord_dejaAI : public ScriptedAI
             DoScriptText(SAY_BANISH, m_creature);
             DoCast(m_creature, SPELL_TIME_LAPSE);
             TimeLapse_Timer = 15000+rand()%10000;
-        }else TimeLapse_Timer -= diff;
+        } else TimeLapse_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

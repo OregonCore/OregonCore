@@ -104,7 +104,7 @@ struct OREGON_DLL_DECL boss_jandicebarovAI : public ScriptedAI
 
             //45 seconds
             CurseOfBlood_Timer = 30000;
-        }else CurseOfBlood_Timer -= diff;
+        } else CurseOfBlood_Timer -= diff;
 
         //Illusion_Timer
         if (!Invisible && Illusion_Timer < diff)
@@ -130,7 +130,7 @@ struct OREGON_DLL_DECL boss_jandicebarovAI : public ScriptedAI
 
             //25 seconds until we should cast this agian
             Illusion_Timer = 25000;
-        }else Illusion_Timer -= diff;
+        } else Illusion_Timer -= diff;
 
 
         //            //Illusion_Timer
@@ -151,7 +151,7 @@ struct OREGON_DLL_DECL boss_jandicebarovAI : public ScriptedAI
         //                      Illusioncounter=0;
         //                  }
         //
-        //            }else Illusion_Timer -= diff;
+        //            } else Illusion_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -189,7 +189,7 @@ struct OREGON_DLL_DECL mob_illusionofjandicebarovAI : public ScriptedAI
 
             //5-8 seconds
             Cleave_Timer = 5000 + rand()%3000;
-        }else Cleave_Timer -= diff;
+        } else Cleave_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

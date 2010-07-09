@@ -72,7 +72,7 @@ struct OREGON_DLL_DECL npc_chicken_cluckAI : public ScriptedAI
             {
                 EnterEvadeMode();
                 return;
-            }else ResetFlagTimer -= diff;
+            } else ResetFlagTimer -= diff;
         }
 
         if (UpdateVictim())
@@ -169,7 +169,7 @@ struct OREGON_DLL_DECL npc_dancing_flamesAI : public ScriptedAI
                 active = true;
                 can_iteract = 3500;
                 m_creature->HandleEmoteCommand(EMOTE_ONESHOT_DANCE);
-            }else can_iteract -= diff;
+            } else can_iteract -= diff;
         }
     }
 
@@ -574,7 +574,7 @@ void npc_doctorAI::UpdateAI(const uint32 diff)
         }
         SummonPatient_Timer = 10000;
         SummonPatientCount++;
-    }else SummonPatient_Timer -= diff;
+    } else SummonPatient_Timer -= diff;
 }
 
 bool QuestAccept_npc_doctor(Player *player, Creature *creature, Quest const *quest)
@@ -1101,7 +1101,7 @@ struct OREGON_DLL_DECL npc_snake_trap_serpentsAI : public ScriptedAI
                     DoCast(m_creature->getVictim(),SPELL_DEADLY_POISON);
                 SpellTimer = VENOMOUS_SNAKE_TIMER + (rand() %5)*100;
             }
-        }else SpellTimer-=diff;
+        } else SpellTimer-=diff;
         DoMeleeAttackIfReady();
     }
 };

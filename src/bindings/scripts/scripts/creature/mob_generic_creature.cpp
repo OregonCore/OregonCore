@@ -74,7 +74,7 @@ struct OREGON_DLL_DECL generic_creatureAI : public ScriptedAI
                     BuffTimer = 600000;
                 }//Try agian in 30 seconds
                 else BuffTimer = 30000;
-            }else BuffTimer -= diff;
+            } else BuffTimer -= diff;
 
         //Return since we have no target
         if (!UpdateVictim())

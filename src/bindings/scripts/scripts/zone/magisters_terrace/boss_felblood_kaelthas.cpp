@@ -303,14 +303,14 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                         DoCast(m_creature, SPELL_SHOCK_BARRIER, true);
                         DoCast(m_creature->getVictim(), SPELL_PYROBLAST);
                         PyroblastTimer = 60000;
-                    }else PyroblastTimer -= diff;
+                    } else PyroblastTimer -= diff;
                 }
 
                 if (FireballTimer < diff)
                 {
                     DoCast(m_creature->getVictim(), Heroic ? SPELL_FIREBALL_HEROIC : SPELL_FIREBALL_NORMAL);
                     FireballTimer = 2000 + rand()%4000;
-                }else FireballTimer -= diff;
+                } else FireballTimer -= diff;
 
                 if (PhoenixTimer < diff)
                 {
@@ -340,7 +340,7 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                     DoScriptText(SAY_PHOENIX, m_creature);
 
                     PhoenixTimer = 40000;
-                }else PhoenixTimer -= diff;
+                } else PhoenixTimer -= diff;
 
                 if (FlameStrikeTimer < diff)
                 {
@@ -352,7 +352,7 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
 
                         FlameStrikeTimer = 20000 + rand()%5000;
                     }
-                }else FlameStrikeTimer -= diff;
+                } else FlameStrikeTimer -= diff;
 
                 // Below 50%
                 if (m_creature->GetMaxHealth() * 0.5 > m_creature->GetHealth())
@@ -388,7 +388,7 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                                     GameObject* KaelRight = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_KAEL_STATUE_RIGHT));
                                     if (KaelRight) KaelRight->SetGoState(GO_STATE_ACTIVE);
                                 }
-                            }else
+                            } else
                             {
                                 DoScriptText(SAY_RECAST_GRAVITY, m_creature);
                             }
@@ -451,7 +451,7 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                             GravityLapsePhase = 0;
                             break;
                     }
-                }else GravityLapseTimer -= diff;
+                } else GravityLapseTimer -= diff;
             }
             break;
         }
@@ -486,7 +486,7 @@ struct OREGON_DLL_DECL mob_felkael_flamestrikeAI : public ScriptedAI
         {
             DoCast(m_creature, Heroic ? SPELL_FLAMESTRIKE1_HEROIC : SPELL_FLAMESTRIKE1_NORMAL, true);
             m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-        }else FlameStrikeTimer -= diff;
+        } else FlameStrikeTimer -= diff;
     }
 };
 
@@ -540,7 +540,7 @@ struct OREGON_DLL_DECL mob_felkael_phoenixAI : public ScriptedAI
                 }
             }
             CheckTimer = 1000;
-        }else CheckTimer -= diff;
+        } else CheckTimer -= diff;
 
         if (!UpdateVictim())
             return;
@@ -558,7 +558,7 @@ struct OREGON_DLL_DECL mob_felkael_phoenixAI : public ScriptedAI
                 DoCast(m_creature->getVictim(), SPELL_PHOENIX_FIREBALL);
             }
             BurnTimer = 2000;
-        }else BurnTimer -= diff;
+        } else BurnTimer -= diff;
 
         //DoMeleeAttackIfReady();
     }
@@ -594,7 +594,7 @@ struct OREGON_DLL_DECL mob_felkael_phoenix_eggAI : public Scripted_NoMovementAI
                 }
             }
             m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-        }else HatchTimer -= diff;
+        } else HatchTimer -= diff;
     }
 };
 
@@ -650,7 +650,7 @@ struct OREGON_DLL_DECL mob_arcane_sphereAI : public ScriptedAI
             if (ntarget)
                 StalkTarget(ntarget);
             ChangeTargetTimer = 10000;
-        }else ChangeTargetTimer -= diff;
+        } else ChangeTargetTimer -= diff;
 
         if (CheckTimer < diff)
         {
@@ -661,10 +661,10 @@ struct OREGON_DLL_DECL mob_arcane_sphereAI : public ScriptedAI
                 {
                     if (!((boss_felblood_kaelthasAI*)boss->AI())->Phase || boss->isDead())
                         DespawnTimer = 0;
-                }else DespawnTimer = 0;
+                } else DespawnTimer = 0;
             }
             CheckTimer = 1000;
-        }else CheckTimer -= diff;
+        } else CheckTimer -= diff;
     }
 };
 

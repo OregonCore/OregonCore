@@ -103,7 +103,7 @@ bool GossipHello_npc_rathis_tomber(Player *player, Creature *_Creature)
     {
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
         player->SEND_GOSSIP_MENU(8432, _Creature->GetGUID());
-    }else
+    } else
     player->SEND_GOSSIP_MENU(8431,_Creature->GetGUID());
 
     return true;

@@ -2532,7 +2532,7 @@ struct OREGON_DLL_DECL guard_shattrath_aldorAI : public guardAI
                 playerGUID = 0;
                 Exile_Timer = 8500;
                 CanTeleport = false;
-            }else Exile_Timer -= diff;
+            } else Exile_Timer -= diff;
         }
         else if (Banish_Timer < diff)
         {
@@ -2545,7 +2545,7 @@ struct OREGON_DLL_DECL guard_shattrath_aldorAI : public guardAI
                 if (playerGUID)
                     CanTeleport = true;
             }
-        }else Banish_Timer -= diff;
+        } else Banish_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -2728,7 +2728,7 @@ struct OREGON_DLL_DECL guard_shattrath_scryerAI : public guardAI
                 playerGUID = 0;
                 Exile_Timer = 8500;
                 CanTeleport = false;
-            }else Exile_Timer -= diff;
+            } else Exile_Timer -= diff;
         }
         else if (Banish_Timer < diff)
         {
@@ -2741,7 +2741,7 @@ struct OREGON_DLL_DECL guard_shattrath_scryerAI : public guardAI
                 if (playerGUID)
                     CanTeleport = true;
             }
-        }else Banish_Timer -= diff;
+        } else Banish_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

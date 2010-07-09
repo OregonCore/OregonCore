@@ -324,7 +324,7 @@ struct OREGON_DLL_DECL npc_barnesAI : public npc_escortAI
                     }
 
                     WipeTimer = 15000;
-                }else WipeTimer -= diff;
+                } else WipeTimer -= diff;
             }
 
         }
@@ -485,7 +485,7 @@ struct OREGON_DLL_DECL npc_image_of_medivhAI : public ScriptedAI
             pInstance->SetData64(DATA_IMAGE_OF_MEDIVH, m_creature->GetGUID());
             (*m_creature).GetMotionMaster()->MovePoint(1,MedivPos[0],MedivPos[1],MedivPos[2]);
             Step = 0;
-        }else
+        } else
         {
             m_creature->DealDamage(m_creature,m_creature->GetHealth(),NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             m_creature->RemoveCorpse();
@@ -610,7 +610,7 @@ struct OREGON_DLL_DECL npc_image_of_medivhAI : public ScriptedAI
             {
                 YellTimer = NextStep(Step++);
             }
-        }else YellTimer -= diff;
+        } else YellTimer -= diff;
 
         if (Step >= 7 && Step <= 12)
         {
@@ -621,14 +621,14 @@ struct OREGON_DLL_DECL npc_image_of_medivhAI : public ScriptedAI
                 if (arca)
                     arca->CastSpell(m_creature, SPELL_FIRE_BALL, false);
                 FireArcanagosTimer = 6000;
-            }else FireArcanagosTimer -= diff;
+            } else FireArcanagosTimer -= diff;
 
             if (FireMedivhTimer < diff)
             {
                 if (arca)
                     DoCast(arca, SPELL_FIRE_BALL);
                 FireMedivhTimer = 5000;
-            }else FireMedivhTimer -= diff;
+            } else FireMedivhTimer -= diff;
 
         }
     }

@@ -180,7 +180,7 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
         {
             ((npc_enslaved_soulAI*)Soul->AI())->ReliquaryGUID = m_creature->GetGUID();
             Soul->AI()->AttackStart(target);
-        }else EnterEvadeMode();
+        } else EnterEvadeMode();
         return true;
     }
 
@@ -232,7 +232,7 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
                     //m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_SUBMERGED);  // Ribs: open
                     Summon->AI()->AttackStart(SelectUnit(SELECT_TARGET_TOPAGGRO, 0));
                     EssenceGUID = Summon->GetGUID();
-                }else EnterEvadeMode();
+                } else EnterEvadeMode();
                 break;
             case 3:
                 Timer = 1000;
@@ -248,7 +248,7 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
                     {
                         //Essence->AI()->EnterEvadeMode();
                         Essence->GetMotionMaster()->MoveFollow(m_creature, 0, 0);
-                    }else return;
+                    } else return;
                 }
                 break;
             case 4:
@@ -300,7 +300,7 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
                 break;
             }
             Counter++;
-        }else Timer -= diff;
+        } else Timer -= diff;
     }
 };
 
@@ -406,7 +406,7 @@ struct OREGON_DLL_DECL boss_essence_of_sufferingAI : public ScriptedAI
                 {
                     DoScriptText(SUFF_SAY_AGGRO, m_creature);
                 }
-            }else FixateTimer -= diff;
+            } else FixateTimer -= diff;
         }
 
         //Return since we have no target
@@ -418,13 +418,13 @@ struct OREGON_DLL_DECL boss_essence_of_sufferingAI : public ScriptedAI
             DoCast(m_creature, SPELL_ENRAGE);
             EnrageTimer = 60000;
             DoScriptText(SUFF_EMOTE_ENRAGE, m_creature);
-        }else EnrageTimer -= diff;
+        } else EnrageTimer -= diff;
 
         if (SoulDrainTimer < diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM,0), SPELL_SOUL_DRAIN);
             SoulDrainTimer = 60000;
-        }else SoulDrainTimer -= diff;
+        } else SoulDrainTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -503,13 +503,13 @@ struct OREGON_DLL_DECL boss_essence_of_desireAI : public ScriptedAI
             SoulShockTimer += 2000;
             DeadenTimer += 2000;
             RuneShieldTimer = 60000;
-        }else RuneShieldTimer -= diff;
+        } else RuneShieldTimer -= diff;
 
         if (SoulShockTimer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_SOUL_SHOCK);
             SoulShockTimer = 5000;
-        }else SoulShockTimer -= diff;
+        } else SoulShockTimer -= diff;
 
         if (DeadenTimer < diff)
         {
@@ -520,7 +520,7 @@ struct OREGON_DLL_DECL boss_essence_of_desireAI : public ScriptedAI
             {
                 DoScriptText(DESI_SAY_SPEC, m_creature);
             }
-        }else DeadenTimer -= diff;
+        } else DeadenTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -600,7 +600,7 @@ struct OREGON_DLL_DECL boss_essence_of_angerAI : public ScriptedAI
                 AggroTargetGUID = m_creature->getVictim()->GetGUID();
             }
             CheckTankTimer = 2000;
-        }else CheckTankTimer -= diff;
+        } else CheckTankTimer -= diff;
 
         if (SoulScreamTimer < diff)
         {
@@ -610,14 +610,14 @@ struct OREGON_DLL_DECL boss_essence_of_angerAI : public ScriptedAI
             {
                 DoScriptText(ANGER_SAY_SPEC, m_creature);
             }
-        }else SoulScreamTimer -= diff;
+        } else SoulScreamTimer -= diff;
 
         if (SpiteTimer < diff)
         {
             DoCast(m_creature, SPELL_SPITE_TARGET);
             SpiteTimer = 30000;
             DoScriptText(ANGER_SAY_SPEC, m_creature);
-        }else SpiteTimer -= diff;
+        } else SpiteTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

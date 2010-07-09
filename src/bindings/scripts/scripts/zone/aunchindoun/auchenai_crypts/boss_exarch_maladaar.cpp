@@ -273,7 +273,7 @@ struct OREGON_DLL_DECL boss_exarch_maladaarAI : public ScriptedAI
                     StolenSoul_Timer = 20000 + rand()% 10000;
                 } else StolenSoul_Timer = 1000;
             }
-        }else StolenSoul_Timer -= diff;
+        } else StolenSoul_Timer -= diff;
 
         if (Ribbon_of_Souls_timer < diff)
         {
@@ -281,13 +281,13 @@ struct OREGON_DLL_DECL boss_exarch_maladaarAI : public ScriptedAI
                 DoCast(target,SPELL_RIBBON_OF_SOULS);
 
             Ribbon_of_Souls_timer = 5000 + (rand()%20 * 1000);
-        }else Ribbon_of_Souls_timer -= diff;
+        } else Ribbon_of_Souls_timer -= diff;
 
         if (Fear_timer < diff)
         {
             DoCast(m_creature,SPELL_SOUL_SCREAM);
             Fear_timer = 15000 + rand()% 15000;
-        }else Fear_timer -= diff;
+        } else Fear_timer -= diff;
 
         DoMeleeAttackIfReady();
     }

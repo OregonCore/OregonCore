@@ -111,7 +111,7 @@ struct OREGON_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
             if (m_creature->isDead())
                 pInstance->SetData(DATA_SELIN_EVENT, DONE);
             else pInstance->SetData(DATA_SELIN_EVENT, NOT_STARTED);
-        }else error_log(ERROR_INST_DATA);
+        } else error_log(ERROR_INST_DATA);
 
         DrainLifeTimer = 3000 + rand()%4000;
         DrainManaTimer = DrainLifeTimer + 5000;
@@ -258,7 +258,7 @@ struct OREGON_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
                 {
                     DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_DRAIN_LIFE);
                     DrainLifeTimer = 10000;
-                }else DrainLifeTimer -= diff;
+                } else DrainLifeTimer -= diff;
 
                 // Heroic only
                 if (Heroic)
@@ -267,7 +267,7 @@ struct OREGON_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
                     {
                         DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_DRAIN_MANA);
                         DrainManaTimer = 10000;
-                    }else DrainManaTimer -= diff;
+                    } else DrainManaTimer -= diff;
                 }
             }
 
@@ -278,7 +278,7 @@ struct OREGON_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
                     DoCast(m_creature, SPELL_FEL_EXPLOSION);
                     FelExplosionTimer = 2000;
                 }
-            }else FelExplosionTimer -= diff;
+            } else FelExplosionTimer -= diff;
 
             // If below 10% mana, start recharging
             maxPowerMana = m_creature->GetMaxPower(POWER_MANA);
@@ -289,10 +289,10 @@ struct OREGON_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
                     SelectNearestCrystal();
                     if (Heroic)   DrainCrystalTimer = 10000 + rand()%5000;
                     else         DrainCrystalTimer = 20000 + rand()%5000;
-                }else DrainCrystalTimer -= diff;
+                } else DrainCrystalTimer -= diff;
             }
 
-        }else
+        } else
         {
             if (IsDraining)
             {
@@ -304,7 +304,7 @@ struct OREGON_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
                         if (CrystalChosen->GetUInt32Value(UNIT_CHANNEL_SPELL) == SPELL_MANA_RAGE)
                         {
                             m_creature->StopMoving();
-                        }else{
+                        } else{
                             IsDraining = false;
                             DrainingCrystal = false;
 
@@ -321,7 +321,7 @@ struct OREGON_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
                         }
                     }
                     CheckTimer = 1000;
-                }else CheckTimer -= diff;
+                } else CheckTimer -= diff;
             }
         }
         DoMeleeAttackIfReady();                             // No need to check if we are draining crystal here, as the spell has a stun.
@@ -364,7 +364,7 @@ struct OREGON_DLL_DECL mob_fel_crystalAI : public ScriptedAI
                     }
                 }
             }
-        }else error_log(ERROR_INST_DATA);
+        } else error_log(ERROR_INST_DATA);
     }
 };
 

@@ -286,7 +286,7 @@ void SimpleAI::UpdateAI(const uint32 diff)
                 Spell_Timer[i] = Spell[i].Cooldown + (rand() % Spell[i].CooldownRandomAddition);
             else Spell_Timer[i] = Spell[i].Cooldown;
 
-        }else Spell_Timer[i] -= diff;
+        } else Spell_Timer[i] -= diff;
 
     }
 

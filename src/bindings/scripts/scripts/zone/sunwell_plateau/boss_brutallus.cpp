@@ -259,7 +259,7 @@ struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
         {
             if (IntroPhaseTimer < diff){
                 DoIntro();
-            }else IntroPhaseTimer -= diff;
+            } else IntroPhaseTimer -= diff;
 
             if (IntroPhase == 3 + 1){
                 if (IntroFrostBoltTimer < diff){
@@ -267,7 +267,7 @@ struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
                         Madrigosa->CastSpell(m_creature, SPELL_INTRO_FROSTBOLT, false);
                         IntroFrostBoltTimer = 2000;
                     }
-                }else IntroFrostBoltTimer -= diff;
+                } else IntroFrostBoltTimer -= diff;
             }
         }
 
@@ -278,7 +278,7 @@ struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), SPELL_METEOR_SLASH);
             SlashTimer = 11000;
-        }else SlashTimer -= diff;
+        } else SlashTimer -= diff;
 
         if (StompTimer < diff)
         {
@@ -290,21 +290,21 @@ struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
             }
             DoCast(m_creature->getVictim(), SPELL_STOMP);
             StompTimer = 30000;
-        }else StompTimer -= diff;
+        } else StompTimer -= diff;
 
         if (BurnTimer < diff)
         {
             if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 target->CastSpell(target, SPELL_BURN, true);
             BurnTimer = 60000;
-        }else BurnTimer -= diff;
+        } else BurnTimer -= diff;
 
         if (BerserkTimer < diff && !Enraged)
         {
             DoScriptText(YELL_BERSERK, m_creature);
             DoCast(m_creature, SPELL_BERSERK);
             Enraged = true;
-        }else BerserkTimer -= diff;
+        } else BerserkTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

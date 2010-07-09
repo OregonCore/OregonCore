@@ -109,19 +109,19 @@ struct OREGON_DLL_DECL boss_jeklikAI : public ScriptedAI
                     }
 
                     Charge_Timer = 15000 + rand()%15000;
-                }else Charge_Timer -= diff;
+                } else Charge_Timer -= diff;
 
                 if (SonicBurst_Timer < diff)
                 {
                     DoCast(m_creature->getVictim(),SPELL_SONICBURST);
                     SonicBurst_Timer = 8000 + rand()%5000;
-                }else SonicBurst_Timer -= diff;
+                } else SonicBurst_Timer -= diff;
 
                 if (Screech_Timer < diff)
                 {
                     DoCast(m_creature->getVictim(),SPELL_SCREECH);
                     Screech_Timer = 18000 + rand()%8000;
-                }else Screech_Timer -= diff;
+                } else Screech_Timer -= diff;
 
                 if (SpawnBats_Timer < diff)
                 {
@@ -146,7 +146,7 @@ struct OREGON_DLL_DECL boss_jeklikAI : public ScriptedAI
                     if (target && Bat) Bat ->AI()->AttackStart(target);
 
                     SpawnBats_Timer = 60000;
-                }else SpawnBats_Timer -= diff;
+                } else SpawnBats_Timer -= diff;
             }
             else
             {
@@ -192,7 +192,7 @@ struct OREGON_DLL_DECL boss_jeklikAI : public ScriptedAI
                             FlyingBat->AI()->AttackStart(target);
 
                         SpawnFlyingBats_Timer = 10000 + rand()%5000;
-                    }else SpawnFlyingBats_Timer -=diff;
+                    } else SpawnFlyingBats_Timer -=diff;
                 }
                 else
                 {
@@ -243,7 +243,7 @@ struct OREGON_DLL_DECL mob_batriderAI : public ScriptedAI
                 DoCast(target, SPELL_BOMB);
                 Bomb_Timer = 5000;
             }
-        }else Bomb_Timer -= diff;
+        } else Bomb_Timer -= diff;
 
         //Check_Timer
         if (Check_Timer < diff)
@@ -258,7 +258,7 @@ struct OREGON_DLL_DECL mob_batriderAI : public ScriptedAI
             }
 
             Check_Timer = 1000;
-        }else Check_Timer -= diff;
+        } else Check_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

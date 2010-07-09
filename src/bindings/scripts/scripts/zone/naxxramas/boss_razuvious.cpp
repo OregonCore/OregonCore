@@ -115,14 +115,14 @@ struct OREGON_DLL_DECL boss_razuviousAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_UNBALANCINGSTRIKE);
             UnbalancingStrike_Timer = 30000;
-        }else UnbalancingStrike_Timer -= diff;
+        } else UnbalancingStrike_Timer -= diff;
 
         //DisruptingShout_Timer
         if (DisruptingShout_Timer < diff)
         {
             DoCast(m_creature->getVictim(), SPELL_DISRUPTINGSHOUT);
             DisruptingShout_Timer = 25000;
-        }else DisruptingShout_Timer -= diff;
+        } else DisruptingShout_Timer -= diff;
 
         //CommandSound_Timer
         if (CommandSound_Timer < diff)
@@ -147,7 +147,7 @@ struct OREGON_DLL_DECL boss_razuviousAI : public ScriptedAI
             }
 
             CommandSound_Timer = 40000;
-        }else CommandSound_Timer -= diff;
+        } else CommandSound_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
