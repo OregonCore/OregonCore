@@ -202,9 +202,6 @@ void Object::BuildUpdate(UpdateDataMapType &update_players)
 
 void Object::SendUpdateToPlayer(Player* player)
 {
-    // send update to another players
-    SendUpdateObjectToAllExcept(player);
-
     // send create update to player
     UpdateData upd;
     WorldPacket packet;
@@ -718,20 +715,6 @@ void Object::ClearUpdateMask(bool remove)
             ObjectAccessor::Instance().RemoveUpdateObject(this);
         m_objectUpdated = false;
     }
-}
-
-// Send current value fields changes to all viewers
-void Object::SendUpdateObjectToAllExcept(Player* exceptPlayer)
-{
-    // changes will be send in create packet
-    if (!IsInWorld())
-        return;
-
-    // nothing do
-    if (!m_objectUpdated)
-        return;
-
-    ObjectAccessor::UpdateObject(this,exceptPlayer);
 }
 
 bool Object::LoadValues(const char* data)

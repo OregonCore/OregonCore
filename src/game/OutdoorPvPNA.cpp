@@ -207,7 +207,7 @@ OPvPCapturePoint(pvp), m_capturable(true), m_GuardsAlive(0), m_ControllingFactio
 m_HalaaState(HALAA_N), m_WyvernStateSouth(0), m_WyvernStateNorth(0), m_WyvernStateWest(0),
 m_WyvernStateEast(0), m_RespawnTimer(NA_RESPAWN_TIME), m_GuardCheckTimer(NA_GUARD_CHECK_TIME)
 {
-    AddCapturePoint(182210,530,-1572.57,7945.3,-22.475,2.05949,0,0,0.857167,0.515038);
+    SetCapturePointData(182210,530,-1572.57,7945.3,-22.475,2.05949,0,0,0.857167,0.515038);
 }
 
 bool OutdoorPvPNA::SetupOutdoorPvP()
@@ -220,7 +220,7 @@ bool OutdoorPvPNA::SetupOutdoorPvP()
     m_obj = new OPvPCapturePointNA(this);
     if (!m_obj)
         return false;
-    m_capturePoints.push_back(m_obj);
+    AddCapturePoint(m_obj);
 
     return true;
 }
@@ -334,7 +334,7 @@ bool OutdoorPvPNA::Update(uint32 diff)
     return m_obj->Update(diff);
 }
 
-bool OPvPCapturePointNA::HandleCustomSpell(Player * plr, uint32 spellId, GameObject * go)
+bool OPvPCapturePointNA::HandleCustomSpell(Player * plr, uint32 spellId, GameObject * /*go*/)
 {
     std::vector<uint32> nodes;
     nodes.resize(2);
@@ -412,7 +412,7 @@ bool OPvPCapturePointNA::HandleCustomSpell(Player * plr, uint32 spellId, GameObj
 int32 OPvPCapturePointNA::HandleOpenGo(Player *plr, uint64 guid)
 {
     uint32 retval = OPvPCapturePoint::HandleOpenGo(plr, guid);
-    if (retval>=0)
+    if (retval >= 0)
     {
         const go_type * gos = NULL;
         if (m_ControllingFaction == ALLIANCE)
@@ -604,11 +604,10 @@ void OPvPCapturePointNA::ChangeState()
         break;
     }
 
-    GameObject* flag = HashMapHolder<GameObject>::Find(m_CapturePointGUID);
+    GameObject* flag = HashMapHolder<GameObject>::Find(m_capturePointGUID);
     if (flag)
     {
         flag->SetGoArtKit(artkit);
-        flag->SendUpdateObjectToAllExcept(NULL);
     }
 
     UpdateHalaaWorldState();

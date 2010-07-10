@@ -300,7 +300,6 @@ class OREGON_DLL_SPEC Object
         }
 
         void ClearUpdateMask(bool remove);
-        void SendUpdateObjectToAllExcept(Player* exceptPlayer);
 
         bool LoadValues(const char* data);
 

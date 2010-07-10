@@ -36,7 +36,7 @@ const uint32 HP_LANG_CAPTURE_H[HP_TOWER_NUM] = {LANG_OPVP_HP_CAPTURE_BROKENHILL_
 OPvPCapturePointHP::OPvPCapturePointHP(OutdoorPvP *pvp,OutdoorPvPHPTowerType type)
 : OPvPCapturePoint(pvp), m_TowerType(type)
 {
-    AddCapturePoint(HPCapturePoints[type].entry,
+    SetCapturePointData(HPCapturePoints[type].entry,
         HPCapturePoints[type].map,
         HPCapturePoints[type].x,
         HPCapturePoints[type].y,
@@ -72,11 +72,11 @@ bool OutdoorPvPHP::SetupOutdoorPvP()
     for (int i = 0; i < OutdoorPvPHPBuffZonesNum; ++i)
         RegisterZone(OutdoorPvPHPBuffZones[i]);
 
-    m_capturePoints.push_back(new OPvPCapturePointHP(this,HP_TOWER_BROKEN_HILL));
+    AddCapturePoint(new OPvPCapturePointHP(this,HP_TOWER_BROKEN_HILL));
 
-    m_capturePoints.push_back(new OPvPCapturePointHP(this,HP_TOWER_OVERLOOK));
+    AddCapturePoint(new OPvPCapturePointHP(this,HP_TOWER_OVERLOOK));
 
-    m_capturePoints.push_back(new OPvPCapturePointHP(this,HP_TOWER_STADIUM));
+    AddCapturePoint(new OPvPCapturePointHP(this,HP_TOWER_STADIUM));
 
     return true;
 }
@@ -159,7 +159,7 @@ void OutdoorPvPHP::FillInitialWorldStates(WorldPacket &data)
     data << uint32(HP_UI_TOWER_SLIDER_N) << uint32(100);
     for (OPvPCapturePointMap::iterator itr = m_capturePoints.begin(); itr != m_capturePoints.end(); ++itr)
     {
-        (*itr)->FillInitialWorldStates(data);
+        itr->second->FillInitialWorldStates(data);
     }
 }
 
@@ -244,17 +244,15 @@ void OPvPCapturePointHP::ChangeState()
         break;
     }
 
-    GameObject* flag = HashMapHolder<GameObject>::Find(m_CapturePointGUID);
+    GameObject* flag = HashMapHolder<GameObject>::Find(m_capturePointGUID);
     GameObject* flag2 = HashMapHolder<GameObject>::Find(m_Objects[m_TowerType]);
     if (flag)
     {
         flag->SetGoArtKit(artkit);
-        flag->SendUpdateObjectToAllExcept(NULL);
     }
     if (flag2)
     {
         flag2->SetGoArtKit(artkit2);
-        flag2->SendUpdateObjectToAllExcept(NULL);
     }
 
     // send world state update

@@ -29,7 +29,7 @@
 OPvPCapturePointZM_Beacon::OPvPCapturePointZM_Beacon(OutdoorPvP *pvp, ZM_BeaconType type)
 : OPvPCapturePoint(pvp), m_TowerType(type), m_TowerState(ZM_TOWERSTATE_N)
 {
-    AddCapturePoint(ZMCapturePoints[type].entry,ZMCapturePoints[type].map,ZMCapturePoints[type].x,ZMCapturePoints[type].y,ZMCapturePoints[type].z,ZMCapturePoints[type].o,ZMCapturePoints[type].rot0,ZMCapturePoints[type].rot1,ZMCapturePoints[type].rot2,ZMCapturePoints[type].rot3);
+    SetCapturePointData(ZMCapturePoints[type].entry,ZMCapturePoints[type].map,ZMCapturePoints[type].x,ZMCapturePoints[type].y,ZMCapturePoints[type].z,ZMCapturePoints[type].o,ZMCapturePoints[type].rot0,ZMCapturePoints[type].rot1,ZMCapturePoints[type].rot2,ZMCapturePoints[type].rot3);
 }
 
 void OPvPCapturePointZM_Beacon::FillInitialWorldStates(WorldPacket &data)
@@ -182,10 +182,10 @@ bool OutdoorPvPZM::SetupOutdoorPvP()
     for (int i = 0; i < OutdoorPvPZMBuffZonesNum; ++i)
         RegisterZone(OutdoorPvPZMBuffZones[i]);
 
-    m_capturePoints.push_back(new OPvPCapturePointZM_Beacon(this,ZM_BEACON_WEST));
-    m_capturePoints.push_back(new OPvPCapturePointZM_Beacon(this,ZM_BEACON_EAST));
+    AddCapturePoint(new OPvPCapturePointZM_Beacon(this,ZM_BEACON_WEST));
+    AddCapturePoint(new OPvPCapturePointZM_Beacon(this,ZM_BEACON_EAST));
     m_GraveYard = new OPvPCapturePointZM_GraveYard(this);
-    m_capturePoints.push_back(m_GraveYard); // though the update function isn't used, the handleusego is!
+    AddCapturePoint(m_GraveYard); // though the update function isn't used, the handleusego is!
 
     return true;
 }
@@ -201,7 +201,7 @@ void OutdoorPvPZM::HandleKillImpl(Player *plr, Unit * killed)
         plr->CastSpell(plr,ZM_HordePlayerKillReward,true);
 }
 
-bool OPvPCapturePointZM_GraveYard::Update(uint32 diff)
+bool OPvPCapturePointZM_GraveYard::Update(uint32 /*diff*/)
 {
     bool retval = m_State != m_OldState;
     m_State = m_OldState;
@@ -211,7 +211,7 @@ bool OPvPCapturePointZM_GraveYard::Update(uint32 diff)
 int32 OPvPCapturePointZM_GraveYard::HandleOpenGo(Player *plr, uint64 guid)
 {
     uint32 retval = OPvPCapturePoint::HandleOpenGo(plr, guid);
-    if (retval>=0)
+    if (retval >= 0)
     {
         if (plr->HasAura(ZM_BATTLE_STANDARD_A,0) && m_GraveYardState != ZM_GRAVEYARD_A)
         {
@@ -346,7 +346,7 @@ bool OPvPCapturePointZM_GraveYard::CanTalkTo(Player * plr, Creature * c, GossipO
     return false;
 }
 
-bool OPvPCapturePointZM_GraveYard::HandleGossipOption(Player *plr, uint64 guid, uint32 gossipid)
+bool OPvPCapturePointZM_GraveYard::HandleGossipOption(Player *plr, uint64 guid, uint32 /*gossipid*/)
 {
     std::map<uint64,uint32>::iterator itr = m_CreatureTypes.find(guid);
     if (itr != m_CreatureTypes.end())
@@ -374,7 +374,7 @@ bool OPvPCapturePointZM_GraveYard::HandleGossipOption(Player *plr, uint64 guid, 
     return false;
 }
 
-bool OPvPCapturePointZM_GraveYard::HandleDropFlag(Player * plr, uint32 spellId)
+bool OPvPCapturePointZM_GraveYard::HandleDropFlag(Player * /*plr*/, uint32 spellId)
 {
     switch(spellId)
     {
@@ -393,7 +393,7 @@ void OutdoorPvPZM::FillInitialWorldStates(WorldPacket &data)
     data << ZM_WORLDSTATE_UNK_1 << uint32(1);
     for (OPvPCapturePointMap::iterator itr = m_capturePoints.begin(); itr != m_capturePoints.end(); ++itr)
     {
-        (*itr)->FillInitialWorldStates(data);
+        itr->second->FillInitialWorldStates(data);
     }
 }
 
