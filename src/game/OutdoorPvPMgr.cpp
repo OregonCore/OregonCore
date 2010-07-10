@@ -40,6 +40,7 @@ OutdoorPvPMgr::~OutdoorPvPMgr()
     for (OutdoorPvPSet::iterator itr = m_OutdoorPvPSet.begin(); itr != m_OutdoorPvPSet.end(); ++itr)
     {
         (*itr)->DeleteSpawns();
+        delete *itr;
     }
 }
 
@@ -59,7 +60,6 @@ void OutdoorPvPMgr::InitOutdoorPvP()
         sLog.outDebug("OutdoorPvP : HP successfully initiated.");
     }
 
-
     pOP = new OutdoorPvPNA;
     // respawn, init variables
     if (!pOP->SetupOutdoorPvP())
@@ -72,7 +72,6 @@ void OutdoorPvPMgr::InitOutdoorPvP()
         m_OutdoorPvPSet.push_back(pOP);
         sLog.outDebug("OutdoorPvP : NA successfully initiated.");
     }
-
 
     pOP = new OutdoorPvPTF;
     // respawn, init variables
@@ -132,14 +131,13 @@ void OutdoorPvPMgr::AddZone(uint32 zoneid, OutdoorPvP *handle)
     m_OutdoorPvPMap[zoneid] = handle;
 }
 
-
 void OutdoorPvPMgr::HandlePlayerEnterZone(Player *plr, uint32 zoneid)
 {
     OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(zoneid);
-    if(itr == m_OutdoorPvPMap.end())
+    if (itr == m_OutdoorPvPMap.end())
         return;
 
-    if(itr->second->HasPlayer(plr))
+    if (itr->second->HasPlayer(plr))
         return;
 
     itr->second->HandlePlayerEnterZone(plr, zoneid);
@@ -150,11 +148,11 @@ void OutdoorPvPMgr::HandlePlayerEnterZone(Player *plr, uint32 zoneid)
 void OutdoorPvPMgr::HandlePlayerLeaveZone(Player *plr, uint32 zoneid)
 {
     OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(zoneid);
-    if(itr == m_OutdoorPvPMap.end())
+    if (itr == m_OutdoorPvPMap.end())
         return;
 
     // teleport: remove once in removefromworld, once in updatezone
-    if(!itr->second->HasPlayer(plr))
+    if (!itr->second->HasPlayer(plr))
         return;
 
     itr->second->HandlePlayerLeaveZone(plr, zoneid);
