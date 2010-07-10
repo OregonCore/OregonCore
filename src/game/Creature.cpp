@@ -184,6 +184,7 @@ void Creature::AddToWorld()
         ObjectAccessor::Instance().AddObject(this);
         Unit::AddToWorld();
         SearchFormation();
+        AIM_Initialize();
     }
 }
 
@@ -1446,7 +1447,6 @@ bool Creature::LoadFromDB(uint32 guid, Map *map)
     // checked at creature_template loading
     m_defaultMovementType = MovementGeneratorType(data->movementType);
 
-    AIM_Initialize();
     m_creatureData = data;
 
     return true;

@@ -122,6 +122,7 @@ void Pet::AddToWorld()
     {
         ObjectAccessor::Instance().AddObject(this);
         Unit::AddToWorld();
+        AIM_Initialize();
     }
 
     // Prevent stuck pets when zoning. Pets default to "follow" when added to world
@@ -211,7 +212,6 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
     CreatureInfo const *cinfo = GetCreatureInfo();
     if (cinfo->type == CREATURE_TYPE_CRITTER)
     {
-        AIM_Initialize();
         map->Add(ToCreature());
         return true;
     }
@@ -349,7 +349,6 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
         }
     }
 
-    AIM_Initialize();
     map->Add(ToCreature());
 
     // Spells should be loaded after pet is added to map, because in CanCast is check on it

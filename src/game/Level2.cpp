@@ -3762,7 +3762,6 @@ bool ChatHandler::HandleCreatePetCommand(const char* /*args*/)
 
      pet->GetCharmInfo()->SetPetNumber(objmgr.GeneratePetNumber(), true);
      // this enables pet details window (Shift+P)
-     pet->AIM_Initialize();
      pet->InitPetCreateSpells();
      pet->SetHealth(pet->GetMaxHealth());
 

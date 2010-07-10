@@ -1785,8 +1785,6 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
     // this enables pet details window (Shift+P)
     pet->GetCharmInfo()->SetPetNumber(pet_number, false);
 
-    pet->AIM_Initialize();
-
     map->Add(pet->ToCreature());
 
     pet->setPowerType(POWER_MANA);
