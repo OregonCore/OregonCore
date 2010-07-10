@@ -386,6 +386,7 @@ enum GOState
 // from `gameobject`
 struct GameObjectData
 {
+    explicit GameObjectData() : dbData(true) {}
     uint32 id;                                              // entry in gamobject_template
     uint32 mapid;
     float posX;
@@ -401,6 +402,7 @@ struct GameObjectData
     GOState go_state;
     uint8 spawnMask;
     uint32 ArtKit;
+    bool dbData;
 };
 
 // For containers:  [GO_NOT_READY]->GO_READY (close)->GO_ACTIVATED (open) ->GO_JUST_DEACTIVATED->GO_READY        -> ...
@@ -432,7 +434,8 @@ class OREGON_DLL_SPEC GameObject : public WorldObject
         bool Create(uint32 guidlow, uint32 name_id, Map *map, float x, float y, float z, float ang, float rotation0, float rotation1, float rotation2, float rotation3, uint32 animprogress, GOState go_state, uint32 ArtKit = 0);
         void Update(uint32 diff);
         static GameObject* GetGameObject(WorldObject& object, uint64 guid);
-        GameObjectInfo const* GetGOInfo() const;
+        GameObjectInfo const* GetGOInfo() const { return m_goInfo; }
+        GameObjectData const* GetGOData() const { return m_goData; }
 
         bool IsTransport() const;
 
@@ -613,6 +616,7 @@ class OREGON_DLL_SPEC GameObject : public WorldObject
 
         uint32 m_DBTableGuid;                               ///< For new or temporary gameobjects is 0 for saved it is lowguid
         GameObjectInfo const* m_goInfo;
+        GameObjectData const* m_goData;
     private:
         void SwitchDoorOrButton(bool activate, bool alternative = false);
 

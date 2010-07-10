@@ -256,6 +256,7 @@ struct EquipmentInfo
 // from `creature` table
 struct CreatureData
 {
+    explicit CreatureData() : dbData(true) {}
     uint32 id;                                              // entry in creature_template
     uint16 mapid;
     uint32 displayid;
@@ -272,6 +273,7 @@ struct CreatureData
     bool  is_dead;
     uint8 movementType;
     uint8 spawnMask;
+    bool dbData;
 };
 
 struct CreatureDataAddonAura
@@ -532,6 +534,7 @@ class OREGON_DLL_SPEC Creature : public Unit
         TrainerSpellData const* GetTrainerSpells() const;
 
         CreatureInfo const *GetCreatureInfo() const { return m_creatureInfo; }
+        CreatureData const *GetCreatureData() const { return m_creatureData; }
         CreatureDataAddon const* GetCreatureAddon() const;
 
         std::string GetAIName() const;
@@ -595,14 +598,13 @@ class OREGON_DLL_SPEC Creature : public Unit
         float GetAttackDistance(Unit const* pl) const;
 
         Unit* SelectNearestTarget(float dist = 0) const;
-        void CallAssistance();
+        void DoFleeToGetAssistance();
         void CallForHelp(float fRadius);
+        void CallAssistance();
         void SetNoCallAssistance(bool val) { m_AlreadyCallAssistance = val; }
         void SetNoSearchAssistance(bool val) { m_AlreadySearchedAssistance = val; }
         bool HasSearchedAssistance() { return m_AlreadySearchedAssistance; }
-
         bool CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction = true) const;
-        void DoFleeToGetAssistance();
 
         MovementGeneratorType GetDefaultMovementType() const { return m_defaultMovementType; }
         void SetDefaultMovementType(MovementGeneratorType mgt) { m_defaultMovementType = mgt; }
@@ -732,6 +734,8 @@ class OREGON_DLL_SPEC Creature : public Unit
         float mHome_O;
 
         bool DisableReputationGain;
+
+        CreatureData const* m_creatureData;
 
     private:
         //WaypointMovementGenerator vars

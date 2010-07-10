@@ -48,119 +48,52 @@ void OPvPCapturePoint::HandlePlayerLeave(Player * plr)
     m_activePlayers[plr->GetTeamId()].erase(plr);
 }
 
-bool OPvPCapturePoint::AddObject(uint32 type, uint32 entry, uint32 map, float x, float y, float z, float o, float rotation0, float rotation1, float rotation2, float rotation3)
+void OPvPCapturePoint::AddGO(uint32 type, uint32 guid, uint32 entry)
 {
-    GameObjectInfo const* goinfo = objmgr.GetGameObjectInfo(entry);
-    if (!goinfo)
-        return false;
-
-    uint32 guid = objmgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT);
-
-    GameObjectData& data = objmgr.NewGOData(guid);
-
-    data.id             = entry;
-    data.mapid          = map;
-    data.posX           = x;
-    data.posY           = y;
-    data.posZ           = z;
-    data.orientation    = o;
-    data.rotation0      = rotation0;
-    data.rotation1      = rotation1;
-    data.rotation2      = rotation2;
-    data.rotation3      = rotation3;
-    data.spawntimesecs  = 0;
-    data.animprogress   = 100;
-    data.spawnMask      = 1;
-    data.go_state       = GO_STATE_READY;
-
-    objmgr.AddGameobjectToGrid(guid, &data);
-
-    // 2 way registering
+    if (!entry)
+    {
+        const GameObjectData *data = objmgr.GetGOData(guid);
+        if (!data)
+            return;
+        entry = data->id;
+    }
     m_Objects[type] = MAKE_NEW_GUID(guid, entry, HIGHGUID_GAMEOBJECT);
     m_ObjectTypes[m_Objects[type]]=type;
-
-    Map * pMap = MapManager::Instance().FindMap(map);
-    if (!pMap)
-        return true;
-    GameObject * go = new GameObject;
-    if (!go->Create(guid,entry, pMap,x,y,z,o,rotation0,rotation1,rotation2,rotation3,100,GO_STATE_READY))
-    {
-        sLog.outError("Gameobject template %u not found in database.", entry);
-        delete go;
-        return true;
-    }
-
-    go->SetRespawnTime(0);
-    objmgr.SaveGORespawnTime(go->GetDBTableGUIDLow(),0,0);
-    pMap->Add(go);
-
-    return true;
 }
 
-bool OPvPCapturePoint::AddCreature(uint32 type, uint32 entry, uint32 teamval, uint32 map, float x, float y, float z, float o, uint32 spawntimedelay)
+void OPvPCapturePoint::AddCre(uint32 type, uint32 guid, uint32 entry)
 {
-    CreatureInfo const *cinfo = objmgr.GetCreatureTemplate(entry);
-    if (!cinfo)
+    if (!entry)
     {
-        return false;
+        const CreatureData *data = objmgr.GetCreatureData(guid);
+        if (!data)
+            return;
+        entry = data->id;
     }
-
-    uint32 displayId = objmgr.ChooseDisplayId(teamval, cinfo, NULL);
-    CreatureModelInfo const *minfo = objmgr.GetCreatureModelRandomGender(displayId);
-    if (!minfo)
-    {
-        return false;
-    }
-    else
-        displayId = minfo->modelid;                        // it can be different (for another gender)
-
-    uint32 guid = objmgr.GenerateLowGuid(HIGHGUID_UNIT);
-
-    CreatureData& data = objmgr.NewOrExistCreatureData(guid);
-
-    data.id = entry;
-    data.mapid = map;
-    data.displayid = displayId;
-    data.equipmentId = cinfo->equipmentId;
-    data.posX = x;
-    data.posY = y;
-    data.posZ = z;
-    data.orientation = o;
-    data.spawntimesecs = spawntimedelay;
-    data.spawndist = 0;
-    data.currentwaypoint = 0;
-    data.curhealth = cinfo->maxhealth;
-    data.curmana = cinfo->maxmana;
-    data.is_dead = false;
-    data.movementType = cinfo->MovementType;
-    data.spawnMask = 1;
-
-    objmgr.AddCreatureToGrid(guid, &data);
-
     m_Creatures[type] = MAKE_NEW_GUID(guid, entry, HIGHGUID_UNIT);
     m_CreatureTypes[m_Creatures[type]] = type;
+}
 
-    Map * pMap = MapManager::Instance().FindMap(map);
-    if (!pMap)
-        return true;
-    Creature* pCreature = new Creature;
-    if (!pCreature->Create(guid, pMap, entry, teamval, x, y, z, o))
+bool OPvPCapturePoint::AddObject(uint32 type, uint32 entry, uint32 map, float x, float y, float z, float o, float rotation0, float rotation1, float rotation2, float rotation3)
+{
+    if (uint32 guid = objmgr.AddGOData(entry, map, x, y, z, o, 0, rotation0, rotation1, rotation2, rotation3))
     {
-        sLog.outError("Can't create creature entry: %u",entry);
-        delete pCreature;
-        return false;
+        AddGO(type, guid, entry);
+        return true;
     }
 
-    pCreature->AIM_Initialize();
+    return false;
+}
 
-    pCreature->SetHomePosition(x, y, z, o);
+bool OPvPCapturePoint::AddCreature(uint32 type, uint32 entry, uint32 team, uint32 map, float x, float y, float z, float o, uint32 spawntimedelay)
+{
+    if (uint32 guid = objmgr.AddCreData(entry, team, map, x, y, z, o, spawntimedelay))
+    {
+        AddCre(type, guid, entry);
+        return true;
+    }
 
-    if (spawntimedelay)
-        pCreature->SetRespawnDelay(spawntimedelay);
-
-    pMap->Add(pCreature);
-
-    return true;
+    return false;
 }
 
 bool OPvPCapturePoint::AddCapturePoint(uint32 entry, uint32 map, float x, float y, float z, float o, float rotation0, float rotation1, float rotation2, float rotation3)
@@ -175,31 +108,14 @@ bool OPvPCapturePoint::AddCapturePoint(uint32 entry, uint32 map, float x, float 
         return false;
     }
 
-    // create capture point go
-    m_CapturePointGUID = objmgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT);
+    m_CapturePointGUID = objmgr.AddGOData(entry, map, x, y, z, o, 0, rotation0, rotation1, rotation2, rotation3);
+    if(!m_CapturePointGUID)
+        return false;
+
     // get the needed values from goinfo
     m_ShiftMaxPhase = goinfo->capturePoint.maxTime;
     m_ShiftMaxCaptureSpeed = m_ShiftMaxPhase / float(goinfo->capturePoint.minTime);
     m_NeutralValue = goinfo->capturePoint.neutralPercent;
-
-    GameObjectData& data = objmgr.NewGOData(m_CapturePointGUID);
-
-    data.id             = entry;
-    data.mapid          = map;
-    data.posX           = x;
-    data.posY           = y;
-    data.posZ           = z;
-    data.orientation    = o;
-    data.rotation0      = rotation0;
-    data.rotation1      = rotation1;
-    data.rotation2      = rotation2;
-    data.rotation3      = rotation3;
-    data.spawntimesecs  = 1;
-    data.animprogress   = 100;
-    data.spawnMask      = 1;
-    data.go_state       = GO_STATE_READY;
-
-    objmgr.AddGameobjectToGrid(m_CapturePointGUID, &data);
 
     return true;
 }
@@ -318,7 +234,13 @@ bool OutdoorPvP::Update(uint32 diff)
 {
     bool objective_changed = false;
     for (OPvPCapturePointMap::iterator itr = m_capturePoints.begin(); itr != m_capturePoints.end(); ++itr)
-        objective_changed |= (*itr)->Update(diff);
+    {
+        if ((*itr)->Update(diff))
+        {
+            (*itr)->ChangeState();
+            objective_changed = true;
+        }
+    }
     return objective_changed;
 }
 
@@ -425,7 +347,10 @@ bool OPvPCapturePoint::Update(uint32 diff)
             m_State = OBJECTIVESTATE_ALLIANCE_HORDE_CHALLENGE;
     }
 
-    return true;
+    if (m_ShiftPhase != m_OldPhase)
+        SendChangePhase();
+
+    return m_OldState != m_State;
 }
 
 void OutdoorPvP::SendUpdateWorldState(uint32 field, uint32 value)

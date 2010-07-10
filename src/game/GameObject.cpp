@@ -58,6 +58,7 @@ GameObject::GameObject() : WorldObject()
     m_charges = 5;
     m_cooldownTime = 0;
     m_goInfo = NULL;
+    m_goData = NULL;
 
     m_DBTableGuid = 0;
 }
@@ -657,6 +658,8 @@ bool GameObject::LoadFromDB(uint32 guid, Map *map)
             break;
     }
 
+    m_goData = data;
+
     return true;
 }
 
@@ -671,11 +674,6 @@ void GameObject::DeleteFromDB()
 GameObject* GameObject::GetGameObject(WorldObject& object, uint64 guid)
 {
     return object.GetMap()->GetGameObject(guid);
-}
-
-GameObjectInfo const *GameObject::GetGOInfo() const
-{
-    return m_goInfo;
 }
 
 uint32 GameObject::GetLootId(GameObjectInfo const* ginfo)
@@ -736,7 +734,7 @@ Unit* GameObject::GetOwner() const
 
 void GameObject::SaveRespawnTime()
 {
-    if (m_respawnTime > time(NULL) && m_spawnedByDefault)
+    if (m_goData && m_goData->dbData && m_respawnTime > time(NULL) && m_spawnedByDefault)
         objmgr.SaveGORespawnTime(m_DBTableGuid,GetInstanceId(),m_respawnTime);
 }
 

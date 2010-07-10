@@ -148,6 +148,7 @@ m_regenTimer(2000), m_defaultMovementType(IDLE_MOTION_TYPE), m_equipmentId(0), m
 m_regenHealth(true), m_AI_locked(false), m_isDeadByDefault(false),
 m_meleeDamageSchoolMask(SPELL_SCHOOL_MASK_NORMAL),m_creatureInfo(NULL), m_DBTableGuid(0), m_formation(NULL), m_PlayerDamageReq(0)
 , m_AlreadySearchedAssistance(false)
+, m_creatureData(NULL)
 {
     m_valuesCount = UNIT_END;
 
@@ -1446,6 +1447,8 @@ bool Creature::LoadFromDB(uint32 guid, Map *map)
     m_defaultMovementType = MovementGeneratorType(data->movementType);
 
     AIM_Initialize();
+    m_creatureData = data;
+
     return true;
 }
 
@@ -2046,7 +2049,7 @@ bool Creature::CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction /
 
 void Creature::SaveRespawnTime()
 {
-    if (isPet() || !m_DBTableGuid)
+    if (isPet() || !m_DBTableGuid || m_creatureData && !m_creatureData->dbData)
         return;
 
     if (m_respawnTime > time(NULL))                          // dead (no corpse)
