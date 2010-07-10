@@ -173,7 +173,6 @@ public:
     void SetMaxItems(uint32 value)
     {
         maxItems = value;
-        CalculatePercents();
     }
     uint32 GetMaxItems()
     {

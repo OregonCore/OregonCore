@@ -437,9 +437,8 @@ bool AuctionHouseMgr::RemoveAItem(uint32 id)
 {
     ItemMap::iterator i = mAitems.find(id);
     if (i == mAitems.end())
-    {
         return false;
-    }
+
     mAitems.erase(i);
     return true;
 }
@@ -500,7 +499,11 @@ AuctionHouseEntry const* AuctionHouseMgr::GetAuctionHouseEntry(uint32 factionTem
     bool AuctionHouseObject::RemoveAuction(AuctionEntry *auction, uint32 item_template)
     {
         auctionbot.DecrementItemCounts(auction, item_template);
-        return AuctionsMap.erase(auction->Id) ? true : false;
+        bool wasInMap = AuctionsMap.erase(auction->Id) ? true : false;
+
+        // we need to delete the entry, it is not referenced any more
+        delete auction;
+        return wasInMap;
     }
 
 void AuctionHouseObject::Update()

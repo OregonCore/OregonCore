@@ -1501,6 +1501,7 @@ void AuctionHouseBot::Commands(uint32 command, uint32 ahMapID, uint32 col, char*
             uint32 maxItems = (uint32) strtoul(param1, NULL, 0);
             CharacterDatabase.PExecute("UPDATE auctionhousebot SET maxitems = '%u' WHERE auctionhouse = '%u'", maxItems, ahMapID);
             config->SetMaxItems(maxItems);
+            config->CalculatePercents();
         }
         break;
     case 3:     //min time Deprecated (Place holder for future commands)
