@@ -30,52 +30,27 @@ static MTRandTSS mtRand;
 
 int32 irand (int32 min, int32 max)
 {
-    int32 result;
-#pragma omp critical (mtrand)
-{
-    result = mtRand->randInt (max-min) + min;
-}
-  return result;
+    return int32 (mtRand->randInt (max - min)) + min;
 }
 
 uint32 urand (uint32 min, uint32 max)
 {
-    uint32 result;
-#pragma omp critical (mtrand)
-{
-  result =  mtRand->randInt (max - min) + min;
-}
-  return result;
+    return mtRand->randInt (max - min) + min;
 }
 
 int32 rand32 ()
 {
-   int32 result;
-#pragma omp critical (mtrand)
-{
-  result =  mtRand->randInt ();
-}
-  return result;
+    return mtRand->randInt ();
 }
 
 double rand_norm(void)
 {
-  double result;
-#pragma omp critical (mtrand)
-{
-  result = mtRand->randExc ();
-}
-  return result;
+    return mtRand->randExc ();
 }
 
 double rand_chance (void)
 {
-  double result;
-#pragma omp critical (mtrand)
-{
-  result = mtRand->randExc (100.0);
-}
-  return result;
+    return mtRand->randExc (100.0);
 }
 
 Tokens StrSplit(const std::string &src, const std::string &sep)
