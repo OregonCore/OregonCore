@@ -9111,6 +9111,8 @@ void Unit::UpdateSpeed(UnitMoveType mtype, bool forced)
 
     // Apply strongest slow aura mod to speed
     int32 slow = GetMaxNegativeAuraModifier(SPELL_AURA_MOD_DECREASE_SPEED);
+    int32 slow_non_stack = GetMaxNegativeAuraModifier(SPELL_AURA_MOD_SPEED_NOT_STACK);
+    slow = slow < slow_non_stack ? slow : slow_non_stack;
     if (slow)
         speed *=(100.0f + slow)/100.0f;
     SetSpeed(mtype, speed, forced);
