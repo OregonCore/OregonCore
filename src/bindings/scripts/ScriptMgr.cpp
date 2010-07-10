@@ -211,15 +211,56 @@ void DoScriptText(int32 iTextEntry, WorldObject* pSource, Unit* pTarget)
 
 void Script::RegisterSelf()
 {
+    // try to find scripts which try to use another script's allocated memory
+    // that means didn't allocate memory for script
+    for (uint16 i = 0; i < MAX_SCRIPTS; ++i)
+    {
+        // somebody forgot to allocate memory for a script by a method like this: newscript = new Script
+        if (m_scripts[i] == this)
+        {
+            error_log("ScriptName: '%s' - Forgot to allocate memory, so this script and/or the script before that can't work.", Name.c_str());
+            // don't register it
+            // and don't delete it because its memory is used for another script
+            return;
+        }
+    }
+
     int id = GetScriptId(Name.c_str());
     if (id)
     {
-        m_scripts[id] = this;
-        ++num_sc_scripts;
+        // try to find the script in assigned scripts
+        bool IsExist = false;
+        for (uint16 i = 0; i < MAX_SCRIPTS; ++i)
+        {
+            if (m_scripts[i])
+            {
+                // if the assigned script's name and the new script's name is the same
+                if (m_scripts[i]->Name == Name)
+                {
+                    IsExist = true;
+                    break;
+                }
+            }
+        }
+
+        // if the script doesn't assigned -> assign it!
+        if (!IsExist)
+        {
+            m_scripts[id] = this;
+            ++num_sc_scripts;
+        }
+        // if the script is already assigned -> delete it!
+        else
+        {
+            // TODO: write a better error message than this one :)
+            error_log("ScriptName: '%s' already assigned with the same ScriptName, so the script can't work.", Name.c_str());
+            delete this;
+        }
     }
-    else if (Name.find("example") == std::string::npos)
+    else
     {
-        error_db_log("CRASH ALERT! OregonScript: RegisterSelf, but script named %s does not have ScriptName assigned in database.",(this)->Name.c_str());
+        if (Name.find("example") == std::string::npos)
+            error_db_log("OregonScript: RegisterSelf, but script named %s does not have ScriptName assigned in database.",(this)->Name.c_str());
         delete this;
     }
 }
