@@ -139,7 +139,7 @@ World::~World()
 
     VMAP::VMapFactory::clear();
 
-    if (m_resultQueue) delete m_resultQueue;
+    delete m_resultQueue;
 
     //TODO free addSessQueue
 }

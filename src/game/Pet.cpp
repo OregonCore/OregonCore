@@ -372,8 +372,7 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
 
         if (result)
         {
-            if (m_declinedname)
-                delete m_declinedname;
+            delete m_declinedname;
 
             m_declinedname = new DeclinedName;
             Field *fields = result->Fetch();

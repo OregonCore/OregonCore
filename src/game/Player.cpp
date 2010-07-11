@@ -456,10 +456,8 @@ Player::~Player ()
 
     // Note: buy back item already deleted from DB when player was saved
     for (int i = 0; i < PLAYER_SLOTS_COUNT; ++i)
-    {
-        if (m_items[i])
-            delete m_items[i];
-    }
+        delete m_items[i];
+
     CleanupChannels();
 
     for (PlayerSpellMap::const_iterator itr = m_spells.begin(); itr != m_spells.end(); ++itr)
@@ -480,8 +478,7 @@ Player::~Player ()
     }
 
     for (size_t x = 0; x < ItemSetEff.size(); x++)
-        if (ItemSetEff[x])
-            delete ItemSetEff[x];
+        delete ItemSetEff[x];
 
     // clean up player-instance binds, may unload some instance saves
     for (uint8 i = 0; i < TOTAL_DIFFICULTIES; i++)
@@ -13971,8 +13968,7 @@ void Player::_LoadDeclinedNames(QueryResult_AutoPtr result)
     if (!result)
         return;
 
-    if (m_declinedname)
-        delete m_declinedname;
+    delete m_declinedname;
 
     m_declinedname = new DeclinedName;
     Field *fields = result->Fetch();
@@ -14142,11 +14138,8 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
         SetUInt64Value((uint16)(PLAYER_FIELD_INV_SLOT_HEAD + (slot * 2)), 0);
         SetVisibleItemSlot(slot, NULL);
 
-        if (m_items[slot])
-        {
-            delete m_items[slot];
-            m_items[slot] = NULL;
-        }
+        delete m_items[slot];
+        m_items[slot] = NULL;
     }
 
     // update money limits

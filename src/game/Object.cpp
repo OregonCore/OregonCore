@@ -89,15 +89,10 @@ Object::~Object()
 
     assert(!m_objectUpdated);
 
-    if (m_uint32Values)
-    {
-        //DEBUG_LOG("Object desctr 1 check (%p)",(void*)this);
-        delete [] m_uint32Values;
-        delete [] m_uint32Values_mirror;
-        m_uint32Values = NULL;
-        m_uint32Values_mirror = NULL;
-        //DEBUG_LOG("Object desctr 2 check (%p)",(void*)this);
-    }
+    delete [] m_uint32Values;
+    delete [] m_uint32Values_mirror;
+    m_uint32Values = NULL;
+    m_uint32Values_mirror = NULL;
 }
 
 void Object::_InitValues()

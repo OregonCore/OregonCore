@@ -88,11 +88,10 @@ m_LastPingTime (ACE_Time_Value::zero)
 
 WorldSocket::~WorldSocket (void)
 {
-    if (m_RecvWPct)
-        delete m_RecvWPct;
+    delete m_RecvWPct;
 
     if (m_OutBuffer)
-        m_OutBuffer->release ();
+        m_OutBuffer->release();
 
     closing_ = true;
 

@@ -258,8 +258,7 @@ Unit::~Unit()
     RemoveAllDynObjects();
     _DeleteAuras();
 
-    if (m_charmInfo)
-        delete m_charmInfo;
+    delete m_charmInfo;
 
     assert(!m_attacking);
     assert(m_attackers.empty());
@@ -10162,8 +10161,7 @@ void Unit::UpdateCharmAI()
     {
         if (!isCharmed())
         {
-            if (i_AI)
-                delete i_AI;
+            delete i_AI;
             i_AI = i_disabledAI;
             i_disabledAI = NULL;
         }
@@ -10191,9 +10189,6 @@ CharmInfo* Unit::InitCharmInfo()
 
 void Unit::DeleteCharmInfo()
 {
-    if (!m_charmInfo)
-        return;
-
     delete m_charmInfo;
     m_charmInfo = NULL;
 }

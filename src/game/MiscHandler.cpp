@@ -888,14 +888,14 @@ void WorldSession::HandleAreaTriggerOpcode(WorldPacket & recv_data)
 void WorldSession::HandleUpdateAccountData(WorldPacket &recv_data)
 {
     sLog.outDetail("WORLD: Received CMSG_UPDATE_ACCOUNT_DATA");
-	// not yet implemented. Needs to be backported from TC2
+    // not yet implemented. Needs to be backported from TC2
     recv_data.rpos(recv_data.wpos());                       // prevent warnings spam
 }
 
 void WorldSession::HandleRequestAccountData(WorldPacket& recv_data)
 {
     sLog.outDetail("WORLD: Received CMSG_REQUEST_ACCOUNT_DATA");
-	// not yet implemented. Needs to be backported from TC2
+    // not yet implemented. Needs to be backported from TC2
     recv_data.rpos(recv_data.wpos());                       // prevent warnings spam
 }
 
