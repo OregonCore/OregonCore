@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
-	Name="vmapExtractor3"
-	ProjectGUID="{D4624B20-AC1E-4EE9-8C9C-0FB65EEE3393}"
-	RootNamespace="vmapExtractor3"
+	Version="9,00"
+	Name="vmap3extractor"
+	ProjectGUID="{87335BBF-5DA8-4FEC-A51E-1FB948F2FFE9}"
+	RootNamespace="vmap3_extractor"
+	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -17,10 +18,10 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\bin\$(PlatformName)_$(ConfigurationName)"
-			IntermediateDirectory=".\bin\$(ProjectName)__$(PlatformName)_$(ConfigurationName)"
+			OutputDirectory=".\bin\Win32\DebugAS"
+			IntermediateDirectory=".\bin\Win32\DebugAS"
 			ConfigurationType="1"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -40,13 +41,17 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\libmpq;..\libmpq\win;..\..\dep\include\zlib"
-				PreprocessorDefinitions="WIN32;USE_LIBMPQ04"
-				MinimalRebuild="true"
+				AdditionalIncludeDirectories="..\vmapextract;..\..\libmpq;..\..\libmpq\win"
+				PreprocessorDefinitions="_DEBUG;_CONSOLE;WIN32"
+				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				ObjectFile=".\bin\Win32\DebugAS/"
+				ProgramDataBaseFileName=".\bin\Win32\DebugAS/"
 				WarningLevel="3"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -59,9 +64,14 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libmpq.lib"
-				AdditionalLibraryDirectories="..\libmpq\bin\$(PlatformName)_$(ConfigurationName)"
+				OutputFile=".\bin\Win32\DebugAS\(ProjectName)_d.exe"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
+				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
+				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -88,11 +98,11 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\bin\$(PlatformName)_$(ConfigurationName)"
-			IntermediateDirectory=".\bin\$(ProjectName)__$(PlatformName)_$(ConfigurationName)"
+			OutputDirectory=".\bin\Win32\ReleaseAS"
+			IntermediateDirectory=".\bin\Win32\ReleaseAS"
 			ConfigurationType="1"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
+			CharacterSet="1"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -112,11 +122,17 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\libmpq;..\libmpq\win;..\..\dep\include\zlib"
-				PreprocessorDefinitions="WIN32;USE_LIBMPQ04"
+				EnableIntrinsicFunctions="false"
+				WholeProgramOptimization="false"
+				AdditionalIncludeDirectories="..\vmapextract;..\..\libmpq;..\..\libmpq\win"
+				PreprocessorDefinitions="NDEBUG;_CONSOLE;WIN32"
+				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
+				EnableEnhancedInstructionSet="1"
+				UsePrecompiledHeader="0"
+				AssemblerListingLocation=".\bin\Win32\ReleaseAS/"
+				ObjectFile=".\bin\Win32\ReleaseAS/"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -131,11 +147,17 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libmpq.lib"
-				AdditionalLibraryDirectories="..\libmpq\bin\$(PlatformName)_$(ConfigurationName)"
+				OutputFile=".\bin\Win32\ReleaseAS\$(ProjectName).exe"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
+				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="0"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -165,80 +187,88 @@
 	</References>
 	<Files>
 		<Filter
-			Name="vmapextractor"
+			Name="Source Files"
+			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\vmapextract\adtfile.cpp"
+				RelativePath="..\vmapextract\adtfile.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\vmapextract\adtfile.h"
+				RelativePath="..\vmapextract\dbcfile.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\vmapextract\dbcfile.cpp"
+				RelativePath="..\vmapextract\model.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\vmapextract\dbcfile.h"
+				RelativePath="..\vmapextract\mpq_libmpq.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\vmapextract\model.cpp"
+				RelativePath="..\vmapextract\vmapexport.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\vmapextract\model.h"
+				RelativePath="..\vmapextract\wdtfile.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\vmapextract\modelheaders.h"
-				>
-			</File>
-			<File
-				RelativePath=".\vmapextract\mpq_libmpq.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\vmapextract\mpq_libmpq04.h"
-				>
-			</File>
-			<File
-				RelativePath=".\vmapextract\vec3d.h"
-				>
-			</File>
-			<File
-				RelativePath=".\vmapextract\vmapexport.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\vmapextract\vmapexport.h"
-				>
-			</File>
-			<File
-				RelativePath=".\vmapextract\wdtfile.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\vmapextract\wdtfile.h"
-				>
-			</File>
-			<File
-				RelativePath=".\vmapextract\wmo.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\vmapextract\wmo.h"
+				RelativePath="..\vmapextract\wmo.cpp"
 				>
 			</File>
 		</Filter>
 		<Filter
-			Name="loadlib"
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\vmapextract\loadlib\loadlib.h"
+				RelativePath="..\vmapextract\adtfile.h"
 				>
 			</File>
+			<File
+				RelativePath="..\vmapextract\dbcfile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\vmapextract\model.h"
+				>
+			</File>
+			<File
+				RelativePath="..\vmapextract\modelheaders.h"
+				>
+			</File>
+			<File
+				RelativePath="..\vmapextract\mpq_libmpq04.h"
+				>
+			</File>
+			<File
+				RelativePath="..\vmapextract\vec3d.h"
+				>
+			</File>
+			<File
+				RelativePath="..\vmapextract\vmapexport.h"
+				>
+			</File>
+			<File
+				RelativePath="..\vmapextract\wdtfile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\vmapextract\wmo.h"
+				>
+			</File>
+			<Filter
+				Name="loadlib"
+				>
+				<File
+					RelativePath="..\vmapextract\loadlib\loadlib.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
