@@ -3,7 +3,7 @@ cls
 echo.
 echo                    Welcome to the vmaps extractor and assembler
 echo.
-echo You need 2GB of free space in disk, CTRL+C to stop process
+echo You need 600MB of free space in disk, CTRL+C to stop process
 echo Hit Enter to start . . .
 pause>nul
 cls
@@ -14,7 +14,7 @@ IF EXIST buildings\dir (ECHO The buildings folder already exist do you want to d
 echo If YES hit Enter to continue if no CLOSE the program now! . . .
 pause>nul
 DEL /S /Q buildings)
-vmapextract_v2.exe
+vmapExtractor3.exe
 cls
 echo.
 echo.
@@ -29,7 +29,7 @@ echo.
 echo Vmaps extracted check log.txt for errors, now it's time to assemble the vmaps press any key to continue . . .
 pause>nul
 md vmaps
-vmap_assembler.exe buildings vmaps splitConfig.txt
+vmap_assembler.exe buildings vmaps
 cls
 echo.
 echo.
@@ -41,6 +41,6 @@ cls
 echo.
 echo.
 echo.
-echo Process done! copy vmaps folder to the MaNGOS main directory
+echo Process done! Copy vmaps folder to the Oregon main directory
 echo Press any key to exit . . .
 pause>nul

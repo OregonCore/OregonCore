@@ -42,8 +42,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\dep\include\g3dlite;..\..\..\src\shared\vmap;..\..\..\src\framework;..\..\..\dep\ACE_wrappers"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="..\..\..\dep\include\g3dlite;..\..\..\src\shared;..\..\..\src\shared\vmap;..\..\..\src\framework;..\..\..\dep\ACE_wrappers"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;NO_CORE_FUNCS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -121,8 +121,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\dep\include\g3dlite;..\..\..\src\shared\vmap;..\..\..\src\framework;..\..\..\dep\ACE_wrappers"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="..\..\..\dep\include\g3dlite;..\..\..\src\shared;..\..\..\src\shared\vmap;..\..\..\src\framework;..\..\..\dep\ACE_wrappers"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;NO_CORE_FUNCS"
 				RuntimeLibrary="2"
 				EnableEnhancedInstructionSet="1"
 				UsePrecompiledHeader="0"

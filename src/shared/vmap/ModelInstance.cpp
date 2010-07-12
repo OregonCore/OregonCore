@@ -1,24 +1,25 @@
 /*
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "ModelInstance.h"
 #include "WorldModel.h"
 #include "MapTree.h"
+#include "VMapDefinitions.h"
 
 using G3D::Vector3;
 using G3D::Ray;
@@ -35,29 +36,29 @@ namespace VMAP
     {
         if (!iModel)
         {
-            //std::cout << "<object not loaded>\n";
+#ifdef VMAP_DEBUG
+            DEBUG_LOG("<object not loaded>");
+#endif
             return false;
         }
         float time = pRay.intersectionTime(iBound);
         if (time == G3D::inf())
         {
-//            std::cout << "Ray does not hit '" << name << "'\n";
-
+#ifdef VMAP_DEBUG
+            DEBUG_LOG("Ray does not hit '%s'", name.c_str());
+#endif
             return false;
         }
-//        std::cout << "Ray crosses bound of '" << name << "'\n";
-/*        std::cout << "ray from:" << pRay.origin().x << ", " << pRay.origin().y << ", " << pRay.origin().z
-                  << " dir:" << pRay.direction().x << ", " << pRay.direction().y << ", " << pRay.direction().z
-                  << " t/tmax:" << time << "/" << pMaxDist;
-        std::cout << "\nBound lo:" << iBound.low().x << ", " << iBound.low().y << ", " << iBound.low().z << " hi: "
-                  << iBound.high().x << ", " << iBound.high().y << ", " << iBound.high().z << std::endl; */
         // child bounds are defined in object space:
         Vector3 p = iInvRot * (pRay.origin() - iPos) * iInvScale;
         Ray modRay(p, iInvRot * pRay.direction());
         float distance = pMaxDist * iInvScale;
         bool hit = iModel->IntersectRay(modRay, distance, pStopAtFirstHit);
-        distance *= iScale;
-        pMaxDist = distance;
+        if(hit)
+        {
+            distance *= iScale;
+            pMaxDist = distance;
+        }
         return hit;
     }
 
@@ -66,7 +67,7 @@ namespace VMAP
         if (!iModel)
         {
 #ifdef VMAP_DEBUG
-            std::cout << "<object not loaded>\n";
+            DEBUG_LOG("<object not loaded>");
 #endif
             return;
         }
@@ -100,7 +101,7 @@ namespace VMAP
         if (!iModel)
         {
 #ifdef VMAP_DEBUG
-            std::cout << "<object not loaded>\n";
+            DEBUG_LOG("<object not loaded>");
 #endif
             return false;
         }
@@ -155,7 +156,7 @@ namespace VMAP
         if (!check)
         {
             if (ferror(rf))
-                std::cout << "Error reading ModelSpawn!\n";
+                ERROR_LOG("Error reading ModelSpawn!");
             return false;
         }
         check += fread(&spawn.adtId, sizeof(uint16), 1, rf);
@@ -174,19 +175,19 @@ namespace VMAP
         check += fread(&nameLen, sizeof(uint32), 1, rf);
         if(check != (has_bound ? 17 : 11))
         {
-            std::cout << "Error reading ModelSpawn!\n";
+            ERROR_LOG("Error reading ModelSpawn!");
             return false;
         }
         char nameBuff[500];
         if (nameLen>500) // file names should never be that long, must be file error
         {
-            std::cout << "Error reading ModelSpawn, file name too long!\n";
+            ERROR_LOG("Error reading ModelSpawn, file name too long!");
             return false;
         }
         check = fread(nameBuff, sizeof(char), nameLen, rf);
         if (check != nameLen)
         {
-            std::cout << "Error reading ModelSpawn!\n";
+            ERROR_LOG("Error reading name string of ModelSpawn!");
             return false;
         }
         spawn.name = std::string(nameBuff, nameLen);

@@ -1,7 +1,7 @@
 ##########################################
 # Oregon Core world configuration file #
 ##########################################
-ConfVersion=2010061601
+ConfVersion=2010071301
 # Note to devs, line breaks should be at column 80
 ###############################################################################
 # CONNECTIONS AND DIRECTORIES
@@ -232,7 +232,7 @@ PlayerSaveInterval = 900000
 DisconnectToleranceInterval = 0
 vmap.enableLOS = 0
 vmap.enableHeight = 0
-vmap.ignoreMapIds = "369"
+vmap.ignoreMapIds = ""
 vmap.ignoreSpellIds = "7720"
 vmap.petLOS = 0
 vmap.totem = 0
