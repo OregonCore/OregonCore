@@ -722,6 +722,15 @@ bool ChatHandler::HandleGPSCommand(const char* args)
     uint32 have_map = Map::ExistMap(obj->GetMapId(),gx,gy) ? 1 : 0;
     uint32 have_vmap = Map::ExistVMap(obj->GetMapId(),gx,gy) ? 1 : 0;
 
+    if(have_vmap)
+    {
+        if(map->IsOutdoors(obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ()))
+            PSendSysMessage("You are outdoors");
+        else
+            PSendSysMessage("You are indoor");
+    }
+    else PSendSysMessage("no VMAP available for area info");
+
     PSendSysMessage(LANG_MAP_POSITION,
         obj->GetMapId(), (mapEntry ? mapEntry->name[m_session->GetSessionDbcLocale()] : "<unknown>"),
         zone_id, (zoneEntry ? zoneEntry->area_name[m_session->GetSessionDbcLocale()] : "<unknown>"),
@@ -2408,7 +2417,8 @@ bool ChatHandler::HandleNameTeleCommand(const char * args)
     else if (uint64 guid = objmgr.GetPlayerGUIDByName(name.c_str()))
     {
         PSendSysMessage(LANG_TELEPORTING_TO, name.c_str(), GetOregonString(LANG_OFFLINE), tele->name.c_str());
-        Player::SavePositionInDB(tele->mapId,tele->position_x,tele->position_y,tele->position_z,tele->orientation,MapManager::Instance().GetZoneId(tele->mapId,tele->position_x,tele->position_y),guid);
+        Player::SavePositionInDB(tele->mapId,tele->position_x,tele->position_y,tele->position_z,tele->orientation,
+            MapManager::Instance().GetZoneId(tele->mapId,tele->position_x,tele->position_y,tele->position_z),guid);
     }
     else
         PSendSysMessage(LANG_NO_PLAYER, name.c_str());

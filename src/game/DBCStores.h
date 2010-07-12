@@ -39,6 +39,8 @@ AreaTableEntry const* GetAreaEntryByAreaID(uint32 area_id);
 AreaTableEntry const* GetAreaEntryByAreaFlagAndMap(uint32 area_flag,uint32 map_id);
 uint32 GetAreaFlagByMapId(uint32 mapid);
 
+WMOAreaTableEntry const* GetWMOAreaTableEntryByTripple(int32 rootid, int32 adtid, int32 groupid);
+
 uint32 GetVirtualMapForMapAndZone(uint32 mapid, uint32 zoneId);
 
 enum ContentLevels
@@ -124,6 +126,7 @@ extern TaxiMask                                  sTaxiNodesMask;
 extern TaxiPathSetBySource                       sTaxiPathSetBySource;
 extern TaxiPathNodesByPath                       sTaxiPathNodesByPath;
 extern DBCStorage <TotemCategoryEntry>           sTotemCategoryStore;
+extern DBCStorage <WMOAreaTableEntry>            sWMOAreaTableStore;
 //extern DBCStorage <WorldMapAreaEntry>           sWorldMapAreaStore; -- use Zone2MapCoordinates and Map2ZoneCoordinates
 extern DBCStorage <WorldSafeLocsEntry>           sWorldSafeLocsStore;
 

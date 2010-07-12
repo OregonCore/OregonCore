@@ -1196,6 +1196,7 @@ class OREGON_DLL_SPEC Unit : public WorldObject
         void RemoveRankAurasDueToSpell(uint32 spellId);
         bool RemoveNoStackAurasDueToAura(Aura *Aur);
         void RemoveAurasWithInterruptFlags(uint32 flags, uint32 except = 0);
+        void RemoveAurasWithAttribute(uint32 flags);
         void RemoveAurasWithDispelType(DispelType type);
         void RemoveMovementImpairingAuras();
 

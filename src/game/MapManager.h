@@ -47,13 +47,13 @@ class OREGON_DLL_DECL MapManager : public Oregon::Singleton<MapManager, Oregon::
         // only const version for outer users
         void DeleteInstance(uint32 mapid, uint32 instanceId);
 
-        uint16 GetAreaFlag(uint32 mapid, float x, float y) const
+        uint16 GetAreaFlag(uint32 mapid, float x, float y, float z) const
         {
             Map const* m = CreateBaseMap(mapid);
-            return m->GetAreaFlag(x, y);
+            return m->GetAreaFlag(x, y, z);
         }
-        uint32 GetAreaId(uint32 mapid, float x, float y) { return Map::GetAreaId(GetAreaFlag(mapid, x, y),mapid); }
-        uint32 GetZoneId(uint32 mapid, float x, float y) { return Map::GetZoneId(GetAreaFlag(mapid, x, y),mapid); }
+        uint32 GetAreaId(uint32 mapid, float x, float y, float z) { return Map::GetAreaId(GetAreaFlag(mapid, x, y, z),mapid); }
+        uint32 GetZoneId(uint32 mapid, float x, float y, float z) { return Map::GetZoneId(GetAreaFlag(mapid, x, y, z),mapid); }
 
         void Initialize(void);
         void Update(time_t);

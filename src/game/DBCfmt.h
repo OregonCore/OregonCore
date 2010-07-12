@@ -86,6 +86,7 @@ const char TaxiPathEntryfmt[]="niii";
 const char TaxiPathNodeEntryfmt[]="diiifffiixx";
 const char TotemCategoryEntryfmt[]="nxxxxxxxxxxxxxxxxxii";
 const char WorldMapAreaEntryfmt[]="xinxffffi";
+const char WMOAreaTableEntryfmt[]="niiixxxxxiixxxxxxxxxxxxxxxxx";
 const char WorldSafeLocsEntryfmt[]="nifffxxxxxxxxxxxxxxxxx";
 
 #endif
