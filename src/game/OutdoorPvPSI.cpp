@@ -83,7 +83,7 @@ void OutdoorPvPSI::HandlePlayerLeaveZone(Player * plr, uint32 zone)
 
 bool OutdoorPvPSI::HandleAreaTrigger(Player *plr, uint32 trigger)
 {
-    switch(trigger)
+    switch (trigger)
     {
     case SI_AREATRIGGER_A:
         if (plr->GetTeam() == ALLIANCE && plr->HasAura(SI_SILITHYST_FLAG,0))
@@ -144,7 +144,7 @@ bool OutdoorPvPSI::HandleDropFlag(Player *plr, uint32 spellId)
     if (spellId == SI_SILITHYST_FLAG)
     {
         // if it was dropped away from the player's turn-in point, then create a silithyst mound, if it was dropped near the areatrigger, then it was dispelled by the outdoorpvp, so do nothing
-        switch(plr->GetTeam())
+        switch (plr->GetTeam())
         {
         case ALLIANCE:
             {
