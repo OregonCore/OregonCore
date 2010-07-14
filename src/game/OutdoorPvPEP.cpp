@@ -17,70 +17,233 @@
  */
 
 #include "OutdoorPvPEP.h"
-#include "WorldPacket.h"
-#include "Player.h"
-#include "GameObject.h"
-#include "ObjectMgr.h"
-#include "ObjectAccessor.h"
+#include "OutdoorPvP.h"
 #include "OutdoorPvPMgr.h"
-#include "Creature.h"
-#include "Language.h"
+#include "Player.h"
+#include "WorldPacket.h"
 #include "World.h"
+#include "ObjectMgr.h"
+#include "Language.h"
 #include "GossipDef.h"
 
-OPvPCapturePointEP_EWT::OPvPCapturePointEP_EWT(OutdoorPvP *pvp)
-: OPvPCapturePoint(pvp), m_TowerState(EP_TS_N), m_UnitsSummonedSide(0)
+const uint32 EP_LANG_LOOSE_A[EP_TOWER_NUM] = {LANG_OPVP_EP_LOOSE_CROWNGUARD_A,LANG_OPVP_EP_LOOSE_EASTWALL_A,LANG_OPVP_EP_LOOSE_NORTHPASS_A,LANG_OPVP_EP_LOOSE_PLAGUEWOOD_A};
+
+const uint32 EP_LANG_LOOSE_H[EP_TOWER_NUM] = {LANG_OPVP_EP_LOOSE_CROWNGUARD_H,LANG_OPVP_EP_LOOSE_EASTWALL_H,LANG_OPVP_EP_LOOSE_NORTHPASS_H,LANG_OPVP_EP_LOOSE_PLAGUEWOOD_H};
+
+const uint32 EP_LANG_CAPTURE_A[EP_TOWER_NUM] = {LANG_OPVP_EP_CAPTURE_CROWNGUARD_A,LANG_OPVP_EP_CAPTURE_EASTWALL_A,LANG_OPVP_EP_CAPTURE_NORTHPASS_A,LANG_OPVP_EP_CAPTURE_PLAGUEWOOD_A};
+
+const uint32 EP_LANG_CAPTURE_H[EP_TOWER_NUM] = {LANG_OPVP_EP_CAPTURE_CROWNGUARD_H,LANG_OPVP_EP_CAPTURE_EASTWALL_H,LANG_OPVP_EP_CAPTURE_NORTHPASS_H,LANG_OPVP_EP_CAPTURE_PLAGUEWOOD_H};
+
+const uint32 EP_LANG_FLIGHT_GOSSIPS[EP_TOWER_NUM-1] = {LANG_OPVP_EP_FLIGHT_NORTHPASS,LANG_OPVP_EP_FLIGHT_EASTWALL,LANG_OPVP_EP_FLIGHT_CROWNGUARD};
+
+OPvPCapturePointEP::OPvPCapturePointEP(OutdoorPvP *pvp,OutdoorPvPEPTowerType type)
+: OPvPCapturePoint(pvp), m_TowerType(type)
 {
-    SetCapturePointData(EPCapturePoints[EP_EWT].entry,EPCapturePoints[EP_EWT].map,EPCapturePoints[EP_EWT].x,EPCapturePoints[EP_EWT].y,EPCapturePoints[EP_EWT].z,EPCapturePoints[EP_EWT].o,EPCapturePoints[EP_EWT].rot0,EPCapturePoints[EP_EWT].rot1,EPCapturePoints[EP_EWT].rot2,EPCapturePoints[EP_EWT].rot3);
-    AddObject(EP_EWT_FLAGS,EPTowerFlags[EP_EWT].entry,EPTowerFlags[EP_EWT].map,EPTowerFlags[EP_EWT].x,EPTowerFlags[EP_EWT].y,EPTowerFlags[EP_EWT].z,EPTowerFlags[EP_EWT].o,EPTowerFlags[EP_EWT].rot0,EPTowerFlags[EP_EWT].rot1,EPTowerFlags[EP_EWT].rot2,EPTowerFlags[EP_EWT].rot3);
+    SetCapturePointData(EPCapturePoints[type].entry,
+        EPCapturePoints[type].map,
+        EPCapturePoints[type].x,
+        EPCapturePoints[type].y,
+        EPCapturePoints[type].z,
+        EPCapturePoints[type].o,
+        EPCapturePoints[type].rot0,
+        EPCapturePoints[type].rot1,
+        EPCapturePoints[type].rot2,
+        EPCapturePoints[type].rot3);
+    AddObject(type,
+        EPTowerFlags[type].entry,
+        EPTowerFlags[type].map,
+        EPTowerFlags[type].x,
+        EPTowerFlags[type].y,
+        EPTowerFlags[type].z,
+        EPTowerFlags[type].o,
+        EPTowerFlags[type].rot0,
+        EPTowerFlags[type].rot1,
+        EPTowerFlags[type].rot2,
+        EPTowerFlags[type].rot3);
+
+	EP_TOWER_EVENT_TEAM[type] = 0;
 }
 
-void OPvPCapturePointEP_EWT::ChangeState()
+OutdoorPvPEP::OutdoorPvPEP()
 {
+    m_TypeId = OUTDOOR_PVP_EP;
+}
+
+bool OutdoorPvPEP::SetupOutdoorPvP()
+{
+    m_AllianceTowersControlled = 0;
+    m_HordeTowersControlled = 0;
+
+    // add the zones affected by the pvp buff
+    for (uint8 i = 0; i < OutdoorPvPEPBuffZonesNum; ++i)
+        RegisterZone(OutdoorPvPEPBuffZones[i]);
+
+    AddCapturePoint(new OPvPCapturePointEP(this,EP_TOWER_CROWNGUARD));
+    AddCapturePoint(new OPvPCapturePointEP(this,EP_TOWER_EASTWALL));
+    AddCapturePoint(new OPvPCapturePointEP(this,EP_TOWER_NORTHPASS));
+    AddCapturePoint(new OPvPCapturePointEP(this,EP_TOWER_PLAGUEWOOD));
+
+    return true;
+}
+
+void OutdoorPvPEP::HandlePlayerEnterZone(Player * plr, uint32 zone)
+{
+    // add buffs
+    if (plr->GetTeam() == ALLIANCE)
+    {
+        if (m_AllianceTowersControlled > 0)
+            plr->CastSpell(plr,EP_AllianceBuffs[m_AllianceTowersControlled-1],true);
+    }
+    else
+    {
+        if (m_HordeTowersControlled > 0)
+            plr->CastSpell(plr,EP_HordeBuffs[m_HordeTowersControlled-1],true);
+    }
+    OutdoorPvP::HandlePlayerEnterZone(plr,zone);
+}
+
+void OutdoorPvPEP::HandlePlayerLeaveZone(Player * plr, uint32 zone)
+{
+    // remove buffs
+    if (plr->GetTeam() == ALLIANCE)
+    {
+        for (uint8 i = 0; i < OutdoorPvPEPTeamsBuffNum; ++i)
+            plr->RemoveAurasDueToSpell(EP_AllianceBuffs[i]);
+    }
+    else
+    {
+        for (uint8 i = 0; i < OutdoorPvPEPTeamsBuffNum; ++i)
+            plr->RemoveAurasDueToSpell(EP_HordeBuffs[i]);
+    }
+    OutdoorPvP::HandlePlayerLeaveZone(plr, zone);
+}
+
+bool OutdoorPvPEP::Update(uint32 diff)
+{
+    bool changed = false;
+    if (changed = OutdoorPvP::Update(diff))
+    {
+        for (uint8 i = 0; i < OutdoorPvPEPTeamsBuffNum; ++i)
+        {
+            TeamCastSpell(TEAM_ALLIANCE, -EP_AllianceBuffs[i]);
+            TeamCastSpell(TEAM_HORDE, -EP_HordeBuffs[i]);
+        }
+
+        uint32 AllianceBuff = m_AllianceTowersControlled > 0 ? EP_AllianceBuffs[m_AllianceTowersControlled-1] : 0;
+        uint32 HordeBuff = m_HordeTowersControlled > 0 ? EP_HordeBuffs[m_HordeTowersControlled-1] : 0;
+        if (m_AllianceTowersControlled > 0)
+            TeamApplyBuff(TEAM_ALLIANCE, AllianceBuff, HordeBuff);
+        if (m_HordeTowersControlled > 0)
+            TeamApplyBuff(TEAM_HORDE, HordeBuff, AllianceBuff);
+
+        SendUpdateWorldState(EP_UI_TOWER_COUNT_A, m_AllianceTowersControlled);
+        SendUpdateWorldState(EP_UI_TOWER_COUNT_H, m_HordeTowersControlled);
+    }
+    return changed;
+}
+
+void OutdoorPvPEP::SendRemoveWorldStates(Player *plr)
+{
+    plr->SendUpdateWorldState(EP_UI_TOWER_COUNT_A,0);
+    plr->SendUpdateWorldState(EP_UI_TOWER_COUNT_H,0);
+    plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY,0);
+    plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_POS,0);
+    plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_N,0);
+
+    for (uint8 i = 0; i < EP_TOWER_NUM; ++i)
+    {
+        plr->SendUpdateWorldState(EP_MAP_N[i],0);
+        plr->SendUpdateWorldState(EP_MAP_A[i],0);
+        plr->SendUpdateWorldState(EP_MAP_H[i],0);
+        plr->SendUpdateWorldState(EP_MAP_N_A[i],0);
+        plr->SendUpdateWorldState(EP_MAP_N_H[i],0);
+    }
+}
+
+void OutdoorPvPEP::FillInitialWorldStates(WorldPacket &data)
+{
+    data << EP_UI_TOWER_COUNT_A << m_AllianceTowersControlled;
+    data << EP_UI_TOWER_COUNT_H << m_HordeTowersControlled;
+    data << EP_UI_TOWER_SLIDER_DISPLAY << uint32(0);
+    data << EP_UI_TOWER_SLIDER_POS << uint32(50);
+    data << EP_UI_TOWER_SLIDER_N << uint32(100);
+    for (OPvPCapturePointMap::iterator itr = m_capturePoints.begin(); itr != m_capturePoints.end(); ++itr)
+    {
+        itr->second->FillInitialWorldStates(data);
+    }
+}
+
+void OPvPCapturePointEP::ChangeState()
+{
+    uint32 field = 0;
     switch (m_OldState)
     {
+    case OBJECTIVESTATE_NEUTRAL:
+        field = EP_MAP_N[m_TowerType];
+        break;
     case OBJECTIVESTATE_ALLIANCE:
-        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_EWT_A));
-        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_EWT] = 0;
-    break;
+        field = EP_MAP_A[m_TowerType];
+        if (((OutdoorPvPEP*)m_PvP)->m_AllianceTowersControlled)
+            ((OutdoorPvPEP*)m_PvP)->m_AllianceTowersControlled--;
+        sWorld.SendZoneText(OutdoorPvPEPBuffZones[0],objmgr.GetOregonStringForDBCLocale(EP_LANG_LOOSE_A[m_TowerType]));
+        break;
     case OBJECTIVESTATE_HORDE:
-        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_EWT_H));
-        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_EWT] = 0;
-    break;
+        field = EP_MAP_H[m_TowerType];
+        if (((OutdoorPvPEP*)m_PvP)->m_HordeTowersControlled)
+            ((OutdoorPvPEP*)m_PvP)->m_HordeTowersControlled--;
+        sWorld.SendZoneText(OutdoorPvPEPBuffZones[0],objmgr.GetOregonStringForDBCLocale(EP_LANG_LOOSE_H[m_TowerType]));
+        break;
+    case OBJECTIVESTATE_NEUTRAL_ALLIANCE_CHALLENGE:
+    case OBJECTIVESTATE_ALLIANCE_HORDE_CHALLENGE:
+        field = EP_MAP_N_A[m_TowerType];
+        break;
+    case OBJECTIVESTATE_NEUTRAL_HORDE_CHALLENGE:
+    case OBJECTIVESTATE_HORDE_ALLIANCE_CHALLENGE:
+        field = EP_MAP_N_H[m_TowerType];
+        break;
+    }
+
+    // send world state update
+    if (field)
+    {
+        m_PvP->SendUpdateWorldState(field, 0);
+        field = 0;
     }
 
     uint32 artkit = 21;
     switch (m_State)
     {
+    case OBJECTIVESTATE_NEUTRAL:
+        field = EP_MAP_N[m_TowerType];
+        break;
     case OBJECTIVESTATE_ALLIANCE:
-        m_TowerState = EP_TS_A;
+        field = EP_MAP_A[m_TowerType];
         artkit = 2;
-        SummonSupportUnitAtNorthpassTower(ALLIANCE);
-        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_EWT] = ALLIANCE;
-        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_CAPTURE_EWT_A));
+        if (((OutdoorPvPEP*)m_PvP)->m_AllianceTowersControlled<4)
+            ((OutdoorPvPEP*)m_PvP)->m_AllianceTowersControlled++;
+        sWorld.SendZoneText(OutdoorPvPEPBuffZones[0],objmgr.GetOregonStringForDBCLocale(EP_LANG_CAPTURE_A[m_TowerType]));
         break;
     case OBJECTIVESTATE_HORDE:
-        m_TowerState = EP_TS_H;
+        field = EP_MAP_H[m_TowerType];
         artkit = 1;
-        SummonSupportUnitAtNorthpassTower(HORDE);
-        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_EWT] = HORDE;
-        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_CAPTURE_EWT_H));
-        break;
-    case OBJECTIVESTATE_NEUTRAL:
-        m_TowerState = EP_TS_N;
+        if (((OutdoorPvPEP*)m_PvP)->m_HordeTowersControlled<4)
+            ((OutdoorPvPEP*)m_PvP)->m_HordeTowersControlled++;
+        sWorld.SendZoneText(OutdoorPvPEPBuffZones[0],objmgr.GetOregonStringForDBCLocale(EP_LANG_CAPTURE_H[m_TowerType]));
         break;
     case OBJECTIVESTATE_NEUTRAL_ALLIANCE_CHALLENGE:
-    case OBJECTIVESTATE_HORDE_ALLIANCE_CHALLENGE:
-        m_TowerState = EP_TS_N_A;
+    case OBJECTIVESTATE_ALLIANCE_HORDE_CHALLENGE:
+        field = EP_MAP_N_A[m_TowerType];
         break;
     case OBJECTIVESTATE_NEUTRAL_HORDE_CHALLENGE:
-    case OBJECTIVESTATE_ALLIANCE_HORDE_CHALLENGE:
-        m_TowerState = EP_TS_N_H;
+    case OBJECTIVESTATE_HORDE_ALLIANCE_CHALLENGE:
+        field = EP_MAP_N_H[m_TowerType];
         break;
     }
 
+	UpdateTowerEvents();
+
     GameObject* flag = HashMapHolder<GameObject>::Find(m_capturePointGUID);
-    GameObject* flag2 = HashMapHolder<GameObject>::Find(m_Objects[EP_EWT_FLAGS]);
+    GameObject* flag2 = HashMapHolder<GameObject>::Find(m_Objects[m_TowerType]);
     if (flag)
     {
         flag->SetGoArtKit(artkit);
@@ -90,43 +253,70 @@ void OPvPCapturePointEP_EWT::ChangeState()
         flag2->SetGoArtKit(artkit);
     }
 
-    UpdateTowerState();
+    // send world state update
+    if (field)
+        m_PvP->SendUpdateWorldState(field, 1);
 
     // complete quest objective
-    if (m_TowerState == EP_TS_A || m_TowerState == EP_TS_H)
-        SendObjectiveComplete(EP_EWT_CM, 0);
+    if (m_State == OBJECTIVESTATE_ALLIANCE || m_State == OBJECTIVESTATE_HORDE)
+        SendObjectiveComplete(EP_CREDITMARKER[m_TowerType], 0);
 }
 
-void OPvPCapturePointEP_EWT::SendChangePhase()
+void OPvPCapturePointEP::SendChangePhase()
 {
-    // send this too, sometimes the slider disappears, dunno why :(
-    SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 1);
+    SendUpdateWorldState(EP_UI_TOWER_SLIDER_N, m_neutralValuePct);
     // send these updates to only the ones in this objective
     uint32 phase = (uint32)ceil((m_value + m_maxValue) / (2 * m_maxValue) * 100.0f);
     SendUpdateWorldState(EP_UI_TOWER_SLIDER_POS, phase);
-    // send this too, sometimes it resets :S
-    SendUpdateWorldState(EP_UI_TOWER_SLIDER_N, m_neutralValuePct);
+    SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 1);
 }
 
-void OPvPCapturePointEP_EWT::FillInitialWorldStates(WorldPacket &data)
+void OPvPCapturePointEP::FillInitialWorldStates(WorldPacket &data)
 {
-    data << EP_EWT_A << uint32(bool(m_TowerState & EP_TS_A));
-    data << EP_EWT_H << uint32(bool(m_TowerState & EP_TS_H));
-    data << EP_EWT_N_A << uint32(bool(m_TowerState & EP_TS_N_A));
-    data << EP_EWT_N_H << uint32(bool(m_TowerState & EP_TS_N_H));
-    data << EP_EWT_N << uint32(bool(m_TowerState & EP_TS_N));
+    switch (m_State)
+    {
+        case OBJECTIVESTATE_ALLIANCE:
+            data << uint32(EP_MAP_N[m_TowerType]) << uint32(0);
+            data << uint32(EP_MAP_A[m_TowerType]) << uint32(1);
+            data << uint32(EP_MAP_H[m_TowerType]) << uint32(0);
+            data << uint32(EP_MAP_N_A[m_TowerType]) << uint32(0);
+            data << uint32(EP_MAP_N_H[m_TowerType]) << uint32(0);
+            break;
+        case OBJECTIVESTATE_HORDE:
+            data << uint32(EP_MAP_N[m_TowerType]) << uint32(0);
+            data << uint32(EP_MAP_A[m_TowerType]) << uint32(0);
+            data << uint32(EP_MAP_H[m_TowerType]) << uint32(1);
+            data << uint32(EP_MAP_N_A[m_TowerType]) << uint32(0);
+            data << uint32(EP_MAP_N_H[m_TowerType]) << uint32(0);
+            break;
+        case OBJECTIVESTATE_NEUTRAL_ALLIANCE_CHALLENGE:
+        case OBJECTIVESTATE_ALLIANCE_HORDE_CHALLENGE:
+            data << uint32(EP_MAP_N[m_TowerType]) << uint32(0);
+            data << uint32(EP_MAP_A[m_TowerType]) << uint32(0);
+            data << uint32(EP_MAP_H[m_TowerType]) << uint32(0);
+            data << uint32(EP_MAP_N_A[m_TowerType]) << uint32(1);
+            data << uint32(EP_MAP_N_H[m_TowerType]) << uint32(0);
+            break;
+        case OBJECTIVESTATE_NEUTRAL_HORDE_CHALLENGE:
+        case OBJECTIVESTATE_HORDE_ALLIANCE_CHALLENGE:
+            data << uint32(EP_MAP_N[m_TowerType]) << uint32(0);
+            data << uint32(EP_MAP_A[m_TowerType]) << uint32(0);
+            data << uint32(EP_MAP_H[m_TowerType]) << uint32(0);
+            data << uint32(EP_MAP_N_A[m_TowerType]) << uint32(0);
+            data << uint32(EP_MAP_N_H[m_TowerType]) << uint32(1);
+            break;
+        case OBJECTIVESTATE_NEUTRAL:
+        default:
+            data << uint32(EP_MAP_N[m_TowerType]) << uint32(1);
+            data << uint32(EP_MAP_A[m_TowerType]) << uint32(0);
+            data << uint32(EP_MAP_H[m_TowerType]) << uint32(0);
+            data << uint32(EP_MAP_N_A[m_TowerType]) << uint32(0);
+            data << uint32(EP_MAP_N_H[m_TowerType]) << uint32(0);
+            break;
+    }
 }
 
-void OPvPCapturePointEP_EWT::UpdateTowerState()
-{
-    m_PvP->SendUpdateWorldState(EP_EWT_A , bool(m_TowerState & EP_TS_A));
-    m_PvP->SendUpdateWorldState(EP_EWT_H , bool(m_TowerState & EP_TS_H));
-    m_PvP->SendUpdateWorldState(EP_EWT_N_A , bool(m_TowerState & EP_TS_N_A));
-    m_PvP->SendUpdateWorldState(EP_EWT_N_H , bool(m_TowerState & EP_TS_N_H));
-    m_PvP->SendUpdateWorldState(EP_EWT_N , bool(m_TowerState & EP_TS_N));
-}
-
-bool OPvPCapturePointEP_EWT::HandlePlayerEnter(Player *plr)
+bool OPvPCapturePointEP::HandlePlayerEnter(Player *plr)
 {
     if (OPvPCapturePoint::HandlePlayerEnter(plr))
     {
@@ -139,24 +329,82 @@ bool OPvPCapturePointEP_EWT::HandlePlayerEnter(Player *plr)
     return false;
 }
 
-void OPvPCapturePointEP_EWT::HandlePlayerLeave(Player *plr)
+void OPvPCapturePointEP::HandlePlayerLeave(Player *plr)
 {
     plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 0);
     OPvPCapturePoint::HandlePlayerLeave(plr);
 }
 
-void OPvPCapturePointEP_EWT::SummonSupportUnitAtNorthpassTower(uint32 team)
+// Tower specific events
+void OPvPCapturePointEP::UpdateTowerEvents()
 {
-    if (m_UnitsSummonedSide != team)
+    if (m_State == OBJECTIVESTATE_ALLIANCE || m_State == OBJECTIVESTATE_HORDE)
     {
-        m_UnitsSummonedSide = team;
+        uint32 team = (m_State == OBJECTIVESTATE_ALLIANCE) ? ALLIANCE : HORDE;
+        switch (m_TowerType)
+        {
+        case EP_TOWER_CROWNGUARD:
+            LinkGraveYard(team);
+            break;
+        case EP_TOWER_EASTWALL:
+            SummonSupportUnits(team);
+            break;
+        case EP_TOWER_NORTHPASS:
+            SummonShrine(team);
+            break;
+        case EP_TOWER_PLAGUEWOOD:
+            SummonFlightMaster(team);
+            break;
+        }
+    }
+    else if (m_OldState == OBJECTIVESTATE_ALLIANCE || m_OldState == OBJECTIVESTATE_HORDE)
+    {
+        switch (m_TowerType)
+        {
+        case EP_TOWER_CROWNGUARD:
+            UnlinkGraveYard();
+            break;
+        case EP_TOWER_EASTWALL:
+            UnsummonSupportUnits();
+            break;
+        case EP_TOWER_NORTHPASS:
+            UnsummonShrine();
+            break;
+        case EP_TOWER_PLAGUEWOOD:
+            UnsummonFlightMaster();
+            break;
+        }
+    }
+}
+
+void OPvPCapturePointEP::LinkGraveYard(uint32 team)
+{
+    if (EP_TOWER_EVENT_TEAM[EP_TOWER_CROWNGUARD] != team)
+    {
+        EP_TOWER_EVENT_TEAM[EP_TOWER_CROWNGUARD] = team;
+        objmgr.RemoveGraveYardLink(EP_GraveYardId,EP_GraveYardZone,team,false);
+        objmgr.AddGraveYardLink(EP_GraveYardId,EP_GraveYardZone,team,false);
+    }
+}
+
+void OPvPCapturePointEP::UnlinkGraveYard()
+{
+    objmgr.RemoveGraveYardLink(EP_GraveYardId,EP_GraveYardZone,EP_TOWER_EVENT_TEAM[EP_TOWER_CROWNGUARD],false);
+    EP_TOWER_EVENT_TEAM[EP_TOWER_CROWNGUARD] = 0;
+}
+
+void OPvPCapturePointEP::SummonSupportUnits(uint32 team)
+{
+    if (EP_TOWER_EVENT_TEAM[EP_TOWER_EASTWALL] != team)
+    {
+        EP_TOWER_EVENT_TEAM[EP_TOWER_EASTWALL] = team;
         const creature_type * ct = NULL;
         if (team == ALLIANCE)
             ct=EP_EWT_Summons_A;
         else
             ct=EP_EWT_Summons_H;
 
-        for (int i = 0; i < EP_EWT_NUM_CREATURES; ++i)
+        for (uint8 i = 0; i < EP_EWT_NUM_CREATURES; ++i)
         {
             DelCreature(i);
             AddCreature(i,ct[i].entry,ct[i].teamval,ct[i].map,ct[i].x,ct[i].y,ct[i].z,ct[i].o,1000000);
@@ -164,131 +412,18 @@ void OPvPCapturePointEP_EWT::SummonSupportUnitAtNorthpassTower(uint32 team)
     }
 }
 
-// NPT
-OPvPCapturePointEP_NPT::OPvPCapturePointEP_NPT(OutdoorPvP *pvp)
-: OPvPCapturePoint(pvp), m_TowerState(EP_TS_N), m_SummonedGOSide(0)
+void OPvPCapturePointEP::UnsummonSupportUnits()
 {
-    SetCapturePointData(EPCapturePoints[EP_NPT].entry,EPCapturePoints[EP_NPT].map,EPCapturePoints[EP_NPT].x,EPCapturePoints[EP_NPT].y,EPCapturePoints[EP_NPT].z,EPCapturePoints[EP_NPT].o,EPCapturePoints[EP_NPT].rot0,EPCapturePoints[EP_NPT].rot1,EPCapturePoints[EP_NPT].rot2,EPCapturePoints[EP_NPT].rot3);
-    AddObject(EP_NPT_FLAGS,EPTowerFlags[EP_NPT].entry,EPTowerFlags[EP_NPT].map,EPTowerFlags[EP_NPT].x,EPTowerFlags[EP_NPT].y,EPTowerFlags[EP_NPT].z,EPTowerFlags[EP_NPT].o,EPTowerFlags[EP_NPT].rot0,EPTowerFlags[EP_NPT].rot1,EPTowerFlags[EP_NPT].rot2,EPTowerFlags[EP_NPT].rot3);
+    for (uint8 i = 0; i < EP_EWT_NUM_CREATURES; ++i)
+        DelCreature(i);
+    EP_TOWER_EVENT_TEAM[EP_TOWER_EASTWALL] = 0;
 }
 
-void OPvPCapturePointEP_NPT::ChangeState()
+void OPvPCapturePointEP::SummonShrine(uint32 team)
 {
-    switch (m_OldState)
+    if (EP_TOWER_EVENT_TEAM[EP_TOWER_NORTHPASS] != team)
     {
-    case OBJECTIVESTATE_ALLIANCE:
-        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_NPT_A));
-        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_NPT] = 0;
-    break;
-    case OBJECTIVESTATE_HORDE:
-        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_NPT_H));
-        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_NPT] = 0;
-    break;
-    }
-
-    uint32 artkit = 21;
-    switch (m_State)
-    {
-    case OBJECTIVESTATE_ALLIANCE:
-        m_TowerState = EP_TS_A;
-        artkit = 2;
-        SummonGO(ALLIANCE);
-        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_NPT] = ALLIANCE;
-        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_CAPTURE_NPT_A));
-        break;
-    case OBJECTIVESTATE_HORDE:
-        m_TowerState = EP_TS_H;
-        artkit = 1;
-        SummonGO(HORDE);
-        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_NPT] = HORDE;
-        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_CAPTURE_NPT_H));
-        break;
-    case OBJECTIVESTATE_NEUTRAL:
-        m_TowerState = EP_TS_N;
-        m_SummonedGOSide = 0;
-        DelObject(EP_NPT_BUFF);
-        break;
-    case OBJECTIVESTATE_NEUTRAL_ALLIANCE_CHALLENGE:
-    case OBJECTIVESTATE_HORDE_ALLIANCE_CHALLENGE:
-        m_TowerState = EP_TS_N_A;
-        break;
-    case OBJECTIVESTATE_NEUTRAL_HORDE_CHALLENGE:
-    case OBJECTIVESTATE_ALLIANCE_HORDE_CHALLENGE:
-        m_TowerState = EP_TS_N_H;
-        break;
-    }
-
-    GameObject* flag = HashMapHolder<GameObject>::Find(m_capturePointGUID);
-    GameObject* flag2 = HashMapHolder<GameObject>::Find(m_Objects[EP_NPT_FLAGS]);
-    if (flag)
-    {
-        flag->SetGoArtKit(artkit);
-    }
-    if (flag2)
-    {
-        flag2->SetGoArtKit(artkit);
-    }
-
-    UpdateTowerState();
-
-    // complete quest objective
-    if (m_TowerState == EP_TS_A || m_TowerState == EP_TS_H)
-        SendObjectiveComplete(EP_NPT_CM, 0);
-}
-
-void OPvPCapturePointEP_NPT::SendChangePhase()
-{
-    // send this too, sometimes the slider disappears, dunno why :(
-    SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 1);
-    // send these updates to only the ones in this objective
-    uint32 phase = (uint32)ceil((m_value + m_maxValue) / (2 * m_maxValue) * 100.0f);
-    SendUpdateWorldState(EP_UI_TOWER_SLIDER_POS, phase);
-    // send this too, sometimes it resets :S
-    SendUpdateWorldState(EP_UI_TOWER_SLIDER_N, m_neutralValuePct);
-}
-
-void OPvPCapturePointEP_NPT::FillInitialWorldStates(WorldPacket &data)
-{
-    data << EP_NPT_A << uint32(bool(m_TowerState & EP_TS_A));
-    data << EP_NPT_H << uint32(bool(m_TowerState & EP_TS_H));
-    data << EP_NPT_N_A << uint32(bool(m_TowerState & EP_TS_N_A));
-    data << EP_NPT_N_H << uint32(bool(m_TowerState & EP_TS_N_H));
-    data << EP_NPT_N << uint32(bool(m_TowerState & EP_TS_N));
-}
-
-void OPvPCapturePointEP_NPT::UpdateTowerState()
-{
-    m_PvP->SendUpdateWorldState(EP_NPT_A , bool(m_TowerState & EP_TS_A));
-    m_PvP->SendUpdateWorldState(EP_NPT_H , bool(m_TowerState & EP_TS_H));
-    m_PvP->SendUpdateWorldState(EP_NPT_N_A , bool(m_TowerState & EP_TS_N_A));
-    m_PvP->SendUpdateWorldState(EP_NPT_N_H , bool(m_TowerState & EP_TS_N_H));
-    m_PvP->SendUpdateWorldState(EP_NPT_N , bool(m_TowerState & EP_TS_N));
-}
-
-bool OPvPCapturePointEP_NPT::HandlePlayerEnter(Player *plr)
-{
-    if (OPvPCapturePoint::HandlePlayerEnter(plr))
-    {
-        plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 1);
-        uint32 phase = (uint32)ceil((m_value + m_maxValue) / (2 * m_maxValue) * 100.0f);
-        plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_POS, phase);
-        plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_N, m_neutralValuePct);
-        return true;
-    }
-    return false;
-}
-
-void OPvPCapturePointEP_NPT::HandlePlayerLeave(Player *plr)
-{
-    plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 0);
-    OPvPCapturePoint::HandlePlayerLeave(plr);
-}
-
-void OPvPCapturePointEP_NPT::SummonGO(uint32 team)
-{
-    if (m_SummonedGOSide != team)
-    {
-        m_SummonedGOSide = team;
+        EP_TOWER_EVENT_TEAM[EP_TOWER_NORTHPASS] = team;
         DelObject(EP_NPT_BUFF);
         AddObject(EP_NPT_BUFF,EP_NPT_LordaeronShrine.entry,EP_NPT_LordaeronShrine.map,EP_NPT_LordaeronShrine.x,EP_NPT_LordaeronShrine.y,EP_NPT_LordaeronShrine.z,EP_NPT_LordaeronShrine.o,EP_NPT_LordaeronShrine.rot0,EP_NPT_LordaeronShrine.rot1,EP_NPT_LordaeronShrine.rot2,EP_NPT_LordaeronShrine.rot3);
         GameObject * go = HashMapHolder<GameObject>::Find(m_Objects[EP_NPT_BUFF]);
@@ -297,308 +432,59 @@ void OPvPCapturePointEP_NPT::SummonGO(uint32 team)
     }
 }
 
-// CGT
-OPvPCapturePointEP_CGT::OPvPCapturePointEP_CGT(OutdoorPvP *pvp)
-: OPvPCapturePoint(pvp), m_TowerState(EP_TS_N), m_GraveyardSide(0)
+void OPvPCapturePointEP::UnsummonShrine()
 {
-    SetCapturePointData(EPCapturePoints[EP_CGT].entry,EPCapturePoints[EP_CGT].map,EPCapturePoints[EP_CGT].x,EPCapturePoints[EP_CGT].y,EPCapturePoints[EP_CGT].z,EPCapturePoints[EP_CGT].o,EPCapturePoints[EP_CGT].rot0,EPCapturePoints[EP_CGT].rot1,EPCapturePoints[EP_CGT].rot2,EPCapturePoints[EP_CGT].rot3);
-    AddObject(EP_CGT_FLAGS,EPTowerFlags[EP_CGT].entry,EPTowerFlags[EP_CGT].map,EPTowerFlags[EP_CGT].x,EPTowerFlags[EP_CGT].y,EPTowerFlags[EP_CGT].z,EPTowerFlags[EP_CGT].o,EPTowerFlags[EP_CGT].rot0,EPTowerFlags[EP_CGT].rot1,EPTowerFlags[EP_CGT].rot2,EPTowerFlags[EP_CGT].rot3);
+    DelObject(EP_NPT_BUFF);
+    EP_TOWER_EVENT_TEAM[EP_TOWER_NORTHPASS] = 0;
 }
 
-void OPvPCapturePointEP_CGT::ChangeState()
+void OPvPCapturePointEP::SummonFlightMaster(uint32 team)
 {
-    switch (m_OldState)
+    if (EP_TOWER_EVENT_TEAM[EP_TOWER_PLAGUEWOOD] != team)
     {
-    case OBJECTIVESTATE_ALLIANCE:
-        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_CGT_A));
-        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_CGT] = 0;;
-    break;
-    case OBJECTIVESTATE_HORDE:
-        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_CGT_H));
-        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_CGT] = 0;;
-    break;
-    }
-
-    uint32 artkit = 21;
-    switch (m_State)
-    {
-    case OBJECTIVESTATE_ALLIANCE:
-        m_TowerState = EP_TS_A;
-        artkit = 2;
-        LinkGraveYard(ALLIANCE);
-        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_CGT] = ALLIANCE;
-        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_CAPTURE_CGT_A));
-        break;
-    case OBJECTIVESTATE_HORDE:
-        m_TowerState = EP_TS_H;
-        artkit = 1;
-        LinkGraveYard(HORDE);
-        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_CGT] = HORDE;
-        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_CAPTURE_CGT_H));
-        break;
-    case OBJECTIVESTATE_NEUTRAL:
-        m_TowerState = EP_TS_N;
-        break;
-    case OBJECTIVESTATE_NEUTRAL_ALLIANCE_CHALLENGE:
-    case OBJECTIVESTATE_HORDE_ALLIANCE_CHALLENGE:
-        m_TowerState = EP_TS_N_A;
-        break;
-    case OBJECTIVESTATE_NEUTRAL_HORDE_CHALLENGE:
-    case OBJECTIVESTATE_ALLIANCE_HORDE_CHALLENGE:
-        m_TowerState = EP_TS_N_H;
-        break;
-    }
-
-    GameObject* flag = HashMapHolder<GameObject>::Find(m_capturePointGUID);
-    GameObject* flag2 = HashMapHolder<GameObject>::Find(m_Objects[EP_CGT_FLAGS]);
-    if (flag)
-    {
-        flag->SetGoArtKit(artkit);
-    }
-    if (flag2)
-    {
-        flag2->SetGoArtKit(artkit);
-    }
-
-    UpdateTowerState();
-
-    // complete quest objective
-    if (m_TowerState == EP_TS_A || m_TowerState == EP_TS_H)
-        SendObjectiveComplete(EP_CGT_CM, 0);
-}
-
-void OPvPCapturePointEP_CGT::SendChangePhase()
-{
-    // send this too, sometimes the slider disappears, dunno why :(
-    SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 1);
-    // send these updates to only the ones in this objective
-    uint32 phase = (uint32)ceil((m_value + m_maxValue) / (2 * m_maxValue) * 100.0f);
-    SendUpdateWorldState(EP_UI_TOWER_SLIDER_POS, phase);
-    // send this too, sometimes it resets :S
-    SendUpdateWorldState(EP_UI_TOWER_SLIDER_N, m_neutralValuePct);
-}
-
-void OPvPCapturePointEP_CGT::FillInitialWorldStates(WorldPacket &data)
-{
-    data << EP_CGT_A << uint32(bool(m_TowerState & EP_TS_A));
-    data << EP_CGT_H << uint32(bool(m_TowerState & EP_TS_H));
-    data << EP_CGT_N_A << uint32(bool(m_TowerState & EP_TS_N_A));
-    data << EP_CGT_N_H << uint32(bool(m_TowerState & EP_TS_N_H));
-    data << EP_CGT_N << uint32(bool(m_TowerState & EP_TS_N));
-}
-
-void OPvPCapturePointEP_CGT::UpdateTowerState()
-{
-    m_PvP->SendUpdateWorldState(EP_CGT_A , bool(m_TowerState & EP_TS_A));
-    m_PvP->SendUpdateWorldState(EP_CGT_H , bool(m_TowerState & EP_TS_H));
-    m_PvP->SendUpdateWorldState(EP_CGT_N_A , bool(m_TowerState & EP_TS_N_A));
-    m_PvP->SendUpdateWorldState(EP_CGT_N_H , bool(m_TowerState & EP_TS_N_H));
-    m_PvP->SendUpdateWorldState(EP_CGT_N , bool(m_TowerState & EP_TS_N));
-}
-
-bool OPvPCapturePointEP_CGT::HandlePlayerEnter(Player *plr)
-{
-    if (OPvPCapturePoint::HandlePlayerEnter(plr))
-    {
-        plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 1);
-        uint32 phase = (uint32)ceil((m_value + m_maxValue) / (2 * m_maxValue) * 100.0f);
-        plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_POS, phase);
-        plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_N, m_neutralValuePct);
-        return true;
-    }
-    return false;
-}
-
-void OPvPCapturePointEP_CGT::HandlePlayerLeave(Player *plr)
-{
-    plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 0);
-    OPvPCapturePoint::HandlePlayerLeave(plr);
-}
-
-void OPvPCapturePointEP_CGT::LinkGraveYard(uint32 team)
-{
-    if (m_GraveyardSide != team)
-    {
-        m_GraveyardSide = team;
-        objmgr.RemoveGraveYardLink(EP_GraveYardId,EP_GraveYardZone,team,false);
-        objmgr.AddGraveYardLink(EP_GraveYardId,EP_GraveYardZone,team,false);
-    }
-}
-
-// PWT
-OPvPCapturePointEP_PWT::OPvPCapturePointEP_PWT(OutdoorPvP *pvp)
-: OPvPCapturePoint(pvp), m_TowerState(EP_TS_N), m_FlightMasterSpawned(0)
-{
-    SetCapturePointData(EPCapturePoints[EP_PWT].entry,EPCapturePoints[EP_PWT].map,EPCapturePoints[EP_PWT].x,EPCapturePoints[EP_PWT].y,EPCapturePoints[EP_PWT].z,EPCapturePoints[EP_PWT].o,EPCapturePoints[EP_PWT].rot0,EPCapturePoints[EP_PWT].rot1,EPCapturePoints[EP_PWT].rot2,EPCapturePoints[EP_PWT].rot3);
-    AddObject(EP_PWT_FLAGS,EPTowerFlags[EP_PWT].entry,EPTowerFlags[EP_PWT].map,EPTowerFlags[EP_PWT].x,EPTowerFlags[EP_PWT].y,EPTowerFlags[EP_PWT].z,EPTowerFlags[EP_PWT].o,EPTowerFlags[EP_PWT].rot0,EPTowerFlags[EP_PWT].rot1,EPTowerFlags[EP_PWT].rot2,EPTowerFlags[EP_PWT].rot3);
-}
-
-void OPvPCapturePointEP_PWT::ChangeState()
-{
-    switch (m_OldState)
-    {
-    case OBJECTIVESTATE_ALLIANCE:
-        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_PWT_A));
-        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_PWT] = 0;
-    break;
-    case OBJECTIVESTATE_HORDE:
-        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_PWT_H));
-        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_PWT] = 0;
-    break;
-    }
-
-    uint32 artkit = 21;
-    switch (m_State)
-    {
-    case OBJECTIVESTATE_ALLIANCE:
-        m_TowerState = EP_TS_A;
-        SummonFlightMaster(ALLIANCE);
-        artkit = 2;
-        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_PWT] = ALLIANCE;
-        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_CAPTURE_PWT_A));
-        break;
-    case OBJECTIVESTATE_HORDE:
-        m_TowerState = EP_TS_H;
-        SummonFlightMaster(HORDE);
-        artkit = 1;
-        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_PWT] = HORDE;
-        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_CAPTURE_PWT_H));
-        break;
-    case OBJECTIVESTATE_NEUTRAL:
-        m_TowerState = EP_TS_N;
-        DelCreature(EP_PWT_FLIGHTMASTER);
-        m_FlightMasterSpawned = 0;
-        break;
-    case OBJECTIVESTATE_NEUTRAL_ALLIANCE_CHALLENGE:
-    case OBJECTIVESTATE_HORDE_ALLIANCE_CHALLENGE:
-        m_TowerState = EP_TS_N_A;
-        break;
-    case OBJECTIVESTATE_NEUTRAL_HORDE_CHALLENGE:
-    case OBJECTIVESTATE_ALLIANCE_HORDE_CHALLENGE:
-        m_TowerState = EP_TS_N_H;
-        break;
-    }
-
-    GameObject* flag = HashMapHolder<GameObject>::Find(m_capturePointGUID);
-    GameObject* flag2 = HashMapHolder<GameObject>::Find(m_Objects[EP_PWT_FLAGS]);
-    if (flag)
-    {
-        flag->SetGoArtKit(artkit);
-    }
-    if (flag2)
-    {
-        flag2->SetGoArtKit(artkit);
-    }
-
-    UpdateTowerState();
-
-    // complete quest objective
-    if (m_TowerState == EP_TS_A || m_TowerState == EP_TS_H)
-        SendObjectiveComplete(EP_PWT_CM, 0);
-}
-
-void OPvPCapturePointEP_PWT::SendChangePhase()
-{
-    // send this too, sometimes the slider disappears, dunno why :(
-    SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 1);
-    // send these updates to only the ones in this objective
-    uint32 phase = (uint32)ceil((m_value + m_maxValue) / (2 * m_maxValue) * 100.0f);
-    SendUpdateWorldState(EP_UI_TOWER_SLIDER_POS, phase);
-    // send this too, sometimes it resets :S
-    SendUpdateWorldState(EP_UI_TOWER_SLIDER_N, m_neutralValuePct);
-}
-
-void OPvPCapturePointEP_PWT::FillInitialWorldStates(WorldPacket &data)
-{
-    data << EP_PWT_A << uint32(bool(m_TowerState & EP_TS_A));
-    data << EP_PWT_H << uint32(bool(m_TowerState & EP_TS_H));
-    data << EP_PWT_N_A << uint32(bool(m_TowerState & EP_TS_N_A));
-    data << EP_PWT_N_H << uint32(bool(m_TowerState & EP_TS_N_H));
-    data << EP_PWT_N << uint32(bool(m_TowerState & EP_TS_N));
-}
-
-void OPvPCapturePointEP_PWT::UpdateTowerState()
-{
-    m_PvP->SendUpdateWorldState(EP_PWT_A , bool(m_TowerState & EP_TS_A));
-    m_PvP->SendUpdateWorldState(EP_PWT_H , bool(m_TowerState & EP_TS_H));
-    m_PvP->SendUpdateWorldState(EP_PWT_N_A , bool(m_TowerState & EP_TS_N_A));
-    m_PvP->SendUpdateWorldState(EP_PWT_N_H , bool(m_TowerState & EP_TS_N_H));
-    m_PvP->SendUpdateWorldState(EP_PWT_N , bool(m_TowerState & EP_TS_N));
-}
-
-bool OPvPCapturePointEP_PWT::HandlePlayerEnter(Player *plr)
-{
-    if (OPvPCapturePoint::HandlePlayerEnter(plr))
-    {
-        plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 1);
-        uint32 phase = (uint32)ceil((m_value + m_maxValue) / (2 * m_maxValue) * 100.0f);
-        plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_POS, phase);
-        plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_N, m_neutralValuePct);
-        return true;
-    }
-    return false;
-}
-
-void OPvPCapturePointEP_PWT::HandlePlayerLeave(Player *plr)
-{
-    plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY, 0);
-    OPvPCapturePoint::HandlePlayerLeave(plr);
-}
-
-void OPvPCapturePointEP_PWT::SummonFlightMaster(uint32 team)
-{
-    if (m_FlightMasterSpawned != team)
-    {
-        m_FlightMasterSpawned = team;
+        EP_TOWER_EVENT_TEAM[EP_TOWER_PLAGUEWOOD] = team;
         DelCreature(EP_PWT_FLIGHTMASTER);
         AddCreature(EP_PWT_FLIGHTMASTER,EP_PWT_FlightMaster.entry,team,EP_PWT_FlightMaster.map,EP_PWT_FlightMaster.x,EP_PWT_FlightMaster.y,EP_PWT_FlightMaster.z,EP_PWT_FlightMaster.o);
         Creature * c = HashMapHolder<Creature>::Find(m_Creatures[EP_PWT_FLIGHTMASTER]);
         if (c)
         {
+            // Change the flightmasters's faction to horde if required
+            if (team == HORDE)
+                c->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, c->GetCreatureInfo()->faction_H);
+
             GossipOption gso;
-            gso.Action = GOSSIP_OPTION_OUTDOORPVP;
-            gso.GossipId = 0;
-            gso.OptionText.assign(objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_FLIGHT_NPT));
-            gso.Id = 50;
-            gso.Icon = 0;
-            gso.NpcFlag = 0;
-            gso.BoxMoney = 0;
-            gso.Coded = false;
-            c->addGossipOption(gso);
-
-            gso.Action = GOSSIP_OPTION_OUTDOORPVP;
-            gso.GossipId = 0;
-            gso.OptionText.assign(objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_FLIGHT_EWT));
-            gso.Id = 50;
-            gso.Icon = 0;
-            gso.NpcFlag = 0;
-            gso.BoxMoney = 0;
-            gso.Coded = false;
-            c->addGossipOption(gso);
-
-            gso.Action = GOSSIP_OPTION_OUTDOORPVP;
-            gso.GossipId = 0;
-            gso.OptionText.assign(objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_FLIGHT_CGT));
-            gso.Id = 50;
-            gso.Icon = 0;
-            gso.NpcFlag = 0;
-            gso.BoxMoney = 0;
-            gso.Coded = false;
-            c->addGossipOption(gso);
+            for (uint8 i = 0; i < EP_TOWER_NUM-1; ++i)
+            {
+                gso.Action = GOSSIP_OPTION_OUTDOORPVP;
+                gso.GossipId = 0;
+                gso.OptionText.assign(objmgr.GetOregonStringForDBCLocale(EP_LANG_FLIGHT_GOSSIPS[i]));
+                gso.Id = 50;
+                gso.Icon = 0;
+                gso.NpcFlag = 0;
+                gso.BoxMoney = 0;
+                gso.Coded = false;
+                c->addGossipOption(gso);
+            }
         }
     }
 }
 
-bool OPvPCapturePointEP_PWT::CanTalkTo(Player * p, Creature * c, GossipOption &gso)
+void OPvPCapturePointEP::UnsummonFlightMaster()
 {
-    if (p->GetTeam() == m_FlightMasterSpawned &&
+    DelCreature(EP_PWT_FLIGHTMASTER);
+    EP_TOWER_EVENT_TEAM[EP_TOWER_PLAGUEWOOD] = 0;
+}
+
+bool OPvPCapturePointEP::CanTalkTo(Player * p, Creature * c, GossipOption &gso)
+{
+    if (p->GetTeam() == EP_TOWER_EVENT_TEAM[EP_TOWER_PLAGUEWOOD] &&
         c->GetGUID() == m_Creatures[EP_PWT_FLIGHTMASTER] &&
         gso.Id == 50)
         return true;
     return false;
 }
 
-bool OPvPCapturePointEP_PWT::HandleGossipOption(Player *plr, uint64 guid, uint32 gossipid)
+bool OPvPCapturePointEP::HandleGossipOption(Player *plr, uint64 guid, uint32 gossipid)
 {
     std::map<uint64,uint32>::iterator itr = m_CreatureTypes.find(guid);
     if (itr != m_CreatureTypes.end())
@@ -608,20 +494,8 @@ bool OPvPCapturePointEP_PWT::HandleGossipOption(Player *plr, uint64 guid, uint32
             return true;
         if (itr->second == EP_PWT_FLIGHTMASTER)
         {
-            uint32 src = EP_PWT_Taxi;
-            uint32 dst = 0;
-            switch (gossipid)
-            {
-            case 0:
-                dst = EP_NPT_Taxi;
-                break;
-            case 1:
-                dst = EP_EWT_Taxi;
-                break;
-            default:
-                dst = EP_CGT_Taxi;
-                break;
-            }
+            uint32 src = EP_TAXI_NODE[0];
+            uint32 dst = EP_TAXI_NODE[gossipid+1];
 
             std::vector<uint32> nodes;
             nodes.resize(2);
@@ -637,148 +511,3 @@ bool OPvPCapturePointEP_PWT::HandleGossipOption(Player *plr, uint64 guid, uint32
     }
     return false;
 }
-
-// ep
-OutdoorPvPEP::OutdoorPvPEP()
-{
-    m_TypeId = OUTDOOR_PVP_EP;
-    memset(EP_Controls,0,sizeof(EP_Controls));
-    m_AllianceTowersControlled = 0;
-    m_HordeTowersControlled = 0;
-}
-
-bool OutdoorPvPEP::SetupOutdoorPvP()
-{
-    for (int i = 0; i < EPBuffZonesNum; ++i)
-        RegisterZone(EPBuffZones[i]);
-
-    AddCapturePoint(new OPvPCapturePointEP_EWT(this));
-    AddCapturePoint(new OPvPCapturePointEP_PWT(this));
-    AddCapturePoint(new OPvPCapturePointEP_CGT(this));
-    AddCapturePoint(new OPvPCapturePointEP_NPT(this));
-    return true;
-}
-
-bool OutdoorPvPEP::Update(uint32 diff)
-{
-    if (OutdoorPvP::Update(diff))
-    {
-        m_AllianceTowersControlled = 0;
-        m_HordeTowersControlled = 0;
-        for (int i = 0; i < EP_TOWER_NUM; ++i)
-        {
-            if (EP_Controls[i] == ALLIANCE)
-                ++m_AllianceTowersControlled;
-            else if (EP_Controls[i] == HORDE)
-                ++m_HordeTowersControlled;
-            SendUpdateWorldState(EP_UI_TOWER_COUNT_A,m_AllianceTowersControlled);
-            SendUpdateWorldState(EP_UI_TOWER_COUNT_H,m_HordeTowersControlled);
-            BuffTeams();
-        }
-        return true;
-    }
-    return false;
-}
-
-void OutdoorPvPEP::HandlePlayerEnterZone(Player * plr, uint32 zone)
-{
-    // add buffs
-    if (plr->GetTeam() == ALLIANCE)
-    {
-        if (m_AllianceTowersControlled && m_AllianceTowersControlled < 5)
-            plr->CastSpell(plr,EP_AllianceBuffs[m_AllianceTowersControlled-1],true);
-    }
-    else
-    {
-        if (m_HordeTowersControlled && m_HordeTowersControlled < 5)
-            plr->CastSpell(plr,EP_HordeBuffs[m_HordeTowersControlled-1],true);
-    }
-    OutdoorPvP::HandlePlayerEnterZone(plr,zone);
-}
-
-void OutdoorPvPEP::HandlePlayerLeaveZone(Player * plr, uint32 zone)
-{
-    // remove buffs
-    if (plr->GetTeam() == ALLIANCE)
-    {
-        for (int i = 0; i < 4; ++i)
-            plr->RemoveAurasDueToSpell(EP_AllianceBuffs[i]);
-    }
-    else
-    {
-        for (int i = 0; i < 4; ++i)
-            plr->RemoveAurasDueToSpell(EP_HordeBuffs[i]);
-    }
-    OutdoorPvP::HandlePlayerLeaveZone(plr, zone);
-}
-
-void OutdoorPvPEP::BuffTeams()
-{
-    for (PlayerSet::iterator itr = m_players[0].begin(); itr != m_players[0].end(); ++itr)
-    {
-        Player * plr = *itr;
-        {
-            for (int i = 0; i < 4; ++i)
-                plr->RemoveAurasDueToSpell(EP_AllianceBuffs[i]);
-            if (m_AllianceTowersControlled && m_AllianceTowersControlled < 5)
-                plr->CastSpell(plr,EP_AllianceBuffs[m_AllianceTowersControlled-1],true);
-        }
-    }
-    for (PlayerSet::iterator itr = m_players[1].begin(); itr != m_players[1].end(); ++itr)
-    {
-        Player * plr = *itr;
-        {
-            for (int i = 0; i < 4; ++i)
-                plr->RemoveAurasDueToSpell(EP_HordeBuffs[i]);
-            if (m_HordeTowersControlled && m_HordeTowersControlled < 5)
-                plr->CastSpell(plr,EP_HordeBuffs[m_HordeTowersControlled-1],true);
-        }
-    }
-}
-
-void OutdoorPvPEP::FillInitialWorldStates(WorldPacket & data)
-{
-    data << EP_UI_TOWER_COUNT_A << m_AllianceTowersControlled;
-    data << EP_UI_TOWER_COUNT_H << m_HordeTowersControlled;
-    data << EP_UI_TOWER_SLIDER_DISPLAY << uint32(0);
-    data << EP_UI_TOWER_SLIDER_POS << uint32(50);
-    data << EP_UI_TOWER_SLIDER_N << uint32(100);
-    for (OPvPCapturePointMap::iterator itr = m_capturePoints.begin(); itr != m_capturePoints.end(); ++itr)
-    {
-        itr->second->FillInitialWorldStates(data);
-    }
-}
-
-void OutdoorPvPEP::SendRemoveWorldStates(Player *plr)
-{
-    plr->SendUpdateWorldState(EP_UI_TOWER_COUNT_A,0);
-    plr->SendUpdateWorldState(EP_UI_TOWER_COUNT_H,0);
-    plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_DISPLAY,0);
-    plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_POS,0);
-    plr->SendUpdateWorldState(EP_UI_TOWER_SLIDER_N,0);
-
-    plr->SendUpdateWorldState(EP_EWT_A,0);
-    plr->SendUpdateWorldState(EP_EWT_H,0);
-    plr->SendUpdateWorldState(EP_EWT_N,0);
-    plr->SendUpdateWorldState(EP_EWT_N_A,0);
-    plr->SendUpdateWorldState(EP_EWT_N_H,0);
-
-    plr->SendUpdateWorldState(EP_PWT_A,0);
-    plr->SendUpdateWorldState(EP_PWT_H,0);
-    plr->SendUpdateWorldState(EP_PWT_N,0);
-    plr->SendUpdateWorldState(EP_PWT_N_A,0);
-    plr->SendUpdateWorldState(EP_PWT_N_H,0);
-
-    plr->SendUpdateWorldState(EP_NPT_A,0);
-    plr->SendUpdateWorldState(EP_NPT_H,0);
-    plr->SendUpdateWorldState(EP_NPT_N,0);
-    plr->SendUpdateWorldState(EP_NPT_N_A,0);
-    plr->SendUpdateWorldState(EP_NPT_N_H,0);
-
-    plr->SendUpdateWorldState(EP_CGT_A,0);
-    plr->SendUpdateWorldState(EP_CGT_H,0);
-    plr->SendUpdateWorldState(EP_CGT_N,0);
-    plr->SendUpdateWorldState(EP_CGT_N_A,0);
-    plr->SendUpdateWorldState(EP_CGT_N_H,0);
-}
-

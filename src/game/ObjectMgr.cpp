@@ -1108,13 +1108,6 @@ uint32 ObjectMgr::AddCreData(uint32 entry, uint32 team, uint32 mapId, float x, f
                 delete creature;
                 return 0;
             }
-
-            // Change the creature's team
-            if (team == HORDE)
-                creature->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, creature->GetCreatureInfo()->faction_H);
-            else
-                creature->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, creature->GetCreatureInfo()->faction_A);
-
             map->Add(creature);
         }
     }
