@@ -565,8 +565,7 @@ void OutdoorPvP::TeamCastSpell(TeamId team, int32 spellId)
             (*itr)->CastSpell(*itr, (uint32)spellId, true);
     else
         for (PlayerSet::iterator itr = m_players[team].begin(); itr != m_players[team].end(); ++itr)
-            //(*itr)->RemoveAura((uint32)-spellId); // by stack?
-            (*itr)->RemoveAurasDueToSpell((uint32)spellId);
+            (*itr)->RemoveAurasDueToSpell((uint32)-spellId);
 }
 
 void OutdoorPvP::TeamApplyBuff(TeamId team, uint32 spellId, uint32 spellId2)
