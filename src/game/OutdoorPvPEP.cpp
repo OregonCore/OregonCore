@@ -39,35 +39,28 @@ void OPvPCapturePointEP_EWT::ChangeState()
 {
     switch (m_OldState)
     {
-        // if changing from controlling alliance to horde or vice versa
-        case OBJECTIVESTATE_ALLIANCE:
-            sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_EWT_A));
-            ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_EWT] = 0;
-        break;
-        case OBJECTIVESTATE_HORDE:
-            sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_EWT_H));
-            ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_EWT] = 0;
-        break;
+    case OBJECTIVESTATE_ALLIANCE:
+        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_EWT_A));
+        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_EWT] = 0;
+    break;
+    case OBJECTIVESTATE_HORDE:
+        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_EWT_H));
+        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_EWT] = 0;
+    break;
     }
 
     uint32 artkit = 21;
     switch (m_State)
     {
     case OBJECTIVESTATE_ALLIANCE:
-        if (m_value == m_maxValue)
-            m_TowerState = EP_TS_A;
-        else
-            m_TowerState = EP_TS_A_P;
+        m_TowerState = EP_TS_A;
         artkit = 2;
         SummonSupportUnitAtNorthpassTower(ALLIANCE);
         ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_EWT] = ALLIANCE;
         sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_CAPTURE_EWT_A));
         break;
     case OBJECTIVESTATE_HORDE:
-        if (m_value == -m_maxValue)
-            m_TowerState = EP_TS_H;
-        else
-            m_TowerState = EP_TS_H_P;
+        m_TowerState = EP_TS_H;
         artkit = 1;
         SummonSupportUnitAtNorthpassTower(HORDE);
         ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_EWT] = HORDE;
@@ -119,8 +112,6 @@ void OPvPCapturePointEP_EWT::FillInitialWorldStates(WorldPacket &data)
 {
     data << EP_EWT_A << uint32(bool(m_TowerState & EP_TS_A));
     data << EP_EWT_H << uint32(bool(m_TowerState & EP_TS_H));
-    data << EP_EWT_A_P << uint32(bool(m_TowerState & EP_TS_A_P));
-    data << EP_EWT_H_P << uint32(bool(m_TowerState & EP_TS_H_P));
     data << EP_EWT_N_A << uint32(bool(m_TowerState & EP_TS_N_A));
     data << EP_EWT_N_H << uint32(bool(m_TowerState & EP_TS_N_H));
     data << EP_EWT_N << uint32(bool(m_TowerState & EP_TS_N));
@@ -130,8 +121,6 @@ void OPvPCapturePointEP_EWT::UpdateTowerState()
 {
     m_PvP->SendUpdateWorldState(EP_EWT_A , bool(m_TowerState & EP_TS_A));
     m_PvP->SendUpdateWorldState(EP_EWT_H , bool(m_TowerState & EP_TS_H));
-    m_PvP->SendUpdateWorldState(EP_EWT_A_P , bool(m_TowerState & EP_TS_A_P));
-    m_PvP->SendUpdateWorldState(EP_EWT_H_P , bool(m_TowerState & EP_TS_H_P));
     m_PvP->SendUpdateWorldState(EP_EWT_N_A , bool(m_TowerState & EP_TS_N_A));
     m_PvP->SendUpdateWorldState(EP_EWT_N_H , bool(m_TowerState & EP_TS_N_H));
     m_PvP->SendUpdateWorldState(EP_EWT_N , bool(m_TowerState & EP_TS_N));
@@ -187,35 +176,28 @@ void OPvPCapturePointEP_NPT::ChangeState()
 {
     switch (m_OldState)
     {
-        // if changing from controlling alliance to horde or vice versa
-        case OBJECTIVESTATE_ALLIANCE:
-            sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_NPT_A));
-            ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_NPT] = 0;
-        break;
-        case OBJECTIVESTATE_HORDE:
-            sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_NPT_H));
-            ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_NPT] = 0;
-        break;
+    case OBJECTIVESTATE_ALLIANCE:
+        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_NPT_A));
+        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_NPT] = 0;
+    break;
+    case OBJECTIVESTATE_HORDE:
+        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_NPT_H));
+        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_NPT] = 0;
+    break;
     }
 
     uint32 artkit = 21;
     switch (m_State)
     {
     case OBJECTIVESTATE_ALLIANCE:
-        if (m_value == m_maxValue)
-            m_TowerState = EP_TS_A;
-        else
-            m_TowerState = EP_TS_A_P;
+        m_TowerState = EP_TS_A;
         artkit = 2;
         SummonGO(ALLIANCE);
         ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_NPT] = ALLIANCE;
         sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_CAPTURE_NPT_A));
         break;
     case OBJECTIVESTATE_HORDE:
-        if (m_value == -m_maxValue)
-            m_TowerState = EP_TS_H;
-        else
-            m_TowerState = EP_TS_H_P;
+        m_TowerState = EP_TS_H;
         artkit = 1;
         SummonGO(HORDE);
         ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_NPT] = HORDE;
@@ -269,8 +251,6 @@ void OPvPCapturePointEP_NPT::FillInitialWorldStates(WorldPacket &data)
 {
     data << EP_NPT_A << uint32(bool(m_TowerState & EP_TS_A));
     data << EP_NPT_H << uint32(bool(m_TowerState & EP_TS_H));
-    data << EP_NPT_A_P << uint32(bool(m_TowerState & EP_TS_A_P));
-    data << EP_NPT_H_P << uint32(bool(m_TowerState & EP_TS_H_P));
     data << EP_NPT_N_A << uint32(bool(m_TowerState & EP_TS_N_A));
     data << EP_NPT_N_H << uint32(bool(m_TowerState & EP_TS_N_H));
     data << EP_NPT_N << uint32(bool(m_TowerState & EP_TS_N));
@@ -280,8 +260,6 @@ void OPvPCapturePointEP_NPT::UpdateTowerState()
 {
     m_PvP->SendUpdateWorldState(EP_NPT_A , bool(m_TowerState & EP_TS_A));
     m_PvP->SendUpdateWorldState(EP_NPT_H , bool(m_TowerState & EP_TS_H));
-    m_PvP->SendUpdateWorldState(EP_NPT_A_P , bool(m_TowerState & EP_TS_A_P));
-    m_PvP->SendUpdateWorldState(EP_NPT_H_P , bool(m_TowerState & EP_TS_H_P));
     m_PvP->SendUpdateWorldState(EP_NPT_N_A , bool(m_TowerState & EP_TS_N_A));
     m_PvP->SendUpdateWorldState(EP_NPT_N_H , bool(m_TowerState & EP_TS_N_H));
     m_PvP->SendUpdateWorldState(EP_NPT_N , bool(m_TowerState & EP_TS_N));
@@ -331,35 +309,28 @@ void OPvPCapturePointEP_CGT::ChangeState()
 {
     switch (m_OldState)
     {
-        // if changing from controlling alliance to horde or vice versa
-        case OBJECTIVESTATE_ALLIANCE:
-            sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_CGT_A));
-            ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_CGT] = 0;;
-        break;
-        case OBJECTIVESTATE_HORDE:
-            sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_CGT_H));
-            ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_CGT] = 0;;
-        break;
+    case OBJECTIVESTATE_ALLIANCE:
+        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_CGT_A));
+        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_CGT] = 0;;
+    break;
+    case OBJECTIVESTATE_HORDE:
+        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_CGT_H));
+        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_CGT] = 0;;
+    break;
     }
 
     uint32 artkit = 21;
     switch (m_State)
     {
     case OBJECTIVESTATE_ALLIANCE:
-        if (m_value == m_maxValue)
-            m_TowerState = EP_TS_A;
-        else
-            m_TowerState = EP_TS_A_P;
+        m_TowerState = EP_TS_A;
         artkit = 2;
         LinkGraveYard(ALLIANCE);
         ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_CGT] = ALLIANCE;
         sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_CAPTURE_CGT_A));
         break;
     case OBJECTIVESTATE_HORDE:
-        if (m_value == -m_maxValue)
-            m_TowerState = EP_TS_H;
-        else
-            m_TowerState = EP_TS_H_P;
+        m_TowerState = EP_TS_H;
         artkit = 1;
         LinkGraveYard(HORDE);
         ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_CGT] = HORDE;
@@ -411,8 +382,6 @@ void OPvPCapturePointEP_CGT::FillInitialWorldStates(WorldPacket &data)
 {
     data << EP_CGT_A << uint32(bool(m_TowerState & EP_TS_A));
     data << EP_CGT_H << uint32(bool(m_TowerState & EP_TS_H));
-    data << EP_CGT_A_P << uint32(bool(m_TowerState & EP_TS_A_P));
-    data << EP_CGT_H_P << uint32(bool(m_TowerState & EP_TS_H_P));
     data << EP_CGT_N_A << uint32(bool(m_TowerState & EP_TS_N_A));
     data << EP_CGT_N_H << uint32(bool(m_TowerState & EP_TS_N_H));
     data << EP_CGT_N << uint32(bool(m_TowerState & EP_TS_N));
@@ -422,8 +391,6 @@ void OPvPCapturePointEP_CGT::UpdateTowerState()
 {
     m_PvP->SendUpdateWorldState(EP_CGT_A , bool(m_TowerState & EP_TS_A));
     m_PvP->SendUpdateWorldState(EP_CGT_H , bool(m_TowerState & EP_TS_H));
-    m_PvP->SendUpdateWorldState(EP_CGT_A_P , bool(m_TowerState & EP_TS_A_P));
-    m_PvP->SendUpdateWorldState(EP_CGT_H_P , bool(m_TowerState & EP_TS_H_P));
     m_PvP->SendUpdateWorldState(EP_CGT_N_A , bool(m_TowerState & EP_TS_N_A));
     m_PvP->SendUpdateWorldState(EP_CGT_N_H , bool(m_TowerState & EP_TS_N_H));
     m_PvP->SendUpdateWorldState(EP_CGT_N , bool(m_TowerState & EP_TS_N));
@@ -470,35 +437,28 @@ void OPvPCapturePointEP_PWT::ChangeState()
 {
     switch (m_OldState)
     {
-        // if changing from controlling alliance to horde or vice versa
-        case OBJECTIVESTATE_ALLIANCE:
-            sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_PWT_A));
-            ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_PWT] = 0;
-        break;
-        case OBJECTIVESTATE_HORDE:
-            sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_PWT_H));
-            ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_PWT] = 0;
-        break;
+    case OBJECTIVESTATE_ALLIANCE:
+        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_PWT_A));
+        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_PWT] = 0;
+    break;
+    case OBJECTIVESTATE_HORDE:
+        sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_LOOSE_PWT_H));
+        ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_PWT] = 0;
+    break;
     }
 
     uint32 artkit = 21;
     switch (m_State)
     {
     case OBJECTIVESTATE_ALLIANCE:
-        if (m_value == m_maxValue)
-            m_TowerState = EP_TS_A;
-        else
-            m_TowerState = EP_TS_A_P;
+        m_TowerState = EP_TS_A;
         SummonFlightMaster(ALLIANCE);
         artkit = 2;
         ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_PWT] = ALLIANCE;
         sWorld.SendZoneText(EP_GraveYardZone,objmgr.GetOregonStringForDBCLocale(LANG_OPVP_EP_CAPTURE_PWT_A));
         break;
     case OBJECTIVESTATE_HORDE:
-        if (m_value == -m_maxValue)
-            m_TowerState = EP_TS_H;
-        else
-            m_TowerState = EP_TS_H_P;
+        m_TowerState = EP_TS_H;
         SummonFlightMaster(HORDE);
         artkit = 1;
         ((OutdoorPvPEP*)m_PvP)->EP_Controls[EP_PWT] = HORDE;
@@ -552,8 +512,6 @@ void OPvPCapturePointEP_PWT::FillInitialWorldStates(WorldPacket &data)
 {
     data << EP_PWT_A << uint32(bool(m_TowerState & EP_TS_A));
     data << EP_PWT_H << uint32(bool(m_TowerState & EP_TS_H));
-    data << EP_PWT_A_P << uint32(bool(m_TowerState & EP_TS_A_P));
-    data << EP_PWT_H_P << uint32(bool(m_TowerState & EP_TS_H_P));
     data << EP_PWT_N_A << uint32(bool(m_TowerState & EP_TS_N_A));
     data << EP_PWT_N_H << uint32(bool(m_TowerState & EP_TS_N_H));
     data << EP_PWT_N << uint32(bool(m_TowerState & EP_TS_N));
@@ -563,8 +521,6 @@ void OPvPCapturePointEP_PWT::UpdateTowerState()
 {
     m_PvP->SendUpdateWorldState(EP_PWT_A , bool(m_TowerState & EP_TS_A));
     m_PvP->SendUpdateWorldState(EP_PWT_H , bool(m_TowerState & EP_TS_H));
-    m_PvP->SendUpdateWorldState(EP_PWT_A_P , bool(m_TowerState & EP_TS_A_P));
-    m_PvP->SendUpdateWorldState(EP_PWT_H_P , bool(m_TowerState & EP_TS_H_P));
     m_PvP->SendUpdateWorldState(EP_PWT_N_A , bool(m_TowerState & EP_TS_N_A));
     m_PvP->SendUpdateWorldState(EP_PWT_N_H , bool(m_TowerState & EP_TS_N_H));
     m_PvP->SendUpdateWorldState(EP_PWT_N , bool(m_TowerState & EP_TS_N));
@@ -606,6 +562,8 @@ void OPvPCapturePointEP_PWT::SummonFlightMaster(uint32 team)
             gso.Id = 50;
             gso.Icon = 0;
             gso.NpcFlag = 0;
+            gso.BoxMoney = 0;
+            gso.Coded = false;
             c->addGossipOption(gso);
 
             gso.Action = GOSSIP_OPTION_OUTDOORPVP;
@@ -614,6 +572,8 @@ void OPvPCapturePointEP_PWT::SummonFlightMaster(uint32 team)
             gso.Id = 50;
             gso.Icon = 0;
             gso.NpcFlag = 0;
+            gso.BoxMoney = 0;
+            gso.Coded = false;
             c->addGossipOption(gso);
 
             gso.Action = GOSSIP_OPTION_OUTDOORPVP;
@@ -622,6 +582,8 @@ void OPvPCapturePointEP_PWT::SummonFlightMaster(uint32 team)
             gso.Id = 50;
             gso.Icon = 0;
             gso.NpcFlag = 0;
+            gso.BoxMoney = 0;
+            gso.Coded = false;
             c->addGossipOption(gso);
         }
     }
@@ -798,32 +760,24 @@ void OutdoorPvPEP::SendRemoveWorldStates(Player *plr)
     plr->SendUpdateWorldState(EP_EWT_A,0);
     plr->SendUpdateWorldState(EP_EWT_H,0);
     plr->SendUpdateWorldState(EP_EWT_N,0);
-    plr->SendUpdateWorldState(EP_EWT_A_P,0);
-    plr->SendUpdateWorldState(EP_EWT_H_P,0);
     plr->SendUpdateWorldState(EP_EWT_N_A,0);
     plr->SendUpdateWorldState(EP_EWT_N_H,0);
 
     plr->SendUpdateWorldState(EP_PWT_A,0);
     plr->SendUpdateWorldState(EP_PWT_H,0);
     plr->SendUpdateWorldState(EP_PWT_N,0);
-    plr->SendUpdateWorldState(EP_PWT_A_P,0);
-    plr->SendUpdateWorldState(EP_PWT_H_P,0);
     plr->SendUpdateWorldState(EP_PWT_N_A,0);
     plr->SendUpdateWorldState(EP_PWT_N_H,0);
 
     plr->SendUpdateWorldState(EP_NPT_A,0);
     plr->SendUpdateWorldState(EP_NPT_H,0);
     plr->SendUpdateWorldState(EP_NPT_N,0);
-    plr->SendUpdateWorldState(EP_NPT_A_P,0);
-    plr->SendUpdateWorldState(EP_NPT_H_P,0);
     plr->SendUpdateWorldState(EP_NPT_N_A,0);
     plr->SendUpdateWorldState(EP_NPT_N_H,0);
 
     plr->SendUpdateWorldState(EP_CGT_A,0);
     plr->SendUpdateWorldState(EP_CGT_H,0);
     plr->SendUpdateWorldState(EP_CGT_N,0);
-    plr->SendUpdateWorldState(EP_CGT_A_P,0);
-    plr->SendUpdateWorldState(EP_CGT_H_P,0);
     plr->SendUpdateWorldState(EP_CGT_N_A,0);
     plr->SendUpdateWorldState(EP_CGT_N_H,0);
 }
