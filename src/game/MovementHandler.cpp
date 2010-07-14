@@ -355,11 +355,8 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         }
         time_delta = (time_delta < 1500) ? time_delta / 1000 : 1.5f; // normalize time - 1.5 second allowed for heavy loaded server
 
-        // (DISABLED) wall-walking check due to really bad accuracy.
-        // Feel free to enable by removing the comments,
-        // but checks are bad and you will get glitching even falling down mountains.
-        /*if (!(MovementFlags & (MOVEMENTFLAG_FLYING | MOVEMENTFLAG_SWIMMING)))
-            tg_z = (real_delta != 0) ? (delta_z * delta_z / real_delta) : -99999;*/
+        if (!(MovementFlags & (MOVEMENTFLAG_FLYING | MOVEMENTFLAG_SWIMMING)))
+            tg_z = (real_delta != 0) ? (delta_z * delta_z / real_delta) : -99999;
 
         if (current_speed < GetPlayer()->m_anti_last_hspeed)
         {
@@ -375,7 +372,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
        // sLog.outBasic("%s newcoord: tm:%d ftm:%d | %f,%f,%fo(%f) [%X][%s]$%s",GetPlayer()->GetName(),movementInfo.time,movementInfo.fallTime,movementInfo.x,movementInfo.y,movementInfo.z,movementInfo.o,MovementFlags, LookupOpcodeName(opcode),move_type_name[move_type]);
        // sLog.outBasic("%f",tg_z);
 
-        if ((real_delta > allowed_delta) && (delta_z < 1)) // If you're wanting to enable wall-walking check, comment out "&& (delta_z < 1))" and add a) after allowed_delta
+        if ((real_delta > allowed_delta) && (delta_z < 1))
         {
             #ifdef MOVEMENT_ANTICHEAT_DEBUG
             sLog.outDebug("Movement anticheat: %s is speed exception. {real_delta=%f allowed_delta=%f | current_speed=%f preview_speed=%f time=%f}(%f %f %f %d)[%s]",GetPlayer()->GetName(),real_delta, allowed_delta, current_speed, GetPlayer()->m_anti_last_hspeed,time_delta,GetPlayer()->GetPositionX(),GetPlayer()->GetPositionY(),GetPlayer()->GetPositionZ(), GetPlayer()->GetMapId(),LookupOpcodeName(opcode));
