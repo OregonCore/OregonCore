@@ -201,9 +201,9 @@ void LoadDBCStores(const std::string& dataPath)
 {
     std::string dbcPath = dataPath+"dbc/";
 
-    const uint32 DBCFilesCount = 57;
+    const uint32 DBCFilesCount = 59;
 
-    barGoLink bar( DBCFilesCount);
+    barGoLink bar(DBCFilesCount);
 
     StoreProblemList bad_dbc_files;
     uint32 availableDbcLocales = 0xFFFFFFFF;
