@@ -118,7 +118,7 @@ public:
 
     virtual void DeleteSpawns();
 
-    uint32 m_capturePointGUID;
+    uint64 m_capturePointGUID;
     GameObject *m_capturePoint;
 
     void AddGO(uint32 type, uint32 guid, uint32 entry = 0);

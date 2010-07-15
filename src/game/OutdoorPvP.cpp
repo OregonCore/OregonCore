@@ -129,8 +129,7 @@ bool OPvPCapturePoint::SetCapturePointData(uint32 entry, uint32 map, float x, fl
         return false;
     }
 
-    m_capturePointGUID = objmgr.AddGOData(entry, map, x, y, z, o, 0, rotation0, rotation1, rotation2, rotation3);
-    if (!m_capturePointGUID)
+    if (!objmgr.AddGOData(entry, map, x, y, z, o, 0, rotation0, rotation1, rotation2, rotation3))
         return false;
 
     // get the needed values from goinfo
@@ -580,5 +579,9 @@ void OutdoorPvP::OnGameObjectCreate(GameObject *go, bool add)
         return;
 
     if (OPvPCapturePoint *cp = GetCapturePoint(go->GetDBTableGUIDLow()))
+    {
         cp->m_capturePoint = add ? go : NULL;
+        if (add)
+            cp->m_capturePointGUID = go->GetGUID();
+    }
 }
