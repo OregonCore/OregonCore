@@ -122,7 +122,7 @@ void OPvPCapturePointNA::SpawnGOsForTeam(uint32 team)
             i == NA_BOMB_WAGON_N ||
             i == NA_BOMB_WAGON_E)
             continue;   // roosts and bomb wagons are spawned when someone uses the matching destroyed roost
-        AddObject(i,gos[i].entry,gos[i].map,gos[i].x,gos[i].y,gos[i].z,gos[i].o,gos[i].rot0,gos[i].rot1,gos[i].rot2,gos[i].rot3);
+        AddObject(i,gos[i].entry,0,gos[i].map,gos[i].x,gos[i].y,gos[i].z,gos[i].o,gos[i].rot0,gos[i].rot1,gos[i].rot2,gos[i].rot3);
     }
 }
 
@@ -521,10 +521,10 @@ int32 OPvPCapturePointNA::HandleOpenGo(Player *plr, uint64 guid)
             DelObject(del2);
 
         if (add>-1)
-            AddObject(add,gos[add].entry,gos[add].map,gos[add].x,gos[add].y,gos[add].z,gos[add].o,gos[add].rot0,gos[add].rot1,gos[add].rot2,gos[add].rot3);
+            AddObject(add,gos[add].entry,0,gos[add].map,gos[add].x,gos[add].y,gos[add].z,gos[add].o,gos[add].rot0,gos[add].rot1,gos[add].rot2,gos[add].rot3);
 
         if (add2>-1)
-            AddObject(add2,gos[add2].entry,gos[add2].map,gos[add2].x,gos[add2].y,gos[add2].z,gos[add2].o,gos[add2].rot0,gos[add2].rot1,gos[add2].rot2,gos[add2].rot3);
+            AddObject(add2,gos[add2].entry,0,gos[add2].map,gos[add2].x,gos[add2].y,gos[add2].z,gos[add2].o,gos[add2].rot0,gos[add2].rot1,gos[add2].rot2,gos[add2].rot3);
 
         return retval;
     }
@@ -604,11 +604,8 @@ void OPvPCapturePointNA::ChangeState()
         break;
     }
 
-    GameObject* flag = HashMapHolder<GameObject>::Find(m_capturePointGUID);
-    if (flag)
-    {
-        flag->SetGoArtKit(artkit);
-    }
+    if (m_capturePoint)
+        m_capturePoint->SetGoArtKit(artkit);
 
     UpdateHalaaWorldState();
 }

@@ -178,6 +178,8 @@ void Creature::AddToWorld()
     ///- Register the creature for guid lookup
     if (!IsInWorld())
     {
+        if (m_zoneScript)
+            m_zoneScript->OnCreatureCreate(this, true);
         ObjectAccessor::Instance().AddObject(this);
         Unit::AddToWorld();
         SearchFormation();

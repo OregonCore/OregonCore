@@ -49,19 +49,22 @@ OPvPCapturePointEP::OPvPCapturePointEP(OutdoorPvP *pvp,OutdoorPvPEPTowerType typ
         EPCapturePoints[type].rot1,
         EPCapturePoints[type].rot2,
         EPCapturePoints[type].rot3);
-    AddObject(type,
-        EPTowerFlags[type].entry,
-        EPTowerFlags[type].map,
-        EPTowerFlags[type].x,
-        EPTowerFlags[type].y,
-        EPTowerFlags[type].z,
-        EPTowerFlags[type].o,
-        EPTowerFlags[type].rot0,
-        EPTowerFlags[type].rot1,
-        EPTowerFlags[type].rot2,
-        EPTowerFlags[type].rot3);
 
-	EP_TOWER_EVENT_TEAM[type] = 0;
+    for (uint8 i = 0; i < 2; i++)
+        AddObject(type+EP_TOWER_NUM*i,
+            EPTowerFlags[type+EP_TOWER_NUM*i].entry,
+            21,
+            EPTowerFlags[type+EP_TOWER_NUM*i].map,
+            EPTowerFlags[type+EP_TOWER_NUM*i].x,
+            EPTowerFlags[type+EP_TOWER_NUM*i].y,
+            EPTowerFlags[type+EP_TOWER_NUM*i].z,
+            EPTowerFlags[type+EP_TOWER_NUM*i].o,
+            EPTowerFlags[type+EP_TOWER_NUM*i].rot0,
+            EPTowerFlags[type+EP_TOWER_NUM*i].rot1,
+            EPTowerFlags[type+EP_TOWER_NUM*i].rot2,
+            EPTowerFlags[type+EP_TOWER_NUM*i].rot3);
+
+    EP_TOWER_EVENT_TEAM[type] = 0;
 }
 
 OutdoorPvPEP::OutdoorPvPEP()
@@ -240,18 +243,16 @@ void OPvPCapturePointEP::ChangeState()
         break;
     }
 
-	UpdateTowerEvents();
+    UpdateTowerEvents();
 
-    GameObject* flag = HashMapHolder<GameObject>::Find(m_capturePointGUID);
-    GameObject* flag2 = HashMapHolder<GameObject>::Find(m_Objects[m_TowerType]);
+    GameObject* flag = HashMapHolder<GameObject>::Find(m_Objects[m_TowerType]);
+    GameObject* flag2 = HashMapHolder<GameObject>::Find(m_Objects[m_TowerType+EP_TOWER_NUM]);
+    if (m_capturePoint)
+        m_capturePoint->SetGoArtKit(artkit);
     if (flag)
-    {
         flag->SetGoArtKit(artkit);
-    }
     if (flag2)
-    {
         flag2->SetGoArtKit(artkit);
-    }
 
     // send world state update
     if (field)
@@ -425,7 +426,7 @@ void OPvPCapturePointEP::SummonShrine(uint32 team)
     {
         EP_TOWER_EVENT_TEAM[EP_TOWER_NORTHPASS] = team;
         DelObject(EP_NPT_BUFF);
-        AddObject(EP_NPT_BUFF,EP_NPT_LordaeronShrine.entry,EP_NPT_LordaeronShrine.map,EP_NPT_LordaeronShrine.x,EP_NPT_LordaeronShrine.y,EP_NPT_LordaeronShrine.z,EP_NPT_LordaeronShrine.o,EP_NPT_LordaeronShrine.rot0,EP_NPT_LordaeronShrine.rot1,EP_NPT_LordaeronShrine.rot2,EP_NPT_LordaeronShrine.rot3);
+        AddObject(EP_NPT_BUFF,EP_NPT_LordaeronShrine.entry,0,EP_NPT_LordaeronShrine.map,EP_NPT_LordaeronShrine.x,EP_NPT_LordaeronShrine.y,EP_NPT_LordaeronShrine.z,EP_NPT_LordaeronShrine.o,EP_NPT_LordaeronShrine.rot0,EP_NPT_LordaeronShrine.rot1,EP_NPT_LordaeronShrine.rot2,EP_NPT_LordaeronShrine.rot3);
         GameObject * go = HashMapHolder<GameObject>::Find(m_Objects[EP_NPT_BUFF]);
         if (go)
             go->SetUInt32Value(GAMEOBJECT_FACTION,(team == ALLIANCE ? 84 : 83));

@@ -118,7 +118,7 @@ public:
 
     virtual void DeleteSpawns();
 
-    uint64 m_capturePointGUID;
+    uint32 m_capturePointGUID;
     GameObject *m_capturePoint;
 
     void AddGO(uint32 type, uint32 guid, uint32 entry = 0);
@@ -127,7 +127,7 @@ public:
 
 protected:
 
-    bool AddObject(uint32 type, uint32 entry, uint32 map, float x, float y, float z, float o, float rotation0, float rotation1, float rotation2, float rotation3);
+    bool AddObject(uint32 type, uint32 entry, uint32 artKit, uint32 map, float x, float y, float z, float o, float rotation0, float rotation1, float rotation2, float rotation3);
     bool AddCreature(uint32 type, uint32 entry, uint32 teamval, uint32 map, float x, float y, float z, float o, uint32 spawntimedelay = 0);
 
     bool DelCreature(uint32 type);

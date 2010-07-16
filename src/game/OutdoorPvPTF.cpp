@@ -286,9 +286,8 @@ void OPvPCapturePointTF::ChangeState()
         break;
     }
 
-    GameObject* flag = HashMapHolder<GameObject>::Find(m_capturePointGUID);
-    if (flag)
-        flag->SetGoArtKit(artkit);
+    if (m_capturePoint)
+        m_capturePoint->SetGoArtKit(artkit);
 
     UpdateTowerState();
 }

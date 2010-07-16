@@ -1021,7 +1021,7 @@ void ObjectMgr::RemoveCreatureFromGrid(uint32 guid, CreatureData const* data)
     }
 }
 
-uint32 ObjectMgr::AddGOData(uint32 entry, uint32 mapId, float x, float y, float z, float o, uint32 spawntimedelay, float rotation0, float rotation1, float rotation2, float rotation3)
+uint32 ObjectMgr::AddGOData(uint32 entry, uint32 artKit, uint32 mapId, float x, float y, float z, float o, uint32 spawntimedelay, float rotation0, float rotation1, float rotation2, float rotation3)
 {
     GameObjectInfo const* goinfo = GetGameObjectInfo(entry);
     if (!goinfo)
@@ -1043,6 +1043,7 @@ uint32 ObjectMgr::AddGOData(uint32 entry, uint32 mapId, float x, float y, float 
     data.animprogress   = 100;
     data.spawnMask      = 1;
     data.go_state       = GO_STATE_READY;
+    data.artKit         = artKit;
     data.dbData = false;
 
     AddGameobjectToGrid(guid, &data);
@@ -1070,7 +1071,7 @@ uint32 ObjectMgr::AddGOData(uint32 entry, uint32 mapId, float x, float y, float 
 uint32 ObjectMgr::AddCreData(uint32 entry, uint32 team, uint32 mapId, float x, float y, float z, float o, uint32 spawntimedelay)
 {
     CreatureInfo const *cInfo = GetCreatureTemplate(entry);
-    if(!cInfo)
+    if (!cInfo)
         return 0;
 
     uint32 guid = GenerateLowGuid(HIGHGUID_UNIT);
@@ -1099,10 +1100,10 @@ uint32 ObjectMgr::AddCreData(uint32 entry, uint32 team, uint32 mapId, float x, f
     if (Map* map = MapManager::Instance().FindMap(mapId))
     {
         // We use spawn coords to spawn
-        if(!map->Instanceable() && !map->IsRemovalGrid(x, y))
+        if (!map->Instanceable() && !map->IsRemovalGrid(x, y))
         {
             Creature* creature = new Creature;
-            if(!creature->LoadFromDB(guid, map))
+            if (!creature->LoadFromDB(guid, map))
             {
                 sLog.outError("AddCreature: cannot add creature entry %u to map", entry);
                 delete creature;
@@ -1159,7 +1160,7 @@ void ObjectMgr::LoadGameobjects()
         data.rotation3      = fields[10].GetFloat();
         data.spawntimesecs  = fields[11].GetInt32();
         data.animprogress   = fields[12].GetUInt32();
-        data.ArtKit         = 0;
+        data.artKit         = 0;
 
         uint32 go_state     = fields[13].GetUInt32();
         if (go_state >= MAX_GO_STATE)

@@ -401,7 +401,7 @@ struct GameObjectData
     uint32 animprogress;
     GOState go_state;
     uint8 spawnMask;
-    uint32 ArtKit;
+    uint32 artKit;
     bool dbData;
 };
 

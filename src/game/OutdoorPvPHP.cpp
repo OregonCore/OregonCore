@@ -48,6 +48,7 @@ OPvPCapturePointHP::OPvPCapturePointHP(OutdoorPvP *pvp,OutdoorPvPHPTowerType typ
         HPCapturePoints[type].rot3);
     AddObject(type,
         HPTowerFlags[type].entry,
+        HP_TowerArtKit_N[type],
         HPTowerFlags[type].map,
         HPTowerFlags[type].x,
         HPTowerFlags[type].y,
@@ -244,16 +245,11 @@ void OPvPCapturePointHP::ChangeState()
         break;
     }
 
-    GameObject* flag = HashMapHolder<GameObject>::Find(m_capturePointGUID);
-    GameObject* flag2 = HashMapHolder<GameObject>::Find(m_Objects[m_TowerType]);
+    GameObject* flag = HashMapHolder<GameObject>::Find(m_Objects[m_TowerType]);
+    if (m_capturePoint)
+        m_capturePoint->SetGoArtKit(artkit);
     if (flag)
-    {
-        flag->SetGoArtKit(artkit);
-    }
-    if (flag2)
-    {
-        flag2->SetGoArtKit(artkit2);
-    }
+        flag->SetGoArtKit(artkit2);
 
     // send world state update
     if (field)

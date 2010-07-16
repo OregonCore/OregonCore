@@ -27,11 +27,9 @@
 const uint32 OutdoorPvPEPBuffZones[OutdoorPvPEPBuffZonesNum] = {139, 2017, 2057};
 
 const int EP_AllianceBuffs[OutdoorPvPEPTeamsBuffNum] = {11413, 11414, 11415, 1386};
-
 const int EP_HordeBuffs[OutdoorPvPEPTeamsBuffNum] = {30880, 30683, 30682, 29520};
 
 const uint32 EP_GraveYardZone = 139;
-
 const uint32 EP_GraveYardId = 927;
 
 enum OutdoorPvPEPTowerType{
@@ -61,6 +59,8 @@ enum OutdoorPvPEPWorldStates{
     EP_UI_TOWER_COUNT_H = 2328
 };
 
+const uint32 EP_NPT_BUFF = EP_TOWER_NUM;
+
 enum EP_Summons {
     EP_EWT_COMMANDER = 0,
     EP_EWT_SOLDIER1,
@@ -70,14 +70,6 @@ enum EP_Summons {
     EP_PWT_FLIGHTMASTER,
 };
 
-enum EP_GoSummons {
-    EP_NPT_BUFF = 0,
-    EP_NPT_FLAGS,
-    EP_EWT_FLAGS,
-    EP_CGT_FLAGS,
-    EP_PWT_FLAGS
-};
-
 const go_type EPCapturePoints[EP_TOWER_NUM] = {
     {182096,0,1860.85,-3731.23,196.716,-2.53214,0.033967,-0.131914,0.944741,-0.298177},
     {182097,0,2574.51,-4794.89,144.704,-1.45003,-0.097056,0.095578,-0.656229,0.742165},
@@ -85,15 +77,18 @@ const go_type EPCapturePoints[EP_TOWER_NUM] = {
     {182098,0,2962.71,-3042.31,154.789,2.08426,-0.074807,-0.113837,0.855928,0.49883}
 };
 
-const go_type EPTowerFlags[EP_TOWER_NUM] = {
-    {182106,0,1838.42,-3703.56,167.713,0.890118,0,0,0.430511,0.902585},
-    {182106,0,2569.60,-4772.93,115.399,2.72271,0,0,0.978148,0.207912},
+const go_type EPTowerFlags[EP_TOWER_NUM*2] = {
+    {182106,0,1877.6,-3716.76,167.188,1.74533,0,0,0.766044,0.642788}, // flags left side
+    {182106,0,2569.6,-4772.93,115.399,2.72271,0,0,0.978148,0.207912},
+    {182106,0,3188.76,-4358.5,144.555,1.97222,0,0,0.833886,0.551937},
+    {182106,0,2975.5,-3060.36,125.108,-1.0472,0,0,0.5,-0.866025},
+    {182106,0,1838.42,-3703.56,167.713,0.890118,0,0,0.430511,0.902585}, // flags right side
+    {182106,0,2539.61,-4801.55,115.766,2.00713,0,0,0.843391,0.5373},
     {182106,0,3148.17,-4365.51,145.029,1.53589,0,0,0.694658,0.71934},
     {182106,0,2992.63,-3022.95,125.593,3.03687,0,0,0.99863,0.052336}
 };
 
 const uint32 EPTowerPlayerEnterEvents[EP_TOWER_NUM] = {10705,10691,10699,10701};
-
 const uint32 EPTowerPlayerLeaveEvents[EP_TOWER_NUM] = {10704,10692,10698,10700};
 
 const uint32 EP_NUM_CREATURES = 6;

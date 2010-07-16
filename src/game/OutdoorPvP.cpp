@@ -95,9 +95,9 @@ void OPvPCapturePoint::AddCre(uint32 type, uint32 guid, uint32 entry)
     m_CreatureTypes[m_Creatures[type]] = type;
 }
 
-bool OPvPCapturePoint::AddObject(uint32 type, uint32 entry, uint32 map, float x, float y, float z, float o, float rotation0, float rotation1, float rotation2, float rotation3)
+bool OPvPCapturePoint::AddObject(uint32 type, uint32 entry, uint32 artKit, uint32 map, float x, float y, float z, float o, float rotation0, float rotation1, float rotation2, float rotation3)
 {
-    if (uint32 guid = objmgr.AddGOData(entry, map, x, y, z, o, 0, rotation0, rotation1, rotation2, rotation3))
+    if (uint32 guid = objmgr.AddGOData(entry, artKit, map, x, y, z, o, 0, rotation0, rotation1, rotation2, rotation3))
     {
         AddGO(type, guid, entry);
         return true;
@@ -129,7 +129,8 @@ bool OPvPCapturePoint::SetCapturePointData(uint32 entry, uint32 map, float x, fl
         return false;
     }
 
-    if (!objmgr.AddGOData(entry, map, x, y, z, o, 0, rotation0, rotation1, rotation2, rotation3))
+    m_capturePointGUID = objmgr.AddGOData(entry, 21, map, x, y, z, o, 0, rotation0, rotation1, rotation2, rotation3);
+    if (!m_capturePointGUID)
         return false;
 
     // get the needed values from goinfo
@@ -579,9 +580,5 @@ void OutdoorPvP::OnGameObjectCreate(GameObject *go, bool add)
         return;
 
     if (OPvPCapturePoint *cp = GetCapturePoint(go->GetDBTableGUIDLow()))
-    {
         cp->m_capturePoint = add ? go : NULL;
-        if (add)
-            cp->m_capturePointGUID = go->GetGUID();
-    }
 }
