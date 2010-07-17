@@ -24,7 +24,6 @@ Config TScriptConfig;
 
 void FillSpellSummary();
 void LoadOverridenSQLData();
-void LoadOverridenDBCData();
 
 void LoadDatabase()
 {
@@ -121,8 +120,6 @@ void ScriptsInit(char const* cfg_file = _OREGON_SCRIPT_CONFIG)
 
     outstring_log(">> Load Overriden SQL Data.");
     LoadOverridenSQLData();
-    outstring_log(">> Load Overriden DBC Data.");
-    LoadOverridenDBCData();
 }
 
 //*********************************

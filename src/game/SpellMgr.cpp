@@ -2246,9 +2246,7 @@ void SpellMgr::LoadSpellPetAuras()
 
         SpellPetAuraMap::iterator itr = mSpellPetAuraMap.find(spell);
         if (itr != mSpellPetAuraMap.end())
-        {
             itr->second.AddAura(pet, aura);
-        }
         else
         {
             SpellEntry const* spellInfo = sSpellStore.LookupEntry(spell);
@@ -2302,7 +2300,7 @@ void SpellMgr::LoadSpellCustomAttr()
             continue;
 
         bool auraSpell = true;
-        for (uint32 j = 0; j < 3; ++j)
+        for (uint8 j = 0; j < 3; ++j)
         {
             if (spellInfo->Effect[j])
                 if (spellInfo->Effect[j] != SPELL_EFFECT_APPLY_AURA
@@ -2363,10 +2361,9 @@ void SpellMgr::LoadSpellCustomAttr()
             }
         }
 
-
-        for (uint32 j = 0; j < 3; ++j)
+        for (uint8 j = 0; j < 3; ++j)
         {
-            switch(spellInfo->EffectApplyAuraName[j])
+            switch (spellInfo->EffectApplyAuraName[j])
             {
                 case SPELL_AURA_MOD_POSSESS:
                 case SPELL_AURA_MOD_CONFUSE:
@@ -2423,27 +2420,27 @@ void SpellMgr::LoadSpellCustomAttr()
         case 41357: // L1 Acane Charge
         case 41376: // Spite
         case 39992: // Needle Spine
-        case 29576: //Multi-Shot
-        case 37790: //Spread Shot
-        case 46771: //Flame Sear
-        case 45248: //Shadow Blades
+        case 29576: // Multi-Shot
+        case 37790: // Spread Shot
+        case 46771: // Flame Sear
+        case 45248: // Shadow Blades
         case 41303: // Soul Drain
             spellInfo->MaxAffectedTargets = 3;
             break;
-        case 38310: //Multi-Shot
+        case 38310: // Multi-Shot
             spellInfo->MaxAffectedTargets = 4;
             break;
         case 42005: // Bloodboil
-        case 38296: //Spitfire Totem
-        case 37676: //Insidious Whisper
-        case 46008: //Negative Energy
-        case 45641: //Fire Bloom
+        case 38296: // Spitfire Totem
+        case 37676: // Insidious Whisper
+        case 46008: // Negative Energy
+        case 45641: // Fire Bloom
             spellInfo->MaxAffectedTargets = 5;
             break;
-        case 40827: //Sinful Beam
-        case 40859: //Sinister Beam
-        case 40860: //Vile Beam
-        case 40861: //Wicked Beam
+        case 40827: // Sinful Beam
+        case 40859: // Sinister Beam
+        case 40860: // Vile Beam
+        case 40861: // Wicked Beam
             spellInfo->MaxAffectedTargets = 10;
             break;
         case 8122: case 8124: case 10888: case 10890: // Psychic Scream
@@ -2461,6 +2458,17 @@ void SpellMgr::LoadSpellCustomAttr()
         case 12723: // Sweeping Strikes proc
             mSpellCustomAttr[i] |= SPELL_ATTR_CU_IGNORE_ARMOR;
             spellInfo->Attributes |= SPELL_ATTR_IMPOSSIBLE_DODGE_PARRY_BLOCK;
+            break;
+        case 41013:     // Parasitic Shadowfiend Passive
+            spellInfo->EffectApplyAuraName[0] = 4; // proc debuff, and summon infinite fiends
+            break;
+        case 27892:     // To Anchor 1
+        case 27928:     // To Anchor 1
+        case 27935:     // To Anchor 1
+        case 27915:     // Anchor to Skulls
+        case 27931:     // Anchor to Skulls
+        case 27937:     // Anchor to Skulls
+            spellInfo->rangeIndex = 13;
             break;
         default:
             break;
