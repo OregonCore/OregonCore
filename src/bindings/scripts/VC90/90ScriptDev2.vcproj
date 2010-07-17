@@ -459,6 +459,10 @@
 					RelativePath="..\scripts\custom\test.cpp"
 					>
 				</File>
+				<File
+					RelativePath="..\scripts\custom\on_events.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="areatrigger"

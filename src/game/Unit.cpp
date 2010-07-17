@@ -52,6 +52,7 @@
 #include "PetAI.h"
 #include "PassiveAI.h"
 #include "Traveller.h"
+#include "ScriptCalls.h"
 
 #include <math.h>
 
@@ -835,6 +836,14 @@ uint32 Unit::DealDamage(Unit *pVictim, uint32 damage, CleanDamage const* cleanDa
     {
         DEBUG_LOG("DealDamage: victim just died");
         Kill(pVictim, durabilityLoss);
+
+        //Hook for OnPVPKill Event
+        if (pVictim->GetTypeId() == TYPEID_PLAYER && this->GetTypeId() == TYPEID_PLAYER)
+        {
+            Player *killer = ToPlayer();
+            Player *killed = pVictim->ToPlayer();
+            Script->OnPVPKill(killer, killed);
+        }
     }
     else                                                    // if (health <= damage)
     {

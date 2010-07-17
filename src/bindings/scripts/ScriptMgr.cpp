@@ -266,6 +266,30 @@ void Script::RegisterSelf()
 //*** Functions to be Exported ***
 
 OREGON_DLL_EXPORT
+void OnLogin(Player *pPlayer)
+{
+    Script *tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    if (!tmpscript || !tmpscript->pOnLogin) return;
+    tmpscript->pOnLogin(pPlayer);
+}
+
+OREGON_DLL_EXPORT
+void OnLogout(Player *pPlayer)
+{
+    Script *tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    if (!tmpscript || !tmpscript->pOnLogout) return;
+    tmpscript->pOnLogout(pPlayer);
+}
+
+OREGON_DLL_EXPORT
+void OnPVPKill(Player *killer, Player *killed)
+{
+    Script *tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    if (!tmpscript || !tmpscript->pOnPVPKill) return;
+    tmpscript->pOnPVPKill(killer, killed);
+}
+
+OREGON_DLL_EXPORT
 char const* ScriptsVersion()
 {
     return "Default Oregon scripting library";

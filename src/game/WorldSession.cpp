@@ -40,6 +40,7 @@
 #include "MapManager.h"
 #include "Chat.h"
 #include "SocialMgr.h"
+#include "ScriptCalls.h"
 
 /// WorldSession constructor
 WorldSession::WorldSession(uint32 id, WorldSocket *sock, uint32 sec, uint8 expansion, time_t mute_time, LocaleConstant locale) :
@@ -405,9 +406,7 @@ void WorldSession::LogoutPlayer(bool Save)
 
         ///- Send update to group
         if (_player->GetGroup())
-        {
             _player->GetGroup()->SendUpdate();
-        }
 
         ///- Broadcast a logout message to the player's friends
         sSocialMgr.SendFriendStatus(_player, FRIEND_OFFLINE, _player->GetGUIDLow(), true);
@@ -429,6 +428,9 @@ void WorldSession::LogoutPlayer(bool Save)
             GetAccountId());
         sLog.outDebug("SESSION: Sent SMSG_LOGOUT_COMPLETE Message");
     }
+
+    //Hook for OnLogout Event
+    Script->OnLogout(_player);
 
     m_playerLogout = false;
     m_playerRecentlyLogout = true;

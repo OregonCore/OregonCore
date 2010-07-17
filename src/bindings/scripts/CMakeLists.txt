@@ -10,6 +10,7 @@ SET(oregonscript_LIB_SRCS
    include/sc_creature.h
    include/sc_gossip.h
    include/sc_instance.h
+   scripts/custom/on_events.cpp
    scripts/areatrigger/areatrigger_scripts.cpp
    scripts/boss/boss_emeriss.cpp
    scripts/boss/boss_lethon.cpp
@@ -411,4 +412,3 @@ target_link_libraries(oregonscript)
 
 set_target_properties(oregonscript PROPERTIES VERSION 4.2.0 SOVERSION 4)
 install(TARGETS oregonscript DESTINATION lib)
-

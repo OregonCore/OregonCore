@@ -570,6 +570,8 @@ extern void AddSC_boss_zuljin();
 extern void AddSC_instance_zulaman();
 extern void AddSC_zulaman();
 
+extern void AddSC_onevents();
+
 void AddScripts()
 {
     //custom
@@ -1137,5 +1139,5 @@ void AddScripts()
     AddSC_instance_zulaman();
     AddSC_zulaman();
 
-    // -------------------
+    AddSC_onevents();
 }

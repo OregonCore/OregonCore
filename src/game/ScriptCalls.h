@@ -37,6 +37,10 @@ class InstanceData;
 bool LoadScriptingModule(char const* libName = "");
 void UnloadScriptingModule();
 
+//On Event Handlers
+typedef void(OREGON_IMPORT * scriptCallOnLogin) (Player *pPlayer);
+typedef void(OREGON_IMPORT * scriptCallOnLogout) (Player *pPlayer);
+typedef void(OREGON_IMPORT * scriptCallOnPVPKill) (Player *killer, Player *killed);
 typedef void(OREGON_IMPORT * scriptCallScriptsInit) (char const*);
 typedef void(OREGON_IMPORT * scriptCallScriptsFree) ();
 typedef char const* (OREGON_IMPORT * scriptCallScriptsVersion) ();
@@ -69,6 +73,9 @@ typedef struct
     scriptCallScriptsFree ScriptsFree;
     scriptCallScriptsVersion ScriptsVersion;
 
+    scriptCallOnLogin OnLogin;
+    scriptCallOnLogout OnLogout;
+    scriptCallOnPVPKill OnPVPKill;
     scriptCallGossipHello GossipHello;
     scriptCallGOChooseReward GOChooseReward;
     scriptCallQuestAccept QuestAccept;

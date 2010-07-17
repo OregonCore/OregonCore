@@ -41,6 +41,7 @@
 #include "SocialMgr.h"
 #include "UpdateMask.h"
 #include "Util.h"
+#include "ScriptCalls.h"
 #include "MapManager.h"
 #include "SystemConfig.h"
 
@@ -737,10 +738,14 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
         SendNotification(LANG_GM_ON);
 
     std::string IP_str = GetRemoteAddress();
-    sLog.outChar("Account: %d (IP: %s) Login Character:[%s] (GUID: %u)",
+    sLog.outChar("Account: %d (IP: %s) Login Character:[%s] (guid:%u)",
         GetAccountId(),IP_str.c_str(),pCurrChar->GetName() ,pCurrChar->GetGUIDLow());
 
     m_playerLoading = false;
+
+    //Hook for OnLogin Event
+    Script->OnLogin(pCurrChar);
+
     delete holder;
 }
 

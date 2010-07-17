@@ -3575,7 +3575,7 @@ void ObjectMgr::LoadScripts(ScriptMapMap& scripts, char const* tablename)
         {
             case SCRIPT_COMMAND_TALK:
             {
-                if (tmp.datalong > 3)
+                if (tmp.datalong > 4)
                 {
                     sLog.outErrorDb("Table %s has invalid talk type (datalong = %u) in SCRIPT_COMMAND_TALK for script id %u",tablename,tmp.datalong,tmp.id);
                     continue;
@@ -7235,6 +7235,9 @@ void ObjectMgr::LoadScriptNames()
             m_scriptNames.push_back((*result)[0].GetString());
         } while (result->NextRow());
     }
+
+    //OnEvent Changes
+    m_scriptNames.push_back("scripted_on_events");
 
     std::sort(m_scriptNames.begin(), m_scriptNames.end());
 }
