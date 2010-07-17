@@ -78,7 +78,7 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
     boss_grand_warlock_nethekurseAI(Creature *c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     ScriptedInstance* pInstance;
@@ -101,7 +101,7 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
         IsIntroEvent = false;
         IntroOnce = false;
@@ -124,7 +124,7 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
         if (PeonEngagedCount >= 4)
             return;
 
-        DoScriptText(PeonAttacked[PeonEngagedCount].id, m_creature);
+        DoScriptText(PeonAttacked[PeonEngagedCount].id, me);
         ++PeonEngagedCount;
     }
 
@@ -133,14 +133,14 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
         if (PeonKilledCount >= 4)
             return;
 
-        DoScriptText(PeonDies[PeonKilledCount].id, m_creature);
+        DoScriptText(PeonDies[PeonKilledCount].id, me);
         ++PeonKilledCount;
 
         if (PeonKilledCount == 4)
         {
             IsIntroEvent = false;
             IsMainEvent = true;
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
     }
 
@@ -148,9 +148,9 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-            case 0: DoScriptText(SAY_TAUNT_1, m_creature); break;
-            case 1: DoScriptText(SAY_TAUNT_2, m_creature); break;
-            case 2: DoScriptText(SAY_TAUNT_3, m_creature); break;
+            case 0: DoScriptText(SAY_TAUNT_1, me); break;
+            case 1: DoScriptText(SAY_TAUNT_2, me); break;
+            case 2: DoScriptText(SAY_TAUNT_3, me); break;
         }
 
         //TODO: kill the peons first
@@ -158,7 +158,7 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
         PeonEngagedCount = 4;
         PeonKilledCount = 4;
         IsMainEvent = true;
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
     void AttackStart(Unit* who)
@@ -166,7 +166,7 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
         if (IsIntroEvent || !IsMainEvent)
             return;
 
-        if (m_creature->Attack(who, true))
+        if (me->Attack(who, true))
         {
             if (Phase)
                 DoStartNoMovement(who);
@@ -177,11 +177,11 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit *who)
     {
-        if (!m_creature->getVictim() && who->isTargetableForAttack() && (m_creature->IsHostileTo(who)) && who->isInAccessiblePlaceFor (m_creature))
+        if (!me->getVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor (me))
         {
-            if (!IntroOnce && m_creature->IsWithinDistInMap(who, 75))
+            if (!IntroOnce && me->IsWithinDistInMap(who, 75))
             {
-                DoScriptText(SAY_INTRO, m_creature);
+                DoScriptText(SAY_INTRO, me);
                 IntroOnce = true;
                 IsIntroEvent = true;
 
@@ -189,14 +189,14 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
                     pInstance->SetData(TYPE_NETHEKURSE,IN_PROGRESS);
             }
 
-            if (!m_creature->canFly() && m_creature->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
+            if (!me->canFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
                 return;
 
             if (IsIntroEvent || !IsMainEvent)
                 return;
 
-            float attackRadius = m_creature->GetAttackDistance(who);
-            if (m_creature->IsWithinDistInMap(who, attackRadius) && m_creature->IsWithinLOSInMap(who))
+            float attackRadius = me->GetAttackDistance(who);
+            if (me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who))
             {
                 //who->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
                 AttackStart(who);
@@ -208,9 +208,9 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, m_creature); break;
-            case 1: DoScriptText(SAY_AGGRO_2, m_creature); break;
-            case 2: DoScriptText(SAY_AGGRO_3, m_creature); break;
+            case 0: DoScriptText(SAY_AGGRO_1, me); break;
+            case 1: DoScriptText(SAY_AGGRO_2, me); break;
+            case 2: DoScriptText(SAY_AGGRO_3, me); break;
         }
     }
 
@@ -225,14 +225,14 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-            case 0: DoScriptText(SAY_SLAY_1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY_2, m_creature); break;
+            case 0: DoScriptText(SAY_SLAY_1, me); break;
+            case 1: DoScriptText(SAY_SLAY_2, me); break;
         }
     }
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DIE, m_creature);
+        DoScriptText(SAY_DIE, me);
 
         if (!pInstance)
             return;
@@ -241,7 +241,7 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
 
         if (pInstance->GetData64(DATA_NETHEKURSE_DOOR))
         {
-            if (GameObject *Door = GameObject::GetGameObject(*m_creature,pInstance->GetData64(DATA_NETHEKURSE_DOOR)))
+            if (GameObject *Door = GameObject::GetGameObject(*me,pInstance->GetData64(DATA_NETHEKURSE_DOOR)))
                 Door->SetGoState(GO_STATE_ACTIVE);
         }
     }
@@ -272,13 +272,13 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
         {
             if (!SpinOnce)
             {
-                DoCast(m_creature->getVictim(),SPELL_DARK_SPIN);
+                DoCast(me->getVictim(),SPELL_DARK_SPIN);
                 SpinOnce = true;
             }
 
             if (Cleave_Timer < diff)
             {
-                DoCast(m_creature->getVictim(),(HeroicMode ? H_SPELL_SHADOW_SLAM : SPELL_SHADOW_CLEAVE));
+                DoCast(me->getVictim(),(HeroicMode ? H_SPELL_SHADOW_SLAM : SPELL_SHADOW_CLEAVE));
                 Cleave_Timer = 6000+rand()%2500;
             } else Cleave_Timer -= diff;
         }
@@ -298,7 +298,7 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
                 DeathCoil_Timer = 15000+rand()%5000;
             } else DeathCoil_Timer -= diff;
 
-            if ((m_creature->GetHealth()*100) / m_creature->GetMaxHealth() <= 20)
+            if ((me->GetHealth()*100) / me->GetMaxHealth() <= 20)
                 Phase = true;
 
             DoMeleeAttackIfReady();
@@ -318,7 +318,7 @@ struct OREGON_DLL_DECL mob_fel_orc_convertAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->SetNoCallAssistance(true);              //we don't want any assistance (WE R HEROZ!)
+        me->SetNoCallAssistance(true);              //we don't want any assistance (WE R HEROZ!)
         Hemorrhage_Timer = 3000;
     }
 
@@ -333,7 +333,7 @@ struct OREGON_DLL_DECL mob_fel_orc_convertAI : public ScriptedAI
         {
             if (pInstance->GetData64(DATA_NETHEKURSE))
             {
-                Creature *pKurse = Unit::GetCreature(*m_creature,pInstance->GetData64(DATA_NETHEKURSE));
+                Creature *pKurse = Unit::GetCreature(*me,pInstance->GetData64(DATA_NETHEKURSE));
                 if (pKurse)
                     ((boss_grand_warlock_nethekurseAI*)pKurse->AI())->DoYellForPeonEnterCombat();
             }
@@ -350,7 +350,7 @@ struct OREGON_DLL_DECL mob_fel_orc_convertAI : public ScriptedAI
         {
             if (pInstance->GetData64(DATA_NETHEKURSE))
             {
-                Creature *pKurse = Unit::GetCreature(*m_creature,pInstance->GetData64(DATA_NETHEKURSE));
+                Creature *pKurse = Unit::GetCreature(*me,pInstance->GetData64(DATA_NETHEKURSE));
                 if (pKurse)
                     ((boss_grand_warlock_nethekurseAI*)pKurse->AI())->DoYellForPeonDeath();
             }
@@ -364,7 +364,7 @@ struct OREGON_DLL_DECL mob_fel_orc_convertAI : public ScriptedAI
 
         if (Hemorrhage_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_HEMORRHAGE);
+            DoCast(me->getVictim(),SPELL_HEMORRHAGE);
             Hemorrhage_Timer = 15000;
         } else Hemorrhage_Timer -= diff;
 
@@ -397,17 +397,17 @@ struct OREGON_DLL_DECL mob_lesser_shadow_fissureAI : public ScriptedAI
         if (!Start)
         {
             //triggered spell of consumption does not properly show it's SpellVisual, hack it a bit
-            m_creature->CastSpell(m_creature,SPELL_TEMPORARY_VISUAL,true);
-            m_creature->CastSpell(m_creature,SPELL_CONSUMPTION,false);
+            me->CastSpell(me,SPELL_TEMPORARY_VISUAL,true);
+            me->CastSpell(me,SPELL_CONSUMPTION,false);
             Start = true;
         }
 
         if (Stop_Timer < diff)
         {
-            m_creature->setDeathState(JUST_DIED);
-            m_creature->SetHealth(0);
-            m_creature->CombatStop();
-            m_creature->DeleteThreatList();
+            me->setDeathState(JUST_DIED);
+            me->SetHealth(0);
+            me->CombatStop();
+            me->DeleteThreatList();
         } else Stop_Timer -= diff;
     }
 };

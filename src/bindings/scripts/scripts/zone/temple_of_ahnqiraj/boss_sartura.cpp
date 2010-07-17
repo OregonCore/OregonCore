@@ -70,17 +70,17 @@ struct OREGON_DLL_DECL boss_sarturaAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
     }
 
      void JustDied(Unit* Killer)
      {
-         DoScriptText(SAY_DEATH, m_creature);
+         DoScriptText(SAY_DEATH, me);
      }
 
      void KilledUnit(Unit* victim)
      {
-         DoScriptText(SAY_SLAY, m_creature);
+         DoScriptText(SAY_SLAY, me);
      }
 
     void UpdateAI(const uint32 diff)
@@ -111,7 +111,7 @@ struct OREGON_DLL_DECL boss_sarturaAI : public ScriptedAI
         {
             if (WhirlWind_Timer < diff)
             {
-                DoCast(m_creature, SPELL_WHIRLWIND);
+                DoCast(me, SPELL_WHIRLWIND);
                 WhirlWind = true;
                 WhirlWindEnd_Timer = 15000;
             } else WhirlWind_Timer -= diff;
@@ -120,7 +120,7 @@ struct OREGON_DLL_DECL boss_sarturaAI : public ScriptedAI
             {
                 //Attack random Gamers
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
-                    m_creature->TauntApply(pTarget);
+                    me->TauntApply(pTarget);
 
                     AggroReset = true;
                     AggroReset_Timer = 2000 + rand()%3000;
@@ -139,9 +139,9 @@ struct OREGON_DLL_DECL boss_sarturaAI : public ScriptedAI
             //If she is 20% enrage
             if (!Enraged)
             {
-                if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 20 && !m_creature->IsNonMeleeSpellCasted(false))
+                if (me->GetHealth()*100 / me->GetMaxHealth() <= 20 && !me->IsNonMeleeSpellCasted(false))
                 {
-                    DoCast(m_creature, SPELL_ENRAGE);
+                    DoCast(me, SPELL_ENRAGE);
                     Enraged = true;
                 }
             }
@@ -151,7 +151,7 @@ struct OREGON_DLL_DECL boss_sarturaAI : public ScriptedAI
             {
                 if (EnrageHard_Timer < diff)
                 {
-                    DoCast(m_creature, SPELL_ENRAGEHARD);
+                    DoCast(me, SPELL_ENRAGEHARD);
                     EnragedHard = true;
                 } else EnrageHard_Timer -= diff;
             }
@@ -200,7 +200,7 @@ struct OREGON_DLL_DECL mob_sartura_royal_guardAI : public ScriptedAI
 
         if (!WhirlWind && WhirlWind_Timer < diff)
         {
-            DoCast(m_creature, SPELL_WHIRLWINDADD);
+            DoCast(me, SPELL_WHIRLWINDADD);
             WhirlWind = true;
             WhirlWind_Timer = 25000 + rand()%15000;
             WhirlWindEnd_Timer = 15000;
@@ -212,7 +212,7 @@ struct OREGON_DLL_DECL mob_sartura_royal_guardAI : public ScriptedAI
             {
                 //Attack random Gamers
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
-                    m_creature->TauntApply(pTarget);
+                    me->TauntApply(pTarget);
 
                 WhirlWindRandom_Timer = 3000 + rand()%4000;
             } else WhirlWindRandom_Timer -= diff;
@@ -237,7 +237,7 @@ struct OREGON_DLL_DECL mob_sartura_royal_guardAI : public ScriptedAI
 
             if (KnockBack_Timer < diff)
             {
-                DoCast(m_creature, SPELL_WHIRLWINDADD);
+                DoCast(me, SPELL_WHIRLWINDADD);
                 KnockBack_Timer = 10000 + rand()%10000;
             } else KnockBack_Timer -= diff;
         }

@@ -37,7 +37,7 @@ struct OREGON_DLL_DECL boss_the_black_stalkerAI : public ScriptedAI
 {
     boss_the_black_stalkerAI(Creature *c) : ScriptedAI(c)
     {
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     bool HeroicMode;
@@ -73,15 +73,15 @@ struct OREGON_DLL_DECL boss_the_black_stalkerAI : public ScriptedAI
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
                 summon->AI()->AttackStart(pTarget);
             else
-                if (m_creature->getVictim())
-                    summon->AI()->AttackStart(m_creature->getVictim());
+                if (me->getVictim())
+                    summon->AI()->AttackStart(me->getVictim());
         }
     }
 
     void JustDied(Unit *who)
     {
         for (std::list<uint64>::iterator i = Striders.begin(); i != Striders.end(); ++i)
-            if (Creature *strider = Unit::GetCreature(*m_creature, *i))
+            if (Creature *strider = Unit::GetCreature(*me, *i))
             {
                 strider->SetLootRecipient(NULL);
                 strider->DealDamage(strider,strider->GetMaxHealth(),NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -98,8 +98,8 @@ struct OREGON_DLL_DECL boss_the_black_stalkerAI : public ScriptedAI
         if (check_Timer < diff)
         {
             float x,y,z,o;
-            m_creature->GetHomePosition(x,y,z,o);
-            if (m_creature->GetDistance(x,y,z) > 60)
+            me->GetHomePosition(x,y,z,o);
+            if (me->GetDistance(x,y,z) > 60)
             {
                 EnterEvadeMode();
                 return;
@@ -110,7 +110,7 @@ struct OREGON_DLL_DECL boss_the_black_stalkerAI : public ScriptedAI
         // Spore Striders
         if (HeroicMode && SporeStriders_Timer < diff)
         {
-            DoCast(m_creature,SPELL_SUMMON_SPORE_STRIDER);
+            DoCast(me,SPELL_SUMMON_SPORE_STRIDER);
             SporeStriders_Timer = 10000+rand()%5000;
         } else SporeStriders_Timer -= diff;
 
@@ -119,7 +119,7 @@ struct OREGON_DLL_DECL boss_the_black_stalkerAI : public ScriptedAI
         {
             if (LevitatedTarget_Timer < diff)
             {
-                if (Unit *pTarget = (Unit*)Unit::GetUnit(*m_creature, LevitatedTarget))
+                if (Unit *pTarget = (Unit*)Unit::GetUnit(*me, LevitatedTarget))
                 {
                     if (!pTarget->HasAura(SPELL_LEVITATE,0))
                     {

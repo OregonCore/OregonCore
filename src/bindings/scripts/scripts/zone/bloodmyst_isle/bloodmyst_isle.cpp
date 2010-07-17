@@ -56,7 +56,7 @@ struct OREGON_DLL_DECL mob_webbed_creatureAI : public ScriptedAI
             case 0:
                 spawnCreatureID = 17681;
                 if (Killer->GetTypeId() == TYPEID_PLAYER)
-                    ((Player*)Killer)->KilledMonster(spawnCreatureID, m_creature->GetGUID());
+                    ((Player*)Killer)->KilledMonster(spawnCreatureID, me->GetGUID());
                 break;
             case 1:
             case 2:
@@ -65,7 +65,7 @@ struct OREGON_DLL_DECL mob_webbed_creatureAI : public ScriptedAI
         }
 
         if (spawnCreatureID)
-            DoSpawnCreature(spawnCreatureID,0,0,0,m_creature->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+            DoSpawnCreature(spawnCreatureID,0,0,0,me->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
     }
 };
 CreatureAI* GetAI_mob_webbed_creature(Creature *_Creature)

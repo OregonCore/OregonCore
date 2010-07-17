@@ -43,8 +43,8 @@ struct OREGON_DLL_DECL npc_calvin_montagueAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->setFaction(FACTION_FRIENDLY);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
+        me->setFaction(FACTION_FRIENDLY);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
     }
 
     void EnterCombat(Unit* who) { }

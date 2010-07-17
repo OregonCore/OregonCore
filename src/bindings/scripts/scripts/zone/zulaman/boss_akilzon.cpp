@@ -115,7 +115,7 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
     void EnterCombat(Unit *who)
     {
         DoYell(SAY_ONAGGRO, LANG_UNIVERSAL, NULL);
-        DoPlaySoundToSet(m_creature, SOUND_ONAGGRO);
+        DoPlaySoundToSet(me, SOUND_ONAGGRO);
         //DoZoneInCombat();
         if (pInstance)
             pInstance->SetData(DATA_AKILZONEVENT, IN_PROGRESS);
@@ -124,7 +124,7 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
     void JustDied(Unit* Killer)
     {
         DoYell(SAY_ONDEATH,LANG_UNIVERSAL,NULL);
-        DoPlaySoundToSet(m_creature, SOUND_ONDEATH);
+        DoPlaySoundToSet(me, SOUND_ONDEATH);
         if (pInstance)
             pInstance->SetData(DATA_AKILZONEVENT, DONE);
         DespawnSummons();
@@ -136,11 +136,11 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
         {
         case 0:
             DoYell(SAY_ONSLAY1, LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(m_creature, SOUND_ONSLAY1);
+            DoPlaySoundToSet(me, SOUND_ONSLAY1);
             break;
         case 1:
             DoYell(SAY_ONSLAY2, LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(m_creature, SOUND_ONSLAY2);
+            DoPlaySoundToSet(me, SOUND_ONSLAY2);
             break;
         }
     }
@@ -149,7 +149,7 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
     {
         for (uint8 i = 0; i < 8; i++)
         {
-            Unit* bird = Unit::GetUnit(*m_creature,BirdGUIDs[i]);
+            Unit* bird = Unit::GetUnit(*me,BirdGUIDs[i]);
             if (bird && bird->isAlive())
             {
                 bird->SetVisibility(VISIBILITY_OFF);
@@ -160,7 +160,7 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
 
     void SetWeather(uint32 weather, float grade)
     {
-        Map *map = m_creature->GetMap();
+        Map *map = me->GetMap();
         if (!map->IsDungeon()) return;
 
         WorldPacket data(SMSG_WEATHER, (4+4+4));
@@ -178,7 +178,7 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
             for (uint8 i = 2; i < StormCount; ++i)
                 bp0 *= 2;
 
-            CellPair p(Oregon::ComputeCellPair(m_creature->GetPositionX(), m_creature->GetPositionY()));
+            CellPair p(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
             Cell cell(p);
             cell.data.Part.reserved = ALL_DISTRICT;
             cell.SetNoCreate();
@@ -186,32 +186,32 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
             std::list<Unit *> tempUnitMap;
 
             {
-                Oregon::AnyAoETargetUnitInObjectRangeCheck u_check(m_creature, m_creature, 999);
+                Oregon::AnyAoETargetUnitInObjectRangeCheck u_check(me, me, 999);
                 Oregon::UnitListSearcher<Oregon::AnyAoETargetUnitInObjectRangeCheck> searcher(tempUnitMap, u_check);
 
                 TypeContainerVisitor<Oregon::UnitListSearcher<Oregon::AnyAoETargetUnitInObjectRangeCheck>, WorldTypeMapContainer > world_unit_searcher(searcher);
                 TypeContainerVisitor<Oregon::UnitListSearcher<Oregon::AnyAoETargetUnitInObjectRangeCheck>, GridTypeMapContainer >  grid_unit_searcher(searcher);
 
                 CellLock<GridReadGuard> cell_lock(cell, p);
-                cell_lock->Visit(cell_lock, world_unit_searcher, *(m_creature->GetMap()));
-                cell_lock->Visit(cell_lock, grid_unit_searcher, *(m_creature->GetMap()));
+                cell_lock->Visit(cell_lock, world_unit_searcher, *(me->GetMap()));
+                cell_lock->Visit(cell_lock, grid_unit_searcher, *(me->GetMap()));
             }
             //dealdamege
             for (std::list<Unit*>::iterator i = tempUnitMap.begin(); i != tempUnitMap.end(); ++i)
             {
                 if (Cloud->GetDistance2d(*i)>= 6)
                 {
-                    Cloud->CastCustomSpell(*i, 43137, &bp0, NULL, NULL, true, 0, 0, m_creature->GetGUID());
+                    Cloud->CastCustomSpell(*i, 43137, &bp0, NULL, NULL, true, 0, 0, me->GetGUID());
                 }
             }
             // visual
             float x,y,z;
-            z = m_creature->GetPositionZ();
+            z = me->GetPositionZ();
             for (uint8 i = 0; i < 5+rand()%5; ++i)
             {
                 x = 343+rand()%60;
                 y = 1380+rand()%60;
-                if (Unit *trigger = m_creature->SummonTrigger(x, y, z, 0, 2000))
+                if (Unit *trigger = me->SummonTrigger(x, y, z, 0, 2000))
                 {
                     trigger->setFaction(35);
                     trigger->SetMaxHealth(100000);
@@ -227,7 +227,7 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
         {
             StormCount = 0; // finish
             SummonEagles_Timer = 5000;
-            m_creature->InterruptNonMeleeSpells(false);
+            me->InterruptNonMeleeSpells(false);
             CloudGUID = 0;
             if (Cloud)
                 Cloud->DealDamage(Cloud, Cloud->GetHealth(),NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -244,13 +244,13 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
 
         if (StormCount)
         {
-            Unit *pTarget = Unit::GetUnit(*m_creature, CloudGUID);
+            Unit *pTarget = Unit::GetUnit(*me, CloudGUID);
             if (!pTarget || !pTarget->isAlive())
             {
                 EnterEvadeMode();
                 return;
             }
-            else if (Unit* Cyclone = Unit::GetUnit(*m_creature, CycloneGUID))
+            else if (Unit* Cyclone = Unit::GetUnit(*me, CycloneGUID))
                 Cyclone->CastSpell(pTarget, 25160, true); // keep casting or...
 
             if (StormSequenceTimer < diff) {
@@ -261,33 +261,33 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
 
         if (Enrage_Timer < diff) {
             DoYell(SAY_ONENRAGE, LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(m_creature, SOUND_ONENRAGE);
-            m_creature->CastSpell(m_creature, SPELL_BERSERK, true);
+            DoPlaySoundToSet(me, SOUND_ONENRAGE);
+            me->CastSpell(me, SPELL_BERSERK, true);
             Enrage_Timer = 600000;
         } else Enrage_Timer -= diff;
 
         if (StaticDisruption_Timer < diff) {
             Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
-            if (!pTarget) pTarget = m_creature->getVictim();
+            if (!pTarget) pTarget = me->getVictim();
             TargetGUID = pTarget->GetGUID();
-            m_creature->CastSpell(pTarget, SPELL_STATIC_DISRUPTION, false);
-            m_creature->SetInFront(m_creature->getVictim());
+            me->CastSpell(pTarget, SPELL_STATIC_DISRUPTION, false);
+            me->SetInFront(me->getVictim());
             StaticDisruption_Timer = (10+rand()%8)*1000; // < 20s
 
-            /*float dist = m_creature->GetDistance(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
+            /*float dist = me->GetDistance(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
             if (dist < 5.0f) dist = 5.0f;
             SDisruptAOEVisual_Timer = 1000 + floor(dist / 30 * 1000.0f);*/
         } else StaticDisruption_Timer -= diff;
 
         if (GustOfWind_Timer < diff) {
             Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
-            if (!pTarget) pTarget = m_creature->getVictim();
+            if (!pTarget) pTarget = me->getVictim();
             DoCast(pTarget, SPELL_GUST_OF_WIND);
             GustOfWind_Timer = (20+rand()%10)*1000; //20 to 30 seconds(bosskillers)
         } else GustOfWind_Timer -= diff;
 
         if (CallLighting_Timer < diff) {
-            DoCast(m_creature->getVictim(), SPELL_CALL_LIGHTNING);
+            DoCast(me->getVictim(), SPELL_CALL_LIGHTNING);
             CallLighting_Timer = (12 + rand()%5)*1000; //totaly random timer. can't find any info on this
         } else CallLighting_Timer -= diff;
 
@@ -304,15 +304,15 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
                 return;
             }
             pTarget->CastSpell(pTarget, 44007, true);//cloud visual
-            m_creature->CastSpell(pTarget, SPELL_ELECTRICAL_STORM, false);//storm cyclon + visual
+            me->CastSpell(pTarget, SPELL_ELECTRICAL_STORM, false);//storm cyclon + visual
             float x,y,z;
             pTarget->GetPosition(x,y,z);
             if (pTarget)
             {
                 pTarget->SetUnitMovementFlags(MOVEMENTFLAG_LEVITATING);
-                pTarget->SendMonsterMove(x,y,m_creature->GetPositionZ()+15,0);
+                pTarget->SendMonsterMove(x,y,me->GetPositionZ()+15,0);
             }
-            Unit *Cloud = m_creature->SummonTrigger(x, y, m_creature->GetPositionZ()+16, 0, 15000);
+            Unit *Cloud = me->SummonTrigger(x, y, me->GetPositionZ()+16, 0, 15000);
             if (Cloud)
             {
                 CloudGUID = Cloud->GetGUID();
@@ -332,14 +332,14 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
         if (SummonEagles_Timer < diff)
         {
             DoYell(SAY_ONSUMMON, LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(m_creature, SOUND_ONSUMMON);
+            DoPlaySoundToSet(me, SOUND_ONSUMMON);
 
             float x, y, z;
-            m_creature->GetPosition(x, y, z);
+            me->GetPosition(x, y, z);
 
             for (uint8 i = 0; i < 8; i++)
             {
-                Unit* bird = Unit::GetUnit(*m_creature,BirdGUIDs[i]);
+                Unit* bird = Unit::GetUnit(*me,BirdGUIDs[i]);
                 if (!bird)//they despawned on die
                 {
                     if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
@@ -349,11 +349,11 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
                         z = pTarget->GetPositionZ() + 6 + rand()%5 + 10;
                         if (z > 95) z = 95 - rand()%5;
                     }
-                    Creature *pCreature = m_creature->SummonCreature(MOB_SOARING_EAGLE, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                    Creature *pCreature = me->SummonCreature(MOB_SOARING_EAGLE, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
                     if (pCreature)
                     {
-                        pCreature->AddThreat(m_creature->getVictim(), 1.0f);
-                        pCreature->AI()->AttackStart(m_creature->getVictim());
+                        pCreature->AddThreat(me->getVictim(), 1.0f);
+                        pCreature->AI()->AttackStart(me->getVictim());
                         BirdGUIDs[i] = pCreature->GetGUID();
                     }
                 }
@@ -378,7 +378,7 @@ struct OREGON_DLL_DECL mob_soaring_eagleAI : public ScriptedAI
         EagleSwoop_Timer = 5000 + rand()%5000;
         arrived = true;
         TargetGUID = 0;
-        m_creature->SetUnitMovementFlags(MOVEMENTFLAG_LEVITATING);
+        me->SetUnitMovementFlags(MOVEMENTFLAG_LEVITATING);
     }
 
     void EnterCombat(Unit *who) {DoZoneInCombat();}
@@ -390,10 +390,10 @@ struct OREGON_DLL_DECL mob_soaring_eagleAI : public ScriptedAI
         arrived = true;
         if (TargetGUID)
         {
-            if (Unit *pTarget = Unit::GetUnit(*m_creature, TargetGUID))
-                m_creature->CastSpell(pTarget, SPELL_EAGLE_SWOOP, true);
+            if (Unit *pTarget = Unit::GetUnit(*me, TargetGUID))
+                me->CastSpell(pTarget, SPELL_EAGLE_SWOOP, true);
             TargetGUID = 0;
-            m_creature->SetSpeed(MOVE_RUN, 1.2f);
+            me->SetSpeed(MOVE_RUN, 1.2f);
             EagleSwoop_Timer = 5000 + rand()%5000;
         }
     }
@@ -417,14 +417,14 @@ struct OREGON_DLL_DECL mob_soaring_eagleAI : public ScriptedAI
                 }
                 else
                 {
-                    pTarget->GetContactPoint(m_creature, x, y, z);
+                    pTarget->GetContactPoint(me, x, y, z);
                     z += 2;
-                    m_creature->SetSpeed(MOVE_RUN, 5.0f);
+                    me->SetSpeed(MOVE_RUN, 5.0f);
                     TargetGUID = pTarget->GetGUID();
                 }
-                m_creature->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
-                m_creature->GetMotionMaster()->MovePoint(0, x, y, z);
-                m_creature->RemoveUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
+                me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
+                me->GetMotionMaster()->MovePoint(0, x, y, z);
+                me->RemoveUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
                 arrived = false;
             }
         }

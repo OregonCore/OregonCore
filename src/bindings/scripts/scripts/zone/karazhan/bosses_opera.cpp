@@ -134,22 +134,22 @@ struct OREGON_DLL_DECL boss_dorotheeAI : public ScriptedAI
 
     void EnterCombat(Unit* who)
     {
-        DoScriptText(SAY_DOROTHEE_AGGRO, m_creature);
+        DoScriptText(SAY_DOROTHEE_AGGRO, me);
     }
 
     void SummonTito();                                      // See below
 
     void JustDied(Unit* killer)
     {
-        DoScriptText(SAY_DOROTHEE_DEATH, m_creature);
+        DoScriptText(SAY_DOROTHEE_DEATH, me);
 
         if (pInstance)
-            SummonCroneIfReady(pInstance, m_creature);
+            SummonCroneIfReady(pInstance, me);
     }
 
     void AttackStart(Unit* who)
     {
-        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
         ScriptedAI::AttackStart(who);
@@ -157,7 +157,7 @@ struct OREGON_DLL_DECL boss_dorotheeAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
         ScriptedAI::MoveInLineOfSight(who);
@@ -169,7 +169,7 @@ struct OREGON_DLL_DECL boss_dorotheeAI : public ScriptedAI
         {
             if (AggroTimer <= diff)
             {
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 AggroTimer = 0;
             } else AggroTimer -= diff;
         }
@@ -185,7 +185,7 @@ struct OREGON_DLL_DECL boss_dorotheeAI : public ScriptedAI
 
         if (FearTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_SCREAM);
+            DoCast(me->getVictim(), SPELL_SCREAM);
             FearTimer = 30000;
         } else FearTimer -= diff;
 
@@ -221,7 +221,7 @@ struct OREGON_DLL_DECL mob_titoAI : public ScriptedAI
     {
         if (DorotheeGUID)
         {
-            Creature* Dorothee = (Unit::GetCreature((*m_creature), DorotheeGUID));
+            Creature* Dorothee = (Unit::GetCreature((*me), DorotheeGUID));
             if (Dorothee && Dorothee->isAlive())
             {
                 ((boss_dorotheeAI*)Dorothee->AI())->TitoDied = true;
@@ -237,7 +237,7 @@ struct OREGON_DLL_DECL mob_titoAI : public ScriptedAI
 
         if (YipTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_YIPPING);
+            DoCast(me->getVictim(), SPELL_YIPPING);
             YipTimer = 10000;
         } else YipTimer -= diff;
 
@@ -250,9 +250,9 @@ void boss_dorotheeAI::SummonTito()
     Creature* Tito = DoSpawnCreature(CREATURE_TITO, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45000);
     if (Tito)
     {
-        DoScriptText(SAY_DOROTHEE_SUMMON, m_creature);
-        ((mob_titoAI*)Tito->AI())->DorotheeGUID = m_creature->GetGUID();
-        Tito->AI()->AttackStart(m_creature->getVictim());
+        DoScriptText(SAY_DOROTHEE_SUMMON, me);
+        ((mob_titoAI*)Tito->AI())->DorotheeGUID = me->GetGUID();
+        Tito->AI()->AttackStart(me->getVictim());
         SummonedTito = true;
         TitoDied = false;
     }
@@ -280,7 +280,7 @@ struct OREGON_DLL_DECL boss_strawmanAI : public ScriptedAI
 
     void AttackStart(Unit* who)
     {
-        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
         ScriptedAI::AttackStart(who);
@@ -288,7 +288,7 @@ struct OREGON_DLL_DECL boss_strawmanAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
         ScriptedAI::MoveInLineOfSight(who);
@@ -296,26 +296,26 @@ struct OREGON_DLL_DECL boss_strawmanAI : public ScriptedAI
 
     void EnterCombat(Unit* who)
     {
-        DoScriptText(SAY_STRAWMAN_AGGRO, m_creature);
+        DoScriptText(SAY_STRAWMAN_AGGRO, me);
     }
 
     void SpellHit(Unit* caster, const SpellEntry *Spell)
     {
         if ((Spell->SchoolMask == SPELL_SCHOOL_MASK_FIRE) && (!(rand()%10)))
-            DoCast(m_creature, SPELL_BURNING_STRAW, true);
+            DoCast(me, SPELL_BURNING_STRAW, true);
     }
 
     void JustDied(Unit* killer)
     {
-        DoScriptText(SAY_STRAWMAN_DEATH, m_creature);
+        DoScriptText(SAY_STRAWMAN_DEATH, me);
 
         if (pInstance)
-            SummonCroneIfReady(pInstance, m_creature);
+            SummonCroneIfReady(pInstance, me);
     }
 
     void KilledUnit(Unit* victim)
     {
-        DoScriptText(SAY_STRAWMAN_SLAY, m_creature);
+        DoScriptText(SAY_STRAWMAN_SLAY, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -324,7 +324,7 @@ struct OREGON_DLL_DECL boss_strawmanAI : public ScriptedAI
         {
             if (AggroTimer <= diff)
             {
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 AggroTimer = 0;
             } else AggroTimer -= diff;
         }
@@ -334,7 +334,7 @@ struct OREGON_DLL_DECL boss_strawmanAI : public ScriptedAI
 
         if (BrainBashTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_BRAIN_BASH);
+            DoCast(me->getVictim(), SPELL_BRAIN_BASH);
             BrainBashTimer = 15000;
         } else BrainBashTimer -= diff;
 
@@ -374,12 +374,12 @@ struct OREGON_DLL_DECL boss_tinheadAI : public ScriptedAI
 
     void EnterCombat(Unit* who)
     {
-        DoScriptText(SAY_TINHEAD_AGGRO, m_creature);
+        DoScriptText(SAY_TINHEAD_AGGRO, me);
     }
 
     void AttackStart(Unit* who)
     {
-        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
         ScriptedAI::AttackStart(who);
@@ -387,7 +387,7 @@ struct OREGON_DLL_DECL boss_tinheadAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
         ScriptedAI::MoveInLineOfSight(who);
@@ -395,15 +395,15 @@ struct OREGON_DLL_DECL boss_tinheadAI : public ScriptedAI
 
     void JustDied(Unit* killer)
     {
-        DoScriptText(SAY_TINHEAD_DEATH, m_creature);
+        DoScriptText(SAY_TINHEAD_DEATH, me);
 
         if (pInstance)
-            SummonCroneIfReady(pInstance, m_creature);
+            SummonCroneIfReady(pInstance, me);
     }
 
     void KilledUnit(Unit* victim)
     {
-        DoScriptText(SAY_TINHEAD_SLAY, m_creature);
+        DoScriptText(SAY_TINHEAD_SLAY, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -412,7 +412,7 @@ struct OREGON_DLL_DECL boss_tinheadAI : public ScriptedAI
         {
             if (AggroTimer < diff)
             {
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 AggroTimer = 0;
             } else AggroTimer -= diff;
         }
@@ -422,7 +422,7 @@ struct OREGON_DLL_DECL boss_tinheadAI : public ScriptedAI
 
         if (CleaveTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_CLEAVE);
+            DoCast(me->getVictim(), SPELL_CLEAVE);
             CleaveTimer = 5000;
         } else CleaveTimer -= diff;
 
@@ -431,8 +431,8 @@ struct OREGON_DLL_DECL boss_tinheadAI : public ScriptedAI
             if (RustTimer < diff)
             {
                 RustCount++;
-                 DoScriptText(EMOTE_RUST, m_creature);
-                DoCast(m_creature, SPELL_RUST);
+                 DoScriptText(EMOTE_RUST, me);
+                DoCast(me, SPELL_RUST);
                 RustTimer = 6000;
             } else RustTimer -= diff;
         }
@@ -465,7 +465,7 @@ struct OREGON_DLL_DECL boss_roarAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
         ScriptedAI::MoveInLineOfSight(who);
@@ -473,7 +473,7 @@ struct OREGON_DLL_DECL boss_roarAI : public ScriptedAI
 
     void AttackStart(Unit* who)
     {
-        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
         ScriptedAI::AttackStart(who);
@@ -481,20 +481,20 @@ struct OREGON_DLL_DECL boss_roarAI : public ScriptedAI
 
     void EnterCombat(Unit* who)
     {
-        DoScriptText(SAY_ROAR_AGGRO, m_creature);
+        DoScriptText(SAY_ROAR_AGGRO, me);
     }
 
     void JustDied(Unit* killer)
     {
-        DoScriptText(SAY_ROAR_DEATH, m_creature);
+        DoScriptText(SAY_ROAR_DEATH, me);
 
         if (pInstance)
-            SummonCroneIfReady(pInstance, m_creature);
+            SummonCroneIfReady(pInstance, me);
     }
 
     void KilledUnit(Unit* victim)
     {
-        DoScriptText(SAY_ROAR_SLAY, m_creature);
+        DoScriptText(SAY_ROAR_SLAY, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -503,7 +503,7 @@ struct OREGON_DLL_DECL boss_roarAI : public ScriptedAI
         {
             if (AggroTimer <= diff)
             {
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 AggroTimer = 0;
             } else AggroTimer -= diff;
         }
@@ -513,19 +513,19 @@ struct OREGON_DLL_DECL boss_roarAI : public ScriptedAI
 
         if (MangleTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_MANGLE);
+            DoCast(me->getVictim(), SPELL_MANGLE);
             MangleTimer = 5000 + rand()%3000;
         } else MangleTimer -= diff;
 
         if (ShredTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_SHRED);
+            DoCast(me->getVictim(), SPELL_SHRED);
             ShredTimer = 10000 + rand()%5000;
         } else ShredTimer -= diff;
 
         if (ScreamTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_FRIGHTENED_SCREAM);
+            DoCast(me->getVictim(), SPELL_FRIGHTENED_SCREAM);
             ScreamTimer = 20000 + rand()%10000;
         } else ScreamTimer -= diff;
 
@@ -555,21 +555,21 @@ struct OREGON_DLL_DECL boss_croneAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-        case 0: DoScriptText(SAY_CRONE_AGGRO, m_creature); break;
-        case 1: DoScriptText(SAY_CRONE_AGGRO2, m_creature); break;
+        case 0: DoScriptText(SAY_CRONE_AGGRO, me); break;
+        case 1: DoScriptText(SAY_CRONE_AGGRO2, me); break;
         }
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
     }
 
     void JustDied(Unit* killer)
     {
-        DoScriptText(SAY_CRONE_DEATH, m_creature);
+        DoScriptText(SAY_CRONE_DEATH, me);
 
         if (pInstance)
         {
             pInstance->SetData(DATA_OPERA_EVENT, DONE);
-            GameObject* Door = GameObject::GetGameObject((*m_creature), pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORRIGHT));
+            GameObject* Door = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORRIGHT));
             if (Door)
                 Door->UseDoorOrButton();
         }
@@ -580,8 +580,8 @@ struct OREGON_DLL_DECL boss_croneAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
         if (CycloneTimer < diff)
         {
@@ -593,7 +593,7 @@ struct OREGON_DLL_DECL boss_croneAI : public ScriptedAI
 
         if (ChainLightningTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_CHAIN_LIGHTNING);
+            DoCast(me->getVictim(), SPELL_CHAIN_LIGHTNING);
             ChainLightningTimer = 15000;
         } else ChainLightningTimer -= diff;
 
@@ -620,16 +620,16 @@ struct OREGON_DLL_DECL mob_cycloneAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!m_creature->HasAura(SPELL_KNOCKBACK, 0))
-            DoCast(m_creature, SPELL_KNOCKBACK, true);
+        if (!me->HasAura(SPELL_KNOCKBACK, 0))
+            DoCast(me, SPELL_KNOCKBACK, true);
 
         if (MoveTimer < diff)
         {
             float x,y,z;
-            m_creature->GetPosition(x,y,z);
+            me->GetPosition(x,y,z);
             float PosX, PosY, PosZ;
-            m_creature->GetRandomPoint(x,y,z,10, PosX, PosY, PosZ);
-            m_creature->GetMotionMaster()->MovePoint(0, PosX, PosY, PosZ);
+            me->GetRandomPoint(x,y,z,10, PosX, PosY, PosZ);
+            me->GetMotionMaster()->MovePoint(0, PosX, PosY, PosZ);
             MoveTimer = 5000 + rand()%3000;
         } else MoveTimer -= diff;
     }
@@ -750,17 +750,17 @@ struct OREGON_DLL_DECL boss_bigbadwolfAI : public ScriptedAI
 
     void EnterCombat(Unit* who)
     {
-        DoScriptText(SAY_WOLF_AGGRO, m_creature);
+        DoScriptText(SAY_WOLF_AGGRO, me);
     }
 
     void JustDied(Unit* killer)
     {
-        DoPlaySoundToSet(m_creature, SOUND_WOLF_DEATH);
+        DoPlaySoundToSet(me, SOUND_WOLF_DEATH);
 
         if (pInstance)
         {
             pInstance->SetData(DATA_OPERA_EVENT, DONE);
-            GameObject* Door = GameObject::GetGameObject((*m_creature), pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORRIGHT));
+            GameObject* Door = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORRIGHT));
             if (Door)
                 Door->UseDoorOrButton();
         }
@@ -780,14 +780,14 @@ struct OREGON_DLL_DECL boss_bigbadwolfAI : public ScriptedAI
                 Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
                 {
-                    DoScriptText(SAY_WOLF_HOOD, m_creature);
+                    DoScriptText(SAY_WOLF_HOOD, me);
 
                     DoCast(pTarget, SPELL_LITTLE_RED_RIDING_HOOD, true);
                     TempThreat = DoGetThreat(pTarget);
                     if (TempThreat)
                         DoModifyThreatPercent(pTarget, -100);
                     HoodGUID = pTarget->GetGUID();
-                    m_creature->AddThreat(pTarget, 1000000.0f);
+                    me->AddThreat(pTarget, 1000000.0f);
                     ChaseTimer = 20000;
                     IsChasing = true;
                 }
@@ -795,13 +795,13 @@ struct OREGON_DLL_DECL boss_bigbadwolfAI : public ScriptedAI
             else
             {
                 IsChasing = false;
-                Unit *pTarget = Unit::GetUnit((*m_creature), HoodGUID);
+                Unit *pTarget = Unit::GetUnit((*me), HoodGUID);
                 if (pTarget)
                 {
                     HoodGUID = 0;
                     if (DoGetThreat(pTarget))
                         DoModifyThreatPercent(pTarget, -100);
-                    m_creature->AddThreat(pTarget, TempThreat);
+                    me->AddThreat(pTarget, TempThreat);
                     TempThreat = 0;
                 }
 
@@ -814,13 +814,13 @@ struct OREGON_DLL_DECL boss_bigbadwolfAI : public ScriptedAI
 
         if (FearTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_TERRIFYING_HOWL);
+            DoCast(me->getVictim(), SPELL_TERRIFYING_HOWL);
             FearTimer = 25000 + rand()%10000;
         } else FearTimer -= diff;
 
         if (SwipeTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_WIDE_SWIPE);
+            DoCast(me->getVictim(), SPELL_WIDE_SWIPE);
             SwipeTimer = 25000 + rand()%5000;
         } else SwipeTimer -= diff;
 
@@ -941,7 +941,7 @@ struct OREGON_DLL_DECL boss_julianneAI : public ScriptedAI
     {
         if (RomuloGUID)
         {
-            if (Unit* Romulo = Unit::GetUnit(*m_creature, RomuloGUID))
+            if (Unit* Romulo = Unit::GetUnit(*me, RomuloGUID))
             {
                 Romulo->SetVisibility(VISIBILITY_OFF);
                 Romulo->DealDamage(Romulo, Romulo->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -958,7 +958,7 @@ struct OREGON_DLL_DECL boss_julianneAI : public ScriptedAI
         PowerfulAttractionTimer = 5000;
 
         if (IsFakingDeath)
-            Resurrect(m_creature);
+            Resurrect(me);
 
         IsFakingDeath = false;
         SummonedRomulo = false;
@@ -969,7 +969,7 @@ struct OREGON_DLL_DECL boss_julianneAI : public ScriptedAI
 
     void AttackStart(Unit* who)
     {
-        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
         ScriptedAI::AttackStart(who);
@@ -977,7 +977,7 @@ struct OREGON_DLL_DECL boss_julianneAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
         ScriptedAI::MoveInLineOfSight(who);
@@ -987,12 +987,12 @@ struct OREGON_DLL_DECL boss_julianneAI : public ScriptedAI
 
     void JustDied(Unit* killer)
     {
-        DoScriptText(SAY_JULIANNE_DEATH02, m_creature);
+        DoScriptText(SAY_JULIANNE_DEATH02, me);
 
         if (pInstance)
         {
             pInstance->SetData(DATA_OPERA_EVENT, DONE);
-            GameObject* Door = GameObject::GetGameObject((*m_creature), pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORRIGHT));
+            GameObject* Door = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORRIGHT));
             if (Door)
                 Door->UseDoorOrButton();
         }
@@ -1000,7 +1000,7 @@ struct OREGON_DLL_DECL boss_julianneAI : public ScriptedAI
 
     void KilledUnit(Unit* victim)
     {
-       DoScriptText(SAY_JULIANNE_SLAY, m_creature);
+       DoScriptText(SAY_JULIANNE_SLAY, me);
     }
 
     void UpdateAI(const uint32 diff);
@@ -1041,7 +1041,7 @@ struct OREGON_DLL_DECL boss_romuloAI : public ScriptedAI
         PoisonThrustTimer = 10000;
 
         if (IsFakingDeath)
-            Resurrect(m_creature);
+            Resurrect(me);
 
         IsFakingDeath = false;
         JulianneDead = false;
@@ -1051,13 +1051,13 @@ struct OREGON_DLL_DECL boss_romuloAI : public ScriptedAI
 
     void EnterCombat(Unit* who)
     {
-        DoScriptText(SAY_ROMULO_AGGRO, m_creature);
+        DoScriptText(SAY_ROMULO_AGGRO, me);
         if (JulianneGUID)
         {
-            Creature* Julianne = (Unit::GetCreature((*m_creature), JulianneGUID));
+            Creature* Julianne = (Unit::GetCreature((*me), JulianneGUID));
             if (Julianne && Julianne->getVictim())
             {
-                m_creature->AddThreat(Julianne->getVictim(), 1.0f);
+                me->AddThreat(Julianne->getVictim(), 1.0f);
                 AttackStart(Julianne->getVictim());
             }
         }
@@ -1065,7 +1065,7 @@ struct OREGON_DLL_DECL boss_romuloAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
         ScriptedAI::MoveInLineOfSight(who);
@@ -1073,12 +1073,12 @@ struct OREGON_DLL_DECL boss_romuloAI : public ScriptedAI
 
     void JustDied(Unit* killer)
     {
-        DoScriptText(SAY_ROMULO_DEATH, m_creature);
+        DoScriptText(SAY_ROMULO_DEATH, me);
     }
 
     void KilledUnit(Unit* victim)
     {
-        DoScriptText(SAY_ROMULO_SLAY, m_creature);
+        DoScriptText(SAY_ROMULO_SLAY, me);
     }
 
     void UpdateAI(const uint32 diff);
@@ -1086,15 +1086,15 @@ struct OREGON_DLL_DECL boss_romuloAI : public ScriptedAI
 
 void boss_julianneAI::DamageTaken(Unit* done_by, uint32 &damage)
 {
-    if (damage < m_creature->GetHealth() || done_by == m_creature || done_by->GetGUID() == RomuloGUID)
+    if (damage < me->GetHealth() || done_by == me || done_by->GetGUID() == RomuloGUID)
         return;
 
     if (Phase == PHASE_JULIANNE)
     {
-        DoScriptText(SAY_JULIANNE_DEATH01, m_creature);
-        m_creature->InterruptNonMeleeSpells(true);
-        DoCast(m_creature, SPELL_DRINK_POISON);
-        PretendToDie(m_creature);
+        DoScriptText(SAY_JULIANNE_DEATH01, me);
+        me->InterruptNonMeleeSpells(true);
+        DoCast(me, SPELL_DRINK_POISON);
+        PretendToDie(me);
         Phase = PHASE_ROMULO;
         damage = 0;
         IsFakingDeath = true;
@@ -1104,7 +1104,7 @@ void boss_julianneAI::DamageTaken(Unit* done_by, uint32 &damage)
 
     if (!IsFakingDeath)
     {
-        Creature* Romulo = (Unit::GetCreature((*m_creature), RomuloGUID));
+        Creature* Romulo = (Unit::GetCreature((*me), RomuloGUID));
         if (Romulo && Romulo->isAlive() && !((boss_romuloAI*)Romulo->AI())->IsFakingDeath)
         {
             ((boss_romuloAI*)Romulo->AI())->ResurrectTimer = 10000;
@@ -1112,8 +1112,8 @@ void boss_julianneAI::DamageTaken(Unit* done_by, uint32 &damage)
         }
         else
         {
-            m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             if (Romulo)
             {
                 Romulo->DealDamage(Romulo, Romulo->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -1124,7 +1124,7 @@ void boss_julianneAI::DamageTaken(Unit* done_by, uint32 &damage)
         }
 
         IsFakingDeath = true;
-        PretendToDie(m_creature);
+        PretendToDie(me);
         damage = 0;
     }
     else
@@ -1133,17 +1133,17 @@ void boss_julianneAI::DamageTaken(Unit* done_by, uint32 &damage)
 
 void boss_romuloAI::DamageTaken(Unit* done_by, uint32 &damage)
 {
-    if (damage < m_creature->GetHealth() || done_by == m_creature || done_by->GetGUID() == JulianneGUID)
+    if (damage < me->GetHealth() || done_by == me || done_by->GetGUID() == JulianneGUID)
         return;
 
     if (!IsFakingDeath)
     {
         IsFakingDeath = true;
-        PretendToDie(m_creature);
+        PretendToDie(me);
 
         if (Phase == PHASE_BOTH)
         {
-            Creature* Julianne = (Unit::GetCreature((*m_creature), JulianneGUID));
+            Creature* Julianne = (Unit::GetCreature((*me), JulianneGUID));
             if (Julianne && Julianne->isAlive() && !((boss_julianneAI*)Julianne->AI())->IsFakingDeath)
             {
                 ((boss_julianneAI*)Julianne->AI())->ResurrectTimer = 10000;
@@ -1151,8 +1151,8 @@ void boss_romuloAI::DamageTaken(Unit* done_by, uint32 &damage)
             }
             else
             {
-                m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 if (Julianne)
                 {
                     Julianne->DealDamage(Julianne, Julianne->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -1163,11 +1163,11 @@ void boss_romuloAI::DamageTaken(Unit* done_by, uint32 &damage)
         }
         else
         {
-            Creature* Julianne = (Unit::GetCreature((*m_creature), JulianneGUID));
+            Creature* Julianne = (Unit::GetCreature((*me), JulianneGUID));
             if (Julianne)
             {
                 Resurrect(Julianne);
-                m_creature->SetHealth(m_creature->GetMaxHealth());
+                me->SetHealth(me->GetMaxHealth());
                 ((boss_julianneAI*)Julianne->AI())->ResurrectTimer = 4000;
                 ((boss_julianneAI*)Julianne->AI())->RomuloDead = true;
                 ((boss_julianneAI*)Julianne->AI())->Phase = PHASE_BOTH;
@@ -1188,8 +1188,8 @@ void boss_julianneAI::UpdateAI(const uint32 diff)
     {
         if (EntryYellTimer < diff)
         {
-            DoScriptText(SAY_JULIANNE_ENTER, m_creature);
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            DoScriptText(SAY_JULIANNE_ENTER, me);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             EntryYellTimer = 0;
         } else EntryYellTimer -= diff;
     }
@@ -1198,7 +1198,7 @@ void boss_julianneAI::UpdateAI(const uint32 diff)
     {
         if (AggroYellTimer < diff)
         {
-            DoScriptText(SAY_JULIANNE_AGGRO, m_creature);
+            DoScriptText(SAY_JULIANNE_AGGRO, me);
             AggroYellTimer = 0;
         } else AggroYellTimer -= diff;
     }
@@ -1207,16 +1207,16 @@ void boss_julianneAI::UpdateAI(const uint32 diff)
     {
         if (SummonRomuloTimer < diff)
         {
-            Creature* Romulo = m_creature->SummonCreature(CREATURE_ROMULO, ROMULO_X, ROMULO_Y, m_creature->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 45000);
+            Creature* Romulo = me->SummonCreature(CREATURE_ROMULO, ROMULO_X, ROMULO_Y, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 45000);
             if (Romulo)
             {
                 RomuloGUID = Romulo->GetGUID();
-                ((boss_romuloAI*)Romulo->AI())->JulianneGUID = m_creature->GetGUID();
+                ((boss_romuloAI*)Romulo->AI())->JulianneGUID = me->GetGUID();
                 ((boss_romuloAI*)Romulo->AI())->Phase = PHASE_ROMULO;
-                if (m_creature->getVictim())
+                if (me->getVictim())
                 {
-                    Romulo->AI()->AttackStart(m_creature->getVictim());
-                    Romulo->AddThreat(m_creature->getVictim(), 50.0f);
+                    Romulo->AI()->AttackStart(me->getVictim());
+                    Romulo->AddThreat(me->getVictim(), 50.0f);
                 }
                 DoZoneInCombat(Romulo);
             }
@@ -1231,10 +1231,10 @@ void boss_julianneAI::UpdateAI(const uint32 diff)
     {
         if (ResurrectTimer < diff)
         {
-            Creature* Romulo = (Unit::GetCreature((*m_creature), RomuloGUID));
+            Creature* Romulo = (Unit::GetCreature((*me), RomuloGUID));
             if (Romulo && ((boss_romuloAI*)Romulo->AI())->IsFakingDeath)
             {
-                DoScriptText(SAY_JULIANNE_RESURRECT, m_creature);
+                DoScriptText(SAY_JULIANNE_RESURRECT, me);
                 Resurrect(Romulo);
                 ((boss_romuloAI*)Romulo->AI())->IsFakingDeath = false;
                 ResurrectTimer = 10000;
@@ -1251,7 +1251,7 @@ void boss_julianneAI::UpdateAI(const uint32 diff)
 
     if (DevotionTimer < diff)
     {
-        DoCast(m_creature, SPELL_DEVOTION);
+        DoCast(me, SPELL_DEVOTION);
         DevotionTimer = 15000 + rand()%30000;
     } else DevotionTimer -= diff;
 
@@ -1265,12 +1265,12 @@ void boss_julianneAI::UpdateAI(const uint32 diff)
     {
         if (rand()%2 == 1 && SummonedRomulo)
         {
-            Creature* Romulo = (Unit::GetCreature((*m_creature), RomuloGUID));
+            Creature* Romulo = (Unit::GetCreature((*me), RomuloGUID));
             if (Romulo && Romulo->isAlive() && !((boss_romuloAI*)Romulo->AI())->IsFakingDeath)
                 DoCast(Romulo, SPELL_ETERNAL_AFFECTION);
             else
                 return;
-        } else DoCast(m_creature, SPELL_ETERNAL_AFFECTION);
+        } else DoCast(me, SPELL_ETERNAL_AFFECTION);
 
         EternalAffectionTimer = 45000 + rand()%15000;
     } else EternalAffectionTimer -= diff;
@@ -1287,10 +1287,10 @@ void boss_romuloAI::UpdateAI(const uint32 diff)
     {
         if (ResurrectTimer < diff)
         {
-            Creature* Julianne = (Unit::GetCreature((*m_creature), JulianneGUID));
+            Creature* Julianne = (Unit::GetCreature((*me), JulianneGUID));
             if (Julianne && ((boss_julianneAI*)Julianne->AI())->IsFakingDeath)
             {
-                DoScriptText(SAY_ROMULO_RESURRECT, m_creature);
+                DoScriptText(SAY_ROMULO_RESURRECT, me);
                 Resurrect(Julianne);
                 ((boss_julianneAI*)Julianne->AI())->IsFakingDeath = false;
                 ResurrectTimer = 10000;
@@ -1302,7 +1302,7 @@ void boss_romuloAI::UpdateAI(const uint32 diff)
     if (BackwardLungeTimer < diff)
     {
         Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
-        if (pTarget && !m_creature->HasInArc(M_PI, pTarget))
+        if (pTarget && !me->HasInArc(M_PI, pTarget))
         {
             DoCast(pTarget, SPELL_BACKWARD_LUNGE);
             BackwardLungeTimer = 15000 + rand()%15000;
@@ -1311,7 +1311,7 @@ void boss_romuloAI::UpdateAI(const uint32 diff)
 
     if (DaringTimer < diff)
     {
-        DoCast(m_creature, SPELL_DARING);
+        DoCast(me, SPELL_DARING);
         DaringTimer = 20000 + rand()%20000;
     } else DaringTimer -= diff;
 
@@ -1323,7 +1323,7 @@ void boss_romuloAI::UpdateAI(const uint32 diff)
 
     if (PoisonThrustTimer < diff)
     {
-        DoCast(m_creature->getVictim(), SPELL_POISON_THRUST);
+        DoCast(me->getVictim(), SPELL_POISON_THRUST);
         PoisonThrustTimer = 10000 + rand()%10000;
     } else PoisonThrustTimer -= diff;
 

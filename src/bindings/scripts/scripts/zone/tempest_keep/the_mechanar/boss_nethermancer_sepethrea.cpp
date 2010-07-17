@@ -46,7 +46,7 @@ struct OREGON_DLL_DECL boss_nethermancer_sepethreaAI : public ScriptedAI
     boss_nethermancer_sepethreaAI(Creature *c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     ScriptedInstance *pInstance;
@@ -76,23 +76,23 @@ struct OREGON_DLL_DECL boss_nethermancer_sepethreaAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(DATA_NETHERMANCER_EVENT, IN_PROGRESS);
 
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
         DoCast(who, HeroicMode ? H_SPELL_SUMMON_RAGIN_FLAMES : SPELL_SUMMON_RAGIN_FLAMES);
-        DoScriptText(SAY_SUMMON, m_creature);
+        DoScriptText(SAY_SUMMON, me);
     }
 
     void KilledUnit(Unit* victim)
     {
         switch(rand()%2)
         {
-        case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-        case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+        case 0: DoScriptText(SAY_SLAY1, me); break;
+        case 1: DoScriptText(SAY_SLAY2, me); break;
         }
     }
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
             pInstance->SetData(DATA_NETHERMANCER_EVENT, DONE);
@@ -107,29 +107,29 @@ struct OREGON_DLL_DECL boss_nethermancer_sepethreaAI : public ScriptedAI
         //Frost Attack
         if (frost_attack_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_FROST_ATTACK);
+            DoCast(me->getVictim(),SPELL_FROST_ATTACK);
             frost_attack_Timer = 7000 + rand()%30000;
         } else frost_attack_Timer -= diff;
 
         //Arcane Blast
         if (arcane_blast_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_ARCANE_BLAST);
+            DoCast(me->getVictim(), SPELL_ARCANE_BLAST);
             arcane_blast_Timer = 15000;
         } else arcane_blast_Timer -= diff;
 
         //Dragons Breath
         if (dragons_breath_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_DRAGONS_BREATH);
+            DoCast(me->getVictim(),SPELL_DRAGONS_BREATH);
             {
                 if (rand()%2)
                     return;
 
                 switch(rand()%2)
                 {
-                case 0: DoScriptText(SAY_DRAGONS_BREATH_1, m_creature); break;
-                case 1: DoScriptText(SAY_DRAGONS_BREATH_2, m_creature); break;
+                case 0: DoScriptText(SAY_DRAGONS_BREATH_1, me); break;
+                case 1: DoScriptText(SAY_DRAGONS_BREATH_2, me); break;
                 }
             }
             dragons_breath_Timer = 12000 + rand()%10000;
@@ -138,14 +138,14 @@ struct OREGON_DLL_DECL boss_nethermancer_sepethreaAI : public ScriptedAI
         //Knockback
         if (knockback_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_KNOCKBACK);
+            DoCast(me->getVictim(),SPELL_KNOCKBACK);
             knockback_Timer = 15000 + rand()%10000;
         } else knockback_Timer -= diff;
 
         //Solarburn
         if (solarburn_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_SOLARBURN);
+            DoCast(me->getVictim(),SPELL_SOLARBURN);
             solarburn_Timer = 30000;
         } else solarburn_Timer -= diff;
 
@@ -166,7 +166,7 @@ struct OREGON_DLL_DECL mob_ragin_flamesAI : public ScriptedAI
 {
     mob_ragin_flamesAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = c->GetInstanceData();        HeroicMode = m_creature->GetMap()->IsHeroic();
+        pInstance = c->GetInstanceData();        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     ScriptedInstance *pInstance;
@@ -185,9 +185,9 @@ struct OREGON_DLL_DECL mob_ragin_flamesAI : public ScriptedAI
         flame_timer = 500;
         Check_Timer = 2000;
         onlyonce = false;
-        m_creature->ApplySpellImmune(0, IMMUNITY_DAMAGE, SPELL_SCHOOL_MASK_MAGIC, true);
-        m_creature->ApplySpellImmune(0, IMMUNITY_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, true);
-        m_creature->SetSpeed(MOVE_RUN, HeroicMode ? 0.7f : 0.5f);
+        me->ApplySpellImmune(0, IMMUNITY_DAMAGE, SPELL_SCHOOL_MASK_MAGIC, true);
+        me->ApplySpellImmune(0, IMMUNITY_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, true);
+        me->SetSpeed(MOVE_RUN, HeroicMode ? 0.7f : 0.5f);
     }
 
     void EnterCombat(Unit* who)
@@ -204,8 +204,8 @@ struct OREGON_DLL_DECL mob_ragin_flamesAI : public ScriptedAI
                 if (pInstance->GetData(DATA_NETHERMANCER_EVENT) != IN_PROGRESS)
                 {
                     //remove
-                    m_creature->setDeathState(JUST_DIED);
-                    m_creature->RemoveCorpse();
+                    me->setDeathState(JUST_DIED);
+                    me->RemoveCorpse();
                 }
             }
             Check_Timer = 1000;
@@ -217,20 +217,20 @@ struct OREGON_DLL_DECL mob_ragin_flamesAI : public ScriptedAI
         if (!onlyonce)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                m_creature->GetMotionMaster()->MoveChase(pTarget);
+                me->GetMotionMaster()->MoveChase(pTarget);
             onlyonce = true;
         }
 
         if (inferno_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),HeroicMode ? H_SPELL_INFERNO : SPELL_INFERNO);
-            m_creature->TauntApply(m_creature->getVictim());
+            DoCast(me->getVictim(),HeroicMode ? H_SPELL_INFERNO : SPELL_INFERNO);
+            me->TauntApply(me->getVictim());
             inferno_Timer = 10000;
         } else inferno_Timer -= diff;
 
         if (flame_timer < diff)
         {
-            DoCast(m_creature,SPELL_FIRE_TAIL);
+            DoCast(me,SPELL_FIRE_TAIL);
             flame_timer = 500;
         } else flame_timer -=diff;
 

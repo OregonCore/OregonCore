@@ -66,7 +66,7 @@ struct OREGON_DLL_DECL boss_high_botanist_freywinnAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
     }
 
     void JustSummoned(Creature *summoned)
@@ -79,10 +79,10 @@ struct OREGON_DLL_DECL boss_high_botanist_freywinnAI : public ScriptedAI
     {
         switch(rand()%4)
         {
-            case 0: DoCast(m_creature,SPELL_PLANT_WHITE); break;
-            case 1: DoCast(m_creature,SPELL_PLANT_GREEN); break;
-            case 2: DoCast(m_creature,SPELL_PLANT_BLUE); break;
-            case 3: DoCast(m_creature,SPELL_PLANT_RED); break;
+            case 0: DoCast(me,SPELL_PLANT_WHITE); break;
+            case 1: DoCast(me,SPELL_PLANT_GREEN); break;
+            case 2: DoCast(me,SPELL_PLANT_BLUE); break;
+            case 3: DoCast(me,SPELL_PLANT_RED); break;
         }
     }
 
@@ -90,14 +90,14 @@ struct OREGON_DLL_DECL boss_high_botanist_freywinnAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-        case 0: DoScriptText(SAY_KILL_1, m_creature); break;
-        case 1: DoScriptText(SAY_KILL_2, m_creature); break;
+        case 0: DoScriptText(SAY_KILL_1, me); break;
+        case 1: DoScriptText(SAY_KILL_2, me); break;
         }
     }
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -109,20 +109,20 @@ struct OREGON_DLL_DECL boss_high_botanist_freywinnAI : public ScriptedAI
         {
             switch(rand()%2)
             {
-            case 0: DoScriptText(SAY_TREE_1, m_creature); break;
-            case 1: DoScriptText(SAY_TREE_2, m_creature); break;
+            case 0: DoScriptText(SAY_TREE_1, me); break;
+            case 1: DoScriptText(SAY_TREE_2, me); break;
             }
 
-            if (m_creature->IsNonMeleeSpellCasted(false))
-                m_creature->InterruptNonMeleeSpells(true);
+            if (me->IsNonMeleeSpellCasted(false))
+                me->InterruptNonMeleeSpells(true);
 
-            m_creature->RemoveAllAuras();
+            me->RemoveAllAuras();
 
-            DoCast(m_creature,SPELL_SUMMON_FRAYER,true);
-            DoCast(m_creature,SPELL_TRANQUILITY,true);
-            DoCast(m_creature,SPELL_TREE_FORM,true);
+            DoCast(me,SPELL_SUMMON_FRAYER,true);
+            DoCast(me,SPELL_TRANQUILITY,true);
+            DoCast(me,SPELL_TREE_FORM,true);
 
-            m_creature->GetMotionMaster()->MoveIdle();
+            me->GetMotionMaster()->MoveIdle();
             MoveFree = false;
 
             TreeForm_Timer = 75000;
@@ -136,7 +136,7 @@ struct OREGON_DLL_DECL boss_high_botanist_freywinnAI : public ScriptedAI
                 {
                     for (std::list<uint64>::iterator itr = Adds_List.begin(); itr != Adds_List.end(); ++itr)
                     {
-                        if (Unit *temp = Unit::GetUnit(*m_creature,*itr))
+                        if (Unit *temp = Unit::GetUnit(*me,*itr))
                         {
                             if (!temp->isAlive())
                             {
@@ -156,9 +156,9 @@ struct OREGON_DLL_DECL boss_high_botanist_freywinnAI : public ScriptedAI
                     Adds_List.clear();
                     DeadAddsCount = 0;
 
-                    m_creature->InterruptNonMeleeSpells(true);
-                    m_creature->RemoveAllAuras();
-                    m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                    me->InterruptNonMeleeSpells(true);
+                    me->RemoveAllAuras();
+                    me->GetMotionMaster()->MoveChase(me->getVictim());
                     MoveFree = true;
                 }
                 MoveCheck_Timer = 500;
@@ -168,7 +168,7 @@ struct OREGON_DLL_DECL boss_high_botanist_freywinnAI : public ScriptedAI
             return;
         }
 
-        /*if (m_creature->HasAura(SPELL_TREE_FORM,0) || m_creature->HasAura(SPELL_TRANQUILITY,0))
+        /*if (me->HasAura(SPELL_TREE_FORM,0) || me->HasAura(SPELL_TRANQUILITY,0))
             return;*/
 
         //one random seedling every 5 secs, but not in tree form

@@ -69,7 +69,7 @@ struct OREGON_DLL_DECL boss_gehennasAI : public ScriptedAI
         //GehennasCurse_Timer
         if (GehennasCurse_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_GEHENNASCURSE);
+            DoCast(me->getVictim(),SPELL_GEHENNASCURSE);
             GehennasCurse_Timer = 22000 + rand()%8000;
         } else GehennasCurse_Timer -= diff;
 

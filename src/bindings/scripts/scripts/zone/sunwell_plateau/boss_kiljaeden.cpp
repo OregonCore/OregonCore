@@ -312,9 +312,9 @@ struct OREGON_DLL_DECL boss_kalecgos_kjAI : public ScriptedAI
         FindOrbs();
         OrbsEmpowered = 0;
         EmpowerCount = 0;
-        m_creature->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->setActive(true);
+        me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->setActive(true);
         Searched = false;
         FindOrbs();
     }
@@ -325,7 +325,7 @@ struct OREGON_DLL_DECL boss_kalecgos_kjAI : public ScriptedAI
 
     void FindOrbs()
     {
-        CellPair pair(Oregon::ComputeCellPair(m_creature->GetPositionX(), m_creature->GetPositionY()));
+        CellPair pair(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
         Cell cell(pair);
         cell.data.Part.reserved = ALL_DISTRICT;
         cell.SetNoCreate();
@@ -334,17 +334,17 @@ struct OREGON_DLL_DECL boss_kalecgos_kjAI : public ScriptedAI
         Oregon::GameObjectListSearcher<AllOrbsInGrid> searcher(orbList, check);
         TypeContainerVisitor<Oregon::GameObjectListSearcher<AllOrbsInGrid>, GridTypeMapContainer> visitor(searcher);
         CellLock<GridReadGuard> cell_lock(cell, pair);
-        cell_lock->Visit(cell_lock, visitor, *(m_creature->GetMap()));
+        cell_lock->Visit(cell_lock, visitor, *(me->GetMap()));
         if (orbList.empty())
             return;
         uint8 i = 0;
         for (std::list<GameObject*>::iterator itr = orbList.begin(); itr != orbList.end(); ++itr, ++i){
-            Orb[i] = GameObject::GetGameObject(*m_creature, (*itr)->GetGUID());
+            Orb[i] = GameObject::GetGameObject(*me, (*itr)->GetGUID());
         }
     }
 
     void ResetOrbs(){
-        m_creature->RemoveDynObject(SPELL_RING_OF_BLUE_FLAMES);
+        me->RemoveDynObject(SPELL_RING_OF_BLUE_FLAMES);
         for (uint8 i = 0; i < 4; ++i)
             if (Orb[i]) Orb[i]->SetUInt32Value(GAMEOBJECT_FACTION, 0);
     }
@@ -355,10 +355,10 @@ struct OREGON_DLL_DECL boss_kalecgos_kjAI : public ScriptedAI
             return;
         uint8 random = rand()%3;
         if (all){
-            m_creature->RemoveDynObject(SPELL_RING_OF_BLUE_FLAMES);
+            me->RemoveDynObject(SPELL_RING_OF_BLUE_FLAMES);
             for (uint8 i = 0; i < 4; ++i){
                 if (!Orb[i]) return;
-                Orb[i]->CastSpell(m_creature, SPELL_RING_OF_BLUE_FLAMES);
+                Orb[i]->CastSpell(me, SPELL_RING_OF_BLUE_FLAMES);
                 Orb[i]->SetUInt32Value(GAMEOBJECT_FACTION, 35);
                 Orb[i]->setActive(true);
                 Orb[i]->Refresh();
@@ -367,7 +367,7 @@ struct OREGON_DLL_DECL boss_kalecgos_kjAI : public ScriptedAI
             float x,y,z, dx,dy,dz;
             Orb[random]->GetPosition(x,y,z);
             for (uint8 i = 0; i < 4; ++i){
-                DynamicObject* Dyn = m_creature->GetDynObject(SPELL_RING_OF_BLUE_FLAMES);
+                DynamicObject* Dyn = me->GetDynObject(SPELL_RING_OF_BLUE_FLAMES);
                 if (Dyn){
                     Dyn->GetPosition(dx,dy,dz);
                     if (x == dx && dy == y && dz == z){
@@ -376,7 +376,7 @@ struct OREGON_DLL_DECL boss_kalecgos_kjAI : public ScriptedAI
                      }
                  }
             }
-        Orb[random]->CastSpell(m_creature, SPELL_RING_OF_BLUE_FLAMES);
+        Orb[random]->CastSpell(me, SPELL_RING_OF_BLUE_FLAMES);
         Orb[random]->SetUInt32Value(GAMEOBJECT_FACTION, 35);
         Orb[random]->setActive(true);
         Orb[random]->Refresh();
@@ -385,10 +385,10 @@ struct OREGON_DLL_DECL boss_kalecgos_kjAI : public ScriptedAI
         ++EmpowerCount;
 
         switch(EmpowerCount){
-            case 1: DoScriptText(SAY_KALEC_ORB_READY1, m_creature); break;
-            case 2: DoScriptText(SAY_KALEC_ORB_READY2, m_creature); break;
-            case 3: DoScriptText(SAY_KALEC_ORB_READY3, m_creature); break;
-            case 4: DoScriptText(SAY_KALEC_ORB_READY4, m_creature); break;
+            case 1: DoScriptText(SAY_KALEC_ORB_READY1, me); break;
+            case 2: DoScriptText(SAY_KALEC_ORB_READY2, me); break;
+            case 3: DoScriptText(SAY_KALEC_ORB_READY3, me); break;
+            case 4: DoScriptText(SAY_KALEC_ORB_READY4, me); break;
         }
     }
 
@@ -410,7 +410,7 @@ CreatureAI* GetAI_boss_kalecgos_kj(Creature *_Creature)
 //AI for Kil'jaeden
 struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
 {
-    boss_kiljaedenAI(Creature* c) : Scripted_NoMovementAI(c), Summons(m_creature){
+    boss_kiljaedenAI(Creature* c) : Scripted_NoMovementAI(c), Summons(me){
         pInstance = c->GetInstanceData();
     }
 
@@ -462,7 +462,7 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
         IsWaiting     = false;
         OrbActivated  = false;
 
-        Kalec = ((Creature*)Unit::GetUnit(*m_creature, pInstance->GetData64(DATA_KALECGOS_KJ)));
+        Kalec = ((Creature*)Unit::GetUnit(*me, pInstance->GetData64(DATA_KALECGOS_KJ)));
         ChangeTimers(false, 0);
     }
 
@@ -488,15 +488,15 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
             summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         } else{
-            summoned->SetLevel(m_creature->getLevel());
+            summoned->SetLevel(me->getLevel());
         }
-        summoned->setFaction(m_creature->getFaction());
+        summoned->setFaction(me->getFaction());
         Summons.Summon(summoned);
     }
 
     void JustDied(Unit* killer)
     {
-        DoScriptText(SAY_KJ_DEATH, m_creature);
+        DoScriptText(SAY_KJ_DEATH, me);
 
         if (pInstance)
             pInstance->SetData(DATA_KILJAEDEN_EVENT, DONE);
@@ -506,8 +506,8 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
     {
         switch(rand()%2)
         {
-        case 0: DoScriptText(SAY_KJ_SLAY1, m_creature); break;
-        case 1: DoScriptText(SAY_KJ_SLAY2, m_creature); break;
+        case 0: DoScriptText(SAY_KJ_SLAY1, me); break;
+        case 1: DoScriptText(SAY_KJ_SLAY2, me); break;
         }
     }
 
@@ -518,7 +518,7 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
 
         // Reset the controller
         if (pInstance){
-            Creature* Control = ((Creature*)Unit::GetUnit(*m_creature, pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)));
+            Creature* Control = ((Creature*)Unit::GetUnit(*me, pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)));
             if (Control)
                 ((Scripted_NoMovementAI*)Control->AI())->Reset();
         }
@@ -526,16 +526,16 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
 
     void EnterCombat(Unit* who){
         DoZoneInCombat();
-        DoScriptText(SAY_KJ_EMERGE, m_creature);
+        DoScriptText(SAY_KJ_EMERGE, me);
     }
 
     void CastSinisterReflection()
     {
         switch(rand()%2){
-        case 0: DoScriptText(SAY_KJ_REFLECTION1, m_creature); break;
-        case 1: DoScriptText(SAY_KJ_REFLECTION2, m_creature); break;
+        case 0: DoScriptText(SAY_KJ_REFLECTION1, me); break;
+        case 1: DoScriptText(SAY_KJ_REFLECTION2, me); break;
         }
-        DoCast(m_creature, SPELL_SINISTER_REFLECTION, true);
+        DoCast(me, SPELL_SINISTER_REFLECTION, true);
         for (uint8 i = 0; i < 4; i++){
             float x,y,z;
             Unit *pTarget;
@@ -544,7 +544,7 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
                 if (!pTarget->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT,0)) break;
             }
             pTarget->GetPosition(x,y,z);
-            Creature* SinisterReflection = m_creature->SummonCreature(CREATURE_SINISTER_REFLECTION, x,y,z,0, TEMPSUMMON_CORPSE_DESPAWN, 0);
+            Creature* SinisterReflection = me->SummonCreature(CREATURE_SINISTER_REFLECTION, x,y,z,0, TEMPSUMMON_CORPSE_DESPAWN, 0);
             if (SinisterReflection)
                 SinisterReflection->AI()->AttackStart(pTarget);
         }
@@ -574,15 +574,15 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
                         }
                         break;
                     case TIMER_SOUL_FLAY:
-                        if (!m_creature->IsNonMeleeSpellCasted(false)){
-                        m_creature->CastSpell(m_creature->getVictim(), SPELL_SOUL_FLAY, false);
-                        m_creature->getVictim()->CastSpell(m_creature->getVictim(), SPELL_SOUL_FLAY_SLOW, true);
+                        if (!me->IsNonMeleeSpellCasted(false)){
+                        me->CastSpell(me->getVictim(), SPELL_SOUL_FLAY, false);
+                        me->getVictim()->CastSpell(me->getVictim(), SPELL_SOUL_FLAY_SLOW, true);
                         Timer[TIMER_SOUL_FLAY] = 3500;
                         }
                         break;
                     case TIMER_LEGION_LIGHTNING:
-                        if (!m_creature->IsNonMeleeSpellCasted(false)){
-                            m_creature->RemoveAurasDueToSpell(SPELL_SOUL_FLAY);
+                        if (!me->IsNonMeleeSpellCasted(false)){
+                            me->RemoveAurasDueToSpell(SPELL_SOUL_FLAY);
                             for (uint8 z = 0; z < 6; ++z){
                                 randomPlayer = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
                                 if (!randomPlayer->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT,0)) break;
@@ -594,8 +594,8 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
                         }
                         break;
                     case TIMER_FIRE_BLOOM:
-                        if (!m_creature->IsNonMeleeSpellCasted(false)){
-                            m_creature->RemoveAurasDueToSpell(SPELL_SOUL_FLAY);
+                        if (!me->IsNonMeleeSpellCasted(false)){
+                            me->RemoveAurasDueToSpell(SPELL_SOUL_FLAY);
                             DoCastAOE(SPELL_FIRE_BLOOM, false);
                             Timer[TIMER_FIRE_BLOOM] = (Phase == PHASE_SACRIFICE) ? 25000 : 40000; // 25 seconds in PHASE_SACRIFICE
                             Timer[TIMER_SOUL_FLAY] = 1000;
@@ -606,13 +606,13 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
                             float sx, sy;
                             sx = ShieldOrbLocations[0][0] + sin(ShieldOrbLocations[i][0]);
                             sy = ShieldOrbLocations[0][1] + sin(ShieldOrbLocations[i][1]);
-                            m_creature->SummonCreature(CREATURE_SHIELD_ORB, sx, sy, SHIELD_ORB_Z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45000);
+                            me->SummonCreature(CREATURE_SHIELD_ORB, sx, sy, SHIELD_ORB_Z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45000);
                         }
                         Timer[TIMER_SUMMON_SHILEDORB] = 30000+rand()%30*1000; // 30-60seconds cooldown
                         Timer[TIMER_SOUL_FLAY] = 2000;
                         break;
                     case TIMER_SHADOW_SPIKE: //Phase 3
-                        if (!m_creature->IsNonMeleeSpellCasted(false)){
+                        if (!me->IsNonMeleeSpellCasted(false)){
                         DoCastAOE(SPELL_SHADOW_SPIKE, false);
                         Timer[TIMER_SHADOW_SPIKE] = 0;
                         TimerIsDeactiveted[TIMER_SHADOW_SPIKE] = true;
@@ -624,10 +624,10 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
                         Timer[TIMER_FLAME_DART] = 3000; //TODO Timer
                         break;
                     case TIMER_DARKNESS: //Phase 3
-                        if (!m_creature->IsNonMeleeSpellCasted(false)){
+                        if (!me->IsNonMeleeSpellCasted(false)){
                         // Begins to channel for 8 seconds, then deals 50'000 damage to all raid members.
                         if (!IsInDarkness){
-                            DoScriptText(EMOTE_KJ_DARKNESS, m_creature);
+                            DoScriptText(EMOTE_KJ_DARKNESS, me);
                             DoCastAOE(SPELL_DARKNESS_OF_A_THOUSAND_SOULS, false);
                             ChangeTimers(true, 9000);
                             Timer[TIMER_DARKNESS] = 8750;
@@ -639,9 +639,9 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
                             IsInDarkness = false;
                             DoCastAOE(SPELL_DARKNESS_OF_A_THOUSAND_SOULS_DAMAGE);
                             switch(rand()%3){
-                                case 0: DoScriptText(SAY_KJ_DARKNESS1, m_creature); break;
-                                case 1: DoScriptText(SAY_KJ_DARKNESS2, m_creature); break;
-                                case 2: DoScriptText(SAY_KJ_DARKNESS3, m_creature); break;
+                                case 0: DoScriptText(SAY_KJ_DARKNESS1, me); break;
+                                case 1: DoScriptText(SAY_KJ_DARKNESS2, me); break;
+                                case 2: DoScriptText(SAY_KJ_DARKNESS3, me); break;
                             }
                         }
                         Timer[TIMER_SOUL_FLAY] = 9000;
@@ -664,7 +664,7 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
                         if (pTarget){
                             float x, y, z;
                             pTarget->GetPosition(x, y, z);
-                            m_creature->SummonCreature(CREATURE_ARMAGEDDON_TARGET, x,y,z,0, TEMPSUMMON_TIMED_DESPAWN,15000);
+                            me->SummonCreature(CREATURE_ARMAGEDDON_TARGET, x,y,z,0, TEMPSUMMON_TIMED_DESPAWN,15000);
                         }
                         Timer[TIMER_ARMAGEDDON] = 2000; // No, I'm not kidding
                         break;
@@ -681,9 +681,9 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
 
         //Phase 3
         if (Phase <= PHASE_NORMAL){
-            if (Phase == PHASE_NORMAL && ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 85)){
+            if (Phase == PHASE_NORMAL && ((me->GetHealth()*100 / me->GetMaxHealth()) < 85)){
                 CastSinisterReflection();
-                DoScriptText(SAY_KJ_PHASE3, m_creature);
+                DoScriptText(SAY_KJ_PHASE3, me);
                 Phase = PHASE_DARKNESS;
                 OrbActivated = false;
                 ActiveTimers = 9;
@@ -693,8 +693,8 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
 
         //Phase 4
         if (Phase <= PHASE_DARKNESS){
-            if (Phase == PHASE_DARKNESS && ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 55)){
-                DoScriptText(SAY_KJ_PHASE4, m_creature);
+            if (Phase == PHASE_DARKNESS && ((me->GetHealth()*100 / me->GetMaxHealth()) < 55)){
+                DoScriptText(SAY_KJ_PHASE4, me);
                 Phase = PHASE_ARMAGEDDON;
                 OrbActivated = false;
                 ActiveTimers = 10;
@@ -704,10 +704,10 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
 
         //Phase 5 specific spells all we can
         if (Phase <= PHASE_ARMAGEDDON){
-            if (Phase == PHASE_ARMAGEDDON && ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 25)){
+            if (Phase == PHASE_ARMAGEDDON && ((me->GetHealth()*100 / me->GetMaxHealth()) < 25)){
                 Phase = PHASE_SACRIFICE;
-                Creature* Anveena = (Creature*)(Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_ANVEENA)));
-                if (Anveena)Anveena->CastSpell(m_creature, SPELL_SACRIFICE_OF_ANVEENA, false);
+                Creature* Anveena = (Creature*)(Unit::GetUnit((*me), pInstance->GetData64(DATA_ANVEENA)));
+                if (Anveena)Anveena->CastSpell(me, SPELL_SACRIFICE_OF_ANVEENA, false);
                 OrbActivated = false;
                 ChangeTimers(true, 10000);// He shouldn't cast spells for ~10 seconds after Anveena's sacrifice. This will be done within Anveena's script
             }
@@ -725,7 +725,7 @@ CreatureAI* GetAI_boss_kiljaeden(Creature *_Creature)
 //AI for Kil'jaeden Event Controller
 struct OREGON_DLL_DECL mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
 {
-    mob_kiljaeden_controllerAI(Creature* c) : Scripted_NoMovementAI(c), Summons(m_creature){
+    mob_kiljaeden_controllerAI(Creature* c) : Scripted_NoMovementAI(c), Summons(me){
         pInstance = c->GetInstanceData();
     }
 
@@ -741,10 +741,10 @@ struct OREGON_DLL_DECL mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
     uint8 DeceiverDeathCount;
 
     void InitializeAI(){
-        KalecKJ = Unit::GetCreature((*m_creature), pInstance->GetData64(DATA_KALECGOS_KJ));
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        m_creature->addUnitState(UNIT_STAT_STUNNED);
+        KalecKJ = Unit::GetCreature((*me), pInstance->GetData64(DATA_KALECGOS_KJ));
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->addUnitState(UNIT_STAT_STUNNED);
     }
 
     void Reset(){
@@ -770,7 +770,7 @@ struct OREGON_DLL_DECL mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
             case CREATURE_KILJAEDEN:
                 summoned->CastSpell(summoned, SPELL_REBIRTH, false);
                 ((boss_kiljaedenAI*)summoned->AI())->Phase=PHASE_NORMAL;
-                summoned->AddThreat(m_creature->getVictim(), 1.0f);
+                summoned->AddThreat(me->getVictim(), 1.0f);
                 break;
         }
         Summons.Summon(summoned);
@@ -782,26 +782,26 @@ struct OREGON_DLL_DECL mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
     {
         if (RandomSayTimer < diff && pInstance->GetData(DATA_MURU_EVENT) != DONE && pInstance->GetData(DATA_KILJAEDEN_EVENT) == NOT_STARTED){
             switch(rand()%5){
-                case 0: DoScriptText(SAY_KJ_OFFCOMBAT1, m_creature); break;
-                case 1: DoScriptText(SAY_KJ_OFFCOMBAT2, m_creature); break;
-                case 2: DoScriptText(SAY_KJ_OFFCOMBAT3, m_creature); break;
-                case 3: DoScriptText(SAY_KJ_OFFCOMBAT4, m_creature); break;
-                case 4: DoScriptText(SAY_KJ_OFFCOMBAT5, m_creature); break;
+                case 0: DoScriptText(SAY_KJ_OFFCOMBAT1, me); break;
+                case 1: DoScriptText(SAY_KJ_OFFCOMBAT2, me); break;
+                case 2: DoScriptText(SAY_KJ_OFFCOMBAT3, me); break;
+                case 3: DoScriptText(SAY_KJ_OFFCOMBAT4, me); break;
+                case 4: DoScriptText(SAY_KJ_OFFCOMBAT5, me); break;
             }
             RandomSayTimer = 30000;
         } else RandomSayTimer -= diff;
 
         if (!SummonedDeceivers){
             for (uint8 i = 0; i < 3; ++i)
-                m_creature->SummonCreature(CREATURE_HAND_OF_THE_DECEIVER, DeceiverLocations[i][0], DeceiverLocations[i][1], FLOOR_Z, DeceiverLocations[i][2], TEMPSUMMON_DEAD_DESPAWN, 0);
+                me->SummonCreature(CREATURE_HAND_OF_THE_DECEIVER, DeceiverLocations[i][0], DeceiverLocations[i][1], FLOOR_Z, DeceiverLocations[i][2], TEMPSUMMON_DEAD_DESPAWN, 0);
 
             DoSpawnCreature(CREATURE_ANVEENA,  0, 0, 40, 0, TEMPSUMMON_DEAD_DESPAWN, 0);
-            DoCast(m_creature, SPELL_ANVEENA_ENERGY_DRAIN);
+            DoCast(me, SPELL_ANVEENA_ENERGY_DRAIN);
             SummonedDeceivers = true;
         }
 
         if (DeceiverDeathCount > 2 && Phase == PHASE_DECEIVERS){
-            m_creature->RemoveAurasDueToSpell(SPELL_ANVEENA_ENERGY_DRAIN) ;
+            me->RemoveAurasDueToSpell(SPELL_ANVEENA_ENERGY_DRAIN) ;
             Phase = PHASE_NORMAL;
             DoSpawnCreature(CREATURE_KILJAEDEN, 0, 0,0, 0, TEMPSUMMON_MANUAL_DESPAWN, 0);
         }
@@ -832,43 +832,43 @@ struct OREGON_DLL_DECL mob_hand_of_the_deceiverAI : public ScriptedAI
     }
 
     void JustSummoned(Creature* summoned){
-        summoned->setFaction(m_creature->getFaction());
-        summoned->SetLevel(m_creature->getLevel());
+        summoned->setFaction(me->getFaction());
+        summoned->SetLevel(me->getLevel());
     }
 
     void EnterCombat(Unit* who){
         if (pInstance){
             pInstance->SetData(DATA_KILJAEDEN_EVENT, IN_PROGRESS);
-            Creature* Control = ((Creature*)Unit::GetUnit(*m_creature, pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)));
+            Creature* Control = ((Creature*)Unit::GetUnit(*me, pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)));
             if (Control)
                 Control->AddThreat(who, 1.0f);
         }
-        m_creature->InterruptNonMeleeSpells(true);
+        me->InterruptNonMeleeSpells(true);
     }
 
     void JustDied(Unit* killer){
         if (!pInstance)
             return;
 
-        Creature* Control = ((Creature*)Unit::GetUnit(*m_creature, pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)));
+        Creature* Control = ((Creature*)Unit::GetUnit(*me, pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)));
         if (Control)
             ((mob_kiljaeden_controllerAI*)Control->AI())->DeceiverDeathCount++;
     }
 
     void UpdateAI(const uint32 diff){
-        if (!m_creature->isInCombat())
-            DoCast(m_creature, SPELL_SHADOW_CHANNELING);
+        if (!me->isInCombat())
+            DoCast(me, SPELL_SHADOW_CHANNELING);
 
         if (!UpdateVictim())
             return;
 
         // Gain Shadow Infusion at 20% health
-        if (((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 20) && !m_creature->HasAura(SPELL_SHADOW_INFUSION, 0))
-            DoCast(m_creature, SPELL_SHADOW_INFUSION, true);
+        if (((me->GetHealth()*100 / me->GetMaxHealth()) < 20) && !me->HasAura(SPELL_SHADOW_INFUSION, 0))
+            DoCast(me, SPELL_SHADOW_INFUSION, true);
 
         // Shadow Bolt Volley - Shoots Shadow Bolts at all enemies within 30 yards, for ~2k Shadow damage.
         if (ShadowBoltVolleyTimer < diff){
-            DoCast(m_creature->getVictim(), SPELL_SHADOW_BOLT_VOLLEY);
+            DoCast(me->getVictim(), SPELL_SHADOW_BOLT_VOLLEY);
             ShadowBoltVolleyTimer = 12000;
         } else ShadowBoltVolleyTimer -= diff;
 
@@ -878,9 +878,9 @@ struct OREGON_DLL_DECL mob_hand_of_the_deceiverAI : public ScriptedAI
             if (Portal)
             {
                 std::list<HostileReference*>::iterator itr;
-                for (itr = m_creature->getThreatManager().getThreatList().begin(); itr != m_creature->getThreatManager().getThreatList().end(); ++itr)
+                for (itr = me->getThreatManager().getThreatList().begin(); itr != me->getThreatManager().getThreatList().end(); ++itr)
                 {
-                    Unit* pUnit = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+                    Unit* pUnit = Unit::GetUnit(*me, (*itr)->getUnitGuid());
                     if (pUnit)
                         Portal->AddThreat(pUnit, 1.0f);
                 }
@@ -906,8 +906,8 @@ struct OREGON_DLL_DECL mob_felfire_portalAI : public Scripted_NoMovementAI
 
     void InitializeAI(){
         SpawnFiendTimer = 5000;
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
     // TODO: Timers
@@ -919,8 +919,8 @@ struct OREGON_DLL_DECL mob_felfire_portalAI : public Scripted_NoMovementAI
 
     void JustSummoned(Creature* summoned)
     {
-        summoned->setFaction(m_creature->getFaction());
-        summoned->SetLevel(m_creature->getLevel());
+        summoned->setFaction(me->getFaction());
+        summoned->SetLevel(me->getLevel());
     }
 
     void UpdateAI(const uint32 diff)
@@ -962,8 +962,8 @@ struct OREGON_DLL_DECL mob_volatile_felfire_fiendAI : public ScriptedAI
 
     void DamageTaken(Unit *done_by, uint32 &damage)
     {
-        if (damage > m_creature->GetHealth())
-            DoCast(m_creature, SPELL_FELFIRE_FISSION, true);
+        if (damage > me->GetHealth())
+            DoCast(me, SPELL_FELFIRE_FISSION, true);
     }
 
     void UpdateAI(const uint32 diff)
@@ -972,7 +972,7 @@ struct OREGON_DLL_DECL mob_volatile_felfire_fiendAI : public ScriptedAI
             return;
 
         if (!LockedTarget){
-            m_creature->AddThreat(m_creature->getVictim(), 10000000.0f);
+            me->AddThreat(me->getVictim(), 10000000.0f);
             LockedTarget = true;
         }
 
@@ -981,10 +981,10 @@ struct OREGON_DLL_DECL mob_volatile_felfire_fiendAI : public ScriptedAI
                 ExplodeTimer = 0;
             else ExplodeTimer -= diff;
         }
-        else if (m_creature->IsWithinDistInMap(m_creature->getVictim(), 3)) // Explode if it's close enough to it's target
+        else if (me->IsWithinDistInMap(me->getVictim(), 3)) // Explode if it's close enough to it's target
         {
-            DoCast(m_creature->getVictim(), SPELL_FELFIRE_FISSION);
-            m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+            DoCast(me->getVictim(), SPELL_FELFIRE_FISSION);
+            me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
         }
     }
 };
@@ -1014,22 +1014,22 @@ struct OREGON_DLL_DECL mob_armageddonAI : public Scripted_NoMovementAI
         if (Timer < diff){
             switch(Spell){
                 case 0:
-                    DoCast(m_creature, SPELL_ARMAGEDDON_VISUAL, true);
+                    DoCast(me, SPELL_ARMAGEDDON_VISUAL, true);
                     ++Spell;
                     break;
                 case 1:
-                    DoCast(m_creature, SPELL_ARMAGEDDON_VISUAL2, true);
+                    DoCast(me, SPELL_ARMAGEDDON_VISUAL2, true);
                     Timer = 9000;
                     ++Spell;
                     break;
                 case 2:
-                    DoCast(m_creature, SPELL_ARMAGEDDON_TRIGGER, true);
+                    DoCast(me, SPELL_ARMAGEDDON_TRIGGER, true);
                     ++Spell;
                     Timer = 5000;
                     break;
                 case 3:
-                    m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-                    m_creature->RemoveCorpse();
+                    me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                    me->RemoveCorpse();
                     break;
             }
         } else Timer -=diff;
@@ -1056,7 +1056,7 @@ struct OREGON_DLL_DECL mob_shield_orbAI : public ScriptedAI
     float x, y, r, c, mx, my;
 
     void InitializeAI(){
-        m_creature->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
+        me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
         PointReached = true;
         Timer = 500+ rand()%500;
         CheckTimer = 1000;
@@ -1084,7 +1084,7 @@ struct OREGON_DLL_DECL mob_shield_orbAI : public ScriptedAI
             }
             PointReached = false;
             CheckTimer = 1000;
-            m_creature->GetMotionMaster()->MovePoint(1,x, y, SHIELD_ORB_Z);
+            me->GetMotionMaster()->MovePoint(1,x, y, SHIELD_ORB_Z);
             c += 3.1415926535/32;
             if (c > 2*3.1415926535) c = 0;
         } else{
@@ -1096,7 +1096,7 @@ struct OREGON_DLL_DECL mob_shield_orbAI : public ScriptedAI
         }
 
         if (Timer < diff){
-            Unit* random = (Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_PLAYER_GUID)));
+            Unit* random = (Unit::GetUnit((*me), pInstance->GetData64(DATA_PLAYER_GUID)));
             if (random)DoCast(random, SPELL_SHADOW_BOLT, false);
             Timer = 500+ rand()%500;
         } else Timer -= diff;
@@ -1135,7 +1135,7 @@ struct OREGON_DLL_DECL mob_sinster_reflectionAI : public ScriptedAI
     void UpdateAI(const uint32 diff){
 
         if (Class == 0){
-            Class = m_creature->getVictim()->getClass();
+            Class = me->getVictim()->getClass();
             switch(Class){
                 case CLASS_DRUID:
                     break;
@@ -1146,17 +1146,17 @@ struct OREGON_DLL_DECL mob_sinster_reflectionAI : public ScriptedAI
                 case CLASS_WARLOCK:
                     break;
                 case CLASS_WARRIOR:
-                    m_creature->SetCanDualWield(true);
+                    me->SetCanDualWield(true);
                     break;
                 case CLASS_PALADIN:
                     break;
                 case CLASS_PRIEST:
                     break;
                 case CLASS_SHAMAN:
-                    m_creature->SetCanDualWield(true);
+                    me->SetCanDualWield(true);
                     break;
                 case CLASS_ROGUE:
-                    m_creature->SetCanDualWield(true);
+                    me->SetCanDualWield(true);
                     break;
             }
         }
@@ -1164,23 +1164,23 @@ struct OREGON_DLL_DECL mob_sinster_reflectionAI : public ScriptedAI
         switch(Class){
             case CLASS_DRUID:
                 if (Timer[1] < diff){
-                    DoCast(m_creature->getVictim(), SPELL_SR_MOONFIRE, false);
+                    DoCast(me->getVictim(), SPELL_SR_MOONFIRE, false);
                     Timer[1] = 3000;
                 }
                 DoMeleeAttackIfReady();
                 break;
             case CLASS_HUNTER:
                 if (Timer[1] < diff){
-                    DoCast(m_creature->getVictim(), SPELL_SR_MULTI_SHOT, false);
+                    DoCast(me->getVictim(), SPELL_SR_MULTI_SHOT, false);
                     Timer[1] = 9000;
                 }
                 if (Timer[2] < diff){
-                    DoCast(m_creature->getVictim(), SPELL_SR_SHOOT, false);
+                    DoCast(me->getVictim(), SPELL_SR_SHOOT, false);
                     Timer[2] = 5000;
                 }
-                if (m_creature->IsWithinMeleeRange(m_creature->getVictim(), 6)){
+                if (me->IsWithinMeleeRange(me->getVictim(), 6)){
                     if (Timer[3] < diff){
-                        DoCast(m_creature->getVictim(), SPELL_SR_MULTI_SHOT, false);
+                        DoCast(me->getVictim(), SPELL_SR_MULTI_SHOT, false);
                         Timer[3] = 7000;
                     }
                     DoMeleeAttackIfReady();
@@ -1188,14 +1188,14 @@ struct OREGON_DLL_DECL mob_sinster_reflectionAI : public ScriptedAI
                 break;
             case CLASS_MAGE:
                 if (Timer[1] < diff){
-                    DoCast(m_creature->getVictim(), SPELL_SR_FIREBALL, false);
+                    DoCast(me->getVictim(), SPELL_SR_FIREBALL, false);
                     Timer[1] = 3000;
                 }
                 DoMeleeAttackIfReady();
                 break;
             case CLASS_WARLOCK:
                 if (Timer[1] < diff){
-                    DoCast(m_creature->getVictim(), SPELL_SR_SHADOW_BOLT, false);
+                    DoCast(me->getVictim(), SPELL_SR_SHADOW_BOLT, false);
                     Timer[1] = 4000;
                 }
                 if (Timer[2] < diff){
@@ -1206,43 +1206,43 @@ struct OREGON_DLL_DECL mob_sinster_reflectionAI : public ScriptedAI
                 break;
             case CLASS_WARRIOR:
                 if (Timer[1] < diff){
-                    DoCast(m_creature->getVictim(), SPELL_SR_WHIRLWIND, false);
+                    DoCast(me->getVictim(), SPELL_SR_WHIRLWIND, false);
                     Timer[1] = 10000;
                 }
                 DoMeleeAttackIfReady();
                 break;
             case CLASS_PALADIN:
                 if (Timer[1] < diff){
-                    DoCast(m_creature->getVictim(), SPELL_SR_HAMMER_OF_JUSTICE, false);
+                    DoCast(me->getVictim(), SPELL_SR_HAMMER_OF_JUSTICE, false);
                     Timer[1] = 7000;
                 }
                 if (Timer[2] < diff){
-                    DoCast(m_creature->getVictim(), SPELL_SR_HOLY_SHOCK, false);
+                    DoCast(me->getVictim(), SPELL_SR_HOLY_SHOCK, false);
                     Timer[2] = 3000;
                 }
                 DoMeleeAttackIfReady();
                 break;
             case CLASS_PRIEST:
                 if (Timer[1] < diff){
-                    DoCast(m_creature->getVictim(), SPELL_SR_HOLY_SMITE, false);
+                    DoCast(me->getVictim(), SPELL_SR_HOLY_SMITE, false);
                     Timer[1] = 5000;
                 }
                 if (Timer[2] < diff){
-                    DoCast(m_creature,  SPELL_SR_RENEW, false);
+                    DoCast(me,  SPELL_SR_RENEW, false);
                     Timer[2] = 7000;
                 }
                 DoMeleeAttackIfReady();
                 break;
             case CLASS_SHAMAN:
                 if (Timer[1] < diff){
-                    DoCast(m_creature->getVictim(), SPELL_SR_EARTH_SHOCK, false);
+                    DoCast(me->getVictim(), SPELL_SR_EARTH_SHOCK, false);
                     Timer[1] = 5000;
                 }
                 DoMeleeAttackIfReady();
                 break;
             case CLASS_ROGUE:
                 if (Timer[1] < diff){
-                    DoCast(m_creature->getVictim(), SPELL_SR_HEMORRHAGE, true);
+                    DoCast(me->getVictim(), SPELL_SR_HEMORRHAGE, true);
                     Timer[1] = 5000;
                 }
                 DoMeleeAttackIfReady();

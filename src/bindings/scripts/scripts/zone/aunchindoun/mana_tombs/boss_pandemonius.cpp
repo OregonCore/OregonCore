@@ -43,7 +43,7 @@ struct OREGON_DLL_DECL boss_pandemoniusAI : public ScriptedAI
 {
     boss_pandemoniusAI(Creature *c) : ScriptedAI(c)
     {
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     bool HeroicMode;
@@ -60,15 +60,15 @@ struct OREGON_DLL_DECL boss_pandemoniusAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
     }
 
     void KilledUnit(Unit* victim)
     {
         switch(rand()%2)
         {
-            case 0: DoScriptText(SAY_KILL_1, m_creature); break;
-            case 1: DoScriptText(SAY_KILL_2, m_creature); break;
+            case 0: DoScriptText(SAY_KILL_1, me); break;
+            case 1: DoScriptText(SAY_KILL_2, me); break;
         }
     }
 
@@ -76,9 +76,9 @@ struct OREGON_DLL_DECL boss_pandemoniusAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, m_creature); break;
-            case 1: DoScriptText(SAY_AGGRO_2, m_creature); break;
-            case 2: DoScriptText(SAY_AGGRO_3, m_creature); break;
+            case 0: DoScriptText(SAY_AGGRO_1, me); break;
+            case 1: DoScriptText(SAY_AGGRO_2, me); break;
+            case 2: DoScriptText(SAY_AGGRO_3, me); break;
         }
 
     }
@@ -108,12 +108,12 @@ struct OREGON_DLL_DECL boss_pandemoniusAI : public ScriptedAI
         {
             if (DarkShell_Timer < diff)
             {
-                if (m_creature->IsNonMeleeSpellCasted(false))
-                    m_creature->InterruptNonMeleeSpells(true);
+                if (me->IsNonMeleeSpellCasted(false))
+                    me->InterruptNonMeleeSpells(true);
 
-                DoScriptText(EMOTE_DARK_SHELL, m_creature);
+                DoScriptText(EMOTE_DARK_SHELL, me);
 
-                DoCast(m_creature,HeroicMode ? H_SPELL_DARK_SHELL : SPELL_DARK_SHELL);
+                DoCast(me,HeroicMode ? H_SPELL_DARK_SHELL : SPELL_DARK_SHELL);
                 DarkShell_Timer = 20000;
             } else DarkShell_Timer -= diff;
         }

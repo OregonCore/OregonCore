@@ -55,13 +55,13 @@ struct OREGON_DLL_DECL boss_amnennar_the_coldbringerAI : public ScriptedAI
     void EnterCombat(Unit *who)
     {
         DoYell(SAY_0,LANG_UNIVERSAL,NULL);
-        DoPlaySoundToSet(m_creature,SOUND_AGGRO);
+        DoPlaySoundToSet(me,SOUND_AGGRO);
     }
 
     void KilledUnit()
     {
         DoYell(SAY_SLAY, LANG_UNIVERSAL, NULL);
-        DoPlaySoundToSet(m_creature, SOUND_SLAY);
+        DoPlaySoundToSet(me, SOUND_SLAY);
     }
 
     void SummonSpectrals(Unit* victim)
@@ -93,7 +93,7 @@ struct OREGON_DLL_DECL boss_amnennar_the_coldbringerAI : public ScriptedAI
         //AmnenarsWrath_Timer
         if (AmnenarsWrath_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_AMNENNARSWRATH);
+            DoCast(me->getVictim(),SPELL_AMNENNARSWRATH);
             AmnenarsWrath_Timer = 12000;
         } else AmnenarsWrath_Timer -= diff;
 
@@ -107,10 +107,10 @@ struct OREGON_DLL_DECL boss_amnennar_the_coldbringerAI : public ScriptedAI
             FrostBolt_Timer = 8000;
         } else FrostBolt_Timer -= diff;
 
-        if (!Spectrals && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 50)
+        if (!Spectrals && me->GetHealth()*100 / me->GetMaxHealth() < 50)
         {
             DoYell(SAY_1, LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(m_creature, SOUND_SUMMON);
+            DoPlaySoundToSet(me, SOUND_SUMMON);
 
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);

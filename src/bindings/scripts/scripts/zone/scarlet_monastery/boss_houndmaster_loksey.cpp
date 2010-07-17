@@ -43,9 +43,9 @@ struct OREGON_DLL_DECL boss_houndmaster_lokseyAI : public ScriptedAI
     void EnterCombat(Unit *who)
     {
         DoYell(SAY_AGGRO,LANG_UNIVERSAL,NULL);
-        DoPlaySoundToSet(m_creature,SOUND_AGGRO);
+        DoPlaySoundToSet(me,SOUND_AGGRO);
 
-        DoCast(m_creature,SPELL_SUMMONSCARLETHOUND);
+        DoCast(me,SPELL_SUMMONSCARLETHOUND);
     }
 
     void UpdateAI(const uint32 diff)
@@ -54,9 +54,9 @@ struct OREGON_DLL_DECL boss_houndmaster_lokseyAI : public ScriptedAI
             return;
 
         //If we are <10% hp cast healing spells at self and Mograine
-        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 10 && !m_creature->IsNonMeleeSpellCasted(false) && Enrage_Timer < diff)
+        if (me->GetHealth()*100 / me->GetMaxHealth() <= 10 && !me->IsNonMeleeSpellCasted(false) && Enrage_Timer < diff)
         {
-            DoCast(m_creature,SPELL_ENRAGE);
+            DoCast(me,SPELL_ENRAGE);
             Enrage_Timer = 900000;
         } else Enrage_Timer -= diff;
 

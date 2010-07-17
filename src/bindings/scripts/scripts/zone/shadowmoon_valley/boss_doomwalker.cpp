@@ -70,22 +70,22 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
 
         switch(rand()%3)
         {
-            case 0: DoScriptText(SAY_SLAY_1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY_2, m_creature); break;
-            case 2: DoScriptText(SAY_SLAY_3, m_creature); break;
+            case 0: DoScriptText(SAY_SLAY_1, me); break;
+            case 1: DoScriptText(SAY_SLAY_2, me); break;
+            case 2: DoScriptText(SAY_SLAY_3, me); break;
         }
 
-        DoCast(m_creature->getVictim(), SPELL_MARK_DEATH);
+        DoCast(me->getVictim(), SPELL_MARK_DEATH);
     }
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
     }
 
     void EnterCombat(Unit *who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -94,11 +94,11 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
             return;
 
         //Spell Enrage, when hp <= 20% gain enrage
-        if (((m_creature->GetHealth()*100)/ m_creature->GetMaxHealth()) <= 20)
+        if (((me->GetHealth()*100)/ me->GetMaxHealth()) <= 20)
         {
             if (Enrage_Timer < diff)
             {
-                DoCast(m_creature,SPELL_ENRAGE);
+                DoCast(me,SPELL_ENRAGE);
                 Enrage_Timer = 6000;
                 InEnrage = true;
             } else Enrage_Timer -= diff;
@@ -109,11 +109,11 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
         {
             switch(rand()%2)
             {
-                case 0: DoScriptText(SAY_OVERRUN_1, m_creature); break;
-                case 1: DoScriptText(SAY_OVERRUN_2, m_creature); break;
+                case 0: DoScriptText(SAY_OVERRUN_1, me); break;
+                case 1: DoScriptText(SAY_OVERRUN_2, me); break;
             }
 
-            DoCast(m_creature->getVictim(),SPELL_OVERRUN);
+            DoCast(me->getVictim(),SPELL_OVERRUN);
             Overrun_Timer = 25000 + rand()%15000;
         } else Overrun_Timer -= diff;
 
@@ -125,15 +125,15 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
 
             switch(rand()%2)
             {
-                case 0: DoScriptText(SAY_EARTHQUAKE_1, m_creature); break;
-                case 1: DoScriptText(SAY_EARTHQUAKE_2, m_creature); break;
+                case 0: DoScriptText(SAY_EARTHQUAKE_1, me); break;
+                case 1: DoScriptText(SAY_EARTHQUAKE_2, me); break;
             }
 
             //remove enrage before casting earthquake because enrage + earthquake = 16000dmg over 8sec and all dead
             if (InEnrage)
-                m_creature->RemoveAura(SPELL_ENRAGE, 0);
+                me->RemoveAura(SPELL_ENRAGE, 0);
 
-            DoCast(m_creature,SPELL_EARTHQUAKE);
+            DoCast(me,SPELL_EARTHQUAKE);
             Quake_Timer = 30000 + rand()%25000;
         } else Quake_Timer -= diff;
 
@@ -144,7 +144,7 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
 
             if (!pTarget)
-                pTarget = m_creature->getVictim();
+                pTarget = me->getVictim();
 
             if (pTarget)
                 DoCast(pTarget,SPELL_CHAIN_LIGHTNING);
@@ -155,7 +155,7 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
         //Spell Sunder Armor
         if (Armor_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_SUNDER_ARMOR);
+            DoCast(me->getVictim(),SPELL_SUNDER_ARMOR);
             Armor_Timer = 10000 + rand()%15000;
         } else Armor_Timer -= diff;
 

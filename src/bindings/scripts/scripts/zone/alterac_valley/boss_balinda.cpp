@@ -55,7 +55,7 @@ struct OREGON_DLL_DECL boss_balindaAI : public ScriptedAI
 
     void Aggro(Unit *who)
     {
-        DoScriptText(YELL_AGGRO, m_creature);
+        DoScriptText(YELL_AGGRO, me);
     }
 
     void JustRespawned()
@@ -74,25 +74,25 @@ struct OREGON_DLL_DECL boss_balindaAI : public ScriptedAI
 
         if (ArcaneExplosionTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_ARCANE_EXPLOSION);
+            DoCast(me->getVictim(), SPELL_ARCANE_EXPLOSION);
             ArcaneExplosionTimer =  (10+rand()%5)*1000;
         } else ArcaneExplosionTimer -= diff;
 
         if (ConeofcoldTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_CONE_OF_COLD);
+            DoCast(me->getVictim(), SPELL_CONE_OF_COLD);
             ConeofcoldTimer = (10+rand()%10)*1000;
         } else ConeofcoldTimer -= diff;
 
         if (FireboltTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_FIREBALL);
+            DoCast(me->getVictim(), SPELL_FIREBALL);
             FireboltTimer = (5+rand()%4)*1000;
         } else FireboltTimer -= diff;
 
         if (FrostboltTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_FROSTBOLT);
+            DoCast(me->getVictim(), SPELL_FROSTBOLT);
             FrostboltTimer = (4+rand()%8)*1000;
         } else FrostboltTimer -= diff;
 
@@ -101,10 +101,10 @@ struct OREGON_DLL_DECL boss_balindaAI : public ScriptedAI
         if (ResetTimer < diff)
         {
             float x, y, z;
-            m_creature->GetPosition(x, y, z);
+            me->GetPosition(x, y, z);
             if (x > -6)
         {
-            DoScriptText(YELL_EVADE, m_creature);
+            DoScriptText(YELL_EVADE, me);
                     EnterEvadeMode();
         }
             ResetTimer = 5000;

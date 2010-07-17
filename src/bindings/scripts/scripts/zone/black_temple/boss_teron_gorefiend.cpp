@@ -70,8 +70,8 @@ struct OREGON_DLL_DECL mob_doom_blossomAI : public ScriptedAI
 
     void Despawn()
     {
-        m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-        m_creature->RemoveCorpse();
+        me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+        me->RemoveCorpse();
     }
 
     void UpdateAI(const uint32 diff)
@@ -82,7 +82,7 @@ struct OREGON_DLL_DECL mob_doom_blossomAI : public ScriptedAI
             {
                 DoZoneInCombat();
 
-                Creature* Teron = (Unit::GetCreature((*m_creature), TeronGUID));
+                Creature* Teron = (Unit::GetCreature((*me), TeronGUID));
                 if ((Teron) && (!Teron->isAlive() || Teron->IsInEvadeMode()))
                     Despawn();
             }
@@ -92,7 +92,7 @@ struct OREGON_DLL_DECL mob_doom_blossomAI : public ScriptedAI
             CheckTeronTimer = 5000;
         } else CheckTeronTimer -= diff;
 
-        if (ShadowBoltTimer < diff && m_creature->isInCombat())
+        if (ShadowBoltTimer < diff && me->isInCombat())
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_SHADOWBOLT);
             ShadowBoltTimer = 10000;
@@ -154,23 +154,23 @@ struct OREGON_DLL_DECL mob_shadowy_constructAI : public ScriptedAI
 
     void CheckPlayers()
     {
-        std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
+        std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
         if (m_threatlist.empty())
             return;                                         // No threat list. Don't continue.
         std::list<HostileReference*>::iterator itr = m_threatlist.begin();
         std::list<Unit*> targets;
         for (; itr != m_threatlist.end(); ++itr)
         {
-            Unit* pUnit = Unit::GetUnit((*m_creature), (*itr)->getUnitGuid());
+            Unit* pUnit = Unit::GetUnit((*me), (*itr)->getUnitGuid());
             if (pUnit && pUnit->isAlive())
                 targets.push_back(pUnit);
         }
-        targets.sort(TargetDistanceOrder(m_creature));
+        targets.sort(TargetDistanceOrder(me));
         Unit *pTarget = targets.front();
-        if (pTarget && m_creature->IsWithinDistInMap(pTarget, m_creature->GetAttackDistance(pTarget)))
+        if (pTarget && me->IsWithinDistInMap(pTarget, me->GetAttackDistance(pTarget)))
         {
             DoCast(pTarget, SPELL_ATROPHY);
-            m_creature->AI()->AttackStart(pTarget);
+            me->AI()->AttackStart(pTarget);
         }
     }
 
@@ -184,9 +184,9 @@ struct OREGON_DLL_DECL mob_shadowy_constructAI : public ScriptedAI
 
         if (CheckTeronTimer < diff)
         {
-            Creature* Teron = (Unit::GetCreature((*m_creature), TeronGUID));
+            Creature* Teron = (Unit::GetCreature((*me), TeronGUID));
             if (!Teron || !Teron->isAlive() || Teron->IsInEvadeMode())
-                m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 
             CheckTeronTimer = 5000;
         } else CheckTeronTimer -= diff;
@@ -228,9 +228,9 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
         SummonShadowsTimer = 60000;
         RandomYellTimer = 50000;
 
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         // Start off unattackable so that the intro is done properly
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
         AggroTimer = 20000;
         AggroTargetGUID = 0;
@@ -243,27 +243,27 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
     {
         if (!who || (!who->isAlive())) return;
 
-        if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (m_creature) && m_creature->IsHostileTo(who))
+        if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (me) && me->IsHostileTo(who))
         {
-            float attackRadius = m_creature->GetAttackDistance(who);
+            float attackRadius = me->GetAttackDistance(who);
 
-            if (m_creature->IsWithinDistInMap(who, attackRadius) && m_creature->GetDistanceZ(who) <= CREATURE_Z_ATTACK_RANGE && m_creature->IsWithinLOSInMap(who))
+            if (me->IsWithinDistInMap(who, attackRadius) && me->GetDistanceZ(who) <= CREATURE_Z_ATTACK_RANGE && me->IsWithinLOSInMap(who))
             {
                 //if (who->HasStealthAura())
                 //    who->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
 
-                m_creature->AddThreat(who, 1.0f);
+                me->AddThreat(who, 1.0f);
             }
 
-            if (!m_creature->isInCombat() && !Intro && m_creature->IsWithinDistInMap(who, 60.0f) && (who->GetTypeId() == TYPEID_PLAYER))
+            if (!me->isInCombat() && !Intro && me->IsWithinDistInMap(who, 60.0f) && (who->GetTypeId() == TYPEID_PLAYER))
             {
                 if (pInstance)
                     pInstance->SetData(DATA_TERONGOREFIENDEVENT, IN_PROGRESS);
 
-                m_creature->GetMotionMaster()->Clear(false);
-                m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                DoScriptText(SAY_INTRO, m_creature);
-                m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_TALK);
+                me->GetMotionMaster()->Clear(false);
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                DoScriptText(SAY_INTRO, me);
+                me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_TALK);
                 AggroTargetGUID = who->GetGUID();
                 Intro = true;
             }
@@ -274,8 +274,8 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-        case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-        case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+        case 0: DoScriptText(SAY_SLAY1, me); break;
+        case 1: DoScriptText(SAY_SLAY2, me); break;
         }
     }
 
@@ -284,7 +284,7 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(DATA_TERONGOREFIENDEVENT, DONE);
 
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
     }
 
     float CalculateRandomLocation(float Loc, uint32 radius)
@@ -306,11 +306,11 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
     {
         if (!Blossom) return;
 
-        std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
+        std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
         std::list<HostileReference*>::iterator i = m_threatlist.begin();
         for (i = m_threatlist.begin(); i != m_threatlist.end(); i++)
         {
-            Unit* pUnit = Unit::GetUnit((*m_creature), (*i)->getUnitGuid());
+            Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
             if (pUnit && pUnit->isAlive())
             {
                 float threat = DoGetThreat(pUnit);
@@ -330,12 +330,12 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
 
         Unit* Ghost = NULL;
         if (GhostGUID)
-            Ghost = Unit::GetUnit((*m_creature), GhostGUID);
+            Ghost = Unit::GetUnit((*me), GhostGUID);
         if (Ghost && Ghost->isAlive() && Ghost->HasAura(SPELL_SHADOW_OF_DEATH, 0))
         {
             /*float x,y,z;
             Ghost->GetPosition(x,y,z);
-            Creature* control = m_creature->SummonCreature(CREATURE_GHOST, x, y, z, 0, TEMPSUMMON_TIMED_DESAWN, 30000);
+            Creature* control = me->SummonCreature(CREATURE_GHOST, x, y, z, 0, TEMPSUMMON_TIMED_DESAWN, 30000);
             if (control)
             {
                 ((Player*)Ghost)->Possess(control);
@@ -347,7 +347,7 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
                 Creature* Construct = NULL;
                 float X = CalculateRandomLocation(Ghost->GetPositionX(), 10);
                 float Y = CalculateRandomLocation(Ghost->GetPositionY(), 10);
-                Construct = m_creature->SummonCreature(CREATURE_SHADOWY_CONSTRUCT, X, Y, Ghost->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45000);
+                Construct = me->SummonCreature(CREATURE_SHADOWY_CONSTRUCT, X, Y, Ghost->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45000);
                 if (Construct)
                 {
                     Construct->CastSpell(Construct, SPELL_PASSIVE_SHADOWFORM, true);
@@ -355,7 +355,7 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
                     ((mob_shadowy_constructAI*)Construct->AI())->GhostGUID = GhostGUID;
                     Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
                     if (!pTarget)                             // someone's trying to solo.
-                        pTarget = m_creature->getVictim();
+                        pTarget = me->getVictim();
 
                     if (pTarget)
                         Construct->GetMotionMaster()->MoveChase(pTarget);
@@ -370,14 +370,14 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
         {
             if (AggroTimer < diff)
             {
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                DoScriptText(SAY_AGGRO, m_creature);
-                m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_NONE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                DoScriptText(SAY_AGGRO, me);
+                me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_NONE);
                 Intro = false;
                 if (AggroTargetGUID)
                 {
-                    Unit* pUnit = Unit::GetUnit((*m_creature), AggroTargetGUID);
+                    Unit* pUnit = Unit::GetUnit((*me), AggroTargetGUID);
                     if (pUnit)
                         AttackStart(pUnit);
 
@@ -401,13 +401,13 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
             for (uint8 i = 0; i < 2; ++i)
             {
                 Creature* Shadow = NULL;
-                float X = CalculateRandomLocation(m_creature->GetPositionX(), 10);
-                Shadow = m_creature->SummonCreature(CREATURE_SHADOWY_CONSTRUCT, X, m_creature->GetPositionY(), m_creature->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 0);
+                float X = CalculateRandomLocation(me->GetPositionX(), 10);
+                Shadow = me->SummonCreature(CREATURE_SHADOWY_CONSTRUCT, X, me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 0);
                 if (Shadow)
                 {
                     Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
                     if (!pTarget)
-                        pTarget = m_creature->getVictim();
+                        pTarget = me->getVictim();
 
                     if (pTarget)
                         Shadow->AI()->AttackStart(pTarget);
@@ -423,14 +423,14 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
                 float X = CalculateRandomLocation(pTarget->GetPositionX(), 20);
                 float Y = CalculateRandomLocation(pTarget->GetPositionY(), 20);
                 float Z = pTarget->GetPositionZ();
-                Z = m_creature->GetMap()->GetHeight(X, Y, Z);
-                Creature* DoomBlossom = m_creature->SummonCreature(CREATURE_DOOM_BLOSSOM, X, Y, Z, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 20000);
+                Z = me->GetMap()->GetHeight(X, Y, Z);
+                Creature* DoomBlossom = me->SummonCreature(CREATURE_DOOM_BLOSSOM, X, Y, Z, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 20000);
                 if (DoomBlossom)
                 {
                     DoomBlossom->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                    DoomBlossom->setFaction(m_creature->getFaction());
+                    DoomBlossom->setFaction(me->getFaction());
                     DoomBlossom->AddThreat(pTarget, 1.0f);
-                    ((mob_doom_blossomAI*)DoomBlossom->AI())->SetTeronGUID(m_creature->GetGUID());
+                    ((mob_doom_blossomAI*)DoomBlossom->AI())->SetTeronGUID(me->GetGUID());
                     //((mob_doom_blossomAI*)DoomBlossom->AI())->InCombat = true;
                     pTarget->CombatStart(DoomBlossom);
                     SetThreatList(DoomBlossom);
@@ -443,14 +443,14 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
         {
             Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
             if (!pTarget)
-                pTarget = m_creature->getVictim();
+                pTarget = me->getVictim();
 
             if (pTarget)
             {
                 switch(rand()%2)
                 {
-                case 0: DoScriptText(SAY_SPECIAL1, m_creature); break;
-                case 1: DoScriptText(SAY_SPECIAL2, m_creature); break;
+                case 0: DoScriptText(SAY_SPECIAL1, me); break;
+                case 1: DoScriptText(SAY_SPECIAL2, me); break;
                 }
                 DoCast(pTarget, SPELL_INCINERATE);
                 IncinerateTimer = 20000 + rand()%31 * 1000;
@@ -471,7 +471,7 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
             Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
 
             if (!pTarget)
-               pTarget = m_creature->getVictim();
+               pTarget = me->getVictim();
 
             if (pTarget && pTarget->isAlive() && pTarget->GetTypeId() == TYPEID_PLAYER)
             {
@@ -486,18 +486,18 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
         {
             switch(rand()%2)
             {
-            case 0: DoScriptText(SAY_SPELL1, m_creature); break;
-            case 1: DoScriptText(SAY_SPELL2, m_creature); break;
+            case 0: DoScriptText(SAY_SPELL1, me); break;
+            case 1: DoScriptText(SAY_SPELL2, me); break;
             }
             RandomYellTimer = 50000 + rand()%51 * 1000;
         } else RandomYellTimer -= diff;
 
-        if (!m_creature->HasAura(SPELL_BERSERK, 0))
+        if (!me->HasAura(SPELL_BERSERK, 0))
         {
             if (EnrageTimer < diff)
         {
-            DoCast(m_creature, SPELL_BERSERK);
-            DoScriptText(SAY_ENRAGE, m_creature);
+            DoCast(me, SPELL_BERSERK);
+            DoScriptText(SAY_ENRAGE, me);
         } else EnrageTimer -= diff;
         }
 

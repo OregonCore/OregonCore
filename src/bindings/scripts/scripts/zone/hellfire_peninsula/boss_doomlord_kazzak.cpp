@@ -70,15 +70,15 @@ struct OREGON_DLL_DECL boss_doomlordkazzakAI : public ScriptedAI
 
     void JustRespawned()
     {
-        DoScriptText(SAY_INTRO, m_creature);
+        DoScriptText(SAY_INTRO, me);
     }
 
     void EnterCombat(Unit *who)
     {
         switch(rand()%2)
         {
-        case 0: DoScriptText(SAY_AGGRO1, m_creature); break;
-        case 1: DoScriptText(SAY_AGGRO2, m_creature); break;
+        case 0: DoScriptText(SAY_AGGRO1, me); break;
+        case 1: DoScriptText(SAY_AGGRO2, me); break;
         }
     }
 
@@ -88,19 +88,19 @@ struct OREGON_DLL_DECL boss_doomlordkazzakAI : public ScriptedAI
          if (victim->GetTypeId() != TYPEID_PLAYER)
              return;
 
-            DoCast(m_creature,SPELL_CAPTURESOUL);
+            DoCast(me,SPELL_CAPTURESOUL);
 
             switch(rand()%3)
             {
-            case 0: DoScriptText(SAY_KILL1, m_creature); break;
-            case 1: DoScriptText(SAY_KILL2, m_creature); break;
-            case 2: DoScriptText(SAY_KILL3, m_creature); break;
+            case 0: DoScriptText(SAY_KILL1, me); break;
+            case 1: DoScriptText(SAY_KILL2, me); break;
+            case 2: DoScriptText(SAY_KILL3, me); break;
             }
     }
 
     void JustDied(Unit *victim)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -112,28 +112,28 @@ struct OREGON_DLL_DECL boss_doomlordkazzakAI : public ScriptedAI
         //ShadowVolley_Timer
         if (ShadowVolley_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_SHADOWVOLLEY);
+            DoCast(me->getVictim(), SPELL_SHADOWVOLLEY);
             ShadowVolley_Timer = 4000 + rand()%2000;
         } else ShadowVolley_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_CLEAVE);
+            DoCast(me->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 8000 + rand()%4000;
         } else Cleave_Timer -= diff;
 
         //ThunderClap_Timer
         if (ThunderClap_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_THUNDERCLAP);
+            DoCast(me->getVictim(),SPELL_THUNDERCLAP);
             ThunderClap_Timer = 10000 + rand()%4000;
         } else ThunderClap_Timer -= diff;
 
         //VoidBolt_Timer
         if (VoidBolt_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_VOIDBOLT);
+            DoCast(me->getVictim(),SPELL_VOIDBOLT);
             VoidBolt_Timer = 15000 + rand()%3000;
         } else VoidBolt_Timer -= diff;
 
@@ -151,8 +151,8 @@ struct OREGON_DLL_DECL boss_doomlordkazzakAI : public ScriptedAI
         //Enrage_Timer
         if (Enrage_Timer < diff)
         {
-            DoScriptText(EMOTE_FRENZY, m_creature);
-            DoCast(m_creature,SPELL_ENRAGE);
+            DoScriptText(EMOTE_FRENZY, me);
+            DoCast(me,SPELL_ENRAGE);
             Enrage_Timer = 30000;
         } else Enrage_Timer -= diff;
 

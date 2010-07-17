@@ -49,8 +49,8 @@ struct OREGON_DLL_DECL npc_shadowfang_prisonerAI : public npc_escortAI
     {
         if (pInstance && i == 6)
         {
-            m_creature->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
-            DoScriptText(SAY_FREE, m_creature);
+            me->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
+            DoScriptText(SAY_FREE, me);
             pInstance->SetData(TYPE_FREE_NPC, DONE);
         }
     }

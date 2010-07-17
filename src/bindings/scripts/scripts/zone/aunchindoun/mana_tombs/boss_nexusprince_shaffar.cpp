@@ -89,11 +89,11 @@ struct OREGON_DLL_DECL boss_nexusprince_shaffarAI : public ScriptedAI
 
         float dist = 8.0f;
         float posX, posY, posZ, angle;
-        m_creature->GetHomePosition(posX, posY, posZ, angle);
+        me->GetHomePosition(posX, posY, posZ, angle);
 
-        Beacon[0] = m_creature->SummonCreature(ENTRY_BEACON, posX - dist, posY - dist, posZ, angle, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 7200000);
-        Beacon[1] = m_creature->SummonCreature(ENTRY_BEACON, posX - dist, posY + dist, posZ, angle, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 7200000);
-        Beacon[2] = m_creature->SummonCreature(ENTRY_BEACON, posX + dist, posY, posZ, angle, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 7200000);
+        Beacon[0] = me->SummonCreature(ENTRY_BEACON, posX - dist, posY - dist, posZ, angle, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 7200000);
+        Beacon[1] = me->SummonCreature(ENTRY_BEACON, posX - dist, posY + dist, posZ, angle, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 7200000);
+        Beacon[2] = me->SummonCreature(ENTRY_BEACON, posX + dist, posY, posZ, angle, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 7200000);
 
         for (uint8 i = 0; i < NR_INITIAL_BEACONS; i++)
         {
@@ -120,19 +120,19 @@ struct OREGON_DLL_DECL boss_nexusprince_shaffarAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit *who)
     {
-        if (!m_creature->getVictim() && who->isTargetableForAttack() && (m_creature->IsHostileTo(who)) && who->isInAccessiblePlaceFor (m_creature))
+        if (!me->getVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor (me))
         {
-            if (!HasTaunted && m_creature->IsWithinDistInMap(who, 100.0))
+            if (!HasTaunted && me->IsWithinDistInMap(who, 100.0))
             {
-                DoScriptText(SAY_INTRO, m_creature);
+                DoScriptText(SAY_INTRO, me);
                 HasTaunted = true;
             }
 
-            if (!m_creature->canFly() && m_creature->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
+            if (!me->canFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
                 return;
 
-            float attackRadius = m_creature->GetAttackDistance(who);
-            if (m_creature->IsWithinDistInMap(who, attackRadius) && m_creature->IsWithinLOSInMap(who))
+            float attackRadius = me->GetAttackDistance(who);
+            if (me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who))
             {
                 //who->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
                 AttackStart(who);
@@ -144,9 +144,9 @@ struct OREGON_DLL_DECL boss_nexusprince_shaffarAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, m_creature); break;
-            case 1: DoScriptText(SAY_AGGRO_2, m_creature); break;
-            case 2: DoScriptText(SAY_AGGRO_3, m_creature); break;
+            case 0: DoScriptText(SAY_AGGRO_1, me); break;
+            case 1: DoScriptText(SAY_AGGRO_2, me); break;
+            case 2: DoScriptText(SAY_AGGRO_3, me); break;
         }
 
         // Send initial beacons to join the fight if not already
@@ -170,14 +170,14 @@ struct OREGON_DLL_DECL boss_nexusprince_shaffarAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-            case 0: DoScriptText(SAY_SLAY_1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY_2, m_creature); break;
+            case 0: DoScriptText(SAY_SLAY_1, me); break;
+            case 1: DoScriptText(SAY_SLAY_2, me); break;
         }
     }
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DEAD, m_creature);
+        DoScriptText(SAY_DEAD, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -187,23 +187,23 @@ struct OREGON_DLL_DECL boss_nexusprince_shaffarAI : public ScriptedAI
 
         if (FrostNova_Timer < diff)
         {
-            if (m_creature->IsNonMeleeSpellCasted(false))
-                m_creature->InterruptNonMeleeSpells(true);
+            if (me->IsNonMeleeSpellCasted(false))
+                me->InterruptNonMeleeSpells(true);
 
-            DoCast(m_creature,SPELL_FROSTNOVA);
+            DoCast(me,SPELL_FROSTNOVA);
             FrostNova_Timer  = 17500 + rand()%7500;
             CanBlink = true;
         } else FrostNova_Timer -= diff;
 
         if (Frostbolt_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_FROSTBOLT);
+            DoCast(me->getVictim(),SPELL_FROSTBOLT);
             Frostbolt_Timer = 4500 + rand()%1500;
         } else Frostbolt_Timer -= diff;
 
         if (FireBall_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_FIREBALL);
+            DoCast(me->getVictim(),SPELL_FIREBALL);
             FireBall_Timer = 4500 + rand()%1500;
         } else FireBall_Timer -= diff;
 
@@ -211,10 +211,10 @@ struct OREGON_DLL_DECL boss_nexusprince_shaffarAI : public ScriptedAI
         {
             if (Blink_Timer < diff)
             {
-                if (m_creature->IsNonMeleeSpellCasted(false))
-                    m_creature->InterruptNonMeleeSpells(true);
+                if (me->IsNonMeleeSpellCasted(false))
+                    me->InterruptNonMeleeSpells(true);
 
-                DoCast(m_creature,SPELL_BLINK);
+                DoCast(me,SPELL_BLINK);
                 Blink_Timer = 1000 + rand()%1500;
                 CanBlink = false;
             } else Blink_Timer -= diff;
@@ -222,13 +222,13 @@ struct OREGON_DLL_DECL boss_nexusprince_shaffarAI : public ScriptedAI
 
         if (Beacon_Timer < diff)
         {
-            if (m_creature->IsNonMeleeSpellCasted(false))
-                m_creature->InterruptNonMeleeSpells(true);
+            if (me->IsNonMeleeSpellCasted(false))
+                me->InterruptNonMeleeSpells(true);
 
             if (!urand(0,3))
-                DoScriptText(SAY_SUMMON, m_creature);
+                DoScriptText(SAY_SUMMON, me);
 
-            DoCast(m_creature,SPELL_ETHEREAL_BEACON);
+            DoCast(me,SPELL_ETHEREAL_BEACON);
 
             Beacon_Timer = 10000;
         } else Beacon_Timer -= diff;
@@ -249,7 +249,7 @@ struct OREGON_DLL_DECL mob_ethereal_beaconAI : public ScriptedAI
 {
     mob_ethereal_beaconAI(Creature *c) : ScriptedAI(c)
     {
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     bool HeroicMode;
@@ -259,7 +259,7 @@ struct OREGON_DLL_DECL mob_ethereal_beaconAI : public ScriptedAI
 
     void KillSelf()
     {
-        m_creature->Kill(m_creature);
+        me->Kill(me);
     }
 
     void Reset()
@@ -272,7 +272,7 @@ struct OREGON_DLL_DECL mob_ethereal_beaconAI : public ScriptedAI
     void EnterCombat(Unit *who)
     {
         // Send Shaffar to fight
-        Unit* Shaffar = FindCreature(ENTRY_SHAFFAR, 100, m_creature);
+        Unit* Shaffar = FindCreature(ENTRY_SHAFFAR, 100, me);
         if (!Shaffar || Shaffar->isDead())
         {
             KillSelf();
@@ -284,14 +284,14 @@ struct OREGON_DLL_DECL mob_ethereal_beaconAI : public ScriptedAI
 
     void JustSummoned(Creature *summoned)
     {
-        summoned->AI()->AttackStart(m_creature->getVictim());
+        summoned->AI()->AttackStart(me->getVictim());
     }
 
     void JustDied(Unit* Killer)
     {
-        Unit *Shaffar = FindCreature(ENTRY_SHAFFAR, 100, m_creature);
+        Unit *Shaffar = FindCreature(ENTRY_SHAFFAR, 100, me);
         if (Shaffar)
-            ((boss_nexusprince_shaffarAI*)(((Creature*)Shaffar)->AI()))->RemoveBeaconFromList(m_creature);
+            ((boss_nexusprince_shaffarAI*)(((Creature*)Shaffar)->AI()))->RemoveBeaconFromList(me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -301,7 +301,7 @@ struct OREGON_DLL_DECL mob_ethereal_beaconAI : public ScriptedAI
 
         if (Check_Timer < diff)
         {
-            Unit *Shaffar = FindCreature(ENTRY_SHAFFAR, 100, m_creature);
+            Unit *Shaffar = FindCreature(ENTRY_SHAFFAR, 100, me);
             if (!Shaffar || Shaffar->isDead() || !Shaffar->isInCombat())
             {
                 KillSelf();
@@ -312,18 +312,18 @@ struct OREGON_DLL_DECL mob_ethereal_beaconAI : public ScriptedAI
 
         if (ArcaneBolt_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_ARCANE_BOLT);
+            DoCast(me->getVictim(),SPELL_ARCANE_BOLT);
             ArcaneBolt_Timer = 2000 + rand()%2500;
         } else ArcaneBolt_Timer -= diff;
 
         if (Apprentice_Timer < diff)
         {
-            if (m_creature->IsNonMeleeSpellCasted(false))
-                m_creature->InterruptNonMeleeSpells(true);
+            if (me->IsNonMeleeSpellCasted(false))
+                me->InterruptNonMeleeSpells(true);
 
-            m_creature->CastSpell(m_creature,SPELL_ETHEREAL_APPRENTICE,true);
-            if (m_creature->isPet())
-                ((Pet*)m_creature)->SetDuration(0);
+            me->CastSpell(me,SPELL_ETHEREAL_APPRENTICE,true);
+            if (me->isPet())
+                ((Pet*)me)->SetDuration(0);
             KillSelf();
             return;
         } else Apprentice_Timer -= diff;
@@ -363,10 +363,10 @@ struct OREGON_DLL_DECL mob_ethereal_apprenticeAI : public ScriptedAI
         {
             if (isFireboltTurn)
             {
-                m_creature->CastSpell(m_creature->getVictim(), SPELL_ETHEREAL_APPRENTICE_FIREBOLT, true);
+                me->CastSpell(me->getVictim(), SPELL_ETHEREAL_APPRENTICE_FIREBOLT, true);
                 isFireboltTurn = false;
             } else{
-                m_creature->CastSpell(m_creature->getVictim(), SPELL_ETHEREAL_APPRENTICE_FROSTBOLT, true);
+                me->CastSpell(me->getVictim(), SPELL_ETHEREAL_APPRENTICE_FROSTBOLT, true);
                 isFireboltTurn = true;
             }
             Cast_Timer = 3000;

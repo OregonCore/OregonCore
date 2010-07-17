@@ -46,8 +46,8 @@ struct OREGON_DLL_DECL mobs_mana_tappedAI : public ScriptedAI
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {
         if (caster->GetTypeId() == TYPEID_PLAYER)
-            if (((Player*)caster)->GetQuestStatus(8346) == QUEST_STATUS_INCOMPLETE && !((Player*)caster)->GetReqKillOrCastCurrentCount(8346, m_creature->GetEntry()) && spell->Id == 28734)
-                ((Player*)caster)->CastedCreatureOrGO(15468, m_creature->GetGUID(), spell->Id);
+            if (((Player*)caster)->GetQuestStatus(8346) == QUEST_STATUS_INCOMPLETE && !((Player*)caster)->GetReqKillOrCastCurrentCount(8346, me->GetEntry()) && spell->Id == 28734)
+                ((Player*)caster)->CastedCreatureOrGO(15468, me->GetGUID(), spell->Id);
         return;
     }
 };
@@ -83,9 +83,9 @@ struct OREGON_DLL_DECL npc_prospector_anvilwardAI : public npc_escortAI
 
         switch (i)
         {
-            case 0: DoScriptText(SAY_PR_1, m_creature, pPlayer); break;
-            case 5: DoScriptText(SAY_PR_2, m_creature, pPlayer); break;
-            case 6: m_creature->setFaction(24); break;
+            case 0: DoScriptText(SAY_PR_1, me, pPlayer); break;
+            case 5: DoScriptText(SAY_PR_2, me, pPlayer); break;
+            case 6: me->setFaction(24); break;
         }
     }
 
@@ -225,15 +225,15 @@ struct OREGON_DLL_DECL npc_secondTrialAI : public ScriptedAI
       questPhase = 0;
       summonerGuid = 0;
 
-      m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_KNEEL);
-      m_creature->setFaction(FACTION_FRIENDLY);
+      me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_KNEEL);
+      me->setFaction(FACTION_FRIENDLY);
 
       spellFlashLight = false;
       spellJustice    = false;
       spellJudLight   = false;
       spellCommand    = false;
 
-      switch(m_creature->GetEntry()) {
+      switch(me->GetEntry()) {
         case CHAMPION_BLOODWRATH :
           spellFlashLight = true;
           timerFlashLight = TIMER_FLASH_OF_LIGHT;
@@ -264,14 +264,14 @@ struct OREGON_DLL_DECL npc_secondTrialAI : public ScriptedAI
       if (questPhase == 1) {
 
         if (timer < diff) {
-              m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_NONE);
-              m_creature->setFaction(FACTION_HOSTILE);
+              me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_NONE);
+              me->setFaction(FACTION_HOSTILE);
               questPhase = 0;
 
               Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
               if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER) // only on players.
               {
-                m_creature->AddThreat(pTarget, 5000000.0f);
+                me->AddThreat(pTarget, 5000000.0f);
                 AttackStart(pTarget);
               }
          }
@@ -283,9 +283,9 @@ struct OREGON_DLL_DECL npc_secondTrialAI : public ScriptedAI
 
       // healer
       if (spellFlashLight) {
-        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 70){
+        if (me->GetHealth()*100 / me->GetMaxHealth() < 70){
           if (timerFlashLight < diff) {
-            DoCast(m_creature, SPELL_FLASH_OF_LIGHT);
+            DoCast(me, SPELL_FLASH_OF_LIGHT);
             timerFlashLight = TIMER_FLASH_OF_LIGHT +  rand()%(TIMER_FLASH_OF_LIGHT);
           }
           else
@@ -296,7 +296,7 @@ struct OREGON_DLL_DECL npc_secondTrialAI : public ScriptedAI
       if (spellJustice) {
           if (timerJustice < diff)
             {
-            DoCast(m_creature, SPELL_SEAL_OF_JUSTICE);
+            DoCast(me, SPELL_SEAL_OF_JUSTICE);
             timerJustice = TIMER_SEAL_OF_JUSTICE +  rand()%(TIMER_SEAL_OF_JUSTICE);
           }
           else
@@ -305,7 +305,7 @@ struct OREGON_DLL_DECL npc_secondTrialAI : public ScriptedAI
 
       if (spellJudLight) {
           if (timerJudLight < diff) {
-            DoCast(m_creature,  SPELL_JUDGEMENT_OF_LIGHT);
+            DoCast(me,  SPELL_JUDGEMENT_OF_LIGHT);
             timerJudLight = TIMER_JUDGEMENT_OF_LIGHT +  rand()%(TIMER_JUDGEMENT_OF_LIGHT);
           }
           else
@@ -314,7 +314,7 @@ struct OREGON_DLL_DECL npc_secondTrialAI : public ScriptedAI
 
       if (spellCommand) {
           if (timerCommand < diff) {
-            DoCast(m_creature,  TIMER_SEAL_OF_COMMAND);
+            DoCast(me,  TIMER_SEAL_OF_COMMAND);
             timerCommand = TIMER_SEAL_OF_COMMAND +  rand()%(TIMER_SEAL_OF_COMMAND);
           }
           else
@@ -368,22 +368,22 @@ struct OREGON_DLL_DECL master_kelerun_bloodmournAI : public ScriptedAI
         if (timer < diff) {
 
           Creature* paladinSpawn;
-          paladinSpawn = (Unit::GetCreature((*m_creature), paladinGuid[paladinPhase]));
+          paladinSpawn = (Unit::GetCreature((*me), paladinGuid[paladinPhase]));
             if (paladinSpawn) {
-               ((npc_secondTrialAI*)paladinSpawn->AI())->Activate(m_creature->GetGUID());
+               ((npc_secondTrialAI*)paladinSpawn->AI())->Activate(me->GetGUID());
 
                switch(paladinPhase) {
                  case 0:
-                  DoScriptText(TEXT_SECOND_TRIAL_1,m_creature);
+                  DoScriptText(TEXT_SECOND_TRIAL_1,me);
                  break;
                  case 1:
-                   DoScriptText(TEXT_SECOND_TRIAL_2,m_creature);
+                   DoScriptText(TEXT_SECOND_TRIAL_2,me);
                  break;
                  case 2:
-                  DoScriptText(TEXT_SECOND_TRIAL_3,m_creature);
+                  DoScriptText(TEXT_SECOND_TRIAL_3,me);
                  break;
                  case 3:
-                  DoScriptText(TEXT_SECOND_TRIAL_4,m_creature);
+                  DoScriptText(TEXT_SECOND_TRIAL_4,me);
                  break;
                }
             }
@@ -468,13 +468,13 @@ void npc_secondTrialAI::JustDied(Unit* Killer) {
       if (Killer->GetTypeId() == TYPEID_PLAYER)
       {
           Creature* Summoner;
-          Summoner = (Unit::GetCreature((*m_creature), summonerGuid));
+          Summoner = (Unit::GetCreature((*me), summonerGuid));
 
           if (Summoner)
             ((master_kelerun_bloodmournAI*)Summoner->AI())->SecondTrialKill();
 
           // last kill quest complete for group
-          if (m_creature->GetEntry() == CHAMPION_SUNSTRIKER) {
+          if (me->GetEntry() == CHAMPION_SUNSTRIKER) {
 
             if (Group *pGroup = ((Player*)Killer)->GetGroup())
             {
@@ -483,7 +483,7 @@ void npc_secondTrialAI::JustDied(Unit* Killer) {
                  Player *pGroupGuy = itr->getSource();
 
                  // for any leave or dead (with not released body) group member at appropriate distance
-                 if (pGroupGuy && pGroupGuy->IsAtGroupRewardDistance(m_creature) && !pGroupGuy->GetCorpse() && pGroupGuy->GetQuestStatus(QUEST_SECOND_TRIAL) == QUEST_STATUS_INCOMPLETE)
+                 if (pGroupGuy && pGroupGuy->IsAtGroupRewardDistance(me) && !pGroupGuy->GetCorpse() && pGroupGuy->GetQuestStatus(QUEST_SECOND_TRIAL) == QUEST_STATUS_INCOMPLETE)
                    pGroupGuy->CompleteQuest(QUEST_SECOND_TRIAL);
                 }
             }
@@ -556,7 +556,7 @@ bool GOHello_go_second_trial(Player *player, GameObject* _GO)
 
 struct OREGON_DLL_DECL npc_apprentice_mirvedaAI : public ScriptedAI
 {
-    npc_apprentice_mirvedaAI(Creature* c) : ScriptedAI(c), Summons(m_creature) {}
+    npc_apprentice_mirvedaAI(Creature* c) : ScriptedAI(c), Summons(me) {}
 
     uint32 KillCount;
     uint64 PlayerGUID;
@@ -575,7 +575,7 @@ struct OREGON_DLL_DECL npc_apprentice_mirvedaAI : public ScriptedAI
 
     void JustSummoned(Creature *summoned)
     {
-        summoned->AI()->AttackStart(m_creature);
+        summoned->AI()->AttackStart(me);
         Summons.Summon(summoned);
     }
 
@@ -609,9 +609,9 @@ struct OREGON_DLL_DECL npc_apprentice_mirvedaAI : public ScriptedAI
 
         if (Summon)
         {
-            m_creature->SummonCreature(MOB_GHARZUL, 8745, -7134.32, 35.22, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
-            m_creature->SummonCreature(MOB_ANGERSHADE, 8745, -7134.32, 35.22, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
-            m_creature->SummonCreature(MOB_ANGERSHADE, 8745, -7134.32, 35.22, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
+            me->SummonCreature(MOB_GHARZUL, 8745, -7134.32, 35.22, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
+            me->SummonCreature(MOB_ANGERSHADE, 8745, -7134.32, 35.22, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
+            me->SummonCreature(MOB_ANGERSHADE, 8745, -7134.32, 35.22, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
             Summon = false;
         }
     }
@@ -680,12 +680,12 @@ struct OREGON_DLL_DECL npc_infused_crystalAI : public Scripted_NoMovementAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (who->GetTypeId() == TYPEID_PLAYER && !m_creature->canStartAttack(who) && !Progress)
+        if (who->GetTypeId() == TYPEID_PLAYER && !me->canStartAttack(who) && !Progress)
         {
             if (((Player*)who)->GetQuestStatus(QUEST_POWERING_OUR_DEFENSES) == QUEST_STATUS_INCOMPLETE)
             {
                 float Radius = 10.0;
-                if (m_creature->IsWithinDistInMap(who, Radius))
+                if (me->IsWithinDistInMap(who, Radius))
                 {
                     PlayerGUID = who->GetGUID();
                     WaveTimer = 1000;
@@ -698,7 +698,7 @@ struct OREGON_DLL_DECL npc_infused_crystalAI : public Scripted_NoMovementAI
 
     void JustSummoned(Creature *summoned)
     {
-        summoned->AI()->AttackStart(m_creature);
+        summoned->AI()->AttackStart(me);
     }
 
     void JustDied(Unit* killer)
@@ -715,7 +715,7 @@ struct OREGON_DLL_DECL npc_infused_crystalAI : public Scripted_NoMovementAI
     {
         if (EndTimer < diff && Progress)
         {
-            DoScriptText(EMOTE, m_creature);
+            DoScriptText(EMOTE, me);
             Completed = true;
             if (PlayerGUID)
             {
@@ -723,8 +723,8 @@ struct OREGON_DLL_DECL npc_infused_crystalAI : public Scripted_NoMovementAI
                 if (player)
                     player->CompleteQuest(QUEST_POWERING_OUR_DEFENSES);
             }
-            m_creature->DealDamage(m_creature,m_creature->GetHealth(),NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-            m_creature->RemoveCorpse();
+            me->DealDamage(me,me->GetHealth(),NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+            me->RemoveCorpse();
         } else EndTimer -= diff;
 
         if (WaveTimer < diff && !Completed && Progress)
@@ -732,9 +732,9 @@ struct OREGON_DLL_DECL npc_infused_crystalAI : public Scripted_NoMovementAI
             uint32 ran1 = rand()%8;
             uint32 ran2 = rand()%8;
             uint32 ran3 = rand()%8;
-            m_creature->SummonCreature(MOB_ENRAGED_WRAITH, SpawnLocations[ran1].x, SpawnLocations[ran1].y, SpawnLocations[ran1].z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 10000);
-            m_creature->SummonCreature(MOB_ENRAGED_WRAITH, SpawnLocations[ran2].x, SpawnLocations[ran2].y, SpawnLocations[ran2].z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 10000);
-            m_creature->SummonCreature(MOB_ENRAGED_WRAITH, SpawnLocations[ran3].x, SpawnLocations[ran3].y, SpawnLocations[ran3].z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 10000);
+            me->SummonCreature(MOB_ENRAGED_WRAITH, SpawnLocations[ran1].x, SpawnLocations[ran1].y, SpawnLocations[ran1].z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 10000);
+            me->SummonCreature(MOB_ENRAGED_WRAITH, SpawnLocations[ran2].x, SpawnLocations[ran2].y, SpawnLocations[ran2].z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 10000);
+            me->SummonCreature(MOB_ENRAGED_WRAITH, SpawnLocations[ran3].x, SpawnLocations[ran3].y, SpawnLocations[ran3].z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 10000);
             WaveTimer = 30000;
         } else WaveTimer -= diff;
     }

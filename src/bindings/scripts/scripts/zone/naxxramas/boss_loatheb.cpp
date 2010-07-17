@@ -89,15 +89,15 @@ struct OREGON_DLL_DECL boss_loathebAI : public ScriptedAI
         {
             case 0:
                 DoYell(SAY_AGGRO1,LANG_UNIVERSAL,NULL);
-                DoPlaySoundToSet(m_creature,SOUND_AGGRO1);
+                DoPlaySoundToSet(me,SOUND_AGGRO1);
                 break;
             case 1:
                 DoYell(SAY_AGGRO2,LANG_UNIVERSAL,NULL);
-                DoPlaySoundToSet(m_creature,SOUND_AGGRO2);
+                DoPlaySoundToSet(me,SOUND_AGGRO2);
                 break;
             case 2:
                 DoYell(SAY_AGGRO3,LANG_UNIVERSAL,NULL);
-                DoPlaySoundToSet(m_creature,SOUND_AGGRO3);
+                DoPlaySoundToSet(me,SOUND_AGGRO3);
                 break;
         }
     }
@@ -108,27 +108,27 @@ struct OREGON_DLL_DECL boss_loathebAI : public ScriptedAI
         {
             case 0:
                 DoYell(SAY_SLAY1,LANG_UNIVERSAL,NULL);
-                DoPlaySoundToSet(m_creature,SOUND_SLAY1);
+                DoPlaySoundToSet(me,SOUND_SLAY1);
                 break;
             case 1:
                 DoYell(SAY_SLAY2,LANG_UNIVERSAL,NULL);
-                DoPlaySoundToSet(m_creature,SOUND_SLAY2);
+                DoPlaySoundToSet(me,SOUND_SLAY2);
                 break;
             case 2:
                 DoYell(SAY_SLAY3,LANG_UNIVERSAL,NULL);
-                DoPlaySoundToSet(m_creature,SOUND_SLAY3);
+                DoPlaySoundToSet(me,SOUND_SLAY3);
                 break;
             case 3:
                 DoYell(SAY_SLAY4,LANG_UNIVERSAL,NULL);
-                DoPlaySoundToSet(m_creature,SOUND_SLAY4);
+                DoPlaySoundToSet(me,SOUND_SLAY4);
                 break;
             case 4:
                 DoYell(SAY_SLAY5,LANG_UNIVERSAL,NULL);
-                DoPlaySoundToSet(m_creature,SOUND_SLAY5);
+                DoPlaySoundToSet(me,SOUND_SLAY5);
                 break;
             case 5:
                 DoYell(SAY_SLAY6,LANG_UNIVERSAL,NULL);
-                DoPlaySoundToSet(m_creature,SOUND_SLAY6);
+                DoPlaySoundToSet(me,SOUND_SLAY6);
                 break;
         }
     }
@@ -136,7 +136,7 @@ struct OREGON_DLL_DECL boss_loathebAI : public ScriptedAI
     void JustDied(Unit* Killer)
     {
         DoYell(SAY_DEATH,LANG_UNIVERSAL,NULL);
-        DoPlaySoundToSet(m_creature,SOUND_DEATH);
+        DoPlaySoundToSet(me,SOUND_DEATH);
     }
 
     void UpdateAI(const uint32 diff)
@@ -147,35 +147,35 @@ struct OREGON_DLL_DECL boss_loathebAI : public ScriptedAI
         //CorruptedMind_Timer
         if (CorruptedMind_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_CORRUPTED_MIND);
+            DoCast(me->getVictim(),SPELL_CORRUPTED_MIND);
             CorruptedMind_Timer = 62000;
         } else CorruptedMind_Timer -= diff;
 
         //PoisonAura_Timer
         if (PoisonAura_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_POISON_AURA);
+            DoCast(me->getVictim(),SPELL_POISON_AURA);
             PoisonAura_Timer = 60000;
         } else PoisonAura_Timer -= diff;
 
         //InevitableDoom_Timer
         if (InevitableDoom_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_INEVITABLE_DOOM);
+            DoCast(me->getVictim(),SPELL_INEVITABLE_DOOM);
             InevitableDoom_Timer = 120000;
         } else InevitableDoom_Timer -= diff;
 
         //InevitableDoom5mins_Timer
         if (InevitableDoom5mins_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_INEVITABLE_DOOM);
+            DoCast(me->getVictim(),SPELL_INEVITABLE_DOOM);
             InevitableDoom5mins_Timer = 15000;
         } else InevitableDoom5mins_Timer -= diff;
 
         //RemoveCurse_Timer
         if (RemoveCurse_Timer < diff)
         {
-            DoCast(m_creature,SPELL_REMOVE_CURSE);
+            DoCast(me,SPELL_REMOVE_CURSE);
             RemoveCurse_Timer = 30000;
         } else RemoveCurse_Timer -= diff;
 
@@ -185,9 +185,9 @@ struct OREGON_DLL_DECL boss_loathebAI : public ScriptedAI
             Unit *pTarget = NULL;
             Unit* SummonedSpores = NULL;
 
-            SummonedSpores = m_creature->SummonCreature(16286,ADD_1X,ADD_1Y,ADD_1Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
-            SummonedSpores = m_creature->SummonCreature(16286,ADD_2X,ADD_2Y,ADD_2Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
-            SummonedSpores = m_creature->SummonCreature(16286,ADD_3X,ADD_3Y,ADD_3Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+            SummonedSpores = me->SummonCreature(16286,ADD_1X,ADD_1Y,ADD_1Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+            SummonedSpores = me->SummonCreature(16286,ADD_2X,ADD_2Y,ADD_2Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+            SummonedSpores = me->SummonCreature(16286,ADD_3X,ADD_3Y,ADD_3Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
             if (SummonedSpores)
             {
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);

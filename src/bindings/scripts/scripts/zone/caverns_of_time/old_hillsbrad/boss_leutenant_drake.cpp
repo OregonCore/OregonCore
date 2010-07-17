@@ -117,21 +117,21 @@ struct OREGON_DLL_DECL boss_lieutenant_drakeAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
     }
 
     void KilledUnit(Unit *victim)
     {
         switch(rand()%2)
         {
-            case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+            case 0: DoScriptText(SAY_SLAY1, me); break;
+            case 1: DoScriptText(SAY_SLAY2, me); break;
         }
     }
 
     void JustDied(Unit *victim)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -139,7 +139,7 @@ struct OREGON_DLL_DECL boss_lieutenant_drakeAI : public ScriptedAI
         //TODO: make this work
         if (CanPatrol && wpId == 0)
         {
-            m_creature->GetMotionMaster()->MovePoint(DrakeWP[0].wpId, DrakeWP[0].x, DrakeWP[0].y, DrakeWP[0].z);
+            me->GetMotionMaster()->MovePoint(DrakeWP[0].wpId, DrakeWP[0].x, DrakeWP[0].y, DrakeWP[0].z);
             wpId++;
         }
 
@@ -150,23 +150,23 @@ struct OREGON_DLL_DECL boss_lieutenant_drakeAI : public ScriptedAI
         //Whirlwind
         if (Whirlwind_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_WHIRLWIND);
+            DoCast(me->getVictim(), SPELL_WHIRLWIND);
             Whirlwind_Timer = 20000+rand()%5000;
         } else Whirlwind_Timer -= diff;
 
         //Fear
         if (Fear_Timer < diff)
         {
-            DoScriptText(SAY_SHOUT, m_creature);
-            DoCast(m_creature->getVictim(), SPELL_FRIGHTENING_SHOUT);
+            DoScriptText(SAY_SHOUT, me);
+            DoCast(me->getVictim(), SPELL_FRIGHTENING_SHOUT);
             Fear_Timer = 30000+rand()%10000;
         } else Fear_Timer -= diff;
 
         //Mortal Strike
         if (MortalStrike_Timer < diff)
         {
-            DoScriptText(SAY_MORTAL, m_creature);
-            DoCast(m_creature->getVictim(), SPELL_MORTAL_STRIKE);
+            DoScriptText(SAY_MORTAL, me);
+            DoCast(me->getVictim(), SPELL_MORTAL_STRIKE);
             MortalStrike_Timer = 45000+rand()%5000;
         } else MortalStrike_Timer -= diff;
 

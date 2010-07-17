@@ -108,7 +108,7 @@ struct OREGON_DLL_DECL boss_ysondreAI : public ScriptedAI
         //NoxiousBreath_Timer
         if (NoxiousBreath_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_NOXIOUSBREATH);
+            DoCast(me->getVictim(),SPELL_NOXIOUSBREATH);
             NoxiousBreath_Timer = 14000 + rand()%6000;
         } else NoxiousBreath_Timer -= diff;
 
@@ -124,7 +124,7 @@ struct OREGON_DLL_DECL boss_ysondreAI : public ScriptedAI
         //MarkOfNature_Timer
         //if (MarkOfNature_Timer < diff)
         //{
-        //    DoCast(m_creature->getVictim(),SPELL_MARKOFNATURE);
+        //    DoCast(me->getVictim(),SPELL_MARKOFNATURE);
         //    MarkOfNature_Timer = 45000;
         //} else MarkOfNature_Timer -= diff;
 
@@ -139,7 +139,7 @@ struct OREGON_DLL_DECL boss_ysondreAI : public ScriptedAI
         } else LightningWave_Timer -= diff;
 
         //Summon Druids
-        if ((int) (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() +0.5) == 75)
+        if ((int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 75)
         {
             if (SummonDruids1_Timer < diff)
             {
@@ -156,7 +156,7 @@ struct OREGON_DLL_DECL boss_ysondreAI : public ScriptedAI
         }
 
         //Summon Druids
-        if ((int) (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() +0.5) == 50)
+        if ((int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 50)
         {
             if (SummonDruids2_Timer < diff)
             {
@@ -173,7 +173,7 @@ struct OREGON_DLL_DECL boss_ysondreAI : public ScriptedAI
         }
 
         //Summon Druids
-        if ((int) (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() +0.5) == 25)
+        if ((int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 25)
         {
             if (SummonDruids3_Timer < diff)
             {
@@ -215,7 +215,7 @@ struct OREGON_DLL_DECL mob_dementeddruidsAI : public ScriptedAI
         //MoonFire_Timer
         if (MoonFire_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_MOONFIRE);
+            DoCast(me->getVictim(),SPELL_MOONFIRE);
             MoonFire_Timer = 5000;
         } else MoonFire_Timer -= diff;
 

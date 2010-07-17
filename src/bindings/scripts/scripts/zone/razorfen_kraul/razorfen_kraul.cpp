@@ -59,42 +59,42 @@ struct OREGON_DLL_DECL npc_willixAI : public npc_escortAI
         switch (i)
         {
         case 3:
-            m_creature->HandleEmoteCommand(EMOTE_STATE_POINT);
-            DoScriptText(SAY_POINT, m_creature, player);
+            me->HandleEmoteCommand(EMOTE_STATE_POINT);
+            DoScriptText(SAY_POINT, me, player);
             break;
         case 4:
-            m_creature->SummonCreature(ENTRY_BOAR, 2137.66, 1843.98, 48.08, 1.54, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+            me->SummonCreature(ENTRY_BOAR, 2137.66, 1843.98, 48.08, 1.54, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
             break;
         case 8:
-            DoScriptText(SAY_BLUELEAF, m_creature, player);
+            DoScriptText(SAY_BLUELEAF, me, player);
             break;
         case 9:
-            DoScriptText(SAY_DANGER, m_creature, player);
+            DoScriptText(SAY_DANGER, me, player);
             break;
         case 13:
-            DoScriptText(SAY_BAD, m_creature, player);
+            DoScriptText(SAY_BAD, me, player);
             break;
         case 14:
-            m_creature->SummonCreature(ENTRY_BOAR, 2078.91, 1704.54, 56.77, 1.54, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+            me->SummonCreature(ENTRY_BOAR, 2078.91, 1704.54, 56.77, 1.54, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
             break;
         case 25:
-            DoScriptText(SAY_THINK, m_creature, player);
+            DoScriptText(SAY_THINK, me, player);
             break;
         case 31:
-            DoScriptText(SAY_SOON, m_creature, player);
+            DoScriptText(SAY_SOON, me, player);
             break;
         case 42:
-            DoScriptText(SAY_FINALY, m_creature, player);
+            DoScriptText(SAY_FINALY, me, player);
             break;
         case 43:
-            m_creature->SummonCreature(ENTRY_BOAR, 1956.43, 1596.97, 81.75, 1.54,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+            me->SummonCreature(ENTRY_BOAR, 1956.43, 1596.97, 81.75, 1.54,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
             break;
         case 45:
-            DoScriptText(SAY_WIN, m_creature, player);
-            player->GroupEventHappens(QUEST_WILLIX_THE_IMPORTER,m_creature);
+            DoScriptText(SAY_WIN, me, player);
+            player->GroupEventHappens(QUEST_WILLIX_THE_IMPORTER,me);
             break;
         case 46:
-            DoScriptText(SAY_END, m_creature, player);
+            DoScriptText(SAY_END, me, player);
             break;
         }
     }
@@ -103,12 +103,12 @@ struct OREGON_DLL_DECL npc_willixAI : public npc_escortAI
 
     void EnterCombat(Unit* who)
     {
-        DoScriptText(SAY_AGGRO1, m_creature, NULL);
+        DoScriptText(SAY_AGGRO1, me, NULL);
     }
 
     void JustSummoned(Creature* summoned)
     {
-        summoned->AI()->AttackStart(m_creature);
+        summoned->AI()->AttackStart(me);
     }
 
     void JustDied(Unit* killer)
@@ -156,7 +156,7 @@ struct OREGON_DLL_DECL npc_deaths_head_ward_keeperAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!m_creature->isAlive())
+        if (!me->isAlive())
             return;
 
         if (pInstance)
@@ -164,9 +164,9 @@ struct OREGON_DLL_DECL npc_deaths_head_ward_keeperAI : public ScriptedAI
 
         if (QuillboarChanneling_Timer < diff)
         {
-            if (m_creature->IsNonMeleeSpellCasted(false))
-                m_creature->InterruptNonMeleeSpells(true);
-            DoCast(m_creature, SPELL_QUILLBOAR_CHANNELING);
+            if (me->IsNonMeleeSpellCasted(false))
+                me->InterruptNonMeleeSpells(true);
+            DoCast(me, SPELL_QUILLBOAR_CHANNELING);
             QuillboarChanneling_Timer = 1100;
         } else QuillboarChanneling_Timer -= diff;
 

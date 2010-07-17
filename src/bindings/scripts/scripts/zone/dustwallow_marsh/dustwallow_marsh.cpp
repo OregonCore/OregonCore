@@ -57,8 +57,8 @@ struct OREGON_DLL_DECL mobs_risen_husk_spiritAI : public ScriptedAI
     void DamageTaken(Unit *done_by, uint32 &damage)
     {
         if (done_by->GetTypeId() == TYPEID_PLAYER)
-            if (damage >= m_creature->GetHealth() && ((Player*)done_by)->GetQuestStatus(11180) == QUEST_STATUS_INCOMPLETE)
-                m_creature->CastSpell(done_by,SPELL_SUMMON_RESTLESS_APPARITION,false);
+            if (damage >= me->GetHealth() && ((Player*)done_by)->GetQuestStatus(11180) == QUEST_STATUS_INCOMPLETE)
+                me->CastSpell(done_by,SPELL_SUMMON_RESTLESS_APPARITION,false);
     }
 
     void UpdateAI(const uint32 diff)
@@ -68,15 +68,15 @@ struct OREGON_DLL_DECL mobs_risen_husk_spiritAI : public ScriptedAI
 
         if (ConsumeFlesh_Timer < diff)
         {
-            if (m_creature->GetEntry() == 23555)
-                DoCast(m_creature->getVictim(),SPELL_CONSUME_FLESH);
+            if (me->GetEntry() == 23555)
+                DoCast(me->getVictim(),SPELL_CONSUME_FLESH);
             ConsumeFlesh_Timer = 15000;
         } else ConsumeFlesh_Timer -= diff;
 
         if (IntangiblePresence_Timer < diff)
         {
-            if (m_creature->GetEntry() == 23554)
-                DoCast(m_creature->getVictim(),SPELL_INTANGIBLE_PRESENCE);
+            if (me->GetEntry() == 23554)
+                DoCast(me->getVictim(),SPELL_INTANGIBLE_PRESENCE);
             IntangiblePresence_Timer = 20000;
         } else IntangiblePresence_Timer -= diff;
 
@@ -112,7 +112,7 @@ struct OREGON_DLL_DECL npc_deserter_agitatorAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->setFaction(894);
+        me->setFaction(894);
     }
 
     void EnterCombat(Unit* who) {}

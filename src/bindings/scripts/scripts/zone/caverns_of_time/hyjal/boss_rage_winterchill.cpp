@@ -62,7 +62,7 @@ struct OREGON_DLL_DECL boss_rage_winterchillAI : public hyjal_trashAI
     {
         if (pInstance && IsEvent)
             pInstance->SetData(DATA_RAGEWINTERCHILLEVENT, IN_PROGRESS);
-        DoPlaySoundToSet(m_creature, SOUND_ONAGGRO);
+        DoPlaySoundToSet(me, SOUND_ONAGGRO);
         DoYell(SAY_ONAGGRO, LANG_UNIVERSAL, NULL);
     }
 
@@ -71,11 +71,11 @@ struct OREGON_DLL_DECL boss_rage_winterchillAI : public hyjal_trashAI
         switch(rand()%2)
         {
             case 0:
-                DoPlaySoundToSet(m_creature, SOUND_ONSLAY1);
+                DoPlaySoundToSet(me, SOUND_ONSLAY1);
                 DoYell(SAY_ONSLAY1, LANG_UNIVERSAL, NULL);
                 break;
             case 1:
-                DoPlaySoundToSet(m_creature, SOUND_ONSLAY2);
+                DoPlaySoundToSet(me, SOUND_ONSLAY2);
                 DoYell(SAY_ONSLAY2, LANG_UNIVERSAL, NULL);
                 break;
         }
@@ -86,9 +86,9 @@ struct OREGON_DLL_DECL boss_rage_winterchillAI : public hyjal_trashAI
         pos = i;
         if (i == 7 && pInstance)
         {
-            Unit *pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_JAINAPROUDMOORE));
+            Unit *pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
             if (pTarget && pTarget->isAlive())
-                m_creature->AddThreat(pTarget,0.0);
+                me->AddThreat(pTarget,0.0);
         }
     }
 
@@ -97,7 +97,7 @@ struct OREGON_DLL_DECL boss_rage_winterchillAI : public hyjal_trashAI
         hyjal_trashAI::JustDied(victim);
         if (pInstance && IsEvent)
             pInstance->SetData(DATA_RAGEWINTERCHILLEVENT, DONE);
-        DoPlaySoundToSet(m_creature, SOUND_ONDEATH);
+        DoPlaySoundToSet(me, SOUND_ONDEATH);
         DoYell(SAY_ONDEATH, LANG_UNIVERSAL, NULL);
     }
 
@@ -132,37 +132,37 @@ struct OREGON_DLL_DECL boss_rage_winterchillAI : public hyjal_trashAI
 
         if (FrostArmorTimer < diff)
         {
-            DoCast(m_creature, SPELL_FROST_ARMOR);
+            DoCast(me, SPELL_FROST_ARMOR);
             FrostArmorTimer = 40000+rand()%20000;
         } else FrostArmorTimer -= diff;
         if (DecayTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_DEATH_AND_DECAY);
+            DoCast(me->getVictim(), SPELL_DEATH_AND_DECAY);
             DecayTimer = 60000+rand()%20000;
             switch(rand()%2)
             {
                 case 0:
-                    DoPlaySoundToSet(m_creature, SOUND_DECAY1);
+                    DoPlaySoundToSet(me, SOUND_DECAY1);
                     DoYell(SAY_DECAY1, LANG_UNIVERSAL, NULL);
                     break;
                 case 1:
-                    DoPlaySoundToSet(m_creature, SOUND_DECAY2);
+                    DoPlaySoundToSet(me, SOUND_DECAY2);
                     DoYell(SAY_DECAY2, LANG_UNIVERSAL, NULL);
                     break;
             }
         } else DecayTimer -= diff;
         if (NovaTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_FROST_NOVA);
+            DoCast(me->getVictim(), SPELL_FROST_NOVA);
             NovaTimer = 30000+rand()%15000;
             switch(rand()%2)
             {
                 case 0:
-                    DoPlaySoundToSet(m_creature, SOUND_NOVA1);
+                    DoPlaySoundToSet(me, SOUND_NOVA1);
                     DoYell(SAY_NOVA1, LANG_UNIVERSAL, NULL);
                     break;
                 case 1:
-                    DoPlaySoundToSet(m_creature, SOUND_NOVA2);
+                    DoPlaySoundToSet(me, SOUND_NOVA2);
                     DoYell(SAY_NOVA2, LANG_UNIVERSAL, NULL);
                     break;
             }

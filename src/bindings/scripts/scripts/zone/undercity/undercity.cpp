@@ -69,9 +69,9 @@ struct OREGON_DLL_DECL npc_lady_sylvanas_windrunnerAI : public ScriptedAI
 
     void Reset()
     {
-        myX = m_creature->GetPositionX();
-        myY = m_creature->GetPositionY();
-        myZ = m_creature->GetPositionZ();
+        myX = me->GetPositionX();
+        myY = me->GetPositionY();
+        myZ = me->GetPositionZ();
 
         LamentEvent_Timer = 5000;
         LamentEvent = false;
@@ -106,14 +106,14 @@ struct OREGON_DLL_DECL npc_lady_sylvanas_windrunnerAI : public ScriptedAI
                 float raY = myY;
                 float raZ = myZ;
 
-                m_creature->GetRandomPoint(myX, myY, myZ, 20.0, raX, raY, raZ);
-                m_creature->SummonCreature(ENTRY_HIGHBORNE_BUNNY, raX, raY, myZ, 0, TEMPSUMMON_TIMED_DESPAWN, 3000);
+                me->GetRandomPoint(myX, myY, myZ, 20.0, raX, raY, raZ);
+                me->SummonCreature(ENTRY_HIGHBORNE_BUNNY, raX, raY, myZ, 0, TEMPSUMMON_TIMED_DESPAWN, 3000);
 
                 LamentEvent_Timer = 2000;
-                if (!m_creature->HasAura(SPELL_SYLVANAS_CAST, 0))
+                if (!me->HasAura(SPELL_SYLVANAS_CAST, 0))
                 {
-                    DoScriptText(SAY_LAMENT_END, m_creature);
-                    DoScriptText(EMOTE_LAMENT_END, m_creature);
+                    DoScriptText(SAY_LAMENT_END, me);
+                    DoScriptText(EMOTE_LAMENT_END, me);
                     LamentEvent = false;
                 }
             } else LamentEvent_Timer -= diff;
@@ -174,9 +174,9 @@ struct OREGON_DLL_DECL npc_highborne_lamenterAI : public ScriptedAI
         {
             if (EventMove_Timer < diff)
             {
-                m_creature->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
-                m_creature->SendMonsterMoveWithSpeed(m_creature->GetPositionX(),m_creature->GetPositionY(),HIGHBORNE_LOC_Y_NEW,5000);
-                m_creature->GetMap()->CreatureRelocation(m_creature,m_creature->GetPositionX(),m_creature->GetPositionY(),HIGHBORNE_LOC_Y_NEW,m_creature->GetOrientation());
+                me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
+                me->SendMonsterMoveWithSpeed(me->GetPositionX(),me->GetPositionY(),HIGHBORNE_LOC_Y_NEW,5000);
+                me->GetMap()->CreatureRelocation(me,me->GetPositionX(),me->GetPositionY(),HIGHBORNE_LOC_Y_NEW,me->GetOrientation());
                 EventMove = false;
             } else EventMove_Timer -= diff;
         }
@@ -184,7 +184,7 @@ struct OREGON_DLL_DECL npc_highborne_lamenterAI : public ScriptedAI
         {
             if (EventCast_Timer < diff)
             {
-                DoCast(m_creature,SPELL_HIGHBORNE_AURA);
+                DoCast(me,SPELL_HIGHBORNE_AURA);
                 EventCast = false;
             } else EventCast_Timer -= diff;
         }

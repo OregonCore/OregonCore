@@ -46,7 +46,7 @@ struct OREGON_DLL_DECL boss_thespiaAI : public ScriptedAI
     boss_thespiaAI(Creature *c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     ScriptedInstance *pInstance;
@@ -62,13 +62,13 @@ struct OREGON_DLL_DECL boss_thespiaAI : public ScriptedAI
         LungBurst_Timer = 7000;
         EnvelopingWinds_Timer = 9000;
 
-        if (pInstance && m_creature->isAlive())
+        if (pInstance && me->isAlive())
             pInstance->SetData(TYPE_HYDROMANCER_THESPIA, NOT_STARTED);
     }
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DEAD, m_creature);
+        DoScriptText(SAY_DEAD, me);
 
         if (pInstance)
             pInstance->SetData(TYPE_HYDROMANCER_THESPIA, DONE);
@@ -78,8 +78,8 @@ struct OREGON_DLL_DECL boss_thespiaAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-            case 0: DoScriptText(SAY_SLAY_1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY_2, m_creature); break;
+            case 0: DoScriptText(SAY_SLAY_1, me); break;
+            case 1: DoScriptText(SAY_SLAY_2, me); break;
         }
     }
 
@@ -87,9 +87,9 @@ struct OREGON_DLL_DECL boss_thespiaAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, m_creature); break;
-            case 1: DoScriptText(SAY_AGGRO_2, m_creature); break;
-            case 2: DoScriptText(SAY_AGGRO_3, m_creature); break;
+            case 0: DoScriptText(SAY_AGGRO_1, me); break;
+            case 1: DoScriptText(SAY_AGGRO_2, me); break;
+            case 2: DoScriptText(SAY_AGGRO_3, me); break;
         }
 
         if (pInstance)
@@ -149,7 +149,7 @@ struct OREGON_DLL_DECL mob_coilfang_waterelementalAI : public ScriptedAI
 
     void Reset()
     {
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
         WaterBoltVolley_Timer = 3000+rand()%3000;
     }
 
@@ -162,7 +162,7 @@ struct OREGON_DLL_DECL mob_coilfang_waterelementalAI : public ScriptedAI
 
         if (WaterBoltVolley_Timer < diff)
         {
-            DoCast(m_creature, HeroicMode ? H_SPELL_WATER_BOLT_VOLLEY : SPELL_WATER_BOLT_VOLLEY);
+            DoCast(me, HeroicMode ? H_SPELL_WATER_BOLT_VOLLEY : SPELL_WATER_BOLT_VOLLEY);
             WaterBoltVolley_Timer = 7000+rand()%5000;
         } else WaterBoltVolley_Timer -= diff;
 

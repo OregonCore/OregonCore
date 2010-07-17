@@ -69,19 +69,19 @@ struct OREGON_DLL_DECL boss_curatorAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-        case 0: DoScriptText(SAY_KILL1, m_creature); break;
-        case 1: DoScriptText(SAY_KILL2, m_creature); break;
+        case 0: DoScriptText(SAY_KILL1, me); break;
+        case 1: DoScriptText(SAY_KILL2, me); break;
         }
     }
 
     void JustDied(Unit *victim)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
     }
 
     void EnterCombat(Unit *who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -89,14 +89,14 @@ struct OREGON_DLL_DECL boss_curatorAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Evocating && !m_creature->HasAura(SPELL_EVOCATION, 0))
+        if (Evocating && !me->HasAura(SPELL_EVOCATION, 0))
             Evocating = false;
 
-        if (m_creature->GetPower(POWER_MANA) <= 1000 && !Evocating)
+        if (me->GetPower(POWER_MANA) <= 1000 && !Evocating)
         {
-            DoScriptText(SAY_EVOCATE, m_creature);
-            m_creature->InterruptNonMeleeSpells(false);
-            DoCast(m_creature, SPELL_EVOCATION);
+            DoScriptText(SAY_EVOCATE, me);
+            me->InterruptNonMeleeSpells(false);
+            DoCast(me, SPELL_EVOCATION);
             Evocating = true;
         }
 
@@ -116,12 +116,12 @@ struct OREGON_DLL_DECL boss_curatorAI : public ScriptedAI
                 }
 
                 //Reduce Mana by 10%
-                int32 mana = (int32)(0.1f*(m_creature->GetMaxPower(POWER_MANA)));
-                m_creature->ModifyPower(POWER_MANA, -mana);
+                int32 mana = (int32)(0.1f*(me->GetMaxPower(POWER_MANA)));
+                me->ModifyPower(POWER_MANA, -mana);
                 switch(rand()%4)
                 {
-                    case 0: DoScriptText(SAY_SUMMON1, m_creature);break;
-                    case 1: DoScriptText(SAY_SUMMON2, m_creature);break;
+                    case 0: DoScriptText(SAY_SUMMON1, me);break;
+                    case 1: DoScriptText(SAY_SUMMON2, me);break;
                 }
                 AddTimer = 10000;
             } else AddTimer -= diff;
@@ -136,18 +136,18 @@ struct OREGON_DLL_DECL boss_curatorAI : public ScriptedAI
                 HatefulBoltTimer = 15000;
             } else HatefulBoltTimer -= diff;
 
-            if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 15)
+            if (me->GetHealth()*100 / me->GetMaxHealth() < 15)
             {
                 Enraged = true;
-                DoCast(m_creature, SPELL_ENRAGE);
-                DoScriptText(SAY_ENRAGE, m_creature);
+                DoCast(me, SPELL_ENRAGE);
+                DoScriptText(SAY_ENRAGE, me);
             }
         }
 
         if (BerserkTimer < diff)
         {
-            DoCast(m_creature, SPELL_BERSERK);
-            DoScriptText(SAY_ENRAGE, m_creature);
+            DoCast(me, SPELL_BERSERK);
+            DoScriptText(SAY_ENRAGE, me);
         } else BerserkTimer -= diff;
 
         DoMeleeAttackIfReady();

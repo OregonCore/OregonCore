@@ -74,7 +74,7 @@ struct OREGON_DLL_DECL npc_forest_frogAI : public ScriptedAI
             if (!pInstance->GetData(TYPE_RAND_VENDOR_2))
                 if (rand()%10 == 1) cEntry = 24409;      //Kyren
 
-            if (cEntry) m_creature->UpdateEntry(cEntry);
+            if (cEntry) me->UpdateEntry(cEntry);
 
             if (cEntry == 24408) pInstance->SetData(TYPE_RAND_VENDOR_1,DONE);
             if (cEntry == 24409) pInstance->SetData(TYPE_RAND_VENDOR_2,DONE);
@@ -83,7 +83,7 @@ struct OREGON_DLL_DECL npc_forest_frogAI : public ScriptedAI
 
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {
-        if (spell->Id == SPELL_REMOVE_AMANI_CURSE && caster->GetTypeId() == TYPEID_PLAYER && m_creature->GetEntry() == ENTRY_FOREST_FROG)
+        if (spell->Id == SPELL_REMOVE_AMANI_CURSE && caster->GetTypeId() == TYPEID_PLAYER && me->GetEntry() == ENTRY_FOREST_FROG)
         {
             //increase or decrease chance of mojo?
             if (rand()%99 == 50) DoCast(caster,SPELL_PUSH_MOJO,true);
@@ -115,11 +115,11 @@ struct OREGON_DLL_DECL npc_zulaman_hostageAI : public ScriptedAI
     void JustDied(Unit *)
     {
         Player* player = Unit::GetPlayer(PlayerGUID);
-        if (player) player->SendLoot(m_creature->GetGUID(), LOOT_CORPSE);
+        if (player) player->SendLoot(me->GetGUID(), LOOT_CORPSE);
     }
     void UpdateAI(const uint32 diff)
     {
-        if (IsLoot) m_creature->CastSpell(m_creature, 7, false);
+        if (IsLoot) me->CastSpell(me, 7, false);
     }
 };
 

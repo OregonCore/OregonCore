@@ -84,8 +84,8 @@ struct OREGON_DLL_DECL boss_nefarianAI : public ScriptedAI
 
         DespawnTimer = 5000;
 
-        m_creature->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-        m_creature->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
+        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
+        me->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
     }
 
     void KilledUnit(Unit* Victim)
@@ -93,21 +93,21 @@ struct OREGON_DLL_DECL boss_nefarianAI : public ScriptedAI
         if (rand()%5)
             return;
 
-        DoScriptText(SAY_SLAY, m_creature, Victim);
+        DoScriptText(SAY_SLAY, me, Victim);
     }
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
     }
 
     void EnterCombat(Unit *who)
     {
         switch (rand()%3)
         {
-            case 0: DoScriptText(SAY_XHEALTH, m_creature); break;
-            case 1: DoScriptText(SAY_AGGRO, m_creature); break;
-            case 2: DoScriptText(SAY_SHADOWFLAME, m_creature); break;
+            case 0: DoScriptText(SAY_XHEALTH, me); break;
+            case 1: DoScriptText(SAY_AGGRO, me); break;
+            case 2: DoScriptText(SAY_SHADOWFLAME, me); break;
         }
 
         DoCast(who,SPELL_SHADOWFLAME_INITIAL);
@@ -120,9 +120,9 @@ struct OREGON_DLL_DECL boss_nefarianAI : public ScriptedAI
         {
             if (!UpdateVictim())
             {
-                m_creature->SetHealth(0);
-                m_creature->setDeathState(JUST_DIED);
-                m_creature->RemoveCorpse();
+                me->SetHealth(0);
+                me->setDeathState(JUST_DIED);
+                me->RemoveCorpse();
             }
             DespawnTimer = 5000;
         } else DespawnTimer -= diff;
@@ -133,28 +133,28 @@ struct OREGON_DLL_DECL boss_nefarianAI : public ScriptedAI
         //ShadowFlame_Timer
         if (ShadowFlame_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_SHADOWFLAME);
+            DoCast(me->getVictim(),SPELL_SHADOWFLAME);
             ShadowFlame_Timer = 12000;
         } else ShadowFlame_Timer -= diff;
 
         //BellowingRoar_Timer
         if (BellowingRoar_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_BELLOWINGROAR);
+            DoCast(me->getVictim(),SPELL_BELLOWINGROAR);
             BellowingRoar_Timer = 30000;
         } else BellowingRoar_Timer -= diff;
 
         //VeilOfShadow_Timer
         if (VeilOfShadow_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_VEILOFSHADOW);
+            DoCast(me->getVictim(),SPELL_VEILOFSHADOW);
             VeilOfShadow_Timer = 15000;
         } else VeilOfShadow_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_CLEAVE);
+            DoCast(me->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 7000;
         } else Cleave_Timer -= diff;
 
@@ -162,7 +162,7 @@ struct OREGON_DLL_DECL boss_nefarianAI : public ScriptedAI
         if (TailLash_Timer < diff)
         {
             //Cast NYI since we need a better check for behind target
-            //DoCast(m_creature->getVictim(),SPELL_TAILLASH);
+            //DoCast(me->getVictim(),SPELL_TAILLASH);
 
             TailLash_Timer = 10000;
         } else TailLash_Timer -= diff;
@@ -177,40 +177,40 @@ struct OREGON_DLL_DECL boss_nefarianAI : public ScriptedAI
             switch (rand()%9)
             {
                 case 0:
-                    DoScriptText(SAY_MAGE, m_creature);
-                    DoCast(m_creature,SPELL_MAGE);
+                    DoScriptText(SAY_MAGE, me);
+                    DoCast(me,SPELL_MAGE);
                     break;
                 case 1:
-                    DoScriptText(SAY_WARRIOR, m_creature);
-                    DoCast(m_creature,SPELL_WARRIOR);
+                    DoScriptText(SAY_WARRIOR, me);
+                    DoCast(me,SPELL_WARRIOR);
                     break;
                 case 2:
-                    DoScriptText(SAY_DRUID, m_creature);
-                    DoCast(m_creature,SPELL_DRUID);
+                    DoScriptText(SAY_DRUID, me);
+                    DoCast(me,SPELL_DRUID);
                     break;
                 case 3:
-                    DoScriptText(SAY_PRIEST, m_creature);
-                    DoCast(m_creature,SPELL_PRIEST);
+                    DoScriptText(SAY_PRIEST, me);
+                    DoCast(me,SPELL_PRIEST);
                     break;
                 case 4:
-                    DoScriptText(SAY_PALADIN, m_creature);
-                    DoCast(m_creature,SPELL_PALADIN);
+                    DoScriptText(SAY_PALADIN, me);
+                    DoCast(me,SPELL_PALADIN);
                     break;
                 case 5:
-                    DoScriptText(SAY_SHAMAN, m_creature);
-                    DoCast(m_creature,SPELL_SHAMAN);
+                    DoScriptText(SAY_SHAMAN, me);
+                    DoCast(me,SPELL_SHAMAN);
                     break;
                 case 6:
-                    DoScriptText(SAY_WARLOCK, m_creature);
-                    DoCast(m_creature,SPELL_WARLOCK);
+                    DoScriptText(SAY_WARLOCK, me);
+                    DoCast(me,SPELL_WARLOCK);
                     break;
                 case 7:
-                    DoScriptText(SAY_HUNTER, m_creature);
-                    DoCast(m_creature,SPELL_HUNTER);
+                    DoScriptText(SAY_HUNTER, me);
+                    DoCast(me,SPELL_HUNTER);
                     break;
                 case 8:
-                    DoScriptText(SAY_ROGUE, m_creature);
-                    DoCast(m_creature,SPELL_ROGUE);
+                    DoScriptText(SAY_ROGUE, me);
+                    DoCast(me,SPELL_ROGUE);
                     break;
             }
 
@@ -218,10 +218,10 @@ struct OREGON_DLL_DECL boss_nefarianAI : public ScriptedAI
         } else ClassCall_Timer -= diff;
 
         //Phase3 begins when we are below X health
-        if (!Phase3 && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 20)
+        if (!Phase3 && (me->GetHealth()*100 / me->GetMaxHealth()) < 20)
         {
             Phase3 = true;
-            DoScriptText(SAY_RAISE_SKELETONS, m_creature);
+            DoScriptText(SAY_RAISE_SKELETONS, me);
         }
 
         DoMeleeAttackIfReady();

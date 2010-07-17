@@ -66,19 +66,19 @@ struct OREGON_DLL_DECL mob_jadespine_basiliskAI : public ScriptedAI
         if (Cslumber_Timer < diff)
         {
             //Cast
-            // DoCast(m_creature->getVictim(),SPELL_CSLUMBER);
-            m_creature->CastSpell(m_creature->getVictim(),SPELL_CSLUMBER, true);
+            // DoCast(me->getVictim(),SPELL_CSLUMBER);
+            me->CastSpell(me->getVictim(),SPELL_CSLUMBER, true);
 
             //Stop attacking target thast asleep and pick new target
             Cslumber_Timer = 28000;
 
             Unit *pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
 
-            if (!pTarget || pTarget == m_creature->getVictim())
+            if (!pTarget || pTarget == me->getVictim())
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
             if (pTarget)
-                m_creature->TauntApply(pTarget);
+                me->TauntApply(pTarget);
 
         } else Cslumber_Timer -= diff;
 

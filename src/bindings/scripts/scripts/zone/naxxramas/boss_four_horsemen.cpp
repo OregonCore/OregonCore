@@ -64,17 +64,17 @@
 
         void EnterCombat(Unit *who)
         {
-            DoScriptText(SAY_BLAU_AGGRO, m_creature);
+            DoScriptText(SAY_BLAU_AGGRO, me);
         }
 
         void KilledUnit(Unit* Victim)
         {
-            DoScriptText(SAY_BLAU_SLAY, m_creature);
+            DoScriptText(SAY_BLAU_SLAY, me);
         }
 
         void JustDied(Unit* Killer)
         {
-            DoScriptText(SAY_BLAU_DEATH, m_creature);
+            DoScriptText(SAY_BLAU_DEATH, me);
         }
 
         void UpdateAI(const uint32 diff)
@@ -85,24 +85,24 @@
             // Mark of Blaumeux
             if (Mark_Timer < diff)
             {
-                DoCast(m_creature->getVictim(),SPELL_MARK_OF_BLAUMEUX);
+                DoCast(me->getVictim(),SPELL_MARK_OF_BLAUMEUX);
                 Mark_Timer = 12000;
             } else Mark_Timer -= diff;
 
             // Shield Wall - All 4 horsemen will shield wall at 50% hp and 20% hp for 20 seconds
-            if (ShieldWall1 && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 50)
+            if (ShieldWall1 && (me->GetHealth()*100 / me->GetMaxHealth()) < 50)
             {
                 if (ShieldWall1)
                 {
-                    DoCast(m_creature,SPELL_SHIELDWALL);
+                    DoCast(me,SPELL_SHIELDWALL);
                     ShieldWall1 = false;
                 }
            }
-           if (ShieldWall2 && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 20)
+           if (ShieldWall2 && (me->GetHealth()*100 / me->GetMaxHealth()) < 20)
            {
                if (ShieldWall2)
                {
-                   DoCast(m_creature,SPELL_SHIELDWALL);
+                   DoCast(me,SPELL_SHIELDWALL);
                    ShieldWall2 = false;
                }
            }
@@ -110,7 +110,7 @@
            // Void Zone
            if (VoidZone_Timer < diff)
            {
-               DoCast(m_creature->getVictim(),SPELL_VOIDZONE);
+               DoCast(me->getVictim(),SPELL_VOIDZONE);
                VoidZone_Timer = 12000;
            } else VoidZone_Timer -= diff;
 
@@ -153,9 +153,9 @@
        {
            switch(rand()%3)
            {
-               case 0: DoScriptText(SAY_RIVE_AGGRO1, m_creature); break;
-               case 1: DoScriptText(SAY_RIVE_AGGRO2, m_creature); break;
-               case 2: DoScriptText(SAY_RIVE_AGGRO3, m_creature); break;
+               case 0: DoScriptText(SAY_RIVE_AGGRO1, me); break;
+               case 1: DoScriptText(SAY_RIVE_AGGRO2, me); break;
+               case 2: DoScriptText(SAY_RIVE_AGGRO3, me); break;
            }
        }
 
@@ -163,14 +163,14 @@
        {
            switch(rand()%2)
            {
-               case 0: DoScriptText(SAY_RIVE_SLAY1, m_creature); break;
-               case 1: DoScriptText(SAY_RIVE_SLAY2, m_creature); break;
+               case 0: DoScriptText(SAY_RIVE_SLAY1, me); break;
+               case 1: DoScriptText(SAY_RIVE_SLAY2, me); break;
            }
        }
 
        void JustDied(Unit* Killer)
        {
-           DoScriptText(SAY_RIVE_DEATH, m_creature);
+           DoScriptText(SAY_RIVE_DEATH, me);
        }
 
        void UpdateAI(const uint32 diff)
@@ -197,7 +197,7 @@
    #define SAY_KORT_DEATH              -1533057
 
    #define SPELL_MARK_OF_KORTHAZZ      28832
-   #define SPELL_METEOR                26558                   // m_creature->getVictim() auto-area spell but with a core problem
+   #define SPELL_METEOR                26558                   // me->getVictim() auto-area spell but with a core problem
 
    #define C_SPIRIT_OF_KORTHAZZ        16778
 
@@ -220,17 +220,17 @@
 
        void EnterCombat(Unit *who)
        {
-           DoScriptText(SAY_KORT_AGGRO, m_creature);
+           DoScriptText(SAY_KORT_AGGRO, me);
        }
 
        void KilledUnit(Unit* Victim)
        {
-           DoScriptText(SAY_KORT_SLAY, m_creature);
+           DoScriptText(SAY_KORT_SLAY, me);
        }
 
        void JustDied(Unit* Killer)
        {
-           DoScriptText(SAY_KORT_DEATH, m_creature);
+           DoScriptText(SAY_KORT_DEATH, me);
        }
 
        void UpdateAI(const uint32 diff)
@@ -241,24 +241,24 @@
            // Mark of Korthazz
            if (Mark_Timer < diff)
            {
-               DoCast(m_creature->getVictim(),SPELL_MARK_OF_KORTHAZZ);
+               DoCast(me->getVictim(),SPELL_MARK_OF_KORTHAZZ);
                Mark_Timer = 12000;
            } else Mark_Timer -= diff;
 
            // Shield Wall - All 4 horsemen will shield wall at 50% hp and 20% hp for 20 seconds
-           if (ShieldWall1 && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 50)
+           if (ShieldWall1 && (me->GetHealth()*100 / me->GetMaxHealth()) < 50)
            {
                if (ShieldWall1)
                {
-                   DoCast(m_creature,SPELL_SHIELDWALL);
+                   DoCast(me,SPELL_SHIELDWALL);
                    ShieldWall1 = false;
                }
            }
-           if (ShieldWall2 && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 20)
+           if (ShieldWall2 && (me->GetHealth()*100 / me->GetMaxHealth()) < 20)
            {
                if (ShieldWall2)
                {
-                   DoCast(m_creature,SPELL_SHIELDWALL);
+                   DoCast(me,SPELL_SHIELDWALL);
                   ShieldWall2 = false;
                }
            }
@@ -266,7 +266,7 @@
            // Meteor
            if (Meteor_Timer < diff)
            {
-               DoCast(m_creature->getVictim(),SPELL_METEOR);
+               DoCast(me->getVictim(),SPELL_METEOR);
                Meteor_Timer = 20000;                           // wrong
           } else Meteor_Timer -= diff;
 
@@ -315,17 +315,17 @@
 
        void EnterCombat(Unit *who)
        {
-           DoScriptText(SAY_ZELI_AGGRO, m_creature);
+           DoScriptText(SAY_ZELI_AGGRO, me);
        }
 
        void KilledUnit(Unit* Victim)
        {
-           DoScriptText(SAY_ZELI_SLAY, m_creature);
+           DoScriptText(SAY_ZELI_SLAY, me);
        }
 
        void JustDied(Unit* Killer)
        {
-           DoScriptText(SAY_ZELI_DEATH, m_creature);
+           DoScriptText(SAY_ZELI_DEATH, me);
        }
 
        void UpdateAI(const uint32 diff)
@@ -337,24 +337,24 @@
            // Mark of Zeliek
            if (Mark_Timer < diff)
            {
-               DoCast(m_creature->getVictim(),SPELL_MARK_OF_ZELIEK);
+               DoCast(me->getVictim(),SPELL_MARK_OF_ZELIEK);
                Mark_Timer = 12000;
            } else Mark_Timer -= diff;
 
            // Shield Wall - All 4 horsemen will shield wall at 50% hp and 20% hp for 20 seconds
-           if (ShieldWall1 && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 50)
+           if (ShieldWall1 && (me->GetHealth()*100 / me->GetMaxHealth()) < 50)
            {
                if (ShieldWall1)
                {
-                   DoCast(m_creature,SPELL_SHIELDWALL);
+                   DoCast(me,SPELL_SHIELDWALL);
                    ShieldWall1 = false;
                }
          }
-           if (ShieldWall2 && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 20)
+           if (ShieldWall2 && (me->GetHealth()*100 / me->GetMaxHealth()) < 20)
            {
                if (ShieldWall2)
                {
-                   DoCast(m_creature,SPELL_SHIELDWALL);
+                   DoCast(me,SPELL_SHIELDWALL);
                    ShieldWall2 = false;
                }
            }
@@ -362,7 +362,7 @@
            // Holy Wrath
            if (HolyWrath_Timer < diff)
            {
-               DoCast(m_creature->getVictim(),SPELL_HOLY_WRATH);
+               DoCast(me->getVictim(),SPELL_HOLY_WRATH);
                HolyWrath_Timer = 12000;
            } else HolyWrath_Timer -= diff;
 

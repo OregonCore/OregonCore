@@ -71,7 +71,7 @@ struct OREGON_DLL_DECL boss_arcanist_doanAI : public ScriptedAI
     void EnterCombat(Unit *who)
     {
         DoYell(SAY_AGGRO,LANG_UNIVERSAL,NULL);
-        DoPlaySoundToSet(m_creature,SOUND_AGGRO);
+        DoPlaySoundToSet(me,SOUND_AGGRO);
     }
 
     void UpdateAI(const uint32 diff)
@@ -80,7 +80,7 @@ struct OREGON_DLL_DECL boss_arcanist_doanAI : public ScriptedAI
             return;
 
         //If we are <50% hp cast Arcane Bubble and start casting SPECIAL FIRE AOE
-        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 50 && !m_creature->IsNonMeleeSpellCasted(false))
+        if (me->GetHealth()*100 / me->GetMaxHealth() <= 50 && !me->IsNonMeleeSpellCasted(false))
         {
             if (Polymorph_Timer < diff)
             {
@@ -94,19 +94,19 @@ struct OREGON_DLL_DECL boss_arcanist_doanAI : public ScriptedAI
             if (Yell_Timer < diff)
             {
                 DoYell(SAY_SPECIALAE,LANG_UNIVERSAL,NULL);
-                DoPlaySoundToSet(m_creature,SOUND_SPECIALAE);
+                DoPlaySoundToSet(me,SOUND_SPECIALAE);
                 Yell_Timer = 40000;
             } else Yell_Timer -= diff;
 
             if (ArcaneBubble_Timer < diff)
             {
-                DoCast(m_creature,SPELL_ARCANEBUBBLE);
+                DoCast(me,SPELL_ARCANEBUBBLE);
                 ArcaneBubble_Timer = 40000;
             } else ArcaneBubble_Timer -= diff;
 
             if (FullAOE_Timer < diff)
             {
-                DoCast(m_creature->getVictim(),SPELL_FIREAOE);
+                DoCast(me->getVictim(),SPELL_FIREAOE);
                 FullAOE_Timer = 40000;
             } else FullAOE_Timer -= diff;
         }
@@ -114,42 +114,42 @@ struct OREGON_DLL_DECL boss_arcanist_doanAI : public ScriptedAI
         //AoESilence_Timer
         if (AoESilence_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_AOESILENCE);
+            DoCast(me->getVictim(),SPELL_AOESILENCE);
             AoESilence_Timer = 30000;
         } else AoESilence_Timer -= diff;
 
         //ArcaneExplosion3_Timer
         if (ArcaneExplosion3_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_ARCANEEXPLOSION3);
+            DoCast(me->getVictim(),SPELL_ARCANEEXPLOSION3);
             ArcaneExplosion3_Timer = 8000;
         } else ArcaneExplosion3_Timer -= diff;
 
         //ArcaneExplosion4_Timer
         if (ArcaneExplosion4_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_ARCANEEXPLOSION4);
+            DoCast(me->getVictim(),SPELL_ARCANEEXPLOSION4);
             ArcaneExplosion4_Timer = 10000;
         } else ArcaneExplosion4_Timer -= diff;
 
         //Blink_Timer
         if (Blink_Timer < diff)
         {
-            DoCast(m_creature,SPELL_BLINK);
+            DoCast(me,SPELL_BLINK);
             Blink_Timer = 30000;
         } else Blink_Timer -= diff;
 
         //Fireball_Timer
         if (Fireball_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_FIREBALL);
+            DoCast(me->getVictim(),SPELL_FIREBALL);
             Fireball_Timer = 12000;
         } else Fireball_Timer -= diff;
 
         //ManaShiled4_Timer
         if (ManaShield4_Timer < diff)
         {
-            DoCast(m_creature,SPELL_MANASHIELD4);
+            DoCast(me,SPELL_MANASHIELD4);
             ManaShield4_Timer = 70000;
         } else ManaShield4_Timer -= diff;
 

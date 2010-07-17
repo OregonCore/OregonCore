@@ -323,8 +323,8 @@ public:
         uint32 rnd = rand()%2;
         switch(rnd)
         {
-            case 0: DoScriptText(CLINTAR_SPIRIT_SAY_UNDER_ATTACK_1, m_creature, who); break;
-            case 1: DoScriptText(CLINTAR_SPIRIT_SAY_UNDER_ATTACK_2, m_creature, who); break;
+            case 0: DoScriptText(CLINTAR_SPIRIT_SAY_UNDER_ATTACK_1, me, who); break;
+            case 1: DoScriptText(CLINTAR_SPIRIT_SAY_UNDER_ATTACK_2, me, who); break;
         }
     }
 
@@ -350,11 +350,11 @@ public:
 
         if (!PlayerGUID)
         {
-            m_creature->setDeathState(JUST_DIED);
+            me->setDeathState(JUST_DIED);
             return;
         }
 
-        if (!m_creature->isInCombat() && !Event_onWait)
+        if (!me->isInCombat() && !Event_onWait)
         {
             if (checkPlayer_Timer < diff)
             {
@@ -371,7 +371,7 @@ public:
             Player* pPlayer = Unit::GetPlayer(PlayerGUID);
             if (!pPlayer || (pPlayer && pPlayer->GetQuestStatus(10965) == QUEST_STATUS_NONE))
             {
-                m_creature->setDeathState(JUST_DIED);
+                me->setDeathState(JUST_DIED);
                 return;
             }
 
@@ -381,7 +381,7 @@ public:
                     switch(Step)
                     {
                         case 0:
-                            m_creature->Say(CLINTAR_SPIRIT_SAY_START,0,PlayerGUID);
+                            me->Say(CLINTAR_SPIRIT_SAY_START,0,PlayerGUID);
                             Event_Timer = 8000;
                             Step = 1;
                             break;
@@ -394,13 +394,13 @@ public:
                     switch(Step)
                     {
                         case 0:
-                            m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, 133);
+                            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 133);
                             Event_Timer = 5000;
                             Step = 1;
                             break;
                         case 1:
-                            m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
-                            DoScriptText(CLINTAR_SPIRIT_SAY_GET_ONE, m_creature, pPlayer);
+                            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
+                            DoScriptText(CLINTAR_SPIRIT_SAY_GET_ONE, me, pPlayer);
                             Event_onWait = false;
                             break;
                     }
@@ -409,12 +409,12 @@ public:
                     switch(Step)
                     {
                         case 0:
-                            m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, 133);
+                            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 133);
                             Event_Timer = 5000;
                             Step = 1;
                             break;
                         case 1:
-                            m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
+                            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
                             Event_onWait = false;
                             break;
                     }
@@ -423,7 +423,7 @@ public:
                     switch(Step)
                     {
                         case 0:
-                            DoScriptText(CLINTAR_SPIRIT_SAY_GET_TWO, m_creature, pPlayer);
+                            DoScriptText(CLINTAR_SPIRIT_SAY_GET_TWO, me, pPlayer);
                             Event_Timer = 15000;
                             Step = 1;
                             break;
@@ -437,11 +437,11 @@ public:
                     {
                         case 0:
                             {
-                            Creature *mob = m_creature->SummonCreature(ASPECT_RAVEN, ASPECT_RAVEN_SUMMON_X, ASPECT_RAVEN_SUMMON_Y, ASPECT_RAVEN_SUMMON_Z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 2000);
+                            Creature *mob = me->SummonCreature(ASPECT_RAVEN, ASPECT_RAVEN_SUMMON_X, ASPECT_RAVEN_SUMMON_Y, ASPECT_RAVEN_SUMMON_Z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 2000);
                             if (mob)
                             {
-                                mob->AddThreat(m_creature,10000.0f);
-                                mob->AI()->AttackStart(m_creature);
+                                mob->AddThreat(me,10000.0f);
+                                mob->AI()->AttackStart(me);
                             }
                             Event_Timer = 2000;
                             Step = 1;
@@ -456,12 +456,12 @@ public:
                     switch(Step)
                     {
                         case 0:
-                            m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, 133);
+                            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 133);
                             Event_Timer = 5000;
                             Step = 1;
                             break;
                         case 1:
-                            m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
+                            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
                             Event_onWait = false;
                             break;
                     }
@@ -470,7 +470,7 @@ public:
                     switch(Step)
                     {
                         case 0:
-                            DoScriptText(CLINTAR_SPIRIT_SAY_GET_THREE, m_creature, pPlayer);
+                            DoScriptText(CLINTAR_SPIRIT_SAY_GET_THREE, me, pPlayer);
                             Event_Timer = 4000;
                             Step = 1;
                             break;
@@ -483,22 +483,22 @@ public:
                     switch(Step)
                     {
                         case 0:
-                            m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, 2);
-                            DoScriptText(CLINTAR_SPIRIT_SAY_GET_FINAL, m_creature, pPlayer);
+                            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 2);
+                            DoScriptText(CLINTAR_SPIRIT_SAY_GET_FINAL, me, pPlayer);
                             pPlayer->CompleteQuest(10965);
                             Event_Timer = 1500;
                             Step = 1;
                             break;
                         case 1:
-                            m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
+                            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
                             Event_Timer = 3000;
                             Step = 2;
                             break;
                         case 2:
-                            pPlayer->TalkedToCreature(m_creature->GetEntry(), m_creature->GetGUID());
+                            pPlayer->TalkedToCreature(me->GetEntry(), me->GetGUID());
                             PlayerGUID = 0;
                             Reset();
-                            m_creature->setDeathState(JUST_DIED);
+                            me->setDeathState(JUST_DIED);
                             break;
                     }
                     break;

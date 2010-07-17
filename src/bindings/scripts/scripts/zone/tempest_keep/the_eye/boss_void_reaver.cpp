@@ -62,7 +62,7 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
 
         Enraged = false;
 
-        if (pInstance && m_creature->isAlive())
+        if (pInstance && me->isAlive())
             pInstance->SetData(DATA_VOIDREAVEREVENT, NOT_STARTED);
     }
 
@@ -70,15 +70,15 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-        case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-        case 1: DoScriptText(SAY_SLAY2, m_creature); break;
-        case 2: DoScriptText(SAY_SLAY3, m_creature); break;
+        case 0: DoScriptText(SAY_SLAY1, me); break;
+        case 1: DoScriptText(SAY_SLAY2, me); break;
+        case 2: DoScriptText(SAY_SLAY3, me); break;
         }
     }
 
     void JustDied(Unit *victim)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
             pInstance->SetData(DATA_VOIDREAVEREVENT, DONE);
@@ -86,7 +86,7 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
 
         if (pInstance)
             pInstance->SetData(DATA_VOIDREAVEREVENT, IN_PROGRESS);
@@ -100,12 +100,12 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
         // Pounding
         if (Pounding_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_POUNDING);
+            DoCast(me->getVictim(),SPELL_POUNDING);
 
             switch(rand()%2)
             {
-            case 0: DoScriptText(SAY_POUNDING1, m_creature); break;
-            case 1: DoScriptText(SAY_POUNDING2, m_creature); break;
+            case 0: DoScriptText(SAY_POUNDING1, me); break;
+            case 1: DoScriptText(SAY_POUNDING2, me); break;
             }
              Pounding_Timer = 15000;                         //cast time(3000) + cooldown time(12000)
         } else Pounding_Timer -= diff;
@@ -114,13 +114,13 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
         if (ArcaneOrb_Timer < diff)
         {
             Unit *pTarget = NULL;
-            std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
+            std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
             std::vector<Unit *> target_list;
             for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
-                pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+                pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
                                                             //18 yard radius minimum
-                if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->isAlive() && pTarget->GetDistance2d(m_creature) >= 18)
+                if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->isAlive() && pTarget->GetDistance2d(me) >= 18)
                     target_list.push_back(pTarget);
                 pTarget = NULL;
             }
@@ -128,7 +128,7 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
                 pTarget = *(target_list.begin()+rand()%target_list.size());
 
             if (pTarget)
-                m_creature->CastSpell(pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(), SPELL_ARCANE_ORB, false);
+                me->CastSpell(pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(), SPELL_ARCANE_ORB, false);
 
             ArcaneOrb_Timer = 3000;
         } else ArcaneOrb_Timer -= diff;
@@ -136,11 +136,11 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
         // Single Target knock back, reduces aggro
         if (KnockAway_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_KNOCK_AWAY);
+            DoCast(me->getVictim(),SPELL_KNOCK_AWAY);
 
             //Drop 25% aggro
-            if (DoGetThreat(m_creature->getVictim()))
-                DoModifyThreatPercent(m_creature->getVictim(),-25);
+            if (DoGetThreat(me->getVictim()))
+                DoModifyThreatPercent(me->getVictim(),-25);
 
             KnockAway_Timer = 30000;
         } else KnockAway_Timer -= diff;
@@ -148,7 +148,7 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
         //Berserk
         if (Berserk_Timer < diff && !Enraged)
         {
-            DoCast(m_creature,SPELL_BERSERK);
+            DoCast(me,SPELL_BERSERK);
             Enraged = true;
         } else Berserk_Timer -= diff;
 

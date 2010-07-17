@@ -40,7 +40,7 @@ struct OREGON_DLL_DECL boss_shirrak_the_dead_watcherAI : public ScriptedAI
 {
     boss_shirrak_the_dead_watcherAI(Creature *c) : ScriptedAI(c)
     {
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     uint32 Inhibitmagic_Timer;
@@ -67,8 +67,8 @@ struct OREGON_DLL_DECL boss_shirrak_the_dead_watcherAI : public ScriptedAI
         if (summoned && summoned->GetEntry() == ENTRY_FOCUS_FIRE)
         {
             summoned->CastSpell(summoned,SPELL_FOCUS_FIRE_VISUAL,false);
-            summoned->setFaction(m_creature->getFaction());
-            summoned->SetLevel(m_creature->getLevel());
+            summoned->setFaction(me->getFaction());
+            summoned->SetLevel(me->getLevel());
             summoned->addUnitState(UNIT_STAT_ROOT);
 
             if (focusedTarget)
@@ -82,20 +82,20 @@ struct OREGON_DLL_DECL boss_shirrak_the_dead_watcherAI : public ScriptedAI
         if (Inhibitmagic_Timer < diff)
         {
             float dist;
-            Map *map = m_creature->GetMap();
+            Map *map = me->GetMap();
             Map::PlayerList const &PlayerList = map->GetPlayers();
             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                 if (Player* i_pl = i->getSource())
-                    if (i_pl->isAlive() && (dist = i_pl->GetDistance(m_creature)) < 45)
+                    if (i_pl->isAlive() && (dist = i_pl->GetDistance(me)) < 45)
                     {
                         i_pl->RemoveAurasDueToSpell(SPELL_INHIBITMAGIC);
-                        m_creature->AddAura(SPELL_INHIBITMAGIC, i_pl);
+                        me->AddAura(SPELL_INHIBITMAGIC, i_pl);
                         if (dist < 35)
-                            m_creature->AddAura(SPELL_INHIBITMAGIC, i_pl);
+                            me->AddAura(SPELL_INHIBITMAGIC, i_pl);
                         if (dist < 25)
-                            m_creature->AddAura(SPELL_INHIBITMAGIC, i_pl);
+                            me->AddAura(SPELL_INHIBITMAGIC, i_pl);
                         if (dist < 15)
-                            m_creature->AddAura(SPELL_INHIBITMAGIC, i_pl);
+                            me->AddAura(SPELL_INHIBITMAGIC, i_pl);
                     }
             Inhibitmagic_Timer = 3000+(rand()%1000);
         } else Inhibitmagic_Timer -= diff;
@@ -107,7 +107,7 @@ struct OREGON_DLL_DECL boss_shirrak_the_dead_watcherAI : public ScriptedAI
         //Attractmagic_Timer
         if (Attractmagic_Timer < diff)
         {
-            DoCast(m_creature,SPELL_ATTRACTMAGIC);
+            DoCast(me,SPELL_ATTRACTMAGIC);
             Attractmagic_Timer = 30000;
             Carnivorousbite_Timer = 1500;
         } else Attractmagic_Timer -= diff;
@@ -115,7 +115,7 @@ struct OREGON_DLL_DECL boss_shirrak_the_dead_watcherAI : public ScriptedAI
         //Carnivorousbite_Timer
         if (Carnivorousbite_Timer < diff)
         {
-            DoCast(m_creature,SPELL_CARNIVOROUSBITE);
+            DoCast(me,SPELL_CARNIVOROUSBITE);
             Carnivorousbite_Timer = 10000;
         } else Carnivorousbite_Timer -= diff;
 
@@ -127,7 +127,7 @@ struct OREGON_DLL_DECL boss_shirrak_the_dead_watcherAI : public ScriptedAI
             if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->isAlive())
             {
                 focusedTarget = pTarget;
-                m_creature->SummonCreature(ENTRY_FOCUS_FIRE,pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN,5500);
+                me->SummonCreature(ENTRY_FOCUS_FIRE,pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN,5500);
 
                 // Emote
                 std::string *emote = new std::string("focuses on ");
@@ -152,7 +152,7 @@ struct OREGON_DLL_DECL mob_focus_fireAI : public ScriptedAI
 {
     mob_focus_fireAI(Creature *c) : ScriptedAI(c)
     {
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     bool HeroicMode;
@@ -177,7 +177,7 @@ struct OREGON_DLL_DECL mob_focus_fireAI : public ScriptedAI
         //FieryBlast_Timer
         if (fiery2 && FieryBlast_Timer < diff)
         {
-            DoCast(m_creature,SPELL_FIERY_BLAST);
+            DoCast(me,SPELL_FIERY_BLAST);
 
             if (fiery1) fiery1 = false;
             else if (fiery2) fiery2 = false;

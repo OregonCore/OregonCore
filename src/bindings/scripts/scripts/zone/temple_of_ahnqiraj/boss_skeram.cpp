@@ -90,27 +90,27 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
         Images25 = false;
         Invisible = false;
 
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->SetVisibility(VISIBILITY_ON);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->SetVisibility(VISIBILITY_ON);
 
         if (IsImage)
-            m_creature->setDeathState(JUST_DIED);
+            me->setDeathState(JUST_DIED);
     }
 
     void KilledUnit(Unit* victim)
     {
         switch(rand()%3)
         {
-        case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-        case 1: DoScriptText(SAY_SLAY2, m_creature); break;
-        case 2: DoScriptText(SAY_SLAY3, m_creature); break;
+        case 0: DoScriptText(SAY_SLAY1, me); break;
+        case 1: DoScriptText(SAY_SLAY2, me); break;
+        case 2: DoScriptText(SAY_SLAY3, me); break;
         }
     }
 
     void JustDied(Unit* Killer)
     {
         if (!IsImage)
-            DoScriptText(SAY_DEATH, m_creature);
+            DoScriptText(SAY_DEATH, me);
     }
 
     void EnterCombat(Unit *who)
@@ -119,9 +119,9 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
             return;
         switch(rand()%3)
         {
-        case 0: DoScriptText(SAY_AGGRO1, m_creature); break;
-        case 1: DoScriptText(SAY_AGGRO2, m_creature); break;
-        case 2: DoScriptText(SAY_AGGRO3, m_creature); break;
+        case 0: DoScriptText(SAY_AGGRO1, me); break;
+        case 1: DoScriptText(SAY_AGGRO2, me); break;
+        case 2: DoScriptText(SAY_AGGRO3, me); break;
         }
     }
 
@@ -134,25 +134,25 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
         //ArcaneExplosion_Timer
         if (ArcaneExplosion_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_ARCANE_EXPLOSION);
+            DoCast(me->getVictim(), SPELL_ARCANE_EXPLOSION);
             ArcaneExplosion_Timer = 8000 + rand()%10000;
         } else ArcaneExplosion_Timer -= diff;
 
         //If we are within range melee the target
-        if (m_creature->IsWithinMeleeRange(m_creature->getVictim()))
+        if (me->IsWithinMeleeRange(me->getVictim()))
         {
             //Make sure our attack is ready and we arn't currently casting
-            if (m_creature->isAttackReady() && !m_creature->IsNonMeleeSpellCasted(false))
+            if (me->isAttackReady() && !me->IsNonMeleeSpellCasted(false))
             {
-                m_creature->AttackerStateUpdate(m_creature->getVictim());
-                m_creature->resetAttackTimer();
+                me->AttackerStateUpdate(me->getVictim());
+                me->resetAttackTimer();
             }
         } else
         {
             //EarthShock_Timer
             if (EarthShock_Timer < diff)
             {
-                DoCast(m_creature->getVictim(),SPELL_EARTH_SHOCK);
+                DoCast(me->getVictim(),SPELL_EARTH_SHOCK);
                 EarthShock_Timer = 1000;
             } else EarthShock_Timer -= diff;
         }
@@ -160,19 +160,19 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
         //Blink_Timer
         if (Blink_Timer < diff)
         {
-            //DoCast(m_creature, SPELL_BLINK);
+            //DoCast(me, SPELL_BLINK);
             switch(rand()%3)
             {
                 case 0:
-                    m_creature->Relocate(-8340.782227,2083.814453,125.648788,0);
+                    me->Relocate(-8340.782227,2083.814453,125.648788,0);
                     DoResetThreat();
                     break;
                 case 1:
-                    m_creature->Relocate(-8341.546875,2118.504639,133.058151,0);
+                    me->Relocate(-8341.546875,2118.504639,133.058151,0);
                     DoResetThreat();
                     break;
                 case 2:
-                    m_creature->Relocate(-8318.822266,2058.231201,133.058151,0);
+                    me->Relocate(-8318.822266,2058.231201,133.058151,0);
                     DoResetThreat();
                     break;
             }
@@ -181,7 +181,7 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
             Blink_Timer= 20000 + rand()%20000;
         } else Blink_Timer -= diff;
 
-        int procent = (int) (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() +0.5);
+        int procent = (int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5);
 
         //Summoning 2 Images and teleporting to a random position on 75% health
         if ((!Images75 && !IsImage) && (procent <= 75 && procent > 70))
@@ -202,8 +202,8 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
             if (Invisible_Timer < diff)
             {
                 //Making Skeram visible after telporting
-                m_creature->SetVisibility(VISIBILITY_ON);
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                me->SetVisibility(VISIBILITY_ON);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
                 Invisible_Timer = 2500;
                 Invisible = false;
@@ -215,7 +215,7 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
 
     void DoSplit(int atPercent /* 75 50 25 */)
     {
-        DoScriptText(SAY_SPLIT, m_creature);
+        DoScriptText(SAY_SPLIT, me);
 
         ov_mycoordinates *place1 = new ov_mycoordinates(-8340.782227,2083.814453,125.648788,0);
         ov_mycoordinates *place2 = new ov_mycoordinates(-8341.546875,2118.504639,133.058151,0);
@@ -252,7 +252,7 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
                 {
                     for (int ici = 0; ici < TARGETICONCOUNT; ici++)
                     {
-                        //if (grp ->m_targetIcons[ici] == m_creature->GetGUID()) -- private member:(
+                        //if (grp ->m_targetIcons[ici] == me->GetGUID()) -- private member:(
                         grp->SetTargetIcon(ici, 0);
                     }
                 }
@@ -260,10 +260,10 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
             }
         }
 
-        m_creature->RemoveAllAuras();
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->SetVisibility(VISIBILITY_OFF);
-        m_creature->Relocate(bossc->x, bossc->y, bossc->z, bossc->r);
+        me->RemoveAllAuras();
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->SetVisibility(VISIBILITY_OFF);
+        me->Relocate(bossc->x, bossc->y, bossc->z, bossc->r);
         Invisible = true;
         DoResetThreat();
         DoStopAttack();
@@ -277,25 +277,25 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
 
         Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
 
-        Image1 = m_creature->SummonCreature(15263, i1->x, i1->y, i1->z, i1->r, TEMPSUMMON_CORPSE_DESPAWN, 30000);
+        Image1 = me->SummonCreature(15263, i1->x, i1->y, i1->z, i1->r, TEMPSUMMON_CORPSE_DESPAWN, 30000);
         if (!Image1)
         {
           PLACES_CLEANUP
           return;
         }
-        Image1->SetMaxHealth(m_creature->GetMaxHealth() / 5);
-        Image1->SetHealth(m_creature->GetHealth() / 5);
+        Image1->SetMaxHealth(me->GetMaxHealth() / 5);
+        Image1->SetHealth(me->GetHealth() / 5);
         if (pTarget)
             Image1->AI()->AttackStart(pTarget);
 
-        Image2 = m_creature->SummonCreature(15263,i2->x, i2->y, i2->z, i2->r, TEMPSUMMON_CORPSE_DESPAWN, 30000);
+        Image2 = me->SummonCreature(15263,i2->x, i2->y, i2->z, i2->r, TEMPSUMMON_CORPSE_DESPAWN, 30000);
         if (!Image2)
         {
           PLACES_CLEANUP
           return;
         }
-        Image2->SetMaxHealth(m_creature->GetMaxHealth() / 5);
-        Image2->SetHealth(m_creature->GetHealth() / 5);
+        Image2->SetMaxHealth(me->GetMaxHealth() / 5);
+        Image2->SetHealth(me->GetHealth() / 5);
         if (pTarget)
             Image2->AI()->AttackStart(pTarget);
 

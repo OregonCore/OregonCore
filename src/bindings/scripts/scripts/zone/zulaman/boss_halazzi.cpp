@@ -106,7 +106,7 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
         BerserkTimer = 600000;
         CheckTimer = 1000;
 
-        DoCast(m_creature, SPELL_DUAL_WIELD, true);
+        DoCast(me, SPELL_DUAL_WIELD, true);
 
         Phase = PHASE_NONE;
         EnterPhase(PHASE_LYNX);
@@ -118,21 +118,21 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
             pInstance->SetData(DATA_HALAZZIEVENT, IN_PROGRESS);
 
         DoYell(YELL_AGGRO, LANG_UNIVERSAL, NULL);
-        DoPlaySoundToSet(m_creature, SOUND_AGGRO);
+        DoPlaySoundToSet(me, SOUND_AGGRO);
 
         EnterPhase(PHASE_LYNX);
     }
 
     void JustSummoned(Creature* summon)
     {
-        summon->AI()->AttackStart(m_creature->getVictim());
+        summon->AI()->AttackStart(me->getVictim());
         if (summon->GetEntry() == MOB_SPIRIT_LYNX)
             LynxGUID = summon->GetGUID();
     }
 
     void DamageTaken(Unit *done_by, uint32 &damage)
     {
-        if (damage >= m_creature->GetHealth() && Phase != PHASE_ENRAGE)
+        if (damage >= me->GetHealth() && Phase != PHASE_ENRAGE)
             damage = 0;
     }
 
@@ -155,17 +155,17 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
         case PHASE_ENRAGE:
             if (Phase == PHASE_MERGE)
             {
-                m_creature->CastSpell(m_creature, SPELL_TRANSFORM_MERGE, true);
-                m_creature->Attack(m_creature->getVictim(), true);
-                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                me->CastSpell(me, SPELL_TRANSFORM_MERGE, true);
+                me->Attack(me->getVictim(), true);
+                me->GetMotionMaster()->MoveChase(me->getVictim());
             }
-            if (Unit *Lynx = Unit::GetUnit(*m_creature, LynxGUID))
+            if (Unit *Lynx = Unit::GetUnit(*me, LynxGUID))
             {
                 Lynx->SetVisibility(VISIBILITY_OFF);
                 Lynx->setDeathState(JUST_DIED);
             }
-            m_creature->SetMaxHealth(600000);
-            m_creature->SetHealth(600000 - 150000 * TransformCount);
+            me->SetMaxHealth(600000);
+            me->SetHealth(600000 - 150000 * TransformCount);
             FrenzyTimer = 16000;
             SaberlashTimer = 20000;
             ShockTimer = 10000;
@@ -173,27 +173,27 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
             break;
         case PHASE_SPLIT:
             DoYell(YELL_SPLIT, LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(m_creature, SOUND_SPLIT);
-            m_creature->CastSpell(m_creature, SPELL_TRANSFORM_SPLIT, true);
+            DoPlaySoundToSet(me, SOUND_SPLIT);
+            me->CastSpell(me, SPELL_TRANSFORM_SPLIT, true);
             break;
         case PHASE_HUMAN:
-            //DoCast(m_creature, SPELL_SUMMON_LYNX, true);
+            //DoCast(me, SPELL_SUMMON_LYNX, true);
             DoSpawnCreature(MOB_SPIRIT_LYNX, 5,5,0,0, TEMPSUMMON_CORPSE_DESPAWN, 0);
-            m_creature->SetMaxHealth(400000);
-            m_creature->SetHealth(400000);
+            me->SetMaxHealth(400000);
+            me->SetHealth(400000);
             ShockTimer = 10000;
             TotemTimer = 12000;
             break;
         case PHASE_MERGE:
-            if (Unit *Lynx = Unit::GetUnit(*m_creature, LynxGUID))
+            if (Unit *Lynx = Unit::GetUnit(*me, LynxGUID))
             {
                 DoYell(YELL_MERGE, LANG_UNIVERSAL, NULL);
-                DoPlaySoundToSet(m_creature, SOUND_MERGE);
+                DoPlaySoundToSet(me, SOUND_MERGE);
                 Lynx->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 Lynx->GetMotionMaster()->Clear();
-                Lynx->GetMotionMaster()->MoveFollow(m_creature, 0, 0);
-                m_creature->GetMotionMaster()->Clear();
-                m_creature->GetMotionMaster()->MoveFollow(Lynx, 0, 0);
+                Lynx->GetMotionMaster()->MoveFollow(me, 0, 0);
+                me->GetMotionMaster()->Clear();
+                me->GetMotionMaster()->MoveFollow(Lynx, 0, 0);
                 TransformCount++;
             }break;
         default:
@@ -210,8 +210,8 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
         if (BerserkTimer < diff)
         {
             DoYell(YELL_BERSERK, LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(m_creature, SOUND_BERSERK);
-            DoCast(m_creature, SPELL_BERSERK, true);
+            DoPlaySoundToSet(me, SOUND_BERSERK);
+            DoCast(me, SPELL_BERSERK, true);
             BerserkTimer = 60000;
         } else BerserkTimer -= diff;
 
@@ -220,22 +220,22 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
             if (SaberlashTimer < diff)
             {
                 // A tank with more than 490 defense skills should receive no critical hit
-                //m_creature->CastSpell(m_creature, 41296, true);
-                m_creature->CastSpell(m_creature->getVictim(), SPELL_SABER_LASH, true);
-                //m_creature->RemoveAurasDueToSpell(41296);
+                //me->CastSpell(me, 41296, true);
+                me->CastSpell(me->getVictim(), SPELL_SABER_LASH, true);
+                //me->RemoveAurasDueToSpell(41296);
                 SaberlashTimer = 30000;
             } else SaberlashTimer -= diff;
 
             if (FrenzyTimer < diff)
             {
-                DoCast(m_creature, SPELL_FRENZY);
+                DoCast(me, SPELL_FRENZY);
                 FrenzyTimer = (10+rand()%5)*1000;
             } else FrenzyTimer -= diff;
 
             if (Phase == PHASE_LYNX)
                 if (CheckTimer < diff)
                 {
-                    if (m_creature->GetHealth() * 4 < m_creature->GetMaxHealth() * (3 - TransformCount))
+                    if (me->GetHealth() * 4 < me->GetMaxHealth() * (3 - TransformCount))
                         EnterPhase(PHASE_SPLIT);
                     CheckTimer = 1000;
                 } else CheckTimer -= diff;
@@ -245,7 +245,7 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
         {
             if (TotemTimer < diff)
             {
-                DoCast(m_creature, SPELL_SUMMON_TOTEM);
+                DoCast(me, SPELL_SUMMON_TOTEM);
                 TotemTimer = 20000;
             } else TotemTimer -= diff;
 
@@ -264,11 +264,11 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
             if (Phase == PHASE_HUMAN)
                 if (CheckTimer < diff)
                 {
-                    if (((m_creature->GetHealth()*100) / m_creature->GetMaxHealth() <= 20)/*m_creature->GetHealth() * 10 < m_creature->GetMaxHealth()*/)
+                    if (((me->GetHealth()*100) / me->GetMaxHealth() <= 20)/*me->GetHealth() * 10 < me->GetMaxHealth()*/)
                         EnterPhase(PHASE_MERGE);
                     else
                     {
-                        Unit *Lynx = Unit::GetUnit(*m_creature, LynxGUID);
+                        Unit *Lynx = Unit::GetUnit(*me, LynxGUID);
                         if (Lynx && ((Lynx->GetHealth()*100) / Lynx->GetMaxHealth() <= 20)/*Lynx->GetHealth() * 10 < Lynx->GetMaxHealth()*/)
                             EnterPhase(PHASE_MERGE);
                     }
@@ -280,12 +280,12 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
         {
             if (CheckTimer < diff)
             {
-                Unit *Lynx = Unit::GetUnit(*m_creature, LynxGUID);
+                Unit *Lynx = Unit::GetUnit(*me, LynxGUID);
                 if (Lynx)
                 {
-                    Lynx->GetMotionMaster()->MoveFollow(m_creature, 0, 0);
-                    m_creature->GetMotionMaster()->MoveFollow(Lynx, 0, 0);
-                    if (m_creature->IsWithinDistInMap(Lynx, 6.0f))
+                    Lynx->GetMotionMaster()->MoveFollow(me, 0, 0);
+                    me->GetMotionMaster()->MoveFollow(Lynx, 0, 0);
+                    if (me->IsWithinDistInMap(Lynx, 6.0f))
                     {
                         if (TransformCount < 3)
                             EnterPhase(PHASE_LYNX);
@@ -306,12 +306,12 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
         {
         case 0:
             DoYell(YELL_KILL_ONE, LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(m_creature, SOUND_KILL_ONE);
+            DoPlaySoundToSet(me, SOUND_KILL_ONE);
             break;
 
         case 1:
             DoYell(YELL_KILL_TWO, LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(m_creature, SOUND_KILL_TWO);
+            DoPlaySoundToSet(me, SOUND_KILL_TWO);
             break;
         }
     }
@@ -322,7 +322,7 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
             pInstance->SetData(DATA_HALAZZIEVENT, DONE);
 
         DoYell(YELL_DEATH, LANG_UNIVERSAL, NULL);
-        DoPlaySoundToSet(m_creature, SOUND_DEATH);
+        DoPlaySoundToSet(me, SOUND_DEATH);
     }
 };
 
@@ -343,13 +343,13 @@ struct OREGON_DLL_DECL boss_spiritlynxAI : public ScriptedAI
 
     void DamageTaken(Unit *done_by, uint32 &damage)
     {
-        if (damage >= m_creature->GetHealth())
+        if (damage >= me->GetHealth())
             damage = 0;
     }
 
     void AttackStart(Unit *who)
     {
-        if (!m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (!me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             ScriptedAI::AttackStart(who);
     }
 
@@ -362,13 +362,13 @@ struct OREGON_DLL_DECL boss_spiritlynxAI : public ScriptedAI
 
         if (FrenzyTimer < diff)
         {
-            DoCast(m_creature, SPELL_LYNX_FRENZY);
+            DoCast(me, SPELL_LYNX_FRENZY);
             FrenzyTimer = (30+rand()%20)*1000;
         } else FrenzyTimer -= diff;
 
         if (shredder_timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_SHRED_ARMOR);
+            DoCast(me->getVictim(), SPELL_SHRED_ARMOR);
             shredder_timer = 4000;
         } else shredder_timer -= diff;
 

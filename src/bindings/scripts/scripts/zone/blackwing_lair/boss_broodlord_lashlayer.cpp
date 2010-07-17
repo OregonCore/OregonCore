@@ -49,13 +49,13 @@ struct OREGON_DLL_DECL boss_broodlordAI : public ScriptedAI
         KnockBack_Timer = 30000;
         LeashCheck_Timer = 2000;
 
-        m_creature->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-        m_creature->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
+        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
+        me->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
     }
 
     void EnterCombat(Unit *who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
         DoZoneInCombat();
     }
 
@@ -68,11 +68,11 @@ struct OREGON_DLL_DECL boss_broodlordAI : public ScriptedAI
         if (LeashCheck_Timer < diff)
         {
             float rx,ry,rz;
-            m_creature->GetRespawnCoord(rx, ry, rz);
-            float spawndist = m_creature->GetDistance(rx,ry,rz);
+            me->GetRespawnCoord(rx, ry, rz);
+            float spawndist = me->GetDistance(rx,ry,rz);
             if (spawndist > 250)
             {
-                DoScriptText(SAY_LEASH, m_creature);
+                DoScriptText(SAY_LEASH, me);
                 EnterEvadeMode();
                 return;
             }
@@ -82,30 +82,30 @@ struct OREGON_DLL_DECL boss_broodlordAI : public ScriptedAI
         //Cleave_Timer
         if (Cleave_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_CLEAVE);
+            DoCast(me->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 7000;
         } else Cleave_Timer -= diff;
 
         // BlastWave
         if (BlastWave_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_BLASTWAVE);
+            DoCast(me->getVictim(),SPELL_BLASTWAVE);
             BlastWave_Timer = 8000 + rand()%8000;
         } else BlastWave_Timer -= diff;
 
         //MortalStrike_Timer
         if (MortalStrike_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_MORTALSTRIKE);
+            DoCast(me->getVictim(),SPELL_MORTALSTRIKE);
             MortalStrike_Timer = 25000 + rand()%10000;
         } else MortalStrike_Timer -= diff;
 
         if (KnockBack_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_KNOCKBACK);
+            DoCast(me->getVictim(),SPELL_KNOCKBACK);
             //Drop 50% aggro
-            if (DoGetThreat(m_creature->getVictim()))
-                DoModifyThreatPercent(m_creature->getVictim(),-50);
+            if (DoGetThreat(me->getVictim()))
+                DoModifyThreatPercent(me->getVictim(),-50);
 
             KnockBack_Timer = 15000 + rand()%15000;
         } else KnockBack_Timer -= diff;

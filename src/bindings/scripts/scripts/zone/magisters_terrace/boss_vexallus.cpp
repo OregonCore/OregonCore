@@ -75,7 +75,7 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
 
         if (pInstance)
         {
-            if (m_creature->isDead())
+            if (me->isDead())
                 pInstance->SetData(DATA_VEXALLUS_EVENT, DONE);
             else pInstance->SetData(DATA_VEXALLUS_EVENT, NOT_STARTED);
         }
@@ -83,7 +83,7 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
 
     void KilledUnit(Unit *victim)
     {
-        DoScriptText(SAY_KILL, m_creature);
+        DoScriptText(SAY_KILL, me);
     }
 
     void JustDied(Unit *victim)
@@ -94,7 +94,7 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
             pInstance->SetData(DATA_VEXALLUS_EVENT, DONE);
 
             GameObject* Door = NULL;
-            Door = GameObject::GetGameObject((*m_creature), pInstance->GetData64(DATA_VEXALLUS_DOOR));
+            Door = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_VEXALLUS_DOOR));
             if (Door)
                 Door->SetGoState(GO_STATE_ACTIVE);
         }
@@ -102,7 +102,7 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
         if (pInstance)
             pInstance->SetData(DATA_VEXALLUS_EVENT, IN_PROGRESS);
     }
@@ -112,7 +112,7 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 11)
+        if (me->GetHealth()*100 / me->GetMaxHealth() < 11)
         {
             Enraged = true;
         }
@@ -120,10 +120,10 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
         if (!Enraged)
         {
             //used for check, when Vexallus cast adds 85%, 70%, 55%, 40%, 25%
-            if ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < (100-(SpawnAddInterval*(AlreadySpawnedAmount+1))))
+            if ((me->GetHealth()*100 / me->GetMaxHealth()) < (100-(SpawnAddInterval*(AlreadySpawnedAmount+1))))
             {
-                DoScriptText(SAY_ENERGY, m_creature);
-                DoScriptText(EMOTE_DISCHARGE_ENERGY, m_creature);
+                DoScriptText(SAY_ENERGY, me);
+                DoScriptText(EMOTE_DISCHARGE_ENERGY, me);
                 Creature* PureEnergyCreature = NULL;
                 PureEnergyCreature = DoSpawnCreature(CREATURE_PURE_ENERGY, 10, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 Unit *pTarget = NULL;
@@ -186,13 +186,13 @@ struct OREGON_DLL_DECL mob_pure_energyAI : public ScriptedAI
     {
         EnergyBoltTimer = 1700;
         VisualTimer = 1000;
-        m_creature->SetSpeed(MOVE_RUN, 0.5f);
-        m_creature->SetSpeed(MOVE_WALK, 0.5f);
+        me->SetSpeed(MOVE_RUN, 0.5f);
+        me->SetSpeed(MOVE_WALK, 0.5f);
     }
 
     void JustDied(Unit* slayer)
     {
-        slayer->CastSpell(slayer, SPELL_ENERGY_FEEDBACK, true, 0, 0, m_creature->GetGUID());
+        slayer->CastSpell(slayer, SPELL_ENERGY_FEEDBACK, true, 0, 0, me->GetGUID());
     }
 
     void EnterCombat(Unit *who){}
@@ -204,12 +204,12 @@ struct OREGON_DLL_DECL mob_pure_energyAI : public ScriptedAI
 
         if (EnergyBoltTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_ENERGY_BOLT);
+            DoCast(me->getVictim(), SPELL_ENERGY_BOLT);
             EnergyBoltTimer = 1700;
         } else   EnergyBoltTimer -= diff;
         if (VisualTimer < diff)
         {
-            DoCast(m_creature->getVictim(), ASTRAL_FLARE_VISUAL, true);
+            DoCast(me->getVictim(), ASTRAL_FLARE_VISUAL, true);
             VisualTimer = 1000;
         } else   VisualTimer -= diff;
     }

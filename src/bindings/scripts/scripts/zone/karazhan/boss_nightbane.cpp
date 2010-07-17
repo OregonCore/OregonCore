@@ -105,7 +105,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                 NightbaneGUID = pInstance->GetData64(DATA_NIGHTBANE);
 
                 if (NightbaneGUID)
-                    if (Creature* Nightbane = Creature::GetCreature((*m_creature),NightbaneGUID))
+                    if (Creature* Nightbane = Creature::GetCreature((*me),NightbaneGUID))
                         isCorrectSpawned = false;
             }
             else
@@ -113,23 +113,23 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
 
             if (!isCorrectSpawned)
             {
-                (*m_creature).GetMotionMaster()->Clear(false);
+                (*me).GetMotionMaster()->Clear(false);
                 isReseted = true;
-                m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-                m_creature->RemoveCorpse();
+                me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                me->RemoveCorpse();
             }
             else
             {
-                pInstance->SetData64(DATA_NIGHTBANE,m_creature->GetGUID());
+                pInstance->SetData64(DATA_NIGHTBANE,me->GetGUID());
             }
 
             if (!Intro)
             {
-                (*m_creature).GetMotionMaster()->Clear(false);
+                (*me).GetMotionMaster()->Clear(false);
                 isReseted = true;
                 pInstance->SetData(DATA_NIGHTBANE_EVENT,NOT_STARTED);
-                m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-                m_creature->RemoveCorpse();
+                me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                me->RemoveCorpse();
                 return;
             } else
             {
@@ -149,15 +149,15 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                 FlyCount = 0;
                 MovePhase = 0;
 
-                m_creature->SetSpeed(MOVE_RUN, 2.0f);
-                m_creature->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
-                m_creature->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
-                m_creature->setActive(true);
+                me->SetSpeed(MOVE_RUN, 2.0f);
+                me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
+                me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
+                me->setActive(true);
 
-                m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
-                m_creature->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, false);
-                m_creature->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, false);
+                me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, false);
+                me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, false);
 
                 HandleTerraceDoors(true);
                 Flying = false;
@@ -168,9 +168,9 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
 
     void HandleTerraceDoors(bool open)
     {
-        if (GameObject *Door = GameObject::GetGameObject((*m_creature),pInstance->GetData64(DATA_MASTERS_TERRACE_DOOR_1)))
+        if (GameObject *Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_MASTERS_TERRACE_DOOR_1)))
             Door->SetGoState(open ? GO_STATE_ACTIVE : GO_STATE_READY);
-        if (GameObject *Door = GameObject::GetGameObject((*m_creature),pInstance->GetData64(DATA_MASTERS_TERRACE_DOOR_2)))
+        if (GameObject *Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_MASTERS_TERRACE_DOOR_2)))
             Door->SetGoState(open ? GO_STATE_ACTIVE : GO_STATE_READY);
     }
 
@@ -203,7 +203,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
     {
         if (!Intro && !Flying)
         {
-            if (!m_creature->getVictim() && m_creature->canStartAttack(who))
+            if (!me->getVictim() && me->canStartAttack(who))
                 if (Phase == 1) ScriptedAI::AttackStart(who);
                 else ScriptedAI::AttackStart(who,false);
         }
@@ -219,8 +219,8 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
             if (id >= 8)
             {
                 Intro = false;
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                m_creature->SetHomePosition(IntroWay[7][0],IntroWay[7][1],IntroWay[7][2],0);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                me->SetHomePosition(IntroWay[7][0],IntroWay[7][1],IntroWay[7][2],0);
                 Phase = 1;
                 return;
             }
@@ -233,7 +233,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
             if (id == 0)
             {
                 DoResetThreat();
-                DoStartNoMovement(m_creature->getVictim());
+                DoStartNoMovement(me->getVictim());
                 DoTextEmote(EMOTE_BREATH, NULL, true);
                 Skeletons = false;
                 Flying = false;
@@ -263,18 +263,18 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
 
     void JustSummoned(Creature *summoned)
     {
-        summoned->AI()->AttackStart(m_creature->getVictim());
+        summoned->AI()->AttackStart(me->getVictim());
     }
 
     void TakeOff()
     {
         DoYell(YELL_FLY_PHASE, LANG_UNIVERSAL, NULL);
 
-        m_creature->InterruptSpell(CURRENT_GENERIC_SPELL);
-        m_creature->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
-        m_creature->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
-        (*m_creature).GetMotionMaster()->Clear(false);
-        (*m_creature).GetMotionMaster()->MovePoint(0,IntroWay[2][0],IntroWay[2][1],IntroWay[2][2]);
+        me->InterruptSpell(CURRENT_GENERIC_SPELL);
+        me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
+        me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
+        (*me).GetMotionMaster()->Clear(false);
+        (*me).GetMotionMaster()->MovePoint(0,IntroWay[2][0],IntroWay[2][1],IntroWay[2][2]);
         Flying = true;
 
         FlyTimer = 45000+rand()%15000; //timer wrong between 45 and 60 seconds
@@ -293,13 +293,13 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
             {
                 if (MovePhase >= 7)
                 {
-                    m_creature->RemoveUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
-                    m_creature->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
-                    m_creature->GetMotionMaster()->MovePoint(8,IntroWay[7][0],IntroWay[7][1],IntroWay[7][2]);
+                    me->RemoveUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
+                    me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
+                    me->GetMotionMaster()->MovePoint(8,IntroWay[7][0],IntroWay[7][1],IntroWay[7][2]);
                 }
                 else
                 {
-                    m_creature->GetMotionMaster()->MovePoint(MovePhase,IntroWay[MovePhase][0],IntroWay[MovePhase][1],IntroWay[MovePhase][2]);
+                    me->GetMotionMaster()->MovePoint(MovePhase,IntroWay[MovePhase][0],IntroWay[MovePhase][1],IntroWay[MovePhase][2]);
                     ++MovePhase;
                 }
             }
@@ -308,13 +308,13 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
             {
                 if (MovePhase >= 7)
                 {
-                    m_creature->RemoveUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
-                    m_creature->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
-                    m_creature->GetMotionMaster()->MovePoint(8,IntroWay[7][0],IntroWay[7][1],IntroWay[7][2]);
+                    me->RemoveUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
+                    me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
+                    me->GetMotionMaster()->MovePoint(8,IntroWay[7][0],IntroWay[7][1],IntroWay[7][2]);
                 }
                 else
                 {
-                    m_creature->GetMotionMaster()->MovePoint(MovePhase,IntroWay[MovePhase][0],IntroWay[MovePhase][1],IntroWay[MovePhase][2]);
+                    me->GetMotionMaster()->MovePoint(MovePhase,IntroWay[MovePhase][0],IntroWay[MovePhase][1],IntroWay[MovePhase][2]);
                     ++MovePhase;
                 }
             }
@@ -333,19 +333,19 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
         {
             if (Movement)
             {
-                DoStartMovement(m_creature->getVictim());
+                DoStartMovement(me->getVictim());
                 Movement = false;
             }
 
             if (BellowingRoarTimer < diff)
             {
-                DoCast(m_creature->getVictim(),SPELL_BELLOWING_ROAR);
+                DoCast(me->getVictim(),SPELL_BELLOWING_ROAR);
                 BellowingRoarTimer = 30000+rand()%10000 ; //Timer
             } else BellowingRoarTimer -= diff;
 
             if (SmolderingBreathTimer < diff)
             {
-                DoCast(m_creature->getVictim(),SPELL_SMOLDERING_BREATH);
+                DoCast(me->getVictim(),SPELL_SMOLDERING_BREATH);
                 SmolderingBreathTimer = 20000;//timer
             } else SmolderingBreathTimer -= diff;
 
@@ -359,7 +359,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
             if (TailSweepTimer < diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    if (!m_creature->HasInArc(M_PI, pTarget))
+                    if (!me->HasInArc(M_PI, pTarget))
                         DoCast(pTarget,SPELL_TAIL_SWEEP);
                 TailSweepTimer = 15000;//timer
             } else TailSweepTimer -= diff;
@@ -372,7 +372,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
             } else SearingCindersTimer -= diff;
 
             uint32 Prozent;
-            Prozent = (m_creature->GetHealth()*100) / m_creature->GetMaxHealth();
+            Prozent = (me->GetHealth()*100) / me->GetMaxHealth();
 
             if (Prozent < 75 && FlyCount == 0) // first take off 75%
                 TakeOff();
@@ -397,11 +397,11 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                     if (!Skeletons)
                     {
                         for (int i = 0; i < 5; i++)
-                            DoCast(m_creature->getVictim(), SPELL_SUMMON_SKELETON, true);
+                            DoCast(me->getVictim(), SPELL_SUMMON_SKELETON, true);
                         Skeletons = true;
                     }
 
-                    DoCast(m_creature->getVictim(),SPELL_RAIN_OF_BONES);
+                    DoCast(me->getVictim(),SPELL_RAIN_OF_BONES);
                     RainBones = true;
                     SmokingBlastTimer = 20000;
                 } else RainofBonesTimer -= diff;
@@ -418,20 +418,20 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
             {
                 if (SmokingBlastTimer < diff)
                  {
-                    DoCast(m_creature->getVictim(),SPELL_SMOKING_BLAST);
+                    DoCast(me->getVictim(),SPELL_SMOKING_BLAST);
                     SmokingBlastTimer = 1500 ; //timer wrong
                  } else SmokingBlastTimer -= diff;
             }
 
             if (FireballBarrageTimer < diff)
             {
-                Map *map = m_creature->GetMap();
+                Map *map = me->GetMap();
                 if (!map->IsDungeon()) return;
                 Map::PlayerList const &PlayerList = map->GetPlayers();
                 for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                 {
                     if (Player* i_pl = i->getSource())
-                        if (i_pl->isAlive() && !m_creature->IsWithinDistInMap(i_pl,80))
+                        if (i_pl->isAlive() && !me->IsWithinDistInMap(i_pl,80))
                         {
                             DoCast(i_pl,SPELL_FIREBALL_BARRAGE);
                         }
@@ -446,8 +446,8 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                 else
                     DoYell(YELL_LAND_PHASE_2, LANG_UNIVERSAL, NULL);
 
-                (*m_creature).GetMotionMaster()->Clear(false);
-                m_creature->GetMotionMaster()->MovePoint(3,IntroWay[3][0],IntroWay[3][1],IntroWay[3][2]);
+                (*me).GetMotionMaster()->Clear(false);
+                me->GetMotionMaster()->MovePoint(3,IntroWay[3][0],IntroWay[3][1],IntroWay[3][2]);
                 Flying = true;
 
             } else FlyTimer -= diff;

@@ -71,8 +71,8 @@ struct OREGON_DLL_DECL npc_kyle_frenziedAI : public ScriptedAI
     void Reset()
     {
         STATE = 0;
-        m_creature->SetDefaultMovementType(WAYPOINT_MOTION_TYPE);
-        m_creature->GetMotionMaster()->Initialize();
+        me->SetDefaultMovementType(WAYPOINT_MOTION_TYPE);
+        me->GetMotionMaster()->Initialize();
     }
     void EnterCombat(Unit* who){}
 
@@ -86,12 +86,12 @@ struct OREGON_DLL_DECL npc_kyle_frenziedAI : public ScriptedAI
             caster->GetPosition(x, y, z);
             x = x + 3.7*cos(caster->GetOrientation());
             y = y + 3.7*sin(caster->GetOrientation());
-            z2 = m_creature->GetBaseMap()->GetHeight(x,y,z,false);
+            z2 = me->GetBaseMap()->GetHeight(x,y,z,false);
             z = (z2 <= INVALID_HEIGHT) ? z : z2;
-            m_creature->SetDefaultMovementType(IDLE_MOTION_TYPE);       //there is other way to stop waypoint movement?
-            m_creature->GetMotionMaster()->Initialize();
-            m_creature->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
-            m_creature->GetMotionMaster()->MovePoint(0,x, y, z);
+            me->SetDefaultMovementType(IDLE_MOTION_TYPE);       //there is other way to stop waypoint movement?
+            me->GetMotionMaster()->Initialize();
+            me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
+            me->GetMotionMaster()->MovePoint(0,x, y, z);
         }
     }
 
@@ -103,20 +103,20 @@ struct OREGON_DLL_DECL npc_kyle_frenziedAI : public ScriptedAI
             {
             case 1:
                 {
-                Unit *plr = Unit::GetUnit((*m_creature),player);
+                Unit *plr = Unit::GetUnit((*me),player);
                 if (plr)
-                    m_creature->SetOrientation(m_creature->GetAngle(plr));
-                m_creature->HandleEmoteCommand(EMOTE_STATE_USESTANDING);    //eat
+                    me->SetOrientation(me->GetAngle(plr));
+                me->HandleEmoteCommand(EMOTE_STATE_USESTANDING);    //eat
                 WorldPacket data;
-                m_creature->BuildHeartBeatMsg(&data);
-                m_creature->SendMessageToSet(&data,true);
+                me->BuildHeartBeatMsg(&data);
+                me->SendMessageToSet(&data,true);
                 wait = 3000;
                 STATE = 2;
                 break;
                 }
             case 4:
-                m_creature->setDeathState(JUST_DIED);
-                m_creature->Respawn();
+                me->setDeathState(JUST_DIED);
+                me->Respawn();
                 break;
             }
         }
@@ -132,8 +132,8 @@ struct OREGON_DLL_DECL npc_kyle_frenziedAI : public ScriptedAI
             {
             case 2:
                 STATE = 3; wait = 7000;
-                m_creature->UpdateEntry(23622,HORDE);
-                m_creature->HandleEmoteCommand(EMOTE_ONESHOT_DANCE);
+                me->UpdateEntry(23622,HORDE);
+                me->HandleEmoteCommand(EMOTE_ONESHOT_DANCE);
                 break;
             case 3:
                 STATE = 4;  //go home
@@ -141,13 +141,13 @@ struct OREGON_DLL_DECL npc_kyle_frenziedAI : public ScriptedAI
                 if (plr && plr->GetQuestStatus(11129) == QUEST_STATUS_INCOMPLETE)
                     plr->CompleteQuest(11129);
                 float x, y, z, z2, angle;
-                angle = m_creature->GetAngle(-2146, -430);
-                m_creature->GetPosition(x,y,z);
+                angle = me->GetAngle(-2146, -430);
+                me->GetPosition(x,y,z);
                 x = x + 40*cos(angle);
                 y = y + 40*sin(angle);
-                z2 = m_creature->GetBaseMap()->GetHeight(x,y,MAX_HEIGHT,false);
+                z2 = me->GetBaseMap()->GetHeight(x,y,MAX_HEIGHT,false);
                 z = (z2 <= INVALID_HEIGHT) ? z : z2;
-                m_creature->GetMotionMaster()->MovePoint(0,x,y,z);
+                me->GetMotionMaster()->MovePoint(0,x,y,z);
                 break;
             }
         } else wait -= diff;
@@ -246,8 +246,8 @@ struct OREGON_DLL_DECL npc_plains_visionAI  : public ScriptedAI
         }
         else
         {
-            m_creature->setDeathState(JUST_DIED);
-            m_creature->RemoveCorpse();
+            me->setDeathState(JUST_DIED);
+            me->RemoveCorpse();
         }
     }
 
@@ -255,7 +255,7 @@ struct OREGON_DLL_DECL npc_plains_visionAI  : public ScriptedAI
     {
         if (newWaypoint)
         {
-            m_creature->GetMotionMaster()->MovePoint(WayPointId, wp_plain_vision[WayPointId][0], wp_plain_vision[WayPointId][1], wp_plain_vision[WayPointId][2]);
+            me->GetMotionMaster()->MovePoint(WayPointId, wp_plain_vision[WayPointId][0], wp_plain_vision[WayPointId][1], wp_plain_vision[WayPointId][2]);
             newWaypoint = false;
         }
     }

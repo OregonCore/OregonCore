@@ -55,14 +55,14 @@ struct OREGON_DLL_DECL mob_shattered_rumblerAI : public ScriptedAI
     {
         if (Spellkind->Id == 32001 && !Spawn)
         {
-            float x = m_creature->GetPositionX();
-            float y = m_creature->GetPositionY();
-            float z = m_creature->GetPositionZ();
+            float x = me->GetPositionX();
+            float y = me->GetPositionY();
+            float z = me->GetPositionZ();
 
             Hitter->SummonCreature(18181,x+(0.7 * (rand()%30)),y+(rand()%5),z,0,TEMPSUMMON_CORPSE_TIMED_DESPAWN,60000);
             Hitter->SummonCreature(18181,x+(rand()%5),y-(rand()%5),z,0,TEMPSUMMON_CORPSE_TIMED_DESPAWN,60000);
             Hitter->SummonCreature(18181,x-(rand()%5),y+(0.5 *(rand()%60)),z,0,TEMPSUMMON_CORPSE_TIMED_DESPAWN,60000);
-            m_creature->setDeathState(CORPSE);
+            me->setDeathState(CORPSE);
             Spawn = true;
         }
         return;
@@ -106,12 +106,12 @@ struct OREGON_DLL_DECL mob_lumpAI : public ScriptedAI
         Reset_Timer = 60000;
         Spear_Throw_Timer = 2000;
 
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
     void DamageTaken(Unit *done_by, uint32 & damage)
     {
-        if (done_by->GetTypeId() == TYPEID_PLAYER && (m_creature->GetHealth() - damage)*100 / m_creature->GetMaxHealth() < 30)
+        if (done_by->GetTypeId() == TYPEID_PLAYER && (me->GetHealth() - damage)*100 / me->GetMaxHealth() < 30)
         {
             if (!bReset && ((Player*)done_by)->GetQuestStatus(9918) == QUEST_STATUS_INCOMPLETE)
             {
@@ -119,13 +119,13 @@ struct OREGON_DLL_DECL mob_lumpAI : public ScriptedAI
                 damage = 0;
 
                 ((Player*)done_by)->AttackStop();
-                m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                m_creature->RemoveAllAuras();
-                m_creature->DeleteThreatList();
-                m_creature->CombatStop();
-                m_creature->setFaction(1080);               //friendly
-                m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_SIT);
-                DoScriptText(LUMP_DEFEAT, m_creature);
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                me->RemoveAllAuras();
+                me->DeleteThreatList();
+                me->CombatStop();
+                me->setFaction(1080);               //friendly
+                me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_SIT);
+                DoScriptText(LUMP_DEFEAT, me);
 
                 bReset = true;
             }
@@ -134,16 +134,16 @@ struct OREGON_DLL_DECL mob_lumpAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        if (m_creature->HasAura(SPELL_VISUAL_SLEEP,0))
-            m_creature->RemoveAura(SPELL_VISUAL_SLEEP,0);
+        if (me->HasAura(SPELL_VISUAL_SLEEP,0))
+            me->RemoveAura(SPELL_VISUAL_SLEEP,0);
 
-        if (!m_creature->IsStandState())
-            m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_NONE);
+        if (!me->IsStandState())
+            me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_NONE);
 
         switch(rand()%2)
         {
-            case 0: DoScriptText(LUMP_SAY0, m_creature); break;
-            case 1: DoScriptText(LUMP_SAY1, m_creature); break;
+            case 0: DoScriptText(LUMP_SAY0, me); break;
+            case 1: DoScriptText(LUMP_SAY1, me); break;
         }
     }
 
@@ -156,7 +156,7 @@ struct OREGON_DLL_DECL mob_lumpAI : public ScriptedAI
             {
                 EnterEvadeMode();
                 bReset = false;
-                m_creature->setFaction(1711);               //hostile
+                me->setFaction(1711);               //hostile
                 return;
             }
             else Reset_Timer -= diff;
@@ -169,7 +169,7 @@ struct OREGON_DLL_DECL mob_lumpAI : public ScriptedAI
         //Spear_Throw_Timer
         if (Spear_Throw_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_SPEAR_THROW);
+            DoCast(me->getVictim(), SPELL_SPEAR_THROW);
             Spear_Throw_Timer = 20000;
         } else Spear_Throw_Timer -= diff;
 
@@ -226,8 +226,8 @@ struct OREGON_DLL_DECL mob_sunspring_villagerAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 32);
-        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1,7);   // lay down
+        me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 32);
+        me->SetUInt32Value(UNIT_FIELD_BYTES_1,7);   // lay down
     }
 
     void EnterCombat(Unit *who) {}
@@ -236,8 +236,8 @@ struct OREGON_DLL_DECL mob_sunspring_villagerAI : public ScriptedAI
     {
         if (spell->Id == 32146)
         {
-            m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-            m_creature->RemoveCorpse();
+            me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+            me->RemoveCorpse();
         }
     }
 };
@@ -537,12 +537,12 @@ struct OREGON_DLL_DECL npc_creditmarker_visit_with_ancestorsAI : public Scripted
         {
             if (((Player*)who)->GetQuestStatus(10085) == QUEST_STATUS_INCOMPLETE)
             {
-                uint32 creditMarkerId = m_creature->GetEntry();
+                uint32 creditMarkerId = me->GetEntry();
                 if ((creditMarkerId >= 18840) && (creditMarkerId <= 18843))
                 {
                     // 18840: Sunspring, 18841: Laughing, 18842: Garadar, 18843: Bleeding
                     if (!((Player*)who)->GetReqKillOrCastCurrentCount(10085, creditMarkerId))
-                        ((Player*)who)->KilledMonster(creditMarkerId, m_creature->GetGUID());
+                        ((Player*)who)->KilledMonster(creditMarkerId, me->GetGUID());
                 }
             }
         }
@@ -572,7 +572,7 @@ struct OREGON_DLL_DECL mob_sparrowhawkAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->RemoveAurasDueToSpell(SPELL_SPARROWHAWK_NET);
+        me->RemoveAurasDueToSpell(SPELL_SPARROWHAWK_NET);
         Check_Timer = 1000;
         PlayerGUID = 0;
         fleeing = false;
@@ -592,7 +592,7 @@ struct OREGON_DLL_DECL mob_sparrowhawkAI : public ScriptedAI
         if (!who || PlayerGUID)
             return;
 
-        if (!PlayerGUID && who->GetTypeId() == TYPEID_PLAYER && m_creature->IsWithinDistInMap(((Player *)who), 30) && ((Player *)who)->GetQuestStatus(10987) == QUEST_STATUS_INCOMPLETE)
+        if (!PlayerGUID && who->GetTypeId() == TYPEID_PLAYER && me->IsWithinDistInMap(((Player *)who), 30) && ((Player *)who)->GetQuestStatus(10987) == QUEST_STATUS_INCOMPLETE)
         {
             PlayerGUID = who->GetGUID();
             return;
@@ -607,22 +607,22 @@ struct OREGON_DLL_DECL mob_sparrowhawkAI : public ScriptedAI
         {
             if (PlayerGUID)
             {
-                if (fleeing && m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() != FLEEING_MOTION_TYPE)
+                if (fleeing && me->GetMotionMaster()->GetCurrentMovementGeneratorType() != FLEEING_MOTION_TYPE)
                     fleeing = false;
 
                 Player *player = Unit::GetPlayer(PlayerGUID);
-                if (player && m_creature->IsWithinDistInMap(player, 30))
+                if (player && me->IsWithinDistInMap(player, 30))
                 {
                     if (!fleeing)
                     {
-                        m_creature->DeleteThreatList();
-                        m_creature->GetMotionMaster()->MoveFleeing(player);
+                        me->DeleteThreatList();
+                        me->GetMotionMaster()->MoveFleeing(player);
                         fleeing = true;
                     }
                 }
                 else if (fleeing)
                 {
-                    m_creature->GetMotionMaster()->MovementExpired(false);
+                    me->GetMotionMaster()->MovementExpired(false);
                     PlayerGUID = 0;
                     fleeing = false;
                 }
@@ -642,9 +642,9 @@ struct OREGON_DLL_DECL mob_sparrowhawkAI : public ScriptedAI
         {
             if (spell->Id == SPELL_SPARROWHAWK_NET && ((Player*)caster)->GetQuestStatus(10987) == QUEST_STATUS_INCOMPLETE)
             {
-                m_creature->CastSpell(caster, SPELL_ITEM_CAPTIVE_SPARROWHAWK, true);
-                m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-                m_creature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                me->CastSpell(caster, SPELL_ITEM_CAPTIVE_SPARROWHAWK, true);
+                me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                me->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
             }
         }
         return;

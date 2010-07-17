@@ -98,13 +98,13 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
 
         InitialSpawn = true;
 
-        m_creature->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-        m_creature->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
+        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
+        me->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
     }
 
     void EnterCombat(Unit* who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
         DoZoneInCombat();
     }
 
@@ -114,7 +114,7 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
 
     void KilledUnit(Unit *victim)
     {
-        DoScriptText(SAY_KILL, m_creature);
+        DoScriptText(SAY_KILL, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -122,41 +122,41 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 60) && (Phase == 1))
+        if (((me->GetHealth()*100 / me->GetMaxHealth()) < 60) && (Phase == 1))
         {
             Phase = 2;
-            m_creature->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
-            m_creature->AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
-            m_creature->SetHover(true);
-            m_creature->GetMotionMaster()->Clear(false);
-            m_creature->GetMotionMaster()->MoveIdle();
-            DoScriptText(SAY_PHASE_2_TRANS, m_creature);
+            me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
+            me->AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
+            me->SetHover(true);
+            me->GetMotionMaster()->Clear(false);
+            me->GetMotionMaster()->MoveIdle();
+            DoScriptText(SAY_PHASE_2_TRANS, me);
         }
 
-        if (((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 40) && (Phase == 2))
+        if (((me->GetHealth()*100 / me->GetMaxHealth()) < 40) && (Phase == 2))
         {
             Phase = 3;
-            m_creature->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
-            m_creature->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
-            m_creature->SetHover(false);
-            m_creature->GetMotionMaster()->MovePoint(0, -10.6155, -219.357, -87.7344);
-            DoStartMovement(m_creature->getVictim());
-            m_creature->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
-            DoScriptText(SAY_PHASE_3_TRANS, m_creature);
+            me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
+            me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
+            me->SetHover(false);
+            me->GetMotionMaster()->MovePoint(0, -10.6155, -219.357, -87.7344);
+            DoStartMovement(me->getVictim());
+            me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
+            DoScriptText(SAY_PHASE_3_TRANS, me);
         }
 
         if (Phase == 1 || Phase == 3)
         {
             if (FlameBreathTimer < diff)
             {
-                DoCast(m_creature->getVictim(), SPELL_FLAMEBREATH);
+                DoCast(me->getVictim(), SPELL_FLAMEBREATH);
                 FlameBreathTimer = 15000;
             } else FlameBreathTimer -= diff;
 
             if (TailSweepTimer < diff)
             {
                 Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
-                if (pTarget && !m_creature->HasInArc(M_PI, pTarget))
+                if (pTarget && !me->HasInArc(M_PI, pTarget))
                     DoCast(pTarget, SPELL_TAILSWEEP);
 
                 TailSweepTimer = 10000;
@@ -164,13 +164,13 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
 
             if (CleaveTimer < diff)
             {
-                DoCast(m_creature->getVictim(), SPELL_CLEAVE);
+                DoCast(me->getVictim(), SPELL_CLEAVE);
                 CleaveTimer = 10000;
             } else CleaveTimer -= diff;
 
             if (WingBuffetTimer < diff)
             {
-                DoCast(m_creature->getVictim(), SPELL_WINGBUFFET);
+                DoCast(me->getVictim(), SPELL_WINGBUFFET);
                 WingBuffetTimer = 7000 + ((rand()%8)*1000);
             } else WingBuffetTimer -= diff;
 
@@ -178,7 +178,7 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
             {
                 if (rand() <= 30)
                 {
-                    DoCast(m_creature->getVictim(), SPELL_KNOCK_AWAY);
+                    DoCast(me->getVictim(), SPELL_KNOCK_AWAY);
                 }
                 KnockAwayTimer = 15000;
             } else KnockAwayTimer -= diff;
@@ -187,7 +187,7 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
             {
                 if (BellowingRoarTimer < diff)
                 {
-                    DoCast(m_creature->getVictim(), SPELL_BELLOWINGROAR);
+                    DoCast(me->getVictim(), SPELL_BELLOWINGROAR);
 
                     BellowingRoarTimer = 30000;
                 } else BellowingRoarTimer -= diff;
@@ -212,7 +212,7 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
                 for (uint32 i = 0; i < 10; ++i)
                 {
                     uint32 random = rand()%4;
-                    Creature* Whelp = m_creature->SummonCreature(CREATURE_WHELP, SpawnLocations[random][0], SpawnLocations[random][1], SpawnLocations[random][2], 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
+                    Creature* Whelp = me->SummonCreature(CREATURE_WHELP, SpawnLocations[random][0], SpawnLocations[random][1], SpawnLocations[random][2], 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
                     if (Whelp)
                         Whelp->AI()->AttackStart(SelectUnit(SELECT_TARGET_RANDOM, 0));
                 }
@@ -221,7 +221,7 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
             if (EngulfingFlamesTimer < diff)
             {
                 DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_ENGULFINGFLAMES);
-                m_creature->HandleEmoteCommand(ANIM_FLY);
+                me->HandleEmoteCommand(ANIM_FLY);
 
                 EngulfingFlamesTimer = 10000;
             }
@@ -239,8 +239,8 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
             {
                 if (rand()%100 < 30)
                 {
-                    DoScriptText(EMOTE_BREATH, m_creature);
-                    DoCast(m_creature->getVictim(), SPELL_DEEPBREATH);
+                    DoScriptText(EMOTE_BREATH, me);
+                    DoCast(me->getVictim(), SPELL_DEEPBREATH);
                 }
                 else ChangePosition();
 
@@ -261,7 +261,7 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
     {
         uint32 random = rand() % 4;
         if (random<4){
-            m_creature->GetMotionMaster()->MovePoint(0, MovementLocations[random][0], MovementLocations[random][1], MovementLocations[random][2]);}
+            me->GetMotionMaster()->MovePoint(0, MovementLocations[random][0], MovementLocations[random][1], MovementLocations[random][2]);}
     }
 
     void SummonWhelps(uint32 Phase)
@@ -272,7 +272,7 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
             for (uint32 i = 0; i < max; ++i)
             {
                 uint32 random = rand()%3;
-                Creature* Whelp = m_creature->SummonCreature(CREATURE_WHELP, SpawnLocations[random][0], SpawnLocations[random][1], SpawnLocations[random][2], 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
+                Creature* Whelp = me->SummonCreature(CREATURE_WHELP, SpawnLocations[random][0], SpawnLocations[random][1], SpawnLocations[random][2], 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
                 if (Whelp)
                     Whelp->AI()->AttackStart(SelectUnit(SELECT_TARGET_RANDOM, 0));
             }
@@ -286,7 +286,7 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
                 for (uint32 i = 0; i < max; ++i)
                 {
                     uint32 random = rand()%4;
-                    Creature* Whelp = m_creature->SummonCreature(CREATURE_WHELP, SpawnLocations[random][0], SpawnLocations[random][1], SpawnLocations[random][2], 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
+                    Creature* Whelp = me->SummonCreature(CREATURE_WHELP, SpawnLocations[random][0], SpawnLocations[random][1], SpawnLocations[random][2], 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
                     if (Whelp)
                         Whelp->AI()->AttackStart(SelectUnit(SELECT_TARGET_RANDOM, 0));
                 }

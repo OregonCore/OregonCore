@@ -67,20 +67,20 @@ struct OREGON_DLL_DECL boss_maiden_of_virtueAI : public ScriptedAI
 
         switch(rand()%3)
         {
-        case 0: DoScriptText(SAY_SLAY1, m_creature);break;
-        case 1: DoScriptText(SAY_SLAY2, m_creature);break;
-        case 2: DoScriptText(SAY_SLAY3, m_creature);break;
+        case 0: DoScriptText(SAY_SLAY1, me);break;
+        case 1: DoScriptText(SAY_SLAY2, me);break;
+        case 2: DoScriptText(SAY_SLAY3, me);break;
         }
     }
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
     }
 
     void EnterCombat(Unit *who)
     {
-         DoScriptText(SAY_AGGRO, m_creature);
+         DoScriptText(SAY_AGGRO, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -90,24 +90,24 @@ struct OREGON_DLL_DECL boss_maiden_of_virtueAI : public ScriptedAI
 
         if (Enrage_Timer < diff && !Enraged)
         {
-            DoCast(m_creature, SPELL_BERSERK,true);
+            DoCast(me, SPELL_BERSERK,true);
             Enraged = true;
         } else Enrage_Timer -=diff;
 
         if (Holyground_Timer < diff)
         {
-            DoCast(m_creature, SPELL_HOLYGROUND, true);     //Triggered so it doesn't interrupt her at all
+            DoCast(me, SPELL_HOLYGROUND, true);     //Triggered so it doesn't interrupt her at all
             Holyground_Timer = 3000;
         } else Holyground_Timer -= diff;
 
         if (Repentance_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_REPENTANCE);
+            DoCast(me->getVictim(),SPELL_REPENTANCE);
 
             switch(rand()%2)
             {
-            case 0: DoScriptText(SAY_REPENTANCE1, m_creature);break;
-            case 1: DoScriptText(SAY_REPENTANCE2, m_creature);break;
+            case 0: DoScriptText(SAY_REPENTANCE1, me);break;
+            case 1: DoScriptText(SAY_REPENTANCE2, me);break;
             }
             Repentance_Timer = 30000 + rand()%15000;        //A little randomness on that spell
         } else Repentance_Timer -= diff;

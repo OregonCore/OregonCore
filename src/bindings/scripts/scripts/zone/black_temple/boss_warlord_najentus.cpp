@@ -85,8 +85,8 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-        case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-        case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+        case 0: DoScriptText(SAY_SLAY1, me); break;
+        case 1: DoScriptText(SAY_SLAY2, me); break;
         }
     }
 
@@ -95,13 +95,13 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(DATA_HIGHWARLORDNAJENTUSEVENT, DONE);
 
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
         DeleteSpine();
     }
 
     bool TryDoCast(Unit *victim, uint32 spellId, bool triggered = false)
     {
-        if (m_creature->IsNonMeleeSpellCasted(false)) return false;
+        if (me->IsNonMeleeSpellCasted(false)) return false;
 
         DoCast(victim,spellId,triggered);
         return true;
@@ -109,10 +109,10 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
 
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {
-        if (spell->Id == SPELL_HURL_SPINE && m_creature->HasAura(SPELL_TIDAL_SHIELD, 0))
+        if (spell->Id == SPELL_HURL_SPINE && me->HasAura(SPELL_TIDAL_SHIELD, 0))
         {
-            m_creature->RemoveAurasDueToSpell(SPELL_TIDAL_SHIELD);
-            m_creature->CastSpell(m_creature, SPELL_TIDAL_BURST, true);
+            me->RemoveAurasDueToSpell(SPELL_TIDAL_SHIELD);
+            me->CastSpell(me, SPELL_TIDAL_BURST, true);
             ResetTimer();
         }
     }
@@ -122,7 +122,7 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
         switch(spell->Id)
         {
         case SPELL_NEEDLE_SPINE:
-            m_creature->CastSpell(pTarget,SPELL_NEEDLE_SPINE_DMG,true);
+            me->CastSpell(pTarget,SPELL_NEEDLE_SPINE_DMG,true);
             break;
         }
     }
@@ -132,14 +132,14 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(DATA_HIGHWARLORDNAJENTUSEVENT, IN_PROGRESS);
 
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
         DoZoneInCombat();
     }
 
     bool RemoveImpalingSpine()
     {
         if (!SpineTargetGUID) return false;
-        Unit *pTarget = Unit::GetUnit(*m_creature, SpineTargetGUID);
+        Unit *pTarget = Unit::GetUnit(*me, SpineTargetGUID);
         if (pTarget && pTarget->HasAura(SPELL_IMPALING_SPINE, 1))
             pTarget->RemoveAurasDueToSpell(SPELL_IMPALING_SPINE);
         SpineTargetGUID=0;
@@ -154,10 +154,10 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
 
     void DeleteSpine()
     {
-        InstanceMap::PlayerList const &playerliste = ((InstanceMap*)m_creature->GetMap())->GetPlayers();
+        InstanceMap::PlayerList const &playerliste = ((InstanceMap*)me->GetMap())->GetPlayers();
         InstanceMap::PlayerList::const_iterator it;
 
-        Map::PlayerList const &PlayerList = ((InstanceMap*)m_creature->GetMap())->GetPlayers();
+        Map::PlayerList const &PlayerList = ((InstanceMap*)me->GetMap())->GetPlayers();
         for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
         {
             Player* i_pl = i->getSource();
@@ -173,19 +173,19 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
 
         if (TidalShieldTimer < diff)
         {
-            if (TryDoCast(m_creature, SPELL_TIDAL_SHIELD, true))
+            if (TryDoCast(me, SPELL_TIDAL_SHIELD, true))
             {
                 ResetTimer(45000);
                 TidalShieldTimer = 60000;
             }
         } else TidalShieldTimer -= diff;
 
-        if (!m_creature->HasAura(SPELL_BERSERK,0))
+        if (!me->HasAura(SPELL_BERSERK,0))
         {
             if (EnrageTimer < diff)
             {
-                DoScriptText(SAY_ENRAGE2, m_creature);
-                DoCast(m_creature, SPELL_BERSERK, true);
+                DoScriptText(SAY_ENRAGE2, me);
+                DoCast(me, SPELL_BERSERK, true);
             } else EnrageTimer -= diff;
         }
 
@@ -193,29 +193,29 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
         {
             switch(rand()%2)
             {
-            case 0: DoScriptText(SAY_SPECIAL1, m_creature); break;
-            case 1: DoScriptText(SAY_SPECIAL2, m_creature); break;
+            case 0: DoScriptText(SAY_SPECIAL1, me); break;
+            case 1: DoScriptText(SAY_SPECIAL2, me); break;
             }
             SpecialYellTimer = 25000 + (rand()%76)*1000;
         } else SpecialYellTimer -= diff;
 
         if (ImpalingSpineTimer < diff)
         {
-            if (!m_creature->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCasted(false))
             {
                 Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 80,true);
-                if (!pTarget) pTarget = m_creature->getVictim();
+                if (!pTarget) pTarget = me->getVictim();
                 if (pTarget)
                 {
                     DoCast(pTarget, SPELL_IMPALING_SPINE);
                     SpineTargetGUID = pTarget->GetGUID();
                     //must let target summon, otherwise you cannot click the spine
-                    pTarget->SummonGameObject(GOBJECT_SPINE, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), m_creature->GetOrientation(), 0, 0, 0, 0, 0);
+                    pTarget->SummonGameObject(GOBJECT_SPINE, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), me->GetOrientation(), 0, 0, 0, 0, 0);
 
                     switch(rand()%2)
                     {
-                    case 0: DoScriptText(SAY_NEEDLE1, m_creature); break;
-                    case 1: DoScriptText(SAY_NEEDLE2, m_creature); break;
+                    case 0: DoScriptText(SAY_NEEDLE1, me); break;
+                    case 1: DoScriptText(SAY_NEEDLE2, me); break;
                     }
                     ImpalingSpineTimer = 21000;
                 }
@@ -224,12 +224,12 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
 
         if (NeedleSpineTimer < diff)
         {
-            if (TryDoCast(m_creature, SPELL_NEEDLE_SPINE, true))
+            if (TryDoCast(me, SPELL_NEEDLE_SPINE, true))
             {
                 //std::list<Unit*> target;
                 //SelectUnitList(target, 3, SELECT_TARGET_RANDOM, 100, true);
                 //for (std::list<Unit*>::iterator i = target.begin(); i != target.end(); ++i)
-                //    m_creature->CastSpell(*i, 39835, true);
+                //    me->CastSpell(*i, 39835, true);
                 NeedleSpineTimer = 3000;
             }
         } else NeedleSpineTimer -= diff;

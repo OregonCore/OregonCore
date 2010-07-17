@@ -51,7 +51,7 @@ struct OREGON_DLL_DECL boss_archaedasAI : public ScriptedAI
 {
     boss_archaedasAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (m_creature->GetInstanceData());
+        pInstance = (me->GetInstanceData());
     }
 
     uint32 Tremor_Timer;
@@ -76,15 +76,15 @@ struct OREGON_DLL_DECL boss_archaedasAI : public ScriptedAI
         vaultWalkersAwake = false;
 
         if (pInstance) pInstance->SetData (DATA_MINIONS, NOT_STARTED);    // respawn any dead minions
-        m_creature->setFaction(35);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+        me->setFaction(35);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
 
     }
 
     void ActivateMinion (uint64 guid, bool flag)
     {
-        Unit *minion = Unit::GetUnit(*m_creature, guid);
+        Unit *minion = Unit::GetUnit(*me, guid);
 
         if (minion && minion->isAlive())
         {
@@ -96,9 +96,9 @@ struct OREGON_DLL_DECL boss_archaedasAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        m_creature->setFaction (14);
-        m_creature->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->RemoveFlag (UNIT_FIELD_FLAGS,UNIT_FLAG_DISABLE_MOVE);
+        me->setFaction (14);
+        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->RemoveFlag (UNIT_FIELD_FLAGS,UNIT_FLAG_DISABLE_MOVE);
     }
 
     void SpellHit (Unit* caster, const SpellEntry *spell)
@@ -106,7 +106,7 @@ struct OREGON_DLL_DECL boss_archaedasAI : public ScriptedAI
         // Being woken up from the altar, start the awaken sequence
         if (spell == GetSpellStore()->LookupEntry(SPELL_ARCHAEDAS_AWAKEN)) {
             DoYell(SAY_AGGRO,LANG_UNIVERSAL,NULL);
-            DoPlaySoundToSet(m_creature,SOUND_AGGRO);
+            DoPlaySoundToSet(me,SOUND_AGGRO);
             Awaken_Timer = 4000;
             wakingUp = true;
         }
@@ -115,7 +115,7 @@ struct OREGON_DLL_DECL boss_archaedasAI : public ScriptedAI
     void KilledUnit(Unit *victim)
     {
         DoYell(SAY_KILL,LANG_UNIVERSAL, NULL);
-        DoPlaySoundToSet(m_creature, SOUND_KILL);
+        DoPlaySoundToSet(me, SOUND_KILL);
     }
 
     void UpdateAI(const uint32 diff)
@@ -128,7 +128,7 @@ struct OREGON_DLL_DECL boss_archaedasAI : public ScriptedAI
             return;        // dont do anything until we are done
         } else if (wakingUp && Awaken_Timer <= 0) {
             wakingUp = false;
-            AttackStart(Unit::GetUnit(*m_creature, pInstance->GetData64(0)));
+            AttackStart(Unit::GetUnit(*me, pInstance->GetData64(0)));
             return;     // dont want to continue until we finish the AttackStart method
         }
 
@@ -145,7 +145,7 @@ struct OREGON_DLL_DECL boss_archaedasAI : public ScriptedAI
         } else WallMinionTimer -= diff;
 
         //If we are <66 summon the guardians
-        if (!guardiansAwake && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 66) {
+        if (!guardiansAwake && me->GetHealth()*100 / me->GetMaxHealth() <= 66) {
             ActivateMinion(pInstance->GetData64(5),true);   // EarthenGuardian1
             ActivateMinion(pInstance->GetData64(6),true);   // EarthenGuardian2
             ActivateMinion(pInstance->GetData64(7),true);   // EarthenGuardian3
@@ -153,18 +153,18 @@ struct OREGON_DLL_DECL boss_archaedasAI : public ScriptedAI
             ActivateMinion(pInstance->GetData64(9),true);   // EarthenGuardian5
             ActivateMinion(pInstance->GetData64(10),false); // EarthenGuardian6
             DoYell(SAY_SUMMON,LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(m_creature, SOUND_SUMMON);
+            DoPlaySoundToSet(me, SOUND_SUMMON);
             guardiansAwake = true;
         }
 
         //If we are <33 summon the vault walkers
-        if (!vaultWalkersAwake && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 33) {
+        if (!vaultWalkersAwake && me->GetHealth()*100 / me->GetMaxHealth() <= 33) {
             ActivateMinion(pInstance->GetData64(1),true);    // VaultWalker1
             ActivateMinion(pInstance->GetData64(2),true);    // VaultWalker2
             ActivateMinion(pInstance->GetData64(3),true);    // VaultWalker3
             ActivateMinion(pInstance->GetData64(4),false);    // VaultWalker4
             DoYell(SAY_SUMMON2, LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(m_creature, SOUND_SUMMON2);
+            DoPlaySoundToSet(me, SOUND_SUMMON2);
             vaultWalkersAwake = true;
         }
 
@@ -172,7 +172,7 @@ struct OREGON_DLL_DECL boss_archaedasAI : public ScriptedAI
         if (Tremor_Timer < diff)
         {
             //Cast
-            DoCast(m_creature->getVictim(),SPELL_GROUND_TREMOR);
+            DoCast(me->getVictim(),SPELL_GROUND_TREMOR);
 
             //45 seconds until we should cast this agian
             Tremor_Timer  = 45000;
@@ -210,7 +210,7 @@ struct OREGON_DLL_DECL mob_archaedas_minionsAI : public ScriptedAI
 {
     mob_archaedas_minionsAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (m_creature->GetInstanceData());
+        pInstance = (me->GetInstanceData());
     }
 
     uint32 Arcing_Timer;
@@ -230,18 +230,18 @@ struct OREGON_DLL_DECL mob_archaedas_minionsAI : public ScriptedAI
         wakingUp = false;
         amIAwake = false;
 
-        m_creature->setFaction(35);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
-        m_creature->RemoveAllAuras();
+        me->setFaction(35);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+        me->RemoveAllAuras();
     }
 
     void EnterCombat(Unit *who)
     {
-        m_creature->setFaction (14);
-        m_creature->RemoveAllAuras();
-        m_creature->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+        me->setFaction (14);
+        me->RemoveAllAuras();
+        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
         amIAwake = true;
     }
 
@@ -268,7 +268,7 @@ struct OREGON_DLL_DECL mob_archaedas_minionsAI : public ScriptedAI
         } else if (wakingUp && Awaken_Timer <= 0) {
             wakingUp = false;
             amIAwake = true;
-            AttackStart(Unit::GetUnit(*m_creature, pInstance->GetData64(0))); // whoWokeArchaedasGUID
+            AttackStart(Unit::GetUnit(*me, pInstance->GetData64(0))); // whoWokeArchaedasGUID
             return;     // dont want to continue until we finish the AttackStart method
         }
 
@@ -358,7 +358,7 @@ struct OREGON_DLL_DECL mob_stonekeepersAI : public ScriptedAI
 {
     mob_stonekeepersAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (m_creature->GetInstanceData());
+        pInstance = (me->GetInstanceData());
     }
 
     bool InCombat;
@@ -367,17 +367,17 @@ struct OREGON_DLL_DECL mob_stonekeepersAI : public ScriptedAI
     void Reset()
     {
         InCombat = false;
-        m_creature->setFaction(35);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
-        m_creature->RemoveAllAuras();
+        me->setFaction(35);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+        me->RemoveAllAuras();
     }
 
     void EnterCombat(Unit *who)
     {
-        m_creature->setFaction (14);
-        m_creature->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+        me->setFaction (14);
+        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
     }
 
     void UpdateAI(const uint32 diff)
@@ -391,7 +391,7 @@ struct OREGON_DLL_DECL mob_stonekeepersAI : public ScriptedAI
     }
 
     void JustDied (Unit *killer) {
-        DoCast (m_creature, SPELL_SELF_DESTRUCT,true);
+        DoCast (me, SPELL_SELF_DESTRUCT,true);
         if (pInstance)
             pInstance->SetData(DATA_STONE_KEEPERS, IN_PROGRESS);    // activate next stonekeeper
     }

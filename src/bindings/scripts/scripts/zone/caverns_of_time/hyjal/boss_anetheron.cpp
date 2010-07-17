@@ -74,7 +74,7 @@ struct OREGON_DLL_DECL boss_anetheronAI : public hyjal_trashAI
     {
         if (pInstance && IsEvent)
             pInstance->SetData(DATA_ANETHERONEVENT, IN_PROGRESS);
-        DoPlaySoundToSet(m_creature, SOUND_ONAGGRO);
+        DoPlaySoundToSet(me, SOUND_ONAGGRO);
         DoYell(SAY_ONAGGRO, LANG_UNIVERSAL, NULL);
     }
 
@@ -83,15 +83,15 @@ struct OREGON_DLL_DECL boss_anetheronAI : public hyjal_trashAI
         switch(rand()%3)
         {
             case 0:
-                DoPlaySoundToSet(m_creature, SOUND_ONSLAY1);
+                DoPlaySoundToSet(me, SOUND_ONSLAY1);
                 DoYell(SAY_ONSLAY1, LANG_UNIVERSAL, NULL);
                 break;
             case 1:
-                DoPlaySoundToSet(m_creature, SOUND_ONSLAY2);
+                DoPlaySoundToSet(me, SOUND_ONSLAY2);
                 DoYell(SAY_ONSLAY2, LANG_UNIVERSAL, NULL);
                 break;
             case 2:
-                DoPlaySoundToSet(m_creature, SOUND_ONSLAY3);
+                DoPlaySoundToSet(me, SOUND_ONSLAY3);
                 DoYell(SAY_ONSLAY3, LANG_UNIVERSAL, NULL);
                 break;
         }
@@ -102,9 +102,9 @@ struct OREGON_DLL_DECL boss_anetheronAI : public hyjal_trashAI
         pos = i;
         if (i == 7 && pInstance)
         {
-            Unit *pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_JAINAPROUDMOORE));
+            Unit *pTarget = Unit::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
             if (pTarget && pTarget->isAlive())
-                m_creature->AddThreat(pTarget,0.0);
+                me->AddThreat(pTarget,0.0);
         }
     }
 
@@ -113,7 +113,7 @@ struct OREGON_DLL_DECL boss_anetheronAI : public hyjal_trashAI
         hyjal_trashAI::JustDied(victim);
         if (pInstance && IsEvent)
             pInstance->SetData(DATA_ANETHERONEVENT, DONE);
-        DoPlaySoundToSet(m_creature, SOUND_ONDEATH);
+        DoPlaySoundToSet(me, SOUND_ONDEATH);
         DoYell(SAY_ONDEATH, LANG_UNIVERSAL, NULL);
     }
 
@@ -155,11 +155,11 @@ struct OREGON_DLL_DECL boss_anetheronAI : public hyjal_trashAI
             switch(rand()%2)
             {
                 case 0:
-                    DoPlaySoundToSet(m_creature, SOUND_SWARM1);
+                    DoPlaySoundToSet(me, SOUND_SWARM1);
                     DoYell(SAY_SWARM1, LANG_UNIVERSAL, NULL);
                     break;
                 case 1:
-                    DoPlaySoundToSet(m_creature, SOUND_SWARM2);
+                    DoPlaySoundToSet(me, SOUND_SWARM2);
                     DoYell(SAY_SWARM2, LANG_UNIVERSAL, NULL);
                     break;
             }
@@ -176,18 +176,18 @@ struct OREGON_DLL_DECL boss_anetheronAI : public hyjal_trashAI
             switch(rand()%2)
             {
                 case 0:
-                    DoPlaySoundToSet(m_creature, SOUND_SLEEP1);
+                    DoPlaySoundToSet(me, SOUND_SLEEP1);
                     DoYell(SAY_SLEEP1, LANG_UNIVERSAL, NULL);
                     break;
                 case 1:
-                    DoPlaySoundToSet(m_creature, SOUND_SLEEP2);
+                    DoPlaySoundToSet(me, SOUND_SLEEP2);
                     DoYell(SAY_SLEEP2, LANG_UNIVERSAL, NULL);
                     break;
             }
         } else SleepTimer -= diff;
         if (AuraTimer < diff)
         {
-            DoCast(m_creature, SPELL_VAMPIRIC_AURA, true);
+            DoCast(me, SPELL_VAMPIRIC_AURA, true);
             AuraTimer = 10000+rand()%10000;
         } else AuraTimer -= diff;
         if (InfernoTimer < diff)
@@ -197,11 +197,11 @@ struct OREGON_DLL_DECL boss_anetheronAI : public hyjal_trashAI
             switch(rand()%2)
             {
                 case 0:
-                    DoPlaySoundToSet(m_creature, SOUND_INFERNO1);
+                    DoPlaySoundToSet(me, SOUND_INFERNO1);
                     DoYell(SAY_INFERNO1, LANG_UNIVERSAL, NULL);
                     break;
                 case 1:
-                    DoPlaySoundToSet(m_creature, SOUND_INFERNO2);
+                    DoPlaySoundToSet(me, SOUND_INFERNO2);
                     DoYell(SAY_INFERNO2, LANG_UNIVERSAL, NULL);
                     break;
             }
@@ -235,7 +235,7 @@ struct OREGON_DLL_DECL mob_towering_infernalAI : public ScriptedAI
 
     void Reset()
     {
-        DoCast(m_creature, SPELL_INFERNO_EFFECT);
+        DoCast(me, SPELL_INFERNO_EFFECT);
         ImmolationTimer = 5000;
         CheckTimer = 5000;
     }
@@ -254,8 +254,8 @@ struct OREGON_DLL_DECL mob_towering_infernalAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit *who)
     {
-        if (m_creature->GetDistance(who) <= 50 && !m_creature->isInCombat() && m_creature->IsHostileTo(who))
-            m_creature->Attack(who,false);
+        if (me->GetDistance(who) <= 50 && !me->isInCombat() && me->IsHostileTo(who))
+            me->Attack(who,false);
     }
 
     void UpdateAI(const uint32 diff)
@@ -264,11 +264,11 @@ struct OREGON_DLL_DECL mob_towering_infernalAI : public ScriptedAI
         {
             if (AnetheronGUID)
             {
-                Creature* boss = Unit::GetCreature((*m_creature),AnetheronGUID);
+                Creature* boss = Unit::GetCreature((*me),AnetheronGUID);
                 if (!boss || (boss && boss->isDead()))
                 {
-                    m_creature->setDeathState(JUST_DIED);
-                    m_creature->RemoveCorpse();
+                    me->setDeathState(JUST_DIED);
+                    me->RemoveCorpse();
                     return;
                 }
             }
@@ -281,7 +281,7 @@ struct OREGON_DLL_DECL mob_towering_infernalAI : public ScriptedAI
 
         if (ImmolationTimer < diff)
         {
-            DoCast(m_creature, SPELL_IMMOLATION);
+            DoCast(me, SPELL_IMMOLATION);
             ImmolationTimer = 5000;
         } else ImmolationTimer -= diff;
 

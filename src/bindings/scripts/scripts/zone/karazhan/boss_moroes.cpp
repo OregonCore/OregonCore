@@ -93,7 +93,7 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
 
         Enrage = false;
         InVanish = false;
-        if (m_creature->GetHealth() > 0)
+        if (me->GetHealth() > 0)
         {
             DeSpawnAdds();
             SpawnAdds();
@@ -115,7 +115,7 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
     {
         StartEvent();
 
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
         AddsAttack();
         DoZoneInCombat();
     }
@@ -124,15 +124,15 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
     {
         switch (rand()%3)
         {
-        case 0: DoScriptText(SAY_KILL_1, m_creature); break;
-        case 1: DoScriptText(SAY_KILL_2, m_creature); break;
-        case 2: DoScriptText(SAY_KILL_3, m_creature); break;
+        case 0: DoScriptText(SAY_KILL_1, me); break;
+        case 1: DoScriptText(SAY_KILL_2, me); break;
+        case 2: DoScriptText(SAY_KILL_3, me); break;
         }
     }
 
     void JustDied(Unit* victim)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
             pInstance->SetData(DATA_MOROES_EVENT, DONE);
@@ -140,7 +140,7 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
         DeSpawnAdds();
 
         //remove aura from spell Garrote when Moroes dies
-        Map *map = m_creature->GetMap();
+        Map *map = me->GetMap();
         if (map->IsDungeon())
         {
             Map::PlayerList const &PlayerList = map->GetPlayers();
@@ -176,7 +176,7 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
             {
                 uint32 entry = *itr;
 
-                pCreature = m_creature->SummonCreature(entry, Locations[i][0], Locations[i][1], POS_Z, Locations[i][2], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+                pCreature = me->SummonCreature(entry, Locations[i][0], Locations[i][1], POS_Z, Locations[i][2], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
                 if (pCreature)
                 {
                     AddGUID[i] = pCreature->GetGUID();
@@ -188,7 +188,7 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
         {
             for (int i = 0; i < 4; i++)
             {
-                Creature *pCreature = m_creature->SummonCreature(AddId[i], Locations[i][0], Locations[i][1], POS_Z, Locations[i][2], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+                Creature *pCreature = me->SummonCreature(AddId[i], Locations[i][0], Locations[i][1], POS_Z, Locations[i][2], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
                 if (pCreature)
                 {
                     AddGUID[i] = pCreature->GetGUID();
@@ -214,7 +214,7 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
             Creature* Temp = NULL;
             if (AddGUID[i])
             {
-                Temp = Creature::GetCreature((*m_creature),AddGUID[i]);
+                Temp = Creature::GetCreature((*me),AddGUID[i]);
                 if (Temp && Temp->isAlive())
                 {
                     (*Temp).GetMotionMaster()->Clear(true);
@@ -233,10 +233,10 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
             Creature* Temp = NULL;
             if (AddGUID[i])
             {
-                Temp = Creature::GetCreature((*m_creature),AddGUID[i]);
+                Temp = Creature::GetCreature((*me),AddGUID[i]);
                 if (Temp && Temp->isAlive())
                 {
-                    Temp->AI()->AttackStart(m_creature->getVictim());
+                    Temp->AI()->AttackStart(me->getVictim());
                     DoZoneInCombat(Temp);
                 } else
                     EnterEvadeMode();
@@ -255,9 +255,9 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
             return;
         }
 
-        if (!Enrage && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 30)
+        if (!Enrage && me->GetHealth()*100 / me->GetMaxHealth() < 30)
         {
-            DoCast(m_creature, SPELL_FRENZY);
+            DoCast(me, SPELL_FRENZY);
             Enrage = true;
         }
 
@@ -268,10 +268,10 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
                 Creature* Temp = NULL;
                 if (AddGUID[i])
                 {
-                    Temp = Creature::GetCreature((*m_creature),AddGUID[i]);
+                    Temp = Creature::GetCreature((*me),AddGUID[i]);
                     if (Temp && Temp->isAlive())
                         if (!Temp->getVictim())
-                            Temp->AI()->AttackStart(m_creature->getVictim());
+                            Temp->AI()->AttackStart(me->getVictim());
                 }
             }
             CheckAdds_Timer = 5000;
@@ -282,7 +282,7 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
             //Cast Vanish, then Garrote random victim
             if (Vanish_Timer < diff)
             {
-                DoCast(m_creature, SPELL_VANISH);
+                DoCast(me, SPELL_VANISH);
                 InVanish = true;
                 Vanish_Timer = 35000;
                 Wait_Timer = 12000;
@@ -292,14 +292,14 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
             //Blind highest aggro, and attack second highest
             if (Gouge_Timer < diff)
             {
-                DoCast(m_creature->getVictim(), SPELL_GOUGE);
+                DoCast(me->getVictim(), SPELL_GOUGE);
                 Gouge_Timer = 40000;
             } else Gouge_Timer -= diff;
 
             if (Blind_Timer < diff)
             {
                 Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 25, true);
-                if (pTarget && m_creature->IsWithinMeleeRange(pTarget))
+                if (pTarget && me->IsWithinMeleeRange(pTarget))
                     DoCast(pTarget, SPELL_BLIND);
 
                 Blind_Timer = 40000;
@@ -312,8 +312,8 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
             {
                 switch(rand()%2)
                 {
-                    case 0: DoScriptText(SAY_SPECIAL_1, m_creature); break;
-                    case 1: DoScriptText(SAY_SPECIAL_2, m_creature); break;
+                    case 0: DoScriptText(SAY_SPECIAL_1, me); break;
+                    case 1: DoScriptText(SAY_SPECIAL_2, me); break;
                 }
 
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
@@ -357,13 +357,13 @@ struct OREGON_DLL_DECL boss_moroes_guestAI : public ScriptedAI
             return;
 
         GuestGUID[0] = pInstance->GetData64(DATA_MOROES);
-        Creature* Moroes = Creature::GetCreature((*m_creature), GuestGUID[0]);
+        Creature* Moroes = Creature::GetCreature((*me), GuestGUID[0]);
         if (Moroes)
         {
             for (uint8 i = 0; i < 3; ++i)
             {
                 uint64 GUID = ((boss_moroesAI*)Moroes->AI())->AddGUID[i];
-                if (GUID && GUID != m_creature->GetGUID())
+                if (GUID && GUID != me->GetGUID())
                     GuestGUID[i+1] = GUID;
             }
         }
@@ -374,12 +374,12 @@ struct OREGON_DLL_DECL boss_moroes_guestAI : public ScriptedAI
         uint64 TempGUID = GuestGUID[rand()%5];
         if (TempGUID)
         {
-            Unit* pUnit = Unit::GetUnit((*m_creature), TempGUID);
+            Unit* pUnit = Unit::GetUnit((*me), TempGUID);
             if (pUnit && pUnit->isAlive())
                 return pUnit;
         }
 
-        return m_creature;
+        return me;
     }
 
     void UpdateAI(const uint32 diff)
@@ -411,7 +411,7 @@ struct OREGON_DLL_DECL boss_baroness_dorothea_millstipeAI : public boss_moroes_g
         MindFlay_Timer = 1000;
         ShadowWordPain_Timer = 6000;
 
-        DoCast(m_creature,SPELL_SHADOWFORM, true);
+        DoCast(me,SPELL_SHADOWFORM, true);
 
         boss_moroes_guestAI::Reset();
     }
@@ -425,7 +425,7 @@ struct OREGON_DLL_DECL boss_baroness_dorothea_millstipeAI : public boss_moroes_g
 
         if (MindFlay_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_MINDFLY);
+            DoCast(me->getVictim(),SPELL_MINDFLY);
             MindFlay_Timer = 12000;                         //3sec channeled
         } else MindFlay_Timer -= diff;
 
@@ -480,20 +480,20 @@ struct OREGON_DLL_DECL boss_baron_rafe_dreugerAI : public boss_moroes_guestAI
 
         if (SealOfCommand_Timer < diff)
         {
-            DoCast(m_creature,SPELL_SEALOFCOMMAND);
+            DoCast(me,SPELL_SEALOFCOMMAND);
             SealOfCommand_Timer = 32000;
             JudgementOfCommand_Timer = 29000;
         } else SealOfCommand_Timer -= diff;
 
         if (JudgementOfCommand_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_JUDGEMENTOFCOMMAND);
+            DoCast(me->getVictim(),SPELL_JUDGEMENTOFCOMMAND);
             JudgementOfCommand_Timer = SealOfCommand_Timer + 29000;
         } else JudgementOfCommand_Timer -= diff;
 
         if (HammerOfJustice_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_HAMMEROFJUSTICE);
+            DoCast(me->getVictim(),SPELL_HAMMEROFJUSTICE);
             HammerOfJustice_Timer = 12000;
         } else HammerOfJustice_Timer -= diff;
     }
@@ -535,7 +535,7 @@ struct OREGON_DLL_DECL boss_lady_catriona_von_indiAI : public boss_moroes_guestA
 
         if (PowerWordShield_Timer < diff)
         {
-            DoCast(m_creature,SPELL_PWSHIELD);
+            DoCast(me,SPELL_PWSHIELD);
             PowerWordShield_Timer = 15000;
         } else PowerWordShield_Timer -= diff;
 
@@ -548,7 +548,7 @@ struct OREGON_DLL_DECL boss_lady_catriona_von_indiAI : public boss_moroes_guestA
 
         if (HolyFire_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_HOLYFIRE);
+            DoCast(me->getVictim(),SPELL_HOLYFIRE);
             HolyFire_Timer = 22000;
         } else HolyFire_Timer -= diff;
 
@@ -603,7 +603,7 @@ struct OREGON_DLL_DECL boss_lady_keira_berrybuckAI : public boss_moroes_guestAI
 
         if (DivineShield_Timer < diff)
         {
-            DoCast(m_creature,SPELL_DIVINESHIELD);
+            DoCast(me,SPELL_DIVINESHIELD);
             DivineShield_Timer = 31000;
         } else DivineShield_Timer -= diff;
 
@@ -663,19 +663,19 @@ struct OREGON_DLL_DECL boss_lord_robin_darisAI : public boss_moroes_guestAI
 
         if (Hamstring_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_HAMSTRING);
+            DoCast(me->getVictim(),SPELL_HAMSTRING);
             Hamstring_Timer = 12000;
         } else Hamstring_Timer -= diff;
 
         if (MortalStrike_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_MORTALSTRIKE);
+            DoCast(me->getVictim(), SPELL_MORTALSTRIKE);
             MortalStrike_Timer = 18000;
         } else MortalStrike_Timer -= diff;
 
         if (WhirlWind_Timer < diff)
         {
-            DoCast(m_creature,SPELL_WHIRLWIND);
+            DoCast(me,SPELL_WHIRLWIND);
             WhirlWind_Timer = 21000;
         } else WhirlWind_Timer -= diff;
     }
@@ -715,25 +715,25 @@ struct OREGON_DLL_DECL boss_lord_crispin_ferenceAI : public boss_moroes_guestAI
 
         if (Disarm_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_DISARM);
+            DoCast(me->getVictim(),SPELL_DISARM);
             Disarm_Timer = 12000;
         } else Disarm_Timer -= diff;
 
         if (HeroicStrike_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_HEROICSTRIKE);
+            DoCast(me->getVictim(),SPELL_HEROICSTRIKE);
             HeroicStrike_Timer = 10000;
         } else HeroicStrike_Timer -= diff;
 
         if (ShieldBash_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_SHIELDBASH);
+            DoCast(me->getVictim(),SPELL_SHIELDBASH);
             ShieldBash_Timer = 13000;
         } else ShieldBash_Timer -= diff;
 
         if (ShieldWall_Timer < diff)
         {
-            DoCast(m_creature,SPELL_SHIELDWALL);
+            DoCast(me,SPELL_SHIELDWALL);
             ShieldWall_Timer = 21000;
         } else ShieldWall_Timer -= diff;
     }

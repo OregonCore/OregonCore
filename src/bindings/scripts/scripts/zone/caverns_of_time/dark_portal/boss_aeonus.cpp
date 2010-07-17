@@ -43,7 +43,7 @@ struct OREGON_DLL_DECL boss_aeonusAI : public ScriptedAI
     boss_aeonusAI(Creature *c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     ScriptedInstance *pInstance;
@@ -62,7 +62,7 @@ struct OREGON_DLL_DECL boss_aeonusAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
     }
 
     void MoveInLineOfSight(Unit *who)
@@ -70,10 +70,10 @@ struct OREGON_DLL_DECL boss_aeonusAI : public ScriptedAI
         //Despawn Time Keeper
         if (who->GetTypeId() == TYPEID_UNIT && who->GetEntry() == C_TIME_KEEPER)
         {
-            if (m_creature->IsWithinDistInMap(who,20.0f))
+            if (me->IsWithinDistInMap(who,20.0f))
             {
-                DoScriptText(SAY_BANISH, m_creature);
-                m_creature->DealDamage(who, who->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                DoScriptText(SAY_BANISH, me);
+                me->DealDamage(who, who->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             }
         }
 
@@ -82,7 +82,7 @@ struct OREGON_DLL_DECL boss_aeonusAI : public ScriptedAI
 
     void JustDied(Unit *victim)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
          if (pInstance)
          {
@@ -95,8 +95,8 @@ struct OREGON_DLL_DECL boss_aeonusAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-            case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+            case 0: DoScriptText(SAY_SLAY1, me); break;
+            case 1: DoScriptText(SAY_SLAY2, me); break;
         }
     }
 
@@ -109,22 +109,22 @@ struct OREGON_DLL_DECL boss_aeonusAI : public ScriptedAI
         //Sand Breath
         if (SandBreath_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_SAND_BREATH);
+            DoCast(me->getVictim(), SPELL_SAND_BREATH);
             SandBreath_Timer = 30000;
         } else SandBreath_Timer -= diff;
 
         //Time Stop
         if (TimeStop_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_TIME_STOP);
+            DoCast(me->getVictim(), SPELL_TIME_STOP);
             TimeStop_Timer = 40000;
         } else TimeStop_Timer -= diff;
 
         //Frenzy
         if (Frenzy_Timer < diff)
         {
-            DoScriptText(EMOTE_FRENZY, m_creature);
-            DoCast(m_creature, SPELL_ENRAGE);
+            DoScriptText(EMOTE_FRENZY, me);
+            DoCast(me, SPELL_ENRAGE);
             Frenzy_Timer = 120000;
         } else Frenzy_Timer -= diff;
 

@@ -132,16 +132,16 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
 
         Charge_Timer = 30000;
 
-        DoCast(m_creature,SPELL_ACIDIC_WOUND,true);
+        DoCast(me,SPELL_ACIDIC_WOUND,true);
 
-        m_creature->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, false);
-        m_creature->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, false);
+        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, false);
+        me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, false);
     }
 
     void EnterCombat(Unit *who)
     {
         DoZoneInCombat();
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
         if (pInstance)
             pInstance->SetData(DATA_GURTOGGBLOODBOILEVENT, IN_PROGRESS);
     }
@@ -150,8 +150,8 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-        case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-        case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+        case 0: DoScriptText(SAY_SLAY1, me); break;
+        case 1: DoScriptText(SAY_SLAY2, me); break;
         }
     }
 
@@ -160,14 +160,14 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(DATA_GURTOGGBLOODBOILEVENT, DONE);
 
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
     }
 
     // Note: This seems like a very complicated fix. The fix needs to be handled by the core, as implementation of limited-target AoE spells are still not limited.
     void CastBloodboil()
     {
         std::list<Unit *> targets;
-        Map *map = m_creature->GetMap();
+        Map *map = me->GetMap();
         if (map->IsDungeon())
         {
             InstanceMap::PlayerList const &PlayerList = ((InstanceMap*)map)->GetPlayers();
@@ -182,7 +182,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
         }
 
         //Sort the list of players
-        targets.sort(ObjectDistanceOrderReversed(m_creature));
+        targets.sort(ObjectDistanceOrderReversed(me));
         //Resize so we only get top 5
         targets.resize(5);
 
@@ -191,7 +191,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
         {
             Unit *pTarget = *itr;
             if (pTarget && pTarget->isAlive())
-                m_creature->AddAura(SPELL_BLOODBOIL, pTarget);
+                me->AddAura(SPELL_BLOODBOIL, pTarget);
         }
         targets.clear();
     }
@@ -199,13 +199,13 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
     void RevertThreatOnTarget(uint64 guid)
     {
         Unit* pUnit = NULL;
-        pUnit = Unit::GetUnit((*m_creature), guid);
+        pUnit = Unit::GetUnit((*me), guid);
         if (pUnit)
         {
             if (DoGetThreat(pUnit))
                 DoModifyThreatPercent(pUnit, -100);
             if (TargetThreat)
-                m_creature->AddThreat(pUnit, TargetThreat);
+                me->AddThreat(pUnit, TargetThreat);
         }
     }
 
@@ -214,42 +214,42 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (!m_creature->HasAura(SPELL_BERSERK, 0))
+        if (!me->HasAura(SPELL_BERSERK, 0))
         {
             if (EnrageTimer < diff)
             {
-                DoCast(m_creature, SPELL_BERSERK);
+                DoCast(me, SPELL_BERSERK);
                 switch(rand()%2)
                 {
-                case 0: DoScriptText(SAY_ENRAGE1, m_creature); break;
-                case 1: DoScriptText(SAY_ENRAGE2, m_creature); break;
+                case 0: DoScriptText(SAY_ENRAGE1, me); break;
+                case 1: DoScriptText(SAY_ENRAGE2, me); break;
                 }
             } else EnrageTimer -= diff;
         }
 
         if (ArcingSmashTimer < diff)
         {
-            DoCast(m_creature->getVictim(),Phase1 ? SPELL_ARCING_SMASH_1 : SPELL_ARCING_SMASH_2);
+            DoCast(me->getVictim(),Phase1 ? SPELL_ARCING_SMASH_1 : SPELL_ARCING_SMASH_2);
             ArcingSmashTimer = 10000;
         } else ArcingSmashTimer -= diff;
 
         if (FelBreathTimer < diff)
         {
-            DoCast(m_creature->getVictim(),Phase1 ? SPELL_FELBREATH_1 : SPELL_FELBREATH_2);
+            DoCast(me->getVictim(),Phase1 ? SPELL_FELBREATH_1 : SPELL_FELBREATH_2);
             FelBreathTimer = 25000;
         } else FelBreathTimer -= diff;
 
         if (EjectTimer < diff)
         {
-            DoCast(m_creature->getVictim(),Phase1 ? SPELL_EJECT_1 : SPELL_EJECT_2);
+            DoCast(me->getVictim(),Phase1 ? SPELL_EJECT_1 : SPELL_EJECT_2);
             EjectTimer = 15000;
         } else EjectTimer -= diff;
 
 
         if (Charge_Timer < diff)
         {
-            if (m_creature->GetDistance2d(m_creature->getVictim()) > 15)
-                DoCast(m_creature->getVictim(),SPELL_CHARGE);
+            if (me->GetDistance2d(me->getVictim()) > 15)
+                DoCast(me->getVictim(),SPELL_CHARGE);
             Charge_Timer = 10000;
         } else Charge_Timer -= diff;
 
@@ -257,7 +257,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
         {
             if (BewilderingStrikeTimer < diff)
             {
-                DoCast(m_creature->getVictim(), SPELL_BEWILDERING_STRIKE);
+                DoCast(me->getVictim(), SPELL_BEWILDERING_STRIKE);
                 BewilderingStrikeTimer = 20000;
             } else BewilderingStrikeTimer -= diff;
 
@@ -266,7 +266,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
                 if (BloodboilCount < 5)                      // Only cast it five times.
                 {
                     CastBloodboil(); // Causes issues on windows, so is commented out.
-                    //DoCast(m_creature->getVictim(), SPELL_BLOODBOIL);
+                    //DoCast(me->getVictim(), SPELL_BLOODBOIL);
                     ++BloodboilCount;
                     BloodboilTimer = 10000;
                 }
@@ -277,12 +277,12 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
         {
             if (FelGeyserTimer < diff)
             {
-                DoCast(m_creature->getVictim(), SPELL_FEL_GEYSER);
+                DoCast(me->getVictim(), SPELL_FEL_GEYSER);
                 FelGeyserTimer = 30000;
             } else FelGeyserTimer -= diff;
 
-            if (m_creature->getVictim()->IsImmunedToDamage(SPELL_SCHOOL_MASK_ALL,true))
-                m_creature->getThreatManager().modifyThreatPercent(m_creature->getVictim(),-100);
+            if (me->getVictim()->IsImmunedToDamage(SPELL_SCHOOL_MASK_ALL,true))
+                me->getThreatManager().modifyThreatPercent(me->getVictim(),-100);
         }
 
         if (PhaseChangeTimer < diff)
@@ -298,25 +298,25 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
                     TargetGUID = pTarget->GetGUID();
                     if (DoGetThreat(pTarget))
                         DoModifyThreatPercent(pTarget, -100);
-                    m_creature->AddThreat(pTarget, 50000000.0f);
-                    pTarget->CastSpell(m_creature, SPELL_TAUNT_GURTOGG, true);
-                    m_creature->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-                    m_creature->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
+                    me->AddThreat(pTarget, 50000000.0f);
+                    pTarget->CastSpell(me, SPELL_TAUNT_GURTOGG, true);
+                    me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
+                    me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
 
                     // If VMaps are disabled, this spell can call the whole instance
-                    DoCast(m_creature, SPELL_INSIGNIFIGANCE, true);
+                    DoCast(me, SPELL_INSIGNIFIGANCE, true);
                     DoCast(pTarget,SPELL_FEL_RAGE_1, true);
                     DoCast(pTarget,SPELL_FEL_RAGE_2, true);
                     DoCast(pTarget,SPELL_FEL_RAGE_3, true);
                     DoCast(pTarget,SPELL_FEL_RAGE_SCALE, true);
 
                     //Cast this without triggered so that it appears in combat logs and shows visual.
-                    DoCast(m_creature, SPELL_FEL_RAGE_SELF);
+                    DoCast(me, SPELL_FEL_RAGE_SELF);
 
                     switch(rand()%2)
                     {
-                    case 0: DoScriptText(SAY_SPECIAL1, m_creature); break;
-                    case 1: DoScriptText(SAY_SPECIAL2, m_creature); break;
+                    case 0: DoScriptText(SAY_SPECIAL1, me); break;
+                    case 1: DoScriptText(SAY_SPECIAL2, me); break;
                     }
 
                     FelGeyserTimer = 1000;
@@ -334,8 +334,8 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
                 FelBreathTimer += 2000;
                 EjectTimer += 2000;
                 PhaseChangeTimer = 65000;
-                m_creature->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, false);
-                m_creature->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, false);
+                me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, false);
+                me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, false);
             }
         } else PhaseChangeTimer -= diff;
 

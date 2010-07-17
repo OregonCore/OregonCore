@@ -118,7 +118,7 @@ struct OREGON_DLL_DECL mob_omrogg_headsAI : public ScriptedAI
 
         if (Death_Timer < diff)
         {
-            DoScriptText(YELL_DIE_R, m_creature);
+            DoScriptText(YELL_DIE_R, me);
             DeathYell = false;
         } else Death_Timer -= diff;
     }
@@ -129,7 +129,7 @@ struct OREGON_DLL_DECL boss_warbringer_omroggAI : public ScriptedAI
     boss_warbringer_omroggAI(Creature *c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     ScriptedInstance* pInstance;
@@ -156,8 +156,8 @@ struct OREGON_DLL_DECL boss_warbringer_omroggAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-        m_creature->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
+        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
+        me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
 
         LeftHead = 0;
         RightHead = 0;
@@ -183,8 +183,8 @@ struct OREGON_DLL_DECL boss_warbringer_omroggAI : public ScriptedAI
     {
         if (LeftHead && RightHead)
         {
-            Unit *Left  = Unit::GetUnit(*m_creature,LeftHead);
-            Unit *Right = Unit::GetUnit(*m_creature,RightHead);
+            Unit *Left  = Unit::GetUnit(*me,LeftHead);
+            Unit *Right = Unit::GetUnit(*me,RightHead);
 
             if (!Left || !Right)
                 return;
@@ -205,7 +205,7 @@ struct OREGON_DLL_DECL boss_warbringer_omroggAI : public ScriptedAI
         DoSpawnCreature(ENTRY_LEFT_HEAD,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN,1800000);
         DoSpawnCreature(ENTRY_RIGHT_HEAD,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN,1800000);
 
-        if (Unit *Left = Unit::GetUnit(*m_creature,LeftHead))
+        if (Unit *Left = Unit::GetUnit(*me,LeftHead))
         {
             iaggro = rand()%3;
 
@@ -236,8 +236,8 @@ struct OREGON_DLL_DECL boss_warbringer_omroggAI : public ScriptedAI
     {
         if (LeftHead && RightHead)
         {
-            Unit *Left  = Unit::GetUnit(*m_creature,LeftHead);
-            Unit *Right = Unit::GetUnit(*m_creature,RightHead);
+            Unit *Left  = Unit::GetUnit(*me,LeftHead);
+            Unit *Right = Unit::GetUnit(*me,RightHead);
 
             if (!Left || !Right)
                 return;
@@ -265,8 +265,8 @@ struct OREGON_DLL_DECL boss_warbringer_omroggAI : public ScriptedAI
     {
         if (LeftHead && RightHead)
         {
-            Unit *Left  = Unit::GetUnit(*m_creature,LeftHead);
-            Unit *Right = Unit::GetUnit(*m_creature,RightHead);
+            Unit *Left  = Unit::GetUnit(*me,LeftHead);
+            Unit *Right = Unit::GetUnit(*me,RightHead);
 
             if (!Left || !Right)
                 return;
@@ -289,8 +289,8 @@ struct OREGON_DLL_DECL boss_warbringer_omroggAI : public ScriptedAI
             if (!LeftHead || !RightHead)
                 return;
 
-            Unit *Left  = Unit::GetUnit(*m_creature,LeftHead);
-            Unit *Right = Unit::GetUnit(*m_creature,RightHead);
+            Unit *Left  = Unit::GetUnit(*me,LeftHead);
+            Unit *Right = Unit::GetUnit(*me,RightHead);
 
             if (!Left || !Right)
                 return;
@@ -332,7 +332,7 @@ struct OREGON_DLL_DECL boss_warbringer_omroggAI : public ScriptedAI
 
         if (BlastCount && BlastWave_Timer <= diff)
         {
-            DoCast(m_creature,SPELL_BLAST_WAVE);
+            DoCast(me,SPELL_BLAST_WAVE);
             BlastWave_Timer = 5000;
             ++BlastCount;
 
@@ -342,8 +342,8 @@ struct OREGON_DLL_DECL boss_warbringer_omroggAI : public ScriptedAI
 
         if (BurningMaul_Timer < diff)
         {
-            DoScriptText(EMOTE_ENRAGE, m_creature);
-            DoCast(m_creature,HeroicMode ? H_SPELL_BURNING_MAUL : SPELL_BURNING_MAUL);
+            DoScriptText(EMOTE_ENRAGE, me);
+            DoCast(me,HeroicMode ? H_SPELL_BURNING_MAUL : SPELL_BURNING_MAUL);
             BurningMaul_Timer = 40000;
             BlastWave_Timer = 16000;
             BlastCount = 1;
@@ -355,20 +355,20 @@ struct OREGON_DLL_DECL boss_warbringer_omroggAI : public ScriptedAI
             {
                 DoYellForThreat();
                 DoResetThreat();
-                m_creature->AddThreat(pTarget, 0.0f);
+                me->AddThreat(pTarget, 0.0f);
             }
             ResetThreat_Timer = 35000+rand()%10000;
         } else ResetThreat_Timer -= diff;
 
         if (Fear_Timer < diff)
         {
-            DoCast(m_creature,SPELL_FEAR);
+            DoCast(me,SPELL_FEAR);
             Fear_Timer = 15000+rand()%25000;
         } else Fear_Timer -= diff;
 
         if (ThunderClap_Timer < diff)
         {
-            DoCast(m_creature,SPELL_THUNDERCLAP);
+            DoCast(me,SPELL_THUNDERCLAP);
             ThunderClap_Timer = 25000+rand()%15000;
         } else ThunderClap_Timer -= diff;
 

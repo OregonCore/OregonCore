@@ -77,61 +77,61 @@ struct OREGON_DLL_DECL AV_WarmastersAI : public ScriptedAI
      void UpdateAI(const uint32 diff)
      {
          //Adding the auras//
-        if (m_creature->GetEntry() == 14773 && Aura1 == 0) //Iceblood Warmaster
+        if (me->GetEntry() == 14773 && Aura1 == 0) //Iceblood Warmaster
         {
-            DoCast(m_creature, 45822);
+            DoCast(me, 45822);
             Aura1 = 1;
         }
-        if (m_creature->GetEntry() == 14776 && Aura2 == 0) //Tower Point Warmaster
+        if (me->GetEntry() == 14776 && Aura2 == 0) //Tower Point Warmaster
         {
-            DoCast(m_creature, 45823);
+            DoCast(me, 45823);
             Aura2 = 1;
         }
-        if (m_creature->GetEntry() == 14772 && Aura3 == 0) //East Frostwolf Warmaster
+        if (me->GetEntry() == 14772 && Aura3 == 0) //East Frostwolf Warmaster
         {
-            DoCast(m_creature, 45826);
+            DoCast(me, 45826);
             Aura3 = 1;
         }
-        if (m_creature->GetEntry() == 14777 && Aura4 == 0) //West FRostwolf Marshal
+        if (me->GetEntry() == 14777 && Aura4 == 0) //West FRostwolf Marshal
         {
-            DoCast(m_creature, 45824);
+            DoCast(me, 45824);
             Aura4 = 1;
         }
         if (!UpdateVictim())
             return;
         if (ChargeTimer <diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_CHARGE);
+            DoCast(me->getVictim(), SPELL_CHARGE);
             ChargeTimer = (10+rand()%15)*1000;
         } else ChargeTimer -= diff;
 
         if (CleaveTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_CLEAVE);
+            DoCast(me->getVictim(), SPELL_CLEAVE);
             CleaveTimer =  (10+rand()%6)*1000;
         } else CleaveTimer -= diff;
 
         if (DemoralizingShoutTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_DEMORALIZING_SHOUT);
+            DoCast(me->getVictim(), SPELL_DEMORALIZING_SHOUT);
             DemoralizingShoutTimer = (10+rand()%5)*1000;
         } else DemoralizingShoutTimer -= diff;
 
         if (Whirlwind1Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_WHIRLWIND1);
+            DoCast(me->getVictim(), SPELL_WHIRLWIND1);
             Whirlwind1Timer = (6+rand()%14)*1000;
         } else Whirlwind1Timer -= diff;
 
         if (Whirlwind2Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_WHIRLWIND2);
+            DoCast(me->getVictim(), SPELL_WHIRLWIND2);
             Whirlwind2Timer = (10+rand()%15)*1000;
         } else Whirlwind2Timer -= diff;
 
         if (EnrageTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_ENRAGE);
+            DoCast(me->getVictim(), SPELL_ENRAGE);
             EnrageTimer = (10+rand()%20)*1000;
         } else EnrageTimer -= diff;
 
@@ -140,7 +140,7 @@ struct OREGON_DLL_DECL AV_WarmastersAI : public ScriptedAI
         if (ResetTimer < diff)
         {
              float x, y, z;
-             m_creature->GetPosition(x, y, z);
+             me->GetPosition(x, y, z);
              if (y < -260)
             {
                 EnterEvadeMode();

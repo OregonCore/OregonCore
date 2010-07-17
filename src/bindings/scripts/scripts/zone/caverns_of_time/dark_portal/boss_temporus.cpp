@@ -42,7 +42,7 @@ struct OREGON_DLL_DECL boss_temporusAI : public ScriptedAI
     boss_temporusAI(Creature *c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     ScriptedInstance *pInstance;
@@ -53,8 +53,8 @@ struct OREGON_DLL_DECL boss_temporusAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-        m_creature->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
+        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
+        me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
 
         Haste_Timer = 20000;
         SpellReflection_Timer = 40000;
@@ -62,21 +62,21 @@ struct OREGON_DLL_DECL boss_temporusAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
     }
 
     void KilledUnit(Unit *victim)
     {
         switch(rand()%2)
         {
-            case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+            case 0: DoScriptText(SAY_SLAY1, me); break;
+            case 1: DoScriptText(SAY_SLAY2, me); break;
         }
     }
 
     void JustDied(Unit *victim)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
             pInstance->SetData(TYPE_RIFT,SPECIAL);
@@ -87,11 +87,11 @@ struct OREGON_DLL_DECL boss_temporusAI : public ScriptedAI
         //Despawn Time Keeper
         if (who->GetTypeId() == TYPEID_UNIT && who->GetEntry() == C_TIME_KEEPER)
         {
-            if (m_creature->IsWithinDistInMap(who,20.0f))
+            if (me->IsWithinDistInMap(who,20.0f))
             {
-                DoScriptText(SAY_BANISH, m_creature);
+                DoScriptText(SAY_BANISH, me);
 
-                m_creature->DealDamage(who, who->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                me->DealDamage(who, who->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             }
         }
 
@@ -107,14 +107,14 @@ struct OREGON_DLL_DECL boss_temporusAI : public ScriptedAI
         //Attack Haste
         if (Haste_Timer < diff)
         {
-            DoCast(m_creature, SPELL_HASTE);
+            DoCast(me, SPELL_HASTE);
             Haste_Timer = 20000+rand()%5000;
         } else Haste_Timer -= diff;
 
         //Spell Reflection
         if (SpellReflection_Timer < diff)
         {
-            DoCast(m_creature, SPELL_REFLECT);
+            DoCast(me, SPELL_REFLECT);
             SpellReflection_Timer = 40000+rand()%10000;
         } else SpellReflection_Timer -= diff;
 

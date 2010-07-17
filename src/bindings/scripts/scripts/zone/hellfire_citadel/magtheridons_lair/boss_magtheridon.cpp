@@ -109,8 +109,8 @@ struct OREGON_DLL_DECL mob_abyssalAI : public ScriptedAI
     {
         if (trigger == 2 && spell->Id == SPELL_BLAZE_TARGET)
         {
-            m_creature->CastSpell(m_creature, SPELL_BLAZE_TRAP, true);
-            m_creature->SetVisibility(VISIBILITY_OFF);
+            me->CastSpell(me, SPELL_BLAZE_TRAP, true);
+            me->SetVisibility(VISIBILITY_OFF);
             Despawn_Timer = 130000;
         }
     }
@@ -118,11 +118,11 @@ struct OREGON_DLL_DECL mob_abyssalAI : public ScriptedAI
     void SetTrigger(uint32 _trigger)
     {
         trigger = _trigger;
-        m_creature->SetDisplayId(11686);
+        me->SetDisplayId(11686);
         if (trigger == 1) //debris
         {
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->CastSpell(m_creature, SPELL_DEBRIS_VISUAL, true);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->CastSpell(me, SPELL_DEBRIS_VISUAL, true);
             FireBlast_Timer = 5000;
             Despawn_Timer = 10000;
         }
@@ -140,7 +140,7 @@ struct OREGON_DLL_DECL mob_abyssalAI : public ScriptedAI
             {
                 if (FireBlast_Timer < diff)
                 {
-                    m_creature->CastSpell(m_creature, SPELL_DEBRIS_DAMAGE, true);
+                    me->CastSpell(me, SPELL_DEBRIS_DAMAGE, true);
                     trigger = 3;
                 } else FireBlast_Timer -= diff;
             }
@@ -149,8 +149,8 @@ struct OREGON_DLL_DECL mob_abyssalAI : public ScriptedAI
 
         if (Despawn_Timer < diff)
         {
-            m_creature->SetVisibility(VISIBILITY_OFF);
-            m_creature->setDeathState(JUST_DIED);
+            me->SetVisibility(VISIBILITY_OFF);
+            me->setDeathState(JUST_DIED);
         } else Despawn_Timer -= diff;
 
         if (!UpdateVictim())
@@ -158,7 +158,7 @@ struct OREGON_DLL_DECL mob_abyssalAI : public ScriptedAI
 
         if (FireBlast_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_FIRE_BLAST);
+            DoCast(me->getVictim(), SPELL_FIRE_BLAST);
             FireBlast_Timer = 5000+rand()%10000;
         } else FireBlast_Timer -= diff;
 
@@ -170,9 +170,9 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
 {
     boss_magtheridonAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance =m_creature->GetInstanceData();
-        m_creature->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 10);
-        m_creature->SetFloatValue(UNIT_FIELD_COMBATREACH, 10);
+        pInstance =me->GetInstanceData();
+        me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 10);
+        me->SetFloatValue(UNIT_FIELD_COMBATREACH, 10);
 
         // target 7, random target with certain entry spell, need core fix
         SpellEntry *TempSpell;
@@ -222,18 +222,18 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
 
         Phase3 = false;
 
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
-        m_creature->addUnitState(UNIT_STAT_STUNNED);
-        m_creature->CastSpell(m_creature, SPELL_SHADOW_CAGE_C, true);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
+        me->addUnitState(UNIT_STAT_STUNNED);
+        me->CastSpell(me, SPELL_SHADOW_CAGE_C, true);
     }
 
     void SetClicker(uint64 cubeGUID, uint64 clickerGUID)
     {
         // to avoid multiclicks from 1 cube
         if (uint64 guid = Cube[cubeGUID])
-            DebuffClicker(Unit::GetUnit(*m_creature, guid));
+            DebuffClicker(Unit::GetUnit(*me, guid));
         Cube[cubeGUID] = clickerGUID;
         NeedCheckCube = true;
     }
@@ -256,7 +256,7 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
         // if not - apply mind exhaustion and delete from clicker's list
         for (CubeMap::iterator i = Cube.begin(); i != Cube.end(); ++i)
         {
-            Unit *clicker = Unit::GetUnit(*m_creature, (*i).second);
+            Unit *clicker = Unit::GetUnit(*me, (*i).second);
             if (!clicker || !clicker->HasAura(SPELL_SHADOW_GRASP, 1))
             {
                 DebuffClicker(clicker);
@@ -265,20 +265,20 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
         }
 
         // if 5 clickers from other cubes apply shadow cage
-        if (ClickerNum >= CLICKERS_COUNT && !m_creature->HasAura(SPELL_SHADOW_CAGE, 0))
+        if (ClickerNum >= CLICKERS_COUNT && !me->HasAura(SPELL_SHADOW_CAGE, 0))
         {
-            DoScriptText(SAY_BANISH, m_creature);
-            m_creature->CastSpell(m_creature, SPELL_SHADOW_CAGE, true);
+            DoScriptText(SAY_BANISH, me);
+            me->CastSpell(me, SPELL_SHADOW_CAGE, true);
         }
-        else if (ClickerNum < CLICKERS_COUNT && m_creature->HasAura(SPELL_SHADOW_CAGE, 0))
-            m_creature->RemoveAurasDueToSpell(SPELL_SHADOW_CAGE);
+        else if (ClickerNum < CLICKERS_COUNT && me->HasAura(SPELL_SHADOW_CAGE, 0))
+            me->RemoveAurasDueToSpell(SPELL_SHADOW_CAGE);
 
         if (!ClickerNum) NeedCheckCube = false;
     }
 
     void KilledUnit(Unit* victim)
     {
-        DoScriptText(SAY_PLAYER_KILLED, m_creature);
+        DoScriptText(SAY_PLAYER_KILLED, me);
     }
 
     void JustDied(Unit* Killer)
@@ -286,14 +286,14 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(DATA_MAGTHERIDON_EVENT, DONE);
 
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
     }
 
     void MoveInLineOfSight(Unit*) {}
 
     void AttackStart(Unit *who)
     {
-        if (!m_creature->hasUnitState(UNIT_STAT_STUNNED))
+        if (!me->hasUnitState(UNIT_STAT_STUNNED))
             ScriptedAI::AttackStart(who);
     }
 
@@ -303,19 +303,19 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
             pInstance->SetData(DATA_MAGTHERIDON_EVENT, IN_PROGRESS);
         DoZoneInCombat();
 
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        m_creature->RemoveAurasDueToSpell(SPELL_SHADOW_CAGE_C);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->RemoveAurasDueToSpell(SPELL_SHADOW_CAGE_C);
 
-        DoScriptText(SAY_FREED, m_creature);
+        DoScriptText(SAY_FREED, me);
    }
 
     void UpdateAI(const uint32 diff)
     {
-        if (!m_creature->isInCombat())
+        if (!me->isInCombat())
         {
             if (RandChat_Timer < diff)
             {
-                DoScriptText(RandomTaunt[rand()%6].id, m_creature);
+                DoScriptText(RandomTaunt[rand()%6].id, me);
                 RandChat_Timer = 90000;
             } else RandChat_Timer -= diff;
         }
@@ -327,24 +327,24 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
 
         if (Berserk_Timer < diff)
         {
-            m_creature->CastSpell(m_creature, SPELL_BERSERK, true);
-            DoScriptText(EMOTE_BERSERK, m_creature);
+            me->CastSpell(me, SPELL_BERSERK, true);
+            DoScriptText(EMOTE_BERSERK, me);
             Berserk_Timer = 60000;
         } else Berserk_Timer -= diff;
 
         if (Cleave_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_CLEAVE);
+            DoCast(me->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 10000;
         } else Cleave_Timer -= diff;
 
         if (BlastNova_Timer < diff)
         {
             // to avoid earthquake interruption
-            if (!m_creature->hasUnitState(UNIT_STAT_STUNNED))
+            if (!me->hasUnitState(UNIT_STAT_STUNNED))
             {
-                DoScriptText(EMOTE_BLASTNOVA, m_creature);
-                DoCast(m_creature, SPELL_BLASTNOVA);
+                DoScriptText(EMOTE_BLASTNOVA, me);
+                DoCast(me, SPELL_BLASTNOVA);
                 BlastNova_Timer = 60000;
             }
         } else BlastNova_Timer -= diff;
@@ -352,9 +352,9 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
         if (Quake_Timer < diff)
         {
             // to avoid blastnova interruption
-            if (!m_creature->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCasted(false))
             {
-                m_creature->CastSpell(m_creature, SPELL_QUAKE_TRIGGER, true);
+                me->CastSpell(me, SPELL_QUAKE_TRIGGER, true);
                 Quake_Timer = 50000;
             }
         } else Quake_Timer -= diff;
@@ -365,25 +365,25 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
             {
                 float x, y, z;
                 pTarget->GetPosition(x, y, z);
-                Creature *summon = m_creature->SummonCreature(MOB_ABYSSAL, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                Creature *summon = me->SummonCreature(MOB_ABYSSAL, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
                 if (summon)
                 {
                     ((mob_abyssalAI*)summon->AI())->SetTrigger(2);
-                    m_creature->CastSpell(summon, SPELL_BLAZE_TARGET, true);
+                    me->CastSpell(summon, SPELL_BLAZE_TARGET, true);
                     summon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 }
             }
             Blaze_Timer = 20000 + rand()%20000;
         } else Blaze_Timer -= diff;
 
-        if (!Phase3 && m_creature->GetHealth()*10 < m_creature->GetMaxHealth()*3
-            && !m_creature->IsNonMeleeSpellCasted(false) // blast nova
-            && !m_creature->hasUnitState(UNIT_STAT_STUNNED)) // shadow cage and earthquake
+        if (!Phase3 && me->GetHealth()*10 < me->GetMaxHealth()*3
+            && !me->IsNonMeleeSpellCasted(false) // blast nova
+            && !me->hasUnitState(UNIT_STAT_STUNNED)) // shadow cage and earthquake
         {
             Phase3 = true;
-            DoScriptText(SAY_CHAMBER_DESTROY, m_creature);
-            m_creature->CastSpell(m_creature, SPELL_CAMERA_SHAKE, true);
-            m_creature->CastSpell(m_creature, SPELL_DEBRIS_KNOCKDOWN, true);
+            DoScriptText(SAY_CHAMBER_DESTROY, me);
+            me->CastSpell(me, SPELL_CAMERA_SHAKE, true);
+            me->CastSpell(me, SPELL_DEBRIS_KNOCKDOWN, true);
 
             if (pInstance)
                 pInstance->SetData(DATA_COLLAPSE, true);
@@ -397,7 +397,7 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
                 {
                     float x, y, z;
                     pTarget->GetPosition(x, y, z);
-                    Creature *summon = m_creature->SummonCreature(MOB_ABYSSAL, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                    Creature *summon = me->SummonCreature(MOB_ABYSSAL, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
                     if (summon) ((mob_abyssalAI*)summon->AI())->SetTrigger(1);
                 }
                 Debris_Timer = 10000;
@@ -412,7 +412,7 @@ struct OREGON_DLL_DECL mob_hellfire_channelerAI : public ScriptedAI
 {
     mob_hellfire_channelerAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance =m_creature->GetInstanceData();
+        pInstance =me->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -436,7 +436,7 @@ struct OREGON_DLL_DECL mob_hellfire_channelerAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(DATA_CHANNELER_EVENT, NOT_STARTED);
 
-        m_creature->CastSpell(m_creature, SPELL_SHADOW_GRASP_C, false);
+        me->CastSpell(me, SPELL_SHADOW_GRASP_C, false);
     }
 
     void EnterCombat(Unit *who)
@@ -444,18 +444,18 @@ struct OREGON_DLL_DECL mob_hellfire_channelerAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(DATA_CHANNELER_EVENT, IN_PROGRESS);
 
-        m_creature->InterruptNonMeleeSpells(false);
+        me->InterruptNonMeleeSpells(false);
         DoZoneInCombat();
     }
 
-    void JustSummoned(Creature *summon) {summon->AI()->AttackStart(m_creature->getVictim());}
+    void JustSummoned(Creature *summon) {summon->AI()->AttackStart(me->getVictim());}
 
     void MoveInLineOfSight(Unit*) {}
 
     void DamageTaken(Unit*, uint32 &damage)
     {
-        if (damage >= m_creature->GetHealth())
-            m_creature->CastSpell(m_creature, SPELL_SOUL_TRANSFER, true);
+        if (damage >= me->GetHealth())
+            me->CastSpell(me, SPELL_SOUL_TRANSFER, true);
     }
 
     void JustDied(Unit*)
@@ -471,14 +471,14 @@ struct OREGON_DLL_DECL mob_hellfire_channelerAI : public ScriptedAI
 
         if (ShadowBoltVolley_Timer < diff)
         {
-            DoCast(m_creature, SPELL_SHADOW_BOLT_VOLLEY);
+            DoCast(me, SPELL_SHADOW_BOLT_VOLLEY);
             ShadowBoltVolley_Timer = 10000 + rand()%10000;
         } else ShadowBoltVolley_Timer -= diff;
 
         if (DarkMending_Timer < diff)
         {
-            if ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 50)
-                DoCast(m_creature, SPELL_DARK_MENDING);
+            if ((me->GetHealth()*100 / me->GetMaxHealth()) < 50)
+                DoCast(me, SPELL_DARK_MENDING);
             DarkMending_Timer = 10000 +(rand() % 10000);
         } else DarkMending_Timer -= diff;
 
@@ -492,7 +492,7 @@ struct OREGON_DLL_DECL mob_hellfire_channelerAI : public ScriptedAI
         if (Infernal_Timer < diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                m_creature->CastSpell(pTarget, SPELL_BURNING_ABYSSAL, true);
+                me->CastSpell(pTarget, SPELL_BURNING_ABYSSAL, true);
             Infernal_Timer = 30000 + rand()%10000;
         } else Infernal_Timer -= diff;
 

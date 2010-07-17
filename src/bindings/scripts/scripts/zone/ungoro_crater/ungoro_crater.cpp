@@ -60,24 +60,24 @@ struct OREGON_DLL_DECL npc_ameAI : public npc_escortAI
         {
 
          case 19:
-            m_creature->SummonCreature(ENTRY_STOMPER, -6391.69, -1730.49, -272.83, 4.96, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
-            DoScriptText(SAY_AGGRO1, m_creature, pPlayer);
+            me->SummonCreature(ENTRY_STOMPER, -6391.69, -1730.49, -272.83, 4.96, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+            DoScriptText(SAY_AGGRO1, me, pPlayer);
             break;
             case 28:
-            DoScriptText(SAY_SEARCH, m_creature, pPlayer);
+            DoScriptText(SAY_SEARCH, me, pPlayer);
             break;
             case 38:
-            m_creature->SummonCreature(ENTRY_TARLORD, -6370.75, -1382.84, -270.51, 6.06, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
-            DoScriptText(SAY_AGGRO2, m_creature, pPlayer);
+            me->SummonCreature(ENTRY_TARLORD, -6370.75, -1382.84, -270.51, 6.06, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+            DoScriptText(SAY_AGGRO2, me, pPlayer);
             break;
             case 49:
-            m_creature->SummonCreature(ENTRY_TARLORD1, -6324.44, -1181.05, -270.17, 4.34, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
-            DoScriptText(SAY_AGGRO3, m_creature, pPlayer);
+            me->SummonCreature(ENTRY_TARLORD1, -6324.44, -1181.05, -270.17, 4.34, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+            DoScriptText(SAY_AGGRO3, me, pPlayer);
             break;
          case 55:
-            DoScriptText(SAY_FINISH, m_creature, pPlayer);
+            DoScriptText(SAY_FINISH, me, pPlayer);
             if (pPlayer)
-                pPlayer->GroupEventHappens(QUEST_CHASING_AME,m_creature);
+                pPlayer->GroupEventHappens(QUEST_CHASING_AME,me);
             break;
 
         }
@@ -90,7 +90,7 @@ struct OREGON_DLL_DECL npc_ameAI : public npc_escortAI
 
     void JustSummoned(Creature* summoned)
     {
-        summoned->AI()->AttackStart(m_creature);
+        summoned->AI()->AttackStart(me);
     }
 
     void JustDied(Unit* killer)
@@ -107,7 +107,7 @@ struct OREGON_DLL_DECL npc_ameAI : public npc_escortAI
 
         if (DEMORALIZINGSHOUT_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_DEMORALIZINGSHOUT);
+            DoCast(me->getVictim(),SPELL_DEMORALIZINGSHOUT);
             DEMORALIZINGSHOUT_Timer = 70000;
         } else DEMORALIZINGSHOUT_Timer -= diff;
 

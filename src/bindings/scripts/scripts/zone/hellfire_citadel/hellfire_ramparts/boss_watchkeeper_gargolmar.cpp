@@ -42,7 +42,7 @@ struct OREGON_DLL_DECL boss_watchkeeper_gargolmarAI : public ScriptedAI
 {
     boss_watchkeeper_gargolmarAI(Creature *c) : ScriptedAI(c)
     {
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     bool HeroicMode;
@@ -68,28 +68,28 @@ struct OREGON_DLL_DECL boss_watchkeeper_gargolmarAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, m_creature); break;
-            case 1: DoScriptText(SAY_AGGRO_2, m_creature); break;
-            case 2: DoScriptText(SAY_AGGRO_3, m_creature); break;
+            case 0: DoScriptText(SAY_AGGRO_1, me); break;
+            case 1: DoScriptText(SAY_AGGRO_2, me); break;
+            case 2: DoScriptText(SAY_AGGRO_3, me); break;
         }
     }
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (!m_creature->getVictim() && who->isTargetableForAttack() && (m_creature->IsHostileTo(who)) && who->isInAccessiblePlaceFor (m_creature))
+        if (!me->getVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor (me))
         {
-            if (!m_creature->canFly() && m_creature->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
+            if (!me->canFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
                 return;
 
-            float attackRadius = m_creature->GetAttackDistance(who);
-            if (m_creature->IsWithinDistInMap(who, attackRadius) && m_creature->IsWithinLOSInMap(who))
+            float attackRadius = me->GetAttackDistance(who);
+            if (me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who))
             {
                 //who->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
                 AttackStart(who);
             }
-            else if (!HasTaunted && m_creature->IsWithinDistInMap(who, 60.0f))
+            else if (!HasTaunted && me->IsWithinDistInMap(who, 60.0f))
             {
-                DoScriptText(SAY_TAUNT, m_creature);
+                DoScriptText(SAY_TAUNT, me);
                 HasTaunted = true;
             }
         }
@@ -99,14 +99,14 @@ struct OREGON_DLL_DECL boss_watchkeeper_gargolmarAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-            case 0: DoScriptText(SAY_KILL_1, m_creature); break;
-            case 1: DoScriptText(SAY_KILL_2, m_creature); break;
+            case 0: DoScriptText(SAY_KILL_1, me); break;
+            case 1: DoScriptText(SAY_KILL_2, me); break;
         }
     }
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DIE, m_creature);
+        DoScriptText(SAY_DIE, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -116,13 +116,13 @@ struct OREGON_DLL_DECL boss_watchkeeper_gargolmarAI : public ScriptedAI
 
         if (MortalWound_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),HeroicMode ? H_SPELL_MORTAL_WOUND : SPELL_MORTAL_WOUND);
+            DoCast(me->getVictim(),HeroicMode ? H_SPELL_MORTAL_WOUND : SPELL_MORTAL_WOUND);
             MortalWound_Timer = 5000+rand()%8000;
         } else MortalWound_Timer -= diff;
 
         if (Surge_Timer < diff)
         {
-            DoScriptText(SAY_SURGE, m_creature);
+            DoScriptText(SAY_SURGE, me);
 
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_SURGE);
@@ -130,20 +130,20 @@ struct OREGON_DLL_DECL boss_watchkeeper_gargolmarAI : public ScriptedAI
             Surge_Timer = 5000+rand()%8000;
         } else Surge_Timer -= diff;
 
-        if ((m_creature->GetHealth()*100) / m_creature->GetMaxHealth() < 20)
+        if ((me->GetHealth()*100) / me->GetMaxHealth() < 20)
         {
             if (Retaliation_Timer < diff)
             {
-                DoCast(m_creature,SPELL_RETALIATION);
+                DoCast(me,SPELL_RETALIATION);
                 Retaliation_Timer = 30000;
             } else Retaliation_Timer -= diff;
         }
 
         if (!YelledForHeal)
         {
-            if ((m_creature->GetHealth()*100) / m_creature->GetMaxHealth() < 40)
+            if ((me->GetHealth()*100) / me->GetMaxHealth() < 40)
             {
-                DoScriptText(SAY_HEAL, m_creature);
+                DoScriptText(SAY_HEAL, me);
                 YelledForHeal = true;
             }
         }

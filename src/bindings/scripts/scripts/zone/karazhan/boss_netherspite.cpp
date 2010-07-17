@@ -135,7 +135,7 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
         pos[BLUE_PORTAL] = (r>1 ? 1: 2); // Blue Portal not on the left side (0)
 
         for (int i=0; i<3; ++i)
-            if (Creature *portal = m_creature->SummonCreature(PortalID[i],PortalCoord[pos[i]][0],PortalCoord[pos[i]][1],PortalCoord[pos[i]][2],0,TEMPSUMMON_TIMED_DESPAWN,60000))
+            if (Creature *portal = me->SummonCreature(PortalID[i],PortalCoord[pos[i]][0],PortalCoord[pos[i]][1],PortalCoord[pos[i]][2],0,TEMPSUMMON_TIMED_DESPAWN,60000))
             {
                 PortalGUID[i] = portal->GetGUID();
                 portal->AddAura(PortalVisual[i], portal);
@@ -146,13 +146,13 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
     {
         for (int i=0; i<3; ++i)
         {
-            if (Creature *portal = Unit::GetCreature(*m_creature, PortalGUID[i]))
+            if (Creature *portal = Unit::GetCreature(*me, PortalGUID[i]))
             {
                 portal->SetVisibility(VISIBILITY_OFF);
                 portal->DealDamage(portal, portal->GetMaxHealth());
                 portal->RemoveFromWorld();
             }
-            if (Creature *portal = Unit::GetCreature(*m_creature, BeamerGUID[i]))
+            if (Creature *portal = Unit::GetCreature(*me, BeamerGUID[i]))
             {
                 portal->SetVisibility(VISIBILITY_OFF);
                 portal->DealDamage(portal, portal->GetMaxHealth());
@@ -166,14 +166,14 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
     void UpdatePortals() // Here we handle the beams' behavior
     {
         for (int j=0; j<3; ++j) // j = color
-            if (Creature *portal = Unit::GetCreature(*m_creature, PortalGUID[j]))
+            if (Creature *portal = Unit::GetCreature(*me, PortalGUID[j]))
             {
                 // the one who's been casted upon before
                 Unit *current = Unit::GetUnit(*portal, BeamTarget[j]);
                 // temporary store for the best suitable beam reciever
-                Unit *pTarget = m_creature;
+                Unit *pTarget = me;
 
-                if (Map* map = m_creature->GetMap())
+                if (Map* map = me->GetMap())
                 {
                     Map::PlayerList const& players = map->GetPlayers();
 
@@ -186,7 +186,7 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
                             && !p->HasAura(PlayerDebuff[j],0) // not exhausted
                             && !p->HasAura(PlayerBuff[(j+1)%3],0) // not on another beam
                             && !p->HasAura(PlayerBuff[(j+2)%3],0)
-                            && IsBetween(m_creature, p, portal)) // on the beam
+                            && IsBetween(me, p, portal)) // on the beam
                             pTarget = p;
                     }
                 }
@@ -217,41 +217,41 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
                     }
                 }
                 // aggro target if Red Beam
-                if (j == RED_PORTAL && m_creature->getVictim() != pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
-                    m_creature->getThreatManager().addThreat(pTarget, 100000.0f+DoGetThreat(m_creature->getVictim()));
+                if (j == RED_PORTAL && me->getVictim() != pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
+                    me->getThreatManager().addThreat(pTarget, 100000.0f+DoGetThreat(me->getVictim()));
             }
     }
 
     void SwitchToPortalPhase()
     {
-        m_creature->RemoveAurasDueToSpell(SPELL_BANISH_ROOT);
-        m_creature->RemoveAurasDueToSpell(SPELL_BANISH_VISUAL);
+        me->RemoveAurasDueToSpell(SPELL_BANISH_ROOT);
+        me->RemoveAurasDueToSpell(SPELL_BANISH_VISUAL);
         SummonPortals();
         PhaseTimer = 60000;
         PortalPhase = true;
         PortalTimer = 10000;
         EmpowermentTimer = 10000;
-        DoScriptText(EMOTE_PHASE_PORTAL,m_creature);
+        DoScriptText(EMOTE_PHASE_PORTAL,me);
     }
 
     void SwitchToBanishPhase()
     {
-        m_creature->RemoveAurasDueToSpell(SPELL_EMPOWERMENT);
-        m_creature->RemoveAurasDueToSpell(SPELL_NETHERBURN_AURA);
-        DoCast(m_creature,SPELL_BANISH_VISUAL,true);
-        DoCast(m_creature,SPELL_BANISH_ROOT,true);
+        me->RemoveAurasDueToSpell(SPELL_EMPOWERMENT);
+        me->RemoveAurasDueToSpell(SPELL_NETHERBURN_AURA);
+        DoCast(me,SPELL_BANISH_VISUAL,true);
+        DoCast(me,SPELL_BANISH_ROOT,true);
         DestroyPortals();
         PhaseTimer = 30000;
         PortalPhase = false;
-        DoScriptText(EMOTE_PHASE_BANISH,m_creature);
+        DoScriptText(EMOTE_PHASE_BANISH,me);
 
         for (int i=0; i<3; ++i)
-            m_creature->RemoveAurasDueToSpell(NetherBuff[i]);
+            me->RemoveAurasDueToSpell(NetherBuff[i]);
     }
 
     void HandleDoors(bool open) // Massive Door switcher
     {
-        if (GameObject *Door = GameObject::GetGameObject((*m_creature),pInstance->GetData64(DATA_GAMEOBJECT_MASSIVE_DOOR)))
+        if (GameObject *Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GAMEOBJECT_MASSIVE_DOOR)))
             Door->SetGoState(open ? GO_STATE_ACTIVE : GO_STATE_READY);
     }
 
@@ -282,8 +282,8 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
         // NetherInfusion Berserk
         if (!Berserk && NetherInfusionTimer < diff)
         {
-            m_creature->AddAura(SPELL_NETHER_INFUSION, m_creature);
-            DoCast(m_creature, SPELL_NETHERSPITE_ROAR);
+            me->AddAura(SPELL_NETHER_INFUSION, me);
+            DoCast(me, SPELL_NETHERSPITE_ROAR);
             Berserk = true;
         } else NetherInfusionTimer -= diff;
 
@@ -299,14 +299,14 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
             // Empowerment & Nether Burn
             if (EmpowermentTimer < diff)
             {
-                DoCast(m_creature, SPELL_EMPOWERMENT);
-                m_creature->AddAura(SPELL_NETHERBURN_AURA, m_creature);
+                DoCast(me, SPELL_EMPOWERMENT);
+                me->AddAura(SPELL_NETHERBURN_AURA, me);
                 EmpowermentTimer = 90000;
             } else EmpowermentTimer -= diff;
 
             if (PhaseTimer < diff)
             {
-                if (!m_creature->IsNonMeleeSpellCasted(false))
+                if (!me->IsNonMeleeSpellCasted(false))
                 {
                     SwitchToBanishPhase();
                     return;
@@ -325,7 +325,7 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
 
             if (PhaseTimer < diff)
             {
-                if (!m_creature->IsNonMeleeSpellCasted(false))
+                if (!me->IsNonMeleeSpellCasted(false))
                 {
                     SwitchToPortalPhase();
                     return;

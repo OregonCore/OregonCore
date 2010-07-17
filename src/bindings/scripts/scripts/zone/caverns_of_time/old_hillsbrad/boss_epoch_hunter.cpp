@@ -66,8 +66,8 @@ struct OREGON_DLL_DECL boss_epoch_hunterAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-            case 0: DoScriptText(SAY_AGGRO1, m_creature); break;
-            case 1: DoScriptText(SAY_AGGRO2, m_creature); break;
+            case 0: DoScriptText(SAY_AGGRO1, me); break;
+            case 1: DoScriptText(SAY_AGGRO2, me); break;
         }
     }
 
@@ -75,14 +75,14 @@ struct OREGON_DLL_DECL boss_epoch_hunterAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-            case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+            case 0: DoScriptText(SAY_SLAY1, me); break;
+            case 1: DoScriptText(SAY_SLAY2, me); break;
         }
     }
 
     void JustDied(Unit *victim)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
         if (pInstance && pInstance->GetData(TYPE_THRALL_EVENT) == IN_PROGRESS)
             pInstance->SetData(TYPE_THRALL_PART4, DONE);
@@ -97,15 +97,15 @@ struct OREGON_DLL_DECL boss_epoch_hunterAI : public ScriptedAI
         //Sand Breath
         if (SandBreath_Timer < diff)
         {
-            if (m_creature->IsNonMeleeSpellCasted(false))
-                m_creature->InterruptNonMeleeSpells(false);
+            if (me->IsNonMeleeSpellCasted(false))
+                me->InterruptNonMeleeSpells(false);
 
-            DoCast(m_creature->getVictim(),SPELL_SAND_BREATH);
+            DoCast(me->getVictim(),SPELL_SAND_BREATH);
 
             switch(rand()%2)
             {
-                case 0: DoScriptText(SAY_BREATH1, m_creature); break;
-                case 1: DoScriptText(SAY_BREATH2, m_creature); break;
+                case 0: DoScriptText(SAY_BREATH1, me); break;
+                case 1: DoScriptText(SAY_BREATH2, me); break;
             }
 
             SandBreath_Timer = 25000+rand()%5000;
@@ -113,7 +113,7 @@ struct OREGON_DLL_DECL boss_epoch_hunterAI : public ScriptedAI
 
         if (ImpendingDeath_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_IMPENDING_DEATH);
+            DoCast(me->getVictim(),SPELL_IMPENDING_DEATH);
             ImpendingDeath_Timer = 30000+rand()%5000;
         } else ImpendingDeath_Timer -= diff;
 
@@ -126,7 +126,7 @@ struct OREGON_DLL_DECL boss_epoch_hunterAI : public ScriptedAI
 
         if (Mda_Timer < diff)
         {
-            DoCast(m_creature,SPELL_MAGIC_DISRUPTION_AURA);
+            DoCast(me,SPELL_MAGIC_DISRUPTION_AURA);
             Mda_Timer = 15000;
         } else Mda_Timer -= diff;
 

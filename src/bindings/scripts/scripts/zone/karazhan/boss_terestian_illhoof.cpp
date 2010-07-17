@@ -85,11 +85,11 @@ struct OREGON_DLL_DECL mob_kilrekAI : public ScriptedAI
     {
         if (!pInstance)
         {
-            ERROR_INST_DATA(m_creature);
+            ERROR_INST_DATA(me);
             return;
         }
 
-        Creature* Terestian = (Unit::GetCreature(*m_creature, pInstance->GetData64(DATA_TERESTIAN)));
+        Creature* Terestian = (Unit::GetCreature(*me, pInstance->GetData64(DATA_TERESTIAN)));
         if (Terestian && !Terestian->getVictim())
             Terestian->AddThreat(who, 1.0f);
     }
@@ -101,11 +101,11 @@ struct OREGON_DLL_DECL mob_kilrekAI : public ScriptedAI
             uint64 TerestianGUID = pInstance->GetData64(DATA_TERESTIAN);
             if (TerestianGUID)
             {
-                Unit* Terestian = Unit::GetUnit((*m_creature), TerestianGUID);
+                Unit* Terestian = Unit::GetUnit((*me), TerestianGUID);
                 if (Terestian && Terestian->isAlive())
                     DoCast(Terestian, SPELL_BROKEN_PACT, true);
             }
-        } else ERROR_INST_DATA(m_creature);
+        } else ERROR_INST_DATA(me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -116,15 +116,15 @@ struct OREGON_DLL_DECL mob_kilrekAI : public ScriptedAI
 
         if (AmplifyTimer < diff)
         {
-            m_creature->InterruptNonMeleeSpells(false);
-            DoCast(m_creature->getVictim(),SPELL_AMPLIFY_FLAMES);
+            me->InterruptNonMeleeSpells(false);
+            DoCast(me->getVictim(),SPELL_AMPLIFY_FLAMES);
 
             AmplifyTimer = 20000;
         } else AmplifyTimer -= diff;
 
         //Chain cast
-        if (!m_creature->IsNonMeleeSpellCasted(false) && m_creature->IsWithinDistInMap(m_creature->getVictim(), 30))
-            DoCast(m_creature->getVictim(),SPELL_FIREBOLT);
+        if (!me->IsNonMeleeSpellCasted(false) && me->IsWithinDistInMap(me->getVictim(), 30))
+            DoCast(me->getVictim(),SPELL_FIREBOLT);
         else DoMeleeAttackIfReady();
     }
 };
@@ -148,7 +148,7 @@ struct OREGON_DLL_DECL mob_demon_chainAI : public ScriptedAI
     {
         if (SacrificeGUID)
         {
-            Unit* Sacrifice = Unit::GetUnit((*m_creature),SacrificeGUID);
+            Unit* Sacrifice = Unit::GetUnit((*me),SacrificeGUID);
             if (Sacrifice)
                 Sacrifice->RemoveAurasDueToSpell(SPELL_SACRIFICE);
         }
@@ -183,7 +183,7 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
         {
             if (PortalGUID[i])
             {
-                Unit* Portal = Unit::GetUnit((*m_creature), PortalGUID[i]);
+                Unit* Portal = Unit::GetUnit((*me), PortalGUID[i]);
                 if (Portal)
                     Portal->DealDamage(Portal, Portal->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 
@@ -206,25 +206,25 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
 
     void EnterCombat(Unit* who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
 
         if (pInstance)
         {
             // Put Kil'rek in combat against our target so players don't skip him
-            Creature* Kilrek = (Unit::GetCreature(*m_creature, pInstance->GetData64(DATA_KILREK)));
+            Creature* Kilrek = (Unit::GetCreature(*me, pInstance->GetData64(DATA_KILREK)));
             if (Kilrek && !Kilrek->getVictim())
                 Kilrek->AddThreat(who, 1.0f);
 
             pInstance->SetData(DATA_TERESTIAN_EVENT, IN_PROGRESS);
-        } else ERROR_INST_DATA(m_creature);
+        } else ERROR_INST_DATA(me);
     }
 
     void KilledUnit(Unit *victim)
     {
         switch(rand()%2)
         {
-        case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-        case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+        case 0: DoScriptText(SAY_SLAY1, me); break;
+        case 1: DoScriptText(SAY_SLAY2, me); break;
         }
     }
 
@@ -234,7 +234,7 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
         {
             if (PortalGUID[i])
             {
-                Unit* Portal = Unit::GetUnit((*m_creature), PortalGUID[i]);
+                Unit* Portal = Unit::GetUnit((*me), PortalGUID[i]);
                 if (Portal)
                     Portal->DealDamage(Portal, Portal->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 
@@ -242,7 +242,7 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
             }
         }
 
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
             pInstance->SetData(DATA_TERESTIAN_EVENT, DONE);
@@ -259,14 +259,14 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
 
             if (pInstance)
                 uint64 KilrekGUID = pInstance->GetData64(DATA_KILREK);
-            else ERROR_INST_DATA(m_creature);
+            else ERROR_INST_DATA(me);
 
-            Creature* Kilrek = (Unit::GetCreature((*m_creature), KilrekGUID));
+            Creature* Kilrek = (Unit::GetCreature((*me), KilrekGUID));
             if (SummonKilrek && Kilrek)
             {
                 Kilrek->Respawn();
                 if (Kilrek->AI())
-                    Kilrek->AI()->AttackStart(m_creature->getVictim());
+                    Kilrek->AI()->AttackStart(me->getVictim());
 
                 SummonKilrek = false;
             }
@@ -284,15 +284,15 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
             if (pTarget && pTarget->isAlive() && pTarget->GetTypeId() == TYPEID_PLAYER)
             {
                 DoCast(pTarget, SPELL_SACRIFICE, true);
-                Creature* Chains = m_creature->SummonCreature(CREATURE_DEMONCHAINS, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 21000);
+                Creature* Chains = me->SummonCreature(CREATURE_DEMONCHAINS, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 21000);
                 if (Chains)
                 {
                     ((mob_demon_chainAI*)Chains->AI())->SacrificeGUID = pTarget->GetGUID();
                     Chains->CastSpell(Chains, SPELL_DEMON_CHAINS, true);
                     switch(rand()%2)
                     {
-                    case 0: DoScriptText(SAY_SACRIFICE1, m_creature); break;
-                    case 1: DoScriptText(SAY_SACRIFICE2, m_creature); break;
+                    case 0: DoScriptText(SAY_SACRIFICE1, me); break;
+                    case 1: DoScriptText(SAY_SACRIFICE2, me); break;
                     }
                     SacrificeTimer = 30000;
                 }
@@ -311,22 +311,22 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
             {
                 for (uint8 i = 0; i < 2; ++i)
                 {
-                    Creature* Portal = m_creature->SummonCreature(CREATURE_PORTAL, PortalLocations[i][0], PortalLocations[i][1], PORTAL_Z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                    Creature* Portal = me->SummonCreature(CREATURE_PORTAL, PortalLocations[i][0], PortalLocations[i][1], PORTAL_Z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
                     if (Portal)
                         PortalGUID[i] = Portal->GetGUID();
                 }
                 SummonedPortals = true;
                 switch(rand()%2)
                 {
-                case 0: DoScriptText(SAY_SUMMON1, m_creature); break;
-                case 1: DoScriptText(SAY_SUMMON2, m_creature); break;
+                case 0: DoScriptText(SAY_SUMMON1, me); break;
+                case 1: DoScriptText(SAY_SUMMON2, me); break;
                 }
             }
             uint32 random = rand()%2;
-            Creature* Imp = m_creature->SummonCreature(CREATURE_FIENDISHIMP, PortalLocations[random][0], PortalLocations[random][1], PORTAL_Z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 15000);
+            Creature* Imp = me->SummonCreature(CREATURE_FIENDISHIMP, PortalLocations[random][0], PortalLocations[random][1], PORTAL_Z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 15000);
             if (Imp)
             {
-                Imp->AddThreat(m_creature->getVictim(), 1.0f);
+                Imp->AddThreat(me->getVictim(), 1.0f);
                 Imp->AI()->AttackStart(SelectUnit(SELECT_TARGET_RANDOM, 1));
             }
             SummonTimer = 5000;
@@ -336,7 +336,7 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
         {
             if (BerserkTimer < diff)
             {
-                DoCast(m_creature, SPELL_BERSERK);
+                DoCast(me, SPELL_BERSERK);
                 Berserk = true;
             } else BerserkTimer -= diff;
         }
@@ -368,7 +368,7 @@ struct OREGON_DLL_DECL mob_fiendish_impAI : public ScriptedAI
 
         if (FireboltTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_FIREBOLT);
+            DoCast(me->getVictim(), SPELL_FIREBOLT);
             FireboltTimer = 1500;
         } else FireboltTimer -= diff;
 

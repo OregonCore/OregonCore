@@ -156,8 +156,8 @@ struct OREGON_DLL_DECL mob_restless_soulAI : public ScriptedAI
         {
             if (Die_Timer < diff)
             {
-                if (Unit* temp = Unit::GetUnit(*m_creature,Tagger))
-                    temp->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                if (Unit* temp = Unit::GetUnit(*me,Tagger))
+                    temp->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             } else Die_Timer -= diff;
         }
     }
@@ -202,12 +202,12 @@ struct OREGON_DLL_DECL mobs_spectral_ghostly_citizenAI : public ScriptedAI
             for (uint32 i = 1; i <= 4; i++)
             {
                 float x,y,z;
-                 m_creature->GetRandomPoint(m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),20.0f,x,y,z);
+                 me->GetRandomPoint(me->GetPositionX(),me->GetPositionY(),me->GetPositionZ(),20.0f,x,y,z);
 
                  //100%, 50%, 33%, 25% chance to spawn
                  uint32 j = urand(1,i);
                  if (j == 1)
-                     m_creature->SummonCreature(ENTRY_RESTLESS,x,y,z,0,TEMPSUMMON_CORPSE_DESPAWN,600000);
+                     me->SummonCreature(ENTRY_RESTLESS,x,y,z,0,TEMPSUMMON_CORPSE_DESPAWN,600000);
             }
         }
     }
@@ -218,7 +218,7 @@ struct OREGON_DLL_DECL mobs_spectral_ghostly_citizenAI : public ScriptedAI
         {
             if (Die_Timer < diff)
             {
-                m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             } else Die_Timer -= diff;
         }
 

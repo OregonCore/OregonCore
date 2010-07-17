@@ -58,21 +58,21 @@ struct OREGON_DLL_DECL boss_angerrelAI : public ScriptedAI
         //SunderArmor_Timer
         if (SunderArmor_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_SUNDERARMOR);
+            DoCast(me->getVictim(),SPELL_SUNDERARMOR);
             SunderArmor_Timer = 28000;
         } else SunderArmor_Timer -= diff;
 
         //ShieldBlock_Timer
         if (ShieldBlock_Timer < diff)
         {
-            DoCast(m_creature,SPELL_SHIELDBLOCK);
+            DoCast(me,SPELL_SHIELDBLOCK);
             ShieldBlock_Timer = 25000;
         } else ShieldBlock_Timer -= diff;
 
         //Strike_Timer
         if (Strike_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_STRIKE);
+            DoCast(me->getVictim(),SPELL_STRIKE);
             Strike_Timer = 10000;
         } else Strike_Timer -= diff;
 
@@ -116,21 +116,21 @@ struct OREGON_DLL_DECL boss_doperelAI : public ScriptedAI
         //SinisterStrike_Timer
         if (SinisterStrike_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_SINISTERSTRIKE);
+            DoCast(me->getVictim(),SPELL_SINISTERSTRIKE);
             SinisterStrike_Timer = 7000;
         } else SinisterStrike_Timer -= diff;
 
         //BackStab_Timer
         if (BackStab_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_BACKSTAB);
+            DoCast(me->getVictim(),SPELL_BACKSTAB);
             BackStab_Timer = 6000;
         } else BackStab_Timer -= diff;
 
         //Gouge_Timer
         if (Gouge_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_GOUGE);
+            DoCast(me->getVictim(),SPELL_GOUGE);
             Gouge_Timer = 8000;
         } else Gouge_Timer -= diff;
 
@@ -194,14 +194,14 @@ struct OREGON_DLL_DECL boss_haterelAI : public ScriptedAI
         //ShadowShield_Timer
         if (ShadowShield_Timer < diff)
         {
-            DoCast(m_creature,SPELL_SHADOWSHIELD);
+            DoCast(me,SPELL_SHADOWSHIELD);
             ShadowShield_Timer = 25000;
         } else ShadowShield_Timer -= diff;
 
         //Strike_Timer
         if (Strike_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_STRIKE);
+            DoCast(me->getVictim(),SPELL_STRIKE);
             Strike_Timer = 10000;
         } else Strike_Timer -= diff;
 
@@ -248,28 +248,28 @@ struct OREGON_DLL_DECL boss_vilerelAI : public ScriptedAI
         //MindBlast_Timer
         if (MindBlast_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_MINDBLAST);
+            DoCast(me->getVictim(),SPELL_MINDBLAST);
             MindBlast_Timer = 7000;
         } else MindBlast_Timer -= diff;
 
         //Heal_Timer
         if (Heal_Timer < diff)
         {
-            DoCast(m_creature,SPELL_HEAL);
+            DoCast(me,SPELL_HEAL);
             Heal_Timer = 20000;
         } else Heal_Timer -= diff;
 
         //PrayerOfHealing_Timer
         if (PrayerOfHealing_Timer < diff)
         {
-            DoCast(m_creature,SPELL_PRAYEROFHEALING);
+            DoCast(me,SPELL_PRAYEROFHEALING);
             PrayerOfHealing_Timer = 30000;
         } else PrayerOfHealing_Timer -= diff;
 
         //Shield_Timer
         if (Shield_Timer < diff)
         {
-            DoCast(m_creature,SPELL_SHIELD);
+            DoCast(me,SPELL_SHIELD);
             Shield_Timer = 30000;
         } else Shield_Timer -= diff;
 
@@ -306,7 +306,7 @@ struct OREGON_DLL_DECL boss_seethrelAI : public ScriptedAI
         FrostNova_Timer = 12000;
         FrostWard_Timer = 25000;
 
-        m_creature->CastSpell(m_creature,SPELL_FROSTARMOR,true);
+        me->CastSpell(me,SPELL_FROSTARMOR,true);
     }
 
     void EnterCombat(Unit *who)
@@ -321,14 +321,14 @@ struct OREGON_DLL_DECL boss_seethrelAI : public ScriptedAI
         //FrostArmor_Timer
         if (FrostArmor_Timer < diff)
         {
-            DoCast(m_creature, SPELL_FROSTARMOR);
+            DoCast(me, SPELL_FROSTARMOR);
             FrostArmor_Timer = 180000;
         } else FrostArmor_Timer -= diff;
 
         //Frostbolt_Timer
         if (Frostbolt_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_FROSTBOLT);
+            DoCast(me->getVictim(),SPELL_FROSTBOLT);
             Frostbolt_Timer = 15000;
         } else Frostbolt_Timer -= diff;
 
@@ -344,14 +344,14 @@ struct OREGON_DLL_DECL boss_seethrelAI : public ScriptedAI
         //FrostNova_Timer
         if (FrostNova_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_FROSTNOVA);
+            DoCast(me->getVictim(),SPELL_FROSTNOVA);
             FrostNova_Timer = 14000;
         } else FrostNova_Timer -= diff;
 
         //FrostWard_Timer
         if (FrostWard_Timer < diff)
         {
-            DoCast(m_creature,SPELL_FROSTWARD);
+            DoCast(me,SPELL_FROSTWARD);
             FrostWard_Timer = 68000;
         } else FrostWard_Timer -= diff;
 
@@ -382,7 +382,7 @@ struct OREGON_DLL_DECL boss_gloomrelAI : public ScriptedAI
         Cleave_Timer = 6000;
         MortalStrike_Timer = 10000;
 
-        m_creature->setFaction(FACTION_NEUTRAL);
+        me->setFaction(FACTION_NEUTRAL);
     }
 
     void EnterCombat(Unit *who)
@@ -397,21 +397,21 @@ struct OREGON_DLL_DECL boss_gloomrelAI : public ScriptedAI
         //Hamstring_Timer
         if (Hamstring_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_HAMSTRING);
+            DoCast(me->getVictim(),SPELL_HAMSTRING);
             Hamstring_Timer = 14000;
         } else Hamstring_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_CLEAVE);
+            DoCast(me->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 8000;
         } else Cleave_Timer -= diff;
 
         //MortalStrike_Timer
         if (MortalStrike_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_MORTALSTRIKE);
+            DoCast(me->getVictim(),SPELL_MORTALSTRIKE);
             MortalStrike_Timer = 12000;
         } else MortalStrike_Timer -= diff;
 
@@ -490,7 +490,7 @@ struct OREGON_DLL_DECL boss_doomrelAI : public ScriptedAI
         DemonArmor_Timer = 16000;
         Voidwalkers = false;
 
-        m_creature->setFaction(FACTION_NEUTRAL);
+        me->setFaction(FACTION_NEUTRAL);
     }
 
     void EnterCombat(Unit *who)
@@ -526,7 +526,7 @@ struct OREGON_DLL_DECL boss_doomrelAI : public ScriptedAI
         //ShadowVolley_Timer
         if (ShadowVolley_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_SHADOWBOLTVOLLEY);
+            DoCast(me->getVictim(),SPELL_SHADOWBOLTVOLLEY);
             ShadowVolley_Timer = 12000;
         } else ShadowVolley_Timer -= diff;
 
@@ -542,23 +542,23 @@ struct OREGON_DLL_DECL boss_doomrelAI : public ScriptedAI
         //CurseOfWeakness_Timer
         if (CurseOfWeakness_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_CURSEOFWEAKNESS);
+            DoCast(me->getVictim(),SPELL_CURSEOFWEAKNESS);
             CurseOfWeakness_Timer = 45000;
         } else CurseOfWeakness_Timer -= diff;
 
         //DemonArmor_Timer
         if (DemonArmor_Timer < diff)
         {
-            DoCast(m_creature,SPELL_DEMONARMOR);
+            DoCast(me,SPELL_DEMONARMOR);
             DemonArmor_Timer = 300000;
         } else DemonArmor_Timer -= diff;
 
         //Summon Voidwalkers
-        if (!Voidwalkers && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 51)
+        if (!Voidwalkers && me->GetHealth()*100 / me->GetMaxHealth() < 51)
         {
-            SummonVoidwalkers(m_creature->getVictim());
-            SummonVoidwalkers(m_creature->getVictim());
-            SummonVoidwalkers(m_creature->getVictim());
+            SummonVoidwalkers(me->getVictim());
+            SummonVoidwalkers(me->getVictim());
+            SummonVoidwalkers(me->getVictim());
             Voidwalkers = true;
         }
 

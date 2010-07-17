@@ -76,17 +76,17 @@ struct OREGON_DLL_DECL boss_razuviousAI : public ScriptedAI
         switch (rand()%2)
         {
             case 0:
-                DoPlaySoundToSet(m_creature, SOUND_SLAY1);
+                DoPlaySoundToSet(me, SOUND_SLAY1);
                 break;
             case 1:
-                DoPlaySoundToSet(m_creature, SOUND_SLAY2);
+                DoPlaySoundToSet(me, SOUND_SLAY2);
                 break;
         }
     }
 
     void JustDied(Unit* Killer)
     {
-        DoPlaySoundToSet(m_creature, SOUND_DEATH);
+        DoPlaySoundToSet(me, SOUND_DEATH);
     }
 
     void EnterCombat(Unit *who)
@@ -94,13 +94,13 @@ struct OREGON_DLL_DECL boss_razuviousAI : public ScriptedAI
         switch (rand()%3)
         {
             case 0:
-                DoPlaySoundToSet(m_creature, SOUND_AGGRO1);
+                DoPlaySoundToSet(me, SOUND_AGGRO1);
                 break;
             case 1:
-                DoPlaySoundToSet(m_creature, SOUND_AGGRO2);
+                DoPlaySoundToSet(me, SOUND_AGGRO2);
                 break;
             case 2:
-                DoPlaySoundToSet(m_creature, SOUND_AGGRO3);
+                DoPlaySoundToSet(me, SOUND_AGGRO3);
                 break;
         }
     }
@@ -113,14 +113,14 @@ struct OREGON_DLL_DECL boss_razuviousAI : public ScriptedAI
         //UnbalancingStrike_Timer
         if (UnbalancingStrike_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_UNBALANCINGSTRIKE);
+            DoCast(me->getVictim(),SPELL_UNBALANCINGSTRIKE);
             UnbalancingStrike_Timer = 30000;
         } else UnbalancingStrike_Timer -= diff;
 
         //DisruptingShout_Timer
         if (DisruptingShout_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_DISRUPTINGSHOUT);
+            DoCast(me->getVictim(), SPELL_DISRUPTINGSHOUT);
             DisruptingShout_Timer = 25000;
         } else DisruptingShout_Timer -= diff;
 
@@ -130,19 +130,19 @@ struct OREGON_DLL_DECL boss_razuviousAI : public ScriptedAI
             switch (rand()%5)
             {
                 case 0:
-                    DoPlaySoundToSet(m_creature, SOUND_COMMND1);
+                    DoPlaySoundToSet(me, SOUND_COMMND1);
                     break;
                 case 1:
-                    DoPlaySoundToSet(m_creature, SOUND_COMMND2);
+                    DoPlaySoundToSet(me, SOUND_COMMND2);
                     break;
                 case 2:
-                    DoPlaySoundToSet(m_creature, SOUND_COMMND3);
+                    DoPlaySoundToSet(me, SOUND_COMMND3);
                     break;
                 case 3:
-                    DoPlaySoundToSet(m_creature, SOUND_COMMND4);
+                    DoPlaySoundToSet(me, SOUND_COMMND4);
                     break;
                 case 4:
-                    DoPlaySoundToSet(m_creature, SOUND_COMMND5);
+                    DoPlaySoundToSet(me, SOUND_COMMND5);
                     break;
             }
 

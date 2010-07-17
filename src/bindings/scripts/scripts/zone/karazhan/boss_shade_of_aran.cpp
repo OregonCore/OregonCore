@@ -142,7 +142,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
             // Not in progress
             pInstance->SetData(DATA_SHADEOFARAN_EVENT, NOT_STARTED);
 
-            if (GameObject* Door = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
+            if (GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
                 Door->SetGoState(GO_STATE_ACTIVE);
         }
     }
@@ -151,20 +151,20 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-        case 0: DoScriptText(SAY_KILL1, m_creature); break;
-        case 1: DoScriptText(SAY_KILL2, m_creature); break;
+        case 0: DoScriptText(SAY_KILL1, me); break;
+        case 1: DoScriptText(SAY_KILL2, me); break;
         }
     }
 
     void JustDied(Unit *victim)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
         {
             pInstance->SetData(DATA_SHADEOFARAN_EVENT, DONE);
 
-            if (GameObject* Door = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
+            if (GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
                 Door->SetGoState(GO_STATE_ACTIVE);
         }
     }
@@ -173,15 +173,15 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-        case 0: DoScriptText(SAY_AGGRO1, m_creature); break;
-        case 1: DoScriptText(SAY_AGGRO2, m_creature); break;
-        case 2: DoScriptText(SAY_AGGRO3, m_creature); break;
+        case 0: DoScriptText(SAY_AGGRO1, me); break;
+        case 1: DoScriptText(SAY_AGGRO2, me); break;
+        case 2: DoScriptText(SAY_AGGRO3, me); break;
         }
 
         if (pInstance)
         {
             pInstance->SetData(DATA_SHADEOFARAN_EVENT, IN_PROGRESS);
-            if (GameObject* Door = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
+            if (GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
                 Door->SetGoState(GO_STATE_READY);
         }
     }
@@ -189,7 +189,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
     void FlameWreathEffect()
     {
         std::vector<Unit*> targets;
-        std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
+        std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
 
         if (!t_list.size())
             return;
@@ -197,7 +197,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
         //store the threat list in a different container
         for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
         {
-            Unit *pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+            Unit *pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
             //only on alive players
             if (pTarget && pTarget->isAlive() && pTarget->GetTypeId() == TYPEID_PLAYER)
                 targets.push_back(pTarget);
@@ -215,7 +215,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
                 FlameWreathTarget[i] = (*itr)->GetGUID();
                 FWTargPosX[i] = (*itr)->GetPositionX();
                 FWTargPosY[i] = (*itr)->GetPositionY();
-                m_creature->CastSpell((*itr), SPELL_FLAME_WREATH, true);
+                me->CastSpell((*itr), SPELL_FLAME_WREATH, true);
                 i++;
             }
         }
@@ -232,7 +232,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
             {
                 if (pInstance)
                 {
-                    if (GameObject* Door = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
+                    if (GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
                         Door->SetGoState(GO_STATE_READY);
                     CloseDoorTimer = 0;
                 }
@@ -261,20 +261,20 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
         else FrostCooldown = 0;
         }
 
-        if (!Drinking && m_creature->GetMaxPower(POWER_MANA) && (m_creature->GetPower(POWER_MANA)*100 / m_creature->GetMaxPower(POWER_MANA)) < 20)
+        if (!Drinking && me->GetMaxPower(POWER_MANA) && (me->GetPower(POWER_MANA)*100 / me->GetMaxPower(POWER_MANA)) < 20)
         {
             Drinking = true;
-            m_creature->InterruptNonMeleeSpells(false);
+            me->InterruptNonMeleeSpells(false);
 
-            DoScriptText(SAY_DRINK, m_creature);
+            DoScriptText(SAY_DRINK, me);
 
             if (!DrinkInturrupted)
             {
-                m_creature->CastSpell(m_creature, SPELL_MASS_POLY, true);
-                m_creature->CastSpell(m_creature, SPELL_CONJURE, false);
-                m_creature->CastSpell(m_creature, SPELL_DRINK, false);
+                me->CastSpell(me, SPELL_MASS_POLY, true);
+                me->CastSpell(me, SPELL_CONJURE, false);
+                me->CastSpell(me, SPELL_DRINK, false);
                                                             //Sitting down
-                m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 1);
+                me->SetUInt32Value(UNIT_FIELD_BYTES_1, 1);
                 DrinkInturruptTimer = 10000;
             }
         }
@@ -283,10 +283,10 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
         if (Drinking && DrinkInturrupted)
         {
             Drinking = false;
-            m_creature->RemoveAurasDueToSpell(SPELL_DRINK);
-            m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-            m_creature->SetPower(POWER_MANA, m_creature->GetMaxPower(POWER_MANA)-32000);
-            m_creature->CastSpell(m_creature, SPELL_POTION, false);
+            me->RemoveAurasDueToSpell(SPELL_DRINK);
+            me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
+            me->SetPower(POWER_MANA, me->GetMaxPower(POWER_MANA)-32000);
+            me->CastSpell(me, SPELL_POTION, false);
         }
 
         //Drink Inturrupt Timer
@@ -295,9 +295,9 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
                 DrinkInturruptTimer -= diff;
         else
         {
-            m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-            m_creature->CastSpell(m_creature, SPELL_POTION, true);
-            m_creature->CastSpell(m_creature, SPELL_AOE_PYROBLAST, false);
+            me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
+            me->CastSpell(me, SPELL_POTION, true);
+            me->CastSpell(me, SPELL_AOE_PYROBLAST, false);
             DrinkInturrupted = true;
             Drinking = false;
         }
@@ -309,7 +309,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
         //Normal casts
         if (NormalCastTimer < diff)
         {
-            if (!m_creature->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCasted(false))
             {
                 Unit *pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
@@ -352,7 +352,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
             {
 
                 case 0:
-                    DoCast(m_creature, SPELL_AOE_CS);
+                    DoCast(me, SPELL_AOE_CS);
                     break;
                 case 1:
                     if (Unit* pUnit = SelectUnit(SELECT_TARGET_RANDOM, 0))
@@ -389,21 +389,21 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
                 case SUPER_AE:
 
                     if (rand()%2)
-                        DoScriptText(SAY_EXPLOSION1, m_creature);
+                        DoScriptText(SAY_EXPLOSION1, me);
                     else
-                        DoScriptText(SAY_EXPLOSION2, m_creature);
+                        DoScriptText(SAY_EXPLOSION2, me);
 
-                    m_creature->CastSpell(m_creature, SPELL_BLINK_CENTER, true);
-                    m_creature->CastSpell(m_creature, SPELL_PLAYERPULL, true);
-                    m_creature->CastSpell(m_creature, SPELL_MASSSLOW, true);
-                    m_creature->CastSpell(m_creature, SPELL_AEXPLOSION, false);
+                    me->CastSpell(me, SPELL_BLINK_CENTER, true);
+                    me->CastSpell(me, SPELL_PLAYERPULL, true);
+                    me->CastSpell(me, SPELL_MASSSLOW, true);
+                    me->CastSpell(me, SPELL_AEXPLOSION, false);
                     break;
 
                 case SUPER_FLAME:
                     if (rand()%2)
-                        DoScriptText(SAY_FLAMEWREATH1, m_creature);
+                        DoScriptText(SAY_FLAMEWREATH1, me);
                     else
-                        DoScriptText(SAY_FLAMEWREATH2, m_creature);
+                        DoScriptText(SAY_FLAMEWREATH2, me);
 
                     FlameWreathTimer = 20000;
                     FlameWreathCheckTime = 500;
@@ -418,15 +418,15 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
                 case SUPER_BLIZZARD:
 
                     if (rand()%2)
-                        DoScriptText(SAY_BLIZZARD1, m_creature);
+                        DoScriptText(SAY_BLIZZARD1, me);
                     else
-                        DoScriptText(SAY_BLIZZARD2, m_creature);
+                        DoScriptText(SAY_BLIZZARD2, me);
 
                     Creature* Spawn = NULL;
                     Spawn = DoSpawnCreature(CREATURE_ARAN_BLIZZARD, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 25000);
                     if (Spawn)
                     {
-                        Spawn->setFaction(m_creature->getFaction());
+                        Spawn->setFaction(me->getFaction());
                         Spawn->CastSpell(Spawn, SPELL_CIRCULAR_BLIZZARD, false);
                     }
                     break;
@@ -435,7 +435,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
             SuperCastTimer = 35000 + (rand()%5000);
         } else SuperCastTimer -= diff;
 
-        if (!ElementalsSpawned && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 40)
+        if (!ElementalsSpawned && me->GetHealth()*100 / me->GetMaxHealth() < 40)
         {
             ElementalsSpawned = true;
 
@@ -444,12 +444,12 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
                 Creature* pUnit = DoSpawnCreature(CREATURE_WATER_ELEMENTAL, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 90000);
                 if (pUnit)
                 {
-                    pUnit->Attack(m_creature->getVictim(), true);
-                    pUnit->setFaction(m_creature->getFaction());
+                    pUnit->Attack(me->getVictim(), true);
+                    pUnit->setFaction(me->getFaction());
                 }
             }
 
-            DoScriptText(SAY_ELEMENTALS, m_creature);
+            DoScriptText(SAY_ELEMENTALS, me);
         }
 
         if (BerserkTimer < diff)
@@ -459,12 +459,12 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
                 Creature* pUnit = DoSpawnCreature(CREATURE_SHADOW_OF_ARAN, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 if (pUnit)
                 {
-                    pUnit->Attack(m_creature->getVictim(), true);
-                    pUnit->setFaction(m_creature->getFaction());
+                    pUnit->Attack(me->getVictim(), true);
+                    pUnit->setFaction(me->getFaction());
                 }
             }
 
-            DoScriptText(SAY_TIMEOVER, m_creature);
+            DoScriptText(SAY_TIMEOVER, me);
 
             BerserkTimer = 60000;
         } else BerserkTimer -= diff;
@@ -483,10 +483,10 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
                     if (!FlameWreathTarget[i])
                         continue;
 
-                    Unit* pUnit = Unit::GetUnit(*m_creature, FlameWreathTarget[i]);
+                    Unit* pUnit = Unit::GetUnit(*me, FlameWreathTarget[i]);
                     if (pUnit && pUnit->GetDistance2d(FWTargPosX[i], FWTargPosY[i]) > 3)
                     {
-                        pUnit->CastSpell(pUnit, 20476, true, 0, 0, m_creature->GetGUID());
+                        pUnit->CastSpell(pUnit, 20476, true, 0, 0, me->GetGUID());
                         pUnit->CastSpell(pUnit, 11027, true);
                         FlameWreathTarget[i] = 0;
                     }
@@ -510,11 +510,11 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
         //We only care about inturrupt effects and only if they are durring a spell currently being casted
         if ((Spell->Effect[0] != SPELL_EFFECT_INTERRUPT_CAST &&
             Spell->Effect[1] != SPELL_EFFECT_INTERRUPT_CAST &&
-            Spell->Effect[2] != SPELL_EFFECT_INTERRUPT_CAST) || !m_creature->IsNonMeleeSpellCasted(false))
+            Spell->Effect[2] != SPELL_EFFECT_INTERRUPT_CAST) || !me->IsNonMeleeSpellCasted(false))
             return;
 
         //Inturrupt effect
-        m_creature->InterruptNonMeleeSpells(false);
+        me->InterruptNonMeleeSpells(false);
 
         //Normally we would set the cooldown equal to the spell duration
         //but we do not have access to the DurationStore
@@ -548,7 +548,7 @@ struct OREGON_DLL_DECL water_elementalAI : public ScriptedAI
 
         if (CastTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_WATERBOLT);
+            DoCast(me->getVictim(), SPELL_WATERBOLT);
             CastTimer = 2000 + (rand()%3000);
         } else CastTimer -= diff;
     }

@@ -121,7 +121,7 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
 
     void Reset()
     {
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
         EventPhase = 0;
         Event_Timer = 1000;
@@ -142,7 +142,7 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
     //TODO: move them to center
     void SummonRingMob()
     {
-        if (Creature* tmp = m_creature->SummonCreature(RingMob[MobSpawnId],608.960,-235.322,-53.907,1.857,TEMPSUMMON_DEAD_DESPAWN,0))
+        if (Creature* tmp = me->SummonCreature(RingMob[MobSpawnId],608.960,-235.322,-53.907,1.857,TEMPSUMMON_DEAD_DESPAWN,0))
             RingMobGUID[MobCount] = tmp->GetGUID();
 
         ++MobCount;
@@ -154,7 +154,7 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
     //TODO: move them to center
     void SummonRingBoss()
     {
-        if (Creature* tmp = m_creature->SummonCreature(RingBoss[rand()%6],644.300,-175.989,-53.739,3.418,TEMPSUMMON_DEAD_DESPAWN,0))
+        if (Creature* tmp = me->SummonCreature(RingBoss[rand()%6],644.300,-175.989,-53.739,3.418,TEMPSUMMON_DEAD_DESPAWN,0))
             RingBossGUID = tmp->GetGUID();
 
         MobDeath_Timer = 2500;
@@ -165,12 +165,12 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
         switch(i)
         {
         case 0:
-            DoScriptText(-1000000, m_creature);//2
+            DoScriptText(-1000000, me);//2
             CanWalk = false;
             Event_Timer = 5000;
             break;
         case 1:
-            DoScriptText(-1000000, m_creature);//4
+            DoScriptText(-1000000, me);//4
             CanWalk = false;
             Event_Timer = 5000;
             break;
@@ -178,10 +178,10 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
             CanWalk = false;
             break;
         case 3:
-            DoScriptText(-1000000, m_creature);//5
+            DoScriptText(-1000000, me);//5
             break;
         case 4:
-            DoScriptText(-1000000, m_creature);//6
+            DoScriptText(-1000000, me);//6
             CanWalk = false;
             Event_Timer = 5000;
             break;
@@ -213,7 +213,7 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
 
                 if (RingBossGUID)
                 {
-                    Creature *boss = Unit::GetCreature(*m_creature,RingBossGUID);
+                    Creature *boss = Unit::GetCreature(*me,RingBossGUID);
                     if (boss && !boss->isAlive() && boss->isDead())
                     {
                         RingBossGUID = 0;
@@ -226,7 +226,7 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
 
                 for (uint8 i = 0; i < MOB_AMOUNT; i++)
                 {
-                    Creature *mob = Unit::GetCreature(*m_creature,RingMobGUID[i]);
+                    Creature *mob = Unit::GetCreature(*me,RingMobGUID[i]);
                     if (mob && !mob->isAlive() && mob->isDead())
                     {
                         RingMobGUID[i] = 0;
@@ -250,7 +250,7 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
                 switch(EventPhase)
                 {
                 case 0:
-                    DoScriptText(-1000000, m_creature);//1
+                    DoScriptText(-1000000, me);//1
                     HandleGameObject(DATA_ARENA4, false);
                     Start(false, false, false);
                     CanWalk = true;
@@ -269,7 +269,7 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
                     break;
                 case 4:
                     CanWalk = true;
-                    m_creature->SetVisibility(VISIBILITY_OFF);
+                    me->SetVisibility(VISIBILITY_OFF);
                     SummonRingMob();
                     Event_Timer = 8000;
                     break;
@@ -283,9 +283,9 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
                     Event_Timer = 0;
                     break;
                 case 7:
-                    m_creature->SetVisibility(VISIBILITY_ON);
+                    me->SetVisibility(VISIBILITY_ON);
                     HandleGameObject(DATA_ARENA1, false);
-                    DoScriptText(-1000000, m_creature);//4
+                    DoScriptText(-1000000, me);//4
                     CanWalk = true;
                     Event_Timer = 0;
                     break;
@@ -294,7 +294,7 @@ struct OREGON_DLL_DECL npc_grimstoneAI : public npc_escortAI
                     Event_Timer = 5000;
                     break;
                 case 9:
-                    m_creature->SetVisibility(VISIBILITY_OFF);
+                    me->SetVisibility(VISIBILITY_OFF);
                     SummonRingBoss();
                     Event_Timer = 0;
                     break;
@@ -363,16 +363,16 @@ struct OREGON_DLL_DECL mob_phalanxAI : public ScriptedAI
         //ThunderClap_Timer
         if (ThunderClap_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_THUNDERCLAP);
+            DoCast(me->getVictim(),SPELL_THUNDERCLAP);
             ThunderClap_Timer = 10000;
         } else ThunderClap_Timer -= diff;
 
         //FireballVolley_Timer
-        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 51)
+        if (me->GetHealth()*100 / me->GetMaxHealth() < 51)
         {
             if (FireballVolley_Timer < diff)
             {
-                DoCast(m_creature->getVictim(),SPELL_FIREBALLVOLLEY);
+                DoCast(me->getVictim(),SPELL_FIREBALLVOLLEY);
                 FireballVolley_Timer = 15000;
             } else FireballVolley_Timer -= diff;
         }
@@ -380,7 +380,7 @@ struct OREGON_DLL_DECL mob_phalanxAI : public ScriptedAI
         //MightyBlow_Timer
         if (MightyBlow_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_MIGHTYBLOW);
+            DoCast(me->getVictim(),SPELL_MIGHTYBLOW);
             MightyBlow_Timer = 10000;
         } else MightyBlow_Timer -= diff;
 
@@ -544,12 +544,12 @@ struct OREGON_DLL_DECL npc_dughal_stormwingAI : public npc_escortAI
     {
     switch(i)
         {
-        case 0:m_creature->Say(SAY_DUGHAL_FREE, LANG_UNIVERSAL, PlayerGUID); break;
+        case 0:me->Say(SAY_DUGHAL_FREE, LANG_UNIVERSAL, PlayerGUID); break;
         case 1:pInstance->SetData(DATA_DUGHAL,ENCOUNTER_STATE_OBJECTIVE_COMPLETED);break;
         case 2:
-            m_creature->SetVisibility(VISIBILITY_OFF);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SetVisibility(VISIBILITY_OFF);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             pInstance->SetData(DATA_DUGHAL,ENCOUNTER_STATE_ENDED);
             break;
         }
@@ -560,11 +560,11 @@ struct OREGON_DLL_DECL npc_dughal_stormwingAI : public npc_escortAI
 
     void JustDied(Unit* killer)
     {
-        if (IsBeingEscorted && killer == m_creature)
+        if (IsBeingEscorted && killer == me)
         {
-            m_creature->SetVisibility(VISIBILITY_OFF);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SetVisibility(VISIBILITY_OFF);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             pInstance->SetData(DATA_DUGHAL,ENCOUNTER_STATE_ENDED);
         }
     }
@@ -574,15 +574,15 @@ struct OREGON_DLL_DECL npc_dughal_stormwingAI : public npc_escortAI
         if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_NOT_STARTED) return;
         if ((pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_FAILED || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_ENDED)&& pInstance->GetData(DATA_DUGHAL) == ENCOUNTER_STATE_ENDED)
         {
-            m_creature->SetVisibility(VISIBILITY_OFF);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SetVisibility(VISIBILITY_OFF);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
         else
         {
-            m_creature->SetVisibility(VISIBILITY_ON);
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SetVisibility(VISIBILITY_ON);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
         npc_escortAI::UpdateAI(diff);
     }
@@ -648,41 +648,41 @@ struct OREGON_DLL_DECL npc_marshal_windsorAI : public npc_escortAI
     switch(i)
         {
         case 1:
-            m_creature->Say(SAY_WINDSOR_1, LANG_UNIVERSAL, PlayerGUID);
+            me->Say(SAY_WINDSOR_1, LANG_UNIVERSAL, PlayerGUID);
             break;
         case 7:
-            m_creature->HandleEmoteCommand(EMOTE_STATE_POINT);
-            m_creature->Say(SAY_WINDSOR_4_1, LANG_UNIVERSAL, PlayerGUID);
+            me->HandleEmoteCommand(EMOTE_STATE_POINT);
+            me->Say(SAY_WINDSOR_4_1, LANG_UNIVERSAL, PlayerGUID);
             IsOnHold=true;
             break;
         case 10:
-            m_creature->setFaction(534);
+            me->setFaction(534);
             break;
         case 12:
-            m_creature->Say(SAY_WINDSOR_6, LANG_UNIVERSAL, PlayerGUID);
+            me->Say(SAY_WINDSOR_6, LANG_UNIVERSAL, PlayerGUID);
             pInstance->SetData(DATA_SUPPLY_ROOM, ENCOUNTER_STATE_IN_PROGRESS);
             break;
         case 13:
-            m_creature->HandleEmoteCommand(EMOTE_STATE_USESTANDING);//EMOTE_STATE_WORK
+            me->HandleEmoteCommand(EMOTE_STATE_USESTANDING);//EMOTE_STATE_WORK
             break;
         case 14:
             pInstance->SetData(DATA_GATE_SR,0);
-            m_creature->setFaction(11);
+            me->setFaction(11);
             break;
         case 16:
-            m_creature->Say(SAY_WINDSOR_9, LANG_UNIVERSAL, PlayerGUID);
+            me->Say(SAY_WINDSOR_9, LANG_UNIVERSAL, PlayerGUID);
             break;
         case 17:
-            m_creature->HandleEmoteCommand(EMOTE_STATE_USESTANDING);//EMOTE_STATE_WORK
+            me->HandleEmoteCommand(EMOTE_STATE_USESTANDING);//EMOTE_STATE_WORK
             break;
         case 18:
             pInstance->SetData(DATA_GATE_SC,0);
             break;
         case 19:
-            m_creature->SetVisibility(VISIBILITY_OFF);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            m_creature->SummonCreature(MOB_ENTRY_REGINALD_WINDSOR,403.61,-51.71,-63.92,3.600434,TEMPSUMMON_DEAD_DESPAWN ,0);
+            me->SetVisibility(VISIBILITY_OFF);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SummonCreature(MOB_ENTRY_REGINALD_WINDSOR,403.61,-51.71,-63.92,3.600434,TEMPSUMMON_DEAD_DESPAWN ,0);
             pInstance->SetData(DATA_SUPPLY_ROOM, ENCOUNTER_STATE_ENDED);
             break;
         }
@@ -692,9 +692,9 @@ struct OREGON_DLL_DECL npc_marshal_windsorAI : public npc_escortAI
         {
         switch(rand()%3)
             {
-            case 0:m_creature->Say(SAY_WINDSOR_AGGRO1, LANG_UNIVERSAL, PlayerGUID);break;
-            case 1:m_creature->Say(SAY_WINDSOR_AGGRO2, LANG_UNIVERSAL, PlayerGUID);break;
-            case 2:m_creature->Say(SAY_WINDSOR_AGGRO3, LANG_UNIVERSAL, PlayerGUID);break;
+            case 0:me->Say(SAY_WINDSOR_AGGRO1, LANG_UNIVERSAL, PlayerGUID);break;
+            case 1:me->Say(SAY_WINDSOR_AGGRO2, LANG_UNIVERSAL, PlayerGUID);break;
+            case 2:me->Say(SAY_WINDSOR_AGGRO3, LANG_UNIVERSAL, PlayerGUID);break;
             }
         }
 
@@ -712,25 +712,25 @@ struct OREGON_DLL_DECL npc_marshal_windsorAI : public npc_escortAI
             IsOnHold = false;
         if (!pInstance->GetData(DATA_GATE_D) && pInstance->GetData(DATA_DUGHAL) == ENCOUNTER_STATE_NOT_STARTED)
             {
-            m_creature->Say(SAY_WINDSOR_4_2, LANG_UNIVERSAL, PlayerGUID);
+            me->Say(SAY_WINDSOR_4_2, LANG_UNIVERSAL, PlayerGUID);
             pInstance->SetData(DATA_DUGHAL, ENCOUNTER_STATE_BEFORE_START);
             }
         if (pInstance->GetData(DATA_DUGHAL) == ENCOUNTER_STATE_OBJECTIVE_COMPLETED)
             {
-            m_creature->Say(SAY_WINDSOR_4_3, LANG_UNIVERSAL, PlayerGUID);
+            me->Say(SAY_WINDSOR_4_3, LANG_UNIVERSAL, PlayerGUID);
             pInstance->SetData(DATA_DUGHAL, ENCOUNTER_STATE_ENDED);
             }
         if ((pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_FAILED || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_ENDED)&& pInstance->GetData(DATA_SUPPLY_ROOM) == ENCOUNTER_STATE_ENDED)
         {
-            m_creature->SetVisibility(VISIBILITY_OFF);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SetVisibility(VISIBILITY_OFF);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
         else
         {
-            m_creature->SetVisibility(VISIBILITY_ON);
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SetVisibility(VISIBILITY_ON);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
         npc_escortAI::UpdateAI(diff);
     }
@@ -813,53 +813,53 @@ struct OREGON_DLL_DECL npc_marshal_reginald_windsorAI : public npc_escortAI
     switch(i)
         {
         case 0:
-            m_creature->setFaction(11);
-            m_creature->Say(SAY_REGINALD_WINDSOR_0_1, LANG_UNIVERSAL, PlayerGUID);
+            me->setFaction(11);
+            me->Say(SAY_REGINALD_WINDSOR_0_1, LANG_UNIVERSAL, PlayerGUID);
             break;
         case 1:
-            m_creature->Say(SAY_REGINALD_WINDSOR_0_2, LANG_UNIVERSAL, PlayerGUID);
+            me->Say(SAY_REGINALD_WINDSOR_0_2, LANG_UNIVERSAL, PlayerGUID);
             break;
         case 7:
-            m_creature->HandleEmoteCommand(EMOTE_STATE_POINT);
-            m_creature->Say(SAY_REGINALD_WINDSOR_5_1, LANG_UNIVERSAL, PlayerGUID);
+            me->HandleEmoteCommand(EMOTE_STATE_POINT);
+            me->Say(SAY_REGINALD_WINDSOR_5_1, LANG_UNIVERSAL, PlayerGUID);
             IsOnHold=true;
             break;
         case 8:
-            m_creature->Say(SAY_REGINALD_WINDSOR_5_2, LANG_UNIVERSAL, PlayerGUID);
+            me->Say(SAY_REGINALD_WINDSOR_5_2, LANG_UNIVERSAL, PlayerGUID);
             break;
         case 11:
-            m_creature->HandleEmoteCommand(EMOTE_STATE_POINT);
-            m_creature->Say(SAY_REGINALD_WINDSOR_7_1, LANG_UNIVERSAL, PlayerGUID);
+            me->HandleEmoteCommand(EMOTE_STATE_POINT);
+            me->Say(SAY_REGINALD_WINDSOR_7_1, LANG_UNIVERSAL, PlayerGUID);
             IsOnHold=true;
             break;
         case 12:
-            m_creature->Say(SAY_REGINALD_WINDSOR_7_2, LANG_UNIVERSAL, PlayerGUID);
+            me->Say(SAY_REGINALD_WINDSOR_7_2, LANG_UNIVERSAL, PlayerGUID);
             break;
         case 13:
-            m_creature->Say(SAY_REGINALD_WINDSOR_7_3, LANG_UNIVERSAL, PlayerGUID);
+            me->Say(SAY_REGINALD_WINDSOR_7_3, LANG_UNIVERSAL, PlayerGUID);
             break;
         case 20:
-            m_creature->HandleEmoteCommand(EMOTE_STATE_POINT);
-            m_creature->Say(SAY_REGINALD_WINDSOR_13_1, LANG_UNIVERSAL, PlayerGUID);
+            me->HandleEmoteCommand(EMOTE_STATE_POINT);
+            me->Say(SAY_REGINALD_WINDSOR_13_1, LANG_UNIVERSAL, PlayerGUID);
             IsOnHold=true;
             break;
         case 21:
-            m_creature->Say(SAY_REGINALD_WINDSOR_13_3, LANG_UNIVERSAL, PlayerGUID);
+            me->Say(SAY_REGINALD_WINDSOR_13_3, LANG_UNIVERSAL, PlayerGUID);
             break;
         case 23:
-            m_creature->HandleEmoteCommand(EMOTE_STATE_POINT);
-            m_creature->Say(SAY_REGINALD_WINDSOR_14_1, LANG_UNIVERSAL, PlayerGUID);
+            me->HandleEmoteCommand(EMOTE_STATE_POINT);
+            me->Say(SAY_REGINALD_WINDSOR_14_1, LANG_UNIVERSAL, PlayerGUID);
             IsOnHold=true;
             break;
         case 24:
-            m_creature->Say(SAY_REGINALD_WINDSOR_14_2, LANG_UNIVERSAL, PlayerGUID);
+            me->Say(SAY_REGINALD_WINDSOR_14_2, LANG_UNIVERSAL, PlayerGUID);
             break;
         case 31:
-            m_creature->Say(SAY_REGINALD_WINDSOR_20_1, LANG_UNIVERSAL, PlayerGUID);
+            me->Say(SAY_REGINALD_WINDSOR_20_1, LANG_UNIVERSAL, PlayerGUID);
             break;
         case 32:
-            m_creature->Say(SAY_REGINALD_WINDSOR_20_2, LANG_UNIVERSAL, PlayerGUID);
-            PlayerStart->GroupEventHappens(QUEST_JAIL_BREAK, m_creature);
+            me->Say(SAY_REGINALD_WINDSOR_20_2, LANG_UNIVERSAL, PlayerGUID);
+            PlayerStart->GroupEventHappens(QUEST_JAIL_BREAK, me);
             pInstance->SetData(DATA_SHILL, ENCOUNTER_STATE_ENDED);
             break;
         }
@@ -875,10 +875,10 @@ struct OREGON_DLL_DECL npc_marshal_reginald_windsorAI : public npc_escortAI
             if (((Player*)who)->GetQuestStatus(4322) == QUEST_STATUS_INCOMPLETE)
             {
                 float Radius = 10.0;
-                if (m_creature->IsWithinDistInMap(who, Radius))
+                if (me->IsWithinDistInMap(who, Radius))
                 {
                     IsOnHold = false;
-                    ((npc_escortAI*)(m_creature->AI()))->Start(true, true, false, who->GetGUID());
+                    ((npc_escortAI*)(me->AI()))->Start(true, true, false, who->GetGUID());
                 }
             }
         }
@@ -888,9 +888,9 @@ struct OREGON_DLL_DECL npc_marshal_reginald_windsorAI : public npc_escortAI
         {
         switch(rand()%3)
             {
-            case 0:m_creature->Say(SAY_WINDSOR_AGGRO1, LANG_UNIVERSAL, PlayerGUID);break;
-            case 1:m_creature->Say(SAY_WINDSOR_AGGRO2, LANG_UNIVERSAL, PlayerGUID);break;
-            case 2:m_creature->Say(SAY_WINDSOR_AGGRO3, LANG_UNIVERSAL, PlayerGUID);break;
+            case 0:me->Say(SAY_WINDSOR_AGGRO1, LANG_UNIVERSAL, PlayerGUID);break;
+            case 1:me->Say(SAY_WINDSOR_AGGRO2, LANG_UNIVERSAL, PlayerGUID);break;
+            case 2:me->Say(SAY_WINDSOR_AGGRO3, LANG_UNIVERSAL, PlayerGUID);break;
             }
         }
     void Reset() {}
@@ -934,7 +934,7 @@ struct OREGON_DLL_DECL npc_marshal_reginald_windsorAI : public npc_escortAI
             if (!pInstance->GetData(DATA_GATE_C) && pInstance->GetData(DATA_CREST) == ENCOUNTER_STATE_NOT_STARTED)
                 {
                     pInstance->SetData(DATA_CREATURE_CREST,1);
-                    m_creature->Say(SAY_REGINALD_WINDSOR_13_2, LANG_UNIVERSAL, PlayerGUID);
+                    me->Say(SAY_REGINALD_WINDSOR_13_2, LANG_UNIVERSAL, PlayerGUID);
                     pInstance->SetData(DATA_CREST,ENCOUNTER_STATE_IN_PROGRESS);
                 }
             if (pInstance->GetData(DATA_CREATURE_CREST) && pInstance->GetData(DATA_CREST) == ENCOUNTER_STATE_IN_PROGRESS)
@@ -1005,11 +1005,11 @@ struct OREGON_DLL_DECL npc_tobias_seecherAI : public npc_escortAI
 
     void JustDied(Unit* killer)
     {
-        if (IsBeingEscorted && killer == m_creature)
+        if (IsBeingEscorted && killer == me)
         {
-            m_creature->SetVisibility(VISIBILITY_OFF);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SetVisibility(VISIBILITY_OFF);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             pInstance->SetData(DATA_TOBIAS,ENCOUNTER_STATE_ENDED);
         }
     }
@@ -1018,13 +1018,13 @@ struct OREGON_DLL_DECL npc_tobias_seecherAI : public npc_escortAI
     {
     switch(i)
         {
-        case 0:m_creature->Say(SAY_TOBIAS_FREE, LANG_UNIVERSAL, PlayerGUID); break;
+        case 0:me->Say(SAY_TOBIAS_FREE, LANG_UNIVERSAL, PlayerGUID); break;
         case 2:
             pInstance->SetData(DATA_TOBIAS,ENCOUNTER_STATE_OBJECTIVE_COMPLETED);break;
         case 4:
-            m_creature->SetVisibility(VISIBILITY_OFF);
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SetVisibility(VISIBILITY_OFF);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             pInstance->SetData(DATA_TOBIAS,ENCOUNTER_STATE_ENDED);
             break;
         }
@@ -1035,15 +1035,15 @@ struct OREGON_DLL_DECL npc_tobias_seecherAI : public npc_escortAI
         if (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_NOT_STARTED) return;
         if ((pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_FAILED || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_ENDED)&& pInstance->GetData(DATA_TOBIAS) == ENCOUNTER_STATE_ENDED)
         {
-            m_creature->SetVisibility(VISIBILITY_OFF);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SetVisibility(VISIBILITY_OFF);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
         else
         {
-            m_creature->SetVisibility(VISIBILITY_ON);
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SetVisibility(VISIBILITY_ON);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
         npc_escortAI::UpdateAI(diff);
     }
@@ -1142,7 +1142,7 @@ struct OREGON_DLL_DECL npc_rocknotAI : public npc_escortAI
 
     void DoGo(uint32 id, uint32 state)
     {
-        if (GameObject *go = GameObject::GetGameObject(*m_creature,pInstance->GetData64(id)))
+        if (GameObject *go = GameObject::GetGameObject(*me,pInstance->GetData64(id)))
             go->SetGoState((GOState)state);
     }
 
@@ -1154,19 +1154,19 @@ struct OREGON_DLL_DECL npc_rocknotAI : public npc_escortAI
         switch(i)
         {
         case 1:
-            m_creature->HandleEmoteCommand(EMOTE_ONESHOT_KICK);
+            me->HandleEmoteCommand(EMOTE_ONESHOT_KICK);
             break;
         case 2:
-            m_creature->HandleEmoteCommand(EMOTE_ONESHOT_ATTACKUNARMED);
+            me->HandleEmoteCommand(EMOTE_ONESHOT_ATTACKUNARMED);
             break;
         case 3:
-            m_creature->HandleEmoteCommand(EMOTE_ONESHOT_ATTACKUNARMED);
+            me->HandleEmoteCommand(EMOTE_ONESHOT_ATTACKUNARMED);
             break;
         case 4:
-            m_creature->HandleEmoteCommand(EMOTE_ONESHOT_KICK);
+            me->HandleEmoteCommand(EMOTE_ONESHOT_KICK);
             break;
         case 5:
-            m_creature->HandleEmoteCommand(EMOTE_ONESHOT_KICK);
+            me->HandleEmoteCommand(EMOTE_ONESHOT_KICK);
             BreakKeg_Timer = 2000;
             break;
         }
@@ -1195,7 +1195,7 @@ struct OREGON_DLL_DECL npc_rocknotAI : public npc_escortAI
                 DoGo(DATA_GO_BAR_KEG_TRAP,0);               //doesn't work very well, leaving code here for future
                 //spell by trap has effect61, this indicate the bar go hostile
 
-                if (Unit *tmp = Unit::GetUnit(*m_creature,pInstance->GetData64(DATA_PHALANX)))
+                if (Unit *tmp = Unit::GetUnit(*me,pInstance->GetData64(DATA_PHALANX)))
                     tmp->setFaction(14);
 
                 //for later, this event(s) has alot more to it.

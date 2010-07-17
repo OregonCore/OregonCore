@@ -56,7 +56,7 @@ struct OREGON_DLL_DECL boss_golemaggAI : public ScriptedAI
         Buff_Timer = 2500;
         Enrage_Timer = 0;
 
-        m_creature->CastSpell(m_creature,SPELL_MAGMASPLASH,true);
+        me->CastSpell(me,SPELL_MAGMASPLASH,true);
     }
 
     void EnterCombat(Unit *who)
@@ -84,21 +84,21 @@ struct OREGON_DLL_DECL boss_golemaggAI : public ScriptedAI
         } else Pyroblast_Timer -= diff;
 
         //Enrage_Timer
-        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 11)
+        if (me->GetHealth()*100 / me->GetMaxHealth() < 11)
         {
             if (Enrage_Timer < diff)
             {
-                DoCast(m_creature,SPELL_ENRAGE);
+                DoCast(me,SPELL_ENRAGE);
                 Enrage_Timer = 62000;
             } else Enrage_Timer -= diff;
         }
 
         //EarthQuake_Timer
-        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 11)
+        if (me->GetHealth()*100 / me->GetMaxHealth() < 11)
         {
             if (EarthQuake_Timer < diff)
             {
-                DoCast(m_creature->getVictim(),SPELL_EARTHQUAKE);
+                DoCast(me->getVictim(),SPELL_EARTHQUAKE);
                 EarthQuake_Timer = 3000;
             } else EarthQuake_Timer -= diff;
         }
@@ -106,7 +106,7 @@ struct OREGON_DLL_DECL boss_golemaggAI : public ScriptedAI
         //Casting Buff for Coreragers. Spell is not working right. Players get the buff...
         //        if (Buff_Timer < diff)
         //        {
-        //            DoCast(m_creature, SPELL_BUFF);
+        //            DoCast(me, SPELL_BUFF);
         //            Buff_Timer = 2500;
         //        } else Buff_Timer -= diff;
 
@@ -143,15 +143,15 @@ struct OREGON_DLL_DECL mob_core_ragerAI : public ScriptedAI
         //Mangle_Timer
         if (Mangle_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_MANGLE);
+            DoCast(me->getVictim(),SPELL_MANGLE);
             Mangle_Timer = 10000;
         } else Mangle_Timer -= diff;
 
         //Cast AEGIS
-        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 50)
+        if (me->GetHealth()*100 / me->GetMaxHealth() < 50)
         {
-            DoCast(m_creature,SPELL_AEGIS);
-            DoScriptText(EMOTE_AEGIS, m_creature);
+            DoCast(me,SPELL_AEGIS);
+            DoScriptText(EMOTE_AEGIS, me);
         }
 
         //Check_Timer
@@ -159,10 +159,10 @@ struct OREGON_DLL_DECL mob_core_ragerAI : public ScriptedAI
         {
             if (pInstance)
             {
-                Unit *pGolemagg = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_GOLEMAGG));
+                Unit *pGolemagg = Unit::GetUnit((*me), pInstance->GetData64(DATA_GOLEMAGG));
                 if (!pGolemagg || !pGolemagg->isAlive())
                 {
-                    m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, true);
+                    me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, true);
                 }
             }
 

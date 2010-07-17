@@ -48,7 +48,7 @@ struct OREGON_DLL_DECL boss_ironayaAI : public ScriptedAI
     void EnterCombat(Unit *who)
     {
         DoYell(SAY_AGGRO,LANG_UNIVERSAL,NULL);
-        DoPlaySoundToSet(m_creature,SOUND_AGGRO);
+        DoPlaySoundToSet(me,SOUND_AGGRO);
     }
 
     void UpdateAI(const uint32 diff)
@@ -58,18 +58,18 @@ struct OREGON_DLL_DECL boss_ironayaAI : public ScriptedAI
             return;
 
         //If we are <50% hp do knockaway ONCE
-        if (!hasCastedKnockaway && m_creature->GetHealth()*2 < m_creature->GetMaxHealth())
+        if (!hasCastedKnockaway && me->GetHealth()*2 < me->GetMaxHealth())
         {
-            m_creature->CastSpell(m_creature->getVictim(),SPELL_KNOCKAWAY, true);
+            me->CastSpell(me->getVictim(),SPELL_KNOCKAWAY, true);
 
             // current aggro target is knocked away pick new target
             Unit *pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
 
-            if (!pTarget || pTarget == m_creature->getVictim())
+            if (!pTarget || pTarget == me->getVictim())
                 pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
 
             if (pTarget)
-                m_creature->TauntApply(pTarget);
+                me->TauntApply(pTarget);
 
             //Shouldn't cast this agian
             hasCastedKnockaway = true;
@@ -78,13 +78,13 @@ struct OREGON_DLL_DECL boss_ironayaAI : public ScriptedAI
         //Arcing_Timer
         if (Arcing_Timer < diff)
         {
-            DoCast(m_creature,SPELL_ARCINGSMASH);
+            DoCast(me,SPELL_ARCINGSMASH);
             Arcing_Timer = 13000;
         } else Arcing_Timer -= diff;
 
-        if (!hasCastedWstomp && m_creature->GetHealth()*4 < m_creature->GetMaxHealth())
+        if (!hasCastedWstomp && me->GetHealth()*4 < me->GetMaxHealth())
         {
-            DoCast(m_creature,SPELL_WSTOMP);
+            DoCast(me,SPELL_WSTOMP);
             hasCastedWstomp = true;
         }
 

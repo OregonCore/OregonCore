@@ -60,27 +60,27 @@ struct OREGON_DLL_DECL mob_unkor_the_ruthlessAI : public ScriptedAI
         CanDoQuest = false;
         UnkorUnfriendly_Timer = 0;
         Pulverize_Timer = 3000;
-        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_NONE);
-        m_creature->setFaction(FACTION_HOSTILE);
+        me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_NONE);
+        me->setFaction(FACTION_HOSTILE);
     }
 
     void EnterCombat(Unit *who) {}
 
     void DoNice()
     {
-        DoScriptText(SAY_SUBMIT, m_creature);
-        m_creature->setFaction(FACTION_FRIENDLY);
-        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_SIT);
-        m_creature->RemoveAllAuras();
-        m_creature->DeleteThreatList();
-        m_creature->CombatStop();
+        DoScriptText(SAY_SUBMIT, me);
+        me->setFaction(FACTION_FRIENDLY);
+        me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_SIT);
+        me->RemoveAllAuras();
+        me->DeleteThreatList();
+        me->CombatStop();
         UnkorUnfriendly_Timer = 60000;
     }
 
     void DamageTaken(Unit *done_by, uint32 &damage)
     {
         if (done_by->GetTypeId() == TYPEID_PLAYER)
-            if ((m_creature->GetHealth()-damage)*100 / m_creature->GetMaxHealth() < 30)
+            if ((me->GetHealth()-damage)*100 / me->GetMaxHealth() < 30)
         {
             if (Group* pGroup = ((Player*)done_by)->GetGroup())
             {
@@ -112,7 +112,7 @@ struct OREGON_DLL_DECL mob_unkor_the_ruthlessAI : public ScriptedAI
         {
             if (!UnkorUnfriendly_Timer)
             {
-                //DoCast(m_creature,SPELL_QUID9889);        //not using spell for now
+                //DoCast(me,SPELL_QUID9889);        //not using spell for now
                 DoNice();
             }
             else
@@ -130,7 +130,7 @@ struct OREGON_DLL_DECL mob_unkor_the_ruthlessAI : public ScriptedAI
 
         if (Pulverize_Timer < diff)
         {
-            DoCast(m_creature,SPELL_PULVERIZE);
+            DoCast(me,SPELL_PULVERIZE);
             Pulverize_Timer = 9000;
         } else Pulverize_Timer -= diff;
 
@@ -157,10 +157,10 @@ struct OREGON_DLL_DECL mob_infested_root_walkerAI : public ScriptedAI
     void DamageTaken(Unit *done_by, uint32 &damage)
     {
         if (done_by && done_by->GetTypeId() == TYPEID_PLAYER)
-            if (m_creature->GetHealth() <= damage)
+            if (me->GetHealth() <= damage)
                 if (rand()%100 < 75)
                     //Summon Wood Mites
-                    m_creature->CastSpell(m_creature,39130,true);
+                    me->CastSpell(me,39130,true);
     }
 };
 CreatureAI* GetAI_mob_infested_root_walker(Creature *_Creature)
@@ -182,10 +182,10 @@ struct OREGON_DLL_DECL mob_rotting_forest_ragerAI : public ScriptedAI
     void DamageTaken(Unit *done_by, uint32 &damage)
     {
         if (done_by->GetTypeId() == TYPEID_PLAYER)
-            if (m_creature->GetHealth() <= damage)
+            if (me->GetHealth() <= damage)
                 if (rand()%100 < 75)
                     //Summon Lots of Wood Mights
-                    m_creature->CastSpell(m_creature,39134,true);
+                    me->CastSpell(me,39134,true);
     }
 };
 CreatureAI* GetAI_mob_rotting_forest_rager(Creature *_Creature)
@@ -221,7 +221,7 @@ struct OREGON_DLL_DECL mob_netherweb_victimAI : public ScriptedAI
                 if (rand()%100 < 25)
                 {
                     DoSpawnCreature(QUEST_TARGET,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,60000);
-                    ((Player*)Killer)->KilledMonster(QUEST_TARGET, m_creature->GetGUID());
+                    ((Player*)Killer)->KilledMonster(QUEST_TARGET, me->GetGUID());
                 } else
                 DoSpawnCreature(netherwebVictims[rand()%6],0,0,0,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,60000);
 
@@ -266,7 +266,7 @@ struct OREGON_DLL_DECL npc_floonAI : public ScriptedAI
         Silence_Timer = 2000;
         Frostbolt_Timer = 4000;
         FrostNova_Timer = 9000;
-        m_creature->setFaction(FACTION_FRIENDLY_FL);
+        me->setFaction(FACTION_FRIENDLY_FL);
     }
 
     void EnterCombat(Unit *who) {}
@@ -278,19 +278,19 @@ struct OREGON_DLL_DECL npc_floonAI : public ScriptedAI
 
         if (Silence_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_SILENCE);
+            DoCast(me->getVictim(),SPELL_SILENCE);
             Silence_Timer = 30000;
         } else Silence_Timer -= diff;
 
         if (FrostNova_Timer < diff)
         {
-            DoCast(m_creature,SPELL_FROST_NOVA);
+            DoCast(me,SPELL_FROST_NOVA);
             FrostNova_Timer = 20000;
         } else FrostNova_Timer -= diff;
 
         if (Frostbolt_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_FROSTBOLT);
+            DoCast(me->getVictim(),SPELL_FROSTBOLT);
             Frostbolt_Timer = 5000;
         } else Frostbolt_Timer -= diff;
 
@@ -390,21 +390,21 @@ struct OREGON_DLL_DECL npc_isla_starmaneAI : public npc_escortAI
             if (Cage)
                 Cage->SetGoState(GO_STATE_ACTIVE);
             }break;
-        case 2: DoScriptText(SAY_PROGRESS_1, m_creature, pPlayer); break;
-        case 5: DoScriptText(SAY_PROGRESS_2, m_creature, pPlayer); break;
-        case 6: DoScriptText(SAY_PROGRESS_3, m_creature, pPlayer); break;
-        case 29:DoScriptText(SAY_PROGRESS_4, m_creature, pPlayer);
+        case 2: DoScriptText(SAY_PROGRESS_1, me, pPlayer); break;
+        case 5: DoScriptText(SAY_PROGRESS_2, me, pPlayer); break;
+        case 6: DoScriptText(SAY_PROGRESS_3, me, pPlayer); break;
+        case 29:DoScriptText(SAY_PROGRESS_4, me, pPlayer);
             if (pPlayer)
             {
                 if (pPlayer->GetTeam() == ALLIANCE)
-                    pPlayer->GroupEventHappens(QUEST_EFTW_A, m_creature);
+                    pPlayer->GroupEventHappens(QUEST_EFTW_A, me);
                 else if (pPlayer->GetTeam() == HORDE)
-                    pPlayer->GroupEventHappens(QUEST_EFTW_H, m_creature);
+                    pPlayer->GroupEventHappens(QUEST_EFTW_H, me);
             }
-            m_creature->SetInFront(pPlayer); break;
-        case 30: m_creature->HandleEmoteCommand(EMOTE_ONESHOT_WAVE); break;
-        case 31: DoCast(m_creature, SPELL_CAT);
-            m_creature->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE); break;
+            me->SetInFront(pPlayer); break;
+        case 30: me->HandleEmoteCommand(EMOTE_ONESHOT_WAVE); break;
+        case 31: DoCast(me, SPELL_CAT);
+            me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE); break;
         }
     }
 

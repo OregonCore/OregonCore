@@ -106,9 +106,9 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
         if (Shades && Shades_Timer < diff)
         {
             //Become unbanished again
-            m_creature->setFaction(14);
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            //m_creature->m_canMove = true;
+            me->setFaction(14);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            //me->m_canMove = true;
             Shades = false;
         } else if (Shades)
         {
@@ -134,7 +134,7 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
         //NoxiousBreath_Timer
         if (NoxiousBreath_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_NOXIOUSBREATH);
+            DoCast(me->getVictim(),SPELL_NOXIOUSBREATH);
             NoxiousBreath_Timer = 14000 + rand()%6000;
         } else NoxiousBreath_Timer -= diff;
 
@@ -150,34 +150,34 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
         //MarkOfNature_Timer
         //if (MarkOfNature_Timer < diff)
         //{
-        //    DoCast(m_creature->getVictim(),SPELL_MARKOFNATURE);
+        //    DoCast(me->getVictim(),SPELL_MARKOFNATURE);
         //    MarkOfNature_Timer = 45000;
         //} else MarkOfNature_Timer -= diff;
 
         //ArcaneBlast_Timer
         if (ArcaneBlast_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_ARCANEBLAST);
+            DoCast(me->getVictim(),SPELL_ARCANEBLAST);
             ArcaneBlast_Timer = 7000 + rand()%5000;
         } else ArcaneBlast_Timer -= diff;
 
         //BellowingRoar_Timer
         if (BellowingRoar_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_BELLOWINGROAR);
+            DoCast(me->getVictim(),SPELL_BELLOWINGROAR);
             BellowingRoar_Timer = 20000 + rand()%10000;
         } else BellowingRoar_Timer -= diff;
 
         //Summon 3 Shades
-        if (!Shades  && (int) (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() +0.5) == 75)
+        if (!Shades  && (int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 75)
         {
             if (Summon1_Timer < diff)
             {
                 //Inturrupt any spell casting
-                m_creature->InterruptNonMeleeSpells(false);
-                m_creature->setFaction(35);
-                m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                //m_creature->m_canMove = false;
+                me->InterruptNonMeleeSpells(false);
+                me->setFaction(35);
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                //me->m_canMove = false;
 
                 //Cast
                 Unit *pTarget = NULL;
@@ -192,15 +192,15 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
         }
 
         //Summon 3 Shades
-        if (!Shades  && (int) (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() +0.5) == 50)
+        if (!Shades  && (int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 50)
         {
             if (Summon2_Timer < diff)
             {
                 //Inturrupt any spell casting
-                m_creature->InterruptNonMeleeSpells(false);
-                m_creature->setFaction(35);
-                m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                //m_creature->m_canMove = false;
+                me->InterruptNonMeleeSpells(false);
+                me->setFaction(35);
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                //me->m_canMove = false;
 
                 //Cast
                 Unit *pTarget = NULL;
@@ -215,15 +215,15 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
         }
 
         //Summon 3 Shades
-        if (!Shades  && (int) (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() +0.5) == 25)
+        if (!Shades  && (int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 25)
         {
             if (Summon3_Timer < diff)
             {
                 //Inturrupt any spell casting
-                m_creature->InterruptNonMeleeSpells(false);
-                m_creature->setFaction(35);
-                m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                //m_creature->m_canMove = false;
+                me->InterruptNonMeleeSpells(false);
+                me->setFaction(35);
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                //me->m_canMove = false;
 
                 //Cast
                 Unit *pTarget = NULL;
@@ -268,14 +268,14 @@ struct OREGON_DLL_DECL boss_shadeoftaerarAI : public ScriptedAI
         //PoisonCloud_Timer
         if (PoisonCloud_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_POSIONCLOUD);
+            DoCast(me->getVictim(),SPELL_POSIONCLOUD);
             PoisonCloud_Timer = 30000;
         } else PoisonCloud_Timer -= diff;
 
         //PosionBreath_Timer
         if (PosionBreath_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_POSIONBREATH);
+            DoCast(me->getVictim(),SPELL_POSIONBREATH);
             PosionBreath_Timer = 12000;
         } else PosionBreath_Timer -= diff;
 

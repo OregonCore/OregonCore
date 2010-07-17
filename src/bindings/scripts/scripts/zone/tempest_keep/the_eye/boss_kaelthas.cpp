@@ -164,7 +164,7 @@ struct OREGON_DLL_DECL advisorbase_ai : public ScriptedAI
 
     void MoveInLineOfSight(Unit *who)
     {
-        if (!who || FakeDeath || m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (!who || FakeDeath || me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
         ScriptedAI::MoveInLineOfSight(who);
@@ -172,7 +172,7 @@ struct OREGON_DLL_DECL advisorbase_ai : public ScriptedAI
 
     void AttackStart(Unit* who)
     {
-        if (!who || FakeDeath || m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (!who || FakeDeath || me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
         ScriptedAI::AttackStart(who);
@@ -180,20 +180,20 @@ struct OREGON_DLL_DECL advisorbase_ai : public ScriptedAI
 
     void Reset()
     {
-        m_creature->SetNoCallAssistance(true);
+        me->SetNoCallAssistance(true);
         FakeDeath = false;
         DelayRes_Timer = 0;
         DelayRes_Target = 0;
 
-        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
         //reset encounter
         if (pInstance && (pInstance->GetData(DATA_KAELTHASEVENT) == 1 || pInstance->GetData(DATA_KAELTHASEVENT) == 3))
         {
             Creature *Kaelthas = NULL;
-            Kaelthas = (Creature*)(Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_KAELTHAS)));
+            Kaelthas = (Creature*)(Unit::GetUnit((*me), pInstance->GetData64(DATA_KAELTHAS)));
 
             if (Kaelthas)
                 Kaelthas->AI()->EnterEvadeMode();
@@ -202,16 +202,16 @@ struct OREGON_DLL_DECL advisorbase_ai : public ScriptedAI
 
     void Revive(Unit *pTarget)
     {
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->SetHealth(m_creature->GetMaxHealth());
-        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-        DoCast(m_creature, SPELL_RES_VISUAL, false);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->SetHealth(me->GetMaxHealth());
+        me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
+        DoCast(me, SPELL_RES_VISUAL, false);
         DelayRes_Timer = 2000;
     }
 
     void DamageTaken(Unit* pKiller, uint32 &damage)
     {
-        if (damage < m_creature->GetHealth())
+        if (damage < me->GetHealth())
             return;
 
         //Prevent glitch if in fake death
@@ -227,18 +227,18 @@ struct OREGON_DLL_DECL advisorbase_ai : public ScriptedAI
             damage = 0;
             FakeDeath = true;
 
-            m_creature->InterruptNonMeleeSpells(false);
-            m_creature->SetHealth(0);
-            m_creature->ClearComboPointHolders();
-            m_creature->RemoveAllAurasOnDeath();
-            m_creature->ModifyAuraState(AURA_STATE_HEALTHLESS_20_PERCENT, false);
-            m_creature->ModifyAuraState(AURA_STATE_HEALTHLESS_35_PERCENT, false);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->ClearAllReactives();
-            m_creature->SetUInt64Value(UNIT_FIELD_TARGET,0);
-            m_creature->GetMotionMaster()->Clear();
-            m_creature->GetMotionMaster()->MoveIdle();
-            m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1,PLAYER_STATE_DEAD);
+            me->InterruptNonMeleeSpells(false);
+            me->SetHealth(0);
+            me->ClearComboPointHolders();
+            me->RemoveAllAurasOnDeath();
+            me->ModifyAuraState(AURA_STATE_HEALTHLESS_20_PERCENT, false);
+            me->ModifyAuraState(AURA_STATE_HEALTHLESS_35_PERCENT, false);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->ClearAllReactives();
+            me->SetUInt64Value(UNIT_FIELD_TARGET,0);
+            me->GetMotionMaster()->Clear();
+            me->GetMotionMaster()->MoveIdle();
+            me->SetUInt32Value(UNIT_FIELD_BYTES_1,PLAYER_STATE_DEAD);
 
             if (pInstance->GetData(DATA_KAELTHASEVENT) == 3)
                 JustDied(pKiller);
@@ -254,16 +254,16 @@ struct OREGON_DLL_DECL advisorbase_ai : public ScriptedAI
                 DelayRes_Timer = 0;
                 FakeDeath = false;
 
-                Unit *pTarget = Unit::GetUnit((*m_creature), DelayRes_Target);
+                Unit *pTarget = Unit::GetUnit((*me), DelayRes_Target);
                 if (!pTarget)
-                    pTarget = m_creature->getVictim();
+                    pTarget = me->getVictim();
                 DoResetThreat();
                 if (!pTarget)
                     return;
                 AttackStart(pTarget);
-                m_creature->GetMotionMaster()->Clear();
-                m_creature->GetMotionMaster()->MoveChase(pTarget);
-                m_creature->AddThreat(pTarget, 0.0f);
+                me->GetMotionMaster()->Clear();
+                me->GetMotionMaster()->MoveChase(pTarget);
+                me->AddThreat(pTarget, 0.0f);
             } else DelayRes_Timer -= diff;
         }
     }
@@ -272,7 +272,7 @@ struct OREGON_DLL_DECL advisorbase_ai : public ScriptedAI
 //Kael'thas AI
 struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 {
-    boss_kaelthasAI(Creature *c) : ScriptedAI(c), summons(m_creature)
+    boss_kaelthasAI(Creature *c) : ScriptedAI(c), summons(me)
     {
         pInstance = c->GetInstanceData();
         AdvisorGuid[0] = 0;
@@ -311,10 +311,10 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
     void DeleteLegs()
     {
-        InstanceMap::PlayerList const &playerliste = ((InstanceMap*)m_creature->GetMap())->GetPlayers();
+        InstanceMap::PlayerList const &playerliste = ((InstanceMap*)me->GetMap())->GetPlayers();
         InstanceMap::PlayerList::const_iterator it;
 
-        Map::PlayerList const &PlayerList = ((InstanceMap*)m_creature->GetMap())->GetPlayers();
+        Map::PlayerList const &PlayerList = ((InstanceMap*)me->GetMap())->GetPlayers();
         for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
         {
             Player* i_pl = i->getSource();
@@ -332,7 +332,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->SetNoCallAssistance(true);
+        me->SetNoCallAssistance(true);
         Fireball_Timer = 5000+rand()%10000;
         ArcaneDisruption_Timer = 45000;
         MindControl_Timer = 40000;
@@ -350,14 +350,14 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
         IsCastingFireball = false;
         ChainPyros = false;
 
-        if (m_creature->isInCombat())
+        if (me->isInCombat())
             PrepareAdvisors();
 
         DeleteLegs();
         summons.DespawnAll();
 
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
         if (pInstance)
             pInstance->SetData(DATA_KAELTHASEVENT, NOT_STARTED);
@@ -368,12 +368,12 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
         Creature *pCreature;
         for (uint8 i = 0; i < 4; ++i)
         {
-            pCreature = (Creature*)(Unit::GetUnit((*m_creature), AdvisorGuid[i]));
+            pCreature = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[i]));
             if (pCreature)
             {
                 pCreature->Respawn();
                 pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                pCreature->setFaction(m_creature->getFaction());
+                pCreature->setFaction(me->getFaction());
                 pCreature->AI()->EnterEvadeMode();
             }
         }
@@ -394,13 +394,13 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
             error_log("TSCR: Kael'Thas One or more advisors missing, Skipping Phases 1-3");
             DoYell("TSCR: Kael'Thas One or more advisors missing, Skipping Phases 1-3", LANG_UNIVERSAL, NULL);
 
-            DoScriptText(SAY_PHASE4_INTRO2, m_creature);
+            DoScriptText(SAY_PHASE4_INTRO2, me);
             Phase = 4;
 
             pInstance->SetData(DATA_KAELTHASEVENT, 4);
 
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
@@ -411,10 +411,10 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
         {
             PrepareAdvisors();
 
-            DoScriptText(SAY_INTRO, m_creature);
+            DoScriptText(SAY_INTRO, me);
 
             pInstance->SetData(DATA_KAELTHASEVENT, IN_PROGRESS);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
             PhaseSubphase = 0;
             Phase_Timer = 23000;
@@ -426,9 +426,9 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-        case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-        case 1: DoScriptText(SAY_SLAY2, m_creature); break;
-        case 2: DoScriptText(SAY_SLAY3, m_creature); break;
+        case 0: DoScriptText(SAY_SLAY1, me); break;
+        case 1: DoScriptText(SAY_SLAY2, me); break;
+        case 2: DoScriptText(SAY_SLAY3, me); break;
         }
     }
 
@@ -436,7 +436,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
     {
         if (summoned->GetEntry() == PHOENIX)
         {
-            summoned->setFaction(m_creature->getFaction());
+            summoned->setFaction(me->getFaction());
             Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget)
                 summoned->AI()->AttackStart(pTarget);
@@ -448,10 +448,10 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
         DeleteLegs();
         summons.DespawnAll();
@@ -462,7 +462,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
         Creature *pCreature;
         for (uint8 i = 0; i < 4; ++i)
         {
-            pCreature = (Unit::GetCreature((*m_creature), AdvisorGuid[i]));
+            pCreature = (Unit::GetCreature((*me), AdvisorGuid[i]));
             if (pCreature)
             {
                 pCreature->setDeathState(JUST_DIED);
@@ -478,23 +478,23 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit *who)
     {
-        if (!m_creature->getVictim() && who->isTargetableForAttack() && who->isInAccessiblePlaceFor (m_creature) && m_creature->IsHostileTo(who))
+        if (!me->getVictim() && who->isTargetableForAttack() && who->isInAccessiblePlaceFor (me) && me->IsHostileTo(who))
         {
-            if (!m_creature->canFly() && m_creature->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
+            if (!me->canFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
                 return;
 
-            float attackRadius = m_creature->GetAttackDistance(who);
-            if (Phase >= 4 && m_creature->IsWithinDistInMap(who, attackRadius) && m_creature->IsWithinLOSInMap(who))
+            float attackRadius = me->GetAttackDistance(who);
+            if (Phase >= 4 && me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who))
             {
                 AttackStart(who);
             }
             else if (who->isAlive())
             {
-                if (pInstance && !pInstance->GetData(DATA_KAELTHASEVENT) && !Phase && m_creature->IsWithinDistInMap(who, 60.0f))
+                if (pInstance && !pInstance->GetData(DATA_KAELTHASEVENT) && !Phase && me->IsWithinDistInMap(who, 60.0f))
                     StartEvent();
 
                 //add to the threat list, so we can use SelectTarget
-                m_creature->AddThreat(who,0.0f);
+                me->AddThreat(who,0.0f);
             }
         }
     }
@@ -504,7 +504,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
         if (pInstance && Phase)
         {
-            if (pInstance->GetData(DATA_KAELTHASEVENT) == IN_PROGRESS && m_creature->getThreatManager().getThreatList().empty())
+            if (pInstance->GetData(DATA_KAELTHASEVENT) == IN_PROGRESS && me->getThreatManager().getThreatList().empty())
             {
                 EnterEvadeMode();
                 return;
@@ -525,7 +525,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                     case 0:
                         if (Phase_Timer < diff)
                         {
-                            DoScriptText(SAY_INTRO_THALADRED, m_creature);
+                            DoScriptText(SAY_INTRO_THALADRED, me);
 
                             //start advisor within 7 seconds
                             Phase_Timer = 7000;
@@ -538,12 +538,12 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                     case 1:
                         if (Phase_Timer < diff)
                         {
-                            Advisor = (Creature*)(Unit::GetUnit((*m_creature), AdvisorGuid[0]));
+                            Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[0]));
 
                             if (Advisor)
                             {
                                 Advisor->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                                Advisor->setFaction(m_creature->getFaction());
+                                Advisor->setFaction(me->getFaction());
 
                                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                                 if (pTarget)
@@ -556,10 +556,10 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
                         //Subphase 2 - Start
                     case 2:
-                        Advisor = (Creature*)(Unit::GetUnit((*m_creature), AdvisorGuid[0]));
+                        Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[0]));
                         if (Advisor && (Advisor->GetUInt32Value(UNIT_FIELD_BYTES_1) == PLAYER_STATE_DEAD))
                         {
-                            DoScriptText(SAY_INTRO_SANGUINAR, m_creature);
+                            DoScriptText(SAY_INTRO_SANGUINAR, me);
 
                             //start advisor within 12.5 seconds
                             Phase_Timer = 12500;
@@ -572,12 +572,12 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                     case 3:
                         if (Phase_Timer < diff)
                         {
-                            Advisor = (Creature*)(Unit::GetUnit((*m_creature), AdvisorGuid[1]));
+                            Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[1]));
 
                             if (Advisor)
                             {
                                 Advisor->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                                Advisor->setFaction(m_creature->getFaction());
+                                Advisor->setFaction(me->getFaction());
 
                                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                                 if (pTarget)
@@ -590,10 +590,10 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
                         //Subphase 3 - Start
                     case 4:
-                        Advisor = (Creature*)(Unit::GetUnit((*m_creature), AdvisorGuid[1]));
+                        Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[1]));
                         if (Advisor && (Advisor->GetUInt32Value(UNIT_FIELD_BYTES_1) == PLAYER_STATE_DEAD))
                         {
-                            DoScriptText(SAY_INTRO_CAPERNIAN, m_creature);
+                            DoScriptText(SAY_INTRO_CAPERNIAN, me);
 
                             //start advisor within 7 seconds
                             Phase_Timer = 7000;
@@ -606,12 +606,12 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                     case 5:
                         if (Phase_Timer < diff)
                         {
-                            Advisor = (Creature*)(Unit::GetUnit((*m_creature), AdvisorGuid[2]));
+                            Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[2]));
 
                             if (Advisor)
                             {
                                 Advisor->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                                Advisor->setFaction(m_creature->getFaction());
+                                Advisor->setFaction(me->getFaction());
 
                                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                                 if (pTarget)
@@ -624,10 +624,10 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
                         //Subphase 4 - Start
                     case 6:
-                        Advisor = (Creature*)(Unit::GetUnit((*m_creature), AdvisorGuid[2]));
+                        Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[2]));
                         if (Advisor && (Advisor->GetUInt32Value(UNIT_FIELD_BYTES_1) == PLAYER_STATE_DEAD))
                         {
-                            DoScriptText(SAY_INTRO_TELONICUS, m_creature);
+                            DoScriptText(SAY_INTRO_TELONICUS, me);
 
                             //start advisor within 8.4 seconds
                             Phase_Timer = 8400;
@@ -640,12 +640,12 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                     case 7:
                         if (Phase_Timer < diff)
                         {
-                            Advisor = (Creature*)(Unit::GetUnit((*m_creature), AdvisorGuid[3]));
+                            Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[3]));
 
                             if (Advisor)
                             {
                                 Advisor->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                                Advisor->setFaction(m_creature->getFaction());
+                                Advisor->setFaction(me->getFaction());
 
                                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                                 if (pTarget)
@@ -660,16 +660,16 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
                         //End of phase 1
                     case 8:
-                        Advisor = (Creature*)(Unit::GetUnit((*m_creature), AdvisorGuid[3]));
+                        Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[3]));
                         if (Advisor && (Advisor->GetUInt32Value(UNIT_FIELD_BYTES_1) == PLAYER_STATE_DEAD))
                         {
                             Phase = 2;
                             pInstance->SetData(DATA_KAELTHASEVENT, 2);
 
-                            DoScriptText(SAY_PHASE2_WEAPON, m_creature);
+                            DoScriptText(SAY_PHASE2_WEAPON, me);
                             PhaseSubphase = 0;
                             Phase_Timer = 3500;
-                            DoCast(m_creature, SPELL_SUMMON_WEAPONS);
+                            DoCast(me, SPELL_SUMMON_WEAPONS);
                         }
                         break;
                 }
@@ -692,13 +692,13 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                     for (uint32 i = 0; i < 7; ++i)
                     {
                         Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                        Weapon = m_creature->SummonCreature(((uint32)KaelthasWeapons[i][0]),KaelthasWeapons[i][1],KaelthasWeapons[i][2],KaelthasWeapons[i][3],0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000);
+                        Weapon = me->SummonCreature(((uint32)KaelthasWeapons[i][0]),KaelthasWeapons[i][1],KaelthasWeapons[i][2],KaelthasWeapons[i][3],0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000);
 
                         if (!Weapon)
                             error_log("STSCR: Kael'thas weapon %i could not be spawned", i);
                         else
                         {
-                            Weapon->setFaction(m_creature->getFaction());
+                            Weapon->setFaction(me->getFaction());
                             Weapon->AI()->AttackStart(pTarget);
                             Weapon->CastSpell(Weapon, SPELL_WEAPON_SPAWN, false);
                             WeaponGuid[i] = Weapon->GetGUID();
@@ -712,7 +712,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                 if (PhaseSubphase == 2)
                     if (Phase_Timer < diff)
                 {
-                    DoScriptText(SAY_PHASE3_ADVANCE, m_creature);
+                    DoScriptText(SAY_PHASE3_ADVANCE, me);
                     pInstance->SetData(DATA_KAELTHASEVENT, 3);
                     Phase = 3;
                     PhaseSubphase = 0;
@@ -730,7 +730,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                     Creature* Advisor;
                     for (uint32 i = 0; i < 4; ++i)
                     {
-                        Advisor = (Creature*)(Unit::GetUnit((*m_creature), AdvisorGuid[i]));
+                        Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[i]));
                         if (!Advisor)
                             error_log("TSCR: Kael'Thas Advisor %u does not exist. Possibly despawned? Incorrectly Killed?", i);
                         else if (pTarget)
@@ -743,13 +743,13 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
                 if (Phase_Timer < diff)
                 {
-                    DoScriptText(SAY_PHASE4_INTRO2, m_creature);
+                    DoScriptText(SAY_PHASE4_INTRO2, me);
                     Phase = 4;
 
                     pInstance->SetData(DATA_KAELTHASEVENT, 4);
 
-                    m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                    m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
                     if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     {
@@ -776,11 +776,11 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                     {
                         if (!IsCastingFireball)
                         {
-                            if (!m_creature->IsNonMeleeSpellCasted(false))
+                            if (!me->IsNonMeleeSpellCasted(false))
                             {
                                 //interruptable
-                                m_creature->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_INTERRUPT_CAST, false);
-                                m_creature->CastSpell(m_creature->getVictim(), SPELL_FIREBALL, false);
+                                me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_INTERRUPT_CAST, false);
+                                me->CastSpell(me->getVictim(), SPELL_FIREBALL, false);
                                 IsCastingFireball = true;
                                 Fireball_Timer = 2500;
                             }
@@ -788,7 +788,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                         else
                         {
                             //apply resistance
-                            m_creature->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_INTERRUPT_CAST, true);
+                            me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_INTERRUPT_CAST, true);
                             IsCastingFireball = false;
                             Fireball_Timer = 5000+rand()%10000;
                         }
@@ -797,7 +797,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                     //ArcaneDisruption_Timer
                     if (ArcaneDisruption_Timer < diff)
                     {
-                        DoCast(m_creature->getVictim(), SPELL_ARCANE_DISRUPTION, true);
+                        DoCast(me->getVictim(), SPELL_ARCANE_DISRUPTION, true);
 
                         ArcaneDisruption_Timer = 60000;
                     } else ArcaneDisruption_Timer -= diff;
@@ -812,12 +812,12 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
                     if (MindControl_Timer < diff)
                     {
-                        if (m_creature->getThreatManager().getThreatList().size() >= 2)
+                        if (me->getThreatManager().getThreatList().size() >= 2)
                         for (uint32 i = 0; i < 3; i++)
                         {
 
                             Unit *pTarget =SelectTarget(SELECT_TARGET_RANDOM, 1, 70, true);
-                            if (!pTarget) pTarget = m_creature->getVictim();
+                            if (!pTarget) pTarget = me->getVictim();
                             debug_log("TSCR: Kael'Thas mind control not supported.");
                             if (pTarget)
                                 DoCast(pTarget, SPELL_MIND_CONTROL);
@@ -830,11 +830,11 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                 //Phoenix_Timer
                 if (Phoenix_Timer < diff)
                 {
-                    DoCast(m_creature, SPELL_SUMMON_PHOENIX);
+                    DoCast(me, SPELL_SUMMON_PHOENIX);
                     switch(rand()%2)
                     {
-                    case 0: DoScriptText(SAY_SUMMON_PHOENIX1, m_creature); break;
-                    case 1: DoScriptText(SAY_SUMMON_PHOENIX2, m_creature); break;
+                    case 0: DoScriptText(SAY_SUMMON_PHOENIX1, me); break;
+                    case 1: DoScriptText(SAY_SUMMON_PHOENIX2, me); break;
                     }
 
                     Phoenix_Timer = 60000;
@@ -843,27 +843,27 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                 //Phase 4 specific spells
                 if (Phase == 4)
                 {
-                    if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 50)
+                    if (me->GetHealth()*100 / me->GetMaxHealth() < 50)
                     {
                         pInstance->SetData(DATA_KAELTHASEVENT, 4);
                         Phase = 5;
                         Phase_Timer = 10000;
 
-                        DoScriptText(SAY_PHASE5_NUTS, m_creature);
+                        DoScriptText(SAY_PHASE5_NUTS, me);
 
-                        m_creature->GetMotionMaster()->Clear();
-                        m_creature->GetMotionMaster()->MoveIdle();
+                        me->GetMotionMaster()->Clear();
+                        me->GetMotionMaster()->MoveIdle();
                         DoTeleportTo(GRAVITY_X, GRAVITY_Y, GRAVITY_Z);
 
-                        m_creature->InterruptNonMeleeSpells(false);
-                        DoCast(m_creature, SPELL_FULLPOWER);
-                        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                        me->InterruptNonMeleeSpells(false);
+                        DoCast(me, SPELL_FULLPOWER);
+                        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     }
 
                     //ShockBarrier_Timer
                     if (ShockBarrier_Timer < diff)
                     {
-                        DoCast(m_creature, SPELL_SHOCK_BARRIER);
+                        DoCast(me, SPELL_SHOCK_BARRIER);
                         ChainPyros = true;
                         PyrosCasted = 0;
                         Check_Timer = 0;
@@ -875,7 +875,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                     if (ChainPyros){
                         if (PyrosCasted < 3 && Check_Timer < diff)
                         {
-                            DoCast(m_creature->getVictim(), SPELL_PYROBLAST);
+                            DoCast(me->getVictim(), SPELL_PYROBLAST);
                             ++PyrosCasted;
 
                             Check_Timer = 4400;
@@ -893,13 +893,13 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                 {
                     if (Phase_Timer < diff)
                     {
-                        m_creature->InterruptNonMeleeSpells(false);
-                        m_creature->RemoveAurasDueToSpell(SPELL_FULLPOWER);
-                        DoCast(m_creature, SPELL_EXPLODE);
-                        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                        me->InterruptNonMeleeSpells(false);
+                        me->RemoveAurasDueToSpell(SPELL_FULLPOWER);
+                        DoCast(me, SPELL_EXPLODE);
+                        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         Phase = 6;
-                        DoStartMovement(m_creature->getVictim());
-                        AttackStart(m_creature->getVictim());
+                        DoStartMovement(me->getVictim());
+                        AttackStart(me->getVictim());
                     } else Phase_Timer -= diff;
                 }
 
@@ -910,17 +910,17 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                     //GravityLapse_Timer
                     if (GravityLapse_Timer < diff)
                     {
-                        std::list<HostileReference*>::iterator i = m_creature->getThreatManager().getThreatList().begin();
+                        std::list<HostileReference*>::iterator i = me->getThreatManager().getThreatList().begin();
                         switch(GravityLapse_Phase)
                         {
                             case 0:
-                                m_creature->GetMotionMaster()->Clear();
-                                m_creature->GetMotionMaster()->MoveIdle();
+                                me->GetMotionMaster()->Clear();
+                                me->GetMotionMaster()->MoveIdle();
                                 DoTeleportTo(GRAVITY_X, GRAVITY_Y, GRAVITY_Z);
                                 // 1) Kael'thas will portal the whole raid right into his body
-                                for (i = m_creature->getThreatManager().getThreatList().begin(); i != m_creature->getThreatManager().getThreatList().end();)
+                                for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end();)
                                 {
-                                    Unit* pUnit = Unit::GetUnit((*m_creature), (*i)->getUnitGuid());
+                                    Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
                                     ++i;
                                     if (pUnit && (pUnit->GetTypeId() == TYPEID_PLAYER))
                                     {
@@ -938,22 +938,22 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                             case 1:
                                 switch(rand()%2)
                                 {
-                                case 0: DoScriptText(SAY_GRAVITYLAPSE1, m_creature); break;
-                                case 1: DoScriptText(SAY_GRAVITYLAPSE2, m_creature); break;
+                                case 0: DoScriptText(SAY_GRAVITYLAPSE1, me); break;
+                                case 1: DoScriptText(SAY_GRAVITYLAPSE2, me); break;
                                 }
 
                                 // 2) At that point he will put a Gravity Lapse debuff on everyone
-                                for (i = m_creature->getThreatManager().getThreatList().begin(); i != m_creature->getThreatManager().getThreatList().end();)
+                                for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end();)
                                 {
-                                    Unit* pUnit = Unit::GetUnit((*m_creature), (*i)->getUnitGuid());
+                                    Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
                                     ++i;
                                     if (pUnit && pUnit->GetTypeId() == TYPEID_PLAYER)
                                     {
-                                        m_creature->CastSpell(pUnit, SPELL_KNOCKBACK, true);
+                                        me->CastSpell(pUnit, SPELL_KNOCKBACK, true);
                                         //Gravity lapse - needs an exception in Spell system to work
 
-                                        pUnit->CastSpell(pUnit, SPELL_GRAVITY_LAPSE, true, 0, 0, m_creature->GetGUID());
-                                        pUnit->CastSpell(pUnit, SPELL_GRAVITY_LAPSE_AURA, true, 0, 0, m_creature->GetGUID());
+                                        pUnit->CastSpell(pUnit, SPELL_GRAVITY_LAPSE, true, 0, 0, me->GetGUID());
+                                        pUnit->CastSpell(pUnit, SPELL_GRAVITY_LAPSE_AURA, true, 0, 0, me->GetGUID());
 
                                         //Using packet workaround
                                         WorldPacket data(12);
@@ -969,8 +969,8 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
                             case 2:
                                 //Cast nether vapor aura on self
-                                m_creature->InterruptNonMeleeSpells(false);
-                                DoCast(m_creature, SPELL_NETHER_VAPOR);
+                                me->InterruptNonMeleeSpells(false);
+                                DoCast(me, SPELL_NETHER_VAPOR);
 
                                 GravityLapse_Timer = 20000;
                                 ++GravityLapse_Phase;
@@ -978,9 +978,9 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
                             case 3:
                                 //Remove flight
-                                for (i = m_creature->getThreatManager().getThreatList().begin(); i != m_creature->getThreatManager().getThreatList().end();)
+                                for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end();)
                                 {
-                                    Unit* pUnit = Unit::GetUnit((*m_creature), (*i)->getUnitGuid());
+                                    Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
                                     ++i;
                                     if (pUnit && pUnit->GetTypeId() == TYPEID_PLAYER)
                                     {
@@ -992,12 +992,12 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                                         pUnit->SendMessageToSet(&data, true);
                                     }
                                 }
-                                m_creature->RemoveAurasDueToSpell(SPELL_NETHER_VAPOR);
+                                me->RemoveAurasDueToSpell(SPELL_NETHER_VAPOR);
                                 InGravityLapse = false;
                                 GravityLapse_Timer = 60000;
                                 GravityLapse_Phase = 0;
-                                DoStartMovement(m_creature->getVictim());
-                                AttackStart(m_creature->getVictim());
+                                DoStartMovement(me->getVictim());
+                                AttackStart(me->getVictim());
                                 DoResetThreat();
                                 break;
                         }
@@ -1008,7 +1008,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                         //ShockBarrier_Timer
                         if (ShockBarrier_Timer < diff)
                         {
-                            DoCast(m_creature, SPELL_SHOCK_BARRIER);
+                            DoCast(me, SPELL_SHOCK_BARRIER);
                             ShockBarrier_Timer = 20000;
                         } else ShockBarrier_Timer -= diff;
 
@@ -1050,19 +1050,19 @@ struct OREGON_DLL_DECL boss_thaladred_the_darkenerAI : public advisorbase_ai
 
     void JustDied(Unit* pKiller)
     {
-        DoScriptText(SAY_THALADRED_DEATH, m_creature);
+        DoScriptText(SAY_THALADRED_DEATH, me);
     }
 
     void EnterCombat(Unit *who)
     {
-        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
         if (!who || FakeDeath)
             return;
 
-        DoScriptText(SAY_THALADRED_AGGRO, m_creature);
-        m_creature->AddThreat(who, 5000000.0f);
+        DoScriptText(SAY_THALADRED_AGGRO, me);
+        me->AddThreat(who, 5000000.0f);
     }
 
     void UpdateAI(const uint32 diff)
@@ -1085,8 +1085,8 @@ struct OREGON_DLL_DECL boss_thaladred_the_darkenerAI : public advisorbase_ai
                 DoResetThreat();
                 if (pTarget)
                 {
-                    m_creature->AddThreat(pTarget, 5000000.0f);
-                    DoScriptText(EMOTE_THALADRED_GAZE, m_creature, pTarget);
+                    me->AddThreat(pTarget, 5000000.0f);
+                    DoScriptText(EMOTE_THALADRED_GAZE, me, pTarget);
                 }
                 Gaze_Timer = 8500;
             }
@@ -1095,14 +1095,14 @@ struct OREGON_DLL_DECL boss_thaladred_the_darkenerAI : public advisorbase_ai
         //Silence_Timer
         if (Silence_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_SILENCE);
+            DoCast(me->getVictim(), SPELL_SILENCE);
             Silence_Timer = 20000;
         } else Silence_Timer -= diff;
 
         //PsychicBlow_Timer
         if (PsychicBlow_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_PSYCHIC_BLOW);
+            DoCast(me->getVictim(), SPELL_PSYCHIC_BLOW);
             PsychicBlow_Timer = 20000+rand()%5000;
         } else PsychicBlow_Timer -= diff;
 
@@ -1125,18 +1125,18 @@ struct OREGON_DLL_DECL boss_lord_sanguinarAI : public advisorbase_ai
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_SANGUINAR_DEATH, m_creature);
+        DoScriptText(SAY_SANGUINAR_DEATH, me);
     }
 
     void EnterCombat(Unit *who)
     {
-        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
         if (!who || FakeDeath)
             return;
 
-        DoScriptText(SAY_SANGUINAR_AGGRO, m_creature);
+        DoScriptText(SAY_SANGUINAR_AGGRO, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -1154,7 +1154,7 @@ struct OREGON_DLL_DECL boss_lord_sanguinarAI : public advisorbase_ai
         //Fear_Timer
         if (Fear_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_BELLOWING_ROAR);
+            DoCast(me->getVictim(), SPELL_BELLOWING_ROAR);
             Fear_Timer = 25000+rand()%10000;                //approximately every 30 seconds
         } else Fear_Timer -= diff;
 
@@ -1186,27 +1186,27 @@ struct OREGON_DLL_DECL boss_grand_astromancer_capernianAI : public advisorbase_a
 
     void JustDied(Unit* pKiller)
     {
-        DoScriptText(SAY_CAPERNIAN_DEATH, m_creature);
+        DoScriptText(SAY_CAPERNIAN_DEATH, me);
     }
 
     void AttackStart(Unit* who)
     {
-        if (!who || FakeDeath || m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (!who || FakeDeath || me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
-        if (m_creature->Attack(who, true))
+        if (me->Attack(who, true))
         {
-            m_creature->AddThreat(who, 0.0f);
-            m_creature->SetInCombatWith(who);
-            who->SetInCombatWith(m_creature);
+            me->AddThreat(who, 0.0f);
+            me->SetInCombatWith(who);
+            who->SetInCombatWith(me);
 
-            m_creature->GetMotionMaster()->MoveChase(who, CAPERNIAN_DISTANCE);
+            me->GetMotionMaster()->MoveChase(who, CAPERNIAN_DISTANCE);
         }
     }
 
     void EnterCombat(Unit *who)
     {
-        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
         if (!who || FakeDeath)
@@ -1230,7 +1230,7 @@ struct OREGON_DLL_DECL boss_grand_astromancer_capernianAI : public advisorbase_a
         {
             if (Yell_Timer < diff)
             {
-                DoScriptText(SAY_CAPERNIAN_AGGRO, m_creature);
+                DoScriptText(SAY_CAPERNIAN_AGGRO, me);
 
                 Yell = true;
             } else Yell_Timer -= diff;
@@ -1239,7 +1239,7 @@ struct OREGON_DLL_DECL boss_grand_astromancer_capernianAI : public advisorbase_a
         //Fireball_Timer
         if (Fireball_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_CAPERNIAN_FIREBALL);
+            DoCast(me->getVictim(), SPELL_CAPERNIAN_FIREBALL);
             Fireball_Timer = 4000;
         } else Fireball_Timer -= diff;
 
@@ -1249,10 +1249,10 @@ struct OREGON_DLL_DECL boss_grand_astromancer_capernianAI : public advisorbase_a
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
-            if (pTarget && m_creature->IsWithinDistInMap(pTarget, 30))
+            if (pTarget && me->IsWithinDistInMap(pTarget, 30))
                 DoCast(pTarget, SPELL_CONFLAGRATION);
             else
-                DoCast(m_creature->getVictim(), SPELL_CONFLAGRATION);
+                DoCast(me->getVictim(), SPELL_CONFLAGRATION);
 
             Conflagration_Timer = 10000+rand()%5000;
         } else Conflagration_Timer -= diff;
@@ -1262,12 +1262,12 @@ struct OREGON_DLL_DECL boss_grand_astromancer_capernianAI : public advisorbase_a
         {
             bool InMeleeRange = false;
             Unit *pTarget = NULL;
-            std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
+            std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
             for (std::list<HostileReference*>::iterator i = m_threatlist.begin(); i != m_threatlist.end();++i)
             {
-                Unit* pUnit = Unit::GetUnit((*m_creature), (*i)->getUnitGuid());
+                Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
                                                             //if in melee range
-                if (pUnit && pUnit->IsWithinDistInMap(m_creature, 5))
+                if (pUnit && pUnit->IsWithinDistInMap(me, 5))
                 {
                     InMeleeRange = true;
                     pTarget = pUnit;
@@ -1303,18 +1303,18 @@ struct OREGON_DLL_DECL boss_master_engineer_telonicusAI : public advisorbase_ai
 
     void JustDied(Unit* pKiller)
     {
-         DoScriptText(SAY_TELONICUS_DEATH, m_creature);
+         DoScriptText(SAY_TELONICUS_DEATH, me);
     }
 
     void EnterCombat(Unit *who)
     {
-        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             return;
 
         if (!who || FakeDeath)
             return;
 
-        DoScriptText(SAY_TELONICUS_AGGRO, m_creature);
+        DoScriptText(SAY_TELONICUS_AGGRO, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -1332,7 +1332,7 @@ struct OREGON_DLL_DECL boss_master_engineer_telonicusAI : public advisorbase_ai
         //Bomb_Timer
         if (Bomb_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_BOMB);
+            DoCast(me->getVictim(), SPELL_BOMB);
             Bomb_Timer = 25000;
         } else Bomb_Timer -= diff;
 
@@ -1364,8 +1364,8 @@ struct OREGON_DLL_DECL mob_kael_flamestrikeAI : public ScriptedAI
         Casting = false;
         KillSelf = false;
 
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->setFaction(14);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->setFaction(14);
     }
 
     void EnterCombat(Unit *who)
@@ -1380,7 +1380,7 @@ struct OREGON_DLL_DECL mob_kael_flamestrikeAI : public ScriptedAI
     {
         if (!Casting)
         {
-            DoCast(m_creature, SPELL_FLAME_STRIKE_VIS);
+            DoCast(me, SPELL_FLAME_STRIKE_VIS);
             Casting = true;
         }
 
@@ -1389,9 +1389,9 @@ struct OREGON_DLL_DECL mob_kael_flamestrikeAI : public ScriptedAI
         {
             if (!KillSelf)
             {
-                m_creature->InterruptNonMeleeSpells(false);
-                DoCast(m_creature, SPELL_FLAME_STRIKE_DMG);
-            } else m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                me->InterruptNonMeleeSpells(false);
+                DoCast(me, SPELL_FLAME_STRIKE_DMG);
+            } else me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 
             KillSelf = true;
             Timer = 1000;
@@ -1416,22 +1416,22 @@ struct OREGON_DLL_DECL mob_phoenix_tkAI : public ScriptedAI
         if (egg)
         {
             float x,y,z;
-            m_creature->GetPosition(x,y,z);
-            z = m_creature->GetMap()->GetHeight(x,y,z);
+            me->GetPosition(x,y,z);
+            z = me->GetMap()->GetHeight(x,y,z);
             if (z == INVALID_HEIGHT)
                 z = ROOM_BASE_Z;
-            m_creature->SummonCreature(PHOENIX_EGG,x,y,z,m_creature->GetOrientation(),TEMPSUMMON_TIMED_DESPAWN,16000);
-            m_creature->RemoveCorpse();
+            me->SummonCreature(PHOENIX_EGG,x,y,z,me->GetOrientation(),TEMPSUMMON_TIMED_DESPAWN,16000);
+            me->RemoveCorpse();
         }
     }
 
 
     void Reset()
     {
-        m_creature->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);//birds can fly! :)
+        me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);//birds can fly! :)
         egg = true;
         Cycle_Timer = 2000;
-        m_creature->CastSpell(m_creature,SPELL_BURN,true);
+        me->CastSpell(me,SPELL_BURN,true);
     }
 
     void EnterCombat(Unit *who) { }
@@ -1447,21 +1447,21 @@ struct OREGON_DLL_DECL mob_phoenix_tkAI : public ScriptedAI
         {
             if (pInstance)//check for boss reset
             {
-                Creature* Kael = Unit::GetCreature((*m_creature), pInstance->GetData64(DATA_KAELTHAS));
+                Creature* Kael = Unit::GetCreature((*me), pInstance->GetData64(DATA_KAELTHAS));
                 if (Kael && Kael->getThreatManager().getThreatList().empty())
                 {
                     egg = false;
-                    m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                    me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                     Cycle_Timer = 2000;
                     return;
                 }
             }
             //spell Burn should possible do this, but it doesn't, so do this for now.
             uint32 dmg = urand(4500,5500);
-            if (m_creature->GetHealth() > dmg)
-                m_creature->SetHealth(uint32(m_creature->GetHealth()-dmg));
+            if (me->GetHealth() > dmg)
+                me->SetHealth(uint32(me->GetHealth()-dmg));
             else//kill itt
-                m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             Cycle_Timer = 2000;
         } else Cycle_Timer -= diff;
 
@@ -1489,10 +1489,10 @@ struct OREGON_DLL_DECL mob_phoenix_egg_tkAI : public ScriptedAI
 
     void AttackStart(Unit* who)
     {
-        if (m_creature->Attack(who, false))
+        if (me->Attack(who, false))
         {
-            m_creature->SetInCombatWith(who);
-            who->SetInCombatWith(m_creature);
+            me->SetInCombatWith(who);
+            who->SetInCombatWith(me);
 
             DoStartNoMovement(who);
         }
@@ -1502,7 +1502,7 @@ struct OREGON_DLL_DECL mob_phoenix_egg_tkAI : public ScriptedAI
 
     void JustSummoned(Creature* summoned)
     {
-        summoned->AddThreat(m_creature->getVictim(), 0.0f);
+        summoned->AddThreat(me->getVictim(), 0.0f);
         summoned->CastSpell(summoned,SPELL_REBIRTH,false);
     }
 
@@ -1512,10 +1512,10 @@ struct OREGON_DLL_DECL mob_phoenix_egg_tkAI : public ScriptedAI
         {
             if (!summoned)
             {
-                Creature* Phoenix = m_creature->SummonCreature(PHOENIX,m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),m_creature->GetOrientation(),TEMPSUMMON_CORPSE_DESPAWN,5000);
+                Creature* Phoenix = me->SummonCreature(PHOENIX,me->GetPositionX(),me->GetPositionY(),me->GetPositionZ(),me->GetOrientation(),TEMPSUMMON_CORPSE_DESPAWN,5000);
                 summoned = true;
             }
-            m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+            me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
         } else Rebirth_Timer -= diff;
     }
 };

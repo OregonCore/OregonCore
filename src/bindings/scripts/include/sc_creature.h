@@ -29,7 +29,7 @@ class ScriptedInstance;
 class SummonList : public std::list<uint64>
 {
     public:
-        explicit SummonList(Creature* creature) : m_creature(creature) {}
+        explicit SummonList(Creature* creature) : me(creature) {}
         void Summon(Creature *summon) { push_back(summon->GetGUID()); }
         void Despawn(Creature *summon) { remove(summon->GetGUID()); }
         void DespawnEntry(uint32 entry);
@@ -37,7 +37,7 @@ class SummonList : public std::list<uint64>
         void DoAction(uint32 entry, uint32 info);
         void DoZoneInCombat(uint32 entry = 0);
     private:
-        Creature *m_creature;
+        Creature *me;
 };
 
 //Get a single creature of given entry
@@ -94,7 +94,7 @@ struct OREGON_DLL_DECL ScriptedAI : public CreatureAI
     //*************
 
     //Pointer to creature we are manipulating
-    Creature* m_creature;
+    Creature* me;
 
     //For fleeing
     bool IsFleeing;
@@ -166,16 +166,16 @@ struct OREGON_DLL_DECL ScriptedAI : public CreatureAI
     //Returns a list of all friendly units missing a specific buff within range
     std::list<Creature*> DoFindFriendlyMissingBuff(float fRange, uint32 uiSpellId);
 
-    //Return a player with at least minimumRange from m_creature
+    //Return a player with at least minimumRange from me
     Player* GetPlayerAtMinimumRange(float fMinimumRange);
 
-    //Spawns a creature relative to m_creature
+    //Spawns a creature relative to me
     Creature* DoSpawnCreature(uint32 uiId, float fX, float fY, float fZ, float fAngle, uint32 uiType, uint32 uiDespawntime);
 
     //Selects a unit from the creature's current aggro list
     Unit* SelectUnit(SelectAggroTarget pTarget, uint32 uiPosition);
 
-    bool HealthBelowPct(uint32 pct) const { return me->GetHealth() * 100 < m_creature->GetMaxHealth() * pct; }
+    bool HealthBelowPct(uint32 pct) const { return me->GetHealth() * 100 < me->GetMaxHealth() * pct; }
 
     //Returns spells that meet the specified criteria from the creatures spell list
     SpellEntry const* SelectSpell(Unit* Target, int32 School, int32 Mechanic, SelectTargetType Targets,  uint32 PowerCostMin, uint32 PowerCostMax, float RangeMin, float RangeMax, SelectEffect Effect);
@@ -200,7 +200,7 @@ struct OREGON_DLL_DECL Scripted_NoMovementAI : public ScriptedAI
 {
     Scripted_NoMovementAI(Creature* creature) : ScriptedAI(creature) {}
 
-    //Called at each attack of m_creature by any victim
+    //Called at each attack of me by any victim
     void AttackStart(Unit* who);
 };
 
@@ -230,7 +230,7 @@ struct OREGON_DLL_DECL BossAI : public ScriptedAI
 
 // SD2 grid searchers
 //return closest creature alive in grid, with range from pSource
-Creature* GetClosestCreatureWithEntry(WorldObject* pSource, uint32 Entry, float MaxSearchRange);
+Creature *GetClosestCreatureWithEntry(WorldObject *pSource, uint32 Entry, float MaxSearchRange);
 
 #endif
 

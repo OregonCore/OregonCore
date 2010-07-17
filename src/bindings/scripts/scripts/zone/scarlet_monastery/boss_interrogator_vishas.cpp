@@ -51,7 +51,7 @@ struct OREGON_DLL_DECL boss_interrogator_vishasAI : public ScriptedAI
     void EnterCombat(Unit *who)
     {
         DoYell(SAY_AGGRO,LANG_UNIVERSAL,NULL);
-        DoPlaySoundToSet(m_creature,SOUND_AGGRO);
+        DoPlaySoundToSet(me,SOUND_AGGRO);
     }
 
     void UpdateAI(const uint32 diff)
@@ -60,13 +60,13 @@ struct OREGON_DLL_DECL boss_interrogator_vishasAI : public ScriptedAI
             return;
 
         //If we are low on hp Do sayings
-        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 60 && !m_creature->IsNonMeleeSpellCasted(false))
+        if (me->GetHealth()*100 / me->GetMaxHealth() <= 60 && !me->IsNonMeleeSpellCasted(false))
         {
             //Yell_Timer
             if (Yell_Timer < diff)
             {
                 DoYell(SAY_HEALTH1,LANG_UNIVERSAL,NULL);
-                DoPlaySoundToSet(m_creature,SOUND_HEALTH1);
+                DoPlaySoundToSet(me,SOUND_HEALTH1);
                 return;
 
                 //60 seconds until we should cast this agian
@@ -74,13 +74,13 @@ struct OREGON_DLL_DECL boss_interrogator_vishasAI : public ScriptedAI
             } else Yell_Timer -= diff;
         }
 
-        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 30 && !m_creature->IsNonMeleeSpellCasted(false))
+        if (me->GetHealth()*100 / me->GetMaxHealth() <= 30 && !me->IsNonMeleeSpellCasted(false))
         {
             //Yell_Timer
             if (Yell_Timer < diff)
             {
                 DoYell(SAY_HEALTH2,LANG_UNIVERSAL,NULL);
-                DoPlaySoundToSet(m_creature,SOUND_HEALTH2);
+                DoPlaySoundToSet(me,SOUND_HEALTH2);
                 return;
 
                 //60 seconds until we should cast this agian
@@ -91,7 +91,7 @@ struct OREGON_DLL_DECL boss_interrogator_vishasAI : public ScriptedAI
         //PowerWordShield_Timer
         if (PowerWordShield_Timer < diff)
         {
-            DoCast(m_creature,SPELL_POWERWORDSHIELD);
+            DoCast(me,SPELL_POWERWORDSHIELD);
             PowerWordShield_Timer = 60000;
         } else PowerWordShield_Timer -= diff;
 

@@ -74,20 +74,20 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
         PhaseTwo = false;
         VanishedOnce = false;
 
-        m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID,15218);
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->SetUInt32Value(UNIT_FIELD_DISPLAYID,15218);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
     void EnterCombat(Unit *who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
     }
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DEATH, m_creature);
-        m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID,15218);
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        DoScriptText(SAY_DEATH, me);
+        me->SetUInt32Value(UNIT_FIELD_DISPLAYID,15218);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
         if (pInstance)
             pInstance->SetData(DATA_ARLOKK_DEATH, 0);
@@ -98,11 +98,11 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (m_creature->getVictim() && m_creature->isAlive())
+        if (me->getVictim() && me->isAlive())
         {
             if (!PhaseTwo && ShadowWordPain_Timer < diff)
             {
-                DoCast(m_creature->getVictim(),SPELL_SHADOWWORDPAIN);
+                DoCast(me->getVictim(),SPELL_SHADOWWORDPAIN);
                 ShadowWordPain_Timer = 15000;
             } else ShadowWordPain_Timer -= diff;
 
@@ -119,15 +119,15 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
                 Unit *pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
 
-                Panther = m_creature->SummonCreature(15101,-11532.79980,-1649.6734,41.4800,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
+                Panther = me->SummonCreature(15101,-11532.79980,-1649.6734,41.4800,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
 
                 if (markedTarget && Panther)
                 {
-                    DoScriptText(SAY_FEAST_PANTHER, m_creature, markedTarget);
+                    DoScriptText(SAY_FEAST_PANTHER, me, markedTarget);
                     Panther ->AI()->AttackStart(markedTarget);
                 } else if (Panther && pTarget) Panther ->AI()->AttackStart(pTarget);
 
-                Panther = m_creature->SummonCreature(15101,-11532.9970,-1606.4840,41.2979,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
+                Panther = me->SummonCreature(15101,-11532.9970,-1606.4840,41.2979,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
 
                 if (markedTarget && Panther)
                     Panther ->AI()->AttackStart(markedTarget);
@@ -141,9 +141,9 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
             if (Vanish_Timer < diff)
             {
                 //Invisble Model
-                m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID,11686);
-                m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                //m_creature->CombatStop();
+                me->SetUInt32Value(UNIT_FIELD_DISPLAYID,11686);
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                //me->CombatStop();
                 DoResetThreat();
                 VanishedOnce = true;
                 Vanish_Timer = 45000;
@@ -157,18 +157,18 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
                     Unit *pTarget = NULL;
                     pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
                     //The Panther Model
-                    m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID,15215);
-                    m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                    me->SetUInt32Value(UNIT_FIELD_DISPLAYID,15215);
+                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
-                    const CreatureInfo *cinfo = m_creature->GetCreatureInfo();
-                    m_creature->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg +((cinfo->mindmg/100) * 35)));
-                    m_creature->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg/100) * 35)));
-                    m_creature->UpdateDamagePhysical(BASE_ATTACK);
+                    const CreatureInfo *cinfo = me->GetCreatureInfo();
+                    me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg +((cinfo->mindmg/100) * 35)));
+                    me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg/100) * 35)));
+                    me->UpdateDamagePhysical(BASE_ATTACK);
                     if (pTarget)
                         AttackStart(pTarget);
                     //The Panther Model
-                    m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID,15215);
-                    m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                    me->SetUInt32Value(UNIT_FIELD_DISPLAYID,15215);
+                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     PhaseTwo = true;
                 } else Visible_Timer -= diff;
             }
@@ -176,16 +176,16 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
             //Cleave_Timer
             if (PhaseTwo && Cleave_Timer < diff)
             {
-                DoCast(m_creature->getVictim(), SPELL_CLEAVE);
+                DoCast(me->getVictim(), SPELL_CLEAVE);
                 Cleave_Timer = 16000;
             }Cleave_Timer -=diff;
 
             //Gouge_Timer
             if (PhaseTwo && Gouge_Timer < diff)
             {
-                DoCast(m_creature->getVictim(), SPELL_GOUGE);
-                if (DoGetThreat(m_creature->getVictim()))
-                    DoModifyThreatPercent(m_creature->getVictim(),-80);
+                DoCast(me->getVictim(), SPELL_GOUGE);
+                if (DoGetThreat(me->getVictim()))
+                    DoModifyThreatPercent(me->getVictim(),-80);
 
                 Gouge_Timer = 17000+rand()%10000;
             } else Gouge_Timer -= diff;

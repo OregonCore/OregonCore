@@ -2524,7 +2524,7 @@ struct OREGON_DLL_DECL guard_shattrath_aldorAI : public guardAI
         {
             if (Exile_Timer < diff)
             {
-                if (Unit* temp = Unit::GetUnit(*m_creature,playerGUID))
+                if (Unit* temp = Unit::GetUnit(*me,playerGUID))
                 {
                     temp->CastSpell(temp,SPELL_EXILE,true);
                     temp->CastSpell(temp,SPELL_BANISH_TELEPORT,true);
@@ -2536,7 +2536,7 @@ struct OREGON_DLL_DECL guard_shattrath_aldorAI : public guardAI
         }
         else if (Banish_Timer < diff)
         {
-            Unit* temp = m_creature->getVictim();
+            Unit* temp = me->getVictim();
             if (temp && temp->GetTypeId() == TYPEID_PLAYER)
             {
                 DoCast(temp,SPELL_BANISHED_SHATTRATH_A);
@@ -2720,7 +2720,7 @@ struct OREGON_DLL_DECL guard_shattrath_scryerAI : public guardAI
         {
             if (Exile_Timer < diff)
             {
-                if (Unit* temp = Unit::GetUnit(*m_creature,playerGUID))
+                if (Unit* temp = Unit::GetUnit(*me,playerGUID))
                 {
                     temp->CastSpell(temp,SPELL_EXILE,true);
                     temp->CastSpell(temp,SPELL_BANISH_TELEPORT,true);
@@ -2732,7 +2732,7 @@ struct OREGON_DLL_DECL guard_shattrath_scryerAI : public guardAI
         }
         else if (Banish_Timer < diff)
         {
-            Unit* temp = m_creature->getVictim();
+            Unit* temp = me->getVictim();
             if (temp && temp->GetTypeId() == TYPEID_PLAYER)
             {
                 DoCast(temp,SPELL_BANISHED_SHATTRATH_S);

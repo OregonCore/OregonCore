@@ -74,7 +74,7 @@ enum RotationType
 
 struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
 {
-    boss_the_lurker_belowAI(Creature *c) : Scripted_NoMovementAI(c), Summons(m_creature)
+    boss_the_lurker_belowAI(Creature *c) : Scripted_NoMovementAI(c), Summons(me)
     {
         pInstance = c->GetInstanceData();
         SpellEntry *TempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_SPOUT_ANIM);
@@ -106,9 +106,9 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
 
     void Reset()
     {
-        m_creature->AddUnitMovementFlag(MOVEMENTFLAG_SWIMMING + MOVEMENTFLAG_LEVITATING);
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->SetCorpseDelay(1000*60*60);
+        me->AddUnitMovementFlag(MOVEMENTFLAG_SWIMMING + MOVEMENTFLAG_LEVITATING);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->SetCorpseDelay(1000*60*60);
 
         RotType = NOROTATE;
 
@@ -131,23 +131,23 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
 
         /*if (pInstance->GetData(DATA_STRANGE_POOL) != DONE)
         {
-            m_creature->SetReactState(REACT_PASSIVE);
-            m_creature->SetVisibility(VISIBILITY_OFF);
+            me->SetReactState(REACT_PASSIVE);
+            me->SetVisibility(VISIBILITY_OFF);
         } else {
-            m_creature->SetVisibility(VISIBILITY_ON);
-            m_creature->SetReactState(REACT_AGGRESSIVE);
+            me->SetVisibility(VISIBILITY_ON);
+            me->SetReactState(REACT_AGGRESSIVE);
         }*/
     }
 
      void MoveInLineOfSight(Unit *who)
      {
-        if (!who || m_creature->getVictim())
+        if (!who || me->getVictim())
             return;
 
-        if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (m_creature) && m_creature->IsHostileTo(who))
+        if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (me) && me->IsHostileTo(who))
         {
-            float attackRadius = m_creature->GetAttackDistance(who);
-            if (m_creature->IsWithinDistInMap(who, attackRadius) && m_creature->IsWithinLOSInMap(who))
+            float attackRadius = me->GetAttackDistance(who);
+            if (me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who))
                 AttackStart(who);
         }
      }
@@ -157,13 +157,13 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
          if (pInstance)
             pInstance->SetData(DATA_THELURKERBELOWEVENT, IN_PROGRESS);
 
-         if (!who || m_creature->getVictim())
+         if (!who || me->getVictim())
             return;
 
-         if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (m_creature) && m_creature->IsHostileTo(who))
+         if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (me) && me->IsHostileTo(who))
          {
-             float attackRadius = m_creature->GetAttackDistance(who);
-             if (m_creature->IsWithinDistInMap(who, attackRadius) && m_creature->IsWithinLOSInMap(who))
+             float attackRadius = me->GetAttackDistance(who);
+             if (me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who))
                  AttackStart(who);
          }
      }
@@ -185,20 +185,20 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
              return;
          case CLOCKWISE://20secs for 360turn
              //no target if rotating!
-             m_creature->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+             me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
              SpoutAngle += (double)diff/20000*(double)M_PI*2;
              if (SpoutAngle >= M_PI*2)SpoutAngle = 0;
-             m_creature->SetOrientation(SpoutAngle);
-             m_creature->StopMoving();
+             me->SetOrientation(SpoutAngle);
+             me->StopMoving();
              Spout = true;
              break;
          case COUNTERCLOCKWISE://20secs for 360turn
              //no target if rotating!
-             m_creature->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+             me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
              SpoutAngle -= (double)diff/20000*(double)M_PI*2;
              if (SpoutAngle <= 0)SpoutAngle = M_PI*2;
-             m_creature->SetOrientation(SpoutAngle);
-             m_creature->StopMoving();
+             me->SetOrientation(SpoutAngle);
+             me->StopMoving();
              Spout = true;
              break;
          }
@@ -210,25 +210,25 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
          {
              RotType = NOROTATE;//set norotate state
              RotTimer=20000;
-             m_creature->InterruptNonMeleeSpells(false);
+             me->InterruptNonMeleeSpells(false);
              WhirlTimer = 4000; //whirl directly after spout ends
              return;
          } else RotTimer-=diff;
 
          if (SpoutAnimTimer<diff)
          {
-             DoCast(m_creature,SPELL_SPOUT_ANIM,true);
+             DoCast(me,SPELL_SPOUT_ANIM,true);
              SpoutAnimTimer = 1000;
          } else SpoutAnimTimer-=diff;
 
-         Map *map = m_creature->GetMap();
+         Map *map = me->GetMap();
          if (map->IsDungeon() && pInstance->GetData(DATA_THELURKERBELOWEVENT) == IN_PROGRESS)
          {
              Map::PlayerList const &PlayerList = map->GetPlayers();
              for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
              {
                  Player *pTarget = i->getSource();
-                 if (pTarget && pTarget->isAlive() && m_creature->HasInArc((double)diff/20000*(double)M_PI*2,pTarget) && m_creature->GetDistance(pTarget) <= SPOUT_DIST && !pTarget->IsInWater())
+                 if (pTarget && pTarget->isAlive() && me->HasInArc((double)diff/20000*(double)M_PI*2,pTarget) && me->GetDistance(pTarget) <= SPOUT_DIST && !pTarget->IsInWater())
                      DoCast(pTarget,SPELL_SPOUT,true);//only knock back palyers in arc, in 100yards, not in water
              }
          }
@@ -244,20 +244,20 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
          RotTimer=20000;
 
          if (victim)
-             SpoutAngle = m_creature->GetAngle(victim);
+             SpoutAngle = me->GetAngle(victim);
 
-         m_creature->MonsterTextEmote(EMOTE_SPOUT,0,true);
-         //DoCast(m_creature,SPELL_SPOUT_BREATH);//take breath anim
+         me->MonsterTextEmote(EMOTE_SPOUT,0,true);
+         //DoCast(me,SPELL_SPOUT_BREATH);//take breath anim
      }
 
      void UpdateAI(const uint32 diff)
      {
          //Return since we have no target
-         if (!UpdateVictim() /*|| !m_creature->getVictim()*/)//rotate resets target
+         if (!UpdateVictim() /*|| !me->getVictim()*/)//rotate resets target
              return;
 
           //Check if players in water and if in water cast spell
-         Map *map = m_creature->GetMap();
+         Map *map = me->GetMap();
          if (map->IsDungeon() && pInstance->GetData(DATA_THELURKERBELOWEVENT) == IN_PROGRESS)
          {
              Map::PlayerList const &PlayerList = map->GetPlayers();
@@ -279,8 +279,8 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
          {
              if (PhaseTimer < diff)
              {
-                 m_creature->InterruptNonMeleeSpells(false);
-                 DoCast(m_creature,SPELL_SUBMERGE);
+                 me->InterruptNonMeleeSpells(false);
+                 DoCast(me,SPELL_SUBMERGE);
                  PhaseTimer = 60000;//60secs submerged
                  Submerged = true;
              } else PhaseTimer-=diff;
@@ -290,8 +290,8 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
          {
              if (SpoutTimer < diff)
              {
-                 if (m_creature->getVictim() && RotType == NOROTATE)
-                     StartRotate(m_creature->getVictim());//start spout and random rotate
+                 if (me->getVictim() && RotType == NOROTATE)
+                     StartRotate(me->getVictim());//start spout and random rotate
 
                  SpoutTimer= 35000;
                  return;
@@ -301,7 +301,7 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
              if (WhirlTimer < diff)
              {
                  WhirlTimer = rand()%5000 + 15000;
-                 DoCast(m_creature,SPELL_WHIRL);
+                 DoCast(me,SPELL_WHIRL);
                  WaterboltTimer += 5000;//add 5secs to waterbolt timer, to add some time to run back to boss
              } else WhirlTimer -= diff;
 
@@ -344,12 +344,12 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
              if (PhaseTimer < diff)
              {
                  Submerged = false;
-                 m_creature->InterruptNonMeleeSpells(false);//shouldn't be any
-                 m_creature->RemoveAllAuras();
-                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                 m_creature->RemoveFlag(UNIT_NPC_EMOTESTATE,EMOTE_STATE_SUBMERGED);
-                 m_creature->RemoveFlag(UNIT_FIELD_BYTES_1,9);
-                 DoCast(m_creature,SPELL_EMERGE);
+                 me->InterruptNonMeleeSpells(false);//shouldn't be any
+                 me->RemoveAllAuras();
+                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                 me->RemoveFlag(UNIT_NPC_EMOTESTATE,EMOTE_STATE_SUBMERGED);
+                 me->RemoveFlag(UNIT_FIELD_BYTES_1,9);
+                 DoCast(me,SPELL_EMERGE);
                  Spawned = false;
                  SpoutTimer = 4000; // directly cast Spout after emerging!
                  WhirlTimer = 26000;
@@ -357,19 +357,19 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
                  return;
              } else PhaseTimer-=diff;
 
-             if (!m_creature->isInCombat())
-                 m_creature->SetInCombatState(false);
+             if (!me->isInCombat())
+                 me->SetInCombatState(false);
 
              if (!Spawned)
              {
-                 m_creature->SetUInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                 me->SetUInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                  //spawn adds
                  for (uint8 i = 0; i < 9; ++i)
                  {
                      Creature* Summoned;
                      if (i < 7)
-                         Summoned = m_creature->SummonCreature(MOB_COILFANG_AMBUSHER,AddPos[i][0],AddPos[i][1],AddPos[i][2], 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
-                     else Summoned = m_creature->SummonCreature(MOB_COILFANG_GUARDIAN,AddPos[i][0],AddPos[i][1],AddPos[i][2], 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                         Summoned = me->SummonCreature(MOB_COILFANG_AMBUSHER,AddPos[i][0],AddPos[i][1],AddPos[i][2], 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                     else Summoned = me->SummonCreature(MOB_COILFANG_GUARDIAN,AddPos[i][0],AddPos[i][1],AddPos[i][2], 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
 
                      if (Summoned)
                         Summons.Summon(Summoned);
@@ -425,9 +425,9 @@ struct OREGON_DLL_DECL mob_coilfang_ambusherAI : public Scripted_NoMovementAI
 
     void MoveInLineOfSight(Unit *who)
     {
-        if (!who || m_creature->getVictim()) return;
+        if (!who || me->getVictim()) return;
 
-        if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (m_creature) && m_creature->IsHostileTo(who))
+        if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (me) && me->IsHostileTo(who))
         {
             AttackStart(who);
         }
@@ -437,8 +437,8 @@ struct OREGON_DLL_DECL mob_coilfang_ambusherAI : public Scripted_NoMovementAI
     {
         if (MultiShotTimer < diff)
         {
-            if (m_creature->getVictim())
-                DoCast(m_creature->getVictim(), SPELL_SPREAD_SHOT, true);
+            if (me->getVictim())
+                DoCast(me->getVictim(), SPELL_SPREAD_SHOT, true);
 
             MultiShotTimer = 10000;
             ShootBowTimer += 1500;//add global cooldown
@@ -450,7 +450,7 @@ struct OREGON_DLL_DECL mob_coilfang_ambusherAI : public Scripted_NoMovementAI
             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             int bp0 = 1100;
             if (pTarget)
-                m_creature->CastCustomSpell(pTarget,SPELL_SHOOT,&bp0,NULL,NULL,true);
+                me->CastCustomSpell(pTarget,SPELL_SHOOT,&bp0,NULL,NULL,true);
             ShootBowTimer = 4000;
             MultiShotTimer += 1500;//add global cooldown
         } else ShootBowTimer -= diff;

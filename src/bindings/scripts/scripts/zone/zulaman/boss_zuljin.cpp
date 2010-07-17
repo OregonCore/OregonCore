@@ -141,7 +141,7 @@ static TransformStruct Transform[] =
 
 struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
 {
-    boss_zuljinAI(Creature *c) : ScriptedAI(c), Summons(m_creature)
+    boss_zuljinAI(Creature *c) : ScriptedAI(c), Summons(me)
     {
         pInstance = c->GetInstanceData();
     }
@@ -181,7 +181,7 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
 
         Phase = 0;
 
-        health_20 = m_creature->GetMaxHealth()*0.2;
+        health_20 = me->GetMaxHealth()*0.2;
 
         Intro_Timer = 37000;
         Berserk_Timer = 600000;
@@ -206,9 +206,9 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
 
         Summons.DespawnAll();
 
-        m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 47174);
-        m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, 218172674);
-        m_creature->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE);
+        me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 47174);
+        me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, 218172674);
+        me->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE);
     }
 
     void EnterCombat(Unit *who)
@@ -219,7 +219,7 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
         DoZoneInCombat();
 
         DoYell(YELL_INTRO,LANG_UNIVERSAL,NULL);
-        DoPlaySoundToSet(m_creature, SOUND_INTRO);
+        DoPlaySoundToSet(me, SOUND_INTRO);
         SpawnAdds();
         EnterPhase(0);
     }
@@ -233,11 +233,11 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
         {
         case 0:
             DoYell(YELL_KILL_ONE, LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(m_creature, SOUND_KILL_ONE);
+            DoPlaySoundToSet(me, SOUND_KILL_ONE);
             break;
         case 1:
             DoYell(YELL_KILL_TWO, LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(m_creature, SOUND_KILL_TWO);
+            DoPlaySoundToSet(me, SOUND_KILL_TWO);
             break;
         }
     }
@@ -248,10 +248,10 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
             pInstance->SetData(DATA_ZULJINEVENT, DONE);
 
         DoYell(YELL_DEATH, LANG_UNIVERSAL, NULL);
-        DoPlaySoundToSet(m_creature, SOUND_DEATH);
+        DoPlaySoundToSet(me, SOUND_DEATH);
         Summons.DespawnEntry(CREATURE_COLUMN_OF_FIRE);
 
-        if (Unit *Temp = Unit::GetUnit(*m_creature, SpiritGUID[3]))
+        if (Unit *Temp = Unit::GetUnit(*me, SpiritGUID[3]))
             Temp->SetUInt32Value(UNIT_FIELD_BYTES_1,PLAYER_STATE_DEAD);
     }
 
@@ -265,21 +265,21 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
 
     void DoMeleeAttackIfReady()
     {
-        if (!m_creature->IsNonMeleeSpellCasted(false))
+        if (!me->IsNonMeleeSpellCasted(false))
         {
-            if (m_creature->isAttackReady() && m_creature->IsWithinMeleeRange(m_creature->getVictim()))
+            if (me->isAttackReady() && me->IsWithinMeleeRange(me->getVictim()))
             {
                 if (Phase == 1 && !Overpower_Timer)
                 {
-                    uint32 health = m_creature->getVictim()->GetHealth();
-                    m_creature->AttackerStateUpdate(m_creature->getVictim());
-                    if (m_creature->getVictim() && health == m_creature->getVictim()->GetHealth())
+                    uint32 health = me->getVictim()->GetHealth();
+                    me->AttackerStateUpdate(me->getVictim());
+                    if (me->getVictim() && health == me->getVictim()->GetHealth())
                     {
-                        m_creature->CastSpell(m_creature->getVictim(), SPELL_OVERPOWER, false);
+                        me->CastSpell(me->getVictim(), SPELL_OVERPOWER, false);
                         Overpower_Timer = 5000;
                     }
-                } else m_creature->AttackerStateUpdate(m_creature->getVictim());
-                m_creature->resetAttackTimer();
+                } else me->AttackerStateUpdate(me->getVictim());
+                me->resetAttackTimer();
             }
         }
     }
@@ -289,7 +289,7 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
         Creature *pCreature = NULL;
         for (uint8 i = 0; i < 4; i++)
         {
-            pCreature = m_creature->SummonCreature(SpiritInfo[i].entry, SpiritInfo[i].x, SpiritInfo[i].y, SpiritInfo[i].z, SpiritInfo[i].orient, TEMPSUMMON_DEAD_DESPAWN, 0);
+            pCreature = me->SummonCreature(SpiritInfo[i].entry, SpiritInfo[i].x, SpiritInfo[i].y, SpiritInfo[i].z, SpiritInfo[i].orient, TEMPSUMMON_DEAD_DESPAWN, 0);
             if (pCreature)
             {
                 pCreature->CastSpell(pCreature, SPELL_SPIRIT_AURA, true);
@@ -307,7 +307,7 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
             Unit* Temp = NULL;
             if (SpiritGUID[i])
             {
-                if (Temp = Unit::GetUnit(*m_creature, SpiritGUID[i]))
+                if (Temp = Unit::GetUnit(*me, SpiritGUID[i]))
                 {
                     Temp->SetVisibility(VISIBILITY_OFF);
                     Temp->setDeathState(DEAD);
@@ -339,22 +339,22 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
         case 4:
             DoTeleportTo(CENTER_X, CENTER_Y, CENTER_Z, 100);
             DoResetThreat();
-            m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
-            m_creature->RemoveAurasDueToSpell(Transform[Phase].unaura);
-            DoCast(m_creature, Transform[Phase].spell);
+            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
+            me->RemoveAurasDueToSpell(Transform[Phase].unaura);
+            DoCast(me, Transform[Phase].spell);
             DoYell(Transform[Phase].text, LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(m_creature, Transform[Phase].sound);
+            DoPlaySoundToSet(me, Transform[Phase].sound);
             if (Phase > 0)
             {
-                if (Unit *Temp = Unit::GetUnit(*m_creature, SpiritGUID[Phase - 1]))
+                if (Unit *Temp = Unit::GetUnit(*me, SpiritGUID[Phase - 1]))
                     Temp->SetUInt32Value(UNIT_FIELD_BYTES_1,PLAYER_STATE_DEAD);
             }
-            if (Unit *Temp = Unit::GetUnit(*m_creature, SpiritGUID[NextPhase - 1]))
-                Temp->CastSpell(m_creature, SPELL_SIPHON_SOUL, false); // should m cast on temp
+            if (Unit *Temp = Unit::GetUnit(*me, SpiritGUID[NextPhase - 1]))
+                Temp->CastSpell(me, SPELL_SIPHON_SOUL, false); // should m cast on temp
             if (NextPhase == 2)
             {
-                m_creature->GetMotionMaster()->Clear();
-                m_creature->CastSpell(m_creature, SPELL_ENERGY_STORM, true); // enemy aura
+                me->GetMotionMaster()->Clear();
+                me->CastSpell(me, SPELL_ENERGY_STORM, true); // enemy aura
                 for (uint8 i = 0; i < 4; i++)
                 {
                     Creature* Vortex = DoSpawnCreature(CREATURE_FEATHER_VORTEX, 0, 0, 0, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
@@ -370,12 +370,12 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                 }
             }
             else
-                m_creature->AI()->AttackStart(m_creature->getVictim());
+                me->AI()->AttackStart(me->getVictim());
             if (NextPhase == 3)
             {
-                m_creature->RemoveAurasDueToSpell(SPELL_ENERGY_STORM);
+                me->RemoveAurasDueToSpell(SPELL_ENERGY_STORM);
                 Summons.DespawnEntry(CREATURE_FEATHER_VORTEX);
-                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                me->GetMotionMaster()->MoveChase(me->getVictim());
             }
             break;
         default:
@@ -391,15 +391,15 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
             if (!UpdateVictim())
                 return;
 
-            if (m_creature->GetHealth() < health_20 * (4 - Phase))
+            if (me->GetHealth() < health_20 * (4 - Phase))
                 EnterPhase(Phase + 1);
         }
 
         if (Berserk_Timer < diff)
         {
-            m_creature->CastSpell(m_creature, SPELL_BERSERK, true);
+            me->CastSpell(me, SPELL_BERSERK, true);
             DoYell(YELL_BERSERK, LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(m_creature, SOUND_BERSERK);
+            DoPlaySoundToSet(me, SOUND_BERSERK);
             Berserk_Timer = 60000;
         } else Berserk_Timer -= diff;
 
@@ -411,21 +411,21 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                 if (Intro_Timer <= diff)
                 {
                     DoYell(YELL_AGGRO, LANG_UNIVERSAL, NULL);
-                    DoPlaySoundToSet(m_creature, SOUND_AGGRO);
+                    DoPlaySoundToSet(me, SOUND_AGGRO);
                     Intro_Timer = 0;
                 } else Intro_Timer -= diff;
             }
 
             if (Whirlwind_Timer < diff)
             {
-                DoCast(m_creature, SPELL_WHIRLWIND);
+                DoCast(me, SPELL_WHIRLWIND);
                 Whirlwind_Timer = 15000 + rand()%5000;
             } else Whirlwind_Timer -= diff;
 
             if (Grievous_Throw_Timer < diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    m_creature->CastSpell(pTarget, SPELL_GRIEVOUS_THROW, false);
+                    me->CastSpell(pTarget, SPELL_GRIEVOUS_THROW, false);
                 Grievous_Throw_Timer = 10000;
             } else Grievous_Throw_Timer -= diff;
             break;
@@ -433,7 +433,7 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
         case 1:
             if (Creeping_Paralysis_Timer < diff)
             {
-                DoCast(m_creature, SPELL_CREEPING_PARALYSIS);
+                DoCast(me, SPELL_CREEPING_PARALYSIS);
                 Creeping_Paralysis_Timer = 20000;
             } else Creeping_Paralysis_Timer -= diff;
 
@@ -454,8 +454,8 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                 {
                     if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     {
-                        TankGUID = m_creature->getVictim()->GetGUID();
-                        m_creature->SetSpeed(MOVE_RUN, 5.0f);
+                        TankGUID = me->getVictim()->GetGUID();
+                        me->SetSpeed(MOVE_RUN, 5.0f);
                         AttackStart(pTarget); // change victim
                         Claw_Rage_Timer = 0;
                         Claw_Loop_Timer = 500;
@@ -466,21 +466,21 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                 {
                     if (Claw_Loop_Timer < diff)
                     {
-                        Unit *pTarget = m_creature->getVictim();
-                        if (!pTarget || !pTarget->isTargetableForAttack()) pTarget = Unit::GetUnit(*m_creature, TankGUID);
+                        Unit *pTarget = me->getVictim();
+                        if (!pTarget || !pTarget->isTargetableForAttack()) pTarget = Unit::GetUnit(*me, TankGUID);
                         if (!pTarget || !pTarget->isTargetableForAttack()) pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                         if (pTarget)
                         {
                             AttackStart(pTarget);
-                            if (m_creature->IsWithinMeleeRange(pTarget))
+                            if (me->IsWithinMeleeRange(pTarget))
                             {
-                                m_creature->CastSpell(pTarget, SPELL_CLAW_RAGE_DAMAGE, true);
+                                me->CastSpell(pTarget, SPELL_CLAW_RAGE_DAMAGE, true);
                                 Claw_Counter++;
                                 if (Claw_Counter == 12)
                                 {
                                     Claw_Rage_Timer = 15000 + rand()%5000;
-                                    m_creature->SetSpeed(MOVE_RUN, 1.2f);
-                                    AttackStart(Unit::GetUnit(*m_creature, TankGUID));
+                                    me->SetSpeed(MOVE_RUN, 1.2f);
+                                    AttackStart(Unit::GetUnit(*me, TankGUID));
                                     TankGUID = 0;
                                     return;
                                 }
@@ -503,8 +503,8 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                 {
                     if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     {
-                        TankGUID = m_creature->getVictim()->GetGUID();
-                        m_creature->SetSpeed(MOVE_RUN, 5.0f);
+                        TankGUID = me->getVictim()->GetGUID();
+                        me->SetSpeed(MOVE_RUN, 5.0f);
                         AttackStart(pTarget); // change victim
                         Lynx_Rush_Timer = 0;
                         Claw_Counter = 0;
@@ -512,7 +512,7 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                 }
                 else if (!Lynx_Rush_Timer)
                 {
-                    Unit *pTarget = m_creature->getVictim();
+                    Unit *pTarget = me->getVictim();
                     if (!pTarget || !pTarget->isTargetableForAttack())
                     {
                         pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
@@ -520,15 +520,15 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                     }
                     if (pTarget)
                     {
-                        if (m_creature->IsWithinMeleeRange(pTarget))
+                        if (me->IsWithinMeleeRange(pTarget))
                         {
-                            m_creature->CastSpell(pTarget, SPELL_LYNX_RUSH_DAMAGE, true);
+                            me->CastSpell(pTarget, SPELL_LYNX_RUSH_DAMAGE, true);
                             Claw_Counter++;
                             if (Claw_Counter == 9)
                             {
                                 Lynx_Rush_Timer = 15000 + rand()%5000;
-                                m_creature->SetSpeed(MOVE_RUN, 1.2f);
-                                AttackStart(Unit::GetUnit(*m_creature, TankGUID));
+                                me->SetSpeed(MOVE_RUN, 1.2f);
+                                AttackStart(Unit::GetUnit(*me, TankGUID));
                                 TankGUID = 0;
                             }
                             else
@@ -547,7 +547,7 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
         case 4:
             if (Flame_Whirl_Timer < diff)
             {
-                DoCast(m_creature, SPELL_FLAME_WHIRL);
+                DoCast(me, SPELL_FLAME_WHIRL);
                 Flame_Whirl_Timer = 12000;
             }Flame_Whirl_Timer -= diff;
 
@@ -561,8 +561,8 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
             if (Flame_Breath_Timer < diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    m_creature->SetInFront(pTarget);
-                DoCast(m_creature, SPELL_FLAME_BREATH);
+                    me->SetInFront(pTarget);
+                DoCast(me, SPELL_FLAME_BREATH);
                 Flame_Breath_Timer = 10000;
             } else Flame_Breath_Timer -= diff;
             break;
@@ -592,13 +592,13 @@ struct OREGON_DLL_DECL feather_vortexAI : public ScriptedAI
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {
         if (spell->Id == SPELL_ZAP_INFORM)
-            m_creature->CastSpell(caster, SPELL_ZAP_DAMAGE, true);
+            me->CastSpell(caster, SPELL_ZAP_DAMAGE, true);
     }
 
     void UpdateAI(const uint32 diff)
     {
         //if the vortex reach the target, it change his target to another player
-        if (m_creature->IsWithinMeleeRange(m_creature->getVictim()))
+        if (me->IsWithinMeleeRange(me->getVictim()))
             AttackStart(SelectUnit(SELECT_TARGET_RANDOM, 0));
     }
 };

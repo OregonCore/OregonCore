@@ -47,7 +47,7 @@ struct OREGON_DLL_DECL boss_ambassador_hellmawAI : public ScriptedAI
     boss_ambassador_hellmawAI(Creature *c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     ScriptedInstance* pInstance;
@@ -73,14 +73,14 @@ struct OREGON_DLL_DECL boss_ambassador_hellmawAI : public ScriptedAI
         {
             if (pInstance->GetData(TYPE_HELLMAW) == NOT_STARTED)
             {
-                DoCast(m_creature,SPELL_BANISH);
+                DoCast(me,SPELL_BANISH);
                 IsBanished = true;
             }
             else pInstance->SetData(TYPE_HELLMAW,FAIL);
             if (pInstance->GetData(TYPE_OVERSEER) == DONE)
             {
-                if (m_creature->HasAura(SPELL_BANISH,0))
-                    m_creature->RemoveAurasDueToSpell(SPELL_BANISH);
+                if (me->HasAura(SPELL_BANISH,0))
+                    me->RemoveAurasDueToSpell(SPELL_BANISH);
                 Intro = true;
             }
         }
@@ -88,7 +88,7 @@ struct OREGON_DLL_DECL boss_ambassador_hellmawAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit *who)
     {
-        if (m_creature->HasAura(SPELL_BANISH,0))
+        if (me->HasAura(SPELL_BANISH,0))
             return;
 
         ScriptedAI::MoveInLineOfSight(who);
@@ -102,10 +102,10 @@ struct OREGON_DLL_DECL boss_ambassador_hellmawAI : public ScriptedAI
 
     void DoIntro()
     {
-        DoScriptText(SAY_INTRO, m_creature);
+        DoScriptText(SAY_INTRO, me);
 
-        if (m_creature->HasAura(SPELL_BANISH,0))
-            m_creature->RemoveAurasDueToSpell(SPELL_BANISH);
+        if (me->HasAura(SPELL_BANISH,0))
+            me->RemoveAurasDueToSpell(SPELL_BANISH);
 
         IsBanished = false;
         Intro = true;
@@ -118,9 +118,9 @@ struct OREGON_DLL_DECL boss_ambassador_hellmawAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-            case 0: DoScriptText(SAY_AGGRO1, m_creature); break;
-            case 1: DoScriptText(SAY_AGGRO2, m_creature); break;
-            case 2: DoScriptText(SAY_AGGRO3, m_creature); break;
+            case 0: DoScriptText(SAY_AGGRO1, me); break;
+            case 1: DoScriptText(SAY_AGGRO2, me); break;
+            case 2: DoScriptText(SAY_AGGRO3, me); break;
         }
     }
 
@@ -128,14 +128,14 @@ struct OREGON_DLL_DECL boss_ambassador_hellmawAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-            case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+            case 0: DoScriptText(SAY_SLAY1, me); break;
+            case 1: DoScriptText(SAY_SLAY2, me); break;
         }
     }
 
     void JustDied(Unit *victim)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
             pInstance->SetData(TYPE_HELLMAW, DONE);
@@ -156,7 +156,7 @@ struct OREGON_DLL_DECL boss_ambassador_hellmawAI : public ScriptedAI
             } else EventCheck_Timer -= diff;
         }
 
-        if (!m_creature->isInCombat() && !IsBanished)
+        if (!me->isInCombat() && !IsBanished)
         {
             //this is where we add MovePoint()
             //DoWhine("I haz no mount!", LANG_UNIVERSAL, NULL);
@@ -165,7 +165,7 @@ struct OREGON_DLL_DECL boss_ambassador_hellmawAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (m_creature->HasAura(SPELL_BANISH, 0))
+        if (me->HasAura(SPELL_BANISH, 0))
         {
             EnterEvadeMode();
             return;
@@ -173,13 +173,13 @@ struct OREGON_DLL_DECL boss_ambassador_hellmawAI : public ScriptedAI
 
         if (CorrosiveAcid_Timer < diff)
         {
-            DoCast(m_creature,SPELL_CORROSIVE_ACID);
+            DoCast(me,SPELL_CORROSIVE_ACID);
             CorrosiveAcid_Timer = 25000;
         } else CorrosiveAcid_Timer -= diff;
 
         if (Fear_Timer < diff)
         {
-            DoCast(m_creature,SPELL_FEAR);
+            DoCast(me,SPELL_FEAR);
             Fear_Timer = 35000;
         } else Fear_Timer -= diff;
 
@@ -187,7 +187,7 @@ struct OREGON_DLL_DECL boss_ambassador_hellmawAI : public ScriptedAI
         {
             if (Enrage_Timer < diff)
             {
-                DoCast(m_creature,SPELL_ENRAGE);
+                DoCast(me,SPELL_ENRAGE);
             } else Enrage_Timer -= diff;
         }*/
 

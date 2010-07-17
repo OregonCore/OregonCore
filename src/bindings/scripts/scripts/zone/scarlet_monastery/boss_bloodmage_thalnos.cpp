@@ -61,7 +61,7 @@ struct OREGON_DLL_DECL boss_bloodmage_thalnosAI : public ScriptedAI
     void EnterCombat(Unit *who)
     {
         DoYell(SAY_AGGRO,LANG_UNIVERSAL,NULL);
-        DoPlaySoundToSet(m_creature,SOUND_AGGRO);
+        DoPlaySoundToSet(me,SOUND_AGGRO);
     }
 
     void UpdateAI(const uint32 diff)
@@ -70,14 +70,14 @@ struct OREGON_DLL_DECL boss_bloodmage_thalnosAI : public ScriptedAI
             return;
 
         //If we are <35% hp
-        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 35)
+        if (me->GetHealth()*100 / me->GetMaxHealth() <= 35)
         {
             Yell_Timer -= diff;
 
             if (Yell_Timer < diff)
             {
                 DoYell(SAY_HEALTH,LANG_UNIVERSAL,NULL);
-                DoPlaySoundToSet(m_creature,SOUND_HEALTH);
+                DoPlaySoundToSet(me,SOUND_HEALTH);
                 Yell_Timer = 900000;
             }
         }
@@ -85,35 +85,35 @@ struct OREGON_DLL_DECL boss_bloodmage_thalnosAI : public ScriptedAI
         //FrostNova2_Timer
         if (FrostNova2_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_FROSTNOVA2);
+            DoCast(me->getVictim(),SPELL_FROSTNOVA2);
             FrostNova2_Timer = 10000;
         } else FrostNova2_Timer -= diff;
 
         //FlameShock3_Timer
         if (FlameShock3_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_FLAMESHOCK3);
+            DoCast(me->getVictim(),SPELL_FLAMESHOCK3);
             FlameShock3_Timer = 15000;
         } else FlameShock3_Timer -= diff;
 
         //ShadowBolt5_Timer
         if (ShadowBolt5_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_SHADOWBOLT5);
+            DoCast(me->getVictim(),SPELL_SHADOWBOLT5);
             ShadowBolt5_Timer = 20000;
         } else ShadowBolt5_Timer -= diff;
 
         //FlameSpike_Timer
         if (FlameSpike_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_FLAMESPIKE);
+            DoCast(me->getVictim(),SPELL_FLAMESPIKE);
             FlameSpike_Timer = 30000;
         } else FlameSpike_Timer -= diff;
 
         //FireNova_Timer
         if (FireNova_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_FIRENOVA);
+            DoCast(me->getVictim(),SPELL_FIRENOVA);
             FireNova_Timer = 20000;
         } else FireNova_Timer -= diff;
 

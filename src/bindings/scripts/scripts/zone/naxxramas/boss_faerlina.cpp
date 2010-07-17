@@ -59,18 +59,18 @@ struct OREGON_DLL_DECL boss_faerlinaAI : public ScriptedAI
     {
         switch (rand()%4)
         {
-        case 0: DoScriptText(SAY_AGGRO1, m_creature); break;
-        case 1: DoScriptText(SAY_AGGRO2, m_creature); break;
-        case 2: DoScriptText(SAY_AGGRO3, m_creature); break;
-        case 3: DoScriptText(SAY_AGGRO4, m_creature); break;
+        case 0: DoScriptText(SAY_AGGRO1, me); break;
+        case 1: DoScriptText(SAY_AGGRO2, me); break;
+        case 2: DoScriptText(SAY_AGGRO3, me); break;
+        case 3: DoScriptText(SAY_AGGRO4, me); break;
         }
     }
 
     void MoveInLineOfSight(Unit *who)
     {
-         if (!HasTaunted && m_creature->IsWithinDistInMap(who, 60.0f))
+         if (!HasTaunted && me->IsWithinDistInMap(who, 60.0f))
          {
-                DoScriptText(SAY_GREET, m_creature);
+                DoScriptText(SAY_GREET, me);
                 HasTaunted = true;
 
         }
@@ -81,14 +81,14 @@ struct OREGON_DLL_DECL boss_faerlinaAI : public ScriptedAI
     {
         switch (rand()%2)
         {
-            case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+            case 0: DoScriptText(SAY_SLAY1, me); break;
+            case 1: DoScriptText(SAY_SLAY2, me); break;
         }
     }
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -99,7 +99,7 @@ struct OREGON_DLL_DECL boss_faerlinaAI : public ScriptedAI
         //PoisonBoltVolley_Timer
         if (PoisonBoltVolley_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_POSIONBOLT_VOLLEY);
+            DoCast(me->getVictim(),SPELL_POSIONBOLT_VOLLEY);
             PoisonBoltVolley_Timer = 11000;
         } else PoisonBoltVolley_Timer -= diff;
 
@@ -114,7 +114,7 @@ struct OREGON_DLL_DECL boss_faerlinaAI : public ScriptedAI
         //Enrage_Timer
         if (Enrage_Timer < diff)
         {
-            DoCast(m_creature,SPELL_ENRAGE);
+            DoCast(me,SPELL_ENRAGE);
             Enrage_Timer = 61000;
         } else Enrage_Timer -= diff;
 

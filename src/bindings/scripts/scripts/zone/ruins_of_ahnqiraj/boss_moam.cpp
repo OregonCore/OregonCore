@@ -54,7 +54,7 @@ struct OREGON_DLL_DECL boss_moamAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        DoScriptText(EMOTE_AGGRO, m_creature);
+        DoScriptText(EMOTE_AGGRO, me);
         pTarget = who;
     }
 
@@ -64,31 +64,31 @@ struct OREGON_DLL_DECL boss_moamAI : public ScriptedAI
             return;
 
         //If we are 100%MANA cast Arcane Erruption
-        //if (j == 1 && m_creature->GetMana()*100 / m_creature->GetMaxMana() == 100 && !m_creature->IsNonMeleeSpellCasted(false))
+        //if (j == 1 && me->GetMana()*100 / me->GetMaxMana() == 100 && !me->IsNonMeleeSpellCasted(false))
         {
-            DoCast(m_creature->getVictim(),SPELL_ARCANEERUPTION);
-            DoScriptText(EMOTE_MANA_FULL, m_creature);
+            DoCast(me->getVictim(),SPELL_ARCANEERUPTION);
+            DoScriptText(EMOTE_MANA_FULL, me);
         }
 
         //If we are <50%HP cast MANA FIEND (Summon Mana) and Sleep
-        //if (i == 0 && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 50 && !m_creature->IsNonMeleeSpellCasted(false))
+        //if (i == 0 && me->GetHealth()*100 / me->GetMaxHealth() <= 50 && !me->IsNonMeleeSpellCasted(false))
         {
             i=1;
-            DoCast(m_creature->getVictim(),SPELL_SUMMONMANA);
-            DoCast(m_creature->getVictim(),SPELL_GRDRSLEEP);
+            DoCast(me->getVictim(),SPELL_SUMMONMANA);
+            DoCast(me->getVictim(),SPELL_GRDRSLEEP);
         }
 
         //SUMMONMANA_Timer
         if (i == 1 && SUMMONMANA_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_SUMMONMANA);
+            DoCast(me->getVictim(),SPELL_SUMMONMANA);
             SUMMONMANA_Timer = 90000;
         } else SUMMONMANA_Timer -= diff;
 
         //TRAMPLE_Timer
         if (TRAMPLE_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_TRAMPLE);
+            DoCast(me->getVictim(),SPELL_TRAMPLE);
             j=1;
 
             TRAMPLE_Timer = 30000;
@@ -97,7 +97,7 @@ struct OREGON_DLL_DECL boss_moamAI : public ScriptedAI
         //DRAINMANA_Timer
         if (DRAINMANA_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_DRAINMANA);
+            DoCast(me->getVictim(),SPELL_DRAINMANA);
             DRAINMANA_Timer = 30000;
         } else DRAINMANA_Timer -= diff;
 

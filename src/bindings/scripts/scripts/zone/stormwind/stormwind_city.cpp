@@ -73,20 +73,20 @@ struct OREGON_DLL_DECL npc_bartlebyAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->setFaction(11);
-        m_creature->setEmoteState(7);
+        me->setFaction(11);
+        me->setEmoteState(7);
 
         PlayerGUID = 0;
     }
 
     void JustDied(Unit *who)
     {
-        m_creature->setFaction(11);
+        me->setFaction(11);
     }
 
     void DamageTaken(Unit *done_by, uint32 & damage)
     {
-        if (damage > m_creature->GetHealth() || ((m_creature->GetHealth() - damage)*100 / m_creature->GetMaxHealth() < 15))
+        if (damage > me->GetHealth() || ((me->GetHealth() - damage)*100 / me->GetMaxHealth() < 15))
         {
             //Take 0 damage
             damage = 0;
@@ -96,7 +96,7 @@ struct OREGON_DLL_DECL npc_bartlebyAI : public ScriptedAI
                 ((Player*)done_by)->AttackStop();
                 ((Player*)done_by)->AreaExploredOrEventHappens(1640);
             }
-            m_creature->CombatStop();
+            me->CombatStop();
             EnterEvadeMode();
         }
     }
@@ -130,13 +130,13 @@ struct OREGON_DLL_DECL npc_dashel_stonefistAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->setFaction(11);
-        m_creature->setEmoteState(7);
+        me->setFaction(11);
+        me->setEmoteState(7);
     }
 
     void DamageTaken(Unit *done_by, uint32 & damage)
     {
-        if ((damage > m_creature->GetHealth()) || (m_creature->GetHealth() - damage)*100 / m_creature->GetMaxHealth() < 15)
+        if ((damage > me->GetHealth()) || (me->GetHealth() - damage)*100 / me->GetMaxHealth() < 15)
         {
             //Take 0 damage
             damage = 0;
@@ -146,7 +146,7 @@ struct OREGON_DLL_DECL npc_dashel_stonefistAI : public ScriptedAI
                 ((Player*)done_by)->AttackStop();
                 ((Player*)done_by)->AreaExploredOrEventHappens(1447);
             }
-            //m_creature->CombatStop();
+            //me->CombatStop();
             EnterEvadeMode();
         }
     }

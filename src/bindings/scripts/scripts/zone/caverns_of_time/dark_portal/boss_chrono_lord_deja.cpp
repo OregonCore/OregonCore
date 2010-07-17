@@ -43,7 +43,7 @@ struct OREGON_DLL_DECL boss_chrono_lord_dejaAI : public ScriptedAI
     boss_chrono_lord_dejaAI(Creature *c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     ScriptedInstance *pInstance;
@@ -60,7 +60,7 @@ struct OREGON_DLL_DECL boss_chrono_lord_dejaAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
     }
 
     void MoveInLineOfSight(Unit *who)
@@ -68,10 +68,10 @@ struct OREGON_DLL_DECL boss_chrono_lord_dejaAI : public ScriptedAI
         //Despawn Time Keeper
         if (who->GetTypeId() == TYPEID_UNIT && who->GetEntry() == C_TIME_KEEPER)
         {
-            if (m_creature->IsWithinDistInMap(who,20.0f))
+            if (me->IsWithinDistInMap(who,20.0f))
             {
-                DoScriptText(SAY_BANISH, m_creature);
-                m_creature->DealDamage(who, who->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                DoScriptText(SAY_BANISH, me);
+                me->DealDamage(who, who->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             }
         }
 
@@ -82,14 +82,14 @@ struct OREGON_DLL_DECL boss_chrono_lord_dejaAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-            case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+            case 0: DoScriptText(SAY_SLAY1, me); break;
+            case 1: DoScriptText(SAY_SLAY2, me); break;
         }
     }
 
     void JustDied(Unit *victim)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
             pInstance->SetData(TYPE_RIFT,SPECIAL);
@@ -104,15 +104,15 @@ struct OREGON_DLL_DECL boss_chrono_lord_dejaAI : public ScriptedAI
         //Arcane Blast
         if (ArcaneBlast_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_ARCANE_BLAST);
+            DoCast(me->getVictim(), SPELL_ARCANE_BLAST);
             ArcaneBlast_Timer = 20000+rand()%5000;
         } else ArcaneBlast_Timer -= diff;
 
         //Time Lapse
         if (TimeLapse_Timer < diff)
         {
-            DoScriptText(SAY_BANISH, m_creature);
-            DoCast(m_creature, SPELL_TIME_LAPSE);
+            DoScriptText(SAY_BANISH, me);
+            DoCast(me, SPELL_TIME_LAPSE);
             TimeLapse_Timer = 15000+rand()%10000;
         } else TimeLapse_Timer -= diff;
 

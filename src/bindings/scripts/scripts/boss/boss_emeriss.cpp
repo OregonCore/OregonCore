@@ -75,7 +75,7 @@ struct OREGON_DLL_DECL boss_emerissAI : public ScriptedAI
         //NoxiousBreath_Timer
         if (NoxiousBreath_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_NOXIOUSBREATH);
+            DoCast(me->getVictim(),SPELL_NOXIOUSBREATH);
             NoxiousBreath_Timer = 14000 + rand()%6000;
         } else NoxiousBreath_Timer -= diff;
 
@@ -91,23 +91,23 @@ struct OREGON_DLL_DECL boss_emerissAI : public ScriptedAI
         //MarkOfNature_Timer
         //if (MarkOfNature_Timer < diff)
         //{
-        //    DoCast(m_creature->getVictim(),SPELL_MARKOFNATURE);
+        //    DoCast(me->getVictim(),SPELL_MARKOFNATURE);
         //    MarkOfNature_Timer = 45000;
         //} else MarkOfNature_Timer -= diff;
 
         //VolatileInfection_Timer
         if (VolatileInfection_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_VOLATILEINFECTION);
+            DoCast(me->getVictim(),SPELL_VOLATILEINFECTION);
             VolatileInfection_Timer = 7000 + rand()%5000;
         } else VolatileInfection_Timer -= diff;
 
         //CorruptionofEarth_Timer
-        if ((int) (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() +0.5) == 75)
+        if ((int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 75)
         {
             if (CorruptionofEarth1_Timer < diff)
             {
-                DoCast(m_creature->getVictim(),SPELL_CORRUPTIONOFEARTH);
+                DoCast(me->getVictim(),SPELL_CORRUPTIONOFEARTH);
 
                 //1 minutes for next one. Means not again with this health value
                 CorruptionofEarth1_Timer = 60000;
@@ -115,11 +115,11 @@ struct OREGON_DLL_DECL boss_emerissAI : public ScriptedAI
         }
 
         //CorruptionofEarth_Timer
-        if ((int) (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() +0.5) == 50)
+        if ((int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 50)
         {
             if (CorruptionofEarth2_Timer < diff)
             {
-                DoCast(m_creature->getVictim(),SPELL_CORRUPTIONOFEARTH);
+                DoCast(me->getVictim(),SPELL_CORRUPTIONOFEARTH);
 
                 //1 minutes for next one. Means not again with this health value
                 CorruptionofEarth2_Timer = 60000;
@@ -127,11 +127,11 @@ struct OREGON_DLL_DECL boss_emerissAI : public ScriptedAI
         }
 
         //CorruptionofEarth_Timer
-        if ((int) (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() +0.5) == 25)
+        if ((int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 25)
         {
             if (CorruptionofEarth3_Timer < diff)
             {
-                DoCast(m_creature->getVictim(),SPELL_CORRUPTIONOFEARTH);
+                DoCast(me->getVictim(),SPELL_CORRUPTIONOFEARTH);
 
                 //1 minutes for next one. Means not again with this health value
                 CorruptionofEarth3_Timer = 60000;

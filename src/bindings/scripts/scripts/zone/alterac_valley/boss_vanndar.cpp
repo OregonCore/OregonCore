@@ -65,7 +65,7 @@ struct OREGON_DLL_DECL boss_vanndarAI : public ScriptedAI
 
     void Aggro(Unit *who)
     {
-        DoScriptText(YELL_AGGRO, m_creature);
+        DoScriptText(YELL_AGGRO, me);
     }
 
     void JustRespawned()
@@ -73,8 +73,8 @@ struct OREGON_DLL_DECL boss_vanndarAI : public ScriptedAI
         Reset();
     switch(rand()%1)
             {
-                case 0: DoScriptText(YELL_RESPAWN1, m_creature); break;
-                case 1: DoScriptText(YELL_RESPAWN2, m_creature); break;
+                case 0: DoScriptText(YELL_RESPAWN1, me); break;
+                case 1: DoScriptText(YELL_RESPAWN2, me); break;
             }
     }
 
@@ -89,32 +89,32 @@ struct OREGON_DLL_DECL boss_vanndarAI : public ScriptedAI
 
         if (AvatarTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_AVATAR);
+            DoCast(me->getVictim(), SPELL_AVATAR);
             AvatarTimer =  (15+rand()%5)*1000;
         } else AvatarTimer -= diff;
 
         if (ThunderclapTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_THUNDERCLAP);
+            DoCast(me->getVictim(), SPELL_THUNDERCLAP);
             ThunderclapTimer = (5+rand()%10)*1000;
         } else ThunderclapTimer -= diff;
 
         if (StormboltTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_STORMBOLT);
+            DoCast(me->getVictim(), SPELL_STORMBOLT);
             StormboltTimer = (10+rand()%15)*1000;
         } else StormboltTimer -= diff;
 
         if (YellTimer < diff) {
             switch(rand()%6)
             {
-                case 0: DoScriptText(YELL_RANDOM1, m_creature); break;
-                case 1: DoScriptText(YELL_RANDOM2, m_creature); break;
-                case 2: DoScriptText(YELL_RANDOM3, m_creature); break;
-                case 3: DoScriptText(YELL_RANDOM4, m_creature); break;
-                case 4: DoScriptText(YELL_RANDOM5, m_creature); break;
-                case 5: DoScriptText(YELL_RANDOM6, m_creature); break;
-                case 6: DoScriptText(YELL_RANDOM7, m_creature); break;
+                case 0: DoScriptText(YELL_RANDOM1, me); break;
+                case 1: DoScriptText(YELL_RANDOM2, me); break;
+                case 2: DoScriptText(YELL_RANDOM3, me); break;
+                case 3: DoScriptText(YELL_RANDOM4, me); break;
+                case 4: DoScriptText(YELL_RANDOM5, me); break;
+                case 5: DoScriptText(YELL_RANDOM6, me); break;
+                case 6: DoScriptText(YELL_RANDOM7, me); break;
             }
         YellTimer = (20+rand()%10)*1000; //20 to 30 seconds
         } else YellTimer -= diff;
@@ -123,10 +123,10 @@ struct OREGON_DLL_DECL boss_vanndarAI : public ScriptedAI
         if (ResetTimer < diff)
         {
             float x, y, z;
-            m_creature->GetPosition(x, y, z);
+            me->GetPosition(x, y, z);
             if (x < 678)
         {
-            DoScriptText(YELL_EVADE, m_creature);
+            DoScriptText(YELL_EVADE, me);
                 EnterEvadeMode();
         }
             ResetTimer = 5000;

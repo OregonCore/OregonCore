@@ -114,7 +114,7 @@ struct OREGON_DLL_DECL netherspite_infernalAI : public ScriptedAI
         if (HellfireTimer)
             if (HellfireTimer <= diff)
         {
-            DoCast(m_creature, SPELL_HELLFIRE);
+            DoCast(me, SPELL_HELLFIRE);
             HellfireTimer = 0;
         }
         else HellfireTimer -= diff;
@@ -129,7 +129,7 @@ struct OREGON_DLL_DECL netherspite_infernalAI : public ScriptedAI
 
     void KilledUnit(Unit *who)
     {
-        Unit *pMalchezaar = Unit::GetUnit(*m_creature, malchezaar);
+        Unit *pMalchezaar = Unit::GetUnit(*me, malchezaar);
         if (pMalchezaar)
             ((Creature*)pMalchezaar)->AI()->KilledUnit(who);
     }
@@ -138,8 +138,8 @@ struct OREGON_DLL_DECL netherspite_infernalAI : public ScriptedAI
     {
         if (spell->Id == SPELL_INFERNAL_RELAY)
         {
-            m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID, m_creature->GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID));
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->SetUInt32Value(UNIT_FIELD_DISPLAYID, me->GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID));
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             HellfireTimer = 4000;
             CleanupTimer = 170000;
         }
@@ -206,7 +206,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
 
         if (pInstance)
         {
-            GameObject* Door = GameObject::GetGameObject((*m_creature),pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR));
+            GameObject* Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR));
             if (Door)
             {
                 Door->SetGoState(GO_STATE_ACTIVE);
@@ -218,15 +218,15 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-        case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-        case 1: DoScriptText(SAY_SLAY2, m_creature); break;
-        case 2: DoScriptText(SAY_SLAY3, m_creature); break;
+        case 0: DoScriptText(SAY_SLAY1, me); break;
+        case 1: DoScriptText(SAY_SLAY2, me); break;
+        case 2: DoScriptText(SAY_SLAY3, me); break;
         }
     }
 
     void JustDied(Unit *victim)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
         AxesCleanup();
         ClearWeapons();
@@ -238,7 +238,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
 
         if (pInstance)
         {
-            GameObject* Door = GameObject::GetGameObject((*m_creature),pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR));
+            GameObject* Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR));
             if (Door)
             {
                 Door->SetGoState(GO_STATE_ACTIVE);
@@ -248,11 +248,11 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
 
         if (pInstance)
         {
-            GameObject* Door = GameObject::GetGameObject((*m_creature),pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR));
+            GameObject* Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR));
             if (Door)
             {
                 Door->SetGoState(GO_STATE_READY);
@@ -265,7 +265,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
         //Infernal Cleanup
         for (std::vector<uint64>::iterator itr = infernals.begin(); itr != infernals.end(); ++itr)
         {
-            Unit *pInfernal = Unit::GetUnit(*m_creature, *itr);
+            Unit *pInfernal = Unit::GetUnit(*me, *itr);
             if (pInfernal && pInfernal->isAlive())
             {
                 pInfernal->SetVisibility(VISIBILITY_OFF);
@@ -279,7 +279,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
     {
         for (int i=0; i<2;++i)
         {
-            Unit *axe = Unit::GetUnit(*m_creature, axes[i]);
+            Unit *axe = Unit::GetUnit(*me, axes[i]);
             if (axe && axe->isAlive())
                 axe->DealDamage(axe, axe->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             axes[i] = 0;
@@ -288,17 +288,17 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
 
     void ClearWeapons()
     {
-        m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
-        m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, 0);
+        me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
+        me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, 0);
 
-        m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, 0);
-        m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO+2, 0);
+        me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, 0);
+        me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO+2, 0);
 
         //damage
-        const CreatureInfo *cinfo = m_creature->GetCreatureInfo();
-        m_creature->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, cinfo->mindmg);
-        m_creature->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, cinfo->maxdmg);
-        m_creature->UpdateDamagePhysical(BASE_ATTACK);
+        const CreatureInfo *cinfo = me->GetCreatureInfo();
+        me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, cinfo->mindmg);
+        me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, cinfo->maxdmg);
+        me->UpdateDamagePhysical(BASE_ATTACK);
     }
 
     void EnfeebleHealthEffect()
@@ -307,7 +307,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
         if (!info)
             return;
 
-        std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
+        std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
         std::vector<Unit *> targets;
 
         if (!t_list.size())
@@ -318,7 +318,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
         std::advance(itr, 1);
         for (; itr != t_list.end(); ++itr)                   //store the threat list in a different container
         {
-            Unit *pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+            Unit *pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
                                                             //only on alive players
             if (pTarget && pTarget->isAlive() && pTarget->GetTypeId() == TYPEID_PLAYER)
                 targets.push_back(pTarget);
@@ -337,7 +337,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
                 enfeeble_targets[i] = pTarget->GetGUID();
                 enfeeble_health[i] = pTarget->GetHealth();
 
-                pTarget->CastSpell(pTarget, SPELL_ENFEEBLE, true, 0, 0, m_creature->GetGUID());
+                pTarget->CastSpell(pTarget, SPELL_ENFEEBLE, true, 0, 0, me->GetGUID());
                 pTarget->SetHealth(1);
             }
         }
@@ -348,7 +348,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
     {
         for (int i = 0; i < 5; ++i)
         {
-            Unit *pTarget = Unit::GetUnit(*m_creature, enfeeble_targets[i]);
+            Unit *pTarget = Unit::GetUnit(*me, enfeeble_targets[i]);
             if (pTarget && pTarget->isAlive())
                 pTarget->SetHealth(enfeeble_health[i]);
             enfeeble_targets[i] = 0;
@@ -360,9 +360,9 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
     {
         InfernalPoint *point = NULL;
         float posX,posY,posZ;
-        if ((m_creature->GetMapId() != 532) || positions.empty())
+        if ((me->GetMapId() != 532) || positions.empty())
         {
-            m_creature->GetRandomPoint(m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ(), 60, posX, posY, posZ);
+            me->GetRandomPoint(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 60, posX, posY, posZ);
         }
         else
         {
@@ -375,15 +375,15 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
             posZ = INFERNAL_Z;
         }
 
-        Creature *Infernal = m_creature->SummonCreature(NETHERSPITE_INFERNAL, posX, posY, posZ, 0, TEMPSUMMON_TIMED_DESPAWN, 180000);
+        Creature *Infernal = me->SummonCreature(NETHERSPITE_INFERNAL, posX, posY, posZ, 0, TEMPSUMMON_TIMED_DESPAWN, 180000);
 
         if (Infernal)
         {
             Infernal->SetUInt32Value(UNIT_FIELD_DISPLAYID, INFERNAL_MODEL_INVISIBLE);
-            Infernal->setFaction(m_creature->getFaction());
+            Infernal->setFaction(me->getFaction());
             if (point)
                 ((netherspite_infernalAI*)Infernal->AI())->point=point;
-            ((netherspite_infernalAI*)Infernal->AI())->malchezaar=m_creature->GetGUID();
+            ((netherspite_infernalAI*)Infernal->AI())->malchezaar=me->GetGUID();
 
             infernals.push_back(Infernal->GetGUID());
             DoCast(Infernal, SPELL_INFERNAL_RELAY);
@@ -391,8 +391,8 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
 
         switch(rand()%2)
         {
-        case 0: DoScriptText(SAY_SUMMON1, m_creature); break;
-        case 1: DoScriptText(SAY_SUMMON2, m_creature); break;
+        case 0: DoScriptText(SAY_SUMMON1, me); break;
+        case 1: DoScriptText(SAY_SUMMON2, me); break;
         }
     }
 
@@ -408,54 +408,54 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
             EnfeebleResetTimer=0;
         } else EnfeebleResetTimer -= diff;
 
-        if (m_creature->hasUnitState(UNIT_STAT_STUNNED))     //While shifting to phase 2 malchezaar stuns himself
+        if (me->hasUnitState(UNIT_STAT_STUNNED))     //While shifting to phase 2 malchezaar stuns himself
             return;
 
-        if (m_creature->GetUInt64Value(UNIT_FIELD_TARGET) != m_creature->getVictim()->GetGUID())
-            m_creature->SetUInt64Value(UNIT_FIELD_TARGET, m_creature->getVictim()->GetGUID());
+        if (me->GetUInt64Value(UNIT_FIELD_TARGET) != me->getVictim()->GetGUID())
+            me->SetUInt64Value(UNIT_FIELD_TARGET, me->getVictim()->GetGUID());
 
         if (phase == 1)
         {
-            if ((m_creature->GetHealth()*100) / m_creature->GetMaxHealth() < 60)
+            if ((me->GetHealth()*100) / me->GetMaxHealth() < 60)
             {
-                m_creature->InterruptNonMeleeSpells(false);
+                me->InterruptNonMeleeSpells(false);
 
                 phase = 2;
 
                 //animation
-                DoCast(m_creature, SPELL_EQUIP_AXES);
+                DoCast(me, SPELL_EQUIP_AXES);
 
                 //text
-                DoScriptText(SAY_AXE_TOSS1, m_creature);
+                DoScriptText(SAY_AXE_TOSS1, me);
 
                 //passive thrash aura
-                m_creature->CastSpell(m_creature, SPELL_THRASH_AURA, true);
+                me->CastSpell(me, SPELL_THRASH_AURA, true);
 
                 //models
-                m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, AXE_EQUIP_MODEL);
-                m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, AXE_EQUIP_INFO);
+                me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, AXE_EQUIP_MODEL);
+                me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, AXE_EQUIP_INFO);
 
-                m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, AXE_EQUIP_MODEL);
-                m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO+2, AXE_EQUIP_INFO);
+                me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, AXE_EQUIP_MODEL);
+                me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO+2, AXE_EQUIP_INFO);
 
                 //damage
-                const CreatureInfo *cinfo = m_creature->GetCreatureInfo();
-                m_creature->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, 2*cinfo->mindmg);
-                m_creature->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, 2*cinfo->maxdmg);
-                m_creature->UpdateDamagePhysical(BASE_ATTACK);
+                const CreatureInfo *cinfo = me->GetCreatureInfo();
+                me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, 2*cinfo->mindmg);
+                me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, 2*cinfo->maxdmg);
+                me->UpdateDamagePhysical(BASE_ATTACK);
 
-                m_creature->SetBaseWeaponDamage(OFF_ATTACK, MINDAMAGE, cinfo->mindmg);
-                m_creature->SetBaseWeaponDamage(OFF_ATTACK, MAXDAMAGE, cinfo->maxdmg);
+                me->SetBaseWeaponDamage(OFF_ATTACK, MINDAMAGE, cinfo->mindmg);
+                me->SetBaseWeaponDamage(OFF_ATTACK, MAXDAMAGE, cinfo->maxdmg);
                 //Sigh, updating only works on main attack , do it manually ....
-                m_creature->SetFloatValue(UNIT_FIELD_MINOFFHANDDAMAGE, cinfo->mindmg);
-                m_creature->SetFloatValue(UNIT_FIELD_MAXOFFHANDDAMAGE, cinfo->maxdmg);
+                me->SetFloatValue(UNIT_FIELD_MINOFFHANDDAMAGE, cinfo->mindmg);
+                me->SetFloatValue(UNIT_FIELD_MAXOFFHANDDAMAGE, cinfo->maxdmg);
 
-                m_creature->SetAttackTime(OFF_ATTACK, (m_creature->GetAttackTime(BASE_ATTACK)*150)/100);
+                me->SetAttackTime(OFF_ATTACK, (me->GetAttackTime(BASE_ATTACK)*150)/100);
             }
         }
         else if (phase == 2)
         {
-            if ((m_creature->GetHealth()*100) / m_creature->GetMaxHealth() < 30)
+            if ((me->GetHealth()*100) / me->GetMaxHealth() < 30)
             {
                 InfernalTimer = 15000;
 
@@ -464,21 +464,21 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
                 ClearWeapons();
 
                 //remove thrash
-                m_creature->RemoveAurasDueToSpell(SPELL_THRASH_AURA);
+                me->RemoveAurasDueToSpell(SPELL_THRASH_AURA);
 
-                DoScriptText(SAY_AXE_TOSS2, m_creature);
+                DoScriptText(SAY_AXE_TOSS2, me);
 
                 Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 for (uint32 i=0; i<2; ++i)
                 {
-                    Creature *axe = m_creature->SummonCreature(MALCHEZARS_AXE, m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 1000);
+                    Creature *axe = me->SummonCreature(MALCHEZARS_AXE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 1000);
                     if (axe)
                     {
                         axe->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, AXE_EQUIP_MODEL);
                         axe->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, AXE_EQUIP_INFO);
 
                         axe->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                        axe->setFaction(m_creature->getFaction());
+                        axe->setFaction(me->getFaction());
                         axes[i] = axe->GetGUID();
                         if (pTarget)
                         {
@@ -498,7 +498,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
 
             if (SunderArmorTimer < diff)
             {
-                DoCast(m_creature->getVictim(), SPELL_SUNDER_ARMOR);
+                DoCast(me->getVictim(), SPELL_SUNDER_ARMOR);
                 SunderArmorTimer = 15000;
 
             } else SunderArmorTimer -= diff;
@@ -514,7 +514,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
                 {
                     for (int i = 0; i < 2; ++i)
                     {
-                        Unit *axe = Unit::GetUnit(*m_creature, axes[i]);
+                        Unit *axe = Unit::GetUnit(*me, axes[i]);
                         if (axe)
                         {
                             float threat = 1000000.0f;
@@ -548,7 +548,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
 
         if (ShadowNovaTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_SHADOWNOVA);
+            DoCast(me->getVictim(), SPELL_SHADOWNOVA);
             ShadowNovaTimer = phase == 3 ? 35000 : -1;
         } else ShadowNovaTimer -= diff;
 
@@ -558,7 +558,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
             {
                 Unit *pTarget = NULL;
                 if (phase == 1)
-                    pTarget = m_creature->getVictim();       // the tank
+                    pTarget = me->getVictim();       // the tank
                 else                                        //anyone but the tank
                     pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
 
@@ -588,19 +588,19 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
 
     void DoMeleeAttacksIfReady()
     {
-        if (m_creature->IsWithinMeleeRange(m_creature->getVictim()) && !m_creature->IsNonMeleeSpellCasted(false))
+        if (me->IsWithinMeleeRange(me->getVictim()) && !me->IsNonMeleeSpellCasted(false))
         {
             //Check for base attack
-            if (m_creature->isAttackReady() && m_creature->getVictim())
+            if (me->isAttackReady() && me->getVictim())
             {
-                m_creature->AttackerStateUpdate(m_creature->getVictim());
-                m_creature->resetAttackTimer();
+                me->AttackerStateUpdate(me->getVictim());
+                me->resetAttackTimer();
             }
             //Check for offhand attack
-            if (m_creature->isAttackReady(OFF_ATTACK) && m_creature->getVictim())
+            if (me->isAttackReady(OFF_ATTACK) && me->getVictim())
             {
-                m_creature->AttackerStateUpdate(m_creature->getVictim(), OFF_ATTACK);
-                m_creature->resetAttackTimer(OFF_ATTACK);
+                me->AttackerStateUpdate(me->getVictim(), OFF_ATTACK);
+                me->resetAttackTimer(OFF_ATTACK);
             }
         }
     }
@@ -620,10 +620,10 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
 
 void netherspite_infernalAI::Cleanup()
 {
-    Unit *pMalchezaar = Unit::GetUnit(*m_creature, malchezaar);
+    Unit *pMalchezaar = Unit::GetUnit(*me, malchezaar);
 
     if (pMalchezaar && pMalchezaar->isAlive())
-        ((boss_malchezaarAI*)((Creature*)pMalchezaar)->AI())->Cleanup(m_creature, point);
+        ((boss_malchezaarAI*)((Creature*)pMalchezaar)->AI())->Cleanup(me, point);
 }
 
 CreatureAI* GetAI_netherspite_infernal(Creature *_Creature)

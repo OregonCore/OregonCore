@@ -59,23 +59,23 @@ struct OREGON_DLL_DECL boss_patchwerkAI : public ScriptedAI
         if (rand()%5)
             return;
 
-        DoScriptText(SAY_SLAY, m_creature);
+        DoScriptText(SAY_SLAY, me);
     }
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
     }
 
     void EnterCombat(Unit *who)
     {
         if (rand()%2)
         {
-             DoScriptText(SAY_AGGRO1, m_creature);
+             DoScriptText(SAY_AGGRO1, me);
         }
         else
         {
-           DoScriptText(SAY_AGGRO2, m_creature);
+           DoScriptText(SAY_AGGRO2, me);
         }
     }
 
@@ -92,13 +92,13 @@ struct OREGON_DLL_DECL boss_patchwerkAI : public ScriptedAI
             uint32 MostHP = 0;
             Unit* pMostHPTarget = NULL;
             Unit* pTemp = NULL;
-            std::list<HostileReference*>::iterator i = m_creature->getThreatManager().getThreatList().begin();
+            std::list<HostileReference*>::iterator i = me->getThreatManager().getThreatList().begin();
 
-            for (i = m_creature->getThreatManager().getThreatList().begin(); i != m_creature->getThreatManager().getThreatList().end();)
+            for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end();)
             {
-                pTemp = Unit::GetUnit((*m_creature),(*i)->getUnitGuid());
+                pTemp = Unit::GetUnit((*me),(*i)->getUnitGuid());
                 ++i;
-                if (pTemp && pTemp->isAlive() && pTemp->GetHealth() > MostHP && m_creature->GetDistance2d(pTemp) < 5)
+                if (pTemp && pTemp->isAlive() && pTemp->GetHealth() > MostHP && me->GetDistance2d(pTemp) < 5)
                 {
                     MostHP = pTemp->GetHealth();
                     pMostHPTarget = pTemp;
@@ -114,8 +114,8 @@ struct OREGON_DLL_DECL boss_patchwerkAI : public ScriptedAI
         //Enrage_Timer
         if (Enrage_Timer < diff)
         {
-            DoCast(m_creature, SPELL_BERSERK);
-             DoScriptText(EMOTE_BERSERK, m_creature);
+            DoCast(me, SPELL_BERSERK);
+             DoScriptText(EMOTE_BERSERK, me);
 
             Enrage_Timer = 300000;
         } else Enrage_Timer -= diff;
@@ -123,14 +123,14 @@ struct OREGON_DLL_DECL boss_patchwerkAI : public ScriptedAI
         //Slimebolt_Timer
         if (Slimebolt_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_SLIMEBOLT);
+            DoCast(me->getVictim(),SPELL_SLIMEBOLT);
             Slimebolt_Timer = 5000;
         } else Slimebolt_Timer -= diff;
 
         //Enrage if not already enraged and below 5%
-        if (!Enraged && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 5)
+        if (!Enraged && (me->GetHealth()*100 / me->GetMaxHealth()) < 5)
         {
-            DoCast(m_creature,SPELL_ENRAGE);
+            DoCast(me,SPELL_ENRAGE);
             DoScriptText(EMOTE_ENRAGE,NULL);
             Enraged = true;
         }

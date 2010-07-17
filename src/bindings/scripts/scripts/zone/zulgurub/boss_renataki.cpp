@@ -64,12 +64,12 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
         //Invisible_Timer
         if (Invisible_Timer < diff)
         {
-            m_creature->InterruptSpell(CURRENT_GENERIC_SPELL);
-            m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
-            m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO , 218171138);
-            m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO  + 1, 3);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID,11686);
+            me->InterruptSpell(CURRENT_GENERIC_SPELL);
+            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
+            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO , 218171138);
+            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO  + 1, 3);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->SetUInt32Value(UNIT_FIELD_DISPLAYID,11686);
             Invisible = true;
 
             Invisible_Timer = 15000 + rand()%15000;
@@ -96,13 +96,13 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
         {
             if (Visible_Timer < diff)
             {
-                m_creature->InterruptSpell(CURRENT_GENERIC_SPELL);
-                m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID,15268);
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 31818);
-                m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO , 218171138);
-                m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO  + 1, 3);
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                me->InterruptSpell(CURRENT_GENERIC_SPELL);
+                me->SetUInt32Value(UNIT_FIELD_DISPLAYID,15268);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 31818);
+                me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO , 218171138);
+                me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO  + 1, 3);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 Invisible = false;
 
                 Visible_Timer = 4000;
@@ -116,8 +116,8 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
 
-            if (DoGetThreat(m_creature->getVictim()))
-                DoModifyThreatPercent(m_creature->getVictim(),-50);
+            if (DoGetThreat(me->getVictim()))
+                DoModifyThreatPercent(me->getVictim(),-50);
 
             if (pTarget)
                 AttackStart(pTarget);
@@ -128,7 +128,7 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
         if (!Invisible)
             if (ThousandBlades_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_THOUSANDBLADES);
+            DoCast(me->getVictim(), SPELL_THOUSANDBLADES);
             ThousandBlades_Timer = 7000 + rand()%5000;
         } else ThousandBlades_Timer -= diff;
 

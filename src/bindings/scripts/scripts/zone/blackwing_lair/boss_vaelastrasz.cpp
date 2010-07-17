@@ -73,8 +73,8 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
         HasYelled = false;
         DoingSpeach = false;
 
-        m_creature->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-        m_creature->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
+        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
+        me->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
     }
 
     void BeginSpeach(Unit *pTarget)
@@ -83,13 +83,13 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
         PlayerGUID = pTarget->GetGUID();
 
         //10 seconds
-        DoScriptText(SAY_LINE1, m_creature);
+        DoScriptText(SAY_LINE1, me);
 
         SpeachTimer = 10000;
         SpeachNum = 0;
         DoingSpeach = true;
 
-        m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+        me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
     }
 
     void KilledUnit(Unit *victim)
@@ -97,14 +97,14 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
         if (rand()%5)
             return;
 
-        DoScriptText(SAY_KILLTARGET, m_creature, victim);
+        DoScriptText(SAY_KILLTARGET, me, victim);
     }
 
     void EnterCombat(Unit *who)
     {
-        DoCast(m_creature,SPELL_ESSENCEOFTHERED);
+        DoCast(me,SPELL_ESSENCEOFTHERED);
         DoZoneInCombat();
-        m_creature->SetHealth(int(m_creature->GetMaxHealth()*.3));
+        me->SetHealth(int(me->GetMaxHealth()*.3));
     }
 
     void UpdateAI(const uint32 diff)
@@ -118,22 +118,22 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
                 {
                     case 0:
                         //16 seconds till next line
-                        DoScriptText(SAY_LINE2, m_creature);
+                        DoScriptText(SAY_LINE2, me);
                         SpeachTimer = 16000;
                         SpeachNum++;
                         break;
                     case 1:
                         //This one is actually 16 seconds but we only go to 10 seconds because he starts attacking after he says "I must fight this!"
-                        DoScriptText(SAY_LINE3, m_creature);
+                        DoScriptText(SAY_LINE3, me);
                         SpeachTimer = 10000;
                         SpeachNum++;
                         break;
                     case 2:
-                        m_creature->setFaction(103);
-                        if (PlayerGUID && Unit::GetUnit((*m_creature),PlayerGUID))
+                        me->setFaction(103);
+                        if (PlayerGUID && Unit::GetUnit((*me),PlayerGUID))
                         {
-                            AttackStart(Unit::GetUnit((*m_creature),PlayerGUID));
-                            DoCast(m_creature,SPELL_ESSENCEOFTHERED);
+                            AttackStart(Unit::GetUnit((*me),PlayerGUID));
+                            DoCast(me,SPELL_ESSENCEOFTHERED);
                         }
                         SpeachTimer = 0;
                         DoingSpeach = false;
@@ -147,23 +147,23 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
             return;
 
         // Yell if hp lower than 15%
-        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 15 && !HasYelled)
+        if (me->GetHealth()*100 / me->GetMaxHealth() < 15 && !HasYelled)
         {
-            DoScriptText(SAY_HALFLIFE, m_creature);
+            DoScriptText(SAY_HALFLIFE, me);
             HasYelled = true;
         }
 
         //Cleave_Timer
         if (Cleave_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_CLEAVE);
+            DoCast(me->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 15000;
         } else Cleave_Timer -= diff;
 
         //FlameBreath_Timer
         if (FlameBreath_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_FLAMEBREATH);
+            DoCast(me->getVictim(),SPELL_FLAMEBREATH);
             FlameBreath_Timer = 4000 + rand()%4000;
         } else FlameBreath_Timer -= diff;
 
@@ -192,7 +192,7 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
         {
             // have the victim cast the spell on himself otherwise the third effect aura will be applied
             // to Vael instead of the player
-            m_creature->getVictim()->CastSpell(m_creature->getVictim(),SPELL_BURNINGADRENALINE,1);
+            me->getVictim()->CastSpell(me->getVictim(),SPELL_BURNINGADRENALINE,1);
 
             BurningAdrenalineTank_Timer = 45000;
         } else BurningAdrenalineTank_Timer -= diff;
@@ -200,7 +200,7 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
         //FireNova_Timer
         if (FireNova_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_FIRENOVA);
+            DoCast(me->getVictim(),SPELL_FIRENOVA);
             FireNova_Timer = 5000;
         } else FireNova_Timer -= diff;
 
@@ -208,9 +208,9 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
         if (TailSwipe_Timer < diff)
         {
             //Only cast if we are behind
-            /*if (!m_creature->HasInArc(M_PI, m_creature->getVictim()))
+            /*if (!me->HasInArc(M_PI, me->getVictim()))
             {
-            DoCast(m_creature->getVictim(),SPELL_TAILSWIPE);
+            DoCast(me->getVictim(),SPELL_TAILSWIPE);
             }*/
 
             TailSwipe_Timer = 20000;

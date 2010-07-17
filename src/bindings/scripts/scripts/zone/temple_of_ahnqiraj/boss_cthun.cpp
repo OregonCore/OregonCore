@@ -174,8 +174,8 @@ struct OREGON_DLL_DECL eye_of_cthunAI : public Scripted_NoMovementAI
         ClockWise = false;
 
         //Reset flags
-        m_creature->RemoveAurasDueToSpell(SPELL_RED_COLORATION);
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
+        me->RemoveAurasDueToSpell(SPELL_RED_COLORATION);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
 
         //Reset Phase
         if (pInst)
@@ -190,7 +190,7 @@ struct OREGON_DLL_DECL eye_of_cthunAI : public Scripted_NoMovementAI
     void SpawnEyeTentacle(float x, float y)
     {
         Creature* Spawned;
-        Spawned = (Creature*)m_creature->SummonCreature(MOB_EYE_TENTACLE,m_creature->GetPositionX()+x,m_creature->GetPositionY()+y,m_creature->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,500);
+        Spawned = (Creature*)me->SummonCreature(MOB_EYE_TENTACLE,me->GetPositionX()+x,me->GetPositionY()+y,me->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,500);
         if (Spawned)
         {
             Unit *pTarget;
@@ -223,11 +223,11 @@ struct OREGON_DLL_DECL eye_of_cthunAI : public Scripted_NoMovementAI
                     pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
                     if (pTarget)
                     {
-                        m_creature->InterruptNonMeleeSpells(false);
+                        me->InterruptNonMeleeSpells(false);
                         DoCast(pTarget,SPELL_GREEN_BEAM);
 
                         //Correctly update our target
-                        m_creature->SetUInt64Value(UNIT_FIELD_TARGET, pTarget->GetGUID());
+                        me->SetUInt64Value(UNIT_FIELD_TARGET, pTarget->GetGUID());
                     }
 
                     //Beam every 3 seconds
@@ -244,7 +244,7 @@ struct OREGON_DLL_DECL eye_of_cthunAI : public Scripted_NoMovementAI
                         Creature* Spawned = NULL;
 
                         //Spawn claw tentacle on the random target
-                        Spawned = (Creature*)m_creature->SummonCreature(MOB_CLAW_TENTACLE,pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,500);
+                        Spawned = (Creature*)me->SummonCreature(MOB_CLAW_TENTACLE,pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,500);
 
                         if (Spawned)
                             Spawned->AI()->AttackStart(pTarget);
@@ -279,7 +279,7 @@ struct OREGON_DLL_DECL eye_of_cthunAI : public Scripted_NoMovementAI
                     //Switch to Dark Beam
                     pInst->SetData(DATA_CTHUN_PHASE, 1);
 
-                    m_creature->InterruptNonMeleeSpells(false);
+                    me->InterruptNonMeleeSpells(false);
 
                     //Select random target for dark beam to start on
                     Unit *pTarget = NULL;
@@ -288,20 +288,20 @@ struct OREGON_DLL_DECL eye_of_cthunAI : public Scripted_NoMovementAI
                     if (pTarget)
                     {
                         //Correctly update our target
-                        m_creature->SetUInt64Value(UNIT_FIELD_TARGET, pTarget->GetGUID());
+                        me->SetUInt64Value(UNIT_FIELD_TARGET, pTarget->GetGUID());
 
                         //Face our target
-                        DarkGlareAngle = m_creature->GetAngle(pTarget);
+                        DarkGlareAngle = me->GetAngle(pTarget);
                         DarkGlareTickTimer = 1000;
                         DarkGlareTick = 0;
                         ClockWise = rand()%2;
                     }
 
                     //Add red coloration to C'thun
-                    DoCast(m_creature,SPELL_RED_COLORATION);
+                    DoCast(me,SPELL_RED_COLORATION);
 
                     //Freeze animation
-                    m_creature->setEmoteState(53);
+                    me->setEmoteState(53);
 
                     //Darkbeam for 35 seconds
                     PhaseTimer = 35000;
@@ -316,17 +316,17 @@ struct OREGON_DLL_DECL eye_of_cthunAI : public Scripted_NoMovementAI
                     if (DarkGlareTickTimer < diff)
                 {
                     //Remove any target
-                    m_creature->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+                    me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
 
                     //Set angle and cast
                     if (ClockWise)
-                        m_creature->SetOrientation(DarkGlareAngle + ((float)DarkGlareTick*PI/35));
-                    else m_creature->SetOrientation(DarkGlareAngle - ((float)DarkGlareTick*PI/35));
+                        me->SetOrientation(DarkGlareAngle + ((float)DarkGlareTick*PI/35));
+                    else me->SetOrientation(DarkGlareAngle - ((float)DarkGlareTick*PI/35));
 
-                    m_creature->StopMoving();
+                    me->StopMoving();
 
                     //Actual dark glare cast, maybe something missing here?
-                    m_creature->CastSpell(m_creature, SPELL_DARK_GLARE, false);
+                    me->CastSpell(me, SPELL_DARK_GLARE, false);
 
                     //Increase tick
                     DarkGlareTick++;
@@ -345,14 +345,14 @@ struct OREGON_DLL_DECL eye_of_cthunAI : public Scripted_NoMovementAI
                     EyeTentacleTimer = 45000;               //Always spawns 5 seconds before Dark Beam
                     ClawTentacleTimer = 12500;              //4 per Eye beam phase (unsure if they spawn durring Dark beam)
 
-                    m_creature->InterruptNonMeleeSpells(false);
+                    me->InterruptNonMeleeSpells(false);
 
                     //Remove Red coloration from c'thun
-                    m_creature->RemoveAurasDueToSpell(SPELL_RED_COLORATION);
+                    me->RemoveAurasDueToSpell(SPELL_RED_COLORATION);
 
                     //Freeze animation
-                    m_creature->setEmoteState(0);
-                    m_creature->SetUInt32Value(UNIT_FIELD_FLAGS, 0);
+                    me->setEmoteState(0);
+                    me->SetUInt32Value(UNIT_FIELD_FLAGS, 0);
 
                     //Eye Beam for 50 seconds
                     PhaseTimer = 50000;
@@ -363,14 +363,14 @@ struct OREGON_DLL_DECL eye_of_cthunAI : public Scripted_NoMovementAI
             case 2:
             {
                 //Remove any target
-                m_creature->SetUInt64Value(UNIT_FIELD_TARGET, 0);
-                m_creature->SetHealth(0);
+                me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+                me->SetHealth(0);
             }
 
             //Dead phase
             case 5:
             {
-                m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
+                me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
             }
         }
     }
@@ -387,30 +387,30 @@ struct OREGON_DLL_DECL eye_of_cthunAI : public Scripted_NoMovementAI
             case 1:
             {
                 //Only if it will kill
-                if (damage < m_creature->GetHealth())
+                if (damage < me->GetHealth())
                     return;
 
                 //Fake death in phase 0 or 1 (green beam or dark glare phase)
-                m_creature->InterruptNonMeleeSpells(false);
+                me->InterruptNonMeleeSpells(false);
 
                 //Remove Red coloration from c'thun
-                m_creature->RemoveAurasDueToSpell(SPELL_RED_COLORATION);
+                me->RemoveAurasDueToSpell(SPELL_RED_COLORATION);
 
                 //Reset to normal emote state and prevent select and attack
-                m_creature->setEmoteState(0);
-                m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
+                me->setEmoteState(0);
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
 
                 //Remove Target field
-                m_creature->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+                me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
 
                 //Death animation/respawning;
                 pInst->SetData(DATA_CTHUN_PHASE, 2);
 
-                m_creature->SetHealth(0);
+                me->SetHealth(0);
                 damage = 0;
 
-                m_creature->InterruptNonMeleeSpells(true);
-                m_creature->RemoveAllAuras();
+                me->InterruptNonMeleeSpells(true);
+                me->RemoveAllAuras();
             }
             break;
 
@@ -491,8 +491,8 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
         Stomach_Map.clear();
 
         //Reset flags
-        m_creature->RemoveAurasDueToSpell(SPELL_TRANSFORM);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
+        me->RemoveAurasDueToSpell(SPELL_TRANSFORM);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
 
         if (pInst)
             pInst->SetData(DATA_CTHUN_PHASE, 0);
@@ -506,7 +506,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
     void SpawnEyeTentacle(float x, float y)
     {
         Creature* Spawned;
-        Spawned = (Creature*)m_creature->SummonCreature(MOB_EYE_TENTACLE,m_creature->GetPositionX()+x,m_creature->GetPositionY()+y,m_creature->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,500);
+        Spawned = (Creature*)me->SummonCreature(MOB_EYE_TENTACLE,me->GetPositionX()+x,me->GetPositionY()+y,me->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,500);
         if (Spawned)
         {
             Unit *pTarget;
@@ -532,7 +532,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
         while (i != Stomach_Map.end())
         {
             //Check for valid player
-            Unit* pUnit = Unit::GetUnit(*m_creature, i->first);
+            Unit* pUnit = Unit::GetUnit(*me, i->first);
 
             //Only units out of stomach
             if (pUnit && i->second == false)
@@ -563,7 +563,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
             //WisperTimer
             if (WisperTimer < diff)
             {
-                Map *map = m_creature->GetMap();
+                Map *map = me->GetMap();
                 if (!map->IsDungeon()) return;
 
                 Map::PlayerList const &PlayerList = map->GetPlayers();
@@ -583,7 +583,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
             return;
         }
 
-        m_creature->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+        me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
 
         //No instance
         if (!pInst)
@@ -601,21 +601,21 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
                     pInst->SetData(DATA_CTHUN_PHASE, 3);
 
                     //Switch to c'thun model
-                    m_creature->InterruptNonMeleeSpells(false);
-                    DoCast(m_creature, SPELL_TRANSFORM, false);
-                    m_creature->SetHealth(m_creature->GetMaxHealth());
+                    me->InterruptNonMeleeSpells(false);
+                    DoCast(me, SPELL_TRANSFORM, false);
+                    me->SetHealth(me->GetMaxHealth());
 
-                    m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
+                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
 
                     //Emerging phase
-                    //AttackStart(Unit::GetUnit(*m_creature, HoldPlayer));
+                    //AttackStart(Unit::GetUnit(*me, HoldPlayer));
                     DoZoneInCombat();
 
                     //Place all units in threat list on outside of stomach
                     Stomach_Map.clear();
 
-                    std::list<HostileReference*>::iterator i = m_creature->getThreatManager().getThreatList().begin();
-                    for (; i != m_creature->getThreatManager().getThreatList().end(); ++i)
+                    std::list<HostileReference*>::iterator i = me->getThreatManager().getThreatList().begin();
+                    for (; i != me->getThreatManager().getThreatList().end(); ++i)
                     {
                         //Outside stomach
                         Stomach_Map[(*i)->getUnitGuid()] = false;
@@ -627,20 +627,20 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
                     Creature* Spawned;
 
                     //Spawn flesh tentacle
-                    Spawned = (Creature*)m_creature->SummonCreature(MOB_FLESH_TENTACLE, TENTACLE_POS1_X, TENTACLE_POS1_Y, TENTACLE_POS1_Z, TENTACLE_POS1_O, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                    Spawned = (Creature*)me->SummonCreature(MOB_FLESH_TENTACLE, TENTACLE_POS1_X, TENTACLE_POS1_Y, TENTACLE_POS1_Z, TENTACLE_POS1_O, TEMPSUMMON_CORPSE_DESPAWN, 0);
 
                     if (!Spawned)
                         FleshTentaclesKilled++;
                     else
-                        ((flesh_tentacleAI*)(Spawned->AI()))->SpawnedByCthun(m_creature->GetGUID());
+                        ((flesh_tentacleAI*)(Spawned->AI()))->SpawnedByCthun(me->GetGUID());
 
                     //Spawn flesh tentacle
-                    Spawned = (Creature*)m_creature->SummonCreature(MOB_FLESH_TENTACLE, TENTACLE_POS2_X, TENTACLE_POS2_Y, TENTACLE_POS2_Z, TENTACLE_POS2_O, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                    Spawned = (Creature*)me->SummonCreature(MOB_FLESH_TENTACLE, TENTACLE_POS2_X, TENTACLE_POS2_Y, TENTACLE_POS2_Z, TENTACLE_POS2_O, TEMPSUMMON_CORPSE_DESPAWN, 0);
 
                     if (!Spawned)
                         FleshTentaclesKilled++;
                     else
-                        ((flesh_tentacleAI*)(Spawned->AI()))->SpawnedByCthun(m_creature->GetGUID());
+                        ((flesh_tentacleAI*)(Spawned->AI()))->SpawnedByCthun(me->GetGUID());
 
                     PhaseTimer = 0;
                 } else PhaseTimer -= diff;
@@ -651,17 +651,17 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
             case 3:
             {
                 //Remove Target field
-                m_creature->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+                me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
 
                 //Weaken
                 if (FleshTentaclesKilled > 1)
                 {
                     pInst->SetData(DATA_CTHUN_PHASE, 4);
 
-                    DoScriptText(EMOTE_WEAKENED, m_creature);
+                    DoScriptText(EMOTE_WEAKENED, me);
                     PhaseTimer = 45000;
 
-                    DoCast(m_creature, SPELL_RED_COLORATION, true);
+                    DoCast(me, SPELL_RED_COLORATION, true);
 
                     UNORDERED_MAP<uint64, bool>::iterator i = Stomach_Map.begin();
 
@@ -669,13 +669,13 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
                     while (i != Stomach_Map.end())
                     {
                         //Check for valid player
-                        Unit* pUnit = Unit::GetUnit(*m_creature, i->first);
+                        Unit* pUnit = Unit::GetUnit(*me, i->first);
 
                         //Only move units in stomach
                         if (pUnit && i->second == true)
                         {
                             //Teleport each player out
-                            DoTeleportPlayer(pUnit, m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ()+10, rand()%6);
+                            DoTeleportPlayer(pUnit, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ()+10, rand()%6);
 
                             //Cast knockback on them
                             DoCast(pUnit, SPELL_EXIT_STOMACH_KNOCKBACK, true);
@@ -700,7 +700,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
                     while (i != Stomach_Map.end())
                     {
                         //Check for valid player
-                        Unit* pUnit = Unit::GetUnit(*m_creature, i->first);
+                        Unit* pUnit = Unit::GetUnit(*me, i->first);
 
                         //Only apply to units in stomach
                         if (pUnit && i->second == true)
@@ -712,7 +712,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
                             if (pUnit->GetDistance(KICK_X, KICK_Y, KICK_Z) < 15)
                             {
                                 //Teleport each player out
-                                DoTeleportPlayer(pUnit, m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ()+10, rand()%6);
+                                DoTeleportPlayer(pUnit, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ()+10, rand()%6);
 
                                 //Cast knockback on them
                                 DoCast(pUnit, SPELL_EXIT_STOMACH_KNOCKBACK, true);
@@ -740,7 +740,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
                         //Set target in stomach
                         Stomach_Map[pTarget->GetGUID()] = true;
                         pTarget->InterruptNonMeleeSpells(false);
-                        pTarget->CastSpell(pTarget, SPELL_MOUTH_TENTACLE, true, NULL, NULL, m_creature->GetGUID());
+                        pTarget->CastSpell(pTarget, SPELL_MOUTH_TENTACLE, true, NULL, NULL, me->GetGUID());
                         StomachEnterTarget = pTarget->GetGUID();
                         StomachEnterVisTimer = 3800;
                     }
@@ -752,7 +752,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
                     if (StomachEnterVisTimer <= diff)
                 {
                     //Check for valid player
-                    Unit* pUnit = Unit::GetUnit(*m_creature, StomachEnterTarget);
+                    Unit* pUnit = Unit::GetUnit(*me, StomachEnterTarget);
 
                     if (pUnit)
                     {
@@ -773,7 +773,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
                         Creature* Spawned = NULL;
 
                         //Spawn claw tentacle on the random target
-                        Spawned = (Creature*)m_creature->SummonCreature(MOB_GIANT_CLAW_TENTACLE,pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,500);
+                        Spawned = (Creature*)me->SummonCreature(MOB_GIANT_CLAW_TENTACLE,pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,500);
 
                         if (Spawned)
                             Spawned->AI()->AttackStart(pTarget);
@@ -794,7 +794,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
                         Creature* Spawned = NULL;
 
                         //Spawn claw tentacle on the random target
-                        Spawned = (Creature*)m_creature->SummonCreature(MOB_GIANT_EYE_TENTACLE,pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,500);
+                        Spawned = (Creature*)me->SummonCreature(MOB_GIANT_EYE_TENTACLE,pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,500);
 
                         if (Spawned)
                             Spawned->AI()->AttackStart(pTarget);
@@ -834,7 +834,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
                     pInst->SetData(DATA_CTHUN_PHASE, 3);
 
                     //Remove red coloration
-                    m_creature->RemoveAurasDueToSpell(SPELL_RED_COLORATION);
+                    me->RemoveAurasDueToSpell(SPELL_RED_COLORATION);
 
                     //Spawn 2 flesh tentacles
                     FleshTentaclesKilled = 0;
@@ -842,20 +842,20 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
                     Creature* Spawned;
 
                     //Spawn flesh tentacle
-                    Spawned = (Creature*)m_creature->SummonCreature(MOB_FLESH_TENTACLE, TENTACLE_POS1_X, TENTACLE_POS1_Y, TENTACLE_POS1_Z, TENTACLE_POS1_O, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                    Spawned = (Creature*)me->SummonCreature(MOB_FLESH_TENTACLE, TENTACLE_POS1_X, TENTACLE_POS1_Y, TENTACLE_POS1_Z, TENTACLE_POS1_O, TEMPSUMMON_CORPSE_DESPAWN, 0);
 
                     if (!Spawned)
                         FleshTentaclesKilled++;
                     else
-                        ((flesh_tentacleAI*)(Spawned->AI()))->SpawnedByCthun(m_creature->GetGUID());
+                        ((flesh_tentacleAI*)(Spawned->AI()))->SpawnedByCthun(me->GetGUID());
 
                     //Spawn flesh tentacle
-                    Spawned = (Creature*)m_creature->SummonCreature(MOB_FLESH_TENTACLE, TENTACLE_POS2_X, TENTACLE_POS2_Y, TENTACLE_POS2_Z, TENTACLE_POS2_O, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                    Spawned = (Creature*)me->SummonCreature(MOB_FLESH_TENTACLE, TENTACLE_POS2_X, TENTACLE_POS2_Y, TENTACLE_POS2_Z, TENTACLE_POS2_O, TEMPSUMMON_CORPSE_DESPAWN, 0);
 
                     if (!Spawned)
                         FleshTentaclesKilled++;
                     else
-                        ((flesh_tentacleAI*)(Spawned->AI()))->SpawnedByCthun(m_creature->GetGUID());
+                        ((flesh_tentacleAI*)(Spawned->AI()))->SpawnedByCthun(me->GetGUID());
 
                     PhaseTimer = 0;
                 } else PhaseTimer -= diff;
@@ -885,7 +885,7 @@ struct OREGON_DLL_DECL cthunAI : public Scripted_NoMovementAI
                 else damage = 1;
 
                 //Prevent death in non-weakened state
-                if (damage >= m_creature->GetHealth())
+                if (damage >= me->GetHealth())
                     damage = 0;
 
                 return;
@@ -925,7 +925,7 @@ struct OREGON_DLL_DECL eye_tentacleAI : public Scripted_NoMovementAI
 
     void JustDied(Unit*)
     {
-        Unit* p = Unit::GetUnit(*m_creature, Portal);
+        Unit* p = Unit::GetUnit(*me, Portal);
         if (p)
             p->DealDamage(p, p->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
     }
@@ -953,7 +953,7 @@ struct OREGON_DLL_DECL eye_tentacleAI : public Scripted_NoMovementAI
         //KillSelfTimer
         if (KillSelfTimer < diff)
         {
-            m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
+            me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
 
             return;
         } else KillSelfTimer -= diff;
@@ -988,7 +988,7 @@ struct OREGON_DLL_DECL claw_tentacleAI : public Scripted_NoMovementAI
 
     void JustDied(Unit*)
     {
-        Unit* p = Unit::GetUnit(*m_creature, Portal);
+        Unit* p = Unit::GetUnit(*me, Portal);
         if (p)
             p->DealDamage(p, p->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
     }
@@ -1013,27 +1013,27 @@ struct OREGON_DLL_DECL claw_tentacleAI : public Scripted_NoMovementAI
             return;
 
         //EvadeTimer
-        if (!m_creature->IsWithinMeleeRange(m_creature->getVictim()))
+        if (!me->IsWithinMeleeRange(me->getVictim()))
             if (EvadeTimer < diff)
         {
-            Unit* p = Unit::GetUnit(*m_creature, Portal);
+            Unit* p = Unit::GetUnit(*me, Portal);
             if (p)
-                p->DealDamage(p, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
+                p->DealDamage(p, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
 
             //Dissapear and reappear at new position
-            m_creature->SetVisibility(VISIBILITY_OFF);
+            me->SetVisibility(VISIBILITY_OFF);
 
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (!pTarget)
             {
-                m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
+                me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
                 return;
             }
 
             if (!pTarget->HasAura(SPELL_DIGESTIVE_ACID, 0))
             {
-                m_creature->GetMap()->CreatureRelocation(m_creature, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0);
+                me->GetMap()->CreatureRelocation(me, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0);
                 Unit* p = DoSpawnCreature(MOB_SMALL_PORTAL,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN, 0);
                 if (p)
                     Portal = p->GetGUID();
@@ -1044,21 +1044,21 @@ struct OREGON_DLL_DECL claw_tentacleAI : public Scripted_NoMovementAI
                 AttackStart(pTarget);
             }
 
-            m_creature->SetVisibility(VISIBILITY_ON);
+            me->SetVisibility(VISIBILITY_ON);
 
         } else EvadeTimer -= diff;
 
         //GroundRuptureTimer
         if (GroundRuptureTimer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_GROUND_RUPTURE);
+            DoCast(me->getVictim(),SPELL_GROUND_RUPTURE);
             GroundRuptureTimer = 30000;
         } else GroundRuptureTimer -= diff;
 
         //HamstringTimer
         if (HamstringTimer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_HAMSTRING);
+            DoCast(me->getVictim(),SPELL_HAMSTRING);
             HamstringTimer = 5000;
         } else HamstringTimer -= diff;
 
@@ -1083,7 +1083,7 @@ struct OREGON_DLL_DECL giant_claw_tentacleAI : public Scripted_NoMovementAI
 
     void JustDied(Unit*)
     {
-        Unit* p = Unit::GetUnit(*m_creature, Portal);
+        Unit* p = Unit::GetUnit(*me, Portal);
         if (p)
             p->DealDamage(p, p->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
     }
@@ -1109,27 +1109,27 @@ struct OREGON_DLL_DECL giant_claw_tentacleAI : public Scripted_NoMovementAI
             return;
 
         //EvadeTimer
-        if (!m_creature->IsWithinMeleeRange(m_creature->getVictim()))
+        if (!me->IsWithinMeleeRange(me->getVictim()))
             if (EvadeTimer < diff)
         {
-            Unit* p = Unit::GetUnit(*m_creature, Portal);
+            Unit* p = Unit::GetUnit(*me, Portal);
             if (p)
-                p->DealDamage(p, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
+                p->DealDamage(p, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
 
             //Dissapear and reappear at new position
-            m_creature->SetVisibility(VISIBILITY_OFF);
+            me->SetVisibility(VISIBILITY_OFF);
 
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (!pTarget)
             {
-                m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
+                me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
                 return;
             }
 
             if (!pTarget->HasAura(SPELL_DIGESTIVE_ACID, 0))
             {
-                m_creature->GetMap()->CreatureRelocation(m_creature, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0);
+                me->GetMap()->CreatureRelocation(me, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0);
                 Unit* p = DoSpawnCreature(MOB_GIANT_PORTAL,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN, 0);
                 if (p)
                     Portal = p->GetGUID();
@@ -1141,28 +1141,28 @@ struct OREGON_DLL_DECL giant_claw_tentacleAI : public Scripted_NoMovementAI
                 AttackStart(pTarget);
             }
 
-            m_creature->SetVisibility(VISIBILITY_ON);
+            me->SetVisibility(VISIBILITY_ON);
 
         } else EvadeTimer -= diff;
 
         //GroundRuptureTimer
         if (GroundRuptureTimer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_GROUND_RUPTURE);
+            DoCast(me->getVictim(),SPELL_GROUND_RUPTURE);
             GroundRuptureTimer = 30000;
         } else GroundRuptureTimer -= diff;
 
         //ThrashTimer
         if (ThrashTimer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_THRASH);
+            DoCast(me->getVictim(),SPELL_THRASH);
             ThrashTimer = 10000;
         } else ThrashTimer -= diff;
 
         //HamstringTimer
         if (HamstringTimer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_HAMSTRING);
+            DoCast(me->getVictim(),SPELL_HAMSTRING);
             HamstringTimer = 10000;
         } else HamstringTimer -= diff;
 
@@ -1184,7 +1184,7 @@ struct OREGON_DLL_DECL giant_eye_tentacleAI : public Scripted_NoMovementAI
 
     void JustDied(Unit*)
     {
-        Unit* p = Unit::GetUnit(*m_creature, Portal);
+        Unit* p = Unit::GetUnit(*me, Portal);
         if (p)
             p->DealDamage(p, p->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
     }
@@ -1230,12 +1230,12 @@ void flesh_tentacleAI::UpdateAI(const uint32 diff)
     if (Parent)
         if (CheckTimer < diff)
     {
-        Unit* pUnit = Unit::GetUnit(*m_creature, Parent);
+        Unit* pUnit = Unit::GetUnit(*me, Parent);
 
         if (!pUnit || !pUnit->isAlive() || !pUnit->isInCombat())
         {
             Parent = 0;
-            m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
+            me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
             return;
         }
 
@@ -1253,7 +1253,7 @@ void flesh_tentacleAI::JustDied(Unit* killer)
         return;
     }
 
-    Creature* Cthun = Unit::GetCreature(*m_creature, Parent);
+    Creature* Cthun = Unit::GetCreature(*me, Parent);
 
     if (Cthun)
         ((cthunAI*)(Cthun->AI()))->FleshTentcleKilled();

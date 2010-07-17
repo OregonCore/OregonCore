@@ -56,9 +56,9 @@ struct OREGON_DLL_DECL boss_the_makerAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, m_creature); break;
-            case 1: DoScriptText(SAY_AGGRO_2, m_creature); break;
-            case 2: DoScriptText(SAY_AGGRO_3, m_creature); break;
+            case 0: DoScriptText(SAY_AGGRO_1, me); break;
+            case 1: DoScriptText(SAY_AGGRO_2, me); break;
+            case 2: DoScriptText(SAY_AGGRO_3, me); break;
         }
     }
 
@@ -66,14 +66,14 @@ struct OREGON_DLL_DECL boss_the_makerAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-            case 0: DoScriptText(SAY_KILL_1, m_creature); break;
-            case 1: DoScriptText(SAY_KILL_2, m_creature); break;
+            case 0: DoScriptText(SAY_KILL_1, me); break;
+            case 1: DoScriptText(SAY_KILL_2, me); break;
         }
     }
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DIE, m_creature);
+        DoScriptText(SAY_DIE, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -83,7 +83,7 @@ struct OREGON_DLL_DECL boss_the_makerAI : public ScriptedAI
 
         if (AcidSpray_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_ACID_SPRAY);
+            DoCast(me->getVictim(),SPELL_ACID_SPRAY);
             AcidSpray_Timer = 15000+rand()%8000;
         } else AcidSpray_Timer -=diff;
 
@@ -108,7 +108,7 @@ struct OREGON_DLL_DECL boss_the_makerAI : public ScriptedAI
 
         if (Knockdown_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_KNOCKDOWN);
+            DoCast(me->getVictim(),SPELL_KNOCKDOWN);
             Knockdown_Timer = 4000+rand()%8000;
         } else Knockdown_Timer -=diff;
 

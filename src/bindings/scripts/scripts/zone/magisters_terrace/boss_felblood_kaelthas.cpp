@@ -131,7 +131,7 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
 
         if (pInstance)
         {
-            if (m_creature->isDead())
+            if (me->isDead())
                 pInstance->SetData(DATA_KAELTHAS_EVENT, DONE);
             else
                 pInstance->SetData(DATA_KAELTHAS_EVENT, NOT_STARTED);
@@ -154,20 +154,20 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
     void JustDied(Unit *killer)
     {
         RemoveGravityLapse();
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
         if (pInstance)
             pInstance->SetData(DATA_KAELTHAS_EVENT, DONE);
     }
 
     void DamageTaken(Unit* done_by, uint32 &damage)
     {
-        if (damage > m_creature->GetHealth())
+        if (damage > me->GetHealth())
             RemoveGravityLapse();                           // Remove Gravity Lapse so that players fall to ground if they kill him when in air.
     }
 
     void EnterCombat(Unit *who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
         if (pInstance)
             pInstance->SetData(DATA_KAELTHAS_EVENT, IN_PROGRESS);
     }
@@ -177,11 +177,11 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
         if (!SummonedUnit)
             return;
 
-        std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
+        std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
         std::list<HostileReference*>::iterator i = m_threatlist.begin();
         for (i = m_threatlist.begin(); i != m_threatlist.end(); i++)
         {
-            Unit* pUnit = Unit::GetUnit((*m_creature), (*i)->getUnitGuid());
+            Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
             if (pUnit && pUnit->isAlive())
             {
                 float threat = DoGetThreat(pUnit);
@@ -193,16 +193,16 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
     void EnterEvadeMode()
     {
         RemoveGravityLapse();
-        m_creature->InterruptNonMeleeSpells(true);
-        m_creature->RemoveAllAuras();
-        m_creature->DeleteThreatList();
-        m_creature->CombatStop(true);
-        m_creature->LoadCreaturesAddon();
+        me->InterruptNonMeleeSpells(true);
+        me->RemoveAllAuras();
+        me->DeleteThreatList();
+        me->CombatStop(true);
+        me->LoadCreaturesAddon();
 
-        if (m_creature->isAlive())
-            m_creature->GetMotionMaster()->MoveTargetedHome();
+        if (me->isAlive())
+            me->GetMotionMaster()->MoveTargetedHome();
 
-        m_creature->SetLootRecipient(NULL);
+        me->SetLootRecipient(NULL);
 
         Reset();
     }
@@ -210,8 +210,8 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
     void TeleportPlayersToSelf()
     {
         float x,y,z;
-        m_creature->Relocate(KaelLocations[0][0], KaelLocations[0][1], LOCATION_Z, 0);
-        Map *map = m_creature->GetMap();
+        me->Relocate(KaelLocations[0][0], KaelLocations[0][1], LOCATION_Z, 0);
+        Map *map = me->GetMap();
         Map::PlayerList const &PlayerList = map->GetPlayers();
         Map::PlayerList::const_iterator i;
         for (i = PlayerList.begin(); i != PlayerList.end(); ++i)
@@ -220,16 +220,16 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                 if (i_pl->isAlive())
                 {
                     i_pl->CastSpell(i_pl, SPELL_TELEPORT_CENTER, true);
-                    m_creature->GetNearPoint(m_creature,x,y,z,5,5,0);
-                    i_pl->TeleportTo(m_creature->GetMapId(),x,y,LOCATION_Z,i_pl->GetOrientation());
+                    me->GetNearPoint(me,x,y,z,5,5,0);
+                    i_pl->TeleportTo(me->GetMapId(),x,y,LOCATION_Z,i_pl->GetOrientation());
                 }
         }
-        DoCast(m_creature, SPELL_TELEPORT_CENTER, true);
+        DoCast(me, SPELL_TELEPORT_CENTER, true);
     }
 
     void CastGravityLapseKnockUp()
     {
-        Map *map = m_creature->GetMap();
+        Map *map = me->GetMap();
         Map::PlayerList const &PlayerList = map->GetPlayers();
         Map::PlayerList::const_iterator i;
         for (i = PlayerList.begin(); i != PlayerList.end(); ++i)
@@ -237,13 +237,13 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
             if (Player* i_pl = i->getSource())
                 if (i_pl->isAlive())
                 // Knockback into the air
-                    i_pl->CastSpell(i_pl, SPELL_GRAVITY_LAPSE_DOT, true, 0, 0, m_creature->GetGUID());
+                    i_pl->CastSpell(i_pl, SPELL_GRAVITY_LAPSE_DOT, true, 0, 0, me->GetGUID());
         }
     }
 
     void CastGravityLapseFly()                              // Use Fly Packet hack for now as players can't cast "fly" spells unless in map 530. Has to be done a while after they get knocked into the air...
     {
-        Map *map = m_creature->GetMap();
+        Map *map = me->GetMap();
         Map::PlayerList const &PlayerList = map->GetPlayers();
         Map::PlayerList::const_iterator i;
         for (i = PlayerList.begin(); i != PlayerList.end(); ++i)
@@ -253,7 +253,7 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                 if (i_pl->isAlive())
                 {
                     // Also needs an exception in spell system.
-                    i_pl->CastSpell(i_pl, SPELL_GRAVITY_LAPSE_FLY, true, 0, 0, m_creature->GetGUID());
+                    i_pl->CastSpell(i_pl, SPELL_GRAVITY_LAPSE_FLY, true, 0, 0, me->GetGUID());
                     // Use packet hack
                     WorldPacket data(12);
                     data.SetOpcode(SMSG_MOVE_SET_CAN_FLY);
@@ -268,7 +268,7 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
 
     void RemoveGravityLapse()
     {
-        Map *map = m_creature->GetMap();
+        Map *map = me->GetMap();
         Map::PlayerList const &PlayerList = map->GetPlayers();
         Map::PlayerList::const_iterator i;
         for (i = PlayerList.begin(); i != PlayerList.end(); ++i)
@@ -300,15 +300,15 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                 {
                     if (PyroblastTimer < diff)
                     {
-                        DoCast(m_creature, SPELL_SHOCK_BARRIER, true);
-                        DoCast(m_creature->getVictim(), SPELL_PYROBLAST);
+                        DoCast(me, SPELL_SHOCK_BARRIER, true);
+                        DoCast(me->getVictim(), SPELL_PYROBLAST);
                         PyroblastTimer = 60000;
                     } else PyroblastTimer -= diff;
                 }
 
                 if (FireballTimer < diff)
                 {
-                    DoCast(m_creature->getVictim(), Heroic ? SPELL_FIREBALL_HEROIC : SPELL_FIREBALL_NORMAL);
+                    DoCast(me->getVictim(), Heroic ? SPELL_FIREBALL_HEROIC : SPELL_FIREBALL_NORMAL);
                     FireballTimer = 2000 + rand()%4000;
                 } else FireballTimer -= diff;
 
@@ -317,7 +317,7 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                     uint32 random = rand()%2 + 1;
                     float x = KaelLocations[random][0];
                     float y = KaelLocations[random][1];
-                    Creature* Phoenix = m_creature->SummonCreature(CREATURE_PHOENIX, x, y, LOCATION_Z, 0, TEMPSUMMON_CORPSE_DESPAWN, 60000);
+                    Creature* Phoenix = me->SummonCreature(CREATURE_PHOENIX, x, y, LOCATION_Z, 0, TEMPSUMMON_CORPSE_DESPAWN, 60000);
                     if (Phoenix)
                     {
                         Phoenix->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE + UNIT_FLAG_NON_ATTACKABLE);
@@ -331,13 +331,13 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                         }
                         else
                         {
-                            Phoenix->AddThreat(m_creature->getVictim(),1000);
-                            Phoenix->Attack(m_creature->getVictim(),true);
-                            Phoenix->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                            Phoenix->AddThreat(me->getVictim(),1000);
+                            Phoenix->Attack(me->getVictim(),true);
+                            Phoenix->GetMotionMaster()->MoveChase(me->getVictim());
                         }
                     }
 
-                    DoScriptText(SAY_PHOENIX, m_creature);
+                    DoScriptText(SAY_PHOENIX, me);
 
                     PhoenixTimer = 40000;
                 } else PhoenixTimer -= diff;
@@ -346,21 +346,21 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                 {
                     if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     {
-                        m_creature->InterruptNonMeleeSpells(false);
+                        me->InterruptNonMeleeSpells(false);
                         DoCast(pTarget, SPELL_FLAMESTRIKE3, true);
-                        DoScriptText(SAY_FLAMESTRIKE, m_creature);
+                        DoScriptText(SAY_FLAMESTRIKE, me);
 
                         FlameStrikeTimer = 20000 + rand()%5000;
                     }
                 } else FlameStrikeTimer -= diff;
 
                 // Below 50%
-                if (m_creature->GetMaxHealth() * 0.5 > m_creature->GetHealth())
+                if (me->GetMaxHealth() * 0.5 > me->GetHealth())
                 {
-                    m_creature->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_INTERRUPT_CAST, true);
-                    m_creature->StopMoving();
-                    m_creature->GetMotionMaster()->Clear();
-                    m_creature->GetMotionMaster()->MoveIdle();
+                    me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_INTERRUPT_CAST, true);
+                    me->StopMoving();
+                    me->GetMotionMaster()->Clear();
+                    me->GetMotionMaster()->MoveIdle();
                     GravityLapseTimer = 0;
                     GravityLapsePhase = 0;
                     Phase = 1;
@@ -371,7 +371,7 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
 
             case 1:
             {
-                m_creature->StopMoving();
+                me->StopMoving();
                 if (GravityLapseTimer < diff)
                 {
                     switch(GravityLapsePhase)
@@ -379,21 +379,21 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                         case 0:
                             if (FirstGravityLapse)           // Different yells at 50%, and at every following Gravity Lapse
                             {
-                                DoScriptText(SAY_GRAVITY_LAPSE, m_creature);
+                                DoScriptText(SAY_GRAVITY_LAPSE, me);
                                 FirstGravityLapse = false;
                                 if (pInstance)
                                 {
-                                    GameObject* KaelLeft = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_KAEL_STATUE_LEFT));
+                                    GameObject* KaelLeft = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_KAEL_STATUE_LEFT));
                                     if (KaelLeft) KaelLeft->SetGoState(GO_STATE_ACTIVE);
-                                    GameObject* KaelRight = GameObject::GetGameObject(*m_creature, pInstance->GetData64(DATA_KAEL_STATUE_RIGHT));
+                                    GameObject* KaelRight = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_KAEL_STATUE_RIGHT));
                                     if (KaelRight) KaelRight->SetGoState(GO_STATE_ACTIVE);
                                 }
                             } else
                             {
-                                DoScriptText(SAY_RECAST_GRAVITY, m_creature);
+                                DoScriptText(SAY_RECAST_GRAVITY, me);
                             }
-                            m_creature->StopMoving();
-                            DoCast(m_creature, SPELL_GRAVITY_LAPSE_INITIAL);
+                            me->StopMoving();
+                            DoCast(me, SPELL_GRAVITY_LAPSE_INITIAL);
                             GravityLapseTimer = 2000 + diff;// Don't interrupt the visual spell
                             GravityLapsePhase = 1;
                             break;
@@ -416,7 +416,7 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                             GravityLapsePhase = 4;
                             for (uint8 i = 0; i < 3; ++i)
                             {
-                                Creature* Orb = m_creature->SummonCreature(CREATURE_ARCANE_SPHERE,KaelLocations[3+i][0],KaelLocations[3+i][1],LOCATION_Z,0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,30000);
+                                Creature* Orb = me->SummonCreature(CREATURE_ARCANE_SPHERE,KaelLocations[3+i][0],KaelLocations[3+i][1],LOCATION_Z,0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,30000);
                                 if (Orb)
                                 {
                                     SetThreatList(Orb);
@@ -439,13 +439,13 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                                     }
                                 }
                             }
-                            DoCast(m_creature, SPELL_GRAVITY_LAPSE_CHANNEL);
+                            DoCast(me, SPELL_GRAVITY_LAPSE_CHANNEL);
                             break;
 
                         case 4:
-                            m_creature->InterruptNonMeleeSpells(false);
-                            DoScriptText(SAY_TIRED, m_creature);
-                            DoCast(m_creature, SPELL_POWER_FEEDBACK);
+                            me->InterruptNonMeleeSpells(false);
+                            DoScriptText(SAY_TIRED, me);
+                            DoCast(me, SPELL_POWER_FEEDBACK);
                             RemoveGravityLapse();
                             GravityLapseTimer = 10000;
                             GravityLapsePhase = 0;
@@ -472,10 +472,10 @@ struct OREGON_DLL_DECL mob_felkael_flamestrikeAI : public ScriptedAI
     {
         FlameStrikeTimer = 5000;
 
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->setFaction(14);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->setFaction(14);
 
-        DoCast(m_creature, SPELL_FLAMESTRIKE2, true);
+        DoCast(me, SPELL_FLAMESTRIKE2, true);
     }
 
     void EnterCombat(Unit *who) {}
@@ -484,8 +484,8 @@ struct OREGON_DLL_DECL mob_felkael_flamestrikeAI : public ScriptedAI
     {
         if (FlameStrikeTimer < diff)
         {
-            DoCast(m_creature, Heroic ? SPELL_FLAMESTRIKE1_HEROIC : SPELL_FLAMESTRIKE1_NORMAL, true);
-            m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+            DoCast(me, Heroic ? SPELL_FLAMESTRIKE1_HEROIC : SPELL_FLAMESTRIKE1_NORMAL, true);
+            me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
         } else FlameStrikeTimer -= diff;
     }
 };
@@ -504,9 +504,9 @@ struct OREGON_DLL_DECL mob_felkael_phoenixAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->SetSpeed(MOVE_RUN, 0.5f);
-        m_creature->SetSpeed(MOVE_WALK, 0.5f);
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE + UNIT_FLAG_NON_ATTACKABLE);
+        me->SetSpeed(MOVE_RUN, 0.5f);
+        me->SetSpeed(MOVE_WALK, 0.5f);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE + UNIT_FLAG_NON_ATTACKABLE);
         BurnTimer = 2000;
         CheckTimer = 1000;
         phase = 0;
@@ -528,14 +528,14 @@ struct OREGON_DLL_DECL mob_felkael_phoenixAI : public ScriptedAI
         {
             if (pInstance)
             {
-                Creature *boss = (Unit::GetCreature((*m_creature),pInstance->GetData64(DATA_KAEL)));
+                Creature *boss = (Unit::GetCreature((*me),pInstance->GetData64(DATA_KAEL)));
                 if (boss)
                 {
                     phase = ((boss_felblood_kaelthasAI*)boss->AI())->Phase;
                     if (boss->isDead() || !boss->isInCombat())
                     {
                         end = true;
-                        m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_FIRE, NULL, false);//temphack, hellfire is not damaging self
+                        me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_FIRE, NULL, false);//temphack, hellfire is not damaging self
                     }
                 }
             }
@@ -549,13 +549,13 @@ struct OREGON_DLL_DECL mob_felkael_phoenixAI : public ScriptedAI
         {
             if (!phase)
             {
-                DoCast(m_creature, SPELL_PHOENIX_BURN);
-                m_creature->DealDamage(m_creature, 1500, NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_FIRE, NULL, false);//temphack, hellfire is not damaging self
+                DoCast(me, SPELL_PHOENIX_BURN);
+                me->DealDamage(me, 1500, NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_FIRE, NULL, false);//temphack, hellfire is not damaging self
             }
             else
             {
-                m_creature->StopMoving();
-                DoCast(m_creature->getVictim(), SPELL_PHOENIX_FIREBALL);
+                me->StopMoving();
+                DoCast(me->getVictim(), SPELL_PHOENIX_FIREBALL);
             }
             BurnTimer = 2000;
         } else BurnTimer -= diff;
@@ -585,7 +585,7 @@ struct OREGON_DLL_DECL mob_felkael_phoenix_eggAI : public Scripted_NoMovementAI
             Creature *bird = DoSpawnCreature(CREATURE_PHOENIX, 0, 0, 0, 0, TEMPSUMMON_CORPSE_DESPAWN, 60000);
             if (bird)
             {
-                Unit *boss = Unit::GetUnit((*m_creature),pInstance->GetData64(DATA_KAEL));
+                Unit *boss = Unit::GetUnit((*me),pInstance->GetData64(DATA_KAEL));
                 if (boss && boss->getVictim())
                 {
                     bird->AddThreat(boss->getVictim(),100);
@@ -593,7 +593,7 @@ struct OREGON_DLL_DECL mob_felkael_phoenix_eggAI : public Scripted_NoMovementAI
                     bird->GetMotionMaster()->MoveChase(boss->getVictim());
                 }
             }
-            m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+            me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
         } else HatchTimer -= diff;
     }
 };
@@ -612,15 +612,15 @@ struct OREGON_DLL_DECL mob_arcane_sphereAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->SetUnitMovementFlags(MOVEMENTFLAG_LEVITATING);
+        me->SetUnitMovementFlags(MOVEMENTFLAG_LEVITATING);
         DespawnTimer = 30000;
         ChangeTargetTimer = 5000;
         CheckTimer = 1000;
-        m_creature->SetSpeed(MOVE_RUN, 0.5f);
-        m_creature->SetSpeed(MOVE_WALK, 0.5f);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->setFaction(14);
-        DoCast(m_creature, SPELL_ARCANE_SPHERE_PASSIVE, true);
+        me->SetSpeed(MOVE_RUN, 0.5f);
+        me->SetSpeed(MOVE_WALK, 0.5f);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->setFaction(14);
+        DoCast(me, SPELL_ARCANE_SPHERE_PASSIVE, true);
     }
 
     void EnterCombat(Unit* who) {}
@@ -629,15 +629,15 @@ struct OREGON_DLL_DECL mob_arcane_sphereAI : public ScriptedAI
     {
         if (!pTarget)
             return;
-        m_creature->AddThreat(pTarget,100000);
-        m_creature->GetMotionMaster()->MoveChase(pTarget);
-        m_creature->Attack(pTarget,true);
+        me->AddThreat(pTarget,100000);
+        me->GetMotionMaster()->MoveChase(pTarget);
+        me->Attack(pTarget,true);
     }
 
     void UpdateAI(const uint32 diff)
     {
         if (DespawnTimer < diff)
-            m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+            me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
         else DespawnTimer -= diff;
 
         if (!UpdateVictim())
@@ -656,7 +656,7 @@ struct OREGON_DLL_DECL mob_arcane_sphereAI : public ScriptedAI
         {
             if (pInstance)
             {
-                Creature *boss = Unit::GetCreature((*m_creature),pInstance->GetData64(DATA_KAEL));
+                Creature *boss = Unit::GetCreature((*me),pInstance->GetData64(DATA_KAEL));
                 if (boss)
                 {
                     if (!((boss_felblood_kaelthasAI*)boss->AI())->Phase || boss->isDead())

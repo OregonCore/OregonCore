@@ -82,7 +82,7 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
             pInstance->SetData(DATA_GRUULEVENT, DONE);
@@ -90,7 +90,7 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
         DoZoneInCombat();
 
         if (pInstance)
@@ -101,9 +101,9 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-        case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-        case 1: DoScriptText(SAY_SLAY2, m_creature); break;
-        case 2: DoScriptText(SAY_SLAY3, m_creature); break;
+        case 0: DoScriptText(SAY_SLAY1, me); break;
+        case 1: DoScriptText(SAY_SLAY2, me); break;
+        case 2: DoScriptText(SAY_SLAY3, me); break;
         }
     }
 
@@ -117,8 +117,8 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
         // Gruul can cast this spell up to 30 times
         if (Growth_Timer < diff)
         {
-            DoCast(m_creature,SPELL_GROWTH);
-            DoScriptText(EMOTE_GROW, m_creature);
+            DoCast(me,SPELL_GROWTH);
+            DoScriptText(EMOTE_GROW, me);
             Growth_Timer = 30000;
         } else Growth_Timer -= diff;
 
@@ -131,14 +131,14 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
                     case 0:
                     {
                         //Begin the whole ordeal
-                        std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
+                        std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
 
                         std::vector<Unit*> knockback_targets;
 
                         //First limit the list to only players
                         for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
                         {
-                            Unit *pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+                            Unit *pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
 
                             if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
                                 knockback_targets.push_back(pTarget);
@@ -154,8 +154,8 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
                             {
                                 switch(rand()%2)
                                 {
-                                    case 0: target2->CastSpell(target, SPELL_MAGNETIC_PULL, true, NULL, NULL, m_creature->GetGUID()); break;
-                                    case 1: target2->CastSpell(target, SPELL_KNOCK_BACK, true, NULL, NULL, m_creature->GetGUID()); break;
+                                    case 0: target2->CastSpell(target, SPELL_MAGNETIC_PULL, true, NULL, NULL, me->GetGUID()); break;
+                                    case 1: target2->CastSpell(target, SPELL_KNOCK_BACK, true, NULL, NULL, me->GetGUID()); break;
                                 }
                             }
                         }
@@ -167,16 +167,16 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
                     case 1:
                     {
                         //Players are going to get stoned
-                        std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
+                        std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
 
                         for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
                         {
-                            Unit *pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+                            Unit *pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
 
                             if (pTarget)
                             {
                                 pTarget->RemoveAurasDueToSpell(SPELL_GRONN_LORDS_GRASP);
-                                pTarget->CastSpell(pTarget, SPELL_STONED, true, NULL, NULL, m_creature->GetGUID());
+                                pTarget->CastSpell(pTarget, SPELL_STONED, true, NULL, NULL, me->GetGUID());
                             }
                         }
 
@@ -187,7 +187,7 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
 
                     case 2:
                     {
-                        DoCast(m_creature, SPELL_SHATTER);
+                        DoCast(me, SPELL_SHATTER);
                         GroundSlamTimer = 1000;
                      break;
                     }
@@ -196,25 +196,25 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
                     {
                         //Shatter takes effect
                         // Not Needet Anymore Handled in Spell SPELL_SHATTER
-                        //std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
+                        //std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
                         //for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
                         //{
-                        //    Unit *target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+                        //    Unit *target = Unit::GetUnit(*me, (*itr)->getUnitGuid());
                         //    if (target)
                         //    {
                         //        target->RemoveAurasDueToSpell(SPELL_STONED);
                         //        if (target->GetTypeId() == TYPEID_PLAYER)
-                        //            target->CastSpell(target, SPELL_SHATTER_EFFECT, false, NULL, NULL, m_creature->GetGUID());
+                        //            target->CastSpell(target, SPELL_SHATTER_EFFECT, false, NULL, NULL, me->GetGUID());
                         //    }
                         //}
 
-                        m_creature->GetMotionMaster()->Clear();
+                        me->GetMotionMaster()->Clear();
 
-                        Unit *victim = m_creature->getVictim();
+                        Unit *victim = me->getVictim();
                         if (victim)
                         {
-                            m_creature->GetMotionMaster()->MoveChase(victim);
-                            m_creature->SetUInt64Value(UNIT_FIELD_TARGET, victim->GetGUID());
+                            me->GetMotionMaster()->MoveChase(victim);
+                            me->SetUInt64Value(UNIT_FIELD_TARGET, victim->GetGUID());
                         }
 
                         PerformingGroundSlam = false;
@@ -241,10 +241,10 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
                 Unit *pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO,1);
 
-                if (pTarget && m_creature->IsWithinMeleeRange(m_creature->getVictim()))
+                if (pTarget && me->IsWithinMeleeRange(me->getVictim()))
                     DoCast(pTarget,SPELL_HURTFUL_STRIKE);
                 else
-                    DoCast(m_creature->getVictim(),SPELL_HURTFUL_STRIKE);
+                    DoCast(me->getVictim(),SPELL_HURTFUL_STRIKE);
 
                 HurtfulStrike_Timer= 8000;
             } else HurtfulStrike_Timer -= diff;
@@ -252,7 +252,7 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
             // Reverberation
             if (Reverberation_Timer < diff)
             {
-                DoCast(m_creature->getVictim(), SPELL_REVERBERATION, true);
+                DoCast(me->getVictim(), SPELL_REVERBERATION, true);
                 Reverberation_Timer = 30000;
             } else Reverberation_Timer -= diff;
 
@@ -268,14 +268,14 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
             // Ground Slam, Gronn Lord's Grasp, Stoned, Shatter
             if (GroundSlamTimer < diff)
             {
-                m_creature->GetMotionMaster()->Clear();
-                m_creature->GetMotionMaster()->MoveIdle();
-                m_creature->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+                me->GetMotionMaster()->Clear();
+                me->GetMotionMaster()->MoveIdle();
+                me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
 
                 PerformingGroundSlam= true;
                 GroundSlamTimer = 0;
                 GroundSlamStage = 0;
-                DoCast(m_creature->getVictim(), SPELL_GROUND_SLAM);
+                DoCast(me->getVictim(), SPELL_GROUND_SLAM);
             } else GroundSlamTimer -=diff;
 
             DoMeleeAttackIfReady();

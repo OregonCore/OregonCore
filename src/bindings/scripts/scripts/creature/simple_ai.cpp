@@ -114,7 +114,7 @@ void SimpleAI::Aggro(Unit *who)
 
             //Random sound
             if (Aggro_Sound[random_text])
-                DoPlaySoundToSet(m_creature, Aggro_Sound[random_text]);
+                DoPlaySoundToSet(me, Aggro_Sound[random_text]);
 }
 
 void SimpleAI::KilledUnit(Unit *victim)
@@ -129,7 +129,7 @@ void SimpleAI::KilledUnit(Unit *victim)
 
     //Random sound
     if (Kill_Sound[random_text])
-        DoPlaySoundToSet(m_creature, Kill_Sound[random_text]);
+        DoPlaySoundToSet(me, Kill_Sound[random_text]);
 
     if (!Kill_Spell)
         return;
@@ -139,10 +139,10 @@ void SimpleAI::KilledUnit(Unit *victim)
     switch (Kill_Target_Type)
     {
     case CAST_SELF:
-        pTarget = m_creature;
+        pTarget = me;
         break;
     case CAST_HOSTILE_TARGET:
-        pTarget = m_creature->getVictim();
+        pTarget = me->getVictim();
         break;
     case CAST_HOSTILE_SECOND_AGGRO:
         pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO,1);
@@ -166,7 +166,7 @@ void SimpleAI::KilledUnit(Unit *victim)
 void SimpleAI::DamageTaken(Unit *killer, uint32 &damage)
 {
     //Return if damage taken won't kill us
-    if (m_creature->GetHealth() > damage)
+    if (me->GetHealth() > damage)
         return;
 
     uint32 random_text = rand()%3;
@@ -179,7 +179,7 @@ void SimpleAI::DamageTaken(Unit *killer, uint32 &damage)
 
     //Random sound
     if (Death_Sound[random_text])
-        DoPlaySoundToSet(m_creature, Death_Sound[random_text]);
+        DoPlaySoundToSet(me, Death_Sound[random_text]);
 
     if (!Death_Spell)
         return;
@@ -189,10 +189,10 @@ void SimpleAI::DamageTaken(Unit *killer, uint32 &damage)
     switch (Death_Target_Type)
     {
     case CAST_SELF:
-        pTarget = m_creature;
+        pTarget = me;
         break;
     case CAST_HOSTILE_TARGET:
-        pTarget = m_creature->getVictim();
+        pTarget = me->getVictim();
         break;
     case CAST_HOSTILE_SECOND_AGGRO:
         pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO,1);
@@ -229,21 +229,21 @@ void SimpleAI::UpdateAI(const uint32 diff)
         if (Spell_Timer[i] < diff)
         {
             //Check if this is a percentage based
-            if (Spell[i].First_Cast < 0 && Spell[i].First_Cast > -100 && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() > -Spell[i].First_Cast)
+            if (Spell[i].First_Cast < 0 && Spell[i].First_Cast > -100 && me->GetHealth()*100 / me->GetMaxHealth() > -Spell[i].First_Cast)
                 continue;
 
             //Check Current spell
-            if (!(Spell[i].InterruptPreviousCast && m_creature->IsNonMeleeSpellCasted(false)))
+            if (!(Spell[i].InterruptPreviousCast && me->IsNonMeleeSpellCasted(false)))
             {
                 Unit *pTarget = NULL;
 
                 switch (Spell[i].Cast_Target_Type)
                 {
                 case CAST_SELF:
-                    pTarget = m_creature;
+                    pTarget = me;
                     break;
                 case CAST_HOSTILE_TARGET:
-                    pTarget = m_creature->getVictim();
+                    pTarget = me->getVictim();
                     break;
                 case CAST_HOSTILE_SECOND_AGGRO:
                     pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO,1);
@@ -259,8 +259,8 @@ void SimpleAI::UpdateAI(const uint32 diff)
                 //Target is ok, cast a spell on it and then do our random yell
                 if (pTarget)
                 {
-                    if (m_creature->IsNonMeleeSpellCasted(false))
-                        m_creature->InterruptNonMeleeSpells(false);
+                    if (me->IsNonMeleeSpellCasted(false))
+                        me->InterruptNonMeleeSpells(false);
 
                     DoCast(pTarget, Spell[i].Spell_Id);
 
@@ -276,7 +276,7 @@ void SimpleAI::UpdateAI(const uint32 diff)
 
                     //Random sound
                     if (Spell[i].Text_Sound[random_text])
-                        DoPlaySoundToSet(m_creature, Spell[i].Text_Sound[random_text]);
+                        DoPlaySoundToSet(me, Spell[i].Text_Sound[random_text]);
                 }
 
             }

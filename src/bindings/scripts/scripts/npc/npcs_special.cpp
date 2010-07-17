@@ -57,8 +57,8 @@ struct OREGON_DLL_DECL npc_chicken_cluckAI : public ScriptedAI
     {
         ResetFlagTimer = 120000;
 
-        m_creature->setFaction(FACTION_CHICKEN);
-        m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+        me->setFaction(FACTION_CHICKEN);
+        me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
     }
 
     void Aggro(Unit *who) {}
@@ -66,7 +66,7 @@ struct OREGON_DLL_DECL npc_chicken_cluckAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         // Reset flags after a certain time has passed so that the next player has to start the 'event' again
-        if (m_creature->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER))
+        if (me->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER))
         {
             if (ResetFlagTimer < diff)
             {
@@ -149,16 +149,16 @@ struct OREGON_DLL_DECL npc_dancing_flamesAI : public ScriptedAI
     {
         active = true;
         can_iteract = 3500;
-        DoCast(m_creature,SPELL_BRAZIER,true);
-        DoCast(m_creature,SPELL_FIERY_AURA,false);
+        DoCast(me,SPELL_BRAZIER,true);
+        DoCast(me,SPELL_FIERY_AURA,false);
         float x, y, z;
-        m_creature->GetPosition(x,y,z);
-        m_creature->Relocate(x,y,z + 0.94f);
-        m_creature->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
-        m_creature->HandleEmoteCommand(EMOTE_ONESHOT_DANCE);
+        me->GetPosition(x,y,z);
+        me->Relocate(x,y,z + 0.94f);
+        me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
+        me->HandleEmoteCommand(EMOTE_ONESHOT_DANCE);
         WorldPacket data;                       //send update position to client
-        m_creature->BuildHeartBeatMsg(&data);
-        m_creature->SendMessageToSet(&data,true);
+        me->BuildHeartBeatMsg(&data);
+        me->SendMessageToSet(&data,true);
     }
 
     void UpdateAI(const uint32 diff)
@@ -168,7 +168,7 @@ struct OREGON_DLL_DECL npc_dancing_flamesAI : public ScriptedAI
             if (can_iteract <= diff){
                 active = true;
                 can_iteract = 3500;
-                m_creature->HandleEmoteCommand(EMOTE_ONESHOT_DANCE);
+                me->HandleEmoteCommand(EMOTE_ONESHOT_DANCE);
             } else can_iteract -= diff;
         }
     }
@@ -349,27 +349,27 @@ struct OREGON_DLL_DECL npc_injured_patientAI : public ScriptedAI
 
         Coord = NULL;
                                                             //no select
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                                                             //no regen health
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
                                                             //to make them lay with face down
-        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_DEAD);
+        me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_DEAD);
 
-        uint32 mobId = m_creature->GetEntry();
+        uint32 mobId = me->GetEntry();
 
         switch (mobId)
         {                                                   //lower max health
             case 12923:
             case 12938:                                     //Injured Soldier
-                m_creature->SetHealth(uint32(m_creature->GetMaxHealth()*.75));
+                me->SetHealth(uint32(me->GetMaxHealth()*.75));
                 break;
             case 12924:
             case 12936:                                     //Badly injured Soldier
-                m_creature->SetHealth(uint32(m_creature->GetMaxHealth()*.50));
+                me->SetHealth(uint32(me->GetMaxHealth()*.50));
                 break;
             case 12925:
             case 12937:                                     //Critically injured Soldier
-                m_creature->SetHealth(uint32(m_creature->GetMaxHealth()*.25));
+                me->SetHealth(uint32(me->GetMaxHealth()*.25));
                 break;
         }
     }
@@ -378,38 +378,38 @@ struct OREGON_DLL_DECL npc_injured_patientAI : public ScriptedAI
 
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {
-        if (caster->GetTypeId() == TYPEID_PLAYER && m_creature->isAlive() && spell->Id == 20804)
+        if (caster->GetTypeId() == TYPEID_PLAYER && me->isAlive() && spell->Id == 20804)
         {
             if ((((Player*)caster)->GetQuestStatus(6624) == QUEST_STATUS_INCOMPLETE) || (((Player*)caster)->GetQuestStatus(6622) == QUEST_STATUS_INCOMPLETE))
             {
                 if (Doctorguid)
                 {
-                    Creature* Doctor = (Unit::GetCreature((*m_creature), Doctorguid));
+                    Creature* Doctor = (Unit::GetCreature((*me), Doctorguid));
                     if (Doctor)
-                        ((npc_doctorAI*)Doctor->AI())->PatientSaved(m_creature, ((Player*)caster), Coord);
+                        ((npc_doctorAI*)Doctor->AI())->PatientSaved(me, ((Player*)caster), Coord);
                 }
             }
                                                             //make not selectable
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                                                             //regen health
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
                                                             //stand up
-            m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_NONE);
+            me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_NONE);
             DoSay(SAY_DOC1,LANG_UNIVERSAL,NULL);
 
-            uint32 mobId = m_creature->GetEntry();
-            m_creature->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
+            uint32 mobId = me->GetEntry();
+            me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
             switch (mobId)
             {
                 case 12923:
                 case 12924:
                 case 12925:
-                    m_creature->GetMotionMaster()->MovePoint(0, H_RUNTOX, H_RUNTOY, H_RUNTOZ);
+                    me->GetMotionMaster()->MovePoint(0, H_RUNTOX, H_RUNTOY, H_RUNTOZ);
                     break;
                 case 12936:
                 case 12937:
                 case 12938:
-                    m_creature->GetMotionMaster()->MovePoint(0, A_RUNTOX, A_RUNTOY, A_RUNTOZ);
+                    me->GetMotionMaster()->MovePoint(0, A_RUNTOX, A_RUNTOY, A_RUNTOZ);
                     break;
             }
         }
@@ -418,21 +418,21 @@ struct OREGON_DLL_DECL npc_injured_patientAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (m_creature->isAlive() && m_creature->GetHealth() > 6)
+        if (me->isAlive() && me->GetHealth() > 6)
         {                                                   //lower HP on every world tick makes it a useful counter, not officlone though
-            m_creature->SetHealth(uint32(m_creature->GetHealth()-5));
+            me->SetHealth(uint32(me->GetHealth()-5));
         }
 
-        if (m_creature->isAlive() && m_creature->GetHealth() <= 6)
+        if (me->isAlive() && me->GetHealth() <= 6)
         {
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->setDeathState(JUST_DIED);
-            m_creature->SetFlag(UNIT_DYNAMIC_FLAGS, 32);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->setDeathState(JUST_DIED);
+            me->SetFlag(UNIT_DYNAMIC_FLAGS, 32);
 
             if (Doctorguid)
             {
-                Creature* Doctor = (Unit::GetCreature((*m_creature), Doctorguid));
+                Creature* Doctor = (Unit::GetCreature((*me), Doctorguid));
                 if (Doctor)
                     ((npc_doctorAI*)Doctor->AI())->PatientDied(Coord);
             }
@@ -458,7 +458,7 @@ void npc_doctorAI::BeginEvent(Player* player)
     PatientDiedCount = 0;
     PatientSavedCount = 0;
 
-    switch(m_creature->GetEntry())
+    switch(me->GetEntry())
     {
         case DOCTOR_ALLIANCE:
             for (uint8 i = 0; i < ALLIANCE_COORDS; ++i)
@@ -473,7 +473,7 @@ void npc_doctorAI::BeginEvent(Player* player)
 
     Event = true;
 
-    m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+    me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 }
 
 void npc_doctorAI::PatientDied(Location* Point)
@@ -490,7 +490,7 @@ void npc_doctorAI::PatientDied(Location* Point)
                 player->FailQuest(6622);
 
             Event = false;
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         }
 
         Coordinates.push_back(Point);
@@ -511,7 +511,7 @@ void npc_doctorAI::PatientSaved(Creature* soldier, Player* player, Location* Poi
                     std::list<uint64>::iterator itr;
                     for (itr = Patients.begin(); itr != Patients.end(); ++itr)
                     {
-                        Creature* Patient = (Unit::GetCreature((*m_creature), *itr));
+                        Creature* Patient = (Unit::GetCreature((*me), *itr));
                         if (Patient)
                             Patient->setDeathState(JUST_DIED);
                     }
@@ -523,7 +523,7 @@ void npc_doctorAI::PatientSaved(Creature* soldier, Player* player, Location* Poi
                     player->AreaExploredOrEventHappens(6622);
 
                 Event = false;
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             }
 
             Coordinates.push_back(Point);
@@ -536,7 +536,7 @@ void npc_doctorAI::UpdateAI(const uint32 diff)
     if (Event && SummonPatientCount >= 20)
     {
         Event = false;
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
     if (Event)
@@ -551,7 +551,7 @@ void npc_doctorAI::UpdateAI(const uint32 diff)
         std::vector<Location*>::iterator itr = Coordinates.begin()+rand()%Coordinates.size();
         uint32 patientEntry = 0;
 
-        switch(m_creature->GetEntry())
+        switch(me->GetEntry())
         {
             case DOCTOR_ALLIANCE: patientEntry = AllianceSoldierId[rand()%3]; break;
             case DOCTOR_HORDE:    patientEntry = HordeSoldierId[rand()%3]; break;
@@ -562,12 +562,12 @@ void npc_doctorAI::UpdateAI(const uint32 diff)
 
         Point = *itr;
 
-        Patient = m_creature->SummonCreature(patientEntry, Point->x, Point->y, Point->z, Point->o, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
+        Patient = me->SummonCreature(patientEntry, Point->x, Point->y, Point->z, Point->o, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
 
         if (Patient)
         {
             Patients.push_back(Patient->GetGUID());
-            ((npc_injured_patientAI*)Patient->AI())->Doctorguid = m_creature->GetGUID();
+            ((npc_injured_patientAI*)Patient->AI())->Doctorguid = me->GetGUID();
             if (Point)
                 ((npc_injured_patientAI*)Patient->AI())->Coord = Point;
             Coordinates.erase(itr);
@@ -603,7 +603,7 @@ struct OREGON_DLL_DECL npc_guardianAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
     void Aggro(Unit *who)
@@ -616,10 +616,10 @@ struct OREGON_DLL_DECL npc_guardianAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (m_creature->isAttackReady())
+        if (me->isAttackReady())
         {
-            m_creature->CastSpell(m_creature->getVictim(),SPELL_DEATHTOUCH, true);
-            m_creature->resetAttackTimer();
+            me->CastSpell(me->getVictim(),SPELL_DEATHTOUCH, true);
+            me->resetAttackTimer();
         }
     }
 };
@@ -907,13 +907,13 @@ struct OREGON_DLL_DECL npc_steam_tonkAI : public ScriptedAI
         if (apply)
         {
             // Initialize the action bar without the melee attack command
-            m_creature->InitCharmInfo();
-            m_creature->GetCharmInfo()->InitEmptyActionBar(false);
+            me->InitCharmInfo();
+            me->GetCharmInfo()->InitEmptyActionBar(false);
 
-            m_creature->SetReactState(REACT_PASSIVE);
+            me->SetReactState(REACT_PASSIVE);
         }
         else
-            m_creature->SetReactState(REACT_AGGRESSIVE);
+            me->SetReactState(REACT_AGGRESSIVE);
     }
 
 };
@@ -929,7 +929,7 @@ struct OREGON_DLL_DECL npc_tonk_mineAI : public ScriptedAI
 {
     npc_tonk_mineAI(Creature *c) : ScriptedAI(c)
     {
-        m_creature->SetReactState(REACT_PASSIVE);
+        me->SetReactState(REACT_PASSIVE);
     }
 
     uint32 ExplosionTimer;
@@ -947,8 +947,8 @@ struct OREGON_DLL_DECL npc_tonk_mineAI : public ScriptedAI
     {
         if (ExplosionTimer < diff)
         {
-            m_creature->CastSpell(m_creature, SPELL_TONK_MINE_DETONATE, true);
-            m_creature->setDeathState(DEAD); // unsummon it
+            me->CastSpell(me, SPELL_TONK_MINE_DETONATE, true);
+            me->setDeathState(DEAD); // unsummon it
         } else
             ExplosionTimer -= diff;
     }
@@ -1013,40 +1013,40 @@ struct OREGON_DLL_DECL npc_snake_trap_serpentsAI : public ScriptedAI
 
     void Reset()
     {
-        Owner = m_creature->GetOwner();
+        Owner = me->GetOwner();
 
-        if (!m_creature->isPet() || !Owner)
+        if (!me->isPet() || !Owner)
             return;
 
-        CreatureInfo const *Info = m_creature->GetCreatureInfo();
+        CreatureInfo const *Info = me->GetCreatureInfo();
 
         if (Info->Entry == C_VIPER)
             IsViper = true;
 
         //Add delta to make them not all hit the same time
         uint32 delta = (rand() % 7) *100;
-        m_creature->SetStatFloatValue(UNIT_FIELD_BASEATTACKTIME, Info->baseattacktime + delta);
-        m_creature->SetStatFloatValue(UNIT_FIELD_RANGED_ATTACK_POWER , Info->attackpower);
+        me->SetStatFloatValue(UNIT_FIELD_BASEATTACKTIME, Info->baseattacktime + delta);
+        me->SetStatFloatValue(UNIT_FIELD_RANGED_ATTACK_POWER , Info->attackpower);
 
     }
 
     //Redefined for random target selection:
     void MoveInLineOfSight(Unit *who)
     {
-        if (!m_creature->isPet() || !Owner)
+        if (!me->isPet() || !Owner)
             return;
 
-        if (!m_creature->getVictim() && who->isTargetableForAttack() && (m_creature->IsHostileTo(who)) && who->isInAccessiblePlaceFor (m_creature) && Owner->IsHostileTo(who))//don't attack not-pvp-flaged
+        if (!me->getVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor (me) && Owner->IsHostileTo(who))//don't attack not-pvp-flaged
         {
-            if (m_creature->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
+            if (me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
                 return;
 
-            float attackRadius = m_creature->GetAttackDistance(who);
-            if (m_creature->IsWithinDistInMap(who, attackRadius) && m_creature->IsWithinLOSInMap(who))
+            float attackRadius = me->GetAttackDistance(who);
+            if (me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who))
             {
                 if (!(rand() % RAND))
                 {
-                    m_creature->setAttackTimer(BASE_ATTACK, (rand() % 10) * 100);
+                    me->setAttackTimer(BASE_ATTACK, (rand() % 10) * 100);
                     SpellTimer = (rand() % 10) * 100;
                     AttackStart(who);
                 }
@@ -1056,20 +1056,20 @@ struct OREGON_DLL_DECL npc_snake_trap_serpentsAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!m_creature->isPet() || !Owner)
+        if (!me->isPet() || !Owner)
             return;
 
         //Follow if not in combat
-        if (!m_creature->hasUnitState(UNIT_STAT_FOLLOW)&& !m_creature->isInCombat())
+        if (!me->hasUnitState(UNIT_STAT_FOLLOW)&& !me->isInCombat())
         {
-            m_creature->GetMotionMaster()->Clear();
-            m_creature->GetMotionMaster()->MoveFollow(Owner,PET_FOLLOW_DIST,PET_FOLLOW_ANGLE);
+            me->GetMotionMaster()->Clear();
+            me->GetMotionMaster()->MoveFollow(Owner,PET_FOLLOW_DIST,PET_FOLLOW_ANGLE);
         }
 
         //No victim -> get new from owner (need this because MoveInLineOfSight won't work while following -> corebug)
-        if (!m_creature->getVictim())
+        if (!me->getVictim())
         {
-            if (m_creature->isInCombat())
+            if (me->isInCombat())
                 DoStopAttack();
 
             if (Owner->getAttackerForHelper())
@@ -1090,7 +1090,7 @@ struct OREGON_DLL_DECL npc_snake_trap_serpentsAI : public ScriptedAI
                     else
                         spell = SPELL_CRIPPLING_POISON;
 
-                    DoCast(m_creature->getVictim(),spell);
+                    DoCast(me->getVictim(),spell);
                 }
 
                 SpellTimer = VIPER_TIMER;
@@ -1098,7 +1098,7 @@ struct OREGON_DLL_DECL npc_snake_trap_serpentsAI : public ScriptedAI
             else //Venomous Snake
             {
                 if (rand() % 10 < 8) //80% chance to cast
-                    DoCast(m_creature->getVictim(),SPELL_DEADLY_POISON);
+                    DoCast(me->getVictim(),SPELL_DEADLY_POISON);
                 SpellTimer = VENOMOUS_SNAKE_TIMER + (rand() %5)*100;
             }
         } else SpellTimer-=diff;

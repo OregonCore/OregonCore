@@ -63,7 +63,7 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
         Icebolt_Count = 0;
         IsInFly = false;
 
-        m_creature->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
+        me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
     }
 
     void EnterCombat(Unit *who)
@@ -79,7 +79,7 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
             {
                 if (FrostAura_Timer < diff)
                 {
-                    DoCast(m_creature->getVictim(),SPELL_FROST_AURA);
+                    DoCast(me->getVictim(),SPELL_FROST_AURA);
                     FrostAura_Timer = 5000;
                 } else FrostAura_Timer -= diff;
 
@@ -97,16 +97,16 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
                     Blizzard_Timer = 20000;
                 } else Blizzard_Timer -= diff;
 
-                if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() > 10)
+                if (me->GetHealth()*100 / me->GetMaxHealth() > 10)
                 {
                     if (Fly_Timer < diff)
                     {
                         phase = 2;
-                        m_creature->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
-                        m_creature->AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
-                        m_creature->GetMotionMaster()->Clear(false);
-                        m_creature->GetMotionMaster()->MoveIdle();
-                        m_creature->SetHover(true);
+                        me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
+                        me->AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
+                        me->GetMotionMaster()->Clear(false);
+                        me->GetMotionMaster()->MoveIdle();
+                        me->SetHover(true);
                         Icebolt_Timer = 4000;
                         Icebolt_Count = 0;
                         IsInFly = true;
@@ -130,8 +130,8 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
 
                     if (Icebolt_Count == 5 && IsInFly && FrostBreath_Timer < diff)
                     {
-                        DoScriptText(EMOTE_BREATH, m_creature);
-                        DoCast(m_creature->getVictim(),SPELL_FROST_BREATH);
+                        DoScriptText(EMOTE_BREATH, me);
+                        DoCast(me->getVictim(),SPELL_FROST_BREATH);
                         land_Timer = 2000;
                         IsInFly = false;
                         FrostBreath_Timer = 6000;
@@ -140,22 +140,22 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
                     if (!IsInFly && land_Timer < diff)
                     {
                         phase = 1;
-                        m_creature->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
-                        m_creature->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
-                        m_creature->GetMotionMaster()->Clear(false);
-                        m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-                        m_creature->SetHover(true);
+                        me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
+                        me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
+                        me->GetMotionMaster()->Clear(false);
+                        me->GetMotionMaster()->MoveChase(me->getVictim());
+                        me->SetHover(true);
                         land_Timer = 0;
                         Fly_Timer = 67000;
                     } else land_Timer -= diff;
                 }
 
-                if ((m_creature->GetHealth()*100) / m_creature->GetMaxHealth() <= 10)
+                if ((me->GetHealth()*100) / me->GetMaxHealth() <= 10)
                 {
                     if (Beserk_Timer < diff)
                     {
-                        DoScriptText(EMOTE_ENRAGE, m_creature);
-                        DoCast(m_creature,SPELL_BESERK);
+                        DoScriptText(EMOTE_ENRAGE, me);
+                        DoCast(me,SPELL_BESERK);
                         Beserk_Timer = 300000;
                     } else Beserk_Timer -= diff;
                 }

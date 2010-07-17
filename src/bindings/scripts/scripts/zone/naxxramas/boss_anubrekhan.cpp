@@ -68,31 +68,31 @@ struct OREGON_DLL_DECL boss_anubrekhanAI : public ScriptedAI
         if (rand()%5)
             return;
 
-         DoScriptText(SAY_SLAY, m_creature);
+         DoScriptText(SAY_SLAY, me);
     }
 
     void EnterCombat(Unit *who)
     {
         switch(rand()%3)
         {
-        case 0: DoScriptText(SAY_AGGRO1, m_creature); break;
-        case 1: DoScriptText(SAY_AGGRO2, m_creature); break;
-        case 2: DoScriptText(SAY_AGGRO3, m_creature); break;
+        case 0: DoScriptText(SAY_AGGRO1, me); break;
+        case 1: DoScriptText(SAY_AGGRO2, me); break;
+        case 2: DoScriptText(SAY_AGGRO3, me); break;
         }
     }
 
     void MoveInLineOfSight(Unit *who)
     {
 
-            if (!HasTaunted && m_creature->IsWithinDistInMap(who, 60.0f))
+            if (!HasTaunted && me->IsWithinDistInMap(who, 60.0f))
             {
                 switch(rand()%5)
                 {
-                case 0: DoScriptText(SAY_GREET, m_creature); break;
-                case 1: DoScriptText(SAY_TAUNT1, m_creature); break;
-                case 2: DoScriptText(SAY_TAUNT2, m_creature); break;
-                case 3: DoScriptText(SAY_TAUNT3, m_creature); break;
-                case 4: DoScriptText(SAY_TAUNT4, m_creature); break;
+                case 0: DoScriptText(SAY_GREET, me); break;
+                case 1: DoScriptText(SAY_TAUNT1, me); break;
+                case 2: DoScriptText(SAY_TAUNT2, me); break;
+                case 3: DoScriptText(SAY_TAUNT3, me); break;
+                case 4: DoScriptText(SAY_TAUNT4, me); break;
                 }
                 HasTaunted = true;
             }
@@ -109,7 +109,7 @@ struct OREGON_DLL_DECL boss_anubrekhanAI : public ScriptedAI
         {
             //Cast Impale on a random target
             //Do NOT cast it when we are afflicted by locust swarm
-            if (!m_creature->HasAura(SPELL_LOCUSTSWARM,1))
+            if (!me->HasAura(SPELL_LOCUSTSWARM,1))
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                     DoCast(pTarget,SPELL_IMPALE);
@@ -121,14 +121,14 @@ struct OREGON_DLL_DECL boss_anubrekhanAI : public ScriptedAI
         //LocustSwarm_Timer
         if (LocustSwarm_Timer < diff)
         {
-            DoCast(m_creature, SPELL_LOCUSTSWARM);
+            DoCast(me, SPELL_LOCUSTSWARM);
             LocustSwarm_Timer = 90000;
         } else LocustSwarm_Timer -= diff;
 
         //Summon_Timer
         if (Summon_Timer < diff)
         {
-            DoCast(m_creature, SPELL_SUMMONGUARD);
+            DoCast(me, SPELL_SUMMONGUARD);
             Summon_Timer = 45000;
         } else Summon_Timer -= diff;
 

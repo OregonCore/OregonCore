@@ -53,20 +53,20 @@ struct OREGON_DLL_DECL npc_defias_traitorAI : public npc_escortAI
                 SetRun(false);
                 break;
             case 36:
-                DoScriptText(SAY_PROGRESS, m_creature, pPlayer);
+                DoScriptText(SAY_PROGRESS, me, pPlayer);
                 break;
             case 44:
-                DoScriptText(SAY_END, m_creature, pPlayer);
+                DoScriptText(SAY_END, me, pPlayer);
                 {
                     if (pPlayer)
-                        pPlayer->GroupEventHappens(QUEST_DEFIAS_BROTHERHOOD,m_creature);
+                        pPlayer->GroupEventHappens(QUEST_DEFIAS_BROTHERHOOD,me);
                 }
                 break;
         }
     }
     void EnterCombat(Unit* who)
     {
-        DoScriptText(RAND(SAY_AGGRO_1,SAY_AGGRO_2), m_creature, who);
+        DoScriptText(RAND(SAY_AGGRO_1,SAY_AGGRO_2), me, who);
     }
 
     void Reset() {}

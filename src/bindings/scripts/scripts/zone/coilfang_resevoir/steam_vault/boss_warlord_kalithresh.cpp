@@ -51,16 +51,16 @@ struct OREGON_DLL_DECL mob_naga_distillerAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
         //hack, due to really weird spell behaviour :(
         if (pInstance)
         {
             if (pInstance->GetData(TYPE_DISTILLER) == IN_PROGRESS)
             {
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             }
         }
     }
@@ -69,10 +69,10 @@ struct OREGON_DLL_DECL mob_naga_distillerAI : public ScriptedAI
 
     void StartRageGen(Unit *caster)
     {
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
-        DoCast(m_creature,SPELL_WARLORDS_RAGE_NAGA,true);
+        DoCast(me,SPELL_WARLORDS_RAGE_NAGA,true);
 
         if (pInstance)
             pInstance->SetData(TYPE_DISTILLER,IN_PROGRESS);
@@ -80,7 +80,7 @@ struct OREGON_DLL_DECL mob_naga_distillerAI : public ScriptedAI
 
     void DamageTaken(Unit *done_by, uint32 &damage)
     {
-        if (m_creature->GetHealth() <= damage)
+        if (me->GetHealth() <= damage)
             if (pInstance)
                 pInstance->SetData(TYPE_DISTILLER,DONE);
     }
@@ -115,9 +115,9 @@ struct OREGON_DLL_DECL boss_warlord_kalithreshAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-            case 0: DoScriptText(SAY_AGGRO1, m_creature); break;
-            case 1: DoScriptText(SAY_AGGRO2, m_creature); break;
-            case 2: DoScriptText(SAY_AGGRO3, m_creature); break;
+            case 0: DoScriptText(SAY_AGGRO1, me); break;
+            case 1: DoScriptText(SAY_AGGRO2, me); break;
+            case 2: DoScriptText(SAY_AGGRO3, me); break;
         }
 
         if (pInstance)
@@ -128,8 +128,8 @@ struct OREGON_DLL_DECL boss_warlord_kalithreshAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-            case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+            case 0: DoScriptText(SAY_SLAY1, me); break;
+            case 1: DoScriptText(SAY_SLAY2, me); break;
         }
     }
 
@@ -137,18 +137,18 @@ struct OREGON_DLL_DECL boss_warlord_kalithreshAI : public ScriptedAI
     {
         Creature* pCreature = NULL;
 
-        CellPair pair(Oregon::ComputeCellPair(m_creature->GetPositionX(), m_creature->GetPositionY()));
+        CellPair pair(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
         Cell cell(pair);
         cell.data.Part.reserved = ALL_DISTRICT;
         cell.SetNoCreate();
 
-        Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*m_creature, entry, true, range);
+        Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*me, entry, true, range);
         Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(pCreature, creature_check);
 
         TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> creature_searcher(searcher);
 
         CellLock<GridReadGuard> cell_lock(cell, pair);
-        cell_lock->Visit(cell_lock, creature_searcher,*(m_creature->GetMap()));
+        cell_lock->Visit(cell_lock, creature_searcher,*(me->GetMap()));
 
         return pCreature;
     }
@@ -159,12 +159,12 @@ struct OREGON_DLL_DECL boss_warlord_kalithreshAI : public ScriptedAI
         if (spell->Id == SPELL_WARLORDS_RAGE_PROC)
             if (pInstance)
                 if (pInstance->GetData(TYPE_DISTILLER) == DONE)
-                    m_creature->RemoveAurasDueToSpell(SPELL_WARLORDS_RAGE_PROC);
+                    me->RemoveAurasDueToSpell(SPELL_WARLORDS_RAGE_PROC);
     }
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
             pInstance->SetData(TYPE_WARLORD_KALITHRESH, DONE);
@@ -180,9 +180,9 @@ struct OREGON_DLL_DECL boss_warlord_kalithreshAI : public ScriptedAI
             Creature* distiller = SelectCreatureInGrid(17954, 100);
             if (distiller)
             {
-                DoScriptText(SAY_REGEN, m_creature);
-                DoCast(m_creature,SPELL_WARLORDS_RAGE);
-                ((mob_naga_distillerAI*)distiller->AI())->StartRageGen(m_creature);
+                DoScriptText(SAY_REGEN, me);
+                DoCast(me,SPELL_WARLORDS_RAGE);
+                ((mob_naga_distillerAI*)distiller->AI())->StartRageGen(me);
             }
             Rage_Timer = 3000+rand()%15000;
         } else Rage_Timer -= diff;
@@ -190,7 +190,7 @@ struct OREGON_DLL_DECL boss_warlord_kalithreshAI : public ScriptedAI
         //Reflection_Timer
         if (Reflection_Timer < diff)
         {
-            DoCast(m_creature, SPELL_SPELL_REFLECTION);
+            DoCast(me, SPELL_SPELL_REFLECTION);
             Reflection_Timer = 15000+rand()%10000;
         } else Reflection_Timer -= diff;
 

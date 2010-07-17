@@ -43,8 +43,8 @@ struct OREGON_DLL_DECL npc_henze_faulkAI : public ScriptedAI
     void Reset()
     {
         lifeTimer = 120000;
-        m_creature->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 32);
-        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1,7);   // lay down
+        me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 32);
+        me->SetUInt32Value(UNIT_FIELD_BYTES_1,7);   // lay down
         spellHit = false;
     }
 
@@ -59,7 +59,7 @@ struct OREGON_DLL_DECL npc_henze_faulkAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!m_creature->GetUInt32Value(UNIT_FIELD_BYTES_1))
+        if (!me->GetUInt32Value(UNIT_FIELD_BYTES_1))
         {
             if (lifeTimer < diff)
             {
@@ -75,11 +75,11 @@ struct OREGON_DLL_DECL npc_henze_faulkAI : public ScriptedAI
     {
         if (Spellkind->Id == 8593 && !spellHit)
         {
-            DoCast(m_creature,32343);
-            m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
-            m_creature->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
-            //m_creature->RemoveAllAuras();
-            DoScriptText(SAY_HEAL, m_creature);
+            DoCast(me,32343);
+            me->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
+            me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
+            //me->RemoveAllAuras();
+            DoScriptText(SAY_HEAL, me);
             spellHit = true;
         }
     }

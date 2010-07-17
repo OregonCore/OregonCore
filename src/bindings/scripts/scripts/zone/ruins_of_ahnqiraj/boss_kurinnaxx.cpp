@@ -62,32 +62,32 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
             return;
 
         //If we are <30% cast enrage
-        if (!enraged && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 30 && !m_creature->IsNonMeleeSpellCasted(false))
+        if (!enraged && me->GetHealth()*100 / me->GetMaxHealth() <= 30 && !me->IsNonMeleeSpellCasted(false))
         {
             enraged = true;
-            DoCast(m_creature,SPELL_ENRAGE,true);
-        } else if (enraged && !m_creature->HasAura(SPELL_ENRAGE,0))
+            DoCast(me,SPELL_ENRAGE,true);
+        } else if (enraged && !me->HasAura(SPELL_ENRAGE,0))
         {
-            DoCast(m_creature,SPELL_ENRAGE,true);
+            DoCast(me,SPELL_ENRAGE,true);
         }
 
 
         //MORTALWOUND_Timer
         if (MORTALWOUND_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_MORTALWOUND);
+            DoCast(me->getVictim(),SPELL_MORTALWOUND);
             MORTALWOUND_Timer = 6000 + rand()%2000;
         } else MORTALWOUND_Timer -= diff;
 
         if (THRASH_Timer < diff)
         {
-            DoCast(m_creature,SPELL_THRASH);
+            DoCast(me,SPELL_THRASH);
             THRASH_Timer = 3000+ rand()%5000;
         } else THRASH_Timer -= diff;
 
         if (SLASH_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_SLASH);
+            DoCast(me->getVictim(),SPELL_SLASH);
             SLASH_Timer = 5000 + rand()%5000;
         } else SLASH_Timer -= diff;
 
@@ -110,13 +110,13 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
 
                 if (pTarget)
                 {
-                    pTarget->CastSpell(pTarget,SPELL_SANDTRAP,true,0,0,m_creature->GetGUID());
+                    pTarget->CastSpell(pTarget,SPELL_SANDTRAP,true,0,0,me->GetGUID());
                     sandtrap = true;
                 }
                 SANDTRAP_Timer = 5000;
             } else
             {
-                GameObject* trap = FindGameObject(180647,100,m_creature);
+                GameObject* trap = FindGameObject(180647,100,me);
 
                 if (trap)
                 {
@@ -124,7 +124,7 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
                     trap->GetPosition(x,y,z);
 
                     //trap->CastSpell((Unit*)trap,25656);
-                    Creature* trigger = m_creature->SummonCreature(15426,x,y,z,0,TEMPSUMMON_TIMED_DESPAWN,2000);
+                    Creature* trigger = me->SummonCreature(15426,x,y,z,0,TEMPSUMMON_TIMED_DESPAWN,2000);
 
                     trigger->CastSpell(trigger,25656,false);
                     trap->Delete();

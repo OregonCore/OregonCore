@@ -51,7 +51,7 @@ struct OREGON_DLL_DECL boss_mekgineer_steamriggerAI : public ScriptedAI
     boss_mekgineer_steamriggerAI(Creature *c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     ScriptedInstance *pInstance;
@@ -74,13 +74,13 @@ struct OREGON_DLL_DECL boss_mekgineer_steamriggerAI : public ScriptedAI
         Summon50 = false;
         Summon25 = false;
 
-        if (pInstance && m_creature->isAlive())
+        if (pInstance && me->isAlive())
             pInstance->SetData(TYPE_MEKGINEER_STEAMRIGGER, NOT_STARTED);
     }
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
             pInstance->SetData(TYPE_MEKGINEER_STEAMRIGGER, DONE);
@@ -90,9 +90,9 @@ struct OREGON_DLL_DECL boss_mekgineer_steamriggerAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-            case 0: DoScriptText(SAY_SLAY_1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY_2, m_creature); break;
-            case 2: DoScriptText(SAY_SLAY_3, m_creature); break;
+            case 0: DoScriptText(SAY_SLAY_1, me); break;
+            case 1: DoScriptText(SAY_SLAY_2, me); break;
+            case 2: DoScriptText(SAY_SLAY_3, me); break;
         }
     }
 
@@ -100,9 +100,9 @@ struct OREGON_DLL_DECL boss_mekgineer_steamriggerAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, m_creature); break;
-            case 1: DoScriptText(SAY_AGGRO_2, m_creature); break;
-            case 2: DoScriptText(SAY_AGGRO_3, m_creature); break;
+            case 0: DoScriptText(SAY_AGGRO_1, me); break;
+            case 1: DoScriptText(SAY_AGGRO_2, me); break;
+            case 2: DoScriptText(SAY_AGGRO_3, me); break;
         }
 
         if (pInstance)
@@ -112,7 +112,7 @@ struct OREGON_DLL_DECL boss_mekgineer_steamriggerAI : public ScriptedAI
     //no known summon spells exist
     void SummonMechanichs()
     {
-        DoScriptText(SAY_MECHANICS, m_creature);
+        DoScriptText(SAY_MECHANICS, me);
 
         DoSpawnCreature(ENTRY_STREAMRIGGER_MECHANIC,5,5,0,0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 240000);
         DoSpawnCreature(ENTRY_STREAMRIGGER_MECHANIC,-5,5,0,0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 240000);
@@ -131,7 +131,7 @@ struct OREGON_DLL_DECL boss_mekgineer_steamriggerAI : public ScriptedAI
 
         if (Shrink_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_SUPER_SHRINK_RAY);
+            DoCast(me->getVictim(),SPELL_SUPER_SHRINK_RAY);
             Shrink_Timer = 20000;
         } else Shrink_Timer -= diff;
 
@@ -140,21 +140,21 @@ struct OREGON_DLL_DECL boss_mekgineer_steamriggerAI : public ScriptedAI
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
                 DoCast(pTarget,SPELL_SAW_BLADE);
             else
-                DoCast(m_creature->getVictim(),SPELL_SAW_BLADE);
+                DoCast(me->getVictim(),SPELL_SAW_BLADE);
 
             Saw_Blade_Timer = 15000;
         } else Saw_Blade_Timer -= diff;
 
         if (Electrified_Net_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_ELECTRIFIED_NET);
+            DoCast(me->getVictim(),SPELL_ELECTRIFIED_NET);
             Electrified_Net_Timer = 10000;
         }
         else Electrified_Net_Timer -= diff;
 
         if (!Summon75)
         {
-            if ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 75)
+            if ((me->GetHealth()*100 / me->GetMaxHealth()) < 75)
             {
                 SummonMechanichs();
                 Summon75 = true;
@@ -163,7 +163,7 @@ struct OREGON_DLL_DECL boss_mekgineer_steamriggerAI : public ScriptedAI
 
         if (!Summon50)
         {
-            if ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 50)
+            if ((me->GetHealth()*100 / me->GetMaxHealth()) < 50)
             {
                 SummonMechanichs();
                 Summon50 = true;
@@ -172,7 +172,7 @@ struct OREGON_DLL_DECL boss_mekgineer_steamriggerAI : public ScriptedAI
 
         if (!Summon25)
         {
-            if ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 25)
+            if ((me->GetHealth()*100 / me->GetMaxHealth()) < 25)
             {
                 SummonMechanichs();
                 Summon25 = true;
@@ -200,7 +200,7 @@ struct OREGON_DLL_DECL mob_steamrigger_mechanicAI : public ScriptedAI
     mob_steamrigger_mechanicAI(Creature *c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     ScriptedInstance* pInstance;
@@ -227,24 +227,24 @@ struct OREGON_DLL_DECL mob_steamrigger_mechanicAI : public ScriptedAI
         {
             if (pInstance && pInstance->GetData64(DATA_MEKGINEERSTEAMRIGGER) && pInstance->GetData(TYPE_MEKGINEER_STEAMRIGGER) == IN_PROGRESS)
             {
-                if (Unit* pMekgineer = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_MEKGINEERSTEAMRIGGER)))
+                if (Unit* pMekgineer = Unit::GetUnit((*me), pInstance->GetData64(DATA_MEKGINEERSTEAMRIGGER)))
                 {
-                    if (m_creature->IsWithinDistInMap(pMekgineer, MAX_REPAIR_RANGE))
+                    if (me->IsWithinDistInMap(pMekgineer, MAX_REPAIR_RANGE))
                     {
                         //are we already channeling? Doesn't work very well, find better check?
-                        if (!m_creature->GetUInt32Value(UNIT_CHANNEL_SPELL))
+                        if (!me->GetUInt32Value(UNIT_CHANNEL_SPELL))
                         {
-                            //m_creature->GetMotionMaster()->MovementExpired();
-                            //m_creature->GetMotionMaster()->MoveIdle();
+                            //me->GetMotionMaster()->MovementExpired();
+                            //me->GetMotionMaster()->MoveIdle();
 
-                            DoCast(m_creature,HeroicMode ? H_SPELL_REPAIR : SPELL_REPAIR, true);
+                            DoCast(me,HeroicMode ? H_SPELL_REPAIR : SPELL_REPAIR, true);
                         }
                         Repair_Timer = 5000;
                     }
                     else
                     {
-                        //m_creature->GetMotionMaster()->MovementExpired();
-                        //m_creature->GetMotionMaster()->MoveFollow(pMekgineer,0,0);
+                        //me->GetMotionMaster()->MovementExpired();
+                        //me->GetMotionMaster()->MoveFollow(pMekgineer,0,0);
                     }
                 }
             } else Repair_Timer = 5000;

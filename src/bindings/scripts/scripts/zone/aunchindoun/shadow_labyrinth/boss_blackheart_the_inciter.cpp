@@ -82,14 +82,14 @@ struct OREGON_DLL_DECL boss_blackheart_the_inciterAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-            case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+            case 0: DoScriptText(SAY_SLAY1, me); break;
+            case 1: DoScriptText(SAY_SLAY2, me); break;
         }
     }
 
     void JustDied(Unit *victim)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
             pInstance->SetData(DATA_BLACKHEARTTHEINCITEREVENT, DONE);
@@ -99,9 +99,9 @@ struct OREGON_DLL_DECL boss_blackheart_the_inciterAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-            case 0: DoScriptText(SAY_AGGRO1, m_creature); break;
-            case 1: DoScriptText(SAY_AGGRO2, m_creature); break;
-            case 2: DoScriptText(SAY_AGGRO3, m_creature); break;
+            case 0: DoScriptText(SAY_AGGRO1, me); break;
+            case 1: DoScriptText(SAY_AGGRO2, me); break;
+            case 2: DoScriptText(SAY_AGGRO3, me); break;
         }
 
         if (pInstance)
@@ -127,12 +127,12 @@ struct OREGON_DLL_DECL boss_blackheart_the_inciterAI : public ScriptedAI
 
         if (InciteChaos_Timer < diff)
         {
-            DoCast(m_creature, SPELL_INCITE_CHAOS);
+            DoCast(me, SPELL_INCITE_CHAOS);
 
-            std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
+            std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
             for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
-                Unit *pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+                Unit *pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
                 if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
                     pTarget->CastSpell(pTarget,SPELL_INCITE_CHAOS_B,true);
             }
@@ -154,7 +154,7 @@ struct OREGON_DLL_DECL boss_blackheart_the_inciterAI : public ScriptedAI
         //Knockback_Timer
         if (Knockback_Timer < diff)
         {
-            DoCast(m_creature, SPELL_WAR_STOMP);
+            DoCast(me, SPELL_WAR_STOMP);
             Knockback_Timer = 20000;
         } else Knockback_Timer -= diff;
 

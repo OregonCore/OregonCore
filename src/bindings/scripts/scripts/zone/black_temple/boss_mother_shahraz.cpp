@@ -123,17 +123,17 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
             pInstance->SetData(DATA_MOTHERSHAHRAZEVENT, IN_PROGRESS);
 
         DoZoneInCombat();
-        DoScriptText(SAY_AGGRO, m_creature);
-        DoCast(m_creature,SPELL_PRISMATIC_SHIELD,true);
-        DoCast(m_creature,SPELL_SABER_LASH_TRIGGER,true);
+        DoScriptText(SAY_AGGRO, me);
+        DoCast(me,SPELL_PRISMATIC_SHIELD,true);
+        DoCast(me,SPELL_SABER_LASH_TRIGGER,true);
     }
 
     void KilledUnit(Unit *victim)
     {
         switch(rand()%2)
         {
-        case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-        case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+        case 0: DoScriptText(SAY_SLAY1, me); break;
+        case 1: DoScriptText(SAY_SLAY2, me); break;
         }
     }
 
@@ -142,7 +142,7 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(DATA_MOTHERSHAHRAZEVENT, DONE);
 
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
     }
 
     void TeleportPlayers()
@@ -165,7 +165,7 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
 
     bool TryDoCast(Unit *victim, uint32 spellId, bool triggered = false)
     {
-        if (m_creature->IsNonMeleeSpellCasted(false)) return false;
+        if (me->IsNonMeleeSpellCasted(false)) return false;
 
         DoCast(victim,spellId,triggered);
         return true;
@@ -176,30 +176,30 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 10) && !Enraged)
+        if (((me->GetHealth()*100 / me->GetMaxHealth()) < 10) && !Enraged)
         {
             Enraged = true;
-            DoCast(m_creature, SPELL_ENRAGE, true);
-            DoScriptText(SAY_ENRAGE, m_creature);
+            DoCast(me, SPELL_ENRAGE, true);
+            DoScriptText(SAY_ENRAGE, me);
         }
 
         if (BeamTimer < diff)
         {
-            if (!m_creature->IsNonMeleeSpellCasted(false))
+            if (!me->IsNonMeleeSpellCasted(false))
             {
                 switch(CurrentBeam)
                 {
                     case 0:
-                        DoCast(m_creature, SPELL_BEAM_SINISTER_TRIGGER);
+                        DoCast(me, SPELL_BEAM_SINISTER_TRIGGER);
                         break;
                     case 1:
-                        DoCast(m_creature, SPELL_BEAM_VILE_TRIGGER);
+                        DoCast(me, SPELL_BEAM_VILE_TRIGGER);
                         break;
                     case 2:
-                        DoCast(m_creature, SPELL_BEAM_WICKED_TRIGGER);
+                        DoCast(me, SPELL_BEAM_WICKED_TRIGGER);
                         break;
                     case 3:
-                        DoCast(m_creature, SPELL_BEAM_SINFUL_TRIGGER);
+                        DoCast(me, SPELL_BEAM_SINFUL_TRIGGER);
                         break;
                 }
                 uint32 Beam = CurrentBeam;
@@ -217,8 +217,8 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
 
             switch(rand()%2)
             {
-            case 0: DoScriptText(SAY_SPELL2, m_creature); break;
-            case 1: DoScriptText(SAY_SPELL3, m_creature); break;
+            case 0: DoScriptText(SAY_SPELL2, me); break;
+            case 1: DoScriptText(SAY_SPELL3, me); break;
             }
             FatalAttractionExplodeTimer = 2000;
             FatalAttractionTimer = 30000;
@@ -312,16 +312,16 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
 
         if (ShriekTimer < diff)
         {
-            if (TryDoCast(m_creature->getVictim(), SPELL_SILENCING_SHRIEK))
+            if (TryDoCast(me->getVictim(), SPELL_SILENCING_SHRIEK))
                 ShriekTimer = 20000;
         } else ShriekTimer -= diff;
 
         //Enrage
-        if (!m_creature->HasAura(SPELL_BERSERK, 0))
+        if (!me->HasAura(SPELL_BERSERK, 0))
             if (EnrageTimer < diff)
             {
-                DoCast(m_creature, SPELL_BERSERK);
-                DoScriptText(SAY_ENRAGE, m_creature);
+                DoCast(me, SPELL_BERSERK);
+                DoScriptText(SAY_ENRAGE, me);
             } else EnrageTimer -= diff;
 
         //Random taunts
@@ -329,9 +329,9 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
         {
             switch(rand()%3)
             {
-            case 0: DoScriptText(SAY_TAUNT1, m_creature); break;
-            case 1: DoScriptText(SAY_TAUNT2, m_creature); break;
-            case 2: DoScriptText(SAY_TAUNT3, m_creature); break;
+            case 0: DoScriptText(SAY_TAUNT1, me); break;
+            case 1: DoScriptText(SAY_TAUNT2, me); break;
+            case 2: DoScriptText(SAY_TAUNT3, me); break;
             }
             RandomYellTimer = 60000 + rand()%91 * 1000;
         } else RandomYellTimer -= diff;

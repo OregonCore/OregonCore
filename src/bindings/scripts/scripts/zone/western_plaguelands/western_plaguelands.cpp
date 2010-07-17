@@ -105,11 +105,11 @@ struct OREGON_DLL_DECL npc_the_scourge_cauldronAI : public ScriptedAI
     void DoDie()
     {
         //summoner dies here
-        m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+        me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
         //override any database `spawntimesecs` to prevent duplicated summons
-        uint32 rTime = m_creature->GetRespawnDelay();
+        uint32 rTime = me->GetRespawnDelay();
         if (rTime<600)
-            m_creature->SetRespawnDelay(600);
+            me->SetRespawnDelay(600);
     }
 
     void MoveInLineOfSight(Unit *who)
@@ -119,13 +119,13 @@ struct OREGON_DLL_DECL npc_the_scourge_cauldronAI : public ScriptedAI
 
         if (who->GetTypeId() == TYPEID_PLAYER)
         {
-            switch(m_creature->GetAreaId())
+            switch(me->GetAreaId())
             {
                 case 199:                                   //felstone
                     if (((Player*)who)->GetQuestStatus(5216) == QUEST_STATUS_INCOMPLETE ||
                         ((Player*)who)->GetQuestStatus(5229) == QUEST_STATUS_INCOMPLETE)
                     {
-                        DoSpawnCreature(11075,0,0,0,m_creature->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,600000);
+                        DoSpawnCreature(11075,0,0,0,me->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,600000);
                         DoDie();
                     }
                     break;
@@ -133,7 +133,7 @@ struct OREGON_DLL_DECL npc_the_scourge_cauldronAI : public ScriptedAI
                     if (((Player*)who)->GetQuestStatus(5219) == QUEST_STATUS_INCOMPLETE ||
                         ((Player*)who)->GetQuestStatus(5231) == QUEST_STATUS_INCOMPLETE)
                     {
-                        DoSpawnCreature(11077,0,0,0,m_creature->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,600000);
+                        DoSpawnCreature(11077,0,0,0,me->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,600000);
                         DoDie();
                     }
                     break;
@@ -141,7 +141,7 @@ struct OREGON_DLL_DECL npc_the_scourge_cauldronAI : public ScriptedAI
                     if (((Player*)who)->GetQuestStatus(5225) == QUEST_STATUS_INCOMPLETE ||
                         ((Player*)who)->GetQuestStatus(5235) == QUEST_STATUS_INCOMPLETE)
                     {
-                        DoSpawnCreature(11078,0,0,0,m_creature->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,600000);
+                        DoSpawnCreature(11078,0,0,0,me->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,600000);
                         DoDie();
                     }
                     break;
@@ -149,7 +149,7 @@ struct OREGON_DLL_DECL npc_the_scourge_cauldronAI : public ScriptedAI
                     if (((Player*)who)->GetQuestStatus(5222) == QUEST_STATUS_INCOMPLETE ||
                         ((Player*)who)->GetQuestStatus(5233) == QUEST_STATUS_INCOMPLETE)
                     {
-                        DoSpawnCreature(11076,0,0,0,m_creature->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,600000);
+                        DoSpawnCreature(11076,0,0,0,me->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,600000);
                         DoDie();
                     }
                     break;

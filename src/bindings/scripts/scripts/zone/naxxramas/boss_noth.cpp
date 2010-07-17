@@ -68,9 +68,9 @@ struct OREGON_DLL_DECL boss_nothAI : public ScriptedAI
     {
         switch (rand()%3)
         {
-        case 0: DoScriptText(SAY_AGGRO1, m_creature); break;
-        case 1: DoScriptText(SAY_AGGRO2, m_creature); break;
-        case 2: DoScriptText(SAY_AGGRO3, m_creature); break;
+        case 0: DoScriptText(SAY_AGGRO1, me); break;
+        case 1: DoScriptText(SAY_AGGRO2, me); break;
+        case 2: DoScriptText(SAY_AGGRO3, me); break;
         }
     }
 
@@ -78,8 +78,8 @@ struct OREGON_DLL_DECL boss_nothAI : public ScriptedAI
     {
         switch (rand()%2)
         {
-        case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-        case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+        case 0: DoScriptText(SAY_SLAY1, me); break;
+        case 1: DoScriptText(SAY_SLAY2, me); break;
         }
     }
 
@@ -91,7 +91,7 @@ struct OREGON_DLL_DECL boss_nothAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -102,8 +102,8 @@ struct OREGON_DLL_DECL boss_nothAI : public ScriptedAI
         //Blink_Timer
         if (Blink_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_CRIPPLE);
-            DoCast(m_creature,SPELL_BLINK);
+            DoCast(me->getVictim(),SPELL_CRIPPLE);
+            DoCast(me,SPELL_BLINK);
 
             Blink_Timer = 25000;
         } else Blink_Timer -= diff;
@@ -111,17 +111,17 @@ struct OREGON_DLL_DECL boss_nothAI : public ScriptedAI
         //Curse_Timer
         if (Curse_Timer < diff)
         {
-             DoCast(m_creature->getVictim(),SPELL_CURSE_PLAGUEBRINGER);
+             DoCast(me->getVictim(),SPELL_CURSE_PLAGUEBRINGER);
             Curse_Timer = 28000;
         } else Curse_Timer -= diff;
 
         //Summon_Timer
         if (Summon_Timer < diff)
         {
-            DoScriptText(SAY_SUMMON, m_creature);
+            DoScriptText(SAY_SUMMON, me);
 
             for (uint8 i = 0; i < 6; i++)
-                  m_creature->SummonCreature(C_PLAGUED_WARRIOR,2684.804,-3502.517,261.313,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+                  me->SummonCreature(C_PLAGUED_WARRIOR,2684.804,-3502.517,261.313,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
 
             Summon_Timer = 30500;
         } else Summon_Timer -= diff;

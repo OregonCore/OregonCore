@@ -57,16 +57,16 @@ struct OREGON_DLL_DECL mob_crystalcore_devastatorAI : public ScriptedAI
         //Knockaway_Timer
         if (Knockaway_Timer < diff)
         {
-            m_creature->CastSpell(m_creature->getVictim(),SPELL_KNOCKAWAY, true);
+            me->CastSpell(me->getVictim(),SPELL_KNOCKAWAY, true);
 
             // current aggro target is knocked away pick new target
             Unit *pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
 
-            if (!pTarget || pTarget == m_creature->getVictim())
+            if (!pTarget || pTarget == me->getVictim())
                 pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
 
             if (pTarget)
-                m_creature->TauntApply(pTarget);
+                me->TauntApply(pTarget);
 
             Knockaway_Timer = 23000;
         }
@@ -75,7 +75,7 @@ struct OREGON_DLL_DECL mob_crystalcore_devastatorAI : public ScriptedAI
         //Countercharge_Timer
         if (Countercharge_Timer < diff)
         {
-            DoCast(this->m_creature,SPELL_COUNTERCHARGE);
+            DoCast(this->me,SPELL_COUNTERCHARGE);
             Countercharge_Timer = 45000;
         } else Countercharge_Timer -= diff;
 

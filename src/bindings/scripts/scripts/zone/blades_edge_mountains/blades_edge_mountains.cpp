@@ -52,7 +52,7 @@ struct OREGON_DLL_DECL mobs_bladespire_ogreAI : public ScriptedAI
     void JustDied(Unit* Killer)
     {
         if (Killer->GetTypeId() == TYPEID_PLAYER)
-            ((Player*)Killer)->KilledMonster(19995, m_creature->GetGUID());
+            ((Player*)Killer)->KilledMonster(19995, me->GetGUID());
     }
 };
 CreatureAI* GetAI_mobs_bladespire_ogre(Creature *_Creature)
@@ -98,9 +98,9 @@ struct OREGON_DLL_DECL mobs_nether_drakeAI : public ScriptedAI
     {
         NihilSpeech_Timer = 2000;
         IsNihil = false;
-        if (m_creature->GetEntry() == ENTRY_NIHIL)
+        if (me->GetEntry() == ENTRY_NIHIL)
         {
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             IsNihil = true;
         }
         NihilSpeech_Phase = 1;
@@ -118,7 +118,7 @@ struct OREGON_DLL_DECL mobs_nether_drakeAI : public ScriptedAI
         {
             uint32 cEntry = 0;
 
-            switch(m_creature->GetEntry())
+            switch(me->GetEntry())
             {
                 case ENTRY_WHELP:
                     switch(rand()%4)
@@ -156,7 +156,7 @@ struct OREGON_DLL_DECL mobs_nether_drakeAI : public ScriptedAI
                 case ENTRY_NIHIL:
                     if (NihilSpeech_Phase)
                     {
-                        DoScriptText(SAY_NIHIL_INTERRUPT, m_creature);
+                        DoScriptText(SAY_NIHIL_INTERRUPT, me);
                         IsNihil = false;
                         switch(rand()%3)
                         {
@@ -170,14 +170,14 @@ struct OREGON_DLL_DECL mobs_nether_drakeAI : public ScriptedAI
 
             if (cEntry)
             {
-                m_creature->UpdateEntry(cEntry);
+                me->UpdateEntry(cEntry);
 
                 if (cEntry == ENTRY_NIHIL)
                 {
-                    m_creature->InterruptNonMeleeSpells(true);
-                    m_creature->RemoveAllAuras();
-                    m_creature->DeleteThreatList();
-                    m_creature->CombatStop(true);
+                    me->InterruptNonMeleeSpells(true);
+                    me->RemoveAllAuras();
+                    me->DeleteThreatList();
+                    me->CombatStop(true);
                     Reset();
                 }
             }
@@ -195,27 +195,27 @@ struct OREGON_DLL_DECL mobs_nether_drakeAI : public ScriptedAI
                     switch(NihilSpeech_Phase)
                     {
                         case 1:
-                            DoScriptText(SAY_NIHIL_1, m_creature);
+                            DoScriptText(SAY_NIHIL_1, me);
                             ++NihilSpeech_Phase;
                             break;
                         case 2:
-                            DoScriptText(SAY_NIHIL_2, m_creature);
+                            DoScriptText(SAY_NIHIL_2, me);
                             ++NihilSpeech_Phase;
                             break;
                         case 3:
-                            DoScriptText(SAY_NIHIL_3, m_creature);
+                            DoScriptText(SAY_NIHIL_3, me);
                             ++NihilSpeech_Phase;
                             break;
                         case 4:
-                            DoScriptText(SAY_NIHIL_4, m_creature);
+                            DoScriptText(SAY_NIHIL_4, me);
                             ++NihilSpeech_Phase;
                             break;
                         case 5:
-                            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                                                             // + MOVEMENTFLAG_LEVITATING
-                            m_creature->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
+                            me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
                             //then take off to random location. creature is initially summoned, so don't bother do anything else.
-                            m_creature->GetMotionMaster()->MovePoint(0, m_creature->GetPositionX()+100, m_creature->GetPositionY(), m_creature->GetPositionZ()+100);
+                            me->GetMotionMaster()->MovePoint(0, me->GetPositionX()+100, me->GetPositionY(), me->GetPositionZ()+100);
                             NihilSpeech_Phase = 0;
                             break;
                     }
@@ -230,13 +230,13 @@ struct OREGON_DLL_DECL mobs_nether_drakeAI : public ScriptedAI
 
         if (IntangiblePresence_Timer <= diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_INTANGIBLE_PRESENCE);
+            DoCast(me->getVictim(),SPELL_INTANGIBLE_PRESENCE);
             IntangiblePresence_Timer = 15000+rand()%15000;
         } else IntangiblePresence_Timer -= diff;
 
         if (ManaBurn_Timer <= diff)
         {
-            Unit *pTarget = m_creature->getVictim();
+            Unit *pTarget = me->getVictim();
             if (pTarget && pTarget->getPowerType() == POWER_MANA)
                 DoCast(pTarget,SPELL_MANA_BURN);
             ManaBurn_Timer = 8000+rand()%8000;
@@ -244,7 +244,7 @@ struct OREGON_DLL_DECL mobs_nether_drakeAI : public ScriptedAI
 
         if (ArcaneBlast_Timer <= diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_ARCANE_BLAST);
+            DoCast(me->getVictim(),SPELL_ARCANE_BLAST);
             ArcaneBlast_Timer = 2500+rand()%5000;
         } else ArcaneBlast_Timer -= diff;
 
@@ -280,9 +280,9 @@ struct OREGON_DLL_DECL npc_daranelleAI : public ScriptedAI
         {
             if (who->HasAura(36904,0))
             {
-                DoScriptText(SAY_DARANELLE, m_creature, who);
+                DoScriptText(SAY_DARANELLE, me, who);
                 //TODO: Move the below to updateAI and run if this statement == true
-                ((Player*)who)->KilledMonster(21511, m_creature->GetGUID());
+                ((Player*)who)->KilledMonster(21511, me->GetGUID());
                 ((Player*)who)->RemoveAurasDueToSpell(36904);
             }
         }

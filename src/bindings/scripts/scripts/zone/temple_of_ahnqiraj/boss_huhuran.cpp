@@ -70,7 +70,7 @@ struct OREGON_DLL_DECL boss_huhuranAI : public ScriptedAI
         //Frenzy_Timer
         if (!Frenzy && Frenzy_Timer < diff)
         {
-            DoCast(m_creature, SPELL_FRENZY);
+            DoCast(me, SPELL_FRENZY);
             Frenzy = true;
             PoisonBolt_Timer = 3000;
             Frenzy_Timer = 25000 + rand()%10000;
@@ -87,14 +87,14 @@ struct OREGON_DLL_DECL boss_huhuranAI : public ScriptedAI
         //Spit Timer
         if (Spit_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_ACIDSPIT);
+            DoCast(me->getVictim(),SPELL_ACIDSPIT);
             Spit_Timer = 5000 + rand()%5000;
         } else Spit_Timer -= diff;
 
         //NoxiousPoison_Timer
         if (NoxiousPoison_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_NOXIOUSPOISON);
+            DoCast(me->getVictim(),SPELL_NOXIOUSPOISON);
             NoxiousPoison_Timer = 12000 + rand()%12000;
         } else NoxiousPoison_Timer -= diff;
 
@@ -103,7 +103,7 @@ struct OREGON_DLL_DECL boss_huhuranAI : public ScriptedAI
         {
             if (PoisonBolt_Timer < diff)
             {
-                DoCast(m_creature->getVictim(),SPELL_POISONBOLT);
+                DoCast(me->getVictim(),SPELL_POISONBOLT);
                 PoisonBolt_Timer = 3000;
             } else PoisonBolt_Timer -= diff;
         }
@@ -111,16 +111,16 @@ struct OREGON_DLL_DECL boss_huhuranAI : public ScriptedAI
         //FrenzyBack_Timer
         if (Frenzy && FrenzyBack_Timer < diff)
         {
-            m_creature->InterruptNonMeleeSpells(false);
+            me->InterruptNonMeleeSpells(false);
             Frenzy = false;
             FrenzyBack_Timer = 15000;
         } else FrenzyBack_Timer -= diff;
 
-        if (!Berserk && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 31)
+        if (!Berserk && me->GetHealth()*100 / me->GetMaxHealth() < 31)
         {
-            m_creature->InterruptNonMeleeSpells(false);
+            me->InterruptNonMeleeSpells(false);
             DoTextEmote("is going berserk", NULL);
-            DoCast(m_creature, SPELL_BERSERK);
+            DoCast(me, SPELL_BERSERK);
             Berserk = true;
         }
 

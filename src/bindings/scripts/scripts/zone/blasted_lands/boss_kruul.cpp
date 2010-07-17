@@ -65,7 +65,7 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
     void KilledUnit()
     {
         // When a player, pet or totem gets killed, Lord Kazzak casts this spell to instantly regenerate 70,000 health.
-        DoCast(m_creature,SPELL_CAPTURESOUL);
+        DoCast(me,SPELL_CAPTURESOUL);
 
     }
 
@@ -101,7 +101,7 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
         {
             if (rand()%100 < 46)
             {
-                DoCast(m_creature->getVictim(),SPELL_SHADOWVOLLEY);
+                DoCast(me->getVictim(),SPELL_SHADOWVOLLEY);
             }
 
             ShadowVolley_Timer = 5000;
@@ -112,7 +112,7 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
         {
             if (rand()%100 < 50)
             {
-                DoCast(m_creature->getVictim(),SPELL_CLEAVE);
+                DoCast(me->getVictim(),SPELL_CLEAVE);
             }
 
             Cleave_Timer = 10000;
@@ -123,7 +123,7 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
         {
             if (rand()%100 < 20)
             {
-                DoCast(m_creature->getVictim(),SPELL_THUNDERCLAP);
+                DoCast(me->getVictim(),SPELL_THUNDERCLAP);
             }
 
             ThunderClap_Timer = 12000;
@@ -132,7 +132,7 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
         //TwistedReflection_Timer
         if (TwistedReflection_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_TWISTEDREFLECTION);
+            DoCast(me->getVictim(),SPELL_TWISTEDREFLECTION);
             TwistedReflection_Timer = 30000;
         } else TwistedReflection_Timer -= diff;
 
@@ -141,7 +141,7 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
         {
             if (rand()%100 < 40)
             {
-                DoCast(m_creature->getVictim(),SPELL_VOIDBOLT);
+                DoCast(me->getVictim(),SPELL_VOIDBOLT);
             }
 
             VoidBolt_Timer = 18000;
@@ -150,16 +150,16 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
         //Rage_Timer
         if (Rage_Timer < diff)
         {
-            DoCast(m_creature,SPELL_RAGE);
+            DoCast(me,SPELL_RAGE);
             Rage_Timer = 70000;
         } else Rage_Timer -= diff;
 
         //Hound_Timer
         if (Hound_Timer < diff)
         {
-            SummonHounds(m_creature->getVictim());
-            SummonHounds(m_creature->getVictim());
-            SummonHounds(m_creature->getVictim());
+            SummonHounds(me->getVictim());
+            SummonHounds(me->getVictim());
+            SummonHounds(me->getVictim());
 
             Hound_Timer = 45000;
         } else Hound_Timer -= diff;

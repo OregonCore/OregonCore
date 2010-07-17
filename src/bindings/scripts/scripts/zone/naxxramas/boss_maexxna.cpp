@@ -69,12 +69,12 @@ struct OREGON_DLL_DECL mob_webwrapAI : public ScriptedAI
 
     void DamageTaken(Unit *done_by, uint32 &damage)
     {
-        if (damage > m_creature->GetHealth())
+        if (damage > me->GetHealth())
         {
             if (victimGUID)
             {
                 Unit* victim = NULL;
-                victim = Unit::GetUnit((*m_creature), victimGUID);
+                victim = Unit::GetUnit((*me), victimGUID);
                 if (victim)
                     victim->RemoveAurasDueToSpell(SPELL_WEBTRAP);
             }
@@ -121,7 +121,7 @@ struct OREGON_DLL_DECL boss_maexxnaAI : public ScriptedAI
 
     void DoCastWebWrap()
     {
-        std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
+        std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
         std::vector<Unit *> targets;
 
         //This spell doesn't work if we only have 1 player on threat list
@@ -133,7 +133,7 @@ struct OREGON_DLL_DECL boss_maexxnaAI : public ScriptedAI
         std::advance(itr, 1);
         for (; itr != t_list.end(); ++itr)                   //store the threat list in a different container
         {
-            Unit *pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+            Unit *pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
                                                             //only on alive players
             if (pTarget && pTarget->isAlive() && pTarget->GetTypeId() == TYPEID_PLAYER)
                 targets.push_back(pTarget);
@@ -155,20 +155,20 @@ struct OREGON_DLL_DECL boss_maexxnaAI : public ScriptedAI
                 {
                     case 0:
                         DoTeleportPlayer(pTarget, LOC_X1, LOC_Y1, LOC_Z1, pTarget->GetOrientation());
-                        Wrap = m_creature->SummonCreature(16486, LOC_X1, LOC_Y1, LOC_Z1, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
+                        Wrap = me->SummonCreature(16486, LOC_X1, LOC_Y1, LOC_Z1, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
                         break;
                     case 1:
                         DoTeleportPlayer(pTarget, LOC_X2, LOC_Y2, LOC_Z2, pTarget->GetOrientation());
-                        Wrap = m_creature->SummonCreature(16486, LOC_X2, LOC_Y2, LOC_Z2, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
+                        Wrap = me->SummonCreature(16486, LOC_X2, LOC_Y2, LOC_Z2, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
                         break;
                     case 2:
                         DoTeleportPlayer(pTarget, LOC_X3, LOC_Y3, LOC_Z3, pTarget->GetOrientation());
-                        Wrap = m_creature->SummonCreature(16486, LOC_X3, LOC_Y3, LOC_Z3, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
+                        Wrap = me->SummonCreature(16486, LOC_X3, LOC_Y3, LOC_Z3, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000);
                         break;
                 }
                 if (Wrap)
                 {
-                    Wrap->setFaction(m_creature->getFaction());
+                    Wrap->setFaction(me->getFaction());
                     ((mob_webwrapAI*)Wrap->AI())->SetVictim(pTarget);
                 }
             }
@@ -190,35 +190,35 @@ struct OREGON_DLL_DECL boss_maexxnaAI : public ScriptedAI
         //WebSpray_Timer
         if (WebSpray_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_WEBSPRAY);
+            DoCast(me->getVictim(), SPELL_WEBSPRAY);
             WebSpray_Timer = 40000;
         } else WebSpray_Timer -= diff;
 
         //PoisonShock_Timer
         if (PoisonShock_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_POISONSHOCK);
+            DoCast(me->getVictim(), SPELL_POISONSHOCK);
             PoisonShock_Timer = 20000;
         } else PoisonShock_Timer -= diff;
 
         //NecroticPoison_Timer
         if (NecroticPoison_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_NECROTICPOISON);
+            DoCast(me->getVictim(), SPELL_NECROTICPOISON);
             NecroticPoison_Timer = 30000;
         } else NecroticPoison_Timer -= diff;
 
         //SummonSpiderling_Timer
         if (SummonSpiderling_Timer < diff)
         {
-            DoCast(m_creature, SPELL_SUMMON_SPIDERLING);
+            DoCast(me, SPELL_SUMMON_SPIDERLING);
             SummonSpiderling_Timer = 40000;
         } else SummonSpiderling_Timer -= diff;
 
         //Enrage if not already enraged and below 30%
-        if (!Enraged && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 30)
+        if (!Enraged && (me->GetHealth()*100 / me->GetMaxHealth()) < 30)
         {
-            DoCast(m_creature,SPELL_FRENZY);
+            DoCast(me,SPELL_FRENZY);
             Enraged = true;
         }
 

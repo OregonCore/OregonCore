@@ -41,7 +41,7 @@ struct OREGON_DLL_DECL npc_ravenholdtAI : public ScriptedAI
     {
         if (who->GetTypeId() == TYPEID_PLAYER)
             if (((Player*)who)->GetQuestStatus(6681) == QUEST_STATUS_INCOMPLETE)
-                ((Player*)who)->KilledMonster(m_creature->GetEntry(),m_creature->GetGUID());
+                ((Player*)who)->KilledMonster(me->GetEntry(),me->GetGUID());
     }
 
     void Aggro(Unit* who) { }

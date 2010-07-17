@@ -197,7 +197,7 @@ struct OREGON_DLL_DECL boss_chromaggusAI : public ScriptedAI
         {
             //Remove old vurlnability spell
             if (CurrentVurln_Spell)
-                m_creature->RemoveAurasDueToSpell(CurrentVurln_Spell);
+                me->RemoveAurasDueToSpell(CurrentVurln_Spell);
 
             //Cast new random vurlnabilty on self
             uint32 spell;
@@ -210,24 +210,24 @@ struct OREGON_DLL_DECL boss_chromaggusAI : public ScriptedAI
                 case 4: spell = SPELL_ARCANE_VURNALBILTY; break;
             }
 
-            DoCast(m_creature,spell);
+            DoCast(me,spell);
             CurrentVurln_Spell = spell;
 
-            DoScriptText(EMOTE_SHIMMER, m_creature);
+            DoScriptText(EMOTE_SHIMMER, me);
             Shimmer_Timer = 45000;
         } else Shimmer_Timer -= diff;
 
         //Breath1_Timer
         if (Breath1_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),Breath1_Spell);
+            DoCast(me->getVictim(),Breath1_Spell);
             Breath1_Timer = 60000;
         } else Breath1_Timer -= diff;
 
         //Breath2_Timer
         if (Breath2_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),Breath2_Spell);
+            DoCast(me->getVictim(),Breath2_Spell);
             Breath2_Timer = 60000;
         } else Breath2_Timer -= diff;
 
@@ -247,10 +247,10 @@ struct OREGON_DLL_DECL boss_chromaggusAI : public ScriptedAI
 
             std::list<HostileReference*>::iterator i;
 
-            for (i = m_creature->getThreatManager().getThreatList().begin();i != m_creature->getThreatManager().getThreatList().end();)
+            for (i = me->getThreatManager().getThreatList().begin();i != me->getThreatManager().getThreatList().end();)
             {
                 Unit* pUnit = NULL;
-                pUnit = Unit::GetUnit((*m_creature), (*i)->getUnitGuid());
+                pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
                 ++i;
 
                 if (pUnit)
@@ -285,15 +285,15 @@ struct OREGON_DLL_DECL boss_chromaggusAI : public ScriptedAI
         //Frenzy_Timer
         if (Frenzy_Timer < diff)
         {
-            DoCast(m_creature,SPELL_FRENZY);
-            DoScriptText(EMOTE_FRENZY, m_creature);
+            DoCast(me,SPELL_FRENZY);
+            DoScriptText(EMOTE_FRENZY, me);
             Frenzy_Timer = 10000 + (rand() % 5000);
         } else Frenzy_Timer -= diff;
 
         //Enrage if not already enraged and below 20%
-        if (!Enraged && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 20)
+        if (!Enraged && (me->GetHealth()*100 / me->GetMaxHealth()) < 20)
         {
-            DoCast(m_creature,SPELL_ENRAGE);
+            DoCast(me,SPELL_ENRAGE);
             Enraged = true;
         }
 

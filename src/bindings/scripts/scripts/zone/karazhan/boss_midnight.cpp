@@ -58,15 +58,15 @@ struct OREGON_DLL_DECL boss_midnightAI : public ScriptedAI
         Attumen = 0;
         Mount_Timer = 0;
 
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        m_creature->SetVisibility(VISIBILITY_ON);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->SetVisibility(VISIBILITY_ON);
     }
 
     void KilledUnit(Unit *victim)
     {
         if (Phase == 2)
         {
-            if (Unit *pUnit = Unit::GetUnit(*m_creature, Attumen))
+            if (Unit *pUnit = Unit::GetUnit(*me, Attumen))
             DoScriptText(SAY_MIDNIGHT_KILL, pUnit);
         }
     }
@@ -76,15 +76,15 @@ struct OREGON_DLL_DECL boss_midnightAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Phase == 1 && (m_creature->GetHealth()*100)/m_creature->GetMaxHealth() < 95)
+        if (Phase == 1 && (me->GetHealth()*100)/me->GetMaxHealth() < 95)
         {
             Phase = 2;
             Creature *pAttumen = DoSpawnCreature(SUMMON_ATTUMEN, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 30000);
             if (pAttumen)
             {
                 Attumen = pAttumen->GetGUID();
-                pAttumen->AI()->AttackStart(m_creature->getVictim());
-                SetMidnight(pAttumen, m_creature->GetGUID());
+                pAttumen->AI()->AttackStart(me->getVictim());
+                SetMidnight(pAttumen, me->GetGUID());
                 switch(rand()%3)
                 {
                 case 0: DoScriptText(SAY_APPEAR1, pAttumen); break;
@@ -93,9 +93,9 @@ struct OREGON_DLL_DECL boss_midnightAI : public ScriptedAI
                 }
             }
         }
-        else if (Phase == 2 && (m_creature->GetHealth()*100)/m_creature->GetMaxHealth() < 25)
+        else if (Phase == 2 && (me->GetHealth()*100)/me->GetMaxHealth() < 25)
         {
-            if (Unit *pAttumen = Unit::GetUnit(*m_creature, Attumen))
+            if (Unit *pAttumen = Unit::GetUnit(*me, Attumen))
                 Mount(pAttumen);
         }
         else if (Phase == 3)
@@ -105,9 +105,9 @@ struct OREGON_DLL_DECL boss_midnightAI : public ScriptedAI
                 if (Mount_Timer <= diff)
                 {
                     Mount_Timer = 0;
-                    m_creature->SetVisibility(VISIBILITY_OFF);
-                    m_creature->GetMotionMaster()->MoveIdle();
-                    if (Unit *pAttumen = Unit::GetUnit(*m_creature, Attumen))
+                    me->SetVisibility(VISIBILITY_OFF);
+                    me->GetMotionMaster()->MoveIdle();
+                    if (Unit *pAttumen = Unit::GetUnit(*me, Attumen))
                     {
                         pAttumen->SetUInt32Value(UNIT_FIELD_DISPLAYID, MOUNTED_DISPLAYID);
                         pAttumen->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -131,20 +131,20 @@ struct OREGON_DLL_DECL boss_midnightAI : public ScriptedAI
     {
         DoScriptText(SAY_MOUNT, pAttumen);
         Phase = 3;
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         pAttumen->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        float angle = m_creature->GetAngle(pAttumen);
-        float distance = m_creature->GetDistance2d(pAttumen);
-        float newX = m_creature->GetPositionX() + cos(angle)*(distance/2) ;
-        float newY = m_creature->GetPositionY() + sin(angle)*(distance/2) ;
+        float angle = me->GetAngle(pAttumen);
+        float distance = me->GetDistance2d(pAttumen);
+        float newX = me->GetPositionX() + cos(angle)*(distance/2) ;
+        float newY = me->GetPositionY() + sin(angle)*(distance/2) ;
         float newZ = 50;
-        //m_creature->Relocate(newX,newY,newZ,angle);
-        //m_creature->SendMonsterMove(newX, newY, newZ, 0, true, 1000);
-        m_creature->GetMotionMaster()->Clear();
-        m_creature->GetMotionMaster()->MovePoint(0, newX, newY, newZ);
+        //me->Relocate(newX,newY,newZ,angle);
+        //me->SendMonsterMove(newX, newY, newZ, 0, true, 1000);
+        me->GetMotionMaster()->Clear();
+        me->GetMotionMaster()->MovePoint(0, newX, newY, newZ);
         distance += 10;
-        newX = m_creature->GetPositionX() + cos(angle)*(distance/2) ;
-        newY = m_creature->GetPositionY() + sin(angle)*(distance/2) ;
+        newX = me->GetPositionX() + cos(angle)*(distance/2) ;
+        newY = me->GetPositionY() + sin(angle)*(distance/2) ;
         pAttumen->GetMotionMaster()->Clear();
         pAttumen->GetMotionMaster()->MovePoint(0, newX, newY, newZ);
         //pAttumen->Relocate(newX,newY,newZ,-angle);
@@ -190,15 +190,15 @@ struct OREGON_DLL_DECL boss_attumenAI : public ScriptedAI
     {
         switch(rand()%2)
         {
-        case 0: DoScriptText(SAY_KILL1, m_creature); break;
-        case 1: DoScriptText(SAY_KILL2, m_creature); break;
+        case 0: DoScriptText(SAY_KILL1, me); break;
+        case 1: DoScriptText(SAY_KILL2, me); break;
         }
     }
 
     void JustDied(Unit *victim)
     {
-        DoScriptText(SAY_DEATH, m_creature);
-        if (Unit *pMidnight = Unit::GetUnit(*m_creature, Midnight))
+        DoScriptText(SAY_DEATH, me);
+        if (Unit *pMidnight = Unit::GetUnit(*me, Midnight))
             pMidnight->DealDamage(pMidnight, pMidnight->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
     }
 
@@ -209,15 +209,15 @@ struct OREGON_DLL_DECL boss_attumenAI : public ScriptedAI
             if (ResetTimer <= diff)
             {
                 ResetTimer = 0;
-                Unit *pMidnight = Unit::GetUnit(*m_creature, Midnight);
+                Unit *pMidnight = Unit::GetUnit(*me, Midnight);
                 if (pMidnight)
                 {
                     pMidnight->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     pMidnight->SetVisibility(VISIBILITY_ON);
                 }
                 Midnight = 0;
-                m_creature->SetVisibility(VISIBILITY_OFF);
-                m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                me->SetVisibility(VISIBILITY_OFF);
+                me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             }
         } else ResetTimer -= diff;
 
@@ -225,18 +225,18 @@ struct OREGON_DLL_DECL boss_attumenAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE))
+        if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE))
             return;
 
         if (CleaveTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_SHADOWCLEAVE);
+            DoCast(me->getVictim(), SPELL_SHADOWCLEAVE);
             CleaveTimer = 10000 + (rand()%6)*1000;
         } else CleaveTimer -= diff;
 
         if (CurseTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_INTANGIBLE_PRESENCE);
+            DoCast(me->getVictim(), SPELL_INTANGIBLE_PRESENCE);
             CurseTimer = 30000;
         } else CurseTimer -= diff;
 
@@ -244,23 +244,23 @@ struct OREGON_DLL_DECL boss_attumenAI : public ScriptedAI
         {
             switch(rand()%2)
             {
-            case 0: DoScriptText(SAY_RANDOM1, m_creature); break;
-            case 1: DoScriptText(SAY_RANDOM2, m_creature); break;
+            case 0: DoScriptText(SAY_RANDOM1, me); break;
+            case 1: DoScriptText(SAY_RANDOM2, me); break;
             }
             RandomYellTimer = 30000 + (rand()%31)*1000;
         } else RandomYellTimer -= diff;
 
-        if (m_creature->GetUInt32Value(UNIT_FIELD_DISPLAYID) == MOUNTED_DISPLAYID)
+        if (me->GetUInt32Value(UNIT_FIELD_DISPLAYID) == MOUNTED_DISPLAYID)
         {
             if (ChargeTimer < diff)
             {
                 Unit *pTarget;
-                std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
+                std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
                 std::vector<Unit *> target_list;
                 for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
                 {
-                    pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
-                    if (pTarget && pTarget->GetDistance2d(m_creature) > 5)
+                    pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
+                    if (pTarget && pTarget->GetDistance2d(me) > 5)
                         target_list.push_back(pTarget);
                     pTarget = NULL;
                 }
@@ -273,13 +273,13 @@ struct OREGON_DLL_DECL boss_attumenAI : public ScriptedAI
         }
         else
         {
-            if ((m_creature->GetHealth()*100)/m_creature->GetMaxHealth() < 25)
+            if ((me->GetHealth()*100)/me->GetMaxHealth() < 25)
             {
-                Creature *pMidnight = Unit::GetCreature(*m_creature, Midnight);
+                Creature *pMidnight = Unit::GetCreature(*me, Midnight);
                 if (pMidnight && pMidnight->GetTypeId() == TYPEID_UNIT)
                 {
-                    ((boss_midnightAI*)(pMidnight->AI()))->Mount(m_creature);
-                    m_creature->SetHealth(m_creature->GetMaxHealth());
+                    ((boss_midnightAI*)(pMidnight->AI()))->Mount(me);
+                    me->SetHealth(me->GetMaxHealth());
                 }
             }
         }
@@ -290,7 +290,7 @@ struct OREGON_DLL_DECL boss_attumenAI : public ScriptedAI
     void SpellHit(Unit *source, const SpellEntry *spell)
     {
         if (spell->Mechanic == MECHANIC_DISARM)
-            DoScriptText(SAY_DISARMED, m_creature);
+            DoScriptText(SAY_DISARMED, me);
     }
 };
 

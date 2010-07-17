@@ -112,21 +112,21 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
         //        MindControl_Timer = 10000;
         Transformed = false;
 
-        m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID,10545);
-        m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, 1.00f);
+        me->SetUInt32Value(UNIT_FIELD_DISPLAYID,10545);
+        me->SetFloatValue(OBJECT_FIELD_SCALE_X, 1.00f);
 
     }
 
     void JustDied(Unit* Victim)
     {
-        m_creature->SummonCreature(10698,ADD_1X,ADD_1Y,ADD_1Z,ADD_1O,TEMPSUMMON_TIMED_DESPAWN,240000);
-        m_creature->SummonCreature(10698,ADD_2X,ADD_2Y,ADD_2Z,ADD_2O,TEMPSUMMON_TIMED_DESPAWN,240000);
-        m_creature->SummonCreature(10698,ADD_3X,ADD_3Y,ADD_3Z,ADD_3O,TEMPSUMMON_TIMED_DESPAWN,240000);
-        m_creature->SummonCreature(10698,ADD_4X,ADD_4Y,ADD_4Z,ADD_4O,TEMPSUMMON_TIMED_DESPAWN,240000);
-        m_creature->SummonCreature(10698,ADD_5X,ADD_5Y,ADD_5Z,ADD_5O,TEMPSUMMON_TIMED_DESPAWN,240000);
-        m_creature->SummonCreature(10698,ADD_6X,ADD_6Y,ADD_6Z,ADD_6O,TEMPSUMMON_TIMED_DESPAWN,240000);
-        m_creature->SummonCreature(10698,ADD_7X,ADD_7Y,ADD_7Z,ADD_7O,TEMPSUMMON_TIMED_DESPAWN,240000);
-        m_creature->SummonCreature(10698,ADD_8X,ADD_8Y,ADD_8Z,ADD_8O,TEMPSUMMON_TIMED_DESPAWN,240000);
+        me->SummonCreature(10698,ADD_1X,ADD_1Y,ADD_1Z,ADD_1O,TEMPSUMMON_TIMED_DESPAWN,240000);
+        me->SummonCreature(10698,ADD_2X,ADD_2Y,ADD_2Z,ADD_2O,TEMPSUMMON_TIMED_DESPAWN,240000);
+        me->SummonCreature(10698,ADD_3X,ADD_3Y,ADD_3Z,ADD_3O,TEMPSUMMON_TIMED_DESPAWN,240000);
+        me->SummonCreature(10698,ADD_4X,ADD_4Y,ADD_4Z,ADD_4O,TEMPSUMMON_TIMED_DESPAWN,240000);
+        me->SummonCreature(10698,ADD_5X,ADD_5Y,ADD_5Z,ADD_5O,TEMPSUMMON_TIMED_DESPAWN,240000);
+        me->SummonCreature(10698,ADD_6X,ADD_6Y,ADD_6Z,ADD_6O,TEMPSUMMON_TIMED_DESPAWN,240000);
+        me->SummonCreature(10698,ADD_7X,ADD_7Y,ADD_7Z,ADD_7O,TEMPSUMMON_TIMED_DESPAWN,240000);
+        me->SummonCreature(10698,ADD_8X,ADD_8Y,ADD_8Z,ADD_8O,TEMPSUMMON_TIMED_DESPAWN,240000);
     }
 
     void EnterCombat(Unit *who)
@@ -143,72 +143,72 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
         if (!Transformed)
         {
             //CrusadersHammer
-            if (CrusadersHammer_Timer < diff && !m_creature->IsNonMeleeSpellCasted(false))
+            if (CrusadersHammer_Timer < diff && !me->IsNonMeleeSpellCasted(false))
             {
                 //Cast
                 if (rand()%100 < 75) //50% chance to cast
                 {
-                    DoCast(m_creature->getVictim(),SPELL_CRUSADERSHAMMER);
+                    DoCast(me->getVictim(),SPELL_CRUSADERSHAMMER);
                 }
                 //15 seconds until we should cast this again
                 CrusadersHammer_Timer = 12000;
             } else CrusadersHammer_Timer -= diff;
 
             //CrusaderStrike
-            if (CrusaderStrike_Timer < diff && !m_creature->IsNonMeleeSpellCasted(false))
+            if (CrusaderStrike_Timer < diff && !me->IsNonMeleeSpellCasted(false))
             {
                 //Cast
                 if (rand()%100 < 60) //50% chance to cast
                 {
-                    DoCast(m_creature->getVictim(),SPELL_CRUSADERSTRIKE);
+                    DoCast(me->getVictim(),SPELL_CRUSADERSTRIKE);
                 }
                 //15 seconds until we should cast this again
                 CrusaderStrike_Timer = 15000;
             } else CrusaderStrike_Timer -= diff;
 
             //MindBlast
-            if (MindBlast_Timer < diff && !m_creature->IsNonMeleeSpellCasted(false))
+            if (MindBlast_Timer < diff && !me->IsNonMeleeSpellCasted(false))
             {
                 //Cast
                 if (rand()%100 < 70) //70% chance to cast
                 {
-                    DoCast(m_creature->getVictim(),SPELL_MINDBLAST);
+                    DoCast(me->getVictim(),SPELL_MINDBLAST);
                 }
                 //15 seconds until we should cast this again
                 MindBlast_Timer = 10000;
             } else MindBlast_Timer -= diff;
 
             //HolyStrike
-            if (HolyStrike_Timer < diff && !m_creature->IsNonMeleeSpellCasted(false))
+            if (HolyStrike_Timer < diff && !me->IsNonMeleeSpellCasted(false))
             {
                 //Cast
                 if (rand()%100 < 50) //50% chance to cast
                 {
-                    DoCast(m_creature->getVictim(),SPELL_HOLYSTRIKE);
+                    DoCast(me->getVictim(),SPELL_HOLYSTRIKE);
                 }
                 //15 seconds until we should cast this again
                 HolyStrike_Timer = 15000;
             } else HolyStrike_Timer -= diff;
 
             //Dazed
-            if (Dazed_Timer < diff && !m_creature->IsNonMeleeSpellCasted(false))
+            if (Dazed_Timer < diff && !me->IsNonMeleeSpellCasted(false))
             {
                 //Cast
                 if (rand()%100 < 50) //50% chance to cast
                 {
-                    DoCast(m_creature->getVictim(),SPELL_DAZED);
+                    DoCast(me->getVictim(),SPELL_DAZED);
                 }
                 //15 seconds until we should cast this again
                 Dazed_Timer = 15000;
             } else Dazed_Timer -= diff;
 
             //BalnazzarTransform
-            if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 40)
+            if (me->GetHealth()*100 / me->GetMaxHealth() < 40)
             {
                 //Cast
-                DoCast(m_creature,SPELL_BALNAZZARTRANSFORM); //restore hp, mana and stun
-                m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID,10691); //then change disaply id
-                m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, 3.00f); //then, change size
+                DoCast(me,SPELL_BALNAZZARTRANSFORM); //restore hp, mana and stun
+                me->SetUInt32Value(UNIT_FIELD_DISPLAYID,10691); //then change disaply id
+                me->SetFloatValue(OBJECT_FIELD_SCALE_X, 3.00f); //then, change size
                 Transformed = true;
             }
 
@@ -217,12 +217,12 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
 
 
             //MindBlast
-            if (MindBlast_Timer < diff && !m_creature->IsNonMeleeSpellCasted(false))
+            if (MindBlast_Timer < diff && !me->IsNonMeleeSpellCasted(false))
             {
                 //Cast
                 if (rand()%100 < 60) //70% chance to cast
                 {
-                    DoCast(m_creature->getVictim(),SPELL_MINDBLAST);
+                    DoCast(me->getVictim(),SPELL_MINDBLAST);
                 }
                 //15 seconds until we should cast this again
                 MindBlast_Timer = 10000;
@@ -234,7 +234,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
                 //Cast
                 if (rand()%100 < 80) //80% chance to cast
                 {
-                    DoCast(m_creature->getVictim(),SPELL_SHADOWSHOCK);
+                    DoCast(me->getVictim(),SPELL_SHADOWSHOCK);
                 }
                 //15 seconds until we should cast this again
                 ShadowShock_Timer = 11000;
@@ -246,9 +246,9 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
                 //Cast
                 if (rand()%100 < 60) //60% chance to cast
                 {
-                    DoCast(m_creature->getVictim(),SPELL_PSYCHICSCREAM);
-                    if (DoGetThreat(m_creature->getVictim()))
-                        DoModifyThreatPercent(m_creature->getVictim(),-50);
+                    DoCast(me->getVictim(),SPELL_PSYCHICSCREAM);
+                    if (DoGetThreat(me->getVictim()))
+                        DoModifyThreatPercent(me->getVictim(),-50);
                 }
                 //15 seconds until we should cast this again
                 PsychicScream_Timer = 20000;
@@ -277,7 +277,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
                 //Cast
                 if (rand()%100 < 75) //75% chance to cast
                 {
-                    DoCast(m_creature->getVictim(),SPELL_SHADOWBOLTVOLLEY);
+                    DoCast(me->getVictim(),SPELL_SHADOWBOLTVOLLEY);
                 }
                 //15 seconds until we should cast this again
                 ShadowBoltVolley_Timer = 13000;
@@ -289,7 +289,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
             //Cast
             //                if (rand()%100 < 50) //50% chance to cast
             //                {
-            //                DoCast(m_creature->getVictim(),SPELL_MINDCONTROL);
+            //                DoCast(me->getVictim(),SPELL_MINDCONTROL);
             //                }
             //15 seconds until we should cast this again
             //                MindControl_Timer = 15000;

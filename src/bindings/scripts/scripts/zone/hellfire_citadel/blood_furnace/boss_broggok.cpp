@@ -48,7 +48,7 @@ struct OREGON_DLL_DECL boss_broggokAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -59,19 +59,19 @@ struct OREGON_DLL_DECL boss_broggokAI : public ScriptedAI
 
         if (AcidSpray_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_SLIME_SPRAY);
+            DoCast(me->getVictim(),SPELL_SLIME_SPRAY);
             AcidSpray_Timer = 4000+rand()%8000;
         } else AcidSpray_Timer -=diff;
 
         if (PoisonBolt_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_POISON_BOLT);
+            DoCast(me->getVictim(),SPELL_POISON_BOLT);
             PoisonBolt_Timer = 4000+rand()%8000;
         } else PoisonBolt_Timer -=diff;
 
         if (PoisonSpawn_Timer < diff)
         {
-            DoCast(m_creature,SPELL_POISON_CLOUD);
+            DoCast(me,SPELL_POISON_CLOUD);
             PoisonSpawn_Timer = 20000;
         } else PoisonSpawn_Timer -=diff;
 

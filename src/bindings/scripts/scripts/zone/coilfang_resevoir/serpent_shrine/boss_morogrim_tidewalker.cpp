@@ -137,7 +137,7 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
 
     void StartEvent()
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, me);
 
         if (pInstance)
             pInstance->SetData(DATA_MOROGRIMTIDEWALKEREVENT, IN_PROGRESS);
@@ -147,15 +147,15 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-        case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-        case 1: DoScriptText(SAY_SLAY2, m_creature); break;
-        case 2: DoScriptText(SAY_SLAY3, m_creature); break;
+        case 0: DoScriptText(SAY_SLAY1, me); break;
+        case 1: DoScriptText(SAY_SLAY2, me); break;
+        case 2: DoScriptText(SAY_SLAY3, me); break;
         }
     }
 
     void JustDied(Unit *victim)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
             pInstance->SetData(DATA_MOROGRIMTIDEWALKEREVENT, DONE);
@@ -163,7 +163,7 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     {
-        PlayerList = &((InstanceMap*)m_creature->GetMap())->GetPlayers();
+        PlayerList = &((InstanceMap*)me->GetMap())->GetPlayers();
         Playercount = PlayerList->getSize();
         StartEvent();
     }
@@ -190,7 +190,7 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
         {
             if (!Earthquake)
             {
-                DoCast(m_creature->getVictim(), SPELL_EARTHQUAKE);
+                DoCast(me->getVictim(), SPELL_EARTHQUAKE);
                 Earthquake = true;
                 Earthquake_Timer = 10000;
             }
@@ -198,18 +198,18 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
             {
                 switch(rand()%2)
                 {
-                    case 0: DoScriptText(SAY_SUMMON1, m_creature); break;
-                    case 1: DoScriptText(SAY_SUMMON2, m_creature); break;
+                    case 0: DoScriptText(SAY_SUMMON1, me); break;
+                    case 1: DoScriptText(SAY_SUMMON2, me); break;
                 }
 
                 for (uint8 i = 0; i < 10; i++)
                 {
                     Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                    Creature* Murloc = m_creature->SummonCreature(MurlocCords[i][0],MurlocCords[i][1],MurlocCords[i][2],MurlocCords[i][3],MurlocCords[i][4], TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
+                    Creature* Murloc = me->SummonCreature(MurlocCords[i][0],MurlocCords[i][1],MurlocCords[i][2],MurlocCords[i][3],MurlocCords[i][4], TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
                     if (pTarget && Murloc)
                         Murloc->AI()->AttackStart(pTarget);
                 }
-                DoScriptText(EMOTE_EARTHQUAKE, m_creature);
+                DoScriptText(EMOTE_EARTHQUAKE, me);
                 Earthquake = false;
                 Earthquake_Timer = 40000+rand()%5000;
             }
@@ -218,7 +218,7 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
         //TidalWave_Timer
         if (TidalWave_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_TIDAL_WAVE);
+            DoCast(me->getVictim(), SPELL_TIDAL_WAVE);
             TidalWave_Timer = 20000;
         } else TidalWave_Timer -= diff;
 
@@ -248,16 +248,16 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
 
                 switch(rand()%2)
                 {
-                    case 0: DoScriptText(SAY_SUMMON_BUBL1, m_creature); break;
-                    case 1: DoScriptText(SAY_SUMMON_BUBL2, m_creature); break;
+                    case 0: DoScriptText(SAY_SUMMON_BUBL1, me); break;
+                    case 1: DoScriptText(SAY_SUMMON_BUBL2, me); break;
                 }
 
-                DoScriptText(EMOTE_WATERY_GRAVE, m_creature);
+                DoScriptText(EMOTE_WATERY_GRAVE, me);
                 WateryGrave_Timer = 30000;
             } else WateryGrave_Timer -= diff;
 
             //Start Phase2
-            if ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 25)
+            if ((me->GetHealth()*100 / me->GetMaxHealth()) < 25)
                 Phase2 = true;
         }
         else
@@ -281,7 +281,7 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
                     if (globuletarget)globulelist.insert(globuletarget->GetGUID());
                     globuletarget->CastSpell(globuletarget, globulespell[g], true);
                 }
-                DoScriptText(EMOTE_WATERY_GLOBULES, m_creature);
+                DoScriptText(EMOTE_WATERY_GLOBULES, me);
                 WateryGlobules_Timer = 25000;
             } else WateryGlobules_Timer -= diff;
         }
@@ -303,19 +303,19 @@ struct OREGON_DLL_DECL mob_water_globuleAI : public ScriptedAI
     {
         Check_Timer = 1000;
 
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->setFaction(14);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->setFaction(14);
     }
 
     void EnterCombat(Unit *who) {}
 
     void MoveInLineOfSight(Unit *who)
     {
-        if (!who || m_creature->getVictim())
+        if (!who || me->getVictim())
             return;
 
-        if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (m_creature) && m_creature->IsHostileTo(who))
+        if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (me) && me->IsHostileTo(who))
         {
             //no attack radius check - it attacks the first target that moves in his los
             //who->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
@@ -331,12 +331,12 @@ struct OREGON_DLL_DECL mob_water_globuleAI : public ScriptedAI
 
         if (Check_Timer < diff)
         {
-            if (m_creature->IsWithinDistInMap(m_creature->getVictim(), 5))
+            if (me->IsWithinDistInMap(me->getVictim(), 5))
             {
-                DoCast(m_creature->getVictim(), SPELL_GLOBULE_EXPLOSION);
+                DoCast(me->getVictim(), SPELL_GLOBULE_EXPLOSION);
 
                 //despawn
-                m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             }
             Check_Timer = 500;
         } else Check_Timer -= diff;

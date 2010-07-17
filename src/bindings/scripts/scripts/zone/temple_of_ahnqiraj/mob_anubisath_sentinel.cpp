@@ -117,7 +117,7 @@ struct OREGON_DLL_DECL aqsentinelAI : public ScriptedAI
 
     void AddBuddyToList(Creature *c)
     {
-        if (c == m_creature)
+        if (c == me)
             return;
         for (int i=0; i<3; i++)
         {
@@ -137,7 +137,7 @@ struct OREGON_DLL_DECL aqsentinelAI : public ScriptedAI
         for (int i=0; i<3; i++)
             if (nearby[i] && nearby[i] != c)
                 cai->AddBuddyToList(nearby[i]);
-        cai->AddBuddyToList(m_creature);
+        cai->AddBuddyToList(me);
     }
 
     void SendMyListToBuddies()
@@ -206,7 +206,7 @@ struct OREGON_DLL_DECL aqsentinelAI : public ScriptedAI
         selectAbility(pickAbilityRandom(chosenAbilities));
 
         ClearBudyList();
-        AddSentinelsNear(m_creature);
+        AddSentinelsNear(me);
         int bli;
         for (bli = 0; bli < 3;bli++)
         {
@@ -226,7 +226,7 @@ struct OREGON_DLL_DECL aqsentinelAI : public ScriptedAI
 
     void Reset()
     {
-        if (!m_creature->isDead())
+        if (!me->isDead())
         {
             for (int i=0; i<3; i++)
             {
@@ -238,8 +238,8 @@ struct OREGON_DLL_DECL aqsentinelAI : public ScriptedAI
         }
         ClearBudyList();
         gatherOthersWhenAggro = true;
-        m_creature->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, false);
-        m_creature->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_ATTACK_ME, false);
+        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, false);
+        me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_ATTACK_ME, false);
     }
 
     void GainSentinelAbility(uint32 id)
@@ -250,12 +250,12 @@ struct OREGON_DLL_DECL aqsentinelAI : public ScriptedAI
             if (!spell->Effect[i])
                 continue;
             SentinelAbilityAura *a = new SentinelAbilityAura(this, (SpellEntry *)spell, id, i);
-            m_creature->AddAura(a);
+            me->AddAura(a);
         }
         if (id == SPELL_KNOCK_BUFF)
         {
-            m_creature->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-            m_creature->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_ATTACK_ME, true);
+            me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
+            me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_ATTACK_ME, true);
         }
     }
 
@@ -288,9 +288,9 @@ struct OREGON_DLL_DECL aqsentinelAI : public ScriptedAI
     Unit *GetHatedManaUser()
     {
         std::list<HostileReference*>::iterator i;
-        for (i = m_creature->getThreatManager().getThreatList().begin();i != m_creature->getThreatManager().getThreatList().end(); ++i)
+        for (i = me->getThreatManager().getThreatList().begin();i != me->getThreatManager().getThreatList().end(); ++i)
         {
-            Unit* pUnit = Unit::GetUnit((*m_creature), (*i)->getUnitGuid());
+            Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
             if (pUnit->getPowerType() == POWER_MANA)
                 return pUnit;
         }
@@ -320,7 +320,7 @@ Unit* SentinelAbilityAura::GetTriggerTarget() const
         case SPELL_THUNDER_BUFF:
         case SPELL_MSTRIKE_BUFF:
         case SPELL_STORM_BUFF:
-            return aOwner->m_creature->getVictim();
+            return aOwner->me->getVictim();
 
         case SPELL_MANAB_BUFF:
             return aOwner->GetHatedManaUser();
@@ -330,12 +330,12 @@ Unit* SentinelAbilityAura::GetTriggerTarget() const
         case SPELL_REFLECTSFr_BUFF:
         case SPELL_THORNS_BUFF:
         default:
-            return aOwner->m_creature;
+            return aOwner->me;
     }
 }
 
 SentinelAbilityAura::SentinelAbilityAura(aqsentinelAI *abilityOwner, SpellEntry *spell, uint32 ability, uint32 eff)
-: Aura(spell, eff, NULL, abilityOwner->m_creature, abilityOwner->m_creature, NULL)
+: Aura(spell, eff, NULL, abilityOwner->me, abilityOwner->me, NULL)
 {
     aOwner = abilityOwner;
     abilityId = ability;

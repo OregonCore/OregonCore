@@ -67,22 +67,22 @@ struct OREGON_DLL_DECL boss_captain_skarlocAI : public ScriptedAI
     void EnterCombat(Unit *who)
     {
         //This is not correct. Should taunt Thrall before engage in combat
-        DoScriptText(SAY_TAUNT1, m_creature);
-        DoScriptText(SAY_TAUNT2, m_creature);
+        DoScriptText(SAY_TAUNT1, me);
+        DoScriptText(SAY_TAUNT2, me);
     }
 
     void KilledUnit(Unit *victim)
     {
         switch(rand()%2)
         {
-            case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+            case 0: DoScriptText(SAY_SLAY1, me); break;
+            case 1: DoScriptText(SAY_SLAY2, me); break;
         }
     }
 
     void JustDied(Unit *victim)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
 
         if (pInstance && pInstance->GetData(TYPE_THRALL_EVENT) == IN_PROGRESS)
             pInstance->SetData(TYPE_THRALL_PART1, DONE);
@@ -97,42 +97,42 @@ struct OREGON_DLL_DECL boss_captain_skarlocAI : public ScriptedAI
         //Holy_Light
         if (Holy_Light_Timer < diff)
         {
-            DoCast(m_creature, SPELL_HOLY_LIGHT);
+            DoCast(me, SPELL_HOLY_LIGHT);
             Holy_Light_Timer = 30000;
         } else Holy_Light_Timer -= diff;
 
         //Cleanse
         if (Cleanse_Timer  < diff)
         {
-            DoCast(m_creature, SPELL_CLEANSE);
+            DoCast(me, SPELL_CLEANSE);
             Cleanse_Timer = 10000;
         } else Cleanse_Timer -= diff;
 
         //Hammer of Justice
         if (HammerOfJustice_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_HAMMER_OF_JUSTICE);
+            DoCast(me->getVictim(), SPELL_HAMMER_OF_JUSTICE);
             HammerOfJustice_Timer = 60000;
         } else HammerOfJustice_Timer -= diff;
 
         //Holy Shield
         if (HolyShield_Timer < diff)
         {
-            DoCast(m_creature, SPELL_HOLY_SHIELD);
+            DoCast(me, SPELL_HOLY_SHIELD);
             HolyShield_Timer = 240000;
         } else HolyShield_Timer -= diff;
 
         //Devotion_Aura
         if (DevotionAura_Timer < diff)
         {
-            DoCast(m_creature, SPELL_DEVOTION_AURA);
+            DoCast(me, SPELL_DEVOTION_AURA);
             DevotionAura_Timer = 60000;
         } else DevotionAura_Timer -= diff;
 
         //Consecration
         if (Consecration_Timer < diff)
         {
-            //DoCast(m_creature->getVictim(), SPELL_CONSECRATION);
+            //DoCast(me->getVictim(), SPELL_CONSECRATION);
             Consecration_Timer = 8000;
         } else Consecration_Timer -= diff;
 

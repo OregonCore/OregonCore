@@ -62,15 +62,15 @@ struct OREGON_DLL_DECL npc_swiftmountainAI : public npc_escortAI
         switch(uiPointId)
         {
             case 15:
-                DoScriptText(SAY_WYVERN, m_creature);
+                DoScriptText(SAY_WYVERN, me);
                 DoSpawnWyvern();
                 break;
             case 26:
-                DoScriptText(SAY_COMPLETE, m_creature);
+                DoScriptText(SAY_COMPLETE, me);
                 break;
             case 27:
                 if (Player* pPlayer = GetPlayerForEscort())
-                    pPlayer->GroupEventHappens(QUEST_HOMEWARD, m_creature);
+                    pPlayer->GroupEventHappens(QUEST_HOMEWARD, me);
                 break;
         }
     }
@@ -78,7 +78,7 @@ struct OREGON_DLL_DECL npc_swiftmountainAI : public npc_escortAI
     void DoSpawnWyvern()
     {
         for (int i = 0; i < 3; ++i)
-            m_creature->SummonCreature(NPC_WYVERN,
+            me->SummonCreature(NPC_WYVERN,
             m_afWyvernLoc[i][0], m_afWyvernLoc[i][1], m_afWyvernLoc[i][2], 0.0f,
             TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000);
     }
@@ -201,7 +201,7 @@ struct OREGON_DLL_DECL npc_pluckyAI : public ScriptedAI
 
        Transformed = false;
        Chicken     = false;
-       m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+       me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
        Timer        = 0;
        ChickenTimer = 0;
        }
@@ -213,10 +213,10 @@ struct OREGON_DLL_DECL npc_pluckyAI : public ScriptedAI
          if (!Transformed)
          {
              Transformed = true;
-             DoCast(m_creature, SPELL_TRANSFORM_HUMAN);
+             DoCast(me, SPELL_TRANSFORM_HUMAN);
              Timer = 120000;
              if (emoteid == TEXTEMOTE_BECKON)
-                 m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+                 me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
              else
              {
                  ChickenTimer = 1500;
@@ -238,7 +238,7 @@ struct OREGON_DLL_DECL npc_pluckyAI : public ScriptedAI
        {
            if (ChickenTimer < diff)
            {
-               m_creature->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
+               me->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
                Chicken = false;
            } else ChickenTimer-=diff;
        }

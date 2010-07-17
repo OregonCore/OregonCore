@@ -61,7 +61,7 @@ struct OREGON_DLL_DECL boss_anubshiahAI : public ScriptedAI
         //ShadowBolt_Timer
         if (ShadowBolt_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_SHADOWBOLT);
+            DoCast(me->getVictim(),SPELL_SHADOWBOLT);
             ShadowBolt_Timer = 7000;
         } else ShadowBolt_Timer -= diff;
 
@@ -77,14 +77,14 @@ struct OREGON_DLL_DECL boss_anubshiahAI : public ScriptedAI
         //CurseOfWeakness_Timer
         if (CurseOfWeakness_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_CURSEOFWEAKNESS);
+            DoCast(me->getVictim(),SPELL_CURSEOFWEAKNESS);
             CurseOfWeakness_Timer = 45000;
         } else CurseOfWeakness_Timer -= diff;
 
         //DemonArmor_Timer
         if (DemonArmor_Timer < diff)
         {
-            DoCast(m_creature,SPELL_DEMONARMOR);
+            DoCast(me,SPELL_DEMONARMOR);
             DemonArmor_Timer = 300000;
         } else DemonArmor_Timer -= diff;
 

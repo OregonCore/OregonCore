@@ -109,17 +109,17 @@ struct OREGON_DLL_DECL npc_taskmaster_fizzuleAI : public ScriptedAI
         IsFriend = false;
         Reset_Timer = 120000;
         FlareCount = 0;
-        m_creature->setFaction(FACTION_HOSTILE_F);
-        m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+        me->setFaction(FACTION_HOSTILE_F);
+        me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
     }
 
     //This is a hack. Spellcast will make creature aggro but that is not
     //supposed to happen (Oregon not implemented/not found way to detect this spell kind)
     void DoUglyHack()
     {
-        m_creature->RemoveAllAuras();
-        m_creature->DeleteThreatList();
-        m_creature->CombatStop();
+        me->RemoveAllAuras();
+        me->DeleteThreatList();
+        me->CombatStop();
     }
 
     void SpellHit(Unit *caster, const SpellEntry *spell)
@@ -130,7 +130,7 @@ struct OREGON_DLL_DECL npc_taskmaster_fizzuleAI : public ScriptedAI
             ++FlareCount;
             if (FlareCount >= 2)
             {
-                m_creature->setFaction(FACTION_FRIENDLY_F);
+                me->setFaction(FACTION_FRIENDLY_F);
                 IsFriend = true;
             }
         }
@@ -233,7 +233,7 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
     {
         if (!who || (!who->isAlive())) return;
 
-        if (m_creature->IsWithinDistInMap(who, 10.0f) && (who->GetTypeId() == TYPEID_PLAYER) && ((Player*)who)->GetQuestStatus(1719) == QUEST_STATUS_INCOMPLETE && !EventInProgress)
+        if (me->IsWithinDistInMap(who, 10.0f) && (who->GetTypeId() == TYPEID_PLAYER) && ((Player*)who)->GetQuestStatus(1719) == QUEST_STATUS_INCOMPLETE && !EventInProgress)
         {
             PlayerGUID = who->GetGUID();
             EventInProgress = true;
@@ -255,14 +255,14 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
 
             if (!pWarrior->isAlive() && pWarrior->GetQuestStatus(1719) == QUEST_STATUS_INCOMPLETE) {
                 EventInProgress = false;
-                DoScriptText(SAY_TWIGGY_FLATHEAD_DOWN, m_creature);
+                DoScriptText(SAY_TWIGGY_FLATHEAD_DOWN, me);
                 pWarrior->FailQuest(1719);
 
                 for (uint8 i = 0; i < 6; ++i)
                 {
                     if (AffrayChallenger[i])
                     {
-                        Creature* pCreature = Unit::GetCreature((*m_creature), AffrayChallenger[i]);
+                        Creature* pCreature = Unit::GetCreature((*me), AffrayChallenger[i]);
                         if (pCreature) {
                             if (pCreature->isAlive())
                             {
@@ -278,7 +278,7 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
 
                 if (BigWill)
                 {
-                    Creature* pCreature = Unit::GetCreature((*m_creature), BigWill);
+                    Creature* pCreature = Unit::GetCreature((*me), BigWill);
                     if (pCreature) {
                         if (pCreature->isAlive()) {
                             pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
@@ -297,11 +297,11 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
 
                 if (x >= -1684 && x <= -1674 && y >= -4334 && y <= -4324) {
                     pWarrior->AreaExploredOrEventHappens(1719);
-                    DoScriptText(SAY_TWIGGY_FLATHEAD_BEGIN, m_creature);
+                    DoScriptText(SAY_TWIGGY_FLATHEAD_BEGIN, me);
 
                     for (uint8 i = 0; i < 6; ++i)
                     {
-                        Creature* pCreature = m_creature->SummonCreature(AFFRAY_CHALLENGER, AffrayChallengerLoc[i][0], AffrayChallengerLoc[i][1], AffrayChallengerLoc[i][2], AffrayChallengerLoc[i][3], TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
+                        Creature* pCreature = me->SummonCreature(AFFRAY_CHALLENGER, AffrayChallengerLoc[i][0], AffrayChallengerLoc[i][1], AffrayChallengerLoc[i][2], AffrayChallengerLoc[i][3], TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
                         if (!pCreature)
                             continue;
                         pCreature->setFaction(35);
@@ -323,10 +323,10 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
                     {
                         if (AffrayChallenger[i])
                         {
-                            Creature* pCreature = Unit::GetCreature((*m_creature), AffrayChallenger[i]);
+                            Creature* pCreature = Unit::GetCreature((*me), AffrayChallenger[i]);
                             if ((!pCreature || (!pCreature->isAlive())) && !Challenger_down[i])
                             {
-                                DoScriptText(SAY_TWIGGY_FLATHEAD_DOWN, m_creature);
+                                DoScriptText(SAY_TWIGGY_FLATHEAD_DOWN, me);
                                 Challenger_down[i] = true;
                             }
                         }
@@ -338,8 +338,8 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
                 {
                     if (AffrayChallenger[Wave] && Wave < 6 && !EventBigWill)
                     {
-                        DoScriptText(SAY_TWIGGY_FLATHEAD_FRAY, m_creature);
-                        Creature* pCreature = Unit::GetCreature((*m_creature), AffrayChallenger[Wave]);
+                        DoScriptText(SAY_TWIGGY_FLATHEAD_FRAY, me);
+                        Creature* pCreature = Unit::GetCreature((*me), AffrayChallenger[Wave]);
                         if (pCreature && (pCreature->isAlive()))
                         {
                             pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -352,7 +352,7 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
                         }
                     }
                     else if (Wave >= 6 && !EventBigWill) {
-                        if (Creature* pCreature = m_creature->SummonCreature(BIG_WILL, -1722, -4341, 6.12, 6.26, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 480000))
+                        if (Creature* pCreature = me->SummonCreature(BIG_WILL, -1722, -4341, 6.12, 6.26, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 480000))
                         {
                             BigWill = pCreature->GetGUID();
                             //pCreature->GetMotionMaster()->MovePoint(0, -1693, -4343, 4.32);
@@ -366,10 +366,10 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
                     }
                     else if (Wave >= 6 && EventBigWill && BigWill)
                     {
-                        Creature* pCreature = Unit::GetCreature((*m_creature), BigWill);
+                        Creature* pCreature = Unit::GetCreature((*me), BigWill);
                         if (!pCreature || !pCreature->isAlive())
                         {
-                            DoScriptText(SAY_TWIGGY_FLATHEAD_OVER, m_creature);
+                            DoScriptText(SAY_TWIGGY_FLATHEAD_OVER, me);
                             EventInProgress = false;
                             EventBigWill = false;
                             EventGrate = false;
@@ -426,7 +426,7 @@ struct OREGON_DLL_DECL npc_wizzlecrank_shredderAI : public npc_escortAI
     {
         if (!HasEscortState(STATE_ESCORT_ESCORTING))
         {
-            m_creature->setDeathState(ALIVE);
+            me->setDeathState(ALIVE);
             m_bIsPostEvent = false;
             m_uiPostEventTimer = 1000;
             m_uiPostEventCount = 0;
@@ -443,16 +443,16 @@ struct OREGON_DLL_DECL npc_wizzlecrank_shredderAI : public npc_escortAI
         switch(uiPointId)
         {
         case 0:
-            DoScriptText(SAY_STARTUP1, m_creature);
+            DoScriptText(SAY_STARTUP1, me);
             break;
         case 9:
             SetRun(false);
             break;
         case 17:
-            if (Creature* pTemp = m_creature->SummonCreature(NPC_MERCENARY, 1128.489f, -3037.611f, 92.701f, 1.472f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 120000))
+            if (Creature* pTemp = me->SummonCreature(NPC_MERCENARY, 1128.489f, -3037.611f, 92.701f, 1.472f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 120000))
             {
                 DoScriptText(SAY_MERCENARY, pTemp);
-                m_creature->SummonCreature(NPC_MERCENARY, 1160.172f, -2980.168f, 97.313f, 3.690f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 120000);
+                me->SummonCreature(NPC_MERCENARY, 1160.172f, -2980.168f, 97.313f, 3.690f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 120000);
             }
             break;
         case 24:
@@ -471,10 +471,10 @@ struct OREGON_DLL_DECL npc_wizzlecrank_shredderAI : public npc_escortAI
         switch(uiPointId)
         {
             case 9:
-                DoScriptText(SAY_STARTUP2, m_creature, pPlayer);
+                DoScriptText(SAY_STARTUP2, me, pPlayer);
                 break;
             case 18:
-                DoScriptText(SAY_PROGRESS_1, m_creature, pPlayer);
+                DoScriptText(SAY_PROGRESS_1, me, pPlayer);
                 SetRun();
                 break;
         }
@@ -483,10 +483,10 @@ struct OREGON_DLL_DECL npc_wizzlecrank_shredderAI : public npc_escortAI
     void JustSummoned(Creature* pSummoned)
     {
         if (pSummoned->GetEntry() == NPC_PILOT_WIZZ)
-            m_creature->setDeathState(JUST_DIED);
+            me->setDeathState(JUST_DIED);
 
         if (pSummoned->GetEntry() == NPC_MERCENARY)
-            pSummoned->AI()->AttackStart(m_creature);
+            pSummoned->AI()->AttackStart(me);
     }
 
     void EnterCombat(Unit* who){}
@@ -502,19 +502,19 @@ struct OREGON_DLL_DECL npc_wizzlecrank_shredderAI : public npc_escortAI
                     switch(m_uiPostEventCount)
                     {
                         case 0:
-                            DoScriptText(SAY_PROGRESS_2, m_creature);
+                            DoScriptText(SAY_PROGRESS_2, me);
                             break;
                         case 1:
-                            DoScriptText(SAY_PROGRESS_3, m_creature);
+                            DoScriptText(SAY_PROGRESS_3, me);
                             break;
                         case 2:
-                            DoScriptText(SAY_END, m_creature);
+                            DoScriptText(SAY_END, me);
                             break;
                         case 3:
                             if (Player* pPlayer = GetPlayerForEscort())
                             {
-                                pPlayer->GroupEventHappens(QUEST_ESCAPE, m_creature);
-                                m_creature->SummonCreature(NPC_PILOT_WIZZ, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 180000);
+                                pPlayer->GroupEventHappens(QUEST_ESCAPE, me);
+                                me->SummonCreature(NPC_PILOT_WIZZ, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 180000);
                             }
                             break;
                     }

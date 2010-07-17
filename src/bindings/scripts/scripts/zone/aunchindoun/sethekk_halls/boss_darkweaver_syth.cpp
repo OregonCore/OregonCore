@@ -56,7 +56,7 @@ struct OREGON_DLL_DECL boss_darkweaver_sythAI : public ScriptedAI
     boss_darkweaver_sythAI(Creature *c) : ScriptedAI(c)
 
     {
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     uint32 flameshock_timer;
@@ -87,15 +87,15 @@ struct OREGON_DLL_DECL boss_darkweaver_sythAI : public ScriptedAI
     {
         switch(rand()%3)
         {
-            case 0: DoScriptText(SAY_AGGRO_1, m_creature); break;
-            case 1: DoScriptText(SAY_AGGRO_2, m_creature); break;
-            case 2: DoScriptText(SAY_AGGRO_3, m_creature); break;
+            case 0: DoScriptText(SAY_AGGRO_1, me); break;
+            case 1: DoScriptText(SAY_AGGRO_2, me); break;
+            case 2: DoScriptText(SAY_AGGRO_3, me); break;
         }
     }
 
     void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, me);
     }
 
     void KilledUnit(Unit* victim)
@@ -105,8 +105,8 @@ struct OREGON_DLL_DECL boss_darkweaver_sythAI : public ScriptedAI
 
         switch(rand()%2)
         {
-            case 0: DoScriptText(SAY_SLAY_1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY_2, m_creature); break;
+            case 0: DoScriptText(SAY_SLAY_1, me); break;
+            case 1: DoScriptText(SAY_SLAY_2, me); break;
         }
     }
 
@@ -118,15 +118,15 @@ struct OREGON_DLL_DECL boss_darkweaver_sythAI : public ScriptedAI
 
     void SythSummoning()
     {
-        DoScriptText(SAY_SUMMON, m_creature);
+        DoScriptText(SAY_SUMMON, me);
 
-        if (m_creature->IsNonMeleeSpellCasted(false))
-            m_creature->InterruptNonMeleeSpells(false);
+        if (me->IsNonMeleeSpellCasted(false))
+            me->InterruptNonMeleeSpells(false);
 
-        DoCast(m_creature,SPELL_SUMMON_SYTH_ARCANE,true);   //front
-        DoCast(m_creature,SPELL_SUMMON_SYTH_FIRE,true);     //back
-        DoCast(m_creature,SPELL_SUMMON_SYTH_FROST,true);    //left
-        DoCast(m_creature,SPELL_SUMMON_SYTH_SHADOW,true);   //right
+        DoCast(me,SPELL_SUMMON_SYTH_ARCANE,true);   //front
+        DoCast(me,SPELL_SUMMON_SYTH_FIRE,true);     //back
+        DoCast(me,SPELL_SUMMON_SYTH_FROST,true);    //left
+        DoCast(me,SPELL_SUMMON_SYTH_SHADOW,true);   //right
     }
 
     void UpdateAI(const uint32 diff)
@@ -134,19 +134,19 @@ struct OREGON_DLL_DECL boss_darkweaver_sythAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (((m_creature->GetHealth()*100) / m_creature->GetMaxHealth() < 90) && !summon90)
+        if (((me->GetHealth()*100) / me->GetMaxHealth() < 90) && !summon90)
         {
             SythSummoning();
             summon90 = true;
         }
 
-        if (((m_creature->GetHealth()*100) / m_creature->GetMaxHealth() < 50) && !summon50)
+        if (((me->GetHealth()*100) / me->GetMaxHealth() < 50) && !summon50)
         {
             SythSummoning();
             summon50 = true;
         }
 
-        if (((m_creature->GetHealth()*100) / m_creature->GetMaxHealth() < 10) && !summon10)
+        if (((me->GetHealth()*100) / me->GetMaxHealth() < 10) && !summon10)
         {
             SythSummoning();
             summon10 = true;
@@ -208,7 +208,7 @@ struct OREGON_DLL_DECL mob_syth_fireAI : public ScriptedAI
     mob_syth_fireAI(Creature *c) : ScriptedAI(c)
 
     {
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     uint32 flameshock_timer;
@@ -217,7 +217,7 @@ struct OREGON_DLL_DECL mob_syth_fireAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
+        me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
         flameshock_timer = 2500;
         flamebuffet_timer = 5000;
     }
@@ -259,7 +259,7 @@ struct OREGON_DLL_DECL mob_syth_arcaneAI : public ScriptedAI
     mob_syth_arcaneAI(Creature *c) : ScriptedAI(c)
 
     {
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     uint32 arcaneshock_timer;
@@ -268,7 +268,7 @@ struct OREGON_DLL_DECL mob_syth_arcaneAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, true);
+        me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, true);
         arcaneshock_timer = 2500;
         arcanebuffet_timer = 5000;
     }
@@ -310,7 +310,7 @@ struct OREGON_DLL_DECL mob_syth_frostAI : public ScriptedAI
     mob_syth_frostAI(Creature *c) : ScriptedAI(c)
 
     {
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     uint32 frostshock_timer;
@@ -319,7 +319,7 @@ struct OREGON_DLL_DECL mob_syth_frostAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
+        me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
         frostshock_timer = 2500;
         frostbuffet_timer = 5000;
     }
@@ -361,7 +361,7 @@ struct OREGON_DLL_DECL mob_syth_shadowAI : public ScriptedAI
     mob_syth_shadowAI(Creature *c) : ScriptedAI(c)
 
     {
-        HeroicMode = m_creature->GetMap()->IsHeroic();
+        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     uint32 shadowshock_timer;
@@ -370,7 +370,7 @@ struct OREGON_DLL_DECL mob_syth_shadowAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, true);
+        me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, true);
         shadowshock_timer = 2500;
         shadowbuffet_timer = 5000;
     }

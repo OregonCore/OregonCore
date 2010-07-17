@@ -45,13 +45,13 @@ struct OREGON_DLL_DECL boss_theolenkrastinovAI : public ScriptedAI
 
     void JustDied(Unit *killer)
     {
-        ScriptedInstance *pInstance = (m_creature->GetInstanceData()) ? (m_creature->GetInstanceData()) : NULL;
+        ScriptedInstance *pInstance = (me->GetInstanceData()) ? (me->GetInstanceData()) : NULL;
         if (pInstance)
         {
             pInstance->SetData(DATA_DOCTORTHEOLENKRASTINOV_DEATH, 0);
 
             if (pInstance->GetData(DATA_CANSPAWNGANDLING))
-                m_creature->SummonCreature(1853, 180.73, -9.43856, 75.507, 1.61399, TEMPSUMMON_DEAD_DESPAWN, 0);
+                me->SummonCreature(1853, 180.73, -9.43856, 75.507, 1.61399, TEMPSUMMON_DEAD_DESPAWN, 0);
         }
     }
 
@@ -67,23 +67,23 @@ struct OREGON_DLL_DECL boss_theolenkrastinovAI : public ScriptedAI
         //Rend_Timer
         if (Rend_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_REND);
+            DoCast(me->getVictim(),SPELL_REND);
             Rend_Timer = 10000;
         } else Rend_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_CLEAVE);
+            DoCast(me->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 10000;
         } else Cleave_Timer -= diff;
 
         //Frenzy_Timer
-        if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 26)
+        if (me->GetHealth()*100 / me->GetMaxHealth() < 26)
         {
             if (Frenzy_Timer < diff)
             {
-                DoCast(m_creature,SPELL_FRENZY);
+                DoCast(me,SPELL_FRENZY);
                 DoTextEmote("goes into a killing frenzy!",NULL);
 
                 Frenzy_Timer = 8000;

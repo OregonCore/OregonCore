@@ -59,7 +59,7 @@ struct OREGON_DLL_DECL boss_timmy_the_cruelAI : public ScriptedAI
         if (RavenousClaw_Timer < diff)
         {
             //Cast
-            DoCast(m_creature->getVictim(),SPELL_RAVENOUSCLAW);
+            DoCast(me->getVictim(),SPELL_RAVENOUSCLAW);
             //15 seconds until we should cast this again
             RavenousClaw_Timer = 15000;
         } else RavenousClaw_Timer -= diff;
