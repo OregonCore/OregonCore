@@ -31,7 +31,7 @@ struct OREGON_DLL_DECL boss_azgalorAI : public hyjal_trashAI
 {
     boss_azgalorAI(Creature *c) : hyjal_trashAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         go = false;
         pos = 0;
         SpellEntry *TempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_HOWL_OF_AZGALOR);
@@ -95,9 +95,9 @@ struct OREGON_DLL_DECL boss_azgalorAI : public hyjal_trashAI
         pos = i;
         if (i == 7 && pInstance)
         {
-            Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_THRALL));
-            if (target && target->isAlive())
-                m_creature->AddThreat(target,0.0);
+            Unit *pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_THRALL));
+            if (pTarget && pTarget->isAlive())
+                m_creature->AddThreat(pTarget,0.0);
         }
     }
 
@@ -187,7 +187,7 @@ struct OREGON_DLL_DECL mob_lesser_doomguardAI : public hyjal_trashAI
 {
     mob_lesser_doomguardAI(Creature *c) : hyjal_trashAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         if (pInstance)
             AzgalorGUID = pInstance->GetData64(DATA_AZGALOR);
     }

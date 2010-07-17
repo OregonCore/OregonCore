@@ -71,11 +71,11 @@ struct OREGON_DLL_DECL boss_twinemperorsAI : public ScriptedAI
 
     virtual bool IAmVeklor() = 0;
     virtual void Reset() = 0;
-    virtual void CastSpellOnBug(Creature *target) = 0;
+    virtual void CastSpellOnBug(Creature *pTarget) = 0;
 
     boss_twinemperorsAI(Creature *c): ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     void TwinReset()
@@ -409,7 +409,7 @@ struct OREGON_DLL_DECL boss_twinemperorsAI : public ScriptedAI
 class OREGON_DLL_DECL BugAura : public Aura
 {
     public:
-        BugAura(SpellEntry *spell, uint32 eff, int32 *bp, Unit *target, Unit *caster) : Aura(spell, eff, bp, target, caster, NULL)
+        BugAura(SpellEntry *spell, uint32 eff, int32 *bp, Unit *pTarget, Unit *caster) : Aura(spell, eff, bp, pTarget, caster, NULL)
             {}
 };
 
@@ -438,18 +438,18 @@ struct OREGON_DLL_DECL boss_veknilashAI : public boss_twinemperorsAI
         m_creature->ApplySpellImmune(0, IMMUNITY_DAMAGE, SPELL_SCHOOL_MASK_MAGIC, true);
     }
 
-    void CastSpellOnBug(Creature *target)
+    void CastSpellOnBug(Creature *pTarget)
     {
-        target->setFaction(14);
-        ((CreatureAI*)target->AI())->AttackStart(m_creature->getThreatManager().getHostilTarget());
+        pTarget->setFaction(14);
+        ((CreatureAI*)pTarget->AI())->AttackStart(m_creature->getThreatManager().getHostilTarget());
         SpellEntry *spell = (SpellEntry *)GetSpellStore()->LookupEntry(SPELL_MUTATE_BUG);
         for (int i=0; i<3; i++)
         {
             if (!spell->Effect[i])
                 continue;
-            target->AddAura(new BugAura(spell, i, NULL, target, target));
+            pTarget->AddAura(new BugAura(spell, i, NULL, pTarget, pTarget));
         }
-        target->SetHealth(target->GetMaxHealth());
+        pTarget->SetHealth(pTarget->GetMaxHealth());
     }
 
     void UpdateAI(const uint32 diff)
@@ -522,17 +522,17 @@ struct OREGON_DLL_DECL boss_veklorAI : public boss_twinemperorsAI
         m_creature->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, 0);
     }
 
-    void CastSpellOnBug(Creature *target)
+    void CastSpellOnBug(Creature *pTarget)
     {
-        target->setFaction(14);
+        pTarget->setFaction(14);
         SpellEntry *spell = (SpellEntry *)GetSpellStore()->LookupEntry(SPELL_EXPLODEBUG);
         for (int i=0; i<3; i++)
         {
             if (!spell->Effect[i])
                 continue;
-            target->AddAura(new BugAura(spell, i, NULL, target, target));
+            pTarget->AddAura(new BugAura(spell, i, NULL, pTarget, pTarget));
         }
-        target->SetHealth(target->GetMaxHealth());
+        pTarget->SetHealth(pTarget->GetMaxHealth());
     }
 
     void UpdateAI(const uint32 diff)
@@ -562,10 +562,10 @@ struct OREGON_DLL_DECL boss_veklorAI : public boss_twinemperorsAI
         //Blizzard_Timer
         if (Blizzard_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectTarget(SELECT_TARGET_RANDOM, 0, 45, true);
-            if (target)
-                DoCast(target,SPELL_BLIZZARD);
+            Unit *pTarget = NULL;
+            pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 45, true);
+            if (pTarget)
+                DoCast(pTarget,SPELL_BLIZZARD);
             Blizzard_Timer = 15000+rand()%15000;
         } else Blizzard_Timer -= diff;
 

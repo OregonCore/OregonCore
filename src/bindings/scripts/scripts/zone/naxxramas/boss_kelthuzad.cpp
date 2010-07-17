@@ -66,9 +66,9 @@ EndScriptData */
 DATA.
 This script has been made with info taken from wowwikki... so there are things wrong...
 like spell timers and Says. Also there's another major problem as there is no aggroed list
-I cannot make Kel'thuzad to target specific party members, that is needed for spells like
+I cannot make Kel'thuzad to pTarget specific party members, that is needed for spells like
 Mana Detonation... so what I'm doing untill now is just to cast everything on my main aggroed
-target. Sorry for him.
+pTarget. Sorry for him.
 Another bug is that there are spells that are actually NOT working... I have to implement
 them first.
 Need DISPELL efect

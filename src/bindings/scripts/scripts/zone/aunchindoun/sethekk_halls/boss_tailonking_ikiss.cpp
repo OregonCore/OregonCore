@@ -54,7 +54,7 @@ struct OREGON_DLL_DECL boss_talon_king_ikissAI : public ScriptedAI
 {
     boss_talon_king_ikissAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -153,10 +153,10 @@ struct OREGON_DLL_DECL boss_talon_king_ikissAI : public ScriptedAI
         if (Sheep_Timer < diff)
         {
             //second top aggro target in normal, random target in heroic correct?
-            Unit *target = NULL;
-            target = HeroicMode ? SelectUnit(SELECT_TARGET_RANDOM,0) : SelectUnit(SELECT_TARGET_TOPAGGRO,1);
-            if (target)
-                DoCast(target,HeroicMode ? H_SPELL_POLYMORPH : SPELL_POLYMORPH);
+            Unit *pTarget = NULL;
+            pTarget = HeroicMode ? SelectUnit(SELECT_TARGET_RANDOM,0) : SelectUnit(SELECT_TARGET_TOPAGGRO,1);
+            if (pTarget)
+                DoCast(pTarget,HeroicMode ? H_SPELL_POLYMORPH : SPELL_POLYMORPH);
             Sheep_Timer = 15000+rand()%2500;
         } else Sheep_Timer -= diff;
 
@@ -180,21 +180,21 @@ struct OREGON_DLL_DECL boss_talon_king_ikissAI : public ScriptedAI
         {
             DoScriptText(EMOTE_ARCANE_EXP, m_creature);
 
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             {
                 if (m_creature->IsNonMeleeSpellCasted(false))
                     m_creature->InterruptNonMeleeSpells(false);
 
                 //Spell doesn't work, but we use for visual effect at least
-                DoCast(target,SPELL_BLINK);
+                DoCast(pTarget,SPELL_BLINK);
 
-                float X = target->GetPositionX();
-                float Y = target->GetPositionY();
-                float Z = target->GetPositionZ();
+                float X = pTarget->GetPositionX();
+                float Y = pTarget->GetPositionY();
+                float Z = pTarget->GetPositionZ();
 
                 DoTeleportTo(X,Y,Z);
 
-                DoCast(target,SPELL_BLINK_TELEPORT);
+                DoCast(pTarget,SPELL_BLINK_TELEPORT);
                 Blink = true;
             }
             Blink_Timer = 35000+rand()%5000;

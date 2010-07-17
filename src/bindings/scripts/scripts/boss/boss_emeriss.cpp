@@ -66,8 +66,8 @@ struct OREGON_DLL_DECL boss_emerissAI : public ScriptedAI
         //Sleep_Timer
         if (Sleep_Timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_SLEEP);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_SLEEP);
 
             Sleep_Timer = 8000 + rand()%8000;
         } else Sleep_Timer -= diff;
@@ -82,8 +82,8 @@ struct OREGON_DLL_DECL boss_emerissAI : public ScriptedAI
         //Tailsweep every 2 seconds
         if (TailSweep_Timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_TAILSWEEP);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_TAILSWEEP);
 
             TailSweep_Timer = 2000;
         } else TailSweep_Timer -= diff;

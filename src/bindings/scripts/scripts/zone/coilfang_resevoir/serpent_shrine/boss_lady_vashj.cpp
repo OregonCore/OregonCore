@@ -132,7 +132,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
 {
     boss_lady_vashjAI (Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         Intro = false;
         JustCreated = true;
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); //set it only once on creature create (no need do intro if wiped)
@@ -374,12 +374,12 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
             {
                 //Static Charge
                 //Used on random people (only 1 person at any given time) in Phases 1 and 3, it's a debuff doing 2775 to 3225 Nature damage to the target and everybody in about 5 yards around it, every 1 seconds for 30 seconds. It can be removed by Cloak of Shadows, Iceblock, Divine Shield, etc, but not by Cleanse or Dispel Magic.
-                Unit *target = NULL;
-                target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit *pTarget = NULL;
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
-                if (target && !target->HasAura(SPELL_STATIC_CHARGE_TRIGGER, 0))
+                if (pTarget && !pTarget->HasAura(SPELL_STATIC_CHARGE_TRIGGER, 0))
                                                             //cast Static Charge every 2 seconds for 20 seconds
-                        DoCast(target, SPELL_STATIC_CHARGE_TRIGGER);
+                        DoCast(pTarget, SPELL_STATIC_CHARGE_TRIGGER);
 
                 StaticCharge_Timer = 10000+rand()%20000;    //blizzlike
             } else StaticCharge_Timer -= diff;
@@ -436,10 +436,10 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
 
                     if (Sporebat)
                     {
-                        Unit *target = NULL;
-                        target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                        if (target)
-                            Sporebat->AI()->AttackStart(target);
+                        Unit *pTarget = NULL;
+                        pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                        if (pTarget)
+                            Sporebat->AI()->AttackStart(pTarget);
                     }
 
                     //summon sporebats faster and faster
@@ -461,13 +461,13 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
             if (Check_Timer < diff)
             {
                 bool InMeleeRange = false;
-                Unit *target;
+                Unit *pTarget;
                 std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
                 for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
                 {
-                    target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+                    pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
                                                             //if in melee range
-                    if (target && target->IsWithinDistInMap(m_creature, 5))
+                    if (pTarget && pTarget->IsWithinDistInMap(m_creature, 5))
                     {
                         InMeleeRange = true;
                         break;
@@ -489,13 +489,13 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
             {
                 //Forked Lightning
                 //Used constantly in Phase 2, it shoots out completely randomly targeted bolts of lightning which hit everybody in a roughtly 60 degree cone in front of Vashj for 2313-2687 nature damage.
-                Unit *target = NULL;
-                target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit *pTarget = NULL;
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
-                if (!target)
-                    target = m_creature->getVictim();
+                if (!pTarget)
+                    pTarget = m_creature->getVictim();
 
-                DoCast(target, SPELL_FORKED_LIGHTNING);
+                DoCast(pTarget, SPELL_FORKED_LIGHTNING);
 
                 ForkedLightning_Timer = 2000+rand()%6000;   //blizzlike
             } else ForkedLightning_Timer -= diff;
@@ -532,10 +532,10 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
                 CoilfangElite = m_creature->SummonCreature(COILFANG_ELITE, CoilfangElitePos[pos][0], CoilfangElitePos[pos][1], CoilfangElitePos[pos][2], CoilfangElitePos[pos][3], TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 if (CoilfangElite)
                 {
-                    Unit *target = NULL;
-                    target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                    if (target)
-                        CoilfangElite->AI()->AttackStart(target);
+                    Unit *pTarget = NULL;
+                    pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                    if (pTarget)
+                        CoilfangElite->AI()->AttackStart(pTarget);
                     else if (m_creature->getVictim())
                         CoilfangElite->AI()->AttackStart(m_creature->getVictim());
                 }
@@ -550,10 +550,10 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
                 CoilfangStrider = m_creature->SummonCreature(COILFANG_STRIDER, CoilfangStriderPos[pos][0], CoilfangStriderPos[pos][1], CoilfangStriderPos[pos][2], CoilfangStriderPos[pos][3], TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                  if (CoilfangStrider)
                 {
-                    Unit *target = NULL;
-                    target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                    if (target)
-                        CoilfangStrider->AI()->AttackStart(target);
+                    Unit *pTarget = NULL;
+                    pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                    if (pTarget)
+                        CoilfangStrider->AI()->AttackStart(pTarget);
                     else if (m_creature->getVictim())
                         CoilfangStrider->AI()->AttackStart(m_creature->getVictim());
                 }
@@ -586,7 +586,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
 class OREGON_DLL_DECL VashjSurgeAura : public Aura
 {
     public:
-        VashjSurgeAura(SpellEntry *spell, uint32 eff, int32 *bp, Unit *target, Unit *caster) : Aura(spell, eff, bp, target, caster, NULL)
+        VashjSurgeAura(SpellEntry *spell, uint32 eff, int32 *bp, Unit *pTarget, Unit *caster) : Aura(spell, eff, bp, pTarget, caster, NULL)
             {}
 };
 //Enchanted Elemental
@@ -595,7 +595,7 @@ struct OREGON_DLL_DECL mob_enchanted_elementalAI : public ScriptedAI
 {
     mob_enchanted_elementalAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -699,7 +699,7 @@ struct OREGON_DLL_DECL mob_tainted_elementalAI : public ScriptedAI
 {
     mob_tainted_elementalAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -735,11 +735,11 @@ struct OREGON_DLL_DECL mob_tainted_elementalAI : public ScriptedAI
         //PoisonBolt_Timer
         if (PoisonBolt_Timer < diff)
         {
-            Unit *target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
-            if (target && target->IsWithinDistInMap(m_creature, 30))
-                DoCast(target, SPELL_POISON_BOLT);
+            if (pTarget && pTarget->IsWithinDistInMap(m_creature, 30))
+                DoCast(pTarget, SPELL_POISON_BOLT);
 
             PoisonBolt_Timer = 5000+rand()%5000;
         } else PoisonBolt_Timer -= diff;
@@ -762,7 +762,7 @@ struct OREGON_DLL_DECL mob_toxic_sporebatAI : public ScriptedAI
 {
     mob_toxic_sporebatAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         EnterEvadeMode();
     }
 
@@ -819,11 +819,11 @@ struct OREGON_DLL_DECL mob_toxic_sporebatAI : public ScriptedAI
         //toxic spores
         if (bolt_timer < diff)
         {
-            Unit *target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            if (target)
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            if (pTarget)
             {
-                Creature* trig = m_creature->SummonCreature(TOXIC_SPORES_TRIGGER,target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN,30000);
+                Creature* trig = m_creature->SummonCreature(TOXIC_SPORES_TRIGGER,pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN,30000);
                 if (trig)
                 {
                     trig->setFaction(14);
@@ -923,7 +923,7 @@ struct OREGON_DLL_DECL mob_shield_generator_channelAI : public ScriptedAI
 {
     mob_shield_generator_channelAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;

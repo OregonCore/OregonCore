@@ -39,7 +39,7 @@ struct OREGON_DLL_DECL boss_sulfuronAI : public ScriptedAI
 {
     boss_sulfuronAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     uint32 Darkstrike_Timer;
@@ -77,17 +77,17 @@ struct OREGON_DLL_DECL boss_sulfuronAI : public ScriptedAI
         //Inspire_Timer
         if (Inspire_Timer < diff)
         {
-            Creature* target = NULL;
+            Creature* pTarget = NULL;
             std::list<Creature*> pList = DoFindFriendlyMissingBuff(45.0f,SPELL_INSPIRE);
             if (!pList.empty())
             {
                 std::list<Creature*>::iterator i = pList.begin();
                 advance(i, (rand()%pList.size()));
-                target = (*i);
+                pTarget = (*i);
             }
 
-            if (target)
-                DoCast(target,SPELL_INSPIRE);
+            if (pTarget)
+                DoCast(pTarget,SPELL_INSPIRE);
 
             DoCast(m_creature,SPELL_INSPIRE);
 
@@ -104,9 +104,9 @@ struct OREGON_DLL_DECL boss_sulfuronAI : public ScriptedAI
         //Flamespear_Timer
         if (Flamespear_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_FLAMESPEAR);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (pTarget) DoCast(pTarget,SPELL_FLAMESPEAR);
 
             Flamespear_Timer = 12000 + rand()%4000;
         } else Flamespear_Timer -= diff;
@@ -126,7 +126,7 @@ struct OREGON_DLL_DECL mob_flamewaker_priestAI : public ScriptedAI
 {
     mob_flamewaker_priestAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     uint32 Heal_Timer;
@@ -166,9 +166,9 @@ struct OREGON_DLL_DECL mob_flamewaker_priestAI : public ScriptedAI
         //ShadowWordPain_Timer
         if (ShadowWordPain_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_SHADOWWORDPAIN);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (pTarget) DoCast(pTarget,SPELL_SHADOWWORDPAIN);
 
             ShadowWordPain_Timer = 18000+rand()%8000;
         } else ShadowWordPain_Timer -= diff;
@@ -176,9 +176,9 @@ struct OREGON_DLL_DECL mob_flamewaker_priestAI : public ScriptedAI
         //Immolate_Timer
         if (Immolate_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_IMMOLATE);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (pTarget) DoCast(pTarget,SPELL_IMMOLATE);
 
             Immolate_Timer = 15000+rand()%10000;
         } else Immolate_Timer -= diff;

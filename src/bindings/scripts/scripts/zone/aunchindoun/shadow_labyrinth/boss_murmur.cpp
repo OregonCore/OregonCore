@@ -68,10 +68,10 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
     void EnterCombat(Unit *who) { }
 
     // Sonic Boom instant damage (needs core fix instead of this)
-    void SpellHitTarget(Unit *target, const SpellEntry *spell)
+    void SpellHitTarget(Unit *pTarget, const SpellEntry *spell)
     {
-        if (target && target->isAlive() && spell && spell->Id == SPELL_SONIC_BOOM_EFFECT)
-            m_creature->DealDamage(target,(target->GetHealth()*90)/100,NULL,SPELL_DIRECT_DAMAGE,SPELL_SCHOOL_MASK_NATURE,spell);
+        if (pTarget && pTarget->isAlive() && spell && spell->Id == SPELL_SONIC_BOOM_EFFECT)
+            m_creature->DealDamage(pTarget,(pTarget->GetHealth()*90)/100,NULL,SPELL_DIRECT_DAMAGE,SPELL_SCHOOL_MASK_NATURE,spell);
     }
 
     void UpdateAI(const uint32 diff)
@@ -99,8 +99,8 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
         // Murmur's Touch
         if (MurmursTouch_Timer < diff)
         {
-            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0,80,true))
-                DoCast(target, SPELL_MURMURS_TOUCH);
+            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,80,true))
+                DoCast(pTarget, SPELL_MURMURS_TOUCH);
             MurmursTouch_Timer = 30000;
         } else MurmursTouch_Timer -= diff;
 
@@ -115,10 +115,10 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
         // Magnetic Pull
         if (MagneticPull_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                if (target->GetTypeId() == TYPEID_PLAYER && target->isAlive())
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->isAlive())
                 {
-                    DoCast(target, SPELL_MAGNETIC_PULL);
+                    DoCast(pTarget, SPELL_MAGNETIC_PULL);
                     MagneticPull_Timer = 20000+rand()%15000;
                     return;
                 }
@@ -132,18 +132,18 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
             {
                 std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
                 for (std::list<HostileReference*>::iterator i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
-                    if (Unit* target = Unit::GetUnit((*m_creature),(*i)->getUnitGuid()))
-                        if (target->isAlive() && m_creature->GetDistance2d(target) > 35)
-                            DoCast(target, SPELL_THUNDERING_STORM, true);
+                    if (Unit *pTarget = Unit::GetUnit((*m_creature),(*i)->getUnitGuid()))
+                        if (pTarget->isAlive() && m_creature->GetDistance2d(pTarget) > 35)
+                            DoCast(pTarget, SPELL_THUNDERING_STORM, true);
                 ThunderingStorm_Timer = 15000;
             } else ThunderingStorm_Timer -= diff;
 
             // Sonic Shock
             if (SonicShock_Timer < diff)
             {
-                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0,20,false))
-                    if (target->isAlive())
-                        DoCast(target, SPELL_SONIC_SHOCK);
+                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,20,false))
+                    if (pTarget->isAlive())
+                        DoCast(pTarget, SPELL_SONIC_SHOCK);
                 SonicShock_Timer = 10000+rand()%10000;
             } else SonicShock_Timer -= diff;
         }
@@ -155,10 +155,10 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
         {
             std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
             for (std::list<HostileReference*>::iterator i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
-                if (Unit* target = Unit::GetUnit((*m_creature),(*i)->getUnitGuid()))
-                    if (target->isAlive() && m_creature->IsWithinMeleeRange(target))
+                if (Unit *pTarget = Unit::GetUnit((*m_creature),(*i)->getUnitGuid()))
+                    if (pTarget->isAlive() && m_creature->IsWithinMeleeRange(pTarget))
                     {
-                        m_creature->TauntApply(target);
+                        m_creature->TauntApply(pTarget);
                         break;
                     }
         }

@@ -38,7 +38,7 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
 {
     boss_arlokkAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -116,8 +116,8 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
 
             if (Summon_Timer < diff && Counter < 31)
             {
-                Unit* target = NULL;
-                target = SelectUnit(SELECT_TARGET_RANDOM,0);
+                Unit *pTarget = NULL;
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
 
                 Panther = m_creature->SummonCreature(15101,-11532.79980,-1649.6734,41.4800,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
 
@@ -125,14 +125,14 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
                 {
                     DoScriptText(SAY_FEAST_PANTHER, m_creature, markedTarget);
                     Panther ->AI()->AttackStart(markedTarget);
-                } else if (Panther && target) Panther ->AI()->AttackStart(target);
+                } else if (Panther && pTarget) Panther ->AI()->AttackStart(pTarget);
 
                 Panther = m_creature->SummonCreature(15101,-11532.9970,-1606.4840,41.2979,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
 
                 if (markedTarget && Panther)
                     Panther ->AI()->AttackStart(markedTarget);
-                else if (Panther && target)
-                     Panther ->AI()->AttackStart(target);
+                else if (Panther && pTarget)
+                     Panther ->AI()->AttackStart(pTarget);
 
                 Counter++;
                 Summon_Timer = 5000;
@@ -154,8 +154,8 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
             {
                 if (Visible_Timer < diff)
                 {
-                    Unit* target = NULL;
-                    target = SelectUnit(SELECT_TARGET_RANDOM,0);
+                    Unit *pTarget = NULL;
+                    pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
                     //The Panther Model
                     m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID,15215);
                     m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -164,8 +164,8 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
                     m_creature->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg +((cinfo->mindmg/100) * 35)));
                     m_creature->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg/100) * 35)));
                     m_creature->UpdateDamagePhysical(BASE_ATTACK);
-                    if (target)
-                        AttackStart(target);
+                    if (pTarget)
+                        AttackStart(pTarget);
                     //The Panther Model
                     m_creature->SetUInt32Value(UNIT_FIELD_DISPLAYID,15215);
                     m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);

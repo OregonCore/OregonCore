@@ -54,7 +54,7 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
 {
     boss_supremusAI(Creature *c) : ScriptedAI(c), summons(m_creature)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -127,7 +127,7 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
     Unit* CalculateHatefulStrikeTarget()
     {
         uint32 health = 0;
-        Unit* target = NULL;
+        Unit *pTarget = NULL;
 
         std::list<HostileReference*>& m_threatlist = m_creature->getThreatManager().getThreatList();
         std::list<HostileReference*>::iterator i = m_threatlist.begin();
@@ -139,12 +139,12 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
                 if (pUnit->GetHealth() > health)
                 {
                     health = pUnit->GetHealth();
-                    target = pUnit;
+                    pTarget = pUnit;
                 }
             }
         }
 
-        return target;
+        return pTarget;
     }
 
     void UpdateAI(const uint32 diff)
@@ -169,9 +169,9 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
         {
             if (HatefulStrikeTimer < diff)
             {
-                if (Unit* target = CalculateHatefulStrikeTarget())
+                if (Unit *pTarget = CalculateHatefulStrikeTarget())
                 {
-                    DoCast(target, SPELL_HATEFUL_STRIKE);
+                    DoCast(pTarget, SPELL_HATEFUL_STRIKE);
                     HatefulStrikeTimer = 5000;
                 }
             } else HatefulStrikeTimer -= diff;
@@ -181,13 +181,13 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
         {
             if (SwitchTargetTimer < diff)
             {
-                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true))
+                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true))
                 {
                     if (m_creature->GetDistance2d(m_creature->getVictim()) < 40)
                         m_creature->CastSpell(m_creature->getVictim(),SPELL_CHARGE,false);
 
                     DoResetThreat();
-                    m_creature->AddThreat(target, 5000000.0f);
+                    m_creature->AddThreat(pTarget, 5000000.0f);
                     DoScriptText(EMOTE_NEW_TARGET, m_creature);
                     SwitchTargetTimer = 10000;
                 }
@@ -195,9 +195,9 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
 
             if (SummonVolcanoTimer < diff)
             {
-                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true))
+                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true))
                 {
-                    DoCast(target, SPELL_VOLCANIC_SUMMON);
+                    DoCast(pTarget, SPELL_VOLCANIC_SUMMON);
                     DoScriptText(EMOTE_GROUND_CRACK, m_creature);
                     SummonVolcanoTimer = 10000;
                 }
@@ -238,7 +238,7 @@ struct OREGON_DLL_DECL npc_volcanoAI : public ScriptedAI
 {
     npc_volcanoAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;

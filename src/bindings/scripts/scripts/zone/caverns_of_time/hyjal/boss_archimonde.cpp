@@ -193,10 +193,10 @@ struct OREGON_DLL_DECL mob_doomfireAI : public ScriptedAI
 
         if (TargetSelected && TargetGUID)
         {
-            Unit* target = Unit::GetUnit((*m_creature), TargetGUID);
-            if (target && target->isAlive())
+            Unit *pTarget = Unit::GetUnit((*m_creature), TargetGUID);
+            if (pTarget && pTarget->isAlive())
             {
-                target->CastSpell(target, SPELL_DOOMFIRE_DAMAGE, true);
+                pTarget->CastSpell(pTarget, SPELL_DOOMFIRE_DAMAGE, true);
                 TargetGUID = 0;
                 TargetSelected = false;
             }
@@ -278,15 +278,15 @@ struct OREGON_DLL_DECL mob_doomfire_targettingAI : public ScriptedAI
 
         if (ChangeTargetTimer < diff)
         {
-            Unit* target = NULL;
+            Unit *pTarget = NULL;
             switch(rand()%2)
             {
                 case 0:                                     // stalk player
-                    target = SelectUnit(SELECT_TARGET_RANDOM, 1);
-                    if (target && target->isAlive())
+                    pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+                    if (pTarget && pTarget->isAlive())
                     {
-                        m_creature->AddThreat(target, DoGetThreat(m_creature->getVictim()));
-                        m_creature->GetMotionMaster()->MoveChase(target);
+                        m_creature->AddThreat(pTarget, DoGetThreat(m_creature->getVictim()));
+                        m_creature->GetMotionMaster()->MoveChase(pTarget);
                     }
                     break;
 
@@ -307,7 +307,7 @@ struct OREGON_DLL_DECL mob_doomfire_targettingAI : public ScriptedAI
 /* Finally, Archimonde's script. His script isn't extremely complex, most are simply spells on timers.
    The only complicated aspect of the battle is Finger of Death and Doomfire, with Doomfire being the
    hardest bit to code. Finger of Death is simply a distance check - if no one is in melee range, then
-   select a random target and cast the spell on them. However, if someone IS in melee range, and this
+   select a random pTarget and cast the spell on them. However, if someone IS in melee range, and this
    is NOT the main tank (creature's victim), then we aggro that player and they become the new victim.
    For Doomfire, we summon a mob (Doomfire Targetting) that summons another mob (Doomfire every second)
    Doomfire Targetting 'stalks' players whilst Doomfire damages player that are within range. */
@@ -316,7 +316,7 @@ struct OREGON_DLL_DECL mob_doomfire_targettingAI : public ScriptedAI
 struct TargetDistanceOrder : public std::binary_function<const Unit, const Unit, bool>
 {
     const Unit* MainTarget;
-    TargetDistanceOrder(const Unit* Target) : MainTarget(Target) {};
+    TargetDistanceOrder(const Unit *target) : MainTarget(target) {};
     // functor for operator "<"
     bool operator()(const Unit* _Left, const Unit* _Right) const
     {
@@ -471,7 +471,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
         return false;
     }
 
-    void SummonDoomfire(Unit* target)
+    void SummonDoomfire(Unit *pTarget)
     {
         Creature* Doomfire = DoSpawnCreature(CREATURE_DOOMFIRE_TARGETING, rand()%30, rand()%30, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 30000);
         if (Doomfire)
@@ -485,8 +485,8 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
             Doomfire->setFaction(m_creature->getFaction());
             DoCast(Doomfire, SPELL_DOOMFIRE_SPAWN);
             Doomfire->CastSpell(Doomfire, SPELL_DOOMFIRE_VISUAL, true);
-            if (target)
-                Doomfire->AI()->AttackStart(target);
+            if (pTarget)
+                Doomfire->AI()->AttackStart(pTarget);
 
             if (rand()%2 == 0)
                 DoScriptText(SAY_DOOMFIRE1, m_creature);

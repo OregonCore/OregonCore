@@ -45,7 +45,7 @@ struct OREGON_DLL_DECL boss_jeklikAI : public ScriptedAI
 {
     boss_jeklikAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -102,10 +102,10 @@ struct OREGON_DLL_DECL boss_jeklikAI : public ScriptedAI
             {
                 if (Charge_Timer < diff)
                 {
-                    if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                     {
-                        DoCast(target,SPELL_CHARGE);
-                        AttackStart(target);
+                        DoCast(pTarget,SPELL_CHARGE);
+                        AttackStart(pTarget);
                     }
 
                     Charge_Timer = 15000 + rand()%15000;
@@ -125,25 +125,25 @@ struct OREGON_DLL_DECL boss_jeklikAI : public ScriptedAI
 
                 if (SpawnBats_Timer < diff)
                 {
-                    Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0);
+                    Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
 
                     Creature* Bat = NULL;
                     Bat = m_creature->SummonCreature(11368,-12291.6220,-1380.2640,144.8304,5.483, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
-                    if (target && Bat) Bat ->AI()->AttackStart(target);
+                    if (pTarget && Bat) Bat ->AI()->AttackStart(pTarget);
 
                     Bat = m_creature->SummonCreature(11368,-12289.6220,-1380.2640,144.8304,5.483, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
-                    if (target && Bat) Bat ->AI()->AttackStart(target);
+                    if (pTarget && Bat) Bat ->AI()->AttackStart(pTarget);
 
                     Bat = m_creature->SummonCreature(11368,-12293.6220,-1380.2640,144.8304,5.483, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
-                    if (target && Bat) Bat ->AI()->AttackStart(target);
+                    if (pTarget && Bat) Bat ->AI()->AttackStart(pTarget);
 
                     Bat = m_creature->SummonCreature(11368,-12291.6220,-1380.2640,144.8304,5.483, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
-                    if (target && Bat) Bat ->AI()->AttackStart(target);
+                    if (pTarget && Bat) Bat ->AI()->AttackStart(pTarget);
 
                     Bat = m_creature->SummonCreature(11368,-12289.6220,-1380.2640,144.8304,5.483, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
-                    if (target && Bat) Bat ->AI()->AttackStart(target);
+                    if (pTarget && Bat) Bat ->AI()->AttackStart(pTarget);
                     Bat = m_creature->SummonCreature(11368,-12293.6220,-1380.2640,144.8304,5.483, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
-                    if (target && Bat) Bat ->AI()->AttackStart(target);
+                    if (pTarget && Bat) Bat ->AI()->AttackStart(pTarget);
 
                     SpawnBats_Timer = 60000;
                 } else SpawnBats_Timer -= diff;
@@ -154,9 +154,9 @@ struct OREGON_DLL_DECL boss_jeklikAI : public ScriptedAI
                 {
                     if (PhaseTwo && ShadowWordPain_Timer < diff)
                     {
-                        if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+                        if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                         {
-                            DoCast(target, SPELL_SHADOW_WORD_PAIN);
+                            DoCast(pTarget, SPELL_SHADOW_WORD_PAIN);
                             ShadowWordPain_Timer = 12000 + rand()%6000;
                         }
                     }ShadowWordPain_Timer -=diff;
@@ -183,13 +183,13 @@ struct OREGON_DLL_DECL boss_jeklikAI : public ScriptedAI
 
                     if (SpawnFlyingBats_Timer < diff)
                     {
-                        Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                        if (!target)
+                        Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                        if (!pTarget)
                             return;
 
-                        Creature* FlyingBat = m_creature->SummonCreature(14965, target->GetPositionX(), target->GetPositionY(), target->GetPositionZ()+15, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
+                        Creature* FlyingBat = m_creature->SummonCreature(14965, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ()+15, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
                         if (FlyingBat)
-                            FlyingBat->AI()->AttackStart(target);
+                            FlyingBat->AI()->AttackStart(pTarget);
 
                         SpawnFlyingBats_Timer = 10000 + rand()%5000;
                     } else SpawnFlyingBats_Timer -=diff;
@@ -212,7 +212,7 @@ struct OREGON_DLL_DECL mob_batriderAI : public ScriptedAI
 {
     mob_batriderAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -238,9 +238,9 @@ struct OREGON_DLL_DECL mob_batriderAI : public ScriptedAI
         //Bomb_Timer
         if (Bomb_Timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
-                DoCast(target, SPELL_BOMB);
+                DoCast(pTarget, SPELL_BOMB);
                 Bomb_Timer = 5000;
             }
         } else Bomb_Timer -= diff;

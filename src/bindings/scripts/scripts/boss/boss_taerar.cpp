@@ -124,9 +124,9 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
         //Sleep_Timer
         if (Sleep_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_SLEEP);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (pTarget) DoCast(pTarget,SPELL_SLEEP);
 
             Sleep_Timer = 8000 + rand()%7000;
         } else Sleep_Timer -= diff;
@@ -141,8 +141,8 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
         //Tailsweep every 2 seconds
         if (TailSweep_Timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_TAILSWEEP);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_TAILSWEEP);
 
             TailSweep_Timer = 2000;
         } else TailSweep_Timer -= diff;
@@ -180,11 +180,11 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
                 //m_creature->m_canMove = false;
 
                 //Cast
-                Unit* target = NULL;
-                target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                SummonShades(target);
-                SummonShades(target);
-                SummonShades(target);
+                Unit *pTarget = NULL;
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                SummonShades(pTarget);
+                SummonShades(pTarget);
+                SummonShades(pTarget);
                 Summon1_Timer = 120000;
                 Shades = true;
                 Shades_Timer = 60000;
@@ -203,11 +203,11 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
                 //m_creature->m_canMove = false;
 
                 //Cast
-                Unit* target = NULL;
-                target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                SummonShades(target);
-                SummonShades(target);
-                SummonShades(target);
+                Unit *pTarget = NULL;
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                SummonShades(pTarget);
+                SummonShades(pTarget);
+                SummonShades(pTarget);
                 Summon2_Timer = 120000;
                 Shades = true;
                 Shades_Timer = 60000;
@@ -226,11 +226,11 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
                 //m_creature->m_canMove = false;
 
                 //Cast
-                Unit* target = NULL;
-                target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                SummonShades(target);
-                SummonShades(target);
-                SummonShades(target);
+                Unit *pTarget = NULL;
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                SummonShades(pTarget);
+                SummonShades(pTarget);
+                SummonShades(pTarget);
                 Summon3_Timer = 120000;
                 Shades = true;
                 Shades_Timer = 60000;

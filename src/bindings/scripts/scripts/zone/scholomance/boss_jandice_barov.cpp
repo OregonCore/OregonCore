@@ -118,12 +118,12 @@ struct OREGON_DLL_DECL boss_jandicebarovAI : public ScriptedAI
             DoModifyThreatPercent(m_creature->getVictim(),-99);
 
             //Summon 10 Illusions attacking random gamers
-            Unit* target = NULL;
+            Unit *pTarget = NULL;
             for (int i = 0; i < 10;i++)
             {
-                target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                if (target)
-                    SummonIllusions(target);
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                if (pTarget)
+                    SummonIllusions(pTarget);
             }
             Invisible = true;
             Invisible_Timer = 3000;

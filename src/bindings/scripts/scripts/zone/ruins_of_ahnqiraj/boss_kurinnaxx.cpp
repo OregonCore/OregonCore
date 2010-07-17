@@ -93,10 +93,10 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
 
         if (SUMMON_Timer < diff)
         {
-            Unit *target = SelectTarget(SELECT_TARGET_RANDOM,1,70,true);
-            if (target)
+            Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,1,70,true);
+            if (pTarget)
             {
-                DoCast(target,SPELL_SUMMON);
+                DoCast(pTarget,SPELL_SUMMON);
             }
             SUMMON_Timer = 8000 + rand()%2000;
         } else SUMMON_Timer -= diff;
@@ -106,11 +106,11 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
         {
             if (!sandtrap)
             {
-                Unit *target = SelectTarget(SELECT_TARGET_RANDOM,0,50,true);
+                Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,50,true);
 
-                if (target)
+                if (pTarget)
                 {
-                    target->CastSpell(target,SPELL_SANDTRAP,true,0,0,m_creature->GetGUID());
+                    pTarget->CastSpell(pTarget,SPELL_SANDTRAP,true,0,0,m_creature->GetGUID());
                     sandtrap = true;
                 }
                 SANDTRAP_Timer = 5000;

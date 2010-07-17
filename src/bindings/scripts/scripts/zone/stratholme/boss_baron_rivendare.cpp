@@ -108,8 +108,8 @@ struct OREGON_DLL_DECL boss_baron_rivendareAI : public ScriptedAI
 
     void JustSummoned(Creature* summoned)
     {
-        if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-             summoned->AI()->AttackStart(target);
+        if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+             summoned->AI()->AttackStart(pTarget);
     }
 
      void JustDied(Unit* Killer)
@@ -126,7 +126,7 @@ struct OREGON_DLL_DECL boss_baron_rivendareAI : public ScriptedAI
         //ShadowBolt
         if (ShadowBolt_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(m_creature->getVictim(),SPELL_SHADOWBOLT);
 
             ShadowBolt_Timer = 10000;

@@ -265,7 +265,7 @@ struct OREGON_DLL_DECL boss_chromaggusAI : public ScriptedAI
                         && pUnit->HasAura(SPELL_BROODAF_BRONZE,0)
                         && pUnit->HasAura(SPELL_BROODAF_GREEN,0))
                     {
-                        //target->RemoveAllAuras();
+                        //pTarget->RemoveAllAuras();
                         //DoCast(target,SPELL_CHROMATIC_MUT_1);
 
                         //Chromatic mutation is causing issues

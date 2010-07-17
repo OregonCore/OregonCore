@@ -65,8 +65,8 @@ struct OREGON_DLL_DECL boss_hungarfenAI : public ScriptedAI
 
         if (Mushroom_Timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                m_creature->SummonCreature(17990, target->GetPositionX()+(rand()%8), target->GetPositionY()+(rand()%8), target->GetPositionZ(), (rand()%5), TEMPSUMMON_TIMED_DESPAWN, 22000);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                m_creature->SummonCreature(17990, pTarget->GetPositionX()+(rand()%8), pTarget->GetPositionY()+(rand()%8), pTarget->GetPositionZ(), (rand()%5), TEMPSUMMON_TIMED_DESPAWN, 22000);
             else
                 m_creature->SummonCreature(17990, m_creature->GetPositionX()+(rand()%8), m_creature->GetPositionY()+(rand()%8), m_creature->GetPositionZ(), (rand()%5), TEMPSUMMON_TIMED_DESPAWN, 22000);
 
@@ -75,8 +75,8 @@ struct OREGON_DLL_DECL boss_hungarfenAI : public ScriptedAI
 
         if (AcidGeyser_Timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_ACID_GEYSER);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_ACID_GEYSER);
             AcidGeyser_Timer = 10000+rand()%7500;
         } else AcidGeyser_Timer -= diff;
 

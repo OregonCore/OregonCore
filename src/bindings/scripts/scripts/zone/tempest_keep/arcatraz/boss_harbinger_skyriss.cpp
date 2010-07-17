@@ -57,7 +57,7 @@ struct OREGON_DLL_DECL boss_harbinger_skyrissAI : public ScriptedAI
 {
     boss_harbinger_skyrissAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         HeroicMode = m_creature->GetMap()->IsHeroic();
         Intro = false;
     }
@@ -119,8 +119,8 @@ struct OREGON_DLL_DECL boss_harbinger_skyrissAI : public ScriptedAI
         else
             summon->SetHealth((summon->GetMaxHealth()*66)/100);
         if (m_creature->getVictim())
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                summon->AI()->AttackStart(target);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                summon->AI()->AttackStart(pTarget);
      }
 
     void KilledUnit(Unit* victim)
@@ -203,8 +203,8 @@ struct OREGON_DLL_DECL boss_harbinger_skyrissAI : public ScriptedAI
 
         if (MindRend_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
-                DoCast(target,HeroicMode ? H_SPELL_MIND_REND : SPELL_MIND_REND);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                DoCast(pTarget,HeroicMode ? H_SPELL_MIND_REND : SPELL_MIND_REND);
             else
                 DoCast(m_creature->getVictim(),HeroicMode ? H_SPELL_MIND_REND : SPELL_MIND_REND);
 
@@ -222,8 +222,8 @@ struct OREGON_DLL_DECL boss_harbinger_skyrissAI : public ScriptedAI
             case 1: DoScriptText(SAY_FEAR_2, m_creature); break;
             }
 
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
-                DoCast(target,SPELL_FEAR);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                DoCast(pTarget,SPELL_FEAR);
             else
                 DoCast(m_creature->getVictim(),SPELL_FEAR);
 
@@ -241,8 +241,8 @@ struct OREGON_DLL_DECL boss_harbinger_skyrissAI : public ScriptedAI
             case 1: DoScriptText(SAY_MIND_2, m_creature); break;
             }
 
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
-                DoCast(target,HeroicMode ? H_SPELL_DOMINATION : SPELL_DOMINATION);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                DoCast(pTarget,HeroicMode ? H_SPELL_DOMINATION : SPELL_DOMINATION);
             else
                 DoCast(m_creature->getVictim(),HeroicMode ? H_SPELL_DOMINATION : SPELL_DOMINATION);
 
@@ -256,8 +256,8 @@ struct OREGON_DLL_DECL boss_harbinger_skyrissAI : public ScriptedAI
                 if (m_creature->IsNonMeleeSpellCasted(false))
                     return;
 
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
-                    DoCast(target,H_SPELL_MANA_BURN);
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                    DoCast(pTarget,H_SPELL_MANA_BURN);
 
                 ManaBurn_Timer = 16000+rand()%16000;
             } else ManaBurn_Timer -=diff;
@@ -279,7 +279,7 @@ struct OREGON_DLL_DECL boss_harbinger_skyriss_illusionAI : public ScriptedAI
 {
     boss_harbinger_skyriss_illusionAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         HeroicMode = m_creature->GetMap()->IsHeroic();
     }
 

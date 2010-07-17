@@ -54,7 +54,7 @@ struct OREGON_DLL_DECL boss_thekalAI : public ScriptedAI
 {
     boss_thekalAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     uint32 MortalCleave_Timer;
@@ -196,11 +196,11 @@ struct OREGON_DLL_DECL boss_thekalAI : public ScriptedAI
             {
                 if (Charge_Timer < diff)
                 {
-                    if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                     {
-                        DoCast(target,SPELL_CHARGE);
+                        DoCast(pTarget,SPELL_CHARGE);
                         DoResetThreat();
-                        AttackStart(target);
+                        AttackStart(pTarget);
                     }
 
                     Charge_Timer = 15000 + rand()%7000;
@@ -241,7 +241,7 @@ struct OREGON_DLL_DECL mob_zealot_lorkhanAI : public ScriptedAI
 {
     mob_zealot_lorkhanAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     uint32 Shield_Timer;
@@ -385,7 +385,7 @@ struct OREGON_DLL_DECL mob_zealot_zathAI : public ScriptedAI
 {
     mob_zealot_zathAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     uint32 SweepingStrikes_Timer;

@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Boss_Mekgineer_Steamrigger
 SD%Complete: 60
-SDComment: Mechanics' interrrupt heal doesn't work very well, also a proper movement needs to be implemented -> summon further away and move towards target to repair.
+SDComment: Mechanics' interrrupt heal doesn't work very well, also a proper movement needs to be implemented -> summon further away and move towards pTarget to repair.
 SDCategory: Coilfang Resevoir, The Steamvault
 EndScriptData */
 
@@ -50,7 +50,7 @@ struct OREGON_DLL_DECL boss_mekgineer_steamriggerAI : public ScriptedAI
 {
     boss_mekgineer_steamriggerAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         HeroicMode = m_creature->GetMap()->IsHeroic();
     }
 
@@ -137,8 +137,8 @@ struct OREGON_DLL_DECL boss_mekgineer_steamriggerAI : public ScriptedAI
 
         if (Saw_Blade_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
-                DoCast(target,SPELL_SAW_BLADE);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                DoCast(pTarget,SPELL_SAW_BLADE);
             else
                 DoCast(m_creature->getVictim(),SPELL_SAW_BLADE);
 
@@ -199,7 +199,7 @@ struct OREGON_DLL_DECL mob_steamrigger_mechanicAI : public ScriptedAI
 {
     mob_steamrigger_mechanicAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         HeroicMode = m_creature->GetMap()->IsHeroic();
     }
 

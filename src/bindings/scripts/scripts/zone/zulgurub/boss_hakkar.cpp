@@ -46,7 +46,7 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
 {
     boss_hakkarAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -121,8 +121,8 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
         //CauseInsanity_Timer
         /*if (CauseInsanity_Timer < diff)
         {
-        if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-        DoCast(target,SPELL_CAUSEINSANITY);
+        if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+        DoCast(pTarget,SPELL_CAUSEINSANITY);
 
         CauseInsanity_Timer = 35000 + rand()%8000;
         } else CauseInsanity_Timer -= diff;*/
@@ -130,8 +130,8 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
         //WillOfHakkar_Timer
         if (WillOfHakkar_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_WILLOFHAKKAR);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_WILLOFHAKKAR);
 
             WillOfHakkar_Timer = 25000 + rand()%10000;
         } else WillOfHakkar_Timer -= diff;

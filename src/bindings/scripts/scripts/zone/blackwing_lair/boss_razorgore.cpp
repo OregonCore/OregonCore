@@ -106,10 +106,10 @@ struct OREGON_DLL_DECL boss_razorgoreAI : public ScriptedAI
         // Aura Check. If the gamer is affected by confliguration we attack a random gamer.
         if (m_creature->getVictim()->HasAura(SPELL_CONFLAGRATION,0))
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,1);
-            if (target)
-                m_creature->TauntApply(target);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
+            if (pTarget)
+                m_creature->TauntApply(pTarget);
         }
 
         DoMeleeAttackIfReady();

@@ -62,9 +62,9 @@ struct OREGON_DLL_DECL boss_draganthaurissanAI : public ScriptedAI
 
         if (HandOfThaurissan_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_HANDOFTHAURISSAN);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (pTarget) DoCast(pTarget,SPELL_HANDOFTHAURISSAN);
 
             //3 Hands of Thaurissan will be casted
             //if (Counter < 3)

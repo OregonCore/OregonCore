@@ -55,7 +55,7 @@ struct OREGON_DLL_DECL boss_blackheart_the_inciterAI : public ScriptedAI
 {
     boss_blackheart_the_inciterAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -132,9 +132,9 @@ struct OREGON_DLL_DECL boss_blackheart_the_inciterAI : public ScriptedAI
             std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
             for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
-                Unit* target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
-                if (target && target->GetTypeId() == TYPEID_PLAYER)
-                    target->CastSpell(target,SPELL_INCITE_CHAOS_B,true);
+                Unit *pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+                if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
+                    pTarget->CastSpell(pTarget,SPELL_INCITE_CHAOS_B,true);
             }
 
             DoResetThreat();
@@ -146,8 +146,8 @@ struct OREGON_DLL_DECL boss_blackheart_the_inciterAI : public ScriptedAI
         //Charge_Timer
         if (Charge_Timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(target, SPELL_CHARGE);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_CHARGE);
             Charge_Timer = 25000;
         } else Charge_Timer -= diff;
 

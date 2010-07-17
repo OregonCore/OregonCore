@@ -72,7 +72,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
 {
     boss_high_astromancer_solarianAI(Creature *c) : ScriptedAI(c), Summons(m_creature)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
 
         defaultarmor = m_creature->GetArmor();
         defaultsize = m_creature->GetFloatValue(OBJECT_FIELD_SCALE_X);
@@ -171,8 +171,8 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
         Creature* Summoned = m_creature->SummonCreature(entry, x, y, z, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
         if (Summoned)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                Summoned->AI()->AttackStart(target);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                Summoned->AI()->AttackStart(pTarget);
 
             Summons.Summon(Summoned);
         }
@@ -240,13 +240,13 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
                     DoCast(m_creature->getVictim(), SPELL_BLINDING_LIGHT);
                     BlindingLight = false;
                 } else{
-                    Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                    Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
-                    if (!m_creature->HasInArc(2.5f, target))
-                        target = m_creature->getVictim();
+                    if (!m_creature->HasInArc(2.5f, pTarget))
+                        pTarget = m_creature->getVictim();
 
-                    if (target)
-                        DoCast(target, SPELL_ARCANE_MISSILES);
+                    if (pTarget)
+                        DoCast(pTarget, SPELL_ARCANE_MISSILES);
                 }
                 ArcaneMissiles_Timer = 3000;
             } else ArcaneMissiles_Timer -= diff;
@@ -259,9 +259,9 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
 
             if (MarkOfTheAstromancer_Timer < diff) //A debuff that lasts for 5 seconds, cast several times each phase on a random raid member, but not the main tank
             {
-                Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true);
-                if (target)
-                    DoCast(target, SPELL_MARK_OF_THE_ASTROMANCER);
+                Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true);
+                if (pTarget)
+                    DoCast(pTarget, SPELL_MARK_OF_THE_ASTROMANCER);
                 else DoCast(m_creature->getVictim(), SPELL_MARK_OF_THE_ASTROMANCER);
                 MarkOfTheAstromancer_Timer = 15000;
             } else MarkOfTheAstromancer_Timer -= diff;
@@ -392,7 +392,7 @@ struct OREGON_DLL_DECL mob_solarium_priestAI : public ScriptedAI
 {
     mob_solarium_priestAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -419,22 +419,22 @@ struct OREGON_DLL_DECL mob_solarium_priestAI : public ScriptedAI
 
         if (healTimer < diff)
         {
-            Unit* target = NULL;
+            Unit *pTarget = NULL;
 
             switch(rand()%2)
             {
                 case 0:
                     if (pInstance)
-                        target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_ASTROMANCER));
+                        pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_ASTROMANCER));
                     break;
                 case 1:
-                    target = m_creature;
+                    pTarget = m_creature;
                     break;
             }
 
-            if (target)
+            if (pTarget)
             {
-                DoCast(target,SOLARIUM_HEAL);
+                DoCast(pTarget,SOLARIUM_HEAL);
                 healTimer = 9000;
             }
         } else healTimer -= diff;

@@ -60,7 +60,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
 {
     boss_nightbaneAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         Intro = true;
         isReseted = false;
     }
@@ -351,23 +351,23 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
 
             if (CharredEarthTimer < diff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1))
-                    DoCast(target,SPELL_CHARRED_EARTH);
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
+                    DoCast(pTarget,SPELL_CHARRED_EARTH);
                 CharredEarthTimer = 20000; //timer
             } else CharredEarthTimer -= diff;
 
             if (TailSweepTimer < diff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    if (!m_creature->HasInArc(M_PI, target))
-                        DoCast(target,SPELL_TAIL_SWEEP);
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    if (!m_creature->HasInArc(M_PI, pTarget))
+                        DoCast(pTarget,SPELL_TAIL_SWEEP);
                 TailSweepTimer = 15000;//timer
             } else TailSweepTimer -= diff;
 
             if (SearingCindersTimer < diff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    DoCast(target,SPELL_SEARING_CINDERS);
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget,SPELL_SEARING_CINDERS);
                 SearingCindersTimer = 10000; //timer
             } else SearingCindersTimer -= diff;
 
@@ -408,8 +408,8 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
 
                 if (DistractingAshTimer < diff)
                 {
-                    if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                        DoCast(target,SPELL_DISTRACTING_ASH);
+                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                        DoCast(pTarget,SPELL_DISTRACTING_ASH);
                     DistractingAshTimer = 2000;//timer wrong
                 } else DistractingAshTimer -= diff;
             }

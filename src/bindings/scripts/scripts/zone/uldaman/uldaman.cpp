@@ -72,13 +72,13 @@ struct OREGON_DLL_DECL mob_jadespine_basiliskAI : public ScriptedAI
             //Stop attacking target thast asleep and pick new target
             Cslumber_Timer = 28000;
 
-            Unit* Target = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
+            Unit *pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
 
-            if (!Target || Target == m_creature->getVictim())
-                Target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            if (!pTarget || pTarget == m_creature->getVictim())
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
 
-            if (Target)
-                m_creature->TauntApply(Target);
+            if (pTarget)
+                m_creature->TauntApply(pTarget);
 
         } else Cslumber_Timer -= diff;
 

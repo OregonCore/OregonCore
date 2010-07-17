@@ -69,7 +69,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
 {
     boss_alarAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance =(c->GetInstanceData());
+        pInstance =c->GetInstanceData();
         DefaultMoveSpeedRate = m_creature->GetSpeedRate(MOVE_RUN);
     }
 
@@ -141,8 +141,8 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
     void JustSummoned(Creature *summon)
     {
         if (summon->GetEntry() == CREATURE_EMBER_OF_ALAR)
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                summon->AI()->AttackStart(target);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                summon->AI()->AttackStart(pTarget);
     }
 
     void MoveInLineOfSight(Unit *who) {}
@@ -267,14 +267,14 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                         WaitTimer = 4000;
                         return;
                     case WE_DIVE:
-                        if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                        if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                         {
                             m_creature->RemoveAurasDueToSpell(SPELL_DIVE_BOMB_VISUAL);
-                            m_creature->CastSpell(target, SPELL_DIVE_BOMB, true);
-                            float dist = m_creature->GetDistance(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ());
+                            m_creature->CastSpell(pTarget, SPELL_DIVE_BOMB, true);
+                            float dist = m_creature->GetDistance(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
                             if (dist < 5.0f) dist = 5.0f;
                             WaitTimer = 1000 + floor(dist / 80 * 1000.0f);
-                            m_creature->Relocate(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ());
+                            m_creature->Relocate(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
                             m_creature->StopMoving();
                             WaitEvent = WE_LAND;
                         }
@@ -352,9 +352,9 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
         {
             if (Charge_Timer < diff)
             {
-                Unit *target= SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true);
-                if (target)
-                    DoCast(target, SPELL_CHARGE);
+                Unit *pTarget= SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true);
+                if (pTarget)
+                    DoCast(pTarget, SPELL_CHARGE);
                 Charge_Timer = 30000+rand()%20000;
             } else Charge_Timer -= diff;
 
@@ -378,9 +378,9 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
 
             if (FlamePatch_Timer < diff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
-                    Creature* Summoned = m_creature->SummonCreature(CREATURE_FLAME_PATCH_ALAR, target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 120000);
+                    Creature* Summoned = m_creature->SummonCreature(CREATURE_FLAME_PATCH_ALAR, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 120000);
                     if (Summoned)
                     {
                         Summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -409,10 +409,10 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
             }
             else
             {
-                Unit *target = NULL;
-                target = m_creature->SelectNearestTarget(5);
-                if (target)
-                    m_creature->AI()->AttackStart(target);
+                Unit *pTarget = NULL;
+                pTarget = m_creature->SelectNearestTarget(5);
+                if (pTarget)
+                    m_creature->AI()->AttackStart(pTarget);
                 else
                 {
                     m_creature->CastSpell(m_creature, SPELL_FLAME_BUFFET, true);

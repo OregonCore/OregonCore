@@ -66,7 +66,7 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
         {
             AddId[i] = 0;
         }
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -298,9 +298,9 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
 
             if (Blind_Timer < diff)
             {
-                Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 25, true);
-                if (target && m_creature->IsWithinMeleeRange(target))
-                    DoCast(target, SPELL_BLIND);
+                Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 25, true);
+                if (pTarget && m_creature->IsWithinMeleeRange(pTarget))
+                    DoCast(pTarget, SPELL_BLIND);
 
                 Blind_Timer = 40000;
             } else Blind_Timer -= diff;
@@ -316,8 +316,8 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
                     case 1: DoScriptText(SAY_SPECIAL_2, m_creature); break;
                 }
 
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                   target->CastSpell(target, SPELL_GARROTE,true);
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                   pTarget->CastSpell(pTarget, SPELL_GARROTE,true);
 
                 InVanish = false;
             } else Wait_Timer -= diff;
@@ -333,14 +333,14 @@ struct OREGON_DLL_DECL boss_moroes_guestAI : public ScriptedAI
     ScriptedInstance* pInstance;
 
     uint64 GuestGUID[4];
-    Unit* target;
+    Unit *pTarget;
 
     boss_moroes_guestAI(Creature* c) : ScriptedAI(c)
     {
         for (uint8 i = 0; i < 4; ++i)
             GuestGUID[i] = 0;
 
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     void Reset()
@@ -431,18 +431,18 @@ struct OREGON_DLL_DECL boss_baroness_dorothea_millstipeAI : public boss_moroes_g
 
         if (ManaBurn_Timer < diff)
         {
-            Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            if (target && (target->getPowerType() == POWER_MANA))
-                DoCast(target,SPELL_MANABURN);
+            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            if (pTarget && (pTarget->getPowerType() == POWER_MANA))
+                DoCast(pTarget,SPELL_MANABURN);
             ManaBurn_Timer = 5000;                          //3 sec cast
         } else ManaBurn_Timer -= diff;
 
         if (ShadowWordPain_Timer < diff)
         {
-            Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            if (target)
+            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            if (pTarget)
             {
-                DoCast(target,SPELL_SWPAIN);
+                DoCast(pTarget,SPELL_SWPAIN);
                 ShadowWordPain_Timer = 7000;
             }
         } else ShadowWordPain_Timer -= diff;
@@ -541,8 +541,8 @@ struct OREGON_DLL_DECL boss_lady_catriona_von_indiAI : public boss_moroes_guestA
 
         if (GreaterHeal_Timer < diff)
         {
-            target = SelectTarget();
-            DoCast(target, SPELL_GREATERHEAL);
+            pTarget = SelectTarget();
+            DoCast(pTarget, SPELL_GREATERHEAL);
             GreaterHeal_Timer = 17000;
         } else GreaterHeal_Timer -= diff;
 
@@ -556,8 +556,8 @@ struct OREGON_DLL_DECL boss_lady_catriona_von_indiAI : public boss_moroes_guestA
         {
             if (rand()%2)
             {
-                target = SelectTarget();
-                DoCast(target, SPELL_DISPELMAGIC);
+                pTarget = SelectTarget();
+                DoCast(pTarget, SPELL_DISPELMAGIC);
             }
             else
                 DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_DISPELMAGIC);
@@ -609,23 +609,23 @@ struct OREGON_DLL_DECL boss_lady_keira_berrybuckAI : public boss_moroes_guestAI
 
         if (HolyLight_Timer < diff)
         {
-            target = SelectTarget();
-            DoCast(target, SPELL_HOLYLIGHT);
+            pTarget = SelectTarget();
+            DoCast(pTarget, SPELL_HOLYLIGHT);
             HolyLight_Timer = 10000;
         } else HolyLight_Timer -= diff;
 
         if (GreaterBless_Timer < diff)
         {
-            target = SelectTarget();
-            DoCast(target, SPELL_GREATERBLESSOFMIGHT);
+            pTarget = SelectTarget();
+            DoCast(pTarget, SPELL_GREATERBLESSOFMIGHT);
 
             GreaterBless_Timer = 50000;
         } else GreaterBless_Timer -= diff;
 
         if (Cleanse_Timer < diff)
         {
-            target = SelectTarget();
-            DoCast(target, SPELL_CLEANSE);
+            pTarget = SelectTarget();
+            DoCast(pTarget, SPELL_CLEANSE);
 
             Cleanse_Timer = 10000;
         } else Cleanse_Timer -= diff;

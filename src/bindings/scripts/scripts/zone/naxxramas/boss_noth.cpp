@@ -85,8 +85,8 @@ struct OREGON_DLL_DECL boss_nothAI : public ScriptedAI
 
     void JustSummoned(Creature* summoned)
     {
-        if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-            summoned->AddThreat(target,0.0f);
+        if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            summoned->AddThreat(pTarget,0.0f);
     }
 
     void JustDied(Unit* Killer)

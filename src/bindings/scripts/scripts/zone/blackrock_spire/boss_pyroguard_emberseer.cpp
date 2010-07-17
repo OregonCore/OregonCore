@@ -69,9 +69,9 @@ struct OREGON_DLL_DECL boss_pyroguard_emberseerAI : public ScriptedAI
         //PyroBlast_Timer
         if (PyroBlast_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_PYROBLAST);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (pTarget) DoCast(pTarget,SPELL_PYROBLAST);
             PyroBlast_Timer = 15000;
         } else PyroBlast_Timer -= diff;
 

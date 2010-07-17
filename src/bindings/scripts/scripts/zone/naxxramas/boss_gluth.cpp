@@ -133,7 +133,7 @@ struct OREGON_DLL_DECL boss_gluthAI : public ScriptedAI
         //Summon_Timer
         if (Summon_Timer < diff)
         {
-            Unit* target = NULL;
+            Unit *pTarget = NULL;
             Unit* SummonedZombies = NULL;
 
             SummonedZombies = m_creature->SummonCreature(16360,ADD_1X,ADD_1Y,ADD_1Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
@@ -148,9 +148,9 @@ struct OREGON_DLL_DECL boss_gluthAI : public ScriptedAI
 
             if (SummonedZombies)
             {
-                target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                if (target)
-                    SummonedZombies->AddThreat(target,1.0f);
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                if (pTarget)
+                    SummonedZombies->AddThreat(pTarget,1.0f);
             }
 
             Summon_Timer = 28000;

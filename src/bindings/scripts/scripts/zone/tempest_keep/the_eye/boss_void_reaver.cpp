@@ -41,7 +41,7 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
 {
     boss_void_reaverAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -113,22 +113,22 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
         // Arcane Orb
         if (ArcaneOrb_Timer < diff)
         {
-            Unit *target = NULL;
+            Unit *pTarget = NULL;
             std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
             std::vector<Unit *> target_list;
             for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
-                target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+                pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
                                                             //18 yard radius minimum
-                if (target && target->GetTypeId() == TYPEID_PLAYER && target->isAlive() && target->GetDistance2d(m_creature) >= 18)
-                    target_list.push_back(target);
-                target = NULL;
+                if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->isAlive() && pTarget->GetDistance2d(m_creature) >= 18)
+                    target_list.push_back(pTarget);
+                pTarget = NULL;
             }
             if (target_list.size())
-                target = *(target_list.begin()+rand()%target_list.size());
+                pTarget = *(target_list.begin()+rand()%target_list.size());
 
-            if (target)
-                m_creature->CastSpell(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), SPELL_ARCANE_ORB, false);
+            if (pTarget)
+                m_creature->CastSpell(pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(), SPELL_ARCANE_ORB, false);
 
             ArcaneOrb_Timer = 3000;
         } else ArcaneOrb_Timer -= diff;

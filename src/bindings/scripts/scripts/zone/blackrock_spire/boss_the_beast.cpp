@@ -62,9 +62,9 @@ struct OREGON_DLL_DECL boss_thebeastAI : public ScriptedAI
         //Immolate_Timer
         if (Immolate_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_IMMOLATE);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (pTarget) DoCast(pTarget,SPELL_IMMOLATE);
             Immolate_Timer = 8000;
         } else Immolate_Timer -= diff;
 

@@ -96,7 +96,7 @@ struct OREGON_DLL_DECL boss_priestess_delrissaAI : public ScriptedAI
 {
     boss_priestess_delrissaAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         Adds.clear();
         //SummonAdds();
         Heroic = c->GetMap()->IsHeroic();
@@ -272,66 +272,66 @@ struct OREGON_DLL_DECL boss_priestess_delrissaAI : public ScriptedAI
         if (HealTimer < diff)
         {
             uint32 health = m_creature->GetHealth();
-            Unit* target = m_creature;
+            Unit *pTarget = m_creature;
             for (uint8 i = 0; i < Adds.size(); ++i)
                 if (Unit* pAdd = Unit::GetUnit(*m_creature, Adds[i]->guid))
                     if (pAdd->isAlive() && pAdd->GetHealth() < health)
-                        target = pAdd;
+                        pTarget = pAdd;
 
-            DoCast(target, SPELL_FLASH_HEAL);
+            DoCast(pTarget, SPELL_FLASH_HEAL);
             HealTimer = 15000;
         } else HealTimer -= diff;
 
         if (RenewTimer < diff)
         {
-            Unit* target = m_creature;
+            Unit *pTarget = m_creature;
             if (rand()%2 == 1)
             {
                 std::vector<Add*>::iterator itr = Adds.begin() + rand()%Adds.size();
                 Unit* pAdd = Unit::GetUnit(*m_creature, (*itr)->guid);
                 if (pAdd && pAdd->isAlive())
-                    target = pAdd;
+                    pTarget = pAdd;
             }
-            DoCast(target,Heroic ? SPELL_RENEW_HEROIC : SPELL_RENEW_NORMAL);
+            DoCast(pTarget,Heroic ? SPELL_RENEW_HEROIC : SPELL_RENEW_NORMAL);
             RenewTimer = 5000;
         } else RenewTimer -= diff;
 
         if (ShieldTimer < diff)
         {
-            Unit* target = m_creature;
+            Unit *pTarget = m_creature;
             if (rand()%2 == 1)
             {
                 std::vector<Add*>::iterator itr = Adds.begin() + rand()%Adds.size();
                 if (Unit* pAdd = Unit::GetUnit(*m_creature, (*itr)->guid))
                     if (!pAdd->HasAura(SPELL_SHIELD, 0) && pAdd->isAlive())
-                        target = pAdd;
+                        pTarget = pAdd;
             }
-            DoCast(target, SPELL_SHIELD);
+            DoCast(pTarget, SPELL_SHIELD);
             ShieldTimer = 7500;
         } else ShieldTimer -= diff;
 
         if (DispelTimer < diff)
         {
-            Unit* target = NULL;
+            Unit *pTarget = NULL;
             bool friendly = false;
             if (rand()%2 == 1)
-                target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             else
             {
                 friendly = true;
                 if (rand()%2 == 1)
-                    target = m_creature;
+                    pTarget = m_creature;
                 else
                 {
                     std::vector<Add*>::iterator itr = Adds.begin() + rand()%Adds.size();
                     Unit* pAdd = Unit::GetUnit(*m_creature, (*itr)->guid);
                     if (pAdd && pAdd->isAlive())
-                        target = pAdd;
+                        pTarget = pAdd;
                 }
             }
-            if (target)
+            if (pTarget)
             {
-                DoCast(target, SPELL_DISPEL_MAGIC);
+                DoCast(pTarget, SPELL_DISPEL_MAGIC);
                 DispelTimer = 12000;
             }
         } else DispelTimer -= diff;
@@ -367,7 +367,7 @@ struct OREGON_DLL_DECL boss_priestess_guestAI : public ScriptedAI
     boss_priestess_guestAI(Creature* c) : ScriptedAI(c)
     {
         Group.clear();
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         AcquireGUIDs();
     }
 
@@ -764,10 +764,10 @@ struct OREGON_DLL_DECL boss_yazzaiAI : public boss_priestess_guestAI
 
         if (Polymorph_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
-                DoCast(target, SPELL_POLYMORPH);
-                DoModifyThreatPercent(target,-100);
+                DoCast(pTarget, SPELL_POLYMORPH);
+                DoModifyThreatPercent(pTarget,-100);
                 Polymorph_Timer = 20000;
             }
         } else Polymorph_Timer -= diff;
@@ -808,9 +808,9 @@ struct OREGON_DLL_DECL boss_yazzaiAI : public boss_priestess_guestAI
             std::list<HostileReference*>& t_list = m_creature->getThreatManager().getThreatList();
             for (std::list<HostileReference*>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
-                if (Unit* target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid()))
+                if (Unit *pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid()))
                     //if in melee range
-                    if (target->IsWithinDistInMap(m_creature, 5))
+                    if (pTarget->IsWithinDistInMap(m_creature, 5))
                     {
                         InMeleeRange = true;
                         break;
@@ -886,9 +886,9 @@ struct OREGON_DLL_DECL boss_warlord_salarisAI : public boss_priestess_guestAI
             std::list<HostileReference*>& t_list = m_creature->getThreatManager().getThreatList();
             for (std::list<HostileReference*>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
-                if (Unit* target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid()))
+                if (Unit *pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid()))
                                                             //if in melee range
-                    if (target->IsWithinDistInMap(m_creature, 5))
+                    if (pTarget->IsWithinDistInMap(m_creature, 5))
                 {
                     InMeleeRange = true;
                     break;

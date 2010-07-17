@@ -60,13 +60,13 @@ struct OREGON_DLL_DECL mob_crystalcore_devastatorAI : public ScriptedAI
             m_creature->CastSpell(m_creature->getVictim(),SPELL_KNOCKAWAY, true);
 
             // current aggro target is knocked away pick new target
-            Unit* Target = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
+            Unit *pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
 
-            if (!Target || Target == m_creature->getVictim())
-                Target = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
+            if (!pTarget || pTarget == m_creature->getVictim())
+                pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
 
-            if (Target)
-                m_creature->TauntApply(Target);
+            if (pTarget)
+                m_creature->TauntApply(pTarget);
 
             Knockaway_Timer = 23000;
         }

@@ -39,12 +39,12 @@ struct OREGON_DLL_DECL boss_moira_bronzebeardAI : public ScriptedAI
     uint32 ShadowWordPain_Timer;
     uint32 Smite_Timer;
     Unit* PlayerHolder;
-    Unit* Target;
+    Unit *pTarget;
     bool Heal;
 
     void Reset()
     {
-        Target = NULL;
+        pTarget = NULL;
         Heal_Timer = 12000;                                 //These times are probably wrong
         MindBlast_Timer = 16000;
         ShadowWordPain_Timer = 2000;

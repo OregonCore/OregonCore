@@ -203,11 +203,11 @@ struct OREGON_DLL_DECL boss_exarch_maladaarAI : public ScriptedAI
             summoned->SetDisplayId(soulmodel);
             summoned->setFaction(m_creature->getFaction());
 
-            if (Unit *target = Unit::GetUnit(*m_creature,soulholder))
+            if (Unit *pTarget = Unit::GetUnit(*m_creature,soulholder))
             {
 
             ((mob_stolen_soulAI*)summoned->AI())->SetMyClass(soulclass);
-             summoned->AI()->AttackStart(target);
+             summoned->AI()->AttackStart(pTarget);
             }
         }
     }
@@ -250,9 +250,9 @@ struct OREGON_DLL_DECL boss_exarch_maladaarAI : public ScriptedAI
 
         if (StolenSoul_Timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             {
-                if (target->GetTypeId() == TYPEID_PLAYER)
+                if (pTarget->GetTypeId() == TYPEID_PLAYER)
                 {
                     if (m_creature->IsNonMeleeSpellCasted(false))
                         m_creature->InterruptNonMeleeSpells(true);
@@ -263,11 +263,11 @@ struct OREGON_DLL_DECL boss_exarch_maladaarAI : public ScriptedAI
                     else
                         DoScriptText(SAY_SOUL_CLEAVE, m_creature);
 
-                    soulmodel = target->GetDisplayId();
-                    soulholder = target->GetGUID();
-                    soulclass = target->getClass();
+                    soulmodel = pTarget->GetDisplayId();
+                    soulholder = pTarget->GetGUID();
+                    soulclass = pTarget->getClass();
 
-                    DoCast(target,SPELL_STOLEN_SOUL);
+                    DoCast(pTarget,SPELL_STOLEN_SOUL);
                     DoSpawnCreature(ENTRY_STOLEN_SOUL,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,10000);
 
                     StolenSoul_Timer = 20000 + rand()% 10000;
@@ -277,8 +277,8 @@ struct OREGON_DLL_DECL boss_exarch_maladaarAI : public ScriptedAI
 
         if (Ribbon_of_Souls_timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_RIBBON_OF_SOULS);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_RIBBON_OF_SOULS);
 
             Ribbon_of_Souls_timer = 5000 + (rand()%20 * 1000);
         } else Ribbon_of_Souls_timer -= diff;

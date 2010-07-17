@@ -75,7 +75,7 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
 {
     boss_halazziAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         // need to find out what controls totem's spell cooldown
         SpellEntry *TempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_LIGHTNING);
         if (TempSpell && TempSpell->CastingTimeIndex != 5)
@@ -251,12 +251,12 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
 
             if (ShockTimer < diff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 {
-                    if (target->IsNonMeleeSpellCasted(false))
-                        DoCast(target,SPELL_EARTHSHOCK);
+                    if (pTarget->IsNonMeleeSpellCasted(false))
+                        DoCast(pTarget,SPELL_EARTHSHOCK);
                     else
-                        DoCast(target,SPELL_FLAMESHOCK);
+                        DoCast(pTarget,SPELL_FLAMESHOCK);
                     ShockTimer = 10000 + rand()%5000;
                 }
             } else ShockTimer -= diff;

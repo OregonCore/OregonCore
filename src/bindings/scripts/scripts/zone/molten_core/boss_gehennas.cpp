@@ -60,8 +60,8 @@ struct OREGON_DLL_DECL boss_gehennasAI : public ScriptedAI
         //RainOfFire_Timer
         if (RainOfFire_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_RAINOFFIRE);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_RAINOFFIRE);
 
             RainOfFire_Timer = 4000 + rand()%8000;
         } else RainOfFire_Timer -= diff;

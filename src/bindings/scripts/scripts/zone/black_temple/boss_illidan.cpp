@@ -363,7 +363,7 @@ struct OREGON_DLL_DECL boss_illidan_stormrageAI : public ScriptedAI
 {
     boss_illidan_stormrageAI(Creature* c) : ScriptedAI(c), Summons(m_creature)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         m_creature->CastSpell(m_creature, SPELL_DUAL_WIELD, true);
 
         SpellEntry *TempSpell = GET_SPELL(SPELL_SHADOWFIEND_PASSIVE);
@@ -782,8 +782,8 @@ struct OREGON_DLL_DECL boss_illidan_stormrageAI : public ScriptedAI
 
             case EVENT_PARASITIC_SHADOWFIEND:
                 {
-                    if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 200, true))
-                        m_creature->CastSpell(target, SPELL_PARASITIC_SHADOWFIEND, true);
+                    if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 200, true))
+                        m_creature->CastSpell(pTarget, SPELL_PARASITIC_SHADOWFIEND, true);
                     Timer[EVENT_PARASITIC_SHADOWFIEND] = 35000 + rand()%10000;
                 }break;
 
@@ -904,13 +904,13 @@ struct OREGON_DLL_DECL flame_of_azzinothAI : public ScriptedAI
 
     void ChargeCheck()
     {
-        Unit* target = SelectTarget(SELECT_TARGET_FARTHEST, 0, 200, false);
-        if (target && (!m_creature->IsWithinCombatRange(target, FLAME_CHARGE_DISTANCE)))
+        Unit *pTarget = SelectTarget(SELECT_TARGET_FARTHEST, 0, 200, false);
+        if (pTarget && (!m_creature->IsWithinCombatRange(pTarget, FLAME_CHARGE_DISTANCE)))
         {
-            m_creature->AddThreat(target, 5000000.0f);
-            AttackStart(target);
-            DoCast(target, SPELL_CHARGE);
-            DoTextEmote("sets its gaze on $N!", target);
+            m_creature->AddThreat(pTarget, 5000000.0f);
+            AttackStart(pTarget);
+            DoCast(pTarget, SPELL_CHARGE);
+            DoTextEmote("sets its gaze on $N!", pTarget);
         }
     }
 
@@ -923,8 +923,8 @@ struct OREGON_DLL_DECL flame_of_azzinothAI : public ScriptedAI
                 Glaive->InterruptNonMeleeSpells(true);
                 DoCast(m_creature, SPELL_FLAME_ENRAGE, true);
                 DoResetThreat();
-                Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                if (target && target->isAlive())
+                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                if (pTarget && pTarget->isAlive())
                 {
                     m_creature->AddThreat(m_creature->getVictim(), 5000000.0f);
                     AttackStart(m_creature->getVictim());
@@ -971,7 +971,7 @@ struct OREGON_DLL_DECL npc_akama_illidanAI : public ScriptedAI
 {
     npc_akama_illidanAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         JustCreated = true;
     }
 
@@ -1516,9 +1516,9 @@ struct OREGON_DLL_DECL boss_maievAI : public ScriptedAI
     {
         if (GETCRE(Illidan, IllidanGUID))
         {
-            Unit* target = ((boss_illidan_stormrageAI*)Illidan->AI())->SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit *pTarget = ((boss_illidan_stormrageAI*)Illidan->AI())->SelectUnit(SELECT_TARGET_RANDOM, 0);
 
-            if (!target || !m_creature->IsWithinDistInMap(target, 80) || Illidan->IsWithinDistInMap(target, 20))
+            if (!pTarget || !m_creature->IsWithinDistInMap(pTarget, 80) || Illidan->IsWithinDistInMap(pTarget, 20))
             {
                 uint8 pos = rand()%4;
                 BlinkTo(HoverPosition[pos].x, HoverPosition[pos].y, HoverPosition[pos].z);
@@ -1526,7 +1526,7 @@ struct OREGON_DLL_DECL boss_maievAI : public ScriptedAI
             else
             {
                 float x, y, z;
-                target->GetPosition(x, y, z);
+                pTarget->GetPosition(x, y, z);
                 BlinkTo(x, y, z);
             }
         }
@@ -1732,8 +1732,8 @@ struct OREGON_DLL_DECL shadow_demonAI : public ScriptedAI
 
     void JustDied(Unit *killer)
     {
-        if (Unit* target = Unit::GetUnit((*m_creature), TargetGUID))
-            target->RemoveAurasDueToSpell(SPELL_PARALYZE);
+        if (Unit *pTarget = Unit::GetUnit((*m_creature), TargetGUID))
+            pTarget->RemoveAurasDueToSpell(SPELL_PARALYZE);
     }
 
     void UpdateAI(const uint32 diff)
@@ -1760,7 +1760,7 @@ struct OREGON_DLL_DECL mob_parasitic_shadowfiendAI : public ScriptedAI
 {
     mob_parasitic_shadowfiendAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -1798,8 +1798,8 @@ struct OREGON_DLL_DECL mob_parasitic_shadowfiendAI : public ScriptedAI
     {
         if (!m_creature->getVictim())
         {
-            if (Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true))
-                AttackStart(target);
+            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true))
+                AttackStart(pTarget);
             else
             {
                 m_creature->SetVisibility(VISIBILITY_OFF);
@@ -1897,18 +1897,18 @@ void boss_illidan_stormrageAI::JustSummoned(Creature* summon)
                 summon->setDeathState(JUST_DIED);
                 return;
             }
-            Unit *target = SelectTarget(SELECT_TARGET_TOPAGGRO, 0, 999, true);
-            if (!target || target->HasAura(SPELL_PARASITIC_SHADOWFIEND, 0)
-                || target->HasAura(SPELL_PARASITIC_SHADOWFIEND2, 0))
-                target = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true);
-            if (target)
-                summon->AI()->AttackStart(target);
+            Unit *pTarget = SelectTarget(SELECT_TARGET_TOPAGGRO, 0, 999, true);
+            if (!pTarget || pTarget->HasAura(SPELL_PARASITIC_SHADOWFIEND, 0)
+                || pTarget->HasAura(SPELL_PARASITIC_SHADOWFIEND2, 0))
+                pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true);
+            if (pTarget)
+                summon->AI()->AttackStart(pTarget);
         }break;
     case SHADOW_DEMON:
-        if (Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true)) // only on players.
+        if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true)) // only on players.
         {
-            summon->AddThreat(target, 5000000.0f);
-            summon->AI()->AttackStart(target);
+            summon->AddThreat(pTarget, 5000000.0f);
+            summon->AI()->AttackStart(pTarget);
         }break;
     case MAIEV_SHADOWSONG:
         {

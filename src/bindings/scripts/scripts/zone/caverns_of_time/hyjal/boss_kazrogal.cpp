@@ -28,7 +28,7 @@ struct OREGON_DLL_DECL boss_kazrogalAI : public hyjal_trashAI
 {
     boss_kazrogalAI(Creature *c) : hyjal_trashAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         go = false;
         pos = 0;
         SpellEntry *TempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_MARK);
@@ -90,9 +90,9 @@ struct OREGON_DLL_DECL boss_kazrogalAI : public hyjal_trashAI
         pos = i;
         if (i == 7 && pInstance)
         {
-            Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_THRALL));
-            if (target && target->isAlive())
-                m_creature->AddThreat(target,0.0);
+            Unit *pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_THRALL));
+            if (pTarget && pTarget->isAlive())
+                m_creature->AddThreat(pTarget,0.0);
         }
     }
 
@@ -155,10 +155,10 @@ struct OREGON_DLL_DECL boss_kazrogalAI : public hyjal_trashAI
             std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
             for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
-                Unit *target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
-                if (target && target->GetTypeId() == TYPEID_PLAYER && target->getPowerType() == POWER_MANA)
+                Unit *pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+                if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->getPowerType() == POWER_MANA)
                 {
-                    target->CastSpell(target, SPELL_MARK,true);//only cast on mana users
+                    pTarget->CastSpell(pTarget, SPELL_MARK,true);//only cast on mana users
                 }
             }
             MarkTimerBase -= 5000;

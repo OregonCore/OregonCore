@@ -84,10 +84,10 @@ struct OREGON_DLL_DECL boss_arcanist_doanAI : public ScriptedAI
         {
             if (Polymorph_Timer < diff)
             {
-                Unit* target = NULL;
+                Unit *pTarget = NULL;
 
-                target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                if (target)DoCast(target,SPELL_POLYMORPH);
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                if (pTarget)DoCast(pTarget,SPELL_POLYMORPH);
                 Polymorph_Timer = 40000;
             } else Polymorph_Timer -= diff;
 

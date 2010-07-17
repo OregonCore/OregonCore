@@ -83,7 +83,7 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
 {
     boss_felblood_kaelthasAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());        Heroic = c->GetMap()->IsHeroic();
+        pInstance = c->GetInstanceData();        Heroic = c->GetMap()->IsHeroic();
     }
 
     ScriptedInstance* pInstance;
@@ -322,12 +322,12 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                     {
                         Phoenix->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE + UNIT_FLAG_NON_ATTACKABLE);
                         SetThreatList(Phoenix);
-                        Unit *target = SelectUnit(SELECT_TARGET_RANDOM,1);
-                        if (target)
+                        Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
+                        if (pTarget)
                         {
-                            Phoenix->AddThreat(target,1000);
-                            Phoenix->Attack(target,true);
-                            Phoenix->GetMotionMaster()->MoveChase(target);
+                            Phoenix->AddThreat(pTarget,1000);
+                            Phoenix->Attack(pTarget,true);
+                            Phoenix->GetMotionMaster()->MoveChase(pTarget);
                         }
                         else
                         {
@@ -344,10 +344,10 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
 
                 if (FlameStrikeTimer < diff)
                 {
-                    if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     {
                         m_creature->InterruptNonMeleeSpells(false);
-                        DoCast(target, SPELL_FLAMESTRIKE3, true);
+                        DoCast(pTarget, SPELL_FLAMESTRIKE3, true);
                         DoScriptText(SAY_FLAMESTRIKE, m_creature);
 
                         FlameStrikeTimer = 20000 + rand()%5000;
@@ -420,12 +420,12 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                                 if (Orb)
                                 {
                                     SetThreatList(Orb);
-                                    Unit *target = SelectUnit(SELECT_TARGET_BOTTOMAGGRO,i);
-                                    if (target)
+                                    Unit *pTarget = SelectUnit(SELECT_TARGET_BOTTOMAGGRO,i);
+                                    if (pTarget)
                                     {
-                                        Orb->AddThreat(target,1000);
-                                        Orb->Attack(target,true);
-                                        Orb->GetMotionMaster()->MoveChase(target);
+                                        Orb->AddThreat(pTarget,1000);
+                                        Orb->Attack(pTarget,true);
+                                        Orb->GetMotionMaster()->MoveChase(pTarget);
                                     }
                                     else
                                     {
@@ -494,7 +494,7 @@ struct OREGON_DLL_DECL mob_felkael_phoenixAI : public ScriptedAI
 {
     mob_felkael_phoenixAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
     uint32 BurnTimer;
     uint32 CheckTimer;
@@ -568,7 +568,7 @@ struct OREGON_DLL_DECL mob_felkael_phoenix_eggAI : public Scripted_NoMovementAI
 {
     mob_felkael_phoenix_eggAI(Creature *c) : Scripted_NoMovementAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     uint32 HatchTimer;
@@ -602,7 +602,7 @@ struct OREGON_DLL_DECL mob_arcane_sphereAI : public ScriptedAI
 {
     mob_arcane_sphereAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
     uint32 DespawnTimer;
     uint32 ChangeTargetTimer;
@@ -625,13 +625,13 @@ struct OREGON_DLL_DECL mob_arcane_sphereAI : public ScriptedAI
 
     void EnterCombat(Unit* who) {}
 
-    void StalkTarget(Unit* target)
+    void StalkTarget(Unit *pTarget)
     {
-        if (!target)
+        if (!pTarget)
             return;
-        m_creature->AddThreat(target,100000);
-        m_creature->GetMotionMaster()->MoveChase(target);
-        m_creature->Attack(target,true);
+        m_creature->AddThreat(pTarget,100000);
+        m_creature->GetMotionMaster()->MoveChase(pTarget);
+        m_creature->Attack(pTarget,true);
     }
 
     void UpdateAI(const uint32 diff)

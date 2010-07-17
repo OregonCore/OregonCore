@@ -107,7 +107,7 @@ struct OREGON_DLL_DECL npc_enslaved_soulAI : public ScriptedAI
 
     void Reset() {ReliquaryGUID = 0;}
 
-    void EnterCombat(Unit* who)
+    void EnterCombat(Unit* /*who*/)
     {
         m_creature->CastSpell(m_creature, ENSLAVED_SOUL_PASSIVE, true);
         DoZoneInCombat();
@@ -120,7 +120,7 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
 {
     boss_reliquary_of_soulsAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         EssenceGUID = 0;
     }
 
@@ -176,10 +176,10 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
         float y = Coords[random].y;
         Creature* Soul = m_creature->SummonCreature(CREATURE_ENSLAVED_SOUL, x, y, m_creature->GetPositionZ(), m_creature->GetOrientation(), TEMPSUMMON_CORPSE_DESPAWN, 0);
         if (!Soul) return false;
-        if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
+        if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
         {
             ((npc_enslaved_soulAI*)Soul->AI())->ReliquaryGUID = m_creature->GetGUID();
-            Soul->AI()->AttackStart(target);
+            Soul->AI()->AttackStart(pTarget);
         } else EnterEvadeMode();
         return true;
     }
@@ -201,7 +201,7 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
             return;
         }
 
-        Creature* Essence;
+        Creature* Essence = NULL;
         if (EssenceGUID)
         {
             Essence = Unit::GetCreature(*m_creature, EssenceGUID);
@@ -284,15 +284,16 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
                 if (SoulCount < NUMBER_ENSLAVED_SOUL)
                 {
                     if (SummonSoul())
-                        SoulCount++;
+                        ++SoulCount;
                     Timer = 500;
                     return;
-                }break;
+                }
+                break;
             case 7:
                 if (SoulDeathCount >= SoulCount)
                 {
                     Counter = 1;
-                    Phase++;
+                    ++Phase;
                     Timer = 5000;
                 }
                 return;
@@ -308,7 +309,7 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
 struct TargetDistanceOrder : public std::binary_function<const Unit, const Unit, bool>
 {
     const Unit* MainTarget;
-    TargetDistanceOrder(const Unit* Target) : MainTarget(Target) {};
+    TargetDistanceOrder(const Unit *target) : MainTarget(target) {};
     // functor for operator "<"
     bool operator()(const Unit* _Left, const Unit* _Right) const
     {
@@ -339,7 +340,7 @@ struct OREGON_DLL_DECL boss_essence_of_sufferingAI : public ScriptedAI
         AuraTimer = 5000;
     }
 
-    void DamageTaken(Unit *done_by, uint32 &damage)
+    void DamageTaken(Unit * /*done_by*/, uint32 &damage)
     {
         if (damage >= m_creature->GetHealth())
         {
@@ -375,7 +376,7 @@ struct OREGON_DLL_DECL boss_essence_of_sufferingAI : public ScriptedAI
         if (m_threatlist.empty())
             return; // No point continuing if empty threatlist.
         std::list<Unit*> targets;
-        std::list<HostileReference*>::iterator itr = m_threatlist.begin();
+        std::list<HostileReference*>::const_iterator itr = m_threatlist.begin();
         for (; itr != m_threatlist.end(); ++itr)
         {
             Unit* pUnit = Unit::GetUnit((*m_creature), (*itr)->getUnitGuid());
@@ -386,11 +387,11 @@ struct OREGON_DLL_DECL boss_essence_of_sufferingAI : public ScriptedAI
             return; // No targets added for some reason. No point continuing.
         targets.sort(TargetDistanceOrder(m_creature)); // Sort players by distance.
         targets.resize(1); // Only need closest target.
-        Unit* target = targets.front(); // Get the first target.
-        if (target)
-            target->CastSpell(m_creature, SPELL_FIXATE_TAUNT, true);
+        Unit *pTarget = targets.front(); // Get the first target.
+        if (pTarget)
+            pTarget->CastSpell(m_creature, SPELL_FIXATE_TAUNT, true);
         DoResetThreat();
-        m_creature->AddThreat(target,1000000);
+        m_creature->AddThreat(pTarget,1000000);
     }
 
     void UpdateAI(const uint32 diff)
@@ -422,7 +423,7 @@ struct OREGON_DLL_DECL boss_essence_of_sufferingAI : public ScriptedAI
 
         if (SoulDrainTimer < diff)
         {
-            DoCast(SelectUnit(SELECT_TARGET_RANDOM,0), SPELL_SOUL_DRAIN);
+            DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_SOUL_DRAIN);
             SoulDrainTimer = 60000;
         } else SoulDrainTimer -= diff;
 
@@ -474,14 +475,14 @@ struct OREGON_DLL_DECL boss_essence_of_desireAI : public ScriptedAI
                         m_creature->InterruptSpell(CURRENT_GENERIC_SPELL, false);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         DoScriptText(DESI_SAY_FREED, m_creature);
         DoZoneInCombat();
         DoCast(m_creature, AURA_OF_DESIRE, true);
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
         switch(rand()%3)
         {
@@ -553,7 +554,7 @@ struct OREGON_DLL_DECL boss_essence_of_angerAI : public ScriptedAI
         CheckedAggro = false;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         switch(rand()%2)
         {
@@ -565,12 +566,12 @@ struct OREGON_DLL_DECL boss_essence_of_angerAI : public ScriptedAI
         DoCast(m_creature, AURA_OF_ANGER, true);
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit * /*victim*/)
     {
         DoScriptText(ANGER_SAY_DEATH, m_creature);
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
         switch(rand()%2)
         {
@@ -623,67 +624,65 @@ struct OREGON_DLL_DECL boss_essence_of_angerAI : public ScriptedAI
     }
 };
 
-void npc_enslaved_soulAI::JustDied(Unit *killer)
+void npc_enslaved_soulAI::JustDied(Unit * /*killer*/)
 {
     if (ReliquaryGUID)
-    {
-        Creature* Reliquary = (Unit::GetCreature((*m_creature), ReliquaryGUID));
-        if (Reliquary)
-            ((boss_reliquary_of_soulsAI*)Reliquary->AI())->SoulDeathCount++;
-    }
+        if (Creature *Reliquary = (Unit::GetCreature((*m_creature), ReliquaryGUID)))
+            ++((boss_reliquary_of_soulsAI*)Reliquary->AI())->SoulDeathCount;
+
     DoCast(m_creature, SPELL_SOUL_RELEASE, true);
 }
 
-CreatureAI* GetAI_boss_reliquary_of_souls(Creature *_Creature)
+CreatureAI* GetAI_boss_reliquary_of_souls(Creature* pCreature)
 {
-    return new boss_reliquary_of_soulsAI (_Creature);
+    return new boss_reliquary_of_soulsAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_essence_of_suffering(Creature *_Creature)
+CreatureAI* GetAI_boss_essence_of_suffering(Creature* pCreature)
 {
-    return new boss_essence_of_sufferingAI (_Creature);
+    return new boss_essence_of_sufferingAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_essence_of_desire(Creature *_Creature)
+CreatureAI* GetAI_boss_essence_of_desire(Creature* pCreature)
 {
-    return new boss_essence_of_desireAI (_Creature);
+    return new boss_essence_of_desireAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_essence_of_anger(Creature *_Creature)
+CreatureAI* GetAI_boss_essence_of_anger(Creature* pCreature)
 {
-    return new boss_essence_of_angerAI (_Creature);
+    return new boss_essence_of_angerAI (pCreature);
 }
 
-CreatureAI* GetAI_npc_enslaved_soul(Creature *_Creature)
+CreatureAI* GetAI_npc_enslaved_soul(Creature* pCreature)
 {
-    return new npc_enslaved_soulAI (_Creature);
+    return new npc_enslaved_soulAI (pCreature);
 }
 
 void AddSC_boss_reliquary_of_souls()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_reliquary_of_souls";
+    newscript->Name = "boss_reliquary_of_souls";
     newscript->GetAI = &GetAI_boss_reliquary_of_souls;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_essence_of_suffering";
+    newscript->Name = "boss_essence_of_suffering";
     newscript->GetAI = &GetAI_boss_essence_of_suffering;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_essence_of_desire";
+    newscript->Name = "boss_essence_of_desire";
     newscript->GetAI = &GetAI_boss_essence_of_desire;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_essence_of_anger";
+    newscript->Name = "boss_essence_of_anger";
     newscript->GetAI = &GetAI_boss_essence_of_anger;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_enslaved_soul";
+    newscript->Name = "npc_enslaved_soul";
     newscript->GetAI = &GetAI_npc_enslaved_soul;
     newscript->RegisterSelf();
 }

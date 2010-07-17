@@ -95,7 +95,7 @@ struct OREGON_DLL_DECL boss_fathomlord_karathressAI : public ScriptedAI
 {
     boss_fathomlord_karathressAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         Advisors[0] = 0;
         Advisors[1] = 0;
         Advisors[2] = 0;
@@ -119,8 +119,6 @@ struct OREGON_DLL_DECL boss_fathomlord_karathressAI : public ScriptedAI
 
         BlessingOfTides = false;
 
-
-
         if (pInstance)
         {
             uint64 RAdvisors[3];
@@ -143,7 +141,6 @@ struct OREGON_DLL_DECL boss_fathomlord_karathressAI : public ScriptedAI
             }
             pInstance->SetData(DATA_KARATHRESSEVENT, NOT_STARTED);
         }
-
 
     }
 
@@ -189,7 +186,7 @@ struct OREGON_DLL_DECL boss_fathomlord_karathressAI : public ScriptedAI
         pInstance->SetData(DATA_KARATHRESSEVENT, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
         switch(rand()%3)
         {
@@ -199,7 +196,7 @@ struct OREGON_DLL_DECL boss_fathomlord_karathressAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit *killer)
+    void JustDied(Unit * /*killer*/)
     {
         DoScriptText(SAY_DEATH, m_creature);
 
@@ -220,11 +217,11 @@ struct OREGON_DLL_DECL boss_fathomlord_karathressAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!m_creature->isInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
         {
-            Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
+            Unit *pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
 
-            if (target)
+            if (pTarget)
             {
-                AttackStart(target);
+                AttackStart(pTarget);
                 GetAdvisors();
             }
         }
@@ -244,14 +241,14 @@ struct OREGON_DLL_DECL boss_fathomlord_karathressAI : public ScriptedAI
         if (CataclysmicBolt_Timer < diff)
         {
             //select a random unit other than the main tank
-            Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 1);
+            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
 
             //if there aren't other units, cast on the tank
-            if (!target)
-                target = m_creature->getVictim();
+            if (!pTarget)
+                pTarget = m_creature->getVictim();
 
-            if (target)
-                DoCast(target, SPELL_CATACLYSMIC_BOLT);
+            if (pTarget)
+                DoCast(pTarget, SPELL_CATACLYSMIC_BOLT);
             CataclysmicBolt_Timer = 10000;
         } else CataclysmicBolt_Timer -= diff;
 
@@ -273,27 +270,24 @@ struct OREGON_DLL_DECL boss_fathomlord_karathressAI : public ScriptedAI
         if ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) <= 75 && !BlessingOfTides)
         {
             BlessingOfTides = true;
-            bool continueTriggering;
+            bool continueTriggering = false;
             Creature* Advisor;
             for (uint8 i = 0; i < 4; ++i)
                 if (Advisors[i])
                 {
                     Advisor = (Unit::GetCreature(*m_creature, Advisors[i]));
-                    if (Advisor)
+                    if (Advisor && Advisor->isAlive())
                     {
-                        if (Advisor->isAlive())
-                        {
-                            continueTriggering = true;
-                            break;
-                        }
+                        continueTriggering = true;
+                        break;
                     }
                 }
-                if (continueTriggering)
-                {
-                    DoCast(m_creature, SPELL_BLESSING_OF_THE_TIDES);
-                    DoYell(SAY_GAIN_BLESSING_OF_TIDES, LANG_UNIVERSAL, NULL);
-                    DoPlaySoundToSet(m_creature, SOUND_GAIN_BLESSING_OF_TIDES);
-                }
+            if (continueTriggering)
+            {
+                DoCast(m_creature, SPELL_BLESSING_OF_THE_TIDES);
+                DoYell(SAY_GAIN_BLESSING_OF_TIDES, LANG_UNIVERSAL, NULL);
+                DoPlaySoundToSet(m_creature, SOUND_GAIN_BLESSING_OF_TIDES);
+            }
         }
 
         DoMeleeAttackIfReady();
@@ -305,7 +299,7 @@ struct OREGON_DLL_DECL boss_fathomguard_sharkkisAI : public ScriptedAI
 {
     boss_fathomguard_sharkkisAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -319,7 +313,6 @@ struct OREGON_DLL_DECL boss_fathomguard_sharkkisAI : public ScriptedAI
 
     uint64 SummonedPet;
 
-
     void Reset()
     {
         LeechingThrow_Timer = 20000;
@@ -329,7 +322,7 @@ struct OREGON_DLL_DECL boss_fathomguard_sharkkisAI : public ScriptedAI
 
         pet = false;
 
-        Creature *Pet = (Creature*) Unit::GetUnit(*m_creature, SummonedPet);
+        Creature *Pet = Unit::GetCreature(*m_creature, SummonedPet);
         if (Pet && Pet->isAlive())
         {
             Pet->DealDamage(Pet, Pet->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -341,12 +334,12 @@ struct OREGON_DLL_DECL boss_fathomguard_sharkkisAI : public ScriptedAI
             pInstance->SetData(DATA_KARATHRESSEVENT, NOT_STARTED);
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit * /*victim*/)
     {
         if (pInstance)
         {
             Creature *Karathress = NULL;
-            Karathress = (Creature*)(Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_KARATHRESS)));
+            Karathress = Unit::GetCreature((*m_creature), pInstance->GetData64(DATA_KARATHRESS));
 
             if (Karathress)
                 ((boss_fathomlord_karathressAI*)Karathress->AI())->EventSharkkisDeath();
@@ -368,11 +361,11 @@ struct OREGON_DLL_DECL boss_fathomguard_sharkkisAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!m_creature->isInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
         {
-            Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
+            Unit *pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
 
-            if (target)
+            if (pTarget)
             {
-                AttackStart(target);
+                AttackStart(pTarget);
             }
         }
 
@@ -405,7 +398,7 @@ struct OREGON_DLL_DECL boss_fathomguard_sharkkisAI : public ScriptedAI
         if (TheBeastWithin_Timer < diff)
         {
             DoCast(m_creature, SPELL_THE_BEAST_WITHIN);
-            Creature *Pet = (Creature*) Unit::GetUnit(*m_creature, SummonedPet);
+            Creature *Pet = Unit::GetCreature(*m_creature, SummonedPet);
             if (Pet && Pet->isAlive())
             {
                 Pet->CastSpell(Pet, SPELL_PET_ENRAGE, true);
@@ -432,10 +425,10 @@ struct OREGON_DLL_DECL boss_fathomguard_sharkkisAI : public ScriptedAI
             }
             //DoCast(m_creature, spell_id, true);
             Creature *Pet = DoSpawnCreature(pet_id,0,0,0,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
-            Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (Pet && target)
+            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (Pet && pTarget)
             {
-                Pet->AI()->AttackStart(target);
+                Pet->AI()->AttackStart(pTarget);
                 SummonedPet = Pet->GetGUID();
             }
         } else Pet_Timer -= diff;
@@ -449,7 +442,7 @@ struct OREGON_DLL_DECL boss_fathomguard_tidalvessAI : public ScriptedAI
 {
     boss_fathomguard_tidalvessAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -470,12 +463,12 @@ struct OREGON_DLL_DECL boss_fathomguard_tidalvessAI : public ScriptedAI
             pInstance->SetData(DATA_KARATHRESSEVENT, NOT_STARTED);
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit * /*victim*/)
     {
         if (pInstance)
         {
             Creature *Karathress = NULL;
-            Karathress = (Creature*)(Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_KARATHRESS)));
+            Karathress = Unit::GetCreature((*m_creature), pInstance->GetData64(DATA_KARATHRESS));
 
             if (Karathress)
                 if (!m_creature->isAlive() && Karathress)
@@ -498,11 +491,11 @@ struct OREGON_DLL_DECL boss_fathomguard_tidalvessAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!m_creature->isInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
         {
-            Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
+            Unit *pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
 
-            if (target)
+            if (pTarget)
             {
-                AttackStart(target);
+                AttackStart(pTarget);
             }
         }
 
@@ -564,7 +557,7 @@ struct OREGON_DLL_DECL boss_fathomguard_caribdisAI : public ScriptedAI
 {
     boss_fathomguard_caribdisAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -585,12 +578,12 @@ struct OREGON_DLL_DECL boss_fathomguard_caribdisAI : public ScriptedAI
             pInstance->SetData(DATA_KARATHRESSEVENT, NOT_STARTED);
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit * /*victim*/)
     {
         if (pInstance)
         {
             Creature *Karathress = NULL;
-            Karathress = (Creature*)(Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_KARATHRESS)));
+            Karathress = Unit::GetCreature((*m_creature), pInstance->GetData64(DATA_KARATHRESS));
 
             if (Karathress)
                 if (!m_creature->isAlive() && Karathress)
@@ -612,11 +605,11 @@ struct OREGON_DLL_DECL boss_fathomguard_caribdisAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!m_creature->isInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
         {
-            Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
+            Unit *pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
 
-            if (target)
+            if (pTarget)
             {
-                AttackStart(target);
+                AttackStart(pTarget);
             }
         }
 
@@ -659,10 +652,10 @@ struct OREGON_DLL_DECL boss_fathomguard_caribdisAI : public ScriptedAI
                 Cyclone->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 Cyclone->setFaction(m_creature->getFaction());
                 Cyclone->CastSpell(Cyclone, SPELL_CYCLONE_CYCLONE, true);
-                Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                if (target)
+                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                if (pTarget)
                 {
-                    Cyclone->AI()->AttackStart(target);
+                    Cyclone->AI()->AttackStart(pTarget);
                 }
             }
         } else Cyclone_Timer -= diff;
@@ -688,7 +681,7 @@ struct OREGON_DLL_DECL boss_fathomguard_caribdisAI : public ScriptedAI
 
     Unit* selectAdvisorUnit()
     {
-        Unit* pUnit;
+        Unit* pUnit = NULL;
         if (pInstance)
         {
             switch(rand()%4)
@@ -712,46 +705,46 @@ struct OREGON_DLL_DECL boss_fathomguard_caribdisAI : public ScriptedAI
         }
 };
 
-CreatureAI* GetAI_boss_fathomlord_karathress(Creature *_Creature)
+CreatureAI* GetAI_boss_fathomlord_karathress(Creature* pCreature)
 {
-    return new boss_fathomlord_karathressAI (_Creature);
+    return new boss_fathomlord_karathressAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_fathomguard_sharkkis(Creature *_Creature)
+CreatureAI* GetAI_boss_fathomguard_sharkkis(Creature* pCreature)
 {
-    return new boss_fathomguard_sharkkisAI (_Creature);
+    return new boss_fathomguard_sharkkisAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_fathomguard_tidalvess(Creature *_Creature)
+CreatureAI* GetAI_boss_fathomguard_tidalvess(Creature* pCreature)
 {
-    return new boss_fathomguard_tidalvessAI (_Creature);
+    return new boss_fathomguard_tidalvessAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_fathomguard_caribdis(Creature *_Creature)
+CreatureAI* GetAI_boss_fathomguard_caribdis(Creature* pCreature)
 {
-    return new boss_fathomguard_caribdisAI (_Creature);
+    return new boss_fathomguard_caribdisAI (pCreature);
 }
 
 void AddSC_boss_fathomlord_karathress()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_fathomlord_karathress";
+    newscript->Name = "boss_fathomlord_karathress";
     newscript->GetAI = &GetAI_boss_fathomlord_karathress;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_fathomguard_sharkkis";
+    newscript->Name = "boss_fathomguard_sharkkis";
     newscript->GetAI = &GetAI_boss_fathomguard_sharkkis;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_fathomguard_tidalvess";
+    newscript->Name = "boss_fathomguard_tidalvess";
     newscript->GetAI = &GetAI_boss_fathomguard_tidalvess;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_fathomguard_caribdis";
+    newscript->Name = "boss_fathomguard_caribdis";
     newscript->GetAI = &GetAI_boss_fathomguard_caribdis;
     newscript->RegisterSelf();
 }

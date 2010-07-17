@@ -78,7 +78,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
 {
     boss_hydross_the_unstableAI(Creature *c) : ScriptedAI(c), Summons(m_creature)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -257,9 +257,9 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
             //VileSludge_Timer
             if (VileSludge_Timer < diff)
             {
-                Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                if (target)
-                    DoCast(target, SPELL_VILE_SLUDGE);
+                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                if (pTarget)
+                    DoCast(pTarget, SPELL_VILE_SLUDGE);
 
                 VileSludge_Timer = 15000;
             } else VileSludge_Timer -= diff;
@@ -324,9 +324,9 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
             //WaterTomb_Timer
             if (WaterTomb_Timer < diff)
             {
-                Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                if (target)
-                    DoCast(target, SPELL_WATER_TOMB);
+                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                if (pTarget)
+                    DoCast(pTarget, SPELL_WATER_TOMB);
 
                 WaterTomb_Timer = 7000;
             } else WaterTomb_Timer -= diff;

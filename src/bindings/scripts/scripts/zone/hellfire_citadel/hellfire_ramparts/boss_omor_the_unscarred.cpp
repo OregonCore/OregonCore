@@ -173,21 +173,21 @@ struct OREGON_DLL_DECL boss_omor_the_unscarredAI : public Scripted_NoMovementAI
         {
             DoScriptText(SAY_CURSE, m_creature);
 
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             {
-                DoCast(target,HeroicMode ? H_SPELL_BANE_OF_TREACHERY : SPELL_TREACHEROUS_AURA);
+                DoCast(pTarget,HeroicMode ? H_SPELL_BANE_OF_TREACHERY : SPELL_TREACHEROUS_AURA);
                 Aura_Timer = 8000+rand()%8000;
             }
         } else Aura_Timer -= diff;
 
         if (Shadowbolt_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             {
-                if (target)
-                    target = m_creature->getVictim();
+                if (pTarget)
+                    pTarget = m_creature->getVictim();
 
-                DoCast(target,HeroicMode ? H_SPELL_SHADOW_BOLT : SPELL_SHADOW_BOLT);
+                DoCast(pTarget,HeroicMode ? H_SPELL_SHADOW_BOLT : SPELL_SHADOW_BOLT);
                 Shadowbolt_Timer = 4000+rand()%2500;
             }
         } else Shadowbolt_Timer -= diff;

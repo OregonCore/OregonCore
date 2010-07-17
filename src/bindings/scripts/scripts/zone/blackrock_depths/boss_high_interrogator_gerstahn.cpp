@@ -58,18 +58,18 @@ struct OREGON_DLL_DECL boss_high_interrogator_gerstahnAI : public ScriptedAI
         //ShadowWordPain_Timer
         if (ShadowWordPain_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (target)DoCast(target,SPELL_SHADOWWORDPAIN);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (pTarget)DoCast(pTarget,SPELL_SHADOWWORDPAIN);
             ShadowWordPain_Timer = 7000;
         } else ShadowWordPain_Timer -= diff;
 
         //ManaBurn_Timer
         if (ManaBurn_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (target)DoCast(target,SPELL_MANABURN);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (pTarget)DoCast(pTarget,SPELL_MANABURN);
             ManaBurn_Timer = 10000;
         } else ManaBurn_Timer -= diff;
 

@@ -68,9 +68,9 @@ struct OREGON_DLL_DECL boss_anubshiahAI : public ScriptedAI
         //CurseOfTongues_Timer
         if (CurseOfTongues_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_CURSEOFTONGUES);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (pTarget) DoCast(pTarget,SPELL_CURSEOFTONGUES);
             CurseOfTongues_Timer = 18000;
         } else CurseOfTongues_Timer -= diff;
 
@@ -91,9 +91,9 @@ struct OREGON_DLL_DECL boss_anubshiahAI : public ScriptedAI
         //EnvelopingWeb_Timer
         if (EnvelopingWeb_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_ENVELOPINGWEB);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (pTarget) DoCast(pTarget,SPELL_ENVELOPINGWEB);
             EnvelopingWeb_Timer = 12000;
         } else EnvelopingWeb_Timer -= diff;
 

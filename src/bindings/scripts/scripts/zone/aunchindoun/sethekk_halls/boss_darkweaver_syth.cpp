@@ -112,8 +112,8 @@ struct OREGON_DLL_DECL boss_darkweaver_sythAI : public ScriptedAI
 
     void JustSummoned(Creature *summoned)
     {
-        if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-            summoned->AI()->AttackStart(target);
+        if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            summoned->AI()->AttackStart(pTarget);
     }
 
     void SythSummoning()
@@ -154,40 +154,40 @@ struct OREGON_DLL_DECL boss_darkweaver_sythAI : public ScriptedAI
 
         if (flameshock_timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_FLAME_SHOCK);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_FLAME_SHOCK);
 
             flameshock_timer = 10000 + rand()%5000;
         } else flameshock_timer -= diff;
 
         if (arcaneshock_timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_ARCANE_SHOCK);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_ARCANE_SHOCK);
 
             arcaneshock_timer = 10000 + rand()%5000;
         } else arcaneshock_timer -= diff;
 
         if (frostshock_timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_FROST_SHOCK);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_FROST_SHOCK);
 
             frostshock_timer = 10000 + rand()%5000;
         } else frostshock_timer -= diff;
 
         if (shadowshock_timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_SHADOW_SHOCK);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_SHADOW_SHOCK);
 
             shadowshock_timer = 10000 + rand()%5000;
         } else shadowshock_timer -= diff;
 
         if (chainlightning_timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_CHAIN_LIGHTNING);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_CHAIN_LIGHTNING);
 
             chainlightning_timer = 25000;
         } else chainlightning_timer -= diff;
@@ -231,16 +231,16 @@ struct OREGON_DLL_DECL mob_syth_fireAI : public ScriptedAI
 
         if (flameshock_timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_FLAME_SHOCK);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_FLAME_SHOCK);
 
             flameshock_timer = 5000;
         } else flameshock_timer -= diff;
 
         if (flamebuffet_timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_FLAME_BUFFET);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_FLAME_BUFFET);
 
             flamebuffet_timer = 5000;
         } else flamebuffet_timer -= diff;
@@ -282,16 +282,16 @@ struct OREGON_DLL_DECL mob_syth_arcaneAI : public ScriptedAI
 
         if (arcaneshock_timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_ARCANE_SHOCK);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_ARCANE_SHOCK);
 
             arcaneshock_timer = 5000;
         } else arcaneshock_timer -= diff;
 
         if (arcanebuffet_timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_ARCANE_BUFFET);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_ARCANE_BUFFET);
 
             arcanebuffet_timer = 5000;
         } else arcanebuffet_timer -= diff;
@@ -333,16 +333,16 @@ struct OREGON_DLL_DECL mob_syth_frostAI : public ScriptedAI
 
         if (frostshock_timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_FROST_SHOCK);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_FROST_SHOCK);
 
             frostshock_timer = 5000;
         } else frostshock_timer -= diff;
 
         if (frostbuffet_timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_FROST_BUFFET);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_FROST_BUFFET);
 
             frostbuffet_timer = 5000;
         } else frostbuffet_timer -= diff;
@@ -384,16 +384,16 @@ struct OREGON_DLL_DECL mob_syth_shadowAI : public ScriptedAI
 
         if (shadowshock_timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_SHADOW_SHOCK);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_SHADOW_SHOCK);
 
             shadowshock_timer = 5000;
         } else shadowshock_timer -= diff;
 
         if (shadowbuffet_timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_SHADOW_BUFFET);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_SHADOW_BUFFET);
 
             shadowbuffet_timer = 5000;
         } else shadowbuffet_timer -= diff;

@@ -106,8 +106,8 @@ struct OREGON_DLL_DECL boss_faerlinaAI : public ScriptedAI
         //RainOfFire_Timer
         if (RainOfFire_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_RAINOFFIRE);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_RAINOFFIRE);
             RainOfFire_Timer = 16000;
         } else RainOfFire_Timer -= diff;
 

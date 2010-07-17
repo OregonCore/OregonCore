@@ -100,9 +100,9 @@ struct OREGON_DLL_DECL boss_amnennar_the_coldbringerAI : public ScriptedAI
         //FrostBolt_Timer
         if (FrostBolt_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_FROSTBOLT);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (pTarget) DoCast(pTarget,SPELL_FROSTBOLT);
 
             FrostBolt_Timer = 8000;
         } else FrostBolt_Timer -= diff;
@@ -112,14 +112,14 @@ struct OREGON_DLL_DECL boss_amnennar_the_coldbringerAI : public ScriptedAI
             DoYell(SAY_1, LANG_UNIVERSAL, NULL);
             DoPlaySoundToSet(m_creature, SOUND_SUMMON);
 
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
 
-            if (target)
+            if (pTarget)
             {
-                SummonSpectrals(target);
-                SummonSpectrals(target);
-                SummonSpectrals(target);
+                SummonSpectrals(pTarget);
+                SummonSpectrals(pTarget);
+                SummonSpectrals(pTarget);
             }
             Spectrals = true;
         }

@@ -89,18 +89,18 @@ struct OREGON_DLL_DECL boss_the_makerAI : public ScriptedAI
 
         if (ExplodingBreaker_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_EXPLODING_BREAKER);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_EXPLODING_BREAKER);
             ExplodingBreaker_Timer = 4000+rand()%8000;
         } else ExplodingBreaker_Timer -=diff;
 
         /* // Disabled until Core Support for mind control
         if (domination_timer_timer < diff)
         {
-        Unit* target;
-        target = SelectUnit(SELECT_TARGET_RANDOM,0);
+        Unit *pTarget;
+        pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
 
-        DoCast(target,SPELL_DOMINATION);
+        DoCast(pTarget,SPELL_DOMINATION);
 
         domination_timer = 120000;
         } else domination_timer -=diff;

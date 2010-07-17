@@ -50,7 +50,7 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
 {
     boss_vexallusAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());         Heroic = c->GetMap()->IsHeroic();
+        pInstance = c->GetInstanceData();         Heroic = c->GetMap()->IsHeroic();
     }
 
     ScriptedInstance* pInstance;
@@ -126,17 +126,17 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
                 DoScriptText(EMOTE_DISCHARGE_ENERGY, m_creature);
                 Creature* PureEnergyCreature = NULL;
                 PureEnergyCreature = DoSpawnCreature(CREATURE_PURE_ENERGY, 10, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
-                Unit* target = NULL;
-                target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                if (PureEnergyCreature && target)
-                    PureEnergyCreature->AI()->AttackStart(target);
+                Unit *pTarget = NULL;
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                if (PureEnergyCreature && pTarget)
+                    PureEnergyCreature->AI()->AttackStart(pTarget);
 
                 if (Heroic)                                  // *Heroic mode only - he summons two instead of one.
                 {
                     PureEnergyCreature = DoSpawnCreature(CREATURE_PURE_ENERGY, -10, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
-                    target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                    if (PureEnergyCreature && target)
-                        PureEnergyCreature->AI()->AttackStart(target);
+                    pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                    if (PureEnergyCreature && pTarget)
+                        PureEnergyCreature->AI()->AttackStart(pTarget);
                 }
 
                 ++AlreadySpawnedAmount;
@@ -144,25 +144,25 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
 
             if (ChainLightningTimer < diff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    DoCast(target, SPELL_CHAIN_LIGHTNING);
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, SPELL_CHAIN_LIGHTNING);
                 ChainLightningTimer = 10000;
             } else ChainLightningTimer -= diff;
 
             if (ArcaneShockTimer < diff)
             {
-                Unit* target = NULL;
-                target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                if (target)
-                    DoCast(target, SPELL_ARCANE_SHOCK);
+                Unit *pTarget = NULL;
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                if (pTarget)
+                    DoCast(pTarget, SPELL_ARCANE_SHOCK);
                 ArcaneShockTimer = 8000;
             } else ArcaneShockTimer -= diff;
         } else
         {
             if (OverloadTimer < diff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    DoCast(target, SPELL_OVERLOAD);
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, SPELL_OVERLOAD);
                 OverloadTimer = 2200;
             } else OverloadTimer -= diff;
         }

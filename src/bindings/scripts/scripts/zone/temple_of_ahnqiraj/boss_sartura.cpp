@@ -94,8 +94,8 @@ struct OREGON_DLL_DECL boss_sarturaAI : public ScriptedAI
             if (WhirlWindRandom_Timer < diff)
             {
                 //Attack random Gamers
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
-                    AttackStart(target);
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                    AttackStart(pTarget);
 
                 WhirlWindRandom_Timer = 3000 + rand()%4000;
             } else WhirlWindRandom_Timer -= diff;
@@ -119,8 +119,8 @@ struct OREGON_DLL_DECL boss_sarturaAI : public ScriptedAI
             if (AggroReset_Timer < diff)
             {
                 //Attack random Gamers
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
-                    m_creature->TauntApply(target);
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                    m_creature->TauntApply(pTarget);
 
                     AggroReset = true;
                     AggroReset_Timer = 2000 + rand()%3000;
@@ -211,8 +211,8 @@ struct OREGON_DLL_DECL mob_sartura_royal_guardAI : public ScriptedAI
             if (WhirlWindRandom_Timer < diff)
             {
                 //Attack random Gamers
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
-                    m_creature->TauntApply(target);
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                    m_creature->TauntApply(pTarget);
 
                 WhirlWindRandom_Timer = 3000 + rand()%4000;
             } else WhirlWindRandom_Timer -= diff;
@@ -228,8 +228,8 @@ struct OREGON_DLL_DECL mob_sartura_royal_guardAI : public ScriptedAI
             if (AggroReset_Timer < diff)
             {
                 //Attack random Gamers
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
-                    AttackStart(target);
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                    AttackStart(pTarget);
 
                 AggroReset = true;
                 AggroReset_Timer = 2000 + rand()%3000;

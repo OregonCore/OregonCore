@@ -254,20 +254,20 @@ struct OREGON_DLL_DECL boss_attumenAI : public ScriptedAI
         {
             if (ChargeTimer < diff)
             {
-                Unit *target;
+                Unit *pTarget;
                 std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
                 std::vector<Unit *> target_list;
                 for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
                 {
-                    target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
-                    if (target && target->GetDistance2d(m_creature) > 5)
-                        target_list.push_back(target);
-                    target = NULL;
+                    pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+                    if (pTarget && pTarget->GetDistance2d(m_creature) > 5)
+                        target_list.push_back(pTarget);
+                    pTarget = NULL;
                 }
                 if (target_list.size())
-                    target = *(target_list.begin()+rand()%target_list.size());
+                    pTarget = *(target_list.begin()+rand()%target_list.size());
 
-                DoCast(target, SPELL_BERSERKER_CHARGE);
+                DoCast(pTarget, SPELL_BERSERKER_CHARGE);
                 ChargeTimer = 20000;
             } else ChargeTimer -= diff;
         }

@@ -221,9 +221,9 @@ struct OREGON_DLL_DECL mob_headAI : public ScriptedAI
     }
 
     void EnterCombat(Unit *who) {}
-    void SaySound(int32 textEntry, Unit *target = 0)
+    void SaySound(int32 textEntry, Unit *pTarget = 0)
     {
-        DoScriptText(textEntry, m_creature, target);
+        DoScriptText(textEntry, m_creature, pTarget);
         //DoCast(m_creature,SPELL_HEAD_SPEAKS,true);
         Creature *speaker = DoSpawnCreature(HELPER,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN,1000);
         if (speaker)
@@ -352,7 +352,7 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
             speed->Effect[1] = SPELL_EFFECT_APPLY_AURA;
             speed->EffectApplyAuraName[1] = SPELL_AURA_MOD_CONFUSE;
         }*/
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -491,9 +491,9 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
         }
     }
 
-    void SaySound(int32 textEntry, Unit *target = 0)
+    void SaySound(int32 textEntry, Unit *pTarget = 0)
     {
-        DoScriptText(textEntry, m_creature, target);
+        DoScriptText(textEntry, m_creature, pTarget);
         laugh += 4000;
     }
 

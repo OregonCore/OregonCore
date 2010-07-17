@@ -64,9 +64,9 @@ struct OREGON_DLL_DECL boss_shadowvoshAI : public ScriptedAI
         //Hex_Timer
         if (Hex_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_HEX);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (pTarget) DoCast(pTarget,SPELL_HEX);
             Hex_Timer = 15000;
         } else Hex_Timer -= diff;
 

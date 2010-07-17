@@ -127,7 +127,7 @@ static EventFelmyst MaxTimer[]=
 struct OREGON_DLL_DECL boss_felmystAI : public ScriptedAI
 {
     boss_felmystAI(Creature *c) : ScriptedAI(c){
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
 
         // wait for core patch be accepted
         /*SpellEntry *TempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_ENCAPSULATE_EFFECT);
@@ -305,15 +305,15 @@ struct OREGON_DLL_DECL boss_felmystAI : public ScriptedAI
             break;
         case 2:{
             error_log("Summon Vapor case 2");
-            Unit* target;
-            target = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true);
-            if (!target) target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_PLAYER_GUID));
-            if (target)
+            Unit *pTarget;
+            pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true);
+            if (!pTarget) pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_PLAYER_GUID));
+            if (pTarget)
             {
-                Creature* Vapor = m_creature->SummonCreature(MOB_VAPOR, target->GetPositionX()-5+rand()%10, target->GetPositionY()-5+rand()%10, target->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 9000);
+                Creature* Vapor = m_creature->SummonCreature(MOB_VAPOR, pTarget->GetPositionX()-5+rand()%10, pTarget->GetPositionY()-5+rand()%10, pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 9000);
                 if (Vapor)
                 {
-                    Vapor->AI()->AttackStart(target);
+                    Vapor->AI()->AttackStart(pTarget);
                     m_creature->InterruptNonMeleeSpells(false);
                     m_creature->CastSpell(Vapor, SPELL_VAPOR_CHANNEL, false); // core bug
                     Vapor->CastSpell(Vapor, SPELL_VAPOR_TRIGGER, true);
@@ -330,16 +330,16 @@ struct OREGON_DLL_DECL boss_felmystAI : public ScriptedAI
             DespawnSummons(MOB_VAPOR_TRAIL);
             error_log("Summon Vapor case3");
             //m_creature->CastSpell(m_creature, SPELL_VAPOR_SELECT); need core support
-            Unit* target;
-            target = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true);
-            if (!target) target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_PLAYER_GUID));
-            if (target)
+            Unit *pTarget;
+            pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true);
+            if (!pTarget) pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_PLAYER_GUID));
+            if (pTarget)
             {
-                //target->CastSpell(target, SPELL_VAPOR_SUMMON, true); need core support
-                Creature* Vapor = m_creature->SummonCreature(MOB_VAPOR, target->GetPositionX()-5+rand()%10, target->GetPositionY()-5+rand()%10, target->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 9000);
+                //pTarget->CastSpell(target, SPELL_VAPOR_SUMMON, true); need core support
+                Creature* Vapor = m_creature->SummonCreature(MOB_VAPOR, pTarget->GetPositionX()-5+rand()%10, pTarget->GetPositionY()-5+rand()%10, pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 9000);
                 if (Vapor)
                 {
-                    Vapor->AI()->AttackStart(target);
+                    Vapor->AI()->AttackStart(pTarget);
                     m_creature->InterruptNonMeleeSpells(false);
                     m_creature->CastSpell(Vapor, SPELL_VAPOR_CHANNEL, false); // core bug
                     Vapor->CastSpell(Vapor, SPELL_VAPOR_TRIGGER, true);
@@ -357,15 +357,15 @@ struct OREGON_DLL_DECL boss_felmystAI : public ScriptedAI
             Timer[EVENT_FLIGHT_SEQUENCE] = 1;
             break;
         case 5:{
-            Unit* target;
-            target = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true);
-            if (!target) target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_PLAYER_GUID));
-            if (target)
+            Unit *pTarget;
+            pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true);
+            if (!pTarget) pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_PLAYER_GUID));
+            if (pTarget)
             {
-                BreathX = target->GetPositionX();
-                BreathY = target->GetPositionY();
+                BreathX = pTarget->GetPositionX();
+                BreathY = pTarget->GetPositionY();
                 float x, y, z;
-                target->GetContactPoint(m_creature, x, y, z, 70);
+                pTarget->GetContactPoint(m_creature, x, y, z, 70);
                 m_creature->GetMotionMaster()->MovePoint(0, x, y, z+10);
             } else
             {
@@ -400,10 +400,10 @@ struct OREGON_DLL_DECL boss_felmystAI : public ScriptedAI
             if (BreathCount < 3) FlightCount = 4;
             break;
         case 9:
-            if (Unit* target = SelectUnit(SELECT_TARGET_TOPAGGRO, 0))
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 0))
             {
                 float x, y, z;
-                target->GetContactPoint(m_creature, x, y, z);
+                pTarget->GetContactPoint(m_creature, x, y, z);
                 m_creature->GetMotionMaster()->MovePoint(0, x, y, z);
             }
             else
@@ -471,9 +471,9 @@ struct OREGON_DLL_DECL boss_felmystAI : public ScriptedAI
                 Timer[EVENT_GAS_NOVA] = 20000 + rand()%5 * 1000;
                 break;
             case EVENT_ENCAPSULATE:
-                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true))
+                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true))
                 {
-                    m_creature->CastSpell(target, SPELL_ENCAPSULATE_CHANNEL, false);
+                    m_creature->CastSpell(pTarget, SPELL_ENCAPSULATE_CHANNEL, false);
                     Timer[EVENT_ENCAPSULATE] = 25000 + rand()%5 * 1000;
                 }break;
             case EVENT_FLIGHT:

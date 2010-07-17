@@ -67,7 +67,7 @@ enum Spells
 struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
 {
     boss_brutallusAI(Creature *c) : ScriptedAI(c){
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -294,8 +294,8 @@ struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
 
         if (BurnTimer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                target->CastSpell(target, SPELL_BURN, true);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                pTarget->CastSpell(pTarget, SPELL_BURN, true);
             BurnTimer = 60000;
         } else BurnTimer -= diff;
 

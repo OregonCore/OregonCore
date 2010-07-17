@@ -102,7 +102,7 @@ struct OREGON_DLL_DECL boss_kalecgosAI : public ScriptedAI
 {
     boss_kalecgosAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         SathGUID = 0;
         DoorGUID = 0;
     }
@@ -256,7 +256,7 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
 {
     boss_sathrovarrAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         KalecGUID = 0;
         KalecgosGUID = 0;
     }
@@ -317,9 +317,9 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
             damage = 0;
     }
 
-    void KilledUnit(Unit *target)
+    void KilledUnit(Unit *pTarget)
     {
-        if (target->GetGUID() == KalecGUID)
+        if (pTarget->GetGUID() == KalecGUID)
         {
             TeleportAllPlayersBack();
             if (Unit *Kalecgos = Unit::GetUnit(*m_creature, KalecgosGUID))
@@ -433,9 +433,9 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
 
         if (AgonyCurseTimer < diff)
         {
-            Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            if (!target) target = m_creature->getVictim();
-            DoCast(target, SPELL_AGONY_CURSE);
+            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            if (!pTarget) pTarget = m_creature->getVictim();
+            DoCast(pTarget, SPELL_AGONY_CURSE);
             AgonyCurseTimer = 20000;
         } else AgonyCurseTimer -= diff;
 
@@ -464,7 +464,7 @@ struct OREGON_DLL_DECL boss_kalecAI : public ScriptedAI
     bool isEnraged; // if demon is enraged
 
     boss_kalecAI(Creature *c) : ScriptedAI(c){
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     void Reset()
@@ -634,10 +634,10 @@ void boss_kalecgosAI::UpdateAI(const uint32 diff)
         if (SpectralBlastTimer < diff)
         {
             //this is a hack. we need to find a victim without aura in core
-            Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            if ((target && target != m_creature->getVictim()) && target->isAlive() && !(target->HasAura(AURA_SPECTRAL_EXHAUSTION, 0)))
+            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            if ((pTarget && pTarget != m_creature->getVictim()) && pTarget->isAlive() && !(pTarget->HasAura(AURA_SPECTRAL_EXHAUSTION, 0)))
             {
-                DoCast(target, SPELL_SPECTRAL_BLAST);
+                DoCast(pTarget, SPELL_SPECTRAL_BLAST);
                 SpectralBlastTimer = 20000+(rand()%5000);
             }
             else

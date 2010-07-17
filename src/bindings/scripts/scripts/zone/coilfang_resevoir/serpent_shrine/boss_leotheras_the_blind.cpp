@@ -67,7 +67,7 @@ EndScriptData */
 
 class OREGON_DLL_DECL InsidiousAura : public Aura {
 public:
-    InsidiousAura(SpellEntry *spell, uint32 eff, int32 *bp, Unit *target, Unit *caster) : Aura(spell, eff, bp, target, caster, NULL)
+    InsidiousAura(SpellEntry *spell, uint32 eff, int32 *bp, Unit *pTarget, Unit *caster) : Aura(spell, eff, bp, pTarget, caster, NULL)
     {}
 };
 
@@ -146,7 +146,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
     boss_leotheras_the_blindAI(Creature *c) : ScriptedAI(c)
     {
         m_creature->GetPosition(x,y,z);
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         Demon = 0;
 
         for (uint8 i = 0; i < 3; i++)//clear guids
@@ -728,10 +728,10 @@ struct OREGON_DLL_DECL mob_greyheart_spellbinderAI : public ScriptedAI
 
         if (Mindblast_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
 
-            if (target)DoCast(target, SPELL_MINDBLAST);
+            if (pTarget)DoCast(pTarget, SPELL_MINDBLAST);
 
             Mindblast_Timer = 10000 + rand()%5000;
         } else Mindblast_Timer -= diff;

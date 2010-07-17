@@ -128,7 +128,7 @@ struct OREGON_DLL_DECL boss_warbringer_omroggAI : public ScriptedAI
 {
     boss_warbringer_omroggAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         HeroicMode = m_creature->GetMap()->IsHeroic();
     }
 
@@ -351,11 +351,11 @@ struct OREGON_DLL_DECL boss_warbringer_omroggAI : public ScriptedAI
 
         if (ResetThreat_Timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             {
                 DoYellForThreat();
                 DoResetThreat();
-                m_creature->AddThreat(target, 0.0f);
+                m_creature->AddThreat(pTarget, 0.0f);
             }
             ResetThreat_Timer = 35000+rand()%10000;
         } else ResetThreat_Timer -= diff;

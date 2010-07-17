@@ -361,10 +361,10 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
 
         if (Blaze_Timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
                 float x, y, z;
-                target->GetPosition(x, y, z);
+                pTarget->GetPosition(x, y, z);
                 Creature *summon = m_creature->SummonCreature(MOB_ABYSSAL, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
                 if (summon)
                 {
@@ -393,10 +393,10 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
         {
             if (Debris_Timer < diff)
             {
-                if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
                     float x, y, z;
-                    target->GetPosition(x, y, z);
+                    pTarget->GetPosition(x, y, z);
                     Creature *summon = m_creature->SummonCreature(MOB_ABYSSAL, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
                     if (summon) ((mob_abyssalAI*)summon->AI())->SetTrigger(1);
                 }
@@ -484,15 +484,15 @@ struct OREGON_DLL_DECL mob_hellfire_channelerAI : public ScriptedAI
 
         if (Fear_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1))
-                DoCast(target, SPELL_FEAR);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
+                DoCast(pTarget, SPELL_FEAR);
             Fear_Timer = 25000 + rand()%15000;
         } else Fear_Timer -= diff;
 
         if (Infernal_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                m_creature->CastSpell(target, SPELL_BURNING_ABYSSAL, true);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                m_creature->CastSpell(pTarget, SPELL_BURNING_ABYSSAL, true);
             Infernal_Timer = 30000 + rand()%10000;
         } else Infernal_Timer -= diff;
 

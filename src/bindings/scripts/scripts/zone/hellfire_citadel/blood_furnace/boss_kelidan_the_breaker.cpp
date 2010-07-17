@@ -65,14 +65,14 @@ const float ShadowmoonChannelers[5][4]=
 class OREGON_DLL_DECL BurningNovaAura : public Aura
 {
     public:
-        BurningNovaAura(SpellEntry *spell, uint32 eff, Unit *target, Unit *caster) : Aura(spell, eff, NULL, target, caster, NULL){}
+        BurningNovaAura(SpellEntry *spell, uint32 eff, Unit *pTarget, Unit *caster) : Aura(spell, eff, NULL, pTarget, caster, NULL){}
 };
 
 struct OREGON_DLL_DECL boss_kelidan_the_breakerAI : public ScriptedAI
 {
     boss_kelidan_the_breakerAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         HeroicMode = m_creature->GetMap()->IsHeroic();
         for (int i=0; i<5; ++i) Channelers[i] = 0;
     }
@@ -273,7 +273,7 @@ struct OREGON_DLL_DECL mob_shadowmoon_channelerAI : public ScriptedAI
 {
     mob_shadowmoon_channelerAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         HeroicMode = m_creature->GetMap()->IsHeroic();
     }
 
@@ -328,8 +328,8 @@ struct OREGON_DLL_DECL mob_shadowmoon_channelerAI : public ScriptedAI
 
         if (MarkOfShadow_Timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(target,SPELL_MARK_OF_SHADOW);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget,SPELL_MARK_OF_SHADOW);
             MarkOfShadow_Timer = 15000+rand()%5000;
         } else MarkOfShadow_Timer -=diff;
 

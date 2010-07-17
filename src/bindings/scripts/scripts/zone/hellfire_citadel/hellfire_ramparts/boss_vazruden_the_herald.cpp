@@ -98,10 +98,10 @@ struct OREGON_DLL_DECL boss_nazanAI : public ScriptedAI
         }
     }
 
-    void SpellHitTarget(Unit* target, const SpellEntry* entry)
+    void SpellHitTarget(Unit *pTarget, const SpellEntry* entry)
     {
-        if (target && entry->Id == SPELL_FIREBALL)
-            m_creature->SummonCreature(ENTRY_LIQUID_FIRE,target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(),target->GetOrientation(),TEMPSUMMON_TIMED_DESPAWN,30000);
+        if (pTarget && entry->Id == SPELL_FIREBALL)
+            m_creature->SummonCreature(ENTRY_LIQUID_FIRE,pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(),pTarget->GetOrientation(),TEMPSUMMON_TIMED_DESPAWN,30000);
     }
 
     void UpdateAI(const uint32 diff)

@@ -77,10 +77,10 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
         m_creature->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
     }
 
-    void BeginSpeach(Unit* target)
+    void BeginSpeach(Unit *pTarget)
     {
         //Stand up and begin speach
-        PlayerGUID = target->GetGUID();
+        PlayerGUID = pTarget->GetGUID();
 
         //10 seconds
         DoScriptText(SAY_LINE1, m_creature);
@@ -170,19 +170,19 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
         //BurningAdrenalineCaster_Timer
         if (BurningAdrenalineCaster_Timer < diff)
         {
-            Unit* target = NULL;
+            Unit *pTarget = NULL;
 
             int i = 0 ;
             while (i < 3)                                   // max 3 tries to get a random target with power_mana
             {
                 ++i;
-                target = SelectUnit(SELECT_TARGET_RANDOM,1);//not aggro leader
-                if (target)
-                    if (target->getPowerType() == POWER_MANA)
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);//not aggro leader
+                if (pTarget)
+                    if (pTarget->getPowerType() == POWER_MANA)
                         i=3;
             }
-            if (target)                                     // cast on self (see below)
-                target->CastSpell(target,SPELL_BURNINGADRENALINE,1);
+            if (pTarget)                                     // cast on self (see below)
+                pTarget->CastSpell(pTarget,SPELL_BURNINGADRENALINE,1);
 
             BurningAdrenalineCaster_Timer = 15000;
         } else BurningAdrenalineCaster_Timer -= diff;

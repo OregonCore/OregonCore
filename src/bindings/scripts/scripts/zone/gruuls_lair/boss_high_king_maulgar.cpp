@@ -108,7 +108,7 @@ struct OREGON_DLL_DECL boss_high_king_maulgarAI : public ScriptedAI
 {
     boss_high_king_maulgarAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         for (uint8 i = 0; i < 4; ++i)
             Council[i] = 0;
     }
@@ -220,11 +220,11 @@ struct OREGON_DLL_DECL boss_high_king_maulgarAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!m_creature->isInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
         {
-            Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
+            Unit *pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
 
-            if (target)
+            if (pTarget)
             {
-                AttackStart(target);
+                AttackStart(pTarget);
                 GetCouncil();
             }
         }
@@ -277,12 +277,12 @@ struct OREGON_DLL_DECL boss_high_king_maulgarAI : public ScriptedAI
             //Charging_Timer
             if (Charging_Timer < diff)
             {
-                Unit* target = NULL;
-                target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                if (target)
+                Unit *pTarget = NULL;
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                if (pTarget)
                 {
-                    AttackStart(target);
-                    DoCast(target, SPELL_BERSERKER_C);
+                    AttackStart(pTarget);
+                    DoCast(pTarget, SPELL_BERSERKER_C);
                 }
                 Charging_Timer = 20000;
             } else Charging_Timer -= diff;
@@ -304,7 +304,7 @@ struct OREGON_DLL_DECL boss_olm_the_summonerAI : public ScriptedAI
 {
     boss_olm_the_summonerAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     uint32 DarkDecay_Timer;
@@ -353,11 +353,11 @@ struct OREGON_DLL_DECL boss_olm_the_summonerAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!m_creature->isInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
         {
-            Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
+            Unit *pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
 
-            if (target)
+            if (pTarget)
             {
-                AttackStart(target);
+                AttackStart(pTarget);
             }
         }
 
@@ -389,10 +389,10 @@ struct OREGON_DLL_DECL boss_olm_the_summonerAI : public ScriptedAI
         //DeathCoil Timer /need correct timer
         if (DeathCoil_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            if (target)
-                DoCast(target, SPELL_DEATH_COIL);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            if (pTarget)
+                DoCast(pTarget, SPELL_DEATH_COIL);
             DeathCoil_Timer = 20000;
         } else DeathCoil_Timer -= diff;
 
@@ -406,7 +406,7 @@ struct OREGON_DLL_DECL boss_kiggler_the_crazedAI : public ScriptedAI
 {
     boss_kiggler_the_crazedAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     uint32 GreaterPolymorph_Timer;
@@ -457,11 +457,11 @@ struct OREGON_DLL_DECL boss_kiggler_the_crazedAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!m_creature->isInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
         {
-            Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
+            Unit *pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
 
-            if (target)
+            if (pTarget)
             {
-                AttackStart(target);
+                AttackStart(pTarget);
             }
         }
 
@@ -479,9 +479,9 @@ struct OREGON_DLL_DECL boss_kiggler_the_crazedAI : public ScriptedAI
         //GreaterPolymorph_Timer
         if (GreaterPolymorph_Timer < diff)
         {
-            Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            if (target)
-                DoCast(target, SPELL_GREATER_POLYMORPH);
+            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            if (pTarget)
+                DoCast(pTarget, SPELL_GREATER_POLYMORPH);
 
             GreaterPolymorph_Timer = 20000;
         } else GreaterPolymorph_Timer -= diff;
@@ -516,7 +516,7 @@ struct OREGON_DLL_DECL boss_blindeye_the_seerAI : public ScriptedAI
 {
     boss_blindeye_the_seerAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     uint32 GreaterPowerWordShield_Timer;
@@ -563,11 +563,11 @@ struct OREGON_DLL_DECL boss_blindeye_the_seerAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!m_creature->isInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
         {
-            Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
+            Unit *pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
 
-            if (target)
+            if (pTarget)
             {
-                AttackStart(target);
+                AttackStart(pTarget);
             }
         }
 
@@ -605,7 +605,7 @@ struct OREGON_DLL_DECL boss_krosh_firehandAI : public ScriptedAI
 {
     boss_krosh_firehandAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     uint32 GreaterFireball_Timer;
@@ -654,11 +654,11 @@ struct OREGON_DLL_DECL boss_krosh_firehandAI : public ScriptedAI
         //Only if not incombat check if the event is started
         if (!m_creature->isInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
         {
-            Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
+            Unit *pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
 
-            if (target)
+            if (pTarget)
             {
-                AttackStart(target);
+                AttackStart(pTarget);
             }
         }
 
@@ -691,22 +691,22 @@ struct OREGON_DLL_DECL boss_krosh_firehandAI : public ScriptedAI
         //BlastWave_Timer
         if (BlastWave_Timer < diff)
         {
-                       Unit *target;
+                       Unit *pTarget;
             std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
             std::vector<Unit *> target_list;
             for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
             {
-                target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+                pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
                                                             //15 yard radius minimum
-                if (target && target->GetDistance2d(m_creature) < 15)
-                    target_list.push_back(target);
-                target = NULL;
+                if (pTarget && pTarget->GetDistance2d(m_creature) < 15)
+                    target_list.push_back(pTarget);
+                pTarget = NULL;
             }
             if (target_list.size())
-                target = *(target_list.begin()+rand()%target_list.size());
+                pTarget = *(target_list.begin()+rand()%target_list.size());
 
             m_creature->InterruptNonMeleeSpells(false);
-                       DoCast(target, SPELL_BLAST_WAVE);
+                       DoCast(pTarget, SPELL_BLAST_WAVE);
             BlastWave_Timer = 60000;
         } else BlastWave_Timer -= diff;
 

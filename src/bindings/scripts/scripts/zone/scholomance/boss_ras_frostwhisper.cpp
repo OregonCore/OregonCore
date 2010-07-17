@@ -72,9 +72,9 @@ struct OREGON_DLL_DECL boss_rasfrostAI : public ScriptedAI
         //Frostbolt_Timer
         if (Frostbolt_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_FROSTBOLT);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (pTarget) DoCast(pTarget,SPELL_FROSTBOLT);
 
             Frostbolt_Timer = 8000;
         } else Frostbolt_Timer -= diff;

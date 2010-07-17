@@ -1219,11 +1219,11 @@ struct OREGON_DLL_DECL mob_illidari_spawnAI : public ScriptedAI
         {
             if (SpellTimer1 < diff)
             {
-                if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 {
-                    if (target->GetTypeId() == TYPEID_PLAYER)
+                    if (pTarget->GetTypeId() == TYPEID_PLAYER)
                     {
-                        DoCast(target, SpawnCast[1].SpellId); //Focused Bursts
+                        DoCast(pTarget, SpawnCast[1].SpellId); //Focused Bursts
                         SpellTimer1 = SpawnCast[1].Timer2 + (rand()%5 * 1000);
                     } else SpellTimer1 = 2000;
                 }

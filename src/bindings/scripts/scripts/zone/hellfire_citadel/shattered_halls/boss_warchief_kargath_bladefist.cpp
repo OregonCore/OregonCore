@@ -32,7 +32,7 @@ struct OREGON_DLL_DECL boss_warchief_kargath_bladefistAI : public ScriptedAI
 {
     boss_warchief_kargath_bladefistAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         HeroicMode = m_creature->GetMap()->IsHeroic();
     }
 
@@ -249,7 +249,7 @@ struct OREGON_DLL_DECL boss_warchief_kargath_bladefistAI : public ScriptedAI
 
             if (Summon_Assistant_Timer < diff)
             {
-                Unit* target = NULL;
+                Unit *pTarget = NULL;
                 Creature* Summoned;
 
                 for (int i = 0; i < summoned; i++)

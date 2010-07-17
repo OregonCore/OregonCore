@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Boss_Watchkeeper_Gargolmar
 SD%Complete: 80
-SDComment: Missing adds to heal him. Surge should be used on target furthest away, not random.
+SDComment: Missing adds to heal him. Surge should be used on pTarget furthest away, not random.
 SDCategory: Hellfire Citadel, Hellfire Ramparts
 EndScriptData */
 
@@ -124,8 +124,8 @@ struct OREGON_DLL_DECL boss_watchkeeper_gargolmarAI : public ScriptedAI
         {
             DoScriptText(SAY_SURGE, m_creature);
 
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_SURGE);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_SURGE);
 
             Surge_Timer = 5000+rand()%8000;
         } else Surge_Timer -= diff;

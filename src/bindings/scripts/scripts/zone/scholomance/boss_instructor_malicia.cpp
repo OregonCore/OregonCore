@@ -84,9 +84,9 @@ struct OREGON_DLL_DECL boss_instructormaliciaAI : public ScriptedAI
         //Corruption_Timer
         if (Corruption_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_CORRUPTION);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (pTarget) DoCast(pTarget,SPELL_CORRUPTION);
 
             Corruption_Timer = 24000;
         } else Corruption_Timer -= diff;

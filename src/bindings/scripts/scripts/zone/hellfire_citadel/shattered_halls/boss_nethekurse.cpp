@@ -77,7 +77,7 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
 {
     boss_grand_warlock_nethekurseAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         HeroicMode = m_creature->GetMap()->IsHeroic();
     }
 
@@ -286,15 +286,15 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
         {
             if (ShadowFissure_Timer < diff)
             {
-                if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCast(target,SPELL_SHADOW_FISSURE);
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                    DoCast(pTarget,SPELL_SHADOW_FISSURE);
                 ShadowFissure_Timer = 7500+rand()%7500;
             } else ShadowFissure_Timer -= diff;
 
             if (DeathCoil_Timer < diff)
             {
-                if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCast(target,SPELL_DEATH_COIL);
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                    DoCast(pTarget,SPELL_DEATH_COIL);
                 DeathCoil_Timer = 15000+rand()%5000;
             } else DeathCoil_Timer -= diff;
 
@@ -310,7 +310,7 @@ struct OREGON_DLL_DECL mob_fel_orc_convertAI : public ScriptedAI
 {
     mob_fel_orc_convertAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

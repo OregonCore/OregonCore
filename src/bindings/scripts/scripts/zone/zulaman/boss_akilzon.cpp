@@ -64,7 +64,7 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
         SpellEntry *TempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_ELECTRICAL_DAMAGE);
         if (TempSpell)
             TempSpell->EffectBasePoints[1] = 49;//disable bugged lightning until fixed in core
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
     ScriptedInstance *pInstance;
 
@@ -244,17 +244,17 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
 
         if (StormCount)
         {
-            Unit* target = Unit::GetUnit(*m_creature, CloudGUID);
-            if (!target || !target->isAlive())
+            Unit *pTarget = Unit::GetUnit(*m_creature, CloudGUID);
+            if (!pTarget || !pTarget->isAlive())
             {
                 EnterEvadeMode();
                 return;
             }
             else if (Unit* Cyclone = Unit::GetUnit(*m_creature, CycloneGUID))
-                Cyclone->CastSpell(target, 25160, true); // keep casting or...
+                Cyclone->CastSpell(pTarget, 25160, true); // keep casting or...
 
             if (StormSequenceTimer < diff) {
-                HandleStormSequence(target);
+                HandleStormSequence(pTarget);
             } else StormSequenceTimer -= diff;
             return;
         }
@@ -267,22 +267,22 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
         } else Enrage_Timer -= diff;
 
         if (StaticDisruption_Timer < diff) {
-            Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1);
-            if (!target) target = m_creature->getVictim();
-            TargetGUID = target->GetGUID();
-            m_creature->CastSpell(target, SPELL_STATIC_DISRUPTION, false);
+            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+            if (!pTarget) pTarget = m_creature->getVictim();
+            TargetGUID = pTarget->GetGUID();
+            m_creature->CastSpell(pTarget, SPELL_STATIC_DISRUPTION, false);
             m_creature->SetInFront(m_creature->getVictim());
             StaticDisruption_Timer = (10+rand()%8)*1000; // < 20s
 
-            /*float dist = m_creature->GetDistance(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ());
+            /*float dist = m_creature->GetDistance(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
             if (dist < 5.0f) dist = 5.0f;
             SDisruptAOEVisual_Timer = 1000 + floor(dist / 30 * 1000.0f);*/
         } else StaticDisruption_Timer -= diff;
 
         if (GustOfWind_Timer < diff) {
-            Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1);
-            if (!target) target = m_creature->getVictim();
-            DoCast(target, SPELL_GUST_OF_WIND);
+            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+            if (!pTarget) pTarget = m_creature->getVictim();
+            DoCast(pTarget, SPELL_GUST_OF_WIND);
             GustOfWind_Timer = (20+rand()%10)*1000; //20 to 30 seconds(bosskillers)
         } else GustOfWind_Timer -= diff;
 
@@ -297,20 +297,20 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
         }
 
         if (ElectricalStorm_Timer < diff) {
-            Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 50, true);
-            if (!target)
+            Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 50, true);
+            if (!pTarget)
             {
                 EnterEvadeMode();
                 return;
             }
-            target->CastSpell(target, 44007, true);//cloud visual
-            m_creature->CastSpell(target, SPELL_ELECTRICAL_STORM, false);//storm cyclon + visual
+            pTarget->CastSpell(pTarget, 44007, true);//cloud visual
+            m_creature->CastSpell(pTarget, SPELL_ELECTRICAL_STORM, false);//storm cyclon + visual
             float x,y,z;
-            target->GetPosition(x,y,z);
-            if (target)
+            pTarget->GetPosition(x,y,z);
+            if (pTarget)
             {
-                target->SetUnitMovementFlags(MOVEMENTFLAG_LEVITATING);
-                target->SendMonsterMove(x,y,m_creature->GetPositionZ()+15,0);
+                pTarget->SetUnitMovementFlags(MOVEMENTFLAG_LEVITATING);
+                pTarget->SendMonsterMove(x,y,m_creature->GetPositionZ()+15,0);
             }
             Unit *Cloud = m_creature->SummonTrigger(x, y, m_creature->GetPositionZ()+16, 0, 15000);
             if (Cloud)
@@ -342,11 +342,11 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
                 Unit* bird = Unit::GetUnit(*m_creature,BirdGUIDs[i]);
                 if (!bird)//they despawned on die
                 {
-                    if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     {
-                        x = target->GetPositionX() + 10 - rand()%20;
-                        y = target->GetPositionY() + 10 - rand()%20;
-                        z = target->GetPositionZ() + 6 + rand()%5 + 10;
+                        x = pTarget->GetPositionX() + 10 - rand()%20;
+                        y = pTarget->GetPositionY() + 10 - rand()%20;
+                        z = pTarget->GetPositionZ() + 6 + rand()%5 + 10;
                         if (z > 95) z = 95 - rand()%5;
                     }
                     Creature *pCreature = m_creature->SummonCreature(MOB_SOARING_EAGLE, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
@@ -390,8 +390,8 @@ struct OREGON_DLL_DECL mob_soaring_eagleAI : public ScriptedAI
         arrived = true;
         if (TargetGUID)
         {
-            if (Unit* target = Unit::GetUnit(*m_creature, TargetGUID))
-                m_creature->CastSpell(target, SPELL_EAGLE_SWOOP, true);
+            if (Unit *pTarget = Unit::GetUnit(*m_creature, TargetGUID))
+                m_creature->CastSpell(pTarget, SPELL_EAGLE_SWOOP, true);
             TargetGUID = 0;
             m_creature->SetSpeed(MOVE_RUN, 1.2f);
             EagleSwoop_Timer = 5000 + rand()%5000;
@@ -405,22 +405,22 @@ struct OREGON_DLL_DECL mob_soaring_eagleAI : public ScriptedAI
 
         if (arrived)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
                 float x, y, z;
                 if (EagleSwoop_Timer)
                 {
-                    x = target->GetPositionX() + 10 - rand()%20;
-                    y = target->GetPositionY() + 10 - rand()%20;
-                    z = target->GetPositionZ() + 10 + rand()%5;
+                    x = pTarget->GetPositionX() + 10 - rand()%20;
+                    y = pTarget->GetPositionY() + 10 - rand()%20;
+                    z = pTarget->GetPositionZ() + 10 + rand()%5;
                     if (z > 95) z = 95 - rand()%5;
                 }
                 else
                 {
-                    target->GetContactPoint(m_creature, x, y, z);
+                    pTarget->GetContactPoint(m_creature, x, y, z);
                     z += 2;
                     m_creature->SetSpeed(MOVE_RUN, 5.0f);
-                    TargetGUID = target->GetGUID();
+                    TargetGUID = pTarget->GetGUID();
                 }
                 m_creature->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
                 m_creature->GetMotionMaster()->MovePoint(0, x, y, z);

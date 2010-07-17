@@ -99,8 +99,8 @@ struct OREGON_DLL_DECL mob_fireswornAI : public ScriptedAI
         //Immolate_Timer
         if (Immolate_Timer < diff)
         {
-             if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_IMMOLATE);
+             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_IMMOLATE);
 
             Immolate_Timer = 5000 + rand()%5000;
         } else Immolate_Timer -= diff;

@@ -268,11 +268,11 @@ struct OREGON_DLL_DECL npc_secondTrialAI : public ScriptedAI
               m_creature->setFaction(FACTION_HOSTILE);
               questPhase = 0;
 
-              Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-              if (target && target->GetTypeId() == TYPEID_PLAYER) // only on players.
+              Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+              if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER) // only on players.
               {
-                m_creature->AddThreat(target, 5000000.0f);
-                AttackStart(target);
+                m_creature->AddThreat(pTarget, 5000000.0f);
+                AttackStart(pTarget);
               }
          }
          else timer -= diff;

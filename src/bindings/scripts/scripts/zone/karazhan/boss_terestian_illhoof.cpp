@@ -65,7 +65,7 @@ struct OREGON_DLL_DECL mob_kilrekAI : public ScriptedAI
 {
     mob_kilrekAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -159,7 +159,7 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
 {
     boss_terestianAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -280,14 +280,14 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
 
         if (SacrificeTimer < diff)
         {
-            Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1);
-            if (target && target->isAlive() && target->GetTypeId() == TYPEID_PLAYER)
+            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+            if (pTarget && pTarget->isAlive() && pTarget->GetTypeId() == TYPEID_PLAYER)
             {
-                DoCast(target, SPELL_SACRIFICE, true);
-                Creature* Chains = m_creature->SummonCreature(CREATURE_DEMONCHAINS, target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 21000);
+                DoCast(pTarget, SPELL_SACRIFICE, true);
+                Creature* Chains = m_creature->SummonCreature(CREATURE_DEMONCHAINS, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 21000);
                 if (Chains)
                 {
-                    ((mob_demon_chainAI*)Chains->AI())->SacrificeGUID = target->GetGUID();
+                    ((mob_demon_chainAI*)Chains->AI())->SacrificeGUID = pTarget->GetGUID();
                     Chains->CastSpell(Chains, SPELL_DEMON_CHAINS, true);
                     switch(rand()%2)
                     {

@@ -126,7 +126,7 @@ enum AbilityTarget
 struct PlayerAbilityStruct
 {
     uint32 spell;
-    AbilityTarget target;
+    AbilityTarget pTarget;
     uint32 cooldown;
 };
 
@@ -180,7 +180,7 @@ struct OREGON_DLL_DECL boss_hexlord_addAI : public ScriptedAI
 
     boss_hexlord_addAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     void Reset() {}
@@ -203,7 +203,7 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
 {
     boss_hex_lord_malacrassAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         SelectAddEntry();
         for (uint8 i = 0; i < 4; ++i)
             AddGUID[i] = 0;
@@ -395,9 +395,9 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
 
         if (SiphonSoul_Timer < diff)
         {
-            Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 70, true);
+            Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 70, true);
             Unit *trigger = DoSpawnCreature(MOB_TEMP_TRIGGER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 30000);
-            if (!target || !trigger)
+            if (!pTarget || !trigger)
             {
                 EnterEvadeMode();
                 return;
@@ -406,25 +406,25 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
             {
                 trigger->SetUInt32Value(UNIT_FIELD_DISPLAYID, 11686);
                 trigger->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                trigger->CastSpell(target, SPELL_SIPHON_SOUL, true);
+                trigger->CastSpell(pTarget, SPELL_SIPHON_SOUL, true);
                 trigger->GetMotionMaster()->MoveChase(m_creature);
 
                 //m_creature->CastSpell(target, SPELL_SIPHON_SOUL, true);
                 //m_creature->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, target->GetGUID());
                 //m_creature->SetUInt32Value(UNIT_CHANNEL_SPELL, SPELL_SIPHON_SOUL);
 
-                PlayerGUID = target->GetGUID();
+                PlayerGUID = pTarget->GetGUID();
                 PlayerAbility_Timer = 8000 + rand()%2000;
-                PlayerClass = target->getClass() - 1;
+                PlayerClass = pTarget->getClass() - 1;
                 if (PlayerClass == 10) PlayerClass = 9; // druid
-                if (PlayerClass == 4 && target->HasSpell(15473)) PlayerClass = 5; // shadow priest
+                if (PlayerClass == 4 && pTarget->HasSpell(15473)) PlayerClass = 5; // shadow priest
                 SiphonSoul_Timer = 99999;   // buff lasts 30 sec
             }
         } else SiphonSoul_Timer -= diff;
 
         if (PlayerAbility_Timer < diff)
         {
-            //Unit* target = Unit::GetUnit(*m_creature, PlayerGUID);
+            //Unit *target = Unit::GetUnit(*m_creature, PlayerGUID);
             //if (target && target->isAlive())
             {
                 UseAbility();
@@ -438,31 +438,31 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
     void UseAbility()
     {
         uint32 random = rand()%3;
-        Unit *target = NULL;
-        switch(PlayerAbility[PlayerClass][random].target)
+        Unit *pTarget = NULL;
+        switch(PlayerAbility[PlayerClass][random].pTarget)
         {
         case ABILITY_TARGET_SELF:
-            target = m_creature;
+            pTarget = m_creature;
             break;
         case ABILITY_TARGET_VICTIM:
-            target = m_creature->getVictim();
+            pTarget = m_creature->getVictim();
             break;
         case ABILITY_TARGET_ENEMY:
         default:
-            target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             break;
         case ABILITY_TARGET_HEAL:
-            target = DoSelectLowestHpFriendly(50, 0);
+            pTarget = DoSelectLowestHpFriendly(50, 0);
             break;
         case ABILITY_TARGET_BUFF:
             {
                 std::list<Creature*> templist = DoFindFriendlyMissingBuff(50, PlayerAbility[PlayerClass][random].spell);
-                if (!templist.empty()) target = *(templist.begin());
+                if (!templist.empty()) pTarget = *(templist.begin());
             }
             break;
         }
-        if (target)
-            m_creature->CastSpell(target, PlayerAbility[PlayerClass][random].spell, false);
+        if (pTarget)
+            m_creature->CastSpell(pTarget, PlayerAbility[PlayerClass][random].spell, false);
     }
 };
 
@@ -495,8 +495,8 @@ struct OREGON_DLL_DECL boss_thurgAI : public boss_hexlord_addAI
             std::list<Creature*> templist = DoFindFriendlyMissingBuff(50, SPELL_BLOODLUST);
             if (!templist.empty())
             {
-                if (Unit* target = *(templist.begin()))
-                    m_creature->CastSpell(target, SPELL_BLOODLUST, false);
+                if (Unit *pTarget = *(templist.begin()))
+                    m_creature->CastSpell(pTarget, SPELL_BLOODLUST, false);
             }
             bloodlust_timer = 12000;
         } else bloodlust_timer -= diff;
@@ -554,11 +554,11 @@ struct OREGON_DLL_DECL boss_alyson_antilleAI : public boss_hexlord_addAI
 
         if (flashheal_timer < diff)
         {
-            Unit* target = DoSelectLowestHpFriendly(99, 30000);
-            if (target)
+            Unit *pTarget = DoSelectLowestHpFriendly(99, 30000);
+            if (pTarget)
             {
-                if (target->IsWithinDistInMap(m_creature, 50))
-                    m_creature->CastSpell(target,SPELL_FLASH_HEAL, false);
+                if (pTarget->IsWithinDistInMap(m_creature, 50))
+                    m_creature->CastSpell(pTarget,SPELL_FLASH_HEAL, false);
                 else
                 {
                     // bugged
@@ -570,11 +570,11 @@ struct OREGON_DLL_DECL boss_alyson_antilleAI : public boss_hexlord_addAI
             {
                 if (rand()%2)
                 {
-                    if (Unit* target = DoSelectLowestHpFriendly(50, 0))
-                        m_creature->CastSpell(target, SPELL_DISPEL_MAGIC, false);
+                    if (Unit *pTarget = DoSelectLowestHpFriendly(50, 0))
+                        m_creature->CastSpell(pTarget, SPELL_DISPEL_MAGIC, false);
                 }
-                else if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    m_creature->CastSpell(target, SPELL_DISPEL_MAGIC, false);
+                else if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    m_creature->CastSpell(pTarget, SPELL_DISPEL_MAGIC, false);
             }
             flashheal_timer = 2500;
         } else flashheal_timer -= diff;
@@ -583,9 +583,9 @@ struct OREGON_DLL_DECL boss_alyson_antilleAI : public boss_hexlord_addAI
         {
         if (rand()%2)
         {
-        Unit* target = SelectTarget();
+        Unit *pTarget = SelectTarget();
 
-        m_creature->CastSpell(target, SPELL_DISPEL_MAGIC, false);
+        m_creature->CastSpell(pTarget, SPELL_DISPEL_MAGIC, false);
         }
         else
         m_creature->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_DISPEL_MAGIC, false);

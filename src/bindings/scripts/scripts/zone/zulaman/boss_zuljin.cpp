@@ -143,7 +143,7 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
 {
     boss_zuljinAI(Creature *c) : ScriptedAI(c), Summons(m_creature)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
     ScriptedInstance *pInstance;
 
@@ -424,8 +424,8 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
 
             if (Grievous_Throw_Timer < diff)
             {
-                if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    m_creature->CastSpell(target, SPELL_GRIEVOUS_THROW, false);
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    m_creature->CastSpell(pTarget, SPELL_GRIEVOUS_THROW, false);
                 Grievous_Throw_Timer = 10000;
             } else Grievous_Throw_Timer -= diff;
             break;
@@ -452,11 +452,11 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
             {
                 if (!TankGUID)
                 {
-                    if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     {
                         TankGUID = m_creature->getVictim()->GetGUID();
                         m_creature->SetSpeed(MOVE_RUN, 5.0f);
-                        AttackStart(target); // change victim
+                        AttackStart(pTarget); // change victim
                         Claw_Rage_Timer = 0;
                         Claw_Loop_Timer = 500;
                         Claw_Counter = 0;
@@ -466,15 +466,15 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                 {
                     if (Claw_Loop_Timer < diff)
                     {
-                        Unit* target = m_creature->getVictim();
-                        if (!target || !target->isTargetableForAttack()) target = Unit::GetUnit(*m_creature, TankGUID);
-                        if (!target || !target->isTargetableForAttack()) target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                        if (target)
+                        Unit *pTarget = m_creature->getVictim();
+                        if (!pTarget || !pTarget->isTargetableForAttack()) pTarget = Unit::GetUnit(*m_creature, TankGUID);
+                        if (!pTarget || !pTarget->isTargetableForAttack()) pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                        if (pTarget)
                         {
-                            AttackStart(target);
-                            if (m_creature->IsWithinMeleeRange(target))
+                            AttackStart(pTarget);
+                            if (m_creature->IsWithinMeleeRange(pTarget))
                             {
-                                m_creature->CastSpell(target, SPELL_CLAW_RAGE_DAMAGE, true);
+                                m_creature->CastSpell(pTarget, SPELL_CLAW_RAGE_DAMAGE, true);
                                 Claw_Counter++;
                                 if (Claw_Counter == 12)
                                 {
@@ -501,28 +501,28 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
             {
                 if (!TankGUID)
                 {
-                    if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     {
                         TankGUID = m_creature->getVictim()->GetGUID();
                         m_creature->SetSpeed(MOVE_RUN, 5.0f);
-                        AttackStart(target); // change victim
+                        AttackStart(pTarget); // change victim
                         Lynx_Rush_Timer = 0;
                         Claw_Counter = 0;
                     }
                 }
                 else if (!Lynx_Rush_Timer)
                 {
-                    Unit* target = m_creature->getVictim();
-                    if (!target || !target->isTargetableForAttack())
+                    Unit *pTarget = m_creature->getVictim();
+                    if (!pTarget || !pTarget->isTargetableForAttack())
                     {
-                        target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                        AttackStart(target);
+                        pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                        AttackStart(pTarget);
                     }
-                    if (target)
+                    if (pTarget)
                     {
-                        if (m_creature->IsWithinMeleeRange(target))
+                        if (m_creature->IsWithinMeleeRange(pTarget))
                         {
-                            m_creature->CastSpell(target, SPELL_LYNX_RUSH_DAMAGE, true);
+                            m_creature->CastSpell(pTarget, SPELL_LYNX_RUSH_DAMAGE, true);
                             Claw_Counter++;
                             if (Claw_Counter == 9)
                             {
@@ -553,15 +553,15 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
 
             if (Pillar_Of_Fire_Timer < diff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    DoCast(target, SPELL_SUMMON_PILLAR);
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, SPELL_SUMMON_PILLAR);
                 Pillar_Of_Fire_Timer = 10000;
             } else Pillar_Of_Fire_Timer -= diff;
 
             if (Flame_Breath_Timer < diff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    m_creature->SetInFront(target);
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    m_creature->SetInFront(pTarget);
                 DoCast(m_creature, SPELL_FLAME_BREATH);
                 Flame_Breath_Timer = 10000;
             } else Flame_Breath_Timer -= diff;
@@ -587,7 +587,7 @@ struct OREGON_DLL_DECL feather_vortexAI : public ScriptedAI
 
     void Reset() {}
 
-    void EnterCombat(Unit* target) {}
+    void EnterCombat(Unit *pTarget) {}
 
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {

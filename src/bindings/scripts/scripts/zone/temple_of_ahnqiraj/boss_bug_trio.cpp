@@ -39,7 +39,7 @@ struct OREGON_DLL_DECL boss_kriAI : public ScriptedAI
 {
     boss_kriAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -124,7 +124,7 @@ struct OREGON_DLL_DECL boss_vemAI : public ScriptedAI
 {
     boss_vemAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -169,13 +169,13 @@ struct OREGON_DLL_DECL boss_vemAI : public ScriptedAI
         //Charge_Timer
         if (Charge_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (target)
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (pTarget)
             {
-                DoCast(target, SPELL_CHARGE);
+                DoCast(pTarget, SPELL_CHARGE);
                 //m_creature->SendMonsterMove(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(), 0, true,1);
-                AttackStart(target);
+                AttackStart(pTarget);
             }
 
             Charge_Timer = 8000 + rand()%8000;
@@ -205,7 +205,7 @@ struct OREGON_DLL_DECL boss_yaujAI : public ScriptedAI
 {
     boss_yaujAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -237,10 +237,10 @@ struct OREGON_DLL_DECL boss_yaujAI : public ScriptedAI
 
         for (int i = 0; i < 10;i++)
         {
-            Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0);
+            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             Creature* Summoned = m_creature->SummonCreature(15621,m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ(),0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,90000);
-            if (Summoned && target)
-                ((CreatureAI*)Summoned->AI())->AttackStart(target);
+            if (Summoned && pTarget)
+                ((CreatureAI*)Summoned->AI())->AttackStart(pTarget);
         }
     }
 

@@ -53,7 +53,7 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
 {
     boss_gruulAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -138,10 +138,10 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
                         //First limit the list to only players
                         for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
                         {
-                            Unit *target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+                            Unit *pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
 
-                            if (target && target->GetTypeId() == TYPEID_PLAYER)
-                                knockback_targets.push_back(target);
+                            if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
+                                knockback_targets.push_back(pTarget);
                         }
 
                         //Now to totally disoriend those players
@@ -171,12 +171,12 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
 
                         for (std::list<HostileReference*>::iterator itr = m_threatlist.begin(); itr != m_threatlist.end(); ++itr)
                         {
-                            Unit *target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+                            Unit *pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
 
-                            if (target)
+                            if (pTarget)
                             {
-                                target->RemoveAurasDueToSpell(SPELL_GRONN_LORDS_GRASP);
-                                target->CastSpell(target, SPELL_STONED, true, NULL, NULL, m_creature->GetGUID());
+                                pTarget->RemoveAurasDueToSpell(SPELL_GRONN_LORDS_GRASP);
+                                pTarget->CastSpell(pTarget, SPELL_STONED, true, NULL, NULL, m_creature->GetGUID());
                             }
                         }
 
@@ -238,11 +238,11 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
             // Hurtful Strike
             if (HurtfulStrike_Timer < diff)
             {
-                Unit* target = NULL;
-                target = SelectUnit(SELECT_TARGET_TOPAGGRO,1);
+                Unit *pTarget = NULL;
+                pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO,1);
 
-                if (target && m_creature->IsWithinMeleeRange(m_creature->getVictim()))
-                    DoCast(target,SPELL_HURTFUL_STRIKE);
+                if (pTarget && m_creature->IsWithinMeleeRange(m_creature->getVictim()))
+                    DoCast(pTarget,SPELL_HURTFUL_STRIKE);
                 else
                     DoCast(m_creature->getVictim(),SPELL_HURTFUL_STRIKE);
 
@@ -259,8 +259,8 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
             // Cave In
             if (CaveIn_Timer < diff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCast(target,SPELL_CAVE_IN);
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                    DoCast(pTarget,SPELL_CAVE_IN);
 
                 CaveIn_Timer = 20000;
             } else CaveIn_Timer -= diff;

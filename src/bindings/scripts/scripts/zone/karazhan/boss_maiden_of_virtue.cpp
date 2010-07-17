@@ -114,16 +114,16 @@ struct OREGON_DLL_DECL boss_maiden_of_virtueAI : public ScriptedAI
 
         if (Holyfire_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_HOLYFIRE);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_HOLYFIRE);
 
                 Holyfire_Timer = 8000 + rand()%17000; //Anywhere from 8 to 25 seconds, good luck having several of those in a row!
         } else Holyfire_Timer -= diff;
 
         if (Holywrath_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_HOLYWRATH);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_HOLYWRATH);
 
             Holywrath_Timer = 20000+(rand()%10000);     //20-30 secs sounds nice
 

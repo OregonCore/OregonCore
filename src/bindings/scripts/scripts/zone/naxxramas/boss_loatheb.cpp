@@ -182,7 +182,7 @@ struct OREGON_DLL_DECL boss_loathebAI : public ScriptedAI
         //Summon_Timer
         if (Summon_Timer < diff)
         {
-            Unit* target = NULL;
+            Unit *pTarget = NULL;
             Unit* SummonedSpores = NULL;
 
             SummonedSpores = m_creature->SummonCreature(16286,ADD_1X,ADD_1Y,ADD_1Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
@@ -190,9 +190,9 @@ struct OREGON_DLL_DECL boss_loathebAI : public ScriptedAI
             SummonedSpores = m_creature->SummonCreature(16286,ADD_3X,ADD_3Y,ADD_3Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
             if (SummonedSpores)
             {
-                target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                if (target)
-                    SummonedSpores->AddThreat(target,1.0f);
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                if (pTarget)
+                    SummonedSpores->AddThreat(pTarget,1.0f);
             }
 
             Summon_Timer = 28000;

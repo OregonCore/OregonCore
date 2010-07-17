@@ -76,7 +76,7 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
 {
     boss_the_lurker_belowAI(Creature *c) : Scripted_NoMovementAI(c), Summons(m_creature)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         SpellEntry *TempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_SPOUT_ANIM);
         if (TempSpell)
         {
@@ -227,9 +227,9 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
              Map::PlayerList const &PlayerList = map->GetPlayers();
              for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
              {
-                 Player *target = i->getSource();
-                 if (target && target->isAlive() && m_creature->HasInArc((double)diff/20000*(double)M_PI*2,target) && m_creature->GetDistance(target) <= SPOUT_DIST && !target->IsInWater())
-                     DoCast(target,SPELL_SPOUT,true);//only knock back palyers in arc, in 100yards, not in water
+                 Player *pTarget = i->getSource();
+                 if (pTarget && pTarget->isAlive() && m_creature->HasInArc((double)diff/20000*(double)M_PI*2,pTarget) && m_creature->GetDistance(pTarget) <= SPOUT_DIST && !pTarget->IsInWater())
+                     DoCast(pTarget,SPELL_SPOUT,true);//only knock back palyers in arc, in 100yards, not in water
              }
          }
      }
@@ -307,27 +307,27 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
 
              if (GeyserTimer < diff)
              {
-                 Unit* target = NULL;
-                 target = SelectUnit(SELECT_TARGET_RANDOM,1);
+                 Unit *pTarget = NULL;
+                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
 
-                 if (target)
-                    DoCast(target,SPELL_GEYSER,true);
+                 if (pTarget)
+                    DoCast(pTarget,SPELL_GEYSER,true);
                  else
-                     target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                 if (target)
-                     DoCast(target,SPELL_GEYSER,true);
+                     pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                 if (pTarget)
+                     DoCast(pTarget,SPELL_GEYSER,true);
 
                  GeyserTimer = rand()%5000 + 15000;
              } else GeyserTimer -= diff;
 
              if (WaterboltTimer < diff)
              {
-                 Unit* target = SelectTarget(SELECT_TARGET_NEAREST,0,14,true);
-                 if (!target)
+                 Unit *pTarget = SelectTarget(SELECT_TARGET_NEAREST,0,14,true);
+                 if (!pTarget)
                  {
-                     target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                     if (target)
-                         DoCast(target,SPELL_WATERBOLT);
+                     pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                     if (pTarget)
+                         DoCast(pTarget,SPELL_WATERBOLT);
                  }
                  WaterboltTimer = 3000;
              } else WaterboltTimer -= diff;
@@ -446,11 +446,11 @@ struct OREGON_DLL_DECL mob_coilfang_ambusherAI : public Scripted_NoMovementAI
 
         if (ShootBowTimer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             int bp0 = 1100;
-            if (target)
-                m_creature->CastCustomSpell(target,SPELL_SHOOT,&bp0,NULL,NULL,true);
+            if (pTarget)
+                m_creature->CastCustomSpell(pTarget,SPELL_SHOOT,&bp0,NULL,NULL,true);
             ShootBowTimer = 4000;
             MultiShotTimer += 1500;//add global cooldown
         } else ShootBowTimer -= diff;

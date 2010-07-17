@@ -44,7 +44,7 @@ struct OREGON_DLL_DECL boss_epoch_hunterAI : public ScriptedAI
 {
     boss_epoch_hunterAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -119,8 +119,8 @@ struct OREGON_DLL_DECL boss_epoch_hunterAI : public ScriptedAI
 
         if (WingBuffet_Timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_WING_BUFFET);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_WING_BUFFET);
             WingBuffet_Timer = 25000+rand()%10000;
         } else WingBuffet_Timer -= diff;
 

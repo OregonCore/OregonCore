@@ -155,9 +155,9 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
 
             if (TailSweepTimer < diff)
             {
-                Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1);
-                if (target && !m_creature->HasInArc(M_PI, target))
-                    DoCast(target, SPELL_TAILSWEEP);
+                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+                if (pTarget && !m_creature->HasInArc(M_PI, pTarget))
+                    DoCast(pTarget, SPELL_TAILSWEEP);
 
                 TailSweepTimer = 10000;
             } else TailSweepTimer -= diff;

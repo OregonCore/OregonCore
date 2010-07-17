@@ -84,11 +84,11 @@ struct OREGON_DLL_DECL npc_lady_sylvanas_windrunnerAI : public ScriptedAI
     {
         if (summoned->GetEntry() == ENTRY_HIGHBORNE_BUNNY)
         {
-            if (Unit* target = Unit::GetUnit(*summoned,targetGUID))
+            if (Unit *pTarget = Unit::GetUnit(*summoned,targetGUID))
             {
-                target->SendMonsterMove(target->GetPositionX(), target->GetPositionY(), myZ+15.0,0);
-                target->Relocate(target->GetPositionX(), target->GetPositionY(), myZ+15.0);
-                summoned->CastSpell(target, SPELL_RIBBON_OF_SOULS, false);
+                pTarget->SendMonsterMove(pTarget->GetPositionX(), pTarget->GetPositionY(), myZ+15.0,0);
+                pTarget->Relocate(pTarget->GetPositionX(), pTarget->GetPositionY(), myZ+15.0);
+                summoned->CastSpell(pTarget, SPELL_RIBBON_OF_SOULS, false);
             }
 
             summoned->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);

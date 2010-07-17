@@ -55,14 +55,14 @@ struct OREGON_DLL_DECL boss_grilekAI : public ScriptedAI
         {
 
             DoCast(m_creature, SPELL_AVARTAR);
-            Unit* target = NULL;
+            Unit *pTarget = NULL;
 
-            target = SelectUnit(SELECT_TARGET_RANDOM,1);
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
 
             if (DoGetThreat(m_creature->getVictim()))
                 DoModifyThreatPercent(m_creature->getVictim(),-50);
-            if (target)
-                AttackStart(target);
+            if (pTarget)
+                AttackStart(pTarget);
 
             Avartar_Timer = 25000 + rand()%10000;
         } else Avartar_Timer -= diff;

@@ -850,10 +850,10 @@ struct OREGON_DLL_DECL mob_phase_hunterAI : public ScriptedAI
 
         if (PlayerGUID) // start: support for quest 10190
         {
-            Player* target = Unit::GetPlayer(PlayerGUID);
+            Player* pTarget = Unit::GetPlayer(PlayerGUID);
 
-            if (target && !Weak && m_creature->GetHealth() < (m_creature->GetMaxHealth() / 100 * WeakPercent)
-                && target->GetQuestStatus(10190) == QUEST_STATUS_INCOMPLETE)
+            if (pTarget && !Weak && m_creature->GetHealth() < (m_creature->GetMaxHealth() / 100 * WeakPercent)
+                && pTarget->GetQuestStatus(10190) == QUEST_STATUS_INCOMPLETE)
             {
                 DoScriptText(EMOTE_WEAK, m_creature);
                 Weak = true;
@@ -878,8 +878,8 @@ struct OREGON_DLL_DECL mob_phase_hunterAI : public ScriptedAI
                 {
                     DrainedPhaseHunter->SetLevel(Level); // set the summoned mob's data
                     DrainedPhaseHunter->SetHealth(Health);
-                    DrainedPhaseHunter->AddThreat(target, 10000.0f);
-                    DrainedPhaseHunter->AI()->AttackStart(target);
+                    DrainedPhaseHunter->AddThreat(pTarget, 10000.0f);
+                    DrainedPhaseHunter->AI()->AttackStart(pTarget);
                 }
             }
         }// end: support for quest 10190

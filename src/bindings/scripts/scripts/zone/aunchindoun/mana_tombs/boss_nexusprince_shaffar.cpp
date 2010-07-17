@@ -161,8 +161,8 @@ struct OREGON_DLL_DECL boss_nexusprince_shaffarAI : public ScriptedAI
         {
             summoned->CastSpell(summoned,SPELL_ETHEREAL_BEACON_VISUAL,false);
 
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                summoned->AI()->AttackStart(target);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                summoned->AI()->AttackStart(pTarget);
         }
     }
 

@@ -116,7 +116,7 @@ uint32 EnrageTimer = 600000;
 struct OREGON_DLL_DECL boss_entropiusAI : public ScriptedAI
 {
     boss_entropiusAI(Creature *c) : ScriptedAI(c), Summons(m_creature){
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         Combat = false;
     }
 
@@ -202,7 +202,7 @@ CreatureAI* GetAI_boss_entropius(Creature *_Creature)
 struct OREGON_DLL_DECL boss_muruAI : public Scripted_NoMovementAI
 {
     boss_muruAI(Creature *c) : Scripted_NoMovementAI(c), Summons(m_creature){
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -343,7 +343,7 @@ CreatureAI* GetAI_boss_muru(Creature *_Creature)
 struct OREGON_DLL_DECL npc_muru_portalAI : public Scripted_NoMovementAI
 {
     npc_muru_portalAI(Creature *c) : Scripted_NoMovementAI(c), Summons(m_creature){
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -409,7 +409,7 @@ CreatureAI* GetAI_npc_muru_portal(Creature *_Creature)
 struct OREGON_DLL_DECL npc_dark_fiendAI : public ScriptedAI
 {
     npc_dark_fiendAI(Creature *c) : ScriptedAI(c){
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -465,7 +465,7 @@ CreatureAI* GetAI_npc_dark_fiend(Creature *_Creature)
 struct OREGON_DLL_DECL npc_void_sentinelAI : public ScriptedAI
 {
     npc_void_sentinelAI(Creature *c) : ScriptedAI(c){
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -518,7 +518,7 @@ CreatureAI* GetAI_npc_void_sentinel(Creature *_Creature)
 struct OREGON_DLL_DECL npc_blackholeAI : public ScriptedAI
 {
     npc_blackholeAI(Creature *c) : ScriptedAI(c){
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;

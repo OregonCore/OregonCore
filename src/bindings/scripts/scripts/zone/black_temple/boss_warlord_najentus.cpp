@@ -52,7 +52,7 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
 {
     boss_najentusAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -117,12 +117,12 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
         }
     }
 
-    void SpellHitTarget(Unit *target, const SpellEntry *spell)
+    void SpellHitTarget(Unit *pTarget, const SpellEntry *spell)
     {
         switch(spell->Id)
         {
         case SPELL_NEEDLE_SPINE:
-            m_creature->CastSpell(target,SPELL_NEEDLE_SPINE_DMG,true);
+            m_creature->CastSpell(pTarget,SPELL_NEEDLE_SPINE_DMG,true);
             break;
         }
     }
@@ -139,9 +139,9 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
     bool RemoveImpalingSpine()
     {
         if (!SpineTargetGUID) return false;
-        Unit* target = Unit::GetUnit(*m_creature, SpineTargetGUID);
-        if (target && target->HasAura(SPELL_IMPALING_SPINE, 1))
-            target->RemoveAurasDueToSpell(SPELL_IMPALING_SPINE);
+        Unit *pTarget = Unit::GetUnit(*m_creature, SpineTargetGUID);
+        if (pTarget && pTarget->HasAura(SPELL_IMPALING_SPINE, 1))
+            pTarget->RemoveAurasDueToSpell(SPELL_IMPALING_SPINE);
         SpineTargetGUID=0;
         return true;
     }
@@ -203,14 +203,14 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
         {
             if (!m_creature->IsNonMeleeSpellCasted(false))
             {
-                Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 80,true);
-                if (!target) target = m_creature->getVictim();
-                if (target)
+                Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 80,true);
+                if (!pTarget) pTarget = m_creature->getVictim();
+                if (pTarget)
                 {
-                    DoCast(target, SPELL_IMPALING_SPINE);
-                    SpineTargetGUID = target->GetGUID();
+                    DoCast(pTarget, SPELL_IMPALING_SPINE);
+                    SpineTargetGUID = pTarget->GetGUID();
                     //must let target summon, otherwise you cannot click the spine
-                    target->SummonGameObject(GOBJECT_SPINE, target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(), m_creature->GetOrientation(), 0, 0, 0, 0, 0);
+                    pTarget->SummonGameObject(GOBJECT_SPINE, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), m_creature->GetOrientation(), 0, 0, 0, 0, 0);
 
                     switch(rand()%2)
                     {

@@ -308,7 +308,7 @@ float HordeFirePos[65][8]=//spawn points for the fire visuals (GO) in the horde 
 
 hyjalAI::hyjalAI(Creature *c) : npc_escortAI(c), Summons(m_creature)
 {
-    pInstance = (c->GetInstanceData());
+    pInstance = c->GetInstanceData();
     VeinsSpawned[0] = false;
     VeinsSpawned[1] = false;
     for (uint8 i=0;i<14;i++)
@@ -899,18 +899,18 @@ void hyjalAI::UpdateAI(const uint32 diff)
                 if (m_creature->IsNonMeleeSpellCasted(false))
                     m_creature->InterruptNonMeleeSpells(false);
 
-                Unit* target = NULL;
+                Unit *pTarget = NULL;
 
                 switch(Spell[i].TargetType)
                 {
-                    case TARGETTYPE_SELF: target = m_creature; break;
-                    case TARGETTYPE_RANDOM: target = SelectUnit(SELECT_TARGET_RANDOM, 0); break;
-                    case TARGETTYPE_VICTIM: target = m_creature->getVictim(); break;
+                    case TARGETTYPE_SELF: pTarget = m_creature; break;
+                    case TARGETTYPE_RANDOM: pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0); break;
+                    case TARGETTYPE_VICTIM: pTarget = m_creature->getVictim(); break;
                 }
 
-                if (target && target->isAlive())
+                if (pTarget && pTarget->isAlive())
                 {
-                    DoCast(target, Spell[i].SpellId);
+                    DoCast(pTarget, Spell[i].SpellId);
                     SpellTimer[i] = Spell[i].Cooldown;
                 }
             } else SpellTimer[i] -= diff;

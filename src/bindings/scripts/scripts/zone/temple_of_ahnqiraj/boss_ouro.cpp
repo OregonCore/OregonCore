@@ -100,11 +100,11 @@ struct OREGON_DLL_DECL boss_ouroAI : public ScriptedAI
         //ChangeTarget_Timer
         if (Submerged && ChangeTarget_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
 
-            if (target)
-                DoTeleportTo(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ());
+            if (pTarget)
+                DoTeleportTo(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
 
             ChangeTarget_Timer = 10000 + rand()%10000;
         } else ChangeTarget_Timer -= diff;

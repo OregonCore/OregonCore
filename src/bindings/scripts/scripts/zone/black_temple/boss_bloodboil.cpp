@@ -79,7 +79,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
 {
     boss_gurtogg_bloodboilAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -189,9 +189,9 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
         //Aura each player in the targets list with Bloodboil.
         for (std::list<Unit *>::iterator itr = targets.begin(); itr != targets.end(); ++itr)
         {
-            Unit* target = *itr;
-            if (target && target->isAlive())
-                m_creature->AddAura(SPELL_BLOODBOIL, target);
+            Unit *pTarget = *itr;
+            if (pTarget && pTarget->isAlive())
+                m_creature->AddAura(SPELL_BLOODBOIL, pTarget);
         }
         targets.clear();
     }
@@ -289,26 +289,26 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
         {
             if (Phase1)
             {
-                Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0,100,true);
-                if (target && target->isAlive())
+                Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0,100,true);
+                if (pTarget && pTarget->isAlive())
                 {
                     Phase1 = false;
 
-                    TargetThreat = DoGetThreat(target);
-                    TargetGUID = target->GetGUID();
-                    if (DoGetThreat(target))
-                        DoModifyThreatPercent(target, -100);
-                    m_creature->AddThreat(target, 50000000.0f);
-                    target->CastSpell(m_creature, SPELL_TAUNT_GURTOGG, true);
+                    TargetThreat = DoGetThreat(pTarget);
+                    TargetGUID = pTarget->GetGUID();
+                    if (DoGetThreat(pTarget))
+                        DoModifyThreatPercent(pTarget, -100);
+                    m_creature->AddThreat(pTarget, 50000000.0f);
+                    pTarget->CastSpell(m_creature, SPELL_TAUNT_GURTOGG, true);
                     m_creature->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
                     m_creature->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
 
                     // If VMaps are disabled, this spell can call the whole instance
                     DoCast(m_creature, SPELL_INSIGNIFIGANCE, true);
-                    DoCast(target,SPELL_FEL_RAGE_1, true);
-                    DoCast(target,SPELL_FEL_RAGE_2, true);
-                    DoCast(target,SPELL_FEL_RAGE_3, true);
-                    DoCast(target,SPELL_FEL_RAGE_SCALE, true);
+                    DoCast(pTarget,SPELL_FEL_RAGE_1, true);
+                    DoCast(pTarget,SPELL_FEL_RAGE_2, true);
+                    DoCast(pTarget,SPELL_FEL_RAGE_3, true);
+                    DoCast(pTarget,SPELL_FEL_RAGE_SCALE, true);
 
                     //Cast this without triggered so that it appears in combat logs and shows visual.
                     DoCast(m_creature, SPELL_FEL_RAGE_SELF);

@@ -100,7 +100,7 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
 {
     boss_morogrim_tidewalkerAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -204,10 +204,10 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
 
                 for (uint8 i = 0; i < 10; i++)
                 {
-                    Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                    Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                     Creature* Murloc = m_creature->SummonCreature(MurlocCords[i][0],MurlocCords[i][1],MurlocCords[i][2],MurlocCords[i][3],MurlocCords[i][4], TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
-                    if (target && Murloc)
-                        Murloc->AI()->AttackStart(target);
+                    if (pTarget && Murloc)
+                        Murloc->AI()->AttackStart(pTarget);
                 }
                 DoScriptText(EMOTE_EARTHQUAKE, m_creature);
                 Earthquake = false;
@@ -228,21 +228,21 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
             if (WateryGrave_Timer < diff)
             {
                 //Teleport 4 players under the waterfalls
-                Unit *target;
+                Unit *pTarget;
                 using std::set;
                 set<int>list;
                 set<int>::iterator itr;
                 for (uint8 i = 0; i < 4; i++)
                 {
                     counter = 0;
-                    do{target = SelectTarget(SELECT_TARGET_RANDOM, 1, 50, true);    //target players only
+                    do{pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 50, true);    //pTarget players only
                     if (counter < Playercount)
                         break;
-                    if (target) itr = list.find(target->GetGUID());
+                    if (pTarget) itr = list.find(pTarget->GetGUID());
                     counter++;
                     }while (itr != list.end());
-                    if (target){list.insert(target->GetGUID());
-                    ApplyWateryGrave(target, i);
+                    if (pTarget){list.insert(pTarget->GetGUID());
+                    ApplyWateryGrave(pTarget, i);
                     }
                 }
 

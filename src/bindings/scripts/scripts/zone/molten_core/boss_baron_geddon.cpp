@@ -73,8 +73,8 @@ struct OREGON_DLL_DECL boss_baron_geddonAI : public ScriptedAI
         //IgniteMana_Timer
         if (IgniteMana_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_IGNITEMANA);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_IGNITEMANA);
 
             IgniteMana_Timer = 30000;
         } else IgniteMana_Timer -= diff;
@@ -82,8 +82,8 @@ struct OREGON_DLL_DECL boss_baron_geddonAI : public ScriptedAI
         //LivingBomb_Timer
         if (LivingBomb_Timer < diff)
         {
-           if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-               DoCast(target,SPELL_LIVINGBOMB);
+           if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+               DoCast(pTarget,SPELL_LIVINGBOMB);
 
             LivingBomb_Timer = 35000;
         } else LivingBomb_Timer -= diff;

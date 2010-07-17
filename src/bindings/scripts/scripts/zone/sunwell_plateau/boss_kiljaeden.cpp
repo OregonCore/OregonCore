@@ -296,7 +296,7 @@ bool GOHello_go_orb_of_the_blue_flight(Player *plr, GameObject* go)
 struct OREGON_DLL_DECL boss_kalecgos_kjAI : public ScriptedAI
 {
     boss_kalecgos_kjAI(Creature* c) : ScriptedAI(c){
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     GameObject* Orb[4];
@@ -411,7 +411,7 @@ CreatureAI* GetAI_boss_kalecgos_kj(Creature *_Creature)
 struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
 {
     boss_kiljaedenAI(Creature* c) : Scripted_NoMovementAI(c), Summons(m_creature){
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -538,15 +538,15 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
         DoCast(m_creature, SPELL_SINISTER_REFLECTION, true);
         for (uint8 i = 0; i < 4; i++){
             float x,y,z;
-            Unit* target;
+            Unit *pTarget;
             for (uint8 z = 0; z < 6; ++z){
-                target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
-                if (!target->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT,0)) break;
+                pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
+                if (!pTarget->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT,0)) break;
             }
-            target->GetPosition(x,y,z);
+            pTarget->GetPosition(x,y,z);
             Creature* SinisterReflection = m_creature->SummonCreature(CREATURE_SINISTER_REFLECTION, x,y,z,0, TEMPSUMMON_CORPSE_DESPAWN, 0);
             if (SinisterReflection)
-                SinisterReflection->AI()->AttackStart(target);
+                SinisterReflection->AI()->AttackStart(pTarget);
         }
     }
 
@@ -588,7 +588,7 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
                                 if (!randomPlayer->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT,0)) break;
                             }
                             if (randomPlayer)DoCast(randomPlayer, SPELL_LEGION_LIGHTNING, false);
-                            else error_log("try to cast SPELL_LEGION_LIGHTNING on invalid target");
+                            else error_log("try to cast SPELL_LEGION_LIGHTNING on invalid pTarget");
                             Timer[TIMER_LEGION_LIGHTNING] = (Phase == PHASE_SACRIFICE) ? 18000 : 30000; // 18 seconds in PHASE_SACRIFICE
                             Timer[TIMER_SOUL_FLAY] = 2500;
                         }
@@ -656,14 +656,14 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
                         TimerIsDeactiveted[TIMER_ORBS_EMPOWER] = true;
                         break;
                     case TIMER_ARMAGEDDON: //Phase 4
-                        Unit* target;
+                        Unit *pTarget;
                         for (uint8 z = 0; z < 6; ++z){
-                            target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
-                            if (!target->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT,0)) break;
+                            pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
+                            if (!pTarget->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT,0)) break;
                         }
-                        if (target){
+                        if (pTarget){
                             float x, y, z;
-                            target->GetPosition(x, y, z);
+                            pTarget->GetPosition(x, y, z);
                             m_creature->SummonCreature(CREATURE_ARMAGEDDON_TARGET, x,y,z,0, TEMPSUMMON_TIMED_DESPAWN,15000);
                         }
                         Timer[TIMER_ARMAGEDDON] = 2000; // No, I'm not kidding
@@ -726,7 +726,7 @@ CreatureAI* GetAI_boss_kiljaeden(Creature *_Creature)
 struct OREGON_DLL_DECL mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
 {
     mob_kiljaeden_controllerAI(Creature* c) : Scripted_NoMovementAI(c), Summons(m_creature){
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -817,7 +817,7 @@ CreatureAI* GetAI_mob_kiljaeden_controller(Creature *_Creature)
 struct OREGON_DLL_DECL mob_hand_of_the_deceiverAI : public ScriptedAI
 {
     mob_hand_of_the_deceiverAI(Creature* c) : ScriptedAI(c){
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
     ScriptedInstance* pInstance;
 
@@ -1045,7 +1045,7 @@ CreatureAI* GetAI_mob_armageddon(Creature *_Creature)
 struct OREGON_DLL_DECL mob_shield_orbAI : public ScriptedAI
 {
     mob_shield_orbAI(Creature* c) : ScriptedAI(c) {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     bool PointReached;

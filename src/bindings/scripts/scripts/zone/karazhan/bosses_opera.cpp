@@ -104,7 +104,7 @@ struct OREGON_DLL_DECL boss_dorotheeAI : public ScriptedAI
 {
     boss_dorotheeAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -262,7 +262,7 @@ struct OREGON_DLL_DECL boss_strawmanAI : public ScriptedAI
 {
     boss_strawmanAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -352,7 +352,7 @@ struct OREGON_DLL_DECL boss_tinheadAI : public ScriptedAI
 {
     boss_tinheadAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -445,7 +445,7 @@ struct OREGON_DLL_DECL boss_roarAI : public ScriptedAI
 {
     boss_roarAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -537,7 +537,7 @@ struct OREGON_DLL_DECL boss_croneAI : public ScriptedAI
 {
     boss_croneAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -722,7 +722,7 @@ struct OREGON_DLL_DECL boss_bigbadwolfAI : public ScriptedAI
 {
     boss_bigbadwolfAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -777,17 +777,17 @@ struct OREGON_DLL_DECL boss_bigbadwolfAI : public ScriptedAI
         {
             if (!IsChasing)
             {
-                Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                if (target && target->GetTypeId() == TYPEID_PLAYER)
+                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
                 {
                     DoScriptText(SAY_WOLF_HOOD, m_creature);
 
-                    DoCast(target, SPELL_LITTLE_RED_RIDING_HOOD, true);
-                    TempThreat = DoGetThreat(target);
+                    DoCast(pTarget, SPELL_LITTLE_RED_RIDING_HOOD, true);
+                    TempThreat = DoGetThreat(pTarget);
                     if (TempThreat)
-                        DoModifyThreatPercent(target, -100);
-                    HoodGUID = target->GetGUID();
-                    m_creature->AddThreat(target, 1000000.0f);
+                        DoModifyThreatPercent(pTarget, -100);
+                    HoodGUID = pTarget->GetGUID();
+                    m_creature->AddThreat(pTarget, 1000000.0f);
                     ChaseTimer = 20000;
                     IsChasing = true;
                 }
@@ -795,13 +795,13 @@ struct OREGON_DLL_DECL boss_bigbadwolfAI : public ScriptedAI
             else
             {
                 IsChasing = false;
-                Unit* target = Unit::GetUnit((*m_creature), HoodGUID);
-                if (target)
+                Unit *pTarget = Unit::GetUnit((*m_creature), HoodGUID);
+                if (pTarget)
                 {
                     HoodGUID = 0;
-                    if (DoGetThreat(target))
-                        DoModifyThreatPercent(target, -100);
-                    m_creature->AddThreat(target, TempThreat);
+                    if (DoGetThreat(pTarget))
+                        DoModifyThreatPercent(pTarget, -100);
+                    m_creature->AddThreat(pTarget, TempThreat);
                     TempThreat = 0;
                 }
 
@@ -895,17 +895,17 @@ void PretendToDie(Creature* _Creature)
     _Creature->SetUInt32Value(UNIT_FIELD_BYTES_1,PLAYER_STATE_DEAD);
 };
 
-void Resurrect(Creature* target)
+void Resurrect(Creature* pTarget)
 {
-    target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-    target->SetHealth(target->GetMaxHealth());
-    target->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-    target->CastSpell(target, SPELL_RES_VISUAL, true);
-    if (target->getVictim())
+    pTarget->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+    pTarget->SetHealth(pTarget->GetMaxHealth());
+    pTarget->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
+    pTarget->CastSpell(pTarget, SPELL_RES_VISUAL, true);
+    if (pTarget->getVictim())
     {
-        target->SetUInt64Value(UNIT_FIELD_TARGET, target->getVictim()->GetGUID());
-        target->GetMotionMaster()->MoveChase(target->getVictim());
-        target->AI()->AttackStart(target->getVictim());
+        pTarget->SetUInt64Value(UNIT_FIELD_TARGET, pTarget->getVictim()->GetGUID());
+        pTarget->GetMotionMaster()->MoveChase(pTarget->getVictim());
+        pTarget->AI()->AttackStart(pTarget->getVictim());
     }
 };
 
@@ -913,7 +913,7 @@ struct OREGON_DLL_DECL boss_julianneAI : public ScriptedAI
 {
     boss_julianneAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         EntryYellTimer = 1000;
         AggroYellTimer = 10000;
     }
@@ -1301,10 +1301,10 @@ void boss_romuloAI::UpdateAI(const uint32 diff)
 
     if (BackwardLungeTimer < diff)
     {
-        Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 1);
-        if (target && !m_creature->HasInArc(M_PI, target))
+        Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
+        if (pTarget && !m_creature->HasInArc(M_PI, pTarget))
         {
-            DoCast(target, SPELL_BACKWARD_LUNGE);
+            DoCast(pTarget, SPELL_BACKWARD_LUNGE);
             BackwardLungeTimer = 15000 + rand()%15000;
         }
     } else BackwardLungeTimer -= diff;

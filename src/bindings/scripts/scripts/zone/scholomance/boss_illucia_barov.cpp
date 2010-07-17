@@ -77,9 +77,9 @@ struct OREGON_DLL_DECL boss_illuciabarovAI : public ScriptedAI
         //ShadowShock_Timer
         if (ShadowShock_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_SHADOWSHOCK);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            if (pTarget) DoCast(pTarget,SPELL_SHADOWSHOCK);
 
             ShadowShock_Timer = 12000;
         } else ShadowShock_Timer -= diff;

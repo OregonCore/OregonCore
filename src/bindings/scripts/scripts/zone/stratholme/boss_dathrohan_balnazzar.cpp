@@ -261,11 +261,11 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
                 if (rand()%100 < 55) //55% chance to cast
                 {
                     //Cast
-                    Unit* target = NULL;
+                    Unit *pTarget = NULL;
 
-                    target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                    if (target)
-                    DoCast(target,SPELL_DEEPSLEEP);
+                    pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                    if (pTarget)
+                    DoCast(pTarget,SPELL_DEEPSLEEP);
                 }
                 //15 seconds until we should cast this again
                 DeepSleep_Timer = 15000;

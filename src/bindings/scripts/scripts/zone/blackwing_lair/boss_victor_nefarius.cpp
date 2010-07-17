@@ -184,7 +184,7 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
-    void BeginEvent(Player* target)
+    void BeginEvent(Player* pTarget)
     {
         DoScriptText(SAY_GAMESBEGIN_2, m_creature);
 
@@ -200,7 +200,7 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
         m_creature->SetUInt32Value(UNIT_NPC_FLAGS,0);
         m_creature->setFaction(103);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        AttackStart(target);
+        AttackStart(pTarget);
     }
 
     void EnterCombat(Unit *who)
@@ -229,10 +229,10 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
             //ShadowBoltTimer
             if (ShadowBoltTimer < diff)
             {
-                Unit* target = NULL;
-                target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                if (target)
-                    DoCast(target,SPELL_SHADOWBOLT);
+                Unit *pTarget = NULL;
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                if (pTarget)
+                    DoCast(pTarget,SPELL_SHADOWBOLT);
 
                 ShadowBoltTimer = 3000 + (rand()%7000);
             } else ShadowBoltTimer -= diff;
@@ -240,10 +240,10 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
             //FearTimer
             if (FearTimer < diff)
             {
-                Unit* target = NULL;
-                target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                if (target)
-                    DoCast(target,SPELL_FEAR);
+                Unit *pTarget = NULL;
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                if (pTarget)
+                    DoCast(pTarget,SPELL_FEAR);
 
                 FearTimer = 10000 + (rand()%10000);
             } else FearTimer -= diff;
@@ -254,7 +254,7 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
                 //Spawn 2 random types of creatures at the 2 locations
                 uint32 CreatureID;
                 Creature* Spawned = NULL;
-                Unit* target = NULL;
+                Unit *pTarget = NULL;
 
                 //1 in 3 chance it will be a chromatic
                 if (rand()%3 == 0)
@@ -265,10 +265,10 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
 
                 //Spawn creature and force it to start attacking a random target
                 Spawned = m_creature->SummonCreature(CreatureID,ADD_X1,ADD_Y1,ADD_Z1,5.000,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,5000);
-                target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                if (target && Spawned)
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                if (pTarget && Spawned)
                 {
-                    Spawned->AI()->AttackStart(target);
+                    Spawned->AI()->AttackStart(pTarget);
                     Spawned->setFaction(103);
                 }
 
@@ -279,13 +279,13 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
 
                 SpawnedAdds++;
 
-                target = NULL;
+                pTarget = NULL;
                 Spawned = NULL;
                 Spawned = m_creature->SummonCreature(CreatureID,ADD_X2,ADD_Y2,ADD_Z2,5.000,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,5000);
-                target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                if (target && Spawned)
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                if (pTarget && Spawned)
                 {
-                    Spawned->AI()->AttackStart(target);
+                    Spawned->AI()->AttackStart(pTarget);
                     Spawned->setFaction(103);
                 }
 
@@ -311,11 +311,11 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
                     //Spawn nef and have him attack a random target
                     Creature* Nefarian = NULL;
                     Nefarian = m_creature->SummonCreature(CREATURE_NEFARIAN,NEF_X,NEF_Y,NEF_Z,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,120000);
-                    target = NULL;
-                    target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                    if (target && Nefarian)
+                    pTarget = NULL;
+                    pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                    if (pTarget && Nefarian)
                     {
-                        Nefarian->AI()->AttackStart(target);
+                        Nefarian->AI()->AttackStart(pTarget);
                         Nefarian->setFaction(103);
                         NefarianGUID = Nefarian->GetGUID();
                     }

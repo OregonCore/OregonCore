@@ -236,9 +236,9 @@ struct OREGON_DLL_DECL mobs_nether_drakeAI : public ScriptedAI
 
         if (ManaBurn_Timer <= diff)
         {
-            Unit* target = m_creature->getVictim();
-            if (target && target->getPowerType() == POWER_MANA)
-                DoCast(target,SPELL_MANA_BURN);
+            Unit *pTarget = m_creature->getVictim();
+            if (pTarget && pTarget->getPowerType() == POWER_MANA)
+                DoCast(pTarget,SPELL_MANA_BURN);
             ManaBurn_Timer = 8000+rand()%8000;
         } else ManaBurn_Timer -= diff;
 

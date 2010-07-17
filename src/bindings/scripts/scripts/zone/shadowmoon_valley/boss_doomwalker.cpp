@@ -140,14 +140,14 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
         //Spell Chain Lightning
         if (Chain_Timer < diff)
         {
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,1);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
 
-            if (!target)
-                target = m_creature->getVictim();
+            if (!pTarget)
+                pTarget = m_creature->getVictim();
 
-            if (target)
-                DoCast(target,SPELL_CHAIN_LIGHTNING);
+            if (pTarget)
+                DoCast(pTarget,SPELL_CHAIN_LIGHTNING);
 
             Chain_Timer = 10000 + rand()%25000;
         } else Chain_Timer -= diff;

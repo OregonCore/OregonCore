@@ -41,7 +41,7 @@ struct OREGON_DLL_DECL boss_venoxisAI : public ScriptedAI
 {
     boss_venoxisAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -114,8 +114,8 @@ struct OREGON_DLL_DECL boss_venoxisAI : public ScriptedAI
                     TargetInRange = 0;
                     for (int i=0; i<10; i++)
                     {
-                        if (Unit* target = SelectUnit(SELECT_TARGET_TOPAGGRO,i))
-                            if (m_creature->IsWithinMeleeRange(target))
+                        if (Unit *pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO,i))
+                            if (m_creature->IsWithinMeleeRange(pTarget))
                                 TargetInRange++;
                     }
 
@@ -133,8 +133,8 @@ struct OREGON_DLL_DECL boss_venoxisAI : public ScriptedAI
 
                 if (HolyFire_Timer < diff && TargetInRange < 3)
                 {
-                    if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                        DoCast(target, SPELL_HOLY_FIRE);
+                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                        DoCast(pTarget, SPELL_HOLY_FIRE);
 
                     HolyFire_Timer = 8000;
                 } else HolyFire_Timer -= diff;
@@ -163,8 +163,8 @@ struct OREGON_DLL_DECL boss_venoxisAI : public ScriptedAI
 
                 if (PhaseTwo && VenomSpit_Timer < diff)
                 {
-                    if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                        DoCast(target, SPELL_VENOMSPIT);
+                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                        DoCast(pTarget, SPELL_VENOMSPIT);
 
                     VenomSpit_Timer = 15000 + rand()%5000;
                 } else VenomSpit_Timer -= diff;

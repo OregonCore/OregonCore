@@ -113,10 +113,10 @@ struct OREGON_DLL_DECL boss_pathaleon_the_calculatorAI : public ScriptedAI
         {
             for (int i = 0; i < 3;i++)
             {
-                Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 Creature* Wraith = m_creature->SummonCreature(21062,m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ(),0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
-                if (target && Wraith)
-                    Wraith->AI()->AttackStart(target);
+                if (pTarget && Wraith)
+                    Wraith->AI()->AttackStart(pTarget);
             }
             DoScriptText(SAY_SUMMON, m_creature);
             Summon_Timer = 30000 + rand()%15000;
@@ -136,7 +136,7 @@ struct OREGON_DLL_DECL boss_pathaleon_the_calculatorAI : public ScriptedAI
 
         if (Domination_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
             {
                 switch(rand()%2)
                 {
@@ -144,7 +144,7 @@ struct OREGON_DLL_DECL boss_pathaleon_the_calculatorAI : public ScriptedAI
                 case 1: DoScriptText(SAY_DOMINATION_2, m_creature); break;
                 }
 
-                DoCast(target,SPELL_DOMINATION);
+                DoCast(pTarget,SPELL_DOMINATION);
             }
                 Domination_Timer = 25000 + rand()%5000;
             } else Domination_Timer -= diff;
@@ -206,8 +206,8 @@ struct OREGON_DLL_DECL mob_nether_wraithAI : public ScriptedAI
 
         if (ArcaneMissiles_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
-                DoCast(target,SPELL_ARCANE_MISSILES);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                DoCast(pTarget,SPELL_ARCANE_MISSILES);
             else
                 DoCast(m_creature->getVictim(),SPELL_ARCANE_MISSILES);
 

@@ -40,7 +40,7 @@ struct OREGON_DLL_DECL boss_golemaggAI : public ScriptedAI
 {
     boss_golemaggAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
     ScriptedInstance *pInstance;
 
@@ -77,8 +77,8 @@ struct OREGON_DLL_DECL boss_golemaggAI : public ScriptedAI
         //Pyroblast_Timer
         if (Pyroblast_Timer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_PYROBLAST);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_PYROBLAST);
 
             Pyroblast_Timer = 7000;
         } else Pyroblast_Timer -= diff;
@@ -118,7 +118,7 @@ struct OREGON_DLL_DECL mob_core_ragerAI : public ScriptedAI
 {
     mob_core_ragerAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     uint32 Mangle_Timer;

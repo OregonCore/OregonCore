@@ -95,7 +95,7 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
     {
         MoveEvent = true;
         MovePhase = 0;
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -145,7 +145,7 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
         m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY + 1, 5122);
     }
 
-    void SendAttacker(Unit* target)
+    void SendAttacker(Unit *pTarget)
     {
         std::list<Creature*> templist;
         float x, y, z;
@@ -174,7 +174,7 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
             if ((*i) && m_creature->IsWithinDistInMap((*i),25))
             {
                 (*i)->SetNoCallAssistance(true);
-                (*i)->AI()->AttackStart(target);
+                (*i)->AI()->AttackStart(pTarget);
             }
         }
     }
@@ -406,9 +406,9 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
             {
                 DoYell(YELL_SURGE, LANG_UNIVERSAL, NULL);
                 DoPlaySoundToSet(m_creature, SOUND_YELL_SURGE);
-                Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 1, 45, true);
-                if (target)
-                    DoCast(target, SPELL_SURGE);
+                Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 45, true);
+                if (pTarget)
+                    DoCast(pTarget, SPELL_SURGE);
                 Surge_Timer = 15000 + rand()%5000;
             } else Surge_Timer -= diff;
         }

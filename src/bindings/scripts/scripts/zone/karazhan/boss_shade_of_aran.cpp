@@ -83,7 +83,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
 {
     boss_aranAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
@@ -197,10 +197,10 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
         //store the threat list in a different container
         for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
         {
-            Unit *target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+            Unit *pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
             //only on alive players
-            if (target && target->isAlive() && target->GetTypeId() == TYPEID_PLAYER)
-                targets.push_back(target);
+            if (pTarget && pTarget->isAlive() && pTarget->GetTypeId() == TYPEID_PLAYER)
+                targets.push_back(pTarget);
         }
 
         //cut down to size if we have more than 3 targets
@@ -311,9 +311,9 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
         {
             if (!m_creature->IsNonMeleeSpellCasted(false))
             {
-                Unit* target = NULL;
-                target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                if (!target)
+                Unit *pTarget = NULL;
+                pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                if (!pTarget)
                     return;
 
                 uint32 Spells[3];
@@ -340,7 +340,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
                 if (AvailableSpells)
                 {
                     CurrentNormalSpell = Spells[rand() % AvailableSpells];
-                    DoCast(target, CurrentNormalSpell);
+                    DoCast(pTarget, CurrentNormalSpell);
                 }
             }
             NormalCastTimer = 1000;

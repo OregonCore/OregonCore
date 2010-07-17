@@ -79,8 +79,8 @@ struct OREGON_DLL_DECL boss_huhuranAI : public ScriptedAI
         // Wyvern Timer
         if (Wyvern_Timer < diff)
         {
-            if (Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_WYVERNSTING);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget,SPELL_WYVERNSTING);
             Wyvern_Timer = 15000 + rand()%17000;
         } else Wyvern_Timer -= diff;
 

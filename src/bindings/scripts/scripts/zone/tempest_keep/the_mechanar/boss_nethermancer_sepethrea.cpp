@@ -45,7 +45,7 @@ struct OREGON_DLL_DECL boss_nethermancer_sepethreaAI : public ScriptedAI
 {
     boss_nethermancer_sepethreaAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         HeroicMode = m_creature->GetMap()->IsHeroic();
     }
 
@@ -166,7 +166,7 @@ struct OREGON_DLL_DECL mob_ragin_flamesAI : public ScriptedAI
 {
     mob_ragin_flamesAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());        HeroicMode = m_creature->GetMap()->IsHeroic();
+        pInstance = c->GetInstanceData();        HeroicMode = m_creature->GetMap()->IsHeroic();
     }
 
     ScriptedInstance *pInstance;
@@ -216,8 +216,8 @@ struct OREGON_DLL_DECL mob_ragin_flamesAI : public ScriptedAI
 
         if (!onlyonce)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                m_creature->GetMotionMaster()->MoveChase(target);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                m_creature->GetMotionMaster()->MoveChase(pTarget);
             onlyonce = true;
         }
 

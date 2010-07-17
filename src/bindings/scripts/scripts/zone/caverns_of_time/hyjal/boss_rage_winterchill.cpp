@@ -34,7 +34,7 @@ struct OREGON_DLL_DECL boss_rage_winterchillAI : public hyjal_trashAI
 {
     boss_rage_winterchillAI(Creature *c) : hyjal_trashAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         go = false;
         pos = 0;
     }
@@ -86,9 +86,9 @@ struct OREGON_DLL_DECL boss_rage_winterchillAI : public hyjal_trashAI
         pos = i;
         if (i == 7 && pInstance)
         {
-            Unit* target = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_JAINAPROUDMOORE));
-            if (target && target->isAlive())
-                m_creature->AddThreat(target,0.0);
+            Unit *pTarget = Unit::GetUnit((*m_creature), pInstance->GetData64(DATA_JAINAPROUDMOORE));
+            if (pTarget && pTarget->isAlive())
+                m_creature->AddThreat(pTarget,0.0);
         }
     }
 

@@ -212,23 +212,23 @@ struct OREGON_DLL_DECL boss_ragnarosAI : public Scripted_NoMovementAI
             m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             m_creature->HandleEmoteCommand(EMOTE_ONESHOT_SUBMERGE);
 
-            Unit* target = NULL;
-            target = SelectUnit(SELECT_TARGET_RANDOM,0);
+            Unit *pTarget = NULL;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
 
             if (!HasSubmergedOnce)
             {
                 DoScriptText(SAY_REINFORCEMENTS1, m_creature);
 
                 // summon 10 elementals
-                Unit* target = NULL;
+                Unit *pTarget = NULL;
                 for (int i = 0; i < 9;i++)
                 {
-                    target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                    if (target)
+                    pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                    if (pTarget)
                     {
-                        Summoned = m_creature->SummonCreature(12143,target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(),0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,900000);
+                        Summoned = m_creature->SummonCreature(12143,pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(),0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,900000);
                         if (Summoned)
-                            ((CreatureAI*)Summoned->AI())->AttackStart(target);
+                            ((CreatureAI*)Summoned->AI())->AttackStart(pTarget);
                     }
                 }
 
@@ -241,15 +241,15 @@ struct OREGON_DLL_DECL boss_ragnarosAI : public Scripted_NoMovementAI
             {
                 DoScriptText(SAY_REINFORCEMENTS2, m_creature);
 
-                Unit* target = NULL;
+                Unit *pTarget = NULL;
                 for (int i = 0; i < 9;i++)
                 {
-                    target = SelectUnit(SELECT_TARGET_RANDOM,0);
-                    if (target)
+                    pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                    if (pTarget)
                     {
-                        Summoned = m_creature->SummonCreature(12143,target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(),0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,900000);
+                        Summoned = m_creature->SummonCreature(12143,pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(),0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,900000);
                         if (Summoned)
-                            ((CreatureAI*)Summoned->AI())->AttackStart(target);
+                            ((CreatureAI*)Summoned->AI())->AttackStart(pTarget);
                     }
                 }
 

@@ -198,7 +198,7 @@ struct OREGON_DLL_DECL mob_illidari_councilAI : public ScriptedAI
 {
     mob_illidari_councilAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         for (uint8 i = 0; i < 4; ++i)
             Council[i] = 0;
     }
@@ -253,11 +253,11 @@ struct OREGON_DLL_DECL mob_illidari_councilAI : public ScriptedAI
     void AttackStart(Unit* who) {}
     void MoveInLineOfSight(Unit* who) {}
 
-    void StartEvent(Unit *target)
+    void StartEvent(Unit *pTarget)
     {
         if (!pInstance) return;
 
-        if (target && target->isAlive())
+        if (pTarget && pTarget->isAlive())
         {
             Council[0] = pInstance->GetData64(DATA_GATHIOSTHESHATTERER);
             Council[1] = pInstance->GetData64(DATA_HIGHNETHERMANCERZEREVOR);
@@ -278,7 +278,7 @@ struct OREGON_DLL_DECL mob_illidari_councilAI : public ScriptedAI
                 {
                     Member = Unit::GetUnit((*m_creature), Council[i]);
                     if (Member && Member->isAlive())
-                        ((Creature*)Member)->AI()->AttackStart(target);
+                        ((Creature*)Member)->AI()->AttackStart(pTarget);
                 }
             }
 
@@ -354,7 +354,7 @@ struct OREGON_DLL_DECL boss_illidari_councilAI : public ScriptedAI
 {
     boss_illidari_councilAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         for (uint8 i = 0; i < 4; ++i)
             Council[i] = 0;
         LoadedGUIDs = false;
@@ -567,12 +567,12 @@ struct OREGON_DLL_DECL boss_gathios_the_shattererAI : public boss_illidari_counc
 
         if (HammerOfJusticeTimer < diff)
         {
-            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0,40,true))
+            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0,40,true))
             {
                 // is in ~10-40 yd range
-                if (m_creature->GetDistance2d(target) > 10)
+                if (m_creature->GetDistance2d(pTarget) > 10)
                 {
-                    if (TryDoCast(target, SPELL_HAMMER_OF_JUSTICE))
+                    if (TryDoCast(pTarget, SPELL_HAMMER_OF_JUSTICE))
                         HammerOfJusticeTimer = 20000;
                 }
             }
@@ -673,9 +673,9 @@ struct OREGON_DLL_DECL boss_high_nethermancer_zerevorAI : public boss_illidari_c
         {
             if (!m_creature->IsNonMeleeSpellCasted(false))
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
-                    DoCast(target, SPELL_BLIZZARD);
+                    DoCast(pTarget, SPELL_BLIZZARD);
                     BlizzardTimer = 45000;
                     FlamestrikeTimer += 10000;
                 }
@@ -686,9 +686,9 @@ struct OREGON_DLL_DECL boss_high_nethermancer_zerevorAI : public boss_illidari_c
         {
             if (!m_creature->IsNonMeleeSpellCasted(false))
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
-                    DoCast(target, SPELL_FLAMESTRIKE);
+                    DoCast(pTarget, SPELL_FLAMESTRIKE);
                     FlamestrikeTimer = 45000;
                     BlizzardTimer += 10000;
                 }
@@ -746,9 +746,9 @@ struct OREGON_DLL_DECL boss_lady_malandeAI : public boss_illidari_councilAI
 
         if (DivineWrathTimer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
-                if (TryDoCast(target, SPELL_DIVINE_WRATH))
+                if (TryDoCast(pTarget, SPELL_DIVINE_WRATH))
                     DivineWrathTimer = 20000 + rand()%20 * 1000;
             }
         } else DivineWrathTimer -= diff;
@@ -789,13 +789,13 @@ struct OREGON_DLL_DECL boss_veras_darkshadowAI : public boss_illidari_councilAI
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
-    void SpellHitTarget(Unit *target, const SpellEntry *spell)
+    void SpellHitTarget(Unit *pTarget, const SpellEntry *spell)
     {
         if (spell->Id != 41485)
         {
-            if (target->GetTypeId() == TYPEID_PLAYER)
+            if (pTarget->GetTypeId() == TYPEID_PLAYER)
             {
-                EnvenomTargetGUID = target->GetGUID();
+                EnvenomTargetGUID = pTarget->GetGUID();
                 EnvenomTimer = 3000;
             }
         }
@@ -820,7 +820,7 @@ struct OREGON_DLL_DECL boss_veras_darkshadowAI : public boss_illidari_councilAI
         {
             if (VanishTimer < diff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
                     DoCast(m_creature,SPELL_DEADLY_POISON_TRIGGER,true);
                     DoCast(m_creature,SPELL_VANISH,false);
@@ -839,12 +839,12 @@ struct OREGON_DLL_DECL boss_veras_darkshadowAI : public boss_illidari_councilAI
             {
                 if (EnvenomTargetGUID)
                 {
-                    if (Unit* target = Unit::GetUnit((*m_creature),EnvenomTargetGUID))
+                    if (Unit *pTarget = Unit::GetUnit((*m_creature),EnvenomTargetGUID))
                     {
-                        if (target->HasAura(SPELL_DEADLY_POISON,0))
+                        if (pTarget->HasAura(SPELL_DEADLY_POISON,0))
                         {
                             if (rand()%3 == 0)
-                                DoCast(target,SPELL_ENVENOM);
+                                DoCast(pTarget,SPELL_ENVENOM);
                         }
                     }
                 }

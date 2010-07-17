@@ -63,7 +63,7 @@ float VoidPortalCoords[5][3] =
 class EmpoweringShadowsAura: public Aura
 {
     public:
-        EmpoweringShadowsAura(SpellEntry *spell, uint32 eff, int32 *bp, Unit *target, Unit *caster) : Aura(spell, eff, bp, target, caster, NULL) {}
+        EmpoweringShadowsAura(SpellEntry *spell, uint32 eff, int32 *bp, Unit *pTarget, Unit *caster) : Aura(spell, eff, bp, pTarget, caster, NULL) {}
 };
 
 struct OREGON_DLL_DECL mob_voidtravelerAI : public ScriptedAI
@@ -132,7 +132,7 @@ struct OREGON_DLL_DECL boss_grandmaster_vorpilAI : public ScriptedAI
 {
     boss_grandmaster_vorpilAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance = (c->GetInstanceData());
+        pInstance = c->GetInstanceData();
         HeroicMode = m_creature->GetMap()->IsHeroic();
         Intro = false;
     }
@@ -268,10 +268,10 @@ struct OREGON_DLL_DECL boss_grandmaster_vorpilAI : public ScriptedAI
 
         if (HeroicMode && banish_Timer < diff)
         {
-            Unit *target = SelectTarget(SELECT_TARGET_RANDOM,0,30,false);
-            if (target)
+            Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,30,false);
+            if (pTarget)
             {
-                DoCast(target,SPELL_BANISH);
+                DoCast(pTarget,SPELL_BANISH);
                 banish_Timer = 16000;
             }
         } else banish_Timer -= diff;

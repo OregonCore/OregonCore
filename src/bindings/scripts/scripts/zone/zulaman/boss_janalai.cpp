@@ -101,7 +101,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
 {
     boss_janalaiAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance =(c->GetInstanceData());
+        pInstance =c->GetInstanceData();
 
         SpellEntry *TempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_HATCH_EGG);
         if (TempSpell && TempSpell->EffectImplicitTargetA[0] != 1)
@@ -180,11 +180,11 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
 //        DoZoneInCombat();
     }
 
-    void DamageDeal(Unit* target, uint32 &damage)
+    void DamageDeal(Unit *pTarget, uint32 &damage)
     {
         if (isFlameBreathing)
         {
-            if (!m_creature->HasInArc(M_PI/6, target))
+            if (!m_creature->HasInArc(M_PI/6, pTarget))
                 damage = 0;
         }
     }
@@ -433,11 +433,11 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
 
         if (FireBreathTimer < diff)
         {
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             {
                 m_creature->AttackStop();
                 m_creature->GetMotionMaster()->Clear();
-                m_creature->CastSpell(target, SPELL_FLAME_BREATH, false);
+                m_creature->CastSpell(pTarget, SPELL_FLAME_BREATH, false);
                 m_creature->StopMoving();
                 isFlameBreathing = true;
             }
@@ -481,7 +481,7 @@ struct OREGON_DLL_DECL mob_amanishi_hatcherAI : public ScriptedAI
 {
     mob_amanishi_hatcherAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance =(c->GetInstanceData());
+        pInstance =c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
@@ -612,7 +612,7 @@ struct OREGON_DLL_DECL mob_hatchlingAI : public ScriptedAI
 {
     mob_hatchlingAI(Creature *c) : ScriptedAI(c)
     {
-        pInstance =(c->GetInstanceData());
+        pInstance =c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
