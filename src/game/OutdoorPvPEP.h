@@ -59,8 +59,6 @@ enum OutdoorPvPEPWorldStates{
     EP_UI_TOWER_COUNT_H = 2328
 };
 
-const uint32 EP_NPT_BUFF = EP_TOWER_NUM;
-
 enum EP_Summons {
     EP_EWT_COMMANDER = 0,
     EP_EWT_SOLDIER1,
@@ -68,6 +66,11 @@ enum EP_Summons {
     EP_EWT_SOLDIER3,
     EP_EWT_SOLDIER4,
     EP_PWT_FLIGHTMASTER,
+};
+ 
+enum EP_GoSummons {
+    EP_NPT_SHRINE = EP_TOWER_NUM,
+    EP_NPT_SHRINE_AURA,
 };
 
 const go_type EPCapturePoints[EP_TOWER_NUM] = {
@@ -118,11 +121,10 @@ enum EP_TowerStates {
     EP_TS_H = 64
 };
 
-// when spawning, pay attention at setting the faction manually!
 const creature_type EP_PWT_FlightMaster = {17209,0,0,2987.5,-3049.11,120.126,5.75959};
 
-// after spawning, modify the faction so that only the controller will be able to use it with SetUInt32Value(GAMEOBJECT_FACTION, faction_id);
 const go_type EP_NPT_LordaeronShrine = {181682,0,3167.72,-4355.91,138.785,1.69297,0,0,0.748956,0.66262};
+const go_type EP_NPT_LordaeronShrineAura = {180100,0,3167.72,-4355.91,138.785,1.69297,0,0,0.748956,0.66262};
 
 class OPvPCapturePointEP : public OPvPCapturePoint
 {

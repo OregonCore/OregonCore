@@ -425,17 +425,22 @@ void OPvPCapturePointEP::SummonShrine(uint32 team)
     if (EP_TOWER_EVENT_TEAM[EP_TOWER_NORTHPASS] != team)
     {
         EP_TOWER_EVENT_TEAM[EP_TOWER_NORTHPASS] = team;
-        DelObject(EP_NPT_BUFF);
-        AddObject(EP_NPT_BUFF,EP_NPT_LordaeronShrine.entry,0,EP_NPT_LordaeronShrine.map,EP_NPT_LordaeronShrine.x,EP_NPT_LordaeronShrine.y,EP_NPT_LordaeronShrine.z,EP_NPT_LordaeronShrine.o,EP_NPT_LordaeronShrine.rot0,EP_NPT_LordaeronShrine.rot1,EP_NPT_LordaeronShrine.rot2,EP_NPT_LordaeronShrine.rot3);
-        GameObject * go = HashMapHolder<GameObject>::Find(m_Objects[EP_NPT_BUFF]);
+        DelObject(EP_NPT_SHRINE);
+        AddObject(EP_NPT_SHRINE,EP_NPT_LordaeronShrine.entry,0,EP_NPT_LordaeronShrine.map,EP_NPT_LordaeronShrine.x,EP_NPT_LordaeronShrine.y,EP_NPT_LordaeronShrine.z,EP_NPT_LordaeronShrine.o,EP_NPT_LordaeronShrine.rot0,EP_NPT_LordaeronShrine.rot1,EP_NPT_LordaeronShrine.rot2,EP_NPT_LordaeronShrine.rot3);
+        GameObject * go = HashMapHolder<GameObject>::Find(m_Objects[EP_NPT_SHRINE]);
         if (go)
             go->SetUInt32Value(GAMEOBJECT_FACTION,(team == ALLIANCE ? 84 : 83));
+
+        DelObject(EP_NPT_SHRINE_AURA);
+        uint32 shrineEntry = (team == ALLIANCE ? EP_NPT_LordaeronShrineAura.entry : EP_NPT_LordaeronShrineAura.entry + 1);
+        AddObject(EP_NPT_SHRINE_AURA,shrineEntry,0,EP_NPT_LordaeronShrineAura.map,EP_NPT_LordaeronShrineAura.x,EP_NPT_LordaeronShrineAura.y,EP_NPT_LordaeronShrineAura.z,EP_NPT_LordaeronShrineAura.o,EP_NPT_LordaeronShrineAura.rot0,EP_NPT_LordaeronShrineAura.rot1,EP_NPT_LordaeronShrineAura.rot2,EP_NPT_LordaeronShrineAura.rot3);
     }
 }
 
 void OPvPCapturePointEP::UnsummonShrine()
 {
-    DelObject(EP_NPT_BUFF);
+    DelObject(EP_NPT_SHRINE);
+    DelObject(EP_NPT_SHRINE_AURA);
     EP_TOWER_EVENT_TEAM[EP_TOWER_NORTHPASS] = 0;
 }
 
