@@ -4016,8 +4016,6 @@ bool Unit::RemoveNoStackAurasDueToAura(Aura *Aur)
     uint32 spellId = Aur->GetId();
     uint32 effIndex = Aur->GetEffIndex();
 
-    SpellSpecific spellId_spec = GetSpellSpecific(spellId);
-
     AuraMap::iterator i,next;
     for (i = m_Auras.begin(); i != m_Auras.end(); i = next)
     {
@@ -12083,6 +12081,7 @@ void Unit::RemoveCharmedOrPossessedBy(Unit *charmer)
     DeleteThreatList();
     SetCharmerGUID(0);
     RestoreFaction();
+    GetMotionMaster()->InitDefault();
 
     if (possess)
     {

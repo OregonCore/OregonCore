@@ -255,20 +255,18 @@ void ArenaTeam::SetCaptain(const uint64& guid)
     if (newcaptain)
     {
         newcaptain->SetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + 1 + (GetSlot() * 6), 0);
-        sLog.outArena("Player: %s [GUID: %u] promoted player: %s [GUID: %u] to leader of arena team [Id: %u] [Type: %u].", oldcaptain->GetName(), oldcaptain->GetGUIDLow(), newcaptain->GetName(), newcaptain->GetGUID(), GetId(), GetType());
+        sLog.outArena("Player: %s [GUID: %u] promoted player: %s [GUID: %u] to leader of arena team [Id: %u] [Type: %u].", oldcaptain->GetName(), oldcaptain->GetGUIDLow(), newcaptain->GetName(), newcaptain->GetGUIDLow(), GetId(), GetType());
     }
 }
 
 void ArenaTeam::DelMember(uint64 guid)
 {
     for (MemberList::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
-    {
         if (itr->guid == guid)
         {
             m_members.erase(itr);
             break;
         }
-    }
 
     if (Player *player = objmgr.GetPlayer(guid))
     {
@@ -285,18 +283,20 @@ void ArenaTeam::DelMember(uint64 guid)
 void ArenaTeam::Disband(WorldSession *session)
 {
     // event
-    WorldPacket data;
-    session->BuildArenaTeamEventPacket(&data, ERR_ARENA_TEAM_DISBANDED_S, 2, session->GetPlayerName(), GetName(), "");
-    BroadcastPacket(&data);
-
-    while (!m_members.empty())
+    if (session)
     {
-        // Removing from members is done in DelMember.
-        DelMember(m_members.front().guid);
+        WorldPacket data;
+        session->BuildArenaTeamEventPacket(&data, ERR_ARENA_TEAM_DISBANDED_S, 2, session->GetPlayerName(), GetName(), "");
+        BroadcastPacket(&data);
     }
 
-    if (Player *player = session->GetPlayer())
-        sLog.outArena("Player: %s [GUID: %u] disbanded arena team type: %u [Id: %u].", player->GetName(), player->GetGUIDLow(), GetType(), GetId());
+    while (!m_members.empty())
+        // Removing from members is done in DelMember.
+        DelMember(m_members.front().guid);
+
+    if (session)
+        if (Player *player = session->GetPlayer())
+            sLog.outArena("Player: %s [GUID: %u] disbanded arena team type: %u [Id: %u].", player->GetName(), player->GetGUIDLow(), GetType(), GetId());
 
     CharacterDatabase.BeginTransaction();
     CharacterDatabase.PExecute("DELETE FROM arena_team WHERE arenateamid = '%u'", m_TeamId);
@@ -509,7 +509,7 @@ void ArenaTeam::FinishGame(int32 mod)
     m_stats.games_season += 1;
     // update team's rank
     m_stats.rank = 1;
-    ObjectMgr::ArenaTeamMap::iterator i = objmgr.GetArenaTeamMapBegin();
+    ObjectMgr::ArenaTeamMap::const_iterator i = objmgr.GetArenaTeamMapBegin();
     for (; i != objmgr.GetArenaTeamMapEnd(); ++i)
     {
         if (i->second->GetType() == m_Type && i->second->GetStats().rating > m_stats.rating)
@@ -624,7 +624,7 @@ void ArenaTeam::UpdateArenaPointsHelper(std::map<uint32, uint32>& PlayerPoints)
         return;
     // to get points, a player has to participate in at least 30% of the matches
     uint32 min_plays = (uint32) ceil(m_stats.games_week * 0.3);
-    for (MemberList::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
+    for (MemberList::const_iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
     {
         // the player participated in enough games, update his points
         uint32 points_to_add = 0;
@@ -671,12 +671,8 @@ void ArenaTeam::FinishWeek()
 bool ArenaTeam::IsFighting() const
 {
     for (MemberList::const_iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
-    {
         if (Player *p = objmgr.GetPlayer(itr->guid))
-        {
             if (p->GetMap()->IsBattleArena())
                 return true;
-        }
-    }
     return false;
 }

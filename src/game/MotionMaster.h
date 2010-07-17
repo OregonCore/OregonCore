@@ -97,7 +97,7 @@ class OREGON_DLL_SPEC MotionMaster //: private std::stack<MovementGenerator *>
 
         explicit MotionMaster(Unit *unit) : i_owner(unit), m_expList(NULL), m_cleanFlag(MMCF_NONE), i_top(-1)
         {
-            for (int i = 0; i < MAX_MOTION_SLOT; ++i)
+            for (uint8 i = 0; i < MAX_MOTION_SLOT; ++i)
             {
                 Impl[i] = NULL;
                 needInit[i] = true;
@@ -106,6 +106,7 @@ class OREGON_DLL_SPEC MotionMaster //: private std::stack<MovementGenerator *>
         ~MotionMaster();
 
         void Initialize();
+        void InitDefault();
 
         int size() const { return i_top + 1; }
         _Ty top() const { return Impl[i_top]; }
