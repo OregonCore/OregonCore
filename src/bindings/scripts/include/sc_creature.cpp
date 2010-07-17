@@ -678,6 +678,9 @@ BossAI::BossAI(Creature *c, uint32 id) : ScriptedAI(c)
 
 void BossAI::_Reset()
 {
+    if (!me->isAlive())
+        return;
+
     events.Reset();
     summons.DespawnAll();
     if (instance)
@@ -689,7 +692,10 @@ void BossAI::_JustDied()
     events.Reset();
     summons.DespawnAll();
     if (instance)
+    {
         instance->SetBossState(bossId, DONE);
+        instance->SaveToDB();
+    }
 }
 
 void BossAI::_EnterCombat()
