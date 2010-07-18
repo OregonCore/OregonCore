@@ -1105,8 +1105,7 @@ void World::SetInitialWorldSettings()
     objmgr.SetHighestGuids();
 
     ///- Check the existence of the map files for all races' startup areas.
-    if ( !MapManager::ExistMapAndVMap(0,-6240.32f, 331.033f)
-        ||!MapManager::ExistMapAndVMap(0,-8949.95f,-132.493f)
+    if (!MapManager::ExistMapAndVMap(0,-6240.32f, 331.033f)
         ||!MapManager::ExistMapAndVMap(0,-8949.95f,-132.493f)
         ||!MapManager::ExistMapAndVMap(1,-618.518f,-4251.67f)
         ||!MapManager::ExistMapAndVMap(0, 1676.35f, 1677.45f)
@@ -1120,8 +1119,8 @@ void World::SetInitialWorldSettings()
     }
 
     ///- Loading strings. Getting no records means core load has to be canceled because no error message can be output.
-    sLog.outString("Loading Oregon strings...");
     sLog.outString();
+    sLog.outString("Loading Oregon strings...");
     if (!objmgr.LoadOregonStrings())
         exit(1);                                            // Error message displayed in function already
 
@@ -1144,7 +1143,7 @@ void World::SetInitialWorldSettings()
     sLog.outString("Loading Script Names...");
     objmgr.LoadScriptNames();
 
-    sLog.outString("Loading InstanceTemplate...");
+    sLog.outString("Loading Instance Template...");
     objmgr.LoadInstanceTemplate();
 
     sLog.outString("Loading SkillLineAbilityMultiMap Data...");
@@ -1251,10 +1250,7 @@ void World::SetInitialWorldSettings()
     objmgr.LoadGameobjectRespawnTimes();
 
     sLog.outString("Loading Game Event Data...");
-    sLog.outString();
     gameeventmgr.LoadFromDB();
-    sLog.outString(">>> Game Event Data loaded");
-    sLog.outString();
 
     sLog.outString("Loading Weather Data...");
     objmgr.LoadWeatherZoneChances();
@@ -1263,10 +1259,7 @@ void World::SetInitialWorldSettings()
     objmgr.LoadQuests();                                    // must be loaded after DBCs, creature_template, item_template, gameobject tables
 
     sLog.outString("Loading Quests Relations...");
-    sLog.outString();
     objmgr.LoadQuestRelations();                            // must be after quest load
-    sLog.outString(">>> Quests Relations loaded");
-    sLog.outString();
 
     sLog.outString("Loading AreaTrigger definitions...");
     objmgr.LoadAreaTriggerTeleports();
@@ -1301,11 +1294,8 @@ void World::SetInitialWorldSettings()
     sLog.outString("Loading linked spells...");
     spellmgr.LoadSpellLinked();
 
-    sLog.outString("Loading Player Create Info & Level Stats...");
-    sLog.outString();
+    sLog.outString("Loading Player Create Data...");
     objmgr.LoadPlayerInfo();
-    sLog.outString(">>> Player Create Info & Level Stats loaded");
-    sLog.outString();
 
     sLog.outString("Loading Exploration BaseXP Data...");
     objmgr.LoadExplorationBaseXP();
@@ -1326,10 +1316,7 @@ void World::SetInitialWorldSettings()
     objmgr.LoadSpellDisabledEntrys();
 
     sLog.outString("Loading Loot Tables...");
-    sLog.outString();
     LoadLootTables();
-    sLog.outString(">>> Loot Tables loaded");
-    sLog.outString();
 
     sLog.outString("Loading Skill Discovery Table...");
     LoadSkillDiscoveryTable();
@@ -1341,12 +1328,10 @@ void World::SetInitialWorldSettings()
     objmgr.LoadFishingBaseSkillLevel();
 
     ///- Load dynamic data tables from the database
-    sLog.outString("Loading Auctions...");
-    sLog.outString();
+    sLog.outString("Loading Item Auctions...");
     auctionmgr.LoadAuctionItems();
+    sLog.outString("Loading Auctions...");
     auctionmgr.LoadAuctions();
-    sLog.outString(">>> Auctions loaded");
-    sLog.outString();
 
     sLog.outString("Loading Guilds...");
     objmgr.LoadGuilds();
@@ -1465,6 +1450,10 @@ void World::SetInitialWorldSettings()
     sLog.outString("Starting Map System");
     MapManager::Instance().Initialize();
 
+    sLog.outString("Starting Game Event system...");
+    uint32 nextGameEvent = gameeventmgr.Initialize();
+    m_timers[WUPDATE_EVENTS].SetInterval(nextGameEvent);    //depend on next event
+
     ///- Initialize Battlegrounds
     sLog.outString("Starting BattleGround System");
     sBattleGroundMgr.CreateInitialBattleGrounds();
@@ -1482,14 +1471,10 @@ void World::SetInitialWorldSettings()
     objmgr.LoadTransportEvents();
 
     sLog.outString("Deleting expired bans...");
-    LoginDatabase.Execute("DELETE FROM ip_banned WHERE unbandate<=UNIX_TIMESTAMP() AND unbandate<>bandate");
+    LoginDatabase.Execute("DELETE FROM ip_banned WHERE unbandate <= UNIX_TIMESTAMP() AND unbandate<>bandate");
 
     sLog.outString("Calculate next daily quest reset time...");
     InitDailyQuestResetTime();
-
-    sLog.outString("Starting Game Event system...");
-    uint32 nextGameEvent = gameeventmgr.Initialize();
-    m_timers[WUPDATE_EVENTS].SetInterval(nextGameEvent);    //depend on next event
 
     sLog.outString("Initialize AuctionHouseBot...");
     auctionbot.Initialize();
