@@ -53,7 +53,7 @@ _logoutTime(0), m_inQueue(false), m_playerLoading(false), m_playerLogout(false),
     {
         m_Address = sock->GetRemoteAddress ();
         sock->AddReference ();
-        LoginDatabase.PExecute("UPDATE account SET active_realm_id = %d WHERE id = '%u'", realmID, GetAccountId());
+        LoginDatabase.PExecute("UPDATE account SET active_realm_id = %d WHERE id = %u;", realmID, GetAccountId());
     }
 }
 
@@ -76,13 +76,14 @@ WorldSession::~WorldSession()
     WorldPacket* packet;
     while (_recvQueue.next(packet))
         delete packet;
-    LoginDatabase.PExecute("UPDATE account SET active_realm_id = 0 WHERE id = '%u'", GetAccountId());
+
+    LoginDatabase.PExecute("UPDATE account SET active_realm_id = 0 WHERE id = %u;", GetAccountId());
     CharacterDatabase.PExecute("UPDATE characters SET online = 0 WHERE account = %u;", GetAccountId());
 }
 
 void WorldSession::SizeError(WorldPacket const& packet, uint32 size) const
 {
-    sLog.outError("Client (account %u) send packet %s (%u) with size %u but expected %u (attempt crash server?), skipped",
+    sLog.outError("Client (account %u) send packet %s (%u) with size " SIZEFMTD " but expected %u (attempt crash server?), skipped",
         GetAccountId(),LookupOpcodeName(packet.GetOpcode()),packet.GetOpcode(),packet.size(),size);
 }
 
@@ -156,7 +157,7 @@ void WorldSession::LogUnexpectedOpcode(WorldPacket* packet, const char *reason)
 /// Logging helper for unexpected opcodes
 void WorldSession::LogUnprocessedTail(WorldPacket *packet)
 {
-    sLog.outError( "SESSION: opcode %s (0x%.4X) have unprocessed tail data (read stop at %u from %u)",
+    sLog.outError("SESSION: opcode %s (0x%.4X) have unprocessed tail data (read stop at %u from %u)",
         LookupOpcodeName(packet->GetOpcode()),
         packet->GetOpcode(),
         packet->rpos(),packet->wpos());
@@ -245,23 +246,23 @@ bool WorldSession::Update(uint32 /*diff*/)
                     sLog.outDebug("Dumping error causing packet:");
                     packet->hexlike();
                 }
-             }
+            }
         }
 
         delete packet;
     }
 
-    ///- Cleanup socket pointer if need
-    if (m_Socket && m_Socket->IsClosed ())
-    {
-        m_Socket->RemoveReference ();
-        m_Socket = NULL;
-    }
-
-    ///- If necessary, log the player out
     time_t currTime = time(NULL);
+    ///- If necessary, log the player out
     if (!m_Socket || (ShouldLogOut(currTime) && !m_playerLoading))
         LogoutPlayer(true);
+
+    ///- Cleanup socket pointer if need
+    if (m_Socket && m_Socket->IsClosed())
+    {
+        m_Socket->RemoveReference();
+        m_Socket = NULL;
+    }
 
     if (!m_Socket)
         return false;                                       //Will remove this session from the world session map
@@ -336,14 +337,13 @@ void WorldSession::LogoutPlayer(bool Save)
             _player->BuildPlayerRepop();
             _player->RepopAtGraveyard();
         }
-
         //drop a flag if player is carrying it
         if (BattleGround *bg = _player->GetBattleGround())
             bg->EventPlayerLoggedOut(_player);
 
         sOutdoorPvPMgr.HandlePlayerLeaveZone(_player,_player->GetZoneId());
 
-        for (int i=0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; i++)
+        for (int i=0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; ++i)
         {
             if (int32 bgTypeId = _player->GetBattleGroundQueueId(i))
             {
@@ -375,12 +375,12 @@ void WorldSession::LogoutPlayer(bool Save)
         if (Save)
         {
             uint32 eslot;
-            for (int j = BUYBACK_SLOT_START; j < BUYBACK_SLOT_END; j++)
+            for (int j = BUYBACK_SLOT_START; j < BUYBACK_SLOT_END; ++j)
             {
                 eslot = j - BUYBACK_SLOT_START;
-                _player->SetUInt64Value(PLAYER_FIELD_VENDORBUYBACK_SLOT_1+eslot*2,0);
-                _player->SetUInt32Value(PLAYER_FIELD_BUYBACK_PRICE_1+eslot,0);
-                _player->SetUInt32Value(PLAYER_FIELD_BUYBACK_TIMESTAMP_1+eslot,0);
+                _player->SetUInt64Value(PLAYER_FIELD_VENDORBUYBACK_SLOT_1 + (eslot * 2), 0);
+                _player->SetUInt32Value(PLAYER_FIELD_BUYBACK_PRICE_1 + eslot, 0);
+                _player->SetUInt32Value(PLAYER_FIELD_BUYBACK_TIMESTAMP_1 + eslot, 0);
             }
             _player->SaveToDB();
         }
@@ -396,14 +396,6 @@ void WorldSession::LogoutPlayer(bool Save)
         if (_player->GetGroup() && !_player->GetGroup()->isRaidGroup() && m_Socket)
             _player->RemoveFromGroup();
 
-        ///- Remove the player from the world
-        // the player may not be in the world when logging out
-        // e.g if he got disconnected during a transfer to another map
-        // calls to GetMap in this case may cause crashes
-        if (_player->IsInWorld()) _player->GetMap()->Remove(_player, false);
-        // RemoveFromWorld does cleanup that requires the player to be in the accessor
-        ObjectAccessor::Instance().RemoveObject(_player);
-
         ///- Send update to group
         if (_player->GetGroup())
             _player->GetGroup()->SendUpdate();
@@ -415,6 +407,15 @@ void WorldSession::LogoutPlayer(bool Save)
         _player->CleanupsBeforeDelete();                    // do some cleanup before deleting to prevent crash at crossreferences to already deleted data
 
         sSocialMgr.RemovePlayerSocial (_player->GetGUIDLow ());
+
+        ///- Remove the player from the world
+        // the player may not be in the world when logging out
+        // e.g if he got disconnected during a transfer to another map
+        // calls to GetMap in this case may cause crashes
+        if (_player->IsInWorld()) _player->GetMap()->Remove(_player, false);
+        // RemoveFromWorld does cleanup that requires the player to be in the accessor
+        ObjectAccessor::Instance().RemoveObject(_player);
+
         delete _player;
         _player = NULL;
 
