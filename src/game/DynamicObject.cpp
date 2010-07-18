@@ -58,8 +58,8 @@ void DynamicObject::RemoveFromWorld()
     ///- Remove the dynamicObject from the accessor
     if (IsInWorld())
     {
-        ObjectAccessor::Instance().RemoveObject(this);
         WorldObject::RemoveFromWorld();
+        ObjectAccessor::Instance().RemoveObject(this);
     }
 }
 

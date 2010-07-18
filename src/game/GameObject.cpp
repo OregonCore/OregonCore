@@ -67,9 +67,8 @@ GameObject::~GameObject()
 {
     if (m_uint32Values)                                      // field array can be not exist if GameOBject not loaded
     {
-        // crash possible at access to deleted GO in Unit::m_gameobj
-        uint64 owner_guid = GetOwnerGUID();
-        if (owner_guid)
+        // Possible crash at access to deleted GO in Unit::m_gameobj
+        if (uint64 owner_guid = GetOwnerGUID())
         {
             Unit* owner = ObjectAccessor::GetUnit(*this,owner_guid);
             if (owner)
@@ -110,8 +109,8 @@ void GameObject::RemoveFromWorld()
         if (m_zoneScript)
             m_zoneScript->OnGameObjectCreate(this, false);
 
-        ObjectAccessor::Instance().RemoveObject(this);
         WorldObject::RemoveFromWorld();
+        ObjectAccessor::Instance().RemoveObject(this);
     }
 }
 

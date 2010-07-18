@@ -188,15 +188,14 @@ void Creature::AddToWorld()
 
 void Creature::RemoveFromWorld()
 {
-    ///- Remove the creature from the accessor
     if (IsInWorld())
     {
         if (m_zoneScript)
             m_zoneScript->OnCreatureCreate(this, false);
         if (m_formation)
             formation_mgr.RemoveCreatureFromGroup(m_formation, this);
-        ObjectAccessor::Instance().RemoveObject(this);
         Unit::RemoveFromWorld();
+        ObjectAccessor::Instance().RemoveObject(this);
     }
 }
 
