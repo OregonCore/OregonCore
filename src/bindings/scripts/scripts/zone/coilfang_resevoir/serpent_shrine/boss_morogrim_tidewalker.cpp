@@ -104,6 +104,7 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
     }
 
     ScriptedInstance* pInstance;
+
     Map::PlayerList const *PlayerList;
 
     uint32 TidalWave_Timer;
@@ -143,7 +144,7 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
             pInstance->SetData(DATA_MOROGRIMTIDEWALKEREVENT, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
         switch(rand()%3)
         {
@@ -153,7 +154,7 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit * /*victim*/)
     {
         DoScriptText(SAY_DEATH, me);
 
@@ -161,21 +162,21 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
             pInstance->SetData(DATA_MOROGRIMTIDEWALKEREVENT, DONE);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
-        PlayerList = &((InstanceMap*)me->GetMap())->GetPlayers();
+        PlayerList = &me->GetMap()->GetPlayers();
         Playercount = PlayerList->getSize();
         StartEvent();
     }
 
-    void ApplyWateryGrave(Unit *player, uint8 i)
+    void ApplyWateryGrave(Unit* pPlayer, uint8 i)
     {
         switch(i)
         {
-        case 0: player->CastSpell(player, SPELL_WATERY_GRAVE_1, true); break;
-        case 1: player->CastSpell(player, SPELL_WATERY_GRAVE_2, true); break;
-        case 2: player->CastSpell(player, SPELL_WATERY_GRAVE_3, true); break;
-        case 3: player->CastSpell(player, SPELL_WATERY_GRAVE_4, true); break;
+        case 0: pPlayer->CastSpell(pPlayer, SPELL_WATERY_GRAVE_1, true); break;
+        case 1: pPlayer->CastSpell(pPlayer, SPELL_WATERY_GRAVE_2, true); break;
+        case 2: pPlayer->CastSpell(pPlayer, SPELL_WATERY_GRAVE_3, true); break;
+        case 3: pPlayer->CastSpell(pPlayer, SPELL_WATERY_GRAVE_4, true); break;
         }
     }
 
@@ -202,7 +203,7 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
                     case 1: DoScriptText(SAY_SUMMON2, me); break;
                 }
 
-                for (uint8 i = 0; i < 10; i++)
+                for (uint8 i = 0; i < 10; ++i)
                 {
                     Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                     Creature* Murloc = me->SummonCreature(MurlocCords[i][0],MurlocCords[i][1],MurlocCords[i][2],MurlocCords[i][3],MurlocCords[i][4], TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
@@ -231,18 +232,24 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
                 Unit *pTarget;
                 using std::set;
                 set<int>list;
-                set<int>::iterator itr;
-                for (uint8 i = 0; i < 4; i++)
+                set<int>::const_iterator itr;
+                for (uint8 i = 0; i < 4; ++i)
                 {
                     counter = 0;
-                    do{pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 50, true);    //pTarget players only
-                    if (counter < Playercount)
-                        break;
-                    if (pTarget) itr = list.find(pTarget->GetGUID());
-                    counter++;
-                    }while (itr != list.end());
-                    if (pTarget){list.insert(pTarget->GetGUID());
-                    ApplyWateryGrave(pTarget, i);
+                    do
+                    {
+                        pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 50, true);    //target players only
+                        if (counter < Playercount)
+                            break;
+                        if (pTarget)
+                            itr = list.find(pTarget->GetGUID());
+                        ++counter;
+                    } while (itr != list.end());
+
+                    if (pTarget)
+                    {
+                        list.insert(pTarget->GetGUID());
+                        ApplyWateryGrave(pTarget, i);
                     }
                 }
 
@@ -265,21 +272,24 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
             //WateryGlobules_Timer
             if (WateryGlobules_Timer < diff)
             {
-                Unit* globuletarget;
+                Unit* pGlobuleTarget;
                 using std::set;
                 set<int>globulelist;
-                set<int>::iterator itr;
-                for (int8 g = 0; g < 4; g++)  //one unit cant cast more than one spell per update, so some players have to cast for us XD
+                set<int>::const_iterator itr;
+                for (uint8 g = 0; g < 4; g++)  //one unit can't cast more than one spell per update, so some players have to cast for us XD
                 {
                     counter = 0;
-                    do {globuletarget = SelectTarget(SELECT_TARGET_RANDOM, 0,50,true);
-                    if (globuletarget) itr = globulelist.find(globuletarget->GetGUID());
-                    if (counter > Playercount)
-                        break;
-                    counter++;
+                    do {
+                        pGlobuleTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 50, true);
+                        if (pGlobuleTarget)
+                            itr = globulelist.find(pGlobuleTarget->GetGUID());
+                        if (counter > Playercount)
+                            break;
+                        ++counter;
                     } while (itr != globulelist.end());
-                    if (globuletarget)globulelist.insert(globuletarget->GetGUID());
-                    globuletarget->CastSpell(globuletarget, globulespell[g], true);
+                    if (pGlobuleTarget)
+                        globulelist.insert(pGlobuleTarget->GetGUID());
+                    pGlobuleTarget->CastSpell(pGlobuleTarget, globulespell[g], true);
                 }
                 DoScriptText(EMOTE_WATERY_GLOBULES, me);
                 WateryGlobules_Timer = 25000;
@@ -308,7 +318,7 @@ struct OREGON_DLL_DECL mob_water_globuleAI : public ScriptedAI
         me->setFaction(14);
     }
 
-    void EnterCombat(Unit *who) {}
+    void EnterCombat(Unit * /*who*/) {}
 
     void MoveInLineOfSight(Unit *who)
     {
@@ -336,7 +346,8 @@ struct OREGON_DLL_DECL mob_water_globuleAI : public ScriptedAI
                 DoCast(me->getVictim(), SPELL_GLOBULE_EXPLOSION);
 
                 //despawn
-                me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                me->ForcedDespawn();
+                return;
             }
             Check_Timer = 500;
         } else Check_Timer -= diff;
@@ -345,13 +356,13 @@ struct OREGON_DLL_DECL mob_water_globuleAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_morogrim_tidewalker(Creature *_Creature)
+CreatureAI* GetAI_boss_morogrim_tidewalker(Creature* pCreature)
 {
-    return new boss_morogrim_tidewalkerAI (_Creature);
+    return new boss_morogrim_tidewalkerAI (pCreature);
 }
-CreatureAI* GetAI_mob_water_globule(Creature *_Creature)
+CreatureAI* GetAI_mob_water_globule(Creature* pCreature)
 {
-    return new mob_water_globuleAI (_Creature);
+    return new mob_water_globuleAI (pCreature);
 }
 
 void AddSC_boss_morogrim_tidewalker()
@@ -359,12 +370,12 @@ void AddSC_boss_morogrim_tidewalker()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_morogrim_tidewalker";
+    newscript->Name = "boss_morogrim_tidewalker";
     newscript->GetAI = &GetAI_boss_morogrim_tidewalker;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_water_globule";
+    newscript->Name = "mob_water_globule";
     newscript->GetAI = &GetAI_mob_water_globule;
     newscript->RegisterSelf();
 }

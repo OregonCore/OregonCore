@@ -119,8 +119,7 @@ uint32 CreatureInfo::GetFirstValidModelId() const
 
 bool AssistDelayEvent::Execute(uint64 /*e_time*/, uint32 /*p_time*/)
 {
-    Unit* victim = Unit::GetUnit(m_owner, m_victim);
-    if (victim)
+    if (Unit* victim = Unit::GetUnit(m_owner, m_victim))
     {
         while (!m_assistants.empty())
         {
@@ -169,8 +168,8 @@ Creature::~Creature()
     delete i_AI;
     i_AI = NULL;
 
-    if (m_uint32Values)
-        sLog.outDetail("Deconstruct Creature Entry = %u", GetEntry());
+    //if (m_uint32Values)
+    //    sLog.outError("Deconstruct Creature Entry = %u", GetEntry());
 }
 
 void Creature::AddToWorld()
@@ -216,17 +215,16 @@ void Creature::SearchFormation()
 
     uint32 lowguid = GetDBTableGUIDLow();
     if (!lowguid)
-    return;
+        return;
 
     CreatureGroupInfoType::iterator frmdata = CreatureGroupMap.find(lowguid);
     if (frmdata != CreatureGroupMap.end())
         formation_mgr.AddCreatureToGroup(frmdata->second->leaderGUID, this);
-
 }
 
 void Creature::RemoveCorpse()
 {
-    if (getDeathState() != CORPSE && !m_isDeadByDefault || getDeathState() != ALIVE && m_isDeadByDefault)
+    if ((getDeathState() != CORPSE && !m_isDeadByDefault) || (getDeathState() != ALIVE && m_isDeadByDefault))
         return;
 
     m_deathTimer = 0;

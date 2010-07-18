@@ -127,7 +127,7 @@ struct OREGON_DLL_DECL boss_fathomlord_karathressAI : public ScriptedAI
             RAdvisors[2] = pInstance->GetData64(DATA_CARIBDIS);
             //Respawn of the 3 Advisors
             Creature* pAdvisor = NULL;
-            for (int i=0; i<3; i++)
+            for (int i=0; i<3; ++i)
 
             if (RAdvisors[i])
             {
@@ -342,8 +342,8 @@ struct OREGON_DLL_DECL boss_fathomguard_sharkkisAI : public ScriptedAI
             Karathress = Unit::GetCreature((*me), pInstance->GetData64(DATA_KARATHRESS));
 
             if (Karathress)
-                ((boss_fathomlord_karathressAI*)Karathress->AI())->EventSharkkisDeath();
-                    ((boss_fathomlord_karathressAI*)Karathress->AI())->EventSharkkisDeath();
+                CAST_AI(boss_fathomlord_karathressAI, Karathress->AI())->EventSharkkisDeath();
+                    CAST_AI(boss_fathomlord_karathressAI, Karathress->AI())->EventSharkkisDeath();
         }
     }
 
@@ -472,7 +472,7 @@ struct OREGON_DLL_DECL boss_fathomguard_tidalvessAI : public ScriptedAI
 
             if (Karathress)
                 if (!me->isAlive() && Karathress)
-                    ((boss_fathomlord_karathressAI*)Karathress->AI())->EventTidalvessDeath();
+                    CAST_AI(boss_fathomlord_karathressAI, Karathress->AI())->EventTidalvessDeath();
         }
     }
 
@@ -529,7 +529,7 @@ struct OREGON_DLL_DECL boss_fathomguard_tidalvessAI : public ScriptedAI
             Unit *SpitfireTotem = Unit::GetUnit(*me, CREATURE_SPITFIRE_TOTEM);
             if (SpitfireTotem)
             {
-                ((Creature*)SpitfireTotem)->AI()->AttackStart(me->getVictim());
+                CAST_CRE(SpitfireTotem)->AI()->AttackStart(me->getVictim());
             }
             Spitfire_Timer = 60000;
         } else Spitfire_Timer -= diff;
@@ -587,7 +587,7 @@ struct OREGON_DLL_DECL boss_fathomguard_caribdisAI : public ScriptedAI
 
             if (Karathress)
                 if (!me->isAlive() && Karathress)
-                    ((boss_fathomlord_karathressAI*)Karathress->AI())->EventCaribdisDeath();
+                    CAST_AI(boss_fathomlord_karathressAI, Karathress->AI())->EventCaribdisDeath();
         }
     }
 
@@ -648,7 +648,7 @@ struct OREGON_DLL_DECL boss_fathomguard_caribdisAI : public ScriptedAI
             Creature *Cyclone = me->SummonCreature(CREATURE_CYCLONE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), (rand()%5), TEMPSUMMON_TIMED_DESPAWN, 15000);
             if (Cyclone)
             {
-                ((Creature*)Cyclone)->SetFloatValue(OBJECT_FIELD_SCALE_X, 3.0f);
+                CAST_CRE(Cyclone)->SetFloatValue(OBJECT_FIELD_SCALE_X, 3.0f);
                 Cyclone->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 Cyclone->setFaction(me->getFaction());
                 Cyclone->CastSpell(Cyclone, SPELL_CYCLONE_CYCLONE, true);

@@ -3603,12 +3603,6 @@ bool Unit::isInFront(Unit const* target, float distance,  float arc) const
     return IsWithinDistInMap(target, distance) && HasInArc(arc, target);
 }
 
-void Unit::SetInFront(Unit const* target)
-{
-    if (!hasUnitState(UNIT_STAT_CANNOT_TURN))
-        SetOrientation(GetAngle(target));
-}
-
 bool Unit::isInBack(Unit const* target, float distance, float arc) const
 {
     return IsWithinDistInMap(target, distance) && !HasInArc(2 * M_PI - arc, target);
@@ -12312,12 +12306,12 @@ void Unit::SetFlying(bool apply)
     if (apply)
     {
         SetByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02);
-        AddUnitMovementFlag(MOVEMENTFLAG_FLYING + MOVEMENTFLAG_FLYING2);
+        AddUnitMovementFlag(MOVEMENTFLAG_FLYING | MOVEMENTFLAG_FLYING2);
     }
     else
     {
         RemoveByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02);
-        RemoveUnitMovementFlag(MOVEMENTFLAG_FLYING + MOVEMENTFLAG_FLYING2);
+        RemoveUnitMovementFlag(MOVEMENTFLAG_FLYING | MOVEMENTFLAG_FLYING2);
     }
 }
 

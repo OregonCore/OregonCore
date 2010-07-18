@@ -35,9 +35,9 @@ EndScriptData */
 5 - Lady Vashj Event
 */
 
-bool GOHello_go_bridge_console(Player *player, GameObject* go)
+bool GOHello_go_bridge_console(Player* /*pPlayer*/, GameObject* pGo)
 {
-    ScriptedInstance* pInstance = go->GetInstanceData();
+    ScriptedInstance* pInstance = pGo->GetInstanceData();
 
     if (!pInstance)
         return false;
@@ -50,7 +50,7 @@ bool GOHello_go_bridge_console(Player *player, GameObject* go)
 
 struct OREGON_DLL_DECL instance_serpentshrine_cavern : public ScriptedInstance
 {
-    instance_serpentshrine_cavern(Map *map) : ScriptedInstance(map) {Initialize();};
+    instance_serpentshrine_cavern(Map* pMap) : ScriptedInstance(pMap) {Initialize();};
 
     uint64 LurkerBelow;
     uint64 Sharkkis;
@@ -138,22 +138,18 @@ struct OREGON_DLL_DECL instance_serpentshrine_cavern : public ScriptedInstance
         }
     }
 
-    void OpenDoor(uint64 DoorGUID, bool open)
-    {
-        HandleGameObject(DoorGUID, open, NULL);
-    }
-
-    void OnCreatureCreate(Creature *creature, uint32 creature_entry)
+    void OnCreatureCreate(Creature *pCreature, uint32 creature_entry)
     {
         switch(creature_entry)
         {
-            case 21212: LadyVashj = creature->GetGUID();            break;
-            case 21214: Karathress = creature->GetGUID();           break;
-            case 21966: Sharkkis = creature->GetGUID();             break;
-            case 21217: LurkerBelow = creature->GetGUID();          break;
-            case 21965: Tidalvess = creature->GetGUID();            break;
-            case 21964: Caribdis = creature->GetGUID();             break;
-            case 21215: LeotherasTheBlind = creature->GetGUID();    break;}
+            case 21212: LadyVashj = pCreature->GetGUID();            break;
+            case 21214: Karathress = pCreature->GetGUID();           break;
+            case 21966: Sharkkis = pCreature->GetGUID();             break;
+            case 21217: LurkerBelow = pCreature->GetGUID();          break;
+            case 21965: Tidalvess = pCreature->GetGUID();            break;
+            case 21964: Caribdis = pCreature->GetGUID();             break;
+            case 21215: LeotherasTheBlind = pCreature->GetGUID();    break;
+        }
     }
 
     void SetData64(uint32 type, uint64 data)
@@ -187,11 +183,11 @@ struct OREGON_DLL_DECL instance_serpentshrine_cavern : public ScriptedInstance
         {
         case DATA_STRANGE_POOL: StrangePool = data;
         case DATA_CONTROL_CONSOLE:
-            if (data = DONE)
+            if (data == DONE)
             {
-                OpenDoor(BridgePart[0], true);
-                OpenDoor(BridgePart[1], true);
-                OpenDoor(BridgePart[2], true);
+                HandleGameObject(BridgePart[0], true);
+                HandleGameObject(BridgePart[1], true);
+                HandleGameObject(BridgePart[2], true);
             }
             ControlConsole = data;
         case DATA_HYDROSSTHEUNSTABLEEVENT:
@@ -232,7 +228,7 @@ struct OREGON_DLL_DECL instance_serpentshrine_cavern : public ScriptedInstance
         case DATA_SHIELDGENERATOR4:ShieldGeneratorDeactivated[3] = (data) ? true : false;   break;
         }
 
-        if (data = DONE)
+        if (data == DONE)
             SaveToDB();
     }
 
@@ -290,9 +286,9 @@ struct OREGON_DLL_DECL instance_serpentshrine_cavern : public ScriptedInstance
     }
 };
 
-InstanceData* GetInstanceData_instance_serpentshrine_cavern(Map* map)
+InstanceData* GetInstanceData_instance_serpentshrine_cavern(Map* pMap)
 {
-    return new instance_serpentshrine_cavern(map);
+    return new instance_serpentshrine_cavern(pMap);
 }
 
 void AddSC_instance_serpentshrine_cavern()
@@ -305,7 +301,7 @@ void AddSC_instance_serpentshrine_cavern()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_bridge_console";
+    newscript->Name = "go_bridge_console";
     newscript->pGOHello = &GOHello_go_bridge_console;
     newscript->RegisterSelf();
 }

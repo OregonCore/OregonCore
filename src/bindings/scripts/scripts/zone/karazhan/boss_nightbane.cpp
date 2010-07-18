@@ -150,7 +150,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                 MovePhase = 0;
 
                 me->SetSpeed(MOVE_RUN, 2.0f);
-                me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
+                me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
                 me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
                 me->setActive(true);
 
@@ -272,7 +272,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
 
         me->InterruptSpell(CURRENT_GENERIC_SPELL);
         me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
-        me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
+        me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
         (*me).GetMotionMaster()->Clear(false);
         (*me).GetMotionMaster()->MovePoint(0,IntroWay[2][0],IntroWay[2][1],IntroWay[2][2]);
         Flying = true;
@@ -293,7 +293,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
             {
                 if (MovePhase >= 7)
                 {
-                    me->RemoveUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
+                    me->RemoveUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
                     me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
                     me->GetMotionMaster()->MovePoint(8,IntroWay[7][0],IntroWay[7][1],IntroWay[7][2]);
                 }
@@ -308,7 +308,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
             {
                 if (MovePhase >= 7)
                 {
-                    me->RemoveUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
+                    me->RemoveUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
                     me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
                     me->GetMotionMaster()->MovePoint(8,IntroWay[7][0],IntroWay[7][1],IntroWay[7][2]);
                 }

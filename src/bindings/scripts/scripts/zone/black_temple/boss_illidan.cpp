@@ -615,7 +615,7 @@ struct OREGON_DLL_DECL boss_illidan_stormrageAI : public ScriptedAI
             Timer[EVENT_FLIGHT_SEQUENCE] = 2000;
             break;
         case 9://land
-            me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
+            me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING | MOVEMENTFLAG_ONTRANSPORT);
             me->StopMoving();
             me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
             for (uint8 i = 0; i < 2; i++)
@@ -1879,7 +1879,7 @@ void boss_illidan_stormrageAI::Reset()
     me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
     me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, 0);
-    me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
+    me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING | MOVEMENTFLAG_ONTRANSPORT);
     me->setActive(false);
     Summons.DespawnAll();
 }

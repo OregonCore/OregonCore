@@ -158,7 +158,7 @@ struct OREGON_DLL_DECL boss_felmystAI : public ScriptedAI
         Timer[EVENT_BERSERK] = 600000;
         FlightCount = 0;
 
-        me->AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
+        me->AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING | MOVEMENTFLAG_ONTRANSPORT);
         me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 10);
         me->SetFloatValue(UNIT_FIELD_COMBATREACH, 10);
 
@@ -414,7 +414,7 @@ struct OREGON_DLL_DECL boss_felmystAI : public ScriptedAI
             Timer[EVENT_FLIGHT_SEQUENCE] = 0;
             break;
         case 10:
-            me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
+            me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING | MOVEMENTFLAG_ONTRANSPORT);
             me->StopMoving();
             me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
             EnterPhase(PHASE_GROUND);

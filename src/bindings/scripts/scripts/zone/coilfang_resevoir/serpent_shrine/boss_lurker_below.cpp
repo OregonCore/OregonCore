@@ -37,7 +37,7 @@ EndScriptData */
 #define SPELL_EMERGE        20568
 #define SPELL_SCALDINGWATER 37284
 
-#define EMOTE_SPOUT "takes a deep breath."
+#define EMOTE_SPOUT "The Lurker Below takes a deep breath."
 
 #define SPOUT_DIST  100
 
@@ -380,9 +380,9 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
          }
  };
 
-CreatureAI* GetAI_mob_coilfang_guardian(Creature *_Creature)
+CreatureAI* GetAI_mob_coilfang_guardian(Creature* pCreature)
 {
-    SimpleAI* ai = new SimpleAI (_Creature);
+    SimpleAI* ai = new SimpleAI (pCreature);
 
     ai->Spell[0].Enabled = true;
     ai->Spell[0].Spell_Id = SPELL_ARCINGSMASH;
@@ -418,7 +418,7 @@ struct OREGON_DLL_DECL mob_coilfang_ambusherAI : public Scripted_NoMovementAI
 
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
 
     }
@@ -440,7 +440,7 @@ struct OREGON_DLL_DECL mob_coilfang_ambusherAI : public Scripted_NoMovementAI
             if (me->getVictim())
                 DoCast(me->getVictim(), SPELL_SPREAD_SHOT, true);
 
-            MultiShotTimer = 10000;
+            MultiShotTimer = 10000+rand()%10000;
             ShootBowTimer += 1500;//add global cooldown
         } else MultiShotTimer -= diff;
 
@@ -451,20 +451,20 @@ struct OREGON_DLL_DECL mob_coilfang_ambusherAI : public Scripted_NoMovementAI
             int bp0 = 1100;
             if (pTarget)
                 me->CastCustomSpell(pTarget,SPELL_SHOOT,&bp0,NULL,NULL,true);
-            ShootBowTimer = 4000;
+            ShootBowTimer = 4000+rand()%5000;
             MultiShotTimer += 1500;//add global cooldown
         } else ShootBowTimer -= diff;
     }
 };
 
-CreatureAI* GetAI_mob_coilfang_ambusher(Creature *_Creature)
+CreatureAI* GetAI_mob_coilfang_ambusher(Creature* pCreature)
 {
-    return new mob_coilfang_ambusherAI (_Creature);
+    return new mob_coilfang_ambusherAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_the_lurker_below(Creature *_Creature)
+CreatureAI* GetAI_boss_the_lurker_below(Creature* pCreature)
 {
-    return new boss_the_lurker_belowAI (_Creature);
+    return new boss_the_lurker_belowAI (pCreature);
 }
 
 void AddSC_boss_the_lurker_below()
@@ -476,12 +476,12 @@ void AddSC_boss_the_lurker_below()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_coilfang_guardian";
+    newscript->Name = "mob_coilfang_guardian";
     newscript->GetAI = &GetAI_mob_coilfang_guardian;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_coilfang_ambusher";
+    newscript->Name = "mob_coilfang_ambusher";
     newscript->GetAI = &GetAI_mob_coilfang_ambusher;
     newscript->RegisterSelf();
 }

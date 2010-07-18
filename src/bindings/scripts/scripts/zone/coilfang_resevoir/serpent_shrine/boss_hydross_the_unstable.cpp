@@ -56,7 +56,7 @@ EndScriptData */
 #define SPELL_ENRAGE                27680                   //this spell need verification
 #define SPELL_SUMMON_WATER_ELEMENT  36459                   //not in use yet(in use ever?)
 #define SPELL_ELEMENTAL_SPAWNIN     25035
-#define SPELL_BLUE_BEAM             /*40227*/40227                   //channeled Hydross Beam Helper (not in use yet)
+#define SPELL_BLUE_BEAM             40227                   //channeled Hydross Beam Helper (not in use yet)
 
 #define ENTRY_PURE_SPAWN            22035
 #define ENTRY_TAINTED_SPAWN         22036
@@ -82,6 +82,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
     }
 
     ScriptedInstance* pInstance;
+
     uint64 beams[2];
     uint32 PosCheck_Timer;
     uint32 MarkOfHydross_Timer;
@@ -143,7 +144,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
     }
     void DeSummonBeams()
     {
-        for (uint8 i=0;i<2;i++)
+        for (uint8 i=0; i<2; ++i)
         {
             Creature* mob = Unit::GetCreature(*me,beams[i]);
             if (mob)
@@ -153,7 +154,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
             }
         }
     }
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
 
@@ -161,7 +162,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
             pInstance->SetData(DATA_HYDROSSTHEUNSTABLEEVENT, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
         if (CorruptedForm)
         {
@@ -202,7 +203,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
         Summons.Despawn(summon);
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit * /*victim*/)
     {
         if (CorruptedForm)
             DoScriptText(SAY_CORRUPT_DEATH, me);
@@ -233,9 +234,9 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
             {
                 if (MarkOfCorruption_Count <= 5)
                 {
-                    uint32 mark_spell;
+                    uint32 mark_spell = 0;
 
-                    switch(MarkOfCorruption_Count)
+                    switch (MarkOfCorruption_Count)
                     {
                         case 0: mark_spell = SPELL_MARK_OF_CORRUPTION1; break;
                         case 1: mark_spell = SPELL_MARK_OF_CORRUPTION2; break;
@@ -248,7 +249,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
                     DoCast(me->getVictim(), mark_spell);
 
                     if (MarkOfCorruption_Count < 5)
-                        MarkOfCorruption_Count++;
+                        ++MarkOfCorruption_Count;
                 }
 
                 MarkOfCorruption_Timer = 15000;
@@ -300,7 +301,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
             {
                 if (MarkOfHydross_Count <= 5)
                 {
-                    uint32 mark_spell;
+                    uint32 mark_spell = NULL;
 
                     switch(MarkOfHydross_Count)
                     {
@@ -315,7 +316,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
                     DoCast(me->getVictim(), mark_spell);
 
                     if (MarkOfHydross_Count < 5)
-                        MarkOfHydross_Count++;
+                        ++MarkOfHydross_Count;
                 }
 
                 MarkOfHydross_Timer = 15000;
@@ -324,7 +325,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
             //WaterTomb_Timer
             if (WaterTomb_Timer < diff)
             {
-                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
                 if (pTarget)
                     DoCast(pTarget, SPELL_WATER_TOMB);
 
@@ -370,16 +371,16 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_hydross_the_unstable(Creature *_Creature)
+CreatureAI* GetAI_boss_hydross_the_unstable(Creature* pCreature)
 {
-    return new boss_hydross_the_unstableAI (_Creature);
+    return new boss_hydross_the_unstableAI (pCreature);
 }
 
 void AddSC_boss_hydross_the_unstable()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_hydross_the_unstable";
+    newscript->Name = "boss_hydross_the_unstable";
     newscript->GetAI = &GetAI_boss_hydross_the_unstable;
     newscript->RegisterSelf();
 }

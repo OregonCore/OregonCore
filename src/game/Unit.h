@@ -883,6 +883,7 @@ class OREGON_DLL_SPEC Unit : public WorldObject
         AttackerSet const& getAttackers() const { return m_attackers; }
         bool isAttackingPlayer() const;
         Unit* getVictim() const { return m_attacking; }
+
         void CombatStop(bool cast = false);
         void CombatStopWithPets(bool cast = false);
         Unit* SelectNearbyTarget(float dist = NOMINAL_MELEE_RANGE) const;
@@ -1293,7 +1294,11 @@ class OREGON_DLL_SPEC Unit : public WorldObject
         void SetBaseWeaponDamage(WeaponAttackType attType ,WeaponDamageRange damageRange, float value) { m_weaponDamage[attType][damageRange] = value; }
 
         bool isInFront(Unit const* target,float distance, float arc = M_PI) const;
-        void SetInFront(Unit const* target);
+        void SetInFront(Unit const* target)
+        {
+            if (!hasUnitState(UNIT_STAT_CANNOT_TURN))
+                SetOrientation(GetAngle(target));
+        }
         bool isInBack(Unit const* target, float distance, float arc = M_PI) const;
         bool isInLine(Unit const* target, float distance) const;
 

@@ -438,7 +438,7 @@ struct mob_giant_infernalAI : public hyjal_trashAI
             {
                 trigger->SetVisibility(VISIBILITY_OFF);
                 trigger->setFaction(me->getFaction());
-                trigger->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
+                trigger->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
                 trigger->CastSpell(me,SPELL_METEOR,true);
             }
             me->GetMotionMaster()->Clear();
@@ -1111,7 +1111,7 @@ struct mob_frost_wyrmAI : public hyjal_trashAI
     {
         FrostBreathTimer = 5000;
         MoveTimer = 0;
-        me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
+        me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
     }
 
     void WaypointReached(uint32 i)
@@ -1227,7 +1227,7 @@ struct mob_gargoyleAI : public hyjal_trashAI
         Zpos = 10.0;
         StrikeTimer = 2000+rand()%5000;
         MoveTimer = 0;
-        me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT + MOVEMENTFLAG_LEVITATING);
+        me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
     }
 
     void WaypointReached(uint32 i)

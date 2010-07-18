@@ -63,7 +63,7 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
         Icebolt_Count = 0;
         IsInFly = false;
 
-        me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
+        me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING | MOVEMENTFLAG_ONTRANSPORT);
     }
 
     void EnterCombat(Unit *who)
@@ -103,7 +103,7 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
                     {
                         phase = 2;
                         me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
-                        me->AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
+                        me->AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING | MOVEMENTFLAG_ONTRANSPORT);
                         me->GetMotionMaster()->Clear(false);
                         me->GetMotionMaster()->MoveIdle();
                         me->SetHover(true);
@@ -141,7 +141,7 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
                     {
                         phase = 1;
                         me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
-                        me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
+                        me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING | MOVEMENTFLAG_ONTRANSPORT);
                         me->GetMotionMaster()->Clear(false);
                         me->GetMotionMaster()->MoveChase(me->getVictim());
                         me->SetHover(true);
