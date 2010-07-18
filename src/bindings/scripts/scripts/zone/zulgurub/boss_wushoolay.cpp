@@ -50,14 +50,14 @@ struct OREGON_DLL_DECL boss_wushoolayAI : public ScriptedAI
             return;
 
         //LightningCloud_Timer
-        if (LightningCloud_Timer < diff)
+        if (LightningCloud_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_LIGHTNINGCLOUD);
             LightningCloud_Timer = 15000 + rand()%5000;
         } else LightningCloud_Timer -= diff;
 
         //LightningWave_Timer
-        if (LightningWave_Timer < diff)
+        if (LightningWave_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);

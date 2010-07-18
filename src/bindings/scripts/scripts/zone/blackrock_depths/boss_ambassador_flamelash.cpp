@@ -71,14 +71,14 @@ struct OREGON_DLL_DECL boss_ambassador_flamelashAI : public ScriptedAI
             return;
 
         //FireBlast_Timer
-        if (FireBlast_Timer < diff)
+        if (FireBlast_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_FIREBLAST);
             FireBlast_Timer = 7000;
         } else FireBlast_Timer -= diff;
 
         //Spirit_Timer
-        if (Spirit_Timer < diff)
+        if (Spirit_Timer <= diff)
         {
             SummonSpirits(me->getVictim());
             SummonSpirits(me->getVictim());

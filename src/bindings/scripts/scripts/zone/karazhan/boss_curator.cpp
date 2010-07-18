@@ -102,7 +102,7 @@ struct OREGON_DLL_DECL boss_curatorAI : public ScriptedAI
 
         if (!Enraged && !Evocating)
         {
-            if (AddTimer < diff)
+            if (AddTimer <= diff)
             {
                 //Summon Astral Flare
                 Creature* AstralFlare = DoSpawnCreature(17096, rand()%37, rand()%37, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
@@ -126,7 +126,7 @@ struct OREGON_DLL_DECL boss_curatorAI : public ScriptedAI
                 AddTimer = 10000;
             } else AddTimer -= diff;
 
-            if (HatefulBoltTimer < diff)
+            if (HatefulBoltTimer <= diff)
             {
                 Unit *pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
@@ -144,7 +144,7 @@ struct OREGON_DLL_DECL boss_curatorAI : public ScriptedAI
             }
         }
 
-        if (BerserkTimer < diff)
+        if (BerserkTimer <= diff)
         {
             DoCast(me, SPELL_BERSERK);
             DoScriptText(SAY_ENRAGE, me);

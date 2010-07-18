@@ -50,7 +50,7 @@ struct OREGON_DLL_DECL boss_grizzleAI : public ScriptedAI
             return;
 
         //GroundTremor_Timer
-        if (GroundTremor_Timer < diff)
+        if (GroundTremor_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_GROUNDTREMOR);
             GroundTremor_Timer = 8000;
@@ -59,7 +59,7 @@ struct OREGON_DLL_DECL boss_grizzleAI : public ScriptedAI
         //Frenzy_Timer
         if (me->GetHealth()*100 / me->GetMaxHealth() < 51)
         {
-            if (Frenzy_Timer < diff)
+            if (Frenzy_Timer <= diff)
             {
                 DoCast(me,SPELL_FRENZY);
                 DoTextEmote("goes into a killing frenzy!",NULL);

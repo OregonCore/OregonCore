@@ -55,14 +55,14 @@ struct OREGON_DLL_DECL boss_shadowvoshAI : public ScriptedAI
             return;
 
         //CurseOfBlood_Timer
-        if (CurseOfBlood_Timer < diff)
+        if (CurseOfBlood_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CURSEOFBLOOD);
             CurseOfBlood_Timer = 45000;
         } else CurseOfBlood_Timer -= diff;
 
         //Hex_Timer
-        if (Hex_Timer < diff)
+        if (Hex_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -71,7 +71,7 @@ struct OREGON_DLL_DECL boss_shadowvoshAI : public ScriptedAI
         } else Hex_Timer -= diff;
 
         //Cleave_Timer
-        if (Cleave_Timer < diff)
+        if (Cleave_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 7000;

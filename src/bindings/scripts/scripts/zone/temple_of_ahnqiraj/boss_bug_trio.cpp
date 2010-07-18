@@ -83,14 +83,14 @@ struct OREGON_DLL_DECL boss_kriAI : public ScriptedAI
             return;
 
         //Cleave_Timer
-        if (Cleave_Timer < diff)
+        if (Cleave_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 5000 + rand()%7000;
         } else Cleave_Timer -= diff;
 
         //ToxicVolley_Timer
-        if (ToxicVolley_Timer < diff)
+        if (ToxicVolley_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_TOXIC_VOLLEY);
             ToxicVolley_Timer = 10000 + rand()%5000;
@@ -105,7 +105,7 @@ struct OREGON_DLL_DECL boss_kriAI : public ScriptedAI
         if (!VemDead)
         {
             //Checking if Vem is dead. If yes we will enrage.
-            if (Check_Timer < diff)
+            if (Check_Timer <= diff)
             {
                 if (pInstance && pInstance->GetData(DATA_VEMISDEAD))
                 {
@@ -167,7 +167,7 @@ struct OREGON_DLL_DECL boss_vemAI : public ScriptedAI
             return;
 
         //Charge_Timer
-        if (Charge_Timer < diff)
+        if (Charge_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -182,7 +182,7 @@ struct OREGON_DLL_DECL boss_vemAI : public ScriptedAI
         } else Charge_Timer -= diff;
 
         //KnockBack_Timer
-        if (KnockBack_Timer < diff)
+        if (KnockBack_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_KNOCKBACK);
             if (DoGetThreat(me->getVictim()))
@@ -191,7 +191,7 @@ struct OREGON_DLL_DECL boss_vemAI : public ScriptedAI
         } else KnockBack_Timer -= diff;
 
         //Enrage_Timer
-        if (!Enraged && Enrage_Timer < diff)
+        if (!Enraged && Enrage_Timer <= diff)
         {
             DoCast(me,SPELL_ENRAGE);
             Enraged = true;
@@ -255,7 +255,7 @@ struct OREGON_DLL_DECL boss_yaujAI : public ScriptedAI
             return;
 
         //Fear_Timer
-        if (Fear_Timer < diff)
+        if (Fear_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_FEAR);
             DoResetThreat();
@@ -263,7 +263,7 @@ struct OREGON_DLL_DECL boss_yaujAI : public ScriptedAI
         } else Fear_Timer -= diff;
 
         //Casting Heal to other twins or herself.
-        if (Heal_Timer < diff)
+        if (Heal_Timer <= diff)
         {
             if (pInstance)
             {
@@ -290,7 +290,7 @@ struct OREGON_DLL_DECL boss_yaujAI : public ScriptedAI
         } else Heal_Timer -= diff;
 
         //Checking if Vem is dead. If yes we will enrage.
-        if (Check_Timer < diff)
+        if (Check_Timer <= diff)
         {
             if (!VemDead)
             {

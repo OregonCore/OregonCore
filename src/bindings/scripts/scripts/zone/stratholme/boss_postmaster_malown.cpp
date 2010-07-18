@@ -66,7 +66,7 @@ struct OREGON_DLL_DECL boss_postmaster_malownAI : public ScriptedAI
             return;
 
         //WailingDead
-        if (WailingDead_Timer < diff)
+        if (WailingDead_Timer <= diff)
         {
             //Cast
             if (rand()%100 < 65) //65% chance to cast
@@ -78,7 +78,7 @@ struct OREGON_DLL_DECL boss_postmaster_malownAI : public ScriptedAI
         } else WailingDead_Timer -= diff;
 
         //Backhand
-        if (Backhand_Timer < diff)
+        if (Backhand_Timer <= diff)
         {
             //Cast
             if (rand()%100 < 45) //45% chance to cast
@@ -90,7 +90,7 @@ struct OREGON_DLL_DECL boss_postmaster_malownAI : public ScriptedAI
         } else Backhand_Timer -= diff;
 
         //CurseOfWeakness
-        if (CurseOfWeakness_Timer < diff)
+        if (CurseOfWeakness_Timer <= diff)
         {
             //Cast
             if (rand()%100 < 3) //3% chance to cast
@@ -102,7 +102,7 @@ struct OREGON_DLL_DECL boss_postmaster_malownAI : public ScriptedAI
         } else CurseOfWeakness_Timer -= diff;
 
         //CurseOfTongues
-        if (CurseOfTongues_Timer < diff)
+        if (CurseOfTongues_Timer <= diff)
         {
             //Cast
             if (rand()%100 < 3) //3% chance to cast
@@ -114,7 +114,7 @@ struct OREGON_DLL_DECL boss_postmaster_malownAI : public ScriptedAI
         } else CurseOfTongues_Timer -= diff;
 
         //CallOfTheGrave
-        if (CallOfTheGrave_Timer < diff)
+        if (CallOfTheGrave_Timer <= diff)
         {
             //Cast
             if (rand()%100 < 5) //5% chance to cast

@@ -496,7 +496,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
                 return;
             }
 
-            if (SunderArmorTimer < diff)
+            if (SunderArmorTimer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_SUNDER_ARMOR);
                 SunderArmorTimer = 15000;
@@ -505,7 +505,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
         }
         else
         {
-            if (AxesTargetSwitchTimer < diff)
+            if (AxesTargetSwitchTimer <= diff)
             {
                 AxesTargetSwitchTimer = 7500 + rand()%12500 ;
 
@@ -532,7 +532,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
                 }
             } else AxesTargetSwitchTimer -= diff;
 
-            if (AmplifyDamageTimer < diff)
+            if (AmplifyDamageTimer <= diff)
             {
                 DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_AMPLIFY_DAMAGE);
                 AmplifyDamageTimer = 20000 + rand()%10000;
@@ -540,13 +540,13 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
         }
 
         //Time for global and double timers
-        if (InfernalTimer < diff)
+        if (InfernalTimer <= diff)
         {
             SummonInfernal(diff);
             InfernalTimer =  phase == 3 ? 15000 : 45000;    //15 secs in phase 3, 45 otherwise
         } else InfernalTimer -= diff;
 
-        if (ShadowNovaTimer < diff)
+        if (ShadowNovaTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_SHADOWNOVA);
             ShadowNovaTimer = phase == 3 ? 35000 : -1;
@@ -554,7 +554,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
 
         if (phase != 2)
         {
-            if (SWPainTimer < diff)
+            if (SWPainTimer <= diff)
             {
                 Unit *pTarget = NULL;
                 if (phase == 1)
@@ -571,7 +571,7 @@ struct OREGON_DLL_DECL boss_malchezaarAI : public ScriptedAI
 
         if (phase != 3)
         {
-            if (EnfeebleTimer < diff)
+            if (EnfeebleTimer <= diff)
             {
                 EnfeebleHealthEffect();
                 EnfeebleTimer = 30000;

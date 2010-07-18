@@ -280,7 +280,7 @@ struct OREGON_DLL_DECL mob_rizzle_sprysprocketAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (Must_Die)
-            if (Must_Die_Timer < diff)
+            if (Must_Die_Timer <= diff)
             {
                 Despawn();
                 return;
@@ -291,13 +291,13 @@ struct OREGON_DLL_DECL mob_rizzle_sprysprocketAI : public ScriptedAI
             if (!PlayerGUID)
                 return;
 
-            if (spellEscape_Timer < diff)
+            if (spellEscape_Timer <= diff)
             {
                 DoCast(me, SPELL_RIZZLE_ESCAPE, false);
                 spellEscape_Timer = 10000;
             } else spellEscape_Timer -= diff;
 
-            if (Teleport_Timer < diff)
+            if (Teleport_Timer <= diff)
             {
                 //temp solution - unit can't be teleported by core using spelleffect 5, only players
                 Map *map = me->GetMap();
@@ -326,7 +326,7 @@ struct OREGON_DLL_DECL mob_rizzle_sprysprocketAI : public ScriptedAI
             ContinueWP = false;
         }
 
-        if (Grenade_Timer < diff)
+        if (Grenade_Timer <= diff)
         {
             Player *player = Unit::GetPlayer(PlayerGUID);
             if (player)
@@ -337,7 +337,7 @@ struct OREGON_DLL_DECL mob_rizzle_sprysprocketAI : public ScriptedAI
             Grenade_Timer = 30000;
         } else Grenade_Timer -= diff;
 
-        if (Check_Timer < diff)
+        if (Check_Timer <= diff)
         {
             Player *player = Unit::GetPlayer(PlayerGUID);
             if (!player)
@@ -450,7 +450,7 @@ struct OREGON_DLL_DECL mob_depth_chargeAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (we_must_die)
-            if (must_die_timer < diff)
+            if (must_die_timer <= diff)
             {
                 me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 me->RemoveCorpse();

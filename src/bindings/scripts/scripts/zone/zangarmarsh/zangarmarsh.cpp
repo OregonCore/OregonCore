@@ -144,7 +144,7 @@ struct OREGON_DLL_DECL npc_cooshcooshAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (LightningBolt_Timer < diff)
+        if (LightningBolt_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_LIGHTNING_BOLT);
             LightningBolt_Timer = 5000;

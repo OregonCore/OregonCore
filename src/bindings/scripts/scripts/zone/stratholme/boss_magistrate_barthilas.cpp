@@ -83,7 +83,7 @@ struct OREGON_DLL_DECL boss_magistrate_barthilasAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (FuriousAnger_Timer < diff)
+        if (FuriousAnger_Timer <= diff)
         {
             FuriousAnger_Timer = 4000;
             if (AngerCount > 25)
@@ -94,21 +94,21 @@ struct OREGON_DLL_DECL boss_magistrate_barthilasAI : public ScriptedAI
         } else FuriousAnger_Timer -= diff;
 
         //DrainingBlow
-        if (DrainingBlow_Timer < diff)
+        if (DrainingBlow_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_DRAININGBLOW);
             DrainingBlow_Timer = 15000;
         } else DrainingBlow_Timer -= diff;
 
         //CrowdPummel
-        if (CrowdPummel_Timer < diff)
+        if (CrowdPummel_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CROWDPUMMEL);
             CrowdPummel_Timer = 15000;
         } else CrowdPummel_Timer -= diff;
 
         //MightyBlow
-        if (MightyBlow_Timer < diff)
+        if (MightyBlow_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_MIGHTYBLOW);
             MightyBlow_Timer = 20000;

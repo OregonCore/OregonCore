@@ -111,21 +111,21 @@ struct OREGON_DLL_DECL boss_razuviousAI : public ScriptedAI
             return;
 
         //UnbalancingStrike_Timer
-        if (UnbalancingStrike_Timer < diff)
+        if (UnbalancingStrike_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_UNBALANCINGSTRIKE);
             UnbalancingStrike_Timer = 30000;
         } else UnbalancingStrike_Timer -= diff;
 
         //DisruptingShout_Timer
-        if (DisruptingShout_Timer < diff)
+        if (DisruptingShout_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_DISRUPTINGSHOUT);
             DisruptingShout_Timer = 25000;
         } else DisruptingShout_Timer -= diff;
 
         //CommandSound_Timer
-        if (CommandSound_Timer < diff)
+        if (CommandSound_Timer <= diff)
         {
             switch (rand()%5)
             {

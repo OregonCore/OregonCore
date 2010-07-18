@@ -328,7 +328,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
 
         if (isBombing)
         {
-            if (BombSequenceTimer < diff)
+            if (BombSequenceTimer <= diff)
             {
                 HandleBombSequence();
             } else BombSequenceTimer -= diff;
@@ -342,7 +342,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
         if (!enraged && me->GetHealth() * 4 < me->GetMaxHealth())
             EnrageTimer = 0;
 
-        if (EnrageTimer < diff)
+        if (EnrageTimer <= diff)
         {
             if (!enraged)
             {
@@ -358,7 +358,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
             }
         } else EnrageTimer -= diff;
 
-        if (BombTimer < diff)
+        if (BombTimer <= diff)
         {
             DoScriptText(SAY_FIRE_BOMBS, me);
 
@@ -403,7 +403,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
                 HatchAllEggs(2);
                 noeggs = true;
             }
-            else if (HatcherTimer < diff)
+            else if (HatcherTimer <= diff)
             {
                 if (HatchAllEggs(0))
                 {
@@ -417,7 +417,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
             } else HatcherTimer -= diff;
         }
 
-        if (ResetTimer < diff)
+        if (ResetTimer <= diff)
         {
             float x, y, z, o;
             me->GetHomePosition(x, y, z, o);
@@ -431,7 +431,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
 
         DoMeleeAttackIfReady();
 
-        if (FireBreathTimer < diff)
+        if (FireBreathTimer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             {
@@ -578,7 +578,7 @@ struct OREGON_DLL_DECL mob_amanishi_hatcherAI : public ScriptedAI
         }
         else
         {
-            if (WaitTimer < diff)
+            if (WaitTimer <= diff)
             {
                 if (HatchEggs(HatchNum))
                 {
@@ -643,7 +643,7 @@ struct OREGON_DLL_DECL mob_hatchlingAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (BuffetTimer < diff)
+        if (BuffetTimer <= diff)
         {
             me->CastSpell(me->getVictim(), SPELL_FLAMEBUFFET, false);
             BuffetTimer = 10000;

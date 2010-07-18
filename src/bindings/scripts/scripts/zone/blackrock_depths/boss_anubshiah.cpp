@@ -59,14 +59,14 @@ struct OREGON_DLL_DECL boss_anubshiahAI : public ScriptedAI
             return;
 
         //ShadowBolt_Timer
-        if (ShadowBolt_Timer < diff)
+        if (ShadowBolt_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SHADOWBOLT);
             ShadowBolt_Timer = 7000;
         } else ShadowBolt_Timer -= diff;
 
         //CurseOfTongues_Timer
-        if (CurseOfTongues_Timer < diff)
+        if (CurseOfTongues_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -75,21 +75,21 @@ struct OREGON_DLL_DECL boss_anubshiahAI : public ScriptedAI
         } else CurseOfTongues_Timer -= diff;
 
         //CurseOfWeakness_Timer
-        if (CurseOfWeakness_Timer < diff)
+        if (CurseOfWeakness_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CURSEOFWEAKNESS);
             CurseOfWeakness_Timer = 45000;
         } else CurseOfWeakness_Timer -= diff;
 
         //DemonArmor_Timer
-        if (DemonArmor_Timer < diff)
+        if (DemonArmor_Timer <= diff)
         {
             DoCast(me,SPELL_DEMONARMOR);
             DemonArmor_Timer = 300000;
         } else DemonArmor_Timer -= diff;
 
         //EnvelopingWeb_Timer
-        if (EnvelopingWeb_Timer < diff)
+        if (EnvelopingWeb_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);

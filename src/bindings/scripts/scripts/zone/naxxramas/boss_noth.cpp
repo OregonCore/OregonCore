@@ -100,7 +100,7 @@ struct OREGON_DLL_DECL boss_nothAI : public ScriptedAI
             return;
 
         //Blink_Timer
-        if (Blink_Timer < diff)
+        if (Blink_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CRIPPLE);
             DoCast(me,SPELL_BLINK);
@@ -109,14 +109,14 @@ struct OREGON_DLL_DECL boss_nothAI : public ScriptedAI
         } else Blink_Timer -= diff;
 
         //Curse_Timer
-        if (Curse_Timer < diff)
+        if (Curse_Timer <= diff)
         {
              DoCast(me->getVictim(),SPELL_CURSE_PLAGUEBRINGER);
             Curse_Timer = 28000;
         } else Curse_Timer -= diff;
 
         //Summon_Timer
-        if (Summon_Timer < diff)
+        if (Summon_Timer <= diff)
         {
             DoScriptText(SAY_SUMMON, me);
 

@@ -202,7 +202,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
         if (!me->isInCombat()) // sometimes isincombat but !incombat, faction bug?
             return;
 
-        if (Berserk_Timer < diff)
+        if (Berserk_Timer <= diff)
         {
             me->CastSpell(me, SPELL_BERSERK, true);
             Berserk_Timer = 60000;
@@ -210,7 +210,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
 
         if (ForceMove)
         {
-            if (ForceTimer < diff)
+            if (ForceTimer <= diff)
             {
                 me->GetMotionMaster()->MovePoint(0, waypoint[cur_wp][0], waypoint[cur_wp][1], waypoint[cur_wp][2]);
                 ForceTimer = 5000;
@@ -317,7 +317,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                 return;
             }
 
-            if (Platforms_Move_Timer < diff)
+            if (Platforms_Move_Timer <= diff)
             {
                 if (cur_wp == 4)
                 {
@@ -350,7 +350,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
         }
         else
         {
-            if (Charge_Timer < diff)
+            if (Charge_Timer <= diff)
             {
                 Unit *pTarget= SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true);
                 if (pTarget)
@@ -358,13 +358,13 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                 Charge_Timer = 30000+rand()%20000;
             } else Charge_Timer -= diff;
 
-            if (MeltArmor_Timer < diff)
+            if (MeltArmor_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_MELT_ARMOR);
                 MeltArmor_Timer = 60000;
             } else MeltArmor_Timer -= diff;
 
-            if (DiveBomb_Timer < diff)
+            if (DiveBomb_Timer <= diff)
             {
                 me->AttackStop();
                 me->GetMotionMaster()->MovePoint(6, waypoint[4][0], waypoint[4][1], waypoint[4][2]);
@@ -376,7 +376,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
                 return;
             } else DiveBomb_Timer -= diff;
 
-            if (FlamePatch_Timer < diff)
+            if (FlamePatch_Timer <= diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {

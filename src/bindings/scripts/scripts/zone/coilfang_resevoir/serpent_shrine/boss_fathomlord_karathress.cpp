@@ -238,7 +238,7 @@ struct OREGON_DLL_DECL boss_fathomlord_karathressAI : public ScriptedAI
         }
 
         //CataclysmicBolt_Timer
-        if (CataclysmicBolt_Timer < diff)
+        if (CataclysmicBolt_Timer <= diff)
         {
             //select a random unit other than the main tank
             Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
@@ -253,14 +253,14 @@ struct OREGON_DLL_DECL boss_fathomlord_karathressAI : public ScriptedAI
         } else CataclysmicBolt_Timer -= diff;
 
         //SearNova_Timer
-        if (SearNova_Timer < diff)
+        if (SearNova_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_SEAR_NOVA);
             SearNova_Timer = 20000+rand()%40000;
         } else SearNova_Timer -= diff;
 
         //Enrage_Timer
-        if (Enrage_Timer < diff)
+        if (Enrage_Timer <= diff)
         {
             DoCast(me, SPELL_ENRAGE);
             Enrage_Timer = 90000;
@@ -381,21 +381,21 @@ struct OREGON_DLL_DECL boss_fathomguard_sharkkisAI : public ScriptedAI
         }
 
         //LeechingThrow_Timer
-        if (LeechingThrow_Timer < diff)
+        if (LeechingThrow_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_LEECHING_THROW);
             LeechingThrow_Timer = 20000;
         } else LeechingThrow_Timer -= diff;
 
         //Multishot_Timer
-        if (Multishot_Timer < diff)
+        if (Multishot_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_MULTISHOT);
             Multishot_Timer = 20000;
         } else Multishot_Timer -= diff;
 
         //TheBeastWithin_Timer
-        if (TheBeastWithin_Timer < diff)
+        if (TheBeastWithin_Timer <= diff)
         {
             DoCast(me, SPELL_THE_BEAST_WITHIN);
             Creature *Pet = Unit::GetCreature(*me, SummonedPet);
@@ -407,7 +407,7 @@ struct OREGON_DLL_DECL boss_fathomguard_sharkkisAI : public ScriptedAI
         } else TheBeastWithin_Timer -= diff;
 
         //Pet_Timer
-        if (Pet_Timer < diff && pet == false)
+        if (Pet_Timer <= diff && pet == false)
         {
             pet = true;
             //uint32 spell_id;
@@ -516,14 +516,14 @@ struct OREGON_DLL_DECL boss_fathomguard_tidalvessAI : public ScriptedAI
         }
 
         //FrostShock_Timer
-        if (FrostShock_Timer < diff)
+        if (FrostShock_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_FROST_SHOCK);
             FrostShock_Timer = 25000+rand()%5000;
         } else FrostShock_Timer -= diff;
 
         //Spitfire_Timer
-        if (Spitfire_Timer < diff)
+        if (Spitfire_Timer <= diff)
         {
             DoCast(me, SPELL_SPITFIRE_TOTEM);
             Unit *SpitfireTotem = Unit::GetUnit(*me, CREATURE_SPITFIRE_TOTEM);
@@ -535,14 +535,14 @@ struct OREGON_DLL_DECL boss_fathomguard_tidalvessAI : public ScriptedAI
         } else Spitfire_Timer -= diff;
 
         //PoisonCleansing_Timer
-        if (PoisonCleansing_Timer < diff)
+        if (PoisonCleansing_Timer <= diff)
         {
             DoCast(me, SPELL_POISON_CLEANSING_TOTEM);
             PoisonCleansing_Timer = 30000;
         } else PoisonCleansing_Timer -= diff;
 
         //Earthbind_Timer
-        if (Earthbind_Timer < diff)
+        if (Earthbind_Timer <= diff)
         {
             DoCast(me, SPELL_EARTHBIND_TOTEM);
             Earthbind_Timer = 45000;
@@ -625,14 +625,14 @@ struct OREGON_DLL_DECL boss_fathomguard_caribdisAI : public ScriptedAI
         }
 
         //WaterBoltVolley_Timer
-        if (WaterBoltVolley_Timer < diff)
+        if (WaterBoltVolley_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_WATER_BOLT_VOLLEY);
             WaterBoltVolley_Timer = 30000;
         } else WaterBoltVolley_Timer -= diff;
 
         //TidalSurge_Timer
-        if (TidalSurge_Timer < diff)
+        if (TidalSurge_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_TIDAL_SURGE);
             // Hacky way to do it - won't trigger elseways
@@ -641,7 +641,7 @@ struct OREGON_DLL_DECL boss_fathomguard_caribdisAI : public ScriptedAI
         } else TidalSurge_Timer -= diff;
 
         //Cyclone_Timer
-        if (Cyclone_Timer < diff)
+        if (Cyclone_Timer <= diff)
         {
             //DoCast(me, SPELL_SUMMON_CYCLONE); // Doesn't work
             Cyclone_Timer = 30000+rand()%10000;
@@ -661,7 +661,7 @@ struct OREGON_DLL_DECL boss_fathomguard_caribdisAI : public ScriptedAI
         } else Cyclone_Timer -= diff;
 
         //Heal_Timer
-        if (Heal_Timer < diff)
+        if (Heal_Timer <= diff)
         {
             // It can be cast on any of the mobs
             Unit *pUnit = NULL;

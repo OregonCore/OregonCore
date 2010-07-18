@@ -87,7 +87,7 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
             SonicBoom = false;
             Resonance_Timer = 1500;
         }
-        if (SonicBoom_Timer < diff)
+        if (SonicBoom_Timer <= diff)
         {
             DoScriptText(EMOTE_SONIC_BOOM, me);
             DoCast(me, SPELL_SONIC_BOOM_CAST);
@@ -97,7 +97,7 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
         } else SonicBoom_Timer -= diff;
 
         // Murmur's Touch
-        if (MurmursTouch_Timer < diff)
+        if (MurmursTouch_Timer <= diff)
         {
             if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,80,true))
                 DoCast(pTarget, SPELL_MURMURS_TOUCH);
@@ -105,7 +105,7 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
         } else MurmursTouch_Timer -= diff;
 
         // Resonance
-        if (Resonance_Timer < diff)
+        if (Resonance_Timer <= diff)
         {
             if (!me->IsWithinMeleeRange(SelectTarget(SELECT_TARGET_NEAREST,0,20,true)))
                 DoCast(me, SPELL_RESONANCE);
@@ -113,7 +113,7 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
         } else Resonance_Timer -= diff;
 
         // Magnetic Pull
-        if (MagneticPull_Timer < diff)
+        if (MagneticPull_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 if (pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->isAlive())
@@ -128,7 +128,7 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
         if (HeroicMode)
         {
             // Thundering Storm
-            if (ThunderingStorm_Timer < diff)
+            if (ThunderingStorm_Timer <= diff)
             {
                 std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
                 for (std::list<HostileReference*>::iterator i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
@@ -139,7 +139,7 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
             } else ThunderingStorm_Timer -= diff;
 
             // Sonic Shock
-            if (SonicShock_Timer < diff)
+            if (SonicShock_Timer <= diff)
             {
                 if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,20,false))
                     if (pTarget->isAlive())

@@ -87,14 +87,14 @@ struct OREGON_DLL_DECL boss_herodAI : public ScriptedAI
         }
 
         //Cleave_Timer
-        if (Cleave_Timer < diff)
+        if (Cleave_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 12000;
         } else Cleave_Timer -= diff;
 
         // Whirlwind_Timer
-        if (Whirlwind_Timer < diff)
+        if (Whirlwind_Timer <= diff)
         {
             DoScriptText(SAY_WHIRLWIND, me);
             DoCast(me->getVictim(),SPELL_WHIRLWIND);
@@ -150,7 +150,7 @@ struct OREGON_DLL_DECL mob_scarlet_traineeAI : public npc_escortAI
     {
         if (Start_Timer)
         {
-            if (Start_Timer < diff)
+            if (Start_Timer <= diff)
             {
                 Start(true,true);
                 Start_Timer = 0;

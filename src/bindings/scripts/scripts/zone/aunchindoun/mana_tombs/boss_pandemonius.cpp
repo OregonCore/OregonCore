@@ -88,7 +88,7 @@ struct OREGON_DLL_DECL boss_pandemoniusAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (VoidBlast_Timer < diff)
+        if (VoidBlast_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
@@ -106,7 +106,7 @@ struct OREGON_DLL_DECL boss_pandemoniusAI : public ScriptedAI
 
         if (!VoidBlast_Counter)
         {
-            if (DarkShell_Timer < diff)
+            if (DarkShell_Timer <= diff)
             {
                 if (me->IsNonMeleeSpellCasted(false))
                     me->InterruptNonMeleeSpells(true);

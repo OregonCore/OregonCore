@@ -263,7 +263,7 @@ struct OREGON_DLL_DECL npc_secondTrialAI : public ScriptedAI
     {
       if (questPhase == 1) {
 
-        if (timer < diff) {
+        if (timer <= diff) {
               me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_NONE);
               me->setFaction(FACTION_HOSTILE);
               questPhase = 0;
@@ -284,7 +284,7 @@ struct OREGON_DLL_DECL npc_secondTrialAI : public ScriptedAI
       // healer
       if (spellFlashLight) {
         if (me->GetHealth()*100 / me->GetMaxHealth() < 70){
-          if (timerFlashLight < diff) {
+          if (timerFlashLight <= diff) {
             DoCast(me, SPELL_FLASH_OF_LIGHT);
             timerFlashLight = TIMER_FLASH_OF_LIGHT +  rand()%(TIMER_FLASH_OF_LIGHT);
           }
@@ -294,7 +294,7 @@ struct OREGON_DLL_DECL npc_secondTrialAI : public ScriptedAI
       }
 
       if (spellJustice) {
-          if (timerJustice < diff)
+          if (timerJustice <= diff)
             {
             DoCast(me, SPELL_SEAL_OF_JUSTICE);
             timerJustice = TIMER_SEAL_OF_JUSTICE +  rand()%(TIMER_SEAL_OF_JUSTICE);
@@ -304,7 +304,7 @@ struct OREGON_DLL_DECL npc_secondTrialAI : public ScriptedAI
       }
 
       if (spellJudLight) {
-          if (timerJudLight < diff) {
+          if (timerJudLight <= diff) {
             DoCast(me,  SPELL_JUDGEMENT_OF_LIGHT);
             timerJudLight = TIMER_JUDGEMENT_OF_LIGHT +  rand()%(TIMER_JUDGEMENT_OF_LIGHT);
           }
@@ -313,7 +313,7 @@ struct OREGON_DLL_DECL npc_secondTrialAI : public ScriptedAI
       }
 
       if (spellCommand) {
-          if (timerCommand < diff) {
+          if (timerCommand <= diff) {
             DoCast(me,  TIMER_SEAL_OF_COMMAND);
             timerCommand = TIMER_SEAL_OF_COMMAND +  rand()%(TIMER_SEAL_OF_COMMAND);
           }
@@ -359,13 +359,13 @@ struct OREGON_DLL_DECL master_kelerun_bloodmournAI : public ScriptedAI
     {
       // Quest accepted but object not activated, object despawned (if in sync 1 minute!)
       if (questPhase == 1) {
-         if (timer < diff) Reset();
+         if (timer <= diff) Reset();
          else timer -= diff;
       }
       // fight the 4 paladin mobs phase
       else if (questPhase == 2) {
 
-        if (timer < diff) {
+        if (timer <= diff) {
 
           Creature* paladinSpawn;
           paladinSpawn = (Unit::GetCreature((*me), paladinGuid[paladinPhase]));
@@ -713,7 +713,7 @@ struct OREGON_DLL_DECL npc_infused_crystalAI : public Scripted_NoMovementAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (EndTimer < diff && Progress)
+        if (EndTimer <= diff && Progress)
         {
             DoScriptText(EMOTE, me);
             Completed = true;
@@ -727,7 +727,7 @@ struct OREGON_DLL_DECL npc_infused_crystalAI : public Scripted_NoMovementAI
             me->RemoveCorpse();
         } else EndTimer -= diff;
 
-        if (WaveTimer < diff && !Completed && Progress)
+        if (WaveTimer <= diff && !Completed && Progress)
         {
             uint32 ran1 = rand()%8;
             uint32 ran2 = rand()%8;

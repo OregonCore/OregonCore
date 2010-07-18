@@ -91,14 +91,14 @@ struct OREGON_DLL_DECL boss_fankrissAI : public ScriptedAI
             return;
 
         //MortalWound_Timer
-        if (MortalWound_Timer < diff)
+        if (MortalWound_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_MORTAL_WOUND);
             MortalWound_Timer = 10000 + rand()%10000;
         } else MortalWound_Timer -= diff;
 
         //Summon 1-3 Spawns of Fankriss at random time.
-        if (SpawnSpawns_Timer < diff)
+        if (SpawnSpawns_Timer <= diff)
         {
             switch(rand()%3)
             {
@@ -122,7 +122,7 @@ struct OREGON_DLL_DECL boss_fankrissAI : public ScriptedAI
         //We will only telport if fankriss has more than 3% of hp so teleported gamers can always loot.
         if (me->GetHealth()*100 / me->GetMaxHealth() > 3)
         {
-            if (SpawnHatchlings_Timer< diff)
+            if (SpawnHatchlings_Timer <= diff)
             {
                 Unit *pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);

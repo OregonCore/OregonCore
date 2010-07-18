@@ -145,7 +145,7 @@ struct OREGON_DLL_DECL boss_ambassador_hellmawAI : public ScriptedAI
     {
         if (!Intro)
         {
-            if (EventCheck_Timer < diff)
+            if (EventCheck_Timer <= diff)
             {
                 if (pInstance)
                 {
@@ -171,13 +171,13 @@ struct OREGON_DLL_DECL boss_ambassador_hellmawAI : public ScriptedAI
             return;
         }
 
-        if (CorrosiveAcid_Timer < diff)
+        if (CorrosiveAcid_Timer <= diff)
         {
             DoCast(me,SPELL_CORROSIVE_ACID);
             CorrosiveAcid_Timer = 25000;
         } else CorrosiveAcid_Timer -= diff;
 
-        if (Fear_Timer < diff)
+        if (Fear_Timer <= diff)
         {
             DoCast(me,SPELL_FEAR);
             Fear_Timer = 35000;
@@ -185,7 +185,7 @@ struct OREGON_DLL_DECL boss_ambassador_hellmawAI : public ScriptedAI
 
         /*if (HeroicMode)
         {
-            if (Enrage_Timer < diff)
+            if (Enrage_Timer <= diff)
             {
                 DoCast(me,SPELL_ENRAGE);
             } else Enrage_Timer -= diff;

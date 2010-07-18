@@ -253,20 +253,20 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
             else if (Unit* Cyclone = Unit::GetUnit(*me, CycloneGUID))
                 Cyclone->CastSpell(pTarget, 25160, true); // keep casting or...
 
-            if (StormSequenceTimer < diff) {
+            if (StormSequenceTimer <= diff) {
                 HandleStormSequence(pTarget);
             } else StormSequenceTimer -= diff;
             return;
         }
 
-        if (Enrage_Timer < diff) {
+        if (Enrage_Timer <= diff) {
             DoYell(SAY_ONENRAGE, LANG_UNIVERSAL, NULL);
             DoPlaySoundToSet(me, SOUND_ONENRAGE);
             me->CastSpell(me, SPELL_BERSERK, true);
             Enrage_Timer = 600000;
         } else Enrage_Timer -= diff;
 
-        if (StaticDisruption_Timer < diff) {
+        if (StaticDisruption_Timer <= diff) {
             Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
             if (!pTarget) pTarget = me->getVictim();
             TargetGUID = pTarget->GetGUID();
@@ -279,14 +279,14 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
             SDisruptAOEVisual_Timer = 1000 + floor(dist / 30 * 1000.0f);*/
         } else StaticDisruption_Timer -= diff;
 
-        if (GustOfWind_Timer < diff) {
+        if (GustOfWind_Timer <= diff) {
             Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
             if (!pTarget) pTarget = me->getVictim();
             DoCast(pTarget, SPELL_GUST_OF_WIND);
             GustOfWind_Timer = (20+rand()%10)*1000; //20 to 30 seconds(bosskillers)
         } else GustOfWind_Timer -= diff;
 
-        if (CallLighting_Timer < diff) {
+        if (CallLighting_Timer <= diff) {
             DoCast(me->getVictim(), SPELL_CALL_LIGHTNING);
             CallLighting_Timer = (12 + rand()%5)*1000; //totaly random timer. can't find any info on this
         } else CallLighting_Timer -= diff;
@@ -296,7 +296,7 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
             isRaining = true;
         }
 
-        if (ElectricalStorm_Timer < diff) {
+        if (ElectricalStorm_Timer <= diff) {
             Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 50, true);
             if (!pTarget)
             {
@@ -329,7 +329,7 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
             StormSequenceTimer = 0;
         } else ElectricalStorm_Timer -= diff;
 
-        if (SummonEagles_Timer < diff)
+        if (SummonEagles_Timer <= diff)
         {
             DoYell(SAY_ONSUMMON, LANG_UNIVERSAL, NULL);
             DoPlaySoundToSet(me, SOUND_ONSUMMON);
@@ -400,7 +400,7 @@ struct OREGON_DLL_DECL mob_soaring_eagleAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (EagleSwoop_Timer < diff) EagleSwoop_Timer = 0;
+        if (EagleSwoop_Timer <= diff) EagleSwoop_Timer = 0;
         else EagleSwoop_Timer -= diff;
 
         if (arrived)

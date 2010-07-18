@@ -57,14 +57,14 @@ struct OREGON_DLL_DECL boss_shazzrahAI : public ScriptedAI
             return;
 
         //ArcaneExplosion_Timer
-        if (ArcaneExplosion_Timer < diff)
+        if (ArcaneExplosion_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_ARCANEEXPLOSION);
             ArcaneExplosion_Timer = 5000 + rand()%4000;
         } else ArcaneExplosion_Timer -= diff;
 
         //ShazzrahCurse_Timer
-        if (ShazzrahCurse_Timer < diff)
+        if (ShazzrahCurse_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -74,21 +74,21 @@ struct OREGON_DLL_DECL boss_shazzrahAI : public ScriptedAI
         } else ShazzrahCurse_Timer -= diff;
 
         //DeadenMagic_Timer
-        if (DeadenMagic_Timer < diff)
+        if (DeadenMagic_Timer <= diff)
         {
             DoCast(me,SPELL_DEADENMAGIC);
             DeadenMagic_Timer = 35000;
         } else DeadenMagic_Timer -= diff;
 
         //Countspell_Timer
-        if (Countspell_Timer < diff)
+        if (Countspell_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_COUNTERSPELL);
             Countspell_Timer = 16000 + rand()%4000;
         } else Countspell_Timer -= diff;
 
         //Blink_Timer
-        if (Blink_Timer < diff)
+        if (Blink_Timer <= diff)
         {
             // Teleporting him to a random gamer and casting Arcane Explosion after that.
             // Blink is not working cause of LoS System we need to do this hardcoded.

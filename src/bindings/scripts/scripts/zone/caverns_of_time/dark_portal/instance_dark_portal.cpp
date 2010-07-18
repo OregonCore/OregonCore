@@ -354,7 +354,7 @@ struct OREGON_DLL_DECL instance_dark_portal : public ScriptedInstance
 
         if (NextPortal_Timer)
         {
-            if (NextPortal_Timer < diff)
+            if (NextPortal_Timer <= diff)
             {
                 ++mRiftPortalCount;
                 UpdateBMWorldState(WORLD_STATE_BM_RIFT,mRiftPortalCount);

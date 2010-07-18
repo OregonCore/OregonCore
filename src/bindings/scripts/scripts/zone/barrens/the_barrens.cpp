@@ -142,7 +142,7 @@ struct OREGON_DLL_DECL npc_taskmaster_fizzuleAI : public ScriptedAI
     {
         if (IsFriend)
         {
-            if (Reset_Timer < diff)
+            if (Reset_Timer <= diff)
             {
                 EnterEvadeMode();
                 return;
@@ -317,7 +317,7 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
             }
             else if (EventInProgress)
             {
-                if (Challenger_checker < diff)
+                if (Challenger_checker <= diff)
                 {
                     for (uint8 i = 0; i < 6; ++i)
                     {
@@ -334,7 +334,7 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
                     Challenger_checker = 1000;
                 } else Challenger_checker -= diff;
 
-                if (Wave_Timer < diff)
+                if (Wave_Timer <= diff)
                 {
                     if (AffrayChallenger[Wave] && Wave < 6 && !EventBigWill)
                     {

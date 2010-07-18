@@ -230,7 +230,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
         if (CorruptedForm)
         {
             //MarkOfCorruption_Timer
-            if (MarkOfCorruption_Timer < diff)
+            if (MarkOfCorruption_Timer <= diff)
             {
                 if (MarkOfCorruption_Count <= 5)
                 {
@@ -256,7 +256,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
             } else MarkOfCorruption_Timer -= diff;
 
             //VileSludge_Timer
-            if (VileSludge_Timer < diff)
+            if (VileSludge_Timer <= diff)
             {
                 Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if (pTarget)
@@ -266,7 +266,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
             } else VileSludge_Timer -= diff;
 
             //PosCheck_Timer
-            if (PosCheck_Timer < diff)
+            if (PosCheck_Timer <= diff)
             {
                 if (me->GetDistance2d(HYDROSS_X, HYDROSS_Y) < SWITCH_RADIUS)
                 {
@@ -297,7 +297,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
         else
         {
             //MarkOfHydross_Timer
-            if (MarkOfHydross_Timer < diff)
+            if (MarkOfHydross_Timer <= diff)
             {
                 if (MarkOfHydross_Count <= 5)
                 {
@@ -323,7 +323,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
             } else MarkOfHydross_Timer -= diff;
 
             //WaterTomb_Timer
-            if (WaterTomb_Timer < diff)
+            if (WaterTomb_Timer <= diff)
             {
                 Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
                 if (pTarget)
@@ -333,7 +333,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
             } else WaterTomb_Timer -= diff;
 
             //PosCheck_Timer
-            if (PosCheck_Timer < diff)
+            if (PosCheck_Timer <= diff)
             {
                 if (me->GetDistance2d(HYDROSS_X, HYDROSS_Y) >= SWITCH_RADIUS)
                 {
@@ -362,7 +362,7 @@ struct OREGON_DLL_DECL boss_hydross_the_unstableAI : public ScriptedAI
         }
 
         //EnrageTimer
-        if (EnrageTimer < diff)
+        if (EnrageTimer <= diff)
         {
             DoCast(me, SPELL_ENRAGE);
             EnrageTimer = 60000;

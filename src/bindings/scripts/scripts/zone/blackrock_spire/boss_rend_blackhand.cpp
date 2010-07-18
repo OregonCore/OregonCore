@@ -53,21 +53,21 @@ struct OREGON_DLL_DECL boss_rend_blackhandAI : public ScriptedAI
             return;
 
         //WhirlWind_Timer
-        if (WhirlWind_Timer < diff)
+        if (WhirlWind_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_WHIRLWIND);
             WhirlWind_Timer = 18000;
         } else WhirlWind_Timer -= diff;
 
         //Cleave_Timer
-        if (Cleave_Timer < diff)
+        if (Cleave_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 10000;
         } else Cleave_Timer -= diff;
 
         //Thunderclap_Timer
-        if (Thunderclap_Timer < diff)
+        if (Thunderclap_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_THUNDERCLAP);
             Thunderclap_Timer = 16000;

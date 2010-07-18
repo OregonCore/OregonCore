@@ -72,7 +72,7 @@ void guardAI::UpdateAI(const uint32 diff)
 
     //Buff timer (only buff when we are alive and not in combat
     if (me->isAlive() && !me->isInCombat())
-        if (BuffTimer < diff)
+        if (BuffTimer <= diff)
     {
         //Find a spell that targets friendly and applies an aura (these are generally buffs)
         SpellEntry const *info = SelectSpell(me, -1, -1, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_AURA);

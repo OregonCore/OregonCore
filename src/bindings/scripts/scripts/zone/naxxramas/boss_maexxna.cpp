@@ -181,35 +181,35 @@ struct OREGON_DLL_DECL boss_maexxnaAI : public ScriptedAI
             return;
 
         //WebTrap_Timer
-        if (WebTrap_Timer < diff)
+        if (WebTrap_Timer <= diff)
         {
             DoCastWebWrap();
             WebTrap_Timer = 40000;
         } else WebTrap_Timer -= diff;
 
         //WebSpray_Timer
-        if (WebSpray_Timer < diff)
+        if (WebSpray_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_WEBSPRAY);
             WebSpray_Timer = 40000;
         } else WebSpray_Timer -= diff;
 
         //PoisonShock_Timer
-        if (PoisonShock_Timer < diff)
+        if (PoisonShock_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_POISONSHOCK);
             PoisonShock_Timer = 20000;
         } else PoisonShock_Timer -= diff;
 
         //NecroticPoison_Timer
-        if (NecroticPoison_Timer < diff)
+        if (NecroticPoison_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_NECROTICPOISON);
             NecroticPoison_Timer = 30000;
         } else NecroticPoison_Timer -= diff;
 
         //SummonSpiderling_Timer
-        if (SummonSpiderling_Timer < diff)
+        if (SummonSpiderling_Timer <= diff)
         {
             DoCast(me, SPELL_SUMMON_SPIDERLING);
             SummonSpiderling_Timer = 40000;

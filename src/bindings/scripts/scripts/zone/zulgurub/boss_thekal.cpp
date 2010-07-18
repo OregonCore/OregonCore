@@ -110,7 +110,7 @@ struct OREGON_DLL_DECL boss_thekalAI : public ScriptedAI
             return;
 
             //Check_Timer for the death of LorKhan and Zath.
-            if (!WasDead && Check_Timer < diff)
+            if (!WasDead && Check_Timer <= diff)
             {
                 if (pInstance)
                 {
@@ -144,13 +144,13 @@ struct OREGON_DLL_DECL boss_thekalAI : public ScriptedAI
                 Check_Timer = 5000;
             } else Check_Timer -= diff;
 
-            if (!PhaseTwo && MortalCleave_Timer < diff)
+            if (!PhaseTwo && MortalCleave_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_MORTALCLEAVE);
                 MortalCleave_Timer = 15000 + rand()%5000;
             } else MortalCleave_Timer -= diff;
 
-            if (!PhaseTwo && Silence_Timer < diff)
+            if (!PhaseTwo && Silence_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_SILENCE);
                 Silence_Timer = 20000 + rand()%5000;
@@ -171,7 +171,7 @@ struct OREGON_DLL_DECL boss_thekalAI : public ScriptedAI
             //Thekal will transform to Tiger if he died and was not resurrected after 10 seconds.
             if (!PhaseTwo && WasDead)
             {
-                if (Resurrect_Timer < diff)
+                if (Resurrect_Timer <= diff)
                 {
                     DoCast(me,SPELL_TIGER_FORM);
                     me->SetFloatValue(OBJECT_FIELD_SCALE_X, 2.00f);
@@ -194,7 +194,7 @@ struct OREGON_DLL_DECL boss_thekalAI : public ScriptedAI
 
             if (PhaseTwo)
             {
-                if (Charge_Timer < diff)
+                if (Charge_Timer <= diff)
                 {
                     if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                     {
@@ -206,19 +206,19 @@ struct OREGON_DLL_DECL boss_thekalAI : public ScriptedAI
                     Charge_Timer = 15000 + rand()%7000;
                 } else Charge_Timer -= diff;
 
-                if (Frenzy_Timer < diff)
+                if (Frenzy_Timer <= diff)
                 {
                     DoCast(me,SPELL_FRENZY);
                     Frenzy_Timer = 30000;
                 } else Frenzy_Timer -= diff;
 
-                if (ForcePunch_Timer < diff)
+                if (ForcePunch_Timer <= diff)
                 {
                     DoCast(me->getVictim(),SPELL_SILENCE);
                     ForcePunch_Timer = 16000 + rand()%5000;
                 } else ForcePunch_Timer -= diff;
 
-                if (SummonTigers_Timer < diff)
+                if (SummonTigers_Timer <= diff)
                 {
                     DoCast(me->getVictim(),SPELL_SUMMONTIGERS);
                     SummonTigers_Timer = 10000 + rand()%4000;
@@ -281,21 +281,21 @@ struct OREGON_DLL_DECL mob_zealot_lorkhanAI : public ScriptedAI
             return;
 
         //Shield_Timer
-        if (Shield_Timer < diff)
+        if (Shield_Timer <= diff)
         {
             DoCast(me,SPELL_SHIELD);
             Shield_Timer = 61000;
         } else Shield_Timer -= diff;
 
         //BloodLust_Timer
-        if (BloodLust_Timer < diff)
+        if (BloodLust_Timer <= diff)
         {
             DoCast(me,SPELL_BLOODLUST);
             BloodLust_Timer = 20000+rand()%8000;
         } else BloodLust_Timer -= diff;
 
         //Casting Greaterheal to Thekal or Zath if they are in meele range.
-        if (GreaterHeal_Timer < diff)
+        if (GreaterHeal_Timer <= diff)
         {
             if (pInstance)
             {
@@ -322,14 +322,14 @@ struct OREGON_DLL_DECL mob_zealot_lorkhanAI : public ScriptedAI
         } else GreaterHeal_Timer -= diff;
 
         //Disarm_Timer
-        if (Disarm_Timer < diff)
+        if (Disarm_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_DISARM);
             Disarm_Timer = 15000+rand()%10000;
         } else Disarm_Timer -= diff;
 
         //Check_Timer for the death of LorKhan and Zath.
-        if (!FakeDeath && Check_Timer < diff)
+        if (!FakeDeath && Check_Timer <= diff)
         {
             if (pInstance)
             {
@@ -427,21 +427,21 @@ struct OREGON_DLL_DECL mob_zealot_zathAI : public ScriptedAI
             return;
 
         //SweepingStrikes_Timer
-        if (SweepingStrikes_Timer < diff)
+        if (SweepingStrikes_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SWEEPINGSTRIKES);
             SweepingStrikes_Timer = 22000+rand()%4000;
         } else SweepingStrikes_Timer -= diff;
 
         //SinisterStrike_Timer
-        if (SinisterStrike_Timer < diff)
+        if (SinisterStrike_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SINISTERSTRIKE);
             SinisterStrike_Timer = 8000+rand()%8000;
         } else SinisterStrike_Timer -= diff;
 
         //Gouge_Timer
-        if (Gouge_Timer < diff)
+        if (Gouge_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_GOUGE);
 
@@ -452,21 +452,21 @@ struct OREGON_DLL_DECL mob_zealot_zathAI : public ScriptedAI
         } else Gouge_Timer -= diff;
 
         //Kick_Timer
-        if (Kick_Timer < diff)
+        if (Kick_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_KICK);
             Kick_Timer = 15000+rand()%10000;
         } else Kick_Timer -= diff;
 
         //Blind_Timer
-        if (Blind_Timer < diff)
+        if (Blind_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_BLIND);
             Blind_Timer = 10000+rand()%10000;
         } else Blind_Timer -= diff;
 
         //Check_Timer for the death of LorKhan and Zath.
-        if (!FakeDeath && Check_Timer < diff)
+        if (!FakeDeath && Check_Timer <= diff)
         {
             if (pInstance)
             {

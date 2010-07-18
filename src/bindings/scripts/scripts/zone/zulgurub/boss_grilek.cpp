@@ -51,7 +51,7 @@ struct OREGON_DLL_DECL boss_grilekAI : public ScriptedAI
             return;
 
         //Avartar_Timer
-        if (Avartar_Timer < diff)
+        if (Avartar_Timer <= diff)
         {
 
             DoCast(me, SPELL_AVARTAR);
@@ -68,7 +68,7 @@ struct OREGON_DLL_DECL boss_grilekAI : public ScriptedAI
         } else Avartar_Timer -= diff;
 
         //GroundTremor_Timer
-        if (GroundTremor_Timer < diff)
+        if (GroundTremor_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_GROUNDTREMOR);
             GroundTremor_Timer = 12000 + rand()%4000;

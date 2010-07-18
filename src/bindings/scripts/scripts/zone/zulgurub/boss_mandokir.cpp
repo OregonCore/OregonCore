@@ -145,7 +145,7 @@ struct OREGON_DLL_DECL boss_mandokirAI : public ScriptedAI
                 CombatStart = true;
             }
 
-            if (Watch_Timer < diff)                         //Every 20 Sec Mandokir will check this
+            if (Watch_Timer <= diff)                         //Every 20 Sec Mandokir will check this
             {
                 if (WatchTarget)                             //If someone is watched and If the Position of the watched target is different from the one stored, or are attacking, mandokir will charge him
                 {
@@ -200,21 +200,21 @@ struct OREGON_DLL_DECL boss_mandokirAI : public ScriptedAI
             if (!someWatched)
             {
                 //Cleave
-                if (Cleave_Timer < diff)
+                if (Cleave_Timer <= diff)
                 {
                     DoCast(me->getVictim(),SPELL_CLEAVE);
                     Cleave_Timer = 7000;
                 } else Cleave_Timer -= diff;
 
                 //Whirlwind
-                if (Whirlwind_Timer < diff)
+                if (Whirlwind_Timer <= diff)
                 {
                     DoCast(me,SPELL_WHIRLWIND);
                     Whirlwind_Timer = 18000;
                 } else Whirlwind_Timer -= diff;
 
                 //If more then 3 targets in melee range mandokir will cast fear
-                if (Fear_Timer < diff)
+                if (Fear_Timer <= diff)
                 {
                     TargetInRange = 0;
 
@@ -235,7 +235,7 @@ struct OREGON_DLL_DECL boss_mandokirAI : public ScriptedAI
                 //Mortal Strike if target below 50% hp
                 if (me->getVictim() && me->getVictim()->GetHealth() < me->getVictim()->GetMaxHealth()*0.5)
                 {
-                    if (MortalStrike_Timer < diff)
+                    if (MortalStrike_Timer <= diff)
                     {
                         DoCast(me->getVictim(),SPELL_MORTAL_STRIKE);
                         MortalStrike_Timer = 15000;
@@ -243,7 +243,7 @@ struct OREGON_DLL_DECL boss_mandokirAI : public ScriptedAI
                 }
             }
             //Checking if Ohgan is dead. If yes Mandokir will enrage.
-            if (Check_Timer < diff)
+            if (Check_Timer <= diff)
             {
                 if (pInstance)
                 {
@@ -296,7 +296,7 @@ struct OREGON_DLL_DECL mob_ohganAI : public ScriptedAI
             return;
 
         //SunderArmor_Timer
-        if (SunderArmor_Timer < diff)
+        if (SunderArmor_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_SUNDERARMOR);
             SunderArmor_Timer = 10000 + rand()%5000;

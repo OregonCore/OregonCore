@@ -100,37 +100,37 @@ struct OREGON_DLL_DECL AV_MarshalsAI : public ScriptedAI
         }
         if (!UpdateVictim())
             return;
-        if (ChargeTimer <diff)
+        if (ChargeTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_CHARGE);
             ChargeTimer = (10+rand()%15)*1000;
         } else ChargeTimer -= diff;
 
-        if (CleaveTimer < diff)
+        if (CleaveTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_CLEAVE);
             CleaveTimer =  (10+rand()%6)*1000;
         } else CleaveTimer -= diff;
 
-        if (DemoralizingShoutTimer < diff)
+        if (DemoralizingShoutTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_DEMORALIZING_SHOUT);
             DemoralizingShoutTimer = (10+rand()%5)*1000;
         } else DemoralizingShoutTimer -= diff;
 
-        if (Whirlwind1Timer < diff)
+        if (Whirlwind1Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_WHIRLWIND1);
             Whirlwind1Timer = (6+rand()%14)*1000;
         } else Whirlwind1Timer -= diff;
 
-        if (Whirlwind2Timer < diff)
+        if (Whirlwind2Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_WHIRLWIND2);
             Whirlwind2Timer = (10+rand()%15)*1000;
         } else Whirlwind2Timer -= diff;
 
-        if (EnrageTimer < diff)
+        if (EnrageTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_ENRAGE);
             EnrageTimer = (10+rand()%20)*1000;
@@ -138,7 +138,7 @@ struct OREGON_DLL_DECL AV_MarshalsAI : public ScriptedAI
 
 
         // check if creature is not outside of building
-        if (ResetTimer < diff)
+        if (ResetTimer <= diff)
         {
             float x, y, z;
             me->GetPosition(x, y, z);

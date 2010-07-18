@@ -78,7 +78,7 @@ struct OREGON_DLL_DECL instance_deadmines : public ScriptedInstance
                 break;
             case CANNON_BLAST_INITIATED:
                 PiratesDelay_Timer = PIRATES_DELAY_TIMER;
-                if (CannonBlast_Timer<diff)
+                if (CannonBlast_Timer <= diff)
                 {
                     SummonCreatures();
                     ShootCannon();
@@ -91,7 +91,7 @@ struct OREGON_DLL_DECL instance_deadmines : public ScriptedInstance
                     CannonBlast_Timer-=diff;
                 break;
             case PIRATES_ATTACK:
-                if (PiratesDelay_Timer<diff)
+                if (PiratesDelay_Timer <= diff)
                 {
                     MoveCreaturesInside();
                     State = EVENT_DONE;

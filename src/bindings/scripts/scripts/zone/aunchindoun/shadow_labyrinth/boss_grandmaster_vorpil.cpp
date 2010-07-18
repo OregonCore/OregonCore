@@ -94,7 +94,7 @@ struct OREGON_DLL_DECL mob_voidtravelerAI : public ScriptedAI
             me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             return;
         }
-        if (move < diff)
+        if (move <= diff)
         {
             if (sacrificed)
             {
@@ -260,13 +260,13 @@ struct OREGON_DLL_DECL boss_grandmaster_vorpilAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (ShadowBoltVolley_Timer < diff)
+        if (ShadowBoltVolley_Timer <= diff)
         {
             DoCast(me,SPELL_SHADOWBOLT_VOLLEY);
             ShadowBoltVolley_Timer = 15000;
         } else ShadowBoltVolley_Timer -= diff;
 
-        if (HeroicMode && banish_Timer < diff)
+        if (HeroicMode && banish_Timer <= diff)
         {
             Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,30,false);
             if (pTarget)
@@ -276,7 +276,7 @@ struct OREGON_DLL_DECL boss_grandmaster_vorpilAI : public ScriptedAI
             }
         } else banish_Timer -= diff;
 
-        if (DrawShadows_Timer < diff)
+        if (DrawShadows_Timer <= diff)
         {
             Map *map = me->GetMap();
             Map::PlayerList const &PlayerList = map->GetPlayers();
@@ -294,7 +294,7 @@ struct OREGON_DLL_DECL boss_grandmaster_vorpilAI : public ScriptedAI
             DrawShadows_Timer = 30000;
         } else DrawShadows_Timer -= diff;
 
-        if (summonTraveler_Timer < diff)
+        if (summonTraveler_Timer <= diff)
         {
             spawnVoidTraveler();
             summonTraveler_Timer = 10000;

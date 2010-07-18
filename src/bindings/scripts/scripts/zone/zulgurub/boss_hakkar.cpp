@@ -105,21 +105,21 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
             return;
 
         //BloodSiphon_Timer
-        if (BloodSiphon_Timer < diff)
+        if (BloodSiphon_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_BLOODSIPHON);
             BloodSiphon_Timer = 90000;
         } else BloodSiphon_Timer -= diff;
 
         //CorruptedBlood_Timer
-        if (CorruptedBlood_Timer < diff)
+        if (CorruptedBlood_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CORRUPTEDBLOOD);
             CorruptedBlood_Timer = 30000 + rand()%15000;
         } else CorruptedBlood_Timer -= diff;
 
         //CauseInsanity_Timer
-        /*if (CauseInsanity_Timer < diff)
+        /*if (CauseInsanity_Timer <= diff)
         {
         if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
         DoCast(pTarget,SPELL_CAUSEINSANITY);
@@ -128,7 +128,7 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
         } else CauseInsanity_Timer -= diff;*/
 
         //WillOfHakkar_Timer
-        if (WillOfHakkar_Timer < diff)
+        if (WillOfHakkar_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_WILLOFHAKKAR);
@@ -136,20 +136,20 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
             WillOfHakkar_Timer = 25000 + rand()%10000;
         } else WillOfHakkar_Timer -= diff;
 
-        if (!Enraged && Enrage_Timer < diff)
+        if (!Enraged && Enrage_Timer <= diff)
         {
             DoCast(me, SPELL_ENRAGE);
             Enraged = true;
         } else Enrage_Timer -= diff;
 
         //Checking if Jeklik is dead. If not we cast her Aspect
-        if (CheckJeklik_Timer < diff)
+        if (CheckJeklik_Timer <= diff)
         {
             if (pInstance)
             {
                 if (!pInstance->GetData(DATA_JEKLIKISDEAD))
                 {
-                    if (AspectOfJeklik_Timer < diff)
+                    if (AspectOfJeklik_Timer <= diff)
                     {
                         DoCast(me->getVictim(),SPELL_ASPECT_OF_JEKLIK);
                         AspectOfJeklik_Timer = 10000 + rand()%4000;
@@ -160,13 +160,13 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
         } else CheckJeklik_Timer -= diff;
 
         //Checking if Venoxis is dead. If not we cast his Aspect
-        if (CheckVenoxis_Timer < diff)
+        if (CheckVenoxis_Timer <= diff)
         {
             if (pInstance)
             {
                 if (!pInstance->GetData(DATA_VENOXISISDEAD))
                 {
-                    if (AspectOfVenoxis_Timer < diff)
+                    if (AspectOfVenoxis_Timer <= diff)
                     {
                         DoCast(me->getVictim(),SPELL_ASPECT_OF_VENOXIS);
                         AspectOfVenoxis_Timer = 8000;
@@ -177,13 +177,13 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
         } else CheckVenoxis_Timer -= diff;
 
         //Checking if Marli is dead. If not we cast her Aspect
-        if (CheckMarli_Timer < diff)
+        if (CheckMarli_Timer <= diff)
         {
             if (pInstance)
             {
                 if (!pInstance->GetData(DATA_MARLIISDEAD))
                 {
-                    if (AspectOfMarli_Timer < diff)
+                    if (AspectOfMarli_Timer <= diff)
                     {
                         DoCast(me->getVictim(),SPELL_ASPECT_OF_MARLI);
                         AspectOfMarli_Timer = 10000;
@@ -195,13 +195,13 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
         } else CheckMarli_Timer -= diff;
 
         //Checking if Thekal is dead. If not we cast his Aspect
-        if (CheckThekal_Timer < diff)
+        if (CheckThekal_Timer <= diff)
         {
             if (pInstance)
             {
                 if (!pInstance->GetData(DATA_THEKALISDEAD))
                 {
-                    if (AspectOfThekal_Timer < diff)
+                    if (AspectOfThekal_Timer <= diff)
                     {
                         DoCast(me,SPELL_ASPECT_OF_THEKAL);
                         AspectOfThekal_Timer = 15000;
@@ -212,13 +212,13 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
         } else CheckThekal_Timer -= diff;
 
         //Checking if Arlokk is dead. If yes we cast her Aspect
-        if (CheckArlokk_Timer < diff)
+        if (CheckArlokk_Timer <= diff)
         {
             if (pInstance)
             {
                 if (!pInstance->GetData(DATA_ARLOKKISDEAD))
                 {
-                    if (AspectOfArlokk_Timer < diff)
+                    if (AspectOfArlokk_Timer <= diff)
                     {
                         DoCast(me,SPELL_ASPECT_OF_ARLOKK);
                         DoResetThreat();

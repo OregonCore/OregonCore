@@ -107,21 +107,21 @@ struct OREGON_DLL_DECL boss_aeonusAI : public ScriptedAI
             return;
 
         //Sand Breath
-        if (SandBreath_Timer < diff)
+        if (SandBreath_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_SAND_BREATH);
             SandBreath_Timer = 30000;
         } else SandBreath_Timer -= diff;
 
         //Time Stop
-        if (TimeStop_Timer < diff)
+        if (TimeStop_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_TIME_STOP);
             TimeStop_Timer = 40000;
         } else TimeStop_Timer -= diff;
 
         //Frenzy
-        if (Frenzy_Timer < diff)
+        if (Frenzy_Timer <= diff)
         {
             DoScriptText(EMOTE_FRENZY, me);
             DoCast(me, SPELL_ENRAGE);

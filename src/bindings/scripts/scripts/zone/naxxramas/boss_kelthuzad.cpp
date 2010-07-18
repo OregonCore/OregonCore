@@ -279,7 +279,7 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
         if (me->getVictim() && me->isAlive())
         {
             //Check for Frost Bolt
-            if (FrostBolt_Timer < diff)
+            if (FrostBolt_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_FROST_BOLT);
                 //Cast again on time
@@ -287,14 +287,14 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             } else FrostBolt_Timer -= diff;
 
             //Check for Frost Bolt Nova
-            if (FrostBoltNova_Timer < diff)
+            if (FrostBoltNova_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_FROST_BOLT_NOVA);
                 FrostBoltNova_Timer = 15000;
             } else FrostBoltNova_Timer -= diff;
 
             //Check for Chains Of Kelthuzad
-            if (ChainsOfKelthuzad_Timer < diff)
+            if (ChainsOfKelthuzad_Timer <= diff)
             {
                 //DoCast(me->getVictim(),SPELL_CHAINS_OF_KELTHUZAD);
 
@@ -306,7 +306,7 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             } else ChainsOfKelthuzad_Timer -= diff;
 
             //Check for Mana Detonation
-            if (ManaDetonation_Timer < diff)
+            if (ManaDetonation_Timer <= diff)
             {
                 //time to cast
                 DoCast(me->getVictim(),SPELL_MANA_DETONATION);
@@ -317,7 +317,7 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             } else ManaDetonation_Timer -= diff;
 
             //Check for Shadow Fissure
-            if (ShadowFisure_Timer < diff)
+            if (ShadowFisure_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_SHADOW_FISURE);
 
@@ -327,7 +327,7 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             } else ShadowFisure_Timer -= diff;
 
             //Check for Frost Blast
-            if (FrostBlast_Timer < diff)
+            if (FrostBlast_Timer <= diff)
             {
                 //time to cast
                 DoCast(me->getVictim(),SPELL_FROST_BLAST);
@@ -348,7 +348,7 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             }
 
             if (Phase3 && (GuardiansOfIcecrown_Count < 5))
-                if (GuardiansOfIcecrown_Timer < diff)
+                if (GuardiansOfIcecrown_Timer <= diff)
             {
                 //Summon a Guardian of Icecrown in a random alcove (Creature # 16441)
                 //uint32 TimeToWalk;

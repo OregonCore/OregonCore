@@ -136,7 +136,7 @@ struct OREGON_DLL_DECL npc_millhouse_manastormAI : public ScriptedAI
     {
         if (!Init)
         {
-            if (EventProgress_Timer < diff)
+            if (EventProgress_Timer <= diff)
             {
                 if (Phase < 8)
                 {
@@ -189,7 +189,7 @@ struct OREGON_DLL_DECL npc_millhouse_manastormAI : public ScriptedAI
             LowHp = true;
         }
 
-        if (Pyroblast_Timer < diff)
+        if (Pyroblast_Timer <= diff)
         {
             if (me->IsNonMeleeSpellCasted(false))
                 return;
@@ -200,7 +200,7 @@ struct OREGON_DLL_DECL npc_millhouse_manastormAI : public ScriptedAI
             Pyroblast_Timer = 40000;
         } else Pyroblast_Timer -=diff;
 
-        if (Fireball_Timer < diff)
+        if (Fireball_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_FIREBALL);
             Fireball_Timer = 4000;
@@ -377,7 +377,7 @@ struct OREGON_DLL_DECL npc_warden_mellicharAI : public ScriptedAI
         if (!IsRunning)
             return;
 
-        if (EventProgress_Timer < diff)
+        if (EventProgress_Timer <= diff)
         {
             if (pInstance)
             {

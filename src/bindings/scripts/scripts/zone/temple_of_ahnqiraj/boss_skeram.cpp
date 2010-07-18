@@ -132,7 +132,7 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
             return;
 
         //ArcaneExplosion_Timer
-        if (ArcaneExplosion_Timer < diff)
+        if (ArcaneExplosion_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_ARCANE_EXPLOSION);
             ArcaneExplosion_Timer = 8000 + rand()%10000;
@@ -150,7 +150,7 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
         } else
         {
             //EarthShock_Timer
-            if (EarthShock_Timer < diff)
+            if (EarthShock_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_EARTH_SHOCK);
                 EarthShock_Timer = 1000;
@@ -158,7 +158,7 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
         }
 
         //Blink_Timer
-        if (Blink_Timer < diff)
+        if (Blink_Timer <= diff)
         {
             //DoCast(me, SPELL_BLINK);
             switch(rand()%3)
@@ -199,7 +199,7 @@ struct OREGON_DLL_DECL boss_skeramAI : public ScriptedAI
         //Invisible_Timer
         if (Invisible)
         {
-            if (Invisible_Timer < diff)
+            if (Invisible_Timer <= diff)
             {
                 //Making Skeram visible after telporting
                 me->SetVisibility(VISIBILITY_ON);

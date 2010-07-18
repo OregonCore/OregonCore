@@ -74,7 +74,7 @@ struct OREGON_DLL_DECL boss_bloodmage_thalnosAI : public ScriptedAI
         {
             Yell_Timer -= diff;
 
-            if (Yell_Timer < diff)
+            if (Yell_Timer <= diff)
             {
                 DoYell(SAY_HEALTH,LANG_UNIVERSAL,NULL);
                 DoPlaySoundToSet(me,SOUND_HEALTH);
@@ -83,35 +83,35 @@ struct OREGON_DLL_DECL boss_bloodmage_thalnosAI : public ScriptedAI
         }
 
         //FrostNova2_Timer
-        if (FrostNova2_Timer < diff)
+        if (FrostNova2_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_FROSTNOVA2);
             FrostNova2_Timer = 10000;
         } else FrostNova2_Timer -= diff;
 
         //FlameShock3_Timer
-        if (FlameShock3_Timer < diff)
+        if (FlameShock3_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_FLAMESHOCK3);
             FlameShock3_Timer = 15000;
         } else FlameShock3_Timer -= diff;
 
         //ShadowBolt5_Timer
-        if (ShadowBolt5_Timer < diff)
+        if (ShadowBolt5_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SHADOWBOLT5);
             ShadowBolt5_Timer = 20000;
         } else ShadowBolt5_Timer -= diff;
 
         //FlameSpike_Timer
-        if (FlameSpike_Timer < diff)
+        if (FlameSpike_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_FLAMESPIKE);
             FlameSpike_Timer = 30000;
         } else FlameSpike_Timer -= diff;
 
         //FireNova_Timer
-        if (FireNova_Timer < diff)
+        if (FireNova_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_FIRENOVA);
             FireNova_Timer = 20000;

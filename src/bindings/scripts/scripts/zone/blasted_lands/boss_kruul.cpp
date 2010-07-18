@@ -97,7 +97,7 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
             return;
 
         //ShadowVolley_Timer
-        if (ShadowVolley_Timer < diff)
+        if (ShadowVolley_Timer <= diff)
         {
             if (rand()%100 < 46)
             {
@@ -108,7 +108,7 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
         } else ShadowVolley_Timer -= diff;
 
         //Cleave_Timer
-        if (Cleave_Timer < diff)
+        if (Cleave_Timer <= diff)
         {
             if (rand()%100 < 50)
             {
@@ -119,7 +119,7 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
         } else Cleave_Timer -= diff;
 
         //ThunderClap_Timer
-        if (ThunderClap_Timer < diff)
+        if (ThunderClap_Timer <= diff)
         {
             if (rand()%100 < 20)
             {
@@ -130,14 +130,14 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
         } else ThunderClap_Timer -= diff;
 
         //TwistedReflection_Timer
-        if (TwistedReflection_Timer < diff)
+        if (TwistedReflection_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_TWISTEDREFLECTION);
             TwistedReflection_Timer = 30000;
         } else TwistedReflection_Timer -= diff;
 
         //VoidBolt_Timer
-        if (VoidBolt_Timer < diff)
+        if (VoidBolt_Timer <= diff)
         {
             if (rand()%100 < 40)
             {
@@ -148,14 +148,14 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
         } else VoidBolt_Timer -= diff;
 
         //Rage_Timer
-        if (Rage_Timer < diff)
+        if (Rage_Timer <= diff)
         {
             DoCast(me,SPELL_RAGE);
             Rage_Timer = 70000;
         } else Rage_Timer -= diff;
 
         //Hound_Timer
-        if (Hound_Timer < diff)
+        if (Hound_Timer <= diff)
         {
             SummonHounds(me->getVictim());
             SummonHounds(me->getVictim());

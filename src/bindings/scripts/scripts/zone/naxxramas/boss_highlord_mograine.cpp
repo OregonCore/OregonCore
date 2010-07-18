@@ -126,7 +126,7 @@ struct OREGON_DLL_DECL boss_highlord_mograineAI : public ScriptedAI
             return;
 
         // Mark of Mograine
-        if (Mark_Timer < diff)
+        if (Mark_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_MARK_OF_MOGRAINE);
             Mark_Timer = 12000;
@@ -151,7 +151,7 @@ struct OREGON_DLL_DECL boss_highlord_mograineAI : public ScriptedAI
         }
 
         // Righteous Fire
-        if (RighteousFire_Timer < diff)
+        if (RighteousFire_Timer <= diff)
         {
             if (rand()%4 == 1)                               // 1/4
             {

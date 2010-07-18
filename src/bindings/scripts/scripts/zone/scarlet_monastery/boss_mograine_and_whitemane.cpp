@@ -102,7 +102,7 @@ struct OREGON_DLL_DECL boss_scarlet_commander_mograineAI : public ScriptedAI
         if (me->GetHealth()*100 / me->GetMaxHealth() <= 50 && !me->IsNonMeleeSpellCasted(false))
         {
             //heal_Timer
-            if (Heal_Timer < diff)
+            if (Heal_Timer <= diff)
             {
                 //Switch between 2 different charge methods
                 switch (rand()%2)
@@ -122,42 +122,42 @@ struct OREGON_DLL_DECL boss_scarlet_commander_mograineAI : public ScriptedAI
         }
 
         //DivineShield2_Timer
-        if (DivineShield2_Timer < diff)
+        if (DivineShield2_Timer <= diff)
         {
             DoCast(me,SPELL_DIVINESHIELD2);
             DivineShield2_Timer = 60000;
         } else DivineShield2_Timer -= diff;
 
         //CrusaderStrike5_Timer
-        if (CrusaderStrike5_Timer < diff)
+        if (CrusaderStrike5_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CRUSADERSTRIKE5);
             CrusaderStrike5_Timer = 20000;
         } else CrusaderStrike5_Timer -= diff;
 
         //HammerOfJustice3_Timer
-        if (HammerOfJustice3_Timer < diff)
+        if (HammerOfJustice3_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_HAMMEROFJUSTICE3);
             HammerOfJustice3_Timer = 30000;
         } else HammerOfJustice3_Timer -= diff;
 
         //Consecration3_Timer
-        if (Consecration3_Timer < diff)
+        if (Consecration3_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CONSECRATION3);
             Consecration3_Timer = 20000;
         } else Consecration3_Timer -= diff;
 
         //BlessingOfWisdom_Timer
-        if (BlessingOfWisdom_Timer < diff)
+        if (BlessingOfWisdom_Timer <= diff)
         {
             DoCast(me,SPELL_BLESSINGOFWISDOM);
             BlessingOfWisdom_Timer = 45000;
         } else BlessingOfWisdom_Timer -= diff;
 
         //BlessingOfProtection3_Timer
-        if (BlessingOfProtection3_Timer < diff)
+        if (BlessingOfProtection3_Timer <= diff)
         {
             DoCast(me,SPELL_BLESSINGOFPROTECTION3);
             BlessingOfProtection3_Timer = 50000;
@@ -242,7 +242,7 @@ struct OREGON_DLL_DECL boss_high_inquisitor_whitemaneAI : public ScriptedAI
         //If we are <75% hp cast healing spells at self and Mograine
         if (me->GetHealth()*100 / me->GetMaxHealth() <= 75)
         {
-            if (Healing_Timer < diff)
+            if (Healing_Timer <= diff)
             {
                 DoCast(me,SPELL_FLASHHEAL6);
                 return;
@@ -254,7 +254,7 @@ struct OREGON_DLL_DECL boss_high_inquisitor_whitemaneAI : public ScriptedAI
 
         if (me->GetHealth()*100 / me->GetMaxHealth() <= 30)
         {
-            if (Renew_Timer < diff)
+            if (Renew_Timer <= diff)
             {
                 DoCast(me,SPELL_RENEW);
                 Renew_Timer = 30000;
@@ -262,42 +262,42 @@ struct OREGON_DLL_DECL boss_high_inquisitor_whitemaneAI : public ScriptedAI
         }
 
         //PowerWordShield_Timer
-        if (PowerWordShield_Timer < diff)
+        if (PowerWordShield_Timer <= diff)
         {
             DoCast(me,SPELL_POWERWORDSHIELD);
             PowerWordShield_Timer = 25000;
         } else PowerWordShield_Timer -= diff;
 
         //CrusaderStrike_Timer
-        if (CrusaderStrike_Timer < diff)
+        if (CrusaderStrike_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CRUSADERSTRIKE);
             CrusaderStrike_Timer = 15000;
         } else CrusaderStrike_Timer -= diff;
 
         //HammerOfJustice_Timer
-        if (HammerOfJustice_Timer < diff)
+        if (HammerOfJustice_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_HAMMEROFJUSTICE);
             HammerOfJustice_Timer = 12000;
         } else HammerOfJustice_Timer -= diff;
 
         //HolySmite6_Timer
-        if (HolySmite6_Timer < diff)
+        if (HolySmite6_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_HOLYSMITE6);
             HolySmite6_Timer = 10000;
         } else HolySmite6_Timer -= diff;
 
         //HolyFire5_Timer
-        if (HolyFire5_Timer < diff)
+        if (HolyFire5_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_HOLYFIRE5);
             HolyFire5_Timer = 15000;
         } else HolyFire5_Timer -= diff;
 
         //MindBlast6_Timer
-        if (MindBlast6_Timer < diff)
+        if (MindBlast6_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_MINDBLAST6);
             MindBlast6_Timer = 8000;

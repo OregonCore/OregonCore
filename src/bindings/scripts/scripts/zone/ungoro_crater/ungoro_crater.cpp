@@ -105,7 +105,7 @@ struct OREGON_DLL_DECL npc_ameAI : public npc_escortAI
         if (!UpdateVictim())
             return;
 
-        if (DEMORALIZINGSHOUT_Timer < diff)
+        if (DEMORALIZINGSHOUT_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_DEMORALIZINGSHOUT);
             DEMORALIZINGSHOUT_Timer = 70000;

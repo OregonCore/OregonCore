@@ -518,7 +518,7 @@ struct OREGON_DLL_DECL boss_gathios_the_shattererAI : public boss_illidari_counc
         if (!UpdateVictim())
             return;
 
-        if (BlessingTimer < diff)
+        if (BlessingTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
@@ -535,7 +535,7 @@ struct OREGON_DLL_DECL boss_gathios_the_shattererAI : public boss_illidari_counc
             }
         } else BlessingTimer -= diff;
 
-        if (JudgeTimer < diff)
+        if (JudgeTimer <= diff)
         {
            if (!me->IsNonMeleeSpellCasted(false))
            {
@@ -559,13 +559,13 @@ struct OREGON_DLL_DECL boss_gathios_the_shattererAI : public boss_illidari_counc
            }
         } else JudgeTimer -= diff;
 
-        if (ConsecrationTimer < diff)
+        if (ConsecrationTimer <= diff)
         {
             if (TryDoCast(me, SPELL_CONSECRATION))
                 ConsecrationTimer = 30000;
         } else ConsecrationTimer -= diff;
 
-        if (HammerOfJusticeTimer < diff)
+        if (HammerOfJusticeTimer <= diff)
         {
             if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0,40,true))
             {
@@ -578,7 +578,7 @@ struct OREGON_DLL_DECL boss_gathios_the_shattererAI : public boss_illidari_counc
             }
         } else HammerOfJusticeTimer -= diff;
 
-        if (SealTimer < diff)
+        if (SealTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
@@ -591,7 +591,7 @@ struct OREGON_DLL_DECL boss_gathios_the_shattererAI : public boss_illidari_counc
             }
         } else SealTimer -= diff;
 
-        if (AuraTimer < diff)
+        if (AuraTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
@@ -638,7 +638,7 @@ struct OREGON_DLL_DECL boss_high_nethermancer_zerevorAI : public boss_illidari_c
         if (!UpdateVictim())
             return;
 
-        if (DampenMagicTimer < diff)
+        if (DampenMagicTimer <= diff)
         {
            if (!me->IsNonMeleeSpellCasted(false))
            {
@@ -648,7 +648,7 @@ struct OREGON_DLL_DECL boss_high_nethermancer_zerevorAI : public boss_illidari_c
            }
         } else DampenMagicTimer -= diff;
 
-        if (ArcaneExplosionTimer < diff)
+        if (ArcaneExplosionTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
@@ -660,7 +660,7 @@ struct OREGON_DLL_DECL boss_high_nethermancer_zerevorAI : public boss_illidari_c
             }
         } else ArcaneExplosionTimer -= diff;
 
-        if (ArcaneBoltTimer < diff)
+        if (ArcaneBoltTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
@@ -669,7 +669,7 @@ struct OREGON_DLL_DECL boss_high_nethermancer_zerevorAI : public boss_illidari_c
             }
         } else ArcaneBoltTimer -= diff;
 
-        if (BlizzardTimer < diff)
+        if (BlizzardTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
@@ -682,7 +682,7 @@ struct OREGON_DLL_DECL boss_high_nethermancer_zerevorAI : public boss_illidari_c
             }
         } else BlizzardTimer -= diff;
 
-        if (FlamestrikeTimer < diff)
+        if (FlamestrikeTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
@@ -729,7 +729,7 @@ struct OREGON_DLL_DECL boss_lady_malandeAI : public boss_illidari_councilAI
         if (!UpdateVictim())
             return;
 
-        if (EmpoweredSmiteTimer < diff)
+        if (EmpoweredSmiteTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
@@ -738,13 +738,13 @@ struct OREGON_DLL_DECL boss_lady_malandeAI : public boss_illidari_councilAI
             }
         } else EmpoweredSmiteTimer -= diff;
 
-        if (CircleOfHealingTimer < diff)
+        if (CircleOfHealingTimer <= diff)
         {
             if (TryDoCast(me, SPELL_CIRCLE_OF_HEALING))
                 CircleOfHealingTimer = 30000;
         } else CircleOfHealingTimer -= diff;
 
-        if (DivineWrathTimer < diff)
+        if (DivineWrathTimer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
@@ -753,7 +753,7 @@ struct OREGON_DLL_DECL boss_lady_malandeAI : public boss_illidari_councilAI
             }
         } else DivineWrathTimer -= diff;
 
-        if (ReflectiveShieldTimer < diff)
+        if (ReflectiveShieldTimer <= diff)
         {
             if (TryDoCast(me, SPELL_REFLECTIVE_SHIELD))
                 ReflectiveShieldTimer = 45000;
@@ -818,7 +818,7 @@ struct OREGON_DLL_DECL boss_veras_darkshadowAI : public boss_illidari_councilAI
 
         if (!me->HasAura(SPELL_VANISH,0))
         {
-            if (VanishTimer < diff)
+            if (VanishTimer <= diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
@@ -835,7 +835,7 @@ struct OREGON_DLL_DECL boss_veras_darkshadowAI : public boss_illidari_councilAI
         }
         else
         {
-            if (EnvenomTimer < diff)
+            if (EnvenomTimer <= diff)
             {
                 if (EnvenomTargetGUID)
                 {

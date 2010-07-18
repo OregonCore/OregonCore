@@ -307,7 +307,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
             return;
 
         //Normal casts
-        if (NormalCastTimer < diff)
+        if (NormalCastTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
@@ -346,7 +346,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
             NormalCastTimer = 1000;
         } else NormalCastTimer -= diff;
 
-        if (SecondarySpellTimer < diff)
+        if (SecondarySpellTimer <= diff)
         {
             switch (rand()%2)
             {
@@ -362,7 +362,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
             SecondarySpellTimer = 5000 + (rand()%15000);
         } else SecondarySpellTimer -= diff;
 
-        if (SuperCastTimer < diff)
+        if (SuperCastTimer <= diff)
         {
             uint8 Available[2];
 
@@ -452,7 +452,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
             DoScriptText(SAY_ELEMENTALS, me);
         }
 
-        if (BerserkTimer < diff)
+        if (BerserkTimer <= diff)
         {
             for (uint32 i = 0; i < 5; i++)
             {
@@ -476,7 +476,7 @@ struct OREGON_DLL_DECL boss_aranAI : public ScriptedAI
                 FlameWreathTimer -= diff;
             else FlameWreathTimer = 0;
 
-            if (FlameWreathCheckTime < diff)
+            if (FlameWreathCheckTime <= diff)
             {
                 for (uint32 i = 0; i < 3; i++)
                 {
@@ -546,7 +546,7 @@ struct OREGON_DLL_DECL water_elementalAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (CastTimer < diff)
+        if (CastTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_WATERBOLT);
             CastTimer = 2000 + (rand()%3000);

@@ -122,7 +122,7 @@ struct OREGON_DLL_DECL npc_testAI : public npc_escortAI
             //Combat check
             if (me->isInCombat() && me->getVictim())
             {
-                if (DeathCoilTimer < diff)
+                if (DeathCoilTimer <= diff)
                 {
                     me->Say(SAY_DEATHCOIL, LANG_UNIVERSAL, 0);
                     me->CastSpell(me->getVictim(), 33130, false);
@@ -133,7 +133,7 @@ struct OREGON_DLL_DECL npc_testAI : public npc_escortAI
             {
                 //Out of combat but being escorted
                 if (HasEscortState(STATE_ESCORT_ESCORTING))
-                    if (ChatTimer < diff)
+                    if (ChatTimer <= diff)
                 {
                     if (me->HasAura(3593, 0))
                     {

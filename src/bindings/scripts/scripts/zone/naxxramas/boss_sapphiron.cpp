@@ -77,20 +77,20 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
 
             if (phase == 1)
             {
-                if (FrostAura_Timer < diff)
+                if (FrostAura_Timer <= diff)
                 {
                     DoCast(me->getVictim(),SPELL_FROST_AURA);
                     FrostAura_Timer = 5000;
                 } else FrostAura_Timer -= diff;
 
-                if (LifeDrain_Timer < diff)
+                if (LifeDrain_Timer <= diff)
                 {
                     if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                         DoCast(pTarget,SPELL_LIFE_DRAIN);
                     LifeDrain_Timer = 24000;
                 } else LifeDrain_Timer -= diff;
 
-                if (Blizzard_Timer < diff)
+                if (Blizzard_Timer <= diff)
                 {
                     if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                         DoCast(pTarget,SPELL_BLIZZARD);
@@ -99,7 +99,7 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
 
                 if (me->GetHealth()*100 / me->GetMaxHealth() > 10)
                 {
-                    if (Fly_Timer < diff)
+                    if (Fly_Timer <= diff)
                     {
                         phase = 2;
                         me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
@@ -116,7 +116,7 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
 
                 if (phase == 2)
                 {
-                    if (Icebolt_Timer < diff && Icebolt_Count < 5)
+                    if (Icebolt_Timer <= diff && Icebolt_Count < 5)
                     {
                         if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                         {
@@ -128,7 +128,7 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
                         Icebolt_Timer = 4000;
                     } else Icebolt_Timer -= diff;
 
-                    if (Icebolt_Count == 5 && IsInFly && FrostBreath_Timer < diff)
+                    if (Icebolt_Count == 5 && IsInFly && FrostBreath_Timer <= diff)
                     {
                         DoScriptText(EMOTE_BREATH, me);
                         DoCast(me->getVictim(),SPELL_FROST_BREATH);
@@ -137,7 +137,7 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
                         FrostBreath_Timer = 6000;
                     } else FrostBreath_Timer -= diff;
 
-                    if (!IsInFly && land_Timer < diff)
+                    if (!IsInFly && land_Timer <= diff)
                     {
                         phase = 1;
                         me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
@@ -152,7 +152,7 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
 
                 if ((me->GetHealth()*100) / me->GetMaxHealth() <= 10)
                 {
-                    if (Beserk_Timer < diff)
+                    if (Beserk_Timer <= diff)
                     {
                         DoScriptText(EMOTE_ENRAGE, me);
                         DoCast(me,SPELL_BESERK);

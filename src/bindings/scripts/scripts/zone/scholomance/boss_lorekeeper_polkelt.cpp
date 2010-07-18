@@ -68,28 +68,28 @@ struct OREGON_DLL_DECL boss_lorekeeperpolkeltAI : public ScriptedAI
             return;
 
         //VolatileInfection_Timer
-        if (VolatileInfection_Timer < diff)
+        if (VolatileInfection_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_VOLATILEINFECTION);
             VolatileInfection_Timer = 32000;
         } else VolatileInfection_Timer -= diff;
 
         //Darkplague_Timer
-        if (Darkplague_Timer < diff)
+        if (Darkplague_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_DARKPLAGUE);
             Darkplague_Timer = 8000;
         } else Darkplague_Timer -= diff;
 
         //CorrosiveAcid_Timer
-        if (CorrosiveAcid_Timer < diff)
+        if (CorrosiveAcid_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CORROSIVEACID);
             CorrosiveAcid_Timer = 25000;
         } else CorrosiveAcid_Timer -= diff;
 
         //NoxiousCatalyst_Timer
-        if (NoxiousCatalyst_Timer < diff)
+        if (NoxiousCatalyst_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_NOXIOUSCATALYST);
             NoxiousCatalyst_Timer = 38000;

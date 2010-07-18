@@ -100,7 +100,7 @@ struct OREGON_DLL_DECL boss_jeklikAI : public ScriptedAI
         {
             if ((me->GetHealth()*100 / me->GetMaxHealth() > 50))
             {
-                if (Charge_Timer < diff)
+                if (Charge_Timer <= diff)
                 {
                     if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                     {
@@ -111,19 +111,19 @@ struct OREGON_DLL_DECL boss_jeklikAI : public ScriptedAI
                     Charge_Timer = 15000 + rand()%15000;
                 } else Charge_Timer -= diff;
 
-                if (SonicBurst_Timer < diff)
+                if (SonicBurst_Timer <= diff)
                 {
                     DoCast(me->getVictim(),SPELL_SONICBURST);
                     SonicBurst_Timer = 8000 + rand()%5000;
                 } else SonicBurst_Timer -= diff;
 
-                if (Screech_Timer < diff)
+                if (Screech_Timer <= diff)
                 {
                     DoCast(me->getVictim(),SPELL_SCREECH);
                     Screech_Timer = 18000 + rand()%8000;
                 } else Screech_Timer -= diff;
 
-                if (SpawnBats_Timer < diff)
+                if (SpawnBats_Timer <= diff)
                 {
                     Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
 
@@ -152,7 +152,7 @@ struct OREGON_DLL_DECL boss_jeklikAI : public ScriptedAI
             {
                 if (PhaseTwo)
                 {
-                    if (PhaseTwo && ShadowWordPain_Timer < diff)
+                    if (PhaseTwo && ShadowWordPain_Timer <= diff)
                     {
                         if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                         {
@@ -161,27 +161,27 @@ struct OREGON_DLL_DECL boss_jeklikAI : public ScriptedAI
                         }
                     }ShadowWordPain_Timer -=diff;
 
-                    if (MindFlay_Timer < diff)
+                    if (MindFlay_Timer <= diff)
                     {
                         DoCast(me->getVictim(), SPELL_MIND_FLAY);
                         MindFlay_Timer = 16000;
                     }MindFlay_Timer -=diff;
 
-                    if (ChainMindFlay_Timer < diff)
+                    if (ChainMindFlay_Timer <= diff)
                     {
                         me->InterruptNonMeleeSpells(false);
                         DoCast(me->getVictim(), SPELL_CHAIN_MIND_FLAY);
                         ChainMindFlay_Timer = 15000 + rand()%15000;
                     }ChainMindFlay_Timer -=diff;
 
-                    if (GreaterHeal_Timer < diff)
+                    if (GreaterHeal_Timer <= diff)
                     {
                         me->InterruptNonMeleeSpells(false);
                         DoCast(me,SPELL_GREATERHEAL);
                         GreaterHeal_Timer = 25000 + rand()%10000;
                     }GreaterHeal_Timer -=diff;
 
-                    if (SpawnFlyingBats_Timer < diff)
+                    if (SpawnFlyingBats_Timer <= diff)
                     {
                         Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                         if (!pTarget)
@@ -236,7 +236,7 @@ struct OREGON_DLL_DECL mob_batriderAI : public ScriptedAI
             return;
 
         //Bomb_Timer
-        if (Bomb_Timer < diff)
+        if (Bomb_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
@@ -246,7 +246,7 @@ struct OREGON_DLL_DECL mob_batriderAI : public ScriptedAI
         } else Bomb_Timer -= diff;
 
         //Check_Timer
-        if (Check_Timer < diff)
+        if (Check_Timer <= diff)
         {
             if (pInstance)
             {

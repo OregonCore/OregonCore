@@ -55,7 +55,7 @@ struct OREGON_DLL_DECL celebras_the_cursedAI : public ScriptedAI
             return;
 
         //Wrath
-        if (Wrath_Timer < diff)
+        if (Wrath_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -65,14 +65,14 @@ struct OREGON_DLL_DECL celebras_the_cursedAI : public ScriptedAI
         } else Wrath_Timer -= diff;
 
         //EntanglingRoots
-        if (EntanglingRoots_Timer < diff)
+        if (EntanglingRoots_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_ENTANGLINGROOTS);
             EntanglingRoots_Timer = 20000;
         } else EntanglingRoots_Timer -= diff;
 
         //CorruptForces
-        if (CorruptForces_Timer < diff)
+        if (CorruptForces_Timer <= diff)
         {
             me->InterruptNonMeleeSpells(false);
             DoCast(me,SPELL_CORRUPT_FORCES);

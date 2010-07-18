@@ -206,7 +206,7 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
          if (!Spout)
              return;
 
-         if (RotTimer<diff)//end rotate
+         if (RotTimer <= diff)//end rotate
          {
              RotType = NOROTATE;//set norotate state
              RotTimer=20000;
@@ -215,7 +215,7 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
              return;
          } else RotTimer-=diff;
 
-         if (SpoutAnimTimer<diff)
+         if (SpoutAnimTimer <= diff)
          {
              DoCast(me,SPELL_SPOUT_ANIM,true);
              SpoutAnimTimer = 1000;
@@ -277,7 +277,7 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
          Rotate(diff);//always check rotate things
          if (!Submerged)
          {
-             if (PhaseTimer < diff)
+             if (PhaseTimer <= diff)
              {
                  me->InterruptNonMeleeSpells(false);
                  DoCast(me,SPELL_SUBMERGE);
@@ -288,7 +288,7 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
 
          if (!Submerged && RotType == NOROTATE)//is not spouting and not submerged
          {
-             if (SpoutTimer < diff)
+             if (SpoutTimer <= diff)
              {
                  if (me->getVictim() && RotType == NOROTATE)
                      StartRotate(me->getVictim());//start spout and random rotate
@@ -298,14 +298,14 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
              } else SpoutTimer -= diff;
 
              //Whirl directly after a Spout and at random times
-             if (WhirlTimer < diff)
+             if (WhirlTimer <= diff)
              {
                  WhirlTimer = rand()%5000 + 15000;
                  DoCast(me,SPELL_WHIRL);
                  WaterboltTimer += 5000;//add 5secs to waterbolt timer, to add some time to run back to boss
              } else WhirlTimer -= diff;
 
-             if (GeyserTimer < diff)
+             if (GeyserTimer <= diff)
              {
                  Unit *pTarget = NULL;
                  pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
@@ -320,7 +320,7 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
                  GeyserTimer = rand()%5000 + 15000;
              } else GeyserTimer -= diff;
 
-             if (WaterboltTimer < diff)
+             if (WaterboltTimer <= diff)
              {
                  Unit *pTarget = SelectTarget(SELECT_TARGET_NEAREST,0,14,true);
                  if (!pTarget)
@@ -341,7 +341,7 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
              return;
          else if (Submerged)//phase 2, submerged
          {
-             if (PhaseTimer < diff)
+             if (PhaseTimer <= diff)
              {
                  Submerged = false;
                  me->InterruptNonMeleeSpells(false);//shouldn't be any
@@ -435,7 +435,7 @@ struct OREGON_DLL_DECL mob_coilfang_ambusherAI : public Scripted_NoMovementAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (MultiShotTimer < diff)
+        if (MultiShotTimer <= diff)
         {
             if (me->getVictim())
                 DoCast(me->getVictim(), SPELL_SPREAD_SHOT, true);
@@ -444,7 +444,7 @@ struct OREGON_DLL_DECL mob_coilfang_ambusherAI : public Scripted_NoMovementAI
             ShootBowTimer += 1500;//add global cooldown
         } else MultiShotTimer -= diff;
 
-        if (ShootBowTimer < diff)
+        if (ShootBowTimer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);

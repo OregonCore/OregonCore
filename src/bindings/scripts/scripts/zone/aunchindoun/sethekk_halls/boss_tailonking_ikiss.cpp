@@ -144,13 +144,13 @@ struct OREGON_DLL_DECL boss_talon_king_ikissAI : public ScriptedAI
             Blink = false;
         }
 
-        if (ArcaneVolley_Timer < diff)
+        if (ArcaneVolley_Timer <= diff)
         {
             DoCast(me,HeroicMode ? H_SPELL_ARCANE_VOLLEY : SPELL_ARCANE_VOLLEY);
             ArcaneVolley_Timer = 10000+rand()%5000;
         } else ArcaneVolley_Timer -= diff;
 
-        if (Sheep_Timer < diff)
+        if (Sheep_Timer <= diff)
         {
             //second top aggro target in normal, random target in heroic correct?
             Unit *pTarget = NULL;
@@ -169,14 +169,14 @@ struct OREGON_DLL_DECL boss_talon_king_ikissAI : public ScriptedAI
 
         if (HeroicMode)
         {
-            if (Slow_Timer < diff)
+            if (Slow_Timer <= diff)
             {
                 DoCast(me,H_SPELL_SLOW);
                 Slow_Timer = 15000+rand()%25000;
             } else Slow_Timer -= diff;
         }
 
-        if (Blink_Timer < diff)
+        if (Blink_Timer <= diff)
         {
             DoScriptText(EMOTE_ARCANE_EXP, me);
 

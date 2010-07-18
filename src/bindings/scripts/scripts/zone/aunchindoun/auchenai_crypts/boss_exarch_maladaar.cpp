@@ -64,7 +64,7 @@ struct OREGON_DLL_DECL mob_stolen_soulAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Class_Timer < diff)
+        if (Class_Timer <= diff)
         {
             switch (myClass)
             {
@@ -248,7 +248,7 @@ struct OREGON_DLL_DECL boss_exarch_maladaarAI : public ScriptedAI
             StolenSoul_Timer = 15000 + rand()% 15000;
         }
 
-        if (StolenSoul_Timer < diff)
+        if (StolenSoul_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             {
@@ -275,7 +275,7 @@ struct OREGON_DLL_DECL boss_exarch_maladaarAI : public ScriptedAI
             }
         } else StolenSoul_Timer -= diff;
 
-        if (Ribbon_of_Souls_timer < diff)
+        if (Ribbon_of_Souls_timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_RIBBON_OF_SOULS);
@@ -283,7 +283,7 @@ struct OREGON_DLL_DECL boss_exarch_maladaarAI : public ScriptedAI
             Ribbon_of_Souls_timer = 5000 + (rand()%20 * 1000);
         } else Ribbon_of_Souls_timer -= diff;
 
-        if (Fear_timer < diff)
+        if (Fear_timer <= diff)
         {
             DoCast(me,SPELL_SOUL_SCREAM);
             Fear_timer = 15000 + rand()% 15000;
@@ -321,7 +321,7 @@ struct OREGON_DLL_DECL mob_avatar_of_martyredAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Mortal_Strike_timer < diff)
+        if (Mortal_Strike_timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_AV_MORTAL_STRIKE);
             Mortal_Strike_timer = 10000 + rand()%20 * 1000;

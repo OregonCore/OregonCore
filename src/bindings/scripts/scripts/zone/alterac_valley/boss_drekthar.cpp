@@ -86,31 +86,31 @@ struct OREGON_DLL_DECL boss_drektharAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (WhirlwindTimer < diff)
+        if (WhirlwindTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_WHIRLWIND);
             WhirlwindTimer =  (8+rand()%10)*1000;
         } else WhirlwindTimer -= diff;
 
-        if (Whirlwind2Timer < diff)
+        if (Whirlwind2Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_WHIRLWIND2);
             Whirlwind2Timer = (7+rand()%18)*1000;
         } else Whirlwind2Timer -= diff;
 
-        if (KnockdownTimer < diff)
+        if (KnockdownTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_KNOCKDOWN);
             KnockdownTimer = (10+rand()%5)*1000;
         } else KnockdownTimer -= diff;
 
-        if (FrenzyTimer < diff)
+        if (FrenzyTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_FRENZY);
             FrenzyTimer = (20+rand()%5)*1000;
         } else FrenzyTimer -= diff;
 
-        if (YellTimer < diff) {
+        if (YellTimer <= diff) {
         switch(rand()%4)
         {
             case 0: DoScriptText(YELL_RANDOM1, me); break;
@@ -123,7 +123,7 @@ struct OREGON_DLL_DECL boss_drektharAI : public ScriptedAI
         } else YellTimer -= diff;
 
 // check if creature is not outside of building
-        if (ResetTimer < diff)
+        if (ResetTimer <= diff)
         {
             float x, y, z;
             me->GetPosition(x, y, z);

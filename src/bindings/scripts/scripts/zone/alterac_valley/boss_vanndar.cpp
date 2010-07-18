@@ -87,25 +87,25 @@ struct OREGON_DLL_DECL boss_vanndarAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (AvatarTimer < diff)
+        if (AvatarTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_AVATAR);
             AvatarTimer =  (15+rand()%5)*1000;
         } else AvatarTimer -= diff;
 
-        if (ThunderclapTimer < diff)
+        if (ThunderclapTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_THUNDERCLAP);
             ThunderclapTimer = (5+rand()%10)*1000;
         } else ThunderclapTimer -= diff;
 
-        if (StormboltTimer < diff)
+        if (StormboltTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_STORMBOLT);
             StormboltTimer = (10+rand()%15)*1000;
         } else StormboltTimer -= diff;
 
-        if (YellTimer < diff) {
+        if (YellTimer <= diff) {
             switch(rand()%6)
             {
                 case 0: DoScriptText(YELL_RANDOM1, me); break;
@@ -120,7 +120,7 @@ struct OREGON_DLL_DECL boss_vanndarAI : public ScriptedAI
         } else YellTimer -= diff;
 
         // check if creature is not outside of building
-        if (ResetTimer < diff)
+        if (ResetTimer <= diff)
         {
             float x, y, z;
             me->GetPosition(x, y, z);

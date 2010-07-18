@@ -175,7 +175,7 @@ struct OREGON_DLL_DECL boss_warlord_kalithreshAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Rage_Timer < diff)
+        if (Rage_Timer <= diff)
         {
             Creature* distiller = SelectCreatureInGrid(17954, 100);
             if (distiller)
@@ -188,14 +188,14 @@ struct OREGON_DLL_DECL boss_warlord_kalithreshAI : public ScriptedAI
         } else Rage_Timer -= diff;
 
         //Reflection_Timer
-        if (Reflection_Timer < diff)
+        if (Reflection_Timer <= diff)
         {
             DoCast(me, SPELL_SPELL_REFLECTION);
             Reflection_Timer = 15000+rand()%10000;
         } else Reflection_Timer -= diff;
 
         //Impale_Timer
-        if (Impale_Timer < diff)
+        if (Impale_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_IMPALE);

@@ -88,19 +88,19 @@ struct OREGON_DLL_DECL boss_maiden_of_virtueAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Enrage_Timer < diff && !Enraged)
+        if (Enrage_Timer <= diff && !Enraged)
         {
             DoCast(me, SPELL_BERSERK,true);
             Enraged = true;
         } else Enrage_Timer -=diff;
 
-        if (Holyground_Timer < diff)
+        if (Holyground_Timer <= diff)
         {
             DoCast(me, SPELL_HOLYGROUND, true);     //Triggered so it doesn't interrupt her at all
             Holyground_Timer = 3000;
         } else Holyground_Timer -= diff;
 
-        if (Repentance_Timer < diff)
+        if (Repentance_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_REPENTANCE);
 
@@ -112,7 +112,7 @@ struct OREGON_DLL_DECL boss_maiden_of_virtueAI : public ScriptedAI
             Repentance_Timer = 30000 + rand()%15000;        //A little randomness on that spell
         } else Repentance_Timer -= diff;
 
-        if (Holyfire_Timer < diff)
+        if (Holyfire_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_HOLYFIRE);
@@ -120,7 +120,7 @@ struct OREGON_DLL_DECL boss_maiden_of_virtueAI : public ScriptedAI
                 Holyfire_Timer = 8000 + rand()%17000; //Anywhere from 8 to 25 seconds, good luck having several of those in a row!
         } else Holyfire_Timer -= diff;
 
-        if (Holywrath_Timer < diff)
+        if (Holywrath_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_HOLYWRATH);

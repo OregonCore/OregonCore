@@ -116,7 +116,7 @@ struct OREGON_DLL_DECL boss_blackheart_the_inciterAI : public ScriptedAI
 
         if (InciteChaos)
         {
-            if (InciteChaosWait_Timer < diff)
+            if (InciteChaosWait_Timer <= diff)
             {
                 InciteChaos = false;
                 InciteChaosWait_Timer = 15000;
@@ -125,7 +125,7 @@ struct OREGON_DLL_DECL boss_blackheart_the_inciterAI : public ScriptedAI
             return;
         }
 
-        if (InciteChaos_Timer < diff)
+        if (InciteChaos_Timer <= diff)
         {
             DoCast(me, SPELL_INCITE_CHAOS);
 
@@ -144,7 +144,7 @@ struct OREGON_DLL_DECL boss_blackheart_the_inciterAI : public ScriptedAI
         } else InciteChaos_Timer -= diff;
 
         //Charge_Timer
-        if (Charge_Timer < diff)
+        if (Charge_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_CHARGE);
@@ -152,7 +152,7 @@ struct OREGON_DLL_DECL boss_blackheart_the_inciterAI : public ScriptedAI
         } else Charge_Timer -= diff;
 
         //Knockback_Timer
-        if (Knockback_Timer < diff)
+        if (Knockback_Timer <= diff)
         {
             DoCast(me, SPELL_WAR_STOMP);
             Knockback_Timer = 20000;

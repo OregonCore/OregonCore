@@ -523,7 +523,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                 {
                     //Subphase 1 - Start
                     case 0:
-                        if (Phase_Timer < diff)
+                        if (Phase_Timer <= diff)
                         {
                             DoScriptText(SAY_INTRO_THALADRED, me);
 
@@ -536,7 +536,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
                         //Subphase 1 - Unlock advisor
                     case 1:
-                        if (Phase_Timer < diff)
+                        if (Phase_Timer <= diff)
                         {
                             Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[0]));
 
@@ -570,7 +570,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
                         //Subphase 2 - Unlock advisor
                     case 3:
-                        if (Phase_Timer < diff)
+                        if (Phase_Timer <= diff)
                         {
                             Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[1]));
 
@@ -604,7 +604,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
                         //Subphase 3 - Unlock advisor
                     case 5:
-                        if (Phase_Timer < diff)
+                        if (Phase_Timer <= diff)
                         {
                             Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[2]));
 
@@ -638,7 +638,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
                         //Subphase 4 - Unlock advisor
                     case 7:
-                        if (Phase_Timer < diff)
+                        if (Phase_Timer <= diff)
                         {
                             Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[3]));
 
@@ -679,7 +679,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
             {
                 if (PhaseSubphase == 0)
                 {
-                    if (Phase_Timer < diff)
+                    if (Phase_Timer <= diff)
                     {
                         PhaseSubphase = 1;
                     } else Phase_Timer -= diff;
@@ -710,7 +710,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                 }
 
                 if (PhaseSubphase == 2)
-                    if (Phase_Timer < diff)
+                    if (Phase_Timer <= diff)
                 {
                     DoScriptText(SAY_PHASE3_ADVANCE, me);
                     pInstance->SetData(DATA_KAELTHASEVENT, 3);
@@ -741,7 +741,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                     Phase_Timer = TIME_PHASE_3_4;
                 }
 
-                if (Phase_Timer < diff)
+                if (Phase_Timer <= diff)
                 {
                     DoScriptText(SAY_PHASE4_INTRO2, me);
                     Phase = 4;
@@ -772,7 +772,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                 //Fireball_Timer
                 if (!InGravityLapse && !ChainPyros && Phase != 5)
                 {
-                    if (Fireball_Timer < diff)
+                    if (Fireball_Timer <= diff)
                     {
                         if (!IsCastingFireball)
                         {
@@ -795,14 +795,14 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                     } else Fireball_Timer -= diff;
 
                     //ArcaneDisruption_Timer
-                    if (ArcaneDisruption_Timer < diff)
+                    if (ArcaneDisruption_Timer <= diff)
                     {
                         DoCast(me->getVictim(), SPELL_ARCANE_DISRUPTION, true);
 
                         ArcaneDisruption_Timer = 60000;
                     } else ArcaneDisruption_Timer -= diff;
 
-                    if (FlameStrike_Timer < diff)
+                    if (FlameStrike_Timer <= diff)
                     {
                         if (Unit* pUnit = SelectTarget(SELECT_TARGET_RANDOM, 0, 70, true))
                             DoCast(pUnit, SPELL_FLAME_STRIKE);
@@ -810,7 +810,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                         FlameStrike_Timer = 30000;
                     }FlameStrike_Timer -= diff;
 
-                    if (MindControl_Timer < diff)
+                    if (MindControl_Timer <= diff)
                     {
                         if (me->getThreatManager().getThreatList().size() >= 2)
                         for (uint32 i = 0; i < 3; i++)
@@ -828,7 +828,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                 }
 
                 //Phoenix_Timer
-                if (Phoenix_Timer < diff)
+                if (Phoenix_Timer <= diff)
                 {
                     DoCast(me, SPELL_SUMMON_PHOENIX);
                     switch(rand()%2)
@@ -861,7 +861,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                     }
 
                     //ShockBarrier_Timer
-                    if (ShockBarrier_Timer < diff)
+                    if (ShockBarrier_Timer <= diff)
                     {
                         DoCast(me, SPELL_SHOCK_BARRIER);
                         ChainPyros = true;
@@ -873,7 +873,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
                     //Chain Pyros (3 of them max)
                     if (ChainPyros){
-                        if (PyrosCasted < 3 && Check_Timer < diff)
+                        if (PyrosCasted < 3 && Check_Timer <= diff)
                         {
                             DoCast(me->getVictim(), SPELL_PYROBLAST);
                             ++PyrosCasted;
@@ -891,7 +891,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
                 if (Phase == 5)
                 {
-                    if (Phase_Timer < diff)
+                    if (Phase_Timer <= diff)
                     {
                         me->InterruptNonMeleeSpells(false);
                         me->RemoveAurasDueToSpell(SPELL_FULLPOWER);
@@ -908,7 +908,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                 {
 
                     //GravityLapse_Timer
-                    if (GravityLapse_Timer < diff)
+                    if (GravityLapse_Timer <= diff)
                     {
                         std::list<HostileReference*>::iterator i = me->getThreatManager().getThreatList().begin();
                         switch(GravityLapse_Phase)
@@ -1006,14 +1006,14 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                     if (InGravityLapse)
                     {
                         //ShockBarrier_Timer
-                        if (ShockBarrier_Timer < diff)
+                        if (ShockBarrier_Timer <= diff)
                         {
                             DoCast(me, SPELL_SHOCK_BARRIER);
                             ShockBarrier_Timer = 20000;
                         } else ShockBarrier_Timer -= diff;
 
                         //NetherBeam_Timer
-                        if (NetherBeam_Timer < diff)
+                        if (NetherBeam_Timer <= diff)
                         {
                             if (Unit* pUnit = SelectUnit(SELECT_TARGET_RANDOM, 0))
                                 DoCast(pUnit, SPELL_NETHER_BEAM);
@@ -1078,7 +1078,7 @@ struct OREGON_DLL_DECL boss_thaladred_the_darkenerAI : public advisorbase_ai
             return;
 
         //Gaze_Timer
-        if (Gaze_Timer < diff)
+        if (Gaze_Timer <= diff)
         {
             if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
             {
@@ -1093,14 +1093,14 @@ struct OREGON_DLL_DECL boss_thaladred_the_darkenerAI : public advisorbase_ai
         } else Gaze_Timer -= diff;
 
         //Silence_Timer
-        if (Silence_Timer < diff)
+        if (Silence_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_SILENCE);
             Silence_Timer = 20000;
         } else Silence_Timer -= diff;
 
         //PsychicBlow_Timer
-        if (PsychicBlow_Timer < diff)
+        if (PsychicBlow_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_PSYCHIC_BLOW);
             PsychicBlow_Timer = 20000+rand()%5000;
@@ -1152,7 +1152,7 @@ struct OREGON_DLL_DECL boss_lord_sanguinarAI : public advisorbase_ai
             return;
 
         //Fear_Timer
-        if (Fear_Timer < diff)
+        if (Fear_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_BELLOWING_ROAR);
             Fear_Timer = 25000+rand()%10000;                //approximately every 30 seconds
@@ -1228,7 +1228,7 @@ struct OREGON_DLL_DECL boss_grand_astromancer_capernianAI : public advisorbase_a
         //Yell_Timer
         if (!Yell)
         {
-            if (Yell_Timer < diff)
+            if (Yell_Timer <= diff)
             {
                 DoScriptText(SAY_CAPERNIAN_AGGRO, me);
 
@@ -1237,14 +1237,14 @@ struct OREGON_DLL_DECL boss_grand_astromancer_capernianAI : public advisorbase_a
         }
 
         //Fireball_Timer
-        if (Fireball_Timer < diff)
+        if (Fireball_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_CAPERNIAN_FIREBALL);
             Fireball_Timer = 4000;
         } else Fireball_Timer -= diff;
 
         //Conflagration_Timer
-        if (Conflagration_Timer < diff)
+        if (Conflagration_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
@@ -1258,7 +1258,7 @@ struct OREGON_DLL_DECL boss_grand_astromancer_capernianAI : public advisorbase_a
         } else Conflagration_Timer -= diff;
 
         //ArcaneExplosion_Timer
-        if (ArcaneExplosion_Timer < diff)
+        if (ArcaneExplosion_Timer <= diff)
         {
             bool InMeleeRange = false;
             Unit *pTarget = NULL;
@@ -1330,14 +1330,14 @@ struct OREGON_DLL_DECL boss_master_engineer_telonicusAI : public advisorbase_ai
             return;
 
         //Bomb_Timer
-        if (Bomb_Timer < diff)
+        if (Bomb_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_BOMB);
             Bomb_Timer = 25000;
         } else Bomb_Timer -= diff;
 
         //RemoteToy_Timer
-        if (RemoteToy_Timer < diff)
+        if (RemoteToy_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_REMOTE_TOY);
@@ -1385,7 +1385,7 @@ struct OREGON_DLL_DECL mob_kael_flamestrikeAI : public ScriptedAI
         }
 
         //Timer
-        if (Timer < diff)
+        if (Timer <= diff)
         {
             if (!KillSelf)
             {
@@ -1443,7 +1443,7 @@ struct OREGON_DLL_DECL mob_phoenix_tkAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (Cycle_Timer < diff)
+        if (Cycle_Timer <= diff)
         {
             if (pInstance)//check for boss reset
             {
@@ -1508,7 +1508,7 @@ struct OREGON_DLL_DECL mob_phoenix_egg_tkAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (Rebirth_Timer < diff)
+        if (Rebirth_Timer <= diff)
         {
             if (!summoned)
             {

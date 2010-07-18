@@ -63,7 +63,7 @@ struct OREGON_DLL_DECL boss_interrogator_vishasAI : public ScriptedAI
         if (me->GetHealth()*100 / me->GetMaxHealth() <= 60 && !me->IsNonMeleeSpellCasted(false))
         {
             //Yell_Timer
-            if (Yell_Timer < diff)
+            if (Yell_Timer <= diff)
             {
                 DoYell(SAY_HEALTH1,LANG_UNIVERSAL,NULL);
                 DoPlaySoundToSet(me,SOUND_HEALTH1);
@@ -77,7 +77,7 @@ struct OREGON_DLL_DECL boss_interrogator_vishasAI : public ScriptedAI
         if (me->GetHealth()*100 / me->GetMaxHealth() <= 30 && !me->IsNonMeleeSpellCasted(false))
         {
             //Yell_Timer
-            if (Yell_Timer < diff)
+            if (Yell_Timer <= diff)
             {
                 DoYell(SAY_HEALTH2,LANG_UNIVERSAL,NULL);
                 DoPlaySoundToSet(me,SOUND_HEALTH2);
@@ -89,7 +89,7 @@ struct OREGON_DLL_DECL boss_interrogator_vishasAI : public ScriptedAI
         }
 
         //PowerWordShield_Timer
-        if (PowerWordShield_Timer < diff)
+        if (PowerWordShield_Timer <= diff)
         {
             DoCast(me,SPELL_POWERWORDSHIELD);
             PowerWordShield_Timer = 60000;

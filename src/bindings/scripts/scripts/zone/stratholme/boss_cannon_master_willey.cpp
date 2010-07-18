@@ -114,7 +114,7 @@ struct OREGON_DLL_DECL boss_cannon_master_willeyAI : public ScriptedAI
             return;
 
         //Pummel
-        if (Pummel_Timer < diff)
+        if (Pummel_Timer <= diff)
         {
             //Cast
             if (rand()%100 < 90) //90% chance to cast
@@ -126,7 +126,7 @@ struct OREGON_DLL_DECL boss_cannon_master_willeyAI : public ScriptedAI
         } else Pummel_Timer -= diff;
 
         //KnockAway
-        if (KnockAway_Timer < diff)
+        if (KnockAway_Timer <= diff)
         {
             //Cast
             if (rand()%100 < 80) //80% chance to cast
@@ -138,7 +138,7 @@ struct OREGON_DLL_DECL boss_cannon_master_willeyAI : public ScriptedAI
         } else KnockAway_Timer -= diff;
 
         //Shoot
-        if (Shoot_Timer < diff)
+        if (Shoot_Timer <= diff)
         {
             //Cast
             DoCast(me->getVictim(),SPELL_SHOOT);
@@ -147,7 +147,7 @@ struct OREGON_DLL_DECL boss_cannon_master_willeyAI : public ScriptedAI
         } else Shoot_Timer -= diff;
 
         //SummonRifleman
-        if (SummonRifleman_Timer < diff)
+        if (SummonRifleman_Timer <= diff)
         {
             //Cast
             switch (rand()%9)

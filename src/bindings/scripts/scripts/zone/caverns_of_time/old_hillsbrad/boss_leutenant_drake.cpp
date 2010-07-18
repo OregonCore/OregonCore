@@ -148,14 +148,14 @@ struct OREGON_DLL_DECL boss_lieutenant_drakeAI : public ScriptedAI
             return;
 
         //Whirlwind
-        if (Whirlwind_Timer < diff)
+        if (Whirlwind_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_WHIRLWIND);
             Whirlwind_Timer = 20000+rand()%5000;
         } else Whirlwind_Timer -= diff;
 
         //Fear
-        if (Fear_Timer < diff)
+        if (Fear_Timer <= diff)
         {
             DoScriptText(SAY_SHOUT, me);
             DoCast(me->getVictim(), SPELL_FRIGHTENING_SHOUT);
@@ -163,7 +163,7 @@ struct OREGON_DLL_DECL boss_lieutenant_drakeAI : public ScriptedAI
         } else Fear_Timer -= diff;
 
         //Mortal Strike
-        if (MortalStrike_Timer < diff)
+        if (MortalStrike_Timer <= diff)
         {
             DoScriptText(SAY_MORTAL, me);
             DoCast(me->getVictim(), SPELL_MORTAL_STRIKE);

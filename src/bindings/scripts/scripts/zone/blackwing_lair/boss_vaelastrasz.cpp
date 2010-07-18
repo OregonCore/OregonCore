@@ -112,7 +112,7 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
         //Speach
         if (DoingSpeach)
         {
-            if (SpeachTimer < diff)
+            if (SpeachTimer <= diff)
             {
                 switch (SpeachNum)
                 {
@@ -154,21 +154,21 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
         }
 
         //Cleave_Timer
-        if (Cleave_Timer < diff)
+        if (Cleave_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 15000;
         } else Cleave_Timer -= diff;
 
         //FlameBreath_Timer
-        if (FlameBreath_Timer < diff)
+        if (FlameBreath_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_FLAMEBREATH);
             FlameBreath_Timer = 4000 + rand()%4000;
         } else FlameBreath_Timer -= diff;
 
         //BurningAdrenalineCaster_Timer
-        if (BurningAdrenalineCaster_Timer < diff)
+        if (BurningAdrenalineCaster_Timer <= diff)
         {
             Unit *pTarget = NULL;
 
@@ -188,7 +188,7 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
         } else BurningAdrenalineCaster_Timer -= diff;
 
         //BurningAdrenalineTank_Timer
-        if (BurningAdrenalineTank_Timer < diff)
+        if (BurningAdrenalineTank_Timer <= diff)
         {
             // have the victim cast the spell on himself otherwise the third effect aura will be applied
             // to Vael instead of the player
@@ -198,14 +198,14 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
         } else BurningAdrenalineTank_Timer -= diff;
 
         //FireNova_Timer
-        if (FireNova_Timer < diff)
+        if (FireNova_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_FIRENOVA);
             FireNova_Timer = 5000;
         } else FireNova_Timer -= diff;
 
         //TailSwipe_Timer
-        if (TailSwipe_Timer < diff)
+        if (TailSwipe_Timer <= diff)
         {
             //Only cast if we are behind
             /*if (!me->HasInArc(M_PI, me->getVictim()))

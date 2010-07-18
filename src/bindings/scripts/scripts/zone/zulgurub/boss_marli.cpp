@@ -95,19 +95,19 @@ struct OREGON_DLL_DECL boss_marliAI : public ScriptedAI
 
         if (me->getVictim() && me->isAlive())
         {
-            if (PoisonVolley_Timer < diff)
+            if (PoisonVolley_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_POISONVOLLEY);
                 PoisonVolley_Timer = 10000 + rand()%10000;
             } else PoisonVolley_Timer -= diff;
 
-            if (!PhaseTwo && Aspect_Timer < diff)
+            if (!PhaseTwo && Aspect_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_ASPECT_OF_MARLI);
                 Aspect_Timer = 13000 + rand()%5000;
             } else Aspect_Timer -= diff;
 
-            if (!Spawned && SpawnStartSpiders_Timer < diff)
+            if (!Spawned && SpawnStartSpiders_Timer <= diff)
             {
                 DoScriptText(SAY_SPIDER_SPAWN, me);
 
@@ -131,7 +131,7 @@ struct OREGON_DLL_DECL boss_marliAI : public ScriptedAI
                 Spawned = true;
             } else SpawnStartSpiders_Timer -= diff;
 
-            if (SpawnSpider_Timer < diff)
+            if (SpawnSpider_Timer <= diff)
             {
                 Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
                 if (!pTarget)
@@ -143,7 +143,7 @@ struct OREGON_DLL_DECL boss_marliAI : public ScriptedAI
                 SpawnSpider_Timer = 12000 + rand()%5000;
             } else SpawnSpider_Timer -= diff;
 
-            if (!PhaseTwo && Transform_Timer < diff)
+            if (!PhaseTwo && Transform_Timer <= diff)
             {
                 DoScriptText(SAY_TRANSFORM, me);
                 DoCast(me,SPELL_SPIDER_FORM);
@@ -162,7 +162,7 @@ struct OREGON_DLL_DECL boss_marliAI : public ScriptedAI
 
             if (PhaseTwo)
             {
-                if (Charge_Timer < diff)
+                if (Charge_Timer <= diff)
                 {
                     Unit *pTarget = NULL;
                     int i = 0 ;
@@ -185,7 +185,7 @@ struct OREGON_DLL_DECL boss_marliAI : public ScriptedAI
                     Charge_Timer = 8000;
                 } else Charge_Timer -= diff;
 
-                if (TransformBack_Timer < diff)
+                if (TransformBack_Timer <= diff)
                 {
                     me->SetUInt32Value(UNIT_FIELD_DISPLAYID,15220);
                     const CreatureInfo *cinfo = me->GetCreatureInfo();
@@ -227,7 +227,7 @@ struct OREGON_DLL_DECL mob_spawn_of_marliAI : public ScriptedAI
             return;
 
         //LevelUp_Timer
-        if (LevelUp_Timer < diff)
+        if (LevelUp_Timer <= diff)
         {
             DoCast(me,SPELL_LEVELUP);
             LevelUp_Timer = 3000;

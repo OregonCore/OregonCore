@@ -162,7 +162,7 @@ struct OREGON_DLL_DECL npc_deaths_head_ward_keeperAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(TYPE_WARD_KEEPERS, NOT_STARTED);
 
-        if (QuillboarChanneling_Timer < diff)
+        if (QuillboarChanneling_Timer <= diff)
         {
             if (me->IsNonMeleeSpellCasted(false))
                 me->InterruptNonMeleeSpells(true);

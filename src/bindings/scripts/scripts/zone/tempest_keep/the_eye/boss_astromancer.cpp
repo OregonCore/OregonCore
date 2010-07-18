@@ -207,7 +207,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
         {
             me->StopMoving();
             me->AttackStop();
-            if (AppearDelay_Timer < diff)
+            if (AppearDelay_Timer <= diff)
             {
                 AppearDelay = false;
                 if (Phase == 2)
@@ -221,19 +221,19 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
 
         if (Phase == 1)
         {
-            if (BlindingLight_Timer < diff){
+            if (BlindingLight_Timer <= diff){
                 BlindingLight = true;
                 BlindingLight_Timer = 45000;
             } else BlindingLight_Timer -= diff;
 
-            if (Wrath_Timer < diff)
+            if (Wrath_Timer <= diff)
             {
                 me->InterruptNonMeleeSpells(false);
                 DoCast(SelectTarget(SELECT_TARGET_RANDOM,1,100,true), SPELL_WRATH_OF_THE_ASTROMANCER, true);
                 Wrath_Timer = 20000+rand()%5000;
             } else Wrath_Timer -= diff;
 
-            if (ArcaneMissiles_Timer < diff)
+            if (ArcaneMissiles_Timer <= diff)
             {
                 if (BlindingLight)
                 {
@@ -251,13 +251,13 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
                 ArcaneMissiles_Timer = 3000;
             } else ArcaneMissiles_Timer -= diff;
 
-            if (MarkOfTheSolarian_Timer < diff)
+            if (MarkOfTheSolarian_Timer <= diff)
             {
                 DoCast(me->getVictim(), MARK_OF_SOLARIAN);
                 MarkOfTheSolarian_Timer = 45000;
             } else MarkOfTheSolarian_Timer -= diff;
 
-            if (MarkOfTheAstromancer_Timer < diff) //A debuff that lasts for 5 seconds, cast several times each phase on a random raid member, but not the main tank
+            if (MarkOfTheAstromancer_Timer <= diff) //A debuff that lasts for 5 seconds, cast several times each phase on a random raid member, but not the main tank
             {
                 Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true);
                 if (pTarget)
@@ -267,7 +267,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
             } else MarkOfTheAstromancer_Timer -= diff;
 
             //Phase1_Timer
-            if (Phase1_Timer < diff)
+            if (Phase1_Timer <= diff)
             {
                 Phase = 2;
                 Phase1_Timer = 50000;
@@ -314,7 +314,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
             //10 seconds after Solarian disappears, 12 mobs spawn out of the three portals.
             me->AttackStop();
             me->StopMoving();
-            if (Phase2_Timer < diff)
+            if (Phase2_Timer <= diff)
             {
                 Phase = 3;
                 for (int i=0; i<=2; i++)
@@ -331,7 +331,7 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
             me->StopMoving();
 
             //Check Phase3_Timer
-            if (Phase3_Timer < diff)
+            if (Phase3_Timer <= diff)
             {
                 Phase = 1;
 
@@ -355,14 +355,14 @@ struct OREGON_DLL_DECL boss_high_astromancer_solarianAI : public ScriptedAI
         else if (Phase == 4)
         {
             //Fear_Timer
-            if (Fear_Timer < diff)
+            if (Fear_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_FEAR);
                 Fear_Timer = 20000;
             } else Fear_Timer -= diff;
 
             //VoidBolt_Timer
-            if (VoidBolt_Timer < diff)
+            if (VoidBolt_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_VOID_BOLT);
                 VoidBolt_Timer = 10000;
@@ -417,7 +417,7 @@ struct OREGON_DLL_DECL mob_solarium_priestAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (healTimer < diff)
+        if (healTimer <= diff)
         {
             Unit *pTarget = NULL;
 
@@ -439,13 +439,13 @@ struct OREGON_DLL_DECL mob_solarium_priestAI : public ScriptedAI
             }
         } else healTimer -= diff;
 
-        if (holysmiteTimer < diff)
+        if (holysmiteTimer <= diff)
         {
             DoCast(me->getVictim(), SOLARIUM_SMITE);
             holysmiteTimer = 4000;
         } else holysmiteTimer -= diff;
 
-        if (aoesilenceTimer < diff)
+        if (aoesilenceTimer <= diff)
         {
             DoCast(me->getVictim(), SOLARIUM_SILENCE);
             aoesilenceTimer = 13000;

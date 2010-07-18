@@ -118,7 +118,7 @@ struct OREGON_DLL_DECL boss_silver_hand_bossesAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (HolyLight_Timer < diff)
+        if (HolyLight_Timer <= diff)
         {
             if (me->GetHealth()*5 < me->GetMaxHealth())
             {
@@ -127,7 +127,7 @@ struct OREGON_DLL_DECL boss_silver_hand_bossesAI : public ScriptedAI
             }
         } else HolyLight_Timer -= diff;
 
-        if (DivineShield_Timer < diff)
+        if (DivineShield_Timer <= diff)
         {
             if (me->GetHealth()*20 < me->GetMaxHealth())
             {

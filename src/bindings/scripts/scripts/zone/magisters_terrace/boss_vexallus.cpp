@@ -142,14 +142,14 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
                 ++AlreadySpawnedAmount;
             };
 
-            if (ChainLightningTimer < diff)
+            if (ChainLightningTimer <= diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(pTarget, SPELL_CHAIN_LIGHTNING);
                 ChainLightningTimer = 10000;
             } else ChainLightningTimer -= diff;
 
-            if (ArcaneShockTimer < diff)
+            if (ArcaneShockTimer <= diff)
             {
                 Unit *pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
@@ -159,7 +159,7 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
             } else ArcaneShockTimer -= diff;
         } else
         {
-            if (OverloadTimer < diff)
+            if (OverloadTimer <= diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(pTarget, SPELL_OVERLOAD);
@@ -202,12 +202,12 @@ struct OREGON_DLL_DECL mob_pure_energyAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (EnergyBoltTimer < diff)
+        if (EnergyBoltTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_ENERGY_BOLT);
             EnergyBoltTimer = 1700;
         } else   EnergyBoltTimer -= diff;
-        if (VisualTimer < diff)
+        if (VisualTimer <= diff)
         {
             DoCast(me->getVictim(), ASTRAL_FLARE_VISUAL, true);
             VisualTimer = 1000;

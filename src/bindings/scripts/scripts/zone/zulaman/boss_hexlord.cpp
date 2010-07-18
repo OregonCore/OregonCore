@@ -339,7 +339,7 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (ResetTimer < diff)
+        if (ResetTimer <= diff)
         {
             if (me->GetDistance(119.223,1035.45,29.4481) <= 10)
             {
@@ -349,7 +349,7 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
             ResetTimer = 5000;
         } else ResetTimer -= diff;
 
-        if (CheckAddState_Timer < diff)
+        if (CheckAddState_Timer <= diff)
         {
             for (uint8 i = 0; i < 4; ++i)
             {
@@ -360,7 +360,7 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
             CheckAddState_Timer = 5000;
         } else CheckAddState_Timer -= diff;
 
-        if (DrainPower_Timer < diff)
+        if (DrainPower_Timer <= diff)
         {
             me->CastSpell(me, SPELL_DRAIN_POWER, true); //-1% Damage (+1_Stack)
             Map *map = me->GetMap();
@@ -378,7 +378,7 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
             DrainPower_Timer = 40000 + rand()%15000;    // must cast in 60 sec, or buff/debuff will disappear
            } else DrainPower_Timer -= diff;
 
-        if (SpiritBolts_Timer < diff)
+        if (SpiritBolts_Timer <= diff)
         {
             if (DrainPower_Timer < 12000)    // channel 10 sec
                 SpiritBolts_Timer = 13000;  // cast drain power first
@@ -393,7 +393,7 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
             }
         } else SpiritBolts_Timer -= diff;
 
-        if (SiphonSoul_Timer < diff)
+        if (SiphonSoul_Timer <= diff)
         {
             Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 70, true);
             Unit *trigger = DoSpawnCreature(MOB_TEMP_TRIGGER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 30000);
@@ -422,7 +422,7 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
             }
         } else SiphonSoul_Timer -= diff;
 
-        if (PlayerAbility_Timer < diff)
+        if (PlayerAbility_Timer <= diff)
         {
             //Unit *target = Unit::GetUnit(*me, PlayerGUID);
             //if (target && target->isAlive())
@@ -490,7 +490,7 @@ struct OREGON_DLL_DECL boss_thurgAI : public boss_hexlord_addAI
         if (!UpdateVictim())
             return;
 
-        if (bloodlust_timer < diff)
+        if (bloodlust_timer <= diff)
         {
             std::list<Creature*> templist = DoFindFriendlyMissingBuff(50, SPELL_BLOODLUST);
             if (!templist.empty())
@@ -501,7 +501,7 @@ struct OREGON_DLL_DECL boss_thurgAI : public boss_hexlord_addAI
             bloodlust_timer = 12000;
         } else bloodlust_timer -= diff;
 
-        if (cleave_timer < diff)
+        if (cleave_timer <= diff)
         {
             me->CastSpell(me->getVictim(),SPELL_CLEAVE, false);
             cleave_timer = 12000; //3 sec cast
@@ -552,7 +552,7 @@ struct OREGON_DLL_DECL boss_alyson_antilleAI : public boss_hexlord_addAI
         if (!UpdateVictim())
             return;
 
-        if (flashheal_timer < diff)
+        if (flashheal_timer <= diff)
         {
             Unit *pTarget = DoSelectLowestHpFriendly(99, 30000);
             if (pTarget)
@@ -579,7 +579,7 @@ struct OREGON_DLL_DECL boss_alyson_antilleAI : public boss_hexlord_addAI
             flashheal_timer = 2500;
         } else flashheal_timer -= diff;
 
-        /*if (dispelmagic_timer < diff)
+        /*if (dispelmagic_timer <= diff)
         {
         if (rand()%2)
         {
@@ -631,7 +631,7 @@ struct OREGON_DLL_DECL boss_gazakrothAI : public boss_hexlord_addAI
         if (!UpdateVictim())
             return;
 
-        if (firebolt_timer < diff)
+        if (firebolt_timer <= diff)
         {
             me->CastSpell(me->getVictim(),SPELL_FIREBOLT, false);
             firebolt_timer = 700;
@@ -664,13 +664,13 @@ struct OREGON_DLL_DECL boss_lord_raadanAI : public boss_hexlord_addAI
         if (!UpdateVictim())
             return;
 
-        if (thunderclap_timer < diff)
+        if (thunderclap_timer <= diff)
         {
             me->CastSpell(me->getVictim(),SPELL_THUNDERCLAP, false);
             thunderclap_timer = 12000;
         } else thunderclap_timer -= diff;
 
-        if (flamebreath_timer < diff)
+        if (flamebreath_timer <= diff)
         {
             me->CastSpell(me->getVictim(),SPELL_FLAME_BREATH, false);
             flamebreath_timer = 12000;
@@ -700,7 +700,7 @@ struct OREGON_DLL_DECL boss_darkheartAI : public boss_hexlord_addAI
         if (!UpdateVictim())
             return;
 
-        if (psychicwail_timer < diff)
+        if (psychicwail_timer <= diff)
         {
             me->CastSpell(me->getVictim(),SPELL_PSYCHIC_WAIL, false);
             psychicwail_timer = 12000;
@@ -745,7 +745,7 @@ struct OREGON_DLL_DECL boss_slitherAI : public boss_hexlord_addAI
         if (!UpdateVictim())
             return;
 
-        if (venomspit_timer < diff)
+        if (venomspit_timer <= diff)
         {
             if (Unit* victim = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 me->CastSpell(victim,SPELL_VENOM_SPIT, false);
@@ -777,7 +777,7 @@ struct OREGON_DLL_DECL boss_fenstalkerAI : public boss_hexlord_addAI
         if (!UpdateVictim())
             return;
 
-        if (volatileinf_timer < diff)
+        if (volatileinf_timer <= diff)
         {
             // core bug
             me->getVictim()->CastSpell(me->getVictim(),SPELL_VOLATILE_INFECTION, false);
@@ -813,12 +813,12 @@ struct OREGON_DLL_DECL boss_koraggAI : public boss_hexlord_addAI
         if (!UpdateVictim())
             return;
 
-        if (mightyblow_timer < diff)
+        if (mightyblow_timer <= diff)
         {
             me->CastSpell(me->getVictim(),SPELL_MIGHTY_BLOW, false);
             mightyblow_timer = 12000;
         }
-        if (coldstare_timer < diff)
+        if (coldstare_timer <= diff)
         {
             if (Unit* victim = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 me->CastSpell(victim,SPELL_COLD_STARE, false);

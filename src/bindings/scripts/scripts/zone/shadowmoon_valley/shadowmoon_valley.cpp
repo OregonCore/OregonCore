@@ -120,7 +120,7 @@ struct OREGON_DLL_DECL mob_mature_netherwing_drakeAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (IsEating)
-            if (EatTimer < diff)
+            if (EatTimer <= diff)
         {
             IsEating = false;
             DoCast(me, SPELL_JUST_EATEN);
@@ -139,7 +139,7 @@ struct OREGON_DLL_DECL mob_mature_netherwing_drakeAI : public ScriptedAI
         } else EatTimer -= diff;
 
         if (Evade)
-            if (ResetTimer < diff)
+            if (ResetTimer <= diff)
             {
                 EnterEvadeMode();
                 return;
@@ -148,7 +148,7 @@ struct OREGON_DLL_DECL mob_mature_netherwing_drakeAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (CastTimer < diff)
+        if (CastTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_NETHER_BREATH);
             CastTimer = 5000;
@@ -254,7 +254,7 @@ struct OREGON_DLL_DECL mob_enslaved_netherwing_drakeAI : public ScriptedAI
         if (!UpdateVictim())
         {
             if (Tapped)
-                if (FlyTimer < diff)
+                if (FlyTimer <= diff)
             {
                 Tapped = false;
                 if (PlayerGUID)
@@ -1208,7 +1208,7 @@ struct OREGON_DLL_DECL mob_illidari_spawnAI : public ScriptedAI
         //Illidari Soldier
         if (me->GetEntry() == 22075)
         {
-            if (SpellTimer1 < diff)
+            if (SpellTimer1 <= diff)
             {
                 DoCast(me->getVictim(), SpawnCast[0].SpellId);//Spellbreaker
                 SpellTimer1 = SpawnCast[0].Timer2 + (rand()%5 * 1000);
@@ -1217,7 +1217,7 @@ struct OREGON_DLL_DECL mob_illidari_spawnAI : public ScriptedAI
         //Illidari Mind Breaker
         if (me->GetEntry() == 22074)
         {
-            if (SpellTimer1 < diff)
+            if (SpellTimer1 <= diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 {
@@ -1229,13 +1229,13 @@ struct OREGON_DLL_DECL mob_illidari_spawnAI : public ScriptedAI
                 }
             } else SpellTimer1 -= diff;
 
-            if (SpellTimer2 < diff)
+            if (SpellTimer2 <= diff)
             {
                 DoCast(me->getVictim(), SpawnCast[2].SpellId);//Psychic Scream
                 SpellTimer2 = SpawnCast[2].Timer2 + (rand()%13 * 1000);
             } else SpellTimer2 -= diff;
 
-            if (SpellTimer3 < diff)
+            if (SpellTimer3 <= diff)
             {
                 DoCast(me->getVictim(), SpawnCast[3].SpellId);//Mind Blast
                 SpellTimer3 = SpawnCast[3].Timer2 + (rand()%8 * 1000);
@@ -1244,13 +1244,13 @@ struct OREGON_DLL_DECL mob_illidari_spawnAI : public ScriptedAI
         //Illidari Highlord
         if (me->GetEntry() == 19797)
         {
-            if (SpellTimer1 < diff)
+            if (SpellTimer1 <= diff)
             {
                 DoCast(me->getVictim(), SpawnCast[4].SpellId);//Curse Of Flames
                 SpellTimer1 = SpawnCast[4].Timer2 + (rand()%10 * 1000);
             } else SpellTimer1 -= diff;
 
-            if (SpellTimer2 < diff)
+            if (SpellTimer2 <= diff)
             {
                 DoCast(me->getVictim(), SpawnCast[5].SpellId);//Flamestrike
                 SpellTimer2 = SpawnCast[5].Timer2 + (rand()%7 * 13000);
@@ -1365,19 +1365,19 @@ struct OREGON_DLL_DECL mob_torloth_the_magnificentAI : public ScriptedAI
 
         if (Timers)
         {
-            if (SpellTimer1 < diff)
+            if (SpellTimer1 <= diff)
             {
                 DoCast(me->getVictim(), SpawnCast[6].SpellId);//Cleave
                 SpellTimer1 = SpawnCast[6].Timer2 + (rand()%10 * 1000);
             } else SpellTimer1 -= diff;
 
-            if (SpellTimer2 < diff)
+            if (SpellTimer2 <= diff)
             {
                 DoCast(me->getVictim(), SpawnCast[7].SpellId);//Shadowfury
                 SpellTimer2 = SpawnCast[7].Timer2 + (rand()%5 * 1000);
             } else SpellTimer2 -= diff;
 
-            if (SpellTimer3 < diff)
+            if (SpellTimer3 <= diff)
             {
                 DoCast(me, SpawnCast[8].SpellId);
                 SpellTimer3 = SpawnCast[8].Timer2 + (rand()%7 * 1000);//Spell Reflection
@@ -1594,13 +1594,13 @@ struct OREGON_DLL_DECL npc_lord_illidan_stormrageAI : public ScriptedAI
 
         if (!LiveCount && WaveCount < 4)
         {
-            if (!Announced && AnnounceTimer < diff)
+            if (!Announced && AnnounceTimer <= diff)
             {
                 DoScriptText(WavesInfo[WaveCount].WaveTextId, me);
                 Announced = true;
             } else AnnounceTimer -= diff;
 
-            if (WaveTimer < diff)
+            if (WaveTimer <= diff)
             {
                 SummonNextWave();
             } else WaveTimer -= diff;

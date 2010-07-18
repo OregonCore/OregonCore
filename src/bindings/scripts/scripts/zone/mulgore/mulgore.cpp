@@ -126,7 +126,7 @@ struct OREGON_DLL_DECL npc_kyle_frenziedAI : public ScriptedAI
     {
         if (!STATE || STATE == 4)
             return;
-        if (wait < diff)
+        if (wait <= diff)
         {
             switch(STATE)
             {

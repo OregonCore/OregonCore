@@ -105,21 +105,21 @@ struct OREGON_DLL_DECL boss_nethermancer_sepethreaAI : public ScriptedAI
             return;
 
         //Frost Attack
-        if (frost_attack_Timer < diff)
+        if (frost_attack_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_FROST_ATTACK);
             frost_attack_Timer = 7000 + rand()%30000;
         } else frost_attack_Timer -= diff;
 
         //Arcane Blast
-        if (arcane_blast_Timer < diff)
+        if (arcane_blast_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_ARCANE_BLAST);
             arcane_blast_Timer = 15000;
         } else arcane_blast_Timer -= diff;
 
         //Dragons Breath
-        if (dragons_breath_Timer < diff)
+        if (dragons_breath_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_DRAGONS_BREATH);
             {
@@ -136,14 +136,14 @@ struct OREGON_DLL_DECL boss_nethermancer_sepethreaAI : public ScriptedAI
         } else dragons_breath_Timer -= diff;
 
         //Knockback
-        if (knockback_Timer < diff)
+        if (knockback_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_KNOCKBACK);
             knockback_Timer = 15000 + rand()%10000;
         } else knockback_Timer -= diff;
 
         //Solarburn
-        if (solarburn_Timer < diff)
+        if (solarburn_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SOLARBURN);
             solarburn_Timer = 30000;
@@ -197,7 +197,7 @@ struct OREGON_DLL_DECL mob_ragin_flamesAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
          //Check_Timer
-        if (Check_Timer < diff)
+        if (Check_Timer <= diff)
         {
             if (pInstance)
             {
@@ -221,14 +221,14 @@ struct OREGON_DLL_DECL mob_ragin_flamesAI : public ScriptedAI
             onlyonce = true;
         }
 
-        if (inferno_Timer < diff)
+        if (inferno_Timer <= diff)
         {
             DoCast(me->getVictim(),HeroicMode ? H_SPELL_INFERNO : SPELL_INFERNO);
             me->TauntApply(me->getVictim());
             inferno_Timer = 10000;
         } else inferno_Timer -= diff;
 
-        if (flame_timer < diff)
+        if (flame_timer <= diff)
         {
             DoCast(me,SPELL_FIRE_TAIL);
             flame_timer = 500;

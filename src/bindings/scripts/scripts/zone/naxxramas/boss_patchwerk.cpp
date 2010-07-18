@@ -85,7 +85,7 @@ struct OREGON_DLL_DECL boss_patchwerkAI : public ScriptedAI
             return;
 
         //HatefullStrike_Timer
-        if (HatefullStrike_Timer < diff)
+        if (HatefullStrike_Timer <= diff)
         {
             //Cast Hateful strike on the player with the highest
             //amount of HP within melee distance
@@ -112,7 +112,7 @@ struct OREGON_DLL_DECL boss_patchwerkAI : public ScriptedAI
         } else HatefullStrike_Timer -= diff;
 
         //Enrage_Timer
-        if (Enrage_Timer < diff)
+        if (Enrage_Timer <= diff)
         {
             DoCast(me, SPELL_BERSERK);
              DoScriptText(EMOTE_BERSERK, me);
@@ -121,7 +121,7 @@ struct OREGON_DLL_DECL boss_patchwerkAI : public ScriptedAI
         } else Enrage_Timer -= diff;
 
         //Slimebolt_Timer
-        if (Slimebolt_Timer < diff)
+        if (Slimebolt_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SLIMEBOLT);
             Slimebolt_Timer = 5000;

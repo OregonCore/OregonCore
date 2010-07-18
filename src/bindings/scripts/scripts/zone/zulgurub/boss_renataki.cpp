@@ -62,7 +62,7 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
             return;
 
         //Invisible_Timer
-        if (Invisible_Timer < diff)
+        if (Invisible_Timer <= diff)
         {
             me->InterruptSpell(CURRENT_GENERIC_SPELL);
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
@@ -77,7 +77,7 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
 
         if (Invisible)
         {
-            if (Ambush_Timer < diff)
+            if (Ambush_Timer <= diff)
             {
                 Unit *pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -94,7 +94,7 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
 
         if (Ambushed)
         {
-            if (Visible_Timer < diff)
+            if (Visible_Timer <= diff)
             {
                 me->InterruptSpell(CURRENT_GENERIC_SPELL);
                 me->SetUInt32Value(UNIT_FIELD_DISPLAYID,15268);
@@ -111,7 +111,7 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
 
         //Resetting some aggro so he attacks other gamers
         if (!Invisible)
-            if (Aggro_Timer < diff)
+            if (Aggro_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
@@ -126,7 +126,7 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
         } else Aggro_Timer -= diff;
 
         if (!Invisible)
-            if (ThousandBlades_Timer < diff)
+            if (ThousandBlades_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_THOUSANDBLADES);
             ThousandBlades_Timer = 7000 + rand()%5000;

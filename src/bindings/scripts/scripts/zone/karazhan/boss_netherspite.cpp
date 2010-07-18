@@ -273,14 +273,14 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
             return;
 
         // Void Zone
-        if (VoidZoneTimer < diff)
+        if (VoidZoneTimer <= diff)
         {
             DoCast(SelectTarget(SELECT_TARGET_RANDOM,1,45,true),SPELL_VOIDZONE,true);
             VoidZoneTimer = 15000;
         } else VoidZoneTimer -= diff;
 
         // NetherInfusion Berserk
-        if (!Berserk && NetherInfusionTimer < diff)
+        if (!Berserk && NetherInfusionTimer <= diff)
         {
             me->AddAura(SPELL_NETHER_INFUSION, me);
             DoCast(me, SPELL_NETHERSPITE_ROAR);
@@ -290,21 +290,21 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
         if (PortalPhase) // PORTAL PHASE
         {
             // Distribute beams and buffs
-            if (PortalTimer < diff)
+            if (PortalTimer <= diff)
             {
                 UpdatePortals();
                 PortalTimer = 1000;
             } else PortalTimer -= diff;
 
             // Empowerment & Nether Burn
-            if (EmpowermentTimer < diff)
+            if (EmpowermentTimer <= diff)
             {
                 DoCast(me, SPELL_EMPOWERMENT);
                 me->AddAura(SPELL_NETHERBURN_AURA, me);
                 EmpowermentTimer = 90000;
             } else EmpowermentTimer -= diff;
 
-            if (PhaseTimer < diff)
+            if (PhaseTimer <= diff)
             {
                 if (!me->IsNonMeleeSpellCasted(false))
                 {
@@ -316,14 +316,14 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
         else // BANISH PHASE
         {
             // Netherbreath
-            if (NetherbreathTimer < diff)
+            if (NetherbreathTimer <= diff)
             {
                 if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,40,true))
                     DoCast(pTarget,SPELL_NETHERBREATH);
                 NetherbreathTimer = 5000+rand()%2000;
             } else NetherbreathTimer -= diff;
 
-            if (PhaseTimer < diff)
+            if (PhaseTimer <= diff)
             {
                 if (!me->IsNonMeleeSpellCasted(false))
                 {

@@ -212,7 +212,7 @@ struct OREGON_DLL_DECL boss_reliquary_of_soulsAI : public ScriptedAI
             }
         }
 
-        if (Timer < diff)
+        if (Timer <= diff)
         {
             switch(Counter)
             {
@@ -399,7 +399,7 @@ struct OREGON_DLL_DECL boss_essence_of_sufferingAI : public ScriptedAI
         if (me->isInCombat())
         {
             //Supposed to be cast on nearest target
-            if (FixateTimer < diff)
+            if (FixateTimer <= diff)
             {
                 CastFixate();
                 FixateTimer = 5000;
@@ -414,14 +414,14 @@ struct OREGON_DLL_DECL boss_essence_of_sufferingAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (EnrageTimer < diff)
+        if (EnrageTimer <= diff)
         {
             DoCast(me, SPELL_ENRAGE);
             EnrageTimer = 60000;
             DoScriptText(SUFF_EMOTE_ENRAGE, me);
         } else EnrageTimer -= diff;
 
-        if (SoulDrainTimer < diff)
+        if (SoulDrainTimer <= diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_SOUL_DRAIN);
             SoulDrainTimer = 60000;
@@ -497,7 +497,7 @@ struct OREGON_DLL_DECL boss_essence_of_desireAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (RuneShieldTimer < diff)
+        if (RuneShieldTimer <= diff)
         {
             me->InterruptNonMeleeSpells(false);
             me->CastSpell(me, SPELL_RUNE_SHIELD, true);
@@ -506,13 +506,13 @@ struct OREGON_DLL_DECL boss_essence_of_desireAI : public ScriptedAI
             RuneShieldTimer = 60000;
         } else RuneShieldTimer -= diff;
 
-        if (SoulShockTimer < diff)
+        if (SoulShockTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_SOUL_SHOCK);
             SoulShockTimer = 5000;
         } else SoulShockTimer -= diff;
 
-        if (DeadenTimer < diff)
+        if (DeadenTimer <= diff)
         {
             me->InterruptNonMeleeSpells(false);
             DoCast(me->getVictim(), SPELL_DEADEN);
@@ -592,7 +592,7 @@ struct OREGON_DLL_DECL boss_essence_of_angerAI : public ScriptedAI
             CheckedAggro = true;
         }
 
-        if (CheckTankTimer < diff)
+        if (CheckTankTimer <= diff)
         {
             if (me->getVictim()->GetGUID() != AggroTargetGUID)
             {
@@ -603,7 +603,7 @@ struct OREGON_DLL_DECL boss_essence_of_angerAI : public ScriptedAI
             CheckTankTimer = 2000;
         } else CheckTankTimer -= diff;
 
-        if (SoulScreamTimer < diff)
+        if (SoulScreamTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_SOUL_SCREAM);
             SoulScreamTimer = 9000 + rand()%2000;
@@ -613,7 +613,7 @@ struct OREGON_DLL_DECL boss_essence_of_angerAI : public ScriptedAI
             }
         } else SoulScreamTimer -= diff;
 
-        if (SpiteTimer < diff)
+        if (SpiteTimer <= diff)
         {
             DoCast(me, SPELL_SPITE_TARGET);
             SpiteTimer = 30000;

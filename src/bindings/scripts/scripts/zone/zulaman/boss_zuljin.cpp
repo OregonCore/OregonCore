@@ -395,7 +395,7 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                 EnterPhase(Phase + 1);
         }
 
-        if (Berserk_Timer < diff)
+        if (Berserk_Timer <= diff)
         {
             me->CastSpell(me, SPELL_BERSERK, true);
             DoYell(YELL_BERSERK, LANG_UNIVERSAL, NULL);
@@ -416,13 +416,13 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                 } else Intro_Timer -= diff;
             }
 
-            if (Whirlwind_Timer < diff)
+            if (Whirlwind_Timer <= diff)
             {
                 DoCast(me, SPELL_WHIRLWIND);
                 Whirlwind_Timer = 15000 + rand()%5000;
             } else Whirlwind_Timer -= diff;
 
-            if (Grievous_Throw_Timer < diff)
+            if (Grievous_Throw_Timer <= diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     me->CastSpell(pTarget, SPELL_GRIEVOUS_THROW, false);
@@ -431,13 +431,13 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
             break;
 
         case 1:
-            if (Creeping_Paralysis_Timer < diff)
+            if (Creeping_Paralysis_Timer <= diff)
             {
                 DoCast(me, SPELL_CREEPING_PARALYSIS);
                 Creeping_Paralysis_Timer = 20000;
             } else Creeping_Paralysis_Timer -= diff;
 
-            if (Overpower_Timer < diff)
+            if (Overpower_Timer <= diff)
             {
                 // implemented in DoMeleeAttackIfReady()
                 Overpower_Timer = 0;
@@ -464,7 +464,7 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                 }
                 else if (!Claw_Rage_Timer) // do not do this when Lynx_Rush
                 {
-                    if (Claw_Loop_Timer < diff)
+                    if (Claw_Loop_Timer <= diff)
                     {
                         Unit *pTarget = me->getVictim();
                         if (!pTarget || !pTarget->isTargetableForAttack()) pTarget = Unit::GetUnit(*me, TankGUID);
@@ -545,20 +545,20 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
 
             break;
         case 4:
-            if (Flame_Whirl_Timer < diff)
+            if (Flame_Whirl_Timer <= diff)
             {
                 DoCast(me, SPELL_FLAME_WHIRL);
                 Flame_Whirl_Timer = 12000;
             }Flame_Whirl_Timer -= diff;
 
-            if (Pillar_Of_Fire_Timer < diff)
+            if (Pillar_Of_Fire_Timer <= diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(pTarget, SPELL_SUMMON_PILLAR);
                 Pillar_Of_Fire_Timer = 10000;
             } else Pillar_Of_Fire_Timer -= diff;
 
-            if (Flame_Breath_Timer < diff)
+            if (Flame_Breath_Timer <= diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     me->SetInFront(pTarget);

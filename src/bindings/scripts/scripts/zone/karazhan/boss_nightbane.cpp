@@ -287,7 +287,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (WaitTimer)
-        if (WaitTimer < diff)
+        if (WaitTimer <= diff)
         {
             if (Intro)
             {
@@ -337,26 +337,26 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                 Movement = false;
             }
 
-            if (BellowingRoarTimer < diff)
+            if (BellowingRoarTimer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_BELLOWING_ROAR);
                 BellowingRoarTimer = 30000+rand()%10000 ; //Timer
             } else BellowingRoarTimer -= diff;
 
-            if (SmolderingBreathTimer < diff)
+            if (SmolderingBreathTimer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_SMOLDERING_BREATH);
                 SmolderingBreathTimer = 20000;//timer
             } else SmolderingBreathTimer -= diff;
 
-            if (CharredEarthTimer < diff)
+            if (CharredEarthTimer <= diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
                     DoCast(pTarget,SPELL_CHARRED_EARTH);
                 CharredEarthTimer = 20000; //timer
             } else CharredEarthTimer -= diff;
 
-            if (TailSweepTimer < diff)
+            if (TailSweepTimer <= diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     if (!me->HasInArc(M_PI, pTarget))
@@ -364,7 +364,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                 TailSweepTimer = 15000;//timer
             } else TailSweepTimer -= diff;
 
-            if (SearingCindersTimer < diff)
+            if (SearingCindersTimer <= diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(pTarget,SPELL_SEARING_CINDERS);
@@ -391,7 +391,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
         {
             if (!RainBones)
             {
-                if (RainofBonesTimer < diff && !RainBones) // only once at the beginning of phase 2
+                if (RainofBonesTimer <= diff && !RainBones) // only once at the beginning of phase 2
                 {
 
                     if (!Skeletons)
@@ -406,7 +406,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                     SmokingBlastTimer = 20000;
                 } else RainofBonesTimer -= diff;
 
-                if (DistractingAshTimer < diff)
+                if (DistractingAshTimer <= diff)
                 {
                     if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                         DoCast(pTarget,SPELL_DISTRACTING_ASH);
@@ -416,14 +416,14 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
 
             if (RainBones)
             {
-                if (SmokingBlastTimer < diff)
+                if (SmokingBlastTimer <= diff)
                  {
                     DoCast(me->getVictim(),SPELL_SMOKING_BLAST);
                     SmokingBlastTimer = 1500 ; //timer wrong
                  } else SmokingBlastTimer -= diff;
             }
 
-            if (FireballBarrageTimer < diff)
+            if (FireballBarrageTimer <= diff)
             {
                 Map *map = me->GetMap();
                 if (!map->IsDungeon()) return;
@@ -439,7 +439,7 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
                 FireballBarrageTimer = 2000; //Timer fehlen noch
             } else FireballBarrageTimer -= diff;
 
-            if (FlyTimer < diff) //landing
+            if (FlyTimer <= diff) //landing
             {
                 if (rand()%2 == 0)
                     DoYell(YELL_LAND_PHASE_1, LANG_UNIVERSAL, NULL);

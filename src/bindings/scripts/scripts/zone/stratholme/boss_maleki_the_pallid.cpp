@@ -66,7 +66,7 @@ struct OREGON_DLL_DECL boss_maleki_the_pallidAI : public ScriptedAI
             return;
 
         //Frostbolt
-        if (Frostbolt_Timer < diff)
+        if (Frostbolt_Timer <= diff)
         {
              if (rand()%100 < 90)
                 DoCast(me->getVictim(),SPELL_FROSTBOLT);
@@ -74,7 +74,7 @@ struct OREGON_DLL_DECL boss_maleki_the_pallidAI : public ScriptedAI
         } else Frostbolt_Timer -= diff;
 
         //IceTomb
-        if (IceTomb_Timer < diff)
+        if (IceTomb_Timer <= diff)
         {
             if (rand()%100 < 65)
                 DoCast(me->getVictim(),SPELL_ICETOMB);
@@ -82,7 +82,7 @@ struct OREGON_DLL_DECL boss_maleki_the_pallidAI : public ScriptedAI
         } else IceTomb_Timer -= diff;
 
         //DrainLife
-        if (DrainLife_Timer < diff)
+        if (DrainLife_Timer <= diff)
         {
               if (rand()%100 < 55)
                 DoCast(me->getVictim(),SPELL_DRAINLIFE);

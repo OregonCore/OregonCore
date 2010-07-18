@@ -154,12 +154,12 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
 
         if (!me->HasAura(SPELL_BERSERK, 0))
         {
-            if (BerserkTimer < diff)
+            if (BerserkTimer <= diff)
                 DoCast(me, SPELL_BERSERK);
             else BerserkTimer -= diff;
         }
 
-        if (SummonFlameTimer < diff)
+        if (SummonFlameTimer <= diff)
         {
             DoCast(me, SPELL_MOLTEN_PUNCH);
             SummonFlameTimer = 10000;
@@ -167,7 +167,7 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
 
         if (Phase1)
         {
-            if (HatefulStrikeTimer < diff)
+            if (HatefulStrikeTimer <= diff)
             {
                 if (Unit *pTarget = CalculateHatefulStrikeTarget())
                 {
@@ -179,7 +179,7 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
 
         if (!Phase1)
         {
-            if (SwitchTargetTimer < diff)
+            if (SwitchTargetTimer <= diff)
             {
                 if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true))
                 {
@@ -193,7 +193,7 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
                 }
             } else SwitchTargetTimer -= diff;
 
-            if (SummonVolcanoTimer < diff)
+            if (SummonVolcanoTimer <= diff)
             {
                 if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true))
                 {
@@ -204,7 +204,7 @@ struct OREGON_DLL_DECL boss_supremusAI : public ScriptedAI
             } else SummonVolcanoTimer -= diff;
         }
 
-        if (PhaseSwitchTimer < diff)
+        if (PhaseSwitchTimer <= diff)
         {
             if (!Phase1)
             {
@@ -264,7 +264,7 @@ struct OREGON_DLL_DECL npc_volcanoAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (CheckTimer < diff)
+        if (CheckTimer <= diff)
         {
             uint64 SupremusGUID = pInstance->GetData64(DATA_SUPREMUS);
             Creature* Supremus = (Unit::GetCreature((*me), SupremusGUID));

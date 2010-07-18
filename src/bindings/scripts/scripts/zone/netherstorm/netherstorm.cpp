@@ -220,7 +220,7 @@ struct OREGON_DLL_DECL npc_manaforge_control_consoleAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (Event_Timer < diff)
+        if (Event_Timer <= diff)
         {
             switch(Phase)
             {
@@ -272,7 +272,7 @@ struct OREGON_DLL_DECL npc_manaforge_control_consoleAI : public ScriptedAI
 
         if (Wave)
         {
-            if (Wave_Timer < diff)
+            if (Wave_Timer <= diff)
             {
                 DoWaveSpawnForCreature(me);
             } else Wave_Timer -= diff;
@@ -839,7 +839,7 @@ struct OREGON_DLL_DECL mob_phase_hunterAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (ManaBurnTimer < diff) // cast Mana Burn
+        if (ManaBurnTimer <= diff) // cast Mana Burn
         {
             if (me->getVictim()->GetCreateMana() > 0)
             {

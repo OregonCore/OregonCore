@@ -156,7 +156,7 @@ struct OREGON_DLL_DECL boss_harbinger_skyrissAI : public ScriptedAI
             if (!pInstance)
                 return;
 
-            if (Intro_Timer < diff)
+            if (Intro_Timer <= diff)
             {
                 switch(Intro_Phase)
                 {
@@ -201,7 +201,7 @@ struct OREGON_DLL_DECL boss_harbinger_skyrissAI : public ScriptedAI
             IsImage33 = true;
         }
 
-        if (MindRend_Timer < diff)
+        if (MindRend_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
                 DoCast(pTarget,HeroicMode ? H_SPELL_MIND_REND : SPELL_MIND_REND);
@@ -211,7 +211,7 @@ struct OREGON_DLL_DECL boss_harbinger_skyrissAI : public ScriptedAI
             MindRend_Timer = 8000;
         } else MindRend_Timer -=diff;
 
-        if (Fear_Timer < diff)
+        if (Fear_Timer <= diff)
         {
             if (me->IsNonMeleeSpellCasted(false))
                 return;
@@ -230,7 +230,7 @@ struct OREGON_DLL_DECL boss_harbinger_skyrissAI : public ScriptedAI
             Fear_Timer = 25000;
         } else Fear_Timer -=diff;
 
-        if (Domination_Timer < diff)
+        if (Domination_Timer <= diff)
         {
             if (me->IsNonMeleeSpellCasted(false))
                 return;
@@ -251,7 +251,7 @@ struct OREGON_DLL_DECL boss_harbinger_skyrissAI : public ScriptedAI
 
         if (HeroicMode)
         {
-            if (ManaBurn_Timer < diff)
+            if (ManaBurn_Timer <= diff)
             {
                 if (me->IsNonMeleeSpellCasted(false))
                     return;

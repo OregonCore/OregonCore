@@ -59,14 +59,14 @@ struct OREGON_DLL_DECL boss_garrAI : public ScriptedAI
             return;
 
         //AntiMagicPulse_Timer
-        if (AntiMagicPulse_Timer < diff)
+        if (AntiMagicPulse_Timer <= diff)
         {
             DoCast(me,SPELL_ANTIMAGICPULSE);
             AntiMagicPulse_Timer = 10000 + rand()%5000;
         } else AntiMagicPulse_Timer -= diff;
 
         //MagmaShackles_Timer
-        if (MagmaShackles_Timer < diff)
+        if (MagmaShackles_Timer <= diff)
         {
             DoCast(me,SPELL_MAGMASHACKLES);
             MagmaShackles_Timer = 8000 + rand()%4000;
@@ -97,7 +97,7 @@ struct OREGON_DLL_DECL mob_fireswornAI : public ScriptedAI
             return;
 
         //Immolate_Timer
-        if (Immolate_Timer < diff)
+        if (Immolate_Timer <= diff)
         {
              if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_IMMOLATE);

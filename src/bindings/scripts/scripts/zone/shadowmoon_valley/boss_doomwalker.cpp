@@ -96,7 +96,7 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
         //Spell Enrage, when hp <= 20% gain enrage
         if (((me->GetHealth()*100)/ me->GetMaxHealth()) <= 20)
         {
-            if (Enrage_Timer < diff)
+            if (Enrage_Timer <= diff)
             {
                 DoCast(me,SPELL_ENRAGE);
                 Enrage_Timer = 6000;
@@ -105,7 +105,7 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
         }
 
         //Spell Overrun
-        if (Overrun_Timer < diff)
+        if (Overrun_Timer <= diff)
         {
             switch(rand()%2)
             {
@@ -118,7 +118,7 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
         } else Overrun_Timer -= diff;
 
         //Spell Earthquake
-        if (Quake_Timer < diff)
+        if (Quake_Timer <= diff)
         {
             if (rand()%2)
                 return;
@@ -138,7 +138,7 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
         } else Quake_Timer -= diff;
 
         //Spell Chain Lightning
-        if (Chain_Timer < diff)
+        if (Chain_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
@@ -153,7 +153,7 @@ struct OREGON_DLL_DECL boss_doomwalkerAI : public ScriptedAI
         } else Chain_Timer -= diff;
 
         //Spell Sunder Armor
-        if (Armor_Timer < diff)
+        if (Armor_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SUNDER_ARMOR);
             Armor_Timer = 10000 + rand()%15000;

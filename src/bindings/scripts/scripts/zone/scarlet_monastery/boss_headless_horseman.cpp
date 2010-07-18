@@ -296,14 +296,14 @@ struct OREGON_DLL_DECL mob_headAI : public ScriptedAI
     {
         if (!withbody)
         {
-            if (wait < diff)
+            if (wait <= diff)
             {
                 wait = 1000;
                 if (!me->getVictim()) return;
                 me->GetMotionMaster()->Clear(false);
                 me->GetMotionMaster()->MoveFleeing(me->getVictim());
             } else wait -= diff;
-            if (laugh < diff)
+            if (laugh <= diff)
             {
                 laugh = 15000 + (rand()%16)*1000;
                 DoPlaySoundToSet(me, RandomLaugh[rand()%3]);
@@ -317,7 +317,7 @@ struct OREGON_DLL_DECL mob_headAI : public ScriptedAI
         } else {
 
             if (die) {
-                if (wait < diff)
+                if (wait <= diff)
                 {
                     die = false;
                     Unit *body = Unit::GetUnit((*me),bodyGUID);
@@ -610,7 +610,7 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
             case 0: {
                     if (!IsFlying)
                     {
-                        if (say_timer < diff)
+                        if (say_timer <= diff)
                         {
                             say_timer = 3000;
                             Player *plr = SelectRandomPlayer(100.0f,false);
@@ -645,7 +645,7 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
                 break;
             case 1:
                 if (burned) break;
-                if (burn < diff)
+                if (burn <= diff)
                 {
                     Creature *flame = me->SummonCreature(HELPER,Spawn[0].x,Spawn[0].y,Spawn[0].z,0,TEMPSUMMON_TIMED_DESPAWN,17000);
                     if (flame)
@@ -654,7 +654,7 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
                 } else burn -= diff;
                 break;
             case 2:
-                if (conflagrate < diff)
+                if (conflagrate <= diff)
                 {
                     Unit *plr = SelectTarget(SELECT_TARGET_RANDOM, 1,30,true);
                     if (!plr)
@@ -670,7 +670,7 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
                 } else conflagrate -= diff;
                 break;
             case 3:
-                if (summonadds < diff)
+                if (summonadds <= diff)
                 {
                     me->InterruptNonMeleeSpells(false);
                     DoCast(me,SPELL_SUMMON_PUMPKIN);
@@ -680,7 +680,7 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
                 break;
             }
 
-            if (laugh < diff) {
+            if (laugh <= diff) {
                 laugh = 11000 + rand()%12 * 1000;
                 DoTextEmote("laughs",NULL);
                 DoPlaySoundToSet(me, RandomLaugh[rand()%3]);
@@ -689,7 +689,7 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
             if (UpdateVictim())
             {
                 DoMeleeAttackIfReady();
-                if (cleave < diff) {
+                if (cleave <= diff) {
                 DoCast(me->getVictim(),SPELL_CLEAVE);
                 cleave = 2000*(1 + rand()%3);       //1 cleave per 2.0-6.0sec
                 } else cleave -= diff;
@@ -697,7 +697,7 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
 
         } else {
 
-            if (regen < diff)
+            if (regen <= diff)
             {
                 regen = 1000;                   //"body calls head"
                 if (me->GetHealth()/me->GetMaxHealth() == 1 && !returned)
@@ -715,7 +715,7 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
             }
             else regen -= diff;
 
-            if (whirlwind < diff)
+            if (whirlwind <= diff)
             {
                 whirlwind = 4000 + rand()%5 * 1000;
                 if (rand()%2) {

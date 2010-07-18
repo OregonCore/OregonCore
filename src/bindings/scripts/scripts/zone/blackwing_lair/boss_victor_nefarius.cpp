@@ -227,7 +227,7 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
         if (SpawnedAdds < 42)
         {
             //ShadowBoltTimer
-            if (ShadowBoltTimer < diff)
+            if (ShadowBoltTimer <= diff)
             {
                 Unit *pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -238,7 +238,7 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
             } else ShadowBoltTimer -= diff;
 
             //FearTimer
-            if (FearTimer < diff)
+            if (FearTimer <= diff)
             {
                 Unit *pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -249,7 +249,7 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
             } else FearTimer -= diff;
 
             //Add spawning mechanism
-            if (AddSpawnTimer < diff)
+            if (AddSpawnTimer <= diff)
             {
                 //Spawn 2 random types of creatures at the 2 locations
                 uint32 CreatureID;
@@ -327,7 +327,7 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
         }
         else if (NefarianGUID)
         {
-            if (NefCheckTime < diff)
+            if (NefCheckTime <= diff)
             {
                 Unit* Nefarian = NULL;
                 Nefarian = Unit::GetUnit((*me),NefarianGUID);

@@ -68,7 +68,7 @@ struct OREGON_DLL_DECL boss_huhuranAI : public ScriptedAI
             return;
 
         //Frenzy_Timer
-        if (!Frenzy && Frenzy_Timer < diff)
+        if (!Frenzy && Frenzy_Timer <= diff)
         {
             DoCast(me, SPELL_FRENZY);
             Frenzy = true;
@@ -77,7 +77,7 @@ struct OREGON_DLL_DECL boss_huhuranAI : public ScriptedAI
         } else Frenzy_Timer -= diff;
 
         // Wyvern Timer
-        if (Wyvern_Timer < diff)
+        if (Wyvern_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_WYVERNSTING);
@@ -85,14 +85,14 @@ struct OREGON_DLL_DECL boss_huhuranAI : public ScriptedAI
         } else Wyvern_Timer -= diff;
 
         //Spit Timer
-        if (Spit_Timer < diff)
+        if (Spit_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_ACIDSPIT);
             Spit_Timer = 5000 + rand()%5000;
         } else Spit_Timer -= diff;
 
         //NoxiousPoison_Timer
-        if (NoxiousPoison_Timer < diff)
+        if (NoxiousPoison_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_NOXIOUSPOISON);
             NoxiousPoison_Timer = 12000 + rand()%12000;
@@ -101,7 +101,7 @@ struct OREGON_DLL_DECL boss_huhuranAI : public ScriptedAI
         //PoisonBolt only if frenzy or berserk
         if (Frenzy || Berserk)
         {
-            if (PoisonBolt_Timer < diff)
+            if (PoisonBolt_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_POISONBOLT);
                 PoisonBolt_Timer = 3000;
@@ -109,7 +109,7 @@ struct OREGON_DLL_DECL boss_huhuranAI : public ScriptedAI
         }
 
         //FrenzyBack_Timer
-        if (Frenzy && FrenzyBack_Timer < diff)
+        if (Frenzy && FrenzyBack_Timer <= diff)
         {
             me->InterruptNonMeleeSpells(false);
             Frenzy = false;

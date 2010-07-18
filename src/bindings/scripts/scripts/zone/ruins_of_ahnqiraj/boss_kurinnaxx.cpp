@@ -73,25 +73,25 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
 
 
         //MORTALWOUND_Timer
-        if (MORTALWOUND_Timer < diff)
+        if (MORTALWOUND_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_MORTALWOUND);
             MORTALWOUND_Timer = 6000 + rand()%2000;
         } else MORTALWOUND_Timer -= diff;
 
-        if (THRASH_Timer < diff)
+        if (THRASH_Timer <= diff)
         {
             DoCast(me,SPELL_THRASH);
             THRASH_Timer = 3000+ rand()%5000;
         } else THRASH_Timer -= diff;
 
-        if (SLASH_Timer < diff)
+        if (SLASH_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SLASH);
             SLASH_Timer = 5000 + rand()%5000;
         } else SLASH_Timer -= diff;
 
-        if (SUMMON_Timer < diff)
+        if (SUMMON_Timer <= diff)
         {
             Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,1,70,true);
             if (pTarget)
@@ -102,7 +102,7 @@ struct OREGON_DLL_DECL boss_kurinnaxxAI : public ScriptedAI
         } else SUMMON_Timer -= diff;
 
         //SANDTRAP_Timer
-        if (SANDTRAP_Timer < diff)
+        if (SANDTRAP_Timer <= diff)
         {
             if (!sandtrap)
             {

@@ -187,7 +187,7 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
             return;
 
         //Earthquake_Timer
-        if (Earthquake_Timer < diff)
+        if (Earthquake_Timer <= diff)
         {
             if (!Earthquake)
             {
@@ -217,7 +217,7 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
         } else Earthquake_Timer -= diff;
 
         //TidalWave_Timer
-        if (TidalWave_Timer < diff)
+        if (TidalWave_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_TIDAL_WAVE);
             TidalWave_Timer = 20000;
@@ -226,7 +226,7 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
         if (!Phase2)
         {
             //WateryGrave_Timer
-            if (WateryGrave_Timer < diff)
+            if (WateryGrave_Timer <= diff)
             {
                 //Teleport 4 players under the waterfalls
                 Unit *pTarget;
@@ -270,7 +270,7 @@ struct OREGON_DLL_DECL boss_morogrim_tidewalkerAI : public ScriptedAI
         else
         {
             //WateryGlobules_Timer
-            if (WateryGlobules_Timer < diff)
+            if (WateryGlobules_Timer <= diff)
             {
                 Unit* pGlobuleTarget;
                 using std::set;
@@ -339,7 +339,7 @@ struct OREGON_DLL_DECL mob_water_globuleAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Check_Timer < diff)
+        if (Check_Timer <= diff)
         {
             if (me->IsWithinDistInMap(me->getVictim(), 5))
             {

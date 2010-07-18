@@ -65,7 +65,7 @@ struct OREGON_DLL_DECL npc_raliq_the_drunkAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Uppercut_Timer < diff)
+        if (Uppercut_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_UPPERCUT);
             Uppercut_Timer = 15000;
@@ -139,7 +139,7 @@ struct OREGON_DLL_DECL npc_salsalabimAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (MagneticPull_Timer < diff)
+        if (MagneticPull_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_MAGNETIC_PULL);
             MagneticPull_Timer = 15000;
@@ -489,7 +489,7 @@ struct OREGON_DLL_DECL npc_dirty_larryAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (SayTimer < diff)
+        if (SayTimer <= diff)
         {
             if (Event)
                 SayTimer = NextStep(++Step);

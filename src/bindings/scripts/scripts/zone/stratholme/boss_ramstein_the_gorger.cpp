@@ -67,14 +67,14 @@ struct OREGON_DLL_DECL boss_ramstein_the_gorgerAI : public ScriptedAI
             return;
 
         //Trample
-        if (Trample_Timer < diff)
+        if (Trample_Timer <= diff)
         {
             DoCast(me,SPELL_TRAMPLE);
             Trample_Timer = 7000;
         } else Trample_Timer -= diff;
 
         //Knockout
-        if (Knockout_Timer < diff)
+        if (Knockout_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_KNOCKOUT);
             Knockout_Timer = 10000;

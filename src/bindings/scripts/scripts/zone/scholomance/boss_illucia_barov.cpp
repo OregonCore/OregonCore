@@ -68,14 +68,14 @@ struct OREGON_DLL_DECL boss_illuciabarovAI : public ScriptedAI
             return;
 
         //CurseOfAgony_Timer
-        if (CurseOfAgony_Timer < diff)
+        if (CurseOfAgony_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CURSEOFAGONY);
             CurseOfAgony_Timer = 30000;
         } else CurseOfAgony_Timer -= diff;
 
         //ShadowShock_Timer
-        if (ShadowShock_Timer < diff)
+        if (ShadowShock_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -85,14 +85,14 @@ struct OREGON_DLL_DECL boss_illuciabarovAI : public ScriptedAI
         } else ShadowShock_Timer -= diff;
 
         //Silence_Timer
-        if (Silence_Timer < diff)
+        if (Silence_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SILENCE);
             Silence_Timer = 14000;
         } else Silence_Timer -= diff;
 
         //Fear_Timer
-        if (Fear_Timer < diff)
+        if (Fear_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_FEAR);
             Fear_Timer = 30000;

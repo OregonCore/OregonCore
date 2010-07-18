@@ -257,7 +257,7 @@ struct OREGON_DLL_DECL boss_priestess_delrissaAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (ResetTimer < diff)
+        if (ResetTimer <= diff)
         {
             float x, y, z, o;
             me->GetHomePosition(x, y, z, o);
@@ -269,7 +269,7 @@ struct OREGON_DLL_DECL boss_priestess_delrissaAI : public ScriptedAI
             ResetTimer = 5000;
         } else ResetTimer -= diff;
 
-        if (HealTimer < diff)
+        if (HealTimer <= diff)
         {
             uint32 health = me->GetHealth();
             Unit *pTarget = me;
@@ -282,7 +282,7 @@ struct OREGON_DLL_DECL boss_priestess_delrissaAI : public ScriptedAI
             HealTimer = 15000;
         } else HealTimer -= diff;
 
-        if (RenewTimer < diff)
+        if (RenewTimer <= diff)
         {
             Unit *pTarget = me;
             if (rand()%2 == 1)
@@ -296,7 +296,7 @@ struct OREGON_DLL_DECL boss_priestess_delrissaAI : public ScriptedAI
             RenewTimer = 5000;
         } else RenewTimer -= diff;
 
-        if (ShieldTimer < diff)
+        if (ShieldTimer <= diff)
         {
             Unit *pTarget = me;
             if (rand()%2 == 1)
@@ -310,7 +310,7 @@ struct OREGON_DLL_DECL boss_priestess_delrissaAI : public ScriptedAI
             ShieldTimer = 7500;
         } else ShieldTimer -= diff;
 
-        if (DispelTimer < diff)
+        if (DispelTimer <= diff)
         {
             Unit *pTarget = NULL;
             bool friendly = false;
@@ -336,14 +336,14 @@ struct OREGON_DLL_DECL boss_priestess_delrissaAI : public ScriptedAI
             }
         } else DispelTimer -= diff;
 
-        if (SWPainTimer < diff)
+        if (SWPainTimer <= diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0),Heroic ? SPELL_SW_PAIN_HEROIC : SPELL_SW_PAIN_NORMAL);
             SWPainTimer = 10000;
         } else SWPainTimer -= diff;
 
         /*
-        if (CombatPulseTimer < diff)
+        if (CombatPulseTimer <= diff)
         {
             DoZoneInCombat();
             for (uint8 i = 0; i < Adds.size(); ++i)
@@ -450,7 +450,7 @@ struct OREGON_DLL_DECL boss_priestess_guestAI : public ScriptedAI
             UsedPotion = true;
         }
 
-        if (ResetThreatTimer < diff)
+        if (ResetThreatTimer <= diff)
         {
             DoResetThreat();
             ResetThreatTimer = 5000 + rand()%15000;
@@ -497,7 +497,7 @@ struct OREGON_DLL_DECL boss_kagani_nightstrikeAI : public boss_priestess_guestAI
 
         boss_priestess_guestAI::UpdateAI(diff);
 
-        if (Vanish_Timer < diff)
+        if (Vanish_Timer <= diff)
         {
             me->SetVisibility(VISIBILITY_OFF);      // ...? Hacklike
             DoCast(me, SPELL_VANISH);
@@ -509,7 +509,7 @@ struct OREGON_DLL_DECL boss_kagani_nightstrikeAI : public boss_priestess_guestAI
         } else Vanish_Timer -= diff;
 
         if (InVanish)
-            if (Wait_Timer < diff)
+            if (Wait_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_BACKSTAB, true);
             DoCast(me->getVictim(), SPELL_KIDNEY_SHOT, true);
@@ -517,20 +517,20 @@ struct OREGON_DLL_DECL boss_kagani_nightstrikeAI : public boss_priestess_guestAI
             InVanish = false;
         } else Wait_Timer -= diff;
 
-        if (Gouge_Timer < diff)
+        if (Gouge_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_GOUGE);
             DoModifyThreatPercent(me->getVictim(),-100);
             Gouge_Timer = 5500;
         } else Gouge_Timer -= diff;
 
-        if (Kick_Timer < diff)
+        if (Kick_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_KICK);
             Kick_Timer = 7000;
         } else Kick_Timer -= diff;
 
-        if (Eviscerate_Timer < diff)
+        if (Eviscerate_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_EVISCERATE);
             Eviscerate_Timer = 4000;
@@ -625,31 +625,31 @@ struct OREGON_DLL_DECL boss_ellris_duskhallowAI : public boss_priestess_guestAI
 
         boss_priestess_guestAI::UpdateAI(diff);
 
-        if (Immolate_Timer < diff)
+        if (Immolate_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_IMMOLATE);
             Immolate_Timer = 6000;
         } else Immolate_Timer -= diff;
 
-        if (Shadow_Bolt_Timer < diff)
+        if (Shadow_Bolt_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SHADOW_BOLT);
             Shadow_Bolt_Timer = 5000;
         } else Shadow_Bolt_Timer -= diff;
 
-        if (Seed_of_Corruption_Timer < diff)
+        if (Seed_of_Corruption_Timer <= diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_SEED_OF_CORRUPTION);
             Seed_of_Corruption_Timer = 10000;
         } else Seed_of_Corruption_Timer -= diff;
 
-        if (Curse_of_Agony_Timer < diff)
+        if (Curse_of_Agony_Timer <= diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_CURSE_OF_AGONY);
             Curse_of_Agony_Timer = 13000;
         } else Curse_of_Agony_Timer -= diff;
 
-        if (Fear_Timer < diff)
+        if (Fear_Timer <= diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_FEAR);
             Fear_Timer = 10000;
@@ -699,13 +699,13 @@ struct OREGON_DLL_DECL boss_eramas_brightblazeAI : public boss_priestess_guestAI
 
         boss_priestess_guestAI::UpdateAI(diff);
 
-        if (Knockdown_Timer < diff)
+        if (Knockdown_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_KNOCKDOWN);
             Knockdown_Timer = 6000;
         } else Knockdown_Timer -= diff;
 
-        if (Snap_Kick_Timer < diff)
+        if (Snap_Kick_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SNAP_KICK);
             Snap_Kick_Timer  = 4500;
@@ -762,7 +762,7 @@ struct OREGON_DLL_DECL boss_yazzaiAI : public boss_priestess_guestAI
 
         boss_priestess_guestAI::UpdateAI(diff);
 
-        if (Polymorph_Timer < diff)
+        if (Polymorph_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
@@ -778,31 +778,31 @@ struct OREGON_DLL_DECL boss_yazzaiAI : public boss_priestess_guestAI
             HasIceBlocked = true;
         }
 
-        if (Blizzard_Timer < diff)
+        if (Blizzard_Timer <= diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_BLIZZARD);
             Blizzard_Timer = 8000;
         } else Blizzard_Timer -= diff;
 
-        if (Ice_Lance_Timer < diff)
+        if (Ice_Lance_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_ICE_LANCE);
             Ice_Lance_Timer = 12000;
         } else Ice_Lance_Timer -= diff;
 
-        if (Cone_of_Cold_Timer < diff)
+        if (Cone_of_Cold_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_CONE_OF_COLD);
             Cone_of_Cold_Timer = 10000;
         } else Cone_of_Cold_Timer -= diff;
 
-        if (Frostbolt_Timer < diff)
+        if (Frostbolt_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_FROSTBOLT);
             Frostbolt_Timer = 8000;
         } else Frostbolt_Timer -= diff;
 
-        if (Blink_Timer < diff)
+        if (Blink_Timer <= diff)
         {
             bool InMeleeRange = false;
             std::list<HostileReference*>& t_list = me->getThreatManager().getThreatList();
@@ -880,7 +880,7 @@ struct OREGON_DLL_DECL boss_warlord_salarisAI : public boss_priestess_guestAI
 
         boss_priestess_guestAI::UpdateAI(diff);
 
-        if (Intercept_Stun_Timer < diff)
+        if (Intercept_Stun_Timer <= diff)
         {
             bool InMeleeRange = false;
             std::list<HostileReference*>& t_list = me->getThreatManager().getThreatList();
@@ -900,31 +900,31 @@ struct OREGON_DLL_DECL boss_warlord_salarisAI : public boss_priestess_guestAI
             Intercept_Stun_Timer = 10000;
         } else Intercept_Stun_Timer -= diff;
 
-        if (Disarm_Timer < diff)
+        if (Disarm_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_DISARM);
             Disarm_Timer = 6000;
         } else Disarm_Timer -= diff;
 
-        if (Hamstring_Timer < diff)
+        if (Hamstring_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_HAMSTRING);
             Hamstring_Timer = 4500;
         } else Hamstring_Timer -= diff;
 
-        if (Mortal_Strike_Timer < diff)
+        if (Mortal_Strike_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_MORTAL_STRIKE);
             Mortal_Strike_Timer = 4500;
         } else Mortal_Strike_Timer -= diff;
 
-        if (Piercing_Howl_Timer < diff)
+        if (Piercing_Howl_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_PIERCING_HOWL);
             Piercing_Howl_Timer = 10000;
         } else Piercing_Howl_Timer -= diff;
 
-        if (Frightening_Shout_Timer < diff)
+        if (Frightening_Shout_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_FRIGHTENING_SHOUT);
             Frightening_Shout_Timer = 18000;
@@ -1018,13 +1018,13 @@ struct OREGON_DLL_DECL boss_garaxxasAI : public boss_priestess_guestAI
 
         if (me->IsWithinDistInMap(me->getVictim(), 5))
         {
-            if (Wing_Clip_Timer < diff)
+            if (Wing_Clip_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_WING_CLIP);
                 Wing_Clip_Timer = 4000;
             } else Wing_Clip_Timer -= diff;
 
-            if (Freezing_Trap_Timer < diff)
+            if (Freezing_Trap_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_FREEZING_TRAP);
                 DoModifyThreatPercent(me->getVictim(),-100);
@@ -1035,31 +1035,31 @@ struct OREGON_DLL_DECL boss_garaxxasAI : public boss_priestess_guestAI
                 DoMeleeAttackIfReady();
         } else
         {
-            if (Concussive_Shot_Timer < diff)
+            if (Concussive_Shot_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_CONCUSSIVE_SHOT);
                 Concussive_Shot_Timer = 8000;
             } else Concussive_Shot_Timer -= diff;
 
-            if (Multi_Shot_Timer < diff)
+            if (Multi_Shot_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_MULTI_SHOT);
                 Multi_Shot_Timer = 10000;
             } else Multi_Shot_Timer -= diff;
 
-            if (Aimed_Shot_Timer < diff)
+            if (Aimed_Shot_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_AIMED_SHOT);
                 Aimed_Shot_Timer = 6000;
             } else Aimed_Shot_Timer -= diff;
 
-            if (Shoot_Timer < diff)
+            if (Shoot_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_SHOOT);
                 Shoot_Timer = 2500;
             } else Shoot_Timer -= diff;
         }
-        if (StopMoving < diff)
+        if (StopMoving <= diff)
         {
             if (Stopped)
                 Stopped = false;
@@ -1123,7 +1123,7 @@ struct OREGON_DLL_DECL boss_apokoAI : public boss_priestess_guestAI
 
         boss_priestess_guestAI::UpdateAI(diff);
 
-        if (Totem_Timer < diff)
+        if (Totem_Timer <= diff)
         {
             switch(rand()%3)
             {
@@ -1135,25 +1135,25 @@ struct OREGON_DLL_DECL boss_apokoAI : public boss_priestess_guestAI
             Totem_Timer = Totem_Amount*2000;
         } else Totem_Timer -= diff;
 
-        if (War_Stomp_Timer < diff)
+        if (War_Stomp_Timer <= diff)
         {
             DoCast(me, SPELL_WAR_STOMP);
             War_Stomp_Timer = 10000;
         } else War_Stomp_Timer -= diff;
 
-        if (Purge_Timer < diff)
+        if (Purge_Timer <= diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_PURGE);
             Purge_Timer = 15000;
         } else Purge_Timer -= diff;
 
-        if (Frost_Shock_Timer < diff)
+        if (Frost_Shock_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_FROST_SHOCK);
             Frost_Shock_Timer = 7000;
         } else Frost_Shock_Timer -= diff;
 
-        if (Healing_Wave_Timer < diff)
+        if (Healing_Wave_Timer <= diff)
         {
             // std::vector<Add*>::iterator itr = Group.begin() + rand()%Group.size();
             // uint64 guid = (*itr)->guid;
@@ -1210,7 +1210,7 @@ struct OREGON_DLL_DECL boss_zelfanAI : public boss_priestess_guestAI
 
         boss_priestess_guestAI::UpdateAI(diff);
 
-        if (Goblin_Dragon_Gun_Timer < diff)
+        if (Goblin_Dragon_Gun_Timer <= diff)
         {
             if (me->GetDistance(me->getVictim()) <= 5)
             {
@@ -1219,19 +1219,19 @@ struct OREGON_DLL_DECL boss_zelfanAI : public boss_priestess_guestAI
             } else Goblin_Dragon_Gun_Timer = 2000;
         } else Goblin_Dragon_Gun_Timer -= diff;
 
-        if (Rocket_Launch_Timer < diff)
+        if (Rocket_Launch_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_ROCKET_LAUNCH);
             Rocket_Launch_Timer = 9000;
         } else Rocket_Launch_Timer -= diff;
 
-        if (Fel_Iron_Bomb_Timer < diff)
+        if (Fel_Iron_Bomb_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_FEL_IRON_BOMB);
             Fel_Iron_Bomb_Timer = 15000;
         } else Fel_Iron_Bomb_Timer -= diff;
 
-        if (Recombobulate_Timer < diff)
+        if (Recombobulate_Timer <= diff)
         {
             for (uint8 i = 0; i < Group.size(); ++i)
                 if (Unit* pAdd = Unit::GetUnit(*me, Group[i]->guid))
@@ -1242,7 +1242,7 @@ struct OREGON_DLL_DECL boss_zelfanAI : public boss_priestess_guestAI
                     }
         } else Recombobulate_Timer -= diff;
 
-        if (High_Explosive_Sheep_Timer < diff)
+        if (High_Explosive_Sheep_Timer <= diff)
         {
             DoCast(me, SPELL_HIGH_EXPLOSIVE_SHEEP);
             High_Explosive_Sheep_Timer = 65000;
@@ -1269,7 +1269,7 @@ struct OREGON_DLL_DECL boss_zelfanAI : public boss_priestess_guestAI
 //
 //    void UpdateAI(const uint32 diff)
 //    {
-//        if (Explosion_Timer < diff)
+//        if (Explosion_Timer <= diff)
 //        {
 //            DoCast(me->getVictim(), SPELL_SHEEP_EXPLOSION);
 //        } else

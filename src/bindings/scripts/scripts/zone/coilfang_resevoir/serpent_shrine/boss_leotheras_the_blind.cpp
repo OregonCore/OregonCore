@@ -122,7 +122,7 @@ struct OREGON_DLL_DECL mob_inner_demonAI : public ScriptedAI
                     AttackStart(owner);
         }
 
-        if (Link_Timer < diff)
+        if (Link_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_SOUL_LINK, true);
             Link_Timer = 1000;
@@ -131,7 +131,7 @@ struct OREGON_DLL_DECL mob_inner_demonAI : public ScriptedAI
         if (!me->HasAura(AURA_DEMONIC_ALIGNMENT, 0))
             DoCast(me, AURA_DEMONIC_ALIGNMENT, true);
 
-        if (ShadowBolt_Timer < diff)
+        if (ShadowBolt_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_SHADOWBOLT, false);
             ShadowBolt_Timer = 10000;
@@ -392,7 +392,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
         //Return since we have no target
         if (me->HasAura(AURA_BANISH, 0) || !UpdateVictim())
         {
-            if (BanishTimer<diff)
+            if (BanishTimer <= diff)
             {
                 CheckBanish();//no need to check every update tick
                 BanishTimer = 1000;
@@ -400,7 +400,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
             return;
         }
         if (me->HasAura(SPELL_WHIRLWIND, 0))
-            if (Whirlwind_Timer < diff)
+            if (Whirlwind_Timer <= diff)
             {
                 Unit *newTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if (newTarget)
@@ -428,7 +428,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
         }
 
         //Enrage_Timer (10 min)
-        if (Berserk_Timer < diff && !EnrageUsed)
+        if (Berserk_Timer <= diff && !EnrageUsed)
         {
             me->InterruptNonMeleeSpells(false);
             DoCast(me, SPELL_BERSERK);
@@ -440,7 +440,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
             //Whirldind Timer
             if (!me->HasAura(SPELL_WHIRLWIND, 0))
             {
-                if (Whirlwind_Timer < diff)
+                if (Whirlwind_Timer <= diff)
                 {
                     DoCast(me, SPELL_WHIRLWIND);
                     // while whirlwinding this variable is used to countdown target's change
@@ -451,7 +451,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
             //Switch_Timer
 
             if (!IsFinalForm)
-                if (SwitchToDemon_Timer < diff)
+                if (SwitchToDemon_Timer <= diff)
                 {
                     //switch to demon form
                     me->RemoveAurasDueToSpell(SPELL_WHIRLWIND,0);
@@ -472,7 +472,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
                 return;
             if (me->GetDistance(me->getVictim()) < 30)
                 me->StopMoving();
-            if (ChaosBlast_Timer < diff)
+            if (ChaosBlast_Timer <= diff)
             {
                 // will cast only when in range of spell
                 if (me->GetDistance(me->getVictim()) < 30)
@@ -484,7 +484,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
                 ChaosBlast_Timer = 3000;
             } else ChaosBlast_Timer -= diff;
             //Summon Inner Demon
-            if (InnerDemons_Timer < diff)
+            if (InnerDemons_Timer <= diff)
             {
                 std::list<HostileReference *>& ThreatList = me->getThreatManager().getThreatList();
                 std::vector<Unit *> TargetList;
@@ -529,7 +529,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blindAI : public ScriptedAI
             } else InnerDemons_Timer -= diff;
 
             //Switch_Timer
-            if (SwitchToHuman_Timer < diff)
+            if (SwitchToHuman_Timer <= diff)
             {
                 //switch to nightelf form
                 me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_NIGHTELF);
@@ -621,7 +621,7 @@ struct OREGON_DLL_DECL boss_leotheras_the_blind_demonformAI : public ScriptedAI
         if (me->GetDistance(me->getVictim()) < 30)
             me->StopMoving();
 
-        if (ChaosBlast_Timer < diff)
+        if (ChaosBlast_Timer <= diff)
          {
             // will cast only when in range od spell
             if (me->GetDistance(me->getVictim()) < 30)
@@ -722,7 +722,7 @@ struct OREGON_DLL_DECL mob_greyheart_spellbinderAI : public ScriptedAI
             return;
         }
 
-        if (Mindblast_Timer < diff)
+        if (Mindblast_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -732,7 +732,7 @@ struct OREGON_DLL_DECL mob_greyheart_spellbinderAI : public ScriptedAI
             Mindblast_Timer = 10000 + rand()%5000;
         } else Mindblast_Timer -= diff;
 
-        if (Earthshock_Timer < diff)
+        if (Earthshock_Timer <= diff)
         {
             Map* pMap = me->GetMap();
             Map::PlayerList const &PlayerList = pMap->GetPlayers();

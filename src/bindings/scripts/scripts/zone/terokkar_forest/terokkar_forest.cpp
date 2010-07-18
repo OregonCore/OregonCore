@@ -117,7 +117,7 @@ struct OREGON_DLL_DECL mob_unkor_the_ruthlessAI : public ScriptedAI
             }
             else
             {
-                if (UnkorUnfriendly_Timer < diff)
+                if (UnkorUnfriendly_Timer <= diff)
                 {
                     EnterEvadeMode();
                     return;
@@ -128,7 +128,7 @@ struct OREGON_DLL_DECL mob_unkor_the_ruthlessAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Pulverize_Timer < diff)
+        if (Pulverize_Timer <= diff)
         {
             DoCast(me,SPELL_PULVERIZE);
             Pulverize_Timer = 9000;
@@ -276,19 +276,19 @@ struct OREGON_DLL_DECL npc_floonAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Silence_Timer < diff)
+        if (Silence_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SILENCE);
             Silence_Timer = 30000;
         } else Silence_Timer -= diff;
 
-        if (FrostNova_Timer < diff)
+        if (FrostNova_Timer <= diff)
         {
             DoCast(me,SPELL_FROST_NOVA);
             FrostNova_Timer = 20000;
         } else FrostNova_Timer -= diff;
 
-        if (Frostbolt_Timer < diff)
+        if (Frostbolt_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_FROSTBOLT);
             Frostbolt_Timer = 5000;

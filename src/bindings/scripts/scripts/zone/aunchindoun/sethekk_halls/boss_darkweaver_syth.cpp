@@ -152,7 +152,7 @@ struct OREGON_DLL_DECL boss_darkweaver_sythAI : public ScriptedAI
             summon10 = true;
         }
 
-        if (flameshock_timer < diff)
+        if (flameshock_timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_FLAME_SHOCK);
@@ -160,7 +160,7 @@ struct OREGON_DLL_DECL boss_darkweaver_sythAI : public ScriptedAI
             flameshock_timer = 10000 + rand()%5000;
         } else flameshock_timer -= diff;
 
-        if (arcaneshock_timer < diff)
+        if (arcaneshock_timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_ARCANE_SHOCK);
@@ -168,7 +168,7 @@ struct OREGON_DLL_DECL boss_darkweaver_sythAI : public ScriptedAI
             arcaneshock_timer = 10000 + rand()%5000;
         } else arcaneshock_timer -= diff;
 
-        if (frostshock_timer < diff)
+        if (frostshock_timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_FROST_SHOCK);
@@ -176,7 +176,7 @@ struct OREGON_DLL_DECL boss_darkweaver_sythAI : public ScriptedAI
             frostshock_timer = 10000 + rand()%5000;
         } else frostshock_timer -= diff;
 
-        if (shadowshock_timer < diff)
+        if (shadowshock_timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_SHADOW_SHOCK);
@@ -184,7 +184,7 @@ struct OREGON_DLL_DECL boss_darkweaver_sythAI : public ScriptedAI
             shadowshock_timer = 10000 + rand()%5000;
         } else shadowshock_timer -= diff;
 
-        if (chainlightning_timer < diff)
+        if (chainlightning_timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_CHAIN_LIGHTNING);
@@ -229,7 +229,7 @@ struct OREGON_DLL_DECL mob_syth_fireAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (flameshock_timer < diff)
+        if (flameshock_timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_FLAME_SHOCK);
@@ -237,7 +237,7 @@ struct OREGON_DLL_DECL mob_syth_fireAI : public ScriptedAI
             flameshock_timer = 5000;
         } else flameshock_timer -= diff;
 
-        if (flamebuffet_timer < diff)
+        if (flamebuffet_timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_FLAME_BUFFET);
@@ -280,7 +280,7 @@ struct OREGON_DLL_DECL mob_syth_arcaneAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (arcaneshock_timer < diff)
+        if (arcaneshock_timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_ARCANE_SHOCK);
@@ -288,7 +288,7 @@ struct OREGON_DLL_DECL mob_syth_arcaneAI : public ScriptedAI
             arcaneshock_timer = 5000;
         } else arcaneshock_timer -= diff;
 
-        if (arcanebuffet_timer < diff)
+        if (arcanebuffet_timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_ARCANE_BUFFET);
@@ -331,7 +331,7 @@ struct OREGON_DLL_DECL mob_syth_frostAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (frostshock_timer < diff)
+        if (frostshock_timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_FROST_SHOCK);
@@ -339,7 +339,7 @@ struct OREGON_DLL_DECL mob_syth_frostAI : public ScriptedAI
             frostshock_timer = 5000;
         } else frostshock_timer -= diff;
 
-        if (frostbuffet_timer < diff)
+        if (frostbuffet_timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_FROST_BUFFET);
@@ -382,7 +382,7 @@ struct OREGON_DLL_DECL mob_syth_shadowAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (shadowshock_timer < diff)
+        if (shadowshock_timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_SHADOW_SHOCK);
@@ -390,7 +390,7 @@ struct OREGON_DLL_DECL mob_syth_shadowAI : public ScriptedAI
             shadowshock_timer = 5000;
         } else shadowshock_timer -= diff;
 
-        if (shadowbuffet_timer < diff)
+        if (shadowbuffet_timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_SHADOW_BUFFET);

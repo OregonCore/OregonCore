@@ -102,14 +102,14 @@ struct OREGON_DLL_DECL boss_chrono_lord_dejaAI : public ScriptedAI
             return;
 
         //Arcane Blast
-        if (ArcaneBlast_Timer < diff)
+        if (ArcaneBlast_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_ARCANE_BLAST);
             ArcaneBlast_Timer = 20000+rand()%5000;
         } else ArcaneBlast_Timer -= diff;
 
         //Time Lapse
-        if (TimeLapse_Timer < diff)
+        if (TimeLapse_Timer <= diff)
         {
             DoScriptText(SAY_BANISH, me);
             DoCast(me, SPELL_TIME_LAPSE);

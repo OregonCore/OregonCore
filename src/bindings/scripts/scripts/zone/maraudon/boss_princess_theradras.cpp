@@ -60,14 +60,14 @@ struct OREGON_DLL_DECL boss_ptheradrasAI : public ScriptedAI
             return;
 
         //Dustfield_Timer
-        if (Dustfield_Timer < diff)
+        if (Dustfield_Timer <= diff)
         {
             DoCast(me,SPELL_DUSTFIELD);
             Dustfield_Timer = 14000;
         } else Dustfield_Timer -= diff;
 
         //Boulder_Timer
-        if (Boulder_Timer < diff)
+        if (Boulder_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -77,14 +77,14 @@ struct OREGON_DLL_DECL boss_ptheradrasAI : public ScriptedAI
         } else Boulder_Timer -= diff;
 
         //RepulsiveGaze_Timer
-        if (RepulsiveGaze_Timer < diff)
+        if (RepulsiveGaze_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_REPULSIVEGAZE);
             RepulsiveGaze_Timer = 20000;
         } else RepulsiveGaze_Timer -= diff;
 
         //Thrash_Timer
-        if (Thrash_Timer < diff)
+        if (Thrash_Timer <= diff)
         {
             DoCast(me,SPELL_THRASH);
             Thrash_Timer = 18000;

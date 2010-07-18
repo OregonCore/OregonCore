@@ -79,14 +79,14 @@ struct OREGON_DLL_DECL boss_moamAI : public ScriptedAI
         }
 
         //SUMMONMANA_Timer
-        if (i == 1 && SUMMONMANA_Timer < diff)
+        if (i == 1 && SUMMONMANA_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SUMMONMANA);
             SUMMONMANA_Timer = 90000;
         } else SUMMONMANA_Timer -= diff;
 
         //TRAMPLE_Timer
-        if (TRAMPLE_Timer < diff)
+        if (TRAMPLE_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_TRAMPLE);
             j=1;
@@ -95,7 +95,7 @@ struct OREGON_DLL_DECL boss_moamAI : public ScriptedAI
         } else TRAMPLE_Timer -= diff;
 
         //DRAINMANA_Timer
-        if (DRAINMANA_Timer < diff)
+        if (DRAINMANA_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_DRAINMANA);
             DRAINMANA_Timer = 30000;

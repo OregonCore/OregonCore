@@ -175,11 +175,11 @@ struct OREGON_DLL_DECL boss_entropiusAI : public ScriptedAI
 
         if (!Combat)Combat = true;
 
-        if (EnrageTimer < diff && !me->HasAura(SPELL_ENRAGE, 0)){
+        if (EnrageTimer <= diff && !me->HasAura(SPELL_ENRAGE, 0)){
             DoCast(me,SPELL_ENRAGE, false);
         } else EnrageTimer -= diff;
 
-        if (BlackHoleSummonTimer < diff){
+        if (BlackHoleSummonTimer <= diff){
             Unit* random = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
             if (!random)return;
             DoCast(random, SPELL_DARKNESS_E, false);
@@ -270,7 +270,7 @@ struct OREGON_DLL_DECL boss_muruAI : public Scripted_NoMovementAI
             return;
 
         if (Phase == 3){
-            if (Timer[TIMER_PHASE] <diff){
+            if (Timer[TIMER_PHASE] <= diff){
                 switch(pInstance->GetData(DATA_MURU_EVENT)){
                     case NOT_STARTED:
                         Reset();
@@ -286,12 +286,12 @@ struct OREGON_DLL_DECL boss_muruAI : public Scripted_NoMovementAI
             return;
         }
 
-        if (EnrageTimer < diff && !me->HasAura(SPELL_ENRAGE, 0))
+        if (EnrageTimer <= diff && !me->HasAura(SPELL_ENRAGE, 0))
             DoCast(me, SPELL_ENRAGE, false);
         else EnrageTimer -= diff;
 
         for (uint8 i = 0; i < 4; ++i){
-            if (Timer[i] < diff){
+            if (Timer[i] <= diff){
                 switch(i){
                     case TIMER_DARKNESS:
                         if (!DarkFiend){
@@ -391,7 +391,7 @@ struct OREGON_DLL_DECL npc_muru_portalAI : public Scripted_NoMovementAI
             if (InAction && pInstance->GetData(DATA_MURU_EVENT) == NOT_STARTED)Reset();
             return;
         }
-        if (SummonTimer < diff){
+        if (SummonTimer <= diff){
             DoCastAOE(SPELL_SUMMON_VOID_SENTINEL, false);
             SummonTimer = 5000;
             SummonSentinel = false;
@@ -437,7 +437,7 @@ struct OREGON_DLL_DECL npc_dark_fiendAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (WaitTimer < diff)
+        if (WaitTimer <= diff)
             if (!InAction){
                 me->clearUnitState(UNIT_STAT_STUNNED);
                 DoCastAOE(SPELL_DARKFIEND_SKIN, false);
@@ -495,12 +495,12 @@ struct OREGON_DLL_DECL npc_void_sentinelAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (PulseTimer < diff){
+        if (PulseTimer <= diff){
             DoCastAOE(SPELL_SHADOW_PULSE, true);
             PulseTimer = 3000;
         } else PulseTimer -= diff;
 
-        if (VoidBlastTimer < diff){
+        if (VoidBlastTimer <= diff){
             DoCast(me->getVictim(), SPELL_VOID_BLAST, false);
             VoidBlastTimer = 45000;
         } else VoidBlastTimer -= diff;
@@ -540,7 +540,7 @@ struct OREGON_DLL_DECL npc_blackholeAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (SpellTimer < diff){
+        if (SpellTimer <= diff){
             Unit* Victim = Unit::GetUnit((*me), pInstance->GetData64(DATA_PLAYER_GUID));
             switch(NeedForAHack){
                 case 0:
@@ -570,7 +570,7 @@ struct OREGON_DLL_DECL npc_blackholeAI : public ScriptedAI
             }
         } else SpellTimer -= diff;
 
-        if (DespawnTimer < diff){
+        if (DespawnTimer <= diff){
             me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             me->RemoveCorpse();
         } else DespawnTimer -= diff;

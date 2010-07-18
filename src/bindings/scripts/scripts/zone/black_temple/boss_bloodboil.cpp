@@ -216,7 +216,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
 
         if (!me->HasAura(SPELL_BERSERK, 0))
         {
-            if (EnrageTimer < diff)
+            if (EnrageTimer <= diff)
             {
                 DoCast(me, SPELL_BERSERK);
                 switch(rand()%2)
@@ -227,26 +227,26 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
             } else EnrageTimer -= diff;
         }
 
-        if (ArcingSmashTimer < diff)
+        if (ArcingSmashTimer <= diff)
         {
             DoCast(me->getVictim(),Phase1 ? SPELL_ARCING_SMASH_1 : SPELL_ARCING_SMASH_2);
             ArcingSmashTimer = 10000;
         } else ArcingSmashTimer -= diff;
 
-        if (FelBreathTimer < diff)
+        if (FelBreathTimer <= diff)
         {
             DoCast(me->getVictim(),Phase1 ? SPELL_FELBREATH_1 : SPELL_FELBREATH_2);
             FelBreathTimer = 25000;
         } else FelBreathTimer -= diff;
 
-        if (EjectTimer < diff)
+        if (EjectTimer <= diff)
         {
             DoCast(me->getVictim(),Phase1 ? SPELL_EJECT_1 : SPELL_EJECT_2);
             EjectTimer = 15000;
         } else EjectTimer -= diff;
 
 
-        if (Charge_Timer < diff)
+        if (Charge_Timer <= diff)
         {
             if (me->GetDistance2d(me->getVictim()) > 15)
                 DoCast(me->getVictim(),SPELL_CHARGE);
@@ -255,13 +255,13 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
 
         if (Phase1)
         {
-            if (BewilderingStrikeTimer < diff)
+            if (BewilderingStrikeTimer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_BEWILDERING_STRIKE);
                 BewilderingStrikeTimer = 20000;
             } else BewilderingStrikeTimer -= diff;
 
-            if (BloodboilTimer < diff)
+            if (BloodboilTimer <= diff)
             {
                 if (BloodboilCount < 5)                      // Only cast it five times.
                 {
@@ -275,7 +275,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
 
         if (!Phase1)
         {
-            if (FelGeyserTimer < diff)
+            if (FelGeyserTimer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_FEL_GEYSER);
                 FelGeyserTimer = 30000;
@@ -285,7 +285,7 @@ struct OREGON_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
                 me->getThreatManager().modifyThreatPercent(me->getVictim(),-100);
         }
 
-        if (PhaseChangeTimer < diff)
+        if (PhaseChangeTimer <= diff)
         {
             if (Phase1)
             {

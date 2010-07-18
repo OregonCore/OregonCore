@@ -74,38 +74,38 @@ struct OREGON_DLL_DECL boss_galvangarAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (CleaveTimer < diff)
+        if (CleaveTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_CLEAVE);
             CleaveTimer =  (10+rand()%6)*1000;
         } else CleaveTimer -= diff;
 
-        if (FrighteningShoutTimer < diff)
+        if (FrighteningShoutTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_FRIGHTENING_SHOUT);
             FrighteningShoutTimer = (10+rand()%5)*1000;
         } else FrighteningShoutTimer -= diff;
 
-        if (Whirlwind1Timer < diff)
+        if (Whirlwind1Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_WHIRLWIND1);
             Whirlwind1Timer = (6+rand()%14)*1000;
         } else Whirlwind1Timer -= diff;
 
-        if (Whirlwind2Timer < diff)
+        if (Whirlwind2Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_WHIRLWIND2);
             Whirlwind2Timer = (10+rand()%15)*1000;
         } else Whirlwind2Timer -= diff;
 
-        if (MortalStrikeTimer < diff)
+        if (MortalStrikeTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_MORTAL_STRIKE);
             MortalStrikeTimer = (10+rand()%20)*1000;
         } else MortalStrikeTimer -= diff;
 
         // check if creature is not outside of building
-        if (ResetTimer < diff)
+        if (ResetTimer <= diff)
         {
             float x, y, z;
             me->GetPosition(x, y, z);

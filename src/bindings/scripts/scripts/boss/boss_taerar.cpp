@@ -103,7 +103,7 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (Shades && Shades_Timer < diff)
+        if (Shades && Shades_Timer <= diff)
         {
             //Become unbanished again
             me->setFaction(14);
@@ -122,7 +122,7 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
             return;
 
         //Sleep_Timer
-        if (Sleep_Timer < diff)
+        if (Sleep_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -132,14 +132,14 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
         } else Sleep_Timer -= diff;
 
         //NoxiousBreath_Timer
-        if (NoxiousBreath_Timer < diff)
+        if (NoxiousBreath_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_NOXIOUSBREATH);
             NoxiousBreath_Timer = 14000 + rand()%6000;
         } else NoxiousBreath_Timer -= diff;
 
         //Tailsweep every 2 seconds
-        if (TailSweep_Timer < diff)
+        if (TailSweep_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_TAILSWEEP);
@@ -148,21 +148,21 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
         } else TailSweep_Timer -= diff;
 
         //MarkOfNature_Timer
-        //if (MarkOfNature_Timer < diff)
+        //if (MarkOfNature_Timer <= diff)
         //{
         //    DoCast(me->getVictim(),SPELL_MARKOFNATURE);
         //    MarkOfNature_Timer = 45000;
         //} else MarkOfNature_Timer -= diff;
 
         //ArcaneBlast_Timer
-        if (ArcaneBlast_Timer < diff)
+        if (ArcaneBlast_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_ARCANEBLAST);
             ArcaneBlast_Timer = 7000 + rand()%5000;
         } else ArcaneBlast_Timer -= diff;
 
         //BellowingRoar_Timer
-        if (BellowingRoar_Timer < diff)
+        if (BellowingRoar_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_BELLOWINGROAR);
             BellowingRoar_Timer = 20000 + rand()%10000;
@@ -171,7 +171,7 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
         //Summon 3 Shades
         if (!Shades  && (int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 75)
         {
-            if (Summon1_Timer < diff)
+            if (Summon1_Timer <= diff)
             {
                 //Inturrupt any spell casting
                 me->InterruptNonMeleeSpells(false);
@@ -194,7 +194,7 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
         //Summon 3 Shades
         if (!Shades  && (int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 50)
         {
-            if (Summon2_Timer < diff)
+            if (Summon2_Timer <= diff)
             {
                 //Inturrupt any spell casting
                 me->InterruptNonMeleeSpells(false);
@@ -217,7 +217,7 @@ struct OREGON_DLL_DECL boss_taerarAI : public ScriptedAI
         //Summon 3 Shades
         if (!Shades  && (int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 25)
         {
-            if (Summon3_Timer < diff)
+            if (Summon3_Timer <= diff)
             {
                 //Inturrupt any spell casting
                 me->InterruptNonMeleeSpells(false);
@@ -266,14 +266,14 @@ struct OREGON_DLL_DECL boss_shadeoftaerarAI : public ScriptedAI
             return;
 
         //PoisonCloud_Timer
-        if (PoisonCloud_Timer < diff)
+        if (PoisonCloud_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_POSIONCLOUD);
             PoisonCloud_Timer = 30000;
         } else PoisonCloud_Timer -= diff;
 
         //PosionBreath_Timer
-        if (PosionBreath_Timer < diff)
+        if (PosionBreath_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_POSIONBREATH);
             PosionBreath_Timer = 12000;

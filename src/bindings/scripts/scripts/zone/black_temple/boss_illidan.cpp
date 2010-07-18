@@ -945,7 +945,7 @@ struct OREGON_DLL_DECL flame_of_azzinothAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (FlameBlastTimer < diff)
+        if (FlameBlastTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_BLAZE_SUMMON, true); //appear at victim
             DoCast(me->getVictim(), SPELL_FLAME_BLAST);
@@ -953,7 +953,7 @@ struct OREGON_DLL_DECL flame_of_azzinothAI : public ScriptedAI
             DoZoneInCombat(); //in case someone is revived
         } else FlameBlastTimer -= diff;
 
-        if (CheckTimer < diff)
+        if (CheckTimer <= diff)
         {
             ChargeCheck();
             EnrageCheck();
@@ -1320,7 +1320,7 @@ struct OREGON_DLL_DECL npc_akama_illidanAI : public ScriptedAI
     {
         if (me->GetVisibility() == VISIBILITY_OFF)
         {
-            if (Check_Timer < diff)
+            if (Check_Timer <= diff)
             {
                 if (pInstance && pInstance->GetData(DATA_ILLIDARICOUNCILEVENT) == DONE)
                     me->SetVisibility(VISIBILITY_ON);
@@ -1675,7 +1675,7 @@ struct OREGON_DLL_DECL cage_trap_triggerAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (DespawnTimer)
-            if (DespawnTimer < diff)
+            if (DespawnTimer <= diff)
                 me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             else DespawnTimer -= diff;
 
@@ -1808,7 +1808,7 @@ struct OREGON_DLL_DECL mob_parasitic_shadowfiendAI : public ScriptedAI
             }
         }
 
-        if (CheckTimer < diff)
+        if (CheckTimer <= diff)
         {
             GETUNIT(Illidan, IllidanGUID);
             if (!Illidan || ((Creature*)Illidan)->IsInEvadeMode())

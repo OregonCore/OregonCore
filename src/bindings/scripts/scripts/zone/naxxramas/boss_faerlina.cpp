@@ -97,14 +97,14 @@ struct OREGON_DLL_DECL boss_faerlinaAI : public ScriptedAI
             return;
 
         //PoisonBoltVolley_Timer
-        if (PoisonBoltVolley_Timer < diff)
+        if (PoisonBoltVolley_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_POSIONBOLT_VOLLEY);
             PoisonBoltVolley_Timer = 11000;
         } else PoisonBoltVolley_Timer -= diff;
 
         //RainOfFire_Timer
-        if (RainOfFire_Timer < diff)
+        if (RainOfFire_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_RAINOFFIRE);
@@ -112,7 +112,7 @@ struct OREGON_DLL_DECL boss_faerlinaAI : public ScriptedAI
         } else RainOfFire_Timer -= diff;
 
         //Enrage_Timer
-        if (Enrage_Timer < diff)
+        if (Enrage_Timer <= diff)
         {
             DoCast(me,SPELL_ENRAGE);
             Enrage_Timer = 61000;

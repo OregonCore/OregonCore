@@ -91,7 +91,7 @@ struct OREGON_DLL_DECL boss_sarturaAI : public ScriptedAI
 
         if (WhirlWind)
         {
-            if (WhirlWindRandom_Timer < diff)
+            if (WhirlWindRandom_Timer <= diff)
             {
                 //Attack random Gamers
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
@@ -100,7 +100,7 @@ struct OREGON_DLL_DECL boss_sarturaAI : public ScriptedAI
                 WhirlWindRandom_Timer = 3000 + rand()%4000;
             } else WhirlWindRandom_Timer -= diff;
 
-            if (WhirlWindEnd_Timer < diff)
+            if (WhirlWindEnd_Timer <= diff)
             {
                 WhirlWind = false;
                 WhirlWind_Timer = 25000 + rand()%15000;
@@ -109,14 +109,14 @@ struct OREGON_DLL_DECL boss_sarturaAI : public ScriptedAI
 
         if (!WhirlWind)
         {
-            if (WhirlWind_Timer < diff)
+            if (WhirlWind_Timer <= diff)
             {
                 DoCast(me, SPELL_WHIRLWIND);
                 WhirlWind = true;
                 WhirlWindEnd_Timer = 15000;
             } else WhirlWind_Timer -= diff;
 
-            if (AggroReset_Timer < diff)
+            if (AggroReset_Timer <= diff)
             {
                 //Attack random Gamers
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
@@ -128,7 +128,7 @@ struct OREGON_DLL_DECL boss_sarturaAI : public ScriptedAI
 
             if (AggroReset)
             {
-                if (AggroResetEnd_Timer <diff)
+                if (AggroResetEnd_Timer <= diff)
                 {
                     AggroReset = false;
                     AggroResetEnd_Timer = 5000;
@@ -149,7 +149,7 @@ struct OREGON_DLL_DECL boss_sarturaAI : public ScriptedAI
             //After 10 minutes hard enrage
             if (!EnragedHard)
             {
-                if (EnrageHard_Timer < diff)
+                if (EnrageHard_Timer <= diff)
                 {
                     DoCast(me, SPELL_ENRAGEHARD);
                     EnragedHard = true;
@@ -198,7 +198,7 @@ struct OREGON_DLL_DECL mob_sartura_royal_guardAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (!WhirlWind && WhirlWind_Timer < diff)
+        if (!WhirlWind && WhirlWind_Timer <= diff)
         {
             DoCast(me, SPELL_WHIRLWINDADD);
             WhirlWind = true;
@@ -208,7 +208,7 @@ struct OREGON_DLL_DECL mob_sartura_royal_guardAI : public ScriptedAI
 
         if (WhirlWind)
         {
-            if (WhirlWindRandom_Timer < diff)
+            if (WhirlWindRandom_Timer <= diff)
             {
                 //Attack random Gamers
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
@@ -217,7 +217,7 @@ struct OREGON_DLL_DECL mob_sartura_royal_guardAI : public ScriptedAI
                 WhirlWindRandom_Timer = 3000 + rand()%4000;
             } else WhirlWindRandom_Timer -= diff;
 
-            if (WhirlWindEnd_Timer < diff)
+            if (WhirlWindEnd_Timer <= diff)
             {
                 WhirlWind = false;
             } else WhirlWindEnd_Timer -= diff;
@@ -225,7 +225,7 @@ struct OREGON_DLL_DECL mob_sartura_royal_guardAI : public ScriptedAI
 
         if (!WhirlWind)
         {
-            if (AggroReset_Timer < diff)
+            if (AggroReset_Timer <= diff)
             {
                 //Attack random Gamers
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
@@ -235,7 +235,7 @@ struct OREGON_DLL_DECL mob_sartura_royal_guardAI : public ScriptedAI
                 AggroReset_Timer = 2000 + rand()%3000;
             } else AggroReset_Timer -= diff;
 
-            if (KnockBack_Timer < diff)
+            if (KnockBack_Timer <= diff)
             {
                 DoCast(me, SPELL_WHIRLWINDADD);
                 KnockBack_Timer = 10000 + rand()%10000;
@@ -244,7 +244,7 @@ struct OREGON_DLL_DECL mob_sartura_royal_guardAI : public ScriptedAI
 
         if (AggroReset)
         {
-            if (AggroResetEnd_Timer <diff)
+            if (AggroResetEnd_Timer <= diff)
             {
                 AggroReset = false;
                 AggroResetEnd_Timer = 5000;

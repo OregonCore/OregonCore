@@ -57,14 +57,14 @@ struct OREGON_DLL_DECL boss_halyconAI : public ScriptedAI
             return;
 
         //CrowdPummel_Timer
-        if (CrowdPummel_Timer < diff)
+        if (CrowdPummel_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CROWDPUMMEL);
             CrowdPummel_Timer = 14000;
         } else CrowdPummel_Timer -= diff;
 
         //MightyBlow_Timer
-        if (MightyBlow_Timer < diff)
+        if (MightyBlow_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_MIGHTYBLOW);
             MightyBlow_Timer = 10000;

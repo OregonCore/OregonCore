@@ -143,7 +143,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
         if (!Transformed)
         {
             //CrusadersHammer
-            if (CrusadersHammer_Timer < diff && !me->IsNonMeleeSpellCasted(false))
+            if (CrusadersHammer_Timer <= diff && !me->IsNonMeleeSpellCasted(false))
             {
                 //Cast
                 if (rand()%100 < 75) //50% chance to cast
@@ -155,7 +155,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
             } else CrusadersHammer_Timer -= diff;
 
             //CrusaderStrike
-            if (CrusaderStrike_Timer < diff && !me->IsNonMeleeSpellCasted(false))
+            if (CrusaderStrike_Timer <= diff && !me->IsNonMeleeSpellCasted(false))
             {
                 //Cast
                 if (rand()%100 < 60) //50% chance to cast
@@ -167,7 +167,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
             } else CrusaderStrike_Timer -= diff;
 
             //MindBlast
-            if (MindBlast_Timer < diff && !me->IsNonMeleeSpellCasted(false))
+            if (MindBlast_Timer <= diff && !me->IsNonMeleeSpellCasted(false))
             {
                 //Cast
                 if (rand()%100 < 70) //70% chance to cast
@@ -179,7 +179,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
             } else MindBlast_Timer -= diff;
 
             //HolyStrike
-            if (HolyStrike_Timer < diff && !me->IsNonMeleeSpellCasted(false))
+            if (HolyStrike_Timer <= diff && !me->IsNonMeleeSpellCasted(false))
             {
                 //Cast
                 if (rand()%100 < 50) //50% chance to cast
@@ -191,7 +191,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
             } else HolyStrike_Timer -= diff;
 
             //Dazed
-            if (Dazed_Timer < diff && !me->IsNonMeleeSpellCasted(false))
+            if (Dazed_Timer <= diff && !me->IsNonMeleeSpellCasted(false))
             {
                 //Cast
                 if (rand()%100 < 50) //50% chance to cast
@@ -217,7 +217,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
 
 
             //MindBlast
-            if (MindBlast_Timer < diff && !me->IsNonMeleeSpellCasted(false))
+            if (MindBlast_Timer <= diff && !me->IsNonMeleeSpellCasted(false))
             {
                 //Cast
                 if (rand()%100 < 60) //70% chance to cast
@@ -229,7 +229,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
             } else MindBlast_Timer -= diff;
 
             //ShadowShock
-            if (ShadowShock_Timer < diff)
+            if (ShadowShock_Timer <= diff)
             {
                 //Cast
                 if (rand()%100 < 80) //80% chance to cast
@@ -241,7 +241,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
             } else ShadowShock_Timer -= diff;
 
             //PsychicScream
-            if (PsychicScream_Timer < diff)
+            if (PsychicScream_Timer <= diff)
             {
                 //Cast
                 if (rand()%100 < 60) //60% chance to cast
@@ -255,7 +255,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
             } else PsychicScream_Timer -= diff;
 
             //DeepSleep
-            if (DeepSleep_Timer < diff)
+            if (DeepSleep_Timer <= diff)
             {
                 //Cast
                 if (rand()%100 < 55) //55% chance to cast
@@ -272,7 +272,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
             } else DeepSleep_Timer -= diff;
 
             //ShadowBoltVolley
-            if (ShadowBoltVolley_Timer < diff)
+            if (ShadowBoltVolley_Timer <= diff)
             {
                 //Cast
                 if (rand()%100 < 75) //75% chance to cast
@@ -284,7 +284,7 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
             } else ShadowBoltVolley_Timer -= diff;
 
             //MindControl
-            //            if (MindControl_Timer < diff)
+            //            if (MindControl_Timer <= diff)
             //            {
             //Cast
             //                if (rand()%100 < 50) //50% chance to cast

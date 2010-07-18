@@ -116,7 +116,7 @@ struct OREGON_DLL_DECL boss_omor_the_unscarredAI : public Scripted_NoMovementAI
         //only two may be wrong, perhaps increase timer and spawn periodically instead.
         if (SummonedCount < 2)
         {
-            if (Summon_Timer < diff)
+            if (Summon_Timer <= diff)
             {
                 me->InterruptNonMeleeSpells(false);
                 DoCast(me,SPELL_SUMMON_FIENDISH_HOUND);
@@ -126,7 +126,7 @@ struct OREGON_DLL_DECL boss_omor_the_unscarredAI : public Scripted_NoMovementAI
 
         if (CanPullBack)
         {
-            if (ShadowWhip_Timer < diff)
+            if (ShadowWhip_Timer <= diff)
             {
                 if (Unit* temp = Unit::GetUnit(*me,playerGUID))
                 {
@@ -142,7 +142,7 @@ struct OREGON_DLL_DECL boss_omor_the_unscarredAI : public Scripted_NoMovementAI
                 CanPullBack = false;
             } else ShadowWhip_Timer -= diff;
         }
-        else if (OrbitalStrike_Timer < diff)
+        else if (OrbitalStrike_Timer <= diff)
         {
             Unit* temp = NULL;
             if (me->IsWithinMeleeRange(me->getVictim()))
@@ -162,14 +162,14 @@ struct OREGON_DLL_DECL boss_omor_the_unscarredAI : public Scripted_NoMovementAI
 
         if ((me->GetHealth()*100) / me->GetMaxHealth() < 20)
         {
-            if (DemonicShield_Timer < diff)
+            if (DemonicShield_Timer <= diff)
             {
                 DoCast(me,SPELL_DEMONIC_SHIELD);
                 DemonicShield_Timer = 15000;
             } else DemonicShield_Timer -= diff;
         }
 
-        if (Aura_Timer < diff)
+        if (Aura_Timer <= diff)
         {
             DoScriptText(SAY_CURSE, me);
 
@@ -180,7 +180,7 @@ struct OREGON_DLL_DECL boss_omor_the_unscarredAI : public Scripted_NoMovementAI
             }
         } else Aura_Timer -= diff;
 
-        if (Shadowbolt_Timer < diff)
+        if (Shadowbolt_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             {

@@ -156,7 +156,7 @@ struct OREGON_DLL_DECL npc_medivh_bmAI : public ScriptedAI
 
         if (SpellCorrupt_Timer)
         {
-            if (SpellCorrupt_Timer < diff)
+            if (SpellCorrupt_Timer <= diff)
             {
                     pInstance->SetData(TYPE_MEDIVH,SPECIAL);
 
@@ -171,7 +171,7 @@ struct OREGON_DLL_DECL npc_medivh_bmAI : public ScriptedAI
 
         if (Check_Timer)
         {
-            if (Check_Timer < diff)
+            if (Check_Timer <= diff)
             {
                 uint32 pct = pInstance->GetData(DATA_SHIELD);
 
@@ -322,7 +322,7 @@ struct OREGON_DLL_DECL npc_time_riftAI : public ScriptedAI
         if (!pInstance)
             return;
 
-        if (TimeRiftWave_Timer < diff)
+        if (TimeRiftWave_Timer <= diff)
         {
             DoSelectSummon();
             TimeRiftWave_Timer = 15000;

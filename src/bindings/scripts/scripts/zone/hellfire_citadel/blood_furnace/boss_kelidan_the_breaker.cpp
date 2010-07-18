@@ -192,7 +192,7 @@ struct OREGON_DLL_DECL boss_kelidan_the_breakerAI : public ScriptedAI
     {
         if (!UpdateVictim())
         {
-            if (check_Timer < diff)
+            if (check_Timer <= diff)
             {
                 if (!me->IsNonMeleeSpellCasted(false))
                     DoCast(me,SPELL_EVOCATION);
@@ -203,7 +203,7 @@ struct OREGON_DLL_DECL boss_kelidan_the_breakerAI : public ScriptedAI
 
         if (Firenova)
         {
-            if (Firenova_Timer < diff)
+            if (Firenova_Timer <= diff)
             {
                 DoCast(me,HeroicMode ? H_SPELL_FIRE_NOVA : SPELL_FIRE_NOVA,true);
                 Firenova = false;
@@ -213,19 +213,19 @@ struct OREGON_DLL_DECL boss_kelidan_the_breakerAI : public ScriptedAI
             return;
         }
 
-        if (ShadowVolley_Timer < diff)
+        if (ShadowVolley_Timer <= diff)
         {
             DoCast(me,HeroicMode ? H_SPELL_SHADOW_BOLT_VOLLEY : SPELL_SHADOW_BOLT_VOLLEY);
             ShadowVolley_Timer = 5000+rand()%8000;
         } else ShadowVolley_Timer -=diff;
 
-        if (Corruption_Timer < diff)
+        if (Corruption_Timer <= diff)
         {
             DoCast(me,SPELL_CORRUPTION);
             Corruption_Timer = 30000+rand()%20000;
         } else Corruption_Timer -=diff;
 
-        if (BurningNova_Timer < diff)
+        if (BurningNova_Timer <= diff)
         {
             if (me->IsNonMeleeSpellCasted(false))
                 me->InterruptNonMeleeSpells(true);
@@ -312,7 +312,7 @@ struct OREGON_DLL_DECL mob_shadowmoon_channelerAI : public ScriptedAI
     {
         if (!UpdateVictim())
         {
-            if (check_Timer < diff)
+            if (check_Timer <= diff)
             {
                 if (!me->IsNonMeleeSpellCasted(false))
                     if (Creature *Kelidan = (Creature *)FindCreature(ENTRY_KELIDAN, 100, me))
@@ -326,14 +326,14 @@ struct OREGON_DLL_DECL mob_shadowmoon_channelerAI : public ScriptedAI
             return;
         }
 
-        if (MarkOfShadow_Timer < diff)
+        if (MarkOfShadow_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget,SPELL_MARK_OF_SHADOW);
             MarkOfShadow_Timer = 15000+rand()%5000;
         } else MarkOfShadow_Timer -=diff;
 
-        if (ShadowBolt_Timer < diff)
+        if (ShadowBolt_Timer <= diff)
         {
             DoCast(me->getVictim(),HeroicMode ? H_SPELL_SHADOW_BOLT : SPELL_SHADOW_BOLT);
             ShadowBolt_Timer = 5000+rand()%1000;

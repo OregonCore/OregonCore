@@ -146,7 +146,7 @@ struct OREGON_DLL_DECL mob_ashtongue_sorcererAI : public ScriptedAI
         if (StartBanishing)
             return;
 
-        if (CheckTimer < diff)
+        if (CheckTimer <= diff)
         {
             Creature* Shade = Unit::GetCreature((*me), ShadeGUID);
             if (Shade && Shade->isAlive() && me->isAlive())
@@ -419,7 +419,7 @@ struct OREGON_DLL_DECL boss_shade_of_akamaAI : public ScriptedAI
                 return;
             }
 
-            if (DefenderTimer < diff)
+            if (DefenderTimer <= diff)
             {
                 uint32 ran = rand()%2;
                 Creature* Defender = me->SummonCreature(CREATURE_DEFENDER, SpawnLocations[ran].x, SpawnLocations[ran].y, Z_SPAWN, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 25000);
@@ -444,7 +444,7 @@ struct OREGON_DLL_DECL boss_shade_of_akamaAI : public ScriptedAI
                 DefenderTimer = 15000;
             } else DefenderTimer -= diff;
 
-            if (SummonTimer < diff)
+            if (SummonTimer <= diff)
             {
                 SummonCreature();
                 SummonTimer = 35000;
@@ -475,7 +475,7 @@ struct OREGON_DLL_DECL boss_shade_of_akamaAI : public ScriptedAI
         }
         else                                                // No longer banished, let's fight Akama now
         {
-            if (ReduceHealthTimer < diff)
+            if (ReduceHealthTimer <= diff)
             {
                 if (AkamaGUID)
                 {
@@ -501,7 +501,7 @@ struct OREGON_DLL_DECL boss_shade_of_akamaAI : public ScriptedAI
                     me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     me->GetMotionMaster()->MoveTargetedHome();
                 }
-                if (ResetTimer < diff)
+                if (ResetTimer <= diff)
                 {
                     EnterEvadeMode();// Reset a little while after killing Akama, evade and respawn Akama
                     return;
@@ -686,7 +686,7 @@ struct OREGON_DLL_DECL npc_akamaAI : public ScriptedAI
             {
                 if (((boss_shade_of_akamaAI*)Shade->AI())->IsBanished)
                 {
-                    if (CastSoulRetrieveTimer < diff)
+                    if (CastSoulRetrieveTimer <= diff)
                     {
                         DoCast(Shade, SPELL_AKAMA_SOUL_CHANNEL);
                         CastSoulRetrieveTimer = 60000;
@@ -709,7 +709,7 @@ struct OREGON_DLL_DECL npc_akamaAI : public ScriptedAI
 
         if (!ShadeHasDied && StartCombat)
         {
-            if (CheckTimer < diff)
+            if (CheckTimer <= diff)
             {
                 if (ShadeGUID)
                 {
@@ -817,7 +817,7 @@ struct OREGON_DLL_DECL npc_akamaAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (DestructivePoisonTimer < diff)
+        if (DestructivePoisonTimer <= diff)
         {
             Creature* Shade = Unit::GetCreature((*me), ShadeGUID);
             if (Shade && Shade->isAlive())
@@ -825,7 +825,7 @@ struct OREGON_DLL_DECL npc_akamaAI : public ScriptedAI
             DestructivePoisonTimer = 15000;
         } else DestructivePoisonTimer -= diff;
 
-        if (LightningBoltTimer < diff)
+        if (LightningBoltTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_LIGHTNING_BOLT);
             LightningBoltTimer = 10000;

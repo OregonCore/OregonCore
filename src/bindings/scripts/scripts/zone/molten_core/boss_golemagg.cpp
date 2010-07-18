@@ -75,7 +75,7 @@ struct OREGON_DLL_DECL boss_golemaggAI : public ScriptedAI
             return;
 
         //Pyroblast_Timer
-        if (Pyroblast_Timer < diff)
+        if (Pyroblast_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_PYROBLAST);
@@ -86,7 +86,7 @@ struct OREGON_DLL_DECL boss_golemaggAI : public ScriptedAI
         //Enrage_Timer
         if (me->GetHealth()*100 / me->GetMaxHealth() < 11)
         {
-            if (Enrage_Timer < diff)
+            if (Enrage_Timer <= diff)
             {
                 DoCast(me,SPELL_ENRAGE);
                 Enrage_Timer = 62000;
@@ -96,7 +96,7 @@ struct OREGON_DLL_DECL boss_golemaggAI : public ScriptedAI
         //EarthQuake_Timer
         if (me->GetHealth()*100 / me->GetMaxHealth() < 11)
         {
-            if (EarthQuake_Timer < diff)
+            if (EarthQuake_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_EARTHQUAKE);
                 EarthQuake_Timer = 3000;
@@ -104,7 +104,7 @@ struct OREGON_DLL_DECL boss_golemaggAI : public ScriptedAI
         }
 
         //Casting Buff for Coreragers. Spell is not working right. Players get the buff...
-        //        if (Buff_Timer < diff)
+        //        if (Buff_Timer <= diff)
         //        {
         //            DoCast(me, SPELL_BUFF);
         //            Buff_Timer = 2500;
@@ -141,7 +141,7 @@ struct OREGON_DLL_DECL mob_core_ragerAI : public ScriptedAI
             return;
 
         //Mangle_Timer
-        if (Mangle_Timer < diff)
+        if (Mangle_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_MANGLE);
             Mangle_Timer = 10000;
@@ -155,7 +155,7 @@ struct OREGON_DLL_DECL mob_core_ragerAI : public ScriptedAI
         }
 
         //Check_Timer
-        if (Check_Timer < diff)
+        if (Check_Timer <= diff)
         {
             if (pInstance)
             {

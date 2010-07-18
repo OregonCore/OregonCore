@@ -65,14 +65,14 @@ struct OREGON_DLL_DECL boss_theolenkrastinovAI : public ScriptedAI
             return;
 
         //Rend_Timer
-        if (Rend_Timer < diff)
+        if (Rend_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_REND);
             Rend_Timer = 10000;
         } else Rend_Timer -= diff;
 
         //Cleave_Timer
-        if (Cleave_Timer < diff)
+        if (Cleave_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 10000;
@@ -81,7 +81,7 @@ struct OREGON_DLL_DECL boss_theolenkrastinovAI : public ScriptedAI
         //Frenzy_Timer
         if (me->GetHealth()*100 / me->GetMaxHealth() < 26)
         {
-            if (Frenzy_Timer < diff)
+            if (Frenzy_Timer <= diff)
             {
                 DoCast(me,SPELL_FRENZY);
                 DoTextEmote("goes into a killing frenzy!",NULL);

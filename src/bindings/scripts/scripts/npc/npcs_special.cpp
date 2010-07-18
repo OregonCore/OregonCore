@@ -68,7 +68,7 @@ struct OREGON_DLL_DECL npc_chicken_cluckAI : public ScriptedAI
         // Reset flags after a certain time has passed so that the next player has to start the 'event' again
         if (me->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER))
         {
-            if (ResetFlagTimer < diff)
+            if (ResetFlagTimer <= diff)
             {
                 EnterEvadeMode();
                 return;
@@ -540,7 +540,7 @@ void npc_doctorAI::UpdateAI(const uint32 diff)
     }
 
     if (Event)
-        if (SummonPatient_Timer < diff)
+        if (SummonPatient_Timer <= diff)
     {
         Creature* Patient = NULL;
         Location* Point = NULL;
@@ -945,7 +945,7 @@ struct OREGON_DLL_DECL npc_tonk_mineAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (ExplosionTimer < diff)
+        if (ExplosionTimer <= diff)
         {
             me->CastSpell(me, SPELL_TONK_MINE_DETONATE, true);
             me->setDeathState(DEAD); // unsummon it
@@ -1078,7 +1078,7 @@ struct OREGON_DLL_DECL npc_snake_trap_serpentsAI : public ScriptedAI
             return;
         }
 
-        if (SpellTimer < diff)
+        if (SpellTimer <= diff)
         {
             if (IsViper) //Viper
             {

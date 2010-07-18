@@ -55,7 +55,7 @@ struct OREGON_DLL_DECL boss_azshir_the_sleeplessAI : public ScriptedAI
         if (me->GetHealth()*100 / me->GetMaxHealth() <= 50 && !me->IsNonMeleeSpellCasted(false))
         {
             //SoulSiphon_Timer
-            if (SoulSiphon_Timer < diff)
+            if (SoulSiphon_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_SOULSIPHON);
                 return;
@@ -65,14 +65,14 @@ struct OREGON_DLL_DECL boss_azshir_the_sleeplessAI : public ScriptedAI
         }
 
         //CallOfTheGrave_Timer
-        if (CallOftheGrave_Timer < diff)
+        if (CallOftheGrave_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CALLOFTHEGRAVE);
             CallOftheGrave_Timer = 30000;
         } else CallOftheGrave_Timer -= diff;
 
         //Terrify_Timer
-        if (Terrify_Timer < diff)
+        if (Terrify_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_TERRIFY);
             Terrify_Timer = 20000;

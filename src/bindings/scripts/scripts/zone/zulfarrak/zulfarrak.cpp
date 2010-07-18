@@ -80,13 +80,13 @@ struct OREGON_DLL_DECL npc_sergeant_blyAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (ShieldBash_Timer < diff)
+        if (ShieldBash_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SHIELD_BASH);
             ShieldBash_Timer = 15000;
         } else ShieldBash_Timer -= diff;
 
-        if (Revenge_Timer < diff)
+        if (Revenge_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_REVENGE);
             Revenge_Timer = 10000;

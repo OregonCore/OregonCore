@@ -91,25 +91,25 @@ struct OREGON_DLL_DECL boss_venoxisAI : public ScriptedAI
 
             if ((me->GetHealth()*100 / me->GetMaxHealth() > 50))
             {
-                if (Dispell_Timer < diff)
+                if (Dispell_Timer <= diff)
                 {
                     DoCast(me, SPELL_DISPELL);
                     Dispell_Timer = 15000 + rand()%15000;
                 } else Dispell_Timer -= diff;
 
-                if (Renew_Timer < diff)
+                if (Renew_Timer <= diff)
                 {
                     DoCast(me, SPELL_RENEW);
                     Renew_Timer = 20000 + rand()%10000;
                 } else Renew_Timer -= diff;
 
-                if (HolyWrath_Timer < diff)
+                if (HolyWrath_Timer <= diff)
                 {
                     DoCast(me->getVictim(), SPELL_HOLY_WRATH);
                     HolyWrath_Timer = 15000 + rand()%10000;
                 } else HolyWrath_Timer -= diff;
 
-                if (HolyNova_Timer < diff)
+                if (HolyNova_Timer <= diff)
                 {
                     TargetInRange = 0;
                     for (int i=0; i<10; i++)
@@ -131,7 +131,7 @@ struct OREGON_DLL_DECL boss_venoxisAI : public ScriptedAI
 
                 } else HolyNova_Timer -= diff;
 
-                if (HolyFire_Timer < diff && TargetInRange < 3)
+                if (HolyFire_Timer <= diff && TargetInRange < 3)
                 {
                     if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                         DoCast(pTarget, SPELL_HOLY_FIRE);
@@ -155,13 +155,13 @@ struct OREGON_DLL_DECL boss_venoxisAI : public ScriptedAI
                     PhaseTwo = true;
                 }
 
-                if (PhaseTwo && PoisonCloud_Timer < diff)
+                if (PhaseTwo && PoisonCloud_Timer <= diff)
                 {
                     DoCast(me->getVictim(), SPELL_POISON_CLOUD);
                     PoisonCloud_Timer = 15000;
                 }PoisonCloud_Timer -=diff;
 
-                if (PhaseTwo && VenomSpit_Timer < diff)
+                if (PhaseTwo && VenomSpit_Timer <= diff)
                 {
                     if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                         DoCast(pTarget, SPELL_VENOMSPIT);

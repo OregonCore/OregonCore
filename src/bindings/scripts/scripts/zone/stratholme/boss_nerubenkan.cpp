@@ -92,14 +92,14 @@ struct OREGON_DLL_DECL boss_nerubenkanAI : public ScriptedAI
             return;
 
         //EncasingWebs
-        if (EncasingWebs_Timer < diff)
+        if (EncasingWebs_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_ENCASINGWEBS);
             EncasingWebs_Timer = 30000;
         } else EncasingWebs_Timer -= diff;
 
         //PierceArmor
-        if (PierceArmor_Timer < diff)
+        if (PierceArmor_Timer <= diff)
         {
             if (rand()%100 < 75)
                 DoCast(me->getVictim(),SPELL_PIERCEARMOR);
@@ -107,14 +107,14 @@ struct OREGON_DLL_DECL boss_nerubenkanAI : public ScriptedAI
         } else PierceArmor_Timer -= diff;
 
         //CryptScarabs_Timer
-        if (CryptScarabs_Timer < diff)
+        if (CryptScarabs_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CRYPT_SCARABS);
             CryptScarabs_Timer = 20000;
         } else CryptScarabs_Timer -= diff;
 
         //RaiseUndeadScarab
-        if (RaiseUndeadScarab_Timer < diff)
+        if (RaiseUndeadScarab_Timer <= diff)
         {
             RaiseUndeadScarab(me->getVictim());
             RaiseUndeadScarab_Timer = 16000;

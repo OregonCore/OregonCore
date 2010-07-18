@@ -105,7 +105,7 @@ struct OREGON_DLL_DECL boss_anubrekhanAI : public ScriptedAI
             return;
 
         //Impale_Timer
-        if (Impale_Timer < diff)
+        if (Impale_Timer <= diff)
         {
             //Cast Impale on a random target
             //Do NOT cast it when we are afflicted by locust swarm
@@ -119,14 +119,14 @@ struct OREGON_DLL_DECL boss_anubrekhanAI : public ScriptedAI
         } else Impale_Timer -= diff;
 
         //LocustSwarm_Timer
-        if (LocustSwarm_Timer < diff)
+        if (LocustSwarm_Timer <= diff)
         {
             DoCast(me, SPELL_LOCUSTSWARM);
             LocustSwarm_Timer = 90000;
         } else LocustSwarm_Timer -= diff;
 
         //Summon_Timer
-        if (Summon_Timer < diff)
+        if (Summon_Timer <= diff)
         {
             DoCast(me, SPELL_SUMMONGUARD);
             Summon_Timer = 45000;

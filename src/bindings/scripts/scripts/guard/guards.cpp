@@ -2522,7 +2522,7 @@ struct OREGON_DLL_DECL guard_shattrath_aldorAI : public guardAI
 
         if (CanTeleport)
         {
-            if (Exile_Timer < diff)
+            if (Exile_Timer <= diff)
             {
                 if (Unit* temp = Unit::GetUnit(*me,playerGUID))
                 {
@@ -2534,7 +2534,7 @@ struct OREGON_DLL_DECL guard_shattrath_aldorAI : public guardAI
                 CanTeleport = false;
             } else Exile_Timer -= diff;
         }
-        else if (Banish_Timer < diff)
+        else if (Banish_Timer <= diff)
         {
             Unit* temp = me->getVictim();
             if (temp && temp->GetTypeId() == TYPEID_PLAYER)
@@ -2718,7 +2718,7 @@ struct OREGON_DLL_DECL guard_shattrath_scryerAI : public guardAI
 
         if (CanTeleport)
         {
-            if (Exile_Timer < diff)
+            if (Exile_Timer <= diff)
             {
                 if (Unit* temp = Unit::GetUnit(*me,playerGUID))
                 {
@@ -2730,7 +2730,7 @@ struct OREGON_DLL_DECL guard_shattrath_scryerAI : public guardAI
                 CanTeleport = false;
             } else Exile_Timer -= diff;
         }
-        else if (Banish_Timer < diff)
+        else if (Banish_Timer <= diff)
         {
             Unit* temp = me->getVictim();
             if (temp && temp->GetTypeId() == TYPEID_PLAYER)

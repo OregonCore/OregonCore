@@ -133,13 +133,13 @@ struct OREGON_DLL_DECL boss_kazrogalAI : public hyjal_trashAI
         if (!UpdateVictim())
             return;
 
-        if (CleaveTimer < diff)
+        if (CleaveTimer <= diff)
         {
             DoCast(me, SPELL_CLEAVE);
             CleaveTimer = 6000+rand()%15000;
         } else CleaveTimer -= diff;
 
-        if (WarStompTimer < diff)
+        if (WarStompTimer <= diff)
         {
             DoCast(me, SPELL_WARSTOMP);
             WarStompTimer = 60000;
@@ -147,7 +147,7 @@ struct OREGON_DLL_DECL boss_kazrogalAI : public hyjal_trashAI
 
         if (me->HasAura(SPELL_MARK,0))
             me->RemoveAurasDueToSpell(SPELL_MARK);
-        if (MarkTimer < diff)
+        if (MarkTimer <= diff)
         {
             //cast dummy, useful for bos addons
             me->CastCustomSpell(me, SPELL_MARK, NULL, NULL, NULL, false, NULL, NULL, me->GetGUID());

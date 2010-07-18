@@ -61,7 +61,7 @@ struct OREGON_DLL_DECL npc_narm_faulkAI : public ScriptedAI
     {
         if (!me->GetUInt32Value(UNIT_FIELD_BYTES_1))
         {
-            if (lifeTimer < diff)
+            if (lifeTimer <= diff)
             {
                 EnterEvadeMode();
                 return;

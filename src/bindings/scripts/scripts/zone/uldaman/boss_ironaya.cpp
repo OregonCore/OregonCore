@@ -76,7 +76,7 @@ struct OREGON_DLL_DECL boss_ironayaAI : public ScriptedAI
         }
 
         //Arcing_Timer
-        if (Arcing_Timer < diff)
+        if (Arcing_Timer <= diff)
         {
             DoCast(me,SPELL_ARCINGSMASH);
             Arcing_Timer = 13000;

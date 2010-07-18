@@ -147,13 +147,13 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
 
         if (Phase == 1 || Phase == 3)
         {
-            if (FlameBreathTimer < diff)
+            if (FlameBreathTimer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_FLAMEBREATH);
                 FlameBreathTimer = 15000;
             } else FlameBreathTimer -= diff;
 
-            if (TailSweepTimer < diff)
+            if (TailSweepTimer <= diff)
             {
                 Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
                 if (pTarget && !me->HasInArc(M_PI, pTarget))
@@ -162,19 +162,19 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
                 TailSweepTimer = 10000;
             } else TailSweepTimer -= diff;
 
-            if (CleaveTimer < diff)
+            if (CleaveTimer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_CLEAVE);
                 CleaveTimer = 10000;
             } else CleaveTimer -= diff;
 
-            if (WingBuffetTimer < diff)
+            if (WingBuffetTimer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_WINGBUFFET);
                 WingBuffetTimer = 7000 + ((rand()%8)*1000);
             } else WingBuffetTimer -= diff;
 
-            if (KnockAwayTimer < diff)
+            if (KnockAwayTimer <= diff)
             {
                 if (rand() <= 30)
                 {
@@ -185,14 +185,14 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
 
             if (Phase == 3)
             {
-                if (BellowingRoarTimer < diff)
+                if (BellowingRoarTimer <= diff)
                 {
                     DoCast(me->getVictim(), SPELL_BELLOWINGROAR);
 
                     BellowingRoarTimer = 30000;
                 } else BellowingRoarTimer -= diff;
 
-                if (SummonWhelpsTimer < diff)
+                if (SummonWhelpsTimer <= diff)
                 {
                     SummonWhelps(Phase);
 
@@ -218,7 +218,7 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
                 }
             }
 
-            if (EngulfingFlamesTimer < diff)
+            if (EngulfingFlamesTimer <= diff)
             {
                 DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_ENGULFINGFLAMES);
                 me->HandleEmoteCommand(ANIM_FLY);
@@ -227,7 +227,7 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
             }
             else EngulfingFlamesTimer -= diff;
 
-            if (FireballTimer < diff)
+            if (FireballTimer <= diff)
             {
                 DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_FIREBALL);
 
@@ -235,7 +235,7 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
             }
             else FireballTimer -= diff;
 
-            if (MovementTimer < diff)
+            if (MovementTimer <= diff)
             {
                 if (rand()%100 < 30)
                 {
@@ -247,7 +247,7 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
                 MovementTimer = 25000;
             } else MovementTimer -= diff;
 
-            if (SummonWhelpsTimer < diff)
+            if (SummonWhelpsTimer <= diff)
             {
                 SummonWhelps(Phase);
 

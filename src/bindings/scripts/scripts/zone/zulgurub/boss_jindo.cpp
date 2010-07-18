@@ -78,14 +78,14 @@ struct OREGON_DLL_DECL boss_jindoAI : public ScriptedAI
             return;
 
         //BrainWashTotem_Timer
-        if (BrainWashTotem_Timer < diff)
+        if (BrainWashTotem_Timer <= diff)
         {
             DoCast(me, SPELL_BRAINWASHTOTEM);
             BrainWashTotem_Timer = 18000 + rand()%8000;
         } else BrainWashTotem_Timer -= diff;
 
         //HealingWard_Timer
-        if (HealingWard_Timer < diff)
+        if (HealingWard_Timer <= diff)
         {
             //DoCast(me, SPELL_POWERFULLHEALINGWARD);
             HealingWard = me->SummonCreature(14987, me->GetPositionX()+3, me->GetPositionY()-2, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,30000);
@@ -93,7 +93,7 @@ struct OREGON_DLL_DECL boss_jindoAI : public ScriptedAI
         } else HealingWard_Timer -= diff;
 
         //Hex_Timer
-        if (Hex_Timer < diff)
+        if (Hex_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_HEX);
 
@@ -104,7 +104,7 @@ struct OREGON_DLL_DECL boss_jindoAI : public ScriptedAI
         } else Hex_Timer -= diff;
 
         //Casting the delusion curse with a shade. So shade will attack the same target with the curse.
-        if (Delusions_Timer < diff)
+        if (Delusions_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             {
@@ -119,7 +119,7 @@ struct OREGON_DLL_DECL boss_jindoAI : public ScriptedAI
         } else Delusions_Timer -= diff;
 
         //Teleporting a random gamer and spawning 9 skeletons that will attack this gamer
-        if (Teleport_Timer < diff)
+        if (Teleport_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -190,7 +190,7 @@ struct OREGON_DLL_DECL mob_healing_wardAI : public ScriptedAI
     void UpdateAI (const uint32 diff)
     {
         //Heal_Timer
-        if (Heal_Timer < diff)
+        if (Heal_Timer <= diff)
         {
             if (pInstance)
             {
@@ -231,7 +231,7 @@ struct OREGON_DLL_DECL mob_shade_of_jindoAI : public ScriptedAI
     {
 
         //ShadowShock_Timer
-        if (ShadowShock_Timer < diff)
+        if (ShadowShock_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_SHADOWSHOCK);
             ShadowShock_Timer = 2000;

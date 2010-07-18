@@ -56,7 +56,7 @@ struct OREGON_DLL_DECL boss_high_interrogator_gerstahnAI : public ScriptedAI
             return;
 
         //ShadowWordPain_Timer
-        if (ShadowWordPain_Timer < diff)
+        if (ShadowWordPain_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -65,7 +65,7 @@ struct OREGON_DLL_DECL boss_high_interrogator_gerstahnAI : public ScriptedAI
         } else ShadowWordPain_Timer -= diff;
 
         //ManaBurn_Timer
-        if (ManaBurn_Timer < diff)
+        if (ManaBurn_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -74,14 +74,14 @@ struct OREGON_DLL_DECL boss_high_interrogator_gerstahnAI : public ScriptedAI
         } else ManaBurn_Timer -= diff;
 
         //PsychicScream_Timer
-        if (PsychicScream_Timer < diff)
+        if (PsychicScream_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_PSYCHICSCREAM);
             PsychicScream_Timer = 30000;
         } else PsychicScream_Timer -= diff;
 
         //ShadowShield_Timer
-        if (ShadowShield_Timer < diff)
+        if (ShadowShield_Timer <= diff)
         {
             DoCast(me,SPELL_SHADOWSHIELD);
             ShadowShield_Timer = 25000;

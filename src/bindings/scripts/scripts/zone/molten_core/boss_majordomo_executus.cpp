@@ -96,7 +96,7 @@ struct OREGON_DLL_DECL boss_majordomoAI : public ScriptedAI
         }
 
         //MagicReflection_Timer
-        //        if (MagicReflection_Timer < diff)
+        //        if (MagicReflection_Timer <= diff)
         //        {
         //            DoCast(me, SPELL_MAGICREFLECTION);
 
@@ -105,7 +105,7 @@ struct OREGON_DLL_DECL boss_majordomoAI : public ScriptedAI
         //        } else MagicReflection_Timer -= diff;
 
         //DamageReflection_Timer
-        //        if (DamageReflection_Timer < diff)
+        //        if (DamageReflection_Timer <= diff)
         //        {
         //            DoCast(me, SPELL_DAMAGEREFLECTION);
 
@@ -114,7 +114,7 @@ struct OREGON_DLL_DECL boss_majordomoAI : public ScriptedAI
         //        } else DamageReflection_Timer -= diff;
 
         //Blastwave_Timer
-        if (Blastwave_Timer < diff)
+        if (Blastwave_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_BLASTWAVE);
             Blastwave_Timer = 10000;

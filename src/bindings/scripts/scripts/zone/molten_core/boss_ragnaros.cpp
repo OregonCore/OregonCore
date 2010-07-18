@@ -133,7 +133,7 @@ struct OREGON_DLL_DECL boss_ragnarosAI : public Scripted_NoMovementAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (WasBanished && Attack_Timer < diff)
+        if (WasBanished && Attack_Timer <= diff)
         {
             //Become unbanished again
             me->setFaction(14);
@@ -152,7 +152,7 @@ struct OREGON_DLL_DECL boss_ragnarosAI : public Scripted_NoMovementAI
             return;
 
         //WrathOfRagnaros_Timer
-        if (WrathOfRagnaros_Timer < diff)
+        if (WrathOfRagnaros_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_WRATHOFRAGNAROS);
 
@@ -165,7 +165,7 @@ struct OREGON_DLL_DECL boss_ragnarosAI : public Scripted_NoMovementAI
         } else WrathOfRagnaros_Timer -= diff;
 
         //HandOfRagnaros_Timer
-        if (HandOfRagnaros_Timer < diff)
+        if (HandOfRagnaros_Timer <= diff)
         {
             DoCast(me,SPELL_HANDOFRAGNAROS);
 
@@ -178,28 +178,28 @@ struct OREGON_DLL_DECL boss_ragnarosAI : public Scripted_NoMovementAI
         } else HandOfRagnaros_Timer -= diff;
 
         //LavaBurst_Timer
-        if (LavaBurst_Timer < diff)
+        if (LavaBurst_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_LAVABURST);
             LavaBurst_Timer = 10000;
         } else LavaBurst_Timer -= diff;
 
         //Erruption_Timer
-        if (LavaBurst_Timer < diff)
+        if (LavaBurst_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_ERRUPTION);
             Erruption_Timer = 20000 + rand()%25000;
         } else Erruption_Timer -= diff;
 
         //ElementalFire_Timer
-        if (ElementalFire_Timer < diff)
+        if (ElementalFire_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_ELEMENTALFIRE);
             ElementalFire_Timer = 10000 + rand()%4000;
         } else ElementalFire_Timer -= diff;
 
         //Submerge_Timer
-        if (!WasBanished && Submerge_Timer < diff)
+        if (!WasBanished && Submerge_Timer <= diff)
         {
             //Creature spawning and ragnaros becomming unattackable
             //is not very well supported in the core
@@ -273,7 +273,7 @@ struct OREGON_DLL_DECL boss_ragnarosAI : public Scripted_NoMovementAI
         } else
         {
             //MagmaBurst_Timer
-            if (MagmaBurst_Timer < diff)
+            if (MagmaBurst_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_MAGMABURST);
 

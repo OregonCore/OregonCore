@@ -261,7 +261,7 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
             Enrage = true;
         }
 
-        if (CheckAdds_Timer < diff)
+        if (CheckAdds_Timer <= diff)
         {
             for (uint8 i = 0; i < 4; ++i)
             {
@@ -280,7 +280,7 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
         if (!Enrage)
         {
             //Cast Vanish, then Garrote random victim
-            if (Vanish_Timer < diff)
+            if (Vanish_Timer <= diff)
             {
                 DoCast(me, SPELL_VANISH);
                 InVanish = true;
@@ -290,13 +290,13 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
             } else Vanish_Timer -= diff;
 
             //Blind highest aggro, and attack second highest
-            if (Gouge_Timer < diff)
+            if (Gouge_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_GOUGE);
                 Gouge_Timer = 40000;
             } else Gouge_Timer -= diff;
 
-            if (Blind_Timer < diff)
+            if (Blind_Timer <= diff)
             {
                 Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 25, true);
                 if (pTarget && me->IsWithinMeleeRange(pTarget))
@@ -308,7 +308,7 @@ struct OREGON_DLL_DECL boss_moroesAI : public ScriptedAI
 
         if (InVanish)
         {
-            if (Wait_Timer < diff)
+            if (Wait_Timer <= diff)
             {
                 switch(rand()%2)
                 {
@@ -423,13 +423,13 @@ struct OREGON_DLL_DECL boss_baroness_dorothea_millstipeAI : public boss_moroes_g
 
         boss_moroes_guestAI::UpdateAI(diff);
 
-        if (MindFlay_Timer < diff)
+        if (MindFlay_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_MINDFLY);
             MindFlay_Timer = 12000;                         //3sec channeled
         } else MindFlay_Timer -= diff;
 
-        if (ManaBurn_Timer < diff)
+        if (ManaBurn_Timer <= diff)
         {
             Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget && (pTarget->getPowerType() == POWER_MANA))
@@ -437,7 +437,7 @@ struct OREGON_DLL_DECL boss_baroness_dorothea_millstipeAI : public boss_moroes_g
             ManaBurn_Timer = 5000;                          //3 sec cast
         } else ManaBurn_Timer -= diff;
 
-        if (ShadowWordPain_Timer < diff)
+        if (ShadowWordPain_Timer <= diff)
         {
             Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (pTarget)
@@ -478,20 +478,20 @@ struct OREGON_DLL_DECL boss_baron_rafe_dreugerAI : public boss_moroes_guestAI
 
         boss_moroes_guestAI::UpdateAI(diff);
 
-        if (SealOfCommand_Timer < diff)
+        if (SealOfCommand_Timer <= diff)
         {
             DoCast(me,SPELL_SEALOFCOMMAND);
             SealOfCommand_Timer = 32000;
             JudgementOfCommand_Timer = 29000;
         } else SealOfCommand_Timer -= diff;
 
-        if (JudgementOfCommand_Timer < diff)
+        if (JudgementOfCommand_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_JUDGEMENTOFCOMMAND);
             JudgementOfCommand_Timer = SealOfCommand_Timer + 29000;
         } else JudgementOfCommand_Timer -= diff;
 
-        if (HammerOfJustice_Timer < diff)
+        if (HammerOfJustice_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_HAMMEROFJUSTICE);
             HammerOfJustice_Timer = 12000;
@@ -533,26 +533,26 @@ struct OREGON_DLL_DECL boss_lady_catriona_von_indiAI : public boss_moroes_guestA
 
         boss_moroes_guestAI::UpdateAI(diff);
 
-        if (PowerWordShield_Timer < diff)
+        if (PowerWordShield_Timer <= diff)
         {
             DoCast(me,SPELL_PWSHIELD);
             PowerWordShield_Timer = 15000;
         } else PowerWordShield_Timer -= diff;
 
-        if (GreaterHeal_Timer < diff)
+        if (GreaterHeal_Timer <= diff)
         {
             pTarget = SelectTarget();
             DoCast(pTarget, SPELL_GREATERHEAL);
             GreaterHeal_Timer = 17000;
         } else GreaterHeal_Timer -= diff;
 
-        if (HolyFire_Timer < diff)
+        if (HolyFire_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_HOLYFIRE);
             HolyFire_Timer = 22000;
         } else HolyFire_Timer -= diff;
 
-        if (DispelMagic_Timer < diff)
+        if (DispelMagic_Timer <= diff)
         {
             if (rand()%2)
             {
@@ -601,20 +601,20 @@ struct OREGON_DLL_DECL boss_lady_keira_berrybuckAI : public boss_moroes_guestAI
 
         boss_moroes_guestAI::UpdateAI(diff);
 
-        if (DivineShield_Timer < diff)
+        if (DivineShield_Timer <= diff)
         {
             DoCast(me,SPELL_DIVINESHIELD);
             DivineShield_Timer = 31000;
         } else DivineShield_Timer -= diff;
 
-        if (HolyLight_Timer < diff)
+        if (HolyLight_Timer <= diff)
         {
             pTarget = SelectTarget();
             DoCast(pTarget, SPELL_HOLYLIGHT);
             HolyLight_Timer = 10000;
         } else HolyLight_Timer -= diff;
 
-        if (GreaterBless_Timer < diff)
+        if (GreaterBless_Timer <= diff)
         {
             pTarget = SelectTarget();
             DoCast(pTarget, SPELL_GREATERBLESSOFMIGHT);
@@ -622,7 +622,7 @@ struct OREGON_DLL_DECL boss_lady_keira_berrybuckAI : public boss_moroes_guestAI
             GreaterBless_Timer = 50000;
         } else GreaterBless_Timer -= diff;
 
-        if (Cleanse_Timer < diff)
+        if (Cleanse_Timer <= diff)
         {
             pTarget = SelectTarget();
             DoCast(pTarget, SPELL_CLEANSE);
@@ -661,19 +661,19 @@ struct OREGON_DLL_DECL boss_lord_robin_darisAI : public boss_moroes_guestAI
 
         boss_moroes_guestAI::UpdateAI(diff);
 
-        if (Hamstring_Timer < diff)
+        if (Hamstring_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_HAMSTRING);
             Hamstring_Timer = 12000;
         } else Hamstring_Timer -= diff;
 
-        if (MortalStrike_Timer < diff)
+        if (MortalStrike_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_MORTALSTRIKE);
             MortalStrike_Timer = 18000;
         } else MortalStrike_Timer -= diff;
 
-        if (WhirlWind_Timer < diff)
+        if (WhirlWind_Timer <= diff)
         {
             DoCast(me,SPELL_WHIRLWIND);
             WhirlWind_Timer = 21000;
@@ -713,25 +713,25 @@ struct OREGON_DLL_DECL boss_lord_crispin_ferenceAI : public boss_moroes_guestAI
 
         boss_moroes_guestAI::UpdateAI(diff);
 
-        if (Disarm_Timer < diff)
+        if (Disarm_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_DISARM);
             Disarm_Timer = 12000;
         } else Disarm_Timer -= diff;
 
-        if (HeroicStrike_Timer < diff)
+        if (HeroicStrike_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_HEROICSTRIKE);
             HeroicStrike_Timer = 10000;
         } else HeroicStrike_Timer -= diff;
 
-        if (ShieldBash_Timer < diff)
+        if (ShieldBash_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SHIELDBASH);
             ShieldBash_Timer = 13000;
         } else ShieldBash_Timer -= diff;
 
-        if (ShieldWall_Timer < diff)
+        if (ShieldWall_Timer <= diff)
         {
             DoCast(me,SPELL_SHIELDWALL);
             ShieldWall_Timer = 21000;

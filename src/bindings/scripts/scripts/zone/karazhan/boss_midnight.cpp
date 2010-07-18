@@ -228,19 +228,19 @@ struct OREGON_DLL_DECL boss_attumenAI : public ScriptedAI
         if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE))
             return;
 
-        if (CleaveTimer < diff)
+        if (CleaveTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_SHADOWCLEAVE);
             CleaveTimer = 10000 + (rand()%6)*1000;
         } else CleaveTimer -= diff;
 
-        if (CurseTimer < diff)
+        if (CurseTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_INTANGIBLE_PRESENCE);
             CurseTimer = 30000;
         } else CurseTimer -= diff;
 
-        if (RandomYellTimer < diff)
+        if (RandomYellTimer <= diff)
         {
             switch(rand()%2)
             {
@@ -252,7 +252,7 @@ struct OREGON_DLL_DECL boss_attumenAI : public ScriptedAI
 
         if (me->GetUInt32Value(UNIT_FIELD_DISPLAYID) == MOUNTED_DISPLAYID)
         {
-            if (ChargeTimer < diff)
+            if (ChargeTimer <= diff)
             {
                 Unit *pTarget;
                 std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();

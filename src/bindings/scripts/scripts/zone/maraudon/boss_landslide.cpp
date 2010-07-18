@@ -52,14 +52,14 @@ struct OREGON_DLL_DECL boss_landslideAI : public ScriptedAI
             return;
 
         //KnockAway_Timer
-        if (KnockAway_Timer < diff)
+        if (KnockAway_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_KNOCKAWAY);
             KnockAway_Timer = 15000;
         } else KnockAway_Timer -= diff;
 
         //Trample_Timer
-        if (Trample_Timer < diff)
+        if (Trample_Timer <= diff)
         {
             DoCast(me,SPELL_TRAMPLE);
             Trample_Timer = 8000;
@@ -68,7 +68,7 @@ struct OREGON_DLL_DECL boss_landslideAI : public ScriptedAI
         //Landslide
         if (me->GetHealth()*100 / me->GetMaxHealth() < 50)
         {
-            if (Landslide_Timer < diff)
+            if (Landslide_Timer <= diff)
             {
                 me->InterruptNonMeleeSpells(false);
                 DoCast(me,SPELL_LANDSLIDE);

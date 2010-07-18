@@ -194,7 +194,7 @@ struct OREGON_DLL_DECL boss_twinemperorsAI : public ScriptedAI
         if (IAmVeklor())                                    // this spell heals caster and the other brother so let VN cast it
             return;
 
-        if (Heal_Timer < diff)
+        if (Heal_Timer <= diff)
         {
             Unit *pOtherBoss = GetOtherBoss();
             if (pOtherBoss && (pOtherBoss->GetDistance((const Creature *)me) <= 60))
@@ -259,7 +259,7 @@ struct OREGON_DLL_DECL boss_twinemperorsAI : public ScriptedAI
 
             tspellcasted = true;
 
-            if (AfterTeleportTimer < diff)
+            if (AfterTeleportTimer <= diff)
             {
                 AfterTeleport = false;
                 me->clearUnitState(UNIT_STAT_STUNNED);
@@ -365,10 +365,10 @@ struct OREGON_DLL_DECL boss_twinemperorsAI : public ScriptedAI
 
     void HandleBugs(uint32 diff)
     {
-        if (BugsTimer < diff || Abuse_Bug_Timer < diff)
+        if (BugsTimer <= diff || Abuse_Bug_Timer <= diff)
         {
             Creature *c = RespawnNearbyBugsAndGetOne();
-            if (Abuse_Bug_Timer < diff)
+            if (Abuse_Bug_Timer <= diff)
             {
                 if (c)
                 {
@@ -395,7 +395,7 @@ struct OREGON_DLL_DECL boss_twinemperorsAI : public ScriptedAI
 
     void CheckEnrage(uint32 diff)
     {
-        if (EnrageTimer < diff)
+        if (EnrageTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCasted(true))
             {
@@ -462,13 +462,13 @@ struct OREGON_DLL_DECL boss_veknilashAI : public boss_twinemperorsAI
             return;
 
         //UnbalancingStrike_Timer
-        if (UnbalancingStrike_Timer < diff)
+        if (UnbalancingStrike_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_UNBALANCING_STRIKE);
             UnbalancingStrike_Timer = 8000+rand()%12000;
         } else UnbalancingStrike_Timer -= diff;
 
-        if (UpperCut_Timer < diff)
+        if (UpperCut_Timer <= diff)
         {
             Unit* randomMelee = SelectTarget(SELECT_TARGET_RANDOM, 0, NOMINAL_MELEE_RANGE, true);
             if (randomMelee)
@@ -482,7 +482,7 @@ struct OREGON_DLL_DECL boss_veknilashAI : public boss_twinemperorsAI
         TryHealBrother(diff);
 
         //Teleporting to brother
-        if (Teleport_Timer < diff)
+        if (Teleport_Timer <= diff)
         {
             TeleportToMyBrother();
         } else Teleport_Timer -= diff;
@@ -550,7 +550,7 @@ struct OREGON_DLL_DECL boss_veklorAI : public boss_twinemperorsAI
             return;
 
         //ShadowBolt_Timer
-        if (ShadowBolt_Timer < diff)
+        if (ShadowBolt_Timer <= diff)
         {
             if (me->GetDistance(me->getVictim()) > 45)
                 me->GetMotionMaster()->MoveChase(me->getVictim(), VEKLOR_DIST, 0);
@@ -560,7 +560,7 @@ struct OREGON_DLL_DECL boss_veklorAI : public boss_twinemperorsAI
         } else ShadowBolt_Timer -= diff;
 
         //Blizzard_Timer
-        if (Blizzard_Timer < diff)
+        if (Blizzard_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 45, true);
@@ -569,7 +569,7 @@ struct OREGON_DLL_DECL boss_veklorAI : public boss_twinemperorsAI
             Blizzard_Timer = 15000+rand()%15000;
         } else Blizzard_Timer -= diff;
 
-        if (ArcaneBurst_Timer < diff)
+        if (ArcaneBurst_Timer <= diff)
         {
             Unit *mvic;
             if ((mvic=SelectTarget(SELECT_TARGET_NEAREST, 0, NOMINAL_MELEE_RANGE, true)) != NULL)
@@ -585,7 +585,7 @@ struct OREGON_DLL_DECL boss_veklorAI : public boss_twinemperorsAI
         TryHealBrother(diff);
 
         //Teleporting to brother
-        if (Teleport_Timer < diff)
+        if (Teleport_Timer <= diff)
         {
             TeleportToMyBrother();
         } else Teleport_Timer -= diff;

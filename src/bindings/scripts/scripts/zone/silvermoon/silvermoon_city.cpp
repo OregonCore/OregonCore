@@ -65,7 +65,7 @@ struct OREGON_DLL_DECL npc_blood_knight_stillbladeAI : public ScriptedAI
     {
         if (!me->GetUInt32Value(UNIT_FIELD_BYTES_1))
         {
-            if (lifeTimer < diff)
+            if (lifeTimer <= diff)
                 me->AI()->EnterEvadeMode();
             else
                 lifeTimer -= diff;

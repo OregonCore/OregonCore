@@ -177,13 +177,13 @@ struct OREGON_DLL_DECL boss_dorotheeAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (WaterBoltTimer < diff)
+        if (WaterBoltTimer <= diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_WATERBOLT);
             WaterBoltTimer = TitoDied ? 1500 : 5000;
         } else WaterBoltTimer -= diff;
 
-        if (FearTimer < diff)
+        if (FearTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_SCREAM);
             FearTimer = 30000;
@@ -191,7 +191,7 @@ struct OREGON_DLL_DECL boss_dorotheeAI : public ScriptedAI
 
         if (!SummonedTito)
         {
-            if (SummonTitoTimer < diff)
+            if (SummonTitoTimer <= diff)
                 SummonTito();
             else SummonTitoTimer -= diff;
         }
@@ -235,7 +235,7 @@ struct OREGON_DLL_DECL mob_titoAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (YipTimer < diff)
+        if (YipTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_YIPPING);
             YipTimer = 10000;
@@ -332,13 +332,13 @@ struct OREGON_DLL_DECL boss_strawmanAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (BrainBashTimer < diff)
+        if (BrainBashTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_BRAIN_BASH);
             BrainBashTimer = 15000;
         } else BrainBashTimer -= diff;
 
-        if (BrainWipeTimer < diff)
+        if (BrainWipeTimer <= diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_BRAIN_WIPE);
             BrainWipeTimer = 20000;
@@ -410,7 +410,7 @@ struct OREGON_DLL_DECL boss_tinheadAI : public ScriptedAI
     {
         if (AggroTimer)
         {
-            if (AggroTimer < diff)
+            if (AggroTimer <= diff)
             {
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 AggroTimer = 0;
@@ -420,7 +420,7 @@ struct OREGON_DLL_DECL boss_tinheadAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (CleaveTimer < diff)
+        if (CleaveTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_CLEAVE);
             CleaveTimer = 5000;
@@ -428,7 +428,7 @@ struct OREGON_DLL_DECL boss_tinheadAI : public ScriptedAI
 
         if (RustCount < 8)
         {
-            if (RustTimer < diff)
+            if (RustTimer <= diff)
             {
                 RustCount++;
                  DoScriptText(EMOTE_RUST, me);
@@ -511,19 +511,19 @@ struct OREGON_DLL_DECL boss_roarAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (MangleTimer < diff)
+        if (MangleTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_MANGLE);
             MangleTimer = 5000 + rand()%3000;
         } else MangleTimer -= diff;
 
-        if (ShredTimer < diff)
+        if (ShredTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_SHRED);
             ShredTimer = 10000 + rand()%5000;
         } else ShredTimer -= diff;
 
-        if (ScreamTimer < diff)
+        if (ScreamTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_FRIGHTENED_SCREAM);
             ScreamTimer = 20000 + rand()%10000;
@@ -583,7 +583,7 @@ struct OREGON_DLL_DECL boss_croneAI : public ScriptedAI
         if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
-        if (CycloneTimer < diff)
+        if (CycloneTimer <= diff)
         {
             Creature* Cyclone = DoSpawnCreature(CREATURE_CYCLONE, rand()%10, rand()%10, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 15000);
             if (Cyclone)
@@ -591,7 +591,7 @@ struct OREGON_DLL_DECL boss_croneAI : public ScriptedAI
             CycloneTimer = 30000;
         } else CycloneTimer -= diff;
 
-        if (ChainLightningTimer < diff)
+        if (ChainLightningTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_CHAIN_LIGHTNING);
             ChainLightningTimer = 15000;
@@ -623,7 +623,7 @@ struct OREGON_DLL_DECL mob_cycloneAI : public ScriptedAI
         if (!me->HasAura(SPELL_KNOCKBACK, 0))
             DoCast(me, SPELL_KNOCKBACK, true);
 
-        if (MoveTimer < diff)
+        if (MoveTimer <= diff)
         {
             float x,y,z;
             me->GetPosition(x,y,z);
@@ -773,7 +773,7 @@ struct OREGON_DLL_DECL boss_bigbadwolfAI : public ScriptedAI
 
         DoMeleeAttackIfReady();
 
-        if (ChaseTimer < diff)
+        if (ChaseTimer <= diff)
         {
             if (!IsChasing)
             {
@@ -812,13 +812,13 @@ struct OREGON_DLL_DECL boss_bigbadwolfAI : public ScriptedAI
         if (IsChasing)
             return;
 
-        if (FearTimer < diff)
+        if (FearTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_TERRIFYING_HOWL);
             FearTimer = 25000 + rand()%10000;
         } else FearTimer -= diff;
 
-        if (SwipeTimer < diff)
+        if (SwipeTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_WIDE_SWIPE);
             SwipeTimer = 25000 + rand()%5000;
@@ -1186,7 +1186,7 @@ void boss_julianneAI::UpdateAI(const uint32 diff)
 {
     if (EntryYellTimer)
     {
-        if (EntryYellTimer < diff)
+        if (EntryYellTimer <= diff)
         {
             DoScriptText(SAY_JULIANNE_ENTER, me);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -1196,7 +1196,7 @@ void boss_julianneAI::UpdateAI(const uint32 diff)
 
     if (AggroYellTimer)
     {
-        if (AggroYellTimer < diff)
+        if (AggroYellTimer <= diff)
         {
             DoScriptText(SAY_JULIANNE_AGGRO, me);
             AggroYellTimer = 0;
@@ -1205,7 +1205,7 @@ void boss_julianneAI::UpdateAI(const uint32 diff)
 
     if (Phase == PHASE_ROMULO && !SummonedRomulo)
     {
-        if (SummonRomuloTimer < diff)
+        if (SummonRomuloTimer <= diff)
         {
             Creature* Romulo = me->SummonCreature(CREATURE_ROMULO, ROMULO_X, ROMULO_Y, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 45000);
             if (Romulo)
@@ -1229,7 +1229,7 @@ void boss_julianneAI::UpdateAI(const uint32 diff)
 
     if (RomuloDead)
     {
-        if (ResurrectTimer < diff)
+        if (ResurrectTimer <= diff)
         {
             Creature* Romulo = (Unit::GetCreature((*me), RomuloGUID));
             if (Romulo && ((boss_romuloAI*)Romulo->AI())->IsFakingDeath)
@@ -1243,25 +1243,25 @@ void boss_julianneAI::UpdateAI(const uint32 diff)
         } else ResurrectTimer -= diff;
     }
 
-    if (BlindingPassionTimer < diff)
+    if (BlindingPassionTimer <= diff)
     {
         DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_BLINDING_PASSION);
         BlindingPassionTimer = 30000 + rand()%15000;
     } else BlindingPassionTimer -= diff;
 
-    if (DevotionTimer < diff)
+    if (DevotionTimer <= diff)
     {
         DoCast(me, SPELL_DEVOTION);
         DevotionTimer = 15000 + rand()%30000;
     } else DevotionTimer -= diff;
 
-    if (PowerfulAttractionTimer < diff)
+    if (PowerfulAttractionTimer <= diff)
     {
         DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_POWERFUL_ATTRACTION);
         PowerfulAttractionTimer = 5000 + rand()%25000;
     } else PowerfulAttractionTimer -= diff;
 
-    if (EternalAffectionTimer < diff)
+    if (EternalAffectionTimer <= diff)
     {
         if (rand()%2 == 1 && SummonedRomulo)
         {
@@ -1285,7 +1285,7 @@ void boss_romuloAI::UpdateAI(const uint32 diff)
 
     if (JulianneDead)
     {
-        if (ResurrectTimer < diff)
+        if (ResurrectTimer <= diff)
         {
             Creature* Julianne = (Unit::GetCreature((*me), JulianneGUID));
             if (Julianne && ((boss_julianneAI*)Julianne->AI())->IsFakingDeath)
@@ -1299,7 +1299,7 @@ void boss_romuloAI::UpdateAI(const uint32 diff)
         } else ResurrectTimer -= diff;
     }
 
-    if (BackwardLungeTimer < diff)
+    if (BackwardLungeTimer <= diff)
     {
         Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
         if (pTarget && !me->HasInArc(M_PI, pTarget))
@@ -1309,19 +1309,19 @@ void boss_romuloAI::UpdateAI(const uint32 diff)
         }
     } else BackwardLungeTimer -= diff;
 
-    if (DaringTimer < diff)
+    if (DaringTimer <= diff)
     {
         DoCast(me, SPELL_DARING);
         DaringTimer = 20000 + rand()%20000;
     } else DaringTimer -= diff;
 
-    if (DeadlySwatheTimer < diff)
+    if (DeadlySwatheTimer <= diff)
     {
         DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_DEADLY_SWATHE);
         DeadlySwatheTimer = 15000 + rand()%10000;
     } else DeadlySwatheTimer -= diff;
 
-    if (PoisonThrustTimer < diff)
+    if (PoisonThrustTimer <= diff)
     {
         DoCast(me->getVictim(), SPELL_POISON_THRUST);
         PoisonThrustTimer = 10000 + rand()%10000;

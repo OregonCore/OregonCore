@@ -301,7 +301,7 @@ struct OREGON_DLL_DECL instance_zulaman : public ScriptedInstance
     {
         if (QuestMinute)
         {
-            if (QuestTimer < diff)
+            if (QuestTimer <= diff)
             {
                 QuestMinute--;
                 SaveToDB();

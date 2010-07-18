@@ -157,7 +157,7 @@ struct OREGON_DLL_DECL boss_lajAI : public ScriptedAI
 
         if (CanSummon)
         {
-            if (Summon_Timer < diff)
+            if (Summon_Timer <= diff)
             {
                 DoScriptText(EMOTE_SUMMON, me);
                 DoSummons();
@@ -165,20 +165,20 @@ struct OREGON_DLL_DECL boss_lajAI : public ScriptedAI
             } else Summon_Timer -= diff;
         }
 
-        if (Allergic_Timer < diff)
+        if (Allergic_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_ALLERGIC_REACTION);
             Allergic_Timer = 25000+rand()%15000;
         } else Allergic_Timer -= diff;
 
-        if (Teleport_Timer < diff)
+        if (Teleport_Timer <= diff)
         {
             DoCast(me,SPELL_TELEPORT_SELF);
             Teleport_Timer = 30000+rand()%10000;
             CanSummon = true;
         } else Teleport_Timer -= diff;
 
-        if (Transform_Timer < diff)
+        if (Transform_Timer <= diff)
         {
             DoTransform();
             Transform_Timer = 25000+rand()%15000;

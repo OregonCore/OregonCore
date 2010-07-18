@@ -125,7 +125,7 @@ struct OREGON_DLL_DECL npc_draenei_survivorAI : public ScriptedAI
     {
         if (me->GetHealth() > 50)
         {
-            if (ResetlifeTimer < diff)
+            if (ResetlifeTimer <= diff)
             {
                 ResetlifeTimer = 60000;
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
@@ -139,7 +139,7 @@ struct OREGON_DLL_DECL npc_draenei_survivorAI : public ScriptedAI
 
         if (HealSay)
         {
-            if (HealSayTimer < diff)
+            if (HealSayTimer <= diff)
             {
                 UnSpawn = true;
                 isRun = true;
@@ -156,7 +156,7 @@ struct OREGON_DLL_DECL npc_draenei_survivorAI : public ScriptedAI
                 isMove = false;
             }
 
-            if (UnSpawnTimer < diff)
+            if (UnSpawnTimer <= diff)
             {
                 me->StopMoving();
                 EnterEvadeMode();
@@ -166,7 +166,7 @@ struct OREGON_DLL_DECL npc_draenei_survivorAI : public ScriptedAI
             } else UnSpawnTimer -= diff;
         }
 
-        if (SayingTimer < diff)
+        if (SayingTimer <= diff)
         {
             say = true;
         } else SayingTimer -= diff;
@@ -227,7 +227,7 @@ struct OREGON_DLL_DECL npc_engineer_spark_overgrindAI : public ScriptedAI
     {
         if (!me->isInCombat())
         {
-            if (Emote_Timer < diff)
+            if (Emote_Timer <= diff)
             {
                 DoScriptText(SAY_TEXT, me);
                 DoScriptText(SAY_EMOTE, me);
@@ -238,7 +238,7 @@ struct OREGON_DLL_DECL npc_engineer_spark_overgrindAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Dynamite_Timer < diff)
+        if (Dynamite_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_DYNAMITE);
             Dynamite_Timer = 8000;
@@ -576,7 +576,7 @@ struct OREGON_DLL_DECL npc_geezleAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (SayTimer < diff)
+        if (SayTimer <= diff)
         {
             if (EventStarted)
             {
@@ -629,7 +629,7 @@ struct OREGON_DLL_DECL mob_nestlewood_owlkinAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (ChannelTimer < diff && !Channeled && Hitted)
+        if (ChannelTimer <= diff && !Channeled && Hitted)
         {
             me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             me->RemoveCorpse();

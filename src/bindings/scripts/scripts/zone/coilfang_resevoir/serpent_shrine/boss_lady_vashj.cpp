@@ -327,7 +327,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
     {
         if (!CanAttack && Intro)
         {
-            if (AggroTimer < diff)
+            if (AggroTimer <= diff)
             {
                 CanAttack = true;
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -351,7 +351,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
         if (Phase == 1 || Phase == 3)
         {
             //ShockBlast_Timer
-            if (ShockBlast_Timer < diff)
+            if (ShockBlast_Timer <= diff)
             {
                 //Shock Burst
                 //Randomly used in Phases 1 and 3 on Vashj's target, it's a Shock spell doing 8325-9675 nature damage and stunning the target for 5 seconds, during which she will not attack her target but switch to the next person on the aggro list.
@@ -362,7 +362,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
             } else ShockBlast_Timer -= diff;
 
             //StaticCharge_Timer
-            if (StaticCharge_Timer < diff)
+            if (StaticCharge_Timer <= diff)
             {
                 //Static Charge
                 //Used on random people (only 1 person at any given time) in Phases 1 and 3, it's a debuff doing 2775 to 3225 Nature damage to the target and everybody in about 5 yards around it, every 1 seconds for 30 seconds. It can be removed by Cloak of Shadows, Iceblock, Divine Shield, etc, but not by Cleanse or Dispel Magic.
@@ -377,7 +377,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
             } else StaticCharge_Timer -= diff;
 
             //Entangle_Timer
-            if (Entangle_Timer < diff)
+            if (Entangle_Timer <= diff)
             {
                 if (!Entangle)
                 {
@@ -421,7 +421,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
             else
             {
                 //SummonSporebat_Timer
-                if (SummonSporebat_Timer < diff)
+                if (SummonSporebat_Timer <= diff)
                 {
                     Creature *Sporebat = NULL;
                     Sporebat = me->SummonCreature(TOXIC_SPOREBAT, SPOREBAT_X, SPOREBAT_Y, SPOREBAT_Z, SPOREBAT_O, TEMPSUMMON_CORPSE_DESPAWN, 0);
@@ -450,7 +450,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
             DoMeleeAttackIfReady();
 
             //Check_Timer - used to check if somebody is in melee range
-            if (Check_Timer < diff)
+            if (Check_Timer <= diff)
             {
                 bool InMeleeRange = false;
                 Unit *pTarget;
@@ -477,7 +477,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
         else
         {
             //ForkedLightning_Timer
-            if (ForkedLightning_Timer < diff)
+            if (ForkedLightning_Timer <= diff)
             {
                 //Forked Lightning
                 //Used constantly in Phase 2, it shoots out completely randomly targeted bolts of lightning which hit everybody in a roughtly 60 degree cone in front of Vashj for 2313-2687 nature damage.
@@ -493,7 +493,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
             } else ForkedLightning_Timer -= diff;
 
             //EnchantedElemental_Timer
-            if (EnchantedElemental_Timer < diff)
+            if (EnchantedElemental_Timer <= diff)
             {
                 Creature *Elemental;
                 Elemental = me->SummonCreature(ENCHANTED_ELEMENTAL, ElementPos[EnchantedElemental_Pos][0], ElementPos[EnchantedElemental_Pos][1], ElementPos[EnchantedElemental_Pos][2], ElementPos[EnchantedElemental_Pos][3], TEMPSUMMON_CORPSE_DESPAWN, 0);
@@ -507,7 +507,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
             } else EnchantedElemental_Timer -= diff;
 
             //TaintedElemental_Timer
-            if (TaintedElemental_Timer < diff)
+            if (TaintedElemental_Timer <= diff)
             {
                 Creature *Tain_Elemental;
                 uint32 pos = rand()%8;
@@ -517,7 +517,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
             } else TaintedElemental_Timer -= diff;
 
             //CoilfangElite_Timer
-            if (CoilfangElite_Timer < diff)
+            if (CoilfangElite_Timer <= diff)
             {
                 uint32 pos = rand()%3;
                 Creature* CoilfangElite = NULL;
@@ -535,7 +535,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
             } else CoilfangElite_Timer -= diff;
 
             //CoilfangStrider_Timer
-            if (CoilfangStrider_Timer < diff)
+            if (CoilfangStrider_Timer <= diff)
             {
                 uint32 pos = rand()%3;
                 Creature* CoilfangStrider = NULL;
@@ -553,7 +553,7 @@ struct OREGON_DLL_DECL boss_lady_vashjAI : public ScriptedAI
             } else CoilfangStrider_Timer -= diff;
 
             //Check_Timer
-            if (Check_Timer < diff)
+            if (Check_Timer <= diff)
             {
                 //Start Phase 3
                 if (pInstance && pInstance->GetData(DATA_CANSTARTPHASE3))
@@ -642,7 +642,7 @@ struct OREGON_DLL_DECL mob_enchanted_elementalAI : public ScriptedAI
 
         Creature *Vashj = Unit::GetCreature(*me, VashjGUID);
 
-        if (move < diff)
+        if (move <= diff)
         {
             me->SetUnitMovementFlags(MOVEMENTFLAG_WALK_MODE);
             if (phase == 1)
@@ -727,7 +727,7 @@ struct OREGON_DLL_DECL mob_tainted_elementalAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         //PoisonBolt_Timer
-        if (PoisonBolt_Timer < diff)
+        if (PoisonBolt_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
@@ -739,7 +739,7 @@ struct OREGON_DLL_DECL mob_tainted_elementalAI : public ScriptedAI
         } else PoisonBolt_Timer -= diff;
 
         //Despawn_Timer
-        if (Despawn_Timer < diff)
+        if (Despawn_Timer <= diff)
         {
             //call Unsummon()
             me->setDeathState(DEAD);
@@ -799,7 +799,7 @@ struct OREGON_DLL_DECL mob_toxic_sporebatAI : public ScriptedAI
     void UpdateAI (const uint32 diff)
     {
         //Random movement
-        if (movement_timer < diff)
+        if (movement_timer <= diff)
         {
             uint32 rndpos = rand()%8;
             me->GetMotionMaster()->MovePoint(1,SporebatWPPos[rndpos][0], SporebatWPPos[rndpos][1], SporebatWPPos[rndpos][2]);
@@ -807,7 +807,7 @@ struct OREGON_DLL_DECL mob_toxic_sporebatAI : public ScriptedAI
         } else movement_timer -= diff;
 
         //toxic spores
-        if (bolt_timer < diff)
+        if (bolt_timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
@@ -825,7 +825,7 @@ struct OREGON_DLL_DECL mob_toxic_sporebatAI : public ScriptedAI
         else bolt_timer -= diff;
 
         //Check_Timer
-        if (Check_Timer < diff)
+        if (Check_Timer <= diff)
         {
             if (pInstance)
             {
@@ -894,7 +894,7 @@ struct OREGON_DLL_DECL mob_coilfang_striderAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Blast_Timer < diff)
+        if (Blast_Timer <= diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0),SPELL_MINDBLAST);
             Blast_Timer = 30000+rand()% 10000;
@@ -937,7 +937,7 @@ struct OREGON_DLL_DECL mob_shield_generator_channelAI : public ScriptedAI
         if (!pInstance)
             return;
 
-        if (Check_Timer < diff)
+        if (Check_Timer <= diff)
         {
             Unit *Vashj = NULL;
             Vashj = Unit::GetUnit((*me), pInstance->GetData64(DATA_LADYVASHJ));

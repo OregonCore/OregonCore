@@ -75,21 +75,21 @@ struct OREGON_DLL_DECL boss_darkmaster_gandlingAI : public ScriptedAI
             return;
 
         //ArcaneMissiles_Timer
-        if (ArcaneMissiles_Timer < diff)
+        if (ArcaneMissiles_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_ARCANEMISSILES);
             ArcaneMissiles_Timer = 8000;
         } else ArcaneMissiles_Timer -= diff;
 
         //ShadowShield_Timer
-        if (ShadowShield_Timer < diff)
+        if (ShadowShield_Timer <= diff)
         {
             DoCast(me,SPELL_SHADOWSHIELD);
             ShadowShield_Timer = 14000 + rand()%14000;
         } else ShadowShield_Timer -= diff;
 
         //Curse_Timer
-        if (Curse_Timer < diff)
+        if (Curse_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CURSE);
             Curse_Timer = 15000 + rand()%12000;
@@ -99,7 +99,7 @@ struct OREGON_DLL_DECL boss_darkmaster_gandlingAI : public ScriptedAI
         //We will only telport if gandling has more than 3% of hp so teleported gamers can always loot.
         if (me->GetHealth()*100 / me->GetMaxHealth() > 3)
         {
-            if (Teleport_Timer < diff)
+            if (Teleport_Timer <= diff)
             {
                 Unit *pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);

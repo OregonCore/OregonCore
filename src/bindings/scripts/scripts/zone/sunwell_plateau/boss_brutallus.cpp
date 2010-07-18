@@ -257,12 +257,12 @@ struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
 
         if (IsIntro)
         {
-            if (IntroPhaseTimer < diff){
+            if (IntroPhaseTimer <= diff){
                 DoIntro();
             } else IntroPhaseTimer -= diff;
 
             if (IntroPhase == 3 + 1){
-                if (IntroFrostBoltTimer < diff){
+                if (IntroFrostBoltTimer <= diff){
                     if (Madrigosa){
                         Madrigosa->CastSpell(me, SPELL_INTRO_FROSTBOLT, false);
                         IntroFrostBoltTimer = 2000;
@@ -274,13 +274,13 @@ struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
         if (!UpdateVictim() || IsIntro)
             return;
 
-        if (SlashTimer < diff)
+        if (SlashTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_METEOR_SLASH);
             SlashTimer = 11000;
         } else SlashTimer -= diff;
 
-        if (StompTimer < diff)
+        if (StompTimer <= diff)
         {
             switch(rand()%3)
             {
@@ -292,14 +292,14 @@ struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
             StompTimer = 30000;
         } else StompTimer -= diff;
 
-        if (BurnTimer < diff)
+        if (BurnTimer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 pTarget->CastSpell(pTarget, SPELL_BURN, true);
             BurnTimer = 60000;
         } else BurnTimer -= diff;
 
-        if (BerserkTimer < diff && !Enraged)
+        if (BerserkTimer <= diff && !Enraged)
         {
             DoScriptText(YELL_BERSERK, me);
             DoCast(me, SPELL_BERSERK);

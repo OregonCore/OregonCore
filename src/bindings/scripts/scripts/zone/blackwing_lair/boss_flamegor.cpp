@@ -55,14 +55,14 @@ struct OREGON_DLL_DECL boss_flamegorAI : public ScriptedAI
             return;
 
         //ShadowFlame_Timer
-        if (ShadowFlame_Timer < diff)
+        if (ShadowFlame_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SHADOWFLAME);
             ShadowFlame_Timer = 15000 + rand()%7000;
         } else ShadowFlame_Timer -= diff;
 
         //WingBuffet_Timer
-        if (WingBuffet_Timer < diff)
+        if (WingBuffet_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_WINGBUFFET);
             if (DoGetThreat(me->getVictim()))
@@ -72,7 +72,7 @@ struct OREGON_DLL_DECL boss_flamegorAI : public ScriptedAI
         } else WingBuffet_Timer -= diff;
 
         //Frenzy_Timer
-        if (Frenzy_Timer < diff)
+        if (Frenzy_Timer <= diff)
         {
             DoScriptText(EMOTE_FRENZY, me);
             DoCast(me,SPELL_FRENZY);

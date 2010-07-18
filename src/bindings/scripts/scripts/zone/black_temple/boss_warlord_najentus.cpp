@@ -171,7 +171,7 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (TidalShieldTimer < diff)
+        if (TidalShieldTimer <= diff)
         {
             if (TryDoCast(me, SPELL_TIDAL_SHIELD, true))
             {
@@ -182,14 +182,14 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
 
         if (!me->HasAura(SPELL_BERSERK,0))
         {
-            if (EnrageTimer < diff)
+            if (EnrageTimer <= diff)
             {
                 DoScriptText(SAY_ENRAGE2, me);
                 DoCast(me, SPELL_BERSERK, true);
             } else EnrageTimer -= diff;
         }
 
-        if (SpecialYellTimer < diff)
+        if (SpecialYellTimer <= diff)
         {
             switch(rand()%2)
             {
@@ -199,7 +199,7 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
             SpecialYellTimer = 25000 + (rand()%76)*1000;
         } else SpecialYellTimer -= diff;
 
-        if (ImpalingSpineTimer < diff)
+        if (ImpalingSpineTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
@@ -222,7 +222,7 @@ struct OREGON_DLL_DECL boss_najentusAI : public ScriptedAI
             }
         } else ImpalingSpineTimer -= diff;
 
-        if (NeedleSpineTimer < diff)
+        if (NeedleSpineTimer <= diff)
         {
             if (TryDoCast(me, SPELL_NEEDLE_SPINE, true))
             {

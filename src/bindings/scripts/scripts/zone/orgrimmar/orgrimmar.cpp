@@ -95,7 +95,7 @@ struct OREGON_DLL_DECL npc_shenthulAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (CanEmote)
-            if (Reset_Timer < diff)
+            if (Reset_Timer <= diff)
         {
             if (Player* temp = Unit::GetPlayer(playerGUID))
                 temp->FailQuest(QUEST_2460);
@@ -103,7 +103,7 @@ struct OREGON_DLL_DECL npc_shenthulAI : public ScriptedAI
         } else Reset_Timer -= diff;
 
         if (CanTalk && !CanEmote)
-            if (Salute_Timer < diff)
+            if (Salute_Timer <= diff)
         {
             me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
             CanEmote = true;
@@ -180,13 +180,13 @@ struct OREGON_DLL_DECL npc_thrall_warchiefAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (ChainLightning_Timer < diff)
+        if (ChainLightning_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CHAIN_LIGHTNING);
             ChainLightning_Timer = 9000;
         } else ChainLightning_Timer -= diff;
 
-        if (Shock_Timer < diff)
+        if (Shock_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SHOCK);
             Shock_Timer = 15000;

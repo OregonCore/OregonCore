@@ -88,7 +88,7 @@ struct OREGON_DLL_DECL mob_aquementasAI : public ScriptedAI
     {
         if (isFriendly)
         {
-            if (SwitchFaction_Timer < diff)
+            if (SwitchFaction_Timer <= diff)
             {
                 me->setFaction(91);
                 isFriendly = false;
@@ -100,7 +100,7 @@ struct OREGON_DLL_DECL mob_aquementasAI : public ScriptedAI
 
         if (!isFriendly)
         {
-            if (SendItem_Timer < diff)
+            if (SendItem_Timer <= diff)
             {
                 if (me->getVictim()->GetTypeId() == TYPEID_PLAYER)
                     SendItem(me->getVictim());
@@ -108,13 +108,13 @@ struct OREGON_DLL_DECL mob_aquementasAI : public ScriptedAI
             } else SendItem_Timer -= diff;
         }
 
-        if (FrostShock_Timer < diff)
+        if (FrostShock_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_FROST_SHOCK);
             FrostShock_Timer = 15000;
         } else FrostShock_Timer -= diff;
 
-        if (AquaJet_Timer < diff)
+        if (AquaJet_Timer <= diff)
         {
             DoCast(me,SPELL_AQUA_JET);
             AquaJet_Timer = 15000;

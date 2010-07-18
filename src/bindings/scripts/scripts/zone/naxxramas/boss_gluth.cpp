@@ -96,42 +96,42 @@ struct OREGON_DLL_DECL boss_gluthAI : public ScriptedAI
             return;
 
         //MortalWound_Timer
-        if (MortalWound_Timer < diff)
+        if (MortalWound_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_MORTALWOUND);
             MortalWound_Timer = 10000;
         } else MortalWound_Timer -= diff;
 
         //Decimate_Timer
-        if (Decimate_Timer < diff)
+        if (Decimate_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_DECIMATE);
             Decimate_Timer = 100000;
         } else Decimate_Timer -= diff;
 
         //TerrifyingRoar_Timer
-        if (TerrifyingRoar_Timer < diff)
+        if (TerrifyingRoar_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_TERRIFYINGROAR);
             TerrifyingRoar_Timer = 20000;
         } else TerrifyingRoar_Timer -= diff;
 
         //Frenzy_Timer
-        if (Frenzy_Timer < diff)
+        if (Frenzy_Timer <= diff)
         {
             DoCast(me,SPELL_FRENZY);
             Frenzy_Timer = 10500;
         } else Frenzy_Timer -= diff;
 
         //Enrage_Timer
-        if (Enrage_Timer < diff)
+        if (Enrage_Timer <= diff)
         {
             DoCast(me,SPELL_ENRAGE);
             Enrage_Timer = 61000;
         } else Enrage_Timer -= diff;
 
         //Summon_Timer
-        if (Summon_Timer < diff)
+        if (Summon_Timer <= diff)
         {
             Unit *pTarget = NULL;
             Unit* SummonedZombies = NULL;

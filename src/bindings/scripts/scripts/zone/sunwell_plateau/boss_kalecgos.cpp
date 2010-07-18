@@ -369,7 +369,7 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (CheckTimer < diff)
+        if (CheckTimer <= diff)
         {
             if (((me->GetHealth()*100 / me->GetMaxHealth()) < 10) && !isEnraged)
             {
@@ -408,7 +408,7 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
             CheckTimer = 1000;
         } else CheckTimer -= diff;
 
-        if (ResetThreat < diff)
+        if (ResetThreat <= diff)
         {
             if ((me->getVictim()->HasAura(AURA_SPECTRAL_EXHAUSTION,0)) && (me->getVictim()->GetTypeId() == TYPEID_PLAYER))
             {
@@ -424,14 +424,14 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
             ResetThreat = 1000;
         } else ResetThreat -= diff;
 
-        if (ShadowBoltTimer < diff)
+        if (ShadowBoltTimer <= diff)
         {
             DoScriptText(SAY_SATH_SPELL1, me);
             DoCast(me, SPELL_SHADOW_BOLT);
             ShadowBoltTimer = 7000+(rand()%3000);
         } else ShadowBoltTimer -= diff;
 
-        if (AgonyCurseTimer < diff)
+        if (AgonyCurseTimer <= diff)
         {
             Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (!pTarget) pTarget = me->getVictim();
@@ -439,7 +439,7 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
             AgonyCurseTimer = 20000;
         } else AgonyCurseTimer -= diff;
 
-        if (CorruptionStrikeTimer < diff)
+        if (CorruptionStrikeTimer <= diff)
         {
             DoScriptText(SAY_SATH_SPELL2, me);
             DoCast(me->getVictim(), SPELL_CORRUPTION_STRIKE);
@@ -495,7 +495,7 @@ struct OREGON_DLL_DECL boss_kalecAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (YellTimer < diff)
+        if (YellTimer <= diff)
         {
             switch(YellSequence)
             {
@@ -523,13 +523,13 @@ struct OREGON_DLL_DECL boss_kalecAI : public ScriptedAI
             YellTimer = 5000;
         }
 
-        if (RevitalizeTimer < diff)
+        if (RevitalizeTimer <= diff)
         {
             DoCast(me, SPELL_REVITALIZE);
             RevitalizeTimer = 5000;
         } else RevitalizeTimer -= diff;
 
-        if (HeroicStrikeTimer < diff)
+        if (HeroicStrikeTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_HEROIC_STRIKE);
             HeroicStrikeTimer = 2000;
@@ -568,7 +568,7 @@ void boss_kalecgosAI::UpdateAI(const uint32 diff)
         if (!UpdateVictim())
             return;
 
-        if (CheckTimer < diff)
+        if (CheckTimer <= diff)
          {
              if (((me->GetHealth()*100 / me->GetMaxHealth()) < 10) && !isEnraged)
              {
@@ -607,31 +607,31 @@ void boss_kalecgosAI::UpdateAI(const uint32 diff)
              CheckTimer = 1000;
         } else CheckTimer -= diff;
 
-        if (ArcaneBuffetTimer < diff)
+        if (ArcaneBuffetTimer <= diff)
         {
             DoCastAOE(SPELL_ARCANE_BUFFET);
             ArcaneBuffetTimer = 8000;
         } else ArcaneBuffetTimer -= diff;
 
-        if (FrostBreathTimer < diff)
+        if (FrostBreathTimer <= diff)
         {
             DoCastAOE(SPELL_FROST_BREATH);
             FrostBreathTimer = 15000;
         } else FrostBreathTimer -= diff;
 
-        if (TailLashTimer < diff)
+        if (TailLashTimer <= diff)
         {
             DoCastAOE(SPELL_TAIL_LASH);
             TailLashTimer = 15000;
         } else TailLashTimer -= diff;
 
-        if (WildMagicTimer < diff)
+        if (WildMagicTimer <= diff)
         {
             DoCastAOE(WildMagic[rand()%6]);
             WildMagicTimer = 20000;
         } else WildMagicTimer -= diff;
 
-        if (SpectralBlastTimer < diff)
+        if (SpectralBlastTimer <= diff)
         {
             //this is a hack. we need to find a victim without aura in core
             Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);

@@ -105,7 +105,7 @@ struct OREGON_DLL_DECL boss_high_botanist_freywinnAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (TreeForm_Timer < diff)
+        if (TreeForm_Timer <= diff)
         {
             switch(rand()%2)
             {
@@ -130,7 +130,7 @@ struct OREGON_DLL_DECL boss_high_botanist_freywinnAI : public ScriptedAI
 
         if (!MoveFree)
         {
-            if (MoveCheck_Timer < diff)
+            if (MoveCheck_Timer <= diff)
             {
                 if (!Adds_List.empty())
                 {
@@ -148,7 +148,7 @@ struct OREGON_DLL_DECL boss_high_botanist_freywinnAI : public ScriptedAI
                     }
                 }
 
-                if (DeadAddsCount < 3 && TreeForm_Timer-30000 < diff)
+                if (DeadAddsCount < 3 && TreeForm_Timer-30000 <= diff)
                     DeadAddsCount = 3;
 
                 if (DeadAddsCount >= 3)
@@ -172,7 +172,7 @@ struct OREGON_DLL_DECL boss_high_botanist_freywinnAI : public ScriptedAI
             return;*/
 
         //one random seedling every 5 secs, but not in tree form
-        if (SummonSeedling_Timer < diff)
+        if (SummonSeedling_Timer <= diff)
         {
             DoSummonSeedling();
             SummonSeedling_Timer = 6000;

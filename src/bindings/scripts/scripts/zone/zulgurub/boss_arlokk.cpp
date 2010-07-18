@@ -100,13 +100,13 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
 
         if (me->getVictim() && me->isAlive())
         {
-            if (!PhaseTwo && ShadowWordPain_Timer < diff)
+            if (!PhaseTwo && ShadowWordPain_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_SHADOWWORDPAIN);
                 ShadowWordPain_Timer = 15000;
             } else ShadowWordPain_Timer -= diff;
 
-            if (!PhaseTwo && Mark_Timer < diff)
+            if (!PhaseTwo && Mark_Timer <= diff)
             {
                 markedTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
 
@@ -114,7 +114,7 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
                 Mark_Timer = 15000;
             } else Mark_Timer -= diff;
 
-            if (Summon_Timer < diff && Counter < 31)
+            if (Summon_Timer <= diff && Counter < 31)
             {
                 Unit *pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -138,7 +138,7 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
                 Summon_Timer = 5000;
             } else Summon_Timer -= diff;
 
-            if (Vanish_Timer < diff)
+            if (Vanish_Timer <= diff)
             {
                 //Invisble Model
                 me->SetUInt32Value(UNIT_FIELD_DISPLAYID,11686);
@@ -152,7 +152,7 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
 
             if (VanishedOnce)
             {
-                if (Visible_Timer < diff)
+                if (Visible_Timer <= diff)
                 {
                     Unit *pTarget = NULL;
                     pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -174,14 +174,14 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
             }
 
             //Cleave_Timer
-            if (PhaseTwo && Cleave_Timer < diff)
+            if (PhaseTwo && Cleave_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_CLEAVE);
                 Cleave_Timer = 16000;
             }Cleave_Timer -=diff;
 
             //Gouge_Timer
-            if (PhaseTwo && Gouge_Timer < diff)
+            if (PhaseTwo && Gouge_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_GOUGE);
                 if (DoGetThreat(me->getVictim()))

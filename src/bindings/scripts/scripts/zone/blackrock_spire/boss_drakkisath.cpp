@@ -56,28 +56,28 @@ struct OREGON_DLL_DECL boss_drakkisathAI : public ScriptedAI
             return;
 
         //FireNova_Timer
-        if (FireNova_Timer < diff)
+        if (FireNova_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_FIRENOVA);
             FireNova_Timer = 10000;
         } else FireNova_Timer -= diff;
 
         //Cleave_Timer
-        if (Cleave_Timer < diff)
+        if (Cleave_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 8000;
         } else Cleave_Timer -= diff;
 
         //Confliguration_Timer
-        if (Confliguration_Timer < diff)
+        if (Confliguration_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CONFLIGURATION);
             Confliguration_Timer = 18000;
         } else Confliguration_Timer -= diff;
 
         //Thunderclap_Timer
-        if (Thunderclap_Timer < diff)
+        if (Thunderclap_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_THUNDERCLAP);
             Thunderclap_Timer = 20000;

@@ -226,7 +226,7 @@ void SimpleAI::UpdateAI(const uint32 diff)
         if (!Spell[i].Enabled || !Spell[i].Spell_Id)
             continue;
 
-        if (Spell_Timer[i] < diff)
+        if (Spell_Timer[i] <= diff)
         {
             //Check if this is a percentage based
             if (Spell[i].First_Cast < 0 && Spell[i].First_Cast > -100 && me->GetHealth()*100 / me->GetMaxHealth() > -Spell[i].First_Cast)

@@ -100,7 +100,7 @@ struct OREGON_DLL_DECL npc_lady_sylvanas_windrunnerAI : public ScriptedAI
     {
         if (LamentEvent)
         {
-            if (LamentEvent_Timer < diff)
+            if (LamentEvent_Timer <= diff)
             {
                 float raX = myX;
                 float raY = myY;
@@ -172,7 +172,7 @@ struct OREGON_DLL_DECL npc_highborne_lamenterAI : public ScriptedAI
     {
         if (EventMove)
         {
-            if (EventMove_Timer < diff)
+            if (EventMove_Timer <= diff)
             {
                 me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
                 me->SendMonsterMoveWithSpeed(me->GetPositionX(),me->GetPositionY(),HIGHBORNE_LOC_Y_NEW,5000);
@@ -182,7 +182,7 @@ struct OREGON_DLL_DECL npc_highborne_lamenterAI : public ScriptedAI
         }
         if (EventCast)
         {
-            if (EventCast_Timer < diff)
+            if (EventCast_Timer <= diff)
             {
                 DoCast(me,SPELL_HIGHBORNE_AURA);
                 EventCast = false;

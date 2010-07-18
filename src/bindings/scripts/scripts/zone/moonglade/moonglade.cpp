@@ -356,7 +356,7 @@ public:
 
         if (!me->isInCombat() && !Event_onWait)
         {
-            if (checkPlayer_Timer < diff)
+            if (checkPlayer_Timer <= diff)
             {
                 Player* pPlayer = Unit::GetPlayer(PlayerGUID);
                 if (pPlayer && pPlayer->isInCombat() && pPlayer->getAttackerForHelper())
@@ -365,7 +365,7 @@ public:
             } else checkPlayer_Timer -= diff;
         }
 
-        if (Event_onWait && Event_Timer < diff)
+        if (Event_onWait && Event_Timer <= diff)
         {
 
             Player* pPlayer = Unit::GetPlayer(PlayerGUID);

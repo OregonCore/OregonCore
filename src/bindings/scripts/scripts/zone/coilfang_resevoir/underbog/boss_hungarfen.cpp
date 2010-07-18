@@ -63,7 +63,7 @@ struct OREGON_DLL_DECL boss_hungarfenAI : public ScriptedAI
             }
         }
 
-        if (Mushroom_Timer < diff)
+        if (Mushroom_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 me->SummonCreature(17990, pTarget->GetPositionX()+(rand()%8), pTarget->GetPositionY()+(rand()%8), pTarget->GetPositionZ(), (rand()%5), TEMPSUMMON_TIMED_DESPAWN, 22000);
@@ -73,7 +73,7 @@ struct OREGON_DLL_DECL boss_hungarfenAI : public ScriptedAI
             Mushroom_Timer = 10000;
         } else Mushroom_Timer -= diff;
 
-        if (AcidGeyser_Timer < diff)
+        if (AcidGeyser_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_ACID_GEYSER);

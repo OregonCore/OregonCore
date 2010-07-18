@@ -54,14 +54,14 @@ struct OREGON_DLL_DECL boss_quatermasterzigrisAI : public ScriptedAI
             return;
 
         //Shoot_Timer
-        if (Shoot_Timer < diff)
+        if (Shoot_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SHOOT);
             Shoot_Timer = 500;
         } else Shoot_Timer -= diff;
 
         //StunBomb_Timer
-        if (StunBomb_Timer < diff)
+        if (StunBomb_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_STUNBOMB);
             StunBomb_Timer = 14000;

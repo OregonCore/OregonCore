@@ -63,7 +63,7 @@ struct OREGON_DLL_DECL mob_jadespine_basiliskAI : public ScriptedAI
             return;
 
         //Cslumber_Timer
-        if (Cslumber_Timer < diff)
+        if (Cslumber_Timer <= diff)
         {
             //Cast
             // DoCast(me->getVictim(),SPELL_CSLUMBER);

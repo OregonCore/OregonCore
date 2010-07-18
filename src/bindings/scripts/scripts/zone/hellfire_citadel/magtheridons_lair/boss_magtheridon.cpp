@@ -138,7 +138,7 @@ struct OREGON_DLL_DECL mob_abyssalAI : public ScriptedAI
         {
             if (trigger == 1)
             {
-                if (FireBlast_Timer < diff)
+                if (FireBlast_Timer <= diff)
                 {
                     me->CastSpell(me, SPELL_DEBRIS_DAMAGE, true);
                     trigger = 3;
@@ -147,7 +147,7 @@ struct OREGON_DLL_DECL mob_abyssalAI : public ScriptedAI
             return;
         }
 
-        if (Despawn_Timer < diff)
+        if (Despawn_Timer <= diff)
         {
             me->SetVisibility(VISIBILITY_OFF);
             me->setDeathState(JUST_DIED);
@@ -156,7 +156,7 @@ struct OREGON_DLL_DECL mob_abyssalAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (FireBlast_Timer < diff)
+        if (FireBlast_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_FIRE_BLAST);
             FireBlast_Timer = 5000+rand()%10000;
@@ -313,7 +313,7 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
     {
         if (!me->isInCombat())
         {
-            if (RandChat_Timer < diff)
+            if (RandChat_Timer <= diff)
             {
                 DoScriptText(RandomTaunt[rand()%6].id, me);
                 RandChat_Timer = 90000;
@@ -325,20 +325,20 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
 
         if (NeedCheckCube) NeedCheckCubeStatus();
 
-        if (Berserk_Timer < diff)
+        if (Berserk_Timer <= diff)
         {
             me->CastSpell(me, SPELL_BERSERK, true);
             DoScriptText(EMOTE_BERSERK, me);
             Berserk_Timer = 60000;
         } else Berserk_Timer -= diff;
 
-        if (Cleave_Timer < diff)
+        if (Cleave_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = 10000;
         } else Cleave_Timer -= diff;
 
-        if (BlastNova_Timer < diff)
+        if (BlastNova_Timer <= diff)
         {
             // to avoid earthquake interruption
             if (!me->hasUnitState(UNIT_STAT_STUNNED))
@@ -349,7 +349,7 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
             }
         } else BlastNova_Timer -= diff;
 
-        if (Quake_Timer < diff)
+        if (Quake_Timer <= diff)
         {
             // to avoid blastnova interruption
             if (!me->IsNonMeleeSpellCasted(false))
@@ -359,7 +359,7 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
             }
         } else Quake_Timer -= diff;
 
-        if (Blaze_Timer < diff)
+        if (Blaze_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
@@ -391,7 +391,7 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
 
         if (Phase3)
         {
-            if (Debris_Timer < diff)
+            if (Debris_Timer <= diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
@@ -469,27 +469,27 @@ struct OREGON_DLL_DECL mob_hellfire_channelerAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (ShadowBoltVolley_Timer < diff)
+        if (ShadowBoltVolley_Timer <= diff)
         {
             DoCast(me, SPELL_SHADOW_BOLT_VOLLEY);
             ShadowBoltVolley_Timer = 10000 + rand()%10000;
         } else ShadowBoltVolley_Timer -= diff;
 
-        if (DarkMending_Timer < diff)
+        if (DarkMending_Timer <= diff)
         {
             if ((me->GetHealth()*100 / me->GetMaxHealth()) < 50)
                 DoCast(me, SPELL_DARK_MENDING);
             DarkMending_Timer = 10000 +(rand() % 10000);
         } else DarkMending_Timer -= diff;
 
-        if (Fear_Timer < diff)
+        if (Fear_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
                 DoCast(pTarget, SPELL_FEAR);
             Fear_Timer = 25000 + rand()%15000;
         } else Fear_Timer -= diff;
 
-        if (Infernal_Timer < diff)
+        if (Infernal_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 me->CastSpell(pTarget, SPELL_BURNING_ABYSSAL, true);

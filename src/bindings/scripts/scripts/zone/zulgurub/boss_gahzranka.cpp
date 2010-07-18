@@ -52,14 +52,14 @@ struct OREGON_DLL_DECL boss_gahzrankaAI : public ScriptedAI
             return;
 
         //Frostbreath_Timer
-        if (Frostbreath_Timer < diff)
+        if (Frostbreath_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_FROSTBREATH);
             Frostbreath_Timer = 7000 + rand()%4000;
         } else Frostbreath_Timer -= diff;
 
         //MassiveGeyser_Timer
-        if (MassiveGeyser_Timer < diff)
+        if (MassiveGeyser_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_MASSIVEGEYSER);
             DoResetThreat();
@@ -68,7 +68,7 @@ struct OREGON_DLL_DECL boss_gahzrankaAI : public ScriptedAI
         } else MassiveGeyser_Timer -= diff;
 
         //Slam_Timer
-        if (Slam_Timer < diff)
+        if (Slam_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SLAM);
             Slam_Timer = 12000 + rand()%8000;

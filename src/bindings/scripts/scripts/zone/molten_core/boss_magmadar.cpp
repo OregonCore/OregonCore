@@ -58,7 +58,7 @@ struct OREGON_DLL_DECL boss_magmadarAI : public ScriptedAI
             return;
 
         //Frenzy_Timer
-        if (Frenzy_Timer < diff)
+        if (Frenzy_Timer <= diff)
         {
             DoScriptText(EMOTE_FRENZY, me);
             DoCast(me,SPELL_FRENZY);
@@ -66,14 +66,14 @@ struct OREGON_DLL_DECL boss_magmadarAI : public ScriptedAI
         } else Frenzy_Timer -= diff;
 
         //Panic_Timer
-        if (Panic_Timer < diff)
+        if (Panic_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_PANIC);
             Panic_Timer = 35000;
         } else Panic_Timer -= diff;
 
         //Lavabomb_Timer
-        if (Lavabomb_Timer < diff)
+        if (Lavabomb_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_LAVABOMB_ALT);

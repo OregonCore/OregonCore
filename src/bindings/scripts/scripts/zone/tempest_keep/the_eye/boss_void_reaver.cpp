@@ -98,7 +98,7 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
             return;
 
         // Pounding
-        if (Pounding_Timer < diff)
+        if (Pounding_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_POUNDING);
 
@@ -111,7 +111,7 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
         } else Pounding_Timer -= diff;
 
         // Arcane Orb
-        if (ArcaneOrb_Timer < diff)
+        if (ArcaneOrb_Timer <= diff)
         {
             Unit *pTarget = NULL;
             std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
@@ -134,7 +134,7 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
         } else ArcaneOrb_Timer -= diff;
 
         // Single Target knock back, reduces aggro
-        if (KnockAway_Timer < diff)
+        if (KnockAway_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_KNOCK_AWAY);
 
@@ -146,7 +146,7 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
         } else KnockAway_Timer -= diff;
 
         //Berserk
-        if (Berserk_Timer < diff && !Enraged)
+        if (Berserk_Timer <= diff && !Enraged)
         {
             DoCast(me,SPELL_BERSERK);
             Enraged = true;

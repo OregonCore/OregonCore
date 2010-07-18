@@ -67,7 +67,7 @@ struct OREGON_DLL_DECL boss_baroness_anastariAI : public ScriptedAI
             return;
 
         //BansheeWail
-        if (BansheeWail_Timer < diff)
+        if (BansheeWail_Timer <= diff)
         {
             if (rand()%100 < 95)
                 DoCast(me->getVictim(),SPELL_BANSHEEWAIL);
@@ -76,7 +76,7 @@ struct OREGON_DLL_DECL boss_baroness_anastariAI : public ScriptedAI
         } else BansheeWail_Timer -= diff;
 
         //BansheeCurse
-        if (BansheeCurse_Timer < diff)
+        if (BansheeCurse_Timer <= diff)
         {
             if (rand()%100 < 75)
                 DoCast(me->getVictim(),SPELL_BANSHEECURSE);
@@ -85,7 +85,7 @@ struct OREGON_DLL_DECL boss_baroness_anastariAI : public ScriptedAI
         } else BansheeCurse_Timer -= diff;
 
         //Silence
-        if (Silence_Timer < diff)
+        if (Silence_Timer <= diff)
         {
             if (rand()%100 < 80)
                 DoCast(me->getVictim(),SPELL_SILENCE);
@@ -94,7 +94,7 @@ struct OREGON_DLL_DECL boss_baroness_anastariAI : public ScriptedAI
         } else Silence_Timer -= diff;
 
         //Possess
-        /*            if (Possess_Timer < diff)
+        /*            if (Possess_Timer <= diff)
         {
         //Cast
           if (rand()%100 < 65)

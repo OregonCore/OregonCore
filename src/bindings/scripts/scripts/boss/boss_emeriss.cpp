@@ -64,7 +64,7 @@ struct OREGON_DLL_DECL boss_emerissAI : public ScriptedAI
             return;
 
         //Sleep_Timer
-        if (Sleep_Timer < diff)
+        if (Sleep_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_SLEEP);
@@ -73,14 +73,14 @@ struct OREGON_DLL_DECL boss_emerissAI : public ScriptedAI
         } else Sleep_Timer -= diff;
 
         //NoxiousBreath_Timer
-        if (NoxiousBreath_Timer < diff)
+        if (NoxiousBreath_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_NOXIOUSBREATH);
             NoxiousBreath_Timer = 14000 + rand()%6000;
         } else NoxiousBreath_Timer -= diff;
 
         //Tailsweep every 2 seconds
-        if (TailSweep_Timer < diff)
+        if (TailSweep_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_TAILSWEEP);
@@ -89,14 +89,14 @@ struct OREGON_DLL_DECL boss_emerissAI : public ScriptedAI
         } else TailSweep_Timer -= diff;
 
         //MarkOfNature_Timer
-        //if (MarkOfNature_Timer < diff)
+        //if (MarkOfNature_Timer <= diff)
         //{
         //    DoCast(me->getVictim(),SPELL_MARKOFNATURE);
         //    MarkOfNature_Timer = 45000;
         //} else MarkOfNature_Timer -= diff;
 
         //VolatileInfection_Timer
-        if (VolatileInfection_Timer < diff)
+        if (VolatileInfection_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_VOLATILEINFECTION);
             VolatileInfection_Timer = 7000 + rand()%5000;
@@ -105,7 +105,7 @@ struct OREGON_DLL_DECL boss_emerissAI : public ScriptedAI
         //CorruptionofEarth_Timer
         if ((int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 75)
         {
-            if (CorruptionofEarth1_Timer < diff)
+            if (CorruptionofEarth1_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_CORRUPTIONOFEARTH);
 
@@ -117,7 +117,7 @@ struct OREGON_DLL_DECL boss_emerissAI : public ScriptedAI
         //CorruptionofEarth_Timer
         if ((int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 50)
         {
-            if (CorruptionofEarth2_Timer < diff)
+            if (CorruptionofEarth2_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_CORRUPTIONOFEARTH);
 
@@ -129,7 +129,7 @@ struct OREGON_DLL_DECL boss_emerissAI : public ScriptedAI
         //CorruptionofEarth_Timer
         if ((int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 25)
         {
-            if (CorruptionofEarth3_Timer < diff)
+            if (CorruptionofEarth3_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_CORRUPTIONOFEARTH);
 

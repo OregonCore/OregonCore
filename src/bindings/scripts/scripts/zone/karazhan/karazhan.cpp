@@ -275,7 +275,7 @@ struct OREGON_DLL_DECL npc_barnesAI : public npc_escortAI
 
         if (HasEscortState(STATE_ESCORT_PAUSED))
         {
-            if (TalkTimer < diff)
+            if (TalkTimer <= diff)
             {
                 if (TalkCount > 3)
                 {
@@ -297,7 +297,7 @@ struct OREGON_DLL_DECL npc_barnesAI : public npc_escortAI
         {
             if (!RaidWiped)
             {
-                if (WipeTimer < diff)
+                if (WipeTimer <= diff)
                 {
                     Map* pMap = me->GetMap();
                     if (!pMap->IsDungeon()) return;
@@ -604,7 +604,7 @@ struct OREGON_DLL_DECL npc_image_of_medivhAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
 
-        if (YellTimer < diff)
+        if (YellTimer <= diff)
         {
             if (EventStarted)
             {
@@ -616,14 +616,14 @@ struct OREGON_DLL_DECL npc_image_of_medivhAI : public ScriptedAI
         {
             Unit* arca = Unit::GetUnit((*me),ArcanagosGUID);
 
-            if (FireArcanagosTimer < diff)
+            if (FireArcanagosTimer <= diff)
             {
                 if (arca)
                     arca->CastSpell(me, SPELL_FIRE_BALL, false);
                 FireArcanagosTimer = 6000;
             } else FireArcanagosTimer -= diff;
 
-            if (FireMedivhTimer < diff)
+            if (FireMedivhTimer <= diff)
             {
                 if (arca)
                     DoCast(arca, SPELL_FIRE_BALL);

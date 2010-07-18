@@ -55,14 +55,14 @@ struct OREGON_DLL_DECL boss_mothersmolderwebAI : public ScriptedAI
             return;
 
         //Crystalize_Timer
-        if (Crystalize_Timer < diff)
+        if (Crystalize_Timer <= diff)
         {
             DoCast(me,SPELL_CRYSTALIZE);
             Crystalize_Timer = 15000;
         } else Crystalize_Timer -= diff;
 
         //MothersMilk_Timer
-        if (MothersMilk_Timer < diff)
+        if (MothersMilk_Timer <= diff)
         {
             DoCast(me,SPELL_MOTHERSMILK);
             MothersMilk_Timer = 5000+rand()%7500;

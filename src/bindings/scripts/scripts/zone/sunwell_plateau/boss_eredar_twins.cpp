@@ -255,7 +255,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
 
         if (SisterDeath)
         {
-            if (ConflagrationTimer < diff)
+            if (ConflagrationTimer <= diff)
             {
                 if (!me->IsNonMeleeSpellCasted(false))
                 {
@@ -270,7 +270,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
         }
         else
         {
-            if (ShadownovaTimer < diff)
+            if (ShadownovaTimer <= diff)
             {
                 if (!me->IsNonMeleeSpellCasted(false))
                 {
@@ -290,7 +290,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
             } else ShadownovaTimer -=diff;
         }
 
-        if (ConfoundingblowTimer < diff)
+        if (ConfoundingblowTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
@@ -302,7 +302,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
             }
         } else ConfoundingblowTimer -=diff;
 
-        if (ShadowimageTimer < diff)
+        if (ShadowimageTimer <= diff)
         {
             Unit *pTarget = NULL;
             Creature* temp = NULL;
@@ -316,7 +316,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
             ShadowimageTimer = 20000;
         } else ShadowimageTimer -=diff;
 
-        if (ShadowbladesTimer < diff)
+        if (ShadowbladesTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
@@ -325,7 +325,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
             }
         } else ShadowbladesTimer -=diff;
 
-        if (EnrageTimer < diff && !Enraged)
+        if (EnrageTimer <= diff && !Enraged)
         {
             me->InterruptSpell(CURRENT_GENERIC_SPELL);
             DoScriptText(YELL_ENRAGE, me);
@@ -567,7 +567,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
     {
         if (IntroStepCounter < 9)
         {
-            if (IntroYellTimer < diff)
+            if (IntroYellTimer <= diff)
             {
                 IntroYellTimer = IntroStep(++IntroStepCounter);
             } else IntroYellTimer -= diff;
@@ -594,7 +594,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
 
         if (SisterDeath)
         {
-            if (ShadownovaTimer < diff)
+            if (ShadownovaTimer <= diff)
             {
                 if (!me->IsNonMeleeSpellCasted(false))
                 {
@@ -608,7 +608,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
         }
         else
         {
-            if (ConflagrationTimer < diff)
+            if (ConflagrationTimer <= diff)
             {
                 if (!me->IsNonMeleeSpellCasted(false))
                 {
@@ -631,7 +631,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
             } else ConflagrationTimer -= diff;
         }
 
-        if (FlamesearTimer < diff)
+        if (FlamesearTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
@@ -640,7 +640,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
             }
         } else FlamesearTimer -=diff;
 
-        if (PyrogenicsTimer < diff)
+        if (PyrogenicsTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
@@ -649,7 +649,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
             }
         } else PyrogenicsTimer -= diff;
 
-        if (BlazeTimer < diff)
+        if (BlazeTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
@@ -658,7 +658,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
             }
         } else BlazeTimer -= diff;
 
-        if (EnrageTimer < diff && !Enraged)
+        if (EnrageTimer <= diff && !Enraged)
         {
             me->InterruptSpell(CURRENT_GENERIC_SPELL);
             DoScriptText(YELL_BERSERK, me);
@@ -714,7 +714,7 @@ struct OREGON_DLL_DECL mob_shadow_imageAI : public ScriptedAI
         if (!me->HasAura(SPELL_IMAGE_VISUAL, 0))
             DoCast(me, SPELL_IMAGE_VISUAL);
 
-        if (KillTimer < diff)
+        if (KillTimer <= diff)
         {
             me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             KillTimer = 9999999;
@@ -723,13 +723,13 @@ struct OREGON_DLL_DECL mob_shadow_imageAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (ShadowfuryTimer < diff)
+        if (ShadowfuryTimer <= diff)
         {
             DoCast(me, SPELL_SHADOW_FURY);
             ShadowfuryTimer = 10000;
         } else ShadowfuryTimer -=diff;
 
-        if (DarkstrikeTimer < diff)
+        if (DarkstrikeTimer <= diff)
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {

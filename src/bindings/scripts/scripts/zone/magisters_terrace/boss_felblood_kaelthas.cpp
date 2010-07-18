@@ -298,7 +298,7 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                 // *Heroic mode only:
                 if (Heroic)
                 {
-                    if (PyroblastTimer < diff)
+                    if (PyroblastTimer <= diff)
                     {
                         DoCast(me, SPELL_SHOCK_BARRIER, true);
                         DoCast(me->getVictim(), SPELL_PYROBLAST);
@@ -306,13 +306,13 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                     } else PyroblastTimer -= diff;
                 }
 
-                if (FireballTimer < diff)
+                if (FireballTimer <= diff)
                 {
                     DoCast(me->getVictim(), Heroic ? SPELL_FIREBALL_HEROIC : SPELL_FIREBALL_NORMAL);
                     FireballTimer = 2000 + rand()%4000;
                 } else FireballTimer -= diff;
 
-                if (PhoenixTimer < diff)
+                if (PhoenixTimer <= diff)
                 {
                     uint32 random = rand()%2 + 1;
                     float x = KaelLocations[random][0];
@@ -342,7 +342,7 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                     PhoenixTimer = 40000;
                 } else PhoenixTimer -= diff;
 
-                if (FlameStrikeTimer < diff)
+                if (FlameStrikeTimer <= diff)
                 {
                     if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     {
@@ -372,7 +372,7 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
             case 1:
             {
                 me->StopMoving();
-                if (GravityLapseTimer < diff)
+                if (GravityLapseTimer <= diff)
                 {
                     switch(GravityLapsePhase)
                     {
@@ -482,7 +482,7 @@ struct OREGON_DLL_DECL mob_felkael_flamestrikeAI : public ScriptedAI
     void MoveInLineOfSight(Unit *who) {}
     void UpdateAI(const uint32 diff)
     {
-        if (FlameStrikeTimer < diff)
+        if (FlameStrikeTimer <= diff)
         {
             DoCast(me, Heroic ? SPELL_FLAMESTRIKE1_HEROIC : SPELL_FLAMESTRIKE1_NORMAL, true);
             me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -524,7 +524,7 @@ struct OREGON_DLL_DECL mob_felkael_phoenixAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (CheckTimer < diff)
+        if (CheckTimer <= diff)
         {
             if (pInstance)
             {
@@ -545,7 +545,7 @@ struct OREGON_DLL_DECL mob_felkael_phoenixAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (BurnTimer < diff)
+        if (BurnTimer <= diff)
         {
             if (!phase)
             {
@@ -580,7 +580,7 @@ struct OREGON_DLL_DECL mob_felkael_phoenix_eggAI : public Scripted_NoMovementAI
     void UpdateAI(const uint32 diff)
     {
 
-        if (HatchTimer < diff)
+        if (HatchTimer <= diff)
         {
             Creature *bird = DoSpawnCreature(CREATURE_PHOENIX, 0, 0, 0, 0, TEMPSUMMON_CORPSE_DESPAWN, 60000);
             if (bird)
@@ -636,14 +636,14 @@ struct OREGON_DLL_DECL mob_arcane_sphereAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (DespawnTimer < diff)
+        if (DespawnTimer <= diff)
             me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
         else DespawnTimer -= diff;
 
         if (!UpdateVictim())
             ChangeTargetTimer = 0;
 
-        if (ChangeTargetTimer < diff)
+        if (ChangeTargetTimer <= diff)
         {
             DoResetThreat();
             Unit *ntarget = SelectUnit(SELECT_TARGET_RANDOM,0);
@@ -652,7 +652,7 @@ struct OREGON_DLL_DECL mob_arcane_sphereAI : public ScriptedAI
             ChangeTargetTimer = 10000;
         } else ChangeTargetTimer -= diff;
 
-        if (CheckTimer < diff)
+        if (CheckTimer <= diff)
         {
             if (pInstance)
             {

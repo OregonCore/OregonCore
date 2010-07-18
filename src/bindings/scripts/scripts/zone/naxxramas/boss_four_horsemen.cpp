@@ -83,7 +83,7 @@
                 return;
 
             // Mark of Blaumeux
-            if (Mark_Timer < diff)
+            if (Mark_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_MARK_OF_BLAUMEUX);
                 Mark_Timer = 12000;
@@ -108,7 +108,7 @@
            }
 
            // Void Zone
-           if (VoidZone_Timer < diff)
+           if (VoidZone_Timer <= diff)
            {
                DoCast(me->getVictim(),SPELL_VOIDZONE);
                VoidZone_Timer = 12000;
@@ -239,7 +239,7 @@
                return;
 
            // Mark of Korthazz
-           if (Mark_Timer < diff)
+           if (Mark_Timer <= diff)
            {
                DoCast(me->getVictim(),SPELL_MARK_OF_KORTHAZZ);
                Mark_Timer = 12000;
@@ -264,7 +264,7 @@
            }
 
            // Meteor
-           if (Meteor_Timer < diff)
+           if (Meteor_Timer <= diff)
            {
                DoCast(me->getVictim(),SPELL_METEOR);
                Meteor_Timer = 20000;                           // wrong
@@ -335,7 +335,7 @@
                return;
 
            // Mark of Zeliek
-           if (Mark_Timer < diff)
+           if (Mark_Timer <= diff)
            {
                DoCast(me->getVictim(),SPELL_MARK_OF_ZELIEK);
                Mark_Timer = 12000;
@@ -360,7 +360,7 @@
            }
 
            // Holy Wrath
-           if (HolyWrath_Timer < diff)
+           if (HolyWrath_Timer <= diff)
            {
                DoCast(me->getVictim(),SPELL_HOLY_WRATH);
                HolyWrath_Timer = 12000;

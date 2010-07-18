@@ -104,7 +104,7 @@ struct mob_ancient_wispAI : public ScriptedAI
                 ArchimondeGUID = pInstance->GetData64(DATA_ARCHIMONDE);
         }
 
-        if (CheckTimer < diff)
+        if (CheckTimer <= diff)
         {
             if (ArchimondeGUID)
             {
@@ -187,7 +187,7 @@ struct OREGON_DLL_DECL mob_doomfireAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (RefreshTimer < diff)
+        if (RefreshTimer <= diff)
             RefreshTimer = 0;
         else RefreshTimer -= diff;
 
@@ -202,7 +202,7 @@ struct OREGON_DLL_DECL mob_doomfireAI : public ScriptedAI
             }
         }
 
-        if (CheckTimer < diff)
+        if (CheckTimer <= diff)
         {
             if (ArchimondeGUID)
             {
@@ -253,7 +253,7 @@ struct OREGON_DLL_DECL mob_doomfire_targettingAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (SummonTimer < diff)
+        if (SummonTimer <= diff)
         {
             if (ArchimondeGUID)
             {
@@ -276,7 +276,7 @@ struct OREGON_DLL_DECL mob_doomfire_targettingAI : public ScriptedAI
                 me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
         } else SummonTimer -= diff;
 
-        if (ChangeTargetTimer < diff)
+        if (ChangeTargetTimer <= diff)
         {
             Unit *pTarget = NULL;
             switch(rand()%2)
@@ -550,7 +550,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
                 }
             }
 
-            if (DrainNordrassilTimer < diff)
+            if (DrainNordrassilTimer <= diff)
             {
                 if (!IsChanneling)
                 {
@@ -582,7 +582,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
 
         if (!Enraged)
         {
-            if (EnrageTimer < diff)
+            if (EnrageTimer <= diff)
             {
                 if ((me->GetHealth()*100 / me->GetMaxHealth()) > 10)
                 {
@@ -593,7 +593,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
                 }
             } else EnrageTimer -= diff;
 
-            if (CheckDistanceTimer < diff)
+            if (CheckDistanceTimer <= diff)
             {
                 // To simplify the check, we simply summon a creature in the location and then check how far we are from the creature
                 Creature* Check = me->SummonCreature(CREATURE_CHANNEL_TARGET, NORDRASSIL_X, NORDRASSIL_Y, NORDRASSIL_Z, 0, TEMPSUMMON_TIMED_DESPAWN, 2000);
@@ -626,7 +626,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
                 Enraged = true;
             }
 
-            if (SummonWispTimer < diff)
+            if (SummonWispTimer <= diff)
             {
                 Creature* Wisp = DoSpawnCreature(CREATURE_ANCIENT_WISP, rand()%40, rand()%40, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
                 if (Wisp)
@@ -644,7 +644,7 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
 
         if (Enraged)
         {
-            if (HandOfDeathTimer < diff)
+            if (HandOfDeathTimer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_HAND_OF_DEATH);
                 HandOfDeathTimer = 2000;
@@ -654,18 +654,18 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
 
         if (SoulChargeCount)
         {
-            if (SoulChargeTimer < diff)
+            if (SoulChargeTimer <= diff)
                 UnleashSoulCharge();
             else SoulChargeTimer -= diff;
         }
 
-        if (GripOfTheLegionTimer < diff)
+        if (GripOfTheLegionTimer <= diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_GRIP_OF_THE_LEGION);
             GripOfTheLegionTimer = 5000 + rand()%20000;
         } else GripOfTheLegionTimer -= diff;
 
-        if (AirBurstTimer < diff)
+        if (AirBurstTimer <= diff)
         {
             if (rand()%2 == 0)
                 DoScriptText(SAY_AIR_BURST1, me);
@@ -676,19 +676,19 @@ struct OREGON_DLL_DECL boss_archimondeAI : public hyjal_trashAI
             AirBurstTimer = 25000 + rand()%15000;
         } else AirBurstTimer -= diff;
 
-        if (FearTimer < diff)
+        if (FearTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_FEAR);
             FearTimer = 42000;
         } else FearTimer -= diff;
 
-        if (DoomfireTimer < diff)
+        if (DoomfireTimer <= diff)
         {
             SummonDoomfire(SelectUnit(SELECT_TARGET_RANDOM, 1));
             DoomfireTimer = 40000;
         } else DoomfireTimer -= diff;
 
-        if (MeleeRangeCheckTimer < diff)
+        if (MeleeRangeCheckTimer <= diff)
         {
             if (CanUseFingerOfDeath())
             {

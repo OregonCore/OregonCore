@@ -138,7 +138,7 @@ struct OREGON_DLL_DECL boss_archaedasAI : public ScriptedAI
 
 
         // wake a wall minion
-        if (WallMinionTimer < diff) {
+        if (WallMinionTimer <= diff) {
             pInstance->SetData (DATA_MINIONS, IN_PROGRESS);
 
             WallMinionTimer = 10000;
@@ -169,7 +169,7 @@ struct OREGON_DLL_DECL boss_archaedasAI : public ScriptedAI
         }
 
 
-        if (Tremor_Timer < diff)
+        if (Tremor_Timer <= diff)
         {
             //Cast
             DoCast(me->getVictim(),SPELL_GROUND_TREMOR);

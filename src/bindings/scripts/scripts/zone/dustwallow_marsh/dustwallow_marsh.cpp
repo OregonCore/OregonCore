@@ -66,14 +66,14 @@ struct OREGON_DLL_DECL mobs_risen_husk_spiritAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (ConsumeFlesh_Timer < diff)
+        if (ConsumeFlesh_Timer <= diff)
         {
             if (me->GetEntry() == 23555)
                 DoCast(me->getVictim(),SPELL_CONSUME_FLESH);
             ConsumeFlesh_Timer = 15000;
         } else ConsumeFlesh_Timer -= diff;
 
-        if (IntangiblePresence_Timer < diff)
+        if (IntangiblePresence_Timer <= diff)
         {
             if (me->GetEntry() == 23554)
                 DoCast(me->getVictim(),SPELL_INTANGIBLE_PRESENCE);

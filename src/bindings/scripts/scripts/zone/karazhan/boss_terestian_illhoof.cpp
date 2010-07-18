@@ -114,7 +114,7 @@ struct OREGON_DLL_DECL mob_kilrekAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (AmplifyTimer < diff)
+        if (AmplifyTimer <= diff)
         {
             me->InterruptNonMeleeSpells(false);
             DoCast(me->getVictim(),SPELL_AMPLIFY_FLAMES);
@@ -253,7 +253,7 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (CheckKilrekTimer < diff)
+        if (CheckKilrekTimer <= diff)
         {
             CheckKilrekTimer = 5000;
 
@@ -278,7 +278,7 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
             }
         } else CheckKilrekTimer -= diff;
 
-        if (SacrificeTimer < diff)
+        if (SacrificeTimer <= diff)
         {
             Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
             if (pTarget && pTarget->isAlive() && pTarget->GetTypeId() == TYPEID_PLAYER)
@@ -299,13 +299,13 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
             }
         } else SacrificeTimer -= diff;
 
-        if (ShadowboltTimer < diff)
+        if (ShadowboltTimer <= diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_TOPAGGRO, 0), SPELL_SHADOW_BOLT);
             ShadowboltTimer = 10000;
         } else ShadowboltTimer -= diff;
 
-        if (SummonTimer < diff)
+        if (SummonTimer <= diff)
         {
             if (!SummonedPortals)
             {
@@ -334,7 +334,7 @@ struct OREGON_DLL_DECL boss_terestianAI : public ScriptedAI
 
         if (!Berserk)
         {
-            if (BerserkTimer < diff)
+            if (BerserkTimer <= diff)
             {
                 DoCast(me, SPELL_BERSERK);
                 Berserk = true;
@@ -366,7 +366,7 @@ struct OREGON_DLL_DECL mob_fiendish_impAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (FireboltTimer < diff)
+        if (FireboltTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_FIREBOLT);
             FireboltTimer = 1500;

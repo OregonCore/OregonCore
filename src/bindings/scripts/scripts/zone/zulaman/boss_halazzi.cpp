@@ -207,7 +207,7 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (BerserkTimer < diff)
+        if (BerserkTimer <= diff)
         {
             DoYell(YELL_BERSERK, LANG_UNIVERSAL, NULL);
             DoPlaySoundToSet(me, SOUND_BERSERK);
@@ -217,7 +217,7 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
 
         if (Phase == PHASE_LYNX || Phase == PHASE_ENRAGE)
         {
-            if (SaberlashTimer < diff)
+            if (SaberlashTimer <= diff)
             {
                 // A tank with more than 490 defense skills should receive no critical hit
                 //me->CastSpell(me, 41296, true);
@@ -226,14 +226,14 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
                 SaberlashTimer = 30000;
             } else SaberlashTimer -= diff;
 
-            if (FrenzyTimer < diff)
+            if (FrenzyTimer <= diff)
             {
                 DoCast(me, SPELL_FRENZY);
                 FrenzyTimer = (10+rand()%5)*1000;
             } else FrenzyTimer -= diff;
 
             if (Phase == PHASE_LYNX)
-                if (CheckTimer < diff)
+                if (CheckTimer <= diff)
                 {
                     if (me->GetHealth() * 4 < me->GetMaxHealth() * (3 - TransformCount))
                         EnterPhase(PHASE_SPLIT);
@@ -243,13 +243,13 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
 
         if (Phase == PHASE_HUMAN || Phase == PHASE_ENRAGE)
         {
-            if (TotemTimer < diff)
+            if (TotemTimer <= diff)
             {
                 DoCast(me, SPELL_SUMMON_TOTEM);
                 TotemTimer = 20000;
             } else TotemTimer -= diff;
 
-            if (ShockTimer < diff)
+            if (ShockTimer <= diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 {
@@ -262,7 +262,7 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
             } else ShockTimer -= diff;
 
             if (Phase == PHASE_HUMAN)
-                if (CheckTimer < diff)
+                if (CheckTimer <= diff)
                 {
                     if (((me->GetHealth()*100) / me->GetMaxHealth() <= 20)/*me->GetHealth() * 10 < me->GetMaxHealth()*/)
                         EnterPhase(PHASE_MERGE);
@@ -278,7 +278,7 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
 
         if (Phase == PHASE_MERGE)
         {
-            if (CheckTimer < diff)
+            if (CheckTimer <= diff)
             {
                 Unit *Lynx = Unit::GetUnit(*me, LynxGUID);
                 if (Lynx)
@@ -360,13 +360,13 @@ struct OREGON_DLL_DECL boss_spiritlynxAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (FrenzyTimer < diff)
+        if (FrenzyTimer <= diff)
         {
             DoCast(me, SPELL_LYNX_FRENZY);
             FrenzyTimer = (30+rand()%20)*1000;
         } else FrenzyTimer -= diff;
 
-        if (shredder_timer < diff)
+        if (shredder_timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_SHRED_ARMOR);
             shredder_timer = 4000;

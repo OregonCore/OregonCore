@@ -78,7 +78,7 @@ struct OREGON_DLL_DECL boss_jandicebarovAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (Invisible && Invisible_Timer < diff)
+        if (Invisible && Invisible_Timer <= diff)
         {
             //Become visible again
             me->setFaction(14);
@@ -97,7 +97,7 @@ struct OREGON_DLL_DECL boss_jandicebarovAI : public ScriptedAI
             return;
 
         //CurseOfBlood_Timer
-        if (CurseOfBlood_Timer < diff)
+        if (CurseOfBlood_Timer <= diff)
         {
             //Cast
             DoCast(me->getVictim(),SPELL_CURSEOFBLOOD);
@@ -107,7 +107,7 @@ struct OREGON_DLL_DECL boss_jandicebarovAI : public ScriptedAI
         } else CurseOfBlood_Timer -= diff;
 
         //Illusion_Timer
-        if (!Invisible && Illusion_Timer < diff)
+        if (!Invisible && Illusion_Timer <= diff)
         {
 
             //Inturrupt any spell casting
@@ -134,7 +134,7 @@ struct OREGON_DLL_DECL boss_jandicebarovAI : public ScriptedAI
 
 
         //            //Illusion_Timer
-        //            if (Illusion_Timer < diff)
+        //            if (Illusion_Timer <= diff)
         //            {
         //                  //Cast
         //                DoCast(me->getVictim(),SPELL_ILLUSION);
@@ -182,7 +182,7 @@ struct OREGON_DLL_DECL mob_illusionofjandicebarovAI : public ScriptedAI
             return;
 
         //Cleave_Timer
-        if (Cleave_Timer < diff)
+        if (Cleave_Timer <= diff)
         {
             //Cast
             DoCast(me->getVictim(),SPELL_CLEAVE);

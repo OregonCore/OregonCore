@@ -53,21 +53,21 @@ struct OREGON_DLL_DECL boss_hazzarahAI : public ScriptedAI
             return;
 
         //ManaBurn_Timer
-        if (ManaBurn_Timer < diff)
+        if (ManaBurn_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_MANABURN);
             ManaBurn_Timer = 8000 + rand()%8000;
         } else ManaBurn_Timer -= diff;
 
         //Sleep_Timer
-        if (Sleep_Timer < diff)
+        if (Sleep_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SLEEP);
             Sleep_Timer = 12000 + rand()%8000;
         } else Sleep_Timer -= diff;
 
         //Illusions_Timer
-        if (Illusions_Timer < diff)
+        if (Illusions_Timer <= diff)
         {
             //We will summon 3 illusions that will spawn on a random gamer and attack this gamer
             //We will just use one model for the beginning

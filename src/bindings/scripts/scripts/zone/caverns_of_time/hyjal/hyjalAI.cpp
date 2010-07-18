@@ -751,7 +751,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
 {
     if (IsDummy)
     {
-        if (MassTeleportTimer < diff && DoMassTeleport)
+        if (MassTeleportTimer <= diff && DoMassTeleport)
         {
             me->CastSpell(me,SPELL_MASS_TELEPORT,false);
             DoMassTeleport = false;
@@ -792,7 +792,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
     }
     if (DoRespawn)
     {
-        if (RespawnTimer < diff)
+        if (RespawnTimer <= diff)
         {
             DoRespawn = false;
             RespawnNearPos(me->GetPositionX(), me->GetPositionY());
@@ -815,7 +815,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
         DoOverrun(Faction, diff);
     if (bRetreat)
     {
-        if (RetreatTimer < diff)
+        if (RetreatTimer <= diff)
         {
             IsDummy = true;
             bRetreat = false;
@@ -847,7 +847,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
                 NextWaveTimer = 5000;
         }
 
-        if (NextWaveTimer < diff)
+        if (NextWaveTimer <= diff)
         {
             if (Faction == 0)
                 SummonNextWave(AllianceWaves, WaveCount, AllianceBase);
@@ -857,7 +857,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
         } else NextWaveTimer -= diff;
     }
 
-    if (CheckTimer < diff)
+    if (CheckTimer <= diff)
     {
         for (uint8 i = 0; i < 2; ++i)
         {
@@ -894,7 +894,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
     {
         if (Spell[i].SpellId)
         {
-            if (SpellTimer[i] < diff)
+            if (SpellTimer[i] <= diff)
             {
                 if (me->IsNonMeleeSpellCasted(false))
                     me->InterruptNonMeleeSpells(false);
@@ -1044,7 +1044,7 @@ void hyjalAI::DoOverrun(uint32 faction, const uint32 diff)
     npc_escortAI::UpdateAI(diff);
     if (WaitForTeleport)
     {
-        if (TeleportTimer < diff)
+        if (TeleportTimer <= diff)
         {
             CellPair pair(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
             Cell cell(pair);

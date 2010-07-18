@@ -91,14 +91,14 @@ struct OREGON_DLL_DECL boss_amnennar_the_coldbringerAI : public ScriptedAI
             return;
 
         //AmnenarsWrath_Timer
-        if (AmnenarsWrath_Timer < diff)
+        if (AmnenarsWrath_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_AMNENNARSWRATH);
             AmnenarsWrath_Timer = 12000;
         } else AmnenarsWrath_Timer -= diff;
 
         //FrostBolt_Timer
-        if (FrostBolt_Timer < diff)
+        if (FrostBolt_Timer <= diff)
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);

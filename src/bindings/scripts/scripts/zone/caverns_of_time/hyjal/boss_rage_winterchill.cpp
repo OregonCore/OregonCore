@@ -130,12 +130,12 @@ struct OREGON_DLL_DECL boss_rage_winterchillAI : public hyjal_trashAI
         if (!UpdateVictim())
             return;
 
-        if (FrostArmorTimer < diff)
+        if (FrostArmorTimer <= diff)
         {
             DoCast(me, SPELL_FROST_ARMOR);
             FrostArmorTimer = 40000+rand()%20000;
         } else FrostArmorTimer -= diff;
-        if (DecayTimer < diff)
+        if (DecayTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_DEATH_AND_DECAY);
             DecayTimer = 60000+rand()%20000;
@@ -151,7 +151,7 @@ struct OREGON_DLL_DECL boss_rage_winterchillAI : public hyjal_trashAI
                     break;
             }
         } else DecayTimer -= diff;
-        if (NovaTimer < diff)
+        if (NovaTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_FROST_NOVA);
             NovaTimer = 30000+rand()%15000;
@@ -167,7 +167,7 @@ struct OREGON_DLL_DECL boss_rage_winterchillAI : public hyjal_trashAI
                     break;
             }
         } else NovaTimer -= diff;
-        if (IceboltTimer < diff)
+        if (IceboltTimer <= diff)
         {
             DoCast(SelectTarget(SELECT_TARGET_RANDOM,0,40,true), SPELL_ICEBOLT);
             IceboltTimer = 11000+rand()%20000;

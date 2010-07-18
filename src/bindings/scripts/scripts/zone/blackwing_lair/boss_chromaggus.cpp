@@ -193,7 +193,7 @@ struct OREGON_DLL_DECL boss_chromaggusAI : public ScriptedAI
             return;
 
         //Shimmer_Timer Timer
-        if (Shimmer_Timer < diff)
+        if (Shimmer_Timer <= diff)
         {
             //Remove old vurlnability spell
             if (CurrentVurln_Spell)
@@ -218,21 +218,21 @@ struct OREGON_DLL_DECL boss_chromaggusAI : public ScriptedAI
         } else Shimmer_Timer -= diff;
 
         //Breath1_Timer
-        if (Breath1_Timer < diff)
+        if (Breath1_Timer <= diff)
         {
             DoCast(me->getVictim(),Breath1_Spell);
             Breath1_Timer = 60000;
         } else Breath1_Timer -= diff;
 
         //Breath2_Timer
-        if (Breath2_Timer < diff)
+        if (Breath2_Timer <= diff)
         {
             DoCast(me->getVictim(),Breath2_Spell);
             Breath2_Timer = 60000;
         } else Breath2_Timer -= diff;
 
         //Affliction_Timer
-        if (Affliction_Timer < diff)
+        if (Affliction_Timer <= diff)
         {
             uint32 SpellAfflict = 0;
 
@@ -283,7 +283,7 @@ struct OREGON_DLL_DECL boss_chromaggusAI : public ScriptedAI
         } else Affliction_Timer -= diff;
 
         //Frenzy_Timer
-        if (Frenzy_Timer < diff)
+        if (Frenzy_Timer <= diff)
         {
             DoCast(me,SPELL_FRENZY);
             DoScriptText(EMOTE_FRENZY, me);

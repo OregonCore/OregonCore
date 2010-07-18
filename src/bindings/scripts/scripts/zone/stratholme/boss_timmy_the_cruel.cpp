@@ -56,7 +56,7 @@ struct OREGON_DLL_DECL boss_timmy_the_cruelAI : public ScriptedAI
             return;
 
         //RavenousClaw
-        if (RavenousClaw_Timer < diff)
+        if (RavenousClaw_Timer <= diff)
         {
             //Cast
             DoCast(me->getVictim(),SPELL_RAVENOUSCLAW);

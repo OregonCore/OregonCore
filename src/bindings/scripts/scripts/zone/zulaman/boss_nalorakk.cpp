@@ -337,7 +337,7 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
         if (waitTimer)
         {
             if (inMove)
-                if (waitTimer < diff)
+                if (waitTimer <= diff)
                 {
                     (*me).GetMotionMaster()->MovementExpired();
                     (*me).GetMotionMaster()->MovePoint(MovePhase,NalorakkWay[MovePhase][0],NalorakkWay[MovePhase][1],NalorakkWay[MovePhase][2]);
@@ -348,7 +348,7 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Berserk_Timer < diff)
+        if (Berserk_Timer <= diff)
         {
             DoCast(me, SPELL_BERSERK, true);
             DoYell(YELL_BERSERK, LANG_UNIVERSAL, NULL);
@@ -356,7 +356,7 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
             Berserk_Timer = 600000;
         } else Berserk_Timer -= diff;
 
-        if (ShapeShift_Timer < diff)
+        if (ShapeShift_Timer <= diff)
         {
             if (inBearForm)
             {
@@ -386,13 +386,13 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
 
         if (!inBearForm)
         {
-            if (BrutalSwipe_Timer < diff)
+            if (BrutalSwipe_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_BRUTALSWIPE);
                 BrutalSwipe_Timer = 7000 + rand()%5000;
             } else BrutalSwipe_Timer -= diff;
 
-            if (Mangle_Timer < diff)
+            if (Mangle_Timer <= diff)
             {
                 if (me->getVictim() && !me->getVictim()->HasAura(SPELL_MANGLEEFFECT, 0))
                 {
@@ -402,7 +402,7 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
                 else Mangle_Timer = 10000 + rand()%5000;
             } else Mangle_Timer -= diff;
 
-            if (Surge_Timer < diff)
+            if (Surge_Timer <= diff)
             {
                 DoYell(YELL_SURGE, LANG_UNIVERSAL, NULL);
                 DoPlaySoundToSet(me, SOUND_YELL_SURGE);
@@ -414,19 +414,19 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
         }
         else
         {
-            if (LaceratingSlash_Timer < diff)
+            if (LaceratingSlash_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_LACERATINGSLASH);
                 LaceratingSlash_Timer = 18000 + rand()%5000;
             } else LaceratingSlash_Timer -= diff;
 
-            if (RendFlesh_Timer < diff)
+            if (RendFlesh_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_RENDFLESH);
                 RendFlesh_Timer = 5000 + rand()%5000;
             } else RendFlesh_Timer -= diff;
 
-            if (DeafeningRoar_Timer < diff)
+            if (DeafeningRoar_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_DEAFENINGROAR);
                 DeafeningRoar_Timer = 15000 + rand()%5000;

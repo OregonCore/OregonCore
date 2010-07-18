@@ -255,7 +255,7 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
 
             if (pInstance->GetData(TYPE_NETHEKURSE) == IN_PROGRESS)
             {
-                if (IntroEvent_Timer < diff)
+                if (IntroEvent_Timer <= diff)
                 {
                     DoTauntPeons();
                 } else IntroEvent_Timer -= diff;
@@ -276,7 +276,7 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
                 SpinOnce = true;
             }
 
-            if (Cleave_Timer < diff)
+            if (Cleave_Timer <= diff)
             {
                 DoCast(me->getVictim(),(HeroicMode ? H_SPELL_SHADOW_SLAM : SPELL_SHADOW_CLEAVE));
                 Cleave_Timer = 6000+rand()%2500;
@@ -284,14 +284,14 @@ struct OREGON_DLL_DECL boss_grand_warlock_nethekurseAI : public ScriptedAI
         }
         else
         {
-            if (ShadowFissure_Timer < diff)
+            if (ShadowFissure_Timer <= diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                     DoCast(pTarget,SPELL_SHADOW_FISSURE);
                 ShadowFissure_Timer = 7500+rand()%7500;
             } else ShadowFissure_Timer -= diff;
 
-            if (DeathCoil_Timer < diff)
+            if (DeathCoil_Timer <= diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                     DoCast(pTarget,SPELL_DEATH_COIL);
@@ -362,7 +362,7 @@ struct OREGON_DLL_DECL mob_fel_orc_convertAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Hemorrhage_Timer < diff)
+        if (Hemorrhage_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_HEMORRHAGE);
             Hemorrhage_Timer = 15000;
@@ -402,7 +402,7 @@ struct OREGON_DLL_DECL mob_lesser_shadow_fissureAI : public ScriptedAI
             Start = true;
         }
 
-        if (Stop_Timer < diff)
+        if (Stop_Timer <= diff)
         {
             me->setDeathState(JUST_DIED);
             me->SetHealth(0);

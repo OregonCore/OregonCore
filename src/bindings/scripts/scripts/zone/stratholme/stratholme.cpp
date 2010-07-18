@@ -154,7 +154,7 @@ struct OREGON_DLL_DECL mob_restless_soulAI : public ScriptedAI
     {
         if (Tagged)
         {
-            if (Die_Timer < diff)
+            if (Die_Timer <= diff)
             {
                 if (Unit* temp = Unit::GetUnit(*me,Tagger))
                     temp->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -216,7 +216,7 @@ struct OREGON_DLL_DECL mobs_spectral_ghostly_citizenAI : public ScriptedAI
     {
         if (Tagged)
         {
-            if (Die_Timer < diff)
+            if (Die_Timer <= diff)
             {
                 me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             } else Die_Timer -= diff;

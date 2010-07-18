@@ -115,7 +115,7 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
 
         // Growth
         // Gruul can cast this spell up to 30 times
-        if (Growth_Timer < diff)
+        if (Growth_Timer <= diff)
         {
             DoCast(me,SPELL_GROWTH);
             DoScriptText(EMOTE_GROW, me);
@@ -124,7 +124,7 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
 
         if (PerformingGroundSlam)
         {
-            if (GroundSlamTimer < diff)
+            if (GroundSlamTimer <= diff)
             {
                 switch(GroundSlamStage)
                 {
@@ -236,7 +236,7 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
         else
         {
             // Hurtful Strike
-            if (HurtfulStrike_Timer < diff)
+            if (HurtfulStrike_Timer <= diff)
             {
                 Unit *pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO,1);
@@ -250,14 +250,14 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
             } else HurtfulStrike_Timer -= diff;
 
             // Reverberation
-            if (Reverberation_Timer < diff)
+            if (Reverberation_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_REVERBERATION, true);
                 Reverberation_Timer = 30000;
             } else Reverberation_Timer -= diff;
 
             // Cave In
-            if (CaveIn_Timer < diff)
+            if (CaveIn_Timer <= diff)
             {
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                     DoCast(pTarget,SPELL_CAVE_IN);
@@ -266,7 +266,7 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
             } else CaveIn_Timer -= diff;
 
             // Ground Slam, Gronn Lord's Grasp, Stoned, Shatter
-            if (GroundSlamTimer < diff)
+            if (GroundSlamTimer <= diff)
             {
                 me->GetMotionMaster()->Clear();
                 me->GetMotionMaster()->MoveIdle();

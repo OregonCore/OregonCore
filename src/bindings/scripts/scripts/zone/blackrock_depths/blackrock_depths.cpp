@@ -361,7 +361,7 @@ struct OREGON_DLL_DECL mob_phalanxAI : public ScriptedAI
             return;
 
         //ThunderClap_Timer
-        if (ThunderClap_Timer < diff)
+        if (ThunderClap_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_THUNDERCLAP);
             ThunderClap_Timer = 10000;
@@ -370,7 +370,7 @@ struct OREGON_DLL_DECL mob_phalanxAI : public ScriptedAI
         //FireballVolley_Timer
         if (me->GetHealth()*100 / me->GetMaxHealth() < 51)
         {
-            if (FireballVolley_Timer < diff)
+            if (FireballVolley_Timer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_FIREBALLVOLLEY);
                 FireballVolley_Timer = 15000;
@@ -378,7 +378,7 @@ struct OREGON_DLL_DECL mob_phalanxAI : public ScriptedAI
         }
 
         //MightyBlow_Timer
-        if (MightyBlow_Timer < diff)
+        if (MightyBlow_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_MIGHTYBLOW);
             MightyBlow_Timer = 10000;

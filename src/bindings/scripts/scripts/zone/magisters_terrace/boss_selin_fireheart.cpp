@@ -254,7 +254,7 @@ struct OREGON_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
             uint32 maxPowerMana = me->GetMaxPower(POWER_MANA);
             if (maxPowerMana && ((me->GetPower(POWER_MANA)*100 / maxPowerMana) < 10))
             {
-                if (DrainLifeTimer < diff)
+                if (DrainLifeTimer <= diff)
                 {
                     DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_DRAIN_LIFE);
                     DrainLifeTimer = 10000;
@@ -263,7 +263,7 @@ struct OREGON_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
                 // Heroic only
                 if (Heroic)
                 {
-                    if (DrainManaTimer < diff)
+                    if (DrainManaTimer <= diff)
                     {
                         DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_DRAIN_MANA);
                         DrainManaTimer = 10000;
@@ -271,7 +271,7 @@ struct OREGON_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
                 }
             }
 
-            if (FelExplosionTimer < diff)
+            if (FelExplosionTimer <= diff)
             {
                 if (!me->IsNonMeleeSpellCasted(false))
                 {
@@ -284,7 +284,7 @@ struct OREGON_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
             maxPowerMana = me->GetMaxPower(POWER_MANA);
             if (maxPowerMana && ((me->GetPower(POWER_MANA)*100 / maxPowerMana) < 10))
             {
-                if (DrainCrystalTimer < diff)
+                if (DrainCrystalTimer <= diff)
                 {
                     SelectNearestCrystal();
                     if (Heroic)   DrainCrystalTimer = 10000 + rand()%5000;
@@ -296,7 +296,7 @@ struct OREGON_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
         {
             if (IsDraining)
             {
-                if (CheckTimer < diff)
+                if (CheckTimer <= diff)
                 {
                     Unit* CrystalChosen = Unit::GetUnit(*me, CrystalGUID);
                     if (CrystalChosen)

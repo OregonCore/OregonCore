@@ -74,7 +74,7 @@ struct OREGON_DLL_DECL npc_aeranasAI : public ScriptedAI
     {
         if (Faction_Timer)
         {
-            if (Faction_Timer < diff)
+            if (Faction_Timer <= diff)
             {
                 me->setFaction(FACTION_HOSTILE);
                 Faction_Timer = 0;
@@ -95,13 +95,13 @@ struct OREGON_DLL_DECL npc_aeranasAI : public ScriptedAI
             return;
         }
 
-        if (Shock_Timer < diff)
+        if (Shock_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_SHOCK);
             Shock_Timer = 10000;
         } else Shock_Timer -= diff;
 
-        if (EnvelopingWinds_Timer < diff)
+        if (EnvelopingWinds_Timer <= diff)
         {
             DoCast(me->getVictim(),SPELL_ENVELOPING_WINDS);
             EnvelopingWinds_Timer = 25000;
