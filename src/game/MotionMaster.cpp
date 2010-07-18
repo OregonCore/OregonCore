@@ -250,7 +250,7 @@ void
 MotionMaster::MoveChase(Unit* target, float dist, float angle)
 {
     // ignore movement request if target not exist
-    if (!target || target == i_owner)
+    if (!target || target == i_owner || i_owner->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
         return;
 
     i_owner->clearUnitState(UNIT_STAT_FOLLOW);
@@ -276,7 +276,7 @@ void
 MotionMaster::MoveFollow(Unit* target, float dist, float angle, MovementSlot slot)
 {
     // ignore movement request if target not exist
-    if (!target || target == i_owner)
+    if (!target || target == i_owner || i_owner->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
         return;
 
     i_owner->addUnitState(UNIT_STAT_FOLLOW);
