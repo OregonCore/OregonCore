@@ -24,7 +24,17 @@ EndScriptData */
 #include "precompiled.h"
 #include "def_serpent_shrine.h"
 
-#define ENCOUNTERS 6
+#define MAX_ENCOUNTER 6
+#define SPELL_SCALDINGWATER 37284
+#define MOB_COILFANG_FRENZY 21508
+#define TRASHMOB_COILFANG_PRIESTESS 21220  //6*2
+#define TRASHMOB_COILFANG_SHATTERER 21301  //6*3
+
+#define MIN_KILLS 30
+
+//NOTE: there are 6 platforms
+//there should be 3 shatterers and 2 priestess on all platforms, total of 30 elites, else it won't work!
+//delete all other elites not on platforms! these mobs should only be on those platforms nowhere else.
 
 /* Serpentshrine cavern encounters:
 0 - Hydross The Unstable event
@@ -64,13 +74,22 @@ struct OREGON_DLL_DECL instance_serpentshrine_cavern : public ScriptedInstance
 
     uint64 ControlConsole;
     uint64 BridgePart[3];
-    uint64 StrangePool;
+    uint32 StrangePool;
+    uint32 FishingTimer;
+    uint32 LurkerSubEvent;
+    uint32 WaterCheckTimer;
+    uint32 FrenzySpawnTimer;
+    uint32 Water;
+    uint32 TrashCount;
 
     bool ShieldGeneratorDeactivated[4];
-    uint32 Encounters[ENCOUNTERS];
+    uint32 m_auiEncounter[MAX_ENCOUNTER];
+    bool DoSpawnFrenzy;
 
     void Initialize()
     {
+        memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
+
         LurkerBelow = 0;
         Sharkkis = 0;
         Tidalvess = 0;
@@ -86,54 +105,121 @@ struct OREGON_DLL_DECL instance_serpentshrine_cavern : public ScriptedInstance
         BridgePart[1] = 0;
         BridgePart[2] = 0;
         StrangePool = 0;
+        Water = WATERSTATE_FRENZY;
 
         ShieldGeneratorDeactivated[0] = false;
         ShieldGeneratorDeactivated[1] = false;
         ShieldGeneratorDeactivated[2] = false;
         ShieldGeneratorDeactivated[3] = false;
+        FishingTimer = 1000;
+        LurkerSubEvent = 0;
+        WaterCheckTimer = 500;
+        FrenzySpawnTimer = 2000;
+        DoSpawnFrenzy = false;
+        TrashCount = 0;
 
-        for (uint8 i = 0; i < ENCOUNTERS; i++)
-            Encounters[i] = NOT_STARTED;
     }
 
     bool IsEncounterInProgress() const
     {
-        for (uint8 i = 0; i < ENCOUNTERS; i++)
-            if (Encounters[i] == IN_PROGRESS) return true;
+        for (uint8 i = 0; i < MAX_ENCOUNTER; ++i)
+            if (m_auiEncounter[i] == IN_PROGRESS) return true;
 
         return false;
     }
 
-    void OnObjectCreate(GameObject *go)
+    void Update (uint32 diff)
     {
-        switch(go->GetEntry())
+        //Lurker Fishing event
+        if (LurkerSubEvent == LURKER_FISHING)
+        {
+            if (FishingTimer <= diff)
+            {
+                LurkerSubEvent = LURKER_HOOKED;
+                SetData(DATA_STRANGE_POOL, IN_PROGRESS);//just fished, signal Lurker script to emerge and start fight, we use IN_PROGRESS so it won't get saved and lurker will be alway invis at start if server restarted
+            } else FishingTimer -= diff;
+        }
+        //Water checks
+        if (WaterCheckTimer <= diff)
+        {
+            if (TrashCount >= MIN_KILLS)
+                Water = WATERSTATE_SCALDING;
+            else
+                Water = WATERSTATE_FRENZY;
+
+            Map::PlayerList const &PlayerList = instance->GetPlayers();
+            if (PlayerList.isEmpty())
+                return;
+            for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+            {
+                if (Player* pPlayer = i->getSource())
+                {
+                    if (pPlayer->isAlive() && /*i->getSource()->GetPositionZ() <= -21.434931f*/pPlayer->IsInWater())
+                    {
+                        if (Water == WATERSTATE_SCALDING)
+                        {
+
+                            if (!pPlayer->HasAura(SPELL_SCALDINGWATER, 0))
+                            {
+                                pPlayer->CastSpell(pPlayer, SPELL_SCALDINGWATER,true);
+                            }
+                        } else if (Water == WATERSTATE_FRENZY)
+                        {
+                            //spawn frenzy
+                            if (DoSpawnFrenzy)
+                            {
+                                if (Creature* frenzy = pPlayer->SummonCreature(MOB_COILFANG_FRENZY,pPlayer->GetPositionX(),pPlayer->GetPositionY(),pPlayer->GetPositionZ(),pPlayer->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,2000))
+                                {
+                                    frenzy->Attack(pPlayer,false);
+                                    frenzy->AddUnitMovementFlag(MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_LEVITATING);
+                                }
+                                DoSpawnFrenzy = false;
+                            }
+                        }
+                    }
+                    if (!pPlayer->IsInWater())
+                        pPlayer->RemoveAurasDueToSpell(SPELL_SCALDINGWATER);
+                }
+
+            }
+            WaterCheckTimer = 500;//remove stress from core
+        } else WaterCheckTimer -= diff;
+        if (FrenzySpawnTimer <= diff)
+        {
+            DoSpawnFrenzy = true;
+            FrenzySpawnTimer = 2000;
+        } else FrenzySpawnTimer -= diff;
+    }
+
+    void OnObjectCreate(GameObject *pGo)
+    {
+        switch(pGo->GetEntry())
         {
             case 184568:
-                ControlConsole = go->GetGUID();
-                go->setActive(true);
+                ControlConsole = pGo->GetGUID();
+                pGo->setActive(true);
             break;
 
             case 184203:
-                BridgePart[0] = go->GetGUID();
-                go->setActive(true);
+                BridgePart[0] = pGo->GetGUID();
+                pGo->setActive(true);
             break;
 
             case 184204:
-                BridgePart[1] = go->GetGUID();
-                go->setActive(true);
+                BridgePart[1] = pGo->GetGUID();
+                pGo->setActive(true);
             break;
 
             case 184205:
-                BridgePart[2] = go->GetGUID();
-                go->setActive(true);
+                BridgePart[2] = pGo->GetGUID();
+                pGo->setActive(true);
             break;
-            case 184956:
-                StrangePool = go->GetGUID();
-                if (go->isActiveObject())
-                    SetData(DATA_STRANGE_POOL, DONE);
-                break;
-            case GAMEOBJECT_FISHINGNODE_ENTRY:
-                //todo (yes this works)
+            case GAMEOBJECT_FISHINGNODE_ENTRY://no way checking if fish is hooked, so we create a timed event
+                if (LurkerSubEvent == LURKER_NOT_STARTED)
+                {
+                    FishingTimer = 10000+rand()%30000;//random time before lurker emerges
+                    LurkerSubEvent = LURKER_FISHING;
+                }
                 break;
         }
     }
@@ -181,7 +267,13 @@ struct OREGON_DLL_DECL instance_serpentshrine_cavern : public ScriptedInstance
     {
         switch(type)
         {
-        case DATA_STRANGE_POOL: StrangePool = data;
+        case DATA_STRANGE_POOL:
+            {
+                StrangePool = data;
+                if (data == NOT_STARTED)
+                    LurkerSubEvent = LURKER_NOT_STARTED;
+            }
+            break;
         case DATA_CONTROL_CONSOLE:
             if (data == DONE)
             {
@@ -189,27 +281,20 @@ struct OREGON_DLL_DECL instance_serpentshrine_cavern : public ScriptedInstance
                 HandleGameObject(BridgePart[1], true);
                 HandleGameObject(BridgePart[2], true);
             }
-            ControlConsole = data;
-        case DATA_HYDROSSTHEUNSTABLEEVENT:
-            if (Encounters[0] != DONE)
-                Encounters[0] = data;
-            break;
-        case DATA_LEOTHERASTHEBLINDEVENT:
-            if (Encounters[1] != DONE)
-                Encounters[1] = data;
-            break;
-        case DATA_THELURKERBELOWEVENT:
-            if (Encounters[2] != DONE)
-                Encounters[2] = data;
-            break;
-        case DATA_KARATHRESSEVENT:
-            if (Encounters[3] != DONE)
-                Encounters[3] = data;
-            break;
-        case DATA_MOROGRIMTIDEWALKEREVENT:
-            if (Encounters[4] != DONE)
-                Encounters[4] = data;
-            break;
+            ControlConsole = data;break;
+        case DATA_TRASH :
+            {
+                if (data == 1 && TrashCount < MIN_KILLS)
+                    ++TrashCount;//+1 died
+                SaveToDB();
+                break;
+            }
+        case DATA_WATER : Water = data;break;
+        case DATA_HYDROSSTHEUNSTABLEEVENT:  m_auiEncounter[0] = data;   break;
+        case DATA_LEOTHERASTHEBLINDEVENT:   m_auiEncounter[1] = data;   break;
+        case DATA_THELURKERBELOWEVENT:      m_auiEncounter[2] = data;   break;
+        case DATA_KARATHRESSEVENT:          m_auiEncounter[3] = data;   break;
+        case DATA_MOROGRIMTIDEWALKEREVENT:  m_auiEncounter[4] = data;   break;
             //Lady Vashj
         case DATA_LADYVASHJEVENT:
             if (data == NOT_STARTED)
@@ -219,9 +304,7 @@ struct OREGON_DLL_DECL instance_serpentshrine_cavern : public ScriptedInstance
                 ShieldGeneratorDeactivated[2] = false;
                 ShieldGeneratorDeactivated[3] = false;
             }
-            if (Encounters[5] != DONE)
-                Encounters[5] = data;
-            break;
+            m_auiEncounter[5] = data;   break;
         case DATA_SHIELDGENERATOR1:ShieldGeneratorDeactivated[0] = (data) ? true : false;   break;
         case DATA_SHIELDGENERATOR2:ShieldGeneratorDeactivated[1] = (data) ? true : false;   break;
         case DATA_SHIELDGENERATOR3:ShieldGeneratorDeactivated[2] = (data) ? true : false;   break;
@@ -236,19 +319,21 @@ struct OREGON_DLL_DECL instance_serpentshrine_cavern : public ScriptedInstance
     {
         switch(type)
         {
-            case DATA_HYDROSSTHEUNSTABLEEVENT:  return Encounters[0];
-            case DATA_LEOTHERASTHEBLINDEVENT:   return Encounters[1];
-            case DATA_THELURKERBELOWEVENT:      return Encounters[2];
-            case DATA_KARATHRESSEVENT:          return Encounters[3];
-            case DATA_MOROGRIMTIDEWALKEREVENT:  return Encounters[4];
+            case DATA_HYDROSSTHEUNSTABLEEVENT:  return m_auiEncounter[0];
+            case DATA_LEOTHERASTHEBLINDEVENT:   return m_auiEncounter[1];
+            case DATA_THELURKERBELOWEVENT:      return m_auiEncounter[2];
+            case DATA_KARATHRESSEVENT:          return m_auiEncounter[3];
+            case DATA_MOROGRIMTIDEWALKEREVENT:  return m_auiEncounter[4];
                 //Lady Vashj
-            case DATA_LADYVASHJEVENT:           return Encounters[5];
+            case DATA_LADYVASHJEVENT:           return m_auiEncounter[5];
             case DATA_SHIELDGENERATOR1:         return ShieldGeneratorDeactivated[0];
             case DATA_SHIELDGENERATOR2:         return ShieldGeneratorDeactivated[1];
             case DATA_SHIELDGENERATOR3:         return ShieldGeneratorDeactivated[2];
             case DATA_SHIELDGENERATOR4:         return ShieldGeneratorDeactivated[3];
             case DATA_CANSTARTPHASE3:
                 if (ShieldGeneratorDeactivated[0] && ShieldGeneratorDeactivated[1] && ShieldGeneratorDeactivated[2] && ShieldGeneratorDeactivated[3])return 1;break;
+            case DATA_STRANGE_POOL:             return StrangePool;
+            case DATA_WATER:                    return Water;
         }
         return 0;
     }
@@ -256,8 +341,8 @@ struct OREGON_DLL_DECL instance_serpentshrine_cavern : public ScriptedInstance
     {
         OUT_SAVE_INST_DATA;
         std::ostringstream stream;
-        stream << Encounters[0] << " " << Encounters[1] << " " << Encounters[2] << " "
-            << Encounters[3] << " " << Encounters[4] << " " << Encounters[5];
+        stream << m_auiEncounter[0] << " " << m_auiEncounter[1] << " " << m_auiEncounter[2] << " "
+            << m_auiEncounter[3] << " " << m_auiEncounter[4] << " " << m_auiEncounter[5] << " " << TrashCount;
         char* out = new char[stream.str().length() + 1];
         strcpy(out, stream.str().c_str());
         if (out)
@@ -277,11 +362,11 @@ struct OREGON_DLL_DECL instance_serpentshrine_cavern : public ScriptedInstance
         }
         OUT_LOAD_INST_DATA(in);
         std::istringstream stream(in);
-        stream >> Encounters[0] >> Encounters[1] >> Encounters[2] >> Encounters[3]
-        >> Encounters[4] >> Encounters[5];
-        for (uint8 i = 0; i < ENCOUNTERS; ++i)
-            if (Encounters[i] == IN_PROGRESS)                // Do not load an encounter as "In Progress" - reset it instead.
-                Encounters[i] = NOT_STARTED;
+        stream >> m_auiEncounter[0] >> m_auiEncounter[1] >> m_auiEncounter[2] >> m_auiEncounter[3]
+        >> m_auiEncounter[4] >> m_auiEncounter[5] >> TrashCount;
+        for (uint8 i = 0; i < MAX_ENCOUNTER; ++i)
+            if (m_auiEncounter[i] == IN_PROGRESS)                // Do not load an encounter as "In Progress" - reset it instead.
+                m_auiEncounter[i] = NOT_STARTED;
         OUT_LOAD_INST_DATA_COMPLETE;
     }
 };

@@ -35,7 +35,6 @@ EndScriptData */
 #define SPELL_WATERBOLT     37138
 #define SPELL_SUBMERGE      37550
 #define SPELL_EMERGE        20568
-#define SPELL_SCALDINGWATER 37284
 
 #define EMOTE_SPOUT "The Lurker Below takes a deep breath."
 
@@ -65,13 +64,6 @@ float AddPos[9][3] =
     {42.471519, -445.115295, -19.769423}    //MOVE_GUARDIAN_3 X, Y, Z
 };
 
-enum RotationType
-{
-    NOROTATE = 0,
-    CLOCKWISE = 1,
-    COUNTERCLOCKWISE = 2,
-};
-
 struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
 {
     boss_the_lurker_belowAI(Creature *c) : Scripted_NoMovementAI(c), Summons(me)
@@ -91,293 +83,270 @@ struct OREGON_DLL_DECL boss_the_lurker_belowAI : public Scripted_NoMovementAI
 
     bool Spawned;
     bool Submerged;
-
-    double SpoutAngle;
-
-    uint8 RotType;
-
+    bool InRange;
+    bool CanStartEvent;
     uint32 RotTimer;
     uint32 SpoutAnimTimer;
     uint32 WaterboltTimer;
     uint32 SpoutTimer;
-    uint32 WhirlTimer;//after avery spout
+    uint32 WhirlTimer;
     uint32 PhaseTimer;
     uint32 GeyserTimer;
+    uint32 CheckTimer;
+    uint32 WaitTimer;
+    uint32 WaitTimer2;
 
+    bool CheckCanStart()//check if players fished
+    {
+        if (pInstance && pInstance->GetData(DATA_STRANGE_POOL) == NOT_STARTED)
+            return false;
+        return true;
+    }
     void Reset()
     {
-        me->AddUnitMovementFlag(MOVEMENTFLAG_SWIMMING + MOVEMENTFLAG_LEVITATING);
-        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->SetCorpseDelay(1000*60*60);
-
-        RotType = NOROTATE;
-
-        SpoutAngle = 0;
+        me->AddUnitMovementFlag(MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_LEVITATING);
         SpoutAnimTimer = 1000;
-        RotTimer = 20000;
-        WaterboltTimer = 3000;
-        SpoutTimer = 15000;
+        RotTimer = 0;
+        WaterboltTimer = 15000;//give time to get in range when fight starts
+        SpoutTimer = 45000;
         WhirlTimer = 18000;//after avery spout
         PhaseTimer = 120000;
         GeyserTimer = rand()%5000 + 15000;
+        CheckTimer = 15000;//give time to get in range when fight starts
+        WaitTimer = 60000;//never reached
+        WaitTimer2 = 60000;//never reached
 
-        Submerged = false;
+        Submerged = true;//will be false at combat start
         Spawned = false;
+        InRange = false;
+        CanStartEvent = false;
 
         Summons.DespawnAll();
 
         if (pInstance)
-            pInstance->SetData(DATA_THELURKERBELOWEVENT, NOT_STARTED);
-
-        /*if (pInstance->GetData(DATA_STRANGE_POOL) != DONE)
         {
-            me->SetReactState(REACT_PASSIVE);
-            me->SetVisibility(VISIBILITY_OFF);
-        } else {
-            me->SetVisibility(VISIBILITY_ON);
-            me->SetReactState(REACT_AGGRESSIVE);
-        }*/
+            pInstance->SetData(DATA_THELURKERBELOWEVENT, NOT_STARTED);
+            pInstance->SetData(DATA_STRANGE_POOL, NOT_STARTED);
+        }
+        DoCast(me, SPELL_SUBMERGE);//submerge anim
+        me->SetVisibility(VISIBILITY_OFF);//we start invis under water, submerged
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
     }
 
-     void MoveInLineOfSight(Unit *who)
-     {
-        if (!who || me->getVictim())
-            return;
-
-        if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (me) && me->IsHostileTo(who))
-        {
-            float attackRadius = me->GetAttackDistance(who);
-            if (me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who))
-                AttackStart(who);
-        }
-     }
-
-     void EnterCombat(Unit *who)
-     {
-         if (pInstance)
-            pInstance->SetData(DATA_THELURKERBELOWEVENT, IN_PROGRESS);
-
-         if (!who || me->getVictim())
-            return;
-
-         if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (me) && me->IsHostileTo(who))
-         {
-             float attackRadius = me->GetAttackDistance(who);
-             if (me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who))
-                 AttackStart(who);
-         }
-     }
-
-     void JustDied(Unit* Killer)
-     {
-         if (pInstance)
+    void JustDied(Unit* /*Killer*/)
+    {
+        if (pInstance)
             pInstance->SetData(DATA_THELURKERBELOWEVENT, DONE);
 
-         Summons.DespawnAll();
-     }
+        Summons.DespawnAll();
+    }
 
-     void Rotate(const uint32 diff)
-     {
-         bool Spout = false;
-         switch (RotType)
-         {
-         case NOROTATE:
-             return;
-         case CLOCKWISE://20secs for 360turn
-             //no target if rotating!
-             me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
-             SpoutAngle += (double)diff/20000*(double)M_PI*2;
-             if (SpoutAngle >= M_PI*2)SpoutAngle = 0;
-             me->SetOrientation(SpoutAngle);
-             me->StopMoving();
-             Spout = true;
-             break;
-         case COUNTERCLOCKWISE://20secs for 360turn
-             //no target if rotating!
-             me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
-             SpoutAngle -= (double)diff/20000*(double)M_PI*2;
-             if (SpoutAngle <= 0)SpoutAngle = M_PI*2;
-             me->SetOrientation(SpoutAngle);
-             me->StopMoving();
-             Spout = true;
-             break;
-         }
+    void EnterCombat(Unit * who)
+    {
+        if (pInstance)
+            pInstance->SetData(DATA_THELURKERBELOWEVENT, IN_PROGRESS);
+        Scripted_NoMovementAI::EnterCombat(who);
+    }
 
-         if (!Spout)
-             return;
+    void MoveInLineOfSight(Unit *who)
+    {
+        if (!CanStartEvent)//boss is invisible, don't attack
+            return;
+        if (!me->getVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)))
+        {
+            float attackRadius = me->GetAttackDistance(who);
+            if (me->IsWithinDistInMap(who, attackRadius))
+            {
+                AttackStart(who);
+            }
+        }
+    }
 
-         if (RotTimer <= diff)//end rotate
-         {
-             RotType = NOROTATE;//set norotate state
-             RotTimer=20000;
-             me->InterruptNonMeleeSpells(false);
-             WhirlTimer = 4000; //whirl directly after spout ends
-             return;
-         } else RotTimer-=diff;
+    void MovementInform(uint32 type, uint32 /*id*/)
+    {
+        if (type == ROTATE_MOTION_TYPE)
+            me->SetReactState(REACT_AGGRESSIVE);
+    }
 
-         if (SpoutAnimTimer <= diff)
-         {
-             DoCast(me,SPELL_SPOUT_ANIM,true);
-             SpoutAnimTimer = 1000;
-         } else SpoutAnimTimer-=diff;
+    void UpdateAI(const uint32 diff)
+    {
+        if (!CanStartEvent)//boss is invisible, don't attack
+        {
+            if (CheckCanStart())
+            {
+                if (Submerged)
+                {
+                    me->SetVisibility(VISIBILITY_ON);
+                    Submerged = false;
+                    WaitTimer2 = 500;
+                }
+                if (!Submerged && WaitTimer2 <= diff)//wait 500ms before emerge anim
+                {
+                    me->RemoveAllAuras();
+                    me->RemoveFlag(UNIT_NPC_EMOTESTATE,EMOTE_STATE_SUBMERGED);
+                    DoCast(me, SPELL_EMERGE, false);
+                    WaitTimer2 = 60000;//never reached
+                    WaitTimer = 3000;
+                } else WaitTimer2 -= diff;
 
-         Map *map = me->GetMap();
-         if (map->IsDungeon() && pInstance->GetData(DATA_THELURKERBELOWEVENT) == IN_PROGRESS)
-         {
-             Map::PlayerList const &PlayerList = map->GetPlayers();
-             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
-             {
-                 Player *pTarget = i->getSource();
-                 if (pTarget && pTarget->isAlive() && me->HasInArc((double)diff/20000*(double)M_PI*2,pTarget) && me->GetDistance(pTarget) <= SPOUT_DIST && !pTarget->IsInWater())
-                     DoCast(pTarget,SPELL_SPOUT,true);//only knock back palyers in arc, in 100yards, not in water
-             }
-         }
-     }
+                if (WaitTimer <= diff)//wait 3secs for emerge anim, then attack
+                {
+                    WaitTimer = 3000;
+                    CanStartEvent=true;//fresh fished from pool
+                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
+                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                } else WaitTimer -= diff;
+            }
+            return;
+        }
 
-     void StartRotate(Unit* victim)
-     {
-         switch (rand()%2)
-         {
-         case 0: RotType = CLOCKWISE; break;
-         case 1: RotType = COUNTERCLOCKWISE; break;
-         }
-         RotTimer=20000;
+        if (me->getThreatManager().getThreatList().empty())//check if should evade
+        {
+            if (me->isInCombat())
+                EnterEvadeMode();
+            return;
+        }
+        if (!Submerged)
+        {
+            if (PhaseTimer <= diff)
+            {
+                me->InterruptNonMeleeSpells(false);
+                DoCast(me, SPELL_SUBMERGE);
+                PhaseTimer = 60000;//60secs submerged
+                Submerged = true;
+            } else PhaseTimer-=diff;
 
-         if (victim)
-             SpoutAngle = me->GetAngle(victim);
+            if (SpoutTimer <= diff)
+            {
+                me->MonsterTextEmote(EMOTE_SPOUT,0,true);
+                me->SetReactState(REACT_PASSIVE);
+                me->GetMotionMaster()->MoveRotate(20000, rand()%2 ? ROTATE_DIRECTION_LEFT : ROTATE_DIRECTION_RIGHT);
+                SpoutTimer = 45000;
+                WhirlTimer = 20000;//whirl directly after spout
+                RotTimer = 20000;
+                return;
+            } else SpoutTimer -= diff;
 
-         me->MonsterTextEmote(EMOTE_SPOUT,0,true);
-         //DoCast(me,SPELL_SPOUT_BREATH);//take breath anim
-     }
+            //Whirl directly after a Spout and at random times
+            if (WhirlTimer <= diff)
+            {
+                WhirlTimer = 18000;
+                DoCast(me, SPELL_WHIRL);
+            } else WhirlTimer -= diff;
 
-     void UpdateAI(const uint32 diff)
-     {
-         //Return since we have no target
-         if (!UpdateVictim() /*|| !me->getVictim()*/)//rotate resets target
-             return;
+            if (CheckTimer <= diff)//check if there are players in melee range
+            {
+                InRange = false;
+                Map* pMap = me->GetMap();
+                Map::PlayerList const &PlayerList = pMap->GetPlayers();
+                if (!PlayerList.isEmpty())
+                {
+                    for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+                    {
+                        if (me->IsWithinMeleeRange(i->getSource()))
+                            InRange = true;
+                    }
+                }
+                CheckTimer = 2000;
+            } else CheckTimer -= diff;
 
-          //Check if players in water and if in water cast spell
-         Map *map = me->GetMap();
-         if (map->IsDungeon() && pInstance->GetData(DATA_THELURKERBELOWEVENT) == IN_PROGRESS)
-         {
-             Map::PlayerList const &PlayerList = map->GetPlayers();
+            if (RotTimer)
+            {
+                Map* pMap = me->GetMap();
+                if (pMap->IsDungeon())
+                {
+                    Map::PlayerList const &PlayerList = pMap->GetPlayers();
+                    for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+                    {
+                        if (i->getSource() && i->getSource()->isAlive() && me->HasInArc((double)diff/20000*(double)M_PI*2,i->getSource()) && me->IsWithinDist(i->getSource(), SPOUT_DIST) && !i->getSource()->IsInWater())
+                            DoCast(i->getSource(), SPELL_SPOUT, true);//only knock back palyers in arc, in 100yards, not in water
+                    }
+                }
 
-             if (PlayerList.isEmpty())
-                 return;
+                if (SpoutAnimTimer <= diff)
+                {
+                    DoCast(me, SPELL_SPOUT_ANIM, true);
+                    SpoutAnimTimer = 1000;
+                } else SpoutAnimTimer -= diff;
 
-             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
-             {
-                 if (i->getSource()->isAlive() && i->getSource()->IsInWater() && !i->getSource()->HasAura(SPELL_SCALDINGWATER, 0))
-                     i->getSource()->CastSpell(i->getSource(), SPELL_SCALDINGWATER, true);
-                 else if (!i->getSource()->IsInWater())
-                     i->getSource()->RemoveAurasDueToSpell(SPELL_SCALDINGWATER);
-             }
-         }
+                if (RotTimer <= diff)
+                {
+                    RotTimer = 0;
+                } else RotTimer -= diff;
+                return;
+            }
 
-         Rotate(diff);//always check rotate things
-         if (!Submerged)
-         {
-             if (PhaseTimer <= diff)
-             {
-                 me->InterruptNonMeleeSpells(false);
-                 DoCast(me,SPELL_SUBMERGE);
-                 PhaseTimer = 60000;//60secs submerged
-                 Submerged = true;
-             } else PhaseTimer-=diff;
-         }
+            if (GeyserTimer <= diff)
+            {
+                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
+                if (!pTarget && me->getVictim())
+                    pTarget = me->getVictim();
+                if (pTarget)
+                    DoCast(pTarget, SPELL_GEYSER, true);
+                GeyserTimer = rand()%5000 + 15000;
+            } else GeyserTimer -= diff;
 
-         if (!Submerged && RotType == NOROTATE)//is not spouting and not submerged
-         {
-             if (SpoutTimer <= diff)
-             {
-                 if (me->getVictim() && RotType == NOROTATE)
-                     StartRotate(me->getVictim());//start spout and random rotate
+            if (!InRange)//if on players in melee range cast Waterbolt
+            {
+                if (WaterboltTimer <= diff)
+                {
+                    Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                    if (!pTarget && me->getVictim())
+                        pTarget = me->getVictim();
+                    if (pTarget)
+                        DoCast(pTarget, SPELL_WATERBOLT, true);
+                    WaterboltTimer = 3000;
+                } else WaterboltTimer -= diff;
+            }
 
-                 SpoutTimer= 35000;
-                 return;
-             } else SpoutTimer -= diff;
-
-             //Whirl directly after a Spout and at random times
-             if (WhirlTimer <= diff)
-             {
-                 WhirlTimer = rand()%5000 + 15000;
-                 DoCast(me,SPELL_WHIRL);
-                 WaterboltTimer += 5000;//add 5secs to waterbolt timer, to add some time to run back to boss
-             } else WhirlTimer -= diff;
-
-             if (GeyserTimer <= diff)
-             {
-                 Unit *pTarget = NULL;
-                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
-
-                 if (pTarget)
-                    DoCast(pTarget,SPELL_GEYSER,true);
-                 else
-                     pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-                 if (pTarget)
-                     DoCast(pTarget,SPELL_GEYSER,true);
-
-                 GeyserTimer = rand()%5000 + 15000;
-             } else GeyserTimer -= diff;
-
-             if (WaterboltTimer <= diff)
-             {
-                 Unit *pTarget = SelectTarget(SELECT_TARGET_NEAREST,0,14,true);
-                 if (!pTarget)
-                 {
-                     pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-                     if (pTarget)
-                         DoCast(pTarget,SPELL_WATERBOLT);
-                 }
-                 WaterboltTimer = 3000;
-             } else WaterboltTimer -= diff;
-
-             if (!UpdateVictim())
+            if (!UpdateCombatState())
                 return;
 
-             DoMeleeAttackIfReady();
+            DoMeleeAttackIfReady();
 
-         } else if (!Submerged)
-             return;
-         else if (Submerged)//phase 2, submerged
-         {
-             if (PhaseTimer <= diff)
-             {
-                 Submerged = false;
-                 me->InterruptNonMeleeSpells(false);//shouldn't be any
-                 me->RemoveAllAuras();
-                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                 me->RemoveFlag(UNIT_NPC_EMOTESTATE,EMOTE_STATE_SUBMERGED);
-                 me->RemoveFlag(UNIT_FIELD_BYTES_1,9);
-                 DoCast(me,SPELL_EMERGE);
-                 Spawned = false;
-                 SpoutTimer = 4000; // directly cast Spout after emerging!
-                 WhirlTimer = 26000;
-                 PhaseTimer = 120000;
-                 return;
-             } else PhaseTimer-=diff;
+        }else//submerged
+        {
+            if (PhaseTimer <= diff)
+            {
+                Submerged = false;
+                me->InterruptNonMeleeSpells(false);//shouldn't be any
+                me->RemoveAllAuras();
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
+                me->RemoveFlag(UNIT_NPC_EMOTESTATE,EMOTE_STATE_SUBMERGED);
+                DoCast(me, SPELL_EMERGE, true);
+                Spawned = false;
+                SpoutTimer = 3000; // directly cast Spout after emerging!
+                PhaseTimer = 120000;
+                return;
+            } else PhaseTimer-=diff;
 
-             if (!me->isInCombat())
-                 me->SetInCombatState(false);
+            if (me->getThreatManager().getThreatList().empty())//check if should evade
+            {
+                EnterEvadeMode();
+                return;
+            }
+            if (!me->isInCombat())
+                DoZoneInCombat();
 
-             if (!Spawned)
-             {
-                 me->SetUInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                 //spawn adds
-                 for (uint8 i = 0; i < 9; ++i)
-                 {
-                     Creature* Summoned;
-                     if (i < 7)
-                         Summoned = me->SummonCreature(MOB_COILFANG_AMBUSHER,AddPos[i][0],AddPos[i][1],AddPos[i][2], 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
-                     else Summoned = me->SummonCreature(MOB_COILFANG_GUARDIAN,AddPos[i][0],AddPos[i][1],AddPos[i][2], 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
+            if (!Spawned)
+            {
+                me->SetUInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
+                //spawn adds
+                for (uint8 i = 0; i < 9; ++i)
+                {
+                    Creature* Summoned;
+                    if (i < 6)
+                        Summoned = me->SummonCreature(MOB_COILFANG_AMBUSHER,AddPos[i][0],AddPos[i][1],AddPos[i][2], 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                    else Summoned = me->SummonCreature(MOB_COILFANG_GUARDIAN,AddPos[i][0],AddPos[i][1],AddPos[i][2], 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
 
-                     if (Summoned)
+                    if (Summoned)
                         Summons.Summon(Summoned);
-                     Spawned = true;
-                 }
-             }
-         }
-         }
+                }
+                Spawned = true;
+            }
+        }
+    }
  };
 
 CreatureAI* GetAI_mob_coilfang_guardian(Creature* pCreature)
@@ -427,7 +396,7 @@ struct OREGON_DLL_DECL mob_coilfang_ambusherAI : public Scripted_NoMovementAI
     {
         if (!who || me->getVictim()) return;
 
-        if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (me) && me->IsHostileTo(who))
+        if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who) && me->IsWithinDistInMap(who, 45))
         {
             AttackStart(who);
         }
