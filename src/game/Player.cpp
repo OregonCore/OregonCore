@@ -16710,7 +16710,7 @@ void Player::Whisper(const std::string& text, uint32 language,uint64 receiver)
     rPlayer->BuildPlayerChat(&data, CHAT_MSG_REPLY, text, language);
     GetSession()->SendPacket(&data);
 
-    if (!isAcceptWhispers() && !isGameMaster() && !rPlayer->isGameMaster())
+    if (!isAcceptWhispers() && !(isGameMaster() && rPlayer->isGameMaster()))
     {
         SetAcceptWhispers(true);
         ChatHandler(this).SendSysMessage(LANG_COMMAND_WHISPERON);
