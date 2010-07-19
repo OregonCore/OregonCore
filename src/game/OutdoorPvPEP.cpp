@@ -454,9 +454,12 @@ void OPvPCapturePointEP::SummonFlightMaster(uint32 team)
         Creature * c = HashMapHolder<Creature>::Find(m_Creatures[EP_PWT_FLIGHTMASTER]);
         if (c)
         {
-            // Change the flightmasters's faction to horde if required
+            // Change the flightmasters's faction to horde and display a red aura around the npc
             if (team == HORDE)
+            {
                 c->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, c->GetCreatureInfo()->faction_H);
+                c->SetUInt32Value(UNIT_FIELD_AURA, EP_PWT_FlightMasterAura);
+            }
 
             GossipOption gso;
             for (uint8 i = 0; i < EP_TOWER_NUM-1; ++i)

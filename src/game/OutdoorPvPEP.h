@@ -122,6 +122,7 @@ enum EP_TowerStates {
 };
 
 const creature_type EP_PWT_FlightMaster = {17209,0,0,2987.5,-3049.11,120.126,5.75959};
+const uint32 EP_PWT_FlightMasterAura = 36725;
 
 const go_type EP_NPT_LordaeronShrine = {181682,0,3167.72,-4355.91,138.785,1.69297,0,0,0.748956,0.66262};
 const go_type EP_NPT_LordaeronShrineAura = {180100,0,3167.72,-4355.91,138.785,1.69297,0,0,0.748956,0.66262};
