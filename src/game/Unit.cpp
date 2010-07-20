@@ -3811,25 +3811,6 @@ int32 Unit::GetMaxNegativeAuraModifierByMiscValue(AuraType auratype, int32 misc_
     return modifier;
 }
 
-bool AuraStacking(uint32 auraID)
-{
-    switch(auraID)
-    {
-        case 22959: //scorch
-        case 15258: //shadow weaving
-        case 25225: //sunder armor rank 6
-        case 11597: //sunder armor rank 5
-        case 11596: //sunder armor rank 4
-        case 8380: //sunder armor rank 3
-        case 7405: //sunder armor rank 2
-        case 7386: //sunder armor rank 1
-        case 27189: //Wound poison
-        return true;
-    default:
-        return false;
-    }
-}
-
 bool Unit::AddAura(Aura *Aur)
 {
     // ghost spell check, allow apply any auras at player loading in ghost mode (will be cleanup after load)
@@ -3859,7 +3840,7 @@ bool Unit::AddAura(Aura *Aur)
     {
         for (AuraMap::iterator i2 = m_Auras.lower_bound(spair); i2 != m_Auras.upper_bound(spair);)
         {
-            if ((i2->second->GetCasterGUID() == Aur->GetCasterGUID()) || AuraStacking(Aur->GetId()))
+            if (i2->second->GetCasterGUID() == Aur->GetCasterGUID())
             {
                 if (!stackModified)
                 {
@@ -4978,14 +4959,6 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                 {
                     // prevent chain of triggered spell from same triggered spell
                     if (procSpell && procSpell->Id == 12723)
-                        return false;
-
-                    // prevent proc from whirl wind TEST IT
-                    if (procSpell && procSpell->Id == 1680)
-                        return false;
-
-                    // Cleave
-                    if (procSpell && procSpell->Id == 25231)
                         return false;
 
                     target = SelectNearbyTarget();
