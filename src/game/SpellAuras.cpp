@@ -2982,7 +2982,7 @@ void Aura::HandleChannelDeathItem(bool apply, bool Real)
     {
         Unit* caster = GetCaster();
         Unit* victim = GetTarget();
-        if (!caster || caster->GetTypeId() != TYPEID_PLAYER || !victim)// || m_removeMode != AURA_REMOVE_BY_DEATH)
+        if (!caster || caster->GetTypeId() != TYPEID_PLAYER || !victim)
             return;
 
         //we cannot check removemode = death
