@@ -120,7 +120,7 @@ enum EventAI_ActionType
 
 enum Target
 {
-    //Self (m_creature)
+    //Self (me)
     TARGET_T_SELF = 0,                                      //Self cast
 
     //Hostile targets (if pet then returns pet owner)

@@ -68,7 +68,6 @@ class OREGON_DLL_SPEC CreatureAI : public UnitAI
 {
     protected:
         Creature * const me;
-        Creature * const m_creature;
 
         bool UpdateVictim();
         bool UpdateVictimWithGaze();
@@ -83,7 +82,7 @@ class OREGON_DLL_SPEC CreatureAI : public UnitAI
         Creature *DoSummonFlyer(uint32 uiEntry, WorldObject *obj, float fZ, float fRadius = 5.0f, uint32 uiDespawntime = 30000, TempSummonType uiType = TEMPSUMMON_CORPSE_TIMED_DESPAWN);
 
     public:
-        explicit CreatureAI(Creature *c) : UnitAI((Unit*)c), me(c), m_creature(c) {}
+        explicit CreatureAI(Creature *c) : UnitAI((Unit*)c), me(c) {}
 
         virtual ~CreatureAI() {}
 
@@ -142,6 +141,7 @@ class OREGON_DLL_SPEC CreatureAI : public UnitAI
 
         // Called at text emote receive from player
         virtual void ReceiveEmote(Player* pPlayer, uint32 text_emote) {}
+
         ///== Triggered Actions Requested ==================
 
         // Called when creature attack expected (if creature can and no have current victim)
@@ -162,7 +162,7 @@ class OREGON_DLL_SPEC CreatureAI : public UnitAI
         ///== Fields =======================================
 
         // Pointer to controlled by AI creature
-        //Creature* const m_creature;
+        //Creature* const me;
 
         virtual void PassengerBoarded(Unit *who, int8 seatId, bool apply) {}
 

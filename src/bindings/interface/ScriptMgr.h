@@ -88,13 +88,13 @@ class InstanceDataScript
 
 struct TRINITY_DLL_DECL ScriptedAI : public CreatureAI
 {
-    ScriptedAI(Creature* creature):CreatureAI(creature),m_creature(creature){}
+    ScriptedAI(Creature* creature):CreatureAI(creature),me(creature){}
     ~ScriptedAI() {}
 
     // Called if IsVisible(Unit *who) is true at each *who move
     void MoveInLineOfSight(Unit *) {}
 
-    // Called at each attack of m_creature by any victim
+    // Called at each attack of me by any victim
     void AttackStart(Unit *) {}
 
     // Called at stopping attack by any attacker
@@ -112,7 +112,7 @@ struct TRINITY_DLL_DECL ScriptedAI : public CreatureAI
     // Is unit visible for MoveInLineOfSight
     bool IsVisible(Unit* who) const
     {
-        return !who->HasStealthAura() && m_creature->GetDistance(who) <= VISIBLE_RANGE;
+        return !who->HasStealthAura() && me->GetDistance(who) <= VISIBLE_RANGE;
     }
 
     // Called at World update tick
@@ -127,7 +127,7 @@ struct TRINITY_DLL_DECL ScriptedAI : public CreatureAI
     // Called when hit by a spell
     void SpellHit(Unit *, const SpellEntry*){}
 
-    Creature* m_creature;
+    Creature* me;
 
     //= Some useful helpers =========================
 
@@ -140,17 +140,17 @@ struct TRINITY_DLL_DECL ScriptedAI : public CreatureAI
     // Cast spell
     void DoCast(Unit* victim, uint32 spelId)
     {
-        m_creature->CastSpell(victim,spelId,true);
+        me->CastSpell(victim,spelId,true);
     }
 
     void DoCastSpell(Unit* who,SpellEntry *spellInfo)
     {
-        m_creature->CastSpell(who,spellInfo,true);
+        me->CastSpell(who,spellInfo,true);
     }
 
     void DoSay(char const* text, uint32 language)
     {
-        m_creature->MonsterSay(text,language,0);
+        me->MonsterSay(text,language,0);
     }
 
     void DoGoHome();
