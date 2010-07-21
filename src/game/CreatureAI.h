@@ -82,14 +82,14 @@ class OREGON_DLL_SPEC CreatureAI : public UnitAI
         Creature *DoSummonFlyer(uint32 uiEntry, WorldObject *obj, float fZ, float fRadius = 5.0f, uint32 uiDespawntime = 30000, TempSummonType uiType = TEMPSUMMON_CORPSE_TIMED_DESPAWN);
 
     public:
-        explicit CreatureAI(Creature *c) : UnitAI((Unit*)c), me(c) {}
+        explicit CreatureAI(Creature *c) : UnitAI((Unit*)c), me(c), m_MoveInLineOfSight_locked(false) {}
 
         virtual ~CreatureAI() {}
 
-        ///== Reactions At =================================
+        /// == Reactions At =================================
 
         // Called if IsVisible(Unit *who) is true at each *who move, reaction at visibility zone enter
-        virtual void MoveInLineOfSight(Unit *);
+        void MoveInLineOfSight_Safe(Unit *who);
 
         // Called for reaction at stopping attack at no attackers or targets
         virtual void EnterEvadeMode();
@@ -142,7 +142,7 @@ class OREGON_DLL_SPEC CreatureAI : public UnitAI
         // Called at text emote receive from player
         virtual void ReceiveEmote(Player* pPlayer, uint32 text_emote) {}
 
-        ///== Triggered Actions Requested ==================
+        /// == Triggered Actions Requested ==================
 
         // Called when creature attack expected (if creature can and no have current victim)
         // Note: for reaction at hostile action must be called AttackedBy function.
@@ -151,7 +151,7 @@ class OREGON_DLL_SPEC CreatureAI : public UnitAI
         // Called at World update tick
         //virtual void UpdateAI(const uint32 diff) {}
 
-        ///== State checks =================================
+        /// == State checks =================================
 
         // Is unit visible for MoveInLineOfSight
         //virtual bool IsVisible(Unit *) const { return false; }
@@ -159,7 +159,7 @@ class OREGON_DLL_SPEC CreatureAI : public UnitAI
         // Called when victim entered water and creature can not enter water
         //virtual bool canReachByRangeAttack(Unit*) { return false; }
 
-        ///== Fields =======================================
+        /// == Fields =======================================
 
         // Pointer to controlled by AI creature
         //Creature* const me;
@@ -167,7 +167,12 @@ class OREGON_DLL_SPEC CreatureAI : public UnitAI
         virtual void PassengerBoarded(Unit *who, int8 seatId, bool apply) {}
 
     protected:
+        virtual void MoveInLineOfSight(Unit *);
+
         bool _EnterEvadeMode();
+
+    private:
+        bool m_MoveInLineOfSight_locked;
 };
 
 enum Permitions

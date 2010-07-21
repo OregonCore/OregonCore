@@ -46,7 +46,7 @@ inline void PlayerCreatureRelocationWorker(Player* pl, Creature* c)
     if (c->HasReactState(REACT_AGGRESSIVE) && !c->hasUnitState(UNIT_STAT_SIGHTLESS))
     {
         if (c->IsAIEnabled && c->IsWithinSightDist(pl) && !c->IsInEvadeMode())
-            c->AI()->MoveInLineOfSight(pl);
+            c->AI()->MoveInLineOfSight_Safe(pl);
     }
 }
 
@@ -55,13 +55,13 @@ inline void CreatureCreatureRelocationWorker(Creature* c1, Creature* c2)
     if (c1->HasReactState(REACT_AGGRESSIVE) && !c1->hasUnitState(UNIT_STAT_SIGHTLESS))
     {
         if (c1->IsAIEnabled && c1->IsWithinSightDist(c2) && !c1->IsInEvadeMode())
-            c1->AI()->MoveInLineOfSight(c2);
+            c1->AI()->MoveInLineOfSight_Safe(c2);
     }
 
     if (c2->HasReactState(REACT_AGGRESSIVE) && !c2->hasUnitState(UNIT_STAT_SIGHTLESS))
     {
         if (c2->IsAIEnabled && c1->IsWithinSightDist(c2) && !c2->IsInEvadeMode())
-            c2->AI()->MoveInLineOfSight(c1);
+            c2->AI()->MoveInLineOfSight_Safe(c1);
     }
 }
 
