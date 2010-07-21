@@ -1536,8 +1536,6 @@ bool SpellMgr::canStackSpellRanks(SpellEntry const *spellInfo)
 
 bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool sameCaster) const
 {
-    //if (spellId_1 == spellId_2) // auras due to the same spell
-    //    return false;
     SpellEntry const *spellInfo_1 = sSpellStore.LookupEntry(spellId_1);
     SpellEntry const *spellInfo_2 = sSpellStore.LookupEntry(spellId_2);
 
@@ -1558,22 +1556,6 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
     if (spellInfo_1->SpellFamilyName != spellInfo_2->SpellFamilyName)
         return false;
 
-    // generic spells
-    if (!spellInfo_1->SpellFamilyName)
-    {
-        if (!spellInfo_1->SpellIconID
-            || spellInfo_1->SpellIconID == 1
-            || spellInfo_1->SpellIconID != spellInfo_2->SpellIconID)
-            return false;
-    }
-
-    // check for class spells
-    else
-    {
-        if (spellInfo_1->SpellFamilyFlags != spellInfo_2->SpellFamilyFlags)
-            return false;
-    }
-
     if (!sameCaster)
     {
         for (uint32 i = 0; i < 3; ++i)
@@ -1592,6 +1574,7 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
                     case SPELL_AURA_POWER_BURN_MANA:
                     case SPELL_AURA_OBS_MOD_MANA:
                     case SPELL_AURA_OBS_MOD_HEALTH:
+                    case SPELL_AURA_PERIODIC_TRIGGER_SPELL_WITH_VALUE:
                         return false;
                     default:
                         break;
@@ -1601,6 +1584,22 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2, bool
 //    not needed now because we compare effects last rank of spells
 //    if (spellInfo_1->SpellFamilyName && IsRankSpellDueToSpell(spellInfo_1, spellId_2))
 //        return true;
+
+    // generic spells
+    if (!spellInfo_1->SpellFamilyName)
+    {
+        if (!spellInfo_1->SpellIconID
+            || spellInfo_1->SpellIconID == 1
+            || spellInfo_1->SpellIconID != spellInfo_2->SpellIconID)
+            return false;
+    }
+
+    // check for class spells
+    else
+    {
+        if (spellInfo_1->SpellFamilyFlags != spellInfo_2->SpellFamilyFlags)
+            return false;
+    }
 
     //use data of highest rank spell(needed for spells which ranks have different effects)
     spellInfo_1=sSpellStore.LookupEntry(GetLastSpellInChain(spellId_1));
