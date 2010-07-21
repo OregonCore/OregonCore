@@ -788,7 +788,7 @@ bool GameObject::canDetectTrap(Player const* u, float distance) const
     //GetModifier for trap (miscvalue 1)
     //35y for aura 2836
     //WARNING: these values are guessed, may be not blizzlike
-    visibleDistance += u->GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_DETECT, 1)* 0.5f;
+    visibleDistance += u->GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_STEALTH_DETECT, 1)* 0.5f;
 
     return distance < visibleDistance;
 }

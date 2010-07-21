@@ -4290,14 +4290,14 @@ uint8 Spell::CanCast(bool strict)
 
                 break;
             }
-            case SPELL_AURA_MOD_INCREASE_FLIGHT_SPEED:
+            case SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED:
             case SPELL_AURA_FLY:
             {
-        // not allow cast fly spells at old maps by players (all spells is self target)
+                // not allow cast fly spells at old maps by players (all spells is self target)
                 if (m_caster->GetTypeId() == TYPEID_PLAYER)
                 {
                     if (!m_caster->ToPlayer()->isGameMaster() &&
-            GetVirtualMapForMapAndZone(m_caster->GetMapId(),m_caster->GetZoneId()) != 530)
+                        GetVirtualMapForMapAndZone(m_caster->GetMapId(),m_caster->GetZoneId()) != 530)
                         return SPELL_FAILED_NOT_HERE;
                 }
                 break;
