@@ -97,12 +97,12 @@ inline bool IsGuidHaveEnPart(uint64 const& guid)
         case HIGHGUID_PLAYER:
         case HIGHGUID_DYNAMICOBJECT:
         case HIGHGUID_CORPSE:
+        case HIGHGUID_MO_TRANSPORT:
             return false;
         case HIGHGUID_GAMEOBJECT:
         case HIGHGUID_TRANSPORT:
         case HIGHGUID_UNIT:
         case HIGHGUID_PET:
-        case HIGHGUID_MO_TRANSPORT:
         default:
             return true;
     }
@@ -121,7 +121,7 @@ struct PackedGuidReader
     ObjectGuid* m_guidPtr;
 };
 
-class ObjectGuid
+class OREGON_DLL_SPEC ObjectGuid
 {
     public:                                                 // constructors
         ObjectGuid() : m_guid(0) {}
@@ -132,9 +132,12 @@ class ObjectGuid
         PackedGuidReader ReadAsPacked() { return PackedGuidReader(*this); }
 
         void Set(uint64 const& guid) { m_guid = guid; }
+        void Clear() { m_guid = 0; }
 
         // Possible removed in future for more strict control type conversions
         void operator= (uint64 const& guid) { m_guid = guid; }
+
+        PackedGuid WriteAsPacked() const;
     public:                                                 // accessors
         uint64 const& GetRawValue() const { return m_guid; }
         HighGuid GetHigh() const { return HighGuid((m_guid >> 48) & 0x0000FFFF); }
@@ -177,7 +180,6 @@ class ObjectGuid
             }
         }
 
-        PackedGuid WriteAsPacked() const;
     public:                                                 // accessors - for debug
         char const* GetTypeName() const;
         std::string GetString() const;
@@ -190,12 +192,12 @@ class ObjectGuid
                 case HIGHGUID_PLAYER:
                 case HIGHGUID_DYNAMICOBJECT:
                 case HIGHGUID_CORPSE:
+                case HIGHGUID_MO_TRANSPORT:
                     return false;
                 case HIGHGUID_GAMEOBJECT:
                 case HIGHGUID_TRANSPORT:
                 case HIGHGUID_UNIT:
                 case HIGHGUID_PET:
-                case HIGHGUID_MO_TRANSPORT:
                 default:
                     return true;
             }
