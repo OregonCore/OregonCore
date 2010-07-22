@@ -60,7 +60,7 @@ uint32 GuidHigh2TypeId(uint32 guid_hi)
         case HIGHGUID_CORPSE:       return TYPEID_CORPSE;
         case HIGHGUID_MO_TRANSPORT: return TYPEID_GAMEOBJECT;
     }
-    return 10;                                              // unknown
+    return TYPEID_OBJECT;                                   // unknown
 }
 
 Object::Object() : m_PackGUID(sizeof(uint64)+1)
@@ -83,7 +83,7 @@ Object::~Object()
     if (IsInWorld())
     {
         ///- Do NOT call RemoveFromWorld here, if the object is a player it will crash
-        sLog.outError("Object::~Object - guid="UI64FMTD", typeid=%d deleted but still in world!!", GetGUID(), GetTypeId());
+        sLog.outError("Object::~Object (GUID: %u TypeId: %u) deleted but still in world!!", GetGUIDLow(), GetTypeId());
         assert(false);
     }
 
@@ -1282,8 +1282,6 @@ bool WorldObject::IsInRange3d(float x, float y, float z, float minRange, float m
     float maxdist = maxRange + sizefactor;
     return distsq < maxdist * maxdist;
 }
-
-
 
 float WorldObject::GetAngle(const WorldObject* obj) const
 {

@@ -153,6 +153,7 @@ SET(game_STAT_SRCS
    ObjectAccessor.cpp
    ObjectAccessor.h
    Object.cpp
+   ObjectGuid.cpp
    ObjectGuid.h
    ObjectGridLoader.cpp
    ObjectGridLoader.h
