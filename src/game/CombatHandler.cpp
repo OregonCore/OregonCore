@@ -25,7 +25,7 @@
 #include "World.h"
 #include "ObjectAccessor.h"
 #include "CreatureAI.h"
-#include "ObjectDefines.h"
+#include "ObjectGuid.h"
 
 void WorldSession::HandleAttackSwingOpcode(WorldPacket & recv_data)
 {

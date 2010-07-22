@@ -29,7 +29,7 @@
 #include "MapManager.h"
 #include "ObjectAccessor.h"
 #include "GlobalEvents.h"
-#include "ObjectDefines.h"
+#include "ObjectGuid.h"
 #include "Corpse.h"
 
 static void CorpsesEraseCallBack(QueryResult_AutoPtr result, bool bones)

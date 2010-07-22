@@ -21,7 +21,7 @@
 #ifndef OREGONCORE_PET_H
 #define OREGONCORE_PET_H
 
-#include "ObjectDefines.h"
+#include "ObjectGuid.h"
 #include "Creature.h"
 #include "Unit.h"
 
