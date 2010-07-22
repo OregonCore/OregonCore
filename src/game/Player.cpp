@@ -3813,7 +3813,7 @@ void Player::SetMovement(PlayerMovementType pType)
             sLog.outError("Player::SetMovement: Unsupported move type (%d), data not sent to client.",pType);
             return;
     }
-    data.append(GetPackGUID());
+    data << GetPackGUID();
     data << uint32(0);
     GetSession()->SendPacket(&data);
 }
@@ -18251,7 +18251,7 @@ void Player::SendComboPoints()
     if (combotarget)
     {
         WorldPacket data(SMSG_UPDATE_COMBO_POINTS, combotarget->GetPackGUID().size()+1);
-        data.append(combotarget->GetPackGUID());
+        data << combotarget->GetPackGUID();
         data << uint8(m_comboPoints);
         GetSession()->SendPacket(&data);
     }
@@ -18388,7 +18388,7 @@ void Player::SendInitialPacketsAfterAddToMap()
     if (HasAuraType(SPELL_AURA_MOD_ROOT))
     {
         WorldPacket data(SMSG_FORCE_MOVE_ROOT, 10);
-        data.append(GetPackGUID());
+        data << GetPackGUID();
         data << (uint32)2;
         SendMessageToSet(&data,true);
     }
@@ -19214,7 +19214,7 @@ void Player::ResurectUsingRequestData()
 void Player::SetClientControl(Unit* target, uint8 allowMove)
 {
     WorldPacket data(SMSG_CLIENT_CONTROL_UPDATE, target->GetPackGUID().size()+1);
-    data.append(target->GetPackGUID());
+    data << target->GetPackGUID();
     data << uint8(allowMove);
     GetSession()->SendPacket(&data);
 }

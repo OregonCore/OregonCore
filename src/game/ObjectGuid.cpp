@@ -17,7 +17,6 @@
  */
 
 #include "ObjectGuid.h"
-#include "ByteBuffer.h"
 #include <sstream>
 
 char const* ObjectGuid::GetTypeName() const
@@ -50,7 +49,7 @@ std::string ObjectGuid::GetString() const
 
 ByteBuffer& operator<< (ByteBuffer& buf, ObjectGuid const& guid)
 {
-    buf.append(guid.GetRawValue());
+    buf << uint64(guid.GetRawValue());
     return buf;
 }
 

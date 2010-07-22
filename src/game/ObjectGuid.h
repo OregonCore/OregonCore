@@ -22,8 +22,7 @@
 #define OREGON_OBJECT_GUID_H
 
 #include "Common.h"
-
-class ByteBuffer;
+#include "ByteBuffer.h"
 
 enum TypeID
 {
@@ -44,7 +43,7 @@ enum TypeMask
     TYPEMASK_OBJECT         = 0x0001,
     TYPEMASK_ITEM           = 0x0002,
     TYPEMASK_CONTAINER      = 0x0006,                       // TYPEMASK_ITEM | 0x0004
-    TYPEMASK_UNIT           = 0x0008,
+    TYPEMASK_UNIT           = 0x0008,                       // players also have it
     TYPEMASK_PLAYER         = 0x0010,
     TYPEMASK_GAMEOBJECT     = 0x0020,
     TYPEMASK_DYNAMICOBJECT  = 0x0040,
@@ -113,6 +112,14 @@ inline bool IsGuidHaveEnPart(uint64 const& guid)
 #define GUID_LOPART(x) (IsGuidHaveEnPart(x) ? _GUID_LOPART_3(x) : _GUID_LOPART_2(x))
 
 //*** Must be replaced by ObjectGuid use END ***
+class ObjectGuid;
+class PackedGuid;
+
+struct PackedGuidReader
+{
+    explicit PackedGuidReader(ObjectGuid& guid) : m_guidPtr(&guid) {}
+    ObjectGuid* m_guidPtr;
+};
 
 class ObjectGuid
 {
@@ -122,6 +129,8 @@ class ObjectGuid
         ObjectGuid(HighGuid hi, uint32 entry, uint32 counter) : m_guid(uint64(counter) | (uint64(entry) << 24) | (uint64(hi) << 48)) {}
 
     public:                                                 // modifiers
+        PackedGuidReader ReadAsPacked() { return PackedGuidReader(*this); }
+
         void Set(uint64 const& guid) { m_guid = guid; }
 
         // Possible removed in future for more strict control type conversions
@@ -167,6 +176,8 @@ class ObjectGuid
                 default:                    return TYPEID_OBJECT;
             }
         }
+
+        PackedGuid WriteAsPacked() const;
     public:                                                 // accessors - for debug
         char const* GetTypeName() const;
         std::string GetString() const;
@@ -194,7 +205,32 @@ class ObjectGuid
         uint64 m_guid;
 };
 
+class PackedGuid
+{
+    friend ByteBuffer& operator<< (ByteBuffer& buf, PackedGuid const& guid);
+
+    public:                                                 // constructors
+        explicit PackedGuid() { m_packedGuid.appendPackGUID(0); }
+        explicit PackedGuid(uint64 const& guid) { m_packedGuid.appendPackGUID(guid); }
+        explicit PackedGuid(ObjectGuid const& guid) { m_packedGuid.appendPackGUID(guid.GetRawValue()); }
+
+    public:                                                 // modifiers
+        void Set(uint64 const& guid) { m_packedGuid.wpos(0); m_packedGuid.appendPackGUID(guid); }
+        void Set(ObjectGuid const& guid) { m_packedGuid.wpos(0); m_packedGuid.appendPackGUID(guid.GetRawValue()); }
+
+    public:                                                 // accessors
+        size_t size() const { return m_packedGuid.size(); }
+
+    private:                                                // fields
+        ByteBuffer m_packedGuid;
+};
+
 ByteBuffer& operator<< (ByteBuffer& buf, ObjectGuid const& guid);
 ByteBuffer& operator>> (ByteBuffer& buf, ObjectGuid&       guid);
+
+ByteBuffer& operator<< (ByteBuffer& buf, PackedGuid const& guid);
+ByteBuffer& operator>> (ByteBuffer& buf, PackedGuidReader const& guid);
+
+inline PackedGuid ObjectGuid::WriteAsPacked() const { return PackedGuid(*this); }
 
 #endif

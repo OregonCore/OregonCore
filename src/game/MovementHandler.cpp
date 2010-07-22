@@ -507,7 +507,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     {
         recv_data.put<uint32>(5, getMSTime());                  // offset flags(4) + unk(1)
         WorldPacket data(recv_data.GetOpcode(), (GetPlayer()->GetPackGUID().size()+recv_data.size()));
-        data.append(GetPlayer()->GetPackGUID());
+        data << GetPlayer()->GetPackGUID();
         data.append(recv_data.contents(), recv_data.size());
         GetPlayer()->SendMessageToSet(&data, false);
 
@@ -562,7 +562,7 @@ void WorldSession::HandlePossessedMovement(WorldPacket& recv_data, MovementInfo&
 
     recv_data.put<uint32>(5, getMSTime());
     WorldPacket data(recv_data.GetOpcode(), pos_unit->GetPackGUID().size()+recv_data.size());
-    data.append(pos_unit->GetPackGUID());
+    data << pos_unit->GetPackGUID();
     data.append(recv_data.contents(), recv_data.size());
     // Send the packet to self but not to the possessed player; for creatures the first bool is irrelevant
     pos_unit->SendMessageToSet(&data, true, false);
@@ -603,9 +603,9 @@ void WorldSession::HandlePossessedMovement(WorldPacket& recv_data, MovementInfo&
 void WorldSession::HandleForceSpeedChangeAck(WorldPacket &recv_data)
 {
     /* extract packet */
-    uint64 guid;
+    ObjectGuid guid;
     uint8  unkB;
-    uint32 unk1, flags, time, fallTime;
+    uint32 flags, time, fallTime;
     float x, y, z, orientation;
 
     uint64 t_GUID;
@@ -619,12 +619,12 @@ void WorldSession::HandleForceSpeedChangeAck(WorldPacket &recv_data)
     recv_data >> guid;
 
     // now can skip not our packet
-    if (_player->GetGUID() != guid)
+    if (_player->GetGUID() != guid.GetRawValue())
         return;
 
     // continue parse packet
 
-    recv_data >> unk1;
+    recv_data >> Unused<uint32>();                          // counter or moveEvent
     recv_data >> flags >> unkB >> time;
     recv_data >> x >> y >> z >> orientation;
     if (flags & MOVEMENTFLAG_ONTRANSPORT)
@@ -695,7 +695,6 @@ void WorldSession::HandleForceSpeedChangeAck(WorldPacket &recv_data)
             sLog.outBasic("Player %s from account id %u kicked for incorrect speed (must be %f instead %f)",
                 _player->GetName(),_player->GetSession()->GetAccountId(),_player->GetSpeed(move_type), newspeed);
             _player->GetSession()->KickPlayer();
-
         }
     }
 }
@@ -798,4 +797,3 @@ void WorldSession::HandleSummonResponseOpcode(WorldPacket& recv_data)
 
     _player->SummonIfPossible(agree);
 }
-

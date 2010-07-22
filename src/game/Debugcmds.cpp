@@ -194,11 +194,11 @@ bool ChatHandler::HandleSendOpcodeCommand(const char* /*args*/)
         }
         else if (type == "pguid")
         {
-            data.append(unit->GetPackGUID());
+            data << unit->GetPackGUID();
         }
         else if (type == "myguid")
         {
-            data.append(player->GetPackGUID());
+            data << player->GetPackGUID();
         }
         else if (type == "pos")
         {
