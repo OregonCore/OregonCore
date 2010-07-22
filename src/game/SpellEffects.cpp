@@ -6063,7 +6063,6 @@ void Spell::EffectDispelMechanic(uint32 i)
                 next = Auras.begin();
         }
     }
-    return;
 }
 
 void Spell::EffectSummonDeadPet(uint32 /*i*/)

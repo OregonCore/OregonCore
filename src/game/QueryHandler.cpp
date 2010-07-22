@@ -240,7 +240,7 @@ void WorldSession::HandleGameObjectQueryOpcode(WorldPacket & recv_data)
         data << uint8(0);                                   // 2.0.3, string
         data << CastBarCaption;                             // 2.0.3, string. Text will appear in Cast Bar when using GO (ex: "Collecting")
         data << uint8(0);                                   // 2.0.3, probably string
-        data.append(info->raw.data,24);
+        data.append(info->raw.data, 24);
         SendPacket(&data);
         sLog.outDebug("WORLD: Sent SMSG_GAMEOBJECT_QUERY_RESPONSE");
     }

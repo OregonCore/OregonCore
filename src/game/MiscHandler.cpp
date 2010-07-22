@@ -1447,26 +1447,6 @@ void WorldSession::HandleDungeonDifficultyOpcode(WorldPacket & recv_data)
     }
 }
 
-void WorldSession::HandleNewUnknownOpcode(WorldPacket & recv_data)
-{
-    sLog.outDebug("New Unknown Opcode %u", recv_data.GetOpcode());
-    recv_data.rpos(recv_data.wpos());                       // prevent warnings spam
-    /*
-    New Unknown Opcode 837
-    STORAGE_SIZE: 60
-    02 00 00 00 00 00 00 00 | 00 00 00 00 01 20 00 00
-    89 EB 33 01 71 5C 24 C4 | 15 03 35 45 74 47 8B 42
-    BA B8 1B 40 00 00 00 00 | 00 00 00 00 77 66 42 BF
-    23 91 26 3F 00 00 60 41 | 00 00 00 00
-
-    New Unknown Opcode 837
-    STORAGE_SIZE: 44
-    02 00 00 00 00 00 00 00 | 00 00 00 00 00 00 80 00
-    7B 80 34 01 84 EA 2B C4 | 5F A1 36 45 C9 39 1C 42
-    BA B8 1B 40 CE 06 00 00 | 00 00 80 3F
-    */
-}
-
 void WorldSession::HandleDismountOpcode(WorldPacket & /*recv_data*/)
 {
     sLog.outDebug("WORLD: CMSG_CANCEL_MOUNT_AURA");
@@ -1501,16 +1481,6 @@ void WorldSession::HandleMoveFlyModeChangeAckOpcode(WorldPacket & recv_data)
     recv_data >> guid >> unk >> flags;
 
     _player->SetUnitMovementFlags(flags);
-    /*
-    on:
-    25 00 00 00 00 00 00 00 | 00 00 00 00 00 00 80 00
-    85 4E A9 01 19 BA 7A C3 | 42 0D 70 44 44 B0 A8 42
-    78 15 94 40 39 03 00 00 | 00 00 80 3F
-    off:
-    25 00 00 00 00 00 00 00 | 00 00 00 00 00 00 00 00
-    10 FD A9 01 19 BA 7A C3 | 42 0D 70 44 44 B0 A8 42
-    78 15 94 40 39 03 00 00 | 00 00 00 00
-    */
 }
 
 void WorldSession::HandleRequestPetInfoOpcode(WorldPacket & /*recv_data */)

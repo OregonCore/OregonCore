@@ -2501,7 +2501,7 @@ void Aura::HandleAuraHover(bool apply, bool Real)
         data.Initialize(SMSG_MOVE_UNSET_HOVER, 8+4);
     data.append(m_target->GetPackGUID());
     data << uint32(0);
-    m_target->SendMessageToSet(&data,true);
+    m_target->SendMessageToSet(&data, true);
 }
 
 void Aura::HandleWaterBreathing(bool apply, bool Real)
