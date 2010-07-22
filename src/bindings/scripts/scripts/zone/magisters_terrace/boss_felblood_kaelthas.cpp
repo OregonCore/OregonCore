@@ -144,11 +144,6 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
         {
             victim->RemoveAurasDueToSpell(SPELL_GRAVITY_LAPSE_FLY);
             victim->RemoveAurasDueToSpell(SPELL_GRAVITY_LAPSE_DOT);
-            WorldPacket data(12);
-            data.SetOpcode(SMSG_MOVE_UNSET_CAN_FLY);
-            data << victim->GetPackGUID();
-            data << uint32(0);
-            victim->SendMessageToSet(&data, true);
         }
     }
     void JustDied(Unit *killer)
@@ -241,7 +236,8 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
         }
     }
 
-    void CastGravityLapseFly()                              // Use Fly Packet hack for now as players can't cast "fly" spells unless in map 530. Has to be done a while after they get knocked into the air...
+    // players can't cast "fly" spells unless in map 530. Has to be done a while after they get knocked into the air...
+    void CastGravityLapseFly()
     {
         Map *map = me->GetMap();
         Map::PlayerList const &PlayerList = map->GetPlayers();
@@ -254,12 +250,6 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                 {
                     // Also needs an exception in spell system.
                     i_pl->CastSpell(i_pl, SPELL_GRAVITY_LAPSE_FLY, true, 0, 0, me->GetGUID());
-                    // Use packet hack
-                    WorldPacket data(12);
-                    data.SetOpcode(SMSG_MOVE_SET_CAN_FLY);
-                    data << i_pl->GetPackGUID();
-                    data << uint32(0);
-                    i_pl->SendMessageToSet(&data, true);
                     i_pl->SetSpeed(MOVE_FLIGHT, 2.0f);
                 }
             }
@@ -277,11 +267,6 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
             {
                 i_pl->RemoveAurasDueToSpell(SPELL_GRAVITY_LAPSE_FLY);
                 i_pl->RemoveAurasDueToSpell(SPELL_GRAVITY_LAPSE_DOT);
-                WorldPacket data(12);
-                data.SetOpcode(SMSG_MOVE_UNSET_CAN_FLY);
-                data << i_pl->GetPackGUID();
-                data << uint32(0);
-                i_pl->SendMessageToSet(&data, true);
             }
         }
     }

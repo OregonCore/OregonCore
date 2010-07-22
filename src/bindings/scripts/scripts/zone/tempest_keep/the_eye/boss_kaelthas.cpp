@@ -954,13 +954,6 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
                                         pUnit->CastSpell(pUnit, SPELL_GRAVITY_LAPSE, true, 0, 0, me->GetGUID());
                                         pUnit->CastSpell(pUnit, SPELL_GRAVITY_LAPSE_AURA, true, 0, 0, me->GetGUID());
-
-                                        //Using packet workaround
-                                        WorldPacket data(12);
-                                        data.SetOpcode(SMSG_MOVE_SET_CAN_FLY);
-                                        data << pUnit->GetPackGUID();
-                                        data << uint32(0);
-                                        pUnit->SendMessageToSet(&data, true);
                                     }
                                 }
                                 GravityLapse_Timer = 10000;
@@ -978,20 +971,6 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
                             case 3:
                                 //Remove flight
-                                for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end();)
-                                {
-                                    Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
-                                    ++i;
-                                    if (pUnit && pUnit->GetTypeId() == TYPEID_PLAYER)
-                                    {
-                                        //Using packet workaround
-                                        WorldPacket data(12);
-                                        data.SetOpcode(SMSG_MOVE_UNSET_CAN_FLY);
-                                        data << pUnit->GetPackGUID();
-                                        data << uint32(0);
-                                        pUnit->SendMessageToSet(&data, true);
-                                    }
-                                }
                                 me->RemoveAurasDueToSpell(SPELL_NETHER_VAPOR);
                                 InGravityLapse = false;
                                 GravityLapse_Timer = 60000;
