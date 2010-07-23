@@ -156,7 +156,7 @@ bool IsPassiveStackableSpell(uint32 spellId)
 Unit::Unit()
 : WorldObject(), i_motionMaster(this), m_ThreatManager(this), m_HostileRefManager(this)
 , m_NotifyListPos(-1), m_Notified(false), IsAIEnabled(false), NeedChangeAI(false)
-, i_AI(NULL), i_disabledAI(NULL), m_removedAurasCount(0), m_procDeep(0)
+, i_AI(NULL), i_disabledAI(NULL), m_removedAurasCount(0)
 {
     m_objectType |= TYPEMASK_UNIT;
     m_objectTypeId = TYPEID_UNIT;
@@ -10600,15 +10600,6 @@ uint32 createProcExtendMask(SpellNonMeleeDamage *damageInfo, SpellMissInfo missC
 
 void Unit::ProcDamageAndSpellFor(bool isVictim, Unit * pTarget, uint32 procFlag, uint32 procExtra, WeaponAttackType attType, SpellEntry const * procSpell, uint32 damage)
 {
-    ++m_procDeep;
-    if (m_procDeep > 5)
-    {
-        sLog.outError("Prevent possible stack owerflow in Unit::ProcDamageAndSpellFor");
-        if (procSpell)
-            sLog.outError("  Spell %u", procSpell->Id);
-        --m_procDeep;
-        return;
-    }
     // For melee/ranged based attack need update skills and set some Aura states
     if (procFlag & MELEE_BASED_TRIGGER_MASK)
     {
@@ -10693,7 +10684,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit * pTarget, uint32 procFlag,
     {
         SpellProcEventEntry const* spellProcEvent = NULL;
         bool active = (damage > 0) || (procExtra & PROC_EX_ABSORB && isVictim);
-        if (!IsTriggeredAtSpellProcEvent(itr->second, procSpell, procFlag, procExtra, attType, isVictim, active, spellProcEvent))
+        if (!IsTriggeredAtSpellProcEvent(pTarget, itr->second, procSpell, procFlag, procExtra, attType, isVictim, active, spellProcEvent))
            continue;
 
         procTriggered.push_back(ProcTriggeredData(spellProcEvent, itr->second));
@@ -10872,7 +10863,6 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit * pTarget, uint32 procFlag,
         for (RemoveSpellList::const_iterator i = removedSpells.begin(); i != removedSpells.end();i++)
             RemoveAurasDueToSpell(*i);
     }
-    --m_procDeep;
 }
 
 SpellSchoolMask Unit::GetMeleeDamageSchoolMask() const
@@ -11406,7 +11396,7 @@ Pet* Unit::CreateTamedPetFrom(Creature* creatureTarget,uint32 spell_id)
     return pet;
 }
 
-bool Unit::IsTriggeredAtSpellProcEvent(Aura* aura, SpellEntry const* procSpell, uint32 procFlag, uint32 procExtra, WeaponAttackType attType, bool isVictim, bool active, SpellProcEventEntry const*& spellProcEvent)
+bool Unit::IsTriggeredAtSpellProcEvent(Unit *pVictim, Aura* aura, SpellEntry const* procSpell, uint32 procFlag, uint32 procExtra, WeaponAttackType attType, bool isVictim, bool active, SpellProcEventEntry const*& spellProcEvent )
 {
     SpellEntry const *spellProto = aura->GetSpellProto();
 
@@ -11436,7 +11426,17 @@ bool Unit::IsTriggeredAtSpellProcEvent(Aura* aura, SpellEntry const* procSpell, 
     if (!SpellMgr::IsSpellProcEventCanTriggeredBy(spellProcEvent, EventProcFlag, procSpell, procFlag, procExtra, active))
         return false;
 
-    // Aura added by spell can`t trogger from self (prevent drop cahres/do triggers)
+    // In most cases req get honor or XP from kill
+    if (EventProcFlag & PROC_FLAG_KILL && GetTypeId() == TYPEID_PLAYER)
+    {
+        bool allow = ToPlayer()->isHonorOrXPTarget(pVictim);
+        // Shadow Word: Death - can trigger from every kill
+        if (aura->GetId() == 32409)
+            allow = true;
+        if (!allow)
+            return false;
+    }
+    // Aura added by spell can`t trogger from self (prevent drop charges/do triggers)
     // But except periodic triggers (can triggered from self)
     if (procSpell && procSpell->Id == spellProto->Id && !(spellProto->procFlags&PROC_FLAG_ON_TAKE_PERIODIC))
         return false;
@@ -11597,12 +11597,10 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
     // Reward player, his pets, and group/raid members
     // call kill spell proc event (before real die and combat stop to triggering auras removed at death/combat stop)
     if (bRewardIsAllowed && player && player != pVictim)
-    {
-        if (player->RewardPlayerAndGroupAtKill(pVictim))
-            player->ProcDamageAndSpell(pVictim, PROC_FLAG_KILL_AND_GET_XP, PROC_FLAG_KILLED, PROC_EX_NONE, 0);
-        else
-            player->ProcDamageAndSpell(pVictim, PROC_FLAG_NONE, PROC_FLAG_KILLED,PROC_EX_NONE, 0);
-    }
+        player->RewardPlayerAndGroupAtKill(pVictim);
+
+    // Do KILL and KILLED procs. KILL proc is called only for the unit who landed the killing blow regardless of who tapped the victim
+    ProcDamageAndSpell(pVictim, PROC_FLAG_KILL, PROC_FLAG_KILLED, PROC_EX_NONE, 0);
 
     // if talent known but not triggered (check priest class for speedup check)
     bool SpiritOfRedemption = false;

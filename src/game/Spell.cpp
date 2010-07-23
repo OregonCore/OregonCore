@@ -1019,8 +1019,6 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
         procEx = createProcExtendMask(&damageInfo, missInfo);
         procVictim |= PROC_FLAG_TAKEN_ANY_DAMAGE;
 
-
-        caster->DealSpellDamage(&damageInfo, true);
         // Do triggers for unit (reflect triggers passed on hit phase for correct drop charge)
         if (missInfo != SPELL_MISS_REFLECT)
         {
@@ -1029,15 +1027,10 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
                 caster->ToPlayer()->CastItemCombatSpell(unitTarget, m_attackType, procVictim, procEx, m_spellInfo);
         }
 
-        // Shadow Word: Death - deals damage equal to damage done to caster if victim is not killed
-        if (m_spellInfo->SpellFamilyName == SPELLFAMILY_PRIEST && m_spellInfo->SpellFamilyFlags&0x0000000200000000LL &&
-            caster != unitTarget && unitTarget->isAlive())
-        {
-            // Redirect damage to caster if victim alive
-            m_caster->CastCustomSpell(m_caster, 32409, &m_damage, NULL, NULL, true);
-        }
+        caster->DealSpellDamage(&damageInfo, true);
+
         // Judgement of Blood
-        else if (m_spellInfo->SpellFamilyName == SPELLFAMILY_PALADIN && m_spellInfo->SpellFamilyFlags & 0x0000000800000000LL && m_spellInfo->SpellIconID == 153)
+        if (m_spellInfo->SpellFamilyName == SPELLFAMILY_PALADIN && m_spellInfo->SpellFamilyFlags & 0x0000000800000000LL && m_spellInfo->SpellIconID == 153)
         {
             int32 damagePoint  = damageInfo.damage * 33 / 100;
             m_caster->CastCustomSpell(m_caster, 32220, &damagePoint, NULL, NULL, true);

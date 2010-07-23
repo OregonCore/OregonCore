@@ -19052,13 +19052,32 @@ uint32 Player::GetResurrectionSpellId()
     return spell_id;
 }
 
-bool Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
+// Used in triggers for check "Only to targets that grant experience or honor" req
+bool Player::isHonorOrXPTarget(Unit* pVictim) const
+{
+    uint32 v_level = pVictim->getLevel();
+    uint32 k_grey  = Oregon::XP::GetGrayLevel(getLevel());
+
+    // Victim level less gray level
+    if (v_level<=k_grey)
+        return false;
+
+    if (pVictim->GetTypeId() == TYPEID_UNIT)
+    {
+        if (pVictim->ToCreature()->isTotem() ||
+            pVictim->ToCreature()->isPet() ||
+            pVictim->ToCreature()->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_NO_XP_AT_KILL)
+                return false;
+    }
+    return true;
+}
+
+void Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
 {
     bool PvP = pVictim->isCharmedOwnedByPlayerOrPlayer();
 
     // prepare data for near group iteration (PvP and !PvP cases)
     uint32 xp = 0;
-    bool honored_kill = false;
 
     if (Group *pGroup = GetGroup())
     {
@@ -19090,8 +19109,8 @@ bool Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
                     continue;                               // member (alive or dead) or his corpse at req. distance
 
                 // honor can be in PvP and !PvP (racial leader) cases (for alive)
-                if (pGroupGuy->isAlive() && pGroupGuy->RewardHonor(pVictim,count, -1, true) && pGroupGuy == this)
-                    honored_kill = true;
+                if (pGroupGuy->isAlive())
+                    pGroupGuy->RewardHonor(pVictim,count, -1, true);
 
                 // xp and reputation only in !PvP case
                 if (!PvP)
@@ -19129,8 +19148,7 @@ bool Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
         xp = PvP ? 0 : Oregon::XP::Gain(this, pVictim);
 
         // honor can be in PvP and !PvP (racial leader) cases
-        if (RewardHonor(pVictim,1, -1, true))
-            honored_kill = true;
+        RewardHonor(pVictim,1, -1, true);
 
         // xp and reputation only in !PvP case
         if (!PvP)
@@ -19146,7 +19164,6 @@ bool Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
                 KilledMonster(pVictim->GetEntry(),pVictim->GetGUID());
         }
     }
-    return xp || honored_kill;
 }
 
 void Player::RewardPlayerAndGroupAtEvent(uint32 creature_id, WorldObject* pRewardSource)

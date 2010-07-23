@@ -594,7 +594,7 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
                 DoCast(me,SPELL_BODY_REGEN,true);
                 me->CastSpell(Head, SPELL_FLYING_HEAD,true);
                 DoCast(me,SPELL_CONFUSE,false);                     //test
-                done_by->ProcDamageAndSpell(me,PROC_FLAG_KILL_AND_GET_XP,PROC_FLAG_KILLED,PROC_EX_NONE,0);
+                done_by->ProcDamageAndSpell(me,PROC_FLAG_KILL,PROC_FLAG_KILLED,PROC_EX_NONE,0);
                 whirlwind = 4000 + (rand()%5)*1000;
                 regen = 0;
             }

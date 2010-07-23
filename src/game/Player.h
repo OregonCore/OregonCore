@@ -1686,8 +1686,9 @@ class OREGON_DLL_SPEC Player : public Unit
         void setFactionForRace(uint8 race);
 
         bool IsAtGroupRewardDistance(WorldObject const* pRewardSource) const;
-        bool RewardPlayerAndGroupAtKill(Unit* pVictim);
+        void RewardPlayerAndGroupAtKill(Unit* pVictim);
         void RewardPlayerAndGroupAtEvent(uint32 creature_id,WorldObject* pRewardSource);
+        bool isHonorOrXPTarget(Unit* pVictim) const;
 
         FactionStateList m_factions;
         ForcedReactions m_forcedReactions;

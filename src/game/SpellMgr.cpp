@@ -1333,7 +1333,7 @@ bool SpellMgr::IsSpellProcEventCanTriggeredBy(SpellProcEventEntry const * spellP
     }
 
     // Always trigger for this
-    if (EventProcFlag & (PROC_FLAG_KILLED | PROC_FLAG_KILL_AND_GET_XP))
+    if (EventProcFlag & (PROC_FLAG_KILLED | PROC_FLAG_KILL))
         return true;
 
     if (spellProcEvent)     // Exist event data
