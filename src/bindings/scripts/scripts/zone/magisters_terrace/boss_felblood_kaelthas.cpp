@@ -146,7 +146,7 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
             victim->RemoveAurasDueToSpell(SPELL_GRAVITY_LAPSE_DOT);
             WorldPacket data(12);
             data.SetOpcode(SMSG_MOVE_UNSET_CAN_FLY);
-            data.append(victim->GetPackGUID());
+            data << victim->GetPackGUID();
             data << uint32(0);
             victim->SendMessageToSet(&data, true);
         }
@@ -257,7 +257,7 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                     // Use packet hack
                     WorldPacket data(12);
                     data.SetOpcode(SMSG_MOVE_SET_CAN_FLY);
-                    data.append(i_pl->GetPackGUID());
+                    data << i_pl->GetPackGUID();
                     data << uint32(0);
                     i_pl->SendMessageToSet(&data, true);
                     i_pl->SetSpeed(MOVE_FLIGHT, 2.0f);
@@ -279,7 +279,7 @@ struct OREGON_DLL_DECL boss_felblood_kaelthasAI : public ScriptedAI
                 i_pl->RemoveAurasDueToSpell(SPELL_GRAVITY_LAPSE_DOT);
                 WorldPacket data(12);
                 data.SetOpcode(SMSG_MOVE_UNSET_CAN_FLY);
-                data.append(i_pl->GetPackGUID());
+                data << i_pl->GetPackGUID();
                 data << uint32(0);
                 i_pl->SendMessageToSet(&data, true);
             }

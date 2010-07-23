@@ -958,7 +958,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                                         //Using packet workaround
                                         WorldPacket data(12);
                                         data.SetOpcode(SMSG_MOVE_SET_CAN_FLY);
-                                        data.append(pUnit->GetPackGUID());
+                                        data << pUnit->GetPackGUID();
                                         data << uint32(0);
                                         pUnit->SendMessageToSet(&data, true);
                                     }
@@ -987,7 +987,7 @@ struct OREGON_DLL_DECL boss_kaelthasAI : public ScriptedAI
                                         //Using packet workaround
                                         WorldPacket data(12);
                                         data.SetOpcode(SMSG_MOVE_UNSET_CAN_FLY);
-                                        data.append(pUnit->GetPackGUID());
+                                        data << pUnit->GetPackGUID();
                                         data << uint32(0);
                                         pUnit->SendMessageToSet(&data, true);
                                     }
