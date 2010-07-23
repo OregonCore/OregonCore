@@ -35,8 +35,6 @@
 #include "Unit.h"
 #include "Util.h"
 
-#define SPELL_WATER_ELEMENTAL_WATERBOLT 31707
-
 char const* petTypeSuffix[MAX_PET_TYPE] =
 {
     "'s Minion",                                            // SUMMON_PET
@@ -523,7 +521,7 @@ void Pet::setDeathState(DeathState s)                       // overwrite virtual
             SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0x00);
             RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
 
-             //lose happiness when died and not in BG/Arena
+            //lose happiness when died and not in BG/Arena
             MapEntry const* mapEntry = sMapStore.LookupEntry(GetMapId());
             if (!mapEntry || (mapEntry->map_type != MAP_ARENA && mapEntry->map_type != MAP_BATTLEGROUND))
                 ModifyPower(POWER_HAPPINESS, -HAPPINESS_LEVEL_SIZE);
@@ -921,7 +919,6 @@ void Pet::GivePetLevel(uint32 level)
         return;
 
     InitStatsForLevel(level);
-
     SetTP(m_TrainingPoints + (GetLoyaltyLevel() - 1));
 }
 
@@ -946,7 +943,7 @@ bool Pet::CreateBaseAtCreature(Creature* creature)
 
     if (!IsPositionValid())
     {
-        sLog.outError("ERROR: Pet (guidlow %d, entry %d) not created base at creature. Suggested coordinates isn't valid (X: %f Y: %f)",
+        sLog.outError("Pet (guidlow %d, entry %d) not created base at creature. Suggested coordinates isn't valid (X: %f Y: %f)",
             GetGUIDLow(), GetEntry(), GetPositionX(), GetPositionY());
         return false;
     }
@@ -954,7 +951,7 @@ bool Pet::CreateBaseAtCreature(Creature* creature)
     CreatureInfo const *cinfo = GetCreatureInfo();
     if (!cinfo)
     {
-        sLog.outError("ERROR: CreateBaseAtCreature() failed, creatureInfo is missing!");
+        sLog.outError("CreateBaseAtCreature() failed, creatureInfo is missing!");
         return false;
     }
 
@@ -1029,7 +1026,7 @@ bool Pet::InitStatsForLevel(uint32 petlevel)
         else if (getLevel() <= cFamily->minScaleLevel)
             scale = cFamily->minScale;
         else
-          scale = cFamily->minScale + (float)(getLevel() - cFamily->minScaleLevel) / (float)cFamily->maxScaleLevel * (cFamily->maxScale - cFamily->minScale);
+            scale = cFamily->minScale + float(getLevel() - cFamily->minScaleLevel) / (float)cFamily->maxScaleLevel * (cFamily->maxScale - cFamily->minScale);
 
         SetFloatValue(OBJECT_FIELD_SCALE_X, scale);
     }
@@ -1135,7 +1132,7 @@ bool Pet::InitStatsForLevel(uint32 petlevel)
                 SetModifierValue(UNIT_MOD_ARMOR, BASE_VALUE, float(pInfo->armor));
                 //SetModifierValue(UNIT_MOD_ATTACK_POWER, BASE_VALUE, float(cinfo->attackpower));
 
-                for (int i = STAT_STRENGTH; i < MAX_STATS; i++)
+                for (int i = STAT_STRENGTH; i < MAX_STATS; ++i)
                 {
                     SetCreateStat(Stats(i),  float(pInfo->stats[i]));
                 }
@@ -1514,6 +1511,12 @@ bool Pet::addSpell(uint16 spell_id, uint16 active, PetSpellState state, PetSpell
         {
             // can be in case spell loading but learned at some previous spell loading
             itr->second->state = PETSPELL_UNCHANGED;
+
+            if (active == ACT_ENABLED)
+                ToggleAutocast(spell_id, true);
+            else if (active == ACT_DISABLED)
+                ToggleAutocast(spell_id, false);
+
             return false;
         }
         else
@@ -1614,13 +1617,16 @@ bool Pet::_removeSpell(uint16 spell_id)
 void Pet::InitPetCreateSpells()
 {
     m_charmInfo->InitPetActionBar();
-
     m_spells.clear();
+
     int32 usedtrainpoints = 0, petspellid;
     PetCreateSpellEntry const* CreateSpells = objmgr.GetPetCreateSpellEntry(GetEntry());
     if (CreateSpells)
     {
-        for (uint8 i = 0; i < 4; i++)
+        Unit* owner = GetOwner();
+        Player* p_owner = owner && owner->GetTypeId() == TYPEID_PLAYER ? owner->ToPlayer() : NULL;
+
+        for (uint8 i = 0; i < 4; ++i)
         {
             if (!CreateSpells->spellid[i])
                 break;
@@ -1632,11 +1638,10 @@ void Pet::InitPetCreateSpells()
             if (learn_spellproto->Effect[0] == SPELL_EFFECT_LEARN_SPELL || learn_spellproto->Effect[0] == SPELL_EFFECT_LEARN_PET_SPELL)
             {
                 petspellid = learn_spellproto->EffectTriggerSpell[0];
-                Unit* owner = GetOwner();
-                if (owner->GetTypeId() == TYPEID_PLAYER && !owner->ToPlayer()->HasSpell(learn_spellproto->Id))
+                if (p_owner && !p_owner->HasSpell(learn_spellproto->Id))
                 {
                     if (IsPassiveSpell(petspellid))          //learn passive skills when tamed, not sure if thats right
-                        owner->ToPlayer()->learnSpell(learn_spellproto->Id);
+                        p_owner->learnSpell(learn_spellproto->Id);
                     else
                         AddTeachSpell(learn_spellproto->EffectTriggerSpell[0], learn_spellproto->Id);
                 }
@@ -1644,10 +1649,7 @@ void Pet::InitPetCreateSpells()
             else
                 petspellid = learn_spellproto->Id;
 
-            if (petspellid == SPELL_WATER_ELEMENTAL_WATERBOLT)
-                addSpell(petspellid,ACT_ENABLED);
-            else
-                addSpell(petspellid);
+            addSpell(petspellid);
 
             SkillLineAbilityMap::const_iterator lower = spellmgr.GetBeginSkillLineAbilityMap(learn_spellproto->EffectTriggerSpell[0]);
             SkillLineAbilityMap::const_iterator upper = spellmgr.GetEndSkillLineAbilityMap(learn_spellproto->EffectTriggerSpell[0]);
