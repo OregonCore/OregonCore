@@ -207,7 +207,7 @@ void RASocket::OnRead()
 
                         Sendf("+Logged in.\r\n");
                         sLog.outRemote("User %s has logged in.\n",szLogin.c_str());
-                        Sendf("TC>");
+                        Sendf("Oregon>");
                     }
                     else
                     {
@@ -226,7 +226,7 @@ void RASocket::OnRead()
                     sWorld.QueueCliCommand(&RASocket::zprint , buff);
                 }
                 else
-                    Sendf("TC>");
+                    Sendf("Oregon>");
                 break;
                 ///</ul>
         };
