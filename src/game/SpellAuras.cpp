@@ -2004,7 +2004,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
             case 7057:                                      // Haunting Spirits
                 // expected to tick with 30 sec period (tick part see in Aura::PeriodicTick)
                 m_isPeriodic = true;
-                m_modifier.periodictime = 30*IN_MILISECONDS;
+                m_modifier.periodictime = 30*IN_MILLISECONDS;
                 m_periodicTimer = m_modifier.periodictime;
                 return;
             case 13139:                                     // net-o-matic

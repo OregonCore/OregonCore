@@ -496,7 +496,7 @@ class Spell
         bool m_autoRepeat;
 
         uint8 m_delayAtDamageCount;
-        int32 GetNextDelayAtDamageMsTime() { return m_delayAtDamageCount < 5 ? IN_MILISECONDS - (m_delayAtDamageCount++)* 200 : 200; }
+        int32 GetNextDelayAtDamageMsTime() { return m_delayAtDamageCount < 5 ? IN_MILLISECONDS - (m_delayAtDamageCount++)* 200 : 200; }
 
         // Delayed spells system
         uint64 m_delayStart;                                // time of spell delay start, filled by event handler, zero = just started

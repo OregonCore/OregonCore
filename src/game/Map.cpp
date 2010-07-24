@@ -193,7 +193,7 @@ Map::Map(uint32 id, time_t expiry, uint32 InstanceId, uint8 SpawnMode)
    m_activeNonPlayersIter(m_activeNonPlayers.end())
    , i_lock(true)
 {
-    m_notifyTimer.SetInterval(IN_MILISECONDS/2);
+    m_notifyTimer.SetInterval(IN_MILLISECONDS/2);
 
     for (unsigned int idx=0; idx < MAX_NUMBER_OF_GRIDS; ++idx)
     {
