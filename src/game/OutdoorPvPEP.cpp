@@ -451,29 +451,13 @@ void OPvPCapturePointEP::SummonFlightMaster(uint32 team)
         EP_TOWER_EVENT_TEAM[EP_TOWER_PLAGUEWOOD] = team;
         DelCreature(EP_PWT_FLIGHTMASTER);
         AddCreature(EP_PWT_FLIGHTMASTER,EP_PWT_FlightMaster.entry,team,EP_PWT_FlightMaster.map,EP_PWT_FlightMaster.x,EP_PWT_FlightMaster.y,EP_PWT_FlightMaster.z,EP_PWT_FlightMaster.o);
-        Creature * c = HashMapHolder<Creature>::Find(m_Creatures[EP_PWT_FLIGHTMASTER]);
-        if (c)
-        {
-            // Change the flightmasters's faction to horde and display a red aura around the npc
-            if (team == HORDE)
-            {
-                c->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, c->GetCreatureInfo()->faction_H);
-                c->SetUInt32Value(UNIT_FIELD_AURA, EP_PWT_FlightMasterAura);
-            }
 
-            GossipOption gso;
-            for (uint8 i = 0; i < EP_TOWER_NUM-1; ++i)
-            {
-                gso.Action = GOSSIP_OPTION_OUTDOORPVP;
-                gso.GossipId = 0;
-                gso.OptionText.assign(objmgr.GetOregonStringForDBCLocale(EP_LANG_FLIGHT_GOSSIPS[i]));
-                gso.Id = 50;
-                gso.Icon = 0;
-                gso.NpcFlag = 0;
-                gso.BoxMoney = 0;
-                gso.Coded = false;
-                c->addGossipOption(gso);
-            }
+        // Change the flightmasters's faction to horde and display a red aura around the npc
+        Creature * c = HashMapHolder<Creature>::Find(m_Creatures[EP_PWT_FLIGHTMASTER]);
+        if (c && team == HORDE)
+        {
+            c->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, c->GetCreatureInfo()->faction_H);
+            c->SetUInt32Value(UNIT_FIELD_AURA, EP_PWT_FlightMasterAura);
         }
     }
 }
@@ -484,39 +468,10 @@ void OPvPCapturePointEP::UnsummonFlightMaster()
     EP_TOWER_EVENT_TEAM[EP_TOWER_PLAGUEWOOD] = 0;
 }
 
-bool OPvPCapturePointEP::CanTalkTo(Player * p, Creature * c, GossipOption &gso)
+/*bool OPvPCapturePointEP::CanTalkTo(Player * p, Creature * c, GossipMenuItems gso)
 {
     if (p->GetTeam() == EP_TOWER_EVENT_TEAM[EP_TOWER_PLAGUEWOOD] &&
-        c->GetGUID() == m_Creatures[EP_PWT_FLIGHTMASTER] &&
-        gso.Id == 50)
+        c->GetGUID() == m_Creatures[EP_PWT_FLIGHTMASTER])
         return true;
     return false;
-}
-
-bool OPvPCapturePointEP::HandleGossipOption(Player *plr, uint64 guid, uint32 gossipid)
-{
-    std::map<uint64,uint32>::iterator itr = m_CreatureTypes.find(guid);
-    if (itr != m_CreatureTypes.end())
-    {
-        Creature * cr = HashMapHolder<Creature>::Find(guid);
-        if (!cr)
-            return true;
-        if (itr->second == EP_PWT_FLIGHTMASTER)
-        {
-            uint32 src = EP_TAXI_NODE[0];
-            uint32 dst = EP_TAXI_NODE[gossipid+1];
-
-            std::vector<uint32> nodes;
-            nodes.resize(2);
-            nodes[0] = src;
-            nodes[1] = dst;
-
-            plr->PlayerTalkClass->CloseGossip();
-            plr->ActivateTaxiPathTo(nodes, 0, cr);
-            // leave the opvp, seems like moveinlineofsight isn't called when entering a taxi
-            HandlePlayerLeave(plr);
-        }
-        return true;
-    }
-    return false;
-}
+}*/

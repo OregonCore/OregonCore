@@ -67,7 +67,7 @@ enum EP_Summons {
     EP_EWT_SOLDIER4,
     EP_PWT_FLIGHTMASTER,
 };
- 
+
 enum EP_GoSummons {
     EP_NPT_SHRINE = EP_TOWER_NUM,
     EP_NPT_SHRINE_AURA,
@@ -115,12 +115,6 @@ const creature_type EP_EWT_Summons_H[EP_EWT_NUM_CREATURES] = {
     {17996,67,0, 3169.91,-4349.68,138.37,0.7444}
 };
 
-enum EP_TowerStates {
-    EP_TS_N = 1,
-    EP_TS_A = 32,
-    EP_TS_H = 64
-};
-
 const creature_type EP_PWT_FlightMaster = {17209,0,0,2987.5,-3049.11,120.126,5.75959};
 const uint32 EP_PWT_FlightMasterAura = 36725;
 
@@ -143,14 +137,13 @@ protected:
     void SummonShrine(uint32 team);
     void SummonSupportUnits(uint32 team);
     void SummonFlightMaster(uint32 team);
-    bool HandleGossipOption(Player *plr, uint64 guid, uint32 gossipid);
-    bool CanTalkTo(Player * plr, Creature * c, GossipOption &gso);
+    //bool CanTalkTo(Player * plr, Creature * c, GossipMenuItems gso);
     void UnlinkGraveYard();
     void UnsummonShrine();
     void UnsummonSupportUnits();
     void UnsummonFlightMaster();
 
-	uint32 EP_TOWER_EVENT_TEAM[EP_TOWER_NUM];
+    uint32 EP_TOWER_EVENT_TEAM[EP_TOWER_NUM];
 private:
     OutdoorPvPEPTowerType m_TowerType;
 };

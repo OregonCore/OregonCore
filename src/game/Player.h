@@ -1139,6 +1139,18 @@ class OREGON_DLL_SPEC Player : public Unit
         uint32 m_stableSlots;
 
         /*********************************************************/
+        /***                    GOSSIP SYSTEM                  ***/
+        /*********************************************************/
+
+        void PrepareGossipMenu(WorldObject *pSource, uint32 menuId = 0);
+        void SendPreparedGossip(WorldObject *pSource);
+        void OnGossipSelect(WorldObject *pSource, uint32 gossipListId, uint32 menuId);
+
+        uint32 GetGossipTextId(uint32 menuId);
+        uint32 GetGossipTextId(WorldObject *pSource);
+        uint32 GetDefaultGossipMenuForSource(WorldObject *pSource);
+
+        /*********************************************************/
         /***                    QUEST SYSTEM                   ***/
         /*********************************************************/
         uint32 GetQuestOrPlayerLevel(Quest const* pQuest) const { return pQuest && (pQuest->GetQuestLevel()>0) ? pQuest->GetQuestLevel() : getLevel(); }

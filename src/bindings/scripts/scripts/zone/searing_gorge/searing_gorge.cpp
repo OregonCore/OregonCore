@@ -41,7 +41,7 @@ bool GossipHello_npc_kalaran_windblade(Player *player, Creature *_Creature)
     if (player->GetQuestStatus(3441) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, "Tell me what drives this vengance?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
-    player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
 
     return true;
 }
@@ -78,7 +78,7 @@ bool GossipHello_npc_lothos_riftwaker(Player *player, Creature *_Creature)
     if (player->GetQuestRewardStatus(7487) || player->GetQuestRewardStatus(7848))
         player->ADD_GOSSIP_ITEM(0, "Teleport me to the Molten Core", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
-    player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
 
     return true;
 }

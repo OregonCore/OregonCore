@@ -167,13 +167,13 @@ CreatureAI* GetAI_test(Creature* pCreature)
 bool GossipHello_npc_test(Player* pPlayer, Creature* pCreature)
 {
     pPlayer->TalkedToCreature(pCreature->GetEntry(), pCreature->GetGUID());
-    pCreature->prepareGossipMenu(pPlayer,0);
+    pPlayer->PrepareGossipMenu(pCreature,0);
 
     pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEXT1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
     pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEXT2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
     pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEXT3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
 
-    pCreature->sendPreparedGossip(pPlayer);
+    pPlayer->SendPreparedGossip(pCreature);
     return true;
 }
 

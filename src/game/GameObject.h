@@ -63,7 +63,7 @@ struct GameObjectInfo
             uint32 startOpen;                               //0
             uint32 lockId;                                  //1 -> Lock.dbc
             uint32 autoCloseTime;                           //2 secs till autoclose = autoCloseTime / 0x10000
-            uint32 linkedTrap;                              //3
+            uint32 linkedTrapId;                            //3
             uint32 noDamageImmune;                          //4 isBattlegroundObject
             uint32 large;                                   //5
             uint32 openTextID;                              //6 can be used to replace castBarCaption?
@@ -104,6 +104,7 @@ struct GameObjectInfo
             uint32 openTextID;                              //14 can be used to replace castBarCaption?
             uint32 groupLootRules;                          //15
         } chest;
+        //4 GAMEOBJECT_TYPE_BINDER - empty
         //5 GAMEOBJECT_TYPE_GENERIC
         struct
         {
@@ -178,6 +179,8 @@ struct GameObjectInfo
             uint32 closeTextID;                             //15
             uint32 losOK;                                   //16 isBattlegroundObject
             uint32 allowMounted;                            //17
+            uint32 floatingTooltip;                         //18
+            uint32 gossipID;                                //19
         } goober;
         //11 GAMEOBJECT_TYPE_TRANSPORT
         struct
@@ -206,6 +209,7 @@ struct GameObjectInfo
             uint32 eventID;                                 //2
             uint32 openTextID;                              //3 can be used to replace castBarCaption?
         } camera;
+        //14 GAMEOBJECT_TYPE_MAPOBJECT - empty
         //15 GAMEOBJECT_TYPE_MO_TRANSPORT
         struct
         {
@@ -217,6 +221,7 @@ struct GameObjectInfo
             uint32 transportPhysics;                        //5
             uint32 mapID;                                   //6
         } moTransport;
+        //16 GAMEOBJECT_TYPE_DUELFLAG - empty
         //17 GAMEOBJECT_TYPE_FISHINGNODE
         struct
         {
@@ -235,6 +240,7 @@ struct GameObjectInfo
             uint32 castersGrouped;                          //6
             uint32 ritualNoTargetCheck;                     //7
         } summoningRitual;
+        //19 GAMEOBJECT_TYPE_MAILBOX - empty
         //20 GAMEOBJECT_TYPE_AUCTIONHOUSE
         struct
         {
@@ -350,14 +356,25 @@ struct GameObjectInfo
             uint32 state1Name;                              //2
             uint32 state2Name;                              //3
         } destructibleBuilding;
+        //34 GAMEOBJECT_TYPE_GUILDBANK - empty
 
         // not use for specific field access (only for output with loop by all filed), also this determinate max union size
-        struct                                              // GAMEOBJECT_TYPE_SPELLCASTER
+        struct
         {
             uint32 data[24];
         } raw;
     };
     uint32 ScriptId;
+
+    uint32 GetGossipMenuId() const
+    {
+        switch(type)
+        {
+            case GAMEOBJECT_TYPE_QUESTGIVER:    return questgiver.gossipID;
+            case GAMEOBJECT_TYPE_GOOBER:        return goober.gossipID;
+            default: return 0;
+        }
+    }
 };
 
 // GCC have alternative #pragma pack() syntax and old gcc version not support pack(pop), also any gcc version not support it at some platform
@@ -623,4 +640,3 @@ class OREGON_DLL_SPEC GameObject : public WorldObject
         GridReference<GameObject> m_gridRef;
 };
 #endif
-

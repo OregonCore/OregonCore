@@ -45,7 +45,8 @@
 #include "SpellAuras.h"
 #include "Util.h"
 #include "WaypointManager.h"
-#include "InstanceData.h" //for condition_instance_data
+#include "GossipDef.h"
+#include "InstanceData.h"
 
 INSTANTIATE_SINGLETON_1(ObjectMgr);
 
@@ -54,6 +55,7 @@ ScriptMapMap sQuestStartScripts;
 ScriptMapMap sSpellScripts;
 ScriptMapMap sGameObjectScripts;
 ScriptMapMap sEventScripts;
+ScriptMapMap sGossipScripts;
 ScriptMapMap sWaypointScripts;
 
 bool normalizePlayerName(std::string& name)
@@ -345,16 +347,16 @@ void ObjectMgr::LoadCreatureLocales()
     sLog.outString(">> Loaded %u creature locale strings", mCreatureLocaleMap.size());
 }
 
-void ObjectMgr::LoadNpcOptionLocales()
+void ObjectMgr::LoadGossipMenuItemsLocales()
 {
-    mNpcOptionLocaleMap.clear();                              // need for reload case
+    mGossipMenuItemsLocaleMap.clear();                      // need for reload case
 
-    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry,"
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT menu_id,id,"
         "option_text_loc1,box_text_loc1,option_text_loc2,box_text_loc2,"
         "option_text_loc3,box_text_loc3,option_text_loc4,box_text_loc4,"
         "option_text_loc5,box_text_loc5,option_text_loc6,box_text_loc6,"
         "option_text_loc7,box_text_loc7,option_text_loc8,box_text_loc8 "
-        "FROM locales_npc_option");
+        "FROM locales_gossip_menu_option");
 
     if (!result)
     {
@@ -363,7 +365,7 @@ void ObjectMgr::LoadNpcOptionLocales()
         bar.step();
 
         sLog.outString();
-        sLog.outString(">> Loaded 0 npc_option locale strings. DB table locales_npc_option is empty.");
+        sLog.outString(">> Loaded 0 gossip_menu_option locale strings. DB table `locales_gossip_menu_option` is empty.");
         return;
     }
 
@@ -374,9 +376,10 @@ void ObjectMgr::LoadNpcOptionLocales()
         Field *fields = result->Fetch();
         bar.step();
 
-        uint32 entry = fields[0].GetUInt32();
+        uint16 menuId   = fields[0].GetUInt16();
+        uint16 id       = fields[1].GetUInt16();
 
-        NpcOptionLocale& data = mNpcOptionLocaleMap[entry];
+        GossipMenuItemsLocale& data = mGossipMenuItemsLocaleMap[MAKE_PAIR32(menuId,id)];
 
         for (uint8 i = 1; i < MAX_LOCALE; ++i)
         {
@@ -408,7 +411,7 @@ void ObjectMgr::LoadNpcOptionLocales()
     } while (result->NextRow());
 
     sLog.outString();
-    sLog.outString(">> Loaded %u npc_option locale strings", mNpcOptionLocaleMap.size());
+    sLog.outString(">> Loaded %u gossip_menu_option locale strings", mGossipMenuItemsLocaleMap.size());
 }
 
 struct SQLCreatureLoader : public SQLStorageLoaderBase<SQLCreatureLoader>
@@ -3896,6 +3899,13 @@ void ObjectMgr::LoadWaypointScripts()
     }
 }
 
+void ObjectMgr::LoadGossipScripts()
+{
+    LoadScripts(sGossipScripts, "gossip_scripts");
+
+    // checks are done in LoadGossipMenuItems
+}
+
 void ObjectMgr::LoadItemTexts()
 {
     QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT id, text FROM item_text");
@@ -7057,14 +7067,12 @@ void ObjectMgr::LoadNpcTextId()
     sLog.outString(">> Loaded %d NpcTextId ", count);
 }
 
-void ObjectMgr::LoadNpcOptions()
+void ObjectMgr::LoadGossipMenu()
 {
-    m_mCacheNpcOptionList.clear();                          // For reload case
+    m_mGossipMenusMap.clear();
 
-    QueryResult_AutoPtr result = WorldDatabase.Query(
-        //      0  1         2       3    4      5         6     7           8
-        "SELECT id,gossip_id,npcflag,icon,action,box_money,coded,option_text,box_text "
-        "FROM npc_option");
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, text_id, "
+        "cond_1, cond_1_val_1, cond_1_val_2, cond_2, cond_2_val_1, cond_2_val_2 FROM gossip_menu");
 
     if (!result)
     {
@@ -7073,11 +7081,11 @@ void ObjectMgr::LoadNpcOptions()
         bar.step();
 
         sLog.outString();
-        sLog.outErrorDb(">> Loaded npc_option, table is empty!");
+        sLog.outErrorDb(">> Loaded gossip_menu, table is empty!");
         return;
     }
 
-    barGoLink bar(result->GetRowCount());
+    barGoLink bar( result->GetRowCount() );
 
     uint32 count = 0;
 
@@ -7087,25 +7095,176 @@ void ObjectMgr::LoadNpcOptions()
 
         Field* fields = result->Fetch();
 
-        GossipOption go;
-        go.Id               = fields[0].GetUInt32();
-        go.GossipId         = fields[1].GetUInt32();
-        go.NpcFlag          = fields[2].GetUInt32();
-        go.Icon             = fields[3].GetUInt32();
-        go.Action           = fields[4].GetUInt32();
-        go.BoxMoney         = fields[5].GetUInt32();
-        go.Coded            = fields[6].GetUInt8() != 0;
-        go.OptionText       = fields[7].GetCppString();
-        go.BoxText          = fields[8].GetCppString();
+        GossipMenus gMenu;
 
-        m_mCacheNpcOptionList.push_back(go);
+        gMenu.entry             = fields[0].GetUInt32();
+        gMenu.text_id           = fields[1].GetUInt32();
+
+        ConditionType cond_1    = (ConditionType)fields[2].GetUInt32();
+        uint32 cond_1_val_1     = fields[3].GetUInt32();
+        uint32 cond_1_val_2     = fields[4].GetUInt32();
+        ConditionType cond_2    = (ConditionType)fields[5].GetUInt32();
+        uint32 cond_2_val_1     = fields[6].GetUInt32();
+        uint32 cond_2_val_2     = fields[7].GetUInt32();
+
+        if (!GetGossipText(gMenu.text_id))
+        {
+            sLog.outErrorDb("Table gossip_menu entry %u are using non-existing text_id %u", gMenu.entry, gMenu.text_id);
+            continue;
+        }
+
+        if (!PlayerCondition::IsValid(cond_1, cond_1_val_1, cond_1_val_2))
+        {
+            sLog.outErrorDb("Table gossip_menu entry %u, invalid condition 1 for id %u", gMenu.entry, gMenu.text_id);
+            continue;
+        }
+
+        if (!PlayerCondition::IsValid(cond_2, cond_2_val_1, cond_2_val_2))
+        {
+            sLog.outErrorDb("Table gossip_menu entry %u, invalid condition 2 for id %u", gMenu.entry, gMenu.text_id);
+            continue;
+        }
+
+        gMenu.cond_1 = GetConditionId(cond_1, cond_1_val_1, cond_1_val_2);
+        gMenu.cond_2 = GetConditionId(cond_2, cond_2_val_1, cond_2_val_2);
+
+        m_mGossipMenusMap.insert(GossipMenusMap::value_type(gMenu.entry, gMenu));
+
+        ++count;
+    }
+    while(result->NextRow());
+
+    sLog.outString();
+    sLog.outString( ">> Loaded %u gossip_menu entries", count);
+}
+
+void ObjectMgr::LoadGossipMenuItems()
+{
+    m_mGossipMenuItemsMap.clear();
+
+    QueryResult_AutoPtr result = WorldDatabase.Query(
+        "SELECT menu_id, id, option_icon, option_text, option_id, npc_option_npcflag, "
+        "action_menu_id, action_poi_id, action_script_id, box_coded, box_money, box_text, "
+        "cond_1, cond_1_val_1, cond_1_val_2, "
+        "cond_2, cond_2_val_1, cond_2_val_2, "
+        "cond_3, cond_3_val_1, cond_3_val_2 "
+        "FROM gossip_menu_option");
+
+    if (!result)
+    {
+        barGoLink bar(1);
+
+        bar.step();
+
+        sLog.outString();
+        sLog.outErrorDb(">> Loaded gossip_menu_option, table is empty!");
+        return;
+    }
+
+    barGoLink bar(result->GetRowCount());
+
+    uint32 count = 0;
+
+    std::set<uint32> gossipScriptSet;
+
+    for(ScriptMapMap::const_iterator itr = sGossipScripts.begin(); itr != sGossipScripts.end(); ++itr)
+        gossipScriptSet.insert(itr->first);
+
+    do
+    {
+        bar.step();
+
+        Field* fields = result->Fetch();
+
+        GossipMenuItems gMenuItem;
+
+        gMenuItem.menu_id               = fields[0].GetUInt32();
+        gMenuItem.id                    = fields[1].GetUInt32();
+        gMenuItem.option_icon           = fields[2].GetUInt8();
+        gMenuItem.option_text           = fields[3].GetCppString();
+        gMenuItem.option_id             = fields[4].GetUInt32();
+        gMenuItem.npc_option_npcflag    = fields[5].GetUInt32();
+        gMenuItem.action_menu_id        = fields[6].GetUInt32();
+        gMenuItem.action_poi_id         = fields[7].GetUInt32();
+        gMenuItem.action_script_id      = fields[8].GetUInt32();
+        gMenuItem.box_coded             = fields[9].GetUInt8() != 0;
+        gMenuItem.box_money             = fields[10].GetUInt32();
+        gMenuItem.box_text              = fields[11].GetCppString();
+
+        ConditionType cond_1            = (ConditionType)fields[12].GetUInt32();
+        uint32 cond_1_val_1             = fields[13].GetUInt32();
+        uint32 cond_1_val_2             = fields[14].GetUInt32();
+        ConditionType cond_2            = (ConditionType)fields[15].GetUInt32();
+        uint32 cond_2_val_1             = fields[16].GetUInt32();
+        uint32 cond_2_val_2             = fields[17].GetUInt32();
+        ConditionType cond_3            = (ConditionType)fields[18].GetUInt32();
+        uint32 cond_3_val_1             = fields[19].GetUInt32();
+        uint32 cond_3_val_2             = fields[20].GetUInt32();
+
+        if (!PlayerCondition::IsValid(cond_1, cond_1_val_1, cond_1_val_2))
+        {
+            sLog.outErrorDb("Table gossip_menu_option menu %u, invalid condition 1 for id %u", gMenuItem.menu_id, gMenuItem.id);
+            continue;
+        }
+        if (!PlayerCondition::IsValid(cond_2, cond_2_val_1, cond_2_val_2))
+        {
+            sLog.outErrorDb("Table gossip_menu_option menu %u, invalid condition 2 for id %u", gMenuItem.menu_id, gMenuItem.id);
+            continue;
+        }
+        if (!PlayerCondition::IsValid(cond_3, cond_3_val_1, cond_3_val_2))
+        {
+            sLog.outErrorDb("Table gossip_menu_option menu %u, invalid condition 3 for id %u", gMenuItem.menu_id, gMenuItem.id);
+            continue;
+        }
+
+        if (gMenuItem.option_icon >= GOSSIP_ICON_MAX)
+        {
+            sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u has unknown icon id %u. Replacing with GOSSIP_ICON_CHAT", gMenuItem.menu_id, gMenuItem.id, gMenuItem.option_icon);
+            gMenuItem.option_icon = GOSSIP_ICON_CHAT;
+        }
+
+        if (gMenuItem.option_id == GOSSIP_OPTION_NONE)
+            sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u use option id GOSSIP_OPTION_NONE. Option will never be used", gMenuItem.menu_id, gMenuItem.id);
+
+        if (gMenuItem.option_id >= GOSSIP_OPTION_MAX)
+            sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u has unknown option id %u. Option will not be used", gMenuItem.menu_id, gMenuItem.id, gMenuItem.option_id);
+
+        if (gMenuItem.action_script_id)
+        {
+            if (gMenuItem.option_id != GOSSIP_OPTION_GOSSIP)
+            {
+                sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u have action_script_id %u but option_id is not GOSSIP_OPTION_GOSSIP, ignoring", gMenuItem.menu_id, gMenuItem.id, gMenuItem.action_script_id);
+                continue;
+            }
+
+            if (sGossipScripts.find(gMenuItem.action_script_id) == sGossipScripts.end())
+            {
+                sLog.outErrorDb("Table gossip_menu_option for menu %u, id %u have action_script_id %u that does not exist in `gossip_scripts`, ignoring", gMenuItem.menu_id, gMenuItem.id, gMenuItem.action_script_id);
+                continue;
+            }
+
+            gossipScriptSet.erase(gMenuItem.action_script_id);
+        }
+
+        gMenuItem.cond_1 = GetConditionId(cond_1, cond_1_val_1, cond_1_val_2);
+        gMenuItem.cond_2 = GetConditionId(cond_2, cond_2_val_1, cond_2_val_2);
+        gMenuItem.cond_3 = GetConditionId(cond_3, cond_3_val_1, cond_3_val_2);
+
+        m_mGossipMenuItemsMap.insert(GossipMenuItemsMap::value_type(gMenuItem.menu_id, gMenuItem));
 
         ++count;
 
-    } while (result->NextRow());
+    }
+    while(result->NextRow());
+
+    if (!gossipScriptSet.empty())
+    {
+        for(std::set<uint32>::const_iterator itr = gossipScriptSet.begin(); itr != gossipScriptSet.end(); ++itr)
+            sLog.outErrorDb("Table `gossip_scripts` contain unused script, id %u.", *itr);
+    }
 
     sLog.outString();
-    sLog.outString(">> Loaded %d npc_option entries", count);
+    sLog.outString(">> Loaded %u gossip_menu_option entries", count);
 }
 
 void ObjectMgr::AddVendorItem(uint32 entry,uint32 item, uint32 maxcount, uint32 incrtime, uint32 extendedcost, bool savetodb)
@@ -7230,6 +7389,7 @@ void ObjectMgr::LoadScriptNames()
       "SELECT DISTINCT(ScriptName) FROM areatrigger_scripts WHERE ScriptName <> '' "
       "UNION "
       "SELECT DISTINCT(script) FROM instance_template WHERE script <> ''");
+
     if (result)
     {
         do

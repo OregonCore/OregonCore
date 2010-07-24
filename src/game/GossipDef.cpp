@@ -29,6 +29,7 @@
 GossipMenu::GossipMenu()
 {
     m_gItems.reserve(16);                                   // can be set for max from most often sizes to speedup push_back and less memory use
+    m_gMenuId = 0;
 }
 
 GossipMenu::~GossipMenu()
@@ -46,11 +47,22 @@ void GossipMenu::AddMenuItem(uint8 Icon, const std::string& Message, uint32 dtSe
     gItem.m_gMessage    = Message;
     gItem.m_gCoded      = Coded;
     gItem.m_gSender     = dtSender;
-    gItem.m_gAction     = dtAction;
+    gItem.m_gOptionId   = dtAction;
     gItem.m_gBoxMessage = BoxMessage;
     gItem.m_gBoxMoney   = BoxMoney;
 
     m_gItems.push_back(gItem);
+}
+
+void GossipMenu::AddGossipMenuItemData(uint32 action_menu, uint32 action_poi, uint32 action_script)
+{
+    GossipMenuItemData pItemData;
+
+    pItemData.m_gAction_menu    = action_menu;
+    pItemData.m_gAction_poi     = action_poi;
+    pItemData.m_gAction_script  = action_script;
+
+    m_gItemsData.push_back(pItemData);
 }
 
 void GossipMenu::AddMenuItem(uint8 Icon, const std::string& Message, bool Coded)
@@ -79,7 +91,7 @@ uint32 GossipMenu::MenuItemAction(unsigned int ItemId)
 {
     if (ItemId >= m_gItems.size()) return 0;
 
-    return m_gItems[ ItemId ].m_gAction;
+    return m_gItems[ ItemId ].m_gOptionId;
 }
 
 bool GossipMenu::MenuItemCoded(unsigned int ItemId)
@@ -92,6 +104,7 @@ bool GossipMenu::MenuItemCoded(unsigned int ItemId)
 void GossipMenu::ClearMenu()
 {
     m_gItems.clear();
+    m_gItemsData.clear();
 }
 
 PlayerMenu::PlayerMenu(WorldSession *session) : pSession(session)
@@ -124,28 +137,28 @@ bool PlayerMenu::GossipOptionCoded(unsigned int Selection)
     return mGossipMenu.MenuItemCoded(Selection);
 }
 
-void PlayerMenu::SendGossipMenu(uint32 TitleTextId, uint64 npcGUID)
+void PlayerMenu::SendGossipMenu(uint32 TitleTextId, uint64 objectGUID)
 {
-    WorldPacket data(SMSG_GOSSIP_MESSAGE, (100));         // guess size
-    data << npcGUID;
-    data << uint32(0);                                      // new 2.4.0
+    WorldPacket data(SMSG_GOSSIP_MESSAGE, (100));           // guess size
+    data << uint64(objectGUID);
+    data << uint32(mGossipMenu.GetMenuId());                // new 2.4.0
     data << uint32(TitleTextId);
-    data << uint32(mGossipMenu.MenuItemCount());          // max count 0x0F
+    data << uint32(mGossipMenu.MenuItemCount());            // max count 0x20
 
-    for (unsigned int iI = 0; iI < mGossipMenu.MenuItemCount(); iI++)
+    for (uint32 iI = 0; iI < mGossipMenu.MenuItemCount(); ++iI )
     {
         GossipMenuItem const& gItem = mGossipMenu.GetItem(iI);
         data << uint32(iI);
         data << uint8(gItem.m_gIcon);
-        data << uint8(gItem.m_gCoded);                    // makes pop up box password
+        data << uint8(gItem.m_gCoded);                      // makes pop up box password
         data << uint32(gItem.m_gBoxMoney);                  // money required to open menu, 2.0.3
-        data << gItem.m_gMessage;                           // text for gossip item
-        data << gItem.m_gBoxMessage;                        // accept text (related to money) pop up box, 2.0.3
+        data << gItem.m_gMessage;                           // text for gossip item, max 0x800
+        data << gItem.m_gBoxMessage;                        // accept text (related to money) pop up box, 2.0.3, max 0x800
     }
 
     data << uint32(mQuestMenu.MenuItemCount());           // max count 0x20
 
-    for (uint16 iI = 0; iI < mQuestMenu.MenuItemCount(); iI++)
+    for (uint32 iI = 0; iI < mQuestMenu.MenuItemCount(); ++iI )
     {
         QuestMenuItem const& qItem = mQuestMenu.GetItem(iI);
         uint32 questID = qItem.m_qId;

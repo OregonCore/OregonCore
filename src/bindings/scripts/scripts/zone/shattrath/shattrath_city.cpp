@@ -74,6 +74,7 @@ struct OREGON_DLL_DECL npc_raliq_the_drunkAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
+
 CreatureAI* GetAI_npc_raliq_the_drunk(Creature *_Creature)
 {
     return new npc_raliq_the_drunkAI (_Creature);
@@ -164,7 +165,7 @@ bool GossipHello_npc_salsalabim(Player *player, Creature *_Creature)
     {
         if (_Creature->isQuestGiver())
             player->PrepareQuestMenu(_Creature->GetGUID());
-        player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
     }
     return true;
 }
@@ -232,7 +233,7 @@ bool GossipHello_npc_zephyr(Player *player, Creature *_Creature)
     if (player->GetReputationRank(989) >= REP_REVERED)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HZ, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
 
     return true;
 }
@@ -565,7 +566,7 @@ bool GossipHello_npc_dirty_larry(Player *player, Creature *creature)
     if (player->GetQuestStatus(QUEST_WBI) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_BOOK, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(creature->GetNpcTextId(), creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(creature), creature->GetGUID());
     return true;
 }
 
@@ -601,7 +602,7 @@ bool GossipHello_npc_ishanah(Player *player, Creature *_Creature)
     player->ADD_GOSSIP_ITEM(0, ISANAH_GOSSIP_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
     player->ADD_GOSSIP_ITEM(0, ISANAH_GOSSIP_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
 
-    player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
 
     return true;
 }
@@ -681,49 +682,49 @@ void AddSC_shattrath_city()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_raliq_the_drunk";
+    newscript->Name = "npc_raliq_the_drunk";
     newscript->pGossipHello =  &GossipHello_npc_raliq_the_drunk;
     newscript->pGossipSelect = &GossipSelect_npc_raliq_the_drunk;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_salsalabim";
+    newscript->Name = "npc_salsalabim";
     newscript->GetAI = &GetAI_npc_salsalabim;
     newscript->pGossipHello =  &GossipHello_npc_salsalabim;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_shattrathflaskvendors";
+    newscript->Name = "npc_shattrathflaskvendors";
     newscript->pGossipHello =  &GossipHello_npc_shattrathflaskvendors;
     newscript->pGossipSelect = &GossipSelect_npc_shattrathflaskvendors;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_zephyr";
+    newscript->Name = "npc_zephyr";
     newscript->pGossipHello =  &GossipHello_npc_zephyr;
     newscript->pGossipSelect = &GossipSelect_npc_zephyr;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_kservant";
+    newscript->Name = "npc_kservant";
     newscript->GetAI = &GetAI_npc_kservantAI;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_dirty_larry";
+    newscript->Name = "npc_dirty_larry";
     newscript->GetAI = &GetAI_npc_dirty_larryAI;
     newscript->pGossipHello =   &GossipHello_npc_dirty_larry;
     newscript->pGossipSelect = &GossipSelect_npc_dirty_larry;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_ishanah";
+    newscript->Name = "npc_ishanah";
     newscript->pGossipHello =  &GossipHello_npc_ishanah;
     newscript->pGossipSelect = &GossipSelect_npc_ishanah;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_khadgar";
+    newscript->Name = "npc_khadgar";
     newscript->pGossipHello =  &GossipHello_npc_khadgar;
     newscript->pGossipSelect = &GossipSelect_npc_khadgar;
     newscript->RegisterSelf();

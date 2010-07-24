@@ -208,7 +208,7 @@ bool GossipHello_npc_thrall_warchief(Player *player, Creature *_Creature)
     if (player->GetQuestStatus(QUEST_6566) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HTW, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
     return true;
 }
 

@@ -582,7 +582,6 @@ bool ChatHandler::HandleReloadAllLootCommand(const char*)
 bool ChatHandler::HandleReloadAllNpcCommand(const char* /*args*/)
 {
     HandleReloadNpcGossipCommand("a");
-    HandleReloadNpcOptionCommand("a");
     HandleReloadNpcTrainerCommand("a");
     HandleReloadNpcVendorCommand("a");
     return true;
@@ -708,6 +707,22 @@ bool ChatHandler::HandleReloadCreatureLinkedRespawnCommand(const char *args)
     sLog.outString("Loading Linked Respawns... (creature_linked_respawn)");
     objmgr.LoadCreatureLinkedRespawn();
     SendGlobalGMSysMessage("DB table creature_linked_respawn (creature linked respawns) reloaded.");
+    return true;
+}
+
+bool ChatHandler::HandleReloadGossipMenuCommand(const char*)
+{
+    sLog.outString( "Re-Loading `gossip_menu` Table!" );
+    objmgr.LoadGossipMenu();
+    SendGlobalSysMessage("DB table `gossip_menu` reloaded.");
+    return true;
+}
+
+bool ChatHandler::HandleReloadGossipMenuOptionCommand(const char*)
+{
+    sLog.outString( "Re-Loading `gossip_menu_option` Table!" );
+    objmgr.LoadGossipMenuItems();
+    SendGlobalSysMessage("DB table `gossip_menu_option` reloaded.");
     return true;
 }
 
@@ -845,14 +860,6 @@ bool ChatHandler::HandleReloadOregonStringCommand(const char*)
     sLog.outString("Re-Loading oregon_string Table!");
     objmgr.LoadOregonStrings();
     SendGlobalGMSysMessage("DB table oregon_string reloaded.");
-    return true;
-}
-
-bool ChatHandler::HandleReloadNpcOptionCommand(const char*)
-{
-    sLog.outString("Re-Loading npc_option Table!");
-    objmgr.LoadNpcOptions();
-    SendGlobalGMSysMessage("DB table npc_option reloaded.");
     return true;
 }
 

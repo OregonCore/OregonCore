@@ -422,7 +422,7 @@ bool GossipHello_npc_berthold(Player* player, Creature* _Creature)
     if (pInstance && (pInstance->GetData(DATA_SHADEOFARAN_EVENT) == DONE))
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_TELEPORT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
-    player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
     return true;
 }
 

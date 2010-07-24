@@ -905,15 +905,6 @@ uint32 GameEvent::GetNPCFlag(Creature * cr)
     return mask;
 }
 
-uint32 GameEvent::GetNpcTextId(uint32 guid)
-{
-    GuidEventNpcGossipIdMap::iterator itr = mNPCGossipIds.find(guid);
-    if (itr != mNPCGossipIds.end())
-        if (IsActiveEvent(itr->second.first))
-            return itr->second.second;
-    return 0;
-}
-
 uint32 GameEvent::Initialize()                              // return the next event delay in ms
 {
     m_ActiveEvents.clear();
@@ -1060,7 +1051,7 @@ void GameEvent::UpdateEventNPCFlags(uint16 event_id)
                     npcflag |= ci->npcflag;
                 cr->SetUInt32Value(UNIT_NPC_FLAGS,npcflag);
                 // reset gossip options, since the flag change might have added / removed some
-                cr->ResetGossipOptions();
+                //cr->ResetGossipOptions();
             }
             // if we didn't find it, then the npcflag will be updated when the creature is loaded
         }

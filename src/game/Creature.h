@@ -40,29 +40,6 @@ class Player;
 class WorldSession;
 class CreatureGroup;
 
-enum Gossip_Option
-{
-    GOSSIP_OPTION_NONE              = 0,                    //UNIT_NPC_FLAG_NONE              = 0,
-    GOSSIP_OPTION_GOSSIP            = 1,                    //UNIT_NPC_FLAG_GOSSIP            = 1,
-    GOSSIP_OPTION_QUESTGIVER        = 2,                    //UNIT_NPC_FLAG_QUESTGIVER        = 2,
-    GOSSIP_OPTION_VENDOR            = 3,                    //UNIT_NPC_FLAG_VENDOR            = 4,
-    GOSSIP_OPTION_TAXIVENDOR        = 4,                    //UNIT_NPC_FLAG_TAXIVENDOR        = 8,
-    GOSSIP_OPTION_TRAINER           = 5,                    //UNIT_NPC_FLAG_TRAINER           = 16,
-    GOSSIP_OPTION_SPIRITHEALER      = 6,                    //UNIT_NPC_FLAG_SPIRITHEALER      = 32,
-    GOSSIP_OPTION_SPIRITGUIDE       = 7,                    //UNIT_NPC_FLAG_SPIRITGUIDE       = 64,
-    GOSSIP_OPTION_INNKEEPER         = 8,                    //UNIT_NPC_FLAG_INNKEEPER         = 128,
-    GOSSIP_OPTION_BANKER            = 9,                    //UNIT_NPC_FLAG_BANKER            = 256,
-    GOSSIP_OPTION_PETITIONER        = 10,                   //UNIT_NPC_FLAG_PETITIONER        = 512,
-    GOSSIP_OPTION_TABARDDESIGNER    = 11,                   //UNIT_NPC_FLAG_TABARDDESIGNER    = 1024,
-    GOSSIP_OPTION_BATTLEFIELD       = 12,                   //UNIT_NPC_FLAG_BATTLEFIELDPERSON = 2048,
-    GOSSIP_OPTION_AUCTIONEER        = 13,                   //UNIT_NPC_FLAG_AUCTIONEER        = 4096,
-    GOSSIP_OPTION_STABLEPET         = 14,                   //UNIT_NPC_FLAG_STABLE            = 8192,
-    GOSSIP_OPTION_ARMORER           = 15,                   //UNIT_NPC_FLAG_ARMORER           = 16384,
-    GOSSIP_OPTION_UNLEARNTALENTS    = 16,                   //UNIT_NPC_FLAG_TRAINER (bonus option for GOSSIP_OPTION_TRAINER)
-    GOSSIP_OPTION_UNLEARNPETSKILLS  = 17,                   //UNIT_NPC_FLAG_TRAINER (bonus option for GOSSIP_OPTION_TRAINER)
-    GOSSIP_OPTION_OUTDOORPVP        = 18                    //added by code (option for outdoor pvp creatures)
-};
-
 enum Gossip_Guard
 {
     GOSSIP_GUARD_BANK               = 32,
@@ -157,6 +134,7 @@ struct CreatureInfo
     char*   Name;
     char*   SubName;
     char*   IconName;
+    uint32  GossipMenuId;
     uint32  minlevel;
     uint32  maxlevel;
     uint32  minhealth;
@@ -239,7 +217,7 @@ struct CreatureLocale
     std::vector<std::string> SubName;
 };
 
-struct NpcOptionLocale
+struct GossipMenuItemsLocale
 {
     std::vector<std::string> OptionText;
     std::vector<std::string> BoxText;
@@ -541,18 +519,6 @@ class OREGON_DLL_SPEC Creature : public Unit
         std::string GetScriptName();
         uint32 GetScriptId();
 
-        void prepareGossipMenu(Player *pPlayer, uint32 gossipid = 0);
-        void sendPreparedGossip(Player* player);
-        void OnGossipSelect(Player* player, uint32 option);
-        void OnPoiSelect(Player* player, GossipOption const *gossip);
-
-        uint32 GetGossipTextId(uint32 action, uint32 zoneid);
-        uint32 GetNpcTextId();
-        void LoadGossipOptions();
-        void ResetGossipOptions();
-        GossipOption const* GetGossipOption(uint32 id) const;
-        void addGossipOption(GossipOption const& gso) { m_goptions.push_back(gso); }
-
         void setEmoteState(uint8 emote) { m_emoteState = emote; };
         void Say(const char* text, uint32 language, uint64 TargetGuid) { MonsterSay(text,language,TargetGuid); }
         void Yell(const char* text, uint32 language, uint64 TargetGuid) { MonsterYell(text,language,TargetGuid); }
@@ -703,9 +669,6 @@ class OREGON_DLL_SPEC Creature : public Unit
         uint32 m_respawnDelay;                              // (secs) delay between corpse disappearance and respawning
         uint32 m_corpseDelay;                               // (secs) delay between death and corpse disappearance
         float m_respawnradius;
-
-        bool m_gossipOptionLoaded;
-        GossipOptionList m_goptions;
 
         uint8 m_emoteState;
         bool m_isPet;                                       // set only in Pet::Pet

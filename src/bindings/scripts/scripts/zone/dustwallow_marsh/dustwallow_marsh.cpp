@@ -94,7 +94,7 @@ CreatureAI* GetAI_mobs_risen_husk_spirit(Creature *_Creature)
 
 bool GossipHello_npc_restless_apparition(Player *player, Creature *_Creature)
 {
-    player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
 
     player->TalkedToCreature(_Creature->GetEntry(), _Creature->GetGUID());
     _Creature->SetInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -131,7 +131,7 @@ bool GossipHello_npc_deserter_agitator(Player *player, Creature *_Creature)
         player->TalkedToCreature(_Creature->GetEntry(), _Creature->GetGUID());
     }
     else
-        player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
 
     return true;
 }
@@ -150,7 +150,7 @@ bool GossipHello_npc_lady_jaina_proudmoore(Player *player, Creature *_Creature)
     if (player->GetQuestStatus(558) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_JAINA, GOSSIP_SENDER_MAIN, GOSSIP_SENDER_INFO);
 
-    player->SEND_GOSSIP_MENU(_Creature->GetNpcTextId(), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
 
     return true;
 }

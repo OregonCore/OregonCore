@@ -28,7 +28,7 @@ class Player;
 class GameObject;
 class Creature;
 class ZoneScript;
-struct GossipOption;
+struct GossipMenuItems;
 
 // class to handle player enter / leave / areatrigger / GO use events
 class OutdoorPvPMgr
@@ -60,7 +60,7 @@ public:
 
     void HandleGossipOption(Player * player, uint64 guid, uint32 gossipid);
 
-    bool CanTalkTo(Player * player, Creature * creature, GossipOption & gso);
+    bool CanTalkTo(Player * player, Creature * creature, GossipMenuItems gso);
 
     void HandleDropFlag(Player * plr, uint32 spellId);
 
