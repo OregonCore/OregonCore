@@ -139,7 +139,6 @@ void OutdoorPvPMgr::HandlePlayerEnterZone(Player *plr, uint32 zoneid)
         return;
 
     itr->second->HandlePlayerEnterZone(plr, zoneid);
-    plr->SendInitWorldStates();
     sLog.outDebug("Player %u entered outdoorpvp id %u", plr->GetGUIDLow(), itr->second->GetTypeId());
 }
 
