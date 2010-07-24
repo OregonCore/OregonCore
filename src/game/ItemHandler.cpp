@@ -720,7 +720,11 @@ void WorldSession::SendListInventory(uint64 vendorguid)
     VendorItemData const* vItems = pCreature->GetVendorItems();
     if (!vItems)
     {
-        _player->SendSellError(SELL_ERR_CANT_FIND_VENDOR, NULL, 0, 0);
+        WorldPacket data(SMSG_LIST_INVENTORY, (8+1+1));
+        data << uint64(vendorguid);
+        data << uint8(0);                                   // count==0, next will be error code
+        data << uint8(0);                                   // "Vendor has no inventory"
+        SendPacket(&data);
         return;
     }
 
@@ -729,13 +733,15 @@ void WorldSession::SendListInventory(uint64 vendorguid)
 
     WorldPacket data(SMSG_LIST_INVENTORY, (8+1+numitems*8*4));
     data << uint64(vendorguid);
-    data << uint8(numitems);
+
+    size_t count_pos = data.wpos();
+    data << uint8(count);
 
     float discountMod = _player->GetReputationPriceDiscount(pCreature);
 
-    for (uint8 vendorslot = 0; vendorslot < numitems; ++vendorslot)
+    for (uint8 i = 0; i < numitems; ++i)
     {
-        if (VendorItem const* crItem = vItems->GetItem(vendorslot))
+        if (VendorItem const* crItem = vItems->GetItem(i))
         {
             if (ItemPrototype const *pProto = objmgr.GetItemPrototype(crItem->item))
             {
@@ -759,10 +765,14 @@ void WorldSession::SendListInventory(uint64 vendorguid)
         }
     }
 
-    if (count == 0 || data.size() != 8 + 1 + size_t(count) * 8 * 4)
+    if (count == 0)
+    {
+        data << uint8(0);                                   // "Vendor has no inventory"
+        SendPacket(&data);
         return;
+    }
 
-    data.put<uint8>(8, count);
+    data.put<uint8>(count_pos, count);
     SendPacket(&data);
 }
 
