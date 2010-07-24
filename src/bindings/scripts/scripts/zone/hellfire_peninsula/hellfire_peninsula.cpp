@@ -25,7 +25,6 @@ EndScriptData */
 npc_aeranas
 go_haaleshi_altar
 npc_wing_commander_dabiree
-npc_gryphoneer_windbellow
 npc_wing_commander_brack
 npc_wounded_blood_elf
 EndContentData */
@@ -166,45 +165,6 @@ bool GossipSelect_npc_wing_commander_dabiree(Player *player, Creature *_Creature
     return true;
 }
 
-/*######
-## npc_gryphoneer_windbellow
-######*/
-
-#define GOSSIP_ITEM1_WIN "Fly me to The Abyssal Shelf"
-#define GOSSIP_ITEM2_WIN "Fly me to Honor Point"
-
-bool GossipHello_npc_gryphoneer_windbellow(Player *player, Creature *_Creature)
-{
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
-
-    //Mission: The Abyssal Shelf || Return to the Abyssal Shelf
-    if (player->GetQuestStatus(10163) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(10346) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(2, GOSSIP_ITEM1_WIN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-
-    //Go to the Front
-    if (player->GetQuestStatus(10382) != QUEST_STATUS_NONE && !player->GetQuestRewardStatus(10382))
-        player->ADD_GOSSIP_ITEM(2, GOSSIP_ITEM2_WIN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
-
-    return true;
-}
-
-bool GossipSelect_npc_gryphoneer_windbellow(Player *player, Creature *_Creature, uint32 sender, uint32 action)
-{
-    if (action == GOSSIP_ACTION_INFO_DEF + 1)
-    {
-        player->CLOSE_GOSSIP_MENU();
-        player->CastSpell(player,33899,true);               //TaxiPath 589 (Aerial Assault Flight (Alliance))
-    }
-    if (action == GOSSIP_ACTION_INFO_DEF + 2)
-    {
-        player->CLOSE_GOSSIP_MENU();
-        player->CastSpell(player,35065,true);               //TaxiPath 607 (Taxi - Hellfire Peninsula - Shatter Point to Beach Head)
-    }
-    return true;
-}
 /*######
 ## npc_gryphoneer_leafbeard
 ######*/
@@ -434,12 +394,6 @@ void AddSC_hellfire_peninsula()
     newscript->Name = "npc_gryphoneer_leafbeard";
     newscript->pGossipHello = &GossipHello_npc_gryphoneer_leafbeard;
     newscript->pGossipSelect = &GossipSelect_npc_gryphoneer_leafbeard;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name="npc_gryphoneer_windbellow";
-    newscript->pGossipHello =   &GossipHello_npc_gryphoneer_windbellow;
-    newscript->pGossipSelect =  &GossipSelect_npc_gryphoneer_windbellow;
     newscript->RegisterSelf();
 
     newscript = new Script;

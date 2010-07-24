@@ -467,11 +467,3 @@ void OPvPCapturePointEP::UnsummonFlightMaster()
     DelCreature(EP_PWT_FLIGHTMASTER);
     EP_TOWER_EVENT_TEAM[EP_TOWER_PLAGUEWOOD] = 0;
 }
-
-/*bool OPvPCapturePointEP::CanTalkTo(Player * p, Creature * c, GossipMenuItems gso)
-{
-    if (p->GetTeam() == EP_TOWER_EVENT_TEAM[EP_TOWER_PLAGUEWOOD] &&
-        c->GetGUID() == m_Creatures[EP_PWT_FLIGHTMASTER])
-        return true;
-    return false;
-}*/

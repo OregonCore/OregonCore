@@ -436,6 +436,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\scripts\npc\npc_taxi.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\scripts\npc\npcs_special.cpp"
 					>
 				</File>

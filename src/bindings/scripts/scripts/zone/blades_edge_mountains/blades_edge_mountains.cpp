@@ -27,7 +27,6 @@ mobs_nether_drake
 npc_daranelle
 npc_overseer_nuaar
 npc_saikkal_the_elder
-npc_skyguard_handler_irena
 EndContentData */
 
 #include "precompiled.h"
@@ -356,41 +355,6 @@ bool GossipSelect_npc_saikkal_the_elder(Player *player, Creature *_Creature, uin
 }
 
 /*######
-## npc_skyguard_handler_irena
-######*/
-
-#define GOSSIP_SKYGUARD "Fly me to Skettis please"
-
-bool GossipHello_npc_skyguard_handler_irena(Player *player, Creature *_Creature)
-{
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
-
-    if (player->GetReputationRank(1031) >= REP_HONORED)
-        player->ADD_GOSSIP_ITEM(2, GOSSIP_SKYGUARD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
-
-    return true;
-}
-
-bool GossipSelect_npc_skyguard_handler_irena(Player *player, Creature *_Creature, uint32 sender, uint32 action)
-{
-    if (action == GOSSIP_ACTION_INFO_DEF+1)
-    {
-        player->CLOSE_GOSSIP_MENU();
-
-        std::vector<uint32> nodes;
-
-        nodes.resize(2);
-        nodes[0] = 172;                                     //from ogri'la
-        nodes[1] = 171;                                     //end at skettis
-        player->ActivateTaxiPathTo(nodes);                  //TaxiPath 706
-    }
-    return true;
-}
-
-/*######
 ## AddSC
 ######*/
 
@@ -423,12 +387,6 @@ void AddSC_blades_edge_mountains()
     newscript->Name="npc_saikkal_the_elder";
     newscript->pGossipHello = &GossipHello_npc_saikkal_the_elder;
     newscript->pGossipSelect = &GossipSelect_npc_saikkal_the_elder;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name="npc_skyguard_handler_irena";
-    newscript->pGossipHello =  &GossipHello_npc_skyguard_handler_irena;
-    newscript->pGossipSelect = &GossipSelect_npc_skyguard_handler_irena;
     newscript->RegisterSelf();
 }
 
