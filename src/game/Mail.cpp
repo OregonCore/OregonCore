@@ -72,19 +72,18 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data)
     uint8 items_count;
     recv_data >> items_count;                               // attached items count
 
-    if (items_count > 12)                                    // client limit
-        return;
-
-    if (items_count)
+    if (items_count > 12)                                   // client limit
     {
-        for (uint8 i = 0; i < items_count; ++i)
-        {
-            uint8  item_slot;
-            uint64 item_guid;
-            recv_data >> item_slot;
-            recv_data >> item_guid;
-            mi.AddItem(GUID_LOPART(item_guid), item_slot);
-        }
+        GetPlayer()->SendMailResult(0, MAIL_SEND, MAIL_ERR_TOO_MANY_ATTACHMENTS);
+        return;
+    }
+
+    for (uint8 i = 0; i < items_count; ++i)
+    {
+        uint64 item_guid;
+        recv_data.read_skip<uint8>();                       // item slot in mail, not used
+        recv_data >> item_guid;
+        mi.AddItem(GUID_LOPART(item_guid));
     }
 
     recv_data >> money >> COD;                              // money and cod
@@ -106,7 +105,7 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data)
     {
         sLog.outDetail("Player %u is sending mail to %s (GUID: not existed!) with subject %s and body %s includes %u items, %u copper and %u COD copper with unk1 = %u, unk2 = %u",
             pl->GetGUIDLow(), receiver.c_str(), subject.c_str(), body.c_str(), items_count, money, COD, unk1, unk2);
-        pl->SendMailResult(0, 0, MAIL_ERR_RECIPIENT_NOT_FOUND);
+        pl->SendMailResult(0, MAIL_SEND, MAIL_ERR_RECIPIENT_NOT_FOUND);
         return;
     }
 
@@ -114,7 +113,7 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data)
 
     if (pl->GetGUID() == rc)
     {
-        pl->SendMailResult(0, 0, MAIL_ERR_CANNOT_SEND_TO_SELF);
+        pl->SendMailResult(0, MAIL_SEND, MAIL_ERR_CANNOT_SEND_TO_SELF);
         return;
     }
 
@@ -123,7 +122,7 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data)
 
     if (pl->GetMoney() < reqmoney)
     {
-        pl->SendMailResult(0, 0, MAIL_ERR_NOT_ENOUGH_MONEY);
+        pl->SendMailResult(0, MAIL_SEND, MAIL_ERR_NOT_ENOUGH_MONEY);
         return;
     }
 
@@ -149,50 +148,55 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data)
     //do not allow to have more than 100 mails in mailbox.. mails count is in opcode uint8!!! - so max can be 255..
     if (mails_count > 100)
     {
-        pl->SendMailResult(0, 0, MAIL_ERR_INTERNAL_ERROR);
+        pl->SendMailResult(0, MAIL_SEND, MAIL_ERR_RECIPIENT_CAP_REACHED);
         return;
     }
 
     // check the receiver's Faction...
     if (!sWorld.getConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_MAIL) && pl->GetTeam() != rc_team && GetSecurity() == SEC_PLAYER)
     {
-        pl->SendMailResult(0, 0, MAIL_ERR_NOT_YOUR_TEAM);
+        pl->SendMailResult(0, MAIL_SEND, MAIL_ERR_NOT_YOUR_TEAM);
         return;
     }
 
-    if (items_count)
+    for (MailItemMap::iterator mailItemIter = mi.begin(); mailItemIter != mi.end(); ++mailItemIter)
     {
-        for (MailItemMap::iterator mailItemIter = mi.begin(); mailItemIter != mi.end(); ++mailItemIter)
+        MailItem& mailItem = mailItemIter->second;
+
+        if(!mailItem.item_guidlow)
         {
-            MailItem& mailItem = mailItemIter->second;
+            pl->SendMailResult(0, MAIL_SEND, MAIL_ERR_MAIL_ATTACHMENT_INVALID);
+            return;
+        }
 
-            if (!mailItem.item_guidlow)
-            {
-                pl->SendMailResult(0, 0, MAIL_ERR_INTERNAL_ERROR);
-                return;
-            }
+        mailItem.item = pl->GetItemByGuid(MAKE_NEW_GUID(mailItem.item_guidlow, 0, HIGHGUID_ITEM));
+        // prevent sending bag with items (cheat: can be placed in bag after adding equipped empty bag to mail)
+        if(!mailItem.item)
+        {
+            pl->SendMailResult(0, MAIL_SEND, MAIL_ERR_MAIL_ATTACHMENT_INVALID);
+            return;
+        }
 
-            mailItem.item = pl->GetItemByGuid(MAKE_NEW_GUID(mailItem.item_guidlow, 0, HIGHGUID_ITEM));
-            // prevent sending bag with items (cheat: can be placed in bag after adding equipped empty bag to mail)
-            if (!mailItem.item || !mailItem.item->CanBeTraded())
-            {
-                pl->SendMailResult(0, 0, MAIL_ERR_INTERNAL_ERROR);
-                return;
-            }
-            if (mailItem.item->HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_CONJURED) || mailItem.item->GetUInt32Value(ITEM_FIELD_DURATION))
-            {
-                pl->SendMailResult(0, 0, MAIL_ERR_INTERNAL_ERROR);
-                return;
-            }
+        if(!mailItem.item->CanBeTraded())
+        {
+            pl->SendMailResult(0, MAIL_SEND, MAIL_ERR_EQUIP_ERROR, EQUIP_ERR_MAIL_BOUND_ITEM);
+            return;
+        }
 
-            if (COD && mailItem.item->HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_WRAPPED))
-            {
-                pl->SendMailResult(0, 0, MAIL_ERR_CANT_SEND_WRAPPED_COD);
-                return;
-            }
+        if (mailItem.item->HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_CONJURED) || mailItem.item->GetUInt32Value(ITEM_FIELD_DURATION))
+        {
+            pl->SendMailResult(0, MAIL_SEND, MAIL_ERR_EQUIP_ERROR, EQUIP_ERR_MAIL_BOUND_ITEM);
+            return;
+        }
+
+        if(COD && mailItem.item->HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAGS_WRAPPED))
+        {
+            pl->SendMailResult(0, MAIL_SEND, MAIL_ERR_CANT_SEND_WRAPPED_COD);
+            return;
         }
     }
-    pl->SendMailResult(0, 0, MAIL_OK);
+
+    pl->SendMailResult(0, MAIL_SEND, MAIL_OK);
 
     uint32 itemTextId = 0;
     if (!body.empty())
@@ -300,7 +304,7 @@ void WorldSession::HandleMailDelete(WorldPacket & recv_data)
         }
         m->state = MAIL_STATE_DELETED;
     }
-    pl->SendMailResult(mailId, MAIL_DELETED, 0);
+    pl->SendMailResult(mailId, MAIL_DELETED, MAIL_OK);
 }
 
 void WorldSession::HandleReturnToSender(WorldPacket & recv_data)
@@ -353,7 +357,7 @@ void WorldSession::HandleReturnToSender(WorldPacket & recv_data)
     }
 
     delete m;                                               // we can deallocate old mail
-    pl->SendMailResult(mailId, MAIL_RETURNED_TO_SENDER, 0);
+    pl->SendMailResult(mailId, MAIL_RETURNED_TO_SENDER, MAIL_OK);
 }
 
 void WorldSession::SendReturnToSender(uint8 messageType, uint32 sender_acc, uint32 sender_guid, uint32 receiver_guid, const std::string& subject, uint32 itemTextId, MailItemsInfo *mi, uint32 money, uint16 mailTemplateId)
@@ -490,7 +494,7 @@ void WorldSession::HandleTakeItem(WorldPacket & recv_data)
         pl->SendMailResult(mailId, MAIL_ITEM_TAKEN, MAIL_OK, 0, itemId, count);
     }
     else
-        pl->SendMailResult(mailId, MAIL_ITEM_TAKEN, MAIL_ERR_BAG_FULL, msg);
+        pl->SendMailResult(mailId, MAIL_ITEM_TAKEN, MAIL_ERR_EQUIP_ERROR, msg);
 }
 
 void WorldSession::HandleTakeMoney(WorldPacket & recv_data)
@@ -508,7 +512,7 @@ void WorldSession::HandleTakeMoney(WorldPacket & recv_data)
         return;
     }
 
-    pl->SendMailResult(mailId, MAIL_MONEY_TAKEN, 0);
+     pl->SendMailResult(mailId, MAIL_MONEY_TAKEN, MAIL_OK);
 
     pl->ModifyMoney(m->money);
     m->money = 0;
@@ -699,11 +703,11 @@ void WorldSession::HandleMailCreateTextItem(WorldPacket & recv_data)
 
         pl->StoreItem(dest, bodyItem, true);
         //bodyItem->SetState(ITEM_NEW, pl); is set automatically
-        pl->SendMailResult(mailId, MAIL_MADE_PERMANENT, 0);
+        pl->SendMailResult(mailId, MAIL_MADE_PERMANENT, MAIL_OK);
     }
     else
     {
-        pl->SendMailResult(mailId, MAIL_MADE_PERMANENT, MAIL_ERR_BAG_FULL, msg);
+        pl->SendMailResult(mailId, MAIL_MADE_PERMANENT, MAIL_ERR_EQUIP_ERROR, msg);
         delete bodyItem;
     }
 }
