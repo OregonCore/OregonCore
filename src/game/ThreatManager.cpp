@@ -276,7 +276,7 @@ HostileReference* ThreatContainer::selectNextVictim(Creature* pAttacker, Hostile
         currentRef = (*iter);
 
         Unit* target = currentRef->getTarget();
-        assert(target);                                     // if the ref has status online the target must be there !
+        ASSERT(target);                                     // if the ref has status online the target must be there !
 
         // some units are preferred in comparison to others
         if (iter != lastRef && (target->IsImmunedToDamage(pAttacker->GetMeleeDamageSchoolMask(), false) ||
@@ -353,7 +353,7 @@ void ThreatManager::addThreat(Unit* pVictim, float pThreat, SpellSchoolMask scho
     if (!pVictim || (pVictim->GetTypeId() == TYPEID_PLAYER && pVictim->ToPlayer()->isGameMaster()))
         return;
 
-    assert(getOwner()->GetTypeId() == TYPEID_UNIT);
+    ASSERT(getOwner()->GetTypeId() == TYPEID_UNIT);
 
     float threat = ThreatCalcHelper::calcThreat(pVictim, iOwner, pThreat, schoolMask, pThreatSpell);
 

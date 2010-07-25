@@ -120,7 +120,7 @@ Map* MapInstanced::GetInstance(const WorldObject* obj)
 {
     if (obj->GetTypeId() == TYPEID_UNIT)
     {
-        assert(obj->GetMapId() == GetId() && obj->GetInstanceId());
+        ASSERT(obj->GetMapId() == GetId() && obj->GetInstanceId());
         return _FindMap(obj->GetInstanceId());
     }
 
@@ -181,13 +181,13 @@ InstanceMap* MapInstanced::CreateInstance(uint32 InstanceId, InstanceSave *save,
     if (!entry)
     {
         sLog.outError("CreateInstance: no entry for map %d", GetId());
-        assert(false);
+        ASSERT(false);
     }
     const InstanceTemplate * iTemplate = objmgr.GetInstanceTemplate(GetId());
     if (!iTemplate)
     {
         sLog.outError("CreateInstance: no instance template for map %d", GetId());
-        assert(false);
+        ASSERT(false);
     }
 
     // some instances only have one difficulty
@@ -196,7 +196,7 @@ InstanceMap* MapInstanced::CreateInstance(uint32 InstanceId, InstanceSave *save,
     sLog.outDebug("MapInstanced::CreateInstance: %smap instance %d for %d created with difficulty %s", save?"":"new ", InstanceId, GetId(), difficulty?"heroic":"normal");
 
     InstanceMap *map = new InstanceMap(GetId(), GetGridExpiry(), InstanceId, difficulty);
-    assert(map->IsDungeon());
+    ASSERT(map->IsDungeon());
 
     bool load_data = save != NULL;
     map->CreateInstanceData(load_data);
@@ -213,7 +213,7 @@ BattleGroundMap* MapInstanced::CreateBattleGround(uint32 InstanceId)
     sLog.outDebug("MapInstanced::CreateBattleGround: map bg %d for %d created.", InstanceId, GetId());
 
     BattleGroundMap *map = new BattleGroundMap(GetId(), GetGridExpiry(), InstanceId);
-    assert(map->IsBattleGroundOrArena());
+    ASSERT(map->IsBattleGroundOrArena());
 
     m_InstancedMaps[InstanceId] = map;
     return map;

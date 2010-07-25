@@ -153,7 +153,7 @@ InstanceSave::InstanceSave(uint16 MapId, uint32 InstanceId, uint8 difficulty,
 InstanceSave::~InstanceSave()
 {
     // the players and groups must be unbound before deleting the save
-    assert(m_playerList.empty() && m_groupList.empty());
+    ASSERT(m_playerList.empty() && m_groupList.empty());
 }
 
 /*
@@ -167,7 +167,7 @@ void InstanceSave::SaveToDB()
     Map *map = MapManager::Instance().FindMap(GetMapId(),m_instanceid);
     if (map)
     {
-        assert(map->IsDungeon());
+        ASSERT(map->IsDungeon());
         if (InstanceData *iData = ((InstanceMap*)map)->GetInstanceData())
         {
             data = iData->GetSaveData();
@@ -221,7 +221,7 @@ bool InstanceSave::UnloadIfEmpty()
 void InstanceSaveManager::_DelHelper(DatabaseType &db, const char *fields, const char *table, const char *queryTail,...)
 {
     Tokens fieldTokens = StrSplit(fields, ", ");
-    assert(fieldTokens.size() != 0);
+    ASSERT(fieldTokens.size() != 0);
 
     va_list ap;
     char szQueryTail [MAX_QUERY_LEN];
@@ -456,7 +456,7 @@ void InstanceSaveManager::LoadResetTimes()
             continue;
 
         uint32 period = temp->reset_delay * DAY;
-        assert(period != 0);
+        ASSERT(period != 0);
         time_t t = m_resetTimeByMapId[temp->map];
         if (!t)
         {

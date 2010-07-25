@@ -100,7 +100,7 @@ void MapManager::checkAndCorrectGridStatesArray()
     if (!ok)
         ++i_GridStateErrorCount;
     if (i_GridStateErrorCount > 2)
-        assert(false);                                      // force a crash. Too many errors
+        ASSERT(false);                                      // force a crash. Too many errors
 }
 
 Map* MapManager::_createBaseMap(uint32 id)
@@ -123,7 +123,7 @@ Map* MapManager::_createBaseMap(uint32 id)
         i_maps[id] = m;
     }
 
-    assert(m != NULL);
+    ASSERT(m != NULL);
     return m;
 }
 

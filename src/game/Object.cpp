@@ -1635,7 +1635,7 @@ Map const* WorldObject::GetBaseMap() const
 
 void WorldObject::AddObjectToRemoveList()
 {
-    assert(m_uint32Values);
+    ASSERT(m_uint32Values);
 
     Map* map = FindMap();
     if (!map)

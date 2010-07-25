@@ -261,9 +261,9 @@ Unit::~Unit()
 
     delete m_charmInfo;
 
-    assert(!m_attacking);
-    assert(m_attackers.empty());
-    assert(m_sharedVision.empty());
+    ASSERT(!m_attacking);
+    ASSERT(m_attackers.empty());
+    ASSERT(m_sharedVision.empty());
 }
 
 void Unit::Update(uint32 p_time)
@@ -901,10 +901,10 @@ uint32 Unit::DealDamage(Unit *pVictim, uint32 damage, CleanDamage const* cleanDa
         // last damage from duel opponent
         if (duel_hasEnded)
         {
-            assert(pVictim->GetTypeId() == TYPEID_PLAYER);
+            ASSERT(pVictim->GetTypeId() == TYPEID_PLAYER);
             Player *he = pVictim->ToPlayer();
 
-            assert(he->duel);
+            ASSERT(he->duel);
 
             he->SetHealth(1);
 
@@ -3407,7 +3407,7 @@ void Unit::_UpdateAutoRepeatSpell()
 
 void Unit::SetCurrentCastedSpell(Spell * pSpell)
 {
-    assert(pSpell);                                         // NULL may be never passed here, use InterruptSpell or InterruptNonMeleeSpells
+    ASSERT(pSpell);                                         // NULL may be never passed here, use InterruptSpell or InterruptNonMeleeSpells
 
     uint32 CSpellType = pSpell->GetCurrentContainer();
 
@@ -3478,7 +3478,7 @@ void Unit::SetCurrentCastedSpell(Spell * pSpell)
 
 void Unit::InterruptSpell(uint32 spellType, bool withDelayed, bool withInstant)
 {
-    assert(spellType < CURRENT_MAX_SPELL);
+    ASSERT(spellType < CURRENT_MAX_SPELL);
 
     Spell *spell = m_currentSpells[spellType];
     if (spell
@@ -4429,7 +4429,7 @@ void Unit::RemoveAura(AuraMap::iterator &i, AuraRemoveMode mode)
     }
 
     sLog.outDebug("Aura %u (%u) now is remove mode %d", Aur->GetId(), Aur->GetModifier()->m_auraname, mode);
-    assert(!Aur->IsInUse());
+    ASSERT(!Aur->IsInUse());
     Aur->ApplyModifier(false,true);
 
     Aur->SetStackAmount(0);
@@ -4632,14 +4632,14 @@ DynamicObject * Unit::GetDynObject(uint32 spellId)
 
 void Unit::AddGameObject(GameObject* gameObj)
 {
-    assert(gameObj && gameObj->GetOwnerGUID() == 0);
+    ASSERT(gameObj && gameObj->GetOwnerGUID() == 0);
     m_gameObj.push_back(gameObj);
     gameObj->SetOwnerGUID(GetGUID());
 }
 
 void Unit::RemoveGameObject(GameObject* gameObj, bool del)
 {
-    assert(gameObj && gameObj->GetOwnerGUID() == GetGUID());
+    ASSERT(gameObj && gameObj->GetOwnerGUID() == GetGUID());
 
     // GO created by some spell
     if (GetTypeId() == TYPEID_PLAYER && gameObj->GetSpellId())
@@ -8730,7 +8730,7 @@ bool Unit::isTargetableForAttack() const
 
 bool Unit::canAttack(Unit const* target, bool force) const
 {
-    assert(target);
+    ASSERT(target);
 
     if (force)
     {
@@ -9283,7 +9283,7 @@ void Unit::DeleteThreatList()
 
 void Unit::TauntApply(Unit* taunter)
 {
-    assert(GetTypeId() == TYPEID_UNIT);
+    ASSERT(GetTypeId() == TYPEID_UNIT);
 
     if (!taunter || (taunter->GetTypeId() == TYPEID_PLAYER && taunter->ToPlayer()->isGameMaster()))
         return;
@@ -9306,7 +9306,7 @@ void Unit::TauntApply(Unit* taunter)
 
 void Unit::TauntFadeOut(Unit *taunter)
 {
-    assert(GetTypeId() == TYPEID_UNIT);
+    ASSERT(GetTypeId() == TYPEID_UNIT);
 
     if (!taunter || (taunter->GetTypeId() == TYPEID_PLAYER && taunter->ToPlayer()->isGameMaster()))
         return;
@@ -10053,7 +10053,7 @@ void Unit::AddToWorld()
     {
         WorldObject::AddToWorld();
         m_Notified = false;
-        assert(m_NotifyListPos < 0); //instance : crash
+        ASSERT(m_NotifyListPos < 0); //instance : crash
         SetToNotify();
     }
 }
@@ -10082,7 +10082,7 @@ void Unit::CleanupsBeforeDelete()
     if (IsInWorld())
         RemoveFromWorld();
 
-    assert(m_uint32Values);
+    ASSERT(m_uint32Values);
 
     //A unit may be in removelist and not in world, but it is still in grid
     //and may have some references during delete
@@ -11565,7 +11565,7 @@ void Unit::SetToNotify()
 
 void Unit::Kill(Unit *pVictim, bool durabilityLoss)
 {
-    //assert(pVictim->IsInWorld() && pVictim->FindMap());
+    //ASSERT(pVictim->IsInWorld() && pVictim->FindMap());
 
     //// Prevent killing unit twice (and giving reward from kill twice)
     //if (!pVictim->GetHealth())
@@ -11916,7 +11916,7 @@ void Unit::SetCharmedOrPossessedBy(Unit* charmer, bool possess)
     if (!charmer)
         return;
 
-    assert(!possess || charmer->GetTypeId() == TYPEID_PLAYER);
+    ASSERT(!possess || charmer->GetTypeId() == TYPEID_PLAYER);
 
     if (this == charmer)
         return;
@@ -12056,7 +12056,7 @@ void Unit::RemoveCharmedOrPossessedBy(Unit *charmer)
     if (!charmer)
         return;
 
-    assert(!possess || charmer->GetTypeId() == TYPEID_PLAYER);
+    ASSERT(!possess || charmer->GetTypeId() == TYPEID_PLAYER);
 
     charmer->SetCharm(0);
     if (possess)

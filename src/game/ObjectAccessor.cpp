@@ -66,7 +66,7 @@ namespace Oregon
                 if (iter2 == i_updatePlayers.end())
                 {
                     std::pair<UpdateDataMapType::iterator, bool> p = i_updatePlayers.insert(ObjectAccessor::UpdateDataValueType(iter->getSource(), UpdateData()));
-                    assert(p.second);
+                    ASSERT(p.second);
                     iter2 = p.first;
                 }
 
@@ -230,7 +230,7 @@ ObjectAccessor::_buildUpdateObject(Object *obj, UpdateDataMapType &update_player
     {
         WorldObject * temp = dynamic_cast<WorldObject*>(obj);
 
-        //assert(dynamic_cast<WorldObject*>(obj) != NULL);
+        //ASSERT(dynamic_cast<WorldObject*>(obj) != NULL);
         if (temp)
             _buildChangeObjectForPlayer(temp, update_players);
         else
@@ -246,7 +246,7 @@ ObjectAccessor::_buildPacket(Player *pl, Object *obj, UpdateDataMapType &update_
     if (iter == update_players.end())
     {
         std::pair<UpdateDataMapType::iterator, bool> p = update_players.insert(UpdateDataValueType(pl, UpdateData()));
-        assert(p.second);
+        ASSERT(p.second);
         iter = p.first;
     }
 
@@ -280,14 +280,14 @@ Corpse* ObjectAccessor::GetCorpseForPlayerGUID(uint64 guid)
     if (iter == i_player2corpse.end())
         return NULL;
 
-    assert(iter->second->GetType() != CORPSE_BONES);
+    ASSERT(iter->second->GetType() != CORPSE_BONES);
 
     return iter->second;
 }
 
 void ObjectAccessor::RemoveCorpse(Corpse* corpse)
 {
-    assert(corpse && corpse->GetType() != CORPSE_BONES);
+    ASSERT(corpse && corpse->GetType() != CORPSE_BONES);
 
     Guard guard(i_corpseGuard);
     Player2CorpsesMapType::iterator iter = i_player2corpse.find(corpse->GetOwnerGUID());
@@ -306,10 +306,10 @@ void ObjectAccessor::RemoveCorpse(Corpse* corpse)
 
 void ObjectAccessor::AddCorpse(Corpse* corpse)
 {
-    assert(corpse && corpse->GetType() != CORPSE_BONES);
+    ASSERT(corpse && corpse->GetType() != CORPSE_BONES);
 
     Guard guard(i_corpseGuard);
-    assert(i_player2corpse.find(corpse->GetOwnerGUID()) == i_player2corpse.end());
+    ASSERT(i_player2corpse.find(corpse->GetOwnerGUID()) == i_player2corpse.end());
     i_player2corpse[corpse->GetOwnerGUID()] = corpse;
 
     // build mapid*cellid -> guid_set map

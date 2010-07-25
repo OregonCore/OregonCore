@@ -4427,7 +4427,7 @@ bool ChatHandler::HandleLevelUpCommand(const char *args)
         name = chr->GetName();
     }
 
-    assert(chr || chr_guid);
+    ASSERT(chr || chr_guid);
 
     int32 oldlevel = chr ? chr->getLevel() : Player::GetUInt32ValueFromDB(UNIT_FIELD_LEVEL,chr_guid);
     int32 newlevel = oldlevel + addlevel;
