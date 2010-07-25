@@ -630,6 +630,7 @@ void Spell::prepareDataForTriggerSystem()
             break;
         }
     }
+
     // Do not trigger from item cast spell
     if (m_CastItem)
        m_canTrigger = false;
@@ -639,24 +640,35 @@ void Spell::prepareDataForTriggerSystem()
     {
         case SPELL_DAMAGE_CLASS_MELEE:
             m_procAttacker = PROC_FLAG_SUCCESSFUL_MELEE_SPELL_HIT;
+            if (m_attackType == OFF_ATTACK)
+                m_procAttacker |= PROC_FLAG_SUCCESSFUL_OFFHAND_HIT;
             m_procVictim   = PROC_FLAG_TAKEN_MELEE_SPELL_HIT;
             break;
         case SPELL_DAMAGE_CLASS_RANGED:
-            m_procAttacker = PROC_FLAG_SUCCESSFUL_RANGED_SPELL_HIT;
-            m_procVictim   = PROC_FLAG_TAKEN_RANGED_SPELL_HIT;
-            break;
-        default:
-            if (IsPositiveSpell(m_spellInfo->Id))          // Check for positive spell
+            // Auto attack
+            if (m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_AUTOREPEAT_FLAG)
             {
-                m_procAttacker = PROC_FLAG_SUCCESSFUL_POSITIVE_SPELL;
-                m_procVictim   = PROC_FLAG_TAKEN_POSITIVE_SPELL;
+                m_procAttacker = PROC_FLAG_SUCCESSFUL_RANGED_HIT;
+                m_procVictim   = PROC_FLAG_TAKEN_RANGED_HIT;
             }
-            else if (m_spellInfo->Id == 5019) // Wands
+            else // Ranged spell attack
             {
                 m_procAttacker = PROC_FLAG_SUCCESSFUL_RANGED_SPELL_HIT;
                 m_procVictim   = PROC_FLAG_TAKEN_RANGED_SPELL_HIT;
             }
-            else
+            break;
+        default:
+            if (IsPositiveSpell(m_spellInfo->Id))                                 // Check for positive spell
+            {
+                m_procAttacker = PROC_FLAG_SUCCESSFUL_POSITIVE_SPELL;
+                m_procVictim   = PROC_FLAG_TAKEN_POSITIVE_SPELL;
+            }
+            else if (m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_AUTOREPEAT_FLAG) // Wands auto attack
+            {
+                m_procAttacker = PROC_FLAG_SUCCESSFUL_RANGED_HIT;
+                m_procVictim   = PROC_FLAG_TAKEN_RANGED_HIT;
+            }
+            else                                           // Negative spell
             {
                 m_procAttacker = PROC_FLAG_SUCCESSFUL_NEGATIVE_SPELL_HIT;
                 m_procVictim   = PROC_FLAG_TAKEN_NEGATIVE_SPELL_HIT;
