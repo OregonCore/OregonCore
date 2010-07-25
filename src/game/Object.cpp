@@ -685,6 +685,7 @@ void Object::ClearUpdateMask(bool remove)
         if (m_uint32Values_mirror[index] != m_uint32Values[index])
             m_uint32Values_mirror[index] = m_uint32Values[index];
     }
+
     if (m_objectUpdated)
     {
         if (remove)
@@ -1145,7 +1146,6 @@ float WorldObject::GetDistanceZ(const WorldObject* obj) const
     return (dist > 0 ? dist : 0);
 }
 
-//bool WorldObject::IsWithinDistInMap(const WorldObject* obj, const float dist2compare, const bool is3D) const
 bool WorldObject::_IsWithinDist(WorldObject const* obj, float dist2compare, bool is3D) const
 {
     float dx = GetPositionX() - obj->GetPositionX();

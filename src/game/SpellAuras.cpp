@@ -893,15 +893,6 @@ void Aura::_AddAura()
     // not call total regen auras at adding
     switch (m_modifier.m_auraname)
     {
-        /*case SPELL_AURA_PERIODIC_DAMAGE:
-        case SPELL_AURA_PERIODIC_LEECH:
-            if (caster)
-                m_modifier.m_amount = caster->SpellDamageBonus(m_target, m_spellProto, m_modifier.m_amount, DOT);
-            break;
-        case SPELL_AURA_PERIODIC_HEAL:
-            if (caster)
-                m_modifier.m_amount = caster->SpellHealingBonus(m_spellProto, m_modifier.m_amount, DOT, m_target);
-            break;*/
         case SPELL_AURA_OBS_MOD_HEALTH:
         case SPELL_AURA_OBS_MOD_MANA:
         {
@@ -1795,7 +1786,7 @@ void Aura::TriggerSpell()
                             lRage = 100;
                         m_target->ModifyPower(POWER_RAGE, -lRage);
                         int32 FRTriggerBasePoints = int32(lRage*LifePerRage/10);
-                        m_target->CastCustomSpell(m_target,22845,&FRTriggerBasePoints,NULL,NULL,true,NULL,this);
+                        m_target->CastCustomSpell(m_target, 22845, &FRTriggerBasePoints, NULL, NULL, true, NULL, this);
                         return;
                     }
                     default:
@@ -2103,7 +2094,8 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
             }
 
             if (finalSpelId)
-                caster->CastSpell(m_target,finalSpelId,true,NULL,this);
+                caster->CastSpell(m_target, finalSpelId, true, NULL, this);
+
             return;
         }
 
@@ -2469,7 +2461,7 @@ void Aura::HandleAuraWaterWalk(bool apply, bool Real)
         data.Initialize(SMSG_MOVE_LAND_WALK, 8+4);
     data << m_target->GetPackGUID();
     data << uint32(0);
-    m_target->SendMessageToSet(&data,true);
+    m_target->SendMessageToSet(&data, true);
 }
 
 void Aura::HandleAuraFeatherFall(bool apply, bool Real)
@@ -2660,13 +2652,13 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
                     {
                         m_target->SetPower(POWER_ENERGY,0);
                         if (urand(1,100) <= FurorChance)
-                            m_target->CastSpell(m_target,17099,true,NULL,this);
+                            m_target->CastSpell(m_target, 17099, true, NULL, this);
                     }
                     else
                     {
                         m_target->SetPower(POWER_RAGE,0);
                         if (urand(1,100) <= FurorChance)
-                            m_target->CastSpell(m_target,17057,true,NULL,this);
+                            m_target->CastSpell(m_target, 17057, true, NULL, this);
                     }
                     break;
                 }
@@ -2716,18 +2708,16 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
             case FORM_BEAR:
             case FORM_DIREBEAR:
             case FORM_CAT:
-            {
                 if (Aura* dummy = m_target->GetDummyAura(37315))
-                    m_target->CastSpell(m_target,37316,true,NULL,dummy);
+                    m_target->CastSpell(m_target, 37316, true, NULL, dummy);
                 break;
-            }
             // Nordrassil Regalia - bonus
             case FORM_MOONKIN:
-            {
                 if (Aura* dummy = m_target->GetDummyAura(37324))
-                    m_target->CastSpell(m_target,37325,true,NULL,dummy);
+                    m_target->CastSpell(m_target, 37325, true, NULL, dummy);
                 break;
-            }
+            default:
+                break;
         }
     }
 
@@ -3690,9 +3680,9 @@ void Aura::HandleAuraModUseNormalSpeed(bool /*apply*/, bool Real)
     if (!Real)
         return;
 
-    m_target->UpdateSpeed(MOVE_RUN,  true);
+    m_target->UpdateSpeed(MOVE_RUN, true);
     m_target->UpdateSpeed(MOVE_SWIM, true);
-    m_target->UpdateSpeed(MOVE_FLIGHT,  true);
+    m_target->UpdateSpeed(MOVE_FLIGHT, true);
 }
 
 /*********************************************************/
@@ -3829,7 +3819,7 @@ void Aura::HandleAuraModEffectImmunity(bool apply, bool Real)
         }
     }
 
-    m_target->ApplySpellImmune(GetId(),IMMUNITY_EFFECT,m_modifier.m_miscvalue,apply);
+    m_target->ApplySpellImmune(GetId(), IMMUNITY_EFFECT, m_modifier.m_miscvalue, apply);
 }
 
 void Aura::HandleAuraModStateImmunity(bool apply, bool Real)
@@ -3849,7 +3839,7 @@ void Aura::HandleAuraModStateImmunity(bool apply, bool Real)
         }
     }
 
-    m_target->ApplySpellImmune(GetId(),IMMUNITY_STATE,m_modifier.m_miscvalue,apply);
+    m_target->ApplySpellImmune(GetId(), IMMUNITY_STATE, m_modifier.m_miscvalue, apply);
 }
 
 void Aura::HandleAuraModSchoolImmunity(bool apply, bool Real)
@@ -3996,7 +3986,7 @@ void Aura::HandlePeriodicTriggerSpellWithValue(bool apply, bool Real)
     m_isPeriodic = apply;
 }
 
-void Aura::HandlePeriodicEnergize(bool apply, bool Real)
+void Aura::HandlePeriodicEnergize(bool apply, bool /*Real*/)
 {
     if (m_periodicTimer <= 0)
         m_periodicTimer += m_modifier.periodictime;
@@ -4248,7 +4238,7 @@ void Aura::HandlePeriodicDamage(bool apply, bool Real)
     }
 }
 
-void Aura::HandlePeriodicDamagePCT(bool apply, bool Real)
+void Aura::HandlePeriodicDamagePCT(bool apply, bool /*Real*/)
 {
     if (m_periodicTimer <= 0)
         m_periodicTimer += m_modifier.periodictime;
@@ -4256,7 +4246,7 @@ void Aura::HandlePeriodicDamagePCT(bool apply, bool Real)
     m_isPeriodic = apply;
 }
 
-void Aura::HandlePeriodicLeech(bool apply, bool Real)
+void Aura::HandlePeriodicLeech(bool apply, bool /*Real*/)
 {
     if (m_periodicTimer <= 0)
         m_periodicTimer += m_amplitude;
@@ -4264,7 +4254,7 @@ void Aura::HandlePeriodicLeech(bool apply, bool Real)
     m_isPeriodic = apply;
 }
 
-void Aura::HandlePeriodicManaLeech(bool apply, bool Real)
+void Aura::HandlePeriodicManaLeech(bool apply, bool /*Real*/)
 {
     if (m_periodicTimer <= 0)
         m_periodicTimer += m_amplitude;
@@ -4280,7 +4270,7 @@ void Aura::HandlePeriodicManaLeech(bool apply, bool Real)
 /***        RESISTANCE        ***/
 /********************************/
 
-void Aura::HandleAuraModResistanceExclusive(bool apply, bool Real)
+void Aura::HandleAuraModResistanceExclusive(bool apply, bool /*Real*/)
 {
     for (int8 x = SPELL_SCHOOL_NORMAL; x < MAX_SPELL_SCHOOL;x++)
     {
@@ -4293,7 +4283,7 @@ void Aura::HandleAuraModResistanceExclusive(bool apply, bool Real)
     }
 }
 
-void Aura::HandleAuraModResistance(bool apply, bool Real)
+void Aura::HandleAuraModResistance(bool apply, bool /*Real*/)
 {
     for (int8 x = SPELL_SCHOOL_NORMAL; x < MAX_SPELL_SCHOOL;x++)
     {
@@ -4315,7 +4305,7 @@ void Aura::HandleAuraModResistance(bool apply, bool Real)
     }
 }
 
-void Aura::HandleAuraModBaseResistancePCT(bool apply, bool Real)
+void Aura::HandleAuraModBaseResistancePCT(bool apply, bool /*Real*/)
 {
     // only players have base stats
     if (m_target->GetTypeId() != TYPEID_PLAYER)
@@ -4334,7 +4324,7 @@ void Aura::HandleAuraModBaseResistancePCT(bool apply, bool Real)
     }
 }
 
-void Aura::HandleModResistancePercent(bool apply, bool Real)
+void Aura::HandleModResistancePercent(bool apply, bool /*Real*/)
 {
     for (int8 i = SPELL_SCHOOL_NORMAL; i < MAX_SPELL_SCHOOL; i++)
     {
@@ -4350,7 +4340,7 @@ void Aura::HandleModResistancePercent(bool apply, bool Real)
     }
 }
 
-void Aura::HandleModBaseResistance(bool apply, bool Real)
+void Aura::HandleModBaseResistance(bool apply, bool /*Real*/)
 {
     // only players have base stats
     if (m_target->GetTypeId() != TYPEID_PLAYER)
@@ -4371,7 +4361,7 @@ void Aura::HandleModBaseResistance(bool apply, bool Real)
 /***           STAT           ***/
 /********************************/
 
-void Aura::HandleAuraModStat(bool apply, bool Real)
+void Aura::HandleAuraModStat(bool apply, bool /*Real*/)
 {
     if (m_modifier.m_miscvalue < -2 || m_modifier.m_miscvalue > 4)
     {
@@ -4392,7 +4382,7 @@ void Aura::HandleAuraModStat(bool apply, bool Real)
     }
 }
 
-void Aura::HandleModPercentStat(bool apply, bool Real)
+void Aura::HandleModPercentStat(bool apply, bool /*Real*/)
 {
     if (m_modifier.m_miscvalue < -1 || m_modifier.m_miscvalue > 4)
     {
@@ -4411,7 +4401,7 @@ void Aura::HandleModPercentStat(bool apply, bool Real)
     }
 }
 
-void Aura::HandleModSpellDamagePercentFromStat(bool /*apply*/, bool Real)
+void Aura::HandleModSpellDamagePercentFromStat(bool /*apply*/, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -4422,7 +4412,7 @@ void Aura::HandleModSpellDamagePercentFromStat(bool /*apply*/, bool Real)
     m_target->ToPlayer()->UpdateSpellDamageAndHealingBonus();
 }
 
-void Aura::HandleModSpellHealingPercentFromStat(bool /*apply*/, bool Real)
+void Aura::HandleModSpellHealingPercentFromStat(bool /*apply*/, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -4437,10 +4427,10 @@ void Aura::HandleAuraModDispelResist(bool apply, bool Real)
         return;
 
     if (GetId() == 33206)
-        m_target->CastSpell(m_target,44416,true,NULL,this,GetCasterGUID());
+        m_target->CastSpell(m_target, 44416, true, NULL, this, GetCasterGUID());
 }
 
-void Aura::HandleModSpellDamagePercentFromAttackPower(bool /*apply*/, bool Real)
+void Aura::HandleModSpellDamagePercentFromAttackPower(bool /*apply*/, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -4460,7 +4450,7 @@ void Aura::HandleModSpellHealingPercentFromAttackPower(bool /*apply*/, bool Real
     m_target->ToPlayer()->UpdateSpellDamageAndHealingBonus();
 }
 
-void Aura::HandleModHealingDone(bool /*apply*/, bool Real)
+void Aura::HandleModHealingDone(bool /*apply*/, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -4469,7 +4459,7 @@ void Aura::HandleModHealingDone(bool /*apply*/, bool Real)
     m_target->ToPlayer()->UpdateSpellDamageAndHealingBonus();
 }
 
-void Aura::HandleModTotalPercentStat(bool apply, bool Real)
+void Aura::HandleModTotalPercentStat(bool apply, bool /*Real*/)
 {
     if (m_modifier.m_miscvalue < -1 || m_modifier.m_miscvalue > 4)
     {
@@ -4500,7 +4490,7 @@ void Aura::HandleModTotalPercentStat(bool apply, bool Real)
     }
 }
 
-void Aura::HandleAuraModResistenceOfStatPercent(bool /*apply*/, bool Real)
+void Aura::HandleAuraModResistenceOfStatPercent(bool /*apply*/, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -4520,7 +4510,7 @@ void Aura::HandleAuraModResistenceOfStatPercent(bool /*apply*/, bool Real)
 /********************************/
 /***      HEAL & ENERGIZE     ***/
 /********************************/
-void Aura::HandleAuraModTotalHealthPercentRegen(bool apply, bool Real)
+void Aura::HandleAuraModTotalHealthPercentRegen(bool apply, bool /*Real*/)
 {
     /*
     Need additional checking for auras who reduce or increase healing, magic effect like Dumpen Magic,
@@ -4549,7 +4539,7 @@ void Aura::HandleAuraModTotalHealthPercentRegen(bool apply, bool Real)
     m_isPeriodic = apply;
 }
 
-void Aura::HandleAuraModTotalManaPercentRegen(bool apply, bool Real)
+void Aura::HandleAuraModTotalManaPercentRegen(bool apply, bool /*Real*/)
 {
     if ((GetSpellProto()->AuraInterruptFlags & AURA_INTERRUPT_FLAG_NOT_SEATED) && apply  && !m_target->IsSitState())
         m_target->SetStandState(PLAYER_STATE_SIT);
@@ -4572,7 +4562,7 @@ void Aura::HandleAuraModTotalManaPercentRegen(bool apply, bool Real)
     m_isPeriodic = apply;
 }
 
-void Aura::HandleModRegen(bool apply, bool Real)            // eating
+void Aura::HandleModRegen(bool apply, bool /*Real*/)        // eating
 {
     if (apply)
     {
@@ -4606,13 +4596,9 @@ void Aura::HandleModPowerRegen(bool apply, bool Real)       // drinking
 
     if (apply && m_periodicTimer <= 0)
     {
+        m_periodicTimer += 2000;
 
         Powers pt = m_target->getPowerType();
-        if (pt == POWER_RAGE)
-            m_periodicTimer = 3000;
-        else
-            m_periodicTimer = 2000;
-
         if (int32(pt) != m_modifier.m_miscvalue)
             return;
 
@@ -4633,7 +4619,8 @@ void Aura::HandleModPowerRegen(bool apply, bool Real)       // drinking
         // so 17 is rounded amount for 5 sec tick grow ~ 1 range grow in 3 sec
         if (pt == POWER_RAGE)
         {
-             m_target->ModifyPower(pt, m_modifier.m_amount*3/5);
+            m_target->ModifyPower(pt, m_modifier.m_amount*3/5);
+            m_periodicTimer += 1000;
         }
     }
     m_isPeriodic = apply;
@@ -4714,7 +4701,7 @@ void  Aura::HandleAuraModIncreaseMaxHealth(bool apply, bool Real)
     }
 }
 
-void Aura::HandleAuraModIncreaseEnergy(bool apply, bool Real)
+void Aura::HandleAuraModIncreaseEnergy(bool apply, bool /*Real*/)
 {
     Powers powerType = m_target->getPowerType();
     if (int32(powerType) != m_modifier.m_miscvalue)
@@ -4745,7 +4732,7 @@ void Aura::HandleAuraModIncreaseHealthPercent(bool apply, bool /*Real*/)
 /***          FIGHT           ***/
 /********************************/
 
-void Aura::HandleAuraModParryPercent(bool /*apply*/, bool Real)
+void Aura::HandleAuraModParryPercent(bool /*apply*/, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -4753,7 +4740,7 @@ void Aura::HandleAuraModParryPercent(bool /*apply*/, bool Real)
     m_target->ToPlayer()->UpdateParryPercentage();
 }
 
-void Aura::HandleAuraModDodgePercent(bool /*apply*/, bool Real)
+void Aura::HandleAuraModDodgePercent(bool /*apply*/, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -4762,7 +4749,7 @@ void Aura::HandleAuraModDodgePercent(bool /*apply*/, bool Real)
     //sLog.outError("BONUS DODGE CHANCE: + %f", float(m_modifier.m_amount));
 }
 
-void Aura::HandleAuraModBlockPercent(bool /*apply*/, bool Real)
+void Aura::HandleAuraModBlockPercent(bool /*apply*/, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -4812,13 +4799,13 @@ void Aura::HandleAuraModCritPercent(bool apply, bool Real)
     }
 }
 
-void Aura::HandleModHitChance(bool apply, bool Real)
+void Aura::HandleModHitChance(bool apply, bool /*Real*/)
 {
     m_target->m_modMeleeHitChance += apply ? GetModifierValue() : -GetModifierValue();
     m_target->m_modRangedHitChance += apply ? GetModifierValue() : -GetModifierValue();
 }
 
-void Aura::HandleModSpellHitChance(bool apply, bool Real)
+void Aura::HandleModSpellHitChance(bool apply, bool /*Real*/)
 {
     m_target->m_modSpellHitChance += apply ? GetModifierValue(): -GetModifierValue();
 }
@@ -4857,19 +4844,19 @@ void Aura::HandleModSpellCritChanceShool(bool /*apply*/, bool Real)
 /***         ATTACK SPEED     ***/
 /********************************/
 
-void Aura::HandleModCastingSpeed(bool apply, bool Real)
+void Aura::HandleModCastingSpeed(bool apply, bool /*Real*/)
 {
     m_target->ApplyCastTimePercentMod(GetModifierValue(),apply);
 }
 
-void Aura::HandleModMeleeRangedSpeedPct(bool apply, bool Real)
+void Aura::HandleModMeleeRangedSpeedPct(bool apply, bool /*Real*/)
 {
     m_target->ApplyAttackTimePercentMod(BASE_ATTACK,GetModifierValue(),apply);
     m_target->ApplyAttackTimePercentMod(OFF_ATTACK,GetModifierValue(),apply);
     m_target->ApplyAttackTimePercentMod(RANGED_ATTACK, GetModifierValue(), apply);
 }
 
-void Aura::HandleModCombatSpeedPct(bool apply, bool Real)
+void Aura::HandleModCombatSpeedPct(bool apply, bool /*Real*/)
 {
     m_target->ApplyCastTimePercentMod(GetModifierValue(),apply);
     m_target->ApplyAttackTimePercentMod(BASE_ATTACK,GetModifierValue(),apply);
@@ -4877,7 +4864,7 @@ void Aura::HandleModCombatSpeedPct(bool apply, bool Real)
     m_target->ApplyAttackTimePercentMod(RANGED_ATTACK, GetModifierValue(), apply);
 }
 
-void Aura::HandleModAttackSpeed(bool apply, bool Real)
+void Aura::HandleModAttackSpeed(bool apply, bool /*Real*/)
 {
     if (!m_target->isAlive())
         return;
@@ -4885,19 +4872,19 @@ void Aura::HandleModAttackSpeed(bool apply, bool Real)
     m_target->ApplyAttackTimePercentMod(BASE_ATTACK,GetModifierValue(),apply);
 }
 
-void Aura::HandleHaste(bool apply, bool Real)
+void Aura::HandleHaste(bool apply, bool /*Real*/)
 {
     m_target->ApplyAttackTimePercentMod(BASE_ATTACK,  GetModifierValue(),apply);
     m_target->ApplyAttackTimePercentMod(OFF_ATTACK,   GetModifierValue(),apply);
     m_target->ApplyAttackTimePercentMod(RANGED_ATTACK,GetModifierValue(),apply);
 }
 
-void Aura::HandleAuraModRangedHaste(bool apply, bool Real)
+void Aura::HandleAuraModRangedHaste(bool apply, bool /*Real*/)
 {
     m_target->ApplyAttackTimePercentMod(RANGED_ATTACK, GetModifierValue(), apply);
 }
 
-void Aura::HandleRangedAmmoHaste(bool apply, bool Real)
+void Aura::HandleRangedAmmoHaste(bool apply, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -4908,7 +4895,7 @@ void Aura::HandleRangedAmmoHaste(bool apply, bool Real)
 /***        ATTACK POWER      ***/
 /********************************/
 
-void Aura::HandleAuraModAttackPower(bool apply, bool Real)
+void Aura::HandleAuraModAttackPower(bool apply, bool /*Real*/)
 {
     m_target->HandleStatModifier(UNIT_MOD_ATTACK_POWER, TOTAL_VALUE, float(GetModifierValue()), apply);
     if (apply)
@@ -4935,7 +4922,7 @@ void Aura::HandleAuraModAttackPower(bool apply, bool Real)
     }
 }
 
-void Aura::HandleAuraModRangedAttackPower(bool apply, bool Real)
+void Aura::HandleAuraModRangedAttackPower(bool apply, bool /*Real*/)
 {
     if ((m_target->getClassMask() & CLASSMASK_WAND_USERS) != 0)
         return;
@@ -4943,13 +4930,13 @@ void Aura::HandleAuraModRangedAttackPower(bool apply, bool Real)
     m_target->HandleStatModifier(UNIT_MOD_ATTACK_POWER_RANGED, TOTAL_VALUE, float(GetModifierValue()), apply);
 }
 
-void Aura::HandleAuraModAttackPowerPercent(bool apply, bool Real)
+void Aura::HandleAuraModAttackPowerPercent(bool apply, bool /*Real*/)
 {
     //UNIT_FIELD_ATTACK_POWER_MULTIPLIER = multiplier - 1
     m_target->HandleStatModifier(UNIT_MOD_ATTACK_POWER, TOTAL_PCT, float(GetModifierValue()), apply);
 }
 
-void Aura::HandleAuraModRangedAttackPowerPercent(bool apply, bool Real)
+void Aura::HandleAuraModRangedAttackPowerPercent(bool apply, bool /*Real*/)
 {
     if ((m_target->getClassMask() & CLASSMASK_WAND_USERS) != 0)
         return;
@@ -4958,7 +4945,7 @@ void Aura::HandleAuraModRangedAttackPowerPercent(bool apply, bool Real)
     m_target->HandleStatModifier(UNIT_MOD_ATTACK_POWER_RANGED, TOTAL_PCT, float(GetModifierValue()), apply);
 }
 
-void Aura::HandleAuraModRangedAttackPowerOfStatPercent(bool apply, bool Real)
+void Aura::HandleAuraModRangedAttackPowerOfStatPercent(bool /*apply*/, bool Real)
 {
     // spells required only Real aura add/remove
     if (!Real)
@@ -5245,7 +5232,8 @@ void Aura::HandleShapeshiftBoosts(bool apply)
                 if (itr->second->state == PLAYERSPELL_REMOVED) continue;
                 if (itr->first == spellId || itr->first == spellId2) continue;
                 SpellEntry const *spellInfo = sSpellStore.LookupEntry(itr->first);
-                if (!spellInfo || !(spellInfo->Attributes & ((1<<6) | (1<<7)))) continue;
+                if (!spellInfo || !(spellInfo->Attributes & ((1<<6) | (1<<7))))
+                    continue;
                 if (spellInfo->Stances & (1<<form))
                     m_target->CastSpell(m_target, itr->first, true, NULL, this);
             }
@@ -5256,7 +5244,7 @@ void Aura::HandleShapeshiftBoosts(bool apply)
                 if (spellInfo && spellInfo->Stances & (1<<form))
                     m_target->CastSpell(m_target, 24932, true, NULL, this);
             }
-            // HotW
+            // Heart of the Wild
             if (HotWSpellId)
             {
                 Unit::AuraList const& mModTotalStatPct = m_target->GetAurasByType(SPELL_AURA_MOD_TOTAL_STAT_PERCENTAGE);
@@ -5294,9 +5282,6 @@ void Aura::HandleShapeshiftBoosts(bool apply)
             }
         }
     }
-
-    /*double healthPercentage = (double)m_target->GetHealth() / (double)m_target->GetMaxHealth();
-    m_target->SetHealth(uint32(ceil((double)m_target->GetMaxHealth() * healthPercentage)));*/
 }
 
 void Aura::HandleAuraEmpathy(bool apply, bool Real)
@@ -5339,11 +5324,11 @@ void Aura::HandleAuraModPacify(bool apply, bool Real)
 
 void Aura::HandleAuraModPacifyAndSilence(bool apply, bool Real)
 {
-    HandleAuraModPacify(apply,Real);
-    HandleAuraModSilence(apply,Real);
+    HandleAuraModPacify(apply, Real);
+    HandleAuraModSilence(apply, Real);
 }
 
-void Aura::HandleAuraGhost(bool apply, bool Real)
+void Aura::HandleAuraGhost(bool apply, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -5403,7 +5388,7 @@ void Aura::HandleForceMoveForward(bool apply, bool Real)
         m_target->RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FORCE_MOVE);
 }
 
-void Aura::HandleAuraModExpertise(bool /*apply*/, bool Real)
+void Aura::HandleAuraModExpertise(bool /*apply*/, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -5428,7 +5413,7 @@ void Aura::HandleModTargetResistance(bool apply, bool Real)
         m_target->ApplyModInt32Value(PLAYER_FIELD_MOD_TARGET_RESISTANCE,GetModifierValue(), apply);
 }
 
-void Aura::HandleShieldBlockValue(bool apply, bool Real)
+void Aura::HandleShieldBlockValue(bool apply, bool /*Real*/)
 {
     BaseModType modType = FLAT_MOD;
     if (m_modifier.m_auraname == SPELL_AURA_MOD_SHIELD_BLOCKVALUE_PCT)
@@ -5613,7 +5598,7 @@ void Aura::PeriodicTick()
                             GetEffIndex() < 2 && GetSpellProto()->Effect[GetEffIndex()] == SPELL_EFFECT_DUMMY ?
                             pCaster->CalculateSpellDamage(GetSpellProto(),GetEffIndex()+1,GetSpellProto()->EffectBasePoints[GetEffIndex()+1],m_target) :
                             100;
-                        if (m_target->GetHealth()*100 >= m_target->GetMaxHealth()*percent)
+                        if (m_target->GetHealth() * 100 >= m_target->GetMaxHealth() * percent )
                         {
                             m_target->RemoveAurasDueToSpell(GetId());
                             return;
@@ -5653,8 +5638,8 @@ void Aura::PeriodicTick()
                 }
             }
 
-            uint32 absorb=0;
-            uint32 resist=0;
+            uint32 absorb = 0;
+            uint32 resist = 0;
 
             // ignore non positive values (can be result apply spellmods to aura damage
             uint32 amount = GetModifierValuePerStack() > 0 ? GetModifierValuePerStack() : 0;
@@ -5688,14 +5673,14 @@ void Aura::PeriodicTick()
                         pdamage = pdamage/2;
                     // 9..12 ticks, 3/2 from normal tick damage
                     else if (m_tickNumber > totalTick * 2 / 3)
-                        pdamage += (pdamage+1)/2;           // +1 prevent 0.5 damage possible lost at 1..4 ticks
+                        pdamage += (pdamage + 1) / 2;       // +1 prevent 0.5 damage possible lost at 1..4 ticks
                     // 5..8 ticks have normal tick damage
                 }
             }
             else
                 pdamage = uint32(m_target->GetMaxHealth()*amount/100);
 
-            //As of 2.2 resilience reduces damage from DoT ticks as much as the chance to not be critically hit
+            // As of 2.2 resilience reduces damage from DoT ticks as much as the chance to not be critically hit
             // Reduce dot damage from resilience for players
             if (m_target->GetTypeId() == TYPEID_PLAYER)
                 pdamage-=m_target->ToPlayer()->GetDotDamageReduction(pdamage);
@@ -5826,7 +5811,7 @@ void Aura::PeriodicTick()
                 }
             }
 
-            //As of 2.2 resilience reduces damage from DoT ticks as much as the chance to not be critically hit
+            // As of 2.2 resilience reduces damage from DoT ticks as much as the chance to not be critically hit
             // Reduce dot damage from resilience for players
             if (m_target->GetTypeId() == TYPEID_PLAYER)
                 pdamage-=m_target->ToPlayer()->GetDotDamageReduction(pdamage);
@@ -5896,7 +5881,7 @@ void Aura::PeriodicTick()
             uint32 pdamage;
 
             if (m_modifier.m_auraname == SPELL_AURA_OBS_MOD_HEALTH)
-                pdamage = uint32(m_target->GetMaxHealth() * amount/100);
+                pdamage = uint32(m_target->GetMaxHealth() * amount / 100);
             else
                 pdamage = pCaster->SpellHealingBonus(GetSpellProto(), amount, DOT, m_target);
 
@@ -6510,9 +6495,7 @@ void Aura::UnregisterSingleCastAura()
 {
     if (IsSingleTarget())
     {
-        Unit* caster = NULL;
-        caster = GetCaster();
-        if (caster)
+        if (Unit* caster = GetCaster())
         {
             caster->GetSingleCastAuras().remove(this);
         }

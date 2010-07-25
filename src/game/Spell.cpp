@@ -728,9 +728,7 @@ void Spell::AddUnitTarget(Unit* pVictim, uint32 effIndex)
     if (m_spellInfo->speed > 0.0f)
     {
         // calculate spell incoming interval
-        // TODO: this is a hack
         float dist = m_caster->GetDistance(pVictim->GetPositionX(), pVictim->GetPositionY(), pVictim->GetPositionZ());
-
         if (dist < 5.0f) dist = 5.0f;
         target.timeDelay = (uint64) floor(dist / m_spellInfo->speed * 1000.0f);
 
@@ -751,7 +749,7 @@ void Spell::AddUnitTarget(Unit* pVictim, uint32 effIndex)
             target.reflectResult = SPELL_MISS_PARRY;
 
         // Increase time interval for reflected spells by 1.5
-        target.timeDelay+=target.timeDelay>>1;
+        target.timeDelay += target.timeDelay >> 1;
     }
     else
         target.reflectResult = SPELL_MISS_NONE;
@@ -775,11 +773,11 @@ void Spell::AddGOTarget(GameObject* pVictim, uint32 effIndex)
     uint64 targetGUID = pVictim->GetGUID();
 
     // Lookup target in already in list
-    for (std::list<GOTargetInfo>::iterator ihit= m_UniqueGOTargetInfo.begin();ihit != m_UniqueGOTargetInfo.end();++ihit)
+    for (std::list<GOTargetInfo>::iterator ihit = m_UniqueGOTargetInfo.begin(); ihit != m_UniqueGOTargetInfo.end(); ++ihit)
     {
         if (targetGUID == ihit->targetGUID)                 // Found in list
         {
-            ihit->effectMask |= 1<<effIndex;                // Add only effect mask
+            ihit->effectMask |= (1 << effIndex);            // Add only effect mask
             return;
         }
     }
@@ -788,7 +786,7 @@ void Spell::AddGOTarget(GameObject* pVictim, uint32 effIndex)
 
     GOTargetInfo target;
     target.targetGUID = targetGUID;
-    target.effectMask = 1<<effIndex;
+    target.effectMask = (1 << effIndex);
     target.processed  = false;                              // Effects not apply on target
 
     // Spell have speed - need calculate incoming time
@@ -796,7 +794,8 @@ void Spell::AddGOTarget(GameObject* pVictim, uint32 effIndex)
     {
         // calculate spell incoming interval
         float dist = m_caster->GetDistance(pVictim->GetPositionX(), pVictim->GetPositionY(), pVictim->GetPositionZ());
-        if (dist < 5.0f) dist = 5.0f;
+        if (dist < 5.0f)
+            dist = 5.0f;
         target.timeDelay = (uint64) floor(dist / m_spellInfo->speed * 1000.0f);
         if (m_delayMoment == 0 || m_delayMoment>target.timeDelay)
             m_delayMoment = target.timeDelay;
@@ -827,7 +826,7 @@ void Spell::AddItemTarget(Item* pitem, uint32 effIndex)
     {
         if (pitem == ihit->item)                            // Found in list
         {
-            ihit->effectMask |= 1<<effIndex;                // Add only effect mask
+            ihit->effectMask |= (1 << effIndex);            // Add only effect mask
             return;
         }
     }
@@ -836,86 +835,9 @@ void Spell::AddItemTarget(Item* pitem, uint32 effIndex)
 
     ItemTargetInfo target;
     target.item       = pitem;
-    target.effectMask = 1<<effIndex;
+    target.effectMask = (1 << effIndex);
     m_UniqueItemInfo.push_back(target);
 }
-/*
-void Spell::doTriggers(SpellMissInfo missInfo, uint32 damage, SpellSchoolMask damageSchoolMask, uint32 block, uint32 absorb, bool crit)
-{
-    // Do triggers depends from hit result (triggers on hit do in effects)
-    // Set aura states depends from hit result
-    if (missInfo != SPELL_MISS_NONE)
-    {
-        // Miss/dodge/parry/block only for melee based spells
-        // Resist only for magic based spells
-        switch (missInfo)
-        {
-            case SPELL_MISS_MISS:
-                if (m_caster->GetTypeId() == TYPEID_PLAYER)
-                    m_caster->ToPlayer()->UpdateWeaponSkill(BASE_ATTACK);
-
-                m_caster->CastMeleeProcDamageAndSpell(unitTarget, 0, damageSchoolMask, m_attackType, MELEE_HIT_MISS, m_spellInfo, m_IsTriggeredSpell);
-                break;
-            case SPELL_MISS_RESIST:
-                m_caster->ProcDamageAndSpell(unitTarget, PROC_FLAG_TARGET_RESISTS, PROC_FLAG_RESIST_SPELL, 0, damageSchoolMask, m_spellInfo, m_IsTriggeredSpell);
-                break;
-            case SPELL_MISS_DODGE:
-                if (unitTarget->GetTypeId() == TYPEID_PLAYER)
-                    unitTarget->ToPlayer()->UpdateDefense();
-
-                // Overpower
-                if (m_caster->GetTypeId() == TYPEID_PLAYER && m_caster->getClass() == CLASS_WARRIOR)
-                {
-                     m_caster->ToPlayer()->AddComboPoints(unitTarget, 1);
-                    m_caster->StartReactiveTimer(REACTIVE_OVERPOWER);
-                }
-
-                // Riposte
-                if (unitTarget->getClass() != CLASS_ROGUE)
-                {
-                    unitTarget->ModifyAuraState(AURA_STATE_DEFENSE, true);
-                    unitTarget->StartReactiveTimer(REACTIVE_DEFENSE);
-                }
-
-                m_caster->CastMeleeProcDamageAndSpell(unitTarget, 0, damageSchoolMask, m_attackType, MELEE_HIT_DODGE, m_spellInfo, m_IsTriggeredSpell);
-                break;
-            case SPELL_MISS_PARRY:
-                // Update victim defense ?
-                if (unitTarget->GetTypeId() == TYPEID_PLAYER)
-                    unitTarget->ToPlayer()->UpdateDefense();
-                // Mongoose bite - set only Counterattack here
-                if (unitTarget->getClass() == CLASS_HUNTER)
-                {
-                    unitTarget->ModifyAuraState(AURA_STATE_HUNTER_PARRY,true);
-                    unitTarget->StartReactiveTimer(REACTIVE_HUNTER_PARRY);
-                }
-                else
-                {
-                    unitTarget->ModifyAuraState(AURA_STATE_DEFENSE, true);
-                    unitTarget->StartReactiveTimer(REACTIVE_DEFENSE);
-                }
-                m_caster->CastMeleeProcDamageAndSpell(unitTarget, 0, damageSchoolMask, m_attackType, MELEE_HIT_PARRY, m_spellInfo, m_IsTriggeredSpell);
-                break;
-            case SPELL_MISS_BLOCK:
-                unitTarget->ModifyAuraState(AURA_STATE_DEFENSE, true);
-                unitTarget->StartReactiveTimer(REACTIVE_DEFENSE);
-
-                m_caster->CastMeleeProcDamageAndSpell(unitTarget, 0, damageSchoolMask, m_attackType, MELEE_HIT_BLOCK, m_spellInfo, m_IsTriggeredSpell);
-                break;
-                // Trigger from this events not supported
-            case SPELL_MISS_EVADE:
-            case SPELL_MISS_IMMUNE:
-            case SPELL_MISS_IMMUNE2:
-            case SPELL_MISS_DEFLECT:
-            case SPELL_MISS_ABSORB:
-                // Trigger from reflects need do after get reflect result
-            case SPELL_MISS_REFLECT:
-                break;
-            default:
-                break;
-        }
-    }
-}*/
 
 void Spell::DoAllEffectOnTarget(TargetInfo *target)
 {
@@ -959,23 +881,13 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
     //bool canEffectTrigger = (m_spellInfo->AttributesEx4 & (SPELL_ATTR_EX4_CANT_PROC_FROM_SELFCAST | SPELL_ATTR_EX4_UNK4) ? m_caster != unitTarget : true)
     //    && m_canTrigger;
 
-    if (missInfo == SPELL_MISS_NONE)                          // In case spell hit target, do all effect on that target
+    if (missInfo == SPELL_MISS_NONE)                        // In case spell hit target, do all effect on that target
         DoSpellHitOnUnit(unit, mask);
     else if (missInfo == SPELL_MISS_REFLECT)                // In case spell reflect from target, do all effect on caster (if hit)
     {
         if (target->reflectResult == SPELL_MISS_NONE)       // If reflected spell hit caster -> do all effect on him
             DoSpellHitOnUnit(m_caster, mask);
     }
-    /*else //TODO: This is a hack. need fix
-    {
-        uint32 tempMask = 0;
-        for (uint32 i = 0; i < 3; ++i)
-            if (m_spellInfo->Effect[i] == SPELL_EFFECT_DUMMY
-                || m_spellInfo->Effect[i] == SPELL_EFFECT_TRIGGER_SPELL)
-                tempMask |= 1<<i;
-        if (tempMask &= mask)
-            DoSpellHitOnUnit(unit, tempMask);
-    }*/
 
     // All calculated do it!
     // Do healing and triggers
