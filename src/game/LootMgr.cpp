@@ -36,17 +36,17 @@ static Rates const qualityToRate[MAX_ITEM_QUALITY] = {
     RATE_DROP_ITEM_ARTIFACT,                                // ITEM_QUALITY_ARTIFACT
 };
 
-LootStore LootTemplates_Creature(    "creature_loot_template",     "creature entry");
-LootStore LootTemplates_Disenchant(  "disenchant_loot_template",   "item disenchant id");
-LootStore LootTemplates_Fishing(     "fishing_loot_template",      "area id");
-LootStore LootTemplates_Gameobject(  "gameobject_loot_template",   "gameobject entry");
-LootStore LootTemplates_Item(        "item_loot_template",         "item entry");
-LootStore LootTemplates_Pickpocketing("pickpocketing_loot_template","creature pickpocket lootid");
-LootStore LootTemplates_Prospecting( "prospecting_loot_template",  "item entry");
-LootStore LootTemplates_QuestMail(   "quest_mail_loot_template",   "quest id");
-LootStore LootTemplates_Reference(   "reference_loot_template",    "reference id");
-LootStore LootTemplates_Skinning(    "skinning_loot_template",     "creature skinning id");
-
+LootStore LootTemplates_Creature(       "creature_loot_template",       "creature entry"                );
+LootStore LootTemplates_Disenchant(     "disenchant_loot_template",     "item disenchant id"            );
+LootStore LootTemplates_Fishing(        "fishing_loot_template",        "area id"                       );
+LootStore LootTemplates_Gameobject(     "gameobject_loot_template",     "gameobject entry"              );
+LootStore LootTemplates_Item(           "item_loot_template",           "item entry"                    );
+LootStore LootTemplates_Mail(           "mail_loot_template",           "mail template id"              );
+LootStore LootTemplates_Pickpocketing(  "pickpocketing_loot_template",  "creature pickpocket lootid"    );
+LootStore LootTemplates_Prospecting(    "prospecting_loot_template",    "item entry (ore)"              );
+LootStore LootTemplates_QuestMail(      "quest_mail_loot_template",     "quest id (with mail template)" );
+LootStore LootTemplates_Reference(      "reference_loot_template",      "reference id"                  );
+LootStore LootTemplates_Skinning(       "skinning_loot_template",       "creature skinning id"          );
 
 class LootTemplate::LootGroup                               // A set of loot definitions for items (refs are not allowed)
 {
@@ -638,6 +638,12 @@ LootItem* Loot::LootItemInSlot(uint32 lootSlot, Player* player, QuestItem **qite
     return item;
 }
 
+uint32 Loot::GetMaxSlotInLootFor(Player* player) const
+{
+    QuestItemMap::const_iterator itr = PlayerQuestItems.find(player->GetGUIDLow());
+    return items.size() + (itr != PlayerQuestItems.end() ?  itr->second->size() : 0);
+}
+
 ByteBuffer& operator<<(ByteBuffer& b, LootItem const& li)
 {
     b << uint32(li.itemid);
@@ -1176,19 +1182,20 @@ void LoadLootTemplates_Prospecting()
     LootTemplates_Prospecting.ReportUnusedIds(ids_set);
 }
 
-void LoadLootTemplates_QuestMail()
+void LoadLootTemplates_Mail()
 {
     LootIdSet ids_set;
-    LootTemplates_QuestMail.LoadAndCollectLootIds(ids_set);
+    LootTemplates_Mail.LoadAndCollectLootIds(ids_set);
 
     // remove real entries and check existence loot
     ObjectMgr::QuestMap const& questMap = objmgr.GetQuestTemplates();
     for (ObjectMgr::QuestMap::const_iterator itr = questMap.begin(); itr != questMap.end(); ++itr)
-        if (ids_set.count(itr->first))
-            ids_set.erase(itr->first);
+        if(uint32 mail_template_id = itr->second->GetRewMailTemplateId())
+            if(ids_set.count(mail_template_id))
+                ids_set.erase(mail_template_id);
 
     // output error for any still listed (not referenced from appropriate table) ids
-    LootTemplates_QuestMail.ReportUnusedIds(ids_set);
+    LootTemplates_Mail.ReportUnusedIds(ids_set);
 }
 
 void LoadLootTemplates_Skinning()
@@ -1231,7 +1238,7 @@ void LoadLootTemplates_Reference()
     LootTemplates_Skinning.CheckLootRefs(&ids_set);
     LootTemplates_Disenchant.CheckLootRefs(&ids_set);
     LootTemplates_Prospecting.CheckLootRefs(&ids_set);
-    LootTemplates_QuestMail.CheckLootRefs(&ids_set);
+    LootTemplates_Mail.CheckLootRefs(&ids_set);
     LootTemplates_Reference.CheckLootRefs(&ids_set);
 
     // output error for any still listed ids (not referenced from any loot table)

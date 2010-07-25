@@ -2034,6 +2034,33 @@ LOCK TABLES `locales_quest` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `mail_loot_template`
+--
+
+DROP TABLE IF EXISTS `mail_loot_template`;
+CREATE TABLE `mail_loot_template` (
+  `entry` mediumint(8) unsigned NOT NULL default '0',
+  `item` mediumint(8) unsigned NOT NULL default '0',
+  `ChanceOrQuestChance` float NOT NULL default '100',
+  `groupid` tinyint(3) unsigned NOT NULL default '0',
+  `mincountOrRef` mediumint(9) NOT NULL default '1',
+  `maxcount` tinyint(3) unsigned NOT NULL default '1',
+  `lootcondition` tinyint(3) unsigned NOT NULL default '0',
+  `condition_value1` mediumint(8) unsigned NOT NULL default '0',
+  `condition_value2` mediumint(8) unsigned NOT NULL default '0',
+  PRIMARY KEY (`entry`,`item`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Loot System';
+
+--
+-- Dumping data for table `mail_loot_template`
+--
+
+LOCK TABLES `mail_loot_template` WRITE;
+/*!40000 ALTER TABLE `mail_loot_template` DISABLE KEYS */;
+/*!40000 ALTER TABLE `mail_loot_template` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `npc_gossip`
 --
 
@@ -2586,33 +2613,6 @@ CREATE TABLE `quest_end_scripts` (
 LOCK TABLES `quest_end_scripts` WRITE;
 /*!40000 ALTER TABLE `quest_end_scripts` DISABLE KEYS */;
 /*!40000 ALTER TABLE `quest_end_scripts` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `quest_mail_loot_template`
---
-
-DROP TABLE IF EXISTS `quest_mail_loot_template`;
-CREATE TABLE `quest_mail_loot_template` (
-  `entry` mediumint(8) unsigned NOT NULL default '0',
-  `item` mediumint(8) unsigned NOT NULL default '0',
-  `ChanceOrQuestChance` float NOT NULL default '100',
-  `groupid` tinyint(3) unsigned NOT NULL default '0',
-  `mincountOrRef` mediumint(9) NOT NULL default '1',
-  `maxcount` tinyint(3) unsigned NOT NULL default '1',
-  `lootcondition` tinyint(3) unsigned NOT NULL default '0',
-  `condition_value1` mediumint(8) unsigned NOT NULL default '0',
-  `condition_value2` mediumint(8) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`entry`,`item`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Loot System';
-
---
--- Dumping data for table `quest_mail_loot_template`
---
-
-LOCK TABLES `quest_mail_loot_template` WRITE;
-/*!40000 ALTER TABLE `quest_mail_loot_template` DISABLE KEYS */;
-/*!40000 ALTER TABLE `quest_mail_loot_template` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
