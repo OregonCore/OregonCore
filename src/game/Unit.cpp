@@ -7369,10 +7369,6 @@ uint32 Unit::SpellDamageBonus(Unit *pVictim, SpellEntry const *spellProto, uint3
     if (!spellProto || !pVictim || damagetype == DIRECT_DAMAGE)
         return pdamage;
 
-    //if (spellProto->SchoolMask == SPELL_SCHOOL_MASK_NORMAL)
-    //    return pdamage;
-    //damage = CalcArmorReducedDamage(pVictim, damage);
-
     int32 BonusDamage = 0;
     if (GetTypeId() == TYPEID_UNIT)
     {
@@ -7438,7 +7434,10 @@ uint32 Unit::SpellDamageBonus(Unit *pVictim, SpellEntry const *spellProto, uint3
     for (AuraList::const_iterator i = mModDamagePercentDone.begin(); i != mModDamagePercentDone.end(); ++i)
     {
         if (((*i)->GetModifier()->m_miscvalue & GetSpellSchoolMask(spellProto)) &&
-            (GetTypeId() != TYPEID_PLAYER || ToPlayer()->HasItemFitToSpellReqirements((*i)->GetSpellProto())))
+            (*i)->GetSpellProto()->EquippedItemClass == -1 &&
+                                                            // -1 == any item class (not wand then)
+            (*i)->GetSpellProto()->EquippedItemInventoryTypeMask == 0 )
+                                                            // 0 == any inventory type (not wand then)
         {
             DoneTotalMod *= ((*i)->GetModifierValue() +100.0f)/100.0f;
         }
@@ -7469,7 +7468,6 @@ uint32 Unit::SpellDamageBonus(Unit *pVictim, SpellEntry const *spellProto, uint3
         }
     }
 
-    bool hasmangle=false;
     // .. taken pct: dummy auras
     AuraList const& mDummyAuras = pVictim->GetAurasByType(SPELL_AURA_DUMMY);
     for (AuraList::const_iterator i = mDummyAuras.begin(); i != mDummyAuras.end(); ++i)
@@ -7492,10 +7490,6 @@ uint32 Unit::SpellDamageBonus(Unit *pVictim, SpellEntry const *spellProto, uint3
             //Mangle
             case 2312:
             case 44955:
-                // don't apply mod twice
-                if (hasmangle)
-                    break;
-                hasmangle=true;
                 for (int j=0;j<3;j++)
                 {
                     if (GetEffectMechanic(spellProto, j) == MECHANIC_BLEED)
@@ -7838,8 +7832,6 @@ int32 Unit::SpellBaseDamageBonusForVictim(SpellSchoolMask schoolMask, Unit *pVic
     for (AuraList::const_iterator i = mDamageDoneCreature.begin();i != mDamageDoneCreature.end(); ++i)
         if (creatureTypeMask & uint32((*i)->GetModifier()->m_miscvalue))
             TakenAdvertisedBenefit += (*i)->GetModifierValue();
-
-
 
     // ..taken
     AuraList const& mDamageTaken = pVictim->GetAurasByType(SPELL_AURA_MOD_DAMAGE_TAKEN);
