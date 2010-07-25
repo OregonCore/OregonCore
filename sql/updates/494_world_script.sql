@@ -1,1 +1,1 @@
-UPDATE `creature_template` SET `npcflag` = 1, `ScriptName` = 'npc_taxi' WHERE `entry` = 17209;
+UPDATE `creature_template` SET `ScriptName` = 'npc_taxi' WHERE `entry` = 17209;

@@ -137,7 +137,6 @@ protected:
     void SummonShrine(uint32 team);
     void SummonSupportUnits(uint32 team);
     void SummonFlightMaster(uint32 team);
-    //bool CanTalkTo(Player * plr, Creature * c, GossipMenuItems gso);
     void UnlinkGraveYard();
     void UnsummonShrine();
     void UnsummonSupportUnits();

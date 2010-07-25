@@ -122,7 +122,6 @@ bool GossipHello_npc_taxi(Player* pPlayer, Creature* pCreature)
             pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_CRIMSONWING,GOSSIP_SENDER_MAIN,GOSSIP_ACTION_INFO_DEF + 16);
         break;
     case 17209:
-        pPlayer->SetTaxiCheater(true);
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_WILLIAMKEILAR1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 17);
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_WILLIAMKEILAR2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 18);
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_WILLIAMKEILAR3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 19);
@@ -220,13 +219,13 @@ bool GossipSelect_npc_taxi(Player* pPlayer, Creature* pCreature, uint32 uiSender
         pPlayer->CastSpell(pPlayer,42295,true);
         break;
     case GOSSIP_ACTION_INFO_DEF + 17:
-        pPlayer->CLOSE_GOSSIP_MENU();        nodes.resize(2);        nodes[0] = 87;        nodes[1] = 86;        pPlayer->ActivateTaxiPathTo(nodes);
+        pPlayer->CLOSE_GOSSIP_MENU();        nodes.resize(2);        nodes[0] = 84;        nodes[1] = 85;        pPlayer->ActivateTaxiPathTo(nodes);
         break;
     case GOSSIP_ACTION_INFO_DEF + 18:
-        pPlayer->CLOSE_GOSSIP_MENU();        nodes.resize(2);        nodes[0] = 87;        nodes[1] = 85;        pPlayer->ActivateTaxiPathTo(nodes);
+        pPlayer->CLOSE_GOSSIP_MENU();        nodes.resize(2);        nodes[0] = 84;        nodes[1] = 86;        pPlayer->ActivateTaxiPathTo(nodes);
         break;
     case GOSSIP_ACTION_INFO_DEF + 19:
-        pPlayer->CLOSE_GOSSIP_MENU();        nodes.resize(2);        nodes[0] = 87;        nodes[1] = 84;        pPlayer->ActivateTaxiPathTo(nodes);
+        pPlayer->CLOSE_GOSSIP_MENU();        nodes.resize(2);        nodes[0] = 84;        nodes[1] = 87;        pPlayer->ActivateTaxiPathTo(nodes);
         break;
     }
 
