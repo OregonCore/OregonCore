@@ -693,7 +693,7 @@ void AuctionHouseBot::Update()
 
     WorldSession _session(AHBplayerAccount, NULL, SEC_PLAYER, true, 0, LOCALE_enUS);
     Player _AHBplayer(&_session);
-    _AHBplayer.MinimalLoadFromDB(QueryResult_AutoPtr(NULL), AHBplayerGUID);
+    _AHBplayer.Initialize(AHBplayerGUID);
     ObjectAccessor::Instance().AddObject(&_AHBplayer);
 
     // Add New Bids
