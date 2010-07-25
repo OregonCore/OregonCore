@@ -30,7 +30,17 @@
 #include "Unit.h"
 #include "Language.h"
 #include "DBCStores.h"
+#include "BattleGroundMgr.h"
 #include "AuctionHouseBot.h"
+
+enum MailShowFlags
+{
+    MAIL_SHOW_UNK0    = 0x0001,
+    MAIL_SHOW_DELETE  = 0x0002,                             // forced show delete button instead return button
+    MAIL_SHOW_AUCTION = 0x0004,                             // from old comment
+    MAIL_SHOW_UNK2    = 0x0008,                             // unknown, COD will be shown even without that flag
+    MAIL_SHOW_RETURN  = 0x0010,
+};
 
 void MailItem::deleteItem(bool inDB)
 {
@@ -281,7 +291,15 @@ void WorldSession::HandleMailDelete(WorldPacket & recv_data)
     Player* pl = _player;
     pl->m_mailsUpdated = true;
     if (m)
+    {
+        // delete shouldn't show up for COD mails
+        if (m->COD)
+        {
+            pl->SendMailResult(mailId, MAIL_DELETED, MAIL_ERR_INTERNAL_ERROR);
+            return;
+        }
         m->state = MAIL_STATE_DELETED;
+    }
     pl->SendMailResult(mailId, MAIL_DELETED, 0);
 }
 
@@ -542,6 +560,14 @@ void WorldSession::HandleGetMail(WorldPacket & recv_data)
         if (data.wpos()+next_mail_size > maxPacketSize)
             break;
 
+        uint32 show_flags = 0;
+        if ((*itr)->messageType != MAIL_NORMAL)
+            show_flags |= MAIL_SHOW_DELETE;
+        if ((*itr)->messageType == MAIL_AUCTION)
+            show_flags |= MAIL_SHOW_AUCTION;
+        if ((*itr)->HasItems() && (*itr)->messageType == MAIL_NORMAL)
+            show_flags |= MAIL_SHOW_RETURN;
+
         data << (uint16) 0x0040;                            // unknown 2.3.0, different values
         data << (uint32) (*itr)->messageID;                 // Message ID
         data << (uint8) (*itr)->messageType;                // Message Type
@@ -565,7 +591,7 @@ void WorldSession::HandleGetMail(WorldPacket & recv_data)
         data << (uint32) 0;                                 // unknown
         data << (uint32) (*itr)->stationery;                // stationery (Stationery.dbc)
         data << (uint32) (*itr)->money;                     // Gold
-        data << (uint32) 0x04;                              // unknown, 0x4 - auction, 0x10 - normal
+        data << (uint32) show_flags;                        // unknown, 0x4 - auction, 0x10 - normal
                                                             // Time
         data << (float)  ((*itr)->expire_time-time(NULL))/DAY;
         data << (uint32) (*itr)->mailTemplateId;            // mail template (MailTemplate.dbc)
@@ -751,12 +777,12 @@ void WorldSession::SendMailTo(Player* receiver, uint8 messageType, uint8 station
 
     time_t deliver_time = time(NULL) + deliver_delay;
 
-    //expire time if COD 3 days, if no COD 30 days, if auction sale pending 1 hour
+    // expire time if COD 3 days, if no COD 30 days, if auction sale pending 1 hour
     uint32 expire_delay;
-    if (messageType == MAIL_AUCTION && !mi && !money)        // auction mail without any items and money
+    if(messageType == MAIL_AUCTION && !mi && !money)        // auction mail without any items and money
         expire_delay = sWorld.getConfig(CONFIG_MAIL_DELIVERY_DELAY);
     else
-        expire_delay = (COD > 0) ? 3*DAY : 30*DAY;
+        expire_delay = (COD > 0) ? 3 * DAY : 30 * DAY;
 
     time_t expire_time = deliver_time + expire_delay;
 
@@ -772,7 +798,7 @@ void WorldSession::SendMailTo(Player* receiver, uint8 messageType, uint8 station
 
         if (receiver->IsMailsLoaded())
         {
-            Mail * m = new Mail;
+            Mail *m = new Mail;
             m->messageID = mailId;
             m->messageType = messageType;
             m->stationery = stationery;
@@ -792,7 +818,7 @@ void WorldSession::SendMailTo(Player* receiver, uint8 messageType, uint8 station
             m->checked = checked;
             m->state = MAIL_STATE_UNCHANGED;
 
-            receiver->AddMail(m);                           //to insert new mail to beginning of maillist
+            receiver->AddMail(m);                           // to insert new mail to beginning of maillist
 
             if (mi)
             {
