@@ -1019,7 +1019,6 @@ void Aura::_RemoveAura()
             if (itr->second->GetAuraSlot() == slot)
             {
                 samespell = true;
-
                 break;
             }
         }
@@ -2378,42 +2377,6 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
             m_target->RemovePetAura(petSpell);
         return;
     }
-}
-
-void Aura::HandleAuraPeriodicDummy(bool apply, bool Real)
-{
-    // spells required only Real aura add/remove
-    if (!Real)
-        return;
-
-    SpellEntry const*spell = GetSpellProto();
-    switch(spell->SpellFamilyName)
-    {
-        case SPELLFAMILY_ROGUE:
-        {
-            // Master of Subtlety
-            if (spell->Id == 31666 && !apply && Real)
-            {
-                m_target->RemoveAurasDueToSpell(31665);
-                break;
-            }
-            break;
-        }
-        case SPELLFAMILY_HUNTER:
-        {
-            // Aspect of the Viper
-            if (spell->SpellFamilyFlags&0x0004000000000000LL)
-            {
-                // Update regen on remove
-                if (!apply && m_target->GetTypeId() == TYPEID_PLAYER)
-                    m_target->ToPlayer()->UpdateManaRegen();
-                break;
-            }
-            break;
-        }
-    }
-
-    m_isPeriodic = apply;
 }
 
 void Aura::HandleAuraMounted(bool apply, bool Real)
@@ -3994,6 +3957,42 @@ void Aura::HandlePeriodicEnergize(bool apply, bool /*Real*/)
     m_isPeriodic = apply;
 }
 
+void Aura::HandleAuraPeriodicDummy(bool apply, bool Real)
+{
+    // spells required only Real aura add/remove
+    if (!Real)
+        return;
+
+    SpellEntry const*spell = GetSpellProto();
+    switch(spell->SpellFamilyName)
+    {
+        case SPELLFAMILY_ROGUE:
+        {
+            // Master of Subtlety
+            if (spell->Id == 31666 && !apply && Real)
+            {
+                m_target->RemoveAurasDueToSpell(31665);
+                break;
+            }
+            break;
+        }
+        case SPELLFAMILY_HUNTER:
+        {
+            // Aspect of the Viper
+            if (spell->SpellFamilyFlags&0x0004000000000000LL)
+            {
+                // Update regen on remove
+                if (!apply && m_target->GetTypeId() == TYPEID_PLAYER)
+                    m_target->ToPlayer()->UpdateManaRegen();
+                break;
+            }
+            break;
+        }
+    }
+
+    m_isPeriodic = apply;
+}
+
 void Aura::HandlePeriodicHeal(bool apply, bool Real)
 {
     if (m_periodicTimer <= 0)
@@ -4596,7 +4595,7 @@ void Aura::HandleModPowerRegen(bool apply, bool Real)       // drinking
 
     if (apply && m_periodicTimer <= 0)
     {
-        m_periodicTimer += 2000;
+        m_periodicTimer = 2000;
 
         Powers pt = m_target->getPowerType();
         if (int32(pt) != m_modifier.m_miscvalue)
@@ -5963,7 +5962,7 @@ void Aura::PeriodicTick()
                 return;
 
             if (GetSpellProto()->Effect[GetEffIndex()] == SPELL_EFFECT_PERSISTENT_AREA_AURA &&
-                pCaster->SpellHitResult(m_target,GetSpellProto(),false) != SPELL_MISS_NONE)
+                pCaster->SpellHitResult(m_target, GetSpellProto(), false) != SPELL_MISS_NONE)
                 return;
 
             // Check for immune (not use charges)
@@ -6014,11 +6013,11 @@ void Aura::PeriodicTick()
             data << (float)gain_multiplier;
             m_target->SendMessageToSet(&data,true);
 
-            int32 gain_amount = int32(drain_amount*gain_multiplier);
+            int32 gain_amount = int32(drain_amount * gain_multiplier);
 
             if (gain_amount)
             {
-                int32 gain = pCaster->ModifyPower(power,gain_amount);
+                int32 gain = pCaster->ModifyPower(power, gain_amount);
                 m_target->AddThreat(pCaster, float(gain) * 0.5f, GetSpellSchoolMask(GetSpellProto()), GetSpellProto());
             }
 
@@ -6055,7 +6054,7 @@ void Aura::PeriodicTick()
             sLog.outDetail("PeriodicTick: %u (TypeId: %u) energize %u (TypeId: %u) for %u dmg inflicted by %u",
                 GUID_LOPART(GetCasterGUID()), GuidHigh2TypeId(GUID_HIPART(GetCasterGUID())), m_target->GetGUIDLow(), m_target->GetTypeId(), pdamage, GetId());
 
-            if (m_modifier.m_miscvalue < 0 || m_modifier.m_miscvalue > 4)
+            if (m_modifier.m_miscvalue < 0 || m_modifier.m_miscvalue >= MAX_POWERS)
                 break;
 
             Powers power = Powers(m_modifier.m_miscvalue);

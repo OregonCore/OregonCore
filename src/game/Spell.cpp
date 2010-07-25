@@ -2346,7 +2346,7 @@ void Spell::handle_immediate()
     // process immediate effects (items, ground, etc.) also initialize some variables
     _handle_immediate_phase();
 
-    for (std::list<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin();ihit != m_UniqueTargetInfo.end();++ihit)
+    for (std::list<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin();ihit != m_UniqueTargetInfo.end();++ihit)
     {
         if (m_destroyed || ihit == m_UniqueTargetInfo.end() || m_UniqueTargetInfo.size() == 0)
             break;
@@ -2357,7 +2357,7 @@ void Spell::handle_immediate()
         DoAllEffectOnTarget(&(*ihit));
     }
 
-    for (std::list<GOTargetInfo>::iterator ihit= m_UniqueGOTargetInfo.begin();ihit != m_UniqueGOTargetInfo.end();++ihit)
+    for (std::list<GOTargetInfo>::iterator ihit = m_UniqueGOTargetInfo.begin();ihit != m_UniqueGOTargetInfo.end();++ihit)
     {
         if (m_destroyed || ihit == m_UniqueGOTargetInfo.end() || m_UniqueGOTargetInfo.size() == 0)
             break;
@@ -2444,7 +2444,7 @@ void Spell::_handle_immediate_phase()
     HandleThreatSpells(m_spellInfo->Id);
 
     m_needSpellLog = IsNeedSendToClient();
-    for (uint32 j = 0;j<3;j++)
+    for (uint32 j = 0; j < 3; ++j)
     {
         if (m_spellInfo->Effect[j] == 0)
             continue;
@@ -2452,7 +2452,7 @@ void Spell::_handle_immediate_phase()
         // apply Send Event effect to ground in case empty target lists
         if (m_spellInfo->Effect[j] == SPELL_EFFECT_SEND_EVENT && !HaveTargetsForEffect(j))
         {
-            HandleEffects(NULL,NULL,NULL, j);
+            HandleEffects(NULL, NULL, NULL, j);
             continue;
         }
 

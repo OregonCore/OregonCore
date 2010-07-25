@@ -1906,8 +1906,6 @@ void Unit::CalcAbsorbResist(Unit *pVictim, SpellSchoolMask schoolMask, DamageEff
             DealDamage(caster, currentAbsorb, &cleanDamage, DOT, schoolMask, (*i)->GetSpellProto(), false);
         }
 
-
-
         AuraList const& vSplitDamagePct = pVictim->GetAurasByType(SPELL_AURA_SPLIT_DAMAGE_PCT);
         for (AuraList::const_iterator i = vSplitDamagePct.begin(), next; i != vSplitDamagePct.end() && RemainingDamage >= 0; i = next)
         {
@@ -1936,407 +1934,6 @@ void Unit::CalcAbsorbResist(Unit *pVictim, SpellSchoolMask schoolMask, DamageEff
 
     *absorb = damage - RemainingDamage - *resist;
 }
-
-/*
-void Unit::DoAttackDamage (Unit *pVictim, uint32 *damage, CleanDamage *cleanDamage, uint32 *blocked_amount, SpellSchoolMask damageSchoolMask, uint32 *hitInfo, VictimState *victimState, uint32 *absorbDamage, uint32 *resistDamage, WeaponAttackType attType, SpellEntry const *spellCasted, bool isTriggeredSpell)
-{
-    MeleeHitOutcome outcome;
-
-    // If is casted Melee spell, calculate like physical
-    if (!spellCasted)
-        outcome = RollMeleeOutcomeAgainst (pVictim, attType);
-    else
-        outcome = RollPhysicalOutcomeAgainst (pVictim, attType, spellCasted);
-
-    if (outcome == MELEE_HIT_MISS ||outcome == MELEE_HIT_DODGE ||outcome == MELEE_HIT_BLOCK ||outcome == MELEE_HIT_PARRY)
-        pVictim->AddThreat(this, 0.0f);
-    switch(outcome)
-    {
-        case MELEE_HIT_EVADE:
-        {
-            *hitInfo |= HITINFO_MISS;
-            *damage = 0;
-            cleanDamage->damage = 0;
-            return;
-        }
-        case MELEE_HIT_MISS:
-        {
-            *hitInfo |= HITINFO_MISS;
-            *damage = 0;
-            cleanDamage->damage = 0;
-            if (GetTypeId() == TYPEID_PLAYER)
-                ToPlayer()->UpdateWeaponSkill(attType);
-            return;
-        }
-    }
-
-    /// If this is a creature and it attacks from behind it has a probability to daze it's victim
-    if ((outcome == MELEE_HIT_CRIT || outcome == MELEE_HIT_CRUSHING || outcome == MELEE_HIT_NORMAL || outcome == MELEE_HIT_GLANCING) &&
-        GetTypeId() != TYPEID_PLAYER && !ToCreature()->GetCharmerOrOwnerGUID() && !pVictim->HasInArc(M_PI, this)
-        && pVictim->GetTypeId() == TYPEID_PLAYER)
-    {
-        // -probability is between 0% and 40%
-        // 20% base chance
-        float Probability = 20;
-
-        //there is a newbie protection, at level 10 just 7% base chance; assuming linear function
-        if (pVictim->getLevel() < 30)
-            Probability = 0.65f*pVictim->getLevel()+0.5;
-
-        uint32 VictimDefense=pVictim->GetDefenseSkillValue(this);
-        uint32 AttackerMeleeSkill=GetUnitMeleeSkill(pVictim);
-
-        Probability *= AttackerMeleeSkill/(float)VictimDefense;
-
-        if (Probability > 40.0f)
-            Probability = 40.0f;
-
-        if (roll_chance_f(Probability))
-            CastSpell(pVictim, 1604, true);
-    }
-
-    //Calculate the damage after armor mitigation if SPELL_SCHOOL_NORMAL
-    if (damageSchoolMask & SPELL_SCHOOL_MASK_NORMAL)
-    {
-        uint32 damageAfterArmor = CalcArmorReducedDamage(pVictim, *damage);
-
-        // random durability for main hand weapon (ABSORB)
-        if (damageAfterArmor < *damage)
-            if (pVictim->GetTypeId() == TYPEID_PLAYER)
-                if (roll_chance_f(sWorld.getRate(RATE_DURABILITY_LOSS_ABSORB)))
-                pVictim->ToPlayer()->DurabilityPointLossForEquipSlot(EquipmentSlots(GetMap()->urand(EQUIPMENT_SLOT_START,EQUIPMENT_SLOT_BACK)));
-
-        cleanDamage->damage += *damage - damageAfterArmor;
-        *damage = damageAfterArmor;
-    }
-
-    if (GetTypeId() == TYPEID_PLAYER && pVictim->GetTypeId() != TYPEID_PLAYER && pVictim->GetCreatureType() != CREATURE_TYPE_CRITTER)
-        ToPlayer()->UpdateCombatSkills(pVictim, attType, outcome, false);
-
-    if (GetTypeId() != TYPEID_PLAYER && pVictim->GetTypeId() == TYPEID_PLAYER)
-        pVictim->ToPlayer()->UpdateCombatSkills(this, attType, outcome, true);
-
-    switch (outcome)
-    {
-        case MELEE_HIT_BLOCK_CRIT:
-        case MELEE_HIT_CRIT:
-        {
-            //*hitInfo = 0xEA;
-            // 0xEA
-            *hitInfo  = HITINFO_CRITICALHIT | HITINFO_NORMALSWING2 | 0x8;
-
-            // Crit bonus calc
-            uint32 crit_bonus;
-            crit_bonus = *damage;
-
-            // Apply crit_damage bonus for melee spells
-            if (spellCasted)
-            {
-                if (Player* modOwner = GetSpellModOwner())
-                    modOwner->ApplySpellMod(spellCasted->Id, SPELLMOD_CRIT_DAMAGE_BONUS, crit_bonus);
-
-                uint32 creatureTypeMask = pVictim->GetCreatureTypeMask();
-                AuraList const& mDamageDoneVersus = GetAurasByType(SPELL_AURA_MOD_CRIT_PERCENT_VERSUS);
-                for (AuraList::const_iterator i = mDamageDoneVersus.begin();i != mDamageDoneVersus.end(); ++i)
-                    if (creatureTypeMask & uint32((*i)->GetModifier()->m_miscvalue))
-                        crit_bonus = uint32(crit_bonus * ((*i)->GetModifierValue()+100.0f)/100.0f);
-            }
-
-            *damage += crit_bonus;
-
-            uint32 resilienceReduction = 0;
-
-            if (attType == RANGED_ATTACK)
-            {
-                int32 mod = pVictim->GetTotalAuraModifier(SPELL_AURA_MOD_ATTACKER_RANGED_CRIT_DAMAGE);
-                *damage = int32((*damage) * float((100.0f + mod)/100.0f));
-                // Resilience - reduce crit damage
-                if (pVictim->GetTypeId() == TYPEID_PLAYER)
-                    resilienceReduction = pVictim->ToPlayer()->GetRangedCritDamageReduction(*damage);
-            }
-            else
-            {
-                int32 mod = pVictim->GetTotalAuraModifier(SPELL_AURA_MOD_ATTACKER_MELEE_CRIT_DAMAGE);
-                mod += GetTotalAuraModifier(SPELL_AURA_MOD_CRIT_DAMAGE_BONUS_MELEE);
-                *damage = int32((*damage) * float((100.0f + mod)/100.0f));
-                // Resilience - reduce crit damage
-                if (pVictim->GetTypeId() == TYPEID_PLAYER)
-                    resilienceReduction = pVictim->ToPlayer()->GetMeleeCritDamageReduction(*damage);
-            }
-
-            *damage -= resilienceReduction;
-            cleanDamage->damage += resilienceReduction;
-
-            if (GetTypeId() == TYPEID_PLAYER && pVictim->GetTypeId() != TYPEID_PLAYER && pVictim->GetCreatureType() != CREATURE_TYPE_CRITTER)
-                ToPlayer()->UpdateWeaponSkill(attType);
-
-            ModifyAuraState(AURA_STATE_CRIT, true);
-            StartReactiveTimer(REACTIVE_CRIT);
-
-            if (getClass() == CLASS_HUNTER)
-            {
-                ModifyAuraState(AURA_STATE_HUNTER_CRIT_STRIKE, true);
-                StartReactiveTimer(REACTIVE_HUNTER_CRIT);
-            }
-
-            if (outcome == MELEE_HIT_BLOCK_CRIT)
-            {
-                *blocked_amount = pVictim->GetShieldBlockValue();
-
-                if (pVictim->GetUnitBlockChance())
-                    pVictim->HandleEmoteCommand(EMOTE_ONESHOT_PARRYSHIELD);
-                else
-                    pVictim->HandleEmoteCommand(EMOTE_ONESHOT_PARRYUNARMED);
-
-                //Only set VICTIMSTATE_BLOCK on a full block
-                if (*blocked_amount >= uint32(*damage))
-                {
-                    *victimState = VICTIMSTATE_BLOCKS;
-                    *blocked_amount = uint32(*damage);
-                }
-
-                if (pVictim->GetTypeId() == TYPEID_PLAYER)
-                {
-                    // Update defense
-                    pVictim->ToPlayer()->UpdateDefense();
-
-                    // random durability for main hand weapon (BLOCK)
-                    if (roll_chance_f(sWorld.getRate(RATE_DURABILITY_LOSS_BLOCK)))
-                        pVictim->ToPlayer()->DurabilityPointLossForEquipSlot(EQUIPMENT_SLOT_OFFHAND);
-                }
-
-                pVictim->ModifyAuraState(AURA_STATE_DEFENSE,true);
-                pVictim->StartReactiveTimer(REACTIVE_DEFENSE);
-                break;
-            }
-
-            pVictim->HandleEmoteCommand(EMOTE_ONESHOT_WOUNDCRITICAL);
-            break;
-        }
-        case MELEE_HIT_PARRY:
-        {
-            if (attType == RANGED_ATTACK)                    //range attack - no parry
-            {
-                outcome = MELEE_HIT_NORMAL;
-                break;
-            }
-
-            cleanDamage->damage += *damage;
-            *damage = 0;
-            *victimState = VICTIMSTATE_PARRY;
-
-            // instant (maybe with small delay) counter attack
-            {
-                float offtime  = float(pVictim->getAttackTimer(OFF_ATTACK));
-                float basetime = float(pVictim->getAttackTimer(BASE_ATTACK));
-
-                // after parry nearest next attack time will reduced at %40 from full attack time.
-                // The delay cannot be reduced to less than 20% of your weapon base swing delay.
-                if (pVictim->haveOffhandWeapon() && offtime < basetime)
-                {
-                    float percent20 = pVictim->GetAttackTime(OFF_ATTACK)*0.20;
-                    float percent60 = 3*percent20;
-                    // set to 20% if in range 20%...20+40% of full time
-                    if (offtime > percent20 && offtime <= percent60)
-                    {
-                        pVictim->setAttackTimer(OFF_ATTACK,uint32(percent20));
-                    }
-                    // decrease at %40 from full time
-                    else if (offtime > percent60)
-                    {
-                        offtime -= 2*percent20;
-                        pVictim->setAttackTimer(OFF_ATTACK,uint32(offtime));
-                    }
-                    // ELSE not changed
-                }
-                else
-                {
-                    float percent20 = pVictim->GetAttackTime(BASE_ATTACK)*0.20;
-                    float percent60 = 3*percent20;
-                    // set to 20% if in range 20%...20+40% of full time
-                    if (basetime > percent20 && basetime <= percent60)
-                    {
-                        pVictim->setAttackTimer(BASE_ATTACK,uint32(percent20));
-                    }
-                    // decrease at %40 from full time
-                    else if (basetime > percent60)
-                    {
-                        basetime -= 2*percent20;
-                        pVictim->setAttackTimer(BASE_ATTACK,uint32(basetime));
-                    }
-                    // ELSE not changed
-                }
-            }
-
-            if (pVictim->GetTypeId() == TYPEID_PLAYER)
-            {
-                // Update victim defense ?
-                pVictim->ToPlayer()->UpdateDefense();
-
-                // random durability for main hand weapon (PARRY)
-                if (roll_chance_f(sWorld.getRate(RATE_DURABILITY_LOSS_PARRY)))
-                    pVictim->ToPlayer()->DurabilityPointLossForEquipSlot(EQUIPMENT_SLOT_MAINHAND);
-            }
-
-            pVictim->HandleEmoteCommand(EMOTE_ONESHOT_PARRYUNARMED);
-
-            if (pVictim->getClass() == CLASS_HUNTER)
-            {
-                pVictim->ModifyAuraState(AURA_STATE_HUNTER_PARRY,true);
-                pVictim->StartReactiveTimer(REACTIVE_HUNTER_PARRY);
-            }
-            else
-            {
-                pVictim->ModifyAuraState(AURA_STATE_DEFENSE, true);
-                pVictim->StartReactiveTimer(REACTIVE_DEFENSE);
-            }
-
-            CastMeleeProcDamageAndSpell(pVictim, 0, damageSchoolMask, attType, outcome, spellCasted, isTriggeredSpell);
-            return;
-        }
-        case MELEE_HIT_DODGE:
-        {
-            if (attType == RANGED_ATTACK)                    //range attack - no dodge
-            {
-                outcome = MELEE_HIT_NORMAL;
-                break;
-            }
-
-            cleanDamage->damage += *damage;
-            *damage = 0;
-            *victimState = VICTIMSTATE_DODGE;
-
-            if (pVictim->GetTypeId() == TYPEID_PLAYER)
-                pVictim->ToPlayer()->UpdateDefense();
-
-            pVictim->HandleEmoteCommand(EMOTE_ONESHOT_PARRYUNARMED);
-
-            if (pVictim->getClass() != CLASS_ROGUE)         // Riposte
-            {
-                pVictim->ModifyAuraState(AURA_STATE_DEFENSE, true);
-                pVictim->StartReactiveTimer(REACTIVE_DEFENSE);
-            }
-
-            // Overpower
-            if (GetTypeId() == TYPEID_PLAYER && getClass() == CLASS_WARRIOR)
-            {
-                ToPlayer()->AddComboPoints(pVictim, 1);
-                StartReactiveTimer(REACTIVE_OVERPOWER);
-            }
-
-            CastMeleeProcDamageAndSpell(pVictim, 0, damageSchoolMask, attType, outcome, spellCasted, isTriggeredSpell);
-            return;
-        }
-        case MELEE_HIT_BLOCK:
-        {
-            *blocked_amount = pVictim->GetShieldBlockValue();
-
-            if (pVictim->GetUnitBlockChance())
-                pVictim->HandleEmoteCommand(EMOTE_ONESHOT_PARRYSHIELD);
-            else
-                pVictim->HandleEmoteCommand(EMOTE_ONESHOT_PARRYUNARMED);
-
-            //Only set VICTIMSTATE_BLOCK on a full block
-            if (*blocked_amount >= uint32(*damage))
-            {
-                *victimState = VICTIMSTATE_BLOCKS;
-                *blocked_amount = uint32(*damage);
-            }
-
-            if (pVictim->GetTypeId() == TYPEID_PLAYER)
-            {
-                // Update defense
-                pVictim->ToPlayer()->UpdateDefense();
-
-                // random durability for main hand weapon (BLOCK)
-                if (roll_chance_f(sWorld.getRate(RATE_DURABILITY_LOSS_BLOCK)))
-                    pVictim->ToPlayer()->DurabilityPointLossForEquipSlot(EQUIPMENT_SLOT_OFFHAND);
-            }
-
-            pVictim->ModifyAuraState(AURA_STATE_DEFENSE,true);
-            pVictim->StartReactiveTimer(REACTIVE_DEFENSE);
-
-            break;
-        }
-        case MELEE_HIT_GLANCING:
-        {
-            int32 leveldif = int32(pVictim->getLevel()) - int32(getLevel());
-            if (leveldif > 3) leveldif = 3;
-            *damage *= (1 - leveldif * 0.1f);
-            cleanDamage->damage = *damage;
-            *hitInfo |= HITINFO_GLANCING;
-            break;
-        }
-        case MELEE_HIT_CRUSHING:
-        {
-            // 150% normal damage
-            *damage += (*damage / 2);
-            cleanDamage->damage = *damage;
-            *hitInfo |= HITINFO_CRUSHING;
-            // TODO: victimState, victim animation?
-            break;
-        }
-        default:
-            break;
-    }
-
-    // apply melee damage bonus and absorb only if base damage not fully blocked to prevent negative damage or damage with full block
-    if (*victimState != VICTIMSTATE_BLOCKS)
-    {
-        MeleeDamageBonus(pVictim, damage,attType,spellCasted);
-        CalcAbsorbResist(pVictim, damageSchoolMask, DIRECT_DAMAGE, *damage-*blocked_amount, absorbDamage, resistDamage);
-    }
-
-    if (*absorbDamage) *hitInfo |= HITINFO_ABSORB;
-    if (*resistDamage) *hitInfo |= HITINFO_RESIST;
-
-    cleanDamage->damage += *blocked_amount;
-
-    if (*damage <= *absorbDamage + *resistDamage + *blocked_amount)
-    {
-        //*hitInfo = 0x00010020;
-        //*hitInfo |= HITINFO_SWINGNOHITSOUND;
-        //*damageType = 0;
-        CastMeleeProcDamageAndSpell(pVictim, 0, damageSchoolMask, attType, outcome, spellCasted, isTriggeredSpell);
-        return;
-    }
-
-    // update at damage Judgement aura duration that applied by attacker at victim
-    if (*damage)
-    {
-        AuraMap const& vAuras = pVictim->GetAuras();
-        for (AuraMap::const_iterator itr = vAuras.begin(); itr != vAuras.end(); ++itr)
-        {
-            SpellEntry const *spellInfo = (*itr).second->GetSpellProto();
-            if ((spellInfo->AttributesEx3 & 0x40000) && spellInfo->SpellFamilyName == SPELLFAMILY_PALADIN &&
-                ((*itr).second->GetCasterGUID() == GetGUID() && (!spellCasted || spellCasted->Id == 35395)))
-            {
-                (*itr).second->SetAuraDuration((*itr).second->GetAuraMaxDuration());
-                (*itr).second->UpdateAuraDuration();
-            }
-        }
-    }
-
-    CastMeleeProcDamageAndSpell(pVictim, (*damage - *absorbDamage pVictim->SpellNonMeleeDamageLog(this, (*i)->GetId(), (*i)->GetModifier()->m_amount, false, false);eld
-    // yet another hack to fix crashes related to the aura getting removed during iteration
-    std::set<Aura*> alreadyDone;
-    uint32 removedAuras = pVictim->m_removedAuras;
-    AuraList const& vDamageShields = pVictim->GetAurasByType(SPELL_AURA_DAMAGE_SHIELD);
-    for (AuraList::const_iterator i = vDamageShields.begin(), next = vDamageShields.begin(); i != vDamageShields.end(); i = next)
-    {
-        ++next;
-        if (alreadyDone.find(*i) == alreadyDone.end())
-        {
-            alreadyDone.insert(*i);
-            pVictim->SpellNonMeleeDamageLog(this, (*i)->GetId(), (*i)->GetModifierValue(), false, false);
-            if (pVictim->m_removedAuras > removedAuras)
-            {
-                removedAuras = pVictim->m_removedAuras;
-                next = vDamageShields.begin();
-            }
-        }
-    }
-}*/
 
 void Unit::AttackerStateUpdate (Unit *pVictim, WeaponAttackType attType, bool extra)
 {
@@ -2379,67 +1976,6 @@ void Unit::AttackerStateUpdate (Unit *pVictim, WeaponAttackType attType, bool ex
             GetGUIDLow(), pVictim->GetGUIDLow(), pVictim->GetTypeId(), damageInfo.damage, damageInfo.absorb, damageInfo.blocked_amount, damageInfo.resist);
 
 }
-
-/*
-MeleeHitOutcome Unit::RollPhysicalOutcomeAgainst (Unit const *pVictim, WeaponAttackType attType, SpellEntry const *spellInfo)
-{
-    // Miss chance based on melee
-    float miss_chance = MeleeMissChanceCalc(pVictim, attType);
-
-    // Critical hit chance
-    float crit_chance = GetUnitCriticalChance(attType, pVictim);
-    // this is to avoid compiler issue when declaring variables inside if
-    float block_chance, parry_chance, dodge_chance;
-
-    // cannot be dodged/parried/blocked
-    if (spellInfo->Attributes & SPELL_ATTR_IMPOSSIBLE_DODGE_PARRY_BLOCK)
-    {
-        block_chance = 0.0f;
-        parry_chance = 0.0f;
-        dodge_chance = 0.0f;
-    }
-    else
-    {
-        // parry can be avoided only by some abilities
-        parry_chance = pVictim->GetUnitParryChance();
-        // block might be bypassed by it as well
-        block_chance = pVictim->GetUnitBlockChance();
-        // stunned target cannot dodge and this is check in GetUnitDodgeChance()
-        dodge_chance = pVictim->GetUnitDodgeChance();
-    }
-
-    // Only players can have Talent&Spell bonuses
-    if (GetTypeId() == TYPEID_PLAYER)
-    {
-        // Increase from SPELL_AURA_MOD_SPELL_CRIT_CHANCE_SCHOOL aura
-        crit_chance += GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_SPELL_CRIT_CHANCE_SCHOOL, spellInfo->SchoolMask);
-
-        if (dodge_chance != 0.0f)                          // if dodge chance is already 0, ignore talents for speed
-        {
-            AuraList const& mCanNotBeDodge = GetAurasByType(SPELL_AURA_IGNORE_COMBAT_RESULT);
-            for (AuraList::const_iterator i = mCanNotBeDodge.begin(); i != mCanNotBeDodge.end(); ++i)
-            {
-                // can't be dodged rogue finishing move
-                if ((*i)->GetModifier()->m_miscvalue == VICTIMSTATE_DODGE)
-                {
-                    if (spellInfo->SpellFamilyName == SPELLFAMILY_ROGUE && (spellInfo->SpellFamilyFlags & SPELLFAMILYFLAG_ROGUE__FINISHING_MOVE))
-                    {
-                        dodge_chance = 0.0f;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    // Spellmods
-    if (Player* modOwner = GetSpellModOwner())
-        modOwner->ApplySpellMod(spellInfo->Id, SPELLMOD_CRITICAL_CHANCE, crit_chance);
-
-    DEBUG_LOG("PHYSICAL OUTCOME: miss %f crit %f dodge %f parry %f block %f",miss_chance,crit_chance,dodge_chance,parry_chance, block_chance);
-
-    return RollMeleeOutcomeAgainst(pVictim, attType, int32(crit_chance*100), int32(miss_chance*100),int32(dodge_chance*100),int32(parry_chance*100),int32(block_chance*100), true);
-}*/
 
 MeleeHitOutcome Unit::RollMeleeOutcomeAgainst(const Unit *pVictim, WeaponAttackType attType) const
 {
@@ -3799,7 +3335,8 @@ bool Unit::AddAura(Aura *Aur)
     {
         for (AuraMap::iterator i2 = m_Auras.lower_bound(spair); i2 != m_Auras.upper_bound(spair);)
         {
-            if (i2->second->GetCasterGUID() == Aur->GetCasterGUID())
+            Aura* aur2 = i2->second;
+            if (aur2->GetCasterGUID() == Aur->GetCasterGUID())
             {
                 if (!stackModified)
                 {
@@ -3808,12 +3345,13 @@ bool Unit::AddAura(Aura *Aur)
                     {
                         // prevent adding stack more than once
                         stackModified=true;
-                        Aur->SetStackAmount(i2->second->GetStackAmount());
+                        Aur->SetStackAmount(aur2->GetStackAmount());
                         if (Aur->GetStackAmount() < aurSpellInfo->StackAmount)
                             Aur->SetStackAmount(Aur->GetStackAmount()+1);
                     }
+
                     RemoveAura(i2,AURA_REMOVE_BY_STACK);
-                    i2=m_Auras.lower_bound(spair);
+                    i2 = m_Auras.lower_bound(spair);
                     continue;
                 }
             }
@@ -4182,7 +3720,7 @@ void Unit::RemoveAurasDueToSpellBySteal(uint32 spellId, uint64 casterGUID, Unit 
             // set its duration and maximum duration
             // max duration 2 minutes (in msecs)
             int32 dur = aur->GetAuraDuration();
-            const int32 max_dur = 2*MINUTE*1000;
+            const int32 max_dur = 2*MINUTE*IN_MILLISECONDS;
             new_aur->SetAuraMaxDuration(max_dur > dur ? dur : max_dur);
             new_aur->SetAuraDuration(max_dur > dur ? dur : max_dur);
 

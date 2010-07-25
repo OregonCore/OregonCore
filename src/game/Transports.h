@@ -117,4 +117,3 @@ class Transport : public GameObject
         WayPointMap::iterator GetNextWayPoint();
 };
 #endif
-

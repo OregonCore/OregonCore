@@ -93,7 +93,7 @@ void MapManager::LoadTransports()
         uint32 mapid;
         x = t->m_WayPoints[0].x; y = t->m_WayPoints[0].y; z = t->m_WayPoints[0].z; mapid = t->m_WayPoints[0].mapid; o = 1;
 
-                                                            // creates the Gameobject
+        // creates the Gameobject
         if (!t->Create(entry, mapid, x, y, z, o, 100, 0))
         {
             delete t;
@@ -255,8 +255,8 @@ bool Transport::GenerateWaypoints(uint32 pathid, std::set<uint32> &mapids)
         {
             keyFrames[i].distFromPrev =
                 sqrt(pow(keyFrames[i].x - keyFrames[i - 1].x, 2) +
-                pow(keyFrames[i].y - keyFrames[i - 1].y, 2) +
-                pow(keyFrames[i].z - keyFrames[i - 1].z, 2));
+                    pow(keyFrames[i].y - keyFrames[i - 1].y, 2) +
+                    pow(keyFrames[i].z - keyFrames[i - 1].z, 2));
         }
         if (keyFrames[i].actionflag == 2)
         {
@@ -287,7 +287,7 @@ bool Transport::GenerateWaypoints(uint32 pathid, std::set<uint32> &mapids)
             tmpDist = 0;
     }
 
-    for (size_t i = 0; i < keyFrames.size(); i++)
+    for (size_t i = 0; i < keyFrames.size(); ++i)
     {
         if (keyFrames[i].distSinceStop < (30 * 30 * 0.5f))
             keyFrames[i].tFrom = sqrt(2 * keyFrames[i].distSinceStop);
@@ -303,7 +303,7 @@ bool Transport::GenerateWaypoints(uint32 pathid, std::set<uint32> &mapids)
         keyFrames[i].tTo *= 1000;
     }
 
-    //    for (int i = 0; i < keyFrames.size(); i++) {
+    //    for (int i = 0; i < keyFrames.size(); ++i) {
     //        sLog.outString("%f, %f, %f, %f, %f, %f, %f", keyFrames[i].x, keyFrames[i].y, keyFrames[i].distUntilStop, keyFrames[i].distSinceStop, keyFrames[i].distFromPrev, keyFrames[i].tFrom, keyFrames[i].tTo);
     //    }
 
@@ -319,7 +319,7 @@ bool Transport::GenerateWaypoints(uint32 pathid, std::set<uint32> &mapids)
     t += keyFrames[0].delay * 1000;
 
     uint32 cM = keyFrames[0].mapid;
-    for (size_t i = 0; i < keyFrames.size() - 1; i++)
+    for (size_t i = 0; i < keyFrames.size() - 1; ++i)
     {
         float d = 0;
         float tFrom = keyFrames[i].tFrom;
@@ -397,10 +397,7 @@ bool Transport::GenerateWaypoints(uint32 pathid, std::set<uint32> &mapids)
         WayPoint pos(keyFrames[i + 1].mapid, keyFrames[i + 1].x, keyFrames[i + 1].y, keyFrames[i + 1].z, teleport, i);
 
         //        sLog.outString("T: %d, x: %f, y: %f, z: %f, t:%d", t, pos.x, pos.y, pos.z, teleport);
-/*
-        if (keyFrames[i+1].delay > 5)
-            pos.delayed = true;
-*/
+
         //if (teleport)
         m_WayPoints[t] = pos;
 
@@ -516,27 +513,7 @@ void Transport::Update(uint32 /*p_time*/)
         {
             Relocate(m_curr->second.x, m_curr->second.y, m_curr->second.z);
         }
-/*
-        if (m_curr->second.delayed)
-        {
-            switch (GetEntry())
-            {
-                case 176495:
-                case 164871:
-                case 175080:
-                    SendPlaySound(11804, false); break;     // ZeppelinDocked
-                case 20808:
-                case 181646:
-                case 176231:
-                case 176244:
-                case 176310:
-                case 177233:
-                    SendPlaySound(5495, false);break;       // BoatDockingWarning
-                default:
-                    SendPlaySound(5154, false); break;      // ShipDocked
-            }
-        }
-*/
+
         /*
         for (PlayerSet::iterator itr = m_passengers.begin(); itr != m_passengers.end();)
         {
