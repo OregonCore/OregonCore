@@ -1714,10 +1714,7 @@ void Pet::ToggleAutocast(uint32 spellid, bool apply)
     if (IsPassiveSpell(spellid))
         return;
 
-
     PetSpellMap::const_iterator itr = m_spells.find((uint16)spellid);
-
-
 
     int i;
 

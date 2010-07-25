@@ -3803,7 +3803,7 @@ bool Unit::AddAura(Aura *Aur)
             {
                 if (!stackModified)
                 {
-                // replace aura if next will > spell StackAmount
+                    // replace aura if next will > spell StackAmount
                     if (aurSpellInfo->StackAmount)
                     {
                         // prevent adding stack more than once
