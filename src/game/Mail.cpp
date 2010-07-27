@@ -294,7 +294,6 @@ void WorldSession::HandleMarkAsRead(WorldPacket & recv_data)
     uint32 mailId;
     recv_data >> mailbox;
     recv_data >> mailId;
-    recv_data.read_skip<uint64>();                          // original sender GUID for return to, not used
 
     Player *pl = _player;
 
@@ -335,6 +334,7 @@ void WorldSession::HandleMailDelete(WorldPacket & recv_data)
             pl->SendMailResult(mailId, MAIL_DELETED, MAIL_ERR_INTERNAL_ERROR);
             return;
         }
+
         m->state = MAIL_STATE_DELETED;
     }
     pl->SendMailResult(mailId, MAIL_DELETED, MAIL_OK);
@@ -355,6 +355,8 @@ void WorldSession::HandleReturnToSender(WorldPacket & recv_data)
     uint32 mailId;
     recv_data >> mailbox;
     recv_data >> mailId;
+    recv_data.read_skip<uint64>();                          // original sender GUID for return to, not used
+
     Player *pl = _player;
     Mail *m = pl->GetMail(mailId);
     if (!m || m->state == MAIL_STATE_DELETED || m->deliver_time > time(NULL))
@@ -556,6 +558,10 @@ void WorldSession::HandleGetMail(WorldPacket & recv_data)
 
     for (PlayerMails::iterator itr = pl->GetmailBegin(); itr != pl->GetmailEnd(); ++itr)
     {
+        // packet send mail count as uint8, prevent overflow
+        if (mailsCount >= 254)
+            break;
+
         // skip deleted or not delivered (deliver delay not expired) mails
         if ((*itr)->state == MAIL_STATE_DELETED || cur_time < (*itr)->deliver_time)
             continue;
@@ -677,6 +683,7 @@ void WorldSession::HandleMailCreateTextItem(WorldPacket & recv_data)
 
     recv_data >> mailbox;
     recv_data >> mailId;
+    recv_data.read_skip<uint32>();                          // mailTemplateId, non need, Mail store own 100% correct value anyway
 
     Player *pl = _player;
 
