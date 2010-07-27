@@ -29,22 +29,9 @@
 #define SMALL_ALPHA 0.05f
 
 #include <cmath>
-/*
-struct StackCleaner
-{
-    Creature &i_creature;
-    StackCleaner(Creature &creature) : i_creature(creature) {}
-    void Done(void) { i_creature.StopMoving(); }
-    ~StackCleaner()
-    {
-        i_creature->Clear();
-    }
-};
-*/
 
 template<class T>
-bool
-TargetedMovementGenerator<T>::_setTargetLocation(T &owner)
+bool TargetedMovementGenerator<T>::_setTargetLocation(T &owner)
 {
     if (!i_target.isValid() || !i_target->IsInWorld())
         return false;
@@ -138,11 +125,8 @@ TargetedMovementGenerator<T>::_setTargetLocation(T &owner)
 }
 
 template<class T>
-void
-TargetedMovementGenerator<T>::Initialize(T &owner)
+void TargetedMovementGenerator<T>::Initialize(T &owner)
 {
-    if (!&owner)
-        return;
     owner.RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
 
     if (owner.GetTypeId() == TYPEID_UNIT && (&owner)->ToCreature()->canFly())
@@ -152,22 +136,19 @@ TargetedMovementGenerator<T>::Initialize(T &owner)
 }
 
 template<class T>
-void
-TargetedMovementGenerator<T>::Finalize(T &owner)
+void TargetedMovementGenerator<T>::Finalize(T &owner)
 {
     owner.clearUnitState(UNIT_STAT_CHASE);
 }
 
 template<class T>
-void
-TargetedMovementGenerator<T>::Reset(T &owner)
+void TargetedMovementGenerator<T>::Reset(T &owner)
 {
     Initialize(owner);
 }
 
 template<class T>
-bool
-TargetedMovementGenerator<T>::Update(T &owner, const uint32 & time_diff)
+bool TargetedMovementGenerator<T>::Update(T &owner, const uint32 & time_diff)
 {
     if (!i_target.isValid() || !i_target->IsInWorld())
         return false;
@@ -239,8 +220,7 @@ TargetedMovementGenerator<T>::Update(T &owner, const uint32 & time_diff)
 }
 
 template<class T>
-Unit*
-TargetedMovementGenerator<T>::GetTarget() const
+Unit* TargetedMovementGenerator<T>::GetTarget() const
 {
     return i_target.getTarget();
 }

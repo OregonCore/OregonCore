@@ -252,7 +252,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     if (MovementFlags & MOVEMENTFLAG_ONTRANSPORT)
     {
         // transports size limited
-        // (also received at zeppelin leave by some reason with t_* as absolute in continent coordinates, can be safely skipped)
+        // (also received at zeppelin/lift leave by some reason with t_* as absolute in continent coordinates, can be safely skipped)
         if (movementInfo.t_x > 60 || movementInfo.t_y > 60 || movementInfo.t_z > 60)
             return;
 
@@ -277,6 +277,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
                 {
                     // unmount before boarding
                     _player->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
+
                     GetPlayer()->m_transport = (*iter);
                     (*iter)->AddPassenger(GetPlayer());
                     break;

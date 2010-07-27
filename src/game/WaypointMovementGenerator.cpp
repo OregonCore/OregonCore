@@ -15,34 +15,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-//Basic headers
+
 #include "WaypointMovementGenerator.h"
-#include "DestinationHolderImp.h"
-//Extended headers
 #include "ObjectMgr.h"
 #include "World.h"
-//Creature-specific headers
 #include "Creature.h"
+#include "DestinationHolderImp.h"
 #include "CreatureAI.h"
-//Player-specific
 #include "Player.h"
+#include "WorldPacket.h"
 
 
 template<class T>
-void
-WaypointMovementGenerator<T>::Initialize(T &u){}
+void WaypointMovementGenerator<T>::Initialize(T &u){}
 
 template<>
-void
-WaypointMovementGenerator<Creature>::Finalize(Creature &u){}
+void WaypointMovementGenerator<Creature>::Finalize(Creature &u){}
 
 template<>
-void
-WaypointMovementGenerator<Player>::Finalize(Player &u){}
+void WaypointMovementGenerator<Player>::Finalize(Player &u){}
 
 template<class T>
-void
-WaypointMovementGenerator<T>::MovementInform(T &unit){}
+void WaypointMovementGenerator<T>::MovementInform(T &unit){}
 
 template<>
 void WaypointMovementGenerator<Creature>::MovementInform(Creature &unit)
@@ -89,8 +83,7 @@ void WaypointMovementGenerator<Creature>::InitTraveller(Creature &unit, const Wa
 }
 
 template<>
-void
-WaypointMovementGenerator<Creature>::Initialize(Creature &u)
+void WaypointMovementGenerator<Creature>::Initialize(Creature &u)
 {
     u.StopMoving();
     //i_currentNode = -1; // uint32, become 0 in the first update
@@ -123,8 +116,7 @@ WaypointMovementGenerator<T>::Update(T &unit, const uint32 &diff)
 }
 
 template<>
-bool
-WaypointMovementGenerator<Creature>::Update(Creature &unit, const uint32 &diff)
+bool WaypointMovementGenerator<Creature>::Update(Creature &unit, const uint32 &diff)
 {
     if (!&unit)
         return true;
@@ -215,14 +207,12 @@ template bool WaypointMovementGenerator<Player>::Update(Player &, const uint32 &
 template void WaypointMovementGenerator<Player>::MovementInform(Player &);
 
 //----------------------------------------------------//
-void
-FlightPathMovementGenerator::LoadPath(Player &)
+void FlightPathMovementGenerator::LoadPath(Player &)
 {
     objmgr.GetTaxiPathNodes(i_pathId, i_path,i_mapIds);
 }
 
-uint32
-FlightPathMovementGenerator::GetPathAtMapEnd() const
+uint32 FlightPathMovementGenerator::GetPathAtMapEnd() const
 {
     if (i_currentNode >= i_mapIds.size())
         return i_mapIds.size();
@@ -237,8 +227,7 @@ FlightPathMovementGenerator::GetPathAtMapEnd() const
     return i_mapIds.size();
 }
 
-void
-FlightPathMovementGenerator::Initialize(Player &player)
+void FlightPathMovementGenerator::Initialize(Player &player)
 {
     player.getHostileRefManager().setOnlineOfflineState(false);
     player.addUnitState(UNIT_STAT_IN_FLIGHT);
@@ -253,12 +242,13 @@ FlightPathMovementGenerator::Initialize(Player &player)
 
 void FlightPathMovementGenerator::Finalize(Player & player)
 {
+    // remove flag to prevent send object build movement packets for flight state and crash (movement generator already not at top of stack)
+    player.clearUnitState(UNIT_STAT_IN_FLIGHT);
 
     float x, y, z;
     i_destinationHolder.GetLocationNow(player.GetBaseMap(), x, y, z);
     player.SetPosition(x, y, z, player.GetOrientation());
 
-    player.clearUnitState(UNIT_STAT_IN_FLIGHT);
     player.Unmount();
     player.RemoveFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_TAXI_FLIGHT);
 
@@ -268,13 +258,14 @@ void FlightPathMovementGenerator::Finalize(Player & player)
         if (player.pvpInfo.inHostileArea)
             player.CastSpell(&player, 2479, true);
 
-        player.SetUnitMovementFlags(MOVEMENTFLAG_WALK_MODE);
+        // update z position to ground and orientation for landing point
+        // this prevent cheating with landing  point at lags
+        // when client side flight end early in comparison server side
         player.StopMoving();
     }
 }
 
-bool
-FlightPathMovementGenerator::Update(Player &player, const uint32 &diff)
+bool FlightPathMovementGenerator::Update(Player &player, const uint32 &diff)
 {
     if (MovementInProgress())
     {
@@ -309,8 +300,7 @@ FlightPathMovementGenerator::Update(Player &player, const uint32 &diff)
     return false;
 }
 
-void
-FlightPathMovementGenerator::SetCurrentNodeAfterTeleport()
+void FlightPathMovementGenerator::SetCurrentNodeAfterTeleport()
 {
     if (i_mapIds.empty())
         return;
@@ -651,4 +641,3 @@ int GetFCost(int to, int num, int parentNum, float *gcost)
     return (int)(gc + hc);
 }
 #endif                                                      //__PATHFINDING__
-
