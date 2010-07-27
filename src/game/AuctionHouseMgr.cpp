@@ -174,7 +174,7 @@ void AuctionHouseMgr::SendAuctionWonMail(AuctionEntry *auction)
 
         MailDraft(msgAuctionWonSubject.str(), itemTextId)
             .AddItem(pItem)
-            .SendMailTo(MailReceiver(bidder,auction->bidder), auction, MAIL_CHECK_MASK_AUCTION);
+            .SendMailTo(MailReceiver(bidder,auction->bidder), auction, MAIL_CHECK_MASK_COPIED);
     }
 }
 
@@ -205,7 +205,7 @@ void AuctionHouseMgr::SendAuctionSalePendingMail(AuctionEntry * auction)
         uint32 itemTextId = objmgr.CreateItemText(msgAuctionSalePendingBody.str());
 
         MailDraft(msgAuctionSalePendingSubject.str(), itemTextId)
-            .SendMailTo(MailReceiver(owner,auction->owner), auction, MAIL_CHECK_MASK_AUCTION);
+            .SendMailTo(MailReceiver(owner,auction->owner), auction, MAIL_CHECK_MASK_COPIED);
     }
 }
 
@@ -243,7 +243,7 @@ void AuctionHouseMgr::SendAuctionSuccessfulMail(AuctionEntry * auction)
 
         MailDraft(msgAuctionSuccessfulSubject.str(), itemTextId)
             .AddMoney(profit)
-            .SendMailTo(MailReceiver(owner,auction->owner), auction, MAIL_CHECK_MASK_AUCTION, HOUR);
+            .SendMailTo(MailReceiver(owner,auction->owner), auction, MAIL_CHECK_MASK_COPIED, HOUR);
     }
 }
 
@@ -268,7 +268,7 @@ void AuctionHouseMgr::SendAuctionExpiredMail(AuctionEntry * auction)
 
         MailDraft(subject.str())
             .AddItem(pItem)
-            .SendMailTo(MailReceiver(owner,auction->owner), auction);
+            .SendMailTo(MailReceiver(owner,auction->owner), auction, MAIL_CHECK_MASK_COPIED);
     }
 }
 

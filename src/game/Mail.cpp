@@ -35,15 +35,6 @@
 #include "AuctionHouseMgr.h"
 #include "Item.h"
 
-enum MailShowFlags
-{
-    MAIL_SHOW_UNK0    = 0x0001,
-    MAIL_SHOW_DELETE  = 0x0002,                             // forced show delete button instead return button
-    MAIL_SHOW_AUCTION = 0x0004,                             // from old comment
-    MAIL_SHOW_UNK2    = 0x0008,                             // unknown, COD will be shown even without that flag
-    MAIL_SHOW_RETURN  = 0x0010,
-};
-
 void WorldSession::HandleSendMail(WorldPacket & recv_data)
 {
     uint64 mailbox, unk3;
@@ -132,7 +123,8 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data)
             mails_count = fields[0].GetUInt32();
         }
     }
-    //do not allow to have more than 100 mails in mailbox.. mails count is in opcode uint8!!! - so max can be 255..
+
+    // do not allow to have more than 100 mails in mailbox.. mails count is in opcode uint8!!! - so max can be 255..
     if (mails_count > 100)
     {
         pl->SendMailResult(0, MAIL_SEND, MAIL_ERR_RECIPIENT_CAP_REACHED);
@@ -248,7 +240,7 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data)
     draft
         .AddMoney(money)
         .AddCOD(COD)
-        .SendMailTo(MailReceiver(receive, GUID_LOPART(rc)), pl, MAIL_CHECK_MASK_NONE, deliver_delay);
+        .SendMailTo(MailReceiver(receive, GUID_LOPART(rc)), pl, body.empty() ? MAIL_CHECK_MASK_COPIED : MAIL_CHECK_MASK_HAS_BODY, deliver_delay);
 
     CharacterDatabase.BeginTransaction();
     pl->SaveInventoryAndGoldToDB();
@@ -265,8 +257,8 @@ void WorldSession::HandleMarkAsRead(WorldPacket & recv_data)
     recv_data.read_skip<uint64>();                          // original sender GUID for return to, not used
 
     Player *pl = _player;
-    Mail *m = pl->GetMail(mailId);
-    if (m)
+
+    if (Mail *m = pl->GetMail(mailId))
     {
         if (pl->unReadMails)
             --pl->unReadMails;
@@ -314,8 +306,9 @@ void WorldSession::HandleReturnToSender(WorldPacket & recv_data)
         pl->SendMailResult(mailId, MAIL_RETURNED_TO_SENDER, MAIL_ERR_INTERNAL_ERROR);
         return;
     }
-    //we can return mail now
-    //so firstly delete the old one
+
+    // we can return mail now
+    // so firstly delete the old one
     CharacterDatabase.BeginTransaction();
     CharacterDatabase.PExecute("DELETE FROM mail WHERE id = '%u'", mailId);
                                                             // needed?
@@ -328,19 +321,15 @@ void WorldSession::HandleReturnToSender(WorldPacket & recv_data)
     {
         MailDraft draft(m->subject, m->itemTextId);
         if (m->mailTemplateId)
-            draft = MailDraft(m->mailTemplateId,false);     // items already included
+            draft = MailDraft(m->mailTemplateId, false);     // items already included
 
-        if(m->HasItems())
+        if (m->HasItems())
         {
             for (std::vector<MailItemInfo>::iterator itr2 = m->items.begin(); itr2 != m->items.end(); ++itr2)
             {
                 Item *item = pl->GetMItem(itr2->item_guid);
-                if(item)
+                if (item)
                     draft.AddItem(item);
-                else
-                {
-                    //WTF?
-                }
 
                 pl->RemoveMItem(itr2->item_guid);
             }
@@ -424,7 +413,7 @@ void WorldSession::HandleTakeItem(WorldPacket & recv_data)
             {
                 MailDraft(m->subject)
                     .AddMoney(m->COD)
-                    .SendMailTo(MailReceiver(receive,m->sender),MailSender(MAIL_NORMAL,m->receiver), MAIL_CHECK_MASK_COD_PAYMENT);
+                    .SendMailTo(MailReceiver(receive, m->sender), MailSender(MAIL_NORMAL, m->receiver), MAIL_CHECK_MASK_COD_PAYMENT);
             }
 
             pl->ModifyMoney(-int32(m->COD));
@@ -515,14 +504,6 @@ void WorldSession::HandleGetMail(WorldPacket & recv_data)
         if (data.wpos()+next_mail_size > maxPacketSize)
             break;
 
-        uint32 show_flags = 0;
-        if ((*itr)->messageType != MAIL_NORMAL)
-            show_flags |= MAIL_SHOW_DELETE;
-        if ((*itr)->messageType == MAIL_AUCTION)
-            show_flags |= MAIL_SHOW_AUCTION;
-        if ((*itr)->HasItems() && (*itr)->messageType == MAIL_NORMAL)
-            show_flags |= MAIL_SHOW_RETURN;
-
         data << uint16(next_mail_size);                     // Message size
         data << uint32((*itr)->messageID);                  // Message ID
         data << uint8((*itr)->messageType);                 // Message Type
@@ -541,16 +522,15 @@ void WorldSession::HandleGetMail(WorldPacket & recv_data)
                 break;
         }
 
-        data << (uint32) (*itr)->COD;                       // COD
-        data << (uint32) (*itr)->itemTextId;                // sure about this
-        data << (uint32) 0;                                 // unknown
-        data << (uint32) (*itr)->stationery;                // stationery (Stationery.dbc)
-        data << (uint32) (*itr)->money;                     // Gold
-        data << (uint32) show_flags;                        // unknown, 0x4 - auction, 0x10 - normal
-                                                            // Time
-        data << (float)  ((*itr)->expire_time-time(NULL))/DAY;
-        data << (uint32) (*itr)->mailTemplateId;            // mail template (MailTemplate.dbc)
-        data << (*itr)->subject;                            // Subject string - once 00, when mail type = 3
+        data << uint32((*itr)->COD);                        // COD
+        data << uint32((*itr)->itemTextId);                 // item text
+        data << uint32(0);                                  // unknown
+        data << uint32((*itr)->stationery);                 // stationery (Stationery.dbc)
+        data << uint32((*itr)->money);                      // Gold
+        data << uint32((*itr)->checked);                    // flags
+        data << float(((*itr)->expire_time-time(NULL))/DAY);// Time
+        data << uint32((*itr)->mailTemplateId);             // mail template (MailTemplate.dbc)
+        data << (*itr)->subject;                            // Subject string - once 00, when mail type = 3, max 256
 
         data << (uint8) item_count;
 
@@ -596,7 +576,7 @@ void WorldSession::HandleGetMail(WorldPacket & recv_data)
     _player->UpdateNextMailTimeAndUnreads();
 }
 
-///this function is called when client needs mail message body, or when player clicks on item which has ITEM_FIELD_ITEM_TEXT_ID > 0
+///this function is called when client needs mail message body, or when player clicks on item which has some flag set
 void WorldSession::HandleItemTextQuery(WorldPacket & recv_data)
 {
     uint32 itemTextId;
@@ -626,7 +606,7 @@ void WorldSession::HandleMailCreateTextItem(WorldPacket & recv_data)
     Player *pl = _player;
 
     Mail* m = pl->GetMail(mailId);
-    if (!m || !m->itemTextId || m->state == MAIL_STATE_DELETED || m->deliver_time > time(NULL))
+    if (!m || (!m->itemTextId && !m->mailTemplateId) || m->state == MAIL_STATE_DELETED || m->deliver_time > time(NULL))
     {
         pl->SendMailResult(mailId, MAIL_MADE_PERMANENT, MAIL_ERR_INTERNAL_ERROR);
         return;
@@ -642,18 +622,17 @@ void WorldSession::HandleMailCreateTextItem(WorldPacket & recv_data)
     bodyItem->SetUInt32Value(ITEM_FIELD_ITEM_TEXT_ID , m->itemTextId);
     bodyItem->SetUInt32Value(ITEM_FIELD_CREATOR, m->sender);
 
-    sLog.outDetail("HandleMailCreateTextItem mailid=%u",mailId);
+    sLog.outDetail("HandleMailCreateTextItem mailid=%u", mailId);
 
     ItemPosCountVec dest;
     uint8 msg = _player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, bodyItem, false);
     if (msg == EQUIP_ERR_OK)
     {
-        m->itemTextId = 0;
+        m->checked = m->checked | MAIL_CHECK_MASK_COPIED;
         m->state = MAIL_STATE_CHANGED;
         pl->m_mailsUpdated = true;
 
         pl->StoreItem(dest, bodyItem, true);
-        //bodyItem->SetState(ITEM_NEW, pl); is set automatically
         pl->SendMailResult(mailId, MAIL_MADE_PERMANENT, MAIL_OK);
     }
     else
@@ -663,7 +642,6 @@ void WorldSession::HandleMailCreateTextItem(WorldPacket & recv_data)
     }
 }
 
-//TODO Fix me! ... this void has probably bad condition, but good data are sent
 void WorldSession::HandleMsgQueryNextMailtime(WorldPacket & /*recv_data*/)
 {
     WorldPacket data(MSG_QUERY_NEXT_MAIL_TIME, 8);
@@ -695,16 +673,15 @@ void WorldSession::HandleMsgQueryNextMailtime(WorldPacket & /*recv_data*/)
                 switch(m->messageType)
                 {
                     case MAIL_AUCTION:
-                        data << (uint32) 2;
-                        data << (uint32) 2;
-                        data << (uint32) m->stationery;
+                        data << uint32(m->sender);          // auction house id
+                        data << uint32(MAIL_AUCTION);       // message type
                         break;
                     default:
                         data << (uint32) 0;
                         data << (uint32) 0;
-                        data << (uint32) m->stationery;
                         break;
                 }
+                data << (uint32) m->stationery;
                 data << (uint32) 0xC6000000;                // float unk, time or something
             }
         }
@@ -763,7 +740,8 @@ MailReceiver::MailReceiver(Player* receiver,uint32 receiver_lowguid) : m_receive
 
 MailDraft& MailDraft::AddItem(Item* item)
 {
-    m_items[item->GetGUIDLow()] = item; return *this;
+    m_items[item->GetGUIDLow()] = item;
+    return *this;
 }
 
 void MailDraft::prepareItems(Player* receiver)
