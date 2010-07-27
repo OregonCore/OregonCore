@@ -170,7 +170,7 @@ void AuctionHouseMgr::SendAuctionWonMail(AuctionEntry *auction)
         CharacterDatabase.CommitTransaction();
 
         MailItemsInfo mi;
-        mi.AddItem(auction->item_guidlow, auction->item_template, pItem);
+        mi.AddItem(pItem);
 
         if (bidder)
             bidder->GetSession()->SendAuctionBidderNotification(auction->GetHouseId(), auction->Id, bidder_guid, 0, 0, auction->item_template);
@@ -265,7 +265,7 @@ void AuctionHouseMgr::SendAuctionExpiredMail(AuctionEntry * auction)
             owner->GetSession()->SendAuctionOwnerNotification(auction);
 
         MailItemsInfo mi;
-        mi.AddItem(auction->item_guidlow, auction->item_template, pItem);
+        mi.AddItem(pItem);
 
         WorldSession::SendMailTo(owner, MAIL_AUCTION, MAIL_STATIONERY_AUCTION, auction->GetHouseId(), GUID_LOPART(owner_guid), subject.str(), 0, &mi, 0, 0, MAIL_CHECK_MASK_NONE);
     }
