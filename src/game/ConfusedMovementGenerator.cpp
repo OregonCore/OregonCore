@@ -107,8 +107,7 @@ ConfusedMovementGenerator<Player>::_InitSpecific(Player &, bool &is_water_ok, bo
 }
 
 template<class T>
-void
-ConfusedMovementGenerator<T>::Reset(T &unit)
+void ConfusedMovementGenerator<T>::Reset(T &unit)
 {
     i_nextMove = 1;
     i_nextMoveTime.Reset(0);
@@ -117,8 +116,7 @@ ConfusedMovementGenerator<T>::Reset(T &unit)
 }
 
 template<class T>
-bool
-ConfusedMovementGenerator<T>::Update(T &unit, const uint32 &diff)
+bool ConfusedMovementGenerator<T>::Update(T &unit, const uint32 &diff)
 {
     if (!&unit)
         return true;
@@ -161,8 +159,7 @@ ConfusedMovementGenerator<T>::Update(T &unit, const uint32 &diff)
 }
 
 template<class T>
-void
-ConfusedMovementGenerator<T>::Finalize(T &unit)
+void ConfusedMovementGenerator<T>::Finalize(T &unit)
 {
     unit.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_CONFUSED);
     unit.clearUnitState(UNIT_STAT_CONFUSED);
@@ -178,4 +175,3 @@ template void ConfusedMovementGenerator<Player>::Reset(Player &player);
 template void ConfusedMovementGenerator<Creature>::Reset(Creature &creature);
 template bool ConfusedMovementGenerator<Player>::Update(Player &player, const uint32 &diff);
 template bool ConfusedMovementGenerator<Creature>::Update(Creature &creature, const uint32 &diff);
-

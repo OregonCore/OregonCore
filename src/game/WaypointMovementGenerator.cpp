@@ -23,7 +23,6 @@
 #include "DestinationHolderImp.h"
 #include "CreatureAI.h"
 #include "Player.h"
-#include "WorldPacket.h"
 
 
 template<class T>
@@ -243,14 +242,13 @@ void FlightPathMovementGenerator::Initialize(Player &player)
 void FlightPathMovementGenerator::Finalize(Player & player)
 {
     // remove flag to prevent send object build movement packets for flight state and crash (movement generator already not at top of stack)
-    player.clearUnitState(UNIT_STAT_IN_FLIGHT);
+    player.clearUnitState(UNIT_FLAG_DISABLE_MOVE | UNIT_STAT_IN_FLIGHT);
 
     float x, y, z;
     i_destinationHolder.GetLocationNow(player.GetBaseMap(), x, y, z);
     player.SetPosition(x, y, z, player.GetOrientation());
 
     player.Unmount();
-    player.RemoveFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_TAXI_FLIGHT);
 
     if (player.m_taxi.empty())
     {
@@ -258,9 +256,7 @@ void FlightPathMovementGenerator::Finalize(Player & player)
         if (player.pvpInfo.inHostileArea)
             player.CastSpell(&player, 2479, true);
 
-        // update z position to ground and orientation for landing point
-        // this prevent cheating with landing  point at lags
-        // when client side flight end early in comparison server side
+        player.SetUnitMovementFlags(MOVEMENTFLAG_WALK_MODE);
         player.StopMoving();
     }
 }
