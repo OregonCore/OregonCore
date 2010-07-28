@@ -6593,6 +6593,7 @@ bool Unit::Attack(Unit *victim, bool meleeAttack)
 
     if (meleeAttack)
         addUnitState(UNIT_STAT_MELEE_ATTACKING);
+
     m_attacking = victim;
     m_attacking->_addAttacker(this);
 
@@ -8203,9 +8204,6 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
     if (PvP)
         m_CombatTimer = 5000;
 
-    //if (isInCombat())
-    //    return;
-
     bool creatureNotInCombat = GetTypeId() == TYPEID_UNIT && !HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
 
     SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
@@ -8216,7 +8214,7 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
             InterruptSpell(CURRENT_GENERIC_SPELL);
     }
 
-    if (GetTypeId() != TYPEID_PLAYER && GetMotionMaster()->GetCurrentMovementGeneratorType() == WAYPOINT_MOTION_TYPE)
+    if (GetTypeId() != TYPEID_PLAYER && GetMotionMaster()->GetMotionSlotType(MOTION_SLOT_IDLE) != IDLE_MOTION_TYPE)
         ToCreature()->SetHomePosition(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
 
     if (creatureNotInCombat)
@@ -8231,11 +8229,11 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
         UpdateSpeed(MOVE_RUN, true);
         UpdateSpeed(MOVE_SWIM, true);
         UpdateSpeed(MOVE_FLIGHT, true);
-    }else if (!isCharmed())
+    }
+    else if (!isCharmed())
         return;
 
     SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PET_IN_COMBAT);
-
 }
 
 void Unit::ClearInCombat()
