@@ -8204,34 +8204,47 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
     if (PvP)
         m_CombatTimer = 5000;
 
-    bool creatureNotInCombat = GetTypeId() == TYPEID_UNIT && !HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
-
+    if(isInCombat())
+        return;
+    
     SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
 
-    if(m_currentSpells[CURRENT_GENERIC_SPELL] && m_currentSpells[CURRENT_GENERIC_SPELL]->getState() != SPELL_STATE_FINISHED)
+    if(GetTypeId() == TYPEID_PLAYER)
     {
-        if(m_currentSpells[CURRENT_GENERIC_SPELL]->m_spellInfo->Attributes & SPELL_ATTR_CANT_USED_IN_COMBAT)
-            InterruptSpell(CURRENT_GENERIC_SPELL);
+        if (m_currentSpells[CURRENT_GENERIC_SPELL] && m_currentSpells[CURRENT_GENERIC_SPELL]->getState() != SPELL_STATE_FINISHED)
+        {
+            if(m_currentSpells[CURRENT_GENERIC_SPELL]->m_spellInfo->Attributes & SPELL_ATTR_CANT_USED_IN_COMBAT)
+                InterruptSpell(CURRENT_GENERIC_SPELL);
+        }
+
+        if (!isCharmed())
+            return;
     }
-
-    if (GetTypeId() != TYPEID_PLAYER && GetMotionMaster()->GetMotionSlotType(MOTION_SLOT_IDLE) != IDLE_MOTION_TYPE)
-        ToCreature()->SetHomePosition(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
-
-    if (creatureNotInCombat)
+    else
     {
-        RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
-        if (enemy && ToCreature()->AI())
-            ToCreature()->AI()->EnterCombat(enemy);
-    }
+        if ((IsAIEnabled && ToCreature()->AI()->IsEscorted()) || 
+            GetMotionMaster()->GetCurrentMovementGeneratorType() == WAYPOINT_MOTION_TYPE ||
+            GetMotionMaster()->GetCurrentMovementGeneratorType() == POINT_MOTION_TYPE)
+            ToCreature()->SetHomePosition(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+        
+         if(enemy)
+         {
+            if(IsAIEnabled && ToCreature()->AI())
+                ToCreature()->AI()->EnterCombat(enemy);
 
-    if (GetTypeId() != TYPEID_PLAYER && ToCreature()->isPet())
-    {
-        UpdateSpeed(MOVE_RUN, true);
-        UpdateSpeed(MOVE_SWIM, true);
-        UpdateSpeed(MOVE_FLIGHT, true);
+            if (ToCreature()->GetFormation())
+                ToCreature()->GetFormation()->MemberAttackStart((Creature*)this, enemy);
+
+            RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
+        }
+
+        if(ToCreature()->isPet())
+        {
+            UpdateSpeed(MOVE_RUN, true);
+            UpdateSpeed(MOVE_SWIM, true);
+            UpdateSpeed(MOVE_FLIGHT, true);
+        }
     }
-    else if (!isCharmed())
-        return;
 
     SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PET_IN_COMBAT);
 }
