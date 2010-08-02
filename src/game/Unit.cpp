@@ -11187,6 +11187,8 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
         // Call KilledUnit for creatures
         if (GetTypeId() == TYPEID_UNIT && ToCreature()->IsAIEnabled)
             ToCreature()->AI()->KilledUnit(pVictim);
+        else if (Pet *pPet = GetPet())
+            pPet->AI()->KilledUnit(pVictim);
 
         // last damage from non duel opponent or opponent controlled creature
         if (pVictim->ToPlayer()->duel)
@@ -11210,6 +11212,8 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
         // Call KilledUnit for creatures, this needs to be called after the lootable flag is set
         if (GetTypeId() == TYPEID_UNIT && ToCreature()->IsAIEnabled)
             ToCreature()->AI()->KilledUnit(pVictim);
+        else if (Pet *pPet = GetPet())
+            pPet->AI()->KilledUnit(pVictim);
 
         // Call creature just died function
         if (cVictim->IsAIEnabled)
