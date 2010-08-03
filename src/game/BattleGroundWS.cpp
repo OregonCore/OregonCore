@@ -248,7 +248,7 @@ void BattleGroundWS::RespawnFlagAfterDrop(uint32 team)
     if (GetStatus() != STATUS_IN_PROGRESS)
         return;
 
-    RespawnFlag(team,false);
+    RespawnFlag(team, false);
     if (team == ALLIANCE)
     {
         SpawnBGObject(BG_WS_OBJECT_A_FLAG, RESPAWN_IMMEDIATELY);
@@ -286,7 +286,7 @@ void BattleGroundWS::EventPlayerCapturedFlag(Player *Source)
     Source->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_ENTER_PVP_COMBAT);
     if (Source->GetTeam() == ALLIANCE)
     {
-        if (!this->IsHordeFlagPickedup())
+        if (!IsHordeFlagPickedup())
             return;
         SetHordeFlagPicker(0);                              // must be before aura remove to prevent 2 events (drop+capture) at the same time
                                                             // horde flag in base (but not respawned yet)
@@ -307,7 +307,7 @@ void BattleGroundWS::EventPlayerCapturedFlag(Player *Source)
     }
     else
     {
-        if (!this->IsAllianceFlagPickedup())
+        if (!IsAllianceFlagPickedup())
             return;
         SetAllianceFlagPicker(0);                           // must be before aura remove to prevent 2 events (drop+capture) at the same time
                                                             // alliance flag in base (but not respawned yet)
@@ -396,7 +396,7 @@ void BattleGroundWS::EventPlayerDroppedFlag(Player *Source)
 
     if (Source->GetTeam() == ALLIANCE)
     {
-        if (!this->IsHordeFlagPickedup())
+        if (!IsHordeFlagPickedup())
             return;
         if (GetHordeFlagPickerGUID() == Source->GetGUID())
         {
@@ -415,7 +415,7 @@ void BattleGroundWS::EventPlayerDroppedFlag(Player *Source)
     }
     else
     {
-        if (!this->IsAllianceFlagPickedup())
+        if (!IsAllianceFlagPickedup())
             return;
         if (GetAllianceFlagPickerGUID() == Source->GetGUID())
         {
@@ -460,8 +460,8 @@ void BattleGroundWS::EventPlayerClickedOnFlag(Player *Source, GameObject* target
     uint8 type = 0;
 
     //alliance flag picked up from base
-    if (Source->GetTeam() == HORDE && this->GetFlagState(ALLIANCE) == BG_WS_FLAG_STATE_ON_BASE
-        && this->m_BgObjects[BG_WS_OBJECT_A_FLAG] == target_obj->GetGUID())
+    if (Source->GetTeam() == HORDE && GetFlagState(ALLIANCE) == BG_WS_FLAG_STATE_ON_BASE
+        && m_BgObjects[BG_WS_OBJECT_A_FLAG] == target_obj->GetGUID())
     {
         message = GetOregonString(LANG_BG_WS_PICKEDUP_AF);
         type = CHAT_MSG_BG_SYSTEM_HORDE;
@@ -478,8 +478,8 @@ void BattleGroundWS::EventPlayerClickedOnFlag(Player *Source, GameObject* target
     }
 
     //horde flag picked up from base
-    if (Source->GetTeam() == ALLIANCE && this->GetFlagState(HORDE) == BG_WS_FLAG_STATE_ON_BASE
-        && this->m_BgObjects[BG_WS_OBJECT_H_FLAG] == target_obj->GetGUID())
+    if (Source->GetTeam() == ALLIANCE && GetFlagState(HORDE) == BG_WS_FLAG_STATE_ON_BASE
+        && m_BgObjects[BG_WS_OBJECT_H_FLAG] == target_obj->GetGUID())
     {
         message = GetOregonString(LANG_BG_WS_PICKEDUP_HF);
         type = CHAT_MSG_BG_SYSTEM_ALLIANCE;
@@ -496,7 +496,7 @@ void BattleGroundWS::EventPlayerClickedOnFlag(Player *Source, GameObject* target
     }
 
     //Alliance flag on ground(not in base) (returned or picked up again from ground!)
-    if (this->GetFlagState(ALLIANCE) == BG_WS_FLAG_STATE_ON_GROUND && Source->IsWithinDistInMap(target_obj, 10) && target_obj->GetGOInfo()->id == BG_OBJECT_A_FLAG_GROUND_WS_ENTRY)
+    if (GetFlagState(ALLIANCE) == BG_WS_FLAG_STATE_ON_GROUND && Source->IsWithinDistInMap(target_obj, 10) && target_obj->GetGOInfo()->id == BG_OBJECT_A_FLAG_GROUND_WS_ENTRY)
     {
         if (Source->GetTeam() == ALLIANCE)
         {
@@ -530,7 +530,7 @@ void BattleGroundWS::EventPlayerClickedOnFlag(Player *Source, GameObject* target
     }
 
     //Horde flag on ground(not in base) (returned or picked up again)
-    if (this->GetFlagState(HORDE) == BG_WS_FLAG_STATE_ON_GROUND && Source->IsWithinDistInMap(target_obj, 10) && target_obj->GetGOInfo()->id == BG_OBJECT_H_FLAG_GROUND_WS_ENTRY)
+    if (GetFlagState(HORDE) == BG_WS_FLAG_STATE_ON_GROUND && Source->IsWithinDistInMap(target_obj, 10) && target_obj->GetGOInfo()->id == BG_OBJECT_H_FLAG_GROUND_WS_ENTRY)
     {
         if (Source->GetTeam() == HORDE)
         {
@@ -580,22 +580,22 @@ void BattleGroundWS::RemovePlayer(Player *plr, uint64 guid)
         if (!plr)
         {
             sLog.outError("BattleGroundWS: Removing offline player who has the FLAG!!");
-            this->SetAllianceFlagPicker(0);
-            this->RespawnFlag(ALLIANCE, false);
+            SetAllianceFlagPicker(0);
+            RespawnFlag(ALLIANCE, false);
         }
         else
-            this->EventPlayerDroppedFlag(plr);
+            EventPlayerDroppedFlag(plr);
     }
     if (IsHordeFlagPickedup() && m_FlagKeepers[BG_TEAM_HORDE] == guid)
     {
         if (!plr)
         {
             sLog.outError("BattleGroundWS: Removing offline player who has the FLAG!!");
-            this->SetHordeFlagPicker(0);
-            this->RespawnFlag(HORDE, false);
+            SetHordeFlagPicker(0);
+            RespawnFlag(HORDE, false);
         }
         else
-            this->EventPlayerDroppedFlag(plr);
+            EventPlayerDroppedFlag(plr);
     }
 }
 
@@ -764,6 +764,29 @@ void BattleGroundWS::UpdatePlayerScore(Player *Source, uint32 type, uint32 value
         default:
             BattleGround::UpdatePlayerScore(Source, type, value);
             break;
+    }
+}
+
+WorldSafeLocsEntry const* BattleGroundWS::GetClosestGraveYard(Player* player)
+{
+    //if status in progress, it returns main graveyards with spiritguides
+    //else it will return the graveyard in the flagroom - this is especially good
+    //if a player dies in preparation phase - then the player can't cheat
+    //and teleport to the graveyard outside the flagroom
+    //and start running around, while the doors are still closed
+    if (player->GetTeam() == ALLIANCE)
+    {
+        if (GetStatus() == STATUS_IN_PROGRESS)
+            return sWorldSafeLocsStore.LookupEntry(WS_GRAVEYARD_MAIN_ALLIANCE);
+        else
+            return sWorldSafeLocsStore.LookupEntry(WS_GRAVEYARD_FLAGROOM_ALLIANCE);
+    }
+    else
+    {
+        if (GetStatus() == STATUS_IN_PROGRESS)
+            return sWorldSafeLocsStore.LookupEntry(WS_GRAVEYARD_MAIN_HORDE);
+        else
+            return sWorldSafeLocsStore.LookupEntry(WS_GRAVEYARD_FLAGROOM_HORDE);
     }
 }
 

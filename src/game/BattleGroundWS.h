@@ -26,10 +26,10 @@
 enum BG_WS_TimerOrScore
 {
     BG_WS_MAX_TEAM_SCORE    = 3,
-    BG_WS_FLAG_RESPAWN_TIME = (23*IN_MILLISECONDS),
-    BG_WS_FLAG_DROP_TIME    = (10*IN_MILLISECONDS),
-    BG_WS_SPELL_FORCE_TIME  = (600*IN_MILLISECONDS),
-    BG_WS_SPELL_BRUTAL_TIME = (900*IN_MILLISECONDS)
+    BG_WS_FLAG_RESPAWN_TIME = 23000,
+    BG_WS_FLAG_DROP_TIME    = 10000,
+    BG_WS_SPELL_FORCE_TIME  = 600000,
+    BG_WS_SPELL_BRUTAL_TIME = 900000
 };
 
 enum BG_WS_Sound
@@ -116,8 +116,10 @@ enum BG_WS_FlagState
 
 enum BG_WS_Graveyards
 {
-    WS_GRAVEYARD_MAIN_ALLIANCE   = 771,
-    WS_GRAVEYARD_MAIN_HORDE      = 772
+    WS_GRAVEYARD_FLAGROOM_ALLIANCE = 769,
+    WS_GRAVEYARD_FLAGROOM_HORDE    = 770,
+    WS_GRAVEYARD_MAIN_ALLIANCE     = 771,
+    WS_GRAVEYARD_MAIN_HORDE        = 772
 };
 
 enum BG_WS_CreatureTypes
@@ -181,6 +183,7 @@ class BattleGroundWS : public BattleGround
         void HandleKillPlayer(Player *player, Player *killer);
         bool SetupBattleGround();
         virtual void ResetBGSubclass();
+        virtual WorldSafeLocsEntry const* GetClosestGraveYard(Player* player);
 
         void UpdateFlagState(uint32 team, uint32 value);
         void UpdateTeamScore(uint32 team);
