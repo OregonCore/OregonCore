@@ -31,6 +31,9 @@ class Player;
 class GameObject;
 class Creature;
 
+typedef std::set<GameObject*> DoorSet;
+typedef std::set<Creature*> MinionSet;
+
 enum EncounterState
 {
     NOT_STARTED   = 0,
@@ -41,8 +44,6 @@ enum EncounterState
     TO_BE_DECIDED = 5,
 };
 
-typedef std::set<GameObject*> DoorSet;
-
 enum DoorType
 {
     DOOR_TYPE_ROOM = 0,
@@ -50,11 +51,23 @@ enum DoorType
     MAX_DOOR_TYPES,
 };
 
+struct DoorData
+{
+    uint32 entry, bossId;
+    DoorType type;
+};
+
+struct MinionData
+{
+    uint32 entry, bossId;
+};
+
 struct BossInfo
 {
     BossInfo() : state(TO_BE_DECIDED) {}
     EncounterState state;
     DoorSet door[MAX_DOOR_TYPES];
+    MinionSet minion;
 };
 
 struct DoorInfo
@@ -65,13 +78,14 @@ struct DoorInfo
     DoorType type;
 };
 
-typedef std::multimap<uint32 /*entry*/, DoorInfo> DoorInfoMap;
-
-struct DoorData
+struct MinionInfo
 {
-    uint32 entry, bossId;
-    DoorType type;
+    explicit MinionInfo(BossInfo *_bossInfo) : bossInfo(_bossInfo) {}
+    BossInfo *bossInfo;
 };
+
+typedef std::multimap<uint32 /*entry*/, DoorInfo> DoorInfoMap;
+typedef std::map<uint32 /*entry*/, MinionInfo> MinionInfoMap;
 
 class InstanceData : public ZoneScript
 {
@@ -120,15 +134,20 @@ class InstanceData : public ZoneScript
     protected:
         void SetBossNumber(uint32 number) { bosses.resize(number); }
         void LoadDoorData(const DoorData *data);
+        void LoadMinionData(const MinionData *data);
 
         void AddDoor(GameObject *door, bool add);
+        void AddMinion(Creature *minion, bool add);
+
         void UpdateDoorState(GameObject *door);
+        void UpdateMinionState(Creature *minion, EncounterState state);
 
         std::string LoadBossState(const char * data);
         std::string GetBossSaveData();
     private:
         std::vector<BossInfo> bosses;
         DoorInfoMap doors;
+        MinionInfoMap minions;
 
         virtual void OnObjectCreate(GameObject *) {}
         virtual void OnCreatureCreate(Creature *, uint32 entry) {}

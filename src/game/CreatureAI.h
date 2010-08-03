@@ -70,6 +70,7 @@ class CreatureAI : public UnitAI
         Creature * const me;
 
         bool UpdateVictim();
+        bool UpdateVictimByReact();
         bool UpdateVictimWithGaze();
         bool UpdateCombatState();
 

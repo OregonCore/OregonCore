@@ -23,6 +23,7 @@
 #include "Map.h"
 #include "GameObject.h"
 #include "Creature.h"
+#include "CreatureAI.h"
 
 void InstanceData::SaveToDB()
 {
@@ -58,6 +59,18 @@ void InstanceData::OnCreatureCreate(Creature *creature, bool add)
     OnCreatureCreate(creature, creature->GetEntry());
 }
 
+void InstanceData::LoadMinionData(const MinionData *data)
+{
+    while (data->entry)
+    {
+        if (data->bossId < bosses.size())
+            minions.insert(std::make_pair(data->entry, MinionInfo(&bosses[data->bossId])));
+
+        ++data;
+    }
+    sLog.outDebug("InstanceData::LoadMinionData: %u minions loaded.", doors.size());
+}
+
 void InstanceData::LoadDoorData(const DoorData *data)
 {
     while (data->entry)
@@ -68,6 +81,25 @@ void InstanceData::LoadDoorData(const DoorData *data)
         ++data;
     }
     sLog.outDebug("InstanceData::LoadDoorData: %u doors loaded.", doors.size());
+}
+
+void InstanceData::UpdateMinionState(Creature *minion, EncounterState state)
+{
+    switch (state)
+    {
+        case NOT_STARTED:
+            if (!minion->isAlive())
+                minion->Respawn();
+            else if (minion->isInCombat())
+                minion->AI()->EnterEvadeMode();
+            break;
+        case IN_PROGRESS:
+            if (!minion->isAlive())
+                minion->Respawn();
+            else if (!minion->getVictim())
+                minion->AI()->DoZoneInCombat();
+            break;
+    }
 }
 
 void InstanceData::UpdateDoorState(GameObject *door)
@@ -120,6 +152,18 @@ void InstanceData::AddDoor(GameObject *door, bool add)
         UpdateDoorState(door);
 }
 
+void InstanceData::AddMinion(Creature *minion, bool add)
+{
+    MinionInfoMap::iterator itr = minions.find(minion->GetEntry());
+    if (itr == minions.end())
+        return;
+
+    if (add)
+        itr->second.bossInfo->minion.insert(minion);
+    else
+        itr->second.bossInfo->minion.erase(minion);
+}
+
 bool InstanceData::SetBossState(uint32 id, EncounterState state)
 {
     if (id < bosses.size())
@@ -128,6 +172,7 @@ bool InstanceData::SetBossState(uint32 id, EncounterState state)
         if (bossInfo->state == TO_BE_DECIDED) // loading
         {
             bossInfo->state = state;
+            //sLog.outError("Inialize boss %u state as %u.", id, (uint32)state);
             return false;
         }
         else
@@ -142,6 +187,9 @@ bool InstanceData::SetBossState(uint32 id, EncounterState state)
             for (DoorSet::iterator i = bossInfo->door[type].begin(); i != bossInfo->door[type].end(); ++i)
                 UpdateDoorState(*i);
 
+        for (MinionSet::iterator i = bossInfo->minion.begin(); i != bossInfo->minion.end(); ++i)
+            UpdateMinionState(*i, state);
+
         return true;
     }
     return false;
@@ -149,7 +197,8 @@ bool InstanceData::SetBossState(uint32 id, EncounterState state)
 
 std::string InstanceData::LoadBossState(const char * data)
 {
-    if (!data) return NULL;
+    if (!data)
+        return NULL;
     std::istringstream loadStream(data);
     uint32 buff;
     uint32 bossId = 0;
