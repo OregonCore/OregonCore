@@ -2258,9 +2258,6 @@ bool ChatHandler::HandleSaveAllCommand(const char* /*args*/)
 //Send mail by command
 bool ChatHandler::HandleSendMailCommand(const char* args)
 {
-    Player* target;
-    uint64 target_guid;
-
     if (!*args)
         return false;
 
@@ -2335,7 +2332,7 @@ bool ChatHandler::HandleSendMailCommand(const char* args)
     Player *receiver = objmgr.GetPlayer(receiver_guid);
 
     MailDraft(subject, itemTextId)
-        .SendMailTo(MailReceiver(target,GUID_LOPART(target_guid)),sender);
+        .SendMailTo(MailReceiver(receiver,GUID_LOPART(receiver_guid)),sender);
 
     PSendSysMessage(LANG_MAIL_SENT, name.c_str());
     return true;
@@ -2385,7 +2382,6 @@ bool ChatHandler::HandleNameTeleCommand(const char * args)
     Player *target = objmgr.GetPlayer(name.c_str());
     if (target)
     {
-
         if (target->IsBeingTeleported() == true)
         {
             PSendSysMessage(LANG_IS_TELEPORTED, target->GetName());
