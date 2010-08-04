@@ -156,7 +156,7 @@ bool IsPassiveStackableSpell(uint32 spellId)
 Unit::Unit()
 : WorldObject(), i_motionMaster(this), m_ThreatManager(this), m_HostileRefManager(this)
 , m_NotifyListPos(-1), m_Notified(false), IsAIEnabled(false), NeedChangeAI(false)
-, i_AI(NULL), i_disabledAI(NULL), m_removedAurasCount(0)
+, i_AI(NULL), i_disabledAI(NULL), m_removedAurasCount(0), m_procDeep(0)
 {
     m_objectType |= TYPEMASK_UNIT;
     m_objectTypeId = TYPEID_UNIT;
@@ -10146,6 +10146,15 @@ uint32 createProcExtendMask(SpellNonMeleeDamage *damageInfo, SpellMissInfo missC
 
 void Unit::ProcDamageAndSpellFor(bool isVictim, Unit * pTarget, uint32 procFlag, uint32 procExtra, WeaponAttackType attType, SpellEntry const * procSpell, uint32 damage)
 {
+    ++m_procDeep;
+    if (m_procDeep > 5)
+    {
+        sLog.outError("Prevent possible stack owerflow in Unit::ProcDamageAndSpellFor");
+        if (procSpell)
+            sLog.outError("  Spell %u", procSpell->Id);
+        --m_procDeep;
+        return;
+    }
     // For melee/ranged based attack need update skills and set some Aura states
     if (procFlag & MELEE_BASED_TRIGGER_MASK)
     {
@@ -10409,6 +10418,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit * pTarget, uint32 procFlag,
         for (RemoveSpellList::const_iterator i = removedSpells.begin(); i != removedSpells.end();i++)
             RemoveAurasDueToSpell(*i);
     }
+    --m_procDeep;
 }
 
 SpellSchoolMask Unit::GetMeleeDamageSchoolMask() const
