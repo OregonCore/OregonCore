@@ -217,11 +217,11 @@ void WorldSession::HandleWhoOpcode(WorldPacket & recv_data)
     bool allowTwoSideWhoList = sWorld.getConfig(CONFIG_ALLOW_TWO_SIDE_WHO_LIST);
     bool gmInWhoList         = sWorld.getConfig(CONFIG_GM_IN_WHO_LIST);
 
-    WorldPacket data(SMSG_WHO, 50);                       // guess size
+    WorldPacket data(SMSG_WHO, 50);                         // guess size
     data << uint32(clientcount);                            // clientcount place holder, listed count
     data << uint32(clientcount);                            // clientcount place holder, online count
 
-    //TODO: Guard Player map
+    // TODO: Guard Player map
     HashMapHolder<Player>::MapType& m = ObjectAccessor::Instance().GetPlayers();
     for (HashMapHolder<Player>::MapType::const_iterator itr = m.begin(); itr != m.end(); ++itr)
     {
@@ -256,6 +256,7 @@ void WorldSession::HandleWhoOpcode(WorldPacket & recv_data)
             continue;
 
         uint32 pzoneid = itr->second->GetZoneId();
+        uint8 gender = itr->second->getGender();
 
         bool z_show = true;
         for (uint32 i = 0; i < zones_count; ++i)
@@ -313,11 +314,11 @@ void WorldSession::HandleWhoOpcode(WorldPacket & recv_data)
 
         data << pname;                                      // player name
         data << gname;                                      // guild name
-        data << uint32(lvl);                              // player level
-        data << uint32(class_);                           // player class
-        data << uint32(race);                             // player race
-        data << uint8(0);                                   // new 2.4.0
-        data << uint32(pzoneid);                          // player zone id
+        data << uint32(lvl);                                // player level
+        data << uint32(class_);                             // player class
+        data << uint32(race);                               // player race
+        data << uint8(gender);                              // player gender
+        data << uint32(pzoneid);                            // player zone id
 
         // 49 is maximum player count sent to client - can be overridden
         // through config, but is unstable
@@ -325,8 +326,8 @@ void WorldSession::HandleWhoOpcode(WorldPacket & recv_data)
             break;
     }
 
-    data.put(0,              clientcount);                // insert right count, listed count
-    data.put(sizeof(uint32), clientcount);                // insert right count, online count
+    data.put(0, clientcount);                // insert right count, listed count
+    data.put(4, clientcount);                // insert right count, online count
 
     SendPacket(&data);
     sLog.outDebug("WORLD: Send SMSG_WHO Message");
