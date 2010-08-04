@@ -656,7 +656,7 @@ struct CalcDamageInfo
 struct SpellNonMeleeDamage{
  SpellNonMeleeDamage(Unit *_attacker, Unit *_target, uint32 _SpellID, uint32 _schoolMask) :
     attacker(_attacker), target(_target), SpellID(_SpellID), damage(0), schoolMask(_schoolMask),
-    absorb(0), resist(0), phusicalLog(false), unused(false), blocked(0), HitInfo(0), cleanDamage(0) {}
+    absorb(0), resist(0), physicalLog(false), unused(false), blocked(0), HitInfo(0), cleanDamage(0) {}
  Unit   *target;
  Unit   *attacker;
  uint32 SpellID;
@@ -664,7 +664,7 @@ struct SpellNonMeleeDamage{
  uint32 schoolMask;
  uint32 absorb;
  uint32 resist;
- bool   phusicalLog;
+ bool   physicalLog;
  bool   unused;
  uint32 blocked;
  uint32 HitInfo;
