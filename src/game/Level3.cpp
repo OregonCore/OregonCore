@@ -6032,8 +6032,7 @@ bool ChatHandler::HandleRespawnCommand(const char* /*args*/)
     Oregon::WorldObjectWorker<Oregon::RespawnDo> worker(u_do);
 
     TypeContainerVisitor<Oregon::WorldObjectWorker<Oregon::RespawnDo>, GridTypeMapContainer > obj_worker(worker);
-    CellLock<GridReadGuard> cell_lock(cell, p);
-    cell_lock->Visit(cell_lock, obj_worker, *pl->GetMap());
+    cell.Visit(p, obj_worker, *pl->GetMap());
 
     return true;
 }

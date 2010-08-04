@@ -239,11 +239,8 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
 
             Oregon::AllCreaturesOfEntryInRange check(me, MOB_EGG, 100);
             Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(templist, check);
-
             TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> cSearcher(searcher);
-
-            CellLock<GridReadGuard> cell_lock(cell, pair);
-            cell_lock->Visit(cell_lock, cSearcher, *(me->GetMap()));
+            cell.Visit(pair, cSearcher, *(me->GetMap()));
         }
 
         //error_log("Eggs %d at middle", templist.size());
@@ -274,11 +271,8 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
 
             Oregon::AllCreaturesOfEntryInRange check(me, MOB_FIRE_BOMB, 100);
             Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(templist, check);
-
             TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> cSearcher(searcher);
-
-            CellLock<GridReadGuard> cell_lock(cell, pair);
-            cell_lock->Visit(cell_lock, cSearcher, *(me->GetMap()));
+            cell.Visit(pair, cSearcher, *(me->GetMap()));
         }
         for (std::list<Creature*>::iterator i = templist.begin(); i != templist.end(); ++i)
         {
@@ -518,11 +512,8 @@ struct OREGON_DLL_DECL mob_amanishi_hatcherAI : public ScriptedAI
 
             Oregon::AllCreaturesOfEntryInRange check(me, 23817, 50);
             Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(templist, check);
-
             TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> cSearcher(searcher);
-
-            CellLock<GridReadGuard> cell_lock(cell, pair);
-            cell_lock->Visit(cell_lock, cSearcher, *(me->GetMap()));
+            cell.Visit(pair, cSearcher, *(me->GetMap()));
         }
 
         //error_log("Eggs %d at %d", templist.size(), side);

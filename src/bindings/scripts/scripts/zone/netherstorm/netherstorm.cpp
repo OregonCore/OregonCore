@@ -403,11 +403,8 @@ struct OREGON_DLL_DECL npc_commander_dawnforgeAI : public ScriptedAI
 
         Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*me, entry, true, range);
         Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(pCreature, creature_check);
-
         TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> creature_searcher(searcher);
-
-        CellLock<GridReadGuard> cell_lock(cell, pair);
-        cell_lock->Visit(cell_lock, creature_searcher,*(me->GetMap()));
+        cell.Visit(pair, creature_searcher,*(me->GetMap()));
 
         return pCreature;
     }
@@ -638,11 +635,8 @@ Creature* SearchDawnforge(Player *source, uint32 entry, float range)
 
     Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*source, entry, true, range);
     Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(pCreature, creature_check);
-
     TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> creature_searcher(searcher);
-
-    CellLock<GridReadGuard> cell_lock(cell, pair);
-    cell_lock->Visit(cell_lock, creature_searcher,*(source->GetMap()));
+    cell.Visit(pair, creature_searcher,*(source->GetMap()));
 
     return pCreature;
 }

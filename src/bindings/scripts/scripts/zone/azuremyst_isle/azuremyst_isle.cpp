@@ -519,10 +519,8 @@ struct OREGON_DLL_DECL npc_geezleAI : public ScriptedAI
 
         Oregon::AllGameObjectsWithEntryInGrid go_check(GO_NAGA_FLAG);
         Oregon::GameObjectListSearcher<Oregon::AllGameObjectsWithEntryInGrid> go_search(FlagList, go_check);
-        TypeContainerVisitor
-            <Oregon::GameObjectListSearcher<Oregon::AllGameObjectsWithEntryInGrid>, GridTypeMapContainer> go_visit(go_search);
-        CellLock<GridReadGuard> cell_lock(cell, pair);
-        cell_lock->Visit(cell_lock, go_visit, *(me->GetMap()));
+        TypeContainerVisitor <Oregon::GameObjectListSearcher<Oregon::AllGameObjectsWithEntryInGrid>, GridTypeMapContainer> go_visit(go_search);
+        cell.Visit(pair, go_visit, *(me->GetMap()));
 
         Player* player = NULL;
         if (!FlagList.empty())

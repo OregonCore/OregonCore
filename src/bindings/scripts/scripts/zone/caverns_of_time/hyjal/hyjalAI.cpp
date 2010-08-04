@@ -956,9 +956,8 @@ void hyjalAI::HideNearPos(float x, float y)
         <Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid>,
         GridTypeMapContainer> creature_visitor(creature_searcher);
 
-    CellLock<GridReadGuard> cell_lock(cell, pair);
                                                             // Get Creatures
-    cell_lock->Visit(cell_lock, creature_visitor, *(me->GetMap()));
+    cell.Visit(pair, creature_visitor, *(me->GetMap()));
 
     if (!creatures.empty())
     {
@@ -979,8 +978,7 @@ void hyjalAI::RespawnNearPos(float x, float y)
     Oregon::RespawnDo u_do;
     Oregon::WorldObjectWorker<Oregon::RespawnDo> worker(u_do);
     TypeContainerVisitor<Oregon::WorldObjectWorker<Oregon::RespawnDo>, GridTypeMapContainer > obj_worker(worker);
-    CellLock<GridReadGuard> cell_lock(cell, p);
-    cell_lock->Visit(cell_lock, obj_worker, *me->GetMap());
+    cell.Visit(p, obj_worker, *me->GetMap());
 }
 void hyjalAI::WaypointReached(uint32 i)
 {
@@ -1016,8 +1014,7 @@ void hyjalAI::WaypointReached(uint32 i)
             <Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid>,
             GridTypeMapContainer> creature_visitor(creature_searcher);
 
-        CellLock<GridReadGuard> cell_lock(cell, pair);
-        cell_lock->Visit(cell_lock, creature_visitor, *(me->GetMap()));
+        cell.Visit(pair, creature_visitor, *(me->GetMap()));
 
         if (!creatures.empty())
         {
@@ -1058,8 +1055,7 @@ void hyjalAI::DoOverrun(uint32 faction, const uint32 diff)
                 <Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid>,
                 GridTypeMapContainer> creature_visitor(creature_searcher);
 
-            CellLock<GridReadGuard> cell_lock(cell, pair);
-            cell_lock->Visit(cell_lock, creature_visitor, *(me->GetMap()));
+            cell.Visit(pair, creature_visitor, *(me->GetMap()));
 
             if (!creatures.empty())
             {

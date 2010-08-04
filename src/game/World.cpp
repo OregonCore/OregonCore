@@ -2094,8 +2094,7 @@ void World::ScriptsProcess()
                 Oregon::GameObjectSearcher<Oregon::GameObjectWithDbGUIDCheck> checker(go,go_check);
 
                 TypeContainerVisitor<Oregon::GameObjectSearcher<Oregon::GameObjectWithDbGUIDCheck>, GridTypeMapContainer > object_checker(checker);
-                CellLock<GridReadGuard> cell_lock(cell, p);
-                cell_lock->Visit(cell_lock, object_checker, *summoner->GetMap());
+                cell.Visit(p, object_checker, *summoner->GetMap());
 
                 if (!go)
                 {
@@ -2154,8 +2153,7 @@ void World::ScriptsProcess()
                 Oregon::GameObjectSearcher<Oregon::GameObjectWithDbGUIDCheck> checker(door,go_check);
 
                 TypeContainerVisitor<Oregon::GameObjectSearcher<Oregon::GameObjectWithDbGUIDCheck>, GridTypeMapContainer > object_checker(checker);
-                CellLock<GridReadGuard> cell_lock(cell, p);
-                cell_lock->Visit(cell_lock, object_checker, *caster->GetMap());
+                cell.Visit(p, object_checker, *caster->GetMap());
 
                 if (!door)
                 {
@@ -2210,8 +2208,7 @@ void World::ScriptsProcess()
                 Oregon::GameObjectSearcher<Oregon::GameObjectWithDbGUIDCheck> checker(door,go_check);
 
                 TypeContainerVisitor<Oregon::GameObjectSearcher<Oregon::GameObjectWithDbGUIDCheck>, GridTypeMapContainer > object_checker(checker);
-                CellLock<GridReadGuard> cell_lock(cell, p);
-                cell_lock->Visit(cell_lock, object_checker, *caster->GetMap());
+                cell.Visit(p, object_checker, *caster->GetMap());
 
                 if (!door)
                 {
@@ -2426,8 +2423,7 @@ void World::ScriptsProcess()
                     Oregon::CreatureSearcher<Oregon::CreatureWithDbGUIDCheck> checker(target,target_check);
 
                     TypeContainerVisitor<Oregon::CreatureSearcher <Oregon::CreatureWithDbGUIDCheck>, GridTypeMapContainer > unit_checker(checker);
-                    CellLock<GridReadGuard> cell_lock(cell, p);
-                    cell_lock->Visit(cell_lock, unit_checker, *(((Unit*)source)->GetMap()));
+                    cell.Visit(p, unit_checker, *(((Unit*)source)->GetMap()));
                 }
                 else //check hashmap holders
                 {

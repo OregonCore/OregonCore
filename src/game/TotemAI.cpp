@@ -94,9 +94,8 @@ TotemAI::UpdateAI(const uint32 /*diff*/)
         TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestAttackableUnitInObjectRangeCheck>, GridTypeMapContainer > grid_object_checker(checker);
         TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestAttackableUnitInObjectRangeCheck>, WorldTypeMapContainer > world_object_checker(checker);
 
-        CellLock<GridReadGuard> cell_lock(cell, p);
-        cell_lock->Visit(cell_lock, grid_object_checker,  *i_totem.GetMap());
-        cell_lock->Visit(cell_lock, world_object_checker, *i_totem.GetMap());
+        cell.Visit(p, grid_object_checker,  *i_totem.GetMap());
+        cell.Visit(p, world_object_checker, *i_totem.GetMap());
     }
 
     // If have target

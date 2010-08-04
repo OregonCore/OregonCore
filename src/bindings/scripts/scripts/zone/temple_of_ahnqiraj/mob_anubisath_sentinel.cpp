@@ -176,8 +176,7 @@ struct OREGON_DLL_DECL aqsentinelAI : public ScriptedAI
         NearbyAQSentinel u_check(nears);
         Oregon::CreatureListSearcher<NearbyAQSentinel> searcher(assistList, u_check);
         TypeContainerVisitor<Oregon::CreatureListSearcher<NearbyAQSentinel>, GridTypeMapContainer >  grid_creature_searcher(searcher);
-        CellLock<GridReadGuard> cell_lock(cell, p);
-        cell_lock->Visit(cell_lock, grid_creature_searcher, *(nears->GetMap()));
+        cell.Visit(p, grid_creature_searcher, *(nears->GetMap()));
 
         for (std::list<Creature*>::iterator iter = assistList.begin(); iter != assistList.end(); ++iter)
             AddBuddyToList((*iter));

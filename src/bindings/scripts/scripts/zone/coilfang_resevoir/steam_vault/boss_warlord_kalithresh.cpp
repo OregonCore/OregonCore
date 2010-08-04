@@ -144,11 +144,8 @@ struct OREGON_DLL_DECL boss_warlord_kalithreshAI : public ScriptedAI
 
         Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*me, entry, true, range);
         Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(pCreature, creature_check);
-
         TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> creature_searcher(searcher);
-
-        CellLock<GridReadGuard> cell_lock(cell, pair);
-        cell_lock->Visit(cell_lock, creature_searcher,*(me->GetMap()));
+        cell.Visit(pair, creature_searcher,*(me->GetMap()));
 
         return pCreature;
     }

@@ -573,9 +573,7 @@ Player* ScriptedAI::GetPlayerAtMinimumRange(float fMinimumRange)
     Oregon::PlayerAtMinimumRangeAway check(me, fMinimumRange);
     Oregon::PlayerSearcher<Oregon::PlayerAtMinimumRangeAway> searcher(pPlayer, check);
     TypeContainerVisitor<Oregon::PlayerSearcher<Oregon::PlayerAtMinimumRangeAway>, GridTypeMapContainer> visitor(searcher);
-
-    CellLock<GridReadGuard> cell_lock(cell, pair);
-    cell_lock->Visit(cell_lock, visitor, *(me->GetMap()));
+    cell.Visit(pair, visitor, *(me->GetMap()));
     */
 
     return pPlayer;
@@ -744,11 +742,8 @@ Creature* GetClosestCreatureWithEntry(WorldObject* pSource, uint32 Entry, float 
 
     Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*pSource, Entry, true, MaxSearchRange);
     Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(pCreature, creature_check);
-
     TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> creature_searcher(searcher);
-
-    CellLock<GridReadGuard> cell_lock(cell, pair);
-    cell_lock->Visit(cell_lock, creature_searcher,*(pSource->GetMap()));
+    cell.Visit(pair, creature_searcher,*(pSource->GetMap()));
 
     return pCreature;
 }

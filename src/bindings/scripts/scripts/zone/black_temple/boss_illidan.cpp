@@ -1704,11 +1704,8 @@ bool GOHello_cage_trap(Player* plr, GameObject* go)
     // Grid search for nearest live creature of entry 23304 within 10 yards
     Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck check(*plr, 23304, true, 10);
     Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(trigger, check);
-
     TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> cSearcher(searcher);
-
-    CellLock<GridReadGuard> cell_lock(cell, pair);
-    cell_lock->Visit(cell_lock, cSearcher, *(plr->GetMap()));
+    cell.Visit(pair, cSearcher, *(plr->GetMap()));
 
     if (trigger)
         ((cage_trap_triggerAI*)trigger->AI())->Active = true;

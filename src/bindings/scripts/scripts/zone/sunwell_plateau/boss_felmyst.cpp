@@ -522,20 +522,15 @@ struct OREGON_DLL_DECL boss_felmystAI : public ScriptedAI
         float x, y, z;
         me->GetPosition(x, y, z);
 
-        {
-            CellPair pair(Oregon::ComputeCellPair(x, y));
-            Cell cell(pair);
-            cell.data.Part.reserved = ALL_DISTRICT;
-            cell.SetNoCreate();
+        CellPair pair(Oregon::ComputeCellPair(x, y));
+        Cell cell(pair);
+        cell.data.Part.reserved = ALL_DISTRICT;
+        cell.SetNoCreate();
 
-            Oregon::AllCreaturesOfEntryInRange check(me, entry, 100);
-            Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(templist, check);
-
-            TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> cSearcher(searcher);
-
-            CellLock<GridReadGuard> cell_lock(cell, pair);
-            cell_lock->Visit(cell_lock, cSearcher, *(me->GetMap()));
-        }
+        Oregon::AllCreaturesOfEntryInRange check(me, entry, 100);
+        Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(templist, check);
+        TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> cSearcher(searcher);
+        cell.Visit(pair, cSearcher, *(me->GetMap()));
 
         for (std::list<Creature*>::iterator i = templist.begin(); i != templist.end(); ++i)
         {

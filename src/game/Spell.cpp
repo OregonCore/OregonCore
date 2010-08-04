@@ -3661,8 +3661,7 @@ uint8 Spell::CanCast(bool strict)
                                 MaNGOS::GameObjectLastSearcher<MaNGOS::NearestGameObjectEntryInObjectRangeCheck> checker(p_GameObject,go_check);
 
                                 TypeContainerVisitor<MaNGOS::GameObjectLastSearcher<MaNGOS::NearestGameObjectEntryInObjectRangeCheck>, GridTypeMapContainer > object_checker(checker);
-                                CellLock<GridReadGuard> cell_lock(cell, p);
-                                cell_lock->Visit(cell_lock, object_checker, *m_caster->GetMap());
+                                cell.Visit(p, object_checker, *m_caster->GetMap());
 
                                 if (p_GameObject)
                                 {
@@ -3700,8 +3699,7 @@ uint8 Spell::CanCast(bool strict)
 
                             TypeContainerVisitor<MaNGOS::CreatureLastSearcher<MaNGOS::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer >  grid_creature_searcher(searcher);
 
-                            CellLock<GridReadGuard> cell_lock(cell, p);
-                            cell_lock->Visit(cell_lock, grid_creature_searcher, *m_caster->GetMap());
+                            cell.Visit(p, grid_creature_searcher, *m_caster->GetMap());
 
                             if (p_Creature)
                             {
@@ -4704,8 +4702,7 @@ uint8 Spell::CheckItems()
         Oregon::GameObjectSearcher<Oregon::GameObjectFocusCheck> checker(ok,go_check);
 
         TypeContainerVisitor<Oregon::GameObjectSearcher<Oregon::GameObjectFocusCheck>, GridTypeMapContainer > object_checker(checker);
-        CellLock<GridReadGuard> cell_lock(cell, p);
-        cell_lock->Visit(cell_lock, object_checker, *m_caster->GetMap());
+        cell.Visit(p, object_checker, *m_caster->GetMap());
 
         if (!ok)
             return (uint8)SPELL_FAILED_REQUIRES_SPELL_FOCUS;

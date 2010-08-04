@@ -374,9 +374,7 @@ struct OREGON_DLL_DECL boss_shade_of_akamaAI : public ScriptedAI
         Oregon::AllCreaturesOfEntryInRange check(me, CREATURE_CHANNELER, 50);
         Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(ChannelerList, check);
         TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> visitor(searcher);
-
-        CellLock<GridReadGuard> cell_lock(cell, pair);
-        cell_lock->Visit(cell_lock, visitor, *(me->GetMap()));
+        cell.Visit(pair, visitor, *(me->GetMap()));
 
         if (!ChannelerList.empty())
         {

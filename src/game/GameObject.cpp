@@ -336,16 +336,14 @@ void GameObject::Update(uint32 diff)
                     Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck u_check(this, owner, radius);
                     Oregon::UnitSearcher<Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck> checker(ok, u_check);
 
-                    CellLock<GridReadGuard> cell_lock(cell, p);
-
                     TypeContainerVisitor<Oregon::UnitSearcher<Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck>, GridTypeMapContainer > grid_object_checker(checker);
-                    cell_lock->Visit(cell_lock, grid_object_checker, *GetMap());
+                    cell.Visit(p, grid_object_checker, *GetMap());
 
                     // or unfriendly player/pet
                     if (!ok)
                     {
                         TypeContainerVisitor<Oregon::UnitSearcher<Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck>, WorldTypeMapContainer > world_object_checker(checker);
-                        cell_lock->Visit(cell_lock, world_object_checker, *GetMap());
+                        cell.Visit(p, world_object_checker, *GetMap());
                     }
                 }
                 else                                        // environmental trap
@@ -357,10 +355,8 @@ void GameObject::Update(uint32 diff)
                     Oregon::AnyPlayerInObjectRangeCheck p_check(this, radius);
                     Oregon::PlayerSearcher<Oregon::AnyPlayerInObjectRangeCheck>  checker(p_ok, p_check);
 
-                    CellLock<GridReadGuard> cell_lock(cell, p);
-
                     TypeContainerVisitor<Oregon::PlayerSearcher<Oregon::AnyPlayerInObjectRangeCheck>, WorldTypeMapContainer > world_object_checker(checker);
-                    cell_lock->Visit(cell_lock, world_object_checker, *GetMap());
+                    cell.Visit(p, world_object_checker, *GetMap());
                     ok = p_ok;
                 }
 
@@ -861,8 +857,7 @@ void GameObject::TriggeringLinkedGameObject(uint32 trapEntry, Unit* target)
         Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> checker(trapGO,go_check);
 
         TypeContainerVisitor<Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck>, GridTypeMapContainer > object_checker(checker);
-        CellLock<GridReadGuard> cell_lock(cell, p);
-        cell_lock->Visit(cell_lock, object_checker, *GetMap());
+        cell.Visit(p, object_checker, *GetMap());
     }
 
     // found correct GO
@@ -881,10 +876,8 @@ GameObject* GameObject::LookupFishingHoleAround(float range)
     Oregon::NearestGameObjectFishingHole u_check(*this, range);
     Oregon::GameObjectSearcher<Oregon::NearestGameObjectFishingHole> checker(ok, u_check);
 
-    CellLock<GridReadGuard> cell_lock(cell, p);
-
     TypeContainerVisitor<Oregon::GameObjectSearcher<Oregon::NearestGameObjectFishingHole>, GridTypeMapContainer > grid_object_checker(checker);
-    cell_lock->Visit(cell_lock, grid_object_checker, *GetMap());
+    cell.Visit(p, grid_object_checker, *GetMap());
 
     return ok;
 }

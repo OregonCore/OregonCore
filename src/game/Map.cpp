@@ -544,8 +544,7 @@ void Map::MessageBroadcast(Player *player, WorldPacket *msg, bool to_self, bool 
 
     Oregon::MessageDeliverer post_man(*player, msg, to_possessor, to_self);
     TypeContainerVisitor<Oregon::MessageDeliverer, WorldTypeMapContainer > message(post_man);
-    CellLock<ReadGuard> cell_lock(cell, p);
-    cell_lock->Visit(cell_lock, message, *this);
+    cell.Visit(p, message, *this);
 }
 
 void Map::MessageBroadcast(WorldObject *obj, WorldPacket *msg, bool to_possessor)
@@ -567,8 +566,7 @@ void Map::MessageBroadcast(WorldObject *obj, WorldPacket *msg, bool to_possessor
 
     Oregon::ObjectMessageDeliverer post_man(*obj, msg, to_possessor);
     TypeContainerVisitor<Oregon::ObjectMessageDeliverer, WorldTypeMapContainer > message(post_man);
-    CellLock<ReadGuard> cell_lock(cell, p);
-    cell_lock->Visit(cell_lock, message, *this);
+    cell.Visit(p, message, *this);
 }
 
 void Map::MessageDistBroadcast(Player *player, WorldPacket *msg, float dist, bool to_self, bool to_possessor, bool own_team_only)
@@ -589,8 +587,7 @@ void Map::MessageDistBroadcast(Player *player, WorldPacket *msg, float dist, boo
 
     Oregon::MessageDistDeliverer post_man(*player, msg, to_possessor, dist, to_self, own_team_only);
     TypeContainerVisitor<Oregon::MessageDistDeliverer , WorldTypeMapContainer > message(post_man);
-    CellLock<ReadGuard> cell_lock(cell, p);
-    cell_lock->Visit(cell_lock, message, *this);
+    cell.Visit(p, message, *this);
 }
 
 void Map::MessageDistBroadcast(WorldObject *obj, WorldPacket *msg, float dist, bool to_possessor)
@@ -612,8 +609,7 @@ void Map::MessageDistBroadcast(WorldObject *obj, WorldPacket *msg, float dist, b
 
     Oregon::ObjectMessageDistDeliverer post_man(*obj, msg, to_possessor, dist);
     TypeContainerVisitor<Oregon::ObjectMessageDistDeliverer, WorldTypeMapContainer > message(post_man);
-    CellLock<ReadGuard> cell_lock(cell, p);
-    cell_lock->Visit(cell_lock, message, *this);
+    cell.Visit(p, message, *this);
 }
 
 bool Map::loaded(const GridPair &p) const
@@ -759,9 +755,8 @@ void Map::Update(const uint32 &t_diff)
                     Cell cell(pair);
                     cell.data.Part.reserved = CENTER_DISTRICT;
                     //cell.SetNoCreate();
-                    CellLock<NullGuard> cell_lock(cell, pair);
-                    cell_lock->Visit(cell_lock, grid_object_update,  *this);
-                    cell_lock->Visit(cell_lock, world_object_update, *this);
+                    cell.Visit(pair, grid_object_update,  *this);
+                    cell.Visit(pair, world_object_update, *this);
                 }
             }
         }
@@ -835,9 +830,8 @@ void Map::Update(const uint32 &t_diff)
                         Cell cell(pair);
                         cell.data.Part.reserved = CENTER_DISTRICT;
                         //cell.SetNoCreate();
-                        CellLock<NullGuard> cell_lock(cell, pair);
-                        cell_lock->Visit(cell_lock, grid_object_update,  *this);
-                        cell_lock->Visit(cell_lock, world_object_update, *this);
+                        cell.Visit(pair, grid_object_update,  *this);
+                        cell.Visit(pair, world_object_update, *this);
                     }
                 }
             }
@@ -2063,8 +2057,7 @@ void Map::UpdateObjectVisibility(WorldObject* obj, Cell cell, CellPair cellpair)
     cell.SetNoCreate();
     Oregon::VisibleChangesNotifier notifier(*obj);
     TypeContainerVisitor<Oregon::VisibleChangesNotifier, WorldTypeMapContainer > player_notifier(notifier);
-    CellLock<GridReadGuard> cell_lock(cell, cellpair);
-    cell_lock->Visit(cell_lock, player_notifier, *this);
+    cell.Visit(cellpair, player_notifier, *this);
 }
 
 void Map::SendInitSelf(Player * player)

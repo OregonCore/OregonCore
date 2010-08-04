@@ -333,8 +333,7 @@ struct OREGON_DLL_DECL boss_kalecgos_kjAI : public ScriptedAI
         AllOrbsInGrid check;
         Oregon::GameObjectListSearcher<AllOrbsInGrid> searcher(orbList, check);
         TypeContainerVisitor<Oregon::GameObjectListSearcher<AllOrbsInGrid>, GridTypeMapContainer> visitor(searcher);
-        CellLock<GridReadGuard> cell_lock(cell, pair);
-        cell_lock->Visit(cell_lock, visitor, *(me->GetMap()));
+        cell.Visit(pair, visitor, *(me->GetMap()));
         if (orbList.empty())
             return;
         uint8 i = 0;

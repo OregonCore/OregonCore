@@ -46,25 +46,6 @@ class InstanceSave;
 class WorldObject;
 class CreatureGroup;
 
-typedef ACE_RW_Thread_Mutex GridRWLock;
-
-template<class MUTEX, class LOCK_TYPE>
-struct RGuard
-{
-    RGuard(MUTEX &l) : i_lock(l.getReadLock()) {}
-    Oregon::GeneralLock<LOCK_TYPE> i_lock;
-};
-
-template<class MUTEX, class LOCK_TYPE>
-struct WGuard
-{
-    WGuard(MUTEX &l) : i_lock(l.getWriteLock()) {}
-    Oregon::GeneralLock<LOCK_TYPE> i_lock;
-};
-
-typedef RGuard<GridRWLock, ACE_Thread_Mutex> GridReadGuard;
-typedef WGuard<GridRWLock, ACE_Thread_Mutex> GridWriteGuard;
-typedef Oregon::SingleThreaded<GridRWLock>::Lock NullGuard;
 //******************************************
 // Map file format defines
 //******************************************
@@ -280,9 +261,9 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         void MessageDistBroadcast(WorldObject *, WorldPacket *, float dist, bool to_possessor);
 
         void PlayerRelocation(Player *, float x, float y, float z, float angl);
-        void CreatureRelocation(Creature *creature, float x, float y, float, float);
+        void CreatureRelocation(Creature *creature, float x, float y, float z, float orientation);
 
-        template<class LOCK_TYPE, class T, class CONTAINER> void Visit(const CellLock<LOCK_TYPE> &cell, TypeContainerVisitor<T, CONTAINER> &visitor);
+        template<class T, class CONTAINER> void Visit(const Cell& cell, TypeContainerVisitor<T, CONTAINER> &visitor);
 
         bool IsRemovalGrid(float x, float y) const
         {
@@ -488,8 +469,6 @@ class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::Obj
         ActiveNonPlayers m_activeNonPlayers;
         ActiveNonPlayers::iterator m_activeNonPlayersIter;
     private:
-        typedef GridReadGuard ReadGuard;
-        typedef GridWriteGuard WriteGuard;
 
         NGridType* i_grids[MAX_NUMBER_OF_GRIDS][MAX_NUMBER_OF_GRIDS];
         GridMap *GridMaps[MAX_NUMBER_OF_GRIDS][MAX_NUMBER_OF_GRIDS];
@@ -599,16 +578,16 @@ Map::CalculateGridMask(const uint32 &y) const
 }
 */
 
-template<class LOCK_TYPE, class T, class CONTAINER>
+template<class T, class CONTAINER>
 inline void
-Map::Visit(const CellLock<LOCK_TYPE> &cell, TypeContainerVisitor<T, CONTAINER> &visitor)
+Map::Visit(const Cell& cell, TypeContainerVisitor<T, CONTAINER> &visitor)
 {
-    const uint32 x = cell->GridX();
-    const uint32 y = cell->GridY();
-    const uint32 cell_x = cell->CellX();
-    const uint32 cell_y = cell->CellY();
+    const uint32 x = cell.GridX();
+    const uint32 y = cell.GridY();
+    const uint32 cell_x = cell.CellX();
+    const uint32 cell_y = cell.CellY();
 
-    if (!cell->NoCreate() || loaded(GridPair(x,y)))
+    if (!cell.NoCreate() || loaded(GridPair(x,y)))
     {
         EnsureGridLoaded(cell);
         getNGrid(x, y)->Visit(cell_x, cell_y, visitor);
@@ -624,12 +603,11 @@ Map::VisitAll(const float &x, const float &y, float radius, NOTIFIER &notifier)
     Cell cell(p);
     cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
-    CellLock<GridReadGuard> cell_lock(cell, p);
 
     TypeContainerVisitor<NOTIFIER, WorldTypeMapContainer> world_object_notifier(notifier);
-    cell_lock->Visit(cell_lock, world_object_notifier, *this, radius, x_off, y_off);
+    cell.Visit(p, world_object_notifier, *this, radius, x_off, y_off);
     TypeContainerVisitor<NOTIFIER, GridTypeMapContainer >  grid_object_notifier(notifier);
-    cell_lock->Visit(cell_lock, grid_object_notifier, *this, radius, x_off, y_off);
+    cell.Visit(p, grid_object_notifier, *this, radius, x_off, y_off);
 }
 
 template<class NOTIFIER>
@@ -641,10 +619,9 @@ Map::VisitWorld(const float &x, const float &y, float radius, NOTIFIER &notifier
     Cell cell(p);
     cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
-    CellLock<GridReadGuard> cell_lock(cell, p);
 
     TypeContainerVisitor<NOTIFIER, WorldTypeMapContainer> world_object_notifier(notifier);
-    cell_lock->Visit(cell_lock, world_object_notifier, *this, radius, x_off, y_off);
+    cell.Visit(p, world_object_notifier, *this, radius, x_off, y_off);
 }
 
 template<class NOTIFIER>
@@ -656,9 +633,8 @@ Map::VisitGrid(const float &x, const float &y, float radius, NOTIFIER &notifier)
     Cell cell(p);
     cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
-    CellLock<GridReadGuard> cell_lock(cell, p);
 
     TypeContainerVisitor<NOTIFIER, GridTypeMapContainer >  grid_object_notifier(notifier);
-    cell_lock->Visit(cell_lock, grid_object_notifier, *this, radius, x_off, y_off);
+    cell.Visit(p, grid_object_notifier, *this, radius, x_off, y_off);
 }
 #endif

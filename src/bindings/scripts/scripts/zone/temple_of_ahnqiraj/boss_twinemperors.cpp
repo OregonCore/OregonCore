@@ -340,8 +340,7 @@ struct OREGON_DLL_DECL boss_twinemperorsAI : public ScriptedAI
         AnyBugCheck u_check(me, 150);
         Oregon::CreatureListSearcher<AnyBugCheck> searcher(unitList, u_check);
         TypeContainerVisitor<Oregon::CreatureListSearcher<AnyBugCheck>, GridTypeMapContainer >  grid_creature_searcher(searcher);
-        CellLock<GridReadGuard> cell_lock(cell, p);
-        cell_lock->Visit(cell_lock, grid_creature_searcher, *(me->GetMap()));
+        cell.Visit(p, grid_creature_searcher, *(me->GetMap()));
 
         Creature *nearb = NULL;
 

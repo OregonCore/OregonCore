@@ -531,14 +531,12 @@ bool GOHello_go_second_trial(Player *player, GameObject* _GO)
     Cell cell(p);
     cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
-    CellLock<GridReadGuard> cell_lock(cell, p);
 
     Creature* event_controller = NULL;
     Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck u_check(*_GO, MASTER_KELERUN_BLOODMOURN, true, 30);
     Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(event_controller, u_check);
     TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer >  grid_unit_searcher(searcher);
-    //cell_lock->Visit(cell_lock, grid_unit_searcher, *MapManager::Instance().GetMap(_GO->GetMap(), _GO));
-    cell_lock->Visit(cell_lock, grid_unit_searcher, *(_GO->GetMap()));
+    cell.Visit(p, grid_unit_searcher, *(_GO->GetMap()));
 
     if (event_controller)
        ((master_kelerun_bloodmournAI*)event_controller->AI())->StartEvent();

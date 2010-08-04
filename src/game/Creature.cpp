@@ -1572,8 +1572,7 @@ void Creature::DoFleeToGetAssistance()
 
         TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestAssistCreatureInCreatureRangeCheck>, GridTypeMapContainer > grid_creature_searcher(searcher);
 
-        CellLock<GridReadGuard> cell_lock(cell, p);
-        cell_lock->Visit(cell_lock, grid_creature_searcher, *GetMap(), *this, radius);
+        cell.Visit(p, grid_creature_searcher, *GetMap(), *this, radius);
 
         SetNoSearchAssistance(true);
         if (!pCreature)
@@ -1600,9 +1599,8 @@ Unit* Creature::SelectNearestTarget(float dist) const
         TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestHostileUnitInAttackDistanceCheck>, WorldTypeMapContainer > world_unit_searcher(searcher);
         TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestHostileUnitInAttackDistanceCheck>, GridTypeMapContainer >  grid_unit_searcher(searcher);
 
-        CellLock<GridReadGuard> cell_lock(cell, p);
-        cell_lock->Visit(cell_lock, world_unit_searcher, *GetMap());
-        cell_lock->Visit(cell_lock, grid_unit_searcher, *GetMap());
+        cell.Visit(p, world_unit_searcher, *GetMap());
+        cell.Visit(p, grid_unit_searcher, *GetMap());
     }
 
     return target;
@@ -1630,8 +1628,7 @@ void Creature::CallAssistance()
 
                 TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AnyAssistCreatureInRangeCheck>, GridTypeMapContainer >  grid_creature_searcher(searcher);
 
-                CellLock<GridReadGuard> cell_lock(cell, p);
-                cell_lock->Visit(cell_lock, grid_creature_searcher, *GetMap());
+                cell.Visit(p, grid_creature_searcher, *GetMap());
             }
 
             if (!assistList.empty())
@@ -1664,8 +1661,7 @@ void Creature::CallForHelp(float fRadius)
 
     TypeContainerVisitor<Oregon::CreatureWorker<Oregon::CallOfHelpCreatureInRangeDo>, GridTypeMapContainer >  grid_creature_searcher(worker);
 
-    CellLock<GridReadGuard> cell_lock(cell, p);
-    cell_lock->Visit(cell_lock, grid_creature_searcher, *GetMap(), *this, fRadius);
+    cell.Visit(p, grid_creature_searcher, *GetMap(), *this, fRadius);
 }
 
 bool Creature::CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction /*= true*/) const

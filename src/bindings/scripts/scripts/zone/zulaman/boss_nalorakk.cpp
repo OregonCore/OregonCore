@@ -159,11 +159,8 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
 
             Oregon::AllFriendlyCreaturesInGrid check(me);
             Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid> searcher(templist, check);
-
             TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid>, GridTypeMapContainer> cSearcher(searcher);
-
-            CellLock<GridReadGuard> cell_lock(cell, pair);
-            cell_lock->Visit(cell_lock, cSearcher, *(me->GetMap()));
+            cell.Visit(pair, cSearcher, *(me->GetMap()));
         }
 
         if (!templist.size())

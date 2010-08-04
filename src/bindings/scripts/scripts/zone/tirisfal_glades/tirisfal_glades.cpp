@@ -101,11 +101,8 @@ GameObject* SearchMausoleumGo(Unit *source, uint32 entry, float range)
 
     Oregon::NearestGameObjectEntryInObjectRangeCheck go_check(*source, entry, range);
     Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> searcher(pGo, go_check);
-
     TypeContainerVisitor<Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck>, GridTypeMapContainer> go_searcher(searcher);
-
-    CellLock<GridReadGuard> cell_lock(cell, pair);
-    cell_lock->Visit(cell_lock, go_searcher,*(source->GetMap()));
+    cell.Visit(pair, go_searcher,*(source->GetMap()));
 
     return pGo;
 }
