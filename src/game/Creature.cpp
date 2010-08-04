@@ -1631,7 +1631,7 @@ void Creature::CallAssistance()
                 TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AnyAssistCreatureInRangeCheck>, GridTypeMapContainer >  grid_creature_searcher(searcher);
 
                 CellLock<GridReadGuard> cell_lock(cell, p);
-                cell_lock->Visit(cell_lock, grid_creature_searcher, *MapManager::Instance().GetMap(GetMapId(), this));
+                cell_lock->Visit(cell_lock, grid_creature_searcher, *GetMap());
             }
 
             if (!assistList.empty())

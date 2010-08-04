@@ -1603,12 +1603,12 @@ void WorldObject::BuildTeleportAckMsg(WorldPacket *data, float x, float y, float
 
 void WorldObject::SendMessageToSet(WorldPacket *data, bool /*fake*/, bool bToPossessor)
 {
-    MapManager::Instance().GetMap(m_mapId, this)->MessageBroadcast(this, data, bToPossessor);
+    GetMap()->MessageBroadcast(this, data, bToPossessor);
 }
 
 void WorldObject::SendMessageToSetInRange(WorldPacket *data, float dist, bool /*bToSelf*/, bool bToPossessor)
 {
-    MapManager::Instance().GetMap(m_mapId, this)->MessageDistBroadcast(this, data, dist, bToPossessor);
+    GetMap()->MessageDistBroadcast(this, data, dist, bToPossessor);
 }
 
 void WorldObject::SendObjectDeSpawnAnim(uint64 guid)

@@ -703,7 +703,7 @@ void Spell::EffectDummy(uint32 i)
                     //pGameObj->SetUInt32Value(GAMEOBJECT_LEVEL, m_caster->getLevel());
                     pGameObj->SetSpellId(m_spellInfo->Id);
 
-                    MapManager::Instance().GetMap(creatureTarget->GetMapId(), pGameObj)->Add(pGameObj);
+                    creatureTarget->GetMap()->Add(pGameObj);
 
                     WorldPacket data(SMSG_GAMEOBJECT_SPAWN_ANIM_OBSOLETE, 8);
                     data << uint64(pGameObj->GetGUID());
@@ -2100,7 +2100,7 @@ void Spell::EffectTeleportUnits(uint32 i)
         unitTarget->ToPlayer()->TeleportTo(mapid, x, y, z, orientation, TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET | (unitTarget == m_caster ? TELE_TO_SPELL : 0));
     else
     {
-        MapManager::Instance().GetMap(mapid, m_caster)->CreatureRelocation(unitTarget->ToCreature(), x, y, z, orientation);
+        m_caster->GetMap()->CreatureRelocation(unitTarget->ToCreature(), x, y, z, orientation);
         WorldPacket data;
         unitTarget->BuildTeleportAckMsg(&data, x, y, z, orientation);
         unitTarget->SendMessageToSet(&data, false);

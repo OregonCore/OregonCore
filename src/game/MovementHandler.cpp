@@ -596,7 +596,7 @@ void WorldSession::HandlePossessedMovement(WorldPacket& recv_data, MovementInfo&
     }
     else // Possessed unit is a creature
     {
-        Map* map = MapManager::Instance().GetMap(pos_unit->GetMapId(), pos_unit);
+        Map* map = pos_unit->GetMap();
         map->CreatureRelocation(pos_unit->ToCreature(), movementInfo.x, movementInfo.y, movementInfo.z, movementInfo.o);
     }
 }

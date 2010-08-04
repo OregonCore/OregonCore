@@ -5466,17 +5466,17 @@ void Player::SaveRecallPosition()
 
 void Player::SendMessageToSet(WorldPacket *data, bool self, bool to_possessor)
 {
-    MapManager::Instance().GetMap(GetMapId(), this)->MessageBroadcast(this, data, self, to_possessor);
+    GetMap()->MessageBroadcast(this, data, self, to_possessor);
 }
 
 void Player::SendMessageToSetInRange(WorldPacket *data, float dist, bool self, bool to_possessor)
 {
-    MapManager::Instance().GetMap(GetMapId(), this)->MessageDistBroadcast(this, data, dist, self, to_possessor);
+    GetMap()->MessageDistBroadcast(this, data, dist, self, to_possessor);
 }
 
 void Player::SendMessageToSetInRange(WorldPacket *data, float dist, bool self, bool to_possessor, bool own_team_only)
 {
-    MapManager::Instance().GetMap(GetMapId(), this)->MessageDistBroadcast(this, data, dist, self, to_possessor, own_team_only);
+    GetMap()->MessageDistBroadcast(this, data, dist, self, to_possessor, own_team_only);
 }
 
 void Player::SendDirectMessage(WorldPacket *data)
