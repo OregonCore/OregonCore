@@ -376,41 +376,41 @@ struct OREGON_DLL_DECL mob_fiendish_impAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_kilrek(Creature *_Creature)
+CreatureAI* GetAI_mob_kilrek(Creature* pCreature)
 {
-    return new mob_kilrekAI (_Creature);
+    return new mob_kilrekAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_fiendish_imp(Creature *_Creature)
+CreatureAI* GetAI_mob_fiendish_imp(Creature* pCreature)
 {
-    return new mob_fiendish_impAI (_Creature);
+    return new mob_fiendish_impAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_demon_chain(Creature *_Creature)
+CreatureAI* GetAI_mob_demon_chain(Creature* pCreature)
 {
-    return new mob_demon_chainAI(_Creature);
+    return new mob_demon_chainAI(pCreature);
 }
 
-CreatureAI* GetAI_boss_terestian_illhoof(Creature *_Creature)
+CreatureAI* GetAI_boss_terestian_illhoof(Creature* pCreature)
 {
-    return new boss_terestianAI (_Creature);
+    return new boss_terestianAI (pCreature);
 }
 
 void AddSC_boss_terestian_illhoof()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_terestian_illhoof";
+    newscript->Name = "boss_terestian_illhoof";
     newscript->GetAI = &GetAI_boss_terestian_illhoof;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_fiendish_imp";
+    newscript->Name = "mob_fiendish_imp";
     newscript->GetAI = &GetAI_mob_fiendish_imp;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_kilrek";
+    newscript->Name = "mob_kilrek";
     newscript->GetAI = &GetAI_mob_kilrek;
     newscript->RegisterSelf();
 

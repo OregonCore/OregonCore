@@ -121,16 +121,16 @@ struct OREGON_DLL_DECL boss_faerlinaAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_faerlina(Creature *_Creature)
+CreatureAI* GetAI_boss_faerlina(Creature* pCreature)
 {
-    return new boss_faerlinaAI (_Creature);
+    return new boss_faerlinaAI (pCreature);
 }
 
 void AddSC_boss_faerlina()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_faerlina";
+    newscript->Name = "boss_faerlina";
     newscript->GetAI = &GetAI_boss_faerlina;
     newscript->RegisterSelf();
 }

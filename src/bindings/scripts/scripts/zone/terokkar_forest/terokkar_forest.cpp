@@ -137,9 +137,9 @@ struct OREGON_DLL_DECL mob_unkor_the_ruthlessAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_unkor_the_ruthless(Creature *_Creature)
+CreatureAI* GetAI_mob_unkor_the_ruthless(Creature* pCreature)
 {
-    return new mob_unkor_the_ruthlessAI (_Creature);
+    return new mob_unkor_the_ruthlessAI (pCreature);
 }
 
 /*######
@@ -162,9 +162,9 @@ struct OREGON_DLL_DECL mob_infested_root_walkerAI : public ScriptedAI
                     me->CastSpell(me,39130,true);
     }
 };
-CreatureAI* GetAI_mob_infested_root_walker(Creature *_Creature)
+CreatureAI* GetAI_mob_infested_root_walker(Creature* pCreature)
 {
-    return new mob_infested_root_walkerAI (_Creature);
+    return new mob_infested_root_walkerAI (pCreature);
 }
 
 /*######
@@ -187,9 +187,9 @@ struct OREGON_DLL_DECL mob_rotting_forest_ragerAI : public ScriptedAI
                     me->CastSpell(me,39134,true);
     }
 };
-CreatureAI* GetAI_mob_rotting_forest_rager(Creature *_Creature)
+CreatureAI* GetAI_mob_rotting_forest_rager(Creature* pCreature)
 {
-    return new mob_rotting_forest_ragerAI (_Creature);
+    return new mob_rotting_forest_ragerAI (pCreature);
 }
 
 /*######
@@ -231,9 +231,9 @@ struct OREGON_DLL_DECL mob_netherweb_victimAI : public ScriptedAI
         }
     }
 };
-CreatureAI* GetAI_mob_netherweb_victim(Creature *_Creature)
+CreatureAI* GetAI_mob_netherweb_victim(Creature* pCreature)
 {
-    return new mob_netherweb_victimAI (_Creature);
+    return new mob_netherweb_victimAI (pCreature);
 }
 
 /*######
@@ -296,33 +296,33 @@ struct OREGON_DLL_DECL npc_floonAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_npc_floon(Creature *_Creature)
+CreatureAI* GetAI_npc_floon(Creature* pCreature)
 {
-    return new npc_floonAI (_Creature);
+    return new npc_floonAI (pCreature);
 }
 
-bool GossipHello_npc_floon(Player *player, Creature *_Creature)
+bool GossipHello_npc_floon(Player *player, Creature* pCreature)
 {
     if (player->GetQuestStatus(10009) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(1, GOSSIP_FLOON1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
-    player->SEND_GOSSIP_MENU(9442, _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(9442, pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_floon(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_floon(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF)
     {
         player->ADD_GOSSIP_ITEM(1, GOSSIP_FLOON2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-        player->SEND_GOSSIP_MENU(9443, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(9443, pCreature->GetGUID());
     }
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->setFaction(FACTION_HOSTILE_FL);
-        DoScriptText(SAY_FLOON_ATTACK, _Creature, player);
-        ((npc_floonAI*)_Creature->AI())->AttackStart(player);
+        pCreature->setFaction(FACTION_HOSTILE_FL);
+        DoScriptText(SAY_FLOON_ATTACK, pCreature, player);
+        ((npc_floonAI*)pCreature->AI())->AttackStart(player);
     }
     return true;
 }
@@ -405,9 +405,9 @@ bool QuestAccept_npc_isla_starmane(Player* pPlayer, Creature* pCreature, Quest c
     return true;
 }
 
-CreatureAI* GetAI_npc_isla_starmaneAI(Creature *_Creature)
+CreatureAI* GetAI_npc_isla_starmaneAI(Creature* pCreature)
 {
-    npc_isla_starmaneAI* thisAI = new npc_isla_starmaneAI(_Creature);
+    npc_isla_starmaneAI* thisAI = new npc_isla_starmaneAI(pCreature);
 
     thisAI->AddWaypoint(0, -2265.21, 3091.14, 13.91);
     thisAI->AddWaypoint(1, -2266.80, 3091.33, 13.82, 1000);
@@ -503,39 +503,39 @@ void AddSC_terokkar_forest()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="mob_unkor_the_ruthless";
+    newscript->Name = "mob_unkor_the_ruthless";
     newscript->GetAI = &GetAI_mob_unkor_the_ruthless;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_infested_root_walker";
+    newscript->Name = "mob_infested_root_walker";
     newscript->GetAI = &GetAI_mob_infested_root_walker;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_rotting_forest_rager";
+    newscript->Name = "mob_rotting_forest_rager";
     newscript->GetAI = &GetAI_mob_rotting_forest_rager;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_netherweb_victim";
+    newscript->Name = "mob_netherweb_victim";
     newscript->GetAI = &GetAI_mob_netherweb_victim;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_floon";
+    newscript->Name = "npc_floon";
     newscript->pGossipHello =  &GossipHello_npc_floon;
     newscript->pGossipSelect = &GossipSelect_npc_floon;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name= "npc_isla_starmane";
+    newscript->Name = "npc_isla_starmane";
     newscript->GetAI = &GetAI_npc_isla_starmaneAI;
     newscript->pQuestAccept = &QuestAccept_npc_isla_starmane;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_skull_pile";
+    newscript->Name = "go_skull_pile";
     newscript->pGOHello  = &GossipHello_go_skull_pile;
     newscript->pGOSelect = &GossipSelect_go_skull_pile;
     newscript->RegisterSelf();

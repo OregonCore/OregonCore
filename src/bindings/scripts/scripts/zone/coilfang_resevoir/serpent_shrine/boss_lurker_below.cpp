@@ -471,7 +471,7 @@ void AddSC_boss_the_lurker_below()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_the_lurker_below";
+    newscript->Name = "boss_the_lurker_below";
     newscript->GetAI = &GetAI_boss_the_lurker_below;
     newscript->RegisterSelf();
 

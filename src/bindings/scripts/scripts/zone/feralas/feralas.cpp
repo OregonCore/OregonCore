@@ -29,27 +29,27 @@ EndScriptData */
 
 #define GOSSIP_HELLO "Buy somethin', will ya?"
 
-bool GossipHello_npc_gregan_brewspewer(Player *player, Creature *_Creature)
+bool GossipHello_npc_gregan_brewspewer(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (_Creature->isVendor() && player->GetQuestStatus(3909) == QUEST_STATUS_INCOMPLETE)
+    if (pCreature->isVendor() && player->GetQuestStatus(3909) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HELLO, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(2433,_Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(2433,pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_gregan_brewspewer(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_gregan_brewspewer(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
-        player->SEND_GOSSIP_MENU(2434,_Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(2434,pCreature->GetGUID());
     }
     if (action == GOSSIP_ACTION_TRADE)
-        player->SEND_VENDORLIST(_Creature->GetGUID());
+        player->SEND_VENDORLIST(pCreature->GetGUID());
     return true;
 }
 
@@ -57,11 +57,11 @@ bool GossipSelect_npc_gregan_brewspewer(Player *player, Creature *_Creature, uin
 ## npc_screecher_spirit
 ######*/
 
-bool GossipHello_npc_screecher_spirit(Player *player, Creature *_Creature)
+bool GossipHello_npc_screecher_spirit(Player *player, Creature* pCreature)
 {
-    player->SEND_GOSSIP_MENU(2039, _Creature->GetGUID());
-    player->TalkedToCreature(_Creature->GetEntry(), _Creature->GetGUID());
-    _Creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+    player->SEND_GOSSIP_MENU(2039, pCreature->GetGUID());
+    player->TalkedToCreature(pCreature->GetEntry(), pCreature->GetGUID());
+    pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
     return true;
 }
@@ -75,13 +75,13 @@ void AddSC_feralas()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_gregan_brewspewer";
+    newscript->Name = "npc_gregan_brewspewer";
     newscript->pGossipHello = &GossipHello_npc_gregan_brewspewer;
     newscript->pGossipSelect = &GossipSelect_npc_gregan_brewspewer;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_screecher_spirit";
+    newscript->Name = "npc_screecher_spirit";
     newscript->pGossipHello = &GossipHello_npc_screecher_spirit;
     newscript->RegisterSelf();
 }

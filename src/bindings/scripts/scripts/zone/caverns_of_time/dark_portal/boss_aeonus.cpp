@@ -132,16 +132,16 @@ struct OREGON_DLL_DECL boss_aeonusAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_aeonus(Creature *_Creature)
+CreatureAI* GetAI_boss_aeonus(Creature* pCreature)
 {
-    return new boss_aeonusAI (_Creature);
+    return new boss_aeonusAI (pCreature);
 }
 
 void AddSC_boss_aeonus()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_aeonus";
+    newscript->Name = "boss_aeonus";
     newscript->GetAI = &GetAI_boss_aeonus;
     newscript->RegisterSelf();
 }

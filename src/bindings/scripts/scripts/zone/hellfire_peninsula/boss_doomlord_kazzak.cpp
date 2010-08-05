@@ -167,16 +167,16 @@ struct OREGON_DLL_DECL boss_doomlordkazzakAI : public ScriptedAI
 
 };
 
-CreatureAI* GetAI_boss_doomlordkazzak(Creature *_Creature)
+CreatureAI* GetAI_boss_doomlordkazzak(Creature* pCreature)
 {
-    return new boss_doomlordkazzakAI (_Creature);
+    return new boss_doomlordkazzakAI (pCreature);
 }
 
 void AddSC_boss_doomlordkazzak()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_doomlord_kazzak";
+    newscript->Name = "boss_doomlord_kazzak";
     newscript->GetAI = &GetAI_boss_doomlordkazzak;
     newscript->RegisterSelf();
 }

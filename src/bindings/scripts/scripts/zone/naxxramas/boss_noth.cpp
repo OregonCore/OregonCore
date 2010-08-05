@@ -129,16 +129,16 @@ struct OREGON_DLL_DECL boss_nothAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_noth(Creature *_Creature)
+CreatureAI* GetAI_boss_noth(Creature* pCreature)
 {
-    return new boss_nothAI (_Creature);
+    return new boss_nothAI (pCreature);
 }
 
 void AddSC_boss_noth()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_noth";
+    newscript->Name = "boss_noth";
     newscript->GetAI = &GetAI_boss_noth;
     newscript->RegisterSelf();
 }

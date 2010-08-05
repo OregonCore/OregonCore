@@ -174,9 +174,9 @@ struct OREGON_DLL_DECL boss_lieutenant_drakeAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_lieutenant_drake(Creature *_Creature)
+CreatureAI* GetAI_boss_lieutenant_drake(Creature* pCreature)
 {
-    return new boss_lieutenant_drakeAI (_Creature);
+    return new boss_lieutenant_drakeAI (pCreature);
 }
 
 void AddSC_boss_lieutenant_drake()
@@ -184,12 +184,12 @@ void AddSC_boss_lieutenant_drake()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="go_barrel_old_hillsbrad";
+    newscript->Name = "go_barrel_old_hillsbrad";
     newscript->pGOHello = &GOHello_go_barrel_old_hillsbrad;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_lieutenant_drake";
+    newscript->Name = "boss_lieutenant_drake";
     newscript->GetAI = &GetAI_boss_lieutenant_drake;
     newscript->RegisterSelf();
 }

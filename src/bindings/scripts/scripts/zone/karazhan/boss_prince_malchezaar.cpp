@@ -626,26 +626,26 @@ void netherspite_infernalAI::Cleanup()
         ((boss_malchezaarAI*)((Creature*)pMalchezaar)->AI())->Cleanup(me, point);
 }
 
-CreatureAI* GetAI_netherspite_infernal(Creature *_Creature)
+CreatureAI* GetAI_netherspite_infernal(Creature* pCreature)
 {
-    return new netherspite_infernalAI (_Creature);
+    return new netherspite_infernalAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_malchezaar(Creature *_Creature)
+CreatureAI* GetAI_boss_malchezaar(Creature* pCreature)
 {
-    return new boss_malchezaarAI (_Creature);
+    return new boss_malchezaarAI (pCreature);
 }
 
 void AddSC_boss_malchezaar()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_malchezaar";
+    newscript->Name = "boss_malchezaar";
     newscript->GetAI = &GetAI_boss_malchezaar;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="netherspite_infernal";
+    newscript->Name = "netherspite_infernal";
     newscript->GetAI = &GetAI_netherspite_infernal;
     newscript->RegisterSelf();
 }

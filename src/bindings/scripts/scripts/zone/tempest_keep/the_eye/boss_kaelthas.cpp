@@ -1499,80 +1499,80 @@ struct OREGON_DLL_DECL mob_phoenix_egg_tkAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_kaelthas(Creature *_Creature)
+CreatureAI* GetAI_boss_kaelthas(Creature* pCreature)
 {
-    return new boss_kaelthasAI (_Creature);
+    return new boss_kaelthasAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_thaladred_the_darkener(Creature *_Creature)
+CreatureAI* GetAI_boss_thaladred_the_darkener(Creature* pCreature)
 {
-    return new boss_thaladred_the_darkenerAI (_Creature);
+    return new boss_thaladred_the_darkenerAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_lord_sanguinar(Creature *_Creature)
+CreatureAI* GetAI_boss_lord_sanguinar(Creature* pCreature)
 {
-    return new boss_lord_sanguinarAI (_Creature);
+    return new boss_lord_sanguinarAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_grand_astromancer_capernian(Creature *_Creature)
+CreatureAI* GetAI_boss_grand_astromancer_capernian(Creature* pCreature)
 {
-    return new boss_grand_astromancer_capernianAI (_Creature);
+    return new boss_grand_astromancer_capernianAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_master_engineer_telonicus(Creature *_Creature)
+CreatureAI* GetAI_boss_master_engineer_telonicus(Creature* pCreature)
 {
-    return new boss_master_engineer_telonicusAI (_Creature);
+    return new boss_master_engineer_telonicusAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_kael_flamestrike(Creature *_Creature)
+CreatureAI* GetAI_mob_kael_flamestrike(Creature* pCreature)
 {
-    return new mob_kael_flamestrikeAI (_Creature);
+    return new mob_kael_flamestrikeAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_phoenix_tk(Creature *_Creature)
+CreatureAI* GetAI_mob_phoenix_tk(Creature* pCreature)
 {
-    return new mob_phoenix_tkAI (_Creature);
+    return new mob_phoenix_tkAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_phoenix_egg_tk(Creature *_Creature)
+CreatureAI* GetAI_mob_phoenix_egg_tk(Creature* pCreature)
 {
-    return new mob_phoenix_egg_tkAI (_Creature);
+    return new mob_phoenix_egg_tkAI (pCreature);
 }
 void AddSC_boss_kaelthas()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_kaelthas";
+    newscript->Name = "boss_kaelthas";
     newscript->GetAI = &GetAI_boss_kaelthas;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_thaladred_the_darkener";
+    newscript->Name = "boss_thaladred_the_darkener";
     newscript->GetAI = &GetAI_boss_thaladred_the_darkener;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_lord_sanguinar";
+    newscript->Name = "boss_lord_sanguinar";
     newscript->GetAI = &GetAI_boss_lord_sanguinar;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_grand_astromancer_capernian";
+    newscript->Name = "boss_grand_astromancer_capernian";
     newscript->GetAI = &GetAI_boss_grand_astromancer_capernian;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_master_engineer_telonicus";
+    newscript->Name = "boss_master_engineer_telonicus";
     newscript->GetAI = &GetAI_boss_master_engineer_telonicus;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name= "mob_kael_flamestrike";
+    newscript->Name = "mob_kael_flamestrike";
     newscript->GetAI = &GetAI_mob_kael_flamestrike;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_phoenix_tk";
+    newscript->Name = "mob_phoenix_tk";
     newscript->GetAI = &GetAI_mob_phoenix_tk;
     newscript->RegisterSelf();
 

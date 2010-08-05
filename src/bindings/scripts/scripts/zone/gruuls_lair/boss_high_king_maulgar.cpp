@@ -714,29 +714,29 @@ struct OREGON_DLL_DECL boss_krosh_firehandAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_high_king_maulgar(Creature *_Creature)
+CreatureAI* GetAI_boss_high_king_maulgar(Creature* pCreature)
 {
-    return new boss_high_king_maulgarAI (_Creature);
+    return new boss_high_king_maulgarAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_olm_the_summoner(Creature *_Creature)
+CreatureAI* GetAI_boss_olm_the_summoner(Creature* pCreature)
 {
-    return new boss_olm_the_summonerAI (_Creature);
+    return new boss_olm_the_summonerAI (pCreature);
 }
 
-CreatureAI *GetAI_boss_kiggler_the_crazed(Creature *_Creature)
+CreatureAI *GetAI_boss_kiggler_the_crazed(Creature* pCreature)
 {
-    return new boss_kiggler_the_crazedAI (_Creature);
+    return new boss_kiggler_the_crazedAI (pCreature);
 }
 
-CreatureAI *GetAI_boss_blindeye_the_seer(Creature *_Creature)
+CreatureAI *GetAI_boss_blindeye_the_seer(Creature* pCreature)
 {
-    return new boss_blindeye_the_seerAI (_Creature);
+    return new boss_blindeye_the_seerAI (pCreature);
 }
 
-CreatureAI *GetAI_boss_krosh_firehand(Creature *_Creature)
+CreatureAI *GetAI_boss_krosh_firehand(Creature* pCreature)
 {
-    return new boss_krosh_firehandAI (_Creature);
+    return new boss_krosh_firehandAI (pCreature);
 }
 
 void AddSC_boss_high_king_maulgar()
@@ -744,27 +744,27 @@ void AddSC_boss_high_king_maulgar()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_high_king_maulgar";
+    newscript->Name = "boss_high_king_maulgar";
     newscript->GetAI = &GetAI_boss_high_king_maulgar;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_kiggler_the_crazed";
+    newscript->Name = "boss_kiggler_the_crazed";
     newscript->GetAI = &GetAI_boss_kiggler_the_crazed;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_blindeye_the_seer";
+    newscript->Name = "boss_blindeye_the_seer";
     newscript->GetAI = &GetAI_boss_blindeye_the_seer;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_olm_the_summoner";
+    newscript->Name = "boss_olm_the_summoner";
     newscript->GetAI = &GetAI_boss_olm_the_summoner;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_krosh_firehand";
+    newscript->Name = "boss_krosh_firehand";
     newscript->GetAI = &GetAI_boss_krosh_firehand;
     newscript->RegisterSelf();
 }

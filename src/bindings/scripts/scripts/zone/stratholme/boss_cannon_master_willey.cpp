@@ -205,16 +205,16 @@ struct OREGON_DLL_DECL boss_cannon_master_willeyAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_cannon_master_willey(Creature *_Creature)
+CreatureAI* GetAI_boss_cannon_master_willey(Creature* pCreature)
 {
-    return new boss_cannon_master_willeyAI (_Creature);
+    return new boss_cannon_master_willeyAI (pCreature);
 }
 
 void AddSC_boss_cannon_master_willey()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_cannon_master_willey";
+    newscript->Name = "boss_cannon_master_willey";
     newscript->GetAI = &GetAI_boss_cannon_master_willey;
     newscript->RegisterSelf();
 }

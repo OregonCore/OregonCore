@@ -140,9 +140,9 @@ bool QuestAccept_npc_torek(Player* pPlayer, Creature* pCreature, Quest const* qu
     return true;
 }
 
-CreatureAI* GetAI_npc_torek(Creature *_Creature)
+CreatureAI* GetAI_npc_torek(Creature* pCreature)
 {
-    npc_torekAI* thisAI = new npc_torekAI(_Creature);
+    npc_torekAI* thisAI = new npc_torekAI(pCreature);
 
     thisAI->AddWaypoint(0, 1782.63, -2241.11, 109.73, 5000);
     thisAI->AddWaypoint(1, 1788.88, -2240.17, 111.71);
@@ -248,9 +248,9 @@ bool QuestAccept_npc_ruul_snowhoof(Player* pPlayer, Creature* pCreature, Quest c
     return true;
 }
 
-CreatureAI* GetAI_npc_ruul_snowhoofAI(Creature *_Creature)
+CreatureAI* GetAI_npc_ruul_snowhoofAI(Creature* pCreature)
 {
-    npc_ruul_snowhoofAI* ruul_snowhoofAI = new npc_ruul_snowhoofAI(_Creature);
+    npc_ruul_snowhoofAI* ruul_snowhoofAI = new npc_ruul_snowhoofAI(pCreature);
 
     ruul_snowhoofAI->AddWaypoint(0, 3347.250089, -694.700989, 159.925995);
     ruul_snowhoofAI->AddWaypoint(1, 3341.527039, -694.725891, 161.124542, 4000);

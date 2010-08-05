@@ -156,9 +156,9 @@ struct OREGON_DLL_DECL generic_creatureAI : public ScriptedAI
         }
     }
 };
-CreatureAI* GetAI_generic_creature(Creature *_Creature)
+CreatureAI* GetAI_generic_creature(Creature* pCreature)
 {
-    return new generic_creatureAI (_Creature);
+    return new generic_creatureAI (pCreature);
 }
 
 
@@ -168,7 +168,7 @@ void AddSC_generic_creature()
     [Disabled to prevent "CRASH ALERT!"]
     Script *newscript;
     newscript = new Script;
-    newscript->Name="generic_creature";
+    newscript->Name = "generic_creature";
     newscript->GetAI = &GetAI_generic_creature;
     newscript->RegisterSelf();
     */

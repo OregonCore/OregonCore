@@ -576,9 +576,9 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_zuljin(Creature *_Creature)
+CreatureAI* GetAI_boss_zuljin(Creature* pCreature)
 {
-    return new boss_zuljinAI (_Creature);
+    return new boss_zuljinAI (pCreature);
 }
 
 struct OREGON_DLL_DECL feather_vortexAI : public ScriptedAI
@@ -603,21 +603,21 @@ struct OREGON_DLL_DECL feather_vortexAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_feather_vortexAI(Creature *_Creature)
+CreatureAI* GetAI_feather_vortexAI(Creature* pCreature)
 {
-    return new feather_vortexAI (_Creature);
+    return new feather_vortexAI (pCreature);
 }
 
 void AddSC_boss_zuljin()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_zuljin";
+    newscript->Name = "boss_zuljin";
     newscript->GetAI = &GetAI_boss_zuljin;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_zuljin_vortex";
+    newscript->Name = "mob_zuljin_vortex";
     newscript->GetAI = &GetAI_feather_vortexAI;
     newscript->RegisterSelf();
 }

@@ -118,9 +118,9 @@
        }
    };
 
-   CreatureAI* GetAI_boss_lady_blaumeux(Creature *_Creature)
+   CreatureAI* GetAI_boss_lady_blaumeux(Creature* pCreature)
    {
-       return new boss_lady_blaumeuxAI (_Creature);
+       return new boss_lady_blaumeuxAI (pCreature);
    }
 
   //baron rivendare
@@ -182,9 +182,9 @@
        }
    };
 
-   CreatureAI* GetAI_boss_rivendare_naxx(Creature *_Creature)
+   CreatureAI* GetAI_boss_rivendare_naxx(Creature* pCreature)
    {
-       return new boss_rivendare_naxxAI (_Creature);
+       return new boss_rivendare_naxxAI (pCreature);
    }
 
    //thane korthazz
@@ -274,9 +274,9 @@
        }
    };
 
-   CreatureAI* GetAI_boss_thane_korthazz(Creature *_Creature)
+   CreatureAI* GetAI_boss_thane_korthazz(Creature* pCreature)
    {
-       return new boss_thane_korthazzAI (_Creature);
+       return new boss_thane_korthazzAI (pCreature);
    }
 
    //sir zeliek
@@ -370,9 +370,9 @@
        }
    };
 
-   CreatureAI* GetAI_boss_sir_zeliek(Creature *_Creature)
+   CreatureAI* GetAI_boss_sir_zeliek(Creature* pCreature)
    {
-       return new boss_sir_zeliekAI (_Creature);
+       return new boss_sir_zeliekAI (pCreature);
    }
 
    void AddSC_boss_four_horsemen()

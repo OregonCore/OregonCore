@@ -134,16 +134,16 @@ struct OREGON_DLL_DECL boss_noxxionAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_noxxion(Creature *_Creature)
+CreatureAI* GetAI_boss_noxxion(Creature* pCreature)
 {
-    return new boss_noxxionAI (_Creature);
+    return new boss_noxxionAI (pCreature);
 }
 
 void AddSC_boss_noxxion()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_noxxion";
+    newscript->Name = "boss_noxxion";
     newscript->GetAI = &GetAI_boss_noxxion;
     newscript->RegisterSelf();
 }

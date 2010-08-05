@@ -152,9 +152,9 @@ struct OREGON_DLL_DECL AV_WarmastersAI : public ScriptedAI
      }
 };
 
-CreatureAI* GetAI_AV_Warmasters(Creature *_Creature)
+CreatureAI* GetAI_AV_Warmasters(Creature* pCreature)
 {
-    return new AV_WarmastersAI (_Creature);
+    return new AV_WarmastersAI (pCreature);
 }
 
 void AddSC_AV_Warmasters()

@@ -111,16 +111,16 @@ struct OREGON_DLL_DECL boss_baroness_anastariAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_baroness_anastari(Creature *_Creature)
+CreatureAI* GetAI_boss_baroness_anastari(Creature* pCreature)
 {
-    return new boss_baroness_anastariAI (_Creature);
+    return new boss_baroness_anastariAI (pCreature);
 }
 
 void AddSC_boss_baroness_anastari()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_baroness_anastari";
+    newscript->Name = "boss_baroness_anastari";
     newscript->GetAI = &GetAI_boss_baroness_anastari;
     newscript->RegisterSelf();
 }

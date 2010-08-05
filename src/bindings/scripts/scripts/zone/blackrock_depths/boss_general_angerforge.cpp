@@ -152,16 +152,16 @@ struct OREGON_DLL_DECL boss_general_angerforgeAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_general_angerforge(Creature *_Creature)
+CreatureAI* GetAI_boss_general_angerforge(Creature* pCreature)
 {
-    return new boss_general_angerforgeAI (_Creature);
+    return new boss_general_angerforgeAI (pCreature);
 }
 
 void AddSC_boss_general_angerforge()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_general_angerforge";
+    newscript->Name = "boss_general_angerforge";
     newscript->GetAI = &GetAI_boss_general_angerforge;
     newscript->RegisterSelf();
 }

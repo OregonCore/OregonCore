@@ -142,16 +142,16 @@ struct OREGON_DLL_DECL boss_kormokAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_kormok(Creature *_Creature)
+CreatureAI* GetAI_boss_kormok(Creature* pCreature)
 {
-    return new boss_kormokAI (_Creature);
+    return new boss_kormokAI (pCreature);
 }
 
 void AddSC_boss_kormok()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_kormok";
+    newscript->Name = "boss_kormok";
     newscript->GetAI = &GetAI_boss_kormok;
     newscript->RegisterSelf();
 }

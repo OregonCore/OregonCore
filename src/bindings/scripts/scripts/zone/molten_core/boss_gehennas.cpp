@@ -76,16 +76,16 @@ struct OREGON_DLL_DECL boss_gehennasAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_gehennas(Creature *_Creature)
+CreatureAI* GetAI_boss_gehennas(Creature* pCreature)
 {
-    return new boss_gehennasAI (_Creature);
+    return new boss_gehennasAI (pCreature);
 }
 
 void AddSC_boss_gehennas()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_gehennas";
+    newscript->Name = "boss_gehennas";
     newscript->GetAI = &GetAI_boss_gehennas;
     newscript->RegisterSelf();
 }

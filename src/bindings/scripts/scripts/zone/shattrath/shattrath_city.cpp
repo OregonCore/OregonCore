@@ -75,27 +75,27 @@ struct OREGON_DLL_DECL npc_raliq_the_drunkAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_npc_raliq_the_drunk(Creature *_Creature)
+CreatureAI* GetAI_npc_raliq_the_drunk(Creature* pCreature)
 {
-    return new npc_raliq_the_drunkAI (_Creature);
+    return new npc_raliq_the_drunkAI (pCreature);
 }
 
-bool GossipHello_npc_raliq_the_drunk(Player *player, Creature *_Creature)
+bool GossipHello_npc_raliq_the_drunk(Player *player, Creature* pCreature)
 {
     if (player->GetQuestStatus(10009) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(1, GOSSIP_RALIQ, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(9440, _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(9440, pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_raliq_the_drunk(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_raliq_the_drunk(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->setFaction(FACTION_HOSTILE_RD);
-        ((npc_raliq_the_drunkAI*)_Creature->AI())->AttackStart(player);
+        pCreature->setFaction(FACTION_HOSTILE_RD);
+        ((npc_raliq_the_drunkAI*)pCreature->AI())->AttackStart(player);
     }
     return true;
 }
@@ -149,23 +149,23 @@ struct OREGON_DLL_DECL npc_salsalabimAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_npc_salsalabim(Creature *_Creature)
+CreatureAI* GetAI_npc_salsalabim(Creature* pCreature)
 {
-    return new npc_salsalabimAI (_Creature);
+    return new npc_salsalabimAI (pCreature);
 }
 
-bool GossipHello_npc_salsalabim(Player *player, Creature *_Creature)
+bool GossipHello_npc_salsalabim(Player *player, Creature* pCreature)
 {
     if (player->GetQuestStatus(QUEST_10004) == QUEST_STATUS_INCOMPLETE)
     {
-        _Creature->setFaction(FACTION_HOSTILE_SA);
-        ((npc_salsalabimAI*)_Creature->AI())->AttackStart(player);
+        pCreature->setFaction(FACTION_HOSTILE_SA);
+        ((npc_salsalabimAI*)pCreature->AI())->AttackStart(player);
     }
     else
     {
-        if (_Creature->isQuestGiver())
-            player->PrepareQuestMenu(_Creature->GetGUID());
-        player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+        if (pCreature->isQuestGiver())
+            player->PrepareQuestMenu(pCreature->GetGUID());
+        player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
     }
     return true;
 }
@@ -181,43 +181,43 @@ Purchase requires exalted reputation with Scryers/Aldor, Cenarion Expedition and
 ##################################################
 */
 
-bool GossipHello_npc_shattrathflaskvendors(Player *player, Creature *_Creature)
+bool GossipHello_npc_shattrathflaskvendors(Player *player, Creature* pCreature)
 {
-    if (_Creature->GetEntry() == 23484)
+    if (pCreature->GetEntry() == 23484)
     {
         // Aldor vendor
-        if (_Creature->isVendor() && (player->GetReputationRank(932) == REP_EXALTED) && (player->GetReputationRank(935) == REP_EXALTED) && (player->GetReputationRank(942) == REP_EXALTED))
+        if (pCreature->isVendor() && (player->GetReputationRank(932) == REP_EXALTED) && (player->GetReputationRank(935) == REP_EXALTED) && (player->GetReputationRank(942) == REP_EXALTED))
         {
             player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
-            player->SEND_GOSSIP_MENU(11085, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(11085, pCreature->GetGUID());
         }
         else
         {
-            player->SEND_GOSSIP_MENU(11083, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(11083, pCreature->GetGUID());
         }
     }
 
-    if (_Creature->GetEntry() == 23483)
+    if (pCreature->GetEntry() == 23483)
     {
         // Scryers vendor
-        if (_Creature->isVendor() && (player->GetReputationRank(934) == REP_EXALTED) && (player->GetReputationRank(935) == REP_EXALTED) && (player->GetReputationRank(942) == REP_EXALTED))
+        if (pCreature->isVendor() && (player->GetReputationRank(934) == REP_EXALTED) && (player->GetReputationRank(935) == REP_EXALTED) && (player->GetReputationRank(942) == REP_EXALTED))
         {
             player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
-            player->SEND_GOSSIP_MENU(11085, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(11085, pCreature->GetGUID());
         }
         else
         {
-            player->SEND_GOSSIP_MENU(11084, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(11084, pCreature->GetGUID());
         }
     }
 
     return true;
 }
 
-bool GossipSelect_npc_shattrathflaskvendors(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_shattrathflaskvendors(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_TRADE)
-        player->SEND_VENDORLIST(_Creature->GetGUID());
+        player->SEND_VENDORLIST(pCreature->GetGUID());
 
     return true;
 }
@@ -228,17 +228,17 @@ bool GossipSelect_npc_shattrathflaskvendors(Player *player, Creature *_Creature,
 
 #define GOSSIP_HZ "Take me to the Caverns of Time."
 
-bool GossipHello_npc_zephyr(Player *player, Creature *_Creature)
+bool GossipHello_npc_zephyr(Player *player, Creature* pCreature)
 {
     if (player->GetReputationRank(989) >= REP_REVERED)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HZ, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_zephyr(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_zephyr(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
         player->CastSpell(player,37778,false);
@@ -338,9 +338,9 @@ public:
     void Reset() {}
 };
 
-CreatureAI* GetAI_npc_kservantAI(Creature *_Creature)
+CreatureAI* GetAI_npc_kservantAI(Creature* pCreature)
 {
-    npc_kservantAI* kservantAI = new npc_kservantAI(_Creature);
+    npc_kservantAI* kservantAI = new npc_kservantAI(pCreature);
 
     kservantAI->AddWaypoint(0, -1863.369019, 5419.517090, -10.463668, 4000);
     kservantAI->AddWaypoint(1, -1861.749023, 5416.465332, -10.508068);
@@ -582,9 +582,9 @@ bool GossipSelect_npc_dirty_larry(Player *player, Creature *creature, uint32 sen
     return true;
 }
 
-CreatureAI* GetAI_npc_dirty_larryAI(Creature *_Creature)
+CreatureAI* GetAI_npc_dirty_larryAI(Creature* pCreature)
 {
-    return new npc_dirty_larryAI (_Creature);
+    return new npc_dirty_larryAI (pCreature);
 }
 
 /*######
@@ -594,25 +594,25 @@ CreatureAI* GetAI_npc_dirty_larryAI(Creature *_Creature)
 #define ISANAH_GOSSIP_1 "Who are the Sha'tar?"
 #define ISANAH_GOSSIP_2 "Isn't Shattrath a draenei city? Why do you allow others here?"
 
-bool GossipHello_npc_ishanah(Player *player, Creature *_Creature)
+bool GossipHello_npc_ishanah(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     player->ADD_GOSSIP_ITEM(0, ISANAH_GOSSIP_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
     player->ADD_GOSSIP_ITEM(0, ISANAH_GOSSIP_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_ishanah(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_ishanah(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
-        player->SEND_GOSSIP_MENU(9458, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(9458, pCreature->GetGUID());
     else if (action == GOSSIP_ACTION_INFO_DEF+2)
-        player->SEND_GOSSIP_MENU(9459, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(9459, pCreature->GetGUID());
 
     return true;
 }

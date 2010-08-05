@@ -505,19 +505,19 @@ struct OREGON_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_doom_blossom(Creature *_Creature)
+CreatureAI* GetAI_mob_doom_blossom(Creature* pCreature)
 {
-    return new mob_doom_blossomAI(_Creature);
+    return new mob_doom_blossomAI(pCreature);
 }
 
-CreatureAI* GetAI_mob_shadowy_construct(Creature *_Creature)
+CreatureAI* GetAI_mob_shadowy_construct(Creature* pCreature)
 {
-    return new mob_shadowy_constructAI(_Creature);
+    return new mob_shadowy_constructAI(pCreature);
 }
 
-CreatureAI* GetAI_boss_teron_gorefiend(Creature *_Creature)
+CreatureAI* GetAI_boss_teron_gorefiend(Creature* pCreature)
 {
-    return new boss_teron_gorefiendAI (_Creature);
+    return new boss_teron_gorefiendAI (pCreature);
 }
 
 void AddSC_boss_teron_gorefiend()
@@ -534,7 +534,7 @@ void AddSC_boss_teron_gorefiend()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_teron_gorefiend";
+    newscript->Name = "boss_teron_gorefiend";
     newscript->GetAI = &GetAI_boss_teron_gorefiend;
     newscript->RegisterSelf();
 }

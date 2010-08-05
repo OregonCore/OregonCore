@@ -43,9 +43,9 @@ struct OREGON_DLL_DECL boss_death_knight_darkreaverAI : public ScriptedAI
     {
     }
 };
-CreatureAI* GetAI_boss_death_knight_darkreaver(Creature *_Creature)
+CreatureAI* GetAI_boss_death_knight_darkreaver(Creature* pCreature)
 {
-    return new boss_death_knight_darkreaverAI (_Creature);
+    return new boss_death_knight_darkreaverAI (pCreature);
 }
 
 void AddSC_boss_death_knight_darkreaver()
@@ -53,7 +53,7 @@ void AddSC_boss_death_knight_darkreaver()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_death_knight_darkreaver";
+    newscript->Name = "boss_death_knight_darkreaver";
     newscript->GetAI = &GetAI_boss_death_knight_darkreaver;
     newscript->RegisterSelf();
 }

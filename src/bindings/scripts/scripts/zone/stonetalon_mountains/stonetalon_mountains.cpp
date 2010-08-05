@@ -39,10 +39,10 @@ EndContentData */
 #define GOSSIP_HBD4 "Alexstrasza"
 #define GOSSIP_HBD5 "Malygos"
 
-bool GossipHello_npc_braug_dimspirit(Player *player, Creature *_Creature)
+bool GossipHello_npc_braug_dimspirit(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(6627) == QUEST_STATUS_INCOMPLETE)
     {
@@ -52,20 +52,20 @@ bool GossipHello_npc_braug_dimspirit(Player *player, Creature *_Creature)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HBD4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HBD5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-        player->SEND_GOSSIP_MENU(5820, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(5820, pCreature->GetGUID());
     }
     else
-        player->SEND_GOSSIP_MENU(5819, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(5819, pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_braug_dimspirit(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_braug_dimspirit(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->CastSpell(player,6766,false);
+        pCreature->CastSpell(player,6766,false);
 
     }
     if (action == GOSSIP_ACTION_INFO_DEF+2)
@@ -144,9 +144,9 @@ bool QuestAccept_npc_kaya_flathoof(Player* pPlayer, Creature* pCreature, Quest c
     return true;
 }
 
-CreatureAI* GetAI_npc_kaya_flathoofAI(Creature *_Creature)
+CreatureAI* GetAI_npc_kaya_flathoofAI(Creature* pCreature)
 {
-    npc_kaya_flathoofAI* thisAI = new npc_kaya_flathoofAI(_Creature);
+    npc_kaya_flathoofAI* thisAI = new npc_kaya_flathoofAI(pCreature);
 
     thisAI->AddWaypoint(0, 122.37, -345.80, 3.59);
     thisAI->AddWaypoint(1, 113.69, -350.01, 4.54);
@@ -185,13 +185,13 @@ void AddSC_stonetalon_mountains()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_braug_dimspirit";
+    newscript->Name = "npc_braug_dimspirit";
     newscript->pGossipHello = &GossipHello_npc_braug_dimspirit;
     newscript->pGossipSelect = &GossipSelect_npc_braug_dimspirit;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_kaya_flathoof";
+    newscript->Name = "npc_kaya_flathoof";
     newscript->GetAI = &GetAI_npc_kaya_flathoofAI;
     newscript->pQuestAccept = &QuestAccept_npc_kaya_flathoof;
     newscript->RegisterSelf();

@@ -82,16 +82,16 @@ struct OREGON_DLL_DECL celebras_the_cursedAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_celebras_the_cursed(Creature *_Creature)
+CreatureAI* GetAI_celebras_the_cursed(Creature* pCreature)
 {
-    return new celebras_the_cursedAI (_Creature);
+    return new celebras_the_cursedAI (pCreature);
 }
 
 void AddSC_boss_celebras_the_cursed()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="celebras_the_cursed";
+    newscript->Name = "celebras_the_cursed";
     newscript->GetAI = &GetAI_celebras_the_cursed;
     newscript->RegisterSelf();
 }

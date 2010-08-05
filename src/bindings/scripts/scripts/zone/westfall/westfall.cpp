@@ -85,9 +85,9 @@ bool QuestAccept_npc_defias_traitor(Player* pPlayer, Creature* pCreature, Quest 
     return true;
 }
 
-CreatureAI* GetAI_npc_defias_traitor(Creature *_Creature)
+CreatureAI* GetAI_npc_defias_traitor(Creature* pCreature)
 {
-    npc_defias_traitorAI* thisAI = new npc_defias_traitorAI(_Creature);
+    npc_defias_traitorAI* thisAI = new npc_defias_traitorAI(pCreature);
 
     thisAI->AddWaypoint(0, -10508.40, 1068.00, 55.21);
     thisAI->AddWaypoint(1, -10518.30, 1074.84, 53.96);
@@ -143,7 +143,7 @@ void AddSC_westfall()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_defias_traitor";
+    newscript->Name = "npc_defias_traitor";
     newscript->GetAI = &GetAI_npc_defias_traitor;
     newscript->pQuestAccept = &QuestAccept_npc_defias_traitor;
     newscript->RegisterSelf();

@@ -154,16 +154,16 @@ struct OREGON_DLL_DECL boss_curatorAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_curator(Creature *_Creature)
+CreatureAI* GetAI_boss_curator(Creature* pCreature)
 {
-    return new boss_curatorAI (_Creature);
+    return new boss_curatorAI (pCreature);
 }
 
 void AddSC_boss_curator()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_curator";
+    newscript->Name = "boss_curator";
     newscript->GetAI = &GetAI_boss_curator;
     newscript->RegisterSelf();
 }

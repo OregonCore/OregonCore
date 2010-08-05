@@ -283,36 +283,36 @@ struct OREGON_DLL_DECL npc_volcanoAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_supremus(Creature *_Creature)
+CreatureAI* GetAI_boss_supremus(Creature* pCreature)
 {
-    return new boss_supremusAI (_Creature);
+    return new boss_supremusAI (pCreature);
 }
 
-CreatureAI* GetAI_molten_flame(Creature *_Creature)
+CreatureAI* GetAI_molten_flame(Creature* pCreature)
 {
-    return new molten_flameAI (_Creature);
+    return new molten_flameAI (pCreature);
 }
 
-CreatureAI* GetAI_npc_volcano(Creature *_Creature)
+CreatureAI* GetAI_npc_volcano(Creature* pCreature)
 {
-    return new npc_volcanoAI (_Creature);
+    return new npc_volcanoAI (pCreature);
 }
 
 void AddSC_boss_supremus()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_supremus";
+    newscript->Name = "boss_supremus";
     newscript->GetAI = &GetAI_boss_supremus;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="molten_flame";
+    newscript->Name = "molten_flame";
     newscript->GetAI = &GetAI_molten_flame;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_volcano";
+    newscript->Name = "npc_volcano";
     newscript->GetAI = &GetAI_npc_volcano;
     newscript->RegisterSelf();
 }

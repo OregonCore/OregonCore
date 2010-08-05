@@ -35,23 +35,23 @@ EndContentData */
 
 #define GOSSIP_SW "Tell me a story, Skorn."
 
-bool GossipHello_npc_skorn_whitecloud(Player *player, Creature *_Creature)
+bool GossipHello_npc_skorn_whitecloud(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (!player->GetQuestRewardStatus(770))
         player->ADD_GOSSIP_ITEM(0, GOSSIP_SW, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
-    player->SEND_GOSSIP_MENU(522,_Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(522,pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_skorn_whitecloud(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_skorn_whitecloud(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF)
-        player->SEND_GOSSIP_MENU(523,_Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(523,pCreature->GetGUID());
 
     return true;
 }
@@ -154,9 +154,9 @@ struct OREGON_DLL_DECL npc_kyle_frenziedAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_npc_kyle_frenzied(Creature *_Creature)
+CreatureAI* GetAI_npc_kyle_frenzied(Creature* pCreature)
 {
-    return new npc_kyle_frenziedAI (_Creature);
+    return new npc_kyle_frenziedAI (pCreature);
 }
 
 /*#####
@@ -261,9 +261,9 @@ struct OREGON_DLL_DECL npc_plains_visionAI  : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_npc_plains_vision(Creature *_Creature)
+CreatureAI* GetAI_npc_plains_vision(Creature* pCreature)
 {
-      return new npc_plains_visionAI (_Creature);
+      return new npc_plains_visionAI (pCreature);
 }
 
 /*#####
@@ -275,13 +275,13 @@ void AddSC_mulgore()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_skorn_whitecloud";
+    newscript->Name = "npc_skorn_whitecloud";
     newscript->pGossipHello = &GossipHello_npc_skorn_whitecloud;
     newscript->pGossipSelect = &GossipSelect_npc_skorn_whitecloud;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_kyle_frenzied";
+    newscript->Name = "npc_kyle_frenzied";
     newscript->GetAI = &GetAI_npc_kyle_frenzied;
     newscript->RegisterSelf();
 

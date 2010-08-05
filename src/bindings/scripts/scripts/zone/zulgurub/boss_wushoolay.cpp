@@ -69,16 +69,16 @@ struct OREGON_DLL_DECL boss_wushoolayAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_wushoolay(Creature *_Creature)
+CreatureAI* GetAI_boss_wushoolay(Creature* pCreature)
 {
-    return new boss_wushoolayAI (_Creature);
+    return new boss_wushoolayAI (pCreature);
 }
 
 void AddSC_boss_wushoolay()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_wushoolay";
+    newscript->Name = "boss_wushoolay";
     newscript->GetAI = &GetAI_boss_wushoolay;
     newscript->RegisterSelf();
 }

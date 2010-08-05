@@ -455,16 +455,16 @@ struct OREGON_DLL_DECL boss_nightbaneAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_nightbane(Creature *_Creature)
+CreatureAI* GetAI_boss_nightbane(Creature* pCreature)
 {
-    return new boss_nightbaneAI (_Creature);
+    return new boss_nightbaneAI (pCreature);
 }
 
 void AddSC_boss_nightbane()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_nightbane";
+    newscript->Name = "boss_nightbane";
     newscript->GetAI = &GetAI_boss_nightbane;
     newscript->RegisterSelf();
 }

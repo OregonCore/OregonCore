@@ -346,9 +346,9 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_sacrolash(Creature *_Creature)
+CreatureAI* GetAI_boss_sacrolash(Creature* pCreature)
 {
-    return new boss_sacrolashAI (_Creature);
+    return new boss_sacrolashAI (pCreature);
 };
 
 struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
@@ -668,9 +668,9 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
     }
 };
 
-CreatureAI* GetAI_boss_alythess(Creature *_Creature)
+CreatureAI* GetAI_boss_alythess(Creature* pCreature)
 {
-    return new boss_alythessAI (_Creature);
+    return new boss_alythessAI (pCreature);
 };
 
 struct OREGON_DLL_DECL mob_shadow_imageAI : public ScriptedAI
@@ -743,9 +743,9 @@ struct OREGON_DLL_DECL mob_shadow_imageAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_shadow_image(Creature *_Creature)
+CreatureAI* GetAI_mob_shadow_image(Creature* pCreature)
 {
-    return new mob_shadow_imageAI (_Creature);
+    return new mob_shadow_imageAI (pCreature);
 };
 
 void AddSC_boss_eredar_twins()
@@ -753,17 +753,17 @@ void AddSC_boss_eredar_twins()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_sacrolash";
+    newscript->Name = "boss_sacrolash";
     newscript->GetAI = &GetAI_boss_sacrolash;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_alythess";
+    newscript->Name = "boss_alythess";
     newscript->GetAI = &GetAI_boss_alythess;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_shadow_image";
+    newscript->Name = "mob_shadow_image";
     newscript->GetAI = &GetAI_mob_shadow_image;
     newscript->RegisterSelf();
 }

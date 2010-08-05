@@ -143,9 +143,9 @@ struct OREGON_DLL_DECL boss_shirrak_the_dead_watcherAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_shirrak_the_dead_watcher(Creature *_Creature)
+CreatureAI* GetAI_boss_shirrak_the_dead_watcher(Creature* pCreature)
 {
-    return new boss_shirrak_the_dead_watcherAI (_Creature);
+    return new boss_shirrak_the_dead_watcherAI (pCreature);
 }
 
 struct OREGON_DLL_DECL mob_focus_fireAI : public ScriptedAI
@@ -189,21 +189,21 @@ struct OREGON_DLL_DECL mob_focus_fireAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_focus_fire(Creature *_Creature)
+CreatureAI* GetAI_mob_focus_fire(Creature* pCreature)
 {
-    return new mob_focus_fireAI (_Creature);
+    return new mob_focus_fireAI (pCreature);
 }
 
 void AddSC_boss_shirrak_the_dead_watcher()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_shirrak_the_dead_watcher";
+    newscript->Name = "boss_shirrak_the_dead_watcher";
     newscript->GetAI = &GetAI_boss_shirrak_the_dead_watcher;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_focus_fire";
+    newscript->Name = "mob_focus_fire";
     newscript->GetAI = &GetAI_mob_focus_fire;
     newscript->RegisterSelf();
 }

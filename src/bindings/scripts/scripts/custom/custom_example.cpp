@@ -210,51 +210,51 @@ struct OREGON_DLL_DECL custom_exampleAI : public ScriptedAI
 
 //This is the GetAI method used by all scripts that involve AI
 //It is called every time a new creature using this script is created
-CreatureAI* GetAI_custom_example(Creature *_Creature)
+CreatureAI* GetAI_custom_example(Creature* pCreature)
 {
-    return new custom_exampleAI (_Creature);
+    return new custom_exampleAI (pCreature);
 }
 
 //This function is called when the player clicks an option on the gossip menu
-void SendDefaultMenu_custom_example(Player *player, Creature *_Creature, uint32 action)
+void SendDefaultMenu_custom_example(Player *player, Creature* pCreature, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF + 1)               //Fight time
     {
         //Set our faction to hostile twoards all
-        _Creature->setFaction(24);
-        _Creature->Attack(player, true);
+        pCreature->setFaction(24);
+        pCreature->Attack(player, true);
         player->PlayerTalkClass->CloseGossip();
     }
 }
 
 //This function is called when the player clicks an option on the gossip menu
-bool GossipSelect_custom_example(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_custom_example(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (sender == GOSSIP_SENDER_MAIN)
-        SendDefaultMenu_custom_example(player, _Creature, action);
+        SendDefaultMenu_custom_example(player, pCreature, action);
 
     return true;
 }
 
 //This function is called when the player opens the gossip menu
-bool GossipHello_custom_example(Player *player, Creature *_Creature)
+bool GossipHello_custom_example(Player *player, Creature* pCreature)
 {
     player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM        , GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-    player->PlayerTalkClass->SendGossipMenu(907,_Creature->GetGUID());
+    player->PlayerTalkClass->SendGossipMenu(907,pCreature->GetGUID());
 
     return true;
 }
 
 //Our Recive emote function
-bool ReceiveEmote_custom_example(Player *player, Creature *_Creature, uint32 emote)
+bool ReceiveEmote_custom_example(Player *player, Creature* pCreature, uint32 emote)
 {
-    _Creature->HandleEmoteCommand(emote);
+    pCreature->HandleEmoteCommand(emote);
 
     if (emote == TEXTEMOTE_DANCE)
-        ((custom_exampleAI*)_Creature->AI())->DoSay(SAY_DANCE,LANG_UNIVERSAL,NULL);
+        ((custom_exampleAI*)pCreature->AI())->DoSay(SAY_DANCE,LANG_UNIVERSAL,NULL);
 
     if (emote == TEXTEMOTE_SALUTE)
-        ((custom_exampleAI*)_Creature->AI())->DoSay(SAY_SALUTE,LANG_UNIVERSAL,NULL);
+        ((custom_exampleAI*)pCreature->AI())->DoSay(SAY_SALUTE,LANG_UNIVERSAL,NULL);
 
     return true;
 }
@@ -268,7 +268,7 @@ void AddSC_custom_example()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="custom_example";
+    newscript->Name = "custom_example";
     newscript->GetAI = &GetAI_custom_example;
     newscript->pGossipHello = &GossipHello_custom_example;
     newscript->pGossipSelect = &GossipSelect_custom_example;

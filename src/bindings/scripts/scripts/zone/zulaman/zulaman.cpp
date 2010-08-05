@@ -91,9 +91,9 @@ struct OREGON_DLL_DECL npc_forest_frogAI : public ScriptedAI
         }
     }
 };
-CreatureAI* GetAI_npc_forest_frog(Creature *_Creature)
+CreatureAI* GetAI_npc_forest_frog(Creature* pCreature)
 {
-    return new npc_forest_frogAI (_Creature);
+    return new npc_forest_frogAI (pCreature);
 }
 
 /*######
@@ -123,39 +123,39 @@ struct OREGON_DLL_DECL npc_zulaman_hostageAI : public ScriptedAI
     }
 };
 
-bool GossipHello_npc_zulaman_hostage(Player* player, Creature* _Creature)
+bool GossipHello_npc_zulaman_hostage(Player* player, Creature* pCreature)
 {
     player->ADD_GOSSIP_ITEM(0, GOSSIP_HOSTAGE1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_zulaman_hostage(Player* player, Creature* _Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_zulaman_hostage(Player* player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF + 1)
         player->CLOSE_GOSSIP_MENU();
 
-    if (!_Creature->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP))
+    if (!pCreature->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP))
         return true;
-    _Creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+    pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
-    ScriptedInstance* pInstance = (_Creature->GetInstanceData());
+    ScriptedInstance* pInstance = (pCreature->GetInstanceData());
     if (pInstance)
     {
         //uint8 progress = pInstance->GetData(DATA_CHESTLOOTED);
         pInstance->SetData(DATA_CHESTLOOTED, 0);
         float x, y, z;
-        _Creature->GetPosition(x, y, z);
-        uint32 entry = _Creature->GetEntry();
+        pCreature->GetPosition(x, y, z);
+        uint32 entry = pCreature->GetEntry();
         for (uint8 i = 0; i < 4; ++i)
         {
             if (HostageEntry[i] == entry)
             {
-                _Creature->SummonGameObject(ChestEntry[i], x-2, y, z, 0, 0, 0, 0, 0, 0);
+                pCreature->SummonGameObject(ChestEntry[i], x-2, y, z, 0, 0, 0, 0, 0, 0);
                 break;
             }
         }
-        /*Creature* summon = _Creature->SummonCreature(HostageInfo[progress], x-2, y, z, 0, TEMPSUMMON_DEAD_DESPAWN, 0);
+        /*Creature* summon = pCreature->SummonCreature(HostageInfo[progress], x-2, y, z, 0, TEMPSUMMON_DEAD_DESPAWN, 0);
         if (summon)
         {
             ((npc_zulaman_hostageAI*)summon->AI())->PlayerGUID = player->GetGUID();
@@ -168,9 +168,9 @@ bool GossipSelect_npc_zulaman_hostage(Player* player, Creature* _Creature, uint3
     return true;
 }
 
-CreatureAI* GetAI_npc_zulaman_hostage(Creature *_Creature)
+CreatureAI* GetAI_npc_zulaman_hostage(Creature* pCreature)
 {
-    return new npc_zulaman_hostageAI(_Creature);
+    return new npc_zulaman_hostageAI(pCreature);
 }
 
 void AddSC_zulaman()
@@ -178,7 +178,7 @@ void AddSC_zulaman()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_forest_frog";
+    newscript->Name = "npc_forest_frog";
     newscript->GetAI = &GetAI_npc_forest_frog;
     newscript->RegisterSelf();
 

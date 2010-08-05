@@ -71,16 +71,16 @@ struct OREGON_DLL_DECL boss_mothersmolderwebAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_mothersmolderweb(Creature *_Creature)
+CreatureAI* GetAI_boss_mothersmolderweb(Creature* pCreature)
 {
-    return new boss_mothersmolderwebAI (_Creature);
+    return new boss_mothersmolderwebAI (pCreature);
 }
 
 void AddSC_boss_mothersmolderweb()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_mother_smolderweb";
+    newscript->Name = "boss_mother_smolderweb";
     newscript->GetAI = &GetAI_boss_mothersmolderweb;
     newscript->RegisterSelf();
 }

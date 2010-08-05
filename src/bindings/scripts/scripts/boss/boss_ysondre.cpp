@@ -223,14 +223,14 @@ struct OREGON_DLL_DECL mob_dementeddruidsAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_ysondre(Creature *_Creature)
+CreatureAI* GetAI_boss_ysondre(Creature* pCreature)
 {
-    return new boss_ysondreAI (_Creature);
+    return new boss_ysondreAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_dementeddruids(Creature *_Creature)
+CreatureAI* GetAI_mob_dementeddruids(Creature* pCreature)
 {
-    return new mob_dementeddruidsAI (_Creature);
+    return new mob_dementeddruidsAI (pCreature);
 }
 
 void AddSC_boss_ysondre()
@@ -238,12 +238,12 @@ void AddSC_boss_ysondre()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_ysondre";
+    newscript->Name = "boss_ysondre";
     newscript->GetAI = &GetAI_boss_ysondre;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_dementeddruids";
+    newscript->Name = "mob_dementeddruids";
     newscript->GetAI = &GetAI_mob_dementeddruids;
     newscript->RegisterSelf();
 }

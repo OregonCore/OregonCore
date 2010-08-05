@@ -96,30 +96,30 @@ struct OREGON_DLL_DECL npc_cairne_bloodhoofAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_npc_cairne_bloodhoof(Creature *_Creature)
+CreatureAI* GetAI_npc_cairne_bloodhoof(Creature* pCreature)
 {
-    return new npc_cairne_bloodhoofAI (_Creature);
+    return new npc_cairne_bloodhoofAI (pCreature);
 }
 
-bool GossipHello_npc_cairne_bloodhoof(Player *player, Creature *_Creature)
+bool GossipHello_npc_cairne_bloodhoof(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(925) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HCB, GOSSIP_SENDER_MAIN, GOSSIP_SENDER_INFO);
 
-    player->SEND_GOSSIP_MENU(7013, _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(7013, pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_cairne_bloodhoof(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_cairne_bloodhoof(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_SENDER_INFO)
     {
         player->CastSpell(player, 23123, false);
-        player->SEND_GOSSIP_MENU(7014, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(7014, pCreature->GetGUID());
     }
     return true;
 }
@@ -129,7 +129,7 @@ void AddSC_thunder_bluff()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_cairne_bloodhoof";
+    newscript->Name = "npc_cairne_bloodhoof";
     newscript->GetAI = &GetAI_npc_cairne_bloodhoof;
     newscript->pGossipHello = &GossipHello_npc_cairne_bloodhoof;
     newscript->pGossipSelect = &GossipSelect_npc_cairne_bloodhoof;

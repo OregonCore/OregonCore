@@ -59,11 +59,11 @@ struct OREGON_DLL_DECL npc_shadowfang_prisonerAI : public npc_escortAI
     void EnterCombat(Unit* who) {}
 };
 
-CreatureAI* GetAI_npc_shadowfang_prisoner(Creature *_Creature)
+CreatureAI* GetAI_npc_shadowfang_prisoner(Creature* pCreature)
 {
-    npc_shadowfang_prisonerAI* prisonerAI = new npc_shadowfang_prisonerAI(_Creature);
+    npc_shadowfang_prisonerAI* prisonerAI = new npc_shadowfang_prisonerAI(pCreature);
 
-    uint32 eCreature = _Creature->GetEntry();
+    uint32 eCreature = pCreature->GetEntry();
 
     if (eCreature == 3849)                                    //adamant
         prisonerAI->AddWaypoint(0, -254.47, 2117.48, 81.17);
@@ -80,9 +80,9 @@ CreatureAI* GetAI_npc_shadowfang_prisoner(Creature *_Creature)
     return (CreatureAI*)prisonerAI;
 }
 
-bool GossipHello_npc_shadowfang_prisoner(Player *player, Creature *_Creature)
+bool GossipHello_npc_shadowfang_prisoner(Player *player, Creature* pCreature)
 {
-    ScriptedInstance* pInstance = (_Creature->GetInstanceData());
+    ScriptedInstance* pInstance = (pCreature->GetInstanceData());
 
     if (!pInstance)
         return false;
@@ -90,18 +90,18 @@ bool GossipHello_npc_shadowfang_prisoner(Player *player, Creature *_Creature)
     if (pInstance->GetData(TYPE_FREE_NPC) != DONE && pInstance->GetData(TYPE_RETHILGORE) == DONE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_DOOR, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_shadowfang_prisoner(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_shadowfang_prisoner(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
         player->CLOSE_GOSSIP_MENU();
 
-        if (npc_escortAI* pEscortAI = CAST_AI(npc_shadowfang_prisonerAI, _Creature->AI()))
+        if (npc_escortAI* pEscortAI = CAST_AI(npc_shadowfang_prisonerAI, pCreature->AI()))
             pEscortAI->Start(false, false);
     }
     return true;
@@ -116,7 +116,7 @@ void AddSC_shadowfang_keep()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_shadowfang_prisoner";
+    newscript->Name = "npc_shadowfang_prisoner";
     newscript->pGossipHello =  &GossipHello_npc_shadowfang_prisoner;
     newscript->pGossipSelect = &GossipSelect_npc_shadowfang_prisoner;
     newscript->GetAI = &GetAI_npc_shadowfang_prisoner;

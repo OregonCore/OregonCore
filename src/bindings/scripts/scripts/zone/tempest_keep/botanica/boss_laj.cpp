@@ -188,9 +188,9 @@ struct OREGON_DLL_DECL boss_lajAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_laj(Creature *_Creature)
+CreatureAI* GetAI_boss_laj(Creature* pCreature)
 {
-    return new boss_lajAI (_Creature);
+    return new boss_lajAI (pCreature);
 }
 
 void AddSC_boss_laj()
@@ -198,7 +198,7 @@ void AddSC_boss_laj()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_laj";
+    newscript->Name = "boss_laj";
     newscript->GetAI = &GetAI_boss_laj;
     newscript->RegisterSelf();
 }

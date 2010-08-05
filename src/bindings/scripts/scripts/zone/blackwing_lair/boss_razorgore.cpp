@@ -116,16 +116,16 @@ struct OREGON_DLL_DECL boss_razorgoreAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_razorgore(Creature *_Creature)
+CreatureAI* GetAI_boss_razorgore(Creature* pCreature)
 {
-    return new boss_razorgoreAI (_Creature);
+    return new boss_razorgoreAI (pCreature);
 }
 
 void AddSC_boss_razorgore()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_razorgore";
+    newscript->Name = "boss_razorgore";
     newscript->GetAI = &GetAI_boss_razorgore;
     newscript->RegisterSelf();
 }

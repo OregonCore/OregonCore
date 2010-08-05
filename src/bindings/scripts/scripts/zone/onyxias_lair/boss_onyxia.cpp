@@ -295,16 +295,16 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_onyxiaAI(Creature *_Creature)
+CreatureAI* GetAI_boss_onyxiaAI(Creature* pCreature)
 {
-    return new boss_onyxiaAI (_Creature);
+    return new boss_onyxiaAI (pCreature);
 }
 
 void AddSC_boss_onyxia()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_onyxia";
+    newscript->Name = "boss_onyxia";
     newscript->GetAI = &GetAI_boss_onyxiaAI;
     newscript->RegisterSelf();
 }

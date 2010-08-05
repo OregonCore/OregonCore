@@ -196,9 +196,9 @@ struct OREGON_DLL_DECL boss_omor_the_unscarredAI : public Scripted_NoMovementAI
     }
 };
 
-CreatureAI* GetAI_boss_omor_the_unscarredAI(Creature *_Creature)
+CreatureAI* GetAI_boss_omor_the_unscarredAI(Creature* pCreature)
 {
-    return new boss_omor_the_unscarredAI (_Creature);
+    return new boss_omor_the_unscarredAI (pCreature);
 }
 
 void AddSC_boss_omor_the_unscarred()
@@ -206,7 +206,7 @@ void AddSC_boss_omor_the_unscarred()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_omor_the_unscarred";
+    newscript->Name = "boss_omor_the_unscarred";
     newscript->GetAI = &GetAI_boss_omor_the_unscarredAI;
     newscript->RegisterSelf();
 }

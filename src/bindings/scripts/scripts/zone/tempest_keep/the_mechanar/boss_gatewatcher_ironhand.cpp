@@ -132,16 +132,16 @@ struct OREGON_DLL_DECL boss_gatewatcher_iron_handAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_gatewatcher_iron_hand(Creature *_Creature)
+CreatureAI* GetAI_boss_gatewatcher_iron_hand(Creature* pCreature)
 {
-    return new boss_gatewatcher_iron_handAI (_Creature);
+    return new boss_gatewatcher_iron_handAI (pCreature);
 }
 
 void AddSC_boss_gatewatcher_iron_hand()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_gatewatcher_iron_hand";
+    newscript->Name = "boss_gatewatcher_iron_hand";
     newscript->GetAI = &GetAI_boss_gatewatcher_iron_hand;
     newscript->RegisterSelf();
 }

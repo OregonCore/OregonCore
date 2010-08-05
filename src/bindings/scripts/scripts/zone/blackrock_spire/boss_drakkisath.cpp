@@ -86,16 +86,16 @@ struct OREGON_DLL_DECL boss_drakkisathAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_drakkisath(Creature *_Creature)
+CreatureAI* GetAI_boss_drakkisath(Creature* pCreature)
 {
-    return new boss_drakkisathAI (_Creature);
+    return new boss_drakkisathAI (pCreature);
 }
 
 void AddSC_boss_drakkisath()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_drakkisath";
+    newscript->Name = "boss_drakkisath";
     newscript->GetAI = &GetAI_boss_drakkisath;
     newscript->RegisterSelf();
 }

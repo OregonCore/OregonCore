@@ -103,16 +103,16 @@ struct OREGON_DLL_DECL boss_theravenianAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_theravenian(Creature *_Creature)
+CreatureAI* GetAI_boss_theravenian(Creature* pCreature)
 {
-    return new boss_theravenianAI (_Creature);
+    return new boss_theravenianAI (pCreature);
 }
 
 void AddSC_boss_theravenian()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_the_ravenian";
+    newscript->Name = "boss_the_ravenian";
     newscript->GetAI = &GetAI_boss_theravenian;
     newscript->RegisterSelf();
 }

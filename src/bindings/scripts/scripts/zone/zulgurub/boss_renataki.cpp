@@ -135,16 +135,16 @@ struct OREGON_DLL_DECL boss_renatakiAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_renataki(Creature *_Creature)
+CreatureAI* GetAI_boss_renataki(Creature* pCreature)
 {
-    return new boss_renatakiAI (_Creature);
+    return new boss_renatakiAI (pCreature);
 }
 
 void AddSC_boss_renataki()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_renataki";
+    newscript->Name = "boss_renataki";
     newscript->GetAI = &GetAI_boss_renataki;
     newscript->RegisterSelf();
 }

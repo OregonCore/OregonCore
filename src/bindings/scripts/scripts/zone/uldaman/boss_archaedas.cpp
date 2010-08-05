@@ -191,9 +191,9 @@ struct OREGON_DLL_DECL boss_archaedasAI : public ScriptedAI
 
 };
 
-CreatureAI* GetAI_boss_archaedas(Creature *_Creature)
+CreatureAI* GetAI_boss_archaedas(Creature* pCreature)
 {
-    return new boss_archaedasAI (_Creature);
+    return new boss_archaedasAI (pCreature);
 }
 
 /* ScriptData
@@ -281,9 +281,9 @@ struct OREGON_DLL_DECL mob_archaedas_minionsAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_archaedas_minions(Creature *_Creature)
+CreatureAI* GetAI_mob_archaedas_minions(Creature* pCreature)
 {
-    return new mob_archaedas_minionsAI (_Creature);
+    return new mob_archaedas_minionsAI (pCreature);
 }
 
 /* ScriptData
@@ -398,9 +398,9 @@ struct OREGON_DLL_DECL mob_stonekeepersAI : public ScriptedAI
 
 };
 
-CreatureAI* GetAI_mob_stonekeepers(Creature *_Creature)
+CreatureAI* GetAI_mob_stonekeepers(Creature* pCreature)
 {
-    return new mob_stonekeepersAI (_Creature);
+    return new mob_stonekeepersAI (pCreature);
 }
 
 /* ScriptData
@@ -470,27 +470,27 @@ void AddSC_boss_archaedas()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_archaedas";
+    newscript->Name = "boss_archaedas";
     newscript->GetAI = &GetAI_boss_archaedas;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_altar_of_archaedas";
+    newscript->Name = "go_altar_of_archaedas";
     newscript->pGOHello = &GOHello_go_altar_of_archaedas;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_archaedas_minions";
+    newscript->Name = "mob_archaedas_minions";
     newscript->GetAI = &GetAI_mob_archaedas_minions;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_altar_of_the_keepers";
+    newscript->Name = "go_altar_of_the_keepers";
     newscript->pGOHello = &GOHello_go_altar_of_the_keepers;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_stonekeepers";
+    newscript->Name = "mob_stonekeepers";
     newscript->GetAI = &GetAI_mob_stonekeepers;
     newscript->RegisterSelf();
 }

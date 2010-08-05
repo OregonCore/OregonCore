@@ -1261,39 +1261,39 @@ void flesh_tentacleAI::JustDied(Unit* killer)
 }
 
 //GetAIs
-CreatureAI* GetAI_eye_of_cthun(Creature *_Creature)
+CreatureAI* GetAI_eye_of_cthun(Creature* pCreature)
 {
-    return new eye_of_cthunAI (_Creature);
+    return new eye_of_cthunAI (pCreature);
 }
 
-CreatureAI* GetAI_cthun(Creature *_Creature)
+CreatureAI* GetAI_cthun(Creature* pCreature)
 {
-    return new cthunAI (_Creature);
+    return new cthunAI (pCreature);
 }
 
-CreatureAI* GetAI_eye_tentacle(Creature *_Creature)
+CreatureAI* GetAI_eye_tentacle(Creature* pCreature)
 {
-    return new eye_tentacleAI (_Creature);
+    return new eye_tentacleAI (pCreature);
 }
 
-CreatureAI* GetAI_claw_tentacle(Creature *_Creature)
+CreatureAI* GetAI_claw_tentacle(Creature* pCreature)
 {
-    return new claw_tentacleAI (_Creature);
+    return new claw_tentacleAI (pCreature);
 }
 
-CreatureAI* GetAI_giant_claw_tentacle(Creature *_Creature)
+CreatureAI* GetAI_giant_claw_tentacle(Creature* pCreature)
 {
-    return new giant_claw_tentacleAI (_Creature);
+    return new giant_claw_tentacleAI (pCreature);
 }
 
-CreatureAI* GetAI_giant_eye_tentacle(Creature *_Creature)
+CreatureAI* GetAI_giant_eye_tentacle(Creature* pCreature)
 {
-    return new giant_eye_tentacleAI (_Creature);
+    return new giant_eye_tentacleAI (pCreature);
 }
 
-CreatureAI* GetAI_flesh_tentacle(Creature *_Creature)
+CreatureAI* GetAI_flesh_tentacle(Creature* pCreature)
 {
-    return new flesh_tentacleAI (_Creature);
+    return new flesh_tentacleAI (pCreature);
 }
 
 void AddSC_boss_cthun()
@@ -1302,37 +1302,37 @@ void AddSC_boss_cthun()
 
     //Eye
     newscript = new Script;
-    newscript->Name="boss_eye_of_cthun";
+    newscript->Name = "boss_eye_of_cthun";
     newscript->GetAI = &GetAI_eye_of_cthun;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_cthun";
+    newscript->Name = "boss_cthun";
     newscript->GetAI = &GetAI_cthun;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_eye_tentacle";
+    newscript->Name = "mob_eye_tentacle";
     newscript->GetAI = &GetAI_eye_tentacle;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_claw_tentacle";
+    newscript->Name = "mob_claw_tentacle";
     newscript->GetAI = &GetAI_claw_tentacle;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_giant_claw_tentacle";
+    newscript->Name = "mob_giant_claw_tentacle";
     newscript->GetAI = &GetAI_giant_claw_tentacle;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_giant_eye_tentacle";
+    newscript->Name = "mob_giant_eye_tentacle";
     newscript->GetAI = &GetAI_giant_eye_tentacle;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_giant_flesh_tentacle";
+    newscript->Name = "mob_giant_flesh_tentacle";
     newscript->GetAI = &GetAI_flesh_tentacle;
     newscript->RegisterSelf();
 }

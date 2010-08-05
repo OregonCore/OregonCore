@@ -283,16 +283,16 @@ struct OREGON_DLL_DECL boss_gruulAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_gruul(Creature *_Creature)
+CreatureAI* GetAI_boss_gruul(Creature* pCreature)
 {
-    return new boss_gruulAI (_Creature);
+    return new boss_gruulAI (pCreature);
 }
 
 void AddSC_boss_gruul()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_gruul";
+    newscript->Name = "boss_gruul";
     newscript->GetAI = &GetAI_boss_gruul;
     newscript->RegisterSelf();
 }

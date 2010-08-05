@@ -153,9 +153,9 @@ struct OREGON_DLL_DECL AV_MarshalsAI : public ScriptedAI
      }
 };
 
-CreatureAI* GetAI_AV_Marshals(Creature *_Creature)
+CreatureAI* GetAI_AV_Marshals(Creature* pCreature)
 {
-    return new AV_MarshalsAI (_Creature);
+    return new AV_MarshalsAI (pCreature);
 }
 
 void AddSC_AV_Marshals()

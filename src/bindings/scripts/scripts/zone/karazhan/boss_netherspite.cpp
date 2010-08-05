@@ -337,16 +337,16 @@ struct OREGON_DLL_DECL boss_netherspiteAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_netherspite(Creature *_Creature)
+CreatureAI* GetAI_boss_netherspite(Creature* pCreature)
 {
-    return new boss_netherspiteAI (_Creature);
+    return new boss_netherspiteAI (pCreature);
 }
 
 void AddSC_boss_netherspite()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_netherspite";
+    newscript->Name = "boss_netherspite";
     newscript->GetAI = &GetAI_boss_netherspite;
     newscript->RegisterSelf();
 }

@@ -189,9 +189,9 @@ struct OREGON_DLL_DECL npc_draenei_survivorAI : public ScriptedAI
         }
     }
 };
-CreatureAI* GetAI_npc_draenei_survivor(Creature *_Creature)
+CreatureAI* GetAI_npc_draenei_survivor(Creature* pCreature)
 {
-    return new npc_draenei_survivorAI (_Creature);
+    return new npc_draenei_survivorAI (pCreature);
 }
 
 /*######
@@ -247,28 +247,28 @@ struct OREGON_DLL_DECL npc_engineer_spark_overgrindAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_npc_engineer_spark_overgrind(Creature *_Creature)
+CreatureAI* GetAI_npc_engineer_spark_overgrind(Creature* pCreature)
 {
-    return new npc_engineer_spark_overgrindAI (_Creature);
+    return new npc_engineer_spark_overgrindAI (pCreature);
 }
 
-bool GossipHello_npc_engineer_spark_overgrind(Player *player, Creature *_Creature)
+bool GossipHello_npc_engineer_spark_overgrind(Player *player, Creature* pCreature)
 {
     if (player->GetQuestStatus(9537) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_FIGHT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_engineer_spark_overgrind(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_engineer_spark_overgrind(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF)
     {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->setFaction(14);
-        DoScriptText(ATTACK_YELL, _Creature, player);
-        ((npc_engineer_spark_overgrindAI*)_Creature->AI())->AttackStart(player);
+        pCreature->setFaction(14);
+        DoScriptText(ATTACK_YELL, pCreature, player);
+        ((npc_engineer_spark_overgrindAI*)pCreature->AI())->AttackStart(player);
     }
     return true;
 }
@@ -305,9 +305,9 @@ struct OREGON_DLL_DECL npc_injured_draeneiAI : public ScriptedAI
     }
 
 };
-CreatureAI* GetAI_npc_injured_draenei(Creature *_Creature)
+CreatureAI* GetAI_npc_injured_draenei(Creature* pCreature)
 {
-    return new npc_injured_draeneiAI (_Creature);
+    return new npc_injured_draeneiAI (pCreature);
 }
 
 /*######
@@ -375,9 +375,9 @@ bool QuestAccept_npc_magwin(Player* pPlayer, Creature* pCreature, Quest const* q
     return true;
 }
 
-CreatureAI* GetAI_npc_magwinAI(Creature *_Creature)
+CreatureAI* GetAI_npc_magwinAI(Creature* pCreature)
 {
-    npc_magwinAI* magwinAI = new npc_magwinAI(_Creature);
+    npc_magwinAI* magwinAI = new npc_magwinAI(pCreature);
 
     magwinAI->AddWaypoint(0, -4784.532227, -11051.060547, 3.484263);
     magwinAI->AddWaypoint(1, -4805.509277, -11037.293945, 3.043942);
@@ -548,9 +548,9 @@ struct OREGON_DLL_DECL npc_geezleAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_npc_geezleAI(Creature *_Creature)
+CreatureAI* GetAI_npc_geezleAI(Creature* pCreature)
 {
-    return new npc_geezleAI(_Creature);
+    return new npc_geezleAI(pCreature);
 }
 
 /*######
@@ -603,9 +603,9 @@ struct OREGON_DLL_DECL mob_nestlewood_owlkinAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_nestlewood_owlkinAI(Creature *_Creature)
+CreatureAI* GetAI_mob_nestlewood_owlkinAI(Creature* pCreature)
 {
-    return new mob_nestlewood_owlkinAI (_Creature);
+    return new mob_nestlewood_owlkinAI (pCreature);
 }
 
 void AddSC_azuremyst_isle()
@@ -613,19 +613,19 @@ void AddSC_azuremyst_isle()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_draenei_survivor";
+    newscript->Name = "npc_draenei_survivor";
     newscript->GetAI = &GetAI_npc_draenei_survivor;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_engineer_spark_overgrind";
+    newscript->Name = "npc_engineer_spark_overgrind";
     newscript->GetAI = &GetAI_npc_engineer_spark_overgrind;
     newscript->pGossipHello =  &GossipHello_npc_engineer_spark_overgrind;
     newscript->pGossipSelect = &GossipSelect_npc_engineer_spark_overgrind;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_injured_draenei";
+    newscript->Name = "npc_injured_draenei";
     newscript->GetAI = &GetAI_npc_injured_draenei;
     newscript->RegisterSelf();
 
@@ -636,12 +636,12 @@ void AddSC_azuremyst_isle()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_geezle";
+    newscript->Name = "npc_geezle";
     newscript->GetAI = &GetAI_npc_geezleAI;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_nestlewood_owlkin";
+    newscript->Name = "mob_nestlewood_owlkin";
     newscript->GetAI = &GetAI_mob_nestlewood_owlkinAI;
     newscript->RegisterSelf();
 

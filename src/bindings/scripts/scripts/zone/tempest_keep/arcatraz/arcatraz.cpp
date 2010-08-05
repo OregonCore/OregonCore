@@ -210,9 +210,9 @@ struct OREGON_DLL_DECL npc_millhouse_manastormAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_npc_millhouse_manastorm(Creature *_Creature)
+CreatureAI* GetAI_npc_millhouse_manastorm(Creature* pCreature)
 {
-    return new npc_millhouse_manastormAI (_Creature);
+    return new npc_millhouse_manastormAI (pCreature);
 }
 
 /*#####
@@ -470,9 +470,9 @@ struct OREGON_DLL_DECL npc_warden_mellicharAI : public ScriptedAI
         } else EventProgress_Timer -= diff;
     }
 };
-CreatureAI* GetAI_npc_warden_mellichar(Creature *_Creature)
+CreatureAI* GetAI_npc_warden_mellichar(Creature* pCreature)
 {
-    return new npc_warden_mellicharAI (_Creature);
+    return new npc_warden_mellicharAI (pCreature);
 }
 
 /*#####
@@ -496,9 +496,9 @@ struct OREGON_DLL_DECL mob_zerekethvoidzoneAI : public ScriptedAI
 
     void EnterCombat(Unit* who) {}
 };
-CreatureAI* GetAI_mob_zerekethvoidzoneAI(Creature *_Creature)
+CreatureAI* GetAI_mob_zerekethvoidzoneAI(Creature* pCreature)
 {
-    return new mob_zerekethvoidzoneAI (_Creature);
+    return new mob_zerekethvoidzoneAI (pCreature);
 }
 
 void AddSC_arcatraz()
@@ -506,17 +506,17 @@ void AddSC_arcatraz()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_millhouse_manastorm";
+    newscript->Name = "npc_millhouse_manastorm";
     newscript->GetAI = &GetAI_npc_millhouse_manastorm;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_warden_mellichar";
+    newscript->Name = "npc_warden_mellichar";
     newscript->GetAI = &GetAI_npc_warden_mellichar;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_zerekethvoidzone";
+    newscript->Name = "mob_zerekethvoidzone";
     newscript->GetAI = &GetAI_mob_zerekethvoidzoneAI;
     newscript->RegisterSelf();
 }

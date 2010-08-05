@@ -105,9 +105,9 @@ struct OREGON_DLL_DECL boss_herodAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_herod(Creature *_Creature)
+CreatureAI* GetAI_boss_herod(Creature* pCreature)
 {
-    return new boss_herodAI (_Creature);
+    return new boss_herodAI (pCreature);
 }
 
 
@@ -161,9 +161,9 @@ struct OREGON_DLL_DECL mob_scarlet_traineeAI : public npc_escortAI
     }
 };
 
-CreatureAI* GetAI_mob_scarlet_trainee(Creature* _Creature)
+CreatureAI* GetAI_mob_scarlet_trainee(Creature* pCreature)
 {
-    mob_scarlet_traineeAI* thisAI = new mob_scarlet_traineeAI(_Creature);
+    mob_scarlet_traineeAI* thisAI = new mob_scarlet_traineeAI(pCreature);
 
     for (uint32 i = 0; i < 12; ++i)
         thisAI->AddWaypoint(i, Location[i][0], Location[i][1], Location[i][2], Wait[i][0]);
@@ -175,7 +175,7 @@ void AddSC_boss_herod()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_herod";
+    newscript->Name = "boss_herod";
     newscript->GetAI = &GetAI_boss_herod;
     newscript->RegisterSelf();
 

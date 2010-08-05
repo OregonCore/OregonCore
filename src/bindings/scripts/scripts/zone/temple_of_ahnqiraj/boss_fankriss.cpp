@@ -190,16 +190,16 @@ struct OREGON_DLL_DECL boss_fankrissAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_fankriss(Creature *_Creature)
+CreatureAI* GetAI_boss_fankriss(Creature* pCreature)
 {
-    return new boss_fankrissAI (_Creature);
+    return new boss_fankrissAI (pCreature);
 }
 
 void AddSC_boss_fankriss()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_fankriss";
+    newscript->Name = "boss_fankriss";
     newscript->GetAI = &GetAI_boss_fankriss;
     newscript->RegisterSelf();
 }

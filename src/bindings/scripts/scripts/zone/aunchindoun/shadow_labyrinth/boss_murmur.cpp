@@ -167,16 +167,16 @@ struct OREGON_DLL_DECL boss_murmurAI : public Scripted_NoMovementAI
     }
 };
 
-CreatureAI* GetAI_boss_murmur(Creature *_Creature)
+CreatureAI* GetAI_boss_murmur(Creature* pCreature)
 {
-    return new boss_murmurAI (_Creature);
+    return new boss_murmurAI (pCreature);
 }
 
 void AddSC_boss_murmur()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_murmur";
+    newscript->Name = "boss_murmur";
     newscript->GetAI = &GetAI_boss_murmur;
     newscript->RegisterSelf();
 }

@@ -110,9 +110,9 @@ struct OREGON_DLL_DECL npc_aeranasAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_npc_aeranas(Creature *_Creature)
+CreatureAI* GetAI_npc_aeranas(Creature* pCreature)
 {
-    return new npc_aeranasAI (_Creature);
+    return new npc_aeranasAI (pCreature);
 }
 
 /*######
@@ -132,10 +132,10 @@ bool GOHello_go_haaleshi_altar(Player *player, GameObject* _GO)
 #define GOSSIP_ITEM1_DAB "Fly me to Murketh and Shaadraz Gateways"
 #define GOSSIP_ITEM2_DAB "Fly me to Shatter Point"
 
-bool GossipHello_npc_wing_commander_dabiree(Player *player, Creature *_Creature)
+bool GossipHello_npc_wing_commander_dabiree(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     //Mission: The Murketh and Shaadraz Gateways
     if (player->GetQuestStatus(10146) == QUEST_STATUS_INCOMPLETE)
@@ -145,12 +145,12 @@ bool GossipHello_npc_wing_commander_dabiree(Player *player, Creature *_Creature)
     if (!player->GetQuestRewardStatus(10340))
         player->ADD_GOSSIP_ITEM(2, GOSSIP_ITEM2_DAB, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_wing_commander_dabiree(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_wing_commander_dabiree(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF + 1)
     {
@@ -176,17 +176,17 @@ enum
 
 #define GOSSIP_ITEM1_LEAF       "Fly me to Shatter Point"
 
-bool GossipHello_npc_gryphoneer_leafbeard(Player *player, Creature *_Creature)
+bool GossipHello_npc_gryphoneer_leafbeard(Player *player, Creature* pCreature)
 {
     //Go back to Shatter Point if player has completed the quest 10340 - Shatter Point
     if (player->GetQuestStatus(10340) == QUEST_STATUS_COMPLETE)
         player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM1_LEAF, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_gryphoneer_leafbeard(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_gryphoneer_leafbeard(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
@@ -205,10 +205,10 @@ bool GossipSelect_npc_gryphoneer_leafbeard(Player *player, Creature *_Creature, 
 #define GOSSIP_ITEM2_BRA "Fly me to The Abyssal Shelf"
 #define GOSSIP_ITEM3_BRA "Fly me to Spinebreaker Post"
 
-bool GossipHello_npc_wing_commander_brack(Player *player, Creature *_Creature)
+bool GossipHello_npc_wing_commander_brack(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     //Mission: The Murketh and Shaadraz Gateways
     if (player->GetQuestStatus(10129) == QUEST_STATUS_INCOMPLETE)
@@ -222,12 +222,12 @@ bool GossipHello_npc_wing_commander_brack(Player *player, Creature *_Creature)
     if (player->GetQuestStatus(10242) == QUEST_STATUS_COMPLETE && !player->GetQuestRewardStatus(10242))
         player->ADD_GOSSIP_ITEM(2, GOSSIP_ITEM3_BRA, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_wing_commander_brack(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_wing_commander_brack(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     switch(action)
     {
@@ -316,9 +316,9 @@ struct OREGON_DLL_DECL npc_wounded_blood_elfAI : public npc_escortAI
     }
 };
 
-CreatureAI* GetAI_npc_wounded_blood_elf(Creature *_Creature)
+CreatureAI* GetAI_npc_wounded_blood_elf(Creature* pCreature)
 {
-    npc_wounded_blood_elfAI* welfAI = new npc_wounded_blood_elfAI(_Creature);
+    npc_wounded_blood_elfAI* welfAI = new npc_wounded_blood_elfAI(pCreature);
 
     welfAI->AddWaypoint(0, -1137.72, 4272.10, 14.04, 5000);
     welfAI->AddWaypoint(1, -1141.34, 4232.42, 14.63);
@@ -385,7 +385,7 @@ void AddSC_hellfire_peninsula()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_wing_commander_dabiree";
+    newscript->Name = "npc_wing_commander_dabiree";
     newscript->pGossipHello =   &GossipHello_npc_wing_commander_dabiree;
     newscript->pGossipSelect =  &GossipSelect_npc_wing_commander_dabiree;
     newscript->RegisterSelf();
@@ -397,13 +397,13 @@ void AddSC_hellfire_peninsula()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_wing_commander_brack";
+    newscript->Name = "npc_wing_commander_brack";
     newscript->pGossipHello =   &GossipHello_npc_wing_commander_brack;
     newscript->pGossipSelect =  &GossipSelect_npc_wing_commander_brack;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_wounded_blood_elf";
+    newscript->Name = "npc_wounded_blood_elf";
     newscript->GetAI = &GetAI_npc_wounded_blood_elf;
     newscript->pQuestAccept = &QuestAccept_npc_wounded_blood_elf;
     newscript->RegisterSelf();

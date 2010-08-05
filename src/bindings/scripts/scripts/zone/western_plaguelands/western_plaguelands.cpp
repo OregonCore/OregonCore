@@ -39,11 +39,11 @@ EndContentData */
 
 #define GOSSIP_SDA1 "Thanks, i need a Vitreous Focuser"
 
-bool GossipHello_npcs_dithers_and_arbington(Player *player, Creature *_Creature)
+bool GossipHello_npcs_dithers_and_arbington(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
-    if (_Creature->isVendor())
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
+    if (pCreature->isVendor())
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
 
     if (player->GetQuestRewardStatus(5237) || player->GetQuestRewardStatus(5238))
@@ -52,39 +52,39 @@ bool GossipHello_npcs_dithers_and_arbington(Player *player, Creature *_Creature)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HDA2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HDA3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HDA4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
-        player->SEND_GOSSIP_MENU(3985, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(3985, pCreature->GetGUID());
     } else
-        player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npcs_dithers_and_arbington(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npcs_dithers_and_arbington(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     switch(action)
     {
         case GOSSIP_ACTION_TRADE:
-            player->SEND_VENDORLIST(_Creature->GetGUID());
+            player->SEND_VENDORLIST(pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+1:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SDA1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
-            player->SEND_GOSSIP_MENU(3980, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(3980, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SDA1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
-            player->SEND_GOSSIP_MENU(3981, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(3981, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+3:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SDA1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
-            player->SEND_GOSSIP_MENU(3982, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(3982, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+4:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SDA1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
-            player->SEND_GOSSIP_MENU(3983, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(3983, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+5:
             player->CLOSE_GOSSIP_MENU();
-            _Creature->CastSpell(player, 17529, false);
+            pCreature->CastSpell(player, 17529, false);
             break;
     }
     return true;
@@ -157,9 +157,9 @@ struct OREGON_DLL_DECL npc_the_scourge_cauldronAI : public ScriptedAI
         }
     }
 };
-CreatureAI* GetAI_npc_the_scourge_cauldron(Creature *_Creature)
+CreatureAI* GetAI_npc_the_scourge_cauldron(Creature* pCreature)
 {
-    return new npc_the_scourge_cauldronAI (_Creature);
+    return new npc_the_scourge_cauldronAI (pCreature);
 }
 
 /*######
@@ -171,13 +171,13 @@ void AddSC_western_plaguelands()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npcs_dithers_and_arbington";
+    newscript->Name = "npcs_dithers_and_arbington";
     newscript->pGossipHello = &GossipHello_npcs_dithers_and_arbington;
     newscript->pGossipSelect = &GossipSelect_npcs_dithers_and_arbington;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_the_scourge_cauldron";
+    newscript->Name = "npc_the_scourge_cauldron";
     newscript->GetAI = &GetAI_npc_the_scourge_cauldron;
     newscript->RegisterSelf();
 }

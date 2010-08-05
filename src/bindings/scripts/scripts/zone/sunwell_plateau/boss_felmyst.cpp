@@ -584,36 +584,36 @@ struct OREGON_DLL_DECL mob_felmyst_trailAI : public ScriptedAI
     void UpdateAI(const uint32 diff) {}
 };
 
-CreatureAI* GetAI_boss_felmyst(Creature *_Creature)
+CreatureAI* GetAI_boss_felmyst(Creature* pCreature)
 {
-    return new boss_felmystAI(_Creature);
+    return new boss_felmystAI(pCreature);
 }
 
-CreatureAI* GetAI_mob_felmyst_vapor(Creature *_Creature)
+CreatureAI* GetAI_mob_felmyst_vapor(Creature* pCreature)
 {
-    return new mob_felmyst_vaporAI(_Creature);
+    return new mob_felmyst_vaporAI(pCreature);
 }
 
-CreatureAI* GetAI_mob_felmyst_trail(Creature *_Creature)
+CreatureAI* GetAI_mob_felmyst_trail(Creature* pCreature)
 {
-    return new mob_felmyst_trailAI(_Creature);
+    return new mob_felmyst_trailAI(pCreature);
 }
 
 void AddSC_boss_felmyst()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_felmyst";
+    newscript->Name = "boss_felmyst";
     newscript->GetAI = &GetAI_boss_felmyst;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_felmyst_vapor";
+    newscript->Name = "mob_felmyst_vapor";
     newscript->GetAI = &GetAI_mob_felmyst_vapor;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_felmyst_trail";
+    newscript->Name = "mob_felmyst_trail";
     newscript->GetAI = &GetAI_mob_felmyst_trail;
     newscript->RegisterSelf();
 }

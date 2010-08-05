@@ -174,9 +174,9 @@ struct OREGON_DLL_DECL boss_the_black_stalkerAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_the_black_stalker(Creature *_Creature)
+CreatureAI* GetAI_boss_the_black_stalker(Creature* pCreature)
 {
-    return new boss_the_black_stalkerAI (_Creature);
+    return new boss_the_black_stalkerAI (pCreature);
 }
 
 void AddSC_boss_the_black_stalker()
@@ -184,7 +184,7 @@ void AddSC_boss_the_black_stalker()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_the_black_stalker";
+    newscript->Name = "boss_the_black_stalker";
     newscript->GetAI = &GetAI_boss_the_black_stalker;
     newscript->RegisterSelf();
 }

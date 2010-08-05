@@ -182,16 +182,16 @@ struct OREGON_DLL_DECL boss_kazrogalAI : public hyjal_trashAI
     }
 };
 
-CreatureAI* GetAI_boss_kazrogal(Creature *_Creature)
+CreatureAI* GetAI_boss_kazrogal(Creature* pCreature)
 {
-    return new boss_kazrogalAI (_Creature);
+    return new boss_kazrogalAI (pCreature);
 }
 
 void AddSC_boss_kazrogal()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_kazrogal";
+    newscript->Name = "boss_kazrogal";
     newscript->GetAI = &GetAI_boss_kazrogal;
     newscript->RegisterSelf();
 }

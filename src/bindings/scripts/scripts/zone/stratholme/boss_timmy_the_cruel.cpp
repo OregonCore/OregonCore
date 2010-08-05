@@ -67,16 +67,16 @@ struct OREGON_DLL_DECL boss_timmy_the_cruelAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_timmy_the_cruel(Creature *_Creature)
+CreatureAI* GetAI_boss_timmy_the_cruel(Creature* pCreature)
 {
-    return new boss_timmy_the_cruelAI (_Creature);
+    return new boss_timmy_the_cruelAI (pCreature);
 }
 
 void AddSC_boss_timmy_the_cruel()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_timmy_the_cruel";
+    newscript->Name = "boss_timmy_the_cruel";
     newscript->GetAI = &GetAI_boss_timmy_the_cruel;
     newscript->RegisterSelf();
 }

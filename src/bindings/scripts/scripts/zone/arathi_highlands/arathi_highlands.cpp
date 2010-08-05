@@ -115,9 +115,9 @@ bool QuestAccept_npc_professor_phizzlethorpe(Player* pPlayer, Creature* pCreatur
     return true;
 }
 
-CreatureAI* GetAI_npc_professor_phizzlethorpeAI(Creature *_Creature)
+CreatureAI* GetAI_npc_professor_phizzlethorpeAI(Creature* pCreature)
 {
-    npc_professor_phizzlethorpeAI* professor_phizzlethorpeAI = new npc_professor_phizzlethorpeAI(_Creature);
+    npc_professor_phizzlethorpeAI* professor_phizzlethorpeAI = new npc_professor_phizzlethorpeAI(pCreature);
 
     professor_phizzlethorpeAI->AddWaypoint(0, -2066.45, -2085.96, 9.08);
     professor_phizzlethorpeAI->AddWaypoint(1, -2077.99, -2105.33, 13.24);

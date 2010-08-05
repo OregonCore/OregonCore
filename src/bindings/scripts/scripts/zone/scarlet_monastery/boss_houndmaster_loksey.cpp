@@ -63,16 +63,16 @@ struct OREGON_DLL_DECL boss_houndmaster_lokseyAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_houndmaster_loksey(Creature *_Creature)
+CreatureAI* GetAI_boss_houndmaster_loksey(Creature* pCreature)
 {
-    return new boss_houndmaster_lokseyAI (_Creature);
+    return new boss_houndmaster_lokseyAI (pCreature);
 }
 
 void AddSC_boss_houndmaster_loksey()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_houndmaster_loksey";
+    newscript->Name = "boss_houndmaster_loksey";
     newscript->GetAI = &GetAI_boss_houndmaster_loksey;
     newscript->RegisterSelf();
 }

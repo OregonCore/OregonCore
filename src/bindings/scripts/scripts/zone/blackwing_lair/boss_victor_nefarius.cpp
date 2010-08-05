@@ -346,34 +346,34 @@ struct OREGON_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_victor_nefarius(Creature *_Creature)
+CreatureAI* GetAI_boss_victor_nefarius(Creature* pCreature)
 {
-    return new boss_victor_nefariusAI (_Creature);
+    return new boss_victor_nefariusAI (pCreature);
 }
 
-bool GossipHello_boss_victor_nefarius(Player *player, Creature *_Creature)
+bool GossipHello_boss_victor_nefarius(Player *player, Creature* pCreature)
 {
     player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_1 , GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-    player->SEND_GOSSIP_MENU(7134,_Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(7134,pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_boss_victor_nefarius(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_boss_victor_nefarius(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     switch (action)
     {
         case GOSSIP_ACTION_INFO_DEF+1:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            player->SEND_GOSSIP_MENU(7198, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(7198, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-            player->SEND_GOSSIP_MENU(7199, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(7199, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+3:
             player->CLOSE_GOSSIP_MENU();
-            DoScriptText(SAY_GAMESBEGIN_1, _Creature);
-            ((boss_victor_nefariusAI*)_Creature->AI())->BeginEvent(player);
+            DoScriptText(SAY_GAMESBEGIN_1, pCreature);
+            ((boss_victor_nefariusAI*)pCreature->AI())->BeginEvent(player);
             break;
     }
     return true;
@@ -384,7 +384,7 @@ void AddSC_boss_victor_nefarius()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_victor_nefarius";
+    newscript->Name = "boss_victor_nefarius";
     newscript->GetAI = &GetAI_boss_victor_nefarius;
     newscript->pGossipHello = &GossipHello_boss_victor_nefarius;
     newscript->pGossipSelect = &GossipSelect_boss_victor_nefarius;

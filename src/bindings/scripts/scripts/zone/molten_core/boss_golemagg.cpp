@@ -172,14 +172,14 @@ struct OREGON_DLL_DECL mob_core_ragerAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_golemagg(Creature *_Creature)
+CreatureAI* GetAI_boss_golemagg(Creature* pCreature)
 {
-    return new boss_golemaggAI (_Creature);
+    return new boss_golemaggAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_core_rager(Creature *_Creature)
+CreatureAI* GetAI_mob_core_rager(Creature* pCreature)
 {
-    return new mob_core_ragerAI (_Creature);
+    return new mob_core_ragerAI (pCreature);
 }
 
 void AddSC_boss_golemagg()
@@ -187,12 +187,12 @@ void AddSC_boss_golemagg()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_golemagg";
+    newscript->Name = "boss_golemagg";
     newscript->GetAI = &GetAI_boss_golemagg;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_core_rager";
+    newscript->Name = "mob_core_rager";
     newscript->GetAI = &GetAI_mob_core_rager;
     newscript->RegisterSelf();
 }

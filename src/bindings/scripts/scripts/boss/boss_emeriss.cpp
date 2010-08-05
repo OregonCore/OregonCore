@@ -141,16 +141,16 @@ struct OREGON_DLL_DECL boss_emerissAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_emeriss(Creature *_Creature)
+CreatureAI* GetAI_boss_emeriss(Creature* pCreature)
 {
-    return new boss_emerissAI (_Creature);
+    return new boss_emerissAI (pCreature);
 }
 
 void AddSC_boss_emeriss()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_emeriss";
+    newscript->Name = "boss_emeriss";
     newscript->GetAI = &GetAI_boss_emeriss;
     newscript->RegisterSelf();
 }

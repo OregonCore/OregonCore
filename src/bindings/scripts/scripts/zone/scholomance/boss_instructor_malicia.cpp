@@ -137,16 +137,16 @@ struct OREGON_DLL_DECL boss_instructormaliciaAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_instructormalicia(Creature *_Creature)
+CreatureAI* GetAI_boss_instructormalicia(Creature* pCreature)
 {
-    return new boss_instructormaliciaAI (_Creature);
+    return new boss_instructormaliciaAI (pCreature);
 }
 
 void AddSC_boss_instructormalicia()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_instructor_malicia";
+    newscript->Name = "boss_instructor_malicia";
     newscript->GetAI = &GetAI_boss_instructormalicia;
     newscript->RegisterSelf();
 }

@@ -123,9 +123,9 @@ struct OREGON_DLL_DECL mob_aquementasAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_mob_aquementas(Creature *_Creature)
+CreatureAI* GetAI_mob_aquementas(Creature* pCreature)
 {
-    return new mob_aquementasAI (_Creature);
+    return new mob_aquementasAI (pCreature);
 }
 
 /*######
@@ -212,9 +212,9 @@ struct OREGON_DLL_DECL npc_custodian_of_timeAI : public npc_escortAI
     }
 };
 
-CreatureAI* GetAI_npc_custodian_of_time(Creature *_Creature)
+CreatureAI* GetAI_npc_custodian_of_time(Creature* pCreature)
 {
-    npc_custodian_of_timeAI* custodian_of_timeAI = new npc_custodian_of_timeAI(_Creature);
+    npc_custodian_of_timeAI* custodian_of_timeAI = new npc_custodian_of_timeAI(pCreature);
 
     custodian_of_timeAI->AddWaypoint(0, -8374.93,-4250.21, -204.38,5000);
     custodian_of_timeAI->AddWaypoint(1, -8374.93,-4250.21, -204.38,16000);
@@ -250,23 +250,23 @@ CreatureAI* GetAI_npc_custodian_of_time(Creature *_Creature)
 ## npc_marin_noggenfogger
 ######*/
 
-bool GossipHello_npc_marin_noggenfogger(Player *player, Creature *_Creature)
+bool GossipHello_npc_marin_noggenfogger(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (_Creature->isVendor() && player->GetQuestRewardStatus(2662))
+    if (pCreature->isVendor() && player->GetQuestRewardStatus(2662))
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_marin_noggenfogger(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_marin_noggenfogger(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_TRADE)
-        player->SEND_VENDORLIST(_Creature->GetGUID());
+        player->SEND_VENDORLIST(pCreature->GetGUID());
 
     return true;
 }
@@ -277,18 +277,18 @@ bool GossipSelect_npc_marin_noggenfogger(Player *player, Creature *_Creature, ui
 
 #define GOSSIP_ITEM_FLIGHT  "Please take me to the master's lair."
 
-bool GossipHello_npc_steward_of_time(Player *player, Creature *_Creature)
+bool GossipHello_npc_steward_of_time(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(10279) == QUEST_STATUS_INCOMPLETE || player->GetQuestRewardStatus(10279))
     {
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_FLIGHT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-        player->SEND_GOSSIP_MENU(9978,_Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(9978,pCreature->GetGUID());
     }
     else
-        player->SEND_GOSSIP_MENU(9977,_Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(9977,pCreature->GetGUID());
 
     return true;
 }
@@ -301,7 +301,7 @@ bool QuestAccept_npc_steward_of_time(Player *player, Creature *creature, Quest c
     return false;
 }
 
-bool GossipSelect_npc_steward_of_time(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_steward_of_time(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF + 1)
         player->CastSpell(player,34891,true);               //(Flight through Caverns)
@@ -320,42 +320,42 @@ bool GossipSelect_npc_steward_of_time(Player *player, Creature *_Creature, uint3
 #define GOSSIP_ITEM_NORGANNON_5     "So, what's inside Uldum?"
 #define GOSSIP_ITEM_NORGANNON_6     "I will return when i have the Plates of Uldum."
 
-bool GossipHello_npc_stone_watcher_of_norgannon(Player *player, Creature *_Creature)
+bool GossipHello_npc_stone_watcher_of_norgannon(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(2954) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_NORGANNON_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
-    player->SEND_GOSSIP_MENU(1674, _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(1674, pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_stone_watcher_of_norgannon(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_stone_watcher_of_norgannon(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     switch (action)
     {
         case GOSSIP_ACTION_INFO_DEF:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_NORGANNON_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-            player->SEND_GOSSIP_MENU(1675, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(1675, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+1:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_NORGANNON_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            player->SEND_GOSSIP_MENU(1676, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(1676, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_NORGANNON_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-            player->SEND_GOSSIP_MENU(1677, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(1677, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+3:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_NORGANNON_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
-            player->SEND_GOSSIP_MENU(1678, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(1678, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+4:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_NORGANNON_6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
-            player->SEND_GOSSIP_MENU(1679, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(1679, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+5:
             player->CLOSE_GOSSIP_MENU();
@@ -452,9 +452,9 @@ bool QuestAccept_npc_OOX17(Player* pPlayer, Creature* pCreature, Quest const* qu
     return true;
 }
 
-CreatureAI* GetAI_npc_OOX17(Creature *_Creature)
+CreatureAI* GetAI_npc_OOX17(Creature* pCreature)
 {
-    npc_OOX17AI* OOX17AI = new npc_OOX17AI(_Creature);
+    npc_OOX17AI* OOX17AI = new npc_OOX17AI(pCreature);
 
     OOX17AI->AddWaypoint(0, -8843.73, -4374.44, 43.71);
     OOX17AI->AddWaypoint(1, -8834.68, -4373.88, 45.71);
@@ -604,30 +604,30 @@ void AddSC_tanaris()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="mob_aquementas";
+    newscript->Name = "mob_aquementas";
     newscript->GetAI = &GetAI_mob_aquementas;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_custodian_of_time";
+    newscript->Name = "npc_custodian_of_time";
     newscript->GetAI = &GetAI_npc_custodian_of_time;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_marin_noggenfogger";
+    newscript->Name = "npc_marin_noggenfogger";
     newscript->pGossipHello =  &GossipHello_npc_marin_noggenfogger;
     newscript->pGossipSelect = &GossipSelect_npc_marin_noggenfogger;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_steward_of_time";
+    newscript->Name = "npc_steward_of_time";
     newscript->pGossipHello =  &GossipHello_npc_steward_of_time;
     newscript->pGossipSelect = &GossipSelect_npc_steward_of_time;
     newscript->pQuestAccept =  &QuestAccept_npc_steward_of_time;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_stone_watcher_of_norgannon";
+    newscript->Name = "npc_stone_watcher_of_norgannon";
     newscript->pGossipHello =  &GossipHello_npc_stone_watcher_of_norgannon;
     newscript->pGossipSelect = &GossipSelect_npc_stone_watcher_of_norgannon;
     newscript->RegisterSelf();

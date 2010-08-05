@@ -152,16 +152,16 @@ struct OREGON_DLL_DECL boss_watchkeeper_gargolmarAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_watchkeeper_gargolmarAI(Creature *_Creature)
+CreatureAI* GetAI_boss_watchkeeper_gargolmarAI(Creature* pCreature)
 {
-    return new boss_watchkeeper_gargolmarAI (_Creature);
+    return new boss_watchkeeper_gargolmarAI (pCreature);
 }
 
 void AddSC_boss_watchkeeper_gargolmar()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_watchkeeper_gargolmar";
+    newscript->Name = "boss_watchkeeper_gargolmar";
     newscript->GetAI = &GetAI_boss_watchkeeper_gargolmarAI;
     newscript->RegisterSelf();
 }

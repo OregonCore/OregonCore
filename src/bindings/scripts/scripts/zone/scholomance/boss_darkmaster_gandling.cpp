@@ -197,16 +197,16 @@ struct OREGON_DLL_DECL boss_darkmaster_gandlingAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_darkmaster_gandling(Creature *_Creature)
+CreatureAI* GetAI_boss_darkmaster_gandling(Creature* pCreature)
 {
-    return new boss_darkmaster_gandlingAI (_Creature);
+    return new boss_darkmaster_gandlingAI (pCreature);
 }
 
 void AddSC_boss_darkmaster_gandling()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_darkmaster_gandling";
+    newscript->Name = "boss_darkmaster_gandling";
     newscript->GetAI = &GetAI_boss_darkmaster_gandling;
     newscript->RegisterSelf();
 }

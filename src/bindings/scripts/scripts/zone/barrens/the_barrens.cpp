@@ -38,21 +38,21 @@ EndContentData */
 
 #define GOSSIP_CORPSE "Examine corpse in detail..."
 
-bool GossipHello_npc_beaten_corpse(Player *player, Creature *_Creature)
+bool GossipHello_npc_beaten_corpse(Player *player, Creature* pCreature)
 {
     if (player->GetQuestStatus(4921) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(4921) == QUEST_STATUS_COMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_CORPSE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(3557, _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(3557, pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_beaten_corpse(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_beaten_corpse(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF +1)
     {
-        player->SEND_GOSSIP_MENU(3558, _Creature->GetGUID());
-        player->KilledMonster(10668,_Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(3558, pCreature->GetGUID());
+        player->KilledMonster(10668,pCreature->GetGUID());
     }
     return true;
 }
@@ -63,23 +63,23 @@ bool GossipSelect_npc_beaten_corpse(Player *player, Creature *_Creature, uint32 
 
 #define GOSSIP_SPUTTERVALVE "Can you tell me about this shard?"
 
-bool GossipHello_npc_sputtervalve(Player *player, Creature *_Creature)
+bool GossipHello_npc_sputtervalve(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(6981) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_SPUTTERVALVE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_sputtervalve(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_sputtervalve(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF)
     {
-        player->SEND_GOSSIP_MENU(2013, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(2013, pCreature->GetGUID());
         player->AreaExploredOrEventHappens(6981);
     }
     return true;
@@ -155,19 +155,19 @@ struct OREGON_DLL_DECL npc_taskmaster_fizzuleAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_npc_taskmaster_fizzule(Creature *_Creature)
+CreatureAI* GetAI_npc_taskmaster_fizzule(Creature* pCreature)
 {
-    return new npc_taskmaster_fizzuleAI (_Creature);
+    return new npc_taskmaster_fizzuleAI (pCreature);
 }
 
-bool ReciveEmote_npc_taskmaster_fizzule(Player *player, Creature *_Creature, uint32 emote)
+bool ReciveEmote_npc_taskmaster_fizzule(Player *player, Creature* pCreature, uint32 emote)
 {
     if (emote == TEXTEMOTE_SALUTE)
     {
-        if (((npc_taskmaster_fizzuleAI*)_Creature->AI())->FlareCount >= 2)
+        if (((npc_taskmaster_fizzuleAI*)pCreature->AI())->FlareCount >= 2)
         {
-            _Creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
-            _Creature->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
+            pCreature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+            pCreature->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
         }
     }
     return true;
@@ -383,9 +383,9 @@ struct OREGON_DLL_DECL npc_twiggy_flatheadAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_npc_twiggy_flathead(Creature *_Creature)
+CreatureAI* GetAI_npc_twiggy_flathead(Creature* pCreature)
 {
-    return new npc_twiggy_flatheadAI (_Creature);
+    return new npc_twiggy_flatheadAI (pCreature);
 }
 
 /*#####
@@ -544,9 +544,9 @@ bool QuestAccept_npc_wizzlecrank_shredder(Player* pPlayer, Creature* pCreature, 
     return true;
 }
 
-CreatureAI* GetAI_npc_wizzlecrank_shredderAI(Creature *_Creature)
+CreatureAI* GetAI_npc_wizzlecrank_shredderAI(Creature* pCreature)
 {
-    npc_wizzlecrank_shredderAI* thisAI = new npc_wizzlecrank_shredderAI(_Creature);
+    npc_wizzlecrank_shredderAI* thisAI = new npc_wizzlecrank_shredderAI(pCreature);
 
     thisAI->AddWaypoint(0, 1109.15, -3104.11, 82.41, 6000);
     thisAI->AddWaypoint(1, 1105.39, -3102.86, 82.74, 2000);
@@ -589,30 +589,30 @@ void AddSC_the_barrens()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_beaten_corpse";
+    newscript->Name = "npc_beaten_corpse";
     newscript->pGossipHello = &GossipHello_npc_beaten_corpse;
     newscript->pGossipSelect = &GossipSelect_npc_beaten_corpse;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_sputtervalve";
+    newscript->Name = "npc_sputtervalve";
     newscript->pGossipHello = &GossipHello_npc_sputtervalve;
     newscript->pGossipSelect = &GossipSelect_npc_sputtervalve;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_taskmaster_fizzule";
+    newscript->Name = "npc_taskmaster_fizzule";
     newscript->GetAI = &GetAI_npc_taskmaster_fizzule;
     newscript->pReceiveEmote = &ReciveEmote_npc_taskmaster_fizzule;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_twiggy_flathead";
+    newscript->Name = "npc_twiggy_flathead";
     newscript->GetAI = &GetAI_npc_twiggy_flathead;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_wizzlecrank_shredder";
+    newscript->Name = "npc_wizzlecrank_shredder";
     newscript->GetAI = &GetAI_npc_wizzlecrank_shredderAI;
     newscript->pQuestAccept = &QuestAccept_npc_wizzlecrank_shredder;
     newscript->RegisterSelf();

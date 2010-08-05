@@ -125,21 +125,21 @@ struct OREGON_DLL_DECL npc_lady_sylvanas_windrunnerAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_npc_lady_sylvanas_windrunner(Creature *_Creature)
+CreatureAI* GetAI_npc_lady_sylvanas_windrunner(Creature* pCreature)
 {
-    return new npc_lady_sylvanas_windrunnerAI (_Creature);
+    return new npc_lady_sylvanas_windrunnerAI (pCreature);
 }
 
-bool ChooseReward_npc_lady_sylvanas_windrunner(Player *player, Creature *_Creature, const Quest *_Quest, uint32 slot)
+bool ChooseReward_npc_lady_sylvanas_windrunner(Player *player, Creature* pCreature, const Quest *_Quest, uint32 slot)
 {
     if (_Quest->GetQuestId() == 9180)
     {
-        ((npc_lady_sylvanas_windrunnerAI*)_Creature->AI())->LamentEvent = true;
-        ((npc_lady_sylvanas_windrunnerAI*)_Creature->AI())->DoPlaySoundToSet(_Creature,SOUND_CREDIT);
-        _Creature->CastSpell(_Creature,SPELL_SYLVANAS_CAST,false);
+        ((npc_lady_sylvanas_windrunnerAI*)pCreature->AI())->LamentEvent = true;
+        ((npc_lady_sylvanas_windrunnerAI*)pCreature->AI())->DoPlaySoundToSet(pCreature,SOUND_CREDIT);
+        pCreature->CastSpell(pCreature,SPELL_SYLVANAS_CAST,false);
 
         for (uint8 i = 0; i < 4; ++i)
-            _Creature->SummonCreature(ENTRY_HIGHBORNE_LAMENTER, HighborneLoc[i][0], HighborneLoc[i][1], HIGHBORNE_LOC_Y, HighborneLoc[i][2], TEMPSUMMON_TIMED_DESPAWN, 160000);
+            pCreature->SummonCreature(ENTRY_HIGHBORNE_LAMENTER, HighborneLoc[i][0], HighborneLoc[i][1], HIGHBORNE_LOC_Y, HighborneLoc[i][2], TEMPSUMMON_TIMED_DESPAWN, 160000);
     }
 
     return true;
@@ -190,9 +190,9 @@ struct OREGON_DLL_DECL npc_highborne_lamenterAI : public ScriptedAI
         }
     }
 };
-CreatureAI* GetAI_npc_highborne_lamenter(Creature *_Creature)
+CreatureAI* GetAI_npc_highborne_lamenter(Creature* pCreature)
 {
-    return new npc_highborne_lamenterAI (_Creature);
+    return new npc_highborne_lamenterAI (pCreature);
 }
 
 /*######
@@ -205,30 +205,30 @@ CreatureAI* GetAI_npc_highborne_lamenter(Creature *_Creature)
 #define GOSSIP_HPF2 "Kel'Thuzad"
 #define GOSSIP_HPF3 "Ner'zhul"
 
-bool GossipHello_npc_parqual_fintallas(Player *player, Creature *_Creature)
+bool GossipHello_npc_parqual_fintallas(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(6628) == QUEST_STATUS_INCOMPLETE && !player->HasAura(SPELL_MARK_OF_SHAME,0))
     {
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HPF1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HPF2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HPF3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-        player->SEND_GOSSIP_MENU(5822, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(5822, pCreature->GetGUID());
     }
     else
-        player->SEND_GOSSIP_MENU(5821, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(5821, pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_parqual_fintallas(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_parqual_fintallas(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->CastSpell(player,SPELL_MARK_OF_SHAME,false);
+        pCreature->CastSpell(player,SPELL_MARK_OF_SHAME,false);
     }
     if (action == GOSSIP_ACTION_INFO_DEF+2)
     {
@@ -247,18 +247,18 @@ void AddSC_undercity()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_lady_sylvanas_windrunner";
+    newscript->Name = "npc_lady_sylvanas_windrunner";
     newscript->GetAI = &GetAI_npc_lady_sylvanas_windrunner;
     newscript->pChooseReward = &ChooseReward_npc_lady_sylvanas_windrunner;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_highborne_lamenter";
+    newscript->Name = "npc_highborne_lamenter";
     newscript->GetAI = &GetAI_npc_highborne_lamenter;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_parqual_fintallas";
+    newscript->Name = "npc_parqual_fintallas";
     newscript->pGossipHello = &GossipHello_npc_parqual_fintallas;
     newscript->pGossipSelect = &GossipSelect_npc_parqual_fintallas;
     newscript->RegisterSelf();

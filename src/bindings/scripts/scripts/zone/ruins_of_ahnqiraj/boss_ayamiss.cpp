@@ -92,16 +92,16 @@ struct OREGON_DLL_DECL boss_ayamissAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_ayamiss(Creature *_Creature)
+CreatureAI* GetAI_boss_ayamiss(Creature* pCreature)
 {
-    return new boss_ayamissAI (_Creature);
+    return new boss_ayamissAI (pCreature);
 }
 
 void AddSC_boss_ayamiss()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_ayamiss";
+    newscript->Name = "boss_ayamiss";
     newscript->GetAI = &GetAI_boss_ayamiss;
     newscript->RegisterSelf();
 }

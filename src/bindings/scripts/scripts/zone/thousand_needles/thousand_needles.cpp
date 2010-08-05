@@ -98,9 +98,9 @@ bool QuestAccept_npc_swiftmountain(Player* pPlayer, Creature* pCreature, const Q
     return true;
 }
 
-CreatureAI* GetAI_npc_swiftmountain(Creature *_Creature)
+CreatureAI* GetAI_npc_swiftmountain(Creature* pCreature)
 {
-    npc_swiftmountainAI* thisAI = new npc_swiftmountainAI(_Creature);
+    npc_swiftmountainAI* thisAI = new npc_swiftmountainAI(pCreature);
 
    thisAI->AddWaypoint(0, -5156.69, -1220.49, 48.78, 5000);
    thisAI->AddWaypoint(1, -5157.12, -1220.13, 48.67);
@@ -250,28 +250,28 @@ struct OREGON_DLL_DECL npc_pluckyAI : public ScriptedAI
    }
 };
 
-bool ReceiveEmote_npc_plucky(Player *player, Creature *_Creature, uint32 emote)
+bool ReceiveEmote_npc_plucky(Player *player, Creature* pCreature, uint32 emote)
 {
     if ((emote == TEXTEMOTE_BECKON || emote == TEXTEMOTE_CHICKEN &&
         player->GetQuestStatus(QUEST_GET_THE_SCOOP) == QUEST_STATUS_INCOMPLETE))
     {
-        _Creature->SetInFront(player);
-        ((npc_pluckyAI*)((Creature*)_Creature)->AI())->TransformHuman(emote);
+        pCreature->SetInFront(player);
+        ((npc_pluckyAI*)((Creature*)pCreature)->AI())->TransformHuman(emote);
     }
 
     return true;
 }
 
-bool GossipHello_npc_plucky(Player *player, Creature *_Creature)
+bool GossipHello_npc_plucky(Player *player, Creature* pCreature)
 {
     if (player->GetQuestStatus(QUEST_GET_THE_SCOOP) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_P, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-    player->SEND_GOSSIP_MENU(738, _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(738, pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_plucky(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_plucky(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     switch(action)
     {
@@ -283,9 +283,9 @@ bool GossipSelect_npc_plucky(Player *player, Creature *_Creature, uint32 sender,
     return true;
 }
 
-CreatureAI* GetAI_npc_plucky(Creature *_Creature)
+CreatureAI* GetAI_npc_plucky(Creature* pCreature)
 {
-return new npc_pluckyAI(_Creature);
+return new npc_pluckyAI(pCreature);
 }
 
 /*#####

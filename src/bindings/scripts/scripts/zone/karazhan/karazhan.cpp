@@ -331,9 +331,9 @@ struct OREGON_DLL_DECL npc_barnesAI : public npc_escortAI
     }
 };
 
-CreatureAI* GetAI_npc_barnesAI(Creature* _Creature)
+CreatureAI* GetAI_npc_barnesAI(Creature* pCreature)
 {
-    npc_barnesAI* Barnes_AI = new npc_barnesAI(_Creature);
+    npc_barnesAI* Barnes_AI = new npc_barnesAI(pCreature);
 
     for (uint8 i = 0; i < 6; ++i)
         Barnes_AI->AddWaypoint(i, StageLocations[i][0], StageLocations[i][1], 90.465);
@@ -415,18 +415,18 @@ bool GossipSelect_npc_barnes(Player* pPlayer, Creature* pCreature, uint32 uiSend
 
 #define GOSSIP_ITEM_TELEPORT     "Teleport me to the Guardian's Library"
 
-bool GossipHello_npc_berthold(Player* player, Creature* _Creature)
+bool GossipHello_npc_berthold(Player* player, Creature* pCreature)
 {
-    ScriptedInstance* pInstance = (_Creature->GetInstanceData());
+    ScriptedInstance* pInstance = (pCreature->GetInstanceData());
      // Check if Shade of Aran is dead or not
     if (pInstance && (pInstance->GetData(DATA_SHADEOFARAN_EVENT) == DONE))
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_TELEPORT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_berthold(Player* player, Creature* _Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_berthold(Player* player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF + 1)
         player->CastSpell(player, SPELL_TELEPORT, true);
@@ -634,9 +634,9 @@ struct OREGON_DLL_DECL npc_image_of_medivhAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_npc_image_of_medivh(Creature *_Creature)
+CreatureAI* GetAI_npc_image_of_medivh(Creature* pCreature)
 {
-    return new npc_image_of_medivhAI(_Creature);
+    return new npc_image_of_medivhAI(pCreature);
 }
 
 void AddSC_karazhan()

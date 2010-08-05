@@ -520,41 +520,41 @@ bool GOHello_go_Manticron_Cube(Player *player, GameObject* _GO)
     return true;
 }
 
-CreatureAI* GetAI_boss_magtheridon(Creature *_Creature)
+CreatureAI* GetAI_boss_magtheridon(Creature* pCreature)
 {
-    return new boss_magtheridonAI(_Creature);
+    return new boss_magtheridonAI(pCreature);
 }
 
-CreatureAI* GetAI_mob_hellfire_channeler(Creature *_Creature)
+CreatureAI* GetAI_mob_hellfire_channeler(Creature* pCreature)
 {
-    return new mob_hellfire_channelerAI(_Creature);
+    return new mob_hellfire_channelerAI(pCreature);
 }
 
-CreatureAI* GetAI_mob_abyssalAI(Creature *_Creature)
+CreatureAI* GetAI_mob_abyssalAI(Creature* pCreature)
 {
-    return new mob_abyssalAI(_Creature);
+    return new mob_abyssalAI(pCreature);
 }
 
 void AddSC_boss_magtheridon()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_magtheridon";
+    newscript->Name = "boss_magtheridon";
     newscript->GetAI = &GetAI_boss_magtheridon;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_hellfire_channeler";
+    newscript->Name = "mob_hellfire_channeler";
     newscript->GetAI = &GetAI_mob_hellfire_channeler;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_manticron_cube";
+    newscript->Name = "go_manticron_cube";
     newscript->pGOHello = &GOHello_go_Manticron_Cube;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_abyssal";
+    newscript->Name = "mob_abyssal";
     newscript->GetAI = &GetAI_mob_abyssalAI;
     newscript->RegisterSelf();
 

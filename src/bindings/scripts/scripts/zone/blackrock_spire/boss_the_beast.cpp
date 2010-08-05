@@ -78,16 +78,16 @@ struct OREGON_DLL_DECL boss_thebeastAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_thebeast(Creature *_Creature)
+CreatureAI* GetAI_boss_thebeast(Creature* pCreature)
 {
-    return new boss_thebeastAI (_Creature);
+    return new boss_thebeastAI (pCreature);
 }
 
 void AddSC_boss_thebeast()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_the_beast";
+    newscript->Name = "boss_the_beast";
     newscript->GetAI = &GetAI_boss_thebeast;
     newscript->RegisterSelf();
 }

@@ -47,9 +47,9 @@ struct OREGON_DLL_DECL npc_ravenholdtAI : public ScriptedAI
     void Aggro(Unit* who) { }
 };
 
-CreatureAI* GetAI_npc_ravenholdt(Creature *_Creature)
+CreatureAI* GetAI_npc_ravenholdt(Creature* pCreature)
 {
-    return new npc_ravenholdtAI (_Creature);
+    return new npc_ravenholdtAI (pCreature);
 }
 
 void AddSC_alterac_mountains()
@@ -57,7 +57,7 @@ void AddSC_alterac_mountains()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_ravenholdt";
+    newscript->Name = "npc_ravenholdt";
     newscript->GetAI = &GetAI_npc_ravenholdt;
     newscript->RegisterSelf();
 }

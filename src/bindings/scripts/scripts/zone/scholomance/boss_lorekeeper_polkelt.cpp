@@ -98,16 +98,16 @@ struct OREGON_DLL_DECL boss_lorekeeperpolkeltAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_lorekeeperpolkelt(Creature *_Creature)
+CreatureAI* GetAI_boss_lorekeeperpolkelt(Creature* pCreature)
 {
-    return new boss_lorekeeperpolkeltAI (_Creature);
+    return new boss_lorekeeperpolkeltAI (pCreature);
 }
 
 void AddSC_boss_lorekeeperpolkelt()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_lorekeeper_polkelt";
+    newscript->Name = "boss_lorekeeper_polkelt";
     newscript->GetAI = &GetAI_boss_lorekeeperpolkelt;
     newscript->RegisterSelf();
 }

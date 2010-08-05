@@ -431,14 +431,14 @@ struct OREGON_DLL_DECL mob_soaring_eagleAI : public ScriptedAI
 };
 
 //Soaring Eagle
-CreatureAI* GetAI_mob_soaring_eagle(Creature *_Creature)
+CreatureAI* GetAI_mob_soaring_eagle(Creature* pCreature)
 {
-    return new mob_soaring_eagleAI(_Creature);
+    return new mob_soaring_eagleAI(pCreature);
 }
 
-CreatureAI* GetAI_boss_akilzon(Creature *_Creature)
+CreatureAI* GetAI_boss_akilzon(Creature* pCreature)
 {
-    return new boss_akilzonAI(_Creature);
+    return new boss_akilzonAI(pCreature);
 }
 
 void AddSC_boss_akilzon()
@@ -446,12 +446,12 @@ void AddSC_boss_akilzon()
     Script *newscript = NULL;
 
     newscript = new Script;
-    newscript->Name="boss_akilzon";
+    newscript->Name = "boss_akilzon";
     newscript->GetAI = &GetAI_boss_akilzon;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_akilzon_eagle";
+    newscript->Name = "mob_akilzon_eagle";
     newscript->GetAI = &GetAI_mob_soaring_eagle;
     newscript->RegisterSelf();
 }

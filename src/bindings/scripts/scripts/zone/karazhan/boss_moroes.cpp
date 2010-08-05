@@ -739,39 +739,39 @@ struct OREGON_DLL_DECL boss_lord_crispin_ferenceAI : public boss_moroes_guestAI
     }
 };
 
-CreatureAI* GetAI_boss_moroes(Creature *_Creature)
+CreatureAI* GetAI_boss_moroes(Creature* pCreature)
 {
-    return new boss_moroesAI (_Creature);
+    return new boss_moroesAI (pCreature);
 }
 
-CreatureAI* GetAI_baroness_dorothea_millstipe(Creature *_Creature)
+CreatureAI* GetAI_baroness_dorothea_millstipe(Creature* pCreature)
 {
-    return new boss_baroness_dorothea_millstipeAI (_Creature);
+    return new boss_baroness_dorothea_millstipeAI (pCreature);
 }
 
-CreatureAI* GetAI_baron_rafe_dreuger(Creature *_Creature)
+CreatureAI* GetAI_baron_rafe_dreuger(Creature* pCreature)
 {
-    return new boss_baron_rafe_dreugerAI (_Creature);
+    return new boss_baron_rafe_dreugerAI (pCreature);
 }
 
-CreatureAI* GetAI_lady_catriona_von_indi(Creature *_Creature)
+CreatureAI* GetAI_lady_catriona_von_indi(Creature* pCreature)
 {
-    return new boss_lady_catriona_von_indiAI (_Creature);
+    return new boss_lady_catriona_von_indiAI (pCreature);
 }
 
-CreatureAI* GetAI_lady_keira_berrybuck(Creature *_Creature)
+CreatureAI* GetAI_lady_keira_berrybuck(Creature* pCreature)
 {
-    return new boss_lady_keira_berrybuckAI (_Creature);
+    return new boss_lady_keira_berrybuckAI (pCreature);
 }
 
-CreatureAI* GetAI_lord_robin_daris(Creature *_Creature)
+CreatureAI* GetAI_lord_robin_daris(Creature* pCreature)
 {
-    return new boss_lord_robin_darisAI (_Creature);
+    return new boss_lord_robin_darisAI (pCreature);
 }
 
-CreatureAI* GetAI_lord_crispin_ference(Creature *_Creature)
+CreatureAI* GetAI_lord_crispin_ference(Creature* pCreature)
 {
-    return new boss_lord_crispin_ferenceAI (_Creature);
+    return new boss_lord_crispin_ferenceAI (pCreature);
 }
 
 void AddSC_boss_moroes()
@@ -779,37 +779,37 @@ void AddSC_boss_moroes()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_moroes";
+    newscript->Name = "boss_moroes";
     newscript->GetAI = &GetAI_boss_moroes;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_baroness_dorothea_millstipe";
+    newscript->Name = "boss_baroness_dorothea_millstipe";
     newscript->GetAI = &GetAI_baroness_dorothea_millstipe;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_baron_rafe_dreuger";
+    newscript->Name = "boss_baron_rafe_dreuger";
     newscript->GetAI = &GetAI_baron_rafe_dreuger;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_lady_catriona_von_indi";
+    newscript->Name = "boss_lady_catriona_von_indi";
     newscript->GetAI = &GetAI_lady_catriona_von_indi;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_lady_keira_berrybuck";
+    newscript->Name = "boss_lady_keira_berrybuck";
     newscript->GetAI = &GetAI_lady_keira_berrybuck;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_lord_robin_daris";
+    newscript->Name = "boss_lord_robin_daris";
     newscript->GetAI = &GetAI_lord_robin_daris;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_lord_crispin_ference";
+    newscript->Name = "boss_lord_crispin_ference";
     newscript->GetAI = &GetAI_lord_crispin_ference;
     newscript->RegisterSelf();
 }

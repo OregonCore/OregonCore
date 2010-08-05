@@ -267,9 +267,9 @@ struct OREGON_DLL_DECL boss_harbinger_skyrissAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_harbinger_skyriss(Creature *_Creature)
+CreatureAI* GetAI_boss_harbinger_skyriss(Creature* pCreature)
 {
-    return new boss_harbinger_skyrissAI (_Creature);
+    return new boss_harbinger_skyrissAI (pCreature);
 }
 
 #define SPELL_MIND_REND_IMAGE   36929
@@ -291,9 +291,9 @@ struct OREGON_DLL_DECL boss_harbinger_skyriss_illusionAI : public ScriptedAI
     void EnterCombat(Unit *who) { }
 };
 
-CreatureAI* GetAI_boss_harbinger_skyriss_illusion(Creature *_Creature)
+CreatureAI* GetAI_boss_harbinger_skyriss_illusion(Creature* pCreature)
 {
-    return new boss_harbinger_skyriss_illusionAI (_Creature);
+    return new boss_harbinger_skyriss_illusionAI (pCreature);
 }
 
 void AddSC_boss_harbinger_skyriss()
@@ -301,12 +301,12 @@ void AddSC_boss_harbinger_skyriss()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_harbinger_skyriss";
+    newscript->Name = "boss_harbinger_skyriss";
     newscript->GetAI = &GetAI_boss_harbinger_skyriss;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_harbinger_skyriss_illusion";
+    newscript->Name = "boss_harbinger_skyriss_illusion";
     newscript->GetAI = &GetAI_boss_harbinger_skyriss_illusion;
     newscript->RegisterSelf();
 }

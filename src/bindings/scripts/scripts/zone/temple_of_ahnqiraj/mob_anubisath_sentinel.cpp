@@ -296,16 +296,16 @@ struct OREGON_DLL_DECL aqsentinelAI : public ScriptedAI
         return NULL;
     }
 };
-CreatureAI* GetAI_mob_anubisath_sentinelAI(Creature *_Creature)
+CreatureAI* GetAI_mob_anubisath_sentinelAI(Creature* pCreature)
 {
-    return new aqsentinelAI (_Creature);
+    return new aqsentinelAI (pCreature);
 }
 
 void AddSC_mob_anubisath_sentinel()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="mob_anubisath_sentinel";
+    newscript->Name = "mob_anubisath_sentinel";
     newscript->GetAI = &GetAI_mob_anubisath_sentinelAI;
     newscript->RegisterSelf();
 }

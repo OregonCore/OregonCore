@@ -92,16 +92,16 @@ struct OREGON_DLL_DECL boss_ironayaAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_ironaya(Creature *_Creature)
+CreatureAI* GetAI_boss_ironaya(Creature* pCreature)
 {
-    return new boss_ironayaAI (_Creature);
+    return new boss_ironayaAI (pCreature);
 }
 
 void AddSC_boss_ironaya()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_ironaya";
+    newscript->Name = "boss_ironaya";
     newscript->GetAI = &GetAI_boss_ironaya;
     newscript->RegisterSelf();
 }

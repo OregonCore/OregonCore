@@ -41,24 +41,24 @@ EndContentData */
 ## npc_erozion
 ######*/
 
-bool GossipHello_npc_erozion(Player *player, Creature *_Creature)
+bool GossipHello_npc_erozion(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
-    ScriptedInstance* pInstance = (_Creature->GetInstanceData());
+    ScriptedInstance* pInstance = (pCreature->GetInstanceData());
     if (pInstance && pInstance->GetData(TYPE_BARREL_DIVERSION) != DONE && !player->HasItemCount(ITEM_ENTRY_BOMBS,1))
         player->ADD_GOSSIP_ITEM(0, "I need a pack of Incendiary Bombs.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
     if (!player->GetQuestRewardStatus(QUEST_ENTRY_RETURN) && player->GetQuestStatus(QUEST_ENTRY_RETURN) == QUEST_STATUS_COMPLETE)
         player->ADD_GOSSIP_ITEM(0, "[PH] Teleport please, i'm tired.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
 
-    player->SEND_GOSSIP_MENU(9778, _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(9778, pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_erozion(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_erozion(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
@@ -68,7 +68,7 @@ bool GossipSelect_npc_erozion(Player *player, Creature *_Creature, uint32 sender
         {
              player->StoreNewItem(dest, ITEM_ENTRY_BOMBS, true);
         }
-        player->SEND_GOSSIP_MENU(9515, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(9515, pCreature->GetGUID());
     }
     if (action == GOSSIP_ACTION_INFO_DEF+2)
     {
@@ -462,9 +462,9 @@ struct OREGON_DLL_DECL npc_thrall_old_hillsbradAI : public npc_escortAI
     }
 };
 
-CreatureAI* GetAI_npc_thrall_old_hillsbrad(Creature *_Creature)
+CreatureAI* GetAI_npc_thrall_old_hillsbrad(Creature* pCreature)
 {
-    npc_thrall_old_hillsbradAI* thrall_walkAI = new npc_thrall_old_hillsbradAI(_Creature);
+    npc_thrall_old_hillsbradAI* thrall_walkAI = new npc_thrall_old_hillsbradAI(pCreature);
 
     thrall_walkAI->AddWaypoint(0, 2230.91, 118.765, 82.2947,5000);
     thrall_walkAI->AddWaypoint(1, 2230.33, 114.980, 82.2946);
@@ -739,9 +739,9 @@ struct OREGON_DLL_DECL npc_tarethaAI : public npc_escortAI
     }
 };
 
-CreatureAI* GetAI_npc_taretha(Creature *_Creature)
+CreatureAI* GetAI_npc_taretha(Creature* pCreature)
 {
-    npc_tarethaAI* taretha_walkAI = new npc_tarethaAI(_Creature);
+    npc_tarethaAI* taretha_walkAI = new npc_tarethaAI(pCreature);
 
     taretha_walkAI->AddWaypoint(0, 2650.06, 665.473, 61.9305);
     taretha_walkAI->AddWaypoint(1, 2652.44, 670.761, 61.9370);
@@ -804,20 +804,20 @@ void AddSC_old_hillsbrad()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_erozion";
+    newscript->Name = "npc_erozion";
     newscript->pGossipHello =   &GossipHello_npc_erozion;
     newscript->pGossipSelect =  &GossipSelect_npc_erozion;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_thrall_old_hillsbrad";
+    newscript->Name = "npc_thrall_old_hillsbrad";
     newscript->pGossipHello =  &GossipHello_npc_thrall_old_hillsbrad;
     newscript->pGossipSelect = &GossipSelect_npc_thrall_old_hillsbrad;
     newscript->GetAI = &GetAI_npc_thrall_old_hillsbrad;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_taretha";
+    newscript->Name = "npc_taretha";
     newscript->pGossipHello =   &GossipHello_npc_taretha;
     newscript->pGossipSelect =  &GossipSelect_npc_taretha;
     newscript->GetAI = &GetAI_npc_taretha;

@@ -1277,64 +1277,64 @@ struct OREGON_DLL_DECL boss_zelfanAI : public boss_priestess_guestAI
 //    }
 //};
 
-/*CreatureAI* GetAI_mob_sliver(Creature *_Creature)
+/*CreatureAI* GetAI_mob_sliver(Creature* pCreature)
 {
-    return new mob_sliverAI (_Creature);
+    return new mob_sliverAI (pCreature);
 };*/
 
-//CreatureAI* GetAI_mob_high_explosive_sheep(Creature *_Creature)
+//CreatureAI* GetAI_mob_high_explosive_sheep(Creature* pCreature)
 //{
-//    return new mob_high_explosive_sheepAI (_Creature);
+//    return new mob_high_explosive_sheepAI (pCreature);
 //};
 
-/*CreatureAI* GetAI_mob_fizzle(Creature *_Creature)
+/*CreatureAI* GetAI_mob_fizzle(Creature* pCreature)
 {
-    return new mob_fizzleAI (_Creature);
+    return new mob_fizzleAI (pCreature);
 };*/
 
-CreatureAI* GetAI_boss_priestess_delrissa(Creature *_Creature)
+CreatureAI* GetAI_boss_priestess_delrissa(Creature* pCreature)
 {
-    return new boss_priestess_delrissaAI (_Creature);
+    return new boss_priestess_delrissaAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_kagani_nightstrike(Creature *_Creature)
+CreatureAI* GetAI_boss_kagani_nightstrike(Creature* pCreature)
 {
-    return new boss_kagani_nightstrikeAI (_Creature);
+    return new boss_kagani_nightstrikeAI (pCreature);
 }
 
-CreatureAI* GetAI_ellris_duskhallow(Creature *_Creature)
+CreatureAI* GetAI_ellris_duskhallow(Creature* pCreature)
 {
-    return new boss_ellris_duskhallowAI (_Creature);
+    return new boss_ellris_duskhallowAI (pCreature);
 }
 
-CreatureAI* GetAI_eramas_brightblaze(Creature *_Creature)
+CreatureAI* GetAI_eramas_brightblaze(Creature* pCreature)
 {
-    return new boss_eramas_brightblazeAI (_Creature);
+    return new boss_eramas_brightblazeAI (pCreature);
 }
 
-CreatureAI* GetAI_yazzai(Creature *_Creature)
+CreatureAI* GetAI_yazzai(Creature* pCreature)
 {
-    return new boss_yazzaiAI (_Creature);
+    return new boss_yazzaiAI (pCreature);
 }
 
-CreatureAI* GetAI_warlord_salaris(Creature *_Creature)
+CreatureAI* GetAI_warlord_salaris(Creature* pCreature)
 {
-    return new boss_warlord_salarisAI (_Creature);
+    return new boss_warlord_salarisAI (pCreature);
 }
 
-CreatureAI* GetAI_garaxxas(Creature *_Creature)
+CreatureAI* GetAI_garaxxas(Creature* pCreature)
 {
-    return new boss_garaxxasAI (_Creature);
+    return new boss_garaxxasAI (pCreature);
 }
 
-CreatureAI* GetAI_apoko(Creature *_Creature)
+CreatureAI* GetAI_apoko(Creature* pCreature)
 {
-    return new boss_apokoAI (_Creature);
+    return new boss_apokoAI (pCreature);
 }
 
-CreatureAI* GetAI_zelfan(Creature *_Creature)
+CreatureAI* GetAI_zelfan(Creature* pCreature)
 {
-    return new boss_zelfanAI (_Creature);
+    return new boss_zelfanAI (pCreature);
 }
 
 void AddSC_boss_priestess_delrissa()
@@ -1342,62 +1342,62 @@ void AddSC_boss_priestess_delrissa()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_priestess_delrissa";
+    newscript->Name = "boss_priestess_delrissa";
     newscript->GetAI = &GetAI_boss_priestess_delrissa;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_kagani_nightstrike";
+    newscript->Name = "boss_kagani_nightstrike";
     newscript->GetAI = &GetAI_boss_kagani_nightstrike;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_ellris_duskhallow";
+    newscript->Name = "boss_ellris_duskhallow";
     newscript->GetAI = &GetAI_ellris_duskhallow;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_eramas_brightblaze";
+    newscript->Name = "boss_eramas_brightblaze";
     newscript->GetAI = &GetAI_eramas_brightblaze;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_yazzai";
+    newscript->Name = "boss_yazzai";
     newscript->GetAI = &GetAI_yazzai;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_warlord_salaris";
+    newscript->Name = "boss_warlord_salaris";
     newscript->GetAI = &GetAI_warlord_salaris;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_garaxxas";
+    newscript->Name = "boss_garaxxas";
     newscript->GetAI = &GetAI_garaxxas;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_apoko";
+    newscript->Name = "boss_apoko";
     newscript->GetAI = &GetAI_apoko;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_zelfan";
+    newscript->Name = "boss_zelfan";
     newscript->GetAI = &GetAI_zelfan;
     newscript->RegisterSelf();
 
     /*newscript = new Script;
-    newscript->Name="mob_high_explosive_sheep";
+    newscript->Name = "mob_high_explosive_sheep";
     newscript->GetAI = &GetAI_mob_high_explosive_sheep;
     newscript->RegisterSelf();*/
 
     /*newscript = new Script;
-    newscript->Name="mob_fizzle";
+    newscript->Name = "mob_fizzle";
     newscript->GetAI = &GetAI_mob_fizzle;
     newscript->RegisterSelf();*/
 
     /*newscript = new Script;
-    newscript->Name="mob_sliver";
+    newscript->Name = "mob_sliver";
     newscript->GetAI = &GetAI_mob_sliver;
     newscript->RegisterSelf();*/
 }

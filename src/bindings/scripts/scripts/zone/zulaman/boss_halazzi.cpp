@@ -377,26 +377,26 @@ struct OREGON_DLL_DECL boss_spiritlynxAI : public ScriptedAI
 
 };
 
-CreatureAI* GetAI_boss_halazziAI(Creature *_Creature)
+CreatureAI* GetAI_boss_halazziAI(Creature* pCreature)
 {
-    return new boss_halazziAI (_Creature);
+    return new boss_halazziAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_spiritlynxAI(Creature *_Creature)
+CreatureAI* GetAI_boss_spiritlynxAI(Creature* pCreature)
 {
-    return new boss_spiritlynxAI (_Creature);
+    return new boss_spiritlynxAI (pCreature);
 }
 
 void AddSC_boss_halazzi()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_halazzi";
+    newscript->Name = "boss_halazzi";
     newscript->GetAI = &GetAI_boss_halazziAI;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_halazzi_lynx";
+    newscript->Name = "mob_halazzi_lynx";
     newscript->GetAI = &GetAI_boss_spiritlynxAI;
     newscript->RegisterSelf();
 }

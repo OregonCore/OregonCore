@@ -156,16 +156,16 @@ struct OREGON_DLL_DECL boss_void_reaverAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_void_reaver(Creature *_Creature)
+CreatureAI* GetAI_boss_void_reaver(Creature* pCreature)
 {
-    return new boss_void_reaverAI (_Creature);
+    return new boss_void_reaverAI (pCreature);
 }
 
 void AddSC_boss_void_reaver()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_void_reaver";
+    newscript->Name = "boss_void_reaver";
     newscript->GetAI = &GetAI_boss_void_reaver;
     newscript->RegisterSelf();
 }

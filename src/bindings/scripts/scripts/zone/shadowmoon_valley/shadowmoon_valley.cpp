@@ -158,9 +158,9 @@ struct OREGON_DLL_DECL mob_mature_netherwing_drakeAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_mature_netherwing_drake(Creature *_creature)
+CreatureAI* GetAI_mob_mature_netherwing_drake(Creature* pCreature)
 {
-    return new mob_mature_netherwing_drakeAI(_creature);
+    return new mob_mature_netherwing_drakeAI(pCreature);
 }
 
 /*###
@@ -294,9 +294,9 @@ struct OREGON_DLL_DECL mob_enslaved_netherwing_drakeAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_enslaved_netherwing_drake(Creature* _Creature)
+CreatureAI* GetAI_mob_enslaved_netherwing_drake(Creature* pCreature)
 {
-    return new mob_enslaved_netherwing_drakeAI(_Creature);
+    return new mob_enslaved_netherwing_drakeAI(pCreature);
 }
 
 /*#####
@@ -367,29 +367,29 @@ struct OREGON_DLL_DECL mob_dragonmaw_peonAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_dragonmaw_peon(Creature* _Creature)
+CreatureAI* GetAI_mob_dragonmaw_peon(Creature* pCreature)
 {
-    return new mob_dragonmaw_peonAI(_Creature);
+    return new mob_dragonmaw_peonAI(pCreature);
 }
 
 /*######
 ## npc_drake_dealer_hurlunk
 ######*/
 
-bool GossipHello_npc_drake_dealer_hurlunk(Player *player, Creature *_Creature)
+bool GossipHello_npc_drake_dealer_hurlunk(Player *player, Creature* pCreature)
 {
-    if (_Creature->isVendor() && player->GetReputationRank(1015) == REP_EXALTED)
+    if (pCreature->isVendor() && player->GetReputationRank(1015) == REP_EXALTED)
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_drake_dealer_hurlunk(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_drake_dealer_hurlunk(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_TRADE)
-        player->SEND_VENDORLIST(_Creature->GetGUID());
+        player->SEND_VENDORLIST(pCreature->GetGUID());
 
     return true;
 }
@@ -401,19 +401,19 @@ bool GossipSelect_npc_drake_dealer_hurlunk(Player *player, Creature *_Creature, 
 #define GOSSIP_HSK1 "Take Flanis's Pack"
 #define GOSSIP_HSK2 "Take Kagrosh's Pack"
 
-bool GossipHello_npcs_flanis_swiftwing_and_kagrosh(Player *player, Creature *_Creature)
+bool GossipHello_npcs_flanis_swiftwing_and_kagrosh(Player *player, Creature* pCreature)
 {
     if (player->GetQuestStatus(10583) == QUEST_STATUS_INCOMPLETE && !player->HasItemCount(30658,1,true))
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HSK1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
     if (player->GetQuestStatus(10601) == QUEST_STATUS_INCOMPLETE && !player->HasItemCount(30659,1,true))
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HSK2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npcs_flanis_swiftwing_and_kagrosh(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npcs_flanis_swiftwing_and_kagrosh(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
@@ -451,48 +451,48 @@ bool GossipSelect_npcs_flanis_swiftwing_and_kagrosh(Player *player, Creature *_C
 #define GOSSIP_SMO4 "Who are these bidders?"
 #define GOSSIP_SMO5 "Well... yes."
 
-bool GossipHello_npc_murkblood_overseer(Player *player, Creature *_Creature)
+bool GossipHello_npc_murkblood_overseer(Player *player, Creature* pCreature)
 {
     if (player->GetQuestStatus(QUEST_11082) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HMO, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(10940, _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_murkblood_overseer(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_murkblood_overseer(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     switch (action)
     {
         case GOSSIP_ACTION_INFO_DEF+1:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SMO1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
                                                             //correct id not known
-            player->SEND_GOSSIP_MENU(10940, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SMO2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
                                                             //correct id not known
-            player->SEND_GOSSIP_MENU(10940, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+3:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SMO3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
                                                             //correct id not known
-            player->SEND_GOSSIP_MENU(10940, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+4:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SMO4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
                                                             //correct id not known
-            player->SEND_GOSSIP_MENU(10940, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+5:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SMO5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
                                                             //correct id not known
-            player->SEND_GOSSIP_MENU(10940, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+6:
                                                             //correct id not known
-            player->SEND_GOSSIP_MENU(10940, _Creature->GetGUID());
-            _Creature->CastSpell(player,41121,false);
+            player->SEND_GOSSIP_MENU(10940, pCreature->GetGUID());
+            pCreature->CastSpell(player,41121,false);
             player->AreaExploredOrEventHappens(QUEST_11082);
             break;
     }
@@ -508,34 +508,34 @@ bool GossipSelect_npc_murkblood_overseer(Player *player, Creature *_Creature, ui
 #define GOSSIP_SN2 "Your mate?"
 #define GOSSIP_SN3 "I have battled many beasts, dragon. I will help you."
 
-bool GossipHello_npc_neltharaku(Player *player, Creature *_Creature)
+bool GossipHello_npc_neltharaku(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(10814) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(10613, _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(10613, pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_neltharaku(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_neltharaku(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     switch (action)
     {
         case GOSSIP_ACTION_INFO_DEF+1:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SN1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            player->SEND_GOSSIP_MENU(10614, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(10614, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SN2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-            player->SEND_GOSSIP_MENU(10615, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(10615, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+3:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SN3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
-            player->SEND_GOSSIP_MENU(10616, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(10616, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+4:
             player->CLOSE_GOSSIP_MENU();
@@ -557,53 +557,53 @@ bool GossipSelect_npc_neltharaku(Player *player, Creature *_Creature, uint32 sen
 #define GOSSIP_ORONOK6 "So what of the cipher now? And your boys?"
 #define GOSSIP_ORONOK7 "I will find your boys and the cipher, Oronok."
 
-bool GossipHello_npc_oronok_tornheart(Player *player, Creature *_Creature)
+bool GossipHello_npc_oronok_tornheart(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
-    if (_Creature->isVendor())
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
+    if (pCreature->isVendor())
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
 
     if (player->GetQuestStatus(10519) == QUEST_STATUS_INCOMPLETE)
     {
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
-        player->SEND_GOSSIP_MENU(10312, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(10312, pCreature->GetGUID());
     } else
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_oronok_tornheart(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_oronok_tornheart(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     switch (action)
     {
         case GOSSIP_ACTION_TRADE:
-            player->SEND_VENDORLIST(_Creature->GetGUID());
+            player->SEND_VENDORLIST(pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-            player->SEND_GOSSIP_MENU(10313, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(10313, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+1:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            player->SEND_GOSSIP_MENU(10314, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(10314, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-            player->SEND_GOSSIP_MENU(10315, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(10315, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+3:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
-            player->SEND_GOSSIP_MENU(10316, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(10316, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+4:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
-            player->SEND_GOSSIP_MENU(10317, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(10317, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+5:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ORONOK7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
-            player->SEND_GOSSIP_MENU(10318, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(10318, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+6:
             player->CLOSE_GOSSIP_MENU();
@@ -834,17 +834,17 @@ struct OREGON_DLL_DECL npc_overlord_morghorAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_npc_overlord_morghorAI(Creature *_Creature)
+CreatureAI* GetAI_npc_overlord_morghorAI(Creature* pCreature)
 {
-return new npc_overlord_morghorAI(_Creature);
+return new npc_overlord_morghorAI(pCreature);
 }
 
-bool QuestAccept_npc_overlord_morghor(Player *player, Creature *_Creature, const Quest *_Quest)
+bool QuestAccept_npc_overlord_morghor(Player *player, Creature* pCreature, const Quest *_Quest)
 {
     if (_Quest->GetQuestId() == QUEST_LORD_ILLIDAN_STORMRAGE)
     {
-        ((npc_overlord_morghorAI*)_Creature->AI())->PlayerGUID = player->GetGUID();
-        ((npc_overlord_morghorAI*)_Creature->AI())->StartEvent();
+        ((npc_overlord_morghorAI*)pCreature->AI())->PlayerGUID = player->GetGUID();
+        ((npc_overlord_morghorAI*)pCreature->AI())->StartEvent();
         return true;
     }
     return false;
@@ -993,9 +993,9 @@ struct OREGON_DLL_DECL npc_earthmender_wildaAI : public npc_escortAI
        }
 };
 
-CreatureAI* GetAI_npc_earthmender_wildaAI(Creature *_Creature)
+CreatureAI* GetAI_npc_earthmender_wildaAI(Creature* pCreature)
 {
-    npc_earthmender_wildaAI* earthmender_wildaAI = new npc_earthmender_wildaAI(_Creature);
+    npc_earthmender_wildaAI* earthmender_wildaAI = new npc_earthmender_wildaAI(pCreature);
 
        earthmender_wildaAI->AddWaypoint(0, -2637.466064, 1359.977905, 35.889114, 2000); // SAY_START
        earthmender_wildaAI->AddWaypoint(1, -2666.364990, 1348.222656, 34.445557);
@@ -1764,9 +1764,9 @@ struct OREGON_DLL_DECL npc_enraged_spiritAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_npc_enraged_spirit(Creature *_Creature)
+CreatureAI* GetAI_npc_enraged_spirit(Creature* pCreature)
 {
-return new npc_enraged_spiritAI(_Creature);
+return new npc_enraged_spiritAI(pCreature);
 }
 
 /*#####
@@ -1793,25 +1793,25 @@ void AddSC_shadowmoon_valley()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_drake_dealer_hurlunk";
+    newscript->Name = "npc_drake_dealer_hurlunk";
     newscript->pGossipHello =  &GossipHello_npc_drake_dealer_hurlunk;
     newscript->pGossipSelect = &GossipSelect_npc_drake_dealer_hurlunk;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npcs_flanis_swiftwing_and_kagrosh";
+    newscript->Name = "npcs_flanis_swiftwing_and_kagrosh";
     newscript->pGossipHello =  &GossipHello_npcs_flanis_swiftwing_and_kagrosh;
     newscript->pGossipSelect = &GossipSelect_npcs_flanis_swiftwing_and_kagrosh;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_murkblood_overseer";
+    newscript->Name = "npc_murkblood_overseer";
     newscript->pGossipHello =  &GossipHello_npc_murkblood_overseer;
     newscript->pGossipSelect = &GossipSelect_npc_murkblood_overseer;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_neltharaku";
+    newscript->Name = "npc_neltharaku";
     newscript->pGossipHello =  &GossipHello_npc_neltharaku;
     newscript->pGossipSelect = &GossipSelect_npc_neltharaku;
     newscript->RegisterSelf();
@@ -1822,7 +1822,7 @@ void AddSC_shadowmoon_valley()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_oronok_tornheart";
+    newscript->Name = "npc_oronok_tornheart";
     newscript->pGossipHello =  &GossipHello_npc_oronok_tornheart;
     newscript->pGossipSelect = &GossipSelect_npc_oronok_tornheart;
     newscript->RegisterSelf();

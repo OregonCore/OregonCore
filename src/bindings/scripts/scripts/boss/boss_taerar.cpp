@@ -283,14 +283,14 @@ struct OREGON_DLL_DECL boss_shadeoftaerarAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_taerar(Creature *_Creature)
+CreatureAI* GetAI_boss_taerar(Creature* pCreature)
 {
-    return new boss_taerarAI (_Creature);
+    return new boss_taerarAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_shadeoftaerar(Creature *_Creature)
+CreatureAI* GetAI_boss_shadeoftaerar(Creature* pCreature)
 {
-    return new boss_shadeoftaerarAI (_Creature);
+    return new boss_shadeoftaerarAI (pCreature);
 }
 
 void AddSC_boss_taerar()
@@ -298,12 +298,12 @@ void AddSC_boss_taerar()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_taerar";
+    newscript->Name = "boss_taerar";
     newscript->GetAI = &GetAI_boss_taerar;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_shade_of_taerar";
+    newscript->Name = "boss_shade_of_taerar";
     newscript->GetAI = &GetAI_boss_shadeoftaerar;
     newscript->RegisterSelf();
 }

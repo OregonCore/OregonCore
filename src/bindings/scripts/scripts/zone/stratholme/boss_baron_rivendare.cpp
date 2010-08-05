@@ -172,16 +172,16 @@ struct OREGON_DLL_DECL boss_baron_rivendareAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_baron_rivendare(Creature *_Creature)
+CreatureAI* GetAI_boss_baron_rivendare(Creature* pCreature)
 {
-    return new boss_baron_rivendareAI (_Creature);
+    return new boss_baron_rivendareAI (pCreature);
 }
 
 void AddSC_boss_baron_rivendare()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_baron_rivendare";
+    newscript->Name = "boss_baron_rivendare";
     newscript->GetAI = &GetAI_boss_baron_rivendare;
     newscript->RegisterSelf();
 }

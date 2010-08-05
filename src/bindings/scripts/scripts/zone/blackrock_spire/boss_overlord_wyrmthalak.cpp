@@ -112,16 +112,16 @@ struct OREGON_DLL_DECL boss_overlordwyrmthalakAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_overlordwyrmthalak(Creature *_Creature)
+CreatureAI* GetAI_boss_overlordwyrmthalak(Creature* pCreature)
 {
-    return new boss_overlordwyrmthalakAI (_Creature);
+    return new boss_overlordwyrmthalakAI (pCreature);
 }
 
 void AddSC_boss_overlordwyrmthalak()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_overlord_wyrmthalak";
+    newscript->Name = "boss_overlord_wyrmthalak";
     newscript->GetAI = &GetAI_boss_overlordwyrmthalak;
     newscript->RegisterSelf();
 }

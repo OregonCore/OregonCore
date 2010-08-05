@@ -125,16 +125,16 @@ struct OREGON_DLL_DECL boss_ouroAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_ouro(Creature *_Creature)
+CreatureAI* GetAI_boss_ouro(Creature* pCreature)
 {
-    return new boss_ouroAI (_Creature);
+    return new boss_ouroAI (pCreature);
 }
 
 void AddSC_boss_ouro()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_ouro";
+    newscript->Name = "boss_ouro";
     newscript->GetAI = &GetAI_boss_ouro;
     newscript->RegisterSelf();
 }

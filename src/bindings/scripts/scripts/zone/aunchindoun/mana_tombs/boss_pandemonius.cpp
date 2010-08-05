@@ -122,16 +122,16 @@ struct OREGON_DLL_DECL boss_pandemoniusAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_pandemonius(Creature *_Creature)
+CreatureAI* GetAI_boss_pandemonius(Creature* pCreature)
 {
-    return new boss_pandemoniusAI (_Creature);
+    return new boss_pandemoniusAI (pCreature);
 }
 
 void AddSC_boss_pandemonius()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_pandemonius";
+    newscript->Name = "boss_pandemonius";
     newscript->GetAI = &GetAI_boss_pandemonius;
     newscript->RegisterSelf();
 }

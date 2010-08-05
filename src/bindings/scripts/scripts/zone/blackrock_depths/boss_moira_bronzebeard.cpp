@@ -84,16 +84,16 @@ struct OREGON_DLL_DECL boss_moira_bronzebeardAI : public ScriptedAI
 
     }
 };
-CreatureAI* GetAI_boss_moira_bronzebeard(Creature *_Creature)
+CreatureAI* GetAI_boss_moira_bronzebeard(Creature* pCreature)
 {
-    return new boss_moira_bronzebeardAI (_Creature);
+    return new boss_moira_bronzebeardAI (pCreature);
 }
 
 void AddSC_boss_moira_bronzebeard()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_moira_bronzebeard";
+    newscript->Name = "boss_moira_bronzebeard";
     newscript->GetAI = &GetAI_boss_moira_bronzebeard;
     newscript->RegisterSelf();
 }

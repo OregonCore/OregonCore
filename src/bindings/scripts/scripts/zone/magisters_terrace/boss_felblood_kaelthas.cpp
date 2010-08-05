@@ -723,27 +723,27 @@ void AddSC_boss_felblood_kaelthas()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_felkael_phoenix";
+    newscript->Name = "mob_felkael_phoenix";
     newscript->GetAI = &GetAI_mob_felkael_phoenix;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_felkael_phoenix_egg";
+    newscript->Name = "mob_felkael_phoenix_egg";
     newscript->GetAI = &GetAI_mob_felkael_phoenix_egg;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_felkael_flamestrike";
+    newscript->Name = "mob_felkael_flamestrike";
     newscript->GetAI = &GetAI_mob_felkael_flamestrike;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_kael_orb";
+    newscript->Name = "go_kael_orb";
     newscript->pGOHello = &GOHello_go_kael_orb;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_movie_orb";
+    newscript->Name = "go_movie_orb";
     newscript->pGOHello = &GOHello_go_movie_orb;
     newscript->RegisterSelf();
 }

@@ -54,9 +54,9 @@ struct OREGON_DLL_DECL mobs_bladespire_ogreAI : public ScriptedAI
             ((Player*)Killer)->KilledMonster(19995, me->GetGUID());
     }
 };
-CreatureAI* GetAI_mobs_bladespire_ogre(Creature *_Creature)
+CreatureAI* GetAI_mobs_bladespire_ogre(Creature* pCreature)
 {
-    return new mobs_bladespire_ogreAI (_Creature);
+    return new mobs_bladespire_ogreAI (pCreature);
 }
 
 /*######
@@ -250,9 +250,9 @@ struct OREGON_DLL_DECL mobs_nether_drakeAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_mobs_nether_drake(Creature *_Creature)
+CreatureAI* GetAI_mobs_nether_drake(Creature* pCreature)
 {
-    return new mobs_nether_drakeAI (_Creature);
+    return new mobs_nether_drakeAI (pCreature);
 }
 
 /*######
@@ -290,9 +290,9 @@ struct OREGON_DLL_DECL npc_daranelleAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_npc_daranelle(Creature *_Creature)
+CreatureAI* GetAI_npc_daranelle(Creature* pCreature)
 {
-    return new npc_daranelleAI (_Creature);
+    return new npc_daranelleAI (pCreature);
 }
 
 /*######
@@ -301,21 +301,21 @@ CreatureAI* GetAI_npc_daranelle(Creature *_Creature)
 
 #define GOSSIP_HON "Overseer, I am here to negotiate on behalf of the Cenarion Expedition."
 
-bool GossipHello_npc_overseer_nuaar(Player *player, Creature *_Creature)
+bool GossipHello_npc_overseer_nuaar(Player *player, Creature* pCreature)
 {
     if (player->GetQuestStatus(10682) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HON, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(10532, _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(10532, pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_overseer_nuaar(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_overseer_nuaar(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
-        player->SEND_GOSSIP_MENU(10533, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(10533, pCreature->GetGUID());
         player->AreaExploredOrEventHappens(10682);
     }
     return true;
@@ -328,27 +328,27 @@ bool GossipSelect_npc_overseer_nuaar(Player *player, Creature *_Creature, uint32
 #define GOSSIP_HSTE "Yes... yes, it's me."
 #define GOSSIP_SSTE "Yes elder. Tell me more of the book."
 
-bool GossipHello_npc_saikkal_the_elder(Player *player, Creature *_Creature)
+bool GossipHello_npc_saikkal_the_elder(Player *player, Creature* pCreature)
 {
     if (player->GetQuestStatus(10980) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HSTE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(10794, _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(10794, pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_saikkal_the_elder(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_saikkal_the_elder(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     switch (action)
     {
         case GOSSIP_ACTION_INFO_DEF+1:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SSTE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            player->SEND_GOSSIP_MENU(10795, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(10795, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
-            player->TalkedToCreature(_Creature->GetEntry(), _Creature->GetGUID());
-            player->SEND_GOSSIP_MENU(10796, _Creature->GetGUID());
+            player->TalkedToCreature(pCreature->GetEntry(), pCreature->GetGUID());
+            player->SEND_GOSSIP_MENU(10796, pCreature->GetGUID());
             break;
     }
     return true;
@@ -363,28 +363,28 @@ void AddSC_blades_edge_mountains()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="mobs_bladespire_ogre";
+    newscript->Name = "mobs_bladespire_ogre";
     newscript->GetAI = &GetAI_mobs_bladespire_ogre;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mobs_nether_drake";
+    newscript->Name = "mobs_nether_drake";
     newscript->GetAI = &GetAI_mobs_nether_drake;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_daranelle";
+    newscript->Name = "npc_daranelle";
     newscript->GetAI = &GetAI_npc_daranelle;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_overseer_nuaar";
+    newscript->Name = "npc_overseer_nuaar";
     newscript->pGossipHello = &GossipHello_npc_overseer_nuaar;
     newscript->pGossipSelect = &GossipSelect_npc_overseer_nuaar;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_saikkal_the_elder";
+    newscript->Name = "npc_saikkal_the_elder";
     newscript->pGossipHello = &GossipHello_npc_saikkal_the_elder;
     newscript->pGossipSelect = &GossipSelect_npc_saikkal_the_elder;
     newscript->RegisterSelf();

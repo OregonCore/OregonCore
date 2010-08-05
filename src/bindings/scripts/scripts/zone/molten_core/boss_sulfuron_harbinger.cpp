@@ -187,14 +187,14 @@ struct OREGON_DLL_DECL mob_flamewaker_priestAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_sulfuron(Creature *_Creature)
+CreatureAI* GetAI_boss_sulfuron(Creature* pCreature)
 {
-    return new boss_sulfuronAI (_Creature);
+    return new boss_sulfuronAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_flamewaker_priest(Creature *_Creature)
+CreatureAI* GetAI_mob_flamewaker_priest(Creature* pCreature)
 {
-    return new mob_flamewaker_priestAI (_Creature);
+    return new mob_flamewaker_priestAI (pCreature);
 }
 
 void AddSC_boss_sulfuron()
@@ -202,12 +202,12 @@ void AddSC_boss_sulfuron()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_sulfuron";
+    newscript->Name = "boss_sulfuron";
     newscript->GetAI = &GetAI_boss_sulfuron;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_flamewaker_priest";
+    newscript->Name = "mob_flamewaker_priest";
     newscript->GetAI = &GetAI_mob_flamewaker_priest;
     newscript->RegisterSelf();
 }

@@ -85,9 +85,9 @@ struct OREGON_DLL_DECL npc_narm_faulkAI : public ScriptedAI
     }
 
 };
-CreatureAI* GetAI_npc_narm_faulk(Creature *_Creature)
+CreatureAI* GetAI_npc_narm_faulk(Creature* pCreature)
 {
-    return new npc_narm_faulkAI (_Creature);
+    return new npc_narm_faulkAI (pCreature);
 }
 
 void AddSC_dun_morogh()
@@ -95,7 +95,7 @@ void AddSC_dun_morogh()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_narm_faulk";
+    newscript->Name = "npc_narm_faulk";
     newscript->GetAI = &GetAI_npc_narm_faulk;
     newscript->RegisterSelf();
 }

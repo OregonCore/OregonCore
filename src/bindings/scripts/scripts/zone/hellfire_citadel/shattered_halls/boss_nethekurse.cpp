@@ -412,19 +412,19 @@ struct OREGON_DLL_DECL mob_lesser_shadow_fissureAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_grand_warlock_nethekurse(Creature *_Creature)
+CreatureAI* GetAI_boss_grand_warlock_nethekurse(Creature* pCreature)
 {
-    return new boss_grand_warlock_nethekurseAI (_Creature);
+    return new boss_grand_warlock_nethekurseAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_fel_orc_convert(Creature *_Creature)
+CreatureAI* GetAI_mob_fel_orc_convert(Creature* pCreature)
 {
-    return new mob_fel_orc_convertAI (_Creature);
+    return new mob_fel_orc_convertAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_lesser_shadow_fissure(Creature *_Creature)
+CreatureAI* GetAI_mob_lesser_shadow_fissure(Creature* pCreature)
 {
-    return new mob_lesser_shadow_fissureAI (_Creature);
+    return new mob_lesser_shadow_fissureAI (pCreature);
 }
 
 void AddSC_boss_grand_warlock_nethekurse()
@@ -432,17 +432,17 @@ void AddSC_boss_grand_warlock_nethekurse()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_grand_warlock_nethekurse";
+    newscript->Name = "boss_grand_warlock_nethekurse";
     newscript->GetAI = &GetAI_boss_grand_warlock_nethekurse;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_fel_orc_convert";
+    newscript->Name = "mob_fel_orc_convert";
     newscript->GetAI = &GetAI_mob_fel_orc_convert;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_lesser_shadow_fissure";
+    newscript->Name = "mob_lesser_shadow_fissure";
     newscript->GetAI = &GetAI_mob_lesser_shadow_fissure;
     newscript->RegisterSelf();
 }

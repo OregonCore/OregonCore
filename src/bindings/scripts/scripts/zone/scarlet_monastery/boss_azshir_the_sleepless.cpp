@@ -82,16 +82,16 @@ struct OREGON_DLL_DECL boss_azshir_the_sleeplessAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_azshir_the_sleepless(Creature *_Creature)
+CreatureAI* GetAI_boss_azshir_the_sleepless(Creature* pCreature)
 {
-    return new boss_azshir_the_sleeplessAI (_Creature);
+    return new boss_azshir_the_sleeplessAI (pCreature);
 }
 
 void AddSC_boss_azshir_the_sleepless()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_azshir_the_sleepless";
+    newscript->Name = "boss_azshir_the_sleepless";
     newscript->GetAI = &GetAI_boss_azshir_the_sleepless;
     newscript->RegisterSelf();
 }

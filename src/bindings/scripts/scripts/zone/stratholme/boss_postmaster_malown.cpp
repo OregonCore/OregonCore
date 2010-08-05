@@ -128,16 +128,16 @@ struct OREGON_DLL_DECL boss_postmaster_malownAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_postmaster_malown(Creature *_Creature)
+CreatureAI* GetAI_boss_postmaster_malown(Creature* pCreature)
 {
-    return new boss_postmaster_malownAI (_Creature);
+    return new boss_postmaster_malownAI (pCreature);
 }
 
 void AddSC_boss_postmaster_malown()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_postmaster_malown";
+    newscript->Name = "boss_postmaster_malown";
     newscript->GetAI = &GetAI_boss_postmaster_malown;
     newscript->RegisterSelf();
 }

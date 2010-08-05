@@ -167,16 +167,16 @@ struct OREGON_DLL_DECL boss_kruulAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_kruul(Creature *_Creature)
+CreatureAI* GetAI_boss_kruul(Creature* pCreature)
 {
-    return new boss_kruulAI (_Creature);
+    return new boss_kruulAI (pCreature);
 }
 
 void AddSC_boss_kruul()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_kruul";
+    newscript->Name = "boss_kruul";
     newscript->GetAI = &GetAI_boss_kruul;
     newscript->RegisterSelf();
 }

@@ -121,16 +121,16 @@ struct OREGON_DLL_DECL boss_bloodmage_thalnosAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_bloodmage_thalnos(Creature *_Creature)
+CreatureAI* GetAI_boss_bloodmage_thalnos(Creature* pCreature)
 {
-    return new boss_bloodmage_thalnosAI (_Creature);
+    return new boss_bloodmage_thalnosAI (pCreature);
 }
 
 void AddSC_boss_bloodmage_thalnos()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_bloodmage_thalnos";
+    newscript->Name = "boss_bloodmage_thalnos";
     newscript->GetAI = &GetAI_boss_bloodmage_thalnos;
     newscript->RegisterSelf();
 }

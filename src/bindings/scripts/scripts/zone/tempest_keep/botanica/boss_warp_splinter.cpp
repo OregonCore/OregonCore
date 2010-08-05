@@ -199,14 +199,14 @@ struct OREGON_DLL_DECL boss_warp_splinterAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_warp_splinter(Creature *_Creature)
+CreatureAI* GetAI_boss_warp_splinter(Creature* pCreature)
 {
-    return new boss_warp_splinterAI (_Creature);
+    return new boss_warp_splinterAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_treant(Creature *_Creature)
+CreatureAI* GetAI_mob_treant(Creature* pCreature)
 {
-    return new mob_treantAI (_Creature);
+    return new mob_treantAI (pCreature);
 }
 
 void AddSC_boss_warp_splinter()
@@ -214,12 +214,12 @@ void AddSC_boss_warp_splinter()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_warp_splinter";
+    newscript->Name = "boss_warp_splinter";
     newscript->GetAI = &GetAI_boss_warp_splinter;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_warp_splinter_treant";
+    newscript->Name = "mob_warp_splinter_treant";
     newscript->GetAI = &GetAI_mob_treant;
     newscript->RegisterSelf();
 }

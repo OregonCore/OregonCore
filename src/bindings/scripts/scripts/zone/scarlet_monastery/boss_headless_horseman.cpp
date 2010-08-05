@@ -857,24 +857,24 @@ bool GOReward_go_loosely_turned_soil(Player *plr, GameObject* soil, Quest const*
     }
     return true;
 }
-CreatureAI* GetAI_mob_head(Creature *_Creature)
+CreatureAI* GetAI_mob_head(Creature* pCreature)
 {
-    return new mob_headAI (_Creature);
+    return new mob_headAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_headless_horseman(Creature *_Creature)
+CreatureAI* GetAI_boss_headless_horseman(Creature* pCreature)
 {
-    return new boss_headless_horsemanAI (_Creature);
+    return new boss_headless_horsemanAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_pulsing_pumpkin(Creature *_Creature)
+CreatureAI* GetAI_mob_pulsing_pumpkin(Creature* pCreature)
 {
-    return new mob_pulsing_pumpkinAI (_Creature);
+    return new mob_pulsing_pumpkinAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_wisp_invis(Creature *_Creature)
+CreatureAI* GetAI_mob_wisp_invis(Creature* pCreature)
 {
-    return new mob_wisp_invisAI (_Creature);
+    return new mob_wisp_invisAI (pCreature);
 }
 
 void AddSC_boss_headless_horseman()
@@ -882,22 +882,22 @@ void AddSC_boss_headless_horseman()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_headless_horseman";
+    newscript->Name = "boss_headless_horseman";
     newscript->GetAI = &GetAI_boss_headless_horseman;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_head";
+    newscript->Name = "mob_head";
     newscript->GetAI = &GetAI_mob_head;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_pulsing_pumpkin";
+    newscript->Name = "mob_pulsing_pumpkin";
     newscript->GetAI = &GetAI_mob_pulsing_pumpkin;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_wisp_invis";
+    newscript->Name = "mob_wisp_invis";
     newscript->GetAI = &GetAI_mob_wisp_invis;
     newscript->RegisterSelf();
 

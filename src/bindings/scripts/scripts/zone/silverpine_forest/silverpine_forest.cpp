@@ -54,34 +54,34 @@ struct OREGON_DLL_DECL npc_astor_hadrenAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_npc_astor_hadren(Creature *_creature)
+CreatureAI* GetAI_npc_astor_hadren(Creature* pCreature)
 {
-    return new npc_astor_hadrenAI(_creature);
+    return new npc_astor_hadrenAI(pCreature);
 }
 
-bool GossipHello_npc_astor_hadren(Player *player, Creature *_Creature)
+bool GossipHello_npc_astor_hadren(Player *player, Creature* pCreature)
 {
     if (player->GetQuestStatus(1886) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HAH, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
-    player->SEND_GOSSIP_MENU(623, _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(623, pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_astor_hadren(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_astor_hadren(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     switch (action)
     {
         case GOSSIP_ACTION_INFO_DEF + 1:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SAH, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-            player->SEND_GOSSIP_MENU(624, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(624, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF + 2:
             player->CLOSE_GOSSIP_MENU();
-            _Creature->setFaction(21);
+            pCreature->setFaction(21);
             if (player)
-                ((npc_astor_hadrenAI*)_Creature->AI())->AttackStart(player);
+                ((npc_astor_hadrenAI*)pCreature->AI())->AttackStart(player);
             break;
     }
     return true;
@@ -170,9 +170,9 @@ bool QuestAccept_npc_deathstalker_erland(Player* pPlayer, Creature* pCreature, Q
     return true;
 }
 
-CreatureAI* GetAI_npc_deathstalker_erlandAI(Creature *_Creature)
+CreatureAI* GetAI_npc_deathstalker_erlandAI(Creature* pCreature)
 {
-    npc_deathstalker_erlandAI* deathstalker_erlandAI = new npc_deathstalker_erlandAI(_Creature);
+    npc_deathstalker_erlandAI* deathstalker_erlandAI = new npc_deathstalker_erlandAI(pCreature);
 
     deathstalker_erlandAI->AddWaypoint(0, 1406.32, 1083.10, 52.55);
     deathstalker_erlandAI->AddWaypoint(1, 1400.49, 1080.42, 52.50); //first say
@@ -397,14 +397,14 @@ void AddSC_silverpine_forest()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_astor_hadren";
+    newscript->Name = "npc_astor_hadren";
     newscript->pGossipHello =  &GossipHello_npc_astor_hadren;
     newscript->pGossipSelect = &GossipSelect_npc_astor_hadren;
     newscript->GetAI = &GetAI_npc_astor_hadren;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_deathstalker_erland";
+    newscript->Name = "npc_deathstalker_erland";
     newscript->GetAI = &GetAI_npc_deathstalker_erlandAI;
     newscript->pQuestAccept = &QuestAccept_npc_deathstalker_erland;
     newscript->RegisterSelf();

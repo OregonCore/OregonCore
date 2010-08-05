@@ -253,16 +253,16 @@ bool GOHello_go_najentus_spine(Player *player, GameObject* _GO)
     return true;
 }
 
-CreatureAI* GetAI_boss_najentus(Creature *_Creature)
+CreatureAI* GetAI_boss_najentus(Creature* pCreature)
 {
-    return new boss_najentusAI (_Creature);
+    return new boss_najentusAI (pCreature);
 }
 
 void AddSC_boss_najentus()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_najentus";
+    newscript->Name = "boss_najentus";
     newscript->GetAI = &GetAI_boss_najentus;
     newscript->RegisterSelf();
 

@@ -33,23 +33,23 @@ EndContentData */
 
 #define GOSSIP_ITEM_BEACON  "Please make me a Cenarion Beacon"
 
-bool GossipHello_npcs_riverbreeze_and_silversky(Player *player, Creature *_Creature)
+bool GossipHello_npcs_riverbreeze_and_silversky(Player *player, Creature* pCreature)
 {
-    uint32 eCreature = _Creature->GetEntry();
+    uint32 eCreature = pCreature->GetEntry();
 
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (eCreature == 9528)
     {
         if (player->GetQuestRewardStatus(4101))
         {
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_BEACON, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-            player->SEND_GOSSIP_MENU(2848, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(2848, pCreature->GetGUID());
         } else if (player->GetTeam() == HORDE)
-        player->SEND_GOSSIP_MENU(2845, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(2845, pCreature->GetGUID());
         else
-            player->SEND_GOSSIP_MENU(2844, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(2844, pCreature->GetGUID());
     }
 
     if (eCreature == 9529)
@@ -57,22 +57,22 @@ bool GossipHello_npcs_riverbreeze_and_silversky(Player *player, Creature *_Creat
         if (player->GetQuestRewardStatus(4102))
         {
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_BEACON, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-            player->SEND_GOSSIP_MENU(2849, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(2849, pCreature->GetGUID());
         } else if (player->GetTeam() == ALLIANCE)
-        player->SEND_GOSSIP_MENU(2843, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(2843, pCreature->GetGUID());
         else
-            player->SEND_GOSSIP_MENU(2842, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(2842, pCreature->GetGUID());
     }
 
     return true;
 }
 
-bool GossipSelect_npcs_riverbreeze_and_silversky(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npcs_riverbreeze_and_silversky(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->CastSpell(player, 15120, false);
+        pCreature->CastSpell(player, 15120, false);
     }
     return true;
 }
@@ -82,7 +82,7 @@ void AddSC_felwood()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npcs_riverbreeze_and_silversky";
+    newscript->Name = "npcs_riverbreeze_and_silversky";
     newscript->pGossipHello = &GossipHello_npcs_riverbreeze_and_silversky;
     newscript->pGossipSelect = &GossipSelect_npcs_riverbreeze_and_silversky;
     newscript->RegisterSelf();

@@ -612,14 +612,14 @@ struct OREGON_DLL_DECL boss_veklorAI : public boss_twinemperorsAI
     }
 };
 
-CreatureAI* GetAI_boss_veknilash(Creature *_Creature)
+CreatureAI* GetAI_boss_veknilash(Creature* pCreature)
 {
-    return new boss_veknilashAI (_Creature);
+    return new boss_veknilashAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_veklor(Creature *_Creature)
+CreatureAI* GetAI_boss_veklor(Creature* pCreature)
 {
-    return new boss_veklorAI (_Creature);
+    return new boss_veklorAI (pCreature);
 }
 
 void AddSC_boss_twinemperors()
@@ -627,12 +627,12 @@ void AddSC_boss_twinemperors()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_veknilash";
+    newscript->Name = "boss_veknilash";
     newscript->GetAI = &GetAI_boss_veknilash;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_veklor";
+    newscript->Name = "boss_veklor";
     newscript->GetAI = &GetAI_boss_veklor;
     newscript->RegisterSelf();
 }

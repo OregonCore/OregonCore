@@ -226,14 +226,14 @@ struct OREGON_DLL_DECL boss_maexxnaAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_webwrap(Creature* _Creature)
+CreatureAI* GetAI_mob_webwrap(Creature* pCreature)
 {
-    return new mob_webwrapAI (_Creature);
+    return new mob_webwrapAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_maexxna(Creature *_Creature)
+CreatureAI* GetAI_boss_maexxna(Creature* pCreature)
 {
-    return new boss_maexxnaAI (_Creature);
+    return new boss_maexxnaAI (pCreature);
 }
 
 void AddSC_boss_maexxna()
@@ -241,12 +241,12 @@ void AddSC_boss_maexxna()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_maexxna";
+    newscript->Name = "boss_maexxna";
     newscript->GetAI = &GetAI_boss_maexxna;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_webwrap";
+    newscript->Name = "mob_webwrap";
     newscript->GetAI = &GetAI_mob_webwrap;
     newscript->RegisterSelf();
 }

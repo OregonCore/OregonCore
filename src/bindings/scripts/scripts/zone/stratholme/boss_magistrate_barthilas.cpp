@@ -117,16 +117,16 @@ struct OREGON_DLL_DECL boss_magistrate_barthilasAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_magistrate_barthilas(Creature *_Creature)
+CreatureAI* GetAI_boss_magistrate_barthilas(Creature* pCreature)
 {
-    return new boss_magistrate_barthilasAI (_Creature);
+    return new boss_magistrate_barthilasAI (pCreature);
 }
 
 void AddSC_boss_magistrate_barthilas()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_magistrate_barthilas";
+    newscript->Name = "boss_magistrate_barthilas";
     newscript->GetAI = &GetAI_boss_magistrate_barthilas;
     newscript->RegisterSelf();
 }

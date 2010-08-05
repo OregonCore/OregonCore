@@ -69,16 +69,16 @@ struct OREGON_DLL_DECL boss_magmusAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_magmus(Creature *_Creature)
+CreatureAI* GetAI_boss_magmus(Creature* pCreature)
 {
-    return new boss_magmusAI (_Creature);
+    return new boss_magmusAI (pCreature);
 }
 
 void AddSC_boss_magmus()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_magmus";
+    newscript->Name = "boss_magmus";
     newscript->GetAI = &GetAI_boss_magmus;
     newscript->RegisterSelf();
 }

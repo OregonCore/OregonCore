@@ -201,16 +201,16 @@ struct OREGON_DLL_DECL boss_loathebAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_loatheb(Creature *_Creature)
+CreatureAI* GetAI_boss_loatheb(Creature* pCreature)
 {
-    return new boss_loathebAI (_Creature);
+    return new boss_loathebAI (pCreature);
 }
 
 void AddSC_boss_loatheb()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_loatheb";
+    newscript->Name = "boss_loatheb";
     newscript->GetAI = &GetAI_boss_loatheb;
     newscript->RegisterSelf();
 }

@@ -241,19 +241,19 @@ struct OREGON_DLL_DECL mob_shade_of_jindoAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_jindo(Creature *_Creature)
+CreatureAI* GetAI_boss_jindo(Creature* pCreature)
 {
-    return new boss_jindoAI (_Creature);
+    return new boss_jindoAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_healing_ward(Creature *_Creature)
+CreatureAI* GetAI_mob_healing_ward(Creature* pCreature)
 {
-    return new mob_healing_wardAI (_Creature);
+    return new mob_healing_wardAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_shade_of_jindo(Creature *_Creature)
+CreatureAI* GetAI_mob_shade_of_jindo(Creature* pCreature)
 {
-    return new mob_shade_of_jindoAI (_Creature);
+    return new mob_shade_of_jindoAI (pCreature);
 }
 
 void AddSC_boss_jindo()
@@ -261,17 +261,17 @@ void AddSC_boss_jindo()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_jindo";
+    newscript->Name = "boss_jindo";
     newscript->GetAI = &GetAI_boss_jindo;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_healing_ward";
+    newscript->Name = "mob_healing_ward";
     newscript->GetAI = &GetAI_mob_healing_ward;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_shade_of_jindo";
+    newscript->Name = "mob_shade_of_jindo";
     newscript->GetAI = &GetAI_mob_shade_of_jindo;
     newscript->RegisterSelf();
 }

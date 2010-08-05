@@ -122,7 +122,7 @@ void AddSC_instance_blackfathom_deeps()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="instance_blackfathom_deeps";
+    newscript->Name = "instance_blackfathom_deeps";
     newscript->GetInstanceData = &GetInstance_instance_blackfathom_deeps;
     newscript->RegisterSelf();
 }

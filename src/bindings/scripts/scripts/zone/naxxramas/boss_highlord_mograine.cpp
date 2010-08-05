@@ -163,16 +163,16 @@ struct OREGON_DLL_DECL boss_highlord_mograineAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_highlord_mograine(Creature *_Creature)
+CreatureAI* GetAI_boss_highlord_mograine(Creature* pCreature)
 {
-    return new boss_highlord_mograineAI (_Creature);
+    return new boss_highlord_mograineAI (pCreature);
 }
 
 void AddSC_boss_highlord_mograine()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_highlord_mograine";
+    newscript->Name = "boss_highlord_mograine";
     newscript->GetAI = &GetAI_boss_highlord_mograine;
     newscript->RegisterSelf();
 }

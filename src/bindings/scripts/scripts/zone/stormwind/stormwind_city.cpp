@@ -37,25 +37,25 @@ EndContentData */
 
 #define GOSSIP_ITEM_MALIN "Can you send me to Theramore? I have an urgent message for Lady Jaina from Highlord Bolvar."
 
-bool GossipHello_npc_archmage_malin(Player *player, Creature *_Creature)
+bool GossipHello_npc_archmage_malin(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(11223) == QUEST_STATUS_COMPLETE && !player->GetQuestRewardStatus(11223))
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_MALIN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_archmage_malin(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_archmage_malin(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action = GOSSIP_ACTION_INFO_DEF)
     {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->CastSpell(player, 42711, true);
+        pCreature->CastSpell(player, 42711, true);
     }
 
     return true;
@@ -104,20 +104,20 @@ struct OREGON_DLL_DECL npc_bartlebyAI : public ScriptedAI
     void EnterCombat(Unit *who) {}
 };
 
-bool QuestAccept_npc_bartleby(Player *player, Creature *_Creature, Quest const *_Quest)
+bool QuestAccept_npc_bartleby(Player *player, Creature* pCreature, Quest const *_Quest)
 {
     if (_Quest->GetQuestId() == 1640)
     {
-        _Creature->setFaction(168);
-        ((npc_bartlebyAI*)_Creature->AI())->PlayerGUID = player->GetGUID();
-        ((npc_bartlebyAI*)_Creature->AI())->AttackStart(player);
+        pCreature->setFaction(168);
+        ((npc_bartlebyAI*)pCreature->AI())->PlayerGUID = player->GetGUID();
+        ((npc_bartlebyAI*)pCreature->AI())->AttackStart(player);
     }
     return true;
 }
 
-CreatureAI* GetAI_npc_bartleby(Creature *_creature)
+CreatureAI* GetAI_npc_bartleby(Creature* pCreature)
 {
-    return new npc_bartlebyAI(_creature);
+    return new npc_bartlebyAI(pCreature);
 }
 
 /*######
@@ -154,37 +154,37 @@ struct OREGON_DLL_DECL npc_dashel_stonefistAI : public ScriptedAI
     void EnterCombat(Unit *who) {}
 };
 
-bool QuestAccept_npc_dashel_stonefist(Player *player, Creature *_Creature, Quest const *_Quest)
+bool QuestAccept_npc_dashel_stonefist(Player *player, Creature* pCreature, Quest const *_Quest)
 {
     if (_Quest->GetQuestId() == 1447)
     {
-        _Creature->setFaction(168);
-        ((npc_dashel_stonefistAI*)_Creature->AI())->AttackStart(player);
+        pCreature->setFaction(168);
+        ((npc_dashel_stonefistAI*)pCreature->AI())->AttackStart(player);
     }
     return true;
 }
 
-CreatureAI* GetAI_npc_dashel_stonefist(Creature *_creature)
+CreatureAI* GetAI_npc_dashel_stonefist(Creature* pCreature)
 {
-    return new npc_dashel_stonefistAI(_creature);
+    return new npc_dashel_stonefistAI(pCreature);
 }
 
 /*######
 ## npc_general_marcus_jonathan
 ######*/
 
-bool ReceiveEmote_npc_general_marcus_jonathan(Player *player, Creature *_Creature, uint32 emote)
+bool ReceiveEmote_npc_general_marcus_jonathan(Player *player, Creature* pCreature, uint32 emote)
 {
     if (player->GetTeam() == ALLIANCE)
     {
         if (emote == TEXTEMOTE_SALUTE)
         {
-            _Creature->SetOrientation(_Creature->GetAngle(player));
-            _Creature->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
+            pCreature->SetOrientation(pCreature->GetAngle(player));
+            pCreature->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
         }
         if (emote == TEXTEMOTE_WAVE)
         {
-            _Creature->MonsterSay("Greetings citizen",LANG_COMMON,0);
+            pCreature->MonsterSay("Greetings citizen",LANG_COMMON,0);
         }
     }
     return true;
@@ -199,34 +199,34 @@ bool ReceiveEmote_npc_general_marcus_jonathan(Player *player, Creature *_Creatur
 #define GOSSIP_ITEM_KAT_3 "Begging your pardon, Lady Prestor. That was not my intent."
 #define GOSSIP_ITEM_KAT_4 "Thank you for your time, Lady Prestor."
 
-bool GossipHello_npc_lady_katrana_prestor(Player *player, Creature *_Creature)
+bool GossipHello_npc_lady_katrana_prestor(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(4185) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_KAT_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
-    player->SEND_GOSSIP_MENU(2693, _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(2693, pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_lady_katrana_prestor(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_lady_katrana_prestor(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     switch (action)
     {
         case GOSSIP_ACTION_INFO_DEF:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_KAT_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-            player->SEND_GOSSIP_MENU(2694, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(2694, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+1:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_KAT_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-            player->SEND_GOSSIP_MENU(2695, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(2695, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_KAT_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-            player->SEND_GOSSIP_MENU(2696, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(2696, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+3:
             player->CLOSE_GOSSIP_MENU();
@@ -241,7 +241,7 @@ void AddSC_stormwind_city()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_archmage_malin";
+    newscript->Name = "npc_archmage_malin";
     newscript->pGossipHello = &GossipHello_npc_archmage_malin;
     newscript->pGossipSelect = &GossipSelect_npc_archmage_malin;
     newscript->RegisterSelf();
@@ -264,7 +264,7 @@ void AddSC_stormwind_city()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_lady_katrana_prestor";
+    newscript->Name = "npc_lady_katrana_prestor";
     newscript->pGossipHello = &GossipHello_npc_lady_katrana_prestor;
     newscript->pGossipSelect = &GossipSelect_npc_lady_katrana_prestor;
     newscript->RegisterSelf();

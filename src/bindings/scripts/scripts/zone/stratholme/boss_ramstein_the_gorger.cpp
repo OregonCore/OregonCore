@@ -83,16 +83,16 @@ struct OREGON_DLL_DECL boss_ramstein_the_gorgerAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_ramstein_the_gorger(Creature *_Creature)
+CreatureAI* GetAI_boss_ramstein_the_gorger(Creature* pCreature)
 {
-    return new boss_ramstein_the_gorgerAI (_Creature);
+    return new boss_ramstein_the_gorgerAI (pCreature);
 }
 
 void AddSC_boss_ramstein_the_gorger()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_ramstein_the_gorger";
+    newscript->Name = "boss_ramstein_the_gorger";
     newscript->GetAI = &GetAI_boss_ramstein_the_gorger;
     newscript->RegisterSelf();
 }

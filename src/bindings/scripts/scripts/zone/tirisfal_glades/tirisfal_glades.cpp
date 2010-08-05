@@ -64,9 +64,9 @@ struct OREGON_DLL_DECL npc_calvin_montagueAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_npc_calvin_montague(Creature *_Creature)
+CreatureAI* GetAI_npc_calvin_montague(Creature* pCreature)
 {
-    return new npc_calvin_montagueAI (_Creature);
+    return new npc_calvin_montagueAI (pCreature);
 }
 
 bool QuestAccept_npc_calvin_montague(Player* player, Creature* creature, Quest const* quest)
@@ -142,7 +142,7 @@ void AddSC_tirisfal_glades()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_calvin_montague";
+    newscript->Name = "npc_calvin_montague";
     newscript->GetAI = &GetAI_npc_calvin_montague;
     newscript->pQuestAccept = &QuestAccept_npc_calvin_montague;
     newscript->RegisterSelf();

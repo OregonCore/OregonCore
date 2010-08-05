@@ -213,58 +213,58 @@ void AddSC_go_scripts()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="go_northern_crystal_pylon";
+    newscript->Name = "go_northern_crystal_pylon";
     newscript->pGOHello =           &GOHello_go_northern_crystal_pylon;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_eastern_crystal_pylon";
+    newscript->Name = "go_eastern_crystal_pylon";
     newscript->pGOHello =           &GOHello_go_eastern_crystal_pylon;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_western_crystal_pylon";
+    newscript->Name = "go_western_crystal_pylon";
     newscript->pGOHello =           &GOHello_go_western_crystal_pylon;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_barov_journal";
+    newscript->Name = "go_barov_journal";
     newscript->pGOHello =           &GOHello_go_barov_journal;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_field_repair_bot_74A";
+    newscript->Name = "go_field_repair_bot_74A";
     newscript->pGOHello =           &GOHello_go_field_repair_bot_74A;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_orb_of_command";
+    newscript->Name = "go_orb_of_command";
     newscript->pGOHello =           &GOHello_go_orb_of_command;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_tablet_of_madness";
+    newscript->Name = "go_tablet_of_madness";
     newscript->pGOHello =           &GOHello_go_tablet_of_madness;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_tablet_of_the_seven";
+    newscript->Name = "go_tablet_of_the_seven";
     newscript->pGOHello =           &GOHello_go_tablet_of_the_seven;
     newscript->RegisterSelf();
     /*
     //Disabled to prevent "CRASH ALERT!"
     newscript = new Script;
-    newscript->Name="go_teleporter";
+    newscript->Name = "go_teleporter";
     newscript->pGOHello =           &GOHello_go_teleporter;
     newscript->RegisterSelf();
     */
     newscript = new Script;
-    newscript->Name="go_jump_a_tron";
+    newscript->Name = "go_jump_a_tron";
     newscript->pGOHello =           &GOHello_go_jump_a_tron;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_ethereum_prison";
+    newscript->Name = "go_ethereum_prison";
     newscript->pGOHello =           &GOHello_go_ethereum_prison;
     newscript->RegisterSelf();
 

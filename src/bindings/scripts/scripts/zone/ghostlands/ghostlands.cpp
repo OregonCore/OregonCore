@@ -37,17 +37,17 @@ EndContentData */
 
 #define GOSSIP_H_BKD "Take Blood Knight Insignia"
 
-bool GossipHello_npc_blood_knight_dawnstar(Player *player, Creature *_Creature)
+bool GossipHello_npc_blood_knight_dawnstar(Player *player, Creature* pCreature)
 {
     if (player->GetQuestStatus(9692) == QUEST_STATUS_INCOMPLETE && !player->HasItemCount(24226,1,true))
         player->ADD_GOSSIP_ITEM(0, GOSSIP_H_BKD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_blood_knight_dawnstar(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_blood_knight_dawnstar(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
@@ -68,24 +68,24 @@ bool GossipSelect_npc_blood_knight_dawnstar(Player *player, Creature *_Creature,
 
 #define GOSSIP_HBN "You gave the crew disguises?"
 
-bool GossipHello_npc_budd_nedreck(Player *player, Creature *_Creature)
+bool GossipHello_npc_budd_nedreck(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(11166) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HBN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_budd_nedreck(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_budd_nedreck(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF)
     {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->CastSpell(player, 42540, false);
+        pCreature->CastSpell(player, 42540, false);
     }
     return true;
 }
@@ -94,25 +94,25 @@ bool GossipSelect_npc_budd_nedreck(Player *player, Creature *_Creature, uint32 s
 ## npc_rathis_tomber
 ######*/
 
-bool GossipHello_npc_rathis_tomber(Player *player, Creature *_Creature)
+bool GossipHello_npc_rathis_tomber(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (_Creature->isVendor() && player->GetQuestRewardStatus(9152))
+    if (pCreature->isVendor() && player->GetQuestRewardStatus(9152))
     {
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
-        player->SEND_GOSSIP_MENU(8432, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(8432, pCreature->GetGUID());
     } else
-    player->SEND_GOSSIP_MENU(8431,_Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(8431,pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_rathis_tomber(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_rathis_tomber(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_TRADE)
-        player->SEND_VENDORLIST(_Creature->GetGUID());
+        player->SEND_VENDORLIST(pCreature->GetGUID());
     return true;
 }
 
@@ -282,19 +282,19 @@ void AddSC_ghostlands()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_blood_knight_dawnstar";
+    newscript->Name = "npc_blood_knight_dawnstar";
     newscript->pGossipHello = &GossipHello_npc_blood_knight_dawnstar;
     newscript->pGossipSelect = &GossipSelect_npc_blood_knight_dawnstar;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_budd_nedreck";
+    newscript->Name = "npc_budd_nedreck";
     newscript->pGossipHello = &GossipHello_npc_budd_nedreck;
     newscript->pGossipSelect = &GossipSelect_npc_budd_nedreck;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_rathis_tomber";
+    newscript->Name = "npc_rathis_tomber";
     newscript->pGossipHello = &GossipHello_npc_rathis_tomber;
     newscript->pGossipSelect = &GossipSelect_npc_rathis_tomber;
     newscript->RegisterSelf();

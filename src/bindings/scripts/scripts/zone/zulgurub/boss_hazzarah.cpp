@@ -89,16 +89,16 @@ struct OREGON_DLL_DECL boss_hazzarahAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_hazzarah(Creature *_Creature)
+CreatureAI* GetAI_boss_hazzarah(Creature* pCreature)
 {
-    return new boss_hazzarahAI (_Creature);
+    return new boss_hazzarahAI (pCreature);
 }
 
 void AddSC_boss_hazzarah()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_hazzarah";
+    newscript->Name = "boss_hazzarah";
     newscript->GetAI = &GetAI_boss_hazzarah;
     newscript->RegisterSelf();
 }

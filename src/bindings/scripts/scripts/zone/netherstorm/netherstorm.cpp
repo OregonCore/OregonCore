@@ -277,9 +277,9 @@ struct OREGON_DLL_DECL npc_manaforge_control_consoleAI : public ScriptedAI
         }
     }
 };
-CreatureAI* GetAI_npc_manaforge_control_console(Creature *_Creature)
+CreatureAI* GetAI_npc_manaforge_control_console(Creature* pCreature)
 {
-    return new npc_manaforge_control_consoleAI (_Creature);
+    return new npc_manaforge_control_consoleAI (pCreature);
 }
 
 /*######
@@ -619,9 +619,9 @@ struct OREGON_DLL_DECL npc_commander_dawnforgeAI : public ScriptedAI
      }
 };
 
-CreatureAI* GetAI_npc_commander_dawnforge(Creature* _Creature)
+CreatureAI* GetAI_npc_commander_dawnforge(Creature* pCreature)
 {
-    return new npc_commander_dawnforgeAI(_Creature);
+    return new npc_commander_dawnforgeAI(pCreature);
 }
 
 Creature* SearchDawnforge(Player *source, uint32 entry, float range)
@@ -671,24 +671,24 @@ bool AreaTrigger_at_commander_dawnforge(Player *player, AreaTriggerEntry *at)
 #define QUEST_DIMENSIUS 10439
 #define QUEST_ON_NETHERY_WINGS 10438
 
-bool GossipHello_npc_professor_dabiri(Player *player, Creature *_Creature)
+bool GossipHello_npc_professor_dabiri(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(QUEST_ON_NETHERY_WINGS) == QUEST_STATUS_INCOMPLETE && !player->HasItemCount(29778, 1))
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_professor_dabiri(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_professor_dabiri(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
-        _Creature->CastSpell(player, SPELL_PHASE_DISTRUPTOR, false);
+        pCreature->CastSpell(player, SPELL_PHASE_DISTRUPTOR, false);
         player->CLOSE_GOSSIP_MENU();
     }
 
@@ -817,9 +817,9 @@ struct OREGON_DLL_DECL mob_phase_hunterAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_phase_hunter(Creature *_Creature)
+CreatureAI* GetAI_mob_phase_hunter(Creature* pCreature)
 {
-    return new mob_phase_hunterAI (_Creature);
+    return new mob_phase_hunterAI (pCreature);
 }
 
 /*######
@@ -900,9 +900,9 @@ bool QuestAccept_npc_bessy(Player* pPlayer, Creature* pCreature, Quest const* qu
     return true;
 }
 
-CreatureAI* GetAI_npc_bessy(Creature *_Creature)
+CreatureAI* GetAI_npc_bessy(Creature* pCreature)
 {
-    npc_bessyAI* bessyAI = new npc_bessyAI(_Creature);
+    npc_bessyAI* bessyAI = new npc_bessyAI(pCreature);
 
     bessyAI->AddWaypoint(0, 2488.77, 2184.89, 104.64);
     bessyAI->AddWaypoint(1, 2478.72, 2184.77, 98.58);
@@ -931,12 +931,12 @@ void AddSC_netherstorm()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="go_manaforge_control_console";
+    newscript->Name = "go_manaforge_control_console";
     newscript->pGOHello = &GOHello_go_manaforge_control_console;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_manaforge_control_console";
+    newscript->Name = "npc_manaforge_control_console";
     newscript->GetAI = &GetAI_npc_manaforge_control_console;
     newscript->RegisterSelf();
 

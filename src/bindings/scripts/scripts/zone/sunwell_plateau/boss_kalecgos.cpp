@@ -659,41 +659,41 @@ bool GOkalecgos_teleporter(Player *player, GameObject* _GO)
     return true;
 }
 
-CreatureAI* GetAI_boss_kalecgos(Creature *_Creature)
+CreatureAI* GetAI_boss_kalecgos(Creature* pCreature)
 {
-    return new boss_kalecgosAI (_Creature);
+    return new boss_kalecgosAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_Sathrovarr(Creature *_Creature)
+CreatureAI* GetAI_boss_Sathrovarr(Creature* pCreature)
 {
-    return new boss_sathrovarrAI (_Creature);
+    return new boss_sathrovarrAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_kalec(Creature *_Creature)
+CreatureAI* GetAI_boss_kalec(Creature* pCreature)
 {
-    return new boss_kalecAI (_Creature);
+    return new boss_kalecAI (pCreature);
 }
 
 void AddSC_boss_kalecgos()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_kalecgos";
+    newscript->Name = "boss_kalecgos";
     newscript->GetAI = &GetAI_boss_kalecgos;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_sathrovarr";
+    newscript->Name = "boss_sathrovarr";
     newscript->GetAI = &GetAI_boss_Sathrovarr;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_kalec";
+    newscript->Name = "boss_kalec";
     newscript->GetAI = &GetAI_boss_kalec;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="kalecgos_teleporter";
+    newscript->Name = "kalecgos_teleporter";
     newscript->pGOHello = &GOkalecgos_teleporter;
     newscript->RegisterSelf();
 }

@@ -306,14 +306,14 @@ struct OREGON_DLL_DECL mob_ohganAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_mandokir(Creature *_Creature)
+CreatureAI* GetAI_boss_mandokir(Creature* pCreature)
 {
-    return new boss_mandokirAI (_Creature);
+    return new boss_mandokirAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_ohgan(Creature *_Creature)
+CreatureAI* GetAI_mob_ohgan(Creature* pCreature)
 {
-    return new mob_ohganAI (_Creature);
+    return new mob_ohganAI (pCreature);
 }
 
 void AddSC_boss_mandokir()
@@ -321,12 +321,12 @@ void AddSC_boss_mandokir()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_mandokir";
+    newscript->Name = "boss_mandokir";
     newscript->GetAI = &GetAI_boss_mandokir;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_ohgan";
+    newscript->Name = "mob_ohgan";
     newscript->GetAI = &GetAI_mob_ohgan;
     newscript->RegisterSelf();
 }

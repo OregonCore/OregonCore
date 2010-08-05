@@ -80,16 +80,16 @@ struct OREGON_DLL_DECL boss_halyconAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_halycon(Creature *_Creature)
+CreatureAI* GetAI_boss_halycon(Creature* pCreature)
 {
-    return new boss_halyconAI (_Creature);
+    return new boss_halyconAI (pCreature);
 }
 
 void AddSC_boss_halycon()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_halycon";
+    newscript->Name = "boss_halycon";
     newscript->GetAI = &GetAI_boss_halycon;
     newscript->RegisterSelf();
 }

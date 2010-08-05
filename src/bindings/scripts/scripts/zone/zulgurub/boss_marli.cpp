@@ -237,14 +237,14 @@ struct OREGON_DLL_DECL mob_spawn_of_marliAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_marli(Creature *_Creature)
+CreatureAI* GetAI_boss_marli(Creature* pCreature)
 {
-    return new boss_marliAI (_Creature);
+    return new boss_marliAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_spawn_of_marli(Creature *_Creature)
+CreatureAI* GetAI_mob_spawn_of_marli(Creature* pCreature)
 {
-    return new mob_spawn_of_marliAI (_Creature);
+    return new mob_spawn_of_marliAI (pCreature);
 }
 
 void AddSC_boss_marli()
@@ -252,12 +252,12 @@ void AddSC_boss_marli()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_marli";
+    newscript->Name = "boss_marli";
     newscript->GetAI = &GetAI_boss_marli;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_spawn_of_marli";
+    newscript->Name = "mob_spawn_of_marli";
     newscript->GetAI = &GetAI_mob_spawn_of_marli;
     newscript->RegisterSelf();
 }

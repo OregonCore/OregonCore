@@ -423,9 +423,9 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_alar(Creature *_Creature)
+CreatureAI* GetAI_boss_alar(Creature* pCreature)
 {
-    return new boss_alarAI(_Creature);
+    return new boss_alarAI(pCreature);
 }
 
 struct OREGON_DLL_DECL mob_ember_of_alarAI : public ScriptedAI
@@ -484,9 +484,9 @@ struct OREGON_DLL_DECL mob_ember_of_alarAI : public ScriptedAI
 
 };
 
-CreatureAI* GetAI_mob_ember_of_alar(Creature *_Creature)
+CreatureAI* GetAI_mob_ember_of_alar(Creature* pCreature)
 {
-    return new mob_ember_of_alarAI(_Creature);
+    return new mob_ember_of_alarAI(pCreature);
 }
 
 struct OREGON_DLL_DECL mob_flame_patch_alarAI : public ScriptedAI
@@ -499,9 +499,9 @@ struct OREGON_DLL_DECL mob_flame_patch_alarAI : public ScriptedAI
     void UpdateAI(const uint32 diff) {}
 };
 
-CreatureAI* GetAI_mob_flame_patch_alar(Creature *_Creature)
+CreatureAI* GetAI_mob_flame_patch_alar(Creature* pCreature)
 {
-    return new mob_flame_patch_alarAI(_Creature);
+    return new mob_flame_patch_alarAI(pCreature);
 }
 
 void AddSC_boss_alar()
@@ -509,17 +509,17 @@ void AddSC_boss_alar()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_alar";
+    newscript->Name = "boss_alar";
     newscript->GetAI = &GetAI_boss_alar;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_ember_of_alar";
+    newscript->Name = "mob_ember_of_alar";
     newscript->GetAI = &GetAI_mob_ember_of_alar;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_flame_patch_alar";
+    newscript->Name = "mob_flame_patch_alar";
     newscript->GetAI = &GetAI_mob_flame_patch_alar;
     newscript->RegisterSelf();
 }

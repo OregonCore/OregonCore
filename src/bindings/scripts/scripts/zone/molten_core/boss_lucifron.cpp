@@ -75,16 +75,16 @@ struct OREGON_DLL_DECL boss_lucifronAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_lucifron(Creature *_Creature)
+CreatureAI* GetAI_boss_lucifron(Creature* pCreature)
 {
-    return new boss_lucifronAI (_Creature);
+    return new boss_lucifronAI (pCreature);
 }
 
 void AddSC_boss_lucifron()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_lucifron";
+    newscript->Name = "boss_lucifron";
     newscript->GetAI = &GetAI_boss_lucifron;
     newscript->RegisterSelf();
 }

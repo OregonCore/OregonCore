@@ -98,16 +98,16 @@ struct OREGON_DLL_DECL boss_interrogator_vishasAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_interrogator_vishas(Creature *_Creature)
+CreatureAI* GetAI_boss_interrogator_vishas(Creature* pCreature)
 {
-    return new boss_interrogator_vishasAI (_Creature);
+    return new boss_interrogator_vishasAI (pCreature);
 }
 
 void AddSC_boss_interrogator_vishas()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_interrogator_vishas";
+    newscript->Name = "boss_interrogator_vishas";
     newscript->GetAI = &GetAI_boss_interrogator_vishas;
     newscript->RegisterSelf();
 }

@@ -83,21 +83,21 @@ struct OREGON_DLL_DECL mobs_risen_husk_spiritAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_mobs_risen_husk_spirit(Creature *_Creature)
+CreatureAI* GetAI_mobs_risen_husk_spirit(Creature* pCreature)
 {
-    return new mobs_risen_husk_spiritAI (_Creature);
+    return new mobs_risen_husk_spiritAI (pCreature);
 }
 
 /*######
 ## npc_restless_apparition
 ######*/
 
-bool GossipHello_npc_restless_apparition(Player *player, Creature *_Creature)
+bool GossipHello_npc_restless_apparition(Player *player, Creature* pCreature)
 {
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
-    player->TalkedToCreature(_Creature->GetEntry(), _Creature->GetGUID());
-    _Creature->SetInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+    player->TalkedToCreature(pCreature->GetEntry(), pCreature->GetGUID());
+    pCreature->SetInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
     return true;
 }
@@ -118,20 +118,20 @@ struct OREGON_DLL_DECL npc_deserter_agitatorAI : public ScriptedAI
     void EnterCombat(Unit* who) {}
 };
 
-CreatureAI* GetAI_npc_deserter_agitator(Creature *_Creature)
+CreatureAI* GetAI_npc_deserter_agitator(Creature* pCreature)
 {
-    return new npc_deserter_agitatorAI (_Creature);
+    return new npc_deserter_agitatorAI (pCreature);
 }
 
-bool GossipHello_npc_deserter_agitator(Player *player, Creature *_Creature)
+bool GossipHello_npc_deserter_agitator(Player *player, Creature* pCreature)
 {
     if (player->GetQuestStatus(11126) == QUEST_STATUS_INCOMPLETE)
     {
-        _Creature->setFaction(1883);
-        player->TalkedToCreature(_Creature->GetEntry(), _Creature->GetGUID());
+        pCreature->setFaction(1883);
+        player->TalkedToCreature(pCreature->GetEntry(), pCreature->GetGUID());
     }
     else
-        player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
@@ -142,24 +142,24 @@ bool GossipHello_npc_deserter_agitator(Player *player, Creature *_Creature)
 
 #define GOSSIP_ITEM_JAINA "I know this is rather silly but i have a young ward who is a bit shy and would like your autograph."
 
-bool GossipHello_npc_lady_jaina_proudmoore(Player *player, Creature *_Creature)
+bool GossipHello_npc_lady_jaina_proudmoore(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(558) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_JAINA, GOSSIP_SENDER_MAIN, GOSSIP_SENDER_INFO);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_lady_jaina_proudmoore(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_lady_jaina_proudmoore(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_SENDER_INFO)
     {
-        player->SEND_GOSSIP_MENU(7012, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(7012, pCreature->GetGUID());
         player->CastSpell(player, 23122, false);
     }
     return true;
@@ -169,26 +169,26 @@ bool GossipSelect_npc_lady_jaina_proudmoore(Player *player, Creature *_Creature,
 ## npc_nat_pagle
 ######*/
 
-bool GossipHello_npc_nat_pagle(Player *player, Creature *_Creature)
+bool GossipHello_npc_nat_pagle(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (_Creature->isVendor() && player->GetQuestRewardStatus(8227))
+    if (pCreature->isVendor() && player->GetQuestRewardStatus(8227))
     {
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
-        player->SEND_GOSSIP_MENU(7640, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(7640, pCreature->GetGUID());
     }
     else
-        player->SEND_GOSSIP_MENU(7638, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(7638, pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_nat_pagle(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_nat_pagle(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_TRADE)
-        player->SEND_VENDORLIST(_Creature->GetGUID());
+        player->SEND_VENDORLIST(pCreature->GetGUID());
 
     return true;
 }
@@ -202,29 +202,29 @@ void AddSC_dustwallow_marsh()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="mobs_risen_husk_spirit";
+    newscript->Name = "mobs_risen_husk_spirit";
     newscript->GetAI = &GetAI_mobs_risen_husk_spirit;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_restless_apparition";
+    newscript->Name = "npc_restless_apparition";
     newscript->pGossipHello =   &GossipHello_npc_restless_apparition;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_deserter_agitator";
+    newscript->Name = "npc_deserter_agitator";
     newscript->GetAI = &GetAI_npc_deserter_agitator;
     newscript->pGossipHello = &GossipHello_npc_deserter_agitator;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_lady_jaina_proudmoore";
+    newscript->Name = "npc_lady_jaina_proudmoore";
     newscript->pGossipHello = &GossipHello_npc_lady_jaina_proudmoore;
     newscript->pGossipSelect = &GossipSelect_npc_lady_jaina_proudmoore;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_nat_pagle";
+    newscript->Name = "npc_nat_pagle";
     newscript->pGossipHello = &GossipHello_npc_nat_pagle;
     newscript->pGossipSelect = &GossipSelect_npc_nat_pagle;
     newscript->RegisterSelf();

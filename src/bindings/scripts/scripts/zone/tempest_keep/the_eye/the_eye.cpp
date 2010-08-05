@@ -83,16 +83,16 @@ struct OREGON_DLL_DECL mob_crystalcore_devastatorAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_crystalcore_devastator(Creature *_Creature)
+CreatureAI* GetAI_mob_crystalcore_devastator(Creature* pCreature)
 {
-    return new mob_crystalcore_devastatorAI (_Creature);
+    return new mob_crystalcore_devastatorAI (pCreature);
 }
 
 void AddSC_the_eye()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="mob_crystalcore_devastator";
+    newscript->Name = "mob_crystalcore_devastator";
     newscript->GetAI = &GetAI_mob_crystalcore_devastator;
     newscript->RegisterSelf();
 }

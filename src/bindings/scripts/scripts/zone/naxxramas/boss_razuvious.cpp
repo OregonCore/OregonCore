@@ -152,16 +152,16 @@ struct OREGON_DLL_DECL boss_razuviousAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_razuvious(Creature *_Creature)
+CreatureAI* GetAI_boss_razuvious(Creature* pCreature)
 {
-    return new boss_razuviousAI (_Creature);
+    return new boss_razuviousAI (pCreature);
 }
 
 void AddSC_boss_razuvious()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_razuvious";
+    newscript->Name = "boss_razuvious";
     newscript->GetAI = &GetAI_boss_razuvious;
     newscript->RegisterSelf();
 }

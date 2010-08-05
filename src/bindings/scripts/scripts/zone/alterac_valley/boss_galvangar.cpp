@@ -121,9 +121,9 @@ struct OREGON_DLL_DECL boss_galvangarAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_galvangar(Creature *_Creature)
+CreatureAI* GetAI_boss_galvangar(Creature* pCreature)
 {
-    return new boss_galvangarAI (_Creature);
+    return new boss_galvangarAI (pCreature);
 }
 
 void AddSC_boss_galvangar()

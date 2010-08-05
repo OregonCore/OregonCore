@@ -95,9 +95,9 @@ struct OREGON_DLL_DECL mob_freed_soulAI : public ScriptedAI
     void EnterCombat(Unit* who) { }
 };
 
-CreatureAI* GetAI_mob_freed_soul(Creature *_Creature)
+CreatureAI* GetAI_mob_freed_soul(Creature* pCreature)
 {
-    return new mob_freed_soulAI (_Creature);
+    return new mob_freed_soulAI (pCreature);
 }
 
 /*######
@@ -163,9 +163,9 @@ struct OREGON_DLL_DECL mob_restless_soulAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_restless_soul(Creature *_Creature)
+CreatureAI* GetAI_mob_restless_soul(Creature* pCreature)
 {
-    return new mob_restless_soulAI (_Creature);
+    return new mob_restless_soulAI (pCreature);
 }
 
 /*######
@@ -229,33 +229,33 @@ struct OREGON_DLL_DECL mobs_spectral_ghostly_citizenAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mobs_spectral_ghostly_citizen(Creature *_Creature)
+CreatureAI* GetAI_mobs_spectral_ghostly_citizen(Creature* pCreature)
 {
-    return new mobs_spectral_ghostly_citizenAI (_Creature);
+    return new mobs_spectral_ghostly_citizenAI (pCreature);
 }
 
-bool ReciveEmote_mobs_spectral_ghostly_citizen(Player *player, Creature *_Creature, uint32 emote)
+bool ReciveEmote_mobs_spectral_ghostly_citizen(Player *player, Creature* pCreature, uint32 emote)
 {
     switch(emote)
     {
         case TEXTEMOTE_DANCE:
-            ((mobs_spectral_ghostly_citizenAI*)_Creature->AI())->EnterEvadeMode();
+            ((mobs_spectral_ghostly_citizenAI*)pCreature->AI())->EnterEvadeMode();
             break;
         case TEXTEMOTE_RUDE:
             //Should instead cast spell, kicking player back. Spell not found.
-            if (_Creature->IsWithinDistInMap(player, 5))
-                _Creature->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
+            if (pCreature->IsWithinDistInMap(player, 5))
+                pCreature->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
             else
-                _Creature->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
+                pCreature->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
             break;
         case TEXTEMOTE_WAVE:
-            _Creature->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
+            pCreature->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
             break;
         case TEXTEMOTE_BOW:
-            _Creature->HandleEmoteCommand(EMOTE_ONESHOT_BOW);
+            pCreature->HandleEmoteCommand(EMOTE_ONESHOT_BOW);
             break;
         case TEXTEMOTE_KISS:
-            _Creature->HandleEmoteCommand(EMOTE_ONESHOT_FLEX);
+            pCreature->HandleEmoteCommand(EMOTE_ONESHOT_FLEX);
             break;
     }
 

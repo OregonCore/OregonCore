@@ -426,9 +426,9 @@ struct OREGON_DLL_DECL boss_kelthuzadAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_kelthuzadAI(Creature *_Creature)
+CreatureAI* GetAI_boss_kelthuzadAI(Creature* pCreature)
 {
-    return new boss_kelthuzadAI (_Creature);
+    return new boss_kelthuzadAI (pCreature);
 }
 
 void AddSC_boss_kelthuzad()
@@ -436,7 +436,7 @@ void AddSC_boss_kelthuzad()
 
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_kelthuzad";
+    newscript->Name = "boss_kelthuzad";
     newscript->GetAI = &GetAI_boss_kelthuzadAI;
     newscript->RegisterSelf();
 }

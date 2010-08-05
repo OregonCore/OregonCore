@@ -41,42 +41,42 @@ EndContentData */
 #define GOSSIP_SL4 "Then what happened?"
 #define GOSSIP_SL5 "He is not safe, i'll make sure of that."
 
-bool GossipHello_npc_lorax(Player *player, Creature *_Creature)
+bool GossipHello_npc_lorax(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(5126) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HL, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_lorax(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_lorax(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     switch (action)
     {
         case GOSSIP_ACTION_INFO_DEF:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SL1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-            player->SEND_GOSSIP_MENU(3759, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(3759, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+1:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SL2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-            player->SEND_GOSSIP_MENU(3760, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(3760, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SL3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-            player->SEND_GOSSIP_MENU(3761, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(3761, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+3:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SL4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
-            player->SEND_GOSSIP_MENU(3762, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(3762, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+4:
             player->ADD_GOSSIP_ITEM(0, GOSSIP_SL5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
-            player->SEND_GOSSIP_MENU(3763, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(3763, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+5:
             player->CLOSE_GOSSIP_MENU();
@@ -90,23 +90,23 @@ bool GossipSelect_npc_lorax(Player *player, Creature *_Creature, uint32 sender, 
 ## npc_rivern_frostwind
 ######*/
 
-bool GossipHello_npc_rivern_frostwind(Player *player, Creature *_Creature)
+bool GossipHello_npc_rivern_frostwind(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (_Creature->isVendor() && player->GetReputationRank(589) == REP_EXALTED)
+    if (pCreature->isVendor() && player->GetReputationRank(589) == REP_EXALTED)
         player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_rivern_frostwind(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_rivern_frostwind(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_TRADE)
-        player->SEND_VENDORLIST(_Creature->GetGUID());
+        player->SEND_VENDORLIST(pCreature->GetGUID());
 
     return true;
 }
@@ -117,27 +117,27 @@ bool GossipSelect_npc_rivern_frostwind(Player *player, Creature *_Creature, uint
 
 #define GOSSIP_HWDM "I'd like you to make me a new Cache of Mau'ari please."
 
-bool GossipHello_npc_witch_doctor_mauari(Player *player, Creature *_Creature)
+bool GossipHello_npc_witch_doctor_mauari(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestRewardStatus(975))
     {
         player->ADD_GOSSIP_ITEM(0, GOSSIP_HWDM, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-        player->SEND_GOSSIP_MENU(3377, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(3377, pCreature->GetGUID());
     } else
-        player->SEND_GOSSIP_MENU(3375, _Creature->GetGUID());
+        player->SEND_GOSSIP_MENU(3375, pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_witch_doctor_mauari(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_witch_doctor_mauari(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->CastSpell(player, 16351, false);
+        pCreature->CastSpell(player, 16351, false);
     }
 
     return true;
@@ -148,19 +148,19 @@ void AddSC_winterspring()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_lorax";
+    newscript->Name = "npc_lorax";
     newscript->pGossipHello =  &GossipHello_npc_lorax;
     newscript->pGossipSelect = &GossipSelect_npc_lorax;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_rivern_frostwind";
+    newscript->Name = "npc_rivern_frostwind";
     newscript->pGossipHello =  &GossipHello_npc_rivern_frostwind;
     newscript->pGossipSelect = &GossipSelect_npc_rivern_frostwind;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_witch_doctor_mauari";
+    newscript->Name = "npc_witch_doctor_mauari";
     newscript->pGossipHello =  &GossipHello_npc_witch_doctor_mauari;
     newscript->pGossipSelect = &GossipSelect_npc_witch_doctor_mauari;
     newscript->RegisterSelf();

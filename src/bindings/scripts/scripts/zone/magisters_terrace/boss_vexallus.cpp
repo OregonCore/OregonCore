@@ -170,9 +170,9 @@ struct OREGON_DLL_DECL boss_vexallusAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_vexallus(Creature *_Creature)
+CreatureAI* GetAI_boss_vexallus(Creature* pCreature)
 {
-    return new boss_vexallusAI (_Creature);
+    return new boss_vexallusAI (pCreature);
 };
 
 struct OREGON_DLL_DECL mob_pure_energyAI : public ScriptedAI
@@ -215,9 +215,9 @@ struct OREGON_DLL_DECL mob_pure_energyAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_pure_energy(Creature *_Creature)
+CreatureAI* GetAI_mob_pure_energy(Creature* pCreature)
 {
-    return new mob_pure_energyAI (_Creature);
+    return new mob_pure_energyAI (pCreature);
 };
 
 void AddSC_boss_vexallus()
@@ -225,12 +225,12 @@ void AddSC_boss_vexallus()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_vexallus";
+    newscript->Name = "boss_vexallus";
     newscript->GetAI = &GetAI_boss_vexallus;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_pure_energy";
+    newscript->Name = "mob_pure_energy";
     newscript->GetAI = &GetAI_mob_pure_energy;
     newscript->RegisterSelf();
 }

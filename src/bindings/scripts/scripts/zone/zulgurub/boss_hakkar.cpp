@@ -233,16 +233,16 @@ struct OREGON_DLL_DECL boss_hakkarAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_hakkar(Creature *_Creature)
+CreatureAI* GetAI_boss_hakkar(Creature* pCreature)
 {
-    return new boss_hakkarAI (_Creature);
+    return new boss_hakkarAI (pCreature);
 }
 
 void AddSC_boss_hakkar()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_hakkar";
+    newscript->Name = "boss_hakkar";
     newscript->GetAI = &GetAI_boss_hakkar;
     newscript->RegisterSelf();
 }

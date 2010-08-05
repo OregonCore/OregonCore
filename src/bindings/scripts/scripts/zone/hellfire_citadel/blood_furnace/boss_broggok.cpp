@@ -79,16 +79,16 @@ struct OREGON_DLL_DECL boss_broggokAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_broggokAI(Creature *_Creature)
+CreatureAI* GetAI_boss_broggokAI(Creature* pCreature)
 {
-    return new boss_broggokAI (_Creature);
+    return new boss_broggokAI (pCreature);
 }
 
 void AddSC_boss_broggok()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_broggok";
+    newscript->Name = "boss_broggok";
     newscript->GetAI = &GetAI_boss_broggokAI;
     newscript->RegisterSelf();
 }

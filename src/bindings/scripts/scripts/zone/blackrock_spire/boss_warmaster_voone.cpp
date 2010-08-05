@@ -106,16 +106,16 @@ struct OREGON_DLL_DECL boss_warmastervooneAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_warmastervoone(Creature *_Creature)
+CreatureAI* GetAI_boss_warmastervoone(Creature* pCreature)
 {
-    return new boss_warmastervooneAI (_Creature);
+    return new boss_warmastervooneAI (pCreature);
 }
 
 void AddSC_boss_warmastervoone()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_warmaster_voone";
+    newscript->Name = "boss_warmaster_voone";
     newscript->GetAI = &GetAI_boss_warmastervoone;
     newscript->RegisterSelf();
 }

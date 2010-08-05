@@ -204,14 +204,14 @@ struct OREGON_DLL_DECL boss_warlord_kalithreshAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_naga_distiller(Creature *_Creature)
+CreatureAI* GetAI_mob_naga_distiller(Creature* pCreature)
 {
-    return new mob_naga_distillerAI (_Creature);
+    return new mob_naga_distillerAI (pCreature);
 }
 
-CreatureAI* GetAI_boss_warlord_kalithresh(Creature *_Creature)
+CreatureAI* GetAI_boss_warlord_kalithresh(Creature* pCreature)
 {
-    return new boss_warlord_kalithreshAI (_Creature);
+    return new boss_warlord_kalithreshAI (pCreature);
 }
 
 void AddSC_boss_warlord_kalithresh()
@@ -219,12 +219,12 @@ void AddSC_boss_warlord_kalithresh()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="mob_naga_distiller";
+    newscript->Name = "mob_naga_distiller";
     newscript->GetAI = &GetAI_mob_naga_distiller;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_warlord_kalithresh";
+    newscript->Name = "boss_warlord_kalithresh";
     newscript->GetAI = &GetAI_boss_warlord_kalithresh;
     newscript->RegisterSelf();
 }

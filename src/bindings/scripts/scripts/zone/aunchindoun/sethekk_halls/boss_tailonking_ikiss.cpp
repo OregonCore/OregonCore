@@ -205,16 +205,16 @@ struct OREGON_DLL_DECL boss_talon_king_ikissAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_talon_king_ikiss(Creature *_Creature)
+CreatureAI* GetAI_boss_talon_king_ikiss(Creature* pCreature)
 {
-    return new boss_talon_king_ikissAI (_Creature);
+    return new boss_talon_king_ikissAI (pCreature);
 }
 
 void AddSC_boss_talon_king_ikiss()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_talon_king_ikiss";
+    newscript->Name = "boss_talon_king_ikiss";
     newscript->GetAI = &GetAI_boss_talon_king_ikiss;
     newscript->RegisterSelf();
 }

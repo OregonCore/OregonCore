@@ -93,16 +93,16 @@ struct OREGON_DLL_DECL boss_theolenkrastinovAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_theolenkrastinov(Creature *_Creature)
+CreatureAI* GetAI_boss_theolenkrastinov(Creature* pCreature)
 {
-    return new boss_theolenkrastinovAI (_Creature);
+    return new boss_theolenkrastinovAI (pCreature);
 }
 
 void AddSC_boss_theolenkrastinov()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_doctor_theolen_krastinov";
+    newscript->Name = "boss_doctor_theolen_krastinov";
     newscript->GetAI = &GetAI_boss_theolenkrastinov;
     newscript->RegisterSelf();
 }

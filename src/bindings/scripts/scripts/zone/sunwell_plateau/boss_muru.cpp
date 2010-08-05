@@ -194,9 +194,9 @@ struct OREGON_DLL_DECL boss_entropiusAI : public ScriptedAI
 
 };
 
-CreatureAI* GetAI_boss_entropius(Creature *_Creature)
+CreatureAI* GetAI_boss_entropius(Creature* pCreature)
 {
-    return new boss_entropiusAI (_Creature);
+    return new boss_entropiusAI (pCreature);
 }
 
 struct OREGON_DLL_DECL boss_muruAI : public Scripted_NoMovementAI
@@ -335,9 +335,9 @@ struct OREGON_DLL_DECL boss_muruAI : public Scripted_NoMovementAI
 
 };
 
-CreatureAI* GetAI_boss_muru(Creature *_Creature)
+CreatureAI* GetAI_boss_muru(Creature* pCreature)
 {
-    return new boss_muruAI (_Creature);
+    return new boss_muruAI (pCreature);
 }
 
 struct OREGON_DLL_DECL npc_muru_portalAI : public Scripted_NoMovementAI
@@ -401,9 +401,9 @@ struct OREGON_DLL_DECL npc_muru_portalAI : public Scripted_NoMovementAI
 
 };
 
-CreatureAI* GetAI_npc_muru_portal(Creature *_Creature)
+CreatureAI* GetAI_npc_muru_portal(Creature* pCreature)
 {
-    return new npc_muru_portalAI (_Creature);
+    return new npc_muru_portalAI (pCreature);
 }
 
 struct OREGON_DLL_DECL npc_dark_fiendAI : public ScriptedAI
@@ -457,9 +457,9 @@ struct OREGON_DLL_DECL npc_dark_fiendAI : public ScriptedAI
 
 };
 
-CreatureAI* GetAI_npc_dark_fiend(Creature *_Creature)
+CreatureAI* GetAI_npc_dark_fiend(Creature* pCreature)
 {
-    return new npc_dark_fiendAI (_Creature);
+    return new npc_dark_fiendAI (pCreature);
 }
 
 struct OREGON_DLL_DECL npc_void_sentinelAI : public ScriptedAI
@@ -510,9 +510,9 @@ struct OREGON_DLL_DECL npc_void_sentinelAI : public ScriptedAI
 
 };
 
-CreatureAI* GetAI_npc_void_sentinel(Creature *_Creature)
+CreatureAI* GetAI_npc_void_sentinel(Creature* pCreature)
 {
-    return new npc_void_sentinelAI (_Creature);
+    return new npc_void_sentinelAI (pCreature);
 }
 
 struct OREGON_DLL_DECL npc_blackholeAI : public ScriptedAI
@@ -577,41 +577,41 @@ struct OREGON_DLL_DECL npc_blackholeAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_npc_blackhole(Creature *_Creature)
+CreatureAI* GetAI_npc_blackhole(Creature* pCreature)
 {
-    return new npc_blackholeAI (_Creature);
+    return new npc_blackholeAI (pCreature);
 }
 
 void AddSC_boss_muru()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_muru";
+    newscript->Name = "boss_muru";
     newscript->GetAI = &GetAI_boss_muru;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="boss_entropius";
+    newscript->Name = "boss_entropius";
     newscript->GetAI = &GetAI_boss_entropius;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_muru_portal";
+    newscript->Name = "npc_muru_portal";
     newscript->GetAI = &GetAI_npc_muru_portal;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_dark_fiend";
+    newscript->Name = "npc_dark_fiend";
     newscript->GetAI = &GetAI_npc_dark_fiend;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_void_sentinel";
+    newscript->Name = "npc_void_sentinel";
     newscript->GetAI = &GetAI_npc_void_sentinel;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_blackhole";
+    newscript->Name = "npc_blackhole";
     newscript->GetAI = &GetAI_npc_blackhole;
     newscript->RegisterSelf();
 }

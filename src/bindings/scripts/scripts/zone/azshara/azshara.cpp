@@ -90,19 +90,19 @@ struct OREGON_DLL_DECL mobs_spitelashesAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_mobs_spitelashes(Creature *_Creature)
+CreatureAI* GetAI_mobs_spitelashes(Creature* pCreature)
 {
-    return new mobs_spitelashesAI (_Creature);
+    return new mobs_spitelashesAI (pCreature);
 }
 
 /*######
 ## npc_loramus_thalipedes
 ######*/
 
-bool GossipHello_npc_loramus_thalipedes(Player *player, Creature *_Creature)
+bool GossipHello_npc_loramus_thalipedes(Player *player, Creature* pCreature)
 {
-    if (_Creature->isQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+    if (pCreature->isQuestGiver())
+        player->PrepareQuestMenu(pCreature->GetGUID());
 
     if (player->GetQuestStatus(2744) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, "Can you help me?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
@@ -110,12 +110,12 @@ bool GossipHello_npc_loramus_thalipedes(Player *player, Creature *_Creature)
     if (player->GetQuestStatus(3141) == QUEST_STATUS_INCOMPLETE)
         player->ADD_GOSSIP_ITEM(0, "Tell me your story", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_loramus_thalipedes(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_loramus_thalipedes(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     switch (action)
     {
@@ -126,23 +126,23 @@ bool GossipSelect_npc_loramus_thalipedes(Player *player, Creature *_Creature, ui
 
         case GOSSIP_ACTION_INFO_DEF+2:
             player->ADD_GOSSIP_ITEM(0, "Please continue", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 21);
-            player->SEND_GOSSIP_MENU(1813, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(1813, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+21:
             player->ADD_GOSSIP_ITEM(0, "I do not understand", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 22);
-            player->SEND_GOSSIP_MENU(1814, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(1814, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+22:
             player->ADD_GOSSIP_ITEM(0, "Indeed", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 23);
-            player->SEND_GOSSIP_MENU(1815, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(1815, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+23:
             player->ADD_GOSSIP_ITEM(0, "I will do this with or your help, Loramus", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 24);
-            player->SEND_GOSSIP_MENU(1816, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(1816, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+24:
             player->ADD_GOSSIP_ITEM(0, "Yes", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 25);
-            player->SEND_GOSSIP_MENU(1817, _Creature->GetGUID());
+            player->SEND_GOSSIP_MENU(1817, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+25:
             player->CLOSE_GOSSIP_MENU();
@@ -402,30 +402,30 @@ struct OREGON_DLL_DECL mob_rizzle_sprysprocketAI : public ScriptedAI
 
 };
 
-bool GossipHello_mob_rizzle_sprysprocket(Player *player, Creature *_Creature)
+bool GossipHello_mob_rizzle_sprysprocket(Player *player, Creature* pCreature)
 {
     if (player->GetQuestStatus(10994) != QUEST_STATUS_INCOMPLETE)
         return true;
     player->ADD_GOSSIP_ITEM(0, GOSSIP_GET_MOONSTONE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-    player->SEND_GOSSIP_MENU(10811,_Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(10811,pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_mob_rizzle_sprysprocket(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_mob_rizzle_sprysprocket(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF + 1 && player->GetQuestStatus(10994) == QUEST_STATUS_INCOMPLETE)
     {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->CastSpell(player, SPELL_GIVE_SOUTHFURY_MOONSTONE, true);
-        ((mob_rizzle_sprysprocketAI*)_Creature->AI())->Must_Die_Timer = 3000;
-        ((mob_rizzle_sprysprocketAI*)_Creature->AI())->Must_Die = true;
+        pCreature->CastSpell(player, SPELL_GIVE_SOUTHFURY_MOONSTONE, true);
+        ((mob_rizzle_sprysprocketAI*)pCreature->AI())->Must_Die_Timer = 3000;
+        ((mob_rizzle_sprysprocketAI*)pCreature->AI())->Must_Die = true;
     }
     return true;
 }
 
-CreatureAI* GetAI_mob_rizzle_sprysprocket(Creature *_Creature)
+CreatureAI* GetAI_mob_rizzle_sprysprocket(Creature* pCreature)
 {
-    return new mob_rizzle_sprysprocketAI (_Creature);
+    return new mob_rizzle_sprysprocketAI (pCreature);
 }
 
 /*####
@@ -482,9 +482,9 @@ struct OREGON_DLL_DECL mob_depth_chargeAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_mob_depth_charge(Creature *_Creature)
+CreatureAI* GetAI_mob_depth_charge(Creature* pCreature)
 {
-    return new mob_depth_chargeAI (_Creature);
+    return new mob_depth_chargeAI (pCreature);
 }
 
 void AddSC_azshara()
@@ -492,25 +492,25 @@ void AddSC_azshara()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="mobs_spitelashes";
+    newscript->Name = "mobs_spitelashes";
     newscript->GetAI = &GetAI_mobs_spitelashes;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_loramus_thalipedes";
+    newscript->Name = "npc_loramus_thalipedes";
     newscript->pGossipHello =  &GossipHello_npc_loramus_thalipedes;
     newscript->pGossipSelect = &GossipSelect_npc_loramus_thalipedes;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_rizzle_sprysprocket";
+    newscript->Name = "mob_rizzle_sprysprocket";
     newscript->GetAI = &GetAI_mob_rizzle_sprysprocket;
     newscript->pGossipHello =  &GossipHello_mob_rizzle_sprysprocket;
     newscript->pGossipSelect = &GossipSelect_mob_rizzle_sprysprocket;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_depth_charge";
+    newscript->Name = "mob_depth_charge";
     newscript->GetAI = &GetAI_mob_depth_charge;
     newscript->RegisterSelf();
 }

@@ -136,9 +136,9 @@ struct OREGON_DLL_DECL boss_vanndarAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_vanndar(Creature *_Creature)
+CreatureAI* GetAI_boss_vanndar(Creature* pCreature)
 {
-    return new boss_vanndarAI (_Creature);
+    return new boss_vanndarAI (pCreature);
 }
 
 void AddSC_boss_vanndar()

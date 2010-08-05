@@ -38,12 +38,12 @@ bool isEventActive()
     return isGameEventActive(HALLOWEEN_EVENTID);
 }
 
-bool GossipHello_npc_innkeeper(Player *player, Creature *_Creature)
+bool GossipHello_npc_innkeeper(Player *player, Creature* pCreature)
 {
 
-    player->TalkedToCreature(_Creature->GetEntry(),_Creature->GetGUID());
+    player->TalkedToCreature(pCreature->GetEntry(),pCreature->GetGUID());
 
-    player->PrepareGossipMenu(_Creature,0); //send innkeeper menu too
+    player->PrepareGossipMenu(pCreature,0); //send innkeeper menu too
 
     if (isEventActive()&& !player->GetAura(SPELL_TRICK_OR_TREATED,0))
     {
@@ -69,11 +69,11 @@ bool GossipHello_npc_innkeeper(Player *player, Creature *_Creature)
         player->ADD_GOSSIP_ITEM(0, localizedEntry, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+HALLOWEEN_EVENTID);
     }
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(_Creature), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_innkeeper(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_innkeeper(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+HALLOWEEN_EVENTID && isEventActive() && !player->GetAura(SPELL_TRICK_OR_TREATED,0))
     {
@@ -125,13 +125,13 @@ bool GossipSelect_npc_innkeeper(Player *player, Creature *_Creature, uint32 send
     //Trininty Gossip core handling dont work...
     else if (action == GOSSIP_OPTION_VENDOR)
     {
-        player->SEND_VENDORLIST(_Creature->GetGUID());
+        player->SEND_VENDORLIST(pCreature->GetGUID());
     return true;
     }
     else if (action == GOSSIP_OPTION_INNKEEPER)
     {
         player->PlayerTalkClass->CloseGossip();
-        player->SetBindPoint(_Creature->GetGUID());
+        player->SetBindPoint(pCreature->GetGUID());
     return true;
     }
 
@@ -142,7 +142,7 @@ void AddSC_npc_innkeeper()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="npc_innkeeper";
+    newscript->Name = "npc_innkeeper";
     newscript->pGossipHello = &GossipHello_npc_innkeeper;
     newscript->pGossipSelect = &GossipSelect_npc_innkeeper;
     newscript->RegisterSelf();

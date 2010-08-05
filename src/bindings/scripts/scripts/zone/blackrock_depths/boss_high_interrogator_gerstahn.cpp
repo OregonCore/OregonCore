@@ -90,16 +90,16 @@ struct OREGON_DLL_DECL boss_high_interrogator_gerstahnAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_high_interrogator_gerstahn(Creature *_Creature)
+CreatureAI* GetAI_boss_high_interrogator_gerstahn(Creature* pCreature)
 {
-    return new boss_high_interrogator_gerstahnAI (_Creature);
+    return new boss_high_interrogator_gerstahnAI (pCreature);
 }
 
 void AddSC_boss_high_interrogator_gerstahn()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_high_interrogator_gerstahn";
+    newscript->Name = "boss_high_interrogator_gerstahn";
     newscript->GetAI = &GetAI_boss_high_interrogator_gerstahn;
     newscript->RegisterSelf();
 }

@@ -93,16 +93,16 @@ struct OREGON_DLL_DECL boss_ptheradrasAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_ptheradras(Creature *_Creature)
+CreatureAI* GetAI_boss_ptheradras(Creature* pCreature)
 {
-    return new boss_ptheradrasAI (_Creature);
+    return new boss_ptheradrasAI (pCreature);
 }
 
 void AddSC_boss_ptheradras()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_princess_theradras";
+    newscript->Name = "boss_princess_theradras";
     newscript->GetAI = &GetAI_boss_ptheradras;
     newscript->RegisterSelf();
 }

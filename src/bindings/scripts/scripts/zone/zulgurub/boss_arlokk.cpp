@@ -194,16 +194,16 @@ struct OREGON_DLL_DECL boss_arlokkAI : public ScriptedAI
         }
     }
 };
-CreatureAI* GetAI_boss_arlokk(Creature *_Creature)
+CreatureAI* GetAI_boss_arlokk(Creature* pCreature)
 {
-    return new boss_arlokkAI (_Creature);
+    return new boss_arlokkAI (pCreature);
 }
 
 void AddSC_boss_arlokk()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_arlokk";
+    newscript->Name = "boss_arlokk";
     newscript->GetAI = &GetAI_boss_arlokk;
     newscript->RegisterSelf();
 }

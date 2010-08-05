@@ -833,46 +833,46 @@ struct OREGON_DLL_DECL npc_akamaAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_shade_of_akama(Creature *_Creature)
+CreatureAI* GetAI_boss_shade_of_akama(Creature* pCreature)
 {
-    return new boss_shade_of_akamaAI (_Creature);
+    return new boss_shade_of_akamaAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_ashtongue_channeler(Creature *_Creature)
+CreatureAI* GetAI_mob_ashtongue_channeler(Creature* pCreature)
 {
-    return new mob_ashtongue_channelerAI (_Creature);
+    return new mob_ashtongue_channelerAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_ashtongue_sorcerer(Creature *_Creature)
+CreatureAI* GetAI_mob_ashtongue_sorcerer(Creature* pCreature)
 {
-    return new mob_ashtongue_sorcererAI (_Creature);
+    return new mob_ashtongue_sorcererAI (pCreature);
 }
 
-CreatureAI* GetAI_npc_akama_shade(Creature *_Creature)
+CreatureAI* GetAI_npc_akama_shade(Creature* pCreature)
 {
-    return new npc_akamaAI (_Creature);
+    return new npc_akamaAI (pCreature);
 }
 
-bool GossipSelect_npc_akama(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_npc_akama(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF + 1)               //Fight time
     {
         player->CLOSE_GOSSIP_MENU();
-        ((npc_akamaAI*)_Creature->AI())->BeginEvent(player);
+        ((npc_akamaAI*)pCreature->AI())->BeginEvent(player);
     }
 
     return true;
 }
 
-bool GossipHello_npc_akama(Player *player, Creature *_Creature)
+bool GossipHello_npc_akama(Player *player, Creature* pCreature)
 {
-    ScriptedInstance* pInstance = (_Creature->GetInstanceData());
+    ScriptedInstance* pInstance = (pCreature->GetInstanceData());
 
     if (pInstance && pInstance->GetData(DATA_SHADEOFAKAMAEVENT) == NOT_STARTED)
     {
         player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
     }
-    player->SEND_GOSSIP_MENU(907, _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(907, pCreature->GetGUID());
     return true;
 }
 
@@ -880,22 +880,22 @@ void AddSC_boss_shade_of_akama()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_shade_of_akama";
+    newscript->Name = "boss_shade_of_akama";
     newscript->GetAI = &GetAI_boss_shade_of_akama;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_ashtongue_channeler";
+    newscript->Name = "mob_ashtongue_channeler";
     newscript->GetAI = &GetAI_mob_ashtongue_channeler;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_ashtongue_sorcerer";
+    newscript->Name = "mob_ashtongue_sorcerer";
     newscript->GetAI = &GetAI_mob_ashtongue_sorcerer;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_akama_shade";
+    newscript->Name = "npc_akama_shade";
     newscript->GetAI = &GetAI_npc_akama_shade;
     newscript->pGossipHello = &GossipHello_npc_akama;
     newscript->pGossipSelect = &GossipSelect_npc_akama;

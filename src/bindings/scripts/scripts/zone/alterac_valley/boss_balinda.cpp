@@ -114,9 +114,9 @@ struct OREGON_DLL_DECL boss_balindaAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_balinda(Creature *_Creature)
+CreatureAI* GetAI_boss_balinda(Creature* pCreature)
 {
-    return new boss_balindaAI (_Creature);
+    return new boss_balindaAI (pCreature);
 }
 
 void AddSC_boss_balinda()

@@ -140,9 +140,9 @@ struct OREGON_DLL_DECL boss_drektharAI : public ScriptedAI
 };
 
 
-CreatureAI* GetAI_boss_drekthar(Creature *_Creature)
+CreatureAI* GetAI_boss_drekthar(Creature* pCreature)
 {
-    return new boss_drektharAI (_Creature);
+    return new boss_drektharAI (pCreature);
 }
 
 void AddSC_boss_drekthar()

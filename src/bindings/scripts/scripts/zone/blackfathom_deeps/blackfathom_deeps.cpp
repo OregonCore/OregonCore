@@ -115,7 +115,7 @@ void AddSC_blackfathom_deeps()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="go_fire_akumai";
+    newscript->Name = "go_fire_akumai";
     newscript->pGOHello = &GOHello_go_fire_akumai;
     newscript->RegisterSelf();
 

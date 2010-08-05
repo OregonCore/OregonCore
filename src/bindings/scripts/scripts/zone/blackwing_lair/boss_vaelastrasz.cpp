@@ -220,41 +220,41 @@ struct OREGON_DLL_DECL boss_vaelAI : public ScriptedAI
     }
 };
 
-void SendDefaultMenu_boss_vael(Player *player, Creature *_Creature, uint32 action)
+void SendDefaultMenu_boss_vael(Player *player, Creature* pCreature, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF + 1)               //Fight time
     {
         player->CLOSE_GOSSIP_MENU();
-        ((boss_vaelAI*)_Creature->AI())->BeginSpeach((Unit*)player);
+        ((boss_vaelAI*)pCreature->AI())->BeginSpeach((Unit*)player);
     }
 }
 
-bool GossipSelect_boss_vael(Player *player, Creature *_Creature, uint32 sender, uint32 action)
+bool GossipSelect_boss_vael(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
     if (sender == GOSSIP_SENDER_MAIN)
-        SendDefaultMenu_boss_vael(player, _Creature, action);
+        SendDefaultMenu_boss_vael(player, pCreature, action);
 
     return true;
 }
 
-bool GossipHello_boss_vael(Player *player, Creature *_Creature)
+bool GossipHello_boss_vael(Player *player, Creature* pCreature)
 {
     player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM        , GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-    player->SEND_GOSSIP_MENU(907,_Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(907,pCreature->GetGUID());
 
     return true;
 }
 
-CreatureAI* GetAI_boss_vael(Creature *_Creature)
+CreatureAI* GetAI_boss_vael(Creature* pCreature)
 {
-    return new boss_vaelAI (_Creature);
+    return new boss_vaelAI (pCreature);
 }
 
 void AddSC_boss_vael()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_vaelastrasz";
+    newscript->Name = "boss_vaelastrasz";
     newscript->GetAI = &GetAI_boss_vael;
     newscript->pGossipHello = &GossipHello_boss_vael;
     newscript->pGossipSelect = &GossipSelect_boss_vael;

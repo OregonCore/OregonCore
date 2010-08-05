@@ -51,9 +51,9 @@ struct OREGON_DLL_DECL mobs_mana_tappedAI : public ScriptedAI
         return;
     }
 };
-CreatureAI* GetAI_mobs_mana_tapped(Creature *_Creature)
+CreatureAI* GetAI_mobs_mana_tapped(Creature* pCreature)
 {
-    return new mobs_mana_tappedAI (_Creature);
+    return new mobs_mana_tappedAI (pCreature);
 }
 
 /*######
@@ -102,9 +102,9 @@ struct OREGON_DLL_DECL npc_prospector_anvilwardAI : public npc_escortAI
     }
 };
 
-CreatureAI* GetAI_npc_prospector_anvilward(Creature *_Creature)
+CreatureAI* GetAI_npc_prospector_anvilward(Creature* pCreature)
 {
-    npc_prospector_anvilwardAI* thisAI = new npc_prospector_anvilwardAI(_Creature);
+    npc_prospector_anvilwardAI* thisAI = new npc_prospector_anvilwardAI(pCreature);
 
     thisAI->AddWaypoint(0, 9294.78, -6682.51, 22.42);
     thisAI->AddWaypoint(1, 9298.27, -6667.99, 22.42);
@@ -425,19 +425,19 @@ struct OREGON_DLL_DECL master_kelerun_bloodmournAI : public ScriptedAI
 };
 
 
-bool GossipHello_master_kelerun_bloodmourn(Player *player, Creature *_Creature)
+bool GossipHello_master_kelerun_bloodmourn(Player *player, Creature* pCreature)
 {
     // quest only available if not already started
     // Quest_template flag is set to : QUEST_FLAGS_EVENT
     // Escort quests or any other event-driven quests. If player in party, all players that can accept this quest will receive confirmation box to accept quest.
     // !not sure if this really works!
 
-    if (((master_kelerun_bloodmournAI*)_Creature->AI())->questPhase == 0) {
-        player->PrepareQuestMenu(_Creature->GetGUID());
-        player->SendPreparedQuest(_Creature->GetGUID());
+    if (((master_kelerun_bloodmournAI*)pCreature->AI())->questPhase == 0) {
+        player->PrepareQuestMenu(pCreature->GetGUID());
+        player->SendPreparedQuest(pCreature->GetGUID());
     }
 
-    player->SEND_GOSSIP_MENU(_Creature->GetEntry(), _Creature->GetGUID());
+    player->SEND_GOSSIP_MENU(pCreature->GetEntry(), pCreature->GetGUID());
     return true;
 }
 
@@ -510,14 +510,14 @@ void npc_secondTrialAI::Activate(uint64 summonerguid) {
       summonerGuid = summonerguid;
     }
 
-CreatureAI* GetAI_master_kelerun_bloodmourn(Creature *_Creature)
+CreatureAI* GetAI_master_kelerun_bloodmourn(Creature* pCreature)
 {
-    return new master_kelerun_bloodmournAI (_Creature);
+    return new master_kelerun_bloodmournAI (pCreature);
 }
 
-CreatureAI* GetAI_npc_secondTrial(Creature *_Creature)
+CreatureAI* GetAI_npc_secondTrial(Creature* pCreature)
 {
-    return new npc_secondTrialAI (_Creature);
+    return new npc_secondTrialAI (pCreature);
 }
 
 /*######
@@ -625,9 +625,9 @@ bool QuestAccept_npc_apprentice_mirveda(Player* player, Creature* creature, Ques
     return true;
 }
 
-CreatureAI* GetAI_npc_apprentice_mirvedaAI(Creature *_Creature)
+CreatureAI* GetAI_npc_apprentice_mirvedaAI(Creature* pCreature)
 {
-    return new npc_apprentice_mirvedaAI (_Creature);
+    return new npc_apprentice_mirvedaAI (pCreature);
 }
 
 /*######
@@ -738,9 +738,9 @@ struct OREGON_DLL_DECL npc_infused_crystalAI : public Scripted_NoMovementAI
     }
 };
 
-CreatureAI* GetAI_npc_infused_crystalAI(Creature *_Creature)
+CreatureAI* GetAI_npc_infused_crystalAI(Creature* pCreature)
 {
-    return new npc_infused_crystalAI (_Creature);
+    return new npc_infused_crystalAI (pCreature);
 }
 
 void AddSC_eversong_woods()
@@ -748,31 +748,31 @@ void AddSC_eversong_woods()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="mobs_mana_tapped";
+    newscript->Name = "mobs_mana_tapped";
     newscript->GetAI = &GetAI_mobs_mana_tapped;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name= "npc_prospector_anvilward";
+    newscript->Name = "npc_prospector_anvilward";
     newscript->GetAI = &GetAI_npc_prospector_anvilward;
     newscript->pGossipHello =  &GossipHello_npc_prospector_anvilward;
     newscript->pGossipSelect = &GossipSelect_npc_prospector_anvilward;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_second_trial_controller";
+    newscript->Name = "npc_second_trial_controller";
     newscript->GetAI = &GetAI_master_kelerun_bloodmourn;
     newscript->pGossipHello = &GossipHello_master_kelerun_bloodmourn;
     newscript->pQuestAccept = &QuestAccept_master_kelerun_bloodmourn;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_second_trial_paladin";
+    newscript->Name = "npc_second_trial_paladin";
     newscript->GetAI = &GetAI_npc_secondTrial;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="go_second_trial";
+    newscript->Name = "go_second_trial";
     newscript->pGOHello =  &GOHello_go_second_trial;
     newscript->RegisterSelf();
 

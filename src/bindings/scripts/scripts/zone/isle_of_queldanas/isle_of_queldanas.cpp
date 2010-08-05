@@ -73,9 +73,9 @@ struct OREGON_DLL_DECL npc_converted_sentryAI : public ScriptedAI
         }
     }
 };
-CreatureAI* GetAI_npc_converted_sentry(Creature *_Creature)
+CreatureAI* GetAI_npc_converted_sentry(Creature* pCreature)
 {
-    return new npc_converted_sentryAI (_Creature);
+    return new npc_converted_sentryAI (pCreature);
 }
 
 /*######
@@ -130,9 +130,9 @@ struct OREGON_DLL_DECL npc_greengill_slaveAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_npc_greengill_slaveAI(Creature* _Creature)
+CreatureAI* GetAI_npc_greengill_slaveAI(Creature* pCreature)
 {
-    return new npc_greengill_slaveAI(_Creature);
+    return new npc_greengill_slaveAI(pCreature);
 }
 
 void AddSC_isle_of_queldanas()
@@ -140,12 +140,12 @@ void AddSC_isle_of_queldanas()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="npc_converted_sentry";
+    newscript->Name = "npc_converted_sentry";
     newscript->GetAI = &GetAI_npc_converted_sentry;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_greengill_slave";
+    newscript->Name = "npc_greengill_slave";
     newscript->GetAI = &GetAI_npc_greengill_slaveAI;
     newscript->RegisterSelf();
 }

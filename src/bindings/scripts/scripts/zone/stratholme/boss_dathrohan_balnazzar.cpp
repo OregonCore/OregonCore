@@ -301,16 +301,16 @@ struct OREGON_DLL_DECL boss_dathrohan_balnazzarAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_dathrohan_balnazzar(Creature *_Creature)
+CreatureAI* GetAI_boss_dathrohan_balnazzar(Creature* pCreature)
 {
-    return new boss_dathrohan_balnazzarAI (_Creature);
+    return new boss_dathrohan_balnazzarAI (pCreature);
 }
 
 void AddSC_boss_dathrohan_balnazzar()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_dathrohan_balnazzar";
+    newscript->Name = "boss_dathrohan_balnazzar";
     newscript->GetAI = &GetAI_boss_dathrohan_balnazzar;
     newscript->RegisterSelf();
 }

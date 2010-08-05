@@ -123,16 +123,16 @@ struct OREGON_DLL_DECL boss_majordomoAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_majordomo(Creature *_Creature)
+CreatureAI* GetAI_boss_majordomo(Creature* pCreature)
 {
-    return new boss_majordomoAI (_Creature);
+    return new boss_majordomoAI (pCreature);
 }
 
 void AddSC_boss_majordomo()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_majordomo";
+    newscript->Name = "boss_majordomo";
     newscript->GetAI = &GetAI_boss_majordomo;
     newscript->RegisterSelf();
 }

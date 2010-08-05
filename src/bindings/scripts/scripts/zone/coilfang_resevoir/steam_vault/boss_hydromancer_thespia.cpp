@@ -170,14 +170,14 @@ struct OREGON_DLL_DECL mob_coilfang_waterelementalAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_thespiaAI(Creature *_Creature)
+CreatureAI* GetAI_boss_thespiaAI(Creature* pCreature)
 {
-    return new boss_thespiaAI (_Creature);
+    return new boss_thespiaAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_coilfang_waterelementalAI(Creature *_Creature)
+CreatureAI* GetAI_mob_coilfang_waterelementalAI(Creature* pCreature)
 {
-    return new mob_coilfang_waterelementalAI (_Creature);
+    return new mob_coilfang_waterelementalAI (pCreature);
 }
 
 void AddSC_boss_hydromancer_thespia()
@@ -185,12 +185,12 @@ void AddSC_boss_hydromancer_thespia()
     Script *newscript;
 
     newscript = new Script;
-    newscript->Name="boss_hydromancer_thespia";
+    newscript->Name = "boss_hydromancer_thespia";
     newscript->GetAI = &GetAI_boss_thespiaAI;
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="mob_coilfang_waterelemental";
+    newscript->Name = "mob_coilfang_waterelemental";
     newscript->GetAI = &GetAI_mob_coilfang_waterelementalAI;
     newscript->RegisterSelf();
 }

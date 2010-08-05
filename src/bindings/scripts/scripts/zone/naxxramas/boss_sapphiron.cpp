@@ -165,16 +165,16 @@ struct OREGON_DLL_DECL boss_sapphironAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_sapphiron(Creature *_Creature)
+CreatureAI* GetAI_boss_sapphiron(Creature* pCreature)
 {
-    return new boss_sapphironAI (_Creature);
+    return new boss_sapphironAI (pCreature);
 }
 
 void AddSC_boss_sapphiron()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_sapphiron";
+    newscript->Name = "boss_sapphiron";
     newscript->GetAI = &GetAI_boss_sapphiron;
     newscript->RegisterSelf();
 }

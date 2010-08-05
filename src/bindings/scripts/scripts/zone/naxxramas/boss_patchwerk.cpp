@@ -138,16 +138,16 @@ struct OREGON_DLL_DECL boss_patchwerkAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_patchwerk(Creature *_Creature)
+CreatureAI* GetAI_boss_patchwerk(Creature* pCreature)
 {
-    return new boss_patchwerkAI (_Creature);
+    return new boss_patchwerkAI (pCreature);
 }
 
 void AddSC_boss_patchwerk()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_patchwerk";
+    newscript->Name = "boss_patchwerk";
     newscript->GetAI = &GetAI_boss_patchwerk;
     newscript->RegisterSelf();
 }

@@ -110,16 +110,16 @@ struct OREGON_DLL_DECL boss_rasfrostAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_boss_rasfrost(Creature *_Creature)
+CreatureAI* GetAI_boss_rasfrost(Creature* pCreature)
 {
-    return new boss_rasfrostAI (_Creature);
+    return new boss_rasfrostAI (pCreature);
 }
 
 void AddSC_boss_rasfrost()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name="boss_boss_ras_frostwhisper";
+    newscript->Name = "boss_boss_ras_frostwhisper";
     newscript->GetAI = &GetAI_boss_rasfrost;
     newscript->RegisterSelf();
 }
