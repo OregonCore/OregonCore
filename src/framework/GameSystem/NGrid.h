@@ -75,11 +75,11 @@ class OREGON_DLL_DECL NGrid
     public:
 
         typedef Grid<ACTIVE_OBJECT, WORLD_OBJECT_TYPES, GRID_OBJECT_TYPES, ThreadModel> GridType;
-        NGrid(uint32 id, int32 x, int32 y, time_t expiry, bool unload = true) :
-            i_gridId(id), i_cellstate(GRID_STATE_INVALID), i_x(x), i_y(y), i_GridObjectDataLoaded(false)
-            {
-                i_GridInfo = GridInfo(expiry, unload);
-            }
+        NGrid(uint32 id, int32 x, int32 y, time_t expiry, bool unload = true)
+            : i_gridId(id), i_x(x), i_y(y), i_cellstate(GRID_STATE_INVALID), i_GridObjectDataLoaded(false)
+        {
+            i_GridInfo = GridInfo(expiry, unload);
+        }
 
         const GridType& operator()(unsigned short x, unsigned short y) const { return i_cells[x][y]; }
         GridType& operator()(unsigned short x, unsigned short y) { return i_cells[x][y]; }
@@ -108,14 +108,14 @@ class OREGON_DLL_DECL NGrid
         void ResetTimeTracker(time_t interval) { i_GridInfo.ResetTimeTracker(interval); }
         void UpdateTimeTracker(time_t diff) { i_GridInfo.UpdateTimeTracker(diff); }
 
-        template<class SPECIFIC_OBJECT> void AddWorldObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj, OBJECT_HANDLE hdl)
+        template<class SPECIFIC_OBJECT> void AddWorldObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj)
         {
-            i_cells[x][y].AddWorldObject(obj, hdl);
+            i_cells[x][y].AddWorldObject(obj);
         }
 
-        template<class SPECIFIC_OBJECT> void RemoveWorldObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj, OBJECT_HANDLE hdl)
+        template<class SPECIFIC_OBJECT> void RemoveWorldObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj)
         {
-            i_cells[x][y].RemoveWorldObject(obj, hdl);
+            i_cells[x][y].RemoveWorldObject(obj);
         }
 
         template<class T, class TT> void Visit(TypeContainerVisitor<T, TypeMapContainer<TT> > &visitor)
@@ -139,24 +139,14 @@ class OREGON_DLL_DECL NGrid
             return count;
         }
 
-        template<class SPECIFIC_OBJECT> const SPECIFIC_OBJECT* GetGridObject(const uint32 x, const uint32 y, OBJECT_HANDLE hdl) const
+        template<class SPECIFIC_OBJECT> bool AddGridObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj)
         {
-            return i_cells[x][y].template GetGridObject<SPECIFIC_OBJECT>(hdl);
+            return i_cells[x][y].AddGridObject(obj);
         }
 
-        template<class SPECIFIC_OBJECT> SPECIFIC_OBJECT* GetGridObject(const uint32 x, const uint32 y, OBJECT_HANDLE hdl)
+        template<class SPECIFIC_OBJECT> bool RemoveGridObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj)
         {
-            return i_cells[x][y].template GetGridObject<SPECIFIC_OBJECT>(hdl);
-        }
-
-        template<class SPECIFIC_OBJECT> bool AddGridObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj, OBJECT_HANDLE hdl)
-        {
-            return i_cells[x][y].AddGridObject(hdl, obj);
-        }
-
-        template<class SPECIFIC_OBJECT> bool RemoveGridObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj, OBJECT_HANDLE hdl)
-        {
-            return i_cells[x][y].RemoveGridObject(obj, hdl);
+            return i_cells[x][y].RemoveGridObject(obj);
         }
 
     private:
@@ -171,4 +161,3 @@ class OREGON_DLL_DECL NGrid
         bool i_GridObjectDataLoaded;
 };
 #endif
-
