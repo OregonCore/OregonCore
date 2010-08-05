@@ -393,8 +393,8 @@ Map::EnsureGridCreated(const GridPair &p)
             getNGrid(p.x_coord, p.y_coord)->SetGridState(GRID_STATE_IDLE);
 
             //z coord
-            int gx=63-p.x_coord;
-            int gy=63-p.y_coord;
+            int gx = (MAX_NUMBER_OF_GRIDS - 1) - p.x_coord;
+            int gy = (MAX_NUMBER_OF_GRIDS - 1) - p.y_coord;
 
             if (!GridMaps[gx][gy])
                 LoadMapAndVMap(gx,gy);
@@ -701,6 +701,7 @@ void Map::Update(const uint32 &t_diff)
         if (plr && plr->IsInWorld())
             plr->Update(t_diff);
     }
+
     /// update active cells around players and active objects
     resetMarkedCells();
 
@@ -1164,7 +1165,7 @@ bool Map::UnloadGrid(const uint32 &x, const uint32 &y, bool unloadAll)
 
     {
         if (!unloadAll && ActiveObjectsNearGrid(x, y))
-             return false;
+            return false;
 
         sLog.outDebug("Unloading grid[%u,%u] for map %u", x,y, GetId());
 
@@ -1195,8 +1196,9 @@ bool Map::UnloadGrid(const uint32 &x, const uint32 &y, bool unloadAll)
         delete grid;
         setNGrid(NULL, x, y);
     }
-    int gx=63-x;
-    int gy=63-y;
+
+    int gx = (MAX_NUMBER_OF_GRIDS - 1) - x;
+    int gy = (MAX_NUMBER_OF_GRIDS - 1) - y;
 
     // delete grid map, but don't delete if it is from parent map (and thus only reference)
     //+++if (GridMaps[gx][gy]) don't check for GridMaps[gx][gy], we might have to unload vmaps
@@ -1212,6 +1214,7 @@ bool Map::UnloadGrid(const uint32 &x, const uint32 &y, bool unloadAll)
         }
         else
             ((MapInstanced*)(MapManager::Instance().CreateBaseMap(i_id)))->RemoveGridMapReference(GridPair(gx, gy));
+
         GridMaps[gx][gy] = NULL;
     }
     DEBUG_LOG("Unloading grid[%u,%u] for map %u finished", x,y, GetId());
@@ -1724,13 +1727,13 @@ inline ZLiquidStatus GridMap::getLiquidStatus(float x, float y, float z, uint8 R
     int delta = int((liquid_level - z) * 10);
 
     // Get position delta
-    if (delta > 20)                   // Under water
+    if (delta > 20)                                         // Under water
         return LIQUID_MAP_UNDER_WATER;
-    if (delta > 0)                   // In water
+    if (delta > 0)                                          // In water
         return LIQUID_MAP_IN_WATER;
-    if (delta > -1)                   // Walk on water
+    if (delta > -1)                                         // Walk on water
         return LIQUID_MAP_WATER_WALK;
-                                      // Above water
+                                                            // Above water
     return LIQUID_MAP_ABOVE_WATER;
 }
 
@@ -2205,21 +2208,21 @@ void Map::RemoveAllObjectsInRemoveList()
                     Remove(corpse,true);
                 break;
             }
-        case TYPEID_DYNAMICOBJECT:
-            Remove((DynamicObject*)obj,true);
-            break;
-        case TYPEID_GAMEOBJECT:
-            Remove((GameObject*)obj,true);
-            break;
-        case TYPEID_UNIT:
-            // in case triggered sequence some spell can continue casting after prev CleanupsBeforeDelete call
-            // make sure that like sources auras/etc removed before destructor start
-            obj->ToCreature()->CleanupsBeforeDelete();
-            Remove(obj->ToCreature(),true);
-            break;
-        default:
-            sLog.outError("Non-grid object (TypeId: %u) is in grid object remove list, ignored.",obj->GetTypeId());
-            break;
+            case TYPEID_DYNAMICOBJECT:
+                Remove((DynamicObject*)obj,true);
+                break;
+            case TYPEID_GAMEOBJECT:
+                Remove((GameObject*)obj,true);
+                break;
+            case TYPEID_UNIT:
+                // in case triggered sequence some spell can continue casting after prev CleanupsBeforeDelete call
+                // make sure that like sources auras/etc removed before destructor start
+                obj->ToCreature()->CleanupsBeforeDelete();
+                Remove(obj->ToCreature(),true);
+                break;
+            default:
+                sLog.outError("Non-grid object (TypeId: %u) is in grid object remove list, ignored.",obj->GetTypeId());
+                break;
         }
 
         i_objectsToRemove.erase(itr);
@@ -2441,6 +2444,7 @@ bool InstanceMap::Add(Player *player)
                                 sLog.outError("MapSave players: %d, group count: %d", mapSave->GetPlayerCount(), mapSave->GetGroupCount());
                             else
                                 sLog.outError("MapSave NULL");
+
                             if (groupBind->save)
                                 sLog.outError("GroupBind save players: %d, group count: %d", groupBind->save->GetPlayerCount(), groupBind->save->GetGroupCount());
                             else
@@ -2470,7 +2474,9 @@ bool InstanceMap::Add(Player *player)
             }
         }
 
-        if (i_data) i_data->OnPlayerEnter(player);
+        if (i_data)
+            i_data->OnPlayerEnter(player);
+
         // for normal instances cancel the reset schedule when the
         // first player enters (no players yet)
         SetResetSchedule(false);
