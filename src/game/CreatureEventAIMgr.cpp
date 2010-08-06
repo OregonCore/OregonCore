@@ -99,14 +99,14 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Texts(bool check_entry_use)
         if (check_entry_use)
            CheckUnusedAITexts();
 
-        sLog.outString("");
+        sLog.outString();
         sLog.outString(">> Loaded %u additional CreatureEventAI Texts data.", count);
     }
     else
     {
         barGoLink bar(1);
         bar.step();
-        sLog.outString("");
+        sLog.outString();
         sLog.outString(">> Loaded 0 additional CreatureEventAI Texts data. DB table creature_ai_texts is empty.");
     }
 
@@ -189,14 +189,14 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Summons(bool check_entry_use)
         if (check_entry_use)
             CheckUnusedAISummons();
 
-        sLog.outString("");
+        sLog.outString();
         sLog.outString(">> Loaded %u CreatureEventAI summon definitions", Count);
     }
     else
     {
         barGoLink bar(1);
         bar.step();
-        sLog.outString("");
+        sLog.outString();
         sLog.outString(">> Loaded 0 CreatureEventAI Summon definitions. DB table creature_ai_summons is empty.");
     }
 
@@ -801,14 +801,14 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
         CheckUnusedAITexts();
         CheckUnusedAISummons();
 
-        sLog.outString("");
+        sLog.outString();
         sLog.outString(">> Loaded %u CreatureEventAI scripts", Count);
     }
     else
     {
         barGoLink bar(1);
         bar.step();
-        sLog.outString("");
+        sLog.outString();
         sLog.outString(">> Loaded 0 CreatureEventAI scripts. DB table creature_ai_scripts is empty.");
     }
 }

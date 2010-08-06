@@ -20,15 +20,6 @@
 #include "WorldPacket.h"
 #include "ArenaTeam.h"
 
-void ArenaTeamMember::ModifyPersonalRating(Player* plr, int32 mod, uint32 slot)
-{
-    int32 rating = int32(personal_rating) + mod;
-    personal_rating = rating < 0 ? 0 : rating;
-
-    if (plr)
-        plr->SetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (slot*6) + 5, personal_rating);
-}
-
 ArenaTeam::ArenaTeam()
 {
     m_TeamId              = 0;
@@ -559,8 +550,8 @@ void ArenaTeam::MemberLost(Player * plr, uint32 againstRating)
             int32 mod = (int32)ceil(32.0f * (0.0f - chance));
             itr->ModifyPersonalRating(plr, mod, GetSlot());
             // update personal played stats
-            itr->games_week +=1;
-            itr->games_season +=1;
+            itr->games_week += 1;
+            itr->games_season += 1;
             // update the unit fields
             plr->SetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + 6 * GetSlot() + 2, itr->games_week);
             plr->SetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + 6 * GetSlot() + 3, itr->games_season);
