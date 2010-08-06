@@ -27,88 +27,57 @@ class BattleGround;
 #define LANG_BG_AV_H_CAPTAIN_BUFF       "Now is the time to attack! For the Horde!"
 #define LANG_BG_AV_S_MINE_BOSS_CLAIMS   "Snivvle is here! Snivvle claims the Coldtooth Mine!"
 
-#define BG_AV_CAPTIME                    240000  //4:00
-#define BG_AV_SNOWFALL_FIRSTCAP          300000  //5:00 but i also have seen 4:05
+#define BG_AV_CAPTIME                       240000          // 4 minutes
+#define BG_AV_SNOWFALL_FIRSTCAP             300000          // 5 minutes but i also have seen 4:05
 
-#define BG_AV_SCORE_INITIAL_POINTS       600
-#define SEND_MSG_NEAR_LOSE               120
+#define BG_AV_SCORE_INITIAL_POINTS          600
+#define BG_AV_SCORE_NEAR_LOSE               120
 
-#define BG_AV_KILL_BOSS                 4
-#define BG_AV_REP_BOSS                  350
+#define BG_AV_KILL_BOSS                     4
+#define BG_AV_REP_BOSS                      350
 
-#define BG_AV_KILL_CAPTAIN              3
-#define BG_AV_REP_CAPTAIN               125
-#define BG_AV_RES_CAPTAIN               100
+#define BG_AV_KILL_CAPTAIN                  3
+#define BG_AV_REP_CAPTAIN                   125
+#define BG_AV_RES_CAPTAIN                   100
 
-#define BG_AV_KILL_TOWER                3
-#define BG_AV_REP_TOWER                 12
-#define BG_AV_RES_TOWER                 75
+#define BG_AV_KILL_TOWER                    3
+#define BG_AV_REP_TOWER                     12
+#define BG_AV_RES_TOWER                     75
 
-#define BG_AV_GET_COMMANDER            1 //for a safely returned wingcommander
-//bonushonor at the end
-#define BG_AV_KILL_SURVIVING_TOWER      2
-#define BG_AV_REP_SURVIVING_TOWER       12
+#define BG_AV_KILL_GET_COMMANDER            1               // for a safely returned wingcommander TODO implement it
 
-#define BG_AV_KILL_SURVIVING_CAPTAIN    2
-#define BG_AV_REP_SURVIVING_CAPTAIN     125
+// bonushonor at the end
+#define BG_AV_KILL_SURVIVING_TOWER          2
+#define BG_AV_REP_SURVIVING_TOWER           12
+
+#define BG_AV_KILL_SURVIVING_CAPTAIN        2
+#define BG_AV_REP_SURVIVING_CAPTAIN         125
 
 enum BG_AV_Sounds
-{ //TODO: get out if there comes a sound when neutral team captures mine
+{
+    BG_AV_SOUND_NEAR_LOSE               = 8456,             // not confirmed yet
 
-/*
-8212:
-    alliance grave assault
-    alliance tower assault
-    drek "mlanzenabschaum! In meiner Burg?! Toetet sie all" - nicht immer der sound
-8333:
-    galv "sterbt fuer euch ist kein platz hier"
+    BG_AV_SOUND_ALLIANCE_ASSAULTS       = 8212,             // tower,grave + enemy boss if someone tries to attack him
+    BG_AV_SOUND_HORDE_ASSAULTS          = 8174,
+    BG_AV_SOUND_ALLIANCE_GOOD           = 8173,             // if something good happens for the team:  wins(maybe only through killing the boss), captures mine or grave, destroys tower and defends grave
+    BG_AV_SOUND_HORDE_GOOD              = 8213,
+    BG_AV_SOUND_BOTH_TOWER_DEFEND       = 8192,
 
-8332:
-    bal "Verschwinde, dreckiger Abschaum! Die Allianz wird im Alteractal "
-8174:
-    horde tower assault
-    horde grave assault
-    van "es Sturmlanzenklans, euer General wird angegriffen! Ich fordere Unterst"
-8173:
-    ally grave capture/defend
-    tower destroy
-    mine capture
-    ally wins
-8192:
-    ally tower destroy(only iceblood - found a bug^^)
-    ally tower  defend
-    horde tower defend
-8213
-horde:
-    grave defend/capture
-    tower destroy
-    mine capture
-    horde wins
-    */
-
-    AV_SOUND_NEAR_VICTORY                   = 8456, //not confirmed yet
-
-    AV_SOUND_ALLIANCE_ASSAULTS              = 8212, //tower,grave + enemy boss if someone tries to attack him
-    AV_SOUND_HORDE_ASSAULTS                 = 8174,
-    AV_SOUND_ALLIANCE_GOOD                  = 8173, //if something good happens for the team:  wins(maybe only through killing the boss), captures mine or grave, destroys tower and defends grave
-    AV_SOUND_HORDE_GOOD                     = 8213,
-    AV_SOUND_BOTH_TOWER_DEFEND              = 8192,
-
-    AV_SOUND_ALLIANCE_CAPTAIN               = 8232, //gets called when someone attacks them and at the beginning after 3min+rand(x)*10sec (maybe buff)
-    AV_SOUND_HORDE_CAPTAIN                  = 8333,
-
-
+    BG_AV_SOUND_ALLIANCE_CAPTAIN        = 8232,             // gets called when someone attacks them and at the beginning after 3min + rand(x) * 10sec (maybe buff)
+    BG_AV_SOUND_HORDE_CAPTAIN           = 8333,
 };
 
 enum BG_AV_OTHER_VALUES
 {
     AV_STATICCPLACE_MAX        = 123,
-    AV_NORTH_MINE              = 0,
-    AV_SOUTH_MINE              = 1,
-    AV_MINE_TICK_TIMER         = 45000,
-    AV_MINE_RECLAIM_TIMER      = 1200000, //TODO: get the right value.. this is currently 20 minutes
-    AV_NEUTRAL_TEAM            = 0 //this is the neutral owner of snowfall
+    BG_AV_NORTH_MINE            = 0,
+    BG_AV_SOUTH_MINE            = 1,
+    BG_AV_MINE_TICK_TIMER       = 45000,
+    BG_AV_MINE_RECLAIM_TIMER    = 1200000,                  // TODO: get the right value.. this is currently 20 minutes
+    BG_AV_NEUTRAL_TEAM          = 0                         // this is the neutral owner of snowfall
 };
+#define BG_AV_MAX_MINES 2
+
 enum BG_AV_ObjectIds
 {
     //cause the mangos-system is a bit different, we don't use the right go-ids for every node.. if we want to be 100% like another big server, we must take one object for every node
@@ -1245,29 +1214,27 @@ const uint32 BG_AV_StaticCreatureInfo[51][4] = {
 
 enum BG_AV_Graveyards
 {
-    AV_GRAVE_STORM_AID         = 751,
-    AV_GRAVE_STORM_GRAVE       = 689,
-    AV_GRAVE_STONE_GRAVE       = 729,
-    AV_GRAVE_SNOWFALL          = 169,
-    AV_GRAVE_ICE_GRAVE         = 749,
-    AV_GRAVE_FROSTWOLF         = 690,
-    AV_GRAVE_FROST_HUT         = 750,
-    AV_GRAVE_MAIN_ALLIANCE     = 611,
-    AV_GRAVE_MAIN_HORDE        = 610
+    BG_AV_GRAVE_STORM_AID          = 751,
+    BG_AV_GRAVE_STORM_GRAVE        = 689,
+    BG_AV_GRAVE_STONE_GRAVE        = 729,
+    BG_AV_GRAVE_SNOWFALL           = 169,
+    BG_AV_GRAVE_ICE_GRAVE          = 749,
+    BG_AV_GRAVE_FROSTWOLF          = 690,
+    BG_AV_GRAVE_FROST_HUT          = 750,
+    BG_AV_GRAVE_MAIN_ALLIANCE      = 611,
+    BG_AV_GRAVE_MAIN_HORDE         = 610
 };
 
-
-
 const uint32 BG_AV_GraveyardIds[9]= {
-  AV_GRAVE_STORM_AID,
-  AV_GRAVE_STORM_GRAVE,
-  AV_GRAVE_STONE_GRAVE,
-  AV_GRAVE_SNOWFALL,
-  AV_GRAVE_ICE_GRAVE,
-  AV_GRAVE_FROSTWOLF,
-  AV_GRAVE_FROST_HUT,
-  AV_GRAVE_MAIN_ALLIANCE,
-  AV_GRAVE_MAIN_HORDE
+    BG_AV_GRAVE_STORM_AID,
+    BG_AV_GRAVE_STORM_GRAVE,
+    BG_AV_GRAVE_STONE_GRAVE,
+    BG_AV_GRAVE_SNOWFALL,
+    BG_AV_GRAVE_ICE_GRAVE,
+    BG_AV_GRAVE_FROSTWOLF,
+    BG_AV_GRAVE_FROST_HUT,
+    BG_AV_GRAVE_MAIN_ALLIANCE,
+    BG_AV_GRAVE_MAIN_HORDE
 };
 
 enum BG_AV_BUFF
@@ -1278,18 +1245,18 @@ enum BG_AV_BUFF
 };
 enum BG_AV_States
 {
-    POINT_NEUTRAL              =  0,
-    POINT_ASSAULTED            =  1,
-    POINT_DESTROYED            =  2,
-    POINT_CONTROLED            =  3
+    POINT_NEUTRAL              = 0,
+    POINT_ASSAULTED            = 1,
+    POINT_DESTROYED            = 2,
+    POINT_CONTROLLED           = 3
 };
 
 enum BG_AV_WorldStates
 {
-    AV_Alliance_Score               = 3127,
-    AV_Horde_Score                  = 3128,
-    AV_SHOW_H_SCORE                 = 3133,
-    AV_SHOW_A_SCORE                 = 3134,
+    BG_AV_Alliance_Score        = 3127,
+    BG_AV_Horde_Score           = 3128,
+    BG_AV_SHOW_H_SCORE          = 3133,
+    BG_AV_SHOW_A_SCORE          = 3134,
 
 /*
     //the comments behind the state shows which icon overlaps the other.. but is, until now, unused and maybe not a good solution (but give few performance (:)
@@ -1442,28 +1409,28 @@ const uint32 BG_AV_NodeWorldStates[16][4] = {
 
 enum BG_AV_QuestIds
 {
-    AV_QUEST_A_SCRAPS1      = 7223,
-    AV_QUEST_A_SCRAPS2      = 6781,
-    AV_QUEST_H_SCRAPS1      = 7224,
-    AV_QUEST_H_SCRAPS2      = 6741,
-    AV_QUEST_A_COMMANDER1   = 6942, //soldier
-    AV_QUEST_H_COMMANDER1   = 6825,
-    AV_QUEST_A_COMMANDER2   = 6941, //leutnant
-    AV_QUEST_H_COMMANDER2   = 6826,
-    AV_QUEST_A_COMMANDER3   = 6943, //commander
-    AV_QUEST_H_COMMANDER3   = 6827,
-    AV_QUEST_A_BOSS1        = 7386, // 5 cristal/blood
-    AV_QUEST_H_BOSS1        = 7385,
-    AV_QUEST_A_BOSS2        = 6881, // 1
-    AV_QUEST_H_BOSS2        = 6801,
-    AV_QUEST_A_NEAR_MINE    = 5892, //the mine near start location of team
-    AV_QUEST_H_NEAR_MINE    = 5893,
-    AV_QUEST_A_OTHER_MINE   = 6982, //the other mine ;)
-    AV_QUEST_H_OTHER_MINE   = 6985,
-    AV_QUEST_A_RIDER_HIDE   = 7026,
-    AV_QUEST_H_RIDER_HIDE   = 7002,
-    AV_QUEST_A_RIDER_TAME   = 7027,
-    AV_QUEST_H_RIDER_TAME   = 7001
+    BG_AV_QUEST_A_SCRAPS1       = 7223,                     // first quest
+    BG_AV_QUEST_A_SCRAPS2       = 6781,                     // repeatable
+    BG_AV_QUEST_H_SCRAPS1       = 7224,
+    BG_AV_QUEST_H_SCRAPS2       = 6741,
+    BG_AV_QUEST_A_COMMANDER1    = 6942,                     // soldier
+    BG_AV_QUEST_H_COMMANDER1    = 6825,
+    BG_AV_QUEST_A_COMMANDER2    = 6941,                     // leutnant
+    BG_AV_QUEST_H_COMMANDER2    = 6826,
+    BG_AV_QUEST_A_COMMANDER3    = 6943,                     // commander
+    BG_AV_QUEST_H_COMMANDER3    = 6827,
+    BG_AV_QUEST_A_BOSS1         = 7386,                     // 5 cristal/blood
+    BG_AV_QUEST_H_BOSS1         = 7385,
+    BG_AV_QUEST_A_BOSS2         = 6881,                     // 1
+    BG_AV_QUEST_H_BOSS2         = 6801,
+    BG_AV_QUEST_A_NEAR_MINE     = 5892,                     // the mine near start location of team
+    BG_AV_QUEST_H_NEAR_MINE     = 5893,
+    BG_AV_QUEST_A_OTHER_MINE    = 6982,                     // the other mine ;)
+    BG_AV_QUEST_H_OTHER_MINE    = 6985,
+    BG_AV_QUEST_A_RIDER_HIDE    = 7026,
+    BG_AV_QUEST_H_RIDER_HIDE    = 7002,
+    BG_AV_QUEST_A_RIDER_TAME    = 7027,
+    BG_AV_QUEST_H_RIDER_TAME    = 7001
 };
 
 struct BG_AV_NodeInfo
@@ -1512,15 +1479,14 @@ class BattleGroundAV : public BattleGround
 
         /*general stuff*/
         void UpdateScore(uint16 team, int16 points);
-       void UpdatePlayerScore(Player *Source, uint32 type, uint32 value);
+        void UpdatePlayerScore(Player *Source, uint32 type, uint32 value);
 
-        /*handlestuff*/ //these are functions which get called from extern
+        /*handle stuff*/ // these are functions which get called from extern scripts
         virtual void EventPlayerClickedOnFlag(Player *source, GameObject* target_obj);
         void HandleKillPlayer(Player* player, Player *killer);
         void HandleKillUnit(Creature *unit, Player *killer);
         void HandleQuestComplete(uint32 questid, Player *player);
         bool PlayerCanDoMineQuest(int32 GOId,uint32 team);
-
 
         void EndBattleGround(uint32 winner);
 
@@ -1545,7 +1511,6 @@ class BattleGroundAV : public BattleGround
         const char* GetNodeName(BG_AV_Nodes node);
         const bool IsTower(BG_AV_Nodes node) {   return m_Nodes[node].Tower; }
 
-
         /*mine*/
         void ChangeMineOwner(uint8 mine, uint32 team, bool initial=false);
 
@@ -1560,23 +1525,21 @@ class BattleGroundAV : public BattleGround
         const uint16 GetBonusHonor(uint8 kills); //TODO remove this when mangos handles this right
 
         /*variables */
-        int32 m_Team_Scores[2];
-        uint32 m_Team_QuestStatus[2][9]; //[x][y] x=team y=questcounter
+        int32 m_Team_Scores[BG_TEAMS_COUNT];
+        uint32 m_Team_QuestStatus[BG_TEAMS_COUNT][9];       // [x][y] x=team y=questcounter
 
         BG_AV_NodeInfo m_Nodes[BG_AV_NODES_MAX];
 
-        uint32 m_Mine_Owner[2];
-        uint32 m_Mine_PrevOwner[2]; //only for worldstates needed
+        uint32 m_Mine_Owner[BG_AV_MAX_MINES];
+        uint32 m_Mine_PrevOwner[BG_AV_MAX_MINES];           // only for worldstates needed
         int32 m_Mine_Timer; //ticks for both teams
-        uint32 m_Mine_Reclaim_Timer[2];
-        uint32 m_CaptainBuffTimer[2];
-        bool m_CaptainAlive[2];
+        uint32 m_Mine_Reclaim_Timer[BG_AV_MAX_MINES];
+       // [x][y] x=team y=questcounter
+        uint32 m_CaptainBuffTimer[BG_TEAMS_COUNT];
+        bool m_CaptainAlive[BG_TEAMS_COUNT];
 
         uint8 m_MaxLevel; //TODO remove this when battleground-getmaxlevel() returns something usefull
         bool m_IsInformedNearVictory[2];
-
-
 };
 
 #endif
-

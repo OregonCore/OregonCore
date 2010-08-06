@@ -130,12 +130,12 @@ enum BG_AB_Timers
 
 enum BG_AB_Score
 {
-    BG_AB_MAX_TEAM_SCORE                = 2000,
-    BG_AB_WARNING_SCORE                 = 1800
+    BG_AB_WARNING_NEAR_VICTORY_SCORE    = 1800,
+    BG_AB_MAX_TEAM_SCORE                = 2000
 };
 
 /* do NOT change the order, else wrong behaviour */
-enum BG_AB_BattleGroundNodes
+enum BG_AB_Nodes
 {
     BG_AB_NODE_STABLES          = 0,
     BG_AB_NODE_BLACKSMITH       = 1,
@@ -143,13 +143,13 @@ enum BG_AB_BattleGroundNodes
     BG_AB_NODE_LUMBER_MILL      = 3,
     BG_AB_NODE_GOLD_MINE        = 4,
 
-    BG_AB_DYNAMIC_NODES_COUNT   = 5,                        // dynamic nodes that can be captured
-
     BG_AB_SPIRIT_ALIANCE        = 5,
     BG_AB_SPIRIT_HORDE          = 6,
 
     BG_AB_ALL_NODES_COUNT       = 7,                        // all nodes (dynamic and static)
 };
+
+#define BG_AB_NODES_MAX   5
 
 enum BG_AB_NodeStatus
 {
@@ -164,16 +164,16 @@ enum BG_AB_NodeStatus
 
 enum BG_AB_Sounds
 {
-    SOUND_NODE_CLAIMED                  = 8192,
-    SOUND_NODE_CAPTURED_ALLIANCE        = 8173,
-    SOUND_NODE_CAPTURED_HORDE           = 8213,
-    SOUND_NODE_ASSAULTED_ALLIANCE       = 8174,
-    SOUND_NODE_ASSAULTED_HORDE          = 8212,
-    SOUND_NEAR_VICTORY                  = 8456
+    BG_AB_SOUND_NODE_CLAIMED            = 8192,
+    BG_AB_SOUND_NODE_CAPTURED_ALLIANCE  = 8173,
+    BG_AB_SOUND_NODE_CAPTURED_HORDE     = 8213,
+    BG_AB_SOUND_NODE_ASSAULTED_ALLIANCE = 8174,
+    BG_AB_SOUND_NODE_ASSAULTED_HORDE    = 8212,
+    BG_AB_SOUND_NEAR_VICTORY            = 8456
 };
 
 // x, y, z, o
-const float BG_AB_NodePositions[BG_AB_DYNAMIC_NODES_COUNT][4] = {
+const float BG_AB_NodePositions[BG_AB_NODES_MAX][4] = {
     {1166.785f, 1200.132f, -56.70859f, 0.9075713f},         // stables
     {977.0156f, 1046.616f, -44.80923f, -2.600541f},         // blacksmith
     {806.1821f, 874.2723f, -55.99371f, -2.303835f},         // farm
@@ -195,7 +195,7 @@ const uint32 BG_AB_TickPoints[6] = {0, 10, 10, 10, 10, 30};
 const uint32 BG_AB_GraveyardIds[BG_AB_ALL_NODES_COUNT] = {895, 894, 893, 897, 896, 898, 899};
 
 // x, y, z, o
-const float BG_AB_BuffPositions[BG_AB_DYNAMIC_NODES_COUNT][4] = {
+const float BG_AB_BuffPositions[BG_AB_NODES_MAX][4] = {
     {1185.71f, 1185.24f, -56.36f, 2.56f},                   // stables
     {990.75f, 1008.18f, -42.60f, 2.43f},                    // blacksmith
     {817.66f, 843.34f, -56.54f, 3.01f},                     // farm
@@ -273,10 +273,10 @@ class BattleGroundAB : public BattleGround
             2: horde contested
             3: ally occupied
             4: horde occupied     */
-        uint8             m_Nodes[BG_AB_DYNAMIC_NODES_COUNT];
-        uint8             m_prevNodes[BG_AB_DYNAMIC_NODES_COUNT];
-        BG_AB_BannerTimer m_BannerTimers[BG_AB_DYNAMIC_NODES_COUNT];
-        int32             m_NodeTimers[BG_AB_DYNAMIC_NODES_COUNT];
+        uint8             m_Nodes[BG_AB_NODES_MAX];
+        uint8             m_prevNodes[BG_AB_NODES_MAX];
+        BG_AB_BannerTimer m_BannerTimers[BG_AB_NODES_MAX];
+        int32             m_NodeTimers[BG_AB_NODES_MAX];
         uint32            m_TeamScores[2];
         uint32            m_lastTick[2];
         uint32            m_HonorScoreTics[2];
@@ -284,4 +284,3 @@ class BattleGroundAB : public BattleGround
         bool              m_IsInformedNearVictory;
 };
 #endif
-

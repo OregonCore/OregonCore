@@ -207,6 +207,7 @@ enum BattleGroundTeamId
     BG_TEAM_ALLIANCE        = 0,
     BG_TEAM_HORDE           = 1
 };
+#define BG_TEAMS_COUNT  2
 
 enum BattleGroundJoinError
 {
@@ -417,9 +418,9 @@ class BattleGround
 
         // used for rated arena battles
         void SetArenaTeamIdForTeam(uint32 Team, uint32 ArenaTeamId) { m_ArenaTeamIds[GetTeamIndexByTeamId(Team)] = ArenaTeamId; }
-        uint32 GetArenaTeamIdForTeam(uint32 Team) const { return m_ArenaTeamIds[GetTeamIndexByTeamId(Team)]; }
+        uint32 GetArenaTeamIdForTeam(uint32 Team) const             { return m_ArenaTeamIds[GetTeamIndexByTeamId(Team)]; }
         void SetArenaTeamRatingChangeForTeam(uint32 Team, int32 RatingChange) { m_ArenaTeamRatingChanges[GetTeamIndexByTeamId(Team)] = RatingChange; }
-        int32 GetArenaTeamRatingChangeForTeam(uint32 Team) const { return m_ArenaTeamRatingChanges[GetTeamIndexByTeamId(Team)]; }
+        int32 GetArenaTeamRatingChangeForTeam(uint32 Team) const    { return m_ArenaTeamRatingChanges[GetTeamIndexByTeamId(Team)]; }
 
         /* Triggers handle */
         // must be implemented in BG subclass
@@ -520,7 +521,6 @@ class BattleGround
         uint32 m_PrematureCountDownTimer;
         char const *m_Name;
 
-
         /* Player lists */
         std::vector<uint64> m_ResurrectQueue;               // Player GUID
         std::map<uint64, uint8> m_RemovedPlayers;           // uint8 is remove type (0 - bgqueue, 1 - bg, 2 - resurrect queue)
@@ -532,15 +532,15 @@ class BattleGround
         uint32 m_InvitedHorde;
 
         /* Raid Group */
-        Group *m_BgRaids[2];                                // 0 - alliance, 1 - horde
+        Group *m_BgRaids[BG_TEAMS_COUNT];                                // 0 - alliance, 1 - horde
 
         /* Players count by team */
-        uint32 m_PlayersCount[2];
+        uint32 m_PlayersCount[BG_TEAMS_COUNT];
 
         /* Arena team ids by team */
-        uint32 m_ArenaTeamIds[2];
+        uint32 m_ArenaTeamIds[BG_TEAMS_COUNT];
 
-        int32 m_ArenaTeamRatingChanges[2];
+        int32 m_ArenaTeamRatingChanges[BG_TEAMS_COUNT];
 
         /* Limits */
         uint32 m_LevelMin;
@@ -550,7 +550,7 @@ class BattleGround
         uint32 m_MinPlayersPerTeam;
         uint32 m_MinPlayers;
 
-        /* Location */
+        /* Start Location */
         uint32 m_MapId;
         float m_TeamStartLocX[2];
         float m_TeamStartLocY[2];
@@ -558,4 +558,3 @@ class BattleGround
         float m_TeamStartLocO[2];
 };
 #endif
-
