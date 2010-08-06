@@ -50,6 +50,7 @@ uint32 BG_WSG_Reputation[BG_HONOR_MODE_NUM][BG_WSG_REWARD_NUM] = {
 
 BattleGroundWS::BattleGroundWS()
 {
+    m_BothFlagsKept = false;
     m_BgObjects.resize(BG_WS_OBJECT_MAX);
     m_BgCreatures.resize(BG_CREATURES_MAX_WS);
 }
