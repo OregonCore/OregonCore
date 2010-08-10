@@ -1344,7 +1344,11 @@ bool Creature::FallGround()
 
     float x, y, z;
     GetPosition(x, y, z);
-    float ground_Z = GetMap()->GetHeight(x, y, z);
+
+    // use larger distance for vmap height search than in most other cases
+    float ground_Z = GetMap()->GetHeight(x, y, z, true, MAX_FALL_DISTANCE);
+
+    // Abort too if the ground is very near
     if (fabs(ground_Z - z) < 0.1f)
         return false;
 

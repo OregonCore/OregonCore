@@ -82,7 +82,7 @@ namespace VMAP
             VMapManager2();
             ~VMapManager2(void);
 
-            int loadMap(const char* pBasePath, unsigned int pMapId, int x, int y);
+            VMAPLoadResult loadMap(const char* pBasePath, unsigned int pMapId, int x, int y);
 
             void unloadMap(unsigned int pMapId, int x, int y);
             void unloadMap(unsigned int pMapId);
@@ -92,7 +92,7 @@ namespace VMAP
             fill the hit pos and return true, if an object was hit
             */
             bool getObjectHitPos(unsigned int pMapId, float x1, float y1, float z1, float x2, float y2, float z2, float& rx, float &ry, float& rz, float pModifyDist);
-            float getHeight(unsigned int pMapId, float x, float y, float z);
+            float getHeight(unsigned int pMapId, float x, float y, float z, float maxSearchDist);
 
             bool processCommand(char *pCommand) { return false; }      // for debug and extensions
 
