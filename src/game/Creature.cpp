@@ -1349,7 +1349,7 @@ bool Creature::FallGround()
     float ground_Z = GetMap()->GetHeight(x, y, z, true, MAX_FALL_DISTANCE);
 
     // Abort too if the ground is very near
-    if (fabs(ground_Z - z) < 0.1f)
+    if (fabs(z - ground_Z) < 0.1f)
         return false;
 
     GetMotionMaster()->MoveFall(ground_Z, EVENT_FALL_GROUND);
