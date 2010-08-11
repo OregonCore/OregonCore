@@ -1171,8 +1171,7 @@ class OREGON_DLL_SPEC Player : public Unit
         void IncompleteQuest(uint32 quest_id);
         void RewardQuest(Quest const *pQuest, uint32 reward, Object* questGiver, bool announce = true);
 
-        void FailQuest(uint32 quest_id);
-        void FailTimedQuest(uint32 quest_id);
+        void FailQuest(uint32 questId);
         bool SatisfyQuestSkillOrClass(Quest const* qInfo, bool msg);
         bool SatisfyQuestLevel(Quest const* qInfo, bool msg);
         bool SatisfyQuestLog(bool msg);
@@ -1255,6 +1254,7 @@ class OREGON_DLL_SPEC Player : public Unit
         void SetInGameTime(uint32 time) { m_ingametime = time; }
 
         void AddTimedQuest(uint32 quest_id) { m_timedquests.insert(quest_id); }
+        void RemoveTimedQuest(uint32 quest_id) { m_timedquests.erase(quest_id); }
 
         /*********************************************************/
         /***                   LOAD SYSTEM                     ***/
@@ -2134,6 +2134,7 @@ class OREGON_DLL_SPEC Player : public Unit
         /***                    QUEST SYSTEM                   ***/
         /*********************************************************/
 
+        //We allow only one timed quest active at the same time. Below can then be simple value instead of set.
         std::set<uint32> m_timedquests;
 
         uint64 m_divider;

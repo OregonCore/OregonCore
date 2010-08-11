@@ -1133,8 +1133,8 @@ void Player::Update(uint32 p_time)
             if (q_status.m_timer <= p_time)
             {
                 uint32 quest_id  = *iter;
-                ++iter;                                     // current iter will be removed in FailTimedQuest
-                FailTimedQuest(quest_id);
+                ++iter;                                     // current iter will be removed in FailQuest
+                FailQuest(quest_id);
             }
             else
             {
@@ -13208,47 +13208,40 @@ void Player::RewardQuest(Quest const *pQuest, uint32 reward, Object* questGiver,
         SetQuestStatus(quest_id, QUEST_STATUS_NONE);
 
     q_status.m_rewarded = true;
+    if (q_status.uState != QUEST_NEW)
+        q_status.uState = QUEST_CHANGED;
 
     if (announce)
         SendQuestReward(pQuest, XP, questGiver);
 
-    if (q_status.uState != QUEST_NEW) q_status.uState = QUEST_CHANGED;
+
 }
 
-void Player::FailQuest(uint32 quest_id)
+void Player::FailQuest(uint32 questId)
 {
-    if (quest_id)
+    if (Quest const* pQuest = objmgr.GetQuestTemplate(questId))
     {
-        IncompleteQuest(quest_id);
+        SetQuestStatus(questId, QUEST_STATUS_FAILED);
 
-        uint16 log_slot = FindQuestSlot(quest_id);
+        uint16 log_slot = FindQuestSlot(questId);
+
         if (log_slot < MAX_QUEST_LOG_SIZE)
         {
             SetQuestSlotTimer(log_slot, 1);
-            SetQuestSlotState(log_slot,QUEST_STATE_FAIL);
+            SetQuestSlotState(log_slot, QUEST_STATE_FAIL);
         }
-        SendQuestFailed(quest_id);
-    }
-}
 
-void Player::FailTimedQuest(uint32 quest_id)
-{
-    if (quest_id)
-    {
-        QuestStatusData& q_status = mQuestStatus[quest_id];
-
-        if (q_status.uState != QUEST_NEW) q_status.uState = QUEST_CHANGED;
-        q_status.m_timer = 0;
-
-        IncompleteQuest(quest_id);
-
-        uint16 log_slot = FindQuestSlot(quest_id);
-        if (log_slot < MAX_QUEST_LOG_SIZE)
+        if (pQuest->HasFlag(QUEST_OREGON_FLAGS_TIMED))
         {
-            SetQuestSlotTimer(log_slot, 1);
-            SetQuestSlotState(log_slot,QUEST_STATE_FAIL);
+            QuestStatusData& q_status = mQuestStatus[questId];
+
+            RemoveTimedQuest(questId);
+            q_status.m_timer = 0;
+
+            SendQuestTimerFailed(questId);
         }
-        SendQuestTimerFailed(quest_id);
+        else
+            SendQuestFailed(questId);
     }
 }
 
@@ -13470,10 +13463,11 @@ bool Player::SatisfyQuestStatus(Quest const* qInfo, bool msg)
 
 bool Player::SatisfyQuestTimed(Quest const* qInfo, bool msg)
 {
-    if ((find(m_timedquests.begin(), m_timedquests.end(), qInfo->GetQuestId()) != m_timedquests.end()) && qInfo->HasFlag(QUEST_OREGON_FLAGS_TIMED))
+    if (!m_timedquests.empty() && qInfo->HasFlag(QUEST_OREGON_FLAGS_TIMED))
     {
         if (msg)
             SendCanTakeQuestResponse(INVALIDREASON_QUEST_ONLY_ONE_TIMED);
+
         return false;
     }
     return true;
@@ -13699,19 +13693,14 @@ bool Player::CanShareQuest(uint32 quest_id) const
 
 void Player::SetQuestStatus(uint32 quest_id, QuestStatus status)
 {
-    Quest const* qInfo = objmgr.GetQuestTemplate(quest_id);
-    if (qInfo)
+    if (objmgr.GetQuestTemplate(quest_id))
     {
-        if (status == QUEST_STATUS_NONE || status == QUEST_STATUS_INCOMPLETE || status == QUEST_STATUS_COMPLETE)
-        {
-            if (qInfo->HasFlag(QUEST_OREGON_FLAGS_TIMED))
-                m_timedquests.erase(qInfo->GetQuestId());
-        }
-
         QuestStatusData& q_status = mQuestStatus[quest_id];
 
         q_status.m_status = status;
-        if (q_status.uState != QUEST_NEW) q_status.uState = QUEST_CHANGED;
+
+        if (q_status.uState != QUEST_NEW)
+            q_status.uState = QUEST_CHANGED;
     }
 
     UpdateForQuestsGO();
@@ -13724,7 +13713,7 @@ uint32 Player::GetReqKillOrCastCurrentCount(uint32 quest_id, int32 entry)
     if (!qInfo)
         return 0;
 
-    for (int j = 0; j < QUEST_OBJECTIVES_COUNT; j++)
+    for (int j = 0; j < QUEST_OBJECTIVES_COUNT; ++j)
         if (qInfo->ReqCreatureOrGOId[j] == entry)
             return mQuestStatus[quest_id].m_creatureOrGOcount[j];
 
@@ -13735,7 +13724,7 @@ void Player::AdjustQuestReqItemCount(Quest const* pQuest)
 {
     if (pQuest->HasFlag(QUEST_OREGON_FLAGS_DELIVER))
     {
-        for (int i = 0; i < QUEST_OBJECTIVES_COUNT; i++)
+        for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
         {
             uint32 reqitemcount = pQuest->ReqItemCount[i];
             if (reqitemcount != 0)
@@ -15436,14 +15425,18 @@ void Player::_LoadQuestStatus(QueryResult_AutoPtr result)
 
                 // add to quest log
                 if (slot < MAX_QUEST_LOG_SIZE &&
-                    (questStatusData.m_status == QUEST_STATUS_INCOMPLETE ||
-                    questStatusData.m_status == QUEST_STATUS_COMPLETE &&
+                    ((questStatusData.m_status == QUEST_STATUS_INCOMPLETE ||
+                    questStatusData.m_status == QUEST_STATUS_COMPLETE ||
+                    questStatusData.m_status == QUEST_STATUS_FAILED) &&
                     (!questStatusData.m_rewarded || pQuest->IsDaily())))
                 {
                     SetQuestSlot(slot, quest_id, quest_time);
 
                     if (questStatusData.m_status == QUEST_STATUS_COMPLETE)
                         SetQuestSlotState(slot, QUEST_STATE_COMPLETE);
+
+                    if (questStatusData.m_status == QUEST_STATUS_FAILED)
+                        SetQuestSlotState(slot, QUEST_STATE_FAIL);
 
                     for (uint8 idx = 0; idx < QUEST_OBJECTIVES_COUNT; ++idx)
                         if (questStatusData.m_creatureOrGOcount[idx])

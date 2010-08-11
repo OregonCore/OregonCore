@@ -90,8 +90,7 @@ void WorldSession::HandleQuestgiverHelloOpcode(WorldPacket & recv_data)
     Creature *pCreature = GetPlayer()->GetNPCIfCanInteractWith(guid,UNIT_NPC_FLAG_NONE);
     if (!pCreature)
     {
-        sLog.outDebug ("WORLD: HandleQuestgiverHelloOpcode - Unit (GUID: %u) not found or you can't interact with him.",
-            GUID_LOPART(guid));
+        sLog.outDebug ("WORLD: HandleQuestgiverHelloOpcode - Unit (GUID: %u) not found or you can't interact with him.", GUID_LOPART(guid));
         return;
     }
 
@@ -374,6 +373,12 @@ void WorldSession::HandleQuestLogRemoveQuest(WorldPacket& recv_data)
             if (!_player->TakeQuestSourceItem(quest, true))
                 return;                                     // can't un-equip some items, reject quest cancel
 
+            if (const Quest *pQuest = objmgr.GetQuestTemplate(quest))
+            {
+                if (pQuest->HasFlag(QUEST_OREGON_FLAGS_TIMED))
+                    _player->RemoveTimedQuest(quest);
+            }
+
             _player->SetQuestStatus(quest, QUEST_STATUS_NONE);
         }
 
@@ -470,8 +475,9 @@ void WorldSession::HandleQuestPushToParty(WorldPacket& recvPacket)
                 if (!pPlayer || pPlayer == _player)         // skip self
                     continue;
 
-                // 2.4.3: can only share quests within 10 yards
                 _player->SendPushToPartyResponse(pPlayer, QUEST_PARTY_MSG_SHARING_QUEST);
+
+                // 2.4.3: can only share quests within 10 yards
                 if (_player->GetDistance(pPlayer) > 10)
                 {
                     _player->SendPushToPartyResponse(pPlayer, QUEST_PARTY_MSG_TOO_FAR);

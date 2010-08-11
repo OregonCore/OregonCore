@@ -96,6 +96,7 @@ enum QuestStatus
     QUEST_STATUS_UNAVAILABLE    = 2,
     QUEST_STATUS_INCOMPLETE     = 3,
     QUEST_STATUS_AVAILABLE      = 4,
+    QUEST_STATUS_FAILED         = 5,
     MAX_QUEST_STATUS
 };
 
@@ -134,7 +135,7 @@ enum __QuestFlags
     QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT = 0x020000,     // Set by 2 in SpecialFlags from DB (if required area explore, spell SPELL_EFFECT_QUEST_COMPLETE casting, table `*_script` command SCRIPT_COMMAND_QUEST_EXPLORED use, set from script DLL)
     QUEST_OREGON_FLAGS_DB_ALLOWED = 0xFFFF | QUEST_OREGON_FLAGS_REPEATABLE | QUEST_OREGON_FLAGS_EXPLORATION_OR_EVENT,
 
-    // OREGON flags for internal use only
+    // Oregon flags for internal use only
     QUEST_OREGON_FLAGS_DELIVER              = 0x040000,     // Internal flag computed only
     QUEST_OREGON_FLAGS_SPEAKTO              = 0x080000,     // Internal flag computed only
     QUEST_OREGON_FLAGS_KILL_OR_CAST         = 0x100000,     // Internal flag computed only
