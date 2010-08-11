@@ -1,6 +1,6 @@
 add_subdirectory(updates)
 add_subdirectory(tools)
-add_subdirectory(full_tables)
+add_subdirectory(scripts)
 
 
 ########### install files ###############
