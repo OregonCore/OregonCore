@@ -829,6 +829,8 @@ CREATE TABLE `creature_template` (
 
 LOCK TABLES `creature_template` WRITE;
 /*!40000 ALTER TABLE `creature_template` DISABLE KEYS */;
+INSERT INTO `creature_template` VALUES
+(1,0,10045,0,10045,0,'Waypoint (Only GM can see it)','Visual',NULL,0,1,1,8,8,0,0,0,35,35,0,0.91,1,0,3,4,0,26,2000,2200,4096,0,8,0,0,0,0,1.76,2.42,100,8,5242886,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,1,0,1,0,0,130,'');
 /*!40000 ALTER TABLE `creature_template` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1885,6 +1887,65 @@ CREATE TABLE `instance_template` (
 
 LOCK TABLES `instance_template` WRITE;
 /*!40000 ALTER TABLE `instance_template` DISABLE KEYS */;
+INSERT INTO `instance_template` VALUES
+(33,0,10,0,1,NULL,NULL,NULL,NULL,'instance_shadowfang_keep'),
+(34,0,10,0,2,NULL,NULL,NULL,NULL,''),
+(36,0,10,0,3,NULL,NULL,NULL,NULL,'instance_deadmines'),
+(43,0,10,0,4,NULL,NULL,NULL,NULL,''),
+(47,0,10,0,5,NULL,NULL,NULL,NULL,'instance_razorfen_kraul'),
+(48,0,10,0,6,NULL,NULL,NULL,NULL,'instance_blackfathom_deeps'),
+(70,0,10,0,7,NULL,NULL,NULL,NULL,'instance_uldaman'),
+(90,0,10,0,8,NULL,NULL,NULL,NULL,''),
+(109,0,10,0,9,NULL,NULL,NULL,NULL,''),
+(129,0,10,0,10,NULL,NULL,NULL,NULL,''),
+(189,0,10,0,11,NULL,NULL,NULL,NULL,'instance_scarlet_monastery'),
+(209,0,10,0,12,NULL,NULL,NULL,NULL,''),
+(229,0,10,0,13,78,-225,49,5,''),
+(230,0,5,0,14,NULL,NULL,NULL,NULL,'instance_blackrock_depths'),
+(249,0,40,0,15,NULL,NULL,NULL,NULL,''),
+(269,0,5,0,16,NULL,NULL,NULL,NULL,'instance_dark_portal'),
+(289,0,5,0,17,NULL,NULL,NULL,NULL,'instance_scholomance'),
+(309,0,20,0,18,NULL,NULL,NULL,NULL,'instance_zulgurub'),
+(329,0,5,0,19,NULL,NULL,NULL,NULL,'instance_stratholme'),
+(349,0,10,0,20,NULL,NULL,NULL,NULL,''),
+(389,0,10,0,21,NULL,NULL,NULL,NULL,''),
+(409,230,40,0,22,NULL,NULL,NULL,NULL,'instance_molten_core'),
+(429,0,5,0,23,NULL,NULL,NULL,NULL,''),
+(469,229,40,0,24,NULL,NULL,NULL,NULL,'instance_blackwing_lair'),
+(509,0,20,0,25,NULL,NULL,NULL,NULL,'instance_ruins_of_ahnqiraj'),
+(531,0,40,0,26,NULL,NULL,NULL,NULL,'instance_temple_of_ahnqiraj'),
+(532,0,10,0,27,NULL,NULL,NULL,NULL,'instance_karazhan'),
+(533,0,40,0,28,NULL,NULL,NULL,NULL,'instance_naxxramas'),
+(534,0,25,0,29,NULL,NULL,NULL,NULL,'instance_hyjal'),
+(540,0,5,0,30,NULL,NULL,NULL,NULL,'instance_shattered_halls'),
+(542,0,5,0,31,NULL,NULL,NULL,NULL,'instance_blood_furnace'),
+(543,0,5,0,32,NULL,NULL,NULL,NULL,''),
+(544,0,25,0,33,NULL,NULL,NULL,NULL,'instance_magtheridons_lair'),
+(545,0,5,0,34,NULL,NULL,NULL,NULL,'instance_steam_vault'),
+(546,0,5,0,35,NULL,NULL,NULL,NULL,''),
+(547,0,5,0,36,NULL,NULL,NULL,NULL,''),
+(548,0,25,0,37,NULL,NULL,NULL,NULL,'instance_serpent_shrine'),
+(550,0,25,0,38,NULL,NULL,NULL,NULL,'instance_the_eye'),
+(552,0,5,0,39,NULL,NULL,NULL,NULL,'instance_arcatraz'),
+(553,0,5,0,40,NULL,NULL,NULL,NULL,''),
+(554,0,5,0,41,NULL,NULL,NULL,NULL,'instance_mechanar'),
+(555,0,5,0,42,NULL,NULL,NULL,NULL,'instance_shadow_labyrinth'),
+(556,0,5,0,43,NULL,NULL,NULL,NULL,'instance_sethekk_halls'),
+(557,0,5,0,44,NULL,NULL,NULL,NULL,''),
+(558,0,5,0,45,NULL,NULL,NULL,NULL,''),
+(560,0,5,0,46,NULL,NULL,NULL,NULL,'instance_old_hillsbrad'),
+(564,0,25,0,47,NULL,NULL,NULL,NULL,'instance_black_temple'),
+(565,0,25,0,48,NULL,NULL,NULL,NULL,'instance_gruuls_lair'),
+(568,0,10,0,49,NULL,NULL,NULL,NULL,'instance_zulaman'),
+(580,0,25,0,50,NULL,NULL,NULL,NULL,'instance_sunwell_plateau'),
+(585,0,5,0,51,NULL,NULL,NULL,NULL,'instance_magisters_terrace'),
+(559,0,50,7200,0,NULL,NULL,NULL,NULL,''),
+(566,0,50,7200,0,NULL,NULL,NULL,NULL,''),
+(30,0,50,7200,0,NULL,NULL,NULL,NULL,''),
+(529,0,50,7200,0,NULL,NULL,NULL,NULL,''),
+(489,0,50,7200,0,NULL,NULL,NULL,NULL,''),
+(562,0,50,7200,0,NULL,NULL,NULL,NULL,''),
+(572,0,50,7200,0,NULL,NULL,NULL,NULL,'');
 /*!40000 ALTER TABLE `instance_template` ENABLE KEYS */;
 UNLOCK TABLES;
 
