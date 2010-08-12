@@ -213,17 +213,17 @@ INSERT INTO `command` VALUES
 ('account lock',0,'Syntax: .account lock [on|off]\r\n\r\nAllow login from account only from current used IP or remove this requirement.'),
 ('account onlinelist',4,'Syntax: .account onlinelist\r\n\r\nShow list of online accounts.'),
 ('account password',0,'Syntax: .account password $old_password $new_password $new_password\r\n\r\nChange your account password.'),
-('account set addon',3,'Syntax: .account set addon [$account] #addon\r\n\r\nSet user (posible targeted) expansion addon level allowed. Addon values: 0 - normal,1 - tbc,2 - wotlk.'),
+('account set addon',3,'Syntax: .account set addon [$account] #addon\r\n\r\nSet user (posible targeted) expansion addon level allowed. Addon values: 0 - normal, 1 - tbc, 2 - wotlk.'),
 ('account set gmlevel',4,'Syntax: .account set gmlevel [$account] #level\r\n\r\nSet the security level for targeted player (can''t be used at self) or for account $name to a level of #level.\r\n\r\n#level may range from 0 to 3.'),
 ('account set password',4,'Syntax: .account set password $account $password $password\r\n\r\nSet password for account.'),
-('additem',3,'Syntax: .additem #itemid/[#itemname]/#shift-click-item-link #itemcount\r\n\r\nAdds the specified number of items of id #itemid (or exact (!) name $itemname in brackets,or link created by shift-click at item in inventory or recipe) to your or selected character inventory. If #itemcount is omitted,only one item will be added.\r\n.'),
+('additem',3,'Syntax: .additem #itemid/[#itemname]/#shift-click-item-link #itemcount\r\n\r\nAdds the specified number of items of id #itemid (or exact (!) name $itemname in brackets, or link created by shift-click at item in inventory or recipe) to your or selected character inventory. If #itemcount is omitted, only one item will be added.\r\n.'),
 ('additemset',3,'Syntax: .additemset #itemsetid\r\n\r\nAdd items from itemset of id #itemsetid to your or selected character inventory. Will add by one example each item from itemset.'),
 ('addmove',2,'Syntax: .addmove #creature_guid [#waittime]\r\n\r\nAdd your current location as a waypoint for creature with guid #creature_guid. And optional add wait time.'),
 ('announce',1,'Syntax: .announce $MessageToBroadcast\r\n\r\nSend a global message to all players online in chat log.'),
 ('aura',3,'Syntax: .aura #spellid\r\n\r\nAdd the aura from spell #spellid to the selected Unit.'),
-('ban account',3,'Syntax is: ban account $Name $bantime $reason\r\nBan account kick player.\r\n$bantime: negative value leads to permban,otherwise use a timestring like "4d20h3s".'),
-('ban character',3,'Syntax is: ban character $Name $bantime $reason\r\nBan account and kick player.\r\n$bantime: negative value leads to permban,otherwise use a timestring like "4d20h3s".'),
-('ban ip',3,'Syntax is: ban ip $Ip $bantime $reason\r\nBan IP.\r\n$bantime: negative value leads to permban,otherwise use a timestring like "4d20h3s".'),
+('ban account',3,'Syntax is: ban account $Name $bantime $reason\r\nBan account kick player.\r\n$bantime: negative value leads to permban, otherwise use a timestring like "4d20h3s".'),
+('ban character',3,'Syntax is: ban character $Name $bantime $reason\r\nBan account and kick player.\r\n$bantime: negative value leads to permban, otherwise use a timestring like "4d20h3s".'),
+('ban ip',3,'Syntax is: ban ip $Ip $bantime $reason\r\nBan IP.\r\n$bantime: negative value leads to permban, otherwise use a timestring like "4d20h3s".'),
 ('baninfo account',3,'Syntax is: baninfo account\r\nWatch full information about a specific ban.'),
 ('baninfo character',3,'Syntax is: baninfo character\r\nWatch full information about a specific ban.'),
 ('baninfo ip',3,'Syntax is: baninfo ip\r\nWatch full information about a specific ban.'),
@@ -239,29 +239,30 @@ INSERT INTO `command` VALUES
 ('cast target',3,'Syntax: .cast target #spellid [triggered]\r\n  Selected target will cast #spellid to his victim. If ''trigered'' or part provided then spell casted with triggered flag.'),
 ('character delete',4,'Syntax: .character delete $name\r\n\r\nDelete character $name.'),
 ('character rename',2,'Syntax: .character rename [$name]\r\n\r\nMark selected in game or by $name in command character for rename at next login.'),
+('character titles',2,'Syntax: .character titles [$player_name]\r\n\r\nShow known titles list for selected player or player find by $player_name.'),
 ('combatstop',2,'Syntax: .combatstop [$playername]\r\nStop combat for selected character. If selected non-player then command applied to self. If $playername provided then attempt applied to online player $playername.'),
 ('commands',0,'Syntax: .commands\r\n\r\nDisplay a list of available commands for your account level.'),
 ('cooldown',3,'Syntax: .cooldown [#spell_id]\r\n\r\nRemove all (if spell_id not provided) or #spel_id spell cooldown from selected character or you (if no selection).'),
-('damage',3,'Syntax: .damage $damage_amount [$school [$spellid]]\r\n\r\nApply $damage to target. If not $school and $spellid provided then this flat clean melee damage without any modifiers. If $school provided then damage modified by armor reduction (if school physical),and target absorbing modifiers and result applied as melee damage to target. If spell provided then damage modified and applied as spell damage. $spellid can be shift-link.'),
+('damage',3,'Syntax: .damage $damage_amount [$school [$spellid]]\r\n\r\nApply $damage to target. If not $school and $spellid provided then this flat clean melee damage without any modifiers. If $school provided then damage modified by armor reduction (if school physical), and target absorbing modifiers and result applied as melee damage to target. If spell provided then damage modified and applied as spell damage. $spellid can be shift-link.'),
 ('debug anim',2,'Syntax: .debug anim #emoteid\r\n\r\nPlay emote #emoteid for your character.'),
 ('debug arena',3,'Syntax: .debug arena\r\n\r\n Toggles arena 1v1 or normal mode.'),
-('debug getvalue',3,'Syntax: .debug getvalue #field #isInt\r\n\r\nGet the field #field of the selected creature. If no creature is selected,get the content of your field.\r\n\r\nUse a #isInt of value 1 if the expected field content is an integer.'),
+('debug getvalue',3,'Syntax: .debug getvalue #field #isInt\r\n\r\nGet the field #field of the selected creature. If no creature is selected, get the content of your field.\r\n\r\nUse a #isInt of value 1 if the expected field content is an integer.'),
 ('debug hostilrefs',3,'Syntax: .debug hostilrefs\n\n Prints out the hostil refs of the targetted unit.'),
 ('debug playsound',1,'Syntax: .debug playsound #soundid\r\n\r\nPlay sound with #soundid.\r\nSound will be play only for you. Other players do not hear this.\r\nWarning: client may have more 5000 sounds...'),
-('debug setvalue',3,'Syntax: .debug setvalue #field #value #isInt\r\n\r\nSet the field #field of the selected creature with value #value. If no creature is selected,set the content of your field.\r\n\r\nUse a #isInt of value 1 if #value is an integer.'),
+('debug setvalue',3,'Syntax: .debug setvalue #field #value #isInt\r\n\r\nSet the field #field of the selected creature with value #value. If no creature is selected, set the content of your field.\r\n\r\nUse a #isInt of value 1 if #value is an integer.'),
 ('debug standstate',2,'Syntax: .debug standstate #emoteid\r\n\r\nChange the emote of your character while standing to #emoteid.'),
 ('debug threatlist',3,'Syntax: .debug threatlist\n\n Prints out the current threatlist of the targetted creature.'),
-('debug update',3,'Syntax: .debug update #field #value\r\n\r\nUpdate the field #field of the selected character or creature with value #value.\r\n\r\nIf no #value is provided,display the content of field #field.'),
+('debug update',3,'Syntax: .debug update #field #value\r\n\r\nUpdate the field #field of the selected character or creature with value #value.\r\n\r\nIf no #value is provided, display the content of field #field.'),
 ('demorph',2,'Syntax: .demorph\r\n\r\nDemorph the selected player.'),
-('die',3,'Syntax: .die\r\n\r\nKill the selected player. If no player is selected,it will kill you.'),
-('dismount',0,'Syntax: .dismount\r\n\r\nDismount you,if you are mounted.'),
+('die',3,'Syntax: .die\r\n\r\nKill the selected player. If no player is selected, it will kill you.'),
+('dismount',0,'Syntax: .dismount\r\n\r\nDismount you, if you are mounted.'),
 ('distance',3,'Syntax: .distance\r\n\r\nDisplay the distance from your character to the selected creature.'),
 ('event',2,'Syntax: .event #event_id\r\nShow details about event with #event_id.'),
 ('event activelist',2,'Syntax: .event activelist\r\nShow list of currently active events.'),
 ('event start',2,'Syntax: .event start #event_id\r\nStart event #event_id. Set start time for event to current moment (change not saved in DB).'),
 ('event stop',2,'Syntax: .event stop #event_id\r\nStop event #event_id. Set start time for event to time in past that make current moment is event stop time (change not saved in DB).'),
-('explorecheat',3,'Syntax: .explorecheat #flag\r\n\r\nReveal  or hide all maps for the selected player. If no player is selected,hide or reveal maps to you.\r\n\r\nUse a #flag of value 1 to reveal,use a #flag value of 0 to hide all maps.'),
-('flusharenapoints',3,'Syntax: .flusharenapoints\r\n\r\nUse it to distribute arena points based on arena team ratings,and start a new week.'),
+('explorecheat',3,'Syntax: .explorecheat #flag\r\n\r\nReveal  or hide all maps for the selected player. If no player is selected, hide or reveal maps to you.\r\n\r\nUse a #flag of value 1 to reveal, use a #flag value of 0 to hide all maps.'),
+('flusharenapoints',3,'Syntax: .flusharenapoints\r\n\r\nUse it to distribute arena points based on arena team ratings, and start a new week.'),
 ('freeze',2,'Syntax: .freeze (#player)\r\n"Freezes" #player and disables his chat. When using this without #name it will freeze your target.'),
 ('gm',1,'Syntax: .gm [on/off]\r\n\r\nEnable or Disable in game GM MODE or show current state of on/off not provided.'),
 ('gm chat',1,'Syntax: .gm chat [on/off]\r\n\r\nEnable or disable chat GM MODE (show gm badge in messages) or show current state of on/off not provided.'),
@@ -271,9 +272,9 @@ INSERT INTO `command` VALUES
 ('gm online',0,'Syntax: .gm online\r\n\r\nDisplay a list of available Game Masters.'),
 ('gm visible',1,'Syntax: .gm visible on/off\r\n\r\nOutput current visibility state or make GM visible(on) and invisible(off) for other players.'),
 ('gmannounce',4,'Syntax: .gmannounce $announcement\r\nSend an announcement to online Gamemasters.'),
-('gmnameannounce',2,'Syntax: .gmnameannounce $announcement.\r\nSend an announcement to all online GM''s,displaying the name of the sender.'),
+('gmnameannounce',2,'Syntax: .gmnameannounce $announcement.\r\nSend an announcement to all online GM''s, displaying the name of the sender.'),
 ('gmnotify',2,'Syntax: .gmnotify $notification\r\nDisplays a notification on the screen of all online GM''s.'),
-('go creature',2,'Syntax: .go creature #creature_guid\r\nTeleport your character to creature with guid #creature_guid.\r\n.gocreature #creature_name\r\nTeleport your character to creature with this name.\r\n.gocreature id #creature_id\r\nTeleport your character to a creature that was spawned from the template with this entry.\r\n*If* more than one creature is found,then you are teleported to the first that is found inside the database.'),
+('go creature',2,'Syntax: .go creature #creature_guid\r\nTeleport your character to creature with guid #creature_guid.\r\n.gocreature #creature_name\r\nTeleport your character to creature with this name.\r\n.gocreature id #creature_id\r\nTeleport your character to a creature that was spawned from the template with this entry.\r\n*If* more than one creature is found, then you are teleported to the first that is found inside the database.'),
 ('go graveyard',2,'Syntax: .go graveyard #graveyardId\r\n Teleport to graveyard with the graveyardId specified.'),
 ('go grid',1,'Syntax: .go grid #gridX #gridY [#mapId]\r\n\r\nTeleport the gm to center of grid with provided indexes at map #mapId (or current map if it not provided).'),
 ('go object',1,'Syntax: .go object #object_guid\r\nTeleport your character to gameobject with guid #object_guid'),
@@ -283,15 +284,15 @@ INSERT INTO `command` VALUES
 ('go xyz',1,'Syntax: .go xyz #x #y #z [#mapid]\r\n\r\nTeleport player to point with (#x,#y,#z) coordinates at ground(water) level at map #mapid or same map if #mapid not provided.'),
 ('go zonexy',1,'Syntax: .go zonexy #x #y [#zone]\r\n\r\nTeleport player to point with (#x,#y) client coordinates at ground(water) level in zone #zoneid or current zone if #zoneid not provided. You can look up zone using .lookup area $namepart'),
 ('gobject activate',2,'Syntax: .gobject activate #guid\r\n\r\nActivates an object like a door or a button.'),
-('gobject add',2,'Syntax: .gobject add #id <spawntimeSecs>\r\n\r\nAdd a game object from game object templates to the world at your current location using the #id.\r\nspawntimesecs sets the spawntime,it is optional.\r\n\r\nNote: this is a copy of .gameobject.'),
+('gobject add',2,'Syntax: .gobject add #id <spawntimeSecs>\r\n\r\nAdd a game object from game object templates to the world at your current location using the #id.\r\nspawntimesecs sets the spawntime, it is optional.\r\n\r\nNote: this is a copy of .gameobject.'),
 ('gobject addtemp',2,'Adds a temporary gameobject that is not saved to DB.'),
 ('gobject delete',2,'Syntax: .gobject delete #go_guid\r\nDelete gameobject with guid #go_guid.'),
 ('gobject move',2,'Syntax: .gobject move #goguid [#x #y #z]\r\n\r\nMove gameobject #goguid to character coordinates (or to (#x,#y,#z) coordinates if its provide).'),
 ('gobject near ',3,'Syntax: .gobject near  [#distance]\r\n\r\nOutput gameobjects at distance #distance from player. Output gameobject guids and coordinates sorted by distance from character. If #distance not provided use 10 as default value.'),
 ('gobject target',2,'Syntax: .gobject target [#go_id|#go_name_part]\r\n\r\nLocate and show position nearest gameobject. If #go_id or #go_name_part provide then locate and show position of nearest gameobject with gameobject template id #go_id or name included #go_name_part as part.'),
 ('gobject turn',2,'Syntax: .gobject turn #goguid \r\n\r\nSet for gameobject #goguid orientation same as current character orientation.'),
-('goname',1,'Syntax: .goname $charactername\r\n\r\nTeleport to the given character. Either specify the character name or click on the character''s portrait,e.g. when you are in a group.'),
-('gps',1,'Syntax: .gps\r\n\r\nDisplay the position information for a selected character or creature. Position information includes X,Y,Z,and orientation,map Id and zone Id'),
+('goname',1,'Syntax: .goname $charactername\r\n\r\nTeleport to the given character. Either specify the character name or click on the character''s portrait, e.g. when you are in a group.'),
+('gps',1,'Syntax: .gps\r\n\r\nDisplay the position information for a selected character or creature. Position information includes X, Y, Z, and orientation, map Id and zone Id'),
 ('groupgo',1,'Syntax: .groupgo $charactername\r\n\r\nTeleport the given character and his group to you.'),
 ('guid',2,'Syntax: .guid\r\n\r\nDisplay the GUID for the selected character.'),
 ('guild create',2,'Syntax: .guild create $GuildLeaderName $GuildName\r\n\r\nCreate a guild named $GuildName with the player $GuildLeaderName as leader.'),
@@ -300,17 +301,17 @@ INSERT INTO `command` VALUES
 ('guild rank',2,'Syntax: .guild rank $CharacterName #Rank\r\n\r\nSet for $CharacterName rank #Rank in a guild.'),
 ('guild uninvite',2,'Syntax: .guild uninvite $CharacterName\r\n\r\nRemove $CharacterName from a guild.'),
 ('help',0,'Syntax: .help [$command]\r\n\r\nDisplay usage instructions for the given $command. If no $command provided show list available commands.'),
-('hidearea',3,'Syntax: .hidearea #areaid\r\n\r\nHide the area of #areaid to the selected character. If no character is selected,hide this area to you.'),
+('hidearea',3,'Syntax: .hidearea #areaid\r\n\r\nHide the area of #areaid to the selected character. If no character is selected, hide this area to you.'),
 ('honor add',2,'Syntax: .honor add $amount\r\n\r\nAdd a certain amount of honor (gained today) to the selected player.'),
 ('honor addkill',2,'Syntax: .honor addkikll\r\n\r\nAdd the targeted unit as one of your pvp kills today (you only get honor if it''s a racial leader or a player)'),
-('honor update',2,'Syntax: .honor update\r\n\r\nForce the yesterday''s honor fields to be updated with today''s data,which will get reset for the selected player.'),
-('hover',3,'Syntax: .hover #flag\r\n\r\nEnable or disable hover mode for your character.\r\n\r\nUse a #flag of value 1 to enable,use a #flag value of 0 to disable hover.'),
+('honor update',2,'Syntax: .honor update\r\n\r\nForce the yesterday''s honor fields to be updated with today''s data, which will get reset for the selected player.'),
+('hover',3,'Syntax: .hover #flag\r\n\r\nEnable or disable hover mode for your character.\r\n\r\nUse a #flag of value 1 to enable, use a #flag value of 0 to disable hover.'),
 ('instance listbinds',3,'Syntax: .instance listbinds\r\n  Lists the binds of the selected player.'),
 ('instance savedata',3,'Syntax: .instance savedata\r\n  Save the InstanceData for the current player''s map to the DB.'),
 ('instance stats',3,'Syntax: .instance stats\r\n  Shows statistics about instances.'),
 ('instance unbind',3,'Syntax: .instance unbind all\r\n  All of the selected player''s binds will be cleared.'),
 ('itemmove',2,'Syntax: .itemmove #sourceslotid #destinationslotid\r\n\r\nMove an item from slots #sourceslotid to #destinationslotid in your inventory\r\n\r\nNot yet implemented'),
-('kick',2,'Syntax: .kick [$charactername] [$reason]\r\n\r\nKick the given character name from the world with or without reason. If no character name is provided then the selected player (except for yourself) will be kicked. If no reason is provided,default is "No Reason".'),
+('kick',2,'Syntax: .kick [$charactername] [$reason]\r\n\r\nKick the given character name from the world with or without reason. If no character name is provided then the selected player (except for yourself) will be kicked. If no reason is provided, default is "No Reason".'),
 ('learn',3,'Syntax: .learn #parameter\r\n\r\nSelected character learn a spell of id #parameter.'),
 ('learn all',3,'Syntax: .learn all\r\n\r\nLearn all big set different spell maybe useful for Administaror.'),
 ('learn all_crafts',2,'Syntax: .learn crafts\r\n\r\nLearn all professions and recipes.'),
@@ -321,50 +322,50 @@ INSERT INTO `command` VALUES
 ('learn all_myspells',3,'Syntax: .learn all_myspells\r\n\r\nLearn all spells (except talents and spells with first rank learned as talent) available for his class.'),
 ('learn all_mytalents',3,'Syntax: .learn all_mytalents\r\n\r\nLearn all talents (and spells with first rank learned as talent) available for his class.'),
 ('learn all_recipes',2,'Syntax: .learn all_recipes [$profession]\r\rLearns all recipes of specified profession and sets skill level to max.\rExample: .learn all_recipes enchanting'),
-('levelup',3,'Syntax: .levelup [$playername] [#numberoflevels]\r\n\r\nIncrease/decrease the level of character with $playername (or the selected if not name provided) by #numberoflevels Or +1 if no #numberoflevels provided). If #numberoflevels is omitted,the level will be increase by 1. If #numberoflevels is 0,the same level will be restarted. If no character is selected and name not provided,increase your level. Command can be used for offline character. All stats and dependent values recalculated. At level decrease talents can be reset if need. Also at level decrease equipped items with greater level requirement can be lost.'),
+('levelup',3,'Syntax: .levelup [$playername] [#numberoflevels]\r\n\r\nIncrease/decrease the level of character with $playername (or the selected if not name provided) by #numberoflevels Or +1 if no #numberoflevels provided). If #numberoflevels is omitted, the level will be increase by 1. If #numberoflevels is 0, the same level will be restarted. If no character is selected and name not provided, increase your level. Command can be used for offline character. All stats and dependent values recalculated. At level decrease talents can be reset if need. Also at level decrease equipped items with greater level requirement can be lost.'),
 ('linkgrave',3,'Syntax: .linkgrave #graveyard_id [alliance|horde]\r\n\r\nLink current zone to graveyard for any (or alliance/horde faction ghosts). This let character ghost from zone teleport to graveyard after die if graveyard is nearest from linked to zone and accept ghost of this faction. Add only single graveyard at another map and only if no graveyards linked (or planned linked at same map).'),
 ('list creature',3,'Syntax: .list creature #creature_id [#max_count]\r\n\r\nOutput creatures with creature id #creature_id found in world. Output creature guids and coordinates sorted by distance from character. Will be output maximum #max_count creatures. If #max_count not provided use 10 as default value.'),
-('list item',3,'Syntax: .list item #item_id [#max_count]\r\n\r\nOutput items with item id #item_id found in all character inventories,mails,auctions,and guild banks. Output item guids,item owner guid,owner account and owner name (guild name and guid in case guild bank). Will be output maximum #max_count items. If #max_count not provided use 10 as default value.'),
+('list item',3,'Syntax: .list item #item_id [#max_count]\r\n\r\nOutput items with item id #item_id found in all character inventories, mails, auctions, and guild banks. Output item guids, item owner guid, owner account and owner name (guild name and guid in case guild bank). Will be output maximum #max_count items. If #max_count not provided use 10 as default value.'),
 ('list object',3,'Syntax: .list object #gameobject_id [#max_count]\r\n\r\nOutput gameobjects with gameobject id #gameobject_id found in world. Output gameobject guids and coordinates sorted by distance from character. Will be output maximum #max_count gameobject. If #max_count not provided use 10 as default value.'),
 ('listfreeze',1,'Syntax: .listfreeze\r\n\r\nSearch and output all frozen players.'),
-('loadscripts',3,'Syntax: .loadscripts $scriptlibraryname\r\n\r\nUnload current and load the script library $scriptlibraryname or reload current if $scriptlibraryname omitted,in case you changed it while the server was running.'),
-('lookup area',1,'Syntax: .lookup area $namepart\r\n\r\nLooks up an area by $namepart,and returns all matches with their area ID''s.'),
-('lookup creature',3,'Syntax: .lookup creature $namepart\r\n\r\nLooks up a creature by $namepart,and returns all matches with their creature ID''s.'),
+('loadscripts',3,'Syntax: .loadscripts $scriptlibraryname\r\n\r\nUnload current and load the script library $scriptlibraryname or reload current if $scriptlibraryname omitted, in case you changed it while the server was running.'),
+('lookup area',1,'Syntax: .lookup area $namepart\r\n\r\nLooks up an area by $namepart, and returns all matches with their area ID''s.'),
+('lookup creature',3,'Syntax: .lookup creature $namepart\r\n\r\nLooks up a creature by $namepart, and returns all matches with their creature ID''s.'),
 ('lookup event',2,'Syntax: .lookup event $name\r\nAttempts to find the ID of the event with the provided $name.'),
 ('lookup faction',3,'Syntax: .lookup faction $name\r\nAttempts to find the ID of the faction with the provided $name.'),
-('lookup item',3,'Syntax: .lookup item $itemname\r\n\r\nLooks up an item by $itemname,and returns all matches with their Item ID''s.'),
-('lookup itemset',3,'Syntax: .lookup itemset $itemname\r\n\r\nLooks up an item set by $itemname,and returns all matches with their Item set ID''s.'),
-('lookup object',3,'Syntax: .lookup object $objname\r\n\r\nLooks up an gameobject by $objname,and returns all matches with their Gameobject ID''s.'),
-('lookup player account',2,'Syntax : .lookup player account $account ($limit) \r\n\r\n Searchs players,which account username is $account with optional parametr $limit of results.'),
-('lookup player email',2,'Syntax : .lookup player email $email ($limit) \r\n\r\n Searchs players,which account email is $email with optional parametr $limit of results.'),
-('lookup player ip',2,'Syntax : .lookup player ip $ip ($limit) \r\n\r\n Searchs players,which account ast_ip is $ip with optional parametr $limit of results.'),
-('lookup quest',3,'Syntax: .lookup quest $namepart\r\n\r\nLooks up a quest by $namepart,and returns all matches with their quest ID''s.'),
-('lookup skill',3,'Syntax: .lookup skill $$namepart\r\n\r\nLooks up a skill by $namepart,and returns all matches with their skill ID''s.'),
-('lookup spell',3,'Syntax: .lookup spell $namepart\r\n\r\nLooks up a spell by $namepart,and returns all matches with their spell ID''s.'),
+('lookup item',3,'Syntax: .lookup item $itemname\r\n\r\nLooks up an item by $itemname, and returns all matches with their Item ID''s.'),
+('lookup itemset',3,'Syntax: .lookup itemset $itemname\r\n\r\nLooks up an item set by $itemname, and returns all matches with their Item set ID''s.'),
+('lookup object',3,'Syntax: .lookup object $objname\r\n\r\nLooks up an gameobject by $objname, and returns all matches with their Gameobject ID''s.'),
+('lookup player account',2,'Syntax : .lookup player account $account ($limit) \r\n\r\n Searchs players, which account username is $account with optional parametr $limit of results.'),
+('lookup player email',2,'Syntax : .lookup player email $email ($limit) \r\n\r\n Searchs players, which account email is $email with optional parametr $limit of results.'),
+('lookup player ip',2,'Syntax : .lookup player ip $ip ($limit) \r\n\r\n Searchs players, which account ast_ip is $ip with optional parametr $limit of results.'),
+('lookup quest',3,'Syntax: .lookup quest $namepart\r\n\r\nLooks up a quest by $namepart, and returns all matches with their quest ID''s.'),
+('lookup skill',3,'Syntax: .lookup skill $$namepart\r\n\r\nLooks up a skill by $namepart, and returns all matches with their skill ID''s.'),
+('lookup spell',3,'Syntax: .lookup spell $namepart\r\n\r\nLooks up a spell by $namepart, and returns all matches with their spell ID''s.'),
 ('lookup tele',1,'Syntax: .lookup tele $substring\r\n\r\nSearch and output all .tele command locations with provide $substring in name.'),
+('lookup title',2,'Syntax: .lookup title $$namepart\r\n\r\nLooks up a title by $namepart, and returns all matches with their title ID''s and index''s.'),
 ('maxskill',3,'Syntax: .maxskill\r\nSets all skills of the targeted player to their maximum values for its current level.'),
 ('Mod32Value',3,'Syntax: .Mod32Value #field #value\r\n\r\nAdd #value to field #field of your character.'),
 ('modify arena',3,'Syntax: .modify arena #value\r\nAdd $amount arena points to the selected player.'),
-('modify aspeed',1,'Syntax: .modify aspeed #rate\r\n\r\nModify all speeds -run,swim,run back,swim back- of the selected player to "normalbase speed for this move type"*rate. If no player is selected,modify your speed.\r\n\r\n #rate may range from 0.1 to 10.'),
-('modify bit',1,'Syntax: .modify bit #field #bit\r\n\r\nToggle the #bit bit of the #field field for the selected player. If no player is selected,modify your character.'),
-('modify bwalk',1,'Syntax: .modify bwalk #rate\r\n\r\nModify the speed of the selected player while running backwards to "normal walk back speed"*rate. If no player is selected,modify your speed.\r\n\r\n #rate may range from 0.1 to 10.'),
-('modify drunk',1,'Syntax: .modify drunk #value\r\n Set drunk level to #value (0..100). Value 0 remove drunk state,100 is max drunked state.'),
-('modify energy',1,'Syntax: .modify energy #energy\r\n\r\nModify the energy of the selected player. If no player is selected,modify your energy.'),
-('modify faction',1,'Syntax: .modify faction #factionid #flagid #npcflagid #dynamicflagid\r\n\r\nModify the faction and flags of the selected creature. Without arguments,display the faction and flags of the selected creature.'),
+('modify aspeed',1,'Syntax: .modify aspeed #rate\r\n\r\nModify all speeds -run,swim,run back,swim back- of the selected player to "normalbase speed for this move type"*rate. If no player is selected, modify your speed.\r\n\r\n #rate may range from 0.1 to 10.'),
+('modify bit',1,'Syntax: .modify bit #field #bit\r\n\r\nToggle the #bit bit of the #field field for the selected player. If no player is selected, modify your character.'),
+('modify bwalk',1,'Syntax: .modify bwalk #rate\r\n\r\nModify the speed of the selected player while running backwards to "normal walk back speed"*rate. If no player is selected, modify your speed.\r\n\r\n #rate may range from 0.1 to 10.'),
+('modify drunk',1,'Syntax: .modify drunk #value\r\n Set drunk level to #value (0..100). Value 0 remove drunk state, 100 is max drunked state.'),
+('modify energy',1,'Syntax: .modify energy #energy\r\n\r\nModify the energy of the selected player. If no player is selected, modify your energy.'),
+('modify faction',1,'Syntax: .modify faction #factionid #flagid #npcflagid #dynamicflagid\r\n\r\nModify the faction and flags of the selected creature. Without arguments, display the faction and flags of the selected creature.'),
 ('modify gender',2,'Syntax: .modify gender male/female\r\n\r\nChange gender of selected player.'),
 ('modify honor',1,'Syntax: .modify honor $amount\r\n\r\nAdd $amount honor points to the selected player.'),
-('modify hp',1,'Syntax: .modify hp #newhp\r\n\r\nModify the hp of the selected player. If no player is selected,modify your hp.'),
-('modify mana',1,'Syntax: .modify mana #newmana\r\n\r\nModify the mana of the selected player. If no player is selected,modify your mana.'),
-('modify money',1,'Syntax:\r\n.modify money #money\r\n.money #money\r\n\r\nAdd or remove money to the selected player. If no player is selected,modify your money.\r\n\r\n #gold can be negative to remove money.'),
+('modify hp',1,'Syntax: .modify hp #newhp\r\n\r\nModify the hp of the selected player. If no player is selected, modify your hp.'),
+('modify mana',1,'Syntax: .modify mana #newmana\r\n\r\nModify the mana of the selected player. If no player is selected, modify your mana.'),
+('modify money',1,'Syntax:\r\n.modify money #money\r\n.money #money\r\n\r\nAdd or remove money to the selected player. If no player is selected, modify your money.\r\n\r\n #gold can be negative to remove money.'),
 ('modify morph',2,'Syntax: .modify morph #displayid\r\n\r\nChange your current model id to #displayid.'),
 ('modify mount',1,'Syntax:\r\n.modify mount #id #speed\r\nDisplay selected player as mounted at #id creature and set speed to #speed value.'),
-('modify rage',1,'Syntax: .modify rage #newrage\r\n\r\nModify the rage of the selected player. If no player is selected,modify your rage.'),
-('modify rep',2,'Syntax: .modify rep #repId (#repvalue | $rankname [#delta])\r\nSets the selected players reputation with faction #repId to #repvalue or to $reprank.\r\nIf the reputation rank name is provided,the resulting reputation will be the lowest reputation for that rank plus the delta amount,if specified.\r\nYou can use ''.pinfo rep'' to list all known reputation ids,or use ''.lookup faction $name'' to locate a specific faction id.'),
-('modify scale',1,'Syntax: .modify scale #scale\r\n\r\nChange model scale for targeted player(until re-login),or creature(until respawn).'),
-('modify speed',1,'Syntax:\r\n.modify speed #rate\r\n.speed #rate\r\n\r\nModify the running speed of the selected player to "normal base run speed"*rate. If no player is selected,modify your speed.\r\n\r\n #rate may range from 0.1 to 10.'),
+('modify rage',1,'Syntax: .modify rage #newrage\r\n\r\nModify the rage of the selected player. If no player is selected, modify your rage.'),
+('modify rep',2,'Syntax: .modify rep #repId (#repvalue | $rankname [#delta])\r\nSets the selected players reputation with faction #repId to #repvalue or to $reprank.\r\nIf the reputation rank name is provided, the resulting reputation will be the lowest reputation for that rank plus the delta amount, if specified.\r\nYou can use ''.pinfo rep'' to list all known reputation ids, or use ''.lookup faction $name'' to locate a specific faction id.'),
+('modify scale',1,'Syntax: .modify scale #scale\r\n\r\nChange model scale for targeted player(until re-login), or creature(until respawn).'),
+('modify speed',1,'Syntax:\r\n.modify speed #rate\r\n.speed #rate\r\n\r\nModify the running speed of the selected player to "normal base run speed"*rate. If no player is selected, modify your speed.\r\n\r\n #rate may range from 0.1 to 10.'),
 ('modify spell',1,''),
-('modify swim',1,'Syntax: .modify swim #rate\r\n\r\nModify the swim speed of the selected player to "normal swim speed"*rate. If no player is selected,modify your speed.\r\n\r\n #rate may range from 0.1 to 10.'),
-('modify titles',1,'Syntax:\n.modify titles #mask\n.titles #mask\n\nAllows user to use all titles from #mask.\n\n #mask=0 disables the title-choose-field'),
+('modify swim',1,'Syntax: .modify swim #rate\r\n\r\nModify the swim speed of the selected player to "normal swim speed"*rate. If no player is selected, modify your speed.\r\n\r\n #rate may range from 0.1 to 10.'),
 ('movegens',3,'Syntax: .movegens\r\n  Show movement generators stack for selected creature or player.'),
 ('mute',1,'Syntax: .mute [$playerName] $timeInMinutes [$reason]\r\n\r\nDisible chat messaging for any character from account of character $playerName (or currently selected) at $timeInMinutes minutes. Player can be offline.'),
 ('namego',1,'Syntax: .namego $charactername\r\n\r\nTeleport the given character to you.'),
@@ -372,7 +373,7 @@ INSERT INTO `command` VALUES
 ('notify',1,'Syntax: .notify $MessageToBroadcast\r\n\r\nSend a global message to all players online in screen.'),
 ('npc add',2,'Syntax: .npc add #creatureid\r\n\r\nSpawn a creature by the given template id of #creatureid.'),
 ('npc additem',2,'Syntax: .npc additem #itemId <#maxcount><#incrtime><#extendedcost>r\r\n\r\nAdd item #itemid to item list of selected vendor. Also optionally set max count item in vendor item list and time to item count restoring and items ExtendedCost.'),
-('npc addtemp',2,'Adds temporary NPC,not saved to database.'),
+('npc addtemp',2,'Adds temporary NPC, not saved to database.'),
 ('npc addweapon',3,'Not yet implemented.'),
 ('npc allowmove',3,'Syntax: .npc allowmove\r\n\r\nEnable or disable movement for the selected creature.'),
 ('npc changelevel',2,'Syntax: .npc changelevel #level\r\n\r\nChange the level of the selected creature to #level.\r\n\r\n#level may range from 1 to 63.'),
@@ -381,20 +382,20 @@ INSERT INTO `command` VALUES
 ('npc factionid',2,'Syntax: .npc factionid #factionid\r\n\r\nSet the faction of the selected creature to #factionid.'),
 ('npc flag',2,'Syntax: .npc flag #npcflag\r\n\r\nSet the NPC flags of creature template of the selected creature and selected creature to #npcflag. NPC flags will applied to all creatures of selected creature template after server restart or grid unload/load.'),
 ('npc follow',2,'Syntax: .npc follow\r\n\r\nSelected creature start follow you until death/fight/etc.'),
-('npc info',3,'Syntax: .npc info\r\n\r\nDisplay a list of details for the selected creature.\r\n\r\nThe list includes:\r\n- GUID,Faction,NPC flags,Entry ID,Model ID,\r\n- Level,\r\n- Health (current/maximum),\r\n\r\n- Field flags,dynamic flags,faction template,\r\n- Position information,\r\n- and the creature type,e.g. if the creature is a vendor.'),
+('npc info',3,'Syntax: .npc info\r\n\r\nDisplay a list of details for the selected creature.\r\n\r\nThe list includes:\r\n- GUID, Faction, NPC flags, Entry ID, Model ID,\r\n- Level,\r\n- Health (current/maximum),\r\n\r\n- Field flags, dynamic flags, faction template, \r\n- Position information,\r\n- and the creature type, e.g. if the creature is a vendor.'),
 ('npc move',2,'Syntax: .npc move [#creature_guid]\r\n\r\nMove the targeted creature spawn point to your coordinates.'),
 ('npc name',2,'Syntax: .npc name $name\r\n\r\nChange the name of the selected creature or character to $name.\r\n\r\nCommand disabled.'),
 ('npc playemote',3,'Syntax: .npc playemote #emoteid\r\n\r\nMake the selected creature emote with an emote of id #emoteid.'),
 ('npc setdeathstate',2,'Syntax: .npc setdeathstate on/off\r\n\r\nSet default death state (dead/alive) for npc at spawn.'),
 ('npc setmodel',2,'Syntax: .npc setmodel #displayid\r\n\r\nChange the model id of the selected creature to #displayid.'),
-('npc setmovetype',2,'Syntax: .npc setmovetype [#creature_guid] stay/random/way [NODEL]\r\n\r\nSet for creature pointed by #creature_guid (or selected if #creature_guid not provided) movement type and move it to respawn position (if creature alive). Any existing waypoints for creature will be removed from the database if you do not use NODEL. If the creature is dead then movement type will applied at creature respawn.\r\nMake sure you use NODEL,if you want to keep the waypoints.'),
+('npc setmovetype',2,'Syntax: .npc setmovetype [#creature_guid] stay/random/way [NODEL]\r\n\r\nSet for creature pointed by #creature_guid (or selected if #creature_guid not provided) movement type and move it to respawn position (if creature alive). Any existing waypoints for creature will be removed from the database if you do not use NODEL. If the creature is dead then movement type will applied at creature respawn.\r\nMake sure you use NODEL, if you want to keep the waypoints.'),
 ('npc spawndist',2,'Syntax: .npc spawndist #dist\r\n\r\nAdjust spawndistance of selected creature to dist.'),
 ('npc spawntime',2,'Syntax: .npc spawntime #time \r\n\r\nAdjust spawntime of selected creature to time.'),
 ('npc subname',2,'Syntax: .npc subname $Name\r\n\r\nChange the subname of the selected creature or player to $Name.\r\n\r\nCommand disabled.'),
 ('npc textemote',3,'Syntax: .npc textemote #emoteid\r\n\r\nMake the selected creature to do textemote with an emote of id #emoteid.'),
 ('npc unfollow',2,'Syntax: .npc unfollow\r\n\r\nSelected creature (non pet) stop follow you.'),
 ('npc whisper',1,'Syntax: .npc whisper #playerguid #text\r\nMake the selected npc whisper #text to  #playerguid.'),
-('pdump load',3,'Syntax is: pdump load $filename $account [$newname] [$newguid]\r\nLoad character dump from dump file into character list of $account with saved or $newname,with saved (or first free) or $newguid guid.'),
+('pdump load',3,'Syntax is: pdump load $filename $account [$newname] [$newguid]\r\nLoad character dump from dump file into character list of $account with saved or $newname, with saved (or first free) or $newguid guid.'),
 ('pdump write',3,'Syntax is: pdump write $filename $playerNameOrGUID\r\nWrite character dump with name/guid $playerNameOrGUID to file $filename.'),
 ('pet create',2,'Syntax: .pet create\r\n\r\nCreates a pet of the selected creature.'),
 ('pet learn',2,'Syntax: .pet learn\r\n\r\nLearn #spellid to pet.'),
@@ -406,7 +407,7 @@ INSERT INTO `command` VALUES
 ('quest add',3,'Syntax: .quest add #quest_id\r\n\r\nAdd to character quest log quest #quest_id. Quest started from item can''t be added by this command but correct .additem call provided in command output.'),
 ('quest complete',3,'Syntax: .quest complete #questid\r\nMark all quest objectives as completed for target character active quest. After this target character can go and get quest reward.'),
 ('quest remove',3,'Syntax: .quest remove #quest_id\r\n\r\nSet quest #quest_id state to not completed and not active (and remove from active quest list) for selected player.'),
-('recall',1,'Syntax: .recall [$playername]\r\n\r\nTeleport $playername or selected player to the place where he has been before last use of a teleportation command. If no $playername is entered and no player is selected,it will teleport you.'),
+('recall',1,'Syntax: .recall [$playername]\r\n\r\nTeleport $playername or selected player to the place where he has been before last use of a teleportation command. If no $playername is entered and no player is selected, it will teleport you.'),
 ('reload',3,'Syntax: .reload table_name\r\n\r\nReload table `table_name` if reload support added for this table and this table can be _safe_ reloaded.'),
 ('reload all',3,'Syntax: .reload all\r\n\r\nReload all tables with reload support added and that can be _safe_ reloaded.'),
 ('reload all_area',3,'Syntax: .reload all_area\r\n\r\nReload all `areatrigger_*` tables if reload support added for this table and this table can be _safe_ reloaded.'),
@@ -414,7 +415,7 @@ INSERT INTO `command` VALUES
 ('reload all_loot',3,'Syntax: .reload all_loot\r\n\r\nReload all `*_loot_template` tables. This can be slow operation with lags for server run.'),
 ('reload all_quest',3,'Syntax: .reload all_quest\r\n\r\nReload all quest related tables if reload support added for this table and this table can be _safe_ reloaded.'),
 ('reload all_spell',3,'Syntax: .reload all\r\n\r\nReload all `spell_*` tables with reload support added and that can be _safe_ reloaded.'),
-('reload config',3,'Syntax: .reload config\r\n\r\nReload config settings (by default stored in trinityd.conf). Not all settings can be change at reload: some new setting values will be ignored until restart,some values will applied with delay or only to new objects/maps,some values will explicitly rejected to change at reload.'),
+('reload config',3,'Syntax: .reload config\r\n\r\nReload config settings (by default stored in trinityd.conf). Not all settings can be change at reload: some new setting values will be ignored until restart, some values will applied with delay or only to new objects/maps, some values will explicitly rejected to change at reload.'),
 ('reload spell_linked_spell',3,'Usage: .reload spell_linked_spell\r\nReloads the spell_linked_spell DB table.'),
 ('reload tickets',4,'Usage: .reload tickets.\r\nReloads GM Tickets from the database and re-caches them into memory.'),
 ('repairitems',2,'Syntax: .repairitems\r\n\r\nRepair all selected player''s items.'),
@@ -425,10 +426,10 @@ INSERT INTO `command` VALUES
 ('reset stats',3,'Syntax:\r\n.reset stats [Playername]\r\n  Resets(recalculate) all stats of the targeted player to their original values at current level.'),
 ('reset talents',3,'Syntax:\r\n.reset talents [Playername]\r\n  Removes all talents of the targeted player. Playername can be name of offline character.'),
 ('respawn',3,'Syntax: .respawn\r\n\r\nRespawn all nearest creatures and GO without waiting respawn time expiration.'),
-('revive',3,'Syntax: .revive\r\n\r\nRevive the selected player. If no player is selected,it will revive you.'),
+('revive',3,'Syntax: .revive\r\n\r\nRevive the selected player. If no player is selected, it will revive you.'),
 ('save',0,'Syntax: .save\r\n\r\nSaves your character.'),
 ('saveall',1,'Syntax: .saveall\r\n\r\nSave all characters in game.'),
-('senditems',3,'Syntax: .senditems #playername "#subject" "#text" itemid1[:count1] itemid2[:count2] ... itemidN[:countN]\r\n\r\nSend a mail to a player. Subject and mail text must be in "". If for itemid not provided related count values then expected 1,if count > max items in stack then items will be send in required amount stacks. All stacks amount in mail limited to 12.'),
+('senditems',3,'Syntax: .senditems #playername "#subject" "#text" itemid1[:count1] itemid2[:count2] ... itemidN[:countN]\r\n\r\nSend a mail to a player. Subject and mail text must be in "". If for itemid not provided related count values then expected 1, if count > max items in stack then items will be send in required amount stacks. All stacks amount in mail limited to 12.'),
 ('sendmail',1,'Syntax: .sendmail #playername "#subject" "#text"\r\n\r\nSend a mail to a player. Subject and mail text must be in "".'),
 ('sendmessage',3,'Syntax: .sendmessage $playername $message\r\n\r\nSend screen message to player from ADMINISTRATOR.'),
 ('sendmoney',3,'Syntax: .sendmoney #playername "#subject" "#text" #money\r\n\r\nSend mail with money to a player. Subject and mail text must be in "".'),
@@ -440,18 +441,18 @@ INSERT INTO `command` VALUES
 ('server idleshutdown cancel',3,'Syntax: .server idleshutdown cancel\r\n\r\nCancel the restart/shutdown timer if any.'),
 ('server info',0,'Syntax: .server info\r\n\r\nDisplay server version and the number of connected players.'),
 ('server motd',0,'Syntax: .server motd\r\n\r\nShow server Message of the day.'),
-('server plimit',3,'Syntax: .server plimit [#num|-1|-2|-3|reset|player|moderator|gamemaster|administrator]\r\n\r\nWithout arg show current player amount and security level limitations for login to server,with arg set player linit ($num > 0) or securiti limitation ($num < 0 or security leme name. With `reset` sets player limit to the one in the config file'),
+('server plimit',3,'Syntax: .server plimit [#num|-1|-2|-3|reset|player|moderator|gamemaster|administrator]\r\n\r\nWithout arg show current player amount and security level limitations for login to server, with arg set player linit ($num > 0) or securiti limitation ($num < 0 or security leme name. With `reset` sets player limit to the one in the config file'),
 ('server restart',3,'Syntax: .server restart #delay\r\n\r\nRestart the server after #delay seconds. Use #exist_code or 2 as program exist code.'),
 ('server restart cancel',3,'Syntax: .server restart cancel\r\n\r\nCancel the restart/shutdown timer if any.'),
-('server set loglevel',4,'Syntax: .server set loglevel #level\r\n\r\nSet server log level (0 - errors only,1 - basic,2 - detail,3 - debug).'),
+('server set loglevel',4,'Syntax: .server set loglevel #level\r\n\r\nSet server log level (0 - errors only, 1 - basic, 2 - detail, 3 - debug).'),
 ('server set motd',3,'Syntax: .server set motd $MOTD\r\n\r\nSet server Message of the day.'),
 ('server shutdown',3,'Syntax: .server shutdown #delay [#exist_code]\r\n\r\nShut the server down after #delay seconds. Use #exist_code or 0 as program exist code.'),
 ('server shutdown cancel',3,'Syntax: .server shutdown cancel\r\n\r\nCancel the restart/shutdown timer if any.'),
-('setskill',3,'Syntax: .setskill #skill #level [#max]\r\n\r\nSet a skill of id #skill with a current skill value of #level and a maximum value of #max (or equal current maximum if not provide) for the selected character. If no character is selected,you learn the skill.'),
-('showarea',3,'Syntax: .showarea #areaid\r\n\r\nReveal the area of #areaid to the selected character. If no character is selected,reveal this area to you.'),
+('setskill',3,'Syntax: .setskill #skill #level [#max]\r\n\r\nSet a skill of id #skill with a current skill value of #level and a maximum value of #max (or equal current maximum if not provide) for the selected character. If no character is selected, you learn the skill.'),
+('showarea',3,'Syntax: .showarea #areaid\r\n\r\nReveal the area of #areaid to the selected character. If no character is selected, reveal this area to you.'),
 ('showhonor',0,'Syntax: .showhonor\r\n\r\nDisplay your honor ranking.'),
 ('start',0,'Syntax: .start\r\n\r\nTeleport you to the starting area of your character.'),
-('taxicheat',1,'Syntax: .taxicheat on/off\r\n\r\nTemporary grant access or remove to all taxi routes for the selected character. If no character is selected,hide or reveal all routes to you.\r\n\r\nVisited taxi nodes sill accessible after removing access.'),
+('taxicheat',1,'Syntax: .taxicheat on/off\r\n\r\nTemporary grant access or remove to all taxi routes for the selected character. If no character is selected, hide or reveal all routes to you.\r\n\r\nVisited taxi nodes sill accessible after removing access.'),
 ('tele',1,'Syntax: .tele #location\r\n\r\nTeleport player to a given location.'),
 ('tele add',3,'Syntax: .tele add $name\r\n\r\nAdd current your position to .tele command target locations list with name $name.'),
 ('tele del',3,'Syntax: .tele del $name\r\n\r\nRemove location with name $name for .tele command locations list.'),
@@ -466,17 +467,21 @@ INSERT INTO `command` VALUES
 ('ticket unassign',3,'Usage: .ticket unassign $ticketid.\r\nUnassigns the specified ticket from the current assigned Game Master.'),
 ('ticket viewid',1,'Usage: .ticket viewid $ticketid.\r\nReturns details about specified ticket. Ticket must be open and not deleted.'),
 ('ticket viewname',1,'Usage: .ticket viewname $creatorname. \r\nReturns details about specified ticket. Ticket must be open and not deleted.'),
+('titles add',2,'Syntax: .titles add #title\r\nAdd title #title (id or shift-link) to known titles list for selected player.'),
+('titles current',2,'Syntax: .titles current #title\r\nSet title #title (id or shift-link) as current selected title for selected player. If title not in known title list for player then it will be added to list.'),
+('titles remove',2,'Syntax: .titles remove #title\r\nRemove title #title (id or shift-link) from known titles list for selected player.'),
+('titles setmask',2,'Syntax: .titles setmask #mask\r\n\r\nAllows user to use all titles from #mask.\r\n\r\n #mask=0 disables the title-choose-field'),
 ('unaura',3,'Syntax: .unaura #spellid\r\n\r\nRemove aura due to spell #spellid from the selected Unit.'),
 ('unban account',3,'Syntax is: unban account $Name\r\nUnban accounts for account name pattern.'),
 ('unban character',3,'Syntax is: unban character $Name\r\nUnban accounts for character name pattern.'),
 ('unban ip',3,'Syntax is: unban ip $Ip\r\nUnban accounts for IP pattern.'),
 ('unbindsight',3,'Syntax: .unbindsight\r\n\r\nRemoves bound vision. Cannot be used while currently possessing a target.'),
 ('unfreeze',2,'Syntax: .unfreeze (#player)\r\n"Unfreezes" #player and enables his chat again. When using this without #name it will unfreeze your target.'),
-('unlearn',3,'Syntax: .unlearn #startspell #endspell\r\n\r\nUnlearn for selected player the range of spells between id #startspell and #endspell. If no #endspell is provided,just unlearn spell of id #startspell.'),
+('unlearn',3,'Syntax: .unlearn #startspell #endspell\r\n\r\nUnlearn for selected player the range of spells between id #startspell and #endspell. If no #endspell is provided, just unlearn spell of id #startspell.'),
 ('unmute',1,'Syntax: .unmute $playerName\r\n\r\nRestore chat messaging for any character from account of character $playerName.'),
-('unpossess',3,'Syntax: .unpossess\r\n\r\nIf you are possessed,unpossesses yourself; otherwise unpossesses current possessed target.'),
+('unpossess',3,'Syntax: .unpossess\r\n\r\nIf you are possessed, unpossesses yourself; otherwise unpossesses current possessed target.'),
 ('waterwalk',2,'Syntax: .waterwalk on/off\r\n\r\nSet on/off waterwalk state for selected player or self if no player selected.'),
-('wchange',3,'Syntax: .wchange #weathertype #status\r\n\r\nSet current weather to #weathertype with an intensity of #status.\r\n\r\n#weathertype can be 1 for rain,2 for snow,and 3 for sand. #status can be 0 for disabled,and 1 for enabled.'),
+('wchange',3,'Syntax: .wchange #weathertype #status\r\n\r\nSet current weather to #weathertype with an intensity of #status.\r\n\r\n#weathertype can be 1 for rain, 2 for snow, and 3 for sand. #status can be 0 for disabled, and 1 for enabled.'),
 ('whispers',1,'Syntax: .whispers on|off\r\nEnable/disable accepting whispers by GM from players. By default use trinityd.conf setting.'),
 ('wp',2,'Using WP Command:\r\nEach Waypoint Command has it''s own description!'),
 ('wp add',2,'Syntax: .wp add [#creature_guid or Select a Creature]'),
@@ -757,6 +762,7 @@ CREATE TABLE `creature_template` (
   `name` char(100) NOT NULL default '0',
   `subname` char(100) default NULL,
   `IconName` char(100) default NULL,
+  `gossip_menu_id` mediumint(8) unsigned NOT NULL default '0',
   `minlevel` tinyint(3) unsigned NOT NULL default '1',
   `maxlevel` tinyint(3) unsigned NOT NULL default '1',
   `minhealth` int(10) unsigned NOT NULL default '0',
@@ -1745,6 +1751,116 @@ LOCK TABLES `gameobject_template` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `gossip_menu`
+--
+
+DROP TABLE IF EXISTS gossip_menu;
+CREATE TABLE gossip_menu (
+  `entry` smallint(6) unsigned NOT NULL default '0',
+  `text_id` mediumint(8) unsigned NOT NULL default '0',
+  `cond_1` tinyint(3) unsigned NOT NULL default '0',
+  `cond_1_val_1` mediumint(8) unsigned NOT NULL default '0',
+  `cond_1_val_2` mediumint(8) unsigned NOT NULL default '0',
+  `cond_2` tinyint(3) unsigned NOT NULL default '0',
+  `cond_2_val_1` mediumint(8) unsigned NOT NULL default '0',
+  `cond_2_val_2` mediumint(8) unsigned NOT NULL default '0',
+  PRIMARY KEY (`entry`,`text_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `gossip_menu`
+--
+
+LOCK TABLES `gossip_menu` WRITE;
+/*!40000 ALTER TABLE `gossip_menu` DISABLE KEYS */;
+/*!40000 ALTER TABLE `gossip_menu` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `gossip_menu_option`
+--
+
+DROP TABLE IF EXISTS gossip_menu_option;
+CREATE TABLE gossip_menu_option (
+  `menu_id` smallint(6) unsigned NOT NULL default '0',
+  `id` smallint(6) unsigned NOT NULL default '0',
+  `option_icon` mediumint(8) unsigned NOT NULL default '0',
+  `option_text` text,
+  `option_id` tinyint(3) unsigned NOT NULL default '0',
+  `npc_option_npcflag` int(10) unsigned NOT NULL default '0',
+  `action_menu_id` mediumint(8) unsigned NOT NULL default '0',
+  `action_poi_id` mediumint(8) unsigned NOT NULL default '0',
+  `action_script_id` mediumint(8) unsigned NOT NULL default '0',
+  `box_coded` tinyint(3) unsigned NOT NULL default '0',
+  `box_money` int(11) unsigned NOT NULL default '0',
+  `box_text` text,
+  `cond_1` tinyint(3) unsigned NOT NULL default '0',
+  `cond_1_val_1` mediumint(8) unsigned NOT NULL default '0',
+  `cond_1_val_2` mediumint(8) unsigned NOT NULL default '0',
+  `cond_2` tinyint(3) unsigned NOT NULL default '0',
+  `cond_2_val_1` mediumint(8) unsigned NOT NULL default '0',
+  `cond_2_val_2` mediumint(8) unsigned NOT NULL default '0',
+  `cond_3` tinyint(3) unsigned NOT NULL default '0',
+  `cond_3_val_1` mediumint(8) unsigned NOT NULL default '0',
+  `cond_3_val_2` mediumint(8) unsigned NOT NULL default '0',
+  PRIMARY KEY (`menu_id`,`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `gossip_menu_option`
+--
+
+LOCK TABLES `gossip_menu_option` WRITE;
+/*!40000 ALTER TABLE `gossip_menu_option` DISABLE KEYS */;
+INSERT INTO gossip_menu_option VALUES
+(0, 0,0,'GOSSIP_OPTION_QUESTGIVER',2,2,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0),
+(0, 1,1,'I want to browse your goods',3,128,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0),
+(0, 2,2,'I want to travel fast',4,8192,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0),
+(0, 3,3,'Train me!',5,16,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0),
+(0, 4,4,'Bring me back to life',6,16384,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0),
+(0, 5,4,'Bring me back to life',7,32768,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0),
+(0, 6,5,'Make this inn my home',8,65536,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0),
+(0, 7,6,'Show me my bank',9,131072,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0),
+(0, 8,7,'How do I form a guild?',10,262144,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0),
+(0, 9,8,'I want to create a guild crest',11,524288,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0),
+(0,10,9,'I want to join the Battle Ground',12,1048576,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0),
+(0,11,6,'Auction!',13,2097152,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0),
+(0,12,0,'I''d like to stable my pet here',14,4194304,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0),
+(0,13,1,'I want to browse your goods',15,4096,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0),
+(0,14,2,'I wish to unlearn my talents',16,16,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0),
+(0,15,2,'I wish to unlearn my pet''s skills',17,16,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0),
+(0,16,0,'GOSSIP_OPTION_OUTDOORPVP',18,536870912,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0);
+/*!40000 ALTER TABLE `gossip_menu_option` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `gossip_scripts`
+--
+
+DROP TABLE IF EXISTS `gossip_scripts`;
+CREATE TABLE `gossip_scripts` (
+  `id` mediumint(8) unsigned NOT NULL default '0',
+  `delay` int(10) unsigned NOT NULL default '0',
+  `command` mediumint(8) unsigned NOT NULL default '0',
+  `datalong` mediumint(8) unsigned NOT NULL default '0',
+  `datalong2` int(10) unsigned NOT NULL default '0',
+  `dataint` int(11) NOT NULL default '0',
+  `x` float NOT NULL default '0',
+  `y` float NOT NULL default '0',
+  `z` float NOT NULL default '0',
+  `o` float NOT NULL default '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `gossip_scripts`
+--
+
+LOCK TABLES `gossip_scripts` WRITE;
+/*!40000 ALTER TABLE `gossip_scripts` DISABLE KEYS */;
+/*!40000 ALTER TABLE `gossip_scripts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `instance_template`
 --
 
@@ -1754,7 +1870,7 @@ CREATE TABLE `instance_template` (
   `parent` int(10) unsigned NOT NULL,
   `maxPlayers` tinyint(3) unsigned NOT NULL default '0',
   `reset_delay` int(10) unsigned NOT NULL default '0',
-  `access_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `access_id` bigint(20) unsigned NOT NULL default '0',
   `startLocX` float default NULL,
   `startLocY` float default NULL,
   `startLocZ` float default NULL,
@@ -2051,6 +2167,42 @@ LOCK TABLES `locales_gameobject` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `locales_gossip_menu_option`
+--
+
+DROP TABLE IF EXISTS `locales_gossip_menu_option`;
+CREATE TABLE `locales_gossip_menu_option` (
+  `menu_id` smallint(6) unsigned NOT NULL default '0',
+  `id` smallint(6) unsigned NOT NULL default '0',
+  `option_text_loc1` text,
+  `option_text_loc2` text,
+  `option_text_loc3` text,
+  `option_text_loc4` text,
+  `option_text_loc5` text,
+  `option_text_loc6` text,
+  `option_text_loc7` text,
+  `option_text_loc8` text,
+  `box_text_loc1` text,
+  `box_text_loc2` text,
+  `box_text_loc3` text,
+  `box_text_loc4` text,
+  `box_text_loc5` text,
+  `box_text_loc6` text,
+  `box_text_loc7` text,
+  `box_text_loc8` text,
+  PRIMARY KEY (`menu_id`,`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `locales_gossip_menu_option`
+--
+
+LOCK TABLES `locales_gossip_menu_option` WRITE;
+/*!40000 ALTER TABLE `locales_gossip_menu_option` DISABLE KEYS */;
+/*!40000 ALTER TABLE `locales_gossip_menu_option` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `locales_item`
 --
 
@@ -2083,41 +2235,6 @@ CREATE TABLE `locales_item` (
 LOCK TABLES `locales_item` WRITE;
 /*!40000 ALTER TABLE `locales_item` DISABLE KEYS */;
 /*!40000 ALTER TABLE `locales_item` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `locales_npc_option`
---
-
-DROP TABLE IF EXISTS `locales_npc_option`;
-CREATE TABLE `locales_npc_option` (
-  `entry` mediumint(8) unsigned NOT NULL default '0',
-  `option_text_loc1` text,
-  `option_text_loc2` text,
-  `option_text_loc3` text,
-  `option_text_loc4` text,
-  `option_text_loc5` text,
-  `option_text_loc6` text,
-  `option_text_loc7` text,
-  `option_text_loc8` text,
-  `box_text_loc1` text,
-  `box_text_loc2` text,
-  `box_text_loc3` text,
-  `box_text_loc4` text,
-  `box_text_loc5` text,
-  `box_text_loc6` text,
-  `box_text_loc7` text,
-  `box_text_loc8` text,
-  PRIMARY KEY  (`entry`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `locales_npc_option`
---
-
-LOCK TABLES `locales_npc_option` WRITE;
-/*!40000 ALTER TABLE `locales_npc_option` DISABLE KEYS */;
-/*!40000 ALTER TABLE `locales_npc_option` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -2438,54 +2555,6 @@ CREATE TABLE `npc_gossip` (
 LOCK TABLES `npc_gossip` WRITE;
 /*!40000 ALTER TABLE `npc_gossip` DISABLE KEYS */;
 /*!40000 ALTER TABLE `npc_gossip` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `npc_gossip_textid`
---
-
-DROP TABLE IF EXISTS `npc_gossip_textid`;
-CREATE TABLE `npc_gossip_textid` (
-  `zoneid` smallint(5) unsigned NOT NULL default '0',
-  `action` smallint(5) unsigned NOT NULL default '0',
-  `textid` mediumint(8) unsigned NOT NULL default '0',
-  KEY `zoneid` (`zoneid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `npc_gossip_textid`
---
-
-LOCK TABLES `npc_gossip_textid` WRITE;
-/*!40000 ALTER TABLE `npc_gossip_textid` DISABLE KEYS */;
-/*!40000 ALTER TABLE `npc_gossip_textid` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `npc_option`
---
-
-DROP TABLE IF EXISTS `npc_option`;
-CREATE TABLE `npc_option` (
-  `id` tinyint(3) unsigned NOT NULL default '0',
-  `gossip_id` tinyint(3) unsigned NOT NULL default '0',
-  `npcflag` int(10) unsigned NOT NULL default '0',
-  `icon` tinyint(3) unsigned NOT NULL default '0',
-  `action` tinyint(3) unsigned NOT NULL default '0',
-  `box_money` int(10) unsigned NOT NULL default '0',
-  `coded` tinyint(3) unsigned NOT NULL default '0',
-  `option_text` text,
-  `box_text` text,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `npc_option`
---
-
-LOCK TABLES `npc_option` WRITE;
-/*!40000 ALTER TABLE `npc_option` DISABLE KEYS */;
-/*!40000 ALTER TABLE `npc_option` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -12528,7 +12597,7 @@ INSERT INTO `oregon_string` VALUES
 (27,'The new passwords do not match or the old password is wrong',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (28,'Your account is now locked.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (29,'Your account is now unlocked.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(30,',rank ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(30,', rank ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (31,' [known]',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (32,' [learn]',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (33,' [passive]',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -12585,11 +12654,11 @@ INSERT INTO `oregon_string` VALUES
 (125,'You changed rage of %s to %i/%i.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (126,'%s changed your rage to %i/%i.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (127,'You changed level of %s to %i.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(128,'GUID %i,faction is %i,flags is %i,npcflag is %i,DY flag is %i',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(128,'GUID %i, faction is %i, flags is %i, npcflag is %i, DY flag is %i',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (129,'Wrong faction: %u (not found in factiontemplate.dbc).',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(130,'You changed GUID=%i ''s Faction to %i,flags to %i,npcflag to %i,dyflag to %i.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(131,'You changed the spellflatid=%i,val= %i,mark =%i to %s.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(132,'%s changed your spellflatid=%i,val= %i,mark =%i.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(130,'You changed GUID=%i ''s Faction to %i, flags to %i, npcflag to %i, dyflag to %i.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(131,'You changed the spellflatid=%i, val= %i, mark =%i to %s.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(132,'%s changed your spellflatid=%i, val= %i, mark =%i.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (133,'%s has access to all taxi nodes now (until logout).',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (134,'%s has no more access to all taxi nodes now (only visited accessible).',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (135,'%s has given you access to all taxi nodes (until logout).',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -12609,7 +12678,7 @@ INSERT INTO `oregon_string` VALUES
 (149,'There is no such mount.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (150,'You give a mount to %s.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (151,'%s gave you a mount.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(152,'USER1: %i,ADD: %i,DIF: %i\n',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(152,'USER1: %i, ADD: %i, DIF: %i\n',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (153,'You take all copper of %s.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (154,'%s took you all of your copper.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (155,'You take %i copper from %s.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -12617,7 +12686,7 @@ INSERT INTO `oregon_string` VALUES
 (157,'You give %i copper to %s.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (158,'%s gave you %i copper.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (159,'You hear sound %u.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(160,'USER2: %i,ADD: %i,RESULT: %i\n',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(160,'USER2: %i, ADD: %i, RESULT: %i\n',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (161,'Removed bit %i in field %i.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (162,'Set bit %i in field %i.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (163,'Teleport location table is empty!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -12628,11 +12697,11 @@ INSERT INTO `oregon_string` VALUES
 (169,'Mail sent to %s',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (170,'You try to hear sound %u but it doesn''t exist.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (172,'server console command',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(173,'Liquid level: %f,ground: %f,type: %d,status: %d',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(173,'Liquid level: %f, ground: %f, type: %d, status: %d',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (200,'No selection.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (201,'Object GUID is: lowpart %u highpart %X',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (202,'The name was too long by %i characters.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(203,'Error,name can only contain characters A-Z and a-z.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(203,'Error, name can only contain characters A-Z and a-z.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (204,'The subname was too long by %i characters.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (205,'Not yet implemented',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (206,'Item ''%i'' ''%s'' added to list with maxcount ''%i'' and incrtime ''%i'' and extendedcost ''%i''',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -12673,9 +12742,9 @@ INSERT INTO `oregon_string` VALUES
 (241,'Waypoint removed.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (242,'Warning: Could not delete WP from the world with ID: %d',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (243,'This happens if the waypoint is too far away from your char.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(244,'The WP is deleted from the database,but not from the world here.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(244,'The WP is deleted from the database, but not from the world here.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (245,'They will disappear after a server restart.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(246,'Waypoint %d: Info for creature: %s,GUID: %d',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(246,'Waypoint %d: Info for creature: %s, GUID: %d',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (247,'Waittime: %d',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (248,'Model %d: %d',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (249,'Emote: %d',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -12686,11 +12755,11 @@ INSERT INTO `oregon_string` VALUES
 (254,'Forced rename for player %s (GUID #%u) will be requested at next login.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (255,'Waypoint-Creature (GUID: %u) Not found',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (256,'Could not find NPC...',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(257,'Creature movement type set to ''%s'',waypoints removed (if any).',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(258,'Creature movement type set to ''%s'',waypoints were not removed.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(259,'Incorrect value,use on or off',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(257,'Creature movement type set to ''%s'', waypoints removed (if any).',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(258,'Creature movement type set to ''%s'', waypoints were not removed.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(259,'Incorrect value, use on or off',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (260,'Value saved.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(261,'Value saved,you may need to rejoin or clean your client cache.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(261,'Value saved, you may need to rejoin or clean your client cache.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (262,'Areatrigger ID %u not found!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (263,'Target map or coordinates is invalid (X: %f Y: %f MapId: %u)',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (264,'Zone coordinates is invalid (X: %f Y: %f AreaId: %u)',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -12710,7 +12779,7 @@ INSERT INTO `oregon_string` VALUES
 (278,'You must select a vendor',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (279,'You must send id for item',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (280,'Vendor has too many items (max 128)',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(281,'You can''t kick self,logout instead',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(281,'You can''t kick self, logout instead',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (282,'Player |cffff0000%s|r kicked by |cffff0000%s|r. Reason: |cffff0000%s|r.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (283,'Player %s not found.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (284,'Accepting Whisper: %s',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -12763,6 +12832,14 @@ INSERT INTO `oregon_string` VALUES
 (340,'%s is now following you.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (341,'%s is not following you.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (342,'%s is now not following you.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(349,'%d (idx:%d) - |cffffffff|Htitle:%d|h[%s %s]|h|r %s %s ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(350,'%d (idx:%d) - [%s %s] %s %s ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(351,'No titles found!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(352,'Invalid title id: %u',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(353,'Title %u (%s) added to known titles list for player %s.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(354,'Title %u (%s) removed from known titles list for player %s.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(355,'Title %u (%s) set as current selected title for player %s.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(356,'Current selected title for player %s reset as not known now.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (400,'|cffff0000[System Message]:|rScripts reloaded',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (401,'You change security level of account %s to %i.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (402,'%s changed your security level to %i.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -12816,8 +12893,8 @@ INSERT INTO `oregon_string` VALUES
 (450,'Graveyard #%u already linked to zone #%u (current).',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (451,'Graveyard #%u linked to zone #%u (current).',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (452,'Graveyard #%u can''t be linked to subzone or not existed zone #%u (internal error).',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(454,'No faction in Graveyard with id= #%u ,fix your DB',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(455,'invalid team,please fix database',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(454,'No faction in Graveyard with id= #%u , fix your DB',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(455,'invalid team, please fix database',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (456,'any',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (457,'alliance',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (458,'horde',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -12833,7 +12910,7 @@ INSERT INTO `oregon_string` VALUES
 (469,'Target unit has %d auras of type %d:',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (470,'id: %d eff: %d name: %s%s%s caster: %s %u',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (471,'Quest %u not found.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(472,'Quest %u started from item. For correct work,please,add item to inventory and start quest in normal way: .additem %u',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(472,'Quest %u started from item. For correct work, please, add item to inventory and start quest in normal way: .additem %u',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (473,'Quest removed.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (474,' [rewarded]',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (475,' [complete]',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -12855,9 +12932,9 @@ INSERT INTO `oregon_string` VALUES
 (491,'You already forgot that spell.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (492,'All spell cooldowns removed for %s.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (493,'Spell %u cooldown removed for %s.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(494,'Command : Additem,itemId = %i,amount = %i',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(495,'Command : Additemset,itemsetId = %i',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(496,'Removed itemID = %i,amount = %i from %s',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(494,'Command : Additem, itemId = %i, amount = %i',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(495,'Command : Additemset, itemsetId = %i',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(496,'Removed itemID = %i, amount = %i from %s',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (497,'Cannot create item ''%i'' (amount: %i)',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (498,'You need to provide a guild name!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (499,'Player not found!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -12923,7 +13000,7 @@ INSERT INTO `oregon_string` VALUES
 (559,'Your level progress has been reset.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (560,'The area has been set as explored.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (561,'The area has been set as not explored.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(562,'GUID=%i ''s updateIndex: %i,value:  %i.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(562,'GUID=%i ''s updateIndex: %i, value:  %i.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (563,'You change GUID=%i ''s UpdateIndex: %i value to %i.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (564,'The value index %u is too big to %u(count: %u).',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (565,'Set %u uint32 Value:[OPCODE]:%u [VALUE]:%u',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -12990,12 +13067,12 @@ INSERT INTO `oregon_string` VALUES
 (657,'The %s has taken the %s',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (658,'$n has defended the %s',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (659,'$n has assaulted the %s',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(660,'$n claims the %s! If left unchallenged,the %s will control it in 1 minute!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(660,'$n claims the %s! If left unchallenged, the %s will control it in 1 minute!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (661,'The Battle for Arathi Basin begins in 1 minute.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (662,'The Battle for Arathi Basin begins in 30 seconds. Prepare yourselves!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (663,'The Battle for Arathi Basin has begun!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(664,'The Alliance has gathered $1776W resources,and is near victory!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(665,'The Horde has gathered $1777W resources,and is near victory!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(664,'The Alliance has gathered $1776W resources, and is near victory!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(665,'The Horde has gathered $1777W resources, and is near victory!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (666,'After your recent battle in %s our best attempts to award you a Mark of Honor failed. Enclosed you will find the Mark of Honor we were not able to deliver to you at the time. Thanks for fighting in %s!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (667,'The Alliance has taken control of the Mage Tower!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (668,'The Horde has taken control of the Mage Tower!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -13032,15 +13109,15 @@ INSERT INTO `oregon_string` VALUES
 (711,'Your group is too large for this battleground. Please regroup to join.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (712,'Your group is too large for this arena. Please regroup to join.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (713,'You must be level %u to join an arena team!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(715,'You don''t meet Battleground level requirements',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(715,'You don''t meet Battleground level requirements',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 (717,'Alliance',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (718,'Horde',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (719,'%s was destroyed by the %s!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(720,'The %s is under attack! If left unchecked,the %s will destroy it!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(720,'The %s is under attack! If left unchecked, the %s will destroy it!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (721,'The %s was taken by the %s!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (722,'The %s was taken by the %s!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (723,'The %s was taken by the %s!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(724,'The %s is under attack! If left unchecked,the %s will capture it!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+(724,'The %s is under attack! If left unchecked, the %s will capture it!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (725,'The %s has taken the %s! Its supplies will now be used for reinforcements!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (726,'Irondeep Mine',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (727,'Coldtooth Mine',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -13066,7 +13143,7 @@ INSERT INTO `oregon_string` VALUES
 (747,'|cffffff00[|c1f40af20Announce by|r |cffff0000%s|cffffff00]:|r %s|r',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (748,'The Frostwolf General is Dead!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (749,'The Stormpike General is Dead!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(750,'linkGUID: %u,Entry: %u (%s)',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(750,'linkGUID: %u, Entry: %u (%s)',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (770,'Your group has members not in your arena team. Please regroup to join.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (771,'Your group does not have enough players to join this match.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (772,'The Gold Team wins!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -13151,31 +13228,31 @@ INSERT INTO `oregon_string` VALUES
 (1136,'You cannot summon players to a battleground or arena map.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (1137,'You must be in GM mode to teleport to a player in a battleground.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (1138,'You cannot teleport to a battleground from another battleground. Please leave the current battleground first.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(2000,'|cff00ff00New ticket from|r|cffff00ff %s.|r |cff00ff00Ticket entry:|r|cffff00ff %d.|r','','','','','','','',''),
-(2001,'|cff00ff00Character|r|cffff00ff %s |r|cff00ff00edited his/her ticket:|r|cffff00ff %d.|r','','','','','','','',''),
-(2002,'|cff00ff00Character|r|cffff00ff %s |r|cff00ff00abandoned ticket entry:|r|cffff00ff %d.|r','','','','','','','',''),
-(2003,'|cff00ff00Closed by|r:|cff00ccff %s|r ','','','','','','','',''),
-(2004,'|cff00ff00Deleted by|r:|cff00ccff %s|r ','','','','','','','',''),
-(2005,'Ticket not found.','','','','','','','',''),
-(2006,'Please close ticket before deleting it permanently.','','','','','','','',''),
-(2007,'Ticket %d is already assigned.','','','','','','','',''),
-(2008,'%u Tickets succesfully reloaded from the database.','','','','','','','',''),
-(2009,'Showing list of open tickets.','','','','','','','',''),
-(2010,'Showing list of open tickets whose creator is online.','','','','','','','',''),
-(2011,'Showing list of closed tickets.','','','','','','','',''),
-(2012,'Invalid name specified. Name should be that of an online Gamemaster.','','','','','','','',''),
-(2013,'This ticket is already assigned to yourself. To unassign use .ticket unassign %d and then reassign.','','','','','','','',''),
-(2014,'Ticket %d is not assigned,you cannot unassign it.','','','','','','','',''),
-(2015,'You cannot unassign tickets from staffmembers with a higher security level than yourself.','','','','','','','',''),
-(2016,'Cannot close ticket %d,it is assigned to another GM.','','','','','','','',''),
-(2017,'|cff00ff00Ticket|r:|cff00ccff %d.|r ','','','','','','','',''),
-(2018,'|cff00ff00Created by|r:|cff00ccff %s|r ','','','','','','','',''),
-(2019,'|cff00ff00Last change|r:|cff00ccff %s ago|r ','','','','','','','',''),
-(2020,'|cff00ff00Assigned to|r:|cff00ccff %s|r ','','','','','','','',''),
-(2021,'|cff00ff00Unassigned by|r:|cff00ccff %s|r ','','','','','','','',''),
-(2022,'\n|cff00ff00Message|r: "%s"|r ','','','','','','','',''),
-(2023,'\n|cff00ff00Comment|r: "%s"|r ','','','','','','','',''),
-(2024,'\n|cff00ccff%s|r |cff00ff00Added comment|r: "%s"|r ','','','','','','','',''),
+(2000,'|cff00ff00New ticket from|r|cffff00ff %s.|r |cff00ff00Ticket entry:|r|cffff00ff %d.|r', '', '', '', '', '', '', '', ''),
+(2001,'|cff00ff00Character|r|cffff00ff %s |r|cff00ff00edited his/her ticket:|r|cffff00ff %d.|r', '', '', '', '', '', '', '', ''),
+(2002,'|cff00ff00Character|r|cffff00ff %s |r|cff00ff00abandoned ticket entry:|r|cffff00ff %d.|r', '', '', '', '', '', '', '', ''),
+(2003,'|cff00ff00Closed by|r:|cff00ccff %s|r ', '', '', '', '', '', '', '', ''),
+(2004,'|cff00ff00Deleted by|r:|cff00ccff %s|r ', '', '', '', '', '', '', '', ''),
+(2005,'Ticket not found.', '', '', '', '', '', '', '', ''),
+(2006,'Please close ticket before deleting it permanently.', '', '', '', '', '', '', '', ''),
+(2007,'Ticket %d is already assigned.', '', '', '', '', '', '', '', ''),
+(2008,'%u Tickets succesfully reloaded from the database.', '', '', '', '', '', '', '', ''),
+(2009,'Showing list of open tickets.', '', '', '', '', '', '', '', ''),
+(2010,'Showing list of open tickets whose creator is online.', '', '', '', '', '', '', '', ''),
+(2011,'Showing list of closed tickets.', '', '', '', '', '', '', '', ''),
+(2012,'Invalid name specified. Name should be that of an online Gamemaster.', '', '', '', '', '', '', '', ''),
+(2013,'This ticket is already assigned to yourself. To unassign use .ticket unassign %d and then reassign.', '', '', '', '', '', '', '', ''),
+(2014,'Ticket %d is not assigned, you cannot unassign it.', '', '', '', '', '', '', '', ''),
+(2015,'You cannot unassign tickets from staffmembers with a higher security level than yourself.', '', '', '', '', '', '', '', ''),
+(2016,'Cannot close ticket %d, it is assigned to another GM.', '', '', '', '', '', '', '', ''),
+(2017,'|cff00ff00Ticket|r:|cff00ccff %d.|r ', '', '', '', '', '', '', '', ''),
+(2018,'|cff00ff00Created by|r:|cff00ccff %s|r ', '', '', '', '', '', '', '', ''),
+(2019,'|cff00ff00Last change|r:|cff00ccff %s ago|r ', '', '', '', '', '', '', '', ''),
+(2020,'|cff00ff00Assigned to|r:|cff00ccff %s|r ', '', '', '', '', '', '', '', ''),
+(2021,'|cff00ff00Unassigned by|r:|cff00ccff %s|r ', '', '', '', '', '', '', '', ''),
+(2022,'\n|cff00ff00Message|r: "%s"|r ', '', '', '', '', '', '', '', ''),
+(2023,'\n|cff00ff00Comment|r: "%s"|r ', '', '', '', '', '', '', '', ''),
+(2024,'\n|cff00ccff%s|r |cff00ff00Added comment|r: "%s"|r ', '', '', '', '', '', '', '', ''),
 (2025,'|cff00ff00Created|r:|cff00ccff %s ago|r ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (5000,'You froze player %s.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (5001,'It might be amusing but no... you cant freeze yourself!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -13242,8 +13319,8 @@ INSERT INTO `oregon_string` VALUES
 (10051,'Take me to Northpass Tower.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (10052,'Take me to Eastwall Tower.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (10053,'Take me to Crown Guard Tower.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(10054,'Give me the flag,I''ll take it to the central beacon for the glory of the Alliance!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(10055,'Give me the flag,I''ll take it to the central beacon for the glory of the Horde!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(10054,'Give me the flag, I''ll take it to the central beacon for the glory of the Alliance!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(10055,'Give me the flag, I''ll take it to the central beacon for the glory of the Horde!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (10056,'You must be a member of the Horde to enter the Hall of Legends.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (10057,'You must be a member of the Alliance to enter the Champion''s Hall.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `oregon_string` ENABLE KEYS */;
