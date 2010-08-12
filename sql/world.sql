@@ -11671,16 +11671,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `spell_proc_event`;
 CREATE TABLE `spell_proc_event` (
-  `entry` smallint(5) unsigned NOT NULL default '0',
+  `entry` smallint(6) unsigned NOT NULL default '0',
   `SchoolMask` tinyint(4) NOT NULL default '0',
-  `Category` smallint(6) NOT NULL default '0',
-  `SkillID` smallint(6) NOT NULL default '0',
-  `SpellFamilyName` smallint(5) unsigned NOT NULL default '0',
-  `SpellFamilyMask` bigint(20) unsigned NOT NULL default '0',
+  `SpellFamilyName` smallint(6) unsigned NOT NULL default '0',
+  `SpellFamilyMask` bigint(40) unsigned NOT NULL default '0',
   `procFlags` int(10) unsigned NOT NULL default '0',
+  `procEx` int(10) unsigned NOT NULL default '0',
   `ppmRate` float NOT NULL default '0',
-  `cooldown` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`entry`)
+  `CustomChance` float NOT NULL default '0',
+  `Cooldown` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
