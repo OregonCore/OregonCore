@@ -788,7 +788,7 @@ void WorldSession::HandleTutorialFlag(WorldPacket & recv_data)
 
 void WorldSession::HandleTutorialClear(WorldPacket & /*recv_data*/)
 {
-    for (uint8 i = 0; i < 8; +++)
+    for (uint8 i = 0; i < 8; ++i)
         GetPlayer()->SetTutorialInt(i, 0xFFFFFFFF);
 }
 
