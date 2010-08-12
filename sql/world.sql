@@ -2511,6 +2511,30 @@ LOCK TABLES `locales_quest` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `mail_external`
+--
+
+CREATE TABLE IF NOT EXISTS `mail_external` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `receiver` bigint(20) unsigned NOT NULL,
+  `subject` varchar(200) default 'Support Message',
+  `message` varchar(500) default 'Support Message',
+  `money` bigint(20) unsigned NOT NULL default '0',
+  `item` bigint(20) unsigned NOT NULL default '0',
+  `item_count` bigint(20) unsigned NOT NULL default '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+--
+-- Dumping data for table `mail_external`
+--
+
+LOCK TABLES `mail_external` WRITE;
+/*!40000 ALTER TABLE `mail_external` DISABLE KEYS */;
+/*!40000 ALTER TABLE `mail_external` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `mail_loot_template`
 --
 
@@ -3270,7 +3294,7 @@ INSERT INTO `oregon_string` VALUES
 (711,'Your group is too large for this battleground. Please regroup to join.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (712,'Your group is too large for this arena. Please regroup to join.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (713,'You must be level %u to join an arena team!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(715,'You don''t meet Battleground level requirements',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+(715,'You don''t meet Battleground level requirements',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (717,'Alliance',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (718,'Horde',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (719,'%s was destroyed by the %s!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
