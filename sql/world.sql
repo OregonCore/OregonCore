@@ -557,6 +557,105 @@ LOCK TABLES `creature_addon` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `creature_ai_scripts`
+--
+
+DROP TABLE IF EXISTS `creature_ai_scripts`;
+CREATE TABLE `creature_ai_scripts` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifier',
+  `creature_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT 'Creature Template Identifier',
+  `event_type` tinyint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'Event Type',
+  `event_inverse_phase_mask` int(11) NOT NULL DEFAULT '0' COMMENT 'Mask which phases this event will not trigger in',
+  `event_chance` int(3) unsigned NOT NULL DEFAULT '100',
+  `event_flags` int(3) unsigned NOT NULL DEFAULT '0',
+  `event_param1` int(11) NOT NULL DEFAULT '0',
+  `event_param2` int(11) NOT NULL DEFAULT '0',
+  `event_param3` int(11) NOT NULL DEFAULT '0',
+  `event_param4` int(11) NOT NULL DEFAULT '0',
+  `action1_type` tinyint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'Action Type',
+  `action1_param1` int(11) NOT NULL DEFAULT '0',
+  `action1_param2` int(11) NOT NULL DEFAULT '0',
+  `action1_param3` int(11) NOT NULL DEFAULT '0',
+  `action2_type` tinyint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'Action Type',
+  `action2_param1` int(11) NOT NULL DEFAULT '0',
+  `action2_param2` int(11) NOT NULL DEFAULT '0',
+  `action2_param3` int(11) NOT NULL DEFAULT '0',
+  `action3_type` tinyint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'Action Type',
+  `action3_param1` int(11) NOT NULL DEFAULT '0',
+  `action3_param2` int(11) NOT NULL DEFAULT '0',
+  `action3_param3` int(11) NOT NULL DEFAULT '0',
+  `comment` varchar(255) NOT NULL DEFAULT '' COMMENT 'Event Comment',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3510210 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='EventAI Scripts';
+
+--
+-- Dumping data for table `creature_ai_scripts`
+--
+
+LOCK TABLES `creature_ai_scripts` WRITE;
+/*!40000 ALTER TABLE `creature_ai_scripts` DISABLE KEYS */;
+/*!40000 ALTER TABLE `creature_ai_scripts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `creature_ai_summons`
+--
+
+DROP TABLE IF EXISTS `creature_ai_summons`;
+CREATE TABLE `creature_ai_summons` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Location Identifier',
+  `position_x` float NOT NULL DEFAULT '0',
+  `position_y` float NOT NULL DEFAULT '0',
+  `position_z` float NOT NULL DEFAULT '0',
+  `orientation` float NOT NULL DEFAULT '0',
+  `spawntimesecs` int(11) unsigned NOT NULL DEFAULT '120',
+  `comment` varchar(255) NOT NULL DEFAULT '' COMMENT 'Summon Comment',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='EventAI Summoning Locations';
+
+--
+-- Dumping data for table `creature_ai_summons`
+--
+
+LOCK TABLES `creature_ai_summons` WRITE;
+/*!40000 ALTER TABLE `creature_ai_summons` DISABLE KEYS */;
+/*!40000 ALTER TABLE `creature_ai_summons` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `creature_ai_texts`
+--
+
+DROP TABLE IF EXISTS `creature_ai_texts`;
+CREATE TABLE `creature_ai_texts` (
+  `entry` mediumint(8) NOT NULL,
+  `content_default` text NOT NULL,
+  `content_loc1` text,
+  `content_loc2` text,
+  `content_loc3` text,
+  `content_loc4` text,
+  `content_loc5` text,
+  `content_loc6` text,
+  `content_loc7` text,
+  `content_loc8` text,
+  `sound` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `type` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `language` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `emote` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `comment` text,
+  PRIMARY KEY (`entry`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Script Texts';
+
+--
+-- Dumping data for table `creature_ai_texts`
+--
+
+LOCK TABLES `creature_ai_texts` WRITE;
+/*!40000 ALTER TABLE `creature_ai_texts` DISABLE KEYS */;
+/*!40000 ALTER TABLE `creature_ai_texts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `creature_equip_template`
 --
 
@@ -625,6 +724,26 @@ CREATE TABLE `creature_involvedrelation` (
 LOCK TABLES `creature_involvedrelation` WRITE;
 /*!40000 ALTER TABLE `creature_involvedrelation` DISABLE KEYS */;
 /*!40000 ALTER TABLE `creature_involvedrelation` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `creature_linked_respawn`
+--
+
+DROP TABLE IF EXISTS `creature_linked_respawn`;
+CREATE TABLE `creature_linked_respawn` (
+  `guid` int(10) unsigned NOT NULL COMMENT 'dependent creature',
+  `linkedGuid` int(10) unsigned NOT NULL COMMENT 'master creature',
+  PRIMARY KEY (`guid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Creature Respawn Link System';
+
+--
+-- Dumping data for table `creature_linked_respawn`
+--
+
+LOCK TABLES `creature_linked_respawn` WRITE;
+/*!40000 ALTER TABLE `creature_linked_respawn` DISABLE KEYS */;
+/*!40000 ALTER TABLE `creature_linked_respawn` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -895,6 +1014,34 @@ LOCK TABLES `custom_texts` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `db_script_string`
+--
+
+DROP TABLE IF EXISTS `db_script_string`;
+CREATE TABLE `db_script_string` (
+  `entry` int(11) unsigned NOT NULL DEFAULT '0',
+  `content_default` text NOT NULL,
+  `content_loc1` text,
+  `content_loc2` text,
+  `content_loc3` text,
+  `content_loc4` text,
+  `content_loc5` text,
+  `content_loc6` text,
+  `content_loc7` text,
+  `content_loc8` text,
+  PRIMARY KEY (`entry`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `db_script_string`
+--
+
+LOCK TABLES `db_script_string` WRITE;
+/*!40000 ALTER TABLE `db_script_string` DISABLE KEYS */;
+/*!40000 ALTER TABLE `db_script_string` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `disenchant_loot_template`
 --
 
@@ -932,7 +1079,7 @@ CREATE TABLE `event_scripts` (
   `command` mediumint(8) unsigned NOT NULL default '0',
   `datalong` mediumint(8) unsigned NOT NULL default '0',
   `datalong2` int(10) unsigned NOT NULL default '0',
-  `datatext` text NOT NULL,
+  `dataint` int(11) NOT NULL default '0',
   `x` float NOT NULL default '0',
   `y` float NOT NULL default '0',
   `z` float NOT NULL default '0',
@@ -1684,7 +1831,7 @@ CREATE TABLE `gameobject_scripts` (
   `command` mediumint(8) unsigned NOT NULL default '0',
   `datalong` mediumint(8) unsigned NOT NULL default '0',
   `datalong2` int(10) unsigned NOT NULL default '0',
-  `datatext` text NOT NULL,
+  `dataint` int(11) NOT NULL default '0',
   `x` float NOT NULL default '0',
   `y` float NOT NULL default '0',
   `z` float NOT NULL default '0',
@@ -10784,7 +10931,7 @@ CREATE TABLE `quest_end_scripts` (
   `command` mediumint(8) unsigned NOT NULL default '0',
   `datalong` mediumint(8) unsigned NOT NULL default '0',
   `datalong2` int(10) unsigned NOT NULL default '0',
-  `datatext` text NOT NULL,
+  `dataint` int(11) NOT NULL default '0',
   `x` float NOT NULL default '0',
   `y` float NOT NULL default '0',
   `z` float NOT NULL default '0',
@@ -10811,7 +10958,7 @@ CREATE TABLE `quest_start_scripts` (
   `command` mediumint(8) unsigned NOT NULL default '0',
   `datalong` mediumint(8) unsigned NOT NULL default '0',
   `datalong2` int(10) unsigned NOT NULL default '0',
-  `datatext` text NOT NULL,
+  `dataint` int(11) NOT NULL default '0',
   `x` float NOT NULL default '0',
   `y` float NOT NULL default '0',
   `z` float NOT NULL default '0',
@@ -12548,6 +12695,28 @@ INSERT INTO `spell_learn_spell` VALUES
 UNLOCK TABLES;
 
 --
+-- Table structure for table `spell_linked_spell`
+--
+
+DROP TABLE IF EXISTS `spell_linked_spell`;
+CREATE TABLE `spell_linked_spell` (
+  `spell_trigger` mediumint(8) NOT NULL,
+  `spell_effect` mediumint(8) NOT NULL DEFAULT '0',
+  `type` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `comment` text NOT NULL,
+  UNIQUE KEY `trigger_effect_type` (`spell_trigger`,`spell_effect`,`type`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Spell System';
+
+--
+-- Dumping data for table `spell_linked_spell`
+--
+
+LOCK TABLES `spell_linked_spell` WRITE;
+/*!40000 ALTER TABLE `spell_linked_spell` DISABLE KEYS */;
+/*!40000 ALTER TABLE `spell_linked_spell` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `spell_pet_auras`
 --
 
@@ -13240,7 +13409,7 @@ CREATE TABLE `spell_scripts` (
   `command` mediumint(8) unsigned NOT NULL default '0',
   `datalong` mediumint(8) unsigned NOT NULL default '0',
   `datalong2` int(10) unsigned NOT NULL default '0',
-  `datatext` text character set latin1 NOT NULL,
+  `dataint` int(11) NOT NULL default '0',
   `x` float NOT NULL default '0',
   `y` float NOT NULL default '0',
   `z` float NOT NULL default '0',
@@ -13418,7 +13587,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `transport_events`;
 CREATE TABLE `transport_events` (
  	`entry` int(11) unsigned NOT NULL default '0',
-	`waypoint_id` int(11) unsigned NOT NULL default '0',	
+	`waypoint_id` int(11) unsigned NOT NULL default '0',
   	`event_id` int(11) unsigned NOT NULL default '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
