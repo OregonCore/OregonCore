@@ -1603,8 +1603,8 @@ Unit* Creature::SelectNearestTarget(float dist) const
         TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestHostileUnitInAttackDistanceCheck>, WorldTypeMapContainer > world_unit_searcher(searcher);
         TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestHostileUnitInAttackDistanceCheck>, GridTypeMapContainer >  grid_unit_searcher(searcher);
 
-        cell.Visit(p, world_unit_searcher, *GetMap());
-        cell.Visit(p, grid_unit_searcher, *GetMap());
+        cell.Visit(p, world_unit_searcher, *GetMap(), *this, ATTACK_DISTANCE);
+        cell.Visit(p, grid_unit_searcher, *GetMap(), *this, ATTACK_DISTANCE);
     }
 
     return target;
@@ -1632,7 +1632,7 @@ void Creature::CallAssistance()
 
                 TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AnyAssistCreatureInRangeCheck>, GridTypeMapContainer >  grid_creature_searcher(searcher);
 
-                cell.Visit(p, grid_creature_searcher, *GetMap());
+                cell.Visit(p, grid_creature_searcher, *GetMap(), *this, radius);
             }
 
             if (!assistList.empty())

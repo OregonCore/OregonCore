@@ -94,6 +94,9 @@ TotemAI::UpdateAI(const uint32 /*diff*/)
         TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestAttackableUnitInObjectRangeCheck>, GridTypeMapContainer > grid_object_checker(checker);
         TypeContainerVisitor<Oregon::UnitLastSearcher<Oregon::NearestAttackableUnitInObjectRangeCheck>, WorldTypeMapContainer > world_object_checker(checker);
 
+        //TODO: Backport mangos-0.12 r638: [7667] Add to CreatureAI field pointing to creature itself
+        //cell.Visit(p, grid_object_checker,  *m_creature.GetMap(), *m_creature, max_range);
+        //cell.Visit(p, world_object_checker, *m_creature.GetMap(), *m_creature, max_range);
         cell.Visit(p, grid_object_checker,  *i_totem.GetMap());
         cell.Visit(p, world_object_checker, *i_totem.GetMap());
     }

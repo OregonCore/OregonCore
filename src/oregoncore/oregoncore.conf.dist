@@ -1,7 +1,7 @@
 ##########################################
 # Oregon Core world configuration file #
 ##########################################
-ConfVersion=2010071301
+ConfVersion=2010081401
 # Note to devs, line breaks should be at column 80
 ###############################################################################
 # CONNECTIONS AND DIRECTORIES
@@ -1167,12 +1167,12 @@ GM.AllowFriend    = 0
 #                 1 (raid members 100% auto detect invisible player from same raid)
 #                 2 (players from same team can 100% auto detect invisible player)
 #
-#    Visibility.Distance.Creature
-#    Visibility.Distance.Player
-#        Visibility distance for different in game object
+#    Visibility.Distance.Continents
+#    Visibility.Distance.Instances
+#    Visibility.Distance.BGArenas
+#        Visibility distance for different ingame object in different maps.
+#        Visibility on continents on offy ~90 yards. In BG/Arenas ~180. For instances default ~120.
 #        Max limited by active player zone: ~ 333
-#        Min limit dependent from objects
-#        Default: 132 (cell size)
 #        Min limit is max aggro radius (45) * Rate.Creature.Aggro
 #
 #    Visibility.Distance.Object
@@ -1197,10 +1197,11 @@ GM.AllowFriend    = 0
 ###############################################################################
 
 Visibility.GroupMode = 0
-Visibility.Distance.Creature      = 132
-Visibility.Distance.Player        = 132
-Visibility.Distance.Object        = 132
-Visibility.Distance.InFlight      = 132
+Visibility.Distance.Continents    = 90
+Visibility.Distance.Instances     = 120
+Visibility.Distance.BGArenas      = 180
+Visibility.Distance.Object        = 66
+Visibility.Distance.InFlight      = 66
 Visibility.Distance.Grey.Unit   = 1
 Visibility.Distance.Grey.Object = 10
 

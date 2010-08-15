@@ -160,14 +160,15 @@ struct OREGON_DLL_DECL Cell
         uint32 All;
     } data;
 
-    template<class T, class CONTAINER> void Visit(const CellPair &cellPair, TypeContainerVisitor<T, CONTAINER> &visitor, Map &) const;
-    template<class T, class CONTAINER> void Visit(const CellPair &cellPair, TypeContainerVisitor<T, CONTAINER> &visitor, Map &m, const WorldObject &obj, float radius) const;
-    template<class T, class CONTAINER> void Visit(const CellPair &cellPair, TypeContainerVisitor<T, CONTAINER> &visitor, Map &, float radius, float x_off, float y_off) const;
+    template<class T, class CONTAINER> void Visit(const CellPair&, TypeContainerVisitor<T, CONTAINER> &visitor, Map &) const;
+    template<class T, class CONTAINER> void Visit(const CellPair&, TypeContainerVisitor<T, CONTAINER> &visitor, Map &, const WorldObject&, float) const;
+    template<class T, class CONTAINER> void Visit(const CellPair&, TypeContainerVisitor<T, CONTAINER> &visitor, Map &, float, float, float) const;
 
     static CellArea CalculateCellArea(const WorldObject &obj, float radius);
+    static CellArea CalculateCellArea(float x, float y, float radius);
 
 private:
-    template<class T, class CONTAINER> void VisitCircle(const CellPair &cellPair, TypeContainerVisitor<T, CONTAINER> &, Map &, const CellPair& , const CellPair& ) const;
+    template<class T, class CONTAINER> void VisitCircle(TypeContainerVisitor<T, CONTAINER> &, Map &, const CellPair&, const CellPair&) const;
 };
 
 #endif

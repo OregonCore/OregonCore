@@ -265,7 +265,9 @@ ObjectAccessor::_buildChangeObjectForPlayer(WorldObject *obj, UpdateDataMapType 
     cell.SetNoCreate();
     WorldObjectChangeAccumulator notifier(*obj, update_players);
     TypeContainerVisitor<WorldObjectChangeAccumulator, WorldTypeMapContainer > player_notifier(notifier);
-    cell.Visit(p, player_notifier, *obj->GetMap());
+    Map& map = *obj->GetMap();
+    //we must build packets for all visible players
+    cell.Visit(p, player_notifier, map, *obj, map.GetVisibilityDistance());
 }
 
 Pet*

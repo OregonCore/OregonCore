@@ -337,13 +337,13 @@ void GameObject::Update(uint32 diff)
                     Oregon::UnitSearcher<Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck> checker(ok, u_check);
 
                     TypeContainerVisitor<Oregon::UnitSearcher<Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck>, GridTypeMapContainer > grid_object_checker(checker);
-                    cell.Visit(p, grid_object_checker, *GetMap());
+                    cell.Visit(p, grid_object_checker, *GetMap(), *this, radius);
 
                     // or unfriendly player/pet
                     if (!ok)
                     {
                         TypeContainerVisitor<Oregon::UnitSearcher<Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck>, WorldTypeMapContainer > world_object_checker(checker);
-                        cell.Visit(p, world_object_checker, *GetMap());
+                        cell.Visit(p, world_object_checker, *GetMap(), *this, radius);
                     }
                 }
                 else                                        // environmental trap
@@ -356,7 +356,7 @@ void GameObject::Update(uint32 diff)
                     Oregon::PlayerSearcher<Oregon::AnyPlayerInObjectRangeCheck>  checker(p_ok, p_check);
 
                     TypeContainerVisitor<Oregon::PlayerSearcher<Oregon::AnyPlayerInObjectRangeCheck>, WorldTypeMapContainer > world_object_checker(checker);
-                    cell.Visit(p, world_object_checker, *GetMap());
+                    cell.Visit(p, world_object_checker, *GetMap(), *this, radius);
                     ok = p_ok;
                 }
 
@@ -764,7 +764,7 @@ bool GameObject::isVisibleForInState(Player const* u, bool inVisibleList) const
     }
 
     // check distance
-    return IsWithinDistInMap(u,World::GetMaxVisibleDistanceForObject() +
+    return IsWithinDistInMap(u, World::GetMaxVisibleDistanceForObject() +
         (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), false);
 }
 
@@ -857,7 +857,7 @@ void GameObject::TriggeringLinkedGameObject(uint32 trapEntry, Unit* target)
         Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> checker(trapGO,go_check);
 
         TypeContainerVisitor<Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck>, GridTypeMapContainer > object_checker(checker);
-        cell.Visit(p, object_checker, *GetMap());
+        cell.Visit(p, object_checker, *GetMap(), *target, range);
     }
 
     // found correct GO
@@ -877,7 +877,7 @@ GameObject* GameObject::LookupFishingHoleAround(float range)
     Oregon::GameObjectSearcher<Oregon::NearestGameObjectFishingHole> checker(ok, u_check);
 
     TypeContainerVisitor<Oregon::GameObjectSearcher<Oregon::NearestGameObjectFishingHole>, GridTypeMapContainer > grid_object_checker(checker);
-    cell.Visit(p, grid_object_checker, *GetMap());
+    cell.Visit(p, grid_object_checker, *GetMap(), *this, range);
 
     return ok;
 }

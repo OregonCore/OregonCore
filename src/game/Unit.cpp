@@ -8415,7 +8415,7 @@ int32 Unit::ModifyPower(Powers power, int32 dVal)
 
 bool Unit::isVisibleForOrDetect(Unit const* u, bool detect, bool inVisibleList, bool is3dDistance) const
 {
-    if (!u)
+    if (!u || !IsInMap(u))
         return false;
 
     return u->canSeeOrDetect(this, detect, inVisibleList, is3dDistance);
@@ -8504,9 +8504,9 @@ void Unit::DestroyForNearbyPlayers()
         return;
 
     std::list<Unit*> targets;
-    Oregon::AnyUnitInObjectRangeCheck check(this, World::GetMaxVisibleDistance());
+    Oregon::AnyUnitInObjectRangeCheck check(this, GetMap()->GetVisibilityDistance());
     Oregon::UnitListSearcher<Oregon::AnyUnitInObjectRangeCheck> searcher(targets, check);
-    VisitNearbyWorldObject(World::GetMaxVisibleDistance(), searcher);
+    VisitNearbyWorldObject(GetMap()->GetVisibilityDistance(), searcher);
     for (std::list<Unit*>::iterator iter = targets.begin(); iter != targets.end(); ++iter)
         if (*iter != this && (*iter)->GetTypeId() == TYPEID_PLAYER
             && ((*iter)->ToPlayer())->HaveAtClient(this))

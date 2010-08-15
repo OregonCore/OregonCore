@@ -81,8 +81,19 @@ class OREGON_DLL_DECL NGrid
             i_GridInfo = GridInfo(expiry, unload);
         }
 
-        const GridType& operator()(unsigned short x, unsigned short y) const { return i_cells[x][y]; }
-        GridType& operator()(unsigned short x, unsigned short y) { return i_cells[x][y]; }
+        const GridType& operator()(unsigned short x, unsigned short y) const
+        {
+            ASSERT(x < N);
+            ASSERT(y < N);
+            return i_cells[x][y];
+        }
+
+        GridType& operator()(unsigned short x, unsigned short y)
+        {
+            ASSERT(x < N);
+            ASSERT(y < N);
+            return i_cells[x][y];
+        }
 
         const uint32& GetGridId(void) const { return i_gridId; }
         void SetGridId(const uint32 id) const { i_gridId = id; }
@@ -110,12 +121,12 @@ class OREGON_DLL_DECL NGrid
 
         template<class SPECIFIC_OBJECT> void AddWorldObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj)
         {
-            i_cells[x][y].AddWorldObject(obj);
+            getGridType(x, y).AddWorldObject(obj);
         }
 
         template<class SPECIFIC_OBJECT> void RemoveWorldObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj)
         {
-            i_cells[x][y].RemoveWorldObject(obj);
+            getGridType(x, y).RemoveWorldObject(obj);
         }
 
         template<class T, class TT> void Visit(TypeContainerVisitor<T, TypeMapContainer<TT> > &visitor)
@@ -127,7 +138,7 @@ class OREGON_DLL_DECL NGrid
 
         template<class T, class TT> void Visit(const uint32 &x, const uint32 &y, TypeContainerVisitor<T, TypeMapContainer<TT> > &visitor)
         {
-            i_cells[x][y].Visit(visitor);
+            getGridType(x, y).Visit(visitor);
         }
 
         unsigned int ActiveObjectsInGrid(void) const
@@ -141,15 +152,22 @@ class OREGON_DLL_DECL NGrid
 
         template<class SPECIFIC_OBJECT> bool AddGridObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj)
         {
-            return i_cells[x][y].AddGridObject(obj);
+            return getGridType(x, y).AddGridObject(obj);
         }
 
         template<class SPECIFIC_OBJECT> bool RemoveGridObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj)
         {
-            return i_cells[x][y].RemoveGridObject(obj);
+            return getGridType(x, y).RemoveGridObject(obj);
         }
 
     private:
+
+        GridType& getGridType(const uint32& x, const uint32& y)
+        {
+            ASSERT(x < N);
+            ASSERT(y < N);
+            return i_cells[x][y];
+        }
 
         uint32 i_gridId;
         GridInfo i_GridInfo;

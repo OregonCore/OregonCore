@@ -61,6 +61,7 @@ class OREGON_DLL_DECL MapInstanced : public Map
         }
 
         InstancedMaps &GetInstancedMaps() { return m_InstancedMaps; }
+        virtual void InitVisibilityDistance();
 
     private:
 

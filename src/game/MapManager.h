@@ -1,5 +1,5 @@
 /*
-CreateBaseMap * Copyright (C) 2005-2008 MaNGOS <http://www.mangosproject.org/>
+ * Copyright (C) 2005-2008 MaNGOS <http://www.mangosproject.org/>
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
@@ -115,6 +115,7 @@ class OREGON_DLL_DECL MapManager : public Oregon::Singleton<MapManager, Oregon::
         void RemoveBonesFromMap(uint32 mapid, uint64 guid, float x, float y);
         uint32 GenerateInstanceId() { return ++i_MaxInstanceId; }
         void InitMaxInstanceId();
+        void InitializeVisibilityDistanceInfo();
 
         /* statistics */
         uint32 GetNumInstances();

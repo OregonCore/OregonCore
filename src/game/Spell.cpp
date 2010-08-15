@@ -3661,7 +3661,7 @@ uint8 Spell::CanCast(bool strict)
                                 MaNGOS::GameObjectLastSearcher<MaNGOS::NearestGameObjectEntryInObjectRangeCheck> checker(p_GameObject,go_check);
 
                                 TypeContainerVisitor<MaNGOS::GameObjectLastSearcher<MaNGOS::NearestGameObjectEntryInObjectRangeCheck>, GridTypeMapContainer > object_checker(checker);
-                                cell.Visit(p, object_checker, *m_caster->GetMap());
+                                cell.Visit(p, object_checker, *m_caster->GetMap(), *m_caster, range);
 
                                 if (p_GameObject)
                                 {
@@ -3699,7 +3699,7 @@ uint8 Spell::CanCast(bool strict)
 
                             TypeContainerVisitor<MaNGOS::CreatureLastSearcher<MaNGOS::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer >  grid_creature_searcher(searcher);
 
-                            cell.Visit(p, grid_creature_searcher, *m_caster->GetMap());
+                            cell.Visit(p, grid_creature_searcher, *m_caster->GetMap(), *m_caster, range);
 
                             if (p_Creature)
                             {
@@ -4702,7 +4702,8 @@ uint8 Spell::CheckItems()
         Oregon::GameObjectSearcher<Oregon::GameObjectFocusCheck> checker(ok,go_check);
 
         TypeContainerVisitor<Oregon::GameObjectSearcher<Oregon::GameObjectFocusCheck>, GridTypeMapContainer > object_checker(checker);
-        cell.Visit(p, object_checker, *m_caster->GetMap());
+        Map& map = *m_caster->GetMap();
+        cell.Visit(p, object_checker, map, *m_caster, map.GetVisibilityDistance());
 
         if (!ok)
             return (uint8)SPELL_FAILED_REQUIRES_SPELL_FOCUS;
