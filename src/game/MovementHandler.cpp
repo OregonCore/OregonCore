@@ -284,12 +284,13 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
                 }
             }
         }
-            //GetPlayer()->m_anti_transportGUID = GUID_LOPART(movementInfo.t_guid);
-            GameObject *obj = HashMapHolder<GameObject>::Find(movementInfo.t_guid);
-            if(obj)
-                GetPlayer()->m_anti_transportGUID = obj->GetDBTableGUIDLow();
-            else
-                GetPlayer()->m_anti_transportGUID = GUID_LOPART(movementInfo.t_guid);
+
+        //GetPlayer()->m_anti_transportGUID = GUID_LOPART(movementInfo.t_guid);
+        GameObject *obj = HashMapHolder<GameObject>::Find(movementInfo.t_guid);
+        if(obj)
+            GetPlayer()->m_anti_transportGUID = obj->GetDBTableGUIDLow();
+        else
+            GetPlayer()->m_anti_transportGUID = GUID_LOPART(movementInfo.t_guid);
     }
     else if (GetPlayer()->m_transport)                      // if we were on a transport, leave
     {
@@ -449,7 +450,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     }
     else if (MovementFlags & MOVEMENTFLAG_ONTRANSPORT)
     {
-            // antiwrap =)
+        // antiwrap =)
         if (GetPlayer()->m_transport)
         {
             float trans_rad = movementInfo.t_x*movementInfo.t_x + movementInfo.t_y*movementInfo.t_y + movementInfo.t_z*movementInfo.t_z;
@@ -470,7 +471,8 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
                 if (GetPlayer()->GetMapId() != mapid)
                 {
                     check_passed = false;
-                } else if (mapid != 369)
+                }
+                else if (mapid != 369)
                 {
                     float delta_go = delta_gox*delta_gox + delta_goy*delta_goy;
                     if (delta_go > 3600.0f)
@@ -490,16 +492,16 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         if (!check_passed)
         {
             if (GetPlayer()->m_transport)
-                {
-                    GetPlayer()->m_transport->RemovePassenger(GetPlayer());
-                    GetPlayer()->m_transport = NULL;
-                }
-                movementInfo.t_x = 0.0f;
-                movementInfo.t_y = 0.0f;
-                movementInfo.t_z = 0.0f;
-                movementInfo.t_o = 0.0f;
-                movementInfo.t_time = 0;
-                GetPlayer()->m_anti_transportGUID = 0;
+            {
+                GetPlayer()->m_transport->RemovePassenger(GetPlayer());
+                GetPlayer()->m_transport = NULL;
+            }
+            movementInfo.t_x = 0.0f;
+            movementInfo.t_y = 0.0f;
+            movementInfo.t_z = 0.0f;
+            movementInfo.t_o = 0.0f;
+            movementInfo.t_time = 0;
+            GetPlayer()->m_anti_transportGUID = 0;
         }
     }
 
@@ -512,16 +514,16 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         data.append(recv_data.contents(), recv_data.size());
         GetPlayer()->SendMessageToSet(&data, false);
 
-    GetPlayer()->SetPosition(movementInfo.x, movementInfo.y, movementInfo.z, movementInfo.o);
-    GetPlayer()->m_movementInfo = movementInfo;
-    if (GetPlayer()->m_lastFallTime >= movementInfo.fallTime || GetPlayer()->m_lastFallZ <=movementInfo.z || recv_data.GetOpcode() == MSG_MOVE_FALL_LAND)
-        GetPlayer()->SetFallInformation(movementInfo.fallTime, movementInfo.z);
+        GetPlayer()->SetPosition(movementInfo.x, movementInfo.y, movementInfo.z, movementInfo.o);
+        GetPlayer()->m_movementInfo = movementInfo;
+        if (GetPlayer()->m_lastFallTime >= movementInfo.fallTime || GetPlayer()->m_lastFallZ <=movementInfo.z || recv_data.GetOpcode() == MSG_MOVE_FALL_LAND)
+            GetPlayer()->SetFallInformation(movementInfo.fallTime, movementInfo.z);
 
-    if (GetPlayer()->isMovingOrTurning())
-        GetPlayer()->RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
+        if (GetPlayer()->isMovingOrTurning())
+            GetPlayer()->RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
 
-    if (movementInfo.z < -500.0f)
-        GetPlayer()->HandleFallUnderMap();
+        if (movementInfo.z < -500.0f)
+            GetPlayer()->HandleFallUnderMap();
 
         if (GetPlayer()->m_anti_alarmcount > 0)
         {
