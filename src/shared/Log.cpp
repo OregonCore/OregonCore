@@ -123,20 +123,20 @@ void Log::Initialize()
     InitColors(sConfig.GetStringDefault("LogColors", ""));
 
     m_gmlog_per_account = sConfig.GetBoolDefault("GmLogPerAccount",false);
-    if(!m_gmlog_per_account)
+    if (!m_gmlog_per_account)
         gmLogfile = openLogFile("GMLogFile","GmLogTimestamp","a");
     else
     {
         // GM log settings for per account case
         m_gmlog_filename_format = sConfig.GetStringDefault("GMLogFile", "");
-        if(!m_gmlog_filename_format.empty())
+        if (!m_gmlog_filename_format.empty())
         {
             bool m_gmlog_timestamp = sConfig.GetBoolDefault("GmLogTimestamp",false);
 
             size_t dot_pos = m_gmlog_filename_format.find_last_of(".");
-            if(dot_pos!=m_gmlog_filename_format.npos)
+            if (dot_pos!=m_gmlog_filename_format.npos)
             {
-                if(m_gmlog_timestamp)
+                if (m_gmlog_timestamp)
                     m_gmlog_filename_format.insert(dot_pos,m_logsTimestamp);
 
                 m_gmlog_filename_format.insert(dot_pos,"_#%u");
@@ -145,7 +145,7 @@ void Log::Initialize()
             {
                 m_gmlog_filename_format += "_#%u";
 
-                if(m_gmlog_timestamp)
+                if (m_gmlog_timestamp)
                     m_gmlog_filename_format += m_logsTimestamp;
             }
 
@@ -154,7 +154,6 @@ void Log::Initialize()
     }
 
     charLogfile = openLogFile("CharLogFile","CharLogTimestamp","a");
-
     dberLogfile = openLogFile("DBErrorLogFile",NULL,"a");
     raLogfile = openLogFile("RaLogFile",NULL,"a");
     chatLogfile = openLogFile("ChatLogFile","ChatLogTimestamp","a");
@@ -181,13 +180,13 @@ void Log::Initialize()
 FILE* Log::openLogFile(char const* configFileName,char const* configTimeStampFlag, char const* mode)
 {
     std::string logfn=sConfig.GetStringDefault(configFileName, "");
-    if(logfn.empty())
+    if (logfn.empty())
         return NULL;
 
-    if(configTimeStampFlag && sConfig.GetBoolDefault(configTimeStampFlag,false))
+    if (configTimeStampFlag && sConfig.GetBoolDefault(configTimeStampFlag,false))
     {
         size_t dot_pos = logfn.find_last_of(".");
-        if(dot_pos!=logfn.npos)
+        if (dot_pos!=logfn.npos)
             logfn.insert(dot_pos,m_logsTimestamp);
         else
             logfn += m_logsTimestamp;
@@ -198,7 +197,7 @@ FILE* Log::openLogFile(char const* configFileName,char const* configTimeStampFla
 
 FILE* Log::openGmlogPerAccount(uint32 account)
 {
-    if(m_gmlog_filename_format.empty())
+    if (m_gmlog_filename_format.empty())
         return NULL;
 
     char namebuf[OREGON_PATH_MAX];
@@ -386,11 +385,11 @@ void Log::outString(const char * str, ...)
 
     UTF8PRINTF(stdout,str,);
 
-    if(m_colored)
+    if (m_colored)
         ResetColor(true);
 
     printf("\n");
-    if(logfile)
+    if (logfile)
     {
         outTimestamp(logfile);
         va_list ap;
@@ -401,6 +400,7 @@ void Log::outString(const char * str, ...)
 
         fflush(logfile);
     }
+
     fflush(stdout);
 }
 
@@ -493,6 +493,7 @@ void Log::outError(const char * err, ...)
         fprintf(logfile, "\n");
         fflush(logfile);
     }
+
     fflush(stderr);
 }
 
@@ -546,6 +547,7 @@ void Log::outErrorDb(const char * err, ...)
     if (dberLogfile)
     {
         outTimestamp(dberLogfile);
+
         va_list ap;
         va_start(ap, err);
         vfprintf(dberLogfile, err, ap);
@@ -554,6 +556,7 @@ void Log::outErrorDb(const char * err, ...)
         fprintf(dberLogfile, "\n");
         fflush(dberLogfile);
     }
+
     fflush(stderr);
 }
 
@@ -845,6 +848,7 @@ void Log::outRemote(const char * str, ...)
         va_end(ap);
         fflush(raLogfile);
     }
+
     fflush(stdout);
 }
 
@@ -884,7 +888,7 @@ void outstring_log(const char * str, ...)
     char buf[256];
     va_list ap;
     va_start(ap, str);
-    vsnprintf(buf,256, str, ap);
+    vsnprintf(buf, 256, str, ap);
     va_end(ap);
 
     Oregon::Singleton<Log>::Instance().outString(buf);
