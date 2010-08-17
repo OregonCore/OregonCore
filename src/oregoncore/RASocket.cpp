@@ -31,27 +31,14 @@
 #include "Util.h"
 #include "AccountMgr.h"
 
-/// \todo Make this thread safe if in the future 2 admins should be able to log at the same time.
-SOCKET r;
-
 #define dropclient {Sendf("I'm busy right now, come back later."); \
         SetCloseAndDelete(); \
         return; \
     }
 
-uint32 iSession=0;                                          ///< Session number (incremented each time a new connection is made)
-unsigned int iUsers=0;                                      ///< Number of active administrators
-
-typedef int(* pPrintf)(const char*,...);
-
-void ParseCommand(CliCommandHolder::Print*, char*command);
-
 /// RASocket constructor
 RASocket::RASocket(ISocketHandler &h): TcpSocket(h)
 {
-
-    ///- Increment the session number
-    iSess =iSession++ ;
 
     ///- Get the config parameters
     bSecure = sConfig.GetBoolDefault( "RA.Secure", true );
@@ -59,20 +46,13 @@ RASocket::RASocket(ISocketHandler &h): TcpSocket(h)
 
     ///- Initialize buffer and data
     iInputLength=0;
-    buff=new char[RA_BUFF_SIZE];
     stage=NONE;
 }
 
 /// RASocket destructor
 RASocket::~RASocket()
 {
-    ///- Delete buffer and decrease active admins count
-    delete [] buff;
-
     sLog.outRemote("Connection was closed.\n");
-
-    if(stage==OK)
-        iUsers--;
 }
 
 /// Accept an incoming connection
@@ -80,12 +60,9 @@ void RASocket::OnAccept()
 {
     std::string ss=GetRemoteAddress();
     sLog.outRemote("Incoming connection from %s.\n",ss.c_str());
-    ///- If there is already an active admin, drop the connection
-    if(iUsers)
-        dropclient
 
-        ///- Else print Motd
-            Sendf("%s\r\n",sWorld.GetMotd());
+    ///- print Motd
+    Sendf("%s\r\n",sWorld.GetMotd());
 }
 
 /// Read data from the network
@@ -95,18 +72,14 @@ void RASocket::OnRead()
     TcpSocket::OnRead();
 
     unsigned int sz=ibuf.GetLength();
-    if(iInputLength+sz>=RA_BUFF_SIZE)
+    if (iInputLength+sz>=RA_BUFF_SIZE)
     {
         sLog.outRemote("Input buffer overflow, possible DOS attack.\n");
         SetCloseAndDelete();
         return;
     }
 
-    ///- If there is already an active admin (other than you), drop the connection
-    if(stage!=OK && iUsers)
-        dropclient
-
-            char *inp = new char [sz+1];
+    char *inp = new char [sz+1];
     ibuf.Read(inp,sz);
 
     /// \todo Can somebody explain this 'Linux bugfix'?
@@ -122,19 +95,20 @@ void RASocket::OnRead()
     bool gotenter=false;
     unsigned int y=0;
     for(;y<sz;y++)
-        if(inp[y]=='\r'||inp[y]=='\n')
     {
-        gotenter=true;
-        break;
+        if (inp[y]=='\r'||inp[y]=='\n')
+        {
+            gotenter=true;
+            break;
+        }
     }
 
     //No buffer overflow (checked above)
     memcpy(&buff[iInputLength],inp,y);
     iInputLength+=y;
     delete [] inp;
-    if(gotenter)
+    if (gotenter)
     {
-
         buff[iInputLength]=0;
         iInputLength=0;
         switch(stage)
@@ -161,7 +135,8 @@ void RASocket::OnRead()
                     {
                         Sendf("-No such user.\r\n");
                         sLog.outRemote("User %s does not exist.\n",szLogin.c_str());
-                        if(bSecure)SetCloseAndDelete();
+                        if(bSecure)
+                            SetCloseAndDelete();
                     }
                     else
                     {
@@ -174,8 +149,10 @@ void RASocket::OnRead()
                         {
                             Sendf("-Not enough privileges.\r\n");
                             sLog.outRemote("User %s has no privilege.\n",szLogin.c_str());
-                            if(bSecure)SetCloseAndDelete();
-                        }   else
+                            if(bSecure)
+                                SetCloseAndDelete();
+                        }
+                        else
                         {
                             stage=LG;
                         }
@@ -199,11 +176,10 @@ void RASocket::OnRead()
                         "SELECT 1 FROM account WHERE username = '%s' AND sha_pass_hash=SHA1(CONCAT(username,':','%s'))",
                         login.c_str(), pw.c_str());
 
-                    if(check)
+                    if (check)
                     {
-                        r=GetSocket();
+                        GetSocket();
                         stage=OK;
-                        ++iUsers;
 
                         Sendf("+Logged in.\r\n");
                         sLog.outRemote("User %s has logged in.\n",szLogin.c_str());
@@ -214,16 +190,20 @@ void RASocket::OnRead()
                         ///- Else deny access
                         Sendf("-Wrong pass.\r\n");
                         sLog.outRemote("User %s has failed to log in.\n",szLogin.c_str());
-                        if(bSecure)SetCloseAndDelete();
+                        if(bSecure)
+                            SetCloseAndDelete();
                     }
                 }
                 break;
                 ///<li> If user is logged, parse and execute the command
             case OK:
-                if(strlen(buff))
+                if (strlen(buff))
                 {
                     sLog.outRemote("Got '%s' cmd.\n",buff);
-                    sWorld.QueueCliCommand(&RASocket::zprint , buff);
+                    SetDeleteByHandler(false);
+                    CliCommandHolder* cmd = new CliCommandHolder(this, buff, &RASocket::zprint, &RASocket::commandFinished);
+                    sWorld.QueueCliCommand(cmd);
+                    ++pendingCommands; 
                 }
                 else
                     Sendf("Oregon>");
@@ -235,24 +215,22 @@ void RASocket::OnRead()
 }
 
 /// Output function
-void RASocket::zprint( const char * szText )
+void RASocket::zprint(void* callbackArg, const char * szText )
 {
-    if( !szText )
+    if (!szText)
         return;
 
-    #ifdef RA_CRYPT
-
-    char *megabuffer=strdup(szText);
-    unsigned int sz=strlen(megabuffer);
-    Encrypt(megabuffer,sz);
-    send(r,megabuffer,sz,0);
-    delete [] megabuffer;
-
-    #else
-
     unsigned int sz=strlen(szText);
-    send(r,szText,sz,0);
+    send(((RASocket*)callbackArg)->GetSocket(), szText, sz, 0);
+}
 
-    #endif
+void RASocket::commandFinished(void* callbackArg, bool success)
+{
+    RASocket* raSocket = (RASocket*)callbackArg;
+    raSocket->Sendf("Oregon>");
+    uint64 remainingCommands = --raSocket->pendingCommands;
+
+    if (remainingCommands == 0)
+        raSocket->SetDeleteByHandler(true);
 }
 

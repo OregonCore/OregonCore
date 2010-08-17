@@ -48,7 +48,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game;..\..\src\oregoncore;..\..\dep\ACE_wrappers;..\..\src\shared\Database"
+				AdditionalIncludeDirectories="..\..\dep\include\gsoap;..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game;..\..\src\oregoncore;..\..\dep\ACE_wrappers;..\..\src\shared\Database"
 				PreprocessorDefinitions="VERSION=&quot;0.12.0-SVN&quot;;WIN32;NDEBUG;_CONSOLE;ENABLE_CLI"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -149,7 +149,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game;..\..\src\oregoncore;..\..\dep\ACE_wrappers;..\..\src\shared\Database"
+				AdditionalIncludeDirectories="..\..\dep\include\gsoap;..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game;..\..\src\oregoncore;..\..\dep\ACE_wrappers;..\..\src\shared\Database"
 				PreprocessorDefinitions="VERSION=&quot;0.12.0-SVN&quot;;WIN32;NDEBUG;_CONSOLE;ENABLE_CLI"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -248,7 +248,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game;..\..\src\oregoncore;..\..\dep\ACE_wrappers;..\..\src\shared\Database"
+				AdditionalIncludeDirectories="..\..\dep\include\gsoap;..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game;..\..\src\oregoncore;..\..\dep\ACE_wrappers;..\..\src\shared\Database"
 				PreprocessorDefinitions="VERSION=&quot;0.12.0-SVN&quot;;WIN32;_DEBUG;OREGON_DEBUG;_CONSOLE;ENABLE_CLI"
 				IgnoreStandardIncludePath="false"
 				BasicRuntimeChecks="3"
@@ -350,7 +350,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game;..\..\src\oregoncore;..\..\dep\ACE_wrappers;..\..\src\shared\Database"
+				AdditionalIncludeDirectories="..\..\dep\include\gsoap;..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game;..\..\src\oregoncore;..\..\dep\ACE_wrappers;..\..\src\shared\Database"
 				PreprocessorDefinitions="VERSION=&quot;0.12.0-SVN&quot;;WIN32;_DEBUG;OREGON_DEBUG;_CONSOLE;ENABLE_CLI"
 				IgnoreStandardIncludePath="false"
 				BasicRuntimeChecks="3"
@@ -470,6 +470,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\oregoncore\OCSoap.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\oregoncore\OCSoap.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\oregoncore\Master.cpp"
 			>
 		</File>
@@ -491,6 +499,30 @@
 		</File>
 		<File
 			RelativePath="..\..\src\oregoncore\RASocket.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\dep\src\gsoap\soapC.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\dep\include\soapH.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\dep\src\gsoap\soapServer.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\dep\include\soapStub.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\dep\src\gsoap\stdsoap2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\dep\include\gsoap\stdsoap2.h"
 			>
 		</File>
 		<File

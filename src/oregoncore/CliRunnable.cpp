@@ -85,7 +85,7 @@ char ** cli_completion(const char * text, int start, int end)
 }
 #endif
 
-void utf8print(const char* str)
+void utf8print(void* arg, const char* str)
 {
 #if PLATFORM == PLATFORM_WINDOWS
     wchar_t wtemp_buf[6000];
@@ -101,11 +101,17 @@ void utf8print(const char* str)
 #endif
 }
 
+void commandFinished(void*, bool sucess)
+{
+    printf("mangos>");
+    fflush(stdout);
+}
+
 /// Delete a user account and all associated characters in this realm
 /// \todo This function has to be enhanced to respect the login/realm split (delete char, delete account chars in realm, delete account chars in realm then delete account
 bool ChatHandler::HandleAccountDeleteCommand(const char* args)
 {
-    if(!*args)
+    if (!*args)
         return false;
 
     ///- Get the account name from the command line
@@ -114,7 +120,7 @@ bool ChatHandler::HandleAccountDeleteCommand(const char* args)
         return false;
 
     std::string account_name = account_name_str;
-    if(!AccountMgr::normalizeString(account_name))
+    if (!AccountMgr::normalizeString(account_name))
     {
         PSendSysMessage(LANG_ACCOUNT_NOT_EXIST,account_name.c_str());
         SetSentErrorMessage(true);
@@ -122,7 +128,7 @@ bool ChatHandler::HandleAccountDeleteCommand(const char* args)
     }
 
     uint32 account_id = accmgr.GetId(account_name);
-    if(!account_id)
+    if (!account_id)
     {
         PSendSysMessage(LANG_ACCOUNT_NOT_EXIST,account_name.c_str());
         SetSentErrorMessage(true);
@@ -361,7 +367,7 @@ void CliRunnable::run()
     char commandbuf[256];
     bool canflush = true;
     ///- Display the list of available CLI functions then beep
-    sLog.outString("");
+    sLog.outString();
     #if PLATFORM != WINDOWS
     rl_attempted_completion_function = cli_completion;
     #endif
@@ -411,7 +417,7 @@ void CliRunnable::run()
                 continue;
             }
             fflush(stdout);
-            sWorld.QueueCliCommand(&utf8print,command.c_str());
+            sWorld.QueueCliCommand(new CliCommandHolder(NULL, command.c_str(), &utf8print, &commandFinished));
             #if PLATFORM != WINDOWS
             add_history(command.c_str());
             #endif
@@ -421,7 +427,6 @@ void CliRunnable::run()
         {
             World::StopNow(SHUTDOWN_EXIT_CODE);
         }
-
     }
 
     ///- End the database thread

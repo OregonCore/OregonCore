@@ -1818,8 +1818,8 @@ bool CliHandler::isAvailable(ChatCommand const& cmd) const
 
 void CliHandler::SendSysMessage(const char *str)
 {
-    m_print(str);
-    m_print("\r\n");
+    m_print(m_callbackArg, str);
+    m_print(m_callbackArg, "\r\n");
 }
 
 const char *CliHandler::GetName() const

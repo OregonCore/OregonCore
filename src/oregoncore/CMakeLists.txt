@@ -11,6 +11,8 @@ RASocket.cpp
 RASocket.h 
 WorldRunnable.cpp 
 WorldRunnable.h
+OCSoap.cpp
+OCSoap.h
 )
 
 SET(oregon-core_LINK_FLAGS "")
@@ -43,6 +45,7 @@ oregonauth
 oregonconfig
 vmaps
 g3dlite
+gsoap
 ${READLINE_LIBRARY}
 gomp
 ${SCRIPT_LIB}

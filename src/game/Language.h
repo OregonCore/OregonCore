@@ -95,7 +95,6 @@ enum OregonStrings
     LANG_CANNOT_GO_TO_INST_GM           = 105,
     LANG_CANNOT_GO_INST_INST            = 106,
     LANG_CANNOT_SUMMON_INST_INST        = 107,
-
     LANG_SUMMONING                      = 108,
     LANG_SUMMONED_BY                    = 109,
     LANG_TELEPORTING_TO                 = 110,
@@ -103,7 +102,6 @@ enum OregonStrings
     LANG_NO_PLAYER                      = 112,
     LANG_APPEARING_AT                   = 113,
     LANG_APPEARING_TO                   = 114,
-
     LANG_BAD_VALUE                      = 115,
     LANG_NO_CHAR_SELECTED               = 116,
     LANG_NOT_IN_GROUP                   = 117,
@@ -646,8 +644,6 @@ enum OregonStrings
 
     LANG_BG_QUEUE_ANNOUNCE_SELF         = 711,
     LANG_BG_QUEUE_ANNOUNCE_WORLD        = 712,
-
-
     LANG_YOUR_ARENA_LEVEL_REQ_ERROR     = 713,
 //    LANG_HIS_ARENA_LEVEL_REQ_ERROR      = 714, an opcode exists for this
     LANG_YOUR_BG_LEVEL_REQ_ERROR        = 715,
