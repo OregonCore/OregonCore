@@ -27,6 +27,9 @@
 
 #include <list>
 
+bool IsAcceptableClientBuild(uint32 build);
+std::string AcceptableClientBuildsListStr();
+
 typedef std::list<uint32> SimpleFactionsList;
 
 SimpleFactionsList const* GetFactionTeamList(uint32 faction);

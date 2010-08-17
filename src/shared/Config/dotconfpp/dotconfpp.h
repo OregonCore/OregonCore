@@ -19,7 +19,6 @@
 #define PATH_MAX _MAX_PATH
 #define snprintf _snprintf
 #define strcasecmp stricmp
-#define realpath(path,resolved_path) _fullpath(resolved_path, path, _MAX_PATH)
 #include <io.h>
 #else
 #include <unistd.h>

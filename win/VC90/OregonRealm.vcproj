@@ -430,7 +430,23 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\oregonrealm\BufferedSocket.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\oregonrealm\BufferedSocket.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\oregonrealm\Main.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\oregonrealm\PatchHandler.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\oregonrealm\PatchHandler.h"
 			>
 		</File>
 		<File

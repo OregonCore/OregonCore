@@ -131,7 +131,8 @@ CREATE TABLE `realmcharacters` (
   `realmid` int(11) unsigned NOT NULL default '0',
   `acctid` bigint(20) unsigned NOT NULL,
   `numchars` tinyint(3) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`realmid`,`acctid`)
+  PRIMARY KEY  (`realmid`,`acctid`),
+  KEY (acctid)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Realm Character Tracker';
 
 --
@@ -154,11 +155,11 @@ CREATE TABLE `realmlist` (
   `address` varchar(32) NOT NULL default '127.0.0.1',
   `port` int(11) NOT NULL default '8085',
   `icon` tinyint(3) unsigned NOT NULL default '0',
-  `color` tinyint(3) unsigned NOT NULL default '2',
+  `realmflags` tinyint(3) unsigned NOT NULL default '2' COMMENT 'Supported masks: 0x1 (invalid, not show in realm list), 0x2 (offline, set by mangosd), 0x4 (show version and build), 0x20 (new players), 0x40 (recommended)',
   `timezone` tinyint(3) unsigned NOT NULL default '0',
   `allowedSecurityLevel` tinyint(3) unsigned NOT NULL default '0',
   `population` float unsigned NOT NULL default '0',
-  `gamebuild` int(11) unsigned NOT NULL default '8606',
+  `realmbuilds` varchar(64) NOT NULL default '',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `idx_name` (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Realm System';

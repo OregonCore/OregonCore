@@ -327,8 +327,9 @@ int DOTCONFDocument::setContent(const char * _fileName)
     int ret = 0;
     char realpathBuf[PATH_MAX];
 
-    if(realpath(_fileName, realpathBuf) == NULL){
-        error(0, NULL, "realpath(%s) failed: %s", _fileName, strerror(errno));
+    if (ACE_OS::realpath(_fileName, realpathBuf) == NULL)
+    {
+        error(0, NULL, "realpath (%s) failed: %s", _fileName, strerror(errno));
         return -1;
     }
 
@@ -368,8 +369,10 @@ int DOTCONFDocument::setContent(const char * _fileName)
                         error(tagNode->lineNum, tagNode->fileName, "%s: %s", tagNode->values[vi], strerror(errno));
                         return -1;
                     }
-                    if(realpath(tagNode->values[vi], realpathBuf) == NULL){
-                        error(tagNode->lineNum, tagNode->fileName, "realpath(%s) failed: %s", tagNode->values[vi], strerror(errno));
+
+                    if (ACE_OS::realpath(tagNode->values[vi], realpathBuf) == NULL)
+                    {
+                        error(tagNode->lineNum, tagNode->fileName, "realpath (%s) failed: %s", tagNode->values[vi], strerror(errno));
                         return -1;
                     }
 

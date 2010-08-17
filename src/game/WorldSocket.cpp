@@ -44,6 +44,7 @@
 #include "WorldSession.h"
 #include "WorldSocketMgr.h"
 #include "Log.h"
+#include "DBCStores.h"
 #include "WorldLog.h"
 
 #if defined(__GNUC__)
@@ -379,8 +380,7 @@ int WorldSocket::handle_input_header (void)
     EndianConvertReverse(header.size);
     EndianConvert(header.cmd);
 
-    if ((header.size < 4) || (header.size > 10240) ||
-        (header.cmd  < 0) || (header.cmd  > 10240))
+    if ((header.size < 4) || (header.size > 10240) || (header.cmd  > 10240))
     {
         sLog.outError ("WorldSocket::handle_input_header: client sent malformed packet size = %d , cmd = %d",
                        header.size, header.cmd);
@@ -601,6 +601,7 @@ int WorldSocket::ProcessIncoming (WorldPacket* new_pct)
                     sLog.outError ("WorldSocket::ProcessIncoming: Player send CMSG_AUTH_SESSION again");
                     return -1;
                 }
+
                 return HandleAuthSession (*new_pct);
             case CMSG_KEEP_ALIVE:
                 DEBUG_LOG ("CMSG_KEEP_ALIVE ,size: %d", new_pct->size ());
@@ -626,7 +627,7 @@ int WorldSocket::ProcessIncoming (WorldPacket* new_pct)
             }
         }
     }
-    catch(ByteBufferException &)
+    catch (ByteBufferException &)
     {
         sLog.outError("WorldSocket::ProcessIncoming ByteBufferException occured while parsing an instant handled packet (opcode: %u) from client %s, accountid=%i. Disconnected client.",
                 opcode, GetRemoteAddress().c_str(), m_Session?m_Session->GetAccountId():-1);
@@ -659,7 +660,7 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     BigNumber K;
 
     // Read the content of the packet
-    recvPacket >> BuiltNumberClient;                        // for now no use
+    recvPacket >> BuiltNumberClient;
     recvPacket >> unk2;
     recvPacket >> account;
 
@@ -671,6 +672,18 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
                 unk2,
                 account.c_str (),
                 clientSeed);
+
+    // Check the version of client trying to connect
+    if (!IsAcceptableClientBuild(BuiltNumberClient))
+    {
+        packet.Initialize (SMSG_AUTH_RESPONSE, 1);
+        packet << uint8 (AUTH_VERSION_MISMATCH);
+
+        SendPacket (packet);
+
+        sLog.outError ("WorldSocket::HandleAuthSession: Sent Auth Response (version mismatch).");
+        return -1;
+    }
 
     // Get the account information from the realmd database
     std::string safe_account = account; // Duplicate, else will screw the SHA hash verification below
@@ -826,7 +839,7 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
                             address.c_str (),
                             safe_account.c_str ());
 
-    // NOTE ATM the socket is singlethreaded, have this in mind ...
+    // NOTE ATM the socket is single-threaded, have this in mind ...
     ACE_NEW_RETURN (m_Session, WorldSession (id, this, security, expansion, mutetime, locale), -1);
 
     m_Crypt.SetKey (&K);

@@ -4,7 +4,11 @@ SET(oregon-realm_SRCS
 AuthCodes.h 
 AuthSocket.cpp 
 AuthSocket.h 
+BufferedSocket.h
+BufferedSocket.cpp
 Main.cpp 
+PatchHandler.h
+PatchHandler.cpp
 RealmList.cpp 
 RealmList.h
 )

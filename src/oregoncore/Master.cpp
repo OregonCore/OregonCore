@@ -55,9 +55,6 @@
 extern int m_ServiceStatus;
 #endif
 
-/// \todo Warning disabling not useful under VC++2005. Can somebody say on which compiler it is useful?
-#pragma warning(disable:4305)
-
 INSTANTIATE_SINGLETON_1( Master );
 
 volatile uint32 Master::m_masterLoopCounter = 0;
@@ -82,6 +79,7 @@ public:
         while(!World::IsStopped())
         {
             ACE_Based::Thread::Sleep(1000);
+
             uint32 curtime = getMSTime();
             //DEBUG_LOG("anti-freeze: time=%u, counters=[%u; %u]",curtime,Master::m_masterLoopCounter,World::m_worldLoopCounter);
 
@@ -245,8 +243,10 @@ int Master::Run()
     ACE_Based::Thread world_thread(new WorldRunnable);
     world_thread.setPriority(ACE_Based::Highest);
 
-    // set server online
-    LoginDatabase.PExecute("UPDATE realmlist SET color = 0, population = 0 WHERE id = '%d'",realmID);
+    // set realmbuilds depend on OregonCore expected builds, and set server online
+    std::string builds = AcceptableClientBuildsListStr();
+    LoginDatabase.escape_string(builds);
+    LoginDatabase.PExecute("UPDATE realmlist SET realmflags = realmflags & ~(%u), population = 0, realmbuilds = '%s'  WHERE id = '%d'", REALM_FLAG_OFFLINE, builds.c_str(), realmID);
 
     ACE_Based::Thread* cliThread = NULL;
 
@@ -279,7 +279,7 @@ int Master::Run()
 
                 if(!curAff )
                 {
-                    sLog.outError("Processors marked in UseProcessors bitmask (hex) %x not accessible for Oregon. Accessible processors bitmask (hex): %x",Aff,appAff);
+                    sLog.outError("Processors marked in UseProcessors bitmask (hex) %x not accessible for OregonCore. Accessible processors bitmask (hex): %x",Aff,appAff);
                 }
                 else
                 {
@@ -289,7 +289,7 @@ int Master::Run()
                         sLog.outError("Can't set used processors (hex): %x",curAff);
                 }
             }
-            sLog.outString("");
+            sLog.outString();
         }
 
         bool Prio = sConfig.GetBoolDefault("ProcessPriority", false);
@@ -300,8 +300,8 @@ int Master::Run()
             if(SetPriorityClass(hProcess,HIGH_PRIORITY_CLASS))
                 sLog.outString("OregonCore process priority class set to HIGH");
             else
-                sLog.outError("ERROR: Can't set Oregond process priority class.");
-            sLog.outString("");
+                sLog.outError("ERROR: Can't set OregonCore process priority class.");
+            sLog.outString();
         }
     }
     #endif
@@ -333,8 +333,8 @@ int Master::Run()
 
     sWorldSocketMgr->Wait ();
 
-    // set server offline
-    LoginDatabase.PExecute("UPDATE realmlist SET color = 2 WHERE id = '%d'",realmID);
+    ///- Set server offline in realmlist
+    LoginDatabase.PExecute("UPDATE realmlist SET realmflags = realmflags | %u WHERE id = '%d'", REALM_FLAG_OFFLINE, realmID);
 
     ///- Remove signal handling before leaving
     _UnhookSignals();

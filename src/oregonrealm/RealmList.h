@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2005-2008 MaNGOS <http://www.mangosproject.org/>
- *
- * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
+ * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,17 +25,31 @@
 
 #include "Common.h"
 
+struct RealmBuildInfo
+{
+    int build;
+    int major_version;
+    int minor_version;
+    int bugfix_version;
+    int hotfix_version;
+};
+
+RealmBuildInfo const* FindBuildInfo(uint16 _build);
+
+typedef std::set<uint32> RealmBuilds;
+
 /// Storage object for a realm
 struct Realm
 {
-    std::string name;
     std::string address;
     uint8 icon;
-    uint8 color;
+    RealmFlags realmflags;                                  // realmflags
     uint8 timezone;
     uint32 m_ID;
-    AccountTypes allowedSecurityLevel;
+    AccountTypes allowedSecurityLevel;                      // current allowed join security level (show as locked for not fit accounts)
     float populationLevel;
+    RealmBuilds realmbuilds;                                // list of supported builds (updated in DB by mangosd)
+    RealmBuildInfo realmBuildInfo;                          // build info for show version in list
 };
 
 /// Storage object for the list of realms on the server
@@ -45,6 +57,8 @@ class RealmList
 {
     public:
         typedef std::map<std::string, Realm> RealmMap;
+
+        static RealmList& Instance();
 
         RealmList();
         ~RealmList() {}
@@ -58,12 +72,14 @@ class RealmList
         uint32 size() const { return m_realms.size(); }
     private:
         void UpdateRealms(bool init);
-        void UpdateRealm( uint32 ID, const std::string& name, const std::string& address, uint32 port, uint8 icon, uint8 color, uint8 timezone, AccountTypes allowedSecurityLevel, float popu);
+        void UpdateRealm( uint32 ID, const std::string& name, const std::string& address, uint32 port, uint8 icon, RealmFlags realmflags, uint8 timezone, AccountTypes allowedSecurityLevel, float popu, const char* builds);
     private:
         RealmMap m_realms;                                  ///< Internal map of realms
         uint32   m_UpdateInterval;
         time_t   m_NextUpdateTime;
 };
+
+#define sRealmList RealmList::Instance()
+
 #endif
 /// @}
-

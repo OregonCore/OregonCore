@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2005-2008 MaNGOS <http://www.mangosproject.org/>
- *
- * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
+ * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,53 +23,58 @@
 #ifndef _AUTHCODES_H
 #define _AUTHCODES_H
 
-enum eAuthResults
+enum eAuthCmd
 {
-    REALM_AUTH_SUCCESS              = 0x00,
-    REALM_AUTH_FAILURE              = 0x01,                 ///< Unable to connect
-    REALM_AUTH_UNKNOWN1             = 0x02,                 ///< Unable to connect
-    REALM_AUTH_ACCOUNT_BANNED       = 0x03,                 ///< This <game> account has been closed and is no longer available for use. Please go to <site>/banned.html for further information.
-    REALM_AUTH_NO_MATCH             = 0x04,                 ///< The information you have entered is not valid. Please check the spelling of the account name and password. If you need help in retrieving a lost or stolen password, see <site> for more information
-    REALM_AUTH_UNKNOWN2             = 0x05,                 ///< The information you have entered is not valid. Please check the spelling of the account name and password. If you need help in retrieving a lost or stolen password, see <site> for more information
-    REALM_AUTH_ACCOUNT_IN_USE       = 0x06,                 ///< This account is already logged into <game>. Please check the spelling and try again.
-    REALM_AUTH_PREPAID_TIME_LIMIT   = 0x07,                 ///< You have used up your prepaid time for this account. Please purchase more to continue playing
-    REALM_AUTH_SERVER_FULL          = 0x08,                 ///< Could not log in to <game> at this time. Please try again later.
-    REALM_AUTH_WRONG_BUILD_NUMBER   = 0x09,                 ///< Unable to validate game version. This may be caused by file corruption or interference of another program. Please visit <site> for more information and possible solutions to this issue.
-    REALM_AUTH_UPDATE_CLIENT        = 0x0a,                 ///< Downloading
-    REALM_AUTH_UNKNOWN3             = 0x0b,                 ///< Unable to connect
-    REALM_AUTH_ACCOUNT_FREEZED      = 0x0c,                 ///< This <game> account has been temporarily suspended. Please go to <site>/banned.html for further information
-    REALM_AUTH_UNKNOWN4             = 0x0d,                 ///< Unable to connect
-    REALM_AUTH_UNKNOWN5             = 0x0e,                 ///< Connected.
-    REALM_AUTH_PARENTAL_CONTROL     = 0x0f,                 ///< Access to this account has been blocked by parental controls. Your settings may be changed in your account preferences at <site>
-    REALM_AUTH_ACCOUNT_LOCKED       = 0x10                  ///< This account is locked(...)
+    CMD_AUTH_LOGON_CHALLENGE        = 0x00,
+    CMD_AUTH_LOGON_PROOF            = 0x01,
+    CMD_AUTH_RECONNECT_CHALLENGE    = 0x02,
+    CMD_AUTH_RECONNECT_PROOF        = 0x03,
+    CMD_REALM_LIST                  = 0x10,
+    CMD_XFER_INITIATE               = 0x30,
+    CMD_XFER_DATA                   = 0x31,
+    // these opcodes no longer exist in currently supported client
+    CMD_XFER_ACCEPT                 = 0x32,
+    CMD_XFER_RESUME                 = 0x33,
+    CMD_XFER_CANCEL                 = 0x34
 };
 
-enum LoginResult
+// not used by us currently
+enum eAuthSrvCmd
 {
-    LOGIN_OK                = 0x00,
-    LOGIN_FAILED            = 0x01,
-    LOGIN_FAILED2           = 0x02,
-    LOGIN_BANNED            = 0x03,
-    LOGIN_UNKNOWN_ACCOUNT   = 0x04,
-    LOGIN_UNKNOWN_ACCOUNT3  = 0x05,
-    LOGIN_ALREADYONLINE     = 0x06,
-    LOGIN_NOTIME            = 0x07,
-    LOGIN_DBBUSY            = 0x08,
-    LOGIN_BADVERSION        = 0x09,
-    LOGIN_DOWNLOAD_FILE     = 0x0A,
-    LOGIN_FAILED3           = 0x0B,
-    LOGIN_SUSPENDED         = 0x0C,
-    LOGIN_FAILED4           = 0x0D,
-    LOGIN_CONNECTED         = 0x0E,
-    LOGIN_PARENTALCONTROL   = 0x0F,
-    LOGIN_LOCKED_ENFORCED   = 0x10,
+    CMD_GRUNT_AUTH_CHALLENGE        = 0x0,
+    CMD_GRUNT_AUTH_VERIFY           = 0x2,
+    CMD_GRUNT_CONN_PING             = 0x10,
+    CMD_GRUNT_CONN_PONG             = 0x11,
+    CMD_GRUNT_HELLO                 = 0x20,
+    CMD_GRUNT_PROVESESSION          = 0x21,
+    CMD_GRUNT_KICK                  = 0x24,
+    CMD_GRUNT_PCWARNING             = 0x29,
+    CMD_GRUNT_STRINGS               = 0x41,
+    CMD_GRUNT_SUNKENUPDATE          = 0x44,
+    CMD_GRUNT_SUNKEN_ONLINE         = 0x46
 };
 
-// we need to stick to 1 version or half of the stuff will work for someone
-// others will not and opposite
-// will only support WoW and WoW:TBC 2.4.3 client build 8606...
-
-#define EXPECTED_OREGON_CLIENT_BUILD        {8606, 0}
+enum AuthResult
+{
+    WOW_SUCCESS                     = 0x00,
+    WOW_FAIL_UNKNOWN0               = 0x01,                 ///< ? Unable to connect
+    WOW_FAIL_UNKNOWN1               = 0x02,                 ///< ? Unable to connect
+    WOW_FAIL_BANNED                 = 0x03,                 ///< This <game> account has been closed and is no longer available for use. Please go to <site>/banned.html for further information.
+    WOW_FAIL_UNKNOWN_ACCOUNT        = 0x04,                 ///< The information you have entered is not valid. Please check the spelling of the account name and password. If you need help in retrieving a lost or stolen password, see <site> for more information
+    WOW_FAIL_INCORRECT_PASSWORD     = 0x05,                 ///< The information you have entered is not valid. Please check the spelling of the account name and password. If you need help in retrieving a lost or stolen password, see <site> for more information
+    WOW_FAIL_ALREADY_ONLINE         = 0x06,                 ///< This account is already logged into <game>. Please check the spelling and try again.
+    WOW_FAIL_NO_TIME                = 0x07,                 ///< You have used up your prepaid time for this account. Please purchase more to continue playing
+    WOW_FAIL_DB_BUSY                = 0x08,                 ///< Could not log in to <game> at this time. Please try again later.
+    WOW_FAIL_VERSION_INVALID        = 0x09,                 ///< Unable to validate game version. This may be caused by file corruption or interference of another program. Please visit <site> for more information and possible solutions to this issue.
+    WOW_FAIL_VERSION_UPDATE         = 0x0A,                 ///< Downloading
+    WOW_FAIL_INVALID_SERVER         = 0x0B,                 ///< Unable to connect
+    WOW_FAIL_SUSPENDED              = 0x0C,                 ///< This <game> account has been temporarily suspended. Please go to <site>/banned.html for further information
+    WOW_FAIL_FAIL_NOACCESS          = 0x0D,                 ///< Unable to connect
+    WOW_SUCCESS_SURVEY              = 0x0E,                 ///< Connected.
+    WOW_FAIL_PARENTCONTROL          = 0x0F,                 ///< Access to this account has been blocked by parental controls. Your settings may be changed in your account preferences at <site>
+    WOW_FAIL_LOCKED_ENFORCED        = 0x10,                 ///< You have applied a lock to your account. You can change your locked status by calling your account lock phone number.
+    WOW_FAIL_TRIAL_ENDED            = 0x11,                 ///< Your trial subscription has expired. Please visit <site> to upgrade your account.
+    WOW_FAIL_USE_BATTLENET          = 0x12,                 ///< WOW_FAIL_OTHER This account is now attached to a Battle.net account. Please login with your Battle.net account email address and password.
+};
 
 #endif
-
