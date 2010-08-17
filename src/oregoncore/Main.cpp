@@ -29,6 +29,7 @@
 #include "Config/ConfigEnv.h"
 #include "Log.h"
 #include "Master.h"
+#include <ace/Version.h>
 #include <ace/Get_Opt.h>
 
 #ifndef _OREGON_CORE_CONFIG
@@ -160,6 +161,8 @@ extern int main(int argc, char **argv)
 
         while (pause > clock()) {}
     }
+
+    sLog.outDetail("Using ACE: %s", ACE_VERSION);
 
     ///- and run the 'Master'
     /// \todo Why do we need this 'Master'? Can't all of this be in the Main as for Realmd?
