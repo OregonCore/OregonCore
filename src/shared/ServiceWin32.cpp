@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2005-2008 MaNGOS <http://www.mangosproject.org/>
- *
- * Copyright (C) 2008 Oregon <http://www.oregoncore.com/>
+ * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -10,7 +8,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -59,7 +57,7 @@ bool WinServiceInstall()
         if (GetModuleFileName( 0, path, sizeof(path)/sizeof(path[0]) ) > 0)
         {
             SC_HANDLE service;
-            std::strcat(path, " --service");
+            std::strcat(path, " -s run");
             service = CreateService(serviceControlManager,
                 serviceName,                                // name of service
                 serviceLongName,                            // service name to display
@@ -131,10 +129,10 @@ bool WinServiceUninstall()
             serviceName, SERVICE_QUERY_STATUS | DELETE);
         if (service)
         {
-            SERVICE_STATUS serviceStatus;
-            if (QueryServiceStatus(service, &serviceStatus))
+            SERVICE_STATUS serviceStatus2;
+            if (QueryServiceStatus(service, &serviceStatus2))
             {
-                if (serviceStatus.dwCurrentState == SERVICE_STOPPED)
+                if (serviceStatus2.dwCurrentState == SERVICE_STOPPED)
                     DeleteService(service);
             }
             CloseServiceHandle(service);
@@ -260,4 +258,3 @@ bool WinServiceRun()
     return true;
 }
 #endif
-
