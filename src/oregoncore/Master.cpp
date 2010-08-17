@@ -312,12 +312,13 @@ int Master::Run()
     uint32 socketSelecttime = sWorld.getConfig(CONFIG_SOCKET_SELECTTIME);
 
     ///- Start up freeze catcher thread
+    ACE_Based::Thread* freeze_thread = NULL;
     if(uint32 freeze_delay = sConfig.GetIntDefault("MaxCoreStuckTime", 0))
     {
         FreezeDetectorRunnable *fdr = new FreezeDetectorRunnable();
         fdr->SetDelayTime(freeze_delay*1000);
-        ACE_Based::Thread freeze_thread(fdr);
-        freeze_thread.setPriority(ACE_Based::Highest);
+        freeze_thread = new ACE_Based::Thread(fdr);
+        freeze_thread->setPriority(ACE_Based::Highest);
     }
 
     ///- Launch the world listener socket
@@ -333,6 +334,13 @@ int Master::Run()
 
     sWorldSocketMgr->Wait ();
 
+    ///- Stop freeze protection before shutdown tasks
+    if (freeze_thread)
+    {
+        freeze_thread->destroy();
+        delete freeze_thread;
+    }
+
     ///- Set server offline in realmlist
     LoginDatabase.PExecute("UPDATE realmlist SET realmflags = realmflags | %u WHERE id = '%d'", REALM_FLAG_OFFLINE, realmID);
 
@@ -344,7 +352,7 @@ int Master::Run()
     world_thread.wait();
     rar_thread.wait ();
 
-    ///- Clean database before leaving
+    ///- Clean account database before leaving
     clearOnlineAccounts();
 
     ///- Wait for delay threads to end
@@ -408,7 +416,7 @@ int Master::Run()
     // fixes a memory leak related to detaching threads from the module
     UnloadScriptingModule();
 
-    // Exit the process with specified return value
+    ///- Exit the process with specified return value
     return World::GetExitCode();
 }
 
