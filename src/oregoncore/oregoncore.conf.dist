@@ -1127,6 +1127,11 @@ Channel.SilentlyGMJoin = 0
 #        Default: 0 (false)
 #                 1 (true)
 #
+#    GM.Mail
+#        If GM ON, is outgoing mail with GM stationary?
+#        Default: 0 (false)
+#                 1 (true)
+#
 #    GM.LogTrade
 #        Include GM trade and trade slot enchanting operations in GM log
 #        Default: 1 (include)
@@ -1153,6 +1158,7 @@ GM.Chat           = 2
 GM.WhisperingTo   = 2
 GM.InGMList       = 0
 GM.InWhoList      = 0
+GM.Mail           = 0
 GM.LogTrade       = 1
 GM.StartLevel     = 70
 GM.AllowInvite    = 0
