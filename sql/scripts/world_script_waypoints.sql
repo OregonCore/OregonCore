@@ -1669,10 +1669,6 @@ INSERT INTO `script_waypoint` VALUES
    (23784, 23, 1634.05, -6153.81, 8.08527, 5, 'Apothecary Hanes');
 
 -- New waypoint format as of 5696:
-ALTER IGNORE TABLE `creature_addon`
-    ADD `path_id` int(11) unsigned NOT NULL default '0' AFTER `guid`;
-ALTER IGNORE TABLE `creature_template_addon`
-    ADD `path_id` int(11) unsigned NOT NULL default '0' AFTER `entry`;
 
 ALTER TABLE `waypoint_data` ADD COLUMN `id_old` int(10) unsigned NOT NULL default '0' COMMENT 'Creature GUID' AFTER `wpguid`;
 UPDATE `waypoint_data` SET `id_old`=`id`*0.1;
