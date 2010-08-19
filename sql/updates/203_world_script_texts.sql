@@ -1,3 +1,4 @@
+DELETE FROM `script_texts` WHERE `entry` IN (-2100007,-2100006,-2100005,-2100004,-2100003,-2100001,-2100000,-2100018,-2100017,-2100016,-2100015,-2100014,-2100013,-2100012,-2100009,-2100008,-2100022,-2100021,-2100020,-2100019);
 -- Balinda
 INSERT INTO `script_texts` (`entry` ,`content_default`, `type`, `comment`)VALUES ('-2100019',  'Begone, uncouth scum! The Alliance shall prevail in Alterac Valley!', '1', 'BALINDA_YELL_AGGRO');
 INSERT INTO `script_texts` (`entry` ,`content_default`, `type`, `comment`)VALUES ('-2100020',  'Filthy Frostwolf cowards! If you want a fight, you''ll have to come to me!', '1', 'BALINDA_YELL_EVADE');

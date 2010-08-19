@@ -4,4 +4,4 @@ CREATE TABLE `logs` (
   `realm` int(4) NOT NULL,
   `type` int(4) NOT NULL,
   `string` text
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;

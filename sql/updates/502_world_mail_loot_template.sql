@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS mail_loot_template;
 RENAME TABLE quest_mail_loot_template TO mail_loot_template;
 
 -- Remove these fake and false entries causing errors. --

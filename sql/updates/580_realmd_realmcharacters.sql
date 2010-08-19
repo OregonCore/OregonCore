@@ -1,2 +1,1 @@
-ALTER TABLE realmcharacters
-  ADD KEY (acctid);
+ALTER TABLE realmcharacters ADD KEY (acctid);
