@@ -103,7 +103,7 @@ void utf8print(void* arg, const char* str)
 
 void commandFinished(void*, bool sucess)
 {
-    printf("mangos>");
+    printf("Oregon>");
     fflush(stdout);
 }
 
