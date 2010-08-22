@@ -1333,7 +1333,23 @@ void Aura::TriggerSpell()
 //                    // Cannon Prep
 //                    case 24832: break;
 //                    // Shadow Bolt Whirl
-//                    case 24834: break;
+					case 24834:
+					{
+						uint32 spellForTick[8] = { 24820, 24821, 24822, 24823, 24835, 24836, 24837, 24838 };
+						uint32 totalTick = m_maxduration / m_modifier.periodictime;
+						if(totalTick < 8)
+						{
+							trigger_spell_id = spellForTick[totalTick];
+
+							// casted in left/right (but triggered spell have wide forward cone)
+							float forward = m_target->GetOrientation();
+							float angle = m_target->GetOrientation() + ( totalTick % 2 == 0 ? M_PI / 2 : - M_PI / 2);
+							m_target->SetOrientation(angle);
+							target->CastSpell(target, trigger_spell_id, true, NULL, this);
+							m_target->SetOrientation(forward);
+						}
+						return;
+					}
 //                    // Stink Trap
 //                    case 24918: break;
 //                    // Mark of Nature
@@ -1398,7 +1414,12 @@ void Aura::TriggerSpell()
 //                    // Inoculate Nestlewood Owlkin
                     case 29528: trigger_spell_id = 28713; break;
 //                    // Overload
-//                    case 29768: break;
+						case 29768:
+                     {
+                         int32 BasePoints = int32(GetModifier()->m_amount);
+                         m_target->CastCustomSpell(m_target,29766,&BasePoints,NULL,NULL,true,NULL,this);
+                         return;
+                     }
 //                    // Return Fire
 //                    case 29788: break;
 //                    // Return Fire
@@ -1487,13 +1508,15 @@ void Aura::TriggerSpell()
                     }
 //                    // Bloodmyst Tesla
 //                    case 31611: break;
-                    // Doomfire
+                    // Doomfire dot
                     case 31944:
                     {
-                        int32 damage = 2250 - (150 * m_tickNumber-1);
-                        if (damage < 0) damage = 0;
-                        m_target->CastCustomSpell(m_target, 31969, &damage, NULL, NULL, true, 0, this, originalCasterGUID);
-
+                        int32 BasePoints = int32(GetModifier()->m_amount);
+                        m_target->CastCustomSpell( m_target, 31969, &BasePoints, NULL, NULL, true, NULL, this, m_target->GetGUID() );  /* X */
+        
+                        ApplyModifier(false);
+                        GetModifier()->m_amount -= 150;
+                        ApplyModifier(true);
                         return;
                     }
 //                    // Teleport Test
@@ -1628,7 +1651,12 @@ void Aura::TriggerSpell()
 //                    // Hellfire - The Exorcism, Jules releases darkness, aura
 //                    case 39306: break;
 //                    // Inferno
-//                    case 39346: break;
+					  case 39346:
+                      {
+                          int32 BasePoints = int32(GetModifier()->m_amount);
+                          m_target->CastCustomSpell(m_target,35283,&BasePoints,NULL,NULL,true,NULL,this);
+                          return;
+                      }
 //                    // Enchanted Weapons
 //                    case 39489: break;
 //                    // Shadow Bolt Whirl
@@ -1636,7 +1664,12 @@ void Aura::TriggerSpell()
 //                    // Shadow Bolt Whirl
 //                    case 39634: break;
 //                    // Shadow Inferno
-//                    case 39645: break;
+					  case 39645:
+                      {
+                          int32 BasePoints = int32(GetModifier()->m_amount);
+                          m_target->CastCustomSpell(m_target,39646,&BasePoints,NULL,NULL,true,NULL,this);
+                          return;
+                      }
                     // Tear of Azzinoth Summon Channel - it's not really supposed to do anything,and this only prevents the console spam
                     case 39857: trigger_spell_id = 39856; break;
 //                    // Soulgrinder Ritual Visual (Smashed)
