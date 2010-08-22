@@ -2830,6 +2830,15 @@ void Spell::EffectEnergize(uint32 i)
             m_caster->CastSpell(unitTarget,elixirs[rand_spell],true,m_CastItem);
         }
     }
+	    switch (m_spellInfo->Id)
+    {
+
+		//Elune's Touch (30% AP
+		case 33926:
+			damage = m_caster->GetTotalAttackPowerValue(BASE_ATTACK) * 30 / 100;
+		break;
+	}
+
 }
 
 void Spell::EffectEnergisePct(uint32 i)
