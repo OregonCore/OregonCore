@@ -40,6 +40,7 @@ UPDATE `gameobject_template` SET `ScriptName` = 'go_ethereum_prison' WHERE `entr
 UPDATE `gameobject_template` SET `ScriptName` = 'go_ethereum_prison' WHERE `entry` = 184431 LIMIT 1;
 UPDATE `gameobject_template` SET `scriptname`='go_sacred_fire_of_life' WHERE `entry` = 175944;
 UPDATE `gameobject_template` SET `scriptname`='go_skull_pile' WHERE `entry`=185913;
+UPDATE `gameobject_template` SET `ScriptName` = 'go_iruxos' WHERE `entry` = 176581;
 
 /* GUARD */
 UPDATE `creature_template` SET `ScriptName`='guard_azuremyst' WHERE `entry`=18038;

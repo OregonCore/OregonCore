@@ -31,6 +31,7 @@ go_orb_of_command
 go_tablet_of_madness
 go_tablet_of_the_seven
 go_teleporter
+go_iruxos
 EndContentData */
 
 #include "precompiled.h"
@@ -208,6 +209,18 @@ bool GOHello_go_sacred_fire_of_life(Player* pPlayer, GameObject* pGO)
     return true;
 }
 
+/*######
+## go_iruxos. Quest 5381
+######*/
+
+bool GOHello_go_iruxos(Player *pPlayer, GameObject* /*pGO*/)
+{
+        if (pPlayer->GetQuestStatus(5381) == QUEST_STATUS_INCOMPLETE)
+            pPlayer->SummonCreature(11876, pPlayer->GetPositionX(),pPlayer->GetPositionY(),pPlayer->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,10000);
+
+        return true;
+}
+
 void AddSC_go_scripts()
 {
     Script *newscript;
@@ -271,6 +284,11 @@ void AddSC_go_scripts()
     newscript = new Script;
     newscript->Name = "go_sacred_fire_of_life";
     newscript->pGOHello =           &GOHello_go_sacred_fire_of_life;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_iruxos";
+    newscript->pGOHello =           &GOHello_go_iruxos;
     newscript->RegisterSelf();
 
 }
