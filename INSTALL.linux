@@ -40,10 +40,8 @@ Thats just about all thats needed. You can however tweak more settings than wher
 
     DO_MYSQL --mysql database support (enabled or disabled by a 1 or 0, enabled by default)
     DO_SCRIPTS --enable or disable oregon script (enabled or disabled by a 1 or 0, enabled by default)
-    DO_RA --remote administration (enabled or disabled by a 1 or 0)
     DO_DEBUG --enable debugging (enabled or disabled by a 1 or 0)
     DO_CLI --enable command line support (enabled or disabled by a 1 or 0, enabled by default)
-    LARGE_CELL --enable large cells (enabled or disabled by a 1 or 0, disabled by default, enabling can cause CPU spikes)
     SHORT_SLEEP --changes sleep time from 100ms to 50ms
     PREFIX --prefix directory for install (see example for use)
     CONF_DIR --location for your oregon config files
