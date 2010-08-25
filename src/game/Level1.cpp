@@ -1431,9 +1431,10 @@ bool ChatHandler::HandleModifyASpeedCommand(const char* args)
     if (!*args)
         return false;
 
-    float ASpeed = (float)atof((char*)args);
+    float modSpeed = (float)atof((char*)args);
 
-    if (ASpeed > 10.0f || ASpeed < 0.1f)
+
+    if (modSpeed > 10 || modSpeed < 0.1)
     {
         SendSysMessage(LANG_BAD_VALUE);
         SetSentErrorMessage(true);
@@ -1455,15 +1456,15 @@ bool ChatHandler::HandleModifyASpeedCommand(const char* args)
         return false;
     }
 
-    PSendSysMessage(LANG_YOU_CHANGE_ASPEED, ASpeed, target->GetName());
+    PSendSysMessage(LANG_YOU_CHANGE_ASPEED, modSpeed, target->GetName());
     if (needReportToTarget(target))
-        ChatHandler(target).PSendSysMessage(LANG_YOURS_ASPEED_CHANGED, GetName(), ASpeed);
+        ChatHandler(target).PSendSysMessage(LANG_YOURS_ASPEED_CHANGED, GetName(), modSpeed);
 
-    target->SetSpeed(MOVE_WALK,    ASpeed,true);
-    target->SetSpeed(MOVE_RUN,     ASpeed,true);
-    target->SetSpeed(MOVE_SWIM,    ASpeed,true);
-    //target->SetSpeed(MOVE_TURN,    ASpeed,true);
-    target->SetSpeed(MOVE_FLIGHT,     ASpeed,true);
+    target->UpdateSpeed(MOVE_WALK,   true, modSpeed);
+    target->UpdateSpeed(MOVE_RUN,    true, modSpeed);
+    target->UpdateSpeed(MOVE_SWIM,   true, modSpeed);
+    //target->UpdateSpeed(MOVE_TURN,   true, modSpeed);
+    target->UpdateSpeed(MOVE_FLIGHT, true, modSpeed);
     return true;
 }
 
@@ -1473,9 +1474,9 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args)
     if (!*args)
         return false;
 
-    float Speed = (float)atof((char*)args);
+    float modSpeed = (float)atof((char*)args);
 
-    if (Speed > 10.0f || Speed < 0.1f)
+    if (modSpeed > 10 || modSpeed < 0.1)
     {
         SendSysMessage(LANG_BAD_VALUE);
         SetSentErrorMessage(true);
@@ -1497,11 +1498,11 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args)
         return false;
     }
 
-    PSendSysMessage(LANG_YOU_CHANGE_SPEED, Speed, target->GetName());
+    PSendSysMessage(LANG_YOU_CHANGE_SPEED, modSpeed, target->GetName());
     if (needReportToTarget(target))
-        ChatHandler(target).PSendSysMessage(LANG_YOURS_SPEED_CHANGED, GetName(), Speed);
+        ChatHandler(target).PSendSysMessage(LANG_YOURS_SPEED_CHANGED, GetName(), modSpeed);
 
-    target->SetSpeed(MOVE_RUN,Speed,true);
+    target->UpdateSpeed(MOVE_RUN, true, modSpeed);
 
     return true;
 }
@@ -1512,9 +1513,9 @@ bool ChatHandler::HandleModifySwimCommand(const char* args)
     if (!*args)
         return false;
 
-    float Swim = (float)atof((char*)args);
+    float modSpeed = (float)atof((char*)args);
 
-    if (Swim > 10.0f || Swim < 0.1f)
+    if (modSpeed > 10.0f || modSpeed < 0.1f)
     {
         SendSysMessage(LANG_BAD_VALUE);
         SetSentErrorMessage(true);
@@ -1536,11 +1537,11 @@ bool ChatHandler::HandleModifySwimCommand(const char* args)
         return false;
     }
 
-    PSendSysMessage(LANG_YOU_CHANGE_SWIM_SPEED, Swim, target->GetName());
+    PSendSysMessage(LANG_YOU_CHANGE_SWIM_SPEED, modSpeed, target->GetName());
     if (needReportToTarget(target))
-        ChatHandler(target).PSendSysMessage(LANG_YOURS_SWIM_SPEED_CHANGED, GetName(), Swim);
+        ChatHandler(target).PSendSysMessage(LANG_YOURS_SWIM_SPEED_CHANGED, GetName(), modSpeed);
 
-    target->SetSpeed(MOVE_SWIM,Swim,true);
+    target->UpdateSpeed(MOVE_SWIM, true, modSpeed);
 
     return true;
 }
@@ -1551,9 +1552,9 @@ bool ChatHandler::HandleModifyBWalkCommand(const char* args)
     if (!*args)
         return false;
 
-    float BSpeed = (float)atof((char*)args);
+    float modSpeed = (float)atof((char*)args);
 
-    if (BSpeed > 10.0f || BSpeed < 0.1f)
+    if (modSpeed > 10.0f || modSpeed < 0.1f)
     {
         SendSysMessage(LANG_BAD_VALUE);
         SetSentErrorMessage(true);
@@ -1575,11 +1576,11 @@ bool ChatHandler::HandleModifyBWalkCommand(const char* args)
         return false;
     }
 
-    PSendSysMessage(LANG_YOU_CHANGE_BACK_SPEED, BSpeed, target->GetName());
+    PSendSysMessage(LANG_YOU_CHANGE_BACK_SPEED, modSpeed, target->GetName());
     if (needReportToTarget(target))
-        ChatHandler(target).PSendSysMessage(LANG_YOURS_BACK_SPEED_CHANGED, GetName(), BSpeed);
+        ChatHandler(target).PSendSysMessage(LANG_YOURS_BACK_SPEED_CHANGED, GetName(), modSpeed);
 
-    target->SetSpeed(MOVE_RUN_BACK,BSpeed,true);
+    target->UpdateSpeed(MOVE_RUN_BACK, true, modSpeed);
 
     return true;
 }
@@ -1590,9 +1591,9 @@ bool ChatHandler::HandleModifyFlyCommand(const char* args)
     if (!*args)
         return false;
 
-    float FSpeed = (float)atof((char*)args);
+    float modSpeed = (float)atof((char*)args);
 
-    if (FSpeed > 10.0f || FSpeed < 0.1f)
+    if (modSpeed > 10.0f || modSpeed < 0.1f)
     {
         SendSysMessage(LANG_BAD_VALUE);
         SetSentErrorMessage(true);
@@ -1607,11 +1608,11 @@ bool ChatHandler::HandleModifyFlyCommand(const char* args)
         return false;
     }
 
-    PSendSysMessage(LANG_YOU_CHANGE_FLY_SPEED, FSpeed, target->GetName());
+    PSendSysMessage(LANG_YOU_CHANGE_FLY_SPEED, modSpeed, target->GetName());
     if (needReportToTarget(target))
-        ChatHandler(target).PSendSysMessage(LANG_YOURS_FLY_SPEED_CHANGED, GetName(), FSpeed);
+        ChatHandler(target).PSendSysMessage(LANG_YOURS_FLY_SPEED_CHANGED, GetName(), modSpeed);
 
-    target->SetSpeed(MOVE_FLIGHT,FSpeed,true);
+    target->UpdateSpeed(MOVE_FLIGHT, true, modSpeed);
 
     return true;
 }

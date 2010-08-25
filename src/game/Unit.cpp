@@ -6820,11 +6820,6 @@ Unit* Unit::GetCharm() const
 void Unit::SetPet(Pet* pet)
 {
     SetUInt64Value(UNIT_FIELD_SUMMON, pet ? pet->GetGUID() : 0);
-
-    // FIXME: hack, speed must be set only at follow
-    if (pet)
-        for (int i = 0; i < MAX_MOVE_TYPE; ++i)
-            pet->SetSpeed(UnitMoveType(i), m_speed_rate[i], true);
 }
 
 void Unit::SetCharm(Unit* pet)
@@ -8526,7 +8521,7 @@ void Unit::SetVisibility(UnitVisibility x)
         DestroyForNearbyPlayers();
 }
 
-void Unit::UpdateSpeed(UnitMoveType mtype, bool forced)
+void Unit::UpdateSpeed(UnitMoveType mtype, bool forced, float ratio)
 {
     int32 main_speed_mod  = 0;
     float stack_bonus     = 1.0f;
@@ -8615,7 +8610,7 @@ void Unit::UpdateSpeed(UnitMoveType mtype, bool forced)
     slow = slow < slow_non_stack ? slow : slow_non_stack;
     if (slow)
         speed *=(100.0f + slow)/100.0f;
-    SetSpeed(mtype, speed, forced);
+    SetSpeed(mtype, speed * ratio, forced);
 }
 
 float Unit::GetSpeed(UnitMoveType mtype) const
