@@ -22,8 +22,11 @@ SET(vmaps_STAT_SRCS
 )
 
 include_directories(
+  ${ACE_INCLUDE_DIR}
+  ${CMAKE_SOURCE_DIR}/src/shared
   ${CMAKE_SOURCE_DIR}/src/framework
   ${CMAKE_SOURCE_DIR}/dep/include/g3dlite
+  ${MYSQL_INCLUDE_DIR}
 )
 
 add_library(vmaps STATIC ${vmaps_STAT_SRCS})
