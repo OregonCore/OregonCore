@@ -177,7 +177,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
             pInstance->SetData(DATA_JANALAIEVENT, IN_PROGRESS);
 
         DoScriptText(SAY_AGGRO, me);
-//        DoZoneInCombat();
+		DoZoneInCombat();
     }
 
     void DamageDeal(Unit *pTarget, uint32 &damage)

@@ -116,7 +116,7 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
     {
         DoYell(SAY_ONAGGRO, LANG_UNIVERSAL, NULL);
         DoPlaySoundToSet(me, SOUND_ONAGGRO);
-        //DoZoneInCombat();
+        DoZoneInCombat();
         if (pInstance)
             pInstance->SetData(DATA_AKILZONEVENT, IN_PROGRESS);
     }
