@@ -88,7 +88,10 @@ endif(DO_CLI)
 
 if(DO_DEBUG)
     message("* Debug mode ON")
-    add_definitions(-g -DOREGON_DEBUG)
+    add_definitions(-DOREGON_DEBUG)
+    if(CMAKE_COMPILER_IS_GNUCXX)
+        add_definitions(-g)
+    endif(CMAKE_COMPILER_IS_GNUCXX)
 endif(DO_DEBUG)
 
 if(DO_WARN)
@@ -148,8 +151,6 @@ IF(UNIX AND NOT CENTOS)
   return()
   ENDIF(READLINE_FOUND)
 ENDIF(UNIX AND NOT CENTOS)
-
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
   set(OSX_LIBS /opt/local/lib/libcrypto.dylib)
