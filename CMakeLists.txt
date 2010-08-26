@@ -1,4 +1,4 @@
-PROJECT(Oregon)
+project(Oregon)
 cmake_minimum_required(VERSION 2.6)
 cmake_policy(SET CMP0005 OLD)
 
@@ -7,20 +7,20 @@ include(cmake/FindAce.cmake)
 include(cmake/FindMySql.cmake)
 include(cmake/FindReadline.cmake)
 CONFIGURE_FILE(
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-  IMMEDIATE @ONLY)
-ADD_CUSTOM_TARGET(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    IMMEDIATE @ONLY)
+add_custom_target(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
 
-OPTION(DO_MYSQL "With MySQL support" 1)
-OPTION(DO_SCRIPTS "With oregonscripts" 1)
-OPTION(DO_CLI "With CLI" 1)
-OPTION(DO_DEBUG "Debug mode" 0)
-OPTION(DO_WARN "Enable all compile warnings" 0)
-OPTION(SHORT_SLEEP "Short sleep" 0)
-OPTION(CENTOS "CENTOS" 0)
+option(DO_MYSQL "With MySQL support" 1)
+option(DO_SCRIPTS "With oregonscripts" 1)
+option(DO_CLI "With CLI" 1)
+option(DO_DEBUG "Debug mode" 0)
+option(DO_WARN "Enable all compile warnings" 0)
+option(SHORT_SLEEP "Short sleep" 0)
+option(CENTOS "CENTOS" 0)
 
-SET(GENREV_SRC
+set(GENREV_SRC
 src/tools/genrevision/genrevision.cpp
 )
 
@@ -35,60 +35,60 @@ ADD_CUSTOM_TARGET("revision.h" ALL
 )
 
 
-EXECUTE_PROCESS(
+execute_process(
         COMMAND hg tip --template {rev}
         OUTPUT_VARIABLE HG_REVISION
 )
 
 message("* OregonCore revision: ${HG_REVISION}")
 
-IF (PREFIX)
-    SET(CMAKE_INSTALL_PREFIX ${PREFIX})
-ENDIF (PREFIX)
+if(PREFIX)
+    set(CMAKE_INSTALL_PREFIX ${PREFIX})
+endif(PREFIX)
 
 if(CONF_DIR)
 
 else(CONF_DIR)
-SET(CONF_DIR ${PREFIX}/etc)
+    set(CONF_DIR ${PREFIX}/etc)
 endif(CONF_DIR)
-SET(LIBSDIR ${CMAKE_INSTALL_PREFIX}/lib)
+set(LIBSDIR ${CMAKE_INSTALL_PREFIX}/lib)
 
 message("* Will install to: ${CMAKE_INSTALL_PREFIX}")
 message("* With config dir at: ${CONF_DIR}")
 message("* Libs install dir at: ${LIBSDIR}")
 
-FIND_LIBRARY(SSLLIB NAMES ssl DOC "SSL library")
-FIND_LIBRARY(ZLIB z "Zlib library")
+find_library(SSLLIB NAMES ssl DOC "SSL library")
+find_library(ZLIB z "Zlib library")
 
-IF(DO_MYSQL)
-    MESSAGE("* With MySQL")
+if(DO_MYSQL)
+    message("* With MySQL")
     FIND_MYSQL()
     ADD_DEFINITIONS(-DDO_MYSQL)
-ENDIF(DO_MYSQL)
+endif(DO_MYSQL)
 
 if(DO_SCRIPTS)
-message("* With Oregon Scripts")
-SET(SCRIPT_LIB oregonscript)
-SET(SCRIPT_INCLUDE src/bindings/scripts/include)
-ADD_DEFINITIONS(-DDO_SCRIPTS)
+    message("* With Oregon Scripts")
+    set(SCRIPT_LIB oregonscript)
+    set(SCRIPT_INCLUDE src/bindings/scripts/include)
+    ADD_DEFINITIONS(-DDO_SCRIPTS)
 else (DO_SCRIPTS)
-message("* Without Oregon Scripts")
-SET(SCRIPT_LIB oregoninterface)
-SET(SCRIPT_INCLUDE src/bindings/interface)
+    message("* Without Oregon Scripts")
+    set(SCRIPT_LIB oregoninterface)
+    set(SCRIPT_INCLUDE src/bindings/interface)
 endif(DO_SCRIPTS)
 
 message("-- Miscellaneus options:")
 
 if(DO_CLI)
-message("* With CLI")
-add_definitions(-DENABLE_CLI)
+    message("* With CLI")
+    add_definitions(-DENABLE_CLI)
 else (DO_CLI)
-message(* Without CLI)
+    message(* Without CLI)
 endif(DO_CLI)
 
 if(DO_DEBUG)
-message("* Debug mode ON")
-add_definitions(-g -DOREGON_DEBUG)
+    message("* Debug mode ON")
+    add_definitions(-g -DOREGON_DEBUG)
 endif(DO_DEBUG)
 
 if(DO_WARN)
@@ -103,37 +103,39 @@ else(SHORT_SLEEP)
 message("* System sleep time is 100ms")
 endif(SHORT_SLEEP)
 
-IF(CENTOS)
-add_definitions(-DCENTOS)
-    message("* Building with termcap")
-else(CENTOS)
-    message("* Building with readline")
-ENDIF(CENTOS)
+if(UNIX)
+    if(CENTOS)
+        add_definitions(-DCENTOS)
+        message("* Building with termcap")
+    else(CENTOS)
+        message("* Building with readline")
+    endif(CENTOS)
+endif(UNIX)
 
 FIND_ACE(ACE)
 if(ACE_FOUND)
-message(STATUS "Found ACE library: ${ACE_LIBRARY}")
-message(STATUS "Include dir is: ${ACE_INCLUDE_DIR}")
+    message(STATUS "Found ACE library: ${ACE_LIBRARY}")
+    message(STATUS "Include dir is: ${ACE_INCLUDE_DIR}")
 else(ACE_FOUND)
-message(SEND_ERROR "** ACE library not found! Trinity Core cannot be compiled!")
-message(SEND_ERROR "** Please build ACE from http://www.cs.wustl.edu/~schmidt/ACE.html")
-#For now remove msg about install from repo, as ubuntu/debian don't have needed ver in repos.
-#message(SEND_ERROR "** your distro may provide a binary for ACE e.g. for ubuntu try apt-get install libace-dev")
-return()
-#SET(BUILD_ACE 1)
-#SET(ACE_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/dep/ACE_wrappers ${CMAKE_BINARY_DIR}/dep/ACE_wrappers")
-#SET(ACE_LIBRARY ACE)
-#message(STATUS "I will try to build ACE from: ${ACE_INCLUDE_DIR}")
-#message(STATUS "And link using: ${ACE_LIBRARY}")
+    message(SEND_ERROR "** ACE library not found! Trinity Core cannot be compiled!")
+    message(SEND_ERROR "** Please build ACE from http://www.cs.wustl.edu/~schmidt/ACE.html")
+    #For now remove msg about install from repo, as ubuntu/debian don't have needed ver in repos.
+    #message(SEND_ERROR "** your distro may provide a binary for ACE e.g. for ubuntu try apt-get install libace-dev")
+    return()
+    #set(BUILD_ACE 1)
+    #set(ACE_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/dep/ACE_wrappers ${CMAKE_BINARY_DIR}/dep/ACE_wrappers")
+    #set(ACE_LIBRARY ACE)
+    #message(STATUS "I will try to build ACE from: ${ACE_INCLUDE_DIR}")
+    #message(STATUS "And link using: ${ACE_LIBRARY}")
 endif(ACE_FOUND)
 
 #somehow line below don't work. so for now change it to if exist
 #check_include_files(${ACE_INCLUDE_DIR}/ace/Stack_Trace.h HAVE_ACE_STACK_TRACE_H)
-IF(EXISTS ${ACE_INCLUDE_DIR}/ace/Stack_Trace.h)
-    SET(HAVE_ACE_STACK_TRACE_H 1)
-ELSE(EXISTS ${ACE_INCLUDE_DIR}/ace/Stack_Trace.h)
+if(EXISTS ${ACE_INCLUDE_DIR}/ace/Stack_Trace.h)
+    set(HAVE_ACE_STACK_TRACE_H 1)
+else(EXISTS ${ACE_INCLUDE_DIR}/ace/Stack_Trace.h)
     message(STATUS "** Your libace is out of date. Please update your libace!")
-ENDIF(EXISTS ${ACE_INCLUDE_DIR}/ace/Stack_Trace.h)
+endif(EXISTS ${ACE_INCLUDE_DIR}/ace/Stack_Trace.h)
 
 IF(UNIX AND NOT CENTOS)
   FIND_READLINE()
@@ -149,18 +151,18 @@ ENDIF(UNIX AND NOT CENTOS)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
-IF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
-  SET(OSX_LIBS /opt/local/lib/libcrypto.dylib)
+if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+  set(OSX_LIBS /opt/local/lib/libcrypto.dylib)
   add_definitions(-D__ASSERTMACROS__)
-ENDIF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+endif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
 
 
 add_definitions(--no-warnings) #to make build look nice, no gcc nazi warnings.
 
-SET(CMAKE_SKIP_BUILD_RPATH FALSE)
-SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_SKIP_BUILD_RPATH FALSE)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 add_subdirectory(dep)
 #add_subdirectory(doc)
