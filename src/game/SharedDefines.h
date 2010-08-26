@@ -2066,10 +2066,11 @@ enum DiminishingGroup
     // Warlock Specific
     DIMINISHING_DEATHCOIL,                                  // Death Coil Diminish only with another Death Coil
     DIMINISHING_WARLOCK_FEAR,                               // Also with Sedduction
+    DIMINISHING_UNSTABLE_AFFLICTION,                        // Only with itself
     // Shared Class Specific
     DIMINISHING_BLIND_CYCLONE,                              // From 2.3.0
     DIMINISHING_DISARM,                                     // From 2.3.0
-    DIMINISHING_SILENCE,                                    // From 2.3.0
+    //DIMINISHING_SILENCE,                                  // Only Unstable affliction is DR'd silence
     DIMINISHING_FREEZE,                                     // Hunter's Freezing Trap
     DIMINISHING_KNOCKOUT,                                   // Also with Sap, all Knockout mechanics are here
     DIMINISHING_BANISH,

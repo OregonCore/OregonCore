@@ -2816,7 +2816,7 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellEntry const* spellproto
             if (spellproto->SpellFamilyFlags & 0x00000080000LL)
                 return DIMINISHING_DEATHCOIL;
             // Seduction
-            if (spellproto->SpellFamilyFlags & 0x00040000000LL)
+            else if (spellproto->SpellFamilyFlags & 0x00040000000LL)
                 return DIMINISHING_FEAR;
             // Fear
             //else if (spellproto->SpellFamilyFlags & 0x40840000000LL)
@@ -2824,6 +2824,9 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellEntry const* spellproto
             // Curses/etc
             else if (spellproto->SpellFamilyFlags & 0x00080000000LL)
                 return DIMINISHING_LIMITONLY;
+            // Unstable affliction dispel silence
+            else if (spellproto->Id == 31117)
+                return DIMINISHING_UNSTABLE_AFFLICTION;
             break;
         }
         case SPELLFAMILY_DRUID:
@@ -2864,8 +2867,6 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellEntry const* spellproto
             return DIMINISHING_FEAR;
         else if (spellproto->Mechanic == MECHANIC_CHARM   || spellproto->EffectMechanic[i] == MECHANIC_CHARM)
             return DIMINISHING_CHARM;
-        else if (spellproto->Mechanic == MECHANIC_SILENCE || spellproto->EffectMechanic[i] == MECHANIC_SILENCE)
-            return DIMINISHING_SILENCE;
         else if (spellproto->Mechanic == MECHANIC_DISARM  || spellproto->EffectMechanic[i] == MECHANIC_DISARM)
             return DIMINISHING_DISARM;
         else if (spellproto->Mechanic == MECHANIC_FREEZE  || spellproto->EffectMechanic[i] == MECHANIC_FREEZE)
@@ -2919,13 +2920,13 @@ DiminishingReturnsType GetDiminishingReturnsGroupType(DiminishingGroup group)
         case DIMINISHING_FEAR:
         case DIMINISHING_CHARM:
         case DIMINISHING_POLYMORPH:
-        case DIMINISHING_SILENCE:
         case DIMINISHING_DISARM:
         case DIMINISHING_DEATHCOIL:
         case DIMINISHING_FREEZE:
         case DIMINISHING_BANISH:
         case DIMINISHING_WARLOCK_FEAR:
         case DIMINISHING_KNOCKOUT:
+        case DIMINISHING_UNSTABLE_AFFLICTION:
             return DRTYPE_PLAYER;
     }
 
