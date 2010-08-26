@@ -13,6 +13,15 @@ RealmList.cpp
 RealmList.h
 )
 
+include_directories(
+  ${ACE_INCLUDE_DIR}
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/src/shared
+  ${CMAKE_SOURCE_DIR}/src/shared/Database
+  ${CMAKE_SOURCE_DIR}/src/framework
+  ${MYSQL_INCLUDE_DIR}
+)
+
 SET(oregon-realm_LINK_FLAGS "")
 
 add_executable(oregon-realm ${oregon-realm_SRCS})
@@ -50,4 +59,3 @@ install(TARGETS oregon-realm DESTINATION bin)
 ########### install files ###############
 
 install(FILES  oregonrealm.conf.dist DESTINATION etc)
-

@@ -18,4 +18,13 @@ SET(oregondatabase_STAT_SRCS
     SqlOperations.h
 )
 
+include_directories(
+  ${ACE_INCLUDE_DIR}
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/src/shared
+  ${CMAKE_SOURCE_DIR}/src/shared/Database
+  ${CMAKE_SOURCE_DIR}/src/framework
+  ${MYSQL_INCLUDE_DIR}
+)
+
 add_library(oregondatabase STATIC ${oregondatabase_STAT_SRCS})

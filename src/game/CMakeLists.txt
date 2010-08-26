@@ -274,5 +274,17 @@ SET(game_STAT_SRCS
    OutdoorPvPImpl.h
    ZoneScript.h
 )
+
+include_directories(
+  ${ACE_INCLUDE_DIR}
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/dep/include
+  ${CMAKE_SOURCE_DIR}/src/framework
+  ${CMAKE_SOURCE_DIR}/src/shared
+  ${CMAKE_SOURCE_DIR}/src/shared/vmap
+  ${CMAKE_SOURCE_DIR}/src/shared/Database
+  ${MYSQL_INCLUDE_DIR}
+)
+
 add_library(game STATIC ${game_STAT_SRCS})
 ADD_DEPENDENCIES(game revision.h)

@@ -401,6 +401,17 @@ SET(oregonscript_LIB_SRCS
    system/system.h
 )
 
+include_directories(
+  include
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/src/shared
+  ${CMAKE_SOURCE_DIR}/src/framework
+  ${CMAKE_SOURCE_DIR}/src/game
+  ${CMAKE_SOURCE_DIR}/src/shared/Database
+  ${CMAKE_SOURCE_DIR}/dep/include
+  ${MYSQL_INCLUDE_DIR}
+)
+
 add_library(oregonscript SHARED ${oregonscript_LIB_SRCS})
 
 add_definitions(-D_OREGON_SCRIPT_CONFIG='"${CONF_DIR}/oregoncore.conf"')

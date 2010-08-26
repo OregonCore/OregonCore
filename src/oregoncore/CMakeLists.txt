@@ -2,17 +2,28 @@
 ########### next target ###############
 
 SET(oregon-core_SRCS
-CliRunnable.cpp 
-CliRunnable.h 
-Main.cpp 
-Master.cpp 
-Master.h 
-RASocket.cpp 
-RASocket.h 
-WorldRunnable.cpp 
+CliRunnable.cpp
+CliRunnable.h
+Main.cpp
+Master.cpp
+Master.h
+RASocket.cpp
+RASocket.h
+WorldRunnable.cpp
 WorldRunnable.h
 OCSoap.cpp
 OCSoap.h
+)
+
+include_directories(
+  ${ACE_INCLUDE_DIR}
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/dep/include
+  ${CMAKE_SOURCE_DIR}/src/shared
+  ${CMAKE_SOURCE_DIR}/src/shared/Database
+  ${CMAKE_SOURCE_DIR}/src/framework
+  ${CMAKE_SOURCE_DIR}/src/game
+  ${MYSQL_INCLUDE_DIR}
 )
 
 SET(oregon-core_LINK_FLAGS "")
@@ -24,7 +35,6 @@ add_definitions(
 IF (DO_MYSQL)
     SET(oregon-core_LINK_FLAGS "-pthread ${oregon-core_LINK_FLAGS}")
 ENDIF(DO_MYSQL)
-
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
     SET(oregon-core_LINK_FLAGS "-framework Carbon ${oregon-core_LINK_FLAGS}")
@@ -64,7 +74,6 @@ IF (CENTOS)
 ENDIF (CENTOS)
 
 install(TARGETS oregon-core DESTINATION bin)
-
 
 ########### install files ###############
 

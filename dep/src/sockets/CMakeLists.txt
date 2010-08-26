@@ -19,4 +19,8 @@ SET(oregonsockets_STAT_SRCS
    socket_include.cpp
 )
 
+include_directories(
+  ${CMAKE_SOURCE_DIR}/dep/include/sockets
+)
+
 add_library(oregonsockets STATIC ${oregonsockets_STAT_SRCS})
