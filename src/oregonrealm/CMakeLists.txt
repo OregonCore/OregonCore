@@ -28,9 +28,8 @@ add_executable(oregon-realm ${oregon-realm_SRCS})
 add_definitions(
 -D_OREGON_REALM_CONFIG='"${CONF_DIR}/oregonrealm.conf"'
 )
-IF (DO_MYSQL)
-   SET(oregon-realm_LINK_FLAGS "-pthread ${oregon-realm_LINK_FLAGS}")
-ENDIF(DO_MYSQL)
+
+SET(oregon-realm_LINK_FLAGS "-pthread ${oregon-realm_LINK_FLAGS}")
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
    SET(oregon-realm_LINK_FLAGS "-framework Carbon ${oregon-realm_LINK_FLAGS}")

@@ -33,9 +33,8 @@ add_executable(oregon-core ${oregon-core_SRCS})
 add_definitions(
 -D_OREGON_CORE_CONFIG='"${CONF_DIR}/oregoncore.conf"'
 )
-IF (DO_MYSQL)
-    SET(oregon-core_LINK_FLAGS "-pthread ${oregon-core_LINK_FLAGS}")
-ENDIF(DO_MYSQL)
+
+SET(oregon-core_LINK_FLAGS "-pthread ${oregon-core_LINK_FLAGS}")
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
     SET(oregon-core_LINK_FLAGS "-framework Carbon ${oregon-core_LINK_FLAGS}")

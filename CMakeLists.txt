@@ -12,7 +12,6 @@ CONFIGURE_FILE(
     IMMEDIATE @ONLY)
 add_custom_target(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
 
-option(DO_MYSQL "With MySQL support" 1)
 option(DO_SCRIPTS "With oregonscripts" 1)
 option(DO_CLI "With CLI" 1)
 option(DO_DEBUG "Debug mode" 0)
@@ -60,11 +59,7 @@ message("* Libs install dir at: ${LIBSDIR}")
 find_library(SSLLIB NAMES ssl DOC "SSL library")
 find_library(ZLIB z "Zlib library")
 
-if(DO_MYSQL)
-    message("* With MySQL")
-    FIND_MYSQL()
-    ADD_DEFINITIONS(-DDO_MYSQL)
-endif(DO_MYSQL)
+FIND_MYSQL()
 
 if(DO_SCRIPTS)
     message("* With Oregon Scripts")
