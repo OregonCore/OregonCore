@@ -431,6 +431,7 @@ struct OREGON_DLL_DECL boss_janalaiAI : public ScriptedAI
             {
                 me->AttackStop();
                 me->GetMotionMaster()->Clear();
+				me->SetInFront(pTarget);
                 me->CastSpell(pTarget, SPELL_FLAME_BREATH, false);
                 me->StopMoving();
                 isFlameBreathing = true;
