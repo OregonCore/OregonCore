@@ -27,7 +27,7 @@ EndScriptData */
 #include "def_zulaman.h"
 #include "Weather.h"
 
-#define SPELL_STATIC_DISRUPTION     43622
+#define SPELL_STATIC_DISRUPTION     44008 //original spellID 43622
 #define SPELL_STATIC_VISUAL         45265
 #define SPELL_CALL_LIGHTNING        43661 //Missing timer
 #define SPELL_GUST_OF_WIND          43621
