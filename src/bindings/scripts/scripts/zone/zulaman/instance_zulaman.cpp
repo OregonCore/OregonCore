@@ -62,7 +62,8 @@ struct OREGON_DLL_DECL instance_zulaman : public ScriptedInstance
     uint64 ZulJinGateGUID;
     uint64 AkilzonDoorGUID;
     uint64 ZulJinDoorGUID;
-    uint64 HalazziDoorGUID;
+    uint64 HalazziDoorEntryGUID;
+	uint64 HalazziDoorExitGUID;
 
     uint32 QuestTimer;
     uint16 BossKilled;
@@ -82,7 +83,8 @@ struct OREGON_DLL_DECL instance_zulaman : public ScriptedInstance
         uint64 HexLordGateGUID = 0;
         uint64 ZulJinGateGUID = 0;
         uint64 AkilzonDoorGUID = 0;
-        uint64 HalazziDoorGUID = 0;
+        uint64 HalazziDoorEntryGUID = 0;
+		uint64 HalazziDoorExitGUID = 0;
         uint64 ZulJinDoorGUID = 0;
 
         QuestTimer = 0;
@@ -121,9 +123,18 @@ struct OREGON_DLL_DECL instance_zulaman : public ScriptedInstance
     {
         switch(go->GetEntry())
         {
-        case 186303: HalazziDoorGUID = go->GetGUID(); break;
-        case 186304: ZulJinGateGUID  = go->GetGUID(); break;
-        case 186305: HexLordGateGUID = go->GetGUID(); break;
+		case 186303: HalazziDoorExitGUID = go->GetGUID();
+		if(BossKilled >= 4) OpenDoor(HalazziDoorExitGUID, true);
+		break;
+		case 186304: HalazziDoorEntryGUID  = go->GetGUID();
+		break;
+		case 186305: HexLordGateGUID = go->GetGUID();
+		//if(BossKilled >= 4) HandleGameObject(NULL, true, go);
+		if(BossKilled >= 4) OpenDoor(HexLordGateGUID, true);
+		break;
+		case 186306: ZulJinGateGUID  = go->GetGUID();
+		if(BossKilled >= 5) OpenDoor(ZulJinGateGUID, true);
+		break;
         case 186858: AkilzonDoorGUID = go->GetGUID(); break;
         case 186859: ZulJinDoorGUID  = go->GetGUID(); break;
 
@@ -167,6 +178,9 @@ struct OREGON_DLL_DECL instance_zulaman : public ScriptedInstance
     {
         if (BossKilled >= 4)
             OpenDoor(HexLordGateGUID, true);
+
+		if(BossKilled >= 4) 
+			OpenDoor(HalazziDoorExitGUID, true);
 
         if (BossKilled >= 5)
             OpenDoor(ZulJinGateGUID, true);
@@ -249,7 +263,7 @@ struct OREGON_DLL_DECL instance_zulaman : public ScriptedInstance
             break;
         case DATA_HALAZZIEVENT:
             Encounters[3] = data;
-            OpenDoor(HalazziDoorGUID, data != IN_PROGRESS);
+            OpenDoor(HalazziDoorEntryGUID, data != IN_PROGRESS);
             if (data == DONE)
 			{
 				if (QuestMinute)
@@ -258,6 +272,7 @@ struct OREGON_DLL_DECL instance_zulaman : public ScriptedInstance
 					UpdateWorldState(3106, QuestMinute);
 				}
 				SummonHostage(3);
+				OpenDoor(HalazziDoorExitGUID, true);
 			}
             break;
         case DATA_HEXLORDEVENT:

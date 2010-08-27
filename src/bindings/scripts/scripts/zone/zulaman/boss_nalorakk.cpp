@@ -96,6 +96,14 @@ struct OREGON_DLL_DECL boss_nalorakkAI : public ScriptedAI
         MoveEvent = true;
         MovePhase = 0;
         pInstance = c->GetInstanceData();
+
+		// hack mangle as it affects Nalorakk instead of victim
+		SpellEntry *TempSpell1 = (SpellEntry*)GetSpellStore()->LookupEntry(42389);
+		if(TempSpell1)
+		{
+			TempSpell1->EffectImplicitTargetA[1] = TARGET_UNIT_TARGET_ENEMY;
+			TempSpell1->EffectImplicitTargetB[1] = 0;
+		}
     }
 
     ScriptedInstance *pInstance;
