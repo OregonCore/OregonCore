@@ -28,10 +28,9 @@ EndScriptData */
 #define YELL_AGGRO "Get on your knees and bow to da fang and claw!"
 #define SOUND_AGGRO                    12020
 #define YELL_SABER_ONE "You gonna leave in pieces!"
-// TODO: Define Saber sounds, I could not find them in .mpq
-//#define SOUND_SABER_ONE
+#define SOUND_SABER_ONE              12024
 #define YELL_SABER_TWO "Me gonna carve ya now!"
-//#define SOUND_SABER_TWO
+#define SOUND_SABER_TWO              12023
 #define YELL_SPLIT "Me gonna carve ya now!"
 #define SOUND_SPLIT                    12021
 #define YELL_MERGE "Spirit, come back to me!"
@@ -226,12 +225,12 @@ struct OREGON_DLL_DECL boss_halazziAI : public ScriptedAI
 				{
 				case 0:
 						DoYell(YELL_SABER_ONE, LANG_UNIVERSAL, NULL);
-						//DoPlaySoundToSet(me, SOUND_SABER_ONE); // there is an compile error dunno why { error C2059: Syntaxerror: ')' }
+						DoPlaySoundToSet(me, SOUND_SABER_ONE);
 						break;
 
 				case 1:
 						DoYell(YELL_SABER_TWO, LANG_UNIVERSAL, NULL);
-						//DoPlaySoundToSet(me, SOUND_SABER_TWO); // there is an compile error dunno why { error C2059: Syntaxerror: ')' }
+						DoPlaySoundToSet(me, SOUND_SABER_TWO);
 						break;
 				}
                 // A tank with more than 490 defense skills should receive no critical hit
