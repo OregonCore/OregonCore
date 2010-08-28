@@ -12,7 +12,6 @@ SET(shared_STAT_SRCS
   ${sources_config}
   ${sources_database}
   ${sources_localdir}
-  Debugging/Errors.h
 )
 
 include_directories(

@@ -457,7 +457,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\shared\Debugging\Errors.h"
+				RelativePath="..\..\src\shared\Errors.h"
 				>
 			</File>
 			<File
