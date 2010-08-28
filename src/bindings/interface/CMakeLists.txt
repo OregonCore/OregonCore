@@ -11,6 +11,16 @@ SET(oregoninterface_LIB_SRCS
    Scripts/sc_defines.h
 )
 
+include_directories(
+  ${ACE_INCLUDE_DIR}
+  ${CMAKE_SOURCE_DIR}/src/shared
+  ${CMAKE_SOURCE_DIR}/src/framework
+  ${CMAKE_SOURCE_DIR}/src/game
+  ${CMAKE_SOURCE_DIR}/src/shared/Database
+  ${CMAKE_SOURCE_DIR}/dep/include
+  ${MYSQL_INCLUDE_DIR}
+)
+
 add_library(oregoninterface SHARED ${oregoninterface_LIB_SRCS})
 
 target_link_libraries(oregoninterface)
