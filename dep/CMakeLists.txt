@@ -1,6 +1,6 @@
-#if(BUILD_ACE)
-#add_subdirectory(ACE_wrappers)
-#endif(BUILD_ACE)
-#add_subdirectory(include)
+if(CMAKE_SYSTEM_NAME MATCHES "Windows")
+  add_subdirectory(acelite)
+endif()
+
 add_subdirectory(lib)
 add_subdirectory(src)

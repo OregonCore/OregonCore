@@ -1,31 +1,64 @@
-# This script is taken from BFilter project, thanks to original authors.
-# - Locate the ACE library
+#
+# Find the ACE client includes and library
+# 
+
 # This module defines
-#  ACE_FOUND -- true if ACE was found
-#  ACE_LIBRARY -- the library to link against
-#  ACE_INCLUDE_DIR -- path to ace/ACE.h
-MACRO(FIND_ACE LIBNAME)
-    GET_FILENAME_COMPONENT(parent_dir_ "${PROJECT_SOURCE_DIR}/.." ABSOLUTE)
-    FIND_PATH(
-        ACE_INCLUDE_DIR ace/ACE.h
-        PATHS /usr/include /usr/local/include
-        "${CMAKE_INSTALL_PREFIX}/include" "${parent_dir_}/ACE_wrappers"
-        DOC "Path to ace/ACE.h"
-    )
+# ACE_INCLUDE_DIR, where to find ace.h
+# ACE_LIBRARIES, the libraries to link against
+# ACE_FOUND, if false, you cannot build anything that requires ACE
 
-    # This prevents it being taken from cache. - but also broke cmake -i, so we dont use it
-    # SET(ACE_LIBRARY ACE_LIBRARY-NOTFOUND)
+# also defined, but not for general use are
+# ACE_LIBRARY, where to find the ACE library.
 
-    FIND_LIBRARY(
-        ACE_LIBRARY "${LIBNAME}"
-        PATHS /usr/lib /usr/local/lib
-        "${CMAKE_INSTALL_PREFIX}/lib" "${parent_dir_}/ACE_wrappers/ace"
-        DOC "Path to ACE library file"
-    )
-    IF(ACE_INCLUDE_DIR AND ACE_LIBRARY)
-        SET(ACE_FOUND TRUE)
-    ELSE(ACE_INCLUDE_DIR AND ACE_LIBRARY)
-        SET(ACE_FOUND FALSE)
-    ENDIF(ACE_INCLUDE_DIR AND ACE_LIBRARY)
-ENDMACRO(FIND_ACE)
+set( ACE_FOUND 0 )
 
+if ( UNIX )
+  FIND_PATH( ACE_INCLUDE_DIR
+    NAMES
+      ace/ACE.h
+    PATHS
+      /usr/include
+      /usr/include/ace
+      /usr/local/include
+      /usr/local/include/ace
+      $ENV{ACE_ROOT}
+      $ENV{ACE_ROOT}/include
+  DOC
+    "Specify include-directories that might contain ace.h here."
+  )
+  FIND_LIBRARY( ACE_LIBRARY 
+    NAMES
+      ace ACE
+    PATHS
+      /usr/lib
+      /usr/lib/ace
+      /usr/local/lib
+      /usr/local/lib/ace
+      /usr/local/ace/lib
+      $ENV{ACE_ROOT}/lib
+      $ENV{ACE_ROOT}
+    DOC "Specify library-locations that might contain the ACE library here."
+  )
+
+#  FIND_LIBRARY( ACE_EXTRA_LIBRARIES
+#    NAMES
+#      z zlib
+#    PATHS
+#      /usr/lib
+#      /usr/local/lib
+#    DOC
+#      "if more libraries are necessary to link into ACE, specify them here."
+#  )
+
+  if ( ACE_LIBRARY )
+    if ( ACE_INCLUDE_DIR )
+      set( ACE_FOUND 1 )
+      message( STATUS "Found ACE library: ${ACE_LIBRARY}")
+      message( STATUS "Found ACE headers: ${ACE_INCLUDE_DIR}")
+    else ( ACE_INCLUDE_DIR )
+      message(FATAL_ERROR "Could not find ACE headers! Please install ACE libraries and headers")
+    endif ( ACE_INCLUDE_DIR )
+  endif ( ACE_LIBRARY )
+
+  mark_as_advanced( ACE_FOUND ACE_LIBRARY ACE_EXTRA_LIBRARIES ACE_INCLUDE_DIR )
+endif (UNIX)

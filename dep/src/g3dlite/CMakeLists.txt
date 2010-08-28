@@ -47,8 +47,19 @@ SET(g3dlite_STAT_SRCS
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/dep/include/g3dlite
+  ${CMAKE_SOURCE_DIR}/dep/include/zlib
 )
 
 add_library(g3dlite STATIC ${g3dlite_STAT_SRCS})
+
+if(WIN32)
+  target_link_libraries(g3dlite
+    zlib
+  )
+else()
+  target_link_libraries(g3dlite
+    ${ZLIB_LIBRARIES}
+  )
+endif()
 
 ########### install files ###############

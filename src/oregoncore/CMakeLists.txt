@@ -43,28 +43,42 @@ ENDIF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
 
 SET_TARGET_PROPERTIES(oregon-core PROPERTIES LINK_FLAGS "${oregon-core_LINK_FLAGS}")
 
-target_link_libraries(
-oregon-core
-game
-shared
-zlib
-oregonframework
-oregonsockets
-oregondatabase
-oregonauth
-oregonconfig
-vmaps
-g3dlite
-gsoap
-${READLINE_LIBRARY}
-gomp
-${SCRIPT_LIB}
-${MYSQL_LIBRARIES}
-${SSLLIB}
-${ACE_LIBRARY}
-${ZLIB}
-${OSX_LIBS}
-)
+if( WIN32 )
+  target_link_libraries(
+    oregon-core
+    game
+    shared
+    zlib
+    oregonframework
+    oregonsockets
+    g3dlite
+    gsoap
+    ace
+    ${SCRIPT_LIB}
+    ${MYSQL_LIBRARIES}
+    ${SSLLIB}
+    ${ZLIB}
+  )
+else()
+  target_link_libraries(
+    oregon-core
+    game
+    shared
+    zlib
+    oregonframework
+    oregonsockets
+    g3dlite
+    gsoap
+    ${READLINE_LIBRARY}
+    gomp
+    ${ACE_LIBRARY}
+    ${SCRIPT_LIB}
+    ${MYSQL_LIBRARIES}
+    ${SSLLIB}
+    ${ZLIB}
+    ${OSX_LIBS}
+  )
+endif()
 
 IF (CENTOS)
     target_link_libraries(

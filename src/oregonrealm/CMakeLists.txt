@@ -20,6 +20,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/src/shared/Database
   ${CMAKE_SOURCE_DIR}/src/framework
   ${MYSQL_INCLUDE_DIR}
+  ${OPENSSL_INCLUDE_DIR}
 )
 
 SET(oregon-realm_LINK_FLAGS "")
@@ -37,20 +38,31 @@ ENDIF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
 
 SET_TARGET_PROPERTIES(oregon-realm PROPERTIES LINK_FLAGS "${oregon-realm_LINK_FLAGS}")
 
-target_link_libraries(
-oregon-realm
-shared
-oregonframework
-oregonsockets
-oregondatabase
-oregonauth
-oregonconfig
-zlib
-gomp
-${SSLLIB}
-${MYSQL_LIBRARIES}
-${OSX_LIBS}
-)
+if( WIN32 )
+  target_link_libraries(
+    oregon-realm
+    shared
+    oregonframework
+    oregonsockets
+    zlib
+    ace
+    ${MYSQL_LIBRARIES}
+    ${SSLLIB}
+  )
+else()
+  target_link_libraries(
+    oregon-realm
+    shared
+    oregonframework
+    oregonsockets
+    zlib
+    gomp
+    ${ACE_LIBRARY}
+    ${MYSQL_LIBRARIES}
+    ${SSLLIB}
+    ${OSX_LIBS}
+  )
+endif()
 
 install(TARGETS oregon-realm DESTINATION bin)
 
