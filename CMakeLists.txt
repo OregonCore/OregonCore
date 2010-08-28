@@ -45,7 +45,7 @@ option(SCRIPTS "Build with scripts included" 1)
 option(DO_CLI "With CLI" 1)
 option(COREDEBUG "Build with additional debug-code included" 0)
 option(SCRIPTPCH "Use precompiled headers when compiling scripts project" 1)
-option(WARNINGS "Enable all compile-warnings during compile" 1)
+option(WARNINGS "Enable all compile-warnings during compile" 0)
 
 #
 # Search for readline on *nixbased systems (CLI-handler)
