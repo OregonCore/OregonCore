@@ -39,24 +39,21 @@ if( UNIX )
   option(SHORT_SLEEP "Short sleep" 0)
 endif( UNIX )
 
-set(GENREV_SRC
-src/tools/genrevision/genrevision.cpp
-)
+#
+# Create genrev object and create revision.h
+# (Moved to subfolder to avoid cluttering up the base build-dir)
+#
 
-ADD_EXECUTABLE(genrev
-${GENREV_SRC}
-)
-ADD_CUSTOM_TARGET("revision.h" ALL
-    COMMAND "${Oregon_BINARY_DIR}/genrev"
-    ${Oregon_SOURCE_DIR}
-    WORKING_DIRECTORY "${Oregon_SOURCE_DIR}/src/shared"
-    DEPENDS genrev
-)
+add_subdirectory(src/tools/genrevision)
 
+#
+# Find current revision of downloaded sourcetree
+#
 
 execute_process(
-        COMMAND hg tip --template {rev}
-        OUTPUT_VARIABLE HG_REVISION
+  COMMAND hg tip --template {rev}
+  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+  OUTPUT_VARIABLE HG_REVISION
 )
 
 message("* OregonCore revision: ${HG_REVISION}")
