@@ -57,7 +57,6 @@ if( WIN32 )
     g3dlite
     gsoap
     ace
-    ${SCRIPT_LIB}
     ${MYSQL_LIBRARY}
     ${OPENSSL_LIBRARIES}
     ${OPENSSL_EXTRA_LIBRARIES}
@@ -71,7 +70,6 @@ else()
     oregonsockets
     g3dlite
     gsoap
-    ${SCRIPT_LIB}
     ${READLINE_LIBRARY}
     ${ACE_LIBRARY}
     ${MYSQL_LIBRARY}
