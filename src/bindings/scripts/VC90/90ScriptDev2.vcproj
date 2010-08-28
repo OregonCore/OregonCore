@@ -46,7 +46,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\..\dep\include\;..\..\..\shared\;..\..\..\framework\;..\..\..\game\;..\include\;..\scripts\npc\;..\..\..\shared\Database;..\..\..\..\dep\ACE_wrappers"
+				AdditionalIncludeDirectories="..\..\..\..\dep\include\;..\..\..\shared\;..\..\..\framework\;..\..\..\game\;..\include\;..\scripts\npc\;..\..\..\shared\Database;..\..\..\..\dep\acelite"
 				PreprocessorDefinitions="WIN32;_DEBUG;MANGOS_DEBUG;_WINDOWS;_USRDLL;SCRIPT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -129,7 +129,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
-				AdditionalIncludeDirectories="..\..\..\..\dep\include;..\..\..\shared;..\..\..\framework;..\..\..\shared\Database;..\..\..\..\dep\ACE_wrappers;..\..\..\game;..\include;..\scripts\npc"
+				AdditionalIncludeDirectories="..\..\..\..\dep\include;..\..\..\shared;..\..\..\framework;..\..\..\shared\Database;..\..\..\..\dep\acelite;..\..\..\game;..\include;..\scripts\npc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPT"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
@@ -213,7 +213,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\..\dep\include\;..\..\..\shared\;..\..\..\shared\Database;..\..\..\framework\;..\..\..\game\;..\include\;..\scripts\npc\;..\..\..\..\dep\ACE_wrappers"
+				AdditionalIncludeDirectories="..\..\..\..\dep\include\;..\..\..\shared\;..\..\..\shared\Database;..\..\..\framework\;..\..\..\game\;..\include\;..\scripts\npc\;..\..\..\..\dep\acelite"
 				PreprocessorDefinitions="WIN32;_DEBUG;MANGOS_DEBUG;_WINDOWS;_USRDLL;SCRIPT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -297,7 +297,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
-				AdditionalIncludeDirectories="..\..\..\..\dep\include\;..\..\..\shared\;..\..\..\framework\;..\..\..\game\;..\include\;..\scripts\npc\;..\..\..\..\dep\ACE_wrappers"
+				AdditionalIncludeDirectories="..\..\..\..\dep\include\;..\..\..\shared\;..\..\..\framework\;..\..\..\game\;..\include\;..\scripts\npc\;..\..\..\..\dep\acelite"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPT"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
