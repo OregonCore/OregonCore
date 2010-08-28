@@ -18,7 +18,7 @@ add_executable(genrev
 if( CMAKE_GENERATOR MATCHES "Visual Studio" )
   add_custom_command(TARGET genrev
     POST_BUILD
-    COMMAND ${CMAKE_BINARY_DIR}/bin/$(ConfigurationName)/genrev -m $(ConfigurationName) ${CMAKE_SOURCE_DIR}
+    COMMAND ${CMAKE_BINARY_DIR}/src/tools/genrevision/$(ConfigurationName)/genrev -m $(ConfigurationName) ${CMAKE_SOURCE_DIR}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   )
 elseif( CMAKE_GENERATOR MATCHES "Xcode" )

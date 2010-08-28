@@ -26,6 +26,9 @@ include_directories(
 SET(oregon-realm_LINK_FLAGS "")
 
 add_executable(oregon-realm ${oregon-realm_SRCS})
+
+add_dependencies(oregon-realm genrev)
+
 add_definitions(
 -D_OREGON_REALM_CONFIG='"${CONF_DIR}/oregonrealm.conf"'
 )

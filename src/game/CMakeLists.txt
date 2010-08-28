@@ -287,4 +287,4 @@ include_directories(
 )
 
 add_library(game STATIC ${game_STAT_SRCS})
-ADD_DEPENDENCIES(game revision.h)
+ADD_DEPENDENCIES(game genrev)

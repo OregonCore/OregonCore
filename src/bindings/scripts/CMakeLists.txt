@@ -416,6 +416,8 @@ include_directories(
 
 add_library(oregonscript SHARED ${oregonscript_LIB_SRCS})
 
+add_dependencies(oregonscript genrev)
+
 add_definitions(-D_OREGON_SCRIPT_CONFIG='"${CONF_DIR}/oregoncore.conf"')
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Darwin")

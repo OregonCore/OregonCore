@@ -34,6 +34,8 @@ add_definitions(
 -D_OREGON_CORE_CONFIG='"${CONF_DIR}/oregoncore.conf"'
 )
 
+add_dependencies(oregon-core genrev)
+
 SET(oregon-core_LINK_FLAGS "-pthread ${oregon-core_LINK_FLAGS}")
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
