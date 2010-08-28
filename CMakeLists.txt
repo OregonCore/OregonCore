@@ -24,6 +24,15 @@ if( UNIX )
   find_package(BZip2)
 endif()
 
+
+#
+# Select the Release build configuration by default.
+#
+
+if( NOT CMAKE_BUILD_TYPE )
+  set(CMAKE_BUILD_TYPE "Release")
+endif()
+
 #####
 ##### Options and settings
 #####
@@ -37,6 +46,7 @@ option(DO_CLI "With CLI" 1)
 option(DO_DEBUG "Debug mode" 0)
 option(SCRIPTPCH "Use precompiled headers when compiling scripts project" 1)
 option(DO_WARN "Enable all compile warnings" 0)
+
 #
 # Search for readline on *nixbased systems (CLI-handler)
 #
@@ -53,6 +63,14 @@ if( PREFIX )
   set(CMAKE_INSTALL_PREFIX "${PREFIX}")
 endif()
 
+
+#
+# Handle core debugmode compilation (this will require further work for proper WIN32-setups)
+#
+
+if( DO_DEBUG )
+  set(CMAKE_BUILD_TYPE Debug)
+endif()
 
 #
 # WINDOWS/MSVC: Set up paths for where we want binaries to end up after compilation
