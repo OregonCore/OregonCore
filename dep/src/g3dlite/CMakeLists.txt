@@ -1,10 +1,4 @@
-## Modified for MaNGOS project <http://getmangos.com>
-##
-## Permission is hereby granted, free of charge, to any person obtaining a copy
-
-########### next target ###############
-
-SET(g3dlite_STAT_SRCS
+set(g3dlite_STAT_SRCS
 	AABox.cpp
 	Box.cpp
 	Crypto.cpp
@@ -45,10 +39,16 @@ SET(g3dlite_STAT_SRCS
 	Vector2.cpp
 )
 
-include_directories(
-  ${CMAKE_SOURCE_DIR}/dep/include/g3dlite
-  ${CMAKE_SOURCE_DIR}/dep/include/zlib
-)
+if(WIN32)
+  include_directories(
+    ${CMAKE_SOURCE_DIR}/dep/include/g3dlite
+    ${CMAKE_SOURCE_DIR}/dep/include/zlib
+  )
+else()
+  include_directories(
+    ${CMAKE_SOURCE_DIR}/dep/include/g3dlite
+  )
+endif()
 
 add_library(g3dlite STATIC ${g3dlite_STAT_SRCS})
 
@@ -61,5 +61,3 @@ else()
     ${ZLIB_LIBRARIES}
   )
 endif()
-
-########### install files ###############
