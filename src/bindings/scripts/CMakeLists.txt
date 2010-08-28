@@ -20,7 +20,6 @@ set(oregonscript_LIB_SRCS
   ${scripts_custom}
   ${scripts_go}
   ${scripts_guard}
-  ${scripts_npc}
   ${scripts_item}
   ${scripts_npc}
   ${scripts_zone}
