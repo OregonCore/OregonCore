@@ -1,6 +1,6 @@
 file(GLOB_RECURSE sources_vmap vmap/*.cpp vmap/*.h)
 file(GLOB_RECURSE sources_auth Auth/*.cpp Auth/*.h)
-file(GLOB_RECURSE sources_config Config/*.cpp)
+file(GLOB_RECURSE sources_config Config/*.cpp Config/*.h)
 file(GLOB_RECURSE sources_database Database/*.cpp Database/*.h)
 
 file(GLOB sources_localdir *.cpp *.h)
