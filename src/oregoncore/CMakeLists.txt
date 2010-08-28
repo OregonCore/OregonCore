@@ -27,23 +27,26 @@ include_directories(
   ${MYSQL_INCLUDE_DIR}
 )
 
-SET(oregon-core_LINK_FLAGS "")
+set(oregon-core_LINK_FLAGS "")
 
 add_executable(oregon-core ${oregon-core_SRCS})
-add_definitions(
--D_OREGON_CORE_CONFIG='"${CONF_DIR}/oregoncore.conf"'
-)
+
+if( NOT WIN32 )
+  add_definitions(-D_OREGON_CORE_CONFIG='"${CONF_DIR}/oregoncore.conf"')
+endif()
 
 add_dependencies(oregon-core genrev)
 
-SET(oregon-core_LINK_FLAGS "-pthread ${oregon-core_LINK_FLAGS}")
+if( UNIX )
+  set(oregon-core_LINK_FLAGS "-pthread ${oregon-core_LINK_FLAGS}")
+endif()
 
-IF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+if( CMAKE_SYSTEM_NAME MATCHES "Darwin" )
     SET(oregon-core_LINK_FLAGS "-framework Carbon ${oregon-core_LINK_FLAGS}")
     SET(SCRIPT_LIB "")
-ENDIF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+endif()
 
-SET_TARGET_PROPERTIES(oregon-core PROPERTIES LINK_FLAGS "${oregon-core_LINK_FLAGS}")
+set_target_properties(oregon-core PROPERTIES LINK_FLAGS "${oregon-core_LINK_FLAGS}")
 
 if( WIN32 )
   target_link_libraries(
@@ -90,8 +93,4 @@ IF (CENTOS)
 ENDIF (CENTOS)
 
 install(TARGETS oregon-core DESTINATION bin)
-
-########### install files ###############
-
 install(FILES  oregoncore.conf.dist DESTINATION etc)
-

@@ -402,10 +402,10 @@ SET(oregonscript_LIB_SRCS
 )
 
 include_directories(
-  include
-  scripts/npc
   ${ACE_INCLUDE_DIR}
   ${CMAKE_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/src/bindings/scripts/include
+  ${CMAKE_SOURCE_DIR}/src/bindings/scripts/scripts/npc
   ${CMAKE_SOURCE_DIR}/src/shared
   ${CMAKE_SOURCE_DIR}/src/framework
   ${CMAKE_SOURCE_DIR}/src/game
@@ -418,11 +418,13 @@ add_library(oregonscript SHARED ${oregonscript_LIB_SRCS})
 
 add_dependencies(oregonscript genrev)
 
-add_definitions(-D_OREGON_SCRIPT_CONFIG='"${CONF_DIR}/oregoncore.conf"')
+if( NOT WIN32 )
+  add_definitions(-D_OREGON_CORE_CONFIG='"${CONF_DIR}/oregoncore.conf"')
+endif()
 
-IF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+if( CMAKE_SYSTEM_NAME MATCHES "Darwin" )
     SET_TARGET_PROPERTIES(oregonscript PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
-ENDIF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+endif()
 
 target_link_libraries(oregonscript)
 
