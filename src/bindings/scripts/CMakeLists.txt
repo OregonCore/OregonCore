@@ -53,7 +53,17 @@ if( CMAKE_SYSTEM_NAME MATCHES "Darwin" )
     set_target_properties(oregonscript PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
 endif()
 
-target_link_libraries(oregonscript)
+if( WIN32 )
+  target_link_libraries(
+    oregonscript
+    oregon-core
+  )
+else()
+  target_link_libraries(
+    oregonscript
+    oregon-core
+  )
+endif()
 
 set_target_properties(oregonscript PROPERTIES VERSION 4.2.0 SOVERSION 4)
 
