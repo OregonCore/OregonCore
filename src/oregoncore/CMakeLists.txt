@@ -1,16 +1,8 @@
+file(GLOB sources_localdir *.cpp *.h)
+
 set(oregon-core_SRCS
   ${oregon-core_SRCS}
-CliRunnable.cpp
-CliRunnable.h
-Main.cpp
-Master.cpp
-Master.h
-RASocket.cpp
-RASocket.h
-WorldRunnable.cpp
-WorldRunnable.h
-OCSoap.cpp
-OCSoap.h
+  ${sources_localdir}
 )
 
 if( WIN32 )

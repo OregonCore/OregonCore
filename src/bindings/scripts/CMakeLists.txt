@@ -32,9 +32,9 @@ include_directories(
   ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/src/bindings/scripts/include
   ${CMAKE_SOURCE_DIR}/src/bindings/scripts/scripts/npc
-  ${CMAKE_SOURCE_DIR}/src/shared
   ${CMAKE_SOURCE_DIR}/src/framework
   ${CMAKE_SOURCE_DIR}/src/game
+  ${CMAKE_SOURCE_DIR}/src/shared
   ${CMAKE_SOURCE_DIR}/src/shared/Database
   ${CMAKE_SOURCE_DIR}/dep/include
   ${ACE_INCLUDE_DIR}

@@ -41,11 +41,11 @@ endif()
 # Set up default option-parameters for building
 #
 
-option(DO_SCRIPTS "With oregonscripts" 1)
+option(SCRIPTS "Build with scripts included" 1)
 option(DO_CLI "With CLI" 1)
-option(DO_DEBUG "Debug mode" 0)
+option(COREDEBUG "Build with additional debug-code included" 0)
 option(SCRIPTPCH "Use precompiled headers when compiling scripts project" 1)
-option(DO_WARN "Enable all compile warnings" 0)
+option(WARNINGS "Enable all compile-warnings during compile" 1)
 
 #
 # Search for readline on *nixbased systems (CLI-handler)
@@ -63,12 +63,23 @@ if( PREFIX )
   set(CMAKE_INSTALL_PREFIX "${PREFIX}")
 endif()
 
+#
+# Example: Check the CMake preload parameters (Commented out by default)
+#
+# Overload CMAKE_INSTALL_PREFIX if not being set properly
+#if( WIN32 )
+#  if( NOT CYGWIN )
+#    if( NOT CMAKE_INSTALL_PREFIX )
+#      set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/bin")
+#    endif()
+#  endif()
+#endif()
 
 #
 # Handle core debugmode compilation (this will require further work for proper WIN32-setups)
 #
 
-if( DO_DEBUG )
+if( COREDEBUG )
   set(CMAKE_BUILD_TYPE Debug)
 endif()
 
@@ -148,11 +159,11 @@ message("")
 # Show infomation about the options selected during configuration
 #
 
-if(DO_SCRIPTS)
+if(SCRIPTS)
   message("* Build with scripts    : Yes (default)")
   set(SCRIPT_LIB oregonscript)
   set(SCRIPT_INCLUDE src/bindings/scripts/include)
-  ADD_DEFINITIONS(-DDO_SCRIPTS)
+  ADD_DEFINITIONS(-DSCRIPTS)
 else()
   message("* Build with scripts    : No")
   set(SCRIPTPCH 0)
@@ -173,7 +184,7 @@ else()
   message("* Build with CLI        : No")
 endif()
 
-if(DO_DEBUG)
+if( COREDEBUG )
   message("* Use coreside debug    : Yes")
   add_definitions(-DOREGON_DEBUG)
   if(CMAKE_COMPILER_IS_GNUCXX)
@@ -183,7 +194,7 @@ else()
   message("* Use coreside debug    : No  (default)")
 endif()
 
-if( DO_WARN )
+if( WARNINGS )
   message("* Show all warnings     : Yes")
   if( UNIX )
     add_definitions(-Wall -Wfatal-errors -Wextra)

@@ -1,5 +1,5 @@
-if(DO_SCRIPTS)
+if(SCRIPTS)
 add_subdirectory(scripts)
-else (DO_SCRIPTS)
+else (SCRIPTS)
 add_subdirectory(interface)
-endif(DO_SCRIPTS)
+endif(SCRIPTS)
