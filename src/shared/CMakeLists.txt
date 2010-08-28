@@ -1,6 +1,6 @@
 file(GLOB_RECURSE sources_vmap vmap/*.cpp vmap/*.h)
 file(GLOB_RECURSE sources_auth Auth/*.cpp Auth/*.h)
-file(GLOB_RECURSE sources_config Config/*.cpp Config/*.h Config/dotconfpp/*.cpp Config/dotconfpp/*.h)
+file(GLOB_RECURSE sources_config Config/*.cpp)
 file(GLOB_RECURSE sources_database Database/*.cpp Database/*.h)
 
 file(GLOB sources_localdir *.cpp *.h)
@@ -12,6 +12,7 @@ SET(shared_STAT_SRCS
   ${sources_config}
   ${sources_database}
   ${sources_localdir}
+  Debugging/Errors.h
 )
 
 include_directories(

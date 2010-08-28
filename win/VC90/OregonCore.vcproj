@@ -526,11 +526,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\shared\WheatyExceptionReport.cpp"
+			RelativePath="..\..\src\shared\Debugging\WheatyExceptionReport.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\shared\WheatyExceptionReport.h"
+			RelativePath="..\..\src\shared\Debugging\WheatyExceptionReport.h"
 			>
 		</File>
 		<File
