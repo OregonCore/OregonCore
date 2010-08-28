@@ -36,7 +36,6 @@ option(DO_DEBUG "Debug mode" 0)
 if( UNIX )
   option(CENTOS "CENTOS" 0)
   option(DO_WARN "Enable all compile warnings" 0)
-  option(SHORT_SLEEP "Short sleep" 0)
 endif( UNIX )
 
 #
@@ -110,13 +109,6 @@ if( UNIX )
     add_definitions(--no-warnings) # makes build look nice, no warnings shown at all, only errors
   endif( DO_WARN )
 endif( UNIX )
-
-if(SHORT_SLEEP)
-message("* System sleep time is 50ms")
-add_definitions(-DSHORT_SLEEP)
-else(SHORT_SLEEP)
-message("* System sleep time is 100ms")
-endif(SHORT_SLEEP)
 
 if(UNIX)
     if(CENTOS)

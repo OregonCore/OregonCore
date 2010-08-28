@@ -33,11 +33,7 @@
 
 #include "Database/DatabaseEnv.h"
 
-#if (defined(SHORT_SLEEP) || defined(WIN32))
 #define WORLD_SLEEP_CONST 50
-#else
-#define WORLD_SLEEP_CONST 100                            //Is this still needed?? [On linux some time ago not working 50ms]
-#endif
 
 /// Heartbeat for the World
 void WorldRunnable::run()
