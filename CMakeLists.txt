@@ -35,6 +35,7 @@ endif()
 option(DO_SCRIPTS "With oregonscripts" 1)
 option(DO_CLI "With CLI" 1)
 option(DO_DEBUG "Debug mode" 0)
+option(SCRIPTPCH "Use precompiled headers when compiling scripts project" 1)
 option(DO_WARN "Enable all compile warnings" 0)
 #
 # Search for readline on *nixbased systems (CLI-handler)
@@ -99,6 +100,10 @@ execute_process(
   OUTPUT_VARIABLE HG_REVISION
 )
 
+if(DEFINED NOPCH)
+  set(SCRIPTPCH 0)
+endif()
+
 #
 # Output some generic information about the core and buildtype chosen
 #
@@ -132,10 +137,16 @@ if(DO_SCRIPTS)
   ADD_DEFINITIONS(-DDO_SCRIPTS)
 else()
   message("* Build with scripts    : No")
+  set(SCRIPTPCH 0)
   set(SCRIPT_LIB oregoninterface)
   set(SCRIPT_INCLUDE src/bindings/interface)
 endif()
 
+if( SCRIPTPCH )
+  message("* Build scripts w/PCH   : Yes (default)")
+else()
+  message("* Build scripts w/PCH   : No")
+endif()
 
 if(DO_CLI)
   message("* Build with CLI        : Yes (default)")

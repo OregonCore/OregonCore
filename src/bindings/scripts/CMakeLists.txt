@@ -1,11 +1,7 @@
-
-########### next target ###############
-
-SET(oregonscript_LIB_SRCS
+set(oregonscript_LIB_SRCS
    ScriptMgr.cpp
    ScriptMgr.h
    include/precompiled.cpp
-   include/precompiled.h
    include/sc_creature.cpp
    include/sc_creature.h
    include/sc_gossip.h
@@ -402,7 +398,6 @@ SET(oregonscript_LIB_SRCS
 )
 
 include_directories(
-  ${ACE_INCLUDE_DIR}
   ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/src/bindings/scripts/include
   ${CMAKE_SOURCE_DIR}/src/bindings/scripts/scripts/npc
@@ -411,6 +406,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/src/game
   ${CMAKE_SOURCE_DIR}/src/shared/Database
   ${CMAKE_SOURCE_DIR}/dep/include
+  ${ACE_INCLUDE_DIR}
   ${MYSQL_INCLUDE_DIR}
 )
 
@@ -423,10 +419,20 @@ if( NOT WIN32 )
 endif()
 
 if( CMAKE_SYSTEM_NAME MATCHES "Darwin" )
-    SET_TARGET_PROPERTIES(oregonscript PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+    set_target_properties(oregonscript PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
 endif()
 
 target_link_libraries(oregonscript)
 
 set_target_properties(oregonscript PROPERTIES VERSION 4.2.0 SOVERSION 4)
+
+# Generate precompiled header
+if( SCRIPTPCH )
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    add_precompiled_header(oregonscript ${CMAKE_CURRENT_SOURCE_DIR}/include/precompiled.h)
+  elseif(MSVC)
+    add_native_precompiled_header(oregonscript ${CMAKE_CURRENT_SOURCE_DIR}/include/precompiled)
+  endif()
+endif()
+
 install(TARGETS oregonscript DESTINATION lib)
