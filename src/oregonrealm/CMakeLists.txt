@@ -48,7 +48,7 @@ if( WIN32 )
   target_link_libraries(
     oregon-realm
     shared
-    ${MYSQL_LIBRARIES}
+    ${MYSQL_LIBRARY}
     ${OPENSSL_LIBRARIES}
     ${OPENSSL_EXTRA_LIBRARIES}
   )
@@ -56,7 +56,7 @@ else()
   target_link_libraries(
     oregon-realm
     shared
-    ${MYSQL_LIBRARIES}
+    ${MYSQL_LIBRARY}
     ${OPENSSL_LIBRARIES}
     ${OSX_LIBS}
   )
