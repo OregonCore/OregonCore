@@ -13,10 +13,10 @@
 #define G3D_platform_h
 
 /**
- The version number of G3D in the form: MmmBB ->
+ The version number of G3D in the form: MmmBB -> 
  version M.mm [beta BB]
  */
-#define G3D_VER 80004
+#define G3D_VER 80000
 
 // fatal error for unsupported architectures
 #if defined(__powerpc__)
@@ -37,13 +37,19 @@
 #   define G3D_DEBUG
 #endif
 
+/** These control the version of Winsock used by G3D.
+    Version 2.0 is standard for G3D 6.09 and later.
+    Version 1.1 is standard for G3D 6.08 and earlier.
+ */
+#define G3D_WINSOCK_MAJOR_VERSION 2
+#define G3D_WINSOCK_MINOR_VERSION 0
+
 #ifndef _MSC_VER
 /// Fast call is a register-based optimized calling convention supported only by Visual C++
 #define __fastcall
-
 #endif
 
-#ifdef _MSC_VER
+#ifdef _MSC_VER 
     #define G3D_WIN32
 #elif  defined(__FreeBSD__) || defined(__OpenBSD__)
     #define G3D_FREEBSD
@@ -89,7 +95,7 @@
 #    ifndef __GNUC__
 #        error G3D only supports the gcc compiler on OS X.
 #    endif
-
+	
 #    if defined(__i386__)
 #        define G3D_OSX_INTEL
 #    elif defined(__PPC__)
@@ -142,7 +148,7 @@
 
 /** @def G3D_CHECK_PRINTF_METHOD_ARGS()
     Enables printf parameter validation on gcc. */
-#   define G3D_CHECK_PRINTF_METHOD_ARGS
+#   define G3D_CHECK_PRINTF_METHOD_ARGS 
 
 /** @def G3D_CHECK_PRINTF_METHOD_ARGS()
     Enables printf parameter validation on gcc. */
@@ -151,7 +157,7 @@
     // On MSVC, we need to link against the multithreaded DLL version of
     // the C++ runtime because that is what SDL and ZLIB are compiled
     // against.  This is not the default for MSVC, so we set the following
-    // defines to force correct linking.
+    // defines to force correct linking.  
     //
     // For documentation on compiler options, see:
     //  http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/_core_.2f.md.2c_2f.ml.2c_2f.mt.2c_2f.ld.asp
@@ -285,18 +291,18 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) {\
 #endif
 
 
-/**
+/** 
   @def STR(expression)
 
   Creates a string from the expression.  Frequently used with G3D::Shader
-  to express shading programs inline.
+  to express shading programs inline.  
 
   <CODE>STR(this becomes a string)\verbatim<PRE>\endverbatim evaluates the same as \verbatim<CODE>\endverbatim"this becomes a string"</CODE>
  */
 #define STR(x) #x
 
 /** @def PRAGMA(expression)
-    \#pragma may not appear inside a macro, so this uses the pragma operator
+    \#pragma may not appear inside a macro, so this uses the pragma operator 
     to create an equivalent statement.*/
 #ifdef _MSC_VER
 // Microsoft's version http://msdn.microsoft.com/en-us/library/d9x1s805.aspx
@@ -322,7 +328,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) {\
 #    define G3D_END_PACKED_CLASS(byteAlign)  ; PRAGMA( pack(pop) )
 #elif defined(__GNUC__)
 #    define G3D_END_PACKED_CLASS(byteAlign)  __attribute((aligned(byteAlign))) ;
-#else
+#else 
 #    define G3D_END_PACKED_CLASS(byteAlign)  ;
 #endif
 

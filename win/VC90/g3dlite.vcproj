@@ -569,11 +569,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\dep\src\g3dlite\Triangle.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dep\src\g3dlite\uint128.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\dep\src\g3dlite\UprightFrame.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\dep\src\g3dlite\Vector2.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dep\src\g3dlite\Vector3.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dep\src\g3dlite\Vector4.cpp"
 				>
 			</File>
 		</Filter>
