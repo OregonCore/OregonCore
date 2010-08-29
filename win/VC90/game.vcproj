@@ -45,7 +45,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/MP"
+				AdditionalOptions="/MP /Zm200"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\shared\Database;..\..\src\shared\vmap;..\..\dep\acelite;..\..\src\game\"
 				PreprocessorDefinitions="WIN32;_DEBUG;OREGON_DEBUG;_LIB;"
@@ -55,7 +55,8 @@
 				RuntimeLibrary="3"
 				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="true"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="gamePCH.h"
 				PrecompiledHeaderFile=".\game__$(PlatformName)_$(ConfigurationName)\game.pch"
 				AssemblerListingLocation=".\game__$(PlatformName)_$(ConfigurationName)\"
 				ObjectFile=".\game__$(PlatformName)_$(ConfigurationName)\"
@@ -66,6 +67,7 @@
 				DebugInformationFormat="3"
 				CallingConvention="0"
 				CompileAs="0"
+				ForcedIncludeFiles="gamePCH.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -126,7 +128,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/MP"
+				AdditionalOptions="/MP /bigobj /Zm200"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\shared\Database;..\..\src\shared\vmap;..\..\dep\acelite"
 				PreprocessorDefinitions="WIN32;_DEBUG;OREGON_DEBUG;_LIB;"
@@ -136,7 +138,8 @@
 				RuntimeLibrary="3"
 				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="true"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="gamePCH.h"
 				PrecompiledHeaderFile=".\game__$(PlatformName)_$(ConfigurationName)\game.pch"
 				AssemblerListingLocation=".\game__$(PlatformName)_$(ConfigurationName)\"
 				ObjectFile=".\game__$(PlatformName)_$(ConfigurationName)\"
@@ -147,6 +150,7 @@
 				DebugInformationFormat="3"
 				CallingConvention="0"
 				CompileAs="0"
+				ForcedIncludeFiles="gamePCH.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -207,7 +211,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/MP"
+				AdditionalOptions="/MP /Zm200"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\shared\Database;..\..\src\shared\vmap;..\..\dep\acelite;..\..\src\game\"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;"
@@ -216,7 +220,8 @@
 				EnableFunctionLevelLinking="true"
 				EnableEnhancedInstructionSet="1"
 				RuntimeTypeInfo="true"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="gamePCH.h"
 				PrecompiledHeaderFile=".\game__$(PlatformName)_$(ConfigurationName)\game.pch"
 				AssemblerListingLocation=".\game__$(PlatformName)_$(ConfigurationName)\"
 				ObjectFile=".\game__$(PlatformName)_$(ConfigurationName)\"
@@ -227,6 +232,7 @@
 				DebugInformationFormat="3"
 				CallingConvention="0"
 				CompileAs="0"
+				ForcedIncludeFiles="gamePCH.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -287,7 +293,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/MP"
+				AdditionalOptions="/MP /bigobj /Zm200"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\shared\Database;..\..\src\shared\vmap;..\..\dep\acelite"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;"
@@ -296,7 +302,8 @@
 				EnableFunctionLevelLinking="true"
 				EnableEnhancedInstructionSet="0"
 				RuntimeTypeInfo="true"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="gamePCH.h"
 				PrecompiledHeaderFile=".\game__$(PlatformName)_$(ConfigurationName)\game.pch"
 				AssemblerListingLocation=".\game__$(PlatformName)_$(ConfigurationName)\"
 				ObjectFile=".\game__$(PlatformName)_$(ConfigurationName)\"
@@ -307,6 +314,7 @@
 				DebugInformationFormat="3"
 				CallingConvention="0"
 				CompileAs="0"
+				ForcedIncludeFiles="gamePCH.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -1717,6 +1725,50 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\..\src\game\PrecompiledHeaders\gamePCH.cpp"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
+					PrecompiledHeaderThrough="gamePCH.h"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Debug|x64"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
+					PrecompiledHeaderThrough="gamePCH.h"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
+					PrecompiledHeaderThrough="gamePCH.h"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|x64"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
+					PrecompiledHeaderThrough="gamePCH.h"
+				/>
+			</FileConfiguration>
+		</File>
+		<File
+			RelativePath="..\..\src\game\PrecompiledHeaders\gamePCH.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
