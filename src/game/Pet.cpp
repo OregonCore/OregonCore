@@ -1297,6 +1297,9 @@ void Pet::_LoadSpellCooldowns()
 
 void Pet::_SaveSpellCooldowns()
 {
+    if(getPetType() == SUMMON_PET) //don't save cooldowns for temp pets, thats senseless
+        return;
+
     CharacterDatabase.PExecute("DELETE FROM pet_spell_cooldown WHERE guid = '%u'", m_charmInfo->GetPetNumber());
 
     time_t curTime = time(NULL);
