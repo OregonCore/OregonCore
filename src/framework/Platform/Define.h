@@ -62,18 +62,18 @@
 #  endif //__APPLE_CC__ && BIG_ENDIAN
 #  if defined(__APPLE_CC__)
 #    define OREGON_SCRIPT_EXT ".dylib"
-#    if defined(DO_SCRIPTS)
+#    if defined(SCRIPTS)
 #      define OREGON_SCRIPT_NAME "../lib/liboregonscript"
 #    else
 #      define OREGON_SCRIPT_NAME "../lib/liboregoninterface"
-#    endif // DO_SCRIPTS
+#    endif // SCRIPTS
 #  else
 #    define OREGON_SCRIPT_EXT ".so"
-#    if defined(DO_SCRIPTS)
+#    if defined(SCRIPTS)
 #      define OREGON_SCRIPT_NAME "liboregonscript"
 #    else
 #      define OREGON_SCRIPT_NAME "liboregoninterface"
-#    endif // DO_SCRIPTS
+#    endif // SCRIPTS
 #  endif //__APPLE_CC__
 #  define OREGON_PATH_MAX PATH_MAX
 #endif //PLATFORM
