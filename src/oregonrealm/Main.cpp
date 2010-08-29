@@ -44,8 +44,8 @@
 # define _REALMDCONFVERSION 2007062001
 #endif
 
-#ifndef OREGON_REALM_CONFIG
-# define OREGON_REALM_CONFIG  "oregonrealm.conf"
+#ifndef _OREGON_REALM_CONFIG
+# define _OREGON_REALM_CONFIG  "oregonrealm.conf"
 #endif
 
 #ifdef WIN32
@@ -89,7 +89,7 @@ void usage(const char *prog)
 extern int main(int argc, char **argv)
 {
     ///- Command line parsing
-    char const* cfg_file = OREGON_REALM_CONFIG;
+    char const* cfg_file = _OREGON_REALM_CONFIG;
 
 #ifdef WIN32
     char const *options = ":c:s:";
