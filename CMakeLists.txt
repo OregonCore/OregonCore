@@ -45,6 +45,7 @@ option(SCRIPTS "Build with scripts included" 1)
 option(DO_CLI "With CLI" 1)
 option(COREDEBUG "Build with additional debug-code included" 0)
 option(SCRIPTPCH "Use precompiled headers when compiling scripts project" 1)
+option(GAMEPCH "Use precompiled headers when compiling game project" 1)
 option(WARNINGS "Enable all compile-warnings during compile" 0)
 
 #
@@ -131,6 +132,7 @@ execute_process(
 
 if(DEFINED NOPCH)
   set(SCRIPTPCH 0)
+  set(GAMEPCH 0)
 endif()
 
 #
@@ -159,11 +161,17 @@ message("")
 # Show infomation about the options selected during configuration
 #
 
-if(SCRIPTS)
+if( GAMEPCH )
+  message("* Build game w/PCH      : Yes (default)")
+else()
+  message("* Build game w/PCH      : No")
+endif()
+
+if( SCRIPTS )
   message("* Build with scripts    : Yes (default)")
   set(SCRIPT_LIB oregonscript)
   set(SCRIPT_INCLUDE src/bindings/scripts/include)
-  ADD_DEFINITIONS(-DSCRIPTS)
+  add_definitions(-DSCRIPTS)
 else()
   message("* Build with scripts    : No")
   set(SCRIPTPCH 0)

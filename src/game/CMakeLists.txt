@@ -1,290 +1,44 @@
+if( GAMEPCH )
+  include_directories(${CMAKE_CURRENT_BINARY_DIR})
+endif()
 
-########### next target ###############
+file(GLOB sources_localdir *.cpp *.h)
 
-SET(game_STAT_SRCS
-   AccountMgr.cpp
-   AccountMgr.h
-   AddonHandler.cpp
-   AddonHandler.h
-   CombatAI.cpp
-   CombatAI.h
-   AnimalRandomMovementGenerator.h
-   ArenaTeam.cpp
-   ArenaTeam.h
-   ArenaTeamHandler.cpp
-   AuctionHouseBot.cpp
-   AuctionHouseBot.h
-   AuctionHouseHandler.cpp
-   AuctionHouseMgr.cpp
-   AuctionHouseMgr.h
-   Bag.cpp
-   Bag.h
-   BattleGround.cpp
-   BattleGroundAA.cpp
-   BattleGroundAB.cpp
-   BattleGroundAV.cpp
-   BattleGroundBE.cpp
-   BattleGroundEY.cpp
-   BattleGroundNA.cpp
-   BattleGroundRL.cpp
-   BattleGroundWS.cpp
-   BattleGround.h
-   BattleGroundAA.h
-   BattleGroundAB.h
-   BattleGroundAV.h
-   BattleGroundBE.h
-   BattleGroundEY.h
-   BattleGroundNA.h
-   BattleGroundRL.h
-   BattleGroundWS.h
-   BattleGroundHandler.cpp
-   BattleGroundMgr.cpp
-   BattleGroundMgr.h
-   Cell.h
-   CellImpl.h
-   Channel.cpp
-   Channel.h
-   ChannelHandler.cpp
-   ChannelMgr.h
-   CharacterHandler.cpp
-   Chat.cpp
-   Chat.h
-   ChatHandler.cpp
-   CombatHandler.cpp
-   ConfusedMovementGenerator.cpp
-   ConfusedMovementGenerator.h
-   Corpse.cpp
-   Corpse.h
-   CreatureAI.cpp
-   CreatureAI.h
-   CreatureAIFactory.h
-   CreatureAIImpl.h
-   CreatureAIRegistry.cpp
-   CreatureAIRegistry.h
-   CreatureAISelector.cpp
-   CreatureAISelector.h
-   CreatureEventAI.cpp
-   CreatureEventAIMgr.cpp
-   Creature.cpp
-   Creature.h
-   CreatureGroups.cpp
-   CreatureGroups.h
-   DBCEnums.h
-   DBCStores.cpp
-   DBCStores.h
-   DBCStructure.h
-   DBCfmt.h
-   Debugcmds.cpp
-   DestinationHolder.cpp
-   DestinationHolder.h
-   DestinationHolderImp.h
-   DuelHandler.cpp
-   DynamicObject.cpp
-   DynamicObject.h
-   FleeingMovementGenerator.cpp
-   FleeingMovementGenerator.h
-   Formulas.h
-   GameEvent.cpp
-   GameEvent.h
-   GameObject.cpp
-   GameObject.h
-   GlobalEvents.cpp
-   GlobalEvents.h
-   GossipDef.cpp
-   GossipDef.h
-   GridDefines.h
-   GridNotifiers.cpp
-   GridNotifiers.h
-   GridNotifiersImpl.h
-   GridStates.cpp
-   GridStates.h
-   Group.cpp
-   Group.h
-   GroupHandler.cpp
-   GuardAI.cpp
-   GuardAI.h
-   Guild.cpp
-   Guild.h
-   GuildHandler.cpp
-   HomeMovementGenerator.cpp
-   HomeMovementGenerator.h
-   HostileRefManager.cpp
-   HostileRefManager.h
-   IdleMovementGenerator.cpp
-   IdleMovementGenerator.h
-   InstanceData.cpp
-   InstanceData.h
-   InstanceSaveMgr.cpp
-   InstanceSaveMgr.h
-   Item.cpp
-   Item.h
-   ItemEnchantmentMgr.cpp
-   ItemEnchantmentMgr.h
-   ItemHandler.cpp
-   ItemPrototype.h
-   Language.h
-   Level0.cpp
-   Level1.cpp
-   Level2.cpp
-   Level3.cpp
-   LFGHandler.cpp
-   LootHandler.cpp
-   LootMgr.cpp
-   LootMgr.h
-   Mail.cpp
-   Mail.h
-   Map.cpp
-   Map.h
-   MapInstanced.cpp
-   MapInstanced.h
-   MapManager.cpp
-   MapManager.h
-   MapUpdater.cpp
-   MapUpdater.h
-   MiscHandler.cpp
-   MotionMaster.cpp
-   MotionMaster.h
-   MovementGenerator.cpp
-   MovementGenerator.h
-   MovementGeneratorImpl.h
-   MovementHandler.cpp
-   NPCHandler.cpp
-   NPCHandler.h
-   ObjectAccessor.cpp
-   ObjectAccessor.h
-   Object.cpp
-   ObjectGuid.cpp
-   ObjectGuid.h
-   ObjectGridLoader.cpp
-   ObjectGridLoader.h
-   Object.h
-   ObjectMgr.cpp
-   ObjectMgr.h
-   Opcodes.cpp
-   Opcodes.h
-   OutdoorPvP.cpp
-   OutdoorPvP.h
-   OutdoorPvPEP.cpp
-   OutdoorPvPEP.h
-   OutdoorPvPHP.cpp
-   OutdoorPvPHP.h
-   OutdoorPvPMgr.cpp
-   OutdoorPvPMgr.h
-   OutdoorPvPNA.cpp
-   OutdoorPvPNA.h
-   OutdoorPvPSI.cpp
-   OutdoorPvPSI.h
-   OutdoorPvPTF.cpp
-   OutdoorPvPTF.h
-   OutdoorPvPZM.cpp
-   OutdoorPvPZM.h
-   PassiveAI.cpp
-   PassiveAI.h
-   Path.h
-   PetAI.cpp
-   PetAI.h
-   Pet.cpp
-   Pet.h
-   PetHandler.cpp
-   PetitionsHandler.cpp
-   Player.cpp
-   Player.h
-   PlayerDump.cpp
-   PlayerDump.h
-   PointMovementGenerator.cpp
-   PointMovementGenerator.h
-   QueryHandler.cpp
-   QuestDef.cpp
-   QuestDef.h
-   QuestHandler.cpp
-   RandomMovementGenerator.cpp
-   RandomMovementGenerator.h
-   ReactorAI.cpp
-   ReactorAI.h
-   ScriptCalls.cpp
-   ScriptCalls.h
-   SharedDefines.h
-   SkillHandler.cpp
-   SpellAuraDefines.h
-   SpellAuras.cpp
-   SpellAuras.h
-   Spell.cpp
-   SpellEffects.cpp
-   Spell.h
-   SkillDiscovery.cpp
-   SkillDiscovery.h
-   SkillExtraItems.cpp
-   SkillExtraItems.h
-   SpellHandler.cpp
-   SocialMgr.cpp
-   SocialMgr.h
-   SpellMgr.cpp
-   SpellMgr.h
-   StatSystem.cpp
-   TargetedMovementGenerator.cpp
-   TargetedMovementGenerator.h
-   TaxiHandler.cpp
-   TemporarySummon.cpp
-   TemporarySummon.h
-   TicketHandler.cpp
-   TicketMgr.cpp
-   TicketMgr.h
-   TotemAI.cpp
-   TotemAI.h
-   Totem.cpp
-   Totem.h
-   TradeHandler.cpp
-   Transports.cpp
-   Transports.h
-   ThreatManager.cpp
-   ThreatManager.h
-   Traveller.h
-   Unit.cpp
-   Unit.h
-   UnitAI.cpp
-   UnitAI.h
-   UnitEvents.h
-   UpdateData.cpp
-   UpdateData.h
-   UpdateFields.h
-   UpdateMask.h
-   VoiceChatHandler.cpp
-   WaypointManager.cpp
-   WaypointManager.h
-   WaypointMovementGenerator.cpp
-   WaypointMovementGenerator.h
-   Weather.cpp
-   Weather.h
-   World.cpp
-   World.h
-   WorldLog.cpp
-   WorldLog.h
-   WorldSession.cpp
-   WorldSession.h
-   WorldSocket.cpp
-   WorldSocket.h
-   WorldSocketMgr.cpp
-   WorldSocketMgr.h
-   FollowerReference.cpp
-   FollowerReference.h
-   FollowerRefManager.h
-   GroupReference.cpp
-   GroupReference.h
-   GroupRefManager.h
-   OutdoorPvPImpl.h
-   ZoneScript.h
+# Create game-libary
+
+if( GAMEPCH AND MSVC )
+  set(game_STAT_SRCS
+    PrecompiledHeaders/gamePCH.cpp
+    PrecompiledHeaders/gamePCH.h
+  )
+endif()
+
+set(game_STAT_SRCS
+  ${game_STAT_SRCS}
+  ${sources_localdir}
 )
 
 include_directories(
-  ${ACE_INCLUDE_DIR}
   ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/dep/include
   ${CMAKE_SOURCE_DIR}/src/framework
   ${CMAKE_SOURCE_DIR}/src/shared
   ${CMAKE_SOURCE_DIR}/src/shared/vmap
   ${CMAKE_SOURCE_DIR}/src/shared/Database
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${ACE_INCLUDE_DIR}
   ${MYSQL_INCLUDE_DIR}
 )
 
 add_library(game STATIC ${game_STAT_SRCS})
-ADD_DEPENDENCIES(game genrev)
+
+add_dependencies(game genrev)
+
+# Generate precompiled header
+if( GAMEPCH )
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    add_precompiled_header(game ${CMAKE_CURRENT_SOURCE_DIR}/PrecompiledHeaders/gamePCH.h)
+  elseif(MSVC)
+    add_native_precompiled_header(game ${CMAKE_CURRENT_SOURCE_DIR}/PrecompiledHeaders/gamePCH)
+  endif()
+endif()
