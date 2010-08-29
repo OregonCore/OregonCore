@@ -135,10 +135,6 @@ inline double pi() {
     return 3.1415926535898;
 }
 
-inline float pif() {
-    return 3.1415926535898f;
-}
-
 inline double halfPi() {
     return 1.57079633;
 }
@@ -609,18 +605,6 @@ inline double aCos (double fValue) {
             return 0.0;
     } else {
         return pi();
-    }
-}
-
-inline float acos (float fValue) {
-    if ( -1.0f < fValue ) {
-        if ( fValue < 1.0f ) {
-            return ::acos(fValue);
-        } else {
-            return 0.0f;
-        }
-    } else {
-        return pif();
     }
 }
 

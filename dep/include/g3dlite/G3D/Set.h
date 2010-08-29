@@ -57,12 +57,9 @@ public:
 
     /**
      Inserts into the table if not already present.
-     Returns true if this is the first time the element was added.
      */
-    bool insert(const T& member) {
-        bool isNew = false;
-        memberTable.getCreate(member, isNew) = true;
-        return isNew;
+    void insert(const T& member) {
+        memberTable.set(member, true);
     }
 
     /**

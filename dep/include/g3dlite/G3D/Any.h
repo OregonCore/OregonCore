@@ -5,7 +5,7 @@
  @maintainer Morgan McGuire
   
  @created 2006-06-11
- @edited  2010-03-16
+ @edited  2009-12-16
 
  Copyright 2000-2010, Morgan McGuire.
  All rights reserved.
@@ -34,14 +34,11 @@ class TextOutput;
 /** 
 \brief Easy loading and saving of human-readable configuration files.
 
-Any encodes typed, structured data and can serialize it to a human
+Encodes typed, structured data and can serialize it to a human
 readable format that is very similar to the Python language's data
-syntax.  It is well-suited for quickly creating human-readable file
-formats, especially since deserialization and serialization preserve
-comments and an Any can tell you what file and line it came from.  The
-syntax allows most C++ editors to properly highlight Any files, and
-makes it easy to design little ad-hoc C-like languages in
-configuration files.
+syntax.  Well-suited for quickly creating human-readable file formats,
+especially since deserialization and serialization preserve comments and
+an Any can tell you what file and line it came from.
 
 The class is designed so that copying Anys generally is fast, even if
 it is a large array or table.  This is because data is shared between
@@ -53,17 +50,15 @@ Sample File:
 {
    shape = "round",
 
-   // in meters
+   # in meters
    radius = 3.7,
 
    position = Vector3(1.0, -1.0, 0.0),
-   video = { format = "RGB8", size = (320, 200)},
-
-   material = #include("rocks.mat")
+   texture = { format = "RGB8", size = (320, 200)}
 }
 </pre>
 
-Sample code using Any:
+Sample code using:
 <pre>
 Any x;
 x.load("ball.txt");
@@ -115,21 +110,6 @@ Vector3::Vector3(const Any& any) {
 }
 </pre>
 
-It is often convenient to iterate through the table portion:
-
-<pre>
-    for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
-        const std::string& k = toLower(it->key);
-        if (key == "hello") {
-           ...
-        } else if (key == "goodbye") {
-           ...
-        } else {
-           any.verify(false, "Unsupported key: " + it->key);
-        }
-    }
-</pre>
-
 \section BNF
 Serialized format BNF:
 
@@ -139,38 +119,27 @@ identifier-op ::= "::" | "->" | "."
 
 identifier-exp ::= [identifier-op] identifier (identifier-op identifier)*
 
-comment     ::= C++ single or multi-line comments
+comment     ::= "#" <any characters> "\n"
 separator   ::= "," | ";"
 
 number      ::= <legal C printf number format>
 string      ::= <legal C double-quoted string; backslashes must be escaped>
 boolean     ::= "True" | "False"
 none        ::= "None"
-array       ::= ("(" | "[") [ value (separator value)* [separator] ] (")" | "]")
+array       ::= "(" [value ("," value)*] ")"
 pair        ::= (identifier | string) "=" value
-table       ::= "{" [ pair (separator pair)* [separator] ] "}"
-named-array ::= identifier-exp array
-named-table ::= identifier-exp table
-include     ::= "#" "include" "(" string ")"
+table       ::= "{" [pair (separator pair)*] "}"
+named-array ::= identifier-exp tuple
+named-table ::= identifier-exp dict
 
-value       ::= [comment] (none | number | boolean | string | array | table | named-array | named-table | include)
+value       ::= [comment] (none | number | boolean | string | array | table | named-array | named-table)
 </pre>
 
 Except for single-line comments, whitespace is not significant.  
 All parsing is case-insensitive.
 
-The include expression pastes the contents of the named file in as if
-they appeared in the original source.  Note that an include expression
-can only appear in the locations where a value is expected.  This means
-that it cannot yield more than one element of an array and cannot serve
-as the pair in a table.
-
 The deserializer allows the substitution of [] for () when writing
-tuples and ";" for ",".  These are convenient when mimicing a
-programming language, e.g., <code>"[ printf("hello world."); clearScreen();]"</code> 
-parses as an array containing two named arrays within it. The 
-deserializer also allows a trailing comma inside any array or table,
-which also convenient when commenting out the last element.
+tuples and ";" for ",".
 
 The serializer indents four spaces for each level of nesting. 
 Tables are written with the keys in alphabetic order.
@@ -438,31 +407,8 @@ public:
     const std::string& string() const;
     bool boolean() const;
 
-    /** If a valid string, takes the string value and creates a fully qualified filename.
-        If not found, the returned string is empty.
-
-        The file is searched for the following ways:
-        
-        - In the directory from which the Any was loaded.
-        - By calling System::findDataFile as you would with other data files.
-     */
-    std::string resolveStringAsFilename() const;
-
-
     /** If this is named ARRAY or TABLE, returns the name. */
     const std::string& name() const;
-
-    /** If this is named ARRAY or TABLE, returns true if the name begins with \a s.  The comparision is case insensitive. */
-    bool nameBeginsWith(const std::string& s) const;
-
-    /** If this is named ARRAY or TABLE, returns true if the name begins with \a s.  The comparision is case insensitive. */
-    bool nameBeginsWith(const char* s) const;
-
-    /** If this is named ARRAY or TABLE, returns true if the name is \a s.  The comparision is case insensitive. */
-    bool nameEquals(const std::string& s) const;
-
-    /** If this is named ARRAY or TABLE, returns true if the name is\a s.  The comparision is case insensitive. */
-    bool nameEquals(const char* s) const;
 
     /** \brief Set the name used when serializing an ARRAY or TABLE.
     
@@ -492,14 +438,6 @@ public:
     /** For an array, returns the ith element */
     const Any& operator[](int i) const;
     Any& operator[](int i);
-
-    const Any& last() const {
-        return (*this)[size() - 1];
-    }
-
-    Any& last() {
-        return (*this)[size() - 1];
-    }
 
     /** Directly exposes the underlying data structure for an ARRAY. */
     const Array<Any>& array() const;
@@ -565,10 +503,6 @@ public:
     /** for an ARRAY, resizes and returns the last element */
     Any& next();
 
-    /** The parent directory of the location from which this Any was loaded.  This is useful for 
-       interpreting filenames relative to the Any's source location,
-       which may not match the current directory if the Any was from an included file. */
-    std::string sourceDirectory() const;
 
     /** True if the Anys are exactly equal, ignoring comments.  Applies deeply on arrays and tables. */
     bool operator==(const Any& x) const;
@@ -608,14 +542,9 @@ public:
     */
     void verify(bool value, const std::string& message = "") const;
 
-
-    /** Verifies that the name <i>begins with</i> identifier \a n (case insensitive). 
-        It may contain identifier operators after this */
+    /** Verifies that the name begins with identifier \a n.  It may contain
+        identifier operators after this */
     void verifyName(const std::string& n) const;
-
-    /** Verifies that the name <i>begins with</i> identifier \a n or \a m (case insensitive). 
-        It may contain identifier operators after this */
-    void verifyName(const std::string& n, const std::string& m) const;
 
     /** Verifies that the type is \a t. */
     void verifyType(Type t) const;

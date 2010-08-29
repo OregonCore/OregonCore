@@ -22,170 +22,112 @@
 
   Enum classes are initialized to their zero value by default.
 
-  You must implement the following method before calling G3D_DECLARE_ENUM_CLASS_METHODS, as either:
-
-  <pre>
-    static const char* toString(int i, Value& v) {
-        static const char* str[] = {"FUEL", "FOOD", "WATER", NULL}; // Whatever your enum values are
-        static const Value val[] = {FUEL, FOOD, WATER};             // Whatever your enum values are
-        const char* s = str[i];
-        if (s) {
-            v = val[i];
-        }
-        return s;
-    }
-  </pre>
-
   See GLG3D/GKey.h for an example.
   \sa G3D_DECLARE_ENUM_CLASS_HASHCODE
  */
 #define G3D_DECLARE_ENUM_CLASS_METHODS(Classname)\
-private: \
-    void fromString(const std::string& x) {\
-        Value v;\
-        const char* s;\
-        int i = 0;\
+    inline Classname(char v) : value((Value)v) {}\
 \
-        do {\
-            s = toString(i, v);\
-            if (x == s) {\
-                value = v;\
-                return;\
-            }\
-            ++i;\
-        } while (s);\
-    }\
+    inline Classname() : value((Value)0) {}\
 \
-public:\
+    inline Classname(const Value v) : value(v) {}\
 \
-    const char* toString() const {\
-        const char* s;\
-        int i = 0;\
-        Value v = (Value)0;\
-        while (true) {\
-            s = toString(i, v);\
-            if ((s == NULL) || (v == value)) {\
-                return s;\
-            }\
-            ++i;\
-        }\
-        return NULL;\
-    }\
-\
-    explicit Classname(const std::string& x) : value((Value)0) {\
-        fromString(x);\
-    }\
-\
-    Classname(const Any& a) : value((Value)0) {\
-        fromString(a.string());\
-    }\
-\
-    operator Any() const {\
-        return Any(toString());\
-    }\
-\
-    Classname(char v) : value((Value)v) {}\
-\
-    Classname() : value((Value)0) {}\
-\
-    Classname(const Value v) : value(v) {}\
-\
-    explicit Classname(int v) : value((Value)v) {}\
+    explicit inline Classname(int v) : value((Value)v) {}\
 \
     /** Support cast back to the Value type, which is needed to allow implicit assignment inside unions. */\
     /*inline operator Value() const {
         return value;
 	}*/\
 \
-    operator int() const {\
+    inline operator int() const {\
         return (int)value;\
     }\
 \
-    bool operator== (const Classname other) const {\
+    inline bool operator== (const Classname other) const {\
         return value == other.value;\
     }\
 \
-    bool operator== (const Classname::Value other) const {\
+    inline bool operator== (const Classname::Value other) const {\
         return value == other;\
     }\
 \
-    bool operator!= (const Classname other) const {\
+    inline bool operator!= (const Classname other) const {\
         return value != other.value;\
     }\
 \
-    bool operator!= (const Classname::Value other) const {\
+    inline bool operator!= (const Classname::Value other) const {\
         return value != other;\
     }\
 \
-    bool operator< (const Classname other) const {\
+    inline bool operator< (const Classname other) const {\
         return value < other.value;\
     }\
 \
-    bool operator> (const Classname other) const {\
+    inline bool operator> (const Classname other) const {\
         return value > other.value;\
     }\
 \
-    bool operator>= (const Classname other) const {\
+    inline bool operator>= (const Classname other) const {\
         return value >= other.value;\
     }\
 \
-    bool operator<= (const Classname other) const {\
+    inline bool operator<= (const Classname other) const {\
         return value <= other.value;\
     }\
 \
-    bool operator< (const Value other) const {\
+    inline bool operator< (const Value other) const {\
         return value < other;\
     }\
 \
-    bool operator> (const Value other) const {\
+    inline bool operator> (const Value other) const {\
         return value > other;\
     }\
 \
-    bool operator<= (const Value other) const {\
+    inline bool operator<= (const Value other) const {\
         return value <= other;\
     }\
 \
-    bool operator>= (const Value other) const {\
+    inline bool operator>= (const Value other) const {\
         return value >= other;\
     }\
 \
-    Classname& operator-- () {\
+    inline Classname& operator-- () {\
         value = (Value)((int)value - 1);\
         return *this;\
     }\
 \
-    Classname& operator++ () {\
+    inline Classname& operator++ () {\
         value = (Value)((int)value + 1);\
         return *this;\
     }\
 \
-    Classname& operator+= (const int x) {\
+    inline Classname& operator+= (const int x) {\
         value = (Value)((int)value + x);\
         return *this;\
     }\
 \
-    Classname& operator-= (const int x) {\
+    inline Classname& operator-= (const int x) {\
         value = (Value)((int)value - x);\
         return *this;\
     }\
 \
-    Classname operator+ (const int x) const {\
+    inline Classname operator+ (const int x) const {\
         return Classname((int)value + x);\
     }\
 \
-    Classname operator- (const int x) const {\
+    inline Classname operator- (const int x) const {\
         return Classname((int)value - x);\
     }\
 \
-    unsigned int hashCode() const {\
+    inline unsigned int hashCode() const {\
         return (unsigned int)value;\
     }\
 \
-    void serialize(BinaryOutput& b) const {\
+    inline void serialize(BinaryOutput& b) const {\
         b.writeInt32(value);\
     }\
 \
-    void deserialize(BinaryInput& b) {\
+    inline void deserialize(BinaryInput& b) {\
         value = (Value)b.readInt32();\
     }
 

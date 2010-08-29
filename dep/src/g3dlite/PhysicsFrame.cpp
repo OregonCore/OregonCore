@@ -4,12 +4,10 @@
  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
  
  @created 2002-07-09
- @edited  2010-03-25
+ @edited  2006-01-25
 */
 
 #include "G3D/platform.h"
-#include "G3D/Any.h"
-#include "G3D/stringutils.h"
 #include "G3D/PhysicsFrame.h"
 #include "G3D/BinaryInput.h"
 #include "G3D/BinaryOutput.h"
@@ -30,37 +28,6 @@ PhysicsFrame::PhysicsFrame(
 }
 
 
-PhysicsFrame::PhysicsFrame(const Any& a) {
-    const std::string& n = toLower(a.name());
-    *this = PhysicsFrame();
-
-    if (beginsWith(n, "vector3")) {
-        *this = PhysicsFrame(Vector3(a));
-    } else if (beginsWith(n, "matrix3")) {        
-        *this = PhysicsFrame(Matrix3(a));
-    } else if (beginsWith(n, "cframe") || beginsWith(n, "coordinateframe")) {        
-        *this = PhysicsFrame(CoordinateFrame(a));
-    } else if (beginsWith(n, "pframe") || beginsWith(n, "physicsframe")) {
-        if (a.type() == Any::ARRAY) {
-            a.verifySize(2);
-            rotation    = a[0];
-            translation = a[1];
-        } else {
-            for (Any::AnyTable::Iterator it = a.table().begin(); it.hasMore(); ++it) {
-                const std::string& n = toLower(it->key);
-                if (n == "translation") {
-                    translation = it->value;
-                } else if (n == "rotation") {
-                    rotation = it->value;
-                } else {
-                    a.verify(false, "Illegal table key: " + it->key);
-                }
-            }
-        }
-    }
-}
-
-
 PhysicsFrame PhysicsFrame::operator*(const PhysicsFrame& other) const {
     PhysicsFrame result;
 
@@ -71,7 +38,7 @@ PhysicsFrame PhysicsFrame::operator*(const PhysicsFrame& other) const {
 }
 
 
-PhysicsFrame::operator CoordinateFrame() const {
+CoordinateFrame PhysicsFrame::toCoordinateFrame() const {
     CoordinateFrame f;
     
     f.translation = translation;

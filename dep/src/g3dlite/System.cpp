@@ -27,7 +27,6 @@
 #include "G3D/Table.h"
 #include "G3D/GMutex.h"
 #include "G3D/units.h"
-#include "G3D/FileSystem.h"
 #include <time.h>
 
 #include <cstring>
@@ -341,6 +340,40 @@ void getG3DVersion(std::string& s) {
     s = cstr;
 }
 
+#if 0 // TODO: delete
+struct Directory {
+    std::string          path;
+    Array<std::string>   contents;
+};
+
+static bool maybeAddDirectory(const std::string& newPath, Array<Directory>& directoryArray, bool recurse = true) {
+    if (fileExists(newPath)) {
+        Directory& d = directoryArray.next();
+        d.path = newPath;
+        getFiles(pathConcat(newPath, "*"), d.contents);
+        Array<std::string> dirs;
+        getDirs(pathConcat(newPath, "*"), dirs);
+        d.contents.append(dirs);
+
+        if (recurse) {
+            // Look for subdirectories
+            static const std::string subdirs[] = 
+            {"font", "gui", "SuperShader", "cubemap", "icon", "material", "image", "md2", "md3", "ifs", "3ds", "sky", ""};
+
+            for (int j = 0; j < dirs.size(); ++j) {
+                for (int i = 0; ! subdirs[i].empty(); ++i) {
+                    if (dirs[j] == subdirs[i]) {
+                        maybeAddDirectory(pathConcat(newPath, dirs[j]), directoryArray, false);
+                    }
+                }
+            }
+        }
+        return true;
+    } else {
+        return false;
+    }
+}
+#endif
 
 std::string System::findDataFile
 (const std::string&  full,
@@ -352,14 +385,14 @@ std::string System::findDataFile
 
     // First check if the file exists as requested.  This will go
     // through the FileSystemCache, so most calls do not touch disk.
-    if (FileSystem::exists(full)) {
+    if (fileExists(full)) {
         return full;
     }
 
     // Now check where we previously found this file.
     std::string* last = lastFound.getPointer(full);
     if (last != NULL) {
-        if (FileSystem::exists(*last)) {
+        if (fileExists(*last)) {
             // Even if cwd has changed the file is still present.
             // We won't notice if it has been deleted, however.
             return *last;
@@ -372,33 +405,20 @@ std::string System::findDataFile
     // Places to look
     static Array<std::string> directoryArray;
 
-    std::string initialAppDataDir(instance().m_appDataDir);
-    const char* g3dPath = getenv("G3DDATA");
-
     if (directoryArray.size() == 0) {
         // Initialize the directory array
         RealTime t0 = System::time();
 
         Array<std::string> baseDirArray;
+
+        std::string initialAppDataDir(instance().m_appDataDir);
         
         baseDirArray.append("");
         if (! initialAppDataDir.empty()) {
             baseDirArray.append(initialAppDataDir);
         }
 
-#       ifdef G3D_WIN32
-        if (g3dPath == NULL) {
-            // If running the demos under visual studio from the G3D.sln file,
-            // this will locate the data directory.
-            const char* paths[] = {"../data-files/", "../../data-files/", "../../../data-files/", NULL};
-            for (int i = 0; paths[i]; ++i) {
-                if (FileSystem::exists(pathConcat(paths[i], "G3D-DATA-README.TXT"))) {
-                    g3dPath = paths[i];
-                    break;
-                }
-            }
-        }
-#       endif
+        const char* g3dPath = getenv("G3DDATA");
 
         if (g3dPath && (initialAppDataDir != g3dPath)) {
             baseDirArray.append(g3dPath);
@@ -408,11 +428,11 @@ std::string System::findDataFile
             {"font", "gui", "SuperShader", "cubemap", "icon", "material", "image", "md2", "md3", "ifs", "3ds", "sky", ""};
         for (int j = 0; j < baseDirArray.size(); ++j) {
             std::string d = baseDirArray[j];
-            if ((d == "") || FileSystem::exists(d)) {
+            if (fileExists(d)) {
                 directoryArray.append(d);
                 for (int i = 0; ! subdirs[i].empty(); ++i) {
                     const std::string& p = pathConcat(d, subdirs[i]);
-                    if (FileSystem::exists(p)) {
+                    if (fileExists(p)) {
                         directoryArray.append(p);
                     }
                 }
@@ -424,7 +444,7 @@ std::string System::findDataFile
 
     for (int i = 0; i < directoryArray.size(); ++i) {
         const std::string& p = pathConcat(directoryArray[i], full);
-        if (FileSystem::exists(p)) {
+        if (fileExists(p)) {
             lastFound.set(full, p);
             return p;
         }
@@ -434,29 +454,9 @@ std::string System::findDataFile
         // Generate an error message
         std::string locations;
         for (int i = 0; i < directoryArray.size(); ++i) {
-            locations += "\'" + pathConcat(directoryArray[i], full) + "'\n";
+            locations += pathConcat(directoryArray[i], full) + "\n";
         }
-
-        std::string msg = "Could not find '" + full + "'.\n\n";
-        msg += "cwd = \'" + FileSystem::currentDirectory() + "\'\n";
-        if (g3dPath) {
-            msg += "G3DDATA = ";
-            if (! FileSystem::exists(g3dPath)) {
-                msg += "(illegal path!) ";
-            }
-            msg += std::string(g3dPath) + "\'\n";
-        } else {
-            msg += "(G3DDATA environment variable is undefined)\n";
-        }
-        msg += "GApp::Settings.dataDir = ";
-        if (! FileSystem::exists(initialAppDataDir)) {
-            msg += "(illegal path!) ";
-        }
-        msg += std::string(initialAppDataDir) + "\'\n";
-
-        msg += "\nLocations searched:\n" + locations;
-
-        alwaysAssertM(false, msg);
+        alwaysAssertM(false, "Could not find '" + full + "' in:\n" + locations);
     }
 
     // Not found
@@ -474,23 +474,19 @@ std::string demoFindData(bool errorIfNotFound) {
     if (g3dPath) {
         return g3dPath;
 #   ifdef G3D_WIN32
-    } else if (FileSystem::exists("../data")) {
+    } else if (fileExists("../data")) {
         // G3D install on Windows
         return "../data";
-    } else if (FileSystem::exists("../data-files")) {
+    } else if (fileExists("../data-files")) {
         // G3D source on Windows
         return "../data-files";
-    } else if (FileSystem::exists("c:/libraries/G3D/data")) {
-        return "c:/libraries/G3D/data";
 #   else
-    } else if (FileSystem::exists("../../../../data")) {
+    } else if (fileExists("../../../../data")) {
         // G3D install on Unix
         return "../../../../data";
-    } else if (FileSystem::exists("../../../../data-files")) {
+    } else if (fileExists("../../../../data-files")) {
         // G3D source on Unix
         return "../../../../data-files";
-    } else if (FileSystem::exists("/usr/local/G3D/data")) {
-        return "/usr/local/G3D/data";
 #   endif
     } else {
         return "";
@@ -564,7 +560,7 @@ void System::getStandardProcessorExtensions() {
 #endif
 }
 
-#if defined(G3D_WIN32) && !defined(G3D_64BIT) /* G3DFIX: Don't check if on 64-bit Windows platforms */
+#if defined(G3D_WIN32) && !defined(G3D_64BIT)
     #pragma message("Port System::memcpy SIMD to all platforms")
 /** Michael Herf's fast memcpy */
 void memcpyMMX(void* dst, const void* src, int nbytes) {
@@ -615,7 +611,7 @@ void memcpyMMX(void* dst, const void* src, int nbytes) {
 #endif
 
 void System::memcpy(void* dst, const void* src, size_t numBytes) {
-#if defined(G3D_WIN32) && !defined(G3D_64BIT) /* G3DFIX: Don't check if on 64-bit Windows platforms */
+#if defined(G3D_WIN32) && !defined(G3D_64BIT)
     memcpyMMX(dst, src, numBytes);
 #else
     ::memcpy(dst, src, numBytes);
@@ -625,7 +621,7 @@ void System::memcpy(void* dst, const void* src, size_t numBytes) {
 
 /** Michael Herf's fastest memset. n32 must be filled with the same
     character repeated. */
-#if defined(G3D_WIN32) && !defined(G3D_64BIT) /* G3DFIX: Don't check if on 64-bit Windows platforms */
+#if defined(G3D_WIN32) && !defined(G3D_64BIT)
     #pragma message("Port System::memfill SIMD to all platforms")
 
 // On x86 processors, use MMX
@@ -664,7 +660,7 @@ void memfill(void *dst, int n32, unsigned long i) {
 
 
 void System::memset(void* dst, uint8 value, size_t numBytes) {
-#if defined(G3D_WIN32) && !defined(G3D_64BIT) /* G3DFIX: Don't check if on 64-bit Windows platforms */
+#if defined(G3D_WIN32) && !defined(G3D_64BIT)
     uint32 v = value;
     v = v + (v << 8) + (v << 16) + (v << 24); 
     G3D::memfill(dst, v, numBytes);
@@ -1681,7 +1677,7 @@ std::string System::currentDateString() {
 
 // VC on Intel
 void System::cpuid(CPUIDFunction func, uint32& areg, uint32& breg, uint32& creg, uint32& dreg) {
-#if !defined(G3D_64BIT) /* G3DFIX: Don't check if on 64-bit platform */
+#if !defined(G3D_64BIT)
     // Can't copy from assembler direct to a function argument (which is on the stack) in VC.
     uint32 a,b,c,d;
 

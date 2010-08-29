@@ -4,7 +4,7 @@
   @maintainer Morgan McGuire, http://graphics.cs.williams.edu
 
   @created 2003-05-23
-  @edited  2010-05-01
+  @edited  2010-01-01
 */
 
 #ifndef GLG3D_ImageFormat_H
@@ -13,7 +13,6 @@
 #include "G3D/platform.h"
 #include "G3D/Table.h"
 #include "G3D/enumclass.h"
-#include "G3D/Any.h"
 
 namespace G3D {
 
@@ -58,18 +57,12 @@ public:
         CODE_RGB8I,
         CODE_RGB8UI,
 
-        CODE_RGBA8UI,
-
         CODE_ARGB8,
         CODE_BGR8,
-
-        CODE_R8,
 
         CODE_RG8,
         CODE_RG8I,
         CODE_RG8UI,
-
-        CODE_RG16F,
 
         CODE_RGBA8,
         CODE_RGBA16,
@@ -267,13 +260,9 @@ public:
 
     static const ImageFormat* BGR8();
 
-    static const ImageFormat* R8();
-
     static const ImageFormat* RG8();
     static const ImageFormat* RG8I();
     static const ImageFormat* RG8UI();
-
-    static const ImageFormat* RG16F();
 
     static const ImageFormat* RGB5();
 
@@ -308,8 +297,6 @@ public:
     static const ImageFormat* RGB8I();    
 
     static const ImageFormat* RGB8UI();    
-
-    static const ImageFormat* RGBA8UI();    
     
     static const ImageFormat* RGB_DXT1();
 
@@ -389,18 +376,9 @@ public:
             NEAREST,
             BILINEAR,
             MHC,
-            BEST = MHC
+            HIGH_QUALITY = MHC
         };
     private:
-        static const char* toString(int i, Value& v) {
-            static const char* str[] = {"NEAREST", "BILINEAR", "MHC", "BEST", NULL}; 
-            static const Value val[] = {NEAREST, BILINEAR, MHC, BEST};
-            const char* s = str[i];
-            if (s) {
-                v = val[i];
-            }
-            return s;
-        }
 
         Value value;
 
@@ -421,7 +399,7 @@ public:
     */
     static bool convert(const Array<const void*>& srcBytes, int srcWidth, int srcHeight, const ImageFormat* srcFormat, int srcRowPadBits,
 	                    const Array<void*>& dstBytes, const ImageFormat* dstFormat, int dstRowPadBits,
-	                    bool invertY = false, BayerAlgorithm bayerAlg = BayerAlgorithm::MHC);
+	                    bool invertY = false, BayerAlgorithm bayerAlg = BayerAlgorithm::HIGH_QUALITY);
 
     /* Checks if a conversion between two formats is available. */
     static bool conversionAvailable(const ImageFormat* srcFormat, int srcRowPadBits, const ImageFormat* dstFormat, int dstRowPadBits, bool invertY = false);

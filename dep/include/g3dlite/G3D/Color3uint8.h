@@ -1,27 +1,20 @@
 /** 
   @file Color3uint8.h
  
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  @maintainer Morgan McGuire, graphics3d.com
  
   @created 2003-04-07
-  @edited  2010-03-24
+  @edited  2006-06-24
 
-  Copyright 2000-2010, Morgan McGuire.
+  Copyright 2000-2006, Morgan McGuire.
   All rights reserved.
  */
 
-#ifndef G3D_Color3uint8_h
-#define G3D_Color3uint8_h
+#ifndef G3D_COLOR3UINT8_H
+#define G3D_COLOR3UINT8_H
 
 #include "G3D/platform.h"
 #include "G3D/g3dmath.h"
-#ifdef max
-#undef max
-#endif
-
-#ifdef min
-#undef min
-#endif
 
 namespace G3D {
 
@@ -60,7 +53,7 @@ public:
 
     Color3uint8(class BinaryInput& bi);
 
-    static Color3uint8 fromARGB(uint32 i) {
+    inline static Color3uint8 fromARGB(uint32 i) {
         Color3uint8 c;
         c.r = (i >> 16) & 0xFF;
         c.g = (i >> 8) & 0xFF;
@@ -68,23 +61,15 @@ public:
         return c;
     }
 
-    Color3uint8 bgr() const {
+    inline Color3uint8 bgr() const {
         return Color3uint8(b, g, r);
-    }
-
-    Color3uint8 max(const Color3uint8 x) const {
-        return Color3uint8(G3D::max(r, x.r), G3D::max(g, x.g), G3D::max(b, x.b));
-    }
-
-    Color3uint8 min(const Color3uint8 x) const {
-        return Color3uint8(G3D::min(r, x.r), G3D::min(g, x.g), G3D::min(b, x.b));
     }
 
     /**
      Returns the color packed into a uint32
      (the upper byte is 0xFF)
      */
-    uint32 asUInt32() const {
+    inline uint32 asUInt32() const {
         return (0xFF << 24) + ((uint32)r << 16) + ((uint32)g << 8) + b;
     }
 
@@ -110,12 +95,12 @@ public:
         return (uint8*)this;
     }
 
-    bool operator==(const Color3uint8 other) const {
+    bool operator==(const Color3uint8& other) const {
         return (other.r == r) && (other.g == g) && (other.b == b);
     }
 
-    bool operator!=(const Color3uint8 other) const {
-        return ! (*this == other);
+    bool operator!=(const Color3uint8& other) const {
+        return (other.r != r) && (other.g != g) && (other.b != b);
     }
 }
 G3D_END_PACKED_CLASS(1)

@@ -21,8 +21,6 @@
 namespace G3D {
 
 /**
-  Arbitrary quaternion (not necessarily unit)
-
   Unit quaternions are used in computer graphics to represent
   rotation about an axis.  Any 3x3 rotation matrix can
   be stored as a quaternion.
@@ -44,7 +42,7 @@ namespace G3D {
   Do not subclass.
 
   <B>BETA API -- subject to change</B>
-  \cite Erik B. Dam, Martin Koch, Martin Lillholm, Quaternions, Interpolation and Animation.  Technical Report DIKU-TR-98/5, Department of Computer Science, University of Copenhagen, Denmark.  1998.
+  @cite Erik B. Dam, Martin Koch, Martin Lillholm, Quaternions, Interpolation and Animation.  Technical Report DIKU-TR-98/5, Department of Computer Science, University of Copenhagen, Denmark.  1998.
  */
 class Quat {
 private:
@@ -65,98 +63,29 @@ public:
     float x, y, z, w;
 
     /**
-     Initializes to a zero degree rotation, (0,0,0,1)
+     Initializes to a zero degree rotation.
      */
-    Quat() : x(0), y(0), z(0), w(1) {}
+    inline Quat() : x(0), y(0), z(0), w(1) {}
 
-    /** Expects "Quat(x,y,z,w)" or a Matrix3 constructor. */
-    Quat(const class Any& a);
+    Quat(
+        const Matrix3& rot);
 
-    Quat(const Matrix3& rot);
-
-    Quat(float _x, float _y, float _z, float _w) :
+    inline Quat(float _x, float _y, float _z, float _w) :
         x(_x), y(_y), z(_z), w(_w) {}
 
     /** Defaults to a pure vector quaternion */
-    Quat(const Vector3& v, float _w = 0) : x(v.x), y(v.y), z(v.z), w(_w) {
+    inline Quat(const Vector3& v, float _w = 0) : x(v.x), y(v.y), z(v.z), w(_w) {
     }
 
     /**
      The real part of the quaternion.
      */
-    const float& real() const {
+    inline const float& real() const {
         return w;
     }
 
-    float& real() {
+    inline float& real() {
         return w;
-    }
-
-	Quat operator-() const {
-		return Quat(-x, -y, -z, -w);
-	}
-
-    Quat operator-(const Quat& other) const {
-        return Quat(x - other.x, y - other.y, z - other.z, w - other.w);
-    }
-
-    Quat& operator-=(const Quat& q) {
-        x -= q.x;
-        y -= q.y;
-        z -= q.z;
-        w -= q.w;
-        return *this;
-    }
-
-    Quat operator+(const Quat& q) const {
-        return Quat(x + q.x, y + q.y, z + q.z, w + q.w);
-    }
-    
-    Quat& operator+=(const Quat& q) {
-        x += q.x;
-        y += q.y;
-        z += q.z;
-        w += q.w;
-        return *this;
-    }
-
-    /**
-     Negates the imaginary part.
-     */
-    Quat conj() const {
-        return Quat(-x, -y, -z, w);
-    }
-
-    float sum() const {
-        return x + y + z + w;
-    }
-
-    float average() const {
-        return sum() / 4.0f;
-    }
-
-    Quat operator*(float s) const {
-        return Quat(x * s, y * s, z * s, w * s);
-    }
-
-    Quat& operator*=(float s) {
-        x *= s;
-        y *= s;
-        z *= s;
-        w *= s;
-        return *this;
-    }
-
-
-	/** @cite Based on Watt & Watt, page 360 */
-    friend Quat operator* (float s, const Quat& q);
-
-    inline Quat operator/(float s) const {
-        return Quat(x / s, y / s, z / s, w / s);
-    }
-
-    float dot(const Quat& other) const {
-        return (x * other.x) + (y * other.y) + (z * other.z) + (w * other.w);
     }
 
     /** Note: two quats can represent the Quat::sameRotation and not be equal. */
@@ -171,14 +100,18 @@ public:
         return fuzzyEq(q) || fuzzyEq(-q);
     }
 
+	inline Quat operator-() const {
+		return Quat(-x, -y, -z, -w);
+	}
+
     /**
      Returns the imaginary part (x, y, z)
      */
-    const Vector3& imag() const {
+    inline const Vector3& imag() const {
         return *(reinterpret_cast<const Vector3*>(this));
     }
 
-    Vector3& imag() {
+    inline Vector3& imag() {
         return *(reinterpret_cast<Vector3*>(this));
     }
 
@@ -225,13 +158,53 @@ public:
 	/** Normalized linear interpolation of quaternion components. */
 	Quat nlerp(const Quat& other, float alpha) const;
 
+    /**
+     Negates the imaginary part.
+     */
+    inline Quat conj() const {
+        return Quat(-x, -y, -z, w);
+    }
 
+    inline float sum() const {
+        return x + y + z + w;
+    }
+
+    inline float average() const {
+        return sum() / 4.0f;
+    }
+
+    inline Quat operator*(float s) const {
+        return Quat(x * s, y * s, z * s, w * s);
+    }
+
+    inline Quat& operator*=(float s) {
+        x *= s;
+        y *= s;
+        z *= s;
+        w *= s;
+        return *this;
+    }
+
+	/** @cite Based on Watt & Watt, page 360 */
+    friend Quat operator* (float s, const Quat& q);
+
+    inline Quat operator/(float s) const {
+        return Quat(x / s, y / s, z / s, w / s);
+    }
+
+    inline float dot(const Quat& other) const {
+        return (x * other.x) + (y * other.y) + (z * other.z) + (w * other.w);
+    }
 
     /** Note that q<SUP>-1</SUP> = q.conj() for a unit quaternion. 
         @cite Dam99 page 13 */
     inline Quat inverse() const {
         return conj() / dot(*this);
     }
+
+    Quat operator-(const Quat& other) const;
+
+    Quat operator+(const Quat& other) const;
 
     /**
      Quaternion multiplication (composition of rotations).
@@ -244,16 +217,18 @@ public:
         return (*this) * other.inverse();
     }
 
-    /** Is the magnitude nearly 1.0? */
-    bool isUnit(float tolerance = 1e-5) const {
-        return abs(dot(*this) - 1.0f) < tolerance;
-    }    
 
-    float magnitude() const {
+    /** Is the magnitude nearly 1.0? */
+    inline bool isUnit(float tolerance = 1e-5) const {
+        return abs(dot(*this) - 1.0f) < tolerance;
+    }
+    
+
+    inline float magnitude() const {
         return sqrtf(dot(*this));
     }
 
-    Quat log() const {
+    inline Quat log() const {
         if ((x == 0) && (y == 0) && (z == 0)) {
             if (w > 0) {
                 return Quat(0, 0, 0, ::logf(w));
@@ -314,16 +289,18 @@ public:
         return (log() * x).exp();
     }
 
-    /** Make unit length in place */
-    void unitize() {
-        *this *= rsq(dot(*this));
+    inline void unitize() {
+        float mag2 = dot(*this);
+        if (! G3D::fuzzyEq(mag2, 1.0f)) {
+            *this *= rsq(mag2);
+        }
     }
 
     /**
      Returns a unit quaterion obtained by dividing through by
      the magnitude.
      */
-    Quat toUnit() const {
+    inline Quat toUnit() const {
         Quat x = *this;
         x.unitize();
         return x;
@@ -335,7 +312,7 @@ public:
      n(q) value used in Eberly's 1999 paper, which is the square of the
      norm.
      */
-    float norm() const {
+    inline float norm() const {
         return magnitude();
     }
 
@@ -729,6 +706,13 @@ inline const float& Quat::operator[] (int i) const {
     return ((float*)this)[i];
 }
 
+inline Quat Quat::operator-(const Quat& other) const {
+    return Quat(x - other.x, y - other.y, z - other.z, w - other.w);
+}
+
+inline Quat Quat::operator+(const Quat& other) const {
+    return Quat(x + other.x, y + other.y, z + other.z, w + other.w);
+}
 
 } // Namespace G3D
 

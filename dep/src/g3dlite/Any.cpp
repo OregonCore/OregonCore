@@ -5,9 +5,9 @@
  @author Shawn Yarbrough
   
  @created 2006-06-11
- @edited  2010-07-24
+ @edited  2009-11-15
 
- Copyright 2000-2010, Morgan McGuire.
+ Copyright 2000-2009, Morgan McGuire.
  All rights reserved.
  */
 
@@ -15,72 +15,10 @@
 #include "G3D/TextOutput.h"
 #include "G3D/TextInput.h"
 #include "G3D/stringutils.h"
-#include "G3D/fileutils.h"
-#include "G3D/FileSystem.h"
 #include <deque>
 #include <iostream>
 
 namespace G3D {
-
-std::string Any::resolveStringAsFilename() const {
-    verifyType(STRING);
-    std::string f = FileSystem::resolve(string(), sourceDirectory());
-    if (FileSystem::exists(f)) {
-        return f;
-    } else {
-        const std::string& s = System::findDataFile(string(), false);
-        if (s.empty()) {
-            return string();
-        } else {
-            return s;
-        }
-    }
-}
-
-
-bool Any::nameBeginsWith(const std::string& s) const {
-    return nameBeginsWith(s.c_str());
-}
-
-
-bool Any::nameEquals(const std::string& s) const {
-    // If std::string has a fast hash compare, use it first
-    return (name() == s) || nameEquals(s.c_str());
-}
-
-
-inline static char toLower(char c) {
-    return ((c >= 'A') && (c <= 'Z')) ? (c - 'A' + 'a') : c;
-}
-
-
-bool Any::nameBeginsWith(const char* s) const {
-    verifyType(Any::ARRAY, Any::TABLE);
-
-    const char* n = name().c_str();
-    // Walk through character-by-character
-    while ((*s != '\0') && (*n != '\0')) {
-        if (toLower(*s) != toLower(*n)) {
-            // Mismatch
-            return false;
-        }
-        ++s; ++n;
-    }
-    // Make sure s ran out no later than n
-    return (*s == '\0');
-}
-
-
-bool Any::nameEquals(const char* s) const {
-    verifyType(Any::ARRAY, Any::TABLE);
-#ifdef G3D_WIN32
-    return stricmp(name().c_str(), s) == 0;
-#else
-    return strcasecmp(name().c_str(), s) == 0;
-#endif
-
-}
-
 
 void Any::beforeRead() const {
     if (isPlaceholder()) {
@@ -737,10 +675,11 @@ bool Any::operator!=(const Any& x) const {
 static void getDeserializeSettings(TextInput::Settings& settings) {
     settings.cppBlockComments = true;
     settings.cppLineComments = true;
-    settings.otherLineComments = false;
+    settings.otherLineComments = true;
+    settings.otherCommentCharacter = '#';
     settings.generateCommentTokens = true;
     settings.singleQuotedStrings = false;
-    settings.msvcFloatSpecials = false;
+    settings.msvcSpecials = false;
     settings.caseSensitive = false;
 }
 
@@ -769,7 +708,7 @@ void Any::load(const std::string& filename) {
     TextInput::Settings settings;
     getDeserializeSettings(settings);
 
-    TextInput ti(FileSystem::resolve(filename), settings);
+    TextInput ti(filename, settings);
     deserialize(ti);
 }
 
@@ -931,6 +870,12 @@ static bool isClose(const char c) {
 }
 
 
+/** True if \a s is a C++ name operator */
+static bool isNameOperator(const std::string& s) {
+    return s == "." || s == "::" || s == "->";
+}
+
+
 void Any::deserializeName(TextInput& ti, Token& token, std::string& name) {
     debugAssert(token.type() == Token::SYMBOL);
     std::string s = token.string();
@@ -983,9 +928,6 @@ void Any::deserialize(TextInput& ti, Token& token) {
             "File ended without a properly formed Any");
     }
 
-    // Do we need to read one more token after the end? 
-    bool needRead = true;
-
     switch (token.type()) {
     case Token::STRING:
         m_type = STRING;
@@ -1009,41 +951,8 @@ void Any::deserialize(TextInput& ti, Token& token) {
         break;
 
     case Token::SYMBOL:
-        // Pragma, Named Array, Named Table, Array, Table, or NONE
-        if (token.string() == "#") {
-            // Pragma
-            
-            // Currently, "include" is the only pragma allowed
-            token = ti.read();
-            if (! ((token.type() == Token::SYMBOL) &&
-                   (token.string() == "include"))) {
-                throw ParseError(ti.filename(), token.line(), token.character(),
-                                 "Expected 'include' pragma after '#'");
-            }
-            
-            ti.readSymbol("(");
-            const std::string& includeName = ti.readString();
-
-            // Find the include file
-            const std::string& myPath = filenamePath(ti.filename());
-            std::string t = pathConcat(myPath, includeName);
-
-            if (! FileSystem::exists(t)) {
-                // Try and find it, starting with cwd
-                t = System::findDataFile(includeName);
-            }
-
-            // Read the included file
-            load(t);
-
-            // Update the source information
-            ensureData();
-            m_data->source.filename += 
-                format(" [included from %s:%d(%d)]", ti.filename().c_str(), token.line(), token.character());
-            
-            ti.readSymbol(")");
-
-        } else if (toUpper(token.string()) == "NONE") {
+        // Named Array, Named Table, Array, Table, or NONE
+        if (toUpper(token.string()) == "NONE") {
             // Nothing left to do; we initialized to NONE originally
             ensureData();
             m_data->source.set(ti, token);
@@ -1073,7 +982,6 @@ void Any::deserialize(TextInput& ti, Token& token) {
                 ensureData();
                 m_data->name = name;
             }
-            needRead = false;
         } // if NONE
         break;
 
@@ -1088,7 +996,7 @@ void Any::deserialize(TextInput& ti, Token& token) {
         m_data->comment = comment;
     }
 
-    if (needRead) {
+    if (m_type != ARRAY && m_type != TABLE) {
         // Array and table already consumed their last token
         token = ti.read();
     }
@@ -1108,9 +1016,9 @@ static bool isSeparator(char c) {
 
 
 void Any::readUntilCommaOrClose(TextInput& ti, Token& token) {
-    bool atClose = (token.type() == Token::SYMBOL) && isClose(token.string()[0]);
-    bool atComma = isSeparator(token.string()[0]);
-    while (! (atClose || atComma)) {
+    while (! ((token.type() == Token::SYMBOL) && 
+              (isClose(token.string()[0])) || 
+               isSeparator(token.string()[0]))) {
         switch (token.type()) {
         case Token::NEWLINE:
         case Token::COMMENT:
@@ -1122,10 +1030,6 @@ void Any::readUntilCommaOrClose(TextInput& ti, Token& token) {
             throw ParseError(ti.filename(), token.line(), token.character(), 
                 "Expected a comma or close paren");
         }
-
-	// Update checks
-        atComma = isSeparator(token.string()[0]);
-        atClose = (token.type() == Token::SYMBOL) && isClose(token.string()[0]);
     }
 }
 
@@ -1172,13 +1076,13 @@ void Any::deserializeBody(TextInput& ti, Token& token) {
             } 
             
             key = token.string();
-            // Consume everything up to the = sign, returning the "=" sign.
+            // Consume everything up to the = sign
             token = ti.readSignificant();
 
             if ((token.type() != Token::SYMBOL) || (token.string() != "=")) {
                 throw ParseError(ti.filename(), token.line(), token.character(), "Expected =");
             } else {
-                // Read the next token, which is the value (don't consume comments--we want the value pointed to by a to get those).
+                // Consume (don't consume comments--we want the value pointed to by a to get those).
                 token = ti.read();
             }
         }
@@ -1250,15 +1154,6 @@ const Any::Source& Any::source() const {
 }
 
 
-std::string Any::sourceDirectory() const {
-    if (m_data) {
-        return FilePath::parent(m_data->source.filename);
-    } else {
-        return "";
-    }
-}
-
-
 void Any::verify(bool value, const std::string& message) const {
     beforeRead();
     if (! value) {
@@ -1287,14 +1182,6 @@ void Any::verify(bool value, const std::string& message) const {
 void Any::verifyName(const std::string& n) const {
     beforeRead();
     verify(beginsWith(toUpper(name()), toUpper(n)), "Name must begin with " + n);
-}
-
-
-void Any::verifyName(const std::string& n, const std::string& m) const {
-    beforeRead();
-    const std::string& x = toUpper(name());
-    verify(beginsWith(x, toUpper(n)) ||
-           beginsWith(x, toUpper(m)), "Name must begin with " + n + " or " + m);
 }
 
 

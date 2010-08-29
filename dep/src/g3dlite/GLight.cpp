@@ -19,8 +19,6 @@ GLight::GLight(const Any& any) {
 
     if (any.type() == Any::TABLE) {
         *this = GLight();
-        Vector3 spotTarget;
-        bool hasSpotTarget = false;
         for (Any::AnyTable::Iterator it = any.table().begin(); it.hasMore(); ++it) {
             const std::string& key = toLower(it->key);
             if (key == "position") {
@@ -28,10 +26,7 @@ GLight::GLight(const Any& any) {
             } else if (key == "rightdirection") {
                 rightDirection = it->value;
             } else if (key == "spotdirection") {
-                spotDirection = Vector3(it->value).directionOrZero();
-            } else if (key == "spottarget") {
-                spotTarget = it->value;
-                hasSpotTarget = true;
+                spotDirection = it->value;
             } else if (key == "spotcutoff") {
                 spotCutoff = it->value.number();
             } else if (key == "spotsquare") {
@@ -51,9 +46,6 @@ GLight::GLight(const Any& any) {
             } else {
                 any.verify(false, "Illegal key: " + it->key);
             }
-        }
-        if (hasSpotTarget) {
-            spotDirection = (spotTarget - position.xyz()).direction();
         }
     } else if (toLower(any.name()) == "glight::directional") {
 
@@ -75,9 +67,9 @@ GLight::GLight(const Any& any) {
         *this = spot(any[0], any[1], any[2], any[3],
             (any.size() > 4) ? any[4] : Any(1), 
             (any.size() > 5) ? any[5] : Any(0), 
-            (any.size() > 6) ? any[6] : Any(0), 
-            (any.size() > 7) ? any[7] : Any(true), 
-            (any.size() > 8) ? any[8] : Any(true));
+            (any.size() > 6) ? any[6] : Any(0.5f), 
+            (any.size() > 7) ? any[5] : Any(true), 
+            (any.size() > 8) ? any[6] : Any(true));
     } else {
         any.verify(false, "Unrecognized name");
     }

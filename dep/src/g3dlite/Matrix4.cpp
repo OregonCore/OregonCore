@@ -44,12 +44,7 @@ Matrix4::Matrix4(const Any& any) {
         } else {
             any.verify(false, "Matrix4::scale() takes either 1 or 3 arguments");
         }
-    } else if (name == "matrix4::translation") {
-        if (any.size() == 3) {
-            *this = translation(any[0], any[1], any[2]);
-        } else {
-            any.verify(false, "Matrix4::translation() takes either 1 or 3 arguments");
-        }    } else {
+    } else {
         any.verify(false, "Expected Matrix4 constructor");
     }
 }
