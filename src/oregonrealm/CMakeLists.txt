@@ -31,7 +31,7 @@ add_executable(oregon-realm
 add_dependencies(oregon-realm genrev)
 
 if( NOT WIN32 )
-  add_definitions(-D_OREGON_CORE_CONFIG='"${CONF_DIR}/oregonrealm.conf"')
+  add_definitions(-D_OREGON_REALM_CONFIG='"${CONF_DIR}/oregonrealm.conf"')
 endif()
 
 if( UNIX )
