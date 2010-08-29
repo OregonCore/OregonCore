@@ -260,7 +260,7 @@ struct OREGON_DLL_DECL boss_attumenAI : public ScriptedAI
                 for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
                 {
                     pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
-                    if (pTarget && pTarget->GetDistance2d(me) > 5)
+                    if (pTarget && pTarget->GetDistance2d(me) > 5 && pTarget->GetTypeId() == TYPEID_PLAYER)
                         target_list.push_back(pTarget);
                     pTarget = NULL;
                 }
