@@ -58,10 +58,7 @@ if( WIN32 )
     oregon-core
   )
 else()
-  target_link_libraries(
-    oregonscript
-    oregon-core
-  )
+  target_link_libraries(oregonscript)
 endif()
 
 set_target_properties(oregonscript PROPERTIES VERSION 4.2.0 SOVERSION 4)
