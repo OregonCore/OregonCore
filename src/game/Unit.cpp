@@ -5664,14 +5664,12 @@ bool Unit::HandleProcTriggerSpell(Unit *pVictim, uint32 damage, Aura* triggeredB
                         // On successful melee or ranged attack gain $29471s1 mana and if possible drain $27526s1 mana from the target.
                         if (this && this->isAlive())
                             CastSpell(this, 29471, true, castItem, triggeredByAura);
-                        if (pVictim && pVictim->isAlive())
+                        if (pVictim && pVictim->isAlive() && pVictim->getPowerType() == POWER_MANA && pVictim->GetPower(POWER_MANA) > 8)
                         {
                             CastSpell(pVictim, 27526, true, castItem, triggeredByAura);
-                            if (pVictim->getPowerType() == POWER_MANA && pVictim->GetPower(POWER_MANA) > 8)
-                                CastSpell(this, 29471, true, castItem, triggeredByAura);
+                            CastSpell(this, 29471, true, castItem, triggeredByAura);
                         }
                         return true;
-                        break;
                     }
                     // Moonkin Form (Passive)
                     case 24905:
