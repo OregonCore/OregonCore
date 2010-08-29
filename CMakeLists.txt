@@ -42,7 +42,6 @@ endif()
 #
 
 option(SCRIPTS "Build with scripts included" 1)
-option(DO_CLI "With CLI" 1)
 option(COREDEBUG "Build with additional debug-code included" 0)
 option(SCRIPTPCH "Use precompiled headers when compiling scripts project" 1)
 option(GAMEPCH "Use precompiled headers when compiling game project" 1)
@@ -183,13 +182,6 @@ if( SCRIPTPCH )
   message("* Build scripts w/PCH   : Yes (default)")
 else()
   message("* Build scripts w/PCH   : No")
-endif()
-
-if(DO_CLI)
-  message("* Build with CLI        : Yes (default)")
-  add_definitions(-DENABLE_CLI)
-else()
-  message("* Build with CLI        : No")
 endif()
 
 if( COREDEBUG )
