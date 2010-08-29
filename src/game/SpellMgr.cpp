@@ -634,7 +634,7 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
         case 34877:                                         // Custodian of Time
         case 34700:                                         // Allergic Reaction
         case 31719:                                         // Suspension
-		case 43501:                                         // Siphon Soul (Hexlord Spell)
+        case 43501:                                         // Siphon Soul (Hexlord Spell)
             return false;
     }
 
@@ -2460,9 +2460,9 @@ void SpellMgr::LoadSpellCustomAttr()
             mSpellCustomAttr[i] |= SPELL_ATTR_CU_IGNORE_ARMOR;
             spellInfo->Attributes |= SPELL_ATTR_IMPOSSIBLE_DODGE_PARRY_BLOCK;
             break;
-			case 24905: // Moonkin form -> elune's touch
-				spellInfo->EffectImplicitTargetA[2] = TARGET_UNIT_CASTER;
-				break;
+        case 24905: // Moonkin form -> elune's touch
+            spellInfo->EffectImplicitTargetA[2] = TARGET_UNIT_CASTER;
+            break;
         case 41013:     // Parasitic Shadowfiend Passive
             spellInfo->EffectApplyAuraName[0] = 4; // proc debuff, and summon infinite fiends
             break;
@@ -2473,6 +2473,9 @@ void SpellMgr::LoadSpellCustomAttr()
         case 27931:     // Anchor to Skulls
         case 27937:     // Anchor to Skulls
             spellInfo->rangeIndex = 13;
+            break;
+        case 34580:
+            mSpellCustomAttr[i] |= SPELL_ATTR_CU_IGNORE_ARMOR;
             break;
         default:
             break;
