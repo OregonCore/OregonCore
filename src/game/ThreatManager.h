@@ -45,20 +45,8 @@ class ThreatCalcHelper
 };
 
 //==============================================================
-
 class OREGON_DLL_SPEC HostileReference : public Reference<Unit, ThreatManager>
 {
-    private:
-        float iThreat;
-        float iTempThreatModifyer;                          // used for taunt
-        uint64 iUnitGuid;
-        bool iOnline;
-        bool iAccessible;
-    private:
-        // Inform the source, that the status of that reference was changed
-        void fireStatusChanged(const ThreatRefStatusChangeEvent& pThreatRefStatusChangeEvent);
-
-        Unit* getSourceUnit();
     public:
         HostileReference(Unit* pUnit, ThreatManager *pThreatManager, float pThreat);
 
@@ -125,6 +113,17 @@ class OREGON_DLL_SPEC HostileReference : public Reference<Unit, ThreatManager>
 
         // Tell our refFrom (source) object, that the link is cut (Target destroyed)
         void sourceObjectDestroyLink();
+    private:
+        // Inform the source, that the status of that reference was changed
+        void fireStatusChanged(ThreatRefStatusChangeEvent& pThreatRefStatusChangeEvent);
+
+        Unit* getSourceUnit();
+    private:
+        float iThreat;
+        float iTempThreatModifyer;                          // used for taunt
+        uint64 iUnitGuid;
+        bool iOnline;
+        bool iAccessible;
 };
 
 //==============================================================
@@ -170,14 +169,9 @@ class OREGON_DLL_SPEC ThreatContainer
 
 class OREGON_DLL_SPEC ThreatManager
 {
-    private:
-        HostileReference* iCurrentVictim;
-        Unit* iOwner;
-        ThreatContainer iThreatContainer;
-        ThreatContainer iThreatOfflineContainer;
-
-        void _addThreat(Unit* target, float threat);
     public:
+        friend class HostileReference;
+
         explicit ThreatManager(Unit *pOwner);
 
         ~ThreatManager() { clearReferences(); }
@@ -191,13 +185,13 @@ class OREGON_DLL_SPEC ThreatManager
 
         bool isThreatListEmpty() { return iThreatContainer.empty();}
 
-        bool processThreatEvent(const UnitBaseEvent* pUnitBaseEvent);
+        void processThreatEvent(ThreatRefStatusChangeEvent* threatRefStatusChangeEvent);
 
         HostileReference* getCurrentVictim() { return iCurrentVictim; }
 
         Unit*  getOwner() { return iOwner; }
 
-        Unit* getHostilTarget();
+        Unit* getHostileTarget();
 
         void tauntApply(Unit* pTaunter);
         void tauntFadeOut(Unit *pTaunter);
@@ -212,8 +206,14 @@ class OREGON_DLL_SPEC ThreatManager
         inline std::list<HostileReference*>& getOfflieThreatList() { return iThreatOfflineContainer.getThreatList(); }
         inline ThreatContainer& getOnlineContainer() { return iThreatContainer; }
         inline ThreatContainer& getOfflineContainer() { return iThreatOfflineContainer; }
+
+        void _addThreat(Unit* target, float threat);
+    private:
+        HostileReference* iCurrentVictim;
+        Unit* iOwner;
+        ThreatContainer iThreatContainer;
+        ThreatContainer iThreatOfflineContainer;
 };
 
 //=================================================
 #endif
-

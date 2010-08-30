@@ -8884,7 +8884,7 @@ void Unit::TauntFadeOut(Unit *taunter)
     }
 
     //m_ThreatManager.tauntFadeOut(taunter);
-    target = m_ThreatManager.getHostilTarget();
+    target = m_ThreatManager.getHostileTarget();
 
     if (target && target != taunter)
     {
@@ -8912,7 +8912,7 @@ Unit* Creature::SelectVictim()
     {
         if (!HasAuraType(SPELL_AURA_MOD_TAUNT))
         {
-            target = m_ThreatManager.getHostilTarget();
+            target = m_ThreatManager.getHostileTarget();
         }
         else
             target = getVictim();

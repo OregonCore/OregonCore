@@ -58,7 +58,7 @@ void CreatureAI::DoZoneInCombat(Creature* creature)
         {
                 Unit *target = summoner->getAttackerForHelper();
                 if (!target && summoner->CanHaveThreatList() && !summoner->getThreatManager().isThreatListEmpty())
-                    target = summoner->getThreatManager().getHostilTarget();
+                    target = summoner->getThreatManager().getHostileTarget();
                 if (target && (creature->IsFriendlyTo(summoner) || creature->IsHostileTo(target)))
                     creature->AI()->AttackStart(target);
         }

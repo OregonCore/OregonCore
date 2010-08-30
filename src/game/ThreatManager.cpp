@@ -84,7 +84,7 @@ void HostileReference::sourceObjectDestroyLink()
 //============================================================
 // Inform the source, that the status of the reference changed
 
-void HostileReference::fireStatusChanged(const ThreatRefStatusChangeEvent& pThreatRefStatusChangeEvent)
+void HostileReference::fireStatusChanged(ThreatRefStatusChangeEvent& pThreatRefStatusChangeEvent)
 {
     if (getSource())
         getSource()->processThreatEvent(&pThreatRefStatusChangeEvent);
@@ -100,7 +100,11 @@ void HostileReference::addThreat(float pMod)
     if (!isOnline())
         updateOnlineStatus();
     if (pMod != 0.0f)
-        fireStatusChanged(ThreatRefStatusChangeEvent(UEV_THREAT_REF_THREAT_CHANGE, this, pMod));
+    {
+        ThreatRefStatusChangeEvent event(UEV_THREAT_REF_THREAT_CHANGE, this, pMod);
+        fireStatusChanged(event);
+    }
+
     if (isValid() && pMod >= 0)
     {
         Unit* victim_owner = getTarget()->GetCharmerOrOwner();
@@ -156,7 +160,9 @@ void HostileReference::setOnlineOfflineState(bool pIsOnline)
         iOnline = pIsOnline;
         if (!iOnline)
             setAccessibleState(false);                      // if not online that not accessible as well
-        fireStatusChanged(ThreatRefStatusChangeEvent(UEV_THREAT_REF_ONLINE_STATUS, this));
+
+        ThreatRefStatusChangeEvent event(UEV_THREAT_REF_ONLINE_STATUS, this);
+        fireStatusChanged(event);
     }
 }
 
@@ -167,7 +173,9 @@ void HostileReference::setAccessibleState(bool pIsAccessible)
     if (iAccessible != pIsAccessible)
     {
         iAccessible = pIsAccessible;
-        fireStatusChanged(ThreatRefStatusChangeEvent(UEV_THREAT_REF_ASSECCIBLE_STATUS, this));
+
+        ThreatRefStatusChangeEvent event(UEV_THREAT_REF_ASSECCIBLE_STATUS, this);
+        fireStatusChanged(event);
     }
 }
 
@@ -178,7 +186,9 @@ void HostileReference::setAccessibleState(bool pIsAccessible)
 void HostileReference::removeReference()
 {
     invalidate();
-    fireStatusChanged(ThreatRefStatusChangeEvent(UEV_THREAT_REF_REMOVE_FROM_LIST, this));
+
+    ThreatRefStatusChangeEvent event(UEV_THREAT_REF_REMOVE_FROM_LIST, this);
+    fireStatusChanged(event);
 }
 
 //============================================================
@@ -347,10 +357,16 @@ void ThreatManager::addThreat(Unit* pVictim, float pThreat, SpellSchoolMask scho
     //players and pets have only InHateListOf
     //HateOfflineList is used co contain unattackable victims (in-flight, in-water, GM etc.)
 
-    if (pVictim == getOwner())                              // only for same creatures :)
+    // not to self
+    if (pVictim == getOwner())
         return;
 
+    // not to GM
     if (!pVictim || (pVictim->GetTypeId() == TYPEID_PLAYER && pVictim->ToPlayer()->isGameMaster()))
+        return;
+
+    // not to dead and not for dead
+    if (!pVictim->isAlive() || !getOwner()->isAlive())
         return;
 
     ASSERT(getOwner()->GetTypeId() == TYPEID_UNIT);
@@ -396,7 +412,7 @@ void ThreatManager::modifyThreatPercent(Unit *pVictim, int32 pPercent)
 
 //============================================================
 
-Unit* ThreatManager::getHostilTarget()
+Unit* ThreatManager::getHostileTarget()
 {
     iThreatContainer.update();
     HostileReference* nextVictim = iThreatContainer.selectNextVictim(getOwner()->ToCreature(), getCurrentVictim());
@@ -450,18 +466,13 @@ void ThreatManager::setCurrentVictim(HostileReference* pHostileReference)
 // The hated unit is gone, dead or deleted
 // return true, if the event is consumed
 
-bool ThreatManager::processThreatEvent(const UnitBaseEvent* pUnitBaseEvent)
+void ThreatManager::processThreatEvent(ThreatRefStatusChangeEvent* threatRefStatusChangeEvent)
 {
-    bool consumed = false;
-
-    ThreatRefStatusChangeEvent* threatRefStatusChangeEvent;
-    HostileReference* hostileReference;
-
-    threatRefStatusChangeEvent = (ThreatRefStatusChangeEvent*) pUnitBaseEvent;
     threatRefStatusChangeEvent->setThreatManager(this);     // now we can set the threat manager
-    hostileReference = threatRefStatusChangeEvent->getReference();
 
-    switch(pUnitBaseEvent->getType())
+    HostileReference* hostileReference = threatRefStatusChangeEvent->getReference();
+
+    switch(threatRefStatusChangeEvent->getType())
     {
         case UEV_THREAT_REF_THREAT_CHANGE:
             if ((getCurrentVictim() == hostileReference && threatRefStatusChangeEvent->getFValue()<0.0f) ||
@@ -499,6 +510,4 @@ bool ThreatManager::processThreatEvent(const UnitBaseEvent* pUnitBaseEvent)
                 iThreatOfflineContainer.remove(hostileReference);
             break;
     }
-    return consumed;
 }
-

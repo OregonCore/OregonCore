@@ -440,7 +440,7 @@ struct OREGON_DLL_DECL boss_veknilashAI : public boss_twinemperorsAI
     void CastSpellOnBug(Creature *pTarget)
     {
         pTarget->setFaction(14);
-        ((CreatureAI*)pTarget->AI())->AttackStart(me->getThreatManager().getHostilTarget());
+        ((CreatureAI*)pTarget->AI())->AttackStart(me->getThreatManager().getHostileTarget());
         SpellEntry *spell = (SpellEntry *)GetSpellStore()->LookupEntry(SPELL_MUTATE_BUG);
         for (int i=0; i<3; i++)
         {
