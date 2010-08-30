@@ -1351,6 +1351,14 @@ bool SpellMgr::IsSpellProcEventCanTriggeredBy(SpellProcEventEntry const * spellP
         }
         else // For spells need check school/spell family/family mask
         {
+            // Potions can trigger only if spellfamily given
+            if (procSpell->SpellFamilyName == SPELLFAMILY_POTION)
+            {
+                if (procSpell->SpellFamilyName == spellProcEvent->spellFamilyName)
+                    return true;
+                return false;
+            }
+
             // Check (if set) for school
             if (spellProcEvent->schoolMask && (spellProcEvent->schoolMask & procSpell->SchoolMask) == 0)
                 return false;
@@ -1368,6 +1376,10 @@ bool SpellMgr::IsSpellProcEventCanTriggeredBy(SpellProcEventEntry const * spellP
             }
         }
     }
+    // potions can trigger only if have spell_proc entry
+    else if (procSpell && procSpell->SpellFamilyName==SPELLFAMILY_POTION)
+        return false;
+
     // Check for extra req (if none) and hit/crit
     if (procEvent_procEx == PROC_EX_NONE)
     {
@@ -1378,7 +1390,7 @@ bool SpellMgr::IsSpellProcEventCanTriggeredBy(SpellProcEventEntry const * spellP
     else // Passive spells hits here only if resist/reflect/immune/evade
     {
         // Exist req for PROC_EX_EX_TRIGGER_ALWAYS
-        if (procEvent_procEx & PROC_EX_EX_TRIGGER_ALWAYS)
+        if ((procExtra & AURA_SPELL_PROC_EX_MASK) && (procEvent_procEx & PROC_EX_EX_TRIGGER_ALWAYS))
             return true;
         // Passive spells cant trigger if need hit
         if ((procEvent_procEx & PROC_EX_NORMAL_HIT) && !active)
