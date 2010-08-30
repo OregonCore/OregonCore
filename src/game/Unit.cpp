@@ -6047,7 +6047,7 @@ bool Unit::HandleProcTriggerSpell(Unit *pVictim, uint32 damage, Aura* triggeredB
         case 31255:
         {
             // whenever you deal damage to a target who is below 20% health.
-            if (pVictim->GetHealth() > pVictim->GetMaxHealth() / 5)
+            if (!pVictim || !pVictim->isAlive() || (pVictim->GetHealth() > pVictim->GetMaxHealth() / 5))
                 return false;
 
             target = this;
@@ -6056,6 +6056,9 @@ bool Unit::HandleProcTriggerSpell(Unit *pVictim, uint32 damage, Aura* triggeredB
         // Greater Heal Refund (Avatar Raiment set)
         case 37594:
         {
+            if (!pVictim || !pVictim->isAlive())
+                return false;
+
             // Not give if target already have full health
             if (pVictim->GetHealth() == pVictim->GetMaxHealth())
                 return false;
@@ -6068,7 +6071,7 @@ bool Unit::HandleProcTriggerSpell(Unit *pVictim, uint32 damage, Aura* triggeredB
         case 40971:
         {
             // If your target is below $s1% health
-            if (pVictim->GetHealth() > pVictim->GetMaxHealth() * triggerAmount / 100)
+            if (!pVictim || !pVictim->isAlive() || (pVictim->GetHealth() > pVictim->GetMaxHealth() * triggerAmount / 100))
                 return false;
             break;
         }
