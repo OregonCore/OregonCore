@@ -718,6 +718,10 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
     if (sWorld.IsShutdowning())
         sWorld.ShutdownMsg(true,pCurrChar);
 
+    // ImpConfig - Max weapon skill when logging in
+    if (sWorld.getConfig(CONFIG_ALWAYS_MAXSKILL))
+        pCurrChar->UpdateSkillsToMaxSkillsForLevel();
+
     if (sWorld.getConfig(CONFIG_ALL_TAXI_PATHS))
         pCurrChar->SetTaxiCheater(true);
 
