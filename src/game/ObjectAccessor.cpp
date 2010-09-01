@@ -58,8 +58,11 @@ ObjectAccessor::~ObjectAccessor()
 
 Creature* ObjectAccessor::GetCreatureOrPet(WorldObject const& u, uint64 guid)
 {
-    if (Creature *unit = GetPet(guid))
-        return unit;
+    if (IS_PLAYER_GUID(guid))
+        return NULL;
+
+    if (IS_PET_GUID(guid))
+        return GetPet(guid);
 
     return u.GetMap()->GetCreature(guid);
 }
@@ -176,7 +179,7 @@ void ObjectAccessor::RemoveCorpse(Corpse* corpse)
     CellPair cell_pair = Oregon::ComputeCellPair(corpse->GetPositionX(), corpse->GetPositionY());
     uint32 cell_id = (cell_pair.y_coord*TOTAL_NUMBER_OF_CELLS_PER_MAP) + cell_pair.x_coord;
 
-    objmgr.DeleteCorpseCellData(corpse->GetMapId(),cell_id,corpse->GetOwnerGUID());
+    objmgr.DeleteCorpseCellData(corpse->GetMapId(), cell_id, corpse->GetOwnerGUID());
     corpse->RemoveFromWorld();
 
     i_player2corpse.erase(iter);
@@ -194,7 +197,7 @@ void ObjectAccessor::AddCorpse(Corpse* corpse)
     CellPair cell_pair = Oregon::ComputeCellPair(corpse->GetPositionX(), corpse->GetPositionY());
     uint32 cell_id = (cell_pair.y_coord*TOTAL_NUMBER_OF_CELLS_PER_MAP) + cell_pair.x_coord;
 
-    objmgr.AddCorpseCellData(corpse->GetMapId(),cell_id,corpse->GetOwnerGUID(),corpse->GetInstanceId());
+    objmgr.AddCorpseCellData(corpse->GetMapId(), cell_id, corpse->GetOwnerGUID(), corpse->GetInstanceId());
 }
 
 void ObjectAccessor::AddCorpsesToGrid(GridPair const& gridpair, GridType& grid, Map* map)
