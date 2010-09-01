@@ -343,10 +343,7 @@ Spell::Spell(Unit* Caster, SpellEntry const *info, bool triggered, uint64 origin
     m_triggeredByAuraSpell  = NULL;
 
     //Auto Shot & Shoot
-    if (m_spellInfo->AttributesEx2 == 0x000020 && !triggered)
-        m_autoRepeat = true;
-    else
-        m_autoRepeat = false;
+    m_autoRepeat = IsAutoRepeatRangedSpell(m_spellInfo);
 
     m_powerCost = 0;                                        // setup to correct value in Spell::prepare, don't must be used before.
     m_casttime = 0;                                         // setup to correct value in Spell::prepare, don't must be used before.
@@ -2881,8 +2878,8 @@ void Spell::SendSpellGo()
     uint32 castFlags = CAST_FLAG_UNKNOWN3;
 
     // triggered spells with spell visual != 0 and not auto shot
-    if ((m_IsTriggeredSpell && (m_spellInfo->AttributesEx4 & SPELL_ATTR_EX4_AUTOSHOT) == 0) || m_triggeredByAuraSpell)
-        castFlags |= CAST_FLAG_UNKNOWN0;
+    if ((m_IsTriggeredSpell && !IsAutoRepeatRangedSpell(m_spellInfo)) || m_triggeredByAuraSpell)
+        castFlags |= CAST_FLAG_PENDING;
 
     if (IsRangedSpell())
         castFlags |= CAST_FLAG_AMMO;                        // arrows/bullets visual
