@@ -105,18 +105,34 @@ class OREGON_DLL_DECL ObjectAccessor : public Oregon::Singleton<ObjectAccessor, 
             return HashMapHolder<T>::Find(guid);
         }
 
+        // Player may be not in world while in ObjectAccessor
+        static Player* GetObjectInWorld(uint64 guid, Player* /*typeSpecifier*/)
+        {
+            Player * player = HashMapHolder<Player>::Find(guid);
+            if (player && player->IsInWorld())
+                return player;
+            return NULL;
+        }
+
         static Unit* GetObjectInWorld(uint64 guid, Unit* /*typeSpecifier*/)
         {
-            if (!guid)
-                return NULL;
-
             if (IS_PLAYER_GUID(guid))
-                return (Unit*)HashMapHolder<Player>::Find(guid);
+                return (Unit*)GetObjectInWorld(guid, (Player*)NULL);
 
-            if (Unit* u = (Unit*)HashMapHolder<Pet>::Find(guid))
-                return u;
+            if (IS_PET_GUID(guid))
+                return (Unit*)GetObjectInWorld(guid, (Pet*)NULL);
 
-            return (Unit*)HashMapHolder<Creature>::Find(guid);
+            return (Unit*)GetObjectInWorld(guid, (Creature*)NULL);
+        }
+
+        // returns object if is in map
+        template<class T> static T* GetObjectInMap(uint64 guid, Map * map, T* /*typeSpecifier*/)
+        {
+            assert(map);
+            if (T * obj = GetObjectInWorld(guid, (T*)NULL))
+                if (obj->GetMap() == map)
+                    return obj;
+            return NULL;
         }
 
         template<class T> static T* GetObjectInWorld(uint32 mapid, float x, float y, uint64 guid, T* /*fake*/)
@@ -149,16 +165,19 @@ class OREGON_DLL_DECL ObjectAccessor : public Oregon::Singleton<ObjectAccessor, 
         }
 
         // these functions return objects only if in map of specified object
-        static Object* GetObjectByTypeMask(Player const &, uint64, uint32 typemask);
-        static Creature* GetCreatureOrPet(WorldObject const&, uint64);
-        static Unit* GetUnit(WorldObject const &, uint64);
-        static Pet* GetPet(Unit const&, uint64 guid) { return GetPet(guid); }
-        static Player* GetPlayer(Unit const&, uint64 guid) { return FindPlayer(guid); }
+        static Object* GetObjectByTypeMask(WorldObject const&, uint64, uint32 typemask);
         static Corpse* GetCorpse(WorldObject const& u, uint64 guid);
+        static GameObject* GetGameObject(WorldObject const& u, uint64 guid);
+        static DynamicObject* GetDynamicObject(WorldObject const& u, uint64 guid);
+        static Unit* GetUnit(WorldObject const&, uint64 guid);
+        static Creature* GetCreature(WorldObject const& u, uint64 guid);
+        static Pet* GetPet(WorldObject const&, uint64 guid);
+        static Player* GetPlayer(WorldObject const&, uint64 guid);
+        static Creature* GetCreatureOrPet(WorldObject const&, uint64);
 
         // these functions return objects if found in whole world
         // ACCESS LIKE THAT IS NOT THREAD SAFE
-        static Pet* GetPet(uint64);
+        static Pet* FindPet(uint64);
         static Player* FindPlayer(uint64);
         Player* FindPlayerByName(const char* name);
 

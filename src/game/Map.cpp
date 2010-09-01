@@ -2775,43 +2775,18 @@ void BattleGroundMap::UnloadAll()
 Creature*
 Map::GetCreature(uint64 guid)
 {
-    Creature * ret = ObjectAccessor::GetObjectInWorld(guid, (Creature*)NULL);
-
-    if (!ret)
-        return NULL;
-
-    if (ret->GetMapId() != GetId())
-        return NULL;
-
-    if (ret->GetInstanceId() != GetInstanceId())
-        return NULL;
-
-    return ret;
+    return ObjectAccessor::GetObjectInMap(guid, this, (Creature*)NULL);
 }
 
 GameObject*
 Map::GetGameObject(uint64 guid)
 {
-    GameObject * ret = ObjectAccessor::GetObjectInWorld(guid, (GameObject*)NULL);
-    if (!ret)
-        return NULL;
-    if (ret->GetMapId() != GetId())
-        return NULL;
-    if (ret->GetInstanceId() != GetInstanceId())
-        return NULL;
-    return ret;
+    return ObjectAccessor::GetObjectInMap(guid, this, (GameObject*)NULL);
 }
 
 DynamicObject*
 Map::GetDynamicObject(uint64 guid)
 {
-    DynamicObject * ret = ObjectAccessor::GetObjectInWorld(guid, (DynamicObject*)NULL);
-    if (!ret)
-        return NULL;
-    if (ret->GetMapId() != GetId())
-        return NULL;
-    if (ret->GetInstanceId() != GetInstanceId())
-        return NULL;
-    return ret;
+    return ObjectAccessor::GetObjectInMap(guid, this, (DynamicObject*)NULL);
 }
 

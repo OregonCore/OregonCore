@@ -16876,7 +16876,7 @@ Pet* Player::GetMiniPet()
 {
     if (!m_miniPet)
         return NULL;
-    return ObjectAccessor::GetPet(m_miniPet);
+    return ObjectAccessor::GetPet(*this, m_miniPet);
 }
 
 void Player::RemoveGuardians()
@@ -16884,7 +16884,7 @@ void Player::RemoveGuardians()
     while (!m_guardianPets.empty())
     {
         uint64 guid = *m_guardianPets.begin();
-        if (Pet* pet = ObjectAccessor::GetPet(guid))
+        if (Pet* pet = ObjectAccessor::GetPet(*this, guid))
             pet->Remove(PET_SAVE_AS_DELETED);
 
         m_guardianPets.erase(guid);
