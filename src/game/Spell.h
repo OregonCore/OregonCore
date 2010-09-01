@@ -23,8 +23,6 @@
 
 #include "GridDefines.h"
 
-#define MAX_SPELL_ID    60000
-
 class Unit;
 class Player;
 class GameObject;
@@ -552,13 +550,11 @@ class Spell
             SpellMissInfo reflectResult:8;
             uint8  effectMask:8;
             bool   processed:1;
-            bool   deleted:1;
             int32  damage;
             bool   crit;
         };
         std::list<TargetInfo> m_UniqueTargetInfo;
         uint8 m_needAliveTargetMask;                        // Mask req. alive targets
-        bool m_destroyed;
 
         struct GOTargetInfo
         {
@@ -566,7 +562,6 @@ class Spell
             uint64 timeDelay;
             uint8  effectMask:8;
             bool   processed:1;
-            bool   deleted:1;
         };
         std::list<GOTargetInfo> m_UniqueGOTargetInfo;
 
