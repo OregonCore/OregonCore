@@ -137,7 +137,6 @@ class OREGON_DLL_SPEC Object
         void BuildValuesUpdateBlockForPlayer(UpdateData *data, Player *target) const;
         void BuildOutOfRangeUpdateBlock(UpdateData *data) const;
         void BuildMovementUpdateBlock(UpdateData * data, uint32 flags = 0) const;
-        void BuildUpdate(UpdateDataMapType &);
 
         virtual void DestroyForPlayer(Player *target) const;
 
@@ -282,6 +281,8 @@ class OREGON_DLL_SPEC Object
 
         virtual bool hasQuest(uint32 /* quest_id */) const { return false; }
         virtual bool hasInvolvedQuest(uint32 /* quest_id */) const { return false; }
+        virtual void BuildUpdate(UpdateDataMapType& ) {}
+        void BuildFieldsUpdate(Player *, UpdateDataMapType &) const;
 
         // FG: some hacky helpers
         void ForceValuesUpdateAtIndex(uint32);
@@ -505,6 +506,10 @@ class OREGON_DLL_SPEC WorldObject : public Object, public WorldLocation
         Creature*   SummonCreature(uint32 id, float x, float y, float z, float ang,TempSummonType spwtype,uint32 despwtime);
         GameObject* SummonGameObject(uint32 entry, float x, float y, float z, float ang, float rotation0, float rotation1, float rotation2, float rotation3, uint32 respawnTime);
         Creature*   SummonTrigger(float x, float y, float z, float ang, uint32 dur, CreatureAI* (*GetAI)(Creature*) = NULL);
+
+        void UpdateObjectVisibility();
+        void BuildUpdate(UpdateDataMapType& );
+
         bool isActiveObject() const { return m_isActive; }
         void setActive(bool isActiveObject);
         void SetWorldObject(bool apply);

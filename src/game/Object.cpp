@@ -189,12 +189,6 @@ void Object::BuildCreateUpdateBlockForPlayer(UpdateData *data, Player *target) c
     data->AddUpdateBlock(buf);
 }
 
-void Object::BuildUpdate(UpdateDataMapType &update_players)
-{
-    ObjectAccessor::_buildUpdateObject(this,update_players);
-    ClearUpdateMask(true);
-}
-
 void Object::SendUpdateToPlayer(Player* player)
 {
     // send create update to player
@@ -699,6 +693,20 @@ void Object::ClearUpdateMask(bool remove)
             ObjectAccessor::Instance().RemoveUpdateObject(this);
         m_objectUpdated = false;
     }
+}
+
+void Object::BuildFieldsUpdate(Player *pl, UpdateDataMapType &data_map) const
+{
+    UpdateDataMapType::iterator iter = data_map.find(pl);
+
+    if (iter == data_map.end())
+    {
+        std::pair<UpdateDataMapType::iterator, bool> p = data_map.insert( UpdateDataMapType::value_type(pl, UpdateData()) );
+        assert(p.second);
+        iter = p.first;
+    }
+
+    BuildValuesUpdateBlockForPlayer(&iter->second, iter->first);
 }
 
 bool Object::LoadValues(const char* data)
@@ -1870,5 +1878,84 @@ void WorldObject::GetGroundPoint(float &x, float &y, float &z, float dist, float
     UpdateGroundPositionZ(x, y, z);
 }
 
+void WorldObject::UpdateObjectVisibility()
+{
+    CellPair p = Oregon::ComputeCellPair(GetPositionX(), GetPositionY());
+    Cell cell(p);
 
+    GetMap()->UpdateObjectVisibility(this, cell, p);
+}
 
+struct WorldObjectChangeAccumulator
+{
+    UpdateDataMapType &i_updateDatas;
+    WorldObject &i_object;
+    std::set<uint64> plr_list;
+    WorldObjectChangeAccumulator(WorldObject &obj, UpdateDataMapType &d) : i_updateDatas(d), i_object(obj) {}
+    void Visit(PlayerMapType &m)
+    {
+        for (PlayerMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
+        {
+            BuildPacket(iter->getSource());
+            if (!iter->getSource()->GetSharedVisionList().empty())
+            {
+                SharedVisionList::const_iterator it = iter->getSource()->GetSharedVisionList().begin();
+                for (; it != iter->getSource()->GetSharedVisionList().end(); ++it)
+                    BuildPacket(*it);
+            }
+        }
+    }
+
+    void Visit(CreatureMapType &m)
+    {
+        for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
+        {
+            if (!iter->getSource()->GetSharedVisionList().empty())
+            {
+                SharedVisionList::const_iterator it = iter->getSource()->GetSharedVisionList().begin();
+                for (; it != iter->getSource()->GetSharedVisionList().end(); ++it)
+                    BuildPacket(*it);
+            }
+        }
+    }
+    void Visit(DynamicObjectMapType &m)
+    {
+        for (DynamicObjectMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
+        {
+            uint64 guid = iter->getSource()->GetCasterGUID();
+            if (IS_PLAYER_GUID(guid))
+            {
+                //Caster may be NULL if DynObj is in removelist
+                if(Player *caster = ObjectAccessor::FindPlayer(guid))
+                    if (caster->GetUInt64Value(PLAYER_FARSIGHT) == iter->getSource()->GetGUID())
+                        BuildPacket(caster);
+            }
+        }
+    }
+    void BuildPacket(Player* plr)
+    {
+        // Only send update once to a player
+        if (plr_list.find(plr->GetGUID()) == plr_list.end() && plr->HaveAtClient(&i_object))
+        {
+            i_object.BuildFieldsUpdate(plr, i_updateDatas);
+            plr_list.insert(plr->GetGUID());
+        }
+    }
+
+    template<class SKIP> void Visit(GridRefManager<SKIP> &) {}
+};
+
+void WorldObject::BuildUpdate(UpdateDataMapType& data_map)
+{
+    CellPair p = Oregon::ComputeCellPair(GetPositionX(), GetPositionY());
+    Cell cell(p);
+    cell.data.Part.reserved = ALL_DISTRICT;
+    cell.SetNoCreate();
+    WorldObjectChangeAccumulator notifier(*this, data_map);
+    TypeContainerVisitor<WorldObjectChangeAccumulator, WorldTypeMapContainer > player_notifier(notifier);
+    Map& map = *GetMap();
+    //we must build packets for all visible players
+    cell.Visit(p, player_notifier, map, *this, map.GetVisibilityDistance());
+
+    ClearUpdateMask(false);
+}

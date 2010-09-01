@@ -471,7 +471,7 @@ void GameObject::Update(uint32 diff)
             if (sWorld.getConfig(CONFIG_SAVE_RESPAWN_TIME_IMMEDIATELY))
                 SaveRespawnTime();
 
-            ObjectAccessor::UpdateObjectVisibility(this);
+            UpdateObjectVisibility();
 
             break;
         }

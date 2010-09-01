@@ -46,38 +46,6 @@
 INSTANTIATE_SINGLETON_2(ObjectAccessor, CLASS_LOCK);
 INSTANTIATE_CLASS_MUTEX(ObjectAccessor, ACE_Thread_Mutex);
 
-namespace Oregon
-{
-    struct OREGON_DLL_DECL BuildUpdateForPlayer
-    {
-        Player &i_player;
-        UpdateDataMapType &i_updatePlayers;
-
-        BuildUpdateForPlayer(Player &player, UpdateDataMapType &data_map) : i_player(player), i_updatePlayers(data_map) {}
-
-        void Visit(PlayerMapType &m)
-        {
-            for (PlayerMapType::iterator iter=m.begin(); iter != m.end(); ++iter)
-            {
-                if (iter->getSource() == &i_player)
-                    continue;
-
-                UpdateDataMapType::iterator iter2 = i_updatePlayers.find(iter->getSource());
-                if (iter2 == i_updatePlayers.end())
-                {
-                    std::pair<UpdateDataMapType::iterator, bool> p = i_updatePlayers.insert(ObjectAccessor::UpdateDataValueType(iter->getSource(), UpdateData()));
-                    ASSERT(p.second);
-                    iter2 = p.first;
-                }
-
-                i_player.BuildValuesUpdateBlockForPlayer(&iter2->second, iter2->first);
-            }
-        }
-
-        template<class SKIP> void Visit(GridRefManager<SKIP> &) {}
-    };
-}
-
 ObjectAccessor::ObjectAccessor() {}
 ObjectAccessor::~ObjectAccessor()
 {
@@ -175,78 +143,6 @@ void ObjectAccessor::SaveAllPlayers()
     HashMapHolder<Player>::MapType::iterator itr = m.begin();
     for (; itr != m.end(); ++itr)
         itr->second->SaveToDB();
-}
-
-void ObjectAccessor::UpdateObject(Object* obj, Player* exceptPlayer)
-{
-    UpdateDataMapType update_players;
-    obj->BuildUpdate(update_players);
-
-    WorldPacket packet;
-    for (UpdateDataMapType::iterator iter = update_players.begin(); iter != update_players.end(); ++iter)
-    {
-        if (iter->first == exceptPlayer)
-            continue;
-
-        iter->second.BuildPacket(&packet);
-        iter->first->GetSession()->SendPacket(&packet);
-        packet.clear();
-    }
-}
-
-void ObjectAccessor::_buildUpdateObject(Object *obj, UpdateDataMapType &update_players)
-{
-    bool build_for_all = true;
-    Player *pl = NULL;
-    if (obj->isType(TYPEMASK_ITEM))
-    {
-        Item *item = static_cast<Item *>(obj);
-        pl = item->GetOwner();
-        build_for_all = false;
-    }
-
-    if (pl != NULL)
-        _buildPacket(pl, obj, update_players);
-
-    // Capt: okey for all those fools who think its a real fix
-    //       THIS IS A TEMP FIX
-    if (build_for_all)
-    {
-        WorldObject * temp = dynamic_cast<WorldObject*>(obj);
-
-        //ASSERT(dynamic_cast<WorldObject*>(obj) != NULL);
-        if (temp)
-            _buildChangeObjectForPlayer(temp, update_players);
-        else
-            sLog.outDebug("ObjectAccessor: Ln 405 Temp bug fix");
-    }
-}
-
-void ObjectAccessor::_buildPacket(Player *pl, Object *obj, UpdateDataMapType &update_players)
-{
-    UpdateDataMapType::iterator iter = update_players.find(pl);
-
-    if (iter == update_players.end())
-    {
-        std::pair<UpdateDataMapType::iterator, bool> p = update_players.insert(UpdateDataValueType(pl, UpdateData()));
-        ASSERT(p.second);
-        iter = p.first;
-    }
-
-    obj->BuildValuesUpdateBlockForPlayer(&iter->second, iter->first);
-}
-
-void ObjectAccessor::_buildChangeObjectForPlayer(WorldObject *obj, UpdateDataMapType &update_players)
-{
-    CellPair p = Oregon::ComputeCellPair(obj->GetPositionX(), obj->GetPositionY());
-    Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
-    cell.SetNoCreate();
-    WorldObjectChangeAccumulator notifier(*obj, update_players);
-    TypeContainerVisitor<WorldObjectChangeAccumulator, WorldTypeMapContainer > player_notifier(notifier);
-    Map& map = *obj->GetMap();
-    //we must build packets for all visible players
-    cell.Visit(p, player_notifier, map, *obj, map.GetVisibilityDistance());
 }
 
 Pet* ObjectAccessor::GetPet(uint64 guid)
@@ -399,8 +295,7 @@ void ObjectAccessor::Update(uint32 diff)
             i_objects.erase(i_objects.begin());
             if (!obj || !obj->IsInWorld())
                 continue;
-            _buildUpdateObject(obj, update_players);
-            obj->ClearUpdateMask(false);
+            obj->BuildUpdate(update_players);
         }
     }
 
@@ -412,79 +307,6 @@ void ObjectAccessor::Update(uint32 diff)
         packet.clear();                                     // clean the string
     }
 }
-
-void
-ObjectAccessor::WorldObjectChangeAccumulator::Visit(PlayerMapType &m)
-{
-    for (PlayerMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
-    {
-        BuildPacket(iter->getSource());
-        if (!iter->getSource()->GetSharedVisionList().empty())
-        {
-            SharedVisionList::const_iterator it = iter->getSource()->GetSharedVisionList().begin();
-            for (; it != iter->getSource()->GetSharedVisionList().end(); ++it)
-                BuildPacket(*it);
-        }
-    }
-}
-
-void
-ObjectAccessor::WorldObjectChangeAccumulator::Visit(CreatureMapType &m)
-{
-    for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
-    {
-        if (!iter->getSource()->GetSharedVisionList().empty())
-        {
-            SharedVisionList::const_iterator it = iter->getSource()->GetSharedVisionList().begin();
-            for (; it != iter->getSource()->GetSharedVisionList().end(); ++it)
-                BuildPacket(*it);
-        }
-    }
-}
-
-void
-ObjectAccessor::WorldObjectChangeAccumulator::Visit(DynamicObjectMapType &m)
-{
-    for (DynamicObjectMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
-    {
-        if (IS_PLAYER_GUID(iter->getSource()->GetCasterGUID()))
-        {
-            Player* caster = iter->getSource()->GetCaster()->ToPlayer();
-            if (caster->GetUInt64Value(PLAYER_FARSIGHT) == iter->getSource()->GetGUID())
-                BuildPacket(caster);
-        }
-    }
-}
-
-void
-ObjectAccessor::WorldObjectChangeAccumulator::BuildPacket(Player* plr)
-{
-    // Only send update once to a player
-    if (plr_list.find(plr->GetGUID()) == plr_list.end() && plr->HaveAtClient(&i_object))
-    {
-        ObjectAccessor::_buildPacket(plr, &i_object, i_updateDatas);
-        plr_list.insert(plr->GetGUID());
-    }
-}
-
-void
-ObjectAccessor::UpdateObjectVisibility(WorldObject *obj)
-{
-    CellPair p = Oregon::ComputeCellPair(obj->GetPositionX(), obj->GetPositionY());
-    Cell cell(p);
-
-    obj->GetMap()->UpdateObjectVisibility(obj,cell,p);
-}
-
-/*void ObjectAccessor::UpdateVisibilityForPlayer(Player* player)
-{
-    CellPair p = Oregon::ComputeCellPair(player->GetPositionX(), player->GetPositionY());
-    Cell cell(p);
-    Map* m = player->GetMap();
-
-    m->UpdatePlayerVisibility(player,cell,p);
-    m->UpdateObjectsVisibilityFor(player,cell,p);
-}*/
 
 /// Define the static member of HashMapHolder
 
