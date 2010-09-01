@@ -96,8 +96,7 @@ Creature* ObjectAccessor::GetCreatureOrPet(WorldObject const& u, uint64 guid)
     return u.GetMap()->GetCreature(guid);
 }
 
-Unit*
-ObjectAccessor::GetUnit(WorldObject const &u, uint64 guid)
+Unit* ObjectAccessor::GetUnit(WorldObject const &u, uint64 guid)
 {
     if (!guid)
         return NULL;
@@ -108,8 +107,7 @@ ObjectAccessor::GetUnit(WorldObject const &u, uint64 guid)
     return GetCreatureOrPet(u, guid);
 }
 
-Corpse*
-ObjectAccessor::GetCorpse(WorldObject const &u, uint64 guid)
+Corpse* ObjectAccessor::GetCorpse(WorldObject const& u, uint64 guid)
 {
     Corpse * ret = GetObjectInWorld(guid, (Corpse*)NULL);
     if (ret && ret->GetMapId() != u.GetMapId()) ret = NULL;
@@ -196,24 +194,7 @@ void ObjectAccessor::UpdateObject(Object* obj, Player* exceptPlayer)
     }
 }
 
-void
-ObjectAccessor::AddUpdateObject(Object *obj)
-{
-    Guard guard(i_updateGuard);
-    i_objects.insert(obj);
-}
-
-void
-ObjectAccessor::RemoveUpdateObject(Object *obj)
-{
-    Guard guard(i_updateGuard);
-    std::set<Object *>::iterator iter = i_objects.find(obj);
-    if (iter != i_objects.end())
-        i_objects.erase(iter);
-}
-
-void
-ObjectAccessor::_buildUpdateObject(Object *obj, UpdateDataMapType &update_players)
+void ObjectAccessor::_buildUpdateObject(Object *obj, UpdateDataMapType &update_players)
 {
     bool build_for_all = true;
     Player *pl = NULL;
@@ -241,8 +222,7 @@ ObjectAccessor::_buildUpdateObject(Object *obj, UpdateDataMapType &update_player
     }
 }
 
-void
-ObjectAccessor::_buildPacket(Player *pl, Object *obj, UpdateDataMapType &update_players)
+void ObjectAccessor::_buildPacket(Player *pl, Object *obj, UpdateDataMapType &update_players)
 {
     UpdateDataMapType::iterator iter = update_players.find(pl);
 
@@ -256,8 +236,7 @@ ObjectAccessor::_buildPacket(Player *pl, Object *obj, UpdateDataMapType &update_
     obj->BuildValuesUpdateBlockForPlayer(&iter->second, iter->first);
 }
 
-void
-ObjectAccessor::_buildChangeObjectForPlayer(WorldObject *obj, UpdateDataMapType &update_players)
+void ObjectAccessor::_buildChangeObjectForPlayer(WorldObject *obj, UpdateDataMapType &update_players)
 {
     CellPair p = Oregon::ComputeCellPair(obj->GetPositionX(), obj->GetPositionY());
     Cell cell(p);
@@ -270,8 +249,7 @@ ObjectAccessor::_buildChangeObjectForPlayer(WorldObject *obj, UpdateDataMapType 
     cell.Visit(p, player_notifier, map, *obj, map.GetVisibilityDistance());
 }
 
-Pet*
-ObjectAccessor::GetPet(uint64 guid)
+Pet* ObjectAccessor::GetPet(uint64 guid)
 {
     return GetObjectInWorld(guid, (Pet*)NULL);
 }
@@ -328,19 +306,17 @@ void ObjectAccessor::AddCorpsesToGrid(GridPair const& gridpair, GridType& grid, 
     Guard guard(i_corpseGuard);
 
     for (Player2CorpsesMapType::iterator iter = i_player2corpse.begin(); iter != i_player2corpse.end(); ++iter)
-        if (iter->second->GetGrid() == gridpair)
     {
-        // verify, if the corpse in our instance (add only corpses which are)
-        if (map->Instanceable())
+        if (iter->second->GetGrid() == gridpair)
         {
-            if (iter->second->GetInstanceId() == map->GetInstanceId())
+            // verify, if the corpse in our instance (add only corpses which are)
+            if (map->Instanceable())
             {
-                grid.AddWorldObject(iter->second);
+                if (iter->second->GetInstanceId() == map->GetInstanceId())
+                    grid.AddWorldObject(iter->second);
             }
-        }
-        else
-        {
-            grid.AddWorldObject(iter->second);
+            else
+                grid.AddWorldObject(iter->second);
         }
     }
 }
@@ -361,7 +337,7 @@ Corpse* ObjectAccessor::ConvertCorpseForPlayer(uint64 player_guid, bool insignia
     // remove corpse from player_guid -> corpse map
     RemoveCorpse(corpse);
 
-    // remove resurrectble corpse from grid object registry (loaded state checked into call)
+    // remove resurrectable corpse from grid object registry (loaded state checked into call)
     // do not load the map if it's not loaded
     Map *map = MapManager::Instance().FindMap(corpse->GetMapId(), corpse->GetInstanceId());
     if (map) map->Remove(corpse,false);
@@ -394,7 +370,7 @@ Corpse* ObjectAccessor::ConvertCorpseForPlayer(uint64 player_guid, bool insignia
         bones->SetUInt32Value(CORPSE_FIELD_FLAGS, CORPSE_FLAG_UNK2 | CORPSE_FLAG_BONES);
         bones->SetUInt64Value(CORPSE_FIELD_OWNER, 0);
 
-        for (int i = 0; i < EQUIPMENT_SLOT_END; i++)
+        for (int i = 0; i < EQUIPMENT_SLOT_END; ++i)
         {
             if (corpse->GetUInt32Value(CORPSE_FIELD_ITEM + i))
                 bones->SetUInt32Value(CORPSE_FIELD_ITEM + i, 0);
@@ -413,6 +389,8 @@ Corpse* ObjectAccessor::ConvertCorpseForPlayer(uint64 player_guid, bool insignia
 void ObjectAccessor::Update(uint32 diff)
 {
     UpdateDataMapType update_players;
+
+    // Critical section
     {
         Guard guard(i_updateGuard);
         while (!i_objects.empty())

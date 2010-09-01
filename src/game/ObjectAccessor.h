@@ -49,7 +49,7 @@ class HashMapHolder
 {
     public:
 
-        typedef UNORDERED_MAP< uint64, T* >   MapType;
+        typedef UNORDERED_MAP<uint64, T*> MapType;
         typedef ACE_Thread_Mutex LockType;
         typedef Oregon::GeneralLock<LockType > Guard;
 
@@ -88,23 +88,24 @@ class HashMapHolder
 
 class OREGON_DLL_DECL ObjectAccessor : public Oregon::Singleton<ObjectAccessor, Oregon::ClassLevelLockable<ObjectAccessor, ACE_Thread_Mutex> >
 {
-
     friend class Oregon::OperatorNew<ObjectAccessor>;
     ObjectAccessor();
     ~ObjectAccessor();
-    ObjectAccessor(const ObjectAccessor &);
-    ObjectAccessor& operator=(const ObjectAccessor &);
+    ObjectAccessor(const ObjectAccessor&);
+    ObjectAccessor& operator=(const ObjectAccessor&);
 
     public:
-        typedef UNORDERED_MAP<uint64, Corpse* >      Player2CorpsesMapType;
+
+        typedef UNORDERED_MAP<uint64, Corpse*> Player2CorpsesMapType;
         typedef UNORDERED_MAP<Player*, UpdateData>::value_type UpdateDataValueType;
 
-        template<class T> static T* GetObjectInWorld(uint64 guid, T* /*fake*/)
+        // returns object if is in world
+        template<class T> static T* GetObjectInWorld(uint64 guid, T* /*typeSpecifier*/)
         {
             return HashMapHolder<T>::Find(guid);
         }
 
-        static Unit* GetObjectInWorld(uint64 guid, Unit* /*fake*/)
+        static Unit* GetObjectInWorld(uint64 guid, Unit* /*typeSpecifier*/)
         {
             if (!guid)
                 return NULL;
@@ -121,9 +122,10 @@ class OREGON_DLL_DECL ObjectAccessor : public Oregon::Singleton<ObjectAccessor, 
         template<class T> static T* GetObjectInWorld(uint32 mapid, float x, float y, uint64 guid, T* /*fake*/)
         {
             T* obj = HashMapHolder<T>::Find(guid);
-            if (!obj || obj->GetMapId() != mapid) return NULL;
+            if (!obj || obj->GetMapId() != mapid)
+                return NULL;
 
-            CellPair p = Oregon::ComputeCellPair(x,y);
+            CellPair p = Oregon::ComputeCellPair(x, y);
             if (p.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || p.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
             {
                 sLog.outError("ObjectAccessor::GetObjectInWorld: invalid coordinates supplied X:%f Y:%f grid cell [%u:%u]", x, y, p.x_coord, p.y_coord);
@@ -140,37 +142,43 @@ class OREGON_DLL_DECL ObjectAccessor : public Oregon::Singleton<ObjectAccessor, 
             int32 dx = int32(p.x_coord) - int32(q.x_coord);
             int32 dy = int32(p.y_coord) - int32(q.y_coord);
 
-            if (dx > -2 && dx < 2 && dy > -2 && dy < 2) return obj;
-            else return NULL;
+            if (dx > -2 && dx < 2 && dy > -2 && dy < 2)
+                return obj;
+            else
+                return NULL;
         }
 
-        static Object*   GetObjectByTypeMask(Player const &, uint64, uint32 typemask);
+        // these functions return objects only if in map of specified object
+        static Object* GetObjectByTypeMask(Player const &, uint64, uint32 typemask);
         static Creature* GetCreatureOrPet(WorldObject const&, uint64);
         static Unit* GetUnit(WorldObject const &, uint64);
         static Pet* GetPet(Unit const&, uint64 guid) { return GetPet(guid); }
         static Player* GetPlayer(Unit const&, uint64 guid) { return FindPlayer(guid); }
         static Corpse* GetCorpse(WorldObject const& u, uint64 guid);
-        static Pet* GetPet(uint64 guid);
+
+        // these functions return objects if found in whole world
+        // ACCESS LIKE THAT IS NOT THREAD SAFE
+        static Pet* GetPet(uint64);
         static Player* FindPlayer(uint64);
+        Player* FindPlayerByName(const char* name);
 
-        Player* FindPlayerByName(const char* name) ;
-
+        // when using this, you must use the hashmapholder's lock
         HashMapHolder<Player>::MapType& GetPlayers()
         {
             return HashMapHolder<Player>::GetContainer();
         }
 
-        template<class T> void AddObject(T *object)
+        template<class T> void AddObject(T* object)
         {
             HashMapHolder<T>::Insert(object);
         }
 
-        template<class T> void RemoveObject(T *object)
+        template<class T> void RemoveObject(T* object)
         {
             HashMapHolder<T>::Remove(object);
         }
 
-        void RemoveObject(Player *pl)
+        void RemoveObject(Player* pl)
         {
             HashMapHolder<Player>::Remove(pl);
 
@@ -183,15 +191,26 @@ class OREGON_DLL_DECL ObjectAccessor : public Oregon::Singleton<ObjectAccessor, 
 
         void SaveAllPlayers();
 
-        void AddUpdateObject(Object *obj);
-        void RemoveUpdateObject(Object *obj);
+        void AddUpdateObject(Object* obj)
+        {
+            Guard guard(i_updateGuard);
+            i_objects.insert(obj);
+        }
+
+        void RemoveUpdateObject(Object* obj)
+        {
+            Guard guard(i_updateGuard);
+            std::set<Object *>::iterator iter = i_objects.find(obj);
+            if (iter != i_objects.end())
+                i_objects.erase(iter);
+        }
 
         void Update(uint32 diff);
 
         Corpse* GetCorpseForPlayerGUID(uint64 guid);
-        void RemoveCorpse(Corpse *corpse);
+        void RemoveCorpse(Corpse* corpse);
         void AddCorpse(Corpse* corpse);
-        void AddCorpsesToGrid(GridPair const& gridpair,GridType& grid,Map* map);
+        void AddCorpsesToGrid(GridPair const& gridpair, GridType& grid, Map* map);
         Corpse* ConvertCorpseForPlayer(uint64 player_guid, bool insignia = false);
 
         static void UpdateObject(Object* obj, Player* exceptPlayer);
@@ -214,19 +233,19 @@ class OREGON_DLL_DECL ObjectAccessor : public Oregon::Singleton<ObjectAccessor, 
         };
 
         friend struct WorldObjectChangeAccumulator;
-        Player2CorpsesMapType   i_player2corpse;
+        Player2CorpsesMapType i_player2corpse;
 
         typedef ACE_Thread_Mutex LockType;
         typedef Oregon::GeneralLock<LockType > Guard;
 
-        static void _buildChangeObjectForPlayer(WorldObject *, UpdateDataMapType &);
-        static void _buildPacket(Player *, Object *, UpdateDataMapType &);
+        static void _buildChangeObjectForPlayer(WorldObject*, UpdateDataMapType&);
+        static void _buildPacket(Player*, Object*, UpdateDataMapType&);
         void _update(void);
-        std::set<Object *> i_objects;
+
+        std::set<Object*> i_objects;
         LockType i_playerGuard;
         LockType i_updateGuard;
         LockType i_corpseGuard;
         LockType i_petGuard;
 };
 #endif
-
