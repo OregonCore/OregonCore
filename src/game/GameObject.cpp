@@ -1245,7 +1245,7 @@ void GameObject::Use(Unit* user)
 
             Player* player = user->ToPlayer();
 
-            if (player->isAllowUseBattleGroundObject())
+            if (player->CanUseBattleGroundObject())
             {
                 // in battleground check
                 BattleGround *bg = player->GetBattleGround();
@@ -1270,7 +1270,7 @@ void GameObject::Use(Unit* user)
 
             Player* player = user->ToPlayer();
 
-            if (player->isAllowUseBattleGroundObject())
+            if (player->CanUseBattleGroundObject())
             {
                 // in battleground check
                 BattleGround *bg = player->GetBattleGround();
