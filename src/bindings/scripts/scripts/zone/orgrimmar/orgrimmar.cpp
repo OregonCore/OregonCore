@@ -97,7 +97,7 @@ struct OREGON_DLL_DECL npc_shenthulAI : public ScriptedAI
         if (CanEmote)
             if (Reset_Timer <= diff)
         {
-            if (Player* temp = Unit::GetPlayer(playerGUID))
+            if (Player* temp = Unit::GetPlayer(*me, playerGUID))
                 temp->FailQuest(QUEST_2460);
             Reset();
         } else Reset_Timer -= diff;

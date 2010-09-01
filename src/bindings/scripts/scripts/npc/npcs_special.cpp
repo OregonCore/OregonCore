@@ -478,7 +478,7 @@ void npc_doctorAI::BeginEvent(Player* player)
 
 void npc_doctorAI::PatientDied(Location* Point)
 {
-    Player* player = Unit::GetPlayer(Playerguid);
+    Player* player = Unit::GetPlayer(*me, Playerguid);
     if (player && ((player->GetQuestStatus(6624) == QUEST_STATUS_INCOMPLETE) || (player->GetQuestStatus(6622) == QUEST_STATUS_INCOMPLETE)))
     {
         PatientDiedCount++;

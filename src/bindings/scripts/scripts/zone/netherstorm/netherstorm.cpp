@@ -97,7 +97,7 @@ struct OREGON_DLL_DECL npc_manaforge_control_consoleAI : public ScriptedAI
 
         if (someplayer)
         {
-            Player* p = Unit::GetPlayer(someplayer);
+            Player* p = Unit::GetPlayer(*me, someplayer);
             if (p)
             {
                 switch(me->GetEntry())
@@ -253,7 +253,7 @@ struct OREGON_DLL_DECL npc_manaforge_control_consoleAI : public ScriptedAI
                     DoScriptText(EMOTE_COMPLETE, me);
                     if (someplayer)
                     {
-                        Player* player = Unit::GetPlayer(someplayer);
+                        Player* player = Unit::GetPlayer(*me, someplayer);
                         if (player)
                            player->KilledMonster(me->GetEntry(),me->GetGUID());
                         DoCast(me,SPELL_DISABLE_VISUAL);
@@ -419,7 +419,7 @@ struct OREGON_DLL_DECL npc_commander_dawnforgeAI : public ScriptedAI
     {
         Creature *ardonis = Unit::GetCreature(*me,ardonisGUID);
         Creature *pathaleon = Unit::GetCreature(*me,pathaleonGUID);
-        Player *player = Unit::GetPlayer(playerGUID);
+        Player *player = Unit::GetPlayer(*me, playerGUID);
 
         if (!ardonis || !pathaleon || !player)
             return;
@@ -445,7 +445,7 @@ struct OREGON_DLL_DECL npc_commander_dawnforgeAI : public ScriptedAI
     {
         if (Unit *ardonis = Unit::GetUnit(*me,ardonisGUID))
         {
-            Player *player = Unit::GetPlayer(playerGUID);
+            Player *player = Unit::GetPlayer(*me, playerGUID);
 
             if (!player)
                 return;
@@ -502,7 +502,7 @@ struct OREGON_DLL_DECL npc_commander_dawnforgeAI : public ScriptedAI
 
         Unit *ardonis = Unit::GetUnit(*me,ardonisGUID);
         Unit *pathaleon = Unit::GetUnit(*me,pathaleonGUID);
-        Player *player = Unit::GetPlayer(playerGUID);
+        Player *player = Unit::GetPlayer(*me, playerGUID);
 
         if (!ardonis || !player)
         {
@@ -779,7 +779,7 @@ struct OREGON_DLL_DECL mob_phase_hunterAI : public ScriptedAI
 
         if (PlayerGUID) // start: support for quest 10190
         {
-            Player* pTarget = Unit::GetPlayer(PlayerGUID);
+            Player* pTarget = Unit::GetPlayer(*me, PlayerGUID);
 
             if (pTarget && !Weak && me->GetHealth() < (me->GetMaxHealth() / 100 * WeakPercent)
                 && pTarget->GetQuestStatus(10190) == QUEST_STATUS_INCOMPLETE)

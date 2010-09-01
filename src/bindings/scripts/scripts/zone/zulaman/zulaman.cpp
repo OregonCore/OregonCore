@@ -114,7 +114,7 @@ struct OREGON_DLL_DECL npc_zulaman_hostageAI : public ScriptedAI
     void EnterCombat(Unit *who) {}
     void JustDied(Unit *)
     {
-        Player* player = Unit::GetPlayer(PlayerGUID);
+        Player* player = Unit::GetPlayer(*me, PlayerGUID);
         if (player) player->SendLoot(me->GetGUID(), LOOT_CORPSE);
     }
     void UpdateAI(const uint32 diff)

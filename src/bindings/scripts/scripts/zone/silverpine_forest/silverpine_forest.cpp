@@ -278,7 +278,7 @@ struct OREGON_DLL_DECL pyrewood_ambushAI : public ScriptedAI
             Unit* pTarget = NULL;
             if (PlayerGUID)
             {
-                pPlayer = Unit::GetPlayer(PlayerGUID);
+                pPlayer = Unit::GetPlayer(*me, PlayerGUID);
                 switch(rand()%2)
                 {
                     case 0: pTarget = me; break;
@@ -297,7 +297,7 @@ struct OREGON_DLL_DECL pyrewood_ambushAI : public ScriptedAI
     {
         if (PlayerGUID)
         {
-            Player* pPlayer = Unit::GetPlayer(PlayerGUID);
+            Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID);
             if (pPlayer && ((Player*)pPlayer)->GetQuestStatus(QUEST_PYREWOOD_AMBUSH) == QUEST_STATUS_INCOMPLETE)
                 ((Player*)pPlayer)->FailQuest(QUEST_PYREWOOD_AMBUSH);
         }

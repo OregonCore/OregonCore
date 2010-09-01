@@ -110,7 +110,7 @@ struct OREGON_DLL_DECL npc_greengill_slaveAI : public ScriptedAI
             PlayerGUID = caster->GetGUID();
             if (PlayerGUID)
             {
-                Player* plr = Unit::GetPlayer(PlayerGUID);
+                Player* plr = Unit::GetPlayer(*me, PlayerGUID);
                 if (plr && plr->GetQuestStatus(QUESTG) == QUEST_STATUS_INCOMPLETE)
                     plr->KilledMonster(25086, me->GetGUID());
             }

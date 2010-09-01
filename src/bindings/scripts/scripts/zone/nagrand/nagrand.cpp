@@ -610,7 +610,7 @@ struct OREGON_DLL_DECL mob_sparrowhawkAI : public ScriptedAI
                 if (fleeing && me->GetMotionMaster()->GetCurrentMovementGeneratorType() != FLEEING_MOTION_TYPE)
                     fleeing = false;
 
-                Player *player = Unit::GetPlayer(PlayerGUID);
+                Player *player = Unit::GetPlayer(*me, PlayerGUID);
                 if (player && me->IsWithinDistInMap(player, 30))
                 {
                     if (!fleeing)

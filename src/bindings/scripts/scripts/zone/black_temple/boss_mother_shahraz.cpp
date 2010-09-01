@@ -230,7 +230,7 @@ struct OREGON_DLL_DECL boss_shahrazAI : public ScriptedAI
             for (uint8 i = 0; i < 3; ++i)
             {
                 if (TargetGUID[i])
-                    targets[i] = Player::GetPlayer(TargetGUID[i]);
+                    targets[i] = Player::GetPlayer(*me, TargetGUID[i]);
                 else
                     targets[i] = NULL;
             }

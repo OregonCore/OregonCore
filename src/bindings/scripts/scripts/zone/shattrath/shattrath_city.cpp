@@ -464,7 +464,7 @@ struct OREGON_DLL_DECL npc_dirty_larryAI : public ScriptedAI
 
     uint32 NextStep(uint32 Step)
     {
-        Player* player = Unit::GetPlayer(PlayerGUID);
+        Player* player = Unit::GetPlayer(*me, PlayerGUID);
 
         switch(Step)
         {
@@ -498,7 +498,7 @@ struct OREGON_DLL_DECL npc_dirty_larryAI : public ScriptedAI
 
         if (Attack)
         {
-            Player* player = Unit::GetPlayer(PlayerGUID);
+            Player* player = Unit::GetPlayer(*me, PlayerGUID);
             me->setFaction(14);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             if (player)
@@ -550,7 +550,7 @@ struct OREGON_DLL_DECL npc_dirty_larryAI : public ScriptedAI
             me->DeleteThreatList();
             me->CombatStop();
             me->GetMotionMaster()->MoveTargetedHome();
-            Player* player = Unit::GetPlayer(PlayerGUID);
+            Player* player = Unit::GetPlayer(*me, PlayerGUID);
             if (player)
                 player->GroupEventHappens(QUEST_WBI, me);
         }

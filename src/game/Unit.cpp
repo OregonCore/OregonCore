@@ -9186,9 +9186,9 @@ Unit* Unit::GetUnit(WorldObject& object, uint64 guid)
     return ObjectAccessor::GetUnit(object,guid);
 }
 
-Player* Unit::GetPlayer(uint64 guid)
+Player* Unit::GetPlayer(WorldObject& object, uint64 guid)
 {
-    return ObjectAccessor::FindPlayer(guid);
+    return ObjectAccessor::GetPlayer(object,guid);
 }
 
 Creature* Unit::GetCreature(WorldObject& object, uint64 guid)

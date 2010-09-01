@@ -137,7 +137,7 @@ struct OREGON_DLL_DECL npc_kyle_frenziedAI : public ScriptedAI
                 break;
             case 3:
                 STATE = 4;  //go home
-                Player *plr = Unit::GetPlayer(player);
+                Player *plr = Unit::GetPlayer(*me, player);
                 if (plr && plr->GetQuestStatus(11129) == QUEST_STATUS_INCOMPLETE)
                     plr->CompleteQuest(11129);
                 float x, y, z, z2, angle;

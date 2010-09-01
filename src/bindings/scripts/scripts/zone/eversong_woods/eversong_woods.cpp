@@ -587,7 +587,7 @@ struct OREGON_DLL_DECL npc_apprentice_mirvedaAI : public ScriptedAI
     {
         if (PlayerGUID)
         {
-            Player* player = Unit::GetPlayer(PlayerGUID);
+            Player* player = Unit::GetPlayer(*me, PlayerGUID);
             if (player)
                 player->FailQuest(QUEST_UNEXPECTED_RESULT);
         }
@@ -599,7 +599,7 @@ struct OREGON_DLL_DECL npc_apprentice_mirvedaAI : public ScriptedAI
         {
             if (PlayerGUID)
             {
-                Player* player = Unit::GetPlayer(PlayerGUID);
+                Player* player = Unit::GetPlayer(*me, PlayerGUID);
                 if (player)
                     player->CompleteQuest(QUEST_UNEXPECTED_RESULT);
             }
@@ -703,7 +703,7 @@ struct OREGON_DLL_DECL npc_infused_crystalAI : public Scripted_NoMovementAI
     {
         if (PlayerGUID && !Completed)
         {
-            Player* player = Unit::GetPlayer(PlayerGUID);
+            Player* player = Unit::GetPlayer(*me, PlayerGUID);
             if (player)
                 player->FailQuest(QUEST_POWERING_OUR_DEFENSES);
         }
@@ -717,7 +717,7 @@ struct OREGON_DLL_DECL npc_infused_crystalAI : public Scripted_NoMovementAI
             Completed = true;
             if (PlayerGUID)
             {
-                Player* player = Unit::GetPlayer(PlayerGUID);
+                Player* player = Unit::GetPlayer(*me, PlayerGUID);
                 if (player)
                     player->CompleteQuest(QUEST_POWERING_OUR_DEFENSES);
             }
