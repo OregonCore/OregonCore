@@ -568,21 +568,13 @@ void Aura::Update(uint32 diff)
 
         // Get spell range
         float radius;
-        SpellModOp mod;
         if (m_spellProto->EffectRadiusIndex[GetEffIndex()])
-        {
-            //radius = GetSpellRadius(sSpellRadiusStore.LookupEntry(m_spellProto->EffectRadiusIndex[GetEffIndex()]));
             radius = GetSpellRadius(m_spellProto, GetEffIndex(), false);
-            mod = SPELLMOD_RADIUS;
-        }
         else
-        {
             radius = GetSpellMaxRange(sSpellRangeStore.LookupEntry(m_spellProto->rangeIndex));
-            mod = SPELLMOD_RANGE;
-        }
 
         if (Player* modOwner = caster->GetSpellModOwner())
-            modOwner->ApplySpellMod(GetId(), mod, radius,NULL);
+            modOwner->ApplySpellMod(GetId(), SPELLMOD_RADIUS, radius,NULL);
 
         if (!caster->IsWithinDistInMap(pRealTarget, radius))
             return;
