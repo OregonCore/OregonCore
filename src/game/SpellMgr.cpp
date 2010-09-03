@@ -2392,9 +2392,6 @@ void SpellMgr::LoadSpellCustomAttr()
         if (spellInfo->SpellVisual == 3879)
             mSpellCustomAttr[i] |= SPELL_ATTR_CU_CONE_BACK;
 
-        if (spellInfo->SpellFamilyName == SPELLFAMILY_DRUID && spellInfo->SpellFamilyFlags & 0x1000LL)
-            mSpellCustomAttr[i] |= SPELL_ATTR_CU_IGNORE_ARMOR;
-
         switch(i)
         {
         case 26029: // dark glare
@@ -2491,6 +2488,22 @@ void SpellMgr::LoadSpellCustomAttr()
             break;
         default:
             break;
+        }
+
+        switch (spellInfo->SpellFamilyName)
+        {
+            case SPELLFAMILY_WARRIOR:
+                // Shout
+                if (spellInfo->SpellFamilyFlags & 0x0000000000020000LL)
+                    mSpellCustomAttr[i] |= SPELL_ATTR_CU_AURA_CC;
+                break;
+            case SPELLFAMILY_DRUID:
+                // Roar
+                if (spellInfo->SpellFamilyFlags & 0x0000000800000000LL)
+                    mSpellCustomAttr[i] |= SPELL_ATTR_CU_AURA_CC;
+                else if (spellInfo->SpellFamilyFlags & 0x1000LL)
+                    mSpellCustomAttr[i] |= SPELL_ATTR_CU_IGNORE_ARMOR;
+                break;
         }
     }
     CreatureAI::FillAISpellInfo();
