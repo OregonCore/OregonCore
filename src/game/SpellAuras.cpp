@@ -867,8 +867,8 @@ void Aura::_AddAura()
         Unit::spellEffectPair spair = Unit::spellEffectPair(GetId(), i);
         for (Unit::AuraMap::const_iterator itr = m_target->GetAuras().lower_bound(spair); itr != m_target->GetAuras().upper_bound(spair); ++itr)
         {
-            // allow use single slot only by auras from same caster
-            if (itr->second->GetCasterGUID() == GetCasterGUID())
+            // allow use single slot only by auras from same caster and item
+            if (itr->second->GetCasterGUID() == GetCasterGUID() && itr->second->GetCastItemGUID() == GetCastItemGUID())
             {
                 secondaura = true;
                 slot = itr->second->GetAuraSlot();

@@ -3349,7 +3349,12 @@ bool Unit::AddAura(Aura *Aur)
                         if (Aur->GetStackAmount() < aurSpellInfo->StackAmount)
                             Aur->SetStackAmount(Aur->GetStackAmount()+1);
                     }
-
+                    // Allow mongoose procs from different weapon stacks
+                    if (Aur->GetId() == 28093 && Aur->GetCastItemGUID() != i2->second->GetCastItemGUID())
+                    {
+                        i2++;
+                        continue;
+                    }
                     RemoveAura(i2,AURA_REMOVE_BY_STACK);
                     i2 = m_Auras.lower_bound(spair);
                     continue;
