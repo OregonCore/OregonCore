@@ -724,12 +724,12 @@ enum OregonStrings
     LANG_NEED_CHARACTER_NAME            = 807,
     LANG_PLAYER_NOT_EXIST_OR_OFFLINE    = 808,
     LANG_ACCOUNT_FOR_PLAYER_NOT_FOUND   = 809,
-    LANG_GUILD_MASTER                   = 811,
-    LANG_GUILD_OFFICER                  = 812,
-    LANG_GUILD_VETERAN                  = 813,
-    LANG_GUILD_MEMBER                   = 814,
-    LANG_GUILD_INITIATE                 = 815,
-    // Room for in-game strings           816-999 not used
+    LANG_GUILD_MASTER                   = 812,
+    LANG_GUILD_OFFICER                  = 813,
+    LANG_GUILD_VETERAN                  = 814,
+    LANG_GUILD_MEMBER                   = 815,
+    LANG_GUILD_INITIATE                 = 816,
+    // Room for in-game strings           817-999 not used
 
     // Level 4 (CLI only commands)
     LANG_COMMAND_EXIT                   = 1000,
