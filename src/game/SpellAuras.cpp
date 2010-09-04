@@ -1630,6 +1630,13 @@ void Aura::TriggerSpell()
                     }
 //                    // Magic Sucker Device timer
 //                    case 38672: break;
+                    // Rod of Purification - for quest 10839 (Veil Skith: Darkstone of Terokk)
+                    case 38736:
+                        {
+                            if(Unit* caster = GetCaster())
+                                caster->CastSpell(target, trigger_spell_id, true, NULL, this);
+                            return;
+                        }
 //                    // Tomb Guarding Charging
 //                    case 38751: break;
 //                    // Murmur's Touch
