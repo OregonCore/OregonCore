@@ -1325,23 +1325,23 @@ void Aura::TriggerSpell()
 //                    // Cannon Prep
 //                    case 24832: break;
 //                    // Shadow Bolt Whirl
-					case 24834:
-					{
-						uint32 spellForTick[8] = { 24820, 24821, 24822, 24823, 24835, 24836, 24837, 24838 };
-						uint32 totalTick = m_maxduration / m_modifier.periodictime;
-						if(totalTick < 8)
-						{
-							trigger_spell_id = spellForTick[totalTick];
+                    case 24834:
+                    {
+                        uint32 spellForTick[8] = { 24820, 24821, 24822, 24823, 24835, 24836, 24837, 24838 };
+                        uint32 totalTick = m_maxduration / m_modifier.periodictime;
+                        if(totalTick < 8)
+                        {
+                            trigger_spell_id = spellForTick[totalTick];
 
-							// casted in left/right (but triggered spell have wide forward cone)
-							float forward = m_target->GetOrientation();
-							float angle = m_target->GetOrientation() + ( totalTick % 2 == 0 ? M_PI / 2 : - M_PI / 2);
-							m_target->SetOrientation(angle);
-							target->CastSpell(target, trigger_spell_id, true, NULL, this);
-							m_target->SetOrientation(forward);
-						}
-						return;
-					}
+                            // casted in left/right (but triggered spell have wide forward cone)
+                            float forward = m_target->GetOrientation();
+                            float angle = m_target->GetOrientation() + ( totalTick % 2 == 0 ? M_PI / 2 : - M_PI / 2);
+                            m_target->SetOrientation(angle);
+                            target->CastSpell(target, trigger_spell_id, true, NULL, this);
+                            m_target->SetOrientation(forward);
+                        }
+                        return;
+                    }
 //                    // Stink Trap
 //                    case 24918: break;
 //                    // Mark of Nature
@@ -1406,12 +1406,12 @@ void Aura::TriggerSpell()
 //                    // Inoculate Nestlewood Owlkin
                     case 29528: trigger_spell_id = 28713; break;
 //                    // Overload
-						case 29768:
-                     {
-                         int32 BasePoints = int32(GetModifier()->m_amount);
-                         m_target->CastCustomSpell(m_target,29766,&BasePoints,NULL,NULL,true,NULL,this);
-                         return;
-                     }
+                    case 29768:
+                    {
+                        int32 BasePoints = int32(GetModifier()->m_amount);
+                        m_target->CastCustomSpell(m_target,29766,&BasePoints,NULL,NULL,true,NULL,this);
+                        return;
+                    }
 //                    // Return Fire
 //                    case 29788: break;
 //                    // Return Fire
@@ -1643,7 +1643,7 @@ void Aura::TriggerSpell()
 //                    // Hellfire - The Exorcism, Jules releases darkness, aura
 //                    case 39306: break;
 //                    // Inferno
-					  case 39346:
+                      case 39346:
                       {
                           int32 BasePoints = int32(GetModifier()->m_amount);
                           m_target->CastCustomSpell(m_target,35283,&BasePoints,NULL,NULL,true,NULL,this);
@@ -1656,7 +1656,7 @@ void Aura::TriggerSpell()
 //                    // Shadow Bolt Whirl
 //                    case 39634: break;
 //                    // Shadow Inferno
-					  case 39645:
+                      case 39645:
                       {
                           int32 BasePoints = int32(GetModifier()->m_amount);
                           m_target->CastCustomSpell(m_target,39646,&BasePoints,NULL,NULL,true,NULL,this);
@@ -1818,42 +1818,42 @@ void Aura::TriggerSpell()
                 }
                 break;
             }
+            case SPELLFAMILY_HUNTER:
+            {
+                switch (auraId)
+                {
+                    //Frost Trap Aura
+                    case 13810:
+                        if (caster->GetTypeId() == TYPEID_PLAYER)
+                        {
+                            float f_chance = 0;
+                            Unit::AuraList const& auraTriggerSpell = caster->GetAurasByType(SPELL_AURA_PROC_TRIGGER_SPELL);
+                            for (Unit::AuraList::const_iterator itr = auraTriggerSpell.begin(); itr != auraTriggerSpell.end(); ++itr)
+                            {
+                                switch ((*itr)->GetSpellProto()->Id)
+                                {
+                                    case 19384:
+                                    case 19387:
+                                    case 19388:
+                                        f_chance = (*itr)->GetSpellProto()->procChance;
+                                        break;
+                                }
+                            }
 
-//            case SPELLFAMILY_HUNTER:
-//            {
-//                switch(auraId)
-//                {
-//                    //Frost Trap Aura
-//                    case 13810:
-//                        return;
-//                    //Rizzle's Frost Trap
-//                    case 39900:
-//                        return;
-//                    // Tame spells
-//                    case 19597:         // Tame Ice Claw Bear
-//                    case 19676:         // Tame Snow Leopard
-//                    case 19677:         // Tame Large Crag Boar
-//                    case 19678:         // Tame Adult Plainstrider
-//                    case 19679:         // Tame Prairie Stalker
-//                    case 19680:         // Tame Swoop
-//                    case 19681:         // Tame Dire Mottled Boar
-//                    case 19682:         // Tame Surf Crawler
-//                    case 19683:         // Tame Armored Scorpid
-//                    case 19684:         // Tame Webwood Lurker
-//                    case 19685:         // Tame Nightsaber Stalker
-//                    case 19686:         // Tame Strigid Screecher
-//                    case 30100:         // Tame Crazed Dragonhawk
-//                    case 30103:         // Tame Elder Springpaw
-//                    case 30104:         // Tame Mistbat
-//                    case 30647:         // Tame Barbed Crawler
-//                    case 30648:         // Tame Greater Timberstrider
-//                    case 30652:         // Tame Nightstalker
-//                        return;
-//                    default:
-//                        break;
-//                }
-//                break;
-//            }
+                            if (roll_chance_f(f_chance))
+                            {
+                                target = m_target;
+                                trigger_spell_id = 19185;
+                            }
+                            else
+                                return;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            }
             case SPELLFAMILY_SHAMAN:
             {
                 switch(auraId)
