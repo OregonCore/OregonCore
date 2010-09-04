@@ -1832,7 +1832,7 @@ void Aura::TriggerSpell()
                             {
                                 switch ((*itr)->GetSpellProto()->Id)
                                 {
-                                    case 19384:
+                                    case 19184:
                                     case 19387:
                                     case 19388:
                                         f_chance = (*itr)->GetSpellProto()->procChance;
