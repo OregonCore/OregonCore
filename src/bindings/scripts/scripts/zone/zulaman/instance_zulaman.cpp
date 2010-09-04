@@ -256,6 +256,10 @@ struct OREGON_DLL_DECL instance_zulaman : public ScriptedInstance
         case DATA_HALAZZIEVENT:
             Encounters[3] = data;
             OpenDoor(HalazziDoorEntryGUID, data != IN_PROGRESS);
+            if(data == IN_PROGRESS)
+            {
+                OpenDoor(HalazziDoorEntryGUID, false);
+            }
             if (data == DONE)
 			{
 				SummonHostage(3);
