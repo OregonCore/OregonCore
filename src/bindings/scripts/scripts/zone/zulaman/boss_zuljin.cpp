@@ -295,7 +295,7 @@ struct OREGON_DLL_DECL boss_zuljinAI : public ScriptedAI
                 pCreature->CastSpell(pCreature, SPELL_SPIRIT_AURA, true);
                 pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-				pCreature->addUnitState(UNIT_STAT_STUNNED);
+                pCreature->addUnitState(UNIT_STAT_STUNNED);
                 SpiritGUID[i] = pCreature->GetGUID();
             }
         }
@@ -586,9 +586,9 @@ struct OREGON_DLL_DECL feather_vortexAI : public ScriptedAI
 {
     feather_vortexAI(Creature *c) : ScriptedAI(c) {}
 
-	std::list<Player*> PlayerList;
-	uint32 ResetTimer;
-	uint32 ChangeTargetTimer;
+    std::list<Player*> PlayerList;
+    uint32 ResetTimer;
+    uint32 ChangeTargetTimer;
 
     void Reset() {}
 
@@ -596,14 +596,14 @@ struct OREGON_DLL_DECL feather_vortexAI : public ScriptedAI
 
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {
-        if(caster->GetTypeId() == TYPEID_PLAYER && !PlayerIsInList((Player*)caster))
-		{
-			if(spell->Id == SPELL_ZAP_INFORM)
-			{
-				me->CastSpell(caster, SPELL_ZAP_DAMAGE, true);
-				PlayerList.push_back((Player*)caster);
-			}
-		}
+        if (caster->GetTypeId() == TYPEID_PLAYER && !PlayerIsInList(CAST_PLR(caster)))
+        {
+            if (spell->Id == SPELL_ZAP_INFORM)
+            {
+                me->CastSpell(caster, SPELL_ZAP_DAMAGE, true);
+                PlayerList.push_back(CAST_PLR(caster));
+            }
+        }
     }
 
     void UpdateAI(const uint32 diff)
@@ -612,30 +612,34 @@ struct OREGON_DLL_DECL feather_vortexAI : public ScriptedAI
         if (me->IsWithinMeleeRange(me->getVictim()))
             AttackStart(SelectUnit(SELECT_TARGET_RANDOM, 0));
 
-		if(ResetTimer < diff)
-		{
-			PlayerList.clear();
-			ResetTimer = 500;
-			}else ResetTimer -= diff;
+        if (ResetTimer < diff)
+        {
+            PlayerList.clear();
+            ResetTimer = 500;
+        }
+        else
+            ResetTimer -= diff;
 
-		if(ChangeTargetTimer < diff)
-		{
-			AttackStart(SelectUnit(SELECT_TARGET_RANDOM, 0));
-			ChangeTargetTimer = urand(3000, 6000);
-			}else ChangeTargetTimer -= diff;
-	}
-	bool PlayerIsInList(Player* pl)
-	{
-		if(PlayerList.size())
-		{
-			for(std::list<Player*>::const_iterator plr = PlayerList.begin(); plr != PlayerList.end(); plr++)
-			{
-				if((*plr) && pl && (*plr)->GetGUID() == pl->GetGUID())
-					return true;
-			}
-		}
-		return false;
-	}
+        if (ChangeTargetTimer < diff)
+        {
+            AttackStart(SelectUnit(SELECT_TARGET_RANDOM, 0));
+            ChangeTargetTimer = urand(3000, 6000);
+        }
+        else
+            ChangeTargetTimer -= diff;
+    }
+    bool PlayerIsInList(Player* pl)
+    {
+        if (PlayerList.size())
+        {
+            for (std::list<Player*>::const_iterator plr = PlayerList.begin(); plr != PlayerList.end(); plr++)
+            {
+                if ((*plr) && pl && (*plr)->GetGUID() == pl->GetGUID())
+                    return true;
+            }
+        }
+        return false;
+    }
 };
 
 CreatureAI* GetAI_feather_vortexAI(Creature* pCreature)

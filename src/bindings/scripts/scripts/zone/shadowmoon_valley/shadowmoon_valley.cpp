@@ -972,7 +972,7 @@ struct OREGON_DLL_DECL npc_earthmender_wildaAI : public npc_escortAI
                case 0: DoScriptText(ASSASSIN_SAY_AGGRO1, CoilskarAssassin, player); break;
                case 1: DoScriptText(ASSASSIN_SAY_AGGRO2, CoilskarAssassin, player); break;
                }
-               ((Creature*)CoilskarAssassin)->AI()->AttackStart(me);
+               CAST_CRE(CoilskarAssassin)->AI()->AttackStart(me);
            }
            else error_log("TSCR ERROR: Coilskar Assassin couldn't be summmoned");
        }
@@ -1393,12 +1393,12 @@ struct OREGON_DLL_DECL mob_torloth_the_magnificentAI : public ScriptedAI
             switch(slayer->GetTypeId())
         {
             case TYPEID_UNIT:
-                if (((Creature*)slayer)->isPet() && ((Pet*)slayer)->GetOwner()->GetTypeId() == TYPEID_PLAYER)
-                    ((Player*)((Pet*)slayer->GetOwner()))->GroupEventHappens(QUEST_BATTLE_OF_THE_CRIMSON_WATCH, me);
+                if (CAST_CRE(slayer)->isPet() && ((Pet*)slayer)->GetOwner()->GetTypeId() == TYPEID_PLAYER)
+                    CAST_PLR(((Pet*)slayer->GetOwner()))->GroupEventHappens(QUEST_BATTLE_OF_THE_CRIMSON_WATCH, me);
                 break;
 
             case TYPEID_PLAYER:
-                ((Player*)slayer)->GroupEventHappens(QUEST_BATTLE_OF_THE_CRIMSON_WATCH, me);
+                CAST_PLR(slayer)->GroupEventHappens(QUEST_BATTLE_OF_THE_CRIMSON_WATCH, me);
                 break;
         }
 
@@ -1630,11 +1630,11 @@ bool GOQuestAccept_GO_crystal_prison(Player* plr, GameObject* go, Quest const* q
     {
         Unit* Illidan = FindCreature(22083, 50, plr);
 
-        if (Illidan && !(((npc_lord_illidan_stormrageAI*)((Creature*)Illidan)->AI())->EventStarted))
+        if (Illidan && !(((npc_lord_illidan_stormrageAI*)CAST_CRE(Illidan)->AI())->EventStarted))
         {
-            ((npc_lord_illidan_stormrageAI*)((Creature*)Illidan)->AI())->PlayerGUID = plr->GetGUID();
-            ((npc_lord_illidan_stormrageAI*)((Creature*)Illidan)->AI())->LiveCount = 0;
-            ((npc_lord_illidan_stormrageAI*)((Creature*)Illidan)->AI())->EventStarted=true;
+            ((npc_lord_illidan_stormrageAI*)CAST_CRE(Illidan)->AI())->PlayerGUID = plr->GetGUID();
+            ((npc_lord_illidan_stormrageAI*)CAST_CRE(Illidan)->AI())->LiveCount = 0;
+            ((npc_lord_illidan_stormrageAI*)CAST_CRE(Illidan)->AI())->EventStarted=true;
         }
     }
  return true;

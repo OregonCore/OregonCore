@@ -279,7 +279,7 @@ struct OREGON_DLL_DECL mob_ethereal_beaconAI : public ScriptedAI
             return;
         }
         if (!Shaffar->isInCombat())
-            ((Creature*)Shaffar)->AI()->AttackStart(who);
+            CAST_CRE(Shaffar)->AI()->AttackStart(who);
     }
 
     void JustSummoned(Creature *summoned)
@@ -291,7 +291,7 @@ struct OREGON_DLL_DECL mob_ethereal_beaconAI : public ScriptedAI
     {
         Unit *Shaffar = FindCreature(ENTRY_SHAFFAR, 100, me);
         if (Shaffar)
-            ((boss_nexusprince_shaffarAI*)(((Creature*)Shaffar)->AI()))->RemoveBeaconFromList(me);
+            ((boss_nexusprince_shaffarAI*)(CAST_CRE(Shaffar)->AI()))->RemoveBeaconFromList(me);
     }
 
     void UpdateAI(const uint32 diff)

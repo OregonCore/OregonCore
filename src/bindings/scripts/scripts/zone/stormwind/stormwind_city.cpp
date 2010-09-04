@@ -93,8 +93,8 @@ struct OREGON_DLL_DECL npc_bartlebyAI : public ScriptedAI
 
             if (done_by->GetTypeId() == TYPEID_PLAYER && done_by->GetGUID() == PlayerGUID)
             {
-                ((Player*)done_by)->AttackStop();
-                ((Player*)done_by)->AreaExploredOrEventHappens(1640);
+                CAST_PLR(done_by)->AttackStop();
+                CAST_PLR(done_by)->AreaExploredOrEventHappens(1640);
             }
             me->CombatStop();
             EnterEvadeMode();
@@ -143,8 +143,8 @@ struct OREGON_DLL_DECL npc_dashel_stonefistAI : public ScriptedAI
 
             if (done_by->GetTypeId() == TYPEID_PLAYER)
             {
-                ((Player*)done_by)->AttackStop();
-                ((Player*)done_by)->AreaExploredOrEventHappens(1447);
+                CAST_PLR(done_by)->AttackStop();
+                CAST_PLR(done_by)->AreaExploredOrEventHappens(1447);
             }
             //me->CombatStop();
             EnterEvadeMode();

@@ -380,13 +380,13 @@ struct OREGON_DLL_DECL npc_injured_patientAI : public ScriptedAI
     {
         if (caster->GetTypeId() == TYPEID_PLAYER && me->isAlive() && spell->Id == 20804)
         {
-            if ((((Player*)caster)->GetQuestStatus(6624) == QUEST_STATUS_INCOMPLETE) || (((Player*)caster)->GetQuestStatus(6622) == QUEST_STATUS_INCOMPLETE))
+            if ((CAST_PLR(caster)->GetQuestStatus(6624) == QUEST_STATUS_INCOMPLETE) || (CAST_PLR(caster)->GetQuestStatus(6622) == QUEST_STATUS_INCOMPLETE))
             {
                 if (Doctorguid)
                 {
                     Creature* Doctor = (Unit::GetCreature((*me), Doctorguid));
                     if (Doctor)
-                        ((npc_doctorAI*)Doctor->AI())->PatientSaved(me, ((Player*)caster), Coord);
+                        ((npc_doctorAI*)Doctor->AI())->PatientSaved(me, CAST_PLR(caster), Coord);
                 }
             }
                                                             //make not selectable

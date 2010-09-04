@@ -88,11 +88,11 @@ bool CheckAllBossDied(ScriptedInstance* pInstance, Creature* me)
     OlmGUID = pInstance->GetData64(DATA_OLMTHESUMMONER);
     KroshGUID = pInstance->GetData64(DATA_KROSHFIREHAND);
 
-    Maulgar = ((Creature*)Unit::GetUnit((*me), MaulgarGUID));
-    Kiggler = ((Creature*)Unit::GetUnit((*me), KigglerGUID));
-    Blindeye = ((Creature*)Unit::GetUnit((*me), BlindeyeGUID));
-    Olm = ((Creature*)Unit::GetUnit((*me), OlmGUID));
-    Krosh = ((Creature*)Unit::GetUnit((*me), KroshGUID));
+    Maulgar = (Unit::GetCreature((*me), MaulgarGUID));
+    Kiggler = (Unit::GetCreature((*me), KigglerGUID));
+    Blindeye = (Unit::GetCreature((*me), BlindeyeGUID));
+    Olm = (Unit::GetCreature((*me), OlmGUID));
+    Krosh = (Unit::GetCreature((*me), KroshGUID));
 
     if (!Maulgar || !Kiggler || !Blindeye || !Olm || !Krosh)
         return false;

@@ -51,7 +51,7 @@ struct OREGON_DLL_DECL mobs_bladespire_ogreAI : public ScriptedAI
     void JustDied(Unit* Killer)
     {
         if (Killer->GetTypeId() == TYPEID_PLAYER)
-            ((Player*)Killer)->KilledMonster(19995, me->GetGUID());
+            CAST_PLR(Killer)->KilledMonster(19995, me->GetGUID());
     }
 };
 CreatureAI* GetAI_mobs_bladespire_ogre(Creature* pCreature)
@@ -281,8 +281,8 @@ struct OREGON_DLL_DECL npc_daranelleAI : public ScriptedAI
             {
                 DoScriptText(SAY_DARANELLE, me, who);
                 //TODO: Move the below to updateAI and run if this statement == true
-                ((Player*)who)->KilledMonster(21511, me->GetGUID());
-                ((Player*)who)->RemoveAurasDueToSpell(36904);
+                CAST_PLR(who)->KilledMonster(21511, me->GetGUID());
+                CAST_PLR(who)->RemoveAurasDueToSpell(36904);
             }
         }
 

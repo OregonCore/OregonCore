@@ -131,7 +131,7 @@ struct OREGON_DLL_DECL netherspite_infernalAI : public ScriptedAI
     {
         Unit *pMalchezaar = Unit::GetUnit(*me, malchezaar);
         if (pMalchezaar)
-            ((Creature*)pMalchezaar)->AI()->KilledUnit(who);
+            CAST_CRE(pMalchezaar)->AI()->KilledUnit(who);
     }
 
     void SpellHit(Unit *who, const SpellEntry *spell)
@@ -623,7 +623,7 @@ void netherspite_infernalAI::Cleanup()
     Unit *pMalchezaar = Unit::GetUnit(*me, malchezaar);
 
     if (pMalchezaar && pMalchezaar->isAlive())
-        ((boss_malchezaarAI*)((Creature*)pMalchezaar)->AI())->Cleanup(me, point);
+        ((boss_malchezaarAI*)CAST_CRE(pMalchezaar)->AI())->Cleanup(me, point);
 }
 
 CreatureAI* GetAI_netherspite_infernal(Creature* pCreature)

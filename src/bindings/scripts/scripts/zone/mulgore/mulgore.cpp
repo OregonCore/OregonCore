@@ -78,7 +78,7 @@ struct OREGON_DLL_DECL npc_kyle_frenziedAI : public ScriptedAI
 
     void SpellHit(Unit *caster, const SpellEntry* spell)
     {   // we can feed him without any quest
-        if (spell->Id == 42222 && caster->GetTypeId() == TYPEID_PLAYER && ((Player*)caster)->GetTeam() == HORDE)
+        if (spell->Id == 42222 && caster->GetTypeId() == TYPEID_PLAYER && CAST_PLR(caster)->GetTeam() == HORDE)
         {
             STATE = 1;
             player = caster->GetGUID();

@@ -274,7 +274,7 @@ bool GOHello_go_orb_of_the_blue_flight(Player *plr, GameObject* go)
         go->SummonCreature(CREATURE_POWER_OF_THE_BLUE_DRAGONFLIGHT, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN, 121000);
         plr->CastSpell(plr, SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT, true);
         go->SetUInt32Value(GAMEOBJECT_FACTION, 0);
-        Unit* Kalec = ((Creature*)Unit::GetUnit(*plr, pInstance->GetData64(DATA_KALECGOS_KJ)));
+        Unit* Kalec = CAST_CRE(Unit::GetUnit(*plr, pInstance->GetData64(DATA_KALECGOS_KJ)));
         //Kalec->RemoveDynObject(SPELL_RING_OF_BLUE_FLAMES);
         go->GetPosition(x,y,z);
         for (uint8 i = 0; i < 4; ++i){
@@ -461,7 +461,7 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
         IsWaiting     = false;
         OrbActivated  = false;
 
-        Kalec = ((Creature*)Unit::GetUnit(*me, pInstance->GetData64(DATA_KALECGOS_KJ)));
+        Kalec = CAST_CRE(Unit::GetUnit(*me, pInstance->GetData64(DATA_KALECGOS_KJ)));
         ChangeTimers(false, 0);
     }
 
@@ -517,7 +517,7 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
 
         // Reset the controller
         if (pInstance){
-            Creature* Control = ((Creature*)Unit::GetUnit(*me, pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)));
+            Creature* Control = CAST_CRE(Unit::GetUnit(*me, pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)));
             if (Control)
                 ((Scripted_NoMovementAI*)Control->AI())->Reset();
         }
@@ -838,7 +838,7 @@ struct OREGON_DLL_DECL mob_hand_of_the_deceiverAI : public ScriptedAI
     void EnterCombat(Unit* who){
         if (pInstance){
             pInstance->SetData(DATA_KILJAEDEN_EVENT, IN_PROGRESS);
-            Creature* Control = ((Creature*)Unit::GetUnit(*me, pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)));
+            Creature* Control = CAST_CRE(Unit::GetUnit(*me, pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)));
             if (Control)
                 Control->AddThreat(who, 1.0f);
         }
@@ -849,7 +849,7 @@ struct OREGON_DLL_DECL mob_hand_of_the_deceiverAI : public ScriptedAI
         if (!pInstance)
             return;
 
-        Creature* Control = ((Creature*)Unit::GetUnit(*me, pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)));
+        Creature* Control = CAST_CRE(Unit::GetUnit(*me, pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)));
         if (Control)
             ((mob_kiljaeden_controllerAI*)Control->AI())->DeceiverDeathCount++;
     }

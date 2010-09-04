@@ -1808,7 +1808,7 @@ struct OREGON_DLL_DECL mob_parasitic_shadowfiendAI : public ScriptedAI
         if (CheckTimer <= diff)
         {
             GETUNIT(Illidan, IllidanGUID);
-            if (!Illidan || ((Creature*)Illidan)->IsInEvadeMode())
+            if (!Illidan || CAST_CRE(Illidan)->IsInEvadeMode())
             {
                 me->SetVisibility(VISIBILITY_OFF);
                 me->setDeathState(JUST_DIED);

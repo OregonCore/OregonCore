@@ -256,7 +256,7 @@ bool ReceiveEmote_npc_plucky(Player *player, Creature* pCreature, uint32 emote)
         player->GetQuestStatus(QUEST_GET_THE_SCOOP) == QUEST_STATUS_INCOMPLETE))
     {
         pCreature->SetInFront(player);
-        ((npc_pluckyAI*)((Creature*)pCreature)->AI())->TransformHuman(emote);
+        ((npc_pluckyAI*)CAST_CRE(pCreature)->AI())->TransformHuman(emote);
     }
 
     return true;

@@ -46,8 +46,8 @@ struct OREGON_DLL_DECL mobs_mana_tappedAI : public ScriptedAI
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {
         if (caster->GetTypeId() == TYPEID_PLAYER)
-            if (((Player*)caster)->GetQuestStatus(8346) == QUEST_STATUS_INCOMPLETE && !((Player*)caster)->GetReqKillOrCastCurrentCount(8346, me->GetEntry()) && spell->Id == 28734)
-                ((Player*)caster)->CastedCreatureOrGO(15468, me->GetGUID(), spell->Id);
+            if (CAST_PLR(caster)->GetQuestStatus(8346) == QUEST_STATUS_INCOMPLETE && !CAST_PLR(caster)->GetReqKillOrCastCurrentCount(8346, me->GetEntry()) && spell->Id == 28734)
+                CAST_PLR(caster)->CastedCreatureOrGO(15468, me->GetGUID(), spell->Id);
         return;
     }
 };
@@ -476,7 +476,7 @@ void npc_secondTrialAI::JustDied(Unit* Killer) {
           // last kill quest complete for group
           if (me->GetEntry() == CHAMPION_SUNSTRIKER) {
 
-            if (Group *pGroup = ((Player*)Killer)->GetGroup())
+            if (Group *pGroup = CAST_PLR(Killer)->GetGroup())
             {
                for (GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
                {
@@ -488,8 +488,8 @@ void npc_secondTrialAI::JustDied(Unit* Killer) {
                 }
             }
             else {
-               if (((Player*)Killer)->GetQuestStatus(QUEST_SECOND_TRIAL) == QUEST_STATUS_INCOMPLETE)
-                   ((Player*)Killer)->CompleteQuest(QUEST_SECOND_TRIAL);
+               if (CAST_PLR(Killer)->GetQuestStatus(QUEST_SECOND_TRIAL) == QUEST_STATUS_INCOMPLETE)
+                   CAST_PLR(Killer)->CompleteQuest(QUEST_SECOND_TRIAL);
             }
           }
       }
@@ -499,8 +499,8 @@ void npc_secondTrialAI::KilledUnit(Unit* Killed) {
 
   if (Killed->GetTypeId() == TYPEID_PLAYER) {
 
-      if (((Player*)Killed)->GetQuestStatus(QUEST_SECOND_TRIAL) == QUEST_STATUS_INCOMPLETE)
-        ((Player*)Killed)->FailQuest(QUEST_SECOND_TRIAL);
+      if (CAST_PLR(Killed)->GetQuestStatus(QUEST_SECOND_TRIAL) == QUEST_STATUS_INCOMPLETE)
+        CAST_PLR(Killed)->FailQuest(QUEST_SECOND_TRIAL);
   }
 }
 
@@ -680,7 +680,7 @@ struct OREGON_DLL_DECL npc_infused_crystalAI : public Scripted_NoMovementAI
     {
         if (who->GetTypeId() == TYPEID_PLAYER && !me->canStartAttack(who) && !Progress)
         {
-            if (((Player*)who)->GetQuestStatus(QUEST_POWERING_OUR_DEFENSES) == QUEST_STATUS_INCOMPLETE)
+            if (CAST_PLR(who)->GetQuestStatus(QUEST_POWERING_OUR_DEFENSES) == QUEST_STATUS_INCOMPLETE)
             {
                 float Radius = 10.0;
                 if (me->IsWithinDistInMap(who, Radius))

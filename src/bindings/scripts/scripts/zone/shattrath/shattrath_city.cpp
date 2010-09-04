@@ -129,7 +129,7 @@ struct OREGON_DLL_DECL npc_salsalabimAI : public ScriptedAI
         if (done_by->GetTypeId() == TYPEID_PLAYER)
             if ((me->GetHealth()-damage)*100 / me->GetMaxHealth() < 20)
         {
-            ((Player*)done_by)->GroupEventHappens(QUEST_10004,me);
+            CAST_PLR(done_by)->GroupEventHappens(QUEST_10004,me);
             damage = 0;
             EnterEvadeMode();
         }
@@ -449,14 +449,14 @@ struct OREGON_DLL_DECL npc_dirty_larryAI : public ScriptedAI
         Unit* Creepjack = FindCreature(NPC_CREEPJACK, 20, me);
         if (Creepjack)
         {
-            ((Creature*)Creepjack)->AI()->EnterEvadeMode();
+            CAST_CRE(Creepjack)->AI()->EnterEvadeMode();
             Creepjack->setFaction(1194);
             Creepjack->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
         Unit* Malone = FindCreature(NPC_MALONE, 20, me);
         if (Malone)
         {
-            ((Creature*)Malone)->AI()->EnterEvadeMode();
+            CAST_CRE(Malone)->AI()->EnterEvadeMode();
             Malone->setFaction(1194);
             Malone->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
@@ -530,7 +530,7 @@ struct OREGON_DLL_DECL npc_dirty_larryAI : public ScriptedAI
             Unit* Creepjack = FindCreature(NPC_CREEPJACK, 20, me);
             if (Creepjack)
             {
-                ((Creature*)Creepjack)->AI()->EnterEvadeMode();
+                CAST_CRE(Creepjack)->AI()->EnterEvadeMode();
                 Creepjack->setFaction(1194);
                 Creepjack->GetMotionMaster()->MoveTargetedHome();
                 Creepjack->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -538,7 +538,7 @@ struct OREGON_DLL_DECL npc_dirty_larryAI : public ScriptedAI
             Unit* Malone = FindCreature(NPC_MALONE, 20, me);
             if (Malone)
             {
-                ((Creature*)Malone)->AI()->EnterEvadeMode();
+                CAST_CRE(Malone)->AI()->EnterEvadeMode();
                 Malone->setFaction(1194);
                 Malone->GetMotionMaster()->MoveTargetedHome();
                 Malone->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);

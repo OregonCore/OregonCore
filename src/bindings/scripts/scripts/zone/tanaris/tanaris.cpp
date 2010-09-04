@@ -67,15 +67,15 @@ struct OREGON_DLL_DECL mob_aquementasAI : public ScriptedAI
 
     void SendItem(Unit* receiver)
     {
-        if (((Player*)receiver)->HasItemCount(11169,1,false) &&
-            ((Player*)receiver)->HasItemCount(11172,11,false) &&
-            ((Player*)receiver)->HasItemCount(11173,1,false) &&
-            !((Player*)receiver)->HasItemCount(11522,1,true))
+        if (CAST_PLR(receiver)->HasItemCount(11169,1,false) &&
+            CAST_PLR(receiver)->HasItemCount(11172,11,false) &&
+            CAST_PLR(receiver)->HasItemCount(11173,1,false) &&
+            !CAST_PLR(receiver)->HasItemCount(11522,1,true))
         {
             ItemPosCountVec dest;
-            uint8 msg = ((Player*)receiver)->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 11522, 1, false);
+            uint8 msg = CAST_PLR(receiver)->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 11522, 1, false);
             if (msg == EQUIP_ERR_OK)
-                ((Player*)receiver)->StoreNewItem(dest, 11522, 1, true);
+                CAST_PLR(receiver)->StoreNewItem(dest, 11522, 1, true);
         }
     }
 

@@ -278,7 +278,7 @@ struct OREGON_DLL_DECL mob_illidari_councilAI : public ScriptedAI
                 {
                     Member = Unit::GetUnit((*me), Council[i]);
                     if (Member && Member->isAlive())
-                        ((Creature*)Member)->AI()->AttackStart(pTarget);
+                        CAST_CRE(Member)->AI()->AttackStart(pTarget);
                 }
             }
 

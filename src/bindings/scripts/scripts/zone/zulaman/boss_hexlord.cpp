@@ -259,7 +259,7 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
         {
             Unit* Temp = Unit::GetUnit((*me),AddGUID[i]);
             if (Temp && Temp->isAlive())
-                ((Creature*)Temp)->AI()->AttackStart(me->getVictim());
+                CAST_CRE(Temp)->AI()->AttackStart(me->getVictim());
             else
             {
                 EnterEvadeMode();
@@ -355,7 +355,7 @@ struct OREGON_DLL_DECL boss_hex_lord_malacrassAI : public ScriptedAI
             {
                 Unit* Temp = Unit::GetUnit((*me),AddGUID[i]);
                 if (Temp && Temp->isAlive() && !Temp->getVictim())
-                    ((Creature*)Temp)->AI()->AttackStart(me->getVictim());
+                    CAST_CRE(Temp)->AI()->AttackStart(me->getVictim());
             }
             CheckAddState_Timer = 5000;
         } else CheckAddState_Timer -= diff;

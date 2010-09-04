@@ -872,7 +872,7 @@ struct OREGON_DLL_DECL npc_marshal_reginald_windsorAI : public npc_escortAI
 
         if (who->GetTypeId() == TYPEID_PLAYER)
         {
-            if (((Player*)who)->GetQuestStatus(4322) == QUEST_STATUS_INCOMPLETE)
+            if (CAST_PLR(who)->GetQuestStatus(4322) == QUEST_STATUS_INCOMPLETE)
             {
                 float Radius = 10.0;
                 if (me->IsWithinDistInMap(who, Radius))

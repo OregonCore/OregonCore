@@ -81,7 +81,7 @@ struct OREGON_DLL_DECL mob_unkor_the_ruthlessAI : public ScriptedAI
         if (done_by->GetTypeId() == TYPEID_PLAYER)
             if ((me->GetHealth()-damage)*100 / me->GetMaxHealth() < 30)
         {
-            if (Group* pGroup = ((Player*)done_by)->GetGroup())
+            if (Group* pGroup = CAST_PLR(done_by)->GetGroup())
             {
                 for (GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
                 {
@@ -96,10 +96,10 @@ struct OREGON_DLL_DECL mob_unkor_the_ruthlessAI : public ScriptedAI
                     }
                 }
             } else
-            if (((Player*)done_by)->GetQuestStatus(QUEST_DONTKILLTHEFATONE) == QUEST_STATUS_INCOMPLETE &&
-                ((Player*)done_by)->GetReqKillOrCastCurrentCount(QUEST_DONTKILLTHEFATONE, 18260) == 10)
+            if (CAST_PLR(done_by)->GetQuestStatus(QUEST_DONTKILLTHEFATONE) == QUEST_STATUS_INCOMPLETE &&
+                CAST_PLR(done_by)->GetReqKillOrCastCurrentCount(QUEST_DONTKILLTHEFATONE, 18260) == 10)
             {
-                ((Player*)done_by)->AreaExploredOrEventHappens(QUEST_DONTKILLTHEFATONE);
+                CAST_PLR(done_by)->AreaExploredOrEventHappens(QUEST_DONTKILLTHEFATONE);
                 CanDoQuest = true;
             }
         }
@@ -215,12 +215,12 @@ struct OREGON_DLL_DECL mob_netherweb_victimAI : public ScriptedAI
     {
         if (Killer->GetTypeId() == TYPEID_PLAYER)
         {
-            if (((Player*)Killer)->GetQuestStatus(10873) == QUEST_STATUS_INCOMPLETE)
+            if (CAST_PLR(Killer)->GetQuestStatus(10873) == QUEST_STATUS_INCOMPLETE)
             {
                 if (rand()%100 < 25)
                 {
                     DoSpawnCreature(QUEST_TARGET,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,60000);
-                    ((Player*)Killer)->KilledMonster(QUEST_TARGET, me->GetGUID());
+                    CAST_PLR(Killer)->KilledMonster(QUEST_TARGET, me->GetGUID());
                 } else
                 DoSpawnCreature(netherwebVictims[rand()%6],0,0,0,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,60000);
 

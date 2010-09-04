@@ -50,7 +50,7 @@ void SummonCreatureWithRandomTarget(uint32 creatureId, int position, float mod, 
         if (pTarget)
         {
             pSummoned->AddThreat(pTarget, 32.0f);
-            ((Creature*)pSummoned)->AI()->AttackStart(pTarget);
+            pSummoned->AI()->AttackStart(pTarget);
         }
 
         //TODO: instance group random player...

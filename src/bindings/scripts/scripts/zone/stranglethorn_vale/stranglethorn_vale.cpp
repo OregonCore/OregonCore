@@ -52,7 +52,7 @@ struct OREGON_DLL_DECL mob_yennikuAI : public ScriptedAI
         if (caster->GetTypeId() == TYPEID_PLAYER)
         {
                                                             //Yenniku's Release
-            if (!bReset && ((Player*)caster)->GetQuestStatus(592) == QUEST_STATUS_INCOMPLETE && spell->Id == 3607)
+            if (!bReset && CAST_PLR(caster)->GetQuestStatus(592) == QUEST_STATUS_INCOMPLETE && spell->Id == 3607)
             {
                 me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_STUN);
                 me->CombatStop();                   //stop combat
@@ -86,7 +86,7 @@ struct OREGON_DLL_DECL mob_yennikuAI : public ScriptedAI
                 if (me->getVictim()->GetTypeId() == TYPEID_PLAYER)
                 {
                     Unit *victim = me->getVictim();
-                    if (((Player*)victim)->GetTeam() == HORDE)
+                    if (CAST_PLR(victim)->GetTeam() == HORDE)
                     {
                         me->CombatStop();
                         me->DeleteThreatList();
