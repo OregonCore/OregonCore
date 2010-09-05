@@ -8950,15 +8950,15 @@ Unit* Creature::SelectVictim()
             return target;
     }
 
-    if (m_attackers.size())
-        return NULL;
-
     if (m_invisibilityMask)
     {
         Unit::AuraList const& iAuras = GetAurasByType(SPELL_AURA_MOD_INVISIBILITY);
         for (Unit::AuraList::const_iterator itr = iAuras.begin(); itr != iAuras.end(); ++itr)
             if ((*itr)->IsPermanent())
             {
+                if (m_attackers.size())
+                    return NULL;
+
                 AI()->EnterEvadeMode();
                 break;
             }
