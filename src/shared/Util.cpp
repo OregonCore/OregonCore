@@ -80,7 +80,7 @@ void stripLineInvisibleChars(std::string &str)
     size_t wpos = 0;
 
     bool space = false;
-    for(size_t pos = 0; pos < str.size(); ++pos)
+    for (size_t pos = 0; pos < str.size(); ++pos)
     {
         if(invChars.find(str[pos])!=std::string::npos)
         {
@@ -363,7 +363,7 @@ std::wstring GetMainPartOfName(std::wstring wname, uint32 declension)
         { &ie_End[1], &i_End[1],    NULL,         NULL,        NULL,         NULL,         NULL,       NULL }
     };
 
-    for(wchar_t const * const* itr = &dropEnds[declension][0]; *itr; ++itr)
+    for (wchar_t const * const* itr = &dropEnds[declension][0]; *itr; ++itr)
     {
         size_t len = size_t((*itr)[-1]);                    // get length from string size field
 

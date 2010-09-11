@@ -31,14 +31,14 @@ template<class T>
 inline
 const T& RAND(const T& v1, const T& v2)
 {
-    return (rand()%2) ? v1 : v2;
+    return (urand(0,1)) ? v1 : v2;
 }
 
 template<class T>
 inline
 const T& RAND(const T& v1, const T& v2, const T& v3)
 {
-    switch(rand()%3)
+    switch (urand(0,2))
     {
         default:
         case 0: return v1;
@@ -51,7 +51,7 @@ template<class T>
 inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4)
 {
-    switch(rand()%4)
+    switch (urand(0,3))
     {
         default:
         case 0: return v1;
@@ -65,7 +65,7 @@ template<class T>
 inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5)
 {
-    switch(rand()%5)
+    switch (urand(0,4))
     {
         default:
         case 0: return v1;
@@ -80,7 +80,7 @@ template<class T>
 inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6)
 {
-    switch(rand()%6)
+    switch (urand(0,5))
     {
         default:
         case 0: return v1;
@@ -96,7 +96,7 @@ template<class T>
 inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7)
 {
-    switch(rand()%7)
+    switch (urand(0,6))
     {
         default:
         case 0: return v1;
@@ -113,7 +113,7 @@ template<class T>
 inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8)
 {
-    switch(rand()%8)
+    switch (urand(0,7))
     {
         default:
         case 0: return v1;
@@ -132,7 +132,7 @@ inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8,
               const T& v9)
 {
-    switch(rand()%9)
+    switch (urand(0,8))
     {
         default:
         case 0: return v1;
@@ -152,7 +152,7 @@ inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8,
               const T& v9, const T& v10)
 {
-    switch(rand()%10)
+    switch (urand(0,9))
     {
         default:
         case 0: return v1;
@@ -173,7 +173,7 @@ inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8,
               const T& v9, const T& v10, const T& v11)
 {
-    switch(rand()%11)
+    switch (urand(0,10))
     {
         default:
         case 0: return v1;
@@ -195,7 +195,7 @@ inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8,
               const T& v9, const T& v10, const T& v11, const T& v12)
 {
-    switch(rand()%12)
+    switch (urand(0,11))
     {
         default:
         case 0: return v1;
@@ -218,7 +218,7 @@ inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8,
               const T& v9, const T& v10, const T& v11, const T& v12, const T& v13)
 {
-    switch(rand()%13)
+    switch (urand(0,12))
     {
         default:
         case 0: return v1;
@@ -242,7 +242,7 @@ inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8,
               const T& v9, const T& v10, const T& v11, const T& v12, const T& v13, const T& v14)
 {
-    switch(rand()%14)
+    switch (urand(0,13))
     {
         default:
         case 0: return v1;
@@ -267,7 +267,7 @@ inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8,
               const T& v9, const T& v10, const T& v11, const T& v12, const T& v13, const T& v14, const T& v15)
 {
-    switch(rand()%15)
+    switch (urand(0,14))
     {
         default:
         case 0: return v1;
@@ -293,7 +293,7 @@ inline
 const T& RAND(const T& v1, const T& v2, const T& v3, const T& v4, const T& v5, const T& v6, const T& v7, const T& v8,
               const T& v9, const T& v10, const T& v11, const T& v12, const T& v13, const T& v14, const T& v15, const T& v16)
 {
-    switch(rand()%16)
+    switch (urand(0,15))
     {
         default:
         case 0: return v1;
@@ -404,9 +404,7 @@ class EventMap : private std::map<uint32, uint32>
                 else if (m_phase && (begin()->second & 0xFF000000) && !(begin()->second & m_phase))
                     erase(begin());
                 else
-                {
                     return (begin()->second & 0x0000FFFF);
-                }
             }
             return 0;
         }
@@ -483,7 +481,6 @@ struct AISpellInfoType
 };
 
 OREGON_DLL_SPEC AISpellInfoType * GetAISpellInfo(uint32 i);
-
 
 inline void CreatureAI::SetGazeOn(Unit *target)
 {
@@ -588,7 +585,7 @@ inline bool CreatureAI::_EnterEvadeMode()
 
 inline void UnitAI::DoCast(Unit* victim, uint32 spellId, bool triggered)
 {
-    if (!victim || me->hasUnitState(UNIT_STAT_CASTING) && !triggered)
+    if (!victim || (me->hasUnitState(UNIT_STAT_CASTING) && !triggered))
         return;
 
     me->CastSpell(victim, spellId, triggered);
