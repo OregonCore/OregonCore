@@ -248,32 +248,6 @@ public:
     }
 };
 
-bool GOHello_go_orb_of_the_blue_flight(Player *plr, GameObject* go)
-{
-    if (go->GetUInt32Value(GAMEOBJECT_FACTION) == 35){
-        ScriptedInstance* pInstance = (go->GetInstanceData());
-        float x,y,z, dx,dy,dz;
-        go->SummonCreature(CREATURE_POWER_OF_THE_BLUE_DRAGONFLIGHT, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN, 121000);
-        plr->CastSpell(plr, SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT, true);
-        go->SetUInt32Value(GAMEOBJECT_FACTION, 0);
-        Unit* Kalec = CAST_CRE(Unit::GetUnit(*plr, pInstance->GetData64(DATA_KALECGOS_KJ)));
-        //Kalec->RemoveDynObject(SPELL_RING_OF_BLUE_FLAMES);
-        go->GetPosition(x,y,z);
-        for (uint8 i = 0; i < 4; ++i){
-            DynamicObject* Dyn = Kalec->GetDynObject(SPELL_RING_OF_BLUE_FLAMES);
-            if (Dyn){
-                Dyn->GetPosition(dx,dy,dz);
-                if (x == dx && dy == y && dz == z){
-                    Dyn->RemoveFromWorld();
-                    break;
-                }
-            }
-        }
-        go->Refresh();
-    }
-    return true;
-}
-
 //AI for Kalecgos
 struct OREGON_DLL_DECL boss_kalecgos_kjAI : public ScriptedAI
 {
@@ -337,16 +311,20 @@ struct OREGON_DLL_DECL boss_kalecgos_kjAI : public ScriptedAI
         if (!Orb[OrbsEmpowered])
             return;
         uint8 random = rand()%3;
-        if (all){
+        if (all)
+        {
             me->RemoveDynObject(SPELL_RING_OF_BLUE_FLAMES);
-            for (uint8 i = 0; i < 4; ++i){
+            for (uint8 i = 0; i < 4; ++i)
+            {
                 if (!Orb[i]) return;
                 Orb[i]->CastSpell(me, SPELL_RING_OF_BLUE_FLAMES);
                 Orb[i]->SetUInt32Value(GAMEOBJECT_FACTION, 35);
                 Orb[i]->setActive(true);
                 Orb[i]->Refresh();
             }
-        } else{
+        }
+        else
+        {
             float x,y,z, dx,dy,dz;
             Orb[random]->GetPosition(x,y,z);
             for (uint8 i = 0; i < 4; ++i){
@@ -390,6 +368,128 @@ struct OREGON_DLL_DECL boss_kalecgos_kjAI : public ScriptedAI
 CreatureAI* GetAI_boss_kalecgos_kj(Creature* pCreature)
 {
     return new boss_kalecgos_kjAI (pCreature);
+}
+
+bool GOHello_go_orb_of_the_blue_flight(Player *plr, GameObject* go)
+{
+    if (go->GetUInt32Value(GAMEOBJECT_FACTION) == 35){
+        ScriptedInstance* pInstance = (go->GetInstanceData());
+        float x,y,z, dx,dy,dz;
+        go->SummonCreature(CREATURE_POWER_OF_THE_BLUE_DRAGONFLIGHT, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN, 121000);
+        plr->CastSpell(plr, SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT, true);
+        go->SetUInt32Value(GAMEOBJECT_FACTION, 0);
+        Unit* Kalec = CAST_CRE(Unit::GetUnit(*plr, pInstance->GetData64(DATA_KALECGOS_KJ)));
+        //Kalec->RemoveDynObject(SPELL_RING_OF_BLUE_FLAMES);
+        go->GetPosition(x,y,z);
+        for (uint8 i = 0; i < 4; ++i){
+            DynamicObject* Dyn = Kalec->GetDynObject(SPELL_RING_OF_BLUE_FLAMES);
+            if (Dyn){
+                Dyn->GetPosition(dx,dy,dz);
+                if (x == dx && dy == y && dz == z){
+                    Dyn->RemoveFromWorld();
+                    break;
+                }
+            }
+        }
+        go->Refresh();
+    }
+    return true;
+}
+
+//AI for Kil'jaeden Event Controller
+struct OREGON_DLL_DECL mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
+{
+    mob_kiljaeden_controllerAI(Creature* c) : Scripted_NoMovementAI(c), summons(me)
+    {
+        pInstance = c->GetInstanceData();
+    }
+
+    ScriptedInstance* pInstance;
+    Creature* KalecKJ;
+    SummonList summons;
+
+    bool bSummonedDeceivers;
+    bool bKiljaedenDeath;
+
+    uint32 uiRandomSayTimer;
+    uint32 phase;
+    uint8 deceiverDeathCount;
+
+    void InitializeAI()
+    {
+        KalecKJ = Unit::GetCreature((*me), pInstance->GetData64(DATA_KALECGOS_KJ));
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->addUnitState(UNIT_STAT_STUNNED);
+    }
+
+    void Reset()
+    {
+        phase = PHASE_DECEIVERS;
+        if (KalecKJ)((boss_kalecgos_kjAI*)KalecKJ->AI())->ResetOrbs();
+        deceiverDeathCount = 0;
+        bSummonedDeceivers = false;
+        bKiljaedenDeath = false;
+        uiRandomSayTimer = 30000;
+        summons.DespawnAll();
+    }
+
+    void JustSummoned(Creature* summoned)
+    {
+        switch(summoned->GetEntry())
+        {
+            case CREATURE_HAND_OF_THE_DECEIVER:
+                summoned->CastSpell(summoned, SPELL_SHADOW_CHANNELING, false);
+                break;
+            case CREATURE_ANVEENA:
+                summoned->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
+                summoned->CastSpell(summoned, SPELL_ANVEENA_PRISON, true);
+                summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                break;
+            case CREATURE_KILJAEDEN:
+                summoned->CastSpell(summoned, SPELL_REBIRTH, false);
+                ((boss_kiljaedenAI*)summoned->AI())->phase=PHASE_NORMAL;
+                summoned->AddThreat(me->getVictim(), 1.0f);
+                break;
+        }
+        summons.Summon(summoned);
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (uiRandomSayTimer <= diff && pInstance->GetData(DATA_MURU_EVENT) != DONE && pInstance->GetData(DATA_KILJAEDEN_EVENT) == NOT_STARTED){
+            switch(rand()%5){
+                case 0: DoScriptText(SAY_KJ_OFFCOMBAT1, me); break;
+                case 1: DoScriptText(SAY_KJ_OFFCOMBAT2, me); break;
+                case 2: DoScriptText(SAY_KJ_OFFCOMBAT3, me); break;
+                case 3: DoScriptText(SAY_KJ_OFFCOMBAT4, me); break;
+                case 4: DoScriptText(SAY_KJ_OFFCOMBAT5, me); break;
+            }
+            uiRandomSayTimer = 30000;
+        } else uiRandomSayTimer -= diff;
+
+        if (!bSummonedDeceivers)
+        {
+            for (uint8 i = 0; i < 3; ++i)
+                me->SummonCreature(CREATURE_HAND_OF_THE_DECEIVER, DeceiverLocations[i][0], DeceiverLocations[i][1], FLOOR_Z, DeceiverLocations[i][2], TEMPSUMMON_DEAD_DESPAWN, 0);
+
+            DoSpawnCreature(CREATURE_ANVEENA,  0, 0, 40, 0, TEMPSUMMON_DEAD_DESPAWN, 0);
+            DoCast(me, SPELL_ANVEENA_ENERGY_DRAIN);
+            bSummonedDeceivers = true;
+        }
+
+        if (deceiverDeathCount > 2 && phase == PHASE_DECEIVERS)
+        {
+            me->RemoveAurasDueToSpell(SPELL_ANVEENA_ENERGY_DRAIN);
+            phase = PHASE_NORMAL;
+            DoSpawnCreature(CREATURE_KILJAEDEN, 0, 0,0, 0, TEMPSUMMON_MANUAL_DESPAWN, 0);
+        }
+    }
+};
+
+CreatureAI* GetAI_mob_kiljaeden_controller(Creature* pCreature)
+{
+    return new mob_kiljaeden_controllerAI (pCreature);
 }
 
 //AI for Kil'jaeden
@@ -463,9 +563,12 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
             WaitTimer = WTimer;
         }
 
-        if (OrbActivated) TimerIsDeactivated[TIMER_ORBS_EMPOWER] = true;
-        if (Timer[TIMER_SHADOW_SPIKE] == 0) TimerIsDeactivated[TIMER_SHADOW_SPIKE] = true;
-        if (Phase == PHASE_SACRIFICE) TimerIsDeactivated[TIMER_SUMMON_SHILEDORB] = true;
+        if (OrbActivated)
+            TimerIsDeactivated[TIMER_ORBS_EMPOWER] = true;
+        if (Timer[TIMER_SHADOW_SPIKE] == 0)
+            TimerIsDeactivated[TIMER_SHADOW_SPIKE] = true;
+        if (Phase == PHASE_SACRIFICE)
+            TimerIsDeactivated[TIMER_SUMMON_SHILEDORB] = true;
     }
 
     void JustSummoned(Creature* summoned)
@@ -525,10 +628,12 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
         case 1: DoScriptText(SAY_KJ_REFLECTION2, me); break;
         }
         DoCast(me, SPELL_SINISTER_REFLECTION, true);
-        for (uint8 i = 0; i < 4; i++){
+        for (uint8 i = 0; i < 4; ++i)
+        {
             float x,y,z;
             Unit *pTarget;
-            for (uint8 z = 0; z < 6; ++z){
+            for (uint8 z = 0; z < 6; ++z)
+            {
                 pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
                 if (!pTarget->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT,0)) break;
             }
@@ -695,7 +800,8 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
         //Phase 3
         if (Phase <= PHASE_NORMAL)
         {
-            if (Phase == PHASE_NORMAL && ((me->GetHealth()*100 / me->GetMaxHealth()) < 85)){
+            if (Phase == PHASE_NORMAL && HealthBelowPct(85))
+            {
                 CastSinisterReflection();
                 DoScriptText(SAY_KJ_PHASE3, me);
                 Phase = PHASE_DARKNESS;
@@ -708,7 +814,8 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
         //Phase 4
         if (Phase <= PHASE_DARKNESS)
         {
-            if (Phase == PHASE_DARKNESS && ((me->GetHealth()*100 / me->GetMaxHealth()) < 55)){
+            if (Phase == PHASE_DARKNESS && HealthBelowPct(55))
+            {
                 DoScriptText(SAY_KJ_PHASE4, me);
                 Phase = PHASE_ARMAGEDDON;
                 OrbActivated = false;
@@ -720,7 +827,8 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
         //Phase 5 specific spells all we can
         if (Phase <= PHASE_ARMAGEDDON)
         {
-            if (Phase == PHASE_ARMAGEDDON && ((me->GetHealth()*100 / me->GetMaxHealth()) < 25)){
+            if (Phase == PHASE_ARMAGEDDON && HealthBelowPct(25))
+            {
                 Phase = PHASE_SACRIFICE;
                 Creature* Anveena = (Creature*)(Unit::GetUnit((*me), pInstance->GetData64(DATA_ANVEENA)));
                 if (Anveena)Anveena->CastSpell(me, SPELL_SACRIFICE_OF_ANVEENA, false);
@@ -735,98 +843,6 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
 CreatureAI* GetAI_boss_kiljaeden(Creature* pCreature)
 {
     return new boss_kiljaedenAI (pCreature);
-}
-
-//AI for Kil'jaeden Event Controller
-struct OREGON_DLL_DECL mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
-{
-    mob_kiljaeden_controllerAI(Creature* c) : Scripted_NoMovementAI(c), summons(me)
-    {
-        pInstance = c->GetInstanceData();
-    }
-
-    ScriptedInstance* pInstance;
-    Creature* KalecKJ;
-    SummonList summons;
-
-    bool SummonedDeceivers;
-    bool KiljaedenDeath;
-
-    uint32 RandomSayTimer;
-    uint32 Phase;
-    uint8 deceiverDeathCount;
-
-    void InitializeAI(){
-        KalecKJ = Unit::GetCreature((*me), pInstance->GetData64(DATA_KALECGOS_KJ));
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        me->addUnitState(UNIT_STAT_STUNNED);
-    }
-
-    void Reset(){
-        Phase = PHASE_DECEIVERS;
-        if (KalecKJ)((boss_kalecgos_kjAI*)KalecKJ->AI())->ResetOrbs();
-        deceiverDeathCount = 0;
-        SummonedDeceivers = false;
-        KiljaedenDeath = false;
-        RandomSayTimer = 30000;
-        summons.DespawnAll();
-    }
-
-    void JustSummoned(Creature* summoned){
-        switch(summoned->GetEntry()){
-            case CREATURE_HAND_OF_THE_DECEIVER:
-                summoned->CastSpell(summoned, SPELL_SHADOW_CHANNELING, false);
-                break;
-            case CREATURE_ANVEENA:
-                summoned->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
-                summoned->CastSpell(summoned, SPELL_ANVEENA_PRISON, true);
-                summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                break;
-            case CREATURE_KILJAEDEN:
-                summoned->CastSpell(summoned, SPELL_REBIRTH, false);
-                ((boss_kiljaedenAI*)summoned->AI())->Phase=PHASE_NORMAL;
-                summoned->AddThreat(me->getVictim(), 1.0f);
-                break;
-        }
-        summons.Summon(summoned);
-    }
-
-    void EnterCombat(Unit* who) {}
-
-    void UpdateAI(const uint32 diff)
-    {
-        if (RandomSayTimer <= diff && pInstance->GetData(DATA_MURU_EVENT) != DONE && pInstance->GetData(DATA_KILJAEDEN_EVENT) == NOT_STARTED){
-            switch(rand()%5){
-                case 0: DoScriptText(SAY_KJ_OFFCOMBAT1, me); break;
-                case 1: DoScriptText(SAY_KJ_OFFCOMBAT2, me); break;
-                case 2: DoScriptText(SAY_KJ_OFFCOMBAT3, me); break;
-                case 3: DoScriptText(SAY_KJ_OFFCOMBAT4, me); break;
-                case 4: DoScriptText(SAY_KJ_OFFCOMBAT5, me); break;
-            }
-            RandomSayTimer = 30000;
-        } else RandomSayTimer -= diff;
-
-        if (!SummonedDeceivers){
-            for (uint8 i = 0; i < 3; ++i)
-                me->SummonCreature(CREATURE_HAND_OF_THE_DECEIVER, DeceiverLocations[i][0], DeceiverLocations[i][1], FLOOR_Z, DeceiverLocations[i][2], TEMPSUMMON_DEAD_DESPAWN, 0);
-
-            DoSpawnCreature(CREATURE_ANVEENA,  0, 0, 40, 0, TEMPSUMMON_DEAD_DESPAWN, 0);
-            DoCast(me, SPELL_ANVEENA_ENERGY_DRAIN);
-            SummonedDeceivers = true;
-        }
-
-        if (deceiverDeathCount > 2 && Phase == PHASE_DECEIVERS){
-            me->RemoveAurasDueToSpell(SPELL_ANVEENA_ENERGY_DRAIN) ;
-            Phase = PHASE_NORMAL;
-            DoSpawnCreature(CREATURE_KILJAEDEN, 0, 0,0, 0, TEMPSUMMON_MANUAL_DESPAWN, 0);
-        }
-    }
-};
-
-CreatureAI* GetAI_mob_kiljaeden_controller(Creature* pCreature)
-{
-    return new mob_kiljaeden_controllerAI (pCreature);
 }
 
 //AI for Hand of the Deceiver
@@ -886,7 +902,7 @@ struct OREGON_DLL_DECL mob_hand_of_the_deceiverAI : public ScriptedAI
             return;
 
         // Gain Shadow Infusion at 20% health
-        if (((me->GetHealth()*100 / me->GetMaxHealth()) < 20) && !me->HasAura(SPELL_SHADOW_INFUSION, 0))
+        if (HealthBelowPct(20) && !me->HasAura(SPELL_SHADOW_INFUSION, 0))
             DoCast(me, SPELL_SHADOW_INFUSION, true);
 
         // Shadow Bolt Volley - Shoots Shadow Bolts at all enemies within 30 yards, for ~2k Shadow damage.
@@ -1107,7 +1123,7 @@ struct OREGON_DLL_DECL mob_shield_orbAI : public ScriptedAI
             uiCheckTimer = 1000;
             me->GetMotionMaster()->MovePoint(1,x, y, SHIELD_ORB_Z);
             c += 3.1415926535/32;
-            if (c > 2*3.1415926535) c = 0;
+            if (c >= 2*3.1415926535) c = 0;
         }
         else
         {
