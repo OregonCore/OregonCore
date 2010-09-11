@@ -448,7 +448,6 @@ struct OREGON_DLL_DECL mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
                 break;
             case CREATURE_KILJAEDEN:
                 summoned->CastSpell(summoned, SPELL_REBIRTH, false);
-                ((boss_kiljaedenAI*)summoned->AI())->phase=PHASE_NORMAL;
                 summoned->AddThreat(me->getVictim(), 1.0f);
                 break;
         }
@@ -635,12 +634,14 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
             for (uint8 z = 0; z < 6; ++z)
             {
                 pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
-                if (!pTarget->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT,0)) break;
+                if (!pTarget || !pTarget->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT,0)) break;
             }
-            pTarget->GetPosition(x,y,z);
-            Creature* SinisterReflection = me->SummonCreature(CREATURE_SINISTER_REFLECTION, x,y,z,0, TEMPSUMMON_CORPSE_DESPAWN, 0);
-            if (SinisterReflection)
-                SinisterReflection->AI()->AttackStart(pTarget);
+            if (pTarget)
+            {
+                pTarget->GetPosition(x,y,z);
+                if (Creature* pSinisterReflection = me->SummonCreature(CREATURE_SINISTER_REFLECTION, x,y,z,0, TEMPSUMMON_CORPSE_DESPAWN, 0))
+                    pSinisterReflection->AI()->AttackStart(pTarget);
+            }
         }
     }
 
@@ -688,7 +689,7 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
                             for (uint8 z = 0; z < 6; ++z)
                             {
                                 pRandomPlayer = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
-                                if (!pRandomPlayer->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT,0)) 
+                                if (!pRandomPlayer || !pRandomPlayer->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT,0)) 
                                     break;
                             }
 
@@ -776,7 +777,7 @@ struct OREGON_DLL_DECL boss_kiljaedenAI : public Scripted_NoMovementAI
                         for (uint8 z = 0; z < 6; ++z)
                         {
                             pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
-                            if (!pTarget->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT,0)) break;
+                            if (!pTarget || !pTarget->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT,0)) break;
                         }
                         if (pTarget)
                         {
