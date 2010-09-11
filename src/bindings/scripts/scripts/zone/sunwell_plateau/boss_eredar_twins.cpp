@@ -84,22 +84,15 @@ enum Spells
     SPELL_BLAZE_BURN        =   45246
 };
 
-enum Creatures
-{
-    GRAND_WARLOCK_ALYTHESS  =   25166,
-    MOB_SHADOW_IMAGE        =   25214,
-    LADY_SACROLASH          =   25165
-};
-
 struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
 {
-    boss_sacrolashAI(Creature *c) : ScriptedAI(c){
+    boss_sacrolashAI(Creature *c) : ScriptedAI(c)
+    {
         pInstance = c->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
 
-    bool InCombat;
     bool SisterDeath;
     bool Enraged;
 
@@ -112,7 +105,6 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
 
     void Reset()
     {
-        InCombat = false;
         Enraged = false;
 
         if (pInstance)
@@ -127,12 +119,11 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
                     if (Temp->getVictim())
                     {
                         me->getThreatManager().addThreat(Temp->getVictim(),0.0f);
-                        InCombat = true;
                     }
                 }
         }
 
-        if (!InCombat)
+        if (!me->isInCombat())
         {
             ShadowbladesTimer = 10000;
             ShadownovaTimer = 30000;
@@ -163,7 +154,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
             pInstance->SetData(DATA_EREDAR_TWINS_EVENT, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
         if (rand()%4 == 0)
         {
@@ -175,7 +166,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         // only if ALY death
         if (SisterDeath)
@@ -243,7 +234,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
                 if (Temp && Temp->isDead())
                 {
                     DoScriptText(YELL_SISTER_ALYTHESS_DEAD, me);
-                    DoCast(me,SPELL_EMPOWER);
+                    DoCast(me, SPELL_EMPOWER);
                     me->InterruptSpell(CURRENT_GENERIC_SPELL);
                     SisterDeath = true;
                 }
@@ -306,12 +297,15 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
         {
             Unit *pTarget = NULL;
             Creature* temp = NULL;
-            for (int i = 0;i<3;i++)
+            for (uint8 i = 0; i<3; ++i)
             {
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 temp = DoSpawnCreature(MOB_SHADOW_IMAGE,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN,10000);
                 if (temp && pTarget)
+                {
+                    temp->AddThreat(pTarget,1000000);//don't change target(healers)
                     temp->AI()->AttackStart(pTarget);
+                }
             }
             ShadowimageTimer = 20000;
         } else ShadowimageTimer -=diff;
@@ -329,7 +323,7 @@ struct OREGON_DLL_DECL boss_sacrolashAI : public ScriptedAI
         {
             me->InterruptSpell(CURRENT_GENERIC_SPELL);
             DoScriptText(YELL_ENRAGE, me);
-            DoCast(me,SPELL_ENRAGE);
+            DoCast(me, SPELL_ENRAGE);
             Enraged = true;
         } else EnrageTimer -= diff;
 
@@ -353,14 +347,14 @@ CreatureAI* GetAI_boss_sacrolash(Creature* pCreature)
 
 struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
 {
-    boss_alythessAI(Creature *c) : Scripted_NoMovementAI(c){
+    boss_alythessAI(Creature *c) : Scripted_NoMovementAI(c)
+    {
         pInstance = c->GetInstanceData();
         IntroStepCounter = 10;
     }
 
     ScriptedInstance *pInstance;
 
-    bool InCombat;
     bool SisterDeath;
     bool Enraged;
 
@@ -376,7 +370,6 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
 
     void Reset()
     {
-        InCombat = false;
         Enraged = false;
 
         if (pInstance)
@@ -391,12 +384,11 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
                     if (Temp->getVictim())
                     {
                         me->getThreatManager().addThreat(Temp->getVictim(),0.0f);
-                        InCombat = true;
                     }
                 }
         }
 
-        if (!InCombat)
+        if (!me->isInCombat())
         {
             ConflagrationTimer = 45000;
             BlazeTimer = 100;
@@ -430,7 +422,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
 
     void AttackStart(Unit *who)
     {
-        if (!InCombat)
+        if (!me->isInCombat())
         {
             Scripted_NoMovementAI::AttackStart(who);
         }
@@ -441,17 +433,15 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
         if (!who || me->getVictim())
             return;
 
-        if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor (me) && me->IsHostileTo(who))
+        if (who->isTargetableForAttack() && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who))
         {
 
             float attackRadius = me->GetAttackDistance(who);
             if (me->IsWithinDistInMap(who, attackRadius) && me->GetDistanceZ(who) <= CREATURE_Z_ATTACK_RANGE && me->IsWithinLOSInMap(who))
             {
-                if (!InCombat)
+                if (!me->isInCombat())
                 {
                     DoStartNoMovement(who);
-                    EnterCombat(who);
-                    InCombat = true;
                 }
             }
         }
@@ -461,7 +451,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
         }
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
         if (rand()%4 == 0)
         {
@@ -473,7 +463,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
         }
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         if (SisterDeath)
         {
@@ -535,7 +525,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
 
     uint32 IntroStep(uint32 step)
     {
-        Creature* Sacrolash = (Creature*)Unit::GetUnit((*me),pInstance->GetData64(DATA_SACROLASH));
+        Creature* Sacrolash = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_SACROLASH) : 0);
         switch (step)
         {
         case 0: return 0;
@@ -585,6 +575,19 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
                     DoCast(me, SPELL_EMPOWER);
                     me->InterruptSpell(CURRENT_GENERIC_SPELL);
                     SisterDeath = true;
+                }
+            }
+        }
+        if (!me->getVictim())
+        {
+            if (pInstance)
+            {
+                Creature* sisiter = Unit::GetCreature((*me),pInstance->GetData64(DATA_SACROLASH));
+                if (sisiter && !sisiter->isDead() && sisiter->getVictim())
+                {
+                    me->AddThreat(sisiter->getVictim(),0.0f);
+                    DoStartNoMovement(sisiter->getVictim());
+                    me->Attack(sisiter->getVictim(),false);
                 }
             }
         }
@@ -644,7 +647,7 @@ struct OREGON_DLL_DECL boss_alythessAI : public Scripted_NoMovementAI
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
-                DoCast(me, SPELL_PYROGENICS,true);
+                DoCast(me, SPELL_PYROGENICS, true);
                 PyrogenicsTimer = 15000;
             }
         } else PyrogenicsTimer -= diff;
@@ -683,12 +686,13 @@ struct OREGON_DLL_DECL mob_shadow_imageAI : public ScriptedAI
 
     void Reset()
     {
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         ShadowfuryTimer = 5000 + (rand()%15000);
         DarkstrikeTimer = 3000;
         KillTimer = 15000;
     }
 
-    void EnterCombat(Unit *who){}
+    void EnterCombat(Unit * /*who*/){}
 
     void SpellHitTarget(Unit *pTarget,const SpellEntry* spell)
     {
@@ -716,9 +720,9 @@ struct OREGON_DLL_DECL mob_shadow_imageAI : public ScriptedAI
 
         if (KillTimer <= diff)
         {
-            me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+            me->Kill(me);
             KillTimer = 9999999;
-        } else KillTimer -=diff;
+        } else KillTimer -= diff;
 
         if (!UpdateVictim())
             return;
@@ -738,8 +742,7 @@ struct OREGON_DLL_DECL mob_shadow_imageAI : public ScriptedAI
                     DoCast(me->getVictim(), SPELL_DARK_STRIKE);
             }
             DarkstrikeTimer = 3000;
-        }
-        else DarkstrikeTimer -= diff;
+        } else DarkstrikeTimer -= diff;
     }
 };
 

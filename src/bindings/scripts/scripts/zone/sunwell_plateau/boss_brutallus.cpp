@@ -66,7 +66,8 @@ enum Spells
 
 struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
 {
-    boss_brutallusAI(Creature *c) : ScriptedAI(c){
+    boss_brutallusAI(Creature *c) : ScriptedAI(c)
+    {
         pInstance = c->GetInstanceData();
     }
 
@@ -119,7 +120,7 @@ struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
             pInstance->SetData(DATA_BRUTALLUS_EVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         DoScriptText(YELL_AGGRO, me);
 
@@ -127,7 +128,7 @@ struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
             pInstance->SetData(DATA_BRUTALLUS_EVENT, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit* /*victim*/)
     {
         switch(rand()%3)
         {
@@ -137,11 +138,12 @@ struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(YELL_DEATH, me);
 
-        if (pInstance){
+        if (pInstance)
+        {
             pInstance->SetData(DATA_BRUTALLUS_EVENT, DONE);
             float x,y,z;
             me->GetPosition(x,y,z);
@@ -153,20 +155,20 @@ struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
     {
         if (!Intro)
             return;
+        error_log("Start Intro");
         if (Madrigosa){
             Madrigosa->setDeathState(ALIVE);
             Madrigosa->setActive(true);
             IsIntro = true;
         }
-        error_log("Starte das Intro");
     }
 
     void EndIntro()
     {
-        error_log("Beende das Intro");
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         Intro = false;
         IsIntro = false;
+        error_log("End Intro");
     }
 
     void DoIntro()
@@ -178,7 +180,7 @@ struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
         {
             case 0:
                 DoScriptText(YELL_MADR_ICE_BARRIER, Madrigosa);
-                IntroPhaseTimer = 5000;
+                IntroPhaseTimer = 7000;
                 ++IntroPhase;
                 break;
             case 1:
@@ -215,7 +217,7 @@ struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
             case 6:
                 me->SetSpeed(MOVE_RUN, 4.0f, true);
                 DoScriptText(YELL_INTRO_CHARGE, me);
-                IntroPhaseTimer = 3000;
+                IntroPhaseTimer = 5000;
                 ++IntroPhase;
                 break;
             case 7:
@@ -224,14 +226,14 @@ struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
                 me->SetHealth(me->GetMaxHealth());
                 me->AttackStop();
                 me->SetSpeed(MOVE_RUN, 1.0f, true);
-                IntroPhaseTimer = 3000;
+                IntroPhaseTimer = 4000;
                 ++IntroPhase;
                 break;
             case 8:
                 DoScriptText(YELL_INTRO_KILL_MADRIGOSA, me);
                 me->SetOrientation(0.14);
                 Madrigosa->setDeathState(CORPSE);
-                IntroPhaseTimer = 5000;
+                IntroPhaseTimer = 8000;
                 ++IntroPhase;
                 break;
             case 9:
@@ -245,7 +247,8 @@ struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
         }
     }
 
-    void MoveInLineOfSight(Unit *who){
+    void MoveInLineOfSight(Unit *who)
+    {
         if (pInstance && Intro)
             pInstance->SetData(DATA_BRUTALLUS_EVENT, SPECIAL);
     }
@@ -257,12 +260,14 @@ struct OREGON_DLL_DECL boss_brutallusAI : public ScriptedAI
 
         if (IsIntro)
         {
-            if (IntroPhaseTimer <= diff){
+            if (IntroPhaseTimer <= diff)
                 DoIntro();
-            } else IntroPhaseTimer -= diff;
+            else IntroPhaseTimer -= diff;
 
-            if (IntroPhase == 3 + 1){
-                if (IntroFrostBoltTimer <= diff){
+            if (IntroPhase == 3 + 1)
+            {
+                if (IntroFrostBoltTimer <= diff)
+                {
                     if (Madrigosa){
                         Madrigosa->CastSpell(me, SPELL_INTRO_FROSTBOLT, false);
                         IntroFrostBoltTimer = 2000;

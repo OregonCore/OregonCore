@@ -24,63 +24,56 @@ EndScriptData */
 #include "precompiled.h"
 #include "def_sunwell_plateau.h"
 
-enum Quotes
+enum Yells
 {
     //Kalecgos dragon form
-    SAY_EVIL_AGGRO          = -1580000,
-    SAY_EVIL_SPELL1         = -1580001,
-    SAY_EVIL_SPELL2         = -1580002,
-    SAY_EVIL_SLAY1          = -1580003,
-    SAY_EVIL_SLAY2          = -1580004,
-    SAY_EVIL_ENRAGE         = -1580005,
+    SAY_EVIL_AGGRO                               = -1580000,
+    SAY_EVIL_SPELL1                              = -1580001,
+    SAY_EVIL_SPELL2                              = -1580002,
+    SAY_EVIL_SLAY1                               = -1580003,
+    SAY_EVIL_SLAY2                               = -1580004,
+    SAY_EVIL_ENRAGE                              = -1580005,
 
     //Kalecgos humanoid form
-    SAY_GOOD_AGGRO          = -1580006,
-    SAY_GOOD_NEAR_DEATH     = -1580007,
-    SAY_GOOD_NEAR_DEATH2    = -1580008,
-    SAY_GOOD_PLRWIN         = -1580009,
+    SAY_GOOD_AGGRO                               = -1580006,
+    SAY_GOOD_NEAR_DEATH                          = -1580007,
+    SAY_GOOD_NEAR_DEATH2                         = -1580008,
+    SAY_GOOD_PLRWIN                              = -1580009,
 
-    //Shattrowar
-    SAY_SATH_AGGRO          = -1580010,
-    SAY_SATH_DEATH          = -1580011,
-    SAY_SATH_SPELL1         = -1580012,
-    SAY_SATH_SPELL2         = -1580013,
-    SAY_SATH_SLAY1          = -1580014,
-    SAY_SATH_SLAY2          = -1580015,
-    SAY_SATH_ENRAGE         = -1580016
+    //Sathrovarr
+    SAY_SATH_AGGRO                               = -1580010,
+    SAY_SATH_DEATH                               = -1580011,
+    SAY_SATH_SPELL1                              = -1580012,
+    SAY_SATH_SPELL2                              = -1580013,
+    SAY_SATH_SLAY1                               = -1580014,
+    SAY_SATH_SLAY2                               = -1580015,
+    SAY_SATH_ENRAGE                              = -1580016,
 };
 
-enum SpellIds
+enum Spells
 {
-    AURA_SUNWELL_RADIANCE       =   45769,
-    AURA_SPECTRAL_EXHAUSTION    =   44867,
-    AURA_SPECTRAL_REALM         =   46021,
-    AURA_SPECTRAL_INVISIBILITY  =   44801,
-    AURA_DEMONIC_VISUAL         =   44800,
+    AURA_SUNWELL_RADIANCE                        = 45769,
+    AURA_SPECTRAL_EXHAUSTION                     = 44867,
+    AURA_SPECTRAL_REALM                          = 46021,
+    AURA_SPECTRAL_INVISIBILITY                   = 44801,
+    AURA_DEMONIC_VISUAL                          = 44800,
 
-    SPELL_SPECTRAL_BLAST        =   44869,
-    SPELL_TELEPORT_SPECTRAL     =   46021,
-    SPELL_ARCANE_BUFFET         =   45018,
-    SPELL_FROST_BREATH          =   44799,
-    SPELL_TAIL_LASH             =   45122,
+    SPELL_SPECTRAL_BLAST                         = 44869,
+    SPELL_TELEPORT_SPECTRAL                      = 46019,
+    SPELL_ARCANE_BUFFET                          = 45018,
+    SPELL_FROST_BREATH                           = 44799,
+    SPELL_TAIL_LASH                              = 45122,
 
-    SPELL_BANISH                =   44836,
-    SPELL_TRANSFORM_KALEC       =   44670,
-    SPELL_ENRAGE                =   44807,
+    SPELL_BANISH                                 = 44836,
+    SPELL_TRANSFORM_KALEC                        = 44670,
+    SPELL_ENRAGE                                 = 44807,
 
-    SPELL_CORRUPTION_STRIKE     =   45029,
-    SPELL_AGONY_CURSE           =   45032,
-    SPELL_SHADOW_BOLT           =   45031,
+    SPELL_CORRUPTION_STRIKE                      = 45029,
+    SPELL_AGONY_CURSE                            = 45032,
+    SPELL_SHADOW_BOLT                            = 45031,
 
-    SPELL_HEROIC_STRIKE         =   45026,
-    SPELL_REVITALIZE            =   45027
-};
-
-enum Creatures
-{
-    MOB_KALECGOS    =  24850,
-    MOB_KALEC       =  24891,
-    MOB_SATHROVARR  =  24892
+    SPELL_HEROIC_STRIKE                          = 45026,
+    SPELL_REVITALIZE                             = 45027
 };
 
 #define GO_FAILED   "You are unable to use this currently."
@@ -96,7 +89,7 @@ enum Creatures
 #define DRAGON_REALM_Z  53.079
 #define DEMON_REALM_Z   -74.558
 
-uint32 WildMagic[]= { 44978, 45001, 45002, 45004, 45006, 45010 };
+uint32 WildMagic[] = { 44978, 45001, 45002, 45004, 45006, 45010 };
 
 struct OREGON_DLL_DECL boss_kalecgosAI : public ScriptedAI
 {
@@ -104,7 +97,6 @@ struct OREGON_DLL_DECL boss_kalecgosAI : public ScriptedAI
     {
         pInstance = c->GetInstanceData();
         SathGUID = 0;
-        DoorGUID = 0;
     }
 
     ScriptedInstance *pInstance;
@@ -123,21 +115,17 @@ struct OREGON_DLL_DECL boss_kalecgosAI : public ScriptedAI
     bool isBanished;
 
     uint64 SathGUID;
-    uint64 DoorGUID;
 
     void Reset()
     {
         if (pInstance)
         {
             SathGUID = pInstance->GetData64(DATA_SATHROVARR);
-            DoorGUID = pInstance->GetData64(DATA_GO_FORCEFIELD);
+            pInstance->SetData(DATA_KALECGOS_EVENT, NOT_STARTED);
         }
 
-        Unit *Sath = Unit::GetUnit(*me,SathGUID);
-        if (Sath) CAST_CRE(Sath)->AI()->EnterEvadeMode();
-
-        GameObject *Door = GameObject::GetGameObject(*me, DoorGUID);
-        if (Door) Door->SetLootState(GO_JUST_DEACTIVATED);
+        if (Creature *Sath = Unit::GetCreature(*me, SathGUID))
+            Sath->AI()->EnterEvadeMode();
 
         me->setFaction(14);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE + UNIT_FLAG_NOT_SELECTABLE);
@@ -165,19 +153,17 @@ struct OREGON_DLL_DECL boss_kalecgosAI : public ScriptedAI
             damage = 0;
     }
 
-    void EnterCombat(Unit* who)
+    void EnterCombat(Unit* /*who*/)
     {
         me->SetStandState(PLAYER_STATE_NONE);
         DoScriptText(SAY_EVIL_AGGRO, me);
-        GameObject *Door = GameObject::GetGameObject(*me, DoorGUID);
-        if (Door) Door->SetLootState(GO_ACTIVATED);
         DoZoneInCombat();
 
         if (pInstance)
             pInstance->SetData(DATA_KALECGOS_EVENT, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
         switch(rand()%2)
         {
@@ -186,12 +172,9 @@ struct OREGON_DLL_DECL boss_kalecgosAI : public ScriptedAI
         }
     }
 
-    void MovementInform(uint32 type,uint32 id)
+    void MovementInform(uint32 type,uint32 /*id*/)
     {
         if (type != POINT_MOTION_TYPE)
-            return;
-
-        if (id != 1)
             return;
 
         me->SetVisibility(VISIBILITY_OFF);
@@ -278,11 +261,13 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
     void Reset()
     {
         if (pInstance)
+        {
             KalecgosGUID = pInstance->GetData64(DATA_KALECGOS_DRAGON);
-
+            pInstance->SetData(DATA_KALECGOS_EVENT, NOT_STARTED);
+        }
         if (KalecGUID)
         {
-            if (Unit* Kalec = Unit::GetUnit(*me, KalecGUID))
+            if (Creature* Kalec = Unit::GetCreature(*me, KalecGUID))
                 Kalec->setDeathState(JUST_DIED);
             KalecGUID = 0;
         }
@@ -294,15 +279,11 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
         ResetThreat = 1000;
         isEnraged = false;
         isBanished = false;
-
-        if (pInstance)
-            pInstance->SetData(DATA_KALECGOS_EVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit* who)
+    void EnterCombat(Unit* /*who*/)
     {
-        Creature *Kalec = me->SummonCreature(MOB_KALEC, me->GetPositionX() + 10, me->GetPositionY() + 5, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 0);
-        if (Kalec)
+        if (Creature *Kalec = me->SummonCreature(MOB_KALEC, me->GetPositionX() + 10, me->GetPositionY() + 5, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 0))
         {
             KalecGUID = Kalec->GetGUID();
             me->CombatStart(Kalec);
@@ -322,10 +303,10 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
         if (pTarget->GetGUID() == KalecGUID)
         {
             TeleportAllPlayersBack();
-            if (Unit *Kalecgos = Unit::GetUnit(*me, KalecgosGUID))
+            if (Creature *Kalecgos = Unit::GetCreature(*me, KalecgosGUID))
             {
-                ((boss_kalecgosAI*)CAST_CRE(Kalecgos)->AI())->TalkTimer = 1;
-                ((boss_kalecgosAI*)CAST_CRE(Kalecgos)->AI())->isFriendly = false;
+                CAST_AI(boss_kalecgosAI, Kalecgos->AI())->TalkTimer = 1;
+                CAST_AI(boss_kalecgosAI, Kalecgos->AI())->isFriendly = false;
             }
             EnterEvadeMode();
             return;
@@ -337,15 +318,15 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit *killer)
+    void JustDied(Unit * /*killer*/)
     {
         DoScriptText(SAY_SATH_DEATH, me);
         me->Relocate(me->GetPositionX(), me->GetPositionY(), DRAGON_REALM_Z, me->GetOrientation());
         TeleportAllPlayersBack();
-        if (Unit *Kalecgos = Unit::GetUnit(*me, KalecgosGUID))
+        if (Creature *Kalecgos = Unit::GetCreature(*me, KalecgosGUID))
         {
-            ((boss_kalecgosAI*)CAST_CRE(Kalecgos)->AI())->TalkTimer = 1;
-            ((boss_kalecgosAI*)CAST_CRE(Kalecgos)->AI())->isFriendly = true;
+            CAST_AI(boss_kalecgosAI, Kalecgos->AI())->TalkTimer = 1;
+            CAST_AI(boss_kalecgosAI, Kalecgos->AI())->isFriendly = true;
         }
 
         if (pInstance)
@@ -354,14 +335,15 @@ struct OREGON_DLL_DECL boss_sathrovarrAI : public ScriptedAI
 
     void TeleportAllPlayersBack()
     {
-        Map *map = me->GetMap();
-        if (!map->IsDungeon()) return;
-        Map::PlayerList const &PlayerList = map->GetPlayers();
-        Map::PlayerList::const_iterator i;
-        for (i = PlayerList.begin(); i != PlayerList.end(); ++i)
+        Map* pMap = me->GetMap();
+        if (!pMap->IsDungeon()) return;
+        Map::PlayerList const &PlayerList = pMap->GetPlayers();
+        for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+        {
             if (Player* i_pl = i->getSource())
                 if (i_pl->HasAura(AURA_SPECTRAL_REALM,0))
                     i_pl->RemoveAurasDueToSpell(AURA_SPECTRAL_REALM);
+        }
     }
 
     void UpdateAI(const uint32 diff)
@@ -463,7 +445,8 @@ struct OREGON_DLL_DECL boss_kalecAI : public ScriptedAI
 
     bool isEnraged; // if demon is enraged
 
-    boss_kalecAI(Creature *c) : ScriptedAI(c){
+    boss_kalecAI(Creature *c) : ScriptedAI(c)
+    {
         pInstance = c->GetInstanceData();
     }
 
@@ -479,8 +462,6 @@ struct OREGON_DLL_DECL boss_kalecAI : public ScriptedAI
 
         isEnraged = false;
     }
-
-    void EnterCombat(Unit* who) {}
 
     void DamageTaken(Unit *done_by, uint32 &damage)
     {
@@ -501,20 +482,20 @@ struct OREGON_DLL_DECL boss_kalecAI : public ScriptedAI
             {
             case 0:
                 DoScriptText(SAY_GOOD_AGGRO, me);
-                YellSequence++;
+                ++YellSequence;
                 break;
             case 1:
                 if ((me->GetHealth()*100)/me->GetMaxHealth() < 50)
                 {
                     DoScriptText(SAY_GOOD_NEAR_DEATH, me);
-                    YellSequence++;
+                    ++YellSequence;
                 }
                 break;
             case 2:
                 if ((me->GetHealth()*100)/me->GetMaxHealth() < 10)
                 {
                     DoScriptText(SAY_GOOD_NEAR_DEATH2, me);
-                    YellSequence++;
+                    ++YellSequence;
                 }
                 break;
             default:
@@ -550,8 +531,6 @@ void boss_kalecgosAI::UpdateAI(const uint32 diff)
             me->RemoveAllAuras();
             me->DeleteThreatList();
             me->CombatStop();
-            GameObject *Door = GameObject::GetGameObject(*me, DoorGUID);
-            if (Door) Door->SetLootState(GO_JUST_DEACTIVATED);
             TalkSequence++;
         }
         if (TalkTimer <= diff)
