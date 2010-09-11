@@ -224,7 +224,7 @@ struct OREGON_DLL_DECL boss_magtheridonAI : public ScriptedAI
 
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
         me->addUnitState(UNIT_STAT_STUNNED);
         me->CastSpell(me, SPELL_SHADOW_CAGE_C, true);
     }

@@ -44,7 +44,7 @@ struct OREGON_DLL_DECL npc_calvin_montagueAI : public ScriptedAI
     void Reset()
     {
         me->setFaction(FACTION_FRIENDLY);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
     }
 
     void EnterCombat(Unit* who) { }
@@ -74,7 +74,7 @@ bool QuestAccept_npc_calvin_montague(Player* player, Creature* creature, Quest c
     if (quest->GetQuestId() == QUEST_590)
     {
         creature->setFaction(FACTION_HOSTILE);
-        creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
+        creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
         ((npc_calvin_montagueAI*)creature->AI())->AttackStart(player);
     }
     return true;

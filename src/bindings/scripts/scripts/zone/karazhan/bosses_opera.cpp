@@ -559,7 +559,7 @@ struct OREGON_DLL_DECL boss_croneAI : public ScriptedAI
         case 1: DoScriptText(SAY_CRONE_AGGRO2, me); break;
         }
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
     }
 
     void JustDied(Unit* killer)
