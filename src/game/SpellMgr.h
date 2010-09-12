@@ -590,15 +590,8 @@ enum ProcFlagsEx
     PROC_EX_EX_TRIGGER_ALWAYS   = 0x0010000,                 // If set trigger always ( no matter another flags) used for drop charges
     PROC_EX_EX_ONE_TIME_TRIGGER = 0x0020000,                 // If set trigger always but only one time (not used)
     PROC_EX_INTERNAL_HOT        = 0x1000000,                 // Only for internal use
-    PROC_EX_INTERNAL_DOT        = 0x2000000,                 // Only for internal use
-    PROC_EX_INTERNAL_TRIGGERED  = 0x4000000                  // Only for internal use
+    PROC_EX_INTERNAL_DOT        = 0x2000000                  // Only for internal use
 };
-
-#define AURA_SPELL_PROC_EX_MASK \
-   (PROC_EX_NORMAL_HIT | PROC_EX_CRITICAL_HIT | PROC_EX_MISS | \
-    PROC_EX_RESIST | PROC_EX_DODGE | PROC_EX_PARRY | PROC_EX_BLOCK | \
-    PROC_EX_EVADE | PROC_EX_IMMUNE | PROC_EX_DEFLECT | \
-    PROC_EX_ABSORB | PROC_EX_REFLECT | PROC_EX_INTERRUPT)
 
 struct SpellProcEventEntry
 {

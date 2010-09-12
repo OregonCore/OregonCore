@@ -588,11 +588,13 @@ void Spell::FillTargetMap()
 void Spell::prepareDataForTriggerSystem()
 {
     //==========================================================================================
-    // Create base triggers flags for Attacker and Victim (m_procAttacker and  m_procVictim)
+    // Now fill data for trigger system, need know:
+    // can spell trigger another or not (m_canTrigger)
+    // Create base triggers flags for Attacker and Victim (m_procAttacker and m_procVictim)
     //==========================================================================================
 
     // Fill flag can spell trigger or not
-    /*if (!m_IsTriggeredSpell)
+    if (!m_IsTriggeredSpell)
         m_canTrigger = true;          // Normal cast - can trigger
     else if (!m_triggeredByAuraSpell)
         m_canTrigger = true;          // Triggered from SPELL_EFFECT_TRIGGER_SPELL - can trigger
@@ -625,13 +627,6 @@ void Spell::prepareDataForTriggerSystem()
             break;
         }
     }
-
-    // Do not trigger from item cast spell
-    if (m_CastItem)
-       m_canTrigger = false;
-    */
-
-    m_canTrigger = true;
 
     if (m_CastItem && m_spellInfo->SpellFamilyName != SPELLFAMILY_POTION)
         m_canTrigger = false;         // Do not trigger from item cast spell(except potions)
@@ -889,7 +884,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
     // Fill base trigger info
     uint32 procAttacker = m_procAttacker;
     uint32 procVictim   = m_procVictim;
-    uint32 procEx       = m_triggeredByAuraSpell? PROC_EX_INTERNAL_TRIGGERED : PROC_EX_NONE;
+    uint32 procEx       = PROC_EX_NONE;
 
                             //Spells with this flag cannot trigger if effect is casted on self
                             // Slice and Dice, relentless strikes, eviscerate
@@ -943,7 +938,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
         // Send log damage message to client
         caster->SendSpellNonMeleeDamageLog(&damageInfo);
 
-        procEx |= createProcExtendMask(&damageInfo, missInfo);
+        procEx = createProcExtendMask(&damageInfo, missInfo);
         procVictim |= PROC_FLAG_TAKEN_ANY_DAMAGE;
 
         // Do triggers for unit (reflect triggers passed on hit phase for correct drop charge)
@@ -987,7 +982,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
     {
         // Fill base damage struct (unitTarget - is real spell target)
         SpellNonMeleeDamage damageInfo(caster, unitTarget, m_spellInfo->Id, m_spellSchoolMask);
-        procEx |= createProcExtendMask(&damageInfo, missInfo);
+        procEx = createProcExtendMask(&damageInfo, missInfo);
         // Do triggers for unit (reflect triggers passed on hit phase for correct drop charge)
         if (missInfo != SPELL_MISS_REFLECT)
             caster->ProcDamageAndSpell(unit, procAttacker, procVictim, procEx, 0, m_attackType, m_spellInfo, m_canTrigger);

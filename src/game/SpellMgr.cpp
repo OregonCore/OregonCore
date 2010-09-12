@@ -1400,7 +1400,7 @@ bool SpellMgr::IsSpellProcEventCanTriggeredBy(SpellProcEventEntry const * spellP
     else // Passive spells hits here only if resist/reflect/immune/evade
     {
         // Exist req for PROC_EX_EX_TRIGGER_ALWAYS
-        if ((procExtra & AURA_SPELL_PROC_EX_MASK) && (procEvent_procEx & PROC_EX_EX_TRIGGER_ALWAYS))
+        if (procEvent_procEx & PROC_EX_EX_TRIGGER_ALWAYS)
             return true;
         // Passive spells cant trigger if need hit
         if ((procEvent_procEx & PROC_EX_NORMAL_HIT) && !active)
