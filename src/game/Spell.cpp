@@ -272,7 +272,6 @@ Spell::Spell(Unit* Caster, SpellEntry const *info, bool triggered, uint64 origin
     m_executedCurrently = false;
     m_delayStart = 0;
     m_delayAtDamageCount = 0;
-
     m_applyMultiplierMask = 0;
 
     // Get data for type of attack
@@ -721,7 +720,8 @@ void Spell::AddUnitTarget(Unit* pVictim, uint32 effIndex)
     // Calculate hit result
     if (m_originalCaster)
     {
-        target.missCondition = m_originalCaster->SpellHitResult(pVictim, m_spellInfo, m_canReflect);
+        bool canMiss = (m_triggeredByAuraSpell || !m_IsTriggeredSpell);
+        target.missCondition = m_originalCaster->SpellHitResult(pVictim, m_spellInfo, m_canReflect, canMiss);
         if (m_skipCheck && target.missCondition != SPELL_MISS_IMMUNE)
             target.missCondition = SPELL_MISS_NONE;
     }
