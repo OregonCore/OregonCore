@@ -157,7 +157,7 @@ Player* ObjectAccessor::FindPlayerByName(const char* name)
     Guard guard(*HashMapHolder<Player>::GetLock());
     HashMapHolder<Player>::MapType& m = HashMapHolder<Player>::GetContainer();
     for (HashMapHolder<Player>::MapType::iterator iter = m.begin(); iter != m.end(); ++iter)
-        if (::strcmp(name, iter->second->GetName()) == 0)
+        if (iter->second->IsInWorld() && strcmp(name, iter->second->GetName()) == 0)
             return iter->second;
 
     return NULL;
