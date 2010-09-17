@@ -43,7 +43,7 @@ bool WorldSession::processChatmessageFurtherAfterSecurityChecks(std::string& msg
     if (lang != LANG_ADDON)
     {
         // strip invisible characters for non-addon messages
-        if(sWorld.getConfig(CONFIG_CHAT_FAKE_MESSAGE_PREVENTING))
+        if (sWorld.getConfig(CONFIG_CHAT_FAKE_MESSAGE_PREVENTING))
             stripLineInvisibleChars(msg);
 
         if (sWorld.getConfig(CONFIG_CHAT_STRICT_LINK_CHECKING_SEVERITY) && GetSecurity() < SEC_MODERATOR
@@ -90,7 +90,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
         bool foundAura = false;
         for (Unit::AuraList::const_iterator i = langAuras.begin();i != langAuras.end(); ++i)
         {
-            if ((*i)->GetModifier()->m_miscvalue == lang)
+            if ((*i)->GetModifier()->m_miscvalue == int32(lang))
             {
                 foundAura = true;
                 break;
@@ -173,7 +173,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
             GetPlayer()->UpdateSpeakTime();
     }
 
-   if (GetPlayer()->HasAura(1852,0) && type != CHAT_MSG_WHISPER)
+    if (GetPlayer()->HasAura(1852,0) && type != CHAT_MSG_WHISPER)
     {
         std::string msg="";
         recv_data >> msg;
@@ -227,9 +227,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
 
             if (!normalizePlayerName(to))
             {
-                WorldPacket data(SMSG_CHAT_PLAYER_NOT_FOUND, (to.size()+1));
-                data<<to;
-                SendPacket(&data);
+                SendPlayerNotFoundNotice(to);
                 break;
             }
 
@@ -238,9 +236,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
             uint32 pSecurity = player ? player->GetSession()->GetSecurity() : SEC_PLAYER;
             if (!player || (tSecurity == SEC_PLAYER && pSecurity > SEC_PLAYER && !player->isAcceptWhispers()))
             {
-                WorldPacket data(SMSG_CHAT_PLAYER_NOT_FOUND, (to.size()+1));
-                data<<to;
-                SendPacket(&data);
+                SendPlayerNotFoundNotice(to);
                 return;
             }
 
@@ -250,9 +246,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
                 uint32 sideb = player->GetTeam();
                 if (sidea != sideb)
                 {
-                    WorldPacket data(SMSG_CHAT_PLAYER_NOT_FOUND, (to.size()+1));
-                    data<<to;
-                    SendPacket(&data);
+                    SendWrongFactionNotice();
                     return;
                 }
             }
@@ -263,12 +257,12 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
                 return;
             }
 
-            GetPlayer()->Whisper(msg, lang,player->GetGUID());
+            GetPlayer()->Whisper(msg, lang, player->GetGUID());
         } break;
 
         case CHAT_MSG_PARTY:
         {
-            std::string msg = "";
+            std::string msg;
             recv_data >> msg;
 
             if (msg.empty())
@@ -288,7 +282,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
                 return;
 
             WorldPacket data;
-            ChatHandler::FillMessageData(&data, this, CHAT_MSG_PARTY, lang, NULL, 0, msg.c_str(),NULL);
+            ChatHandler::FillMessageData(&data, this, type, lang, NULL, 0, msg.c_str(), NULL);
             group->BroadcastPacket(&data, group->GetMemberGroup(GetPlayer()->GetGUID()));
 
             if (sWorld.getConfig(CONFIG_CHATLOG_PARTY))
@@ -298,7 +292,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
         break;
         case CHAT_MSG_GUILD:
         {
-            std::string msg = "";
+            std::string msg;
             recv_data >> msg;
 
             if (msg.empty())
@@ -335,7 +329,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
         }
         case CHAT_MSG_OFFICER:
         {
-            std::string msg = "";
+            std::string msg;
             recv_data >> msg;
 
             if (msg.empty())
@@ -364,7 +358,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
         }
         case CHAT_MSG_RAID:
         {
-            std::string msg="";
+            std::string msg;
             recv_data >> msg;
 
             if (msg.empty())
@@ -384,7 +378,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
                 return;
 
             WorldPacket data;
-            ChatHandler::FillMessageData(&data, this, CHAT_MSG_RAID, lang, "", 0, msg.c_str(),NULL);
+            ChatHandler::FillMessageData(&data, this, CHAT_MSG_RAID, lang, "", 0, msg.c_str(), NULL);
             group->BroadcastPacket(&data);
 
             if (sWorld.getConfig(CONFIG_CHATLOG_RAID))
@@ -393,7 +387,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
         } break;
         case CHAT_MSG_RAID_LEADER:
         {
-            std::string msg="";
+            std::string msg;
             recv_data >> msg;
 
             if (msg.empty())
@@ -413,7 +407,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
                 return;
 
             WorldPacket data;
-            ChatHandler::FillMessageData(&data, this, CHAT_MSG_RAID_LEADER, lang, "", 0, msg.c_str(),NULL);
+            ChatHandler::FillMessageData(&data, this, CHAT_MSG_RAID_LEADER, lang, "", 0, msg.c_str(), NULL);
             group->BroadcastPacket(&data);
 
             if (sWorld.getConfig(CONFIG_CHATLOG_RAID))
@@ -422,7 +416,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
         } break;
         case CHAT_MSG_RAID_WARNING:
         {
-            std::string msg="";
+            std::string msg;
             recv_data >> msg;
 
             if (!processChatmessageFurtherAfterSecurityChecks(msg, lang))
@@ -446,7 +440,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
 
         case CHAT_MSG_BATTLEGROUND:
         {
-            std::string msg="";
+            std::string msg;
             recv_data >> msg;
 
             if (!processChatmessageFurtherAfterSecurityChecks(msg, lang))
@@ -460,7 +454,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
                 return;
 
             WorldPacket data;
-            ChatHandler::FillMessageData(&data, this, CHAT_MSG_BATTLEGROUND, lang, "", 0, msg.c_str(),NULL);
+            ChatHandler::FillMessageData(&data, this, CHAT_MSG_BATTLEGROUND, lang, "", 0, msg.c_str(), NULL);
             group->BroadcastPacket(&data);
 
             if (sWorld.getConfig(CONFIG_CHATLOG_BGROUND))
@@ -470,7 +464,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
 
         case CHAT_MSG_BATTLEGROUND_LEADER:
         {
-            std::string msg="";
+            std::string msg;
             recv_data >> msg;
 
             if (!processChatmessageFurtherAfterSecurityChecks(msg, lang))
@@ -494,7 +488,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
 
         case CHAT_MSG_CHANNEL:
         {
-            std::string channel = "", msg = "";
+            std::string channel, msg;
             recv_data >> channel;
             recv_data >> msg;
 
@@ -506,10 +500,9 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
 
             if (ChannelMgr* cMgr = channelMgr(_player->GetTeam()))
             {
-                Channel *chn = cMgr->GetChannel(channel,_player);
-                if (chn)
+                if (Channel *chn = cMgr->GetChannel(channel, _player))
                 {
-                    chn->Say(_player->GetGUID(),msg.c_str(),lang);
+                    chn->Say(_player->GetGUID(), msg.c_str(), lang);
 
                     if ((chn->HasFlag(CHANNEL_FLAG_TRADE) ||
                         chn->HasFlag(CHANNEL_FLAG_GENERAL) ||
@@ -664,12 +657,19 @@ void WorldSession::HandleChatIgnoredOpcode(WorldPacket& recv_data)
         return;
 
     WorldPacket data;
-    ChatHandler::FillMessageData(&data, this, CHAT_MSG_IGNORED, LANG_UNIVERSAL, NULL, GetPlayer()->GetGUID(), GetPlayer()->GetName(),NULL);
+    ChatHandler::FillMessageData(&data, this, CHAT_MSG_IGNORED, LANG_UNIVERSAL, NULL, GetPlayer()->GetGUID(), GetPlayer()->GetName(), NULL);
     player->GetSession()->SendPacket(&data);
 }
 
-void WorldSession::HandleChannelDeclineInvite(WorldPacket &recvPacket)
+void WorldSession::SendPlayerNotFoundNotice(std::string name)
 {
-    sLog.outDebug("Opcode %u", recvPacket.GetOpcode());
+    WorldPacket data(SMSG_CHAT_PLAYER_NOT_FOUND, name.size()+1);
+    data << name;
+    SendPacket(&data);
 }
 
+void WorldSession::SendWrongFactionNotice()
+{
+    WorldPacket data(SMSG_CHAT_WRONG_FACTION, 0);
+    SendPacket(&data);
+}

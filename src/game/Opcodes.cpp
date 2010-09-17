@@ -1067,7 +1067,7 @@ OpcodeHandler opcodeTable[NUM_MSG_TYPES] =
     /*0x40C*/ { "CMSG_GRANT_LEVEL",                 STATUS_NEVER,    &WorldSession::Handle_NULL                     },
     /*0x40D*/ { "CMSG_REFER_A_FRIEND",              STATUS_NEVER,    &WorldSession::Handle_NULL                     },
     /*0x40E*/ { "MSG_GM_CHANGE_ARENA_RATING",       STATUS_NEVER,    &WorldSession::Handle_NULL                     },
-    /*0x40F*/ { "CMSG_DECLINE_CHANNEL_INVITE",      STATUS_LOGGEDIN, &WorldSession::HandleChannelDeclineInvite      },
+    /*0x40F*/ { "CMSG_DECLINE_CHANNEL_INVITE",      STATUS_NEVER,    &WorldSession::Handle_NULL                     },
     /*0x410*/ { "CMSG_GROUPACTION_THROTTLED",       STATUS_NEVER,    &WorldSession::Handle_NULL                     },
     /*0x411*/ { "SMSG_OVERRIDE_LIGHT",              STATUS_NEVER,    &WorldSession::Handle_ServerSide               },
     /*0x412*/ { "SMSG_TOTEM_CREATED",               STATUS_NEVER,    &WorldSession::Handle_ServerSide               },
@@ -1089,4 +1089,3 @@ OpcodeHandler opcodeTable[NUM_MSG_TYPES] =
     /*0x422*/ { "SMSG_SPLINE_MOVE_UNSET_FLYING",    STATUS_NEVER,    &WorldSession::Handle_ServerSide               },
     /*0x423*/ { "SMSG_SUMMON_CANCEL",               STATUS_NEVER,    &WorldSession::Handle_ServerSide               },
 };
-
