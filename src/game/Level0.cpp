@@ -158,9 +158,9 @@ bool ChatHandler::HandleGMListIngameCommand(const char* /*args*/)
 {
     bool first = true;
 
-    HashMapHolder<Player>::MapType &m = HashMapHolder<Player>::GetContainer();
-    HashMapHolder<Player>::MapType::iterator itr = m.begin();
-    for (; itr != m.end(); ++itr)
+    ObjectAccessor::Guard guard(*HashMapHolder<Player>::GetLock());
+    HashMapHolder<Player>::MapType &m = ObjectAccessor::Instance().GetPlayers();
+    for (HashMapHolder<Player>::MapType::iterator itr = m.begin(); itr != m.end(); ++itr)
     {
         if (itr->second->GetSession()->GetSecurity() &&
             (itr->second->isGameMaster() || sWorld.getConfig(CONFIG_GM_IN_GM_LIST)) &&

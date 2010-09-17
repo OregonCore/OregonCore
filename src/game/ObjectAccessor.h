@@ -198,9 +198,7 @@ class OREGON_DLL_DECL ObjectAccessor : public Oregon::Singleton<ObjectAccessor, 
         void RemoveObject(Player* pl)
         {
             HashMapHolder<Player>::Remove(pl);
-
-            Guard guard(i_updateGuard);
-            i_objects.erase((Object *)pl);
+            RemoveUpdateObject((Object*)pl);
         }
 
         void SaveAllPlayers();
@@ -225,21 +223,20 @@ class OREGON_DLL_DECL ObjectAccessor : public Oregon::Singleton<ObjectAccessor, 
         void AddCorpsesToGrid(GridPair const& gridpair, GridType& grid, Map* map);
         Corpse* ConvertCorpseForPlayer(uint64 player_guid, bool insignia = false);
 
+        typedef ACE_Thread_Mutex LockType;
+        typedef Oregon::GeneralLock<LockType> Guard;
+
     private:
 
         Player2CorpsesMapType i_player2corpse;
 
-        typedef ACE_Thread_Mutex LockType;
-        typedef Oregon::GeneralLock<LockType > Guard;
-
         static void _buildChangeObjectForPlayer(WorldObject*, UpdateDataMapType&);
         static void _buildPacket(Player*, Object*, UpdateDataMapType&);
-        void _update(void);
+        void _update();
 
         std::set<Object*> i_objects;
-        LockType i_playerGuard;
+
         LockType i_updateGuard;
         LockType i_corpseGuard;
-        LockType i_petGuard;
 };
 #endif
