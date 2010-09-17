@@ -1384,10 +1384,7 @@ class OREGON_DLL_SPEC Player : public Unit
         Item* GetMItem(uint32 id)
         {
             ItemMap::const_iterator itr = mMitems.find(id);
-            if (itr != mMitems.end())
-                return itr->second;
-
-            return NULL;
+            return itr != mMitems.end() ? itr->second : NULL;
         }
 
         void AddMItem(Item* it)
@@ -1399,12 +1396,7 @@ class OREGON_DLL_SPEC Player : public Unit
 
         bool RemoveMItem(uint32 id)
         {
-            ItemMap::iterator i = mMitems.find(id);
-            if (i == mMitems.end())
-                return false;
-
-            mMitems.erase(i);
-            return true;
+            return mMitems.erase(id) ? true : false;
         }
 
         void PetSpellInitialize();

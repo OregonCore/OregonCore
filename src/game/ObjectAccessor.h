@@ -62,9 +62,7 @@ class HashMapHolder
         static void Remove(T* o)
         {
             Guard guard(i_lock);
-            typename MapType::iterator itr = m_objectMap.find(o->GetGUID());
-            if (itr != m_objectMap.end())
-                m_objectMap.erase(itr);
+            m_objectMap.erase(o->GetGUID());
         }
 
         static T* Find(uint64 guid)
@@ -202,10 +200,7 @@ class OREGON_DLL_DECL ObjectAccessor : public Oregon::Singleton<ObjectAccessor, 
             HashMapHolder<Player>::Remove(pl);
 
             Guard guard(i_updateGuard);
-
-            std::set<Object *>::iterator iter2 = std::find(i_objects.begin(), i_objects.end(), (Object *)pl);
-            if (iter2 != i_objects.end())
-                i_objects.erase(iter2);
+            i_objects.erase((Object *)pl);
         }
 
         void SaveAllPlayers();
@@ -219,9 +214,7 @@ class OREGON_DLL_DECL ObjectAccessor : public Oregon::Singleton<ObjectAccessor, 
         void RemoveUpdateObject(Object* obj)
         {
             Guard guard(i_updateGuard);
-            std::set<Object *>::iterator iter = i_objects.find(obj);
-            if (iter != i_objects.end())
-                i_objects.erase(iter);
+            i_objects.erase(obj);
         }
 
         void Update(uint32 diff);

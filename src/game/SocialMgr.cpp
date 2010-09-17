@@ -174,19 +174,10 @@ bool PlayerSocial::HasIgnore(uint32 ignore_guid)
 
 SocialMgr::SocialMgr()
 {
-
 }
 
 SocialMgr::~SocialMgr()
 {
-
-}
-
-void SocialMgr::RemovePlayerSocial(uint32 guid)
-{
-    SocialMap::iterator itr = m_socialMap.find(guid);
-    if (itr != m_socialMap.end())
-        m_socialMap.erase(itr);
 }
 
 void SocialMgr::GetFriendInfo(Player *player, uint32 friendGUID, FriendInfo &friendInfo)
