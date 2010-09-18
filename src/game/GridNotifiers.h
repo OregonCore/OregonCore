@@ -507,7 +507,7 @@ namespace Oregon
                 if (go->GetGOInfo()->spellFocus.focusId != i_focusId)
                     return false;
 
-                float dist = go->GetGOInfo()->spellFocus.dist;
+                float dist = (float)((go->GetGOInfo()->spellFocus.dist)/2);
 
                 return go->IsWithinDistInMap(i_unit, dist);
             }
