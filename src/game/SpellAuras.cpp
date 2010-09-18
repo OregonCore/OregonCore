@@ -516,7 +516,7 @@ Unit* Aura::GetCaster() const
 void Aura::SetModifier(AuraType t, int32 a, uint32 pt, int32 miscValue)
 {
     m_modifier.m_auraname = t;
-    m_modifier.m_amount   = a;
+    m_modifier.m_amount = a;
     m_modifier.m_miscvalue = miscValue;
     m_modifier.periodictime = pt;
 }
@@ -538,7 +538,7 @@ void Aura::Update(uint32 diff)
             {
                 Powers powertype = Powers(m_spellProto->powerType);
                 int32 manaPerSecond = m_spellProto->manaPerSecond + m_spellProto->manaPerSecondPerLevel * caster->getLevel();
-                m_timeCla = 1000;
+                m_timeCla = 1*IN_MILLISECONDS;
                 if (manaPerSecond)
                 {
                     if (powertype == POWER_HEALTH)
@@ -556,25 +556,31 @@ void Aura::Update(uint32 diff)
                          !IsAreaOfEffectSpell(sSpellStore.LookupEntry(GetSpellProto()->EffectTriggerSpell[m_effIndex])) &&
                          GetTriggerTarget()) ? GetTriggerTarget() : m_target;
 
-
     if (IsChanneledSpell(m_spellProto) && !pRealTarget->isPossessed() && pRealTarget->GetGUID() != GetCasterGUID())
     {
         Unit* caster = GetCaster();
         if (!caster)
         {
-            m_target->RemoveAura(GetId(),GetEffIndex());
+            m_target->RemoveAura(GetId(), GetEffIndex());
             return;
         }
 
         // Get spell range
         float radius;
+        SpellModOp mod;
         if (m_spellProto->EffectRadiusIndex[GetEffIndex()])
+        {
             radius = GetSpellRadius(m_spellProto, GetEffIndex(), false);
+            mod = SPELLMOD_RADIUS;
+        }
         else
+        {
             radius = GetSpellMaxRange(sSpellRangeStore.LookupEntry(m_spellProto->rangeIndex));
+            mod = SPELLMOD_RANGE;
+        }
 
         if (Player* modOwner = caster->GetSpellModOwner())
-            modOwner->ApplySpellMod(GetId(), SPELLMOD_RADIUS, radius,NULL);
+            modOwner->ApplySpellMod(GetId(), mod, radius,NULL);
 
         if (!caster->IsWithinDistInMap(pRealTarget, radius))
             return;
