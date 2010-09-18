@@ -5669,10 +5669,10 @@ bool Unit::HandleProcTriggerSpell(Unit *pVictim, uint32 damage, Aura* triggeredB
                     case 27522:             // Mana Drain Trigger of Black Grasp of the Destroyer
                     case 46939:             // Mana Drain Trigger of Black Bow of the Betrayer
                     {
-                        // On successful melee or ranged attack gain $29471s1 mana and if possible drain $27526s1 mana from the target.
+                        // On successful melee or ranged attack gain 8 mana and if possible drain 8 mana from the target.
                         if (this && this->isAlive())
                             CastSpell(this, 29471, true, castItem, triggeredByAura);
-                        if (pVictim && pVictim->isAlive() && pVictim->getPowerType() == POWER_MANA && pVictim->GetPower(POWER_MANA) > 8)
+                        if (pVictim && pVictim->isAlive() && pVictim->getPowerType() == POWER_MANA && pVictim->GetPower(POWER_MANA) >= 8)
                         {
                             CastSpell(pVictim, 27526, true, castItem, triggeredByAura);
                             CastSpell(this, 29471, true, castItem, triggeredByAura);
