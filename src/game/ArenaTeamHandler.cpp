@@ -206,6 +206,10 @@ void WorldSession::HandleArenaTeamLeaveOpcode(WorldPacket & recv_data)
     if (!at)
         return;
 
+    if (MapEntry const* mapEntry = sMapStore.LookupEntry(_player->GetMapId()))
+        if (mapEntry->IsBattleArena())
+            return;
+
     if (_player->GetGUID() == at->GetCaptain() && at->GetMembersSize() > 1)
     {
         // check for correctness
@@ -238,9 +242,6 @@ void WorldSession::HandleArenaTeamDisbandOpcode(WorldPacket & recv_data)
 
     uint32 ArenaTeamId;                                     // arena team id
     recv_data >> ArenaTeamId;
-
-    if (GetPlayer()->InArena())
-        return;
 
     if (ArenaTeam *at = objmgr.GetArenaTeamById(ArenaTeamId))
     {
@@ -291,8 +292,14 @@ void WorldSession::HandleArenaTeamRemoveFromTeamOpcode(WorldPacket & recv_data)
         return;
     }
 
-    Player *player = ObjectAccessor::FindPlayer(member->guid);
-    if (player && player->InArena())
+    Player *player = objmgr.GetPlayer(member->guid);
+
+    if (!player)
+        return;
+
+    MapEntry const* mapEntry = sMapStore.LookupEntry(player->GetMapId());
+
+    if (mapEntry && mapEntry->IsBattleArena())
         return;
 
     at->DelMember(member->guid);
