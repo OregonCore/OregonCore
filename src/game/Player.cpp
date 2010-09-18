@@ -1524,12 +1524,14 @@ uint8 Player::chatTag() const
     // 0x1 - afk
     if (isGMChat())
         return 4;
-    else if (isDND())
+
+    if (isDND())
         return 3;
+
     if (isAFK())
         return 1;
-    else
-        return 0;
+
+    return 0;
 }
 
 bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientation, uint32 options)
@@ -19001,7 +19003,7 @@ bool Player::GetBGAccessByLevel(uint32 bgTypeId) const
 uint32 Player::GetMinLevelForBattleGroundQueueId(uint32 queue_id)
 {
     if (queue_id < 1)
-        return 0;
+        queue_id = 0;
 
     if (queue_id >=6)
         queue_id = 6;
