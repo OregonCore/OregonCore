@@ -12655,15 +12655,14 @@ void Player::SendPreparedQuest(uint64 guid)
     if (questMenu.Empty())
         return;
 
-    QuestMenuItem const& qmi0 = questMenu.GetItem(0);
-
-    uint32 status = qmi0.m_qIcon;
-
     // single element case
     if (questMenu.MenuItemCount() == 1)
     {
         // Auto open -- maybe also should verify there is no greeting
+        QuestMenuItem const& qmi0 = questMenu.GetItem(0);
+        uint32 status = qmi0.m_qIcon;
         uint32 quest_id = qmi0.m_qId;
+
         Quest const* pQuest = objmgr.GetQuestTemplate(quest_id);
         if (pQuest)
         {
@@ -12686,7 +12685,7 @@ void Player::SendPreparedQuest(uint64 guid)
         qe._Emote = 0;
         std::string title = "";
 
-        if (Creature *pCreature =  GetMap()->GetCreature(guid))
+        if (Creature *pCreature = GetMap()->GetCreature(guid))
         {
             uint32 textid = GetGossipTextId(pCreature);
 
