@@ -1031,8 +1031,6 @@ WorldObject::WorldObject()
 {
     m_groupLootTimer    = 0;
     lootingGroupLeaderGUID = 0;
-
-    mSemaphoreTeleport  = false;
 }
 
 void WorldObject::SetWorldObject(bool on)

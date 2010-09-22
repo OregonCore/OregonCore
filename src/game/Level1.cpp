@@ -778,7 +778,7 @@ bool ChatHandler::HandleNamegoCommand(const char* args)
     Player *target = objmgr.GetPlayer(name.c_str());
     if (target)
     {
-        if (target->IsBeingTeleported() == true)
+        if (target->IsBeingTeleported())
         {
             PSendSysMessage(LANG_IS_TELEPORTED, target->GetName());
             SetSentErrorMessage(true);
@@ -2381,7 +2381,7 @@ bool ChatHandler::HandleNameTeleCommand(const char * args)
     Player *target = objmgr.GetPlayer(name.c_str());
     if (target)
     {
-        if (target->IsBeingTeleported() == true)
+        if (target->IsBeingTeleported())
         {
             PSendSysMessage(LANG_IS_TELEPORTED, target->GetName());
             SetSentErrorMessage(true);
@@ -2540,7 +2540,7 @@ bool ChatHandler::HandleGroupgoCommand(const char* args)
         if (!pl || pl == m_session->GetPlayer() || !pl->GetSession())
             continue;
 
-        if (pl->IsBeingTeleported() == true)
+        if (pl->IsBeingTeleported())
         {
             PSendSysMessage(LANG_IS_TELEPORTED, pl->GetName());
             SetSentErrorMessage(true);

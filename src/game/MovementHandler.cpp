@@ -43,6 +43,10 @@ void WorldSession::HandleMoveWorldportAckOpcode(WorldPacket & /*recv_data*/)
 
 void WorldSession::HandleMoveWorldportAckOpcode()
 {
+    // ignore unexpected far teleports
+    if (!GetPlayer()->IsBeingTeleportedFar())
+        return;
+
     // get the teleport destination
     WorldLocation &loc = GetPlayer()->GetTeleportDest();
 
@@ -64,7 +68,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     if (GetPlayer()->m_InstanceValid == false && !mInstance)
         GetPlayer()->m_InstanceValid = true;
 
-    GetPlayer()->SetSemaphoreTeleport(false);
+    GetPlayer()->SetSemaphoreTeleportFar(false);
 
     // relocate the player to the teleport destination
     GetPlayer()->SetMapId(loc.mapid);
@@ -84,7 +88,6 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     {
         sLog.outDebug("WORLD: teleport of player %s (%d) to location %d, %f, %f, %f, %f failed", GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), loc.mapid, loc.coord_x, loc.coord_y, loc.coord_z, loc.orientation);
         // teleport the player home
-        GetPlayer()->SetDontMove(false);
         if (!GetPlayer()->TeleportTo(GetPlayer()->m_homebindMapId, GetPlayer()->m_homebindX, GetPlayer()->m_homebindY, GetPlayer()->m_homebindZ, GetPlayer()->GetOrientation()))
         {
             // the player must always be able to teleport home
@@ -123,7 +126,6 @@ void WorldSession::HandleMoveWorldportAckOpcode()
         if (!_player->InBattleGround())
         {
             // short preparations to continue flight
-            GetPlayer()->SetDontMove(false);
             FlightPathMovementGenerator* flight = (FlightPathMovementGenerator*)(GetPlayer()->GetMotionMaster()->top());
             flight->Initialize(*GetPlayer());
             return;
@@ -172,12 +174,62 @@ void WorldSession::HandleMoveWorldportAckOpcode()
 
         GetPlayer()->m_temporaryUnsummonedPetNumber = 0;
     }
-    GetPlayer()->SetDontMove(false);
+}
+
+void WorldSession::HandleMoveTeleportAck(WorldPacket& recv_data)
+{
+    sLog.outDebug("MSG_MOVE_TELEPORT_ACK");
+    uint64 guid;
+    uint32 flags, time;
+
+    recv_data >> guid;
+    recv_data >> flags >> time;
+    sLog.outDebug("Guid " UI64FMTD, guid);
+    sLog.outDebug("Flags %u, time %u", flags, time/IN_MILLISECONDS);
+
+    Player* plMover = GetPlayer();
+
+    if (!plMover || !plMover->IsBeingTeleportedNear())
+        return;
+
+    if (guid != plMover->GetGUID())
+        return;
+
+    plMover->SetSemaphoreTeleportNear(false);
+
+    uint32 old_zone = plMover->GetZoneId();
+
+    WorldLocation const& dest = plMover->GetTeleportDest();
+
+    plMover->SetPosition(dest.coord_x, dest.coord_y, dest.coord_z, dest.orientation, true);
+
+    uint32 newzone = plMover->GetZoneId();
+
+    plMover->UpdateZone(newzone);
+
+    // new zone
+    if (old_zone != newzone)
+    {
+        // honorless target
+        if (plMover->pvpInfo.inHostileArea)
+            plMover->CastSpell(plMover, 2479, true);
+    }
+
+    // resummon pet
+    if (GetPlayer()->m_temporaryUnsummonedPetNumber)
+    {
+        Pet* NewPet = new Pet;
+        if (!NewPet->LoadPetFromDB(GetPlayer(), 0, GetPlayer()->m_temporaryUnsummonedPetNumber, true))
+            delete NewPet;
+
+        GetPlayer()->m_temporaryUnsummonedPetNumber = 0;
+    }
 }
 
 void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 {
-    if (GetPlayer()->GetDontMove())
+    // ignore, waiting processing in WorldSession::HandleMoveWorldportAckOpcode and WorldSession::HandleMoveTeleportAck
+    if (GetPlayer()->IsBeingTeleported())
     {
         GetPlayer()->m_anti_justteleported = 1;
         return;
@@ -241,9 +293,6 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         HandlePossessedMovement(recv_data, movementInfo, MovementFlags);
         return;
     }
-
-    if (GetPlayer()->GetDontMove())
-        return;
 
     //Save movement flags
     GetPlayer()->SetUnitMovementFlags(MovementFlags);
@@ -550,7 +599,7 @@ void WorldSession::HandlePossessedMovement(WorldPacket& recv_data, MovementInfo&
 
     Unit* pos_unit = GetPlayer()->GetCharm();
 
-    if (pos_unit->GetTypeId() == TYPEID_PLAYER && pos_unit->ToPlayer()->GetDontMove())
+    if (pos_unit->GetTypeId() == TYPEID_PLAYER)
         return;
 
     //Save movement flags
