@@ -174,6 +174,9 @@ void WorldSession::HandleMoveWorldportAckOpcode()
 
         GetPlayer()->m_temporaryUnsummonedPetNumber = 0;
     }
+
+    //lets process all delayed operations on successful teleport
+    GetPlayer()->ProcessDelayedOperations();
 }
 
 void WorldSession::HandleMoveTeleportAck(WorldPacket& recv_data)
@@ -224,6 +227,9 @@ void WorldSession::HandleMoveTeleportAck(WorldPacket& recv_data)
 
         GetPlayer()->m_temporaryUnsummonedPetNumber = 0;
     }
+
+    //lets process all delayed operations on successful teleport
+    GetPlayer()->ProcessDelayedOperations();
 }
 
 void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
