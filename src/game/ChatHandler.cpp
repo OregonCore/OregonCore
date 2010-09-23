@@ -525,7 +525,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
 
             if (!_player->isInCombat())
             {
-                if (!_player->isAFK())
+                if (!msg.empty() || !_player->isAFK())
                 {
                     if (msg.empty())
                         _player->afkMsg = GetOregonString(LANG_PLAYER_AFK_DEFAULT);
@@ -546,7 +546,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
             std::string msg;
             recv_data >> msg;
 
-            if (!_player->isDND())
+            if (!msg.empty() || !_player->isDND())
             {
                 if (msg.empty())
                     _player->dndMsg = GetOregonString(LANG_PLAYER_DND_DEFAULT);
