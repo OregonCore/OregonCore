@@ -2667,7 +2667,7 @@ void InstanceMap::UnloadAll()
         for (MapRefManager::iterator itr = m_mapRefManager.begin(); itr != m_mapRefManager.end(); ++itr)
         {
             Player* plr = itr->getSource();
-            plr->TeleportTo(plr->m_homebindMapId, plr->m_homebindX, plr->m_homebindY, plr->m_homebindZ, plr->GetOrientation());
+            plr->TeleportToHomebind();
         }
     }
 
@@ -2761,7 +2761,7 @@ void BattleGroundMap::UnloadAll()
     {
         if (Player * plr = m_mapRefManager.getFirst()->getSource())
         {
-            plr->TeleportTo(plr->m_homebindMapId, plr->m_homebindX, plr->m_homebindY, plr->m_homebindZ, plr->GetOrientation());
+            plr->TeleportToHomebind();
             // TeleportTo removes the player from this map (if the map exists) -> calls BattleGroundMap::Remove -> invalidates the iterator.
             // just in case, remove the player from the list explicitly here as well to prevent a possible infinite loop
             // note that this remove is not needed if the code works well in other places

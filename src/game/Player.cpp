@@ -4344,7 +4344,7 @@ void Player::RepopAtGraveyard()
         }
     }
     else if (GetPositionZ() < -500.0f)
-        TeleportTo(m_homebindMapId, m_homebindX, m_homebindY, m_homebindZ, GetOrientation());
+        TeleportToHomebind();
 }
 
 void Player::JoinedChannel(Channel *c)
@@ -17967,7 +17967,7 @@ void Player::UpdateHomebindTime(uint32 time)
         if (time >= m_HomebindTimer)
         {
             // teleport to homebind location
-            TeleportTo(m_homebindMapId, m_homebindX, m_homebindY, m_homebindZ, GetOrientation());
+            TeleportToHomebind();
         }
         else
             m_HomebindTimer -= time;
