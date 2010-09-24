@@ -78,6 +78,8 @@ class OREGON_DLL_SPEC WorldSession
 
         void SizeError(WorldPacket const& packet, uint32 size) const;
 
+        void ReadMovementInfo(WorldPacket &data, MovementInfo *mi, uint32* flags);
+
         void SendPacket(WorldPacket const* packet);
         void SendNotification(const char *format,...) ATTR_PRINTF(2,3);
         void SendNotification(int32 string_id,...);
@@ -318,7 +320,7 @@ class OREGON_DLL_SPEC WorldSession
         void HandleMoveWorldportAckOpcode();                // for server-side calls
 
         void HandleMovementOpcodes(WorldPacket& recvPacket);
-        void HandlePossessedMovement(WorldPacket& recv_data, MovementInfo& movementInfo, uint32& MovementFlags);
+        void HandlePossessedMovement(WorldPacket& recv_data, MovementInfo& movementInfo, uint32& movementFlags);
         void HandleSetActiveMoverOpcode(WorldPacket &recv_data);
         void HandleMoveTimeSkippedOpcode(WorldPacket &recv_data);
 
