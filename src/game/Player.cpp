@@ -6922,7 +6922,7 @@ void Player::_ApplyItemBonuses(ItemPrototype const *proto,uint8 slot,bool apply)
         SetBaseWeaponDamage(attType, MAXDAMAGE, damage);
     }
 
-    if (!IsUseEquipedWeapon(slot == EQUIPMENT_SLOT_MAINHAND))
+    if (!IsUseEquippedWeapon(slot == EQUIPMENT_SLOT_MAINHAND))
         return;
 
     if (proto->Delay)
@@ -7152,7 +7152,7 @@ void Player::CastItemCombatSpell(Unit *target, WeaponAttackType attType, uint32 
                         // Check if item is useable (forms or disarm)
                         if (attType == BASE_ATTACK)
                         {
-                            if (!IsUseEquipedWeapon(true))
+                            if (!IsUseEquippedWeapon(true))
                                 continue;
                         }
                         else
@@ -8772,7 +8772,7 @@ Item* Player::GetWeaponForAttack(WeaponAttackType attackType, bool useable) cons
     if (!useable)
         return item;
 
-    if (item->IsBroken() || !IsUseEquipedWeapon(attackType == BASE_ATTACK))
+    if (item->IsBroken() || !IsUseEquippedWeapon(attackType == BASE_ATTACK))
         return NULL;
 
     return item;
