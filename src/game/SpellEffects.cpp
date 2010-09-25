@@ -74,7 +74,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS]=
     &Spell::EffectPowerDrain,                               //  8 SPELL_EFFECT_POWER_DRAIN
     &Spell::EffectHealthLeech,                              //  9 SPELL_EFFECT_HEALTH_LEECH
     &Spell::EffectHeal,                                     // 10 SPELL_EFFECT_HEAL
-    &Spell::EffectUnused,                                   // 11 SPELL_EFFECT_BIND
+    &Spell::EffectBind,                                     // 11 SPELL_EFFECT_BIND
     &Spell::EffectNULL,                                     // 12 SPELL_EFFECT_PORTAL
     &Spell::EffectUnused,                                   // 13 SPELL_EFFECT_RITUAL_BASE              unused
     &Spell::EffectUnused,                                   // 14 SPELL_EFFECT_RITUAL_SPECIALIZE        unused
@@ -6569,9 +6569,44 @@ void Spell::EffectQuestFail(uint32 i)
     unitTarget->ToPlayer()->FailQuest(m_spellInfo->EffectMiscValue[i]);
 }
 
+void Spell::EffectBind(uint32 i)
+{
+    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
+        return;
+
+    Player* player = (Player*)unitTarget;
+
+    uint32 area_id;
+    WorldLocation loc;
+    player->GetPosition(loc);
+    area_id = player->GetAreaId();
+
+    player->SetHomebindToLocation(loc, area_id);
+
+    // binding
+    WorldPacket data(SMSG_BINDPOINTUPDATE, (4+4+4+4+4));
+    data << float(loc.coord_x);
+    data << float(loc.coord_y);
+    data << float(loc.coord_z);
+    data << uint32(loc.mapid);
+    data << uint32(area_id);
+    player->SendDirectMessage(&data);
+
+    DEBUG_LOG("New Home Position X is %f", loc.coord_x);
+    DEBUG_LOG("New Home Position Y is %f", loc.coord_y);
+    DEBUG_LOG("New Home Position Z is %f", loc.coord_z);
+    DEBUG_LOG("New Home MapId is %u", loc.mapid);
+    DEBUG_LOG("New Home AreaId is %u", area_id);
+
+    // zone update
+    data.Initialize(SMSG_PLAYERBOUND, 8+4);
+    data << uint64(player->GetGUID());
+    data << uint32(area_id);
+    player->SendDirectMessage(&data);
+}
+
 void Spell::EffectRedirectThreat(uint32 /*i*/)
 {
     if (unitTarget)
         m_caster->SetReducedThreatPercent(100, unitTarget->GetGUID());
 }
-

@@ -470,6 +470,7 @@ void Spell::FillTargetMap()
                     }
                     break;
                 }
+                case SPELL_EFFECT_BIND:
                 case SPELL_EFFECT_RESURRECT:
                 case SPELL_EFFECT_CREATE_ITEM:
                 case SPELL_EFFECT_TRIGGER_SPELL:

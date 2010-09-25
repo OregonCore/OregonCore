@@ -967,8 +967,6 @@ void SpellMgr::LoadSpellTargetPositions()
 
         bar.step();
 
-        ++count;
-
         uint32 Spell_ID = fields[0].GetUInt32();
 
         SpellTargetPosition st;
@@ -978,6 +976,19 @@ void SpellMgr::LoadSpellTargetPositions()
         st.target_Y           = fields[3].GetFloat();
         st.target_Z           = fields[4].GetFloat();
         st.target_Orientation = fields[5].GetFloat();
+
+        MapEntry const* mapEntry = sMapStore.LookupEntry(st.target_mapId);
+        if (!mapEntry)
+        {
+            sLog.outErrorDb("Spell (ID:%u) target map (ID: %u) does not exist in Map.dbc.",Spell_ID,st.target_mapId);
+            continue;
+        }
+
+        if (st.target_X == 0 && st.target_Y == 0 && st.target_Z == 0)
+        {
+            sLog.outErrorDb("Spell (ID:%u) target coordinates not provided.",Spell_ID);
+            continue;
+        }
 
         SpellEntry const* spellInfo = sSpellStore.LookupEntry(Spell_ID);
         if (!spellInfo)
@@ -1001,20 +1012,8 @@ void SpellMgr::LoadSpellTargetPositions()
             continue;
         }
 
-        MapEntry const* mapEntry = sMapStore.LookupEntry(st.target_mapId);
-        if (!mapEntry)
-        {
-            sLog.outErrorDb("Spell (ID:%u) target map (ID: %u) does not exist in Map.dbc.",Spell_ID,st.target_mapId);
-            continue;
-        }
-
-        if (st.target_X == 0 && st.target_Y == 0 && st.target_Z == 0)
-        {
-            sLog.outErrorDb("Spell (ID:%u) target coordinates not provided.",Spell_ID);
-            continue;
-        }
-
         mSpellTargetPositions[Spell_ID] = st;
+        ++count;
 
     } while (result->NextRow());
 
