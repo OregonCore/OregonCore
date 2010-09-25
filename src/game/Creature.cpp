@@ -167,9 +167,6 @@ Creature::~Creature()
 
     delete i_AI;
     i_AI = NULL;
-
-    //if (m_uint32Values)
-    //    sLog.outError("Deconstruct Creature Entry = %u", GetEntry());
 }
 
 void Creature::AddToWorld()
@@ -1319,8 +1316,6 @@ void Creature::setDeathState(DeathState s)
     }
     if (s == JUST_ALIVED)
     {
-        //if (isPet())
-        //    setActive(true);
         SetHealth(GetMaxHealth());
         SetLootRecipient(NULL);
         ResetPlayerDamageReq();
