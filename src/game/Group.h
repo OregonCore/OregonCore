@@ -34,11 +34,13 @@
 
 enum RollVote
 {
-    PASS              = 0,
-    NEED              = 1,
-    GREED             = 2,
-    NOT_EMITED_YET    = 3,
-    NOT_VALID         = 4
+    ROLL_PASS              = 0,
+    ROLL_NEED              = 1,
+    ROLL_GREED             = 2,
+
+    // other not send by client
+    ROLL_NOT_EMITED_YET    = 3,                             // send to client
+    ROLL_NOT_VALID         = 4                              // not send to client
 };
 
 enum GroupMemberOnlineStatus

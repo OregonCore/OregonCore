@@ -416,7 +416,7 @@ void Group::SendLootStartRoll(uint32 CountDown, const Roll &r)
         if (!p || !p->GetSession())
             continue;
 
-        if (itr->second != NOT_VALID)
+        if (itr->second != ROLL_NOT_VALID)
             p->GetSession()->SendPacket(&data);
     }
 }
@@ -440,7 +440,7 @@ void Group::SendLootRoll(const uint64& SourceGuid, const uint64& TargetGuid, uin
         if (!p || !p->GetSession())
             continue;
 
-        if (itr->second != NOT_VALID)
+        if (itr->second != ROLL_NOT_VALID)
             p->GetSession()->SendPacket(&data);
     }
 }
@@ -463,7 +463,7 @@ void Group::SendLootRollWon(const uint64& SourceGuid, const uint64& TargetGuid, 
         if (!p || !p->GetSession())
             continue;
 
-        if (itr->second != NOT_VALID)
+        if (itr->second != ROLL_NOT_VALID)
             p->GetSession()->SendPacket(&data);
     }
 }
@@ -483,7 +483,7 @@ void Group::SendLootAllPassed(uint32 NumberOfPlayers, const Roll &r)
         if (!p || !p->GetSession())
             continue;
 
-        if (itr->second != NOT_VALID)
+        if (itr->second != ROLL_NOT_VALID)
             p->GetSession()->SendPacket(&data);
     }
 }
@@ -521,7 +521,7 @@ void Group::GroupLoot(const uint64& playerGUID, Loot *loot, WorldObject* object)
                 {
                     if (member->GetDistance2d(object) < sWorld.getConfig(CONFIG_GROUP_XP_DISTANCE))
                     {
-                        r->playerVote[member->GetGUID()] = NOT_EMITED_YET;
+                        r->playerVote[member->GetGUID()] = ROLL_NOT_EMITED_YET;
                         ++r->totalPlayersRolling;
                     }
                 }
@@ -570,7 +570,7 @@ void Group::NeedBeforeGreed(const uint64& playerGUID, Loot *loot, WorldObject* o
                 {
                     if (playerToRoll->GetDistance2d(object) < sWorld.getConfig(CONFIG_GROUP_XP_DISTANCE))
                     {
-                        r->playerVote[playerToRoll->GetGUID()] = NOT_EMITED_YET;
+                        r->playerVote[playerToRoll->GetGUID()] = ROLL_NOT_EMITED_YET;
                         ++r->totalPlayersRolling;
                     }
                 }
@@ -651,20 +651,28 @@ void Group::CountRollVote(const uint64& playerGUID, const uint64& Guid, uint32 N
 
     switch (Choice)
     {
-        case 0:                                             //Player choose pass
+        case ROLL_PASS:                                     // Player choose pass
+        {
             SendLootRoll(0, playerGUID, 128, 128, *roll);
             ++roll->totalPass;
-            itr->second = PASS;
+            itr->second = ROLL_PASS;
             break;
-        case 1:                                             //player choose Need
+        }
+        case ROLL_NEED:                                     // player choose Need
+        {
             SendLootRoll(0, playerGUID, 0, 0, *roll);
             ++roll->totalNeed;
-            itr->second = NEED;
+            itr->second = ROLL_NEED;
             break;
-        case 2:                                             //player choose Greed
+        }
+        case ROLL_GREED:                                    // player choose Greed
+        {
             SendLootRoll(0, playerGUID, 128, 2, *roll);
             ++roll->totalGreed;
-            itr->second = GREED;
+            itr->second = ROLL_GREED;
+            break;
+        }
+        default:                                            // Roll removed case
             break;
     }
 
@@ -706,18 +714,18 @@ void Group::CountTheRoll(Rolls::iterator rollI, uint32 NumberOfPlayers)
 
             for (Roll::PlayerVote::const_iterator itr=roll->playerVote.begin(); itr != roll->playerVote.end(); ++itr)
             {
-                if (itr->second != NEED)
+                if (itr->second != ROLL_NEED)
                     continue;
 
-                uint8 randomN = urand(1, 99);
-                SendLootRoll(0, itr->first, randomN, 1, *roll);
+                uint8 randomN = urand(1, 100);
+                SendLootRoll(0, itr->first, randomN, ROLL_NEED, *roll);
                 if (maxresul < randomN)
                 {
                     maxguid  = itr->first;
                     maxresul = randomN;
                 }
             }
-            SendLootRollWon(0, maxguid, maxresul, 1, *roll);
+            SendLootRollWon(0, maxguid, maxresul, ROLL_NEED, *roll);
             player = objmgr.GetPlayer(maxguid);
 
             if (player && player->GetSession())
@@ -751,18 +759,18 @@ void Group::CountTheRoll(Rolls::iterator rollI, uint32 NumberOfPlayers)
             Roll::PlayerVote::iterator itr;
             for (itr = roll->playerVote.begin(); itr != roll->playerVote.end(); ++itr)
             {
-                if (itr->second != GREED)
+                if (itr->second != ROLL_GREED)
                     continue;
 
-                uint8 randomN = urand(1, 99);
-                SendLootRoll(0, itr->first, randomN, 2, *roll);
+                uint8 randomN = urand(1, 100);
+                SendLootRoll(0, itr->first, randomN, itr->second, *roll);
                 if (maxresul < randomN)
                 {
                     maxguid  = itr->first;
                     maxresul = randomN;
                 }
             }
-            SendLootRollWon(0, maxguid, maxresul, 2, *roll);
+            SendLootRollWon(0, maxguid, maxresul, ROLL_GREED, *roll);
             player = objmgr.GetPlayer(maxguid);
 
             if (player && player->GetSession())
@@ -1126,10 +1134,14 @@ void Group::_removeRolls(const uint64 &guid)
         if (itr2 == roll->playerVote.end())
             continue;
 
-        if (itr2->second == GREED) --roll->totalGreed;
-        if (itr2->second == NEED) --roll->totalNeed;
-        if (itr2->second == PASS) --roll->totalPass;
-        if (itr2->second != NOT_VALID) --roll->totalPlayersRolling;
+        if (itr2->second == ROLL_GREED)
+            --roll->totalGreed;
+        if (itr2->second == ROLL_NEED)
+            --roll->totalNeed;
+        if (itr2->second == ROLL_PASS)
+            --roll->totalPass;
+        if (itr2->second != ROLL_NOT_VALID)
+            --roll->totalPlayersRolling;
 
         roll->playerVote.erase(itr2);
 

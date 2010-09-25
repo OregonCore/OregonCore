@@ -28,13 +28,6 @@
 #include <map>
 #include <vector>
 
-enum RollType
-{
-    ROLL_PASS         = 0,
-    ROLL_NEED         = 1,
-    ROLL_GREED        = 2
-};
-
 #define MAX_NR_LOOT_ITEMS 16
 // note: the client cannot show more than 16 items total
 #define MAX_NR_QUEST_ITEMS 32
