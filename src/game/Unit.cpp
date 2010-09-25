@@ -153,6 +153,78 @@ bool IsPassiveStackableSpell(uint32 spellId)
     return true;
 }
 
+void MovementInfo::Read(ByteBuffer &data)
+{
+    data >> moveFlags;
+    data >> moveFlags2;
+    data >> time;
+    data >> pos.x;
+    data >> pos.y;
+    data >> pos.z;
+    data >> pos.o;
+
+    if (HasMovementFlag(MOVEMENTFLAG_ONTRANSPORT))
+    {
+        data >> t_guid;
+        data >> t_pos.x;
+        data >> t_pos.y;
+        data >> t_pos.z;
+        data >> t_pos.o;
+        data >> t_time;
+    }
+    if (HasMovementFlag(MovementFlags(MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING2)))
+        data >> s_pitch;
+
+    data >> fallTime;
+
+    if (HasMovementFlag(MOVEMENTFLAG_JUMPING))
+    {
+        data >> j_velocity;
+        data >> j_sinAngle;
+        data >> j_cosAngle;
+        data >> j_xyspeed;
+    }
+
+    if (HasMovementFlag(MOVEMENTFLAG_SPLINE))
+        data >> u_unk1;
+}
+
+void MovementInfo::Write(ByteBuffer &data) const
+{
+    data << moveFlags;
+    data << moveFlags2;
+    data << time;
+    data << pos.x;
+    data << pos.y;
+    data << pos.z;
+    data << pos.o;
+
+    if (HasMovementFlag(MOVEMENTFLAG_ONTRANSPORT))
+    {
+        data << t_guid;
+        data << t_pos.x;
+        data << t_pos.y;
+        data << t_pos.z;
+        data << t_pos.o;
+        data << t_time;
+    }
+    if (HasMovementFlag(MovementFlags(MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING2)))
+        data << s_pitch;
+
+    data << fallTime;
+
+    if (HasMovementFlag(MOVEMENTFLAG_JUMPING))
+    {
+        data << j_velocity;
+        data << j_sinAngle;
+        data << j_cosAngle;
+        data << j_xyspeed;
+    }
+
+    if (HasMovementFlag(MOVEMENTFLAG_SPLINE))
+        data << u_unk1;
+}
+
 Unit::Unit()
 : WorldObject(), i_motionMaster(this), m_ThreatManager(this), m_HostileRefManager(this)
 , m_NotifyListPos(-1), m_Notified(false), IsAIEnabled(false), NeedChangeAI(false)

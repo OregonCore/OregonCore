@@ -187,22 +187,20 @@ void WorldSession::HandleTaxiNextDestinationOpcode(WorldPacket& recv_data)
 {
     sLog.outDebug("WORLD: Received CMSG_MOVE_SPLINE_DONE");
 
+    MovementInfo movementInfo;                              // used only for proper packet read
+
+    recv_data >> movementInfo;
+    recv_data >> Unused<uint32>();                          // unk
+
     // in taxi flight packet received in 2 case:
     // 1) end taxi path in far (multi-node) flight
     // 2) switch from one map to other in case multim-map taxi path
     // we need process only (1)
-
-    // movement anticheat code
-    MovementInfo movementInfo;
-    uint32 movementFlags;
-    ReadMovementInfo(recv_data, &movementInfo, &movementFlags);
-    //<<< end movement anticheat
-
     uint32 curDest = GetPlayer()->m_taxi.GetTaxiDestination();
     if (!curDest)
     {
         // movement anticheat code
-        GetPlayer()->SetPosition(movementInfo.x, movementInfo.y, movementInfo.z, movementInfo.o);
+        GetPlayer()->SetPosition(movementInfo.GetPos()->x, movementInfo.GetPos()->y, movementInfo.GetPos()->z, movementInfo.GetPos()->o);
         GetPlayer()->m_movementInfo = movementInfo;
         GetPlayer()->m_anti_lastmovetime = movementInfo.time;
         GetPlayer()->m_anti_justteleported = 1;
@@ -219,7 +217,7 @@ void WorldSession::HandleTaxiNextDestinationOpcode(WorldPacket& recv_data)
     }
 
     //movement anticheat code
-    GetPlayer()->SetPosition(movementInfo.x, movementInfo.y, movementInfo.z, movementInfo.o);
+    GetPlayer()->SetPosition(movementInfo.GetPos()->x, movementInfo.GetPos()->y, movementInfo.GetPos()->z, movementInfo.GetPos()->o);
     GetPlayer()->m_movementInfo = movementInfo;
     GetPlayer()->m_anti_lastmovetime = movementInfo.time;
     //<<< end movement anticheat

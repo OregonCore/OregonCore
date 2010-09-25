@@ -594,8 +594,99 @@ enum MovementFlags
     MOVEMENTFLAG_SPLINE2        = 0x08000000,               // used for flight paths
     MOVEMENTFLAG_WATERWALKING   = 0x10000000,               // prevent unit from falling through water
     MOVEMENTFLAG_SAFE_FALL      = 0x20000000,               // active rogue safe fall spell (passive)
-    MOVEMENTFLAG_UNK3           = 0x40000000
+    MOVEMENTFLAG_UNK3           = 0x40000000,
+
+    MOVEMENTFLAG_MOVING         =
+        MOVEMENTFLAG_FORWARD |MOVEMENTFLAG_BACKWARD  |MOVEMENTFLAG_STRAFE_LEFT|MOVEMENTFLAG_STRAFE_RIGHT|
+        MOVEMENTFLAG_PITCH_UP|MOVEMENTFLAG_PITCH_DOWN|MOVEMENTFLAG_FLY_UNK1   |
+        MOVEMENTFLAG_JUMPING |MOVEMENTFLAG_FALLING   |MOVEMENTFLAG_FLY_UP     |
+        MOVEMENTFLAG_FLYING2 |MOVEMENTFLAG_SPLINE,
+    MOVEMENTFLAG_TURNING        =
+        MOVEMENTFLAG_LEFT | MOVEMENTFLAG_RIGHT,
 };
+
+struct Position
+{
+    Position() : x(0.0f), y(0.0f), z(0.0f), o(0.0f) {}
+    float x, y, z, o;
+};
+
+class MovementInfo
+{
+    public:
+        MovementInfo() : moveFlags(MOVEFLAG_NONE), moveFlags2(0), time(0), t_guid(0),
+            t_time(0), s_pitch(0.0f), fallTime(0), j_velocity(0.0f), j_sinAngle(0.0f),
+            j_cosAngle(0.0f), j_xyspeed(0.0f), u_unk1(0.0f) {}
+
+        // Read/Write methods
+        void Read(ByteBuffer &data);
+        void Write(ByteBuffer &data) const;
+
+        // Movement flags manipulations
+        void AddMovementFlag(MovementFlags f) { moveFlags |= f; }
+        void RemoveMovementFlag(MovementFlags f) { moveFlags &= ~f; }
+        bool HasMovementFlag(MovementFlags f) const { return moveFlags & f; }
+        MovementFlags GetMovementFlags() const { return MovementFlags(moveFlags); }
+        void SetMovementFlags(MovementFlags f) { moveFlags = f; }
+
+        // Position manipulations
+        Position const *GetPos() const { return &pos; }
+        void SetTransportData(uint64 guid, float x, float y, float z, float o, uint32 time)
+        {
+            t_guid = guid;
+            t_pos.x = x;
+            t_pos.y = y;
+            t_pos.z = z;
+            t_pos.o = o;
+            t_time = time;
+        }
+        void ClearTransportData()
+        {
+            t_guid = 0;
+            t_pos.x = 0.0f;
+            t_pos.y = 0.0f;
+            t_pos.z = 0.0f;
+            t_pos.o = 0.0f;
+            t_time = 0;
+        }
+        uint64 const& GetTransportGuid() const { return t_guid; }
+        Position const *GetTransportPos() const { return &t_pos; }
+        uint32 GetTransportTime() const { return t_time; }
+        uint32 GetFallTime() const { return fallTime; }
+        void ChangePosition(float x, float y, float z, float o) { pos.x = x; pos.y = y; pos.z = z; pos.o = o; }
+        void UpdateTime(uint32 _time) { time = _time; }
+
+    //private:
+        // common
+        uint32  moveFlags;                                  // see enum MovementFlags
+        uint8   moveFlags2;
+        uint32  time;
+        Position pos;
+        // transport
+        uint64  t_guid;
+        Position t_pos;
+        uint32  t_time;
+        // swimming and unknown
+        float   s_pitch;
+        // last fall time
+        uint32  fallTime;
+        // jumping
+        float   j_velocity, j_sinAngle, j_cosAngle, j_xyspeed;
+        // spline
+        float   u_unk1;
+};
+
+inline ByteBuffer& operator<< (ByteBuffer& buf, MovementInfo const& mi)
+{
+    mi.Write(buf);
+    return buf;
+}
+
+inline ByteBuffer& operator>> (ByteBuffer& buf, MovementInfo& mi)
+{
+    mi.Read(buf);
+    return buf;
+}
 
 enum DiminishingLevels
 {
@@ -620,6 +711,7 @@ enum MeleeHitOutcome
     MELEE_HIT_EVADE, MELEE_HIT_MISS, MELEE_HIT_DODGE, MELEE_HIT_BLOCK, MELEE_HIT_PARRY,
     MELEE_HIT_GLANCING, MELEE_HIT_CRIT, MELEE_HIT_CRUSHING, MELEE_HIT_NORMAL, MELEE_HIT_BLOCK_CRIT
 };
+
 struct CleanDamage
 {
     CleanDamage(uint32 _damage, WeaponAttackType _attackType, MeleeHitOutcome _hitOutCome) :

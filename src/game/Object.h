@@ -89,8 +89,6 @@ struct WorldLocation
         : mapid(loc.mapid), coord_x(loc.coord_x), coord_y(loc.coord_y), coord_z(loc.coord_z), orientation(loc.orientation) {}
 };
 
-typedef float Position[4];
-
 class OREGON_DLL_SPEC Object
 {
     public:
@@ -302,7 +300,7 @@ class OREGON_DLL_SPEC Object
         virtual void _SetUpdateBits(UpdateMask *updateMask, Player *target) const;
 
         virtual void _SetCreateBits(UpdateMask *updateMask, Player *target) const;
-        void _BuildMovementUpdate(ByteBuffer * data, uint8 flags, uint32 flags2) const;
+        void _BuildMovementUpdate(ByteBuffer * data, uint8 updateFlags) const;
         void _BuildValuesUpdate(uint8 updatetype, ByteBuffer *data, UpdateMask *updateMask, Player *target) const;
 
         uint16 m_objectType;
@@ -358,9 +356,6 @@ class OREGON_DLL_SPEC WorldObject : public Object, public WorldLocation
             m_positionZ = z;
         }
 
-        void Relocate(Position pos)
-            { m_positionX = pos[0]; m_positionY = pos[1]; m_positionZ = pos[2]; m_orientation = pos[3]; }
-
         void SetOrientation(float orientation) { m_orientation = orientation; }
 
         float GetPositionX() const { return m_positionX; }
@@ -370,8 +365,6 @@ class OREGON_DLL_SPEC WorldObject : public Object, public WorldLocation
             { x = m_positionX; y = m_positionY; z = m_positionZ; }
         void GetPosition(WorldLocation &loc) const
             { loc.mapid = GetMapId(); GetPosition(loc.coord_x, loc.coord_y, loc.coord_z); loc.orientation = GetOrientation(); }
-        void GetPosition(Position pos) const
-            { pos[0] = m_positionX; pos[1] = m_positionY; pos[2] = m_positionZ; pos[3] = m_orientation; }
 
         float GetOrientation() const { return m_orientation; }
         void GetNearPoint2D(float &x, float &y, float distance, float absAngle) const;

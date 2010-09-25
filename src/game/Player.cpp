@@ -1602,11 +1602,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
     {
         m_transport->RemovePassenger(this);
         m_transport = NULL;
-        m_movementInfo.t_x = 0.0f;
-        m_movementInfo.t_y = 0.0f;
-        m_movementInfo.t_z = 0.0f;
-        m_movementInfo.t_o = 0.0f;
-        m_movementInfo.t_time = 0;
+        m_movementInfo.ClearTransportData();
     }
 
     // The player was ported to another map and looses the duel immediately.
@@ -1746,18 +1742,27 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
                 data << uint32(mapid);
                 if (m_transport)
                 {
-                    data << m_transport->GetEntry() << GetMapId();
+                    data << uint32(m_transport->GetEntry());
+                    data << uint32(GetMapId());
                 }
                 GetSession()->SendPacket(&data);
 
                 data.Initialize(SMSG_NEW_WORLD, (20));
                 if (m_transport)
                 {
-                    data << (uint32)mapid << m_movementInfo.t_x << m_movementInfo.t_y << m_movementInfo.t_z << m_movementInfo.t_o;
+                    data << uint32(mapid);
+                    data << float(m_movementInfo.GetTransportPos()->x);
+                    data << float(m_movementInfo.GetTransportPos()->y);
+                    data << float(m_movementInfo.GetTransportPos()->z);
+                    data << float(m_movementInfo.GetTransportPos()->o);
                 }
                 else
                 {
-                    data << (uint32)mapid << (float)x << (float)y << (float)z << (float)orientation;
+                    data << uint32(mapid);
+                    data << float(x);
+                    data << float(y);
+                    data << float(z);
+                    data << float(orientation);
                 }
                 GetSession()->SendPacket(&data);
                 SendSavedInstances();
@@ -1774,15 +1779,15 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
 
             if (m_transport)
             {
-                final_x += m_movementInfo.t_x;
-                final_y += m_movementInfo.t_y;
-                final_z += m_movementInfo.t_z;
-                final_o += m_movementInfo.t_o;
+                final_x += m_movementInfo.GetTransportPos()->x;
+                final_y += m_movementInfo.GetTransportPos()->y;
+                final_z += m_movementInfo.GetTransportPos()->z;
+                final_o += m_movementInfo.GetTransportPos()->o;
             }
 
             m_teleport_dest = WorldLocation(mapid, final_x, final_y, final_z, final_o);
             SetFallInformation(0, final_z);
-            // if the player is saved before worldportack (at logout for example)
+            // if the player is saved before worldport ack (at logout for example)
             // this will be used instead of the current location in SaveToDB
 
             // move packet sent by client always after far teleport
@@ -14541,10 +14546,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 
         transGUID = 0;
 
-        m_movementInfo.t_x = 0.0f;
-        m_movementInfo.t_y = 0.0f;
-        m_movementInfo.t_z = 0.0f;
-        m_movementInfo.t_o = 0.0f;
+        m_movementInfo.ClearTransportData();
     }
 
     ////                                                            0     1       2      3    4    5    6
@@ -14586,27 +14588,21 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 
     if (transGUID != 0)
     {
-        m_movementInfo.t_x = fields[27].GetFloat();
-        m_movementInfo.t_y = fields[28].GetFloat();
-        m_movementInfo.t_z = fields[29].GetFloat();
-        m_movementInfo.t_o = fields[30].GetFloat();
+        m_movementInfo.SetTransportData(transGUID, fields[27].GetFloat(), fields[28].GetFloat(), fields[29].GetFloat(), fields[30].GetFloat(), 0);
 
         if (!Oregon::IsValidMapCoord(
-            GetPositionX()+m_movementInfo.t_x,GetPositionY()+m_movementInfo.t_y,
-            GetPositionZ()+m_movementInfo.t_z,GetOrientation()+m_movementInfo.t_o) ||
+            GetPositionX() + m_movementInfo.GetTransportPos()->x, GetPositionY() + m_movementInfo.GetTransportPos()->y,
+            GetPositionZ() + m_movementInfo.GetTransportPos()->z, GetOrientation() + m_movementInfo.GetTransportPos()->o) ||
             // transport size limited
-            m_movementInfo.t_x > 50 || m_movementInfo.t_y > 50 || m_movementInfo.t_z > 50)
+            m_movementInfo.GetTransportPos()->x > 50 || m_movementInfo.GetTransportPos()->y > 50 || m_movementInfo.GetTransportPos()->z > 50)
         {
             sLog.outError("Player (guidlow %d) have invalid transport coordinates (X: %f Y: %f Z: %f O: %f). Teleport to default race/class locations.",
-                guid,GetPositionX()+m_movementInfo.t_x,GetPositionY()+m_movementInfo.t_y,
-                GetPositionZ()+m_movementInfo.t_z,GetOrientation()+m_movementInfo.t_o);
+                guid, GetPositionX() + m_movementInfo.GetTransportPos()->x, GetPositionY() + m_movementInfo.GetTransportPos()->y,
+                GetPositionZ() + m_movementInfo.GetTransportPos()->z, GetOrientation() + m_movementInfo.GetTransportPos()->o);
 
             RelocateToHomebind();
 
-            m_movementInfo.t_x = 0.0f;
-            m_movementInfo.t_y = 0.0f;
-            m_movementInfo.t_z = 0.0f;
-            m_movementInfo.t_o = 0.0f;
+            m_movementInfo.ClearTransportData();
 
             transGUID = 0;
         }
@@ -14632,10 +14628,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 
             RelocateToHomebind();
 
-            m_movementInfo.t_x = 0.0f;
-            m_movementInfo.t_y = 0.0f;
-            m_movementInfo.t_z = 0.0f;
-            m_movementInfo.t_o = 0.0f;
+            m_movementInfo.ClearTransportData();
 
             transGUID = 0;
         }
@@ -16101,10 +16094,10 @@ void Player::SaveToDB()
     ss << m_resetTalentsCost << ", ";
     ss << (uint64)m_resetTalentsTime << ", ";
 
-    ss << finiteAlways(m_movementInfo.t_x) << ", ";
-    ss << finiteAlways(m_movementInfo.t_y) << ", ";
-    ss << finiteAlways(m_movementInfo.t_z) << ", ";
-    ss << finiteAlways(m_movementInfo.t_o) << ", ";
+    ss << finiteAlways(m_movementInfo.GetTransportPos()->x) << ", ";
+    ss << finiteAlways(m_movementInfo.GetTransportPos()->y) << ", ";
+    ss << finiteAlways(m_movementInfo.GetTransportPos()->z) << ", ";
+    ss << finiteAlways(m_movementInfo.GetTransportPos()->o) << ", ";
     if (m_transport)
         ss << m_transport->GetGUIDLow();
     else
@@ -19860,11 +19853,11 @@ bool ItemPosCount::isContainedIn(ItemPosCountVec const& vec) const
 
 void Player::HandleFallDamage(MovementInfo& movementInfo)
 {
-    if (movementInfo.fallTime < 1500)
+    if (movementInfo.GetFallTime() < 1500)
         return;
 
     // calculate total z distance of the fall
-    float z_diff = m_lastFallZ - movementInfo.z;
+    float z_diff = m_lastFallZ - movementInfo.GetPos()->z;
     sLog.outDebug("zDiff = %f", z_diff);
 
     //Players with low fall distance, Feather Fall or physical immunity (charges used) are ignored
@@ -19882,8 +19875,8 @@ void Player::HandleFallDamage(MovementInfo& movementInfo)
         {
             uint32 damage = (uint32)(damageperc * GetMaxHealth()*sWorld.getRate(RATE_DAMAGE_FALL));
 
-            float height = movementInfo.z;
-            UpdateGroundPositionZ(movementInfo.x,movementInfo.y,height);
+            float height = movementInfo.GetPos()->z;
+            UpdateGroundPositionZ(movementInfo.GetPos()->x,movementInfo.GetPos()->y,height);
 
             if (damage > 0)
             {
@@ -19899,7 +19892,7 @@ void Player::HandleFallDamage(MovementInfo& movementInfo)
             }
 
             //Z given by moveinfo, LastZ, FallTime, WaterZ, MapZ, Damage, Safefall reduction
-            DEBUG_LOG("FALLDAMAGE z=%f sz=%f pZ=%f FallTime=%d mZ=%f damage=%d SF=%d" , movementInfo.z, height, GetPositionZ(), movementInfo.fallTime, height, damage, safe_fall);
+            DEBUG_LOG("FALLDAMAGE z=%f sz=%f pZ=%f FallTime=%d mZ=%f damage=%d SF=%d" , movementInfo.GetPos()->z, height, GetPositionZ(), movementInfo.GetFallTime(), height, damage, safe_fall);
         }
     }
 }

@@ -671,52 +671,6 @@ enum InstanceResetWarningType
     RAID_INSTANCE_WELCOME           = 4                     // Welcome to %s. This raid instance is scheduled to reset in %s.
 };
 
-struct MovementInfo
-{
-    // common
-    //uint32  flags;
-    uint8   unk1;
-    uint32  time;
-    float   x, y, z, o;
-    // transport
-    uint64  t_guid;
-    float   t_x, t_y, t_z, t_o;
-    uint32  t_time;
-    // swimming and unk
-    float   s_pitch;
-    // last fall time
-    uint32  fallTime;
-    // jumping
-    float   j_unk, j_sinAngle, j_cosAngle, j_xyspeed;
-    // spline
-    float   u_unk1;
-
-    MovementInfo()
-    {
-        //flags =
-        time = t_time = fallTime = 0;
-        unk1 = 0;
-        x = y = z = o = t_x = t_y = t_z = t_o = s_pitch = j_unk = j_sinAngle = j_cosAngle = j_xyspeed = u_unk1 = 0.0f;
-        t_guid = 0;
-    }
-
-    /*void SetMovementFlags(uint32 _flags)
-    {
-        flags = _flags;
-    }*/
-};
-
-// flags that use in movement check for example at spell casting
-MovementFlags const movementFlagsMask = MovementFlags(
-    MOVEMENTFLAG_FORWARD |MOVEMENTFLAG_BACKWARD  |MOVEMENTFLAG_STRAFE_LEFT|MOVEMENTFLAG_STRAFE_RIGHT|
-    MOVEMENTFLAG_PITCH_UP|MOVEMENTFLAG_PITCH_DOWN|MOVEMENTFLAG_FLY_UNK1    |
-    MOVEMENTFLAG_JUMPING |MOVEMENTFLAG_FALLING   |MOVEMENTFLAG_FLY_UP      |
-    MOVEMENTFLAG_FLYING2  |MOVEMENTFLAG_SPLINE
-);
-
-MovementFlags const movementOrTurningFlagsMask = MovementFlags(
-    movementFlagsMask | MOVEMENTFLAG_LEFT | MOVEMENTFLAG_RIGHT
-);
 class InstanceSave;
 
 enum RestType
@@ -1985,8 +1939,8 @@ class OREGON_DLL_SPEC Player : public Unit
             m_lastFallTime = time;
             m_lastFallZ = z;
         }
-        bool isMoving() const { return HasUnitMovementFlag(movementFlagsMask); }
-        bool isMovingOrTurning() const { return HasUnitMovementFlag(movementOrTurningFlagsMask); }
+        bool isMoving() const { return HasUnitMovementFlag(MOVEMENTFLAG_MOVING); }
+        bool isMovingOrTurning() const { return HasUnitMovementFlag(MOVEMENTFLAG_TURNING); }
 
         bool CanFly() const { return HasUnitMovementFlag(MOVEMENTFLAG_CAN_FLY); }
         bool IsFlying() const { return HasUnitMovementFlag(MOVEMENTFLAG_FLYING2); }
@@ -2003,11 +1957,11 @@ class OREGON_DLL_SPEC Player : public Unit
         Transport * GetTransport() const { return m_transport; }
         void SetTransport(Transport * t) { m_transport = t; }
 
-        float GetTransOffsetX() const { return m_movementInfo.t_x; }
-        float GetTransOffsetY() const { return m_movementInfo.t_y; }
-        float GetTransOffsetZ() const { return m_movementInfo.t_z; }
-        float GetTransOffsetO() const { return m_movementInfo.t_o; }
-        uint32 GetTransTime() const { return m_movementInfo.t_time; }
+        float GetTransOffsetX() const { return m_movementInfo.GetTransportPos()->x; }
+        float GetTransOffsetY() const { return m_movementInfo.GetTransportPos()->y; }
+        float GetTransOffsetZ() const { return m_movementInfo.GetTransportPos()->z; }
+        float GetTransOffsetO() const { return m_movementInfo.GetTransportPos()->o; }
+        uint32 GetTransTime() const { return m_movementInfo.GetTransportTime(); }
 
         uint32 GetSaveTimer() const { return m_nextSave; }
         void   SetSaveTimer(uint32 timer) { m_nextSave = timer; }

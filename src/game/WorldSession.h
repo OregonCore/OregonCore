@@ -31,7 +31,6 @@
 struct ItemPrototype;
 struct AuctionEntry;
 struct DeclinedName;
-struct MovementInfo;
 
 class Creature;
 class Item;
@@ -43,6 +42,7 @@ class WorldSocket;
 class QueryResult;
 class LoginQueryHolder;
 class CharacterHandler;
+class MovementInfo;
 
 enum PartyOperation
 {
@@ -77,8 +77,6 @@ class OREGON_DLL_SPEC WorldSession
         bool PlayerLogout() const { return m_playerLogout; }
 
         void SizeError(WorldPacket const& packet, uint32 size) const;
-
-        void ReadMovementInfo(WorldPacket &data, MovementInfo *mi, uint32* flags);
 
         void SendPacket(WorldPacket const* packet);
         void SendNotification(const char *format,...) ATTR_PRINTF(2,3);
@@ -320,7 +318,7 @@ class OREGON_DLL_SPEC WorldSession
         void HandleMoveWorldportAckOpcode();                // for server-side calls
 
         void HandleMovementOpcodes(WorldPacket& recvPacket);
-        void HandlePossessedMovement(WorldPacket& recv_data, MovementInfo& movementInfo, uint32& movementFlags);
+        void HandlePossessedMovement(WorldPacket& recv_data, MovementInfo& movementInfo);
         void HandleSetActiveMoverOpcode(WorldPacket &recv_data);
         void HandleMoveNotActiveMoverOpcode(WorldPacket &recv_data);
         void HandleMoveTimeSkippedOpcode(WorldPacket &recv_data);
