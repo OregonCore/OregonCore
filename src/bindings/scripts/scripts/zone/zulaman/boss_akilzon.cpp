@@ -308,14 +308,14 @@ struct OREGON_DLL_DECL boss_akilzonAI : public ScriptedAI
             pTarget->GetPosition(x,y,z);
             if (pTarget)
             {
-                pTarget->SetUnitMovementFlags(MOVEMENTFLAG_LEVITATING);
+                pTarget->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
                 pTarget->SendMonsterMove(x,y,me->GetPositionZ()+15,0);
             }
             Unit *Cloud = me->SummonTrigger(x, y, me->GetPositionZ()+16, 0, 15000);
             if (Cloud)
             {
                 CloudGUID = Cloud->GetGUID();
-                Cloud->SetUnitMovementFlags(MOVEMENTFLAG_LEVITATING);
+                Cloud->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
                 Cloud->StopMoving();
                 Cloud->SetFloatValue(OBJECT_FIELD_SCALE_X, 1.0f);
                 Cloud->setFaction(35);
@@ -377,7 +377,7 @@ struct OREGON_DLL_DECL mob_soaring_eagleAI : public ScriptedAI
         EagleSwoop_Timer = 5000 + rand()%5000;
         arrived = true;
         TargetGUID = 0;
-        me->SetUnitMovementFlags(MOVEMENTFLAG_LEVITATING);
+        me->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
     }
 
     void EnterCombat(Unit *who) {DoZoneInCombat();}
@@ -421,9 +421,9 @@ struct OREGON_DLL_DECL mob_soaring_eagleAI : public ScriptedAI
                     me->SetSpeed(MOVE_RUN, 5.0f);
                     TargetGUID = pTarget->GetGUID();
                 }
-                me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
+                me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
                 me->GetMotionMaster()->MovePoint(0, x, y, z);
-                me->RemoveUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
+                me->RemoveUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
                 arrived = false;
             }
         }

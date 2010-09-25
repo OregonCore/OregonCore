@@ -211,8 +211,8 @@ struct OREGON_DLL_DECL mobs_nether_drakeAI : public ScriptedAI
                             break;
                         case 5:
                             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                                                            // + MOVEMENTFLAG_LEVITATING
-                            me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
+                                                            // + MOVEFLAG_LEVITATING
+                            me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
                             //then take off to random location. creature is initially summoned, so don't bother do anything else.
                             me->GetMotionMaster()->MovePoint(0, me->GetPositionX()+100, me->GetPositionY(), me->GetPositionZ()+100);
                             NihilSpeech_Phase = 0;

@@ -129,7 +129,7 @@ struct OREGON_DLL_DECL boss_kalecgosAI : public ScriptedAI
 
         me->setFaction(14);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE + UNIT_FLAG_NOT_SELECTABLE);
-        me->RemoveUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
+        me->RemoveUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
         me->SetVisibility(VISIBILITY_ON);
         me->SetStandState(PLAYER_STATE_SLEEP);
 
@@ -200,7 +200,7 @@ struct OREGON_DLL_DECL boss_kalecgosAI : public ScriptedAI
             TalkTimer = 10000;
             break;
         case 3:
-            me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
+            me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
             me->GetMotionMaster()->Clear();
             me->GetMotionMaster()->MovePoint(1,FLY_X,FLY_Y,FLY_Z);
             TalkTimer = 600000;
@@ -219,7 +219,7 @@ struct OREGON_DLL_DECL boss_kalecgosAI : public ScriptedAI
             TalkTimer = 3000;
             break;
         case 2:
-            me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
+            me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
             me->GetMotionMaster()->Clear();
             me->GetMotionMaster()->MovePoint(1,FLY_X,FLY_Y,FLY_Z);
             TalkTimer = 600000;

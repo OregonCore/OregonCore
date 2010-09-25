@@ -154,7 +154,7 @@ struct OREGON_DLL_DECL npc_dancing_flamesAI : public ScriptedAI
         float x, y, z;
         me->GetPosition(x,y,z);
         me->Relocate(x,y,z + 0.94f);
-        me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
+        me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
         me->HandleEmoteCommand(EMOTE_ONESHOT_DANCE);
         WorldPacket data;                       //send update position to client
         me->BuildHeartBeatMsg(&data);
@@ -398,7 +398,7 @@ struct OREGON_DLL_DECL npc_injured_patientAI : public ScriptedAI
             DoSay(SAY_DOC1,LANG_UNIVERSAL,NULL);
 
             uint32 mobId = me->GetEntry();
-            me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
+            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
             switch (mobId)
             {
                 case 12923:

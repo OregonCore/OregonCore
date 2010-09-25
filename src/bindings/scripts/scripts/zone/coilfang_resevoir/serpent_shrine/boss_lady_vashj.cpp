@@ -644,7 +644,7 @@ struct OREGON_DLL_DECL mob_enchanted_elementalAI : public ScriptedAI
 
         if (move <= diff)
         {
-            me->SetUnitMovementFlags(MOVEMENTFLAG_WALK_MODE);
+            me->SetUnitMovementFlags(MOVEFLAG_WALK_MODE);
             if (phase == 1)
                 me->GetMotionMaster()->MovePoint(0, x, y, z);
             if (phase == 1 && me->GetDistance(x,y,z) < 0.1)
@@ -769,7 +769,7 @@ struct OREGON_DLL_DECL mob_toxic_sporebatAI : public ScriptedAI
 
     void Reset()
     {
-        me->AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
+        me->AddUnitMovementFlag(MOVEFLAG_LEVITATING);
         me->setFaction(14);
         movement_timer = 0;
         ToxicSpore_Timer = 5000;

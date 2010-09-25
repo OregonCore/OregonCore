@@ -117,7 +117,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
         //me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 10);
         //me->SetFloatValue(UNIT_FIELD_COMBATREACH, 10);
         me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
-        me->SetUnitMovementFlags(MOVEMENTFLAG_LEVITATING);
+        me->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         me->setActive(false);
     }
@@ -127,7 +127,7 @@ struct OREGON_DLL_DECL boss_alarAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(DATA_ALAREVENT, IN_PROGRESS);
 
-        me->SetUnitMovementFlags(MOVEMENTFLAG_LEVITATING); // after enterevademode will be set walk movement
+        me->SetUnitMovementFlags(MOVEFLAG_LEVITATING); // after enterevademode will be set walk movement
         DoZoneInCombat();
         me->setActive(true);
     }
@@ -433,7 +433,7 @@ struct OREGON_DLL_DECL mob_ember_of_alarAI : public ScriptedAI
     mob_ember_of_alarAI(Creature *c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
-        me->SetUnitMovementFlags(MOVEMENTFLAG_LEVITATING);
+        me->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
         me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
     }
 

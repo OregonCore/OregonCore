@@ -126,7 +126,7 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
         {
             Phase = 2;
             me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
-            me->AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING | MOVEMENTFLAG_ONTRANSPORT);
+            me->AddUnitMovementFlag(MOVEFLAG_LEVITATING | MOVEFLAG_ONTRANSPORT);
             me->SetHover(true);
             me->GetMotionMaster()->Clear(false);
             me->GetMotionMaster()->MoveIdle();
@@ -136,12 +136,12 @@ struct OREGON_DLL_DECL boss_onyxiaAI : public ScriptedAI
         if (((me->GetHealth()*100 / me->GetMaxHealth()) < 40) && (Phase == 2))
         {
             Phase = 3;
-            me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING | MOVEMENTFLAG_ONTRANSPORT);
+            me->RemoveUnitMovementFlag(MOVEFLAG_LEVITATING | MOVEFLAG_ONTRANSPORT);
             me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
             me->SetHover(false);
             me->GetMotionMaster()->MovePoint(0, -10.6155, -219.357, -87.7344);
             DoStartMovement(me->getVictim());
-            me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
+            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
             DoScriptText(SAY_PHASE_3_TRANS, me);
         }
 

@@ -120,7 +120,7 @@ struct OREGON_DLL_DECL instance_deadmines : public ScriptedInstance
 
     void MoveCreatureInside(Creature *creature)
     {
-        creature->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
+        creature->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
         creature->GetMotionMaster()->MovePoint(0, -102.7,-655.9, creature->GetPositionZ());
     }
 

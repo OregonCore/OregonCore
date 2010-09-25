@@ -90,7 +90,7 @@ struct OREGON_DLL_DECL npc_kyle_frenziedAI : public ScriptedAI
             z = (z2 <= INVALID_HEIGHT) ? z : z2;
             me->SetDefaultMovementType(IDLE_MOTION_TYPE);       //there is other way to stop waypoint movement?
             me->GetMotionMaster()->Initialize();
-            me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
+            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
             me->GetMotionMaster()->MovePoint(0,x, y, z);
         }
     }

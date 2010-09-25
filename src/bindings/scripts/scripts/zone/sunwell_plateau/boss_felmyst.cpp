@@ -137,7 +137,7 @@ struct OREGON_DLL_DECL boss_felmystAI : public ScriptedAI
 
         uiFlightCount = 0;
 
-        me->AddUnitMovementFlag(MOVEMENTFLAG_LEVITATING | MOVEMENTFLAG_ONTRANSPORT);
+        me->AddUnitMovementFlag(MOVEFLAG_LEVITATING | MOVEFLAG_ONTRANSPORT);
         me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 10);
         me->SetFloatValue(UNIT_FIELD_COMBATREACH, 10);
 
@@ -248,7 +248,7 @@ struct OREGON_DLL_DECL boss_felmystAI : public ScriptedAI
         case PHASE_GROUND:
             me->CastStop(SPELL_FOG_BREATH);
             me->RemoveAurasDueToSpell(SPELL_FOG_BREATH);
-            me->SetUnitMovementFlags(MOVEMENTFLAG_NONE);
+            me->SetUnitMovementFlags(MOVEFLAG_NONE);
             me->SetSpeed(MOVE_RUN, 2.0);
 
             events.ScheduleEvent(EVENT_CLEAVE, 5000 + rand()%5 * 1000);
@@ -258,7 +258,7 @@ struct OREGON_DLL_DECL boss_felmystAI : public ScriptedAI
             events.ScheduleEvent(EVENT_FLIGHT, 60000);
             break;
         case PHASE_FLIGHT:
-            me->SetUnitMovementFlags(MOVEMENTFLAG_LEVITATING);
+            me->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
             events.ScheduleEvent(EVENT_FLIGHT_SEQUENCE, 1000);
             uiFlightCount = 0;
             uiBreathCount = 0;
@@ -393,7 +393,7 @@ struct OREGON_DLL_DECL boss_felmystAI : public ScriptedAI
             }
             break;
         case 10:
-            me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING | MOVEMENTFLAG_ONTRANSPORT);
+            me->RemoveUnitMovementFlag(MOVEFLAG_LEVITATING | MOVEFLAG_ONTRANSPORT);
             me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
             EnterPhase(PHASE_GROUND);
             AttackStart(SelectTarget(SELECT_TARGET_TOPAGGRO));

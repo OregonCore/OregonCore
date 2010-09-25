@@ -296,7 +296,7 @@ struct OREGON_DLL_DECL npc_thrall_old_hillsbradAI : public npc_escortAI
                 SetRun();
                 break;
             case 91:
-                me->AddUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
+                me->AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
                 SetRun(false);
                 break;
             case 93:

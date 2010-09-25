@@ -269,7 +269,7 @@ struct OREGON_DLL_DECL boss_kalecgos_kjAI : public ScriptedAI
         FindOrbs();
         OrbsEmpowered = 0;
         EmpowerCount = 0;
-        me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
+        me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->setActive(true);
         Searched = false;
@@ -442,7 +442,7 @@ struct OREGON_DLL_DECL mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
                 summoned->CastSpell(summoned, SPELL_SHADOW_CHANNELING, false);
                 break;
             case CREATURE_ANVEENA:
-                summoned->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
+                summoned->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
                 summoned->CastSpell(summoned, SPELL_ANVEENA_PRISON, true);
                 summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 break;
@@ -1095,7 +1095,7 @@ struct OREGON_DLL_DECL mob_shield_orbAI : public ScriptedAI
 
     void InitializeAI()
     {
-        me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
+        me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
         bPointReached = true;
         uiTimer = 500+ rand()%500;
         uiCheckTimer = 1000;

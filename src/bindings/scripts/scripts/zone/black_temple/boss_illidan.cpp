@@ -545,7 +545,7 @@ struct OREGON_DLL_DECL boss_illidan_stormrageAI : public ScriptedAI
         {
         case 1://lift off
             me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
-            me->SetUnitMovementFlags(MOVEMENTFLAG_LEVITATING + MOVEMENTFLAG_ONTRANSPORT);
+            me->SetUnitMovementFlags(MOVEFLAG_LEVITATING + MOVEFLAG_ONTRANSPORT);
             me->StopMoving();
             DoYell(SAY_TAKEOFF, LANG_UNIVERSAL, NULL);
             DoPlaySoundToSet(me, SOUND_TAKEOFF);
@@ -615,7 +615,7 @@ struct OREGON_DLL_DECL boss_illidan_stormrageAI : public ScriptedAI
             Timer[EVENT_FLIGHT_SEQUENCE] = 2000;
             break;
         case 9://land
-            me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING | MOVEMENTFLAG_ONTRANSPORT);
+            me->RemoveUnitMovementFlag(MOVEFLAG_LEVITATING | MOVEFLAG_ONTRANSPORT);
             me->StopMoving();
             me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
             for (uint8 i = 0; i < 2; i++)
@@ -1137,7 +1137,7 @@ struct OREGON_DLL_DECL npc_akama_illidanAI : public ScriptedAI
 
     void BeginWalk()
     {
-        me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
+        me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
         me->SetSpeed(MOVE_RUN, 1.0f);
         me->GetMotionMaster()->MovePoint(0, AkamaWP[WalkCount].x, AkamaWP[WalkCount].y, AkamaWP[WalkCount].z);
     }
@@ -1876,7 +1876,7 @@ void boss_illidan_stormrageAI::Reset()
     me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
     me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, 0);
-    me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING | MOVEMENTFLAG_ONTRANSPORT);
+    me->RemoveUnitMovementFlag(MOVEFLAG_LEVITATING | MOVEFLAG_ONTRANSPORT);
     me->setActive(false);
     Summons.DespawnAll();
 }
@@ -1935,7 +1935,7 @@ void boss_illidan_stormrageAI::HandleTalkSequence()
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 45479); // Equip our warglaives!
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, 45481);
         me->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE);
-        me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
+        me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
         break;
     case 9:
         if (GETCRE(Akama, AkamaGUID))
@@ -2038,7 +2038,7 @@ void boss_illidan_stormrageAI::CastEyeBlast()
     if (!Trigger) return;
 
     Trigger->SetSpeed(MOVE_WALK, 3);
-    Trigger->SetUnitMovementFlags(MOVEMENTFLAG_WALK_MODE);
+    Trigger->SetUnitMovementFlags(MOVEFLAG_WALK_MODE);
     Trigger->GetMotionMaster()->MovePoint(0, final.x, final.y, final.z);
 
     //Trigger->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);

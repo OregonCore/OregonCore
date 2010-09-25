@@ -91,7 +91,7 @@ struct OREGON_DLL_DECL npc_lady_sylvanas_windrunnerAI : public ScriptedAI
                 summoned->CastSpell(pTarget, SPELL_RIBBON_OF_SOULS, false);
             }
 
-            summoned->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
+            summoned->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
             targetGUID = summoned->GetGUID();
         }
     }
@@ -174,7 +174,7 @@ struct OREGON_DLL_DECL npc_highborne_lamenterAI : public ScriptedAI
         {
             if (EventMove_Timer <= diff)
             {
-                me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);
+                me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
                 me->SendMonsterMoveWithSpeed(me->GetPositionX(),me->GetPositionY(),HIGHBORNE_LOC_Y_NEW,5000);
                 me->GetMap()->CreatureRelocation(me,me->GetPositionX(),me->GetPositionY(),HIGHBORNE_LOC_Y_NEW,me->GetOrientation());
                 EventMove = false;

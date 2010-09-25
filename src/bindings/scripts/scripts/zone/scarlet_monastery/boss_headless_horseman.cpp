@@ -413,7 +413,7 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
     {
         me->SetVisibility(VISIBILITY_OFF);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        me->AddUnitMovementFlag(MOVEMENTFLAG_FLYING2);
+        me->AddUnitMovementFlag(MOVEFLAG_FLYING2);
         me->SetSpeed(MOVE_WALK,5.0f,true);
         wp_reached = false;
         count = 0;
@@ -445,7 +445,7 @@ struct OREGON_DLL_DECL boss_headless_horsemanAI : public ScriptedAI
                 pInstance->SetData(GAMEOBJECT_PUMPKIN_SHRINE, 0);   //hide gameobject
             break;
         case 19:
-            me->RemoveUnitMovementFlag(MOVEMENTFLAG_FLYING2);break;
+            me->RemoveUnitMovementFlag(MOVEFLAG_FLYING2);break;
         case 20:
             {
                 Phase = 1;

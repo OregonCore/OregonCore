@@ -1407,7 +1407,7 @@ struct OREGON_DLL_DECL mob_phoenix_tkAI : public ScriptedAI
 
     void Reset()
     {
-        me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT | MOVEMENTFLAG_LEVITATING);//birds can fly! :)
+        me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);//birds can fly! :)
         egg = true;
         Cycle_Timer = 2000;
         me->CastSpell(me,SPELL_BURN,true);

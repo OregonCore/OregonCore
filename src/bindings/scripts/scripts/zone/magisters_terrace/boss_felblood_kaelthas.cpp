@@ -461,7 +461,7 @@ struct OREGON_DLL_DECL mob_felkael_phoenixAI : public ScriptedAI
     void Reset()
     {
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE + UNIT_FLAG_NON_ATTACKABLE);
-        me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
+        me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
         DoCast(me, SPELL_PHOENIX_BURN, true);
         BurnTimer = 2000;
         Death_Timer = 2700;
@@ -587,7 +587,7 @@ struct OREGON_DLL_DECL mob_arcane_sphereAI : public ScriptedAI
         ChangeTargetTimer = 6000 + rand()%6000;
 
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
+        me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
         me->setFaction(14);
         DoCast(me, SPELL_ARCANE_SPHERE_PASSIVE, true);
     }
