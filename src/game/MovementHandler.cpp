@@ -189,6 +189,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
 void WorldSession::HandleMoveTeleportAck(WorldPacket& recv_data)
 {
     sLog.outDebug("MSG_MOVE_TELEPORT_ACK");
+
     uint64 guid;
     uint32 flags, time;
 
@@ -258,7 +259,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 
     if (recv_data.size() != recv_data.rpos())
     {
-        sLog.outError("MovementHandler: player %s (guid %d, account %u) sent a packet (opcode %u) that is %u bytes larger than it should be. Kicked as cheater.", _player->GetName(), _player->GetGUIDLow(), _player->GetSession()->GetAccountId(), recv_data.GetOpcode(), recv_data.size() - recv_data.rpos());
+        sLog.outError("MovementHandler: player %s (guid %d, account %u) sent a packet (opcode %u) that is %u bytes larger than it should be. Kicked as cheater.", _player->GetName(), _player->GetGUIDLow(), _player->GetSession()->GetAccountId(), opcode, recv_data.size() - recv_data.rpos());
         KickPlayer();
         return;
     }
@@ -333,7 +334,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     }
 
     // fall damage generation (ignore in flight case that can be triggered also at lags in moment teleportation to another map).
-    if (recv_data.GetOpcode() == MSG_MOVE_FALL_LAND && !GetPlayer()->isInFlight())
+    if (opcode == MSG_MOVE_FALL_LAND && !GetPlayer()->isInFlight())
         GetPlayer()->HandleFallDamage(movementInfo);
 
     if (((movementFlags & MOVEMENTFLAG_SWIMMING) != 0) != GetPlayer()->IsInWater())
@@ -538,14 +539,14 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     if (check_passed)
     {
         recv_data.put<uint32>(5, getMSTime());                  // offset flags(4) + unk(1)
-        WorldPacket data(recv_data.GetOpcode(), (GetPlayer()->GetPackGUID().size()+recv_data.size()));
+        WorldPacket data(opcode, (GetPlayer()->GetPackGUID().size()+recv_data.size()));
         data << GetPlayer()->GetPackGUID();
         data.append(recv_data.contents(), recv_data.size());
         GetPlayer()->SendMessageToSet(&data, false);
 
         GetPlayer()->SetPosition(movementInfo.x, movementInfo.y, movementInfo.z, movementInfo.o);
         GetPlayer()->m_movementInfo = movementInfo;
-        if (GetPlayer()->m_lastFallTime >= movementInfo.fallTime || GetPlayer()->m_lastFallZ <=movementInfo.z || recv_data.GetOpcode() == MSG_MOVE_FALL_LAND)
+        if (GetPlayer()->m_lastFallTime >= movementInfo.fallTime || GetPlayer()->m_lastFallZ <=movementInfo.z || opcode == MSG_MOVE_FALL_LAND)
             GetPlayer()->SetFallInformation(movementInfo.fallTime, movementInfo.z);
 
         if (GetPlayer()->isMovingOrTurning())
@@ -592,8 +593,10 @@ void WorldSession::HandlePossessedMovement(WorldPacket& recv_data, MovementInfo&
         return;
     }
 
+    uint16 opcode = recv_data.GetOpcode();
+
     recv_data.put<uint32>(5, getMSTime());
-    WorldPacket data(recv_data.GetOpcode(), pos_unit->GetPackGUID().size()+recv_data.size());
+    WorldPacket data(opcode, pos_unit->GetPackGUID().size()+recv_data.size());
     data << pos_unit->GetPackGUID();
     data.append(recv_data.contents(), recv_data.size());
     // Send the packet to self but not to the possessed player; for creatures the first bool is irrelevant
@@ -604,7 +607,7 @@ void WorldSession::HandlePossessedMovement(WorldPacket& recv_data, MovementInfo&
     {
         Player* plr = pos_unit->ToPlayer();
 
-        if (recv_data.GetOpcode() == MSG_MOVE_FALL_LAND)
+        if (opcode == MSG_MOVE_FALL_LAND)
             plr->HandleFallDamage(movementInfo);
 
         if (((movementFlags & MOVEMENTFLAG_SWIMMING) != 0) != plr->IsInWater())
@@ -636,17 +639,7 @@ void WorldSession::HandleForceSpeedChangeAck(WorldPacket &recv_data)
 {
     /* extract packet */
     ObjectGuid guid;
-    uint8  unkB;
-    uint32 flags, time, fallTime;
-    float x, y, z, orientation;
-
-    uint64 t_GUID;
-    float  t_x, t_y, t_z, t_o;
-    uint32 t_time;
-    float  s_pitch;
-    float  j_unk1, j_sinAngle, j_cosAngle, j_xyspeed;
-    float  u_unk1;
-    float  newspeed;
+    float newspeed;
 
     recv_data >> guid;
 
@@ -657,27 +650,10 @@ void WorldSession::HandleForceSpeedChangeAck(WorldPacket &recv_data)
     // continue parse packet
 
     recv_data >> Unused<uint32>();                          // counter or moveEvent
-    recv_data >> flags >> unkB >> time;
-    recv_data >> x >> y >> z >> orientation;
-    if (flags & MOVEMENTFLAG_ONTRANSPORT)
-    {
-        recv_data >> t_GUID;
-        recv_data >> t_x >> t_y >> t_z >> t_o >> t_time;
-    }
-    if (flags & (MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING2))
-        recv_data >> s_pitch;                               // pitch, -1.55=looking down, 0=looking straight forward, +1.55=looking up
 
-    recv_data >> fallTime;                                  // duration of last jump (when in jump duration from jump begin to now)
-
-    if ((flags & MOVEMENTFLAG_JUMPING) || (flags & MOVEMENTFLAG_FALLING))
-    {
-        recv_data >> j_unk1;                                // ?constant, but different when jumping in water and on land?
-        recv_data >> j_sinAngle >> j_cosAngle;              // sin + cos of angle between orientation0 and players orientation
-        recv_data >> j_xyspeed;                             // speed of xy movement
-    }
-
-    if (flags & MOVEMENTFLAG_SPLINE)
-        recv_data >> u_unk1;                                // unknown
+    MovementInfo movementInfo;
+    uint32 movementFlags;
+    ReadMovementInfo(recv_data, &movementInfo, &movementFlags);
 
     recv_data >> newspeed;
     /*----------------*/
@@ -814,14 +790,32 @@ void WorldSession::HandleMoveKnockBackAck(WorldPacket & recv_data)
     GetPlayer()->m_anti_lastspeed_changetime = movementInfo.time + 1750;
 }
 
-void WorldSession::HandleMoveHoverAck(WorldPacket& /*recv_data*/)
+void WorldSession::HandleMoveHoverAck(WorldPacket& recv_data)
 {
     sLog.outDebug("CMSG_MOVE_HOVER_ACK");
+
+    recv_data.read_skip<uint64>();                          // guid
+    recv_data.read_skip<uint32>();                          // unk
+
+    MovementInfo movementInfo;
+    uint32 movementFlags;
+    ReadMovementInfo(recv_data, &movementInfo, &movementFlags);
+
+    recv_data.read_skip<uint32>();                          // unk2
 }
 
-void WorldSession::HandleMoveWaterWalkAck(WorldPacket& /*recv_data*/)
+void WorldSession::HandleMoveWaterWalkAck(WorldPacket& recv_data)
 {
     sLog.outDebug("CMSG_MOVE_WATER_WALK_ACK");
+
+    recv_data.read_skip<uint64>();                          // guid
+    recv_data.read_skip<uint32>();                          // unk
+
+    MovementInfo movementInfo;
+    uint32 movementFlags;
+    ReadMovementInfo(recv_data, &movementInfo, &movementFlags);
+
+    recv_data.read_skip<uint32>();                          // unk2
 }
 
 void WorldSession::HandleSummonResponseOpcode(WorldPacket& recv_data)

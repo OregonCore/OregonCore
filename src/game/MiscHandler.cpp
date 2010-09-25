@@ -1468,13 +1468,16 @@ void WorldSession::HandleMoveFlyModeChangeAckOpcode(WorldPacket & recv_data)
     sLog.outDebug("WORLD: CMSG_MOVE_SET_CAN_FLY_ACK");
     //recv_data.hexlike();
 
-    uint32 flags;
+    recv_data.read_skip<uint64>();                          // guid
+    recv_data.read_skip<uint32>();                          // unk
 
-    recv_data >> Unused<uint64>();                          // guid
-    recv_data >> Unused<uint32>();                          // unk
-    recv_data >> flags;
+    MovementInfo movementInfo;
+    uint32 movementFlags;
+    ReadMovementInfo(recv_data, &movementInfo, &movementFlags);
 
-    _player->SetUnitMovementFlags(flags);
+    recv_data.read_skip<uint32>();                          // unk2
+
+    _player->SetUnitMovementFlags(movementFlags);
 }
 
 void WorldSession::HandleRequestPetInfoOpcode(WorldPacket & /*recv_data */)

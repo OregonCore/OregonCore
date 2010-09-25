@@ -194,15 +194,8 @@ void WorldSession::HandleTaxiNextDestinationOpcode(WorldPacket& recv_data)
 
     // movement anticheat code
     MovementInfo movementInfo;
-    uint32 MovementFlags;
-
-    recv_data >> MovementFlags;
-    recv_data >> movementInfo.unk1;
-    recv_data >> movementInfo.time;
-    recv_data >> movementInfo.x;
-    recv_data >> movementInfo.y;
-    recv_data >> movementInfo.z;
-    recv_data >> movementInfo.o;
+    uint32 movementFlags;
+    ReadMovementInfo(recv_data, &movementInfo, &movementFlags);
     //<<< end movement anticheat
 
     uint32 curDest = GetPlayer()->m_taxi.GetTaxiDestination();
