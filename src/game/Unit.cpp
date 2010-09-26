@@ -515,11 +515,9 @@ void Unit::SendMonsterMoveByPath(Path const& path, uint32 start, uint32 end)
 
 void Unit::BuildHeartBeatMsg(WorldPacket *data) const
 {
-    uint32 move_flags = GetTypeId() == TYPEID_PLAYER ? GetUnitMovementFlags() : MOVEFLAG_NONE;
-
     data->Initialize(MSG_MOVE_HEARTBEAT, 32);
     *data << GetPackGUID();
-    *data << uint32(move_flags);                            // movement flags
+    *data << uint32(((GetUnitMovementFlags() & MOVEFLAG_LEVITATING) || isInFlight())? (SPLINEFLAG_FLYING|SPLINEFLAG_WALKMODE) : GetUnitMovementFlags());
     *data << uint8(0);                                      // 2.3.0
     *data << uint32(getMSTime());                           // time
     *data << float(GetPositionX());
