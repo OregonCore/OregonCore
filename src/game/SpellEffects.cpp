@@ -2073,13 +2073,17 @@ void Spell::EffectTeleportUnits(uint32 i)
     // Init dest coordinates
     int32 mapid = m_targets.m_mapId;
     if (mapid < 0)
-	    mapid = (int32)unitTarget->GetMapId();
+        mapid = (int32)unitTarget->GetMapId();
     float x = m_targets.m_destX;
     float y = m_targets.m_destY;
     float z = m_targets.m_destZ;
     float orientation = m_targets.getUnitTarget() ? m_targets.getUnitTarget()->GetOrientation() : unitTarget->GetOrientation();
     sLog.outDebug("Spell::EffectTeleportUnits - teleport unit to %u %f %f %f\n", mapid, x, y, z);
-    unitTarget->NearTeleportTo(x, y, z, orientation, unitTarget == m_caster);
+
+    if (mapid == unitTarget->GetMapId())
+        unitTarget->NearTeleportTo(x, y, z, orientation, unitTarget == m_caster);
+    else if (unitTarget->GetTypeId() == TYPEID_PLAYER)
+        unitTarget->ToPlayer()->TeleportTo(mapid, x, y, z, orientation, unitTarget == m_caster ? TELE_TO_SPELL : 0);
 
     // post effects for TARGET_DST_DB
     switch (m_spellInfo->Id)
