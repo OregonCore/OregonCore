@@ -324,6 +324,7 @@ Player::Player (WorldSession *session): Unit()
     m_DelayedOperations = 0;
     m_bCanDelayTeleport = false;
     m_bHasDelayedTeleport = false;
+    m_bHasBeenAliveAtDelayedTeleport = true;                // overwrite always at setup teleport data, so not used infact
     m_teleport_options = 0;
 
     pTrader = 0;
@@ -1319,9 +1320,7 @@ void Player::Update(uint32 p_time)
     if (pet && !IsWithinDistInMap(pet, OWNER_MAX_DISTANCE) && !pet->isPossessed())
         RemovePet(pet, PET_SAVE_NOT_IN_SLOT, true);
 
-    //we should execute delayed teleports only for alive(!) players
-    //because we don't want player's ghost teleported from graveyard
-    if (IsHasDelayedTeleport() && isAlive())
+    if (IsHasDelayedTeleport())
         TeleportTo(m_teleport_dest, m_teleport_options);
 }
 
@@ -1620,10 +1619,9 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         //lets reset far teleport flag if it wasn't reset during chained teleports
         SetSemaphoreTeleportFar(false);
         //setup delayed teleport flag
-        SetDelayedTeleportFlag(IsCanDelayTeleport());
         //if teleport spell is casted in Unit::Update() func
         //then we need to delay it until update process will be finished
-        if(IsHasDelayedTeleport())
+        if (SetDelayedTeleportFlagIfCan())
         {
             SetSemaphoreTeleportNear(true);
             //lets save teleport destination for player
@@ -1683,10 +1681,9 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
             //lets reset near teleport flag if it wasn't reset during chained teleports
             SetSemaphoreTeleportNear(false);
             //setup delayed teleport flag
-            SetDelayedTeleportFlag(IsCanDelayTeleport());
             //if teleport spell is casted in Unit::Update() func
             //then we need to delay it until update process will be finished
-            if (IsHasDelayedTeleport())
+            if (SetDelayedTeleportFlagIfCan())
             {
                 SetSemaphoreTeleportFar(true);
                 //lets save teleport destination for player
@@ -1837,14 +1834,6 @@ void Player::ProcessDelayedOperations()
 
     //we have executed ALL delayed ops, so clear the flag
     m_DelayedOperations = 0;
-}
-
-void Player::ScheduleDelayedOperation(uint32 operation)
-{
-    if (operation >= DELAYED_END)
-        return;
-
-    m_DelayedOperations |= operation;
 }
 
 void Player::AddToWorld()
@@ -13127,10 +13116,6 @@ void Player::IncompleteQuest(uint32 quest_id)
 
 void Player::RewardQuest(Quest const *pQuest, uint32 reward, Object* questGiver, bool announce)
 {
-    //this THING should be here to protect code from quest, which cast on player far teleport as a reward
-    //should work fine, cause far teleport will be executed in Player::Update()
-    SetCanDelayTeleport(true);
-
     uint32 quest_id = pQuest->GetQuestId();
 
     for (int i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
@@ -13224,9 +13209,6 @@ void Player::RewardQuest(Quest const *pQuest, uint32 reward, Object* questGiver,
         CastSpell(this, pQuest->GetRewSpellCast(), true);
     else if (pQuest->GetRewSpell() > 0)
         CastSpell(this, pQuest->GetRewSpell(), true);
-
-    //lets remove flag for delayed teleports
-    SetCanDelayTeleport(false);
 }
 
 void Player::FailQuest(uint32 questId)

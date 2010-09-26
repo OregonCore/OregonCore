@@ -2323,12 +2323,26 @@ class OREGON_DLL_SPEC Player : public Unit
         uint8 m_MirrorTimerFlagsLast;
         bool m_isInWater;
 
-        bool IsCanDelayTeleport() const { return m_bCanDelayTeleport; }
         void SetCanDelayTeleport(bool setting) { m_bCanDelayTeleport = setting; }
-        bool IsHasDelayedTeleport() const { return m_bHasDelayedTeleport; }
-        void SetDelayedTeleportFlag(bool setting) { m_bHasDelayedTeleport = setting; }
+        bool IsHasDelayedTeleport() const
+        {
+            // we should not execute delayed teleports for now dead players but has been alive at teleport
+            // because we don't want player's ghost teleported from graveyard
+            return m_bHasDelayedTeleport && (isAlive() || !m_bHasBeenAliveAtDelayedTeleport);
+        }
 
-        void ScheduleDelayedOperation(uint32 operation);
+        bool SetDelayedTeleportFlagIfCan()
+        {
+            m_bHasDelayedTeleport = m_bCanDelayTeleport;
+            m_bHasBeenAliveAtDelayedTeleport = isAlive();
+            return m_bHasDelayedTeleport;
+        }
+
+        void ScheduleDelayedOperation(uint32 operation)
+        {
+            if (operation < DELAYED_END)
+                m_DelayedOperations |= operation;
+        }
 
         GridReference<Player> m_gridRef;
         MapReference m_mapRef;
@@ -2350,6 +2364,7 @@ class OREGON_DLL_SPEC Player : public Unit
         uint32 m_DelayedOperations;
         bool m_bCanDelayTeleport;
         bool m_bHasDelayedTeleport;
+        bool m_bHasBeenAliveAtDelayedTeleport;
 
         // Temporary removed pet cache
         uint32 m_temporaryUnsummonedPetNumber;
