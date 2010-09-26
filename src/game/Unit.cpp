@@ -5758,7 +5758,7 @@ bool Unit::HandleProcTriggerSpell(Unit *pVictim, uint32 damage, Aura* triggeredB
                     case 46939:             // Mana Drain Trigger of Black Bow of the Betrayer
                     {
                         // On successful melee or ranged attack gain 8 mana and if possible drain 8 mana from the target.
-                        if (this && this->isAlive())
+                        if (isAlive())
                             CastSpell(this, 29471, true, castItem, triggeredByAura);
                         if (pVictim && pVictim->isAlive() && pVictim->getPowerType() == POWER_MANA && pVictim->GetPower(POWER_MANA) >= 8)
                         {

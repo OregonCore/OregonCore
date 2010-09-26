@@ -246,6 +246,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     if (GetPlayer()->IsBeingTeleported())
     {
         GetPlayer()->m_anti_justteleported = 1;
+        recv_data.rpos(recv_data.wpos());                   // prevent warnings spam
         return;
     }
 
