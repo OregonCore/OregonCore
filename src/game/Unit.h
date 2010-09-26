@@ -1182,6 +1182,8 @@ class OREGON_DLL_SPEC Unit : public WorldObject
         void SendSpellNonMeleeDamageLog(Unit *target,uint32 SpellID,uint32 Damage, SpellSchoolMask damageSchoolMask,uint32 AbsorbedDamage, uint32 Resist,bool PhysicalDamage, uint32 Blocked, bool CriticalHit = false);
         void SendSpellMiss(Unit *target, uint32 spellID, SpellMissInfo missInfo);
 
+        void NearTeleportTo(float x, float y, float z, float orientation, bool casting = false);
+
         void SendMonsterStop();
         void SendMonsterMove(float NewPosX, float NewPosY, float NewPosZ, uint32 Time, Player* player = NULL);
         void SendMonsterMove(float NewPosX, float NewPosY, float NewPosZ, uint32 MoveFlags, uint32 time, float speedZ, Player *player = NULL);
@@ -1189,6 +1191,8 @@ class OREGON_DLL_SPEC Unit : public WorldObject
         void SendMonsterMoveWithSpeed(float x, float y, float z, uint32 transitTime = 0, Player* player = NULL);
         void SendMonsterMoveWithSpeedToCurrentDestination(Player* player = NULL);
         void SendMovementFlagUpdate();
+
+        void BuildHeartBeatMsg(WorldPacket *data) const;
 
         virtual void MoveOutOfRange(Player &) {  };
 

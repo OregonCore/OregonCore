@@ -1567,43 +1567,6 @@ void WorldObject::BuildMonsterChat(WorldPacket *data, uint8 msgtype, char const*
     *data << (uint8)0;                                      // ChatTag
 }
 
-void WorldObject::BuildHeartBeatMsg(WorldPacket *data) const
-{
-    //Heartbeat message cannot be used for non-units
-    if (!isType(TYPEMASK_UNIT))
-        return;
-
-    data->Initialize(MSG_MOVE_HEARTBEAT, 32);
-    *data << GetPackGUID();
-    *data << uint32(((Unit*)this)->GetUnitMovementFlags()); // movement flags
-    *data << uint8(0);                                      // 2.3.0
-    *data << getMSTime();                                   // time
-    *data << m_positionX;
-    *data << m_positionY;
-    *data << m_positionZ;
-    *data << m_orientation;
-    *data << uint32(0);
-}
-
-void WorldObject::BuildTeleportAckMsg(WorldPacket *data, float x, float y, float z, float ang) const
-{
-    //TeleportAck message cannot be used for non-units
-    if (!isType(TYPEMASK_UNIT))
-        return;
-
-    data->Initialize(MSG_MOVE_TELEPORT_ACK, 41);
-    *data << GetPackGUID();
-    *data << uint32(0);                                     // this value increments every time
-    *data << uint32(((Unit*)this)->GetUnitMovementFlags()); // movement flags
-    *data << uint8(0);                                      // 2.3.0
-    *data << getMSTime();                                   // time
-    *data << x;
-    *data << y;
-    *data << z;
-    *data << ang;
-    *data << uint32(0);
-}
-
 void WorldObject::SendMessageToSet(WorldPacket *data, bool /*fake*/, bool bToPossessor)
 {
     GetMap()->MessageBroadcast(this, data, bToPossessor);

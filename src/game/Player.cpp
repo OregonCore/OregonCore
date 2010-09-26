@@ -20126,6 +20126,21 @@ void Player::RemoveGlobalCooldown(SpellEntry const *spellInfo)
     m_globalCooldowns[spellInfo->StartRecoveryCategory] = 0;
 }
 
+void Player::BuildTeleportAckMsg(WorldPacket *data, float x, float y, float z, float ang) const
+{
+    data->Initialize(MSG_MOVE_TELEPORT_ACK, 41);
+    *data << GetPackGUID();
+    *data << uint32(0);                                     // this value increments every time
+    *data << uint32(GetUnitMovementFlags());                // movement flags
+    *data << uint8(0);                                      // 2.3.0
+    *data << uint32(getMSTime());                           // time
+    *data << x;
+    *data << y;
+    *data << z;
+    *data << ang;
+    *data << uint32(0);
+}
+
 void Player::ResetTimeSync()
 {
     m_timeSyncCounter = 0;

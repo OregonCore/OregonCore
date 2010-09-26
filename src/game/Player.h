@@ -1939,6 +1939,9 @@ class OREGON_DLL_SPEC Player : public Unit
             m_lastFallTime = time;
             m_lastFallZ = z;
         }
+
+        void BuildTeleportAckMsg( WorldPacket *data, float x, float y, float z, float ang) const;
+
         bool isMoving() const { return HasUnitMovementFlag(MOVEFLAG_MOVING); }
         bool isMovingOrTurning() const { return HasUnitMovementFlag(MOVEFLAG_TURNING); }
 

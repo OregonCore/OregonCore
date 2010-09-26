@@ -2069,24 +2069,17 @@ void Spell::EffectTeleportUnits(uint32 i)
         sLog.outError("Spell::EffectTeleportUnits - does not have destination for spell ID %u\n", m_spellInfo->Id);
         return;
     }
+
     // Init dest coordinates
     int32 mapid = m_targets.m_mapId;
-    if (mapid < 0) mapid = (int32)unitTarget->GetMapId();
+    if (mapid < 0)
+	    mapid = (int32)unitTarget->GetMapId();
     float x = m_targets.m_destX;
     float y = m_targets.m_destY;
     float z = m_targets.m_destZ;
     float orientation = m_targets.getUnitTarget() ? m_targets.getUnitTarget()->GetOrientation() : unitTarget->GetOrientation();
     sLog.outDebug("Spell::EffectTeleportUnits - teleport unit to %u %f %f %f\n", mapid, x, y, z);
-    // Teleport
-    if (unitTarget->GetTypeId() == TYPEID_PLAYER)
-        unitTarget->ToPlayer()->TeleportTo(mapid, x, y, z, orientation, TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET | (unitTarget == m_caster ? TELE_TO_SPELL : 0));
-    else
-    {
-        m_caster->GetMap()->CreatureRelocation(unitTarget->ToCreature(), x, y, z, orientation);
-        WorldPacket data;
-        unitTarget->BuildTeleportAckMsg(&data, x, y, z, orientation);
-        unitTarget->SendMessageToSet(&data, false);
-    }
+    unitTarget->NearTeleportTo(x, y, z, orientation, unitTarget == m_caster);
 
     // post effects for TARGET_DST_DB
     switch (m_spellInfo->Id)
@@ -2812,15 +2805,14 @@ void Spell::EffectEnergize(uint32 i)
             m_caster->CastSpell(unitTarget,elixirs[rand_spell],true,m_CastItem);
         }
     }
-	    switch (m_spellInfo->Id)
+    switch (m_spellInfo->Id)
     {
 
-		//Elune's Touch (30% AP
-		case 33926:
-			damage = m_caster->GetTotalAttackPowerValue(BASE_ATTACK) * 30 / 100;
-		break;
-	}
-
+        //Elune's Touch (30% AP
+        case 33926:
+            damage = m_caster->GetTotalAttackPowerValue(BASE_ATTACK) * 30 / 100;
+        break;
+    }
 }
 
 void Spell::EffectEnergisePct(uint32 i)
@@ -3746,16 +3738,12 @@ void Spell::EffectTeleUnitsFaceCaster(uint32 i)
     if (unitTarget->isInFlight())
         return;
 
-    uint32 mapid = m_caster->GetMapId();
     float dis = GetSpellRadius(m_spellInfo,i,false);
 
     float fx, fy, fz;
     m_caster->GetClosePoint(fx, fy, fz, unitTarget->GetObjectSize(), dis);
 
-    if (unitTarget->GetTypeId() == TYPEID_PLAYER)
-        unitTarget->ToPlayer()->TeleportTo(mapid, fx, fy, fz, -m_caster->GetOrientation(), TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET | (unitTarget == m_caster ? TELE_TO_SPELL : 0));
-    else
-        m_caster->GetMap()->CreatureRelocation(m_caster->ToCreature(), fx, fy, fz, -m_caster->GetOrientation());
+    unitTarget->NearTeleportTo(fx,fy,fz,-m_caster->GetOrientation(),unitTarget==m_caster);
 }
 
 void Spell::EffectLearnSkill(uint32 i)
@@ -5750,46 +5738,48 @@ void Spell::EffectMomentMove(uint32 i)
     float dist = GetSpellRadius(m_spellInfo,i,false);
 
     float x,y,z;
-    float destx,desty,destz,ground,floor;
-    float orientation = unitTarget->GetOrientation(), step = dist/10.0f;
+    float destx, desty, destz, ground, floor;
+    float orientation = unitTarget->GetOrientation();
 
     unitTarget->GetPosition(x,y,z);
     destx = x + dist * cos(orientation);
     desty = y + dist * sin(orientation);
-    ground = unitTarget->GetMap()->GetHeight(destx,desty,MAX_HEIGHT,true);
-    floor = unitTarget->GetMap()->GetHeight(destx,desty,z, true);
+    ground = unitTarget->GetMap()->GetHeight(destx, desty, MAX_HEIGHT, true);
+    floor = unitTarget->GetMap()->GetHeight(destx, desty, z, true);
     destz = fabs(ground - z) <= fabs(floor - z) ? ground : floor;
 
     bool col = VMAP::VMapFactory::createOrGetVMapManager()->getObjectHitPos(mapid,x,y,z+0.5f,destx,desty,destz+0.5f,destx,desty,destz,-0.5f);
 
-    if (col) // We had a collision!
+    // collision occured
+    if (col)
     {
+        // move back a bit
         destx -= 0.6 * cos(orientation);
         desty -= 0.6 * sin(orientation);
-        dist = sqrt((x-destx)*(x-destx) + (y-desty)*(y-desty));
-        step = dist/10.0f;
+        dist = sqrt((x - destx)*(x - destx) + (y - desty)*(y - desty));
     }
+
+    float step = dist/10.0f;
 
     int j = 0;
     for (j; j < 10; j++)
     {
+        // do not allow too big z changes
         if (fabs(z - destz) > 6)
         {
             destx -= step * cos(orientation);
             desty -= step * sin(orientation);
-            ground = unitTarget->GetMap()->GetHeight(destx,desty,MAX_HEIGHT,true);
-            floor = unitTarget->GetMap()->GetHeight(destx,desty,z, true);
+            ground = unitTarget->GetMap()->GetHeight(destx, desty, MAX_HEIGHT, true);
+            floor = unitTarget->GetMap()->GetHeight(destx, desty, z, true);
             destz = fabs(ground - z) <= fabs(floor - z) ? ground:floor;
-        } else break;
+        }
+        // we have correct destz now
+        else
+            break;
     }
 
-    if(j < 10)
-    {
-        if(unitTarget->GetTypeId() == TYPEID_PLAYER)
-          unitTarget->ToPlayer()->TeleportTo(mapid, destx, desty, destz + 0.07531f, unitTarget->GetOrientation(), TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET | (unitTarget == m_caster ? TELE_TO_SPELL : 0));
-        else
-             unitTarget->GetMap()->CreatureRelocation(unitTarget->ToCreature(), destx, desty, destz,unitTarget->GetOrientation());
-    }
+    if (j < 10)
+        unitTarget->NearTeleportTo(destx, desty, destz, unitTarget->GetOrientation(), unitTarget == m_caster);
 }
 
 void Spell::EffectReputation(uint32 i)

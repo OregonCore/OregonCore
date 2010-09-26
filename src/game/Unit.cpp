@@ -513,6 +513,22 @@ void Unit::SendMonsterMoveByPath(Path const& path, uint32 start, uint32 end)
     addUnitState(UNIT_STAT_MOVE);
 }
 
+void Unit::BuildHeartBeatMsg(WorldPacket *data) const
+{
+    uint32 move_flags = GetTypeId() == TYPEID_PLAYER ? GetUnitMovementFlags() : MOVEFLAG_NONE;
+
+    data->Initialize(MSG_MOVE_HEARTBEAT, 32);
+    *data << GetPackGUID();
+    *data << uint32(move_flags);                            // movement flags
+    *data << uint8(0);                                      // 2.3.0
+    *data << uint32(getMSTime());                           // time
+    *data << float(GetPositionX());
+    *data << float(GetPositionY());
+    *data << float(GetPositionZ());
+    *data << float(GetOrientation());
+    *data << uint32(0);
+}
+
 void Unit::resetAttackTimer(WeaponAttackType type)
 {
     m_attackTimer[type] = uint32(GetAttackTime(type) * m_modAttackSpeedPct[type]);
@@ -11205,6 +11221,20 @@ void Unit::RemoveAurasAtChanneledTarget(SpellEntry const* spellInfo, Unit * cast
             RemoveAura(iter);
         else
             ++iter;
+    }
+}
+
+void Unit::NearTeleportTo(float x, float y, float z, float orientation, bool casting /*= false*/ )
+{
+    if (GetTypeId() == TYPEID_PLAYER)
+        ToPlayer()->TeleportTo(GetMapId(), x, y, z, orientation, TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET | (casting ? TELE_TO_SPELL : 0));
+    else
+    {
+        GetMap()->CreatureRelocation(ToCreature(), x, y, z, orientation);
+
+        WorldPacket data;
+        BuildHeartBeatMsg(&data);
+        SendMessageToSet(&data, false);
     }
 }
 
