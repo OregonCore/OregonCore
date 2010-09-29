@@ -2426,7 +2426,7 @@ void Spell::EffectPowerBurn(uint32 i)
     if (Player *modOwner = m_caster->GetSpellModOwner())
         modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_MULTIPLE_VALUE, multiplier);
 
-    new_damage = int32(new_damage*multiplier);
+    new_damage = int32(new_damage * multiplier);
     //m_damage+=new_damage; should not apply spell bonus
     //TODO: no log
     //unitTarget->ModifyHealth(-new_damage);
@@ -2916,6 +2916,8 @@ void Spell::SendLoot(uint64 guid, LootType loottype)
                     gameObjTarget->TriggeringLinkedGameObject(trapEntry,m_caster);
 
                 // Don't return, let loots been taken
+            default:
+                break;
         }
     }
 
@@ -3098,10 +3100,10 @@ void Spell::EffectSummonChangeItem(uint32 i)
     if (!pNewItem)
         return;
 
-    for (uint8 i= PERM_ENCHANTMENT_SLOT; i<=TEMP_ENCHANTMENT_SLOT; ++i)
+    for (uint8 j = PERM_ENCHANTMENT_SLOT; j <= TEMP_ENCHANTMENT_SLOT; ++j)
     {
-        if (m_CastItem->GetEnchantmentId(EnchantmentSlot(i)))
-            pNewItem->SetEnchantment(EnchantmentSlot(i), m_CastItem->GetEnchantmentId(EnchantmentSlot(i)), m_CastItem->GetEnchantmentDuration(EnchantmentSlot(i)), m_CastItem->GetEnchantmentCharges(EnchantmentSlot(i)));
+        if (m_CastItem->GetEnchantmentId(EnchantmentSlot(j)))
+            pNewItem->SetEnchantment(EnchantmentSlot(j), m_CastItem->GetEnchantmentId(EnchantmentSlot(j)), m_CastItem->GetEnchantmentDuration(EnchantmentSlot(j)), m_CastItem->GetEnchantmentCharges(EnchantmentSlot(j)));
     }
 
     if (m_CastItem->GetUInt32Value(ITEM_FIELD_DURABILITY) < m_CastItem->GetUInt32Value(ITEM_FIELD_MAXDURABILITY))
@@ -3742,12 +3744,16 @@ void Spell::EffectTeleUnitsFaceCaster(uint32 i)
     if (unitTarget->isInFlight())
         return;
 
+    uint32 mapid = m_caster->GetMapId();
     float dis = GetSpellRadius(m_spellInfo,i,false);
 
     float fx, fy, fz;
     m_caster->GetClosePoint(fx, fy, fz, unitTarget->GetObjectSize(), dis);
 
-    unitTarget->NearTeleportTo(fx,fy,fz,-m_caster->GetOrientation(),unitTarget==m_caster);
+    if (mapid == unitTarget->GetMapId())
+        unitTarget->NearTeleportTo(fx, fy, fz, -m_caster->GetOrientation(), unitTarget == m_caster);
+    else if (unitTarget->GetTypeId() == TYPEID_PLAYER)
+        unitTarget->ToPlayer()->TeleportTo(mapid, fx, fy, fz, -m_caster->GetOrientation(), unitTarget == m_caster ? TELE_TO_SPELL : 0);
 }
 
 void Spell::EffectLearnSkill(uint32 i)
