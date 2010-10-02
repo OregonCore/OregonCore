@@ -31,7 +31,6 @@
 #include "SpellAuras.h"
 #include "BattleGround.h"
 #include "MapManager.h"
-#include "ScriptCalls.h"
 #include "Totem.h"
 #include "TemporarySummon.h"
 #include "ScriptMgr.h"

@@ -56,7 +56,6 @@
 #include "Util.h"
 #include "VMapFactory.h"
 #include "TemporarySummon.h"
-#include "ScriptCalls.h"
 #include "CellImpl.h"
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"

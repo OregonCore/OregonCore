@@ -62,7 +62,7 @@ const float ShadowmoonChannelers[5][4]=
     {316,-109,-24.6,1.257}
 };
 
-class OREGON_DLL_DECL BurningNovaAura : public Aura
+class BurningNovaAura : public Aura
 {
     public:
         BurningNovaAura(SpellEntry *spell, uint32 eff, Unit *pTarget, Unit *caster) : Aura(spell, eff, NULL, pTarget, caster, NULL){}

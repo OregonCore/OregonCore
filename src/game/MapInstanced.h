@@ -24,7 +24,7 @@
 #include "Map.h"
 #include "InstanceSaveMgr.h"
 
-class OREGON_DLL_DECL MapInstanced : public Map
+class MapInstanced : public Map
 {
     friend class MapManager;
     public:

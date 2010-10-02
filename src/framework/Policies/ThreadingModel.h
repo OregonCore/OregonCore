@@ -32,7 +32,7 @@ namespace Oregon
 {
     inline void Guard(void *) {}
 
-    template<typename MUTEX> class OREGON_DLL_DECL GeneralLock
+    template<typename MUTEX> class GeneralLock
     {
         public:
             GeneralLock(MUTEX &m) : i_mutex(m)
@@ -51,7 +51,7 @@ namespace Oregon
     };
 
     template <class T>
-        class OREGON_DLL_DECL SingleThreaded
+        class SingleThreaded
     {
         public:
 
@@ -69,7 +69,7 @@ namespace Oregon
 
     // object level lockable
     template<class T, class MUTEX>
-        class OREGON_DLL_DECL ObjectLevelLockable
+        class ObjectLevelLockable
     {
         public:
             ObjectLevelLockable() : i_mtx() {}
@@ -98,7 +98,7 @@ namespace Oregon
     };
 
     template<class T, class MUTEX>
-        class OREGON_DLL_DECL ClassLevelLockable
+        class ClassLevelLockable
     {
         public:
             class Lock;
@@ -125,6 +125,6 @@ namespace Oregon
 template<class T, class MUTEX> MUTEX Oregon::ClassLevelLockable<T, MUTEX>::si_mtx;
 
 #define INSTANTIATE_CLASS_MUTEX(CTYPE,MUTEX) \
-    template class OREGON_DLL_DECL Oregon::ClassLevelLockable<CTYPE, MUTEX >
+    template class Oregon::ClassLevelLockable<CTYPE, MUTEX >
 #endif
 

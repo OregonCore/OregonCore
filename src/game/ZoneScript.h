@@ -26,7 +26,7 @@
 class Creature;
 class GameObject;
 
-class OREGON_DLL_SPEC ZoneScript
+class ZoneScript
 {
     public:
         explicit ZoneScript() {}

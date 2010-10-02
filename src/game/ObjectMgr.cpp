@@ -7474,7 +7474,7 @@ bool LoadOregonStrings(DatabaseType& db, char const* table,int32 start_value, in
     return objmgr.LoadOregonStrings(db,table,start_value,end_value);
 }
 
-uint32 OREGON_DLL_SPEC GetScriptId(const char *name)
+uint32 GetScriptId(const char *name)
 {
     return objmgr.GetScriptId(name);
 }

@@ -62,7 +62,7 @@ template<class H, class T> struct ContainerMapList<TypeList<H, T> >
  */
 
 template<class OBJECT_TYPES>
-class OREGON_DLL_DECL TypeMapContainer
+class TypeMapContainer
 {
     public:
         template<class SPECIFIC_TYPE> size_t Count() const { return Oregon::Count(i_elements, (SPECIFIC_TYPE*)NULL); }

@@ -32,7 +32,7 @@
 #endif
 #include <mysql.h>
 
-class OREGON_DLL_SPEC QueryResult
+class QueryResult
 {
     public:
         QueryResult(MYSQL_RES *result, MYSQL_FIELD *fields, uint64 rowCount, uint32 fieldCount);
@@ -63,7 +63,7 @@ typedef ACE_Refcounted_Auto_Ptr<QueryResult, ACE_Null_Mutex> QueryResult_AutoPtr
 
 typedef std::vector<std::string> QueryFieldNames;
 
-class OREGON_DLL_SPEC QueryNamedResult
+class QueryNamedResult
 {
     public:
         explicit QueryNamedResult(QueryResult* query, QueryFieldNames const& names) : mQuery(query), mFieldNames(names) {}

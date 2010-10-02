@@ -30,7 +30,7 @@
 
 class Unit;
 
-class OREGON_DLL_SPEC MovementGenerator
+class MovementGenerator
 {
     public:
         virtual ~MovementGenerator();
@@ -50,7 +50,7 @@ class OREGON_DLL_SPEC MovementGenerator
 };
 
 template<class T, class D>
-class OREGON_DLL_SPEC MovementGeneratorMedium : public MovementGenerator
+class MovementGeneratorMedium : public MovementGenerator
 {
     public:
         void Initialize(Unit &u)

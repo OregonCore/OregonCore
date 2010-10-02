@@ -406,7 +406,7 @@ typedef std::map<uint32,time_t> CreatureSpellCooldowns;
 
 #define MAX_VENDOR_ITEMS 255                                // Limitation in item count field size in SMSG_LIST_INVENTORY
 
-class OREGON_DLL_SPEC Creature : public Unit
+class Creature : public Unit
 {
     public:
 

@@ -12,48 +12,20 @@
 #include "ScriptSystem.h"
 #include "Policies/SingletonImp.h"
 
-#define _FULLVERSION "OregonScript"
-
 INSTANTIATE_SINGLETON_1(ScriptMgr);
 
 int num_sc_scripts;
 Script *m_scripts[MAX_SCRIPTS];
-
-Config TScriptConfig;
 
 void FillSpellSummary();
 void LoadOverridenSQLData();
 
 void ScriptMgr::LoadDatabase()
 {
-    //Get db string from file
-    std::string dbstring = TScriptConfig.GetStringDefault("WorldDatabaseInfo", "");
-
-    if (dbstring.empty())
-    {
-        error_log("OSCR: Missing world database info from configuration file. Load database aborted.");
-        return;
-    }
-
-    //Initialize connection to DB
-    if (!dbstring.empty() && TScriptDB.Initialize(dbstring.c_str()))
-    {
-        outstring_log("OSCR: OregonScript database initialized successfully.");
-        outstring_log("");
-
-        pSystemMgr.LoadVersion();
-        pSystemMgr.LoadScriptTexts();
-        pSystemMgr.LoadScriptTextsCustom();
-        // pSystemMgr.LoadScriptWaypoints(); [TZERO] to implement
-    }
-    else
-    {
-        error_log("OSCR: Unable to connect to database at %s. Load database aborted.", dbstring.c_str());
-        return;
-    }
-
-    TScriptDB.HaltDelayThread();
-
+    pSystemMgr.LoadVersion();
+    pSystemMgr.LoadScriptTexts();
+    pSystemMgr.LoadScriptTextsCustom();
+    //pSystemMgr.LoadScriptWaypoints();
 }
 
 struct TSpellSummary {
@@ -77,12 +49,8 @@ ScriptMgr::~ScriptMgr()
     num_sc_scripts = 0;
 }
 
-void ScriptMgr::ScriptsInit(char const* cfg_file)
+void ScriptMgr::ScriptsInit()
 {
-
-#if PLATFORM == PLATFORM_WINDOWS
-    // Remove the warnings C4129 while compiling
-    #pragma warning (disable : 4129)
     outstring_log("   ____                              _____           _       _   ");
     outstring_log("  / __ \\                            / ____|         (_)     | |  ");
     outstring_log(" | |  | |_ __ ___  __ _  ___  _ __ | (___   ___ _ __ _ _ __ | |_ ");
@@ -91,15 +59,6 @@ void ScriptMgr::ScriptsInit(char const* cfg_file)
     outstring_log("  \\____/|_|  \\___|\\__, |\\___/|_| |_|_____/ \\___|_|  |_| .__/ \\__|");
     outstring_log("                   __/ |                              | |        ");
     outstring_log("                  |___/                               |_|  ");
-#endif
-    outstring_log("Oregon Script initializing %s", _FULLVERSION);
-
-    //Get configuration file
-    if (!TScriptConfig.SetSource(cfg_file))
-        error_log("OSCR: Unable to open configuration file. Database will be unaccessible. Configuration values will use default.");
-    else
-        outstring_log("OSCR: Using configuration file %s",cfg_file);
-
     outstring_log("");
 
     //Load database (must be called after SD2Config.SetSource).

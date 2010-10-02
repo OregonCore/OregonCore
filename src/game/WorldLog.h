@@ -32,7 +32,7 @@
 #include <stdarg.h>
 
 /// %Log packets to a file
-class OREGON_DLL_DECL WorldLog : public Oregon::Singleton<WorldLog, Oregon::ClassLevelLockable<WorldLog, ACE_Thread_Mutex> >
+class WorldLog : public Oregon::Singleton<WorldLog, Oregon::ClassLevelLockable<WorldLog, ACE_Thread_Mutex> >
 {
     friend class Oregon::OperatorNew<WorldLog>;
     WorldLog();

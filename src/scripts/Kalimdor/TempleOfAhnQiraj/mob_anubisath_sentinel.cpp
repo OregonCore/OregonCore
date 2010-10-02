@@ -69,7 +69,7 @@ class NearbyAQSentinel
 };
 
 struct aqsentinelAI;
-class OREGON_DLL_DECL SentinelAbilityAura : public Aura
+class SentinelAbilityAura : public Aura
 {
     public:
         ~SentinelAbilityAura();

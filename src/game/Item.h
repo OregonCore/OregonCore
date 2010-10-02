@@ -194,7 +194,7 @@ enum ItemUpdateState
 
 bool ItemCanGoIntoBag(ItemPrototype const *proto, ItemPrototype const *pBagProto);
 
-class OREGON_DLL_SPEC Item : public Object
+class Item : public Object
 {
     public:
         static Item* CreateItem(uint32 item, uint32 count, Player const* player = NULL);

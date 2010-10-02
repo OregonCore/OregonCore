@@ -779,7 +779,7 @@ struct AccessRequirement
     std::string heroicQuestFailedText;
  };
 
-class OREGON_DLL_SPEC PlayerTaxi
+class PlayerTaxi
 {
     public:
         PlayerTaxi();
@@ -830,7 +830,7 @@ class OREGON_DLL_SPEC PlayerTaxi
         std::deque<uint32> m_TaxiDestinations;
 };
 
-class OREGON_DLL_SPEC Player : public Unit
+class Player : public Unit
 {
     friend class WorldSession;
     friend void Item::AddToUpdateQueueOf(Player *player);

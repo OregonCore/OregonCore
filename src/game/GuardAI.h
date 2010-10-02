@@ -26,7 +26,7 @@
 
 class Creature;
 
-class OREGON_DLL_DECL GuardAI : public CreatureAI
+class GuardAI : public CreatureAI
 {
     enum GuardState
     {

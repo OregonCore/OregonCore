@@ -45,7 +45,7 @@ class ThreatCalcHelper
 };
 
 //==============================================================
-class OREGON_DLL_SPEC HostileReference : public Reference<Unit, ThreatManager>
+class HostileReference : public Reference<Unit, ThreatManager>
 {
     public:
         HostileReference(Unit* pUnit, ThreatManager *pThreatManager, float pThreat);
@@ -129,7 +129,7 @@ class OREGON_DLL_SPEC HostileReference : public Reference<Unit, ThreatManager>
 //==============================================================
 class ThreatManager;
 
-class OREGON_DLL_SPEC ThreatContainer
+class ThreatContainer
 {
     private:
         std::list<HostileReference*> iThreatList;
@@ -167,7 +167,7 @@ class OREGON_DLL_SPEC ThreatContainer
 
 //=================================================
 
-class OREGON_DLL_SPEC ThreatManager
+class ThreatManager
 {
     public:
         friend class HostileReference;

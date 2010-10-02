@@ -68,7 +68,7 @@ enum PartyResult
 };
 
 /// Player session in the World
-class OREGON_DLL_SPEC WorldSession
+class WorldSession
 {
     friend class CharacterHandler;
     public:

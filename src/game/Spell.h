@@ -621,7 +621,7 @@ class Spell
 
 namespace Oregon
 {
-    struct OREGON_DLL_DECL SpellNotifierCreatureAndPlayer
+    struct SpellNotifierCreatureAndPlayer
     {
         std::list<Unit*> *i_data;
         Spell &i_spell;

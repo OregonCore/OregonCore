@@ -32,7 +32,6 @@
 #include "Guild.h"
 #include "MapManager.h"
 #include "ObjectAccessor.h"
-#include "ScriptCalls.h"
 #include "Player.h"
 #include "SpellAuras.h"
 #include "Language.h"

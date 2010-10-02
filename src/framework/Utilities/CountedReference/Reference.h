@@ -42,7 +42,7 @@ template
 typename T,
 class THREADING_MODEL = Oregon::SingleThreaded<T>
 >
-class OREGON_DLL_DECL Referencer
+class Referencer
 {
     typedef typename THREADING_MODEL::Lock Lock;
     typedef ReferenceHolder<T, THREADING_MODEL> ReferenceeHolder;

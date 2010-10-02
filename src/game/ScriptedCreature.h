@@ -196,7 +196,7 @@ struct ScriptedAI : public CreatureAI
         uint32 m_uiEvadeCheckCooldown;
 };
 
-struct OREGON_DLL_DECL Scripted_NoMovementAI : public ScriptedAI
+struct Scripted_NoMovementAI : public ScriptedAI
 {
     Scripted_NoMovementAI(Creature* creature) : ScriptedAI(creature) {}
 
@@ -204,7 +204,7 @@ struct OREGON_DLL_DECL Scripted_NoMovementAI : public ScriptedAI
     void AttackStart(Unit* who);
 };
 
-struct OREGON_DLL_DECL BossAI : public ScriptedAI
+struct BossAI : public ScriptedAI
 {
     BossAI(Creature *c, uint32 id);
 

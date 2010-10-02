@@ -84,7 +84,7 @@ class HashMapHolder
         static MapType  m_objectMap;
 };
 
-class OREGON_DLL_DECL ObjectAccessor : public Oregon::Singleton<ObjectAccessor, Oregon::ClassLevelLockable<ObjectAccessor, ACE_Thread_Mutex> >
+class ObjectAccessor : public Oregon::Singleton<ObjectAccessor, Oregon::ClassLevelLockable<ObjectAccessor, ACE_Thread_Mutex> >
 {
     friend class Oregon::OperatorNew<ObjectAccessor>;
     ObjectAccessor();

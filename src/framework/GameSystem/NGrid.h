@@ -70,7 +70,7 @@ class WORLD_OBJECT_TYPES,
 class GRID_OBJECT_TYPES,
 class ThreadModel = Oregon::SingleThreaded<ACTIVE_OBJECT>
 >
-class OREGON_DLL_DECL NGrid
+class NGrid
 {
     public:
 

@@ -439,7 +439,7 @@ class Unit;
 // 5 sec for bobber catch
 #define FISHING_BOBBER_READY_TIME 5
 
-class OREGON_DLL_SPEC GameObject : public WorldObject
+class GameObject : public WorldObject
 {
     public:
         explicit GameObject();

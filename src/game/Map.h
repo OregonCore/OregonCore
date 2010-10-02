@@ -234,7 +234,7 @@ typedef UNORDERED_MAP<Creature*, CreatureMover> CreatureMoveList;
 
 typedef std::map<uint32/*leaderDBGUID*/, CreatureGroup*>        CreatureGroupHolderType;
 
-class OREGON_DLL_SPEC Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable<Map, ACE_Thread_Mutex>
+class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable<Map, ACE_Thread_Mutex>
 {
     friend class MapReference;
     public:
@@ -521,7 +521,7 @@ enum InstanceResetMethod
     INSTANCE_RESET_RESPAWN_DELAY
 };
 
-class OREGON_DLL_SPEC InstanceMap : public Map
+class InstanceMap : public Map
 {
     public:
         InstanceMap(uint32 id, time_t, uint32 InstanceId, uint8 SpawnMode);
@@ -548,7 +548,7 @@ class OREGON_DLL_SPEC InstanceMap : public Map
         uint32 i_script_id;
 };
 
-class OREGON_DLL_SPEC BattleGroundMap : public Map
+class BattleGroundMap : public Map
 {
     public:
         BattleGroundMap(uint32 id, time_t, uint32 InstanceId);

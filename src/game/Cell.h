@@ -43,7 +43,7 @@ enum District
     ALL_DISTRICT = (UPPER_DISTRICT | LOWER_DISTRICT | LEFT_DISTRICT | RIGHT_DISTRICT | CENTER_DISTRICT)
 };
 
-struct OREGON_DLL_DECL CellArea
+struct CellArea
 {
     CellArea() : right_offset(0), left_offset(0), upper_offset(0), lower_offset(0) {}
     CellArea(int right, int left, int upper, int lower) : right_offset(right), left_offset(left), upper_offset(upper), lower_offset(lower) {}
@@ -63,7 +63,7 @@ struct OREGON_DLL_DECL CellArea
     int lower_offset;
 };
 
-struct OREGON_DLL_DECL Cell
+struct Cell
 {
     Cell() { data.All = 0; }
     Cell(const Cell &cell) { data.All = cell.data.All; }

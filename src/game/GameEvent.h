@@ -160,4 +160,4 @@ class GameEvent
 #define gameeventmgr Oregon::Singleton<GameEvent>::Instance()
 #endif
 
-OREGON_DLL_SPEC bool isGameEventActive(uint16 event_id);
+bool isGameEventActive(uint16 event_id);

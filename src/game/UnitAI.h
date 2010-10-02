@@ -39,7 +39,7 @@ enum SelectAggroTarget
     SELECT_TARGET_FARTHEST,
 };
 
-class OREGON_DLL_SPEC UnitAI
+class UnitAI
 {
     protected:
         Unit * const me;
@@ -82,7 +82,7 @@ class OREGON_DLL_SPEC UnitAI
         static void FillAISpellInfo();
 };
 
-class OREGON_DLL_SPEC PlayerAI : public UnitAI
+class PlayerAI : public UnitAI
 {
     protected:
         Player* const me;
@@ -92,7 +92,7 @@ class OREGON_DLL_SPEC PlayerAI : public UnitAI
         void OnCharmed(bool apply);
 };
 
-class OREGON_DLL_SPEC SimpleCharmedAI : public PlayerAI
+class SimpleCharmedAI : public PlayerAI
 {
     public:
         void UpdateAI(const uint32 diff);

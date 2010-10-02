@@ -39,7 +39,7 @@ class Player;
 
 namespace Oregon
 {
-    struct OREGON_DLL_DECL PlayerVisibilityNotifier
+    struct PlayerVisibilityNotifier
     {
         Player &i_player;
         UpdateData i_data;
@@ -53,7 +53,7 @@ namespace Oregon
         void Notify(void);
     };
 
-    struct OREGON_DLL_DECL PlayerRelocationNotifier : public PlayerVisibilityNotifier
+    struct PlayerRelocationNotifier : public PlayerVisibilityNotifier
     {
         PlayerRelocationNotifier(Player &player) : PlayerVisibilityNotifier(player) {}
         template<class T> inline void Visit(GridRefManager<T> &m) { PlayerVisibilityNotifier::Visit(m); }
@@ -63,7 +63,7 @@ namespace Oregon
         #endif
     };
 
-    struct OREGON_DLL_DECL CreatureRelocationNotifier
+    struct CreatureRelocationNotifier
     {
         Creature &i_creature;
         CreatureRelocationNotifier(Creature &c) : i_creature(c) {}
@@ -74,7 +74,7 @@ namespace Oregon
         #endif
     };
 
-    struct OREGON_DLL_DECL VisibleChangesNotifier
+    struct VisibleChangesNotifier
     {
         WorldObject &i_object;
 
@@ -83,7 +83,7 @@ namespace Oregon
         void Visit(PlayerMapType &);
     };
 
-    struct OREGON_DLL_DECL GridUpdater
+    struct GridUpdater
     {
         GridType &i_grid;
         uint32 i_timeDiff;
@@ -102,7 +102,7 @@ namespace Oregon
         void Visit(CorpseMapType &m) { updateObjects<Corpse>(m); }
     };
 
-    struct OREGON_DLL_DECL Deliverer
+    struct Deliverer
     {
         WorldObject &i_source;
         WorldPacket *i_message;
@@ -119,32 +119,32 @@ namespace Oregon
         template<class SKIP> void Visit(GridRefManager<SKIP> &) {}
     };
 
-    struct OREGON_DLL_DECL MessageDeliverer : public Deliverer
+    struct MessageDeliverer : public Deliverer
     {
         MessageDeliverer(Player &pl, WorldPacket *msg, bool to_possessor, bool to_self) : Deliverer(pl, msg, to_possessor, to_self) {}
         void VisitObject(Player* plr);
     };
 
-    struct OREGON_DLL_DECL ObjectMessageDeliverer : public Deliverer
+    struct ObjectMessageDeliverer : public Deliverer
     {
         explicit ObjectMessageDeliverer(WorldObject &src, WorldPacket *msg, bool to_possessor) : Deliverer(src, msg, to_possessor, false) {}
         void VisitObject(Player* plr) { SendPacket(plr); }
     };
 
-    struct OREGON_DLL_DECL MessageDistDeliverer : public Deliverer
+    struct MessageDistDeliverer : public Deliverer
     {
         bool i_ownTeamOnly;
         MessageDistDeliverer(Player &pl, WorldPacket *msg, bool to_possessor, float dist, bool to_self, bool ownTeamOnly) : Deliverer(pl, msg, to_possessor, to_self, dist), i_ownTeamOnly(ownTeamOnly) {}
         void VisitObject(Player* plr);
     };
 
-    struct OREGON_DLL_DECL ObjectMessageDistDeliverer : public Deliverer
+    struct ObjectMessageDistDeliverer : public Deliverer
     {
         ObjectMessageDistDeliverer(WorldObject &obj, WorldPacket *msg, bool to_possessor, float dist) : Deliverer(obj, msg, to_possessor, false, dist) {}
         void VisitObject(Player* plr) { SendPacket(plr); }
     };
 
-    struct OREGON_DLL_DECL ObjectUpdater
+    struct ObjectUpdater
     {
         uint32 i_timeDiff;
         explicit ObjectUpdater(const uint32 &diff) : i_timeDiff(diff) {}
@@ -154,7 +154,7 @@ namespace Oregon
         void Visit(CreatureMapType &);
     };
 
-    struct OREGON_DLL_DECL DynamicObjectUpdater
+    struct DynamicObjectUpdater
     {
         DynamicObject &i_dynobject;
         Unit* i_check;
@@ -180,7 +180,7 @@ namespace Oregon
     // WorldObject searchers & workers
 
     template<class Check>
-        struct OREGON_DLL_DECL WorldObjectSearcher
+        struct WorldObjectSearcher
     {
         WorldObject* &i_object;
         Check &i_check;
@@ -197,7 +197,7 @@ namespace Oregon
     };
 
     template<class Check>
-        struct OREGON_DLL_DECL WorldObjectListSearcher
+        struct WorldObjectListSearcher
     {
         std::list<WorldObject*> &i_objects;
         Check& i_check;
@@ -214,7 +214,7 @@ namespace Oregon
     };
 
     template<class Do>
-        struct OREGON_DLL_DECL WorldObjectWorker
+        struct WorldObjectWorker
     {
         Do const& i_do;
 
@@ -255,7 +255,7 @@ namespace Oregon
     // Gameobject searchers
 
     template<class Check>
-        struct OREGON_DLL_DECL GameObjectSearcher
+        struct GameObjectSearcher
     {
         GameObject* &i_object;
         Check &i_check;
@@ -269,7 +269,7 @@ namespace Oregon
 
     // Last accepted by Check GO if any (Check can change requirements at each call)
     template<class Check>
-        struct OREGON_DLL_DECL GameObjectLastSearcher
+        struct GameObjectLastSearcher
     {
         GameObject* &i_object;
         Check& i_check;
@@ -282,7 +282,7 @@ namespace Oregon
     };
 
     template<class Check>
-        struct OREGON_DLL_DECL GameObjectListSearcher
+        struct GameObjectListSearcher
     {
         std::list<GameObject*> &i_objects;
         Check& i_check;
@@ -298,7 +298,7 @@ namespace Oregon
 
     // First accepted by Check Unit if any
     template<class Check>
-        struct OREGON_DLL_DECL UnitSearcher
+        struct UnitSearcher
     {
         Unit* &i_object;
         Check & i_check;
@@ -313,7 +313,7 @@ namespace Oregon
 
     // Last accepted by Check Unit if any (Check can change requirements at each call)
     template<class Check>
-        struct OREGON_DLL_DECL UnitLastSearcher
+        struct UnitLastSearcher
     {
         Unit* &i_object;
         Check & i_check;
@@ -328,7 +328,7 @@ namespace Oregon
 
     // All accepted by Check units if any
     template<class Check>
-        struct OREGON_DLL_DECL UnitListSearcher
+        struct UnitListSearcher
     {
         std::list<Unit*> &i_objects;
         Check& i_check;
@@ -344,7 +344,7 @@ namespace Oregon
     // Creature searchers
 
     template<class Check>
-        struct OREGON_DLL_DECL CreatureSearcher
+        struct CreatureSearcher
     {
         Creature* &i_object;
         Check & i_check;
@@ -358,7 +358,7 @@ namespace Oregon
 
     // Last accepted by Check Creature if any (Check can change requirements at each call)
     template<class Check>
-        struct OREGON_DLL_DECL CreatureLastSearcher
+        struct CreatureLastSearcher
     {
         Creature* &i_object;
         Check & i_check;
@@ -371,7 +371,7 @@ namespace Oregon
     };
 
     template<class Check>
-    struct OREGON_DLL_DECL CreatureListSearcher
+    struct CreatureListSearcher
     {
         std::list<Creature*> &i_objects;
         Check& i_check;
@@ -384,7 +384,7 @@ namespace Oregon
     };
 
     template<class Do>
-    struct OREGON_DLL_DECL CreatureWorker
+    struct CreatureWorker
     {
         Do& i_do;
 
@@ -403,7 +403,7 @@ namespace Oregon
     // Player searchers
 
     template<class Check>
-    struct OREGON_DLL_DECL PlayerSearcher
+    struct PlayerSearcher
     {
         Player* &i_object;
         Check & i_check;
@@ -416,7 +416,7 @@ namespace Oregon
     };
 
     template<class Check>
-        struct OREGON_DLL_DECL PlayerListSearcher
+        struct PlayerListSearcher
     {
         uint32 i_phaseMask;
         std::list<Player*> &i_objects;
@@ -431,7 +431,7 @@ namespace Oregon
     };
 
     template<class Do>
-    struct OREGON_DLL_DECL PlayerWorker
+    struct PlayerWorker
     {
         Do& i_do;
 

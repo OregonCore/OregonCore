@@ -7,7 +7,7 @@
 
 #define GENERIC_CREATURE_COOLDOWN 5000
 
-struct OREGON_DLL_DECL guardAI : public ScriptedAI
+struct guardAI : public ScriptedAI
 {
     guardAI(Creature *c) : ScriptedAI(c) {}
 

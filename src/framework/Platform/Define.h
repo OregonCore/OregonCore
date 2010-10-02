@@ -40,76 +40,23 @@
 #endif //OREGON_ENDIAN
 
 #if PLATFORM == PLATFORM_WINDOWS
-#  define OREGON_EXPORT __declspec(dllexport)
-#  define OREGON_LIBRARY_HANDLE HMODULE
-#  define OREGON_LOAD_LIBRARY(a) LoadLibrary(a)
-#  define OREGON_CLOSE_LIBRARY FreeLibrary
-#  define OREGON_GET_PROC_ADDR GetProcAddress
-#  define OREGON_IMPORT __cdecl
-#  define OREGON_SCRIPT_EXT ".dll"
-#  define OREGON_SCRIPT_NAME "OregonScript"
 #  define OREGON_PATH_MAX MAX_PATH
-#else //PLATFORM != PLATFORM_WINDOWS
-#  define OREGON_LIBRARY_HANDLE void*
-#  define OREGON_EXPORT export
-#  define OREGON_LOAD_LIBRARY(a) dlopen(a,RTLD_NOW)
-#  define OREGON_CLOSE_LIBRARY dlclose
-#  define OREGON_GET_PROC_ADDR dlsym
-#  if defined(__APPLE_CC__) && defined(BIG_ENDIAN)
-#    define OREGON_IMPORT __attribute__ ((longcall))
-#  else
-#    define OREGON_IMPORT __attribute__ ((cdecl))
-#  endif //__APPLE_CC__ && BIG_ENDIAN
-#  if defined(__APPLE_CC__)
-#    define OREGON_SCRIPT_EXT ".dylib"
-#    if defined(SCRIPTS)
-#      define OREGON_SCRIPT_NAME "../lib/liboregonscript"
-#    else
-#      define OREGON_SCRIPT_NAME "../lib/liboregoninterface"
-#    endif // SCRIPTS
-#  else
-#    define OREGON_SCRIPT_EXT ".so"
-#    if defined(SCRIPTS)
-#      define OREGON_SCRIPT_NAME "liboregonscript"
-#    else
-#      define OREGON_SCRIPT_NAME "liboregoninterface"
-#    endif // SCRIPTS
-#  endif //__APPLE_CC__
-#  define OREGON_PATH_MAX PATH_MAX
-#endif //PLATFORM
-
-#if PLATFORM == PLATFORM_WINDOWS
-#  ifdef OREGON_WIN32_DLL_IMPORT
-#    define OREGON_DLL_DECL __declspec(dllimport)
-#  else //!OREGON_WIN32_DLL_IMPORT
-#    ifdef OREGON_WIND_DLL_EXPORT
-#      define OREGON_DLL_DECL __declspec(dllexport)
-#    else //!OREGON_WIND_DLL_EXPORT
-#      define OREGON_DLL_DECL
-#    endif //OREGON_WIND_DLL_EXPORT
-#  endif //OREGON_WIN32_DLL_IMPORT
-#else //PLATFORM != PLATFORM_WINDOWS
-#  define OREGON_DLL_DECL
-#endif //PLATFORM
-
-#if PLATFORM == PLATFORM_WINDOWS
-#  define OREGON_DLL_SPEC __declspec(dllexport)
 #  ifndef DECLSPEC_NORETURN
 #    define DECLSPEC_NORETURN __declspec(noreturn)
 #  endif //DECLSPEC_NORETURN
 #else //PLATFORM != PLATFORM_WINDOWS
-#  define OREGON_DLL_SPEC
+#  define OREGON_PATH_MAX PATH_MAX
 #  define DECLSPEC_NORETURN
 #endif //PLATFORM
 
-#if !defined(DEBUG)
+#if !defined(COREDEBUG)
 #  define OREGON_INLINE inline
-#else //DEBUG
+#else //COREDEBUG
 #  if !defined(OREGON_DEBUG)
 #    define OREGON_DEBUG
 #  endif //OREGON_DEBUG
 #  define OREGON_INLINE
-#endif //!DEBUG
+#endif //!COREDEBUG
 
 #if COMPILER == COMPILER_GNU
 #  define ATTR_NORETURN __attribute__((noreturn))

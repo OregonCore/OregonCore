@@ -52,7 +52,6 @@
 #include "PetAI.h"
 #include "PassiveAI.h"
 #include "Traveller.h"
-#include "ScriptCalls.h"
 #include "ScriptMgr.h"
 
 #include <math.h>

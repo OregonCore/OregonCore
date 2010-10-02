@@ -32,7 +32,6 @@
 #include "Group.h"
 #include "BattleGround.h"
 #include "BattleGroundAV.h"
-#include "ScriptCalls.h"
 #include "ScriptMgr.h"
 
 void WorldSession::HandleQuestgiverStatusQueryOpcode(WorldPacket & recv_data)

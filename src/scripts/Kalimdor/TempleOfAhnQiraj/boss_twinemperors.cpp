@@ -405,7 +405,7 @@ struct boss_twinemperorsAI : public ScriptedAI
     }
 };
 
-class OREGON_DLL_DECL BugAura : public Aura
+class BugAura : public Aura
 {
     public:
         BugAura(SpellEntry *spell, uint32 eff, int32 *bp, Unit *pTarget, Unit *caster) : Aura(spell, eff, bp, pTarget, caster, NULL)

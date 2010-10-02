@@ -43,7 +43,7 @@ typedef UNORDERED_MAP<ACE_Based::Thread* , SqlResultQueue*> QueryQueues;
 
 #define MAX_QUERY_LEN   1024
 
-class OREGON_DLL_SPEC Database
+class Database
 {
     protected:
         TransactionQueues m_tranQueues;                     ///< Transaction queues from diff. threads

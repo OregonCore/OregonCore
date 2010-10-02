@@ -1487,7 +1487,7 @@ void GameEvent::SendWorldStateUpdate(Player * plr, uint16 event_id)
     }
 }
 
-OREGON_DLL_SPEC bool isGameEventActive(uint16 event_id)
+bool isGameEventActive(uint16 event_id)
 {
     GameEvent::ActiveEvents const& ae = gameeventmgr.GetActiveEventList();
 

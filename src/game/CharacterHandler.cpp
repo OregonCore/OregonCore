@@ -41,7 +41,6 @@
 #include "SocialMgr.h"
 #include "UpdateMask.h"
 #include "Util.h"
-#include "ScriptCalls.h"
 #include "MapManager.h"
 #include "SystemConfig.h"
 #include "ScriptMgr.h"

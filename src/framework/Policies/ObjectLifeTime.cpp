@@ -28,7 +28,7 @@ namespace Oregon
         std::atexit( (void (*)())p );
     }
 
-    void OREGON_DLL_SPEC at_exit( void (*func)() )
+    void at_exit( void (*func)() )
     {
         external_wrapper((void*)func);
     }

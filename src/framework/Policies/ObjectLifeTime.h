@@ -28,10 +28,10 @@ typedef void (* Destroyer)(void);
 
 namespace Oregon
 {
-    void OREGON_DLL_SPEC at_exit( void (*func)() );
+    void at_exit( void (*func)() );
 
     template <class T>
-        class OREGON_DLL_DECL ObjectLifeTime
+        class ObjectLifeTime
     {
         public:
             static void ScheduleCall(void (*destroyer)() )

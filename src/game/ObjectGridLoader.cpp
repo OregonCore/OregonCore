@@ -29,7 +29,7 @@
 #include "CellImpl.h"
 #include "CreatureAI.h"
 
-class OREGON_DLL_DECL ObjectGridRespawnMover
+class ObjectGridRespawnMover
 {
     public:
         ObjectGridRespawnMover() {}

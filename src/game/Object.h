@@ -89,7 +89,7 @@ struct WorldLocation
         : mapid(loc.mapid), coord_x(loc.coord_x), coord_y(loc.coord_y), coord_z(loc.coord_z), orientation(loc.orientation) {}
 };
 
-class OREGON_DLL_SPEC Object
+class Object
 {
     public:
         virtual ~Object ();
@@ -332,7 +332,7 @@ class OREGON_DLL_SPEC Object
         Object& operator=(Object const&);                   // prevent generation assigment operator
 };
 
-class OREGON_DLL_SPEC WorldObject : public Object, public WorldLocation
+class WorldObject : public Object, public WorldLocation
 {
     public:
         virtual ~WorldObject () {}

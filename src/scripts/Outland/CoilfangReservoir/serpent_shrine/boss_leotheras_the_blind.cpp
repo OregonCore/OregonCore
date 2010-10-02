@@ -65,7 +65,7 @@ EndScriptData */
 #define SAY_FREE                -1548019
 #define SAY_DEATH               -1548020
 
-class OREGON_DLL_DECL InsidiousAura : public Aura {
+class InsidiousAura : public Aura {
 public:
     InsidiousAura(SpellEntry *spell, uint32 eff, int32 *bp, Unit *pTarget, Unit *caster) : Aura(spell, eff, bp, pTarget, caster, NULL)
     {}

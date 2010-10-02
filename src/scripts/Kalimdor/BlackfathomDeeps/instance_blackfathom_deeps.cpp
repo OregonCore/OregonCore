@@ -27,7 +27,7 @@ EndScriptData */
 
 #define ENCOUNTERS 4
 
-class OREGON_DLL_SPEC instance_blackfathom_deeps : public ScriptedInstance
+class instance_blackfathom_deeps : public ScriptedInstance
 {
 public:
 

@@ -38,7 +38,7 @@ namespace Oregon
         class CreatePolicy = Oregon::OperatorNew<T>,
         class LifeTimePolicy = Oregon::ObjectLifeTime<T>
         >
-        class OREGON_DLL_DECL Singleton
+        class Singleton
     {
         public:
             static T& Instance();

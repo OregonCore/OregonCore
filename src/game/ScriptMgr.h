@@ -12,10 +12,6 @@
 #include "Platform/CompilerDefs.h"
 #include "DBCStructure.h"
 
-#ifndef _OREGON_SCRIPT_CONFIG
-# define _OREGON_SCRIPT_CONFIG  "oregoncore.conf"
-#endif _OREGON_SCRIPT_CONFIG
-
 class Player;
 class Creature;
 class CreatureAI;
@@ -81,14 +77,10 @@ class ScriptMgr
     public:
         ScriptMgr();
         ~ScriptMgr();
-        
-        void ScriptsInit(char const* cfg_file = _OREGON_SCRIPT_CONFIG);
+
+        void ScriptsInit();
         void LoadDatabase();
         char const* ScriptsVersion();    
-
-        std::string GetConfigValueStr(char const* option);
-        int32 GetConfigValueInt32(char const* option);
-        float GetConfigValueFloat(char const* option);
 
     //event handlers
         void OnLogin(Player *pPlayer);

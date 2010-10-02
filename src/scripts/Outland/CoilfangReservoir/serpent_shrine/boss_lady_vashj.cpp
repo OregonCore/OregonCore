@@ -575,7 +575,7 @@ struct boss_lady_vashjAI : public ScriptedAI
         }
     }
 };
-class OREGON_DLL_DECL VashjSurgeAura : public Aura
+class VashjSurgeAura : public Aura
 {
     public:
         VashjSurgeAura(SpellEntry *spell, uint32 eff, int32 *bp, Unit *pTarget, Unit *caster) : Aura(spell, eff, bp, pTarget, caster, NULL)

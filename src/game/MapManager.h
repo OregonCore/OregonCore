@@ -31,7 +31,7 @@
 
 class Transport;
 
-class OREGON_DLL_DECL MapManager : public Oregon::Singleton<MapManager, Oregon::ClassLevelLockable<MapManager, ACE_Thread_Mutex> >
+class MapManager : public Oregon::Singleton<MapManager, Oregon::ClassLevelLockable<MapManager, ACE_Thread_Mutex> >
 {
 
     friend class Oregon::OperatorNew<MapManager>;

@@ -64,7 +64,7 @@ enum SCEquip
     EQUIP_UNEQUIP   = 0
 };
 
-class OREGON_DLL_SPEC CreatureAI : public UnitAI
+class CreatureAI : public UnitAI
 {
     protected:
         Creature * const me;

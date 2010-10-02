@@ -290,7 +290,7 @@ SkillRangeType GetSkillRangeType(SkillLineEntry const *pSkill, bool racial);
 
 bool normalizePlayerName(std::string& name);
 
-struct OREGON_DLL_SPEC LanguageDesc
+struct LanguageDesc
 {
     Language lang_id;
     uint32   spell_id;
@@ -298,7 +298,7 @@ struct OREGON_DLL_SPEC LanguageDesc
 };
 
 extern LanguageDesc lang_description[LANGUAGES_COUNT];
-OREGON_DLL_SPEC LanguageDesc const* GetLanguageDescByID(uint32 lang);
+LanguageDesc const* GetLanguageDescByID(uint32 lang);
 
 class PlayerDumpReader;
 
@@ -943,13 +943,13 @@ class ObjectMgr
 #define objmgr Oregon::Singleton<ObjectMgr>::Instance()
 
 // scripting access functions
-OREGON_DLL_SPEC bool LoadOregonStrings(DatabaseType& db, char const* table,int32 start_value = MAX_CREATURE_AI_TEXT_STRING_ID, int32 end_value = std::numeric_limits<int32>::min());
-OREGON_DLL_SPEC uint32 GetAreaTriggerScriptId(uint32 trigger_id);
-OREGON_DLL_SPEC uint32 GetScriptId(const char *name);
-OREGON_DLL_SPEC ObjectMgr::ScriptNameMap& GetScriptNames();
-OREGON_DLL_SPEC GameObjectInfo const *GetGameObjectInfo(uint32 id);
-OREGON_DLL_SPEC CreatureInfo const *GetCreatureInfo(uint32 id);
-OREGON_DLL_SPEC CreatureInfo const* GetCreatureTemplateStore(uint32 entry);
-OREGON_DLL_SPEC Quest const* GetQuestTemplateStore(uint32 entry);
+bool LoadOregonStrings(DatabaseType& db, char const* table,int32 start_value = MAX_CREATURE_AI_TEXT_STRING_ID, int32 end_value = std::numeric_limits<int32>::min());
+uint32 GetAreaTriggerScriptId(uint32 trigger_id);
+uint32 GetScriptId(const char *name);
+ObjectMgr::ScriptNameMap& GetScriptNames();
+GameObjectInfo const *GetGameObjectInfo(uint32 id);
+CreatureInfo const *GetCreatureInfo(uint32 id);
+CreatureInfo const* GetCreatureTemplateStore(uint32 entry);
+Quest const* GetQuestTemplateStore(uint32 entry);
 
 #endif

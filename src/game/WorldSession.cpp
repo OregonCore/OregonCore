@@ -40,7 +40,6 @@
 #include "MapManager.h"
 #include "Chat.h"
 #include "SocialMgr.h"
-#include "ScriptCalls.h"
 #include "ScriptMgr.h"
 
 /// WorldSession constructor
