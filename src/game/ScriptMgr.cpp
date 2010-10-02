@@ -2,20 +2,19 @@
  * This program is free software licensed under GPL version 2
  * Please see the included DOCS/LICENSE.TXT for more information */
 
-#include "precompiled.h"
+#include "ScriptPCH.h"
 #include "Config/Config.h"
 #include "Database/DatabaseEnv.h"
 #include "DBCStores.h"
 #include "ObjectMgr.h"
 #include "ProgressBar.h"
-#include "../system/ScriptLoader.h"
-#include "../system/system.h"
+#include "ScriptLoader.h"
+#include "ScriptSystem.h"
+#include "Policies/SingletonImp.h"
 
 #define _FULLVERSION "OregonScript"
 
-#ifndef _OREGON_SCRIPT_CONFIG
-# define _OREGON_SCRIPT_CONFIG  "oregoncore.conf"
-#endif _OREGON_SCRIPT_CONFIG
+INSTANTIATE_SINGLETON_1(ScriptMgr);
 
 int num_sc_scripts;
 Script *m_scripts[MAX_SCRIPTS];
@@ -25,7 +24,7 @@ Config TScriptConfig;
 void FillSpellSummary();
 void LoadOverridenSQLData();
 
-void LoadDatabase()
+void ScriptMgr::LoadDatabase()
 {
     //Get db string from file
     std::string dbstring = TScriptConfig.GetStringDefault("WorldDatabaseInfo", "");
@@ -62,8 +61,11 @@ struct TSpellSummary {
     uint8 Effects;                                          // set of enum SelectEffect
 }extern *SpellSummary;
 
-OREGON_DLL_EXPORT
-void ScriptsFree()
+ScriptMgr::ScriptMgr()
+{
+}
+
+ScriptMgr::~ScriptMgr()
 {
     // Free Spell Summary
     delete []SpellSummary;
@@ -75,8 +77,7 @@ void ScriptsFree()
     num_sc_scripts = 0;
 }
 
-OREGON_DLL_EXPORT
-void ScriptsInit(char const* cfg_file = _OREGON_SCRIPT_CONFIG)
+void ScriptMgr::ScriptsInit(char const* cfg_file)
 {
 
 #if PLATFORM == PLATFORM_WINDOWS
@@ -203,9 +204,6 @@ void DoScriptText(int32 iTextEntry, WorldObject* pSource, Unit* pTarget)
     }
 }
 
-//*********************************
-//*** Functions used internally ***
-
 void Script::RegisterSelf()
 {
     // try to find scripts which try to use another script's allocated memory
@@ -262,41 +260,33 @@ void Script::RegisterSelf()
     }
 }
 
-//********************************
-//*** Functions to be Exported ***
-
-OREGON_DLL_EXPORT
-void OnLogin(Player *pPlayer)
+void ScriptMgr::OnLogin(Player *pPlayer)
 {
     Script *tmpscript = m_scripts[GetScriptId("scripted_on_events")];
     if (!tmpscript || !tmpscript->pOnLogin) return;
     tmpscript->pOnLogin(pPlayer);
 }
 
-OREGON_DLL_EXPORT
-void OnLogout(Player *pPlayer)
+void ScriptMgr::OnLogout(Player *pPlayer)
 {
     Script *tmpscript = m_scripts[GetScriptId("scripted_on_events")];
     if (!tmpscript || !tmpscript->pOnLogout) return;
     tmpscript->pOnLogout(pPlayer);
 }
 
-OREGON_DLL_EXPORT
-void OnPVPKill(Player *killer, Player *killed)
+void ScriptMgr::OnPVPKill(Player *killer, Player *killed)
 {
     Script *tmpscript = m_scripts[GetScriptId("scripted_on_events")];
     if (!tmpscript || !tmpscript->pOnPVPKill) return;
     tmpscript->pOnPVPKill(killer, killed);
 }
 
-OREGON_DLL_EXPORT
-char const* ScriptsVersion()
+char const* ScriptMgr::ScriptsVersion()
 {
-    return "Default Oregon scripting library";
+    return "Integrated Oregon Scripts";
 }
 
-OREGON_DLL_EXPORT
-bool GossipHello (Player * pPlayer, Creature* pCreature)
+bool ScriptMgr::GossipHello (Player * pPlayer, Creature* pCreature)
 {
     Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pGossipHello) return false;
@@ -305,8 +295,7 @@ bool GossipHello (Player * pPlayer, Creature* pCreature)
     return tmpscript->pGossipHello(pPlayer, pCreature);
 }
 
-OREGON_DLL_EXPORT
-bool GossipSelect(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+bool ScriptMgr::GossipSelect(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
 {
     debug_log("OSCR: Gossip selection, sender: %d, action: %d", uiSender, uiAction);
 
@@ -317,8 +306,7 @@ bool GossipSelect(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 
     return tmpscript->pGossipSelect(pPlayer, pCreature, uiSender, uiAction);
 }
 
-OREGON_DLL_EXPORT
-bool GossipSelectWithCode(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction, const char* sCode)
+bool ScriptMgr::GossipSelectWithCode(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction, const char* sCode)
 {
     debug_log("OSCR: Gossip selection with code, sender: %d, action: %d", uiSender, uiAction);
 
@@ -329,8 +317,7 @@ bool GossipSelectWithCode(Player* pPlayer, Creature* pCreature, uint32 uiSender,
     return tmpscript->pGossipSelectWithCode(pPlayer, pCreature, uiSender, uiAction, sCode);
 }
 
-OREGON_DLL_EXPORT
-bool GOSelect(Player* pPlayer, GameObject* pGO, uint32 uiSender, uint32 uiAction)
+bool ScriptMgr::GOSelect(Player* pPlayer, GameObject* pGO, uint32 uiSender, uint32 uiAction)
 {
     if (!pGO)
     return false;
@@ -343,8 +330,7 @@ bool GOSelect(Player* pPlayer, GameObject* pGO, uint32 uiSender, uint32 uiAction
     return tmpscript->pGOSelect(pPlayer, pGO, uiSender, uiAction);
 }
 
-OREGON_DLL_EXPORT
-bool GOSelectWithCode(Player* pPlayer, GameObject* pGO, uint32 uiSender, uint32 uiAction, const char* sCode)
+bool ScriptMgr::GOSelectWithCode(Player* pPlayer, GameObject* pGO, uint32 uiSender, uint32 uiAction, const char* sCode)
 {
     if (!pGO)
     return false;
@@ -357,8 +343,7 @@ bool GOSelectWithCode(Player* pPlayer, GameObject* pGO, uint32 uiSender, uint32 
     return tmpscript->pGOSelectWithCode(pPlayer, pGO, uiSender ,uiAction, sCode);
 }
 
-OREGON_DLL_EXPORT
-bool QuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
+bool ScriptMgr::QuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
     Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pQuestAccept) return false;
@@ -367,8 +352,7 @@ bool QuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
     return tmpscript->pQuestAccept(pPlayer, pCreature, pQuest);
 }
 
-OREGON_DLL_EXPORT
-bool QuestSelect(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
+bool ScriptMgr::QuestSelect(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
     Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pQuestSelect) return false;
@@ -377,8 +361,7 @@ bool QuestSelect(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
     return tmpscript->pQuestSelect(pPlayer, pCreature, pQuest);
 }
 
-OREGON_DLL_EXPORT
-bool QuestComplete(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
+bool ScriptMgr::QuestComplete(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
     Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pQuestComplete) return false;
@@ -387,8 +370,7 @@ bool QuestComplete(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
     return tmpscript->pQuestComplete(pPlayer, pCreature, pQuest);
 }
 
-OREGON_DLL_EXPORT
-bool ChooseReward(Player* pPlayer, Creature* pCreature, Quest const* pQuest, uint32 opt)
+bool ScriptMgr::ChooseReward(Player* pPlayer, Creature* pCreature, Quest const* pQuest, uint32 opt)
 {
     Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pChooseReward) return false;
@@ -397,8 +379,7 @@ bool ChooseReward(Player* pPlayer, Creature* pCreature, Quest const* pQuest, uin
     return tmpscript->pChooseReward(pPlayer, pCreature, pQuest, opt);
 }
 
-OREGON_DLL_EXPORT
-uint32 NPCDialogStatus(Player* pPlayer, Creature* pCreature)
+uint32 ScriptMgr::NPCDialogStatus(Player* pPlayer, Creature* pCreature)
 {
     Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pNPCDialogStatus) return 100;
@@ -407,8 +388,7 @@ uint32 NPCDialogStatus(Player* pPlayer, Creature* pCreature)
     return tmpscript->pNPCDialogStatus(pPlayer, pCreature);
 }
 
-OREGON_DLL_EXPORT
-uint32 GODialogStatus(Player* pPlayer, GameObject* pGO)
+uint32 ScriptMgr::GODialogStatus(Player* pPlayer, GameObject* pGO)
 {
     Script *tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGODialogStatus) return 100;
@@ -417,8 +397,7 @@ uint32 GODialogStatus(Player* pPlayer, GameObject* pGO)
     return tmpscript->pGODialogStatus(pPlayer, pGO);
 }
 
-OREGON_DLL_EXPORT
-bool ItemHello(Player* pPlayer, Item* pItem, Quest const* pQuest)
+bool ScriptMgr::ItemHello(Player* pPlayer, Item* pItem, Quest const* pQuest)
 {
     Script *tmpscript = m_scripts[pItem->GetProto()->ScriptId];
     if (!tmpscript || !tmpscript->pItemHello) return false;
@@ -427,8 +406,7 @@ bool ItemHello(Player* pPlayer, Item* pItem, Quest const* pQuest)
     return tmpscript->pItemHello(pPlayer, pItem, pQuest);
 }
 
-OREGON_DLL_EXPORT
-bool ItemQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest)
+bool ScriptMgr::ItemQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest)
 {
     Script *tmpscript = m_scripts[pItem->GetProto()->ScriptId];
     if (!tmpscript || !tmpscript->pItemQuestAccept) return false;
@@ -437,8 +415,7 @@ bool ItemQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest)
     return tmpscript->pItemQuestAccept(pPlayer, pItem, pQuest);
 }
 
-OREGON_DLL_EXPORT
-bool GOHello(Player* pPlayer, GameObject* pGO)
+bool ScriptMgr::GOHello(Player* pPlayer, GameObject* pGO)
 {
     Script *tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGOHello) return false;
@@ -447,8 +424,7 @@ bool GOHello(Player* pPlayer, GameObject* pGO)
     return tmpscript->pGOHello(pPlayer, pGO);
 }
 
-OREGON_DLL_EXPORT
-bool GOQuestAccept(Player* pPlayer, GameObject* pGO, Quest const* pQuest)
+bool ScriptMgr::GOQuestAccept(Player* pPlayer, GameObject* pGO, Quest const* pQuest)
 {
     Script *tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGOQuestAccept) return false;
@@ -457,8 +433,7 @@ bool GOQuestAccept(Player* pPlayer, GameObject* pGO, Quest const* pQuest)
     return tmpscript->pGOQuestAccept(pPlayer, pGO, pQuest);
 }
 
-OREGON_DLL_EXPORT
-bool GOChooseReward(Player* pPlayer, GameObject* pGO, Quest const* pQuest, uint32 opt)
+bool ScriptMgr::GOChooseReward(Player* pPlayer, GameObject* pGO, Quest const* pQuest, uint32 opt)
 {
     Script *tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
     if (!tmpscript || !tmpscript->pGOChooseReward) return false;
@@ -467,8 +442,7 @@ bool GOChooseReward(Player* pPlayer, GameObject* pGO, Quest const* pQuest, uint3
     return tmpscript->pGOChooseReward(pPlayer, pGO, pQuest, opt);
 }
 
-OREGON_DLL_EXPORT
-bool AreaTrigger(Player* pPlayer, AreaTriggerEntry * atEntry)
+bool ScriptMgr::AreaTrigger(Player* pPlayer, AreaTriggerEntry const* atEntry)
 {
     Script *tmpscript = m_scripts[GetAreaTriggerScriptId(atEntry->id)];
     if (!tmpscript || !tmpscript->pAreaTrigger) return false;
@@ -476,8 +450,7 @@ bool AreaTrigger(Player* pPlayer, AreaTriggerEntry * atEntry)
     return tmpscript->pAreaTrigger(pPlayer, atEntry);
 }
 
-OREGON_DLL_EXPORT
-CreatureAI* GetAI(Creature* pCreature)
+CreatureAI* ScriptMgr::GetAI(Creature* pCreature)
 {
     Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->GetAI) return NULL;
@@ -485,8 +458,7 @@ CreatureAI* GetAI(Creature* pCreature)
     return tmpscript->GetAI(pCreature);
 }
 
-OREGON_DLL_EXPORT
-bool ItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets)
+bool ScriptMgr::ItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets)
 {
     Script *tmpscript = m_scripts[pItem->GetProto()->ScriptId];
     if (!tmpscript || !tmpscript->pItemUse) return false;
@@ -494,8 +466,7 @@ bool ItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets)
     return tmpscript->pItemUse(pPlayer, pItem, targets);
 }
 
-OREGON_DLL_EXPORT
-bool ReceiveEmote(Player* pPlayer, Creature* pCreature, uint32 emote)
+bool ScriptMgr::ReceiveEmote(Player* pPlayer, Creature* pCreature, uint32 emote)
 {
     Script *tmpscript = m_scripts[pCreature->GetScriptId()];
     if (!tmpscript || !tmpscript->pReceiveEmote) return false;
@@ -503,8 +474,7 @@ bool ReceiveEmote(Player* pPlayer, Creature* pCreature, uint32 emote)
     return tmpscript->pReceiveEmote(pPlayer, pCreature, emote);
 }
 
-OREGON_DLL_EXPORT
-InstanceData* CreateInstanceData(Map *map)
+InstanceData* ScriptMgr::CreateInstanceData(Map *map)
 {
     if (!map->IsDungeon()) return NULL;
 

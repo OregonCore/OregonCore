@@ -60,6 +60,7 @@
 #include "CellImpl.h"
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
+#include "ScriptMgr.h"
 
 pEffect SpellEffects[TOTAL_SPELL_EFFECTS]=
 {
@@ -2848,7 +2849,7 @@ void Spell::SendLoot(uint64 guid, LootType loottype)
 
     if (gameObjTarget)
     {
-        if (Script->GOHello(player, gameObjTarget))
+        if (sScriptMgr.GOHello(player, gameObjTarget))
             return;
 
         switch (gameObjTarget->GetGoType())
@@ -2885,7 +2886,7 @@ void Spell::SendLoot(uint64 guid, LootType loottype)
                     if (player->GetQuestStatus(gameObjTarget->GetGOInfo()->goober.questId) != QUEST_STATUS_INCOMPLETE)
                         return;
 
-                Script->GOHello(player, gameObjTarget);
+                sScriptMgr.GOHello(player, gameObjTarget);
                 sWorld.ScriptsStart(sGameObjectScripts, gameObjTarget->GetDBTableGUIDLow(), player, gameObjTarget);
 
                 gameObjTarget->AddUniqueUse(player);

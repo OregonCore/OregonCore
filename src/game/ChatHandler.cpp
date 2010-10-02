@@ -37,6 +37,7 @@
 #include "SpellAuras.h"
 #include "Language.h"
 #include "Util.h"
+#include "ScriptMgr.h"
 
 bool WorldSession::processChatmessageFurtherAfterSecurityChecks(std::string& msg, uint32 lang)
 {
@@ -643,8 +644,8 @@ void WorldSession::HandleTextEmoteOpcode(WorldPacket & recv_data)
         GetPlayer()->SendMessageToSetInRange(&data,sWorld.getConfig(CONFIG_LISTEN_RANGE_TEXTEMOTE),true);
 
         //Send scripted event call
-        if (pCreature && Script)
-            Script->ReceiveEmote(GetPlayer(),pCreature,text_emote);
+        if (pCreature)
+            sScriptMgr.ReceiveEmote(GetPlayer(),pCreature,text_emote);
     }
 }
 

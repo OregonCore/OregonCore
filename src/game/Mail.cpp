@@ -43,6 +43,7 @@
 #include "AuctionHouseBot.h"
 #include "AuctionHouseMgr.h"
 #include "Item.h"
+#include "ScriptMgr.h"
 
 /**
  * Handles the Packet sent by the client when sending a mail.

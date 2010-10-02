@@ -40,6 +40,7 @@
 #include "BattleGroundMgr.h"
 #include "BattleGround.h"
 #include "Guild.h"
+#include "ScriptMgr.h"
 
 void WorldSession::HandleTabardVendorActivateOpcode(WorldPacket & recv_data)
 {
@@ -286,7 +287,7 @@ void WorldSession::HandleGossipHelloOpcode(WorldPacket & recv_data)
         }
     }
 
-    if (!Script->GossipHello(_player, unit))
+    if (!sScriptMgr.GossipHello(_player, unit))
     {
         _player->TalkedToCreature(unit->GetEntry(), unit->GetGUID());
         _player->PrepareGossipMenu(unit, unit->GetCreatureInfo()->GossipMenuId);
@@ -325,12 +326,12 @@ void WorldSession::HandleGossipHelloOpcode(WorldPacket & recv_data)
 
     if (!code.empty())
     {
-        if (!Script->GossipSelectWithCode(_player, unit, _player->PlayerTalkClass->GossipOptionSender (option), _player->PlayerTalkClass->GossipOptionAction(option), code.c_str()))
+        if (!sScriptMgr.GossipSelectWithCode(_player, unit, _player->PlayerTalkClass->GossipOptionSender (option), _player->PlayerTalkClass->GossipOptionAction(option), code.c_str()))
             unit->OnGossipSelect (_player, option);
     }
     else
     {
-        if (!Script->GossipSelect (_player, unit, _player->PlayerTalkClass->GossipOptionSender (option), _player->PlayerTalkClass->GossipOptionAction (option)))
+        if (!sScriptMgr.GossipSelect (_player, unit, _player->PlayerTalkClass->GossipOptionSender (option), _player->PlayerTalkClass->GossipOptionAction (option)))
            unit->OnGossipSelect (_player, option);
     }
 }*/

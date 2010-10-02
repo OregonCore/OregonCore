@@ -12,6 +12,10 @@
 #include "Platform/CompilerDefs.h"
 #include "DBCStructure.h"
 
+#ifndef _OREGON_SCRIPT_CONFIG
+# define _OREGON_SCRIPT_CONFIG  "oregoncore.conf"
+#endif _OREGON_SCRIPT_CONFIG
+
 class Player;
 class Creature;
 class CreatureAI;
@@ -59,7 +63,7 @@ struct Script
     bool (*pChooseReward        )(Player*, Creature*, Quest const*, uint32);
     bool (*pItemHello           )(Player*, Item*, Quest const*);
     bool (*pGOHello             )(Player*, GameObject*);
-    bool (*pAreaTrigger         )(Player*, AreaTriggerEntry*);
+    bool (*pAreaTrigger         )(Player*, AreaTriggerEntry const*);
     bool (*pItemQuestAccept     )(Player*, Item *, Quest const*);
     bool (*pGOQuestAccept       )(Player*, GameObject*, Quest const*);
     bool (*pGOChooseReward      )(Player*, GameObject*, Quest const*, uint32);
@@ -72,6 +76,47 @@ struct Script
     void RegisterSelf();
 };
 
+class ScriptMgr
+{
+    public:
+        ScriptMgr();
+        ~ScriptMgr();
+        
+        void ScriptsInit(char const* cfg_file = _OREGON_SCRIPT_CONFIG);
+        void LoadDatabase();
+        char const* ScriptsVersion();    
+
+        std::string GetConfigValueStr(char const* option);
+        int32 GetConfigValueInt32(char const* option);
+        float GetConfigValueFloat(char const* option);
+
+    //event handlers
+        void OnLogin(Player *pPlayer);
+        void OnLogout(Player *pPlayer);
+        void OnPVPKill(Player *killer, Player *killed);
+        bool GossipHello (Player * pPlayer, Creature* pCreature);
+        bool GossipSelect(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction);
+        bool GossipSelectWithCode(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction, const char* sCode);
+        bool GOSelect(Player* pPlayer, GameObject* pGO, uint32 uiSender, uint32 uiAction);
+        bool GOSelectWithCode(Player* pPlayer, GameObject* pGO, uint32 uiSender, uint32 uiAction, const char* sCode);
+        bool QuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest);
+        bool QuestSelect(Player* pPlayer, Creature* pCreature, Quest const* pQuest);
+        bool QuestComplete(Player* pPlayer, Creature* pCreature, Quest const* pQuest);
+        bool ChooseReward(Player* pPlayer, Creature* pCreature, Quest const* pQuest, uint32 opt);
+        uint32 NPCDialogStatus(Player* pPlayer, Creature* pCreature);
+        uint32 GODialogStatus(Player* pPlayer, GameObject* pGO);
+        bool ItemHello(Player* pPlayer, Item* pItem, Quest const* pQuest);
+        bool ItemQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest);
+        bool GOHello(Player* pPlayer, GameObject* pGO);
+        bool GOQuestAccept(Player* pPlayer, GameObject* pGO, Quest const* pQuest);
+        bool GOChooseReward(Player* pPlayer, GameObject* pGO, Quest const* pQuest, uint32 opt);
+        bool AreaTrigger(Player* pPlayer,AreaTriggerEntry const* atEntry);
+        CreatureAI* GetAI(Creature* pCreature);
+        bool ItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets);
+        bool ReceiveEmote(Player* pPlayer, Creature* pCreature, uint32 emote);
+        InstanceData* CreateInstanceData(Map *map);
+};
+
 //Generic scripting text function
 void DoScriptText(int32 textEntry, WorldObject* pSource, Unit *pTarget = NULL);
 
@@ -81,13 +126,6 @@ void DoScriptText(int32 textEntry, WorldObject* pSource, Unit *pTarget = NULL);
 #define FUNC_PTR(name, callconvention, returntype, parameters)    typedef returntype(callconvention *name)parameters;
 #endif
 
-#ifdef WIN32
-  #define OREGON_DLL_EXPORT extern "C" __declspec(dllexport)
-#elif defined(__GNUC__)
-#define OREGON_DLL_EXPORT extern "C"
-#else
-#define OREGON_DLL_EXPORT extern "C" export
-#endif
-
+#define sScriptMgr Oregon::Singleton<ScriptMgr>::Instance()
 #endif
 

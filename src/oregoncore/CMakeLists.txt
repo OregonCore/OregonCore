@@ -47,10 +47,10 @@ endif()
 set_target_properties(oregon-core PROPERTIES LINK_FLAGS "${oregon-core_LINK_FLAGS}")
 
 if( WIN32 )
-  target_link_libraries(
-    oregon-core
+  target_link_libraries(oregon-core
     game
     shared
+    scripts
     zlib
     oregonframework
     oregonsockets
@@ -62,10 +62,10 @@ if( WIN32 )
     ${OPENSSL_EXTRA_LIBRARIES}
   )
 else()
-  target_link_libraries(
-    oregon-core
+  target_link_libraries(oregon-core
     game
     shared
+    scripts
     oregonframework
     oregonsockets
     g3dlite

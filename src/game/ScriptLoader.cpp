@@ -2,7 +2,7 @@
 * This program is free software licensed under GPL version 2
 * Please see the included DOCS/LICENSE.TXT for more information */
 
-#include "precompiled.h"
+#include "ScriptPCH.h"
 
 // -- Custom --
 
@@ -34,7 +34,6 @@ extern void AddSC_guards();
 
 // -- Item --
 extern void AddSC_item_scripts();
-extern void AddSC_item_test();
 
 // -- NPC --
 extern void AddSC_npc_professions();
@@ -605,7 +604,6 @@ void AddScripts()
 
     // -- Item --
     AddSC_item_scripts();
-    AddSC_item_test();
 
     // -- NPC --
     AddSC_npc_professions();

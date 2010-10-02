@@ -49,6 +49,7 @@
 #include "SocialMgr.h"
 #include "CellImpl.h"
 #include "AccountMgr.h"
+#include "ScriptMgr.h"
 
 void WorldSession::HandleRepopRequestOpcode(WorldPacket & recv_data)
 {
@@ -129,21 +130,21 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket & recv_data)
     {
         if (unit)
         {
-            if (!Script->GossipSelectWithCode(_player, unit, _player->PlayerTalkClass->GossipOptionSender(gossipListId), _player->PlayerTalkClass->GossipOptionAction(gossipListId), code.c_str()))
+            if (!sScriptMgr.GossipSelectWithCode(_player, unit, _player->PlayerTalkClass->GossipOptionSender(gossipListId), _player->PlayerTalkClass->GossipOptionAction(gossipListId), code.c_str()))
                 _player->OnGossipSelect(unit, gossipListId, menuId);
         }
         else
-            Script->GOSelectWithCode(_player, go, _player->PlayerTalkClass->GossipOptionSender(gossipListId), _player->PlayerTalkClass->GossipOptionAction(gossipListId), code.c_str());
+            sScriptMgr.GOSelectWithCode(_player, go, _player->PlayerTalkClass->GossipOptionSender(gossipListId), _player->PlayerTalkClass->GossipOptionAction(gossipListId), code.c_str());
     }
     else
     {
         if (unit)
         {
-            if (!Script->GossipSelect(_player, unit, _player->PlayerTalkClass->GossipOptionSender(gossipListId), _player->PlayerTalkClass->GossipOptionAction(gossipListId)))
+            if (!sScriptMgr.GossipSelect(_player, unit, _player->PlayerTalkClass->GossipOptionSender(gossipListId), _player->PlayerTalkClass->GossipOptionAction(gossipListId)))
                 _player->OnGossipSelect(unit, gossipListId, menuId);
         }
         else
-            Script->GOSelect(_player, go, _player->PlayerTalkClass->GossipOptionSender(gossipListId), _player->PlayerTalkClass->GossipOptionAction(gossipListId));
+            sScriptMgr.GOSelect(_player, go, _player->PlayerTalkClass->GossipOptionSender(gossipListId), _player->PlayerTalkClass->GossipOptionAction(gossipListId));
     }
 }
 
@@ -836,7 +837,7 @@ void WorldSession::HandleAreaTriggerOpcode(WorldPacket & recv_data)
         }
     }
 
-    if (Script->scriptAreaTrigger(GetPlayer(), atEntry))
+    if (sScriptMgr.AreaTrigger(GetPlayer(), atEntry))
         return;
 
     uint32 quest_id = objmgr.GetQuestForAreaTrigger(Trigger_ID);

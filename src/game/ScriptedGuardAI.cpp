@@ -21,8 +21,8 @@ SDComment:
 SDCategory: Guards
 EndScriptData */
 
-#include "precompiled.h"
-#include "guard_ai.h"
+#include "ScriptPCH.h"
+#include "ScriptedGuardAI.h"
 
 // **** This script is for use within every single guard to save coding time ****
 
@@ -73,23 +73,23 @@ void guardAI::UpdateAI(const uint32 diff)
     //Buff timer (only buff when we are alive and not in combat
     if (me->isAlive() && !me->isInCombat())
         if (BuffTimer <= diff)
-    {
-        //Find a spell that targets friendly and applies an aura (these are generally buffs)
-        SpellEntry const *info = SelectSpell(me, -1, -1, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_AURA);
-
-        if (info && !GlobalCooldown)
         {
-            //Cast the buff spell
-            DoCastSpell(me, info);
+            //Find a spell that targets friendly and applies an aura (these are generally buffs)
+            SpellEntry const *info = SelectSpell(me, -1, -1, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_AURA);
 
-            //Set our global cooldown
-            GlobalCooldown = GENERIC_CREATURE_COOLDOWN;
+            if (info && !GlobalCooldown)
+            {
+                //Cast the buff spell
+                DoCastSpell(me, info);
 
-            //Set our timer to 10 minutes before rebuff
-            BuffTimer = 600000;
-        }                                                   //Try agian in 30 seconds
-        else BuffTimer = 30000;
-    } else BuffTimer -= diff;
+                //Set our global cooldown
+                GlobalCooldown = GENERIC_CREATURE_COOLDOWN;
+
+                //Set our timer to 10 minutes before rebuff
+                BuffTimer = 600000;
+            }                                                   //Try again in 30 seconds
+            else BuffTimer = 30000;
+        } else BuffTimer -= diff;
 
     //Return since we have no target
     if (!UpdateVictim())

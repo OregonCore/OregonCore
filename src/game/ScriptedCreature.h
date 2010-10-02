@@ -46,7 +46,7 @@ Unit* FindCreature(uint32 entry, float range, Unit* Finder);
 //Get a single gameobject of given entry
 GameObject* FindGameObject(uint32 entry, float range, Unit* Finder);
 
-struct OREGON_DLL_DECL ScriptedAI : public CreatureAI
+struct ScriptedAI : public CreatureAI
 {
     explicit ScriptedAI(Creature* pCreature);
     ~ScriptedAI() {}

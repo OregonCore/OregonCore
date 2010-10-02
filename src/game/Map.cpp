@@ -40,6 +40,7 @@
 #include "MapInstanced.h"
 #include "InstanceSaveMgr.h"
 #include "VMapFactory.h"
+#include "ScriptMgr.h"
 
 #define DEFAULT_GRID_EXPIRY     300
 #define MAX_GRID_LOAD_TIME      50
@@ -2553,7 +2554,7 @@ void InstanceMap::CreateInstanceData(bool load)
     if (mInstance)
     {
         i_script_id = mInstance->script_id;
-        i_data = Script->CreateInstanceData(this);
+        i_data = sScriptMgr.CreateInstanceData(this);
     }
 
     if (!i_data)

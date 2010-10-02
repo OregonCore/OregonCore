@@ -5,7 +5,7 @@
 #ifndef SC_ESCORTAI_H
 #define SC_ESCORTAI_H
 
-#include "../../system/system.h"
+#include "ScriptSystem.h"
 
 #define DEFAULT_MAX_PLAYER_DISTANCE 50
 

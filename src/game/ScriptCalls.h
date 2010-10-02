@@ -34,16 +34,12 @@ class SpellCastTargets;
 class Map;
 class InstanceData;
 
-bool LoadScriptingModule(char const* libName = "");
-void UnloadScriptingModule();
+void LoadScriptingModule();
 
 //On Event Handlers
 typedef void(OREGON_IMPORT * scriptCallOnLogin) (Player *pPlayer);
 typedef void(OREGON_IMPORT * scriptCallOnLogout) (Player *pPlayer);
 typedef void(OREGON_IMPORT * scriptCallOnPVPKill) (Player *killer, Player *killed);
-typedef void(OREGON_IMPORT * scriptCallScriptsInit) (char const*);
-typedef void(OREGON_IMPORT * scriptCallScriptsFree) ();
-typedef char const* (OREGON_IMPORT * scriptCallScriptsVersion) ();
 
 typedef bool(OREGON_IMPORT * scriptCallGossipHello) (Player *player, Creature *_Creature);
 typedef bool(OREGON_IMPORT * scriptCallQuestAccept) (Player *player, Creature *_Creature, Quest const *);
@@ -69,10 +65,6 @@ typedef InstanceData* (OREGON_IMPORT * scriptCallCreateInstanceData) (Map *map);
 
 typedef struct
 {
-    scriptCallScriptsInit ScriptsInit;
-    scriptCallScriptsFree ScriptsFree;
-    scriptCallScriptsVersion ScriptsVersion;
-
     scriptCallOnLogin OnLogin;
     scriptCallOnLogout OnLogout;
     scriptCallOnPVPKill OnPVPKill;
@@ -100,7 +92,4 @@ typedef struct
 
     OREGON_LIBRARY_HANDLE hScriptsLib;
 }_ScriptSet,*ScriptsSet;
-
-extern ScriptsSet Script;
 #endif
-

@@ -73,7 +73,7 @@ struct DoorData
     DoorType type;
 };
 
-class OREGON_DLL_SPEC InstanceData : public ZoneScript
+class InstanceData : public ZoneScript
 {
     public:
 

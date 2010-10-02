@@ -12,8 +12,8 @@ SDComment:
 SDCategory: Npc
 EndScriptData */
 
-#include "precompiled.h"
-#include "escort_ai.h"
+#include "ScriptPCH.h"
+#include "ScriptedEscortAI.h"
 
 enum ePoints
 {

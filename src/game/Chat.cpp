@@ -638,7 +638,6 @@ ChatCommand * ChatHandler::getCommandTable()
         { "senditems",      SEC_ADMINISTRATOR,  true,  &ChatHandler::HandleSendItemsCommand,           "", NULL },
         { "sendmail",       SEC_MODERATOR,      true,  &ChatHandler::HandleSendMailCommand,            "", NULL },
         { "sendmoney",      SEC_ADMINISTRATOR,  true,  &ChatHandler::HandleSendMoneyCommand,           "", NULL },
-        { "loadscripts",    SEC_ADMINISTRATOR,  true,  &ChatHandler::HandleLoadScriptsCommand,         "", NULL },
         { "mute",           SEC_GAMEMASTER,     true,  &ChatHandler::HandleMuteCommand,                "", NULL },
         { "unmute",         SEC_GAMEMASTER,     true,  &ChatHandler::HandleUnmuteCommand,              "", NULL },
         { "movegens",       SEC_ADMINISTRATOR,  false, &ChatHandler::HandleMovegensCommand,            "", NULL },
