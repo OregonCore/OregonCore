@@ -75,7 +75,7 @@ else()
 endif()
 
 if( WIN32 )
-  add_custom_command(TARGET worldserver
+  add_custom_command(TARGET oregon-realm
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/oregonrealm.conf.dist ${CMAKE_BINARY_DIR}/bin/$(ConfigurationName)/
   )
