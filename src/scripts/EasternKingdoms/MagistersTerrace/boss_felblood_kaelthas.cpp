@@ -231,11 +231,11 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
                 pUnit->CastSpell(pUnit, SPELL_GRAVITY_LAPSE_FLY, true, 0, 0, me->GetGUID());
 
                 // Use packet hack
-                /*WorldPacket data(12);
+                WorldPacket data(12);
                 data.SetOpcode(SMSG_MOVE_SET_CAN_FLY);
                 data << pUnit->GetPackGUID();
                 data << uint32(0);
-                pUnit->SendMessageToSet(&data, true);*/
+                pUnit->SendMessageToSet(&data, true);
             }
         }
     }
@@ -251,11 +251,11 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
                 pUnit->RemoveAurasDueToSpell(SPELL_GRAVITY_LAPSE_FLY);
                 pUnit->RemoveAurasDueToSpell(SPELL_GRAVITY_LAPSE_DOT);
 
-                /*WorldPacket data(12);
+                WorldPacket data(12);
                 data.SetOpcode(SMSG_MOVE_UNSET_CAN_FLY);
                 data << pUnit->GetPackGUID();
                 data << uint32(0);
-                pUnit->SendMessageToSet(&data, true);*/
+                pUnit->SendMessageToSet(&data, true);
             }
         }
     }
