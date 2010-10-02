@@ -9,7 +9,7 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-set(COMPILATION_COMMENT "Source distribution lite for Trinity Core")
+set(COMPILATION_COMMENT "Source distribution lite for Oregon Core")
 set(PROTOCOL_VERSION "10")
 set(DOT_FRM_VERSION "6")
 set(MYSQL_TCP_PORT_DEFAULT "0")

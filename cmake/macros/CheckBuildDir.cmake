@@ -1,7 +1,5 @@
 # Copyright (C) 2008-2010 Trinity <http://www.trinitycore.org/>
 #
-# Copyright (C) 2009-2010 Oregon <http://www.oregoncore.org/>
-#
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without
 # modifications, as long as this notice is preserved.
@@ -10,9 +8,16 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-add_subdirectory(framework)
-add_subdirectory(shared)
-add_subdirectory(oregonrealm)
-add_subdirectory(game)
-add_subdirectory(scripts)
-add_subdirectory(oregoncore)
+#
+# Force out-of-source build
+#
+
+string(COMPARE EQUAL "${CMAKE_SOURCE_DIR}" "${CMAKE_BINARY_DIR}" BUILDING_IN_SOURCE)
+
+if( BUILDING_IN_SOURCE )
+  message(FATAL_ERROR "
+    This project requires an out of source build. Remove the file 'CMakeCache.txt'
+    found in this directory before continuing, create a separate build directory
+    and run 'cmake path_to_project [options]' from there.
+  ")
+endif()

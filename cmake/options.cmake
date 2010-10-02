@@ -1,10 +1,15 @@
+# Copyright (C) 2008-2010 Trinity <http://www.trinitycore.org/>
+#
+# This file is free software; as a special exception the author gives
+# unlimited permission to copy and/or distribute it, with or without
+# modifications, as long as this notice is preserved.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
 option(SCRIPTS          "Build core with scripts included"                            1)
-option(COREDEBUG        "Build with additional debug-code included"                   0)
-option(SCRIPTPCH        "Use precompiled headers when compiling scripts"              1)
-option(GAMEPCH          "Use precompiled headers when compiling game project"         1)
-if(WIN32)
-  option(USE_MYSQL_SOURCES "Use your own installed MySQL instead of the internal one" 0)
-else(WIN32)
-  set(USE_MYSQL_SOURCES 0)
-endif(WIN32)
-option(WARNINGS         "Enable all compile-warnings during compile"                  0)
+option(USE_SCRIPTPCH    "Use precompiled headers when compiling scripts"              1)
+option(USE_COREPCH      "Use precompiled headers when compiling servers"              1)
+option(WITH_WARNINGS    "Show all warnings during compile"                            0)
+option(WITH_COREDEBUG   "Include additional debug-code in core"                       0)

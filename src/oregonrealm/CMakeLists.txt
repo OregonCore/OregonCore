@@ -1,3 +1,15 @@
+# Copyright (C) 2008-2010 Trinity <http://www.trinitycore.org/>
+#
+# Copyright (C) 2009-2010 Oregon <http://www.oregoncore.org/>
+#
+# This file is free software; as a special exception the author gives
+# unlimited permission to copy and/or distribute it, with or without
+# modifications, as long as this notice is preserved.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
 file(GLOB sources_localdir *.cpp *.h)
 
 set(oregon-realm_SRCS
@@ -28,10 +40,8 @@ add_executable(oregon-realm
   ${oregon-realm_SRCS}
 )
 
-add_dependencies(oregon-realm genrev)
-
 if( NOT WIN32 )
-  add_definitions(-D_OREGON_REALM_CONFIG='"${CONF_DIR}/oregonrealm.conf"')
+  add_definitions(-D_OREGON_REALM_CONFIG="${CONF_DIR}/oregonrealm.conf")
 endif()
 
 if( UNIX )

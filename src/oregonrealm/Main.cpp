@@ -28,7 +28,6 @@
 #include "Log.h"
 #include "AuthSocket.h"
 #include "SystemConfig.h"
-#include "revision.h"
 #include "Util.h"
 
 #include <ace/Get_Opt.h>

@@ -1,5 +1,20 @@
-if( SCRIPTPCH )
-  include_directories(${CMAKE_CURRENT_BINARY_DIR})
+# Copyright (C) 2008-2010 Trinity <http://www.trinitycore.org/>
+#
+# Copyright (C) 2009-2010 Oregon <http://www.oregoncore.org/>
+#
+# This file is free software; as a special exception the author gives
+# unlimited permission to copy and/or distribute it, with or without
+# modifications, as long as this notice is preserved.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+# Enable precompiled headers when using the GCC compiler.
+if( USE_SCRIPTPCH )
+  include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}
+  )
 endif()
 
 file(GLOB_RECURSE scripts_custom Custom/*.cpp Custom/*.h)
@@ -9,7 +24,7 @@ file(GLOB_RECURSE scripts_kalimdor Kalimdor/*.cpp Kalimdor/*.h)
 file(GLOB_RECURSE scripts_outland Outland/*.cpp Outland/*.h)
 file(GLOB_RECURSE scripts_world World/*.cpp World/*.h)
 
-if( SCRIPTPCH AND MSVC )
+if( USE_SCRIPTPCH AND MSVC )
   set(scripts_STAT_SRCS
     PrecompiledHeaders/ScriptPCH.cpp
     PrecompiledHeaders/ScriptPCH.h
@@ -40,10 +55,8 @@ include_directories(
 
 add_library(scripts STATIC ${scripts_STAT_SRCS})
 
-add_dependencies(scripts genrev)
-
 # Generate precompiled header
-if( SCRIPTPCH )
+if( USE_SCRIPTPCH )
   if(CMAKE_COMPILER_IS_GNUCXX)
     add_precompiled_header(scripts ${CMAKE_CURRENT_SOURCE_DIR}/PrecompiledHeaders/ScriptPCH.h)
   elseif(MSVC)
