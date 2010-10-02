@@ -42,7 +42,7 @@
 # define _OREGON_CORE_CONFVER 2010081701
 #endif //_OREGON_CORE_CONFVER
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "ServiceWin32.h"
 char serviceName[] = "Oregond";
 char serviceLongName[] = "Oregon core service";
@@ -68,7 +68,7 @@ void usage(const char *prog)
     sLog.outString("Usage: \n %s [<options>]\n"
         "    -v, --version            print version and exit\n\r"
         "    -c config_file           use config_file as configuration file\n\r"
-        #ifdef WIN32
+        #ifdef _WIN32
         "    Running as service functions:\n\r"
         "    -s run                   run as service\n\r"
         "    -s install               install service\n\r"
@@ -83,7 +83,7 @@ extern int main(int argc, char **argv)
     ///- Command line parsing
     char const* cfg_file = _OREGON_CORE_CONFIG;
 
-#ifdef WIN32
+#ifdef _WIN32
     char const *options = ":c:s:";
 #else
     char const *options = ":c:";
@@ -103,7 +103,7 @@ extern int main(int argc, char **argv)
             case 'v':
                 printf("%s\n", _FULLVERSION);
                 return 0;
-#ifdef WIN32
+#ifdef _WIN32
             case 's':
             {
                 const char *mode = cmd_opts.opt_arg();

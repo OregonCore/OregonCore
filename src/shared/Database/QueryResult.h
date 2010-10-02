@@ -27,12 +27,10 @@
 #include "Field.h"
 
 #ifdef WIN32
-#define FD_SETSIZE 1024
-#include <winsock2.h>
-#include <mysql/mysql.h>
-#else
-#include <mysql.h>
+  #define FD_SETSIZE 1024
+  #include <winsock2.h>
 #endif
+#include <mysql.h>
 
 class OREGON_DLL_SPEC QueryResult
 {

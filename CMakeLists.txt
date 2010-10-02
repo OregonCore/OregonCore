@@ -1,14 +1,28 @@
+# Set projectname (must be done AFTER setting configurationtypes)
 project(Oregon)
+
+# CMake policies (can not be handled elsewhere)
 cmake_minimum_required(VERSION 2.6)
 cmake_policy(SET CMP0005 OLD)
 
+# Set RPATH-handing (CMake parameters)
+set(CMAKE_SKIP_BUILD_RPATH 0)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH 0)
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH 1)
+
+# set macro-directory
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-#
-# Basic packagesearching and setup (further support will be needed, this is a preliminary release!)
-#
+# build in Release-mode by default if not explicitly set
+if( NOT CMAKE_BUILD_TYPE )
+  set(CMAKE_BUILD_TYPE "Release")
+endif()
 
 include(CheckIncludeFiles)
+
+# set default buildoptions and print them
+include(cmake/options.cmake)
 
 if(WIN32)
   set(ACE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/dep/acelite)
@@ -16,36 +30,16 @@ endif()
 
 find_package(PCHSupport)
 find_package(ACE REQUIRED)
-find_package(MySQL REQUIRED)
 find_package(OpenSSL REQUIRED)
+if( NOT USE_MYSQL_SOURCES )
+  find_package(MySQL REQUIRED)
+endif()
+
 if( UNIX )
   find_package(Readline)
   find_package(ZLIB)
   find_package(BZip2)
 endif()
-
-
-#
-# Select the Release build configuration by default.
-#
-
-if( NOT CMAKE_BUILD_TYPE )
-  set(CMAKE_BUILD_TYPE "Release")
-endif()
-
-#####
-##### Options and settings
-#####
-
-#
-# Set up default option-parameters for building
-#
-
-option(SCRIPTS "Build with scripts included" 1)
-option(COREDEBUG "Build with additional debug-code included" 0)
-option(SCRIPTPCH "Use precompiled headers when compiling scripts project" 1)
-option(GAMEPCH "Use precompiled headers when compiling game project" 1)
-option(WARNINGS "Enable all compile-warnings during compile" 0)
 
 #
 # Search for readline on *nixbased systems (CLI-handler)
@@ -53,6 +47,13 @@ option(WARNINGS "Enable all compile-warnings during compile" 0)
 
 if( UNIX )
   find_readline()
+endif()
+
+if( USE_MYSQL_SOURCES )
+  set(MYSQL_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/dep/mysqllite/include)
+  set(MYSQL_LIBRARY "libmysql")
+  set( MYSQL_FOUND 1 )
+  message(STATUS "Using internal MySQL.")
 endif()
 
 #
@@ -134,76 +135,6 @@ if(DEFINED NOPCH)
   set(GAMEPCH 0)
 endif()
 
-#
-# Output some generic information about the core and buildtype chosen
-#
-
-message("")
-message("* OregonCore revision   : ${HG_REVISION}")
-if( UNIX )
-  message("* Build binaries in     : ${CMAKE_BUILD_TYPE} mode")
-endif()
-message("")
-
-#
-# Output information about installation-directories and locations
-#
-
-message("* Install core to       : ${CMAKE_INSTALL_PREFIX}")
-if( UNIX )
-  message("* Install libraries to  : ${LIBSDIR}")
-  message("* Install configs to    : ${CONF_DIR}")
-endif()
-message("")
-
-#
-# Show infomation about the options selected during configuration
-#
-
-if( GAMEPCH )
-  message("* Build game w/PCH      : Yes (default)")
-else()
-  message("* Build game w/PCH      : No")
-endif()
-
-if( SCRIPTPCH )
-  message("* Build scripts w/PCH   : Yes (default)")
-else()
-  message("* Build scripts w/PCH   : No")
-endif()
-
-if( COREDEBUG )
-  message("* Use coreside debug    : Yes")
-  add_definitions(-DOREGON_DEBUG)
-  if(CMAKE_COMPILER_IS_GNUCXX)
-    add_definitions(-g)
-  endif()
-else()
-  message("* Use coreside debug    : No  (default)")
-endif()
-
-if( WARNINGS )
-  message("* Show all warnings     : Yes")
-  if( UNIX )
-    add_definitions(-Wall -Wfatal-errors -Wextra)
-  endif()
-else()
-  message("* Show compile-warnings : No  (default)")
-  if( UNIX )
-    add_definitions(--no-warnings) # makes build look nice, no warnings shown at all, only errors
-  elseif( WIN32 )
-    # Disable warnings in Visual Studio 8 and above
-    if(MSVC AND NOT CMAKE_GENERATOR MATCHES "Visual Studio 7")
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4996 /wd4355 /wd4244 /wd4985 /wd4267 /wd4619")
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4996 /wd4355 /wd4244 /wd4985 /wd4267 /wd4619")
-    endif()
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-  endif()
-endif()
-
-
-message("")
-
 #####
 ##### Tweaks to make things operate well
 #####
@@ -230,15 +161,6 @@ if( MSVC )
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-#
-# Set RPATH-handing (CMake parameters)
-#
-
-set(CMAKE_SKIP_BUILD_RPATH 0)
-set(CMAKE_BUILD_WITH_INSTALL_RPATH 0)
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH 1)
-
 #####
 ##### Start filling in the blanks, and build the project
 #####
@@ -262,6 +184,14 @@ endif()
 # Enter the different builddirectories and start working 
 #
 
+# print out the results before continuing
+include(cmake/showoptions.cmake)
+
+# add dependencies
 add_subdirectory(dep)
+
+# add core sources
 add_subdirectory(src)
+
+# add sql-files
 add_subdirectory(sql)

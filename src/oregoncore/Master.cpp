@@ -51,7 +51,7 @@
 #include "sockets/SocketHandler.h"
 #include "sockets/ListenSocket.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "ServiceWin32.h"
 extern int m_ServiceStatus;
 #endif
@@ -233,7 +233,7 @@ int Master::Run()
 
     ACE_Based::Thread* cliThread = NULL;
 
-#ifdef WIN32
+#ifdef _WIN32
     if (sConfig.GetBoolDefault("Console.Enable", true) && (m_ServiceStatus == -1)/* need disable console in service mode*/)
 #else
     if (sConfig.GetBoolDefault("Console.Enable", true))
@@ -246,7 +246,7 @@ int Master::Run()
     ACE_Based::Thread rar_thread(new RARunnable);
 
     ///- Handle affinity for multiple processors and process priority on Windows
-    #ifdef WIN32
+    #ifdef _WIN32
     {
         HANDLE hProcess = GetCurrentProcess();
 
@@ -366,7 +366,7 @@ int Master::Run()
 
     if (cliThread)
     {
-        #ifdef WIN32
+        #ifdef _WIN32
 
         // this only way to terminate CLI thread exist at Win32 (alt. way exist only in Windows Vista API)
         //_exit(1);

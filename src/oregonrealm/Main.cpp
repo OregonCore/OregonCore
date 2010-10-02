@@ -48,7 +48,7 @@
 # define _OREGON_REALM_CONFIG  "oregonrealm.conf"
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "ServiceWin32.h"
 char serviceName[] = "realmd";
 char serviceLongName[] = "Oregon realm service";
@@ -76,7 +76,7 @@ void usage(const char *prog)
     sLog.outString("Usage: \n %s [<options>]\n"
         "    -v, --version            print version and exit\n\r"
         "    -c config_file           use config_file as configuration file\n\r"
-        #ifdef WIN32
+        #ifdef _WIN32
         "    Running as service functions:\n\r"
         "    -s run                   run as service\n\r"
         "    -s install               install service\n\r"
@@ -91,7 +91,7 @@ extern int main(int argc, char **argv)
     ///- Command line parsing
     char const* cfg_file = _OREGON_REALM_CONFIG;
 
-#ifdef WIN32
+#ifdef _WIN32
     char const *options = ":c:s:";
 #else
     char const *options = ":c:";
@@ -111,7 +111,7 @@ extern int main(int argc, char **argv)
             case 'v':
                 printf("%s\n", _FULLVERSION);
                 return 0;
-#ifdef WIN32
+#ifdef _WIN32
             case 's':
             {
                 const char *mode = cmd_opts.opt_arg();
@@ -234,7 +234,7 @@ extern int main(int argc, char **argv)
     HookSignals();
 
     ///- Handle affinity for multiple processors and process priority on Windows
-    #ifdef WIN32
+    #ifdef _WIN32
     {
         HANDLE hProcess = GetCurrentProcess();
 
@@ -295,7 +295,7 @@ extern int main(int argc, char **argv)
             sLog.outDetail("Ping MySQL to keep connection alive");
             LoginDatabase.Query("SELECT 1 FROM realmlist LIMIT 1");
         }
-#ifdef WIN32
+#ifdef _WIN32
         if (m_ServiceStatus == 0) stopEvent = true;
         while (m_ServiceStatus == 2) Sleep(1000);
 #endif

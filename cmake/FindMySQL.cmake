@@ -88,20 +88,20 @@ find_path(MYSQL_INCLUDE_DIR
 )
 
 if( UNIX )
-foreach(LIB ${MYSQL_ADD_LIBRARIES})
-  find_library( MYSQL_LIBRARY 
-    NAMES
-      mysql libmysql ${LIB}
-    PATHS
-      ${MYSQL_ADD_LIBRARIES_PATH}
-      /usr/lib
-      /usr/lib/mysql
-      /usr/local/lib
-      /usr/local/lib/mysql
-      /usr/local/mysql/lib
-    DOC "Specify the location of the mysql library here."
-  )
-endforeach(LIB ${MYSQL_ADD_LIBRARY})
+  foreach(LIB ${MYSQL_ADD_LIBRARIES})
+    find_library( MYSQL_LIBRARY 
+      NAMES
+        mysql libmysql ${LIB}
+      PATHS
+        ${MYSQL_ADD_LIBRARIES_PATH}
+        /usr/lib
+        /usr/lib/mysql
+        /usr/local/lib
+        /usr/local/lib/mysql
+        /usr/local/mysql/lib
+      DOC "Specify the location of the mysql library here."
+    )
+  endforeach(LIB ${MYSQL_ADD_LIBRARY})
 endif( UNIX )
 
 if( WIN32 )
@@ -148,9 +148,9 @@ if( MYSQL_LIBRARY )
     message(STATUS "Found MySQL library: ${MYSQL_LIBRARY}")
     message(STATUS "Found MySQL headers: ${MYSQL_INCLUDE_DIR}")
   else( MYSQL_INCLUDE_DIR )
-      message(FATAL_ERROR "Could not find MySQL headers! Please install the development-libraries and headers.")
+    message(FATAL_ERROR "Could not find MySQL headers! Please install the development libraries and headers")
   endif( MYSQL_INCLUDE_DIR )
   mark_as_advanced( MYSQL_FOUND MYSQL_LIBRARY MYSQL_EXTRA_LIBRARIES MYSQL_INCLUDE_DIR )
 else( MYSQL_LIBRARY )
-  message(FATAL_ERROR "Could not find the MySQL libraries! Please install the development-libraries and headers.")
+  message(FATAL_ERROR "Could not find the MySQL libraries! Please install the development libraries and headers")
 endif( MYSQL_LIBRARY )
