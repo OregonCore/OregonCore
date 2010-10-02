@@ -31,6 +31,14 @@ if( USE_SCRIPTPCH AND MSVC )
   )
 endif()
 
+set(scripts_STAT_SRCS
+  ${scripts_STAT_SRCS}
+  ../game/ScriptedEscortAI.cpp
+  ../game/ScriptedCreature.cpp
+  ../game/ScriptedGuardAI.cpp
+  ../game/ScriptedSimpleAI.cpp
+)
+
 if(SCRIPTS)
   set(scripts_STAT_SRCS
     ${scripts_STAT_SRCS}
