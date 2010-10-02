@@ -31,15 +31,17 @@ if( USE_SCRIPTPCH AND MSVC )
   )
 endif()
 
-set(scripts_STAT_SRCS
-  ${scripts_STAT_SRCS}
-  ${scripts_custom}
-  ${scripts_easternplaguelands}
-  ${scripts_examples}
-  ${scripts_kalimdor}
-  ${scripts_outland}
-  ${scripts_world}
-)
+if(SCRIPTS)
+  set(scripts_STAT_SRCS
+    ${scripts_STAT_SRCS}
+    ${scripts_custom}
+    ${scripts_easternplaguelands}
+    ${scripts_examples}
+    ${scripts_kalimdor}
+    ${scripts_outland}
+    ${scripts_world}
+  )
+endif()
 
 include_directories(
   ${CMAKE_BINARY_DIR}
