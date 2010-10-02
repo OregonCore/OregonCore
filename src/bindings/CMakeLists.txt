@@ -1,5 +1,0 @@
-if(SCRIPTS)
-add_subdirectory(scripts)
-else (SCRIPTS)
-add_subdirectory(interface)
-endif(SCRIPTS)
