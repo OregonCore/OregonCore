@@ -24,8 +24,6 @@
 #include "ObjectMgr.h"
 #include "Database/DatabaseEnv.h"
 
-DatabaseType TScriptDB;
-
 SystemMgr::SystemMgr()
 {
 }
@@ -39,7 +37,7 @@ SystemMgr& SystemMgr::Instance()
 void SystemMgr::LoadVersion()
 {
     //Get Version information
-    QueryResult_AutoPtr Result = TScriptDB.Query("SELECT script_version FROM version LIMIT 1");
+    QueryResult_AutoPtr Result = WorldDatabase.Query("SELECT script_version FROM version LIMIT 1");
 
     if (Result)
     {
@@ -58,9 +56,9 @@ void SystemMgr::LoadVersion()
 void SystemMgr::LoadScriptTexts()
 {
     outstring_log("OISS: Loading Script Texts...");
-    LoadOregonStrings(TScriptDB,"script_texts",TEXT_SOURCE_RANGE,1+(TEXT_SOURCE_RANGE*3));
+    LoadOregonStrings(WorldDatabase,"script_texts",TEXT_SOURCE_RANGE,1+(TEXT_SOURCE_RANGE*3));
 
-    QueryResult_AutoPtr Result = TScriptDB.Query("SELECT entry, sound, type, language, emote FROM script_texts");
+    QueryResult_AutoPtr Result = WorldDatabase.Query("SELECT entry, sound, type, language, emote FROM script_texts");
 
     outstring_log("OISS: Loading Script Texts additional data...");
 
@@ -124,9 +122,9 @@ void SystemMgr::LoadScriptTexts()
 void SystemMgr::LoadScriptTextsCustom()
 {
     outstring_log("TSCR: Loading Custom Texts...");
-    LoadOregonStrings(TScriptDB,"custom_texts",TEXT_SOURCE_RANGE*2,1+(TEXT_SOURCE_RANGE*3));
+    LoadOregonStrings(WorldDatabase,"custom_texts",TEXT_SOURCE_RANGE*2,1+(TEXT_SOURCE_RANGE*3));
 
-    QueryResult_AutoPtr Result = TScriptDB.Query("SELECT entry, sound, type, language, emote FROM custom_texts");
+    QueryResult_AutoPtr Result = WorldDatabase.Query("SELECT entry, sound, type, language, emote FROM custom_texts");
 
     outstring_log("TSCR: Loading Custom Texts additional data...");
 
@@ -195,13 +193,13 @@ void SystemMgr::LoadScriptWaypoints()
     uint64 uiCreatureCount = 0;
 
     // Load Waypoints
-    QueryResult_AutoPtr Result = TScriptDB.Query("SELECT COUNT(entry) FROM script_waypoint GROUP BY entry");
+    QueryResult_AutoPtr Result = WorldDatabase.Query("SELECT COUNT(entry) FROM script_waypoint GROUP BY entry");
     if (Result)
         uiCreatureCount = Result->GetRowCount();
 
     outstring_log("TSCR: Loading Script Waypoints for %u creature(s)...", uiCreatureCount);
 
-    Result = TScriptDB.Query("SELECT entry, pointid, location_x, location_y, location_z, waittime FROM script_waypoint ORDER BY pointid");
+    Result = WorldDatabase.Query("SELECT entry, pointid, location_x, location_y, location_z, waittime FROM script_waypoint ORDER BY pointid");
 
     if (Result)
     {
