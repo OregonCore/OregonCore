@@ -732,4 +732,3 @@ ACE_Get_Opt::ACE_Get_Opt_Long_Option::~ACE_Get_Opt_Long_Option (void)
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

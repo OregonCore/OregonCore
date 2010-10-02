@@ -1,4 +1,4 @@
-// $Id: Ping_Socket.cpp 81737 2008-05-20 09:46:39Z johnnyw $
+// $Id: Ping_Socket.cpp 83247 2008-10-14 22:29:45Z pollockt $
 
 #include "ace/Ping_Socket.h"
 
@@ -9,6 +9,7 @@
 #include "ace/OS_NS_string.h"
 #include "ace/OS_NS_sys_time.h"
 #include "ace/OS_NS_sys_socket.h"
+# include "ace/OS_NS_unistd.h"
 
 #if !defined (__ACE_INLINE__)
 # include "ace/Ping_Socket.inl"
@@ -17,7 +18,7 @@
 
 ACE_RCSID (ace,
            Ping_Socket,
-           "$Id: Ping_Socket.cpp 81737 2008-05-20 09:46:39Z johnnyw $")
+           "$Id: Ping_Socket.cpp 83247 2008-10-14 22:29:45Z pollockt $")
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -248,14 +249,15 @@ ACE_Ping_Socket::process_incoming_dgram (char * ptr, ssize_t len)
           ACE_TEXT ("(%P|%t) ACE_Ping_Socket::process_incoming_dgram")
           ACE_TEXT (" - ICMP_ECHOREPLY received.\n")));
 
-      if (icmp->icmp_id != getpid ())
+      if (icmp->icmp_id != (ACE_OS::getpid () & 0xFFFF))
         {
           ACE_ERROR_RETURN
             ((LM_ERROR,
               ACE_TEXT ("(%P|%t) ACE_Ping_Socket::")
               ACE_TEXT ("process_incoming_dgram ")
-              ACE_TEXT ("- The ICMP header received is a reply")
-              ACE_TEXT (" to request of another process.")),
+              ACE_TEXT ("- The ICMP header received is a reply to request ")
+              ACE_TEXT ("of another process (%d; expected %d).\n"),
+              icmp->icmp_id, ACE_OS::getpid()),
              -1);
         }
       if (icmplen < 16)
@@ -329,7 +331,7 @@ ACE_Ping_Socket::send_echo_check (ACE_INET_Addr &remote_addr,
   _icmp = (struct icmp *) this->icmp_send_buff_;
   _icmp->icmp_type = ICMP_ECHO;
   _icmp->icmp_code = 0;
-  _icmp->icmp_id = getpid ();
+  _icmp->icmp_id = ACE_OS::getpid () & 0xFFFF;
   _icmp->icmp_seq = sequence_number_++;
 
 #if defined (ACE_WIN32)
@@ -375,4 +377,3 @@ ACE_Ping_Socket::make_echo_check (ACE_INET_Addr & remote_addr,
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif  /* ACE_HAS_ICMP_SUPPORT == 1 */
-

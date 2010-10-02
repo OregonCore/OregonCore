@@ -36,4 +36,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 #include /**/ "ace/post.h"
 
 #endif  /* ACE_TIMER_QUEUE_FWD_H */
-

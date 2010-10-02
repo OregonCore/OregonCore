@@ -80,4 +80,3 @@ ACE_SPIPE::set_duplex_handle (ACE_HANDLE handle)
 #endif /* ACE_HAS_STREAM_PIPES */
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

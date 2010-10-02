@@ -47,4 +47,3 @@ ACE_Command_Callback<RECEIVER, ACTION>::execute (void *arg)
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_FUNCTOR_T_CPP */
-

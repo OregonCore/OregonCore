@@ -76,4 +76,3 @@ ACE_FIFO::close (void)
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

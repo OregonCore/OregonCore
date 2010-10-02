@@ -44,4 +44,3 @@ ACE_Node<T, C>::ACE_Node (const ACE_Node<T, C> &s)
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_NODE_CPP */
-

@@ -61,4 +61,3 @@ ACE_Dynamic_Service<TYPE>::instance (const ACE_Service_Gestalt* conf,
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_DYNAMIC_SERVICE_CPP */
-

@@ -227,4 +227,3 @@ ACE_TLI_Stream::recv_n (void *buf,
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_HAS_TLI */
-

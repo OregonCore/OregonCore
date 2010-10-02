@@ -140,4 +140,3 @@ ACE_IO_SAP::disable (int value) const
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

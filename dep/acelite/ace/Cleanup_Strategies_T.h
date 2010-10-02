@@ -147,4 +147,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 
 #include /**/ "ace/post.h"
 #endif /* CLEANUP_STRATEGIES_H */
-

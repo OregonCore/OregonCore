@@ -1,4 +1,4 @@
-// $Id: System_Time.cpp 80826 2008-03-04 14:51:23Z wotte $
+// $Id: System_Time.cpp 84834 2009-03-16 12:28:51Z johnnyw $
 
 #include "ace/System_Time.h"
 #include "ace/MMAP_Memory_Pool.h"
@@ -8,7 +8,7 @@
 #include "ace/OS_NS_string.h"
 #include "ace/OS_NS_time.h"
 
-ACE_RCSID(ace, System_Time, "$Id: System_Time.cpp 80826 2008-03-04 14:51:23Z wotte $")
+ACE_RCSID(ace, System_Time, "$Id: System_Time.cpp 84834 2009-03-16 12:28:51Z johnnyw $")
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -85,7 +85,7 @@ ACE_System_Time::get_master_system_time (time_t &time_out)
   if (this->delta_time_ == 0)
     {
       // Try to find it
-      void * temp;
+      void * temp = 0;
       if (this->shmem_->find (ACE_DEFAULT_TIME_SERVER_STR, temp) == -1)
         {
           // No time entry in shared memory (meaning no Clerk exists)
@@ -138,4 +138,3 @@ ACE_System_Time::sync_local_system_time (ACE_System_Time::Sync_Mode)
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

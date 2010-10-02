@@ -31,4 +31,3 @@ ACE_Thread_Hook::thread_hook (void)
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

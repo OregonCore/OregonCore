@@ -367,4 +367,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 
 #include /**/ "ace/post.h"
 #endif /*ACE_ATOMIC_OP_T_H*/
-

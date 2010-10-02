@@ -1,8 +1,8 @@
-// $Id: Registry_Name_Space.cpp 80826 2008-03-04 14:51:23Z wotte $
+// $Id: Registry_Name_Space.cpp 84455 2009-02-13 13:31:02Z johnnyw $
 
 #include "ace/Registry_Name_Space.h"
 
-ACE_RCSID(ace, Registry_Name_Space, "$Id: Registry_Name_Space.cpp 80826 2008-03-04 14:51:23Z wotte $")
+ACE_RCSID(ace, Registry_Name_Space, "$Id: Registry_Name_Space.cpp 84455 2009-02-13 13:31:02Z johnnyw $")
 
 #if (defined (ACE_WIN32) && defined (ACE_USES_WCHAR))
 // This only works on Win32 platforms when ACE_USES_WCHAR is turned on
@@ -254,7 +254,10 @@ ACE_Registry_Name_Space::list_name_entries (ACE_BINDING_SET &set,
                                   value,
                                   type);
           if (result != 0)
-            ACE_ERROR_RETURN ((LM_ERROR,  ACE_TEXT ("%p\n"),  ACE_TEXT ("ACE_Registry::Naming_Context::resolve")), result);
+            ACE_ERROR_RETURN ((LM_ERROR,
+                              ACE_TEXT ("%p\n"),
+                              ACE_TEXT ("ACE_Registry::Naming_Context::resolve")),
+                              result);
 
           // Complete binding
           ACE_Name_Binding binding (key, value, type);
@@ -291,4 +294,3 @@ ACE_Registry_Name_Space::dump (void) const
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_WIN32 && ACE_USES_WCHAR */
-

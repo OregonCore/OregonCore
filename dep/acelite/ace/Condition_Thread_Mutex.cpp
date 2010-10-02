@@ -124,4 +124,3 @@ ACE_Condition_Thread_Mutex::broadcast (void)
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_HAS_THREADS */
-

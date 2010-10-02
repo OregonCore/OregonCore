@@ -29,7 +29,7 @@
 
 
 #define _PACKAGENAME "OregonCore "
-#define _CODENAME "YUME"
+#define _CODENAME "VELOCITY"
 
 #if OREGON_ENDIAN == OREGON_BIGENDIAN
 # define _ENDIAN_STRING "big-endian"

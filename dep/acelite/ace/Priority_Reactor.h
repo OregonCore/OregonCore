@@ -4,7 +4,7 @@
 /**
  *  @file    Priority_Reactor.h
  *
- *  $Id: Priority_Reactor.h 80826 2008-03-04 14:51:23Z wotte $
+ *  $Id: Priority_Reactor.h 82723 2008-09-16 09:35:44Z johnnyw $
  *
  *  @author Carlos O'Ryan <coryan@uci.edu>
  */
@@ -45,7 +45,7 @@ public:
 
   /// Initialize ACE_Priority_Reactor with size @a size.
   ACE_Priority_Reactor (size_t size,
-                        int restart = 0,
+                        bool restart = false,
                         ACE_Sig_Handler * = 0,
                         ACE_Timer_Queue * = 0);
 
@@ -98,4 +98,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 
 #include /**/ "ace/post.h"
 #endif /* ACE_PRIORITY_REACTOR_H */
-

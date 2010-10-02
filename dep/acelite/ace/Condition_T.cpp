@@ -1,4 +1,4 @@
-// $Id: Condition_T.cpp 81283 2008-04-09 01:28:18Z schmidt $
+// $Id: Condition_T.cpp 89127 2010-02-22 19:58:18Z schmidt $
 
 #ifndef ACE_CONDITION_T_CPP
 #define ACE_CONDITION_T_CPP
@@ -87,7 +87,7 @@ ACE_Condition<MUTEX>::wait (void)
 {
   // ACE_TRACE ("ACE_Condition<MUTEX>::wait");
   return ACE_OS::cond_wait (&this->cond_,
-                            &this->mutex_.lock_);
+                            &this->mutex_.lock ());
 }
 
 template <class MUTEX> int
@@ -96,12 +96,17 @@ ACE_Condition<MUTEX>::wait (MUTEX &mutex,
 {
 // ACE_TRACE ("ACE_Condition<MUTEX>::wait");
   if (abstime == 0)
+    {
       return ACE_OS::cond_wait (&this->cond_,
-                                &mutex.lock_);
+                                &mutex.lock ());
+    }
   else
-    return ACE_OS::cond_timedwait (&this->cond_,
-                                   &mutex.lock_,
-                                   (ACE_Time_Value *) abstime);
+    {
+      ACE_Time_Value tv = *abstime;
+      return ACE_OS::cond_timedwait (&this->cond_,
+                                     &mutex.lock (),
+                                     &tv);
+    }
 }
 
 // Peform an "alertable" timed wait.  If the argument ABSTIME == 0
@@ -120,4 +125,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 #endif /* ACE_HAS_THREADS */
 
 #endif /* ACE_CONDITION_T_CPP */
-

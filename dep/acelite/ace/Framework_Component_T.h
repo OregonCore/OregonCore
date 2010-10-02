@@ -69,4 +69,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 
 #include /**/ "ace/post.h"
 #endif /* ACE_FRAMEWORK_COMPONENT_T_H */
-

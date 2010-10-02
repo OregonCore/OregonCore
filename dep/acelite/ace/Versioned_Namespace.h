@@ -49,4 +49,3 @@
 #endif  /* ACE_HAS_VERSIONED_NAMESPACE */
 
 #endif  /* !ACE_VERSIONED_NAMESPACE_H */
-

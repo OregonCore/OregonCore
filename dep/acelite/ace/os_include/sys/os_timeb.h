@@ -6,7 +6,7 @@
  *
  *  additional definitions for date and time
  *
- *  $Id: os_timeb.h 80826 2008-03-04 14:51:23Z wotte $
+ *  $Id: os_timeb.h 83306 2008-10-17 12:19:53Z johnnyw $
  *
  *  @author Don Hinton <dhinton@dresystems.com>
  *  @author This code was originally in various places including ace/OS.h.
@@ -36,15 +36,9 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-#if defined (__BORLANDC__) && (__BORLANDC__ <= 0x560)
-#  define _ftime ftime
-#  define _timeb timeb
-#endif /* __BORLANDC__ */
-
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
 #include /**/ "ace/post.h"
 #endif /* ACE_OS_INCLUDE_SYS_OS_TIMEB_H */
-

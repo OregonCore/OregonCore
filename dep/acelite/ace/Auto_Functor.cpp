@@ -37,4 +37,3 @@ ACE_Utils::Auto_Functor<X,Functor>::reset(X * p, Functor f)
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /*ACE_AUTO_FUNCTOR_CPP*/
-

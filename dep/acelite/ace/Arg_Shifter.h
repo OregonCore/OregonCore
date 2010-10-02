@@ -4,7 +4,7 @@
 /**
  *  @file     Arg_Shifter.h
  *
- *  $Id: Arg_Shifter.h 80826 2008-03-04 14:51:23Z wotte $
+ *  $Id: Arg_Shifter.h 83891 2008-11-28 11:01:50Z johnnyw $
  *
  *  @author Seth Widoff
  */
@@ -106,7 +106,7 @@ public:
    *     If the current argument does not match flag
    *     If there is no parameter found after a 'matched' flag
    *
-   * If the flag is matched and the flag and paramter DO NOT RUN
+   * If the flag is matched and the flag and parameter DO NOT RUN
    * together, the flag is consumed, the parameter is returned,
    * and the new current argument is the parameter value.
    * ie '-foobarflag  VALUE' leaves the new cur arg == "VALUE"
@@ -118,7 +118,7 @@ public:
   const CHAR_TYPE *get_the_parameter (const CHAR_TYPE* flag);
 
   /**
-   * Check if the current argument matches (case insensitive) <flag>
+   * Check if the current argument matches (case insensitive) @a flag
    *
    * ------------------------------------------------------------
    *
@@ -219,4 +219,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 #include /**/ "ace/post.h"
 
 #endif /* ACE_ARG_SHIFTER_H */
-

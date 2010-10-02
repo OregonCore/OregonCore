@@ -1,9 +1,9 @@
-// $Id: Priority_Reactor.cpp 80826 2008-03-04 14:51:23Z wotte $
+// $Id: Priority_Reactor.cpp 82723 2008-09-16 09:35:44Z johnnyw $
 
 #include "ace/Priority_Reactor.h"
 #include "ace/Malloc_T.h"
 
-ACE_RCSID(ace, Priority_Reactor, "$Id: Priority_Reactor.cpp 80826 2008-03-04 14:51:23Z wotte $")
+ACE_RCSID(ace, Priority_Reactor, "$Id: Priority_Reactor.cpp 82723 2008-09-16 09:35:44Z johnnyw $")
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -51,10 +51,10 @@ ACE_Priority_Reactor::ACE_Priority_Reactor (ACE_Sig_Handler *sh,
 }
 
 ACE_Priority_Reactor::ACE_Priority_Reactor (size_t size,
-                                            int rs,
+                                            bool restart,
                                             ACE_Sig_Handler *sh,
                                             ACE_Timer_Queue *tq)
-  : ACE_Select_Reactor (size, rs, sh, tq),
+  : ACE_Select_Reactor (size, restart, sh, tq),
     bucket_ (0),
     tuple_allocator_ (0)
 {
@@ -186,4 +186,3 @@ ACE_Priority_Reactor::dump (void) const
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

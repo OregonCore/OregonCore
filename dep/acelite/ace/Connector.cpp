@@ -1,4 +1,4 @@
-// $Id: Connector.cpp 81991 2008-06-16 19:05:40Z elliott_c $
+// $Id: Connector.cpp 89510 2010-03-17 12:21:14Z vzykov $
 
 #ifndef ACE_CONNECTOR_CPP
 #define ACE_CONNECTOR_CPP
@@ -24,12 +24,33 @@ ACE_NonBlocking_Connect_Handler<SVC_HANDLER>::ACE_NonBlocking_Connect_Handler
  long id)
   : connector_ (connector)
   , svc_handler_ (sh)
+  , cleanup_svc_handler_ (0)
   , timer_id_ (id)
 {
   ACE_TRACE ("ACE_NonBlocking_Connect_Handler<SVC_HANDLER>::ACE_NonBlocking_Connect_Handler");
 
   this->reference_counting_policy ().value
     (ACE_Event_Handler::Reference_Counting_Policy::ENABLED);
+
+  if (this->svc_handler_ != 0 &&
+      this->svc_handler_->reference_counting_policy ().value () ==
+        ACE_Event_Handler::Reference_Counting_Policy::ENABLED)
+    {
+      // If SVC_HANDLER is reference counted then NBCH holds a reference
+      // in cleanup_svc_handle_ which is both a pointer to SVC_HANDLER
+      // and a flag that triggers remove_reference in NBCH destructor.
+      this->cleanup_svc_handler_ = sh;
+      this->cleanup_svc_handler_->add_reference ();
+    }
+}
+
+template <class SVC_HANDLER>
+ACE_NonBlocking_Connect_Handler<SVC_HANDLER>::~ACE_NonBlocking_Connect_Handler (void)
+{
+  if (this->cleanup_svc_handler_)
+    {
+      this->cleanup_svc_handler_->remove_reference ();
+    }
 }
 
 template <class SVC_HANDLER> SVC_HANDLER *
@@ -119,7 +140,7 @@ ACE_NonBlocking_Connect_Handler<SVC_HANDLER>::handle_timeout
   ACE_TRACE ("ACE_NonBlocking_Connect_Handler<SVC_HANDLER>::handle_timeout");
 
   SVC_HANDLER *svc_handler = 0;
-  int retval = this->close (svc_handler) ? 0 : -1;
+  int const retval = this->close (svc_handler) ? 0 : -1;
 
   // Forward to the SVC_HANDLER the <arg> that was passed in as a
   // magic cookie during ACE_Connector::connect().  This gives the
@@ -145,7 +166,9 @@ ACE_NonBlocking_Connect_Handler<SVC_HANDLER>::handle_input (ACE_HANDLE)
 
   // Close Svc_Handler.
   if (svc_handler != 0)
-    svc_handler->close (NORMAL_CLOSE_OPERATION);
+    {
+      svc_handler->close (NORMAL_CLOSE_OPERATION);
+    }
 
   return retval;
 }
@@ -162,7 +185,9 @@ ACE_NonBlocking_Connect_Handler<SVC_HANDLER>::handle_output (ACE_HANDLE handle)
   int const retval = this->close (svc_handler) ? 0 : -1;
 
   if (svc_handler != 0)
-    connector.initialize_svc_handler (handle, svc_handler);
+    {
+      connector.initialize_svc_handler (handle, svc_handler);
+    }
 
   return retval;
 }
@@ -593,7 +618,7 @@ ACE_Connector<SVC_HANDLER, ACE_PEER_CONNECTOR_2>::initialize_svc_handler
 {
   // Try to find out if the reactor uses event associations for the
   // handles it waits on. If so we need to reset it.
-  int reset_new_handle =
+  bool reset_new_handle =
     this->reactor ()->uses_event_associations ();
 
   if (reset_new_handle)
@@ -964,4 +989,3 @@ ACE_Strategy_Connector<SVC_HANDLER, ACE_PEER_CONNECTOR_2>::concurrency_strategy 
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_CONNECTOR_C */
-

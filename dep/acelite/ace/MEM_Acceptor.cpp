@@ -1,4 +1,4 @@
-// $Id: MEM_Acceptor.cpp 80826 2008-03-04 14:51:23Z wotte $
+// $Id: MEM_Acceptor.cpp 84455 2009-02-13 13:31:02Z johnnyw $
 
 #include "ace/MEM_Acceptor.h"
 
@@ -13,7 +13,7 @@
 #include "ace/MEM_Acceptor.inl"
 #endif /* __ACE_INLINE__ */
 
-ACE_RCSID(ace, MEM_Acceptor, "$Id: MEM_Acceptor.cpp 80826 2008-03-04 14:51:23Z wotte $")
+ACE_RCSID(ace, MEM_Acceptor, "$Id: MEM_Acceptor.cpp 84455 2009-02-13 13:31:02Z johnnyw $")
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -82,8 +82,8 @@ int
 ACE_MEM_Acceptor::accept (ACE_MEM_Stream &new_stream,
                           ACE_MEM_Addr *remote_sap,
                           ACE_Time_Value *timeout,
-                          int restart,
-                          int reset_new_handle)
+                          bool restart,
+                          bool reset_new_handle)
 {
   ACE_TRACE ("ACE_MEM_Acceptor::accept");
 
@@ -192,7 +192,8 @@ ACE_MEM_Acceptor::accept (ACE_MEM_Stream &new_stream,
   if (ACE::recv (new_handle, &client_signaling,
                  sizeof (ACE_INT16)) == -1)
     ACE_ERROR_RETURN ((LM_DEBUG,
-                       ACE_TEXT ("ACE_MEM_Acceptor::%p error receiving strategy\n"), ACE_TEXT ("accept")),
+                       ACE_TEXT ("ACE_MEM_Acceptor::%p error receiving strategy\n"),
+                       ACE_TEXT ("accept")),
                       -1);
 
   // Ensure minimum buffer size
@@ -225,7 +226,7 @@ ACE_MEM_Acceptor::accept (ACE_MEM_Stream &new_stream,
 int
 ACE_MEM_Acceptor::shared_accept_finish (ACE_MEM_Stream new_stream,
                                         int in_blocking_mode,
-                                        int reset_new_handle) const
+                                        bool reset_new_handle) const
 {
   ACE_TRACE ("ACE_MEM_Acceptor::shared_accept_finish ()");
 
@@ -263,4 +264,3 @@ ACE_MEM_Acceptor::shared_accept_finish (ACE_MEM_Stream new_stream,
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_HAS_POSITION_INDEPENDENT_POINTERS == 1 */
-

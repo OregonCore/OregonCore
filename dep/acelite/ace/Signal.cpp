@@ -219,4 +219,3 @@ ACE_Sig_Action::ACE_Sig_Action (const ACE_Sig_Set &signals,
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

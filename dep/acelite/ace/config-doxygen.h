@@ -6,7 +6,7 @@
  *
  * @file config-doxygen.h
  *
- * $Id: config-doxygen.h 80826 2008-03-04 14:51:23Z wotte $
+ * $Id: config-doxygen.h 91101 2010-07-15 09:49:28Z johnnyw $
  *
  * @author Carlos O'Ryan <coryan@uci.edu>
  * @author Darrell Brunsch <brunsch@uci.edu>
@@ -117,5 +117,12 @@
 
 #define ACE_HAS_IP_MULTICAST
 
-#endif /* ACE_CONFIG_DOXYGEN_H */
+#define ACE_INLINE
+#define ACE_BEGIN_VERSIONED_NAMESPACE_DECL
+#define ACE_END_VERSIONED_NAMESPACE_DECL
+#define TAO_BEGIN_VERSIONED_NAMESPACE_DECL
+#define TAO_END_VERSIONED_NAMESPACE_DECL
 
+#define ACE_HAS_POSITION_INDEPENDENT_POINTERS 1
+
+#endif /* ACE_CONFIG_DOXYGEN_H */

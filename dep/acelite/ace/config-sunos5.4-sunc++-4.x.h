@@ -1,5 +1,5 @@
 /* -*- C++ -*- */
-// $Id: config-sunos5.4-sunc++-4.x.h 81935 2008-06-12 22:01:53Z jtc $
+// $Id: config-sunos5.4-sunc++-4.x.h 87250 2009-10-28 11:57:17Z olli $
 
 // The following configuration file is designed to work for SunOS 5.4
 // platforms using the SunC++ 4.0.x compiler.
@@ -31,7 +31,7 @@
 
 // Platform supports system configuration information.
 #define ACE_HAS_SYS_SYSTEMINFO_H
-#define ACE_HAS_SYSINFO
+#define ACE_HAS_SYSV_SYSINFO
 
 // Platform supports the POSIX regular expression library.
 #define ACE_HAS_REGEX
@@ -100,9 +100,6 @@
 // Platform supports STREAM pipes.
 #define ACE_HAS_STREAM_PIPES
 
-// Compiler/platform supports strerror ().
-#define ACE_HAS_STRERROR
-
 // Compiler/platform supports struct strbuf.
 #define ACE_HAS_STRBUF_T
 
@@ -124,8 +121,7 @@
 // Platform provides <sys/filio.h> header.
 #define ACE_HAS_SYS_FILIO_H
 
-// Compiler/platform supports sys_siglist array.
-#define ACE_HAS_SYS_SIGLIST
+#define ACE_HAS_STRSIGNAL
 
 /* Turn off the following defines if you want to disable threading. */
 // Compile using multi-thread libraries.
@@ -188,4 +184,3 @@
 
 #include /**/ "ace/post.h"
 #endif /* ACE_CONFIG_H */
-

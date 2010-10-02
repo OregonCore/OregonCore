@@ -1,4 +1,4 @@
-// $Id: Singleton.cpp 80826 2008-03-04 14:51:23Z wotte $
+// $Id: Singleton.cpp 84273 2009-01-30 12:55:25Z johnnyw $
 
 #ifndef ACE_SINGLETON_CPP
 #define ACE_SINGLETON_CPP
@@ -17,11 +17,11 @@
 #include "ace/Log_Msg.h"
 #include "ace/Framework_Component.h"
 #include "ace/Guard_T.h"
+#include "ace/os_include/os_typeinfo.h"
 
 ACE_RCSID (ace,
            Singleton,
-           "$Id: Singleton.cpp 80826 2008-03-04 14:51:23Z wotte $")
-
+           "$Id: Singleton.cpp 84273 2009-01-30 12:55:25Z johnnyw $")
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -95,7 +95,7 @@ ACE_Singleton<TYPE, ACE_LOCK>::instance (void)
               ACE_NEW_RETURN (singleton, (ACE_Singleton<TYPE, ACE_LOCK>), 0);
 
               // Register for destruction with ACE_Object_Manager.
-              ACE_Object_Manager::at_exit (singleton);
+              ACE_Object_Manager::at_exit (singleton, 0, typeid (TYPE).name ());
 #if defined (ACE_MT_SAFE) && (ACE_MT_SAFE != 0)
             }
 #endif /* ACE_MT_SAFE */
@@ -108,8 +108,22 @@ ACE_Singleton<TYPE, ACE_LOCK>::instance (void)
 template <class TYPE, class ACE_LOCK> void
 ACE_Singleton<TYPE, ACE_LOCK>::cleanup (void *)
 {
+  ACE_Object_Manager::remove_at_exit (this);
   delete this;
   ACE_Singleton<TYPE, ACE_LOCK>::instance_i () = 0;
+}
+
+template <class TYPE, class ACE_LOCK> void
+ACE_Singleton<TYPE, ACE_LOCK>::close (void)
+{
+  ACE_Singleton<TYPE, ACE_LOCK> *&singleton =
+    ACE_Singleton<TYPE, ACE_LOCK>::instance_i ();
+
+  if (singleton)
+    {
+      singleton->cleanup ();
+      ACE_Singleton<TYPE, ACE_LOCK>::instance_i () = 0;
+    }
 }
 
 #if !defined (ACE_LACKS_STATIC_DATA_MEMBER_TEMPLATES)
@@ -282,7 +296,7 @@ ACE_TSS_Singleton<TYPE, ACE_LOCK>::instance (void)
                               0);
 
               // Register for destruction with ACE_Object_Manager.
-              ACE_Object_Manager::at_exit (singleton);
+              ACE_Object_Manager::at_exit (singleton, 0, typeid (TYPE).name ());
 #if defined (ACE_MT_SAFE) && (ACE_MT_SAFE != 0)
             }
 #endif /* ACE_MT_SAFE */
@@ -532,4 +546,3 @@ ACE_DLL_Singleton_Adapter_T<TYPE>::dll_name (void)
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_SINGLETON_CPP */
-

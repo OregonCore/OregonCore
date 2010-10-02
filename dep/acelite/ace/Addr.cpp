@@ -1,12 +1,10 @@
-// $Id: Addr.cpp 80826 2008-03-04 14:51:23Z wotte $
+// $Id: Addr.cpp 84619 2009-02-26 12:26:16Z johnnyw $
 
 #include "ace/Addr.h"
 
-
 ACE_RCSID (ace,
            Addr,
-           "$Id: Addr.cpp 80826 2008-03-04 14:51:23Z wotte $")
-
+           "$Id: Addr.cpp 84619 2009-02-26 12:26:16Z johnnyw $")
 
 #if !defined (__ACE_INLINE__)
 #include "ace/Addr.inl"
@@ -71,4 +69,3 @@ ACE_Addr::dump (void) const
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

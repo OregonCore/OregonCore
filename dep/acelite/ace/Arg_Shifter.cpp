@@ -9,7 +9,7 @@
 
 ACE_RCSID (ace,
            Arg_Shifter,
-           "$Id: Arg_Shifter.cpp 80826 2008-03-04 14:51:23Z wotte $")
+           "$Id: Arg_Shifter.cpp 83749 2008-11-14 18:39:10Z johnnyw $")
 
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
@@ -133,8 +133,7 @@ ACE_Arg_Shifter_T<CHAR_TYPE>::cur_arg_strncasecmp (const CHAR_TYPE *flag)
                               flag,
                               flag_length) == 0)
         {
-          if (ACE_OS::strlen(temp_[current_index_]) ==
-              flag_length)
+          if (ACE_OS::strlen(temp_[current_index_]) == flag_length)
             {
               // match and lengths are equal
               return 0;
@@ -228,4 +227,3 @@ ACE_Arg_Shifter_T<CHAR_TYPE>::num_ignored_args (void) const
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_ATOMIC_OP_T_CPP */
-

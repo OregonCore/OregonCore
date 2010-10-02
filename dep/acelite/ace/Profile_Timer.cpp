@@ -441,4 +441,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* defined (ACE_HAS_PRUSAGE_T) ||
           defined (ACE_HAS_GETRUSAGE) && !defined (ACE_WIN32) */
-

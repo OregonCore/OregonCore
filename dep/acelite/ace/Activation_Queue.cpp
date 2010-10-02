@@ -11,7 +11,7 @@
 
 ACE_RCSID (ace,
            Activation_Queue,
-           "$Id: Activation_Queue.cpp 80826 2008-03-04 14:51:23Z wotte $")
+           "$Id: Activation_Queue.cpp 84565 2009-02-23 08:20:39Z johnnyw $")
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -23,7 +23,7 @@ ACE_Activation_Queue::dump (void) const
   ACE_DEBUG ((LM_DEBUG,
               ACE_TEXT ("delete_queue_ = %d\n"),
               this->delete_queue_));
-  ACE_DEBUG ((LM_INFO, ACE_TEXT ("queue_: \n")));
+  ACE_DEBUG ((LM_INFO, ACE_TEXT ("queue_:\n")));
   if (this->queue_)
     this->queue_->dump();
   else
@@ -136,4 +136,3 @@ ACE_Activation_Queue::enqueue (ACE_Method_Request *mr,
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

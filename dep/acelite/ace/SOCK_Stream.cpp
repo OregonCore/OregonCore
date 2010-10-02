@@ -38,4 +38,3 @@ ACE_SOCK_Stream::close (void)
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

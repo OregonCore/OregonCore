@@ -1,11 +1,11 @@
-// $Id: Atomic_Op.cpp 80826 2008-03-04 14:51:23Z wotte $
+// $Id: Atomic_Op.cpp 89905 2010-04-16 13:04:47Z johnnyw $
 
 #include "ace/Atomic_Op.h"
 #include "ace/OS_NS_unistd.h"
 
 ACE_RCSID (ace,
            Atomic_Op,
-           "$Id: Atomic_Op.cpp 80826 2008-03-04 14:51:23Z wotte $")
+           "$Id: Atomic_Op.cpp 89905 2010-04-16 13:04:47Z johnnyw $")
 
 #if !defined (__ACE_INLINE__)
 #include "ace/Atomic_Op.inl"
@@ -34,8 +34,8 @@ single_cpu_increment (volatile long *value)
   unsigned long addr = reinterpret_cast<unsigned long> (value);
   asm( "xadd %0, (%1)" : "+r"(tmp) : "r"(addr) );
   return tmp + 1;
-#elif defined (sun) || \
-     (defined (__SUNPRO_CC) && (defined (__i386) || defined (__x86_64)))
+#elif !defined (ACE_HAS_SOLARIS_ATOMIC_LIB) && (defined (sun) || \
+     (defined (__SUNPRO_CC) && (defined (__i386) || defined (__x86_64))))
   return ace_atomic_add_long (
            reinterpret_cast<volatile unsigned long*> (value), 1);
 #elif defined(__GNUC__) && defined(PPC)
@@ -58,8 +58,8 @@ single_cpu_decrement (volatile long *value)
   unsigned long addr = reinterpret_cast<unsigned long> (value);
   asm( "xadd %0, (%1)" : "+r"(tmp) : "r"(addr) );
   return tmp - 1;
-#elif defined (sun) || \
-     (defined (__SUNPRO_CC) && (defined (__i386) || defined (__x86_64)))
+#elif !defined (ACE_HAS_SOLARIS_ATOMIC_LIB) && (defined (sun) || \
+     (defined (__SUNPRO_CC) && (defined (__i386) || defined (__x86_64))))
   return ace_atomic_add_long (
             reinterpret_cast<volatile unsigned long*> (value), -1);
 #elif defined(__GNUC__) && defined(PPC)
@@ -81,8 +81,8 @@ single_cpu_exchange (volatile long *value, long rhs)
   unsigned long addr = reinterpret_cast<unsigned long> (value);
   asm( "xchg %0, (%1)" : "+r"(rhs) : "r"(addr) );
   return rhs;
-#elif defined (sun) || \
-     (defined (__SUNPRO_CC) && (defined (__i386) || defined (__x86_64)))
+#elif !defined (ACE_HAS_SOLARIS_ATOMIC_LIB) && (defined (sun) || \
+     (defined (__SUNPRO_CC) && (defined (__i386) || defined (__x86_64))))
   return ace_atomic_swap_long (
            reinterpret_cast<volatile unsigned long*> (value), rhs);
 #elif defined(__GNUC__) && defined(PPC)
@@ -104,8 +104,8 @@ single_cpu_exchange_add (volatile long *value, long rhs)
   unsigned long addr = reinterpret_cast<unsigned long> (value);
   asm( "xadd %0, (%1)" : "+r"(rhs) : "r"(addr) );
   return rhs;
-#elif defined (sun) || \
-     (defined (__SUNPRO_CC) && (defined (__i386) || defined (__x86_64)))
+#elif !defined (ACE_HAS_SOLARIS_ATOMIC_LIB) && (defined (sun) || \
+     (defined (__SUNPRO_CC) && (defined (__i386) || defined (__x86_64))))
   return ace_atomic_swap_add_long (
            reinterpret_cast<volatile unsigned long*> (value), rhs);
 #elif defined(__GNUC__) && defined(PPC)
@@ -147,8 +147,8 @@ multi_cpu_increment (volatile long *value)
   unsigned long addr = reinterpret_cast<unsigned long> (value);
   asm( "lock ; xadd %0, (%1)" : "+r"(tmp) : "r"(addr) );
   return tmp + 1;
-#elif defined (sun) || \
-     (defined (__SUNPRO_CC) && (defined (__i386) || defined (__x86_64)))
+#elif !defined (ACE_HAS_SOLARIS_ATOMIC_LIB) && (defined (sun) || \
+     (defined (__SUNPRO_CC) && (defined (__i386) || defined (__x86_64))))
   return ace_atomic_add_long (
            reinterpret_cast<volatile unsigned long*> (value), 1);
 #else /* ACE_HAS_INTEL_ASSEMBLY*/
@@ -165,8 +165,8 @@ multi_cpu_decrement (volatile long *value)
   unsigned long addr = reinterpret_cast<unsigned long> (value);
   asm( "lock ; xadd %0, (%1)" : "+r"(tmp) : "r"(addr) );
   return tmp - 1;
-#elif defined (sun) || \
-     (defined (__SUNPRO_CC) && (defined (__i386) || defined (__x86_64)))
+#elif !defined (ACE_HAS_SOLARIS_ATOMIC_LIB) && (defined (sun) || \
+     (defined (__SUNPRO_CC) && (defined (__i386) || defined (__x86_64))))
   return ace_atomic_add_long (
            reinterpret_cast<volatile unsigned long*> (value), -1);
 #else /* ACE_HAS_INTEL_ASSEMBLY*/
@@ -183,8 +183,8 @@ multi_cpu_exchange (volatile long *value, long rhs)
   // The XCHG instruction automatically follows LOCK semantics
   asm( "xchg %0, (%1)" : "+r"(rhs) : "r"(addr) );
   return rhs;
-#elif defined (sun) || \
-     (defined (__SUNPRO_CC) && (defined (__i386) || defined (__x86_64)))
+#elif !defined (ACE_HAS_SOLARIS_ATOMIC_LIB) && (defined (sun) || \
+     (defined (__SUNPRO_CC) && (defined (__i386) || defined (__x86_64))))
   return ace_atomic_swap_long (
            reinterpret_cast<volatile unsigned long*> (value), rhs);
 #else /* ACE_HAS_INTEL_ASSEMBLY*/
@@ -201,8 +201,8 @@ multi_cpu_exchange_add (volatile long *value, long rhs)
   unsigned long addr = reinterpret_cast<unsigned long> (value);
   asm( "lock ; xadd %0, (%1)" : "+r"(rhs) : "r"(addr) );
   return rhs;
-#elif defined (sun) || \
-     (defined (__SUNPRO_CC) && (defined (__i386) || defined (__x86_64)))
+#elif !defined (ACE_HAS_SOLARIS_ATOMIC_LIB) && (defined (sun) || \
+     (defined (__SUNPRO_CC) && (defined (__i386) || defined (__x86_64))))
   return ace_atomic_swap_add_long (
            reinterpret_cast<volatile unsigned long*> (value), rhs);
 #elif defined (WIN32) && !defined (ACE_HAS_INTERLOCKED_EXCHANGEADD)
@@ -308,4 +308,3 @@ ACE_Atomic_Op<ACE_Thread_Mutex, unsigned long>::dump (void) const
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_HAS_BUILTIN_ATOMIC_OP */
-

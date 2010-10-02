@@ -118,4 +118,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 
 #include /**/ "ace/post.h"
 #endif /* ACE_SHARED_MALLOC_MM_H */
-

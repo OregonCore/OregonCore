@@ -11,7 +11,7 @@
 
 ACE_RCSID (ace,
            Dynamic_Message_Strategy,
-           "$Id: Dynamic_Message_Strategy.cpp 80826 2008-03-04 14:51:23Z wotte $")
+           "$Id: Dynamic_Message_Strategy.cpp 84565 2009-02-23 08:20:39Z johnnyw $")
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -149,7 +149,7 @@ ACE_Deadline_Message_Strategy::dump (void) const
 
   ACE_DEBUG ((LM_DEBUG, ACE_BEGIN_DUMP, this));
 
-  ACE_DEBUG ((LM_DEBUG, ACE_TEXT ("ACE_Dynamic_Message_Strategy base class: \n")));
+  ACE_DEBUG ((LM_DEBUG, ACE_TEXT ("ACE_Dynamic_Message_Strategy base class:\n")));
   this->ACE_Dynamic_Message_Strategy::dump ();
 
   ACE_DEBUG ((LM_DEBUG, ACE_TEXT ("\nderived class: ACE_Deadline_Message_Strategy\n")));
@@ -192,7 +192,7 @@ ACE_Laxity_Message_Strategy::dump (void) const
 
   ACE_DEBUG ((LM_DEBUG, ACE_BEGIN_DUMP, this));
 
-  ACE_DEBUG ((LM_DEBUG, ACE_TEXT ("ACE_Dynamic_Message_Strategy base class: \n")));
+  ACE_DEBUG ((LM_DEBUG, ACE_TEXT ("ACE_Dynamic_Message_Strategy base class:\n")));
   this->ACE_Dynamic_Message_Strategy::dump ();
 
   ACE_DEBUG ((LM_DEBUG, ACE_TEXT ("\nderived class: ACE_Laxity_Message_Strategy\n")));
@@ -203,4 +203,3 @@ ACE_Laxity_Message_Strategy::dump (void) const
   // Dump the state of the strategy.
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

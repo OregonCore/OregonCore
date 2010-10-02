@@ -573,4 +573,3 @@
 #include /**/ "ace/post.h"
 
 #endif /* ACE_CORBA_MACROS_H */
-

@@ -308,4 +308,3 @@ ACE_Mem_Map::remove (void)
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

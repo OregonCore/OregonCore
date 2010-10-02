@@ -297,4 +297,3 @@ ACE_Task_Base::svc_run (void *args)
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

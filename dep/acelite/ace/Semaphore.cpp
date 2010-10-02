@@ -1,4 +1,4 @@
-// $Id: Semaphore.cpp 80826 2008-03-04 14:51:23Z wotte $
+// $Id: Semaphore.cpp 84282 2009-01-30 15:04:29Z msmit $
 
 #include "ace/Semaphore.h"
 
@@ -11,7 +11,7 @@
 
 ACE_RCSID (ace,
            Semaphore,
-           "$Id: Semaphore.cpp 80826 2008-03-04 14:51:23Z wotte $")
+           "$Id: Semaphore.cpp 84282 2009-01-30 15:04:29Z msmit $")
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -20,11 +20,13 @@ ACE_ALLOC_HOOK_DEFINE(ACE_Semaphore)
 void
 ACE_Semaphore::dump (void) const
 {
+#if defined (ACE_HAS_DUMP)
 // ACE_TRACE ("ACE_Semaphore::dump");
 
   ACE_DEBUG ((LM_DEBUG, ACE_BEGIN_DUMP, this));
   ACE_DEBUG ((LM_DEBUG, ACE_TEXT ("\n")));
   ACE_DEBUG ((LM_DEBUG, ACE_END_DUMP));
+#endif /* ACE_HAS_DUMP */
 }
 
 ACE_Semaphore::ACE_Semaphore (unsigned int count,
@@ -60,4 +62,3 @@ ACE_Semaphore::~ACE_Semaphore (void)
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

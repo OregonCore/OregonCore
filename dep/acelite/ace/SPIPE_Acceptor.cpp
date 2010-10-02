@@ -1,4 +1,4 @@
-// $Id: SPIPE_Acceptor.cpp 80826 2008-03-04 14:51:23Z wotte $
+// $Id: SPIPE_Acceptor.cpp 82723 2008-09-16 09:35:44Z johnnyw $
 
 #include "ace/SPIPE_Acceptor.h"
 #include "ace/Log_Msg.h"
@@ -9,7 +9,7 @@
 #  include "ace/OS_NS_unistd.h"
 #endif  // ACE_HAS_STREAM_PIPES
 
-ACE_RCSID(ace, SPIPE_Acceptor, "$Id: SPIPE_Acceptor.cpp 80826 2008-03-04 14:51:23Z wotte $")
+ACE_RCSID(ace, SPIPE_Acceptor, "$Id: SPIPE_Acceptor.cpp 82723 2008-09-16 09:35:44Z johnnyw $")
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -248,8 +248,8 @@ int
 ACE_SPIPE_Acceptor::accept (ACE_SPIPE_Stream &new_io,
                             ACE_SPIPE_Addr *remote_addr,
                             ACE_Time_Value *timeout,
-                            int restart,
-                            int reset_new_handle)
+                            bool restart,
+                            bool reset_new_handle)
 {
   ACE_TRACE ("ACE_SPIPE_Acceptor::accept");
   ACE_UNUSED_ARG (reset_new_handle);
@@ -335,4 +335,3 @@ ACE_SPIPE_Acceptor::accept (ACE_SPIPE_Stream &new_io,
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

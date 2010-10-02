@@ -34,4 +34,3 @@ ACE_Obchunk::ACE_Obchunk (size_t size)
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

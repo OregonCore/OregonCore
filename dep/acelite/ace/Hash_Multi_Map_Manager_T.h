@@ -553,7 +553,7 @@ protected:
   ACE_Allocator *table_allocator_;
 
   /// Addidtional allocator for entries, so it should be able to
-  /// allocate 'size' / chunks of sizeof
+  /// allocate 'size' / chunks of sizeof 
   /// (@c ACE_Hash_Multi_Map_Entry<@c EXT_ID, @c INT_ID>) bytes each.
   ACE_Allocator *entry_allocator_;
 
@@ -965,4 +965,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 
 #include /**/ "ace/post.h"
 #endif /* ACE_HASH_MULTI_MAP_MANAGER_T_H */
-

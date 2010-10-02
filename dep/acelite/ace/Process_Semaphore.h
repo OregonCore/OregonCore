@@ -4,7 +4,7 @@
 /**
  *  @file    Process_Semaphore.h
  *
- *  $Id: Process_Semaphore.h 80826 2008-03-04 14:51:23Z wotte $
+ *  $Id: Process_Semaphore.h 86731 2009-09-17 12:23:48Z johnnyw $
  *
  *   Wrapper for Dijkstra style general semaphores that work
  *   across processes.
@@ -135,8 +135,6 @@ protected:
 template <class T> class ACE_Malloc_Lock_Adapter_T;
 
 /**
- * @class ACE_Malloc_Lock_Adapter_T<ACE_Process_Semaphore>
- *
  * @brief Template specialization of ACE_Malloc_Lock_Adapter_T for
  * ACE_Process_Semaphore.
  *
@@ -159,4 +157,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 
 #include /**/ "ace/post.h"
 #endif /* ACE_PROCESS_SEMAPHORE_H */
-

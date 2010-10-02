@@ -257,4 +257,3 @@ ACE_SV_Semaphore_Complex::ACE_SV_Semaphore_Complex (void)
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

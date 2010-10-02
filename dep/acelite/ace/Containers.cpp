@@ -10,4 +10,3 @@ ACE_RCSID (ace,
 #include "ace/Containers.inl"
 #endif /* __ACE_INLINE__ */
 
-

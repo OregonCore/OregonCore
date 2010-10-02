@@ -1,4 +1,4 @@
-// $Id: Remote_Tokens.cpp 80826 2008-03-04 14:51:23Z wotte $
+// $Id: Remote_Tokens.cpp 84455 2009-02-13 13:31:02Z johnnyw $
 
 #include "ace/Remote_Tokens.h"
 
@@ -13,7 +13,7 @@
 
 ACE_RCSID (ace,
            Remote_Tokens,
-           "$Id: Remote_Tokens.cpp 80826 2008-03-04 14:51:23Z wotte $")
+           "$Id: Remote_Tokens.cpp 84455 2009-02-13 13:31:02Z johnnyw $")
 
 
 #if defined (ACE_MT_SAFE) && (ACE_MT_SAFE != 0)
@@ -157,12 +157,16 @@ ACE_Remote_Token_Proxy::request_reply (ACE_Token_Request &request,
   ACE_SOCK_Stream *peer = ACE_Token_Connections::instance ()->get_connection ();
 
   if (peer == 0)
-    ACE_ERROR_RETURN ((LM_ERROR, "(%P|%t) %p\n", "BIG PROBLEMS with get_connection"), -1);
+    ACE_ERROR_RETURN ((LM_ERROR,
+                      ACE_TEXT("(%P|%t) %p\n"),
+                      ACE_TEXT("BIG PROBLEMS with get_connection")), -1);
 
   // Transmit request via a blocking send.
 
   if (peer->send_n (buffer, length) != length)
-    ACE_ERROR_RETURN ((LM_ERROR,  ACE_TEXT ("%p\n"),  ACE_TEXT ("send_n failed")), -1);
+    ACE_ERROR_RETURN ((LM_ERROR,
+                      ACE_TEXT ("%p\n"),
+                      ACE_TEXT ("send_n failed")), -1);
   else
     {
       ACE_Token_Reply reply;
@@ -525,4 +529,3 @@ ACE_Remote_WLock::dump (void) const
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_HAS_TOKENS_LIBRARY */
-

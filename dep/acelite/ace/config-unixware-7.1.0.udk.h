@@ -2,7 +2,7 @@
 #ifndef ACE_CONFIG_UNIXWARE_UDK_H
 #define ACE_CONFIG_UNIXWARE_UDK_H
 
-// $Id: config-unixware-7.1.0.udk.h 82267 2008-07-08 16:39:19Z jtc $
+// $Id: config-unixware-7.1.0.udk.h 87167 2009-10-19 19:33:53Z olli $
 
 // Configuration for the unixware UDK compiler. derived from the unixware/g++ config
 // which was itself derived from an autoconfig run.
@@ -269,9 +269,6 @@
 /* Platform supports STREAM pipes */
 #define ACE_HAS_STREAM_PIPES
 
-/* Compiler/platform supports strerror () */
-#define ACE_HAS_STRERROR
-
 /* Platform/Compiler supports a String class (e.g., GNU or Win32). */
 #define ACE_HAS_STRING_CLASS
 
@@ -292,7 +289,7 @@
 
 /* Platform supports system configuration information */
 #define ACE_HAS_SYS_SYSTEMINFO_H
-#define ACE_HAS_SYSINFO 1
+#define ACE_HAS_SYSV_SYSINFO 1
 
 /* Platform supports System V IPC (most versions of UNIX, but not Win32) */
 #define ACE_HAS_SYSV_IPC 1
@@ -458,4 +455,3 @@
 
 #define  __IOCTL_VERSIONED__ // By Carlo!
 #endif /* ACE_UNIXWARE_UDK_H */
-

@@ -27,4 +27,3 @@
 
 #include /**/ "ace/post.h"
 #endif /* ACE_ARRAY_H */
-

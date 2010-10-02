@@ -1930,4 +1930,3 @@ ACE_Array<T>::operator== (const ACE_Array<T> &s) const
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_CONTAINERS_T_CPP */
-

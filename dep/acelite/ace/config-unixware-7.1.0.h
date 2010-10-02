@@ -1,5 +1,5 @@
 /* -*- C++ -*- */
-// $Id: config-unixware-7.1.0.h 82267 2008-07-08 16:39:19Z jtc $
+// $Id: config-unixware-7.1.0.h 87268 2009-10-29 21:06:06Z olli $
 
 #ifndef ACE_CONFIG_H
 #define ACE_CONFIG_H
@@ -106,9 +106,6 @@
 /* Platform has a getrusage () prototype in sys/resource.h that differs from
    the one in ace/OS.i. */
 #define ACE_HAS_GETRUSAGE_PROTOTYPE 1
-
-/* Denotes that GNU has cstring.h as standard which redefines memchr() */
-#define ACE_HAS_GNU_CSTRING_H
 
 /* The GPERF utility is compiled for this platform */
 #define ACE_HAS_GPERF 1
@@ -229,9 +226,6 @@
 /* Platform supports STREAM pipes */
 #define ACE_HAS_STREAM_PIPES 1
 
-/* Compiler/platform supports strerror () */
-#define ACE_HAS_STRERROR 1
-
 /* Platform/Compiler supports a String class (e.g., GNU or Win32). */
 #define ACE_HAS_STRING_CLASS 1
 
@@ -252,7 +246,7 @@
 
 /* Platform supports system configuration information */
 #define ACE_HAS_SYS_SYSTEMINFO_H
-#define ACE_HAS_SYSINFO 1
+#define ACE_HAS_SYSV_SYSINFO 1
 
 /* Platform supports System V IPC (most versions of UNIX, but not Win32) */
 #define ACE_HAS_SYSV_IPC 1
@@ -410,4 +404,3 @@
 #define  __IOCTL_VERSIONED__ // By Carlo!
 
 #endif /* ACE_CONFIG_H */
-

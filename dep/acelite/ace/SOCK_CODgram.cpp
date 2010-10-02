@@ -149,4 +149,3 @@ ACE_SOCK_CODgram::open (const ACE_Addr &remote, const ACE_Addr &local,
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

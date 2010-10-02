@@ -5,7 +5,6 @@
 #define ACE_CONFIG_H
 
 // ACE configuration header file
-# define ACE_LACKS_NETDB_REENTRANT_FUNCTIONS 
 
 
 
@@ -105,9 +104,6 @@
    passed back from select(). */
 #undef ACE_HAS_BIG_FD_SET
 
-/* Compiler/platform uses macro for ctime (e.g., MVS) */
-#undef ACE_HAS_BROKEN_CTIME
-
 /* Platform sendv() does not work properly with datagrams, i.e. it fails when
    the iovec size is IOV_MAX. */
 #undef ACE_HAS_BROKEN_DGRAM_SENDV
@@ -127,9 +123,6 @@
 /* OS/compiler's header files are inconsistent with libC definition of
    rand_r(). */
 #undef ACE_HAS_BROKEN_RANDR
-
-/* Platform defines ctime_r, asctime_r, rand_r and getpwnam_r as macros */
-#undef ACE_HAS_BROKEN_R_ROUTINES
 
 /* Compiler/platform has the wrong prototype for t_error(), i.e., t_error(char
    *) rather than t_error(const char *). */
@@ -223,6 +216,9 @@
 /* Platform has Fast-Light (FL) toolkit installed. */
 #undef ACE_HAS_FL
 
+/* Define to 1 if compiler has builtin atomic support */
+#undef ACE_HAS_GCC_ATOMIC_BUILTINS
+
 /* Define to 1 if platform has getifaddrs(). */
 #undef ACE_HAS_GETIFADDRS
 
@@ -239,9 +235,6 @@
 /* Define to 1 if platform has the declaration of getrusage(). */
 #undef ACE_HAS_GETRUSAGE_PROTOTYPE
 
-/* Denotes that GNU has cstring.h as standard which redefines memchr() */
-#undef ACE_HAS_GNU_CSTRING_H
-
 /* Enable use of GNU template repositories. GNU C++ w/repo patch and EGCS only
    */
 #undef ACE_HAS_GNU_REPO
@@ -253,7 +246,7 @@
    */
 #undef ACE_HAS_HANDLE_SET_OPTIMIZED_FOR_SELECT
 
-/* Compiler/platform supports SunOS high resolution timers */
+/* Define to 1 if system has SunOS high resolution timer. */
 #undef ACE_HAS_HI_RES_TIMER
 
 /* Define to 1 if platform has the <ia32intrin.h> header file. */
@@ -311,6 +304,9 @@
 /* The rusage_t structure has only two fields. */
 #undef ACE_HAS_LIMITED_RUSAGE_T
 
+/* Define to 1 if system has Linux version of sysinfo(). */
+#undef ACE_HAS_LINUX_SYSINFO
+
 /* Platform supports llseek(). This should not be defined if ACE_HAS_LSEEK64
    is defined. */
 #undef ACE_HAS_LLSEEK
@@ -323,7 +319,7 @@
 #undef ACE_HAS_LSEEK64
 
 /* */
-#undef ACE_HAS_LYNXOS_SIGNALS
+#undef ACE_HAS_LYNXOS4_SIGNALS
 
 /* Enabled malloc statistics collection. */
 #undef ACE_HAS_MALLOC_STATS
@@ -461,7 +457,7 @@
    */
 #undef ACE_HAS_PROC_FS
 
-/* Platform supports the prusage_t struct */
+/* Define to 1 if the system has the type `prusage_t'. */
 #undef ACE_HAS_PRUSAGE_T
 
 /* Define to 1 if platform has POSIX threads */
@@ -620,15 +616,8 @@
 /* Compiler requires extern "C" functions for signals. */
 #undef ACE_HAS_SIG_C_FUNC
 
-/* Platform/compiler has macros for sig{empty,fill,add,del}set (e.g., SCO and
-   FreeBSD) */
-#undef ACE_HAS_SIG_MACROS
-
 /* OS/compiler uses size_t * rather than int * for socket lengths */
 #undef ACE_HAS_SIZET_SOCKET_LEN
-
-/* Define to 1 if platform has snprintf(). */
-#undef ACE_HAS_SNPRINTF
 
 /* Define to 1 if `sin6_len' is a member of `sockaddr_in6'. */
 #undef ACE_HAS_SOCKADDR_IN6_SIN6_LEN
@@ -662,15 +651,7 @@
 /* Define to 1 if platform has UNIX International Threads */
 #undef ACE_HAS_STHREADS
 
-/* Used when users want to compile ACE with STL and STL map class conflicts
-   with <net/if.h> map struct. */
-#undef ACE_HAS_STL_MAP_CONFLICT
-
-/* Used when users want to compile ACE with STL and STL queue class conflicts
-   with <netinet/in.h> queue struct. */
-#undef ACE_HAS_STL_QUEUE_CONFLICT
-
-/* Compiler/platform supports struct strbuf */
+/* Define to 1 if the system has the type `struct strbuf'. */
 #undef ACE_HAS_STRBUF_T
 
 /* Define to 1 use ACE's strdup() emulation */
@@ -681,9 +662,6 @@
 
 /* Platform supports STREAM pipes */
 #undef ACE_HAS_STREAM_PIPES
-
-/* Define to 1 if platform has strerror(). */
-#undef ACE_HAS_STRERROR
 
 /* Use the STRICT compilation mode on Win32. */
 #undef ACE_HAS_STRICT
@@ -696,6 +674,9 @@
 
 /* Define to 1 if platform has strnlen(). */
 #undef ACE_HAS_STRNLEN
+
+/* Define to 1 if platform has strsignal(). */
+#undef ACE_HAS_STRSIGNAL
 
 /* Compiler/platform has strange hostent API for socket *_r() calls */
 #undef ACE_HAS_STRUCT_NETDB_DATA
@@ -719,14 +700,11 @@
 /* Define to 1 if platform has the <sysent.h> header file. */
 #undef ACE_HAS_SYSENT_H
 
-/* Platform supports system configuration information. */
-#undef ACE_HAS_SYSINFO
-
 /* Platform supports System V IPC (most versions of UNIX, but not Win32) */
 #undef ACE_HAS_SYSV_IPC
 
-/* Platform/compiler supports _sys_errlist symbol */
-#undef ACE_HAS_SYS_ERRLIST
+/* Define to 1 if system has SysV version of sysinfo(). */
+#undef ACE_HAS_SYSV_SYSINFO
 
 /* Define to 1 if platform has the <sys/filio.h> header file. */
 #undef ACE_HAS_SYS_FILIO_H
@@ -991,8 +969,7 @@
 /* Define to 1 if platform lacks chdir(). */
 #undef ACE_LACKS_CHDIR
 
-/* Platform has no implementation of pthread_condattr_setpshared(), even
-   though it supports pthreads! */
+/* Define to 1 if system lacks pthread_condattr_setpshared() */
 #undef ACE_LACKS_CONDATTR_PSHARED
 
 /* Platform lacks condition variables (e.g., Win32 and VxWorks) */
@@ -1046,7 +1023,7 @@
 /* Define to 1 if platform lacks fgetws(). */
 #undef ACE_LACKS_FGETWS
 
-/* Platform lacks file locking mechanism */
+/* Define to 1 if the system lacks the type `struct flock'. */
 #undef ACE_LACKS_FILELOCKS
 
 /* Define to 1 if platform lacks fork(). */
@@ -1133,6 +1110,18 @@
 /* Define to 1 if platform lacks isatty(). */
 #undef ACE_LACKS_ISATTY
 
+/* Define to 1 if platform lacks isblank(). */
+#undef ACE_LACKS_ISBLANK
+
+/* Define to 1 if platform lacks isctype(). */
+#undef ACE_LACKS_ISCTYPE
+
+/* Define to 1 if platform lacks iswblank(). */
+#undef ACE_LACKS_ISWBLANK
+
+/* Define to 1 if platform lacks iswctype(). */
+#undef ACE_LACKS_ISWCTYPE
+
 /* Define to 1 if platform lacks itow(). */
 #undef ACE_LACKS_ITOW
 
@@ -1210,7 +1199,7 @@
 /* Define to 1 if platform lacks msync(). */
 #undef ACE_LACKS_MSYNC
 
-/* Platform lacks pthread_mutexattr_setpshared(). */
+/* Define to 1 if system lacks pthread_mutexattr_setpshared(). */
 #undef ACE_LACKS_MUTEXATTR_PSHARED
 
 /* Platform lacks named POSIX semaphores (e.g., Chorus) */
@@ -1249,9 +1238,6 @@
 
 /* Compiler doesn't support placement operator delete(void *, void *). */
 #undef ACE_LACKS_PLACEMENT_OPERATOR_DELETE
-
-/* Compiler doesn't support placement operator new(size_t, void *). */
-#undef ACE_LACKS_PLACEMENT_OPERATOR_NEW
 
 /* Compiler complains about use of obsolete "pragma once" */
 #undef ACE_LACKS_PRAGMA_ONCE
@@ -1320,10 +1306,10 @@
 /* Define to 1 if platform lacks the declaration of {get,set}rlimit(). */
 #undef ACE_LACKS_RLIMIT_PROTOTYPE
 
-/* Platform lacks pthread_rwlockattr_setpshared(). */
+/* Define to 1 if system lacks pthread_rwlockattr_setpshared(). */
 #undef ACE_LACKS_RWLOCKATTR_PSHARED
 
-/* Platform lacks readers/writer locks. */
+/* Define to 1 if the system lacks the type `rwlock_t'. */
 #undef ACE_LACKS_RWLOCK_T
 
 /* Define to 1 if platform lacks sbrk(). */
@@ -1341,7 +1327,7 @@
 /* Define to 1 if platform lacks the <semaphore.h> header file. */
 #undef ACE_LACKS_SEMAPHORE_H
 
-/* Platform lacks struct sembuf (e.g., Win32 and VxWorks) */
+/* Define to 1 if the system lacks the type `struct sembuf'. */
 #undef ACE_LACKS_SEMBUF_T
 
 /* Define to 1 if platform lacks sendmsg(). */
@@ -1352,6 +1338,9 @@
 
 /* Define to 1 if platform lacks setegid(). */
 #undef ACE_LACKS_SETEGID
+
+/* Define to 1 if platform lacks setenv(). */
+#undef ACE_LACKS_SETENV
 
 /* Define to 1 if platform lacks seteuid(). */
 #undef ACE_LACKS_SETEUID
@@ -1398,7 +1387,7 @@
 /* Platform lacks "signed char" type (broken!) */
 #undef ACE_LACKS_SIGNED_CHAR
 
-/* Platform lacks signal sets (e.g., Chorus and Win32) */
+/* Define to 1 if the system lacks the type `sigset_t'. */
 #undef ACE_LACKS_SIGSET
 
 /* Define to 1 if `si_addr' is not a member of `siginfo_t'. */
@@ -1467,7 +1456,7 @@
 /* Define to 1 if platform lacks strrchr(). */
 #undef ACE_LACKS_STRRCHR
 
-/* Platform doesn't define struct strrecvfd. */
+/* Define to 1 if the system lacks the type `struct strrecvfd'. */
 #undef ACE_LACKS_STRRECVFD
 
 /* Define to 1 if platform lacks strspn(). */
@@ -1482,13 +1471,22 @@
 /* Define to 1 if platform lacks strtol(). */
 #undef ACE_LACKS_STRTOL
 
+/* Define to 1 if platform lacks strtoll(). */
+#undef ACE_LACKS_STRTOLL
+
+/* Define to 1 if platform lacks a declaration for strtoll() */
+#undef ACE_LACKS_STRTOLL_PROTOTYPE
+
 /* Define to 1 if platform lacks strtoul(). */
 #undef ACE_LACKS_STRTOUL
 
 /* Define to 1 if platform lacks strtoull(). */
 #undef ACE_LACKS_STRTOULL
 
-/* Platform lacks dirent structure. */
+/* Define to 1 if platform lacks a declaration for strtoull() */
+#undef ACE_LACKS_STRTOULL_PROTOTYPE
+
+/* Define to 1 if the system lacks the type `struct dirent'. */
 #undef ACE_LACKS_STRUCT_DIR
 
 /* Define to 1 if the system lacks the type 'suseconds_t'. */
@@ -1636,17 +1634,23 @@
 /* Define to 1 if platform lacks unlink(). */
 #undef ACE_LACKS_UNLINK
 
+/* Define to 1 if platform lacks unsetenv(). */
+#undef ACE_LACKS_UNSETENV
+
 /* Define to 1 if the system lacks the type 'useconds_t'. */
 #undef ACE_LACKS_USECONDS_T
 
 /* Define to 1 if platform lacks the <utime.h> header file. */
 #undef ACE_LACKS_UTIME_H
 
-/* Platform lacks struct utsname (e.g., Win32 and VxWorks) */
+/* Define to 1 if the system lacks the type `struct utsname'. */
 #undef ACE_LACKS_UTSNAME_T
 
 /* Define to 1 if the system lacks the type `u_long_long_t'. */
 #undef ACE_LACKS_U_LONGLONG_T
+
+/* Define to 1 if platform lacks vsnprintf(). */
+#undef ACE_LACKS_VSNPRINTF
 
 /* Define to 1 if platform lacks the <wchar.h> header file. */
 #undef ACE_LACKS_WCHAR_H
@@ -1714,11 +1718,20 @@
 /* Define to 1 if platform lacks wcstol(). */
 #undef ACE_LACKS_WCSTOL
 
+/* Define to 1 if platform lacks wcstoll(). */
+#undef ACE_LACKS_WCSTOLL
+
+/* Define to 1 if platform lacks a declaration for wcstoll() */
+#undef ACE_LACKS_WCSTOLL_PROTOTYPE
+
 /* Define to 1 if platform lacks wcstoul(). */
 #undef ACE_LACKS_WCSTOUL
 
 /* Define to 1 if platform lacks wcstoull(). */
 #undef ACE_LACKS_WCSTOULL
+
+/* Define to 1 if platform lacks a declaration for wcstoull() */
+#undef ACE_LACKS_WCSTOULL_PROTOTYPE
 
 /* Define to 1 if platform lacks the <wctype.h> header file. */
 #undef ACE_LACKS_WCTYPE_H
@@ -1841,6 +1854,12 @@
 /* Define to function that is equivalent to strncasecmp() */
 #undef ACE_STRNCASECMP_EQUIVALENT
 
+/* Define to function that is equivalent to strtoll() */
+#undef ACE_STRTOLL_EQUIVALENT
+
+/* Define to function that is equivalent to strtoull() */
+#undef ACE_STRTOULL_EQUIVALENT
+
 /* Compiler's template mechanism must use a pragma. This is used for AIX's C++
    compiler. */
 #undef ACE_TEMPLATES_REQUIRE_PRAGMA
@@ -1909,12 +1928,21 @@
 /* Define to function that is equivalent to wcsncasecmp() */
 #undef ACE_WCSNCASECMP_EQUIVALENT
 
+/* Define to function that is equivalent to wcstoll() */
+#undef ACE_WCSTOLL_EQUIVALENT
+
+/* Define to function that is equivalent to wcstoull() */
+#undef ACE_WCSTOULL_EQUIVALENT
+
 /* Configure for use on Win32 */
 #undef ACE_WIN32
 
 /* A parameter list indicating the version of WinSock (e.g., "1, 1" is version
    1.1). */
 #undef ACE_WSOCK_VERSION
+
+/* Define if building universal (internal helper macro) */
+#undef AC_APPLE_UNIVERSAL_BUILD
 
 /* Configure for use on AIX */
 #undef AIX
@@ -2048,6 +2076,10 @@
 /* Configure for use on Irix 6 */
 #undef IRIX6
 
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#undef LT_OBJDIR
+
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
 
@@ -2131,9 +2163,17 @@
 /* Configure for use on VxWorks */
 #undef VXWORKS
 
-/* Define to 1 if your processor stores words with the most significant byte
-   first (like Motorola and SPARC, unlike Intel and VAX). */
-#undef WORDS_BIGENDIAN
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
+#if defined AC_APPLE_UNIVERSAL_BUILD
+# if defined __BIG_ENDIAN__
+#  define WORDS_BIGENDIAN 1
+# endif
+#else
+# ifndef WORDS_BIGENDIAN
+#  undef WORDS_BIGENDIAN
+# endif
+#endif
 
 /* Define to 1 if the X Window System is missing or not being used. */
 #undef X_DISPLAY_MISSING

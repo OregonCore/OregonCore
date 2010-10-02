@@ -1,4 +1,4 @@
-// $Id: SOCK_Dgram_Mcast.cpp 82390 2008-07-23 08:13:52Z johnnyw $
+// $Id: SOCK_Dgram_Mcast.cpp 85421 2009-05-22 11:12:30Z johnnyw $
 
 #include "ace/SOCK_Dgram_Mcast.h"
 
@@ -13,7 +13,7 @@
 #endif
 
 #if defined (ACE_HAS_IPV6) && defined (ACE_WIN32)
-#include /**/ <Iphlpapi.h>
+#include /**/ <iphlpapi.h>
 #endif
 
 #if !defined (__ACE_INLINE__)
@@ -22,7 +22,7 @@
 
 ACE_RCSID (ace,
            SOCK_Dgram_Mcast,
-           "$Id: SOCK_Dgram_Mcast.cpp 82390 2008-07-23 08:13:52Z johnnyw $")
+           "$Id: SOCK_Dgram_Mcast.cpp 85421 2009-05-22 11:12:30Z johnnyw $")
 
 #include "ace/Log_Msg.h"
 
@@ -930,4 +930,3 @@ ACE_SOCK_Dgram_Mcast::clear_subs_list (void)
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

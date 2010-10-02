@@ -111,4 +111,3 @@ public:
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_TTY_IO_H */
-

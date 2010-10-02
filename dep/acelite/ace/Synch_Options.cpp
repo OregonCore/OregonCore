@@ -108,4 +108,3 @@ ACE_Synch_Options::arg (const void *a)
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

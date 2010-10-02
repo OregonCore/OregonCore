@@ -13,4 +13,3 @@
 #include "ace/config-sunos5.10.h"
 
 #endif /* ACE_CONFIG_H */
-

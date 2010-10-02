@@ -76,4 +76,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 
 #include /**/ "ace/post.h"
 #endif /* ACE_STATIC_OBJECT_LOCK_H */
-

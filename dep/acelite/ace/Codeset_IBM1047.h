@@ -125,4 +125,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 #include /**/ "ace/post.h"
 
 #endif /* ACE_CODESET_IMB1047_H */
-

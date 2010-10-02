@@ -41,4 +41,3 @@
 
 #include /**/ "ace/post.h"
 #endif /* ACE_GHS_COMMON_H */
-

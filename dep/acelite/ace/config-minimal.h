@@ -37,4 +37,3 @@
 
 #include /**/ "ace/post.h"
 #endif /* ACE_CONFIG_MINIMAL_H */
-

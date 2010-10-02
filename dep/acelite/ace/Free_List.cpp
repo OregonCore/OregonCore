@@ -161,4 +161,3 @@ ACE_Locked_Free_List<T, ACE_LOCK>::dealloc (size_t n)
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_FREE_LIST_CPP */
-

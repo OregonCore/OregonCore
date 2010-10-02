@@ -4,7 +4,7 @@
 /**
  *  @file   Recyclable.h
  *
- *  $Id: Recyclable.h 80826 2008-03-04 14:51:23Z wotte $
+ *  $Id: Recyclable.h 82723 2008-09-16 09:35:44Z johnnyw $
  *
  *  @author Doug Schmidt
  */
@@ -63,8 +63,6 @@ protected:
   /// Constructor.
   ACE_Recyclable (ACE_Recyclable_State initial_state);
 
-protected:
-
   /// Our state.
   ACE_Recyclable_State recycle_state_;
 };
@@ -77,4 +75,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 
 #include /**/ "ace/post.h"
 #endif /*ACE_RECYCLABLE_STATE_H*/
-

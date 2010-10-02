@@ -4,7 +4,7 @@
 /**
  *  @file    Guard_T.h
  *
- *  $Id: Guard_T.h 82508 2008-08-05 13:52:48Z johnnyw $
+ *  $Id: Guard_T.h 83306 2008-10-17 12:19:53Z johnnyw $
  *
  *   Moved from Synch.h.
  *
@@ -32,7 +32,7 @@ ACE_BEGIN_VERSIONED_NAMESPACE_DECL
  *
  * @brief This data structure is meant to be used within a method or
  * function...  It performs automatic aquisition and release of
- * a parameterized synchronization object <ACE_LOCK>.
+ * a parameterized synchronization object ACE_LOCK.
  *
  * The <ACE_LOCK> class given as an actual parameter must provide at
  * the very least the <acquire>, <tryacquire>, <release>, and
@@ -52,8 +52,8 @@ public:
   ACE_Guard (ACE_LOCK &l, bool block);
 
   /// Initialise the guard without implicitly acquiring the lock. The
-  /// <become_owner> parameter indicates whether the guard should release
-  /// the lock implicitly on destruction. The <block> parameter is
+  /// @a become_owner parameter indicates whether the guard should release
+  /// the lock implicitly on destruction. The @a block parameter is
   /// ignored and is used here to disambiguate with the preceding
   /// constructor.
   ACE_Guard (ACE_LOCK &l, bool block, int become_owner);
@@ -77,9 +77,9 @@ public:
   void disown (void);
 
   // = Utility methods.
-  /// 1 if locked, 0 if couldn't acquire the lock
+  /// true if locked, false if couldn't acquire the lock
   /// (errno will contain the reason for this).
-  int locked (void) const;
+  bool locked (void) const;
 
   /// Explicitly remove the lock.
   int remove (void);
@@ -363,4 +363,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 
 #include /**/ "ace/post.h"
 #endif /* ACE_GUARD_T_H */
-

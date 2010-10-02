@@ -383,4 +383,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 #include "ace/ace_wchar.inl"
 
 #endif /* ACE_WCHAR_H */
-

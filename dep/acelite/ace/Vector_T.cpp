@@ -40,7 +40,7 @@ void ACE_Vector<T, DEFAULT_SIZE>::push_back (const T& elem)
     }
   else
     ACE_Array<T>::size (length_ + 1);
-
+  
   ++length_;
   (*this)[length_-1] = elem;
 }
@@ -152,4 +152,3 @@ ACE_Vector_Iterator<T, DEFAULT_SIZE>::next (T *&item)
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_VECTOR_T_CPP */
-

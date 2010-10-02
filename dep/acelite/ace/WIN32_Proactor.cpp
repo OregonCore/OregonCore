@@ -802,4 +802,3 @@ ACE_WIN32_Wakeup_Completion::complete (size_t       /* bytes_transferred */,
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_WIN32 */
-

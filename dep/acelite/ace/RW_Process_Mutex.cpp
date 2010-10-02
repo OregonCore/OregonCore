@@ -52,4 +52,3 @@ ACE_RW_Process_Mutex::dump (void) const
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

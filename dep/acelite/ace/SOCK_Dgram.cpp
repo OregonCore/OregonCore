@@ -16,12 +16,12 @@
 #endif /* __ACE_INLINE__ */
 
 #if defined (ACE_HAS_IPV6) && defined (ACE_WIN32)
-#include /**/ <Iphlpapi.h>
+#include /**/ <iphlpapi.h>
 #endif
 
 ACE_RCSID (ace,
            SOCK_Dgram,
-           "$Id: SOCK_Dgram.cpp 82559 2008-08-07 20:23:07Z parsons $")
+           "$Id: SOCK_Dgram.cpp 85421 2009-05-22 11:12:30Z johnnyw $")
 
 // This is a workaround for platforms with non-standard
 // definitions of the ip_mreq structure
@@ -60,13 +60,12 @@ ACE_SOCK_Dgram::recv (iovec *io_vec,
 
   // Check the status of the current socket to make sure there's data
   // to recv (or time out).
-  int select_width;
 #  if defined (ACE_WIN32)
   // This arg is ignored on Windows and causes pointer truncation
   // warnings on 64-bit compiles.
-  select_width = 0;
+  int select_width = 0;
 #  else
-  select_width = int (this->get_handle ()) + 1;
+  int select_width = int (this->get_handle ()) + 1;
 #  endif /* ACE_WIN32 */
   switch (ACE_OS::select (select_width,
                           handle_set,
@@ -459,13 +458,12 @@ ACE_SOCK_Dgram::recv (void *buf,
   handle_set.set_bit (this->get_handle ());
 
   // Check the status of the current socket.
-  int select_width;
 #if defined (ACE_WIN32)
   // This arg is ignored on Windows and causes pointer truncation
   // warnings on 64-bit compiles.
-  select_width = 0;
+  int select_width = 0;
 #else
-  select_width = int (this->get_handle ()) + 1;
+  int select_width = int (this->get_handle ()) + 1;
 #endif /* ACE_WIN32 */
   switch (ACE_OS::select (select_width,
                           handle_set,
@@ -498,13 +496,12 @@ ACE_SOCK_Dgram::send (const void *buf,
   handle_set.set_bit (this->get_handle ());
 
   // Check the status of the current socket.
-  int select_width;
 #if defined (ACE_WIN32)
   // This arg is ignored on Windows and causes pointer truncation
   // warnings on 64-bit compiles.
-  select_width = 0;
+  int select_width = 0;
 #else
-  select_width = int (this->get_handle ()) + 1;
+  int select_width = int (this->get_handle ()) + 1;
 #endif /* ACE_WIN32 */
   switch (ACE_OS::select (select_width,
                           0,
@@ -748,4 +745,3 @@ ACE_SOCK_Dgram::make_multicast_ifaddr6 (ipv6_mreq *ret_mreq,
 #endif /* __linux__ && ACE_HAS_IPV6 */
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

@@ -18,4 +18,3 @@
 
 #include /**/ "ace/post.h"
 #endif //CONFIG_VISUALAGE_H
-

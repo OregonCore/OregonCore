@@ -68,4 +68,3 @@ ACE_XTI_ATM_Mcast::add_leaf (ACE_TLI_Stream &current_stream,
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_HAS_XTI_ATM */
-

@@ -1,4 +1,4 @@
-// $Id: ATM_Addr.cpp 80826 2008-03-04 14:51:23Z wotte $
+// $Id: ATM_Addr.cpp 84565 2009-02-23 08:20:39Z johnnyw $
 
 // Defines the Internet domain address family address format.
 
@@ -15,7 +15,7 @@
 #include "ace/ATM_Addr.inl"
 #endif /* __ACE_INLINE__ */
 
-ACE_RCSID(ace, ATM_Addr, "$Id: ATM_Addr.cpp 80826 2008-03-04 14:51:23Z wotte $")
+ACE_RCSID(ace, ATM_Addr, "$Id: ATM_Addr.cpp 84565 2009-02-23 08:20:39Z johnnyw $")
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -338,7 +338,7 @@ ACE_ATM_Addr::string_to_addr (const ACE_TCHAR sap[])
    }
 
    if (WSALookupServiceEnd (hLookup) == SOCKET_ERROR) {
-     ACE_OS::printf ("Error : WSALookupServiceEnd failed! %d \n",
+     ACE_OS::printf ("Error : WSALookupServiceEnd failed! %d\n",
                      ::WSAGetLastError ());
       errno = EINVAL;
       return -1;
@@ -520,4 +520,3 @@ ACE_ATM_Addr::dump (void) const
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_HAS_ATM */
-

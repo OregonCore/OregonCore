@@ -174,4 +174,3 @@ ACE_Read_Buffer::rec_read (int term, int search, int replace)
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

@@ -1,4 +1,4 @@
-// $Id: Barrier.cpp 80826 2008-03-04 14:51:23Z wotte $
+// $Id: Barrier.cpp 84282 2009-01-30 15:04:29Z msmit $
 
 #include "ace/Barrier.h"
 
@@ -17,7 +17,7 @@
 
 ACE_RCSID (ace,
            Barrier,
-           "$Id: Barrier.cpp 80826 2008-03-04 14:51:23Z wotte $")
+           "$Id: Barrier.cpp 84282 2009-01-30 15:04:29Z msmit $")
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -31,8 +31,7 @@ ACE_Sub_Barrier::dump (void) const
 
   ACE_DEBUG ((LM_DEBUG, ACE_BEGIN_DUMP, this));
   this->barrier_finished_.dump ();
-  ACE_DEBUG ((LM_DEBUG, ACE_TEXT ("running_threads_ = %d"), this->running_threads_));
-  ACE_DEBUG ((LM_DEBUG, ACE_TEXT ("\n")));
+  ACE_DEBUG ((LM_DEBUG, ACE_TEXT ("running_threads_ = %d\n"), this->running_threads_));
   ACE_DEBUG ((LM_DEBUG, ACE_END_DUMP));
 #endif /* ACE_HAS_DUMP */
 }
@@ -195,4 +194,3 @@ ACE_Process_Barrier::dump (void) const
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_HAS_THREADS */
-

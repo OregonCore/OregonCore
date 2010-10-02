@@ -323,4 +323,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 #endif /* ACE_WIN32 */
 #include /**/ "ace/post.h"
 #endif /* ACE_PROACTOR_H */
-

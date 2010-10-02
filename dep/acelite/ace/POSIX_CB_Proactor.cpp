@@ -1,4 +1,4 @@
-// $Id: POSIX_CB_Proactor.cpp 80826 2008-03-04 14:51:23Z wotte $
+// $Id: POSIX_CB_Proactor.cpp 84455 2009-02-13 13:31:02Z johnnyw $
 
 #include "ace/POSIX_CB_Proactor.h"
 
@@ -11,7 +11,7 @@
 
 ACE_RCSID (ace,
            POSIX_CB_Proactor,
-           "$Id: POSIX_CB_Proactor.cpp 80826 2008-03-04 14:51:23Z wotte $")
+           "$Id: POSIX_CB_Proactor.cpp 84455 2009-02-13 13:31:02Z johnnyw $")
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -135,9 +135,9 @@ ACE_POSIX_CB_Proactor::handle_events_i (u_long milli_seconds)
       if (lerror != ETIME &&   // timeout
           lerror != EINTR )    // interrupted system call
         ACE_ERROR ((LM_ERROR,
-                    "%N:%l:(%P | %t)::%p\n",
-                    "ACE_POSIX_CB_Proactor::handle_events:"
-                    "semaphore acquire failed"
+                    ACE_TEXT("%N:%l:(%P | %t)::%p\n"),
+                    ACE_TEXT("ACE_POSIX_CB_Proactor::handle_events:")
+                    ACE_TEXT("semaphore acquire failed")
                   ));
     }
 
@@ -183,4 +183,3 @@ ACE_POSIX_CB_Proactor::handle_events_i (u_long milli_seconds)
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_HAS_AIO_CALLS && !ACE_HAS_BROKEN_SIGEVENT_STRUCT */
-

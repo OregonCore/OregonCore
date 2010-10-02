@@ -1,8 +1,8 @@
-// $Id: OS_NS_stropts.cpp 80826 2008-03-04 14:51:23Z wotte $
+// $Id: OS_NS_stropts.cpp 85460 2009-05-29 13:38:50Z msmit $
 
 #include "ace/OS_NS_stropts.h"
 
-ACE_RCSID(ace, OS_NS_stropts, "$Id: OS_NS_stropts.cpp 80826 2008-03-04 14:51:23Z wotte $")
+ACE_RCSID(ace, OS_NS_stropts, "$Id: OS_NS_stropts.cpp 85460 2009-05-29 13:38:50Z msmit $")
 
 #if !defined (ACE_HAS_INLINED_OSCALLS)
 # include "ace/OS_NS_stropts.inl"
@@ -47,7 +47,6 @@ ACE_OS::ioctl (ACE_HANDLE socket,
 # endif /* ACE_HAS_WINSOCK2 */
 }
 
-#if !(defined (ACE_HAS_WINCE) && (UNDER_CE < 500))
 int
 ACE_OS::ioctl (ACE_HANDLE socket,
                unsigned long io_control_code,
@@ -190,7 +189,5 @@ ACE_OS::ioctl (ACE_HANDLE socket,
   ACE_NOTSUP_RETURN (-1);
 # endif /* ACE_HAS_WINSOCK2 */
 }
-#endif /* !(defined (ACE_HAS_WINCE) && (UNDER_CE < 500)) */
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

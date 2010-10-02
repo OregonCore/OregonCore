@@ -20,4 +20,3 @@ ACE_Intrusive_Auto_Ptr<X>::~ACE_Intrusive_Auto_Ptr (void)
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif  /* !ACE_INTRUSIVE_AUTO_PTR_CPP */
-

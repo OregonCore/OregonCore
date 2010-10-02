@@ -243,4 +243,3 @@ ACE_OS::open (const wchar_t *filename,
 #endif /* ACE_HAS_WCHAR */
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

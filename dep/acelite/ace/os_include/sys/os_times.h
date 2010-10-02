@@ -42,4 +42,3 @@ extern "C"
 
 #include /**/ "ace/post.h"
 #endif /* ACE_OS_INCLUDE_SYS_OS_TIMES_H */
-

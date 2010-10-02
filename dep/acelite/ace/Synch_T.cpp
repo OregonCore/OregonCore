@@ -20,4 +20,3 @@
 #include "ace/Condition_T.cpp"
 
 #endif /* ACE_SYNCH_T_CPP */
-

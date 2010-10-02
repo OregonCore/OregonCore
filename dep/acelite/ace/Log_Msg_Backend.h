@@ -86,4 +86,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 
 #include /**/ "ace/post.h"
 #endif /* ACE_LOG_MSG_BACKEND_H */
-

@@ -138,4 +138,3 @@ METRICS_PTR->report_##NAME##_stop(); \
 #endif /* ACE_ENABLE_TIMEPROBES && ACE_COMPILE_TIMEPROBES */
 
 #endif /* ACE_METRICS_CACHE_H */
-

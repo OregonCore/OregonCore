@@ -1,4 +1,4 @@
-// $Id: Timer_Hash_T.cpp 80826 2008-03-04 14:51:23Z wotte $
+// $Id: Timer_Hash_T.cpp 89254 2010-02-25 22:10:39Z cleeland $
 
 #ifndef ACE_TIMER_HASH_T_CPP
 #define ACE_TIMER_HASH_T_CPP
@@ -15,7 +15,7 @@
 
 ACE_RCSID(ace,
           Timer_Hash_T,
-          "$Id: Timer_Hash_T.cpp 80826 2008-03-04 14:51:23Z wotte $")
+          "$Id: Timer_Hash_T.cpp 89254 2010-02-25 22:10:39Z cleeland $")
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -823,10 +823,7 @@ ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::expire (const ACE_Time_Value 
             {
               // Make sure that we skip past values that have already
               // "expired".
-              do
-                expired->set_timer_value (expired->get_timer_value ()
-                                          + expired->get_interval ());
-              while (expired->get_timer_value () <= cur_time);
+              this->recompute_next_abs_interval_time (expired, cur_time);
 
               // Since this is an interval timer, we need to
               // reschedule it.
@@ -871,4 +868,3 @@ ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::expire (const ACE_Time_Value 
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_TIMER_HASH_T_CPP */
-

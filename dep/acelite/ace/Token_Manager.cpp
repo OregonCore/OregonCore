@@ -3,6 +3,7 @@
 #if defined (ACE_HAS_TOKENS_LIBRARY)
 
 #include "ace/Object_Manager.h"
+#include "ace/os_include/os_typeinfo.h"
 
 #if !defined (__ACE_INLINE__)
 #include "ace/Token_Manager.inl"
@@ -10,7 +11,7 @@
 
 ACE_RCSID (ace,
            Token_Manager,
-           "$Id: Token_Manager.cpp 80826 2008-03-04 14:51:23Z wotte $")
+           "$Id: Token_Manager.cpp 84179 2009-01-16 07:26:45Z johnnyw $")
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -61,7 +62,7 @@ ACE_Token_Manager::instance (void)
                           ACE_Token_Manager,
                           0);
           // Register for destruction with ACE_Object_Manager.
-          ACE_Object_Manager::at_exit (token_manager_);
+          ACE_Object_Manager::at_exit (token_manager_, 0, typeid (token_manager_).name ());
         }
     }
 
@@ -271,4 +272,3 @@ ACE_Token_Manager::dump (void) const
 ACE_END_VERSIONED_NAMESPACE_DECL
 
 #endif /* ACE_HAS_TOKENS_LIBRARY */
-

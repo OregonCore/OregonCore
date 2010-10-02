@@ -1,4 +1,4 @@
-// $Id: Service_Object.cpp 81826 2008-06-02 15:29:53Z schmidt $
+// $Id: Service_Object.cpp 90077 2010-05-05 16:19:16Z cbeaulac $
 
 #include "ace/config-all.h"
 
@@ -19,14 +19,14 @@
 
 ACE_RCSID (ace,
            Service_Object,
-           "$Id: Service_Object.cpp 81826 2008-06-02 15:29:53Z schmidt $")
+           "$Id: Service_Object.cpp 90077 2010-05-05 16:19:16Z cbeaulac $")
 
-  ACE_BEGIN_VERSIONED_NAMESPACE_DECL
+ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
 ACE_ALLOC_HOOK_DEFINE(ACE_Service_Object)
-  ACE_ALLOC_HOOK_DEFINE(ACE_Service_Type)
+ACE_ALLOC_HOOK_DEFINE(ACE_Service_Type)
 
-  void
+void
 ACE_Service_Type::dump (void) const
 {
 #if defined (ACE_HAS_DUMP)
@@ -111,6 +111,9 @@ ACE_Service_Type::fini (void)
 
   int ret = this->type_->fini ();
 
+  // Ensure type is 0 to prevent invalid access after call to fini.
+  this->type_ = 0;
+
   // Ensure that closing the DLL is done after type_->fini() as it may
   // require access to the code for the service object destructor,
   // which resides in the DLL
@@ -178,4 +181,3 @@ ACE_Dynamic_Svc_Registrar::ACE_Dynamic_Svc_Registrar (const ACE_TCHAR* alloc_nam
 #endif
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

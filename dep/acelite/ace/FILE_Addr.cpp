@@ -122,4 +122,3 @@ ACE_FILE_Addr::dump (void) const
 #endif /* ACE_HAS_DUMP */
 }
 ACE_END_VERSIONED_NAMESPACE_DECL
-

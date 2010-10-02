@@ -76,4 +76,3 @@ ACE_Basic_Stats::dump_results (const ACE_TCHAR *msg, ACE_UINT32 sf) const
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

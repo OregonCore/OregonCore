@@ -86,4 +86,3 @@ ACE_Shared_Memory_SV::free (void *p)
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

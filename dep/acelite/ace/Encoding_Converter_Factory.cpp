@@ -72,4 +72,3 @@ ACE_Encoding_Converter_Factory::create (
 
 ACE_END_VERSIONED_NAMESPACE_DECL
 #endif /* ACE_USES_WCHAR */
-

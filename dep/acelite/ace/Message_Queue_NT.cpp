@@ -1,5 +1,6 @@
-// $Id: Message_Queue_NT.cpp 80826 2008-03-04 14:51:23Z wotte $
+// $Id: Message_Queue_NT.cpp 88560 2010-01-15 05:02:05Z schmidt $
 
+#include "ace/Message_Queue.h"
 #include "ace/Message_Queue_NT.h"
 #include "ace/Log_Msg.h"
 
@@ -9,8 +10,7 @@
 
 ACE_RCSID (ace,
            Message_Queue_NT,
-           "$Id: Message_Queue_NT.cpp 80826 2008-03-04 14:51:23Z wotte $")
-
+           "$Id: Message_Queue_NT.cpp 88560 2010-01-15 05:02:05Z schmidt $")
 
 ACE_BEGIN_VERSIONED_NAMESPACE_DECL
 
@@ -235,4 +235,3 @@ ACE_Message_Queue_NT::dump (void) const
 #endif /* ACE_HAS_WIN32_OVERLAPPED_IO */
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

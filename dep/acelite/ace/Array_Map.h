@@ -4,7 +4,7 @@
 /**
  * @file    Array_Map.h
  *
- * $Id: Array_Map.h 80826 2008-03-04 14:51:23Z wotte $
+ * $Id: Array_Map.h 84136 2009-01-12 11:01:17Z johnnyw $
  *
  * Light weight array-based map with fast iteration but linear
  * (i.e. O(n)) search times.  STL-style interface is exposed.
@@ -41,7 +41,7 @@ ACE_BEGIN_VERSIONED_NAMESPACE_DECL
  *        (i.e. O(n)) search times.
  *
  * Map implementation that focuses on small footprint and fast
- * iteration.  Search times are, however, linear (O(n)) meaning that
+ * iteration. Search times are, however, linear (O(n)) meaning that
  * this map isn't suitable for large data sets that will be searched
  * in performance critical areas of code.  Iteration over large data
  * sets, however, is faster than linked list-based maps, for example,
@@ -298,4 +298,3 @@ ACE_END_VERSIONED_NAMESPACE_DECL
 #include /**/ "ace/post.h"
 
 #endif  /* ACE_ARRAY_MAP_H */
-

@@ -94,4 +94,3 @@ ACE_Thread_Control::exit (ACE_THR_FUNC_RETURN exit_status, int do_thr_exit)
 }
 
 ACE_END_VERSIONED_NAMESPACE_DECL
-

@@ -63,4 +63,3 @@
 
 #include /**/ "ace/post.h"
 #endif /* ACE_SYNCH_H */
-

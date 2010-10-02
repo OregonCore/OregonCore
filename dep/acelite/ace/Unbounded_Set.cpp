@@ -16,4 +16,3 @@
 #endif /* __ACE_INLINE__ */
 
 #endif /* ACE_UNBOUNDED_SET_CPP */
-
