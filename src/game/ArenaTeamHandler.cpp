@@ -102,7 +102,7 @@ void WorldSession::HandleArenaTeamAddMemberOpcode(WorldPacket & recv_data)
 
     if (player->getLevel() < sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL))
     {
-        SendArenaTeamCommandResult(ERR_ARENA_TEAM_CREATE_S, "", player->GetName(), ERR_ARENA_TEAM_PLAYER_TO_LOW);
+        SendArenaTeamCommandResult(ERR_ARENA_TEAM_CREATE_S, "", player->GetName(), ERR_ARENA_TEAM_TARGET_TOO_LOW_S);
         return;
     }
 
@@ -137,7 +137,7 @@ void WorldSession::HandleArenaTeamAddMemberOpcode(WorldPacket & recv_data)
 
     if (arenateam->GetMembersSize() >= arenateam->GetType() * 2)
     {
-        SendArenaTeamCommandResult(ERR_ARENA_TEAM_CREATE_S, arenateam->GetName(), "", ERR_ARENA_TEAM_FULL);
+        SendArenaTeamCommandResult(ERR_ARENA_TEAM_CREATE_S, arenateam->GetName(), "", ERR_ARENA_TEAM_TOO_MANY_MEMBERS_S);
         return;
     }
 
@@ -183,9 +183,7 @@ void WorldSession::HandleArenaTeamInviteAcceptOpcode(WorldPacket & /*recv_data*/
     }
 
     // event
-    WorldPacket data;
-    BuildArenaTeamEventPacket(&data, ERR_ARENA_TEAM_JOIN_SS, 2, _player->GetName(), at->GetName(), "");
-    at->BroadcastPacket(&data);
+    at->BroadcastEvent(ERR_ARENA_TEAM_JOIN_SS, _player->GetGUID(), _player->GetName(), at->GetName().c_str());
 }
 
 void WorldSession::HandleArenaTeamInviteDeclineOpcode(WorldPacket & /*recv_data*/)
@@ -224,9 +222,7 @@ void WorldSession::HandleArenaTeamLeaveOpcode(WorldPacket & recv_data)
     at->DelMember(_player->GetGUID());
 
     // event
-    WorldPacket data;
-    BuildArenaTeamEventPacket(&data, ERR_ARENA_TEAM_LEAVE_SS, 2, _player->GetName(), at->GetName(), "");
-    at->BroadcastPacket(&data);
+    at->BroadcastEvent(ERR_ARENA_TEAM_LEAVE_SS, _player->GetGUID(), _player->GetName(), at->GetName().c_str());
 
     // send you are no longer member of team
     SendArenaTeamCommandResult(ERR_ARENA_TEAM_QUIT_S, at->GetName(), "", 0);
@@ -298,9 +294,7 @@ void WorldSession::HandleArenaTeamRemoveFromTeamOpcode(WorldPacket & recv_data)
     at->DelMember(member->guid);
 
     // event
-    WorldPacket data;
-    BuildArenaTeamEventPacket(&data, ERR_ARENA_TEAM_REMOVE_SSS, 3, name, at->GetName(), _player->GetName());
-    at->BroadcastPacket(&data);
+    at->BroadcastEvent(ERR_ARENA_TEAM_REMOVE_SSS, name.c_str(), at->GetName().c_str(), _player->GetName());
 }
 
 void WorldSession::HandleArenaTeamPromoteToCaptainOpcode(WorldPacket & recv_data)
@@ -339,9 +333,7 @@ void WorldSession::HandleArenaTeamPromoteToCaptainOpcode(WorldPacket & recv_data
     at->SetCaptain(member->guid);
 
     // event
-    WorldPacket data;
-    BuildArenaTeamEventPacket(&data, ERR_ARENA_TEAM_LEADER_CHANGED_SSS, 3, _player->GetName(), name, at->GetName());
-    at->BroadcastPacket(&data);
+    at->BroadcastEvent(ERR_ARENA_TEAM_LEADER_CHANGED_SSS, _player->GetName(), name.c_str(), at->GetName().c_str());
 }
 
 void WorldSession::SendArenaTeamCommandResult(uint32 team_action, const std::string& team, const std::string& player, uint32 error_id)
@@ -352,31 +344,6 @@ void WorldSession::SendArenaTeamCommandResult(uint32 team_action, const std::str
     data << player;
     data << uint32(error_id);
     SendPacket(&data);
-}
-
-void WorldSession::BuildArenaTeamEventPacket(WorldPacket *data, uint8 eventid, uint8 str_count, const std::string& str1, const std::string& str2, const std::string& str3)
-{
-    data->Initialize(SMSG_ARENA_TEAM_EVENT, 1+1+1);
-    *data << eventid;
-    *data << str_count;
-    switch(str_count)
-    {
-        case 1:
-            *data << str1;
-            break;
-        case 2:
-            *data << str1;
-            *data << str2;
-            break;
-        case 3:
-            *data << str1;
-            *data << str2;
-            *data << str3;
-            break;
-        default:
-            sLog.outError("Unhandled str_count %u in SendArenaTeamEvent()", str_count);
-            return;
-    }
 }
 
 void WorldSession::SendNotInArenaTeamPacket(uint8 type)

@@ -26,7 +26,7 @@ enum ArenaTeamCommandTypes
     ERR_ARENA_TEAM_CREATE_S                 = 0x00,
     ERR_ARENA_TEAM_INVITE_SS                = 0x01,
     ERR_ARENA_TEAM_QUIT_S                   = 0x03,
-    ERR_ARENA_TEAM_FOUNDER_S                = 0x0C          // need check, probably wrong...
+    ERR_ARENA_TEAM_FOUNDER_S                = 0x0E
 };
 
 enum ArenaTeamCommandErrors
@@ -44,8 +44,9 @@ enum ArenaTeamCommandErrors
     ERR_ARENA_TEAM_PLAYER_NOT_IN_TEAM_SS    = 0x0A,
     ERR_ARENA_TEAM_PLAYER_NOT_FOUND_S       = 0x0B,
     ERR_ARENA_TEAM_NOT_ALLIED               = 0x0C,
-    ERR_ARENA_TEAM_PLAYER_TO_LOW            = 0x15,
-    ERR_ARENA_TEAM_FULL                     = 0x16
+    ERR_ARENA_TEAM_IGNORING_YOU_S           = 0x13,
+    ERR_ARENA_TEAM_TARGET_TOO_LOW_S         = 0x15,
+    ERR_ARENA_TEAM_TOO_MANY_MEMBERS_S       = 0x16,
 };
 
 enum ArenaTeamEvents
@@ -118,7 +119,7 @@ class ArenaTeam
         ArenaTeam();
         ~ArenaTeam();
 
-        bool Create(uint64 captainGuid, uint32 type, std::string ArenaTeamName);
+        bool Create(uint64 captainGuid, uint32 type, std::string arenaTeamName);
         void Disband(WorldSession *session);
 
         typedef std::list<ArenaTeamMember> MemberList;
@@ -140,10 +141,7 @@ class ArenaTeam
         uint32 GetBackgroundColor() const { return m_BackgroundColor; }
 
         void SetCaptain(const uint64& guid);
-        bool AddMember(const uint64& PlayerGuid);
-
-        // Shouldn't be const uint64& ed, because than can reference guid from members on Disband
-        // and this method removes given record from list. So invalid reference can happen.
+        bool AddMember(const uint64& playerGuid);
         void DelMember(uint64 guid);
 
         void SetEmblem(uint32 backgroundColor, uint32 emblemStyle, uint32 emblemColor, uint32 borderStyle, uint32 borderColor);
@@ -181,6 +179,12 @@ class ArenaTeam
         void SaveToDB();
 
         void BroadcastPacket(WorldPacket *packet);
+
+        void BroadcastEvent(ArenaTeamEvents event, uint64 guid, char const* str1 = NULL, char const* str2 = NULL, char const* str3 = NULL);
+        void BroadcastEvent(ArenaTeamEvents event, char const* str1 = NULL, char const* str2 = NULL, char const* str3 = NULL)
+        {
+            BroadcastEvent(event, 0, str1, str2, str3);
+        }
 
         void Roster(WorldSession *session);
         void Query(WorldSession *session);
