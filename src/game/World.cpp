@@ -1075,7 +1075,6 @@ void World::LoadConfigSettings(bool reload)
     m_configs[CONFIG_MIN_LOG_UPDATE] = sConfig.GetIntDefault("MinRecordUpdateTimeDiff", 10);
     m_configs[CONFIG_NUMTHREADS] = sConfig.GetIntDefault("MapUpdate.Threads",1);
     m_configs[CONFIG_DUEL_MOD] = sConfig.GetBoolDefault("DuelMod.Enable", false);
-    m_configs[CONFIG_DUEL_FULL_POWER] = sConfig.GetBoolDefault("DuelMod.PowerReset", false);
     m_configs[CONFIG_DUEL_CD_RESET] = sConfig.GetBoolDefault("DuelMod.Cooldowns", false);
 
     std::string forbiddenmaps = sConfig.GetStringDefault("ForbiddenMaps", "");

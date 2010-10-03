@@ -1,7 +1,7 @@
 ##########################################
 # Oregon Core world configuration file #
 ##########################################
-ConfVersion=2010081701
+ConfVersion=2010100301
 # Note to devs, line breaks should be at column 80
 ###############################################################################
 # CONNECTIONS AND DIRECTORIES
@@ -1910,11 +1910,6 @@ SOAP.Port = 7878
 #       Default: 0 (Disabled)
 #                1 - Enabled
 #
-#   DuelMod.PowerReset
-#       Makes the players HP & Mana reset before each duel.
-#       Default: 0 (Disabled)
-#                1 - Enabled
-#
 #   DuelMod.Cooldowns
 #       Makes the players arena cooldowns reset before each duel.
 #       Default: 0 (Disabled)
@@ -1938,7 +1933,6 @@ RecordUpdateTimeDiffInterval = 60000
 MinRecordUpdateTimeDiff = 10
 PlayerStart.String = ""
 DuelMod.Enable = 0
-DuelMod.PowerReset = 0
 DuelMod.Cooldowns = 0
 
 ###############################################################################

@@ -128,13 +128,13 @@ void WorldSession::SendUpdateTrade()
 
     WorldPacket data(SMSG_TRADE_STATUS_EXTENDED, (100));    // guess size
     data << (uint8) 1;                                     // can be different (only seen 0 and 1)
-    data << (uint32) 0;                                     // added in 2.4.0, this value must be equal to value from TRADE_STATUS_OPEN_WINDOW status packet (different value for different players to block multiple trades?)
-    data << (uint32) TRADE_SLOT_COUNT;                      // trade slots count/number?, = next field in most cases
-    data << (uint32) TRADE_SLOT_COUNT;                      // trade slots count/number?, = prev field in most cases
+    data << uint32(0);                                      // added in 2.4.0, this value must be equal to value from TRADE_STATUS_OPEN_WINDOW status packet (different value for different players to block multiple trades?)
+    data << uint32(TRADE_SLOT_COUNT);                       // trade slots count/number?, = next field in most cases
+    data << uint32(TRADE_SLOT_COUNT);                       // trade slots count/number?, = prev field in most cases
     data << (uint32) _player->pTrader->tradeGold;           // trader gold
     data << (uint32) 0;                                     // spell casted on lowest slot item
 
-    for (uint8 i = 0; i < TRADE_SLOT_COUNT; i++)
+    for (uint8 i = 0; i < TRADE_SLOT_COUNT; ++i)
     {
         item = (_player->pTrader->tradeItems[i] != NULL_SLOT ? _player->pTrader->GetItemByPos(_player->pTrader->tradeItems[i]) : NULL);
 
@@ -205,6 +205,7 @@ void WorldSession::moveItems(Item* myItems[], Item* hisItems[])
                 // store
                 _player->pTrader->MoveItemToInventory(traderDst, myItems[i], true, true);
             }
+
             if (hisItems[i])
             {
                 // logging
@@ -278,7 +279,7 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& /*recvPacket*/)
     }
 
     // not accept if some items now can't be trade (cheating)
-    for (int i=0; i<TRADE_SLOT_TRADED_COUNT; i++)
+    for (int i = 0; i < TRADE_SLOT_TRADED_COUNT; ++i)
     {
         if (_player->tradeItems[i] != NULL_SLOT)
         {
@@ -361,7 +362,7 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& /*recvPacket*/)
         }
 
         // execute trade: 1. remove
-        for (int i=0; i<TRADE_SLOT_TRADED_COUNT; i++)
+        for(int i = 0; i < TRADE_SLOT_TRADED_COUNT; ++i)
         {
             if (myItems[i])
             {
@@ -453,16 +454,17 @@ void WorldSession::SendCancelTrade()
 void WorldSession::HandleCancelTradeOpcode(WorldPacket& /*recvPacket*/)
 {
     // sended also after LOGOUT COMPLETE
-    if (_player)                                             // needed because STATUS_AUTHED
+    if (_player)                                            // needed because STATUS_LOGGEDIN_OR_RECENTLY_LOGGOUT
         _player->TradeCancel(true);
 }
 
 void WorldSession::HandleInitiateTradeOpcode(WorldPacket& recvPacket)
 {
+    uint64 ID;
+    recvPacket >> ID;
+
     if (GetPlayer()->pTrader)
         return;
-
-    uint64 ID;
 
     if (!GetPlayer()->isAlive())
     {
@@ -487,8 +489,6 @@ void WorldSession::HandleInitiateTradeOpcode(WorldPacket& recvPacket)
         SendTradeStatus(TRADE_STATUS_TARGET_TO_FAR);
         return;
     }
-
-    recvPacket >> ID;
 
     Player* pOther = ObjectAccessor::FindPlayer(ID);
 
@@ -558,12 +558,11 @@ void WorldSession::HandleInitiateTradeOpcode(WorldPacket& recvPacket)
 
 void WorldSession::HandleSetTradeGoldOpcode(WorldPacket& recvPacket)
 {
+    uint32 gold;
+    recvPacket >> gold;
+
     if (!_player->pTrader)
         return;
-
-    uint32 gold;
-
-    recvPacket >> gold;
 
     // gold can be incorrect, but this is checked at trade finished.
     _player->tradeGold = gold;
@@ -573,9 +572,6 @@ void WorldSession::HandleSetTradeGoldOpcode(WorldPacket& recvPacket)
 
 void WorldSession::HandleSetTradeItemOpcode(WorldPacket& recvPacket)
 {
-    if (!_player->pTrader)
-        return;
-
     // send update
     uint8 tradeSlot;
     uint8 bag;
@@ -584,6 +580,9 @@ void WorldSession::HandleSetTradeItemOpcode(WorldPacket& recvPacket)
     recvPacket >> tradeSlot;
     recvPacket >> bag;
     recvPacket >> slot;
+
+    if (!_player->pTrader)
+        return;
 
     // invalid slot number
     if (tradeSlot >= TRADE_SLOT_COUNT)
@@ -620,11 +619,11 @@ void WorldSession::HandleSetTradeItemOpcode(WorldPacket& recvPacket)
 
 void WorldSession::HandleClearTradeItemOpcode(WorldPacket& recvPacket)
 {
-    if (!_player->pTrader)
-        return;
-
     uint8 tradeSlot;
     recvPacket >> tradeSlot;
+
+    if (!_player->pTrader)
+        return;
 
     // invalid slot number
     if (tradeSlot >= TRADE_SLOT_COUNT)
@@ -634,4 +633,3 @@ void WorldSession::HandleClearTradeItemOpcode(WorldPacket& recvPacket)
 
     _player->pTrader->GetSession()->SendUpdateTrade();
 }
-

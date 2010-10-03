@@ -30,17 +30,13 @@
 
 void WorldSession::HandleDuelAcceptedOpcode(WorldPacket& recvPacket)
 {
-    uint64 guid;
-    Player *pl;
-    Player *plTarget;
+    recvPacket >> Unused<uint64>();                         // guid
 
     if (!GetPlayer()->duel)                                  // ignore accept from duel-sender
         return;
 
-    recvPacket >> guid;
-
-    pl       = GetPlayer();
-    plTarget = pl->duel->opponent;
+    Player *pl       = GetPlayer();
+    Player *plTarget = pl->duel->opponent;
 
     if (pl == pl->duel->initiator || !plTarget || pl == plTarget || pl->duel->startTime != 0 || plTarget->duel->startTime != 0)
         return;
@@ -69,6 +65,8 @@ void WorldSession::HandleDuelCancelledOpcode(WorldPacket& recvPacket)
 {
     //sLog.outDebug("WORLD: received CMSG_DUEL_CANCELLED");
 
+    recvPacket >> Unused<uint64>();                         // guid
+
     // no duel requested
     if (!GetPlayer()->duel)
         return;
@@ -87,23 +85,5 @@ void WorldSession::HandleDuelCancelledOpcode(WorldPacket& recvPacket)
 
     // player either discarded the duel using the "discard button"
     // or used "/forfeit" before countdown reached 0
-    uint64 guid;
-    recvPacket >> guid;
-
     GetPlayer()->DuelComplete(DUEL_INTERUPTED);
 }
-
-void Player::DuelMod()
-{
-    if (sWorld.getConfig(CONFIG_DUEL_FULL_POWER))
-    {
-        SetHealth(GetMaxHealth());
-
-        if (getPowerType() == POWER_MANA)
-            SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
-    }
-
-    if (sWorld.getConfig(CONFIG_DUEL_CD_RESET) && !GetMap()->IsDungeon())
-        RemoveArenaSpellCooldowns();
-}
-
