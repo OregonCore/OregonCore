@@ -14325,12 +14325,12 @@ void Player::_LoadArenaTeamInfo(QueryResult_AutoPtr result)
         }
         uint8  arenaSlot = aTeam->GetSlot();
 
-        m_uint32Values[PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + arenaSlot * 6]     = arenateamid;      // TeamID
-        m_uint32Values[PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + arenaSlot * 6 + 1] = ((aTeam->GetCaptain() == GetGUID()) ? (uint32)0 : (uint32)1); // Captain 0, member 1
-        m_uint32Values[PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + arenaSlot * 6 + 2] = played_week;      // Played Week
-        m_uint32Values[PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + arenaSlot * 6 + 3] = played_season;    // Played Season
-        m_uint32Values[PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + arenaSlot * 6 + 4] = 0;                // Unk
-        m_uint32Values[PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + arenaSlot * 6 + 5] = personal_rating;  // Personal Rating
+        SetArenaTeamInfoField(arenaSlot, ARENA_TEAM_ID, arenateamid);
+        SetArenaTeamInfoField(arenaSlot, ARENA_TEAM_MEMBER, (aTeam->GetCaptain() == GetGUID()) ? (uint32)0 : (uint32)1);
+        SetArenaTeamInfoField(arenaSlot, ARENA_TEAM_GAMES_WEEK, played_week);
+        SetArenaTeamInfoField(arenaSlot, ARENA_TEAM_GAMES_SEASON, played_season);
+        SetArenaTeamInfoField(arenaSlot, ARENA_TEAM_WINS_SEASON, 0);
+        SetArenaTeamInfoField(arenaSlot, ARENA_TEAM_PERSONAL_RATING, personal_rating);
 
     }while (result->NextRow());
 }
@@ -14515,8 +14515,8 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
                 continue;
 
         // arena team not exist or not member, cleanup fields
-        for (int j = 0; j < 6; ++j)
-            SetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + arena_slot * 6 + j, 0);
+        for (int j = 0; j < ARENA_TEAM_END; ++j)
+            SetArenaTeamInfoField(arena_slot, ArenaTeamInfoType(j), 0);
     }
 
     _LoadBoundInstances(holder->GetResult(PLAYER_LOGIN_QUERY_LOADBOUNDINSTANCES));
@@ -17919,7 +17919,7 @@ uint32 Player::GetMaxPersonalArenaRatingRequirement()
     {
         if (ArenaTeam * at = objmgr.GetArenaTeamById(GetArenaTeamId(i)))
         {
-            uint32 p_rating = GetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (i * 6) + 5);
+            uint32 p_rating = GetArenaPersonalRating(i);
             uint32 t_rating = at->GetRating();
             p_rating = p_rating < t_rating ? p_rating : t_rating;
             if (max_personal_rating < p_rating)

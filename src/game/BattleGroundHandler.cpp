@@ -733,7 +733,7 @@ void WorldSession::HandleBattleGroundArenaJoin(WorldPacket & recv_data)
             Player *member = itr->getSource();
 
             // calc avg personal rating
-            avg_pers_rating += member->GetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (arenaslot*6) + 5);
+            avg_pers_rating += member->GetArenaPersonalRating(arenaslot);
         }
 
         if (arenatype)
