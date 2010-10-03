@@ -3611,7 +3611,7 @@ bool ChatHandler::HandleGuildCreateCommand(const char *args)
     }
 
     Guild *guild = new Guild;
-    if (!guild->create (player,guildname))
+    if (!guild->Create(player,guildname))
     {
         delete guild;
         SendSysMessage (LANG_GUILD_NOT_CREATED);

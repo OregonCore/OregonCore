@@ -60,7 +60,7 @@ void WorldSession::HandleGuildCreateOpcode(WorldPacket& recvPacket)
         return;
 
     Guild *guild = new Guild;
-    if (!guild->create(GetPlayer(),gname))
+    if (!guild->Create(GetPlayer(),gname))
     {
         delete guild;
         return;

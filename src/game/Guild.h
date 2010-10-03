@@ -218,25 +218,25 @@ struct GuildBankTab
 
 struct GuildItemPosCount
 {
-    GuildItemPosCount(uint8 _slot, uint8 _count) : slot(_slot), count(_count) {}
+    GuildItemPosCount(uint8 _slot, uint8 _count) : Slot(_slot), Count(_count) {}
 
     bool isContainedIn(std::vector<GuildItemPosCount> const& vec) const;
 
-    uint8 slot;
-    uint8 count;
+    uint8 Slot;
+    uint8 Count;
 };
 typedef std::vector<GuildItemPosCount> GuildItemPosCountVec;
 
 struct MemberSlot
 {
-    uint64 logout_time;
-    std::string name;
+    std::string Name;
+    uint32 RankId;
+    uint8 Level;
+    uint8 Class;
+    uint32 ZoneId;
+    uint64 LogoutTime;
     std::string Pnote;
     std::string OFFnote;
-    uint32 RankId;
-    uint32 zoneId;
-    uint8 level;
-    uint8 Class;
     uint32 BankResetTimeMoney;
     uint32 BankRemMoney;
     uint32 BankResetTimeTab[GUILD_BANK_MAX_TABS];
@@ -245,7 +245,7 @@ struct MemberSlot
 
 struct RankInfo
 {
-    RankInfo(const std::string& _name, uint32 _rights, uint32 _money) : name(_name), rights(_rights), BankMoneyPerDay(_money)
+    RankInfo(const std::string& _name, uint32 _rights, uint32 _money) : Name(_name), Rights(_rights), BankMoneyPerDay(_money)
     {
         for (uint8 i = 0; i < GUILD_BANK_MAX_TABS; ++i)
         {
@@ -254,8 +254,8 @@ struct RankInfo
         }
     }
 
-    std::string name;
-    uint32 rights;
+    std::string Name;
+    uint32 Rights;
     uint32 BankMoneyPerDay;
     uint32 TabRight[GUILD_BANK_MAX_TABS];
     uint32 TabSlotPerDay[GUILD_BANK_MAX_TABS];
@@ -267,27 +267,27 @@ class Guild
         Guild();
         ~Guild();
 
-        bool create(Player* leader, std::string gname);
+        bool Create(Player* leader, std::string gname);
         void Disband();
 
         typedef std::map<uint32, MemberSlot> MemberList;
         typedef std::vector<RankInfo> RankList;
 
-        uint32 GetId(){ return Id; }
-        const uint64& GetLeader(){ return leaderGuid; }
-        std::string GetName(){ return name; }
-        std::string GetMOTD(){ return MOTD; }
-        std::string GetGINFO(){ return GINFO; }
+        uint32 GetId(){ return m_Id; }
+        const uint64& GetLeader() const { return m_LeaderGuid; }
+        std::string const& GetName() const { return m_Name; }
+        std::string const& GetMOTD() const { return MOTD; }
+        std::string const& GetGINFO() const { return GINFO; }
 
-        uint32 GetCreatedYear(){ return CreatedYear; }
-        uint32 GetCreatedMonth(){ return CreatedMonth; }
-        uint32 GetCreatedDay(){ return CreatedDay; }
+        uint32 GetCreatedYear() const { return m_CreatedYear; }
+        uint32 GetCreatedMonth() const { return m_CreatedMonth; }
+        uint32 GetCreatedDay() const { return m_CreatedDay; }
 
-        uint32 GetEmblemStyle(){ return EmblemStyle; }
-        uint32 GetEmblemColor(){ return EmblemColor; }
-        uint32 GetBorderStyle(){ return BorderStyle; }
-        uint32 GetBorderColor(){ return BorderColor; }
-        uint32 GetBackgroundColor(){ return BackgroundColor; }
+        uint32 GetEmblemStyle() const { return m_EmblemStyle; }
+        uint32 GetEmblemColor() const { return m_EmblemColor; }
+        uint32 GetBorderStyle() const { return m_BorderStyle; }
+        uint32 GetBorderColor() const { return m_BorderColor; }
+        uint32 GetBackgroundColor() const { return m_BackgroundColor; }
 
         void SetLeader(uint64 guid);
         bool AddMember(uint64 plGuid, uint32 plRank);
@@ -299,7 +299,7 @@ class Guild
         void SetGINFO(std::string ginfo);
         void SetPNOTE(uint64 guid,std::string pnote);
         void SetOFFNOTE(uint64 guid,std::string offnote);
-        void SetEmblem(uint32 emblemStyle, uint32 emblemColor, uint32 borderStyle, uint32 borderColor, uint32 backgroundColor);
+        void SetEmblem(uint32 m_EmblemStyle, uint32 m_EmblemColor, uint32 m_BorderStyle, uint32 m_BorderColor, uint32 m_BackgroundColor);
 
         uint32 GetMemberSize() const { return members.size(); }
 
@@ -321,11 +321,11 @@ class Guild
             BroadcastEvent(event, 0, str1, str2, str3);
         }
 
-        void CreateRank(std::string name,uint32 rights);
+        void CreateRank(std::string m_Name,uint32 rights);
         void DelRank();
         std::string GetRankName(uint32 rankId);
         uint32 GetRankRights(uint32 rankId);
-        uint32 GetNrRanks() const { return m_ranks.size(); }
+        uint32 GetNrRanks() const { return m_Ranks.size(); }
 
         void SetRankName(uint32 rankId, std::string name);
         void SetRankRights(uint32 rankId, uint32 rights);
@@ -333,6 +333,7 @@ class Guild
         {
             return ((GetRankRights(rankId) & right) != GR_RIGHT_EMPTY) ? true : false;
         }
+
         int32 GetRank(uint32 LowGuid);
         bool IsMember(uint32 LowGuid)
         {
@@ -342,7 +343,7 @@ class Guild
         {
             for (MemberList::iterator itr = members.begin(); itr != members.end(); ++itr)
             {
-                if (itr->second.name == name)
+                if (itr->second.Name == name)
                 {
                     guid = itr->first;
                     return &itr->second;
@@ -379,7 +380,7 @@ class Guild
         void   CreateNewBankTab();
         void   SetGuildBankTabText(uint8 TabId, std::string text);
         void   SendGuildBankTabText(WorldSession *session, uint8 TabId);
-        void   SetGuildBankTabInfo(uint8 TabId, std::string name, std::string icon);
+        void   SetGuildBankTabInfo(uint8 TabId, std::string m_Name, std::string icon);
         void   CreateBankRightForTab(uint32 rankid, uint8 TabId);
         const  GuildBankTab *GetBankTab(uint8 index) { if (index >= m_TabListMap.size()) return NULL; return m_TabListMap[index]; }
         const  uint8 GetPurchasedTabs() const { return purchased_tabs; }
@@ -393,7 +394,7 @@ class Guild
         // Money deposit/withdraw
         void   SendMoneyInfo(WorldSession *session, uint32 LowGuid);
         bool   MemberMoneyWithdraw(uint32 amount, uint32 LowGuid);
-        uint64 GetGuildBankMoney() { return guildbank_money; }
+        uint64 GetGuildBankMoney() { return m_GuildBankMoney; }
         void   SetBankMoney(int64 money);
         // per days
         bool   MemberItemWithdraw(uint8 TabId, uint32 LowGuid);
@@ -416,22 +417,22 @@ class Guild
     protected:
         void AddRank(const std::string& name,uint32 rights,uint32 money);
 
-        uint32 Id;
-        std::string name;
-        uint64 leaderGuid;
+        uint32 m_Id;
+        std::string m_Name;
+        uint64 m_LeaderGuid;
         std::string MOTD;
         std::string GINFO;
-        uint32 CreatedYear;
-        uint32 CreatedMonth;
-        uint32 CreatedDay;
+        uint32 m_CreatedYear;
+        uint32 m_CreatedMonth;
+        uint32 m_CreatedDay;
 
-        uint32 EmblemStyle;
-        uint32 EmblemColor;
-        uint32 BorderStyle;
-        uint32 BorderColor;
-        uint32 BackgroundColor;
+        uint32 m_EmblemStyle;
+        uint32 m_EmblemColor;
+        uint32 m_BorderStyle;
+        uint32 m_BorderColor;
+        uint32 m_BackgroundColor;
 
-        RankList m_ranks;
+        RankList m_Ranks;
 
         MemberList members;
 
@@ -448,7 +449,7 @@ class Guild
         bool m_bankloaded;
         bool m_eventlogloaded;
         uint32 m_onlinemembers;
-        uint64 guildbank_money;
+        uint64 m_GuildBankMoney;
         uint8 purchased_tabs;
 
         uint32 LogMaxGuid;
