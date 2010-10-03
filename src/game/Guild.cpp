@@ -448,21 +448,9 @@ void Guild::DelMember(uint64 guid, bool isDisbanding)
         // when leader non-exist (at guild load with deleted leader only) not send broadcasts
         if (oldLeader)
         {
-            WorldPacket data(SMSG_GUILD_EVENT, (1+1+(oldLeader->name).size()+1+(best->name).size()+1));
-            data << (uint8)GE_LEADER_CHANGED;
-            data << (uint8)2;
-            data << oldLeader->name;
-            data << best->name;
-            BroadcastPacket(&data);
-
-            data.Initialize(SMSG_GUILD_EVENT, (1+1+(oldLeader->name).size()+1));
-            data << (uint8)GE_LEFT;
-            data << (uint8)1;
-            data << oldLeader->name;
-            BroadcastPacket(&data);
+            BroadcastEvent(GE_LEADER_CHANGED, oldLeader->name.c_str(), best->name.c_str());
+            BroadcastEvent(GE_LEFT, guid, oldLeader->name.c_str());
         }
-
-        sLog.outDebug("WORLD: Sent (SMSG_GUILD_EVENT)");
     }
 
     members.erase(GUID_LOPART(guid));
@@ -659,9 +647,7 @@ int32 Guild::GetRank(uint32 LowGuid)
 
 void Guild::Disband()
 {
-    WorldPacket data(SMSG_GUILD_EVENT, 1);
-    data << (uint8)GE_DISBANDED;
-    BroadcastPacket(&data);
+    BroadcastEvent(GE_DISBANDED);
 
     while (!members.empty())
     {
@@ -958,21 +944,21 @@ void Guild::DisplayGuildBankContentUpdate(uint8 TabId, int32 slot1, int32 slot2)
     // remaining slots for today
 
     size_t rempos = data.wpos();
-    data << uint32(0);                                      // will be filled later
-    data << uint8(0);                                       // Tell client this is a tab content packet
+    data << uint32(0);                                      // item withdraw amount, will be filled later
+    data << uint8(0);                                       // Tell client that there's no tab info in this packet
 
-    if (slot2 == -1)                                           // single item in slot1
+    if (slot2 == -1)                                        // single item in slot1
     {
-        data << uint8(1);
+        data << uint8(1);                                   // item count
 
         AppendDisplayGuildBankSlot(data, tab, slot1);
     }
     else                                                    // 2 items (in slot1 and slot2)
     {
-        data << uint8(2);
+        data << uint8(2);                                   // item count
 
         if (slot1 > slot2)
-            std::swap(slot1,slot2);
+            std::swap(slot1, slot2);
 
         AppendDisplayGuildBankSlot(data, tab, slot1);
         AppendDisplayGuildBankSlot(data, tab, slot2);
@@ -987,7 +973,7 @@ void Guild::DisplayGuildBankContentUpdate(uint8 TabId, int32 slot1, int32 slot2)
         if (!IsMemberHaveRights(itr->first,TabId,GUILD_BANK_RIGHT_VIEW_TAB))
             continue;
 
-        data.put<uint32>(rempos,uint32(GetMemberSlotWithdrawRem(player->GetGUIDLow(), TabId)));
+        data.put<uint32>(rempos, uint32(GetMemberSlotWithdrawRem(player->GetGUIDLow(), TabId)));
 
         player->GetSession()->SendPacket(&data);
     }
@@ -1008,8 +994,8 @@ void Guild::DisplayGuildBankContentUpdate(uint8 TabId, GuildItemPosCountVec cons
     // remaining slots for today
 
     size_t rempos = data.wpos();
-    data << uint32(0);                                      // will be filled later
-    data << uint8(0);                                       // Tell client this is a tab content packet
+    data << uint32(0);                                      // item withdraw amount, will be filled later
+    data << uint8(0);                                       // Tell client that there's no tab info in this packet
 
     data << uint8(slots.size());                            // updates count
 
@@ -1905,6 +1891,36 @@ void Guild::SendGuildBankTabText(WorldSession *session, uint8 TabId)
     session->SendPacket(&data);
 }
 
+void Guild::BroadcastEvent(GuildEvents event, uint64 guid, char const* str1 /*=NULL*/, char const* str2 /*=NULL*/, char const* str3 /*=NULL*/)
+{
+    uint8 strCount = !str1 ? 0 : (!str2 ? 1 : (!str3 ? 2 : 3));
+
+    WorldPacket data(SMSG_GUILD_EVENT, 1 + 1 + 1*strCount + (!guid ? 0 : 8));
+    data << uint8(event);
+    data << uint8(strCount);
+
+    if (str3)
+    {
+        data << str1;
+        data << str2;
+        data << str3;
+    }
+    else if (str2)
+    {
+        data << str1;
+        data << str2;
+    }
+    else if (str1)
+        data << str1;
+
+    if (guid)
+        data << guid;
+
+    BroadcastPacket(&data);
+
+    DEBUG_LOG("WORLD: Sent SMSG_GUILD_EVENT");
+}
+
 bool GuildItemPosCount::isContainedIn(GuildItemPosCountVec const &vec) const
 {
     for (GuildItemPosCountVec::const_iterator itr = vec.begin(); itr != vec.end();++itr)
@@ -1913,4 +1929,3 @@ bool GuildItemPosCount::isContainedIn(GuildItemPosCountVec const &vec) const
 
     return false;
 }
-
