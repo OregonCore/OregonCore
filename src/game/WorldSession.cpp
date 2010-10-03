@@ -244,17 +244,17 @@ bool WorldSession::Update(uint32 /*diff*/)
         delete packet;
     }
 
-    time_t currTime = time(NULL);
-    ///- If necessary, log the player out
-    if (!m_Socket || (ShouldLogOut(currTime) && !m_playerLoading))
-        LogoutPlayer(true);
-
     ///- Cleanup socket pointer if need
     if (m_Socket && m_Socket->IsClosed())
     {
         m_Socket->RemoveReference();
         m_Socket = NULL;
     }
+
+    ///- If necessary, log the player out
+    time_t currTime = time(NULL);
+    if (!m_Socket || (ShouldLogOut(currTime) && !m_playerLoading))
+        LogoutPlayer(true);
 
     if (!m_Socket)
         return false;                                       //Will remove this session from the world session map
