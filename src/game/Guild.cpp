@@ -107,7 +107,7 @@ bool Guild::AddMember(uint64 plGuid, uint32 plRank)
     }
     else
     {
-        if (Player::GetGuildIdFromDB(plGuid) != 0)           // player already in guild
+        if (Player::GetGuildIdFromDB(plGuid) != 0)          // player already in guild
             return false;
     }
 
@@ -258,7 +258,7 @@ bool Guild::LoadRanksFromDB(uint32 GuildId)
         if (m_ranks.size() == GR_GUILDMASTER)                  // prevent loss leader rights
             rankRights |= GR_RIGHT_ALL;
 
-        AddRank(rankName,rankRights,rankMoney);
+        AddRank(rankName, rankRights, rankMoney);
     }while (result->NextRow());
 
     if (m_ranks.size() == 0)                                   // empty rank table?
@@ -1868,12 +1868,15 @@ void Guild::SetGuildBankTabText(uint8 TabId, std::string text)
     if (m_TabListMap[TabId]->Text == text)
         return;
 
-    utf8truncate(text,500);                                 // DB and client size limitation
+    utf8truncate(text, 500);                                // DB and client size limitation
 
     m_TabListMap[TabId]->Text = text;
 
     CharacterDatabase.escape_string(text);
     CharacterDatabase.PExecute("UPDATE guild_bank_tab SET TabText='%s' WHERE guildid='%u' AND TabId='%u'", text.c_str(), Id, uint32(TabId));
+
+    // announce
+    SendGuildBankTabText(NULL, TabId);
 }
 
 void Guild::SendGuildBankTabText(WorldSession *session, uint8 TabId)
@@ -1888,7 +1891,11 @@ void Guild::SendGuildBankTabText(WorldSession *session, uint8 TabId)
     WorldPacket data(MSG_QUERY_GUILD_BANK_TEXT, 1+tab->Text.size()+1);
     data << uint8(TabId);
     data << tab->Text;
-    session->SendPacket(&data);
+
+    if (session)
+        session->SendPacket(&data);
+    else
+        BroadcastPacket(&data);
 }
 
 void Guild::BroadcastEvent(GuildEvents event, uint64 guid, char const* str1 /*=NULL*/, char const* str2 /*=NULL*/, char const* str3 /*=NULL*/)
