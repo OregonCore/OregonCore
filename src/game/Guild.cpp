@@ -667,7 +667,7 @@ void Guild::Disband()
     objmgr.RemoveGuild(Id);
 }
 
-void Guild::Roster(WorldSession *session)
+void Guild::Roster(WorldSession *session /*= NULL*/)
 {
                                                             // we can only guess size
     WorldPacket data(SMSG_GUILD_ROSTER, (4+MOTD.length()+1+GINFO.length()+1+4+m_ranks.size()*(4+4+GUILD_BANK_MAX_TABS*(4+4))+members.size()*50));
@@ -716,7 +716,10 @@ void Guild::Roster(WorldSession *session)
             data << itr->second.OFFnote;
         }
     }
-    session->SendPacket(&data);;
+    if (session)
+        session->SendPacket(&data);
+    else
+        BroadcastPacket(&data);
     sLog.outDebug("WORLD: Sent (SMSG_GUILD_ROSTER)");
 }
 
