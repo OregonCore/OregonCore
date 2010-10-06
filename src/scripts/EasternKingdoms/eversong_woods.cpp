@@ -225,7 +225,7 @@ struct npc_secondTrialAI : public ScriptedAI
       questPhase = 0;
       summonerGuid = 0;
 
-      me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_KNEEL);
+      me->SetUInt32Value(UNIT_FIELD_BYTES_1, UNIT_STAND_STATE_KNEEL);
       me->setFaction(FACTION_FRIENDLY);
 
       spellFlashLight = false;
@@ -264,7 +264,7 @@ struct npc_secondTrialAI : public ScriptedAI
       if (questPhase == 1) {
 
         if (timer <= diff) {
-              me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_NONE);
+              me->SetUInt32Value(UNIT_FIELD_BYTES_1, UNIT_STAND_STATE_STAND);
               me->setFaction(FACTION_HOSTILE);
               questPhase = 0;
 

@@ -502,7 +502,7 @@ struct mob_felkael_phoenixAI : public ScriptedAI
             me->SetUInt64Value(UNIT_FIELD_TARGET,0);
             me->GetMotionMaster()->Clear();
             me->GetMotionMaster()->MoveIdle();
-            me->SetUInt32Value(UNIT_FIELD_BYTES_1,PLAYER_STATE_DEAD);
+            me->SetStandState(UNIT_STAND_STATE_DEAD);
         }
     }
 

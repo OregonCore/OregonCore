@@ -1004,7 +1004,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
 
         if (m_customAttr & SPELL_ATTR_CU_AURA_CC)
             if (!unit->IsStandState())
-                unit->SetStandState(PLAYER_STATE_NONE);
+                unit->SetStandState(UNIT_STAND_STATE_STAND);
     }
 
     // if target is flagged for pvp also flag caster if a player

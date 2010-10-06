@@ -131,7 +131,7 @@ struct boss_kalecgosAI : public ScriptedAI
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE + UNIT_FLAG_NOT_SELECTABLE);
         me->RemoveUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
         me->SetVisibility(VISIBILITY_ON);
-        me->SetStandState(PLAYER_STATE_SLEEP);
+        me->SetStandState(UNIT_STAND_STATE_SLEEP);
 
         ArcaneBuffetTimer = 8000;
         FrostBreathTimer = 15000;
@@ -155,7 +155,7 @@ struct boss_kalecgosAI : public ScriptedAI
 
     void EnterCombat(Unit* /*who*/)
     {
-        me->SetStandState(PLAYER_STATE_NONE);
+        me->SetStandState(UNIT_STAND_STATE_STAND);
         DoScriptText(SAY_EVIL_AGGRO, me);
         DoZoneInCombat();
 

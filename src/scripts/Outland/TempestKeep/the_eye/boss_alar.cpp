@@ -242,12 +242,12 @@ struct boss_alarAI : public ScriptedAI
                         return;
                     case WE_DIE:
                         ForceMove = false;
-                        me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_DEAD);
+                        me->SetUInt32Value(UNIT_FIELD_BYTES_1, UNIT_STAND_STATE_DEAD);
                         WaitTimer = 5000;
                         WaitEvent = WE_REVIVE;
                         return;
                     case WE_REVIVE:
-                        me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_NONE);
+                        me->SetUInt32Value(UNIT_FIELD_BYTES_1, UNIT_STAND_STATE_STAND);
                         me->SetHealth(me->GetMaxHealth());
                         me->SetSpeed(MOVE_RUN, DefaultMoveSpeedRate);
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);

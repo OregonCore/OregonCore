@@ -59,17 +59,17 @@ struct mob_unkor_the_ruthlessAI : public ScriptedAI
         CanDoQuest = false;
         UnkorUnfriendly_Timer = 0;
         Pulverize_Timer = 3000;
-        me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_NONE);
+        me->SetStandState(UNIT_STAND_STATE_STAND);
         me->setFaction(FACTION_HOSTILE);
     }
 
-    void EnterCombat(Unit *who) {}
+    void EnterCombat(Unit * /*who*/) {}
 
     void DoNice()
     {
         DoScriptText(SAY_SUBMIT, me);
         me->setFaction(FACTION_FRIENDLY);
-        me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_SIT);
+        me->SetStandState(UNIT_STAND_STATE_SIT);
         me->RemoveAllAuras();
         me->DeleteThreatList();
         me->CombatStop();

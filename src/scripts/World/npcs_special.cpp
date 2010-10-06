@@ -348,12 +348,15 @@ struct npc_injured_patientAI : public ScriptedAI
         Doctorguid = 0;
 
         Coord = NULL;
-                                                            //no select
+
+        //no select
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                                                            //no regen health
+
+        //no regen health
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
-                                                            //to make them lay with face down
-        me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_DEAD);
+
+        //to make them lay with face down
+        me->SetUInt32Value(UNIT_FIELD_BYTES_1, UNIT_STAND_STATE_DEAD);
 
         uint32 mobId = me->GetEntry();
 
@@ -389,12 +392,16 @@ struct npc_injured_patientAI : public ScriptedAI
                         ((npc_doctorAI*)Doctor->AI())->PatientSaved(me, CAST_PLR(caster), Coord);
                 }
             }
-                                                            //make not selectable
+
+            //make not selectable
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                                                            //regen health
+
+            //regen health
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
-                                                            //stand up
-            me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_NONE);
+
+            //stand up
+            me->SetUInt32Value(UNIT_FIELD_BYTES_1, UNIT_STAND_STATE_STAND);
+
             DoSay(SAY_DOC1,LANG_UNIVERSAL,NULL);
 
             uint32 mobId = me->GetEntry();

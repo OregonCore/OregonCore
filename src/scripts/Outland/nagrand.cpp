@@ -124,7 +124,7 @@ struct mob_lumpAI : public ScriptedAI
                 me->DeleteThreatList();
                 me->CombatStop();
                 me->setFaction(1080);               //friendly
-                me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_SIT);
+                me->SetStandState(UNIT_STAND_STATE_SIT);
                 DoScriptText(LUMP_DEFEAT, me);
 
                 bReset = true;
@@ -138,7 +138,7 @@ struct mob_lumpAI : public ScriptedAI
             me->RemoveAura(SPELL_VISUAL_SLEEP,0);
 
         if (!me->IsStandState())
-            me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_NONE);
+             me->SetStandState(UNIT_STAND_STATE_STAND);
 
         switch(rand()%2)
         {

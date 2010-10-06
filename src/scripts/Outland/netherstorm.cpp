@@ -436,8 +436,8 @@ struct npc_commander_dawnforgeAI : public ScriptedAI
         ardonis->SendUpdateToPlayer(player);
 
         //Set them to kneel
-        me->SetStandState(PLAYER_STATE_KNEEL);
-        ardonis->SetStandState(PLAYER_STATE_KNEEL);
+        me->SetStandState(UNIT_STAND_STATE_KNEEL);
+        ardonis->SetStandState(UNIT_STAND_STATE_KNEEL);
     }
 
     //Set them back to each other
@@ -461,8 +461,8 @@ struct npc_commander_dawnforgeAI : public ScriptedAI
             ardonis->SendUpdateToPlayer(player);
 
             //Set state
-            me->SetStandState(PLAYER_STATE_NONE);
-            ardonis->SetStandState(PLAYER_STATE_NONE);
+            me->SetStandState(UNIT_STAND_STATE_STAND);
+            ardonis->SetStandState(UNIT_STAND_STATE_STAND);
         }
     }
 

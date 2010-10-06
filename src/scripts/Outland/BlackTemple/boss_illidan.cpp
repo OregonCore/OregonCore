@@ -1993,7 +1993,7 @@ void boss_illidan_stormrageAI::HandleTalkSequence()
         {
             Maiev->CastSpell(Maiev, SPELL_TELEPORT_VISUAL, true);
             Maiev->setDeathState(JUST_DIED);
-            me->SetUInt32Value(UNIT_FIELD_BYTES_1,PLAYER_STATE_DEAD);
+            me->SetUInt32Value(UNIT_FIELD_BYTES_1,UNIT_STAND_STATE_DEAD);
         }
         break;
     case 21: // Kill ourself.
@@ -2006,7 +2006,6 @@ void boss_illidan_stormrageAI::HandleTalkSequence()
         Talk(TalkCount); // This function does most of the talking
     TalkCount++;
 }
-
 
 void boss_illidan_stormrageAI::CastEyeBlast()
 {

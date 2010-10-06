@@ -892,7 +892,7 @@ void PretendToDie(Creature* pCreature)
     pCreature->SetUInt64Value(UNIT_FIELD_TARGET,0);
     pCreature->GetMotionMaster()->Clear();
     pCreature->GetMotionMaster()->MoveIdle();
-    pCreature->SetUInt32Value(UNIT_FIELD_BYTES_1,PLAYER_STATE_DEAD);
+    pCreature->SetStandState(UNIT_STAND_STATE_DEAD);
 };
 
 void Resurrect(Creature* pTarget)

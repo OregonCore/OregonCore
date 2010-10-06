@@ -8262,7 +8262,7 @@ void Unit::CombatStart(Unit* target, bool initialAggro)
     if (initialAggro)
     {
         if (!target->IsStandState()/* && !target->hasUnitState(UNIT_STAT_STUNNED)*/)
-            target->SetStandState(PLAYER_STATE_NONE);
+            target->SetStandState(UNIT_STAND_STATE_STAND);
 
         if (!target->isInCombat() && target->GetTypeId() != TYPEID_PLAYER
             && !target->ToCreature()->HasReactState(REACT_PASSIVE) && target->ToCreature()->IsAIEnabled)
@@ -10648,15 +10648,16 @@ void Unit::SendMovementFlagUpdate()
 bool Unit::IsSitState() const
 {
     uint8 s = getStandState();
-    return s == PLAYER_STATE_SIT_CHAIR || s == PLAYER_STATE_SIT_LOW_CHAIR ||
-        s == PLAYER_STATE_SIT_MEDIUM_CHAIR || s == PLAYER_STATE_SIT_HIGH_CHAIR ||
-        s == PLAYER_STATE_SIT;
+    return
+        s == UNIT_STAND_STATE_SIT_CHAIR        || s == UNIT_STAND_STATE_SIT_LOW_CHAIR  ||
+        s == UNIT_STAND_STATE_SIT_MEDIUM_CHAIR || s == UNIT_STAND_STATE_SIT_HIGH_CHAIR ||
+        s == UNIT_STAND_STATE_SIT;
 }
 
 bool Unit::IsStandState() const
 {
     uint8 s = getStandState();
-    return !IsSitState() && s != PLAYER_STATE_SLEEP && s != PLAYER_STATE_KNEEL;
+    return !IsSitState() && s != UNIT_STAND_STATE_SLEEP && s != UNIT_STAND_STATE_KNEEL;
 }
 
 void Unit::SetStandState(uint8 state)
@@ -10664,7 +10665,7 @@ void Unit::SetStandState(uint8 state)
     SetByteValue(UNIT_FIELD_BYTES_1, 0, state);
 
     if (IsStandState())
-       RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_NOT_SEATED);
+        RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_NOT_SEATED);
 
     if (GetTypeId() == TYPEID_PLAYER)
     {

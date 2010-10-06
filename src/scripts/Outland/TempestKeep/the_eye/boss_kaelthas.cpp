@@ -238,7 +238,7 @@ struct advisorbase_ai : public ScriptedAI
             me->SetUInt64Value(UNIT_FIELD_TARGET,0);
             me->GetMotionMaster()->Clear();
             me->GetMotionMaster()->MoveIdle();
-            me->SetUInt32Value(UNIT_FIELD_BYTES_1,PLAYER_STATE_DEAD);
+            me->SetStandState(UNIT_STAND_STATE_DEAD);
 
             if (pInstance->GetData(DATA_KAELTHASEVENT) == 3)
                 JustDied(pKiller);
@@ -557,7 +557,7 @@ struct boss_kaelthasAI : public ScriptedAI
                         //Subphase 2 - Start
                     case 2:
                         Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[0]));
-                        if (Advisor && (Advisor->GetUInt32Value(UNIT_FIELD_BYTES_1) == PLAYER_STATE_DEAD))
+                        if (Advisor && (Advisor->GetUInt32Value(UNIT_FIELD_BYTES_1) == UNIT_STAND_STATE_DEAD))
                         {
                             DoScriptText(SAY_INTRO_SANGUINAR, me);
 
@@ -591,7 +591,7 @@ struct boss_kaelthasAI : public ScriptedAI
                         //Subphase 3 - Start
                     case 4:
                         Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[1]));
-                        if (Advisor && (Advisor->GetUInt32Value(UNIT_FIELD_BYTES_1) == PLAYER_STATE_DEAD))
+                        if (Advisor && (Advisor->GetUInt32Value(UNIT_FIELD_BYTES_1) == UNIT_STAND_STATE_DEAD))
                         {
                             DoScriptText(SAY_INTRO_CAPERNIAN, me);
 
@@ -625,7 +625,7 @@ struct boss_kaelthasAI : public ScriptedAI
                         //Subphase 4 - Start
                     case 6:
                         Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[2]));
-                        if (Advisor && (Advisor->GetUInt32Value(UNIT_FIELD_BYTES_1) == PLAYER_STATE_DEAD))
+                        if (Advisor && (Advisor->GetUInt32Value(UNIT_FIELD_BYTES_1) == UNIT_STAND_STATE_DEAD))
                         {
                             DoScriptText(SAY_INTRO_TELONICUS, me);
 
@@ -661,7 +661,7 @@ struct boss_kaelthasAI : public ScriptedAI
                         //End of phase 1
                     case 8:
                         Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[3]));
-                        if (Advisor && (Advisor->GetUInt32Value(UNIT_FIELD_BYTES_1) == PLAYER_STATE_DEAD))
+                        if (Advisor && (Advisor->GetUInt32Value(UNIT_FIELD_BYTES_1) == UNIT_STAND_STATE_DEAD))
                         {
                             Phase = 2;
                             pInstance->SetData(DATA_KAELTHASEVENT, 2);
