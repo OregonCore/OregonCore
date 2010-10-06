@@ -12698,6 +12698,19 @@ UNLOCK TABLES;
 -- Table structure for table `spell_linked_spell`
 --
 
+-- --------
+-- LINKED
+-- --------
+-- spell1 / spell2 / type
+-- + + 0 caster casts 2 when casts 1
+-- + - 0 caster removes aura 2 when casts 1
+-- + + 1 target casts 2 on self (originalCaster = caster) when 1 casted by caster hits target
+-- + - 1 target removes aura 2 when hit by 1
+-- + + 2 when aura 1 is applied, aura 2 is also applied; when 1 is removed, 2 is also removed
+-- + - 2 when aura 1 is applied, target is immune to spell 2, until 1 is removed
+-- - + 0 target casts 2 on self (originalCaster = caster) when aura 1 casted by caster is removed
+-- - - 0 aura 2 is removed when aura 1 is removed
+
 DROP TABLE IF EXISTS `spell_linked_spell`;
 CREATE TABLE `spell_linked_spell` (
   `spell_trigger` mediumint(8) NOT NULL,
@@ -12713,6 +12726,67 @@ CREATE TABLE `spell_linked_spell` (
 
 LOCK TABLES `spell_linked_spell` WRITE;
 /*!40000 ALTER TABLE `spell_linked_spell` DISABLE KEYS */;
+INSERT INTO `spell_linked_spell` (`spell_trigger`, `spell_effect`, `type`, `comment`) VALUES
+-- class
+(31224, -1543, 2, 'Cloak of Shadows - Flare'),
+(15237, 23455, 0, 'Holy Nova (rank1)'),
+(15430, 23458, 0, 'Holy Nova (rank2)'),
+(15431, 23459, 0, 'Holy Nova (rank3)'),
+(27799, 27803, 0, 'Holy Nova (rank4)'),
+(27800, 27804, 0, 'Holy Nova (rank5)'),
+(27801, 27805, 0, 'Holy Nova (rank6)'),
+(25331, 25329, 0, 'Holy Nova (rank7)'),
+(-19386, 24131, 0, 'Wyvern Sting'),
+(-24132, 24134, 0, 'Wyvern Sting'),
+(-24133, 24135, 0, 'Wyvern Sting'),
+(-27068, 27069, 0, 'Wyvern Sting'),
+-- Creature
+(36574, 36650, 0, 'Apply Phase Slip Vulnerability'),
+(19938, -17743, 1, 'Lazy Peon removing spell on spellhit'),
+-- instance
+(-30410, 44032, 0, 'Manticron Cube Mind Exhaustion'),
+-- Zul'aman
+(44008, 45265, 1, 'Static Disruption Visual'),
+(43648, 44007, 1, 'Storm Eye Safe Zone'),
+(44007, -43657, 2, 'Storm Eye Safe Zone Immune'),
+(43658, 43653, 0, 'Electrical Arc Visual'),
+(43658, 43654, 0, 'Electrical Arc Visual'),
+(43658, 43655, 0, 'Electrical Arc Visual'),
+(43658, 43656, 0, 'Electrical Arc Visual'),
+(43658, 43659, 0, 'Electrical Arc Visual'),
+-- black temple
+-- (39992, 39835, 1, 'Needle Spine'),
+(39835, 39968, 1, 'Needle Spine'),
+(-41376, 41377, 0, 'Spite'),
+(41126, 41131, 1, 'Flame Crash'),
+(-41914, 41915, 0, 'Summon Parasitic Shadowfiend'),
+(-41917, 41915, 0, 'Summon Parasitic Shadowfiend'),
+(39908, 40017, 1, 'Eye Blast'),
+(40604, 40616, 1, 'Fel Rage Aura'),
+(40616, 41625, 1, 'Fel Rage Aura'),
+(41292, 42017, 2, 'Aura of Suffering'),
+-- sunwell
+(44869, 44866, 1, 'Spectral Blast Portal'),
+-- (44869, 46648, 1, 'Spectral Blast Visual'), cause severe lag seems should be casted by go
+(44869, 46019, 1, 'Spectral Blast Teleport'),
+(46019, 46021, 1, 'Spectral Realm Aura'),
+-- (46021, 44852, 1, 'Spectral Realm Aura'), 44852 makes boss friendly to you
+(-46021, 46020, 0, 'Teleport: Normal Realm'),
+(46020, 44867, 1, 'Spectral Exhaustion'),
+(44867, -46019, 2, 'Spectral Exhaustion - Teleport: Spectral Realm'),
+(45661, 45665, 1, 'Encapsulate'),
+(45347, -45348, 1, 'Remove Flame Touched'),
+(45348, -45347, 1, 'Remove Dark Touched'),
+(45248, 45347, 1, 'Apply Dark Touched'),
+(45329, 45347, 1, 'Apply Dark Touched'),
+(45256, 45347, 1, 'Apply Dark Touched'),
+(45270, 45347, 1, 'Apply Dark Touched'),
+(45342, 45348, 1, 'Apply Flame Touched'),
+(46771, 45348, 1, 'Apply Flame Touched'),
+(45271, 45347, 1, 'Apply Dark Touched'),
+(45246, 45348, 1, 'Apply Flame Touched'),
+-- Item
+(38736, 38729, 0, 'Rod of Purification - Quest 10839');
 /*!40000 ALTER TABLE `spell_linked_spell` ENABLE KEYS */;
 UNLOCK TABLES;
 
