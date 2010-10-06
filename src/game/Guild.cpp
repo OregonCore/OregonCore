@@ -186,9 +186,9 @@ bool Guild::LoadGuildFromDB(uint32 GuildId)
     LoadBankRightsFromDB(GuildId);                          // Must be after LoadRanksFromDB because it populates rank struct
 
     //                                        0        1     2           3            4            5           6
-    result = CharacterDatabase.PQuery("SELECT guildid, m_Name, m_LeaderGuid, m_EmblemStyle, m_EmblemColor, m_BorderStyle, m_BorderColor,"
+    result = CharacterDatabase.PQuery("SELECT guildid, name, leaderguid, EmblemStyle, EmblemColor, BorderStyle, BorderColor,"
     //   7                8     9     10          11
-        "m_BackgroundColor, info, motd, createdate, BankMoney FROM guild WHERE guildid = '%u'", GuildId);
+        "BackgroundColor, info, motd, createdate, BankMoney FROM guild WHERE guildid = '%u'", GuildId);
 
     if (!result)
         return false;
@@ -347,7 +347,7 @@ bool Guild::FillPlayerData(uint64 guid, MemberSlot* memslot)
     }
     else
     {
-        QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT m_Name,level,zone,class FROM characters WHERE guid = '%u'", GUID_LOPART(guid));
+        QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT name,level,zone,class FROM characters WHERE guid = '%u'", GUID_LOPART(guid));
         if (!result)
             return false;                                   // player doesn't exist
 
