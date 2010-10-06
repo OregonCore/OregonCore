@@ -408,7 +408,7 @@ void AddSC_ungoro_crater()
     newscript->pQuestAccept = &QuestAccept_npc_ame;
     newscript->RegisterSelf();
 
-	newscript = new Script;
+    newscript = new Script;
     newscript->Name = "npc_ringo";
     newscript->GetAI = &GetAI_npc_ringo;
     newscript->pQuestAccept = &QuestAccept_npc_ringo;
