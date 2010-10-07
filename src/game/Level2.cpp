@@ -1309,7 +1309,7 @@ bool ChatHandler::HandleNpcMoveCommand(const char* args)
         pCreature->GetMotionMaster()->Initialize();
         if (pCreature->isAlive())                            // dead creature will reset movement generator at respawn
         {
-            pCreature->setDeathState(JUST_DIED);
+            pCreature->setDeathState(DEAD);
             pCreature->Respawn();
         }
     }
