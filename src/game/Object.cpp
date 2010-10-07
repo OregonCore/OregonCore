@@ -1811,6 +1811,23 @@ Creature* WorldObject::SummonTrigger(float x, float y, float z, float ang, uint3
     return summon;
 }
 
+Creature* WorldObject::FindNearestCreature(uint32 entry, float range, bool alive)
+{
+       Creature *creature = NULL;
+       Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck checker(*this, entry, alive, range);
+       Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(creature, checker);
+       VisitNearbyObject(range, searcher);
+       return creature;
+}
+GameObject* WorldObject::FindNearestGameObject(uint32 entry, float range)
+{
+       GameObject *go = NULL;
+       Oregon::NearestGameObjectEntryInObjectRangeCheck checker(*this, entry, range);
+       Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> searcher(go, checker);
+       VisitNearbyGridObject(range, searcher);
+       return go;
+}
+
 void WorldObject::GetNearPoint2D(float &x, float &y, float distance2d, float absAngle) const
 {
     x = GetPositionX() + (GetObjectSize() + distance2d) * cos(absAngle);

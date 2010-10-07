@@ -495,6 +495,8 @@ class WorldObject : public Object, public WorldLocation
         Creature*   SummonCreature(uint32 id, float x, float y, float z, float ang,TempSummonType spwtype,uint32 despwtime);
         GameObject* SummonGameObject(uint32 entry, float x, float y, float z, float ang, float rotation0, float rotation1, float rotation2, float rotation3, uint32 respawnTime);
         Creature*   SummonTrigger(float x, float y, float z, float ang, uint32 dur, CreatureAI* (*GetAI)(Creature*) = NULL);
+        Creature*   FindNearestCreature(uint32 entry, float range, bool alive = true);
+        GameObject* FindNearestGameObject(uint32 entry, float range);
 
         void UpdateObjectVisibility();
         void BuildUpdate(UpdateDataMapType& );
