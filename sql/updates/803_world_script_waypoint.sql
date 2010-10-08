@@ -1,22 +1,3 @@
-SET FOREIGN_KEY_CHECKS=0;
--- ----------------------------
--- Table structure for `script_waypoint`
--- ----------------------------
-DROP TABLE IF EXISTS `script_waypoint`;
-CREATE TABLE `script_waypoint` (
-  `entry` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT 'creature_template entry',
-  `pointid` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `location_x` float NOT NULL DEFAULT '0',
-  `location_y` float NOT NULL DEFAULT '0',
-  `location_z` float NOT NULL DEFAULT '0',
-  `waittime` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'waittime in millisecs',
-  `point_comment` text,
-  PRIMARY KEY (`entry`,`pointid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Script Creature waypoints';
-
--- ----------------------------
--- Records of script_waypoint
--- ----------------------------
 DELETE FROM script_waypoint WHERE entry = '7784';
 INSERT INTO `script_waypoint` VALUES ('7784', '83', '-6957.16', '-4788.92', '6.26', '0', '');
 INSERT INTO `script_waypoint` VALUES ('7784', '82', '-6970.41', '-4788.77', '9.42', '0', '');
