@@ -114,7 +114,7 @@ void ScriptedAI::AttackStart(Unit* pWho, bool melee)
 
 }
 
-void ScriptedAI::UpdateAI(const uint32 uiDiff)
+void ScriptedAI::UpdateAI(const uint32 /*uiDiff*/)
 {
     //Check if we have a current target
     if (!UpdateVictim())

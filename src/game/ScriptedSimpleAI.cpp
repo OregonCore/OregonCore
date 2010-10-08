@@ -70,56 +70,56 @@ void SimpleAI::Reset()
 {
 }
 
-void SimpleAI::Aggro(Unit *who)
+void SimpleAI::EnterCombat(Unit *who)
 {
-            //Reset cast timers
-            if (Spell[0].First_Cast >= 0)
-                Spell_Timer[0] = Spell[0].First_Cast;
-            else Spell_Timer[0] = 1000;
-            if (Spell[1].First_Cast >= 0)
-                Spell_Timer[1] = Spell[1].First_Cast;
-            else Spell_Timer[1] = 1000;
-            if (Spell[2].First_Cast >= 0)
-                Spell_Timer[2] = Spell[2].First_Cast;
-            else Spell_Timer[2] = 1000;
-            if (Spell[3].First_Cast >= 0)
-                Spell_Timer[3] = Spell[3].First_Cast;
-            else Spell_Timer[3] = 1000;
-            if (Spell[4].First_Cast >= 0)
-                Spell_Timer[4] = Spell[4].First_Cast;
-            else Spell_Timer[4] = 1000;
-            if (Spell[5].First_Cast >= 0)
-                Spell_Timer[5] = Spell[5].First_Cast;
-            else Spell_Timer[5] = 1000;
-            if (Spell[6].First_Cast >= 0)
-                Spell_Timer[6] = Spell[6].First_Cast;
-            else Spell_Timer[6] = 1000;
-            if (Spell[7].First_Cast >= 0)
-                Spell_Timer[7] = Spell[7].First_Cast;
-            else Spell_Timer[7] = 1000;
-            if (Spell[8].First_Cast >= 0)
-                Spell_Timer[8] = Spell[8].First_Cast;
-            else Spell_Timer[8] = 1000;
-            if (Spell[9].First_Cast >= 0)
-                Spell_Timer[9] = Spell[9].First_Cast;
-            else Spell_Timer[9] = 1000;
+    //Reset cast timers
+    if (Spell[0].First_Cast >= 0)
+        Spell_Timer[0] = Spell[0].First_Cast;
+    else Spell_Timer[0] = 1000;
+    if (Spell[1].First_Cast >= 0)
+        Spell_Timer[1] = Spell[1].First_Cast;
+    else Spell_Timer[1] = 1000;
+    if (Spell[2].First_Cast >= 0)
+        Spell_Timer[2] = Spell[2].First_Cast;
+    else Spell_Timer[2] = 1000;
+    if (Spell[3].First_Cast >= 0)
+        Spell_Timer[3] = Spell[3].First_Cast;
+    else Spell_Timer[3] = 1000;
+    if (Spell[4].First_Cast >= 0)
+        Spell_Timer[4] = Spell[4].First_Cast;
+    else Spell_Timer[4] = 1000;
+    if (Spell[5].First_Cast >= 0)
+        Spell_Timer[5] = Spell[5].First_Cast;
+    else Spell_Timer[5] = 1000;
+    if (Spell[6].First_Cast >= 0)
+        Spell_Timer[6] = Spell[6].First_Cast;
+    else Spell_Timer[6] = 1000;
+    if (Spell[7].First_Cast >= 0)
+        Spell_Timer[7] = Spell[7].First_Cast;
+    else Spell_Timer[7] = 1000;
+    if (Spell[8].First_Cast >= 0)
+        Spell_Timer[8] = Spell[8].First_Cast;
+    else Spell_Timer[8] = 1000;
+    if (Spell[9].First_Cast >= 0)
+        Spell_Timer[9] = Spell[9].First_Cast;
+    else Spell_Timer[9] = 1000;
 
-            uint32 random_text = rand()%3;
+    uint8 random_text = urand(0,2);
 
-            //Random yell
-            if (Aggro_Text[random_text])
-                if (Aggro_Say[random_text])
-                    DoSay(Aggro_Text[random_text], LANG_UNIVERSAL, who);
-                else DoYell(Aggro_Text[random_text], LANG_UNIVERSAL, who);
+    //Random yell
+    if (Aggro_Text[random_text])
+        if (Aggro_Say[random_text])
+            DoSay(Aggro_Text[random_text], LANG_UNIVERSAL, who);
+        else DoYell(Aggro_Text[random_text], LANG_UNIVERSAL, who);
 
-            //Random sound
-            if (Aggro_Sound[random_text])
-                DoPlaySoundToSet(me, Aggro_Sound[random_text]);
+    //Random sound
+    if (Aggro_Sound[random_text])
+        DoPlaySoundToSet(me, Aggro_Sound[random_text]);
 }
 
 void SimpleAI::KilledUnit(Unit *victim)
 {
-    uint32 random_text = rand()%3;
+    uint8 random_text = urand(0,2);
 
     //Random yell
     if (Kill_Text[random_text])
@@ -169,7 +169,7 @@ void SimpleAI::DamageTaken(Unit *killer, uint32 &damage)
     if (me->GetHealth() > damage)
         return;
 
-    uint32 random_text = rand()%3;
+    uint8 random_text = urand(0,2);
 
     //Random yell
     if (Death_Text[random_text])
@@ -266,7 +266,7 @@ void SimpleAI::UpdateAI(const uint32 diff)
 
                     //Yell and sound use the same number so that you can make
                     //the creature yell with the correct sound effect attached
-                    uint32 random_text = rand()%3;
+                    uint8 random_text = urand(0,2);
 
                     //Random yell
                     if (Spell[i].Text[random_text])

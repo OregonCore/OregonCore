@@ -123,7 +123,7 @@ void npc_escortAI::MoveInLineOfSight(Unit* pWho)
     }
 }
 
-void npc_escortAI::JustDied(Unit* pKiller)
+void npc_escortAI::JustDied(Unit* /*pKiller*/)
 {
     if (!HasEscortState(STATE_ESCORT_ESCORTING) || !m_uiPlayerGUID || !m_pQuestForEscort)
         return;
@@ -282,7 +282,7 @@ void npc_escortAI::UpdateAI(const uint32 uiDiff)
     //Check if player or any member of his group is within range
     if (HasEscortState(STATE_ESCORT_ESCORTING) && m_uiPlayerGUID && !me->getVictim() && !HasEscortState(STATE_ESCORT_RETURNING))
     {
-        if (m_uiPlayerCheckTimer < uiDiff)
+        if (m_uiPlayerCheckTimer <= uiDiff)
         {
             if (DespawnAtFar && !IsPlayerOrGroupInRange())
             {
@@ -308,7 +308,7 @@ void npc_escortAI::UpdateAI(const uint32 uiDiff)
     UpdateEscortAI(uiDiff);
 }
 
-void npc_escortAI::UpdateEscortAI(const uint32 uiDiff)
+void npc_escortAI::UpdateEscortAI(const uint32 /*uiDiff*/)
 {
     if (!UpdateVictim())
         return;

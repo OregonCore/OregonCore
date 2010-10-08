@@ -14,7 +14,6 @@
 #include "InstanceData.h"
 
 #define SCRIPT_CAST_TYPE dynamic_cast
-//#define SCRIPT_CAST_TYPE static_cast
 
 #define CAST_PLR(a)     (SCRIPT_CAST_TYPE<Player*>(a))
 #define CAST_CRE(a)     (SCRIPT_CAST_TYPE<Creature*>(a))
@@ -60,16 +59,16 @@ struct ScriptedAI : public CreatureAI
     void AttackStart(Unit *, bool melee);
 
     // Called at any Damage from any attacker (before damage apply)
-    void DamageTaken(Unit* pDone_by, uint32& uiDamage) {}
+    void DamageTaken(Unit* /*pDone_by*/, uint32& /*uiDamage*/) {}
 
     //Called at World update tick
     void UpdateAI(const uint32);
 
     //Called at creature death
-    void JustDied(Unit* who){}
+    void JustDied(Unit* /*who*/){}
 
     //Called at creature killing another unit
-    void KilledUnit(Unit* who){}
+    void KilledUnit(Unit* /*who*/){}
 
     // Called when the creature summon successfully other creature
     void JustSummoned(Creature*) {}
@@ -78,16 +77,16 @@ struct ScriptedAI : public CreatureAI
     void SummonedCreatureDespawn(Creature*) {}
 
     // Called when hit by a spell
-    void SpellHit(Unit* caster, const SpellEntry *spell) {}
+    void SpellHit(Unit* /*caster*/, const SpellEntry * /*spell*/) {}
 
     // Called when spell hits a target
-    void SpellHitTarget(Unit *pTarget, const SpellEntry *spell) {}
+    void SpellHitTarget(Unit * /*pTarget*/, const SpellEntry * /*spell*/) {}
 
     //Called at waypoint reached or PointMovement end
-    void MovementInform(uint32 type, uint32 id){}
+    void MovementInform(uint32 /*type*/, uint32 /*id*/){}
 
     // Called when AI is temporarily replaced or put back when possess is applied or removed
-    void OnPossess(bool apply) {}
+    void OnPossess(bool /*apply*/) {}
 
     //*************
     // Variables
@@ -109,7 +108,7 @@ struct ScriptedAI : public CreatureAI
     void Reset() {}
 
     //Called at creature aggro either by MoveInLOS or Attack Start
-    void EnterCombat(Unit* who) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     //*************
     //AI Helper Functions
@@ -151,7 +150,7 @@ struct ScriptedAI : public CreatureAI
     void DoTeleportTo(float fX, float fY, float fZ, uint32 uiTime = 0);
     void DoTeleportTo(const float pos[4]);
 
-    void DoAction(const int32 param) {}
+    void DoAction(const int32 /*param*/) {}
 
     //Teleports a player without dropping threat (only teleports to same map)
     void DoTeleportPlayer(Unit* pUnit, float fX, float fY, float fZ, float fO);
@@ -219,8 +218,8 @@ struct BossAI : public ScriptedAI
     void UpdateAI(const uint32 diff) = 0;
 
     void Reset() { _Reset(); }
-    void EnterCombat(Unit *who) { _EnterCombat(); }
-    void JustDied(Unit *killer) { _JustDied(); }
+    void EnterCombat(Unit * /*who*/) { _EnterCombat(); }
+    void JustDied(Unit * /*killer*/) { _JustDied(); }
 
     protected:
         void _Reset();
