@@ -1,17 +1,19 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+/*
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -47,23 +49,22 @@ struct npc_blood_knight_stillbladeAI : public ScriptedAI
     void Reset()
     {
         lifeTimer = 120000;
-        me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 32);
+        me->SetStandState(UNIT_STAND_STATE_DEAD);
         me->SetUInt32Value(UNIT_FIELD_BYTES_1,7);   // lay down
         spellHit = false;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit * /*who*/)
     {
-        return;
     }
 
     void UpdateAI(const uint32 diff)
     {
-        if (!me->GetUInt32Value(UNIT_FIELD_BYTES_1))
+        if (me->IsStandState())
         {
             if (lifeTimer <= diff)
                 me->AI()->EnterEvadeMode();
@@ -78,8 +79,8 @@ struct npc_blood_knight_stillbladeAI : public ScriptedAI
             (Hitter->GetTypeId() == TYPEID_PLAYER) && (CAST_PLR(Hitter)->IsActiveQuest(QUEST_REDEEMING_THE_DEAD)))
         {
             CAST_PLR(Hitter)->AreaExploredOrEventHappens(QUEST_REDEEMING_THE_DEAD);
-            DoCast(me,SPELL_REVIVE_SELF);
-            me->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
+            DoCast(me, SPELL_REVIVE_SELF);
+            me->SetStandState(UNIT_STAND_STATE_STAND);
             me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
             //me->RemoveAllAuras();
             DoScriptText(SAY_HEAL, me);
@@ -101,4 +102,3 @@ void AddSC_silvermoon_city()
     newscript->GetAI = &GetAI_npc_blood_knight_stillblade;
     newscript->RegisterSelf();
 }
-

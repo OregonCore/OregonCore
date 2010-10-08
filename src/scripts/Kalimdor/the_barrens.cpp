@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: The_Barrens
 SD%Complete: 90
-SDComment: Quest support: 2458, 4921, 6981, 1719, 863
+SDComment: Quest support: 863, 1719, 2458, 4921, 6981
 SDCategory: Barrens
 EndScriptData */
 
@@ -38,21 +38,26 @@ EndContentData */
 
 #define GOSSIP_CORPSE "Examine corpse in detail..."
 
-bool GossipHello_npc_beaten_corpse(Player *player, Creature* pCreature)
+enum eQuests
 {
-    if (player->GetQuestStatus(4921) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(4921) == QUEST_STATUS_COMPLETE)
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_CORPSE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    QUEST_LOST_IN_BATTLE    = 4921
+};
 
-    player->SEND_GOSSIP_MENU(3557, pCreature->GetGUID());
+bool GossipHello_npc_beaten_corpse(Player* pPlayer, Creature* pCreature)
+{
+    if (pPlayer->GetQuestStatus(QUEST_LOST_IN_BATTLE) == QUEST_STATUS_INCOMPLETE || pPlayer->GetQuestStatus(QUEST_LOST_IN_BATTLE) == QUEST_STATUS_COMPLETE)
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_CORPSE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+
+    pPlayer->SEND_GOSSIP_MENU(3557, pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_beaten_corpse(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_beaten_corpse(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (action == GOSSIP_ACTION_INFO_DEF +1)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF +1)
     {
-        player->SEND_GOSSIP_MENU(3558, pCreature->GetGUID());
-        player->KilledMonster(10668,pCreature->GetGUID());
+        pPlayer->SEND_GOSSIP_MENU(3558, pCreature->GetGUID());
+        pPlayer->TalkedToCreature(pCreature->GetEntry(), pCreature->GetGUID());
     }
     return true;
 }
@@ -63,24 +68,24 @@ bool GossipSelect_npc_beaten_corpse(Player *player, Creature* pCreature, uint32 
 
 #define GOSSIP_SPUTTERVALVE "Can you tell me about this shard?"
 
-bool GossipHello_npc_sputtervalve(Player *player, Creature* pCreature)
+bool GossipHello_npc_sputtervalve(Player* pPlayer, Creature* pCreature)
 {
     if (pCreature->isQuestGiver())
-        player->PrepareQuestMenu(pCreature->GetGUID());
+        pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (player->GetQuestStatus(6981) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_SPUTTERVALVE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+    if (pPlayer->GetQuestStatus(6981) == QUEST_STATUS_INCOMPLETE)
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SPUTTERVALVE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_sputtervalve(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_sputtervalve(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (action == GOSSIP_ACTION_INFO_DEF)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF)
     {
-        player->SEND_GOSSIP_MENU(2013, pCreature->GetGUID());
-        player->AreaExploredOrEventHappens(6981);
+        pPlayer->SEND_GOSSIP_MENU(2013, pCreature->GetGUID());
+        pPlayer->AreaExploredOrEventHappens(6981);
     }
     return true;
 }
@@ -122,7 +127,7 @@ struct npc_taskmaster_fizzuleAI : public ScriptedAI
         me->CombatStop();
     }
 
-    void SpellHit(Unit *caster, const SpellEntry *spell)
+    void SpellHit(Unit * /*caster*/, const SpellEntry *spell)
     {
         if (spell->Id == SPELL_FLARE || spell->Id == SPELL_FOLLY)
         {
@@ -136,7 +141,7 @@ struct npc_taskmaster_fizzuleAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit* who) { }
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -155,10 +160,6 @@ struct npc_taskmaster_fizzuleAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-CreatureAI* GetAI_npc_taskmaster_fizzule(Creature* pCreature)
-{
-    return new npc_taskmaster_fizzuleAI (pCreature);
-}
 
 bool ReciveEmote_npc_taskmaster_fizzule(Player *player, Creature* pCreature, uint32 emote)
 {
@@ -172,17 +173,27 @@ bool ReciveEmote_npc_taskmaster_fizzule(Player *player, Creature* pCreature, uin
     }
     return true;
 }
+
+CreatureAI* GetAI_npc_taskmaster_fizzule(Creature* pCreature)
+{
+    return new npc_taskmaster_fizzuleAI(pCreature);
+}
+
 /*#####
 ## npc_twiggy_flathead
 #####*/
 
-#define BIG_WILL 6238
-#define AFFRAY_CHALLENGER 6240
-#define SAY_BIG_WILL_READY                  -1000267
-#define SAY_TWIGGY_FLATHEAD_BEGIN           -1000268
-#define SAY_TWIGGY_FLATHEAD_FRAY            -1000269
-#define SAY_TWIGGY_FLATHEAD_DOWN            -1000270
-#define SAY_TWIGGY_FLATHEAD_OVER            -1000271
+enum eTwiggyFlathead
+{
+    NPC_BIG_WILL                = 6238,
+    NPC_AFFRAY_CHALLENGER       = 6240,
+
+    SAY_BIG_WILL_READY          = -1000123,
+    SAY_TWIGGY_FLATHEAD_BEGIN   = -1000124,
+    SAY_TWIGGY_FLATHEAD_FRAY    = -1000125,
+    SAY_TWIGGY_FLATHEAD_DOWN    = -1000126,
+    SAY_TWIGGY_FLATHEAD_OVER    = -1000127,
+};
 
 float AffrayChallengerLoc[6][4]=
 {
@@ -227,7 +238,7 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
         BigWill = 0;
     }
 
-    void EnterCombat(Unit *who) { }
+    void EnterCombat(Unit * /*who*/) { }
 
     void MoveInLineOfSight(Unit *who)
     {
@@ -240,7 +251,7 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
         }
     }
 
-    void KilledUnit(Unit *victim) { }
+    void KilledUnit(Unit * /*victim*/) { }
 
     void UpdateAI(const uint32 diff)
     {
@@ -301,7 +312,7 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
 
                     for (uint8 i = 0; i < 6; ++i)
                     {
-                        Creature* pCreature = me->SummonCreature(AFFRAY_CHALLENGER, AffrayChallengerLoc[i][0], AffrayChallengerLoc[i][1], AffrayChallengerLoc[i][2], AffrayChallengerLoc[i][3], TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
+                        Creature* pCreature = me->SummonCreature(NPC_AFFRAY_CHALLENGER, AffrayChallengerLoc[i][0], AffrayChallengerLoc[i][1], AffrayChallengerLoc[i][2], AffrayChallengerLoc[i][3], TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
                         if (!pCreature)
                             continue;
                         pCreature->setFaction(35);
@@ -346,19 +357,18 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
                             pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                             pCreature->HandleEmoteCommand(EMOTE_ONESHOT_ROAR);
                             pCreature->setFaction(14);
-                            ((CreatureAI*)pCreature->AI())->AttackStart(pWarrior);
+                            pCreature->AI()->AttackStart(pWarrior);
                             ++Wave;
                             Wave_Timer = 20000;
                         }
                     }
                     else if (Wave >= 6 && !EventBigWill) {
-                        if (Creature* pCreature = me->SummonCreature(BIG_WILL, -1722, -4341, 6.12, 6.26, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 480000))
+                        if (Creature* pCreature = me->SummonCreature(NPC_BIG_WILL, -1722, -4341, 6.12, 6.26, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 480000))
                         {
                             BigWill = pCreature->GetGUID();
                             //pCreature->GetMotionMaster()->MovePoint(0, -1693, -4343, 4.32);
                             //pCreature->GetMotionMaster()->MovePoint(1, -1684, -4333, 2.78);
                             pCreature->GetMotionMaster()->MovePoint(2, -1682, -4329, 2.79);
-                            //pCreature->HandleEmoteCommand(EMOTE_ONESHOT_ROAR);
                             pCreature->HandleEmoteCommand(EMOTE_STATE_READYUNARMED);
                             EventBigWill = true;
                             Wave_Timer = 1000;
@@ -489,15 +499,13 @@ struct npc_wizzlecrank_shredderAI : public npc_escortAI
             pSummoned->AI()->AttackStart(me);
     }
 
-    void EnterCombat(Unit* who){}
-
     void UpdateEscortAI(const uint32 uiDiff)
     {
         if (!UpdateVictim())
         {
             if (m_bIsPostEvent)
             {
-                if (m_uiPostEventTimer < uiDiff)
+                if (m_uiPostEventTimer <= uiDiff)
                 {
                     switch(m_uiPostEventCount)
                     {

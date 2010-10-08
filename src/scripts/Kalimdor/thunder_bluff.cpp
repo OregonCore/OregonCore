@@ -1,17 +1,19 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+/*
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -54,7 +56,7 @@ struct npc_cairne_bloodhoofAI : public ScriptedAI
         Uppercut_Timer = 10000;
     }
 
-    void EnterCombat(Unit *who) {}
+    void EnterCombat(Unit * /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -65,31 +67,31 @@ struct npc_cairne_bloodhoofAI : public ScriptedAI
         {
             Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget)
-                DoCast(pTarget,SPELL_BERSERKER_CHARGE);
+                DoCast(pTarget, SPELL_BERSERKER_CHARGE);
             BerserkerCharge_Timer = 25000;
         } else BerserkerCharge_Timer -= diff;
 
         if (Uppercut_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_UPPERCUT);
+            DoCast(me->getVictim(), SPELL_UPPERCUT);
             Uppercut_Timer = 20000;
         } else Uppercut_Timer -= diff;
 
         if (Thunderclap_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_THUNDERCLAP);
+            DoCast(me->getVictim(), SPELL_THUNDERCLAP);
             Thunderclap_Timer = 15000;
         } else Thunderclap_Timer -= diff;
 
         if (MortalStrike_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_MORTAL_STRIKE);
+            DoCast(me->getVictim(), SPELL_MORTAL_STRIKE);
             MortalStrike_Timer = 15000;
         } else MortalStrike_Timer -= diff;
 
         if (Cleave_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CLEAVE);
+            DoCast(me->getVictim(), SPELL_CLEAVE);
             Cleave_Timer = 7000;
         } else Cleave_Timer -= diff;
 
@@ -101,25 +103,25 @@ CreatureAI* GetAI_npc_cairne_bloodhoof(Creature* pCreature)
     return new npc_cairne_bloodhoofAI (pCreature);
 }
 
-bool GossipHello_npc_cairne_bloodhoof(Player *player, Creature* pCreature)
+bool GossipHello_npc_cairne_bloodhoof(Player* pPlayer, Creature* pCreature)
 {
     if (pCreature->isQuestGiver())
-        player->PrepareQuestMenu(pCreature->GetGUID());
+        pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (player->GetQuestStatus(925) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_HCB, GOSSIP_SENDER_MAIN, GOSSIP_SENDER_INFO);
+    if (pPlayer->GetQuestStatus(925) == QUEST_STATUS_INCOMPLETE)
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HCB, GOSSIP_SENDER_MAIN, GOSSIP_SENDER_INFO);
 
-    player->SEND_GOSSIP_MENU(7013, pCreature->GetGUID());
+    pPlayer->SEND_GOSSIP_MENU(7013, pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_cairne_bloodhoof(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_cairne_bloodhoof(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (action == GOSSIP_SENDER_INFO)
+    if (uiAction == GOSSIP_SENDER_INFO)
     {
-        player->CastSpell(player, 23123, false);
-        player->SEND_GOSSIP_MENU(7014, pCreature->GetGUID());
+        pPlayer->CastSpell(pPlayer, 23123, false);
+        pPlayer->SEND_GOSSIP_MENU(7014, pCreature->GetGUID());
     }
     return true;
 }

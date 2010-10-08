@@ -1,17 +1,19 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+/*
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -47,7 +49,7 @@ struct npc_calvin_montagueAI : public ScriptedAI
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
     }
 
-    void EnterCombat(Unit* who) { }
+    void EnterCombat(Unit* /*who*/) {}
 
     void JustDied(Unit* Killer)
     {
@@ -69,13 +71,13 @@ CreatureAI* GetAI_npc_calvin_montague(Creature* pCreature)
     return new npc_calvin_montagueAI (pCreature);
 }
 
-bool QuestAccept_npc_calvin_montague(Player* player, Creature* creature, Quest const* quest)
+bool QuestAccept_npc_calvin_montague(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
-    if (quest->GetQuestId() == QUEST_590)
+    if (pQuest->GetQuestId() == QUEST_590)
     {
-        creature->setFaction(FACTION_HOSTILE);
-        creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
-        ((npc_calvin_montagueAI*)creature->AI())->AttackStart(player);
+        pCreature->setFaction(FACTION_HOSTILE);
+        pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+        CAST_AI(npc_calvin_montagueAI, pCreature->AI())->AttackStart(pPlayer);
     }
     return true;
 }
@@ -85,52 +87,38 @@ bool QuestAccept_npc_calvin_montague(Player* player, Creature* creature, Quest c
 ## go_mausoleum_trigger
 ######*/
 
-#define QUEST_ULAG      1819
-#define C_ULAG          6390
-#define GO_TRIGGER      104593
-#define GO_DOOR         176594
-
-GameObject* SearchMausoleumGo(Unit *source, uint32 entry, float range)
+enum eMausoleum
 {
-    GameObject* pGo = NULL;
+    QUEST_ULAG      = 1819,
+    NPC_ULAG        = 6390,
+    GO_TRIGGER      = 104593,
+    GO_DOOR         = 176594
+};
 
-    CellPair pair(Oregon::ComputeCellPair(source->GetPositionX(), source->GetPositionY()));
-    Cell cell(pair);
-    cell.data.Part.reserved = ALL_DISTRICT;
-    cell.SetNoCreate();
-
-    Oregon::NearestGameObjectEntryInObjectRangeCheck go_check(*source, entry, range);
-    Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> searcher(pGo, go_check);
-    TypeContainerVisitor<Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck>, GridTypeMapContainer> go_searcher(searcher);
-    cell.Visit(pair, go_searcher,*(source->GetMap()));
-
-    return pGo;
-}
-
-bool GOHello_go_mausoleum_door(Player *player, GameObject* _GO)
+bool GOHello_go_mausoleum_door(Player* pPlayer, GameObject* /*pGo*/)
 {
-    if (player->GetQuestStatus(QUEST_ULAG) != QUEST_STATUS_INCOMPLETE)
+    if (pPlayer->GetQuestStatus(QUEST_ULAG) != QUEST_STATUS_INCOMPLETE)
         return false;
 
-    if (GameObject *trigger = SearchMausoleumGo(player, GO_TRIGGER, 30))
+    if (GameObject* pTrigger = pPlayer->FindNearestGameObject(GO_TRIGGER, 30.0f))
     {
-        trigger->SetGoState(GO_STATE_READY);
-        player->SummonCreature(C_ULAG, 2390.26, 336.47, 40.01, 2.26, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000);
+        pTrigger->SetGoState(GO_STATE_READY);
+        pPlayer->SummonCreature(NPC_ULAG, 2390.26, 336.47, 40.01, 2.26, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000);
         return false;
     }
 
     return false;
 }
 
-bool GOHello_go_mausoleum_trigger(Player *player, GameObject* _GO)
+bool GOHello_go_mausoleum_trigger(Player* pPlayer, GameObject* pGo)
 {
-    if (player->GetQuestStatus(QUEST_ULAG) != QUEST_STATUS_INCOMPLETE)
+    if (pPlayer->GetQuestStatus(QUEST_ULAG) != QUEST_STATUS_INCOMPLETE)
         return false;
 
-    if (GameObject *door = SearchMausoleumGo(player, GO_DOOR, 30))
+    if (GameObject* pDoor = pPlayer->FindNearestGameObject(GO_DOOR, 30.0f))
     {
-        _GO->SetGoState(GO_STATE_ACTIVE);
-        door->RemoveFlag(GAMEOBJECT_FLAGS,GO_FLAG_INTERACT_COND);
+        pGo->SetGoState(GO_STATE_ACTIVE);
+        pDoor->RemoveFlag(GAMEOBJECT_FLAGS,GO_FLAG_INTERACT_COND);
         return true;
     }
 
@@ -157,4 +145,3 @@ void AddSC_tirisfal_glades()
     newscript->pGOHello = &GOHello_go_mausoleum_trigger;
     newscript->RegisterSelf();
 }
-

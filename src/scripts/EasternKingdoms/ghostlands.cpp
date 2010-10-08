@@ -1,17 +1,19 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+/*
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -37,26 +39,26 @@ EndContentData */
 
 #define GOSSIP_H_BKD "Take Blood Knight Insignia"
 
-bool GossipHello_npc_blood_knight_dawnstar(Player *player, Creature* pCreature)
+bool GossipHello_npc_blood_knight_dawnstar(Player* pPlayer, Creature* pCreature)
 {
-    if (player->GetQuestStatus(9692) == QUEST_STATUS_INCOMPLETE && !player->HasItemCount(24226,1,true))
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_H_BKD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    if (pPlayer->GetQuestStatus(9692) == QUEST_STATUS_INCOMPLETE && !pPlayer->HasItemCount(24226,1,true))
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_H_BKD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_blood_knight_dawnstar(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_blood_knight_dawnstar(Player* pPlayer, Creature* /*pCreature*/, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (action == GOSSIP_ACTION_INFO_DEF+1)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
     {
         ItemPosCountVec dest;
-        uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 24226, 1, false);
+        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 24226, 1, false);
         if (msg == EQUIP_ERR_OK)
         {
-            player->StoreNewItem(dest, 24226, 1, true);
-            player->PlayerTalkClass->ClearMenus();
+            pPlayer->StoreNewItem(dest, 24226, 1, true);
+            pPlayer->PlayerTalkClass->ClearMenus();
         }
     }
     return true;
@@ -68,24 +70,24 @@ bool GossipSelect_npc_blood_knight_dawnstar(Player *player, Creature* pCreature,
 
 #define GOSSIP_HBN "You gave the crew disguises?"
 
-bool GossipHello_npc_budd_nedreck(Player *player, Creature* pCreature)
+bool GossipHello_npc_budd_nedreck(Player* pPlayer, Creature* pCreature)
 {
     if (pCreature->isQuestGiver())
-        player->PrepareQuestMenu(pCreature->GetGUID());
+        pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (player->GetQuestStatus(11166) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_HBN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+    if (pPlayer->GetQuestStatus(11166) == QUEST_STATUS_INCOMPLETE)
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HBN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_budd_nedreck(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_budd_nedreck(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (action == GOSSIP_ACTION_INFO_DEF)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF)
     {
-        player->CLOSE_GOSSIP_MENU();
-        pCreature->CastSpell(player, 42540, false);
+        pPlayer->CLOSE_GOSSIP_MENU();
+        pCreature->CastSpell(pPlayer, 42540, false);
     }
     return true;
 }
@@ -94,25 +96,25 @@ bool GossipSelect_npc_budd_nedreck(Player *player, Creature* pCreature, uint32 s
 ## npc_rathis_tomber
 ######*/
 
-bool GossipHello_npc_rathis_tomber(Player *player, Creature* pCreature)
+bool GossipHello_npc_rathis_tomber(Player* pPlayer, Creature* pCreature)
 {
     if (pCreature->isQuestGiver())
-        player->PrepareQuestMenu(pCreature->GetGUID());
+        pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (pCreature->isVendor() && player->GetQuestRewardStatus(9152))
+    if (pCreature->isVendor() && pPlayer->GetQuestRewardStatus(9152))
     {
-        player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
-        player->SEND_GOSSIP_MENU(8432, pCreature->GetGUID());
-    } else
-    player->SEND_GOSSIP_MENU(8431,pCreature->GetGUID());
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
+        pPlayer->SEND_GOSSIP_MENU(8432, pCreature->GetGUID());
+    }else
+    pPlayer->SEND_GOSSIP_MENU(8431, pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_rathis_tomber(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_rathis_tomber(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (action == GOSSIP_ACTION_TRADE)
-        player->SEND_VENDORLIST(pCreature->GetGUID());
+    if (uiAction == GOSSIP_ACTION_TRADE)
+        pPlayer->SEND_VENDORLIST(pCreature->GetGUID());
     return true;
 }
 
@@ -169,7 +171,7 @@ struct npc_ranger_lilathaAI : public npc_escortAI
         case 0:
             {
             me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-            if (GameObject* Cage = FindGameObject(GO_CAGE, 20, me))
+            if (GameObject* Cage = me->FindNearestGameObject(GO_CAGE, 20))
                 Cage->SetGoState(GO_STATE_ACTIVE);
             DoScriptText(SAY_START, me, pPlayer);
             break;
@@ -206,18 +208,16 @@ struct npc_ranger_lilathaAI : public npc_escortAI
         case 33:
             me->SetOrientation(5.858011);
             DoScriptText(SAY_END2, me, pPlayer);
-            Unit* CaptainHelios = FindCreature(NPC_CAPTAIN_HELIOS, 50, me);
+            Unit* CaptainHelios = me->FindNearestCreature(NPC_CAPTAIN_HELIOS, 50);
             if (CaptainHelios)
             DoScriptText(SAY_CAPTAIN_ANSWER, CaptainHelios, pPlayer);
             break;
         }
     }
 
-    void EnterCombat(Unit* who) {}
-
     void Reset()
     {
-        if (GameObject* Cage = FindGameObject(GO_CAGE, 20, me))
+        if (GameObject* Cage = me->FindNearestGameObject(GO_CAGE, 20))
             Cage->SetGoState(GO_STATE_READY);
     }
 };
@@ -226,7 +226,7 @@ bool QuestAccept_npc_ranger_lilatha(Player* pPlayer, Creature* pCreature, Quest 
 {
     if (quest->GetQuestId() == QUEST_ESCAPE_FROM_THE_CATACOMBS)
     {
-        pCreature->setFaction(113); //check this later...
+        pCreature->setFaction(113);
 
         if (npc_escortAI* pEscortAI = CAST_AI(npc_ranger_lilathaAI, pCreature->AI()))
             pEscortAI->Start(true, false, pPlayer->GetGUID());
@@ -310,4 +310,3 @@ void AddSC_ghostlands()
     newscript->pQuestAccept = &QuestAccept_npc_ranger_lilatha;
     newscript->RegisterSelf();
 }
-

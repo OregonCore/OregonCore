@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 /* ScriptData
 SDName: Ungoro Crater
 SD%Complete: 100
@@ -44,7 +45,6 @@ EndContentData */
 #define ENTRY_TARLORD 6519
 #define ENTRY_TARLORD1 6519
 #define ENTRY_STOMPER 6513
-
 
 struct npc_ameAI : public npc_escortAI
 {
@@ -96,7 +96,7 @@ struct npc_ameAI : public npc_escortAI
         summoned->AI()->AttackStart(me);
     }
 
-    void JustDied(Unit* killer)
+    void JustDied(Unit* /*killer*/)
     {
         if (Player* pPlayer = GetPlayerForEscort())
             pPlayer->FailQuest(QUEST_CHASING_AME);
@@ -110,7 +110,7 @@ struct npc_ameAI : public npc_escortAI
 
         if (DEMORALIZINGSHOUT_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_DEMORALIZINGSHOUT);
+            DoCast(me->getVictim(), SPELL_DEMORALIZINGSHOUT);
             DEMORALIZINGSHOUT_Timer = 70000;
         } else DEMORALIZINGSHOUT_Timer -= diff;
 
@@ -266,7 +266,7 @@ struct npc_ringoAI : public FollowerAI
         }
     }
 
-    void SpellHit(Unit* pCaster, const SpellEntry* pSpell)
+    void SpellHit(Unit* /*pCaster*/, const SpellEntry* pSpell)
     {
         if (HasFollowState(STATE_FOLLOW_INPROGRESS | STATE_FOLLOW_PAUSED) && pSpell->Id == SPELL_REVIVE_RINGO)
             ClearFaint();

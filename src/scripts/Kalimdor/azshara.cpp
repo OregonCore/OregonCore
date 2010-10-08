@@ -1,17 +1,19 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+/*
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -49,7 +51,7 @@ struct mobs_spitelashesAI : public ScriptedAI
         spellhit = false;
     }
 
-    void EnterCombat(Unit *who) { }
+    void EnterCombat(Unit * /*who*/) { }
 
     void SpellHit(Unit *Hitter, const SpellEntry *Spellkind)
     {
@@ -59,14 +61,14 @@ struct mobs_spitelashesAI : public ScriptedAI
             (Spellkind->Id == 118 || Spellkind->Id == 12824 || Spellkind->Id == 12825 || Spellkind->Id == 12826))
         {
             spellhit=true;
-            DoCast(me,29124);                       //become a sheep
+            DoCast(me, 29124);                       //become a sheep
         }
     }
 
     void UpdateAI(const uint32 diff)
     {
         // we mustn't remove the creature in the same round in which we cast the summon spell, otherwise there will be no summons
-        if (spellhit && morphtimer>=5000)
+        if (spellhit && morphtimer >= 5000)
         {
             me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             me->RemoveCorpse();                     //you don't see any corpse on off.
@@ -77,10 +79,10 @@ struct mobs_spitelashesAI : public ScriptedAI
         if (spellhit && morphtimer<5000)
         {
             morphtimer+=diff;
-            if (morphtimer>=5000)
+            if (morphtimer >= 5000)
             {
-                DoCast(me,28406);                   //summon copies
-                DoCast(me,6924);                    //visual explosion
+                DoCast(me, 28406);                   //summon copies
+                DoCast(me, 6924);                    //visual explosion
             }
         }
         if (!UpdateVictim())
@@ -99,54 +101,62 @@ CreatureAI* GetAI_mobs_spitelashes(Creature* pCreature)
 ## npc_loramus_thalipedes
 ######*/
 
-bool GossipHello_npc_loramus_thalipedes(Player *player, Creature* pCreature)
+#define GOSSIP_HELLO_LT1    "Can you help me?"
+#define GOSSIP_HELLO_LT2    "Tell me your story"
+#define GOSSIP_SELECT_LT1   "Please continue"
+#define GOSSIP_SELECT_LT2   "I do not understand"
+#define GOSSIP_SELECT_LT3   "Indeed"
+#define GOSSIP_SELECT_LT4   "I will do this with or your help, Loramus"
+#define GOSSIP_SELECT_LT5   "Yes"
+
+bool GossipHello_npc_loramus_thalipedes(Player* pPlayer, Creature* pCreature)
 {
     if (pCreature->isQuestGiver())
-        player->PrepareQuestMenu(pCreature->GetGUID());
+        pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (player->GetQuestStatus(2744) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(0, "Can you help me?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    if (pPlayer->GetQuestStatus(2744) == QUEST_STATUS_INCOMPLETE)
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HELLO_LT1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    if (player->GetQuestStatus(3141) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(0, "Tell me your story", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+    if (pPlayer->GetQuestStatus(3141) == QUEST_STATUS_INCOMPLETE)
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HELLO_LT2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_loramus_thalipedes(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_loramus_thalipedes(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    switch (action)
+    switch (uiAction)
     {
         case GOSSIP_ACTION_INFO_DEF+1:
-            player->CLOSE_GOSSIP_MENU();
-            player->AreaExploredOrEventHappens(2744);
+            pPlayer->CLOSE_GOSSIP_MENU();
+            pPlayer->AreaExploredOrEventHappens(2744);
             break;
 
         case GOSSIP_ACTION_INFO_DEF+2:
-            player->ADD_GOSSIP_ITEM(0, "Please continue", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 21);
-            player->SEND_GOSSIP_MENU(1813, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_LT1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 21);
+            pPlayer->SEND_GOSSIP_MENU(1813, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+21:
-            player->ADD_GOSSIP_ITEM(0, "I do not understand", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 22);
-            player->SEND_GOSSIP_MENU(1814, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_LT2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 22);
+            pPlayer->SEND_GOSSIP_MENU(1814, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+22:
-            player->ADD_GOSSIP_ITEM(0, "Indeed", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 23);
-            player->SEND_GOSSIP_MENU(1815, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_LT3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 23);
+            pPlayer->SEND_GOSSIP_MENU(1815, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+23:
-            player->ADD_GOSSIP_ITEM(0, "I will do this with or your help, Loramus", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 24);
-            player->SEND_GOSSIP_MENU(1816, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_LT4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 24);
+            pPlayer->SEND_GOSSIP_MENU(1816, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+24:
-            player->ADD_GOSSIP_ITEM(0, "Yes", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 25);
-            player->SEND_GOSSIP_MENU(1817, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_LT5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 25);
+            pPlayer->SEND_GOSSIP_MENU(1817, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+25:
-            player->CLOSE_GOSSIP_MENU();
-            player->AreaExploredOrEventHappens(3141);
+            pPlayer->CLOSE_GOSSIP_MENU();
+            pPlayer->AreaExploredOrEventHappens(3141);
             break;
     }
     return true;
@@ -300,15 +310,15 @@ struct mob_rizzle_sprysprocketAI : public ScriptedAI
             if (Teleport_Timer <= diff)
             {
                 //temp solution - unit can't be teleported by core using spelleffect 5, only players
-                Map *map = me->GetMap();
-                if (map)
+                Map* pMap = me->GetMap();
+                if (pMap)
                 {
-                    map->CreatureRelocation(me, 3706.39, -3969.15, 35.9118, 0);
+                    pMap->CreatureRelocation(me, 3706.39, -3969.15, 35.9118, 0);
                     me->AI_SendMoveToPacket(3706.39, -3969.15, 35.9118, 0, 0, 0);
                 }
                 //begin swimming and summon depth charges
-                Player* player = Unit::GetPlayer(*me, PlayerGUID);
-                SendText(MSG_ESCAPE_NOTICE, player);
+                Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID);
+                SendText(MSG_ESCAPE_NOTICE, pPlayer);
                 DoCast(me, SPELL_PERIODIC_DEPTH_CHARGE);
                 me->SetUnitMovementFlags(MOVEFLAG_FLYING2 | MOVEFLAG_SWIMMING);
                 me->SetSpeed(MOVE_RUN, 0.85f, true);
@@ -328,25 +338,25 @@ struct mob_rizzle_sprysprocketAI : public ScriptedAI
 
         if (Grenade_Timer <= diff)
         {
-            Player *player = Unit::GetPlayer(*me, PlayerGUID);
-            if (player)
+            Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID);
+            if (pPlayer)
             {
-               DoScriptText(SAY_RIZZLE_GRENADE, me, player);
-               DoCast(player, SPELL_RIZZLE_FROST_GRENADE, true);
+               DoScriptText(SAY_RIZZLE_GRENADE, me, pPlayer);
+               DoCast(pPlayer, SPELL_RIZZLE_FROST_GRENADE, true);
             }
             Grenade_Timer = 30000;
         } else Grenade_Timer -= diff;
 
         if (Check_Timer <= diff)
         {
-            Player *player = Unit::GetPlayer(*me, PlayerGUID);
-            if (!player)
+            Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID);
+            if (!pPlayer)
             {
                 Despawn();
                 return;
             }
-            float dist = me->GetDistance(player);
-            if (dist < 10 && me->GetPositionX() > player->GetPositionX() && !Reached)
+            float dist = me->GetDistance(pPlayer);
+            if (dist < 10 && me->GetPositionX() > pPlayer->GetPositionX() && !Reached)
             {
                 DoScriptText(SAY_RIZZLE_FINAL, me);
                 me->SetUInt32Value(UNIT_NPC_FLAGS, 1);
@@ -361,12 +371,12 @@ struct mob_rizzle_sprysprocketAI : public ScriptedAI
 
     }
 
-    void SendText(const char *text, Player* player)
+    void SendText(const char *text, Player* pPlayer)
     {
         WorldPacket data(SMSG_SERVER_MESSAGE, 0);              // guess size
         data << text;
-        if (player)
-            player->GetSession()->SendPacket(&data);
+        if (pPlayer)
+            pPlayer->GetSession()->SendPacket(&data);
     }
 
     void AttackStart(Unit *who)
@@ -374,7 +384,7 @@ struct mob_rizzle_sprysprocketAI : public ScriptedAI
         if (!who || PlayerGUID)
             return;
 
-        if (who->GetTypeId() == TYPEID_PLAYER && ((Player *)who)->GetQuestStatus(10994) == QUEST_STATUS_INCOMPLETE)
+        if (who->GetTypeId() == TYPEID_PLAYER && CAST_PLR(who)->GetQuestStatus(10994) == QUEST_STATUS_INCOMPLETE)
         {
             PlayerGUID = who->GetGUID();
             DoScriptText(SAY_RIZZLE_START, me);
@@ -383,7 +393,7 @@ struct mob_rizzle_sprysprocketAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit* who) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void MovementInform(uint32 type, uint32 id)
     {
@@ -402,23 +412,23 @@ struct mob_rizzle_sprysprocketAI : public ScriptedAI
 
 };
 
-bool GossipHello_mob_rizzle_sprysprocket(Player *player, Creature* pCreature)
+bool GossipHello_mob_rizzle_sprysprocket(Player* pPlayer, Creature* pCreature)
 {
-    if (player->GetQuestStatus(10994) != QUEST_STATUS_INCOMPLETE)
+    if (pPlayer->GetQuestStatus(10994) != QUEST_STATUS_INCOMPLETE)
         return true;
-    player->ADD_GOSSIP_ITEM(0, GOSSIP_GET_MOONSTONE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-    player->SEND_GOSSIP_MENU(10811,pCreature->GetGUID());
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_GET_MOONSTONE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+    pPlayer->SEND_GOSSIP_MENU(10811, pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_mob_rizzle_sprysprocket(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_mob_rizzle_sprysprocket(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (action == GOSSIP_ACTION_INFO_DEF + 1 && player->GetQuestStatus(10994) == QUEST_STATUS_INCOMPLETE)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF + 1 && pPlayer->GetQuestStatus(10994) == QUEST_STATUS_INCOMPLETE)
     {
-        player->CLOSE_GOSSIP_MENU();
-        pCreature->CastSpell(player, SPELL_GIVE_SOUTHFURY_MOONSTONE, true);
-        ((mob_rizzle_sprysprocketAI*)pCreature->AI())->Must_Die_Timer = 3000;
-        ((mob_rizzle_sprysprocketAI*)pCreature->AI())->Must_Die = true;
+        pPlayer->CLOSE_GOSSIP_MENU();
+        pCreature->CastSpell(pPlayer, SPELL_GIVE_SOUTHFURY_MOONSTONE, true);
+        CAST_AI(mob_rizzle_sprysprocketAI, pCreature->AI())->Must_Die_Timer = 3000;
+        CAST_AI(mob_rizzle_sprysprocketAI, pCreature->AI())->Must_Die = true;
     }
     return true;
 }
@@ -471,14 +481,12 @@ struct mob_depth_chargeAI : public ScriptedAI
         }
     }
 
-    void AttackStart(Unit *who)
+    void AttackStart(Unit * /*who*/)
     {
-        return;
     }
 
-    void EnterCombat(Unit* who)
+    void EnterCombat(Unit* /*who*/)
     {
-        return;
     }
 };
 

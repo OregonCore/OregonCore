@@ -1,17 +1,19 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+/*
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -50,10 +52,8 @@ struct npc_converted_sentryAI : public ScriptedAI
         Timer = 2500;
     }
 
-    void MoveInLineOfSight(Unit *who)
-        { return; }
-    void EnterCombat(Unit* who)
-        { }
+    void MoveInLineOfSight(Unit * /*who*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -62,12 +62,14 @@ struct npc_converted_sentryAI : public ScriptedAI
             if (Timer <= diff)
             {
                 uint32 i = urand(1,2);
-                if (i=1) DoScriptText(SAY_CONVERTED_1, me);
-                else DoScriptText(SAY_CONVERTED_2, me);
+                if (i == 1)
+                    DoScriptText(SAY_CONVERTED_1, me);
+                else
+                    DoScriptText(SAY_CONVERTED_2, me);
 
                 DoCast(me, SPELL_CONVERT_CREDIT);
                 if (me->isPet())
-                    ((Pet*)me)->SetDuration(7500);
+                    CAST_PET(me)->SetDuration(7500);
                 Credit = true;
             } else Timer -= diff;
         }
@@ -93,7 +95,7 @@ struct npc_greengill_slaveAI : public ScriptedAI
 
     uint64 PlayerGUID;
 
-    void EnterCombat(Unit* who){}
+    void EnterCombat(Unit* /*who*/){}
 
     void Reset()
     {
@@ -115,7 +117,7 @@ struct npc_greengill_slaveAI : public ScriptedAI
                     plr->KilledMonster(25086, me->GetGUID());
             }
             DoCast(me, ENRAGE);
-            Unit* Myrmidon = FindCreature(DM, 70, me);
+            Unit* Myrmidon = me->FindNearestCreature(DM, 70);
             if (Myrmidon)
             {
                 me->AddThreat(Myrmidon, 100000.0f);
@@ -124,7 +126,7 @@ struct npc_greengill_slaveAI : public ScriptedAI
         }
     }
 
-    void UpdateAI(const uint32 diff)
+    void UpdateAI(const uint32 /*diff*/)
     {
         DoMeleeAttackIfReady();
     }
@@ -149,4 +151,3 @@ void AddSC_isle_of_queldanas()
     newscript->GetAI = &GetAI_npc_greengill_slaveAI;
     newscript->RegisterSelf();
 }
-

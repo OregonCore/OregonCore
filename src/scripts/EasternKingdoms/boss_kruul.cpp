@@ -1,17 +1,19 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+/*
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -42,10 +44,6 @@ struct boss_kruulAI : public ScriptedAI
     uint32 VoidBolt_Timer;
     uint32 Rage_Timer;
     uint32 Hound_Timer;
-    int Rand;
-    int RandX;
-    int RandY;
-    Creature* Summoned;
 
     void Reset()
     {
@@ -58,20 +56,21 @@ struct boss_kruulAI : public ScriptedAI
         Hound_Timer = 8000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
     void KilledUnit()
     {
         // When a player, pet or totem gets killed, Lord Kazzak casts this spell to instantly regenerate 70,000 health.
-        DoCast(me,SPELL_CAPTURESOUL);
-
+        DoCast(me, SPELL_CAPTURESOUL);
     }
 
-    void SummonHounds(Unit* victim)
+    void SummonHounds(Unit* pVictim)
     {
-        Rand = rand()%10;
+        int RandX;
+        int RandY;
+        int Rand = rand()%10;
         switch (rand()%2)
         {
             case 0: RandX = 0 - Rand; break;
@@ -85,9 +84,8 @@ struct boss_kruulAI : public ScriptedAI
             case 1: RandY = 0 + Rand; break;
         }
         Rand = 0;
-        Summoned = DoSpawnCreature(19207, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 300000);
-        if (Summoned)
-            ((CreatureAI*)Summoned->AI())->AttackStart(victim);
+        if (Creature *Hound = DoSpawnCreature(19207, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 300000))
+            Hound->AI()->AttackStart(pVictim);
     }
 
     void UpdateAI(const uint32 diff)
@@ -99,10 +97,8 @@ struct boss_kruulAI : public ScriptedAI
         //ShadowVolley_Timer
         if (ShadowVolley_Timer <= diff)
         {
-            if (rand()%100 < 46)
-            {
-                DoCast(me->getVictim(),SPELL_SHADOWVOLLEY);
-            }
+            if (urand(0,99) < 45)
+                DoCast(me->getVictim(), SPELL_SHADOWVOLLEY);
 
             ShadowVolley_Timer = 5000;
         } else ShadowVolley_Timer -= diff;
@@ -110,10 +106,8 @@ struct boss_kruulAI : public ScriptedAI
         //Cleave_Timer
         if (Cleave_Timer <= diff)
         {
-            if (rand()%100 < 50)
-            {
-                DoCast(me->getVictim(),SPELL_CLEAVE);
-            }
+            if (urand(0,1))
+                DoCast(me->getVictim(), SPELL_CLEAVE);
 
             Cleave_Timer = 10000;
         } else Cleave_Timer -= diff;
@@ -121,10 +115,8 @@ struct boss_kruulAI : public ScriptedAI
         //ThunderClap_Timer
         if (ThunderClap_Timer <= diff)
         {
-            if (rand()%100 < 20)
-            {
-                DoCast(me->getVictim(),SPELL_THUNDERCLAP);
-            }
+            if (urand(0,9) < 2)
+                DoCast(me->getVictim(), SPELL_THUNDERCLAP);
 
             ThunderClap_Timer = 12000;
         } else ThunderClap_Timer -= diff;
@@ -132,17 +124,15 @@ struct boss_kruulAI : public ScriptedAI
         //TwistedReflection_Timer
         if (TwistedReflection_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_TWISTEDREFLECTION);
+            DoCast(me->getVictim(), SPELL_TWISTEDREFLECTION);
             TwistedReflection_Timer = 30000;
         } else TwistedReflection_Timer -= diff;
 
         //VoidBolt_Timer
         if (VoidBolt_Timer <= diff)
         {
-            if (rand()%100 < 40)
-            {
-                DoCast(me->getVictim(),SPELL_VOIDBOLT);
-            }
+            if (urand(0,9) < 4)
+                DoCast(me->getVictim(), SPELL_VOIDBOLT);
 
             VoidBolt_Timer = 18000;
         } else VoidBolt_Timer -= diff;
@@ -150,7 +140,7 @@ struct boss_kruulAI : public ScriptedAI
         //Rage_Timer
         if (Rage_Timer <= diff)
         {
-            DoCast(me,SPELL_RAGE);
+            DoCast(me, SPELL_RAGE);
             Rage_Timer = 70000;
         } else Rage_Timer -= diff;
 
@@ -180,4 +170,3 @@ void AddSC_boss_kruul()
     newscript->GetAI = &GetAI_boss_kruul;
     newscript->RegisterSelf();
 }
-

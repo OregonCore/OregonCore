@@ -1,17 +1,19 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+/*
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -37,29 +39,29 @@ EndContentData */
 
 #define GOSSIP_HNF "You may speak frankly, Neeru..."
 #define GOSSIP_SNF "[PH] ..."
-bool GossipHello_npc_neeru_fireblade(Player *player, Creature* pCreature)
+bool GossipHello_npc_neeru_fireblade(Player* pPlayer, Creature* pCreature)
 {
     if (pCreature->isQuestGiver())
-        player->PrepareQuestMenu(pCreature->GetGUID());
+        pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (player->GetQuestStatus(QUEST_5727) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_HNF, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    if (pPlayer->GetQuestStatus(QUEST_5727) == QUEST_STATUS_INCOMPLETE)
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HNF, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(4513, pCreature->GetGUID());
+    pPlayer->SEND_GOSSIP_MENU(4513, pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_neeru_fireblade(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_neeru_fireblade(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    switch (action)
+    switch (uiAction)
     {
         case GOSSIP_ACTION_INFO_DEF+1:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_SNF, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            player->SEND_GOSSIP_MENU(4513, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SNF, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+            pPlayer->SEND_GOSSIP_MENU(4513, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
-            player->CLOSE_GOSSIP_MENU();
-            player->AreaExploredOrEventHappens(QUEST_5727);
+            pPlayer->CLOSE_GOSSIP_MENU();
+            pPlayer->AreaExploredOrEventHappens(QUEST_5727);
             break;
     }
     return true;
@@ -69,7 +71,10 @@ bool GossipSelect_npc_neeru_fireblade(Player *player, Creature* pCreature, uint3
 ## npc_shenthul
 ######*/
 
-#define QUEST_2460  2460
+enum eShenthul
+{
+    QUEST_SHATTERED_SALUTE  = 2460
+};
 
 struct npc_shenthulAI : public ScriptedAI
 {
@@ -79,7 +84,7 @@ struct npc_shenthulAI : public ScriptedAI
     bool CanEmote;
     uint32 Salute_Timer;
     uint32 Reset_Timer;
-    uint64 playerGUID;
+    uint64 PlayerGUID;
 
     void Reset()
     {
@@ -87,57 +92,66 @@ struct npc_shenthulAI : public ScriptedAI
         CanEmote = false;
         Salute_Timer = 6000;
         Reset_Timer = 0;
-        playerGUID = 0;
+        PlayerGUID = 0;
     }
 
-    void EnterCombat(Unit* who) { }
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
         if (CanEmote)
-            if (Reset_Timer <= diff)
         {
-            if (Player* temp = Unit::GetPlayer(*me, playerGUID))
-                temp->FailQuest(QUEST_2460);
-            Reset();
-        } else Reset_Timer -= diff;
+            if (Reset_Timer <= diff)
+            {
+                if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
+                {
+                    if (pPlayer->GetTypeId() == TYPEID_PLAYER && pPlayer->GetQuestStatus(QUEST_SHATTERED_SALUTE) == QUEST_STATUS_INCOMPLETE)
+                        pPlayer->FailQuest(QUEST_SHATTERED_SALUTE);
+                }
+                Reset();
+            } else Reset_Timer -= diff;
+        }
 
         if (CanTalk && !CanEmote)
-            if (Salute_Timer <= diff)
         {
-            me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
-            CanEmote = true;
-            Reset_Timer = 60000;
-        } else Salute_Timer -= diff;
+            if (Salute_Timer <= diff)
+            {
+                me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
+                CanEmote = true;
+                Reset_Timer = 60000;
+            } else Salute_Timer -= diff;
+        }
 
         if (!UpdateVictim())
             return;
 
         DoMeleeAttackIfReady();
     }
+
+    void ReceiveEmote(Player* pPlayer, uint32 emote)
+    {
+        if (emote == TEXTEMOTE_SALUTE && pPlayer->GetQuestStatus(QUEST_SHATTERED_SALUTE) == QUEST_STATUS_INCOMPLETE)
+        {
+            if (CanEmote)
+            {
+                pPlayer->AreaExploredOrEventHappens(QUEST_SHATTERED_SALUTE);
+                Reset();
+            }
+        }
+    }
 };
+
 CreatureAI* GetAI_npc_shenthul(Creature* pCreature)
 {
     return new npc_shenthulAI (pCreature);
 }
 
-bool QuestAccept_npc_shenthul(Player* player, Creature* creature, Quest const* quest)
+bool QuestAccept_npc_shenthul(Player* pPlayer, Creature* pCreature, Quest const* quest)
 {
-    if (quest->GetQuestId() == QUEST_2460)
+    if (quest->GetQuestId() == QUEST_SHATTERED_SALUTE)
     {
-        ((npc_shenthulAI*)creature->AI())->CanTalk = true;
-        ((npc_shenthulAI*)creature->AI())->playerGUID = player->GetGUID();
-    }
-    return true;
-}
-
-bool ReciveEmote_npc_shenthul(Player *player, Creature* pCreature, uint32 emote)
-{
-    if (emote == TEXTEMOTE_SALUTE && player->GetQuestStatus(QUEST_2460) == QUEST_STATUS_INCOMPLETE)
-        if (((npc_shenthulAI*)pCreature->AI())->CanEmote)
-    {
-        player->AreaExploredOrEventHappens(QUEST_2460);
-        ((npc_shenthulAI*)pCreature->AI())->Reset();
+        CAST_AI(npc_shenthulAI, pCreature->AI())->CanTalk = true;
+        CAST_AI(npc_shenthulAI, pCreature->AI())->PlayerGUID = pPlayer->GetGUID();
     }
     return true;
 }
@@ -173,7 +187,7 @@ struct npc_thrall_warchiefAI : public ScriptedAI
         Shock_Timer = 8000;
     }
 
-    void EnterCombat(Unit *who) {}
+    void EnterCombat(Unit * /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -182,13 +196,13 @@ struct npc_thrall_warchiefAI : public ScriptedAI
 
         if (ChainLightning_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CHAIN_LIGHTNING);
+            DoCast(me->getVictim(), SPELL_CHAIN_LIGHTNING);
             ChainLightning_Timer = 9000;
         } else ChainLightning_Timer -= diff;
 
         if (Shock_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SHOCK);
+            DoCast(me->getVictim(), SPELL_SHOCK);
             Shock_Timer = 15000;
         } else Shock_Timer -= diff;
 
@@ -200,49 +214,49 @@ CreatureAI* GetAI_npc_thrall_warchief(Creature* pCreature)
     return new npc_thrall_warchiefAI (pCreature);
 }
 
-bool GossipHello_npc_thrall_warchief(Player *player, Creature* pCreature)
+bool GossipHello_npc_thrall_warchief(Player* pPlayer, Creature* pCreature)
 {
     if (pCreature->isQuestGiver())
-        player->PrepareQuestMenu(pCreature->GetGUID());
+        pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (player->GetQuestStatus(QUEST_6566) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_HTW, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    if (pPlayer->GetQuestStatus(QUEST_6566) == QUEST_STATUS_INCOMPLETE)
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HTW, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_thrall_warchief(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_thrall_warchief(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    switch (action)
+    switch (uiAction)
     {
         case GOSSIP_ACTION_INFO_DEF+1:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_STW1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            player->SEND_GOSSIP_MENU(5733, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+            pPlayer->SEND_GOSSIP_MENU(5733, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_STW2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-            player->SEND_GOSSIP_MENU(5734, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
+            pPlayer->SEND_GOSSIP_MENU(5734, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+3:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_STW3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
-            player->SEND_GOSSIP_MENU(5735, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
+            pPlayer->SEND_GOSSIP_MENU(5735, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+4:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_STW4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
-            player->SEND_GOSSIP_MENU(5736, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
+            pPlayer->SEND_GOSSIP_MENU(5736, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+5:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_STW5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
-            player->SEND_GOSSIP_MENU(5737, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
+            pPlayer->SEND_GOSSIP_MENU(5737, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+6:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_STW6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+7);
-            player->SEND_GOSSIP_MENU(5738, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+7);
+            pPlayer->SEND_GOSSIP_MENU(5738, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+7:
-            player->CLOSE_GOSSIP_MENU();
-            player->AreaExploredOrEventHappens(QUEST_6566);
+            pPlayer->CLOSE_GOSSIP_MENU();
+            pPlayer->AreaExploredOrEventHappens(QUEST_6566);
             break;
     }
     return true;
@@ -262,7 +276,6 @@ void AddSC_orgrimmar()
     newscript->Name = "npc_shenthul";
     newscript->GetAI = &GetAI_npc_shenthul;
     newscript->pQuestAccept =  &QuestAccept_npc_shenthul;
-    newscript->pReceiveEmote = &ReciveEmote_npc_shenthul;
     newscript->RegisterSelf();
 
     newscript = new Script;

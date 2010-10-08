@@ -1,17 +1,19 @@
- /* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ /*
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -35,6 +37,7 @@ EndContentData */
 
 #define GOSSIP_HAH "You're Astor Hadren, right?"
 #define GOSSIP_SAH "You've got something I need, Astor. And I'll be taking it now."
+
 struct npc_astor_hadrenAI : public ScriptedAI
 {
     npc_astor_hadrenAI(Creature *c) : ScriptedAI(c) {}
@@ -44,11 +47,11 @@ struct npc_astor_hadrenAI : public ScriptedAI
         me->setFaction(68);
     }
 
-    void EnterCombat(Unit* who)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
-    void JustDied(Unit *who)
+    void JustDied(Unit * /*who*/)
     {
         me->setFaction(68);
     }
@@ -59,29 +62,29 @@ CreatureAI* GetAI_npc_astor_hadren(Creature* pCreature)
     return new npc_astor_hadrenAI(pCreature);
 }
 
-bool GossipHello_npc_astor_hadren(Player *player, Creature* pCreature)
+bool GossipHello_npc_astor_hadren(Player* pPlayer, Creature* pCreature)
 {
-    if (player->GetQuestStatus(1886) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_HAH, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+    if (pPlayer->GetQuestStatus(1886) == QUEST_STATUS_INCOMPLETE)
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HAH, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
-    player->SEND_GOSSIP_MENU(623, pCreature->GetGUID());
+    pPlayer->SEND_GOSSIP_MENU(623, pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_astor_hadren(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_astor_hadren(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    switch (action)
+    switch (uiAction)
     {
         case GOSSIP_ACTION_INFO_DEF + 1:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_SAH, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-            player->SEND_GOSSIP_MENU(624, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SAH, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+            pPlayer->SEND_GOSSIP_MENU(624, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF + 2:
-            player->CLOSE_GOSSIP_MENU();
+            pPlayer->CLOSE_GOSSIP_MENU();
             pCreature->setFaction(21);
-            if (player)
-                ((npc_astor_hadrenAI*)pCreature->AI())->AttackStart(player);
+            if (pPlayer)
+                CAST_AI(npc_astor_hadrenAI, pCreature->AI())->AttackStart(pPlayer);
             break;
     }
     return true;
@@ -132,7 +135,7 @@ struct npc_deathstalker_erlandAI : public npc_escortAI
             pPlayer->GroupEventHappens(QUEST_ESCORTING, me); break;
         case 14: DoScriptText(SAY_THANKS, me, pPlayer); break;
         case 15: {
-                Unit* Rane = FindCreature(NPC_RANE, 20, me);
+                Unit* Rane = me->FindNearestCreature(NPC_RANE, 20);
                 if (Rane)
                     DoScriptText(SAY_RANE, Rane);
                 break;}
@@ -140,7 +143,7 @@ struct npc_deathstalker_erlandAI : public npc_escortAI
         case 17: DoScriptText(SAY_MOVE_QUINN, me); break;
         case 24: DoScriptText(SAY_GREETINGS, me); break;
         case 25: {
-                Unit* Quinn = FindCreature(NPC_QUINN, 20, me);
+                Unit* Quinn = me->FindNearestCreature(NPC_QUINN, 20);
                 if (Quinn)
                     DoScriptText(SAY_QUINN, Quinn);
                 break;}
@@ -207,14 +210,14 @@ CreatureAI* GetAI_npc_deathstalker_erlandAI(Creature* pCreature)
 
 /*######
 ## pyrewood_ambush
-######*/
+#######*/
 
 #define QUEST_PYREWOOD_AMBUSH 452
 
-#define NPCSAY_INIT "Get ready, they'll be arriving any minute..." //no blizzlike
-#define NPCSAY_END "Thanks for your help!" //no blizzlike
+#define NPCSAY_INIT "Get ready, they'll be arriving any minute..." //not blizzlike
+#define NPCSAY_END "Thanks for your help!" //not blizzlike
 
-static float SpawnPoints[3][4] =
+static float PyrewoodSpawnPoints[3][4] =
 {
     //pos_x   pos_y     pos_z    orien
     //door
@@ -227,15 +230,13 @@ static float SpawnPoints[3][4] =
 
 struct pyrewood_ambushAI : public ScriptedAI
 {
-
     pyrewood_ambushAI(Creature *c) : ScriptedAI(c), Summons(me)
     {
        QuestInProgress = false;
     }
 
-
     uint32 Phase;
-    int KillCount;
+    int8 KillCount;
     uint32 WaitTimer;
     uint64 PlayerGUID;
     SummonList Summons;
@@ -255,7 +256,7 @@ struct pyrewood_ambushAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit *who){}
+    void EnterCombat(Unit * /*who*/){}
 
     void JustSummoned(Creature *pSummoned)
     {
@@ -263,7 +264,7 @@ struct pyrewood_ambushAI : public ScriptedAI
         ++KillCount;
     }
 
-    void SummonedCreatureDespawn(Creature* pSummoned)
+    void SummonedCreatureDespawn(Creature *pSummoned)
     {
         Summons.Despawn(pSummoned);
         --KillCount;
@@ -271,48 +272,43 @@ struct pyrewood_ambushAI : public ScriptedAI
 
     void SummonCreatureWithRandomTarget(uint32 creatureId, int position)
     {
-        Creature *pSummoned = me->SummonCreature(creatureId, SpawnPoints[position][0], SpawnPoints[position][1], SpawnPoints[position][2], SpawnPoints[position][3], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 15000);
-        if (pSummoned)
+        if (Creature *pSummoned = me->SummonCreature(creatureId, PyrewoodSpawnPoints[position][0], PyrewoodSpawnPoints[position][1], PyrewoodSpawnPoints[position][2], PyrewoodSpawnPoints[position][3], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 15000))
         {
-            Player* pPlayer = NULL;
-            Unit* pTarget = NULL;
+            Player *pPlayer = NULL;
+            Unit *pTarget = NULL;
             if (PlayerGUID)
             {
                 pPlayer = Unit::GetPlayer(*me, PlayerGUID);
-                switch(rand()%2)
-                {
-                    case 0: pTarget = me; break;
-                    case 1: pTarget = pPlayer; break;
-                }
+                if (pPlayer)
+                    pTarget = RAND((Unit*)me, (Unit*)pPlayer);
             } else
                 pTarget = me;
 
-            pSummoned->setFaction(168);
-            pSummoned->AddThreat(pTarget, 32.0f);
-            pSummoned->AI()->AttackStart(pTarget);
+            if (pTarget)
+            {
+                pSummoned->setFaction(168);
+                pSummoned->AddThreat(pTarget, 32.0f);
+                pSummoned->AI()->AttackStart(pTarget);
+            }
         }
     }
 
-    void JustDied(Unit* pKiller)
+    void JustDied(Unit * /*pKiller*/)
     {
         if (PlayerGUID)
-        {
-            Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID);
-            if (pPlayer && pPlayer->GetQuestStatus(QUEST_PYREWOOD_AMBUSH) == QUEST_STATUS_INCOMPLETE)
-                pPlayer->FailQuest(QUEST_PYREWOOD_AMBUSH);
-        }
-
+            if (Player *pPlayer = Unit::GetPlayer(*me, PlayerGUID))
+                if (pPlayer->GetQuestStatus(QUEST_PYREWOOD_AMBUSH) == QUEST_STATUS_INCOMPLETE)
+                    pPlayer->FailQuest(QUEST_PYREWOOD_AMBUSH);
     }
 
     void UpdateAI(const uint32 diff)
     {
-
         //sLog.outString("DEBUG: p(%i) k(%i) d(%u) W(%i)", Phase, KillCount, diff, WaitTimer);
 
         if (!QuestInProgress)
             return;
 
-        if (KillCount && (Phase < 6))
+        if (KillCount && Phase < 6)
         {
             if (!UpdateVictim()) //reset() on target Despawn...
                 return;
@@ -321,8 +317,8 @@ struct pyrewood_ambushAI : public ScriptedAI
             return;
         }
 
-
-        switch(Phase){
+        switch (Phase)
+        {
             case 0:
                 if (WaitTimer == WAIT_SECS)
                     me->Say(NPCSAY_INIT, LANG_UNIVERSAL, 0); //no blizzlike
@@ -362,10 +358,8 @@ struct pyrewood_ambushAI : public ScriptedAI
                 QuestInProgress = false;
                 Reset();
                 break;
-         }
-
-         Phase++; //prepare next phase
-
+        }
+        ++Phase; //prepare next phase
     }
 };
 
@@ -376,12 +370,12 @@ CreatureAI* GetAI_pyrewood_ambush(Creature *pCreature)
 
 bool QuestAccept_pyrewood_ambush(Player *pPlayer, Creature *pCreature, const Quest *pQuest)
 {
-    if ((pQuest->GetQuestId() == QUEST_PYREWOOD_AMBUSH) && (!((pyrewood_ambushAI*)(pCreature->AI()))->QuestInProgress))
+    if (pQuest->GetQuestId() == QUEST_PYREWOOD_AMBUSH && !CAST_AI(pyrewood_ambushAI, pCreature->AI())->QuestInProgress)
     {
-        ((pyrewood_ambushAI*)(pCreature->AI()))->QuestInProgress = true;
-        ((pyrewood_ambushAI*)(pCreature->AI()))->Phase = 0;
-        ((pyrewood_ambushAI*)(pCreature->AI()))->KillCount = 0;
-        ((pyrewood_ambushAI*)(pCreature->AI()))->PlayerGUID = pPlayer->GetGUID();
+        CAST_AI(pyrewood_ambushAI, pCreature->AI())->QuestInProgress = true;
+        CAST_AI(pyrewood_ambushAI, pCreature->AI())->Phase = 0;
+        CAST_AI(pyrewood_ambushAI, pCreature->AI())->KillCount = 0;
+        CAST_AI(pyrewood_ambushAI, pCreature->AI())->PlayerGUID = pPlayer->GetGUID();
     }
 
     return true;
@@ -414,4 +408,3 @@ void AddSC_silverpine_forest()
     newscript->pQuestAccept = &QuestAccept_pyrewood_ambush;
     newscript->RegisterSelf();
 }
-
