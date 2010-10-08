@@ -113,6 +113,11 @@ struct boss_void_reaverAI : public ScriptedAI
         // Arcane Orb
         if (ArcaneOrb_Timer <= diff)
         {
+            if (me->IsNonMeleeSpellCasted(false))
+            {
+                ArcaneOrb_Timer = 3000;
+                return;
+            }
             Unit *pTarget = NULL;
             std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
             std::vector<Unit *> target_list;
