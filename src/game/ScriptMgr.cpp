@@ -25,7 +25,7 @@ void ScriptMgr::LoadDatabase()
     pSystemMgr.LoadVersion();
     pSystemMgr.LoadScriptTexts();
     pSystemMgr.LoadScriptTextsCustom();
-    //pSystemMgr.LoadScriptWaypoints();
+    pSystemMgr.LoadScriptWaypoints();
 }
 
 struct TSpellSummary {
