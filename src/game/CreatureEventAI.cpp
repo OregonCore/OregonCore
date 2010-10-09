@@ -374,9 +374,10 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
                             target = owner;
                     }
                 }
-                else if ((target = me->getVictim()))
+                else
                 {
-                    if (target->GetTypeId() != TYPEID_PLAYER)
+                    target = me->getVictim();
+                    if (target && target->GetTypeId() != TYPEID_PLAYER)
                         if (Unit* owner = target->GetOwner())
                             if (owner->GetTypeId() == TYPEID_PLAYER)
                                 target = owner;
@@ -1017,7 +1018,7 @@ void CreatureEventAI::UpdateAI(const uint32 diff)
     if (!bEmptyList)
     {
         //Events are only updated once every EVENT_UPDATE_TIME ms to prevent lag with large amount of events
-        if (EventUpdateTime < diff)
+        if (EventUpdateTime <= diff)
         {
             EventDiff += diff;
 
@@ -1027,7 +1028,7 @@ void CreatureEventAI::UpdateAI(const uint32 diff)
                 //Decrement Timers
                 if ((*i).Time)
                 {
-                    if ((*i).Time > EventDiff)
+                    if (EventDiff <= (*i).Time)
                     {
                         //Do not decrement timers if event cannot trigger in this phase
                         if (!((*i).Event.event_inverse_phase_mask & (1 << Phase)))
@@ -1330,7 +1331,7 @@ void CreatureEventAI::ReceiveEmote(Player* pPlayer, uint32 text_emote)
     }
 }
 
-void CreatureEventAI::DamageTaken(Unit* done_by, uint32& damage)
+void CreatureEventAI::DamageTaken(Unit* /*done_by*/, uint32& damage)
 {
     if (InvinceabilityHpLevel > 0 && me->GetHealth() < InvinceabilityHpLevel+damage)
     {

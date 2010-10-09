@@ -79,20 +79,6 @@ EndContentData */
 #define GOSSIP_TEXT_INN_SILVERMOON_1          "Silvermoon City Inn"
 #define GOSSIP_TEXT_INN_SILVERMOON_2          "Wayfarer's Rest tavern"
 
-//common used for guards in main cities
-void DoReplyToTextEmote(Creature* pCreature,uint32 em)
-{
-    switch(em)
-    {
-        case TEXTEMOTE_KISS:    pCreature->HandleEmoteCommand(EMOTE_ONESHOT_BOW); break;
-        case TEXTEMOTE_WAVE:    pCreature->HandleEmoteCommand(EMOTE_ONESHOT_WAVE); break;
-        case TEXTEMOTE_SALUTE:  pCreature->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE); break;
-        case TEXTEMOTE_SHY:     pCreature->HandleEmoteCommand(EMOTE_ONESHOT_FLEX); break;
-        case TEXTEMOTE_RUDE:
-        case TEXTEMOTE_CHICKEN: pCreature->HandleEmoteCommand(EMOTE_ONESHOT_POINT); break;
-    }
-}
-
 /*******************************************************
  * guard_azuremyst start
  *******************************************************/
@@ -2220,20 +2206,13 @@ bool GossipSelect_guard_orgrimmar(Player *player, Creature* pCreature, uint32 se
     return true;
 }
 
-bool ReceiveEmote_guard_orgrimmar(Player *player, Creature* pCreature, uint32 emote)
-{
-    if (player->GetTeam() == HORDE)
-        DoReplyToTextEmote(pCreature,emote);
-    return true;
-}
-
 /*******************************************************
  * guard_orgrimmar end
  *******************************************************/
 
 CreatureAI* GetAI_guard_orgrimmar(Creature* pCreature)
 {
-    return new guardAI (pCreature);
+    return new guardAI_orgrimmar (pCreature);
 }
 
 /*******************************************************
@@ -3384,20 +3363,13 @@ bool GossipSelect_guard_stormwind(Player *player, Creature* pCreature, uint32 se
     return true;
 }
 
-bool ReceiveEmote_guard_stormwind(Player *player, Creature* pCreature, uint32 emote)
-{
-    if (player->GetTeam() == ALLIANCE)
-        DoReplyToTextEmote(pCreature,emote);
-    return true;
-}
-
 /*******************************************************
  * guard_stormwind end
  *******************************************************/
 
 CreatureAI* GetAI_guard_stormwind(Creature* pCreature)
 {
-    return new guardAI (pCreature);
+    return new guardAI_stormwind (pCreature);
 }
 
 /*******************************************************
@@ -4010,7 +3982,6 @@ void AddSC_guards()
     newscript->Name = "guard_orgrimmar";
     newscript->pGossipHello          = &GossipHello_guard_orgrimmar;
     newscript->pGossipSelect         = &GossipSelect_guard_orgrimmar;
-    newscript->pReceiveEmote         = &ReceiveEmote_guard_orgrimmar;
     newscript->GetAI = &GetAI_guard_orgrimmar;
     newscript->RegisterSelf();
 
@@ -4046,7 +4017,6 @@ void AddSC_guards()
     newscript->Name = "guard_stormwind";
     newscript->pGossipHello          = &GossipHello_guard_stormwind;
     newscript->pGossipSelect         = &GossipSelect_guard_stormwind;
-    newscript->pReceiveEmote         = &ReceiveEmote_guard_stormwind;
     newscript->GetAI = &GetAI_guard_stormwind;
     newscript->RegisterSelf();
 

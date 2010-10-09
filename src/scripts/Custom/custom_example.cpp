@@ -1,17 +1,19 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+/*
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2006-2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -89,7 +91,7 @@ struct custom_exampleAI : public ScriptedAI
 
     //*** HANDLED FUNCTION ***
     //Attack Start is called whenever someone hits us.
-    void Aggro(Unit *who)
+    void EnterCombat(Unit *who)
     {
         //Say some stuff
         DoSay(SAY_AGGRO,LANG_UNIVERSAL,NULL);
@@ -206,6 +208,18 @@ struct custom_exampleAI : public ScriptedAI
 
         DoMeleeAttackIfReady();
     }
+
+    //Our Recive emote function
+    void ReceiveEmote(Player* pPlayer, uint32 emote)
+    {
+        me->HandleEmoteCommand(emote);
+
+        if (emote == TEXTEMOTE_DANCE)
+            ((custom_exampleAI*)me->AI())->DoSay(SAY_DANCE, LANG_UNIVERSAL, NULL);
+
+        if (emote == TEXTEMOTE_SALUTE)
+            ((custom_exampleAI*)me->AI())->DoSay(SAY_SALUTE, LANG_UNIVERSAL, NULL);
+    }
 };
 
 //This is the GetAI method used by all scripts that involve AI
@@ -216,45 +230,31 @@ CreatureAI* GetAI_custom_example(Creature* pCreature)
 }
 
 //This function is called when the player clicks an option on the gossip menu
-void SendDefaultMenu_custom_example(Player *player, Creature* pCreature, uint32 action)
+void SendDefaultMenu_custom_example(Player* pPlayer, Creature* pCreature, uint32 uiAction)
 {
-    if (action == GOSSIP_ACTION_INFO_DEF + 1)               //Fight time
+    if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)               //Fight time
     {
         //Set our faction to hostile twoards all
         pCreature->setFaction(24);
-        pCreature->Attack(player, true);
-        player->PlayerTalkClass->CloseGossip();
+        pCreature->Attack(pPlayer, true);
+        pPlayer->PlayerTalkClass->CloseGossip();
     }
 }
 
 //This function is called when the player clicks an option on the gossip menu
-bool GossipSelect_custom_example(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_custom_example(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
 {
-    if (sender == GOSSIP_SENDER_MAIN)
-        SendDefaultMenu_custom_example(player, pCreature, action);
+    if (uiSender == GOSSIP_SENDER_MAIN)
+        SendDefaultMenu_custom_example(pPlayer, pCreature, uiAction);
 
     return true;
 }
 
 //This function is called when the player opens the gossip menu
-bool GossipHello_custom_example(Player *player, Creature* pCreature)
+bool GossipHello_custom_example(Player* pPlayer, Creature* pCreature)
 {
-    player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM        , GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-    player->PlayerTalkClass->SendGossipMenu(907,pCreature->GetGUID());
-
-    return true;
-}
-
-//Our Recive emote function
-bool ReceiveEmote_custom_example(Player *player, Creature* pCreature, uint32 emote)
-{
-    pCreature->HandleEmoteCommand(emote);
-
-    if (emote == TEXTEMOTE_DANCE)
-        ((custom_exampleAI*)pCreature->AI())->DoSay(SAY_DANCE,LANG_UNIVERSAL,NULL);
-
-    if (emote == TEXTEMOTE_SALUTE)
-        ((custom_exampleAI*)pCreature->AI())->DoSay(SAY_SALUTE,LANG_UNIVERSAL,NULL);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM        , GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+    pPlayer->PlayerTalkClass->SendGossipMenu(907, pCreature->GetGUID());
 
     return true;
 }
@@ -272,7 +272,6 @@ void AddSC_custom_example()
     newscript->GetAI = &GetAI_custom_example;
     newscript->pGossipHello = &GossipHello_custom_example;
     newscript->pGossipSelect = &GossipSelect_custom_example;
-    newscript->pReceiveEmote = &ReceiveEmote_custom_example;
     newscript->RegisterSelf();
 }
 

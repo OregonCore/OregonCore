@@ -19,24 +19,24 @@
  */
 
 #include "Common.h"
-#include "Log.h"
+#include "ObjectAccessor.h"
+#include "ObjectMgr.h"
+#include "World.h"
 #include "WorldPacket.h"
 #include "WorldSession.h"
-#include "World.h"
-#include "Opcodes.h"
-#include "ObjectMgr.h"
-#include "Chat.h"
 #include "Database/DatabaseEnv.h"
+#include "Chat.h"
 #include "ChannelMgr.h"
 #include "Group.h"
 #include "Guild.h"
+#include "Language.h"
+#include "Log.h"
+#include "Opcodes.h"
 #include "MapManager.h"
-#include "ObjectAccessor.h"
 #include "Player.h"
 #include "SpellAuras.h"
-#include "Language.h"
+#include "CreatureAI.h"
 #include "Util.h"
-#include "ScriptMgr.h"
 
 bool WorldSession::processChatmessageFurtherAfterSecurityChecks(std::string& msg, uint32 lang)
 {
@@ -596,56 +596,50 @@ void WorldSession::HandleTextEmoteOpcode(WorldPacket & recv_data)
     recv_data >> emoteNum;
     recv_data >> guid;
 
+    EmotesTextEntry const *em = sEmotesTextStore.LookupEntry(text_emote);
+    if (!em)
+        return;
+
+    uint32 emote_anim = em->textid;
+
+    switch(emote_anim)
+    {
+        case EMOTE_STATE_SLEEP:
+        case EMOTE_STATE_SIT:
+        case EMOTE_STATE_KNEEL:
+        case EMOTE_ONESHOT_NONE:
+            break;
+        default:
+            GetPlayer()->HandleEmoteCommand(emote_anim);
+            break;
+    }
+
     const char *nam = 0;
     uint32 namlen = 1;
 
     Unit* unit = ObjectAccessor::GetUnit(*_player, guid);
-    Creature *pCreature = dynamic_cast<Creature *>(unit);
     if (unit)
     {
         nam = unit->GetName();
         namlen = (nam ? strlen(nam) : 0) + 1;
     }
 
-    EmotesTextEntry const *em = sEmotesTextStore.LookupEntry(text_emote);
-    if (em)
-    {
-        uint32 emote_anim = em->textid;
+    WorldPacket data;
+    data.Initialize(SMSG_TEXT_EMOTE, (20+namlen));
+    data << GetPlayer()->GetGUID();
+    data << (uint32)text_emote;
+    data << emoteNum;
+    data << (uint32)namlen;
+    if (namlen > 1)
+        data.append(nam, namlen);
+    else
+        data << (uint8)0x00;
 
-        WorldPacket data;
+    GetPlayer()->SendMessageToSetInRange(&data,sWorld.getConfig(CONFIG_LISTEN_RANGE_TEXTEMOTE),true);
 
-        switch(emote_anim)
-        {
-            case EMOTE_STATE_SLEEP:
-            case EMOTE_STATE_SIT:
-            case EMOTE_STATE_KNEEL:
-            case EMOTE_ONESHOT_NONE:
-                break;
-            default:
-                GetPlayer()->HandleEmoteCommand(emote_anim);
-                break;
-        }
-
-        data.Initialize(SMSG_TEXT_EMOTE, (20+namlen));
-        data << GetPlayer()->GetGUID();
-        data << (uint32)text_emote;
-        data << emoteNum;
-        data << (uint32)namlen;
-        if (namlen > 1)
-        {
-            data.append(nam, namlen);
-        }
-        else
-        {
-            data << (uint8)0x00;
-        }
-
-        GetPlayer()->SendMessageToSetInRange(&data,sWorld.getConfig(CONFIG_LISTEN_RANGE_TEXTEMOTE),true);
-
-        //Send scripted event call
-        if (pCreature)
-            sScriptMgr.ReceiveEmote(GetPlayer(),pCreature,text_emote);
-    }
+    //Send scripted event call
+    if (unit && unit->GetTypeId() == TYPEID_UNIT && ((Creature*)unit)->AI())
+        unit->ToCreature()->AI()->ReceiveEmote(GetPlayer(), text_emote);
 }
 
 void WorldSession::HandleChatIgnoredOpcode(WorldPacket& recv_data)

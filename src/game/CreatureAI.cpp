@@ -25,7 +25,7 @@
 #include "SpellMgr.h"
 
 //Disable CreatureAI when charmed
-void CreatureAI::OnCharmed(bool apply)
+void CreatureAI::OnCharmed(bool /*apply*/)
 {
     //me->IsAIEnabled = !apply;*/
     me->NeedChangeAI = true;

@@ -173,3 +173,27 @@ void guardAI::UpdateAI(const uint32 diff)
     }
 }
 
+void guardAI::DoReplyToTextEmote(uint32 em)
+{
+    switch(em)
+    {
+        case TEXTEMOTE_KISS:    me->HandleEmoteCommand(EMOTE_ONESHOT_BOW);    break;
+        case TEXTEMOTE_WAVE:    me->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);   break;
+        case TEXTEMOTE_SALUTE:  me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE); break;
+        case TEXTEMOTE_SHY:     me->HandleEmoteCommand(EMOTE_ONESHOT_FLEX);   break;
+        case TEXTEMOTE_RUDE:
+        case TEXTEMOTE_CHICKEN: me->HandleEmoteCommand(EMOTE_ONESHOT_POINT);  break;
+    }
+}
+
+void guardAI_orgrimmar::ReceiveEmote(Player* pPlayer, uint32 text_emote)
+{
+    if (pPlayer->GetTeam() == HORDE)
+        DoReplyToTextEmote(text_emote);
+}
+
+void guardAI_stormwind::ReceiveEmote(Player* pPlayer, uint32 text_emote)
+{
+    if (pPlayer->GetTeam() == ALLIANCE)
+        DoReplyToTextEmote(text_emote);
+}

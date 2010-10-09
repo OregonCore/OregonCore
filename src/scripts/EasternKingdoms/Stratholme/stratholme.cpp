@@ -1,17 +1,19 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+/*
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -35,9 +37,9 @@ EndContentData */
 ## go_gauntlet_gate (this is the _first_ of the gauntlet gates, two exist)
 ######*/
 
-bool GOHello_go_gauntlet_gate(Player *player, GameObject* _GO)
+bool GOHello_go_gauntlet_gate(Player* pPlayer, GameObject* pGo)
 {
-    ScriptedInstance* pInstance = _GO->GetInstanceData();
+    ScriptedInstance* pInstance = pGo->GetInstanceData();
 
     if (!pInstance)
         return false;
@@ -45,7 +47,7 @@ bool GOHello_go_gauntlet_gate(Player *player, GameObject* _GO)
     if (pInstance->GetData(TYPE_BARON_RUN) != NOT_STARTED)
         return false;
 
-    if (Group *pGroup = player->GetGroup())
+    if (Group *pGroup = pPlayer->GetGroup())
     {
         for (GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
         {
@@ -55,13 +57,13 @@ bool GOHello_go_gauntlet_gate(Player *player, GameObject* _GO)
 
             if (pGroupie->GetQuestStatus(QUEST_DEAD_MAN_PLEA) == QUEST_STATUS_INCOMPLETE &&
                 !pGroupie->HasAura(SPELL_BARON_ULTIMATUM,0) &&
-                pGroupie->GetMap() == _GO->GetMap())
+                pGroupie->GetMap() == pGo->GetMap())
                 pGroupie->CastSpell(pGroupie,SPELL_BARON_ULTIMATUM,true);
         }
-    } else if (player->GetQuestStatus(QUEST_DEAD_MAN_PLEA) == QUEST_STATUS_INCOMPLETE &&
-                !player->HasAura(SPELL_BARON_ULTIMATUM,0) &&
-                player->GetMap() == _GO->GetMap())
-                player->CastSpell(player,SPELL_BARON_ULTIMATUM,true);
+    } else if (pPlayer->GetQuestStatus(QUEST_DEAD_MAN_PLEA) == QUEST_STATUS_INCOMPLETE &&
+                !pPlayer->HasAura(SPELL_BARON_ULTIMATUM,0) &&
+                pPlayer->GetMap() == pGo->GetMap())
+                pPlayer->CastSpell(pPlayer,SPELL_BARON_ULTIMATUM,true);
 
     pInstance->SetData(TYPE_BARON_RUN,IN_PROGRESS);
     return false;
@@ -92,7 +94,7 @@ struct mob_freed_soulAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit* who) { }
+    void EnterCombat(Unit* /*who*/) {}
 };
 
 CreatureAI* GetAI_mob_freed_soul(Creature* pCreature)
@@ -125,7 +127,7 @@ struct mob_restless_soulAI : public ScriptedAI
         Tagged = false;
     }
 
-    void EnterCombat(Unit* who) { }
+    void EnterCombat(Unit* /*who*/) {}
 
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {
@@ -144,10 +146,10 @@ struct mob_restless_soulAI : public ScriptedAI
         summoned->CastSpell(summoned,SPELL_SOUL_FREED,false);
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         if (Tagged)
-            DoSpawnCreature(ENTRY_FREED, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 300000);
+            me->SummonCreature(ENTRY_FREED, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN, 300000);
     }
 
     void UpdateAI(const uint32 diff)
@@ -156,8 +158,8 @@ struct mob_restless_soulAI : public ScriptedAI
         {
             if (Die_Timer <= diff)
             {
-                if (Unit* temp = Unit::GetUnit(*me,Tagger))
-                    temp->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                if (Unit* pTemp = Unit::GetUnit(*me,Tagger))
+                    pTemp->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             } else Die_Timer -= diff;
         }
     }
@@ -172,7 +174,11 @@ CreatureAI* GetAI_mob_restless_soul(Creature* pCreature)
 ## mobs_spectral_ghostly_citizen
 ######*/
 
-#define SPELL_HAUNTING_PHANTOM  16336
+enum eGhostlyCitizenSpells
+{
+    SPELL_HAUNTING_PHANTOM  = 16336,
+    SPELL_SLAP              = 6754
+};
 
 struct mobs_spectral_ghostly_citizenAI : public ScriptedAI
 {
@@ -187,23 +193,22 @@ struct mobs_spectral_ghostly_citizenAI : public ScriptedAI
         Tagged = false;
     }
 
-    void EnterCombat(Unit* who) { }
+    void EnterCombat(Unit* /*who*/) {}
 
-    void SpellHit(Unit *caster, const SpellEntry *spell)
+    void SpellHit(Unit * /*caster*/, const SpellEntry *spell)
     {
         if (!Tagged && spell->Id == SPELL_EGAN_BLASTER)
             Tagged = true;
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         if (Tagged)
         {
-            for (uint32 i = 1; i <= 4; i++)
+            for (uint32 i = 1; i <= 4; ++i)
             {
                  //100%, 50%, 33%, 25% chance to spawn
-                 uint32 j = urand(1,i);
-                 if (j == 1)
+                 if (urand(1,i) == 1)
                      DoSummon(ENTRY_RESTLESS, me, 20.0f, 600000);
             }
         }
@@ -224,39 +229,36 @@ struct mobs_spectral_ghostly_citizenAI : public ScriptedAI
 
         DoMeleeAttackIfReady();
     }
+
+    void ReceiveEmote(Player* pPlayer, uint32 emote)
+    {
+        switch(emote)
+        {
+            case TEXTEMOTE_DANCE:
+                EnterEvadeMode();
+                break;
+            case TEXTEMOTE_RUDE:
+                if (me->IsWithinDistInMap(pPlayer, 5))
+                    DoCast(pPlayer, SPELL_SLAP, false);
+                else
+                    me->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
+                break;
+            case TEXTEMOTE_WAVE:
+                me->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
+                break;
+            case TEXTEMOTE_BOW:
+                me->HandleEmoteCommand(EMOTE_ONESHOT_BOW);
+                break;
+            case TEXTEMOTE_KISS:
+                me->HandleEmoteCommand(EMOTE_ONESHOT_FLEX);
+                break;
+        }
+    }
 };
 
 CreatureAI* GetAI_mobs_spectral_ghostly_citizen(Creature* pCreature)
 {
     return new mobs_spectral_ghostly_citizenAI (pCreature);
-}
-
-bool ReciveEmote_mobs_spectral_ghostly_citizen(Player *player, Creature* pCreature, uint32 emote)
-{
-    switch(emote)
-    {
-        case TEXTEMOTE_DANCE:
-            ((mobs_spectral_ghostly_citizenAI*)pCreature->AI())->EnterEvadeMode();
-            break;
-        case TEXTEMOTE_RUDE:
-            //Should instead cast spell, kicking player back. Spell not found.
-            if (pCreature->IsWithinDistInMap(player, 5))
-                pCreature->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
-            else
-                pCreature->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
-            break;
-        case TEXTEMOTE_WAVE:
-            pCreature->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
-            break;
-        case TEXTEMOTE_BOW:
-            pCreature->HandleEmoteCommand(EMOTE_ONESHOT_BOW);
-            break;
-        case TEXTEMOTE_KISS:
-            pCreature->HandleEmoteCommand(EMOTE_ONESHOT_FLEX);
-            break;
-    }
-
-    return true;
 }
 
 void AddSC_stratholme()
@@ -281,7 +283,6 @@ void AddSC_stratholme()
     newscript = new Script;
     newscript->Name = "mobs_spectral_ghostly_citizen";
     newscript->GetAI = &GetAI_mobs_spectral_ghostly_citizen;
-    newscript->pReceiveEmote = &ReciveEmote_mobs_spectral_ghostly_citizen;
     newscript->RegisterSelf();
 }
 

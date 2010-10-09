@@ -475,7 +475,7 @@ class Creature : public Unit, public GridObject<Creature>
         bool AIM_Initialize(CreatureAI* ai = NULL);
 
         void AI_SendMoveToPacket(float x, float y, float z, uint32 time, uint32 MovementFlags, uint8 type);
-        CreatureAI* AI() { return (CreatureAI*)i_AI; }
+        CreatureAI * AI() const { return (CreatureAI*)i_AI; }
 
         uint32 GetShieldBlockValue() const                  //dunno mob block value
         {

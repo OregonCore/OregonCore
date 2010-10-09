@@ -21,6 +21,23 @@ struct guardAI : public ScriptedAI
     void JustDied(Unit *Killer);
 
     void UpdateAI(const uint32 diff);
+
+    //common used for guards in main cities
+    void DoReplyToTextEmote(uint32 em);
+};
+
+struct guardAI_orgrimmar : public guardAI
+{
+    guardAI_orgrimmar(Creature *c) : guardAI(c) {}
+
+    void ReceiveEmote(Player *player, uint32 text_emote);
+};
+
+struct guardAI_stormwind : public guardAI
+{
+    guardAI_stormwind(Creature *c) : guardAI(c) {}
+
+    void ReceiveEmote(Player *player, uint32 text_emote);
 };
 #endif
 

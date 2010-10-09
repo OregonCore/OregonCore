@@ -36,7 +36,7 @@ struct Script
         pGossipHello(NULL), pQuestAccept(NULL), pGossipSelect(NULL), pGossipSelectWithCode(NULL),
         pQuestSelect(NULL), pQuestComplete(NULL), pNPCDialogStatus(NULL), pGODialogStatus(NULL),
         pChooseReward(NULL), pItemHello(NULL), pGOHello(NULL), pAreaTrigger(NULL), pItemQuestAccept(NULL),
-        pGOQuestAccept(NULL), pGOChooseReward(NULL),pReceiveEmote(NULL),pItemUse(NULL),    pEffectDummyCreature(NULL),
+        pGOQuestAccept(NULL), pGOChooseReward(NULL), pItemUse(NULL), pEffectDummyCreature(NULL),
         GetAI(NULL), GetInstanceData(NULL)
     {}
 
@@ -63,7 +63,6 @@ struct Script
     bool (*pItemQuestAccept     )(Player*, Item *, Quest const*);
     bool (*pGOQuestAccept       )(Player*, GameObject*, Quest const*);
     bool (*pGOChooseReward      )(Player*, GameObject*, Quest const*, uint32);
-    bool (*pReceiveEmote        )(Player*, Creature*, uint32);
     bool (*pItemUse             )(Player*, Item*, SpellCastTargets const&);
     bool (*pEffectDummyCreature )(Unit*, uint32, uint32, Creature*);
 
@@ -107,7 +106,6 @@ class ScriptMgr
         CreatureAI* GetAI(Creature* pCreature);
         bool ItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets);
         bool EffectDummyCreature(Unit *caster, uint32 spellId, uint32 effIndex, Creature *crTarget);
-        bool ReceiveEmote(Player* pPlayer, Creature* pCreature, uint32 emote);
         InstanceData* CreateInstanceData(Map *map);
 };
 

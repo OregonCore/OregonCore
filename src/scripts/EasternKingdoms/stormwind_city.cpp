@@ -170,21 +170,30 @@ CreatureAI* GetAI_npc_dashel_stonefist(Creature* pCreature)
 ## npc_general_marcus_jonathan
 ######*/
 
-bool ReceiveEmote_npc_general_marcus_jonathan(Player *player, Creature* pCreature, uint32 emote)
+struct npc_general_marcus_jonathanAI : public ScriptedAI
 {
-    if (player->GetTeam() == ALLIANCE)
+    npc_general_marcus_jonathanAI(Creature *c) : ScriptedAI(c) {}
+
+    void ReceiveEmote(Player* pPlayer, uint32 emote)
     {
-        if (emote == TEXTEMOTE_SALUTE)
+        if (pPlayer->GetTeam() == ALLIANCE)
         {
-            pCreature->SetOrientation(pCreature->GetAngle(player));
-            pCreature->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
-        }
-        if (emote == TEXTEMOTE_WAVE)
-        {
-            pCreature->MonsterSay("Greetings citizen",LANG_COMMON,0);
+            if (emote == TEXTEMOTE_SALUTE)
+            {
+                me->SetOrientation(me->GetAngle(pPlayer));
+                me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
+            }
+            if (emote == TEXTEMOTE_WAVE)
+            {
+                me->MonsterSay("Greetings citizen", LANG_COMMON, 0);
+            }
         }
     }
-    return true;
+};
+
+CreatureAI* GetAI_npc_general_marcus_jonathan(Creature* pCreature)
+{
+    return new npc_general_marcus_jonathanAI(pCreature);
 }
 
 /*######
@@ -257,7 +266,7 @@ void AddSC_stormwind_city()
 
     newscript = new Script;
     newscript->Name = "npc_general_marcus_jonathan";
-    newscript->pReceiveEmote = &ReceiveEmote_npc_general_marcus_jonathan;
+    newscript->GetAI = &GetAI_npc_general_marcus_jonathan;
     newscript->RegisterSelf();
 
     newscript = new Script;

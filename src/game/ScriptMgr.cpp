@@ -434,14 +434,6 @@ bool ScriptMgr::EffectDummyCreature(Unit *caster, uint32 spellId, uint32 effInde
     return tmpscript->pEffectDummyCreature(caster, spellId, effIndex, crTarget);
 }
 
-bool ScriptMgr::ReceiveEmote(Player* pPlayer, Creature* pCreature, uint32 emote)
-{
-    Script *tmpscript = m_scripts[pCreature->GetScriptId()];
-    if (!tmpscript || !tmpscript->pReceiveEmote) return false;
-
-    return tmpscript->pReceiveEmote(pPlayer, pCreature, emote);
-}
-
 InstanceData* ScriptMgr::CreateInstanceData(Map *map)
 {
     if (!map->IsDungeon()) return NULL;

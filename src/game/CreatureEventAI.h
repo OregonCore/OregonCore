@@ -380,7 +380,7 @@ struct CreatureEventAI_Action
         {
             uint32 sheath;
         } set_sheath;
-        // ACTION_T_SET_INVINCIBILITY_HP_LEVEL             = 42
+        // ACTION_T_SET_INVINCIBILITY_HP_LEVEL              = 42
         struct
         {
             uint32 hp_level;
@@ -540,8 +540,7 @@ struct CreatureEventAI_Event
     CreatureEventAI_Action action[MAX_ACTIONS];
 };
 //Event_Map
-typedef std::vector<CreatureEventAI_Event> CreatureEventAI_Event_Vec;
-typedef UNORDERED_MAP<uint32, CreatureEventAI_Event_Vec > CreatureEventAI_Event_Map;
+typedef UNORDERED_MAP<uint32, std::vector<CreatureEventAI_Event> > CreatureEventAI_Event_Map;
 
 struct CreatureEventAI_Summon
 {
@@ -583,7 +582,7 @@ class CreatureEventAI : public CreatureAI
         void JustReachedHome();
         void EnterCombat(Unit *enemy);
         void EnterEvadeMode();
-        void JustDied(Unit* killer);
+        void JustDied(Unit* /*killer*/);
         void KilledUnit(Unit* victim);
         void JustSummoned(Creature* pUnit);
         void AttackStart(Unit *who);

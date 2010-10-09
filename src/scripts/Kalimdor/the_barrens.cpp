@@ -257,20 +257,19 @@ struct npc_taskmaster_fizzuleAI : public ScriptedAI
 
         DoMeleeAttackIfReady();
     }
-};
 
-bool ReciveEmote_npc_taskmaster_fizzule(Player *player, Creature* pCreature, uint32 emote)
-{
-    if (emote == TEXTEMOTE_SALUTE)
+    void ReceiveEmote(Player* /*pPlayer*/, uint32 emote)
     {
-        if (((npc_taskmaster_fizzuleAI*)pCreature->AI())->FlareCount >= 2)
+        if (emote == TEXTEMOTE_SALUTE)
         {
-            pCreature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
-            pCreature->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
+            if (FlareCount >= 2)
+            {
+                me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+                me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
+            }
         }
     }
-    return true;
-}
+};
 
 CreatureAI* GetAI_npc_taskmaster_fizzule(Creature* pCreature)
 {
@@ -680,7 +679,6 @@ void AddSC_the_barrens()
     newscript = new Script;
     newscript->Name = "npc_taskmaster_fizzule";
     newscript->GetAI = &GetAI_npc_taskmaster_fizzule;
-    newscript->pReceiveEmote = &ReciveEmote_npc_taskmaster_fizzule;
     newscript->RegisterSelf();
 
     newscript = new Script;
