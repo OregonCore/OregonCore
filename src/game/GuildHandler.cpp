@@ -1538,7 +1538,7 @@ void WorldSession::HandleGuildBankBuyTab(WorldPacket & recv_data)
 
     if (TabId != pGuild->GetPurchasedTabs())                // purchased_tabs = 0 when buying Tab 0, that is why this check can be made
     {
-        sLog.outError("Error: trying to buy a tab non contigous to owned ones");
+        sLog.outError("trying to buy a tab non contigous to owned ones");
         return;
     }
 

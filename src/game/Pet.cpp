@@ -198,7 +198,7 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
 
     if (!IsPositionValid())
     {
-        sLog.outError("ERROR: Pet (guidlow %d, entry %d) not loaded. Suggested coordinates isn't valid (X: %f Y: %f)",
+        sLog.outError("Pet (guidlow %d, entry %d) not loaded. Suggested coordinates isn't valid (X: %f Y: %f)",
             GetGUIDLow(), GetEntry(), GetPositionX(), GetPositionY());
         return false;
     }
@@ -999,7 +999,7 @@ bool Pet::InitStatsForLevel(uint32 petlevel)
     Unit* owner = GetOwner();
     if (!owner)
     {
-        sLog.outError("ERROR: attempt to summon pet (Entry %u) without owner! Attempt terminated.", cinfo->Entry);
+        sLog.outError("attempt to summon pet (Entry %u) without owner! Attempt terminated.", cinfo->Entry);
         return false;
     }
 
