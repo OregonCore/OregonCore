@@ -1073,6 +1073,10 @@ void WorldObject::setActive(bool on)
             map->RemoveFromActive((DynamicObject*)this);
     }
 }
+ 
+void WorldObject::CleanupsBeforeDelete()
+{
+}
 
 void WorldObject::_Create(uint32 guidlow, HighGuid guidhigh, uint32 mapid)
 {

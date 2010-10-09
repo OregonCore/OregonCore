@@ -1369,7 +1369,6 @@ bool BattleGround::DelCreature(uint32 type)
         return false;
     }
     //TODO: only delete creature after not in combat
-    cr->CleanupsBeforeDelete();
     cr->AddObjectToRemoveList();
     m_BgCreatures[type] = 0;
     return true;
