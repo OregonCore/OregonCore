@@ -19,15 +19,17 @@
 /* ScriptData
 SDName: Loch_Modan
 SD%Complete: 100
-SDComment: Quest support: 3181
+SDComment: Quest support: 3181, 309
 SDCategory: Loch Modan
 EndScriptData */
 
 /* ContentData
 npc_mountaineer_pebblebitty
+npc_miran
 EndContentData */
 
 #include "ScriptPCH.h"
+#include "ScriptedEscortAI.h"
 
 /*######
 ## npc_mountaineer_pebblebitty
@@ -90,6 +92,74 @@ bool GossipSelect_npc_mountaineer_pebblebitty(Player* pPlayer, Creature* pCreatu
     return true;
 }
 
+/*#########
+##npc_miran
+#########*/
+
+enum eMiran
+{
+    MIRAN_SAY_AMBUSH_ONE        = -1780127,
+    MIRAN_SAY_AMBUSH_TWO        = -1780128, 
+    DARK_IRON_RAIDER_SAY_AMBUSH = -1780129, 
+    MIRAN_SAY_QUEST_END         = -1780130,
+
+    QUEST_PROTECTING_THE_SHIPMENT  = 309,
+    DARK_IRON_RAIDER               = 2149
+
+};
+
+struct npc_miranAI : public npc_escortAI
+{
+    npc_miranAI(Creature* pCreature) : npc_escortAI(pCreature) { }    
+
+    void Reset() { }
+
+    void WaypointReached(uint32 uiPointId)
+    {
+        Player* pPlayer = GetPlayerForEscort();
+        if (!pPlayer)
+            return;
+
+        switch(uiPointId)
+        {
+        case 8:
+            DoScriptText(MIRAN_SAY_AMBUSH_ONE, me);
+            me->SummonCreature(DARK_IRON_RAIDER, -5697.27,-3736.36,318.54, 2.02, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 30000);
+            me->SummonCreature(DARK_IRON_RAIDER, -5697.27,-3736.36,318.54, 2.07, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 30000);
+            if (Unit* scoff = FindCreature(DARK_IRON_RAIDER, 30, me))
+                DoScriptText(DARK_IRON_RAIDER_SAY_AMBUSH, scoff);
+            DoScriptText(MIRAN_SAY_AMBUSH_TWO, me);
+        break;
+        case 11:
+            DoScriptText(MIRAN_SAY_QUEST_END, me);
+            if (Player* pPlayer = GetPlayerForEscort())
+                pPlayer->GroupEventHappens(QUEST_PROTECTING_THE_SHIPMENT, me);
+        break;
+        }
+    }
+
+    void JustSummoned(Creature* pSummoned)
+    {
+        pSummoned->AI()->AttackStart(me);
+    }
+};
+
+bool QuestAccept_npc_miran(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
+{
+    if (pQuest->GetQuestId() == QUEST_PROTECTING_THE_SHIPMENT)
+    {        
+        pCreature->setFaction(231);
+
+        if (npc_miranAI* pEscortAI = CAST_AI(npc_miranAI,pCreature->AI()))
+            pEscortAI->Start(false, false, pPlayer->GetGUID(), pQuest);
+    }
+    return true;
+}
+CreatureAI* GetAI_npc_miran(Creature *pCreature)
+{
+    return new npc_miranAI(pCreature);
+}
+
 void AddSC_loch_modan()
 {
     Script *newscript;
@@ -98,5 +168,11 @@ void AddSC_loch_modan()
     newscript->Name = "npc_mountaineer_pebblebitty";
     newscript->pGossipHello =  &GossipHello_npc_mountaineer_pebblebitty;
     newscript->pGossipSelect = &GossipSelect_npc_mountaineer_pebblebitty;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_miran";
+    newscript->GetAI = &GetAI_npc_miran;
+    newscript->pQuestAccept = &QuestAccept_npc_miran;
     newscript->RegisterSelf();
 }
