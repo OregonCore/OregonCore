@@ -5,6 +5,7 @@ INSERT INTO `script_texts` VALUES ('-1600367', 'Here they come.', null, null, nu
 INSERT INTO `script_texts` VALUES ('-1600366', 'Look out, the Grimtotem are upon us!', null, null, null, null, null, null, null, null, '0', '0', '1', '0', 'lakota SAY_LAKO_LOOK_OUT');
 INSERT INTO `script_texts` VALUES ('-1600365', 'Be on guard... Arnak has some strange power over the Grimtotem... they will not be happy to see me escape.', null, null, null, null, null, null, null, null, '0', '0', '1', '0', 'lakota SAY_LAKO_START');
 INSERT INTO `script_texts` VALUES ('-1600410', 'Here they come! Defend yourself!', null, null, null, null, null, null, null, null, '0', '0', '1', '5', 'kanati SAY_KAN_START');
+
 UPDATE `quest_template` SET `SpecialFlags` = '2' WHERE `entry` = '4904';
 UPDATE `quest_template` SET `SpecialFlags` = '2' WHERE `entry` = '4966';
 UPDATE `creature_template` SET `ScriptName` = 'npc_kanati' WHERE `entry` = '10638';

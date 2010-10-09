@@ -17,5 +17,6 @@ INSERT INTO `script_texts` VALUES ('-1000420', 'Uuuuuuggggghhhhh....', null, nul
 INSERT INTO `script_texts` VALUES ('-1000418', 'The heat... I can\'t take it...', null, null, null, null, null, null, null, null, '0', '0', '0', '0', 'ringo SAY_FAINT_1');
 INSERT INTO `script_texts` VALUES ('-1000417', 'Remember, if I faint again, the water that Spraggle gave you will revive me.', null, null, null, null, null, null, null, null, '0', '0', '0', '0', 'ringo SAY_RIN_START_2');
 INSERT INTO `script_texts` VALUES ('-1000416', 'Well, I\'m not sure how far I\'ll make it in this state... I\'m feeling kind of faint...', null, null, null, null, null, null, null, null, '0', '0', '0', '0', 'ringo SAY_RIN_START_1');
+
 UPDATE `creature_template` SET `ScriptName` = 'npc_ringo' WHERE `entry` = '9999';
 UPDATE `quest_template` SET `SpecialFlags` = '2' WHERE `entry` = '4491';
