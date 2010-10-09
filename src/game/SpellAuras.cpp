@@ -1511,7 +1511,7 @@ void Aura::TriggerSpell()
                     {
                         int32 BasePoints = int32(GetModifier()->m_amount);
                         m_target->CastCustomSpell( m_target, 31969, &BasePoints, NULL, NULL, true, NULL, this, m_target->GetGUID() );  /* X */
-        
+
                         ApplyModifier(false);
                         GetModifier()->m_amount -= 150;
                         ApplyModifier(true);

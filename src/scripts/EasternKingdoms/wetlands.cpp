@@ -67,19 +67,18 @@ struct npc_tapoke_slim_jahnAI : public npc_escortAI
 
                 SetRun();
                 me->setFaction(FACTION_ENEMY);
-            break;
+                break;
         }
     }
 
-    void EnterCombat(Unit* pWho)
+    void EnterCombat(Unit* /*pWho*/)
     {
         Player* pPlayer = GetPlayerForEscort();
 
         if (HasEscortState(STATE_ESCORT_ESCORTING) && !m_bFriendSummoned && pPlayer)
         {
-            DoCast(me, SPELL_CALL_FRIENDS, true);
-            DoCast(me, SPELL_CALL_FRIENDS, true);
-            DoCast(me, SPELL_CALL_FRIENDS, true);
+            for (uint8 i = 0; i < 3; ++i)
+                DoCast(me, SPELL_CALL_FRIENDS, true);
 
             m_bFriendSummoned = true;
         }
@@ -102,7 +101,7 @@ struct npc_tapoke_slim_jahnAI : public npc_escortAI
         AttackStart(pAttacker);
     }
 
-    void DamageTaken(Unit* pDoneBy, uint32& uiDamage)
+    void DamageTaken(Unit* /*pDoneBy*/, uint32& uiDamage)
     {
         if (me->GetHealth()*100 < me->GetMaxHealth()*20)
         {

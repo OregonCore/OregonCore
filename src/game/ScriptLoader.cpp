@@ -1105,7 +1105,7 @@ void AddScripts()
     AddSC_westfall();
 
     //Wetlands
-	AddSC_wetlands();
+    AddSC_wetlands();
     //Winterspring
     AddSC_winterspring();
 

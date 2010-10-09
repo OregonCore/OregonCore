@@ -63,7 +63,7 @@ ConfusedMovementGenerator<T>::Initialize(T &unit)
                 i_waypoints[idx][2] = idx > 0 ? i_waypoints[idx-1][2] : z;
                 continue;
             }
-            
+
             // Taken from FleeingMovementGenerator
             if (!(new_z - z) || wander_distance / fabs(new_z - z) > 1.0f)
             {

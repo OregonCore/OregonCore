@@ -154,7 +154,7 @@ class WorldSession
 
         bool SendItemInfo(uint32 itemid, WorldPacket data);
 
-        // External Mail 
+        // External Mail
         static void SendExternalMails();
 
         //auction

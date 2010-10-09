@@ -203,7 +203,7 @@ void RASocket::OnRead()
                     SetDeleteByHandler(false);
                     CliCommandHolder* cmd = new CliCommandHolder(this, buff, &RASocket::zprint, &RASocket::commandFinished);
                     sWorld.QueueCliCommand(cmd);
-                    ++pendingCommands; 
+                    ++pendingCommands;
                 }
                 else
                     Sendf("Oregon>");

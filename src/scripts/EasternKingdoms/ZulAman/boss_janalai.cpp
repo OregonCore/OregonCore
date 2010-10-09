@@ -177,7 +177,7 @@ struct boss_janalaiAI : public ScriptedAI
             pInstance->SetData(DATA_JANALAIEVENT, IN_PROGRESS);
 
         DoScriptText(SAY_AGGRO, me);
-		DoZoneInCombat();
+        DoZoneInCombat();
     }
 
     void DamageDeal(Unit *pTarget, uint32 &damage)
@@ -431,7 +431,7 @@ struct boss_janalaiAI : public ScriptedAI
             {
                 me->AttackStop();
                 me->GetMotionMaster()->Clear();
-				me->SetInFront(pTarget);
+                me->SetInFront(pTarget);
                 me->CastSpell(pTarget, SPELL_FLAME_BREATH, false);
                 me->StopMoving();
                 isFlameBreathing = true;

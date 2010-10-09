@@ -82,25 +82,25 @@ static Dialogue RAJDialogue[]=
 
 float GameObjects_OZ[5][4]=
 {
-	{183496, -10909.5, -1761.79, 90.477}, //Bush
-	{183496, -10906.7, -1750.10, 90.476},
-	{183496, -10883.0, -1751.81, 90.476},
-	{183496, -10877.7, -1763.18, 90.477},
-	{183442, -10890.9, -1744.06, 90.476} //Scene Picture
+    {183496, -10909.5, -1761.79, 90.477}, //Bush
+    {183496, -10906.7, -1750.10, 90.476},
+    {183496, -10883.0, -1751.81, 90.476},
+    {183496, -10877.7, -1763.18, 90.477},
+    {183442, -10890.9, -1744.06, 90.476} //Scene Picture
 };
 
 float GameObjects_RomeJulia[1][4]=
 {
-	{183443, -10890.9, -1744.06, 90.476}
+    {183443, -10890.9, -1744.06, 90.476}
 };
 
 float GameObjects_Wolf[5][4]=
 {
-	{183492, -10908.9, -1762.55, 90.478},
-	{183492, -10902.4, -1753.36, 90.477},
-	{183492, -10876.2, -1761.21, 90.477},
-	{183493, -10885.2, -1756.47, 90.477},
-	{183491, -10890.9, -1744.06, 90.476}
+    {183492, -10908.9, -1762.55, 90.478},
+    {183492, -10902.4, -1753.36, 90.477},
+    {183492, -10876.2, -1761.21, 90.477},
+    {183493, -10885.2, -1756.47, 90.477},
+    {183491, -10890.9, -1744.06, 90.476}
 };
 
 // Entries and spawn locations for creatures in Oz event
@@ -210,32 +210,32 @@ struct npc_barnesAI : public npc_escortAI
                 TalkCount = 0;
                 SetEscortPaused(true);
 
-				if (Creature* pSpotlight = me->SummonCreature(CREATURE_SPOTLIGHT,
-					me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0.0f,
-					TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000))
-				{
-					pSpotlight->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-					pSpotlight->CastSpell(pSpotlight, SPELL_SPOTLIGHT, false);
-					m_uiSpotlightGUID = pSpotlight->GetGUID();
-				}
-				switch(m_uiEventId)
-				{
-				case EVENT_OZ:
-					for(int i = 0; i<5; i++)
-						me->SummonGameObject(GameObjects_OZ[i][0],GameObjects_OZ[i][1],GameObjects_OZ[i][2],GameObjects_OZ[i][3],4.63,0,0,0.73,-0.68,60000);
-					break;
+                if (Creature* pSpotlight = me->SummonCreature(CREATURE_SPOTLIGHT,
+                    me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0.0f,
+                    TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000))
+                {
+                    pSpotlight->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                    pSpotlight->CastSpell(pSpotlight, SPELL_SPOTLIGHT, false);
+                    m_uiSpotlightGUID = pSpotlight->GetGUID();
+                }
+                switch(m_uiEventId)
+                {
+                case EVENT_OZ:
+                    for(int i = 0; i<5; i++)
+                        me->SummonGameObject(GameObjects_OZ[i][0],GameObjects_OZ[i][1],GameObjects_OZ[i][2],GameObjects_OZ[i][3],4.63,0,0,0.73,-0.68,60000);
+                    break;
 
-				case EVENT_HOOD:
-					for(int i = 0; i<5; i++)
-						me->SummonGameObject(GameObjects_Wolf[i][0],GameObjects_Wolf[i][1],GameObjects_Wolf[i][2],GameObjects_Wolf[i][3],4.63,0,0,0.73,-0.68,60000);
-					break;
+                case EVENT_HOOD:
+                    for(int i = 0; i<5; i++)
+                        me->SummonGameObject(GameObjects_Wolf[i][0],GameObjects_Wolf[i][1],GameObjects_Wolf[i][2],GameObjects_Wolf[i][3],4.63,0,0,0.73,-0.68,60000);
+                    break;
 
-				case EVENT_RAJ:
-					for(int i = 0; i<1; i++)
-						me->SummonGameObject(GameObjects_RomeJulia[i][0],GameObjects_RomeJulia[i][1],GameObjects_RomeJulia[i][2],GameObjects_RomeJulia[i][3],4.63,0,0,0.73,-0.68,60000);
-					break;
-				}
-				break;
+                case EVENT_RAJ:
+                    for(int i = 0; i<1; i++)
+                        me->SummonGameObject(GameObjects_RomeJulia[i][0],GameObjects_RomeJulia[i][1],GameObjects_RomeJulia[i][2],GameObjects_RomeJulia[i][3],4.63,0,0,0.73,-0.68,60000);
+                    break;
+                }
+                break;
             case 5:
                 PerformanceReady = true;
                 if (GameObject* Go = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORLEFT)))
@@ -692,40 +692,40 @@ CreatureAI* GetAI_npc_image_of_medivh(Creature* pCreature)
 
 struct npc_Spectral_Retainer : public ScriptedAI
 {
-	npc_Spectral_Retainer(Creature* c) : ScriptedAI(c)
-	{
-		pInstance = ((ScriptedInstance*)c->GetInstanceData());
-	}
+    npc_Spectral_Retainer(Creature* c) : ScriptedAI(c)
+    {
+        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+    }
 
     ScriptedInstance *pInstance;
 
-	uint32 Oatchtimer;
-	uint32 Bleedtimer;
+    uint32 Oatchtimer;
+    uint32 Bleedtimer;
 
-	void Aggro(Unit* who) {}
-	void Reset()
-	{
-		Oatchtimer  = 15;
-		Bleedtimer = 10; 
-	}
-	void Update(uint32 diff)
-	{
-		if(!UpdateVictim())
-			return;
+    void Aggro(Unit* who) {}
+    void Reset()
+    {
+        Oatchtimer  = 15;
+        Bleedtimer = 10;
+    }
+    void Update(uint32 diff)
+    {
+        if(!UpdateVictim())
+            return;
 
-		if(Bleedtimer < diff)
-		{
-			if(me->getVictim())
-				me->CastSpell(me->getVictim(),SPELL_BLEED,false);
-			Bleedtimer = 10;
-		}
-		else Bleedtimer -= diff;
-	}
+        if(Bleedtimer < diff)
+        {
+            if(me->getVictim())
+                me->CastSpell(me->getVictim(),SPELL_BLEED,false);
+            Bleedtimer = 10;
+        }
+        else Bleedtimer -= diff;
+    }
 };
 
 CreatureAI* GetAI_npc_Spectral_Retainer(Creature *_Creature)
 {
-	return new npc_Spectral_Retainer(_Creature);
+    return new npc_Spectral_Retainer(_Creature);
 }
 
 void AddSC_karazhan()
@@ -751,8 +751,8 @@ void AddSC_karazhan()
     newscript->RegisterSelf();
 
     newscript = new Script;
-	newscript->Name = "npc_Spectral Retainer";
-	newscript->GetAI = &GetAI_npc_Spectral_Retainer;
-	newscript->RegisterSelf();
+    newscript->Name = "npc_Spectral Retainer";
+    newscript->GetAI = &GetAI_npc_Spectral_Retainer;
+    newscript->RegisterSelf();
 }
 

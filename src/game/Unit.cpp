@@ -8303,7 +8303,7 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
 
     if(isInCombat())
         return;
-    
+
     SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
 
     if(GetTypeId() == TYPEID_PLAYER)
@@ -8319,11 +8319,11 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
     }
     else
     {
-        if ((IsAIEnabled && ToCreature()->AI()->IsEscorted()) || 
+        if ((IsAIEnabled && ToCreature()->AI()->IsEscorted()) ||
             GetMotionMaster()->GetCurrentMovementGeneratorType() == WAYPOINT_MOTION_TYPE ||
             GetMotionMaster()->GetCurrentMovementGeneratorType() == POINT_MOTION_TYPE)
             ToCreature()->SetHomePosition(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
-        
+
          if(enemy)
          {
             if(IsAIEnabled && ToCreature()->AI())

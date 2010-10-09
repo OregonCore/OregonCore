@@ -63,7 +63,7 @@ struct instance_zulaman : public ScriptedInstance
     uint64 AkilzonDoorGUID;
     uint64 ZulJinDoorGUID;
     uint64 HalazziDoorEntryGUID;
-	uint64 HalazziDoorExitGUID;
+    uint64 HalazziDoorExitGUID;
 
     uint32 QuestTimer;
     uint16 BossKilled;
@@ -84,7 +84,7 @@ struct instance_zulaman : public ScriptedInstance
         uint64 ZulJinGateGUID = 0;
         uint64 AkilzonDoorGUID = 0;
         uint64 HalazziDoorEntryGUID = 0;
-		uint64 HalazziDoorExitGUID = 0;
+        uint64 HalazziDoorExitGUID = 0;
         uint64 ZulJinDoorGUID = 0;
 
         QuestTimer = 0;
@@ -123,27 +123,32 @@ struct instance_zulaman : public ScriptedInstance
     {
         switch(go->GetEntry())
         {
-		case 186303: HalazziDoorExitGUID = go->GetGUID();
-		if(BossKilled >= 4) OpenDoor(HalazziDoorExitGUID, true);
-		break;
-		case 186304: HalazziDoorEntryGUID  = go->GetGUID();
-		break;
-		case 186305: HexLordGateGUID = go->GetGUID();
-		//if(BossKilled >= 4) HandleGameObject(NULL, true, go);
-		if(BossKilled >= 4) OpenDoor(HexLordGateGUID, true);
-		break;
-		case 186306: ZulJinGateGUID  = go->GetGUID();
-		if(BossKilled >= 5) OpenDoor(ZulJinGateGUID, true);
-		break;
-        case 186858: AkilzonDoorGUID = go->GetGUID(); break;
-        case 186859: ZulJinDoorGUID  = go->GetGUID(); break;
-
-        case 187021: HarkorsSatchelGUID  = go->GetGUID(); break;
-        case 186648: TanzarsTrunkGUID = go->GetGUID(); break;
-        case 186672: AshlisBagGUID = go->GetGUID(); break;
-        case 186667: KrazsPackageGUID  = go->GetGUID(); break;
-        default: break;
-
+            case 186303:
+                HalazziDoorExitGUID = go->GetGUID();
+                if(BossKilled >= 4)
+                    OpenDoor(HalazziDoorExitGUID, true);
+                break;
+            case 186304:
+                HalazziDoorEntryGUID  = go->GetGUID();
+                break;
+            case 186305:
+                HexLordGateGUID = go->GetGUID();
+                //if(BossKilled >= 4) HandleGameObject(NULL, true, go);
+                if(BossKilled >= 4)
+                    OpenDoor(HexLordGateGUID, true);
+                break;
+            case 186306:
+                ZulJinGateGUID  = go->GetGUID();
+                if(BossKilled >= 5)
+                    OpenDoor(ZulJinGateGUID, true);
+                break;
+            case 186858: AkilzonDoorGUID = go->GetGUID(); break;
+            case 186859: ZulJinDoorGUID  = go->GetGUID(); break;
+            case 187021: HarkorsSatchelGUID  = go->GetGUID(); break;
+            case 186648: TanzarsTrunkGUID = go->GetGUID(); break;
+            case 186672: AshlisBagGUID = go->GetGUID(); break;
+            case 186667: KrazsPackageGUID  = go->GetGUID(); break;
+            default: break;
         }
         CheckInstanceStatus();
     }
@@ -179,8 +184,8 @@ struct instance_zulaman : public ScriptedInstance
         if (BossKilled >= 4)
             OpenDoor(HexLordGateGUID, true);
 
-		if(BossKilled >= 4) 
-			OpenDoor(HalazziDoorExitGUID, true);
+        if(BossKilled >= 4)
+            OpenDoor(HalazziDoorExitGUID, true);
 
         if (BossKilled >= 5)
             OpenDoor(ZulJinGateGUID, true);
@@ -261,10 +266,10 @@ struct instance_zulaman : public ScriptedInstance
                 OpenDoor(HalazziDoorEntryGUID, false);
             }
             if (data == DONE)
-			{
-				SummonHostage(3);
-				OpenDoor(HalazziDoorExitGUID, true);
-			}
+            {
+                SummonHostage(3);
+                OpenDoor(HalazziDoorExitGUID, true);
+            }
             break;
         case DATA_HEXLORDEVENT:
             Encounters[4] = data;

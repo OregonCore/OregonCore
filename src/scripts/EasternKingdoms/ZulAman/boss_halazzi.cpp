@@ -221,18 +221,18 @@ struct boss_halazziAI : public ScriptedAI
         {
             if (SaberlashTimer <= diff)
             {
-				switch(rand()%2)
-				{
-				case 0:
-						DoYell(YELL_SABER_ONE, LANG_UNIVERSAL, NULL);
-						DoPlaySoundToSet(me, SOUND_SABER_ONE);
-						break;
+                switch(rand()%2)
+                {
+                    case 0:
+                        DoYell(YELL_SABER_ONE, LANG_UNIVERSAL, NULL);
+                        DoPlaySoundToSet(me, SOUND_SABER_ONE);
+                        break;
 
-				case 1:
-						DoYell(YELL_SABER_TWO, LANG_UNIVERSAL, NULL);
-						DoPlaySoundToSet(me, SOUND_SABER_TWO);
-						break;
-				}
+                    case 1:
+                        DoYell(YELL_SABER_TWO, LANG_UNIVERSAL, NULL);
+                        DoPlaySoundToSet(me, SOUND_SABER_TWO);
+                        break;
+                }
                 // A tank with more than 490 defense skills should receive no critical hit
                 //me->CastSpell(me, 41296, true);
                 me->CastSpell(me->getVictim(), SPELL_SABER_LASH, true);

@@ -99,8 +99,8 @@ bool GossipSelect_npc_mountaineer_pebblebitty(Player* pPlayer, Creature* pCreatu
 enum eMiran
 {
     MIRAN_SAY_AMBUSH_ONE        = -1780127,
-    MIRAN_SAY_AMBUSH_TWO        = -1780128, 
-    DARK_IRON_RAIDER_SAY_AMBUSH = -1780129, 
+    MIRAN_SAY_AMBUSH_TWO        = -1780128,
+    DARK_IRON_RAIDER_SAY_AMBUSH = -1780129,
     MIRAN_SAY_QUEST_END         = -1780130,
 
     QUEST_PROTECTING_THE_SHIPMENT  = 309,
@@ -110,7 +110,7 @@ enum eMiran
 
 struct npc_miranAI : public npc_escortAI
 {
-    npc_miranAI(Creature* pCreature) : npc_escortAI(pCreature) { }    
+    npc_miranAI(Creature* pCreature) : npc_escortAI(pCreature) { }
 
     void Reset() { }
 
@@ -147,7 +147,7 @@ struct npc_miranAI : public npc_escortAI
 bool QuestAccept_npc_miran(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
 {
     if (pQuest->GetQuestId() == QUEST_PROTECTING_THE_SHIPMENT)
-    {        
+    {
         pCreature->setFaction(231);
 
         if (npc_miranAI* pEscortAI = CAST_AI(npc_miranAI,pCreature->AI()))

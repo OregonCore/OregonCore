@@ -170,7 +170,7 @@ enum Phase
 };
 
 //Timers
-enum KilJaedenTimers 
+enum KilJaedenTimers
 {
     TIMER_SPEECH           = 0,
 
@@ -689,7 +689,7 @@ struct boss_kiljaedenAI : public Scripted_NoMovementAI
                             for (uint8 z = 0; z < 6; ++z)
                             {
                                 pRandomPlayer = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
-                                if (!pRandomPlayer || !pRandomPlayer->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT,0)) 
+                                if (!pRandomPlayer || !pRandomPlayer->HasAura(SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT,0))
                                     break;
                             }
 
@@ -911,8 +911,8 @@ struct mob_hand_of_the_deceiverAI : public ScriptedAI
         {
             DoCast(me->getVictim(), SPELL_SHADOW_BOLT_VOLLEY);
             ShadowBoltVolleyTimer = 12000;
-        } 
-        else 
+        }
+        else
             ShadowBoltVolleyTimer -= diff;
 
         // Felfire Portal - Creatres a portal, that spawns Volatile Felfire Fiends, which do suicide bombing.
@@ -1132,7 +1132,7 @@ struct mob_shield_orbAI : public ScriptedAI
             {
                 DoTeleportTo(x,y,SHIELD_ORB_Z);
                 bPointReached = true;
-            } 
+            }
             else uiCheckTimer -= diff;
         }
 

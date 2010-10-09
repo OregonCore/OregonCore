@@ -524,12 +524,12 @@ struct mob_felkael_phoenixAI : public ScriptedAI
 
             if (Rebirth)
             {
-            
+
                 if (Death_Timer <= diff)
                 {
-                    DoSpawnCreature(CREATURE_PHOENIX_EGG, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45000);   
+                    DoSpawnCreature(CREATURE_PHOENIX_EGG, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45000);
                     me->setDeathState(JUST_DIED);
-                    me->RemoveCorpse(); 
+                    me->RemoveCorpse();
                     Rebirth = false;
                 } else Death_Timer -= diff;
             }

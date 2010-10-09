@@ -80,7 +80,7 @@ class ScriptMgr
 
         void ScriptsInit();
         void LoadDatabase();
-        char const* ScriptsVersion();    
+        char const* ScriptsVersion();
 
     //event handlers
         void OnLogin(Player *pPlayer);

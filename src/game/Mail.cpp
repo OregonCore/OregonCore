@@ -616,8 +616,8 @@ void WorldSession::HandleGetMail(WorldPacket & recv_data)
             for (uint8 j = 0; j < 6; ++j)
             {
                 data << (uint32) (item ? item->GetEnchantmentId((EnchantmentSlot)j) : 0);
-				data << uint32((item ? item->GetEnchantmentDuration((EnchantmentSlot)j) : 0));
-				data << uint32((item ? item->GetEnchantmentCharges((EnchantmentSlot)j) : 0));
+                data << uint32((item ? item->GetEnchantmentDuration((EnchantmentSlot)j) : 0));
+                data << uint32((item ? item->GetEnchantmentCharges((EnchantmentSlot)j) : 0));
             }
             // can be negative
             data << (uint32) (item ? item->GetItemRandomPropertyId() : 0);
@@ -1082,13 +1082,13 @@ void WorldSession::SendExternalMails()
                     {
                         Item* ToMailItem = Item::CreateItem(ItemID, ItemCount, receiver);
                         ToMailItem -> SaveToDB();
-                    
+
                         MailDraft(subject, itemTextId)
                             .AddItem(ToMailItem)
                             .AddMoney(money)
                             .SendMailTo(MailReceiver(receiver), MailSender(MAIL_NORMAL, 0, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_RETURNED);
                     }
-                    else 
+                    else
                     {
                         MailDraft(subject, itemTextId)
                             .AddMoney(money)
@@ -1099,5 +1099,5 @@ void WorldSession::SendExternalMails()
             }
             while(result -> NextRow());
         }
-    sLog.outString("EXTERNAL MAIL> All Mails Sent...");    
+    sLog.outString("EXTERNAL MAIL> All Mails Sent...");
 }

@@ -31,7 +31,7 @@ INSTANTIATE_SINGLETON_1(Log);
 
 Log::Log() :
     raLogfile(NULL), logfile(NULL), gmLogfile(NULL), charLogfile(NULL),
-    dberLogfile(NULL), chatLogfile(NULL), m_gmlog_per_account(false), 
+    dberLogfile(NULL), chatLogfile(NULL), m_gmlog_per_account(false),
     m_enableLogDBLater(false), m_enableLogDB(false), m_colored(false),
     arenaLogFile(NULL)
 {
