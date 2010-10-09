@@ -86,12 +86,7 @@ struct npc_kanatiAI : public npc_escortAI
 
 CreatureAI* GetAI_npc_kanati(Creature* pCreature)
 {
-    npc_kanatiAI* kanatiAI = new npc_kanatiAI(pCreature);
-
-    kanatiAI->AddWaypoint(0, -4903.52, -1368.34, -52.611, 5000);
-    kanatiAI->AddWaypoint(1, -4906, -1367.05, -52.611);
-
-    return (CreatureAI*)kanatiAI;
+    return new npc_kanatiAI(pCreature);
 }
 
 bool QuestAccept_npc_kanati(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
@@ -175,56 +170,7 @@ struct npc_lakota_windsongAI : public npc_escortAI
 
 CreatureAI* GetAI_npc_lakota_windsong(Creature* pCreature)
 {
-    npc_lakota_windsongAI* lakota_windsongAI = new npc_lakota_windsongAI(pCreature);
-
-    lakota_windsongAI->AddWaypoint(0, -4792.4, -2137.78, 82.423);
-    lakota_windsongAI->AddWaypoint(1, -4813.51, -2141.54, 80.774);
-    lakota_windsongAI->AddWaypoint(2, -4828.63, -2154.31, 82.074);
-    lakota_windsongAI->AddWaypoint(3, -4833.77, -2149.18, 81.676);
-    lakota_windsongAI->AddWaypoint(4, -4846.42, -2136.05, 77.871);
-    lakota_windsongAI->AddWaypoint(5, -4865.08, -2116.55, 76.483);
-    lakota_windsongAI->AddWaypoint(6, -4888.43, -2090.73, 80.907);
-    lakota_windsongAI->AddWaypoint(7, -4893.07, -2085.47, 82.094);
-    lakota_windsongAI->AddWaypoint(8, -4907.26, -2074.93, 84.437, 5000);
-    lakota_windsongAI->AddWaypoint(9, -4899.9, -2062.14, 83.78);
-    lakota_windsongAI->AddWaypoint(10, -4897.76, -2056.52, 84.184);
-    lakota_windsongAI->AddWaypoint(11, -4888.33, -2033.18, 83.654);
-    lakota_windsongAI->AddWaypoint(12, -4876.34, -2003.92, 90.887);
-    lakota_windsongAI->AddWaypoint(13, -4872.23, -1994.17, 91.513);
-    lakota_windsongAI->AddWaypoint(14, -4879.57, -1976.99, 92.185, 5000);
-    lakota_windsongAI->AddWaypoint(15, -4879.05, -1964.35, 92.001);
-    lakota_windsongAI->AddWaypoint(16, -4874.72, -1956.94, 90.737);
-    lakota_windsongAI->AddWaypoint(17, -4869.47, -1952.61, 89.206);
-    lakota_windsongAI->AddWaypoint(18, -4842.47, -1929, 84.147);
-    lakota_windsongAI->AddWaypoint(19, -4804.44, -1897.3, 89.362);
-    lakota_windsongAI->AddWaypoint(20, -4798.07, -1892.38, 89.368);
-    lakota_windsongAI->AddWaypoint(21, -4779.45, -1882.76, 90.169, 5000);
-    lakota_windsongAI->AddWaypoint(22, -4762.08, -1866.53, 89.481);
-    lakota_windsongAI->AddWaypoint(23, -4766.27, -1861.87, 87.847);
-    lakota_windsongAI->AddWaypoint(24, -4782.93, -1852.17, 78.354);
-    lakota_windsongAI->AddWaypoint(25, -4793.61, -1850.96, 77.658);
-    lakota_windsongAI->AddWaypoint(26, -4803.32, -1855.1, 78.958);
-    lakota_windsongAI->AddWaypoint(27, -4807.97, -1854.5, 77.743);
-    lakota_windsongAI->AddWaypoint(28, -4837.21, -1848.49, 64.488);
-    lakota_windsongAI->AddWaypoint(29, -4884.62, -1840.4, 56.219);
-    lakota_windsongAI->AddWaypoint(30, -4889.71, -1839.62, 54.417);
-    lakota_windsongAI->AddWaypoint(31, -4893.9, -1843.69, 53.012);
-    lakota_windsongAI->AddWaypoint(32, -4903.14, -1872.38, 32.266);
-    lakota_windsongAI->AddWaypoint(33, -4910.94, -1879.86, 29.94);
-    lakota_windsongAI->AddWaypoint(34, -4920.05, -1880.94, 30.597);
-    lakota_windsongAI->AddWaypoint(35, -4924.46, -1881.45, 29.292);
-    lakota_windsongAI->AddWaypoint(36, -4966.12, -1886.03, 10.977);
-    lakota_windsongAI->AddWaypoint(37, -4999.37, -1890.85, 4.43);
-    lakota_windsongAI->AddWaypoint(38, -5007.27, -1891.67, 2.771);
-    lakota_windsongAI->AddWaypoint(39, -5013.33, -1879.59, -1.947);
-    lakota_windsongAI->AddWaypoint(40, -5023.33, -1855.96, -17.103);
-    lakota_windsongAI->AddWaypoint(41, -5038.51, -1825.99, -35.821);
-    lakota_windsongAI->AddWaypoint(42, -5048.73, -1809.8, -46.457);
-    lakota_windsongAI->AddWaypoint(43, -5053.19, -1791.68, -57.186);
-    lakota_windsongAI->AddWaypoint(44, -5062.09, -1794.4, -56.515);
-    lakota_windsongAI->AddWaypoint(45, -5052.66, -1797.04, -54.734, 5000);
-
-    return (CreatureAI*)lakota_windsongAI;
+    return new npc_lakota_windsongAI(pCreature);;
 }
 
 bool QuestAccept_npc_lakota_windsong(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
@@ -279,7 +225,7 @@ struct npc_paoka_swiftmountainAI : public npc_escortAI
             case 26:
                 DoScriptText(SAY_COMPLETE, me);
                 break;
-            case 27:
+            case 71:
                 if (Player* pPlayer = GetPlayerForEscort())
                     pPlayer->GroupEventHappens(QUEST_HOMEWARD, me);
                 break;
@@ -297,82 +243,7 @@ struct npc_paoka_swiftmountainAI : public npc_escortAI
 
 CreatureAI* GetAI_npc_paoka_swiftmountain(Creature* pCreature)
 {
-    npc_paoka_swiftmountainAI* paoka_swiftmountainAI = new npc_paoka_swiftmountainAI(pCreature);
-
-    paoka_swiftmountainAI->AddWaypoint(0, -5156.69, -1220.49, 48.78, 5000);
-    paoka_swiftmountainAI->AddWaypoint(1, -5157.12, -1220.13, 48.67);
-    paoka_swiftmountainAI->AddWaypoint(2, -5171.7, -1205.36, 47.43);
-    paoka_swiftmountainAI->AddWaypoint(3, -5174.08, -1197.7, 46.90);
-    paoka_swiftmountainAI->AddWaypoint(4, -5178.24, -1183.78, 45.97);
-    paoka_swiftmountainAI->AddWaypoint(5, -5181.52, -1171.03, 45.29);
-    paoka_swiftmountainAI->AddWaypoint(6, -5184.29, -1159.21, 44.62);
-    paoka_swiftmountainAI->AddWaypoint(7, -5184.84, -1152.95, 44.84);
-    paoka_swiftmountainAI->AddWaypoint(8, -5182.04, -1142.83, 44.07);
-    paoka_swiftmountainAI->AddWaypoint(9, -5178.44, -1133.57, 43.91);
-    paoka_swiftmountainAI->AddWaypoint(10, -5176.68, -1129.48, 43.81);
-    paoka_swiftmountainAI->AddWaypoint(11, -5164.85, -1123.33, 43.99);
-    paoka_swiftmountainAI->AddWaypoint(12, -5153.07, -1117.7, 43.66);
-    paoka_swiftmountainAI->AddWaypoint(13, -5143.52, -1113.14, 43.78);
-    paoka_swiftmountainAI->AddWaypoint(14, -5135.86, -1104.42, 47.23);
-    paoka_swiftmountainAI->AddWaypoint(15, -5129.86, -1097.22, 49.52);
-    paoka_swiftmountainAI->AddWaypoint(16, -5127.48, -1087.29, 49.03);
-    paoka_swiftmountainAI->AddWaypoint(17, -5127.57, -1080.4, 46.64);
-    paoka_swiftmountainAI->AddWaypoint(18, -5129.65, -1077.58, 45.29);
-    paoka_swiftmountainAI->AddWaypoint(19, -5135.86, -1069.12, 39.53);
-    paoka_swiftmountainAI->AddWaypoint(20, -5141.97, -1060.58, 32.70);
-    paoka_swiftmountainAI->AddWaypoint(21, -5145.99, -1054.85, 28.98);
-    paoka_swiftmountainAI->AddWaypoint(22, -5147.08, -1050.35, 26.36);
-    paoka_swiftmountainAI->AddWaypoint(23, -5147.5, -1043.37, 21.84);
-    paoka_swiftmountainAI->AddWaypoint(24, -5147.68, -1036.37, 17.05);
-    paoka_swiftmountainAI->AddWaypoint(25, -5147.68, -1029.37, 14.59);
-    paoka_swiftmountainAI->AddWaypoint(26, -5144.62, -1023.9, 11.67);
-    paoka_swiftmountainAI->AddWaypoint(27, -5138.67, -1020.23, 7.81);
-    paoka_swiftmountainAI->AddWaypoint(28, -5135.6, -1018.55, 6.19);
-    paoka_swiftmountainAI->AddWaypoint(29, -5126.25, -1014.76, 1.08);
-    paoka_swiftmountainAI->AddWaypoint(30, -5120.03, -1013.12, -1.11);
-    paoka_swiftmountainAI->AddWaypoint(31, -5112.3, -1027.65, -5.39);
-    paoka_swiftmountainAI->AddWaypoint(32, -5106.99, -1023.09, -5.10);
-    paoka_swiftmountainAI->AddWaypoint(33, -5099.07, -1016.19, -4.92);
-    paoka_swiftmountainAI->AddWaypoint(34, -5091.23, -1009.21, -5.22);
-    paoka_swiftmountainAI->AddWaypoint(35, -5083.62, -1001.97, -5.22);
-    paoka_swiftmountainAI->AddWaypoint(36, -5076.1, -994.652, -4.92);
-    paoka_swiftmountainAI->AddWaypoint(37, -5066.71, -985.507, -4.97);
-    paoka_swiftmountainAI->AddWaypoint(38, -5065.13, -978.689, -5.02);
-    paoka_swiftmountainAI->AddWaypoint(39, -5062.33, -968.57, -5.08);
-    paoka_swiftmountainAI->AddWaypoint(40, -5059.46, -958.469, -5.16);
-    paoka_swiftmountainAI->AddWaypoint(41, -5056.59, -948.375, -5.10);
-    paoka_swiftmountainAI->AddWaypoint(42, -5053.73, -938.274, -5.69);
-    paoka_swiftmountainAI->AddWaypoint(43, -5043.06, -934.822, -5.35);
-    paoka_swiftmountainAI->AddWaypoint(44, -5029.35, -932.007, -5.27);
-    paoka_swiftmountainAI->AddWaypoint(45, -5024.58, -933.781, -5.40);
-    paoka_swiftmountainAI->AddWaypoint(46, -5019.13, -938.172, -5.54);
-    paoka_swiftmountainAI->AddWaypoint(47, -5011, -944.812, -5.47);
-    paoka_swiftmountainAI->AddWaypoint(48, -5002.86, -951.455, -5.44);
-    paoka_swiftmountainAI->AddWaypoint(49, -4994.73, -958.099, -5.41);
-    paoka_swiftmountainAI->AddWaypoint(50, -4990.57, -963.782, -5.33);
-    paoka_swiftmountainAI->AddWaypoint(51, -4987.43, -970.041, -5.17);
-    paoka_swiftmountainAI->AddWaypoint(52, -4981.41, -982.678, -5.10);
-    paoka_swiftmountainAI->AddWaypoint(53, -4977.03, -992.221, -4.97);
-    paoka_swiftmountainAI->AddWaypoint(54, -4972.6, -1001.74, -5.24);
-    paoka_swiftmountainAI->AddWaypoint(55, -4968.15, -1011.25, -5.49);
-    paoka_swiftmountainAI->AddWaypoint(56, -4963.75, -1020.78, -5.07);
-    paoka_swiftmountainAI->AddWaypoint(57, -4959.3, -1030.3, -5.28);
-    paoka_swiftmountainAI->AddWaypoint(58, -4956.28, -1036.61, -5.84);
-    paoka_swiftmountainAI->AddWaypoint(59, -4952.05, -1043.75, -9.04);
-    paoka_swiftmountainAI->AddWaypoint(60, -4943.8, -1055.06, -17.91);
-    paoka_swiftmountainAI->AddWaypoint(61, -4939.47, -1055.61, -20.73);
-    paoka_swiftmountainAI->AddWaypoint(62, -4929.16, -1053.64, -25.65);
-    paoka_swiftmountainAI->AddWaypoint(63, -4922.28, -1052.37, -28.72);
-    paoka_swiftmountainAI->AddWaypoint(64, -4913.26, -1051.3, -31.80);
-    paoka_swiftmountainAI->AddWaypoint(65, -4903.54, -1054.17, -33.48);
-    paoka_swiftmountainAI->AddWaypoint(66, -4905.95, -1056.71, -33.68);
-    paoka_swiftmountainAI->AddWaypoint(67, -4913.18, -1064.32, -39.46);
-    paoka_swiftmountainAI->AddWaypoint(68, -4925.27, -1076.98, -47.39);
-    paoka_swiftmountainAI->AddWaypoint(69, -4932.68, -1084.42, -51.00);
-    paoka_swiftmountainAI->AddWaypoint(70, -4938.3, -1100.41, -50.71, 5000);
-    paoka_swiftmountainAI->AddWaypoint(71, -4937.34, -1102.87, -49.82);
-
-    return (CreatureAI*)paoka_swiftmountainAI;
+    return new npc_paoka_swiftmountainAI(pCreature);
 }
 
 bool QuestAccept_npc_paoka_swiftmountain(Player* pPlayer, Creature* pCreature, const Quest* pQuest)

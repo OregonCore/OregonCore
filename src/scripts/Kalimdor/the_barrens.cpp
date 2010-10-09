@@ -554,42 +554,7 @@ bool QuestAccept_npc_wizzlecrank_shredder(Player* pPlayer, Creature* pCreature, 
 
 CreatureAI* GetAI_npc_wizzlecrank_shredderAI(Creature* pCreature)
 {
-    npc_wizzlecrank_shredderAI* thisAI = new npc_wizzlecrank_shredderAI(pCreature);
-
-    thisAI->AddWaypoint(0, 1109.15, -3104.11, 82.41, 6000);
-    thisAI->AddWaypoint(1, 1105.39, -3102.86, 82.74, 2000);
-    thisAI->AddWaypoint(2, 1104.97, -3108.52, 83.10, 1000);
-    thisAI->AddWaypoint(3, 1110.01, -3110.48, 82.81, 1000);
-    thisAI->AddWaypoint(4, 1111.72, -3103.03, 82.21, 1000);
-    thisAI->AddWaypoint(5, 1106.98, -3099.44, 82.18, 1000);
-    thisAI->AddWaypoint(6, 1103.74, -3103.29, 83.05, 1000);
-    thisAI->AddWaypoint(7, 1112.55, -3106.56, 82.31, 1000);
-    thisAI->AddWaypoint(8, 1108.12, -3111.04, 82.99, 1000);
-    thisAI->AddWaypoint(9, 1109.32, -3100.39, 82.08, 1000);
-    thisAI->AddWaypoint(10, 1109.32, -3100.39, 82.08, 6000);
-    thisAI->AddWaypoint(11, 1098.92, -3095.14, 82.97);
-    thisAI->AddWaypoint(12, 1100.94, -3082.60, 82.83);
-    thisAI->AddWaypoint(13, 1101.12, -3068.83, 82.53);
-    thisAI->AddWaypoint(14, 1096.97, -3051.99, 82.50);
-    thisAI->AddWaypoint(15, 1094.06, -3036.79, 82.70);
-    thisAI->AddWaypoint(16, 1098.22, -3027.84, 83.79);
-    thisAI->AddWaypoint(17, 1109.51, -3015.92, 85.73);
-    thisAI->AddWaypoint(18, 1119.87, -3007.21, 87.08);
-    thisAI->AddWaypoint(19, 1130.23, -3002.49, 91.27, 5000);
-    thisAI->AddWaypoint(20, 1130.23, -3002.49, 91.27, 3000);
-    thisAI->AddWaypoint(21, 1130.23, -3002.49, 91.27, 4000);
-    thisAI->AddWaypoint(22, 1129.73, -2985.89, 92.46);
-    thisAI->AddWaypoint(23, 1124.10, -2983.29, 92.81);
-    thisAI->AddWaypoint(24, 1111.74, -2992.38, 91.59);
-    thisAI->AddWaypoint(25, 1111.06, -2976.54, 91.81);
-    thisAI->AddWaypoint(26, 1099.91, -2991.17, 91.67);
-    thisAI->AddWaypoint(27, 1096.32, -2981.55, 91.73);
-    thisAI->AddWaypoint(28, 1091.28, -2985.82, 91.74, 4000);
-    thisAI->AddWaypoint(29, 1091.28, -2985.82, 91.74, 3000);
-    thisAI->AddWaypoint(30, 1091.28, -2985.82, 91.74, 7000);
-    thisAI->AddWaypoint(31, 1091.28, -2985.82, 91.74, 3000);
-
-    return (CreatureAI*)thisAI;
+    return new npc_wizzlecrank_shredderAI(pCreature);
 }
 
 void AddSC_the_barrens()

@@ -902,24 +902,7 @@ bool QuestAccept_npc_bessy(Player* pPlayer, Creature* pCreature, Quest const* qu
 
 CreatureAI* GetAI_npc_bessy(Creature* pCreature)
 {
-    npc_bessyAI* bessyAI = new npc_bessyAI(pCreature);
-
-    bessyAI->AddWaypoint(0, 2488.77, 2184.89, 104.64);
-    bessyAI->AddWaypoint(1, 2478.72, 2184.77, 98.58);
-    bessyAI->AddWaypoint(2, 2473.52, 2184.71, 99.00);
-    bessyAI->AddWaypoint(3, 2453.15, 2184.96, 97.09,4000);
-    bessyAI->AddWaypoint(4, 2424.18, 2184.15, 94.11);
-    bessyAI->AddWaypoint(5, 2413.18, 2184.15, 93.42);
-    bessyAI->AddWaypoint(6, 2402.02, 2183.90, 87.59);
-    bessyAI->AddWaypoint(7, 2333.31, 2181.63, 90.03,4000);
-    bessyAI->AddWaypoint(8, 2308.73, 2184.34, 92.04);
-    bessyAI->AddWaypoint(9, 2303.10, 2196.89, 94.94);
-    bessyAI->AddWaypoint(10, 2304.58, 2272.23, 96.67);
-    bessyAI->AddWaypoint(11, 2297.09, 2271.40, 95.16);
-    bessyAI->AddWaypoint(12, 2297.68, 2266.79, 95.07,4000);
-    bessyAI->AddWaypoint(13, 2297.67, 2266.76, 95.07,4000);
-
-    return (CreatureAI*)bessyAI;
+    return new npc_bessyAI(pCreature);
 }
 
 /*######
