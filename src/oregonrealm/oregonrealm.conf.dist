@@ -1,7 +1,10 @@
-##########################################
-# Oregon Core realmd configuration file #
-##########################################
-ConfVersion=2007062001
+##############################################
+# Oregon Core Auth Server configuration file #
+##############################################
+
+[authserver]
+ConfVersion=2010101001
+
 # Note to devs, line breaks should be at column 80
 ###############################################################################
 # REALMD SETTINGS

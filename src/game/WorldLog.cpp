@@ -24,7 +24,7 @@
 
 #include "WorldLog.h"
 #include "Policies/SingletonImp.h"
-#include "Config/ConfigEnv.h"
+#include "Config/Config.h"
 #include "Log.h"
 
 #define CLASS_LOCK Oregon::ClassLevelLockable<WorldLog, ACE_Thread_Mutex>

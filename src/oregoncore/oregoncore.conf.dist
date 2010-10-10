@@ -1,7 +1,10 @@
-##########################################
-# Oregon Core world configuration file #
-##########################################
-ConfVersion=2010100301
+###############################################
+# Oregon Core World Server configuration file #
+###############################################
+
+[worldserver]
+ConfVersion=2010101001
+
 # Note to devs, line breaks should be at column 80
 ###############################################################################
 # CONNECTIONS AND DIRECTORIES

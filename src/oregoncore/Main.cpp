@@ -25,7 +25,8 @@
 
 #include "Common.h"
 #include "Database/DatabaseEnv.h"
-#include "Config/ConfigEnv.h"
+#include "Config/Config.h"
+
 #include "Log.h"
 #include "Master.h"
 #include <ace/Version.h>
@@ -38,7 +39,7 @@
 // Format is YYYYMMDDRR where RR is the change in the conf file
 // for that day.
 #ifndef _OREGON_CORE_CONFVER
-# define _OREGON_CORE_CONFVER 2010100301
+# define _OREGON_CORE_CONFVER 2010101001
 #endif //_OREGON_CORE_CONFVER
 
 #ifdef _WIN32

@@ -36,7 +36,7 @@
 #include "Timer.h"
 #include "Policies/SingletonImp.h"
 #include "SystemConfig.h"
-#include "Config/ConfigEnv.h"
+#include "Config/Config.h"
 #include "Database/DatabaseEnv.h"
 #include "DBCStores.h"
 #include "CliRunnable.h"
@@ -184,8 +184,6 @@ int Master::Run()
 {
     sLog.outString( "%s (core-daemon)", _FULLVERSION );
     sLog.outString( "<Ctrl-C> to stop.\n" );
-    // Remove the warnings C4129 while compiling
-    #pragma warning (disable : 4129)
 
     sLog.outString( "  _____                                          " );
     sLog.outString( " /\\  __`\\                                        " );
@@ -426,10 +424,9 @@ int Master::Run()
 bool Master::_StartDB()
 {
     sLog.SetLogDB(false);
-    std::string dbstring;
 
     ///- Get world database info from configuration file
-    dbstring = sConfig.GetStringDefault("WorldDatabaseInfo", "");
+    std::string dbstring = sConfig.GetStringDefault("WorldDatabaseInfo", "");
     if (dbstring.empty())
     {
         sLog.outError("World database not specified in configuration file");
@@ -437,7 +434,7 @@ bool Master::_StartDB()
     }
 
     ///- Initialise the world database
-    if( !WorldDatabase.Initialize(dbstring.c_str()))
+    if (!WorldDatabase.Initialize(dbstring.c_str()))
     {
         sLog.outError("Cannot connect to world database %s",dbstring.c_str());
         return false;

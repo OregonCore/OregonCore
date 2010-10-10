@@ -24,7 +24,7 @@
 #include "Database/DatabaseEnv.h"
 #include "RealmList.h"
 
-#include "Config/ConfigEnv.h"
+#include "Config/Config.h"
 #include "Log.h"
 #include "AuthSocket.h"
 #include "SystemConfig.h"
@@ -40,7 +40,7 @@
 // Format is YYYYMMDDRR where RR is the change in the conf file
 // for that day.
 #ifndef _REALMDCONFVERSION
-# define _REALMDCONFVERSION 2007062001
+# define _REALMDCONFVERSION 2010101001
 #endif
 
 #ifndef _OREGON_REALM_CONFIG
