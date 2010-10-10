@@ -123,7 +123,7 @@ struct boss_thekalAI : public ScriptedAI
                             pLorKhan->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                             pLorKhan->setFaction(14);
                             pLorKhan->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                            pLorKhan->SetHealth(int(pLorKhan->GetMaxHealth()*1.0));
+                            pLorKhan->SetHealth(int(pLorKhan->GetMaxHealth()*1.0f));
                         }
                     }
 
@@ -136,7 +136,7 @@ struct boss_thekalAI : public ScriptedAI
                             pZath->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                             pZath->setFaction(14);
                             pZath->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                            pZath->SetHealth(int(pZath->GetMaxHealth()*1.0));
+                            pZath->SetHealth(int(pZath->GetMaxHealth()*1.0f));
                         }
                     }
                 }
@@ -156,7 +156,7 @@ struct boss_thekalAI : public ScriptedAI
                 Silence_Timer = 20000 + rand()%5000;
             } else Silence_Timer -= diff;
 
-            if (!PhaseTwo && !WasDead && me->GetHealth() <= me->GetMaxHealth() * 0.05)
+            if (!PhaseTwo && !WasDead && me->GetHealth() <= me->GetMaxHealth() * 0.05f)
             {
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 me->SetUInt32Value(UNIT_FIELD_BYTES_1, 3);
@@ -174,10 +174,10 @@ struct boss_thekalAI : public ScriptedAI
                 if (Resurrect_Timer <= diff)
                 {
                     DoCast(me,SPELL_TIGER_FORM);
-                    me->SetFloatValue(OBJECT_FIELD_SCALE_X, 2.00f);
+                    me->SetFloatValue(OBJECT_FIELD_SCALE_X, 2.0f);
                     me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                    me->SetHealth(int(me->GetMaxHealth()*1.0));
+                    me->SetHealth(int(me->GetMaxHealth()*1.0f));
                     const CreatureInfo *cinfo = me->GetCreatureInfo();
                     me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg +((cinfo->mindmg/100) * 40)));
                     me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg/100) * 40)));
@@ -342,7 +342,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
                         pThekal->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                         pThekal->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         pThekal->setFaction(14);
-                        pThekal->SetHealth(int(pThekal->GetMaxHealth()*1.0));
+                        pThekal->SetHealth(int(pThekal->GetMaxHealth()*1.0f));
                     }
                 }
 
@@ -355,7 +355,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
                         pZath->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                         pZath->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         pZath->setFaction(14);
-                        pZath->SetHealth(int(pZath->GetMaxHealth()*1.0));
+                        pZath->SetHealth(int(pZath->GetMaxHealth()*1.0f));
                     }
                 }
             }
@@ -363,7 +363,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
             Check_Timer = 5000;
         } else Check_Timer -= diff;
 
-        if (me->GetHealth() <= me->GetMaxHealth() * 0.05)
+        if (me->GetHealth() <= me->GetMaxHealth() * 0.05f)
         {
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetUInt32Value(UNIT_FIELD_BYTES_1, 3);
@@ -479,7 +479,7 @@ struct mob_zealot_zathAI : public ScriptedAI
                         pLorKhan->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                         pLorKhan->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         pLorKhan->setFaction(14);
-                        pLorKhan->SetHealth(int(pLorKhan->GetMaxHealth()*1.0));
+                        pLorKhan->SetHealth(int(pLorKhan->GetMaxHealth()*1.0f));
                     }
                 }
 
@@ -492,7 +492,7 @@ struct mob_zealot_zathAI : public ScriptedAI
                         pThekal->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                         pThekal->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         pThekal->setFaction(14);
-                        pThekal->SetHealth(int(pThekal->GetMaxHealth()*1.0));
+                        pThekal->SetHealth(int(pThekal->GetMaxHealth()*1.0f));
                     }
                 }
             }
@@ -500,7 +500,7 @@ struct mob_zealot_zathAI : public ScriptedAI
             Check_Timer = 5000;
         } else Check_Timer -= diff;
 
-        if (me->GetHealth() <= me->GetMaxHealth() * 0.05)
+        if (me->GetHealth() <= me->GetMaxHealth() * 0.05f)
         {
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetUInt32Value(UNIT_FIELD_BYTES_1, 3);

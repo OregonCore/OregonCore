@@ -82,25 +82,25 @@ static Dialogue RAJDialogue[]=
 
 float GameObjects_OZ[5][4]=
 {
-    {183496, -10909.5, -1761.79, 90.477}, //Bush
-    {183496, -10906.7, -1750.10, 90.476},
-    {183496, -10883.0, -1751.81, 90.476},
-    {183496, -10877.7, -1763.18, 90.477},
-    {183442, -10890.9, -1744.06, 90.476} //Scene Picture
+    {183496, -10909.5f, -1761.79f, 90.477f}, //Bush
+    {183496, -10906.7f, -1750.10f, 90.476f},
+    {183496, -10883.0f, -1751.81f, 90.476f},
+    {183496, -10877.7f, -1763.18f, 90.477f},
+    {183442, -10890.9f, -1744.06f, 90.476f} //Scene Picture
 };
 
 float GameObjects_RomeJulia[1][4]=
 {
-    {183443, -10890.9, -1744.06, 90.476}
+    {183443, -10890.9f, -1744.06f, 90.476f}
 };
 
 float GameObjects_Wolf[5][4]=
 {
-    {183492, -10908.9, -1762.55, 90.478},
-    {183492, -10902.4, -1753.36, 90.477},
-    {183492, -10876.2, -1761.21, 90.477},
-    {183493, -10885.2, -1756.47, 90.477},
-    {183491, -10890.9, -1744.06, 90.476}
+    {183492, -10908.9f, -1762.55f, 90.478f},
+    {183492, -10902.4f, -1753.36f, 90.477f},
+    {183492, -10876.2f, -1761.21f, 90.477f},
+    {183493, -10885.2f, -1756.47f, 90.477f},
+    {183491, -10890.9f, -1744.06f, 90.476f}
 };
 
 // Entries and spawn locations for creatures in Oz event
@@ -116,12 +116,12 @@ float Spawns[6][2]=
 
 float StageLocations[6][2]=
 {
-    {-10866.711, -1779.816},                                // Open door, begin walking (0)
-    {-10894.917, -1775.467},                                // (1)
-    {-10896.044, -1782.619},                                // Begin Speech after this (2)
-    {-10894.917, -1775.467},                                // Resume walking (back to spawn point now) after speech (3)
-    {-10866.711, -1779.816},                                // (4)
-    {-10866.700, -1781.030}                                 // Summon mobs, open curtains, close door (5)
+    {-10866.711f, -1779.816f},                                // Open door, begin walking (0)
+    {-10894.917f, -1775.467f},                                // (1)
+    {-10896.044f, -1782.619f},                                // Begin Speech after this (2)
+    {-10894.917f, -1775.467f},                                // Resume walking (back to spawn point now) after speech (3)
+    {-10866.711f, -1779.816f},                                // (4)
+    {-10866.700f, -1781.030f}                                 // Summon mobs, open curtains, close door (5)
 };
 
 #define CREATURE_SPOTLIGHT  19525
@@ -129,9 +129,9 @@ float StageLocations[6][2]=
 #define SPELL_SPOTLIGHT     25824
 #define SPELL_TUXEDO        32616
 
-#define SPAWN_Z             90.5
+#define SPAWN_Z             90.5f
 #define SPAWN_Y             -1758
-#define SPAWN_O             4.738
+#define SPAWN_O             4.738f
 
 struct npc_barnesAI : public npc_escortAI
 {
@@ -222,17 +222,17 @@ struct npc_barnesAI : public npc_escortAI
                 {
                 case EVENT_OZ:
                     for(int i = 0; i<5; i++)
-                        me->SummonGameObject(GameObjects_OZ[i][0],GameObjects_OZ[i][1],GameObjects_OZ[i][2],GameObjects_OZ[i][3],4.63,0,0,0.73,-0.68,60000);
+                        me->SummonGameObject(GameObjects_OZ[i][0],GameObjects_OZ[i][1],GameObjects_OZ[i][2],GameObjects_OZ[i][3],4.63f,0,0,0.73f,-0.68f,60000);
                     break;
 
                 case EVENT_HOOD:
                     for(int i = 0; i<5; i++)
-                        me->SummonGameObject(GameObjects_Wolf[i][0],GameObjects_Wolf[i][1],GameObjects_Wolf[i][2],GameObjects_Wolf[i][3],4.63,0,0,0.73,-0.68,60000);
+                        me->SummonGameObject(GameObjects_Wolf[i][0],GameObjects_Wolf[i][1],GameObjects_Wolf[i][2],GameObjects_Wolf[i][3],4.63f,0,0,0.73f,-0.68f,60000);
                     break;
 
                 case EVENT_RAJ:
                     for(int i = 0; i<1; i++)
-                        me->SummonGameObject(GameObjects_RomeJulia[i][0],GameObjects_RomeJulia[i][1],GameObjects_RomeJulia[i][2],GameObjects_RomeJulia[i][3],4.63,0,0,0.73,-0.68,60000);
+                        me->SummonGameObject(GameObjects_RomeJulia[i][0],GameObjects_RomeJulia[i][1],GameObjects_RomeJulia[i][2],GameObjects_RomeJulia[i][3],4.63f,0,0,0.73f,-0.68f,60000);
                     break;
                 }
                 break;
@@ -384,7 +384,7 @@ CreatureAI* GetAI_npc_barnesAI(Creature* pCreature)
     npc_barnesAI* Barnes_AI = new npc_barnesAI(pCreature);
 
     for (uint8 i = 0; i < 6; ++i)
-        Barnes_AI->AddWaypoint(i, StageLocations[i][0], StageLocations[i][1], 90.465);
+        Barnes_AI->AddWaypoint(i, StageLocations[i][0], StageLocations[i][1], 90.465f);
 
     return ((CreatureAI*)Barnes_AI);
 }
@@ -503,8 +503,8 @@ bool GossipSelect_npc_berthold(Player* player, Creature* pCreature, uint32 sende
 #define SPELL_CONFLAGRATION_BLAST   30977
 #define SPELL_MANA_SHIELD           31635
 
-static float MedivPos[4] = {-11161.49,-1902.24,91.48,1.94};
-static float ArcanagosPos[4] = {-11169.75,-1881.48,95.39,4.83};
+static float MedivPos[4] = {-11161.49f,-1902.24f,91.48f,1.94f};
+static float ArcanagosPos[4] = {-11169.75f,-1881.48f,95.39f,4.83f};
 
 struct npc_image_of_medivhAI : public ScriptedAI
 {
@@ -616,7 +616,7 @@ struct npc_image_of_medivhAI : public ScriptedAI
                 CAST_CRE(arca)->Yell(SAY_DIALOG_ARCANAGOS_8, LANG_UNIVERSAL, NULL);
             return 5000;
         case 12:
-            arca->GetMotionMaster()->MovePoint(0, -11010.82,-1761.18, 156.47);
+            arca->GetMotionMaster()->MovePoint(0, -11010.82f,-1761.18f, 156.47f);
             arca->setActive(true);
             arca->InterruptNonMeleeSpells(true);
             arca->SetSpeed(MOVE_FLIGHT, 2.0f);

@@ -53,12 +53,12 @@ EndScriptData */
 #define CREATURE_FIENDISHIMP    17267
 #define CREATURE_PORTAL         17265
 
-#define PORTAL_Z        179.434
+#define PORTAL_Z        179.434f
 
 float PortalLocations[2][2]=
 {
-    {-11249.6933, -1704.61023},
-    {-11242.1160, -1713.33325},
+    {-11249.6933f, -1704.61023f},
+    {-11242.1160f, -1713.33325f},
 };
 
 struct mob_kilrekAI : public ScriptedAI

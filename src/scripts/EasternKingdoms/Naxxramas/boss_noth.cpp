@@ -41,10 +41,10 @@ EndScriptData */
 #define C_PLAGUED_WARRIOR               16984
 
 // Teleport position of Noth on his balcony
-#define TELE_X 2631.370
-#define TELE_Y -3529.680
-#define TELE_Z 274.040
-#define TELE_O 6.277
+#define TELE_X 2631.370f
+#define TELE_Y -3529.680f
+#define TELE_Z 274.040f
+#define TELE_O 6.277f
 
 // IMPORTANT: BALCONY TELEPORT NOT ADDED YET! WILL BE ADDED SOON!
 // Dev note 26.12.2008: When is soon? :)
@@ -121,7 +121,7 @@ struct boss_nothAI : public ScriptedAI
             DoScriptText(SAY_SUMMON, me);
 
             for (uint8 i = 0; i < 6; i++)
-                  me->SummonCreature(C_PLAGUED_WARRIOR,2684.804,-3502.517,261.313,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+                  me->SummonCreature(C_PLAGUED_WARRIOR,2684.804f,-3502.517f,261.313f,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
 
             Summon_Timer = 30500;
         } else Summon_Timer -= diff;

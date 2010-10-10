@@ -66,16 +66,16 @@ CreatureAI* GetAI_npc_shadowfang_prisoner(Creature* pCreature)
     uint32 eCreature = pCreature->GetEntry();
 
     if (eCreature == 3849)                                    //adamant
-        prisonerAI->AddWaypoint(0, -254.47, 2117.48, 81.17);
+        prisonerAI->AddWaypoint(0, -254.47f, 2117.48f, 81.17f);
     if (eCreature == 3850)                                    //ashcrombe
-        prisonerAI->AddWaypoint(0, -252.35, 2126.71, 81.17);
+        prisonerAI->AddWaypoint(0, -252.35f, 2126.71f, 81.17f);
 
-    prisonerAI->AddWaypoint(1, -253.63, 2131.27, 81.28);
-    prisonerAI->AddWaypoint(2, -249.66, 2142.45, 87.01);
-    prisonerAI->AddWaypoint(3, -248.08, 2143.68, 87.01);
-    prisonerAI->AddWaypoint(4, -238.87, 2139.93, 87.01);
-    prisonerAI->AddWaypoint(5, -235.47, 2149.18, 90.59);
-    prisonerAI->AddWaypoint(6, -239.89, 2156.06, 90.62, 20000);
+    prisonerAI->AddWaypoint(1, -253.63f, 2131.27f, 81.28f);
+    prisonerAI->AddWaypoint(2, -249.66f, 2142.45f, 87.01f);
+    prisonerAI->AddWaypoint(3, -248.08f, 2143.68f, 87.01f);
+    prisonerAI->AddWaypoint(4, -238.87f, 2139.93f, 87.01f);
+    prisonerAI->AddWaypoint(5, -235.47f, 2149.18f, 90.59f);
+    prisonerAI->AddWaypoint(6, -239.89f, 2156.06f, 90.62f, 20000);
 
     return (CreatureAI*)prisonerAI;
 }

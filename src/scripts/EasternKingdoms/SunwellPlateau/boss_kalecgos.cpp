@@ -86,8 +86,8 @@ enum Spells
 #define CENTER_Y    930
 #define RADIUS      30
 
-#define DRAGON_REALM_Z  53.079
-#define DEMON_REALM_Z   -74.558
+#define DRAGON_REALM_Z  53.079f
+#define DEMON_REALM_Z   -74.558f
 
 uint32 WildMagic[] = { 44978, 45001, 45002, 45004, 45006, 45010 };
 

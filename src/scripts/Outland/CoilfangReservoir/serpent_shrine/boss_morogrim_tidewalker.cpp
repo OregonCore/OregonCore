@@ -42,18 +42,18 @@ EndScriptData */
 #define SPELL_EARTHQUAKE            37764
 #define SPELL_WATERY_GRAVE_EXPLOSION 37852
 
-#define WATERY_GRAVE_X1             334.64
-#define WATERY_GRAVE_Y1             -728.89
-#define WATERY_GRAVE_Z1             -14.42
-#define WATERY_GRAVE_X2             365.51
-#define WATERY_GRAVE_Y2             -737.14
-#define WATERY_GRAVE_Z2             -14.44
-#define WATERY_GRAVE_X3             366.19
-#define WATERY_GRAVE_Y3             -709.59
-#define WATERY_GRAVE_Z3             -14.36
-#define WATERY_GRAVE_X4             372.93
-#define WATERY_GRAVE_Y4             -690.96
-#define WATERY_GRAVE_Z4             -14.44
+#define WATERY_GRAVE_X1             334.64f
+#define WATERY_GRAVE_Y1             -728.89f
+#define WATERY_GRAVE_Z1             -14.42f
+#define WATERY_GRAVE_X2             365.51f
+#define WATERY_GRAVE_Y2             -737.14f
+#define WATERY_GRAVE_Z2             -14.44f
+#define WATERY_GRAVE_X3             366.19f
+#define WATERY_GRAVE_Y3             -709.59f
+#define WATERY_GRAVE_Z3             -14.36f
+#define WATERY_GRAVE_X4             372.93f
+#define WATERY_GRAVE_Y4             -690.96f
+#define WATERY_GRAVE_Z4             -14.44f
 
 #define SPELL_WATERY_GRAVE_1    38023
 #define SPELL_WATERY_GRAVE_2    38024
@@ -79,16 +79,16 @@ EndScriptData */
 
 float MurlocCords[10][5] =
 {
-      {21920, 424.36, -715.4, -7.14, 0.124},
-       {21920, 425.13, -719.3, -7.14, 0.124},
-       {21920, 425.05, -724.23, -7.14, 0.124},
-       {21920, 424.91, -728.68, -7.14, 0.124},
-      {21920, 424.84, -732.18, -7.14, 0.124},
-       {21920, 321.05, -734.2, -13.15, 0.124},
-       {21920, 321.05, -729.4, -13.15, 0.124},
-       {21920, 321.05, -724.03, -13.15, 0.124},
-      {21920, 321.05, -718.73, -13.15, 0.124},
-       {21920, 321.05, -714.24, -13.15, 0.124}
+      {21920, 424.36f, -715.4f, -7.14f, 0.124f},
+       {21920, 425.13f, -719.3f, -7.14f, 0.124f},
+       {21920, 425.05f, -724.23f, -7.14f, 0.124f},
+       {21920, 424.91f, -728.68f, -7.14f, 0.124f},
+      {21920, 424.84f, -732.18f, -7.14f, 0.124f},
+       {21920, 321.05f, -734.2f, -13.15f, 0.124f},
+       {21920, 321.05f, -729.4f, -13.15f, 0.124f},
+       {21920, 321.05f, -724.03f, -13.15f, 0.124f},
+      {21920, 321.05f, -718.73f, -13.15f, 0.124f},
+       {21920, 321.05f, -714.24f, -13.15f, 0.124f}
 };
 
 //Creatures

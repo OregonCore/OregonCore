@@ -96,7 +96,7 @@ struct boss_kriAI : public ScriptedAI
             ToxicVolley_Timer = 10000 + rand()%5000;
         } else ToxicVolley_Timer -= diff;
 
-        if (me->GetHealth() <= me->GetMaxHealth() * 0.05 && !Death)
+        if (me->GetHealth() <= me->GetMaxHealth() * 0.05f && !Death)
         {
             DoCast(me->getVictim(),SPELL_POISON_CLOUD);
             Death = true;

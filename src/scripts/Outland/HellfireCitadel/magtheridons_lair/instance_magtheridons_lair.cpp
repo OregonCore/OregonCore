@@ -27,9 +27,9 @@ EndScriptData */
 #define SPELL_SOUL_TRANSFER         30531 // core bug, does not support target 7
 #define SPELL_BLAZE_TARGET          30541 // core bug, does not support target 7
 
-#define CHAMBER_CENTER_X            -15.14
-#define CHAMBER_CENTER_Y              1.8
-#define CHAMBER_CENTER_Z             -0.4
+#define CHAMBER_CENTER_X            -15.14f
+#define CHAMBER_CENTER_Y              1.8f
+#define CHAMBER_CENTER_Z             -0.4f
 
 #define ENCOUNTERS 2
 

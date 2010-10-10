@@ -121,7 +121,7 @@ CreatureAI* GetAI_npc_aeranas(Creature* pCreature)
 
 bool GOHello_go_haaleshi_altar(Player *player, GameObject* _GO)
 {
-    _GO->SummonCreature(C_AERANAS,-1321.79, 4043.80, 116.24, 1.25, TEMPSUMMON_TIMED_DESPAWN, 180000);
+    _GO->SummonCreature(C_AERANAS,-1321.79f, 4043.80f, 116.24f, 1.25f, TEMPSUMMON_TIMED_DESPAWN, 180000);
     return false;
 }
 

@@ -198,7 +198,7 @@ struct npc_custodian_of_timeAI : public npc_escortAI
         {
             if (who->HasAura(34877,1) && CAST_PLR(who)->GetQuestStatus(10277) == QUEST_STATUS_INCOMPLETE)
             {
-                float Radius = 10.0;
+                float Radius = 10.0f;
                 if (me->IsWithinDistInMap(who, Radius))
                 {
                     Start(false, false, who->GetGUID());
@@ -373,16 +373,16 @@ struct npc_OOX17AI : public npc_escortAI
 
         switch(i) {
             case 23:
-                me->SummonCreature(SPAWN_FIRST, -8350.96, -4445.79, 10.10, 6.20, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
-                me->SummonCreature(SPAWN_FIRST, -8355.96, -4447.79, 10.10, 6.27, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
-                me->SummonCreature(SPAWN_FIRST, -8353.96, -4442.79, 10.10, 6.08, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+                me->SummonCreature(SPAWN_FIRST, -8350.96f, -4445.79f, 10.10f, 6.20f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+                me->SummonCreature(SPAWN_FIRST, -8355.96f, -4447.79f, 10.10f, 6.27f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+                me->SummonCreature(SPAWN_FIRST, -8353.96f, -4442.79f, 10.10f, 6.08f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
                 DoScriptText(SAY_OOX_AMBUSH, me);
                 break;
 
             case 56:
-                me->SummonCreature(SPAWN_SECOND_1, -7510.07, -4795.50, 9.35, 6.06, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
-                me->SummonCreature(SPAWN_SECOND_2, -7515.07, -4797.50, 9.35, 6.22, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
-                me->SummonCreature(SPAWN_SECOND_2, -7518.07, -4792.50, 9.35, 6.22, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+                me->SummonCreature(SPAWN_SECOND_1, -7510.07f, -4795.50f, 9.35f, 6.06f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+                me->SummonCreature(SPAWN_SECOND_2, -7515.07f, -4797.50f, 9.35f, 6.22f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+                me->SummonCreature(SPAWN_SECOND_2, -7518.07f, -4792.50f, 9.35f, 6.22f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
                 DoScriptText(SAY_OOX_AMBUSH, me);
                 if (Unit* scoff = FindCreature(SPAWN_SECOND_2, 30, me))
                     DoScriptText(SAY_OOX17_AMBUSH_REPLY, scoff);
@@ -457,25 +457,25 @@ bool GOHello_go_landmark_treasure(Player *player, GameObject* _GO)
 
     Creature * spawn = NULL;
 
-    spawn = player->SummonCreature(NPC_PIRATE, -10029.78, -4032.54, 19.41, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
+    spawn = player->SummonCreature(NPC_PIRATE, -10029.78f, -4032.54f, 19.41f, 3.40f, TEMPSUMMON_TIMED_DESPAWN, 340000);
     if (spawn)
         spawn->GetMotionMaster()->MovePath(PATH_ENTRY_1, true);
-    spawn = player->SummonCreature(NPC_PIRATE, -10031.64, -4032.14, 19.11, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
+    spawn = player->SummonCreature(NPC_PIRATE, -10031.64f, -4032.14f, 19.11f, 3.40f, TEMPSUMMON_TIMED_DESPAWN, 340000);
     if (spawn)
         spawn->GetMotionMaster()->MovePath(PATH_ENTRY_3, true);
 
-    spawn = player->SummonCreature(NPC_SWASHBUCKLER, -10029.86, -4030.51, 20.02, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
+    spawn = player->SummonCreature(NPC_SWASHBUCKLER, -10029.86f, -4030.51f, 20.02f, 3.40f, TEMPSUMMON_TIMED_DESPAWN, 340000);
     if (spawn)
         spawn->GetMotionMaster()->MovePath(PATH_ENTRY_4, true);
-    spawn = player->SummonCreature(NPC_SWASHBUCKLER, -10031.83, -4030.70, 19.52, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
+    spawn = player->SummonCreature(NPC_SWASHBUCKLER, -10031.83f, -4030.70f, 19.52f, 3.40f, TEMPSUMMON_TIMED_DESPAWN, 340000);
     if (spawn)
         spawn->GetMotionMaster()->MovePath(PATH_ENTRY_5, true);
 
-    spawn = player->SummonCreature(NPC_BUCCANEER, -10028.90, -4029.65, 20.53, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
+    spawn = player->SummonCreature(NPC_BUCCANEER, -10028.90f, -4029.65f, 20.53f, 3.40f, TEMPSUMMON_TIMED_DESPAWN, 340000);
     if (spawn)
         spawn->GetMotionMaster()->MovePath(PATH_ENTRY_2, true);
 
-    player->SummonGameObject(GO_TREASURE, -10119.70, -4050.45, 5.33, 0, 0, 0, 0, 0, 240);
+    player->SummonGameObject(GO_TREASURE, -10119.70f, -4050.45f, 5.33f, 0, 0, 0, 0, 0, 240);
 
     return true;
 };

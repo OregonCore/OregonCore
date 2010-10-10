@@ -208,8 +208,8 @@ struct boss_akilzonAI : public ScriptedAI
             z = me->GetPositionZ();
             for (uint8 i = 0; i < 5+rand()%5; ++i)
             {
-                x = 343+rand()%60;
-                y = 1380+rand()%60;
+                x = float(343+rand()%60);
+                y = float(1380+rand()%60);
                 if (Unit *trigger = me->SummonTrigger(x, y, z, 0, 2000))
                 {
                     trigger->setFaction(35);
@@ -346,7 +346,7 @@ struct boss_akilzonAI : public ScriptedAI
                         x = pTarget->GetPositionX() + 10 - rand()%20;
                         y = pTarget->GetPositionY() + 10 - rand()%20;
                         z = pTarget->GetPositionZ() + 6 + rand()%5 + 10;
-                        if (z > 95) z = 95 - rand()%5;
+                        if (z > 95) z = float(95 - rand()%5);
                     }
                     Creature *pCreature = me->SummonCreature(MOB_SOARING_EAGLE, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
                     if (pCreature)
@@ -412,7 +412,7 @@ struct mob_soaring_eagleAI : public ScriptedAI
                     x = pTarget->GetPositionX() + 10 - rand()%20;
                     y = pTarget->GetPositionY() + 10 - rand()%20;
                     z = pTarget->GetPositionZ() + 10 + rand()%5;
-                    if (z > 95) z = 95 - rand()%5;
+                    if (z > 95) z = float(95 - rand()%5);
                 }
                 else
                 {

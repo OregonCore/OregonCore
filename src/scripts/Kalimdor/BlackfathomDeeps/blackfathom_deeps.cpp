@@ -31,14 +31,14 @@ EndContentData */
 
 static float SpawnPoints[5][4] =
 {
-    {-868.0, -174.0, -25.87, 0}, //enc 1
-    {-873.0, -164.0, -25.87, 0},
+    {-868.0f, -174.0f, -25.87f, 0}, //enc 1
+    {-873.0f, -164.0f, -25.87f, 0},
 
-    {-769.3, -174.0, -25.87, 0}, //enc 2
+    {-769.3f, -174.0f, -25.87f, 0}, //enc 2
 
-    {-868.0, -154.0, -25.87, 32}, //enc 3
+    {-868.0f, -154.0f, -25.87f, 32}, //enc 3
 
-    {-769.3, -154.0, -25.87, 32}  //enc 4
+    {-769.3f, -154.0f, -25.87f, 32}  //enc 4
 };
 
 void SummonCreatureWithRandomTarget(uint32 creatureId, int position, float mod, Unit* pTarget, GameObject* pGO)

@@ -35,10 +35,10 @@ EndScriptData */
 #define SAY_ARRIVAL3_RAG    -1409011
 #define SAY_ARRIVAL5_RAG    -1409012
 
-#define SPAWN_RAG_X         838.51
-#define SPAWN_RAG_Y         -829.84
-#define SPAWN_RAG_Z         -232.00
-#define SPAWN_RAG_O         1.70
+#define SPAWN_RAG_X         838.51f
+#define SPAWN_RAG_Y         -829.84f
+#define SPAWN_RAG_Z         -232.00f
+#define SPAWN_RAG_O         1.70f
 
 #define SPELL_MAGIC_REFLECTION      20619
 #define SPELL_DAMAGE_REFLECTION     21075

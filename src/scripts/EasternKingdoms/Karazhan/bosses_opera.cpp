@@ -91,7 +91,7 @@ void SummonCroneIfReady(ScriptedInstance* pInstance, Creature* pCreature)
     pInstance->SetData(DATA_OPERA_OZ_DEATHCOUNT, 0);        // Increment DeathCount
     if (pInstance->GetData(DATA_OPERA_OZ_DEATHCOUNT) == 4)
     {
-        Creature* Crone = pCreature->SummonCreature(CREATURE_CRONE,  -10891.96, -1755.95, pCreature->GetPositionZ(), 4.64, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 30000);
+        Creature* Crone = pCreature->SummonCreature(CREATURE_CRONE,  -10891.96f, -1755.95f, pCreature->GetPositionZ(), 4.64f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 30000);
         if (Crone)
         {
             if (pCreature->getVictim())

@@ -324,7 +324,7 @@ public:
         {
             if (CAST_PLR(pWho)->GetQuestStatus(10211) == QUEST_STATUS_INCOMPLETE)
             {
-                float Radius = 10.0;
+                float Radius = 10.0f;
                 if (me->IsWithinDistInMap(pWho, Radius))
                 {
                     Start(false, false, pWho->GetGUID());

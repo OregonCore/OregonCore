@@ -230,7 +230,7 @@ struct boss_high_inquisitor_whitemaneAI : public ScriptedAI
         //This is going to be a routine to make the resurrection event...
         if (me->isAlive && me->isAlive)
         {
-        me->Relocate(1163.113370,1398.856812,32.527786,3.171014);
+        me->Relocate(1163.113370f,1398.856812f,32.527786f,3.171014f);
 
         DoScriptText(SAY_WH_RESSURECT, me);
 

@@ -249,7 +249,7 @@ struct boss_felmystAI : public ScriptedAI
             me->CastStop(SPELL_FOG_BREATH);
             me->RemoveAurasDueToSpell(SPELL_FOG_BREATH);
             me->SetUnitMovementFlags(MOVEFLAG_NONE);
-            me->SetSpeed(MOVE_RUN, 2.0);
+            me->SetSpeed(MOVE_RUN, 2.0f);
 
             events.ScheduleEvent(EVENT_CLEAVE, 5000 + rand()%5 * 1000);
             events.ScheduleEvent(EVENT_CORROSION, 10000 + rand()%10 * 1000);
@@ -514,7 +514,7 @@ struct mob_felmyst_vaporAI : public ScriptedAI
     mob_felmyst_vaporAI(Creature *c) : ScriptedAI(c)
     {
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->SetSpeed(MOVE_RUN, 0.8);
+        me->SetSpeed(MOVE_RUN, 0.8f);
     }
     void Reset() {}
     void EnterCombat(Unit* /*who*/)
@@ -537,7 +537,7 @@ struct mob_felmyst_trailAI : public ScriptedAI
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         DoCast(me, SPELL_TRAIL_TRIGGER, true);
         me->SetUInt64Value(UNIT_FIELD_TARGET, me->GetGUID());
-        me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 0.01); // core bug
+        me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 0.01f); // core bug
     }
     void Reset() {}
     void EnterCombat(Unit* /*who*/) {}

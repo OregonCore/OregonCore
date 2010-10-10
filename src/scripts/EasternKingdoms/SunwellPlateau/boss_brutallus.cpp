@@ -231,7 +231,7 @@ struct boss_brutallusAI : public ScriptedAI
                 break;
             case 8:
                 DoScriptText(YELL_INTRO_KILL_MADRIGOSA, me);
-                me->SetOrientation(0.14);
+                me->SetOrientation(0.14f);
                 Madrigosa->setDeathState(CORPSE);
                 IntroPhaseTimer = 8000;
                 ++IntroPhase;

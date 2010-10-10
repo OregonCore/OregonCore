@@ -51,7 +51,7 @@ struct boss_ptheradrasAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        me->SummonCreature(12238,28.067,61.875,-123.405,4.67,TEMPSUMMON_TIMED_DESPAWN,600000);
+        me->SummonCreature(12238,28.067f,61.875f,-123.405f,4.67f,TEMPSUMMON_TIMED_DESPAWN,600000);
     }
 
     void UpdateAI(const uint32 diff)

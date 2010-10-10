@@ -122,7 +122,7 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
     {
         if (!me->getVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor (me))
         {
-            if (!HasTaunted && me->IsWithinDistInMap(who, 100.0))
+            if (!HasTaunted && me->IsWithinDistInMap(who, 100.0f))
             {
                 DoScriptText(SAY_INTRO, me);
                 HasTaunted = true;

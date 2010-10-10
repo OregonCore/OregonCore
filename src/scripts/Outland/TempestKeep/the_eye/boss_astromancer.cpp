@@ -66,7 +66,7 @@ EndScriptData */
 #define MIN_RANGE_FOR_DOT_JUMP      20.0f
 
                              // x,          y,      z,         o
-static float SolarianPos[4] = {432.909, -373.424, 17.9608, 1.06421};
+static float SolarianPos[4] = {432.909f, -373.424f, 17.9608f, 1.06421f};
 
 struct boss_high_astromancer_solarianAI : public ScriptedAI
 {

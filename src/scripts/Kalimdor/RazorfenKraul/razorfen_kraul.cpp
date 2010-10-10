@@ -63,7 +63,7 @@ struct npc_willixAI : public npc_escortAI
             DoScriptText(SAY_POINT, me, player);
             break;
         case 4:
-            me->SummonCreature(ENTRY_BOAR, 2137.66, 1843.98, 48.08, 1.54, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+            me->SummonCreature(ENTRY_BOAR, 2137.66f, 1843.98f, 48.08f, 1.54f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
             break;
         case 8:
             DoScriptText(SAY_BLUELEAF, me, player);
@@ -75,7 +75,7 @@ struct npc_willixAI : public npc_escortAI
             DoScriptText(SAY_BAD, me, player);
             break;
         case 14:
-            me->SummonCreature(ENTRY_BOAR, 2078.91, 1704.54, 56.77, 1.54, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+            me->SummonCreature(ENTRY_BOAR, 2078.91f, 1704.54f, 56.77f, 1.54f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
             break;
         case 25:
             DoScriptText(SAY_THINK, me, player);
@@ -87,7 +87,7 @@ struct npc_willixAI : public npc_escortAI
             DoScriptText(SAY_FINALY, me, player);
             break;
         case 43:
-            me->SummonCreature(ENTRY_BOAR, 1956.43, 1596.97, 81.75, 1.54,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+            me->SummonCreature(ENTRY_BOAR, 1956.43f, 1596.97f, 81.75f, 1.54f,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
             break;
         case 45:
             DoScriptText(SAY_WIN, me, player);

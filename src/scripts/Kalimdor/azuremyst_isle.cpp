@@ -397,7 +397,7 @@ CreatureAI* GetAI_npc_magwinAI(Creature* pCreature)
 #define MOB_SPARK       17243
 #define GO_NAGA_FLAG    181694
 
-static float SparkPos[3] = {-5030.95, -11291.99, 7.97};
+static float SparkPos[3] = {-5030.95f, -11291.99f, 7.97f};
 
 struct npc_geezleAI : public ScriptedAI
 {
@@ -431,9 +431,9 @@ struct npc_geezleAI : public ScriptedAI
             SparkGUID = Spark->GetGUID();
             Spark->setActive(true);
             Spark->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-            Spark->GetMotionMaster()->MovePoint(0, -5080.70, -11253.61, 0.56);
+            Spark->GetMotionMaster()->MovePoint(0, -5080.70f, -11253.61f, 0.56f);
         }
-        me->GetMotionMaster()->MovePoint(0, -5092.26, -11252, 0.71);
+        me->GetMotionMaster()->MovePoint(0, -5092.26f, -11252, 0.71f);
         SayTimer = 23000;
     }
 
@@ -465,7 +465,7 @@ struct npc_geezleAI : public ScriptedAI
         case 9:
             me->GetMotionMaster()->MoveTargetedHome();
             if (Spark)
-                Spark->GetMotionMaster()->MovePoint(0, -5030.95, -11291.99, 7.97);
+                Spark->GetMotionMaster()->MovePoint(0, -5030.95f, -11291.99f, 7.97f);
             return 20000;
         case 10:
             if (Spark)

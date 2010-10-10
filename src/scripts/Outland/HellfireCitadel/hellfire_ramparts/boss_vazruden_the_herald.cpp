@@ -50,7 +50,7 @@ EndScriptData */
 
 #define PATH_ENTRY              2081
 
-const float VazrudenMiddle[3] = {-1406.5, 1746.5, 81.2};
+const float VazrudenMiddle[3] = {-1406.5f, 1746.5f, 81.2f};
 const float VazrudenRing[2][3] =
 {
     {-1430, 1705, 112},
@@ -337,7 +337,7 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
         {
             ((boss_nazanAI *)summoned->AI())->VazrudenGUID = VazrudenGUID;
             summoned->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
-            summoned->SetSpeed(MOVE_FLIGHT, 2.5);
+            summoned->SetSpeed(MOVE_FLIGHT, 2.5f);
             if (victim)
                 ((ScriptedAI*)summoned->AI())->AttackStart(victim,false);
         }

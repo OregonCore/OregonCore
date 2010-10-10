@@ -130,13 +130,13 @@ EndScriptData */
 //weapon id + position
 float KaelthasWeapons[7][5] =
 {
-    {21270, 794.38, 15, 48.72, 2.9},                        //[Cosmic Infuser]
-    {21269, 785.47, 12.12, 48.72, 3.14},                    //[Devastation]
-    {21271, 781.25, 4.39, 48.72, 3.14},                     //[Infinity Blade]
-    {21273, 777.38, -0.81, 48.72, 3.06},                    //[Phaseshift Bulwark]
-    {21274, 781.48, -6.08, 48.72, 3.9},                     //[Staff of Disintegration]
-    {21272, 785.42, -13.59, 48.72, 3.4},                    //[Warp Slicer]
-    {21268, 793.06, -16.61, 48.72, 3.10}                    //[Netherstrand Longbow]
+    {21270, 794.38f, 15, 48.72f, 2.9f},                        //[Cosmic Infuser]
+    {21269, 785.47f, 12.12f, 48.72f, 3.14f},                    //[Devastation]
+    {21271, 781.25f, 4.39f, 48.72f, 3.14f},                     //[Infinity Blade]
+    {21273, 777.38f, -0.81f, 48.72f, 3.06f},                    //[Phaseshift Bulwark]
+    {21274, 781.48f, -6.08f, 48.72f, 3.9f},                     //[Staff of Disintegration]
+    {21272, 785.42f, -13.59f, 48.72f, 3.4f},                    //[Warp Slicer]
+    {21268, 793.06f, -16.61f, 48.72f, 3.10f}                    //[Netherstrand Longbow]
 };
 
 #define GRAVITY_X 795.0f

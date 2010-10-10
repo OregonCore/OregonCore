@@ -35,17 +35,17 @@ EndScriptData */
 
 #define SPELL_SUMMON_SPIDERLING 29434
 
-#define LOC_X1    3546.796
-#define LOC_Y1    -3869.082
-#define LOC_Z1    296.450
+#define LOC_X1    3546.796f
+#define LOC_Y1    -3869.082f
+#define LOC_Z1    296.450f
 
-#define LOC_X2    3531.271
-#define LOC_Y2    -3847.424
-#define LOC_Z2    299.450
+#define LOC_X2    3531.271f
+#define LOC_Y2    -3847.424f
+#define LOC_Z2    299.450f
 
-#define LOC_X3    3497.067
-#define LOC_Y3    -3843.384
-#define LOC_Z3    302.384
+#define LOC_X3    3497.067f
+#define LOC_Y3    -3843.384f
+#define LOC_Z3    302.384f
 
 struct mob_webwrapAI : public ScriptedAI
 {

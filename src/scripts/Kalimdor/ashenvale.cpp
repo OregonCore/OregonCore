@@ -76,9 +76,9 @@ struct npc_torekAI : public npc_escortAI
             break;
         case 19:
             //TODO: verify location and creatures amount.
-            me->SummonCreature(ENTRY_DURIEL,1776.73,-2049.06,109.83,1.54,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,25000);
-            me->SummonCreature(ENTRY_SILVERWING_SENTINEL,1774.64,-2049.41,109.83,1.40,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,25000);
-            me->SummonCreature(ENTRY_SILVERWING_WARRIOR,1778.73,-2049.50,109.83,1.67,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,25000);
+            me->SummonCreature(ENTRY_DURIEL,1776.73f,-2049.06f,109.83f,1.54f,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,25000);
+            me->SummonCreature(ENTRY_SILVERWING_SENTINEL,1774.64f,-2049.41f,109.83f,1.40f,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,25000);
+            me->SummonCreature(ENTRY_SILVERWING_WARRIOR,1778.73f,-2049.50f,109.83f,1.67f,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,25000);
             break;
         case 20:
             DoScriptText(SAY_WIN, me, pPlayer);
@@ -174,14 +174,14 @@ struct npc_ruul_snowhoofAI : public npc_escortAI
                     Cage->SetGoState(GO_STATE_ACTIVE);
                 break;}
         case 13:
-                me->SummonCreature(3922, 3449.218018, -587.825073, 174.978867, 4.714445, TEMPSUMMON_DEAD_DESPAWN, 60000);
-                me->SummonCreature(3921, 3446.384521, -587.830872, 175.186279, 4.714445, TEMPSUMMON_DEAD_DESPAWN, 60000);
-                me->SummonCreature(3926, 3444.218994, -587.835327, 175.380600, 4.714445, TEMPSUMMON_DEAD_DESPAWN, 60000);
+                me->SummonCreature(3922, 3449.218018f, -587.825073f, 174.978867f, 4.714445f, TEMPSUMMON_DEAD_DESPAWN, 60000);
+                me->SummonCreature(3921, 3446.384521f, -587.830872f, 175.186279f, 4.714445f, TEMPSUMMON_DEAD_DESPAWN, 60000);
+                me->SummonCreature(3926, 3444.218994f, -587.835327f, 175.380600f, 4.714445f, TEMPSUMMON_DEAD_DESPAWN, 60000);
                 break;
         case 19:
-                me->SummonCreature(3922, 3508.344482, -492.024261, 186.929031, 4.145029, TEMPSUMMON_DEAD_DESPAWN, 60000);
-                me->SummonCreature(3921, 3506.265625, -490.531006, 186.740128, 4.239277, TEMPSUMMON_DEAD_DESPAWN, 60000);
-                me->SummonCreature(3926, 3503.682373, -489.393799, 186.629684, 4.349232, TEMPSUMMON_DEAD_DESPAWN, 60000);
+                me->SummonCreature(3922, 3508.344482f, -492.024261f, 186.929031f, 4.145029f, TEMPSUMMON_DEAD_DESPAWN, 60000);
+                me->SummonCreature(3921, 3506.265625f, -490.531006f, 186.740128f, 4.239277f, TEMPSUMMON_DEAD_DESPAWN, 60000);
+                me->SummonCreature(3926, 3503.682373f, -489.393799f, 186.629684f, 4.349232f, TEMPSUMMON_DEAD_DESPAWN, 60000);
                 break;
 
         case 21:{

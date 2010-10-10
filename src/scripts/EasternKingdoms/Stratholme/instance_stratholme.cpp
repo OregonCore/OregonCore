@@ -256,7 +256,7 @@ struct instance_stratholme : public ScriptedInstance
                 {
                     //a bit itchy, it should close the door after 10 secs, but it doesn't. skipping it for now.
                     //UpdateGoState(ziggurat4GUID,0,true);
-                    player->SummonCreature(C_RAMSTEIN,4032.84,-3390.24,119.73,4.71,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,1800000);
+                    player->SummonCreature(C_RAMSTEIN,4032.84f,-3390.24f,119.73f,4.71f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,1800000);
                     debug_log("OSCR: Instance Stratholme: Ramstein spawned.");
                 } else debug_log("OSCR: Instance Stratholme: %u Abomnation left to kill.",count);
             }
@@ -368,7 +368,7 @@ struct instance_stratholme : public ScriptedInstance
                 if (Player *p = GetPlayerInMap())
                 {
                     for (uint8 i = 0; i < 4; i++)
-                        p->SummonCreature(C_BLACK_GUARD,4032.84,-3390.24,119.73,4.71,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,1800000);
+                        p->SummonCreature(C_BLACK_GUARD,4032.84f,-3390.24f,119.73f,4.71f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,1800000);
 
                     UpdateGoState(ziggurat4GUID,0,false);
                     UpdateGoState(ziggurat5GUID,0,false);

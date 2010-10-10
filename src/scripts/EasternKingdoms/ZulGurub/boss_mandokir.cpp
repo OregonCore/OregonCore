@@ -80,9 +80,9 @@ struct boss_mandokirAI : public ScriptedAI
         MortalStrike_Timer = 1000;
         Check_Timer = 1000;
 
-        targetX = 0.0;
-        targetY = 0.0;
-        targetZ = 0.0;
+        targetX = 0.0f;
+        targetY = 0.0f;
+        targetZ = 0.0f;
         TargetInRange = 0;
 
         WatchTarget = 0;
@@ -233,7 +233,7 @@ struct boss_mandokirAI : public ScriptedAI
                 } else Fear_Timer -=diff;
 
                 //Mortal Strike if target below 50% hp
-                if (me->getVictim() && me->getVictim()->GetHealth() < me->getVictim()->GetMaxHealth()*0.5)
+                if (me->getVictim() && me->getVictim()->GetHealth() < me->getVictim()->GetMaxHealth()*0.5f)
                 {
                     if (MortalStrike_Timer <= diff)
                     {

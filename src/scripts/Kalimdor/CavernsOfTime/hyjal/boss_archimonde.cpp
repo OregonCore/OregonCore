@@ -69,9 +69,9 @@ EndScriptData */
 #define CREATURE_ANCIENT_WISP           17946
 #define CREATURE_CHANNEL_TARGET         22418
 
-#define NORDRASSIL_X        5503.713
-#define NORDRASSIL_Y       -3523.436
-#define NORDRASSIL_Z        1608.781
+#define NORDRASSIL_X        5503.713f
+#define NORDRASSIL_Y       -3523.436f
+#define NORDRASSIL_Z        1608.781f
 
 struct mob_ancient_wispAI : public ScriptedAI
 {
@@ -473,7 +473,7 @@ struct boss_archimondeAI : public hyjal_trashAI
 
     void SummonDoomfire(Unit *pTarget)
     {
-        Creature* Doomfire = DoSpawnCreature(CREATURE_DOOMFIRE_TARGETING, rand()%30, rand()%30, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 30000);
+        Creature* Doomfire = DoSpawnCreature(CREATURE_DOOMFIRE_TARGETING, float(rand()%30), float(rand()%30), 0, 0, TEMPSUMMON_TIMED_DESPAWN, 30000);
         if (Doomfire)
         {
             ((mob_doomfire_targettingAI*)Doomfire->AI())->ArchimondeGUID = me->GetGUID();

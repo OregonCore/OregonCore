@@ -80,7 +80,7 @@ struct boss_amnennar_the_coldbringerAI : public ScriptedAI
             case 1: RandY = 0 + Rand; break;
         }
         Rand = 0;
-        Summoned = DoSpawnCreature(8585, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
+        Summoned = DoSpawnCreature(8585, float(RandX), float(RandY), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
         if (Summoned)
             ((CreatureAI*)Summoned->AI())->AttackStart(victim);
     }

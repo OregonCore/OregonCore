@@ -106,7 +106,7 @@ struct mob_fireswornAI : public ScriptedAI
         } else Immolate_Timer -= diff;
 
         //Cast Erruption and let them die
-        if (me->GetHealth() <= me->GetMaxHealth() * 0.10)
+        if (me->GetHealth() <= me->GetMaxHealth() * 0.10f)
         {
             DoCast(me->getVictim(),SPELL_ERUPTION);
             me->setDeathState(JUST_DIED);

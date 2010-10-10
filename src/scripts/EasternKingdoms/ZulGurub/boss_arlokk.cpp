@@ -119,7 +119,7 @@ struct boss_arlokkAI : public ScriptedAI
                 Unit *pTarget = NULL;
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
 
-                Panther = me->SummonCreature(15101,-11532.79980,-1649.6734,41.4800,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
+                Panther = me->SummonCreature(15101,-11532.79980f,-1649.6734f,41.4800f,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
 
                 if (markedTarget && Panther)
                 {
@@ -127,7 +127,7 @@ struct boss_arlokkAI : public ScriptedAI
                     Panther ->AI()->AttackStart(markedTarget);
                 } else if (Panther && pTarget) Panther ->AI()->AttackStart(pTarget);
 
-                Panther = me->SummonCreature(15101,-11532.9970,-1606.4840,41.2979,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
+                Panther = me->SummonCreature(15101,-11532.9970f,-1606.4840f,41.2979f,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
 
                 if (markedTarget && Panther)
                     Panther ->AI()->AttackStart(markedTarget);

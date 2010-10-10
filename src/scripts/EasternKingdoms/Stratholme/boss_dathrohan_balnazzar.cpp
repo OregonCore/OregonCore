@@ -42,45 +42,45 @@ EndScriptData */
 
 //Summon
 //G1 front, left
-#define ADD_1X 3444.156250
-#define ADD_1Y -3090.626709
-#define ADD_1Z 135.002319
-#define ADD_1O 2.240888
+#define ADD_1X 3444.156250f
+#define ADD_1Y -3090.626709f
+#define ADD_1Z 135.002319f
+#define ADD_1O 2.240888f
 //G1 front, right
-#define ADD_2X 3449.123535
-#define ADD_2Y -3087.009766
-#define ADD_2Z 135.002319
-#define ADD_2O 2.240888
+#define ADD_2X 3449.123535f
+#define ADD_2Y -3087.009766f
+#define ADD_2Z 135.002319f
+#define ADD_2O 2.240888f
 //G1 back left
-#define ADD_3X 3446.246826
-#define ADD_3Y -3093.466309
-#define ADD_3Z 135.002319
-#define ADD_3O 2.240888
+#define ADD_3X 3446.246826f
+#define ADD_3Y -3093.466309f
+#define ADD_3Z 135.002319f
+#define ADD_3O 2.240888f
 //G1 back, right
-#define ADD_4X 3451.160889
-#define ADD_4Y -3089.904785
-#define ADD_4Z 135.002136
-#define ADD_4O 2.240888
+#define ADD_4X 3451.160889f
+#define ADD_4Y -3089.904785f
+#define ADD_4Z 135.002136f
+#define ADD_4O 2.240888f
 //G2 front, left
-#define ADD_5X 3457.995117
-#define ADD_5Y -3080.916504
-#define ADD_5Z 135.002319
-#define ADD_5O 3.784981
+#define ADD_5X 3457.995117f
+#define ADD_5Y -3080.916504f
+#define ADD_5Z 135.002319f
+#define ADD_5O 3.784981f
 //G2 front, right
-#define ADD_6X 3454.302490
-#define ADD_6Y -3076.330566
-#define ADD_6Z 135.002319
-#define ADD_6O 3.784981
+#define ADD_6X 3454.302490f
+#define ADD_6Y -3076.330566f
+#define ADD_6Z 135.002319f
+#define ADD_6O 3.784981f
 //G2 back left
-#define ADD_7X 3460.975098
-#define ADD_7Y -3078.901367
-#define ADD_7Z 135.002319
-#define ADD_7O 3.784981
+#define ADD_7X 3460.975098f
+#define ADD_7Y -3078.901367f
+#define ADD_7Z 135.002319f
+#define ADD_7O 3.784981f
 //G2 back, right
-#define ADD_8X 3457.338867
-#define ADD_8Y -3073.979004
-#define ADD_8Z 135.002319
-#define ADD_8O 3.784981
+#define ADD_8X 3457.338867f
+#define ADD_8Y -3073.979004f
+#define ADD_8Z 135.002319f
+#define ADD_8O 3.784981f
 
 struct boss_dathrohan_balnazzarAI : public ScriptedAI
 {
@@ -112,7 +112,7 @@ struct boss_dathrohan_balnazzarAI : public ScriptedAI
         //        MindControl_Timer = 10000;
         Transformed = false;
 
-        me->SetUInt32Value(UNIT_FIELD_DISPLAYID,10545);
+        me->SetUInt32Value(UNIT_FIELD_DISPLAYID, 10545);
         me->SetFloatValue(OBJECT_FIELD_SCALE_X, 1.00f);
 
     }

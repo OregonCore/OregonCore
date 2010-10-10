@@ -43,45 +43,45 @@ EndScriptData */
 #define SPELL_ELEMENTALFIRE         20564
 #define SPELL_ERRUPTION             17731
 
-#define ADD_1X 848.740356
-#define ADD_1Y -816.103455
-#define ADD_1Z -229.74327
-#define ADD_1O 2.615287
+#define ADD_1X 848.740356f
+#define ADD_1Y -816.103455f
+#define ADD_1Z -229.74327f
+#define ADD_1O 2.615287f
 
-#define ADD_2X 852.560791
-#define ADD_2Y -849.861511
-#define ADD_2Z -228.560974
-#define ADD_2O 2.836073
+#define ADD_2X 852.560791f
+#define ADD_2Y -849.861511f
+#define ADD_2Z -228.560974f
+#define ADD_2O 2.836073f
 
-#define ADD_3X 808.710632
-#define ADD_3Y -852.845764
-#define ADD_3Z -227.914963
-#define ADD_3O 0.964207
+#define ADD_3X 808.710632f
+#define ADD_3Y -852.845764f
+#define ADD_3Z -227.914963f
+#define ADD_3O 0.964207f
 
-#define ADD_4X 786.597107
-#define ADD_4Y -821.132874
-#define ADD_4Z -226.350128
-#define ADD_4O 0.949377
+#define ADD_4X 786.597107f
+#define ADD_4Y -821.132874f
+#define ADD_4Z -226.350128f
+#define ADD_4O 0.949377f
 
-#define ADD_5X 796.219116
-#define ADD_5Y -800.948059
-#define ADD_5Z -226.010361
-#define ADD_5O 0.560603
+#define ADD_5X 796.219116f
+#define ADD_5Y -800.948059f
+#define ADD_5Z -226.010361f
+#define ADD_5O 0.560603f
 
-#define ADD_6X 821.602539
-#define ADD_6Y -782.744109
-#define ADD_6Z -226.023575
-#define ADD_6O 6.157440
+#define ADD_6X 821.602539f
+#define ADD_6Y -782.744109f
+#define ADD_6Z -226.023575f
+#define ADD_6O 6.157440f
 
-#define ADD_7X 844.924744
-#define ADD_7Y -769.453735
-#define ADD_7Z -225.521698
-#define ADD_7O 4.4539958
+#define ADD_7X 844.924744f
+#define ADD_7Y -769.453735f
+#define ADD_7Z -225.521698f
+#define ADD_7O 4.4539958f
 
-#define ADD_8X 839.823364
-#define ADD_8Y -810.869385
-#define ADD_8Z -229.683182
-#define ADD_8O 4.693108
+#define ADD_8X 839.823364f
+#define ADD_8Y -810.869385f
+#define ADD_8Z -229.683182f
+#define ADD_8O 4.693108f
 
 struct boss_ragnarosAI : public Scripted_NoMovementAI
 {

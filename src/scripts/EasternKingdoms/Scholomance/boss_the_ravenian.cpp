@@ -58,7 +58,7 @@ struct boss_theravenianAI : public ScriptedAI
             pInstance->SetData(DATA_THERAVENIAN_DEATH, 0);
 
             if (pInstance->GetData(DATA_CANSPAWNGANDLING))
-                me->SummonCreature(1853, 180.73, -9.43856, 75.507, 1.61399, TEMPSUMMON_DEAD_DESPAWN, 0);
+                me->SummonCreature(1853, 180.73f, -9.43856f, 75.507f, 1.61399f, TEMPSUMMON_DEAD_DESPAWN, 0);
         }
     }
 

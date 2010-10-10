@@ -27,7 +27,7 @@ EndScriptData */
 //Text emote
 #define EMOTE_WEAKENED              -1531011
 
-#define PI                          3.14
+#define PI                          3.14f
 
 //****** Out of Combat ******
 //Random Wispers - No txt only sound
@@ -675,7 +675,7 @@ struct cthunAI : public Scripted_NoMovementAI
                         if (pUnit && i->second == true)
                         {
                             //Teleport each player out
-                            DoTeleportPlayer(pUnit, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ()+10, rand()%6);
+                            DoTeleportPlayer(pUnit, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ()+10, float(rand()%6));
 
                             //Cast knockback on them
                             DoCast(pUnit, SPELL_EXIT_STOMACH_KNOCKBACK, true);
@@ -712,7 +712,7 @@ struct cthunAI : public Scripted_NoMovementAI
                             if (pUnit->GetDistance(KICK_X, KICK_Y, KICK_Z) < 15)
                             {
                                 //Teleport each player out
-                                DoTeleportPlayer(pUnit, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ()+10, rand()%6);
+                                DoTeleportPlayer(pUnit, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ()+10, float(rand()%6));
 
                                 //Cast knockback on them
                                 DoCast(pUnit, SPELL_EXIT_STOMACH_KNOCKBACK, true);

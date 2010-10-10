@@ -84,7 +84,7 @@ struct boss_kruulAI : public ScriptedAI
             case 1: RandY = 0 + Rand; break;
         }
         Rand = 0;
-        if (Creature *Hound = DoSpawnCreature(19207, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 300000))
+        if (Creature *Hound = DoSpawnCreature(19207, float(RandX), float(RandY), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 300000))
             Hound->AI()->AttackStart(pVictim);
     }
 
