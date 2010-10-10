@@ -578,7 +578,7 @@ void boss_kalecgosAI::UpdateAI(const uint32 diff)
                  }
                  else
                  {
-                     error_log("TSCR: Didn't find Shathrowar. Kalecgos event reseted.");
+                     error_log("OSCR: Didn't find Shathrowar. Kalecgos event reseted.");
                      EnterEvadeMode();
                      return;
                  }

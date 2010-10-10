@@ -391,8 +391,8 @@ struct boss_kaelthasAI : public ScriptedAI
 
         if (!AdvisorGuid[0] || !AdvisorGuid[1] || !AdvisorGuid[2] || !AdvisorGuid[3])
         {
-            error_log("TSCR: Kael'Thas One or more advisors missing, Skipping Phases 1-3");
-            DoYell("TSCR: Kael'Thas One or more advisors missing, Skipping Phases 1-3", LANG_UNIVERSAL, NULL);
+            error_log("OSCR: Kael'Thas One or more advisors missing, Skipping Phases 1-3");
+            DoYell("OSCR: Kael'Thas One or more advisors missing, Skipping Phases 1-3", LANG_UNIVERSAL, NULL);
 
             DoScriptText(SAY_PHASE4_INTRO2, me);
             Phase = 4;
@@ -695,7 +695,7 @@ struct boss_kaelthasAI : public ScriptedAI
                         Weapon = me->SummonCreature(((uint32)KaelthasWeapons[i][0]),KaelthasWeapons[i][1],KaelthasWeapons[i][2],KaelthasWeapons[i][3],0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000);
 
                         if (!Weapon)
-                            error_log("STSCR: Kael'thas weapon %i could not be spawned", i);
+                            error_log("SOSCR: Kael'thas weapon %i could not be spawned", i);
                         else
                         {
                             Weapon->setFaction(me->getFaction());
@@ -732,7 +732,7 @@ struct boss_kaelthasAI : public ScriptedAI
                     {
                         Advisor = (Creature*)(Unit::GetUnit((*me), AdvisorGuid[i]));
                         if (!Advisor)
-                            error_log("TSCR: Kael'Thas Advisor %u does not exist. Possibly despawned? Incorrectly Killed?", i);
+                            error_log("OSCR: Kael'Thas Advisor %u does not exist. Possibly despawned? Incorrectly Killed?", i);
                         else if (pTarget)
                             ((advisorbase_ai*)Advisor->AI())->Revive(pTarget);
                     }
@@ -818,7 +818,7 @@ struct boss_kaelthasAI : public ScriptedAI
 
                             Unit *pTarget =SelectTarget(SELECT_TARGET_RANDOM, 1, 70, true);
                             if (!pTarget) pTarget = me->getVictim();
-                            debug_log("TSCR: Kael'Thas mind control not supported.");
+                            debug_log("OSCR: Kael'Thas mind control not supported.");
                             if (pTarget)
                                 DoCast(pTarget, SPELL_MIND_CONTROL);
                         }

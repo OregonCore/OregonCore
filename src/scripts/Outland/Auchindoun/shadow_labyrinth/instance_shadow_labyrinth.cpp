@@ -87,7 +87,7 @@ struct instance_shadow_labyrinth : public ScriptedInstance
                 break;
             case 18796:
                 ++FelOverseerCount;
-                debug_log("TSCR: Shadow Labyrinth: counting %u Fel Overseers.",FelOverseerCount);
+                debug_log("OSCR: Shadow Labyrinth: counting %u Fel Overseers.",FelOverseerCount);
                 break;
         }
     }
@@ -105,7 +105,7 @@ struct instance_shadow_labyrinth : public ScriptedInstance
             }
         }
 
-        debug_log("TSCR: Instance Shadow Labyrinth: GetPlayerInMap, but PlayerList is empty!");
+        debug_log("OSCR: Instance Shadow Labyrinth: GetPlayerInMap, but PlayerList is empty!");
         return NULL;
     }
 
@@ -119,16 +119,16 @@ struct instance_shadow_labyrinth : public ScriptedInstance
                 break;
             case TYPE_OVERSEER:
                 if (data != DONE)
-                    error_log("TSCR: Shadow Labyrinth: TYPE_OVERSEER did not expect other data than DONE");
+                    error_log("OSCR: Shadow Labyrinth: TYPE_OVERSEER did not expect other data than DONE");
                 if (FelOverseerCount)
                 {
                     --FelOverseerCount;
-                    debug_log("TSCR: Shadow Labyrinth: %u Fel Overseers left to kill.",FelOverseerCount);
+                    debug_log("OSCR: Shadow Labyrinth: %u Fel Overseers left to kill.",FelOverseerCount);
                 }
                 if (FelOverseerCount == 0)
                 {
                     Encounter[1] = DONE;
-                    debug_log("TSCR: Shadow Labyrinth: TYPE_OVERSEER == DONE");
+                    debug_log("OSCR: Shadow Labyrinth: TYPE_OVERSEER == DONE");
                 }
                 break;
 

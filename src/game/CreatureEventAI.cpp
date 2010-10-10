@@ -773,7 +773,7 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
             pObject = me->SummonGameObject(action.raw.param1, x, y, z, 0, 0, 0, 0, 0, action.raw.param2);
             if (!pObject)
             {
-                sLog.outErrorDb("TSCR: EventAI failed to spawn object %u. Spawn event %d is on creature %d", action.raw.param1, EventId, me->GetEntry());
+                sLog.outErrorDb("OSCR: EventAI failed to spawn object %u. Spawn event %d is on creature %d", action.raw.param1, EventId, me->GetEntry());
             }
             break;
         }

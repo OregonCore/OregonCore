@@ -63,7 +63,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
             for (uint8 i = 0; i < size; ++i)
             {
                 uint64 guid = pInstance->GetData64(DATA_FEL_CRYSTAL);
-                debug_log("TSCR: Selin: Adding Fel Crystal %u to list", guid);
+                debug_log("OSCR: Selin: Adding Fel Crystal %u to list", guid);
                 Crystals.push_back(guid);
             }
         }
@@ -219,7 +219,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
             else
             {
                 // Make an error message in case something weird happened here
-                error_log("TSCR: Selin Fireheart unable to drain crystal as the crystal is either dead or despawned");
+                error_log("OSCR: Selin Fireheart unable to drain crystal as the crystal is either dead or despawned");
                 DrainingCrystal = false;
             }
         }
