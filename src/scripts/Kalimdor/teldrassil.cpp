@@ -56,8 +56,8 @@ struct npc_mistAI : public FollowerAI
 
     uint64 AryniaGUID;
 
-    void Reset() 
-    { 
+    void Reset()
+    {
         m_uiPostEventTimer = 1000;
         m_uiPhasePostEvent = 0;
 
@@ -83,7 +83,7 @@ struct npc_mistAI : public FollowerAI
             }
         }
     }
-    
+
     void MovementInform(uint32 uiMotionType, uint32 uiPointId)
     {
         FollowerAI::MovementInform(uiMotionType, uiPointId);
@@ -135,7 +135,6 @@ struct npc_mistAI : public FollowerAI
         DoMeleeAttackIfReady();
     }
 };
-
 
 CreatureAI* GetAI_npc_mist(Creature* pCreature)
 {
