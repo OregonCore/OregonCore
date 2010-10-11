@@ -1,28 +1,31 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+/*
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
 SDName: The_Barrens
 SD%Complete: 90
-SDComment: Quest support: 863, 1719, 2458, 4921, 6981
+SDComment: Quest support: 863, 1719, 2458, 4921, 6981, 898
 SDCategory: Barrens
 EndScriptData */
 
 /* ContentData
 npc_beaten_corpse
+npc_gilthares
 npc_sputtervalve
 npc_taskmaster_fizzule
 npc_twiggy_flathead
@@ -58,6 +61,101 @@ bool GossipSelect_npc_beaten_corpse(Player* pPlayer, Creature* pCreature, uint32
     {
         pPlayer->SEND_GOSSIP_MENU(3558, pCreature->GetGUID());
         pPlayer->TalkedToCreature(pCreature->GetEntry(), pCreature->GetGUID());
+    }
+    return true;
+}
+
+/*######
+# npc_gilthares
+######*/
+
+enum eGilthares
+{
+    SAY_GIL_START               = -1600370,
+    SAY_GIL_AT_LAST             = -1600371,
+    SAY_GIL_PROCEED             = -1600372,
+    SAY_GIL_FREEBOOTERS         = -1600373,
+    SAY_GIL_AGGRO_1             = -1600374,
+    SAY_GIL_AGGRO_2             = -1600375,
+    SAY_GIL_AGGRO_3             = -1600376,
+    SAY_GIL_AGGRO_4             = -1600377,
+    SAY_GIL_ALMOST              = -1600378,
+    SAY_GIL_SWEET               = -1600379,
+    SAY_GIL_FREED               = -1600380,
+
+    QUEST_FREE_FROM_HOLD        = 898,
+    AREA_MERCHANT_COAST         = 391,
+    FACTION_ESCORTEE            = 232                       //guessed, possible not needed for this quest
+};
+
+struct npc_giltharesAI : public npc_escortAI
+{
+    npc_giltharesAI(Creature* pCreature) : npc_escortAI(pCreature) { }
+
+    void Reset() { }
+
+    void WaypointReached(uint32 uiPointId)
+    {
+        Player* pPlayer = GetPlayerForEscort();
+
+        if (!pPlayer)
+            return;
+
+        switch(uiPointId)
+        {
+            case 16:
+                DoScriptText(SAY_GIL_AT_LAST, me, pPlayer);
+                break;
+            case 17:
+                DoScriptText(SAY_GIL_PROCEED, me, pPlayer);
+                break;
+            case 18:
+                DoScriptText(SAY_GIL_FREEBOOTERS, me, pPlayer);
+                break;
+            case 37:
+                DoScriptText(SAY_GIL_ALMOST, me, pPlayer);
+                break;
+            case 47:
+                DoScriptText(SAY_GIL_SWEET, me, pPlayer);
+                break;
+            case 53:
+                DoScriptText(SAY_GIL_FREED, me, pPlayer);
+                pPlayer->GroupEventHappens(QUEST_FREE_FROM_HOLD, me);
+                break;
+        }
+    }
+
+    void EnterCombat(Unit* pWho)
+    {
+        //not always use
+        if (rand()%4)
+            return;
+
+        //only aggro text if not player and only in this area
+        if (pWho->GetTypeId() != TYPEID_PLAYER && me->GetAreaId() == AREA_MERCHANT_COAST)
+        {
+            //appears to be pretty much random (possible only if escorter not in combat with pWho yet?)
+            DoScriptText(RAND(SAY_GIL_AGGRO_1, SAY_GIL_AGGRO_2, SAY_GIL_AGGRO_3, SAY_GIL_AGGRO_4), me, pWho);
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_gilthares(Creature* pCreature)
+{
+    return new npc_giltharesAI(pCreature);
+}
+
+bool QuestAccept_npc_gilthares(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
+{
+    if (pQuest->GetQuestId() == QUEST_FREE_FROM_HOLD)
+    {
+        pCreature->setFaction(FACTION_ESCORTEE);
+        pCreature->SetStandState(UNIT_STAND_STATE_STAND);
+
+        DoScriptText(SAY_GIL_START, pCreature, pPlayer);
+
+        if (npc_giltharesAI* pEscortAI = CAST_AI(npc_giltharesAI, pCreature->AI()))
+            pEscortAI->Start(false, false, pPlayer->GetGUID(), pQuest);
     }
     return true;
 }
@@ -565,6 +663,12 @@ void AddSC_the_barrens()
     newscript->Name = "npc_beaten_corpse";
     newscript->pGossipHello = &GossipHello_npc_beaten_corpse;
     newscript->pGossipSelect = &GossipSelect_npc_beaten_corpse;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_gilthares";
+    newscript->GetAI = &GetAI_npc_gilthares;
+    newscript->pQuestAccept = &QuestAccept_npc_gilthares;
     newscript->RegisterSelf();
 
     newscript = new Script;

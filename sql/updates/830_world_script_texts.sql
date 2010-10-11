@@ -1,0 +1,14 @@
+DELETE FROM `script_texts` WHERE `entry` BETWEEN '-1600380' AND '-1600370';
+INSERT INTO `script_texts` VALUES ('-1600380', 'Captain Brightsun, $N here has freed me! $N, I am certain the Captain will reward your bravery.', null, null, null, null, null, null, null, null, '0', '0', '1', '66', 'gilthares SAY_GIL_FREED');
+INSERT INTO `script_texts` VALUES ('-1600379', 'Ah, the sweet salt air of Ratchet.', null, null, null, null, null, null, null, null, '0', '0', '1', '0', 'gilthares SAY_GIL_SWEET');
+INSERT INTO `script_texts` VALUES ('-1600378', 'Almost back to Ratchet! Let\'s keep up the pace...', null, null, null, null, null, null, null, null, '0', '0', '1', '0', 'gilthares SAY_GIL_ALMOST');
+INSERT INTO `script_texts` VALUES ('-1600377', 'Get this $C off of me!', null, null, null, null, null, null, null, null, '0', '0', '1', '0', 'gilthares SAY_GIL_AGGRO_4');
+INSERT INTO `script_texts` VALUES ('-1600376', '$C coming right at us!', null, null, null, null, null, null, null, null, '0', '0', '1', '0', 'gilthares SAY_GIL_AGGRO_3');
+INSERT INTO `script_texts` VALUES ('-1600375', '$C heading this way fast! Time for revenge!', null, null, null, null, null, null, null, null, '0', '0', '1', '0', 'gilthares SAY_GIL_AGGRO_2');
+INSERT INTO `script_texts` VALUES ('-1600374', 'Help! $C attacking!', null, null, null, null, null, null, null, null, '0', '0', '1', '0', 'gilthares SAY_GIL_AGGRO_1');
+INSERT INTO `script_texts` VALUES ('-1600373', 'Looks like the Southsea Freeboters are heavily entrenched on the coast. This could get rough.', null, null, null, null, null, null, null, null, '0', '0', '1', '25', 'gilthares SAY_GIL_FREEBOOTERS');
+INSERT INTO `script_texts` VALUES ('-1600372', 'Now I feel better. Let\'s get back to Ratchet. Come on, $n.', null, null, null, null, null, null, null, null, '0', '0', '1', '23', 'gilthares SAY_GIL_PROCEED');
+INSERT INTO `script_texts` VALUES ('-1600371', 'At last! Free from Northwatch Hold! I need a moment to catch my breath...', null, null, null, null, null, null, null, null, '0', '0', '1', '5', 'gilthares SAY_GIL_AT_LAST');
+INSERT INTO `script_texts` VALUES ('-1600370', 'Stay close, $n. I\'ll need all the help I can get to break out of here. Let\'s go!', null, null, null, null, null, null, null, null, '0', '0', '1', '1', 'gilthares SAY_GIL_START');
+UPDATE `creature_template` SET `ScriptName` = 'npc_gilthares' WHERE `entry` = '3465';
+UPDATE `quest_template` SET `SpecialFlags` = '2' WHERE `entry` = '898';
