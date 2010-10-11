@@ -24,6 +24,7 @@ SDCategory: Feralas
 EndScriptData */
 
 #include "ScriptPCH.h"
+#include "ScriptedEscortAI.h"
 
 /*######
 ## npc_gregan_brewspewer
@@ -56,6 +57,109 @@ bool GossipSelect_npc_gregan_brewspewer(Player* pPlayer, Creature* pCreature, ui
 }
 
 /*######
+## npc_oox22fe
+######*/
+
+enum eOOX
+{
+    //signed for 7806
+    SAY_OOX_START           = -1060000,
+    SAY_OOX_AGGRO1          = -1060001,
+    SAY_OOX_AGGRO2          = -1060002,
+    SAY_OOX_AMBUSH          = -1060003,
+    SAY_OOX_END             = -1060005,
+
+    NPC_YETI                = 7848,
+    NPC_GORILLA             = 5260,
+    NPC_WOODPAW_REAVER      = 5255,
+    NPC_WOODPAW_BRUTE       = 5253,
+    NPC_WOODPAW_ALPHA       = 5258,
+    NPC_WOODPAW_MYSTIC      = 5254,
+
+    QUEST_RESCUE_OOX22FE    = 2767,
+    FACTION_ESCORTEE_A      = 774,
+    FACTION_ESCORTEE_H      = 775
+};
+
+struct npc_oox22feAI : public npc_escortAI
+{
+    npc_oox22feAI(Creature* pCreature) : npc_escortAI(pCreature) { }
+
+    void WaypointReached(uint32 i)
+    {
+        switch (i)
+        {
+            // First Ambush(3 Yetis)
+            case 11:
+                DoScriptText(SAY_OOX_AMBUSH, me);
+                for (uint8 i = 0; i < 3; ++i)
+                    me->SummonCreature(NPC_YETI, -4887.69, 1598.1, 67.45, 0.68, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+                break;
+            //Second Ambush(3 Gorillas)
+            case 21:
+                DoScriptText(SAY_OOX_AMBUSH, me);
+                for (uint8 i = 0; i < 3; ++i)
+                    me->SummonCreature(NPC_GORILLA, -4599.37, 2010.59, 52.77, 3.84, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+                break;
+            //Third Ambush(4 Gnolls)
+            case 30:
+                DoScriptText(SAY_OOX_AMBUSH, me);
+                me->SummonCreature(NPC_WOODPAW_REAVER, -4425.14, 2075.87, 47.77, 3.77, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+                me->SummonCreature(NPC_WOODPAW_BRUTE , -4426.68, 2077.98, 47.57, 3.77, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+                me->SummonCreature(NPC_WOODPAW_MYSTIC, -4428.33, 2080.24, 47.43, 3.87, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+                me->SummonCreature(NPC_WOODPAW_ALPHA , -4430.04, 2075.54, 46.83, 3.81, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+                break;
+            case 37:
+                DoScriptText(SAY_OOX_END, me);
+                if (Player* pPlayer = GetPlayerForEscort())
+                    pPlayer->GroupEventHappens(QUEST_RESCUE_OOX22FE, me);
+                break;
+        }
+    }
+
+    void Reset()
+    {
+        if (!HasEscortState(STATE_ESCORT_ESCORTING))
+            me->SetStandState(UNIT_STAND_STATE_DEAD);
+    }
+
+    void EnterCombat(Unit* pWho)
+    {
+        if (pWho->GetEntry() == NPC_YETI || pWho->GetEntry() == NPC_GORILLA || pWho->GetEntry() == NPC_WOODPAW_REAVER ||
+                pWho->GetEntry() == NPC_WOODPAW_BRUTE || pWho->GetEntry() == NPC_WOODPAW_MYSTIC)
+            return;
+        DoScriptText(RAND(SAY_OOX_AGGRO1,SAY_OOX_AGGRO2), me);
+    }
+
+    void JustSummoned(Creature* summoned)
+    {
+        summoned->AI()->AttackStart(me);
+    }
+};
+
+CreatureAI* GetAI_npc_oox22fe(Creature* pCreature)
+{
+    return new npc_oox22feAI(pCreature);
+}
+
+bool QuestAccept_npc_oox22fe(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
+{
+    if (pQuest->GetQuestId() == QUEST_RESCUE_OOX22FE)
+    {
+        pCreature->setFaction(113);
+        pCreature->SetHealth(pCreature->GetMaxHealth());
+        pCreature->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
+        pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+        DoScriptText(SAY_OOX_START, pCreature);
+
+        if (npc_escortAI* pEscortAI = CAST_AI(npc_oox22feAI, pCreature->AI()))
+            pEscortAI->Start(true, false, pPlayer->GetGUID());
+
+    }
+    return true;
+}
+
+/*######
 ## npc_screecher_spirit
 ######*/
 
@@ -80,6 +184,12 @@ void AddSC_feralas()
     newscript->Name = "npc_gregan_brewspewer";
     newscript->pGossipHello = &GossipHello_npc_gregan_brewspewer;
     newscript->pGossipSelect = &GossipSelect_npc_gregan_brewspewer;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_oox22fe";
+    newscript->GetAI = &GetAI_npc_oox22fe;
+    newscript->pQuestAccept = &QuestAccept_npc_oox22fe;
     newscript->RegisterSelf();
 
     newscript = new Script;

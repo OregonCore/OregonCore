@@ -373,7 +373,7 @@ extern void AddSC_boss_amnennar_the_coldbringer();
 extern void AddSC_razorfen_kraul();
 
 //Redridge Mountains
-extern void AddSC_redridge_mountains()
+extern void AddSC_redridge_mountains();
 //Ruins of Ahn'Qiraj
 extern void AddSC_boss_kurinnaxx();
 
