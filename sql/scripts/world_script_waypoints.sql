@@ -677,6 +677,15 @@ INSERT INTO `script_waypoint` VALUES
    (10427,70,-4938.3,-1100.41,-50.71,5000, ''),
    (10427,71,-4937.34,-1102.87,-49.82,0, '');
 
+DELETE FROM `script_waypoint` WHERE `entry`=16812;
+INSERT INTO `script_waypoint` VALUES
+   (16812,0,-10866.711, -1779.816, 90.465,0, 'Open door,begin walking'),
+   (16812,1,-10894.917, -1775.467, 90.465,0, ''),
+   (16812,2,-10896.044, -1782.619, 90.465,0, 'Begin Speech after this'),
+   (16812,3,-10894.917, -1775.467, 90.465,0, 'Resume walking'),
+   (16812,4,-10866.711, -1779.816, 90.465,0, 'Resume walking (back to spawn point now) after speech'),
+   (16812,5,-10866.700, -1781.030, 90.465,0, '');
+
 DELETE FROM `script_waypoint` WHERE `entry`=11856;
 INSERT INTO `script_waypoint` VALUES
    (11856,0,113.91,-350.13,4.55,0, ''),

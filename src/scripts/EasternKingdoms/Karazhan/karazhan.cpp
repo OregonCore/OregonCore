@@ -114,16 +114,6 @@ float Spawns[6][2]=
     {17534, -10900},                                        // Julianne
 };
 
-float StageLocations[6][2]=
-{
-    {-10866.711f, -1779.816f},                                // Open door, begin walking (0)
-    {-10894.917f, -1775.467f},                                // (1)
-    {-10896.044f, -1782.619f},                                // Begin Speech after this (2)
-    {-10894.917f, -1775.467f},                                // Resume walking (back to spawn point now) after speech (3)
-    {-10866.711f, -1779.816f},                                // (4)
-    {-10866.700f, -1781.030f}                                 // Summon mobs, open curtains, close door (5)
-};
-
 #define CREATURE_SPOTLIGHT  19525
 
 #define SPELL_SPOTLIGHT     25824
@@ -381,12 +371,7 @@ struct npc_barnesAI : public npc_escortAI
 
 CreatureAI* GetAI_npc_barnesAI(Creature* pCreature)
 {
-    npc_barnesAI* Barnes_AI = new npc_barnesAI(pCreature);
-
-    for (uint8 i = 0; i < 6; ++i)
-        Barnes_AI->AddWaypoint(i, StageLocations[i][0], StageLocations[i][1], 90.465f);
-
-    return ((CreatureAI*)Barnes_AI);
+    return new npc_barnesAI(pCreature);
 }
 
 bool GossipHello_npc_barnes(Player* pPlayer, Creature* pCreature)
