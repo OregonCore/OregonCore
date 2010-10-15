@@ -19,7 +19,7 @@
 /* ScriptData
 SDName: Azuremyst_Isle
 SD%Complete: 75
-SDComment: Quest support: 9283, 9537, 9582, 9554, 9531, 9303(special flight path, proper model for mount missing). Injured Draenei cosmetic only
+SDComment: Quest support: 9283, 9537, 9582, 9554, 9531, 9303(special flight path, proper model for mount missing). Injured Draenei cosmetic only, 9582.
 SDCategory: Azuremyst Isle
 EndScriptData */
 
@@ -30,6 +30,8 @@ npc_injured_draenei
 npc_magwin
 npc_geezle
 mob_nestlewood_owlkin
+go_ravager_cage
+npc_death_ravager
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -574,6 +576,139 @@ CreatureAI* GetAI_mob_nestlewood_owlkinAI(Creature* pCreature)
     return new mob_nestlewood_owlkinAI (pCreature);
 }
 
+enum eRavegerCage
+{
+    NPC_DEATH_RAVAGER       = 17556,
+
+    SPELL_REND              = 13443,
+    SPELL_ENRAGING_BITE     = 30736,
+
+    QUEST_STRENGTH_ONE      = 9582
+};
+
+bool go_ravager_cage(Player* pPlayer, GameObject* pGo)
+{
+
+    if (pPlayer->GetQuestStatus(QUEST_STRENGTH_ONE) == QUEST_STATUS_INCOMPLETE)
+    {
+        if (Creature* ravager = pGo->FindNearestCreature(NPC_DEATH_RAVAGER, 5.0f, true))
+        {
+            ravager->RemoveFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_NON_ATTACKABLE);
+            ravager->SetReactState(REACT_AGGRESSIVE);
+            ravager->AI()->AttackStart(pPlayer);
+        }
+    }
+    return true ;
+}
+
+struct npc_death_ravagerAI : public ScriptedAI
+{
+    npc_death_ravagerAI(Creature *c) : ScriptedAI(c){}
+
+    uint32 RendTimer;
+    uint32 EnragingBiteTimer;
+
+    void Reset()
+    {
+        RendTimer = 30000;
+        EnragingBiteTimer = 20000;
+
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        me->SetReactState(REACT_PASSIVE);
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (!UpdateVictim())
+            return;
+
+        if (RendTimer <= diff)
+        {
+            DoCast(me->getVictim(), SPELL_REND);
+            RendTimer = 30000;
+        }
+        else RendTimer -= diff;
+
+        if (EnragingBiteTimer <= diff)
+        {
+            DoCast(me->getVictim(), SPELL_ENRAGING_BITE);
+            EnragingBiteTimer = 15000;
+        }
+        else EnragingBiteTimer -= diff;
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_death_ravagerAI(Creature* pCreature)
+{
+    return new npc_death_ravagerAI(pCreature);
+}
+
+/*########
+## Quest: The Prophecy of Akida
+########*/
+
+enum BristlelimbCage
+{
+    CAPITIVE_SAY_1                      = -1600474,
+    CAPITIVE_SAY_2                      = -1600475,
+    CAPITIVE_SAY_3                      = -1600476,
+
+    QUEST_THE_PROPHECY_OF_AKIDA         = 9544,
+    NPC_STILLPINE_CAPITIVE              = 17375,
+    GO_BRISTELIMB_CAGE                  = 181714
+
+};
+
+
+struct npc_stillpine_capitiveAI : public ScriptedAI
+{
+    npc_stillpine_capitiveAI(Creature *c) : ScriptedAI(c){}
+
+    uint32 FleeTimer;
+
+    void Reset()
+    {
+        FleeTimer = 0;
+        GameObject* cage = me->FindNearestGameObject(GO_BRISTELIMB_CAGE, 5.0f);
+        if(cage)
+            cage->ResetDoorOrButton();
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if(FleeTimer)
+        {
+            if(FleeTimer <= diff)
+                me->ForcedDespawn();
+            else FleeTimer -= diff;
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_stillpine_capitiveAI(Creature* pCreature)
+{
+    return new npc_stillpine_capitiveAI(pCreature);
+}
+
+bool go_bristlelimb_cage(Player* pPlayer, GameObject* pGo)
+{
+    if(pPlayer->GetQuestStatus(QUEST_THE_PROPHECY_OF_AKIDA) == QUEST_STATUS_INCOMPLETE)
+    {
+        Creature* pCreature = pGo->FindNearestCreature(NPC_STILLPINE_CAPITIVE, 5.0f, true);
+        if(pCreature)
+        {
+            DoScriptText(RAND(CAPITIVE_SAY_1, CAPITIVE_SAY_2, CAPITIVE_SAY_3), pCreature, pPlayer);
+            pCreature->GetMotionMaster()->MoveFleeing(pPlayer, 3500);
+            pPlayer->KilledMonster(pCreature->GetEntry(), pCreature->GetGUID());
+            CAST_AI(npc_stillpine_capitiveAI, pCreature->AI())->FleeTimer = 3500;
+            return false;
+        }
+    }
+    return true;
+}
+
 void AddSC_azuremyst_isle()
 {
     Script *newscript;
@@ -609,6 +744,26 @@ void AddSC_azuremyst_isle()
     newscript = new Script;
     newscript->Name = "mob_nestlewood_owlkin";
     newscript->GetAI = &GetAI_mob_nestlewood_owlkinAI;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name="npc_death_ravager";
+    newscript->GetAI = &GetAI_npc_death_ravagerAI;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name="go_ravager_cage";
+    newscript->pGOHello = &go_ravager_cage;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name="npc_stillpine_capitive";
+    newscript->GetAI = &GetAI_npc_stillpine_capitiveAI;
+    newscript->RegisterSelf();
+    
+    newscript = new Script;
+    newscript->Name="go_bristlelimb_cage";
+    newscript->pGOHello = &go_bristlelimb_cage;
     newscript->RegisterSelf();
 
 }
