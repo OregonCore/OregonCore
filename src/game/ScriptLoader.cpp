@@ -219,6 +219,7 @@ extern void AddSC_instance_deadmines();
 
 //Deadwind pass
 //Desolace
+extern void AddSC_desolace();
 //Dire Maul
 //Dun Morogh
 extern void AddSC_dun_morogh();
@@ -793,6 +794,7 @@ void AddScripts()
 
     //Deadwind pass
     //Desolace
+    AddSC_desolace();
     //Dire Maul
     //Dun Morogh
     AddSC_dun_morogh();

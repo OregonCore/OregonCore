@@ -425,6 +425,15 @@ bool ScriptMgr::ItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& ta
     return tmpscript->pItemUse(pPlayer, pItem, targets);
 }
 
+bool ScriptMgr::EffectDummyCreature(Unit *caster, uint32 spellId, uint32 effIndex, Creature *crTarget)
+{
+    Script *tmpscript = m_scripts[crTarget->GetScriptId()];
+
+    if (!tmpscript || !tmpscript->pEffectDummyCreature) return false;
+
+    return tmpscript->pEffectDummyCreature(caster, spellId, effIndex, crTarget);
+}
+
 bool ScriptMgr::ReceiveEmote(Player* pPlayer, Creature* pCreature, uint32 emote)
 {
     Script *tmpscript = m_scripts[pCreature->GetScriptId()];

@@ -1798,6 +1798,9 @@ void Spell::EffectDummy(uint32 i)
         m_caster->AddPetAura(petSpell);
         return;
     }
+
+    if (unitTarget && unitTarget->GetTypeId() == TYPEID_UNIT)
+        sScriptMgr.EffectDummyCreature(m_caster, m_spellInfo->Id, i, unitTarget->ToCreature());
 }
 
 void Spell::EffectTriggerSpellWithValue(uint32 i)
