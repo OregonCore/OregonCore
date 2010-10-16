@@ -1,0 +1,10 @@
+UPDATE `creature_template` SET `ScriptName` = 'npc_galen_goodward' WHERE `entry` = '5391';
+UPDATE `quest_template` SET `SpecialFlags` = '2' WHERE `entry` = '1393';
+DELETE FROM `script_texts` WHERE `entry` BETWEEN '-1780137' AND '-1780131';
+INSERT INTO `script_texts` VALUES ('-1780131', 'Help ! Please, you must help me!', null, null, null, null, null, null, null, null, '0', '0', '0', '0', 'GILAN_SAY_START_1');
+INSERT INTO `script_texts` VALUES ('-1780132', 'Let us leave this place', null, null, null, null, null, null, null, null, '0', '0', '0', '0', 'GILAN_SAY_START_2');
+INSERT INTO `script_texts` VALUES ('-1780133', 'Help! The beast is on me!', null, null, null, null, null, null, null, null, '0', '0', '0', '0', 'GILAN_SAY_UNDER_ATTACK_1');
+INSERT INTO `script_texts` VALUES ('-1780134', 'Help! i\'m under attack!', null, null, null, null, null, null, null, null, '0', '0', '0', '0', 'GILAN_SAY_UNDER_ATTACK_2');
+INSERT INTO `script_texts` VALUES ('-1780135', 'Thank you, $N. I will remeber you always. You can find my strongbox in my camp, north of Stonard.', null, null, null, null, null, null, null, null, '0', '0', '0', '0', 'GILAN_SAY_END');
+INSERT INTO `script_texts` VALUES ('-1780136', '%s whispers to $N the secret to opening his strongbox.', null, null, null, null, null, null, null, null, '0', '2', '0', '0', 'GILAN_EMOTE_END_1');
+INSERT INTO `script_texts` VALUES ('-1780137', '%s disappears into the swamp.', null, null, null, null, null, null, null, null, '0', '2', '0', '0', 'GILAN_EMOTE_END_2');

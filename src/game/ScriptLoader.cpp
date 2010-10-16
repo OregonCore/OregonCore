@@ -550,6 +550,9 @@ extern void AddSC_zangarmarsh();
 //Zul'Farrak
 extern void AddSC_zulfarrak();
 
+//Swamp of Sorrows
+extern void AddSC_swamp_of_sorrows();
+
 //Zul'Gurub
 extern void AddSC_boss_jeklik();
 extern void AddSC_boss_venoxis();
@@ -1124,6 +1127,9 @@ void AddScripts()
 
     //Zul'Farrak
     AddSC_zulfarrak();
+
+    //Swamp of Sorrows
+    AddSC_swamp_of_sorrows();
 
     //Zul'Gurub
     AddSC_boss_jeklik();
