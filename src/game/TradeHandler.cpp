@@ -251,8 +251,10 @@ void WorldSession::moveItems(Item* myItems[], Item* hisItems[])
 
 //==============================================================
 
-void WorldSession::HandleAcceptTradeOpcode(WorldPacket& /*recvPacket*/)
+void WorldSession::HandleAcceptTradeOpcode(WorldPacket& recvPacket)
 {
+    recvPacket.read_skip<uint32>();
+
     Item *myItems[TRADE_SLOT_TRADED_COUNT]  = { NULL, NULL, NULL, NULL, NULL, NULL };
     Item *hisItems[TRADE_SLOT_TRADED_COUNT] = { NULL, NULL, NULL, NULL, NULL, NULL };
     bool myCanCompleteTrade=true,hisCanCompleteTrade=true;
