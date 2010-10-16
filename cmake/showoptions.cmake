@@ -18,6 +18,14 @@ message("")
 
 # Show infomation about the options selected during configuration
 
+if( SCRIPTS )
+  message("* Build with scripts     : Yes (default)")
+  add_definitions(-DSCRIPTS)
+else()
+  message("* Build with scripts     : No")
+  set(USE_SCRIPTPCH 0)
+endif()
+
 if( USE_COREPCH )
   message("* Build core w/PCH       : Yes (default)")
 else()
