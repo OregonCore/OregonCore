@@ -329,39 +329,24 @@ void GameObject::Update(uint32 diff)
 
                 bool NeedDespawn = (goInfo->trap.charges != 0);
 
-                CellPair p(Oregon::ComputeCellPair(GetPositionX(),GetPositionY()));
-                Cell cell(p);
-                cell.data.Part.reserved = ALL_DISTRICT;
-
                 // Note: this hack with search required until GO casting not implemented
                 // search unfriendly creature
                 if (owner && NeedDespawn)                    // hunter trap
                 {
-                    Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck u_check(this, owner, radius);
-                    Oregon::UnitSearcher<Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck> checker(ok, u_check);
-
-                    TypeContainerVisitor<Oregon::UnitSearcher<Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck>, GridTypeMapContainer > grid_object_checker(checker);
-                    cell.Visit(p, grid_object_checker, *GetMap(), *this, radius);
-
-                    // or unfriendly player/pet
-                    if (!ok)
-                    {
-                        TypeContainerVisitor<Oregon::UnitSearcher<Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck>, WorldTypeMapContainer > world_object_checker(checker);
-                        cell.Visit(p, world_object_checker, *GetMap(), *this, radius);
-                    }
+                    Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck checker(this, owner, radius);
+                    Oregon::UnitSearcher<Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck> searcher(ok, checker);
+                    VisitNearbyGridObject(radius, searcher);
+                    if (!ok) VisitNearbyWorldObject(radius, searcher);
                 }
                 else                                        // environmental trap
                 {
                     // environmental damage spells already have around enemies targeting but this not help in case not existed GO casting support
-
                     // affect only players
-                    Player* p_ok = NULL;
-                    Oregon::AnyPlayerInObjectRangeCheck p_check(this, radius);
-                    Oregon::PlayerSearcher<Oregon::AnyPlayerInObjectRangeCheck>  checker(p_ok, p_check);
-
-                    TypeContainerVisitor<Oregon::PlayerSearcher<Oregon::AnyPlayerInObjectRangeCheck>, WorldTypeMapContainer > world_object_checker(checker);
-                    cell.Visit(p, world_object_checker, *GetMap(), *this, radius);
-                    ok = p_ok;
+                    Player* player = NULL;
+                    Oregon::AnyPlayerInObjectRangeCheck checker(this, radius);
+                    Oregon::PlayerSearcher<Oregon::AnyPlayerInObjectRangeCheck> searcher(player, checker);
+                    VisitNearbyWorldObject(radius, searcher);
+                    ok = player;
                 }
 
                 if (ok)
