@@ -19,7 +19,7 @@
 #ifndef OUTDOOR_PVP_EP_
 #define OUTDOOR_PVP_EP_
 
-#include "OutdoorPvPImpl.h"
+#include "OutdoorPvP.h"
 
 #define OutdoorPvPEPBuffZonesNum 3
 #define OutdoorPvPEPTeamsBuffNum 4
@@ -32,7 +32,8 @@ const int EP_HordeBuffs[OutdoorPvPEPTeamsBuffNum] = {30880, 30683, 30682, 29520}
 const uint32 EP_GraveYardZone = 139;
 const uint32 EP_GraveYardId = 927;
 
-enum OutdoorPvPEPTowerType{
+enum OutdoorPvPEPTowerType
+{
     EP_TOWER_CROWNGUARD = 0,
     EP_TOWER_EASTWALL,
     EP_TOWER_NORTHPASS,
@@ -50,7 +51,8 @@ const uint32 EP_MAP_N_H[EP_TOWER_NUM] = {2375,2360,2363,2353}; // plaguewood tow
 
 const uint32 EP_TAXI_NODE[EP_TOWER_NUM] = {84,85,86,87};
 
-enum OutdoorPvPEPWorldStates{
+enum OutdoorPvPEPWorldStates
+{
     EP_UI_TOWER_SLIDER_DISPLAY = 2426,
     EP_UI_TOWER_SLIDER_POS = 2427,
     EP_UI_TOWER_SLIDER_N = 2428,
@@ -59,7 +61,8 @@ enum OutdoorPvPEPWorldStates{
     EP_UI_TOWER_COUNT_H = 2328
 };
 
-enum EP_Summons {
+enum EP_Summons
+{
     EP_EWT_COMMANDER = 0,
     EP_EWT_SOLDIER1,
     EP_EWT_SOLDIER2,
@@ -68,51 +71,56 @@ enum EP_Summons {
     EP_PWT_FLIGHTMASTER,
 };
 
-enum EP_GoSummons {
+enum EP_GoSummons
+{
     EP_NPT_SHRINE = EP_TOWER_NUM,
     EP_NPT_SHRINE_AURA,
 };
 
-const go_type EPCapturePoints[EP_TOWER_NUM] = {
-    {182096,0,1860.85,-3731.23,196.716,-2.53214,0.033967,-0.131914,0.944741,-0.298177},
-    {182097,0,2574.51,-4794.89,144.704,-1.45003,-0.097056,0.095578,-0.656229,0.742165},
-    {181899,0,3181.08,-4379.36,174.123,-2.03472,-0.065392,0.119494,-0.842275,0.521553},
-    {182098,0,2962.71,-3042.31,154.789,2.08426,-0.074807,-0.113837,0.855928,0.49883}
+const go_type EPCapturePoints[EP_TOWER_NUM] =
+{
+    {182096,0,1860.85f,-3731.23f,196.716f,-2.53214f,0.033967f,-0.131914f,0.944741f,-0.298177f},
+    {182097,0,2574.51f,-4794.89f,144.704f,-1.45003f,-0.097056f,0.095578f,-0.656229f,0.742165f},
+    {181899,0,3181.08f,-4379.36f,174.123f,-2.03472f,-0.065392f,0.119494f,-0.842275f,0.521553f},
+    {182098,0,2962.71f,-3042.31f,154.789f,2.08426f,-0.074807f,-0.113837f,0.855928f,0.49883f}
 };
 
-const go_type EPTowerFlags[EP_TOWER_NUM*2] = {
-    {182106,0,1877.6,-3716.76,167.188,1.74533,0,0,0.766044,0.642788}, // flags left side
-    {182106,0,2569.6,-4772.93,115.399,2.72271,0,0,0.978148,0.207912},
-    {182106,0,3188.76,-4358.5,144.555,1.97222,0,0,0.833886,0.551937},
-    {182106,0,2975.5,-3060.36,125.108,-1.0472,0,0,0.5,-0.866025},
-    {182106,0,1838.42,-3703.56,167.713,0.890118,0,0,0.430511,0.902585}, // flags right side
-    {182106,0,2539.61,-4801.55,115.766,2.00713,0,0,0.843391,0.5373},
-    {182106,0,3148.17,-4365.51,145.029,1.53589,0,0,0.694658,0.71934},
-    {182106,0,2992.63,-3022.95,125.593,3.03687,0,0,0.99863,0.052336}
+const go_type EPTowerFlags[EP_TOWER_NUM*2] =
+{
+    {182106,0,1877.60f,-3716.76f,167.188f,1.74533f,0.0f,0.0f,0.766044f,0.642788f}, // flags left side
+    {182106,0,2569.60f,-4772.93f,115.399f,2.72271f,0.0f,0.0f,0.978148f,0.207912f},
+    {182106,0,3188.76f,-4358.50f,144.555f,1.97222f,0.0f,0.0f,0.833886f,0.551937f},
+    {182106,0,2975.50f,-3060.36f,125.108f,-1.0472f,0.0f,0.0f,0.5f,-0.866025f},
+    {182106,0,1838.42f,-3703.56f,167.713f,0.890118f,0.0f,0.0f,0.430511f,0.902585f}, // flags right side
+    {182106,0,2539.61f,-4801.55f,115.766f,2.00713f,0.0f,0.0f,0.843391f,0.5373f},
+    {182106,0,3148.17f,-4365.51f,145.029f,1.53589f,0.0f,0.0f,0.694658f,0.71934f},
+    {182106,0,2992.63f,-3022.95f,125.593f,3.03687f,0.0f,0.0f,0.99863f,0.052336f}
 };
 
 const uint32 EPTowerPlayerEnterEvents[EP_TOWER_NUM] = {10705,10691,10699,10701};
 const uint32 EPTowerPlayerLeaveEvents[EP_TOWER_NUM] = {10704,10692,10698,10700};
 
-const uint32 EP_NUM_CREATURES = 6;
-const uint32 EP_EWT_NUM_CREATURES = 5;
+const uint8 EP_NUM_CREATURES = 6;
+const uint8 EP_EWT_NUM_CREATURES = 5;
 
 // one lordaeron commander, 4 soldiers
 // should be spawned at EWT and follow a path, but trans-grid pathing isn't safe, so summon them directly at NPT
-const creature_type EP_EWT_Summons_A[EP_EWT_NUM_CREATURES] = {
-    {17635,469,0, 3167.61,-4352.09,138.20,4.5811},
-    {17647,469,0, 3172.74,-4352.99,139.14,4.9873},
-    {17647,469,0, 3165.89,-4354.46,138.67,3.7244},
-    {17647,469,0, 3164.65,-4350.26,138.22,2.4794},
-    {17647,469,0, 3169.91,-4349.68,138.37,0.7444}
+const creature_type EP_EWT_Summons_A[EP_EWT_NUM_CREATURES] =
+{
+    {17635,469,0, 3167.61f,-4352.09f,138.20f,4.5811f},
+    {17647,469,0, 3172.74f,-4352.99f,139.14f,4.9873f},
+    {17647,469,0, 3165.89f,-4354.46f,138.67f,3.7244f},
+    {17647,469,0, 3164.65f,-4350.26f,138.22f,2.4794f},
+    {17647,469,0, 3169.91f,-4349.68f,138.37f,0.7444f}
 };
 
-const creature_type EP_EWT_Summons_H[EP_EWT_NUM_CREATURES] = {
-    {17995,67,0, 3167.61,-4352.09,138.20,4.5811},
-    {17996,67,0, 3172.74,-4352.99,139.14,4.9873},
-    {17996,67,0, 3165.89,-4354.46,138.67,3.7244},
-    {17996,67,0, 3164.65,-4350.26,138.22,2.4794},
-    {17996,67,0, 3169.91,-4349.68,138.37,0.7444}
+const creature_type EP_EWT_Summons_H[EP_EWT_NUM_CREATURES] =
+{
+    {17995,67,0, 3167.61f,-4352.09f,138.20f,4.5811f},
+    {17996,67,0, 3172.74f,-4352.99f,139.14f,4.9873f},
+    {17996,67,0, 3165.89f,-4354.46f,138.67f,3.7244f},
+    {17996,67,0, 3164.65f,-4350.26f,138.22f,2.4794f},
+    {17996,67,0, 3169.91f,-4349.68f,138.37f,0.7444f}
 };
 
 const creature_type EP_PWT_FlightMaster = {17209,0,0,2987.5,-3049.11,120.126,5.75959};
@@ -123,45 +131,72 @@ const go_type EP_NPT_LordaeronShrineAura = {180100,0,3167.72,-4355.91,138.785,1.
 
 class OPvPCapturePointEP : public OPvPCapturePoint
 {
-public:
-    OPvPCapturePointEP(OutdoorPvP * pvp, OutdoorPvPEPTowerType type);
-    void ChangeState();
-    void SendChangePhase();
-    void FillInitialWorldStates(WorldPacket & data);
-    // used when player is activated/inactivated in the area
-    bool HandlePlayerEnter(Player * plr);
-    void HandlePlayerLeave(Player * plr);
-protected:
-    void UpdateTowerEvents();
-    void LinkGraveYard(uint32 team);
-    void SummonShrine(uint32 team);
-    void SummonSupportUnits(uint32 team);
-    void SummonFlightMaster(uint32 team);
-    void UnlinkGraveYard();
-    void UnsummonShrine();
-    void UnsummonSupportUnits();
-    void UnsummonFlightMaster();
+    public:
 
-    uint32 EP_TOWER_EVENT_TEAM[EP_TOWER_NUM];
-private:
-    OutdoorPvPEPTowerType m_TowerType;
+        OPvPCapturePointEP(OutdoorPvP * pvp, OutdoorPvPEPTowerType type);
+
+        void ChangeState();
+
+        void SendChangePhase();
+
+        void FillInitialWorldStates(WorldPacket & data);
+
+        // used when player is activated/inactivated in the area
+        bool HandlePlayerEnter(Player * plr);
+        void HandlePlayerLeave(Player * plr);
+
+    protected:
+
+        void UpdateTowerEvents();
+
+        void LinkGraveYard(uint32 team);
+
+        void SummonShrine(uint32 team);
+
+        void SummonSupportUnits(uint32 team);
+
+        void SummonFlightMaster(uint32 team);
+
+        void UnlinkGraveYard();
+
+        void UnsummonShrine();
+
+        void UnsummonSupportUnits();
+
+        void UnsummonFlightMaster();
+
+
+        uint32 EP_TOWER_EVENT_TEAM[EP_TOWER_NUM];
+
+    private:
+
+        OutdoorPvPEPTowerType m_TowerType;
 };
 
 class OutdoorPvPEP : public OutdoorPvP
 {
-friend class OPvPCapturePointEP;
-public:
-    OutdoorPvPEP();
-    bool SetupOutdoorPvP();
-    void HandlePlayerEnterZone(Player *plr, uint32 zone);
-    void HandlePlayerLeaveZone(Player *plr, uint32 zone);
-    bool Update(uint32 diff);
-    void FillInitialWorldStates(WorldPacket &data);
-    void SendRemoveWorldStates(Player * plr);
-private:
-    // how many towers are controlled
-    uint32 m_AllianceTowersControlled;
-    uint32 m_HordeTowersControlled;
+    friend class OPvPCapturePointEP;
+
+    public:
+
+        OutdoorPvPEP();
+
+        bool SetupOutdoorPvP();
+
+        void HandlePlayerEnterZone(Player *plr, uint32 zone);
+        void HandlePlayerLeaveZone(Player *plr, uint32 zone);
+
+        bool Update(uint32 diff);
+
+        void FillInitialWorldStates(WorldPacket &data);
+
+        void SendRemoveWorldStates(Player * plr);
+
+    private:
+
+        // how many towers are controlled
+        uint32 m_AllianceTowersControlled;
+        uint32 m_HordeTowersControlled;
 };
 
 #endif

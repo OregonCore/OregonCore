@@ -204,10 +204,10 @@ void OPvPCapturePointNA::HandlePlayerLeave(Player *plr)
 
 OPvPCapturePointNA::OPvPCapturePointNA(OutdoorPvP *pvp) :
 OPvPCapturePoint(pvp), m_capturable(true), m_GuardsAlive(0), m_ControllingFaction(0),
-m_HalaaState(HALAA_N), m_WyvernStateSouth(0), m_WyvernStateNorth(0), m_WyvernStateWest(0),
-m_WyvernStateEast(0), m_RespawnTimer(NA_RESPAWN_TIME), m_GuardCheckTimer(NA_GUARD_CHECK_TIME)
+m_WyvernStateNorth(0), m_WyvernStateSouth(0), m_WyvernStateEast(0), m_WyvernStateWest(0),
+m_HalaaState(HALAA_N), m_RespawnTimer(NA_RESPAWN_TIME), m_GuardCheckTimer(NA_GUARD_CHECK_TIME)
 {
-    SetCapturePointData(182210,530,-1572.57,7945.3,-22.475,2.05949,0,0,0.857167,0.515038);
+    SetCapturePointData(182210,530,-1572.57f,7945.3f,-22.475f,2.05949f,0.0f,0.0f,0.857167f,0.515038f);
 }
 
 bool OutdoorPvPNA::SetupOutdoorPvP()
@@ -411,7 +411,7 @@ bool OPvPCapturePointNA::HandleCustomSpell(Player * plr, uint32 spellId, GameObj
 
 int32 OPvPCapturePointNA::HandleOpenGo(Player *plr, uint64 guid)
 {
-    uint32 retval = OPvPCapturePoint::HandleOpenGo(plr, guid);
+    int32 retval = OPvPCapturePoint::HandleOpenGo(plr, guid);
     if (retval >= 0)
     {
         const go_type * gos = NULL;

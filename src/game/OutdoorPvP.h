@@ -45,6 +45,8 @@ enum ObjectiveStates
     OBJECTIVESTATE_HORDE_ALLIANCE_CHALLENGE,
 };
 
+#define OTHER_TEAM(a) (a == TEAM_ALLIANCE ? TEAM_HORDE : TEAM_ALLIANCE)
+
 // struct for go spawning
 struct go_type{
     uint32 entry;
