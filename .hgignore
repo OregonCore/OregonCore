@@ -1,13 +1,7 @@
 # use glob syntax
 syntax: glob
 
-src/shared/revision.h
 build/
-bin/
 *.orig
 *.rej
-win/VC90/*/
-win/*.ncb
-win/*.suo
-dep/lib/win32*
-src/bindings/scripts/VC90/*/
+*.kdev*

@@ -45,12 +45,10 @@ if( NOT WIN32 )
   add_definitions(-D_OREGON_CORE_CONFIG="${CONF_DIR}/oregoncore.conf")
 endif()
 
+add_dependencies(oregon-core revision.h)
+
 if( UNIX )
   set(oregon-core_LINK_FLAGS "-pthread ${oregon-core_LINK_FLAGS}")
-endif()
-
-if( CMAKE_SYSTEM_NAME MATCHES "Darwin" )
-  set(oregon-core_LINK_FLAGS "-framework Carbon ${oregon-core_LINK_FLAGS}")
 endif()
 
 set_target_properties(oregon-core PROPERTIES LINK_FLAGS "${oregon-core_LINK_FLAGS}")

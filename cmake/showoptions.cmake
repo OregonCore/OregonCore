@@ -1,7 +1,7 @@
 # output generic information about the core and buildtype chosen
 
 message("")
-message("* OregonCore revision    : ${hg_rev_id_str} (${hg_rev_hash_str})")
+message("* OregonCore revision    : ${rev_id_str} (${rev_hash_str})")
 if( UNIX )
   message("* Build binaries in      : ${CMAKE_BUILD_TYPE} mode")
 endif()
