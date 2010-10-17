@@ -2549,13 +2549,13 @@ void SpellMgr::LoadSpellLinked()
         SpellEntry const* spellInfo = sSpellStore.LookupEntry(abs(trigger));
         if (!spellInfo)
         {
-            sLog.outErrorDb("Spell %u listed in spell_linked_spell does not exist", abs(trigger));
+            sLog.outErrorDb("Spell Trigger %i listed in spell_linked_spell does not exist", trigger);
             continue;
         }
         spellInfo = sSpellStore.LookupEntry(abs(effect));
         if (!spellInfo)
         {
-            sLog.outErrorDb("Spell %u listed in spell_linked_spell does not exist", abs(effect));
+            sLog.outErrorDb("Spell Effect %i listed in spell_linked_spell does not exist", effect);
             continue;
         }
 
