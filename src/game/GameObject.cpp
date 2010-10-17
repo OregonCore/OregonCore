@@ -65,32 +65,6 @@ GameObject::GameObject() : WorldObject()
 
 GameObject::~GameObject()
 {
-    CleanupsBeforeDelete();
-}
-
-void GameObject::CleanupsBeforeDelete()
-{
-    if (m_uint32Values)                                      // field array can be not exist if GameOBject not loaded
-    {
-        // Possible crash at access to deleted GO in Unit::m_gameobj
-        if (uint64 owner_guid = GetOwnerGUID())
-        {
-            Unit* owner = ObjectAccessor::GetUnit(*this,owner_guid);
-            if (owner)
-                owner->RemoveGameObject(this,false);
-            else
-            {
-                const char * ownerType = "creature";
-                if (IS_PLAYER_GUID(owner_guid))
-                    ownerType = "player";
-                else if (IS_PET_GUID(owner_guid))
-                    ownerType = "pet";
-
-                sLog.outError("Delete GameObject (GUID: %u Entry: %u SpellId %u LinkedGO %u) that lost references to owner (GUID %u Type '%s') GO list. Crash possible later.",
-                    GetGUIDLow(), GetGOInfo()->id, m_spellId, GetLinkedGameObjectEntry(), GUID_LOPART(owner_guid), ownerType);
-            }
-        }
-    }
 }
 
 void GameObject::AddToWorld()
@@ -113,6 +87,15 @@ void GameObject::RemoveFromWorld()
     {
         if (m_zoneScript)
             m_zoneScript->OnGameObjectCreate(this, false);
+
+        // Possible crash at access to deleted GO in Unit::m_gameobj
+        if (uint64 owner_guid = GetOwnerGUID())
+        {
+            if (Unit * owner = GetOwner())
+                owner->RemoveGameObject(this,false);
+            else
+                sLog.outError("Delete GameObject (GUID: %u Entry: %u) that have references in not found creature %u GO list. Crash possible later.",GetGUIDLow(),GetGOInfo()->id,GUID_LOPART(owner_guid));
+        }
 
         WorldObject::RemoveFromWorld();
         ObjectAccessor::Instance().RemoveObject(this);
@@ -427,10 +410,11 @@ void GameObject::Update(uint32 diff)
             if (GetOwnerGUID())
             {
                 if (Unit* owner = GetOwner())
+                {
                     owner->RemoveGameObject(this, false);
-
-                m_respawnTime = 0;
-                Delete();
+                    m_respawnTime = 0;
+                    Delete();
+                }
                 return;
             }
 

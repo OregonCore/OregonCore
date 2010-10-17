@@ -163,8 +163,6 @@ m_meleeDamageSchoolMask(SPELL_SCHOOL_MASK_NORMAL),m_creatureInfo(NULL), m_DBTabl
 
 Creature::~Creature()
 {
-    CleanupsBeforeDelete();
-
     m_vendorItemCounts.clear();
 
     delete i_AI;
