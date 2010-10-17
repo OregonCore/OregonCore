@@ -81,20 +81,18 @@ Object::~Object()
     if (IsInWorld())
     {
         ///- Do NOT call RemoveFromWorld here, if the object is a player it will crash
-        sLog.outError("Object::~Object (GUID: %u TypeId: %u) deleted but still in world!!", GetGUIDLow(), GetTypeId());
+        sLog.outCrash("Object::~Object (GUID: %u TypeId: %u) deleted but still in world!!", GetGUIDLow(), GetTypeId());
         ASSERT(false);
     }
 
     if (m_objectUpdated)
     {
-        sLog.outError("Object::~Object (GUID: %u TypeId: %u) deleted but still have updated status!!", GetGUIDLow(), GetTypeId());
+        sLog.outCrash("Object::~Object (GUID: %u TypeId: %u) deleted but still have updated status!!", GetGUIDLow(), GetTypeId());
         ASSERT(false);
     }
 
     delete [] m_uint32Values;
     delete [] m_uint32Values_mirror;
-    m_uint32Values = NULL;
-    m_uint32Values_mirror = NULL;
 }
 
 void Object::_InitValues()
@@ -676,14 +674,7 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer * data, UpdateMask 
 
 void Object::ClearUpdateMask(bool remove)
 {
-    if(m_uint32Values)
-    {
-        for (uint16 index = 0; index < m_valuesCount; ++index)
-        {
-            if (m_uint32Values_mirror[index] != m_uint32Values[index])
-                m_uint32Values_mirror[index] = m_uint32Values[index];
-        }
-    }
+    memcpy(m_uint32Values_mirror, m_uint32Values, m_valuesCount*sizeof(uint32));
 
     if (m_objectUpdated)
     {
@@ -700,7 +691,7 @@ void Object::BuildFieldsUpdate(Player *pl, UpdateDataMapType &data_map) const
     if (iter == data_map.end())
     {
         std::pair<UpdateDataMapType::iterator, bool> p = data_map.insert( UpdateDataMapType::value_type(pl, UpdateData()) );
-        assert(p.second);
+        ASSERT(p.second);
         iter = p.first;
     }
 
@@ -728,25 +719,30 @@ bool Object::LoadValues(const char* data)
 
 void Object::_SetUpdateBits(UpdateMask *updateMask, Player* /*target*/) const
 {
-    for (uint16 index = 0; index < m_valuesCount; index ++)
+    uint32 *value = m_uint32Values;
+    uint32 *mirror = m_uint32Values_mirror;
+
+    for (uint16 index = 0; index < m_valuesCount; ++index, ++value, ++mirror)
     {
-        if (m_uint32Values_mirror[index] != m_uint32Values[index])
+        if (*mirror != *value)
             updateMask->SetBit(index);
     }
 }
 
 void Object::_SetCreateBits(UpdateMask *updateMask, Player* /*target*/) const
 {
-    for (uint16 index = 0; index < m_valuesCount; index++)
+    uint32 *value = m_uint32Values;
+
+    for (uint16 index = 0; index < m_valuesCount; ++index, ++value)
     {
-        if (GetUInt32Value(index) != 0)
+        if (*value)
             updateMask->SetBit(index);
     }
 }
 
 void Object::SetInt32Value(uint16 index, int32 value)
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true));
+    ASSERT(index < m_valuesCount || PrintIndexError(index, true));
 
     if (m_int32Values[ index ] != value)
     {
@@ -765,7 +761,7 @@ void Object::SetInt32Value(uint16 index, int32 value)
 
 void Object::SetUInt32Value(uint16 index, uint32 value)
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true));
+    ASSERT(index < m_valuesCount || PrintIndexError(index, true));
 
     if (m_uint32Values[ index ] != value)
     {
@@ -784,7 +780,7 @@ void Object::SetUInt32Value(uint16 index, uint32 value)
 
 void Object::SetUInt64Value(uint16 index, const uint64 &value)
 {
-    ASSERT(index + 1 < m_valuesCount || PrintIndexError(index , true));
+    ASSERT(index + 1 < m_valuesCount || PrintIndexError(index, true));
     if (*((uint64*)&(m_uint32Values[ index ])) != value)
     {
         m_uint32Values[ index ] = *((uint32*)&value);
@@ -822,7 +818,7 @@ void Object::SetFloatValue(uint16 index, float value)
 
 void Object::SetByteValue(uint16 index, uint8 offset, uint8 value)
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true));
+    ASSERT(index < m_valuesCount || PrintIndexError(index, true));
 
     if (offset > 4)
     {
@@ -848,7 +844,7 @@ void Object::SetByteValue(uint16 index, uint8 offset, uint8 value)
 
 void Object::SetUInt16Value(uint16 index, uint8 offset, uint16 value)
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true));
+    ASSERT(index < m_valuesCount || PrintIndexError(index, true));
 
     if (offset > 2)
     {
@@ -856,7 +852,7 @@ void Object::SetUInt16Value(uint16 index, uint8 offset, uint16 value)
         return;
     }
 
-    if (uint8(m_uint32Values[ index ] >> (offset * 16)) != value)
+    if (uint16(m_uint32Values[ index ] >> (offset * 16)) != value)
     {
         m_uint32Values[ index ] &= ~uint32(uint32(0xFFFF) << (offset * 16));
         m_uint32Values[ index ] |= uint32(uint32(value) << (offset * 16));
@@ -922,7 +918,7 @@ void Object::ApplyModPositiveFloatValue(uint16 index, float  val, bool apply)
 
 void Object::SetFlag(uint16 index, uint32 newFlag)
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true));
+    ASSERT(index < m_valuesCount || PrintIndexError(index, true));
     uint32 oldval = m_uint32Values[ index ];
     uint32 newval = oldval | newFlag;
 
@@ -989,7 +985,7 @@ void Object::SetByteFlag(uint16 index, uint8 offset, uint8 newFlag)
 
 void Object::RemoveByteFlag(uint16 index, uint8 offset, uint8 oldFlag)
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index , true));
+    ASSERT(index < m_valuesCount || PrintIndexError(index, true));
 
     if (offset > 4)
     {
