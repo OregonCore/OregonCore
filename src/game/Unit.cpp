@@ -2954,7 +2954,6 @@ void Unit::_UpdateSpells(uint32 time)
         }
     }
 
-    // update auras
     // m_AurasUpdateIterator can be updated in inderect called code at aura remove to skip next planned to update but removed auras
     for (m_AurasUpdateIterator = m_Auras.begin(); m_AurasUpdateIterator != m_Auras.end();)
     {
@@ -2976,20 +2975,18 @@ void Unit::_UpdateSpells(uint32 time)
 
     if (!m_gameObj.empty())
     {
-        std::list<GameObject*>::iterator ite1, dnext1;
-        for (ite1 = m_gameObj.begin(); ite1 != m_gameObj.end(); ite1 = dnext1)
+        std::list<GameObject*>::iterator itr;
+        for (itr = m_gameObj.begin(); itr != m_gameObj.end();)
         {
-            dnext1 = ite1;
-            //(*i)->Update(difftime);
-            if (!(*ite1)->isSpawned())
+            if (!(*itr)->isSpawned())
             {
-                (*ite1)->SetOwnerGUID(0);
-                (*ite1)->SetRespawnTime(0);
-                (*ite1)->Delete();
-                dnext1 = m_gameObj.erase(ite1);
+                (*itr)->SetOwnerGUID(0);
+                (*itr)->SetRespawnTime(0);
+                (*itr)->Delete();
+                m_gameObj.erase(itr++);
             }
             else
-                ++dnext1;
+                ++itr;
         }
     }
 }
@@ -4276,15 +4273,23 @@ void Unit::RemoveGameObject(GameObject* gameObj, bool del)
 {
     ASSERT(gameObj && gameObj->GetOwnerGUID() == GetGUID());
 
-    // GO created by some spell
-    if (GetTypeId() == TYPEID_PLAYER && gameObj->GetSpellId())
-    {
-        SpellEntry const* createBySpell = sSpellStore.LookupEntry(gameObj->GetSpellId());
-        // Need activate spell use for owner
-        if (createBySpell && createBySpell->Attributes & SPELL_ATTR_DISABLED_WHILE_ACTIVE)
-            ToPlayer()->SendCooldownEvent(createBySpell);
-    }
     gameObj->SetOwnerGUID(0);
+
+    // GO created by some spell
+    if (uint32 spellid = gameObj->GetSpellId())
+    {
+        RemoveAurasDueToSpell(spellid);
+
+        if (GetTypeId() == TYPEID_PLAYER)
+        {
+            SpellEntry const* createBySpell = sSpellStore.LookupEntry(spellid);
+            // Need activate spell use for owner
+            if (createBySpell && createBySpell->Attributes & SPELL_ATTR_DISABLED_WHILE_ACTIVE)
+                // note: item based cooldowns and cooldown spell mods with charges ignored (unknown existed cases)
+                ToPlayer()->SendCooldownEvent(createBySpell);
+        }
+    }
+
     m_gameObj.remove(gameObj);
 
     if (del)
