@@ -435,7 +435,14 @@ class WorldObject : public Object, public WorldLocation
             { return sqrt(GetExactDistSq(pos)); }
 
         float GetDistanceZ(const WorldObject* obj) const;
-        bool IsInMap(const WorldObject* obj) const { return GetMapId() == obj->GetMapId() && GetInstanceId() == obj->GetInstanceId(); }
+
+        bool IsInMap(const WorldObject* obj) const
+        {
+            if (obj)
+                return IsInWorld() && obj->IsInWorld() && GetMapId() == obj->GetMapId() && GetInstanceId() == obj->GetInstanceId();
+            else
+                return false;
+        }
         bool _IsWithinDist(WorldObject const* obj, float dist2compare, bool is3D) const;
         bool IsWithinDist(WorldObject const* obj, float dist2compare, bool is3D = true) const
                                                             // use only if you will sure about placing both object at same map
