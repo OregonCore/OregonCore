@@ -127,15 +127,8 @@ void MapInstanced::UnloadAll()
 - create the instance if it's not created already
 - the player is not actually added to the instance (only in InstanceMap::Add)
 */
-Map* MapInstanced::GetInstance(const WorldObject* obj)
+Map* MapInstanced::CreateInstance(const uint32 mapId, Player * player)
 {
-    if (obj->GetTypeId() == TYPEID_UNIT)
-    {
-        ASSERT(obj->GetMapId() == GetId() && obj->GetInstanceId());
-        return _FindMap(obj->GetInstanceId());
-    }
-
-    Player* player = (Player*)obj;
     uint32 instanceId = player->GetInstanceId();
 
     if (instanceId)
@@ -204,9 +197,9 @@ InstanceMap* MapInstanced::CreateInstance(uint32 InstanceId, InstanceSave *save,
     // some instances only have one difficulty
     if (entry && !entry->SupportsHeroicMode()) difficulty = DIFFICULTY_NORMAL;
 
-    sLog.outDebug("MapInstanced::CreateInstance: %smap instance %d for %d created with difficulty %s", save?"":"new ", InstanceId, GetId(), difficulty?"heroic":"normal");
+    sLog.outDebug("MapInstanced::CreateInstance: %s map instance %d for %d created with difficulty %s", save?"":"new ", InstanceId, GetId(), difficulty?"heroic":"normal");
 
-    InstanceMap *map = new InstanceMap(GetId(), GetGridExpiry(), InstanceId, difficulty);
+    InstanceMap *map = new InstanceMap(GetId(), GetGridExpiry(), InstanceId, difficulty, this);
     ASSERT(map->IsDungeon());
 
     bool load_data = save != NULL;
@@ -223,7 +216,7 @@ BattleGroundMap* MapInstanced::CreateBattleGround(uint32 InstanceId)
 
     sLog.outDebug("MapInstanced::CreateBattleGround: map bg %d for %d created.", InstanceId, GetId());
 
-    BattleGroundMap *map = new BattleGroundMap(GetId(), GetGridExpiry(), InstanceId);
+    BattleGroundMap *map = new BattleGroundMap(GetId(), GetGridExpiry(), InstanceId, this);
     ASSERT(map->IsBattleGroundOrArena());
 
     m_InstancedMaps[InstanceId] = map;
@@ -254,11 +247,8 @@ void MapInstanced::DestroyInstance(InstancedMaps::iterator &itr)
     m_InstancedMaps.erase(itr++);
 }
 
-bool MapInstanced::CanEnter(Player *player)
+bool MapInstanced::CanEnter(Player * /*player*/)
 {
-    if (Map* map = GetInstance(player))
-        return map->CanEnter(player);
-
-    return false;
+    //ASSERT(false);
+    return true;
 }
-

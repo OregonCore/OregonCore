@@ -1020,8 +1020,8 @@ bool Object::PrintIndexError(uint32 index, bool set) const
 
 WorldObject::WorldObject()
     : m_mapId(0), m_InstanceId(0),
-    m_positionX(0.0f), m_positionY(0.0f), m_positionZ(0.0f), m_orientation(0.0f)
-    , m_map(NULL), m_zoneScript(NULL)
+    m_positionX(0.0f), m_positionY(0.0f), m_positionZ(0.0f), m_orientation(0.0f), m_currMap(NULL)
+    , m_zoneScript(NULL)
     , m_isActive(false), IsTempWorldObject(false)
     , m_name("")
 {
@@ -1074,11 +1074,9 @@ void WorldObject::CleanupsBeforeDelete()
 {
 }
 
-void WorldObject::_Create(uint32 guidlow, HighGuid guidhigh, uint32 mapid)
+void WorldObject::_Create(uint32 guidlow, HighGuid guidhigh)
 {
     Object::_Create(guidlow, 0, guidhigh);
-
-    m_mapId = mapid;
 }
 
 uint32 WorldObject::GetZoneId() const
@@ -1592,19 +1590,19 @@ void WorldObject::SendGameObjectCustomAnim(uint64 guid)
     SendMessageToSet(&data, true);
 }
 
-Map* WorldObject::_getMap()
+void WorldObject::SetMap(Map * map)
 {
-    return m_map = MapManager::Instance().GetMap(GetMapId(), this);
-}
-
-Map* WorldObject::_findMap()
-{
-    return m_map = MapManager::Instance().FindMap(GetMapId(), GetInstanceId());
+    ASSERT(map);
+    m_currMap = map;
+    //lets save current map's Id/instanceId
+    m_mapId = map->GetId();
+    m_InstanceId = map->GetInstanceId();
 }
 
 Map const* WorldObject::GetBaseMap() const
 {
-    return MapManager::Instance().CreateBaseMap(GetMapId());
+    ASSERT(m_currMap);
+    return m_currMap->GetParent();
 }
 
 void WorldObject::AddObjectToRemoveList()

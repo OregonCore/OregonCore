@@ -40,7 +40,7 @@ class MapManager : public Oregon::Singleton<MapManager, Oregon::ClassLevelLockab
 
     public:
 
-        Map* GetMap(uint32, const WorldObject* obj);
+        Map* CreateMap(uint32, const WorldObject* obj);
         Map const* CreateBaseMap(uint32 id) const { return const_cast<MapManager*>(this)->_createBaseMap(id); }
         Map* FindMap(uint32 mapid, uint32 instanceId = 0) const;
 

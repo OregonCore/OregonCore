@@ -238,7 +238,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 {
     friend class MapReference;
     public:
-        Map(uint32 id, time_t, uint32 InstanceId, uint8 SpawnMode);
+        Map(uint32 id, time_t, uint32 InstanceId, uint8 SpawnMode, Map* _parent = NULL);
         virtual ~Map();
 
         // currently unused for normal maps
@@ -296,6 +296,8 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
         static void InitStateMachine();
         static void DeleteStateMachine();
+
+        Map const * GetParent() const { return m_parentMap; }
 
         // some calls like isInWater should not use vmaps due to processor power
         // can return INVALID_HEIGHT if under z+2 z coord not found height
@@ -459,7 +461,12 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         typedef std::set<WorldObject*> ActiveNonPlayers;
         ActiveNonPlayers m_activeNonPlayers;
         ActiveNonPlayers::iterator m_activeNonPlayersIter;
+
     private:
+
+        //used for fast base_map (e.g. MapInstanced class object) search for
+        //InstanceMaps and BattlegroundMaps...
+        Map* m_parentMap;
 
         NGridType* i_grids[MAX_NUMBER_OF_GRIDS][MAX_NUMBER_OF_GRIDS];
         GridMap *GridMaps[MAX_NUMBER_OF_GRIDS][MAX_NUMBER_OF_GRIDS];
@@ -524,7 +531,7 @@ enum InstanceResetMethod
 class InstanceMap : public Map
 {
     public:
-        InstanceMap(uint32 id, time_t, uint32 InstanceId, uint8 SpawnMode);
+        InstanceMap(uint32 id, time_t, uint32 InstanceId, uint8 SpawnMode, Map* _parent);
         ~InstanceMap();
         bool Add(Player *);
         void Remove(Player *, bool);
@@ -551,7 +558,7 @@ class InstanceMap : public Map
 class BattleGroundMap : public Map
 {
     public:
-        BattleGroundMap(uint32 id, time_t, uint32 InstanceId);
+        BattleGroundMap(uint32 id, time_t, uint32 InstanceId, Map* _parent);
         ~BattleGroundMap();
 
         bool Add(Player *);

@@ -4052,7 +4052,6 @@ void Spell::EffectSummonPet(uint32 i)
                 return;
 
             OldSummon->GetMap()->Remove(OldSummon->ToCreature(),false);
-            OldSummon->SetMapId(owner->GetMapId());
 
             float px, py, pz;
             owner->GetClosePoint(px, py, pz, OldSummon->GetObjectSize());

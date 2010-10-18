@@ -930,9 +930,6 @@ bool Pet::CreateBaseAtCreature(Creature* creature)
     }
     uint32 guid=objmgr.GenerateLowGuid(HIGHGUID_PET);
 
-    sLog.outDebug("SetInstanceID()");
-    SetInstanceId(creature->GetInstanceId());
-
     sLog.outDebug("Create pet");
     uint32 pet_number = objmgr.GeneratePetNumber();
     if (!Create(guid, creature->GetMap(), creature->GetEntry(), pet_number))
@@ -1745,8 +1742,7 @@ void Pet::ToggleAutocast(uint32 spellid, bool apply)
 
 bool Pet::Create(uint32 guidlow, Map *map, uint32 Entry, uint32 pet_number)
 {
-    SetMapId(map->GetId());
-    SetInstanceId(map->GetInstanceId());
+    SetMap(map);
 
     Object::_Create(guidlow, pet_number, HIGHGUID_PET);
 

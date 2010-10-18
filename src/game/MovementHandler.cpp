@@ -76,12 +76,8 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     GetPlayer()->SetSemaphoreTeleportFar(false);
 
     // relocate the player to the teleport destination
-    GetPlayer()->SetMapId(loc.mapid);
+    GetPlayer()->SetMap(MapManager::Instance().CreateMap(loc.mapid, GetPlayer()));
     GetPlayer()->Relocate(loc.coord_x, loc.coord_y, loc.coord_z, loc.orientation);
-
-    // since the MapId is set before the GetInstance call, the InstanceId must be set to 0
-    // to let GetInstance() determine the proper InstanceId based on the player's binds
-    GetPlayer()->SetInstanceId(0);
 
     // check this before Map::Add(player), because that will create the instance save!
     bool reset_notify = (GetPlayer()->GetBoundInstance(GetPlayer()->GetMapId(), GetPlayer()->GetDifficulty()) == NULL);
@@ -91,6 +87,9 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     // while the player is in transit, for example the map may get full
     if (!GetPlayer()->GetMap()->Add(GetPlayer()))
     {
+        //if player wasn't added to map, reset his map pointer!
+        GetPlayer()->ResetMap();
+
         sLog.outError("WorldSession::HandleMoveWorldportAckOpcode: player %s (%d) was teleported far but couldn't be added to map. (map:%u, x:%f, y:%f, "
             "z:%f) We port him to his homebind instead..", GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), loc.mapid, loc.coord_x, loc.coord_y, loc.coord_z);
 
