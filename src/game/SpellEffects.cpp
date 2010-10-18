@@ -315,7 +315,7 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
                 //Gore
                 if (m_spellInfo->SpellIconID == 2269)
                 {
-                    damage+= (uint32)unitTarget->GetMap()->rand32()%2 ? damage : 0;
+                    damage+= (uint32)rand32()%2 ? damage : 0;
                 }
 
                 // Meteor like spells (divided damage to targets)
@@ -574,7 +574,7 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
                 // Steady Shot
                 else if (m_spellInfo->SpellFamilyFlags & 0x100000000LL)
                 {
-                    int32 base = m_caster->GetMap()->irand((int32)m_caster->GetWeaponDamageRange(RANGED_ATTACK, MINDAMAGE),(int32)m_caster->GetWeaponDamageRange(RANGED_ATTACK, MAXDAMAGE));
+                    int32 base = irand((int32)m_caster->GetWeaponDamageRange(RANGED_ATTACK, MINDAMAGE),(int32)m_caster->GetWeaponDamageRange(RANGED_ATTACK, MAXDAMAGE));
                     damage += int32(float(base)/m_caster->GetAttackTime(RANGED_ATTACK)*2800 + m_caster->GetTotalAttackPowerValue(RANGED_ATTACK)*0.2f);
 
                     bool found = false;
@@ -721,7 +721,7 @@ void Spell::EffectDummy(uint32 i)
                         return;
 
                     uint32 spell_id = 0;
-                    switch(m_caster->GetMap()->urand(1,5))
+                    switch(urand(1,5))
                     {
                         case 1: spell_id = 8064; break;     // Sleepy
                         case 2: spell_id = 8065; break;     // Invigorate
@@ -738,7 +738,7 @@ void Spell::EffectDummy(uint32 i)
                         return;
 
                     uint32 spell_id = 0;
-                    switch(m_caster->GetMap()->urand(1,2))
+                    switch(urand(1,2))
                     {
                         // Flip Out - ninja
                         case 1: spell_id = (m_caster->getGender() == GENDER_MALE ? 8219 : 8220); break;
@@ -799,7 +799,7 @@ void Spell::EffectDummy(uint32 i)
 
                     uint32 spell_id = 0;
 
-                    uint32 roll = m_caster->GetMap()->urand(0, 99);
+                    uint32 roll = urand(0, 99);
 
                     if (roll < 2)                           // 2% for 30 sec self root (off-like chance unknown)
                         spell_id = 16566;
@@ -863,7 +863,7 @@ void Spell::EffectDummy(uint32 i)
                         return;
 
                     uint32 spell_id = 0;
-                    switch(m_caster->GetMap()->urand(1,3))
+                    switch(urand(1,3))
                     {
                         case 1: spell_id = 16595; break;
                         case 2: spell_id = 16593; break;
@@ -958,7 +958,7 @@ void Spell::EffectDummy(uint32 i)
                 }
                 case 23448:                                 // Transporter Arrival - Ultrasafe Transporter: Gadgetzan - backfires
                 {
-                    int32 r = m_caster->GetMap()->irand(0, 119);
+                    int32 r = irand(0, 119);
                     if (r < 20)                             // Transporter Malfunction - 1/6 polymorph
                         m_caster->CastSpell(m_caster, 23444, true);
                     else if (r < 100)                       // Evil Twin               - 4/6 evil twin
@@ -988,7 +988,7 @@ void Spell::EffectDummy(uint32 i)
                     if (m_caster->GetTypeId() != TYPEID_PLAYER)
                         return;
 
-                    switch(m_caster->GetMap()->irand(0,3))
+                    switch(irand(0,3))
                     {
                     case 0:
                         m_caster->CastSpell(m_caster,24927,true); // Ghost
@@ -1094,7 +1094,7 @@ void Spell::EffectDummy(uint32 i)
 
                     uint32 spell_id = 0;
 
-                    switch(m_caster->GetMap()->urand(1,5))
+                    switch(urand(1,5))
                     {
                         case 1: spell_id = 33053; break;
                         case 2: spell_id = 33057; break;
@@ -1132,7 +1132,7 @@ void Spell::EffectDummy(uint32 i)
                 {
                     // selecting one from Bloodstained Fortune item
                     uint32 newitemid;
-                    switch(m_caster->GetMap()->urand(1,20))
+                    switch(urand(1,20))
                     {
                         case 1:  newitemid = 32688; break;
                         case 2:  newitemid = 32689; break;
@@ -1214,7 +1214,7 @@ void Spell::EffectDummy(uint32 i)
 
                     tempSummon->UnSummon();
 
-                    Creature* pCreature = m_caster->SummonCreature(entry_list[m_caster->GetMap()->urand(0, 2)], x, y, z, o,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,180000);
+                    Creature* pCreature = m_caster->SummonCreature(entry_list[urand(0, 2)], x, y, z, o,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,180000);
                     if (!pCreature)
                         return;
 
@@ -1358,7 +1358,7 @@ void Spell::EffectDummy(uint32 i)
                     {
                         //Polymorph Cast Visual Rank 1
                         const uint32 spell_list[6] = {32813, 32816, 32817, 32818, 32819, 32820};
-                        unitTarget->CastSpell(unitTarget, spell_list[m_caster->GetMap()->urand(0, 5)], true);
+                        unitTarget->CastSpell(unitTarget, spell_list[urand(0, 5)], true);
                     }
                     return;
                 }
@@ -2094,7 +2094,7 @@ void Spell::EffectTeleportUnits(uint32 i)
         // Dimensional Ripper - Everlook
         case 23442:
         {
-          int32 r = m_caster->GetMap()->irand(0, 119);
+          int32 r = irand(0, 119);
             if (r >= 70)                                  // 7/12 success
             {
                 if (r < 100)                              // 4/12 evil twin
@@ -2109,7 +2109,7 @@ void Spell::EffectTeleportUnits(uint32 i)
         {
             if (roll_chance_i(50))                        // 50% success
             {
-              int32 rand_eff = m_caster->GetMap()->urand(1,7);
+              int32 rand_eff = urand(1,7);
                 switch (rand_eff)
                 {
                     case 1:
@@ -2154,7 +2154,7 @@ void Spell::EffectTeleportUnits(uint32 i)
         {
             if (roll_chance_i(50))                        // 50% success
             {
-              int32 rand_eff = m_caster->GetMap()->urand(1,4);
+              int32 rand_eff = urand(1,4);
                 switch (rand_eff)
                 {
                     case 1:
@@ -2619,7 +2619,7 @@ void Spell::DoCreateItem(uint32 i, uint32 itemtype)
         /*int32 basePoints = m_currentBasePoints[i];
         int32 randomPoints = m_spellInfo->EffectDieSides[i];
         if (randomPoints)
-            num_to_add = basePoints + m_caster->GetMap()->irand(1, randomPoints);
+            num_to_add = basePoints + irand(1, randomPoints);
         else
             num_to_add = basePoints + 1;*/
     }
@@ -2808,7 +2808,7 @@ void Spell::EffectEnergize(uint32 i)
         if (!elixirs.empty())
         {
             // cast random elixir on target
-          uint32 rand_spell = m_caster->GetMap()->urand(0,elixirs.size()-1);
+          uint32 rand_spell = urand(0,elixirs.size()-1);
             m_caster->CastSpell(unitTarget,elixirs[rand_spell],true,m_CastItem);
         }
     }
@@ -3370,7 +3370,7 @@ void Spell::EffectDispel(uint32 i)
         for (int32 count=0; count < damage && list_size > 0; ++count)
         {
             // Random select buff for dispel
-            Aura *aur = dispel_list[m_caster->GetMap()->urand(0, list_size-1)];
+            Aura *aur = dispel_list[urand(0, list_size-1)];
 
             SpellEntry const* spellInfo = aur->GetSpellProto();
             // Base dispel chance
@@ -3518,7 +3518,7 @@ void Spell::EffectPickPocket(uint32 /*i*/)
     {
         int32 chance = 10 + int32(m_caster->getLevel()) - int32(unitTarget->getLevel());
 
-        if (chance > m_caster->GetMap()->irand(0, 19))
+        if (chance > irand(0, 19))
         {
             // Stealing successful
             //sLog.outDebug("Sending loot from pickpocket");
@@ -4592,7 +4592,7 @@ void Spell::EffectScriptEffect(uint32 effIndex)
 
             uint32 iTmpSpellId;
 
-            switch(m_caster->GetMap()->urand(0,3))
+            switch(urand(0,3))
             {
                 case 0:
                     iTmpSpellId = 26272;
@@ -4620,7 +4620,7 @@ void Spell::EffectScriptEffect(uint32 effIndex)
                 return;
 
             uint32 spell_id = 0;
-            switch(m_caster->GetMap()->urand(1,5))
+            switch(urand(1,5))
             {
                 case 1:  spell_id = 8854; break;
                 default: spell_id = 8855; break;
@@ -4754,7 +4754,7 @@ void Spell::EffectScriptEffect(uint32 effIndex)
                 return;
 
             uint32 spellId;
-            switch((uint32)m_caster->GetMap()->rand32()%7)
+            switch((uint32)rand32()%7)
             {
             case 0: spellId = 24717; break; // Pirate Costume
             case 1: spellId = 24741; break; // Wisp Costume
@@ -4821,7 +4821,7 @@ void Spell::EffectScriptEffect(uint32 effIndex)
             if (!unitTarget || !unitTarget->isAlive())
                 return;
 
-            switch((uint32)m_caster->GetMap()->rand32()%3)
+            switch((uint32)rand32()%3)
             {
             case 0: m_caster->CastSpell(unitTarget, 26207, true); break;
             case 1: m_caster->CastSpell(unitTarget, 26206, true); break;
@@ -4872,7 +4872,7 @@ void Spell::EffectScriptEffect(uint32 effIndex)
             for (uint8 i=0; i<5; i++)
                 if (unitTarget->HasAura(spellid+i, 0))
                     return;
-            unitTarget->CastSpell(unitTarget, spellid+m_caster->GetMap()->urand(0, 4), true);
+            unitTarget->CastSpell(unitTarget, spellid+urand(0, 4), true);
             break;
         }
 
@@ -4892,7 +4892,7 @@ void Spell::EffectScriptEffect(uint32 effIndex)
         case 29830:
         {
             uint32 item = 0;
-            switch (m_caster->GetMap()->urand(1,6))
+            switch (urand(1,6))
             {
                 case 1: case 2: case 3: item = 23584; break;// Loch Modan Lager
                 case 4: case 5:         item = 23585; break;// Stouthammer Lite
@@ -4952,7 +4952,7 @@ void Spell::EffectScriptEffect(uint32 effIndex)
                 return;
 
             uint32 spellId;
-            switch((uint32)m_caster->GetMap()->rand32()%4)
+            switch((uint32)rand32()%4)
             {
                 case 0:
                     spellId=46740;
@@ -6013,7 +6013,7 @@ void Spell::EffectKnockBack(uint32 i)
     float vcos, vsin;
     if (dx < 0.001f && dy < 0.001f)
     {
-      float angle = m_caster->GetMap()->rand_norm()*2*M_PI;
+      float angle = rand_norm()*2*M_PI;
         vcos = cos(angle);
         vsin = sin(angle);
     }
@@ -6260,7 +6260,7 @@ void Spell::EffectTransmitted(uint32 effIndex)
     {
         float min_dis = GetSpellMinRange(sSpellRangeStore.LookupEntry(m_spellInfo->rangeIndex));
         float max_dis = GetSpellMaxRange(sSpellRangeStore.LookupEntry(m_spellInfo->rangeIndex));
-        float dis = m_caster->GetMap()->rand_norm() * (max_dis - min_dis) + min_dis;
+        float dis = rand_norm() * (max_dis - min_dis) + min_dis;
 
         m_caster->GetClosePoint(fx, fy, fz, DEFAULT_WORLD_OBJECT_SIZE, dis);
     }
@@ -6490,7 +6490,7 @@ void Spell::EffectStealBeneficialBuff(uint32 i)
          for (int32 count=0; count < damage && list_size > 0; ++count)
          {
              // Random select buff for dispel
-            Aura *aur = steal_list[m_caster->GetMap()->urand(0, list_size-1)];
+            Aura *aur = steal_list[urand(0, list_size-1)];
 
             // Base dispel chance
             // TODO: possible chance depend from spell level??

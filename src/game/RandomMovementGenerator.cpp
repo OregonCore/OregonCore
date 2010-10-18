@@ -178,7 +178,7 @@ bool RandomMovementGenerator<Creature>::Update(Creature &creature, const uint32 
             if (creature.canFly())
                 creature.AddUnitMovementFlag(MOVEFLAG_FLYING2);
             else
-                creature.SetUnitMovementFlags(creature.GetMap()->irand(0,RUNNING_CHANCE_RANDOMMV) > 0 ? MOVEFLAG_WALK_MODE : MOVEFLAG_NONE);
+                creature.SetUnitMovementFlags(irand(0,RUNNING_CHANCE_RANDOMMV) > 0 ? MOVEFLAG_WALK_MODE : MOVEFLAG_NONE);
 
             _setRandomLocation(creature);
         }
