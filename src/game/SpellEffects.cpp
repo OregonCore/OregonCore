@@ -4511,18 +4511,11 @@ void Spell::EffectSummonObjectWild(uint32 i)
     pGameObj->SetRespawnTime(duration > 0 ? duration/IN_MILLISECONDS : 0);
     pGameObj->SetSpellId(m_spellInfo->Id);
 
-    if (pGameObj->GetGoType() != GAMEOBJECT_TYPE_FLAGDROP)   // make dropped flag clickable for other players (not set owner guid (created by) for this)...
-    {
-        if (m_originalCaster)
-            m_originalCaster->AddGameObject(pGameObj);
-        else
-            m_caster->AddGameObject(pGameObj);
-    }
+    // Wild object not have owner and check clickable by players
     map->Add(pGameObj);
 
     if (pGameObj->GetGoType() == GAMEOBJECT_TYPE_FLAGDROP && m_caster->GetTypeId() == TYPEID_PLAYER)
     {
-
         switch(pGameObj->GetMapId())
         {
             case 489:                                       //WS
@@ -4561,7 +4554,7 @@ void Spell::EffectSummonObjectWild(uint32 i)
             linkedGO->SetRespawnTime(duration > 0 ? duration/IN_MILLISECONDS : 0);
             linkedGO->SetSpellId(m_spellInfo->Id);
 
-            m_caster->AddGameObject(linkedGO);
+            // Wild object not have owner and check clickable by players
             map->Add(linkedGO);
         }
         else
