@@ -23,12 +23,18 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define SPELL_SLEEP                24777
-#define SPELL_NOXIOUSBREATH        24818
-#define SPELL_TAILSWEEP            15847
-//#define SPELL_MARKOFNATURE         25040   // Not working
-#define SPELL_VOLATILEINFECTION    24928
-#define SPELL_CORRUPTIONOFEARTH    24910
+enum eEmeriss
+{
+    SAY_AGGRO               = -1000401,
+    SAY_CASTCORRUPTION      = -1000402,
+
+    SPELL_SLEEP                = 24777,
+    SPELL_NOXIOUSBREATH        = 24818,
+    SPELL_TAILSWEEP            = 15847,
+    //SPELL_MARKOFNATURE       = 25040,   // Not working
+    SPELL_VOLATILEINFECTION    = 24928,
+    SPELL_CORRUPTIONOFEARTH    = 24910
+};
 
 struct boss_emerissAI : public ScriptedAI
 {
@@ -55,7 +61,10 @@ struct boss_emerissAI : public ScriptedAI
         CorruptionofEarth3_Timer = 0;
     }
 
-    void Aggro(Unit *who) {}
+    void Aggro(Unit *who) 
+    {
+        DoScriptText(SAY_AGGRO, me);
+    }
 
     void UpdateAI(const uint32 diff)
     {
@@ -107,6 +116,7 @@ struct boss_emerissAI : public ScriptedAI
         {
             if (CorruptionofEarth1_Timer <= diff)
             {
+                DoScriptText(SAY_CASTCORRUPTION, me);
                 DoCast(me->getVictim(),SPELL_CORRUPTIONOFEARTH);
 
                 //1 minutes for next one. Means not again with this health value

@@ -176,18 +176,18 @@ bool QuestAccept_npc_kerlonian(Player* pPlayer, Creature* pCreature, const Quest
 enum eRemtravel
 {
     SAY_REM_START               = -1000327,
-    SAY_REM_AGGRO               = -1000328,
-    SAY_REM_RAMP1_1             = -1000329,
-    SAY_REM_RAMP1_2             = -1000330,
-    SAY_REM_BOOK                = -1000331,
-    SAY_REM_TENT1_1             = -1000332,
-    SAY_REM_TENT1_2             = -1000333,
-    SAY_REM_MOSS                = -1000334,
-    EMOTE_REM_MOSS              = -1000335,
-    SAY_REM_MOSS_PROGRESS       = -1000336,
-    SAY_REM_PROGRESS            = -1000337,
-    SAY_REM_REMEMBER            = -1000338,
-    EMOTE_REM_END               = -1000339,
+    SAY_REM_RAMP1_1             = -1000328,
+    SAY_REM_RAMP1_2             = -1000329,
+    SAY_REM_BOOK                = -1000330,
+    SAY_REM_TENT1_1             = -1000331,
+    SAY_REM_TENT1_2             = -1000332,
+    SAY_REM_MOSS                = -1000333,
+    EMOTE_REM_MOSS              = -1000334,
+    SAY_REM_MOSS_PROGRESS       = -1000335,
+    SAY_REM_PROGRESS            = -1000336,
+    SAY_REM_REMEMBER            = -1000337,
+    EMOTE_REM_END               = -1000338,
+    SAY_REM_AGGRO               = -1000339,
 
     FACTION_ESCORTEE            = 10,
     QUEST_ABSENT_MINDED_PT2     = 731,
@@ -296,8 +296,8 @@ bool QuestAccept_npc_prospector_remtravel(Player* pPlayer, Creature* pCreature, 
 
 enum eThreshwackonator
 {
-    EMOTE_START             = -1000413, //signed for 4966
-    SAY_AT_CLOSE            = -1000414, //signed for 4966
+    EMOTE_START             = -1000325,
+    SAY_AT_CLOSE            = -1000326,
     QUEST_GYROMAST_REV      = 2078,
     NPC_GELKAK              = 6667,
     FACTION_HOSTILE         = 14

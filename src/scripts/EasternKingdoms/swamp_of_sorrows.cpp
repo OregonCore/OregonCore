@@ -34,16 +34,16 @@ EndContentData */
 
 enum eGalen
 {
-    GILAN_SAY_START_1            = -1780131,
-    GILAN_SAY_START_2            = -1780132,
-    GILAN_SAY_UNDER_ATTACK_1    = -1780133,
-    GILAN_SAY_UNDER_ATTACK_2    = -1780134,
-    GILAN_SAY_END                = -1780135,
-    GILAN_EMOTE_END_1            = -1780136,
-    GILAN_EMOTE_END_2            = -1780137,
+    GILAN_SAY_START_1         = -1000582,
+    GILAN_SAY_START_2         = -1000583,
+    GILAN_SAY_UNDER_ATTACK_1  = -1000584,
+    GILAN_SAY_UNDER_ATTACK_2  = -1000585,
+    GILAN_SAY_END             = -1000586,
+    GILAN_EMOTE_END_1         = -1000587,
+    GILAN_EMOTE_END_2         = -1000588,
 
-    QUEST_GALENS_ESCAPE            = 1393,
-    GO_GALENS_CAGE                = 37118
+    QUEST_GALENS_ESCAPE       = 1393,
+    GO_GALENS_CAGE            = 37118
 };
 
 struct npc_galen_goodwardAI : public npc_escortAI

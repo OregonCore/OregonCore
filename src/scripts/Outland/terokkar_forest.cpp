@@ -37,14 +37,17 @@ EndContentData */
 ## mob_unkor_the_ruthless
 ######*/
 
-#define SAY_SUBMIT                      -1000351
+enum eUnkor
+{
+    SAY_SUBMIT                  = -1000194,
 
-#define FACTION_HOSTILE                 45
-#define FACTION_FRIENDLY                35
-#define QUEST_DONTKILLTHEFATONE         9889
+    FACTION_HOSTILE             = 45,
+    FACTION_FRIENDLY            = 35,
+    QUEST_DONTKILLTHEFATONE     = 9889,
 
-#define SPELL_PULVERIZE                 2676
-//#define SPELL_QUID9889                32174
+    SPELL_PULVERIZE             = 2676
+    //SPELL_QUID9889            = 32174
+};
 
 struct mob_unkor_the_ruthlessAI : public ScriptedAI
 {
@@ -243,14 +246,17 @@ CreatureAI* GetAI_mob_netherweb_victim(Creature* pCreature)
 #define GOSSIP_FLOON1           "You owe Sim'salabim money. Hand them over or die!"
 #define GOSSIP_FLOON2           "Hand over the money or die...again!"
 
-#define SAY_FLOON_ATTACK        -1000352
+enum eFloon
+{
+    SAY_FLOON_ATTACK        = -1000195,
 
-#define FACTION_HOSTILE_FL      1738
-#define FACTION_FRIENDLY_FL     35
+    FACTION_HOSTILE_FL      = 1738,
+    FACTION_FRIENDLY_FL     = 35,
 
-#define SPELL_SILENCE           6726
-#define SPELL_FROSTBOLT         9672
-#define SPELL_FROST_NOVA        11831
+    SPELL_SILENCE           = 6726,
+    SPELL_FROSTBOLT         = 9672,
+    SPELL_FROST_NOVA        = 11831
+};
 
 struct npc_floonAI : public ScriptedAI
 {
@@ -331,15 +337,18 @@ bool GossipSelect_npc_floon(Player *player, Creature* pCreature, uint32 sender, 
 ## npc_isla_starmane
 ######*/
 
-#define SAY_PROGRESS_1  -1000353
-#define SAY_PROGRESS_2  -1000354
-#define SAY_PROGRESS_3  -1000355
-#define SAY_PROGRESS_4  -1000356
+enum eIsla
+{
+    SAY_PROGRESS_1  = -1000353,
+    SAY_PROGRESS_2  = -1000354,
+    SAY_PROGRESS_3  = -1000355,
+    SAY_PROGRESS_4  = -1000356,
 
-#define QUEST_EFTW_H    10052
-#define QUEST_EFTW_A    10051
-#define GO_CAGE         182794
-#define SPELL_CAT       32447
+    QUEST_EFTW_H    = 10052,
+    QUEST_EFTW_A    = 10051,
+    GO_CAGE         = 182794,
+    SPELL_CAT       = 32447
+};
 
 struct npc_isla_starmaneAI : public npc_escortAI
 {

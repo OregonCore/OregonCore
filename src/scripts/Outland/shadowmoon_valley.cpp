@@ -46,11 +46,14 @@ EndContentData */
 # mob_mature_netherwing_drake
 #####*/
 
-#define SPELL_PLACE_CARCASS             38439
-#define SPELL_JUST_EATEN                38502
-#define SPELL_NETHER_BREATH             38467
+enum eDrake
+{
+    SPELL_PLACE_CARCASS             = 38439,
+    SPELL_JUST_EATEN                = 38502,
+    SPELL_NETHER_BREATH             = 38467,
 
-#define SAY_JUST_EATEN                  -1000222
+    SAY_JUST_EATEN                  = -1000175
+};
 
 struct mob_mature_netherwing_drakeAI : public ScriptedAI
 {
@@ -854,21 +857,24 @@ bool QuestAccept_npc_overlord_morghor(Player *player, Creature* pCreature, const
 # npc_earthmender_wilda
 ####*/
 
-#define SAY_START -1000223
-#define SAY_AGGRO1 -1000224
-#define SAY_AGGRO2 -1000225
-#define ASSASSIN_SAY_AGGRO1 -1000226
-#define ASSASSIN_SAY_AGGRO2 -1000227
-#define SAY_PROGRESS1 -1000228
-#define SAY_PROGRESS2 -1000229
-#define SAY_PROGRESS3 -1000230
-#define SAY_PROGRESS4 -1000231
-#define SAY_PROGRESS5 -1000232
-#define SAY_PROGRESS6 -1000233
-#define SAY_END -1000234
+enum eWilda
+{
+    SAY_START               = -1000381,
+    SAY_AGGRO1              = -1000382,
+    SAY_AGGRO2              = -1000383,
+    ASSASSIN_SAY_AGGRO1     = -1000600,
+    ASSASSIN_SAY_AGGRO2     = -1000601,
+    SAY_PROGRESS1           = -1000384,
+    SAY_PROGRESS2           = -1000385,
+    SAY_PROGRESS3           = -1000386,
+    SAY_PROGRESS4           = -1000387,
+    SAY_PROGRESS5           = -1000388,
+    SAY_PROGRESS6           = -1000389,
+    SAY_END                 = -1000390,
 
-#define QUEST_ESCAPE_FROM_COILSKAR_CISTERN 10451
-#define NPC_COILSKAR_ASSASSIN 21044
+    QUEST_ESCAPE_FROM_COILSKAR_CISTERN  = 10451,
+    NPC_COILSKAR_ASSASSIN               = 21044
+};
 
 struct npc_earthmender_wildaAI : public npc_escortAI
 {

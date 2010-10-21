@@ -42,15 +42,18 @@ EndContentData */
 ## npc_draenei_survivor
 ######*/
 
-#define HEAL1        -1000248
-#define HEAL2        -1000249
-#define HEAL3        -1000250
-#define HEAL4        -1000251
+enum eSurv
+{
+    HEAL1           = -1000176,
+    HEAL2           = -1000177,
+    HEAL3           = -1000178,
+    HEAL4           = -1000179,
 
-#define HELP1        -1000252
-#define HELP2        -1000253
-#define HELP3        -1000254
-#define HELP4        -1000255
+    HELP1           = -1000180,
+    HELP2           = -1000181,
+    HELP3           = -1000182,
+    HELP4           = -1000183
+};
 
 struct npc_draenei_survivorAI : public ScriptedAI
 {
@@ -202,13 +205,16 @@ CreatureAI* GetAI_npc_draenei_survivor(Creature* pCreature)
 ## npc_engineer_spark_overgrind
 ######*/
 
-#define SAY_TEXT        -1000256
-#define SAY_EMOTE       -1000257
-#define ATTACK_YELL     -1000258
+enum eSpark
+{
+    SAY_TEXT                = -1000184,
+    SAY_EMOTE               = -1000185,
+    ATTACK_YELL             = -1000186,
+
+    SPELL_DYNAMITE          = 7978
+};
 
 #define GOSSIP_FIGHT    "Traitor! You will be brought to justice!"
-
-#define SPELL_DYNAMITE  7978
 
 struct npc_engineer_spark_overgrindAI : public ScriptedAI
 {

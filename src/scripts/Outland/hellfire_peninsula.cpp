@@ -35,17 +35,19 @@ EndContentData */
 /*######
 ## npc_aeranas
 ######*/
+enum eAeranas
+{
+    SAY_SUMMON                      = -1000138,
+    SAY_FREE                        = -1000139,
 
-#define SAY_SUMMON                      -1000138
-#define SAY_FREE                        -1000139
+    FACTION_HOSTILE                 = 16,
+    FACTION_FRIENDLY                = 35,
 
-#define FACTION_HOSTILE                 16
-#define FACTION_FRIENDLY                35
+    SPELL_ENVELOPING_WINDS          = 15535,
+    SPELL_SHOCK                     = 12553,
 
-#define SPELL_ENVELOPING_WINDS          15535
-#define SPELL_SHOCK                     12553
-
-#define C_AERANAS                       17085
+    C_AERANAS                       = 17085
+};
 
 struct npc_aeranasAI : public ScriptedAI
 {

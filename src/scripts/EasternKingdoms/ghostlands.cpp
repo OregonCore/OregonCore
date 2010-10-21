@@ -145,7 +145,7 @@ enum eEnums
     SAY_PROGRESS3       = -1000143,
     SAY_END1            = -1000144,
     SAY_END2            = -1000145,
-    SAY_CAPTAIN_ANSWER      = -1000146,
+    SAY_CAPTAIN_ANSWER  = -1000146,
 
     QUEST_ESCAPE_FROM_THE_CATACOMBS     = 9212,
     GO_CAGE             = 181152,

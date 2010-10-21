@@ -246,101 +246,296 @@ bool GossipSelect_npc_zephyr(Player *player, Creature* pCreature, uint32 sender,
     return true;
 }
 
+
 /*######
-# npc_kservant
+## npc_khadgars_servant
 ######*/
 
-#define SAY1       -1000306
-#define WHISP1     -1000307
-#define WHISP2     -1000308
-#define WHISP3     -1000309
-#define WHISP4     -1000310
-#define WHISP5     -1000311
-#define WHISP6     -1000312
-#define WHISP7     -1000313
-#define WHISP8     -1000314
-#define WHISP9     -1000315
-#define WHISP10    -1000316
-#define WHISP11    -1000317
-#define WHISP12    -1000318
-#define WHISP13    -1000319
-#define WHISP14    -1000320
-#define WHISP15    -1000321
-#define WHISP16    -1000322
-#define WHISP17    -1000323
-#define WHISP18    -1000324
-#define WHISP19    -1000325
-#define WHISP20    -1000326
-#define WHISP21    -1000327
-
-struct npc_kservantAI : public npc_escortAI
+enum eServant
 {
-public:
-    npc_kservantAI(Creature *c) : npc_escortAI(c) {}
+    SAY_KHAD_START          = -1000489,
+    SAY_KHAD_SERV_0         = -1000234,
 
-    void WaypointReached(uint32 i)
+    SAY_KHAD_SERV_1         = -1000235,
+    SAY_KHAD_SERV_2         = -1000236,
+    SAY_KHAD_SERV_3         = -1000237,
+    SAY_KHAD_SERV_4         = -1000238,
+
+    SAY_KHAD_SERV_5         = -1000239,
+    SAY_KHAD_SERV_6         = -1000240,
+    SAY_KHAD_SERV_7         = -1000241,
+
+    SAY_KHAD_SERV_8         = -1000242,
+    SAY_KHAD_SERV_9         = -1000243,
+    SAY_KHAD_SERV_10        = -1000244,
+    SAY_KHAD_SERV_11        = -1000245,
+
+    SAY_KHAD_SERV_12        = -1000246,
+    SAY_KHAD_SERV_13        = -1000247,
+
+    SAY_KHAD_SERV_14        = -1000248,
+    SAY_KHAD_SERV_15        = -1000249,
+    SAY_KHAD_SERV_16        = -1000250,
+    SAY_KHAD_SERV_17        = -1000251,
+
+    SAY_KHAD_SERV_18        = -1000252,
+    SAY_KHAD_SERV_19        = -1000253,
+    SAY_KHAD_SERV_20        = -1000254,
+    SAY_KHAD_SERV_21        = -1000255,
+
+    SAY_KHAD_INJURED        = -1000490,
+    SAY_KHAD_MIND_YOU       = -1000491,
+    SAY_KHAD_MIND_ALWAYS    = -1000492,
+    SAY_KHAD_ALDOR_GREET    = -1000493,
+    SAY_KHAD_SCRYER_GREET   = -1000494,
+    SAY_KHAD_HAGGARD        = -1000495,
+
+    NPC_KHADGAR             = 18166,
+    NPC_SHANIR              = 18597,
+    NPC_IZZARD              = 18622,
+    NPC_ADYRIA              = 18596,
+    NPC_ANCHORITE           = 19142,
+    NPC_ARCANIST            = 18547,
+    NPC_HAGGARD             = 19684,
+
+    QUEST_CITY_LIGHT        = 10211
+};
+
+struct npc_khadgars_servantAI : public npc_escortAI
+{
+    npc_khadgars_servantAI(Creature* pCreature) : npc_escortAI(pCreature)
     {
-        Player* pPlayer = GetPlayerForEscort();
+        if (pCreature->GetOwner() && pCreature->GetOwner()->GetTypeId() == TYPEID_PLAYER)
+            Start(false, false, pCreature->GetOwner()->GetGUID());
+        else
+            error_log("SD2: npc_khadgars_servant can not obtain owner or owner is not a player.");
 
-        if (!pPlayer)
-            return;
+        Reset();
+    }
 
-        switch(i)
-        {
-            case 0: DoScriptText(SAY1, me, pPlayer); break;
-            case 4: DoScriptText(WHISP1, me, pPlayer); break;
-            case 6: DoScriptText(WHISP2, me, pPlayer); break;
-            case 7: DoScriptText(WHISP3, me, pPlayer); break;
-            case 8: DoScriptText(WHISP4, me, pPlayer); break;
-            case 17: DoScriptText(WHISP5, me, pPlayer); break;
-            case 18: DoScriptText(WHISP6, me, pPlayer); break;
-            case 19: DoScriptText(WHISP7, me, pPlayer); break;
-            case 33: DoScriptText(WHISP8, me, pPlayer); break;
-            case 34: DoScriptText(WHISP9, me, pPlayer); break;
-            case 35: DoScriptText(WHISP10, me, pPlayer); break;
-            case 36: DoScriptText(WHISP11, me, pPlayer); break;
-            case 43: DoScriptText(WHISP12, me, pPlayer); break;
-            case 44: DoScriptText(WHISP13, me, pPlayer); break;
-            case 49: DoScriptText(WHISP14, me, pPlayer); break;
-            case 50: DoScriptText(WHISP15, me, pPlayer); break;
-            case 51: DoScriptText(WHISP16, me, pPlayer); break;
-            case 52: DoScriptText(WHISP17, me, pPlayer); break;
-            case 53: DoScriptText(WHISP18, me, pPlayer); break;
-            case 54: DoScriptText(WHISP19, me, pPlayer); break;
-            case 55: DoScriptText(WHISP20, me, pPlayer); break;
-            case 56: DoScriptText(WHISP21, me, pPlayer);
-                if (pPlayer)
-                    pPlayer->GroupEventHappens(10211,me);
-                break;
-        }
+
+    uint32 m_uiPointId;
+    uint32 m_uiTalkTimer;
+    uint32 m_uiTalkCount;
+    uint32 m_uiRandomTalkCooldown;
+
+    void Reset()
+    {
+        m_uiTalkTimer = 2500;
+        m_uiTalkCount = 0;
+        m_uiPointId = 0;
+        m_uiRandomTalkCooldown = 0;
     }
 
     void MoveInLineOfSight(Unit* pWho)
     {
-        if (HasEscortState(STATE_ESCORT_ESCORTING))
-            return;
-
-        if (pWho->GetTypeId() == TYPEID_PLAYER)
+        if (!m_uiRandomTalkCooldown && pWho->GetTypeId() == TYPEID_UNIT && me->IsWithinDistInMap(pWho, 10.0f))
         {
-            if (CAST_PLR(pWho)->GetQuestStatus(10211) == QUEST_STATUS_INCOMPLETE)
+            switch(pWho->GetEntry())
             {
-                float Radius = 10.0f;
-                if (me->IsWithinDistInMap(pWho, Radius))
-                {
-                    Start(false, false, pWho->GetGUID());
-                }
+                case NPC_HAGGARD:
+                    if (Player* pPlayer = GetPlayerForEscort())
+                        DoScriptText(SAY_KHAD_HAGGARD, pWho, pPlayer);
+                    m_uiRandomTalkCooldown = 7500;
+                    break;
+                case NPC_ANCHORITE:
+                    if (Player* pPlayer = GetPlayerForEscort())
+                        DoScriptText(SAY_KHAD_ALDOR_GREET, pWho, pPlayer);
+                    m_uiRandomTalkCooldown = 7500;
+                    break;
+                case NPC_ARCANIST:
+                    if (Player* pPlayer = GetPlayerForEscort())
+                        DoScriptText(SAY_KHAD_SCRYER_GREET, pWho, pPlayer);
+                    m_uiRandomTalkCooldown = 7500;
+                    break;
             }
         }
     }
 
-    void EnterCombat(Unit* who) {}
+        void WaypointStart(uint32 uiPointId)
+    {
+        if (uiPointId == 2)
+            DoScriptText(SAY_KHAD_SERV_0, me);
+    }
 
-    void Reset() {}
+    void WaypointReached(uint32 uiPointId)
+    {
+        m_uiPointId = uiPointId;
+
+        switch(uiPointId)
+        {
+            case 0:
+                if (Creature* pKhadgar = me->FindNearestCreature(NPC_KHADGAR, 10.0f))
+                    DoScriptText(SAY_KHAD_START, pKhadgar);
+                break;
+            case 5:
+            case 24:
+            case 50:
+            case 63:
+            case 74:
+            case 75:
+                SetEscortPaused(true);
+                break;
+            case 34:
+                if (Creature* pIzzard = me->FindNearestCreature(NPC_IZZARD, 10.0f))
+                    DoScriptText(SAY_KHAD_MIND_YOU, pIzzard);
+                break;
+            case 35:
+                if (Creature* pAdyria = me->FindNearestCreature(NPC_ADYRIA, 10.0f))
+                    DoScriptText(SAY_KHAD_MIND_ALWAYS, pAdyria);
+                break;
+        }
+    }
+
+    void UpdateEscortAI(const uint32 uiDiff)
+    {
+        if (m_uiRandomTalkCooldown)
+        {
+            if (m_uiRandomTalkCooldown <= uiDiff)
+                m_uiRandomTalkCooldown = 0;
+            else
+                m_uiRandomTalkCooldown -= uiDiff;
+        }
+
+        if (HasEscortState(STATE_ESCORT_PAUSED))
+        {
+            if (m_uiTalkTimer <= uiDiff)
+            {
+                m_uiTalkTimer = 7500;
+
+                Player* pPlayer = GetPlayerForEscort();
+                    me->ForcedDespawn();
+
+                switch(m_uiPointId)
+                {
+                    case 5:                                 //to lower city
+                    {
+                        switch(m_uiTalkCount)
+                        {
+                            case 1:
+                                DoScriptText(SAY_KHAD_SERV_1, me, pPlayer);
+                                break;
+                            case 2:
+                                DoScriptText(SAY_KHAD_SERV_2, me, pPlayer);
+                                break;
+                            case 3:
+                                DoScriptText(SAY_KHAD_SERV_3, me, pPlayer);
+                                break;
+                            case 4:
+                                DoScriptText(SAY_KHAD_SERV_4, me, pPlayer);
+                                SetEscortPaused(false);
+                                break;
+                        }
+                        break;
+                    }
+                    case 24:                                //in lower city
+                    {
+                        switch(m_uiTalkCount)
+                        {
+                            case 5:
+                                if (Creature* pShanir = me->FindNearestCreature(NPC_SHANIR, 10.0f))
+                                    DoScriptText(SAY_KHAD_INJURED, pShanir, pPlayer);
+
+                                DoScriptText(SAY_KHAD_SERV_5, me, pPlayer);
+                                break;
+                            case 6:
+                                DoScriptText(SAY_KHAD_SERV_6, me, pPlayer);
+                                break;
+                            case 7:
+                                DoScriptText(SAY_KHAD_SERV_7, me, pPlayer);
+                                SetEscortPaused(false);
+                                break;
+                        }
+                        break;
+                    }
+                    case 50:                                //outside
+                    {
+                        switch(m_uiTalkCount)
+                        {
+                            case 8:
+                                DoScriptText(SAY_KHAD_SERV_8, me, pPlayer);
+                                break;
+                            case 9:
+                                DoScriptText(SAY_KHAD_SERV_9, me, pPlayer);
+                                break;
+                            case 10:
+                                DoScriptText(SAY_KHAD_SERV_10, me, pPlayer);
+                                break;
+                            case 11:
+                                DoScriptText(SAY_KHAD_SERV_11, me, pPlayer);
+                                SetEscortPaused(false);
+                                break;
+                        }
+                        break;
+                    }
+                    case 63:                                //scryer
+                    {
+                        switch(m_uiTalkCount)
+                        {
+                            case 12:
+                                DoScriptText(SAY_KHAD_SERV_12, me, pPlayer);
+                                break;
+                            case 13:
+                                DoScriptText(SAY_KHAD_SERV_13, me, pPlayer);
+                                SetEscortPaused(false);
+                                break;
+                        }
+                        break;
+                    }
+                    case 74:                                //aldor
+                    {
+                        switch(m_uiTalkCount)
+                        {
+                            case 14:
+                                DoScriptText(SAY_KHAD_SERV_14, me, pPlayer);
+                                break;
+                            case 15:
+                                DoScriptText(SAY_KHAD_SERV_15, me, pPlayer);
+                                break;
+                            case 16:
+                                DoScriptText(SAY_KHAD_SERV_16, me, pPlayer);
+                                break;
+                            case 17:
+                                DoScriptText(SAY_KHAD_SERV_17, me, pPlayer);
+                                SetEscortPaused(false);
+                                break;
+                        }
+                        break;
+                    }
+                    case 75:                                //a'dal
+                    {
+                        switch(m_uiTalkCount)
+                        {
+                            case 18:
+                                DoScriptText(SAY_KHAD_SERV_18, me, pPlayer);
+                                break;
+                            case 19:
+                                DoScriptText(SAY_KHAD_SERV_19, me, pPlayer);
+                                break;
+                            case 20:
+                                DoScriptText(SAY_KHAD_SERV_20, me, pPlayer);
+                                break;
+                            case 21:
+                                DoScriptText(SAY_KHAD_SERV_21, me, pPlayer);
+                                pPlayer->AreaExploredOrEventHappens(QUEST_CITY_LIGHT);
+                                SetEscortPaused(false);
+                                break;
+                        }
+                        break;
+                    }
+                }
+                ++m_uiTalkCount;
+            }
+            else
+                m_uiTalkTimer -= uiDiff;
+        }
+        return;
+    }
 };
 
-CreatureAI* GetAI_npc_kservantAI(Creature* pCreature)
+CreatureAI* GetAI_npc_khadgars_servant(Creature* pCreature)
 {
-    return new npc_kservantAI(pCreature);
+    return new npc_khadgars_servantAI(pCreature);
 }
 
 /*######
@@ -349,16 +544,19 @@ CreatureAI* GetAI_npc_kservantAI(Creature* pCreature)
 
 #define GOSSIP_BOOK "Ezekiel said that you might have a certain book..."
 
-#define SAY_1       -1000328
-#define SAY_2       -1000329
-#define SAY_3       -1000330
-#define SAY_4       -1000331
-#define SAY_5       -1000332
-#define SAY_GIVEUP  -1000333
+enum eLarry
+{
+    SAY_1       = -1000274,
+    SAY_2       = -1000275,
+    SAY_3       = -1000276,
+    SAY_4       = -1000277,
+    SAY_5       = -1000278,
+    SAY_GIVEUP  = -1000279,
 
-#define QUEST_WBI       10231
-#define NPC_CREEPJACK   19726
-#define NPC_MALONE      19725
+    QUEST_WBI       = 10231,
+    NPC_CREEPJACK   = 19726,
+    NPC_MALONE      = 19725
+};
 
 struct npc_dirty_larryAI : public ScriptedAI
 {
@@ -645,8 +843,8 @@ void AddSC_shattrath_city()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name = "npc_kservant";
-    newscript->GetAI = &GetAI_npc_kservantAI;
+    newscript->Name = "npc_khadgars_servant";
+    newscript->GetAI = &GetAI_npc_khadgars_servant;
     newscript->RegisterSelf();
 
     newscript = new Script;

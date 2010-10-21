@@ -37,11 +37,11 @@ EndContentData */
 
 enum eEnums
 {
-    SAY_DS_START        = -1600402,
-    SAY_DS_DOWN_1       = -1600403,
-    SAY_DS_DOWN_2       = -1600404,
-    SAY_DS_DOWN_3       = -1600405,
-    SAY_DS_PROLOGUE     = -1600406,
+    SAY_DS_START        = -1000293,
+    SAY_DS_DOWN_1       = -1000294,
+    SAY_DS_DOWN_2       = -1000295,
+    SAY_DS_DOWN_3       = -1000296,
+    SAY_DS_PROLOGUE     = -1000297,
 
     SPELL_SHOOT         = 6660,
     QUEST_TOME_VALOR    = 1651,

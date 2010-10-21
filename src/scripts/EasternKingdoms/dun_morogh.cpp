@@ -33,7 +33,7 @@ EndContentData */
 ## npc_narm_faulk
 ######*/
 
-#define SAY_HEAL -1000280
+#define SAY_HEAL -1000187
 
 struct npc_narm_faulkAI : public ScriptedAI
 {

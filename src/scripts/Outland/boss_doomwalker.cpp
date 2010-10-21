@@ -23,22 +23,25 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define SAY_AGGRO                   -1000387
-#define SAY_EARTHQUAKE_1            -1000388
-#define SAY_EARTHQUAKE_2            -1000389
-#define SAY_OVERRUN_1               -1000390
-#define SAY_OVERRUN_2               -1000391
-#define SAY_SLAY_1                  -1000392
-#define SAY_SLAY_2                  -1000393
-#define SAY_SLAY_3                  -1000394
-#define SAY_DEATH                   -1000395
+enum eDoomwalker
+{
+    SAY_AGGRO                   = -1000159,
+    SAY_EARTHQUAKE_1            = -1000160,
+    SAY_EARTHQUAKE_2            = -1000161,
+    SAY_OVERRUN_1               = -1000162,
+    SAY_OVERRUN_2               = -1000163,
+    SAY_SLAY_1                  = -1000164,
+    SAY_SLAY_2                  = -1000165,
+    SAY_SLAY_3                  = -1000166,
+    SAY_DEATH                   = -1000167,
 
-#define SPELL_EARTHQUAKE            32686
-#define SPELL_SUNDER_ARMOR          33661
-#define SPELL_CHAIN_LIGHTNING       33665
-#define SPELL_OVERRUN               32636
-#define SPELL_ENRAGE                33653
-#define SPELL_MARK_DEATH            37128
+    SPELL_EARTHQUAKE            = 32686,
+    SPELL_SUNDER_ARMOR          = 33661,
+    SPELL_CHAIN_LIGHTNING       = 33665,
+    SPELL_OVERRUN               = 32636,
+    SPELL_ENRAGE                = 33653,
+    SPELL_MARK_DEATH            = 37128
+};
 
 struct boss_doomwalkerAI : public ScriptedAI
 {

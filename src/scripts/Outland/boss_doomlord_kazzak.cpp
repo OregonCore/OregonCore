@@ -23,27 +23,30 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define SAY_INTRO                       -1000375
-#define SAY_AGGRO1                      -1000376
-#define SAY_AGGRO2                      -1000377
-#define SAY_SURPREME1                   -1000378
-#define SAY_SURPREME2                   -1000379
-#define SAY_KILL1                       -1000380
-#define SAY_KILL2                       -1000381
-#define SAY_KILL3                       -1000382
-#define SAY_DEATH                       -1000383
-#define EMOTE_FRENZY                    -1000384
-#define SAY_RAND1                       -1000385
-#define SAY_RAND2                       -1000386
+enum eKazzak
+{
+    SAY_INTRO                       = -1000147,
+    SAY_AGGRO1                      = -1000148,
+    SAY_AGGRO2                      = -1000149,
+    SAY_SURPREME1                   = -1000150,
+    SAY_SURPREME2                   = -1000151,
+    SAY_KILL1                       = -1000152,
+    SAY_KILL2                       = -1000153,
+    SAY_KILL3                       = -1000154,
+    SAY_DEATH                       = -1000155,
+    EMOTE_FRENZY                    = -1000002,
+    SAY_RAND1                       = -1000157,
+    SAY_RAND2                       = -1000158,
 
-#define SPELL_SHADOWVOLLEY              32963
-#define SPELL_CLEAVE                    31779
-#define SPELL_THUNDERCLAP               36706
-#define SPELL_VOIDBOLT                  39329
-#define SPELL_MARKOFKAZZAK              32960
-#define SPELL_ENRAGE                    32964
-#define SPELL_CAPTURESOUL               32966
-#define SPELL_TWISTEDREFLECTION         21063
+    SPELL_SHADOWVOLLEY              = 32963,
+    SPELL_CLEAVE                    = 31779,
+    SPELL_THUNDERCLAP               = 36706,
+    SPELL_VOIDBOLT                  = 39329,
+    SPELL_MARKOFKAZZAK              = 32960,
+    SPELL_ENRAGE                    = 32964,
+    SPELL_CAPTURESOUL               = 32966,
+    SPELL_TWISTEDREFLECTION         = 21063
+};
 
 struct boss_doomlordkazzakAI : public ScriptedAI
 {

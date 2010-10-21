@@ -35,21 +35,24 @@ EndContentData */
 # npc_torek
 ####*/
 
-#define SAY_READY                   -1000106
-#define SAY_MOVE                    -1000107
-#define SAY_PREPARE                 -1000108
-#define SAY_WIN                     -1000109
-#define SAY_END                     -1000110
+enum
+{
+    SAY_READY                   = -1000106,
+    SAY_MOVE                    = -1000107,
+    SAY_PREPARE                 = -1000108,
+    SAY_WIN                     = -1000109,
+    SAY_END                     = -1000110,
 
-#define SPELL_REND                  11977
-#define SPELL_THUNDERCLAP           8078
+    SPELL_REND                  = 11977,
+    SPELL_THUNDERCLAP           = 8078,
 
-#define QUEST_TOREK_ASSULT          6544
+    QUEST_TOREK_ASSULT          = 6544,
 
-#define ENTRY_SPLINTERTREE_RAIDER   12859
-#define ENTRY_DURIEL                12860
-#define ENTRY_SILVERWING_SENTINEL   12896
-#define ENTRY_SILVERWING_WARRIOR    12897
+    NPC_SPLINTERTREE_RAIDER     = 12859,
+    ENTRY_DURIEL                = 12860,
+    ENTRY_SILVERWING_SENTINEL   = 12896,
+    ENTRY_SILVERWING_WARRIOR    = 12897
+};
 
 struct npc_torekAI : public npc_escortAI
 {

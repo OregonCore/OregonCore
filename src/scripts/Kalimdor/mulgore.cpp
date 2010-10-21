@@ -58,108 +58,126 @@ bool GossipSelect_npc_skorn_whitecloud(Player* pPlayer, Creature* pCreature, uin
     return true;
 }
 
-/*#####
-# npc_kyle_frenzied
-######*/
-
-struct npc_kyle_frenziedAI : public ScriptedAI
+enum eKyle
 {
-    npc_kyle_frenziedAI(Creature *c) : ScriptedAI(c) {}
+    EMOTE_SEE_LUNCH         = -1000340,
+    EMOTE_EAT_LUNCH         = -1000341,
+    EMOTE_DANCE             = -1000342,
 
-    int STATE;
-    uint32 wait;
-    uint64 player;
+    SPELL_LUNCH             = 42222,
+    NPC_KYLE_FRENZIED       = 23616,
+    NPC_KYLE_FRIENDLY       = 23622,
+    POINT_ID                = 1
+};
+
+struct npc_kyle_the_frenziedAI : public ScriptedAI
+{
+    npc_kyle_the_frenziedAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+
+    bool m_bEvent;
+    bool m_bIsMovingToLunch;
+    uint64 m_uiPlayerGUID;
+    uint32 m_uiEventTimer;
+    uint8 m_uiEventPhase;
 
     void Reset()
     {
-        STATE = 0;
-        me->SetDefaultMovementType(WAYPOINT_MOTION_TYPE);
-        me->GetMotionMaster()->Initialize();
-    }
-    void EnterCombat(Unit* who){}
+        m_bEvent = false;
+        m_bIsMovingToLunch = false;
+        m_uiPlayerGUID = 0;
+        m_uiEventTimer = 5000;
+        m_uiEventPhase = 0;
 
-    void SpellHit(Unit *caster, const SpellEntry* spell)
-    {   // we can feed him without any quest
-        if (spell->Id == 42222 && caster->GetTypeId() == TYPEID_PLAYER && CAST_PLR(caster)->GetTeam() == HORDE)
-        {
-            STATE = 1;
-            player = caster->GetGUID();
-            float x, y, z, z2;
-            caster->GetPosition(x, y, z);
-            x = x + 3.7f*cos(caster->GetOrientation());
-            y = y + 3.7f*sin(caster->GetOrientation());
-            z2 = me->GetBaseMap()->GetHeight(x,y,z,false);
-            z = (z2 <= INVALID_HEIGHT) ? z : z2;
-            me->SetDefaultMovementType(IDLE_MOTION_TYPE);       //there is other way to stop waypoint movement?
-            me->GetMotionMaster()->Initialize();
-            me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
-            me->GetMotionMaster()->MovePoint(0,x, y, z);
-        }
+        if (me->GetEntry() == NPC_KYLE_FRIENDLY)
+            me->UpdateEntry(NPC_KYLE_FRENZIED);
     }
 
-    void MovementInform(uint32 type, uint32 id)
+    void SpellHit(Unit* pCaster, SpellEntry const* pSpell)
     {
-        if (type == POINT_MOTION_TYPE)
+        if (!me->getVictim() && !m_bEvent && pSpell->Id == SPELL_LUNCH)
         {
-            switch(STATE)
+            if (pCaster->GetTypeId() == TYPEID_PLAYER)
+                m_uiPlayerGUID = pCaster->GetGUID();
+
+            if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() == WAYPOINT_MOTION_TYPE)
             {
-            case 1:
-                {
-                Unit *plr = Unit::GetUnit((*me),player);
-                if (plr)
-                    me->SetOrientation(me->GetAngle(plr));
-                me->HandleEmoteCommand(EMOTE_STATE_USESTANDING);    //eat
-                WorldPacket data;
-                me->BuildHeartBeatMsg(&data);
-                me->SendMessageToSet(&data,true);
-                wait = 3000;
-                STATE = 2;
-                break;
-                }
-            case 4:
-                me->setDeathState(JUST_DIED);
-                me->Respawn();
-                break;
+                me->GetMotionMaster()->MovementExpired();
+                me->GetMotionMaster()->MoveIdle();
+                me->StopMoving();
             }
+
+            m_bEvent = true;
+            DoScriptText(EMOTE_SEE_LUNCH, me);
+            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_CREATURE_SPECIAL);
         }
+    }
+
+    void MovementInform(uint32 uiType, uint32 uiPointId)
+    {
+        if (uiType != POINT_MOTION_TYPE || !m_bEvent)
+            return;
+
+        if (uiPointId == POINT_ID)
+            m_bIsMovingToLunch = false;
     }
 
     void UpdateAI(const uint32 diff)
     {
-        if (!STATE || STATE == 4)
-            return;
-        if (wait <= diff)
+        if (m_bEvent)
         {
-            switch(STATE)
+            if (m_bIsMovingToLunch)
+                return;
+
+            if (m_uiEventTimer < diff)
             {
-            case 2:
-                STATE = 3; wait = 7000;
-                me->UpdateEntry(23622,HORDE);
-                me->HandleEmoteCommand(EMOTE_ONESHOT_DANCE);
-                break;
-            case 3:
-                STATE = 4;  //go home
-                Player *plr = Unit::GetPlayer(*me, player);
-                if (plr && plr->GetQuestStatus(11129) == QUEST_STATUS_INCOMPLETE)
-                    plr->CompleteQuest(11129);
-                float x, y, z, z2, angle;
-                angle = me->GetAngle(-2146, -430);
-                me->GetPosition(x,y,z);
-                x = x + 40*cos(angle);
-                y = y + 40*sin(angle);
-                z2 = me->GetBaseMap()->GetHeight(x,y,MAX_HEIGHT,false);
-                z = (z2 <= INVALID_HEIGHT) ? z : z2;
-                me->GetMotionMaster()->MovePoint(0,x,y,z);
-                break;
+                m_uiEventTimer = 5000;
+                ++m_uiEventPhase;
+
+                switch(m_uiEventPhase)
+                {
+                    case 1:
+                        if (Player* pPlayer = Unit::GetPlayer(*me, m_uiPlayerGUID))
+                        {
+                            if (GameObject* pGo = GameObject::GetGameObject(*me, SPELL_LUNCH))
+                            {
+                                m_bIsMovingToLunch = true;
+                                me->GetMotionMaster()->MovePoint(POINT_ID, pGo->GetPositionX(), pGo->GetPositionY(), pGo->GetPositionZ());
+                            }
+                        }
+                        break;
+                    case 2:
+                        DoScriptText(EMOTE_EAT_LUNCH, me);
+                        me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_USESTANDING);
+                        break;
+                    case 3:
+                        if (Player* pPlayer = Unit::GetPlayer(*me, m_uiPlayerGUID))
+                            pPlayer->TalkedToCreature(me->GetEntry(), me->GetGUID());
+
+                        me->UpdateEntry(NPC_KYLE_FRIENDLY);
+                        break;
+                    case 4:
+                        m_uiEventTimer = 30000;
+                        DoScriptText(EMOTE_DANCE, me);
+                        me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_DANCESPECIAL);
+                        break;
+                    case 5:
+                        me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_NONE);
+                        Reset();
+                        me->GetMotionMaster()->Clear();
+                        break;
+                }
             }
-        } else wait -= diff;
+            else
+                m_uiEventTimer -= diff;
+        }
     }
 };
 
-CreatureAI* GetAI_npc_kyle_frenzied(Creature* pCreature)
+CreatureAI* GetAI_npc_kyle_the_frenzied(Creature* pCreature)
 {
-    return new npc_kyle_frenziedAI (pCreature);
+    return new npc_kyle_the_frenziedAI(pCreature);
 }
+
 
 /*#####
 # npc_plains_vision
@@ -283,8 +301,8 @@ void AddSC_mulgore()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name = "npc_kyle_frenzied";
-    newscript->GetAI = &GetAI_npc_kyle_frenzied;
+    newscript->Name = "npc_kyle_the_frenzied";
+    newscript->GetAI = &GetAI_npc_kyle_the_frenzied;
     newscript->RegisterSelf();
 
     newscript = new Script;

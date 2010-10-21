@@ -96,20 +96,21 @@ bool GossipSelect_npc_astor_hadren(Player* pPlayer, Creature* pCreature, uint32 
 
 enum eErland
 {
-    SAY_QUESTACCEPT     = -1000335,
-    SAY_START           = -1000336,
-    SAY_AGGRO_1         = -1000337,
-    SAY_AGGRO_2         = -1000338,
-    SAY_LAST            = -1000339,
+    SAY_QUESTACCEPT     = -1000306,
+    SAY_START           = -1000307,
+    SAY_AGGRO_1         = -1000308,
+    SAY_AGGRO_2         = -1000309,
+	SAY_AGGRO_3         = -1000310,
+    SAY_LAST            = -1000311,
 
-    SAY_THANKS          = -1000340,
-    SAY_RANE            = -1000341,
-    SAY_ANSWER          = -1000342,
-    SAY_MOVE_QUINN      = -1000343,
+    SAY_THANKS          = -1000312,
+    SAY_RANE            = -1000313,
+    SAY_ANSWER          = -1000314,
+    SAY_MOVE_QUINN      = -1000315,
 
-    SAY_GREETINGS       = -1000344,
-    SAY_QUINN           = -1000345,
-    SAY_ON_BYE          = -1000346,
+    SAY_GREETINGS       = -1000316,
+    SAY_QUINN           = -1000317,
+    SAY_ON_BYE          = -1000318,
 
     QUEST_ESCORTING     = 435,
     NPC_RANE            = 1950,
@@ -156,7 +157,7 @@ struct npc_deathstalker_erlandAI : public npc_escortAI
 
     void EnterCombat(Unit* who)
     {
-        DoScriptText(RAND(SAY_AGGRO_1,SAY_AGGRO_2), me, who);
+        DoScriptText(RAND(SAY_AGGRO_1,SAY_AGGRO_2,SAY_AGGRO_3), me, who);
     }
 };
 

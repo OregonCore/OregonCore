@@ -23,20 +23,25 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-//Spells of Taerar
+enum eTaerar
+{
+    //Spells of Taerar
+    SAY_AGGRO               = -1000399,
+    SAY_SUMMONSHADE         = -1000400,
 
-#define SPELL_SLEEP                 24777
-#define SPELL_NOXIOUSBREATH         24818
-#define SPELL_TAILSWEEP             15847
-//#define SPELL_MARKOFNATURE          25040                   // Not working
-#define SPELL_ARCANEBLAST           24857
-#define SPELL_BELLOWINGROAR         22686
-#define SPELL_SUMMONSHADE           24843
+    SPELL_SLEEP                 = 24777,
+    SPELL_NOXIOUSBREATH         = 24818,
+    SPELL_TAILSWEEP             = 15847,
+   //SPELL_MARKOFNATURE         = 25040,                   // Not working
+    SPELL_ARCANEBLAST           = 24857,
+    SPELL_BELLOWINGROAR         = 22686,
+    SPELL_SUMMONSHADE           = 24843,
 
-//Spells of Shades of Taerar
+    //Spells of Shades of Taerar
 
-#define SPELL_POSIONCLOUD           24840
-#define SPELL_POSIONBREATH          20667
+    SPELL_POSIONCLOUD           = 24840,
+    SPELL_POSIONBREATH          = 20667
+};
 
 struct boss_taerarAI : public ScriptedAI
 {
@@ -75,6 +80,7 @@ struct boss_taerarAI : public ScriptedAI
 
     void Aggro(Unit *who)
     {
+        DoScriptText(SAY_AGGRO, me);
     }
 
     void SummonShades(Unit* victim)
@@ -196,6 +202,7 @@ struct boss_taerarAI : public ScriptedAI
         {
             if (Summon2_Timer <= diff)
             {
+                DoScriptText(SAY_SUMMONSHADE, me);
                 //Inturrupt any spell casting
                 me->InterruptNonMeleeSpells(false);
                 me->setFaction(35);

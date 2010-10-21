@@ -32,19 +32,22 @@ EndContentData */
 #include "ScriptedEscortAI.h"
 #include "ScriptedFollowerAI.h"
 
-#define SAY_READY -1000200
-#define SAY_AGGRO1 -1000201
-#define SAY_SEARCH -1000202
-#define SAY_AGGRO2 -1000203
-#define SAY_AGGRO3 -1000204
-#define SAY_FINISH -1000205
+enum eAME
+{
+    SAY_READY           = -1000446,
+    SAY_SEARCH          = -1000447,
+    SAY_FINISH          = -1000448,
+    SAY_AGGRO1          = -1000449,
+    SAY_AGGRO2          = -1000450,
+    SAY_AGGRO3          = -1000451,
 
-#define SPELL_DEMORALIZINGSHOUT  13730
+    SPELL_DEMORALIZINGSHOUT  = 13730,
 
-#define QUEST_CHASING_AME 4245
-#define ENTRY_TARLORD 6519
-#define ENTRY_TARLORD1 6519
-#define ENTRY_STOMPER 6513
+    QUEST_CHASING_AME   = 4245,
+    ENTRY_TARLORD       = 6519,
+    ENTRY_TARLORD1      = 6519,
+    ENTRY_STOMPER       = 6513
+};
 
 struct npc_ameAI : public npc_escortAI
 {
@@ -159,7 +162,7 @@ enum eRingo
     SAY_RIN_END_3               = -1000428,
     EMOTE_RIN_END_4             = -1000429,
     EMOTE_RIN_END_5             = -1000430,
-    SAY_RIN_END_6               = -1000431, // signed for 6784
+    SAY_RIN_END_6               = -1000431,
     SAY_SPR_END_7               = -1000432,
     EMOTE_RIN_END_8             = -1000433,
 

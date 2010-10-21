@@ -41,7 +41,7 @@ EndContentData */
 
 enum eKanati
 {
-    SAY_KAN_START              = -1600410,
+    SAY_KAN_START              = -1000410,
 
     QUEST_PROTECT_KANATI        = 4966,
     NPC_GALAK_ASS               = 10720
@@ -105,11 +105,11 @@ bool QuestAccept_npc_kanati(Player* pPlayer, Creature* pCreature, const Quest* p
 
 enum eLakota
 {
-    SAY_LAKO_START              = -1600365,
-    SAY_LAKO_LOOK_OUT           = -1600366,
-    SAY_LAKO_HERE_COME          = -1600367,
-    SAY_LAKO_MORE               = -1600368,
-    SAY_LAKO_END                = -1600369,
+    SAY_LAKO_START              = -1000365,
+    SAY_LAKO_LOOK_OUT           = -1000366,
+    SAY_LAKO_HERE_COME          = -1000367,
+    SAY_LAKO_MORE               = -1000368,
+    SAY_LAKO_END                = -1000369,
 
     QUEST_FREE_AT_LAST          = 4904,
     NPC_GRIM_BANDIT             = 10758,
@@ -192,9 +192,9 @@ bool QuestAccept_npc_lakota_windsong(Player* pPlayer, Creature* pCreature, const
 
 enum ePacka
 {
-    SAY_START           = -1000147,
-    SAY_WYVERN          = -1000148,
-    SAY_COMPLETE        = -1000149,
+    SAY_START           = -1000362,
+    SAY_WYVERN          = -1000363,
+    SAY_COMPLETE        = -1000364,
 
     QUEST_HOMEWARD      = 4770,
     NPC_WYVERN          = 4107,

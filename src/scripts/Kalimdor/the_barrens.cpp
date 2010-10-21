@@ -71,17 +71,17 @@ bool GossipSelect_npc_beaten_corpse(Player* pPlayer, Creature* pCreature, uint32
 
 enum eGilthares
 {
-    SAY_GIL_START               = -1600370,
-    SAY_GIL_AT_LAST             = -1600371,
-    SAY_GIL_PROCEED             = -1600372,
-    SAY_GIL_FREEBOOTERS         = -1600373,
-    SAY_GIL_AGGRO_1             = -1600374,
-    SAY_GIL_AGGRO_2             = -1600375,
-    SAY_GIL_AGGRO_3             = -1600376,
-    SAY_GIL_AGGRO_4             = -1600377,
-    SAY_GIL_ALMOST              = -1600378,
-    SAY_GIL_SWEET               = -1600379,
-    SAY_GIL_FREED               = -1600380,
+    SAY_GIL_START               = -1000370,
+    SAY_GIL_AT_LAST             = -1000371,
+    SAY_GIL_PROCEED             = -1000372,
+    SAY_GIL_FREEBOOTERS         = -1000373,
+    SAY_GIL_AGGRO_1             = -1000374,
+    SAY_GIL_AGGRO_2             = -1000375,
+    SAY_GIL_AGGRO_3             = -1000376,
+    SAY_GIL_AGGRO_4             = -1000377,
+    SAY_GIL_ALMOST              = -1000378,
+    SAY_GIL_SWEET               = -1000379,
+    SAY_GIL_FREED               = -1000380,
 
     QUEST_FREE_FROM_HOLD        = 898,
     AREA_MERCHANT_COAST         = 391,
@@ -502,14 +502,14 @@ CreatureAI* GetAI_npc_twiggy_flathead(Creature* pCreature)
 
 enum eEnums_Wizzlecrank
 {
-    SAY_START           = -1000272,
-    SAY_STARTUP1        = -1000273,
-    SAY_STARTUP2        = -1000274,
-    SAY_MERCENARY       = -1000275,
-    SAY_PROGRESS_1      = -1000276,
-    SAY_PROGRESS_2      = -1000277,
-    SAY_PROGRESS_3      = -1000278,
-    SAY_END             = -1000279,
+    SAY_START           = -1000298,
+    SAY_STARTUP1        = -1000299,
+    SAY_STARTUP2        = -1000300,
+    SAY_MERCENARY       = -1000301,
+    SAY_PROGRESS_1      = -1000302,
+    SAY_PROGRESS_2      = -1000303,
+    SAY_PROGRESS_3      = -1000304,
+    SAY_END             = -1000305,
 
     QUEST_ESCAPE        = 863,
     FACTION_RATCHET     = 637,

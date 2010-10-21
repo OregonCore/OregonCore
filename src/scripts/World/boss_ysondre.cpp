@@ -23,15 +23,21 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define SPELL_SLEEP                24777
-#define SPELL_NOXIOUSBREATH        24818
-#define SPELL_TAILSWEEP            15847
-//#define SPELL_MARKOFNATURE         25040                    // Not working
-#define SPELL_LIGHTNINGWAVE        24819
-#define SPELL_SUMMONDRUIDS         24795
+enum eYsonde
+{
+    SAY_AGGRO               = -1000360,
+    SAY_SUMMONDRUIDS        = -1000361,
 
-//druid spells
-#define SPELL_MOONFIRE             21669
+    SPELL_SLEEP                = 24777,
+    SPELL_NOXIOUSBREATH        = 24818,
+    SPELL_TAILSWEEP            = 15847,
+    //SPELL_MARKOFNATURE       = 25040,                   // Not working
+    SPELL_LIGHTNINGWAVE        = 24819,
+    SPELL_SUMMONDRUIDS         = 24795,
+
+    //druid spells
+    SPELL_MOONFIRE             = 21669
+};
 
 // Ysondre script
 struct boss_ysondreAI : public ScriptedAI
@@ -65,6 +71,7 @@ struct boss_ysondreAI : public ScriptedAI
 
     void Aggro(Unit *who)
     {
+        DoScriptText(SAY_AGGRO, me);
     }
 
     void SummonDruids(Unit* victim)
@@ -143,6 +150,7 @@ struct boss_ysondreAI : public ScriptedAI
         {
             if (SummonDruids1_Timer <= diff)
             {
+                DoScriptText(SAY_SUMMONDRUIDS, me);
                 // summon 10 druids
                 Unit *pTarget = NULL;
                 for (int i = 0; i < 10;i++)

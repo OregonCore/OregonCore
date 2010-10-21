@@ -42,10 +42,13 @@ EndContentData */
 ## mob_aquementas
 ######*/
 
-#define AGGRO_YELL_AQUE     -1000350
+enum eAqua
+{
+    AGGRO_YELL_AQUE     = -1000168,
 
-#define SPELL_AQUA_JET      13586
-#define SPELL_FROST_SHOCK   15089
+    SPELL_AQUA_JET      = 13586,
+    SPELL_FROST_SHOCK   = 15089
+};
 
 struct mob_aquementasAI : public ScriptedAI
 {
@@ -136,20 +139,23 @@ CreatureAI* GetAI_mob_aquementas(Creature* pCreature)
 ## npc_custodian_of_time
 ######*/
 
-#define WHISPER_CUSTODIAN_1     -1000150
-#define WHISPER_CUSTODIAN_2     -1000151
-#define WHISPER_CUSTODIAN_3     -1000152
-#define WHISPER_CUSTODIAN_4     -1000153
-#define WHISPER_CUSTODIAN_5     -1000154
-#define WHISPER_CUSTODIAN_6     -1000155
-#define WHISPER_CUSTODIAN_7     -1000156
-#define WHISPER_CUSTODIAN_8     -1000157
-#define WHISPER_CUSTODIAN_9     -1000158
-#define WHISPER_CUSTODIAN_10    -1000159
-#define WHISPER_CUSTODIAN_11    -1000160
-#define WHISPER_CUSTODIAN_12    -1000161
-#define WHISPER_CUSTODIAN_13    -1000162
-#define WHISPER_CUSTODIAN_14    -1000163
+enum eCustodian
+{
+    WHISPER_CUSTODIAN_1     = -1000217,
+    WHISPER_CUSTODIAN_2     = -1000218,
+    WHISPER_CUSTODIAN_3     = -1000219,
+    WHISPER_CUSTODIAN_4     = -1000220,
+    WHISPER_CUSTODIAN_5     = -1000221,
+    WHISPER_CUSTODIAN_6     = -1000222,
+    WHISPER_CUSTODIAN_7     = -1000223,
+    WHISPER_CUSTODIAN_8     = -1000224,
+    WHISPER_CUSTODIAN_9     = -1000225,
+    WHISPER_CUSTODIAN_10    = -1000226,
+    WHISPER_CUSTODIAN_11    = -1000227,
+    WHISPER_CUSTODIAN_12    = -1000228,
+    WHISPER_CUSTODIAN_13    = -1000229,
+    WHISPER_CUSTODIAN_14    = -1000230
+};
 
 struct npc_custodian_of_timeAI : public npc_escortAI
 {
@@ -346,13 +352,12 @@ bool GossipSelect_npc_stone_watcher_of_norgannon(Player* pPlayer, Creature* pCre
 
 enum e00X17
 {
-    //texts are signed for 7806
-    SAY_OOX_START           = -1060000,
-    SAY_OOX_AGGRO1          = -1060001,
-    SAY_OOX_AGGRO2          = -1060002,
-    SAY_OOX_AMBUSH          = -1060003,
-    SAY_OOX17_AMBUSH_REPLY  = -1060004,
-    SAY_OOX_END             = -1060005,
+    SAY_OOX_START           = -1000287,
+    SAY_OOX_AGGRO1          = -1000288,
+    SAY_OOX_AGGRO2          = -1000289,
+    SAY_OOX_AMBUSH          = -1000290,
+    SAY_OOX_END             = -1000292,
+    SAY_OOX17_AMBUSH_REPLY  = -1000208,
 
     Q_OOX17                 = 648,
     SPAWN_FIRST             = 7803,
@@ -486,14 +491,14 @@ bool GOHello_go_landmark_treasure(Player *player, GameObject* _GO)
 
 enum eTooga
 {
-    SAY_TOOG_THIRST             = -1600391,
-    SAY_TOOG_WORRIED            = -1600392,
-    SAY_TOOG_POST_1             = -1600393,
-    SAY_TORT_POST_2             = -1600394,
-    SAY_TOOG_POST_3             = -1600395,
-    SAY_TORT_POST_4             = -1600396,
-    SAY_TOOG_POST_5             = -1600397,
-    SAY_TORT_POST_6             = -1600398,
+    SAY_TOOG_THIRST             = -1000391,
+    SAY_TOOG_WORRIED            = -1000392,
+    SAY_TOOG_POST_1             = -1000393,
+    SAY_TORT_POST_2             = -1000394,
+    SAY_TOOG_POST_3             = -1000395,
+    SAY_TORT_POST_4             = -1000396,
+    SAY_TOOG_POST_5             = -1000397,
+    SAY_TORT_POST_6             = -1000398,
 
     QUEST_TOOGA                 = 1560,
     NPC_TORTA                   = 6015,

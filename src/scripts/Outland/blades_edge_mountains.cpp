@@ -63,23 +63,26 @@ CreatureAI* GetAI_mobs_bladespire_ogre(Creature* pCreature)
 ## mobs_nether_drake
 ######*/
 
-#define SAY_NIHIL_1         -1000396
-#define SAY_NIHIL_2         -1000397
-#define SAY_NIHIL_3         -1000398
-#define SAY_NIHIL_4         -1000399
-#define SAY_NIHIL_INTERRUPT -1000400
+enum eDrake
+{
+    SAY_NIHIL_1                 = -1000169,
+    SAY_NIHIL_2                 = -1000170,
+    SAY_NIHIL_3                 = -1000171,
+    SAY_NIHIL_4                 = -1000172,
+    SAY_NIHIL_INTERRUPT         = -1000173,
 
-#define ENTRY_WHELP                 20021
-#define ENTRY_PROTO                 21821
-#define ENTRY_ADOLE                 21817
-#define ENTRY_MATUR                 21820
-#define ENTRY_NIHIL                 21823
+    ENTRY_WHELP                 = 20021,
+    ENTRY_PROTO                 = 21821,
+    ENTRY_ADOLE                 = 21817,
+    ENTRY_MATUR                 = 21820,
+    ENTRY_NIHIL                 = 21823,
 
-#define SPELL_T_PHASE_MODULATOR     37573
+    SPELL_T_PHASE_MODULATOR     = 37573,
 
-#define SPELL_ARCANE_BLAST          38881
-#define SPELL_MANA_BURN             38884
-#define SPELL_INTANGIBLE_PRESENCE   36513
+    SPELL_ARCANE_BLAST          = 38881,
+    SPELL_MANA_BURN             = 38884,
+    SPELL_INTANGIBLE_PRESENCE   = 36513
+};
 
 struct mobs_nether_drakeAI : public ScriptedAI
 {
@@ -259,7 +262,7 @@ CreatureAI* GetAI_mobs_nether_drake(Creature* pCreature)
 ## npc_daranelle
 ######*/
 
-#define SAY_DARANELLE -1000401
+#define SAY_DARANELLE -1000174
 
 struct npc_daranelleAI : public ScriptedAI
 {

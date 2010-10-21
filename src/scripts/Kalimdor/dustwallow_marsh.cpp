@@ -206,8 +206,8 @@ bool GossipSelect_npc_nat_pagle(Player *player, Creature* pCreature, uint32 send
 
 enum
 {
-    SAY_MOR_CHALLENGE               = -1800499,
-    SAY_MOR_SCARED                  = -1800500,
+    SAY_MOR_CHALLENGE               = -1000499,
+    SAY_MOR_SCARED                  = -1000500,
 
     QUEST_CHALLENGE_MOROKK          = 1173,
 
@@ -326,26 +326,26 @@ bool QuestAccept_npc_morokk(Player* pPlayer, Creature* pCreature, const Quest* p
 
 enum
 {
-    SAY_OGR_START                       = -1800452,
-    SAY_OGR_SPOT                        = -1800453,
-    SAY_OGR_RET_WHAT                    = -1800454,
-    SAY_OGR_RET_SWEAR                   = -1800455,
-    SAY_OGR_REPLY_RET                   = -1800456,
-    SAY_OGR_RET_TAKEN                   = -1800457,
-    SAY_OGR_TELL_FIRE                   = -1800458,
-    SAY_OGR_RET_NOCLOSER                = -1800459,
-    SAY_OGR_RET_NOFIRE                  = -1800460,
-    SAY_OGR_RET_HEAR                    = -1800461,
-    SAY_OGR_CAL_FOUND                   = -1800462,
-    SAY_OGR_CAL_MERCY                   = -1800463,
-    SAY_OGR_HALL_GLAD                   = -1800464,
-    EMOTE_OGR_RET_ARROW                 = -1800465,
-    SAY_OGR_RET_ARROW                   = -1800466,
-    SAY_OGR_CAL_CLEANUP                 = -1800467,
-    SAY_OGR_NODIE                       = -1800468,
-    SAY_OGR_SURVIVE                     = -1800469,
-    SAY_OGR_RET_LUCKY                   = -1800470,
-    SAY_OGR_THANKS                      = -1800471,
+    SAY_OGR_START                       = -1000452,
+    SAY_OGR_SPOT                        = -1000453,
+    SAY_OGR_RET_WHAT                    = -1000454,
+    SAY_OGR_RET_SWEAR                   = -1000455,
+    SAY_OGR_REPLY_RET                   = -1000456,
+    SAY_OGR_RET_TAKEN                   = -1000457,
+    SAY_OGR_TELL_FIRE                   = -1000458,
+    SAY_OGR_RET_NOCLOSER                = -1000459,
+    SAY_OGR_RET_NOFIRE                  = -1000460,
+    SAY_OGR_RET_HEAR                    = -1000461,
+    SAY_OGR_CAL_FOUND                   = -1000462,
+    SAY_OGR_CAL_MERCY                   = -1000463,
+    SAY_OGR_HALL_GLAD                   = -1000464,
+    EMOTE_OGR_RET_ARROW                 = -1000465,
+    SAY_OGR_RET_ARROW                   = -1000466,
+    SAY_OGR_CAL_CLEANUP                 = -1000467,
+    SAY_OGR_NODIE                       = -1000468,
+    SAY_OGR_SURVIVE                     = -1000469,
+    SAY_OGR_RET_LUCKY                   = -1000470,
+    SAY_OGR_THANKS                      = -1000471,
 
     QUEST_QUESTIONING                   = 1273,
 
@@ -618,11 +618,11 @@ CreatureAI* GetAI_npc_ogron(Creature* pCreature)
 
 enum eHendel
 {
-    SAY_PROGRESS_1_TER          = -1600411,
-    SAY_PROGRESS_2_HEN          = -1600412,
-    SAY_PROGRESS_3_TER          = -1600413,
-    SAY_PROGRESS_4_TER          = -1600414,
-    EMOTE_SURRENDER             = -1600415,
+    SAY_PROGRESS_1_TER          = -1000411,
+    SAY_PROGRESS_2_HEN          = -1000412,
+    SAY_PROGRESS_3_TER          = -1000413,
+    SAY_PROGRESS_4_TER          = -1000414,
+    EMOTE_SURRENDER             = -1000415,
 
     QUEST_MISSING_DIPLO_PT16    = 1324,
     FACTION_HOSTILE             = 168,

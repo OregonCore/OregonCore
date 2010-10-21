@@ -33,11 +33,14 @@ EndContentData */
 # npc_blood_knight_stillblade
 #######*/
 
-#define SAY_HEAL -1000334
+enum
+{
+    SAY_HEAL                        = -1000193,
 
-#define QUEST_REDEEMING_THE_DEAD        9685
-#define SPELL_SHIMMERING_VESSEL         31225
-#define SPELL_REVIVE_SELF               32343
+    QUEST_REDEEMING_THE_DEAD        = 9685,
+    SPELL_SHIMMERING_VESSEL         = 31225,
+    SPELL_REVIVE_SELF               = 32343
+};
 
 struct npc_blood_knight_stillbladeAI : public ScriptedAI
 {

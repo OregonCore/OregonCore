@@ -35,16 +35,19 @@ EndContentData */
 ## npc_lady_sylvanas_windrunner
 ######*/
 
-#define SAY_LAMENT_END              -1000357
-#define EMOTE_LAMENT_END            -1000358
+enum eSylvanas
+{
+    SAY_LAMENT_END              = -1000196,
+    EMOTE_LAMENT_END            = -1000197,
 
-#define SOUND_CREDIT                10896
-#define ENTRY_HIGHBORNE_LAMENTER    21628
-#define ENTRY_HIGHBORNE_BUNNY       21641
+    SOUND_CREDIT                = 10896,
+    ENTRY_HIGHBORNE_LAMENTER    = 21628,
+    ENTRY_HIGHBORNE_BUNNY       = 21641,
 
-#define SPELL_HIGHBORNE_AURA        37090
-#define SPELL_SYLVANAS_CAST         36568
-#define SPELL_RIBBON_OF_SOULS       34432                   //the real one to use might be 37099
+    SPELL_HIGHBORNE_AURA        = 37090,
+    SPELL_SYLVANAS_CAST         = 36568,
+    SPELL_RIBBON_OF_SOULS       = 34432                   //the real one to use might be 37099
+};
 
 float HighborneLoc[4][3]=
 {

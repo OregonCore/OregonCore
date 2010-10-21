@@ -67,8 +67,8 @@ CreatureAI* GetAI_mobs_mana_tapped(Creature* pCreature)
 
 enum eProspectorAnvilward
 {
-    SAY_ANVIL1                                  = -1000281,
-    SAY_ANVIL2                                  = -1000282,
+    SAY_ANVIL1                                  = -1000209,
+    SAY_ANVIL2                                  = -1000210,
     QUEST_THE_DWARVEN_SPY                       = 8483,
 };
 
@@ -139,38 +139,41 @@ bool GossipSelect_npc_prospector_anvilward(Player* pPlayer, Creature* pCreature,
 ## Quest 9686 Second Trial
 ######*/
 
-#define QUEST_SECOND_TRIAL 9686
+enum eTrial
+{
+    QUEST_SECOND_TRIAL            = 9686,
 
-#define MASTER_KELERUN_BLOODMOURN 17807
+    MASTER_KELERUN_BLOODMOURN     = 17807,
 
-#define CHAMPION_BLOODWRATH 17809
-#define CHAMPION_LIGHTREND  17810
-#define CHAMPION_SWIFTBLADE 17811
-#define CHAMPION_SUNSTRIKER 17812
+    CHAMPION_BLOODWRATH           = 17809,
+    CHAMPION_LIGHTREND            = 17810,
+    CHAMPION_SWIFTBLADE           = 17811,
+    CHAMPION_SUNSTRIKER           = 17812,
 
-#define HARBINGER_OF_THE_SECOND_TRIAL 182052
+    HARBINGER_OF_THE_SECOND_TRIAL = 182052,
 
-#define SPELL_FLASH_OF_LIGHT 19939
-#define TIMER_FLASH_OF_LIGHT 3225
+    SPELL_FLASH_OF_LIGHT          = 19939,
+    TIMER_FLASH_OF_LIGHT          = 3225,
 
-#define SPELL_SEAL_OF_JUSTICE 20164
-#define TIMER_SEAL_OF_JUSTICE 10000
+    SPELL_SEAL_OF_JUSTICE         = 20164,
+    TIMER_SEAL_OF_JUSTICE         = 10000,
 
-#define SPELL_JUDGEMENT_OF_LIGHT 20271
-#define TIMER_JUDGEMENT_OF_LIGHT 10000
+    SPELL_JUDGEMENT_OF_LIGHT      = 20271,
+    TIMER_JUDGEMENT_OF_LIGHT      = 10000,
 
-#define SPELL_SEAL_OF_COMMAND 20375
-#define TIMER_SEAL_OF_COMMAND 20000
+    SPELL_SEAL_OF_COMMAND         = 20375,
+    TIMER_SEAL_OF_COMMAND         = 20000,
 
-#define OFFSET_NEXT_ATTACK 750
+    OFFSET_NEXT_ATTACK            = 750,
 
-#define FACTION_HOSTILE    45
-#define FACTION_FRIENDLY   7
+    FACTION_HOSTILE               = 45,
+    FACTION_FRIENDLY              = 7,
 
-#define TEXT_SECOND_TRIAL_1 -1645006
-#define TEXT_SECOND_TRIAL_2 -1645007
-#define TEXT_SECOND_TRIAL_3 -1645008
-#define TEXT_SECOND_TRIAL_4 -1645009
+    TEXT_SECOND_TRIAL_1           = -1000319,
+    TEXT_SECOND_TRIAL_2           = -1000320,
+    TEXT_SECOND_TRIAL_3           = -1000321,
+    TEXT_SECOND_TRIAL_4           = -1000322
+};
 
 struct Locations
 {
@@ -533,9 +536,12 @@ bool GOHello_go_second_trial(Player* /*pPlayer*/, GameObject* pGO)
 ## npc_apprentice_mirveda
 ######*/
 
-#define QUEST_UNEXPECTED_RESULT 8488
-#define MOB_GHARZUL     15958
-#define MOB_ANGERSHADE  15656
+enum eMirveda
+{
+    QUEST_UNEXPECTED_RESULT = 8488,
+    MOB_GHARZUL             = 15958,
+    MOB_ANGERSHADE          = 15656
+};
 
 struct npc_apprentice_mirvedaAI : public ScriptedAI
 {
@@ -610,9 +616,12 @@ CreatureAI* GetAI_npc_apprentice_mirvedaAI(Creature* pCreature)
 ## npc_infused_crystal
 ######*/
 
-#define MOB_ENRAGED_WRAITH  17086
-#define EMOTE   -1000283
-#define QUEST_POWERING_OUR_DEFENSES 8490
+enum eCrystal
+{
+    MOB_ENRAGED_WRAITH          = 17086,
+    EMOTE                       = -1000283,
+    QUEST_POWERING_OUR_DEFENSES = 8490
+};
 
 struct Location
 {

@@ -37,11 +37,11 @@ EndContentData */
 
 enum eOOX
 {
-    SAY_OOX_START           = -1060000,
-    SAY_OOX_AGGRO1          = -1060001,
-    SAY_OOX_AGGRO2          = -1060002,
-    SAY_OOX_AMBUSH          = -1060003,
-    SAY_OOX_END             = -1060005,
+    SAY_OOX_START           = -1000287,
+    SAY_OOX_AGGRO1          = -1000288,
+    SAY_OOX_AGGRO2          = -1000289,
+    SAY_OOX_AMBUSH          = -1000290,
+    SAY_OOX_END             = -1000292,
 
     QUEST_RESQUE_OOX_09     = 836,
 

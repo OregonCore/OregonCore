@@ -26,7 +26,14 @@ EndScriptData */
 
 // **** This script is for use within every single guard to save coding time ****
 
-#define GENERIC_CREATURE_COOLDOWN 5000
+enum eGuard
+{
+    SAY_GUARD_SIL_AGGRO1        = -1000198,
+    SAY_GUARD_SIL_AGGRO2        = -1000199,
+    SAY_GUARD_SIL_AGGRO3        = -1000200
+};
+
+#define GENERIC_CREATURE_COOLDOWN   5000
 
 void guardAI::Reset()
 {
@@ -40,15 +47,9 @@ void guardAI::EnterCombat(Unit *who)
     {
         switch(rand()%3)
         {
-        case 0:
-            DoSay("Taste blade, mongrel!", LANG_UNIVERSAL,NULL);
-            break;
-        case 1:
-            DoSay("Please tell me that you didn't just do what I think you just did. Please tell me that I'm not going to have to hurt you...", LANG_UNIVERSAL,NULL);
-            break;
-        case 2:
-            DoSay("As if we don't have enough problems, you go and create more!", LANG_UNIVERSAL,NULL);
-            break;
+            case 0: DoScriptText(SAY_GUARD_SIL_AGGRO1, me, who); break;
+            case 1: DoScriptText(SAY_GUARD_SIL_AGGRO2, me, who); break;
+            case 2: DoScriptText(SAY_GUARD_SIL_AGGRO3, me, who); break;
         }
     }
 

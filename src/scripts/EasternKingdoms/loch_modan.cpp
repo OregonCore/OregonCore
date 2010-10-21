@@ -98,10 +98,10 @@ bool GossipSelect_npc_mountaineer_pebblebitty(Player* pPlayer, Creature* pCreatu
 
 enum eMiran
 {
-    MIRAN_SAY_AMBUSH_ONE        = -1780127,
-    MIRAN_SAY_AMBUSH_TWO        = -1780128,
-    DARK_IRON_RAIDER_SAY_AMBUSH = -1780129,
-    MIRAN_SAY_QUEST_END         = -1780130,
+    MIRAN_SAY_AMBUSH_ONE        = -1000571,
+    DARK_IRON_RAIDER_SAY_AMBUSH = -1000572,
+    MIRAN_SAY_AMBUSH_TWO        = -1000573,
+    MIRAN_SAY_QUEST_END         = -1000574,
 
     QUEST_PROTECTING_THE_SHIPMENT  = 309,
     DARK_IRON_RAIDER               = 2149

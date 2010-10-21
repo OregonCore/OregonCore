@@ -33,9 +33,9 @@ EndContentData */
 
 enum eDyingKodo
 {
-    SAY_SMEED_HOME_1                = -1600348,
-    SAY_SMEED_HOME_2                = -1600349,
-    SAY_SMEED_HOME_3                = -1600350,
+    SAY_SMEED_HOME_1                = -1000348,
+    SAY_SMEED_HOME_2                = -1000349,
+    SAY_SMEED_HOME_3                = -1000350,
 
     GOSSIP_MENU_KODO_HOME            = 21000,
 

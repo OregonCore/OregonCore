@@ -35,28 +35,32 @@ EndContentData */
 ## npc_manaforge_control_console
 ######*/
 
-#define EMOTE_START     -1000296
-#define EMOTE_60        -1000297
-#define EMOTE_30        -1000298
-#define EMOTE_10        -1000299
-#define EMOTE_COMPLETE  -1000300
-#define EMOTE_ABORT     -1000301
+enum eManaforge
+{
 
-#define ENTRY_BNAAR_C_CONSOLE   20209
-#define ENTRY_CORUU_C_CONSOLE   20417
-#define ENTRY_DURO_C_CONSOLE    20418
-#define ENTRY_ARA_C_CONSOLE     20440
+    EMOTE_START             = -1000211,
+    EMOTE_60                = -1000212,
+    EMOTE_30                = -1000213,
+    EMOTE_10                = -1000214,
+    EMOTE_COMPLETE          = -1000215,
+    EMOTE_ABORT             = -1000216,
 
-#define ENTRY_SUNFURY_TECH      20218
-#define ENTRY_SUNFURY_PROT      20436
+    ENTRY_BNAAR_C_CONSOLE   = 20209,
+    ENTRY_CORUU_C_CONSOLE   = 20417,
+    ENTRY_DURO_C_CONSOLE    = 20418,
+    ENTRY_ARA_C_CONSOLE     = 20440,
 
-#define ENTRY_ARA_TECH          20438
-#define ENTRY_ARA_ENGI          20439
-#define ENTRY_ARA_GORKLONN      20460
+    ENTRY_SUNFURY_TECH      = 20218,
+    ENTRY_SUNFURY_PROT      = 20436,
 
-#define SPELL_DISABLE_VISUAL    35031
-#define SPELL_INTERRUPT_1       35016                       //ACID mobs should cast this
-#define SPELL_INTERRUPT_2       35176                       //ACID mobs should cast this (Manaforge Ara-version)
+    ENTRY_ARA_TECH          = 20438,
+    ENTRY_ARA_ENGI          = 20439,
+    ENTRY_ARA_GORKLONN      = 20460,
+
+    SPELL_DISABLE_VISUAL    = 35031,
+    SPELL_INTERRUPT_1       = 35016,                      //ACID mobs should cast this
+    SPELL_INTERRUPT_2       = 35176                       //ACID mobs should cast this (Manaforge Ara-version)
+};
 
 struct npc_manaforge_control_consoleAI : public ScriptedAI
 {
@@ -336,20 +340,23 @@ bool GOHello_go_manaforge_control_console(Player *player, GameObject* _GO)
 ######*/
 
 // The Speech of Dawnforge, Ardonis & Pathaleon
-#define SAY_COMMANDER_DAWNFORGE_1           -1000128
-#define SAY_ARCANIST_ARDONIS_1              -1000129
-#define SAY_COMMANDER_DAWNFORGE_2           -1000130
-#define SAY_PATHALEON_CULATOR_IMAGE_1       -1000131
-#define SAY_COMMANDER_DAWNFORGE_3           -1000132
-#define SAY_PATHALEON_CULATOR_IMAGE_2       -1000133
-#define SAY_PATHALEON_CULATOR_IMAGE_2_1     -1000134
-#define SAY_PATHALEON_CULATOR_IMAGE_2_2     -1000135
-#define SAY_COMMANDER_DAWNFORGE_4           -1000136
-#define SAY_ARCANIST_ARDONIS_2              -1000136
-#define SAY_COMMANDER_DAWNFORGE_5           -1000137
+enum eDawnforge
+{
+    SAY_COMMANDER_DAWNFORGE_1           = -1000128,
+    SAY_ARCANIST_ARDONIS_1              = -1000129,
+    SAY_COMMANDER_DAWNFORGE_2           = -1000130,
+    SAY_PATHALEON_CULATOR_IMAGE_1       = -1000131,
+    SAY_COMMANDER_DAWNFORGE_3           = -1000132,
+    SAY_PATHALEON_CULATOR_IMAGE_2       = -1000133,
+    SAY_PATHALEON_CULATOR_IMAGE_2_1     = -1000134,
+    SAY_PATHALEON_CULATOR_IMAGE_2_2     = -1000135,
+    SAY_COMMANDER_DAWNFORGE_4           = -1000136,
+    SAY_ARCANIST_ARDONIS_2              = -1000136,
+    SAY_COMMANDER_DAWNFORGE_5           = -1000137,
 
-#define QUEST_INFO_GATHERING                10198
-#define SPELL_SUNFURY_DISGUISE              34603
+    QUEST_INFO_GATHERING                = 10198,
+    SPELL_SUNFURY_DISGUISE              = 34603
+};
 
 // Entries of Arcanist Ardonis, Commander Dawnforge, Pathaleon the Curators Image
 int CreatureEntry[3][1] =

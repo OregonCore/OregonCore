@@ -166,22 +166,23 @@ bool GossipSelect_npc_loramus_thalipedes(Player* pPlayer, Creature* pCreature, u
 # mob_rizzle_sprysprocket
 ####*/
 
-#define MOB_DEPTH_CHARGE 23025
-#define SPELL_RIZZLE_BLACKJACK 39865
-#define SPELL_RIZZLE_ESCAPE 39871
-#define SPELL_RIZZLE_FROST_GRENADE 40525
-#define SPELL_DEPTH_CHARGE_TRAP 38576
-#define SPELL_PERIODIC_DEPTH_CHARGE 39912
-#define SPELL_GIVE_SOUTHFURY_MOONSTONE 39886
+enum eRizzle
+{
+    MOB_DEPTH_CHARGE               = 23025,
+    SPELL_RIZZLE_BLACKJACK         = 39865,
+    SPELL_RIZZLE_ESCAPE            = 39871,
+    SPELL_RIZZLE_FROST_GRENADE     = 40525,
+    SPELL_DEPTH_CHARGE_TRAP        = 38576,
+    SPELL_PERIODIC_DEPTH_CHARGE    = 39912,
+    SPELL_GIVE_SOUTHFURY_MOONSTONE = 39886,
 
-#define SAY_RIZZLE_START -1000245
-#define SAY_RIZZLE_GRENADE -1000246
-#define SAY_RIZZLE_FINAL -1000247
+    SAY_RIZZLE_START            = -1000351,
+    EMOTE_START                 = -1000352,
+    SAY_RIZZLE_GRENADE          = -1000354,
+    SAY_RIZZLE_FINAL            = -1000355
+};
 
 #define GOSSIP_GET_MOONSTONE "Hand over the Southfury moonstone and I'll let you go."
-
-//next message must be send to player when Rizzle jump into river, not implemented
-#define MSG_ESCAPE_NOTICE "Rizzle Sprysprocket takes the Southfury moonstone and escapes into the river. Follow her!"
 
 float WPs[58][4] =
 {
@@ -318,7 +319,7 @@ struct mob_rizzle_sprysprocketAI : public ScriptedAI
                 }
                 //begin swimming and summon depth charges
                 Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID);
-                SendText(MSG_ESCAPE_NOTICE, pPlayer);
+                DoScriptText(EMOTE_START, me);
                 DoCast(me, SPELL_PERIODIC_DEPTH_CHARGE);
                 me->SetUnitMovementFlags(MOVEFLAG_FLYING2 | MOVEFLAG_SWIMMING);
                 me->SetSpeed(MOVE_RUN, 0.85f, true);
