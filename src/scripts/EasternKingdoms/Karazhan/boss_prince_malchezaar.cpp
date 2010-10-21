@@ -319,8 +319,8 @@ struct boss_malchezaarAI : public ScriptedAI
         for (; itr != t_list.end(); ++itr)                   //store the threat list in a different container
         {
             Unit *pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
-                                                            //only on alive players
-            if (pTarget && pTarget->isAlive() && pTarget->GetTypeId() == TYPEID_PLAYER)
+                                                            //only on alive players and not the tank
+            if (pTarget && pTarget->isAlive() && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget != me->getVictim())
                 targets.push_back(pTarget);
         }
 
