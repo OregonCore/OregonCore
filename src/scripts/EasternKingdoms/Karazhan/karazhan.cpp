@@ -194,7 +194,7 @@ struct npc_barnesAI : public npc_escortAI
             case 0:
                 me->CastSpell(me, SPELL_TUXEDO, false);
                 if (GameObject* Go = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORLEFT)))
-                    Go->SetGoState(GO_STATE_READY);
+                    Go->SetGoState(GO_STATE_ACTIVE);
                 break;
             case 2:
                 TalkCount = 0;
@@ -232,7 +232,7 @@ struct npc_barnesAI : public npc_escortAI
                     Go->SetGoState(GO_STATE_READY);
                 PrepareEncounter();
                 if (GameObject* Go = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_GAMEOBJECT_CURTAINS)))
-                    Go->SetGoState(GO_STATE_READY);
+                    Go->SetGoState(GO_STATE_ACTIVE);
                 break;
         }
     }
