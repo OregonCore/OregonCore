@@ -366,6 +366,17 @@ struct GameObjectInfo
     };
     uint32 ScriptId;
 
+    uint32 GetCharges() const                               // despawn at uses amount
+    {
+        switch(type)
+        {
+            //case GAMEOBJECT_TYPE_TRAP:        return trap.charges;
+            case GAMEOBJECT_TYPE_GUARDPOST:   return guardpost.charges;
+            case GAMEOBJECT_TYPE_SPELLCASTER: return spellcaster.charges;
+            default: return 0;
+        }
+    }
+
     uint32 GetGossipMenuId() const
     {
         switch(type)
@@ -638,7 +649,6 @@ class GameObject : public WorldObject
 
         void CastSpell(Unit *target, uint32 spell);
     protected:
-        uint32      m_charges;                              // Spell charges for GAMEOBJECT_TYPE_SPELLCASTER (22)
         uint32      m_spellId;
         time_t      m_respawnTime;                          // (secs) time of next respawn (or despawn if GO have owner()),
         uint32      m_respawnDelayTime;                     // (secs) if 0 then current GO state no dependent from timer
