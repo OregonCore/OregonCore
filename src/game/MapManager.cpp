@@ -55,17 +55,15 @@ MapManager::~MapManager()
     Map::DeleteStateMachine();
 }
 
-void
-MapManager::Initialize()
+void MapManager::Initialize()
 {
     Map::InitStateMachine();
 
     // debugging code, should be deleted some day
     {
-        for (int i=0;i<MAX_GRID_STATE; i++)
-        {
-            i_GridStates[i] = si_GridStates[i];
-        }
+        for (uint8 i = 0; i < MAX_GRID_STATE; ++i)
+             i_GridStates[i] = si_GridStates[i];
+
         i_GridStateErrorCount = 0;
     }
     int num_threads(sWorld.getConfig(CONFIG_NUMTHREADS));
@@ -86,7 +84,7 @@ void MapManager::InitializeVisibilityDistanceInfo()
 void MapManager::checkAndCorrectGridStatesArray()
 {
     bool ok = true;
-    for (int i=0;i<MAX_GRID_STATE; i++)
+    for (int i=0; i<MAX_GRID_STATE; i++)
     {
         if (i_GridStates[i] != si_GridStates[i])
         {
@@ -163,8 +161,9 @@ Map* MapManager::FindMap(uint32 mapid, uint32 instanceId) const
 bool MapManager::CanPlayerEnter(uint32 mapid, Player* player)
 {
     const MapEntry *entry = sMapStore.LookupEntry(mapid);
-    if(!entry)
+    if (!entry)
        return false;
+
     const char *mapName = entry->name[player->GetSession()->GetSessionDbcLocale()];
 
     if (entry->map_type == MAP_INSTANCE || entry->map_type == MAP_RAID)
@@ -253,8 +252,7 @@ void MapManager::RemoveBonesFromMap(uint32 mapid, uint64 guid, float x, float y)
     }
 }
 
-void
-MapManager::Update(time_t diff)
+void MapManager::Update(time_t diff)
 {
     i_timer.Update(diff);
     if (!i_timer.Passed())
@@ -270,6 +268,9 @@ MapManager::Update(time_t diff)
     }
     if (m_updater.activated())
         m_updater.wait();
+
+    for (iter = i_maps.begin(); iter != i_maps.end(); ++iter)
+        iter->second->DelayedUpdate(uint32(i_timer.GetCurrent()));
 
     ObjectAccessor::Instance().Update(i_timer.GetCurrent());
     sWorld.RecordTimeDiff("UpdateObjectAccessor");

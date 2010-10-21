@@ -328,9 +328,9 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
             return GetZoneId(GetAreaFlag(x,y,z),i_id);
         }
 
-        virtual void MoveAllCreaturesInMoveList();
-        virtual void RemoveAllObjectsInRemoveList();
-        virtual void RelocationNotify();
+        void MoveAllCreaturesInMoveList();
+        void RemoveAllObjectsInRemoveList();
+        void RelocationNotify();
 
         bool CreatureRespawnRelocation(Creature *c);        // used only in MoveAllCreaturesInMoveList and ObjectGridUnloader
 
@@ -353,6 +353,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
         void AddObjectToRemoveList(WorldObject *obj);
         void AddObjectToSwitchList(WorldObject *obj, bool on);
+        virtual void DelayedUpdate(const uint32 diff);
 
         virtual bool RemoveBones(uint64 guid, float x, float y);
 
