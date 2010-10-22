@@ -76,6 +76,20 @@ Object::Object()
     m_objectUpdated     = false;
 }
 
+WorldObject::~WorldObject()
+{
+    // this may happen because there are many !create/delete
+    if (m_isWorldObject && m_currMap)
+    {
+        if (GetTypeId() == TYPEID_CORPSE)
+        {
+            sLog.outCrash("Object::~Object Corpse guid="UI64FMTD", type=%d, entry=%u deleted but still in map!!", GetGUID(), ((Corpse*)this)->GetType(), GetEntry());
+            ASSERT(false);
+        }
+        ResetMap();
+    }
+}
+
 Object::~Object()
 {
     if (IsInWorld())
@@ -1022,7 +1036,7 @@ WorldObject::WorldObject()
     : m_mapId(0), m_InstanceId(0),
     m_positionX(0.0f), m_positionY(0.0f), m_positionZ(0.0f), m_orientation(0.0f), m_currMap(NULL)
     , m_zoneScript(NULL)
-    , m_isActive(false), IsTempWorldObject(false)
+    , m_isActive(false), m_isWorldObject(false)
     , m_name("")
 {
     m_groupLootTimer    = 0;
@@ -1593,10 +1607,31 @@ void WorldObject::SendGameObjectCustomAnim(uint64 guid)
 void WorldObject::SetMap(Map * map)
 {
     ASSERT(map);
+    ASSERT(!IsInWorld() || GetTypeId() == TYPEID_CORPSE);
+    if (m_currMap == map) // command add npc: first create, than loadfromdb
+        return;
+    if (m_currMap)
+    {
+        sLog.outCrash("WorldObject::SetMap: obj %u new map %u %u, old map %u %u", (uint32)GetTypeId(), map->GetId(), map->GetInstanceId(), m_currMap->GetId(), m_currMap->GetInstanceId());
+        ASSERT(false);
+    }
     m_currMap = map;
-    //lets save current map's Id/instanceId
     m_mapId = map->GetId();
     m_InstanceId = map->GetInstanceId();
+    if (m_isWorldObject)
+        m_currMap->AddWorldObject(this);
+}
+
+void WorldObject::ResetMap()
+{
+    ASSERT(m_currMap);
+    ASSERT(!IsInWorld());
+    if (m_isWorldObject)
+        m_currMap->RemoveWorldObject(this);
+    m_currMap = NULL;
+    //maybe not for corpse
+    //m_mapId = 0;
+    //m_InstanceId = 0;
 }
 
 Map const* WorldObject::GetBaseMap() const

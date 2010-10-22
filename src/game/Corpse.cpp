@@ -32,6 +32,7 @@
 #include "World.h"
 
 Corpse::Corpse(CorpseType type) : WorldObject()
+, m_type(type)
 {
     m_objectType |= TYPEMASK_CORPSE;
     m_objectTypeId = TYPEID_CORPSE;
@@ -40,11 +41,12 @@ Corpse::Corpse(CorpseType type) : WorldObject()
 
     m_valuesCount = CORPSE_END;
 
-    m_type = type;
-
     m_time = time(NULL);
 
     lootForBody = false;
+
+    if (type != CORPSE_BONES)
+        m_isWorldObject = true;
 }
 
 Corpse::~Corpse()
@@ -79,12 +81,7 @@ bool Corpse::Create(uint32 guidlow, Player *owner, uint32 mapid, float x, float 
 {
     ASSERT(owner);
 
-    WorldObject::_Create(guidlow, HIGHGUID_CORPSE);
     Relocate(x,y,z,ang);
-
-    //we need to assign owner's map for corpse
-    //in other way we will get a crash in Corpse::SaveToDB()
-    SetMap(owner->GetMap());
 
     if (!IsPositionValid())
     {
@@ -92,6 +89,12 @@ bool Corpse::Create(uint32 guidlow, Player *owner, uint32 mapid, float x, float 
             guidlow, owner->GetName(), x, y);
         return false;
     }
+
+    //we need to assign owner's map for corpse
+    //in other way we will get a crash in Corpse::SaveToDB()
+    SetMap(owner->GetMap());
+
+    WorldObject::_Create(guidlow, HIGHGUID_CORPSE);
 
     SetFloatValue(OBJECT_FIELD_SCALE_X, 1);
     SetFloatValue(CORPSE_FIELD_POS_X, x);
@@ -190,6 +193,10 @@ bool Corpse::LoadFromDB(uint32 guid, Field *fields)
         sLog.outError("Corpse (guidlow %d, owner %d) have wrong corpse type, not load.",GetGUIDLow(),GUID_LOPART(GetOwnerGUID()));
         return false;
     }
+
+    if (m_type != CORPSE_BONES)
+        m_isWorldObject = true;
+
     uint32 instanceid  = fields[8].GetUInt32();
 
     // overwrite possible wrong/corrupted guid
@@ -208,7 +215,6 @@ bool Corpse::LoadFromDB(uint32 guid, Field *fields)
     }
 
     m_grid = Oregon::ComputeGridPair(GetPositionX(), GetPositionY());
-
     return true;
 }
 

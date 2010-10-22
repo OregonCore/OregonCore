@@ -335,7 +335,7 @@ class Object
 class WorldObject : public Object, public WorldLocation
 {
     public:
-        virtual ~WorldObject () {}
+        virtual ~WorldObject();
 
         virtual void Update (uint32 /*time_diff*/) { }
 
@@ -494,10 +494,10 @@ class WorldObject : public Object, public WorldLocation
         void SendPlaySound(uint32 Sound, bool OnlySelf);
 
         void SetMap(Map * map);
+        virtual void ResetMap();
         Map * GetMap() const { ASSERT(m_currMap); return m_currMap; }
         Map * FindMap() const { return m_currMap; }
         //used to check all object's GetMap() calls when object is not in world!
-        void ResetMap() { m_currMap = NULL; }
 
         //this function should be removed in nearest time...
         Map const* GetBaseMap() const;
@@ -520,10 +520,11 @@ class WorldObject : public Object, public WorldLocation
         template<class NOTIFIER> void VisitNearbyObject(const float &radius, NOTIFIER &notifier) const { GetMap()->VisitAll(GetPositionX(), GetPositionY(), radius, notifier); }
         template<class NOTIFIER> void VisitNearbyGridObject(const float &radius, NOTIFIER &notifier) const { GetMap()->VisitGrid(GetPositionX(), GetPositionY(), radius, notifier); }
         template<class NOTIFIER> void VisitNearbyWorldObject(const float &radius, NOTIFIER &notifier) const { GetMap()->VisitWorld(GetPositionX(), GetPositionY(), radius, notifier); }
-        bool IsTempWorldObject;
 
         uint32 m_groupLootTimer;                            // (msecs)timer used for group loot
         uint64 lootingGroupLeaderGUID;                      // used to find group which is looting corpse
+
+        bool m_isWorldObject;
 
     protected:
         explicit WorldObject();

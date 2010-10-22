@@ -99,6 +99,8 @@ Pet::Pet(PetType type) : Creature()
     m_autospells.clear();
     m_declinedname = NULL;
     //m_isActive = true;
+
+    m_isWorldObject = true;
 }
 
 Pet::~Pet()
