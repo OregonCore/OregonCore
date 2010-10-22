@@ -1018,9 +1018,9 @@ bool QuestAccept_npc_earthmender_wilda(Player* player, Creature* creature, Quest
     return true;
 }
 
--/*#####
--# Quest: Battle of the crimson watch
--#####*/
+/*######
+## Quest: Battle of the crimson watch
+######*/
 
 enum
 {
