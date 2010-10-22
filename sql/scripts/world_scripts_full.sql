@@ -127,6 +127,8 @@ UPDATE `creature_template` SET `ScriptName`='npc_ravenholdt' WHERE `entry`=13936
 UPDATE `creature_template` SET `ScriptName`='npc_professor_phizzlethorpe' where entry=2768;
 
 /* ASHENVALE */
+UPDATE `creature_template` SET ScriptName='npc_muglash' WHERE `entry`=12717;
+UPDATE `gameobject_template` SET ScriptName='go_naga_brazier' WHERE `entry`=178247;
 UPDATE `creature_template` SET `ScriptName`='npc_torek' WHERE `entry`=12858;
 UPDATE `creature_template` SET `ScriptName`='npc_ruul_snowhoof' WHERE `entry` = 12818;
 
