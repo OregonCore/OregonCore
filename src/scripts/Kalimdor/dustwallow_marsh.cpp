@@ -20,7 +20,7 @@
 /* ScriptData
 SDName: Dustwallow_Marsh
 SD%Complete: 95
-SDComment: Quest support: 11180, 558, 11126, 1173, 1273, 1324, Vendor Nat Pagle
+SDComment: Quest support: 11180, 558, 11126, 1173, 1273, 1324, 11183, 11142, 11209,Vendor Nat Pagle
 SDCategory: Dustwallow Marsh
 EndScriptData */
 
@@ -33,6 +33,9 @@ npc_nat_pagle
 npc_morokk
 npc_ogron
 npc_private_hendel
+npc_zelfrax
+npc_cassa_crimsonwing
+at_nats_landing
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -843,6 +846,131 @@ CreatureAI* GetAI_npc_private_hendel(Creature* pCreature)
     return new npc_private_hendelAI(pCreature);
 }
 
+/*######
+## npc_zelfrax
+######*/
+
+enum eZelfrax
+{
+    SAY_ZELFRAX     = -1000605,
+    SAY_ZELFRAX_2   = -1000606
+};
+
+struct npc_zelfraxAI : public ScriptedAI
+{
+    npc_zelfraxAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        MoveToDock();
+    }
+
+    void AttackStart(Unit* pWho)
+    {
+        if (!pWho)
+            return;
+
+        if (me->Attack(pWho, true))
+        {
+            me->SetInCombatWith(pWho);
+            pWho->SetInCombatWith(me);
+
+            if (IsCombatMovement())
+                me->GetMotionMaster()->MoveChase(pWho);
+        }
+    }
+
+    void MovementInform(uint32 uiType, uint32 /*uiId*/)
+    {
+        if (uiType != POINT_MOTION_TYPE)
+            return;
+
+        me->SetHomePosition(me->GetPositionX(),me->GetPositionY(),me->GetPositionZ(),me->GetOrientation());
+        me->RemoveFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_OOC_NOT_ATTACKABLE);
+        SetCombatMovement(true);
+
+        if (me->isInCombat())
+            if (Unit* pUnit = me->getVictim())
+                me->GetMotionMaster()->MoveChase(pUnit);
+    }
+
+    void MoveToDock()
+    {
+        SetCombatMovement(false);
+        me->GetMotionMaster()->MovePoint(0,-2967.030,-3872.1799,35.620);
+        DoScriptText(SAY_ZELFRAX,me);
+        DoScriptText(SAY_ZELFRAX_2,me);
+    }
+
+    void UpdateAI(uint32 const /*uiDiff*/)
+    {
+        if (!UpdateVictim())
+            return;
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_zelfrax(Creature* pCreature)
+{
+    return new npc_zelfraxAI(pCreature);
+}
+
+/*######
+## npc_cassa_crimsonwing
+######*/
+
+enum
+{
+    QUEST_SURVEY_ALCAZ          = 11142,
+    SPELL_ALCAZ_SURVEY          = 42295
+};
+
+#define GOSSIP_RIDE             "<Ride the gryphons to Survey Alcaz Island>"
+
+bool GossipHello_npc_cassa_crimsonwing(Player* pPlayer, Creature* pCreature)
+{
+    if (pPlayer->GetQuestStatus(QUEST_SURVEY_ALCAZ) == QUEST_STATUS_INCOMPLETE)
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_RIDE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
+    return true;
+}
+
+bool GossipSelect_npc_cassa_crimsonwing(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+{
+    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+    {
+        pPlayer->CLOSE_GOSSIP_MENU();
+        pPlayer->CastSpell(pPlayer, SPELL_ALCAZ_SURVEY, false);
+    }
+    return true;
+}
+
+/*######
+## at_nats_landing
+######*/
+enum
+{
+    QUEST_NATS_BARGAIN = 11209,
+    SPELL_FISH_PASTE   = 42644,
+    NPC_LURKING_SHARK  = 23928
+};
+
+bool AreaTrigger_at_nats_landing(Player* pPlayer, const AreaTriggerEntry* pAt)
+{
+    if (pPlayer->GetQuestStatus(QUEST_NATS_BARGAIN) == QUEST_STATUS_INCOMPLETE && pPlayer->HasAura(SPELL_FISH_PASTE,0))
+    {
+        Creature* pShark = GetClosestCreatureWithEntry(pPlayer, NPC_LURKING_SHARK, 20.0f);
+
+        if (!pShark)
+            pShark = pPlayer->SummonCreature(NPC_LURKING_SHARK, -4246.243f, -3922.356f, -7.488f, 5.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 100000);
+
+        pShark->AI()->AttackStart(pPlayer);
+        return false;
+    }
+    return true;
+}
+
+
 void AddSC_dustwallow_marsh()
 {
     Script *newscript;
@@ -891,6 +1019,22 @@ void AddSC_dustwallow_marsh()
     newscript->Name = "npc_private_hendel";
     newscript->GetAI = &GetAI_npc_private_hendel;
     newscript->pQuestAccept = &QuestAccept_npc_private_hendel;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_zelfrax";
+    newscript->GetAI = &GetAI_npc_zelfrax;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_cassa_crimsonwing";
+    newscript->pGossipHello = &GossipHello_npc_cassa_crimsonwing;
+    newscript->pGossipSelect = &GossipSelect_npc_cassa_crimsonwing;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "at_nats_landing";
+    newscript->pAreaTrigger = &AreaTrigger_at_nats_landing;
     newscript->RegisterSelf();
 }
 

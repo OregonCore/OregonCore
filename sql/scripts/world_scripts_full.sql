@@ -445,9 +445,11 @@ UPDATE `creature_template` SET `ScriptName`='npc_deserter_agitator' WHERE `entry
 UPDATE `creature_template` SET `ScriptName`='npc_lady_jaina_proudmoore' WHERE `entry`=4968;
 UPDATE `creature_template` SET `ScriptName`='npc_nat_pagle' WHERE `entry`=12919;
 UPDATE `creature_template` SET `ScriptName`='npc_restless_apparition' WHERE `entry`=23861;
-UPDATE `creature_template` SET `ScriptName` = 'npc_private_hendel' WHERE `entry` = '4966';
-UPDATE `creature_template` SET `ScriptName` = 'npc_ogron' WHERE `entry` = '4983';
-UPDATE `creature_template` SET `ScriptName` = 'npc_morokk' WHERE `entry` = '4500';
+UPDATE `creature_template` SET `ScriptName`='npc_private_hendel' WHERE `entry`='4966';
+UPDATE `creature_template` SET `ScriptName`='npc_ogron' WHERE `entry`='4983';
+UPDATE `creature_template` SET `ScriptName`='npc_morokk' WHERE `entry`='4500';
+UPDATE `creature_template` SET `ScriptName`='npc_zelfrax' WHERE `entry`=23864;
+UPDATE `creature_template` SET `ScriptName`='npc_cassa_crimsonwing' WHERE `entry`=23704;
 
 /* EASTERN PLAGUELANDS */
 UPDATE `creature_template` SET `ScriptName`='mobs_ghoul_flayer' WHERE `entry` IN (8530,8531,8532);

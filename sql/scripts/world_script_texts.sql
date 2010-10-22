@@ -491,7 +491,11 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 
 (-1000602,'[Fulborg] The Stillpine furbolgs will not soon forget your bravery!',0,0,0,0,'Stillpine Capitive free say text 1'),
 (-1000603,'[Fulborg] Thank you, $N',0,0,0,0,'Stillpine Capitive free say text 2'),
-(-1000604,'[Fulborg] Those remaining at Stillpine Hold will welcome you as a hero!',0,0,0,0,'Stillpine Capitive free say text 3');
+(-1000604,'[Fulborg] Those remaining at Stillpine Hold will welcome you as a hero!',0,0,0,0,'Stillpine Capitive free say text 3'),
+
+(-1000605,'This land was mine long before your wretched kind set foot here.',0,1,0,0,'SAY_ZELFRAX'),
+(-1000606,'All who venture here belong to me, including you!',0,1,0,0,'SAY_ZELFRAX_2');
+   
 
 -- -1 033 000 SHADOWFANG KEEP
 INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`emote`,`comment`) VALUES

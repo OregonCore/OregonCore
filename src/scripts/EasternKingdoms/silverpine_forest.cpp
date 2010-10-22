@@ -100,7 +100,7 @@ enum eErland
     SAY_START           = -1000307,
     SAY_AGGRO_1         = -1000308,
     SAY_AGGRO_2         = -1000309,
-	SAY_AGGRO_3         = -1000310,
+    SAY_AGGRO_3         = -1000310,
     SAY_LAST            = -1000311,
 
     SAY_THANKS          = -1000312,
