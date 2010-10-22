@@ -487,12 +487,22 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 (-1000588,'%s disappears into the swamp.',0,2,0,0,'Galen - emote disapper'),
 
 (-1000600,'Kill them all!',0,0,0,0,'earthmender wilda say ASSASSIN_SAY_AGGRO1'),
-(-1000601,'You will never essscape Coilssskarrr...',0,0,0,0,'earthmender wilda say ASSASSIN_SAY_AGGRO2');
+(-1000601,'You will never essscape Coilssskarrr...',0,0,0,0,'earthmender wilda say ASSASSIN_SAY_AGGRO2'),
+
+(-1000602,'[Fulborg] The Stillpine furbolgs will not soon forget your bravery!',0,0,0,0,'Stillpine Capitive free say text 1'),
+(-1000603,'[Fulborg] Thank you, $N',0,0,0,0,'Stillpine Capitive free say text 2'),
+(-1000604,'[Fulborg] Those remaining at Stillpine Hold will welcome you as a hero!',0,0,0,0,'Stillpine Capitive free say text 3');
 
 -- -1 033 000 SHADOWFANG KEEP
-INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`comment`) VALUES
-(-1033000,'Thanks for freeing me, I\'ll open this door for you, then I will get out of here.',0,0,0,'shadowfang_prisoner SAY_FREE');
+INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`emote`,`comment`) VALUES
+(-1033000,'Follow me and I\'ll open the courtyard door for you.',0,0,7,1,'prisoner ashcrombe SAY_FREE_AS'),
+(-1033001,'I have just the spell to get this door open. Too bad the cell doors weren\'t locked so haphazardly.',0,0,7,1,'prisoner ashcrombe SAY_OPEN_DOOR_AS'),
+(-1033002,'There it is! Wide open. Good luck to you conquering what lies beyond. I must report back to the Kirin Tor at once!',0,0,7,1,'prisoner ashcrombe SAY_POST_DOOR_AS'),
 
+(-1033003,'Free from this wretched cell at last! Let me show you to the courtyard....',0,0,1,1,'prisoner adamant SAY_FREE_AD'),
+(-1033004,'You are indeed courageous for wanting to brave the horrors that lie beyond this door.',0,0,1,1,'prisoner adamant SAY_OPEN_DOOR_AD'),
+(-1033005,'There we go!',0,0,1,1,'prisoner adamant SAY_POST1_DOOR_AD'),
+(-1033006,'Good luck with Arugal. I must hurry back to Hadrec now.',0,0,1,1,'prisoner adamant SAY_POST2_DOOR_AD');
 -- -1 034 000 STOCKADES
 
 -- -1 036 000 DEADMINES

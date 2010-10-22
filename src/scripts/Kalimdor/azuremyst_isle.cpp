@@ -657,9 +657,9 @@ CreatureAI* GetAI_npc_death_ravagerAI(Creature* pCreature)
 
 enum BristlelimbCage
 {
-    CAPITIVE_SAY_1                      = -1600474,
-    CAPITIVE_SAY_2                      = -1600475,
-    CAPITIVE_SAY_3                      = -1600476,
+    CAPITIVE_SAY_1                      = -1000602,
+    CAPITIVE_SAY_2                      = -1000603,
+    CAPITIVE_SAY_3                      = -1000604,
 
     QUEST_THE_PROPHECY_OF_AKIDA         = 9544,
     NPC_STILLPINE_CAPITIVE              = 17375,
