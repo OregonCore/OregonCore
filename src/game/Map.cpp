@@ -1143,6 +1143,23 @@ bool Map::UnloadGrid(const uint32 &x, const uint32 &y, bool unloadAll)
     return true;
 }
 
+void Map::RemoveAllPlayers()
+{
+    if (HavePlayers())
+    {
+        for (MapRefManager::iterator itr = m_mapRefManager.begin(); itr != m_mapRefManager.end(); ++itr)
+        {
+            Player* plr = itr->getSource();
+            if (!plr->IsBeingTeleportedFar())
+            {
+                // this is happening for bg
+                sLog.outError("Map::UnloadAll: player %s is still in map %u during unload, this should not happen!", plr->GetName(), GetId());
+                plr->TeleportTo(plr->m_homebindMapId, plr->m_homebindX, plr->m_homebindY, plr->m_homebindZ, plr->GetOrientation());
+            }
+        }
+    }
+}
+
 void Map::UnloadAll()
 {
     // clear all delayed moves, useless anyway do this moves before map unload.
@@ -2351,8 +2368,8 @@ bool InstanceMap::Add(Player *player)
 
     {
         Guard guard(*this);
-        if (!CanEnter(player))
-            return false;
+        //if (!CanEnter(player))
+            //return false;
 
         // Dungeon only code
         if (IsDungeon())
@@ -2373,7 +2390,7 @@ bool InstanceMap::Add(Player *player)
                 if (playerBind->save != mapSave)
                 {
                     sLog.outError("InstanceMap::Add: player %s(%d) is permanently bound to instance %d,%d,%d,%d,%d,%d but he is being put into instance %d,%d,%d,%d,%d,%d", player->GetName(), player->GetGUIDLow(), playerBind->save->GetMapId(), playerBind->save->GetInstanceId(), playerBind->save->GetDifficulty(), playerBind->save->GetPlayerCount(), playerBind->save->GetGroupCount(), playerBind->save->CanReset(), mapSave->GetMapId(), mapSave->GetInstanceId(), mapSave->GetDifficulty(), mapSave->GetPlayerCount(), mapSave->GetGroupCount(), mapSave->CanReset());
-                    ASSERT(false);
+                    return false;
                 }
             }
             else
@@ -2433,9 +2450,6 @@ bool InstanceMap::Add(Player *player)
             }
         }
 
-        if (i_data)
-            i_data->OnPlayerEnter(player);
-
         // for normal instances cancel the reset schedule when the
         // first player enters (no players yet)
         SetResetSchedule(false);
@@ -2450,6 +2464,10 @@ bool InstanceMap::Add(Player *player)
 
     // this will acquire the same mutex so it cannot be in the previous block
     Map::Add(player);
+
+    if (i_data)
+        i_data->OnPlayerEnter(player);
+
     return true;
 }
 
@@ -2587,15 +2605,7 @@ time_t InstanceMap::GetResetTime()
 
 void InstanceMap::UnloadAll()
 {
-    if (HavePlayers())
-    {
-        sLog.outError("InstanceMap::UnloadAll: there are still players in the instance at unload, should not happen!");
-        for (MapRefManager::iterator itr = m_mapRefManager.begin(); itr != m_mapRefManager.end(); ++itr)
-        {
-            Player* plr = itr->getSource();
-            plr->TeleportToHomebind();
-        }
-    }
+    ASSERT(!HavePlayers());
 
     if (m_resetAfterUnload == true)
         objmgr.DeleteRespawnTimeForInstance(GetInstanceId());
@@ -2662,8 +2672,8 @@ bool BattleGroundMap::Add(Player * player)
 {
     {
         Guard guard(*this);
-        if (!CanEnter(player))
-            return false;
+        //if (!CanEnter(player))
+            //return false;
         // reset instance validity, battleground maps do not homebind
         player->m_InstanceValid = true;
     }
@@ -2681,21 +2691,14 @@ void BattleGroundMap::SetUnload()
     m_unloadTimer = MIN_UNLOAD_DELAY;
 }
 
-void BattleGroundMap::UnloadAll()
+void BattleGroundMap::RemoveAllPlayers()
 {
-    while (HavePlayers())
-    {
-        if (Player * plr = m_mapRefManager.getFirst()->getSource())
-        {
-            plr->TeleportToHomebind();
-            // TeleportTo removes the player from this map (if the map exists) -> calls BattleGroundMap::Remove -> invalidates the iterator.
-            // just in case, remove the player from the list explicitly here as well to prevent a possible infinite loop
-            // note that this remove is not needed if the code works well in other places
-            plr->GetMapRef().unlink();
-        }
-    }
+    if (HavePlayers())
+        for (MapRefManager::iterator itr = m_mapRefManager.begin(); itr != m_mapRefManager.end(); ++itr)
+            if (Player* plr = itr->getSource())
+                if (!plr->IsBeingTeleportedFar())
+                    plr->TeleportTo(plr->GetBattleGroundEntryPointMap(),plr->GetBattleGroundEntryPointX(),plr->GetBattleGroundEntryPointY(),plr->GetBattleGroundEntryPointZ(),plr->GetBattleGroundEntryPointO());
 
-    Map::UnloadAll();
 }
 
 Creature*

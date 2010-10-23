@@ -332,6 +332,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         void MoveAllCreaturesInMoveList();
         void RemoveAllObjectsInRemoveList();
         void RelocationNotify();
+        virtual void RemoveAllPlayers();
 
         bool CreatureRespawnRelocation(Creature *c);        // used only in MoveAllCreaturesInMoveList and ObjectGridUnloader
 
@@ -574,7 +575,7 @@ class BattleGroundMap : public Map
         void Remove(Player *, bool);
         bool CanEnter(Player* player);
         void SetUnload();
-        void UnloadAll();
+        void RemoveAllPlayers();
 
         virtual void InitVisibilityDistance();
 };
