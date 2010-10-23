@@ -4057,6 +4057,7 @@ void Spell::EffectSummonPet(uint32 i)
             owner->GetClosePoint(px, py, pz, OldSummon->GetObjectSize());
 
             OldSummon->Relocate(px, py, pz, OldSummon->GetOrientation());
+            OldSummon->SetMap(owner->GetMap());
             owner->GetMap()->Add(OldSummon->ToCreature());
 
             if (owner->GetTypeId() == TYPEID_PLAYER && OldSummon->isControlled())

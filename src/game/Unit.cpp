@@ -9731,10 +9731,7 @@ void Unit::RemoveFromWorld()
         RemoveNotOwnSingleTargetAuras();
 
         if (m_NotifyListPos >= 0)
-        {
-            GetMap()->RemoveUnitFromNotify(m_NotifyListPos);
-            m_NotifyListPos = -1;
-        }
+            GetMap()->RemoveUnitFromNotify(this);
 
         WorldObject::RemoveFromWorld();
     }

@@ -198,7 +198,7 @@ void Map::DeleteStateMachine()
 Map::Map(uint32 id, time_t expiry, uint32 InstanceId, uint8 SpawnMode, Map* _parent):
 i_mapEntry (sMapStore.LookupEntry(id)), i_spawnMode(SpawnMode), i_InstanceId(InstanceId),
 m_unloadTimer(0), m_VisibleDistance(DEFAULT_VISIBILITY_DISTANCE),
-m_activeNonPlayersIter(m_activeNonPlayers.end()), i_gridExpiry(expiry), i_lock(true)
+m_activeNonPlayersIter(m_activeNonPlayers.end()), i_gridExpiry(expiry), i_lock(false)
 {
     m_parentMap = (_parent ? _parent : this);
 
@@ -443,7 +443,13 @@ Map::Add(T *obj)
     }
 
     Cell cell(p);
-    obj->SetMap(this);
+    if (obj->IsInWorld()) // need some clean up later
+    {
+        UpdateObjectVisibility(obj,cell,p); // is this needed?
+        AddNotifier(obj);
+        return;
+    }
+
     if (obj->isActiveObject())
         EnsureGridLoadedAtEnter(cell);
     else
@@ -628,18 +634,25 @@ void Map::AddUnitToNotify(Unit* u)
     }
 }
 
-void Map::RemoveUnitFromNotify(int32 slot)
+void Map::RemoveUnitFromNotify(Unit *unit)
 {
-    if(i_lock)
+    int32 slot = unit->m_NotifyListPos;
+    if (i_lock)
     {
-        ASSERT(slot < i_unitsToNotifyBacklog.size());
-        i_unitsToNotifyBacklog[slot] = NULL;
+        if(slot < i_unitsToNotifyBacklog.size() && i_unitsToNotifyBacklog[slot] == unit)
+            i_unitsToNotifyBacklog[slot] = NULL;
+        else if(slot < i_unitsToNotify.size() && i_unitsToNotify[slot] == unit)
+            i_unitsToNotify[slot] = NULL;
+        else
+            assert(false);
     }
     else
     {
-        ASSERT(slot < i_unitsToNotify.size());
+        assert(slot < i_unitsToNotify.size());
         i_unitsToNotify[slot] = NULL;
     }
+
+    unit->m_NotifyListPos = -1;
 }
 
 void Map::Update(const uint32 &t_diff)

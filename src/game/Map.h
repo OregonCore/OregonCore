@@ -373,7 +373,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         void RemoveWorldObject(WorldObject *obj) { i_worldObjects.erase(obj); }
 
         void AddUnitToNotify(Unit* unit);
-        void RemoveUnitFromNotify(int32 slot);
+        void RemoveUnitFromNotify(Unit *unit);
 
         void SendToPlayers(WorldPacket const* data) const;
 
