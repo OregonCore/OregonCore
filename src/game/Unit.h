@@ -1435,6 +1435,7 @@ class Unit : public WorldObject
         bool isVisibleForOrDetect(Unit const* u, bool detect, bool inVisibleList = false, bool is3dDistance = true) const;
         bool canDetectInvisibilityOf(Unit const* u) const;
         bool canDetectStealthOf(Unit const* u, float distance) const;
+        void UpdateObjectVisibility(bool forced = true);
 
         // virtual functions for all world objects types
         bool isVisibleForInState(Player const* u, bool inVisibleList) const;
@@ -1605,9 +1606,6 @@ class Unit : public WorldObject
         PetAuraSet m_petAuras;
         void AddPetAura(PetAura const* petSpell);
         void RemovePetAura(PetAura const* petSpell);
-
-        // relocation notification
-        void SetToNotify();
 
         void SetReducedThreatPercent(uint32 pct, uint64 guid)
         {

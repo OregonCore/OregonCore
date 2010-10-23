@@ -41,52 +41,14 @@ namespace Oregon
 {
     struct VisibleNotifier
     {
-        bool force;
         Player &i_player;
         UpdateData i_data;
         std::set<Unit*> i_visibleNow;
         Player::ClientGUIDs vis_guids;
 
-        explicit VisibleNotifier(Player &player, bool forced) :
-            i_player(player), vis_guids(player.m_clientGUIDs), force(forced) {}
-        explicit VisibleNotifier(Player &player) :
-            i_player(player), vis_guids(player.m_clientGUIDs),
-            force(player.isNeedNotify(NOTIFY_VISIBILITY_CHANGED)) {}
+        VisibleNotifier(Player &player) : i_player(player), vis_guids(player.m_clientGUIDs) {}
         template<class T> void Visit(GridRefManager<T> &m);
-        void Visit(CreatureMapType &m);
-        void Visit(PlayerMapType &m) {}
         void SendToSelf(void);
-    };
-
-    struct Player2PlayerNotifier : public VisibleNotifier
-    {
-        Player2PlayerNotifier(Player &player, bool forced = false) :
-            VisibleNotifier(player, forced) {}
-
-        template<class T> void Visit(GridRefManager<T> &) {}
-        void Visit(PlayerMapType &);
-        void SendToSelf(void);
-    };
-
-    struct PlayerRelocationNotifier
-    {
-        Player &i_player;
-        PlayerRelocationNotifier(Player &pl) : i_player(pl) {}
-        template<class T> void Visit(GridRefManager<T> &) {}
-        #ifdef WIN32
-        template<> inline void Visit(CreatureMapType &);
-        #endif
-    };
-
-    struct CreatureRelocationNotifier
-    {
-        Creature &i_creature;
-        CreatureRelocationNotifier(Creature &c) : i_creature(c) {}
-        template<class T> void Visit(GridRefManager<T> &) {}
-        #ifdef WIN32
-        template<> inline void Visit(PlayerMapType &);
-        template<> inline void Visit(CreatureMapType &);
-        #endif
     };
 
     struct VisibleChangesNotifier
@@ -96,32 +58,49 @@ namespace Oregon
         explicit VisibleChangesNotifier(WorldObject &object) : i_object(object) {}
         template<class T> void Visit(GridRefManager<T> &) {}
         void Visit(PlayerMapType &);
+        void Visit(CreatureMapType &);
+        void Visit(DynamicObjectMapType &);
+    };
+
+    struct PlayerRelocationNotifier : public VisibleNotifier
+    {
+        PlayerRelocationNotifier(Player &pl) : VisibleNotifier(pl) {}
+
+        template<class T> void Visit(GridRefManager<T> &m) { VisibleNotifier::Visit(m); }
+        void Visit(CreatureMapType &);
+        void Visit(PlayerMapType &);
+    };
+
+    struct CreatureRelocationNotifier
+    {
+        Creature &i_creature;
+        CreatureRelocationNotifier(Creature &c) : i_creature(c) {}
+        template<class T> void Visit(GridRefManager<T> &) {}
+        void Visit(CreatureMapType &);
+        void Visit(PlayerMapType &);
     };
 
     struct DelayedUnitRelocation
     {
         Map &i_map;
-        const Cell& i_cell;
-        const CellPair& i_cellPair;
+        Cell &cell;
+        CellPair &p;
         const float i_radius;
-        DelayedUnitRelocation(const Cell& cell, const CellPair& cellp, Map &map, float radius) :
-        i_cell(cell), i_cellPair(cellp), i_map(map), i_radius(radius) {}
+        DelayedUnitRelocation(Cell &c, CellPair &pair, Map &map, float radius) :
+            cell(c), p(pair), i_map(map), i_radius(radius) {}
         template<class T> void Visit(GridRefManager<T> &) {}
-        void Visit(CreatureMapType &m) { Notify<Creature,CreatureRelocationNotifier >(m); }
-        void Visit(PlayerMapType   &m) { Notify<Player,PlayerRelocationNotifier >(m); }
-        template<class T, class VISITOR> 
-            void Notify(GridRefManager<T> &);
+        void Visit(CreatureMapType &);
+        void Visit(PlayerMapType   &);
     };
 
-    struct ResetNotifier
-    {
-        uint16 reset_mask;
-        ResetNotifier(uint16 notifies) : reset_mask(notifies) {}
-        template<class T> void Visit(GridRefManager<T> &m) { /*resetNotify(m);*/}
-        template<class T> void resetNotify(GridRefManager<T> &);
-        void Visit(CreatureMapType &m) { resetNotify<Creature>(m);}
-        void Visit(PlayerMapType &m) { resetNotify<Player>(m);}
-    };
+     struct AIRelocationNotifier
+     {
+        Unit &i_unit;
+        bool isCreature;
+        explicit AIRelocationNotifier(Unit &unit) : i_unit(unit), isCreature(unit.GetTypeId() == TYPEID_UNIT)  {}
+        template<class T> void Visit(GridRefManager<T> &) {}
+        void Visit(CreatureMapType &);
+     };
 
     struct GridUpdater
     {
@@ -206,11 +185,9 @@ namespace Oregon
                 i_check = owner;
         }
 
-        template<class T> inline void Visit(GridRefManager<T>  &) {}
-        #ifdef WIN32
-        template<> inline void Visit<Player>(PlayerMapType &);
-        template<> inline void Visit<Creature>(CreatureMapType &);
-        #endif
+        template<class T> void Visit(GridRefManager<T> &) {}
+        void Visit(CreatureMapType &);
+        void Visit(PlayerMapType &);
 
         void VisitHelper(Unit* target);
     };
@@ -220,7 +197,7 @@ namespace Oregon
     // WorldObject searchers & workers
 
     template<class Check>
-        struct WorldObjectSearcher
+    struct WorldObjectSearcher
     {
         WorldObject* &i_object;
         Check &i_check;
@@ -237,7 +214,7 @@ namespace Oregon
     };
 
     template<class Check>
-        struct WorldObjectListSearcher
+    struct WorldObjectListSearcher
     {
         std::list<WorldObject*> &i_objects;
         Check& i_check;
@@ -254,7 +231,7 @@ namespace Oregon
     };
 
     template<class Do>
-        struct WorldObjectWorker
+    struct WorldObjectWorker
     {
         Do const& i_do;
 
@@ -295,7 +272,7 @@ namespace Oregon
     // Gameobject searchers
 
     template<class Check>
-        struct GameObjectSearcher
+    struct GameObjectSearcher
     {
         GameObject* &i_object;
         Check &i_check;
@@ -309,7 +286,7 @@ namespace Oregon
 
     // Last accepted by Check GO if any (Check can change requirements at each call)
     template<class Check>
-        struct GameObjectLastSearcher
+    struct GameObjectLastSearcher
     {
         GameObject* &i_object;
         Check& i_check;
@@ -322,7 +299,7 @@ namespace Oregon
     };
 
     template<class Check>
-        struct GameObjectListSearcher
+    struct GameObjectListSearcher
     {
         std::list<GameObject*> &i_objects;
         Check& i_check;
@@ -338,7 +315,7 @@ namespace Oregon
 
     // First accepted by Check Unit if any
     template<class Check>
-        struct UnitSearcher
+    struct UnitSearcher
     {
         Unit* &i_object;
         Check & i_check;
@@ -353,7 +330,7 @@ namespace Oregon
 
     // Last accepted by Check Unit if any (Check can change requirements at each call)
     template<class Check>
-        struct UnitLastSearcher
+    struct UnitLastSearcher
     {
         Unit* &i_object;
         Check & i_check;
@@ -368,7 +345,7 @@ namespace Oregon
 
     // All accepted by Check units if any
     template<class Check>
-        struct UnitListSearcher
+    struct UnitListSearcher
     {
         std::list<Unit*> &i_objects;
         Check& i_check;
@@ -384,7 +361,7 @@ namespace Oregon
     // Creature searchers
 
     template<class Check>
-        struct CreatureSearcher
+    struct CreatureSearcher
     {
         Creature* &i_object;
         Check & i_check;
@@ -398,7 +375,7 @@ namespace Oregon
 
     // Last accepted by Check Creature if any (Check can change requirements at each call)
     template<class Check>
-        struct CreatureLastSearcher
+    struct CreatureLastSearcher
     {
         Creature* &i_object;
         Check & i_check;
@@ -456,7 +433,7 @@ namespace Oregon
     };
 
     template<class Check>
-        struct PlayerListSearcher
+    struct PlayerListSearcher
     {
         uint32 i_phaseMask;
         std::list<Player*> &i_objects;
@@ -498,10 +475,7 @@ namespace Oregon
                 if (i_funit->IsFriendlyTo(u) || u->isAlive() || u->isInFlight())
                     return false;
 
-                if (i_funit->IsWithinDistInMap(u, i_range))
-                    return true;
-
-                return false;
+                return i_funit->IsWithinDistInMap(u, i_range);
             }
             bool operator()(Corpse* u);
             bool operator()(Creature* u)
@@ -510,10 +484,7 @@ namespace Oregon
                     (u->GetCreatureTypeMask() & CREATURE_TYPEMASK_HUMANOID_OR_UNDEAD) == 0)
                     return false;
 
-                if (i_funit->IsWithinDistInMap(u, i_range))
-                    return true;
-
-                return false;
+                return i_funit->IsWithinDistInMap(u, i_range);
             }
             template<class NOT_INTERESTED> bool operator()(NOT_INTERESTED*) { return false; }
         private:
@@ -617,6 +588,62 @@ namespace Oregon
     };
 
     // Unit checks
+
+    class MostHPMissingInRange
+    {
+        public:
+            MostHPMissingInRange(Unit const* obj, float range, uint32 hp) : i_obj(obj), i_range(range), i_hp(hp) {}
+            bool operator()(Unit* u)
+            {
+                if (u->isAlive() && u->isInCombat() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) && u->GetMaxHealth() - u->GetHealth() > i_hp)
+                {
+                    i_hp = u->GetMaxHealth() - u->GetHealth();
+                    return true;
+                }
+                return false;
+            }
+        private:
+            Unit const* i_obj;
+            float i_range;
+            uint32 i_hp;
+    };
+
+    class FriendlyCCedInRange
+    {
+        public:
+            FriendlyCCedInRange(Unit const* obj, float range) : i_obj(obj), i_range(range) {}
+            bool operator()(Unit* u)
+            {
+                if (u->isAlive() && u->isInCombat() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) &&
+                    (u->isFeared() || u->isCharmed() || u->isFrozen() || u->hasUnitState(UNIT_STAT_STUNNED) || u->hasUnitState(UNIT_STAT_CONFUSED)))
+                {
+                    return true;
+                }
+                return false;
+            }
+        private:
+            Unit const* i_obj;
+            float i_range;
+    };
+
+    class FriendlyMissingBuffInRange
+    {
+        public:
+            FriendlyMissingBuffInRange(Unit const* obj, float range, uint32 spellid) : i_obj(obj), i_range(range), i_spell(spellid) {}
+            bool operator()(Unit* u)
+            {
+                if (u->isAlive() && u->isInCombat() && /*!i_obj->IsHostileTo(u)*/ i_obj->IsFriendlyTo(u) && i_obj->IsWithinDistInMap(u, i_range) &&
+                    !(u->HasAura(i_spell, 0) || u->HasAura(i_spell, 1) || u->HasAura(i_spell, 2)))
+                {
+                    return true;
+                }
+                return false;
+            }
+        private:
+            Unit const* i_obj;
+            float i_range;
+            uint32 i_spell;
+    };
 
     class AnyUnfriendlyUnitInObjectRangeCheck
     {
@@ -838,31 +865,6 @@ namespace Oregon
             NearestHostileUnitInAttackDistanceCheck(NearestHostileUnitInAttackDistanceCheck const&);
     };
 
-    class NearestAssistCreatureInCreatureRangeCheck
-    {
-        public:
-            NearestAssistCreatureInCreatureRangeCheck(Creature* obj,Unit* enemy, float range)
-                : i_obj(obj), i_enemy(enemy), i_range(range) {}
-
-            bool operator()(Creature* u)
-            {
-                if (u->getFaction() == i_obj->getFaction() && !u->isInCombat() && !u->GetCharmerOrOwnerGUID() && u->IsHostileTo(i_enemy) && u->isAlive()&& i_obj->IsWithinDistInMap(u, i_range) && i_obj->IsWithinLOSInMap(u))
-                {
-                    i_range = i_obj->GetDistance(u);         // use found unit range as new range limit for next check
-                    return true;
-                }
-                return false;
-            }
-            float GetLastRange() const { return i_range; }
-        private:
-            Creature* const i_obj;
-            Unit* const i_enemy;
-            float  i_range;
-
-            // prevent clone this object
-            NearestAssistCreatureInCreatureRangeCheck(NearestAssistCreatureInCreatureRangeCheck const&);
-    };
-
     class AnyAssistCreatureInRangeCheck
     {
         public:
@@ -892,6 +894,31 @@ namespace Oregon
             Unit* const i_funit;
             Unit* const i_enemy;
             float i_range;
+    };
+
+    class NearestAssistCreatureInCreatureRangeCheck
+    {
+        public:
+            NearestAssistCreatureInCreatureRangeCheck(Creature* obj, Unit* enemy, float range)
+                : i_obj(obj), i_enemy(enemy), i_range(range) {}
+
+            bool operator()(Creature* u)
+            {
+                if (u->getFaction() == i_obj->getFaction() && !u->isInCombat() && !u->GetCharmerOrOwnerGUID() && u->IsHostileTo(i_enemy) && u->isAlive()&& i_obj->IsWithinDistInMap(u, i_range) && i_obj->IsWithinLOSInMap(u))
+                {
+                    i_range = i_obj->GetDistance(u);         // use found unit range as new range limit for next check
+                    return true;
+                }
+                return false;
+            }
+            float GetLastRange() const { return i_range; }
+        private:
+            Creature* const i_obj;
+            Unit* const i_enemy;
+            float  i_range;
+
+            // prevent clone this object
+            NearestAssistCreatureInCreatureRangeCheck(NearestAssistCreatureInCreatureRangeCheck const&);
     };
 
     // Success at unit in range, range update for next check (this can be use with CreatureLastSearcher to find nearest creature)
@@ -935,63 +962,6 @@ namespace Oregon
     private:
         WorldObject const* i_obj;
         float i_range;
-    };
-
-    // Searchers used by ScriptedAI
-    class MostHPMissingInRange
-    {
-    public:
-        MostHPMissingInRange(Unit const* obj, float range, uint32 hp) : i_obj(obj), i_range(range), i_hp(hp) {}
-        bool operator()(Unit* u)
-        {
-            if (u->isAlive() && u->isInCombat() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) && u->GetMaxHealth() - u->GetHealth() > i_hp)
-            {
-                i_hp = u->GetMaxHealth() - u->GetHealth();
-                return true;
-            }
-            return false;
-        }
-    private:
-        Unit const* i_obj;
-        float i_range;
-        uint32 i_hp;
-    };
-
-    class FriendlyCCedInRange
-    {
-    public:
-        FriendlyCCedInRange(Unit const* obj, float range) : i_obj(obj), i_range(range) {}
-        bool operator()(Unit* u)
-        {
-            if (u->isAlive() && u->isInCombat() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) &&
-                (u->isFeared() || u->isCharmed() || u->isFrozen() || u->hasUnitState(UNIT_STAT_STUNNED) || u->hasUnitState(UNIT_STAT_CONFUSED)))
-            {
-                return true;
-            }
-            return false;
-        }
-    private:
-        Unit const* i_obj;
-        float i_range;
-    };
-
-    class FriendlyMissingBuffInRange
-    {
-    public:
-        FriendlyMissingBuffInRange(Unit const* obj, float range, uint32 spellid) : i_obj(obj), i_range(range), i_spell(spellid) {}
-        bool operator()(Unit* u)
-        {
-            if (u->isAlive() && u->isInCombat() && /*!i_obj->IsHostileTo(u)*/ i_obj->IsFriendlyTo(u) && i_obj->IsWithinDistInMap(u, i_range) &&
-                !(u->HasAura(i_spell, 0) || u->HasAura(i_spell, 1) || u->HasAura(i_spell, 2)))
-            {
-                return true;
-            }
-            return false;
-        }
-    private:
-        Unit const* i_obj;
-        float i_range;
-        uint32 i_spell;
     };
 
     class AllFriendlyCreaturesInGrid
@@ -1040,13 +1010,5 @@ namespace Oregon
         uint32 entry;
         float range;
     };
-
-    #ifndef WIN32
-    template<> inline void PlayerRelocationNotifier::Visit<Creature>(CreatureMapType &);
-    template<> inline void CreatureRelocationNotifier::Visit<Player>(PlayerMapType &);
-    template<> inline void CreatureRelocationNotifier::Visit<Creature>(CreatureMapType &);
-    template<> inline void DynamicObjectUpdater::Visit<Creature>(CreatureMapType &);
-    template<> inline void DynamicObjectUpdater::Visit<Player>(PlayerMapType &);
-    #endif
 }
 #endif

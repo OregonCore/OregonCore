@@ -359,7 +359,6 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         virtual bool RemoveBones(uint64 guid, float x, float y);
 
         void UpdateObjectVisibility(WorldObject* obj, Cell cell, CellPair cellpair);
-        void UpdatePlayerVisibility( Player* player, Cell cell, CellPair cellpair );
         void UpdateObjectsVisibilityFor(Player* player, Cell cell, CellPair cellpair );
 
         void resetMarkedCells() { marked_cells.reset(); }
@@ -465,9 +464,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         MapRefManager m_mapRefManager;
         MapRefManager::iterator m_mapRefIter;
 
-        PeriodicTimer m_ObjectVisibilityNotifyTimer;
-        PeriodicTimer m_PlayerVisibilityNotifyTimer;
-        PeriodicTimer m_RelocationNotifyTimer;
+        int32 m_VisibilityNotifyPeriod;
 
         typedef std::set<WorldObject*> ActiveNonPlayers;
         ActiveNonPlayers m_activeNonPlayers;
@@ -483,12 +480,11 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         GridMap *GridMaps[MAX_NUMBER_OF_GRIDS][MAX_NUMBER_OF_GRIDS];
         std::bitset<TOTAL_NUMBER_OF_CELLS_PER_MAP*TOTAL_NUMBER_OF_CELLS_PER_MAP> marked_cells;
 
-        time_t i_gridExpiry;
+        //these functions used to process player/mob aggro reactions and
+        //visibility calculations. Highly optimized for massive calculations
+        void ProcessRelocationNotifies(const uint32 &diff);
 
-        void ProcessObjectsVisibility();
-        void ProcesssPlayersVisibility();
-        void ProcessRelocationNotifies();
-        void ResetNotifies(uint16 notify_mask);
+        time_t i_gridExpiry;
 
         std::set<WorldObject *> i_objectsToRemove;
         std::map<WorldObject*, bool> i_objectsToSwitch;
@@ -497,9 +493,6 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         // Type specific code for add/remove to/from grid
         template<class T>
             void AddToGrid(T*, NGridType *, Cell const&);
-
-        template<class T>
-            void AddNotifier(T*);
 
         template<class T>
             void RemoveFromGrid(T*, NGridType *, Cell const&);

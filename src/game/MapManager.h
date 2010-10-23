@@ -30,8 +30,6 @@
 #include "MapUpdater.h"
 
 class Transport;
- 
-#define DEFAULT_VISIBILITY_NOTIFY_PERIOD      1000
 
 class MapManager : public Oregon::Singleton<MapManager, Oregon::ClassLevelLockable<MapManager, ACE_Thread_Mutex> >
 {

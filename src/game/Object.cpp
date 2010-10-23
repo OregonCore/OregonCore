@@ -1896,12 +1896,11 @@ void WorldObject::GetGroundPoint(float &x, float &y, float &z, float dist, float
     UpdateGroundPositionZ(x, y, z);
 }
 
-void WorldObject::UpdateObjectVisibility()
+void WorldObject::UpdateObjectVisibility(bool /*forced*/)
 {
-    CellPair p = Oregon::ComputeCellPair(GetPositionX(), GetPositionY());
-    Cell cell(p);
-
-    GetMap()->UpdateObjectVisibility(this, cell, p);
+    //updates object's visibility for nearby players
+    Oregon::VisibleChangesNotifier notifier(*this);
+    VisitNearbyWorldObject(GetMap()->GetVisibilityDistance(), notifier);
 }
 
 struct WorldObjectChangeAccumulator

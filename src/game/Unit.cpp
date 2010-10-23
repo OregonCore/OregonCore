@@ -8620,28 +8620,7 @@ void Unit::DestroyForNearbyPlayers()
 void Unit::SetVisibility(UnitVisibility x)
 {
     m_Visibility = x;
-
-    if (IsInWorld())
-    {
-        Map *m = GetMap();
-        CellPair p(Oregon::ComputeCellPair(GetPositionX(), GetPositionY()));
-        Cell cell(p);
-
-        if (GetTypeId() == TYPEID_PLAYER)
-        {
-            m->UpdatePlayerVisibility((Player*)this, cell, p);
-            m->UpdateObjectsVisibilityFor((Player*)this, cell, p);
-        }
-        else
-            m->UpdateObjectVisibility(this, cell, p);
-
-        AddToNotify(NOTIFY_AI_RELOCATION);
-    }
-
-    SetToNotify();
-
-    if (x == VISIBILITY_GROUP_STEALTH)
-        DestroyForNearbyPlayers();
+    UpdateObjectVisibility();
 }
 
 void Unit::UpdateSpeed(UnitMoveType mtype, bool forced, float ratio)
@@ -9732,7 +9711,6 @@ void Unit::AddToWorld()
     if (!IsInWorld())
     {
         WorldObject::AddToWorld();
-        SetToNotify();
     }
 }
 
@@ -11253,14 +11231,6 @@ void Unit::NearTeleportTo(float x, float y, float z, float orientation, bool cas
 
 /*-----------------------Oregon-----------------------------*/
 
-void Unit::SetToNotify()
-{
-    if (GetTypeId() == TYPEID_PLAYER)
-        AddToNotify(NOTIFY_VISIBILITY_CHANGED | NOTIFY_AI_RELOCATION | NOTIFY_PLAYER_VISIBILITY);
-    else
-        AddToNotify(NOTIFY_VISIBILITY_CHANGED | NOTIFY_AI_RELOCATION);
-}
-
 void Unit::Kill(Unit *pVictim, bool durabilityLoss)
 {
     //ASSERT(pVictim->IsInWorld() && pVictim->FindMap());
@@ -11954,6 +11924,19 @@ void Unit::SetFlying(bool apply)
     {
         RemoveByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02);
         RemoveUnitMovementFlag(MOVEFLAG_FLYING | MOVEFLAG_FLYING2);
+    }
+}
+
+void Unit::UpdateObjectVisibility(bool forced)
+{
+    if (!forced)
+        AddToNotify(NOTIFY_VISIBILITY_CHANGED);
+    else
+    {
+        WorldObject::UpdateObjectVisibility(true);
+        // call MoveInLineOfSight for nearby creatures
+        Oregon::AIRelocationNotifier notifier(*this);
+        VisitNearbyObject(GetMap()->GetVisibilityDistance(), notifier);
     }
 }
 

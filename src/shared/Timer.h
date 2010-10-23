@@ -71,6 +71,7 @@ class IntervalTimer
         time_t GetCurrent() const { return _current; }
 
     private:
+
         time_t _interval;
         time_t _current;
 };
@@ -97,26 +98,37 @@ struct TimeTrackerSmall
 
 struct PeriodicTimer
 {
-    PeriodicTimer(int32 period, int32 start_time) :
-      i_expireTime(start_time), i_period(period) {}
+    public:
 
-    bool Update(const uint32 &diff)
-    {
-        if((i_expireTime -= diff) > 0)
-            return false;
+        PeriodicTimer(int32 period, int32 start_time)
+            : i_expireTime(start_time), i_period(period)
+        {
+        }
 
-        i_expireTime += i_period > diff ? i_period : diff;
-        return true;
-    }
+        bool Update(const uint32 &diff)
+        {
+            if ((i_expireTime -= diff) > 0)
+                return false;
 
-    void SetPeriodic(int32 period, int32 start_time)
-    {
-        i_expireTime=start_time, i_period=period;
-    }
+            i_expireTime += i_period > diff ? i_period : diff;
+            return true;
+        }
 
-    int32 i_period;
-    int32 i_expireTime;
+        void SetPeriodic(int32 period, int32 start_time)
+        {
+            i_expireTime = start_time;
+            i_period = period;
+        }
+
+        // Tracker interface
+        void TUpdate(int32 diff) { i_expireTime -= diff; }
+        bool TPassed() const { return i_expireTime <= 0; }
+        void TReset(int32 diff, int32 period)  { i_expireTime += period > diff ? period : diff; }
+
+    private:
+
+        int32 i_period;
+        int32 i_expireTime;
 };
 
 #endif
-

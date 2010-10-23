@@ -3431,7 +3431,7 @@ void Aura::HandleInvisibilityDetect(bool apply, bool Real)
             m_target->m_detectInvisibilityMask |= (1 << m_modifier.m_miscvalue);
     }
     if (Real && m_target->GetTypeId() == TYPEID_PLAYER)
-        m_target->SetToNotify();
+        m_target->UpdateObjectVisibility();
 }
 
 void Aura::HandleAuraModRoot(bool apply, bool Real)
