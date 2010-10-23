@@ -6942,7 +6942,6 @@ void Unit::AddPlayerToVision(Player* plr)
         SetWorldObject(true);
     }
     m_sharedVision.push_back(plr);
-    plr->SetFarsightTarget(this);
 }
 
 void Unit::RemovePlayerFromVision(Player* plr)
@@ -6953,7 +6952,6 @@ void Unit::RemovePlayerFromVision(Player* plr)
         setActive(false);
         SetWorldObject(false);
     }
-    plr->ClearFarsight();
 }
 
 void Unit::RemoveBindSightAuras()
@@ -11591,13 +11589,19 @@ void Unit::SetCharmedOrPossessedBy(Unit* charmer, bool possess)
     ASSERT(!possess || charmer->GetTypeId() == TYPEID_PLAYER);
 
     if (this == charmer)
+    {
+        sLog.outCrash("Unit::SetCharmedBy: Unit %u is trying to charm itself!", GetEntry());
         return;
+    }
 
     if (isInFlight())
         return;
 
     if (GetTypeId() == TYPEID_PLAYER && ToPlayer()->GetTransport())
+    {
+        sLog.outCrash("Unit::SetCharmedBy: Player on transport is trying to charm %u", GetEntry());
         return;
+    }
 
     RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
     CastStop();
@@ -11606,20 +11610,28 @@ void Unit::SetCharmedOrPossessedBy(Unit* charmer, bool possess)
 
     // Charmer stop charming
     if (charmer->GetTypeId() == TYPEID_PLAYER)
+    {
         charmer->ToPlayer()->StopCastingCharm();
+        charmer->ToPlayer()->StopCastingBindSight();
+    }
 
     // Charmed stop charming
     if (GetTypeId() == TYPEID_PLAYER)
+    {
         ToPlayer()->StopCastingCharm();
+        ToPlayer()->StopCastingBindSight();
+    }
 
     // StopCastingCharm may remove a possessed pet?
     if (!IsInWorld())
+    {
+        sLog.outCrash("Unit::SetCharmedBy: %u is not in world but %u is trying to charm it!", GetEntry(), charmer->GetEntry());
         return;
+    }
 
     // Set charmed
-    charmer->SetCharm(this);
-    SetCharmerGUID(charmer->GetGUID());
     setFaction(charmer->getFaction());
+    charmer->SetCharm(this);
     SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE);
 
     if (GetTypeId() == TYPEID_UNIT)
@@ -11632,7 +11644,7 @@ void Unit::SetCharmedOrPossessedBy(Unit* charmer, bool possess)
     {
         if (ToPlayer()->isAFK())
             ToPlayer()->ToggleAFK();
-        ToPlayer()->SetViewport(GetGUID(), false);
+        ToPlayer()->SetClientControl(this, 0);
     }
 
     // Pets already have a properly initialized CharmInfo, don't overwrite it.
@@ -11651,7 +11663,8 @@ void Unit::SetCharmedOrPossessedBy(Unit* charmer, bool possess)
         addUnitState(UNIT_STAT_POSSESSED);
         SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
         AddPlayerToVision(charmer->ToPlayer());
-        charmer->ToPlayer()->SetViewport(GetGUID(), true);
+        charmer->ToPlayer()->SetClientControl(this, 1);
+        charmer->ToPlayer()->SetViewpoint(this, true);
         charmer->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
     }
     // Charm demon
@@ -11694,7 +11707,6 @@ void Unit::RemoveCharmedOrPossessedBy(Unit *charmer)
     CombatStop(); //TODO: CombatStop(true) may cause crash (interrupt spells)
     getHostileRefManager().deleteReferences();
     DeleteThreatList();
-    SetCharmerGUID(0);
     RestoreFaction();
     GetMotionMaster()->InitDefault();
 
@@ -11722,7 +11734,7 @@ void Unit::RemoveCharmedOrPossessedBy(Unit *charmer)
         }
     }
     else
-        ToPlayer()->SetViewport(GetGUID(), true);
+        ((Player*)this)->SetClientControl(this, 1);
 
     // If charmer still exists
     if (!charmer)
@@ -11731,10 +11743,12 @@ void Unit::RemoveCharmedOrPossessedBy(Unit *charmer)
     ASSERT(!possess || charmer->GetTypeId() == TYPEID_PLAYER);
 
     charmer->SetCharm(0);
+
     if (possess)
     {
         RemovePlayerFromVision(charmer->ToPlayer());
-        charmer->ToPlayer()->SetViewport(charmer->GetGUID(), true);
+        charmer->ToPlayer()->SetClientControl(charmer, 1);
+        charmer->ToPlayer()->SetViewpoint(this, false);
         charmer->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
     }
     // restore UNIT_FIELD_BYTES_0

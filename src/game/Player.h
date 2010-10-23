@@ -813,16 +813,6 @@ class Player : public Unit
         void AddToWorld();
         void RemoveFromWorld();
 
-        void SetViewport(uint64 guid, bool movable);
-        void StopCastingCharm() { Uncharm(); }
-        void StopCastingBindSight();
-        WorldObject* GetFarsightTarget() const;
-        void ClearFarsight();
-        void SetFarsightTarget(WorldObject* target);
-        // Controls if vision is currently on farsight object, updated in FAR_SIGHT opcode
-        void SetFarsightVision(bool apply) { m_farsightVision = apply; }
-        bool HasFarsightVision() const { return m_farsightVision; }
-
         bool TeleportTo(uint32 mapid, float x, float y, float z, float orientation, uint32 options = 0);
 
         bool TeleportTo(WorldLocation const &loc, uint32 options = 0)
@@ -1908,6 +1898,7 @@ class Player : public Unit
         MovementInfo m_movementInfo;
         uint32 m_lastFallTime;
         float  m_lastFallZ;
+        WorldObject *m_seer;
         void SetFallInformation(uint32 time, float z)
         {
             m_lastFallTime = time;
@@ -1927,8 +1918,11 @@ class Player : public Unit
 
         void SetClientControl(Unit* target, uint8 allowMove);
 
-        uint64 GetFarSight() const { return GetUInt64Value(PLAYER_FARSIGHT); }
-        void SetFarSight(uint64 guid) { SetUInt64Value(PLAYER_FARSIGHT, guid); }
+        void SetSeer(WorldObject *target) { m_seer = target; }
+        void SetViewpoint(WorldObject *target, bool apply);
+        WorldObject* GetViewpoint() const;
+        void StopCastingCharm() { Uncharm(); }
+        void StopCastingBindSight();
 
         // Transports
         Transport * GetTransport() const { return m_transport; }
@@ -2287,8 +2281,6 @@ class Player : public Unit
         float  m_summon_x;
         float  m_summon_y;
         float  m_summon_z;
-
-        bool m_farsightVision;
 
         DeclinedName *m_declinedname;
     private:

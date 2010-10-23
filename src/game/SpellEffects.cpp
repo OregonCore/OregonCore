@@ -3541,6 +3541,9 @@ void Spell::EffectAddFarsight(uint32 i)
 
     float radius = GetSpellRadius(m_spellInfo,i,false);
     int32 duration = GetSpellDuration(m_spellInfo);
+    // Caster not in world, might be spell triggered from aura removal
+    if (!m_caster->IsInWorld())
+        return;
     DynamicObject* dynObj = new DynamicObject;
     if (!dynObj->Create(objmgr.GenerateLowGuid(HIGHGUID_DYNAMICOBJECT), m_caster, m_spellInfo->Id, 4, m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, duration, radius))
     {
@@ -3555,8 +3558,8 @@ void Spell::EffectAddFarsight(uint32 i)
     dynObj->GetMap()->Add(dynObj); //grid will also be loaded
 
     // Need to update visibility of object for client to accept farsight guid
-    m_caster->ToPlayer()->UpdateVisibilityOf(dynObj);
-    m_caster->ToPlayer()->SetFarsightTarget(dynObj);
+    ((Player*)m_caster)->SetViewpoint(dynObj, true);
+    //((Player*)m_caster)->UpdateVisibilityOf(dynObj);
 }
 
 void Spell::EffectSummonWild(uint32 i)

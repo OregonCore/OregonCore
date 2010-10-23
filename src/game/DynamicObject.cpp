@@ -58,6 +58,18 @@ void DynamicObject::RemoveFromWorld()
     ///- Remove the dynamicObject from the accessor
     if (IsInWorld())
     {
+        if (m_isWorldObject)
+        {
+            if (Unit *caster = GetCaster())
+            {
+                if (caster->GetTypeId() == TYPEID_PLAYER)
+                    ((Player*)caster)->SetViewpoint(this, false);
+            }
+            else
+            {
+                sLog.outCrash("DynamicObject::RemoveFromWorld cannot find viewpoint owner");
+            }
+        }
         WorldObject::RemoveFromWorld();
         ObjectAccessor::Instance().RemoveObject(this);
     }
@@ -108,7 +120,7 @@ bool DynamicObject::Create(uint32 guidlow, Unit *caster, uint32 spellId, uint32 
 Unit* DynamicObject::GetCaster() const
 {
     // can be not found in some cases
-    return ObjectAccessor::GetUnit(*this,m_casterGuid);
+    return ObjectAccessor::GetUnit(*this, GetCasterGUID());
 }
 
 void DynamicObject::Update(uint32 p_time)
@@ -148,6 +160,7 @@ void DynamicObject::Update(uint32 p_time)
 void DynamicObject::Delete()
 {
     SendObjectDeSpawnAnim(GetGUID());
+    RemoveFromWorld();
     AddObjectToRemoveList();
 }
 
@@ -162,7 +175,5 @@ void DynamicObject::Delay(int32 delaytime)
 bool DynamicObject::isVisibleForInState(Player const* u, bool inVisibleList) const
 {
     return IsInWorld() && u->IsInWorld()
-        && (IsWithinDistInMap(u, World::GetMaxVisibleDistanceForObject() + (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), false)
-        || GetCasterGUID() == u->GetGUID());
+        && (IsWithinDistInMap(u->m_seer, World::GetMaxVisibleDistanceForObject() + (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), false));
 }
-

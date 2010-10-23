@@ -443,6 +443,9 @@ Player::Player (WorldSession *session): Unit()
 
     m_miniPet = 0;
     m_bgAfkReportedTimer = 0;
+
+    m_seer = this;
+
     m_contestedPvPTimer = 0;
 
     m_declinedname = NULL;
@@ -1876,6 +1879,15 @@ void Player::RemoveFromWorld()
     {
         if (m_items[i])
             m_items[i]->RemoveFromWorld();
+    }
+
+    if (m_uint32Values)
+    {
+        if (WorldObject *viewpoint = GetViewpoint())
+        {
+            sLog.outCrash("Player %s has viewpoint %u %u when removed from world", GetName(), viewpoint->GetEntry(), viewpoint->GetTypeId());
+            SetViewpoint(viewpoint, false);
+        }
     }
 }
 
@@ -14802,14 +14814,13 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     SetUInt32Value(UNIT_CHANNEL_SPELL,0);
 
     // clear charm/summon related fields
-    SetCharm(NULL);
+    SetUInt64Value(UNIT_FIELD_CHARM, 0);
+    SetUInt64Value(PLAYER_FARSIGHT, 0);
     SetPet(NULL);
-    SetCharmerGUID(NULL);
     SetOwnerGUID(NULL);
     SetCreatorGUID(NULL);
 
     // reset some aura modifiers before aura apply
-    SetFarSight(NULL);
     SetUInt32Value(PLAYER_TRACK_CREATURES, 0);
     SetUInt32Value(PLAYER_TRACK_RESOURCES, 0);
 
@@ -17551,6 +17562,9 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, uint32 mount_i
     // stop combat at start taxi flight if any
     CombatStop();
 
+    StopCastingCharm();
+    StopCastingBindSight();
+
     // stop trade (client cancel trade at taxi map open but cheating tools can be used for reopen it)
     TradeCancel(true);
 
@@ -18298,50 +18312,50 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
     if (u->GetVisibility() == VISIBILITY_RESPAWN)
         return false;
 
-    // always seen by owner
-    if (GetGUID() == u->GetCharmerOrOwnerGUID())
-        return true;
-
     Map& _map = *u->GetMap();
     // Grid dead/alive checks
     // non visible at grid for any stealth state
     if (!u->IsVisibleInGridForPlayer(this))
         return false;
 
-    // If the player is currently channeling vision, update visibility from the target unit's location
-    const WorldObject* target = GetFarsightTarget();
-    if (!target || !HasFarsightVision()) // Vision needs to be on the farsight target
-        target = this;
+    // always seen by owner
+    if (uint64 guid = u->GetCharmerOrOwnerGUID())
+        if (GetGUID() == guid)
+            return true;
+
+    if (uint64 guid = GetUInt64Value(PLAYER_FARSIGHT))
+        if (u->GetGUID() == guid)
+            return true;
 
     // different visible distance checks
     if (isInFlight())                                           // what see player in flight
     {
-        if (!target->IsWithinDistInMap(u, _map.GetVisibilityDistance() + (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), is3dDistance))
+        if (!m_seer->IsWithinDistInMap(u, _map.GetVisibilityDistance() + (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), is3dDistance))
             return false;
     }
     else if (!u->isAlive())                                     // distance for show body
     {
-        if (!target->IsWithinDistInMap(u, _map.GetVisibilityDistance() + (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), is3dDistance))
+        if (!m_seer->IsWithinDistInMap(u, _map.GetVisibilityDistance() + (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), is3dDistance))
             return false;
     }
     else if (u->GetTypeId() == TYPEID_PLAYER)                     // distance for show player
     {
         // Players far than max visible distance for player or not in our map are not visible too
-        if (!at_same_transport && !target->IsWithinDistInMap(u, _map.GetVisibilityDistance() + (inVisibleList ? World::GetVisibleUnitGreyDistance() : 0.0f), is3dDistance))
+        if (!at_same_transport && !m_seer->IsWithinDistInMap(u, _map.GetVisibilityDistance() + (inVisibleList ? World::GetVisibleUnitGreyDistance() : 0.0f), is3dDistance))
             return false;
     }
     else if (u->GetCharmerOrOwnerGUID())                        // distance for show pet/charmed
     {
         // Pet/charmed far than max visible distance for player or not in our map are not visible too
-        if (!target->IsWithinDistInMap(u, _map.GetVisibilityDistance() + (inVisibleList ? World::GetVisibleUnitGreyDistance() : 0.0f), is3dDistance))
+        if (!m_seer->IsWithinDistInMap(u, _map.GetVisibilityDistance() + (inVisibleList ? World::GetVisibleUnitGreyDistance() : 0.0f), is3dDistance))
             return false;
     }
     else                                                    // distance for show creature
     {
         // Units farther than max visible distance for creature or not in our map are not visible too
-        if (!target->IsWithinDistInMap(u
+        if (!m_seer->IsWithinDistInMap(u
             , u->isActiveObject() ? (MAX_VISIBILITY_DISTANCE - (inVisibleList ? 0.0f : World::GetVisibleUnitGreyDistance()))
-            : ( _map.GetVisibilityDistance() + (inVisibleList ? World::GetVisibleUnitGreyDistance() : 0.0f))
+            : (_map.GetVisibilityDistance() + (inVisibleList ? World::GetVisibleUnitGreyDistance() : 0.0f))
             , is3dDistance))
             return false;
     }
@@ -19943,26 +19957,9 @@ void Player::HandleFallUnderMap()
     }
 }
 
-void Player::SetViewport(uint64 guid, bool moveable)
-{
-    WorldPacket data(SMSG_CLIENT_CONTROL_UPDATE, 8+1);
-    data.appendPackGUID(guid); // Packed guid of object to set client's view to
-    data << (moveable ? uint8(0x01) : uint8(0x00)); // 0 - can't move; 1 - can move
-    m_session->SendPacket(&data);
-    sLog.outDetail("Viewport for "I64FMT" (%s) changed to "I64FMT, GetGUID(), GetName(), guid);
-}
-
-WorldObject* Player::GetFarsightTarget() const
-{
-    // Players can have in farsight field another player's guid, a creature's guid, or a dynamic object's guid
-    if (uint64 guid = GetUInt64Value(PLAYER_FARSIGHT))
-        return (WorldObject*)ObjectAccessor::GetObjectByTypeMask(*this, guid, TYPEMASK_PLAYER | TYPEMASK_UNIT | TYPEMASK_DYNAMICOBJECT);
-    return NULL;
-}
-
 void Player::StopCastingBindSight()
 {
-    if (WorldObject* target = GetFarsightTarget())
+    if (WorldObject* target = GetViewpoint())
     {
         if (target->isType(TYPEMASK_UNIT))
         {
@@ -19973,25 +19970,50 @@ void Player::StopCastingBindSight()
     }
 }
 
-void Player::ClearFarsight()
+void Player::SetViewpoint(WorldObject* target, bool apply)
 {
-    if (GetUInt64Value(PLAYER_FARSIGHT))
+    if (apply)
     {
-        SetUInt64Value(PLAYER_FARSIGHT, 0);
-        WorldPacket data(SMSG_CLEAR_FAR_SIGHT_IMMEDIATE, 0);
-        GetSession()->SendPacket(&data);
+        sLog.outDebug("Player::CreateViewpoint: Player %s create seer %u (TypeId: %u).", GetName(), target->GetEntry(), target->GetTypeId());
+
+        if (!AddUInt64Value(PLAYER_FARSIGHT, target->GetGUID()))
+        {
+            sLog.outCrash("Player::CreateViewpoint: Player %s cannot add new viewpoint!", GetName());
+            return;
+        }
+
+        // farsight dynobj or puppet may be very far away
+        UpdateVisibilityOf(target);
+
+        if (target->isType(TYPEMASK_UNIT))
+            ((Unit*)target)->AddPlayerToVision(this);
+    }
+    else
+    {
+        sLog.outDebug("Player::CreateViewpoint: Player %s remove seer", GetName());
+
+        if (!RemoveUInt64Value(PLAYER_FARSIGHT, target->GetGUID()))
+        {
+            sLog.outCrash("Player::CreateViewpoint: Player %s cannot remove current viewpoint!", GetName());
+            return;
+        }
+
+        if (target->isType(TYPEMASK_UNIT))
+            ((Unit*)target)->RemovePlayerFromVision(this);
+
+        //must immediately set seer back otherwise may crash
+        m_seer = this;
+
+        //WorldPacket data(SMSG_CLEAR_FAR_SIGHT_IMMEDIATE, 0);
+        //GetSession()->SendPacket(&data);
     }
 }
 
-void Player::SetFarsightTarget(WorldObject* obj)
+WorldObject* Player::GetViewpoint() const
 {
-    if (!obj || !obj->isType(TYPEMASK_PLAYER | TYPEMASK_UNIT | TYPEMASK_DYNAMICOBJECT))
-        return;
-
-    // Remove the current target if there is one
-    StopCastingBindSight();
-
-    SetUInt64Value(PLAYER_FARSIGHT, obj->GetGUID());
+    if(uint64 guid = GetUInt64Value(PLAYER_FARSIGHT))
+        return (WorldObject*)ObjectAccessor::GetObjectByTypeMask(*this, guid, TYPEMASK_SEER);
+    return NULL;
 }
 
 bool Player::CanUseBattleGroundObject()

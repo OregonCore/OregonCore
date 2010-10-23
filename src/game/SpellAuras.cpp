@@ -2098,13 +2098,6 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
     // AT REMOVE
     else
     {
-        if (m_target->GetTypeId() == TYPEID_PLAYER && GetSpellProto()->Effect[0] == 72)
-        {
-            // spells with SpellEffect=72 and aura=4: 6196, 6197, 21171, 21425
-            m_target->ToPlayer()->ClearFarsight();
-            return;
-        }
-
         if ((IsQuestTameSpell(GetId())) && caster && caster->isAlive() && m_target->isAlive())
         {
             uint32 finalSpelId = 0;
@@ -3019,19 +3012,16 @@ void Aura::HandleBindSight(bool apply, bool Real)
     if (!caster || caster->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    if (apply)
-        m_target->AddPlayerToVision(caster->ToPlayer());
-    else
-        m_target->RemovePlayerFromVision(caster->ToPlayer());
+    caster->ToPlayer()->SetViewpoint(m_target, (apply));
 }
 
 void Aura::HandleFarSight(bool apply, bool Real)
 {
-    Unit* caster = GetCaster();
+    /*Unit* caster = GetCaster();
     if (!caster || caster->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    caster->ToPlayer()->SetFarSight(apply ? m_target->GetGUID() : NULL);
+    caster->ToPlayer()->SetFarSight(apply ? m_target->GetGUID() : NULL);*/
 }
 
 void Aura::HandleAuraTrackCreatures(bool apply, bool Real)
