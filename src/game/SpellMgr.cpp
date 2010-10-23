@@ -294,7 +294,14 @@ bool IsPassiveSpell(uint32 spellId)
     SpellEntry const *spellInfo = sSpellStore.LookupEntry(spellId);
     if (!spellInfo)
         return false;
-    return (spellInfo->Attributes & SPELL_ATTR_PASSIVE) != 0;
+    return IsPassiveSpell(spellInfo);
+}
+
+bool IsPassiveSpell(SpellEntry const * spellInfo)
+{
+    if (spellInfo->Attributes & SPELL_ATTR_PASSIVE)
+        return true;
+    return false;
 }
 
 uint32 CalculatePowerCost(SpellEntry const * spellInfo, Unit const * caster, SpellSchoolMask schoolMask)
