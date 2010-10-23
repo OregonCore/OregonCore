@@ -4264,14 +4264,14 @@ DynamicObject * Unit::GetDynObject(uint32 spellId)
 
 void Unit::AddGameObject(GameObject* gameObj)
 {
-    ASSERT(gameObj && gameObj->GetOwnerGUID() == 0);
+    if (!gameObj || !gameObj->GetOwnerGUID() == 0) return;
     m_gameObj.push_back(gameObj);
     gameObj->SetOwnerGUID(GetGUID());
 }
 
 void Unit::RemoveGameObject(GameObject* gameObj, bool del)
 {
-    ASSERT(gameObj && gameObj->GetOwnerGUID() == GetGUID());
+    if (!gameObj || !gameObj->GetOwnerGUID() == GetGUID()) return;
 
     gameObj->SetOwnerGUID(0);
 

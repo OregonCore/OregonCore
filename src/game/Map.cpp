@@ -198,7 +198,7 @@ void Map::DeleteStateMachine()
 Map::Map(uint32 id, time_t expiry, uint32 InstanceId, uint8 SpawnMode, Map* _parent):
 i_mapEntry (sMapStore.LookupEntry(id)), i_spawnMode(SpawnMode), i_InstanceId(InstanceId),
 m_unloadTimer(0), m_VisibleDistance(DEFAULT_VISIBILITY_DISTANCE),
-m_activeNonPlayersIter(m_activeNonPlayers.end()), i_gridExpiry(expiry), i_lock(false)
+m_activeNonPlayersIter(m_activeNonPlayers.end()), i_gridExpiry(expiry), i_notifyLock(false)
 {
     m_parentMap = (_parent ? _parent : this);
 
@@ -564,7 +564,7 @@ bool Map::loaded(const GridPair &p) const
 
 void Map::RelocationNotify()
 {
-    i_lock = true;
+    i_notifyLock = true;
 
     //Notify
     for (std::vector<Unit*>::iterator iter = i_unitsToNotify.begin(); iter != i_unitsToNotify.end(); ++iter)
@@ -605,7 +605,7 @@ void Map::RelocationNotify()
             (*iter)->m_Notified = false;
     i_unitsToNotify.clear();
 
-    i_lock = false;
+    i_notifyLock = false;
 
     if(!i_unitsToNotifyBacklog.empty())
     {
@@ -621,7 +621,7 @@ void Map::AddUnitToNotify(Unit* u)
         u->oldX = u->GetPositionX();
         u->oldY = u->GetPositionY();
 
-        if (i_lock)
+        if (i_notifyLock)
         {
             u->m_NotifyListPos = i_unitsToNotifyBacklog.size();
             i_unitsToNotifyBacklog.push_back(u);
@@ -637,7 +637,7 @@ void Map::AddUnitToNotify(Unit* u)
 void Map::RemoveUnitFromNotify(Unit *unit)
 {
     int32 slot = unit->m_NotifyListPos;
-    if (i_lock)
+    if (i_notifyLock)
     {
         if(slot < i_unitsToNotifyBacklog.size() && i_unitsToNotifyBacklog[slot] == unit)
             i_unitsToNotifyBacklog[slot] = NULL;

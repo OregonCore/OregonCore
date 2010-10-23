@@ -484,7 +484,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         time_t i_gridExpiry;
         IntervalTimer m_notifyTimer;
 
-        bool i_lock;
+        bool i_notifyLock;
         std::vector<Unit*> i_unitsToNotifyBacklog;
         std::vector<Unit*> i_unitsToNotify;
         std::set<WorldObject *> i_objectsToRemove;
