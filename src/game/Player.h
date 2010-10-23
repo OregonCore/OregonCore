@@ -1975,7 +1975,7 @@ class Player : public Unit
         void SendInitialVisiblePackets(Unit* target);
 
         template<class T>
-            void UpdateVisibilityOf(T* target, UpdateData& data, std::set<WorldObject*>& visibleNow);
+            void UpdateVisibilityOf(T* target, UpdateData& data, std::set<Unit*>& visibleNow);
 
         // Stealth detection system
         uint32 m_DetectInvTimer;

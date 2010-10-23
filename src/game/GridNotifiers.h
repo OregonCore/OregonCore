@@ -39,26 +39,41 @@ class Player;
 
 namespace Oregon
 {
-    struct PlayerVisibilityNotifier
+    struct VisibleNotifier
     {
+        bool force;
         Player &i_player;
         UpdateData i_data;
-        Player::ClientGUIDs i_clientGUIDs;
-        std::set<WorldObject*> i_visibleNow;
+        std::set<Unit*> i_visibleNow;
+        Player::ClientGUIDs vis_guids;
 
-        PlayerVisibilityNotifier(Player &player) : i_player(player),i_clientGUIDs(player.m_clientGUIDs) {}
-
-        template<class T> inline void Visit(GridRefManager<T> &);
-
-        void Notify(void);
+        explicit VisibleNotifier(Player &player, bool forced) :
+            i_player(player), vis_guids(player.m_clientGUIDs), force(forced) {}
+        explicit VisibleNotifier(Player &player) :
+            i_player(player), vis_guids(player.m_clientGUIDs),
+            force(player.isNeedNotify(NOTIFY_VISIBILITY_CHANGED)) {}
+        template<class T> void Visit(GridRefManager<T> &m);
+        void Visit(CreatureMapType &m);
+        void Visit(PlayerMapType &m) {}
+        void SendToSelf(void);
     };
 
-    struct PlayerRelocationNotifier : public PlayerVisibilityNotifier
+    struct Player2PlayerNotifier : public VisibleNotifier
     {
-        PlayerRelocationNotifier(Player &player) : PlayerVisibilityNotifier(player) {}
-        template<class T> inline void Visit(GridRefManager<T> &m) { PlayerVisibilityNotifier::Visit(m); }
+        Player2PlayerNotifier(Player &player, bool forced = false) :
+            VisibleNotifier(player, forced) {}
+
+        template<class T> void Visit(GridRefManager<T> &) {}
+        void Visit(PlayerMapType &);
+        void SendToSelf(void);
+    };
+
+    struct PlayerRelocationNotifier
+    {
+        Player &i_player;
+        PlayerRelocationNotifier(Player &pl) : i_player(pl) {}
+        template<class T> void Visit(GridRefManager<T> &) {}
         #ifdef WIN32
-        template<> inline void Visit(PlayerMapType &);
         template<> inline void Visit(CreatureMapType &);
         #endif
     };
@@ -81,6 +96,31 @@ namespace Oregon
         explicit VisibleChangesNotifier(WorldObject &object) : i_object(object) {}
         template<class T> void Visit(GridRefManager<T> &) {}
         void Visit(PlayerMapType &);
+    };
+
+    struct DelayedUnitRelocation
+    {
+        Map &i_map;
+        const Cell& i_cell;
+        const CellPair& i_cellPair;
+        const float i_radius;
+        DelayedUnitRelocation(const Cell& cell, const CellPair& cellp, Map &map, float radius) :
+        i_cell(cell), i_cellPair(cellp), i_map(map), i_radius(radius) {}
+        template<class T> void Visit(GridRefManager<T> &) {}
+        void Visit(CreatureMapType &m) { Notify<Creature,CreatureRelocationNotifier >(m); }
+        void Visit(PlayerMapType   &m) { Notify<Player,PlayerRelocationNotifier >(m); }
+        template<class T, class VISITOR> 
+            void Notify(GridRefManager<T> &);
+    };
+
+    struct ResetNotifier
+    {
+        uint16 reset_mask;
+        ResetNotifier(uint16 notifies) : reset_mask(notifies) {}
+        template<class T> void Visit(GridRefManager<T> &m) { /*resetNotify(m);*/}
+        template<class T> void resetNotify(GridRefManager<T> &);
+        void Visit(CreatureMapType &m) { resetNotify<Creature>(m);}
+        void Visit(PlayerMapType &m) { resetNotify<Player>(m);}
     };
 
     struct GridUpdater
@@ -858,7 +898,7 @@ namespace Oregon
     class NearestCreatureEntryWithLiveStateInObjectRangeCheck
     {
         public:
-            NearestCreatureEntryWithLiveStateInObjectRangeCheck(WorldObject const& obj,uint32 entry, bool alive, float range)
+            NearestCreatureEntryWithLiveStateInObjectRangeCheck(WorldObject const& obj, uint32 entry, bool alive, float range)
                 : i_obj(obj), i_entry(entry), i_alive(alive), i_range(range) {}
 
             bool operator()(Creature* u)
@@ -1003,7 +1043,6 @@ namespace Oregon
 
     #ifndef WIN32
     template<> inline void PlayerRelocationNotifier::Visit<Creature>(CreatureMapType &);
-    template<> inline void PlayerRelocationNotifier::Visit<Player>(PlayerMapType &);
     template<> inline void CreatureRelocationNotifier::Visit<Player>(PlayerMapType &);
     template<> inline void CreatureRelocationNotifier::Visit<Creature>(CreatureMapType &);
     template<> inline void DynamicObjectUpdater::Visit<Creature>(CreatureMapType &);
@@ -1011,4 +1050,3 @@ namespace Oregon
     #endif
 }
 #endif
-

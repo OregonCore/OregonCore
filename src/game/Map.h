@@ -331,7 +331,6 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
         void MoveAllCreaturesInMoveList();
         void RemoveAllObjectsInRemoveList();
-        void RelocationNotify();
         virtual void RemoveAllPlayers();
 
         bool CreatureRespawnRelocation(Creature *c);        // used only in MoveAllCreaturesInMoveList and ObjectGridUnloader
@@ -360,6 +359,8 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         virtual bool RemoveBones(uint64 guid, float x, float y);
 
         void UpdateObjectVisibility(WorldObject* obj, Cell cell, CellPair cellpair);
+        void UpdatePlayerVisibility( Player* player, Cell cell, CellPair cellpair );
+        void UpdateObjectsVisibilityFor(Player* player, Cell cell, CellPair cellpair );
 
         void resetMarkedCells() { marked_cells.reset(); }
         bool isCellMarked(uint32 pCellId) { return marked_cells.test(pCellId); }
@@ -371,9 +372,6 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
         void AddWorldObject(WorldObject *obj) { i_worldObjects.insert(obj); }
         void RemoveWorldObject(WorldObject *obj) { i_worldObjects.erase(obj); }
-
-        void AddUnitToNotify(Unit* unit);
-        void RemoveUnitFromNotify(Unit *unit);
 
         void SendToPlayers(WorldPacket const* data) const;
 
@@ -467,6 +465,10 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         MapRefManager m_mapRefManager;
         MapRefManager::iterator m_mapRefIter;
 
+        PeriodicTimer m_ObjectVisibilityNotifyTimer;
+        PeriodicTimer m_PlayerVisibilityNotifyTimer;
+        PeriodicTimer m_RelocationNotifyTimer;
+
         typedef std::set<WorldObject*> ActiveNonPlayers;
         ActiveNonPlayers m_activeNonPlayers;
         ActiveNonPlayers::iterator m_activeNonPlayersIter;
@@ -482,11 +484,12 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         std::bitset<TOTAL_NUMBER_OF_CELLS_PER_MAP*TOTAL_NUMBER_OF_CELLS_PER_MAP> marked_cells;
 
         time_t i_gridExpiry;
-        IntervalTimer m_notifyTimer;
 
-        bool i_notifyLock;
-        std::vector<Unit*> i_unitsToNotifyBacklog;
-        std::vector<Unit*> i_unitsToNotify;
+        void ProcessObjectsVisibility();
+        void ProcesssPlayersVisibility();
+        void ProcessRelocationNotifies();
+        void ResetNotifies(uint16 notify_mask);
+
         std::set<WorldObject *> i_objectsToRemove;
         std::map<WorldObject*, bool> i_objectsToSwitch;
         std::set<WorldObject*> i_worldObjects;

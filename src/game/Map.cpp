@@ -198,11 +198,12 @@ void Map::DeleteStateMachine()
 Map::Map(uint32 id, time_t expiry, uint32 InstanceId, uint8 SpawnMode, Map* _parent):
 i_mapEntry (sMapStore.LookupEntry(id)), i_spawnMode(SpawnMode), i_InstanceId(InstanceId),
 m_unloadTimer(0), m_VisibleDistance(DEFAULT_VISIBILITY_DISTANCE),
-m_activeNonPlayersIter(m_activeNonPlayers.end()), i_gridExpiry(expiry), i_notifyLock(false)
+m_activeNonPlayersIter(m_activeNonPlayers.end()), i_gridExpiry(expiry),
+  m_PlayerVisibilityNotifyTimer(0.75*DEFAULT_VISIBILITY_NOTIFY_PERIOD, 0.25*DEFAULT_VISIBILITY_NOTIFY_PERIOD),
+  m_ObjectVisibilityNotifyTimer(DEFAULT_VISIBILITY_NOTIFY_PERIOD, 0 * DEFAULT_VISIBILITY_NOTIFY_PERIOD),
+  m_RelocationNotifyTimer(DEFAULT_VISIBILITY_NOTIFY_PERIOD,0.5*DEFAULT_VISIBILITY_NOTIFY_PERIOD)
 {
     m_parentMap = (_parent ? _parent : this);
-
-    m_notifyTimer.SetInterval(IN_MILLISECONDS/2);
 
     for (unsigned int idx=0; idx < MAX_NUMBER_OF_GRIDS; ++idx)
     {
@@ -222,6 +223,10 @@ void Map::InitVisibilityDistance()
 {
     //init visibility for continents
     m_VisibleDistance = sWorld.GetMaxVisibleDistanceOnContinents();
+
+    m_PlayerVisibilityNotifyTimer.SetPeriodic(0.75*sWorld.GetVisibilityNotifyPeriodOnContinents(), 0.25*sWorld.GetVisibilityNotifyPeriodOnContinents());
+    m_ObjectVisibilityNotifyTimer.SetPeriodic(sWorld.GetVisibilityNotifyPeriodOnContinents(), 0 * sWorld.GetVisibilityNotifyPeriodOnContinents());
+    m_RelocationNotifyTimer.SetPeriodic(sWorld.GetVisibilityNotifyPeriodOnContinents(),0.5*sWorld.GetVisibilityNotifyPeriodOnContinents());
 }
 
 // Template specialization of utility methods
@@ -312,17 +317,13 @@ void Map::AddNotifier(T*)
 template<>
 void Map::AddNotifier(Player* obj)
 {
-    //obj->m_Notified = false;
-    //obj->m_IsInNotifyList = false;
-    AddUnitToNotify(obj);
+    obj->AddToNotify(NOTIFY_VISIBILITY_CHANGED | NOTIFY_AI_RELOCATION | NOTIFY_PLAYER_VISIBILITY);
 }
 
 template<>
 void Map::AddNotifier(Creature* obj)
 {
-    //obj->m_Notified = false;
-    //obj->m_IsInNotifyList = false;
-    AddUnitToNotify(obj);
+    obj->AddToNotify(NOTIFY_VISIBILITY_CHANGED | NOTIFY_AI_RELOCATION);
 }
 
 void
@@ -416,17 +417,18 @@ bool Map::Add(Player *player)
 {
     // Check if we are adding to correct map
     ASSERT (player->GetMap() == this);
-
     // update player state for other player and visa-versa
     CellPair p = Oregon::ComputeCellPair(player->GetPositionX(), player->GetPositionY());
     Cell cell(p);
     EnsureGridLoadedAtEnter(cell, player);
+    player->ResetAllNotifies();
     player->AddToWorld();
 
     SendInitSelf(player);
     SendInitTransports(player);
 
     player->m_clientGUIDs.clear();
+    AddNotifier<Player>(player);
 
     return true;
 }
@@ -466,7 +468,9 @@ Map::Add(T *obj)
 
     DEBUG_LOG("Object %u enters grid[%u,%u]", GUID_LOPART(obj->GetGUID()), cell.GridX(), cell.GridY());
 
+    //trigger needs to cast spell, if not update, cannot see visual
     UpdateObjectVisibility(obj,cell,p);
+    AddNotifier<T>(obj);
 }
 
 void Map::MessageBroadcast(Player *player, WorldPacket *msg, bool to_self, bool to_possessor)
@@ -562,99 +566,6 @@ bool Map::loaded(const GridPair &p) const
     return (getNGrid(p.x_coord, p.y_coord) && isGridObjectDataLoaded(p.x_coord, p.y_coord));
 }
 
-void Map::RelocationNotify()
-{
-    i_notifyLock = true;
-
-    //Notify
-    for (std::vector<Unit*>::iterator iter = i_unitsToNotify.begin(); iter != i_unitsToNotify.end(); ++iter)
-    {
-        Unit *unit = *iter;
-        if (!unit)
-            continue;
-
-        unit->m_NotifyListPos = -1;
-
-        if(unit->m_Notified)
-            continue;
-
-        unit->m_Notified = true;
-
-        float dist = abs(unit->GetPositionX() - unit->oldX) + abs(unit->GetPositionY() - unit->oldY);
-        if (dist > 10.0f)
-        {
-            Oregon::VisibleChangesNotifier notifier(*unit);
-            VisitWorld(unit->oldX, unit->oldY, GetVisibilityDistance(), notifier);
-            dist = 0;
-        }
-
-        if (unit->GetTypeId() == TYPEID_PLAYER)
-        {
-            Oregon::PlayerRelocationNotifier notifier(*unit->ToPlayer());
-            VisitAll(unit->GetPositionX(), unit->GetPositionY(), unit->GetMap()->GetVisibilityDistance() + dist, notifier);
-            notifier.Notify();
-        }
-        else
-        {
-            Oregon::CreatureRelocationNotifier notifier(*unit->ToCreature());
-            VisitAll(unit->GetPositionX(), unit->GetPositionY(), unit->GetMap()->GetVisibilityDistance() + dist, notifier);
-        }
-    }
-    for (std::vector<Unit*>::iterator iter = i_unitsToNotify.begin(); iter != i_unitsToNotify.end(); ++iter)
-        if(*iter)
-            (*iter)->m_Notified = false;
-    i_unitsToNotify.clear();
-
-    i_notifyLock = false;
-
-    if(!i_unitsToNotifyBacklog.empty())
-    {
-        i_unitsToNotify.insert(i_unitsToNotify.end(), i_unitsToNotifyBacklog.begin(), i_unitsToNotifyBacklog.end());
-        i_unitsToNotifyBacklog.clear();
-    }
-}
-
-void Map::AddUnitToNotify(Unit* u)
-{
-    if(u->m_NotifyListPos < 0 && u->IsInWorld())
-    {
-        u->oldX = u->GetPositionX();
-        u->oldY = u->GetPositionY();
-
-        if (i_notifyLock)
-        {
-            u->m_NotifyListPos = i_unitsToNotifyBacklog.size();
-            i_unitsToNotifyBacklog.push_back(u);
-        }
-        else
-        {
-            u->m_NotifyListPos = i_unitsToNotify.size();
-            i_unitsToNotify.push_back(u);
-        }
-    }
-}
-
-void Map::RemoveUnitFromNotify(Unit *unit)
-{
-    int32 slot = unit->m_NotifyListPos;
-    if (i_notifyLock)
-    {
-        if(slot < i_unitsToNotifyBacklog.size() && i_unitsToNotifyBacklog[slot] == unit)
-            i_unitsToNotifyBacklog[slot] = NULL;
-        else if(slot < i_unitsToNotify.size() && i_unitsToNotify[slot] == unit)
-            i_unitsToNotify[slot] = NULL;
-        else
-            assert(false);
-    }
-    else
-    {
-        assert(slot < i_unitsToNotify.size());
-        i_unitsToNotify[slot] = NULL;
-    }
-
-    unit->m_NotifyListPos = -1;
-}
-
 void Map::Update(const uint32 &t_diff)
 {
     /// update players at tick
@@ -663,13 +574,6 @@ void Map::Update(const uint32 &t_diff)
         Player* plr = m_mapRefIter->getSource();
         if (plr && plr->IsInWorld())
             plr->Update(t_diff);
-    }
-
-    m_notifyTimer.Update(t_diff);
-    if (m_notifyTimer.Passed())
-    {
-        m_notifyTimer.Reset();
-        RelocationNotify();
     }
 
     /// update active cells around players and active objects
@@ -801,10 +705,185 @@ void Map::Update(const uint32 &t_diff)
     }
 
     MoveAllCreaturesInMoveList();
+
+    bool hasPlayers = !m_mapRefManager.isEmpty();
+    bool hasActiveObjects = !m_activeNonPlayers.empty();
+
+    if (hasPlayers)
+    {
+        if (m_PlayerVisibilityNotifyTimer.Update(t_diff))
+        {   // process player-player visibility
+            ProcesssPlayersVisibility();
+            ResetNotifies(NOTIFY_PLAYER_VISIBILITY);
+        }
+
+        if (m_ObjectVisibilityNotifyTimer.Update(t_diff))
+        {
+            ProcessObjectsVisibility();
+            ResetNotifies(NOTIFY_VISIBILITY_CHANGED);
+        }
+    }
+
+    if (hasActiveObjects || hasPlayers)
+        if (m_RelocationNotifyTimer.Update(t_diff))
+        {
+            ProcessRelocationNotifies();
+            ResetNotifies(NOTIFY_AI_RELOCATION);
+        }
+}
+
+void Map::ProcesssPlayersVisibility()
+{
+    for (m_mapRefIter = m_mapRefManager.begin(); m_mapRefIter != m_mapRefManager.end(); ++m_mapRefIter)
+    {
+        Player* player = m_mapRefIter->getSource();
+
+        if (player->m_seer != player && !player->GetVehicle())
+            AddNotifier<Player>(player);
+
+        if (!player->IsInWorld() || !player->isNeedNotify(NOTIFY_PLAYER_VISIBILITY))
+            continue;
+
+        WorldObject const *viewPoint = player->m_seer;
+        CellPair cellpair(Oregon::ComputeCellPair(viewPoint->GetPositionX(), viewPoint->GetPositionY()));
+
+        if (cellpair.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || cellpair.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
+            continue;
+
+        Oregon::Player2PlayerNotifier notifier(*player);
+
+        Cell cell(cellpair);
+        cell.data.Part.reserved = ALL_DISTRICT;
+        //cell.SetNoCreate();
+        TypeContainerVisitor<Oregon::Player2PlayerNotifier, WorldTypeMapContainer > world_notifier(notifier);
+        cell.Visit(cellpair, world_notifier, *this, *viewPoint, GetVisibilityDistance());
+
+        // send data
+        notifier.SendToSelf();
+        player->RemoveFromNotify(NOTIFY_PLAYER_VISIBILITY);
+        player->SetNotified(NOTIFY_PLAYER_VISIBILITY);
+    }
+}
+
+void Map::ProcessObjectsVisibility()
+{
+    for (m_mapRefIter = m_mapRefManager.begin(); m_mapRefIter != m_mapRefManager.end(); ++m_mapRefIter)
+    {
+        Player* player = m_mapRefIter->getSource();
+
+        if (player->m_seer != player && !player->GetVehicle())
+            AddNotifier<Player>(player);
+
+        if (!player->IsInWorld())
+            continue;
+
+        WorldObject const *viewPoint = player->m_seer;
+        CellPair cellpair(Oregon::ComputeCellPair(viewPoint->GetPositionX(), viewPoint->GetPositionY()));
+
+        if (cellpair.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || cellpair.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP)
+            continue;
+
+        Cell cell(cellpair);
+        cell.data.Part.reserved = ALL_DISTRICT;
+        cell.SetNoCreate();
+
+        Oregon::VisibleNotifier notifier(*player);
+
+        TypeContainerVisitor<Oregon::VisibleNotifier, WorldTypeMapContainer > world_notifier(notifier);
+        TypeContainerVisitor<Oregon::VisibleNotifier, GridTypeMapContainer  > grid_notifier(notifier);
+        cell.Visit(cellpair, world_notifier, *this, *viewPoint, GetVisibilityDistance());
+        cell.Visit(cellpair, grid_notifier,  *this, *viewPoint, GetVisibilityDistance());
+
+        // send data
+        notifier.SendToSelf();
+        player->SetNotified(NOTIFY_VISIBILITY_CHANGED);
+    }
+}
+
+void Map::ProcessRelocationNotifies()
+{
+    for (GridRefManager<NGridType>::iterator i = GridRefManager<NGridType>::begin(); i != GridRefManager<NGridType>::end(); ++i)
+    {
+        NGridType *grid = i->getSource();
+
+        if (!grid || grid->GetGridState() != GRID_STATE_ACTIVE)
+            continue;
+
+        uint32 gx = grid->getX(), gy = grid->getY();
+
+        CellPair cell_min(gx*MAX_NUMBER_OF_CELLS, gy*MAX_NUMBER_OF_CELLS);
+        CellPair cell_max(cell_min.x_coord + MAX_NUMBER_OF_CELLS, cell_min.y_coord+MAX_NUMBER_OF_CELLS);
+
+        for (uint32 x = cell_min.x_coord; x < cell_max.x_coord; ++x)
+        {
+            for (uint32 y = cell_min.y_coord; y < cell_max.y_coord; ++y)
+            {
+                uint32 cell_id = (y * TOTAL_NUMBER_OF_CELLS_PER_MAP) + x;
+                if (!isCellMarked(cell_id))
+                    continue;
+
+                CellPair pair(x,y);
+                Cell cell(pair);
+                cell.data.Part.reserved = CENTER_DISTRICT;
+                cell.SetNoCreate();
+
+                Oregon::DelayedUnitRelocation cell_relocation(cell, pair, *this, GetVisibilityDistance());
+                TypeContainerVisitor<Oregon::DelayedUnitRelocation, GridTypeMapContainer  > grid_object_relocation(cell_relocation);
+                TypeContainerVisitor<Oregon::DelayedUnitRelocation, WorldTypeMapContainer > world_object_relocation(cell_relocation);
+                cell.Visit(pair, grid_object_relocation,  *this);
+                cell.Visit(pair, world_object_relocation,  *this);
+            }
+        }
+    }
+}
+
+void Map::ResetNotifies(uint16 notify_mask)
+{
+    if (notify_mask == NOTIFY_PLAYER_VISIBILITY)
+    {
+        for (m_mapRefIter = m_mapRefManager.begin(); m_mapRefIter != m_mapRefManager.end(); ++m_mapRefIter)
+            m_mapRefIter->getSource()->ResetAllNotifiesbyMask(notify_mask);
+        return;
+    }
+
+    Oregon::ResetNotifier reset(notify_mask);
+    TypeContainerVisitor<Oregon::ResetNotifier, GridTypeMapContainer >  grid_notifier(reset);
+    TypeContainerVisitor<Oregon::ResetNotifier, WorldTypeMapContainer > world_notifier(reset);
+
+    for (GridRefManager<NGridType>::iterator i = GridRefManager<NGridType>::begin(); i != GridRefManager<NGridType>::end(); ++i)
+    {
+        NGridType *grid = i->getSource();
+
+        if (!grid || grid->GetGridState() != GRID_STATE_ACTIVE)
+            continue;
+
+        uint32 gx = grid->getX(), gy = grid->getY();
+
+        CellPair cell_min(gx*MAX_NUMBER_OF_CELLS, gy*MAX_NUMBER_OF_CELLS);
+        CellPair cell_max(cell_min.x_coord + MAX_NUMBER_OF_CELLS, cell_min.y_coord+MAX_NUMBER_OF_CELLS);
+
+        for (uint32 x = cell_min.x_coord; x < cell_max.x_coord; ++x)
+        {
+            for (uint32 y = cell_min.y_coord; y < cell_max.y_coord; ++y)
+            {
+                uint32 cell_id = (y * TOTAL_NUMBER_OF_CELLS_PER_MAP) + x;
+                if (!isCellMarked(cell_id))
+                    continue;
+
+                CellPair pair(x,y);
+                Cell cell(pair);
+                cell.data.Part.reserved = CENTER_DISTRICT;
+                cell.SetNoCreate();
+                cell.Visit(pair, grid_notifier, *this);
+                cell.Visit(pair, world_notifier, *this);
+            }
+        }
+    }
 }
 
 void Map::Remove(Player *player, bool remove)
 {
+    player->ResetAllNotifies();
     player->RemoveFromWorld();
     SendRemoveTransports(player);
 
@@ -848,6 +927,7 @@ template<class T>
 void
 Map::Remove(T *obj, bool remove)
 {
+    obj->ResetAllNotifies();
     obj->RemoveFromWorld();
     if (obj->isActiveObject())
         RemoveFromActive(obj);
@@ -912,7 +992,7 @@ Map::PlayerRelocation(Player *player, float x, float y, float z, float orientati
             EnsureGridLoadedAtEnter(new_cell, player);
     }
 
-    AddUnitToNotify(player);
+    AddNotifier<Player>(player);
 
     NGridType* newGrid = getNGrid(new_cell.GridX(), new_cell.GridY());
     if (!same_cell && newGrid->GetGridState() != GRID_STATE_ACTIVE)
@@ -945,7 +1025,7 @@ Map::CreatureRelocation(Creature *creature, float x, float y, float z, float ang
     else
     {
         creature->Relocate(x, y, z, ang);
-        AddUnitToNotify(creature);
+        AddNotifier<Creature>(creature);
     }
 
     ASSERT(CheckGridIntegrity(creature,true));
@@ -979,7 +1059,7 @@ void Map::MoveAllCreaturesInMoveList()
             // update pos
             c->Relocate(cm.x, cm.y, cm.z, cm.ang);
             //CreatureRelocationNotify(c,new_cell,new_cell.cellPair());
-            AddUnitToNotify(c);
+            AddNotifier<Creature>(c);
         }
         else
         {
@@ -1086,7 +1166,7 @@ bool Map::CreatureRespawnRelocation(Creature *c)
         c->Relocate(resp_x, resp_y, resp_z, resp_o);
         c->GetMotionMaster()->Initialize();                 // prevent possible problems with default move generators
         //CreatureRelocationNotify(c,resp_cell,resp_cell.cellPair());
-        AddUnitToNotify(c);
+        AddNotifier<Creature>(c);
         return true;
     }
     else
@@ -2005,6 +2085,32 @@ void Map::UpdateObjectVisibility(WorldObject* obj, Cell cell, CellPair cellpair)
     cell.Visit(cellpair, player_notifier, *this, *obj, GetVisibilityDistance());
 }
 
+void Map::UpdatePlayerVisibility(Player* player, Cell cell, CellPair cellpair)
+{
+    cell.data.Part.reserved = ALL_DISTRICT;
+
+    Oregon::Player2PlayerNotifier pl_notifier(*player);
+    TypeContainerVisitor<Oregon::Player2PlayerNotifier, WorldTypeMapContainer > player_notifier(pl_notifier);
+
+    cell.Visit(cellpair, player_notifier, *this, *player, GetVisibilityDistance());
+    pl_notifier.SendToSelf();
+}
+
+void Map::UpdateObjectsVisibilityFor(Player* player, Cell cell, CellPair cellpair)
+{
+    Oregon::VisibleNotifier notifier(*player, true);
+
+    cell.data.Part.reserved = ALL_DISTRICT;
+    cell.SetNoCreate();
+    TypeContainerVisitor<Oregon::VisibleNotifier, WorldTypeMapContainer > world_notifier(notifier);
+    TypeContainerVisitor<Oregon::VisibleNotifier, GridTypeMapContainer  > grid_notifier(notifier);
+    cell.Visit(cellpair, world_notifier, *this, *player, GetVisibilityDistance());
+    cell.Visit(cellpair, grid_notifier,  *this, *player, GetVisibilityDistance());
+
+    // send data
+    notifier.SendToSelf();
+}
+
 void Map::SendInitSelf(Player * player)
 {
     sLog.outDetail("Creating player data for himself %u", player->GetGUIDLow());
@@ -2336,6 +2442,10 @@ void InstanceMap::InitVisibilityDistance()
 {
     //init visibility distance for instances
     m_VisibleDistance = sWorld.GetMaxVisibleDistanceInInstances();
+
+    m_PlayerVisibilityNotifyTimer.SetPeriodic(0.75*sWorld.GetVisibilityNotifyPeriodInInstances(), 0.25*sWorld.GetVisibilityNotifyPeriodInInstances());
+    m_ObjectVisibilityNotifyTimer.SetPeriodic(sWorld.GetVisibilityNotifyPeriodInInstances(), 0 * sWorld.GetVisibilityNotifyPeriodInInstances());
+    m_RelocationNotifyTimer.SetPeriodic(sWorld.GetVisibilityNotifyPeriodInInstances(),0.5*sWorld.GetVisibilityNotifyPeriodInInstances());
 }
 
 /*
@@ -2662,6 +2772,10 @@ void BattleGroundMap::InitVisibilityDistance()
 {
     //init visibility distance for BG/Arenas
     m_VisibleDistance = sWorld.GetMaxVisibleDistanceInBGArenas();
+
+    m_PlayerVisibilityNotifyTimer.SetPeriodic(0.75*sWorld.GetVisibilityNotifyPeriodInBGArenas(), 0.25*sWorld.GetVisibilityNotifyPeriodInBGArenas());
+    m_ObjectVisibilityNotifyTimer.SetPeriodic(sWorld.GetVisibilityNotifyPeriodInBGArenas(), 0 * sWorld.GetVisibilityNotifyPeriodInBGArenas());
+    m_RelocationNotifyTimer.SetPeriodic(sWorld.GetVisibilityNotifyPeriodInBGArenas(),0.5*sWorld.GetVisibilityNotifyPeriodInBGArenas());
 }
 
 bool BattleGroundMap::CanEnter(Player * player)

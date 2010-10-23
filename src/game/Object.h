@@ -62,6 +62,15 @@ enum TempSummonType
     TEMPSUMMON_MANUAL_DESPAWN              = 8              // despawns when UnSummon() is called
 };
 
+enum NotifyFlags
+{
+    NOTIFY_NONE                     = 0x00,
+    NOTIFY_AI_RELOCATION            = 0x01,
+    NOTIFY_VISIBILITY_CHANGED       = 0x02,
+    NOTIFY_PLAYER_VISIBILITY        = 0x04,
+    NOTIFY_ALL                      = 0xFF
+};
+
 class WorldPacket;
 class UpdateData;
 class ByteBuffer;
@@ -514,6 +523,17 @@ class WorldObject : public Object, public WorldLocation
         void UpdateObjectVisibility();
         void BuildUpdate(UpdateDataMapType& );
 
+        //new relocation and visibility system functions
+        void AddToNotify(uint16 f) { m_notifyflags |= f;}
+        void RemoveFromNotify(uint16 f) { m_notifyflags &= ~f;}
+        bool isNeedNotify(uint16 f) const { return m_notifyflags & f;}
+
+        bool NotifyExecuted(uint16 f) const { return m_executed_notifies & f;}
+        void SetNotified(uint16 f) { m_executed_notifies |= f;}
+        void ResetNotifies(uint16 f) { m_executed_notifies |= ~f;}
+        void ResetAllNotifies() { m_notifyflags = 0; m_executed_notifies = 0; }
+        void ResetAllNotifiesbyMask(uint16 f) { m_notifyflags &= ~f; m_executed_notifies &= ~f; }
+
         bool isActiveObject() const { return m_isActive; }
         void setActive(bool isActiveObject);
         void SetWorldObject(bool apply);
@@ -548,5 +568,8 @@ class WorldObject : public Object, public WorldLocation
         float m_positionY;
         float m_positionZ;
         float m_orientation;
+
+        uint16 m_notifyflags;
+        uint16 m_executed_notifies;
 };
 #endif

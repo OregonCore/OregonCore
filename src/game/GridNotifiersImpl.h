@@ -29,6 +29,31 @@
 #include "CreatureAI.h"
 #include "SpellAuras.h"
 
+template<class T>
+inline void
+Oregon::VisibleNotifier::Visit(GridRefManager<T> &m)
+{
+    for(typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
+    {
+        vis_guids.erase(iter->getSource()->GetGUID());
+
+        if(force/* || iter->getSource()->isNeedNotify(NOTIFY_VISIBILITY_CHANGED)*/)
+            i_player.UpdateVisibilityOf(iter->getSource(),i_data,i_visibleNow);
+    }
+}
+
+inline void
+Oregon::VisibleNotifier::Visit(CreatureMapType &m)
+{
+    for(CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
+    {
+        vis_guids.erase(iter->getSource()->GetGUID());
+
+        if(force || iter->getSource()->isNeedNotify(NOTIFY_VISIBILITY_CHANGED))
+            i_player.UpdateVisibilityOf(iter->getSource(),i_data,i_visibleNow);
+    }
+}
+
 inline void
 Oregon::ObjectUpdater::Visit(CreatureMapType &m)
 {
@@ -44,77 +69,62 @@ inline void PlayerCreatureRelocationWorker(Player* pl, Creature* c)
 
     // Creature AI reaction
     if (c->HasReactState(REACT_AGGRESSIVE) && !c->hasUnitState(UNIT_STAT_SIGHTLESS))
-    {
         if (c->IsAIEnabled && c->IsWithinSightDist(pl) && !c->IsInEvadeMode())
             c->AI()->MoveInLineOfSight_Safe(pl);
-    }
 }
 
 inline void CreatureCreatureRelocationWorker(Creature* c1, Creature* c2)
 {
     if (c1->HasReactState(REACT_AGGRESSIVE) && !c1->hasUnitState(UNIT_STAT_SIGHTLESS))
-    {
         if (c1->IsAIEnabled && c1->IsWithinSightDist(c2) && !c1->IsInEvadeMode())
             c1->AI()->MoveInLineOfSight_Safe(c2);
-    }
 
     if (c2->HasReactState(REACT_AGGRESSIVE) && !c2->hasUnitState(UNIT_STAT_SIGHTLESS))
-    {
         if (c2->IsAIEnabled && c1->IsWithinSightDist(c2) && !c2->IsInEvadeMode())
             c2->AI()->MoveInLineOfSight_Safe(c1);
+}
+
+template<class T, class VISITOR> 
+inline void
+Oregon::DelayedUnitRelocation::Notify(GridRefManager<T> &m)
+{
+    for(typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
+    {
+        T * unit = iter->getSource();
+        if(!unit->isAlive() || !unit->isNeedNotify(NOTIFY_AI_RELOCATION))
+            continue;
+
+        VISITOR relocate(*unit);
+        TypeContainerVisitor<VISITOR, WorldTypeMapContainer > c2world_relocation(relocate);
+        TypeContainerVisitor<VISITOR, GridTypeMapContainer >  c2grid_relocation(relocate);
+
+        i_cell.Visit(i_cellPair, c2world_relocation, i_map, *unit, i_radius);
+        i_cell.Visit(i_cellPair, c2grid_relocation, i_map, *unit, i_radius);
+
+        unit->SetNotified(NOTIFY_AI_RELOCATION);
     }
 }
 
 template<class T>
 inline void
-Oregon::PlayerVisibilityNotifier::Visit(GridRefManager<T> &m)
+Oregon::ResetNotifier::resetNotify(GridRefManager<T> &m)
 {
-    for (typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
-    {
-        i_player.UpdateVisibilityOf(iter->getSource(),i_data,i_visibleNow);
-        i_clientGUIDs.erase(iter->getSource()->GetGUID());
-    }
-}
-
-template<>
-inline void
-Oregon::PlayerRelocationNotifier::Visit(PlayerMapType &m)
-{
-    for (PlayerMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
-    {
-        i_clientGUIDs.erase(iter->getSource()->GetGUID());
-
-        if (iter->getSource()->m_Notified) //self is also skipped in this check
-            continue;
-
-        i_player.UpdateVisibilityOf(iter->getSource(),i_data,i_visibleNow);
-        iter->getSource()->UpdateVisibilityOf(&i_player);
-
-        //if (!i_player.GetSharedVisionList().empty())
-        //    for (SharedVisionList::const_iterator it = i_player.GetSharedVisionList().begin(); it != i_player.GetSharedVisionList().end(); ++it)
-        //        (*it)->UpdateVisibilityOf(iter->getSource());
-
-        // Cancel Trade
-        if (i_player.GetTrader() == iter->getSource())
-            if (!i_player.IsWithinDistInMap(iter->getSource(), 5)) // iteraction distance
-                i_player.GetSession()->SendCancelTrade();   // will clode both side trade windows
-    }
+    for(typename GridRefManager<T>::iterator iter=m.begin(); iter != m.end(); ++iter)
+        iter->getSource()->ResetAllNotifiesbyMask(reset_mask);
 }
 
 template<>
 inline void
 Oregon::PlayerRelocationNotifier::Visit(CreatureMapType &m)
 {
+    if(!i_player.isAlive() || i_player.isInFlight())
+        return;
+
     for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
-        i_clientGUIDs.erase(iter->getSource()->GetGUID());
-
-        if (iter->getSource()->m_Notified)
-            continue;
-
-        i_player.UpdateVisibilityOf(iter->getSource(),i_data,i_visibleNow);
-
-        PlayerCreatureRelocationWorker(&i_player, iter->getSource());
+        Creature * c = iter->getSource();
+        if(c->isAlive() && !c->NotifyExecuted(NOTIFY_AI_RELOCATION))
+            PlayerCreatureRelocationWorker(&i_player, c);
     }
 }
 
@@ -122,14 +132,14 @@ template<>
 inline void
 Oregon::CreatureRelocationNotifier::Visit(PlayerMapType &m)
 {
+    if(!i_creature.isAlive())
+        return;
+
     for (PlayerMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
-        if (iter->getSource()->m_Notified)
-            continue;
-
-        iter->getSource()->UpdateVisibilityOf(&i_creature);
-
-        PlayerCreatureRelocationWorker(iter->getSource(), &i_creature);
+        Player * pl = iter->getSource();
+        if( pl->isAlive() && !pl->isInFlight() && !pl->NotifyExecuted(NOTIFY_AI_RELOCATION))
+            PlayerCreatureRelocationWorker(pl, &i_creature);
     }
 }
 
@@ -142,13 +152,9 @@ Oregon::CreatureRelocationNotifier::Visit(CreatureMapType &m)
 
     for (CreatureMapType::iterator iter = m.begin(); iter != m.end(); ++iter)
     {
-        if (iter->getSource()->m_Notified)
-            continue;
-
-        if (!iter->getSource()->isAlive())
-            continue;
-
-        CreatureCreatureRelocationWorker(iter->getSource(), &i_creature);
+        Creature* c = iter->getSource();
+        if( c != &i_creature && c->isAlive() && !c->NotifyExecuted(NOTIFY_AI_RELOCATION))
+            CreatureCreatureRelocationWorker(c, &i_creature);
     }
 }
 

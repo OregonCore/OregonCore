@@ -227,7 +227,7 @@ void MovementInfo::Write(ByteBuffer &data) const
 
 Unit::Unit()
 : WorldObject(), i_motionMaster(this), m_ThreatManager(this), m_HostileRefManager(this)
-, m_NotifyListPos(-1), m_Notified(false), IsAIEnabled(false), NeedChangeAI(false)
+, IsAIEnabled(false), NeedChangeAI(false)
 , i_AI(NULL), i_disabledAI(NULL), m_removedAurasCount(0), m_procDeep(0)
 {
     m_objectType |= TYPEMASK_UNIT;
@@ -8621,6 +8621,23 @@ void Unit::SetVisibility(UnitVisibility x)
 {
     m_Visibility = x;
 
+    if (IsInWorld())
+    {
+        Map *m = GetMap();
+        CellPair p(Oregon::ComputeCellPair(GetPositionX(), GetPositionY()));
+        Cell cell(p);
+
+        if (GetTypeId() == TYPEID_PLAYER)
+        {
+            m->UpdatePlayerVisibility((Player*)this, cell, p);
+            m->UpdateObjectsVisibilityFor((Player*)this, cell, p);
+        }
+        else
+            m->UpdateObjectVisibility(this, cell, p);
+
+        AddToNotify(NOTIFY_AI_RELOCATION);
+    }
+
     SetToNotify();
 
     if (x == VISIBILITY_GROUP_STEALTH)
@@ -9715,8 +9732,6 @@ void Unit::AddToWorld()
     if (!IsInWorld())
     {
         WorldObject::AddToWorld();
-        m_Notified = false;
-        ASSERT(m_NotifyListPos < 0); //instance : crash
         SetToNotify();
     }
 }
@@ -9729,9 +9744,6 @@ void Unit::RemoveFromWorld()
         RemoveCharmAuras();
         RemoveBindSightAuras();
         RemoveNotOwnSingleTargetAuras();
-
-        if (m_NotifyListPos >= 0)
-            GetMap()->RemoveUnitFromNotify(this);
 
         WorldObject::RemoveFromWorld();
     }
@@ -11243,9 +11255,10 @@ void Unit::NearTeleportTo(float x, float y, float z, float orientation, bool cas
 
 void Unit::SetToNotify()
 {
-    // it is called somewhere when obj is not in world (crash when log in instance)
-    if (m_NotifyListPos < 0)
-        GetMap()->AddUnitToNotify(this);
+    if (GetTypeId() == TYPEID_PLAYER)
+        AddToNotify(NOTIFY_VISIBILITY_CHANGED | NOTIFY_AI_RELOCATION | NOTIFY_PLAYER_VISIBILITY);
+    else
+        AddToNotify(NOTIFY_VISIBILITY_CHANGED | NOTIFY_AI_RELOCATION);
 }
 
 void Unit::Kill(Unit *pVictim, bool durabilityLoss)

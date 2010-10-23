@@ -5445,6 +5445,9 @@ bool Player::SetPosition(float x, float y, float z, float orientation, bool tele
     // code block for underwater state update
     UpdateUnderwaterState(m, x, y, z);
 
+    if(GetTrader() && !IsWithinDistInMap(GetTrader(), 5))
+        GetSession()->SendCancelTrade();
+
     CheckAreaExploreAndOutdoor();
 
     return true;
@@ -18459,6 +18462,33 @@ bool Player::IsVisibleGloballyFor(Player* u) const
     return true;
 }
 
+template<class T>
+inline void UpdateVisibilityOf_helper(std::set<uint64>& s64, T* target, std::set<Unit*>& v)
+{
+    s64.insert(target->GetGUID());
+}
+
+template<>
+inline void UpdateVisibilityOf_helper(std::set<uint64>& s64, GameObject* target, std::set<Unit*>& v)
+{
+    if(!target->IsTransport())
+        s64.insert(target->GetGUID());
+}
+
+template<>
+inline void UpdateVisibilityOf_helper(std::set<uint64>& s64, Creature* target, std::set<Unit*>& v)
+{
+    s64.insert(target->GetGUID());
+    v.insert(target);
+}
+
+template<>
+inline void UpdateVisibilityOf_helper(std::set<uint64>& s64, Player* target, std::set<Unit*>& v)
+{
+    s64.insert(target->GetGUID());
+    v.insert(target);
+}
+
 void Player::UpdateVisibilityOf(WorldObject* target)
 {
     if (HaveAtClient(target))
@@ -18508,20 +18538,7 @@ void Player::SendInitialVisiblePackets(Unit* target)
 }
 
 template<class T>
-inline void UpdateVisibilityOf_helper(std::set<uint64>& s64, T* target)
-{
-    s64.insert(target->GetGUID());
-}
-
-template<>
-inline void UpdateVisibilityOf_helper(std::set<uint64>& s64, GameObject* target)
-{
-    if (!target->IsTransport())
-        s64.insert(target->GetGUID());
-}
-
-template<class T>
-void Player::UpdateVisibilityOf(T* target, UpdateData& data, std::set<WorldObject*>& visibleNow)
+void Player::UpdateVisibilityOf(T* target, UpdateData& data, std::set<Unit*>& visibleNow)
 {
     if (!target)
     return;
@@ -18542,9 +18559,8 @@ void Player::UpdateVisibilityOf(T* target, UpdateData& data, std::set<WorldObjec
     {
         if (target->isVisibleForInState(this,false))
         {
-            visibleNow.insert(target);
             target->BuildCreateUpdateBlockForPlayer(&data, this);
-            UpdateVisibilityOf_helper(m_clientGUIDs,target);
+            UpdateVisibilityOf_helper(m_clientGUIDs,target,visibleNow);
 
             #ifdef OREGON_DEBUG
             if ((sLog.getLogFilter() & LOG_FILTER_VISIBILITY_CHANGES) == 0)
@@ -18554,46 +18570,11 @@ void Player::UpdateVisibilityOf(T* target, UpdateData& data, std::set<WorldObjec
     }
 }
 
-/*template<>
-void Player::UpdateVisibilityOf<Creature>(Creature* target, UpdateData& data, UpdateDataMapType& data_updates, std::set<WorldObject*>& visibleNow)
-{
-    if (HaveAtClient(target))
-    {
-        if (!target->isVisibleForInState(this,true))
-        {
-            target->DestroyForPlayer(this);
-            target->BuildOutOfRangeUpdateBlock(&data);
-            m_clientGUIDs.erase(target->GetGUID());
-
-            #ifdef OREGON_DEBUG
-            if ((sLog.getLogFilter() & LOG_FILTER_VISIBILITY_CHANGES) == 0)
-                sLog.outDebug("Object %u (Type: %u, Entry: %u) is out of range for player %u. Distance = %f",target->GetGUIDLow(),target->GetTypeId(),target->GetEntry(),GetGUIDLow(),GetDistance(target));
-            #endif
-        }
-    }
-    else
-    {
-        if (target->isVisibleForInState(this,false))
-        {
-            visibleNow.insert(target);
-            target->BuildUpdate(data_updates);
-            target->SendUpdateToPlayer(this);
-            target->SendMonsterMoveWithSpeedToCurrentDestination(this);
-            UpdateVisibilityOf_helper(m_clientGUIDs,target);
-
-            #ifdef OREGON_DEBUG
-            if ((sLog.getLogFilter() & LOG_FILTER_VISIBILITY_CHANGES) == 0)
-                sLog.outDebug("Object %u (Type: %u, Entry: %u) is visible now for player %u. Distance = %f",target->GetGUIDLow(),target->GetTypeId(),target->GetEntry(),GetGUIDLow(),GetDistance(target));
-            #endif
-        }
-    }
-}*/
-
-template void Player::UpdateVisibilityOf(Player*        target, UpdateData& data, std::set<WorldObject*>& visibleNow);
-template void Player::UpdateVisibilityOf(Creature*      target, UpdateData& data, std::set<WorldObject*>& visibleNow);
-template void Player::UpdateVisibilityOf(Corpse*        target, UpdateData& data, std::set<WorldObject*>& visibleNow);
-template void Player::UpdateVisibilityOf(GameObject*    target, UpdateData& data, std::set<WorldObject*>& visibleNow);
-template void Player::UpdateVisibilityOf(DynamicObject* target, UpdateData& data, std::set<WorldObject*>& visibleNow);
+template void Player::UpdateVisibilityOf(Player*        target, UpdateData& data, std::set<Unit*>& visibleNow);
+template void Player::UpdateVisibilityOf(Creature*      target, UpdateData& data, std::set<Unit*>& visibleNow);
+template void Player::UpdateVisibilityOf(Corpse*        target, UpdateData& data, std::set<Unit*>& visibleNow);
+template void Player::UpdateVisibilityOf(GameObject*    target, UpdateData& data, std::set<Unit*>& visibleNow);
+template void Player::UpdateVisibilityOf(DynamicObject* target, UpdateData& data, std::set<Unit*>& visibleNow);
 
 void Player::InitPrimaryProfessions()
 {
