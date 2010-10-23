@@ -357,30 +357,26 @@ Map::EnsureGridCreated(const GridPair &p)
 void
 Map::EnsureGridLoadedAtEnter(const Cell &cell, Player *player)
 {
-    NGridType *grid;
-
-    if(EnsureGridLoaded(cell))
-    {
-        grid = getNGrid(cell.GridX(), cell.GridY());
-
-        if (player)
-        {
-            player->SendDelayResponse(MAX_GRID_LOAD_TIME);
-            DEBUG_LOG("Player %s enter cell[%u,%u] triggers of loading grid[%u,%u] on map %u", player->GetName(), cell.CellX(), cell.CellY(), cell.GridX(), cell.GridY(), GetId());
-        }
-        else
-        {
-            DEBUG_LOG("Active object nearby triggers of loading grid [%u,%u] on map %u", cell.GridX(), cell.GridY(), GetId());
-        }
-
-        ResetGridExpiry(*getNGrid(cell.GridX(), cell.GridY()), 0.1f);
-        grid->SetGridState(GRID_STATE_ACTIVE);
-    }
-    else
-        grid = getNGrid(cell.GridX(), cell.GridY());
+    EnsureGridLoaded(cell);
+    NGridType *grid = getNGrid(cell.GridX(), cell.GridY());
+    ASSERT(grid != NULL);
 
     if (player)
-        AddToGrid(player,grid,cell);
+    {
+        player->SendDelayResponse(MAX_GRID_LOAD_TIME);
+        DEBUG_LOG("Player %s enter cell[%u,%u] triggers of loading grid[%u,%u] on map %u", player->GetName(), cell.CellX(), cell.CellY(), cell.GridX(), cell.GridY(), GetId());
+    }
+    else
+    {
+        DEBUG_LOG("Active object nearby triggers of loading grid [%u,%u] on map %u", cell.GridX(), cell.GridY(), GetId());
+    }
+
+    // refresh grid state & timer
+    if (grid->GetGridState() != GRID_STATE_ACTIVE)
+    {
+        ResetGridExpiry(*grid, 0.1f);
+        grid->SetGridState(GRID_STATE_ACTIVE);
+    }
 }
 
 bool Map::EnsureGridLoaded(const Cell &cell)
@@ -417,10 +413,22 @@ bool Map::Add(Player *player)
 {
     // Check if we are adding to correct map
     ASSERT (player->GetMap() == this);
-    // update player state for other player and visa-versa
     CellPair p = Oregon::ComputeCellPair(player->GetPositionX(), player->GetPositionY());
+    if(p.x_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP || p.y_coord >= TOTAL_NUMBER_OF_CELLS_PER_MAP )
+    {
+        sLog.outError("Map::Add: Player (GUID: %u) have invalid coordinates X:%f Y:%f grid cell [%u:%u]", player->GetGUIDLow(), player->GetPositionX(), player->GetPositionY(), p.x_coord, p.y_coord);
+        return false;
+    }
+
+    player->GetMapRef().link(this, player);
+    player->SetMap(this);
+
     Cell cell(p);
     EnsureGridLoadedAtEnter(cell, player);
+    NGridType *grid = getNGrid(cell.GridX(), cell.GridY());
+    ASSERT(grid != NULL);
+    AddToGrid(player, grid, cell);
+
     player->ResetAllNotifies();
     player->AddToWorld();
 
@@ -970,8 +978,6 @@ Map::PlayerRelocation(Player *player, float x, float y, float z, float orientati
 
     Cell old_cell(old_val);
     Cell new_cell(new_val);
-    new_cell |= old_cell;
-    bool same_cell = (new_cell == old_cell);
 
     player->Relocate(x, y, z, orientation);
 
@@ -986,20 +992,14 @@ Map::PlayerRelocation(Player *player, float x, float y, float z, float orientati
         NGridType* oldGrid = getNGrid(old_cell.GridX(), old_cell.GridY());
         RemoveFromGrid(player, oldGrid,old_cell);
 
-        if (!old_cell.DiffGrid(new_cell))
-            AddToGrid(player, oldGrid,new_cell);
-        else
+        if (old_cell.DiffGrid(new_cell))
             EnsureGridLoadedAtEnter(new_cell, player);
+
+        NGridType* newGrid = getNGrid(new_cell.GridX(), new_cell.GridY());
+        AddToGrid(player, newGrid,new_cell);
     }
 
     AddNotifier<Player>(player);
-
-    NGridType* newGrid = getNGrid(new_cell.GridX(), new_cell.GridY());
-    if (!same_cell && newGrid->GetGridState() != GRID_STATE_ACTIVE)
-    {
-        ResetGridExpiry(*newGrid, 0.1f);
-        newGrid->SetGridState(GRID_STATE_ACTIVE);
-    }
 }
 
 void
