@@ -11581,12 +11581,14 @@ void Unit::SetConfused(bool apply)
         ToPlayer()->SetClientControl(this, !apply);
 }
 
-void Unit::SetCharmedOrPossessedBy(Unit* charmer, bool possess)
+void Unit::SetCharmedBy(Unit* charmer, CharmType type)
 {
     if (!charmer)
         return;
 
-    ASSERT(!possess || charmer->GetTypeId() == TYPEID_PLAYER);
+    ASSERT(type != CHARM_TYPE_POSSESS || charmer->GetTypeId() == TYPEID_PLAYER);
+
+    sLog.outDebug("SetCharmedBy: charmer %u, charmed %u, type %u.", charmer->GetEntry(), GetEntry(), (uint32)type);
 
     if (this == charmer)
     {
@@ -11648,50 +11650,53 @@ void Unit::SetCharmedOrPossessedBy(Unit* charmer, bool possess)
     }
 
     // Pets already have a properly initialized CharmInfo, don't overwrite it.
-    if (GetTypeId() == TYPEID_PLAYER || GetTypeId() == TYPEID_UNIT && !ToCreature()->isPet())
+    if (!GetCharmInfo())
     {
         CharmInfo *charmInfo = InitCharmInfo();
-        if (possess)
+        if (type == CHARM_TYPE_POSSESS)
             charmInfo->InitPossessCreateSpells();
         else
             charmInfo->InitCharmCreateSpells();
     }
 
-    //Set possessed
-    if (possess)
+    if (charmer->GetTypeId() == TYPEID_PLAYER)
     {
-        addUnitState(UNIT_STAT_POSSESSED);
-        SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
-        AddPlayerToVision(charmer->ToPlayer());
-        charmer->ToPlayer()->SetClientControl(this, 1);
-        charmer->ToPlayer()->SetViewpoint(this, true);
-        charmer->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
-    }
-    // Charm demon
-    else if (GetTypeId() == TYPEID_UNIT && charmer->GetTypeId() == TYPEID_PLAYER && charmer->getClass() == CLASS_WARLOCK)
-    {
-        CreatureInfo const *cinfo = ToCreature()->GetCreatureInfo();
-        if (cinfo && cinfo->type == CREATURE_TYPE_DEMON)
+        switch(type)
         {
-            //to prevent client crash
-            SetFlag(UNIT_FIELD_BYTES_0, 2048);
+            case CHARM_TYPE_POSSESS:
+                addUnitState(UNIT_STAT_POSSESSED);
+                SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
+                AddPlayerToVision(charmer->ToPlayer());
+                charmer->ToPlayer()->SetClientControl(this, 1);
+                charmer->ToPlayer()->SetViewpoint(this, true);
+                charmer->ToPlayer()->PossessSpellInitialize();
+                break;
+            case CHARM_TYPE_CHARM:
+                if (GetTypeId() == TYPEID_UNIT && charmer->getClass() == CLASS_WARLOCK)
+                {
+                    CreatureInfo const *cinfo = ToCreature()->GetCreatureInfo();
+                    if (cinfo && cinfo->type == CREATURE_TYPE_DEMON)
+                    {
+                        //to prevent client crash
+                        SetFlag(UNIT_FIELD_BYTES_0, 2048);
 
-            //just to enable stat window
-            if (GetCharmInfo())
-                GetCharmInfo()->SetPetNumber(objmgr.GeneratePetNumber(), true);
+                        //just to enable stat window
+                        if (GetCharmInfo())
+                            GetCharmInfo()->SetPetNumber(objmgr.GeneratePetNumber(), true);
 
-            //if charmed two demons the same session, the 2nd gets the 1st one's name
-            SetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP, time(NULL));
+                        //if charmed two demons the same session, the 2nd gets the 1st one's name
+                        SetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP, time(NULL));
+                    }
+                }
+                charmer->ToPlayer()->CharmSpellInitialize();
+                break;
+            default:
+                break;
         }
     }
-
-    if (possess)
-        charmer->ToPlayer()->PossessSpellInitialize();
-    else if (charmer->GetTypeId() == TYPEID_PLAYER)
-        charmer->ToPlayer()->CharmSpellInitialize();
 }
 
-void Unit::RemoveCharmedOrPossessedBy(Unit *charmer)
+void Unit::RemoveCharmedBy(Unit *charmer)
 {
     if (!isCharmed())
         return;
@@ -11701,7 +11706,11 @@ void Unit::RemoveCharmedOrPossessedBy(Unit *charmer)
     if (charmer != GetCharmer()) // one aura overrides another?
         return;
 
-    bool possess = hasUnitState(UNIT_STAT_POSSESSED);
+    CharmType type;
+    if (hasUnitState(UNIT_STAT_POSSESSED))
+        type = CHARM_TYPE_POSSESS;
+    else
+        type = CHARM_TYPE_CHARM;
 
     CastStop();
     CombatStop(); //TODO: CombatStop(true) may cause crash (interrupt spells)
@@ -11710,7 +11719,7 @@ void Unit::RemoveCharmedOrPossessedBy(Unit *charmer)
     RestoreFaction();
     GetMotionMaster()->InitDefault();
 
-    if (possess)
+    if (type == CHARM_TYPE_POSSESS)
     {
         clearUnitState(UNIT_STAT_POSSESSED);
         RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
@@ -11740,48 +11749,48 @@ void Unit::RemoveCharmedOrPossessedBy(Unit *charmer)
     if (!charmer)
         return;
 
-    ASSERT(!possess || charmer->GetTypeId() == TYPEID_PLAYER);
+    ASSERT(type != CHARM_TYPE_POSSESS || charmer->GetTypeId() == TYPEID_PLAYER);
 
     charmer->SetCharm(0);
 
-    if (possess)
+    if (charmer->GetTypeId() == TYPEID_PLAYER)
     {
-        RemovePlayerFromVision(charmer->ToPlayer());
-        charmer->ToPlayer()->SetClientControl(charmer, 1);
-        charmer->ToPlayer()->SetViewpoint(this, false);
-        charmer->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
-    }
-    // restore UNIT_FIELD_BYTES_0
-    else if (GetTypeId() == TYPEID_UNIT && charmer->GetTypeId() == TYPEID_PLAYER && charmer->getClass() == CLASS_WARLOCK)
-    {
-        CreatureInfo const *cinfo = ToCreature()->GetCreatureInfo();
-        if (cinfo && cinfo->type == CREATURE_TYPE_DEMON)
+        switch (type)
         {
-            CreatureDataAddon const *cainfo = ToCreature()->GetCreatureAddon();
-            if (cainfo && cainfo->bytes0 != 0)
-                SetUInt32Value(UNIT_FIELD_BYTES_0, cainfo->bytes0);
-            else
-                RemoveFlag(UNIT_FIELD_BYTES_0, 2048);
+            case CHARM_TYPE_POSSESS:
+                RemovePlayerFromVision(charmer->ToPlayer());
+                ((Player*)charmer)->SetClientControl(charmer, 1);
+                ((Player*)charmer)->SetViewpoint(this, false);
+                charmer->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+                break;
+            case CHARM_TYPE_CHARM:
+                if (GetTypeId() == TYPEID_UNIT && charmer->getClass() == CLASS_WARLOCK)
+                {
+                    CreatureInfo const *cinfo = ToCreature()->GetCreatureInfo();
+                    if (cinfo && cinfo->type == CREATURE_TYPE_DEMON)
+                    {
+                        CreatureDataAddon const *cainfo = ToCreature()->GetCreatureAddon();
+                        if (cainfo && cainfo->bytes0 != 0)
+                            SetUInt32Value(UNIT_FIELD_BYTES_0, cainfo->bytes0);
+                        else
+                            RemoveFlag(UNIT_FIELD_BYTES_0, 2048);
 
-            if (GetCharmInfo())
-                GetCharmInfo()->SetPetNumber(0, true);
-            else
-                sLog.outError("Aura::HandleModCharm: target="UI64FMTD" with typeid=%d has a charm aura but no charm info!", GetGUID(), GetTypeId());
+                        if (GetCharmInfo())
+                            GetCharmInfo()->SetPetNumber(0, true);
+                        else
+                            sLog.outError("Aura::HandleModCharm: target="UI64FMTD" with typeid=%d has a charm aura but no charm info!", GetGUID(), GetTypeId());
+                    }
+                }
+                break;
+            default:
+                break;
         }
     }
 
-    if (GetTypeId() == TYPEID_PLAYER || GetTypeId() == TYPEID_UNIT && !ToCreature()->isPet())
-    {
+    if (charmer->GetTypeId() == TYPEID_PLAYER && type == CHARM_TYPE_POSSESS)
+        charmer->ToPlayer()->SendRemoveControlBar();
+    else if (GetTypeId() == TYPEID_PLAYER || GetTypeId() == TYPEID_UNIT && !ToCreature()->isPet())
         DeleteCharmInfo();
-    }
-
-    if (possess || charmer->GetTypeId() == TYPEID_PLAYER)
-    {
-        // Remove pet spell action bar
-        WorldPacket data(SMSG_PET_SPELLS, 8);
-        data << uint64(0);
-        charmer->ToPlayer()->GetSession()->SendPacket(&data);
-    }
 }
 
 void Unit::RestoreFaction()

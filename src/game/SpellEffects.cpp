@@ -3739,7 +3739,7 @@ void Spell::EffectSummonPossessed(uint32 i)
         return;
 
     pet->SetUInt32Value(UNIT_CREATED_BY_SPELL, m_spellInfo->Id);
-    pet->SetCharmedOrPossessedBy(m_caster, true);
+    pet->SetCharmedBy(m_caster, CHARM_TYPE_POSSESS);
 }
 
 void Spell::EffectTeleUnitsFaceCaster(uint32 i)

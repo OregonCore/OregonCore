@@ -850,6 +850,12 @@ struct CharmSpellEntry
 
 typedef std::list<Player*> SharedVisionList;
 
+enum CharmType
+{
+    CHARM_TYPE_CHARM,
+    CHARM_TYPE_POSSESS,
+};
+
 struct CharmInfo
 {
     public:
@@ -1269,9 +1275,12 @@ class Unit : public WorldObject
 
         void SetPet(Pet* pet);
         void SetCharm(Unit* pet);
-        void SetCharmedOrPossessedBy(Unit* charmer, bool possess);
-        void RemoveCharmedOrPossessedBy(Unit* charmer);
+        void SetCharmedBy(Unit* charmer, CharmType type);
+        void RemoveCharmedBy(Unit* charmer);
         void RestoreFaction();
+
+        Unit* GetFirstControlled() const;
+        void RemoveAllControlled();
 
         bool isCharmed() const { return GetCharmerGUID() != 0; }
         bool isPossessed() const { return hasUnitState(UNIT_STAT_POSSESSED); }

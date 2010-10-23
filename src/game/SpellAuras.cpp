@@ -3077,10 +3077,10 @@ void Aura::HandleModPossess(bool apply, bool Real)
         if (m_target->getLevel() > m_modifier.m_amount)
             return;
 
-        m_target->SetCharmedOrPossessedBy(caster, true);
+        m_target->SetCharmedBy(caster, CHARM_TYPE_POSSESS);
     }
     else
-        m_target->RemoveCharmedOrPossessedBy(caster);
+        m_target->RemoveCharmedBy(caster);
 }
 
 void Aura::HandleModPossessPet(bool apply, bool Real)
@@ -3097,11 +3097,11 @@ void Aura::HandleModPossessPet(bool apply, bool Real)
         if (caster->GetPet() != m_target)
             return;
 
-        m_target->SetCharmedOrPossessedBy(caster, true);
+        m_target->SetCharmedBy(caster, CHARM_TYPE_POSSESS);
     }
     else
     {
-        m_target->RemoveCharmedOrPossessedBy(caster);
+        m_target->RemoveCharmedBy(caster);
 
         // Reinitialize the pet bar and make the pet come back to the owner
         caster->ToPlayer()->PetSpellInitialize();
@@ -3125,10 +3125,10 @@ void Aura::HandleModCharm(bool apply, bool Real)
         if (int32(m_target->getLevel()) > m_modifier.m_amount)
             return;
 
-        m_target->SetCharmedOrPossessedBy(caster, false);
+        m_target->SetCharmedBy(caster, CHARM_TYPE_CHARM);
     }
     else
-        m_target->RemoveCharmedOrPossessedBy(caster);
+        m_target->RemoveCharmedBy(caster);
 }
 
 void Aura::HandleModConfuse(bool apply, bool Real)

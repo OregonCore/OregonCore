@@ -16907,7 +16907,7 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
             break;
         case POSSESSED_PET:
             m_guardianPets.erase(pet->GetGUID());
-            pet->RemoveCharmedOrPossessedBy(NULL);
+            pet->RemoveCharmedBy(NULL);
             break;
         default:
             if (GetPetGUID() == pet->GetGUID())
@@ -17255,6 +17255,13 @@ void Player::CharmSpellInitialize()
     data << uint32(0x8e8c) << uint64(0);                    // if count = 3
     data << uint32(0x8e8b) << uint64(0);                    // if count = 3
 
+    GetSession()->SendPacket(&data);
+}
+
+void Player::SendRemoveControlBar()
+{
+    WorldPacket data(SMSG_PET_SPELLS, 8);
+    data << uint64(0);
     GetSession()->SendPacket(&data);
 }
 
