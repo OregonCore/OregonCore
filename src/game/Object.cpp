@@ -1033,8 +1033,7 @@ bool Object::PrintIndexError(uint32 index, bool set) const
 }
 
 WorldObject::WorldObject()
-    : m_mapId(0), m_InstanceId(0),
-    m_positionX(0.0f), m_positionY(0.0f), m_positionZ(0.0f), m_orientation(0.0f), m_currMap(NULL)
+    : m_positionX(0.0f), m_positionY(0.0f), m_positionZ(0.0f), m_orientation(0.0f), m_currMap(NULL)
     , m_zoneScript(NULL)
     , m_isActive(false), m_isWorldObject(false)
     , m_name("")

@@ -395,8 +395,8 @@ class WorldObject : public Object, public WorldLocation
 
         void GetRandomPoint(float x, float y, float z, float distance, float &rand_x, float &rand_y, float &rand_z) const;
 
-        uint32 GetMapId() const { return m_mapId; }
-        uint32 GetInstanceId() const { return m_InstanceId; }
+        uint32 GetMapId() const { return m_currMap ? m_currMap->GetId() : 0; }
+        uint32 GetInstanceId() const { return m_currMap ? m_currMap->GetInstanceId() : 0; }
 
         uint32 GetZoneId() const;
         uint32 GetAreaId() const;
@@ -493,7 +493,7 @@ class WorldObject : public Object, public WorldLocation
         // Low Level Packets
         void SendPlaySound(uint32 Sound, bool OnlySelf);
 
-        void SetMap(Map * map);
+        virtual void SetMap(Map * map);
         virtual void ResetMap();
         Map * GetMap() const { ASSERT(m_currMap); return m_currMap; }
         Map * FindMap() const { return m_currMap; }
@@ -541,8 +541,8 @@ class WorldObject : public Object, public WorldLocation
     private:
         Map * m_currMap;                                    //current object's Map location
 
-        uint32 m_mapId;
-        uint32 m_InstanceId;
+        uint32 m_mapId;                                     // object at map with map_id
+        uint32 m_InstanceId;                                // in map copy with instance id
 
         float m_positionX;
         float m_positionY;

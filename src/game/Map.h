@@ -44,6 +44,7 @@ class InstanceData;
 class Group;
 class InstanceSave;
 class WorldObject;
+class Player;
 class CreatureGroup;
 
 //******************************************
@@ -289,7 +290,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         }
 
         time_t GetGridExpiry(void) const { return i_gridExpiry; }
-        uint32 GetId(void) const { return i_id; }
+        uint32 GetId(void) const { return i_mapEntry->MapID; }
 
         static bool ExistMap(uint32 mapid, int gx, int gy);
         static bool ExistVMap(uint32 mapid, int gx, int gy);
@@ -320,12 +321,12 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
         uint32 GetAreaId(float x, float y, float z) const
         {
-            return GetAreaId(GetAreaFlag(x,y,z),i_id);
+            return GetAreaId(GetAreaFlag(x,y,z),GetId());
         }
 
         uint32 GetZoneId(float x, float y, float z) const
         {
-            return GetZoneId(GetAreaFlag(x,y,z),i_id);
+            return GetZoneId(GetAreaFlag(x,y,z),GetId());
         }
 
         void MoveAllCreaturesInMoveList();
@@ -367,6 +368,9 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         uint32 GetPlayersCountExceptGMs() const;
         bool ActiveObjectsNearGrid(uint32 x, uint32 y) const;
 
+        void AddWorldObject(WorldObject *obj) { i_worldObjects.insert(obj); }
+        void RemoveWorldObject(WorldObject *obj) { i_worldObjects.erase(obj); }
+
         void AddUnitToNotify(Unit* unit);
         void RemoveUnitFromNotify(int32 slot);
 
@@ -392,13 +396,17 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         template<class NOTIFIER> void VisitWorld(const float &x, const float &y, float radius, NOTIFIER &notifier);
         template<class NOTIFIER> void VisitGrid(const float &x, const float &y, float radius, NOTIFIER &notifier);
         CreatureGroupHolderType CreatureGroupHolder;
+ 
+        void UpdateIteratorBack(Player *player);
 
+#ifdef MAP_BASED_RAND_GEN
         MTRand mtRand;
         int32 irand(int32 min, int32 max)       { return int32 (mtRand.randInt(max - min)) + min; }
         uint32 urand(uint32 min, uint32 max)    { return mtRand.randInt(max - min) + min; }
         int32 rand32()                          { return mtRand.randInt(); }
         double rand_norm()                      { return mtRand.randExc(); }
         double rand_chance()                    { return mtRand.randExc(100.0); }
+#endif
 
         Creature* GetCreature(uint64 guid);
         GameObject* GetGameObject(uint64 guid);
@@ -451,7 +459,6 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
         MapEntry const* i_mapEntry;
         uint8 i_spawnMode;
-        uint32 i_id;
         uint32 i_InstanceId;
         uint32 m_unloadTimer;
         float m_VisibleDistance;
@@ -481,6 +488,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         std::vector<Unit*> i_unitsToNotify;
         std::set<WorldObject *> i_objectsToRemove;
         std::map<WorldObject*, bool> i_objectsToSwitch;
+        std::set<WorldObject*> i_worldObjects;
 
         // Type specific code for add/remove to/from grid
         template<class T>

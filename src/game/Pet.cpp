@@ -1744,6 +1744,7 @@ void Pet::ToggleAutocast(uint32 spellid, bool apply)
 
 bool Pet::Create(uint32 guidlow, Map *map, uint32 Entry, uint32 pet_number)
 {
+    ASSERT(map);
     SetMap(map);
 
     Object::_Create(guidlow, pet_number, HIGHGUID_PET);

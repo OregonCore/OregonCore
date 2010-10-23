@@ -1958,7 +1958,7 @@ class Player : public Unit
         float m_homebindY;
         float m_homebindZ;
         void SetHomebindToLocation(WorldLocation const& loc, uint32 area_id);
-        void RelocateToHomebind() { SetLocationMapId(m_homebindMapId); Relocate(m_homebindX,m_homebindY,m_homebindZ); }
+        void RelocateToHomebind(uint32 & newMap) { newMap = m_homebindMapId; Relocate(m_homebindX,m_homebindY,m_homebindZ); }
         bool TeleportToHomebind(uint32 options = 0) { return TeleportTo(m_homebindMapId, m_homebindX, m_homebindY, m_homebindZ, GetOrientation(), options); }
 
         // currently visible objects at player client
@@ -2039,6 +2039,10 @@ class Player : public Unit
 
         GridReference<Player> &GetGridRef() { return m_gridRef; }
         MapReference &GetMapRef() { return m_mapRef; }
+
+        // Set map to player and add reference
+        void SetMap(Map * map);
+        void ResetMap();
 
         bool isAllowedToLoot(const Creature* creature);
 

@@ -190,9 +190,11 @@ class BattleGroundMgr
         BattleGroundSet::iterator GetBattleGroundsBegin() { return m_BattleGrounds.begin(); };
         BattleGroundSet::iterator GetBattleGroundsEnd() { return m_BattleGrounds.end(); };
 
-        BattleGround* GetBattleGround(uint32 ID)
+        BattleGround* GetBattleGround(uint32 InstanceID)
         {
-            BattleGroundSet::iterator i = m_BattleGrounds.find(ID);
+            if (!InstanceID)
+                return NULL;
+            BattleGroundSet::iterator i = m_BattleGrounds.find(InstanceID);
             if (i != m_BattleGrounds.end())
                 return i->second;
             else

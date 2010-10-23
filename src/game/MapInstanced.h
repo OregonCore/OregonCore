@@ -41,7 +41,7 @@ class MapInstanced : public Map
         void UnloadAll();
         bool CanEnter(Player* player);
 
-        Map* CreateInstance(const uint32 mapId, Player * player);
+        Map* CreateInstance(const uint32 mapId, Player * player, uint32 instanceId);
         Map* FindMap(uint32 InstanceId) const { return _FindMap(InstanceId); }
         void DestroyInstance(uint32 InstanceId);
         void DestroyInstance(InstancedMaps::iterator &itr);

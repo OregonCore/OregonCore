@@ -75,43 +75,51 @@ void WorldSession::HandleMoveWorldportAckOpcode()
 
     GetPlayer()->SetSemaphoreTeleportFar(false);
 
+    Map * oldMap = GetPlayer()->GetMap();
+    ASSERT(oldMap);
+    if (GetPlayer()->IsInWorld())
+    {
+        sLog.outCrash("Player is still in world when teleported from map %u! to new map %u", oldMap->GetId(), loc.mapid);
+        oldMap->Remove(GetPlayer(), false);
+    }
+
     // relocate the player to the teleport destination
-    GetPlayer()->SetMap(MapManager::Instance().CreateMap(loc.mapid, GetPlayer()));
-    GetPlayer()->Relocate(loc.coord_x, loc.coord_y, loc.coord_z, loc.orientation);
+    Map * newMap = MapManager::Instance().CreateMap(loc.mapid, GetPlayer(), 0);
+    // the CanEnter checks are done in TeleporTo but conditions may change
+    // while the player is in transit, for example the map may get full
+    if (!newMap || !newMap->CanEnter(GetPlayer()))
+    {
+        sLog.outError("Map %d could not be created for player %d, porting player to homebind", loc.mapid, GetPlayer()->GetGUIDLow());
+        GetPlayer()->TeleportToHomebind();
+        return;
+    }
+    else
+        GetPlayer()->Relocate(loc.coord_x, loc.coord_y, loc.coord_z, loc.orientation);
+
+    GetPlayer()->ResetMap();
+    GetPlayer()->SetMap(newMap);
 
     // check this before Map::Add(player), because that will create the instance save!
     bool reset_notify = (GetPlayer()->GetBoundInstance(GetPlayer()->GetMapId(), GetPlayer()->GetDifficulty()) == NULL);
 
     GetPlayer()->SendInitialPacketsBeforeAddToMap();
-    // the CanEnter checks are done in TeleporTo but conditions may change
-    // while the player is in transit, for example the map may get full
     if (!GetPlayer()->GetMap()->Add(GetPlayer()))
     {
-        //if player wasn't added to map, reset his map pointer!
+        sLog.outError("WORLD: failed to teleport player %s (%d) to map %d because of unknown reason!", GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), loc.mapid);
         GetPlayer()->ResetMap();
-
-        sLog.outError("WorldSession::HandleMoveWorldportAckOpcode: player %s (%d) was teleported far but couldn't be added to map. (map:%u, x:%f, y:%f, "
-            "z:%f) We port him to his homebind instead..", GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), loc.mapid, loc.coord_x, loc.coord_y, loc.coord_z);
-
-        // teleport the player home
-        if (!GetPlayer()->TeleportToHomebind())
-        {
-            // the player must always be able to teleport home
-            sLog.outError("WORLD: failed to teleport player %s (%d) to homebind location %d, %f, %f, %f, %f!", GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), GetPlayer()->m_homebindMapId, GetPlayer()->m_homebindX, GetPlayer()->m_homebindY, GetPlayer()->m_homebindZ, GetPlayer()->GetOrientation());
-            ASSERT(false);
-        }
+        GetPlayer()->SetMap(oldMap);
+        GetPlayer()->TeleportToHomebind();
         return;
     }
 
-    //this will set player's team ... so IT MUST BE CALLED BEFORE SendInitialPacketsAfterAddToMap()
     // battleground state prepare (in case join to BG), at relogin/tele player not invited
     // only add to bg group and object, if the player was invited (else he entered through command)
     if (_player->InBattleGround())
     {
-        // cleanup seting if outdated
+        // cleanup setting if outdated
         if (!mEntry->IsBattleGroundOrArena())
         {
-            // Do next only if found in battleground
+            // We're not in BG
             _player->SetBattleGroundId(0);                          // We're not in BG.
             // reset destination bg team
             _player->SetBGTeam(0);

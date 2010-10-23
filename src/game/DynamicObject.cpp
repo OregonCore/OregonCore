@@ -65,15 +65,15 @@ void DynamicObject::RemoveFromWorld()
 
 bool DynamicObject::Create(uint32 guidlow, Unit *caster, uint32 spellId, uint32 effIndex, float x, float y, float z, int32 duration, float radius)
 {
-    WorldObject::_Create(guidlow, HIGHGUID_DYNAMICOBJECT);
     SetMap(caster->GetMap());
     Relocate(x,y,z,0);
-
     if (!IsPositionValid())
     {
         sLog.outError("DynamicObject (spell %u eff %u) not created. Suggested coordinates isn't valid (X: %f Y: %f)",spellId,effIndex,GetPositionX(),GetPositionY());
         return false;
     }
+
+    WorldObject::_Create(guidlow, HIGHGUID_DYNAMICOBJECT);
 
     SetEntry(spellId);
     SetFloatValue(OBJECT_FIELD_SCALE_X, 1);
