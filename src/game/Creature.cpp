@@ -165,6 +165,9 @@ m_meleeDamageSchoolMask(SPELL_SCHOOL_MASK_NORMAL),m_creatureInfo(NULL), m_DBTabl
     m_GlobalCooldown = 0;
     m_unit_movement_flags = MOVEFLAG_WALK_MODE;
     DisableReputationGain = false;
+
+    m_SightDistance = sWorld.getConfig(CONFIG_SIGHT_MONSTER);
+    m_CombatDistance = MELEE_RANGE;
 }
 
 Creature::~Creature()
@@ -1225,11 +1228,6 @@ bool Creature::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bo
     // Now check is target visible with LoS
     //return u->IsWithinLOS(GetPositionX(),GetPositionY(),GetPositionZ());
     return true;
-}
-
-bool Creature::IsWithinSightDist(Unit const* u) const
-{
-    return IsWithinDistInMap(u, sWorld.getConfig(CONFIG_SIGHT_MONSTER));
 }
 
 bool Creature::canStartAttack(Unit const* who) const
