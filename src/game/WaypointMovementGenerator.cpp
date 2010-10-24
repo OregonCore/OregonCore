@@ -137,7 +137,7 @@ bool WaypointMovementGenerator<Creature>::Update(Creature &unit, const uint32 &d
     i_nextMoveTime.Update(diff);
     i_destinationHolder.UpdateTraveller(traveller, diff, true);
 
-    if (i_nextMoveTime.Passed())
+    if (i_nextMoveTime.GetExpiry() < TIMEDIFF_NEXT_WP)
     {
         if (unit.IsStopped())
         {
@@ -180,6 +180,7 @@ bool WaypointMovementGenerator<Creature>::Update(Creature &unit, const uint32 &d
             if (node->event_id && rand()%100 < node->event_chance)
                 sWorld.ScriptsStart(sWaypointScripts, node->event_id, &unit, NULL, false);
 
+            i_destinationHolder.ResetTravelTime();
             MovementInform(unit);
             unit.UpdateWaypointID(i_currentNode);
             unit.clearUnitState(UNIT_STAT_ROAMING);
