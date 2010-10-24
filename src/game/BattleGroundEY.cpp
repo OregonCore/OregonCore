@@ -84,13 +84,13 @@ void BattleGroundEY::Update(time_t diff)
         else if (GetStartDelayTime() <= START_DELAY1 && !(m_Events & 0x04))
         {
             m_Events |= 0x04;
-            SendMessageToAll(GetOregonString(LANG_BG_EY_ONE_MINUTE));
+            SendMessageToAll(GetOregonString(LANG_BG_EY_START_ONE_MINUTE));
         }
         // After 1,5 minute, warning is signalled
         else if (GetStartDelayTime() <= START_DELAY2 && !(m_Events & 0x08))
         {
             m_Events |= 0x08;
-            SendMessageToAll(GetOregonString(LANG_BG_EY_HALF_MINUTE));
+            SendMessageToAll(GetOregonString(LANG_BG_EY_START_HALF_MINUTE));
         }
         // After 2 minutes, gates OPEN ! x)
         else if (GetStartDelayTime() < 0 && !(m_Events & 0x10))
@@ -108,7 +108,7 @@ void BattleGroundEY::Update(time_t diff)
                 SpawnBGObject(BG_EY_OBJECT_SPEEDBUFF_FEL_REAVER + buff + i * 3, RESPAWN_IMMEDIATELY);
             }
 
-            SendMessageToAll(GetOregonString(LANG_BG_EY_BEGIN));
+            SendMessageToAll(GetOregonString(LANG_BG_EY_HAS_BEGUN));
 
             PlaySoundToAll(SOUND_BG_START);
             if (sWorld.getConfig(CONFIG_BG_START_MUSIC))

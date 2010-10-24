@@ -95,19 +95,19 @@ void BattleGroundAB::Update(time_t diff)
         else if (GetStartDelayTime() <= START_DELAY1 && !(m_Events & 0x04))
         {
             m_Events |= 0x04;
-            SendMessageToAll(GetOregonString(LANG_BG_AB_ONEMINTOSTART));
+            SendMessageToAll(GetOregonString(LANG_BG_AB_START_ONE_MINUTE));
         }
         // After 1,5 minute, warning is signalled
         else if (GetStartDelayTime() <= START_DELAY2 && !(m_Events & 0x08))
         {
             m_Events |= 0x08;
-            SendMessageToAll(GetOregonString(LANG_BG_AB_HALFMINTOSTART));
+            SendMessageToAll(GetOregonString(LANG_BG_AB_START_HALF_MINUTE));
         }
         // After 2 minutes, gates OPEN ! x)
         else if (GetStartDelayTime() < 0 && !(m_Events & 0x10))
         {
             m_Events |= 0x10;
-            SendMessageToAll(GetOregonString(LANG_BG_AB_STARTED));
+            SendMessageToAll(GetOregonString(LANG_BG_AB_HAS_BEGUN));
 
             // spawn neutral banners
             for (int banner = BG_AB_OBJECT_BANNER_NEUTRAL, i = 0; i < 5; banner += 8, ++i)

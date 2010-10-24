@@ -85,7 +85,7 @@ void BattleGroundRL::Update(time_t diff)
             for (uint32 i = BG_RL_OBJECT_BUFF_1; i <= BG_RL_OBJECT_BUFF_2; i++)
                 SpawnBGObject(i, 60);
 
-            SendMessageToAll(LANG_ARENA_BEGUN);
+            SendMessageToAll(LANG_ARENA_HAS_BEGUN);
             SetStatus(STATUS_IN_PROGRESS);
             SetStartDelayTime(0);
 

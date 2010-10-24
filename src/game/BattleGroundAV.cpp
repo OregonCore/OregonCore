@@ -374,13 +374,13 @@ void BattleGroundAV::Update(time_t diff)
         else if (GetStartDelayTime() <= START_DELAY1 && !(m_Events & 0x04))
         {
             m_Events |= 0x04;
-            SendMessageToAll(GetOregonString(LANG_BG_AV_ONEMINTOSTART));
+            SendMessageToAll(GetOregonString(LANG_BG_AV_START_ONE_MINUTE));
         }
         // After 1,5 minute, warning is signalled
         else if (GetStartDelayTime() <= START_DELAY2 && !(m_Events & 0x08))
         {
             m_Events |= 0x08;
-            SendMessageToAll(GetOregonString(LANG_BG_AV_HALFMINTOSTART));
+            SendMessageToAll(GetOregonString(LANG_BG_AV_START_HALF_MINUTE));
         }
         // After 2 minutes, gates OPEN ! x)
         else if (GetStartDelayTime() <= 0 && !(m_Events & 0x10))
@@ -390,7 +390,7 @@ void BattleGroundAV::Update(time_t diff)
 
             m_Events |= 0x10;
 
-            SendMessageToAll(GetOregonString(LANG_BG_AV_STARTED));
+            SendMessageToAll(GetOregonString(LANG_BG_AV_HAS_BEGUN));
             PlaySoundToAll(SOUND_BG_START);
             SetStatus(STATUS_IN_PROGRESS);
 

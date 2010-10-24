@@ -96,13 +96,13 @@ void BattleGroundWS::Update(time_t diff)
         else if (GetStartDelayTime() <= START_DELAY1 && !(m_Events & 0x04))
         {
             m_Events |= 0x04;
-            SendMessageToAll(GetOregonString(LANG_BG_WS_ONE_MINUTE));
+            SendMessageToAll(GetOregonString(LANG_BG_WS_START_ONE_MINUTE));
         }
         // After 1,5 minute, warning is signalled
         else if (GetStartDelayTime() <= START_DELAY2 && !(m_Events & 0x08))
         {
             m_Events |= 0x08;
-            SendMessageToAll(GetOregonString(LANG_BG_WS_HALF_MINUTE));
+            SendMessageToAll(GetOregonString(LANG_BG_WS_START_HALF_MINUTE));
         }
         // After 2 minutes, gates OPEN ! x)
         else if (GetStartDelayTime() < 0 && !(m_Events & 0x10))
@@ -121,7 +121,7 @@ void BattleGroundWS::Update(time_t diff)
             for (uint32 i = BG_WS_OBJECT_A_FLAG; i <= BG_WS_OBJECT_BERSERKBUFF_2; i++)
                 SpawnBGObject(i, RESPAWN_IMMEDIATELY);
 
-            SendMessageToAll(GetOregonString(LANG_BG_WS_BEGIN));
+            SendMessageToAll(GetOregonString(LANG_BG_WS_HAS_BEGUN));
 
             PlaySoundToAll(SOUND_BG_START);
             if (sWorld.getConfig(CONFIG_BG_START_MUSIC))

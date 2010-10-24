@@ -168,8 +168,10 @@ enum OregonStrings
     LANG_SOUND_NOT_EXIST                = 170,
     LANG_TELEPORTED_TO_BY_CONSOLE       = 171,
     LANG_CONSOLE_COMMAND                = 172,
-    LANG_LIQUID_STATUS                  = 173,
-    // Room for more level 1              174-199 not used
+    //                                    173               // used in master
+    //                                    174               // used in master
+    LANG_LIQUID_STATUS                  = 175,
+    // Room for more level 1              176-199 not used
 
     // level 2 chat
     LANG_NO_SELECTION                   = 200,
@@ -406,7 +408,6 @@ enum OregonStrings
     LANG_COMMAND_TP_ADDEDERR            = 464,
     LANG_COMMAND_TP_DELETED             = 465,
     //                                    466,              // not used
-
     LANG_COMMAND_TARGET_LISTAURAS       = 467,
     LANG_COMMAND_TARGET_AURADETAIL      = 468,
     LANG_COMMAND_TARGET_LISTAURATYPE    = 469,
@@ -537,9 +538,9 @@ enum OregonStrings
     LANG_CHANGE_32BIT                   = 575,              //log
     LANG_CHANGE_32BIT_FIELD             = 576,
 
-    LANG_INVISIBLE_INVISIBLE            = 577,
-    LANG_INVISIBLE_VISIBLE              = 578,
-    LANG_SELECTED_TARGET_NOT_HAVE_VICTIM = 579,
+    LANG_INVISIBLE_INVISIBLE              = 577,
+    LANG_INVISIBLE_VISIBLE                = 578,
+    LANG_SELECTED_TARGET_NOT_HAVE_VICTIM  = 579,
 
     LANG_COMMAND_LEARN_ALL_DEFAULT_AND_QUEST = 580,
     LANG_COMMAND_NEAROBJMESSAGE         = 581,
@@ -569,9 +570,10 @@ enum OregonStrings
     // Battleground
     LANG_BG_A_WINS                      = 600,
     LANG_BG_H_WINS                      = 601,
-    LANG_BG_WS_ONE_MINUTE               = 602,
-    LANG_BG_WS_HALF_MINUTE              = 603,
-    LANG_BG_WS_BEGIN                    = 604,
+
+    LANG_BG_WS_START_ONE_MINUTE         = 602,
+    LANG_BG_WS_START_HALF_MINUTE        = 603,
+    LANG_BG_WS_HAS_BEGUN                = 604,
 
     LANG_BG_WS_CAPTURED_HF              = 605,
     LANG_BG_WS_CAPTURED_AF              = 606,
@@ -585,9 +587,9 @@ enum OregonStrings
     LANG_BG_WS_ALLIANCE_FLAG_RESPAWNED  = 614,
     LANG_BG_WS_HORDE_FLAG_RESPAWNED     = 615,
 
-    LANG_BG_EY_ONE_MINUTE               = 636,
-    LANG_BG_EY_HALF_MINUTE              = 637,
-    LANG_BG_EY_BEGIN                    = 638,
+    LANG_BG_EY_START_ONE_MINUTE         = 636,
+    LANG_BG_EY_START_HALF_MINUTE        = 637,
+    LANG_BG_EY_HAS_BEGUN                = 638,
 
     LANG_BG_AB_ALLY                     = 650,
     LANG_BG_AB_HORDE                    = 651,
@@ -600,9 +602,10 @@ enum OregonStrings
     LANG_BG_AB_NODE_DEFENDED            = 658,
     LANG_BG_AB_NODE_ASSAULTED           = 659,
     LANG_BG_AB_NODE_CLAIMED             = 660,
-    LANG_BG_AB_ONEMINTOSTART            = 661,
-    LANG_BG_AB_HALFMINTOSTART           = 662,
-    LANG_BG_AB_STARTED                  = 663,
+
+    LANG_BG_AB_START_ONE_MINUTE         = 661,
+    LANG_BG_AB_START_HALF_MINUTE        = 662,
+    LANG_BG_AB_HAS_BEGUN                = 663,
     LANG_BG_AB_A_NEAR_VICTORY           = 664,
     LANG_BG_AB_H_NEAR_VICTORY           = 665,
     LANG_BG_MARK_BY_MAIL                = 666,
@@ -633,7 +636,7 @@ enum OregonStrings
     LANG_ARENA_ONE_MINUTE               = 701,
     LANG_ARENA_THIRTY_SECONDS           = 702,
     LANG_ARENA_FIFTEEN_SECONDS          = 703,
-    LANG_ARENA_BEGUN                    = 704,
+    LANG_ARENA_HAS_BEGUN                = 704,
 
     LANG_WAIT_BEFORE_SPEAKING           = 705,
     LANG_NOT_EQUIPPED_ITEM              = 706,
@@ -645,73 +648,36 @@ enum OregonStrings
     LANG_BG_QUEUE_ANNOUNCE_SELF         = 711,
     LANG_BG_QUEUE_ANNOUNCE_WORLD        = 712,
     LANG_YOUR_ARENA_LEVEL_REQ_ERROR     = 713,
-//    LANG_HIS_ARENA_LEVEL_REQ_ERROR      = 714, an opcode exists for this
+//                                      = 714, not used
     LANG_YOUR_BG_LEVEL_REQ_ERROR        = 715,
-//    LANG_YOUR_ARENA_TEAM_FULL           = 716, an opcode exists for this
+//                                      = 716-719, not used
 
-    LANG_BG_AV_ALLY                     = 717,
-    LANG_BG_AV_HORDE                    = 718,
-    LANG_BG_AV_TOWER_TAKEN              = 719,
-    LANG_BG_AV_TOWER_ASSAULTED          = 720,
-    LANG_BG_AV_TOWER_DEFENDED           = 721,
-    LANG_BG_AV_GRAVE_TAKEN              = 722,
-    LANG_BG_AV_GRAVE_DEFENDED           = 723,
-    LANG_BG_AV_GRAVE_ASSAULTED          = 724,
+    LANG_BG_GROUP_TOO_LARGE             = 720,              // "Your group is too large for this battleground. Please regroup to join."
+    LANG_ARENA_GROUP_TOO_LARGE          = 721,              // "Your group is too large for this arena. Please regroup to join."
+    LANG_ARENA_YOUR_TEAM_ONLY           = 722,              // "Your group has members not in your arena team. Please regroup to join."
+    LANG_ARENA_NOT_ENOUGH_PLAYERS       = 723,              // "Your group does not have enough players to join this match."
+    LANG_ARENA_GOLD_WINS                = 724,              // "The Gold Team wins!"
+    LANG_ARENA_GREEN_WINS               = 725,              // "The Green Team wins!"
+//                                      = 726, not used
+    LANG_BG_GROUP_OFFLINE_MEMBER        = 727,              // "Your group has an offline member. Please remove him before joining."
+    LANG_BG_GROUP_MIXED_FACTION         = 728,              // "Your group has players from the opposing faction. You can't join the battleground as a group."
+    LANG_BG_GROUP_MIXED_LEVELS          = 729,              // "Your group has players from different battleground brakets. You can't join as group."
+    LANG_BG_GROUP_MEMBER_ALREADY_IN_QUEUE = 730,            // "Someone in your party is already in this battleground queue. (S)he must leave it before joining as group."
+    LANG_BG_GROUP_MEMBER_DESERTER       = 731,              // "Someone in your party is Deserter. You can't join as group."
+    LANG_BG_GROUP_MEMBER_NO_FREE_QUEUE_SLOTS = 732,         // "Someone in your party is already in three battleground queues. You cannot join as group."
 
-    LANG_BG_AV_MINE_TAKEN               = 725,
-    LANG_BG_AV_MINE_NORTH               = 726,
-    LANG_BG_AV_MINE_SOUTH               = 727,
+    LANG_CANNOT_TELE_TO_BG              = 733,              // "You cannot teleport to a battleground or arena map."
+    LANG_CANNOT_SUMMON_TO_BG            = 734,              // "You cannot summon players to a battleground or arena map."
+    LANG_CANNOT_GO_TO_BG_GM             = 735,              // "You must be in GM mode to teleport to a player in a battleground."
+    LANG_CANNOT_GO_TO_BG_FROM_BG        = 736,              // "You cannot teleport to a battleground from another battleground. Please leave the current battleground first."
+//                                      = 737-749, not used
+    LANG_BATTLEGROUND_PREMATURE_FINISH_WARNING = 750,       // "Not enough players. This game will close in %u mins."
+    LANG_BATTLEGROUND_PREMATURE_FINISH_WARNING_SECS = 751,  // "Not enough players. This game will close in %u seconds."
 
-    LANG_BG_AV_NODE_GRAVE_STORM_AID     = 728,
-    LANG_BG_AV_NODE_TOWER_DUN_S         = 729,
-    LANG_BG_AV_NODE_TOWER_DUN_N         = 730,
-    LANG_BG_AV_NODE_GRAVE_STORMPIKE     = 731,
-    LANG_BG_AV_NODE_TOWER_ICEWING       = 732,
-    LANG_BG_AV_NODE_GRAVE_STONE         = 733,
-    LANG_BG_AV_NODE_TOWER_STONE         = 734,
-    LANG_BG_AV_NODE_GRAVE_SNOW          = 735,
-    LANG_BG_AV_NODE_TOWER_ICE           = 736,
-    LANG_BG_AV_NODE_GRAVE_ICE           = 737,
-    LANG_BG_AV_NODE_TOWER_POINT         = 738,
-    LANG_BG_AV_NODE_GRAVE_FROST         = 739,
-    LANG_BG_AV_NODE_TOWER_FROST_E       = 740,
-    LANG_BG_AV_NODE_TOWER_FROST_W       = 741,
-    LANG_BG_AV_NODE_GRAVE_FROST_HUT     = 742,
-
-    LANG_BG_AV_ONEMINTOSTART            = 743,
-    LANG_BG_AV_HALFMINTOSTART           = 744,
-    LANG_BG_AV_STARTED                  = 745,
-    LANG_BG_AV_A_NEAR_LOSE              = 746,
-    LANG_BG_AV_H_NEAR_LOSE              = 747,
-    LANG_BG_AV_H_CAPTAIN_DEAD           = 748,
-    LANG_BG_AV_A_CAPTAIN_DEAD           = 749,
-    LANG_NPCINFO_LINKGUID               = 750,
-
-    // Room for BG/ARENA                  751-769 not used
-
+    // Room for BG/ARENA                = 753-784 not used
     LANG_ARENA_TESTING                  = 785,
-
     LANG_AUTO_ANN                       = 786,
     LANG_ANNOUNCE_COLOR                 = 787,
-
-    LANG_BG_GROUP_TOO_LARGE             = 1122, // "Your group is too large for this battleground. Please regroup to join."
-    LANG_ARENA_GROUP_TOO_LARGE          = 1123, // "Your group is too large for this arena. Please regroup to join."
-    LANG_ARENA_YOUR_TEAM_ONLY           = 1124, // "Your group has members not in your arena team. Please regroup to join."
-    LANG_ARENA_NOT_ENOUGH_PLAYERS       = 1125, // "Your group does not have enough players to join this match."
-    LANG_ARENA_GOLD_WINS                = 1126, // "The Gold Team wins!"
-    LANG_ARENA_GREEN_WINS               = 1127, // "The Green Team wins!"
-    LANG_BATTLEGROUND_PREMATURE_FINISH_WARNING = 1128,   // The battleground will end soon, because there aren't enough players. Get more ppl or win already!
-    LANG_BG_GROUP_OFFLINE_MEMBER        = 1129, // "Your group has an offline member. Please remove him before joining."
-    LANG_BG_GROUP_MIXED_FACTION         = 1130, // "Your group has players from the opposing faction. You can't join the battleground as a group."
-    LANG_BG_GROUP_MIXED_LEVELS          = 1131, // "Your group has players from different battleground brakets. You can't join as group."
-    LANG_BG_GROUP_MEMBER_ALREADY_IN_QUEUE = 1132, // "Someone in your party is already in this battleground queue. (S)he must leave it before joining as group."
-    LANG_BG_GROUP_MEMBER_DESERTER       = 1133, // "Someone in your party is Deserter. You can't join as group."
-    LANG_BG_GROUP_MEMBER_NO_FREE_QUEUE_SLOTS = 1134, // "Someone in your party is already in three battleground queues. You cannot join as group."
-
-    LANG_CANNOT_TELE_TO_BG              = 1135, // "You cannot teleport to a battleground or arena map."
-    LANG_CANNOT_SUMMON_TO_BG            = 1136, // "You cannot summon players to a battleground or arena map."
-    LANG_CANNOT_GO_TO_BG_GM             = 1137, // "You must be in GM mode to teleport to a player in a battleground."
-    LANG_CANNOT_GO_TO_BG_FROM_BG        = 1138, // "You cannot teleport to a battleground from another battleground. Please leave the current battleground first."
 
     // in game strings
     LANG_PET_INVALID_NAME               = 800,
@@ -724,12 +690,14 @@ enum OregonStrings
     LANG_NEED_CHARACTER_NAME            = 807,
     LANG_PLAYER_NOT_EXIST_OR_OFFLINE    = 808,
     LANG_ACCOUNT_FOR_PLAYER_NOT_FOUND   = 809,
-    LANG_GUILD_MASTER                   = 812,
-    LANG_GUILD_OFFICER                  = 813,
-    LANG_GUILD_VETERAN                  = 814,
-    LANG_GUILD_MEMBER                   = 815,
-    LANG_GUILD_INITIATE                 = 816,
-    // Room for in-game strings           817-999 not used
+//                                      = 710, not used
+    LANG_GUILD_MASTER                   = 811,
+    LANG_GUILD_OFFICER                  = 812,
+    LANG_GUILD_VETERAN                  = 813,
+    LANG_GUILD_MEMBER                   = 814,
+    LANG_GUILD_INITIATE                 = 815,
+
+    // Room for in-game strings           816-999 not used
 
     // Level 4 (CLI only commands)
     LANG_COMMAND_EXIT                   = 1000,
@@ -769,6 +737,47 @@ enum OregonStrings
     LANG_MUST_MALE_OR_FEMALE            = 1119,
     LANG_YOU_CHANGE_GENDER              = 1120,
     LANG_YOUR_GENDER_CHANGED            = 1121,
+    // Room for more level 3              1122-1198 not used
+    LANG_NPCINFO_LINKGUID               = 1199,
+
+    // AV
+    LANG_BG_AV_ALLY                     = 1300,
+    LANG_BG_AV_HORDE                    = 1301,
+    LANG_BG_AV_TOWER_TAKEN              = 1302,
+    LANG_BG_AV_TOWER_ASSAULTED          = 1303,
+    LANG_BG_AV_TOWER_DEFENDED           = 1304,
+    LANG_BG_AV_GRAVE_TAKEN              = 1305,
+    LANG_BG_AV_GRAVE_DEFENDED           = 1306,
+    LANG_BG_AV_GRAVE_ASSAULTED          = 1307,
+
+    LANG_BG_AV_MINE_TAKEN               = 1308,
+    LANG_BG_AV_MINE_NORTH               = 1309,
+    LANG_BG_AV_MINE_SOUTH               = 1310,
+
+    LANG_BG_AV_NODE_GRAVE_STORM_AID     = 1311,
+    LANG_BG_AV_NODE_TOWER_DUN_S         = 1312,
+    LANG_BG_AV_NODE_TOWER_DUN_N         = 1313,
+    LANG_BG_AV_NODE_GRAVE_STORMPIKE     = 1314,
+    LANG_BG_AV_NODE_TOWER_ICEWING       = 1315,
+    LANG_BG_AV_NODE_GRAVE_STONE         = 1316,
+    LANG_BG_AV_NODE_TOWER_STONE         = 1317,
+    LANG_BG_AV_NODE_GRAVE_SNOW          = 1318,
+    LANG_BG_AV_NODE_TOWER_ICE           = 1319,
+    LANG_BG_AV_NODE_GRAVE_ICE           = 1320,
+    LANG_BG_AV_NODE_TOWER_POINT         = 1321,
+    LANG_BG_AV_NODE_GRAVE_FROST         = 1322,
+    LANG_BG_AV_NODE_TOWER_FROST_E       = 1323,
+    LANG_BG_AV_NODE_TOWER_FROST_W       = 1324,
+    LANG_BG_AV_NODE_GRAVE_FROST_HUT     = 1325,
+
+    LANG_BG_AV_START_ONE_MINUTE         = 1326,
+    LANG_BG_AV_START_HALF_MINUTE        = 1327,
+    LANG_BG_AV_HAS_BEGUN                = 1328,
+    LANG_BG_AV_A_NEAR_LOSE              = 1329,
+    LANG_BG_AV_H_NEAR_LOSE              = 1330,
+    LANG_BG_AV_H_CAPTAIN_DEAD           = 1331,
+    LANG_BG_AV_A_CAPTAIN_DEAD           = 1332,
+    // FREE IDS                           1333-1999
 
     // Ticket Strings 2000-2029
     LANG_COMMAND_TICKETNEW              = 2000,
@@ -798,7 +807,7 @@ enum OregonStrings
     LANG_COMMAND_TICKETLISTADDCOMMENT   = 2024,
     LANG_COMMAND_TICKETLISTAGECREATE    = 2025,
 
-    // Oregon strings             5000-9999
+    // Oregon strings                     5000-9999
     LANG_COMMAND_FREEZE                 = 5000,
     LANG_COMMAND_FREEZE_ERROR           = 5001,
     LANG_COMMAND_FREEZE_WRONG           = 5002,
@@ -809,7 +818,7 @@ enum OregonStrings
     LANG_INSTANCE_MUST_RAID_GRP         = 5007,
     LANG_INSTANCE_NOT_AS_GHOST          = 5008,
     LANG_COMMAND_PLAYED_TO_ALL          = 5009,
-    // Room for more Oregon strings      5010-9999
+    // Room for more Oregon strings       5010-9999
     // Used for GM Announcements
     LANG_GM_BROADCAST                    = 6613,
     LANG_GM_NOTIFY                       = 6614,
@@ -881,16 +890,14 @@ enum OregonStrings
     LANG_OPVP_EP_FLIGHT_CROWNGUARD      = 10053,
     LANG_OPVP_ZM_GOSSIP_ALLIANCE        = 10054,
     LANG_OPVP_ZM_GOSSIP_HORDE           = 10055,
+
     LANG_NO_ENTER_HALL_OF_LEGENDS       = 10056,
     LANG_NO_ENTER_CHAMPIONS_HALL        = 10057,
 
     // Use for custom patches             11000-11999
-    // Broadcaster - was deleted in r200 because of crash in combination with new database code but may be correctly reimplemented based on TC2 r4837 + r4867
-    LANG_AUTO_BROADCAST                 = 11000,
 
     // NOT RESERVED IDS                   12000-1999999999
     // `db_script_string` table index     2000000000-2000009999 (MIN_DB_SCRIPT_STRING_ID-MAX_DB_SCRIPT_STRING_ID)
     // For other tables maybe             2000010000-2147483647 (max index)
 };
 #endif
-

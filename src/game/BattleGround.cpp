@@ -231,6 +231,10 @@ void BattleGround::Update(time_t diff)
         m_ResurrectQueue.clear();
     }
 
+    /*********************************************************/
+    /***           BATTLEGROUND BALLANCE SYSTEM            ***/
+    /*********************************************************/
+
     // if less then minimum players are in on one side, then start premature finish timer
     if (GetStatus() == STATUS_IN_PROGRESS && !isArena() && sBattleGroundMgr.GetPrematureFinishTime() && (GetPlayersCountByTeam(ALLIANCE) < GetMinPlayersPerTeam() || GetPlayersCountByTeam(HORDE) < GetMinPlayersPerTeam()))
     {
@@ -238,7 +242,6 @@ void BattleGround::Update(time_t diff)
         {
             m_PrematureCountDown = true;
             m_PrematureCountDownTimer = sBattleGroundMgr.GetPrematureFinishTime();
-            SendMessageToAll(LANG_BATTLEGROUND_PREMATURE_FINISH_WARNING);
         }
         else if (m_PrematureCountDownTimer < diff)
         {
@@ -250,9 +253,17 @@ void BattleGround::Update(time_t diff)
         {
             uint32 newtime = m_PrematureCountDownTimer - diff;
             // announce every minute
-            if (m_PrematureCountDownTimer != sBattleGroundMgr.GetPrematureFinishTime() &&
-                newtime / (MINUTE * IN_MILLISECONDS) != m_PrematureCountDownTimer / (MINUTE * IN_MILLISECONDS))
-                SendMessageToAll(LANG_BATTLEGROUND_PREMATURE_FINISH_WARNING);
+            if (newtime > (MINUTE * IN_MILLISECONDS))
+            {
+                if (newtime / (MINUTE * IN_MILLISECONDS) != m_PrematureCountDownTimer / (MINUTE * IN_MILLISECONDS))
+                    PSendMessageToAll(LANG_BATTLEGROUND_PREMATURE_FINISH_WARNING, CHAT_MSG_SYSTEM, NULL, (uint32)(m_PrematureCountDownTimer / (MINUTE * IN_MILLISECONDS)));
+            }
+            else
+            {
+                //announce every 15 seconds
+                if (newtime / (15 * IN_MILLISECONDS) != m_PrematureCountDownTimer / (15 * IN_MILLISECONDS))
+                    PSendMessageToAll(LANG_BATTLEGROUND_PREMATURE_FINISH_WARNING_SECS, CHAT_MSG_SYSTEM, NULL, (uint32)(m_PrematureCountDownTimer / IN_MILLISECONDS));
+            }
             m_PrematureCountDownTimer = newtime;
         }
     }
@@ -1440,6 +1451,17 @@ void BattleGround::SendMessageToAll(int32 entry)
     WorldPacket data;
     ChatHandler::FillMessageData(&data, NULL, CHAT_MSG_BG_SYSTEM_NEUTRAL, LANG_UNIVERSAL, NULL, 0, text, NULL);
     SendPacketToAll(&data);
+}
+
+void BattleGround::PSendMessageToAll(int32 entry, ...)
+{
+    const char *format = GetOregonString(entry);
+    va_list ap;
+    char str [2048];
+    va_start(ap, entry);
+    vsnprintf(str,2048,format, ap );
+    va_end(ap);
+    SendMessageToAll(str);
 }
 
 void BattleGround::EndNow()
