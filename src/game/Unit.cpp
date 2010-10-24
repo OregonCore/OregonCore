@@ -9713,6 +9713,9 @@ void Unit::RemoveFromWorld()
         RemoveBindSightAuras();
         RemoveNotOwnSingleTargetAuras();
 
+        RemoveAllGameObjects();
+        RemoveAllDynObjects();
+
         WorldObject::RemoveFromWorld();
     }
 }
@@ -9733,8 +9736,6 @@ void Unit::CleanupsBeforeDelete()
     ClearComboPointHolders();
     DeleteThreatList();
     getHostileRefManager().setOnlineOfflineState(false);
-    RemoveAllGameObjects();
-    RemoveAllDynObjects();
     GetMotionMaster()->Clear(false);                    // remove different non-standard movement generators.
 }
 
