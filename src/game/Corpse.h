@@ -48,7 +48,7 @@ enum CorpseFlags
     CORPSE_FLAG_LOOTABLE    = 0x20
 };
 
-class Corpse : public WorldObject
+class Corpse : public WorldObject, public GridObject<Corpse>
 {
     public:
         explicit Corpse(CorpseType type = CORPSE_BONES);
@@ -90,10 +90,7 @@ class Corpse : public WorldObject
         void TextEmote(int32 textId, uint64 TargetGuid) { MonsterTextEmote(textId,TargetGuid); }
         void Whisper(int32 textId,uint64 receiver) { MonsterWhisper(textId,receiver); }
 
-        GridReference<Corpse> &GetGridRef() { return m_gridRef; }
     private:
-        GridReference<Corpse> m_gridRef;
-
         CorpseType m_type;
         time_t m_time;
         GridPair m_grid;                                    // gride for corpse position for fast search

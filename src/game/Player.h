@@ -796,7 +796,7 @@ class PlayerTaxi
         std::deque<uint32> m_TaxiDestinations;
 };
 
-class Player : public Unit
+class Player : public Unit, public GridObject<Player>
 {
     friend class WorldSession;
     friend void Item::AddToUpdateQueueOf(Player *player);

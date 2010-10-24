@@ -419,6 +419,15 @@ class WorldLocation : public Position
         uint32 m_mapId;
 };
 
+template<class T>
+class GridObject
+{
+    public:
+        GridReference<T> &GetGridRef() { return m_gridRef; }
+    protected:
+        GridReference<T> m_gridRef;
+};
+
 class WorldObject : public Object, public WorldLocation
 {
     public:
@@ -461,8 +470,6 @@ class WorldObject : public Object, public WorldLocation
 
         void GetRandomPoint(const Position &srcPos, float distance, float &rand_x, float &rand_y, float &rand_z) const;
 
-        //uint32 GetMapId() const { return m_currMap ? m_currMap->GetId() : 0; }
-        //uint32 GetInstanceId() const { return m_currMap ? m_currMap->GetInstanceId() : 0; }
         uint32 GetInstanceId() const { return m_InstanceId; }
 
         uint32 GetZoneId() const;

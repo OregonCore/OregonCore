@@ -450,7 +450,7 @@ class Unit;
 // 5 sec for bobber catch
 #define FISHING_BOBBER_READY_TIME 5
 
-class GameObject : public WorldObject
+class GameObject : public WorldObject, public GridObject<GameObject>
 {
     public:
         explicit GameObject();
@@ -666,7 +666,5 @@ class GameObject : public WorldObject
         GameObjectData const* m_goData;
     private:
         void SwitchDoorOrButton(bool activate, bool alternative = false);
-
-        GridReference<GameObject> m_gridRef;
 };
 #endif
