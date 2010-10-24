@@ -274,21 +274,20 @@ struct instance_dark_portal : public ScriptedInstance
     Unit* SummonedPortalBoss(Unit* source)
     {
         uint32 entry = RiftWaves[GetRiftWaveId()].PortalBoss;
+
         if (entry == RIFT_BOSS)
             entry = RandRiftBoss();
 
-        float x,y,z;
-        source->GetRandomPoint(source->GetPositionX(),source->GetPositionY(),source->GetPositionZ(),10.0f,x,y,z);
-        //normalize Z-level if we can, if rift is not at ground level.
-        z = std::max(instance->GetHeight(x, y, MAX_HEIGHT), instance->GetWaterLevel(x, y));
-
         debug_log("OSCR: Instance Dark Portal: Summoning rift boss entry %u.",entry);
 
-        Unit *Summon = source->SummonCreature(entry,x,y,z,source->GetOrientation(),
-            TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,600000);
+        Position pos;
+        source->GetRandomNearPosition(pos, 10.0f);
 
-        if (Summon)
-            return Summon;
+        //normalize Z-level if we can, if rift is not at ground level.
+        pos.m_positionZ = std::max(source->GetMap()->GetHeight(pos.m_positionX, pos.m_positionY, MAX_HEIGHT), source->GetMap()->GetWaterLevel(pos.m_positionX, pos.m_positionY));
+
+        if (Unit *summon = source->SummonCreature(entry, pos, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000))
+            return summon;
 
         debug_log("OSCR: Instance Dark Portal: what just happened there? No boss, no loot, no fun...");
         return NULL;

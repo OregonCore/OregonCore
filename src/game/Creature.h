@@ -617,8 +617,10 @@ class Creature : public Unit
                 return m_charmInfo->GetCharmSpell(pos)->spellId;
         }
 
-        void SetHomePosition(float x, float y, float z, float ori) { mHome_X = x; mHome_Y = y; mHome_Z = z; mHome_O = ori;}
-        void GetHomePosition(float &x, float &y, float &z, float &ori) { x = mHome_X; y = mHome_Y; z = mHome_Z; ori = mHome_O; }
+        void SetHomePosition(float x, float y, float z, float o) { m_homePosition.Relocate(x, y, z, o); }
+        void SetHomePosition(const Position &pos) { m_homePosition.Relocate(pos); }
+        void GetHomePosition(float &x, float &y, float &z, float &ori) { m_homePosition.GetPosition(x, y, z, ori); }
+        Position GetHomePosition() { return m_homePosition; }
 
         uint32 GetGlobalCooldown() const { return m_GlobalCooldown; }
 
@@ -691,10 +693,7 @@ class Creature : public Unit
         SpellSchoolMask m_meleeDamageSchoolMask;
         uint32 m_originalEntry;
 
-        float mHome_X;
-        float mHome_Y;
-        float mHome_Z;
-        float mHome_O;
+        Position m_homePosition;
 
         bool DisableReputationGain;
 

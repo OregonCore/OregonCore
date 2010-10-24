@@ -75,10 +75,10 @@ void DynamicObject::RemoveFromWorld()
     }
 }
 
-bool DynamicObject::Create(uint32 guidlow, Unit *caster, uint32 spellId, uint32 effIndex, float x, float y, float z, int32 duration, float radius)
+bool DynamicObject::Create(uint32 guidlow, Unit *caster, uint32 spellId, uint32 effIndex, const Position &pos, int32 duration, float radius)
 {
     SetMap(caster->GetMap());
-    Relocate(x,y,z,0);
+    Relocate(pos);
     if (!IsPositionValid())
     {
         sLog.outError("DynamicObject (spell %u eff %u) not created. Suggested coordinates isn't valid (X: %f Y: %f)",spellId,effIndex,GetPositionX(),GetPositionY());
@@ -99,9 +99,9 @@ bool DynamicObject::Create(uint32 guidlow, Unit *caster, uint32 spellId, uint32 
     SetUInt32Value(DYNAMICOBJECT_BYTES, 0x00000001);
     SetUInt32Value(DYNAMICOBJECT_SPELLID, spellId);
     SetFloatValue(DYNAMICOBJECT_RADIUS, radius);
-    SetFloatValue(DYNAMICOBJECT_POS_X, x);
-    SetFloatValue(DYNAMICOBJECT_POS_Y, y);
-    SetFloatValue(DYNAMICOBJECT_POS_Z, z);
+    SetFloatValue(DYNAMICOBJECT_POS_X, pos.m_positionX);
+    SetFloatValue(DYNAMICOBJECT_POS_Y, pos.m_positionY);
+    SetFloatValue(DYNAMICOBJECT_POS_Z, pos.m_positionZ);
     SetUInt32Value(DYNAMICOBJECT_CASTTIME, getMSTime());
 
     m_aliveDuration = duration;

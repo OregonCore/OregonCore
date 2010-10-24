@@ -127,19 +127,12 @@ class SpellCastTargets
 
             m_itemTargetEntry  = target.m_itemTargetEntry;
 
-            m_srcX = target.m_srcX;
-            m_srcY = target.m_srcY;
-            m_srcZ = target.m_srcZ;
-
-            m_destX = target.m_destX;
-            m_destY = target.m_destY;
-            m_destZ = target.m_destZ;
+            m_srcPos = target.m_srcPos;
+            m_dstPos.Relocate(target.m_dstPos);
 
             m_strTarget = target.m_strTarget;
 
             m_targetMask = target.m_targetMask;
-
-            m_mapId = -1;
 
             return *this;
         }
@@ -148,9 +141,9 @@ class SpellCastTargets
         Unit *getUnitTarget() const { return m_unitTarget; }
         void setUnitTarget(Unit *target);
         void setSrc(float x, float y, float z);
-        void setSrc(WorldObject *target);
-        void setDestination(float x, float y, float z, int32 mapId = -1);
-        void setDestination(WorldObject *target);
+        void setSrc(Position *pos);
+        void setDst(float x, float y, float z, uint32 mapId = MAPID_INVALID);
+        void setDst(Position *pos);
 
         uint64 getGOTargetGUID() const { return m_GOTargetGUID.GetRawValue(); }
         GameObject *getGOTarget() const { return m_GOTarget; }
@@ -177,9 +170,8 @@ class SpellCastTargets
 
         void Update(Unit* caster);
 
-        float m_srcX, m_srcY, m_srcZ;
-        float m_destX, m_destY, m_destZ;
-        int32 m_mapId;
+        Position m_srcPos;
+        WorldLocation m_dstPos;
         std::string m_strTarget;
 
         uint32 m_targetMask;
@@ -406,7 +398,7 @@ class Spell
         bool CheckTarget(Unit* target, uint32 eff);
 
         void CheckSrc() { if (!m_targets.HasSrc()) m_targets.setSrc(m_caster); }
-        void CheckDst() { if (!m_targets.HasDst()) m_targets.setDestination(m_caster); }
+        void CheckDst() { if (!m_targets.HasDst()) m_targets.setDst(m_caster); }
 
         void SendCastResult(uint8 result);
         void SendSpellStart();
@@ -630,12 +622,12 @@ namespace Oregon
         SpellTargets i_TargetType;
         Unit* i_caster;
         uint32 i_entry;
-        float i_x, i_y, i_z;
+        const Position * const i_pos;
 
         SpellNotifierCreatureAndPlayer(Spell &spell, std::list<Unit*> &data, float radius, const uint32 &type,
-            SpellTargets TargetType = SPELL_TARGETS_ENEMY, uint32 entry = 0, float x = 0, float y = 0, float z = 0)
+            SpellTargets TargetType = SPELL_TARGETS_ENEMY, const Position *pos = NULL, uint32 entry = 0)
             : i_data(&data), i_spell(spell), i_push_type(type), i_radius(radius), i_radiusSq(radius*radius)
-            , i_TargetType(TargetType), i_entry(entry), i_x(x), i_y(y), i_z(z)
+            , i_TargetType(TargetType), i_pos(pos), i_entry(entry)
         {
             i_caster = spell.GetCaster();
         }
@@ -697,7 +689,7 @@ namespace Oregon
                             i_data->push_back(itr->getSource());
                         break;
                     case PUSH_IN_LINE:
-                        if (i_caster->isInLine((Unit*)(itr->getSource()), i_radius))
+                        if (i_caster->HasInLine((Unit*)(itr->getSource()), i_radius, i_caster->GetObjectSize()))
                             i_data->push_back(itr->getSource());
                         break;
                     default:
@@ -708,7 +700,7 @@ namespace Oregon
                         }
                         else
                         {
-                            if ((itr->getSource()->GetDistanceSq(i_x, i_y, i_z) < i_radiusSq))
+                            if ((itr->getSource()->GetExactDistSq(i_pos) < i_radiusSq))
                                 i_data->push_back(itr->getSource());
                         }
                         break;

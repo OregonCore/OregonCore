@@ -275,27 +275,22 @@ struct npc_time_riftAI : public ScriptedAI
         if (!creature_entry)
             return;
 
-        if (pInstance->GetData(TYPE_MEDIVH) != IN_PROGRESS)
+        if (pInstance && pInstance->GetData(TYPE_MEDIVH) != IN_PROGRESS)
         {
             me->InterruptNonMeleeSpells(true);
             me->RemoveAllAuras();
             return;
         }
 
-        float x,y,z;
-        me->GetRandomPoint(me->GetPositionX(),me->GetPositionY(),me->GetPositionZ(),10.0f,x,y,z);
+        Position pos;
+        me->GetRandomNearPosition(pos, 10.0f);
 
         //normalize Z-level if we can, if rift is not at ground level.
-        z = std::max(me->GetMap()->GetHeight(x, y, MAX_HEIGHT), me->GetMap()->GetWaterLevel(x, y));
+        pos.m_positionZ = std::max(me->GetMap()->GetHeight(pos.m_positionX, pos.m_positionY, MAX_HEIGHT), me->GetMap()->GetWaterLevel(pos.m_positionX, pos.m_positionY));
 
-        Unit *Summon = me->SummonCreature(creature_entry,x,y,z,me->GetOrientation(),
-            TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,30000);
-
-        if (Summon)
-        {
-            if (Unit *temp = Unit::GetUnit(*me,pInstance->GetData64(DATA_MEDIVH)))
+        if(Unit *Summon = DoSummon(creature_entry, pos, 30000, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT))
+            if (Unit *temp = Unit::GetUnit(*me, pInstance ? pInstance->GetData64(DATA_MEDIVH) : 0))
                 Summon->AddThreat(temp,0.0f);
-        }
     }
 
     void DoSelectSummon()

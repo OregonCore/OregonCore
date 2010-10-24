@@ -51,10 +51,10 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     WorldLocation &loc = GetPlayer()->GetTeleportDest();
 
     // possible errors in the coordinate validity check
-    if (!MapManager::IsValidMapCoord(loc.mapid, loc.coord_x, loc.coord_y, loc.coord_z, loc.orientation))
+    if (!MapManager::IsValidMapCoord(loc))
     {
         sLog.outError("WorldSession::HandleMoveWorldportAckOpcode: player %s (%d) was teleported far to a not valid location. (map:%u, x:%f, y:%f, "
-            "z:%f) We port him to his homebind instead..", GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), loc.mapid, loc.coord_x, loc.coord_y, loc.coord_z);
+            "z:%f) We port him to his homebind instead..", GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), loc.GetMapId(), loc.GetPositionX(), loc.GetPositionY(), loc.GetPositionZ());
         // stop teleportation else we would try this again and again in LogoutPlayer...
         GetPlayer()->SetSemaphoreTeleportFar(false);
         // and teleport the player to a valid place
@@ -66,8 +66,8 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     GetPlayer()->m_anti_justteleported = 1;
 
     // get the destination map entry, not the current one, this will fix homebind and reset greeting
-    MapEntry const* mEntry = sMapStore.LookupEntry(loc.mapid);
-    InstanceTemplate const* mInstance = objmgr.GetInstanceTemplate(loc.mapid);
+    MapEntry const* mEntry = sMapStore.LookupEntry(loc.GetMapId());
+    InstanceTemplate const* mInstance = objmgr.GetInstanceTemplate(loc.GetMapId());
 
     // reset instance validity, except if going to an instance inside an instance
     if (GetPlayer()->m_InstanceValid == false && !mInstance)
@@ -79,22 +79,22 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     ASSERT(oldMap);
     if (GetPlayer()->IsInWorld())
     {
-        sLog.outCrash("Player is still in world when teleported from map %u! to new map %u", oldMap->GetId(), loc.mapid);
+        sLog.outCrash("Player is still in world when teleported from map %u! to new map %u", oldMap->GetId(), loc.GetMapId());
         oldMap->Remove(GetPlayer(), false);
     }
 
     // relocate the player to the teleport destination
-    Map * newMap = MapManager::Instance().CreateMap(loc.mapid, GetPlayer(), 0);
+    Map * newMap = MapManager::Instance().CreateMap(loc.GetMapId(), GetPlayer(), 0);
     // the CanEnter checks are done in TeleporTo but conditions may change
     // while the player is in transit, for example the map may get full
     if (!newMap || !newMap->CanEnter(GetPlayer()))
     {
-        sLog.outError("Map %d could not be created for player %d, porting player to homebind", loc.mapid, GetPlayer()->GetGUIDLow());
+        sLog.outError("Map %d could not be created for player %d, porting player to homebind", loc.GetMapId(), GetPlayer()->GetGUIDLow());
         GetPlayer()->TeleportToHomebind();
         return;
     }
     else
-        GetPlayer()->Relocate(loc.coord_x, loc.coord_y, loc.coord_z, loc.orientation);
+        GetPlayer()->Relocate(&loc);
 
     GetPlayer()->ResetMap();
     GetPlayer()->SetMap(newMap);
@@ -105,7 +105,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     GetPlayer()->SendInitialPacketsBeforeAddToMap();
     if (!GetPlayer()->GetMap()->Add(GetPlayer()))
     {
-        sLog.outError("WORLD: failed to teleport player %s (%d) to map %d because of unknown reason!", GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), loc.mapid);
+        sLog.outError("WORLD: failed to teleport player %s (%d) to map %d because of unknown reason!", GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), loc.GetMapId());
         GetPlayer()->ResetMap();
         GetPlayer()->SetMap(oldMap);
         GetPlayer()->TeleportToHomebind();
@@ -219,7 +219,7 @@ void WorldSession::HandleMoveTeleportAck(WorldPacket& recv_data)
 
     WorldLocation const& dest = plMover->GetTeleportDest();
 
-    plMover->SetPosition(dest.coord_x, dest.coord_y, dest.coord_z, dest.orientation, true);
+    plMover->SetPosition(dest.GetPositionX(), dest.GetPositionY(), dest.GetPositionZ(), dest.GetOrientation(), true);
 
     uint32 newzone = plMover->GetZoneId();
 
@@ -271,7 +271,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         return;
     }
 
-    if (!Oregon::IsValidMapCoord(movementInfo.GetPos()->x, movementInfo.GetPos()->y, movementInfo.GetPos()->z, movementInfo.GetPos()->o))
+    if (!Oregon::IsValidMapCoord(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation()))
         return;
 
     // Handle possessed unit movement separately
@@ -290,11 +290,11 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     {
         // transports size limited
         // (also received at zeppelin/lift leave by some reason with t_* as absolute in continent coordinates, can be safely skipped)
-        if (movementInfo.GetTransportPos()->x > 60 || movementInfo.GetTransportPos()->y > 60 || movementInfo.GetTransportPos()->z > 60)
+        if (movementInfo.GetTransportPos()->GetPositionX() > 60 || movementInfo.GetTransportPos()->GetPositionY() > 60 || movementInfo.GetTransportPos()->GetPositionZ() > 60)
             return;
 
-        if (!Oregon::IsValidMapCoord(movementInfo.GetPos()->x + movementInfo.GetTransportPos()->x, movementInfo.GetPos()->y + movementInfo.GetTransportPos()->y,
-            movementInfo.GetPos()->z + movementInfo.GetTransportPos()->z, movementInfo.GetPos()->o + movementInfo.GetTransportPos()->o))
+        if (!Oregon::IsValidMapCoord(movementInfo.GetPos()->GetPositionX() + movementInfo.GetTransportPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY() + movementInfo.GetTransportPos()->GetPositionY(),
+            movementInfo.GetPos()->GetPositionZ() + movementInfo.GetTransportPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation() + movementInfo.GetTransportPos()->GetOrientation()))
             return;
 
         if ((GetPlayer()->m_anti_transportGUID == 0) && (movementInfo.t_guid != 0))
@@ -302,7 +302,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         // if we boarded a transport, add us to it
         if (!GetPlayer()->m_transport)
         {
-            float trans_rad = movementInfo.GetTransportPos()->x*movementInfo.GetTransportPos()->x + movementInfo.GetTransportPos()->y*movementInfo.GetTransportPos()->y + movementInfo.GetTransportPos()->z*movementInfo.GetTransportPos()->z;
+            float trans_rad = movementInfo.GetTransportPos()->GetPositionX()*movementInfo.GetTransportPos()->GetPositionX() + movementInfo.GetTransportPos()->GetPositionY()*movementInfo.GetTransportPos()->GetPositionY() + movementInfo.GetTransportPos()->GetPositionZ()*movementInfo.GetTransportPos()->GetPositionZ();
             if (trans_rad > 3600.0f) // transport radius = 60 yards //cheater with on_transport_flag
             {
                 return;
@@ -343,9 +343,9 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     if (movementInfo.HasMovementFlag(MOVEFLAG_SWIMMING) != GetPlayer()->IsInWater())
     {
         // now client not include swimming flag in case jumping under water
-        GetPlayer()->SetInWater(!GetPlayer()->IsInWater() || GetPlayer()->GetBaseMap()->IsUnderWater(movementInfo.GetPos()->x, movementInfo.GetPos()->y, movementInfo.GetPos()->z));
+        GetPlayer()->SetInWater(!GetPlayer()->IsInWater() || GetPlayer()->GetBaseMap()->IsUnderWater(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ()));
 
-        if (GetPlayer()->GetBaseMap()->IsUnderWater(movementInfo.GetPos()->x, movementInfo.GetPos()->y, movementInfo.GetPos()->z-7.0f))
+        if (GetPlayer()->GetBaseMap()->IsUnderWater(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ()-7.0f))
             GetPlayer()->m_anti_BeginFallZ = INVALID_HEIGHT;
     }
 
@@ -375,9 +375,9 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         float allowed_delta = 0;
         float current_speed = GetPlayer()->GetSpeed(move_type);
 
-        float delta_x = GetPlayer()->GetPositionX() - movementInfo.GetPos()->x;
-        float delta_y = GetPlayer()->GetPositionY() - movementInfo.GetPos()->y;
-        float delta_z = GetPlayer()->GetPositionZ() - movementInfo.GetPos()->z;
+        float delta_x = GetPlayer()->GetPositionX() - movementInfo.GetPos()->GetPositionX();
+        float delta_y = GetPlayer()->GetPositionY() - movementInfo.GetPos()->GetPositionY();
+        float delta_z = GetPlayer()->GetPositionZ() - movementInfo.GetPos()->GetPositionZ();
         float real_delta = delta_x * delta_x + delta_y * delta_y;
 
         float tg_z = -99999; // tangens
@@ -450,13 +450,13 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
             #endif
             check_passed = false;
         }
-        if (movementInfo.GetPos()->z < 0.0001f && movementInfo.GetPos()->z > -0.0001f && ((movementInfo.GetMovementFlags() & (MOVEFLAG_SWIMMING | MOVEFLAG_CAN_FLY | MOVEFLAG_FLYING | MOVEFLAG_FLYING2)) == 0) && !GetPlayer()->isGameMaster())
+        if (movementInfo.GetPos()->GetPositionZ() < 0.0001f && movementInfo.GetPos()->GetPositionZ() > -0.0001f && ((movementInfo.GetMovementFlags() & (MOVEFLAG_SWIMMING | MOVEFLAG_CAN_FLY | MOVEFLAG_FLYING | MOVEFLAG_FLYING2)) == 0) && !GetPlayer()->isGameMaster())
         {
             // Prevent using TeleportToPlane.
             Map *map = GetPlayer()->GetMap();
             if (map)
             {
-                float plane_z = map->GetHeight(movementInfo.GetPos()->x, movementInfo.GetPos()->y, MAX_HEIGHT) - movementInfo.GetPos()->z;
+                float plane_z = map->GetHeight(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), MAX_HEIGHT) - movementInfo.GetPos()->GetPositionZ();
                 plane_z = (plane_z < -500.0f) ? 0 : plane_z; // check holes in height map
                 if (plane_z > 0.1f || plane_z < -0.1f)
                 {
@@ -484,7 +484,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         // antiwrap =)
         if (GetPlayer()->m_transport)
         {
-            float trans_rad = movementInfo.GetTransportPos()->x * movementInfo.GetTransportPos()->x + movementInfo.GetTransportPos()->y * movementInfo.GetTransportPos()->y + movementInfo.GetTransportPos()->z * movementInfo.GetTransportPos()->z;
+            float trans_rad = movementInfo.GetTransportPos()->GetPositionX() * movementInfo.GetTransportPos()->GetPositionX() + movementInfo.GetTransportPos()->GetPositionY() * movementInfo.GetTransportPos()->GetPositionY() + movementInfo.GetTransportPos()->GetPositionZ() * movementInfo.GetTransportPos()->GetPositionZ();
             if (trans_rad > 3600.0f)
                 check_passed = false;
         }
@@ -492,9 +492,9 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         {
             if (GameObjectData const* go_data = objmgr.GetGOData(GetPlayer()->m_anti_transportGUID))
             {
-                float delta_gox = go_data->posX - movementInfo.GetPos()->x;
-                float delta_goy = go_data->posY - movementInfo.GetPos()->y;
-                float delta_goz = go_data->posZ - movementInfo.GetPos()->z;
+                float delta_gox = go_data->posX - movementInfo.GetPos()->GetPositionX();
+                float delta_goy = go_data->posY - movementInfo.GetPos()->GetPositionY();
+                float delta_goz = go_data->posZ - movementInfo.GetPos()->GetPositionZ();
                 int mapid = go_data->mapid;
                 #ifdef MOVEMENT_ANTICHEAT_DEBUG
                 sLog.outDebug("Movement anticheat: %s on some transport. xyzo: %f, %f, %f", GetPlayer()->GetName(), go_data->posX, go_data->posY, go_data->posZ);
@@ -541,15 +541,15 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         data.append(recv_data.contents(), recv_data.size());
         GetPlayer()->SendMessageToSet(&data, false);
 
-        GetPlayer()->SetPosition(movementInfo.GetPos()->x, movementInfo.GetPos()->y, movementInfo.GetPos()->z, movementInfo.GetPos()->o);
+        GetPlayer()->SetPosition(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation());
         GetPlayer()->m_movementInfo = movementInfo;
-        if (GetPlayer()->m_lastFallTime >= movementInfo.GetFallTime() || GetPlayer()->m_lastFallZ <=movementInfo.GetPos()->z || opcode == MSG_MOVE_FALL_LAND)
-            GetPlayer()->SetFallInformation(movementInfo.GetFallTime(), movementInfo.GetPos()->z);
+        if (GetPlayer()->m_lastFallTime >= movementInfo.GetFallTime() || GetPlayer()->m_lastFallZ <=movementInfo.GetPos()->GetPositionZ() || opcode == MSG_MOVE_FALL_LAND)
+            GetPlayer()->SetFallInformation(movementInfo.GetFallTime(), movementInfo.GetPos()->GetPositionZ());
 
         if (GetPlayer()->isMovingOrTurning())
             GetPlayer()->RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
 
-        if (movementInfo.GetPos()->z < -500.0f)
+        if (movementInfo.GetPos()->GetPositionZ() < -500.0f)
             GetPlayer()->HandleFallUnderMap();
 
         if (GetPlayer()->m_anti_alarmcount > 0)
@@ -610,16 +610,16 @@ void WorldSession::HandlePossessedMovement(WorldPacket& recv_data, MovementInfo&
         if (movementInfo.HasMovementFlag(MOVEFLAG_SWIMMING) != plr->IsInWater())
         {
             // Now client not include swimming flag in case jumping under water
-            plr->SetInWater(!plr->IsInWater() || plr->GetBaseMap()->IsUnderWater(movementInfo.GetPos()->x, movementInfo.GetPos()->y, movementInfo.GetPos()->z));
+            plr->SetInWater(!plr->IsInWater() || plr->GetBaseMap()->IsUnderWater(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ()));
         }
 
-        plr->SetPosition(movementInfo.GetPos()->x, movementInfo.GetPos()->y, movementInfo.GetPos()->z, movementInfo.GetPos()->o, false);
+        plr->SetPosition(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation(), false);
         plr->m_movementInfo = movementInfo;
 
         if (plr->isMovingOrTurning())
             plr->RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
 
-        if (movementInfo.GetPos()->z < -500.0f)
+        if (movementInfo.GetPos()->GetPositionZ() < -500.0f)
         {
             GetPlayer()->Uncharm();
             plr->HandleFallUnderMap();
@@ -628,7 +628,7 @@ void WorldSession::HandlePossessedMovement(WorldPacket& recv_data, MovementInfo&
     else // Possessed unit is a creature
     {
         Map* map = pos_unit->GetMap();
-        map->CreatureRelocation(pos_unit->ToCreature(), movementInfo.GetPos()->x, movementInfo.GetPos()->y, movementInfo.GetPos()->z, movementInfo.GetPos()->o);
+        map->CreatureRelocation(pos_unit->ToCreature(), movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation());
     }
 }
 

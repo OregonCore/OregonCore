@@ -604,24 +604,24 @@ inline void UnitAI::DoCastAOE(uint32 spellId, bool triggered)
     me->CastSpell((Unit*)NULL, spellId, triggered);
 }
 
-inline Creature *CreatureAI::DoSummon(uint32 uiEntry, const WorldLocation &pos, uint32 uiDespawntime, TempSummonType uiType)
+inline Creature *CreatureAI::DoSummon(uint32 uiEntry, const Position &pos, uint32 uiDespawntime, TempSummonType uiType)
 {
-    return me->SummonCreature(uiEntry, pos.coord_x, pos.coord_y, pos.coord_z, pos.orientation, uiType, uiDespawntime);
+    return me->SummonCreature(uiEntry, pos, uiType, uiDespawntime);
 }
 
 inline Creature *CreatureAI::DoSummon(uint32 uiEntry, WorldObject* obj, float fRadius, uint32 uiDespawntime, TempSummonType uiType)
 {
-    WorldLocation pos;
-    obj->GetClosePoint(pos.coord_x,pos.coord_y,pos.coord_z,obj->GetObjectSize(), fRadius);
-    return me->SummonCreature(uiEntry, pos.coord_x, pos.coord_y, pos.coord_z, pos.orientation, uiType, uiDespawntime);
+    Position pos;
+    obj->GetRandomNearPosition(pos, fRadius);
+    return me->SummonCreature(uiEntry, pos, uiType, uiDespawntime);
 }
 
 inline Creature *CreatureAI::DoSummonFlyer(uint32 uiEntry, WorldObject *obj, float _fZ, float fRadius, uint32 uiDespawntime, TempSummonType uiType)
 {
-    WorldLocation pos;
-    obj->GetClosePoint(pos.coord_x,pos.coord_y,pos.coord_z,obj->GetObjectSize(), fRadius);
-    pos.coord_z += _fZ;
-    return me->SummonCreature(uiEntry, pos.coord_x, pos.coord_y, pos.coord_z, pos.orientation, uiType, uiDespawntime);
+    Position pos;
+    obj->GetRandomNearPosition(pos, fRadius);
+    pos.m_positionZ += _fZ;
+    return me->SummonCreature(uiEntry, pos, uiType, uiDespawntime);
 }
 
 #endif

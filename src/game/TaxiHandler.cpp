@@ -200,7 +200,7 @@ void WorldSession::HandleTaxiNextDestinationOpcode(WorldPacket& recv_data)
     if (!curDest)
     {
         // movement anticheat code
-        GetPlayer()->SetPosition(movementInfo.GetPos()->x, movementInfo.GetPos()->y, movementInfo.GetPos()->z, movementInfo.GetPos()->o);
+        GetPlayer()->Relocate(movementInfo.GetPos());
         GetPlayer()->m_movementInfo = movementInfo;
         GetPlayer()->m_anti_lastmovetime = movementInfo.time;
         GetPlayer()->m_anti_justteleported = 1;
@@ -217,7 +217,7 @@ void WorldSession::HandleTaxiNextDestinationOpcode(WorldPacket& recv_data)
     }
 
     //movement anticheat code
-    GetPlayer()->SetPosition(movementInfo.GetPos()->x, movementInfo.GetPos()->y, movementInfo.GetPos()->z, movementInfo.GetPos()->o);
+    GetPlayer()->SetPosition(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation());
     GetPlayer()->m_movementInfo = movementInfo;
     GetPlayer()->m_anti_lastmovetime = movementInfo.time;
     //<<< end movement anticheat

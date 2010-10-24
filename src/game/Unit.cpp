@@ -158,18 +158,18 @@ void MovementInfo::Read(ByteBuffer &data)
     data >> moveFlags;
     data >> moveFlags2;
     data >> time;
-    data >> pos.x;
-    data >> pos.y;
-    data >> pos.z;
-    data >> pos.o;
+    data >> pos.m_positionX;
+    data >> pos.m_positionY;
+    data >> pos.m_positionZ;
+    data >> pos.m_orientation;
 
     if (HasMovementFlag(MOVEFLAG_ONTRANSPORT))
     {
         data >> t_guid;
-        data >> t_pos.x;
-        data >> t_pos.y;
-        data >> t_pos.z;
-        data >> t_pos.o;
+        data >> t_pos.m_positionX;
+        data >> t_pos.m_positionY;
+        data >> t_pos.m_positionZ;
+        data >> t_pos.m_orientation;
         data >> t_time;
     }
     if (HasMovementFlag(MovementFlags(MOVEFLAG_SWIMMING | MOVEFLAG_FLYING2)))
@@ -194,18 +194,18 @@ void MovementInfo::Write(ByteBuffer &data) const
     data << moveFlags;
     data << moveFlags2;
     data << time;
-    data << pos.x;
-    data << pos.y;
-    data << pos.z;
-    data << pos.o;
+    data << pos.GetPositionX();
+    data << pos.GetPositionY();
+    data << pos.GetPositionZ();
+    data << pos.GetOrientation();
 
     if (HasMovementFlag(MOVEFLAG_ONTRANSPORT))
     {
         data << t_guid;
-        data << t_pos.x;
-        data << t_pos.y;
-        data << t_pos.z;
-        data << t_pos.o;
+        data << t_pos.GetPositionX();
+        data << t_pos.GetPositionY();
+        data << t_pos.GetPositionZ();
+        data << t_pos.GetOrientation();
         data << t_time;
     }
     if (HasMovementFlag(MovementFlags(MOVEFLAG_SWIMMING | MOVEFLAG_FLYING2)))
@@ -1066,7 +1066,7 @@ void Unit::CastSpell(Unit* Victim,SpellEntry const *spellInfo, bool triggered, I
             sLog.outError("CastSpell: spell id %i by caster: %s %u) does not have destination", spellInfo->Id,(GetTypeId() == TYPEID_PLAYER ? "player (GUID:" : "creature (Entry:"),(GetTypeId() == TYPEID_PLAYER ? GetGUIDLow() : GetEntry()));
             return;
         }
-        targets.setDestination(Victim);
+        targets.setDst(Victim);
     }
 
     if (castItem)
@@ -1136,7 +1136,7 @@ void Unit::CastCustomSpell(uint32 spellId, CustomSpellValues const &value, Unit*
             sLog.outError("CastSpell: spell id %i by caster: %s %u) does not have destination", spellInfo->Id,(GetTypeId() == TYPEID_PLAYER ? "player (GUID:" : "creature (Entry:"),(GetTypeId() == TYPEID_PLAYER ? GetGUIDLow() : GetEntry()));
             return;
         }
-        targets.setDestination(Victim);
+        targets.setDst(Victim);
     }
 
     if (!originalCaster && triggeredByAura)
@@ -1176,7 +1176,7 @@ void Unit::CastSpell(float x, float y, float z, uint32 spellId, bool triggered, 
     Spell *spell = new Spell(this, spellInfo, triggered, originalCaster);
 
     SpellCastTargets targets;
-    targets.setDestination(x, y, z);
+    targets.setDst(x, y, z);
     spell->m_CastItem = castItem;
     spell->prepare(&targets, triggeredByAura);
 }
@@ -3187,14 +3187,6 @@ bool Unit::isInFront(Unit const* target, float distance,  float arc) const
 bool Unit::isInBack(Unit const* target, float distance, float arc) const
 {
     return IsWithinDistInMap(target, distance) && !HasInArc(2 * M_PI - arc, target);
-}
-
-bool Unit::isInLine(Unit const* target, float distance) const
-{
-    if (!HasInArc(M_PI, target) || !IsWithinDistInMap(target, distance)) return false;
-    float width = GetObjectSize() + target->GetObjectSize() * 0.5f;
-    float angle = GetAngle(target) - GetOrientation();
-    return abs(sin(angle)) * GetExactDistance2d(target->GetPositionX(), target->GetPositionY()) < width;
 }
 
 bool Unit::isInAccessiblePlaceFor(Creature const* c) const

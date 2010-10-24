@@ -1750,10 +1750,10 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
                 if (m_transport)
                 {
                     data << uint32(mapid);
-                    data << float(m_movementInfo.GetTransportPos()->x);
-                    data << float(m_movementInfo.GetTransportPos()->y);
-                    data << float(m_movementInfo.GetTransportPos()->z);
-                    data << float(m_movementInfo.GetTransportPos()->o);
+                    data << float(m_movementInfo.GetTransportPos()->GetPositionX());
+                    data << float(m_movementInfo.GetTransportPos()->GetPositionY());
+                    data << float(m_movementInfo.GetTransportPos()->GetPositionZ());
+                    data << float(m_movementInfo.GetTransportPos()->GetOrientation());
                 }
                 else
                 {
@@ -1778,10 +1778,10 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
 
             if (m_transport)
             {
-                final_x += m_movementInfo.GetTransportPos()->x;
-                final_y += m_movementInfo.GetTransportPos()->y;
-                final_z += m_movementInfo.GetTransportPos()->z;
-                final_o += m_movementInfo.GetTransportPos()->o;
+                final_x += m_movementInfo.GetTransportPos()->GetPositionX();
+                final_y += m_movementInfo.GetTransportPos()->GetPositionY();
+                final_z += m_movementInfo.GetTransportPos()->GetPositionZ();
+                final_o += m_movementInfo.GetTransportPos()->GetOrientation();
             }
 
             m_teleport_dest = WorldLocation(mapid, final_x, final_y, final_z, final_o);
@@ -14592,14 +14592,14 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
         m_movementInfo.SetTransportData(transGUID, fields[27].GetFloat(), fields[28].GetFloat(), fields[29].GetFloat(), fields[30].GetFloat(), 0);
 
         if (!Oregon::IsValidMapCoord(
-            GetPositionX() + m_movementInfo.GetTransportPos()->x, GetPositionY() + m_movementInfo.GetTransportPos()->y,
-            GetPositionZ() + m_movementInfo.GetTransportPos()->z, GetOrientation() + m_movementInfo.GetTransportPos()->o) ||
+            GetPositionX() + m_movementInfo.GetTransportPos()->GetPositionX(), GetPositionY() + m_movementInfo.GetTransportPos()->GetPositionY(),
+            GetPositionZ() + m_movementInfo.GetTransportPos()->GetPositionZ(), GetOrientation() + m_movementInfo.GetTransportPos()->GetOrientation()) ||
             // transport size limited
-            m_movementInfo.GetTransportPos()->x > 50 || m_movementInfo.GetTransportPos()->y > 50 || m_movementInfo.GetTransportPos()->z > 50)
+            m_movementInfo.GetTransportPos()->GetPositionX() > 50 || m_movementInfo.GetTransportPos()->GetPositionY() > 50 || m_movementInfo.GetTransportPos()->GetPositionZ() > 50)
         {
             sLog.outError("Player (guidlow %d) have invalid transport coordinates (X: %f Y: %f Z: %f O: %f). Teleport to default race/class locations.",
-                guid, GetPositionX() + m_movementInfo.GetTransportPos()->x, GetPositionY() + m_movementInfo.GetTransportPos()->y,
-                GetPositionZ() + m_movementInfo.GetTransportPos()->z, GetOrientation() + m_movementInfo.GetTransportPos()->o);
+                guid, GetPositionX() + m_movementInfo.GetTransportPos()->GetPositionX(), GetPositionY() + m_movementInfo.GetTransportPos()->GetPositionY(),
+                GetPositionZ() + m_movementInfo.GetTransportPos()->GetPositionZ(), GetOrientation() + m_movementInfo.GetTransportPos()->GetOrientation());
 
             RelocateToHomebind(mapId);
 
@@ -16016,7 +16016,7 @@ void Player::SaveToDB()
     // first save/honor gain after midnight will also update the player's honor fields
     UpdateHonorFields();
 
-    uint32 mapid = IsBeingTeleported() ? GetTeleportDest().mapid : GetMapId();
+    uint32 mapid = IsBeingTeleported() ? GetTeleportDest().GetMapId() : GetMapId();
     const MapEntry * me = sMapStore.LookupEntry(mapid);
     // players aren't saved on arena maps
     if (!me || me->IsBattleArena())
@@ -16083,13 +16083,13 @@ void Player::SaveToDB()
     }
     else
     {
-        ss << GetTeleportDest().mapid << ", "
+        ss << GetTeleportDest().GetMapId() << ", "
         << (uint32)0 << ", "
         << (uint32)GetDifficulty() << ", "
-        << finiteAlways(GetTeleportDest().coord_x) << ", "
-        << finiteAlways(GetTeleportDest().coord_y) << ", "
-        << finiteAlways(GetTeleportDest().coord_z) << ", "
-        << finiteAlways(GetTeleportDest().orientation) << ", '";
+        << finiteAlways(GetTeleportDest().GetPositionX()) << ", "
+        << finiteAlways(GetTeleportDest().GetPositionY()) << ", "
+        << finiteAlways(GetTeleportDest().GetPositionZ()) << ", "
+        << finiteAlways(GetTeleportDest().GetOrientation()) << ", '";
     }
 
     uint16 i;
@@ -16118,10 +16118,10 @@ void Player::SaveToDB()
     ss << m_resetTalentsCost << ", ";
     ss << (uint64)m_resetTalentsTime << ", ";
 
-    ss << finiteAlways(m_movementInfo.GetTransportPos()->x) << ", ";
-    ss << finiteAlways(m_movementInfo.GetTransportPos()->y) << ", ";
-    ss << finiteAlways(m_movementInfo.GetTransportPos()->z) << ", ";
-    ss << finiteAlways(m_movementInfo.GetTransportPos()->o) << ", ";
+    ss << finiteAlways(m_movementInfo.GetTransportPos()->GetPositionX()) << ", ";
+    ss << finiteAlways(m_movementInfo.GetTransportPos()->GetPositionY()) << ", ";
+    ss << finiteAlways(m_movementInfo.GetTransportPos()->GetPositionZ()) << ", ";
+    ss << finiteAlways(m_movementInfo.GetTransportPos()->GetOrientation()) << ", ";
     if (m_transport)
         ss << m_transport->GetGUIDLow();
     else
@@ -19897,7 +19897,7 @@ void Player::HandleFallDamage(MovementInfo& movementInfo)
         return;
 
     // calculate total z distance of the fall
-    float z_diff = m_lastFallZ - movementInfo.GetPos()->z;
+    float z_diff = m_lastFallZ - movementInfo.GetPos()->GetPositionZ();
     sLog.outDebug("zDiff = %f", z_diff);
 
     //Players with low fall distance, Feather Fall or physical immunity (charges used) are ignored
@@ -19915,8 +19915,8 @@ void Player::HandleFallDamage(MovementInfo& movementInfo)
         {
             uint32 damage = (uint32)(damageperc * GetMaxHealth()*sWorld.getRate(RATE_DAMAGE_FALL));
 
-            float height = movementInfo.GetPos()->z;
-            UpdateGroundPositionZ(movementInfo.GetPos()->x,movementInfo.GetPos()->y,height);
+            float height = movementInfo.GetPos()->GetPositionZ();
+            UpdateGroundPositionZ(movementInfo.GetPos()->GetPositionX(),movementInfo.GetPos()->GetPositionY(),height);
 
             if (damage > 0)
             {
@@ -19932,7 +19932,7 @@ void Player::HandleFallDamage(MovementInfo& movementInfo)
             }
 
             //Z given by moveinfo, LastZ, FallTime, WaterZ, MapZ, Damage, Safefall reduction
-            DEBUG_LOG("FALLDAMAGE z=%f sz=%f pZ=%f FallTime=%d mZ=%f damage=%d SF=%d" , movementInfo.GetPos()->z, height, GetPositionZ(), movementInfo.GetFallTime(), height, damage, safe_fall);
+            DEBUG_LOG("FALLDAMAGE z=%f sz=%f pZ=%f FallTime=%d mZ=%f damage=%d SF=%d" , movementInfo.GetPos()->GetPositionZ(), height, GetPositionZ(), movementInfo.GetFallTime(), height, damage, safe_fall);
         }
     }
 }
@@ -20210,11 +20210,11 @@ void Player::SendTimeSync()
 
 void Player::SetHomebindToLocation(WorldLocation const& loc, uint32 area_id)
 {
-    m_homebindMapId = loc.mapid;
+    m_homebindMapId = loc.GetMapId();
     m_homebindAreaId = area_id;
-    m_homebindX = loc.coord_x;
-    m_homebindY = loc.coord_y;
-    m_homebindZ = loc.coord_z;
+    m_homebindX = loc.GetPositionX();
+    m_homebindY = loc.GetPositionY();
+    m_homebindZ = loc.GetPositionZ();
 
     // update sql homebind
     CharacterDatabase.PExecute("UPDATE character_homebind SET map = '%u', zone = '%u', position_x = '%f', position_y = '%f', position_z = '%f' WHERE guid = '%u'",

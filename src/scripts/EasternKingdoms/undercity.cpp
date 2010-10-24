@@ -68,16 +68,8 @@ struct npc_lady_sylvanas_windrunnerAI : public ScriptedAI
     bool LamentEvent;
     uint64 targetGUID;
 
-    float myX;
-    float myY;
-    float myZ;
-
     void Reset()
     {
-        myX = me->GetPositionX();
-        myY = me->GetPositionY();
-        myZ = me->GetPositionZ();
-
         LamentEvent_Timer = 5000;
         LamentEvent = false;
         targetGUID = 0;
@@ -91,8 +83,8 @@ struct npc_lady_sylvanas_windrunnerAI : public ScriptedAI
         {
             if (Unit *pTarget = Unit::GetUnit(*summoned,targetGUID))
             {
-                pTarget->SendMonsterMove(pTarget->GetPositionX(), pTarget->GetPositionY(), myZ+15.0f,0);
-                pTarget->Relocate(pTarget->GetPositionX(), pTarget->GetPositionY(), myZ+15.0f);
+                pTarget->SendMonsterMove(pTarget->GetPositionX(), pTarget->GetPositionY(), me->GetPositionZ()+15.0f,0);
+                pTarget->Relocate(pTarget->GetPositionX(), pTarget->GetPositionY(), me->GetPositionZ()+15.0f);
                 summoned->CastSpell(pTarget, SPELL_RIBBON_OF_SOULS, false);
             }
 
@@ -107,12 +99,7 @@ struct npc_lady_sylvanas_windrunnerAI : public ScriptedAI
         {
             if (LamentEvent_Timer <= diff)
             {
-                float raX = myX;
-                float raY = myY;
-                float raZ = myZ;
-
-                me->GetRandomPoint(myX, myY, myZ, 20.0f, raX, raY, raZ);
-                me->SummonCreature(ENTRY_HIGHBORNE_BUNNY, raX, raY, myZ, 0, TEMPSUMMON_TIMED_DESPAWN, 3000);
+                DoSummon(ENTRY_HIGHBORNE_BUNNY, me, 10.0f, 3000, TEMPSUMMON_TIMED_DESPAWN);
 
                 LamentEvent_Timer = 2000;
                 if (!me->HasAura(SPELL_SYLVANAS_CAST, 0))

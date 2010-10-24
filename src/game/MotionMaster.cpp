@@ -306,8 +306,6 @@ MotionMaster::MovePoint(uint32 id, float x, float y, float z)
     }
 }
 
-
-
 void MotionMaster::MoveJumpTo(float angle, float speedXY, float speedZ)
 {
     //this function may make players fall below map

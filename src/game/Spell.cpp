@@ -74,7 +74,7 @@ SpellCastTargets::SpellCastTargets()
     m_itemTargetGUID   = 0;
     m_itemTargetEntry  = 0;
 
-    m_srcX = m_srcY = m_srcZ = m_destX = m_destY = m_destZ = 0;
+    m_srcPos.Relocate(0,0,0,0);
     m_strTarget = "";
     m_targetMask = 0;
 }
@@ -95,38 +95,34 @@ void SpellCastTargets::setUnitTarget(Unit *target)
 
 void SpellCastTargets::setSrc(float x, float y, float z)
 {
-    m_srcX = x;
-    m_srcY = y;
-    m_srcZ = z;
+    m_srcPos.Relocate(x, y, z);
     m_targetMask |= TARGET_FLAG_SOURCE_LOCATION;
 }
 
-void SpellCastTargets::setSrc(WorldObject *target)
+void SpellCastTargets::setSrc(Position *pos)
 {
-    if (!target)
-        return;
-
-    target->GetPosition(m_srcX, m_srcY, m_srcZ);
-    m_targetMask |= TARGET_FLAG_SOURCE_LOCATION;
+    if(pos)
+    {
+        m_srcPos.Relocate(pos);
+        m_targetMask |= TARGET_FLAG_SOURCE_LOCATION;
+    }
 }
 
-void SpellCastTargets::setDestination(float x, float y, float z, int32 mapId)
+void SpellCastTargets::setDst(float x, float y, float z, uint32 mapId)
 {
-    m_destX = x;
-    m_destY = y;
-    m_destZ = z;
+    m_dstPos.Relocate(x, y, z);
     m_targetMask |= TARGET_FLAG_DEST_LOCATION;
-    if (mapId >= 0)
-        m_mapId = mapId;
+    if (mapId != MAPID_INVALID)
+        m_dstPos.m_mapId = mapId;
 }
 
-void SpellCastTargets::setDestination(WorldObject *target)
+void SpellCastTargets::setDst(Position *pos)
 {
-    if (!target)
-        return;
-
-    target->GetPosition(m_destX, m_destY, m_destZ);
-    m_targetMask |= TARGET_FLAG_DEST_LOCATION;
+    if (pos)
+    {
+        m_dstPos.Relocate(pos);
+        m_targetMask |= TARGET_FLAG_DEST_LOCATION;
+    }
 }
 
 void SpellCastTargets::setGOTarget(GameObject *target)
@@ -194,15 +190,15 @@ void SpellCastTargets::read(ByteBuffer& data, Unit *caster)
 
     if (m_targetMask & TARGET_FLAG_SOURCE_LOCATION)
     {
-        data >> m_srcX >> m_srcY >> m_srcZ;
-        if (!Oregon::IsValidMapCoord(m_srcX, m_srcY, m_srcZ))
+        data >> m_srcPos.m_positionX >> m_srcPos.m_positionY >> m_srcPos.m_positionZ;
+        if (!m_srcPos.IsPositionValid())
             throw ByteBufferException(false, data.rpos(), 0, data.size());
     }
 
     if (m_targetMask & TARGET_FLAG_DEST_LOCATION)
     {
-        data >> m_destX >> m_destY >> m_destZ;
-        if (!Oregon::IsValidMapCoord(m_destX, m_destY, m_destZ))
+        data >> m_dstPos.m_positionX >> m_dstPos.m_positionY >> m_dstPos.m_positionZ;
+        if (!m_dstPos.IsPositionValid())
             throw ByteBufferException(false, data.rpos(), 0, data.size());
     }
 
@@ -251,10 +247,10 @@ void SpellCastTargets::write (ByteBuffer& data) const
     }
 
     if (m_targetMask & TARGET_FLAG_SOURCE_LOCATION)
-        data << m_srcX << m_srcY << m_srcZ;
+        data << m_srcPos.m_positionX << m_srcPos.m_positionY << m_srcPos.m_positionZ;
 
     if (m_targetMask & TARGET_FLAG_DEST_LOCATION)
-        data << m_destX << m_destY << m_destZ;
+        data << m_dstPos.m_positionX << m_dstPos.m_positionY << m_dstPos.m_positionZ;
 
     if (m_targetMask & TARGET_FLAG_STRING)
         data << m_strTarget;
@@ -578,7 +574,7 @@ void Spell::FillTargetMap()
     {
         if (m_spellInfo->speed > 0.0f && m_targets.HasDst())
         {
-            float dist = m_caster->GetDistance(m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ);
+            float dist = m_caster->GetDistance(m_targets.m_dstPos);
             if (dist < 5.0f) dist = 5.0f;
             m_delayMoment = (uint64) floor(dist / m_spellInfo->speed * 1000.0f);
         }
@@ -1343,20 +1339,16 @@ void Spell::SearchChainTarget(std::list<Unit*> &TagUnitMap, float max_range, uin
 
 void Spell::SearchAreaTarget(std::list<Unit*> &TagUnitMap, float radius, const uint32 type, SpellTargets TargetType, uint32 entry)
 {
-    float x, y, z;
+    Position *pos;
     switch(type)
     {
         case PUSH_DST_CENTER:
             CheckDst();
-            x = m_targets.m_destX;
-            y = m_targets.m_destY;
-            z = m_targets.m_destZ;
+            pos = &m_targets.m_dstPos;
             break;
         case PUSH_SRC_CENTER:
             CheckSrc();
-            x = m_targets.m_srcX;
-            y = m_targets.m_srcY;
-            z = m_targets.m_srcZ;
+            pos = &m_targets.m_srcPos;
             break;
         case PUSH_CHAIN:
         {
@@ -1366,24 +1358,20 @@ void Spell::SearchAreaTarget(std::list<Unit*> &TagUnitMap, float radius, const u
                 sLog.outError("SPELL: cannot find unit target for spell ID %u\n", m_spellInfo->Id);
                 return;
             }
-            x = target->GetPositionX();
-            y = target->GetPositionY();
-            z = target->GetPositionZ();
+            pos = target;
             break;
         }
         default:
-            x = m_caster->GetPositionX();
-            y = m_caster->GetPositionY();
-            z = m_caster->GetPositionZ();
+            pos = m_caster;
             break;
     }
 
-    Oregon::SpellNotifierCreatureAndPlayer notifier(*this, TagUnitMap, radius, type, TargetType, entry, x, y, z);
+    Oregon::SpellNotifierCreatureAndPlayer notifier(*this, TagUnitMap, radius, type, TargetType, pos, entry);
     if ((m_spellInfo->AttributesEx3 & SPELL_ATTR_EX3_PLAYERS_ONLY)
         || TargetType == SPELL_TARGETS_ENTRY && !entry)
-        m_caster->GetMap()->VisitWorld(x, y, radius, notifier);
+        m_caster->GetMap()->VisitWorld(pos->m_positionX, pos->m_positionY, radius, notifier);
     else
-        m_caster->GetMap()->VisitAll(x, y, radius, notifier);
+        m_caster->GetMap()->VisitAll(pos->m_positionX, pos->m_positionY, radius, notifier);
 }
 
 WorldObject* Spell::SearchNearbyTarget(float range, SpellTargets TargetType)
@@ -1510,7 +1498,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                     float dis = rand_norm() * (max_dis - min_dis) + min_dis;
                     float x, y, z;
                     m_caster->GetClosePoint(x, y, z, DEFAULT_WORLD_OBJECT_SIZE, dis);
-                    m_targets.setDestination(x, y, z);
+                    m_targets.setDst(x, y, z);
                     break;
                 }
                 case TARGET_UNIT_MASTER:
@@ -1630,18 +1618,18 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
             }
             else if (cur == TARGET_DST_CASTER)
             {
-                m_targets.setDestination(m_caster);
+                m_targets.setDst(m_caster);
                 break;
             }
 
-            float x, y, z, angle, dist;
+            float angle, dist;
 
             float objSize = m_caster->GetObjectSize();
             dist = GetSpellRadius(m_spellInfo,i,true);
             if (dist < objSize)
                 dist = objSize;
             else if (cur == TARGET_DEST_CASTER_RANDOM)
-              dist = objSize + (dist - objSize) * rand_norm();
+                dist = objSize + (dist - objSize) * rand_norm();
 
             switch(cur)
             {
@@ -1658,8 +1646,9 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                 default:                            angle = rand_norm()*2*M_PI; break;
             }
 
-            m_caster->GetGroundPointAroundUnit(x, y, z, dist, angle);
-            m_targets.setDestination(x, y, z);
+            Position pos;
+            m_caster->GetNearPosition(pos, dist, angle);
+            m_targets.setDst(&pos); // also flag
             break;
         }
 
@@ -1674,18 +1663,18 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
 
             if (cur == TARGET_DST_TARGET_ENEMY || cur == TARGET_DEST_TARGET_ANY)
             {
-                m_targets.setDestination(target);
+                m_targets.setDst(target);
                 break;
             }
 
-            float x, y, z, angle, dist;
+            float angle, dist;
 
             float objSize = target->GetObjectSize();
             dist = GetSpellRadius(m_spellInfo,i,false);
             if (dist < objSize)
                 dist = objSize;
             else if (cur == TARGET_DEST_CASTER_RANDOM)
-              dist = objSize + (dist - objSize) * rand_norm();
+                dist = objSize + (dist - objSize) * rand_norm();
 
             switch(cur)
             {
@@ -1697,11 +1686,12 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                 case TARGET_DEST_TARGET_BACK_LEFT:  angle = -3*M_PI/4;  break;
                 case TARGET_DEST_TARGET_BACK_RIGHT: angle = 3*M_PI/4;   break;
                 case TARGET_DEST_TARGET_FRONT_RIGHT:angle = M_PI/4;     break;
-            default:                            angle = rand_norm()*2*M_PI; break;
+                default:                            angle = rand_norm()*2*M_PI; break;
             }
 
-            target->GetGroundPointAroundUnit(x, y, z, dist, angle);
-            m_targets.setDestination(x, y, z);
+            Position pos;
+            target->GetNearPosition(pos, dist, angle);
+            m_targets.setDst(&pos);
             break;
         }
 
@@ -1730,19 +1720,16 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                 case TARGET_DEST_DEST_BACK_LEFT:  angle = -3*M_PI/4;  break;
                 case TARGET_DEST_DEST_BACK_RIGHT: angle = 3*M_PI/4;   break;
                 case TARGET_DEST_DEST_FRONT_RIGHT:angle = M_PI/4;     break;
-            default:                          angle = rand_norm()*2*M_PI; break;
+                default:                          angle = rand_norm()*2*M_PI; break;
             }
 
-            float dist, x, y, z;
+            float dist;
             dist = GetSpellRadius(m_spellInfo,i,true);
             if (cur == TARGET_DEST_DEST_RANDOM)
-              dist *= rand_norm();
+                dist *= rand_norm();
 
-            x = m_targets.m_destX;
-            y = m_targets.m_destY;
-            z = m_targets.m_destZ;
-            m_caster->GetGroundPoint(x, y, z, dist, angle);
-            m_targets.setDestination(x, y, z);
+            // must has dst, no need to set flag
+            m_caster->MovePosition(m_targets.m_dstPos, dist, angle);
             break;
         }
 
@@ -1757,16 +1744,16 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                         if (m_spellInfo->Effect[0] == SPELL_EFFECT_TELEPORT_UNITS
                             || m_spellInfo->Effect[1] == SPELL_EFFECT_TELEPORT_UNITS
                             || m_spellInfo->Effect[2] == SPELL_EFFECT_TELEPORT_UNITS)
-                            m_targets.setDestination(st->target_X, st->target_Y, st->target_Z, (int32)st->target_mapId);
+                            m_targets.setDst(st->target_X, st->target_Y, st->target_Z, (int32)st->target_mapId);
                         else if (st->target_mapId == m_caster->GetMapId())
-                            m_targets.setDestination(st->target_X, st->target_Y, st->target_Z);
+                            m_targets.setDst(st->target_X, st->target_Y, st->target_Z);
                     }
                     else
                         sLog.outError("SPELL: unknown target coordinates for spell ID %u\n", m_spellInfo->Id);
                     break;
                 case TARGET_DST_HOME:
                     if (m_caster->GetTypeId() == TYPEID_PLAYER)
-                        m_targets.setDestination(m_caster->ToPlayer()->m_homebindX,m_caster->ToPlayer()->m_homebindY,m_caster->ToPlayer()->m_homebindZ, m_caster->ToPlayer()->m_homebindMapId);
+                        m_targets.setDst(m_caster->ToPlayer()->m_homebindX,m_caster->ToPlayer()->m_homebindY,m_caster->ToPlayer()->m_homebindZ, m_caster->ToPlayer()->m_homebindMapId);
                     break;
                 case TARGET_DST_NEARBY_ENTRY:
                 {
@@ -1774,9 +1761,8 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                     if (modOwner)
                         modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_RANGE, range, this);
 
-                    WorldObject *target = SearchNearbyTarget(range, SPELL_TARGETS_ENTRY);
-                    if (target)
-                        m_targets.setDestination(target);
+                    if (WorldObject *target = SearchNearbyTarget(range, SPELL_TARGETS_ENTRY))
+                        m_targets.setDst(target);
                     break;
                 }
             }
@@ -1898,7 +1884,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
             case TARGET_UNIT_CONE_ENEMY:
             case TARGET_UNIT_CONE_ENEMY_UNKNOWN:
                 SearchAreaTarget(unitList, radius, pushType, SPELL_TARGETS_ENEMY);
-                radius = GetSpellRadius(m_spellInfo,i,false);
+                radius = GetSpellRadius(m_spellInfo, i, false);
                 break;
             case TARGET_UNIT_AREA_ALLY_SRC:
             case TARGET_UNIT_AREA_ALLY_DST:
@@ -2420,7 +2406,7 @@ void Spell::_handle_immediate_phase()
         if (spellmgr.EffectTargetType[m_spellInfo->Effect[j]] == SPELL_REQUIRE_DEST)
         {
             if (!m_targets.HasDst()) // FIXME: this will ignore dest set in effect
-                m_targets.setDestination(m_caster);
+                m_targets.setDst(m_caster);
             HandleEffects(m_originalCaster, NULL, NULL, j);
         }
         else if (spellmgr.EffectTargetType[m_spellInfo->Effect[j]] == SPELL_REQUIRE_NONE)
@@ -3631,7 +3617,7 @@ uint8 Spell::CanCast(bool strict)
                     if (m_spellInfo->EffectImplicitTargetA[j] == TARGET_DST_NEARBY_ENTRY ||
                         m_spellInfo->EffectImplicitTargetB[j] == TARGET_DST_NEARBY_ENTRY)
                     {
-                        m_targets.setDestination(creatureScriptTarget->GetPositionX(),creatureScriptTarget->GetPositionY(),creatureScriptTarget->GetPositionZ());
+                        m_targets.setDst(creatureScriptTarget->GetPositionX(),creatureScriptTarget->GetPositionY(),creatureScriptTarget->GetPositionZ());
 
                         if (m_spellInfo->EffectImplicitTargetA[j] == TARGET_DST_NEARBY_ENTRY && m_spellInfo->EffectImplicitTargetB[j] == 0 && m_spellInfo->Effect[j] != SPELL_EFFECT_PERSISTENT_AREA_AURA)
                             AddUnitTarget(creatureScriptTarget, j);
@@ -3646,7 +3632,7 @@ uint8 Spell::CanCast(bool strict)
                     if (m_spellInfo->EffectImplicitTargetA[j] == TARGET_DST_NEARBY_ENTRY ||
                         m_spellInfo->EffectImplicitTargetB[j] == TARGET_DST_NEARBY_ENTRY)
                     {
-                        m_targets.setDestination(goScriptTarget->GetPositionX(),goScriptTarget->GetPositionY(),goScriptTarget->GetPositionZ());
+                        m_targets.setDst(goScriptTarget->GetPositionX(),goScriptTarget->GetPositionY(),goScriptTarget->GetPositionZ());
 
                         if (m_spellInfo->EffectImplicitTargetA[j] == TARGET_DST_NEARBY_ENTRY && m_spellInfo->EffectImplicitTargetB[j] == 0 && m_spellInfo->Effect[j] != SPELL_EFFECT_PERSISTENT_AREA_AURA)
                             AddGOTarget(goScriptTarget, j);
@@ -4456,9 +4442,9 @@ uint8 Spell::CheckRange(bool strict)
             return SPELL_FAILED_UNIT_NOT_INFRONT;
     }
 
-    if (m_targets.m_targetMask == TARGET_FLAG_DEST_LOCATION && m_targets.m_destX != 0 && m_targets.m_destY != 0 && m_targets.m_destZ != 0)
+    if (m_targets.m_targetMask == TARGET_FLAG_DEST_LOCATION && m_targets.m_dstPos.GetPositionX() != 0 && m_targets.m_dstPos.GetPositionY() != 0 && m_targets.m_dstPos.GetPositionZ() != 0)
     {
-        float dist = m_caster->GetDistance(m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ);
+        float dist = m_caster->GetDistance(m_targets.m_dstPos);
         if (dist > max_range)
             return SPELL_FAILED_OUT_OF_RANGE;
         if (dist < min_range)

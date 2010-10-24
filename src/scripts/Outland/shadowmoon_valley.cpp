@@ -277,19 +277,17 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
                         me->GetRandomPoint(x, y, z, 20, dx, dy, dz);
                         dz += 20; // so it's in the air, not ground*/
 
-                        float dx, dy, dz;
-
-                        Unit* EscapeDummy = FindCreature(CREATURE_ESCAPE_DUMMY, 30, me);
-                        if (EscapeDummy)
-                            EscapeDummy->GetPosition(dx, dy, dz);
+                        Position pos;
+                        if (Unit* EscapeDummy = FindCreature(CREATURE_ESCAPE_DUMMY, 30, me))
+                            EscapeDummy->GetPosition(&pos);
                         else
                         {
-                            me->GetRandomPoint(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 20, dx, dy, dz);
-                            dz += 25;
+                            me->GetRandomNearPosition(pos, 20);
+                            pos.m_positionZ += 25;
                         }
 
                         me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
-                        me->GetMotionMaster()->MovePoint(1, dx, dy, dz);
+                        me->GetMotionMaster()->MovePoint(1, pos);
                     }
                 }
             } else FlyTimer -= diff;

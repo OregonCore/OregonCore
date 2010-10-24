@@ -291,11 +291,9 @@ struct mob_doomfire_targettingAI : public ScriptedAI
                     break;
 
                 case 1:                                     // random location
-                    float x = 0;
-                    float y = 0;
-                    float z = 0;
-                    me->GetRandomPoint(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 40, x, y, z);
-                    me->GetMotionMaster()->MovePoint(0, x, y, z);
+                    Position pos;
+                    me->GetRandomNearPosition(pos, 40);
+                    me->GetMotionMaster()->MovePoint(0, pos.m_positionX, pos.m_positionY, pos.m_positionZ);
                     break;
             }
 

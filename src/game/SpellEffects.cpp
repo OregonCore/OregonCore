@@ -2056,7 +2056,7 @@ void Spell::EffectTriggerMissileSpell(uint32 effect_idx)
     Spell *spell = new Spell(m_caster, spellInfo, true, m_originalCasterGUID);
 
     SpellCastTargets targets;
-    targets.setDestination(m_targets.m_destX,m_targets.m_destY,m_targets.m_destZ);
+    targets.setDst(&m_targets.m_dstPos);
     spell->m_CastItem = m_CastItem;
     spell->prepare(&targets, NULL);
 }
@@ -2074,12 +2074,10 @@ void Spell::EffectTeleportUnits(uint32 i)
     }
 
     // Init dest coordinates
-    int32 mapid = m_targets.m_mapId;
-    if (mapid < 0)
-        mapid = (int32)unitTarget->GetMapId();
-    float x = m_targets.m_destX;
-    float y = m_targets.m_destY;
-    float z = m_targets.m_destZ;
+    uint32 mapid = m_targets.m_dstPos.GetMapId();
+    if (mapid == MAPID_INVALID) mapid = unitTarget->GetMapId();
+    float x, y, z;
+    m_targets.m_dstPos.GetPosition(x, y, z);
     float orientation = m_targets.getUnitTarget() ? m_targets.getUnitTarget()->GetOrientation() : unitTarget->GetOrientation();
     sLog.outDebug("Spell::EffectTeleportUnits - teleport unit to %u %f %f %f\n", mapid, x, y, z);
 
@@ -2713,7 +2711,7 @@ void Spell::EffectPersistentAA(uint32 i)
     Unit *caster = m_caster->GetEntry() == WORLD_TRIGGER ? m_originalCaster : m_caster;
     int32 duration = GetSpellDuration(m_spellInfo);
     DynamicObject* dynObj = new DynamicObject;
-    if (!dynObj->Create(objmgr.GenerateLowGuid(HIGHGUID_DYNAMICOBJECT), caster, m_spellInfo->Id, i, m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, duration, radius))
+    if (!dynObj->Create(objmgr.GenerateLowGuid(HIGHGUID_DYNAMICOBJECT), caster, m_spellInfo->Id, i, m_targets.m_dstPos, duration, radius))
     {
         delete dynObj;
         return;
@@ -3274,11 +3272,7 @@ void Spell::EffectSummon(uint32 i)
     // Summon in dest location
     float x, y, z;
     if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
-    {
-        x = m_targets.m_destX;
-        y = m_targets.m_destY;
-        z = m_targets.m_destZ;
-    }
+        m_targets.m_dstPos.GetPosition(x, y, z);
     else
         m_caster->GetClosePoint(x, y, z, owner->GetObjectSize());
 
@@ -3485,7 +3479,7 @@ void Spell::EffectDistract(uint32 /*i*/)
     if (unitTarget->hasUnitState(UNIT_STAT_CONFUSED | UNIT_STAT_STUNNED | UNIT_STAT_FLEEING))
         return;
 
-    float angle = unitTarget->GetAngle(m_targets.m_destX, m_targets.m_destY);
+    float angle = unitTarget->GetAngle(&m_targets.m_dstPos);
 
     if (unitTarget->GetTypeId() == TYPEID_PLAYER)
     {
@@ -3545,7 +3539,7 @@ void Spell::EffectAddFarsight(uint32 i)
     if (!m_caster->IsInWorld())
         return;
     DynamicObject* dynObj = new DynamicObject;
-    if (!dynObj->Create(objmgr.GenerateLowGuid(HIGHGUID_DYNAMICOBJECT), m_caster, m_spellInfo->Id, 4, m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, duration, radius))
+    if (!dynObj->Create(objmgr.GenerateLowGuid(HIGHGUID_DYNAMICOBJECT), m_caster, m_spellInfo->Id, 4, m_targets.m_dstPos, duration, radius))
     {
         delete dynObj;
         return;
@@ -3583,9 +3577,7 @@ void Spell::EffectSummonWild(uint32 i)
     }
 
     // select center of summon position
-    float center_x = m_targets.m_destX;
-    float center_y = m_targets.m_destY;
-    float center_z = m_targets.m_destZ;
+    WorldLocation center = m_targets.m_dstPos;
 
     float radius = GetSpellRadius(m_spellInfo,i,false);
 
@@ -3599,14 +3591,10 @@ void Spell::EffectSummonWild(uint32 i)
         {
             // Summon 1 unit in dest location
             if (count == 0)
-            {
-                px = m_targets.m_destX;
-                py = m_targets.m_destY;
-                pz = m_targets.m_destZ;
-            }
+                m_targets.m_dstPos.GetPosition(px, py, pz);
             // Summon in random point all other units if location present
             else
-                m_caster->GetRandomPoint(center_x, center_y, center_z, radius, px, py, pz);
+                m_caster->GetRandomPoint(center, radius, px, py, pz);
         }
         // Summon if dest location not present near caster
         else
@@ -3679,9 +3667,7 @@ void Spell::EffectSummonGuardian(uint32 i)
     }
 
     // select center of summon position
-    float center_x = m_targets.m_destX;
-    float center_y = m_targets.m_destY;
-    float center_z = m_targets.m_destZ;
+    WorldLocation center = m_targets.m_dstPos;
 
     float radius = GetSpellRadius(m_spellInfo,i,false);
 
@@ -3695,14 +3681,10 @@ void Spell::EffectSummonGuardian(uint32 i)
         {
             // Summon 1 unit in dest location
             if (count == 0)
-            {
-                px = m_targets.m_destX;
-                py = m_targets.m_destY;
-                pz = m_targets.m_destZ;
-            }
+                m_targets.m_dstPos.GetPosition(px, py, pz);
             // Summon in random point all other units if location present
             else
-                m_caster->GetRandomPoint(center_x, center_y, center_z, radius, px, py, pz);
+                m_caster->GetRandomPoint(center, radius, px, py, pz);
         }
         // Summon if dest location not present near caster
         else
@@ -4493,11 +4475,7 @@ void Spell::EffectSummonObjectWild(uint32 i)
 
     float x, y, z;
     if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
-    {
-        x = m_targets.m_destX;
-        y = m_targets.m_destY;
-        z = m_targets.m_destZ;
-    }
+        m_targets.m_dstPos.GetPosition(x, y, z);
     else
         m_caster->GetClosePoint(x, y, z, DEFAULT_WORLD_OBJECT_SIZE);
 
@@ -5619,11 +5597,7 @@ void Spell::EffectSummonObject(uint32 i)
     float x, y, z;
     // If dest location if present
     if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
-    {
-        x = m_targets.m_destX;
-        y = m_targets.m_destY;
-        z = m_targets.m_destZ;
-    }
+        m_targets.m_dstPos.GetPosition(x, y, z);
     // Summon in random point all other units if location present
     else
         m_caster->GetClosePoint(x, y, z, DEFAULT_WORLD_OBJECT_SIZE);
@@ -5940,11 +5914,7 @@ void Spell::EffectSummonCritter(uint32 i)
     float x, y, z;
     // If dest location if present
     if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
-    {
-        x = m_targets.m_destX;
-        y = m_targets.m_destY;
-        z = m_targets.m_destZ;
-    }
+        m_targets.m_dstPos.GetPosition(x, y, z);
     // Summon if dest location not present near caster
     else
         m_caster->GetClosePoint(x, y, z, critter->GetObjectSize());
@@ -5995,8 +5965,8 @@ void Spell::EffectKnockBack(uint32 i)
     float x, y;
     if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
     {
-        x = m_targets.m_destX;
-        y = m_targets.m_destY;
+        x = m_targets.m_dstPos.GetPositionX();
+        y = m_targets.m_dstPos.GetPositionY();
     }
     else
     {
@@ -6241,11 +6211,7 @@ void Spell::EffectTransmitted(uint32 effIndex)
     float fx, fy, fz;
 
     if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
-    {
-        fx = m_targets.m_destX;
-        fy = m_targets.m_destY;
-        fz = m_targets.m_destZ;
-    }
+        m_targets.m_dstPos.GetPosition(fx, fy, fz);
     //FIXME: this can be better check for most objects but still hack
     else if (m_spellInfo->EffectRadiusIndex[effIndex] && m_spellInfo->speed == 0)
     {
@@ -6401,9 +6367,9 @@ void Spell::EffectSkill(uint32 /*i*/)
 
 void Spell::EffectSummonDemon(uint32 i)
 {
-    float px = m_targets.m_destX;
-    float py = m_targets.m_destY;
-    float pz = m_targets.m_destZ;
+    float px = m_targets.m_dstPos.GetPositionX();
+    float py = m_targets.m_dstPos.GetPositionY();
+    float pz = m_targets.m_dstPos.GetPositionZ();
 
     Creature* Charmed = m_caster->SummonCreature(m_spellInfo->EffectMiscValue[i], px, py, pz, m_caster->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,3600000);
     if (!Charmed)
@@ -6575,26 +6541,24 @@ void Spell::EffectBind(uint32 i)
 
     Player* player = (Player*)unitTarget;
 
-    uint32 area_id;
-    WorldLocation loc;
-    player->GetPosition(loc);
-    area_id = player->GetAreaId();
+    WorldLocation loc = WorldLocation(player->GetMapId(), player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation());;
+    uint32 area_id = player->GetAreaId();
 
     player->SetHomebindToLocation(loc, area_id);
 
     // binding
     WorldPacket data(SMSG_BINDPOINTUPDATE, (4+4+4+4+4));
-    data << float(loc.coord_x);
-    data << float(loc.coord_y);
-    data << float(loc.coord_z);
-    data << uint32(loc.mapid);
+    data << float(loc.GetPositionX());
+    data << float(loc.GetPositionY());
+    data << float(loc.GetPositionZ());
+    data << uint32(loc.GetMapId());
     data << uint32(area_id);
     player->SendDirectMessage(&data);
 
-    DEBUG_LOG("New Home Position X is %f", loc.coord_x);
-    DEBUG_LOG("New Home Position Y is %f", loc.coord_y);
-    DEBUG_LOG("New Home Position Z is %f", loc.coord_z);
-    DEBUG_LOG("New Home MapId is %u", loc.mapid);
+    DEBUG_LOG("New Home Position X is %f", loc.GetPositionX());
+    DEBUG_LOG("New Home Position Y is %f", loc.GetPositionY());
+    DEBUG_LOG("New Home Position Z is %f", loc.GetPositionZ());
+    DEBUG_LOG("New Home MapId is %u", loc.GetMapId());
     DEBUG_LOG("New Home AreaId is %u", area_id);
 
     // zone update
