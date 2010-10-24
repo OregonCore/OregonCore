@@ -267,8 +267,8 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         //function for setting up visibility distance for maps on per-type/per-Id basis
         virtual void InitVisibilityDistance();
 
-        void PlayerRelocation(Player *, float x, float y, float z, float angl);
-        void CreatureRelocation(Creature *creature, float x, float y, float z, float orientation);
+        void PlayerRelocation(Player *, float x, float y, float z, float orientation);
+        void CreatureRelocation(Creature *creature, float x, float y, float z, float ang);
 
         template<class T, class CONTAINER> void Visit(const Cell& cell, TypeContainerVisitor<T, CONTAINER> &visitor);
 
@@ -359,7 +359,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         virtual bool RemoveBones(uint64 guid, float x, float y);
 
         void UpdateObjectVisibility(WorldObject* obj, Cell cell, CellPair cellpair);
-        void UpdateObjectsVisibilityFor(Player* player, Cell cell, CellPair cellpair );
+        void UpdateObjectsVisibilityFor(Player* player, Cell cell, CellPair cellpair);
 
         void resetMarkedCells() { marked_cells.reset(); }
         bool isCellMarked(uint32 pCellId) { return marked_cells.test(pCellId); }
@@ -394,7 +394,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         template<class NOTIFIER> void VisitWorld(const float &x, const float &y, float radius, NOTIFIER &notifier);
         template<class NOTIFIER> void VisitGrid(const float &x, const float &y, float radius, NOTIFIER &notifier);
         CreatureGroupHolderType CreatureGroupHolder;
- 
+
         void UpdateIteratorBack(Player *player);
 
 #ifdef MAP_BASED_RAND_GEN
@@ -472,6 +472,8 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
     private:
 
+        time_t i_gridExpiry;
+
         //used for fast base_map (e.g. MapInstanced class object) search for
         //InstanceMaps and BattlegroundMaps...
         Map* m_parentMap;
@@ -483,8 +485,6 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         //these functions used to process player/mob aggro reactions and
         //visibility calculations. Highly optimized for massive calculations
         void ProcessRelocationNotifies(const uint32 &diff);
-
-        time_t i_gridExpiry;
 
         std::set<WorldObject *> i_objectsToRemove;
         std::map<WorldObject*, bool> i_objectsToSwitch;
