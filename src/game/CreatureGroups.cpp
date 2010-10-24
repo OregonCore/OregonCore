@@ -114,18 +114,32 @@ void CreatureGroupManager::LoadCreatureFormations()
         //If creature is group leader we may skip loading of dist/angle
         if (group_member->leaderGUID != memberGUID)
         {
-            group_member->follow_dist            = fields[2].GetUInt32();
-            group_member->follow_angle            = fields[3].GetUInt32();
+            group_member->follow_dist       = fields[2].GetFloat();
+            group_member->follow_angle      = fields[3].GetFloat() * M_PI / 180;
+        }
+        else
+        {
+            group_member->follow_dist       = 0;
+            group_member->follow_angle      = 0;
         }
 
         // check data correctness
-        const CreatureData* leader = objmgr.GetCreatureData(group_member->leaderGUID);
-        const CreatureData* member = objmgr.GetCreatureData(memberGUID);
-        if (!leader || !member || leader->mapid != member->mapid)
         {
-            sLog.outErrorDb("Table creature_formations has an invalid record (leaderGUID: '%u', memberGUID: '%u')", group_member->leaderGUID, memberGUID);
-            delete group_member;
-            continue;
+            QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT guid FROM creature WHERE guid = %u", group_member->leaderGUID);
+            if (!result)
+            {
+                sLog.outErrorDb("creature_formations table leader guid %u incorrect (not exist)", group_member->leaderGUID);
+                delete group_member;
+                continue;
+            }
+
+            result = WorldDatabase.PQuery("SELECT guid FROM creature WHERE guid = %u", memberGUID);
+            if (!result)
+            {
+                sLog.outErrorDb("creature_formations table member guid %u incorrect (not exist)", memberGUID);
+                delete group_member;
+                continue;
+            }
         }
 
         CreatureGroupMap[memberGUID] = group_member;
@@ -163,14 +177,7 @@ void CreatureGroup::RemoveMember(Creature *member)
 
 void CreatureGroup::MemberAttackStart(Creature *member, Unit *target)
 {
-    if (!member || !target)
-        return;
-
-    const CreatureGroupInfoType::iterator fInfo = CreatureGroupMap.find(member->GetDBTableGUIDLow());
-    if (fInfo == CreatureGroupMap.end() || !fInfo->second)
-        return;
-
-    uint8 groupAI = fInfo->second->groupAI;
+    uint8 groupAI = CreatureGroupMap[member->GetDBTableGUIDLow()]->groupAI;
     if (!groupAI)
         return;
 
@@ -179,11 +186,11 @@ void CreatureGroup::MemberAttackStart(Creature *member, Unit *target)
 
     for (CreatureGroupMemberType::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
     {
-        sLog.outDebug("GROUP ATTACK: group instance id %u calls member instid %u", m_leader ? m_leader->GetInstanceId() : 0, member->GetInstanceId());
-        //sLog.outDebug("AI:%u:Group member found: %u, attacked by %s.", groupAI, itr->second->GetGUIDLow(), member->getVictim()->GetName());
+        if (m_leader) // avoid crash if leader was killed and reset.
+            sLog.outDebug("GROUP ATTACK: group instance id %u calls member instid %u", m_leader->GetInstanceId(), member->GetInstanceId());
 
         //Skip one check
-        if (!itr->first || itr->first == member)
+        if (itr->first == member)
             continue;
 
         if (!itr->first->isAlive())
@@ -238,7 +245,7 @@ void CreatureGroup::LeaderMoveTo(float x, float y, float z)
 
         member->UpdateGroundPositionZ(dx, dy, dz);
 
-        if (member->GetDistance(m_leader) < dist + MAX_DESYNC)
+        if (member->IsWithinDist(m_leader, dist + MAX_DESYNC))
             member->SetUnitMovementFlags(m_leader->GetUnitMovementFlags());
         else
             member->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
