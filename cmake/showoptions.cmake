@@ -18,6 +18,12 @@ message("")
 
 # Show infomation about the options selected during configuration
 
+if( SERVERS )
+  message("* Build world/auth       : Yes (default)")
+else()
+  message("* Build world/authserver : No")
+endif()
+
 if( SCRIPTS )
   message("* Build with scripts     : Yes (default)")
   add_definitions(-DSCRIPTS)
