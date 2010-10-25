@@ -126,5 +126,3 @@ uint8 *MapLiqFlag;
 uint32 k, m, chunk_num;
 void LoadMapChunk(MPQFile &, chunk*);
 #endif
-
-

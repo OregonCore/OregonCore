@@ -236,7 +236,7 @@ void ReadLiquidTypeTableDBC()
 
 // Map file format data
 #define MAP_MAGIC             'SPAM'
-#define MAP_VERSION_MAGIC     '0.1w'
+#define MAP_VERSION_MAGIC     '5.0w'
 #define MAP_AREA_MAGIC        'AERA'
 #define MAP_HEIGHT_MAGIC      'TGHM'
 #define MAP_LIQUID_MAGIC      'QILM'
@@ -358,7 +358,7 @@ bool ConvertADT(char *filename, char *filename2, int cell_y, int cell_x)
                     area_flags[i][j] = areas[areaid];
                     continue;
                 }
-                printf("File: filename\nCan't find area flag for areaid %u [%d, %d].\n", filename, areaid, cell->ix, cell->iy);
+                printf("File: %s\nCan't find area flag for areaid %u [%d, %d].\n", filename, areaid, cell->ix, cell->iy);
             }
             area_flags[i][j] = 0xffff;
         }
@@ -613,7 +613,7 @@ bool ConvertADT(char *filename, char *filename2, int cell_y, int cell_x)
                 // Dark water detect
                 if (type == LIQUID_TYPE_OCEAN)
                 {
-                    uint8 *lm = h2o->getLiquidLightMap(h); 
+                    uint8 *lm = h2o->getLiquidLightMap(h);
                     if (!lm)
                         liquid_type[i][j]|=MAP_LIQUID_TYPE_DARK_WATER;
                 }
@@ -771,7 +771,7 @@ bool ConvertADT(char *filename, char *filename2, int cell_y, int cell_x)
             liquidHeader.liquidType = type;
         else
             map.liquidMapSize+=sizeof(liquid_type);
-     
+
         if (!(liquidHeader.flags & MAP_LIQUID_NO_HEIGHT))
             map.liquidMapSize += sizeof(float)*liquidHeader.width*liquidHeader.height;
     }
@@ -875,11 +875,27 @@ void ExtractMapsFromMpq()
     delete [] map_ids;
 }
 
+bool ExtractFile( char const* mpq_name, std::string const& filename )
+{
+    FILE *output = fopen(filename.c_str(), "wb");
+    if(!output)
+    {
+        printf("Can't create the output file '%s'\n", filename.c_str());
+        return false;
+    }
+    MPQFile m(mpq_name);
+    if(!m.isEof())
+        fwrite(m.getPointer(), 1, m.getSize(), output);
+
+    fclose(output);
+    return true;
+}
+
 void ExtractDBCFiles(int locale, bool basicLocale)
 {
     printf("Extracting dbc files...\n");
 
-    set<string> dbcfiles;
+    std::set<std::string> dbcfiles;
 
     // get DBC file list
     for(ArchiveSet::iterator i = gOpenArchives.begin(); i != gOpenArchives.end();++i)
@@ -891,7 +907,7 @@ void ExtractDBCFiles(int locale, bool basicLocale)
                     dbcfiles.insert(*iter);
     }
 
-    string path = output_path;
+    std::string path = output_path;
     path += "/dbc/";
     CreateDir(path);
     if(!basicLocale)
@@ -908,18 +924,8 @@ void ExtractDBCFiles(int locale, bool basicLocale)
         string filename = path;
         filename += (iter->c_str() + strlen("DBFilesClient\\"));
 
-        FILE *output = fopen(filename.c_str(), "wb");
-        if(!output)
-        {
-            printf("Can't create the output file '%s'\n", filename.c_str());
-            continue;
-        }
-        MPQFile m(iter->c_str());
-        if(!m.isEof())
-            fwrite(m.getPointer(), 1, m.getSize(), output);
-
-        fclose(output);
-        ++count;
+        if(ExtractFile(iter->c_str(), filename))
+            ++count;
     }
     printf("Extracted %u DBC files\n\n", count);
 }
@@ -990,8 +996,8 @@ int main(int argc, char * arg[])
             //Extract DBC files
             if(FirstLocale < 0)
             {
-                ExtractDBCFiles(i, true);
                 FirstLocale = i;
+                ExtractDBCFiles(i, true);
             }
             else
                 ExtractDBCFiles(i, false);
@@ -1024,4 +1030,3 @@ int main(int argc, char * arg[])
 
     return 0;
 }
-

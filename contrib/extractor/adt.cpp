@@ -128,7 +128,7 @@ inline void LoadMapChunk(MPQFile &mf, chunk *_chunk)
     mf.read(&size, 4);
 
     size_t lastpos = mf.getPos() + size;
-    mf.read(&header, 0x80);                                 // what if header size got changed?
+    mf.read(&header, 0x80);
     _chunk->area_id = header.areaid;
 
     float xbase = header.xpos;
@@ -139,7 +139,6 @@ inline void LoadMapChunk(MPQFile &mf, chunk *_chunk)
     if(wmoc.x > xbase) wmoc.x = xbase;
     if(wmoc.z > zbase) wmoc.z = zbase;
     int chunkflags = header.flags;
-    //printf("LMC: flags %X\n", chunkflags);
     float zmin = 999999999.0f;
     float zmax = -999999999.0f;
     // must be there, bl!zz uses some crazy format
@@ -260,7 +259,7 @@ inline void TransformData()
     delete mcells;
 }
 
-const char MAP_MAGIC[] = "MAP_2.90";
+const char MAP_MAGIC[] = "MAP_2.50";                        // for destination from 3.0.8a maps
 
 bool ConvertADT(char *filename, char *filename2)
 {
@@ -313,4 +312,3 @@ bool ConvertADT(char *filename, char *filename2)
 
     return true;
 }
-

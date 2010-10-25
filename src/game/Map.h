@@ -51,7 +51,7 @@ class CreatureGroup;
 // Map file format defines
 //******************************************
 #define MAP_MAGIC             'SPAM'
-#define MAP_VERSION_MAGIC     '0.1w'
+#define MAP_VERSION_MAGIC     '5.0w'
 #define MAP_AREA_MAGIC        'AERA'
 #define MAP_HEIGHT_MAGIC      'TGHM'
 #define MAP_LIQUID_MAGIC      'QILM'
