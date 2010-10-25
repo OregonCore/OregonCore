@@ -28,6 +28,7 @@ include_directories(
   ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/dep/include
   ${CMAKE_SOURCE_DIR}/dep/include/gsoap
+  ${CMAKE_SOURCE_DIR}/src/collision
   ${CMAKE_SOURCE_DIR}/src/shared
   ${CMAKE_SOURCE_DIR}/src/shared/Database
   ${CMAKE_SOURCE_DIR}/src/framework
@@ -53,38 +54,24 @@ endif()
 
 set_target_properties(oregon-core PROPERTIES LINK_FLAGS "${oregon-core_LINK_FLAGS}")
 
-if( WIN32 )
-  target_link_libraries(oregon-core
-    game
-    shared
-    scripts
-    zlib
-    oregonframework
-    oregonsockets
-    g3dlite
-    gsoap
-    ace
-    ${MYSQL_LIBRARY}
-    ${OPENSSL_LIBRARIES}
-    ${OPENSSL_EXTRA_LIBRARIES}
-  )
-else()
-  target_link_libraries(oregon-core
-    game
-    shared
-    scripts
-    oregonframework
-    oregonsockets
-    g3dlite
-    gsoap
-    ${READLINE_LIBRARY}
-    ${ACE_LIBRARY}
-    ${MYSQL_LIBRARY}
-    ${OPENSSL_LIBRARIES}
-    ${ZLIB}
-    ${OSX_LIBS}
-  )
-endif()
+target_link_libraries(oregon-core
+  game
+  shared
+  scripts
+  oregonframework
+  oregonsockets
+  collision
+  g3dlite
+  gsoap
+  ${READLINE_LIBRARY}
+  ${TERMCAP_LIBRARY}
+  ${ACE_LIBRARY}
+  ${MYSQL_LIBRARY}
+  ${OPENSSL_LIBRARIES}
+  ${OPENSSL_EXTRA_LIBRARIES}
+  ${ZLIB_LIBRARIES}
+  ${OSX_LIBS}
+)
 
 if( WIN32 )
   add_custom_command(TARGET oregon-core

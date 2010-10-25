@@ -6,3 +6,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
 endif()
 
 add_subdirectory(src)
+
+if(TOOLS)
+  add_subdirectory(libmpq)
+endif()

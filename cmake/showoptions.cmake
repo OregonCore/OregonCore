@@ -26,6 +26,12 @@ else()
   set(USE_SCRIPTPCH 0)
 endif()
 
+if( TOOLS )
+  message("* Build map/vmap tools   : Yes")
+else()
+  message("* Build map/vmap tools   : No  (default)")
+endif()
+
 if( USE_COREPCH )
   message("* Build core w/PCH       : Yes (default)")
 else()

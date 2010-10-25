@@ -34,6 +34,7 @@ include_directories(
   ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/dep/include
   ${CMAKE_SOURCE_DIR}/src/framework
+  ${CMAKE_SOURCE_DIR}/src/collision
   ${CMAKE_SOURCE_DIR}/src/shared
   ${CMAKE_SOURCE_DIR}/src/shared/vmap
   ${CMAKE_SOURCE_DIR}/src/shared/Database
@@ -41,6 +42,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/src/scripts/PrecompiledHeaders
   ${ACE_INCLUDE_DIR}
   ${MYSQL_INCLUDE_DIR}
+  ${OPENSSL_INCLUDE_DIR}
 )
 
 add_library(game STATIC ${game_STAT_SRCS})
