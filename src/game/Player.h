@@ -1939,11 +1939,11 @@ class OREGON_DLL_SPEC Player : public Unit
             m_lastFallTime = time;
             m_lastFallZ = z;
         }
-        bool isMoving() const { return HasUnitMovementFlag(MOVEMENTFLAG_MOVING); }
-        bool isMovingOrTurning() const { return HasUnitMovementFlag(MOVEMENTFLAG_TURNING); }
+        bool isMoving() const { return HasUnitMovementFlag(MOVEFLAG_MOVING); }
+        bool isMovingOrTurning() const { return HasUnitMovementFlag(MOVEFLAG_TURNING); }
 
-        bool CanFly() const { return HasUnitMovementFlag(MOVEMENTFLAG_CAN_FLY); }
-        bool IsFlying() const { return HasUnitMovementFlag(MOVEMENTFLAG_FLYING2); }
+        bool CanFly() const { return HasUnitMovementFlag(MOVEFLAG_CAN_FLY); }
+        bool IsFlying() const { return HasUnitMovementFlag(MOVEFLAG_FLYING2); }
 
         void HandleFallDamage(MovementInfo& movementInfo);
         void HandleFallUnderMap();

@@ -24,7 +24,7 @@
 #include "ByteBuffer.h"
 class WorldPacket;
 
-enum OBJECT_UPDATE_TYPE
+enum ObjectUpdateType
 {
     UPDATETYPE_VALUES               = 0,
     UPDATETYPE_MOVEMENT             = 1,
@@ -34,16 +34,16 @@ enum OBJECT_UPDATE_TYPE
     UPDATETYPE_NEAR_OBJECTS         = 5
 };
 
-enum OBJECT_UPDATE_FLAGS
+enum ObjectUpdateFlags
 {
-    UPDATEFLAG_NONE         = 0x00,
-    UPDATEFLAG_SELF         = 0x01,
-    UPDATEFLAG_TRANSPORT    = 0x02,
-    UPDATEFLAG_FULLGUID     = 0x04,
-    UPDATEFLAG_LOWGUID      = 0x08,
-    UPDATEFLAG_HIGHGUID     = 0x10,
-    UPDATEFLAG_LIVING       = 0x20,
-    UPDATEFLAG_HASPOSITION  = 0x40
+    UPDATEFLAG_NONE                 = 0x0000,
+    UPDATEFLAG_SELF                 = 0x0001,
+    UPDATEFLAG_TRANSPORT            = 0x0002,
+    UPDATEFLAG_HAS_ATTACKING_TARGET = 0x0004,
+    UPDATEFLAG_LOWGUID              = 0x0008,
+    UPDATEFLAG_HIGHGUID             = 0x0010,
+    UPDATEFLAG_LIVING               = 0x0020,
+    UPDATEFLAG_HAS_POSITION         = 0x0040,
 };
 
 class UpdateData
@@ -68,4 +68,3 @@ class UpdateData
         void Compress(void* dst, uint32 *dst_size, void* src, int src_size);
 };
 #endif
-

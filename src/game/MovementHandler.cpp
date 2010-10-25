@@ -278,7 +278,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     GetPlayer()->SetUnitMovementFlags(movementInfo.GetMovementFlags());
 
     /* handle special cases */
-    if (movementInfo.HasMovementFlag(MOVEMENTFLAG_ONTRANSPORT))
+    if (movementInfo.HasMovementFlag(MOVEFLAG_ONTRANSPORT))
     {
         // transports size limited
         // (also received at zeppelin/lift leave by some reason with t_* as absolute in continent coordinates, can be safely skipped)
@@ -299,7 +299,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
             {
                 return;
             }
-            // elevators also cause the client to send MOVEMENTFLAG_ONTRANSPORT - just unmount if the guid can be found in the transport list
+            // elevators also cause the client to send MOVEFLAG_ONTRANSPORT - just unmount if the guid can be found in the transport list
             for (MapManager::TransportSet::iterator iter = MapManager::Instance().m_Transports.begin(); iter != MapManager::Instance().m_Transports.end(); ++iter)
             {
                 if ((*iter)->GetGUID() == movementInfo.t_guid)
@@ -332,7 +332,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     if (opcode == MSG_MOVE_FALL_LAND && !GetPlayer()->isInFlight())
         GetPlayer()->HandleFallDamage(movementInfo);
 
-    if (movementInfo.HasMovementFlag(MOVEMENTFLAG_SWIMMING) != GetPlayer()->IsInWater())
+    if (movementInfo.HasMovementFlag(MOVEFLAG_SWIMMING) != GetPlayer()->IsInWater())
     {
         // now client not include swimming flag in case jumping under water
         GetPlayer()->SetInWater(!GetPlayer()->IsInWater() || GetPlayer()->GetBaseMap()->IsUnderWater(movementInfo.GetPos()->x, movementInfo.GetPos()->y, movementInfo.GetPos()->z));
@@ -355,14 +355,14 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     {
         UnitMoveType move_type;
 
-        if (movementInfo.HasMovementFlag(MOVEMENTFLAG_FLYING))
-            move_type = movementInfo.HasMovementFlag(MOVEMENTFLAG_BACKWARD) ? MOVE_FLIGHT_BACK : MOVE_FLIGHT;
-        else if (movementInfo.HasMovementFlag(MOVEMENTFLAG_SWIMMING))
-            move_type = movementInfo.HasMovementFlag(MOVEMENTFLAG_BACKWARD) ? MOVE_SWIM_BACK : MOVE_SWIM;
-        else if (movementInfo.HasMovementFlag(MOVEMENTFLAG_WALK_MODE))
+        if (movementInfo.HasMovementFlag(MOVEFLAG_FLYING))
+            move_type = movementInfo.HasMovementFlag(MOVEFLAG_BACKWARD) ? MOVE_FLIGHT_BACK : MOVE_FLIGHT;
+        else if (movementInfo.HasMovementFlag(MOVEFLAG_SWIMMING))
+            move_type = movementInfo.HasMovementFlag(MOVEFLAG_BACKWARD) ? MOVE_SWIM_BACK : MOVE_SWIM;
+        else if (movementInfo.HasMovementFlag(MOVEFLAG_WALK_MODE))
             move_type = MOVE_WALK;
         else    //hmm... in first time after login player has MOVE_SWIMBACK instead MOVE_WALKBACK
-            move_type = movementInfo.HasMovementFlag(MOVEMENTFLAG_BACKWARD) ? MOVE_SWIM_BACK : MOVE_RUN;
+            move_type = movementInfo.HasMovementFlag(MOVEFLAG_BACKWARD) ? MOVE_SWIM_BACK : MOVE_RUN;
 
         float allowed_delta = 0;
         float current_speed = GetPlayer()->GetSpeed(move_type);
@@ -380,7 +380,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
             time_delta = 0;
         time_delta = (time_delta < 1500) ? time_delta / 1000 : 1.5f; // normalize time - 1.5 second allowed for heavy loaded server
 
-        if (!(movementInfo.GetMovementFlags() & (MOVEMENTFLAG_FLYING | MOVEMENTFLAG_SWIMMING)))
+        if (!(movementInfo.GetMovementFlags() & (MOVEFLAG_FLYING | MOVEFLAG_SWIMMING)))
             tg_z = (real_delta != 0) ? (delta_z * delta_z / real_delta) : -99999;
 
         if (current_speed < GetPlayer()->m_anti_last_hspeed)
@@ -424,7 +424,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
             #endif
             check_passed = false;
         }
-        if (((movementInfo.GetMovementFlags() & (MOVEMENTFLAG_CAN_FLY | MOVEMENTFLAG_FLYING | MOVEMENTFLAG_FLYING2)) != 0) && !GetPlayer()->isGameMaster() && !(GetPlayer()->HasAuraType(SPELL_AURA_FLY) || GetPlayer()->HasAuraType(SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED)))
+        if (((movementInfo.GetMovementFlags() & (MOVEFLAG_CAN_FLY | MOVEFLAG_FLYING | MOVEFLAG_FLYING2)) != 0) && !GetPlayer()->isGameMaster() && !(GetPlayer()->HasAuraType(SPELL_AURA_FLY) || GetPlayer()->HasAuraType(SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED)))
         {
             #ifdef MOVEMENT_ANTICHEAT_DEBUG
             sLog.outDebug("Movement anticheat: %s is fly cheater. {SPELL_AURA_FLY=[%X]} {SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED=[%X]} {SPELL_AURA_MOD_FLIGHT_SPEED_STACKING=[%X]} {SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED_STACKING=[%X]} {SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED_NOT_STACKING=[%X]}",
@@ -435,14 +435,14 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
             #endif
             check_passed = false;
         }
-        if (movementInfo.HasMovementFlag(MOVEMENTFLAG_WATERWALKING) && !GetPlayer()->isGameMaster() && !(GetPlayer()->HasAuraType(SPELL_AURA_WATER_WALK) | GetPlayer()->HasAuraType(SPELL_AURA_GHOST)))
+        if (movementInfo.HasMovementFlag(MOVEFLAG_WATERWALKING) && !GetPlayer()->isGameMaster() && !(GetPlayer()->HasAuraType(SPELL_AURA_WATER_WALK) | GetPlayer()->HasAuraType(SPELL_AURA_GHOST)))
         {
             #ifdef MOVEMENT_ANTICHEAT_DEBUG
             sLog.outDebug("Movement anticheat: %s is water-walk exception. [%X]{SPELL_AURA_WATER_WALK=[%X]}", GetPlayer()->GetName(), movementInfo.GetMovementFlags(), GetPlayer()->HasAuraType(SPELL_AURA_WATER_WALK));
             #endif
             check_passed = false;
         }
-        if (movementInfo.GetPos()->z < 0.0001f && movementInfo.GetPos()->z > -0.0001f && ((movementInfo.GetMovementFlags() & (MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_CAN_FLY | MOVEMENTFLAG_FLYING | MOVEMENTFLAG_FLYING2)) == 0) && !GetPlayer()->isGameMaster())
+        if (movementInfo.GetPos()->z < 0.0001f && movementInfo.GetPos()->z > -0.0001f && ((movementInfo.GetMovementFlags() & (MOVEFLAG_SWIMMING | MOVEFLAG_CAN_FLY | MOVEFLAG_FLYING | MOVEFLAG_FLYING2)) == 0) && !GetPlayer()->isGameMaster())
         {
             // Prevent using TeleportToPlane.
             Map *map = GetPlayer()->GetMap();
@@ -471,7 +471,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
                 GetPlayer()->m_anti_teletoplane_count = 0;
         }
     }
-    else if (movementInfo.HasMovementFlag(MOVEMENTFLAG_ONTRANSPORT))
+    else if (movementInfo.HasMovementFlag(MOVEFLAG_ONTRANSPORT))
     {
         // antiwrap =)
         if (GetPlayer()->m_transport)
@@ -576,7 +576,7 @@ void WorldSession::HandlePossessedMovement(WorldPacket& recv_data, MovementInfo&
     pos_unit->SetUnitMovementFlags(movementInfo.GetMovementFlags());
 
     // Remove possession if possessed unit enters a transport
-    if (movementInfo.HasMovementFlag(MOVEMENTFLAG_ONTRANSPORT))
+    if (movementInfo.HasMovementFlag(MOVEFLAG_ONTRANSPORT))
     {
         GetPlayer()->Uncharm();
         return;
@@ -599,7 +599,7 @@ void WorldSession::HandlePossessedMovement(WorldPacket& recv_data, MovementInfo&
         if (opcode == MSG_MOVE_FALL_LAND)
             plr->HandleFallDamage(movementInfo);
 
-        if (movementInfo.HasMovementFlag(MOVEMENTFLAG_SWIMMING) != plr->IsInWater())
+        if (movementInfo.HasMovementFlag(MOVEFLAG_SWIMMING) != plr->IsInWater())
         {
             // Now client not include swimming flag in case jumping under water
             plr->SetInWater(!plr->IsInWater() || plr->GetBaseMap()->IsUnderWater(movementInfo.GetPos()->x, movementInfo.GetPos()->y, movementInfo.GetPos()->z));

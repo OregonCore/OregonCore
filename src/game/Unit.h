@@ -191,14 +191,14 @@ enum SheathState
 // byte (1 from 0..3) of UNIT_FIELD_BYTES_2
 enum UnitBytes2_Flags
 {
-    UNIT_BYTE2_FLAG_UNK0  = 0x01,
-    UNIT_BYTE2_FLAG_UNK1  = 0x02,
-    UNIT_BYTE2_FLAG_UNK2  = 0x04,
+    UNIT_BYTE2_FLAG_UNK0        = 0x01,
+    UNIT_BYTE2_FLAG_UNK1        = 0x02,
+    UNIT_BYTE2_FLAG_UNK2        = 0x04,
     UNIT_BYTE2_FLAG_SANCTUARY   = 0x08,
-    UNIT_BYTE2_FLAG_AURAS = 0x10,                           // show possitive auras as positive, and allow its dispel
-    UNIT_BYTE2_FLAG_UNK5  = 0x20,
-    UNIT_BYTE2_FLAG_UNK6  = 0x40,
-    UNIT_BYTE2_FLAG_UNK7  = 0x80
+    UNIT_BYTE2_FLAG_AURAS       = 0x10,                     // show possitive auras as positive, and allow its dispel
+    UNIT_BYTE2_FLAG_UNK5        = 0x20,
+    UNIT_BYTE2_FLAG_UNK6        = 0x40,
+    UNIT_BYTE2_FLAG_UNK7        = 0x80
 };
 
 // byte (2 from 0..3) of UNIT_FIELD_BYTES_2
@@ -312,18 +312,18 @@ enum AuraRemoveMode
 
 enum UnitMods
 {
-    UNIT_MOD_STAT_STRENGTH,                                 // UNIT_MOD_STAT_STRENGTH..UNIT_MOD_STAT_SPIRIT must be in existed order, it's accessed by index values of Stats enum.
+    UNIT_MOD_STAT_STRENGTH,                                 // UNIT_MOD_STAT_STRENGTH..UNIT_MOD_STAT_SPIRIT must be in existing order, it's accessed by index values of Stats enum.
     UNIT_MOD_STAT_AGILITY,
     UNIT_MOD_STAT_STAMINA,
     UNIT_MOD_STAT_INTELLECT,
     UNIT_MOD_STAT_SPIRIT,
     UNIT_MOD_HEALTH,
-    UNIT_MOD_MANA,                                          // UNIT_MOD_MANA..UNIT_MOD_HAPPINESS must be in existed order, it's accessed by index values of Powers enum.
+    UNIT_MOD_MANA,                                          // UNIT_MOD_MANA..UNIT_MOD_HAPPINESS must be in existing order, it's accessed by index values of Powers enum.
     UNIT_MOD_RAGE,
     UNIT_MOD_FOCUS,
     UNIT_MOD_ENERGY,
     UNIT_MOD_HAPPINESS,
-    UNIT_MOD_ARMOR,                                         // UNIT_MOD_ARMOR..UNIT_MOD_RESISTANCE_ARCANE must be in existed order, it's accessed by index values of SpellSchools enum.
+    UNIT_MOD_ARMOR,                                         // UNIT_MOD_ARMOR..UNIT_MOD_RESISTANCE_ARCANE must be in existing order, it's accessed by index values of SpellSchools enum.
     UNIT_MOD_RESISTANCE_HOLY,
     UNIT_MOD_RESISTANCE_FIRE,
     UNIT_MOD_RESISTANCE_NATURE,
@@ -556,53 +556,51 @@ enum NPCFlags
     UNIT_NPC_FLAG_OUTDOORPVP            = 0x20000000,       // custom flag for outdoor pvp creatures
 };
 
-// only some values known as correct for 2.4.3
-enum MoveFlags
-{
-    MOVEFLAG_NONE               = 0x00000000,
-    MOVEFLAG_JUMP               = 0x00000008,
-    MOVEFLAG_WALK               = 0x00000100,
-    MOVEFLAG_FLY                = 0x00000200,   //For dragon (+walk = glide)
-
-};
-
 enum MovementFlags
 {
-    MOVEMENTFLAG_NONE           = 0x00000000,
-    MOVEMENTFLAG_FORWARD        = 0x00000001,
-    MOVEMENTFLAG_BACKWARD       = 0x00000002,
-    MOVEMENTFLAG_STRAFE_LEFT    = 0x00000004,
-    MOVEMENTFLAG_STRAFE_RIGHT   = 0x00000008,
-    MOVEMENTFLAG_LEFT           = 0x00000010,
-    MOVEMENTFLAG_RIGHT          = 0x00000020,
-    MOVEMENTFLAG_PITCH_UP       = 0x00000040,
-    MOVEMENTFLAG_PITCH_DOWN     = 0x00000080,
-    MOVEMENTFLAG_WALK_MODE      = 0x00000100,
-    MOVEMENTFLAG_ONTRANSPORT    = 0x00000200,
-    MOVEMENTFLAG_LEVITATING     = 0x00000400,
-    MOVEMENTFLAG_FLY_UNK1       = 0x00000800,
-    MOVEMENTFLAG_JUMPING        = 0x00001000,
-    MOVEMENTFLAG_UNK4           = 0x00002000,
-    MOVEMENTFLAG_FALLING        = 0x00004000,
-    // 0x8000, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000
-    MOVEMENTFLAG_SWIMMING       = 0x00200000,               // appears with fly flag also
-    MOVEMENTFLAG_FLY_UP         = 0x00400000,
-    MOVEMENTFLAG_CAN_FLY        = 0x00800000,
-    MOVEMENTFLAG_FLYING         = 0x01000000,
-    MOVEMENTFLAG_FLYING2        = 0x02000000,               // Actual flying mode
-    MOVEMENTFLAG_SPLINE         = 0x04000000,               // used for flight paths
-    MOVEMENTFLAG_SPLINE2        = 0x08000000,               // used for flight paths
-    MOVEMENTFLAG_WATERWALKING   = 0x10000000,               // prevent unit from falling through water
-    MOVEMENTFLAG_SAFE_FALL      = 0x20000000,               // active rogue safe fall spell (passive)
-    MOVEMENTFLAG_UNK3           = 0x40000000,
+    MOVEFLAG_NONE               = 0x00000000,
+    MOVEFLAG_FORWARD            = 0x00000001,
+    MOVEFLAG_BACKWARD           = 0x00000002,
+    MOVEFLAG_STRAFE_LEFT        = 0x00000004,
+    MOVEFLAG_STRAFE_RIGHT       = 0x00000008,
+    MOVEFLAG_TURN_LEFT          = 0x00000010,
+    MOVEFLAG_TURN_RIGHT         = 0x00000020,
+    MOVEFLAG_PITCH_UP           = 0x00000040,
+    MOVEFLAG_PITCH_DOWN         = 0x00000080,
+    MOVEFLAG_WALK_MODE          = 0x00000100,               // Walking
+    MOVEFLAG_ONTRANSPORT        = 0x00000200,               // Used for flying on some creatures
+    MOVEFLAG_LEVITATING         = 0x00000400,
+    MOVEFLAG_ROOT               = 0x00000800,
+    MOVEFLAG_FALLING            = 0x00001000,
+    MOVEFLAG_FALLINGFAR         = 0x00004000,
+    MOVEFLAG_SWIMMING           = 0x00200000,               // appears with fly flag also
+    MOVEFLAG_ASCENDING          = 0x00400000,               // swim up also
+    MOVEFLAG_CAN_FLY            = 0x00800000,
+    MOVEFLAG_FLYING             = 0x01000000,
+    MOVEFLAG_FLYING2            = 0x02000000,               // Actual flying mode
+    MOVEFLAG_SPLINE_ELEVATION   = 0x04000000,               // used for flight paths
+    MOVEFLAG_SPLINE_ENABLED     = 0x08000000,               // used for flight paths
+    MOVEFLAG_WATERWALKING       = 0x10000000,               // prevent unit from falling through water
+    MOVEFLAG_SAFE_FALL          = 0x20000000,               // active rogue safe fall spell (passive)
+    MOVEFLAG_HOVER              = 0x40000000,
 
-    MOVEMENTFLAG_MOVING         =
-        MOVEMENTFLAG_FORWARD |MOVEMENTFLAG_BACKWARD  |MOVEMENTFLAG_STRAFE_LEFT|MOVEMENTFLAG_STRAFE_RIGHT|
-        MOVEMENTFLAG_PITCH_UP|MOVEMENTFLAG_PITCH_DOWN|MOVEMENTFLAG_FLY_UNK1   |
-        MOVEMENTFLAG_JUMPING |MOVEMENTFLAG_FALLING   |MOVEMENTFLAG_FLY_UP     |
-        MOVEMENTFLAG_FLYING2 |MOVEMENTFLAG_SPLINE,
-    MOVEMENTFLAG_TURNING        =
-        MOVEMENTFLAG_LEFT | MOVEMENTFLAG_RIGHT,
+    MOVEFLAG_MOVING         =
+        MOVEFLAG_FORWARD |MOVEFLAG_BACKWARD  |MOVEFLAG_STRAFE_LEFT |MOVEFLAG_STRAFE_RIGHT|
+        MOVEFLAG_PITCH_UP|MOVEFLAG_PITCH_DOWN|MOVEFLAG_ROOT        |
+        MOVEFLAG_FALLING |MOVEFLAG_FALLINGFAR|MOVEFLAG_ASCENDING   |
+        MOVEFLAG_FLYING2 |MOVEFLAG_SPLINE_ELEVATION,
+    MOVEFLAG_TURNING        =
+        MOVEFLAG_TURN_LEFT | MOVEFLAG_TURN_RIGHT,
+};
+
+// used in SMSG_MONSTER_MOVE
+// only some values known as correct for 2.4.3
+enum SplineFlags
+{
+    SPLINEFLAG_NONE           = 0x00000000,
+    SPLINEFLAG_JUMP           = 0x00000008,
+    SPLINEFLAG_WALKMODE       = 0x00000100,
+    SPLINEFLAG_FLYING         = 0x00000200,
 };
 
 struct Position

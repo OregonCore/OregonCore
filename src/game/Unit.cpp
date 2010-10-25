@@ -163,7 +163,7 @@ void MovementInfo::Read(ByteBuffer &data)
     data >> pos.z;
     data >> pos.o;
 
-    if (HasMovementFlag(MOVEMENTFLAG_ONTRANSPORT))
+    if (HasMovementFlag(MOVEFLAG_ONTRANSPORT))
     {
         data >> t_guid;
         data >> t_pos.x;
@@ -172,12 +172,12 @@ void MovementInfo::Read(ByteBuffer &data)
         data >> t_pos.o;
         data >> t_time;
     }
-    if (HasMovementFlag(MovementFlags(MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING2)))
+    if (HasMovementFlag(MovementFlags(MOVEFLAG_SWIMMING | MOVEFLAG_FLYING2)))
         data >> s_pitch;
 
     data >> fallTime;
 
-    if (HasMovementFlag(MOVEMENTFLAG_JUMPING))
+    if (HasMovementFlag(MOVEFLAG_FALLING))
     {
         data >> j_velocity;
         data >> j_sinAngle;
@@ -185,7 +185,7 @@ void MovementInfo::Read(ByteBuffer &data)
         data >> j_xyspeed;
     }
 
-    if (HasMovementFlag(MOVEMENTFLAG_SPLINE))
+    if (HasMovementFlag(MOVEFLAG_SPLINE_ELEVATION))
         data >> u_unk1;
 }
 
@@ -199,7 +199,7 @@ void MovementInfo::Write(ByteBuffer &data) const
     data << pos.z;
     data << pos.o;
 
-    if (HasMovementFlag(MOVEMENTFLAG_ONTRANSPORT))
+    if (HasMovementFlag(MOVEFLAG_ONTRANSPORT))
     {
         data << t_guid;
         data << t_pos.x;
@@ -208,12 +208,12 @@ void MovementInfo::Write(ByteBuffer &data) const
         data << t_pos.o;
         data << t_time;
     }
-    if (HasMovementFlag(MovementFlags(MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING2)))
+    if (HasMovementFlag(MovementFlags(MOVEFLAG_SWIMMING | MOVEFLAG_FLYING2)))
         data << s_pitch;
 
     data << fallTime;
 
-    if (HasMovementFlag(MOVEMENTFLAG_JUMPING))
+    if (HasMovementFlag(MOVEFLAG_FALLING))
     {
         data << j_velocity;
         data << j_sinAngle;
@@ -221,7 +221,7 @@ void MovementInfo::Write(ByteBuffer &data) const
         data << j_xyspeed;
     }
 
-    if (HasMovementFlag(MOVEMENTFLAG_SPLINE))
+    if (HasMovementFlag(MOVEFLAG_SPLINE_ELEVATION))
         data << u_unk1;
 }
 
@@ -233,7 +233,7 @@ Unit::Unit()
     m_objectType |= TYPEMASK_UNIT;
     m_objectTypeId = TYPEID_UNIT;
 
-    m_updateFlag = (UPDATEFLAG_HIGHGUID | UPDATEFLAG_LIVING | UPDATEFLAG_HASPOSITION);
+    m_updateFlag = (UPDATEFLAG_HIGHGUID | UPDATEFLAG_LIVING | UPDATEFLAG_HAS_POSITION);
 
     m_attackTimer[BASE_ATTACK] = 0;
     m_attackTimer[OFF_ATTACK] = 0;
@@ -448,7 +448,7 @@ void Unit::SendMonsterMove(float NewPosX, float NewPosY, float NewPosZ, uint32 T
     data << getMSTime();
 
     data << uint8(0);
-    data << uint32((GetUnitMovementFlags() & MOVEMENTFLAG_LEVITATING) ? MOVEFLAG_FLY : MOVEFLAG_WALK);
+    data << uint32((GetUnitMovementFlags() & MOVEFLAG_LEVITATING) ? SPLINEFLAG_FLYING : SPLINEFLAG_WALKMODE);
     data << Time;                                           // Time in between points
     data << uint32(1);                                      // 1 single waypoint
     data << NewPosX << NewPosY << NewPosZ;                  // the single waypoint Point B
@@ -473,7 +473,7 @@ void Unit::SendMonsterMove(float NewPosX, float NewPosY, float NewPosZ, uint32 M
     data << uint8(0);
     data << MoveFlags;
 
-    if (MoveFlags & MOVEFLAG_JUMP)
+    if (MoveFlags & SPLINEFLAG_JUMP)
     {
         data << time;
         data << speedZ;
@@ -504,7 +504,7 @@ void Unit::SendMonsterMoveByPath(Path const& path, uint32 start, uint32 end)
     data << GetPositionZ();
     data << uint32(getMSTime());
     data << uint8(0);
-    data << uint32(((GetUnitMovementFlags() & MOVEMENTFLAG_LEVITATING) || isInFlight())? (MOVEFLAG_FLY|MOVEFLAG_WALK) : MOVEFLAG_WALK);
+    data << uint32(((GetUnitMovementFlags() & MOVEFLAG_LEVITATING) || isInFlight())? (SPLINEFLAG_FLYING|SPLINEFLAG_WALKMODE) : SPLINEFLAG_WALKMODE);
     data << uint32(traveltime);
     data << uint32(pathSize);
     data.append((char*)path.GetNodes(start), pathSize * 4 * 3);
@@ -11585,7 +11585,7 @@ void Unit::SetCharmedOrPossessedBy(Unit* charmer, bool possess)
     if (GetTypeId() == TYPEID_PLAYER && ToPlayer()->GetTransport())
         return;
 
-    RemoveUnitMovementFlag(MOVEMENTFLAG_WALK_MODE);
+    RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
     CastStop();
     CombatStop(); //TODO: CombatStop(true) may cause crash (interrupt spells)
     DeleteThreatList();
@@ -11904,12 +11904,12 @@ void Unit::SetFlying(bool apply)
     if (apply)
     {
         SetByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02);
-        AddUnitMovementFlag(MOVEMENTFLAG_FLYING | MOVEMENTFLAG_FLYING2);
+        AddUnitMovementFlag(MOVEFLAG_FLYING | MOVEFLAG_FLYING2);
     }
     else
     {
         RemoveByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02);
-        RemoveUnitMovementFlag(MOVEMENTFLAG_FLYING | MOVEMENTFLAG_FLYING2);
+        RemoveUnitMovementFlag(MOVEFLAG_FLYING | MOVEFLAG_FLYING2);
     }
 }
 

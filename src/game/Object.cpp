@@ -143,7 +143,7 @@ void Object::BuildCreateUpdateBlockForPlayer(UpdateData *data, Player *target) c
     if (target == this)                                      // building packet for oneself
         flags |= UPDATEFLAG_SELF;
 
-    if (flags & UPDATEFLAG_HASPOSITION)
+    if (flags & UPDATEFLAG_HAS_POSITION)
     {
         // UPDATETYPE_CREATE_OBJECT2 dynamic objects, corpses...
         if (isType(TYPEMASK_DYNAMICOBJECT) || isType(TYPEMASK_CORPSE) || isType(TYPEMASK_PLAYER))
@@ -233,7 +233,7 @@ void Object::DestroyForPlayer(Player *target) const
 
 void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 updateFlags) const
 {
-    uint32 moveFlags = MOVEMENTFLAG_NONE;
+    uint32 moveFlags = MOVEFLAG_NONE;
 
     *data << uint8(updateFlags);                            // update flags
 
@@ -244,8 +244,8 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 updateFlags) const
             case TYPEID_UNIT:
             {
                 moveFlags = ((Unit*)this)->GetUnitMovementFlags();
-                moveFlags &= ~MOVEMENTFLAG_ONTRANSPORT;
-                moveFlags &= ~MOVEMENTFLAG_SPLINE2;
+                moveFlags &= ~MOVEFLAG_ONTRANSPORT;
+                moveFlags &= ~MOVEFLAG_SPLINE_ENABLED;
             }
             break;
             case TYPEID_PLAYER:
@@ -253,17 +253,17 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 updateFlags) const
                 moveFlags = ToPlayer()->GetUnitMovementFlags();
 
                 if (ToPlayer()->GetTransport())
-                    moveFlags |= MOVEMENTFLAG_ONTRANSPORT;
+                    moveFlags |= MOVEFLAG_ONTRANSPORT;
                 else
-                    moveFlags &= ~MOVEMENTFLAG_ONTRANSPORT;
+                    moveFlags &= ~MOVEFLAG_ONTRANSPORT;
 
                 // remove unknown, unused etc flags for now
-                moveFlags &= ~MOVEMENTFLAG_SPLINE2;            // will be set manually
+                moveFlags &= ~MOVEFLAG_SPLINE_ENABLED;            // will be set manually
 
                 if (ToPlayer()->isInFlight())
                 {
                     WPAssert(const_cast<Player*>(ToPlayer())->GetMotionMaster()->GetCurrentMovementGeneratorType() == FLIGHT_MOTION_TYPE);
-                    moveFlags = (MOVEMENTFLAG_FORWARD | MOVEMENTFLAG_SPLINE2);
+                    moveFlags = (MOVEFLAG_FORWARD | MOVEFLAG_SPLINE_ENABLED);
                 }
             }
             break;
@@ -275,7 +275,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 updateFlags) const
     }
 
     // 0x40
-    if (updateFlags & UPDATEFLAG_HASPOSITION)
+    if (updateFlags & UPDATEFLAG_HAS_POSITION)
     {
         // 0x02
         if (updateFlags & UPDATEFLAG_TRANSPORT && ((GameObject*)this)->GetGoType() == GAMEOBJECT_TYPE_MO_TRANSPORT)
@@ -298,7 +298,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 updateFlags) const
     if (updateFlags & UPDATEFLAG_LIVING)
     {
         // 0x00000200
-        if (moveFlags & MOVEMENTFLAG_ONTRANSPORT)
+        if (moveFlags & MOVEFLAG_ONTRANSPORT)
         {
             if (GetTypeId() == TYPEID_PLAYER)
             {
@@ -313,7 +313,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 updateFlags) const
         }
 
         // 0x02200000
-        if (moveFlags & (MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING2))
+        if (moveFlags & (MOVEFLAG_SWIMMING | MOVEFLAG_FLYING2))
         {
             if (GetTypeId() == TYPEID_PLAYER)
                 *data << (float)ToPlayer()->m_movementInfo.s_pitch;
@@ -327,7 +327,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 updateFlags) const
             *data << uint32(0);                             // last fall time
 
         // 0x00001000
-        if (moveFlags & MOVEMENTFLAG_JUMPING)
+        if (moveFlags & MOVEFLAG_FALLING)
         {
             if (GetTypeId() == TYPEID_PLAYER)
             {
@@ -346,7 +346,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 updateFlags) const
         }
 
         // 0x04000000
-        if (moveFlags & MOVEMENTFLAG_SPLINE)
+        if (moveFlags & MOVEFLAG_SPLINE_ELEVATION)
         {
             if (GetTypeId() == TYPEID_PLAYER)
                 *data << float(ToPlayer()->m_movementInfo.u_unk1);
@@ -365,17 +365,17 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 updateFlags) const
         *data << ((Unit*)this)->GetSpeed(MOVE_TURN_RATE);
 
         // 0x08000000
-        if (moveFlags & MOVEMENTFLAG_SPLINE2)
+        if (moveFlags & MOVEFLAG_SPLINE_ENABLED)
         {
             if (GetTypeId() != TYPEID_PLAYER)
             {
-                sLog.outDebug("_BuildMovementUpdate: MOVEMENTFLAG_SPLINE2 for non-player");
+                sLog.outDebug("_BuildMovementUpdate: MOVEFLAG_SPLINE_ENABLED for non-player");
                 return;
             }
 
             if (!ToPlayer()->isInFlight())
             {
-                sLog.outDebug("_BuildMovementUpdate: MOVEMENTFLAG_SPLINE2 but not in flight");
+                sLog.outDebug("_BuildMovementUpdate: MOVEFLAG_SPLINE_ENABLED but not in flight");
                 return;
             }
 
@@ -480,7 +480,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 updateFlags) const
     }
 
     // 0x4
-    if (updateFlags & UPDATEFLAG_FULLGUID)
+    if (updateFlags & UPDATEFLAG_HAS_ATTACKING_TARGET)
     {
         *data << uint8(0);                                  // packed guid (probably target guid)
     }

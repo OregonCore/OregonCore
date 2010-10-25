@@ -6614,7 +6614,7 @@ void Player::CheckDuelDistance(time_t currTime)
 
 bool Player::IsOutdoorPvPActive()
 {
-    return (isAlive() && !HasInvisibilityAura() && !HasStealthAura() && (HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP) || sWorld.IsPvPRealm())  && !HasUnitMovementFlag(MOVEMENTFLAG_FLYING2) && !isInFlight());
+    return (isAlive() && !HasInvisibilityAura() && !HasStealthAura() && (HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP) || sWorld.IsPvPRealm())  && !HasUnitMovementFlag(MOVEFLAG_FLYING2) && !isInFlight());
 }
 
 void Player::DuelComplete(DuelCompleteType type)
@@ -18695,7 +18695,7 @@ void Player::SendInitialPacketsBeforeAddToMap()
 
     // set fly flag if in fly form or taxi flight to prevent visually drop at ground in showup moment
     if (HasAuraType(SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED) || isInFlight())
-        AddUnitMovementFlag(MOVEMENTFLAG_FLYING2);
+        AddUnitMovementFlag(MOVEFLAG_FLYING2);
 }
 
 void Player::SendInitialPacketsAfterAddToMap()
