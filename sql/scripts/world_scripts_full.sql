@@ -412,6 +412,7 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_kerlonian' WHERE `entry` = '1
 
 
 /* DEADMINES */
+UPDATE `creature_template` SET `ScriptName`='boss_mr_smite' WHERE `entry`=646;
 UPDATE `instance_template` SET `script`='instance_deadmines' WHERE `map`=36;
 UPDATE `item_template` SET `ScriptName`='item_defias_gunpowder' WHERE `entry`=5397;
 UPDATE `gameobject_template` SET `ScriptName`='go_defias_cannon' WHERE `entry`=16398;
