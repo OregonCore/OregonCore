@@ -22,7 +22,7 @@ SD%Complete:
 SDComment: Timers and say taken from acid script
 EndScriptData */
 
-#include "ScriptPch.h"
+#include "ScriptPCH.h"
 #include "deadmines.h"
 
 enum eSpels

@@ -21,7 +21,7 @@ SDComment:
 SDCategory: Deadmines
 EndScriptData */
 
-#include "ScriptPch.h"
+#include "ScriptPCH.h"
 #include "deadmines.h"
 
 enum Sounds

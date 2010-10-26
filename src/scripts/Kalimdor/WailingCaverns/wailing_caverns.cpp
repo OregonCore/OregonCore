@@ -24,7 +24,7 @@ EndScriptData */
 /* ContentData
 EndContentData */
 
-#include "ScriptPch.h"
+#include "ScriptPCH.h"
 #include "ScriptedEscortAI.h"
 #include "wailing_caverns.h"
 
