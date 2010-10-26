@@ -249,6 +249,8 @@ void AddSC_boss_skeram();
 void AddSC_boss_twinemperors();
 void AddSC_mob_anubisath_sentinel();
 void AddSC_instance_temple_of_ahnqiraj();
+void AddSC_wailing_caverns();                //Wailing caverns
+void AddSC_instance_wailing_caverns();
 void AddSC_zulfarrak();                     //Zul'Farrak generic
 void AddSC_ashenvale();
 void AddSC_azshara();
@@ -598,6 +600,8 @@ void AddScripts()
     AddSC_boss_twinemperors();
     AddSC_mob_anubisath_sentinel();
     AddSC_instance_temple_of_ahnqiraj();
+    AddSC_wailing_caverns();                //Wailing caverns
+    AddSC_instance_wailing_caverns();
     AddSC_zulfarrak();                      //Zul'Farrak generic
 
     AddSC_ashenvale();

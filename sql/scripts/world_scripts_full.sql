@@ -717,7 +717,6 @@ UPDATE `creature_template` SET `ScriptName`='npc_thrall_warchief' WHERE `entry`=
 
 /* RAGEFIRE CHASM */
 
-
 /* RAZORFEN DOWNS */
 UPDATE `creature_template` SET `ScriptName`='boss_amnennar_the_coldbringer' WHERE `entry`=7358;
 
@@ -1021,24 +1020,22 @@ UPDATE `creature_template` SET `ScriptName`='npc_highborne_lamenter' WHERE `entr
 UPDATE `creature_template` SET `ScriptName`='npc_parqual_fintallas' WHERE `entry`=4488;
 
 /* WAILING CAVERNS */
-
+UPDATE `creature_template` SET `ScriptName`='npc_disciple_of_naralex' WHERE entry=3678;
+UPDATE `instance_template` SET `script`='instance_wailing_caverns' WHERE map=43;
 
 /* WESTERN PLAGUELANDS */
 UPDATE `creature_template` SET `ScriptName`='npcs_dithers_and_arbington' WHERE `entry` IN (11056,11057);
 UPDATE `creature_template` SET `ScriptName`='npc_the_scourge_cauldron' WHERE `entry`=11152;
-UPDATE `creature_template` SET `ScriptName` = 'npc_andorhal_tower' WHERE `entry` = '10902';
-UPDATE `creature_template` SET `ScriptName` = 'npc_andorhal_tower' WHERE `entry` = '10903';
-UPDATE `creature_template` SET `ScriptName` = 'npc_andorhal_tower' WHERE `entry` = '10904';
-UPDATE `creature_template` SET `ScriptName` = 'npc_andorhal_tower' WHERE `entry` = '10905';
-UPDATE `creature_template` SET `ScriptName` = 'npc_myranda_the_hag' WHERE `entry` = '11872';
+UPDATE `creature_template` SET `ScriptName`='npc_myranda_the_hag' WHERE `entry`=11872;
+UPDATE `creature_template` SET `ScriptName`='npc_andorhal_tower' WHERE `entry` IN (10902,10903,10904,10905);
 
 /* WESTFALL */
-UPDATE `creature_template` SET `ScriptName`='npc_defias_traitor' WHERE `entry`='467';
-UPDATE `creature_template` SET `ScriptName` = 'npc_daphne_stilwell' WHERE `entry` = '6182';
+UPDATE `creature_template` SET `ScriptName`='npc_defias_traitor' WHERE `entry`=467;
+UPDATE `creature_template` SET `ScriptName`='npc_daphne_stilwell' WHERE `entry`=6182;
 
 /* WETLANDS */
-UPDATE `creature_template` SET `ScriptName` = 'npc_tapoke_slim_jahn' WHERE `entry` = '4962';
-UPDATE `creature_template` SET `ScriptName` = 'npc_mikhail' WHERE `entry` = '4963';
+UPDATE `creature_template` SET `ScriptName`='npc_tapoke_slim_jahn' WHERE `entry`=4962;
+UPDATE `creature_template` SET `ScriptName`='npc_mikhail' WHERE `entry`=4963;
 
 /* WINTERSPRING */
 UPDATE `creature_template` SET `ScriptName`='npc_lorax' WHERE `entry`=10918;
