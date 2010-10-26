@@ -147,14 +147,6 @@ struct boss_alarAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit *who) {}
 
-    void AttackStart(Unit* who)
-    {
-        if (Phase1)
-            ScriptedAI::AttackStart(who, false);
-        else
-            ScriptedAI::AttackStart(who, true);
-    }
-
     void DamageTaken(Unit* pKiller, uint32 &damage)
     {
         if (damage >= me->GetHealth() && Phase1)
@@ -412,7 +404,12 @@ struct boss_alarAI : public ScriptedAI
                 Unit *pTarget = NULL;
                 pTarget = me->SelectNearestTarget(5);
                 if (pTarget)
-                    me->AI()->AttackStart(pTarget);
+                {
+                    if (Phase1)
+                        ScriptedAI::AttackStart(pTarget, false);
+                    else
+                        ScriptedAI::AttackStart(pTarget, true);
+                }
                 else
                 {
                     me->CastSpell(me, SPELL_FLAME_BUFFET, true);
