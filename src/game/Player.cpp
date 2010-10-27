@@ -17063,6 +17063,9 @@ void Player::Whisper(const std::string& text, uint32 language,uint64 receiver)
 
     Player *rPlayer = objmgr.GetPlayer(receiver);
 
+    if (!rPlayer || !rPlayer->GetSession() || !GetSession())
+        return;
+
     if (sWorld.getConfig(CONFIG_CHATLOG_WHISPER))
         sLog.outChat("[WHISPER] Player %s tells %s: %s",
             GetName(), rPlayer->GetName(), text.c_str());
