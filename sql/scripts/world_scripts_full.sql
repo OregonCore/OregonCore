@@ -259,6 +259,7 @@ UPDATE `creature_template` SET `ScriptName`='npc_kharan_mighthammer' WHERE `entr
 UPDATE `creature_template` SET `ScriptName`='npc_grimstone' WHERE `entry`=10096;
 UPDATE `creature_template` SET `ScriptName`='npc_rocknot' WHERE `entry`=9503;
 UPDATE `creature_template` SET `ScriptName`='mob_phalanx' WHERE `entry`=9502;
+UPDATE `creature_template` SET `ScriptName`='npc_volcano' WHERE `entry`=23085;
 
 /* BLACKROCK SPIRE */
 /* BLACKROCK SPIRE Lower bosses */
@@ -653,7 +654,7 @@ UPDATE `creature_template` SET `ScriptName`='npc_clintar_spirit' WHERE `entry`=2
 
 /* MULGORE */
 UPDATE `creature_template` SET `ScriptName`='npc_skorn_whitecloud' WHERE `entry`=3052;
-UPDATE `creature_template` SET `ScriptName`='npc_kyle_frenzied' WHERE `entry`=23616;
+UPDATE `creature_template` SET `ScriptName`='npc_kyle_the_frenzied' WHERE `entry`=23616;
 UPDATE `creature_template` SET `ScriptName`='npc_plains_vision' WHERE `entry`=2983;
 
 /* NAGRAND */
