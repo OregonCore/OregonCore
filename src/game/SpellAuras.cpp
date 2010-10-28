@@ -4646,7 +4646,9 @@ void Aura::HandleModPowerRegen(bool apply, bool Real)       // drinking
         // so 17 is rounded amount for 5 sec tick grow ~ 1 range grow in 3 sec
         if (pt == POWER_RAGE)
         {
-            m_target->ModifyPower(pt, m_modifier.m_amount*3/5);
+            if (m_target->isInCombat())
+                m_target->ModifyPower(pt, m_modifier.m_amount*3/5);
+
             m_periodicTimer += 1000;
         }
     }
