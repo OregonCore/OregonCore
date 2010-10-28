@@ -32,10 +32,18 @@ enum eSpels
     SPELL_SMITE_SLAM        = 6435,
     SPELL_NIMBLE_REFLEXES   = 6264,
 
-    EQUIP_SWORD             = 5191,
-    EQUIP_MACE              = 7230,
+    EQUIP_SWORD             = 5144,
+    EQUIP_AXE               = 13913,
+    EQUIP_MACE              = 19610,
+    SWORD_EQUIP_INFO        = 218169346,
+    AXE_EQUIP_INFO          = 218169346,
+    MACE_EQUIP_INFO         = 50267394,
 
-    SAY_AGGRO               = -1036001
+    NPC_DEFIAS_BLACKGUARD   = 636,
+
+    SAY_AGGRO               = -1036001,
+    SAY_PHASE_1             = -1036002,
+    SAY_PHASE_2             = -1036003
 };
 
 struct boss_mr_smiteAI : public ScriptedAI
@@ -67,7 +75,25 @@ struct boss_mr_smiteAI : public ScriptedAI
         uiPhase = 0;
         uiTimer = 0;
 
-        SetEquipmentSlots(false, EQUIP_SWORD, EQUIP_UNEQUIP, EQUIP_NO_CHANGE);
+        me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, EQUIP_SWORD);
+        me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, SWORD_EQUIP_INFO);
+        me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, 0);
+        me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO+2, 0);
+    }
+
+    void MoveInLineOfSight(Unit* pWho)
+    {
+        if (!pWho || UpdateVictim())
+            return;
+
+        if (pWho->GetTypeId() == TYPEID_PLAYER && me->IsWithinDistInMap(pWho, 50.0f))
+        {
+            if (Creature* MrSmitHelper = me->FindNearestCreature(NPC_DEFIAS_BLACKGUARD, 50))
+            {
+                if (MrSmitHelper->isInCombat())
+                    me->AI()->AttackStart(pWho);
+            }
+        }
     }
 
     void EnterCombat(Unit* /*pWho*/)
@@ -114,6 +140,11 @@ struct boss_mr_smiteAI : public ScriptedAI
 
         if (uiHealth == 0 && me->GetHealth()*100 / me->GetMaxHealth() <= 66 || uiHealth == 1 && me->GetHealth()*100 / me->GetMaxHealth() <= 33)
         {
+            if (uiHealth == 0 && me->GetHealth()*100 / me->GetMaxHealth() <= 66)
+                DoScriptText(SAY_PHASE_1, me);
+            else
+                DoScriptText(SAY_PHASE_2, me);
+
             ++uiHealth;
             DoCastAOE(SPELL_SMITE_STOMP,false);
             SetCombatMovement(false);
@@ -121,7 +152,9 @@ struct boss_mr_smiteAI : public ScriptedAI
                 if (GameObject* pGo = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_SMITE_CHEST)))
                 {
                     me->GetMotionMaster()->Clear();
-                    me->GetMotionMaster()->MovePoint(1,-3.00+pGo->GetPositionX(),pGo->GetPositionY(),pGo->GetPositionZ());
+                    me->AttackStop();
+                    me->SetReactState(REACT_PASSIVE);
+                    me->GetMotionMaster()->MovePoint(1,1.37994,-780.29,9.81929);
                 }
         }
 
@@ -132,25 +165,38 @@ struct boss_mr_smiteAI : public ScriptedAI
                 switch(uiPhase)
                 {
                     case 1:
-                        me->HandleEmoteCommand(EMOTE_STATE_KNEEL); //dosen't work?
+                        me->SetStandState(UNIT_STAND_STATE_KNEEL);
                         uiTimer = 1000;
                         uiPhase = 2;
                         break;
                     case 2:
                         if (uiHealth == 1)
-                            SetEquipmentSlots(false, EQUIP_SWORD, EQUIP_SWORD, EQUIP_NO_CHANGE);
+                        {
+                            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, EQUIP_AXE);
+                            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, AXE_EQUIP_INFO);
+                            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, EQUIP_AXE);
+                            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO+2, AXE_EQUIP_INFO);
+                        }
                         else
-                            SetEquipmentSlots(false, EQUIP_MACE, EQUIP_UNEQUIP, EQUIP_NO_CHANGE);
+                        {
+                            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, EQUIP_MACE);
+                            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, MACE_EQUIP_INFO);
+                            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, 0);
+                            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO+2, 0);
+                        }
                         uiTimer = 500;
                         uiPhase = 3;
                         break;
                     case 3:
                         SetCombatMovement(true);
+                        me->AI()->AttackStart(me->getVictim());
+                        me->SetReactState(REACT_AGGRESSIVE);
+                        me->SetStandState(UNIT_STAND_STATE_STAND);
                         me->GetMotionMaster()->MoveChase(me->getVictim(), me->m_CombatDistance);
                         uiPhase = 0;
                         break;
-
                 }
+
             } else uiTimer -= uiDiff;
         }
 
