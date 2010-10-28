@@ -4396,6 +4396,13 @@ void Aura::HandleAuraModStat(bool apply, bool /*Real*/)
         return;
     }
 
+    if(apply && GetId() == 20007) // Crusader enchant proc: Holy Strength
+    {
+        uint32 lvldiff = m_target->getLevel() - 60;
+        uint32 diff = lvldiff > 0 ? lvldiff*4 : 0;
+        m_modifier.m_amount = GetModifierValue() - diff;
+    }
+
     for (int32 i = STAT_STRENGTH; i < MAX_STATS; i++)
     {
         // -1 or -2 is all stats (misc < -2 checked in function beginning)
