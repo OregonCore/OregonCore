@@ -93,7 +93,7 @@ class InstanceData : public ZoneScript
 
         void SaveToDB();
 
-        virtual void Update(uint32 diff) {}
+        virtual void Update(uint32 /*diff*/) {}
 
         //Used by the map's CanEnter function.
         //This is to prevent players from entering during boss encounters.
@@ -112,6 +112,9 @@ class InstanceData : public ZoneScript
         //use HandleGameObject(NULL,boolen,GO); in OnObjectCreate in instance scripts
         //use HandleGameObject(GUID,boolen,NULL); in any other script
         void HandleGameObject(uint64 GUID, bool open, GameObject *go = NULL);
+
+        //change active state of doors or buttons
+        void DoUseDoorOrButton(uint64 uiGuid, uint32 uiWithRestoreTime = 0, bool bUseAlternativeState = false);
 
         virtual bool SetBossState(uint32 id, EncounterState state);
     protected:

@@ -134,9 +134,7 @@ struct instance_shadow_labyrinth : public ScriptedInstance
 
             case DATA_BLACKHEARTTHEINCITEREVENT:
                 if (data == DONE)
-                {
-                    HandleGameObject(RefectoryDoorGUID, true);
-                }
+                    DoUseDoorOrButton(RefectoryDoorGUID);
                 if (Encounter[2] != DONE)
                     Encounter[2] = data;
                 break;

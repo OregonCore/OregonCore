@@ -182,7 +182,7 @@ struct npc_barnesAI : public npc_escortAI
         Start(false, false);
     }
 
-    void EnterCombat(Unit* who) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void WaypointReached(uint32 i)
     {
@@ -192,9 +192,8 @@ struct npc_barnesAI : public npc_escortAI
         switch(i)
         {
             case 0:
-                me->CastSpell(me, SPELL_TUXEDO, false);
-                if (GameObject* Go = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORLEFT)))
-                    Go->SetGoState(GO_STATE_ACTIVE);
+                DoCast(me, SPELL_TUXEDO, false);
+                pInstance->DoUseDoorOrButton(pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORLEFT));
                 break;
             case 2:
                 TalkCount = 0;
@@ -227,12 +226,10 @@ struct npc_barnesAI : public npc_escortAI
                 }
                 break;
             case 5:
+                pInstance->DoUseDoorOrButton(pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORLEFT));
                 PerformanceReady = true;
-                if (GameObject* Go = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORLEFT)))
-                    Go->SetGoState(GO_STATE_READY);
                 PrepareEncounter();
-                if (GameObject* Go = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_GAMEOBJECT_CURTAINS)))
-                    Go->SetGoState(GO_STATE_ACTIVE);
+                pInstance->DoUseDoorOrButton(pInstance->GetData64(DATA_GAMEOBJECT_CURTAINS));
                 break;
         }
     }
