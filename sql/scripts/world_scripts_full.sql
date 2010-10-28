@@ -111,6 +111,7 @@ UPDATE `creature_template` SET `ScriptName`='npc_tonk_mine' WHERE `entry`=15368;
 UPDATE `creature_template` SET `ScriptName`='npc_winter_reveler' WHERE `entry`=15760;
 UPDATE `creature_template` SET `ScriptName`='npc_brewfest_reveler' WHERE `entry`=24484;
 UPDATE `creature_template` SET `ScriptName`='npc_snake_trap_serpents' WHERE `entry` IN (19921,19833);
+UPDATE `creature_template` SET `ScriptName`='npc_taxi' WHERE `entry` IN (17435,18725,19401,19409,20162,20235,20903,23413,23415,23704,25059,25236);
 UPDATE `creature_template` SET `Scriptname`='npc_innkeeper' WHERE `npcflag`& 65536 AND ScriptName='';
 
 /*  */
@@ -846,6 +847,11 @@ UPDATE `creature_template` SET `ScriptName`='mob_restless_soul' WHERE `entry`=11
 UPDATE `creature_template` SET `ScriptName`='mob_freed_soul' WHERE `entry`=11136;
 
 /* SUNKEN TEMPLE */
+UPDATE `instance_template` SET `script`='instance_sunken_temple' WHERE `map`=109;
+UPDATE `gameobject_template` SET `ScriptName`='go_atalai_statue' WHERE `entry` IN (148830,148831,148832,148833,148834,148835);
+UPDATE `creature_template` SET `ScriptName`='boss_twilight_corrupter' WHERE `entry`=15625;
+DELETE FROM `areatrigger_scripts` WHERE `entry`=4016;
+INSERT INTO `areatrigger_scripts` (`entry`,`ScriptName`) VALUES (4016,'at_malfurion_stormrage');
 
 /* SUNWELL PLATEAU */
 UPDATE `instance_template` SET `script`='instance_sunwell_plateau' WHERE `map`=580;
