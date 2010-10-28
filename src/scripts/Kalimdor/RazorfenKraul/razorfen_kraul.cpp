@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -30,7 +30,7 @@ EndContentData */
 #include "razorfen_kraul.h"
 
 #define SAY_READY -1047000
-#define SAY_POINT -10470001
+#define SAY_POINT -1047001
 #define SAY_AGGRO1 -1047002
 #define SAY_BLUELEAF -1047003
 #define SAY_DANGER -1047004
@@ -51,57 +51,59 @@ struct npc_willixAI : public npc_escortAI
 
     void WaypointReached(uint32 i)
     {
-        Player* player = GetPlayerForEscort();
+        Player* pPlayer = GetPlayerForEscort();
 
-        if (!player)
+        if (!pPlayer)
             return;
 
         switch (i)
         {
         case 3:
             me->HandleEmoteCommand(EMOTE_STATE_POINT);
-            DoScriptText(SAY_POINT, me, player);
+            DoScriptText(SAY_POINT, me, pPlayer);
             break;
         case 4:
             me->SummonCreature(ENTRY_BOAR, 2137.66f, 1843.98f, 48.08f, 1.54f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
             break;
         case 8:
-            DoScriptText(SAY_BLUELEAF, me, player);
+            DoScriptText(SAY_BLUELEAF, me, pPlayer);
             break;
         case 9:
-            DoScriptText(SAY_DANGER, me, player);
+            DoScriptText(SAY_DANGER, me, pPlayer);
             break;
         case 13:
-            DoScriptText(SAY_BAD, me, player);
+            DoScriptText(SAY_BAD, me, pPlayer);
             break;
         case 14:
             me->SummonCreature(ENTRY_BOAR, 2078.91f, 1704.54f, 56.77f, 1.54f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
             break;
         case 25:
-            DoScriptText(SAY_THINK, me, player);
+            DoScriptText(SAY_THINK, me, pPlayer);
             break;
         case 31:
-            DoScriptText(SAY_SOON, me, player);
+            DoScriptText(SAY_SOON, me, pPlayer);
             break;
         case 42:
-            DoScriptText(SAY_FINALY, me, player);
+            DoScriptText(SAY_FINALY, me, pPlayer);
             break;
         case 43:
             me->SummonCreature(ENTRY_BOAR, 1956.43f, 1596.97f, 81.75f, 1.54f,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
             break;
         case 45:
-            DoScriptText(SAY_WIN, me, player);
-            player->GroupEventHappens(QUEST_WILLIX_THE_IMPORTER,me);
+            DoScriptText(SAY_WIN, me, pPlayer);
+            me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+            if (pPlayer && pPlayer->GetTypeId() == TYPEID_PLAYER)
+                CAST_PLR(pPlayer)->GroupEventHappens(QUEST_WILLIX_THE_IMPORTER,me);
             break;
         case 46:
-            DoScriptText(SAY_END, me, player);
+            DoScriptText(SAY_END, me, pPlayer);
             break;
         }
     }
 
     void Reset() {}
 
-    void EnterCombat(Unit* who)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO1, me, NULL);
     }
@@ -111,26 +113,22 @@ struct npc_willixAI : public npc_escortAI
         summoned->AI()->AttackStart(me);
     }
 
-    void JustDied(Unit* killer)
+    void JustDied(Unit* /*killer*/)
     {
         if (Player* pPlayer = GetPlayerForEscort())
             CAST_PLR(pPlayer)->FailQuest(QUEST_WILLIX_THE_IMPORTER);
     }
-
-    void UpdateAI(const uint32 diff)
-    {
-        npc_escortAI::UpdateAI(diff);
-    }
 };
 
-bool QuestAccept_npc_willix(Player* player, Creature* creature, Quest const* quest)
+bool QuestAccept_npc_willix(Player* pPlayer, Creature* pCreature, Quest const* quest)
 {
     if (quest->GetQuestId() == QUEST_WILLIX_THE_IMPORTER)
     {
-        CAST_AI(npc_escortAI, (creature->AI()))->Start(true, false, player->GetGUID());
-        DoScriptText(SAY_READY, creature, player);
-        creature->setFaction(113);
+        CAST_AI(npc_escortAI, (pCreature->AI()))->Start(true, false, pPlayer->GetGUID());
+        DoScriptText(SAY_READY, pCreature, pPlayer);
+        pCreature->setFaction(113);
     }
+
     return true;
 }
 
@@ -139,7 +137,6 @@ struct npc_deaths_head_ward_keeperAI : public ScriptedAI
     npc_deaths_head_ward_keeperAI(Creature *c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
-        Reset();
     }
 
     ScriptedInstance *pInstance;
@@ -148,10 +145,6 @@ struct npc_deaths_head_ward_keeperAI : public ScriptedAI
     void Reset()
     {
         QuillboarChanneling_Timer = 1500;
-    }
-
-    void EnterCombat(Unit *who)
-    {
     }
 
     void UpdateAI(const uint32 diff)
