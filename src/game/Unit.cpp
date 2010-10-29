@@ -3179,14 +3179,25 @@ int32 Unit::GetCurrentSpellCastTime(uint32 spell_id) const
     return 0;
 }
 
-bool Unit::isInFront(Unit const* target, float distance,  float arc) const
+bool Unit::isInFrontInMap(Unit const* target, float distance,  float arc) const
 {
     return IsWithinDistInMap(target, distance) && HasInArc(arc, target);
 }
 
-bool Unit::isInBack(Unit const* target, float distance, float arc) const
+bool Unit::isInBackInMap(Unit const* target, float distance, float arc) const
 {
     return IsWithinDistInMap(target, distance) && !HasInArc(2 * M_PI - arc, target);
+}
+
+void Unit::SetFacingToObject(WorldObject* pObject)
+{
+    // update orientation at server
+    SetOrientation(GetAngle(pObject));
+
+    // and client
+    WorldPacket data;
+    BuildHeartBeatMsg(&data);
+    SendMessageToSet(&data, false);
 }
 
 bool Unit::isInAccessiblePlaceFor(Creature const* c) const

@@ -1322,7 +1322,7 @@ void Spell::SearchChainTarget(std::list<Unit*> &TagUnitMap, float max_range, uin
             if (cur->GetDistance(*next) > CHAIN_SPELL_JUMP_RADIUS)
                 break;
             while (m_spellInfo->DmgClass == SPELL_DAMAGE_CLASS_MELEE
-                && !m_caster->isInFront(*next, max_range)
+                && !m_caster->isInFrontInMap(*next, max_range)
                 || !m_caster->canSeeOrDetect(*next, false)
                 || !cur->IsWithinLOSInMap(*next))
             {
