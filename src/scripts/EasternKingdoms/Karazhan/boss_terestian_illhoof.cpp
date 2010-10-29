@@ -94,7 +94,7 @@ struct mob_kilrekAI : public ScriptedAI
             Terestian->AddThreat(who, 1.0f);
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         if (pInstance)
         {
@@ -117,7 +117,7 @@ struct mob_kilrekAI : public ScriptedAI
         if (AmplifyTimer <= diff)
         {
             me->InterruptNonMeleeSpells(false);
-            DoCast(me->getVictim(),SPELL_AMPLIFY_FLAMES);
+            DoCast(me->getVictim(), SPELL_AMPLIFY_FLAMES);
 
             AmplifyTimer = 20000;
         } else AmplifyTimer -= diff;
@@ -140,11 +140,11 @@ struct mob_demon_chainAI : public ScriptedAI
         SacrificeGUID = 0;
     }
 
-    void EnterCombat(Unit* who) {}
-    void AttackStart(Unit* who) {}
-    void MoveInLineOfSight(Unit* who) {}
+    void EnterCombat(Unit* /*who*/) {}
+    void AttackStart(Unit* /*who*/) {}
+    void MoveInLineOfSight(Unit* /*who*/) {}
 
-    void JustDied(Unit *killer)
+    void JustDied(Unit * /*killer*/)
     {
         if (SacrificeGUID)
         {
@@ -219,16 +219,12 @@ struct boss_terestianAI : public ScriptedAI
         } else ERROR_INST_DATA(me);
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
-        switch(rand()%2)
-        {
-        case 0: DoScriptText(SAY_SLAY1, me); break;
-        case 1: DoScriptText(SAY_SLAY2, me); break;
-        }
+        DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2), me);
     }
 
-    void JustDied(Unit *killer)
+    void JustDied(Unit * /*killer*/)
     {
         for (uint8 i = 0; i < 2; ++i)
         {
@@ -280,20 +276,17 @@ struct boss_terestianAI : public ScriptedAI
 
         if (SacrificeTimer <= diff)
         {
-            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
-            if (pTarget && pTarget->isAlive() && pTarget->GetTypeId() == TYPEID_PLAYER)
+            Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true);
+            if (pTarget && pTarget->isAlive())
             {
                 DoCast(pTarget, SPELL_SACRIFICE, true);
-                Creature* Chains = me->SummonCreature(CREATURE_DEMONCHAINS, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 21000);
-                if (Chains)
+                DoCast(pTarget, SPELL_SUMMON_DEMONCHAINS, true);
+
+                if (Creature* Chains = me->FindNearestCreature(CREATURE_DEMONCHAINS, 5000))
                 {
-                    ((mob_demon_chainAI*)Chains->AI())->SacrificeGUID = pTarget->GetGUID();
+                    CAST_AI(mob_demon_chainAI, Chains->AI())->SacrificeGUID = pTarget->GetGUID();
                     Chains->CastSpell(Chains, SPELL_DEMON_CHAINS, true);
-                    switch(rand()%2)
-                    {
-                    case 0: DoScriptText(SAY_SACRIFICE1, me); break;
-                    case 1: DoScriptText(SAY_SACRIFICE2, me); break;
-                    }
+                    DoScriptText(RAND(SAY_SACRIFICE1,SAY_SACRIFICE2), me);
                     SacrificeTimer = 30000;
                 }
             }
@@ -358,7 +351,7 @@ struct mob_fiendish_impAI : public ScriptedAI
         FireboltTimer = 3000;
     }
 
-    void EnterCombat(Unit *who) {}
+    void EnterCombat(Unit * /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -386,14 +379,14 @@ CreatureAI* GetAI_mob_fiendish_imp(Creature* pCreature)
     return new mob_fiendish_impAI (pCreature);
 }
 
-CreatureAI* GetAI_mob_demon_chain(Creature* pCreature)
-{
-    return new mob_demon_chainAI(pCreature);
-}
-
 CreatureAI* GetAI_boss_terestian_illhoof(Creature* pCreature)
 {
     return new boss_terestianAI (pCreature);
+}
+
+CreatureAI* GetAI_mob_demon_chain(Creature* pCreature)
+{
+    return new mob_demon_chainAI(pCreature);
 }
 
 void AddSC_boss_terestian_illhoof()
