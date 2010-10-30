@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "GameEvent.h"
+#include "GameEventMgr.h"
 #include "World.h"
 #include "ObjectMgr.h"
 #include "PoolHandler.h"
@@ -31,9 +31,9 @@
 #include "Player.h"
 #include "BattleGroundMgr.h"
 
-INSTANTIATE_SINGLETON_1(GameEvent);
+INSTANTIATE_SINGLETON_1(GameEventMgr);
 
-bool GameEvent::CheckOneGameEvent(uint16 entry) const
+bool GameEventMgr::CheckOneGameEvent(uint16 entry) const
 {
     time_t currenttime = time(NULL);
     // if the state is conditions or nextphase, then the event should be active
@@ -63,7 +63,7 @@ bool GameEvent::CheckOneGameEvent(uint16 entry) const
         return false;
 }
 
-uint32 GameEvent::NextCheck(uint16 entry) const
+uint32 GameEventMgr::NextCheck(uint16 entry) const
 {
     time_t currenttime = time(NULL);
 
@@ -97,7 +97,7 @@ uint32 GameEvent::NextCheck(uint16 entry) const
         return delay;
 }
 
-bool GameEvent::StartEvent(uint16 event_id, bool overwrite)
+bool GameEventMgr::StartEvent(uint16 event_id, bool overwrite)
 {
     if (mGameEvent[event_id].state == GAMEEVENT_NORMAL)
     {
@@ -136,7 +136,7 @@ bool GameEvent::StartEvent(uint16 event_id, bool overwrite)
     }
 }
 
-void GameEvent::StopEvent(uint16 event_id, bool overwrite)
+void GameEventMgr::StopEvent(uint16 event_id, bool overwrite)
 {
     bool serverwide_evt = mGameEvent[event_id].state != GAMEEVENT_NORMAL;
 
@@ -168,7 +168,7 @@ void GameEvent::StopEvent(uint16 event_id, bool overwrite)
     }
 }
 
-void GameEvent::LoadFromDB()
+void GameEventMgr::LoadFromDB()
 {
     {
         QueryResult_AutoPtr result = WorldDatabase.Query("SELECT MAX(entry) FROM game_event");
@@ -943,7 +943,7 @@ void GameEvent::LoadFromDB()
     }
 }
 
-uint32 GameEvent::GetNPCFlag(Creature * cr)
+uint32 GameEventMgr::GetNPCFlag(Creature * cr)
 {
     uint32 mask = 0;
     uint32 guid = cr->GetDBTableGUIDLow();
@@ -960,7 +960,7 @@ uint32 GameEvent::GetNPCFlag(Creature * cr)
     return mask;
 }
 
-uint32 GameEvent::Initialize()                              // return the next event delay in ms
+uint32 GameEventMgr::Initialize()                              // return the next event delay in ms
 {
     m_ActiveEvents.clear();
     uint32 delay = Update();
@@ -969,7 +969,7 @@ uint32 GameEvent::Initialize()                              // return the next e
     return delay;
 }
 
-uint32 GameEvent::Update()                                  // return the next event delay in ms
+uint32 GameEventMgr::Update()                                  // return the next event delay in ms
 {
     time_t currenttime = time(NULL);
     uint32 nextEventDelay = max_ge_check_delay;             // 1 day
@@ -1039,7 +1039,7 @@ uint32 GameEvent::Update()                                  // return the next e
     return (nextEventDelay + 1) * IN_MILLISECONDS;                     // Add 1 second to be sure event has started/stopped at next call
 }
 
-void GameEvent::UnApplyEvent(uint16 event_id)
+void GameEventMgr::UnApplyEvent(uint16 event_id)
 {
     sLog.outString("GameEvent %u \"%s\" removed.", event_id, mGameEvent[event_id].description.c_str());
     // un-spawn positive event tagged objects
@@ -1059,7 +1059,7 @@ void GameEvent::UnApplyEvent(uint16 event_id)
     UpdateBattleGroundSettings();
 }
 
-void GameEvent::ApplyNewEvent(uint16 event_id)
+void GameEventMgr::ApplyNewEvent(uint16 event_id)
 {
     switch(sWorld.getConfig(CONFIG_EVENT_ANNOUNCE))
     {
@@ -1089,7 +1089,7 @@ void GameEvent::ApplyNewEvent(uint16 event_id)
     UpdateBattleGroundSettings();
 }
 
-void GameEvent::UpdateEventNPCFlags(uint16 event_id)
+void GameEventMgr::UpdateEventNPCFlags(uint16 event_id)
 {
     // go through the creatures whose npcflags are changed in the event
     for (NPCFlagList::iterator itr = mGameEventNPCFlags[event_id].begin(); itr != mGameEventNPCFlags[event_id].end(); ++itr)
@@ -1113,7 +1113,7 @@ void GameEvent::UpdateEventNPCFlags(uint16 event_id)
     }
 }
 
-void GameEvent::UpdateBattleGroundSettings()
+void GameEventMgr::UpdateBattleGroundSettings()
 {
     uint32 mask = 0;
     for (ActiveEvents::const_iterator itr = m_ActiveEvents.begin(); itr != m_ActiveEvents.end(); ++itr)
@@ -1121,7 +1121,7 @@ void GameEvent::UpdateBattleGroundSettings()
     sBattleGroundMgr.SetHolidayWeekends(mask);
 }
 
-void GameEvent::UpdateEventNPCVendor(uint16 event_id, bool activate)
+void GameEventMgr::UpdateEventNPCVendor(uint16 event_id, bool activate)
 {
     for (NPCVendorList::iterator itr = mGameEventVendors[event_id].begin(); itr != mGameEventVendors[event_id].end(); ++itr)
     {
@@ -1132,13 +1132,13 @@ void GameEvent::UpdateEventNPCVendor(uint16 event_id, bool activate)
     }
 }
 
-void GameEvent::GameEventSpawn(int16 event_id)
+void GameEventMgr::GameEventSpawn(int16 event_id)
 {
     int32 internal_event_id = mGameEvent.size() + event_id - 1;
 
     if (internal_event_id < 0 || internal_event_id >= mGameEventCreatureGuids.size())
     {
-        sLog.outError("GameEvent::GameEventSpawn attempt access to out of range mGameEventCreatureGuids element %i (size: %u)",internal_event_id,mGameEventCreatureGuids.size());
+        sLog.outError("GameEventMgr::GameEventSpawn attempt access to out of range mGameEventCreatureGuids element %i (size: %u)",internal_event_id,mGameEventCreatureGuids.size());
         return;
     }
 
@@ -1166,7 +1166,7 @@ void GameEvent::GameEventSpawn(int16 event_id)
 
     if (internal_event_id < 0 || internal_event_id >= mGameEventGameobjectGuids.size())
     {
-        sLog.outError("GameEvent::GameEventSpawn attempt access to out of range mGameEventGameobjectGuids element %i (size: %u)",internal_event_id,mGameEventGameobjectGuids.size());
+        sLog.outError("GameEventMgr::GameEventSpawn attempt access to out of range mGameEventGameobjectGuids element %i (size: %u)",internal_event_id,mGameEventGameobjectGuids.size());
         return;
     }
 
@@ -1197,7 +1197,7 @@ void GameEvent::GameEventSpawn(int16 event_id)
 
     if (internal_event_id < 0 || internal_event_id >= mGameEventPoolIds.size())
     {
-        sLog.outError("GameEvent::GameEventSpawn attempt access to out of range mGameEventPoolIds element %i (size: %u)", internal_event_id, mGameEventPoolIds.size());
+        sLog.outError("GameEventMgr::GameEventSpawn attempt access to out of range mGameEventPoolIds element %i (size: %u)", internal_event_id, mGameEventPoolIds.size());
         return;
     }
 
@@ -1205,13 +1205,13 @@ void GameEvent::GameEventSpawn(int16 event_id)
         poolhandler.SpawnPool(*itr);
 }
 
-void GameEvent::GameEventUnspawn(int16 event_id)
+void GameEventMgr::GameEventUnspawn(int16 event_id)
 {
     int32 internal_event_id = mGameEvent.size() + event_id - 1;
 
     if (internal_event_id < 0 || internal_event_id >= mGameEventCreatureGuids.size())
     {
-        sLog.outError("GameEvent::GameEventUnspawn attempt access to out of range mGameEventCreatureGuids element %i (size: %u)",internal_event_id,mGameEventCreatureGuids.size());
+        sLog.outError("GameEventMgr::GameEventUnspawn attempt access to out of range mGameEventCreatureGuids element %i (size: %u)",internal_event_id,mGameEventCreatureGuids.size());
         return;
     }
 
@@ -1232,7 +1232,7 @@ void GameEvent::GameEventUnspawn(int16 event_id)
 
     if (internal_event_id < 0 || internal_event_id >= mGameEventGameobjectGuids.size())
     {
-        sLog.outError("GameEvent::GameEventUnspawn attempt access to out of range mGameEventGameobjectGuids element %i (size: %u)",internal_event_id,mGameEventGameobjectGuids.size());
+        sLog.outError("GameEventMgr::GameEventUnspawn attempt access to out of range mGameEventGameobjectGuids element %i (size: %u)",internal_event_id,mGameEventGameobjectGuids.size());
         return;
     }
 
@@ -1253,7 +1253,7 @@ void GameEvent::GameEventUnspawn(int16 event_id)
 
     if (internal_event_id < 0 || internal_event_id >= mGameEventPoolIds.size())
     {
-        sLog.outError("GameEvent::GameEventUnspawn attempt access to out of range mGameEventPoolIds element %i (size: %u)", internal_event_id, mGameEventPoolIds.size());
+        sLog.outError("GameEventMgr::GameEventUnspawn attempt access to out of range mGameEventPoolIds element %i (size: %u)", internal_event_id, mGameEventPoolIds.size());
         return;
     }
 
@@ -1261,7 +1261,7 @@ void GameEvent::GameEventUnspawn(int16 event_id)
         poolhandler.DespawnPool(*itr);
 }
 
-void GameEvent::ChangeEquipOrModel(int16 event_id, bool activate)
+void GameEventMgr::ChangeEquipOrModel(int16 event_id, bool activate)
 {
     for (ModelEquipList::iterator itr = mGameEventModelEquip[event_id].begin();itr != mGameEventModelEquip[event_id].end();++itr)
     {
@@ -1340,7 +1340,7 @@ void GameEvent::ChangeEquipOrModel(int16 event_id, bool activate)
     }
 }
 
-bool GameEvent::hasCreatureQuestActiveEventExcept(uint32 quest_id, uint16 event_id)
+bool GameEventMgr::hasCreatureQuestActiveEventExcept(uint32 quest_id, uint16 event_id)
 {
     for (ActiveEvents::iterator e_itr = m_ActiveEvents.begin(); e_itr != m_ActiveEvents.end(); ++e_itr)
     {
@@ -1354,7 +1354,7 @@ bool GameEvent::hasCreatureQuestActiveEventExcept(uint32 quest_id, uint16 event_
     return false;
 }
 
-bool GameEvent::hasGameObjectQuestActiveEventExcept(uint32 quest_id, uint16 event_id)
+bool GameEventMgr::hasGameObjectQuestActiveEventExcept(uint32 quest_id, uint16 event_id)
 {
     for (ActiveEvents::iterator e_itr = m_ActiveEvents.begin(); e_itr != m_ActiveEvents.end(); ++e_itr)
     {
@@ -1367,7 +1367,7 @@ bool GameEvent::hasGameObjectQuestActiveEventExcept(uint32 quest_id, uint16 even
     }
     return false;
 }
-bool GameEvent::hasCreatureActiveEventExcept(uint32 creature_id, uint16 event_id)
+bool GameEventMgr::hasCreatureActiveEventExcept(uint32 creature_id, uint16 event_id)
 {
     for (ActiveEvents::iterator e_itr = m_ActiveEvents.begin(); e_itr != m_ActiveEvents.end(); ++e_itr)
     {
@@ -1383,7 +1383,7 @@ bool GameEvent::hasCreatureActiveEventExcept(uint32 creature_id, uint16 event_id
     }
     return false;
 }
-bool GameEvent::hasGameObjectActiveEventExcept(uint32 go_id, uint16 event_id)
+bool GameEventMgr::hasGameObjectActiveEventExcept(uint32 go_id, uint16 event_id)
 {
     for (ActiveEvents::iterator e_itr = m_ActiveEvents.begin(); e_itr != m_ActiveEvents.end(); ++e_itr)
     {
@@ -1400,7 +1400,7 @@ bool GameEvent::hasGameObjectActiveEventExcept(uint32 go_id, uint16 event_id)
     return false;
 }
 
-void GameEvent::UpdateEventQuests(uint16 event_id, bool Activate)
+void GameEventMgr::UpdateEventQuests(uint16 event_id, bool Activate)
 {
     QuestRelList::iterator itr;
     for (itr = mGameEventCreatureQuests[event_id].begin();itr != mGameEventCreatureQuests[event_id].end();++itr)
@@ -1454,12 +1454,12 @@ void GameEvent::UpdateEventQuests(uint16 event_id, bool Activate)
         }
     }}
 
-GameEvent::GameEvent()
+GameEventMgr::GameEventMgr()
 {
     isSystemInit = false;
 }
 
-void GameEvent::HandleQuestComplete(uint32 quest_id)
+void GameEventMgr::HandleQuestComplete(uint32 quest_id)
 {
     // translate the quest to event and condition
     QuestIdToEventConditionMap::iterator itr = mQuestToEventConditions.find(quest_id);
@@ -1505,7 +1505,7 @@ void GameEvent::HandleQuestComplete(uint32 quest_id)
     }
 }
 
-bool GameEvent::CheckOneGameEventConditions(uint16 event_id)
+bool GameEventMgr::CheckOneGameEventConditions(uint16 event_id)
 {
     for (std::map<uint32,GameEventFinishCondition>::iterator itr = mGameEvent[event_id].conditions.begin(); itr != mGameEvent[event_id].conditions.end(); ++itr)
         if (itr->second.done < itr->second.reqNum)
@@ -1522,7 +1522,7 @@ bool GameEvent::CheckOneGameEventConditions(uint16 event_id)
     return true;
 }
 
-void GameEvent::SaveWorldEventStateToDB(uint16 event_id)
+void GameEventMgr::SaveWorldEventStateToDB(uint16 event_id)
 {
     CharacterDatabase.BeginTransaction();
     CharacterDatabase.PExecute("DELETE FROM game_event_save WHERE event_id = '%u'",event_id);
@@ -1533,7 +1533,7 @@ void GameEvent::SaveWorldEventStateToDB(uint16 event_id)
     CharacterDatabase.CommitTransaction();
 }
 
-void GameEvent::HandleWorldEventGossip(Player *plr, Creature *c)
+void GameEventMgr::HandleWorldEventGossip(Player *plr, Creature *c)
 {
     // this function is used to send world state update before sending gossip menu
     // find the npc's gossip id (if set) in an active game event
@@ -1545,7 +1545,7 @@ void GameEvent::HandleWorldEventGossip(Player *plr, Creature *c)
             SendWorldStateUpdate(plr, itr->second.first);
 }
 
-void GameEvent::SendWorldStateUpdate(Player * plr, uint16 event_id)
+void GameEventMgr::SendWorldStateUpdate(Player * plr, uint16 event_id)
 {
     std::map<uint32,GameEventFinishCondition>::iterator itr;
     for (itr = mGameEvent[event_id].conditions.begin(); itr != mGameEvent[event_id].conditions.end(); ++itr)
@@ -1559,9 +1559,9 @@ void GameEvent::SendWorldStateUpdate(Player * plr, uint16 event_id)
 
 bool isGameEventActive(uint16 event_id)
 {
-    GameEvent::ActiveEvents const& ae = gameeventmgr.GetActiveEventList();
+    GameEventMgr::ActiveEvents const& ae = gameeventmgr.GetActiveEventList();
 
-    for (GameEvent::ActiveEvents::const_iterator itr = ae.begin(); itr != ae.end(); ++itr)
+    for (GameEventMgr::ActiveEvents::const_iterator itr = ae.begin(); itr != ae.end(); ++itr)
         if (*itr == event_id)
         return true;
 

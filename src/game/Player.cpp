@@ -66,7 +66,7 @@
 #include "Spell.h"
 #include "SocialMgr.h"
 #include "Mail.h"
-#include "GameEvent.h"
+#include "GameEventMgr.h"
 
 #include <cmath>
 

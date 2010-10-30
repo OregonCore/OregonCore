@@ -26,7 +26,7 @@
 #include "World.h"
 #include "Cell.h"
 #include "CellImpl.h"
-#include "GameEvent.h"
+#include "GameEventMgr.h"
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
 #include "InstanceData.h"
