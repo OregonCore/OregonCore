@@ -41,7 +41,6 @@ enum eSpels
 
     NPC_DEFIAS_BLACKGUARD   = 636,
 
-    SAY_AGGRO               = -1036001,
     SAY_PHASE_1             = -1036002,
     SAY_PHASE_2             = -1036003
 };
@@ -83,23 +82,18 @@ struct boss_mr_smiteAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* pWho)
     {
-        if (!pWho || UpdateVictim())
-            return;
-
-        if (pWho->GetTypeId() == TYPEID_PLAYER && me->IsWithinDistInMap(pWho, 50.0f))
+        if (pWho && pWho->GetEntry() == NPC_DEFIAS_BLACKGUARD)
         {
-            if (Creature* MrSmitHelper = me->FindNearestCreature(NPC_DEFIAS_BLACKGUARD, 50))
+            Unit* pTarget = pWho->getVictim();
+            if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
             {
-                if (MrSmitHelper->isInCombat())
-                    me->AI()->AttackStart(pWho);
+                if (pWho->isInCombat())
+                    me->AI()->AttackStart(pTarget);
             }
         }
     }
 
-    void EnterCombat(Unit* /*pWho*/)
-    {
-       DoScriptText(SAY_AGGRO, me);
-    }
+    void EnterCombat(Unit* /*pWho*/) {}
 
     bool bCheckChances()
     {
@@ -210,6 +204,9 @@ struct boss_mr_smiteAI : public ScriptedAI
 
         uiTimer = 1500;
         uiPhase = 1;
+
+        if (GameObject* pGo = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_SMITE_CHEST)))
+            me->SetFacingToObject(pGo);
     }
 
 };
