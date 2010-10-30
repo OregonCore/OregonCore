@@ -985,8 +985,9 @@ void ObjectMgr::LoadCreatures()
             }
         }
 
-        if (gameEvent == 0 && PoolId == 0)                    // if not this is to be managed by GameEvent System
+        if (gameEvent == 0 && PoolId == 0)                      // if not this is to be managed by GameEvent System or Pool system
             AddCreatureToGrid(guid, &data);
+
         ++count;
 
     } while (result->NextRow());
@@ -1189,7 +1190,8 @@ void ObjectMgr::LoadGameobjects()
         int16 gameEvent     = fields[15].GetInt16();
         int16 PoolId        = fields[16].GetInt16();
 
-        if (gameEvent == 0 && PoolId == 0)                          // if not this is to be managed by GameEvent System
+
+        if (gameEvent == 0 && PoolId == 0)                      // if not this is to be managed by GameEvent System or Pool system
             AddGameobjectToGrid(guid, &data);
         ++count;
 
