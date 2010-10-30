@@ -20,6 +20,7 @@ set(oregon-core_SRCS
 if( WIN32 )
   set(oregon-core_SRCS
     ${oregon-core_SRCS}
+    ${sources_Debugging}
     OregonCore.rc
   )
 endif()

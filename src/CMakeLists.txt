@@ -11,6 +11,10 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 if( SERVERS )
+  set(sources_Debugging
+    ${CMAKE_SOURCE_DIR}/src/shared/Debugging/WheatyExceptionReport.cpp
+    ${CMAKE_SOURCE_DIR}/src/shared/Debugging/WheatyExceptionReport.h
+  )
   add_subdirectory(genrev)
   add_subdirectory(framework)
   add_subdirectory(shared)

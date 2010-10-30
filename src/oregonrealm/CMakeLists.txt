@@ -18,10 +18,11 @@ set(oregon-realm_SRCS
 )
 
 if( WIN32 )
-set(oregon-realm_SRCS
+  set(oregon-realm_SRCS
     ${oregon-realm_SRCS}
+    ${sources_Debugging}
     OregonRealm.rc
-)
+  )
 endif()
 
 include_directories(
