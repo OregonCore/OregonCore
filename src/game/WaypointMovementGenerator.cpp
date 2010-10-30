@@ -19,23 +19,23 @@
 #include "WaypointMovementGenerator.h"
 #include "ObjectMgr.h"
 #include "World.h"
+#include "MapManager.h" // for flightmaster grid preloading
 #include "Creature.h"
 #include "DestinationHolderImp.h"
 #include "CreatureAI.h"
 #include "Player.h"
 
-
 template<class T>
-void WaypointMovementGenerator<T>::Initialize(T &u){}
+void WaypointMovementGenerator<T>::Initialize(T & /*u*/){}
 
 template<>
-void WaypointMovementGenerator<Creature>::Finalize(Creature &u){}
+void WaypointMovementGenerator<Creature>::Finalize(Creature & /*u*/){}
 
 template<>
-void WaypointMovementGenerator<Player>::Finalize(Player &u){}
+void WaypointMovementGenerator<Player>::Finalize(Player & /*u*/){}
 
 template<class T>
-void WaypointMovementGenerator<T>::MovementInform(T &unit){}
+void WaypointMovementGenerator<T>::MovementInform(T & /*unit*/){}
 
 template<>
 void WaypointMovementGenerator<Creature>::MovementInform(Creature &unit)
@@ -54,20 +54,20 @@ bool WaypointMovementGenerator<Creature>::GetDestination(float &x, float &y, flo
 }
 
 template<>
-bool WaypointMovementGenerator<Player>::GetDestination(float &x, float &y, float &z) const
+bool WaypointMovementGenerator<Player>::GetDestination(float & /*x*/, float & /*y*/, float & /*z*/) const
 {
     return false;
 }
 
 template<>
-void WaypointMovementGenerator<Creature>::Reset(Creature &unit)
+void WaypointMovementGenerator<Creature>::Reset(Creature & /*unit*/)
 {
     StopedByPlayer = true;
     i_nextMoveTime.Reset(0);
 }
 
 template<>
-void WaypointMovementGenerator<Player>::Reset(Player &unit){}
+void WaypointMovementGenerator<Player>::Reset(Player & /*unit*/){}
 
 template<>
 void WaypointMovementGenerator<Creature>::InitTraveller(Creature &unit, const WaypointData &node)
@@ -105,11 +105,11 @@ void WaypointMovementGenerator<Creature>::Initialize(Creature &u)
 }
 
 template<>
-void WaypointMovementGenerator<Player>::InitTraveller(Player &unit, const WaypointData &node){}
+void WaypointMovementGenerator<Player>::InitTraveller(Player & /*unit*/, const WaypointData & /*node*/){}
 
 template<class T>
 bool
-WaypointMovementGenerator<T>::Update(T &unit, const uint32 &diff)
+WaypointMovementGenerator<T>::Update(T & /*unit*/, const uint32 & /*diff*/)
 {
     return false;
 }
@@ -151,19 +151,19 @@ bool WaypointMovementGenerator<Creature>::Update(Creature &unit, const uint32 &d
                 return true;
             }
 
-            if (i_currentNode == waypoints->size() - 1) //If that's our last waypoint
+            if (i_currentNode == waypoints->size() - 1) // If that's our last waypoint
             {
-                if (repeating) //If the movement is repeating
-                    i_currentNode = 0; //Start moving all over again
+                if (repeating)         // If the movement is repeating
+                    i_currentNode = 0; // Start moving all over again
                 else
                 {
                     unit.SetHomePosition(node->x, node->y, node->z, unit.GetOrientation());
                     unit.GetMotionMaster()->Initialize();
-                    return false; //Clear the waypoint movement
+                    return false; // Clear the waypoint movement
                 }
             }
             else
-                i_currentNode++;
+                ++i_currentNode;
 
             node = waypoints->at(i_currentNode);
             InitTraveller(unit, *node);
@@ -231,13 +231,24 @@ void FlightPathMovementGenerator::Initialize(Player &player)
 {
     player.getHostileRefManager().setOnlineOfflineState(false);
     player.addUnitState(UNIT_STAT_IN_FLIGHT);
-    player.SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_TAXI_FLIGHT);
+    player.SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_TAXI_FLIGHT);
     LoadPath(player);
     Traveller<Player> traveller(player);
     // do not send movement, it was sent already
     i_destinationHolder.SetDestination(traveller, i_path[i_currentNode].x, i_path[i_currentNode].y, i_path[i_currentNode].z, false);
 
-    player.SendMonsterMoveByPath(GetPath(),GetCurrentNode(),GetPathAtMapEnd());
+    player.SendMonsterMoveByPath(GetPath(), GetCurrentNode(), GetPathAtMapEnd());
+
+    // Storage to preload flightmaster grid at end of flight. For multi-stop flights, this will
+    // be reinitialized for each flightmaster at the end of each spline (or stop) in the flight.
+
+    uint32 nodeCount = i_mapIds.size();     // Get the number of nodes in the path. i_path and i_mapIds are the
+                                            //  same size when loaded in ObjectMgr::GetTaxiPathNodes, called from LoadPath()
+
+    m_endMapId = i_mapIds[nodeCount -1];    // Get the map ID from the last node
+    m_preloadTargetNode = nodeCount - 3;    // 2 nodes before the final node, we pre-load the grid
+    m_endGridX = i_path[nodeCount -1].x;    // Get the X position from the last node
+    m_endGridY = i_path[nodeCount -1].y;    // Get tye Y position from the last node
 }
 
 void FlightPathMovementGenerator::Finalize(Player & player)
@@ -282,6 +293,11 @@ bool FlightPathMovementGenerator::Update(Player &player, const uint32 &diff)
                         // do not send movement, it was sent already
                         i_destinationHolder.SetDestination(traveller, i_path[i_currentNode].x, i_path[i_currentNode].y, i_path[i_currentNode].z, false);
                     }
+
+                    // check if it's time to preload the flightmaster grid at path end
+                    if (i_currentNode == m_preloadTargetNode)
+                        PreloadEndGrid();
+
                     return true;
                 }
                 //else HasArrived()
@@ -311,6 +327,21 @@ void FlightPathMovementGenerator::SetCurrentNodeAfterTeleport()
             return;
         }
     }
+}
+
+void FlightPathMovementGenerator::PreloadEndGrid()
+{
+    // used to preload the final grid where the flightmaster is
+    Map *endMap = MapManager::Instance().FindMap(m_endMapId);
+
+    // Load the grid
+    if (endMap)
+    {
+        sLog.outDetail("Preloading flightmaster at grid (%f, %f) for map %u", m_endGridX, m_endGridY, m_endMapId);
+        endMap->LoadGrid(m_endGridX, m_endGridY);
+    }
+    else
+        sLog.outDetail("Unable to determine map to preload flightmaster grid");
 }
 
 //
@@ -466,7 +497,7 @@ int CreatePathAStar(gentity_t *bot, int from, int to, short int *pathlist)
                     break;
             }
 
-            for (i = 0; i < nodes[atNode].enodenum; i++)    //loop through all the links for this node
+            for (i = 0; i < nodes[atNode].enodenum; ++i)    //loop through all the links for this node
             {
                 newnode = nodes[atNode].links[i].targetNode;
 
@@ -524,7 +555,7 @@ int CreatePathAStar(gentity_t *bot, int from, int to, short int *pathlist)
                         parent[newnode] = atNode;           //set the new parent for this node
                         gcost[newnode] = gc;                //and the new g cost
 
-                        for (i = 1; i < numOpen; i++)       //loop through all the items on the open list
+                        for (i = 1; i < numOpen; ++i)       //loop through all the items on the open list
                         {
                             if (openlist[i] == newnode)     //find this node in the list
                             {

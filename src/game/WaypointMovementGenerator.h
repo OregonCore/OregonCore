@@ -39,7 +39,7 @@
 #include <set>
 
 #define FLIGHT_TRAVEL_UPDATE  100
-#define STOP_TIME_FOR_PLAYER  3 * 60 * 1000                         // 3 Minutes
+#define STOP_TIME_FOR_PLAYER  3 * MINUTE * IN_MILLISECONDS          // 3 Minutes
 #define TIMEDIFF_NEXT_WP      250
 
 template<class T, class P = Path>
@@ -115,6 +115,14 @@ public PathMovementBase<Player>
         void SkipCurrentNode() { ++i_currentNode; }
         bool GetDestination(float& x, float& y, float& z) const { i_destinationHolder.GetDestination(x,y,z); return true; }
 
+    private:
+        // storage for preloading the flightmaster grid at end
+        // before reaching final waypoint
+        uint32 m_endMapId;
+        uint32 m_preloadTargetNode;
+        float m_endGridX;
+        float m_endGridY;
+        void PreloadEndGrid();
 };
 #endif
 
