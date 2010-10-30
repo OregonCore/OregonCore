@@ -1058,7 +1058,7 @@ uint32 ObjectMgr::AddGOData(uint32 entry, uint32 artKit, uint32 mapId, float x, 
     if (Map* map = MapManager::Instance().FindMap(mapId))
     {
         // We use spawn coords to spawn
-        if (!map->Instanceable() && !map->IsRemovalGrid(x, y))
+        if (!map->Instanceable() && map->IsLoaded(x, y))
         {
             GameObject *go = new GameObject;
             if (!go->LoadFromDB(guid, map))

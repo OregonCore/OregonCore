@@ -893,6 +893,9 @@ void GameEventMgr::LoadFromDB()
     ////////////////////////
 
     mGameEventPoolIds.resize(mGameEvent.size()*2-1);
+
+    sLog.outString("Loading Game Event Pool Data...");
+
     //                                   1                    2
     result = WorldDatabase.Query("SELECT pool_template.entry, game_event_pool.event "
         "FROM pool_template JOIN game_event_pool ON pool_template.entry = game_event_pool.pool_entry");
@@ -1152,7 +1155,7 @@ void GameEventMgr::GameEventSpawn(int16 event_id)
             // Spawn if necessary (loaded grids only)
             Map* map = const_cast<Map*>(MapManager::Instance().CreateBaseMap(data->mapid));
             // We use spawn coords to spawn
-            if (!map->Instanceable() && !map->IsRemovalGrid(data->posX,data->posY))
+            if (!map->Instanceable() && map->IsLoaded(data->posX,data->posY))
             {
                 Creature* pCreature = new Creature;
                 //sLog.outDebug("Spawning creature %u",*itr);
@@ -1180,7 +1183,7 @@ void GameEventMgr::GameEventSpawn(int16 event_id)
             // this base map checked as non-instanced and then only existed
             Map* map = const_cast<Map*>(MapManager::Instance().CreateBaseMap(data->mapid));
             // We use current coords to unspawn, not spawn coords since creature can have changed grid
-            if (!map->Instanceable() && !map->IsRemovalGrid(data->posX, data->posY))
+            if (!map->Instanceable() && map->IsLoaded(data->posX, data->posY))
             {
                 GameObject* pGameobject = new GameObject;
                 //sLog.outDebug("Spawning gameobject %u", *itr);
