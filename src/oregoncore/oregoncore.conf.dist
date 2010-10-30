@@ -24,7 +24,6 @@ ConfVersion=2010101001
 #        Default: "" - no log directory prefix, if used log names isn't
 #         absolute path then logs will be stored in current directory.
 #
-#
 #    LoginDatabaseInfo
 #    WorldDatabaseInfo
 #    CharacterDatabaseInfo
@@ -158,7 +157,7 @@ EAIErrorLevel = 2
 #    vmap.ignoreSpellIds
 #        These spells are ignored for LoS calculation
 #         List of ids with delimiter ','
-#        
+#
 #    vmap.petLOS
 #        Check LOS for pets, to avoid them going through walls etc.
 #        Default: 0 (disable, less CPU usage)
@@ -215,8 +214,8 @@ EAIErrorLevel = 2
 #                 0 (do not permit addon channel)
 #
 #    MapUpdate.Threads
-#	Number of threads to update maps.
-#	Default: 1
+#    Number of threads to update maps.
+#    Default: 1
 #
 ###############################################################################
 
@@ -1172,15 +1171,19 @@ GM.AllowFriend    = 0
 #
 #    Visibility.GroupMode
 #        Group visibility modes
-#        Default: 0 (standard setting: only members from same group can 100% auto detect invisible player)
-#                 1 (raid members 100% auto detect invisible player from same raid)
-#                 2 (players from same team can 100% auto detect invisible player)
+#        Default: 1 (raid members 100% auto detect invisible player from
+#                    same raid)
+#                 0 (only members from same group can
+#                    100% auto detect invisible player)
+#                 2 (players from same team can 100% auto detect
+#                    invisible player)
 #
 #    Visibility.Distance.Continents
 #    Visibility.Distance.Instances
 #    Visibility.Distance.BGArenas
 #        Visibility distance for different ingame object in different maps.
-#        Visibility on continents on offy ~90 yards. In BG/Arenas ~180. For instances default ~120.
+#        Visibility on continents on offy ~90 yards. In BG/Arenas ~180.
+#        For instances default ~120.
 #        Max limited by active player zone: ~ 333
 #        Min limit is max aggro radius (45) * Rate.Creature.Aggro
 #
@@ -1194,9 +1197,11 @@ GM.AllowFriend    = 0
 #
 #    Visibility.Distance.Grey.Unit
 #        Visibility grey distance for creatures/players (fast changing objects)
-#        addition to appropriate object type Visibility.Distance.* use in case visibility removing to
-#        object (except corpse around distences) If D is distance and G is grey distance then object
-#        make visible if distance to it <= D but make non visible if distance > D+G
+#         addition to appropriate object type Visibility.Distance.* use in case
+#         visibility removing to object (except corpse around distances)
+#         If D is distance and G is grey distance then object
+#         make visible if distance to it <= D
+#         but make non visible if distance > D+G
 #        Default: 1 (yard)
 #
 #    Visibility.Distance.Grey.Object
@@ -1205,7 +1210,7 @@ GM.AllowFriend    = 0
 #
 ###############################################################################
 
-Visibility.GroupMode = 0
+Visibility.GroupMode = 1
 Visibility.Distance.Continents    = 90
 Visibility.Distance.Instances     = 120
 Visibility.Distance.BGArenas      = 180

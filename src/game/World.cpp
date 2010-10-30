@@ -798,9 +798,9 @@ void World::LoadConfigSettings(bool reload)
         m_configs[CONFIG_START_GM_LEVEL] = MAX_LEVEL;
     }
 
-    m_configs[CONFIG_GROUP_VISIBILITY] = sConfig.GetIntDefault("Visibility.GroupMode",0);
+    m_configs[CONFIG_GROUP_VISIBILITY] = sConfig.GetIntDefault("Visibility.GroupMode", 1);
 
-    m_configs[CONFIG_MAIL_DELIVERY_DELAY] = sConfig.GetIntDefault("MailDeliveryDelay",HOUR);
+    m_configs[CONFIG_MAIL_DELIVERY_DELAY] = sConfig.GetIntDefault("MailDeliveryDelay", HOUR);
 
     m_configs[CONFIG_EXTERNAL_MAIL] = sConfig.GetIntDefault("ExternalMail", 0);
     m_configs[CONFIG_EXTERNAL_MAIL_INTERVAL] = sConfig.GetIntDefault("ExternalMailInterval", 1);
