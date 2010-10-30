@@ -969,56 +969,56 @@ void World::LoadConfigSettings(bool reload)
     }
 
     //visibility on continents
-    m_MaxVisibleDistanceOnContinents      = sConfig.GetFloatDefault("Visibility.Distance.Continents",     DEFAULT_VISIBILITY_DISTANCE);
+    m_MaxVisibleDistanceOnContinents = sConfig.GetFloatDefault("Visibility.Distance.Continents", DEFAULT_VISIBILITY_DISTANCE);
     if (m_MaxVisibleDistanceOnContinents < 45*sWorld.getRate(RATE_CREATURE_AGGRO))
     {
         sLog.outError("Visibility.Distance.Continents can't be less max aggro radius %f", 45*sWorld.getRate(RATE_CREATURE_AGGRO));
         m_MaxVisibleDistanceOnContinents = 45*sWorld.getRate(RATE_CREATURE_AGGRO);
     }
-    else if (m_MaxVisibleDistanceOnContinents + m_VisibleUnitGreyDistance >  MAX_VISIBILITY_DISTANCE)
+    else if (m_MaxVisibleDistanceOnContinents + m_VisibleUnitGreyDistance > MAX_VISIBILITY_DISTANCE)
     {
         sLog.outError("Visibility.Distance.Continents can't be greater %f",MAX_VISIBILITY_DISTANCE - m_VisibleUnitGreyDistance);
         m_MaxVisibleDistanceOnContinents = MAX_VISIBILITY_DISTANCE - m_VisibleUnitGreyDistance;
     }
 
     //visibility in instances
-    m_MaxVisibleDistanceInInstances        = sConfig.GetFloatDefault("Visibility.Distance.Instances",       DEFAULT_VISIBILITY_INSTANCE);
+    m_MaxVisibleDistanceInInstances = sConfig.GetFloatDefault("Visibility.Distance.Instances", DEFAULT_VISIBILITY_INSTANCE);
     if (m_MaxVisibleDistanceInInstances < 45*sWorld.getRate(RATE_CREATURE_AGGRO))
     {
         sLog.outError("Visibility.Distance.Instances can't be less max aggro radius %f",45*sWorld.getRate(RATE_CREATURE_AGGRO));
         m_MaxVisibleDistanceInInstances = 45*sWorld.getRate(RATE_CREATURE_AGGRO);
     }
-    else if (m_MaxVisibleDistanceInInstances + m_VisibleUnitGreyDistance >  MAX_VISIBILITY_DISTANCE)
+    else if (m_MaxVisibleDistanceInInstances + m_VisibleUnitGreyDistance > MAX_VISIBILITY_DISTANCE)
     {
         sLog.outError("Visibility.Distance.Instances can't be greater %f",MAX_VISIBILITY_DISTANCE - m_VisibleUnitGreyDistance);
         m_MaxVisibleDistanceInInstances = MAX_VISIBILITY_DISTANCE - m_VisibleUnitGreyDistance;
     }
 
     //visibility in BG/Arenas
-    m_MaxVisibleDistanceInBGArenas        = sConfig.GetFloatDefault("Visibility.Distance.BGArenas",       DEFAULT_VISIBILITY_BGARENAS);
+    m_MaxVisibleDistanceInBGArenas = sConfig.GetFloatDefault("Visibility.Distance.BGArenas", DEFAULT_VISIBILITY_BGARENAS);
     if (m_MaxVisibleDistanceInBGArenas < 45*sWorld.getRate(RATE_CREATURE_AGGRO))
     {
         sLog.outError("Visibility.Distance.BGArenas can't be less max aggro radius %f",45*sWorld.getRate(RATE_CREATURE_AGGRO));
         m_MaxVisibleDistanceInBGArenas = 45*sWorld.getRate(RATE_CREATURE_AGGRO);
     }
-    else if (m_MaxVisibleDistanceInBGArenas + m_VisibleUnitGreyDistance >  MAX_VISIBILITY_DISTANCE)
+    else if (m_MaxVisibleDistanceInBGArenas + m_VisibleUnitGreyDistance > MAX_VISIBILITY_DISTANCE)
     {
         sLog.outError("Visibility.Distance.BGArenas can't be greater %f",MAX_VISIBILITY_DISTANCE - m_VisibleUnitGreyDistance);
         m_MaxVisibleDistanceInBGArenas = MAX_VISIBILITY_DISTANCE - m_VisibleUnitGreyDistance;
     }
 
-    m_MaxVisibleDistanceForObject    = sConfig.GetFloatDefault("Visibility.Distance.Object",   DEFAULT_VISIBILITY_DISTANCE);
+    m_MaxVisibleDistanceForObject = sConfig.GetFloatDefault("Visibility.Distance.Object", DEFAULT_VISIBILITY_DISTANCE);
     if (m_MaxVisibleDistanceForObject < INTERACTION_DISTANCE)
     {
         sLog.outError("Visibility.Distance.Object can't be less max aggro radius %f",float(INTERACTION_DISTANCE));
         m_MaxVisibleDistanceForObject = INTERACTION_DISTANCE;
     }
-    else if (m_MaxVisibleDistanceForObject + m_VisibleObjectGreyDistance >  MAX_VISIBILITY_DISTANCE)
+    else if (m_MaxVisibleDistanceForObject + m_VisibleObjectGreyDistance > MAX_VISIBILITY_DISTANCE)
     {
         sLog.outError("Visibility.Distance.Object can't be greater %f",MAX_VISIBILITY_DISTANCE-m_VisibleObjectGreyDistance);
         m_MaxVisibleDistanceForObject = MAX_VISIBILITY_DISTANCE - m_VisibleObjectGreyDistance;
     }
-    m_MaxVisibleDistanceInFlight    = sConfig.GetFloatDefault("Visibility.Distance.InFlight",      DEFAULT_VISIBILITY_DISTANCE);
+    m_MaxVisibleDistanceInFlight = sConfig.GetFloatDefault("Visibility.Distance.InFlight", DEFAULT_VISIBILITY_DISTANCE);
     if (m_MaxVisibleDistanceInFlight + m_VisibleObjectGreyDistance > MAX_VISIBILITY_DISTANCE)
     {
         sLog.outError("Visibility.Distance.InFlight can't be greater %f",MAX_VISIBILITY_DISTANCE-m_VisibleObjectGreyDistance);
@@ -1027,7 +1027,7 @@ void World::LoadConfigSettings(bool reload)
 
     m_visibility_notify_periodOnContinents = sConfig.GetIntDefault("Visibility.Notify.Period.OnContinents", DEFAULT_VISIBILITY_NOTIFY_PERIOD);
     m_visibility_notify_periodInInstances = sConfig.GetIntDefault("Visibility.Notify.Period.InInstances",   DEFAULT_VISIBILITY_NOTIFY_PERIOD);
-    m_visibility_notify_periodInBGArenas = sConfig.GetIntDefault("Visibility.Notify.Period.InBGArenas",    DEFAULT_VISIBILITY_NOTIFY_PERIOD);  
+    m_visibility_notify_periodInBGArenas = sConfig.GetIntDefault("Visibility.Notify.Period.InBGArenas",    DEFAULT_VISIBILITY_NOTIFY_PERIOD);
 
     ///- Read the "Data" directory from the config file
     std::string dataPath = sConfig.GetStringDefault("DataDir","./");
@@ -1453,7 +1453,7 @@ void World::SetInitialWorldSettings()
     m_timers[WUPDATE_AUCTIONS].SetInterval(MINUTE*IN_MILLISECONDS);
     m_timers[WUPDATE_UPTIME].SetInterval(m_configs[CONFIG_UPTIME_UPDATE]*MINUTE*IN_MILLISECONDS);
                                                             //Update "uptime" table based on configuration entry in minutes.
-    m_timers[WUPDATE_CORPSES].SetInterval(20*MINUTE*IN_MILLISECONDS);
+    m_timers[WUPDATE_CORPSES].SetInterval(20 * MINUTE * IN_MILLISECONDS);
                                                             //erase corpses every 20 minutes
     m_timers[WUPDATE_CLEANDB].SetInterval(m_configs[CONFIG_LOGDB_CLEARINTERVAL]*MINUTE*IN_MILLISECONDS);
                                                             // clean logs table every 14 days by default
@@ -1580,9 +1580,9 @@ void World::RecordTimeDiff(const char *text, ...)
     if (diff > m_configs[CONFIG_MIN_LOG_UPDATE])
     {
         va_list ap;
-        char str [256];
+        char str[256];
         va_start(ap, text);
-        vsnprintf(str,256,text, ap);
+        vsnprintf(str, 256, text, ap);
         va_end(ap);
         sLog.outDetail("Difftime %s: %u.", str, diff);
     }
@@ -1611,9 +1611,12 @@ void World::Update(time_t diff)
 
     ///- Update the different timers
     for (int i = 0; i < WUPDATE_COUNT; ++i)
+    {
         if (m_timers[i].GetCurrent() >= 0)
             m_timers[i].Update(diff);
-    else m_timers[i].SetCurrent(0);
+        else
+            m_timers[i].SetCurrent(0);
+    }
 
     ///- Update the game time and check for shutdown time
     _UpdateGameTime();
@@ -1680,6 +1683,7 @@ void World::Update(time_t diff)
             }
         }
     }
+
     /// <li> Update uptime table
     if (m_timers[WUPDATE_UPTIME].Passed())
     {
@@ -1695,9 +1699,6 @@ void World::Update(time_t diff)
     {
         if (m_timers[WUPDATE_CLEANDB].Passed())
         {
-            //uint32 tmpDiff = (m_gameTime - m_startTime);
-            //uint32 maxClientsNum = sWorld.GetMaxActiveSessionCount();
-
             m_timers[WUPDATE_CLEANDB].Reset();
             LoginDatabase.PExecute("DELETE FROM logs WHERE (time + %u) < "UI64FMTD";",
                 sWorld.getConfig(CONFIG_LOGDB_CLEARTIME), uint64(time(0)));
@@ -1707,12 +1708,6 @@ void World::Update(time_t diff)
     /// <li> Handle all other objects
     ///- Update objects when the timer has passed (maps, transport, creatures,...)
     MapManager::Instance().Update(diff);                // As interval = 0
-
-    /*if (m_timers[WUPDATE_OBJECTS].Passed())
-    {
-        m_timers[WUPDATE_OBJECTS].Reset();
-        MapManager::Instance().DoDelayedMovesAndRemoves();
-    }*/
 
     ///- Process necessary scripts
     if (!m_scriptSchedule.empty())
@@ -2806,7 +2801,7 @@ BanReturn World::BanAccount(BanMode mode, std::string nameOrIP, std::string dura
         if (mode == BAN_IP)
             return BAN_SUCCESS;                             // ip correctly banned but nobody affected (yet)
         else
-            return BAN_NOTFOUND;                                // Nobody to ban
+            return BAN_NOTFOUND;                            // Nobody to ban
     }
 
     ///- Disconnect all affected players (for IP it can be several)
@@ -3057,7 +3052,6 @@ void World::InitDailyQuestResetTime()
     if (result)
     {
         Field *fields = result->Fetch();
-
         mostRecentQuestTime = (time_t)fields[0].GetUInt64();
     }
     else
