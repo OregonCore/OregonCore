@@ -645,8 +645,6 @@ class GameObject : public WorldObject, public GridObject<GameObject>
 
         GameObject* LookupFishingHoleAround(float range);
 
-        GridReference<GameObject> &GetGridRef() { return m_gridRef; }
-
         void CastSpell(Unit *target, uint32 spell);
     protected:
         uint32      m_spellId;

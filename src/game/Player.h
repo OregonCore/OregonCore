@@ -2036,7 +2036,6 @@ class Player : public Unit, public GridObject<Player>
         Player* GetNextRandomRaidMember(float radius);
         PartyResult CanUninviteFromGroup() const;
 
-        GridReference<Player> &GetGridRef() { return m_gridRef; }
         MapReference &GetMapRef() { return m_mapRef; }
 
         // Set map to player and add reference
@@ -2319,7 +2318,6 @@ class Player : public Unit, public GridObject<Player>
                 m_DelayedOperations |= operation;
         }
 
-        GridReference<Player> m_gridRef;
         MapReference m_mapRef;
 
         void UpdateCharmedAI();
