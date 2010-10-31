@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -42,7 +42,7 @@ struct boss_landslideAI : public ScriptedAI
         Landslide_Timer = 0;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -54,14 +54,14 @@ struct boss_landslideAI : public ScriptedAI
         //KnockAway_Timer
         if (KnockAway_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_KNOCKAWAY);
+            DoCast(me->getVictim(), SPELL_KNOCKAWAY);
             KnockAway_Timer = 15000;
         } else KnockAway_Timer -= diff;
 
         //Trample_Timer
         if (Trample_Timer <= diff)
         {
-            DoCast(me,SPELL_TRAMPLE);
+            DoCast(me, SPELL_TRAMPLE);
             Trample_Timer = 8000;
         } else Trample_Timer -= diff;
 
@@ -71,7 +71,7 @@ struct boss_landslideAI : public ScriptedAI
             if (Landslide_Timer <= diff)
             {
                 me->InterruptNonMeleeSpells(false);
-                DoCast(me,SPELL_LANDSLIDE);
+                DoCast(me, SPELL_LANDSLIDE);
                 Landslide_Timer = 60000;
             } else Landslide_Timer -= diff;
         }

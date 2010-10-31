@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -45,11 +45,11 @@ struct boss_ptheradrasAI : public ScriptedAI
         RepulsiveGaze_Timer = 23000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*killer*/)
     {
         me->SummonCreature(12238,28.067f,61.875f,-123.405f,4.67f,TEMPSUMMON_TIMED_DESPAWN,600000);
     }
@@ -62,7 +62,7 @@ struct boss_ptheradrasAI : public ScriptedAI
         //Dustfield_Timer
         if (Dustfield_Timer <= diff)
         {
-            DoCast(me,SPELL_DUSTFIELD);
+            DoCast(me, SPELL_DUSTFIELD);
             Dustfield_Timer = 14000;
         } else Dustfield_Timer -= diff;
 
@@ -72,21 +72,21 @@ struct boss_ptheradrasAI : public ScriptedAI
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget)
-                DoCast(pTarget,SPELL_BOULDER);
+                DoCast(pTarget, SPELL_BOULDER);
             Boulder_Timer = 10000;
         } else Boulder_Timer -= diff;
 
         //RepulsiveGaze_Timer
         if (RepulsiveGaze_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_REPULSIVEGAZE);
+            DoCast(me->getVictim(), SPELL_REPULSIVEGAZE);
             RepulsiveGaze_Timer = 20000;
         } else RepulsiveGaze_Timer -= diff;
 
         //Thrash_Timer
         if (Thrash_Timer <= diff)
         {
-            DoCast(me,SPELL_THRASH);
+            DoCast(me, SPELL_THRASH);
             Thrash_Timer = 18000;
         } else Thrash_Timer -= diff;
 

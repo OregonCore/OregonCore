@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -35,10 +35,6 @@ struct boss_noxxionAI : public ScriptedAI
     uint32 Adds_Timer;
     uint32 Invisible_Timer;
     bool Invisible;
-    int Rand;
-    int RandX;
-    int RandY;
-    Creature* Summoned;
 
     void Reset()
     {
@@ -49,29 +45,14 @@ struct boss_noxxionAI : public ScriptedAI
         Invisible = false;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
-    void SummonAdds(Unit* victim)
+    void SummonAdds(Unit* pVictim)
     {
-        Rand = rand()%8;
-        switch (rand()%2)
-        {
-            case 0: RandX = 0 - Rand; break;
-            case 1: RandX = 0 + Rand; break;
-        }
-        Rand = 0;
-        Rand = rand()%8;
-        switch (rand()%2)
-        {
-            case 0: RandY = 0 - Rand; break;
-            case 1: RandY = 0 + Rand; break;
-        }
-        Rand = 0;
-        Summoned = DoSpawnCreature(13456, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000);
-        if (Summoned)
-            ((CreatureAI*)Summoned->AI())->AttackStart(victim);
+        if (Creature *Add = DoSpawnCreature(13456, irand(-7,7), irand(-7,7), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 90000))
+            Add->AI()->AttackStart(pVictim);
     }
 
     void UpdateAI(const uint32 diff)
@@ -99,14 +80,14 @@ struct boss_noxxionAI : public ScriptedAI
         //ToxicVolley_Timer
         if (ToxicVolley_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_TOXICVOLLEY);
+            DoCast(me->getVictim(), SPELL_TOXICVOLLEY);
             ToxicVolley_Timer = 9000;
         } else ToxicVolley_Timer -= diff;
 
         //Uppercut_Timer
         if (Uppercut_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_UPPERCUT);
+            DoCast(me->getVictim(), SPELL_UPPERCUT);
             Uppercut_Timer = 12000;
         } else Uppercut_Timer -= diff;
 

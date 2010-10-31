@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -42,9 +42,9 @@ struct celebras_the_cursedAI : public ScriptedAI
         CorruptForces_Timer = 30000;
     }
 
-    void EnterCombat(Unit *who) { }
+    void EnterCombat(Unit * /*who*/) { }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         me->SummonCreature(13716, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 600000);
     }
@@ -60,14 +60,14 @@ struct celebras_the_cursedAI : public ScriptedAI
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
             if (pTarget)
-                DoCast(pTarget,SPELL_WRATH);
+                DoCast(pTarget, SPELL_WRATH);
             Wrath_Timer = 8000;
         } else Wrath_Timer -= diff;
 
         //EntanglingRoots
         if (EntanglingRoots_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_ENTANGLINGROOTS);
+            DoCast(me->getVictim(), SPELL_ENTANGLINGROOTS);
             EntanglingRoots_Timer = 20000;
         } else EntanglingRoots_Timer -= diff;
 
@@ -75,7 +75,7 @@ struct celebras_the_cursedAI : public ScriptedAI
         if (CorruptForces_Timer <= diff)
         {
             me->InterruptNonMeleeSpells(false);
-            DoCast(me,SPELL_CORRUPT_FORCES);
+            DoCast(me, SPELL_CORRUPT_FORCES);
             CorruptForces_Timer = 20000;
         } else CorruptForces_Timer -= diff;
 
