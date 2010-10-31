@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,9 +23,12 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define SPELL_MIGHTYBLOW            14099
-#define SPELL_HAMSTRING             9080
-#define SPELL_CLEAVE                20691
+enum Spells
+{
+    SPELL_MIGHTYBLOW                                       = 14099,
+    SPELL_HAMSTRING                                        = 9080,
+    SPELL_CLEAVE                                           = 20691
+};
 
 struct boss_general_angerforgeAI : public ScriptedAI
 {
@@ -36,14 +39,6 @@ struct boss_general_angerforgeAI : public ScriptedAI
     uint32 Cleave_Timer;
     uint32 Adds_Timer;
     bool Medics;
-    int Rand1;
-    int Rand1X;
-    int Rand1Y;
-    int Rand2;
-    int Rand2X;
-    int Rand2Y;
-    Creature* SummonedAdds;
-    Creature* SummonedMedics;
 
     void Reset()
     {
@@ -54,50 +49,20 @@ struct boss_general_angerforgeAI : public ScriptedAI
         Medics = false;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
     void SummonAdds(Unit* victim)
     {
-        Rand1 = rand()%15;
-        switch (rand()%2)
-        {
-            case 0: Rand1X = 0 - Rand1; break;
-            case 1: Rand1X = 0 + Rand1; break;
-        }
-        Rand1 = 0;
-        Rand1 = rand()%15;
-        switch (rand()%2)
-        {
-            case 0: Rand1Y = 0 - Rand1; break;
-            case 1: Rand1Y = 0 + Rand1; break;
-        }
-        Rand1 = 0;
-        SummonedAdds = DoSpawnCreature(8901, Rand1X, Rand1Y, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000);
-        if (SummonedAdds)
-            ((CreatureAI*)SummonedAdds->AI())->AttackStart(victim);
+        if (Creature *SummonedAdd = DoSpawnCreature(8901, irand(-14,14), irand(-14,14), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000))
+            SummonedAdd->AI()->AttackStart(victim);
     }
 
     void SummonMedics(Unit* victim)
     {
-        Rand2 = rand()%10;
-        switch (rand()%2)
-        {
-            case 0: Rand2X = 0 - Rand2; break;
-            case 1: Rand2X = 0 + Rand2; break;
-        }
-        Rand2 = 0;
-        Rand2 = rand()%10;
-        switch (rand()%2)
-        {
-            case 0: Rand2Y = 0 - Rand2; break;
-            case 1: Rand2Y = 0 + Rand2; break;
-        }
-        Rand2 = 0;
-        SummonedMedics = DoSpawnCreature(8894, Rand2X, Rand2Y, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000);
-        if (SummonedMedics)
-            ((CreatureAI*)SummonedMedics->AI())->AttackStart(victim);
+        if (Creature *SummonedMedic = DoSpawnCreature(8894, irand(-9,9), irand(-9,9), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000))
+            SummonedMedic->AI()->AttackStart(victim);
     }
 
     void UpdateAI(const uint32 diff)
@@ -109,21 +74,21 @@ struct boss_general_angerforgeAI : public ScriptedAI
         //MightyBlow_Timer
         if (MightyBlow_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_MIGHTYBLOW);
+            DoCast(me->getVictim(), SPELL_MIGHTYBLOW);
             MightyBlow_Timer = 18000;
         } else MightyBlow_Timer -= diff;
 
         //HamString_Timer
         if (HamString_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_HAMSTRING);
+            DoCast(me->getVictim(), SPELL_HAMSTRING);
             HamString_Timer = 15000;
         } else HamString_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CLEAVE);
+            DoCast(me->getVictim(), SPELL_CLEAVE);
             Cleave_Timer = 9000;
         } else Cleave_Timer -= diff;
 
@@ -165,4 +130,3 @@ void AddSC_boss_general_angerforge()
     newscript->GetAI = &GetAI_boss_general_angerforge;
     newscript->RegisterSelf();
 }
-

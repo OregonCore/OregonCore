@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,8 +23,11 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define SPELL_WHIRLWIND             15589
-#define SPELL_MORTALSTRIKE          24573
+enum Spells
+{
+    SPELL_WHIRLWIND                                        = 15589,
+    SPELL_MORTALSTRIKE                                     = 24573
+};
 
 struct boss_gorosh_the_dervishAI : public ScriptedAI
 {
@@ -39,7 +42,7 @@ struct boss_gorosh_the_dervishAI : public ScriptedAI
         MortalStrike_Timer = 22000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -52,14 +55,14 @@ struct boss_gorosh_the_dervishAI : public ScriptedAI
         //WhirlWind_Timer
         if (WhirlWind_Timer <= diff)
         {
-            DoCast(me,SPELL_WHIRLWIND);
+            DoCast(me, SPELL_WHIRLWIND);
             WhirlWind_Timer = 15000;
         } else WhirlWind_Timer -= diff;
 
         //MortalStrike_Timer
         if (MortalStrike_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_MORTALSTRIKE);
+            DoCast(me->getVictim(), SPELL_MORTALSTRIKE);
             MortalStrike_Timer = 15000;
         } else MortalStrike_Timer -= diff;
 
@@ -79,4 +82,3 @@ void AddSC_boss_gorosh_the_dervish()
     newscript->GetAI = &GetAI_boss_gorosh_the_dervish;
     newscript->RegisterSelf();
 }
-

@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,7 +23,10 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define SPELL_FIREBLAST            15573
+enum Spells
+{
+    SPELL_FIREBLAST                                        = 15573
+};
 
 struct boss_ambassador_flamelashAI : public ScriptedAI
 {
@@ -31,10 +34,6 @@ struct boss_ambassador_flamelashAI : public ScriptedAI
 
     uint32 FireBlast_Timer;
     uint32 Spirit_Timer;
-    int Rand;
-    int RandX;
-    int RandY;
-    Creature* Summoned;
 
     void Reset()
     {
@@ -42,26 +41,12 @@ struct boss_ambassador_flamelashAI : public ScriptedAI
         Spirit_Timer = 24000;
     }
 
-    void EnterCombat(Unit *who) {}
+    void EnterCombat(Unit * /*who*/) {}
 
     void SummonSpirits(Unit* victim)
     {
-        Rand = rand()%10;
-        switch (rand()%2)
-        {
-            case 0: RandX -= Rand; break;
-            case 1: RandX += Rand; break;
-        }
-        Rand = 0;
-        Rand = rand()%10;
-        switch (rand()%2)
-        {
-            case 0: RandY -= Rand; break;
-            case 1: RandY += Rand; break;
-        }
-        Summoned = DoSpawnCreature(9178, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
-        if (Summoned)
-            ((CreatureAI*)Summoned->AI())->AttackStart(victim);
+        if (Creature *Spirit = DoSpawnCreature(9178, irand(-9,9), irand(-9,9), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000))
+            Spirit->AI()->AttackStart(victim);
     }
 
     void UpdateAI(const uint32 diff)
@@ -73,7 +58,7 @@ struct boss_ambassador_flamelashAI : public ScriptedAI
         //FireBlast_Timer
         if (FireBlast_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_FIREBLAST);
+            DoCast(me->getVictim(), SPELL_FIREBLAST);
             FireBlast_Timer = 7000;
         } else FireBlast_Timer -= diff;
 
@@ -104,4 +89,3 @@ void AddSC_boss_ambassador_flamelash()
     newscript->GetAI = &GetAI_boss_ambassador_flamelash;
     newscript->RegisterSelf();
 }
-

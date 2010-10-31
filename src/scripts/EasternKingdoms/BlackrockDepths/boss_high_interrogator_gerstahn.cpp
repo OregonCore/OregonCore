@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,10 +23,13 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define SPELL_SHADOWWORDPAIN        10894
-#define SPELL_MANABURN              10876
-#define SPELL_PSYCHICSCREAM         8122
-#define SPELL_SHADOWSHIELD          22417
+enum Spells
+{
+    SPELL_SHADOWWORDPAIN                                   = 10894,
+    SPELL_MANABURN                                         = 10876,
+    SPELL_PSYCHICSCREAM                                    = 8122,
+    SPELL_SHADOWSHIELD                                     = 22417
+};
 
 struct boss_high_interrogator_gerstahnAI : public ScriptedAI
 {
@@ -45,7 +48,7 @@ struct boss_high_interrogator_gerstahnAI : public ScriptedAI
         ShadowShield_Timer = 8000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -58,32 +61,30 @@ struct boss_high_interrogator_gerstahnAI : public ScriptedAI
         //ShadowWordPain_Timer
         if (ShadowWordPain_Timer <= diff)
         {
-            Unit *pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (pTarget)DoCast(pTarget,SPELL_SHADOWWORDPAIN);
+            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                DoCast(pTarget, SPELL_SHADOWWORDPAIN);
             ShadowWordPain_Timer = 7000;
         } else ShadowWordPain_Timer -= diff;
 
         //ManaBurn_Timer
         if (ManaBurn_Timer <= diff)
         {
-            Unit *pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (pTarget)DoCast(pTarget,SPELL_MANABURN);
+            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                DoCast(pTarget, SPELL_MANABURN);
             ManaBurn_Timer = 10000;
         } else ManaBurn_Timer -= diff;
 
         //PsychicScream_Timer
         if (PsychicScream_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_PSYCHICSCREAM);
+            DoCast(me->getVictim(), SPELL_PSYCHICSCREAM);
             PsychicScream_Timer = 30000;
         } else PsychicScream_Timer -= diff;
 
         //ShadowShield_Timer
         if (ShadowShield_Timer <= diff)
         {
-            DoCast(me,SPELL_SHADOWSHIELD);
+            DoCast(me, SPELL_SHADOWSHIELD);
             ShadowShield_Timer = 25000;
         } else ShadowShield_Timer -= diff;
 
@@ -103,4 +104,3 @@ void AddSC_boss_high_interrogator_gerstahn()
     newscript->GetAI = &GetAI_boss_high_interrogator_gerstahn;
     newscript->RegisterSelf();
 }
-

@@ -5,23 +5,41 @@
 #ifndef DEF_BRD_H
 #define DEF_BRD_H
 
-#define TYPE_RING_OF_LAW        1
-#define TYPE_VAULT              2
-#define TYPE_BAR                3
-#define TYPE_TOMB_OF_SEVEN      4
-#define TYPE_LYCEUM             5
-#define TYPE_IRON_HALL          6
+#define FACTION_NEUTRAL             734
+#define FACTION_HOSTILE             754
+#define FACTION_FRIEND              35
 
-#define DATA_EMPEROR            10
-#define DATA_PHALANX            11
+enum eTypes
+{
+    TYPE_RING_OF_LAW        = 1,
+    TYPE_VAULT              = 2,
+    TYPE_BAR                = 3,
+    TYPE_TOMB_OF_SEVEN      = 4,
+    TYPE_LYCEUM             = 5,
+    TYPE_IRON_HALL          = 6,
 
-#define DATA_ARENA1             12
-#define DATA_ARENA2             13
-#define DATA_ARENA3             14
-#define DATA_ARENA4             15
+    DATA_EMPEROR            = 10,
+    DATA_PHALANX            = 11,
 
-#define DATA_GO_BAR_KEG         16
-#define DATA_GO_BAR_KEG_TRAP    17
-#define DATA_GO_BAR_DOOR        18
+    DATA_ARENA1             = 12,
+    DATA_ARENA2             = 13,
+    DATA_ARENA3             = 14,
+    DATA_ARENA4             = 15,
+
+    DATA_GO_BAR_KEG         = 16,
+    DATA_GO_BAR_KEG_TRAP    = 17,
+    DATA_GO_BAR_DOOR        = 18,
+    DATA_GO_CHALICE         = 19,
+
+    DATA_GHOSTKILL          = 20,
+    DATA_EVENSTARTER        = 21,
+
+    DATA_GOLEM_DOOR_N       = 22,
+    DATA_GOLEM_DOOR_S       = 23,
+
+    DATA_THRONE_DOOR        = 24,
+
+    DATA_SF_BRAZIER_N       = 25,
+    DATA_SF_BRAZIER_S       = 26
+};
 #endif
-

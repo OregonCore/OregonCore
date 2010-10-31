@@ -239,3 +239,19 @@ void InstanceData::DoUseDoorOrButton(uint64 uiGuid, uint32 uiWithRestoreTime, bo
             error_log("OSCR: Script call DoUseDoorOrButton, but gameobject entry %u is type %u.",pGo->GetEntry(),pGo->GetGoType());
     }
 }
+
+void InstanceData::DoRespawnGameObject(uint64 uiGuid, uint32 uiTimeToDespawn)
+{
+    if (GameObject* pGo = instance->GetGameObject(uiGuid))
+    {
+        //not expect any of these should ever be handled
+        if (pGo->GetGoType() == GAMEOBJECT_TYPE_FISHINGNODE || pGo->GetGoType() == GAMEOBJECT_TYPE_DOOR ||
+            pGo->GetGoType() == GAMEOBJECT_TYPE_BUTTON || pGo->GetGoType() == GAMEOBJECT_TYPE_TRAP)
+            return;
+
+        if (pGo->isSpawned())
+            return;
+
+        pGo->SetRespawnTime(uiTimeToDespawn);
+    }
+}

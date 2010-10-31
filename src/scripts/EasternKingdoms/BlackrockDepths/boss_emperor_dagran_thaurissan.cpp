@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,11 +23,17 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define SPELL_HANDOFTHAURISSAN          17492
-#define SPELL_AVATAROFFLAME             15636
+enum Yells
+{
+    SAY_AGGRO                                              = -1230001,
+    SAY_SLAY                                               = -1230002
+};
 
-#define SAY_AGGRO                       "Come to aid the Throne!"
-#define SAY_SLAY                        "Hail to the king, baby!"
+enum Spells
+{
+    SPELL_HANDOFTHAURISSAN                                 = 17492,
+    SPELL_AVATAROFFLAME                                    = 15636
+};
 
 struct boss_draganthaurissanAI : public ScriptedAI
 {
@@ -44,14 +50,15 @@ struct boss_draganthaurissanAI : public ScriptedAI
         //Counter= 0;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
-        DoYell(SAY_AGGRO,LANG_UNIVERSAL,NULL);
+        DoScriptText(SAY_AGGRO, me);
+        me->CallForHelp(VISIBLE_RANGE);
     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit* /*victim*/)
     {
-        DoYell(SAY_SLAY, LANG_UNIVERSAL, NULL);
+        DoScriptText(SAY_SLAY, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -62,33 +69,33 @@ struct boss_draganthaurissanAI : public ScriptedAI
 
         if (HandOfThaurissan_Timer <= diff)
         {
-            Unit *pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (pTarget) DoCast(pTarget,SPELL_HANDOFTHAURISSAN);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                DoCast(pTarget, SPELL_HANDOFTHAURISSAN);
 
             //3 Hands of Thaurissan will be casted
             //if (Counter < 3)
             //{
             //    HandOfThaurissan_Timer = 1000;
-            //    Counter++;
+            //    ++Counter;
             //}
             //else
             //{
                 HandOfThaurissan_Timer = 5000;
-                //Counter=0;
+                //Counter = 0;
             //}
         } else HandOfThaurissan_Timer -= diff;
 
         //AvatarOfFlame_Timer
         if (AvatarOfFlame_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_AVATAROFFLAME);
+            DoCast(me->getVictim(), SPELL_AVATAROFFLAME);
             AvatarOfFlame_Timer = 18000;
         } else AvatarOfFlame_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
 };
+
 CreatureAI* GetAI_boss_draganthaurissan(Creature* pCreature)
 {
     return new boss_draganthaurissanAI (pCreature);
@@ -102,4 +109,3 @@ void AddSC_boss_draganthaurissan()
     newscript->GetAI = &GetAI_boss_draganthaurissan;
     newscript->RegisterSelf();
 }
-

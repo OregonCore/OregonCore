@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,8 +23,16 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define SPELL_FIERYBURST        13900
-#define SPELL_WARSTOMP          24375
+enum Spells
+{
+    SPELL_FIERYBURST                                       = 13900,
+    SPELL_WARSTOMP                                         = 24375
+};
+
+enum eEnums
+{
+    DATA_THRONE_DOOR                              = 24 // not id or guid of doors but number of enum in blackrock_depths.h
+};
 
 struct boss_magmusAI : public ScriptedAI
 {
@@ -39,7 +47,7 @@ struct boss_magmusAI : public ScriptedAI
         WarStomp_Timer =0;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -52,7 +60,7 @@ struct boss_magmusAI : public ScriptedAI
         //FieryBurst_Timer
         if (FieryBurst_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_FIERYBURST);
+            DoCast(me->getVictim(), SPELL_FIERYBURST);
             FieryBurst_Timer = 6000;
         } else FieryBurst_Timer -= diff;
 
@@ -61,12 +69,18 @@ struct boss_magmusAI : public ScriptedAI
         {
             if (WarStomp_Timer <= diff)
             {
-                DoCast(me->getVictim(),SPELL_WARSTOMP);
+                DoCast(me->getVictim(), SPELL_WARSTOMP);
                 WarStomp_Timer = 8000;
             } else WarStomp_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();
+    }
+    // When he die open door to last chamber
+    void JustDied(Unit *who)
+    {
+        if (ScriptedInstance* pInstance = who->GetInstanceData())
+            pInstance->HandleGameObject(pInstance->GetData64(DATA_THRONE_DOOR), true);
     }
 };
 CreatureAI* GetAI_boss_magmus(Creature* pCreature)
@@ -82,4 +96,3 @@ void AddSC_boss_magmus()
     newscript->GetAI = &GetAI_boss_magmus;
     newscript->RegisterSelf();
 }
-

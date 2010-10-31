@@ -130,6 +130,9 @@ class InstanceData : public ZoneScript
         //change active state of doors or buttons
         void DoUseDoorOrButton(uint64 uiGuid, uint32 uiWithRestoreTime = 0, bool bUseAlternativeState = false);
 
+        //Respawns a GO having negative spawntimesecs in gameobject-table
+        void DoRespawnGameObject(uint64 uiGuid, uint32 uiTimeToDespawn = MINUTE);
+
         virtual bool SetBossState(uint32 id, EncounterState state);
     protected:
         void SetBossNumber(uint32 number) { bosses.resize(number); }

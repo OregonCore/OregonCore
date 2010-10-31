@@ -678,6 +678,10 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 -- -1 229 000 BLACKROCK SPIRE
 
 -- -1 230 000 BLACKROCK DEPTHS
+INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`comment`) VALUES
+(-1230000,'Ah, hits the spot!',0,0,0,'rocknot SAY_GOT_BEER'),
+(-1230001,'Come to aid the Throne!',0,1,0,'dagran SAY_AGGRO'),
+(-1230002,'Hail to the king, baby!',0,1,0,'dagran SAY_SLAY');
 
 -- -1 249 000 ONYXIA'S LAIR
 INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`comment`) VALUES

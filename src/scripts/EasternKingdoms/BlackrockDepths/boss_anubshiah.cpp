@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,11 +23,14 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define SPELL_SHADOWBOLT            17228
-#define SPELL_CURSEOFTONGUES        15470
-#define SPELL_CURSEOFWEAKNESS       17227
-#define SPELL_DEMONARMOR            11735
-#define SPELL_ENVELOPINGWEB         15471
+enum Spells
+{
+    SPELL_SHADOWBOLT                                       = 17228,
+    SPELL_CURSEOFTONGUES                                   = 15470,
+    SPELL_CURSEOFWEAKNESS                                  = 17227,
+    SPELL_DEMONARMOR                                       = 11735,
+    SPELL_ENVELOPINGWEB                                    = 15471
+};
 
 struct boss_anubshiahAI : public ScriptedAI
 {
@@ -48,7 +51,7 @@ struct boss_anubshiahAI : public ScriptedAI
         EnvelopingWeb_Timer = 16000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -61,39 +64,37 @@ struct boss_anubshiahAI : public ScriptedAI
         //ShadowBolt_Timer
         if (ShadowBolt_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SHADOWBOLT);
+            DoCast(me->getVictim(), SPELL_SHADOWBOLT);
             ShadowBolt_Timer = 7000;
         } else ShadowBolt_Timer -= diff;
 
         //CurseOfTongues_Timer
         if (CurseOfTongues_Timer <= diff)
         {
-            Unit *pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (pTarget) DoCast(pTarget,SPELL_CURSEOFTONGUES);
+            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                DoCast(pTarget, SPELL_CURSEOFTONGUES);
             CurseOfTongues_Timer = 18000;
         } else CurseOfTongues_Timer -= diff;
 
         //CurseOfWeakness_Timer
         if (CurseOfWeakness_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CURSEOFWEAKNESS);
+            DoCast(me->getVictim(), SPELL_CURSEOFWEAKNESS);
             CurseOfWeakness_Timer = 45000;
         } else CurseOfWeakness_Timer -= diff;
 
         //DemonArmor_Timer
         if (DemonArmor_Timer <= diff)
         {
-            DoCast(me,SPELL_DEMONARMOR);
+            DoCast(me, SPELL_DEMONARMOR);
             DemonArmor_Timer = 300000;
         } else DemonArmor_Timer -= diff;
 
         //EnvelopingWeb_Timer
         if (EnvelopingWeb_Timer <= diff)
         {
-            Unit *pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (pTarget) DoCast(pTarget,SPELL_ENVELOPINGWEB);
+            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                DoCast(pTarget, SPELL_ENVELOPINGWEB);
             EnvelopingWeb_Timer = 12000;
         } else EnvelopingWeb_Timer -= diff;
 
@@ -113,4 +114,3 @@ void AddSC_boss_anubshiah()
     newscript->GetAI = &GetAI_boss_anubshiah;
     newscript->RegisterSelf();
 }
-

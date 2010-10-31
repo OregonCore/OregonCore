@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,8 +23,16 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define SPELL_GROUNDTREMOR          6524
-#define SPELL_FRENZY                28371
+enum Yells
+{
+    EMOTE_GENERIC_FRENZY_KILL                              = -1000001
+};
+
+enum Spells
+{
+    SPELL_GROUNDTREMOR                                     = 6524,
+    SPELL_FRENZY                                           = 28371
+};
 
 struct boss_grizzleAI : public ScriptedAI
 {
@@ -39,7 +47,7 @@ struct boss_grizzleAI : public ScriptedAI
         Frenzy_Timer =0;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -52,7 +60,7 @@ struct boss_grizzleAI : public ScriptedAI
         //GroundTremor_Timer
         if (GroundTremor_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_GROUNDTREMOR);
+            DoCast(me->getVictim(), SPELL_GROUNDTREMOR);
             GroundTremor_Timer = 8000;
         } else GroundTremor_Timer -= diff;
 
@@ -61,8 +69,8 @@ struct boss_grizzleAI : public ScriptedAI
         {
             if (Frenzy_Timer <= diff)
             {
-                DoCast(me,SPELL_FRENZY);
-                DoTextEmote("goes into a killing frenzy!",NULL);
+                DoCast(me, SPELL_FRENZY);
+                DoScriptText(EMOTE_GENERIC_FRENZY_KILL, me);
 
                 Frenzy_Timer = 15000;
             } else Frenzy_Timer -= diff;
@@ -84,4 +92,3 @@ void AddSC_boss_grizzle()
     newscript->GetAI = &GetAI_boss_grizzle;
     newscript->RegisterSelf();
 }
-
