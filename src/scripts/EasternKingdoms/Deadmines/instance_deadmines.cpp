@@ -46,6 +46,8 @@ struct instance_deadmines : public ScriptedInstance
     instance_deadmines(Map* pMap) : ScriptedInstance(pMap) { Initialize(); };
 
     uint64 FactoryDoorGUID;
+    uint64 MastRoomDoorGUID;
+    uint64 FoundryDoorGUID;
     uint64 IronCladDoorGUID;
     uint64 DefiasCannonGUID;
     uint64 DoorLeverGUID;
@@ -61,6 +63,8 @@ struct instance_deadmines : public ScriptedInstance
     void Initialize()
     {
         FactoryDoorGUID = 0;
+        MastRoomDoorGUID = 0;
+        FoundryDoorGUID = 0;
         IronCladDoorGUID = 0;
         DefiasCannonGUID = 0;
         DoorLeverGUID = 0;
@@ -176,12 +180,14 @@ struct instance_deadmines : public ScriptedInstance
 
     void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(pGo->GetEntry())
+        switch (pGo->GetEntry())
         {
-            case GO_FACTORY_DOOR:   FactoryDoorGUID = pGo->GetGUID(); break;
+            case GO_FACTORY_DOOR:   FactoryDoorGUID  = pGo->GetGUID();  break;
+            case GO_MAST_ROOM_DOOR: MastRoomDoorGUID = pGo->GetGUID();  break;
+            case GO_FOUNDRY_DOOR:   FoundryDoorGUID  = pGo->GetGUID();  break;
             case GO_IRONCLAD_DOOR:  IronCladDoorGUID = pGo->GetGUID();  break;
             case GO_DEFIAS_CANNON:  DefiasCannonGUID = pGo->GetGUID();  break;
-            case GO_DOOR_LEVER:     DoorLeverGUID = pGo->GetGUID();     break;
+            case GO_DOOR_LEVER:     DoorLeverGUID    = pGo->GetGUID();  break;
             case GO_MR_SMITE_CHEST: uiSmiteChestGUID = pGo->GetGUID();  break;
         }
     }
@@ -197,6 +203,16 @@ struct instance_deadmines : public ScriptedInstance
         case EVENT_RHAHKZOR:
             if (data == DONE)
                 if (GameObject* pGo = instance->GetGameObject(FactoryDoorGUID))
+                    pGo->SetGoState(GO_STATE_ACTIVE);
+            break;
+        case EVENT_SNEED:
+            if (data == DONE)
+                if (GameObject* pGo = instance->GetGameObject(MastRoomDoorGUID))
+                    pGo->SetGoState(GO_STATE_ACTIVE);
+            break;
+        case EVENT_GILNID:
+            if (data == DONE)
+                if (GameObject* pGo = instance->GetGameObject(FoundryDoorGUID))
                     pGo->SetGoState(GO_STATE_ACTIVE);
             break;
         }
