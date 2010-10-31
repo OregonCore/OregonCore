@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -42,7 +42,7 @@ struct boss_azshir_the_sleeplessAI : public ScriptedAI
         Terrify_Timer = 20000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -57,24 +57,24 @@ struct boss_azshir_the_sleeplessAI : public ScriptedAI
             //SoulSiphon_Timer
             if (SoulSiphon_Timer <= diff)
             {
-                DoCast(me->getVictim(),SPELL_SOULSIPHON);
+                DoCast(me->getVictim(), SPELL_SOULSIPHON);
                 return;
 
-                SoulSiphon_Timer = 20000;
+                //SoulSiphon_Timer = 20000;
             } else SoulSiphon_Timer -= diff;
         }
 
         //CallOfTheGrave_Timer
         if (CallOftheGrave_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CALLOFTHEGRAVE);
+            DoCast(me->getVictim(), SPELL_CALLOFTHEGRAVE);
             CallOftheGrave_Timer = 30000;
         } else CallOftheGrave_Timer -= diff;
 
         //Terrify_Timer
         if (Terrify_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_TERRIFY);
+            DoCast(me->getVictim(), SPELL_TERRIFY);
             Terrify_Timer = 20000;
         } else Terrify_Timer -= diff;
 

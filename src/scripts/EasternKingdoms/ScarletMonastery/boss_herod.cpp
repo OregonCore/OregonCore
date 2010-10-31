@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -47,7 +47,6 @@ struct boss_herodAI : public ScriptedAI
     uint32 Cleave_Timer;
     uint32 Whirlwind_Timer;
 
-
     void Reset()
     {
         Enrage = false;
@@ -55,21 +54,21 @@ struct boss_herodAI : public ScriptedAI
         Whirlwind_Timer = 60000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
-        DoCast(me,SPELL_RUSHINGCHARGE);
+        DoCast(me, SPELL_RUSHINGCHARGE);
     }
 
-     void KilledUnit(Unit *victim)
+     void KilledUnit(Unit * /*victim*/)
      {
          DoScriptText(SAY_KILL, me);
      }
 
-     void JustDied(Unit* killer)
+     void JustDied(Unit* /*killer*/)
      {
          for (uint8 i = 0; i < 20; ++i)
-             me->SummonCreature(ENTRY_SCARLET_TRAINEE, 1939.18f, -431.58f, 17.09f, 6.22f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
+             me->SummonCreature(ENTRY_SCARLET_TRAINEE, 1939.18, -431.58, 17.09, 6.22, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
      }
 
     void UpdateAI(const uint32 diff)
@@ -82,14 +81,14 @@ struct boss_herodAI : public ScriptedAI
         {
             DoScriptText(EMOTE_ENRAGE, me);
             DoScriptText(SAY_ENRAGE, me);
-            DoCast(me,SPELL_FRENZY);
+            DoCast(me, SPELL_FRENZY);
             Enrage = true;
         }
 
         //Cleave_Timer
         if (Cleave_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CLEAVE);
+            DoCast(me->getVictim(), SPELL_CLEAVE);
             Cleave_Timer = 12000;
         } else Cleave_Timer -= diff;
 
@@ -97,7 +96,7 @@ struct boss_herodAI : public ScriptedAI
         if (Whirlwind_Timer <= diff)
         {
             DoScriptText(SAY_WHIRLWIND, me);
-            DoCast(me->getVictim(),SPELL_WHIRLWIND);
+            DoCast(me->getVictim(), SPELL_WHIRLWIND);
             Whirlwind_Timer = 30000;
         } else Whirlwind_Timer -= diff;
 
@@ -107,31 +106,8 @@ struct boss_herodAI : public ScriptedAI
 
 CreatureAI* GetAI_boss_herod(Creature* pCreature)
 {
-    return new boss_herodAI (pCreature);
+    return new boss_herodAI(pCreature);
 }
-
-
-float Location[12][3]=
-{
-    {1945.81f, -431.54f, 16.36f},
-    {1946.21f, -436.41f, 16.36f},
-    {1950.01f, -444.11f, 14.63f},
-    {1956.08f, -449.34f, 13.12f},
-    {1966.59f, -450.55f, 11.27f},
-    {1976.09f, -447.51f, 11.27f},
-    {1983.42f, -435.85f, 11.27f},
-    {1978.17f, -428.81f, 11.27f},
-    {1973.97f, -422.08f, 9.04f},
-    {1963.84f, -418.90f, 6.17f},
-    {1961.22f, -422.74f, 6.17f},
-    {1964.80f, -431.26f, 6.17f}
-};
-
-uint32 Wait[12][1]=
-{
-    {0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{600000}
-};
-
 
 struct mob_scarlet_traineeAI : public npc_escortAI
 {
@@ -143,8 +119,8 @@ struct mob_scarlet_traineeAI : public npc_escortAI
     uint32 Start_Timer;
 
     void Reset() {}
-    void WaypointReached(uint32 uiPoint) {}
-    void EnterCombat(Unit* who) {}
+    void WaypointReached(uint32 /*uiPoint*/) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -163,12 +139,7 @@ struct mob_scarlet_traineeAI : public npc_escortAI
 
 CreatureAI* GetAI_mob_scarlet_trainee(Creature* pCreature)
 {
-    mob_scarlet_traineeAI* thisAI = new mob_scarlet_traineeAI(pCreature);
-
-    for (uint32 i = 0; i < 12; ++i)
-        thisAI->AddWaypoint(i, Location[i][0], Location[i][1], Location[i][2], Wait[i][0]);
-
-    return ((CreatureAI*)thisAI);
+    return new mob_scarlet_traineeAI(pCreature);
 }
 
 void AddSC_boss_herod()
@@ -184,3 +155,4 @@ void AddSC_boss_herod()
     newscript->GetAI = &GetAI_mob_scarlet_trainee;
     newscript->RegisterSelf();
 }
+

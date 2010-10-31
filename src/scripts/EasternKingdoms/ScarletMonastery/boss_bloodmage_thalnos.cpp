@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,45 +23,45 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define SPELL_FROSTNOVA2                865
-#define SPELL_FLAMESHOCK3               8053
-#define SPELL_SHADOWBOLT5               1106
-#define SPELL_FLAMESPIKE                8814
-#define SPELL_FIRENOVA                  16079
+enum eEnums
+{
+    SAY_AGGRO               = -1189016,
+    SAY_HEALTH              = -1189017,
+    SAY_KILL                = -1189018,
 
-#define SAY_AGGRO                       "We hunger for vengeance."
-#define SAY_HEALTH                      "No rest... for the angry dead!"
-#define SAY_DEATH                       "More... More souls!"
-
-#define SOUND_AGGRO                     5844
-#define SOUND_HEALTH                    5846
-#define SOUND_DEATH                     5845
+    SPELL_FLAMESHOCK        = 8053,
+    SPELL_SHADOWBOLT        = 1106,
+    SPELL_FLAMESPIKE        = 8814,
+    SPELL_FIRENOVA          = 16079,
+};
 
 struct boss_bloodmage_thalnosAI : public ScriptedAI
 {
     boss_bloodmage_thalnosAI(Creature *c) : ScriptedAI(c) {}
 
-    uint32 FrostNova2_Timer;
-    uint32 FlameShock3_Timer;
-    uint32 ShadowBolt5_Timer;
+    bool HpYell;
+    uint32 FlameShock_Timer;
+    uint32 ShadowBolt_Timer;
     uint32 FlameSpike_Timer;
     uint32 FireNova_Timer;
-    uint32 Yell_Timer;
 
     void Reset()
     {
-        Yell_Timer = 1;
-        FrostNova2_Timer = 10000;
-        FlameShock3_Timer = 15000;
-        ShadowBolt5_Timer = 20000;
-        FlameSpike_Timer = 20000;
-        FireNova_Timer = 10000;
+        HpYell = false;
+        FlameShock_Timer = 10000;
+        ShadowBolt_Timer = 2000;
+        FlameSpike_Timer = 8000;
+        FireNova_Timer = 40000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
-        DoYell(SAY_AGGRO,LANG_UNIVERSAL,NULL);
-        DoPlaySoundToSet(me,SOUND_AGGRO);
+        DoScriptText(SAY_AGGRO, me);
+    }
+
+    void KilledUnit(Unit* /*Victim*/)
+    {
+        DoScriptText(SAY_KILL, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -70,52 +70,39 @@ struct boss_bloodmage_thalnosAI : public ScriptedAI
             return;
 
         //If we are <35% hp
-        if (me->GetHealth()*100 / me->GetMaxHealth() <= 35)
+        if (!HpYell && ((me->GetHealth()*100) / me->GetMaxHealth() <= 35))
         {
-            Yell_Timer -= diff;
-
-            if (Yell_Timer <= diff)
-            {
-                DoYell(SAY_HEALTH,LANG_UNIVERSAL,NULL);
-                DoPlaySoundToSet(me,SOUND_HEALTH);
-                Yell_Timer = 900000;
-            }
+            DoScriptText(SAY_HEALTH, me);
+            HpYell = true;
         }
 
-        //FrostNova2_Timer
-        if (FrostNova2_Timer <= diff)
+        //FlameShock_Timer
+        if (FlameShock_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_FROSTNOVA2);
-            FrostNova2_Timer = 10000;
-        } else FrostNova2_Timer -= diff;
-
-        //FlameShock3_Timer
-        if (FlameShock3_Timer <= diff)
-        {
-            DoCast(me->getVictim(),SPELL_FLAMESHOCK3);
-            FlameShock3_Timer = 15000;
-        } else FlameShock3_Timer -= diff;
-
-        //ShadowBolt5_Timer
-        if (ShadowBolt5_Timer <= diff)
-        {
-            DoCast(me->getVictim(),SPELL_SHADOWBOLT5);
-            ShadowBolt5_Timer = 20000;
-        } else ShadowBolt5_Timer -= diff;
+            DoCast(me->getVictim(), SPELL_FLAMESHOCK);
+            FlameShock_Timer = 10000 + rand()%5000;
+        } else FlameShock_Timer -= diff;
 
         //FlameSpike_Timer
         if (FlameSpike_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_FLAMESPIKE);
+            DoCast(me->getVictim(), SPELL_FLAMESPIKE);
             FlameSpike_Timer = 30000;
         } else FlameSpike_Timer -= diff;
 
         //FireNova_Timer
         if (FireNova_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_FIRENOVA);
-            FireNova_Timer = 20000;
+            DoCast(me->getVictim(), SPELL_FIRENOVA);
+            FireNova_Timer = 40000;
         } else FireNova_Timer -= diff;
+
+        //ShadowBolt_Timer
+        if (ShadowBolt_Timer <= diff)
+        {
+            DoCast(me->getVictim(), SPELL_SHADOWBOLT);
+            ShadowBolt_Timer = 2000;
+        } else ShadowBolt_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

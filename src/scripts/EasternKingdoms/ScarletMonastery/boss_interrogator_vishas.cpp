@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -22,36 +22,55 @@ SDCategory: Scarlet Monastery
 EndScriptData */
 
 #include "ScriptPCH.h"
+#include "scarlet_monastery.h"
 
-#define SPELL_POWERWORDSHIELD           6065
+enum eEnums
+{
+    SAY_AGGRO               = -1189011,
+    SAY_HEALTH1             = -1189012,
+    SAY_HEALTH2             = -1189013,
+    SAY_KILL                = -1189014,
+    SAY_TRIGGER_VORREL      = -1189015,
 
-#define SAY_AGGRO                       "Tell me... tell me everything!"
-#define SAY_HEALTH1                     "Naughty secrets"
-#define SAY_HEALTH2                     "I'll rip the secrets from your flesh!"
-#define SAY_DEATH                       "Purged by pain!"
-
-#define SOUND_AGGRO                     5847
-#define SOUND_HEALTH1                   5849
-#define SOUND_HEALTH2                   5850
-#define SOUND_DEATH                     5848
+    SPELL_SHADOWWORDPAIN    = 2767,
+};
 
 struct boss_interrogator_vishasAI : public ScriptedAI
 {
-    boss_interrogator_vishasAI(Creature *c) : ScriptedAI(c) {}
+    boss_interrogator_vishasAI(Creature *c) : ScriptedAI(c)
+    {
+        pInstance = me->GetInstanceData();
+    }
 
-    uint32 Yell_Timer;
-    uint32 PowerWordShield_Timer;
+    ScriptedInstance* pInstance;
+
+    bool Yell30;
+    bool Yell60;
+    uint32 ShadowWordPain_Timer;
 
     void Reset()
     {
-        Yell_Timer = 6000000;
-        PowerWordShield_Timer = 60000;
+        ShadowWordPain_Timer = 5000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
-        DoYell(SAY_AGGRO,LANG_UNIVERSAL,NULL);
-        DoPlaySoundToSet(me,SOUND_AGGRO);
+        DoScriptText(SAY_AGGRO, me);
+    }
+
+    void KilledUnit(Unit* /*Victim*/)
+    {
+        DoScriptText(SAY_KILL, me);
+    }
+
+    void JustDied(Unit* /*Killer*/)
+    {
+        if (!pInstance)
+            return;
+
+        //Any other actions to do with vorrel? setStandState?
+        if (Unit *vorrel = Unit::GetUnit(*me,pInstance->GetData64(DATA_VORREL)))
+            DoScriptText(SAY_TRIGGER_VORREL, vorrel);
     }
 
     void UpdateAI(const uint32 diff)
@@ -60,44 +79,29 @@ struct boss_interrogator_vishasAI : public ScriptedAI
             return;
 
         //If we are low on hp Do sayings
-        if (me->GetHealth()*100 / me->GetMaxHealth() <= 60 && !me->IsNonMeleeSpellCasted(false))
+        if (!Yell60 && ((me->GetHealth()*100) / me->GetMaxHealth() <= 60))
         {
-            //Yell_Timer
-            if (Yell_Timer <= diff)
-            {
-                DoYell(SAY_HEALTH1,LANG_UNIVERSAL,NULL);
-                DoPlaySoundToSet(me,SOUND_HEALTH1);
-                return;
-
-                //60 seconds until we should cast this agian
-                Yell_Timer = 60000;
-            } else Yell_Timer -= diff;
+            DoScriptText(SAY_HEALTH1, me);
+            Yell60 = true;
         }
 
-        if (me->GetHealth()*100 / me->GetMaxHealth() <= 30 && !me->IsNonMeleeSpellCasted(false))
+        if (!Yell30 && ((me->GetHealth()*100) / me->GetMaxHealth() <= 30))
         {
-            //Yell_Timer
-            if (Yell_Timer <= diff)
-            {
-                DoYell(SAY_HEALTH2,LANG_UNIVERSAL,NULL);
-                DoPlaySoundToSet(me,SOUND_HEALTH2);
-                return;
-
-                //60 seconds until we should cast this agian
-                Yell_Timer = 6000000;
-            } else Yell_Timer -= diff;
+            DoScriptText(SAY_HEALTH2, me);
+            Yell30 = true;
         }
 
-        //PowerWordShield_Timer
-        if (PowerWordShield_Timer <= diff)
+        //ShadowWordPain_Timer
+        if (ShadowWordPain_Timer <= diff)
         {
-            DoCast(me,SPELL_POWERWORDSHIELD);
-            PowerWordShield_Timer = 60000;
-        } else PowerWordShield_Timer -= diff;
+            DoCast(me->getVictim(), SPELL_SHADOWWORDPAIN);
+            ShadowWordPain_Timer = 5000 + rand()%10000;
+        } else ShadowWordPain_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
 };
+
 CreatureAI* GetAI_boss_interrogator_vishas(Creature* pCreature)
 {
     return new boss_interrogator_vishasAI (pCreature);

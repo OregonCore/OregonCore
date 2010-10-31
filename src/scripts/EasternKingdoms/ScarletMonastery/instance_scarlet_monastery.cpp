@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>.sourceforge.net/>
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation; either version 2 of the License, or
@@ -23,18 +23,17 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 #include "scarlet_monastery.h"
-#include "ScriptedCreature.h"
 
 #define ENTRY_PUMPKIN_SHRINE    186267
 #define ENTRY_HORSEMAN          23682
 #define ENTRY_HEAD              23775
 #define ENTRY_PUMPKIN           23694
 
-#define ENCOUNTERS 1
+#define MAX_ENCOUNTER 2
 
 struct instance_scarlet_monastery : public ScriptedInstance
 {
-    instance_scarlet_monastery(Map *Map) : ScriptedInstance(Map) {Initialize();};
+    instance_scarlet_monastery(Map* pMap) : ScriptedInstance(pMap) {Initialize();};
 
     uint64 PumpkinShrineGUID;
     uint64 HorsemanGUID;
@@ -43,12 +42,15 @@ struct instance_scarlet_monastery : public ScriptedInstance
 
     uint64 MograineGUID;
     uint64 WhitemaneGUID;
+    uint64 VorrelGUID;
     uint64 DoorHighInquisitorGUID;
 
-    uint32 Encounter[ENCOUNTERS];
+    uint32 m_auiEncounter[MAX_ENCOUNTER];
 
     void Initialize()
     {
+        memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
+
         PumpkinShrineGUID  = 0;
         HorsemanGUID = 0;
         HeadGUID = 0;
@@ -56,30 +58,29 @@ struct instance_scarlet_monastery : public ScriptedInstance
 
         MograineGUID = 0;
         WhitemaneGUID = 0;
+        VorrelGUID = 0;
         DoorHighInquisitorGUID = 0;
-
-        for (uint8 i = 0; i < ENCOUNTERS; i++)
-            Encounter[i] = NOT_STARTED;
     }
 
-    void OnObjectCreate(GameObject *go)
+    void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(go->GetEntry())
+        switch(pGo->GetEntry())
         {
-        case ENTRY_PUMPKIN_SHRINE: PumpkinShrineGUID = go->GetGUID();break;
-        case 104600: DoorHighInquisitorGUID = go->GetGUID(); break;
+        case ENTRY_PUMPKIN_SHRINE: PumpkinShrineGUID = pGo->GetGUID();break;
+        case 104600: DoorHighInquisitorGUID = pGo->GetGUID(); break;
         }
     }
 
-    void OnCreatureCreate(Creature *creature, uint32 creature_entry)
+    void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(creature_entry)
+        switch(pCreature->GetEntry())
         {
-            case ENTRY_HORSEMAN:    HorsemanGUID = creature->GetGUID(); break;
-            case ENTRY_HEAD:        HeadGUID = creature->GetGUID(); break;
-            case ENTRY_PUMPKIN:     HorsemanAdds.insert(creature->GetGUID());break;
-            case 3976: MograineGUID = creature->GetGUID(); break;
-            case 3977: WhitemaneGUID = creature->GetGUID(); break;
+            case ENTRY_HORSEMAN:    HorsemanGUID = pCreature->GetGUID(); break;
+            case ENTRY_HEAD:        HeadGUID = pCreature->GetGUID(); break;
+            case ENTRY_PUMPKIN:     HorsemanAdds.insert(pCreature->GetGUID());break;
+            case 3976: MograineGUID = pCreature->GetGUID(); break;
+            case 3977: WhitemaneGUID = pCreature->GetGUID(); break;
+            case 3981: VorrelGUID = pCreature->GetGUID(); break;
         }
     }
 
@@ -87,26 +88,29 @@ struct instance_scarlet_monastery : public ScriptedInstance
     {
         switch(type)
         {
-        case TYPE_MOGRAINE_AND_WHITE_EVENT: Encounter[0] = data; break;
+        case TYPE_MOGRAINE_AND_WHITE_EVENT:
+            if (data == IN_PROGRESS)
+                DoUseDoorOrButton(DoorHighInquisitorGUID);
+            if (data == FAIL)
+                DoUseDoorOrButton(DoorHighInquisitorGUID);
+
+            m_auiEncounter[0] = data;
+            break;
         case GAMEOBJECT_PUMPKIN_SHRINE:
-            {
-            GameObject *Shrine = instance->GetGameObject(PumpkinShrineGUID);
-            if (Shrine)
-                Shrine->SetGoState(GO_STATE_READY);
-            }break;
+            HandleGameObject(PumpkinShrineGUID, false);
+            break;
         case DATA_HORSEMAN_EVENT:
+            m_auiEncounter[1] = data;
             if (data == DONE)
             {
-                for (std::set<uint64>::iterator itr = HorsemanAdds.begin(); itr != HorsemanAdds.end(); ++itr)
+                for (std::set<uint64>::const_iterator itr = HorsemanAdds.begin(); itr != HorsemanAdds.end(); ++itr)
                 {
                     Creature* add = instance->GetCreature(*itr);
                     if (add && add->isAlive())
-                        add->DealDamage(add, add->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                        add->Kill(add);
                 }
                 HorsemanAdds.clear();
-                GameObject *Shrine = instance->GetGameObject(PumpkinShrineGUID);
-                if (Shrine)
-                    Shrine->SetGoState(GO_STATE_READY);
+                HandleGameObject(PumpkinShrineGUID, false);
             }
             break;
         }
@@ -121,6 +125,7 @@ struct instance_scarlet_monastery : public ScriptedInstance
             //case DATA_HEAD:                   return HeadGUID;
             case DATA_MOGRAINE:             return MograineGUID;
             case DATA_WHITEMANE:            return WhitemaneGUID;
+            case DATA_VORREL:               return VorrelGUID;
             case DATA_DOOR_WHITEMANE:       return DoorHighInquisitorGUID;
         }
         return 0;
@@ -129,15 +134,16 @@ struct instance_scarlet_monastery : public ScriptedInstance
     uint32 GetData(uint32 type)
     {
         if (type == TYPE_MOGRAINE_AND_WHITE_EVENT)
-            return Encounter[0];
-
+            return m_auiEncounter[0];
+        if (type == DATA_HORSEMAN_EVENT)
+            return m_auiEncounter[1];
         return 0;
     }
 };
 
-InstanceData* GetInstanceData_instance_scarlet_monastery(Map* map)
+InstanceData* GetInstanceData_instance_scarlet_monastery(Map* pMap)
 {
-    return new instance_scarlet_monastery(map);
+    return new instance_scarlet_monastery(pMap);
 }
 
 void AddSC_instance_scarlet_monastery()
