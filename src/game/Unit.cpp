@@ -11241,11 +11241,9 @@ void Unit::NearTeleportTo(float x, float y, float z, float orientation, bool cas
 
 void Unit::Kill(Unit *pVictim, bool durabilityLoss)
 {
-    //ASSERT(pVictim->IsInWorld() && pVictim->FindMap());
-
-    //// Prevent killing unit twice (and giving reward from kill twice)
-    //if (!pVictim->GetHealth())
-    //    return;
+    // Prevent killing unit twice (and giving reward from kill twice)
+    if (!pVictim->GetHealth())
+        return;
 
     pVictim->SetHealth(0);
 
