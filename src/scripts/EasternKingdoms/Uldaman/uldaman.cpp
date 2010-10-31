@@ -33,8 +33,6 @@ EndContentData */
 
 #define QUEST_HIDDEN_CHAMBER 2240
 
-
-
 /*######
 ## mob_jadespine_basilisk
 ######*/
@@ -52,7 +50,7 @@ struct mob_jadespine_basiliskAI : public ScriptedAI
         Cslumber_Timer = 2000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -66,19 +64,19 @@ struct mob_jadespine_basiliskAI : public ScriptedAI
         if (Cslumber_Timer <= diff)
         {
             //Cast
-            // DoCast(me->getVictim(),SPELL_CSLUMBER);
-            me->CastSpell(me->getVictim(),SPELL_CSLUMBER, true);
+            // DoCast(me->getVictim(), SPELL_CSLUMBER);
+            DoCast(me->getVictim(), SPELL_CSLUMBER, true);
 
             //Stop attacking target thast asleep and pick new target
             Cslumber_Timer = 28000;
 
-            Unit *pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
+            Unit* Target = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
 
-            if (!pTarget || pTarget == me->getVictim())
-                pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            if (!Target || Target == me->getVictim())
+                Target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
 
-            if (pTarget)
-                me->TauntApply(pTarget);
+            if (Target)
+                me->TauntApply(Target);
 
         } else Cslumber_Timer -= diff;
 
@@ -95,88 +93,104 @@ CreatureAI* GetAI_mob_jadespine_basilisk(Creature* pCreature)
 ## npc_lore_keeper_of_norgannon
 ######*/
 
-bool GossipHello_npc_lore_keeper_of_norgannon(Player *player, Creature* pCreature)
-{
-    if (player->GetQuestStatus(2278) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(0, "Who are the Earthen?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+#define GOSSIP_HELLO_KEEPER     "Who are the Earthen?"
+#define GOSSIP_SELECT_KEEPER1   "What is a \"subterranean being matrix\"?"
+#define GOSSIP_SELECT_KEEPER2   "What are the anomalies you speak of?"
+#define GOSSIP_SELECT_KEEPER3   "What is a resilient foundation of construction?"
+#define GOSSIP_SELECT_KEEPER4   "So... the Earthen were made out of stone?"
+#define GOSSIP_SELECT_KEEPER5   "Anything else I should know about the Earthen?"
+#define GOSSIP_SELECT_KEEPER6   "I think I understand the Creators' design intent for the Earthen now. What are the Earthen's anomalies that you spoke of earlier?"
+#define GOSSIP_SELECT_KEEPER7   "What high-stress environments would cause the Earthen to destabilize?"
+#define GOSSIP_SELECT_KEEPER8   "What happens when the Earthen destabilize?"
+#define GOSSIP_SELECT_KEEPER9   "Troggs?! Are the troggs you mention the same as the ones in the world today?"
+#define GOSSIP_SELECT_KEEPER10  "You mentioned two results when the Earthen destabilize. What is the second?"
+#define GOSSIP_SELECT_KEEPER11  "Dwarves!!! Now you're telling me that dwarves originally came from the Earthen?!"
+#define GOSSIP_SELECT_KEEPER12  "These dwarves are the same ones today, yes? Do the dwarves maintain any other links to the Earthen?"
+#define GOSSIP_SELECT_KEEPER13  "Who are the Creators?"
+#define GOSSIP_SELECT_KEEPER14  "This is a lot to think about."
+#define GOSSIP_SELECT_KEEPER15  "I will access the discs now."
 
-    player->SEND_GOSSIP_MENU(1079, pCreature->GetGUID());
+bool GossipHello_npc_lore_keeper_of_norgannon(Player* pPlayer, Creature* pCreature)
+{
+    if (pPlayer->GetQuestStatus(2278) == QUEST_STATUS_INCOMPLETE)
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HELLO_KEEPER, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+
+    pPlayer->SEND_GOSSIP_MENU(1079, pCreature->GetGUID());
 
     return true;
 }
 
-bool GossipSelect_npc_lore_keeper_of_norgannon(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_lore_keeper_of_norgannon(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    switch (action)
+    switch (uiAction)
     {
         case GOSSIP_ACTION_INFO_DEF+1:
-            player->ADD_GOSSIP_ITEM(0, "What is a \"subterranean being matrix\"?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            player->SEND_GOSSIP_MENU(1080, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_KEEPER1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+            pPlayer->SEND_GOSSIP_MENU(1080, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
-            player->ADD_GOSSIP_ITEM(0, "What are the anomalies you speak of?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-            player->SEND_GOSSIP_MENU(1081, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_KEEPER2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
+            pPlayer->SEND_GOSSIP_MENU(1081, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+3:
-            player->ADD_GOSSIP_ITEM(0, "What is a resilient foundation of construction?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
-            player->SEND_GOSSIP_MENU(1082, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_KEEPER3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
+            pPlayer->SEND_GOSSIP_MENU(1082, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+4:
-            player->ADD_GOSSIP_ITEM(0, "So... the Earthen were made out of stone?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
-            player->SEND_GOSSIP_MENU(1083, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_KEEPER4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
+            pPlayer->SEND_GOSSIP_MENU(1083, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+5:
-            player->ADD_GOSSIP_ITEM(0, "Anything else I should know about the Earthen?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
-            player->SEND_GOSSIP_MENU(1084, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_KEEPER5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
+            pPlayer->SEND_GOSSIP_MENU(1084, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+6:
-            player->ADD_GOSSIP_ITEM(0, "I think I understand the Creators' design intent for the Earthen now. What are the Earthen's anomalies that you spoke of earlier?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+7);
-            player->SEND_GOSSIP_MENU(1085, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_KEEPER6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+7);
+            pPlayer->SEND_GOSSIP_MENU(1085, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+7:
-            player->ADD_GOSSIP_ITEM(0, "What high-stress environments would cause the Earthen to destabilize?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+8);
-            player->SEND_GOSSIP_MENU(1086, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_KEEPER7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+8);
+            pPlayer->SEND_GOSSIP_MENU(1086, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+8:
-            player->ADD_GOSSIP_ITEM(0, "What happens when the Earthen destabilize?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+9);
-            player->SEND_GOSSIP_MENU(1087, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_KEEPER8, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+9);
+            pPlayer->SEND_GOSSIP_MENU(1087, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+9:
-            player->ADD_GOSSIP_ITEM(0, "Troggs?! Are the troggs you mention the same as the ones in the world today?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+10);
-            player->SEND_GOSSIP_MENU(1088, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_KEEPER9, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+10);
+            pPlayer->SEND_GOSSIP_MENU(1088, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+10:
-            player->ADD_GOSSIP_ITEM(0, "You mentioned two results when the Earthen destabilize. What is the second?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+11);
-            player->SEND_GOSSIP_MENU(1089, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_KEEPER10, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+11);
+            pPlayer->SEND_GOSSIP_MENU(1089, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+11:
-            player->ADD_GOSSIP_ITEM(0, "Dwarves!!! Now you're telling me that dwarves originally came from the Earthen?!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+12);
-            player->SEND_GOSSIP_MENU(1090, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_KEEPER11, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+12);
+            pPlayer->SEND_GOSSIP_MENU(1090, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+12:
-            player->ADD_GOSSIP_ITEM(0, "These dwarves are the same ones today, yes? Do the dwarves maintain any other links to the Earthen?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+13);
-            player->SEND_GOSSIP_MENU(1091, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_KEEPER12, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+13);
+            pPlayer->SEND_GOSSIP_MENU(1091, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+13:
-            player->ADD_GOSSIP_ITEM(0, "Who are the Creators?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+14);
-            player->SEND_GOSSIP_MENU(1092, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_KEEPER13, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+14);
+            pPlayer->SEND_GOSSIP_MENU(1092, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+14:
-            player->ADD_GOSSIP_ITEM(0, "This is a lot to think about.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+15);
-            player->SEND_GOSSIP_MENU(1093, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_KEEPER14, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+15);
+            pPlayer->SEND_GOSSIP_MENU(1093, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+15:
-            player->ADD_GOSSIP_ITEM(0, "I will access the discs now.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+16);
-            player->SEND_GOSSIP_MENU(1094, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SELECT_KEEPER15, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+16);
+            pPlayer->SEND_GOSSIP_MENU(1094, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+16:
-            player->CLOSE_GOSSIP_MENU();
-            player->AreaExploredOrEventHappens(2278);
+            pPlayer->CLOSE_GOSSIP_MENU();
+            pPlayer->AreaExploredOrEventHappens(2278);
             break;
     }
     return true;
 }
-
 
 /*######
 ## go_keystone_chamber
@@ -207,8 +221,6 @@ bool AT_map_chamber(Player *pPlayer, const AreaTriggerEntry *at)
 
     return true;
 }
-
-
 
 void AddSC_uldaman()
 {

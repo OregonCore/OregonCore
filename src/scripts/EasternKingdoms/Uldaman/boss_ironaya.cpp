@@ -23,12 +23,11 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define SPELL_ARCINGSMASH           39144
-#define SPELL_KNOCKAWAY             22893
-#define SPELL_WSTOMP                16727
+#define SAY_AGGRO                   -1070000
 
-#define SAY_AGGRO           "None may steal the secrets of the makers!"
-#define SOUND_AGGRO         5851
+#define SPELL_ARCINGSMASH           8374
+#define SPELL_KNOCKAWAY             10101
+#define SPELL_WSTOMP                11876
 
 struct boss_ironayaAI : public ScriptedAI
 {
@@ -45,10 +44,9 @@ struct boss_ironayaAI : public ScriptedAI
         hasCastedWstomp = false;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
-        DoYell(SAY_AGGRO,LANG_UNIVERSAL,NULL);
-        DoPlaySoundToSet(me,SOUND_AGGRO);
+        DoScriptText(SAY_AGGRO, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -60,16 +58,16 @@ struct boss_ironayaAI : public ScriptedAI
         //If we are <50% hp do knockaway ONCE
         if (!hasCastedKnockaway && me->GetHealth()*2 < me->GetMaxHealth())
         {
-            me->CastSpell(me->getVictim(),SPELL_KNOCKAWAY, true);
+            DoCast(me->getVictim(), SPELL_KNOCKAWAY, true);
 
             // current aggro target is knocked away pick new target
-            Unit *pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
+            Unit* Target = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
 
-            if (!pTarget || pTarget == me->getVictim())
-                pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
+            if (!Target || Target == me->getVictim())
+                Target = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
 
-            if (pTarget)
-                me->TauntApply(pTarget);
+            if (Target)
+                me->TauntApply(Target);
 
             //Shouldn't cast this agian
             hasCastedKnockaway = true;
@@ -78,13 +76,13 @@ struct boss_ironayaAI : public ScriptedAI
         //Arcing_Timer
         if (Arcing_Timer <= diff)
         {
-            DoCast(me,SPELL_ARCINGSMASH);
+            DoCast(me, SPELL_ARCINGSMASH);
             Arcing_Timer = 13000;
         } else Arcing_Timer -= diff;
 
         if (!hasCastedWstomp && me->GetHealth()*4 < me->GetMaxHealth())
         {
-            DoCast(me,SPELL_WSTOMP);
+            DoCast(me, SPELL_WSTOMP);
             hasCastedWstomp = true;
         }
 

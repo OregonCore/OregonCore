@@ -622,6 +622,8 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 (-1048004,'Speak with me to hear my tale',0,0,0,0,'');
 
 -- -1 070 000 ULDAMAN
+INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`emote`,`comment`) VALUES
+(-1070000,'None may steal the secrets of the makers!',5851,1,0,0,'ironaya SAY_AGGRO');
 
 -- -1 090 000 GNOMEREGAN
 
