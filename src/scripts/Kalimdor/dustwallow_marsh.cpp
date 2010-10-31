@@ -970,6 +970,124 @@ bool AreaTrigger_at_nats_landing(Player* pPlayer, const AreaTriggerEntry* pAt)
     return true;
 }
 
+/*#####
+## npc_stinky
+#####*/
+
+enum eStinky
+{
+    QUEST_STINKYS_ESCAPE_H                       = 1270,
+    QUEST_STINKYS_ESCAPE_A                       = 1222,
+    SAY_QUEST_ACCEPTED                           = -1000612,
+    SAY_STAY_1                                   = -1000613,
+    SAY_STAY_2                                   = -1000614,
+    SAY_STAY_3                                   = -1000615,
+    SAY_STAY_4                                   = -1000616,
+    SAY_STAY_5                                   = -1000617,
+    SAY_STAY_6                                   = -1000618,
+    SAY_QUEST_COMPLETE                           = -1000619,
+    SAY_ATTACKED_1                               = -1000620,
+    EMOTE_DISAPPEAR                              = -1000621
+};
+
+struct npc_stinkyAI : public npc_escortAI
+{
+    npc_stinkyAI(Creature* pCreature) : npc_escortAI(pCreature) { }
+
+    void WaypointReached(uint32 i)
+    {
+        Player* pPlayer = GetPlayerForEscort();
+        if (!pPlayer)
+            return;
+
+        switch (i)
+        {
+        case 7:
+            DoScriptText(SAY_STAY_1, me, pPlayer);
+            break;
+        case 11:
+            DoScriptText(SAY_STAY_2, me, pPlayer);
+            break;
+        case 25:
+            DoScriptText(SAY_STAY_3, me, pPlayer);
+            break;
+        case 26:
+            DoScriptText(SAY_STAY_4, me, pPlayer);
+            break;
+        case 27:
+            DoScriptText(SAY_STAY_5, me, pPlayer);
+            break;
+        case 28:
+            DoScriptText(SAY_STAY_6, me, pPlayer);
+            me->SetStandState(UNIT_STAND_STATE_KNEEL);
+            break;
+        case 29:
+            me->SetStandState(UNIT_STAND_STATE_STAND);
+            break;
+        case 37:
+            DoScriptText(SAY_QUEST_COMPLETE, me, pPlayer);
+            SetRun();
+            if (pPlayer && pPlayer->GetQuestStatus(QUEST_STINKYS_ESCAPE_H))
+                pPlayer->GroupEventHappens(QUEST_STINKYS_ESCAPE_H, me);
+            if (pPlayer && pPlayer->GetQuestStatus(QUEST_STINKYS_ESCAPE_A))
+                pPlayer->GroupEventHappens(QUEST_STINKYS_ESCAPE_A, me);
+            break;
+        case 39:
+            DoScriptText(EMOTE_DISAPPEAR, me);
+            break;
+        }
+    }
+
+    void EnterCombat(Unit* pWho)
+    {
+        DoScriptText(SAY_ATTACKED_1, me, pWho);
+    }
+
+    void Reset() {}
+
+    void JustDied(Unit* /*pKiller*/)
+    {
+        Player* pPlayer = GetPlayerForEscort();
+
+        if (HasEscortState(STATE_ESCORT_ESCORTING) && pPlayer)
+        {
+            if (pPlayer->GetQuestStatus(QUEST_STINKYS_ESCAPE_H))
+                pPlayer->FailQuest(QUEST_STINKYS_ESCAPE_H);
+            if (pPlayer->GetQuestStatus(QUEST_STINKYS_ESCAPE_A))
+                pPlayer->FailQuest(QUEST_STINKYS_ESCAPE_A);
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        npc_escortAI::UpdateAI(uiDiff);
+
+            if (!UpdateVictim())
+            return;
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_stinky(Creature* pCreature)
+{
+    return new npc_stinkyAI(pCreature);
+}
+
+bool QuestAccept_npc_stinky(Player* pPlayer, Creature* pCreature, Quest const *quest)
+{
+    if (quest->GetQuestId() == QUEST_STINKYS_ESCAPE_H || QUEST_STINKYS_ESCAPE_A)
+    {
+        if (npc_stinkyAI* pEscortAI = CAST_AI(npc_stinkyAI, pCreature->AI()))
+        {
+            pCreature->setFaction(FACTION_ESCORT_N_NEUTRAL_ACTIVE);
+            pCreature->SetStandState(UNIT_STAND_STATE_STAND);
+            DoScriptText(SAY_QUEST_ACCEPTED, pCreature);
+            pEscortAI->Start(false, false, pPlayer->GetGUID());
+        }
+    }
+    return true;
+}
 
 void AddSC_dustwallow_marsh()
 {
@@ -1035,6 +1153,12 @@ void AddSC_dustwallow_marsh()
     newscript = new Script;
     newscript->Name = "at_nats_landing";
     newscript->pAreaTrigger = &AreaTrigger_at_nats_landing;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_stinky";
+    newscript->GetAI = &GetAI_npc_stinky;
+    newscript->pQuestAccept = &QuestAccept_npc_stinky;
     newscript->RegisterSelf();
 }
 

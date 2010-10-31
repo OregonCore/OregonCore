@@ -555,8 +555,19 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 (-1000608,'We made it! Thanks again! I\'m going to run ahead!',0,0,0,0,'melizza say SAY_COMPLETE'),
 (-1000609,'Hey Hornizz! I\'m back! And there are some people behind me who helped me out of a jam.',0,0,0,0,'melizza say SAY_POST_EVENT_1'),
 (-1000610,'We\'re going to have to scratch the Maraudines off our list. Too hard to work with...',0,0,0,0,'melizza say SAY_POST_EVENT_2'),
-(-1000611,'Well, I\'m off to the Gelkis. They\'re not as dumb as the Maraudines, but they\'re more reasonable.',0,0,0,0,'melizza say SAY_POST_EVENT_3');
+(-1000611,'Well, I\'m off to the Gelkis. They\'re not as dumb as the Maraudines, but they\'re more reasonable.',0,0,0,0,'melizza say SAY_POST_EVENT_3'),
 
+(-1000612,'Ok, let''s get started.',0,0,0,0,'stinky - quest accepted'),
+(-1000613,'Now let''s look for the herb.', 0,0,0,0,'stinky - say1'),
+(-1000614,'Nope, not here...',0,0,0,0,'stinky - say2'),
+(-1000615,'There must be one around here somewhere...', 0,0,0,0,'stinky - say3'),
+(-1000616,'Ah, there''s one! ',0,0,0,0,'stinky - say4'),
+(-1000617,'Come, $N!  Let''s go over there and collect it!',0,0,0,0,'stinky - say5'),
+(-1000618,'Ok, now let''s get out of here! ',0,0,0,0,'stinky - say6'),
+(-1000619,'I can make it from here.  Thanks, $N!  And talk to my employer about a reward!',0,0,0,0,'stinky - quest complete'),
+(-1000620,'Help! The beast is on me!',0,0,0,0,'stinky - aggro'),
+(-1000621,'%s disappears back into the swamp.',0,2,0,0,'stinky - emote disapper');
+ 
 -- -1 033 000 SHADOWFANG KEEP
 INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`emote`,`comment`) VALUES
 (-1033000,'Follow me and I\'ll open the courtyard door for you.',0,0,7,1,'prisoner ashcrombe SAY_FREE_AS'),

@@ -458,6 +458,7 @@ UPDATE `creature_template` SET `ScriptName`='npc_ogron' WHERE `entry`='4983';
 UPDATE `creature_template` SET `ScriptName`='npc_morokk' WHERE `entry`='4500';
 UPDATE `creature_template` SET `ScriptName`='npc_zelfrax' WHERE `entry`=23864;
 UPDATE `creature_template` SET `ScriptName`='npc_cassa_crimsonwing' WHERE `entry`=23704;
+UPDATE `creature_template` SET `ScriptName`='npc_stinky' WHERE `entry`=4880;
 
 /* EASTERN PLAGUELANDS */
 UPDATE `creature_template` SET `ScriptName`='mobs_ghoul_flayer' WHERE `entry` IN (8530,8531,8532);
