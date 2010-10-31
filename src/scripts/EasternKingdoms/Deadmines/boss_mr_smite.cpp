@@ -132,23 +132,24 @@ struct boss_mr_smiteAI : public ScriptedAI
         } else uiNimbleReflexesTimer -= uiDiff;
     /*END ACID-AI*/
 
-        if (uiHealth == 0 && me->GetHealth()*100 / me->GetMaxHealth() <= 66 || uiHealth == 1 && me->GetHealth()*100 / me->GetMaxHealth() <= 33)
+        if ((uiHealth == 0 && me->GetHealth()*100 / me->GetMaxHealth() <= 66) || (uiHealth == 1 && me->GetHealth()*100 / me->GetMaxHealth() <= 33))
         {
-            if (uiHealth == 0 && me->GetHealth()*100 / me->GetMaxHealth() <= 66)
+            DoCastAOE(SPELL_SMITE_STOMP, false);
+            if (uiHealth == 0)
                 DoScriptText(SAY_PHASE_1, me);
             else
                 DoScriptText(SAY_PHASE_2, me);
 
             ++uiHealth;
-            DoCastAOE(SPELL_SMITE_STOMP,false);
-            SetCombatMovement(false);
             if (pInstance)
                 if (GameObject* pGo = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_SMITE_CHEST)))
                 {
+                    SetCombatMovement(false);
                     me->GetMotionMaster()->Clear();
                     me->AttackStop();
                     me->SetReactState(REACT_PASSIVE);
-                    me->GetMotionMaster()->MovePoint(1,1.37994,-780.29,9.81929);
+                    uiPhase = 1;
+                    uiTimer = 2500;
                 }
         }
 
@@ -156,32 +157,43 @@ struct boss_mr_smiteAI : public ScriptedAI
         {
             if (uiTimer <= uiDiff)
             {
-                switch(uiPhase)
+                switch (uiPhase)
                 {
                     case 1:
-                        me->SetStandState(UNIT_STAND_STATE_KNEEL);
-                        uiTimer = 1000;
+                        me->GetMotionMaster()->MovePoint(1,1.37994,-780.29,9.81929);
                         uiPhase = 2;
                         break;
-                    case 2:
+                    case 3:
+                        me->SetStandState(UNIT_STAND_STATE_KNEEL);
+                        uiTimer = 2000;
+                        uiPhase = 4;
+                        break;
+                    case 4:
                         if (uiHealth == 1)
                         {
                             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, EQUIP_AXE);
-                            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, AXE_EQUIP_INFO);
                             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, EQUIP_AXE);
-                            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO+2, AXE_EQUIP_INFO);
                         }
                         else
                         {
                             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, EQUIP_MACE);
-                            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, MACE_EQUIP_INFO);
                             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, 0);
+                        }
+                        me->SetStandState(UNIT_STAND_STATE_STAND);
+                        uiTimer = 1000;
+                        uiPhase = 5;
+                        break;
+                    case 5:
+                        if (uiHealth == 1)
+                        {
+                            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, AXE_EQUIP_INFO);
+                            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO+2, AXE_EQUIP_INFO);
+                        }
+                        else
+                        {
+                            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, MACE_EQUIP_INFO);
                             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO+2, 0);
                         }
-                        uiTimer = 500;
-                        uiPhase = 3;
-                        break;
-                    case 3:
                         SetCombatMovement(true);
                         me->AI()->AttackStart(me->getVictim());
                         me->SetReactState(REACT_AGGRESSIVE);
@@ -202,8 +214,8 @@ struct boss_mr_smiteAI : public ScriptedAI
         if (uiType != POINT_MOTION_TYPE)
             return;
 
-        uiTimer = 1500;
-        uiPhase = 1;
+        uiTimer = 500;
+        uiPhase = 3;
 
         if (GameObject* pGo = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_SMITE_CHEST)))
             me->SetFacingToObject(pGo);
