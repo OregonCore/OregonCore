@@ -218,6 +218,142 @@ bool QuestAccept_npc_dalinda(Player* pPlayer, Creature* pCreature, Quest const* 
     return true;
 }
 
+/*#######
+## npc_melizza_brimbuzzle
+#######*/
+
+enum
+{
+    SAY_START                   = -1000607,
+    SAY_COMPLETE                = -1000608,
+    SAY_POST_EVENT_1            = -1000609,
+    SAY_POST_EVENT_2            = -1000610,
+    SAY_POST_EVENT_3            = -1000611,
+
+    NPC_MARAUDINE_BONEPAW       = 4660,
+    NPC_MARAUDINE_SCOUT         = 4654,
+
+    GO_MELIZZAS_CAGE            = 177706,
+    QUEST_GET_ME_OUT_OF_HERE    = 6132
+};
+
+static float m_afAmbushSpawn[4][3]=
+{
+    {-1388.37f, 2427.81f, 88.8286f},
+    {-1388.78f, 2431.85f, 88.7838f},
+    {-1386.95f, 2429.76f, 88.8444f},
+    {-1389.99f, 2429.93f, 88.7692f} 
+};
+
+struct npc_melizza_brimbuzzleAI : public npc_escortAI
+{
+    npc_melizza_brimbuzzleAI(Creature* pCreature) : npc_escortAI(pCreature) { }
+
+    uint32 m_uiPostEventCount;
+    uint64 m_uiPostEventTimer;
+        
+    void Reset()
+    {
+        m_uiPostEventCount = 0;
+        m_uiPostEventTimer = 0;
+    }
+
+    void WaypointReached(uint32 uiPointId)
+    {
+        if (Player* pPlayer = GetPlayerForEscort())
+        {
+            switch (uiPointId)
+            {
+            case 1:
+                me->setFaction(113);
+                DoScriptText(SAY_START, me, pPlayer);
+                break;
+            case 7:
+                 me->SummonCreature(NPC_MARAUDINE_SCOUT, m_afAmbushSpawn[0][0], m_afAmbushSpawn[0][1], m_afAmbushSpawn[0][2], 1.6f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
+                 me->SummonCreature(NPC_MARAUDINE_SCOUT, m_afAmbushSpawn[1][0], m_afAmbushSpawn[1][1], m_afAmbushSpawn[1][2], 1.6f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
+                 me->SummonCreature(NPC_MARAUDINE_SCOUT, m_afAmbushSpawn[2][0], m_afAmbushSpawn[2][1], m_afAmbushSpawn[2][2], 1.6f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
+                 me->SummonCreature(NPC_MARAUDINE_BONEPAW, m_afAmbushSpawn[3][0], m_afAmbushSpawn[3][1], m_afAmbushSpawn[3][2], 1.6f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
+                 break;
+            case 10:
+                DoScriptText(SAY_COMPLETE, me);
+                me->RestoreFaction();
+                SetRun();
+                pPlayer->GroupEventHappens(QUEST_GET_ME_OUT_OF_HERE, me);
+                break;
+            case 15:
+                m_uiPostEventCount = 1;
+                break;
+
+            }
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {        
+        npc_escortAI::UpdateAI(uiDiff);
+
+        if (!UpdateVictim())
+        {
+            if (m_uiPostEventCount && HasEscortState(STATE_ESCORT_ESCORTING))
+            {
+                if (m_uiPostEventTimer <= uiDiff)
+                {
+                    m_uiPostEventTimer = 3000;
+
+                    if (Unit* pPlayer = GetPlayerForEscort())
+                    {
+                        switch(m_uiPostEventCount)
+                        {
+                            case 1:
+                                DoScriptText(SAY_POST_EVENT_1, me);
+                                ++m_uiPostEventCount;
+                                break;
+                            case 2:
+                                DoScriptText(SAY_POST_EVENT_2, me);
+                                ++m_uiPostEventCount;
+                                break;
+                            case 3:
+                                DoScriptText(SAY_POST_EVENT_3, me);
+                                m_uiPostEventCount = 0;
+                                me->ForcedDespawn(60000);
+                                break;
+                        }
+                    }
+                }
+                else
+                    m_uiPostEventTimer -= uiDiff;
+            }
+
+            return;
+        }
+
+        DoMeleeAttackIfReady();
+    }
+
+    void JustSummoned(Creature* pSummoned)
+    {
+        pSummoned->AI()->AttackStart(me);
+    }
+};
+
+CreatureAI* GetAI_npc_melizza_brimbuzzle(Creature* pCreature)
+{
+    return new npc_melizza_brimbuzzleAI(pCreature);
+}
+
+bool QuestAccept_npc_melizza_brimbuzzle(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
+{
+    if (pQuest->GetQuestId() == QUEST_GET_ME_OUT_OF_HERE)
+    {
+        if (GameObject* pGo = pCreature->FindNearestGameObject(GO_MELIZZAS_CAGE, INTERACTION_DISTANCE))
+            pGo->UseDoorOrButton();
+
+        if (npc_melizza_brimbuzzleAI* pEscortAI = CAST_AI(npc_melizza_brimbuzzleAI, pCreature->AI()))
+            pEscortAI->Start(false, false, pPlayer->GetGUID(), pQuest);
+    }
+    return true;
+}
+
 void AddSC_desolace()
 {
     Script *newscript;
@@ -235,4 +371,9 @@ void AddSC_desolace()
     newscript->pQuestAccept = &QuestAccept_npc_dalinda;
     newscript->RegisterSelf();
 
+    newscript = new Script;
+    newscript->Name = "npc_melizza_brimbuzzle";
+    newscript->GetAI = &GetAI_npc_melizza_brimbuzzle;
+    newscript->pQuestAccept = &QuestAccept_npc_melizza_brimbuzzle;
+    newscript->RegisterSelf();
 }

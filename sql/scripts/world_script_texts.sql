@@ -549,7 +549,13 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 (-1000604,'[Fulborg] Those remaining at Stillpine Hold will welcome you as a hero!',0,0,0,0,'Stillpine Capitive free say text 3'),
 
 (-1000605,'This land was mine long before your wretched kind set foot here.',0,1,0,0,'SAY_ZELFRAX'),
-(-1000606,'All who venture here belong to me, including you!',0,1,0,0,'SAY_ZELFRAX_2');
+(-1000606,'All who venture here belong to me, including you!',0,1,0,0,'SAY_ZELFRAX_2'),
+
+(-1000607,'Thanks $N. Now let\'s get out of here',0,0,0,0,'melizza say SAY_START'),
+(-1000608,'We made it! Thanks again! I\'m going to run ahead!',0,0,0,0,'melizza say SAY_COMPLETE'),
+(-1000609,'Hey Hornizz! I\'m back! And there are some people behind me who helped me out of a jam.',0,0,0,0,'melizza say SAY_POST_EVENT_1'),
+(-1000610,'We\'re going to have to scratch the Maraudines off our list. Too hard to work with...',0,0,0,0,'melizza say SAY_POST_EVENT_2'),
+(-1000611,'Well, I\'m off to the Gelkis. They\'re not as dumb as the Maraudines, but they\'re more reasonable.',0,0,0,0,'melizza say SAY_POST_EVENT_3');
 
 -- -1 033 000 SHADOWFANG KEEP
 INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`emote`,`comment`) VALUES

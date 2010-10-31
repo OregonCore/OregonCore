@@ -430,6 +430,7 @@ UPDATE `creature_template` SET `ScriptName`='npc_aged_dying_ancient_kodo' WHERE 
 UPDATE `creature_template` SET `ScriptName`='npc_aged_dying_ancient_kodo' WHERE `entry`='4701';
 UPDATE `creature_template` SET `ScriptName`='npc_aged_dying_ancient_kodo' WHERE `entry`='4702';
 UPDATE `creature_template` SET `ScriptName`='npc_aged_dying_ancient_kodo' WHERE `entry`='11627';
+UPDATE `creature_template` SET `ScriptName`='npc_melizza_brimbuzzle' WHERE `entry`='12277';
 
 /* DIRE MAUL */
 
