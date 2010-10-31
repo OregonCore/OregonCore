@@ -99,14 +99,14 @@ struct instance_uldaman : public ScriptedInstance
                 altarOfTheKeeperTempleDoor = pGo->GetGUID();
 
                 if (Encounters[0] == DONE)
-                    HandleGameObject(NULL,true,go);
+                    HandleGameObject(NULL,true,pGo);
                 break;
 
             case ARCHAEDAS_TEMPLE_DOOR:
                 archaedasTempleDoor = pGo->GetGUID();
 
                 if (Encounters[0] == DONE)
-                    HandleGameObject(NULL,true,go);
+                    HandleGameObject(NULL,true,pGo);
                 break;
 
             case ANCIENT_VAULT_DOOR:
@@ -119,7 +119,7 @@ struct instance_uldaman : public ScriptedInstance
                 break;
 
             case IRONAYA_SEAL_DOOR:
-                ironayaSealDoor = go->GetGUID();
+                ironayaSealDoor = pGo->GetGUID();
 
                 if (Encounters[2] == DONE)
                     HandleGameObject(NULL,true,pGo);
@@ -129,8 +129,8 @@ struct instance_uldaman : public ScriptedInstance
                 keystoneGUID = pGo->GetGUID();
                 if (Encounters[2] == DONE)
                 {
-                    HandleGameObject(NULL,true,go);
-                    go->SetUInt32Value(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
+                    HandleGameObject(NULL,true,pGo);
+                    pGo->SetUInt32Value(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
                 }
                 break;
         }
@@ -411,7 +411,7 @@ struct instance_uldaman : public ScriptedInstance
                 ironayaGUID = pCreature->GetGUID();
 
                 if (Encounters[2] != DONE)
-                    SetFrozenState (creature);
+                    SetFrozenState(pCreature);
                 break;
 
             case 10120:   // Vault Walker
