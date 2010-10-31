@@ -614,6 +614,12 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 (-1047010,'Many thanks for your help.',0,0,0,0,'Willix');
 
 -- -1 048 000 BLACKFATHOM DEEPS
+INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`emote`,`comment`) VALUES
+(-1048000,'Just...Dust...',5803,1,0,0,''),
+(-1048001,'Sleep...',5804,1,0,0,''),
+(-1048002,'Who dares disturb my meditation!',5805,1,0,0,''),
+(-1048003,'Aku''mai is dead! At last, I can leave this wretched place.',0,1,0,0,''),
+(-1048004,'Speak with me to hear my tale',0,0,0,0,'');
 
 -- -1 070 000 ULDAMAN
 
