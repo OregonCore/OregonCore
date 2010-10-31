@@ -716,9 +716,15 @@ UPDATE `creature_template` SET `ScriptName`='npc_thrall_warchief' WHERE `entry`=
 
 /* RAZORFEN DOWNS */
 UPDATE `creature_template` SET `ScriptName`='boss_amnennar_the_coldbringer' WHERE `entry`=7358;
+UPDATE `creature_template` SET `ScriptName`='npc_henry_stern' WHERE `entry`=8696;
+UPDATE `creature_template` SET `ScriptName`='npc_tomb_creature' WHERE `entry` IN (7351,7349);
+UPDATE `instance_template` SET `script`='instance_razorfen_downs' WHERE `map`=129;
+UPDATE `gameobject_template` SET `ScriptName`='go_gong' WHERE `entry`=148917;
 
 /* RAZORFEN KRAUL */
 UPDATE `creature_template` SET `Scriptname`='npc_willix' WHERE `entry`=4508;
+UPDATE `instance_template` SET `script`='instance_razorfen_kraul' WHERE `map`=47;
+UPDATE `creature_template` SET `ScriptName`='npc_deaths_head_ward_keeper' WHERE `entry`=4625;
 
 /* REDRIDGE MOUNTAINS */
 UPDATE `creature_template` SET `ScriptName`='npc_corporal_keeshan' WHERE `entry`=349;
@@ -1031,7 +1037,7 @@ UPDATE `creature_template` SET `ScriptName`='npc_highborne_lamenter' WHERE `entr
 UPDATE `creature_template` SET `ScriptName`='npc_parqual_fintallas' WHERE `entry`=4488;
 
 /* WAILING CAVERNS */
-UPDATE `creature_template` SET `ScriptName`='npc_disciple_of_naralex' WHERE `entry`=3678;
+UPDATE `creature_template` SET `ScriptName`='npc_disciple_of_naralex' WHERE entry=3678;
 UPDATE `instance_template` SET `script`='instance_wailing_caverns' WHERE map=43;
 
 /* WESTERN PLAGUELANDS */
@@ -1090,6 +1096,10 @@ UPDATE `creature_template` SET `ScriptName`='npc_zulaman_hostage' WHERE `entry` 
 /* ZUL'FARRAK */
 UPDATE `creature_template` SET `ScriptName`='npc_sergeant_bly' WHERE `entry`=7604;
 UPDATE `creature_template` SET `ScriptName`='npc_weegli_blastfuse' WHERE `entry`=7607;
+UPDATE `gameobject_template` SET `ScriptName`='go_shallow_grave' WHERE `entry` IN (128308,128403);
+INSERT IGNORE INTO `areatrigger_scripts` (`entry`,`ScriptName`) VALUES(962, 'at_zumrah');
+UPDATE `gameobject_template` SET `ScriptName`='go_table_theka' WHERE `entry`=142715;
+UPDATE `instance_template` SET `script`='instance_zulfarrak' WHERE `map`=209;
 
 /* ZUL'GURUB */
 UPDATE `instance_template` SET `script`='instance_zulgurub' WHERE `map`=309;

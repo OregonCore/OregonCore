@@ -240,6 +240,8 @@ void AddSC_boss_noxxion();
 void AddSC_boss_ptheradras();
 void AddSC_boss_onyxia();                    //Onyxia's Lair
 void AddSC_boss_amnennar_the_coldbringer();  //Razorfen Downs
+void AddSC_razorfen_downs();
+void AddSC_instance_razorfen_downs();
 void AddSC_razorfen_kraul();                 //Razorfen Kraul
 void AddSC_boss_kurinnaxx();                 //Ruins of ahn'qiraj
 void AddSC_boss_cthun();                     //Temple of ahn'qiraj
@@ -254,6 +256,8 @@ void AddSC_instance_temple_of_ahnqiraj();
 void AddSC_wailing_caverns();                //Wailing caverns
 void AddSC_instance_wailing_caverns();
 void AddSC_zulfarrak();                     //Zul'Farrak generic
+void AddSC_instance_zulfarrak();            //Zul'Farrak instance script
+
 void AddSC_ashenvale();
 void AddSC_azshara();
 void AddSC_azuremyst_isle();
@@ -593,6 +597,8 @@ void AddScripts()
     AddSC_boss_ptheradras();
     AddSC_boss_onyxia();                    //Onyxia's Lair
     AddSC_boss_amnennar_the_coldbringer();  //Razorfen Downs
+    AddSC_razorfen_downs();
+    AddSC_instance_razorfen_downs();
     AddSC_razorfen_kraul();                 //Razorfen Kraul
     AddSC_boss_kurinnaxx();                 //Ruins of ahn'qiraj
     AddSC_boss_cthun();                     //Temple of ahn'qiraj
@@ -607,6 +613,7 @@ void AddScripts()
     AddSC_wailing_caverns();                //Wailing caverns
     AddSC_instance_wailing_caverns();
     AddSC_zulfarrak();                      //Zul'Farrak generic
+    AddSC_instance_zulfarrak();             //Zul'Farrak instance script
 
     AddSC_ashenvale();
     AddSC_azshara();

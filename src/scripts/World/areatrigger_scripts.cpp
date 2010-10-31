@@ -22,8 +22,7 @@ SDCategory: Areatrigger
 EndScriptData */
 
 /* ContentData
-at_legion_teleporter    4560 Teleporter TO Invasion Point: Cataclysm
-at_test                 script test only
+at_legion_teleporter            4560 Teleporter TO Invasion Point: Cataclysm
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -32,22 +31,28 @@ EndContentData */
 ## at_legion_teleporter
 #####*/
 
-#define SPELL_TELE_A_TO   37387
-#define SPELL_TELE_H_TO   37389
-
-bool AreaTrigger_at_legion_teleporter(Player *player, const AreaTriggerEntry *at)
+enum eLegionTeleporter
 {
-    if (player->isAlive() && !player->isInCombat())
+    SPELL_TELE_A_TO         = 37387,
+    QUEST_GAINING_ACCESS_A  = 10589,
+
+    SPELL_TELE_H_TO         = 37389,
+    QUEST_GAINING_ACCESS_H  = 10604
+};
+
+bool AreaTrigger_at_legion_teleporter(Player *pPlayer, const AreaTriggerEntry * /*pAt*/)
+{
+    if (pPlayer->isAlive() && !pPlayer->isInCombat())
     {
-        if (player->GetTeam() == ALLIANCE && player->GetQuestRewardStatus(10589))
+        if (pPlayer->GetTeam() == ALLIANCE && pPlayer->GetQuestRewardStatus(QUEST_GAINING_ACCESS_A))
         {
-            player->CastSpell(player,SPELL_TELE_A_TO,false);
+            pPlayer->CastSpell(pPlayer, SPELL_TELE_A_TO, false);
             return true;
         }
 
-        if (player->GetTeam() == HORDE && player->GetQuestRewardStatus(10604))
+        if (pPlayer->GetTeam() == HORDE && pPlayer->GetQuestRewardStatus(QUEST_GAINING_ACCESS_H))
         {
-            player->CastSpell(player,SPELL_TELE_H_TO,false);
+            pPlayer->CastSpell(pPlayer, SPELL_TELE_H_TO, false);
             return true;
         }
 
@@ -56,26 +61,12 @@ bool AreaTrigger_at_legion_teleporter(Player *player, const AreaTriggerEntry *at
     return false;
 }
 
-bool ATtest(Player *player, AreaTriggerEntry *at)
-{
-    player->Say("Hi!",LANG_UNIVERSAL);
-    return true;
-}
-
 void AddSC_areatrigger_scripts()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "at_legion_teleporter";
     newscript->pAreaTrigger = &AreaTrigger_at_legion_teleporter;
     newscript->RegisterSelf();
-    /*
-    //Disabled to prevent "CRASH ALERT!"
-    newscript = new Script;
-    newscript->Name = "at_test";
-    newscript->pAreaTrigger = &ATtest;
-    newscript->RegisterSelf();
-    */
 }
-

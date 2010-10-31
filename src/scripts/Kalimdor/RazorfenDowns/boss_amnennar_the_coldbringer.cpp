@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,15 +23,16 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define SAY_0             "You'll never leave this place... alive."
-#define SAY_1             "Come, spirits, attend your master."
-#define SAY_SLAY          "Too...easy!"
-#define SOUND_AGGRO       5825
-#define SOUND_SLAY        5826
-#define SOUND_SUMMON      5829
+#define SAY_AGGRO               -1129000
+#define SAY_SUMMON60            -1129001
+#define SAY_SUMMON30            -1129002
+#define SAY_HP                  -1129003
+#define SAY_KILL                -1129004
 
-#define SPELL_AMNENNARSWRATH        13009
-#define SPELL_FROSTBOLT             10179
+#define SPELL_AMNENNARSWRATH    13009
+#define SPELL_FROSTBOLT         15530
+#define SPELL_FROST_NOVA        15531
+#define SPELL_FROST_SPECTRES    12642
 
 struct boss_amnennar_the_coldbringerAI : public ScriptedAI
 {
@@ -39,50 +40,29 @@ struct boss_amnennar_the_coldbringerAI : public ScriptedAI
 
     uint32 AmnenarsWrath_Timer;
     uint32 FrostBolt_Timer;
-    bool Spectrals;
-    int Rand;
-    int RandX;
-    int RandY;
-    Creature* Summoned;
+    uint32 FrostNova_Timer;
+    bool Spectrals60;
+    bool Spectrals30;
+    bool Hp;
 
     void Reset()
     {
         AmnenarsWrath_Timer = 8000;
         FrostBolt_Timer = 1000;
-        Spectrals = false;
+        FrostNova_Timer = 10000 + rand()%5000;
+        Spectrals30 = false;
+        Spectrals60 = false;
+        Hp = false;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
-        DoYell(SAY_0,LANG_UNIVERSAL,NULL);
-        DoPlaySoundToSet(me,SOUND_AGGRO);
+        DoScriptText(SAY_AGGRO, me);
     }
 
     void KilledUnit()
     {
-        DoYell(SAY_SLAY, LANG_UNIVERSAL, NULL);
-        DoPlaySoundToSet(me, SOUND_SLAY);
-    }
-
-    void SummonSpectrals(Unit* victim)
-    {
-        Rand = rand()%5;
-        switch (rand()%2)
-        {
-            case 0: RandX = 0 - Rand; break;
-            case 1: RandX = 0 + Rand; break;
-        }
-        Rand = 0;
-        Rand = rand()%5;
-        switch (rand()%2)
-        {
-            case 0: RandY = 0 - Rand; break;
-            case 1: RandY = 0 + Rand; break;
-        }
-        Rand = 0;
-        Summoned = DoSpawnCreature(8585, float(RandX), float(RandY), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
-        if (Summoned)
-            ((CreatureAI*)Summoned->AI())->AttackStart(victim);
+        DoScriptText(SAY_KILL, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -93,35 +73,41 @@ struct boss_amnennar_the_coldbringerAI : public ScriptedAI
         //AmnenarsWrath_Timer
         if (AmnenarsWrath_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_AMNENNARSWRATH);
+            DoCast(me->getVictim(), SPELL_AMNENNARSWRATH);
             AmnenarsWrath_Timer = 12000;
         } else AmnenarsWrath_Timer -= diff;
 
         //FrostBolt_Timer
         if (FrostBolt_Timer <= diff)
         {
-            Unit *pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (pTarget) DoCast(pTarget,SPELL_FROSTBOLT);
-
+            DoCast(me->getVictim(), SPELL_FROSTBOLT);
             FrostBolt_Timer = 8000;
         } else FrostBolt_Timer -= diff;
 
-        if (!Spectrals && me->GetHealth()*100 / me->GetMaxHealth() < 50)
+        if (FrostNova_Timer <= diff)
         {
-            DoYell(SAY_1, LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(me, SOUND_SUMMON);
+            DoCast(me, SPELL_FROST_NOVA);
+            FrostNova_Timer = 15000;
+        } else FrostNova_Timer -= diff;
 
-            Unit *pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+        if (!Spectrals60 && me->GetHealth()*100 / me->GetMaxHealth() < 60)
+        {
+            DoScriptText(SAY_SUMMON60, me);
+            DoCast(me->getVictim(), SPELL_FROST_SPECTRES);
+            Spectrals60 = true;
+        }
 
-            if (pTarget)
-            {
-                SummonSpectrals(pTarget);
-                SummonSpectrals(pTarget);
-                SummonSpectrals(pTarget);
-            }
-            Spectrals = true;
+        if (!Hp && me->GetHealth()*100 / me->GetMaxHealth() < 50)
+        {
+            DoScriptText(SAY_HP, me);
+            Hp = true;
+        }
+
+        if (!Spectrals30 && me->GetHealth()*100 / me->GetMaxHealth() < 30)
+        {
+            DoScriptText(SAY_SUMMON30, me);
+            DoCast(me->getVictim(), SPELL_FROST_SPECTRES);
+            Spectrals30 = true;
         }
 
         DoMeleeAttackIfReady();
