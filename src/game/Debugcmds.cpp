@@ -35,6 +35,7 @@
 #include "BattleGroundMgr.h"
 #include <fstream>
 #include "ObjectMgr.h"
+#include "InstanceData.h"
 
 bool ChatHandler::HandleDebugInArcCommand(const char* /*args*/)
 {
@@ -597,3 +598,55 @@ bool ChatHandler::HandleDebugHostilRefList(const char * /*args*/)
     return true;
 }
 
+bool ChatHandler::HandleSetInstanceDataCommand(const char *args)
+{
+    if (!args || !m_session->GetPlayer())
+        return false;
+
+    InstanceData *pInstance = m_session->GetPlayer()->GetInstanceData();
+    if (!pInstance)
+    if (!pInstance)
+    {
+    PSendSysMessage("You are not in scripted instance.");
+        SetSentErrorMessage(true);
+      return false;
+    }
+	
+    char *id = strtok((char*)args, " ");
+    char *data = strtok(NULL, " ");
+    char *trash = strtok(NULL, " ");
+	
+    if (!id || !data)
+        return false;
+
+    uint32 _id = uint32(atoi(id));
+    uint32 _data = uint32(atoi(data));
+
+    pInstance->SetData(_id, _data);
+    return true;
+}
+
+bool ChatHandler::HandleGetInstanceDataCommand(const char *args)
+{
+    if (!args || !m_session->GetPlayer())
+        return false;
+
+    InstanceData *pInstance = m_session->GetPlayer()->GetInstanceData();
+    if (!pInstance)
+    {
+        PSendSysMessage("You are not in scripted instance.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    char *id = strtok((char*)args, " ");
+    char *trash = strtok(NULL, " ");
+
+    if (!id)
+        return false;
+
+    uint32 _id = uint32(atoi(id));
+
+    PSendSysMessage("Result: %u", pInstance->GetData(_id));
+    return true;
+}
