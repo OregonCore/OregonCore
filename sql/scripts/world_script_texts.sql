@@ -566,7 +566,8 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 (-1000618,'Ok, now let''s get out of here! ',0,0,0,0,'stinky - say6'),
 (-1000619,'I can make it from here.  Thanks, $N!  And talk to my employer about a reward!',0,0,0,0,'stinky - quest complete'),
 (-1000620,'Help! The beast is on me!',0,0,0,0,'stinky - aggro'),
-(-1000621,'%s disappears back into the swamp.',0,2,0,0,'stinky - emote disapper');
+(-1000621,'%s disappears back into the swamp.',0,2,0,0,'stinky - emote disapper'),
+(-1000622,'Ow! OK, I''ll get back to work, $N!',0,0,0,1,'npc_lazy_peon - SAY_WP_0');
  
 -- -1 033 000 SHADOWFANG KEEP
 INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`emote`,`comment`) VALUES
