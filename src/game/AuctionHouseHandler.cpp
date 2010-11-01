@@ -229,6 +229,12 @@ void WorldSession::HandleAuctionSellItem(WorldPacket & recv_data)
         return;
     }
 
+    if (it->IsBag() && !((Bag*)it)->IsEmpty())
+    {
+        SendAuctionCommandResult(0, AUCTION_SELL_ITEM, AUCTION_INTERNAL_ERROR);
+        return;
+    }
+
     AuctionHouseObject* auctionHouse = auctionmgr.GetAuctionsMap(pCreature->getFaction());
 
     //we have to take deposit :
