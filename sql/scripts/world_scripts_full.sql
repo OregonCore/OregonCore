@@ -670,6 +670,7 @@ UPDATE `creature_template` SET `ScriptName`='mob_sunspring_villager' WHERE `entr
 UPDATE `creature_template` SET `ScriptName`='npc_altruis_the_sufferer' WHERE `entry`=18417;
 UPDATE `creature_template` SET `ScriptName`='npc_greatmother_geyah' WHERE `entry`=18141;
 UPDATE `creature_template` SET `ScriptName`='npc_lantresor_of_the_blade' WHERE `entry`=18261;
+UPDATE `creature_template` SET `ScriptName`='npc_maghar_captive' WHERE `entry`=18210;
 UPDATE `creature_template` SET `ScriptName`='npc_creditmarker_visit_with_ancestors' WHERE `entry` IN (18840,18841,18842,18843);
 UPDATE `creature_template` SET `ScriptName`='mob_sparrowhawk' WHERE `entry`=22979;
 
