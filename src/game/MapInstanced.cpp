@@ -40,9 +40,7 @@ void MapInstanced::InitVisibilityDistance()
         return;
     //initialize visibility distances for all instance copies
     for (InstancedMaps::iterator i = m_InstancedMaps.begin(); i != m_InstancedMaps.end(); ++i)
-    {
         (*i).second->InitVisibilityDistance();
-    }
 }
 
 void MapInstanced::Update(const uint32& t)
@@ -128,11 +126,13 @@ Map* MapInstanced::CreateInstance(const uint32 mapId, Player * player, uint32 in
 
     if (IsBattleGroundOrArena())
     {
-        assert(player->GetBattleGroundId());
-        return CreateBattleGround(player->GetBattleGroundId());
+        instanceId = player->GetBattleGroundId();
+        if (instanceId)
+            if (Map *map = _FindMap(instanceId))
+                return map;
+        return CreateBattleGround(instanceId);
     }
-
-    if (InstanceSave *pSave = player->GetInstanceSave(GetId()))
+    else if (InstanceSave *pSave = player->GetInstanceSave(GetId()))
     {
         if (!instanceId)
         {
