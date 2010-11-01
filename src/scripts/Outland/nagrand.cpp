@@ -579,18 +579,14 @@ struct npc_maghar_captiveAI : public npc_escortAI
 
                 if (Creature* pTemp = me->SummonCreature(NPC_MURK_PUTRIFIER, m_afAmbushB[0], m_afAmbushB[1], m_afAmbushB[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000))
                     DoScriptText(SAY_MAG_MORE_REPLY, pTemp);
-
                 me->SummonCreature(NPC_MURK_PUTRIFIER, m_afAmbushB[0]-2.5f, m_afAmbushB[1]-2.5f, m_afAmbushB[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
-
                 me->SummonCreature(NPC_MURK_SCAVENGER, m_afAmbushB[0]+2.5f, m_afAmbushB[1]+2.5f, m_afAmbushB[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
                 me->SummonCreature(NPC_MURK_SCAVENGER, m_afAmbushB[0]+2.5f, m_afAmbushB[1]-2.5f, m_afAmbushB[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
                 break;
             case 16:
                 DoScriptText(SAY_MAG_COMPLETE, me);
-
                 if (Player* pPlayer = GetPlayerForEscort())
                     pPlayer->GroupEventHappens(QUEST_TOTEM_KARDASH_H, me);
-
                 SetRun();
                 break;
         }
@@ -658,6 +654,12 @@ struct npc_maghar_captiveAI : public npc_escortAI
     }
 };
 
+
+CreatureAI* GetAI_npc_maghar_captive(Creature* pCreature)
+{
+    return new npc_maghar_captiveAI(pCreature);
+}
+
 bool QuestAccept_npc_maghar_captive(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
 {
     if (pQuest->GetQuestId() == QUEST_TOTEM_KARDASH_H)
@@ -679,10 +681,6 @@ bool QuestAccept_npc_maghar_captive(Player* pPlayer, Creature* pCreature, const 
     return true;
 }
 
-CreatureAI* GetAI_npc_maghar_captive(Creature* pCreature)
-{
-    return new npc_maghar_captiveAI(pCreature);
-}
 
 /*######
 ## npc_creditmarker_visist_with_ancestors
@@ -868,6 +866,7 @@ void AddSC_nagrand()
     newscript->pGossipSelect = &GossipSelect_npc_lantresor_of_the_blade;
     newscript->RegisterSelf();
 
+    newscript = new Script;	
     newscript->Name = "npc_maghar_captive";
     newscript->GetAI = &GetAI_npc_maghar_captive;
     newscript->pQuestAccept = &QuestAccept_npc_maghar_captive;
