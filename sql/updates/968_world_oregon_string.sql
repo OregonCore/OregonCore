@@ -1,0 +1,1 @@
+UPDATE oregon_string SET content_default = 'Your chat has been disabled by %s for %u minutes. Reason: %s.' WHERE oregon_string.entry=300;
