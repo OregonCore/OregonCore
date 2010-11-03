@@ -819,6 +819,10 @@ UPDATE `creature_template` SET `ScriptName`='npc_khadgar' WHERE `entry`=18166;
 UPDATE `creature_template` SET `ScriptName`='npcs_rutgar_and_frankal' WHERE `entry` IN (15170,15171);
 UPDATE `creature_template` SET `ScriptName`='npc_highlord_demitrian' WHERE `entry`=14347;
 UPDATE `gameobject_template` SET `ScriptName`='go_gauntlet_gate' WHERE `entry`=175357;
+UPDATE `creature_template` SET `ScriptName` = "mob_qiraj_war_spawn" WHERE `entry` IN (15414,15422,15423,15424);
+UPDATE `creature_template` SET `ScriptName` = "npc_anachronos_quest_trigger" WHERE `entry` = 15454;
+UPDATE `creature_template` SET `ScriptName` = "npc_anachronos_the_ancient" WHERE `entry` = 15381;
+UPDATE `gameobject_template` SET `ScriptName` = "go_crystalline_tear" WHERE `entry` = 180633;
 
 /* SILVERMOON */
 UPDATE `creature_template` SET `ScriptName`='npc_blood_knight_stillblade' WHERE `entry`=17768;
