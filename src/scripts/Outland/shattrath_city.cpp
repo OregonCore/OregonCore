@@ -399,12 +399,13 @@ struct npc_khadgars_servantAI : public npc_escortAI
 
         if (HasEscortState(STATE_ESCORT_PAUSED))
         {
+            Player* pPlayer = GetPlayerForEscort()
+            if (!pPlayer)
+                return;
+
             if (m_uiTalkTimer <= uiDiff)
             {
                 m_uiTalkTimer = 7500;
-
-                Player* pPlayer = GetPlayerForEscort();
-                    me->ForcedDespawn();
 
                 switch(m_uiPointId)
                 {
