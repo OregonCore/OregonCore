@@ -399,7 +399,7 @@ struct npc_khadgars_servantAI : public npc_escortAI
 
         if (HasEscortState(STATE_ESCORT_PAUSED))
         {
-            Player* pPlayer = GetPlayerForEscort()
+            Player* pPlayer = GetPlayerForEscort();
             if (!pPlayer)
                 return;
 
