@@ -295,44 +295,57 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         if (!Oregon::IsValidMapCoord(movementInfo.GetPos()->GetPositionX() + movementInfo.GetTransportPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY() + movementInfo.GetTransportPos()->GetPositionY(),
             movementInfo.GetPos()->GetPositionZ() + movementInfo.GetTransportPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation() + movementInfo.GetTransportPos()->GetOrientation()))
             return;
-
+                
         if ((GetPlayer()->m_anti_transportGUID == 0) && (movementInfo.t_guid != 0))
-
-        // if we boarded a transport, add us to it
-        if (!GetPlayer()->m_transport)
         {
-            float trans_rad = movementInfo.GetTransportPos()->GetPositionX()*movementInfo.GetTransportPos()->GetPositionX() + movementInfo.GetTransportPos()->GetPositionY()*movementInfo.GetTransportPos()->GetPositionY() + movementInfo.GetTransportPos()->GetPositionZ()*movementInfo.GetTransportPos()->GetPositionZ();
-            if (trans_rad > 3600.0f) // transport radius = 60 yards //cheater with on_transport_flag
+            // if we boarded a transport, add us to it
+            if (!GetPlayer()->m_transport)
             {
-                return;
-            }
-            // elevators also cause the client to send MOVEFLAG_ONTRANSPORT - just unmount if the guid can be found in the transport list
-            for (MapManager::TransportSet::iterator iter = MapManager::Instance().m_Transports.begin(); iter != MapManager::Instance().m_Transports.end(); ++iter)
-            {
-                if ((*iter)->GetGUID() == movementInfo.t_guid)
+                float trans_rad = movementInfo.GetTransportPos()->GetPositionX()*movementInfo.GetTransportPos()->GetPositionX() + movementInfo.GetTransportPos()->GetPositionY()*movementInfo.GetTransportPos()->GetPositionY() + movementInfo.GetTransportPos()->GetPositionZ()*movementInfo.GetTransportPos()->GetPositionZ();
+                if (trans_rad > 3600.0f) // transport radius = 60 yards //cheater with on_transport_flag
                 {
-                    // unmount before boarding
-                    _player->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
+                    return;
+                }
+                // elevators also cause the client to send MOVEFLAG_ONTRANSPORT - just unmount if the guid can be found in the transport list
+                for (MapManager::TransportSet::iterator iter = MapManager::Instance().m_Transports.begin(); iter != MapManager::Instance().m_Transports.end(); ++iter)
+                {
+                    if ((*iter)->GetGUID() == movementInfo.t_guid)
+                    {
+                        // unmount before boarding
+                        _player->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
 
-                    GetPlayer()->m_transport = (*iter);
-                    (*iter)->AddPassenger(GetPlayer());
-                    break;
+                        GetPlayer()->m_transport = (*iter);
+                        (*iter)->AddPassenger(GetPlayer());
+                        break;
+                    }
                 }
             }
-        }
 
-        //GetPlayer()->m_anti_transportGUID = GUID_LOPART(movementInfo.t_guid);
-        GameObject *obj = HashMapHolder<GameObject>::Find(movementInfo.t_guid);
-        if(obj)
-            GetPlayer()->m_anti_transportGUID = obj->GetDBTableGUIDLow();
-        else
-            GetPlayer()->m_anti_transportGUID = GUID_LOPART(movementInfo.t_guid);
+            //GetPlayer()->m_anti_transportGUID = GUID_LOPART(movementInfo.t_guid);
+            GameObject *obj = HashMapHolder<GameObject>::Find(movementInfo.t_guid);
+            if(obj)
+                GetPlayer()->m_anti_transportGUID = obj->GetDBTableGUIDLow();
+            else
+                GetPlayer()->m_anti_transportGUID = GUID_LOPART(movementInfo.t_guid);
+        
+            #ifdef MOVEMENT_ANTICHEAT_DEBUG
+            sLog.outBasic("On Transport %d", GetPlayer()->m_anti_transportGUID ? GetPlayer()->m_anti_transportGUID : 0);
+            #endif
+        }
     }
     else if (GetPlayer()->m_transport)                      // if we were on a transport, leave
     {
         GetPlayer()->m_transport->RemovePassenger(GetPlayer());
         GetPlayer()->m_transport = NULL;
+        GetPlayer()->m_anti_transportGUID = 0;
         movementInfo.ClearTransportData();
+    }
+    else if (GetPlayer()->m_anti_transportGUID != 0)
+    {
+        #ifdef MOVEMENT_ANTICHEAT_DEBUG
+        sLog.outBasic("No more Transport %d", GetPlayer()->m_anti_transportGUID ? GetPlayer()->m_anti_transportGUID : 0);
+        #endif
+        GetPlayer()->m_anti_transportGUID = 0;
     }
 
     // fall damage generation (ignore in flight case that can be triggered also at lags in moment teleportation to another map).
@@ -349,7 +362,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     }
 
     #ifdef MOVEMENT_ANTICHEAT_DEBUG
-    sLog.outBasic("%s newcoord: tm:%d ftm:%d | %f, %f, %fo(%f) [%X][%s]| transport: %f, %f, %fo(%f)", GetPlayer()->GetName(), movementInfo.time, movementInfo.GetFallTime(), movementInfo.GetPos()->x, movementInfo.GetPos()->y, movementInfo.GetPos()->z, movementInfo.GetPos()->o, movementInfo.GetMovementFlags(), LookupOpcodeName(opcode), movementInfo.GetTransportPos()->x, movementInfo.GetTransportPos()->y, movementInfo.GetTransportPos()->z, movementInfo.GetTransportPos()->o);
+    sLog.outBasic("%s newcoord: tm:%d ftm:%d | %f, %f, %fo(%f) [%X][%s]| transport: %f, %f, %fo(%f)", GetPlayer()->GetName(), movementInfo.time, movementInfo.GetFallTime(), movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation(), movementInfo.GetMovementFlags(), LookupOpcodeName(opcode), movementInfo.GetTransportPos()->GetPositionX(), movementInfo.GetTransportPos()->GetPositionY(), movementInfo.GetTransportPos()->GetPositionZ(), movementInfo.GetTransportPos()->GetOrientation());
     sLog.outBasic("Transport: %d |  tguid: %d - %d", GetPlayer()->m_anti_transportGUID, GUID_LOPART(movementInfo.t_guid), GUID_HIPART(movementInfo.t_guid));
     #endif
 
@@ -751,7 +764,7 @@ void WorldSession::HandleMoveKnockBackAck(WorldPacket & recv_data)
     _player->SetUnitMovementFlags(movementInfo.GetMovementFlags());
 
     #ifdef MOVEMENT_ANTICHEAT_DEBUG
-    sLog.outDebug("%s CMSG_MOVE_KNOCK_BACK_ACK: tm:%d ftm:%d | %f, %f, %fo(%f) [%X]", GetPlayer()->GetName(), movementInfo.time, movementInfo.GetFallTime(), movementInfo.GetPos()->x, movementInfo.GetPos()->y, movementInfo.GetPos()->z, movementInfo.GetPos()->o, movementInfo.GetMovementFlags());
+    sLog.outDebug("%s CMSG_MOVE_KNOCK_BACK_ACK: tm:%d ftm:%d | %f, %f, %fo(%f) [%X]", GetPlayer()->GetName(), movementInfo.time, movementInfo.GetFallTime(), movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation(), movementInfo.GetMovementFlags());
     sLog.outDebug("%s CMSG_MOVE_KNOCK_BACK_ACK additional: vspeed:%f, hspeed:%f, xdir:%f ydir:%f", GetPlayer()->GetName(), movementInfo.j_velocity, movementInfo.j_xyspeed, movementInfo.j_sinAngle, movementInfo.j_cosAngle);
     #endif
 
