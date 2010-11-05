@@ -107,11 +107,11 @@ const uint32 Buff_Entries[3] = { BG_OBJECTID_SPEEDBUFF_ENTRY, BG_OBJECTID_REGENB
 
 enum BattleGroundStatus
 {
-    STATUS_NONE         = 0,
-    STATUS_WAIT_QUEUE   = 1,
-    STATUS_WAIT_JOIN    = 2,
-    STATUS_IN_PROGRESS  = 3,
-    STATUS_WAIT_LEAVE   = 4                                 // custom
+    STATUS_NONE         = 0,                                // first status, should mean bg is not instance
+    STATUS_WAIT_QUEUE   = 1,                                // means bg is empty and waiting for queue
+    STATUS_WAIT_JOIN    = 2,                                // this means, that BG has already started and it is waiting for more players
+    STATUS_IN_PROGRESS  = 3,                                // means bg is running
+    STATUS_WAIT_LEAVE   = 4                                 // means some faction has won BG and it is ending
 };
 
 struct BattleGroundPlayer
@@ -226,10 +226,11 @@ enum BattleGroundJoinError
 class BattleGroundScore
 {
     public:
-        BattleGroundScore() : KillingBlows(0), HonorableKills(0), Deaths(0), DamageDone(0), HealingDone(0), BonusHonor(0) {};
-        virtual ~BattleGroundScore()                        //virtual destructor is used when deleting score from scores map
-        {
-        };
+        BattleGroundScore() : KillingBlows(0), Deaths(0), HonorableKills(0),
+            BonusHonor(0), DamageDone(0), HealingDone(0)
+        {}
+        virtual ~BattleGroundScore() {}                     //virtual destructor is used when deleting score from scores map
+
         uint32 KillingBlows;
         uint32 Deaths;
         uint32 HonorableKills;
@@ -466,7 +467,7 @@ class BattleGround
         void DoorClose(uint32 type);
         const char *GetOregonString(int32 entry);
 
-        virtual bool HandlePlayerUnderMap(Player * plr) {return false;}
+        virtual bool HandlePlayerUnderMap(Player * /*plr*/) { return false; }
 
         // since arenas can be AvA or Hvh, we have to get the "temporary" team of a player
         uint32 GetPlayerTeam(uint64 guid);
@@ -551,11 +552,12 @@ class BattleGround
         uint32 m_MinPlayersPerTeam;
         uint32 m_MinPlayers;
 
-        /* Start Location */
+        /* Start location */
         uint32 m_MapId;
-        float m_TeamStartLocX[2];
-        float m_TeamStartLocY[2];
-        float m_TeamStartLocZ[2];
-        float m_TeamStartLocO[2];
+        BattleGroundMap* m_Map;
+        float m_TeamStartLocX[BG_TEAMS_COUNT];
+        float m_TeamStartLocY[BG_TEAMS_COUNT];
+        float m_TeamStartLocZ[BG_TEAMS_COUNT];
+        float m_TeamStartLocO[BG_TEAMS_COUNT];
 };
 #endif

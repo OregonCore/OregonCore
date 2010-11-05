@@ -111,6 +111,7 @@ BattleGround::~BattleGround()
         CharacterDatabase.PExecute("DELETE FROM instance WHERE id = '%u'",GetInstanceID());
         // remove from battlegrounds
     }
+
     sBattleGroundMgr.RemoveBattleGround(GetInstanceID());
     // unload map
     if (Map * map = MapManager::Instance().FindMap(GetMapId(), GetInstanceID()))
@@ -779,7 +780,7 @@ void BattleGround::RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPac
     std::map<uint64, BattleGroundPlayer>::iterator itr = m_Players.find(guid);
     if (itr != m_Players.end())
     {
-        UpdatePlayersCountByTeam(team, true);   // -1 player
+        UpdatePlayersCountByTeam(team, true);               // -1 player
         m_Players.erase(itr);
         // check if the player was a participant of the match, or only entered through gm command (goname)
         participant = true;

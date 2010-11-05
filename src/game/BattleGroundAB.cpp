@@ -431,14 +431,16 @@ void BattleGroundAB::_NodeDeOccupied(uint8 node)
             plr = objmgr.GetPlayer(*ghost_list.begin());
             if (!plr)
                 continue;
+
             if (!ClosestGrave)
                 ClosestGrave = GetClosestGraveYard(plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), plr->GetTeam());
 
-            plr->TeleportTo(GetMapId(), ClosestGrave->x, ClosestGrave->y, ClosestGrave->z, plr->GetOrientation());
+            if (ClosestGrave)
+                plr->TeleportTo(GetMapId(), ClosestGrave->x, ClosestGrave->y, ClosestGrave->z, plr->GetOrientation());
         }
     }
 
-     if (m_BgCreatures[node])
+    if (m_BgCreatures[node])
         DelCreature(node);
 
     // buff object isn't despawned

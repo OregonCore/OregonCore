@@ -266,10 +266,8 @@ void MapManager::Update(time_t diff)
         iter->second->DelayedUpdate(uint32(i_timer.GetCurrent()));
 
     ObjectAccessor::Instance().Update(i_timer.GetCurrent());
-    sWorld.RecordTimeDiff("UpdateObjectAccessor");
     for (TransportSet::iterator iter = m_Transports.begin(); iter != m_Transports.end(); ++iter)
         (*iter)->Update(i_timer.GetCurrent());
-    sWorld.RecordTimeDiff("UpdateTransports");
 
     i_timer.SetCurrent(0);
 }

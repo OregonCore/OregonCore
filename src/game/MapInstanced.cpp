@@ -55,10 +55,7 @@ void MapInstanced::Update(const uint32& t)
     {
         if (i->second->CanUnload(t))
         {
-            if (!DestroyInstance(i))                             // iterator incremented
-            {
-                //m_unloadTimer
-            }
+            DestroyInstance(i);                             // iterator incremented
         }
         else
         {
@@ -76,14 +73,6 @@ void MapInstanced::DelayedUpdate(const uint32 diff)
 
     Map::DelayedUpdate(diff); // this may be removed
 }
-
-/*
-void MapInstanced::RelocationNotify()
-{
-    for (InstancedMaps::iterator i = m_InstancedMaps.begin(); i != m_InstancedMaps.end(); ++i)
-        i->second->RelocationNotify();
-}
-*/
 
 bool MapInstanced::RemoveBones(uint64 guid, float x, float y)
 {
@@ -177,7 +166,8 @@ InstanceMap* MapInstanced::CreateInstance(uint32 InstanceId, InstanceSave *save,
     }
 
     // some instances only have one difficulty
-    if (entry && !entry->SupportsHeroicMode()) difficulty = DIFFICULTY_NORMAL;
+    if (entry && !entry->SupportsHeroicMode())
+        difficulty = DIFFICULTY_NORMAL;
 
     sLog.outDebug("MapInstanced::CreateInstance: %s map instance %d for %d created with difficulty %s", save?"":"new ", InstanceId, GetId(), difficulty?"heroic":"normal");
 
