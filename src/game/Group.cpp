@@ -1016,7 +1016,7 @@ bool Group::_addMember(const uint64 &guid, const char* name, bool isAssistant, u
         player->SetGroupInvite(NULL);
         player->SetGroup(this, group);
         // if the same group invites the player back, cancel the homebind timer
-        InstanceGroupBind *bind = GetBoundInstance(player->GetMapId(), player->GetDifficulty());
+        InstanceGroupBind *bind = GetBoundInstance(player);
         if (bind && bind->save->GetInstanceId() == player->GetInstanceId())
             player->m_InstanceValid = true;
     }
@@ -1473,13 +1473,31 @@ void Group::ResetInstances(uint8 method, Player* SendMsgTo)
     }
 }
 
-InstanceGroupBind* Group::GetBoundInstance(uint32 mapid, uint8 difficulty)
+InstanceGroupBind* Group::GetBoundInstance(Player* player)
 {
+    uint32 mapid = player->GetMapId();
+    MapEntry const* mapEntry = sMapStore.LookupEntry(mapid);
+    if (!mapEntry)
+        return NULL;
+
+    uint8 difficulty = player->GetDifficulty();
+
     // some instances only have one difficulty
-    const MapEntry* entry = sMapStore.LookupEntry(mapid);
-    if (!entry || !entry->SupportsHeroicMode()) difficulty = DIFFICULTY_NORMAL;
+    if (!mapEntry->SupportsHeroicMode())
+        difficulty = DIFFICULTY_NORMAL;
 
     BoundInstancesMap::iterator itr = m_boundInstances[difficulty].find(mapid);
+    if (itr != m_boundInstances[difficulty].end())
+        return &itr->second;
+    else
+        return NULL;
+}
+
+InstanceGroupBind* Group::GetBoundInstance(Map* aMap)
+{
+    uint8 difficulty = GetDifficulty();
+
+    BoundInstancesMap::iterator itr = m_boundInstances[difficulty].find(aMap->GetId());
     if (itr != m_boundInstances[difficulty].end())
         return &itr->second;
     else

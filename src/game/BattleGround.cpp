@@ -59,6 +59,7 @@ BattleGround::BattleGround()
     m_MinPlayers        = 0;
 
     m_MapId             = 0;
+    m_Map               = NULL;
 
     m_TeamStartLocX[BG_TEAM_ALLIANCE]   = 0;
     m_TeamStartLocX[BG_TEAM_HORDE]      = 0;
@@ -114,9 +115,8 @@ BattleGround::~BattleGround()
 
     sBattleGroundMgr.RemoveBattleGround(GetInstanceID());
     // unload map
-    if (Map * map = MapManager::Instance().FindMap(GetMapId(), GetInstanceID()))
-        if (map->IsBattleGroundOrArena())
-            ((BattleGroundMap*)map)->SetUnload();
+    if (m_Map)
+        m_Map->SetUnload();
     // remove from bg free slot queue
     this->RemoveFromBGFreeSlotQueue();
 
@@ -1192,7 +1192,7 @@ void BattleGround::RemovePlayerFromResurrectQueue(uint64 player_guid)
 
 bool BattleGround::AddObject(uint32 type, uint32 entry, float x, float y, float z, float o, float rotation0, float rotation1, float rotation2, float rotation3, uint32 respawnTime)
 {
-    Map * map = MapManager::Instance().FindMap(GetMapId(),GetInstanceID());
+    Map *map = GetBgMap();
     if (!map)
         return false;
 
@@ -1239,7 +1239,7 @@ bool BattleGround::AddObject(uint32 type, uint32 entry, float x, float y, float 
 //it would be nice to correctly implement GO_ACTIVATED state and open/close doors in gameobject code
 void BattleGround::DoorClose(uint32 type)
 {
-    GameObject *obj = HashMapHolder<GameObject>::Find(m_BgObjects[type]);
+    GameObject *obj = GetBgMap()->GetGameObject(m_BgObjects[type]);
     if (obj)
     {
         //if doors are open, close it
@@ -1258,7 +1258,7 @@ void BattleGround::DoorClose(uint32 type)
 
 void BattleGround::DoorOpen(uint32 type)
 {
-    GameObject *obj = HashMapHolder<GameObject>::Find(m_BgObjects[type]);
+    GameObject *obj = GetBgMap()->GetGameObject(m_BgObjects[type]);
     if (obj)
     {
         //change state to be sure they will be opened
@@ -1273,7 +1273,7 @@ void BattleGround::DoorOpen(uint32 type)
 
 GameObject* BattleGround::GetBGObject(uint32 type)
 {
-    GameObject *obj = HashMapHolder<GameObject>::Find(m_BgObjects[type]);
+    GameObject *obj = GetBgMap()->GetGameObject(m_BgObjects[type]);
     if (!obj)
         sLog.outError("couldn't get gameobject %i",type);
     return obj;
@@ -1281,7 +1281,7 @@ GameObject* BattleGround::GetBGObject(uint32 type)
 
 Creature* BattleGround::GetBGCreature(uint32 type)
 {
-    Creature *creature = HashMapHolder<Creature>::Find(m_BgCreatures[type]);
+    Creature *creature = GetBgMap()->GetCreature(m_BgCreatures[type]);
     if (!creature)
         sLog.outError("couldn't get creature %i",type);
     return creature;
@@ -1289,12 +1289,12 @@ Creature* BattleGround::GetBGCreature(uint32 type)
 
 void BattleGround::SpawnBGObject(uint32 type, uint32 respawntime)
 {
-    Map * map = MapManager::Instance().FindMap(GetMapId(),GetInstanceID());
+    Map * map = GetBgMap();
     if (!map)
         return;
     if (respawntime == 0)
     {
-        GameObject *obj = HashMapHolder<GameObject>::Find(m_BgObjects[type]);
+        GameObject *obj = map->GetGameObject(m_BgObjects[type]);
         if (obj)
         {
             //we need to change state from GO_JUST_DEACTIVATED to GO_READY in case battleground is starting again
@@ -1306,7 +1306,7 @@ void BattleGround::SpawnBGObject(uint32 type, uint32 respawntime)
     }
     else
     {
-        GameObject *obj = HashMapHolder<GameObject>::Find(m_BgObjects[type]);
+        GameObject *obj = map->GetGameObject(m_BgObjects[type]);
         if (obj)
         {
             map->Add(obj);
@@ -1318,7 +1318,7 @@ void BattleGround::SpawnBGObject(uint32 type, uint32 respawntime)
 
 Creature* BattleGround::AddCreature(uint32 entry, uint32 type, uint32 teamval, float x, float y, float z, float o, uint32 respawntime)
 {
-    Map * map = MapManager::Instance().FindMap(GetMapId(),GetInstanceID());
+    Map * map = GetBgMap();
     if (!map)
         return NULL;
 
@@ -1374,7 +1374,7 @@ bool BattleGround::DelCreature(uint32 type)
     if (!m_BgCreatures[type])
         return true;
 
-    Creature *cr = HashMapHolder<Creature>::Find(m_BgCreatures[type]);
+    Creature *cr = GetBgMap()->GetCreature(m_BgCreatures[type]);
     if (!cr)
     {
         sLog.outError("Can't find creature guid: %u",GUID_LOPART(m_BgCreatures[type]));
@@ -1391,7 +1391,7 @@ bool BattleGround::DelObject(uint32 type)
     if (!m_BgObjects[type])
         return true;
 
-    GameObject *obj = HashMapHolder<GameObject>::Find(m_BgObjects[type]);
+    GameObject *obj = GetBgMap()->GetGameObject(m_BgObjects[type]);
     if (!obj)
     {
         sLog.outError("Can't find gobject guid: %u",GUID_LOPART(m_BgObjects[type]));
@@ -1488,7 +1488,7 @@ buffs are in their positions when battleground starts
 */
 void BattleGround::HandleTriggerBuff(uint64 const& go_guid)
 {
-    GameObject *obj = HashMapHolder<GameObject>::Find(go_guid);
+    GameObject *obj = GetBgMap()->GetGameObject(go_guid);
     if (!obj || obj->GetGoType() != GAMEOBJECT_TYPE_TRAP || !obj->isSpawned())
         return;
 

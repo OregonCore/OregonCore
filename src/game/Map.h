@@ -46,6 +46,7 @@ class InstanceSave;
 class WorldObject;
 class Player;
 class CreatureGroup;
+class BattleGround;
 
 //******************************************
 // Map file format defines
@@ -580,6 +581,10 @@ class BattleGroundMap : public Map
         void RemoveAllPlayers();
 
         virtual void InitVisibilityDistance();
+        BattleGround* GetBG() { return m_bg; }
+        void SetBG(BattleGround* bg) { m_bg = bg; }
+    private:
+        BattleGround* m_bg;
 };
 
 /*inline

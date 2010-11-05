@@ -362,6 +362,14 @@ class BattleGround
         void SetMapId(uint32 MapID) { m_MapId = MapID; }
         uint32 GetMapId() const { return m_MapId; }
 
+        /* Map pointers */
+        void SetBgMap(BattleGroundMap* map) { m_Map = map; }
+        BattleGroundMap* GetBgMap()
+        {
+            ASSERT(m_Map);
+            return m_Map;
+        }
+
         void SetTeamStartLoc(uint32 TeamID, float X, float Y, float Z, float O);
         void GetTeamStartLoc(uint32 TeamID, float &X, float &Y, float &Z, float &O) const
         {

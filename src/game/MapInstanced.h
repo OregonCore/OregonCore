@@ -41,7 +41,7 @@ class MapInstanced : public Map
         void UnloadAll();
         bool CanEnter(Player* player);
 
-        Map* CreateInstance(const uint32 mapId, Player * player, uint32 instanceId);
+        Map* CreateInstance(const uint32 mapId, Player * player);
         Map* FindMap(uint32 InstanceId) const { return _FindMap(InstanceId); }
         bool DestroyInstance(InstancedMaps::iterator &itr);
 
@@ -64,7 +64,7 @@ class MapInstanced : public Map
     private:
 
         InstanceMap* CreateInstance(uint32 InstanceId, InstanceSave *save, uint8 difficulty);
-        BattleGroundMap* CreateBattleGround(uint32 InstanceId);
+        BattleGroundMap* CreateBattleGround(uint32 InstanceId, BattleGround* bg);
 
         InstancedMaps m_InstancedMaps;
 
