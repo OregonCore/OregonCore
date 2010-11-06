@@ -144,7 +144,8 @@ extern int main(int argc, char **argv)
 
     if (!sConfig.SetSource(cfg_file))
     {
-        sLog.outError("Could not find configuration file %s.", cfg_file);
+        sLog.outError("Invalid or missing configuration file : %s", cfg_file);
+        sLog.outError("Verify that the file exists and has \'[worldserver]' written in the top of the file!");
         return 1;
     }
     sLog.outString("Using configuration file %s.", cfg_file);
