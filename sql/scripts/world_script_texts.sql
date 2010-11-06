@@ -612,7 +612,27 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 (-1000650,'There is a way...',0,0,0,1,'MERITHRA_SAY_1'),
 (-1000651,'We will push them back, Anachronos. This I vow. Uphold the end of this task. Let not your hands falter as you seal our fates behind the barrier.',0,0,0,1,'MERITHRA_SAY_2'),
 (-1000652,'Succumb to the endless dream, little ones. Let it consume you!',0,1,0,53,'MERITHRA_YELL_1'),
-(-1000653,'glances at her compatriots.',0,2,0,2,'MERITHRA_EMOTE_1');
+(-1000653,'glances at her compatriots.',0,2,0,2,'MERITHRA_EMOTE_1'),
+
+(-1000654,'Come, $N. See what the Nightmare brings...',0,1,0,0,''),
+(-1000655,'The Nightmare cannot be stopped!',0,1,0,0,''),
+(-1000656,'Twilight Corrupter squeezes the last bit of life out of $N and swallows their soul.',0,2,0,0,''),
+
+(-1000657,'It''s time for my meditation, leave me.',0,0,0,0,''),
+(-1000658,'Yes, sir!',0,0,0,0,''),
+(-1000659,'There you are. What news from Westfall?',0,0,0,0,''),
+(-1000660,'VanCleef sends word that the plans are underway. But he''s hear rumors about someone snooping about.',0,0,0,0,''),
+(-1000661,'Hmm, it could be that meddle Shaw. I will see what I can discover. Be off with you. I''ll contact you again soon.',0,0,0,0,''),
+(-1000662,'That''s it! That''s what you were waiting for! KILL THEM!',0,1,0,0,''),
+(-1000663,'The Defias shall succeed! No meek adventurer will stop us!',0,0,0,0,''),
+(-1000664,'By your command!',0,0,0,0,''),
+(-1000665,'Wait here. Spybot will make Lescovar come out as soon as possible. Be ready! Attack only after you''ve overheard their conversation.',0,0,0,0,''),
+(-1000666,'Good day to you both. I would speak to Lord Lescovar.',0,0,0,0,''),
+(-1000667,'Of course. He awaits you in the library.',0,0,0,0,''),
+(-1000668,'Thank you. The Light be with you both.',0,0,0,0,''),
+(-1000669,'Milord, your guest has arrived. He awaits your presence.',0,0,0,0,''),
+(-1000670,'Ah, thank you kindly. I will leave you to the library while I tend to this small matter.',0,0,0,0,''),
+(-1000671,'I shall use the time wisely, milord. Thank you.',0,0,0,0,'');
  
 -- -1 033 000 SHADOWFANG KEEP
 INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`emote`,`comment`) VALUES

@@ -193,6 +193,7 @@ void AddSC_blasted_lands();
 void AddSC_boss_kruul();
 void AddSC_burning_steppes();
 void AddSC_dun_morogh();
+void AddSC_duskwood();
 void AddSC_eastern_plaguelands();
 void AddSC_elwynn_forest();
 void AddSC_eversong_woods();
@@ -555,6 +556,7 @@ void AddScripts()
     AddSC_boss_kruul();
     AddSC_burning_steppes();
     AddSC_dun_morogh();
+    AddSC_duskwood();
     AddSC_eastern_plaguelands();
     AddSC_elwynn_forest();
     AddSC_eversong_woods();
