@@ -2249,13 +2249,11 @@ class Player : public Unit, public GridObject<Player>
         uint32 m_anti_beginfalltime;         // alternative falling begin time
         uint32 m_anti_justteleported;        // seted when player was teleported
         uint32 m_anti_teletoplane_count;     // Teleport To Plane alarm counter
+
         float  m_anti_BeginFallZ;            // alternative falling begin time
+        uint32 m_anti_justjumped;            // jump already began, anti-air jump check
         uint64 m_anti_alarmcount;            // alarm counter
-        float  m_anti_MovedLen;              // Length of traveled way
-        uint32 m_anti_NextLenCheck;
-        uint32 m_anti_lastalarmtime;         // last time when alarm generated
-        uint32 m_anti_TeleTime;
-        bool m_CanFly;
+        float m_anti_jumpbase;               // Anti-Gravitation
 
         // Transports
         Transport * m_transport;

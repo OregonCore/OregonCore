@@ -350,6 +350,8 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 
     // fall damage generation (ignore in flight case that can be triggered also at lags in moment teleportation to another map).
     if (opcode == MSG_MOVE_FALL_LAND && !GetPlayer()->isInFlight())
+        GetPlayer()->m_anti_justjumped = 0;
+        GetPlayer()->m_anti_jumpbase = 0;
         GetPlayer()->HandleFallDamage(movementInfo);
 
     if (movementInfo.HasMovementFlag(MOVEFLAG_SWIMMING) != GetPlayer()->IsInWater())
@@ -416,6 +418,36 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
        // static char const* move_type_name[MAX_MOVE_TYPE] = {  "Walk", "Run", "Walkback", "Swim", "Swimback", "Turn", "Fly", "Flyback" };
        // sLog.outBasic("%s newcoord: tm:%d ftm:%d | %f, %f, %fo(%f) [%X][%s]$%s", GetPlayer()->GetName(), movementInfo.time, movementInfo.GetFallTime(), movementInfo.GetPos()->x, movementInfo.GetPos()->y, movementInfo.GetPos()->z, movementInfo.GetPos()->o, movementFlags, LookupOpcodeName(opcode), move_type_name[move_type]);
        // sLog.outBasic("%f", tg_z);
+       //AntiGravitation (thanks to Meekro)
+        float JumpHeight = GetPlayer()->m_anti_jumpbase - movementInfo.GetPos()->GetPositionZ();
+        if ((GetPlayer()->m_anti_jumpbase != 0)
+                    && !(movementInfo.HasMovementFlag(MOVEFLAG_SWIMMING) || movementInfo.HasMovementFlag(MOVEFLAG_FLYING)
+                        || movementInfo.HasMovementFlag(MOVEFLAG_FLYING2))
+                    && (JumpHeight < GetPlayer()->m_anti_last_vspeed))
+        {
+            #ifdef MOVEMENT_ANTICHEAT_DEBUG
+            sLog.outError("Movement anticheat: %s is graviJump exception. dz=%f",GetPlayer()->GetName(), movementInfo.GetPos()->z - GetPlayer()->m_anti_jumpbase);
+            #endif
+            check_passed = false;
+        }
+
+        if (opcode == MSG_MOVE_JUMP && !GetPlayer()->IsInWater())
+        {
+            if (GetPlayer()->m_anti_justjumped >= 1)
+            {
+                //GetPlayer()->m_anti_justjumped = 0;
+                check_passed = false; //don't process new jump packet
+            } 
+            else
+            {
+                GetPlayer()->m_anti_justjumped += 1;
+                GetPlayer()->m_anti_jumpbase = movementInfo.GetPos()->GetPositionZ();
+            }
+        } 
+        else if (GetPlayer()->IsInWater())
+        {
+             GetPlayer()->m_anti_justjumped = 0;
+        }
 
         if ((real_delta > allowed_delta) && (delta_z < 1))
         {
