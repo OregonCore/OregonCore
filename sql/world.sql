@@ -2613,30 +2613,6 @@ LOCK TABLES `locales_quest` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `mail_external`
---
-
-CREATE TABLE IF NOT EXISTS `mail_external` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `receiver` bigint(20) unsigned NOT NULL,
-  `subject` varchar(200) default 'Support Message',
-  `message` varchar(500) default 'Support Message',
-  `money` bigint(20) unsigned NOT NULL default '0',
-  `item` bigint(20) unsigned NOT NULL default '0',
-  `item_count` bigint(20) unsigned NOT NULL default '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
---
--- Dumping data for table `mail_external`
---
-
-LOCK TABLES `mail_external` WRITE;
-/*!40000 ALTER TABLE `mail_external` DISABLE KEYS */;
-/*!40000 ALTER TABLE `mail_external` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `mail_loot_template`
 --
 

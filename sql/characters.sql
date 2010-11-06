@@ -1243,6 +1243,32 @@ LOCK TABLES `mail` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `mail_external`
+--
+
+DROP TABLE IF EXISTS `mail_external`;
+
+CREATE TABLE `mail_external` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `receiver` bigint(20) unsigned NOT NULL,
+  `subject` varchar(200) DEFAULT 'Support Message',
+  `message` varchar(500) DEFAULT 'Support Message',
+  `money` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `item` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `item_count` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+
+--
+-- Dumping data for table `mail_external`
+--
+
+LOCK TABLES `mail_external` WRITE;
+/*!40000 ALTER TABLE `mail_external` DISABLE KEYS */;
+/*!40000 ALTER TABLE `mail_external` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `mail_items`
 --
 
