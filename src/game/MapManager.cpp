@@ -39,8 +39,9 @@ INSTANTIATE_CLASS_MUTEX(MapManager, ACE_Thread_Mutex);
 
 extern GridState* si_GridStates[];                          // debugging code, should be deleted some day
 
-MapManager::MapManager() : i_gridCleanUpDelay(sWorld.getConfig(CONFIG_INTERVAL_GRIDCLEAN))
+MapManager::MapManager()
 {
+    i_gridCleanUpDelay = sWorld.getConfig(CONFIG_INTERVAL_GRIDCLEAN);
     i_timer.SetInterval(sWorld.getConfig(CONFIG_INTERVAL_MAPUPDATE));
 }
 

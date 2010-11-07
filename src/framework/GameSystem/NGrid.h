@@ -138,8 +138,8 @@ class NGrid
 
         template<class T, class TT> void Visit(TypeContainerVisitor<T, TypeMapContainer<TT> > &visitor)
         {
-            for(unsigned int x=0; x < N; ++x)
-                for(unsigned int y=0; y < N; ++y)
+            for (unsigned int x=0; x < N; ++x)
+                for (unsigned int y=0; y < N; ++y)
                     getGridType(x, y).Visit(visitor);
         }
 
@@ -151,8 +151,8 @@ class NGrid
         unsigned int ActiveObjectsInGrid(void) const
         {
             unsigned int count=0;
-            for(unsigned int x=0; x < N; ++x)
-                for(unsigned int y=0; y < N; ++y)
+            for (unsigned int x=0; x < N; ++x)
+                for (unsigned int y=0; y < N; ++y)
                     count += i_cells[x][y].ActiveObjectsInGrid();
             return count;
         }
