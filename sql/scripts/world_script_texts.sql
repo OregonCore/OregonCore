@@ -703,6 +703,36 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 (-1070000,'None may steal the secrets of the makers!',5851,1,0,0,'ironaya SAY_AGGRO');
 
 -- -1 090 000 GNOMEREGAN
+INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`emote`,`comment`) VALUES
+   (-1090000,'With your help, I can evaluate these tunnels.',0,0,0,0,''),
+   (-1090001,'Let''s see if we can find out where these Troggs are coming from... and put a stop to the invasion!',0,0,0,0,''),
+   (-1090002,'Such devastation... what horrible mess...',0,0,0,0,''),
+   (-1090003,'It''s quiet here...',0,0,0,0,''),
+   (-1090004,'...too quiet.',0,0,0,0,''),
+   (-1090005,'Look! Over there at the tunnel wall!',0,0,0,0,''),
+   (-1090006,'Trogg incrusion! Defend me while i blast the hole closed!',0,0,0,0,''),
+   (-1090007,'The charges are set. Get back before they blow!',0,0,0,0,''),
+   (-1090008,'Incoming blast in 10 seconds!',0,1,0,0,''),
+   (-1090009,'Incoming blast in 5 seconds. Clear the tunnel!',0,1,0,0,''),
+   (-1090010,'FIRE IN THE HOLE',0,1,0,0,''),
+   (-1090011,'Well done! Without your help I would have never been able to thwart that wave of troggs.',0,0,0,0,''),
+   (-1090012,'Did you hear something?',0,0,0,0,''),
+   (-1090013,'I heard something over there.',0,0,0,0,''),
+   (-1090014,'More troggs! Ward them off as I prepare the explosives!',0,0,0,0,''),
+   (-1090015,'The final charge is set. Stand back!',0,1,0,0,''),
+   (-1090016,'The final charge is set. Stand back!',0,0,0,0,''),
+   (-1090017,'Incoming blast in 10 seconds!',0,1,0,0,''),
+   (-1090018,'Incoming blast in 5 seconds. Clear the tunnel!',0,1,0,0,''),
+   (-1090019,'I don''t think one charge is going to cut it. Keep fending them off!',0,0,0,0,''),
+   (-1090020,'FIRE IN THE HOLE',0,1,0,0,''),
+   (-1090021,'Well done! Without your help I would have never been able to thwart that wave of troggs.',0,0,0,0,''),
+   (-1090022,'Did you hear something?',0,0,0,0,''),
+   (-1090023,'I heard something over there.',0,0,0,0,''),
+   (-1090024,'More troggs! Ward them off as I prepare the explosives!',0,0,0,0,''),
+   (-1090025,'The final charge is set. Stand back!',0,0,0,0,''),
+   (-1090026,'10 seconds to blast! Stand back!!!',0,1,0,0,''),
+   (-1090027,'5 seconds until detonation!!',0,1,0,0,''),
+   (-1090028,'We come from below! You can never stop us!',0,1,0,0,'');
 
 -- -1 109 000 SUNKEN TEMPLE
 

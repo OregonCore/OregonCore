@@ -70,6 +70,8 @@ void AddSC_boss_victor_nefarius();
 void AddSC_boss_mr_smite();
 void AddSC_deadmines();                      //Deadmines
 void AddSC_instance_deadmines();
+void AddSC_instance_gnomeregan();            //Gnomeregan
+void AddSC_gnomeregan();
 void AddSC_boss_attumen();                   //Karazhan
 void AddSC_boss_curator();
 void AddSC_boss_maiden_of_virtue();
@@ -433,6 +435,8 @@ void AddScripts()
     AddSC_boss_mr_smite();
     AddSC_deadmines();                      //Deadmines
     AddSC_instance_deadmines();
+    AddSC_instance_gnomeregan();            //Gnomeregan
+    AddSC_gnomeregan();
     AddSC_boss_attumen();                   //Karazhan
     AddSC_boss_curator();
     AddSC_boss_maiden_of_virtue();
