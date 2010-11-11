@@ -2039,6 +2039,14 @@ void Player::RegenerateHealth()
     ModifyHealth(int32(addvalue));
 }
 
+void Player::ResetAllPowers()
+{
+    SetHealth(GetMaxHealth());
+    SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
+    SetPower(POWER_RAGE, 0);
+    SetPower(POWER_ENERGY, GetMaxPower(POWER_ENERGY));
+}
+
 bool Player::CanInteractWithNPCs(bool alive) const
 {
     if (alive && !isAlive())

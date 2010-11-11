@@ -1715,6 +1715,8 @@ class Player : public Unit, public GridObject<Player>
         void _ApplyAllStatBonuses();
         void _RemoveAllStatBonuses();
 
+        void ResetAllPowers();
+
         void _ApplyWeaponDependentAuraMods(Item *item, WeaponAttackType attackType, bool apply);
         void _ApplyWeaponDependentAuraCritMod(Item *item, WeaponAttackType attackType, Aura* aura, bool apply);
         void _ApplyWeaponDependentAuraDamageMod(Item *item, WeaponAttackType attackType, Aura* aura, bool apply);
