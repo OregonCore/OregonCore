@@ -589,7 +589,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 
         GetPlayer()->SetPosition(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation());
         GetPlayer()->m_movementInfo = movementInfo;
-        if (GetPlayer()->m_lastFallTime >= movementInfo.GetFallTime() || GetPlayer()->m_lastFallZ <=movementInfo.GetPos()->GetPositionZ() || opcode == MSG_MOVE_FALL_LAND)
+        if (GetPlayer()->m_lastFallTime > movementInfo.GetFallTime() || GetPlayer()->m_lastFallZ < movementInfo.GetPos()->GetPositionZ() || opcode == MSG_MOVE_FALL_LAND)
             GetPlayer()->SetFallInformation(movementInfo.GetFallTime(), movementInfo.GetPos()->GetPositionZ());
 
         if (GetPlayer()->isMovingOrTurning())

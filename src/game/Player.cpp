@@ -19935,8 +19935,9 @@ bool ItemPosCount::isContainedIn(ItemPosCountVec const& vec) const
 
 void Player::HandleFallDamage(MovementInfo& movementInfo)
 {
-    if (movementInfo.GetFallTime() < 1500)
-        return;
+    // Removed for Anticheat Fall DMG
+    //if (movementInfo.GetFallTime() < 1500)
+    //    return;
 
     // calculate total z distance of the fall
     float z_diff = m_lastFallZ - movementInfo.GetPos()->GetPositionZ();
@@ -19951,11 +19952,11 @@ void Player::HandleFallDamage(MovementInfo& movementInfo)
         //Safe fall, fall height reduction
         int32 safe_fall = GetTotalAuraModifier(SPELL_AURA_SAFE_FALL);
 
-        float damageperc = 0.018f*(z_diff-safe_fall)-0.2426f;
+        float damageperc = 0.018f * (z_diff - safe_fall) - 0.2426f;
 
         if (damageperc > 0)
         {
-            uint32 damage = (uint32)(damageperc * GetMaxHealth()*sWorld.getRate(RATE_DAMAGE_FALL));
+            uint32 damage = (uint32)(damageperc * GetMaxHealth() * sWorld.getRate(RATE_DAMAGE_FALL));
 
             float height = movementInfo.GetPos()->GetPositionZ();
             UpdateGroundPositionZ(movementInfo.GetPos()->GetPositionX(),movementInfo.GetPos()->GetPositionY(),height);
@@ -19968,7 +19969,7 @@ void Player::HandleFallDamage(MovementInfo& movementInfo)
 
                 // Gust of Wind
                 if (GetDummyAura(43621))
-                    damage = GetMaxHealth()/2;
+                    damage = GetMaxHealth() / 2;
 
                 EnvironmentalDamage(DAMAGE_FALL, damage);
             }
