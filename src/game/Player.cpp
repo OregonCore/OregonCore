@@ -19953,7 +19953,7 @@ void Player::HandleFallDamage(MovementInfo& movementInfo)
 
         float damageperc = 0.018f*(z_diff-safe_fall)-0.2426f;
 
-        if (damageperc >0)
+        if (damageperc > 0)
         {
             uint32 damage = (uint32)(damageperc * GetMaxHealth()*sWorld.getRate(RATE_DAMAGE_FALL));
 
