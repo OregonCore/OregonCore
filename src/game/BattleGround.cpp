@@ -610,6 +610,8 @@ void BattleGround::EndBattleGround(uint32 winner)
             }
         }
 
+        plr->SetHealth(plr->GetMaxHealth());
+        plr->SetPower(POWER_MANA, plr->GetMaxPower(POWER_MANA));
         plr->CombatStopWithPets(true);
 
         BlockMovement(plr);
