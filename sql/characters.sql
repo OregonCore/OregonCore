@@ -338,29 +338,32 @@ LOCK TABLES `character_aura` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `character_bgcoord`
+-- Table structure for table `character_battleground_data`
 --
 
-DROP TABLE IF EXISTS `character_bgcoord`;
-CREATE TABLE `character_bgcoord` (
-  `guid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT 'Global Unique Identifier',
-  `bgid` int(10) unsigned NOT NULL DEFAULT '0',
-  `bgteam` int(10) unsigned NOT NULL DEFAULT '0',
-  `bgmap` int(10) unsigned NOT NULL DEFAULT '0',
-  `bgx` float NOT NULL DEFAULT '0',
-  `bgy` float NOT NULL DEFAULT '0',
-  `bgz` float NOT NULL DEFAULT '0',
-  `bgo` float NOT NULL DEFAULT '0',
-  PRIMARY KEY (`guid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Saving char in bg System';
+DROP TABLE IF EXISTS `character_battleground_data`;
+CREATE TABLE `character_battleground_data` (
+  `guid` int(11) unsigned NOT NULL default '0' COMMENT 'Global Unique Identifier',
+  `instance_id` int(11) unsigned NOT NULL default '0',
+  `team` int(11) unsigned NOT NULL default '0',
+  `join_x` float NOT NULL default '0',
+  `join_y` float NOT NULL default '0',
+  `join_z` float NOT NULL default '0',
+  `join_o` float NOT NULL default '0',
+  `join_map` int(11) NOT NULL default '0',
+  `taxi_start` int(11) NOT NULL default '0',
+  `taxi_end` int(11) NOT NULL default '0',
+  `mount_spell` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`guid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Player System';
 
 --
--- Dumping data for table `character_bgcoord`
+-- Dumping data for table `character_battleground_data`
 --
 
-LOCK TABLES `character_bgcoord` WRITE;
-/*!40000 ALTER TABLE `character_bgcoord` DISABLE KEYS */;
-/*!40000 ALTER TABLE `character_bgcoord` ENABLE KEYS */;
+LOCK TABLES `character_battleground_data` WRITE;
+/*!40000 ALTER TABLE `character_battleground_data` DISABLE KEYS */;
+/*!40000 ALTER TABLE `character_battleground_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

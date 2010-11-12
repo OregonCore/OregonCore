@@ -704,16 +704,18 @@ enum PlayerLoginQueryIndex
     PLAYER_LOGIN_QUERY_LOADDECLINEDNAMES        = 16,
     PLAYER_LOGIN_QUERY_LOADGUILD                = 17,
     PLAYER_LOGIN_QUERY_LOADARENAINFO            = 18,
-    PLAYER_LOGIN_QUERY_LOADBGCOORD              = 19,
+    PLAYER_LOGIN_QUERY_LOADBGDATA               = 19,
 
     MAX_PLAYER_LOGIN_QUERY
 };
 
 enum PlayerDelayedOperations
 {
-    DELAYED_SAVE_PLAYER = 1,
-    DELAYED_RESURRECT_PLAYER = 2,
-    DELAYED_SPELL_CAST_DESERTER = 4,
+    DELAYED_SAVE_PLAYER         = 0x01,
+    DELAYED_RESURRECT_PLAYER    = 0x02,
+    DELAYED_SPELL_CAST_DESERTER = 0x04,
+    DELAYED_BG_MOUNT_RESTORE    = 0x08,                     ///< Flag to restore mount state after teleport from BG
+    DELAYED_BG_TAXI_RESTORE     = 0x10,                     ///< Flag to restore taxi state after teleport from BG
     DELAYED_END
 };
 
@@ -796,6 +798,33 @@ class PlayerTaxi
         std::deque<uint32> m_TaxiDestinations;
 };
 
+class Player;
+
+/// Holder for BattleGround data
+struct BGData
+{
+    BGData() : bgInstanceID(0), bgTypeID(0), bgAfkReportedCount(0), bgAfkReportedTimer(0),
+        bgTeam(0), mountSpell(0) { ClearTaxiPath(); }
+
+    uint32 bgInstanceID;                    ///< This variable is set to bg->m_InstanceID,
+                                            ///  when player is teleported to BG - (it is battleground's GUID)
+    uint32 bgTypeID;
+
+    std::set<uint32>   bgAfkReporter;
+    uint8              bgAfkReportedCount;
+    time_t             bgAfkReportedTimer;
+
+    uint32 bgTeam;                          ///< What side the player will be added to
+
+    uint32 mountSpell;
+    uint32 taxiPath[2];
+
+    WorldLocation joinPos;                  ///< From where player entered BG
+
+    void ClearTaxiPath()     { taxiPath[0] = taxiPath[1] = 0; }
+    bool HasTaxiPath() const { return taxiPath[0] && taxiPath[1]; }
+};
+
 class Player : public Unit, public GridObject<Player>
 {
     friend class WorldSession;
@@ -819,6 +848,8 @@ class Player : public Unit, public GridObject<Player>
         {
             return TeleportTo(loc.GetMapId(), loc.GetPositionX(), loc.GetPositionY(), loc.GetPositionZ(), loc.GetOrientation(), options);
         }
+
+        bool TeleportToBGEntryPoint();
 
         void SetSummonPoint(uint32 mapid, float x, float y, float z)
         {
@@ -863,6 +894,7 @@ class Player : public Unit, public GridObject<Player>
         void InitTaxiNodesForLevel() { m_taxi.InitTaxiNodesForLevel(getRace(),getLevel()); }
         bool ActivateTaxiPathTo(std::vector<uint32> const& nodes, uint32 mount_id = 0 , Creature* npc = NULL);
         void CleanupAfterTaxiFlight();
+        void ContinueTaxiFlight();
                                                             // mount_id can be used in scripting calls
         bool isAcceptWhispers() const { return m_ExtraFlags & PLAYER_EXTRA_ACCEPT_WHISPERS; }
         void SetAcceptWhispers(bool on) { if (on) m_ExtraFlags |= PLAYER_EXTRA_ACCEPT_WHISPERS; else m_ExtraFlags &= ~PLAYER_EXTRA_ACCEPT_WHISPERS; }
@@ -1754,10 +1786,10 @@ class Player : public Unit, public GridObject<Player>
         /***               BATTLEGROUND SYSTEM                 ***/
         /*********************************************************/
 
-        bool InBattleGround() const { return m_bgBattleGroundID != 0; }
-        uint32 GetBattleGroundId() const    { return m_bgBattleGroundID; }
+        bool InBattleGround()       const                { return m_bgData.bgInstanceID != 0; }
+        bool InArena()              const;
+        uint32 GetBattleGroundId()  const                { return m_bgData.bgInstanceID; }
         BattleGround* GetBattleGround() const;
-        bool InArena() const;
 
         static uint32 GetMinLevelForBattleGroundQueueId(uint32 queue_id);
         static uint32 GetMaxLevelForBattleGroundQueueId(uint32 queue_id);
@@ -1765,7 +1797,7 @@ class Player : public Unit, public GridObject<Player>
 
         bool InBattleGroundQueue() const
         {
-            for (int i=0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; i++)
+            for (uint8 i = 0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; ++i)
                 if (m_bgBattleGroundQueueID[i].bgQueueType != 0)
                     return true;
             return false;
@@ -1774,14 +1806,14 @@ class Player : public Unit, public GridObject<Player>
         uint32 GetBattleGroundQueueId(uint32 index) const { return m_bgBattleGroundQueueID[index].bgQueueType; }
         uint32 GetBattleGroundQueueIndex(uint32 bgQueueType) const
         {
-            for (int i=0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; i++)
+            for (uint8 i = 0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; ++i)
                 if (m_bgBattleGroundQueueID[i].bgQueueType == bgQueueType)
                     return i;
             return PLAYER_MAX_BATTLEGROUND_QUEUES;
         }
         bool IsInvitedForBattleGroundQueueType(uint32 bgQueueType) const
         {
-            for (int i=0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; i++)
+            for (uint8 i = 0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; ++i)
                 if (m_bgBattleGroundQueueID[i].bgQueueType == bgQueueType)
                     return m_bgBattleGroundQueueID[i].invitedToInstance != 0;
             return PLAYER_MAX_BATTLEGROUND_QUEUES;
@@ -1791,10 +1823,10 @@ class Player : public Unit, public GridObject<Player>
             return GetBattleGroundQueueIndex(bgQueueType) < PLAYER_MAX_BATTLEGROUND_QUEUES;
         }
 
-        void SetBattleGroundId(uint32 val)  { m_bgBattleGroundID = val; }
+        void SetBattleGroundId(uint32 val)  { m_bgData.bgInstanceID = val; }
         uint32 AddBattleGroundQueueId(uint32 val)
         {
-            for (int i=0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; i++)
+            for (uint8 i=0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; ++i)
             {
                 if (m_bgBattleGroundQueueID[i].bgQueueType == 0 || m_bgBattleGroundQueueID[i].bgQueueType == val)
                 {
@@ -1807,14 +1839,14 @@ class Player : public Unit, public GridObject<Player>
         }
         bool HasFreeBattleGroundQueueId()
         {
-            for (int i=0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; i++)
+            for (uint8 i=0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; ++i)
                 if (m_bgBattleGroundQueueID[i].bgQueueType == 0)
                     return true;
             return false;
         }
         void RemoveBattleGroundQueueId(uint32 val)
         {
-            for (int i=0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; i++)
+            for (uint8 i=0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; ++i)
             {
                 if (m_bgBattleGroundQueueID[i].bgQueueType == val)
                 {
@@ -1826,39 +1858,28 @@ class Player : public Unit, public GridObject<Player>
         }
         void SetInviteForBattleGroundQueueType(uint32 bgQueueType, uint32 instanceId)
         {
-            for (int i=0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; i++)
+            for (uint8 i=0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; ++i)
                 if (m_bgBattleGroundQueueID[i].bgQueueType == bgQueueType)
                     m_bgBattleGroundQueueID[i].invitedToInstance = instanceId;
         }
         bool IsInvitedForBattleGroundInstance(uint32 instanceId) const
         {
-            for (int i=0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; i++)
+            for (uint8 i=0; i < PLAYER_MAX_BATTLEGROUND_QUEUES; ++i)
                 if (m_bgBattleGroundQueueID[i].invitedToInstance == instanceId)
                     return true;
             return false;
         }
-        uint32 GetBattleGroundEntryPointMap() const { return m_bgEntryPointMap; }
-        float GetBattleGroundEntryPointX() const { return m_bgEntryPointX; }
-        float GetBattleGroundEntryPointY() const { return m_bgEntryPointY; }
-        float GetBattleGroundEntryPointZ() const { return m_bgEntryPointZ; }
-        float GetBattleGroundEntryPointO() const { return m_bgEntryPointO; }
-        void SetBattleGroundEntryPoint(uint32 Map, float PosX, float PosY, float PosZ, float PosO)
-        {
-            m_bgEntryPointMap = Map;
-            m_bgEntryPointX = PosX;
-            m_bgEntryPointY = PosY;
-            m_bgEntryPointZ = PosZ;
-            m_bgEntryPointO = PosO;
-        }
+        WorldLocation const& GetBattleGroundEntryPoint() const { return m_bgData.joinPos; }
+        void SetBattleGroundEntryPoint();
 
-        void SetBGTeam(uint32 team) { m_bgTeam = team; }
-        uint32 GetBGTeam() const { return m_bgTeam ? m_bgTeam : GetTeam(); }
+        void SetBGTeam(uint32 team) { m_bgData.bgTeam = team; }
+        uint32 GetBGTeam() const { return m_bgData.bgTeam ? m_bgData.bgTeam : GetTeam(); }
 
         void LeaveBattleground(bool teleportToEntryPoint = true);
         bool CanJoinToBattleground() const;
         bool CanReportAfkDueToLimit();
         void ReportedAfkBy(Player* reporter);
-        void ClearAfkReports() { m_bgAfkReporter.clear(); }
+        void ClearAfkReports() { m_bgData.bgAfkReporter.clear(); }
 
         bool GetBGAccessByLevel(uint32 bgTypeId) const;
         bool isTotalImmunity();
@@ -1879,8 +1900,8 @@ class Player : public Unit, public GridObject<Player>
 
         bool isRested() const { return GetRestTime() >= 10*IN_MILLISECONDS; }
         uint32 GetXPRestBonus(uint32 xp);
-        uint32 GetRestTime() const { return m_restTime;};
-        void SetRestTime(uint32 v) { m_restTime = v;};
+        uint32 GetRestTime() const { return m_restTime;}
+        void SetRestTime(uint32 v) { m_restTime = v;}
 
         /*********************************************************/
         /***              ENVIROMENTAL SYSTEM                  ***/
@@ -2051,12 +2072,12 @@ class Player : public Unit, public GridObject<Player>
 
     protected:
 
+        uint32 m_contestedPvPTimer;
+
         /*********************************************************/
         /***               BATTLEGROUND SYSTEM                 ***/
         /*********************************************************/
 
-        /* this variable is set to bg->m_InstanceID, when player is teleported to BG - (it is battleground's GUID)*/
-        uint32 m_bgBattleGroundID;
         /*
         this is an array of BG queues (BgTypeIDs) in which is player
         */
@@ -2065,19 +2086,9 @@ class Player : public Unit, public GridObject<Player>
             uint32 bgQueueType;
             uint32 invitedToInstance;
         };
+
         BgBattleGroundQueueID_Rec m_bgBattleGroundQueueID[PLAYER_MAX_BATTLEGROUND_QUEUES];
-        uint32 m_bgEntryPointMap;
-        float m_bgEntryPointX;
-        float m_bgEntryPointY;
-        float m_bgEntryPointZ;
-        float m_bgEntryPointO;
-
-        std::set<uint32> m_bgAfkReporter;
-        uint8 m_bgAfkReportedCount;
-        time_t m_bgAfkReportedTimer;
-        uint32 m_contestedPvPTimer;
-
-        uint32 m_bgTeam;    // what side the player will be added to
+        BGData                    m_bgData;
 
         /*********************************************************/
         /***                    QUEST SYSTEM                   ***/
@@ -2110,6 +2121,7 @@ class Player : public Unit, public GridObject<Player>
         bool _LoadHomeBind(QueryResult_AutoPtr result);
         void _LoadDeclinedNames(QueryResult_AutoPtr result);
         void _LoadArenaTeamInfo(QueryResult_AutoPtr result);
+        void _LoadBGData(QueryResult_AutoPtr result);
 
         /*********************************************************/
         /***                   SAVE SYSTEM                     ***/
@@ -2117,7 +2129,6 @@ class Player : public Unit, public GridObject<Player>
 
         void _SaveActions();
         void _SaveAuras();
-        void _SaveBattleGroundCoord();
         void _SaveInventory();
         void _SaveMail();
         void _SaveQuestStatus();
@@ -2125,6 +2136,7 @@ class Player : public Unit, public GridObject<Player>
         void _SaveReputation();
         void _SaveSpells();
         void _SaveTutorials();
+        void _SaveBGData();
 
         void _SetCreateBits(UpdateMask *updateMask, Player *target) const;
         void _SetUpdateBits(UpdateMask *updateMask, Player *target) const;

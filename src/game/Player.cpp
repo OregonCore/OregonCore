@@ -356,13 +356,11 @@ Player::Player (WorldSession *session): Unit()
 
     m_DetectInvTimer = 1*IN_MILLISECONDS;
 
-    m_bgBattleGroundID = 0;
-    for (int j=0; j < PLAYER_MAX_BATTLEGROUND_QUEUES; ++j)
+    for (uint8 j = 0; j < PLAYER_MAX_BATTLEGROUND_QUEUES; ++j)
     {
         m_bgBattleGroundQueueID[j].bgQueueType  = 0;
         m_bgBattleGroundQueueID[j].invitedToInstance = 0;
     }
-    m_bgTeam = 0;
 
     m_logintime = time(NULL);
     m_Last_tick = m_logintime;
@@ -442,7 +440,6 @@ Player::Player (WorldSession *session): Unit()
     m_unit_movement_flags = 0;
 
     m_miniPet = 0;
-    m_bgAfkReportedTimer = 0;
 
     m_seer = this;
 
@@ -1799,6 +1796,13 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
     return true;
 }
 
+bool Player::TeleportToBGEntryPoint()
+{
+    ScheduleDelayedOperation(DELAYED_BG_MOUNT_RESTORE);
+    ScheduleDelayedOperation(DELAYED_BG_TAXI_RESTORE);
+    return TeleportTo(m_bgData.joinPos);
+}
+
 void Player::ProcessDelayedOperations()
 {
     if (m_DelayedOperations == 0)
@@ -1809,29 +1813,46 @@ void Player::ProcessDelayedOperations()
         ResurrectPlayer(0.0f, false);
 
         if (GetMaxHealth() > m_resurrectHealth)
-            SetHealth( m_resurrectHealth );
+            SetHealth(m_resurrectHealth);
         else
-            SetHealth( GetMaxHealth() );
+            SetHealth(GetMaxHealth());
 
         if (GetMaxPower(POWER_MANA) > m_resurrectMana)
-            SetPower(POWER_MANA, m_resurrectMana );
+            SetPower(POWER_MANA, m_resurrectMana);
         else
-            SetPower(POWER_MANA, GetMaxPower(POWER_MANA) );
+            SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
 
-        SetPower(POWER_RAGE, 0 );
-        SetPower(POWER_ENERGY, GetMaxPower(POWER_ENERGY) );
+        SetPower(POWER_RAGE, 0);
+        SetPower(POWER_ENERGY, GetMaxPower(POWER_ENERGY));
 
         SpawnCorpseBones();
     }
 
     if (m_DelayedOperations & DELAYED_SAVE_PLAYER)
-    {
         SaveToDB();
-    }
 
     if (m_DelayedOperations & DELAYED_SPELL_CAST_DESERTER)
-    {
         CastSpell(this, 26013, true);               // Deserter
+
+    if (m_DelayedOperations & DELAYED_BG_MOUNT_RESTORE)
+    {
+        if (m_bgData.mountSpell)
+        {
+            CastSpell(this, m_bgData.mountSpell, true);
+            m_bgData.mountSpell = 0;
+        }
+    }
+
+    if (m_DelayedOperations & DELAYED_BG_TAXI_RESTORE)
+    {
+        if (m_bgData.HasTaxiPath())
+        {
+            m_taxi.AddTaxiDestination(m_bgData.taxiPath[0]);
+            m_taxi.AddTaxiDestination(m_bgData.taxiPath[1]);
+            m_bgData.ClearTaxiPath();
+
+            ContinueTaxiFlight();
+        }
     }
 
     //we have executed ALL delayed ops, so clear the flag
@@ -1845,11 +1866,9 @@ void Player::AddToWorld()
     ///- The player should only be added when logging in
     Unit::AddToWorld();
 
-    for (int i = PLAYER_SLOT_START; i < PLAYER_SLOT_END; ++i)
-    {
-        if (m_items[i])
+    for (uint8 i = PLAYER_SLOT_START; i < PLAYER_SLOT_END; ++i)
+        if(m_items[i])
             m_items[i]->AddToWorld();
-    }
 }
 
 void Player::RemoveFromWorld()
@@ -14384,6 +14403,27 @@ void Player::_LoadArenaTeamInfo(QueryResult_AutoPtr result)
     }while (result->NextRow());
 }
 
+
+void Player::_LoadBGData(QueryResult_AutoPtr result)
+{
+    if (!result)
+        return;
+
+    // Expecting only one row
+    Field *fields = result->Fetch();
+    /* bgInstanceID, bgTeam, x, y, z, o, map, taxi[0], taxi[1], mountSpell */
+    m_bgData.bgInstanceID = fields[0].GetUInt32();
+    m_bgData.bgTeam       = fields[1].GetUInt32();
+    m_bgData.joinPos      = WorldLocation(fields[6].GetUInt32(),    // Map
+                                          fields[2].GetFloat(),     // X
+                                          fields[3].GetFloat(),     // Y
+                                          fields[4].GetFloat(),     // Z
+                                          fields[5].GetFloat());    // Orientation
+    m_bgData.taxiPath[0]  = fields[7].GetUInt32();
+    m_bgData.taxiPath[1]  = fields[8].GetUInt32();
+    m_bgData.mountSpell   = fields[9].GetUInt32();
+}
+
 bool Player::LoadPositionFromDB(uint32& mapid, float& x,float& y,float& z,float& o, bool& in_flight, uint64 guid)
 {
     QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT position_x,position_y,position_z,orientation,map,taxi_path FROM characters WHERE guid = '%u'",GUID_LOPART(guid));
@@ -14534,7 +14574,15 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 
     InitPrimaryProfessions();                               // to max set before any spell loaded
 
+    // init saved position, and fix it later if problematic
+    uint32 transGUID = fields[31].GetUInt32();
+    Relocate(fields[13].GetFloat(),fields[14].GetFloat(),fields[15].GetFloat(),fields[17].GetFloat());
+    uint32 mapId = fields[16].GetUInt32();
+    uint32 instanceId = fields[41].GetFloat();
     SetDifficulty(fields[39].GetUInt32());                  // may be changed in _LoadGroup
+    std::string taxi_nodes = fields[38].GetCppString();
+
+#define RelocateToHomebind(){ mapId = m_homebindMapId; instanceId = 0; Relocate(m_homebindX, m_homebindY, m_homebindZ); }
 
     _LoadGroup(holder->GetResult(PLAYER_LOGIN_QUERY_LOADGROUP));
 
@@ -14563,66 +14611,62 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     }
 
     _LoadBoundInstances(holder->GetResult(PLAYER_LOGIN_QUERY_LOADBOUNDINSTANCES));
-
-    // load player map related values
-    uint32 transGUID = fields[31].GetUInt32();
-    Relocate(fields[13].GetFloat(),fields[14].GetFloat(),fields[15].GetFloat(),fields[17].GetFloat());
-    uint32 mapId = fields[16].GetUInt32();
-    uint32 instanceId = fields[41].GetFloat();
-    std::string taxi_nodes = fields[38].GetCppString();
+    _LoadBGData(holder->GetResult(PLAYER_LOGIN_QUERY_LOADBGDATA));
 
     MapEntry const * mapEntry = sMapStore.LookupEntry(mapId);
-    if (!IsPositionValid())
+    if (!mapEntry || !IsPositionValid())
     {
-        sLog.outError("Player (guidlow %d) have invalid coordinates (X: %f Y: %f Z: %f O: %f). Teleport to default race/class locations.",guid,GetPositionX(),GetPositionY(),GetPositionZ(),GetOrientation());
-        RelocateToHomebind(mapId);
-
-        transGUID = 0;
-        instanceId = 0;
-
-        m_movementInfo.ClearTransportData();
+        sLog.outError("Player (guidlow %d) have invalid coordinates (MapId: %u X: %f Y: %f Z: %f O: %f). Teleport to default race/class locations.",guid,mapId,GetPositionX(),GetPositionY(),GetPositionZ(),GetOrientation());
+        RelocateToHomebind();
     }
-
-    ////                                                            0     1       2      3    4    5    6
-    //QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT bgid, bgteam, bgmap, bgx, bgy, bgz, bgo FROM character_bgcoord WHERE guid = '%u'", GUID_LOPART(m_guid));
-    QueryResult_AutoPtr resultbg = holder->GetResult(PLAYER_LOGIN_QUERY_LOADBGCOORD);
-
-    if (resultbg)
+    // Player was saved in Arena or Bg
+    else if (mapEntry && mapEntry->IsBattleGroundOrArena())
     {
-        Field *fieldsbg = resultbg->Fetch();
+        BattleGround *currentBg = NULL;
+        if (m_bgData.bgInstanceID)                                                //saved in BattleGround
+            currentBg = sBattleGroundMgr.GetBattleGround(m_bgData.bgInstanceID);
 
-        // Player was saved in Arena or Bg
-        if (mapEntry && mapEntry->IsBattleGroundOrArena())
+        bool player_at_bg = currentBg && currentBg->IsPlayerInBattleGround(GetGUID());
+
+        if (player_at_bg && currentBg->GetStatus() != STATUS_WAIT_LEAVE)
         {
-            // Get Entry Point(bg master) or Homebind
-            SetBattleGroundEntryPoint(fieldsbg[2].GetUInt32(),fieldsbg[3].GetFloat(),fieldsbg[4].GetFloat(),fieldsbg[5].GetFloat(),fieldsbg[6].GetFloat());
+            uint32 bgQueueTypeId = sBattleGroundMgr.BGQueueTypeId(currentBg->GetTypeID(), currentBg->GetArenaType());
+            AddBattleGroundQueueId(bgQueueTypeId);
 
-            // Bg still exists - join it!
-            BattleGround *currentBg = sBattleGroundMgr.GetBattleGround(instanceId);
-            if (currentBg && currentBg->IsPlayerInBattleGround(GetGUID()))
+            m_bgData.bgTypeID = currentBg->GetTypeID();
+
+            SetInviteForBattleGroundQueueType(bgQueueTypeId,currentBg->GetInstanceID());
+        }
+        // Bg was not found - go to Entry Point
+        else
+        {
+            // leave bg
+            if (player_at_bg)
+                currentBg->RemovePlayerAtLeave(GetGUID(), false, true);
+
+            // Do not look for instance if bg not found
+            const WorldLocation& _loc = GetBattleGroundEntryPoint();
+            mapId = _loc.GetMapId();
+            instanceId = 0;
+
+            if(mapId == MAPID_INVALID) // Battleground Entry Point not found (???)
             {
-                uint32 bgteam = fieldsbg[1].GetUInt32();
-                uint32 bgQueueTypeId = sBattleGroundMgr.BGQueueTypeId(currentBg->GetTypeID(), currentBg->GetArenaType());
-                uint32 queueSlot = AddBattleGroundQueueId(bgQueueTypeId);
-
-                SetBattleGroundId(currentBg->GetInstanceID());
-                SetBGTeam(bgteam);
-
-                SetInviteForBattleGroundQueueType(bgQueueTypeId,currentBg->GetInstanceID());
+                sLog.outError("Player (guidlow %d) was in BG in database, but BG was not found, and entry point was invalid! Teleport to default race/class locations.",guid);
+                RelocateToHomebind();
             }
-            // Bg was not found - go to Entry Point
             else
-            {
-                // Do not look for instance if bg not found
-                instanceId = 0;
-                mapId = GetBattleGroundEntryPointMap();
-                Relocate(GetBattleGroundEntryPointX(),GetBattleGroundEntryPointY(),GetBattleGroundEntryPointZ(),GetBattleGroundEntryPointO());
-            }
+                Relocate(&_loc);
+
+            // We are not in BG anymore
+            m_bgData.bgInstanceID = 0;
         }
     }
-
-    if (transGUID != 0)
+    // currently we do not support transport in bg
+    else if (transGUID)
     {
+        // There are no transports on instances
+        instanceId = 0;
+
         m_movementInfo.SetTransportData(transGUID, fields[27].GetFloat(), fields[28].GetFloat(), fields[29].GetFloat(), fields[30].GetFloat(), 0);
 
         if (!Oregon::IsValidMapCoord(
@@ -14635,11 +14679,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
                 guid, GetPositionX() + m_movementInfo.GetTransportPos()->GetPositionX(), GetPositionY() + m_movementInfo.GetTransportPos()->GetPositionY(),
                 GetPositionZ() + m_movementInfo.GetTransportPos()->GetPositionZ(), GetOrientation() + m_movementInfo.GetTransportPos()->GetOrientation());
 
-            RelocateToHomebind(mapId);
-
-            m_movementInfo.ClearTransportData();
-
-            transGUID = 0;
+            RelocateToHomebind();
         }
         else
         {
@@ -14659,20 +14699,22 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
                 sLog.outError("Player (guidlow %d) have invalid transport guid (%u). Teleport to default race/class locations.",
                     guid,transGUID);
 
-                RelocateToHomebind(mapId);
-
-                m_movementInfo.ClearTransportData();
-
-                transGUID = 0;
+                RelocateToHomebind();
             }
         }
     }
-    else if (!taxi_nodes.empty()) // Taxi Flight path loaded from db
+    // currently we do not support taxi in instance
+    else if (!taxi_nodes.empty())
     {
-        // There are no flightpaths in instances
         instanceId = 0;
 
-        if (!m_taxi.LoadTaxiDestinationsFromString(taxi_nodes))
+        // Not finish taxi flight path
+        if(m_bgData.HasTaxiPath())
+        {
+            for (int i = 0; i < 2; ++i)
+                m_taxi.AddTaxiDestination(m_bgData.taxiPath[i]);
+        }
+        else if (!m_taxi.LoadTaxiDestinationsFromString(taxi_nodes))
         {
             // problems with taxi path loading
             TaxiNodesEntry const* nodeEntry = NULL;
@@ -14682,7 +14724,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
             if (!nodeEntry)                                      // don't know taxi start node, to homebind
             {
                 sLog.outError("Character %u have wrong data in taxi destination list, teleport to homebind.",GetGUIDLow());
-                RelocateToHomebind(mapId);
+                RelocateToHomebind();
             }
             else                                                // have start node, to it
             {
@@ -14690,26 +14732,31 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
                 mapId = nodeEntry->map_id;
                 Relocate(nodeEntry->x, nodeEntry->y, nodeEntry->z,0.0f);
             }
+            m_taxi.ClearTaxiDestinations();
         }
-        // Taxi path loading succesfull
-        else if(uint32 node_id = m_taxi.GetTaxiSource())
+
+        if (uint32 node_id = m_taxi.GetTaxiSource())
         {
             // save source node as recall coord to prevent recall and fall from sky
             TaxiNodesEntry const* nodeEntry = sTaxiNodesStore.LookupEntry(node_id);
-            ASSERT(nodeEntry);                                  // checked in m_taxi.LoadTaxiDestinationsFromString
-            Relocate(nodeEntry->x,nodeEntry->y,nodeEntry->z,0);
-            mapId = nodeEntry->map_id;
+            if (nodeEntry && nodeEntry->map_id == GetMapId())
+            {
+                ASSERT(nodeEntry);                                  // checked in m_taxi.LoadTaxiDestinationsFromString
+                mapId = nodeEntry->map_id;
+                Relocate(nodeEntry->x, nodeEntry->y, nodeEntry->z,0.0f);
+            }
+
             // flight will started later
         }
     }
+
     // Map could be changed before
     mapEntry = sMapStore.LookupEntry(mapId);
     // client without expansion support
-    if(GetSession()->Expansion() < mapEntry->Expansion())
+    if(mapEntry && GetSession()->Expansion() < mapEntry->Expansion())
     {
         sLog.outDebug("Player %s using client without required expansion tried login at non accessible map %u", GetName(), mapId);
-        RelocateToHomebind(mapId);
-        instanceId = 0;
+        RelocateToHomebind();
     }
 
     // fix crash (because of if(Map *map = _FindMap(instanceId)) in MapInstanced::CreateInstance)
@@ -14735,7 +14782,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
         else
         {
             sLog.outError("Player (guidlow %d) is teleported to home (Map: %u X: %f Y: %f Z: %f O: %f).",guid,mapId,GetPositionX(),GetPositionY(),GetPositionZ(),GetOrientation());
-            RelocateToHomebind(mapId);
+            RelocateToHomebind();
         }
 
         map = MapManager::Instance().CreateMap(mapId, this, 0);
@@ -14749,7 +14796,6 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
             if (!map)
             {
                 sLog.outError("Player (guidlow %d) has invalid default map coordinates (X: %f Y: %f Z: %f O: %f). or instance couldn't be created",guid,GetPositionX(),GetPositionY(),GetPositionZ(),GetOrientation());
-
                 return false;
             }
         }
@@ -14763,9 +14809,8 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
             Relocate(at->target_X, at->target_Y, at->target_Z, at->target_Orientation);
         else
         {
-            sLog.outError("Player %s(GUID: %u) logged in to a reset instance (map: %u) and there is no area-trigger leading to this map. Thus he can't be ported back to the entrance. This _might_ be an exploit attempt.", GetName(), GetGUIDLow(), GetMapId());
-            RelocateToHomebind(mapId);
-            instanceId = 0;
+            sLog.outError("Player %s(GUID: %u) logged in to a reset instance (map: %u) and there is no area-trigger leading to this map. Thus he can't be ported back to the entrance. This _might_ be an exploit attempt.", GetName(), GetGUIDLow(), mapId);
+            RelocateToHomebind();
         }
     }
 
@@ -14935,10 +14980,8 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     // check PLAYER_CHOSEN_TITLE compatibility with PLAYER__FIELD_KNOWN_TITLES
     // note: PLAYER__FIELD_KNOWN_TITLES updated at quest status loaded
     if (uint32 curTitle = GetUInt32Value(PLAYER_CHOSEN_TITLE))
-    {
         if (!HasTitle(curTitle))
             SetUInt32Value(PLAYER_CHOSEN_TITLE, 0);
-    }
 
     // has to be called after last Relocate() in Player::LoadFromDB
     SetFallInformation(0, GetPositionZ());
@@ -16136,12 +16179,9 @@ void Player::SaveToDB()
         ss << m_taxi.GetTaximask(i) << " ";
 
     ss << "', ";
-    ss << (inworld ? 1 : 0);
+    ss << (IsInWorld() ? 1 : 0) << ", ";
 
-    ss << ", ";
-    ss << m_cinematic;
-
-    ss << ", ";
+    ss << m_cinematic << ", ";
 
     ss << m_Played_time[PLAYED_TIME_TOTAL] << ", ";
     ss << m_Played_time[PLAYED_TIME_LEVEL] << ", ";
@@ -16162,33 +16202,28 @@ void Player::SaveToDB()
         ss << "0";
 
     ss << ", ";
-    ss << m_ExtraFlags;
 
-    ss << ", ";
-    ss << uint32(m_stableSlots);                            // to prevent save uint8 as char
+    ss << m_ExtraFlags << ", ";
 
-    ss << ", ";
-    ss << uint32(m_atLoginFlags);
+    ss << uint32(m_stableSlots) << ", ";                    // to prevent save uint8 as char
 
-    ss << ", ";
-    ss << GetZoneId();
+    ss << uint32(m_atLoginFlags) << ", ";
 
-    ss << ", ";
-    ss << (uint64)m_deathExpireTime;
+    ss << GetZoneId() << ", ";
 
-    ss << ", '";
-    ss << m_taxi.SaveTaxiDestinationsToString();
+    ss << (uint64)m_deathExpireTime << ", '";
 
-    ss << "', '0', '";
+    ss << m_taxi.SaveTaxiDestinationsToString() << "', ";
+    ss << "'0', '";                                         // arena_pending_points
     ss << GetSession()->GetLatency();
     ss << "')";
 
     CharacterDatabase.Execute(ss.str().c_str());
 
-    if (m_mailsUpdated)                                      //save mails only when needed
+    if (m_mailsUpdated)                                     //save mails only when needed
         _SaveMail();
 
-    _SaveBattleGroundCoord();
+    _SaveBGData();
     _SaveInventory();
     _SaveQuestStatus();
     _SaveDailyQuestStatus();
@@ -16310,32 +16345,6 @@ void Player::_SaveAuras()
             stackCounter = 1;
         }
     }
-}
-
-void Player::_SaveBattleGroundCoord()
-{
-    CharacterDatabase.PExecute("DELETE FROM character_bgcoord WHERE guid = '%u'", GetGUIDLow());
-
-    // don't save if not needed
-    if (!InBattleGround())
-        return;
-
-    std::ostringstream ss;
-    ss << "INSERT INTO character_bgcoord (guid, bgid, bgteam, bgmap, bgx,"
-        "bgy, bgz, bgo) VALUES ("
-        << GetGUIDLow() << ", ";
-    ss << GetBattleGroundId();
-    ss << ", ";
-    ss << GetBGTeam();
-    ss << ", ";
-    ss << GetBattleGroundEntryPointMap() << ", "
-        << finiteAlways(GetBattleGroundEntryPointX()) << ", "
-        << finiteAlways(GetBattleGroundEntryPointY()) << ", "
-        << finiteAlways(GetBattleGroundEntryPointZ()) << ", "
-        << finiteAlways(GetBattleGroundEntryPointO());
-    ss << ")";
-
-    CharacterDatabase.Execute(ss.str().c_str());
 }
 
 void Player::_SaveInventory()
@@ -16845,10 +16854,10 @@ void Player::SendResetInstanceFailed(uint32 reason, uint32 MapId)
 ///checks the 15 afk reports per 5 minutes limit
 void Player::UpdateAfkReport(time_t currTime)
 {
-    if (m_bgAfkReportedTimer <= currTime)
+    if (m_bgData.bgAfkReportedTimer <= currTime)
     {
-        m_bgAfkReportedCount = 0;
-        m_bgAfkReportedTimer = currTime+5*MINUTE;
+        m_bgData.bgAfkReportedCount = 0;
+        m_bgData.bgAfkReportedTimer = currTime+5*MINUTE;
     }
 }
 
@@ -17718,6 +17727,59 @@ void Player::CleanupAfterTaxiFlight()
     getHostileRefManager().setOnlineOfflineState(true);
 }
 
+void Player::ContinueTaxiFlight()
+{
+    uint32 sourceNode = m_taxi.GetTaxiSource();
+    if (!sourceNode)
+        return;
+
+    sLog.outDebug("WORLD: Restart character %u taxi flight", GetGUIDLow());
+
+    uint32 mountDisplayId = objmgr.GetTaxiMount(sourceNode, GetTeam());
+    uint32 path = m_taxi.GetCurrentTaxiPath();
+
+    // search appropriate start path node
+    uint32 startNode = 0;
+
+    TaxiPathNodeList const& nodeList = sTaxiPathNodesByPath[path];
+
+    float distPrev = MAP_SIZE*MAP_SIZE;
+    float distNext =
+        (nodeList[0].x-GetPositionX())*(nodeList[0].x-GetPositionX())+
+        (nodeList[0].y-GetPositionY())*(nodeList[0].y-GetPositionY())+
+        (nodeList[0].z-GetPositionZ())*(nodeList[0].z-GetPositionZ());
+
+    for (uint32 i = 1; i < nodeList.size(); ++i)
+    {
+        TaxiPathNode const& node = nodeList[i];
+        TaxiPathNode const& prevNode = nodeList[i-1];
+
+        // skip nodes at another map
+        if (node.mapid != GetMapId())
+            continue;
+
+        distPrev = distNext;
+
+        distNext =
+            (node.x-GetPositionX())*(node.x-GetPositionX())+
+            (node.y-GetPositionY())*(node.y-GetPositionY())+
+            (node.z-GetPositionZ())*(node.z-GetPositionZ());
+
+        float distNodes =
+            (node.x-prevNode.x)*(node.x-prevNode.x)+
+            (node.y-prevNode.y)*(node.y-prevNode.y)+
+            (node.z-prevNode.z)*(node.z-prevNode.z);
+
+        if (distNext + distPrev < distNodes)
+        {
+            startNode = i;
+            break;
+        }
+    }
+
+    GetSession()->SendDoFlight(mountDisplayId, path, startNode);
+}
+
 void Player::ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs)
 {
                                                             // last check 2.0.10
@@ -18290,6 +18352,56 @@ void Player::ToggleMetaGemsActive(uint8 exceptslot, bool apply)
     }
 }
 
+void Player::SetBattleGroundEntryPoint()
+{
+    // Taxi path store
+    if (!m_taxi.empty())
+    {
+        m_bgData.mountSpell  = 0;
+        m_bgData.taxiPath[0] = m_taxi.GetTaxiSource();
+        m_bgData.taxiPath[1] = m_taxi.GetTaxiDestination();
+
+        // On taxi we don't need check for dungeon
+        m_bgData.joinPos = WorldLocation(GetMapId(), GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+        return;
+    }
+    else
+    {
+        m_bgData.ClearTaxiPath();
+
+        // Mount spell id storing
+        if (IsMounted())
+        {
+            AuraList const& auras = GetAurasByType(SPELL_AURA_MOUNTED);
+            if (!auras.empty())
+                m_bgData.mountSpell = (*auras.begin())->GetId();
+        }
+        else
+            m_bgData.mountSpell = 0;
+
+        // If map is dungeon find linked graveyard
+        if (GetMap()->IsDungeon())
+        {
+            if (const WorldSafeLocsEntry* entry = objmgr.GetClosestGraveYard(GetPositionX(), GetPositionY(), GetPositionZ(), GetMapId(), GetTeam()))
+            {
+                m_bgData.joinPos = WorldLocation(entry->map_id, entry->x, entry->y, entry->z, 0.0f);
+                return;
+            }
+            else
+                sLog.outError("SetBattleGroundEntryPoint: Dungeon map %u has no linked graveyard, setting home location as entry point.", GetMapId());
+        }
+        // If new entry point is not BG or arena set it
+        else if (!GetMap()->IsBattleGroundOrArena())
+        {
+            m_bgData.joinPos = WorldLocation(GetMapId(), GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+            return;
+        }
+    }
+
+    // In error cases use homebind position
+    m_bgData.joinPos = WorldLocation(m_homebindMapId, m_homebindX, m_homebindY, m_homebindZ, 0.0f);
+}
+
 void Player::LeaveBattleground(bool teleportToEntryPoint)
 {
     if (BattleGround *bg = GetBattleGround())
@@ -18326,9 +18438,9 @@ bool Player::CanJoinToBattleground() const
 bool Player::CanReportAfkDueToLimit()
 {
     // a player can complain about 15 people per 5 minutes
-    if (m_bgAfkReportedCount >= 15)
+    if (m_bgData.bgAfkReportedCount++ >= 15)
         return false;
-    ++m_bgAfkReportedCount;
+
     return true;
 }
 
@@ -18340,15 +18452,15 @@ void Player::ReportedAfkBy(Player* reporter)
         return;
 
     // check if player has 'Idle' or 'Inactive' debuff
-    if (m_bgAfkReporter.find(reporter->GetGUIDLow()) == m_bgAfkReporter.end() && !HasAura(43680,0) && !HasAura(43681,0) && reporter->CanReportAfkDueToLimit())
+    if (m_bgData.bgAfkReporter.find(reporter->GetGUIDLow()) == m_bgData.bgAfkReporter.end() && !HasAura(43680,0) && !HasAura(43681,0) && reporter->CanReportAfkDueToLimit())
     {
-        m_bgAfkReporter.insert(reporter->GetGUIDLow());
+        m_bgData.bgAfkReporter.insert(reporter->GetGUIDLow());
         // 3 players have to complain to apply debuff
-        if (m_bgAfkReporter.size() >= 3)
+        if (m_bgData.bgAfkReporter.size() >= 3)
         {
             // cast 'Idle' spell
             CastSpell(this, 43680, true);
-            m_bgAfkReporter.clear();
+            m_bgData.bgAfkReporter.clear();
         }
     }
 }
@@ -20276,6 +20388,18 @@ void Player::SetHomebindToLocation(WorldLocation const& loc, uint32 area_id)
     // update sql homebind
     CharacterDatabase.PExecute("UPDATE character_homebind SET map = '%u', zone = '%u', position_x = '%f', position_y = '%f', position_z = '%f' WHERE guid = '%u'",
         m_homebindMapId, m_homebindAreaId, m_homebindX, m_homebindY, m_homebindZ, GetGUIDLow());
+}
+
+void Player::_SaveBGData()
+{
+    CharacterDatabase.PExecute("DELETE FROM character_battleground_data WHERE guid='%u'", GetGUIDLow());
+    if (m_bgData.bgInstanceID)
+    {
+        /* guid, bgInstanceID, bgTeam, x, y, z, o, map, taxi[0], taxi[1], mountSpell */
+        CharacterDatabase.PExecute("INSERT INTO character_battleground_data VALUES ('%u', '%u', '%u', '%f', '%f', '%f', '%f', '%u', '%u', '%u', '%u')",
+            GetGUIDLow(), m_bgData.bgInstanceID, m_bgData.bgTeam, m_bgData.joinPos.GetPositionX(), m_bgData.joinPos.GetPositionY(), m_bgData.joinPos.GetPositionZ(),
+            m_bgData.joinPos.GetOrientation(), m_bgData.joinPos.GetMapId(), m_bgData.taxiPath[0], m_bgData.taxiPath[1], m_bgData.mountSpell);
+    }
 }
 
 void Player::ResetMap()

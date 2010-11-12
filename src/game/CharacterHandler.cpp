@@ -87,7 +87,7 @@ bool LoginQueryHolder::Initialize()
     // in other case still be dummy query
     res &= SetPQuery(PLAYER_LOGIN_QUERY_LOADGUILD,           "SELECT guildid,rank FROM guild_member WHERE guid = '%u'", GUID_LOPART(m_guid));
     res &= SetPQuery(PLAYER_LOGIN_QUERY_LOADARENAINFO,       "SELECT arenateamid, played_week, played_season, personal_rating FROM arena_team_member WHERE guid='%u'", GUID_LOPART(m_guid));
-    res &= SetPQuery(PLAYER_LOGIN_QUERY_LOADBGCOORD,         "SELECT bgid, bgteam, bgmap, bgx, bgy, bgz, bgo FROM character_bgcoord WHERE guid = '%u'", GUID_LOPART(m_guid));
+    res &= SetPQuery(PLAYER_LOGIN_QUERY_LOADBGDATA,          "SELECT instance_id, team, join_x, join_y, join_z, join_o, join_map, taxi_start, taxi_end, mount_spell FROM character_battleground_data WHERE guid = '%u'", GUID_LOPART(m_guid));
 
     return res;
 }
@@ -641,55 +641,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
         pCurrChar->SetMovement(MOVE_WATER_WALK);
     }
 
-    if (uint32 sourceNode = pCurrChar->m_taxi.GetTaxiSource())
-    {
-
-        sLog.outDebug("WORLD: Restart character %u taxi flight", pCurrChar->GetGUIDLow());
-
-        uint32 MountId = objmgr.GetTaxiMount(sourceNode, pCurrChar->GetTeam());
-        uint32 path = pCurrChar->m_taxi.GetCurrentTaxiPath();
-
-        // search appropriate start path node
-        uint32 startNode = 0;
-
-        TaxiPathNodeList const& nodeList = sTaxiPathNodesByPath[path];
-
-        float distPrev = MAP_SIZE*MAP_SIZE;
-        float distNext =
-            (nodeList[0].x-pCurrChar->GetPositionX())*(nodeList[0].x-pCurrChar->GetPositionX())+
-            (nodeList[0].y-pCurrChar->GetPositionY())*(nodeList[0].y-pCurrChar->GetPositionY())+
-            (nodeList[0].z-pCurrChar->GetPositionZ())*(nodeList[0].z-pCurrChar->GetPositionZ());
-
-        for (uint32 i = 1; i < nodeList.size(); ++i)
-        {
-            TaxiPathNode const& node = nodeList[i];
-            TaxiPathNode const& prevNode = nodeList[i-1];
-
-            // skip nodes at another map
-            if (node.mapid != pCurrChar->GetMapId())
-                continue;
-
-            distPrev = distNext;
-
-            distNext =
-                (node.x-pCurrChar->GetPositionX())*(node.x-pCurrChar->GetPositionX())+
-                (node.y-pCurrChar->GetPositionY())*(node.y-pCurrChar->GetPositionY())+
-                (node.z-pCurrChar->GetPositionZ())*(node.z-pCurrChar->GetPositionZ());
-
-            float distNodes =
-                (node.x-prevNode.x)*(node.x-prevNode.x)+
-                (node.y-prevNode.y)*(node.y-prevNode.y)+
-                (node.z-prevNode.z)*(node.z-prevNode.z);
-
-            if (distNext + distPrev < distNodes)
-            {
-                startNode = i;
-                break;
-            }
-        }
-
-        SendDoFlight(MountId, path, startNode);
-    }
+    pCurrChar->ContinueTaxiFlight();
 
     // Load pet if any and player is alive and not in taxi flight
     if (pCurrChar->isAlive() && pCurrChar->m_taxi.GetTaxiSource() == 0)

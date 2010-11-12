@@ -2679,7 +2679,7 @@ void BattleGroundMap::RemoveAllPlayers()
         for (MapRefManager::iterator itr = m_mapRefManager.begin(); itr != m_mapRefManager.end(); ++itr)
             if (Player* plr = itr->getSource())
                 if (!plr->IsBeingTeleportedFar())
-                    plr->TeleportTo(plr->GetBattleGroundEntryPointMap(),plr->GetBattleGroundEntryPointX(),plr->GetBattleGroundEntryPointY(),plr->GetBattleGroundEntryPointZ(),plr->GetBattleGroundEntryPointO());
+                    plr->TeleportTo(plr->GetBattleGroundEntryPoint());
 
 }
 
