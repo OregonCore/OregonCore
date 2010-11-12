@@ -1284,7 +1284,7 @@ class Player : public Unit, public GridObject<Player>
         void RemoveMail(uint32 id);
 
         void AddMail(Mail* mail) { m_mail.push_front(mail);}// for call from WorldSession::SendMailTo
-        uint32 GetMailSize() { return m_mail.size();};
+        uint32 GetMailSize() { return m_mail.size();}
         Mail* GetMail(uint32 id);
 
         PlayerMails::iterator GetmailBegin() { return m_mail.begin();};
@@ -1564,9 +1564,9 @@ class Player : public Unit, public GridObject<Player>
 
         void UpdateUnderwaterState(Map * m, float x, float y, float z);
 
-        void SendMessageToSet(WorldPacket *data, bool self, bool to_possessor = true);// overwrite Object::SendMessageToSet
-        void SendMessageToSetInRange(WorldPacket *data, float fist, bool self, bool to_possessor = true);// overwrite Object::SendMessageToSetInRange
-        void SendMessageToSetInRange(WorldPacket *data, float dist, bool self, bool to_possessor, bool own_team_only);
+        void SendMessageToSet(WorldPacket *data, bool self);// overwrite Object::SendMessageToSet
+        void SendMessageToSetInRange(WorldPacket *data, float fist, bool self);// overwrite Object::SendMessageToSetInRange
+        void SendMessageToSetInRange(WorldPacket *data, float dist, bool self, bool own_team_only);
 
         static void DeleteFromDB(uint64 playerguid, uint32 accountId, bool updateRealmChars = true);
 

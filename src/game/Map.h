@@ -259,10 +259,12 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 
         virtual void Update(const uint32&);
 
-        void MessageBroadcast(Player *, WorldPacket *, bool to_self, bool to_possessor);
-        void MessageBroadcast(WorldObject *, WorldPacket *, bool to_possessor);
-        void MessageDistBroadcast(Player *, WorldPacket *, float dist, bool to_self, bool to_possessor, bool own_team_only = false);
-        void MessageDistBroadcast(WorldObject *, WorldPacket *, float dist, bool to_possessor);
+        /*
+        void MessageBroadcast(Player *, WorldPacket *, bool to_self);
+        void MessageBroadcast(WorldObject *, WorldPacket *);
+        void MessageDistBroadcast(Player *, WorldPacket *, float dist, bool to_self, bool own_team_only = false);
+        void MessageDistBroadcast(WorldObject *, WorldPacket *, float dist);
+        */
 
         float GetVisibilityDistance() const { return m_VisibleDistance; }
         //function for setting up visibility distance for maps on per-type/per-Id basis

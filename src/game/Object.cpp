@@ -1573,14 +1573,16 @@ void WorldObject::BuildMonsterChat(WorldPacket *data, uint8 msgtype, char const*
     *data << (uint8)0;                                      // ChatTag
 }
 
-void WorldObject::SendMessageToSet(WorldPacket *data, bool /*fake*/, bool bToPossessor)
+void WorldObject::SendMessageToSet(WorldPacket *data, bool /*fake*/)
 {
-    GetMap()->MessageBroadcast(this, data, bToPossessor);
+    Oregon::MessageDistDeliverer notifier(this, data, GetMap()->GetVisibilityDistance());
+    VisitNearbyWorldObject(GetMap()->GetVisibilityDistance(), notifier);
 }
 
-void WorldObject::SendMessageToSetInRange(WorldPacket *data, float dist, bool /*bToSelf*/, bool bToPossessor)
+void WorldObject::SendMessageToSetInRange(WorldPacket *data, float dist, bool /*bToSelf*/)
 {
-    GetMap()->MessageDistBroadcast(this, data, dist, bToPossessor);
+    Oregon::MessageDistDeliverer notifier(this, data, dist);
+    VisitNearbyWorldObject(dist, notifier);
 }
 
 void WorldObject::SendObjectDeSpawnAnim(uint64 guid)

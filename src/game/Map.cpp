@@ -449,7 +449,8 @@ Map::Add(T *obj)
     obj->UpdateObjectVisibility(true);
 }
 
-void Map::MessageBroadcast(Player *player, WorldPacket *msg, bool to_self, bool to_possessor)
+/*
+void Map::MessageBroadcast(Player *player, WorldPacket *msg, bool to_self)
 {
     CellPair p = Oregon::ComputeCellPair(player->GetPositionX(), player->GetPositionY());
 
@@ -465,12 +466,12 @@ void Map::MessageBroadcast(Player *player, WorldPacket *msg, bool to_self, bool 
     if (!loaded(GridPair(cell.data.Part.grid_x, cell.data.Part.grid_y)))
         return;
 
-    Oregon::MessageDeliverer post_man(*player, msg, to_possessor, to_self);
+    Oregon::MessageDeliverer post_man(*player, msg, to_self);
     TypeContainerVisitor<Oregon::MessageDeliverer, WorldTypeMapContainer > message(post_man);
     cell.Visit(p, message, *this, *player, GetVisibilityDistance());
 }
 
-void Map::MessageBroadcast(WorldObject *obj, WorldPacket *msg, bool to_possessor)
+void Map::MessageBroadcast(WorldObject *obj, WorldPacket *msg)
 {
     CellPair p = Oregon::ComputeCellPair(obj->GetPositionX(), obj->GetPositionY());
 
@@ -489,12 +490,12 @@ void Map::MessageBroadcast(WorldObject *obj, WorldPacket *msg, bool to_possessor
 
     //TODO: currently on continents when Visibility.Distance.InFlight > Visibility.Distance.Continents
     //we have alot of blinking mobs because monster move packet send is broken...
-    Oregon::ObjectMessageDeliverer post_man(*obj, msg, to_possessor);
+    Oregon::ObjectMessageDeliverer post_man(*obj, msg);
     TypeContainerVisitor<Oregon::ObjectMessageDeliverer, WorldTypeMapContainer > message(post_man);
     cell.Visit(p, message, *this, *obj, GetVisibilityDistance());
 }
 
-void Map::MessageDistBroadcast(Player *player, WorldPacket *msg, float dist, bool to_self, bool to_possessor, bool own_team_only)
+void Map::MessageDistBroadcast(Player *player, WorldPacket *msg, float dist, bool to_self, bool own_team_only)
 {
     CellPair p = Oregon::ComputeCellPair(player->GetPositionX(), player->GetPositionY());
 
@@ -510,12 +511,12 @@ void Map::MessageDistBroadcast(Player *player, WorldPacket *msg, float dist, boo
     if (!loaded(GridPair(cell.data.Part.grid_x, cell.data.Part.grid_y)))
         return;
 
-    Oregon::MessageDistDeliverer post_man(*player, msg, to_possessor, dist, to_self, own_team_only);
+    Oregon::MessageDistDeliverer post_man(*player, msg, dist, to_self, own_team_only);
     TypeContainerVisitor<Oregon::MessageDistDeliverer , WorldTypeMapContainer > message(post_man);
     cell.Visit(p, message, *this, *player, dist);
 }
 
-void Map::MessageDistBroadcast(WorldObject *obj, WorldPacket *msg, float dist, bool to_possessor)
+void Map::MessageDistBroadcast(WorldObject *obj, WorldPacket *msg, float dist)
 {
     CellPair p = Oregon::ComputeCellPair(obj->GetPositionX(), obj->GetPositionY());
 
@@ -532,10 +533,11 @@ void Map::MessageDistBroadcast(WorldObject *obj, WorldPacket *msg, float dist, b
     if (!loaded(GridPair(cell.data.Part.grid_x, cell.data.Part.grid_y)))
         return;
 
-    Oregon::ObjectMessageDistDeliverer post_man(*obj, msg, to_possessor, dist);
+    Oregon::ObjectMessageDistDeliverer post_man(*obj, msg, dist);
     TypeContainerVisitor<Oregon::ObjectMessageDistDeliverer, WorldTypeMapContainer > message(post_man);
     cell.Visit(p, message, *this, *obj, dist);
 }
+*/
 
 bool Map::loaded(const GridPair &p) const
 {

@@ -121,46 +121,30 @@ namespace Oregon
         void Visit(CorpseMapType &m) { updateObjects<Corpse>(m); }
     };
 
-    struct Deliverer
+    struct MessageDistDeliverer
     {
-        WorldObject &i_source;
+        WorldObject *i_source;
         WorldPacket *i_message;
-        std::set<uint64> plr_list;
-        bool i_toPossessor;
-        bool i_toSelf;
-        float i_dist;
-        Deliverer(WorldObject &src, WorldPacket *msg, bool to_possessor, bool to_self, float dist = 0.0f) : i_source(src), i_message(msg), i_toPossessor(to_possessor), i_toSelf(to_self), i_dist(dist) {}
+        float i_distSq;
+        uint32 team;
+        MessageDistDeliverer(WorldObject *src, WorldPacket *msg, float dist, bool own_team_only = false)
+            : i_source(src), i_message(msg), i_distSq(dist * dist)
+            , team((own_team_only && src->GetTypeId() == TYPEID_PLAYER) ? ((Player*)src)->GetTeam() : 0)
+        {
+        }
         void Visit(PlayerMapType &m);
         void Visit(CreatureMapType &m);
         void Visit(DynamicObjectMapType &m);
-        virtual void VisitObject(Player* plr) = 0;
-        void SendPacket(Player* plr);
         template<class SKIP> void Visit(GridRefManager<SKIP> &) {}
-    };
 
-    struct MessageDeliverer : public Deliverer
-    {
-        MessageDeliverer(Player &pl, WorldPacket *msg, bool to_possessor, bool to_self) : Deliverer(pl, msg, to_possessor, to_self) {}
-        void VisitObject(Player* plr);
-    };
+        void SendPacket(Player* plr)
+        {
+            // never send packet to self
+            if (plr == i_source || team && plr->GetTeam() != team)
+                return;
 
-    struct ObjectMessageDeliverer : public Deliverer
-    {
-        explicit ObjectMessageDeliverer(WorldObject &src, WorldPacket *msg, bool to_possessor) : Deliverer(src, msg, to_possessor, false) {}
-        void VisitObject(Player* plr) { SendPacket(plr); }
-    };
-
-    struct MessageDistDeliverer : public Deliverer
-    {
-        bool i_ownTeamOnly;
-        MessageDistDeliverer(Player &pl, WorldPacket *msg, bool to_possessor, float dist, bool to_self, bool ownTeamOnly) : Deliverer(pl, msg, to_possessor, to_self, dist), i_ownTeamOnly(ownTeamOnly) {}
-        void VisitObject(Player* plr);
-    };
-
-    struct ObjectMessageDistDeliverer : public Deliverer
-    {
-        ObjectMessageDistDeliverer(WorldObject &obj, WorldPacket *msg, bool to_possessor, float dist) : Deliverer(obj, msg, to_possessor, false, dist) {}
-        void VisitObject(Player* plr) { SendPacket(plr); }
+            plr->GetSession()->SendPacket(i_message);
+        }
     };
 
     struct ObjectUpdater

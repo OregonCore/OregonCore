@@ -643,7 +643,7 @@ void WorldSession::HandlePossessedMovement(WorldPacket& recv_data, MovementInfo&
     data << pos_unit->GetPackGUID();
     data.append(recv_data.contents(), recv_data.size());
     // Send the packet to self but not to the possessed player; for creatures the first bool is irrelevant
-    pos_unit->SendMessageToSet(&data, true, false);
+    pos_unit->SendMessageToSet(&data, true);
 
     // Possessed is a player
     if (pos_unit->GetTypeId() == TYPEID_PLAYER)

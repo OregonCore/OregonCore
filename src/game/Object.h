@@ -542,8 +542,8 @@ class WorldObject : public Object, public WorldLocation
 
         virtual void CleanupsBeforeDelete();                // used in destructor or explicitly before mass creature delete to remove cross-references to already deleted units
 
-        virtual void SendMessageToSet(WorldPacket *data, bool self, bool to_possessor = true);
-        virtual void SendMessageToSetInRange(WorldPacket *data, float dist, bool self, bool to_possessor = true);
+        virtual void SendMessageToSet(WorldPacket *data, bool self);
+        virtual void SendMessageToSetInRange(WorldPacket *data, float dist, bool self);
 
         void MonsterSay(const char* text, uint32 language, uint64 TargetGuid);
         void MonsterYell(const char* text, uint32 language, uint64 TargetGuid);
