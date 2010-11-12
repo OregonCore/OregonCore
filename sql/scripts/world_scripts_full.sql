@@ -667,6 +667,8 @@ UPDATE `creature_template` SET `ScriptName`='npc_great_bear_spirit' WHERE `entry
 UPDATE `creature_template` SET `ScriptName`='npc_silva_filnaveth' WHERE `entry`=11800;
 UPDATE `creature_template` SET `ScriptName`='npc_clintar_dreamwalker' WHERE `entry`=22834;
 UPDATE `creature_template` SET `ScriptName`='npc_clintar_spirit' WHERE `entry`=22916;
+UPDATE `creature_template` SET `ScriptName`='npc_remulos' WHERE `entry`=11832;
+UPDATE `creature_template` SET `ScriptName`='npc_eranikus' WHERE `entry`=15491;
 
 /* MULGORE */
 UPDATE `creature_template` SET `ScriptName`='npc_skorn_whitecloud' WHERE `entry`=3052;
