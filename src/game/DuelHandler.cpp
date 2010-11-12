@@ -51,8 +51,14 @@ void WorldSession::HandleDuelAcceptedOpcode(WorldPacket& recvPacket)
 
     if (sWorld.getConfig(CONFIG_DUEL_MOD))
     {
-        pl->DuelMod();
-        plTarget->DuelMod();
+        pl->ResetAllPowers();
+        plTarget->ResetAllPowers();
+
+        if (sWorld.getConfig(CONFIG_DUEL_CD_RESET) && !pl->GetMap()->IsDungeon())
+            pl->RemoveArenaSpellCooldowns();
+
+        if (sWorld.getConfig(CONFIG_DUEL_CD_RESET) && !plTarget->GetMap()->IsDungeon())
+            plTarget->RemoveArenaSpellCooldowns();
     }
 
     WorldPacket data(SMSG_DUEL_COUNTDOWN, 4);

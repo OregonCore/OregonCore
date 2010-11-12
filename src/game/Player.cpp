@@ -2042,6 +2042,7 @@ void Player::RegenerateHealth()
 void Player::ResetAllPowers()
 {
     SetHealth(GetMaxHealth());
+
     SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
     SetPower(POWER_RAGE, 0);
     SetPower(POWER_ENERGY, GetMaxPower(POWER_ENERGY));
@@ -20260,17 +20261,6 @@ void Player::SetHomebindToLocation(WorldLocation const& loc, uint32 area_id)
     // update sql homebind
     CharacterDatabase.PExecute("UPDATE character_homebind SET map = '%u', zone = '%u', position_x = '%f', position_y = '%f', position_z = '%f' WHERE guid = '%u'",
         m_homebindMapId, m_homebindAreaId, m_homebindX, m_homebindY, m_homebindZ, GetGUIDLow());
-}
-
-void Player::DuelMod()
-{
-    SetHealth(GetMaxHealth());
-
-    if (getPowerType() == POWER_MANA)
-        SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
-
-    if (sWorld.getConfig(CONFIG_DUEL_CD_RESET) && !GetMap()->IsDungeon())
-        RemoveArenaSpellCooldowns();
 }
 
 void Player::ResetMap()
