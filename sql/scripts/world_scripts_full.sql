@@ -1023,6 +1023,7 @@ UPDATE `creature_template` SET `ScriptName`='npc_akuno' WHERE `entry`=22377;
 UPDATE `creature_template` SET `ScriptName`='npc_slim' WHERE `entry`=19679;
 UPDATE `creature_template` SET `ScriptName`='npc_captive_child' WHERE `entry`=22314;
 UPDATE `creature_template` SET `ScriptName`='npc_skywing' WHERE `entry`=22424;
+UPDATE `creature_template` SET `ScriptName`='npc_skyguard_prisoner' WHERE `entry`=23383;
 
 
 /* THOUSAND NEEDLES */

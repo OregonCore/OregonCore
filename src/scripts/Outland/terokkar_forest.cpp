@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Terokkar_Forest
 SD%Complete: 80
-SDComment: Quest support: 9889, 10009, 10873, 10896, 11096, 10052, 10051, 10898, 10446/10447, 10852, 10887, 10922, Skettis->Ogri'la Flight
+SDComment: Quest support: 9889, 10009, 10873, 10896, 11096, 10052, 10051, 10898, 10446/10447, 10852, 10887, 10922, 11085, Skettis->Ogri'la Flight
 SDCategory: Terokkar Forest
 EndScriptData */
 
@@ -28,6 +28,7 @@ mob_rotting_forest_rager
 mob_netherweb_victim
 npc_floon
 npc_isla_starmane
+npc_skyguard_prisoner
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -1131,6 +1132,146 @@ CreatureAI* GetAI_npc_captive_child(Creature* pCreature)
     return new npc_captive_child(pCreature);
 }
 
+/*######
+## npc_skyguard_prisoner
+######*/
+
+enum SPrisoner
+{
+    SAY_START                     = -1000716,
+    SAY_DONT_LIKE                 = -1000717,
+    SAY_COMPLETE                  = -1000718,
+
+    GO_PRISONER_CAGE              = 185952,
+
+    QUEST_ESCAPE_FROM_SKETTIS     = 11085,
+};
+
+struct npc_skyguard_prisonerAI : public npc_escortAI
+{
+    npc_skyguard_prisonerAI(Creature* pCreature) : npc_escortAI(pCreature) {}
+
+    void Reset() {}
+
+    uint32 CalculateWaypointID()
+    {
+        //TODO: we have 2 ways to calculate wich waypoint we need to use
+
+        /*if (abs(me->GetPositionX() + 4108.25) < abs(me->GetPositionX() + 3718.81) &&
+            abs(me->GetPositionX() + 4108.25) < abs(me->GetPositionX() + 3671.51))
+            return 1;
+
+        if (abs(me->GetPositionX() + 3718.81) < abs(me->GetPositionX() + 4108.25) &&
+            abs(me->GetPositionX() + 3718.81) < abs(me->GetPositionX() + 3671.51))
+            return 2;
+
+        return 3;*/
+
+        switch (me->GetGUIDLow())
+        {
+        case 1189307:
+            return 1;
+            break;
+        case 1189309:
+            return 2;
+            break;
+        default:
+            return 3;
+            break;
+        }
+    }
+
+    void StartEvent(Player* pPlayer, const Quest* pQuest)
+    {
+        switch (CalculateWaypointID())
+        {
+        case 1:
+            AddWaypoint(0, -4108.25, 3032.18, 344.799, 3000);
+            AddWaypoint(1, -4114.41, 3036.73, 344.039);
+            AddWaypoint(2, -4126.41, 3026.07, 344.156);
+            AddWaypoint(3, -4145.17, 3029.69, 337.423);
+            AddWaypoint(4, -4173.69, 3035.72, 343.346);
+            AddWaypoint(5, -4173.70, 3047.37, 343.888);
+            AddWaypoint(6, -4183.47, 3060.62, 344.157, 3000);
+            AddWaypoint(7, -4179.13, 3090.20, 323.971, 30000);
+            Start(false, false, pPlayer->GetGUID(), pQuest);
+            break;
+        case 2:
+            AddWaypoint(0, -3718.81, 3787.24, 302.890, 3000);
+            AddWaypoint(1, -3714.44, 3780.35, 302.075);
+            AddWaypoint(2, -3698.33, 3788.04, 302.171);
+            AddWaypoint(3, -3679.36, 3780.25, 295.077);
+            AddWaypoint(4, -3654.82, 3770.43, 301.291);
+            AddWaypoint(5, -3656.07, 3757.31, 301.985);
+            AddWaypoint(6, -3648.83, 3743.07, 302.173, 3000);
+            AddWaypoint(7, -3659.16, 3714.94, 281.576, 30000);
+            Start(false, false, pPlayer->GetGUID(), pQuest);
+            break;
+        case 3:
+            AddWaypoint(0, -3671.51, 3385.36, 312.956, 3000);
+            AddWaypoint(1, -3677.74, 3379.05, 312.136);
+            AddWaypoint(2, -3667.52, 3366.45, 312.233);
+            AddWaypoint(3, -3672.87, 3343.52, 304.994);
+            AddWaypoint(4, -3679.35, 3319.01, 311.419);
+            AddWaypoint(5, -3692.93, 3318.69, 312.081);
+            AddWaypoint(6, -3704.08, 3309.56, 312.233, 3000);
+            AddWaypoint(7, -3733.99, 3315.77, 292.093, 30000);
+            Start(false, false, pPlayer->GetGUID(), pQuest);
+            break;
+        }
+        return;
+    }
+
+    void WaypointReached(uint32 uiPointId)
+    {
+        if (Player* pPlayer = GetPlayerForEscort())
+        {
+            switch (uiPointId)
+            {
+            case 0:
+                DoScriptText(SAY_START, me);
+                break;
+            case 6:
+                DoScriptText(SAY_DONT_LIKE, me);
+                break;
+            case 7:
+                DoScriptText(SAY_COMPLETE, me);
+                if (Player* pPlayer = GetPlayerForEscort())
+                    pPlayer->GroupEventHappens(QUEST_ESCAPE_FROM_SKETTIS, me);
+                break;
+            }
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        npc_escortAI::UpdateAI(uiDiff);
+
+        if (!UpdateVictim())
+            return;
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+bool QuestAccept_npc_skyguard_prisoner(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
+{
+    if (pQuest->GetQuestId() == QUEST_ESCAPE_FROM_SKETTIS)
+    {
+        if (GameObject* pGo = pCreature->FindNearestGameObject(GO_PRISONER_CAGE, 10.0f))
+            pGo->UseDoorOrButton();
+
+        if (npc_skyguard_prisonerAI* pEscortAI = CAST_AI(npc_skyguard_prisonerAI, pCreature->AI()))
+            pEscortAI->StartEvent(pPlayer, pQuest);
+    }
+    return true;
+}
+
+CreatureAI* GetAI_npc_skyguard_prisoner(Creature* pCreature)
+{
+    return new npc_skyguard_prisonerAI(pCreature);
+}
+
 void AddSC_terokkar_forest()
 {
     Script *newscript;
@@ -1223,6 +1364,10 @@ void AddSC_terokkar_forest()
     newscript->GetAI = &GetAI_npc_captive_child;
     newscript->RegisterSelf();
 
-
+    newscript = new Script;
+    newscript->Name = "npc_skyguard_prisoner";
+    newscript->GetAI = &GetAI_npc_skyguard_prisoner;
+    newscript->pQuestAccept = &QuestAccept_npc_skyguard_prisoner;
+    newscript->RegisterSelf();
 }
 

@@ -678,7 +678,11 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 (-1000712,'Be welcome, friends!',0,0,0,0,'SAY_WP_3'),
 (-1000713,'Thank you for coming here in remembrance of me. Your efforts in recovering that symbol, while unnecessary, are certainly touching to an old man\'s heart.',0,0,0,0,'SAY_WP_4'),
 (-1000714,'Please, rise my friend. Keep the Blessing as a symbol of the strength of the Light and how heroes long gone might once again rise in each of us to inspire.',0,0,0,0,'SAY_WP_5'),
-(-1000715,'Thank you my friend for making this possible. This is a day that I shall never forget! I think I will stay a while. Please return to High Priestess MacDonnell at the camp. I know that she\'ll be keenly interested to know of what has transpired here.',0,0,0,0,'SAY_WP_6');
+(-1000715,'Thank you my friend for making this possible. This is a day that I shall never forget! I think I will stay a while. Please return to High Priestess MacDonnell at the camp. I know that she\'ll be keenly interested to know of what has transpired here.',0,0,0,0,'SAY_WP_6'),
+
+(-1000716,'Thanks for your help. Let\'s get out of here!',0,0,0,0,''),
+(-1000717,'Let\'s keep moving. I don\'t like this place.',0,0,0,0,''),
+(-1000718,'Thanks again. Sergeant Doryn will be glad to hear he has one less scout to replace this week.',0,0,0,0,'');
 
 -- -1 033 000 SHADOWFANG KEEP
 INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`emote`,`comment`) VALUES
