@@ -19,7 +19,7 @@
 /* ScriptData
 SDName: Western_Plaguelands
 SD%Complete: 90
-SDComment: Quest support: 5216, 5219, 5222, 5225, 5229, 5231, 5233, 5235. To obtain Vitreous Focuser (could use more spesifics about gossip items)
+SDComment: Quest support: 5216, 5219, 5222, 5225, 5229, 5231, 5233, 5235, 9446. To obtain Vitreous Focuser (could use more spesifics about gossip items)
 SDCategory: Western Plaguelands
 EndScriptData */
 
@@ -29,12 +29,14 @@ npc_the_scourge_cauldron
 EndContentData */
 
 #include "ScriptPCH.h"
+#include "ScriptedEscortAI.h"
 
 /*######
 ## npcs_dithers_and_arbington
-##npc_the_scourge_cauldron
-##npc_myranda_the_hag
-##npcs_andorhal_tower
+## npc_the_scourge_cauldron
+## npc_myranda_the_hag
+## npcs_andorhal_tower
+## npc_anchorite_truuen
 ######*/
 
 #define GOSSIP_HDA1 "What does the Felstone Field Cauldron need?"
@@ -237,6 +239,150 @@ CreatureAI* GetAI_npc_andorhal_tower(Creature* pCreature)
     return new npc_andorhal_towerAI (pCreature);
 }
 
+/*######
+##  npc_anchorite_truuen
+######*/
+
+enum eTruuen
+{
+    SAY_WP_0                    = -1000709,
+    SAY_WP_1                    = -1000710,
+    SAY_WP_2                    = -1000711,
+    SAY_WP_3                    = -1000712,
+    SAY_WP_4                    = -1000713,
+    SAY_WP_5                    = -1000714,
+    SAY_WP_6                    = -1000715,
+
+    NPC_GHOST_UTHER             = 17233,
+    NPC_THEL_DANIS              = 1854,
+    NPC_GHOUL                   = 1791,
+
+    QUEST_TOMB_LIGHTBRINGER     = 9446
+};
+
+struct npc_anchorite_truuenAI : public npc_escortAI
+{    
+    npc_anchorite_truuenAI(Creature* pCreature) : npc_escortAI(pCreature) { }
+
+    uint32 EventTimer;
+    uint64 UterGUID;
+    uint32 uiPhase;
+
+    void Reset()
+    {        
+        EventTimer = 5000;
+        UterGUID = 0;
+        uiPhase = 0;
+    }
+    
+    void WaypointReached(uint32 uiPointId)
+    {
+        Player* pPlayer = GetPlayerForEscort();
+
+        if (!pPlayer)
+            return;
+
+        switch (uiPointId)
+        {
+        case 8:
+            DoScriptText(SAY_WP_0, me);
+            for (int i = 0; i < 2; i++)
+                me->SummonCreature(NPC_GHOUL, 1035.43,-1572.97,61.5412, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 90000);
+            break;
+        case 9:
+            DoScriptText(SAY_WP_1, me);
+            break;
+        case 14:
+            for (int i = 0; i < 4; i++)
+                me->SummonCreature(NPC_GHOUL, 1159.77,-1762.64,60.5699, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+            break;
+        case 15:
+            DoScriptText(SAY_WP_2, me);
+            SetRun(false);
+            break;
+        case 22:
+            if (Creature* pTheldanis = me->FindNearestCreature(NPC_THEL_DANIS, 50))
+                DoScriptText(SAY_WP_3, pTheldanis);
+            break;
+        case 23:
+            if (Creature* pUter = me->SummonCreature(NPC_GHOST_UTHER, 971.86,-1825.42 ,81.99 , 0.0f, TEMPSUMMON_MANUAL_DESPAWN, 10000))
+            {
+                pUter->AddUnitMovementFlag(MOVEFLAG_LEVITATING);
+                DoScriptText(SAY_WP_4, pUter, me);
+                UterGUID = pUter->GetGUID();
+                uiPhase = 1;
+                me->SetStandState(UNIT_STAND_STATE_KNEEL);
+                SetEscortPaused(true);
+            }
+            break;
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        npc_escortAI::UpdateAI(uiDiff);
+
+        if (!UpdateVictim())
+        {
+            if (HasEscortState(STATE_ESCORT_PAUSED) && uiPhase)
+            {
+                if (EventTimer <= uiDiff)
+                {
+                    EventTimer = 5000;
+
+                    if (Creature* pUter = Unit::GetCreature(*me, UterGUID))
+                    {
+                        switch(uiPhase)
+                        {
+                        case 1:
+                            DoScriptText(SAY_WP_5, pUter, me);
+                            me->SetStandState(UNIT_STAND_STATE_STAND);
+                            ++uiPhase;
+                            break;
+                        case 2:
+                            DoScriptText(SAY_WP_6, pUter, me);
+                            me->ForcedDespawn(30000);
+                            pUter->ForcedDespawn(30000);
+                            uiPhase = 0;
+                            break;
+                        }
+                    }
+                }
+                else
+                    EventTimer -= uiDiff;
+            }
+            return;
+        }
+
+        DoMeleeAttackIfReady();
+    }
+
+    void JustSummoned(Creature* pSummoned)
+    {
+        if (pSummoned->GetEntry() == NPC_GHOUL)
+            pSummoned->AI()->AttackStart(me);
+    }
+};
+
+CreatureAI* GetAI_npc_anchorite_truuen(Creature* pCreature)
+{
+    return new npc_anchorite_truuenAI(pCreature);
+}
+
+bool QuestAccept_npc_anchorite_truuen(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
+{
+    if (pQuest->GetQuestId() == QUEST_TOMB_LIGHTBRINGER)
+    {
+        if (npc_anchorite_truuenAI* pEscortAI = CAST_AI(npc_anchorite_truuenAI, pCreature->AI()))
+        {
+            pEscortAI->Start(true, true, pPlayer->GetGUID(), pQuest);
+            pEscortAI->SetDespawnAtEnd(false);
+            return true;
+        }
+    }
+    return false;
+}
+
 void AddSC_western_plaguelands()
 {
     Script *newscript;
@@ -261,5 +407,11 @@ void AddSC_western_plaguelands()
     newscript = new Script;
     newscript->Name = "npc_andorhal_tower";
     newscript->GetAI = &GetAI_npc_andorhal_tower;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_anchorite_truuen";
+    newscript->GetAI = &GetAI_npc_anchorite_truuen;
+    newscript->pQuestAccept =  &QuestAccept_npc_anchorite_truuen;
     newscript->RegisterSelf();
 }

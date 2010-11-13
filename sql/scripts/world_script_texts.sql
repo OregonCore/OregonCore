@@ -670,7 +670,15 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 (-1000705,'My lady, I am unworthy of your prayer. Truly, you are an angel of light. Please, assist me in returning to the barrow den so that I may return to the Dream. I like Malfurion, also have a love awaiting me... I must return to her... to protect her...',0,0,0,0,'ERANIKUS_SAY_3'),
 (-1000706,'And heroes... I hold that which you seek. May it once more see the evil dissolved. Remulos, see to it that our champion receives the shard of the Green Flight.',0,0,0,0,'ERANIKUS_SAY_4'),
 (-1000707,'It will be done, Eranikus. Be well, ancient one.',0,0,0,0,'REMULOS_SAY_9'),
-(-1000708,'Let us leave Nightaven, hero. Seek me aut at the grove.',0,0,0,0,'REMULOS_SAY_10');
+(-1000708,'Let us leave Nightaven, hero. Seek me aut at the grove.',0,0,0,0,'REMULOS_SAY_10'),
+
+(-1000709,'Beware! We are attacked!',0,0,0,0,'SAY_WP_0'),
+(-1000710,'It must be the purity of the Mark of the Lightbringer that is drawing forth the Scourge to attack us. We must proceed with caution lest we be overwhelmed!',0,0,0,0,'SAY_WP_1'),
+(-1000711,'This land truly needs to be cleansed by the Light! Let us continue on to the tomb. It isn\'t far now...',0,0,0,0,'SAY_WP_2'),
+(-1000712,'Be welcome, friends!',0,0,0,0,'SAY_WP_3'),
+(-1000713,'Thank you for coming here in remembrance of me. Your efforts in recovering that symbol, while unnecessary, are certainly touching to an old man\'s heart.',0,0,0,0,'SAY_WP_4'),
+(-1000714,'Please, rise my friend. Keep the Blessing as a symbol of the strength of the Light and how heroes long gone might once again rise in each of us to inspire.',0,0,0,0,'SAY_WP_5'),
+(-1000715,'Thank you my friend for making this possible. This is a day that I shall never forget! I think I will stay a while. Please return to High Priestess MacDonnell at the camp. I know that she\'ll be keenly interested to know of what has transpired here.',0,0,0,0,'SAY_WP_6');
 
 -- -1 033 000 SHADOWFANG KEEP
 INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`emote`,`comment`) VALUES
