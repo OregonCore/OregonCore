@@ -106,12 +106,12 @@ void WorldSession::SendNameQueryOpcodeFromDBCallBack(QueryResult_AutoPtr result,
     // if the first declined name field (3) is empty, the rest must be too
     if (sWorld.getConfig(CONFIG_DECLINED_NAMES_USED) && fields[3].GetCppString() != "")
     {
-        data << (uint8)1;                                   // is declined
+        data << uint8(1);                                   // is declined
         for (int i = 3; i < MAX_DECLINED_NAME_CASES+3; ++i)
             data << fields[i].GetCppString();
     }
     else
-        data << (uint8)0;                                   // is declined
+        data << uint8(0);                                   // is not declined
 
     session->SendPacket(&data);
 }
@@ -178,8 +178,8 @@ void WorldSession::HandleCreatureQueryOpcode(WorldPacket & recv_data)
         data << uint32(ci->type);                           // CreatureType.dbc
         data << uint32(ci->family);                         // CreatureFamily.dbc
         data << uint32(ci->rank);                           // Creature Rank (elite, boss, etc)
-        data << (uint32)0;                                  // unknown        wdbFeild11
-        data << (uint32)ci->PetSpellDataId;                 // Id from CreatureSpellData.dbc    wdbField12
+        data << uint32(0);                                  // unknown        wdbFeild11
+        data << uint32(ci->PetSpellDataId);                 // Id from CreatureSpellData.dbc    wdbField12
         data << (uint32)ci->Modelid_A1;                     // Modelid_A1
         data << (uint32)ci->Modelid_A2;                     // Modelid_A2
         data << (uint32)ci->Modelid_H1;                     // Modelid_H1
@@ -232,14 +232,14 @@ void WorldSession::HandleGameObjectQueryOpcode(WorldPacket & recv_data)
         }
         sLog.outDetail("WORLD: CMSG_GAMEOBJECT_QUERY '%s' - Entry: %u. ", info->name, entryID);
         WorldPacket data (SMSG_GAMEOBJECT_QUERY_RESPONSE, 150);
-        data << entryID;
+        data << uint32(entryID);
         data << uint32(info->type);
         data << uint32(info->displayId);
         data << Name;
         data << uint8(0) << uint8(0) << uint8(0);           // name2, name3, name4
         data << uint8(0);                                   // 2.0.3, string
         data << CastBarCaption;                             // 2.0.3, string. Text will appear in Cast Bar when using GO (ex: "Collecting")
-        data << uint8(0);                                   // 2.0.3, probably string
+        data << uint8(0);                                   // 2.0.3, string
         data.append(info->raw.data, 24);
         SendPacket(&data);
         sLog.outDebug("WORLD: Sent SMSG_GAMEOBJECT_QUERY_RESPONSE");
@@ -261,20 +261,47 @@ void WorldSession::HandleCorpseQueryOpcode(WorldPacket & /*recv_data*/)
 
     Corpse *corpse = GetPlayer()->GetCorpse();
 
-    uint8 found = 1;
     if (!corpse)
-        found = 0;
-
-    WorldPacket data(MSG_CORPSE_QUERY, (1+found*(5*4)));
-    data << uint8(found);
-    if (found)
     {
-        data << corpse->GetMapId();
-        data << corpse->GetPositionX();
-        data << corpse->GetPositionY();
-        data << corpse->GetPositionZ();
-        data << _player->GetMapId();
+        WorldPacket data(MSG_CORPSE_QUERY, 1);
+        data << uint8(0);                                   // corpse not found
+        SendPacket(&data);
+        return;
     }
+
+    int32 mapid = corpse->GetMapId();
+    float x = corpse->GetPositionX();
+    float y = corpse->GetPositionY();
+    float z = corpse->GetPositionZ();
+    int32 corpsemapid = mapid;
+
+    // if corpse at different map
+    if (mapid != _player->GetMapId())
+    {
+        // search entrance map for proper show entrance
+        if (MapEntry const* corpseMapEntry = sMapStore.LookupEntry(mapid))
+        {
+            if (corpseMapEntry->IsDungeon() && corpseMapEntry->entrance_map >= 0)
+            {
+                // if corpse map have entrance
+                if (Map const* entranceMap = MapManager::Instance().CreateBaseMap(corpseMapEntry->entrance_map))
+                {
+                    mapid = corpseMapEntry->entrance_map;
+                    x = corpseMapEntry->entrance_x;
+                    y = corpseMapEntry->entrance_y;
+                    z = entranceMap->GetHeight(x, y, MAX_HEIGHT);
+                }
+            }
+        }
+    }
+
+    WorldPacket data(MSG_CORPSE_QUERY, 1+(5*4));
+    data << uint8(1);                                       // corpse found
+    data << int32(mapid);
+    data << float(x);
+    data << float(y);
+    data << float(z);
+    data << int32(corpsemapid);
     SendPacket(&data);
 }
 
@@ -410,4 +437,3 @@ void WorldSession::HandlePageQueryOpcode(WorldPacket & recv_data)
         sLog.outDebug("WORLD: Sent SMSG_PAGE_TEXT_QUERY_RESPONSE");
     }
 }
-
