@@ -1227,6 +1227,7 @@ Visibility.Notify.Period.InBGArenas   = 1000
 #    Rate.Rage.Income
 #    Rate.Rage.Loss
 #    Rate.Focus
+#    Rate.Energy
 #    Rate.Loyalty
 #        Health and power regeneration and rage income from damage.
 #        Default: 1
@@ -1373,6 +1374,7 @@ Rate.Mana = 1
 Rate.Rage.Income = 1
 Rate.Rage.Loss = 1
 Rate.Focus = 1
+Rate.Energy = 1
 Rate.Loyalty = 1
 Rate.Skill.Discovery = 1
 Rate.Drop.Item.Poor = 1
