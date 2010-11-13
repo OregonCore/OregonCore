@@ -1798,8 +1798,11 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
 
 bool Player::TeleportToBGEntryPoint()
 {
-    ScheduleDelayedOperation(DELAYED_BG_MOUNT_RESTORE);
-    ScheduleDelayedOperation(DELAYED_BG_TAXI_RESTORE);
+    if (sWorld.getConfig(CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE))
+    {
+        ScheduleDelayedOperation(DELAYED_BG_MOUNT_RESTORE);
+        ScheduleDelayedOperation(DELAYED_BG_TAXI_RESTORE);
+    }
     return TeleportTo(m_bgData.joinPos);
 }
 
@@ -14582,7 +14585,18 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     SetDifficulty(fields[39].GetUInt32());                  // may be changed in _LoadGroup
     std::string taxi_nodes = fields[38].GetCppString();
 
-#define RelocateToHomebind(){ mapId = m_homebindMapId; instanceId = 0; Relocate(m_homebindX, m_homebindY, m_homebindZ); }
+#define RelocateToHomebind()
+{
+    mapId = m_homebindMapId;
+    instanceId = 0;
+    Relocate(m_homebindX, m_homebindY, m_homebindZ);
+
+    if (!sWorld.getConfig(CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE))
+    {
+        m_movementInfo.ClearTransportData();
+        transGUID = 0;
+    }
+}
 
     _LoadGroup(holder->GetResult(PLAYER_LOGIN_QUERY_LOADGROUP));
 
@@ -14709,7 +14723,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
         instanceId = 0;
 
         // Not finish taxi flight path
-        if(m_bgData.HasTaxiPath())
+        if (m_bgData.HasTaxiPath() && sWorld.getConfig(CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE))
         {
             for (int i = 0; i < 2; ++i)
                 m_taxi.AddTaxiDestination(m_bgData.taxiPath[i]);

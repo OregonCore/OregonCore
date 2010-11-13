@@ -34,6 +34,7 @@
 #include "BattleGround.h"
 #include "ArenaTeam.h"
 #include "Language.h"
+#include "World.h"
 
 void WorldSession::HandleBattleGroundHelloOpcode(WorldPacket & recv_data)
 {
@@ -162,6 +163,10 @@ void WorldSession::HandleBattleGroundJoinOpcode(WorldPacket & recv_data)
 
             uint32 queueSlot = member->AddBattleGroundQueueId(bgQueueTypeId);           // add to queue
 
+            // store entry point coords (same as leader entry point)
+            if (!sWorld.getConfig(CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE))
+                member->SetBattleGroundEntryPoint(_player->GetMapId(),_player->GetPositionX(),_player->GetPositionY(),_player->GetPositionZ(),_player->GetOrientation());
+
             WorldPacket data;
                                                             // send status packet (in queue)
             sBattleGroundMgr.BuildBattleGroundStatusPacket(&data, bg, member->GetTeam(), queueSlot, STATUS_WAIT_QUEUE, 0, 0);
@@ -178,6 +183,9 @@ void WorldSession::HandleBattleGroundJoinOpcode(WorldPacket & recv_data)
     {
         // already checked if queueSlot is valid, now just get it
         uint32 queueSlot = _player->AddBattleGroundQueueId(bgQueueTypeId);
+        // store entry point coords
+        if (!sWorld.getConfig(CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE))
+            _player->SetBattleGroundEntryPoint(_player->GetMapId(),_player->GetPositionX(),_player->GetPositionY(),_player->GetPositionZ(),_player->GetOrientation());
 
         WorldPacket data;
                                                             // send status packet (in queue)
@@ -421,7 +429,8 @@ void WorldSession::HandleBattleGroundPlayerPortOpcode(WorldPacket &recv_data)
                 if (!_player->IsInvitedForBattleGroundQueueType(bgQueueTypeId))
                     return;                                     // cheating?
 
-                _player->SetBattleGroundEntryPoint();
+                if (sWorld.getConfig(CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE))
+                    _player->SetBattleGroundEntryPoint();
 
                 // resurrect the player
                 if (!_player->isAlive())
@@ -758,6 +767,10 @@ void WorldSession::HandleBattleGroundArenaJoin(WorldPacket & recv_data)
 
             uint32 queueSlot = member->AddBattleGroundQueueId(bgQueueTypeId);// add to queue
 
+            // store entry point coords (same as leader entry point)
+            if (!sWorld.getConfig(CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE))
+                member->SetBattleGroundEntryPoint(_player->GetMapId(),_player->GetPositionX(),_player->GetPositionY(),_player->GetPositionZ(),_player->GetOrientation());
+
             WorldPacket data;
             // send status packet (in queue)
             sBattleGroundMgr.BuildBattleGroundStatusPacket(&data, bg, member->GetTeam(), queueSlot, STATUS_WAIT_QUEUE, 0, 0, arenatype, isRated);
@@ -773,6 +786,10 @@ void WorldSession::HandleBattleGroundArenaJoin(WorldPacket & recv_data)
     else
     {
         uint32 queueSlot = _player->AddBattleGroundQueueId(bgQueueTypeId);
+
+        // store entry point coords
+        if (!sWorld.getConfig(CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE))
+            _player->SetBattleGroundEntryPoint(_player->GetMapId(),_player->GetPositionX(),_player->GetPositionY(),_player->GetPositionZ(),_player->GetOrientation());
 
         WorldPacket data;
         // send status packet (in queue)

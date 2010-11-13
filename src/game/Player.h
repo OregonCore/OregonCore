@@ -1871,6 +1871,10 @@ class Player : public Unit, public GridObject<Player>
         }
         WorldLocation const& GetBattleGroundEntryPoint() const { return m_bgData.joinPos; }
         void SetBattleGroundEntryPoint();
+        void SetBattleGroundEntryPoint(uint32 Map, float PosX, float PosY, float PosZ, float PosO)
+        {
+            m_bgData.joinPos = WorldLocation(Map, PosX, PosY, PosZ, PosO);
+        }
 
         void SetBGTeam(uint32 team) { m_bgData.bgTeam = team; }
         uint32 GetBGTeam() const { return m_bgData.bgTeam ? m_bgData.bgTeam : GetTeam(); }

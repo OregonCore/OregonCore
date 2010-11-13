@@ -821,10 +821,6 @@ DisableWaterBreath = 4
 AllFlightPaths = 0
 AlwaysMaxSkillForLevel = 0
 ActivateWeather = 1
-Battleground.CastDeserter = 1
-Battleground.QueueAnnouncer.Enable = 0
-Battleground.QueueAnnouncer.PlayerOnly = 0
-Battleground.PrematureReward = 1
 CastUnstuck = 1
 Instance.IgnoreLevel = 0
 Instance.IgnoreRaid = 0
@@ -1443,10 +1439,10 @@ Death.Bones.BattlegroundOrArena = 1
 #        Default: 0 (disable)
 #                 1 (enable)
 #
-#   Battleground.PrematureReward
-#       Reward players in case of prematurely finished BG
-#       Default: 1 (enable)
-#                0 (disable)
+#    Battleground.PrematureReward
+#        Reward players in case of prematurely finished BG
+#        Default: 1 (enable)
+#                 0 (disable)
 #
 #    Battleground.PrematureFinishTimer
 #        The time to end the bg if there are less than MinPlayersPerTeam on
@@ -1454,9 +1450,19 @@ Death.Bones.BattlegroundOrArena = 1
 #        Default: 300000 (5 minutes)
 #                 0 - disable (not recommended)
 #
+#   Battleground.LeaveWrathMode
+#        Restore the player's enter position, taxi flight and mount state
+#        Default: 0 (disable)
+#                 1 (enable)
+#
 ###############################################################################
 
+Battleground.CastDeserter = 1
+Battleground.QueueAnnouncer.Enable = 0
+Battleground.QueueAnnouncer.PlayerOnly = 0
+Battleground.PrematureReward = 1
 BattleGround.PrematureFinishTimer = 300000
+Battleground.LeaveWrathMode = 0
 
 ###############################################################################
 # ARENA CONFIG

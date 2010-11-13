@@ -601,7 +601,7 @@ void BattleGround::EndBattleGround(uint32 winner)
         }
         else if (winner == 0)
         {
-            if (sWorld.getConfig(CONFIG_PREMATURE_BG_REWARD))
+            if (sWorld.getConfig(CONFIG_BATTLEGROUND_PREMATURE_REWARD))
             {
                 if (almost_winning_team == team)                  // player's team had more points
                     RewardMark(plr,ITEM_WINNER_COUNT);
