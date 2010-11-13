@@ -59,16 +59,16 @@ InstanceSaveManager::~InstanceSaveManager()
     for (InstanceSaveHashMap::iterator itr = m_instanceSaveById.begin(); itr != m_instanceSaveById.end(); ++itr)
     {
         InstanceSave *save = itr->second;
-        for (InstanceSave::PlayerListType::iterator itr = save->m_playerList.begin(), next = itr; itr != save->m_playerList.end(); itr = next)
+        for (InstanceSave::PlayerListType::iterator itr2 = save->m_playerList.begin(), next = itr2; itr2 != save->m_playerList.end(); itr2 = next)
         {
             ++next;
-            (*itr)->UnbindInstance(save->GetMapId(), save->GetDifficulty(), true);
+            (*itr2)->UnbindInstance(save->GetMapId(), save->GetDifficulty(), true);
         }
         save->m_playerList.clear();
-        for (InstanceSave::GroupListType::iterator itr = save->m_groupList.begin(), next = itr; itr != save->m_groupList.end(); itr = next)
+        for (InstanceSave::GroupListType::iterator itr2 = save->m_groupList.begin(), next = itr2; itr2 != save->m_groupList.end(); itr2 = next)
         {
             ++next;
-            (*itr)->UnbindInstance(save->GetMapId(), save->GetDifficulty(), true);
+            (*itr2)->UnbindInstance(save->GetMapId(), save->GetDifficulty(), true);
         }
         save->m_groupList.clear();
         delete save;
@@ -81,13 +81,19 @@ InstanceSaveManager::~InstanceSaveManager()
 */
 InstanceSave* InstanceSaveManager::AddInstanceSave(uint32 mapId, uint32 instanceId, uint8 difficulty, time_t resetTime, bool canReset, bool load)
 {
-    InstanceSave *save = GetInstanceSave(instanceId);
-    if (save) return save;
+    if (InstanceSave *old_save = GetInstanceSave(instanceId))
+        return old_save;
 
     const MapEntry* entry = sMapStore.LookupEntry(mapId);
-    if (!entry || instanceId == 0)
+    if (!entry)
     {
-        sLog.outError("InstanceSaveManager::AddInstanceSave: mapid = %d, instanceid = %d!", mapId, instanceId);
+        sLog.outError("InstanceSaveManager::AddInstanceSave: wrong mapid = %d, instanceid = %d!", mapId, instanceId);
+        return NULL;
+    }
+
+    if (instanceId == 0)
+    {
+        sLog.outError("InstanceSaveManager::AddInstanceSave: mapid = %d, wrong instanceid = %d!", mapId, instanceId);
         return NULL;
     }
 
@@ -107,7 +113,7 @@ InstanceSave* InstanceSaveManager::AddInstanceSave(uint32 mapId, uint32 instance
 
     sLog.outDebug("InstanceSaveManager::AddInstanceSave: mapid = %d, instanceid = %d", mapId, instanceId);
 
-    save = new InstanceSave(mapId, instanceId, difficulty, resetTime, canReset);
+    InstanceSave *save = new InstanceSave(mapId, instanceId, difficulty, resetTime, canReset);
     if (!load) save->SaveToDB();
 
     m_instanceSaveById[instanceId] = save;
@@ -143,8 +149,7 @@ void InstanceSaveManager::RemoveInstanceSave(uint32 InstanceId)
     }
 }
 
-InstanceSave::InstanceSave(uint16 MapId, uint32 InstanceId, uint8 difficulty,
-                           time_t resetTime, bool canReset)
+InstanceSave::InstanceSave(uint16 MapId, uint32 InstanceId, uint8 difficulty, time_t resetTime, bool canReset)
 : m_mapid(MapId), m_instanceid(InstanceId), m_resetTime(resetTime),
   m_difficulty(difficulty), m_canReset(canReset)
 {
@@ -226,7 +231,7 @@ void InstanceSaveManager::_DelHelper(DatabaseType &db, const char *fields, const
     va_list ap;
     char szQueryTail [MAX_QUERY_LEN];
     va_start(ap, queryTail);
-    int res = vsnprintf(szQueryTail, MAX_QUERY_LEN, queryTail, ap);
+    vsnprintf(szQueryTail, MAX_QUERY_LEN, queryTail, ap);
     va_end(ap);
 
     QueryResult_AutoPtr result = db.PQuery("SELECT %s FROM %s %s", fields, table, szQueryTail);
@@ -249,8 +254,6 @@ void InstanceSaveManager::_DelHelper(DatabaseType &db, const char *fields, const
 
 void InstanceSaveManager::CleanupInstances()
 {
-    uint64 now = (uint64)time(NULL);
-
     barGoLink bar(2);
     bar.step();
 
@@ -270,7 +273,7 @@ void InstanceSaveManager::CleanupInstances()
 
     // creature_respawn and gameobject_respawn are in another database
     // first, obtain total instance set
-    std::set< uint32 > InstanceSet;
+    std::set<uint32> InstanceSet;
     QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT id FROM instance");
     if (result)
     {
@@ -345,7 +348,7 @@ void InstanceSaveManager::PackInstances()
     // TODO: this can be done a LOT more efficiently
 
     // obtain set of all associations
-    std::set< uint32 > InstanceSet;
+    std::set<uint32> InstanceSet;
 
     // all valid ids are in the instance table
     // any associations to ids not in this table are assumed to be
@@ -366,7 +369,7 @@ void InstanceSaveManager::PackInstances()
 
     uint32 InstanceNumber = 1;
     // we do assume std::set is sorted properly on integer value
-    for (std::set< uint32 >::iterator i = InstanceSet.begin(); i != InstanceSet.end(); ++i)
+    for (std::set<uint32>::iterator i = InstanceSet.begin(); i != InstanceSet.end(); ++i)
     {
         if (*i != InstanceNumber)
         {
@@ -611,6 +614,7 @@ void InstanceSaveManager::_ResetOrWarnAll(uint32 mapid, bool warn, uint32 timeLe
     Map const *map = MapManager::Instance().CreateBaseMap(mapid);
     if (!map->Instanceable())
         return;
+
     uint64 now = (uint64)time(NULL);
 
     if (!warn)
@@ -655,10 +659,10 @@ void InstanceSaveManager::_ResetOrWarnAll(uint32 mapid, bool warn, uint32 timeLe
     MapInstanced::InstancedMaps::iterator mitr;
     for (mitr = instMaps.begin(); mitr != instMaps.end(); ++mitr)
     {
-        Map *map = mitr->second;
-        if (!map->IsDungeon()) continue;
-        if (warn) ((InstanceMap*)map)->SendResetWarnings(timeLeft);
-        else ((InstanceMap*)map)->Reset(INSTANCE_RESET_GLOBAL);
+        Map *map2 = mitr->second;
+        if (!map2->IsDungeon()) continue;
+        if (warn) ((InstanceMap*)map2)->SendResetWarnings(timeLeft);
+        else ((InstanceMap*)map2)->Reset(INSTANCE_RESET_GLOBAL);
     }
 
     // TODO: delete creature/gameobject respawn times even if the maps are not loaded
@@ -679,4 +683,3 @@ uint32 InstanceSaveManager::GetNumBoundGroupsTotal()
         ret += itr->second->GetGroupCount();
     return ret;
 }
-
