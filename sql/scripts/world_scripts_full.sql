@@ -554,6 +554,8 @@ UPDATE `creature_template` SET `ScriptName`='npc_tracy_proudwell' WHERE `entry`=
 UPDATE `creature_template` SET `ScriptName`='npc_trollbane' WHERE `entry`=16819;
 UPDATE `creature_template` SET `ScriptName`='npc_ancestral_wolf' WHERE `entry`=17077;
 UPDATE `creature_template` SET `ScriptName`='npc_fel_guard_hound' WHERE `entry`=21847;
+UPDATE `creature_template` SET `ScriptName`='npc_aeranas' WHERE `entry`=17085;
+UPDATE `gameobject_template` SET `ScriptName`='go_haaleshi_altar' WHERE `entry`=181606;
 
 /* HILLSBRAD FOOTHILLS */
 
