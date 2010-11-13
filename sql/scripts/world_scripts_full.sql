@@ -299,6 +299,8 @@ UPDATE `creature_template` SET `ScriptName`='npc_daranelle' WHERE `entry`=21469;
 UPDATE `creature_template` SET `ScriptName`='npc_overseer_nuaar' WHERE `entry`=21981;
 UPDATE `creature_template` SET `ScriptName`='npc_saikkal_the_elder' WHERE `entry`=22932;
 UPDATE `creature_template` SET `ScriptName`='npc_skyguard_handler_deesak' WHERE `entry`=23415;
+UPDATE `creature_template` SET `ScriptName`='npc_ogre_brute' WHERE `entry`=19995;
+UPDATE `creature_template` SET `ScriptName`='npc_bloodmaul_brutebane' WHERE `entry`=21241;
 
 /* BLASTED LANDS */
 UPDATE `creature_template` SET `ScriptName`='npc_deathly_usher' WHERE `entry`=8816;

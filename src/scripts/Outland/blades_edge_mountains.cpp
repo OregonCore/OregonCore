@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Blades_Edge_Mountains
 SD%Complete: 90
-SDComment: Quest support: 10503, 10504, 10556, 10609, 10682, 10980. Ogri'la->Skettis Flight. (npc_daranelle needs bit more work before consider complete)
+SDComment: Quest support: 10503, 10504, 10556, 10609, 10682, 10980, 10512. Ogri'la->Skettis Flight. (npc_daranelle needs bit more work before consider complete)
 SDCategory: Blade's Edge Mountains
 EndScriptData */
 
@@ -27,6 +27,8 @@ mobs_nether_drake
 npc_daranelle
 npc_overseer_nuaar
 npc_saikkal_the_elder
+npc_ogre_brute
+npc_bloodmaul_brutebane
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -358,8 +360,95 @@ bool GossipSelect_npc_saikkal_the_elder(Player *player, Creature* pCreature, uin
 }
 
 /*######
-## AddSC
+## npc_bloodmaul_brutebane
 ######*/
+
+enum eBloodmaul
+{
+    NPC_OGRE_BRUTE        = 19995,
+    NPC_QUEST_CREDIT      = 21241,
+    GO_KEG                = 184315
+};
+
+struct npc_bloodmaul_brutebaneAI : public ScriptedAI
+{
+    npc_bloodmaul_brutebaneAI(Creature *c) : ScriptedAI(c)
+    {
+       if(Creature* pOgre = me->FindNearestCreature(NPC_OGRE_BRUTE, 50, true))
+       {
+           pOgre->SetReactState(REACT_DEFENSIVE);
+           pOgre->GetMotionMaster()->MovePoint(1, me->GetPositionX()-1, me->GetPositionY()+1, me->GetPositionZ());
+       }
+    }
+
+    uint64 OgreGUID;
+
+    void Reset()
+    {
+        OgreGUID = 0;
+    }
+
+    void UpdateAI(const uint32 /*uiDiff*/) {}
+};
+
+CreatureAI* GetAI_npc_bloodmaul_brutebane(Creature* pCreature)
+{
+    return new npc_bloodmaul_brutebaneAI (pCreature);
+}
+
+/*######
+## npc_ogre_brute
+######*/
+
+struct npc_ogre_bruteAI : public ScriptedAI
+{
+    npc_ogre_bruteAI(Creature *c) : ScriptedAI(c) {}
+
+    uint64 PlayerGUID;
+
+    void Reset()
+    {
+        PlayerGUID = 0;
+    }
+
+    void MoveInLineOfSight(Unit *pWho)
+    {
+        if (!pWho || (!pWho->isAlive()))
+            return;
+
+        if (me->IsWithinDistInMap(pWho, 50.0f) && (pWho->GetTypeId() == TYPEID_PLAYER) && pWho->ToPlayer()->GetQuestStatus(10512) == QUEST_STATUS_INCOMPLETE)
+            PlayerGUID = pWho->GetGUID();
+    }
+
+    void MovementInform(uint32 /*uiMotionType*/, uint32 uiPointId)
+    {
+        if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
+        {
+            if (uiPointId == 1)
+            {
+                if (GameObject* pKeg = me->FindNearestGameObject(GO_KEG, 20))
+                    pKeg->Delete();
+                me->HandleEmoteCommand(7);
+                me->SetReactState(REACT_AGGRESSIVE);
+                me->GetMotionMaster()->MoveTargetedHome();
+                if (Creature* pCredit = me->FindNearestCreature(NPC_QUEST_CREDIT, 50, true))
+                    pPlayer->KilledMonster(NPC_QUEST_CREDIT, pCredit->GetGUID());
+            }
+        }
+    }
+
+    void UpdateAI(const uint32 /*diff*/)
+    {
+        if (!UpdateVictim())
+            return;
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_ogre_brute(Creature* pCreature)
+{
+    return new npc_ogre_bruteAI(pCreature);
+}
 
 void AddSC_blades_edge_mountains()
 {
@@ -390,6 +479,16 @@ void AddSC_blades_edge_mountains()
     newscript->Name = "npc_saikkal_the_elder";
     newscript->pGossipHello = &GossipHello_npc_saikkal_the_elder;
     newscript->pGossipSelect = &GossipSelect_npc_saikkal_the_elder;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_bloodmaul_brutebane";
+    newscript->GetAI = &GetAI_npc_bloodmaul_brutebane;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_ogre_brute";
+    newscript->GetAI = &GetAI_npc_ogre_brute;
     newscript->RegisterSelf();
 }
 
