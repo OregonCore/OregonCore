@@ -1,23 +1,25 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+/*
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
 SDName: Netherstorm
 SD%Complete: 75
-SDComment: Quest support: 10337, 10438, 10652 (special flight paths), 10299,10321,10322,10323,10329,10330,10338,10365(Shutting Down Manaforge), 10198
+SDComment: Quest support: 10337, 10438, 10652 (special flight paths), 10299,10321,10322,10323,10329,10330,10338,10365(Shutting Down Manaforge), 10198, 10191
 SDCategory: Netherstorm
 EndScriptData */
 
@@ -26,6 +28,7 @@ npc_manaforge_control_console
 go_manaforge_control_console
 npc_commander_dawnforge
 npc_bessy
+npc_maxx_a_million
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -913,8 +916,97 @@ CreatureAI* GetAI_npc_bessy(Creature* pCreature)
 }
 
 /*######
-##
+## npc_maxx_a_million
 ######*/
+
+enum
+{
+    QUEST_MARK_V_IS_ALIVE   = 10191,
+    GO_DRAENEI_MACHINE      = 183771
+};
+
+struct npc_maxx_a_million_escortAI : public npc_escortAI
+{
+    npc_maxx_a_million_escortAI(Creature* pCreature) : npc_escortAI(pCreature) {}
+
+    bool bTake;
+    uint32 uiTakeTimer;
+
+    void Reset()
+    {
+        bTake=false;
+        uiTakeTimer=3000;
+    }
+
+    void WaypointReached(uint32 i)
+    {
+        Player* pPlayer = GetPlayerForEscort();
+
+        if (!pPlayer)
+            return;
+
+        switch (i)
+        {
+        case 7:
+        case 17:
+        case 29:
+            //Find Object and "work"
+            if (me->FindNearestGameObject(GO_DRAENEI_MACHINE,INTERACTION_DISTANCE))
+            {
+                // take the GO -> animation
+                me->HandleEmoteCommand(428);
+                SetEscortPaused(true);
+                bTake=true;
+            }
+            break;
+        case 36: //return and quest_complete
+            if (pPlayer)
+                pPlayer->CompleteQuest(QUEST_MARK_V_IS_ALIVE);
+            break;
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        npc_escortAI::UpdateAI(uiDiff);
+        
+        if (bTake)
+        {
+            if (uiTakeTimer < uiDiff)
+            {
+                me->HandleEmoteCommand(EMOTE_STATE_NONE);
+                if (GameObject* pGO = me->FindNearestGameObject(GO_DRAENEI_MACHINE,INTERACTION_DISTANCE))
+                {
+                    SetEscortPaused(false);
+                    bTake=false;
+                    uiTakeTimer = 3000;
+                    pGO->Delete();
+                }
+            }
+            else
+                uiTakeTimer -= uiDiff;
+        }
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_maxx_a_million_escort(Creature* pCreature)
+{
+    return new npc_maxx_a_million_escortAI(pCreature);
+}
+
+bool QuestAccept_npc_maxx_a_million_escort(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
+{
+    if (pQuest->GetQuestId() == QUEST_MARK_V_IS_ALIVE)
+    {
+        if (npc_maxx_a_million_escortAI* pEscortAI = CAST_AI(npc_maxx_a_million_escortAI, pCreature->AI()))
+        {
+            pCreature->setFaction(113);
+            pEscortAI->Start(false, false, pPlayer->GetGUID(), pQuest);
+        }
+    }
+    return true;
+}
 
 void AddSC_netherstorm()
 {
@@ -956,6 +1048,12 @@ void AddSC_netherstorm()
     newscript->Name = "npc_bessy";
     newscript->GetAI = &GetAI_npc_bessy;
     newscript->pQuestAccept = &QuestAccept_npc_bessy;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_maxx_a_million_escort";
+    newscript->GetAI = &GetAI_npc_maxx_a_million_escort;
+    newscript->pQuestAccept = &QuestAccept_npc_maxx_a_million_escort;
     newscript->RegisterSelf();
 }
 
