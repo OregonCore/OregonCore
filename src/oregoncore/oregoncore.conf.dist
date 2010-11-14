@@ -3,7 +3,7 @@
 ###############################################
 
 [worldserver]
-ConfVersion=2010103001
+ConfVersion=2010111401
 
 # Note to devs, line breaks should be at column 80
 ###############################################################################
@@ -1918,7 +1918,7 @@ SOAP.Port = 7878
 #
 #   MinRecordUpdateTimeDiff
 #        Only record update time diff which is greater than this value
-#        Default: 10
+#        Default: 100
 #
 #   PlayerStart.String
 #       If set to anything other than "", this string will be displayed
@@ -1950,7 +1950,7 @@ PvPToken.ItemCount = 1
 NoResetTalentsCost = 0
 ShowKickInWorld = 0
 RecordUpdateTimeDiffInterval = 60000
-MinRecordUpdateTimeDiff = 10
+MinRecordUpdateTimeDiff = 100
 PlayerStart.String = ""
 DuelMod.Enable = 0
 DuelMod.Cooldowns = 0
