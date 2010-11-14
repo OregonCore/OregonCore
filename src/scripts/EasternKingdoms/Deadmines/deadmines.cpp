@@ -38,13 +38,10 @@ bool ItemUse_item_defias_gunpowder(Player* pPlayer, Item* pItem, SpellCastTarget
         pPlayer->GetSession()->SendNotification("Instance script not initialized");
         return true;
     }
-    if (pInstance->GetData(EVENT_STATE)!= CANNON_NOT_USED)
+    if (pInstance->GetData(EVENT_CANNON) != CANNON_NOT_USED)
         return false;
-    if (targets.getGOTarget() && targets.getGOTarget()->GetTypeId() == TYPEID_GAMEOBJECT &&
-       targets.getGOTarget()->GetEntry() == GO_DEFIAS_CANNON)
-    {
-        pInstance->SetData(EVENT_STATE, CANNON_GUNPOWDER_USED);
-    }
+    if (targets.getGOTarget() && targets.getGOTarget()->GetTypeId() == TYPEID_GAMEOBJECT && targets.getGOTarget()->GetEntry() == GO_DEFIAS_CANNON)
+        pInstance->SetData(EVENT_CANNON, CANNON_GUNPOWDER_USED);
 
     pPlayer->DestroyItemCount(pItem->GetEntry(), 1, true);
     return true;
