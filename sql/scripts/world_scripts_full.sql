@@ -722,6 +722,7 @@ UPDATE `creature_template` SET `ScriptName`='npc_veronia' WHERE `entry`=20162;
 UPDATE `creature_template` SET `ScriptName`='mob_phase_hunter' WHERE `entry` =18879;
 UPDATE `creature_template` SET `ScriptName`='npc_professor_dabiri' WHERE `entry`=20907;
 UPDATE `creature_template` SET `ScriptName`='npc_bessy' WHERE `entry`=20415;
+UPDATE `creature_template` SET `ScriptName`='npc_commander_dawnforge' WHERE `entry`=19831;
 
 /* ONYXIA'S LAIR */
 UPDATE `creature_template` SET `ScriptName`='boss_onyxia' WHERE `entry`=10184;
