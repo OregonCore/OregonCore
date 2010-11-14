@@ -214,7 +214,7 @@ bool Transport::GenerateWaypoints(uint32 pathid, std::set<uint32> &mapids)
     std::vector<keyFrame> keyFrames;
     int mapChange = 0;
     mapids.clear();
-    for (size_t i = 1; i < path.Size() - 1; i++)
+    for (size_t i = 1; i < path.Size() - 1; ++i)
     {
         if (mapChange == 0)
         {
@@ -246,7 +246,7 @@ bool Transport::GenerateWaypoints(uint32 pathid, std::set<uint32> &mapids)
     }
 
     // find the rest of the distances between key points
-    for (size_t i = 1; i < keyFrames.size(); i++)
+    for (size_t i = 1; i < keyFrames.size(); ++i)
     {
         if ((keyFrames[i].actionflag == 1) || (keyFrames[i].mapid != keyFrames[i-1].mapid))
         {
@@ -256,8 +256,8 @@ bool Transport::GenerateWaypoints(uint32 pathid, std::set<uint32> &mapids)
         {
             keyFrames[i].distFromPrev =
                 sqrt(pow(keyFrames[i].x - keyFrames[i - 1].x, 2) +
-                    pow(keyFrames[i].y - keyFrames[i - 1].y, 2) +
-                    pow(keyFrames[i].z - keyFrames[i - 1].z, 2));
+                pow(keyFrames[i].y - keyFrames[i - 1].y, 2) +
+                pow(keyFrames[i].z - keyFrames[i - 1].z, 2));
         }
         if (keyFrames[i].actionflag == 2)
         {
@@ -269,7 +269,7 @@ bool Transport::GenerateWaypoints(uint32 pathid, std::set<uint32> &mapids)
     }
 
     float tmpDist = 0;
-    for (size_t i = 0; i < keyFrames.size(); i++)
+    for (size_t i = 0; i < keyFrames.size(); ++i)
     {
         int j = (i + lastStop) % keyFrames.size();
         if (keyFrames[j].actionflag == 2)
@@ -459,11 +459,11 @@ void Transport::TeleportTransport(uint32 newMapid, float x, float y, float z)
 
     //we need to create and save new Map object with 'newMapid' because if not done -> lead to invalid Map object reference...
     //player far teleport would try to create same instance, but we need it NOW for transport...
-	
+
     ResetMap();
     Map * newMap = MapManager::Instance().CreateMap(newMapid, this, 0);
     SetMap(newMap);
-    ASSERT (GetMap());
+    ASSERT(GetMap());
 
     if (oldMap != newMap)
     {

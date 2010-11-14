@@ -56,7 +56,7 @@ void SystemMgr::LoadVersion()
 void SystemMgr::LoadScriptTexts()
 {
     outstring_log("OISS: Loading Script Texts...");
-    LoadOregonStrings(WorldDatabase,"script_texts",TEXT_SOURCE_RANGE,1+(TEXT_SOURCE_RANGE*3));
+    LoadOregonStrings(WorldDatabase,"script_texts",TEXT_SOURCE_RANGE,1+(TEXT_SOURCE_RANGE*2));
 
     QueryResult_AutoPtr Result = WorldDatabase.Query("SELECT entry, sound, type, language, emote FROM script_texts");
 
@@ -85,7 +85,7 @@ void SystemMgr::LoadScriptTexts()
                 continue;
             }
 
-            if (iId > TEXT_SOURCE_RANGE || iId <= TEXT_SOURCE_RANGE*3)
+            if (iId > TEXT_SOURCE_RANGE || iId <= TEXT_SOURCE_RANGE*2)
             {
                 error_db_log("OSCR: Entry %i in table script_texts is out of accepted entry range for table.", iId);
                 continue;
