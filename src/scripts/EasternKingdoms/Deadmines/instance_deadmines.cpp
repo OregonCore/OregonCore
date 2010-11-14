@@ -55,7 +55,7 @@ struct instance_deadmines : public ScriptedInstance
     uint64 DefiasPirate2GUID;
     uint64 DefiasCompanionGUID;
 
-    uint32 State;
+    uint32 CannonEventState;
     uint32 CannonBlast_Timer;
     uint32 PiratesDelay_Timer;
     uint64 uiSmiteChestGUID;
@@ -72,7 +72,7 @@ struct instance_deadmines : public ScriptedInstance
         DefiasPirate2GUID = 0;
         DefiasCompanionGUID = 0;
 
-        State = CANNON_NOT_USED;
+        CannonEventState = CANNON_NOT_USED;
         uiSmiteChestGUID = 0;
     }
 
@@ -85,7 +85,7 @@ struct instance_deadmines : public ScriptedInstance
         if (!pIronCladDoor)
             return;
 
-        switch (State)
+        switch (CannonEventState)
         {
             case CANNON_GUNPOWDER_USED:
                 CannonBlast_Timer = DATA_CANNON_BLAST_TIMER;
@@ -93,7 +93,7 @@ struct instance_deadmines : public ScriptedInstance
                 pIronCladDoor->SetName("Mr. Smite");
                 pIronCladDoor->MonsterYell(SAY_MR_SMITE_ALARM1, LANG_UNIVERSAL, 0);
                 DoPlaySound(pIronCladDoor, SOUND_MR_SMITE_ALARM1);
-                State = CANNON_BLAST_INITIATED;
+                CannonEventState = CANNON_BLAST_INITIATED;
                 break;
             case CANNON_BLAST_INITIATED:
                 PiratesDelay_Timer = DATA_PIRATES_DELAY_TIMER;
@@ -105,14 +105,14 @@ struct instance_deadmines : public ScriptedInstance
                     LeverStucked();
                     pIronCladDoor->MonsterYell(SAY_MR_SMITE_ALARM2, LANG_UNIVERSAL, 0);
                     DoPlaySound(pIronCladDoor, SOUND_MR_SMITE_ALARM2);
-                    State = PIRATES_ATTACK;
+                    CannonEventState = PIRATES_ATTACK;
                 } else CannonBlast_Timer -= diff;
                 break;
             case PIRATES_ATTACK:
                 if (PiratesDelay_Timer <= diff)
                 {
                     MoveCreaturesInside();
-                    State = EVENT_DONE;
+                    CannonEventState = EVENT_DONE;
                 } else PiratesDelay_Timer -= diff;
                 break;
         }
@@ -196,9 +196,9 @@ struct instance_deadmines : public ScriptedInstance
     {
         switch (type)
         {
-        case EVENT_STATE:
+        case EVENT_CANNON:
             if (DefiasCannonGUID && IronCladDoorGUID)
-                State=data;
+                CannonEventState = data;
             break;
         case EVENT_RHAHKZOR:
             if (data == DONE)
@@ -222,19 +222,8 @@ struct instance_deadmines : public ScriptedInstance
     {
         switch (type)
         {
-            case EVENT_STATE:
-                return State;
-        }
-
-        return 0;
-    }
-
-    uint64 GetData64(uint32 data)
-    {
-        switch (data)
-        {
-            case DATA_SMITE_CHEST:
-                return uiSmiteChestGUID;
+            case EVENT_CANNON:
+                return CannonEventState;
         }
 
         return 0;

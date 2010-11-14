@@ -14,15 +14,10 @@ enum CannonState
 
 enum Data
 {
-    EVENT_STATE,
+    EVENT_CANNON,
     EVENT_RHAHKZOR,
     EVENT_SNEED,
     EVENT_GILNID
-};
-
-enum Data64
-{
-    DATA_SMITE_CHEST
 };
 
 enum GameObjects

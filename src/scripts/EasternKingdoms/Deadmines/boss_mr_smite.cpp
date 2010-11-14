@@ -39,8 +39,6 @@ enum eSpels
     AXE_EQUIP_INFO          = 218169346,
     MACE_EQUIP_INFO         = 50267394,
 
-    NPC_DEFIAS_BLACKGUARD   = 636,
-
     SAY_PHASE_1             = -1036002,
     SAY_PHASE_2             = -1036003
 };
@@ -78,19 +76,6 @@ struct boss_mr_smiteAI : public ScriptedAI
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, SWORD_EQUIP_INFO);
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, 0);
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO+2, 0);
-    }
-
-    void MoveInLineOfSight(Unit* pWho)
-    {
-        if (pWho && pWho->GetEntry() == NPC_DEFIAS_BLACKGUARD)
-        {
-            Unit* pTarget = pWho->getVictim();
-            if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
-            {
-                if (pWho->isInCombat())
-                    me->AI()->AttackStart(pTarget);
-            }
-        }
     }
 
     void EnterCombat(Unit* /*pWho*/) {}
@@ -190,16 +175,12 @@ struct boss_mr_smiteAI : public ScriptedAI
                 DoScriptText(SAY_PHASE_2, me);
 
             ++uiHealth;
-            if (pInstance)
-                if (GameObject* pGo = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_SMITE_CHEST)))
-                {
-                    SetCombatMovement(false);
-                    me->GetMotionMaster()->Clear();
-                    me->AttackStop();
-                    me->SetReactState(REACT_PASSIVE);
-                    uiPhase = 1;
-                    uiTimer = 2500;
-                }
+            SetCombatMovement(false);
+            me->GetMotionMaster()->Clear();
+            me->AttackStop();
+            me->SetReactState(REACT_PASSIVE);
+            uiPhase = 1;
+            uiTimer = 2500;
         }
         else
             DoMeleeAttackIfReady();
@@ -212,9 +193,6 @@ struct boss_mr_smiteAI : public ScriptedAI
 
         uiTimer = 500;
         uiPhase = 3;
-
-        if (GameObject* pGo = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_SMITE_CHEST)))
-            me->SetFacingToObject(pGo);
     }
 
 };
