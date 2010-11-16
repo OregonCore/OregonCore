@@ -14588,18 +14588,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     SetDifficulty(fields[39].GetUInt32());                  // may be changed in _LoadGroup
     std::string taxi_nodes = fields[38].GetCppString();
 
-#define RelocateToHomebind()
-{
-    mapId = m_homebindMapId;
-    instanceId = 0;
-    Relocate(m_homebindX, m_homebindY, m_homebindZ);
-
-    if (!sWorld.getConfig(CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE))
-    {
-        m_movementInfo.ClearTransportData();
-        transGUID = 0;
-    }
-}
+#define RelocateToHomebind() { mapId = m_homebindMapId; instanceId = 0; Relocate(m_homebindX, m_homebindY, m_homebindZ); if (!sWorld.getConfig(CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE)) { m_movementInfo.ClearTransportData(); transGUID = 0; } }
 
     _LoadGroup(holder->GetResult(PLAYER_LOGIN_QUERY_LOADGROUP));
 
