@@ -1084,13 +1084,14 @@ bool QuestAccept_npc_remulos(Player* pPlayer, Creature* pCreature, const Quest* 
         DoScriptText(REMULOS_SAY_1, pCreature, pPlayer);
 
         if (npc_remulosAI* pEscortAI = CAST_AI(npc_remulosAI, pCreature->AI()))
+        {
             pEscortAI->Start(true, false, pPlayer->GetGUID(), pQuest);
-
-        CAST_AI(npc_remulosAI, pCreature->AI())->SetEscortPaused(true);
-        CAST_AI(npc_remulosAI, pCreature->AI())->SetDespawnAtEnd(false);
-        CAST_AI(npc_remulosAI, pCreature->AI())->SetDespawnAtFar(false);
-        CAST_AI(npc_remulosAI, pCreature->AI())->uiPhase = 1;
-        CAST_AI(npc_remulosAI, pCreature->AI())->EventTimer = 10000;
+            pEscortAI->SetEscortPaused(true);
+            pEscortAI->SetDespawnAtEnd(false);
+            pEscortAI->SetDespawnAtFar(false);
+            pEscortAI->uiPhase = 1;
+            pEscortAI->EventTimer = 10000;
+        }
     }
     return true;
 }
