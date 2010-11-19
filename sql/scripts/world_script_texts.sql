@@ -682,7 +682,17 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 
 (-1000716,'Thanks for your help. Let\'s get out of here!',0,0,0,0,''),
 (-1000717,'Let\'s keep moving. I don\'t like this place.',0,0,0,0,''),
-(-1000718,'Thanks again. Sergeant Doryn will be glad to hear he has one less scout to replace this week.',0,0,0,0,'');
+(-1000718,'Thanks again. Sergeant Doryn will be glad to hear he has one less scout to replace this week.',0,0,0,0,''),
+
+(-1000719,'Hey, thanks.',0,0,0,0, 'Theramore Guard - SAY_QUEST1'),
+(-1000720,'...receive 50 percent off deserter undergarments? What is this garbage?',0,0,0,0,'Theramore Guard - SAY_QUEST2'),
+(-1000721,'...to establish a fund for the purchase of hair gel? I like my hair the way it is, thanks!',0,0,0,0,'Theramore Guard - SAY_QUEST3'),
+(-1000722,'...the deserters seek a Theramore where citizens will be free to juggle at all hours of the day? What is this nonsense?',0,0,0,0,'Theramore Guard - SAY_QUEST4'),
+(-1000723,'...to establish the chicken as the official symbol of Theramore?! These guys are nuts!',0,0,0,0,'Theramore Guard - SAY_QUEST5'),
+(-1000724,'...as a deserter, you\'ll enjoy activities like tethered swimming and dog grooming? How ridiculous!',0,0,0,0,'Theramore Guard - SAY_QUEST6'),
+(-1000725,'This... this is a joke, right?',0,0,0,0,'Theramore Guard - SAY_QUEST7'),
+(-1000726,'I\'d never join anything like this. Better keep this, though. It\'ll come in handy in the privy...',0,0,0,0,'Theramore Guard - SAY_QUEST8'),
+(-1000727,'What a bunch of lunatics! You actually believe this stuff?',0,0,0,0,'Theramore Guard - SAY_QUEST9');
 
 -- -1 033 000 SHADOWFANG KEEP
 INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`emote`,`comment`) VALUES
