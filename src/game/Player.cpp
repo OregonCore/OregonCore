@@ -450,6 +450,8 @@ Player::Player (WorldSession *session): Unit()
     //Default movement to run mode
     m_unit_movement_flags = 0;
 
+    m_mover = this;
+
     m_seer = this;
 
     m_contestedPvPTimer = 0;
@@ -18481,7 +18483,7 @@ void Player::ReportedAfkBy(Player* reporter)
 bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool is3dDistance) const
 {
     // Always can see self
-    if (u == this)
+    if (m_mover == u || this == u)
         return true;
 
     // Arena visibility before arena start
@@ -18567,7 +18569,7 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
     }
 
     // GM's can see everyone with invisibilitymask with less or equal security level
-    if (m_invisibilityMask || u->m_invisibilityMask)
+    if (m_mover->m_invisibilityMask || u->m_invisibilityMask)
     {
         if (isGameMaster())
         {
@@ -18578,7 +18580,7 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
         }
 
         // player see other player with stealth/invisibility only if he in same group or raid or same team (raid/team case dependent from conf setting)
-        if (!canDetectInvisibilityOf(u))
+        if (!m_mover->canDetectInvisibilityOf(u))
             if (!(u->GetTypeId() == TYPEID_PLAYER && !IsHostileTo(u) && IsGroupVisibleFor(const_cast<Player*>(u->ToPlayer()))))
                 return false;
     }
@@ -18593,7 +18595,7 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
             detect = false;
         if (m_DetectInvTimer < 300 || !HaveAtClient(u))
             if (!(u->GetTypeId() == TYPEID_PLAYER && !IsHostileTo(u) && IsGroupVisibleFor(const_cast<Player*>(u->ToPlayer()))))
-                if (!detect || !canDetectStealthOf(u, GetDistance(u)))
+                if (!detect || !m_mover->canDetectStealthOf(u, GetDistance(u)))
                     return false;
     }
 
@@ -19813,6 +19815,8 @@ void Player::SetClientControl(Unit* target, uint8 allowMove)
     data << target->GetPackGUID();
     data << uint8(allowMove);
     GetSession()->SendPacket(&data);
+    if (target == this)
+        SetMover(this);
 }
 
 void Player::UpdateZoneDependentAuras(uint32 newZone)

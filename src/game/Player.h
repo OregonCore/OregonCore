@@ -1928,6 +1928,7 @@ class Player : public Unit, public GridObject<Player>
         MovementInfo m_movementInfo;
         uint32 m_lastFallTime;
         float  m_lastFallZ;
+        Unit *m_mover;
         WorldObject *m_seer;
         void SetFallInformation(uint32 time, float z)
         {
@@ -1948,6 +1949,12 @@ class Player : public Unit, public GridObject<Player>
 
         void SetClientControl(Unit* target, uint8 allowMove);
 
+        void SetMover(Unit* target)
+        {
+            //m_mover->m_movedPlayer = NULL;
+            m_mover = target;
+            //m_mover->m_movedPlayer = this;
+        }
         void SetSeer(WorldObject *target) { m_seer = target; }
         void SetViewpoint(WorldObject *target, bool apply);
         WorldObject* GetViewpoint() const;
