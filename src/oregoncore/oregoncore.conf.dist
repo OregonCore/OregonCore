@@ -3,7 +3,7 @@
 ###############################################
 
 [worldserver]
-ConfVersion=2010111401
+ConfVersion=2010112001
 
 # Note to devs, line breaks should be at column 80
 ###############################################################################
@@ -1966,7 +1966,11 @@ DuelMod.Cooldowns = 0
 #    Anticheat.Movement.TeleportToPlaneAlarms
 #        maximum alarms before player will be kicked (default 50, allowed 20 - 100)
 #
+#    Anticheat.Movement.MaxMovementAlarms
+#        maximum alarms without valid movement before player will be kicked (default 50, allowed 20 - 100)
+#
 ###############################################################################
 
 Anticheat.Movement.Enable = 0
 Anticheat.Movement.TeleportToPlaneAlarms = 50
+Anticheat.Movement.MaxMovementAlarms = 50

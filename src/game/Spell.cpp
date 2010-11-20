@@ -2760,7 +2760,7 @@ void Spell::SendSpellStart()
     if (!IsNeedSendToClient())
         return;
 
-    sLog.outDebug("Sending SMSG_SPELL_START id=%u", m_spellInfo->Id);
+    DEBUG_LOG("Sending SMSG_SPELL_START id=%u", m_spellInfo->Id);
 
     uint32 castFlags = CAST_FLAG_UNKNOWN1;
     if (IsRangedSpell())
@@ -2793,7 +2793,7 @@ void Spell::SendSpellGo()
     if (!IsNeedSendToClient())
         return;
 
-    sLog.outDebug("Sending SMSG_SPELL_GO id=%u", m_spellInfo->Id);
+    DEBUG_LOG("Sending SMSG_SPELL_GO id=%u", m_spellInfo->Id);
 
     Unit *target = m_targets.getUnitTarget() ? m_targets.getUnitTarget() : m_caster;
 
@@ -3284,7 +3284,7 @@ void Spell::HandleEffects(Unit *pUnitTarget,Item *pItemTarget,GameObject *pGOTar
     uint8 eff = m_spellInfo->Effect[i];
     uint32 mechanic = m_spellInfo->EffectMechanic[i];
 
-    sLog.outDebug("Spell: Effect : %u", eff);
+    DEBUG_LOG("Spell: Effect : %u", eff);
 
     //Simply return. Do not display "immune" in red text on client
     if (unitTarget && unitTarget->IsImmunedToSpellEffect(eff, mechanic))
@@ -4912,7 +4912,7 @@ void Spell::DelayedChannel()
     else
         m_timer -= delaytime;
 
-    sLog.outDebug("Spell %u partially interrupted for %i ms, new duration: %u ms", m_spellInfo->Id, delaytime, m_timer);
+    DEBUG_LOG("Spell %u partially interrupted for %i ms, new duration: %u ms", m_spellInfo->Id, delaytime, m_timer);
 
     for (std::list<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin();ihit != m_UniqueTargetInfo.end();++ihit)
     {

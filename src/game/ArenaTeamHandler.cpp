@@ -150,7 +150,7 @@ void WorldSession::HandleArenaTeamAddMemberOpcode(WorldPacket & recv_data)
     data << arenateam->GetName();
     player->GetSession()->SendPacket(&data);
 
-    sLog.outDebug("WORLD: Sent SMSG_ARENA_TEAM_INVITE");
+    DEBUG_LOG("WORLD: Sent SMSG_ARENA_TEAM_INVITE");
 }
 
 void WorldSession::HandleArenaTeamInviteAcceptOpcode(WorldPacket & /*recv_data*/)

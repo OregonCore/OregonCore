@@ -333,7 +333,7 @@ void ArenaTeam::Roster(WorldSession *session)
     }
 
     session->SendPacket(&data);
-    sLog.outDebug("WORLD: Sent SMSG_ARENA_TEAM_ROSTER");
+    DEBUG_LOG("WORLD: Sent SMSG_ARENA_TEAM_ROSTER");
 }
 
 void ArenaTeam::Query(WorldSession *session)
@@ -348,7 +348,7 @@ void ArenaTeam::Query(WorldSession *session)
     data << uint32(m_BorderStyle);                          // border style
     data << uint32(m_BorderColor);                          // border color
     session->SendPacket(&data);
-    sLog.outDebug("WORLD: Sent SMSG_ARENA_TEAM_QUERY_RESPONSE");
+    DEBUG_LOG("WORLD: Sent SMSG_ARENA_TEAM_QUERY_RESPONSE");
 }
 
 void ArenaTeam::Stats(WorldSession *session)

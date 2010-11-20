@@ -257,7 +257,7 @@ void WorldSession::HandleBattleGroundPVPlogdataOpcode(WorldPacket & /*recv_data*
     sBattleGroundMgr.BuildPvpLogDataPacket(&data, bg);
     SendPacket(&data);
 
-    sLog.outDebug("WORLD: Sent MSG_PVP_LOG_DATA Message");
+    DEBUG_LOG("WORLD: Sent MSG_PVP_LOG_DATA Message");
 }
 
 void WorldSession::HandleBattleGroundListOpcode(WorldPacket &recv_data)

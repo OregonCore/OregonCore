@@ -89,7 +89,8 @@ int32 World::m_visibility_notify_periodInBGArenas   = DEFAULT_VISIBILITY_NOTIFY_
 
 // movement anticheat
 bool World::m_EnableMvAnticheat = true;
-uint32  World::m_TeleportToPlaneAlarms = 50;
+uint32 World::m_TeleportToPlaneAlarms = 50;
+uint32 World::m_MaxMovementAlarms = 50;
 
 struct ScriptAction
 {
@@ -561,6 +562,17 @@ void World::LoadConfigSettings(bool reload)
     {
         sLog.outError("Anticheat.Movement.TeleportToPlaneAlarms (%d) must be <=100. Using 100 instead.", m_TeleportToPlaneAlarms);
         m_TeleportToPlaneAlarms = 100;
+    }
+    m_MaxMovementAlarms = sConfig.GetIntDefault("Anticheat.Movement.MaxMovementAlarms", 50);
+    if (m_MaxMovementAlarms < 20)
+    {
+        sLog.outError("Anticheat.Movement.MaxMovementAlarms (%d) must be >=20. Using 20 instead.", m_MaxMovementAlarms);
+        m_MaxMovementAlarms = 20;
+    }
+    if (m_MaxMovementAlarms > 100)
+    {
+        sLog.outError("Anticheat.Movement.MaxMovementAlarms (%d) must be <=100. Using 100 instead.", m_MaxMovementAlarms);
+        m_MaxMovementAlarms = 100;
     }
     ///- Read other configuration items from the config file
 

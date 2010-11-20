@@ -51,8 +51,8 @@ _logoutTime(0), m_inQueue(false), m_playerLoading(false), m_playerLogout(false),
 {
     if (sock)
     {
-        m_Address = sock->GetRemoteAddress ();
-        sock->AddReference ();
+        m_Address = sock->GetRemoteAddress();
+        sock->AddReference();
         LoginDatabase.PExecute("UPDATE account SET active_realm_id = %d WHERE id = %u;", realmID, GetAccountId());
     }
 }
@@ -62,13 +62,13 @@ WorldSession::~WorldSession()
 {
     ///- unload player if not unloaded
     if (_player)
-        LogoutPlayer (true);
+        LogoutPlayer(true);
 
     /// - If have unclosed socket, close it
     if (m_Socket)
     {
-        m_Socket->CloseSocket ();
-        m_Socket->RemoveReference ();
+        m_Socket->CloseSocket();
+        m_Socket->RemoveReference();
         m_Socket = NULL;
     }
 
@@ -84,7 +84,7 @@ WorldSession::~WorldSession()
 void WorldSession::SizeError(WorldPacket const& packet, uint32 size) const
 {
     sLog.outError("Client (account %u) send packet %s (%u) with size " SIZEFMTD " but expected %u (attempt crash server?), skipped",
-        GetAccountId(),LookupOpcodeName(packet.GetOpcode()),packet.GetOpcode(),packet.size(),size);
+        GetAccountId(), LookupOpcodeName(packet.GetOpcode()), packet.GetOpcode(), packet.size(), size);
 }
 
 /// Get the player name
@@ -133,10 +133,10 @@ void WorldSession::SendPacket(WorldPacket const* packet)
         sendLastPacketBytes = packet->wpos();               // wpos is real written size
     }
 
-    #endif                                                  // !MANGOS_DEBUG
+    #endif                                                  // !OREGON_DEBUG
 
-    if (m_Socket->SendPacket (*packet) == -1)
-        m_Socket->CloseSocket ();
+    if (m_Socket->SendPacket(*packet) == -1)
+        m_Socket->CloseSocket();
 }
 
 /// Add an incoming packet to the queue
@@ -438,7 +438,7 @@ void WorldSession::LogoutPlayer(bool Save)
 void WorldSession::KickPlayer()
 {
     if (m_Socket)
-        m_Socket->CloseSocket ();
+        m_Socket->CloseSocket();
 }
 
 /// Cancel channeling handler
