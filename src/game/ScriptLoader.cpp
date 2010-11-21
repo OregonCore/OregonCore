@@ -79,10 +79,11 @@ void AddSC_boss_shade_of_aran();
 void AddSC_boss_malchezaar();
 void AddSC_boss_terestian_illhoof();
 void AddSC_boss_moroes();
+void AddSC_boss_nightbane();
+void AddSC_boss_netherspite();
 void AddSC_bosses_opera();
 void AddSC_instance_karazhan();
 void AddSC_karazhan();
-void AddSC_boss_nightbane();
 void AddSC_boss_felblood_kaelthas();         // Magister's Terrace
 void AddSC_boss_selin_fireheart();
 void AddSC_boss_vexallus();
@@ -445,9 +446,10 @@ void AddScripts()
     AddSC_boss_terestian_illhoof();
     AddSC_boss_moroes();
     AddSC_bosses_opera();
+    AddSC_boss_nightbane();
+    AddSC_boss_netherspite();
     AddSC_instance_karazhan();
     AddSC_karazhan();
-    AddSC_boss_nightbane();
     AddSC_boss_felblood_kaelthas();         // Magister's Terrace
     AddSC_boss_selin_fireheart();
     AddSC_boss_vexallus();
