@@ -115,21 +115,21 @@ void WorldSession::HandleMoveWorldportAckOpcode()
 
     // battleground state prepare (in case join to BG), at relogin/tele player not invited
     // only add to bg group and object, if the player was invited (else he entered through command)
-    if (_player->InBattleGround())
+    if (GetPlayer()->InBattleGround())
     {
         // cleanup setting if outdated
         if (!mEntry->IsBattleGroundOrArena())
         {
             // We're not in BG
-            _player->SetBattleGroundId(0);                          // We're not in BG.
+            GetPlayer()->SetBattleGroundId(0);                          // We're not in BG.
             // reset destination bg team
-            _player->SetBGTeam(0);
+            GetPlayer()->SetBGTeam(0);
         }
         // join to bg case
-        else if (BattleGround *bg = _player->GetBattleGround())
+        else if (BattleGround *bg = GetPlayer()->GetBattleGround())
         {
-            if (_player->IsInvitedForBattleGroundInstance(_player->GetBattleGroundId()))
-                bg->AddPlayer(_player);
+            if (GetPlayer()->IsInvitedForBattleGroundInstance(GetPlayer()->GetBattleGroundId()))
+                bg->AddPlayer(GetPlayer());
         }
     }
 
@@ -138,7 +138,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     // flight fast teleport case
     if (GetPlayer()->GetMotionMaster()->GetCurrentMovementGeneratorType() == FLIGHT_MOTION_TYPE)
     {
-        if (!_player->InBattleGround())
+        if (!GetPlayer()->InBattleGround())
         {
             // short preparations to continue flight
             FlightPathMovementGenerator* flight = (FlightPathMovementGenerator*)(GetPlayer()->GetMotionMaster()->top());
@@ -173,7 +173,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
 
     // mount allow check
     if (!mEntry->IsMountAllowed())
-        _player->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
+        GetPlayer()->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
 
     // honorless target
     if (GetPlayer()->pvpInfo.inHostileArea)
@@ -275,7 +275,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 
     if (recv_data.size() != recv_data.rpos())
     {
-        sLog.outError("MovementHandler: player %s (guid %d, account %u) sent a packet (opcode %u) that is %u bytes larger than it should be. Kicked as cheater.", _player->GetName(), _player->GetGUIDLow(), _player->GetSession()->GetAccountId(), opcode, recv_data.size() - recv_data.rpos());
+        sLog.outError("MovementHandler: player %s (guid %d, account %u) sent a packet (opcode %u) that is %u bytes larger than it should be. Kicked as cheater.", GetPlayer()->GetName(), GetPlayer()->GetGUIDLow(), GetPlayer()->GetSession()->GetAccountId(), opcode, recv_data.size() - recv_data.rpos());
         KickPlayer();
         return;
     }
@@ -334,7 +334,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
                     if ((*iter)->GetGUID() == movementInfo.t_guid)
                     {
                         // unmount before boarding
-                        _player->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
+                        GetPlayer()->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
 
                         GetPlayer()->m_transport = (*iter);
                         (*iter)->AddPassenger(GetPlayer());
@@ -833,12 +833,12 @@ void WorldSession::HandleForceSpeedChangeAck(WorldPacket &recv_data)
     recv_data >> newspeed;
 
     // now can skip not our packet
-    if (_player->GetGUID() != guid.GetRawValue())
+    if (GetPlayer()->GetGUID() != guid.GetRawValue())
         return;
     /*----------------*/
 
     // Save movement flags
-    _player->SetUnitMovementFlags(movementInfo.GetMovementFlags());
+    GetPlayer()->SetUnitMovementFlags(movementInfo.GetMovementFlags());
 
     #ifdef MOVEMENT_ANTICHEAT_DEBUG
     sLog.outBasic("%s CMSG_SPEED_CHANGE_ACK: tm:%d ftm:%d | %f, %f, %fo(%f) [%X]", GetPlayer()->GetName(), movementInfo.time, movementInfo.GetFallTime(), movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation(), movementInfo.GetMovementFlags());
@@ -876,28 +876,28 @@ void WorldSession::HandleForceSpeedChangeAck(WorldPacket &recv_data)
 
     // skip all forced speed changes except last and unexpected
     // in run/mounted case used one ACK and it must be skipped.m_forced_speed_changes[MOVE_RUN] store both.
-    if (_player->m_forced_speed_changes[force_move_type] > 0)
+    if (GetPlayer()->m_forced_speed_changes[force_move_type] > 0)
     {
-        --_player->m_forced_speed_changes[force_move_type];
-        if (_player->m_forced_speed_changes[force_move_type] > 0)
+        --GetPlayer()->m_forced_speed_changes[force_move_type];
+        if (GetPlayer()->m_forced_speed_changes[force_move_type] > 0)
             return;
     }
 
 /*  Not needed any more, the anticheat handles the speed and the if will never be true
 
-    if (!_player->GetTransport() && fabs(_player->GetSpeed(move_type) - newspeed) > 0.01f)
+    if (!GetPlayer()->GetTransport() && fabs(GetPlayer()->GetSpeed(move_type) - newspeed) > 0.01f)
     {
-        if (_player->GetSpeed(move_type) > newspeed)         // must be greater - just correct
+        if (GetPlayer()->GetSpeed(move_type) > newspeed)         // must be greater - just correct
         {
             sLog.outError("%sSpeedChange player %s is NOT correct (must be %f instead %f), force set to correct value",
-                move_type_name[move_type], _player->GetName(), _player->GetSpeed(move_type), newspeed);
-            _player->SetSpeed(move_type, _player->GetSpeedRate(move_type), true);
+                move_type_name[move_type], GetPlayer()->GetName(), GetPlayer()->GetSpeed(move_type), newspeed);
+            GetPlayer()->SetSpeed(move_type, GetPlayer()->GetSpeedRate(move_type), true);
         }
         else                                                // must be lesser - cheating
         {
             sLog.outBasic("Player %s from account id %u kicked for incorrect speed (must be %f instead %f)",
-                _player->GetName(), _player->GetSession()->GetAccountId(), _player->GetSpeed(move_type), newspeed);
-            _player->GetSession()->KickPlayer();
+                GetPlayer()->GetName(), GetPlayer()->GetSession()->GetAccountId(), GetPlayer()->GetSpeed(move_type), newspeed);
+            GetPlayer()->GetSession()->KickPlayer();
         }
     }
 */
@@ -924,7 +924,7 @@ void WorldSession::HandleMoveNotActiveMoverOpcode(WorldPacket &recv_data)
     if (!old_mover_guid)
         return;
 
-    _player->m_movementInfo = mi;
+    GetPlayer()->m_movementInfo = mi;
 }
 
 void WorldSession::HandleMountSpecialAnimOpcode(WorldPacket& /*recvdata*/)
@@ -954,7 +954,7 @@ void WorldSession::HandleMoveKnockBackAck(WorldPacket & recv_data)
         return;
 
     // Save movement flags
-    _player->SetUnitMovementFlags(movementInfo.GetMovementFlags());
+    GetPlayer()->SetUnitMovementFlags(movementInfo.GetMovementFlags());
     GetPlayer()->m_anti_isknockedback = true;
     //Todo: Store the final Position and check it with the Position of MSG_MOVE_FALL_LAND in HandleMovementOpcodes
 
@@ -995,7 +995,7 @@ void WorldSession::HandleMoveFlyModeChangeAckOpcode(WorldPacket & recv_data)
     }
     //<<< end movement anticheat
 
-    _player->SetUnitMovementFlags(movementInfo.GetMovementFlags());
+    GetPlayer()->SetUnitMovementFlags(movementInfo.GetMovementFlags());
 }
 
 void WorldSession::HandleMoveHoverAck(WorldPacket& recv_data)
@@ -1024,7 +1024,7 @@ void WorldSession::HandleMoveWaterWalkAck(WorldPacket& recv_data)
 
 void WorldSession::HandleSummonResponseOpcode(WorldPacket& recv_data)
 {
-    if (!_player->isAlive() || _player->isInCombat())
+    if (!GetPlayer()->isAlive() || GetPlayer()->isInCombat())
         return;
 
     uint64 summoner_guid;
@@ -1032,5 +1032,5 @@ void WorldSession::HandleSummonResponseOpcode(WorldPacket& recv_data)
     recv_data >> summoner_guid;
     recv_data >> agree;
 
-    _player->SummonIfPossible(agree);
+    GetPlayer()->SummonIfPossible(agree);
 }
