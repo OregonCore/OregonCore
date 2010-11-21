@@ -401,6 +401,7 @@ Player::Player (WorldSession *session): Unit()
     m_anti_wasflymounted = false;     // seted when player was mounted on flymount
     m_anti_ontaxipath = false;        // seted when player is on a taxi fight
     m_anti_isjumping = false;         // seted when player is in jump phase
+    m_anti_isknockedback = false;     // seted when player is knocked back
 
     m_anti_justjumped = 0;            // jump already began, anti-air jump check
     m_anti_alarmcount = 0;            // alarm counter

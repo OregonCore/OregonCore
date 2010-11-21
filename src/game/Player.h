@@ -2270,6 +2270,7 @@ class Player : public Unit, public GridObject<Player>
         bool m_anti_wasflymounted;           // seted when player was mounted on flymount
         bool m_anti_ontaxipath;              // seted when player is on a taxi fight
         bool m_anti_isjumping;               // seted when player is in jump phase
+        bool m_anti_isknockedback;           // seted when player is knocked back
 
         uint32 m_anti_justjumped;            // jump already began, anti-air jump check
         uint64 m_anti_alarmcount;            // alarm counter

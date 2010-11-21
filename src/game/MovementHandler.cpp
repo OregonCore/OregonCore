@@ -294,6 +294,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     bool updateOrientationOnly = false;
     bool skipAnticheat = false;
     bool useFallingFlag = false;
+    bool forcemovement = false;
 
     if (!movementInfo.HasMovementFlag(MOVEFLAG_MOVING) && !GetPlayer()->HasUnitMovementFlag(MOVEFLAG_MOVING) && !(opcode == MSG_MOVE_FALL_LAND))
     {
@@ -386,12 +387,17 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         if (GetPlayer()->m_anti_justteleported)
             skipAnticheat = true;
 
+        // Fix KnockBack
+        if (GetPlayer()->m_anti_isknockedback)
+            forcemovement = true;
+
         GetPlayer()->m_anti_justteleported = false;
         GetPlayer()->m_anti_ontaxipath = false;
         GetPlayer()->m_anti_wasflymounted = false;
         GetPlayer()->m_anti_justjumped = 0;
         GetPlayer()->m_anti_jumpbase = 0;
         GetPlayer()->m_anti_isjumping = false;
+        GetPlayer()->m_anti_isknockedback = false;
     }
     else if (opcode == MSG_MOVE_START_SWIM)
     {
@@ -401,6 +407,9 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     {
         GetPlayer()->m_anti_isjumping = true;
     }
+
+    if (GetPlayer()->m_anti_isknockedback)
+        forcemovement = true;
 
     if (movementInfo.HasMovementFlag(MOVEFLAG_SWIMMING) != GetPlayer()->IsInWater())
     {
@@ -413,14 +422,14 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     /*----------------------*/
 
     #ifdef MOVEMENT_ANTICHEAT_DEBUG
-    //sLog.outBasic("%s newcoord: tm:%d ftm:%d | %f, %f, %fo(%f) [%X][%s]| transport: %f, %f, %fo(%f)", GetPlayer()->GetName(), movementInfo.time, movementInfo.GetFallTime(), movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation(), movementInfo.GetMovementFlags(), LookupOpcodeName(opcode), movementInfo.GetTransportPos()->GetPositionX(), movementInfo.GetTransportPos()->GetPositionY(), movementInfo.GetTransportPos()->GetPositionZ(), movementInfo.GetTransportPos()->GetOrientation());
-    //sLog.outBasic("Transport: %d |  tguid: %d - %d", GetPlayer()->m_anti_transportGUID, GUID_LOPART(movementInfo.t_guid), GUID_HIPART(movementInfo.t_guid));
+    sLog.outBasic("%s newcoord: tm:%d ftm:%d | %f, %f, %fo(%f) [%X][%s]| transport: %f, %f, %fo(%f)", GetPlayer()->GetName(), movementInfo.time, movementInfo.GetFallTime(), movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation(), movementInfo.GetMovementFlags(), LookupOpcodeName(opcode), movementInfo.GetTransportPos()->GetPositionX(), movementInfo.GetTransportPos()->GetPositionY(), movementInfo.GetTransportPos()->GetPositionZ(), movementInfo.GetTransportPos()->GetOrientation());
+    sLog.outBasic("Transport: %d |  tguid: %d - %d", GetPlayer()->m_anti_transportGUID, GUID_LOPART(movementInfo.t_guid), GUID_HIPART(movementInfo.t_guid));
     #endif
 
     //---- anti-cheat features -->>>
     bool check_passed = true;
 
-    if (World::GetEnableMvAnticheat() && skipAnticheat && updateOrientationOnly)
+    if (World::GetEnableMvAnticheat() && updateOrientationOnly)
     {
         if ((abs(GetPlayer()->GetPositionX() - movementInfo.GetPos()->GetPositionX()) > 0.1f) ||
             (abs(GetPlayer()->GetPositionY() - movementInfo.GetPos()->GetPositionY()) > 0.1f) ||
@@ -674,7 +683,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     }
 
     /* process position-change */
-    if (check_passed || GetPlayer()->isGameMaster())
+    if (check_passed || GetPlayer()->isGameMaster() || forcemovement)
     {
         if (updateOrientationOnly)
         {
@@ -946,6 +955,8 @@ void WorldSession::HandleMoveKnockBackAck(WorldPacket & recv_data)
 
     // Save movement flags
     _player->SetUnitMovementFlags(movementInfo.GetMovementFlags());
+    GetPlayer()->m_anti_isknockedback = true;
+    //Todo: Store the final Position and check it with the Position of MSG_MOVE_FALL_LAND in HandleMovementOpcodes
 
     #ifdef MOVEMENT_ANTICHEAT_DEBUG
     sLog.outBasic("%s CMSG_MOVE_KNOCK_BACK_ACK: tm:%d ftm:%d | %f, %f, %fo(%f) [%X]", GetPlayer()->GetName(), movementInfo.time, movementInfo.GetFallTime(), movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation(), movementInfo.GetMovementFlags());
@@ -957,7 +968,6 @@ void WorldSession::HandleMoveKnockBackAck(WorldPacket & recv_data)
     GetPlayer()->m_anti_last_hspeed = movementInfo.j_xyspeed;
     GetPlayer()->m_anti_last_vspeed = movementInfo.j_velocity < 3.2f ? movementInfo.j_xyspeed - 1.0f : 3.2f;
     GetPlayer()->m_anti_lastspeed_changetime = movementInfo.time + 1750;
-    // TODO Skip Anticheat but deal FallDmg
 }
 
 void WorldSession::HandleMoveFlyModeChangeAckOpcode(WorldPacket & recv_data)
