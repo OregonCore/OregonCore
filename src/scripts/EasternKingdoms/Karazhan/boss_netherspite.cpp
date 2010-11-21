@@ -251,17 +251,17 @@ struct boss_netherspiteAI : public ScriptedAI
 
     void HandleDoors(bool open) // Massive Door switcher
     {
-        if (GameObject *Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GAMEOBJECT_MASSIVE_DOOR)))
+        if (GameObject *Door = GameObject::GetGameObject((*me),pInstance ? pInstance->GetData64(DATA_GAMEOBJECT_MASSIVE_DOOR) : 0))
             Door->SetGoState(open ? GO_STATE_ACTIVE : GO_STATE_READY);
     }
 
-    void Aggro(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
         HandleDoors(false);
         SwitchToPortalPhase();
     }
 
-    void JustDied(Unit* killer)
+    void JustDied(Unit* /*killer*/)
     {
         HandleDoors(true);
         DestroyPortals();
