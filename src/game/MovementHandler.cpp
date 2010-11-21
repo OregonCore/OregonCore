@@ -752,7 +752,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         GetPlayer()->SendMessageToSet(&data, true);
     }
 
-    if (getMSTimeDiff(timediff, getMSTime()) > 0)
+    if (getMSTimeDiff(timediff, getMSTime()) > 20)
         sLog.outError("Anticheat Process Time: %ums : %s [%x]", getMSTimeDiff(timediff, getMSTime()), LookupOpcodeName(opcode), movementInfo.GetMovementFlags());
 }
 
