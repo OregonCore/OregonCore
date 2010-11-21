@@ -2273,7 +2273,7 @@ class Player : public Unit, public GridObject<Player>
 
         uint32 m_anti_justjumped;            // jump already began, anti-air jump check
         uint64 m_anti_alarmcount;            // alarm counter
-        char* m_anti_lastcheat;              // stores last cheat as string
+        std::string m_anti_lastcheat;        // stores last cheat as string
         float m_anti_jumpbase;               // Anti-Gravitation
 
         // Transports

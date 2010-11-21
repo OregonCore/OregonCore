@@ -404,7 +404,7 @@ Player::Player (WorldSession *session): Unit()
 
     m_anti_justjumped = 0;            // jump already began, anti-air jump check
     m_anti_alarmcount = 0;            // alarm counter
-    m_anti_lastcheat = "";            // stores last cheat as string
+    m_anti_lastcheat.empty();         // stores last cheat as string
     m_anti_jumpbase = 0;              // Anti-Gravitation
 
     /////////////////////////////////
