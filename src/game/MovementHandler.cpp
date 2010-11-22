@@ -298,7 +298,9 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 
     if (!movementInfo.HasMovementFlag(MOVEFLAG_MOVING) && !GetPlayer()->HasUnitMovementFlag(MOVEFLAG_MOVING) && !(opcode == MSG_MOVE_FALL_LAND))
     {
-        //sLog.outBasic("UPDATE only Orientation");
+        #ifdef MOVEMENT_ANTICHEAT_DEBUG
+        sLog.outDetail("Update Orientation Only");
+        #endif
         skipAnticheat = true;
         updateOrientationOnly = true;
     }
@@ -458,8 +460,8 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
             move_type = movementInfo.HasMovementFlag(MOVEFLAG_BACKWARD) ? MOVE_SWIM_BACK : MOVE_SWIM;
         else if (movementInfo.HasMovementFlag(MOVEFLAG_WALK_MODE))
             move_type = MOVE_WALK;
-        else
-            move_type = movementInfo.HasMovementFlag(MOVEFLAG_BACKWARD) ? MOVE_RUN_BACK : MOVE_RUN;
+        else    //hmm... in first time after login player has MOVE_SWIMBACK instead MOVE_WALKBACK
+            move_type = movementInfo.HasMovementFlag(MOVEFLAG_BACKWARD) ? MOVE_SWIM_BACK : MOVE_RUN;
 
         float allowed_delta = 0;
         float current_speed = GetPlayer()->GetSpeed(move_type);
@@ -624,9 +626,9 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 
         /*if (!check_passed)
         {
-            static char const* move_type_name[MAX_MOVE_TYPE] = {"Walk", "Run", "Walkback", "Swim", "Swimback", "Turn", "Fly", "Flyback"};
-            sLog.outError("tg_z %f, allowed_delta %f, real_delta %f, time_delta %f, delta_x %f, delta_y %f, delta_z %f, [%X][%s]$%s",
-                tg_z, allowed_delta, real_delta, time_delta, delta_x, delta_y, delta_z, movementInfo.GetMovementFlags(), LookupOpcodeName(opcode), move_type_name[move_type]);
+            static char const* move_type_name[MAX_MOVE_TYPE] = {"Walk", "Run", "Runback", "Swim", "Swimback", "Turn", "Fly", "Flyback"};
+            sLog.outError("curspeed: %f, tg_z %f, allowed_delta %f, real_delta %f, time_delta %f, delta_x %f, delta_y %f, delta_z %f, [%X][%s]$%s",
+                current_speed, tg_z, allowed_delta, real_delta, time_delta, delta_x, delta_y, delta_z, movementInfo.GetMovementFlags(), LookupOpcodeName(opcode), move_type_name[move_type]);
         }*/
     }
     else if (movementInfo.HasMovementFlag(MOVEFLAG_ONTRANSPORT))
