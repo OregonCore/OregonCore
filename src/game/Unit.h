@@ -610,7 +610,7 @@ enum MovementFlags
     MOVEFLAG_SPLINE_ELEVATION   = 0x04000000,               // used for flight paths
     MOVEFLAG_SPLINE_ENABLED     = 0x08000000,               // used for flight paths
     MOVEFLAG_WATERWALKING       = 0x10000000,               // prevent unit from falling through water
-    MOVEFLAG_SAFE_FALL          = 0x20000000,               // active rogue safe fall spell (passive)
+    MOVEFLAG_SAFE_FALL          = 0x20000000,               // Feather Fall (spell)
     MOVEFLAG_HOVER              = 0x40000000,
 
     MOVEFLAG_MOVING         =

@@ -596,6 +596,16 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
             check_passed = false;
         }
 
+        // Anti-Featherfall
+        if (movementInfo.HasMovementFlag(MOVEFLAG_SAFE_FALL) && !(GetPlayer()->HasAuraType(SPELL_AURA_FEATHER_FALL)))
+        {
+            #ifdef MOVEMENT_ANTICHEAT_DEBUG
+            sLog.outError("Movement anticheat: %s is a featherfall-fall cheater. MovementFlags=[%X], SPELL_AURA_FEATHER_FALL=[%X]", GetPlayer()->GetName(), movementInfo.GetMovementFlags(), GetPlayer()->HasAuraType(SPELL_AURA_FEATHER_FALL));
+            #endif
+            GetPlayer()->m_anti_lastcheat = "Feather Fall Hack";
+            check_passed = false;
+        }
+
         // Anti-TeleportToPlane
         if (movementInfo.GetPos()->GetPositionZ() < 0.0001f && movementInfo.GetPos()->GetPositionZ() > -0.0001f && ((movementInfo.GetMovementFlags() & (MOVEFLAG_SWIMMING | MOVEFLAG_CAN_FLY | MOVEFLAG_FLYING | MOVEFLAG_FLYING2)) == 0))
         {
