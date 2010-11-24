@@ -178,10 +178,10 @@ class Log : public Oregon::Singleton<Log, Oregon::ClassLevelLockable<Log, ACE_Th
 #endif
 
 // primary for script library
-void outstring_log(const char * str, ...) ATTR_PRINTF(1,2);
-void detail_log(const char * str, ...) ATTR_PRINTF(1,2);
-void debug_log(const char * str, ...) ATTR_PRINTF(1,2);
-void error_log(const char * str, ...) ATTR_PRINTF(1,2);
-void error_db_log(const char * str, ...) ATTR_PRINTF(1,2);
+#define outstring_log Oregon::Singleton<Log>::Instance().outString
+#define detail_log Oregon::Singleton<Log>::Instance().outDetail
+#define debug_log Oregon::Singleton<Log>::Instance().outDebug
+#define error_log Oregon::Singleton<Log>::Instance().outError
+#define error_db_log Oregon::Singleton<Log>::Instance().outErrorDb
 #endif
 
