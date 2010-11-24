@@ -343,7 +343,7 @@ void npc_escortAI::MovementInform(uint32 uiMoveType, uint32 uiPointId)
         //Make sure that we are still on the right waypoint
         if (CurrentWP->id != uiPointId)
         {
-            error_log("TSCR ERROR: EscortAI reached waypoint out of order %u, expected %u", uiPointId, CurrentWP->id);
+            error_log("OSCR ERROR: EscortAI reached waypoint out of order %u, expected %u", uiPointId, CurrentWP->id);
             return;
         }
 
@@ -435,7 +435,7 @@ void npc_escortAI::Start(bool bIsActiveAttacker, bool bRun, uint64 uiPlayerGUID,
 {
     if (me->getVictim())
     {
-        error_log("TSCR ERROR: EscortAI attempt to Start while in combat.");
+        error_log("OSCR ERROR: EscortAI attempt to Start while in combat.");
         return;
     }
 

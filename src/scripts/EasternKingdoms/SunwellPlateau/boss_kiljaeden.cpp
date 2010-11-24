@@ -154,7 +154,7 @@ enum Spells
 };
 
 /*** Error messages ***/
-#define ERROR_KJ_NOT_SUMMONED "TSCR ERROR: Unable to summon Kil'Jaeden for some reason"
+#define ERROR_KJ_NOT_SUMMONED "OSCR ERROR: Unable to summon Kil'Jaeden for some reason"
 
 /*** Others ***/
 #define FLOOR_Z         28.050388f

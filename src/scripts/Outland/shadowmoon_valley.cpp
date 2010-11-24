@@ -981,7 +981,7 @@ struct npc_earthmender_wildaAI : public npc_escortAI
                }
                CAST_CRE(CoilskarAssassin)->AI()->AttackStart(me);
            }
-           else error_log("TSCR ERROR: Coilskar Assassin couldn't be summmoned");
+           else error_log("OSCR ERROR: Coilskar Assassin couldn't be summmoned");
        }
 
        void JustDied(Unit* killer)

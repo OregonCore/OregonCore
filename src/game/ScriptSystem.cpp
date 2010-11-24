@@ -55,12 +55,12 @@ void SystemMgr::LoadVersion()
 
 void SystemMgr::LoadScriptTexts()
 {
-    outstring_log("OISS: Loading Script Texts...");
+    outstring_log("OSCR: Loading Script Texts...");
     LoadOregonStrings(WorldDatabase,"script_texts",TEXT_SOURCE_RANGE,1+(TEXT_SOURCE_RANGE*2));
 
     QueryResult_AutoPtr Result = WorldDatabase.Query("SELECT entry, sound, type, language, emote FROM script_texts");
 
-    outstring_log("OISS: Loading Script Texts additional data...");
+    outstring_log("OSCR: Loading Script Texts additional data...");
 
     if (Result)
     {
