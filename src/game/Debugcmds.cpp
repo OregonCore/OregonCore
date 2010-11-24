@@ -605,11 +605,10 @@ bool ChatHandler::HandleSetInstanceDataCommand(const char *args)
 
     InstanceData *pInstance = m_session->GetPlayer()->GetInstanceData();
     if (!pInstance)
-    if (!pInstance)
     {
-    PSendSysMessage("You are not in scripted instance.");
+        PSendSysMessage("You are not in scripted instance.");
         SetSentErrorMessage(true);
-      return false;
+        return false;
     }
 	
     char *id = strtok((char*)args, " ");
