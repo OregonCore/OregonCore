@@ -2077,10 +2077,21 @@ void Player::RegenerateHealth()
 void Player::ResetAllPowers()
 {
     SetHealth(GetMaxHealth());
-
-    SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
-    SetPower(POWER_RAGE, 0);
-    SetPower(POWER_ENERGY, GetMaxPower(POWER_ENERGY));
+    
+	switch (getPowerType())
+	{
+	case POWER_MANA: 
+		SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
+		break;
+	case POWER_RAGE: 
+		SetPower(POWER_RAGE, 0);
+		break;
+	case POWER_ENERGY:
+		SetPower(POWER_ENERGY, GetMaxPower(POWER_ENERGY));
+		break;
+	default:
+		break;
+	}
 }
 
 bool Player::CanInteractWithNPCs(bool alive) const
