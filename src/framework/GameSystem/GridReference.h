@@ -39,7 +39,7 @@ class GridReference : public Reference<GridRefManager<OBJECT>, OBJECT>
         void targetObjectDestroyLink()
         {
             // called from unlink()
-            if(this->isValid()) this->getTarget()->decSize();
+            if (this->isValid()) this->getTarget()->decSize();
         }
         void sourceObjectDestroyLink()
         {

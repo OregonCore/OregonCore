@@ -54,8 +54,8 @@ RealmBuildInfo const* FindBuildInfo(uint16 _build)
         return &ExpectedRealmdClientBuilds[0];
 
     // continue from 1 with explicit equal check
-    for(int i = 1; ExpectedRealmdClientBuilds[i].build; ++i)
-        if(_build == ExpectedRealmdClientBuilds[i].build)
+    for (int i = 1; ExpectedRealmdClientBuilds[i].build; ++i)
+        if (_build == ExpectedRealmdClientBuilds[i].build)
             return &ExpectedRealmdClientBuilds[i];
 
     // none appropriate build
@@ -124,7 +124,7 @@ void RealmList::UpdateRealm( uint32 ID, const std::string& name, const std::stri
 void RealmList::UpdateIfNeed()
 {
     // maybe disabled or updated recently
-    if(!m_UpdateInterval || m_NextUpdateTime > time(NULL))
+    if (!m_UpdateInterval || m_NextUpdateTime > time(NULL))
         return;
 
     m_NextUpdateTime = time(NULL) + m_UpdateInterval;
@@ -144,7 +144,7 @@ void RealmList::UpdateRealms(bool init)
     QueryResult_AutoPtr result = LoginDatabase.Query( "SELECT id, name, address, port, icon, realmflags, timezone, allowedSecurityLevel, population, realmbuilds FROM realmlist WHERE (realmflags & 1) = 0 ORDER BY name" );
 
     ///- Circle through results and add them to the realm map
-    if(result)
+    if (result)
     {
         do
         {
@@ -166,7 +166,7 @@ void RealmList::UpdateRealms(bool init)
                 (allowedSecurityLevel <= SEC_ADMINISTRATOR ? AccountTypes(allowedSecurityLevel) : SEC_ADMINISTRATOR),
                 fields[8].GetFloat(), fields[9].GetString());
 
-            if(init)
+            if (init)
                 sLog.outString("Added realm \"%s\"", fields[1].GetString());
         } while ( result->NextRow() );
     }

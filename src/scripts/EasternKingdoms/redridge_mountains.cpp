@@ -160,7 +160,7 @@ CreatureAI* GetAI_npc_corporal_keeshan(Creature* pCreature)
 {
     return new npc_corporal_keeshanAI(pCreature);
 }
-    
+
 void AddSC_redridge_mountains()
 {
     Script* newscript;

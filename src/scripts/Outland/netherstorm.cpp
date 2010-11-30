@@ -969,7 +969,7 @@ struct npc_maxx_a_million_escortAI : public npc_escortAI
     void UpdateAI(const uint32 uiDiff)
     {
         npc_escortAI::UpdateAI(uiDiff);
-        
+
         if (bTake)
         {
             if (uiTakeTimer < uiDiff)

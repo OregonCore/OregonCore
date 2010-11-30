@@ -166,11 +166,11 @@ void Log::Initialize()
 
     m_logFilter = 0;
 
-    if(sConfig.GetBoolDefault("LogFilter_TransportMoves", true))
+    if (sConfig.GetBoolDefault("LogFilter_TransportMoves", true))
         m_logFilter |= LOG_FILTER_TRANSPORT_MOVES;
-    if(sConfig.GetBoolDefault("LogFilter_CreatureMoves", true))
+    if (sConfig.GetBoolDefault("LogFilter_CreatureMoves", true))
         m_logFilter |= LOG_FILTER_CREATURE_MOVES;
-    if(sConfig.GetBoolDefault("LogFilter_VisibilityChanges", true))
+    if (sConfig.GetBoolDefault("LogFilter_VisibilityChanges", true))
         m_logFilter |= LOG_FILTER_VISIBILITY_CHANGES;
 
     // Char log settings
@@ -220,7 +220,7 @@ void Log::outTimestamp(FILE* file)
 
 void Log::InitColors(const std::string& str)
 {
-    if(str.empty())
+    if (str.empty())
     {
         m_colored = false;
         return;
@@ -234,10 +234,10 @@ void Log::InitColors(const std::string& str)
     {
         ss >> color[i];
 
-        if(!ss)
+        if (!ss)
             return;
 
-        if(color[i] < 0 || color[i] >= Colors)
+        if (color[i] < 0 || color[i] >= Colors)
             return;
     }
 
@@ -436,7 +436,7 @@ void Log::outCrash(const char * err, ...)
 
     UTF8PRINTF(stderr,err,);
 
-    if(m_colored)
+    if (m_colored)
         ResetColor(false);
 
     fprintf(stderr, "\n");
@@ -476,7 +476,7 @@ void Log::outError(const char * err, ...)
 
     UTF8PRINTF(stderr,err,);
 
-    if(m_colored)
+    if (m_colored)
         ResetColor(false);
 
     fprintf (stderr, "\n");
@@ -525,7 +525,7 @@ void Log::outErrorDb(const char * err, ...)
 
     UTF8PRINTF(stderr,err,);
 
-    if(m_colored)
+    if (m_colored)
         ResetColor(false);
 
     fprintf (stderr, "\n");
@@ -685,7 +685,7 @@ void Log::outDebug(const char * str, ...)
 
         UTF8PRINTF(stdout,str,);
 
-        if(m_colored)
+        if (m_colored)
             ResetColor(true);
 
         printf ("\n");
@@ -712,7 +712,7 @@ void Log::outStringInLine(const char * str, ...)
 
     UTF8PRINTF(stdout,str,);
 
-    if(logfile)
+    if (logfile)
     {
         va_list ap;
         va_start(ap, str);
@@ -749,7 +749,7 @@ void Log::outCommand(uint32 account, const char * str, ...)
 
         printf("\n");
     }
-    if(logfile && m_logFileLevel > LOGL_NORMAL)
+    if (logfile && m_logFileLevel > LOGL_NORMAL)
     {
         outTimestamp(logfile);
         va_list ap;
@@ -816,7 +816,7 @@ void Log::outChar(const char * str, ...)
 
 void Log::outCharDump(const char * str, uint32 account_id, uint32 guid, const char * name)
 {
-    if(charLogfile)
+    if (charLogfile)
     {
         fprintf(charLogfile, "== START DUMP == (account: %u guid: %u name: %s)\n%s\n== END DUMP ==\n",account_id,guid,name,str);
         fflush(charLogfile);

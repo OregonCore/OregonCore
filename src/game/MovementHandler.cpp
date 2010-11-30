@@ -347,7 +347,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 
             //GetPlayer()->m_anti_transportGUID = GUID_LOPART(movementInfo.t_guid);
             GameObject *obj = HashMapHolder<GameObject>::Find(movementInfo.t_guid);
-            if(obj)
+            if (obj)
                 GetPlayer()->m_anti_transportGUID = obj->GetDBTableGUIDLow();
             else
                 GetPlayer()->m_anti_transportGUID = GUID_LOPART(movementInfo.t_guid);

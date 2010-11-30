@@ -7176,7 +7176,7 @@ void ObjectMgr::LoadGossipMenuItems()
 
     std::set<uint32> gossipScriptSet;
 
-    for(ScriptMapMap::const_iterator itr = sGossipScripts.begin(); itr != sGossipScripts.end(); ++itr)
+    for (ScriptMapMap::const_iterator itr = sGossipScripts.begin(); itr != sGossipScripts.end(); ++itr)
         gossipScriptSet.insert(itr->first);
 
     do
@@ -7268,7 +7268,7 @@ void ObjectMgr::LoadGossipMenuItems()
 
     if (!gossipScriptSet.empty())
     {
-        for(std::set<uint32>::const_iterator itr = gossipScriptSet.begin(); itr != gossipScriptSet.end(); ++itr)
+        for (std::set<uint32>::const_iterator itr = gossipScriptSet.begin(); itr != gossipScriptSet.end(); ++itr)
             sLog.outErrorDb("Table `gossip_scripts` contain unused script, id %u.", *itr);
     }
 

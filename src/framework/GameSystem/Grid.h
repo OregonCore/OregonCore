@@ -62,7 +62,7 @@ class Grid
          */
         template<class SPECIFIC_OBJECT> void AddWorldObject(SPECIFIC_OBJECT *obj)
         {
-            if(!i_objects.template insert<SPECIFIC_OBJECT>(obj))
+            if (!i_objects.template insert<SPECIFIC_OBJECT>(obj))
                 assert(false);
         }
 
@@ -70,7 +70,7 @@ class Grid
          */
         template<class SPECIFIC_OBJECT> void RemoveWorldObject(SPECIFIC_OBJECT *obj)
         {
-            if(!i_objects.template remove<SPECIFIC_OBJECT>(obj))
+            if (!i_objects.template remove<SPECIFIC_OBJECT>(obj))
                 assert(false);
         }
 
@@ -108,7 +108,7 @@ class Grid
          */
         template<class SPECIFIC_OBJECT> void AddGridObject(SPECIFIC_OBJECT *obj)
         {
-            if(!i_container.template insert<SPECIFIC_OBJECT>(obj))
+            if (!i_container.template insert<SPECIFIC_OBJECT>(obj))
                 assert(false);
         }
 
@@ -116,7 +116,7 @@ class Grid
          */
         template<class SPECIFIC_OBJECT> void RemoveGridObject(SPECIFIC_OBJECT *obj)
         {
-            if(!i_container.template remove<SPECIFIC_OBJECT>(obj))
+            if (!i_container.template remove<SPECIFIC_OBJECT>(obj))
                 assert(false);
         }
 

@@ -212,7 +212,7 @@ MotionMaster::MoveTargetedHome()
 
         MoveFollow(i_owner, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE, MOTION_SLOT_IDLE);
     }
-    else if(i_owner->GetTypeId() == TYPEID_UNIT)
+    else if (i_owner->GetTypeId() == TYPEID_UNIT)
     {
         DEBUG_LOG("Creature (Entry: %u GUID: %u) targeted home", i_owner->GetEntry(), i_owner->GetGUIDLow());
         Mutate(new HomeMovementGenerator<Creature>(), MOTION_SLOT_ACTIVE);

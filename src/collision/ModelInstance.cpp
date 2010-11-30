@@ -54,7 +54,7 @@ namespace VMAP
         Ray modRay(p, iInvRot * pRay.direction());
         float distance = pMaxDist * iInvScale;
         bool hit = iModel->IntersectRay(modRay, distance, pStopAtFirstHit);
-        if(hit)
+        if (hit)
         {
             distance *= iScale;
             pMaxDist = distance;
@@ -173,7 +173,7 @@ namespace VMAP
             spawn.iBound = G3D::AABox(bLow, bHigh);
         }
         check += fread(&nameLen, sizeof(uint32), 1, rf);
-        if(check != (has_bound ? 17 : 11))
+        if (check != (has_bound ? 17 : 11))
         {
             std::cout << "Error reading ModelSpawn!\n";
             return false;
@@ -204,16 +204,16 @@ namespace VMAP
         check += fwrite(&spawn.iRot, sizeof(float), 3, wf);
         check += fwrite(&spawn.iScale, sizeof(float), 1, wf);
         bool has_bound = (spawn.flags & MOD_HAS_BOUND);
-        if(has_bound) // only WMOs have bound in MPQ, only available after computation
+        if (has_bound) // only WMOs have bound in MPQ, only available after computation
         {
             check += fwrite(&spawn.iBound.low(), sizeof(float), 3, wf);
             check += fwrite(&spawn.iBound.high(), sizeof(float), 3, wf);
         }
         uint32 nameLen = spawn.name.length();
         check += fwrite(&nameLen, sizeof(uint32), 1, wf);
-        if(check != (has_bound ? 17 : 11)) return false;
+        if (check != (has_bound ? 17 : 11)) return false;
         check = fwrite(spawn.name.c_str(), sizeof(char), nameLen, wf);
-        if(check != nameLen) return false;
+        if (check != nameLen) return false;
         return true;
     }
 

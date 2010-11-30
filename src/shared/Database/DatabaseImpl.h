@@ -35,7 +35,7 @@
     }
 
 #define ASYNC_PQUERY_BODY(format, szQuery) \
-    if(!format) return false; \
+    if (!format) return false; \
     \
     char szQuery [MAX_QUERY_LEN]; \
     \
@@ -46,7 +46,7 @@
         int res = vsnprintf( szQuery, MAX_QUERY_LEN, format, ap ); \
         va_end(ap); \
         \
-        if(res==-1) \
+        if (res==-1) \
         { \
             sLog.outError("SQL Query truncated (and not execute) for format: %s",format); \
             return false; \

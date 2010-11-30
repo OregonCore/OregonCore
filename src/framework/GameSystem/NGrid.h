@@ -45,7 +45,7 @@ public:
     void setUnloadExplicitLock( bool on ) { i_unloadExplicitLock = on; }
     void setUnloadReferenceLock( bool on ) { i_unloadReferenceLock = on; }
     void incUnloadActiveLock() { ++i_unloadActiveLockCount; }
-    void decUnloadActiveLock() { if(i_unloadActiveLockCount) --i_unloadActiveLockCount; }
+    void decUnloadActiveLock() { if (i_unloadActiveLockCount) --i_unloadActiveLockCount; }
 
     void setTimer(const TimeTracker& pTimer) { i_timer = pTimer; }
     void ResetTimeTracker(time_t interval) { i_timer.Reset(interval); }

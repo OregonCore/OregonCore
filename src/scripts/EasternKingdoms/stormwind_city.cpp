@@ -253,7 +253,7 @@ bool GossipSelect_npc_lady_katrana_prestor(Player* pPlayer, Creature* pCreature,
 ## Quest: The Attack!
 #######*/
 
-enum 
+enum
 {
     SAY_LESCOVAR_2            = -1000657,
     SAY_GUARD_2               = -1000658,
@@ -356,7 +356,7 @@ struct npc_stormwind_royal_guardAI : public ScriptedAI
                     me->GetMotionMaster()->MoveTargetedHome();
                     me->SendMovementFlagUpdate();
                     uiSpybotPhase = 0;
-                }                
+                }
             }
             else uiSpybotTimer -= uiDiff;
         }
@@ -453,8 +453,8 @@ struct npc_lord_gregor_lescovarAI : public npc_escortAI
         cell.Visit(pair, cSearcher, *(me->GetMap()));
 
         if (!lCreatureList.empty())
-        {    
-            for(std::list<Creature*>::iterator itr = lCreatureList.begin(); itr != lCreatureList.end(); ++itr)
+        {
+            for (std::list<Creature*>::iterator itr = lCreatureList.begin(); itr != lCreatureList.end(); ++itr)
             {
                 CAST_AI(npc_stormwind_royal_guardAI,(*itr)->AI())->MovePoint = 1;
                 CAST_AI(npc_stormwind_royal_guardAI,(*itr)->AI())->PointID = PointID;
@@ -678,7 +678,7 @@ struct npc_tyrion_spybotAI : public npc_escortAI
 
         if (!lCreatureList.empty())
         {
-            for(std::list<Creature*>::iterator itr = lCreatureList.begin(); itr != lCreatureList.end(); ++itr)
+            for (std::list<Creature*>::iterator itr = lCreatureList.begin(); itr != lCreatureList.end(); ++itr)
             {
                 CAST_AI(npc_stormwind_royal_guardAI,(*itr)->AI())->SpybotGUID = me->GetGUID();
                 CAST_AI(npc_stormwind_royal_guardAI,(*itr)->AI())->uiSpybotPhase = 1;

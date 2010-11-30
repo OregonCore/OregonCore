@@ -610,11 +610,11 @@ bool ChatHandler::HandleSetInstanceDataCommand(const char *args)
         SetSentErrorMessage(true);
         return false;
     }
-	
+
     char *id = strtok((char*)args, " ");
     char *data = strtok(NULL, " ");
     char *trash = strtok(NULL, " ");
-	
+
     if (!id || !data)
         return false;
 

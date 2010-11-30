@@ -82,9 +82,9 @@ void stripLineInvisibleChars(std::string &str)
     bool space = false;
     for (size_t pos = 0; pos < str.size(); ++pos)
     {
-        if(invChars.find(str[pos])!=std::string::npos)
+        if (invChars.find(str[pos])!=std::string::npos)
         {
-            if(!space)
+            if (!space)
             {
                 str[wpos++] = ' ';
                 space = true;
@@ -92,7 +92,7 @@ void stripLineInvisibleChars(std::string &str)
         }
         else
         {
-            if(wpos!=pos)
+            if (wpos!=pos)
                 str[wpos++] = str[pos];
             else
                 ++wpos;
@@ -100,9 +100,9 @@ void stripLineInvisibleChars(std::string &str)
         }
     }
 
-    if(wpos < str.size())
+    if (wpos < str.size())
         str.erase(wpos,str.size());
-    if(str.find("|TInterface")!=std::string::npos)
+    if (str.find("|TInterface")!=std::string::npos)
         str.clear();
 }
 
@@ -114,15 +114,15 @@ std::string secsToTimeString(uint32 timeInSecs, bool shortText, bool hoursOnly)
     uint32 days    = timeInSecs / DAY;
 
     std::ostringstream ss;
-    if(days)
+    if (days)
         ss << days << (shortText ? "d" : " Day(s) ");
-    if(hours || hoursOnly)
+    if (hours || hoursOnly)
         ss << hours << (shortText ? "h" : " Hour(s) ");
-    if(!hoursOnly)
+    if (!hoursOnly)
     {
-        if(minutes)
+        if (minutes)
             ss << minutes << (shortText ? "m" : " Minute(s) ");
-        if(secs || (!days && !hours && !minutes) )
+        if (secs || (!days && !hours && !minutes) )
             ss << secs << (shortText ? "s" : " Second(s).");
     }
 
@@ -135,9 +135,9 @@ uint32 TimeStringToSecs(const std::string& timestring)
     uint32 buffer     = 0;
     uint32 multiplier = 0;
 
-    for(std::string::const_iterator itr = timestring.begin(); itr != timestring.end(); itr++ )
+    for (std::string::const_iterator itr = timestring.begin(); itr != timestring.end(); itr++ )
     {
-        if(isdigit(*itr))
+        if (isdigit(*itr))
         {
             std::string str;                                //very complicated typecast char->const char*; is there no better way?
             str += *itr;
@@ -182,7 +182,7 @@ std::string TimeToTimestampStr(time_t t)
 /// Check if the string is a valid ip address representation
 bool IsIPAddress(char const* ipaddress)
 {
-    if(!ipaddress)
+    if (!ipaddress)
         return false;
 
     // Let the big boys do it.
@@ -227,7 +227,7 @@ void utf8truncate(std::string& utf8str,size_t len)
     try
     {
         size_t wlen = utf8::distance(utf8str.c_str(),utf8str.c_str()+utf8str.size());
-        if(wlen <= len)
+        if (wlen <= len)
             return;
 
         std::wstring wstr;
@@ -248,7 +248,7 @@ bool Utf8toWStr(char const* utf8str, size_t csize, wchar_t* wstr, size_t& wsize)
     try
     {
         size_t len = utf8::distance(utf8str,utf8str+csize);
-        if(len > wsize)
+        if (len > wsize)
         {
             wsize = 0;
             wstr = L"";
@@ -332,7 +332,7 @@ typedef wchar_t const* const* wstrlist;
 std::wstring GetMainPartOfName(std::wstring wname, uint32 declension)
 {
     // supported only Cyrillic cases
-    if(wname.size() < 1 || !isCyrillicCharacter(wname[0]) || declension > 5)
+    if (wname.size() < 1 || !isCyrillicCharacter(wname[0]) || declension > 5)
         return wname;
 
     // Important: end length must be <= MAX_INTERNAL_PLAYER_NAME-MAX_PLAYER_NAME (3 currently)
@@ -367,7 +367,7 @@ std::wstring GetMainPartOfName(std::wstring wname, uint32 declension)
     {
         size_t len = size_t((*itr)[-1]);                    // get length from string size field
 
-        if(wname.substr(wname.size()-len,len)==*itr)
+        if (wname.substr(wname.size()-len,len)==*itr)
             return wname.substr(0,wname.size()-len);
     }
 
@@ -378,7 +378,7 @@ bool utf8ToConsole(const std::string& utf8str, std::string& conStr)
 {
 #if PLATFORM == PLATFORM_WINDOWS
     std::wstring wstr;
-    if(!Utf8toWStr(utf8str,wstr))
+    if (!Utf8toWStr(utf8str,wstr))
         return false;
 
     conStr.resize(wstr.size());
@@ -410,13 +410,13 @@ bool Utf8FitTo(const std::string& str, std::wstring search)
 {
     std::wstring temp;
 
-    if(!Utf8toWStr(str,temp))
+    if (!Utf8toWStr(str,temp))
         return false;
 
     // converting to lower case
     wstrToLower( temp );
 
-    if(temp.find(search) == std::wstring::npos)
+    if (temp.find(search) == std::wstring::npos)
         return false;
 
     return true;

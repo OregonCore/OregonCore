@@ -754,7 +754,7 @@ struct npc_letollAI : public npc_escortAI
     {
         uint32 uiCount = 0;
 
-        for(std::list<Creature*>::iterator itr = m_lResearchersList.begin(); itr != m_lResearchersList.end(); ++itr)
+        for (std::list<Creature*>::iterator itr = m_lResearchersList.begin(); itr != m_lResearchersList.end(); ++itr)
         {
             float fAngle = uiCount < MAX_RESEARCHER ? M_PI/MAX_RESEARCHER - (uiCount*2*M_PI/MAX_RESEARCHER) : 0.0f;
 
@@ -771,7 +771,7 @@ struct npc_letollAI : public npc_escortAI
         {
             uint8 uiNum = 1;
 
-            for(std::list<Creature*>::iterator itr = m_lResearchersList.begin(); itr != m_lResearchersList.end(); ++itr)
+            for (std::list<Creature*>::iterator itr = m_lResearchersList.begin(); itr != m_lResearchersList.end(); ++itr)
             {
                 if (uiListNum && uiListNum != uiNum)
                 {

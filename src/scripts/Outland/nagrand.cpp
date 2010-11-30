@@ -866,7 +866,7 @@ void AddSC_nagrand()
     newscript->pGossipSelect = &GossipSelect_npc_lantresor_of_the_blade;
     newscript->RegisterSelf();
 
-    newscript = new Script;	
+    newscript = new Script;
     newscript->Name = "npc_maghar_captive";
     newscript->GetAI = &GetAI_npc_maghar_captive;
     newscript->pQuestAccept = &QuestAccept_npc_maghar_captive;

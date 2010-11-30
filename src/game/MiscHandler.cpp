@@ -1315,7 +1315,7 @@ void WorldSession::HandleFarSightOpcode(WorldPacket & recv_data)
             break;
         case 1:
             DEBUG_LOG("Added FarSight " I64FMT " to player %u", _player->GetUInt64Value(PLAYER_FARSIGHT), _player->GetGUIDLow());
-            if(WorldObject *target = _player->GetViewpoint())
+            if (WorldObject *target = _player->GetViewpoint())
                 _player->SetSeer(target);
             else
                 sLog.outError("Player %s requests non-existing seer", _player->GetName());
@@ -1354,7 +1354,7 @@ void WorldSession::HandleTimeSyncResp(WorldPacket & recv_data)
     uint32 counter, clientTicks;
     recv_data >> counter >> clientTicks;
 
-    if(counter != _player->m_timeSyncCounter - 1)
+    if (counter != _player->m_timeSyncCounter - 1)
         DEBUG_LOG("Wrong time sync counter from player %s (cheater?)", _player->GetName());
 
     DEBUG_LOG("Time sync received: counter %u, client ticks %u, time since last sync %u", counter, clientTicks, clientTicks - _player->m_timeSyncClient);

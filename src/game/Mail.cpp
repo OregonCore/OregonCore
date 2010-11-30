@@ -175,7 +175,7 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data)
 
     Item* items[MAX_MAIL_ITEMS];
 
-    for(uint8 i = 0; i < items_count; ++i)
+    for (uint8 i = 0; i < items_count; ++i)
     {
         if (!itemGUIDs[i])
         {
@@ -923,10 +923,10 @@ void MailDraft::SendReturnToSender(uint32 sender_acc, uint32 sender_guid, uint32
     Player *receiver = objmgr.GetPlayer(MAKE_NEW_GUID(receiver_guid, 0, HIGHGUID_PLAYER));
 
     uint32 rc_account = 0;
-    if(!receiver)
+    if (!receiver)
         rc_account = objmgr.GetPlayerAccountIdByGUID(MAKE_NEW_GUID(receiver_guid, 0, HIGHGUID_PLAYER));
 
-    if(!receiver && !rc_account)                            // sender not exist
+    if (!receiver && !rc_account)                            // sender not exist
     {
         deleteIncludedItems(true);
         return;
@@ -935,14 +935,14 @@ void MailDraft::SendReturnToSender(uint32 sender_acc, uint32 sender_guid, uint32
     // prepare mail and send in other case
     bool needItemDelay = false;
 
-    if(!m_items.empty())
+    if (!m_items.empty())
     {
         // if item send to character at another account, then apply item delivery delay
         needItemDelay = sender_acc != rc_account;
 
         // set owner to new receiver (to prevent delete item with sender char deleting)
         CharacterDatabase.BeginTransaction();
-        for(MailItemMap::iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
+        for (MailItemMap::iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
         {
             Item* item = mailItemIter->second;
             item->SaveToDB();                      // item not in inventory and can be save standalone
@@ -1026,7 +1026,7 @@ void MailDraft::SendMailTo(MailReceiver const& receiver, MailSender const& sende
             m->money = GetMoney();
             m->COD = GetCOD();
 
-            for(MailItemMap::const_iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
+            for (MailItemMap::const_iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
             {
                 Item* item = mailItemIter->second;
                 m->AddItem(item->GetGUIDLow(), item->GetEntry());

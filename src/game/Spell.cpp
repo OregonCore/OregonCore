@@ -101,7 +101,7 @@ void SpellCastTargets::setSrc(float x, float y, float z)
 
 void SpellCastTargets::setSrc(Position *pos)
 {
-    if(pos)
+    if (pos)
     {
         m_srcPos.Relocate(pos);
         m_targetMask |= TARGET_FLAG_SOURCE_LOCATION;

@@ -85,7 +85,7 @@ class Referencer
 
         T& _referencee(void)
         {
-            if( i_holder == NULL )
+            if (i_holder == NULL)
                 throw std::runtime_error("Invalid access to null pointer");
             return *i_holder->i_referencee;
         }

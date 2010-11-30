@@ -187,7 +187,7 @@ AuthSocket::AuthSocket()
 /// Close patch file descriptor before leaving
 AuthSocket::~AuthSocket()
 {
-    if(patch_ != ACE_INVALID_HANDLE)
+    if (patch_ != ACE_INVALID_HANDLE)
         ACE_OS::close(patch_);
 }
 
@@ -203,7 +203,7 @@ void AuthSocket::OnRead()
     uint8 _cmd;
     while (1)
     {
-        if(!recv_soft((char *)&_cmd, 1))
+        if (!recv_soft((char *)&_cmd, 1))
             return;
 
         size_t i;
@@ -382,11 +382,11 @@ bool AuthSocket::_HandleLogonChallenge()
         // No SQL injection (escaped user name)
 
         result = LoginDatabase.PQuery("SELECT sha_pass_hash,id,locked,last_ip,gmlevel,v,s FROM account WHERE username = '%s'",_safelogin.c_str ());
-        if( result )
+        if ( result )
         {
             ///- If the IP is 'locked', check that the player comes indeed from the correct IP address
             bool locked = false;
-            if((*result)[2].GetUInt8() == 1)                // if ip is locked
+            if ((*result)[2].GetUInt8() == 1)                // if ip is locked
             {
                 DEBUG_LOG("[AuthChallenge] Account '%s' is locked to IP - '%s'", _login.c_str(), (*result)[3].GetString());
                 DEBUG_LOG("[AuthChallenge] Player address is '%s'", get_remote_address().c_str());
@@ -411,9 +411,9 @@ bool AuthSocket::_HandleLogonChallenge()
                 ///- If the account is banned, reject the logon attempt
                 QueryResult_AutoPtr banresult = LoginDatabase.PQuery("SELECT bandate,unbandate FROM account_banned WHERE "
                     "id = %u AND active = 1 AND (unbandate > UNIX_TIMESTAMP() OR unbandate = bandate)", (*result)[1].GetUInt32());
-                if(banresult)
+                if (banresult)
                 {
-                    if((*banresult)[0].GetUInt64() == (*banresult)[1].GetUInt64())
+                    if ((*banresult)[0].GetUInt64() == (*banresult)[1].GetUInt64())
                     {
                         pkt << (uint8) WOW_FAIL_BANNED;
                         sLog.outBasic("[AuthChallenge] Banned account %s tries to login!",_login.c_str ());
@@ -436,7 +436,7 @@ bool AuthSocket::_HandleLogonChallenge()
                     DEBUG_LOG("database authentication values: v='%s' s='%s'", databaseV.c_str(), databaseS.c_str());
 
                     // multiply with 2, bytes are stored as hexstring
-                    if(databaseV.size() != s_BYTE_SIZE*2 || databaseS.size() != s_BYTE_SIZE*2)
+                    if (databaseV.size() != s_BYTE_SIZE*2 || databaseS.size() != s_BYTE_SIZE*2)
                         _SetVSFields(rI);
                     else
                     {
@@ -467,13 +467,13 @@ bool AuthSocket::_HandleLogonChallenge()
                     uint8 securityFlags = 0;
                     pkt << uint8(securityFlags);            // security flags (0x0...0x04)
 
-                    if(securityFlags & 0x01)                // PIN input
+                    if (securityFlags & 0x01)                // PIN input
                     {
                         pkt << uint32(0);
                         pkt << uint64(0) << uint64(0);      // 16 bytes hash?
                     }
 
-                    if(securityFlags & 0x02)                // Matrix input
+                    if (securityFlags & 0x02)                // Matrix input
                     {
                         pkt << uint8(0);
                         pkt << uint8(0);
@@ -482,7 +482,7 @@ bool AuthSocket::_HandleLogonChallenge()
                         pkt << uint64(0);
                     }
 
-                    if(securityFlags & 0x04)                // Security token input
+                    if (securityFlags & 0x04)                // Security token input
                     {
                         pkt << uint8(1);
                     }
@@ -491,7 +491,7 @@ bool AuthSocket::_HandleLogonChallenge()
                     _accountSecurityLevel = secLevel <= SEC_ADMINISTRATOR ? AccountTypes(secLevel) : SEC_ADMINISTRATOR;
 
                     _localizationName.resize(4);
-                    for(int i = 0; i < 4; ++i)
+                    for (int i = 0; i < 4; ++i)
                         _localizationName[i] = ch->country[4-i-1];
 
                     sLog.outBasic("[AuthChallenge] account %s is using '%c%c%c%c' locale (%u)", _login.c_str (), ch->country[3], ch->country[2], ch->country[1], ch->country[0], GetLocaleByName(_localizationName));
@@ -513,14 +513,14 @@ bool AuthSocket::_HandleLogonProof()
     DEBUG_LOG("Entering _HandleLogonProof");
     ///- Read the packet
     sAuthLogonProof_C lp;
-    if(!recv((char *)&lp, sizeof(sAuthLogonProof_C)))
+    if (!recv((char *)&lp, sizeof(sAuthLogonProof_C)))
         return false;
 
     ///- Check if the client has one of the expected version numbers
     bool valid_version = FindBuildInfo(_build) != NULL;
 
     /// <ul><li> If the client has no valid version
-    if(!valid_version)
+    if (!valid_version)
     {
         if (this->patch_ != ACE_INVALID_HANDLE)
             return false;
@@ -690,22 +690,22 @@ bool AuthSocket::_HandleLogonProof()
         sLog.outBasic("[AuthChallenge] account %s tried to login with wrong password!",_login.c_str ());
 
         uint32 MaxWrongPassCount = sConfig.GetIntDefault("WrongPass.MaxCount", 0);
-        if(MaxWrongPassCount > 0)
+        if (MaxWrongPassCount > 0)
         {
             //Increment number of failed logins by one and if it reaches the limit temporarily ban that account or IP
             LoginDatabase.PExecute("UPDATE account SET failed_logins = failed_logins + 1 WHERE username = '%s'",_safelogin.c_str());
 
-            if(QueryResult_AutoPtr loginfail = LoginDatabase.PQuery("SELECT id, failed_logins FROM account WHERE username = '%s'", _safelogin.c_str()))
+            if (QueryResult_AutoPtr loginfail = LoginDatabase.PQuery("SELECT id, failed_logins FROM account WHERE username = '%s'", _safelogin.c_str()))
             {
                 Field* fields = loginfail->Fetch();
                 uint32 failed_logins = fields[1].GetUInt32();
 
-                if( failed_logins >= MaxWrongPassCount )
+                if ( failed_logins >= MaxWrongPassCount )
                 {
                     uint32 WrongPassBanTime = sConfig.GetIntDefault("WrongPass.BanTime", 600);
                     bool WrongPassBanType = sConfig.GetBoolDefault("WrongPass.BanType", false);
 
-                    if(WrongPassBanType)
+                    if (WrongPassBanType)
                     {
                         uint32 acc_id = fields[0].GetUInt32();
                         LoginDatabase.PExecute("INSERT INTO account_banned VALUES ('%u',UNIX_TIMESTAMP(),UNIX_TIMESTAMP()+'%u','Oregon realmd','Failed login autoban',1)",
@@ -797,7 +797,7 @@ bool AuthSocket::_HandleReconnectProof()
     DEBUG_LOG("Entering _HandleReconnectProof");
     ///- Read the packet
     sAuthReconnectProof_C lp;
-    if(!recv((char *)&lp, sizeof(sAuthReconnectProof_C)))
+    if (!recv((char *)&lp, sizeof(sAuthReconnectProof_C)))
         return false;
 
     if (_login.empty() || !_reconnectProof.GetNumBytes() || !K.GetNumBytes())
@@ -847,7 +847,7 @@ bool AuthSocket::_HandleRealmList()
     // No SQL injection (escaped user name)
 
     QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT id,sha_pass_hash FROM account WHERE username = '%s'",_safelogin.c_str());
-    if(!result)
+    if (!result)
     {
         sLog.outError("[ERROR] user %s tried to login and we cannot find him in the database.",_login.c_str());
         close_connection();
@@ -884,13 +884,13 @@ void AuthSocket::LoadRealmlist(ByteBuffer &pkt, uint32 acctid)
             pkt << uint32(0);
             pkt << uint8(sRealmList.size());
 
-            for(RealmList::RealmMap::const_iterator  i = sRealmList.begin(); i != sRealmList.end(); ++i)
+            for (RealmList::RealmMap::const_iterator  i = sRealmList.begin(); i != sRealmList.end(); ++i)
             {
                 uint8 AmountOfCharacters;
 
                 // No SQL injection. id of realm is controlled by the database.
                 QueryResult_AutoPtr result = LoginDatabase.PQuery( "SELECT numchars FROM realmcharacters WHERE realmid = '%d' AND acctid='%u'", i->second.m_ID, acctid);
-                if( result )
+                if ( result )
                 {
                     Field *fields = result->Fetch();
                     AmountOfCharacters = fields[0].GetUInt8();
@@ -945,13 +945,13 @@ void AuthSocket::LoadRealmlist(ByteBuffer &pkt, uint32 acctid)
             pkt << uint32(0);
             pkt << uint16(sRealmList.size());
 
-            for(RealmList::RealmMap::const_iterator  i = sRealmList.begin(); i != sRealmList.end(); ++i)
+            for (RealmList::RealmMap::const_iterator  i = sRealmList.begin(); i != sRealmList.end(); ++i)
             {
                 uint8 AmountOfCharacters;
 
                 // No SQL injection. id of realm is controlled by the database.
                 QueryResult_AutoPtr result = LoginDatabase.PQuery( "SELECT numchars FROM realmcharacters WHERE realmid = '%d' AND acctid='%u'", i->second.m_ID, acctid);
-                if( result )
+                if ( result )
                 {
                     Field *fields = result->Fetch();
                     AmountOfCharacters = fields[0].GetUInt8();
@@ -1006,7 +1006,7 @@ bool AuthSocket::_HandleXferResume()
 {
     DEBUG_LOG("Entering _HandleXferResume");
 
-    if(recv_len() < 9)
+    if (recv_len() < 9)
         return false;
 
     recv_skip(1);
@@ -1014,7 +1014,7 @@ bool AuthSocket::_HandleXferResume()
     uint64 start_pos;
     recv((char *)&start_pos, 8);
 
-    if(patch_ == ACE_INVALID_HANDLE)
+    if (patch_ == ACE_INVALID_HANDLE)
     {
         close_connection();
         return false;
@@ -1022,13 +1022,13 @@ bool AuthSocket::_HandleXferResume()
 
     ACE_OFF_T file_size = ACE_OS::filesize(patch_);
 
-    if(file_size == -1 || start_pos >= (uint64)file_size)
+    if (file_size == -1 || start_pos >= (uint64)file_size)
     {
         close_connection();
         return false;
     }
 
-    if(ACE_OS::lseek(patch_, start_pos, SEEK_SET) == -1)
+    if (ACE_OS::lseek(patch_, start_pos, SEEK_SET) == -1)
     {
         close_connection();
         return false;
@@ -1068,7 +1068,7 @@ void AuthSocket::InitPatch()
 
     patch_ = ACE_INVALID_HANDLE;
 
-    if(handler->open() == -1)
+    if (handler->open() == -1)
     {
         handler->close();
         close_connection();

@@ -52,8 +52,8 @@ struct npc_galen_goodwardAI : public npc_escortAI
 
     uint32 m_uiPostEventTimer;
 
-    void Reset() 
-    { 
+    void Reset()
+    {
         m_uiPostEventTimer = 0;
     }
 
@@ -73,7 +73,7 @@ struct npc_galen_goodwardAI : public npc_escortAI
         case 1:
             DoScriptText(GILAN_SAY_START_2, me);
             break;
-        case 16:            
+        case 16:
             m_uiPostEventTimer = 10000;
             DoScriptText(GILAN_SAY_END, me, pPlayer);
             SetRun(true);

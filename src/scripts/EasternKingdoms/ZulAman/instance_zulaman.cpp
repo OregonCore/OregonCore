@@ -125,7 +125,7 @@ struct instance_zulaman : public ScriptedInstance
         {
             case 186303:
                 HalazziDoorExitGUID = go->GetGUID();
-                if(BossKilled >= 4)
+                if (BossKilled >= 4)
                     OpenDoor(HalazziDoorExitGUID, true);
                 break;
             case 186304:
@@ -133,13 +133,13 @@ struct instance_zulaman : public ScriptedInstance
                 break;
             case 186305:
                 HexLordGateGUID = go->GetGUID();
-                //if(BossKilled >= 4) HandleGameObject(NULL, true, go);
-                if(BossKilled >= 4)
+                //if (BossKilled >= 4) HandleGameObject(NULL, true, go);
+                if (BossKilled >= 4)
                     OpenDoor(HexLordGateGUID, true);
                 break;
             case 186306:
                 ZulJinGateGUID  = go->GetGUID();
-                if(BossKilled >= 5)
+                if (BossKilled >= 5)
                     OpenDoor(ZulJinGateGUID, true);
                 break;
             case 186858: AkilzonDoorGUID = go->GetGUID(); break;
@@ -184,7 +184,7 @@ struct instance_zulaman : public ScriptedInstance
         if (BossKilled >= 4)
             OpenDoor(HexLordGateGUID, true);
 
-        if(BossKilled >= 4)
+        if (BossKilled >= 4)
             OpenDoor(HalazziDoorExitGUID, true);
 
         if (BossKilled >= 5)
@@ -261,7 +261,7 @@ struct instance_zulaman : public ScriptedInstance
         case DATA_HALAZZIEVENT:
             Encounters[3] = data;
             OpenDoor(HalazziDoorEntryGUID, data != IN_PROGRESS);
-            if(data == IN_PROGRESS)
+            if (data == IN_PROGRESS)
             {
                 OpenDoor(HalazziDoorEntryGUID, false);
             }

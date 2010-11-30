@@ -23,7 +23,7 @@ bool FileLoader::loadFile(char *filename, bool log)
 {
     free();
     MPQFile mf(filename);
-    if(mf.isEof())
+    if (mf.isEof())
     {
         if (log)
             printf("No such file %s\n", filename);

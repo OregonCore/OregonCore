@@ -36,13 +36,13 @@ class LifeTimePolicy
 T&
 Oregon::Singleton<T, ThreadingModel, CreatePolicy, LifeTimePolicy >::Instance()
 {
-    if( !si_instance )
+    if (!si_instance)
     {
         // double-checked Locking pattern
         Guard();
-        if( !si_instance )
+        if (!si_instance)
         {
-            if( si_destroyed )
+            if (si_destroyed)
             {
                 si_destroyed = false;
                 LifeTimePolicy::OnDeadReference();

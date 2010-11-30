@@ -553,7 +553,7 @@ bool QuestAccept_npc_clintar_dreamwalker(Player* pPlayer, Creature* pCreature, Q
 /*####
 ##                      Quest: The Nightmare Manifests
 ## When we created this script. We tried to make it as much as possible blizzlike.
-## But at the same time, we had some things replaced, for example, the coordinates 
+## But at the same time, we had some things replaced, for example, the coordinates
 ## of the Nightmares. The coordinates of the Nightmares had to do more clustered, because
 ## the current system scripting and muvemaps not allow to place Nightmares blizzlike.
 ####*/
@@ -772,7 +772,7 @@ struct npc_remulosAI : public npc_escortAI
     {
         if (!PhantasmsList.empty())
         {
-            for(std::list<uint64>::iterator itr = PhantasmsList.begin(); itr != PhantasmsList.end(); ++itr)
+            for (std::list<uint64>::iterator itr = PhantasmsList.begin(); itr != PhantasmsList.end(); ++itr)
             {
                 if (Creature *pPhantasm = Unit::GetCreature(*me,*itr))
                 {
@@ -988,7 +988,7 @@ struct npc_remulosAI : public npc_escortAI
                     EventTimer = 60000;
                     break;
                 }
-            } 
+            }
             else EventTimer -= diff;
         }
 
@@ -1061,7 +1061,7 @@ struct npc_remulosAI : public npc_escortAI
                         return pTarget;
                 return NULL;
             }
-        }        
+        }
         return NULL;
     }
 
@@ -1071,7 +1071,7 @@ struct npc_remulosAI : public npc_escortAI
             pPlayer->GroupEventHappens(QUEST_NIGHTMARE_MANIFESTS, me);
     }
 };
- 
+
 CreatureAI* GetAI_npc_remulos(Creature* pCreature)
 {
     return new npc_remulosAI(pCreature);
@@ -1354,13 +1354,13 @@ public:
                 DoCast(me->getVictim(), ERANIKUS_SPELL_ACID_BREATH);
                 AcidBreathTimer = urand(5000, 15000);
             } else AcidBreathTimer -= diff;
-    
+
             if (NoxiusBreathTimer <= diff)
             {
                 DoCast(me->getVictim(), ERANIKUS_SPELL_NOXIUS_BREATH);
                 NoxiusBreathTimer = urand(10000, 20000);
             } else NoxiusBreathTimer -= diff;
-        
+
             DoMeleeAttackIfReady();
         }
     }

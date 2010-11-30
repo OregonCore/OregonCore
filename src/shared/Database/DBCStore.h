@@ -40,7 +40,7 @@ class DBCStorage
         {
             DBCFileLoader dbc;
             // Check if load was sucessful, only then continue
-            if(!dbc.Load(fn, fmt))
+            if (!dbc.Load(fn, fmt))
                 return false;
 
             fieldCount = dbc.GetCols();
@@ -55,12 +55,12 @@ class DBCStorage
         bool LoadStringsFrom(char const* fn)
         {
             // DBC must be already loaded using Load
-            if(!indexTable)
+            if (!indexTable)
                 return false;
 
             DBCFileLoader dbc;
             // Check if load was successful, only then continue
-            if(!dbc.Load(fn, fmt))
+            if (!dbc.Load(fn, fmt))
                 return false;
 
             m_stringPoolList.push_back(dbc.AutoProduceStrings(fmt,(char*)m_dataTable));

@@ -56,7 +56,7 @@ void SQLStorage::Free ()
         if (dst_format[x]==FT_STRING)
         {
             for (uint32 y=0; y<MaxEntry; y++)
-                if(pIndex[y])
+                if (pIndex[y])
                     delete [] *(char**)((char*)(pIndex[y])+offset);
 
             offset += sizeof(char*);

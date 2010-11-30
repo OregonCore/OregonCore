@@ -47,7 +47,7 @@ char * command_finder(const char* text, int state)
     const char* ret;
     ChatCommand *cmd = ChatHandler::getCommandTable();
 
-    if(!state)
+    if (!state)
     {
         idx = 0;
         len = strlen(text);
@@ -55,7 +55,7 @@ char * command_finder(const char* text, int state)
 
     while(ret = cmd[idx].Name)
     {
-        if(!cmd[idx].AllowConsole)
+        if (!cmd[idx].AllowConsole)
         {
             idx++;
             continue;
@@ -65,7 +65,7 @@ char * command_finder(const char* text, int state)
         //printf("Checking %s \n", cmd[idx].Name);
         if (strncmp(ret, text, len) == 0)
             return strdup(ret);
-        if(cmd[idx].Name == NULL)
+        if (cmd[idx].Name == NULL)
             break;
     }
 
@@ -77,7 +77,7 @@ char ** cli_completion(const char * text, int start, int end)
     char ** matches;
     matches = (char**)NULL;
 
-    if(start == 0)
+    if (start == 0)
         matches = rl_completion_matches((char*)text,&command_finder);
     else
         rl_bind_key('\t',rl_abort);
@@ -90,7 +90,7 @@ void utf8print(void* arg, const char* str)
 #if PLATFORM == PLATFORM_WINDOWS
     wchar_t wtemp_buf[6000];
     size_t wtemp_len = 6000-1;
-    if(!Utf8toWStr(str,strlen(str),wtemp_buf,wtemp_len))
+    if (!Utf8toWStr(str,strlen(str),wtemp_buf,wtemp_len))
         return;
 
     char temp_buf[6000];
@@ -136,7 +136,7 @@ bool ChatHandler::HandleAccountDeleteCommand(const char* args)
     }
 
     /// Commands not recommended call from chat, but support anyway
-    if(m_session)
+    if (m_session)
     {
         uint32 targetSecurity = accmgr.GetSecurity(account_id);
 
@@ -175,22 +175,22 @@ bool ChatHandler::HandleAccountDeleteCommand(const char* args)
 
 bool ChatHandler::HandleCharacterDeleteCommand(const char* args)
 {
-    if(!*args)
+    if (!*args)
         return false;
 
     char *character_name_str = strtok((char*)args," ");
-    if(!character_name_str)
+    if (!character_name_str)
         return false;
 
     std::string character_name = character_name_str;
-    if(!normalizePlayerName(character_name))
+    if (!normalizePlayerName(character_name))
         return false;
 
     uint64 character_guid;
     uint32 account_id;
 
     Player *player = objmgr.GetPlayer(character_name.c_str());
-    if(player)
+    if (player)
     {
         character_guid = player->GetGUID();
         account_id = player->GetSession()->GetAccountId();
@@ -199,7 +199,7 @@ bool ChatHandler::HandleCharacterDeleteCommand(const char* args)
     else
     {
         character_guid = objmgr.GetPlayerGUIDByName(character_name);
-        if(!character_guid)
+        if (!character_guid)
         {
             PSendSysMessage(LANG_NO_PLAYER,character_name.c_str());
             SetSentErrorMessage(true);
@@ -250,7 +250,7 @@ bool ChatHandler::HandleAccountOnlineListCommand(const char* /*args*/)
         //                                                      0         1        2        3
         QueryResult_AutoPtr resultLogin = LoginDatabase.PQuery("SELECT username, last_ip, gmlevel, expansion FROM account WHERE id = '%u'",account);
 
-        if(resultLogin)
+        if (resultLogin)
         {
             Field *fieldsLogin = resultLogin->Fetch();
             PSendSysMessage("|%15s| %20s | %15s |%4d|%5d|",
@@ -268,13 +268,13 @@ bool ChatHandler::HandleAccountOnlineListCommand(const char* /*args*/)
 /// Create an account
 bool ChatHandler::HandleAccountCreateCommand(const char* args)
 {
-    if(!*args)
+    if (!*args)
         return false;
 
     ///- %Parse the command line arguments
     char *szAcc = strtok((char*)args, " ");
     char *szPassword = strtok(NULL, " ");
-    if(!szAcc || !szPassword)
+    if (!szAcc || !szPassword)
         return false;
 
     // normalized in accmgr.CreateAccount
@@ -311,7 +311,7 @@ bool ChatHandler::HandleAccountCreateCommand(const char* args)
 /// Set the level of logging
 bool ChatHandler::HandleServerSetLogLevelCommand(const char *args)
 {
-    if(!*args)
+    if (!*args)
         return false;
 
     char *NewLevel = strtok((char*)args, " ");
@@ -325,15 +325,15 @@ bool ChatHandler::HandleServerSetLogLevelCommand(const char *args)
 /// set diff time record interval
 bool ChatHandler::HandleServerSetDiffTimeCommand(const char *args)
 {
-    if(!*args)
+    if (!*args)
         return false;
 
     char *NewTimeStr = strtok((char*)args, " ");
-    if(!NewTimeStr)
+    if (!NewTimeStr)
         return false;
 
     int32 NewTime =atoi(NewTimeStr);
-    if(NewTime < 0)
+    if (NewTime < 0)
         return false;
 
     sWorld.SetRecordDiffInterval(NewTime);
@@ -371,7 +371,7 @@ void CliRunnable::run()
     #if PLATFORM != WINDOWS
     rl_attempted_completion_function = cli_completion;
     #endif
-    if(sConfig.GetBoolDefault("BeepAtStart", true))
+    if (sConfig.GetBoolDefault("BeepAtStart", true))
         printf("\a");                                       // \a = Alert
 
     // print this here the first time
@@ -394,13 +394,13 @@ void CliRunnable::run()
         if (command_str != NULL)
         {
             for (int x=0; command_str[x]; x++)
-                if(command_str[x]=='\r'||command_str[x]=='\n')
+                if (command_str[x]=='\r'||command_str[x]=='\n')
                 {
                     command_str[x]=0;
                     break;
                 }
 
-            if(!*command_str)
+            if (!*command_str)
             {
                 #if PLATFORM == WINDOWS
                 printf("Oregon>");
@@ -409,7 +409,7 @@ void CliRunnable::run()
             }
 
             std::string command;
-            if(!consoleToUtf8(command_str,command))         // convert from console encoding to utf8
+            if (!consoleToUtf8(command_str,command))         // convert from console encoding to utf8
             {
                 #if PLATFORM == WINDOWS
                 printf("Oregon>");

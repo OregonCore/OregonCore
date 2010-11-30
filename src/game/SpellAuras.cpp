@@ -1335,7 +1335,7 @@ void Aura::TriggerSpell()
                     {
                         uint32 spellForTick[8] = { 24820, 24821, 24822, 24823, 24835, 24836, 24837, 24838 };
                         uint32 totalTick = m_maxduration / m_modifier.periodictime;
-                        if(totalTick < 8)
+                        if (totalTick < 8)
                         {
                             trigger_spell_id = spellForTick[totalTick];
 
@@ -4396,7 +4396,7 @@ void Aura::HandleAuraModStat(bool apply, bool /*Real*/)
         return;
     }
 
-    if(apply && GetId() == 20007) // Crusader enchant proc: Holy Strength
+    if (apply && GetId() == 20007) // Crusader enchant proc: Holy Strength
     {
         uint32 lvldiff = m_target->getLevel() - 60;
         uint32 diff = lvldiff > 0 ? lvldiff*4 : 0;

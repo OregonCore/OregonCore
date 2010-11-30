@@ -201,7 +201,7 @@ void SqlQueryHolderEx::Execute(Database *db)
     {
         /// execute all queries in the holder and pass the results
         char const *sql = queries[i].first;
-        if(sql) m_holder->SetResult(i, db->Query(sql));
+        if (sql) m_holder->SetResult(i, db->Query(sql));
     }
 
     /// sync with the caller thread

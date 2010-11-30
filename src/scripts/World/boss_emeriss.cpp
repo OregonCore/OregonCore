@@ -61,7 +61,7 @@ struct boss_emerissAI : public ScriptedAI
         CorruptionofEarth3_Timer = 0;
     }
 
-    void Aggro(Unit *who) 
+    void Aggro(Unit *who)
     {
         DoScriptText(SAY_AGGRO, me);
     }

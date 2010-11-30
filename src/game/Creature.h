@@ -647,7 +647,7 @@ class Creature : public Unit, public GridObject<Creature>
         }
         void ResetPlayerDamageReq() { m_PlayerDamageReq = GetHealth() / 2; }
         uint32 m_PlayerDamageReq;
-		
+
         float m_SightDistance, m_CombatDistance;
     protected:
         bool CreateFromProto(uint32 guidlow,uint32 Entry,uint32 team, const CreatureData *data = NULL);

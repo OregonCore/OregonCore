@@ -1078,7 +1078,7 @@ bool Object::PrintIndexError(uint32 index, bool set) const
 
 bool Position::HasInLine(const Unit * const target, float distance, float width) const
 {
-    if(!HasInArc(M_PI, target) || !target->IsWithinDist3d(m_positionX, m_positionY, m_positionZ, distance)) return false;
+    if (!HasInArc(M_PI, target) || !target->IsWithinDist3d(m_positionX, m_positionY, m_positionZ, distance)) return false;
     width += target->GetObjectSize() * 0.5f;
     float angle = GetRelativeAngle(target);
     return abs(sin(angle)) * GetExactDist2d(target->GetPositionX(), target->GetPositionY()) < width;

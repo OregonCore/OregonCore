@@ -230,7 +230,7 @@ struct npc_andorhal_towerAI : public Scripted_NoMovementAI
 
         if (me->FindNearestGameObject(GO_BEACON_TORCH, 10.0f))
             CAST_PLR(pWho)->KilledMonster(me->GetEntry(), me->GetGUID());
-        
+
     }
 };
 
@@ -261,7 +261,7 @@ enum eTruuen
 };
 
 struct npc_anchorite_truuenAI : public npc_escortAI
-{    
+{
     npc_anchorite_truuenAI(Creature* pCreature) : npc_escortAI(pCreature) { }
 
     uint32 EventTimer;
@@ -269,12 +269,12 @@ struct npc_anchorite_truuenAI : public npc_escortAI
     uint32 uiPhase;
 
     void Reset()
-    {        
+    {
         EventTimer = 5000;
         UterGUID = 0;
         uiPhase = 0;
     }
-    
+
     void WaypointReached(uint32 uiPointId)
     {
         Player* pPlayer = GetPlayerForEscort();

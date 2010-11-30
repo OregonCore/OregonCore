@@ -90,7 +90,7 @@ struct ModelVertex {
     Vec2D texcoords;
     int unk1, unk2; // always 0,0 so this is probably unused
 };
- 
+
 struct ModelView {
     uint32 nIndex, ofsIndex; // Vertices in this model (index into vertices[])
     uint32 nTris, ofsTris;   // indices

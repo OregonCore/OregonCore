@@ -1880,7 +1880,7 @@ void Player::AddToWorld()
     Unit::AddToWorld();
 
     for (uint8 i = PLAYER_SLOT_START; i < PLAYER_SLOT_END; ++i)
-        if(m_items[i])
+        if (m_items[i])
             m_items[i]->AddToWorld();
 }
 
@@ -5500,7 +5500,7 @@ bool Player::SetPosition(float x, float y, float z, float orientation, bool tele
     // code block for underwater state update
     UpdateUnderwaterState(m, x, y, z);
 
-    if(GetTrader() && !IsWithinDistInMap(GetTrader(), 5))
+    if (GetTrader() && !IsWithinDistInMap(GetTrader(), 5))
         GetSession()->SendCancelTrade();
 
     CheckAreaExploreAndOutdoor();
@@ -12345,7 +12345,7 @@ void Player::PrepareGossipMenu(WorldObject *pSource, uint32 menuId)
 
     bool canTalkToCredit = pSource->GetTypeId() == TYPEID_UNIT;
 
-    for(GossipMenuItemsMap::const_iterator itr = pMenuItemBounds.first; itr != pMenuItemBounds.second; ++itr)
+    for (GossipMenuItemsMap::const_iterator itr = pMenuItemBounds.first; itr != pMenuItemBounds.second; ++itr)
     {
         bool hasMenuItem = true;
 
@@ -14665,7 +14665,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
             mapId = _loc.GetMapId();
             instanceId = 0;
 
-            if(mapId == MAPID_INVALID) // Battleground Entry Point not found (???)
+            if (mapId == MAPID_INVALID) // Battleground Entry Point not found (???)
             {
                 sLog.outError("Player (guidlow %d) was in BG in database, but BG was not found, and entry point was invalid! Teleport to default race/class locations.",guid);
                 RelocateToHomebind();
@@ -14769,7 +14769,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     // Map could be changed before
     mapEntry = sMapStore.LookupEntry(mapId);
     // client without expansion support
-    if(mapEntry && GetSession()->Expansion() < mapEntry->Expansion())
+    if (mapEntry && GetSession()->Expansion() < mapEntry->Expansion())
     {
         DEBUG_LOG("Player %s using client without required expansion tried login at non accessible map %u", GetName(), mapId);
         RelocateToHomebind();
@@ -14818,7 +14818,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     }
 
     // if the player is in an instance and it has been reset in the meantime teleport him to the entrance
-    if(instanceId && !sInstanceSaveManager.GetInstanceSave(instanceId))
+    if (instanceId && !sInstanceSaveManager.GetInstanceSave(instanceId))
     {
         AreaTrigger const* at = objmgr.GetMapEntranceTrigger(mapId);
         if (at)
@@ -17917,7 +17917,7 @@ bool Player::BuyItemFromVendor(uint64 vendorguid, uint32 item, uint8 count, uint
 
     VendorItem const* crItem = vItems->m_items[vendorslot];
     // store diff item (cheating)
-    if(!crItem || crItem->item != item)
+    if (!crItem || crItem->item != item)
     {
         SendBuyError(BUY_ERR_CANT_FIND_ITEM, pCreature, item, 0);
         return false;
@@ -18672,7 +18672,7 @@ inline void UpdateVisibilityOf_helper(std::set<uint64>& s64, T* target, std::set
 template<>
 inline void UpdateVisibilityOf_helper(std::set<uint64>& s64, GameObject* target, std::set<Unit*>& v)
 {
-    if(!target->IsTransport())
+    if (!target->IsTransport())
         s64.insert(target->GetGUID());
 }
 
@@ -20200,7 +20200,7 @@ void Player::SetViewpoint(WorldObject* target, bool apply)
 
 WorldObject* Player::GetViewpoint() const
 {
-    if(uint64 guid = GetUInt64Value(PLAYER_FARSIGHT))
+    if (uint64 guid = GetUInt64Value(PLAYER_FARSIGHT))
         return (WorldObject*)ObjectAccessor::GetObjectByTypeMask(*this, guid, TYPEMASK_SEER);
     return NULL;
 }

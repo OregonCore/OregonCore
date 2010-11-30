@@ -31,18 +31,18 @@ bool LoadADT(char* filename)
     size_t size;
     MPQFile mf(filename);
 
-    if(mf.isEof())
+    if (mf.isEof())
     {
         //printf("No such file %s\n", filename);
         return false;
     }
 
     MapLiqFlag = new uint8[256];
-    for(uint32 j = 0; j < 256; ++j)
+    for (uint32 j = 0; j < 256; ++j)
         MapLiqFlag[j] = 0;                                  // no water
 
     MapLiqHeight = new float[16384];
-    for(uint32 j = 0; j < 16384; ++j)
+    for (uint32 j = 0; j < 16384; ++j)
         MapLiqHeight[j] = -999999;                          // no water
 
     mcells = new mcell;
@@ -63,9 +63,9 @@ bool LoadADT(char* filename)
 
         size_t nextpos = mf.getPos() + size;
 
-        //if(fourcc==0x4d484452)                            // MHDR header
-        //if(fourcc==0x4d564552)                            // MVER
-        if(fourcc == 0x4d43494e)                            // MCIN
+        //if (fourcc==0x4d484452)                            // MHDR header
+        //if (fourcc==0x4d564552)                            // MVER
+        if (fourcc == 0x4d43494e)                            // MCIN
         {
             for (uint32 i = 0; i < 256; ++i)
             {
@@ -74,18 +74,18 @@ bool LoadADT(char* filename)
                 mf.seekRelative(8);
             }
         }
-        //if(fourcc == 0x4d544558)                          // MTEX textures (strings)
-        //if(fourcc == 0x4d4d4458)                          // MMDX m2 models (strings)
-        //if(fourcc == 0x4d4d4944)                          // MMID offsets for strings in MMDX
-        //if(fourcc == 0x4d574d4f)                          // MWMO
-        //if(fourcc == 0x4d574944)                          // MWID offsets for strings in MWMO
-        //if(fourcc == 0x4d444446)                          // MDDF
-        //if(fourcc == 0x4d4f4446)                          // MODF
-        //if(fourcc == 0x4d48324f)                          // MH2O new in WotLK
-        //if(fourcc == 0x4d46424f)                          // MFBO new in BC
-        //if(fourcc == 0x4d434e4b)                          // MCNK
-        //if(fourcc == 0x4d564552)                          // MVER
-        //if(fourcc == 0x4d484452)                          // MHDR header
+        //if (fourcc == 0x4d544558)                          // MTEX textures (strings)
+        //if (fourcc == 0x4d4d4458)                          // MMDX m2 models (strings)
+        //if (fourcc == 0x4d4d4944)                          // MMID offsets for strings in MMDX
+        //if (fourcc == 0x4d574d4f)                          // MWMO
+        //if (fourcc == 0x4d574944)                          // MWID offsets for strings in MWMO
+        //if (fourcc == 0x4d444446)                          // MDDF
+        //if (fourcc == 0x4d4f4446)                          // MODF
+        //if (fourcc == 0x4d48324f)                          // MH2O new in WotLK
+        //if (fourcc == 0x4d46424f)                          // MFBO new in BC
+        //if (fourcc == 0x4d434e4b)                          // MCNK
+        //if (fourcc == 0x4d564552)                          // MVER
+        //if (fourcc == 0x4d484452)                          // MHDR header
 
         mf.seek(nextpos);
     }
@@ -112,8 +112,8 @@ bool isHole(int holes, int i, int j)
 {
     int testi = i / 2;
     int testj = j / 4;
-    if(testi > 3) testi = 3;
-    if(testj > 3) testj = 3;
+    if (testi > 3) testi = 3;
+    if (testj > 3) testj = 3;
     return (holes & holetab_h[testi] & holetab_v[testj]) != 0;
 }
 
@@ -136,8 +136,8 @@ inline void LoadMapChunk(MPQFile &mf, chunk *_chunk)
     float zbase = header.zpos;
     zbase = TILESIZE * 32 - zbase;
     xbase = TILESIZE * 32 - xbase;
-    if(wmoc.x > xbase) wmoc.x = xbase;
-    if(wmoc.z > zbase) wmoc.z = zbase;
+    if (wmoc.x > xbase) wmoc.x = xbase;
+    if (wmoc.z > zbase) wmoc.z = zbase;
     int chunkflags = header.flags;
     float zmin = 999999999.0f;
     float zmax = -999999999.0f;
@@ -147,7 +147,7 @@ inline void LoadMapChunk(MPQFile &mf, chunk *_chunk)
         mf.read(&fourcc, 4);
         mf.read(&size, 4);
         size_t nextpos = mf.getPos() + size;
-        if(fourcc == 0x4d435654)                            // MCVT
+        if (fourcc == 0x4d435654)                            // MCVT
         {
             for (int j = 0; j < 17; ++j)
             {
@@ -157,29 +157,29 @@ inline void LoadMapChunk(MPQFile &mf, chunk *_chunk)
                     float z = h + ybase;
                     if (j % 2)
                     {
-                        if(isHole(header.holes, i, j))
+                        if (isHole(header.holes, i, j))
                             _chunk->v8[i][j / 2] = -1000;
                         else
                             _chunk->v8[i][j / 2] = z;
                     }
                     else
                     {
-                        if(isHole(header.holes, i, j))
+                        if (isHole(header.holes, i, j))
                             _chunk->v9[i][j / 2] = -1000;
                         else
                             _chunk->v9[i][j / 2] = z;
                     }
 
-                    if(z > zmax) zmax = z;
-                    //if(z < zmin) zmin = z;
+                    if (z > zmax) zmax = z;
+                    //if (z < zmin) zmin = z;
                 }
             }
         }
-        else if(fourcc == 0x4d434e52)                       // MCNR
+        else if (fourcc == 0x4d434e52)                       // MCNR
         {
             nextpos = mf.getPos() + 0x1C0;                  // size fix
         }
-        else if(fourcc == 0x4d434c51)                       // MCLQ
+        else if (fourcc == 0x4d434c51)                       // MCLQ
         {
             // liquid / water level
             char fcc1[5];
@@ -190,7 +190,7 @@ inline void LoadMapChunk(MPQFile &mf, chunk *_chunk)
 
             if (!strcmp(fcc1, "MCSE"))
             {
-                for(int j = 0; j < 81; ++j)
+                for (int j = 0; j < 81; ++j)
                 {
                     ChunkLiqHeight[j] = -999999;            // no liquid/water
                 }
@@ -199,32 +199,32 @@ inline void LoadMapChunk(MPQFile &mf, chunk *_chunk)
             {
                 float maxheight;
                 mf.read(&maxheight, 4);
-                for(int j = 0; j < 81; ++j)
+                for (int j = 0; j < 81; ++j)
                 {
                     LiqData liq;
                     mf.read(&liq, 8);
 
-                    if(liq.height > maxheight)
+                    if (liq.height > maxheight)
                         ChunkLiqHeight[j] = -999999;
                     else
                         ChunkLiqHeight[j] = h;
                 }
 
-                if(chunkflags & 4 || chunkflags & 8)
+                if (chunkflags & 4 || chunkflags & 8)
                     MapLiqFlag[chunk_num] |= 1;             // water
-                if(chunkflags & 16)
+                if (chunkflags & 16)
                     MapLiqFlag[chunk_num] |= 2;             // magma/slime
             }
-            if(!(chunk_num % 16))
+            if (!(chunk_num % 16))
                 m = 1024 * (chunk_num / 16);
             k = m + (chunk_num % 16) * 8;
-            
-            for(int p = 0; p < 72; p += 9)
+
+            for (int p = 0; p < 72; p += 9)
             {
-                for(int s = 0; s < 8; ++s)
+                for (int s = 0; s < 8; ++s)
                 {
                     MapLiqHeight[k] = ChunkLiqHeight[p + s];
-                    ++k;    
+                    ++k;
                 }
                 k = k + 120;
             }
@@ -239,9 +239,9 @@ inline void TransformData()
 {
     cell = new Cell;
 
-    for(uint32 x = 0; x < 128; ++x)
+    for (uint32 x = 0; x < 128; ++x)
     {
-        for(uint32 y = 0; y < 128; ++y)
+        for (uint32 y = 0; y < 128; ++y)
         {
             cell->v8[y][x] = (float)mcells->ch[x / 8][y / 8].v8[x % 8][y % 8];
             cell->v9[y][x] = (float)mcells->ch[x / 8][y / 8].v9[x % 8][y % 8];
@@ -263,11 +263,11 @@ const char MAP_MAGIC[] = "MAP_2.50";                        // for destination f
 
 bool ConvertADT(char *filename, char *filename2)
 {
-    if(!LoadADT(filename))
+    if (!LoadADT(filename))
         return false;
 
     FILE *output=fopen(filename2, "wb");
-    if(!output)
+    if (!output)
     {
         printf("Can't create the output file '%s'\n", filename2);
         delete [] MapLiqHeight;
@@ -278,13 +278,13 @@ bool ConvertADT(char *filename, char *filename2)
     // write magic header
     fwrite(MAP_MAGIC, 1, 8, output);
 
-    for(uint32 x = 0; x < 16; ++x)
+    for (uint32 x = 0; x < 16; ++x)
     {
-        for(uint32 y = 0; y < 16; ++y)
+        for (uint32 y = 0; y < 16; ++y)
         {
-            if(mcells->ch[y][x].area_id && mcells->ch[y][x].area_id <= maxAreaId)
+            if (mcells->ch[y][x].area_id && mcells->ch[y][x].area_id <= maxAreaId)
             {
-                if(areas[mcells->ch[y][x].area_id] == 0xffff)
+                if (areas[mcells->ch[y][x].area_id] == 0xffff)
                     printf("\nCan't find area flag for areaid %u.\n", mcells->ch[y][x].area_id);
 
                 fwrite(&areas[mcells->ch[y][x].area_id], 1, 2, output);

@@ -12,7 +12,7 @@ char * GetPlainName(char * FileName)
 {
     char * szTemp;
 
-    if((szTemp = strrchr(FileName, '\\')) != NULL)
+    if ((szTemp = strrchr(FileName, '\\')) != NULL)
         FileName = szTemp + 1;
     return FileName;
 }
@@ -30,7 +30,7 @@ void fixnamen(char *name, size_t len)
         }
     }
     //extension in lowercase
-    for(size_t i=len-3; i<len; i++)
+    for (size_t i=len-3; i<len; i++)
         name[i] |= 0x20;
 }
 
@@ -38,7 +38,7 @@ void fixname2(char *name, size_t len)
 {
     for (size_t i=0; i<len-3; i++)
     {
-        if(name[i] == ' ')
+        if (name[i] == ' ')
         name[i] = '_';
     }
 }
@@ -50,7 +50,7 @@ ADTFile::ADTFile(char* filename): ADT(filename)
 
 bool ADTFile::init(uint32 map_num, uint32 tileX, uint32 tileY)
 {
-    if(ADT.isEof ())
+    if (ADT.isEof ())
         return false;
 
     uint32 size;
@@ -73,7 +73,7 @@ bool ADTFile::init(uint32 map_num, uint32 tileX, uint32 tileY)
     std::string dirname = std::string(szWorkDirWmo) + "/dir_bin";
     FILE *dirfile;
     dirfile = fopen(dirname.c_str(), "ab");
-    if(!dirfile)
+    if (!dirfile)
     {
         printf("Can't open dirfile!'%s'\n", dirname.c_str());
         return false;
@@ -120,10 +120,10 @@ bool ADTFile::init(uint32 map_num, uint32 tileX, uint32 tileY)
                     char szLocalFile[1024];
                     snprintf(szLocalFile, 1024, "%s/%s", szWorkDirWmo, s);
                     FILE * output = fopen(szLocalFile,"rb");
-                    if(!output)
+                    if (!output)
                     {
                         Model m2(path);
-                        if(m2.open())
+                        if (m2.open())
                             m2.ConvertToVMAPModel(szLocalFile);
                     }
                     else

@@ -319,7 +319,7 @@ namespace VMAP
             ERROR_LOG("VMapManager2: trying to unload non-loaded file '%s'!", filename.c_str());
             return;
         }
-        if( model->second.decRefCount() == 0)
+        if (model->second.decRefCount() == 0)
         {
             DEBUG_LOG("VMapManager2: unloading file '%s'", filename.c_str());
             delete model->second.getModel();

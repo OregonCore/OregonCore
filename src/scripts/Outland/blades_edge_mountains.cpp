@@ -374,7 +374,7 @@ struct npc_bloodmaul_brutebaneAI : public ScriptedAI
 {
     npc_bloodmaul_brutebaneAI(Creature *c) : ScriptedAI(c)
     {
-       if(Creature* pOgre = me->FindNearestCreature(NPC_OGRE_BRUTE, 50, true))
+       if (Creature* pOgre = me->FindNearestCreature(NPC_OGRE_BRUTE, 50, true))
        {
            pOgre->SetReactState(REACT_DEFENSIVE);
            pOgre->GetMotionMaster()->MovePoint(1, me->GetPositionX()-1, me->GetPositionY()+1, me->GetPositionZ());

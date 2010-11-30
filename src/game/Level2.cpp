@@ -4262,7 +4262,7 @@ bool ChatHandler::HandleCharacterTitlesCommand(const char* args)
 {
 
     Player * target = getSelectedPlayer();
-    if(!target)
+    if (!target)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
         SetSentErrorMessage(true);

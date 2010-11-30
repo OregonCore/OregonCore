@@ -56,7 +56,7 @@ class Field
         uint32 GetUInt32() const { return mValue ? static_cast<uint32>(atol(mValue)) : uint32(0); }
         uint64 GetUInt64() const
         {
-            if(mValue)
+            if (mValue)
             {
                 uint64 value;
                 sscanf(mValue,UI64FMTD,&value);

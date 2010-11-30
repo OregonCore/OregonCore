@@ -64,13 +64,13 @@ PatchHandler::PatchHandler(ACE_HANDLE socket, ACE_HANDLE patch)
 
 PatchHandler::~PatchHandler()
 {
-    if(patch_fd_ != ACE_INVALID_HANDLE)
+    if (patch_fd_ != ACE_INVALID_HANDLE)
         ACE_OS::close(patch_fd_);
 }
 
 int PatchHandler::open(void*)
 {
-    if(get_handle() == ACE_INVALID_HANDLE || patch_fd_ == ACE_INVALID_HANDLE)
+    if (get_handle() == ACE_INVALID_HANDLE || patch_fd_ == ACE_INVALID_HANDLE)
         return -1;
 
     int nodelay = 0;
@@ -115,7 +115,7 @@ int PatchHandler::svc(void)
     {
         data.data_size = (ACE_UINT16)r;
 
-        if(peer().send((const char*)&data,
+        if (peer().send((const char*)&data,
                     ((size_t) r) + sizeof(data) - sizeof(data.data),
                     flags) == -1)
         {
@@ -123,7 +123,7 @@ int PatchHandler::svc(void)
         }
     }
 
-    if(r == -1)
+    if (r == -1)
     {
         return -1;
     }
@@ -155,7 +155,7 @@ void PatchCache::LoadPatchMD5(const char* szFileName)
     FILE * pPatch = fopen(path.c_str (), "rb");
     sLog.outDebug("Loading patch info from %s", path.c_str());
 
-    if(!pPatch)
+    if (!pPatch)
         return;
 
     // Calculate the MD5 hash
@@ -195,7 +195,7 @@ void PatchCache::LoadPatchesInfo()
 {
     ACE_DIR* dirp = ACE_OS::opendir(ACE_TEXT("./patches/"));
 
-    if(!dirp)
+    if (!dirp)
         return;
 
     ACE_DIRENT* dp;
@@ -206,7 +206,7 @@ void PatchCache::LoadPatchesInfo()
         if (l < 8)
             continue;
 
-        if(!memcmp(&dp->d_name[l - 4], ".mpq", 4))
+        if (!memcmp(&dp->d_name[l - 4], ".mpq", 4))
             LoadPatchMD5(dp->d_name);
     }
 

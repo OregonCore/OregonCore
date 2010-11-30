@@ -440,7 +440,7 @@ namespace VMAP
             {
                 float group_Z;
                 //float pVol = prims[entry].GetBound().volume();
-                //if(pVol < minVol)
+                //if (pVol < minVol)
                 //{
                     /* if (prims[entry].iBound.contains(point)) */
                     if (prims[entry].IsInsideObject(point, zVec, group_Z))

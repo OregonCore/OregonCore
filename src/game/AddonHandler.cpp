@@ -71,7 +71,7 @@ bool AddonHandler::BuildAddonPacket(WorldPacket *Source, WorldPacket *Target)
     *Source >> TempValue;                                   // get real size of the packed structure
 
     // empty addon packet, nothing process, can't be received from real client
-    if(!TempValue)
+    if (!TempValue)
         return false;
 
     AddonRealSize = TempValue;                              // temp value because ZLIB only excepts uLongf
@@ -91,13 +91,13 @@ bool AddonHandler::BuildAddonPacket(WorldPacket *Source, WorldPacket *Target)
             uint32 crc, unk7;
 
             // check next addon data format correctness
-            if(AddOnPacked.rpos()+1+4+4+1 > AddOnPacked.size())
+            if (AddOnPacked.rpos()+1+4+4+1 > AddOnPacked.size())
                 return false;
 
             AddOnPacked >> AddonNames;
 
             // recheck next addon data format correctness
-            if(AddOnPacked.rpos()+4+4+1 > AddOnPacked.size())
+            if (AddOnPacked.rpos()+4+4+1 > AddOnPacked.size())
                 return false;
 
             AddOnPacked >> crc >> unk7 >> unk6;

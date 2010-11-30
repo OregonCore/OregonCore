@@ -1416,7 +1416,7 @@ void BattleGroundAV::ResetBGSubclass()
 
     for (uint8 i = 0; i < BG_TEAMS_COUNT; i++)
     {
-        for(uint8 j = 0; j < 9; j++)                        // 9 quests getting tracked
+        for (uint8 j = 0; j < 9; j++)                        // 9 quests getting tracked
             m_Team_QuestStatus[i][j] = 0;
         m_Team_Scores[i]=BG_AV_SCORE_INITIAL_POINTS;
         m_IsInformedNearVictory[i]=false;

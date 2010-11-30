@@ -364,7 +364,7 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& recvPacket)
         }
 
         // execute trade: 1. remove
-        for(int i = 0; i < TRADE_SLOT_TRADED_COUNT; ++i)
+        for (int i = 0; i < TRADE_SLOT_TRADED_COUNT; ++i)
         {
             if (myItems[i])
             {

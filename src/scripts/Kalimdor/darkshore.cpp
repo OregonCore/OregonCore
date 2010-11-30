@@ -320,7 +320,7 @@ struct npc_threshwackonatorAI : public FollowerAI
             if (me->IsWithinDistInMap(pWho, 10.0f))
             {
                 DoScriptText(SAY_AT_CLOSE, pWho);
-                
+
                 me->setFaction(FACTION_HOSTILE);
                 if (Player* pHolder = GetLeaderForFollower())
                     me->AI()->AttackStart(pHolder);

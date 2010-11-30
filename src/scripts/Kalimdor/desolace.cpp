@@ -76,7 +76,7 @@ struct npc_aged_dying_ancient_kodoAI : public ScriptedAI
             {
                 DoScriptText(RAND(SAY_SMEED_HOME_1,SAY_SMEED_HOME_2,SAY_SMEED_HOME_3), pWho);
                 me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-                m_uiDespawnTimer = 60000;                
+                m_uiDespawnTimer = 60000;
             }
         }
     }
@@ -134,15 +134,15 @@ bool EffectDummyCreature_npc_aged_dying_ancient_kodo(Unit *pCaster, uint32 spell
 bool GossipHello_npc_aged_dying_ancient_kodo(Player* pPlayer, Creature* pCreature)
 {
     if (pPlayer->HasAura(SPELL_KODO_KOMBO_PLAYER_BUFF,0) && pCreature->HasAura(SPELL_KODO_KOMBO_DESPAWN_BUFF,0))
-    {    
+    {
         pPlayer->RemoveAurasDueToSpell(SPELL_KODO_KOMBO_PLAYER_BUFF);
         pPlayer->CastSpell(pCreature,SPELL_KODO_KOMBO_GOSSIP,true);
 
         pCreature->RemoveAurasDueToSpell(SPELL_KODO_KOMBO_DESPAWN_BUFF);
-        pCreature->GetMotionMaster()->MoveIdle();    
+        pCreature->GetMotionMaster()->MoveIdle();
 
         pPlayer->SEND_GOSSIP_MENU(GOSSIP_MENU_KODO_HOME, pCreature->GetGUID());
-        
+
         return true;
     }
 
@@ -162,8 +162,8 @@ CreatureAI* GetAI_npc_aged_dying_ancient_kodo(Creature* pCreature)
 
 struct npc_dalindaAI : public npc_escortAI
 {
-    npc_dalindaAI(Creature* pCreature) : npc_escortAI(pCreature) { }   
-        
+    npc_dalindaAI(Creature* pCreature) : npc_escortAI(pCreature) { }
+
     void WaypointReached(uint32 i)
     {
         Player* pPlayer = GetPlayerForEscort();
@@ -171,11 +171,11 @@ struct npc_dalindaAI : public npc_escortAI
         {
             case 1:
                 me->IsStandState();
-                break;            
-            case 15:                
+                break;
+            case 15:
                 if (pPlayer)
                 pPlayer->GroupEventHappens(QUEST_RETURN_TO_VAHLARRIEL, me);
-                break;            
+                break;
         }
     }
 
@@ -192,7 +192,7 @@ struct npc_dalindaAI : public npc_escortAI
     }
 
     void UpdateAI(const uint32 uiDiff)
-    {        
+    {
         npc_escortAI::UpdateAI(uiDiff);
         if (!UpdateVictim())
             return;
@@ -208,7 +208,7 @@ CreatureAI* GetAI_npc_dalinda(Creature* pCreature)
 bool QuestAccept_npc_dalinda(Player* pPlayer, Creature* pCreature, Quest const* quest)
 {
     if (quest->GetQuestId() == QUEST_RETURN_TO_VAHLARRIEL)
-   {        
+   {
         if (npc_escortAI* pEscortAI = CAST_AI(npc_dalindaAI, pCreature->AI()))
         {
             pEscortAI->Start(true, false, pPlayer->GetGUID());
@@ -242,7 +242,7 @@ static float m_afAmbushSpawn[4][3]=
     {-1388.37f, 2427.81f, 88.8286f},
     {-1388.78f, 2431.85f, 88.7838f},
     {-1386.95f, 2429.76f, 88.8444f},
-    {-1389.99f, 2429.93f, 88.7692f} 
+    {-1389.99f, 2429.93f, 88.7692f}
 };
 
 struct npc_melizza_brimbuzzleAI : public npc_escortAI
@@ -251,7 +251,7 @@ struct npc_melizza_brimbuzzleAI : public npc_escortAI
 
     uint32 m_uiPostEventCount;
     uint64 m_uiPostEventTimer;
-        
+
     void Reset()
     {
         m_uiPostEventCount = 0;
@@ -289,7 +289,7 @@ struct npc_melizza_brimbuzzleAI : public npc_escortAI
     }
 
     void UpdateAI(const uint32 uiDiff)
-    {        
+    {
         npc_escortAI::UpdateAI(uiDiff);
 
         if (!UpdateVictim())

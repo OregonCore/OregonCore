@@ -678,15 +678,15 @@ struct npc_stillpine_capitiveAI : public ScriptedAI
     {
         FleeTimer = 0;
         GameObject* cage = me->FindNearestGameObject(GO_BRISTELIMB_CAGE, 5.0f);
-        if(cage)
+        if (cage)
             cage->ResetDoorOrButton();
     }
 
     void UpdateAI(const uint32 diff)
     {
-        if(FleeTimer)
+        if (FleeTimer)
         {
-            if(FleeTimer <= diff)
+            if (FleeTimer <= diff)
                 me->ForcedDespawn();
             else FleeTimer -= diff;
         }
@@ -700,10 +700,10 @@ CreatureAI* GetAI_npc_stillpine_capitiveAI(Creature* pCreature)
 
 bool go_bristlelimb_cage(Player* pPlayer, GameObject* pGo)
 {
-    if(pPlayer->GetQuestStatus(QUEST_THE_PROPHECY_OF_AKIDA) == QUEST_STATUS_INCOMPLETE)
+    if (pPlayer->GetQuestStatus(QUEST_THE_PROPHECY_OF_AKIDA) == QUEST_STATUS_INCOMPLETE)
     {
         Creature* pCreature = pGo->FindNearestCreature(NPC_STILLPINE_CAPITIVE, 5.0f, true);
-        if(pCreature)
+        if (pCreature)
         {
             DoScriptText(RAND(CAPITIVE_SAY_1, CAPITIVE_SAY_2, CAPITIVE_SAY_3), pCreature, pPlayer);
             pCreature->GetMotionMaster()->MoveFleeing(pPlayer, 3500);
@@ -766,7 +766,7 @@ void AddSC_azuremyst_isle()
     newscript->Name="npc_stillpine_capitive";
     newscript->GetAI = &GetAI_npc_stillpine_capitiveAI;
     newscript->RegisterSelf();
-    
+
     newscript = new Script;
     newscript->Name="go_bristlelimb_cage";
     newscript->pGOHello = &go_bristlelimb_cage;

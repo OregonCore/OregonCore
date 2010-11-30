@@ -83,9 +83,9 @@ void RASocket::OnRead()
     ibuf.Read(inp,sz);
 
     /// \todo Can somebody explain this 'Linux bugfix'?
-    if(stage==NONE)
-        if(sz>4)                                            //linux remote telnet
-            if(memcmp(inp ,"USER ",5))
+    if (stage==NONE)
+        if (sz>4)                                            //linux remote telnet
+            if (memcmp(inp ,"USER ",5))
             {
                 delete [] inp;return;
                 printf("lin bugfix");
@@ -94,7 +94,7 @@ void RASocket::OnRead()
     ///- Discard data after line break or line feed
     bool gotenter=false;
     unsigned int y=0;
-    for(;y<sz;y++)
+    for (;y<sz;y++)
     {
         if (inp[y]=='\r'||inp[y]=='\n')
         {
@@ -115,7 +115,7 @@ void RASocket::OnRead()
         {
             /// <ul> <li> If the input is 'USER <username>'
             case NONE:
-                if(!memcmp(buff,"USER ",5))                 //got "USER" cmd
+                if (!memcmp(buff,"USER ",5))                 //got "USER" cmd
                 {
                     szLogin=&buff[5];
 
@@ -131,11 +131,11 @@ void RASocket::OnRead()
                     QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT gmlevel FROM account WHERE username = '%s'",login.c_str());
 
                     ///- If the user is not found, deny access
-                    if(!result)
+                    if (!result)
                     {
                         Sendf("-No such user.\r\n");
                         sLog.outRemote("User %s does not exist.\n",szLogin.c_str());
-                        if(bSecure)
+                        if (bSecure)
                             SetCloseAndDelete();
                     }
                     else
@@ -145,11 +145,11 @@ void RASocket::OnRead()
                         //szPass=fields[0].GetString();
 
                         ///- if gmlevel is too low, deny access
-                        if(fields[0].GetUInt32()<iMinLevel)
+                        if (fields[0].GetUInt32()<iMinLevel)
                         {
                             Sendf("-Not enough privileges.\r\n");
                             sLog.outRemote("User %s has no privilege.\n",szLogin.c_str());
-                            if(bSecure)
+                            if (bSecure)
                                 SetCloseAndDelete();
                         }
                         else
@@ -161,7 +161,7 @@ void RASocket::OnRead()
                 break;
                 ///<li> If the input is 'PASS <password>' (and the user already gave his username)
             case LG:
-                if(!memcmp(buff,"PASS ",5))                 //got "PASS" cmd
+                if (!memcmp(buff,"PASS ",5))                 //got "PASS" cmd
                 {                                           //login+pass ok
                     ///- If password is correct, increment the number of active administrators
                     std::string login = szLogin;
@@ -190,7 +190,7 @@ void RASocket::OnRead()
                         ///- Else deny access
                         Sendf("-Wrong pass.\r\n");
                         sLog.outRemote("User %s has failed to log in.\n",szLogin.c_str());
-                        if(bSecure)
+                        if (bSecure)
                             SetCloseAndDelete();
                     }
                 }

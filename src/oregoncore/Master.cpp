@@ -198,10 +198,10 @@ int Master::Run()
 
     /// worldd PID file creation
     std::string pidfile = sConfig.GetStringDefault("PidFile", "");
-    if(!pidfile.empty())
+    if (!pidfile.empty())
     {
         uint32 pid = CreatePIDFile(pidfile);
-        if( !pid )
+        if (!pid)
         {
             sLog.outError( "Cannot create PID file %s.\n", pidfile.c_str() );
             return 1;
@@ -249,22 +249,22 @@ int Master::Run()
         HANDLE hProcess = GetCurrentProcess();
 
         uint32 Aff = sConfig.GetIntDefault("UseProcessors", 0);
-        if(Aff > 0)
+        if (Aff > 0)
         {
             ULONG_PTR appAff;
             ULONG_PTR sysAff;
 
-            if(GetProcessAffinityMask(hProcess,&appAff,&sysAff))
+            if (GetProcessAffinityMask(hProcess,&appAff,&sysAff))
             {
                 ULONG_PTR curAff = Aff & appAff;            // remove non accessible processors
 
-                if(!curAff )
+                if (!curAff )
                 {
                     sLog.outError("Processors marked in UseProcessors bitmask (hex) %x not accessible for OregonCore. Accessible processors bitmask (hex): %x",Aff,appAff);
                 }
                 else
                 {
-                    if(SetProcessAffinityMask(hProcess,curAff))
+                    if (SetProcessAffinityMask(hProcess,curAff))
                         sLog.outString("Using processors (bitmask, hex): %x", curAff);
                     else
                         sLog.outError("Can't set used processors (hex): %x",curAff);
@@ -275,10 +275,10 @@ int Master::Run()
 
         bool Prio = sConfig.GetBoolDefault("ProcessPriority", false);
 
-//        if(Prio && (m_ServiceStatus == -1)/* need set to default process priority class in service mode*/)
-        if(Prio)
+//        if (Prio && (m_ServiceStatus == -1)/* need set to default process priority class in service mode*/)
+        if (Prio)
         {
-            if(SetPriorityClass(hProcess,HIGH_PRIORITY_CLASS))
+            if (SetPriorityClass(hProcess,HIGH_PRIORITY_CLASS))
                 sLog.outString("OregonCore process priority class set to HIGH");
             else
                 sLog.outError("ERROR: Can't set OregonCore process priority class.");
@@ -305,7 +305,7 @@ int Master::Run()
 
     ///- Start up freeze catcher thread
     ACE_Based::Thread* freeze_thread = NULL;
-    if(uint32 freeze_delay = sConfig.GetIntDefault("MaxCoreStuckTime", 0))
+    if (uint32 freeze_delay = sConfig.GetIntDefault("MaxCoreStuckTime", 0))
     {
         FreezeDetectorRunnable *fdr = new FreezeDetectorRunnable();
         fdr->SetDelayTime(freeze_delay*1000);
@@ -334,7 +334,7 @@ int Master::Run()
     }
 
     ///- Stop soap thread
-    if(soap_thread)
+    if (soap_thread)
     {
         soap_thread->wait();
         soap_thread->destroy();

@@ -1190,8 +1190,8 @@ void LoadLootTemplates_Mail()
     // remove real entries and check existence loot
     ObjectMgr::QuestMap const& questMap = objmgr.GetQuestTemplates();
     for (ObjectMgr::QuestMap::const_iterator itr = questMap.begin(); itr != questMap.end(); ++itr)
-        if(uint32 mail_template_id = itr->second->GetRewMailTemplateId())
-            if(ids_set.count(mail_template_id))
+        if (uint32 mail_template_id = itr->second->GetRewMailTemplateId())
+            if (ids_set.count(mail_template_id))
                 ids_set.erase(mail_template_id);
 
     // output error for any still listed (not referenced from appropriate table) ids
