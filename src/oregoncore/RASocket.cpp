@@ -61,8 +61,8 @@ void RASocket::OnAccept()
     std::string ss=GetRemoteAddress();
     sLog.outRemote("Incoming connection from %s.\n",ss.c_str());
 
-    ///- print Motd
-    Sendf("%s\r\n",sWorld.GetMotd());
+    ///- print connect confirmation
+    Sendf("+CONNECTED\r\n");
 }
 
 /// Read data from the network
