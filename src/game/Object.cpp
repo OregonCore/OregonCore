@@ -1896,7 +1896,7 @@ void WorldObject::DestroyForNearbyPlayers()
 
     std::list<Player*> targets;
     Oregon::AnyPlayerInObjectRangeCheck check(this, GetMap()->GetVisibilityDistance());
-    Oregon::PlayerListSearcher<Oregon::AnyPlayerInObjectRangeCheck> searcher(this, targets, check);
+    Oregon::PlayerListSearcher<Oregon::AnyPlayerInObjectRangeCheck> searcher(targets, check);
     VisitNearbyWorldObject(GetMap()->GetVisibilityDistance(), searcher);
     for (std::list<Player*>::const_iterator iter = targets.begin(); iter != targets.end(); ++iter)
     {

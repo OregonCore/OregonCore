@@ -1673,7 +1673,7 @@ void Creature::CallForHelp(float fRadius)
     cell.SetNoCreate();
 
     Oregon::CallOfHelpCreatureInRangeDo u_do(this, getVictim(), fRadius);
-    Oregon::CreatureWorker<Oregon::CallOfHelpCreatureInRangeDo> worker(this, u_do);
+    Oregon::CreatureWorker<Oregon::CallOfHelpCreatureInRangeDo> worker(u_do);
 
     TypeContainerVisitor<Oregon::CreatureWorker<Oregon::CallOfHelpCreatureInRangeDo>, GridTypeMapContainer >  grid_creature_searcher(worker);
 

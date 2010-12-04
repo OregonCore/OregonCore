@@ -389,13 +389,13 @@ namespace Oregon
     {
         Do& i_do;
 
-        CreatureWorker(WorldObject const* searcher, Do& _do)
+        CreatureWorker(Do& _do)
             : i_do(_do) {}
 
         void Visit(CreatureMapType &m)
         {
             for (CreatureMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
-                    i_do(itr->getSource());
+                i_do(itr->getSource());
         }
 
         template<class NOT_INTERESTED> void Visit(GridRefManager<NOT_INTERESTED> &) {}
@@ -423,7 +423,7 @@ namespace Oregon
         std::list<Player*> &i_objects;
         Check& i_check;
 
-        PlayerListSearcher(WorldObject const* searcher, std::list<Player*> &objects, Check & check)
+        PlayerListSearcher(std::list<Player*> &objects, Check & check)
             : i_objects(objects),i_check(check) {}
 
         void Visit(PlayerMapType &m);
