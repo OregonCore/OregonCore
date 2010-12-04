@@ -1058,11 +1058,11 @@ void MailDraft::SendMailTo(MailReceiver const& receiver, MailSender const& sende
 
 void WorldSession::SendExternalMails()
 {
-    sLog.outString("EXTERNAL MAIL> Send Mails from Queue...");
+    sLog.outDebug("External Mail - Send Mails from Queue...");
     QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT id,receiver,subject,message,money,item,item_count FROM mail_external");
         if (!result)
         {
-            sLog.outString("EXTERNAL MAIL> No Mails in Queue...");
+            sLog.outDebug("External Mail - No Mails in Queue...");
             return;
         }
         else
@@ -1082,7 +1082,7 @@ void WorldSession::SendExternalMails()
 
                 if (receiver != 0)
                 {
-                    sLog.outString("EXTERNAL MAIL> Sending mail to %u, Item:%u", receiver_guid, ItemID);
+                    sLog.outDebug("External Mail - Sending mail to %u, Item:%u", receiver_guid, ItemID);
                     uint32 itemTextId = !message.empty() ? objmgr.CreateItemText(message) : 0;
                     if (ItemID != 0)
                     {
@@ -1105,5 +1105,5 @@ void WorldSession::SendExternalMails()
             }
             while(result -> NextRow());
         }
-    sLog.outString("EXTERNAL MAIL> All Mails Sent...");
+    sLog.outDebug("External Mail - All Mails Sent...");
 }
