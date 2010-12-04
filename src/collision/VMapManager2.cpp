@@ -1,6 +1,9 @@
 /*
  * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ *
  * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
+ *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -31,13 +34,9 @@ using G3D::Vector3;
 namespace VMAP
 {
 
-    //=========================================================
-
     VMapManager2::VMapManager2()
     {
     }
-
-    //=========================================================
 
     VMapManager2::~VMapManager2(void)
     {
@@ -51,8 +50,6 @@ namespace VMAP
         }
     }
 
-    //=========================================================
-
     Vector3 VMapManager2::convertPositionToInternalRep(float x, float y, float z) const
     {
         Vector3 pos;
@@ -64,8 +61,6 @@ namespace VMAP
         return pos;
     }
 
-    //=========================================================
-
     Vector3 VMapManager2::convertPositionToMangosRep(float x, float y, float z) const
     {
         Vector3 pos;
@@ -76,7 +71,6 @@ namespace VMAP
 
         return pos;
     }
-    //=========================================================
 
     // move to MapTree too?
     std::string VMapManager2::getMapFileName(unsigned int pMapId)
@@ -87,13 +81,11 @@ namespace VMAP
         return fname.str();
     }
 
-    //=========================================================
-    /**
+    /*
     Block maps from being used.
     parameter: String of map ids. Delimiter = ","
     e.g.: "0,1,590"
     */
-
     void VMapManager2::preventMapsFromBeingUsed(const char* pMapIdString)
     {
         iIgnoreMapIds.clear();
@@ -118,8 +110,6 @@ namespace VMAP
         }
     }
 
-    //=========================================================
-
     VMAPLoadResult VMapManager2::loadMap(const char* pBasePath, unsigned int pMapId, int x, int y)
     {
         VMAPLoadResult result = VMAP_LOAD_RESULT_IGNORED;
@@ -133,9 +123,7 @@ namespace VMAP
         return result;
     }
 
-    //=========================================================
     // load one tile (internal use only)
-
     bool VMapManager2::_loadMap(unsigned int pMapId, const std::string &basePath, uint32 tileX, uint32 tileY)
     {
         InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(pMapId);
@@ -149,8 +137,6 @@ namespace VMAP
         }
         return instanceTree->second->LoadMapTile(tileX, tileY, this);
     }
-
-    //=========================================================
 
     void VMapManager2::unloadMap(unsigned int pMapId)
     {
@@ -166,8 +152,6 @@ namespace VMAP
         }
     }
 
-    //=========================================================
-
     void VMapManager2::unloadMap(unsigned int  pMapId, int x, int y)
     {
         InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(pMapId);
@@ -181,8 +165,6 @@ namespace VMAP
             }
         }
     }
-
-    //==========================================================
 
     bool VMapManager2::isInLineOfSight(unsigned int pMapId, float x1, float y1, float z1, float x2, float y2, float z2)
     {
@@ -200,8 +182,8 @@ namespace VMAP
         }
         return result;
     }
-    //=========================================================
-    /**
+
+    /*
     get the hit position and return true if we hit something
     otherwise the result pos will be the dest pos
     */
@@ -229,11 +211,7 @@ namespace VMAP
         return result;
     }
 
-    //=========================================================
-    /**
-    get height or INVALID_HEIGHT if no height available
-    */
-
+    // get height or INVALID_HEIGHT if no height available
     float VMapManager2::getHeight(unsigned int pMapId, float x, float y, float z, float maxSearchDist)
     {
         float height = VMAP_INVALID_HEIGHT_VALUE;           //no height
@@ -252,8 +230,6 @@ namespace VMAP
         }
         return height;
     }
-
-    //=========================================================
 
     bool VMapManager2::getAreaInfo(unsigned int pMapId, float x, float y, float &z, uint32 &flags, int32 &adtId, int32 &rootId, int32 &groupId) const
     {
@@ -288,8 +264,6 @@ namespace VMAP
         }
         return false;
     }
-
-    //=========================================================
 
     WorldModel* VMapManager2::acquireModelInstance(const std::string &basepath, const std::string &filename)
     {
@@ -326,7 +300,6 @@ namespace VMAP
             iLoadedModelFiles.erase(model);
         }
     }
-    //=========================================================
 
     bool VMapManager2::existsMap(const char* pBasePath, unsigned int pMapId, int x, int y)
     {
@@ -334,3 +307,4 @@ namespace VMAP
     }
 
 } // namespace VMAP
+

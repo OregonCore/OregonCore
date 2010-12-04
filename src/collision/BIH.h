@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -70,11 +72,11 @@ struct AABound
     Vector3 lo, hi;
 };
 
-/** Bounding Interval Hierarchy Class.
-    Building and Ray-Intersection functions based on BIH from
-    Sunflow, a Java Raytracer, released under MIT/X11 License
-    http://sunflow.sourceforge.net/
-    Copyright (c) 2003-2007 Christopher Kulla
+/* Bounding Interval Hierarchy Class.
+   Building and Ray-Intersection functions based on BIH from
+   Sunflow, a Java Raytracer, released under MIT/X11 License
+   http://sunflow.sourceforge.net/
+   Copyright (c) 2003-2007 Christopher Kulla
 */
 
 class BIH
@@ -395,3 +397,4 @@ class BIH
 };
 
 #endif // _BIH_H
+

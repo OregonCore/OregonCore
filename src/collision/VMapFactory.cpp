@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -55,9 +57,7 @@ namespace VMAP
     IVMapManager *gVMapManager = 0;
     Table<unsigned int , bool>* iIgnoreSpellIds=0;
 
-    //===============================================
     // result false, if no more id are found
-
     bool getNextId(const std::string& pString, unsigned int& pStartPos, unsigned int& pId)
     {
         bool result = false;
@@ -80,11 +80,7 @@ namespace VMAP
         return(result);
     }
 
-    //===============================================
-    /**
-    parameter: String of map ids. Delimiter = ","
-    */
-
+    // parameter: String of map ids. Delimiter = ","
     void VMapFactory::preventSpellsFromBeingTestedForLoS(const char* pSpellIdString)
     {
         if (!iIgnoreSpellIds)
@@ -102,14 +98,11 @@ namespace VMAP
         }
     }
 
-    //===============================================
-
     bool VMapFactory::checkSpellForLoS(unsigned int pSpellId)
     {
         return(!iIgnoreSpellIds->containsKey(pSpellId));
     }
 
-    //===============================================
     // just return the instance
     IVMapManager* VMapFactory::createOrGetVMapManager()
     {
@@ -118,7 +111,6 @@ namespace VMAP
         return gVMapManager;
     }
 
-    //===============================================
     // delete all internal data structures
     void VMapFactory::clear()
     {
@@ -129,3 +121,4 @@ namespace VMAP
         gVMapManager = NULL;
     }
 }
+

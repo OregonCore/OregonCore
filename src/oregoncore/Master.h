@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,17 +20,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/// \addtogroup Oregond
-/// @{
-/// \file
-
 #ifndef _MASTER_H
 #define _MASTER_H
 
 #include "Common.h"
 #include "Policies/Singleton.h"
 
-/// Start the server
+// Start the server
 class Master
 {
     public:
@@ -49,5 +47,4 @@ class Master
 
 #define sMaster Oregon::Singleton<Master>::Instance()
 #endif
-/// @}
 

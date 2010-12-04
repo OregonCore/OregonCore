@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -68,7 +70,7 @@ namespace VMAP
             uint8 *iFlags;   //!< info if liquid tile is used
     };
 
-    /*! holding additional info for WMO group files */
+    // holding additional info for WMO group files
     class GroupModel
     {
         public:
@@ -78,7 +80,7 @@ namespace VMAP
                         iBound(bound), iMogpFlags(mogpFlags), iGroupWMOID(groupWMOID), iLiquid(0) {}
             ~GroupModel() { delete iLiquid; }
 
-            //! pass mesh data to object and create BIH. Passed vectors get get swapped with old geometry!
+            // pass mesh data to object and create BIH. Passed vectors get get swapped with old geometry.
             void setMeshData(std::vector<Vector3> &vert, std::vector<MeshTriangle> &tri);
             void setLiquidData(WmoLiquid *liquid) { iLiquid = liquid; }
             bool IntersectRay(const G3D::Ray &ray, float &distance, bool stopAtFirstHit) const;
@@ -99,13 +101,13 @@ namespace VMAP
             BIH meshTree;
             WmoLiquid *iLiquid;
     };
-    /*! Holds a model (converted M2 or WMO) in its original coordinate space */
+    // Holds a model (converted M2 or WMO) in its original coordinate space
     class WorldModel
     {
         public:
             WorldModel(): RootWMOID(0) {}
 
-            //! pass group models to WorldModel and create BIH. Passed vector is swapped with old geometry!
+            // pass group models to WorldModel and create BIH. Passed vector is swapped with old geometry!
             void setGroupModels(std::vector<GroupModel> &models);
             void setRootWmoID(uint32 id) { RootWMOID = id; }
             bool IntersectRay(const G3D::Ray &ray, float &distance, bool stopAtFirstHit) const;
@@ -121,3 +123,4 @@ namespace VMAP
 } // namespace VMAP
 
 #endif // _WORLDMODEL_H
+

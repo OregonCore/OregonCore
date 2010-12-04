@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _MANGOSSOAP_H
-#define _MANGOSSOAP_H
+#ifndef _OREGONSOAP_H
+#define _OREGONSOAP_H
 
 #include "Common.h"
 #include "World.h"

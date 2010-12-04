@@ -138,7 +138,8 @@ EAIErrorLevel = 2
 #        Default: 900000 (15 min)
 #
 #    DisconnectToleranceInterval
-#        Tolerance for disconnected players before putting in the queue. (in seconds)
+#        Tolerance for disconnected players before putting in the queue.
+#         (in seconds)
 #        Default: 0 (disabled)
 #
 #    vmap.enableLOS
@@ -169,7 +170,8 @@ EAIErrorLevel = 2
 #                 1 (enable, each totem created check LOS)
 #    
 #    vmap.enableIndoorCheck
-#        Enable/Disable VMap based indoor check to remove outdoor-only auras (mounts etc.)
+#        Enable/Disable VMap based indoor check to remove outdoor-only auras
+#         (mounts etc.)
 #        Default: 0 (disabled)
 #
 #    DetectPosCollision
@@ -548,11 +550,14 @@ ChatLogTimestamp = 0
 #                 29 CN9           - basic-Latin at create, any at login
 #
 #    Expansion
-#        Allow server use content from expansion
-#        Default: 1 - check expansion 1 maps existence, and if client support expansion 1 and account have
-#                     expansion 1 setting then allow visit expansion 1 maps, allow create new races character)
-#                 0 - not check expansion maps existence, not allow wisit its, not allow create new race or new class
-#                     characters, ignore account expansion setting)
+#        Allow players to access content from expansion 1
+#        Default: 1 - check for expansion 1 maps.  If client supports
+#                      expansion 1 and account has expansion 1 setting, then
+#                      allow visiting expansion 1 maps, and creating new 
+#                      character races.
+#                 0 - Do not check for expansion 1 maps.  Do not allow players
+#                      to visit expansion 1 maps or create new character races.
+#                      Ignore account expansion setting.
 #
 #    DBC.Locale
 #        DBC Language Settings
@@ -580,24 +585,24 @@ ChatLogTimestamp = 0
 #        Default: 0 disable (limited server timezone dependent client check)
 #                 1 basic latin characters  (strict)
 #                 2 realm zone specific (strict). See RealmZone setting.
-#                   Note: In any case if you want correctly see character
-#                   name at client this client must have appropriate fonts
-#                   (included in client by default, with active official
-#                   localization or custom localization fonts in
-#                   clientdir/Fonts).
+#                    Note: In any case if you want correctly see character
+#                    name at client this client must have appropriate fonts
+#                    (included in client by default, with active official
+#                    localization or custom localization fonts in
+#                    clientdir/Fonts).
 #                 3 basic latin characters + server timezone specific
 #
 #    StrictCharterNames
 #        Limit guild/arena team charter names to language specific symbol set,
-#          don't allow charter creation with unallowed symbols in name
+#          don't allow charter creation with disallowed symbols in name
 #        Default: 0 disable
 #                 1 basic latin characters  (strict)
 #                 2 realm zone specific (strict). See RealmZone setting.
-#                   Note: In any case if you want correctly see character
-#                   name at client this client must have appropriate fonts
-#                   (included in client by default, with active official
-#                   localization or custom localization fonts in
-#                   clientdir/Fonts).
+#                    Note: In any case if you want correctly see character
+#                    name at client this client must have appropriate fonts
+#                    (included in client by default, with active official
+#                    localization or custom localization fonts in
+#                    clientdir/Fonts).
 #                 3 basic latin characters + server timezone specific
 #
 #    StrictPetNames
@@ -605,11 +610,11 @@ ChatLogTimestamp = 0
 #        Default: 0 disable
 #                 1 basic latin characters  (strict)
 #                 2 realm zone specific (strict). See RealmZone setting.
-#                   Note: In any case if you want correctly see character
-#                   name at client this client must have appropriate fonts
-#                   (included in client by default, with active official
-#                   localization or custom localization fonts in
-#                   clientdir/Fonts).
+#                    Note: In any case if you want correctly see character
+#                    name at client this client must have appropriate fonts
+#                    (included in client by default, with active official
+#                    localization or custom localization fonts in
+#                    clientdir/Fonts).
 #                 3 basic latin characters + server timezone specific
 #
 #    CharactersCreatingDisabled
@@ -634,7 +639,7 @@ ChatLogTimestamp = 0
 #    CharactersPerRealm
 #        Limit numbers of characters for account at realm
 #        Default: 10 (client limitation)
-#                The number must be between 1 and 10
+#                 The number must be between 1 and 10
 #
 #    SkipCinematics
 #        Disable in-game script movie at first character's login
@@ -680,7 +685,7 @@ ChatLogTimestamp = 0
 #
 #    InstantLogout
 #        Enable or disable instant logout for security level (0..4) or higher
-#        (NOT in combat/while dueling/while falling)
+#         (NOT in combat/while dueling/while falling)
 #        Default: 1 (Mods/GMs/Admins)
 #
 #    DisableWaterBreath
@@ -766,7 +771,8 @@ ChatLogTimestamp = 0
 #                 1 (enabled)
 #
 #    ExternalMailInterval
-#        Mail delivery delay time for item sending from mail_external table, in minutes.
+#        Mail delivery delay time for item sending from mail_external table,
+#         in minutes.
 #        Default: 1 minute
 #
 #    SkillChance.Prospecting
@@ -837,7 +843,7 @@ ExternalMailInterval = 1
 SkillChance.Prospecting = 0
 Event.Announce = 0
 BeepAtStart = 1
-Motd = "Welcome to a Oregon Core server."
+Motd = "Welcome to an Oregon Core server."
 Server.LoginInfo = 0
 
 ###############################################################################
@@ -860,7 +866,7 @@ Server.LoginInfo = 0
 #                             group(join)
 #                             guild(join)
 #                             merge all auction houses for players from
-#                             different teams
+#                              different teams
 #                             send mail to other team.
 #        Default: 0 (Not allowed)
 #                 1 (Allowed)
@@ -1656,9 +1662,9 @@ AuctionHouseBot.ItemsPerCycle = 200
 #
 #    AuctionHouseBot.DisableBOP_Or_Quest_NoReqLevel
 #        Disable items that are BOP or Quest Item
-#        with a Required level that is less than the Item Level
-#        (This prevents a level 10 with a level 60 weapon or armor)
-#        (May need further refinement)
+#         with a Required level that is less than the Item Level
+#         (This prevents a level 10 with a level 60 weapon or armor)
+#         (May need further refinement)
 #    Default 0 (False)
 #
 ###############################################################################
@@ -1688,8 +1694,8 @@ AuctionHouseBot.DisableBOP_Or_Quest_NoReqLevel = 0
 # AUCTION HOUSE BOT FILTERS PART 2
 #
 #     These Filters are boolean (0 or 1) and will disable items that are
-#     specifically meant for the Class named.
-#     (UnusedClass is Class 10, which was skipped for some reason)
+#      specifically meant for the Class named.
+#      (UnusedClass is Class 10, which was skipped for some reason)
 #     Default 0 (allowed)
 #
 ###############################################################################
@@ -1851,10 +1857,12 @@ SOAP.Port = 7878
 #         needed for items, mounts etc.
 #
 #    PlayerStart.AllSpells
-#		If enabled, players will start with all their class spells (not talents). Useful for instant 70 servers.
-#		You must import playercreateinfo_spell_custom.sql, it's included in the SQL folder.
-#		Default: 0 - off
-#				 1 - on
+#        If enabled, players will start with all their class spells
+#         (not talents). Useful for instant 70 servers.
+#         You must import playercreateinfo_spell_custom.sql, it's included in
+#         the SQL folder.
+#        Default: 0 - off
+#                 1 - on
 #
 #
 #    PlayerStart.MapsExplored
@@ -1898,8 +1906,7 @@ SOAP.Port = 7878
 #        with delimiter ','
 #       Default: ""
 #       example: "538,90"
-#       Note that it's HIGHLY DISCOURAGED to forbid starting maps
-#        (0, 1, 530)!
+#       Note that it's HIGHLY DISCOURAGED to forbid starting maps (0,1,530)!
 #
 #   ShowKickInWorld
 #        Determines wether a message is broadcasted to the entire server
@@ -1964,10 +1971,12 @@ DuelMod.Cooldowns = 0
 #                 1 - Enabled
 #
 #    Anticheat.Movement.TeleportToPlaneAlarms
-#        maximum alarms before player will be kicked (default 50, allowed 20 - 100)
+#        Maximum alarms before player will be kicked
+#         (default 50, allowed 20 - 100)
 #
 #    Anticheat.Movement.MaxMovementAlarms
-#        maximum alarms without valid movement before player will be kicked (default 50, allowed 20 - 100)
+#        Maximum alarms without valid movement before player will be kicked
+#         (default 50, allowed 20 - 100)
 #
 ###############################################################################
 

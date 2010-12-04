@@ -1,6 +1,9 @@
 /*
  * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ *
  * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
+ *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/> 
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -82,9 +85,6 @@ namespace VMAP
             bool result;
     };
 
-
-    //=========================================================
-
     std::string StaticMapTree::getTileFileName(uint32 mapID, uint32 tileX, uint32 tileY)
     {
         std::stringstream tilefilename;
@@ -127,15 +127,13 @@ namespace VMAP
         }
     }
 
-    //=========================================================
-    //! Make sure to call unloadMap() to unregister acquired model references before destroying
+    // Make sure to call unloadMap() to unregister acquired model references before destroying
     StaticMapTree::~StaticMapTree()
     {
         delete[] iTreeValues;
     }
 
-    //=========================================================
-    /**
+    /*
     If intersection is found within pMaxDist, sets pMaxDist to intersection distance and returns true.
     Else, pMaxDist is not modified and returns false;
     */
@@ -149,7 +147,6 @@ namespace VMAP
             pMaxDist = distance;
         return intersectionCallBack.didHit();
     }
-    //=========================================================
 
     bool StaticMapTree::isInLineOfSight(const Vector3& pos1, const Vector3& pos2) const
     {
@@ -166,12 +163,11 @@ namespace VMAP
 
         return true;
     }
-    //=========================================================
-    /**
+
+    /*
     When moving from pos1 to pos2 check if we hit an object. Return true and the position if we hit one
     Return the hit pos or the original dest pos
     */
-
     bool StaticMapTree::getObjectHitPos(const Vector3& pPos1, const Vector3& pPos2, Vector3& pResultHitPos, float pModifyDist) const
     {
         bool result=false;
@@ -215,8 +211,6 @@ namespace VMAP
         return result;
     }
 
-    //=========================================================
-
     float StaticMapTree::getHeight(const Vector3& pPos, float maxSearchDist) const
     {
         float height = G3D::inf();
@@ -229,8 +223,6 @@ namespace VMAP
         }
         return(height);
     }
-
-    //=========================================================
 
     bool StaticMapTree::CanLoadMap(const std::string &vmapPath, uint32 mapID, uint32 tileX, uint32 tileY)
     {
@@ -266,8 +258,6 @@ namespace VMAP
         fclose(rf);
         return success;
     }
-
-    //=========================================================
 
     bool StaticMapTree::InitMap(const std::string &fname, VMapManager2 *vm)
     {
@@ -323,8 +313,6 @@ namespace VMAP
         return success;
     }
 
-    //=========================================================
-
     void StaticMapTree::UnloadMap(VMapManager2 *vm)
     {
         for (loadedSpawnMap::iterator i = iLoadedSpawns.begin(); i != iLoadedSpawns.end(); ++i)
@@ -336,8 +324,6 @@ namespace VMAP
         iLoadedSpawns.clear();
         iLoadedTiles.clear();
     }
-
-    //=========================================================
 
     bool StaticMapTree::LoadMapTile(uint32 tileX, uint32 tileY, VMapManager2 *vm)
     {
@@ -413,8 +399,6 @@ namespace VMAP
         return result;
     }
 
-    //=========================================================
-
     void StaticMapTree::UnloadMapTile(uint32 tileX, uint32 tileY, VMapManager2 *vm)
     {
         uint32 tileID = packTileID(tileX, tileY);
@@ -469,3 +453,4 @@ namespace VMAP
     }
 
 }
+

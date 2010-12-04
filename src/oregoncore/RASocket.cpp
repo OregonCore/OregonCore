@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,10 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/** \file
-    \ingroup Oregond
-*/
-
 #include "Common.h"
 #include "Database/DatabaseEnv.h"
 #include "Log.h"
@@ -31,44 +29,45 @@
 #include "Util.h"
 #include "AccountMgr.h"
 
-#define dropclient {Sendf("I'm busy right now, come back later."); \
+#define dropclient {\
+        Sendf("I'm busy right now, come back later."); \
         SetCloseAndDelete(); \
         return; \
     }
 
-/// RASocket constructor
+// RASocket constructor
 RASocket::RASocket(ISocketHandler &h): TcpSocket(h)
 {
 
-    ///- Get the config parameters
+    // Get the config parameters
     bSecure = sConfig.GetBoolDefault( "RA.Secure", true );
     iMinLevel = sConfig.GetIntDefault( "RA.MinLevel", 3 );
 
-    ///- Initialize buffer and data
+    // Initialize buffer and data
     iInputLength=0;
     stage=NONE;
 }
 
-/// RASocket destructor
+// RASocket destructor
 RASocket::~RASocket()
 {
     sLog.outRemote("Connection was closed.\n");
 }
 
-/// Accept an incoming connection
+// Accept an incoming connection
 void RASocket::OnAccept()
 {
     std::string ss=GetRemoteAddress();
     sLog.outRemote("Incoming connection from %s.\n",ss.c_str());
 
-    ///- print connect confirmation
+    // print connect confirmation
     Sendf("+CONNECTED\r\n");
 }
 
-/// Read data from the network
+// Read data from the network
 void RASocket::OnRead()
 {
-    ///- Read data and check input length
+    // Read data and check input length
     TcpSocket::OnRead();
 
     unsigned int sz=ibuf.GetLength();
@@ -82,7 +81,7 @@ void RASocket::OnRead()
     char *inp = new char [sz+1];
     ibuf.Read(inp,sz);
 
-    /// \todo Can somebody explain this 'Linux bugfix'?
+    // todo - Can somebody explain this 'Linux bugfix'?
     if (stage==NONE)
         if (sz>4)                                            //linux remote telnet
             if (memcmp(inp ,"USER ",5))
@@ -91,7 +90,7 @@ void RASocket::OnRead()
                 printf("lin bugfix");
             }                                               //linux bugfix
 
-    ///- Discard data after line break or line feed
+    // Discard data after line break or line feed
     bool gotenter=false;
     unsigned int y=0;
     for (;y<sz;y++)
@@ -103,7 +102,7 @@ void RASocket::OnRead()
         }
     }
 
-    //No buffer overflow (checked above)
+    // No buffer overflow (checked above)
     memcpy(&buff[iInputLength],inp,y);
     iInputLength+=y;
     delete [] inp;
@@ -113,24 +112,24 @@ void RASocket::OnRead()
         iInputLength=0;
         switch(stage)
         {
-            /// <ul> <li> If the input is 'USER <username>'
+            // If the input is 'USER <username>'
             case NONE:
                 if (!memcmp(buff,"USER ",5))                 //got "USER" cmd
                 {
                     szLogin=&buff[5];
 
-                    ///- Get the gmlevel and password from the account table
+                    // Get the gmlevel and password from the account table
                     std::string login = szLogin;
 
-                    ///- Convert Account name to Upper Format
+                    // Convert Account name to Upper Format
                     AccountMgr::normalizeString(login);
 
-                    ///- Escape the Login to allow quotes in names
+                    // Escape the Login to allow quotes in names
                     LoginDatabase.escape_string(login);
 
                     QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT gmlevel FROM account WHERE username = '%s'",login.c_str());
 
-                    ///- If the user is not found, deny access
+                    // If the user is not found, deny access
                     if (!result)
                     {
                         Sendf("-No such user.\r\n");
@@ -142,9 +141,7 @@ void RASocket::OnRead()
                     {
                         Field *fields = result->Fetch();
 
-                        //szPass=fields[0].GetString();
-
-                        ///- if gmlevel is too low, deny access
+                        // if gmlevel is too low, deny access
                         if (fields[0].GetUInt32()<iMinLevel)
                         {
                             Sendf("-Not enough privileges.\r\n");
@@ -159,11 +156,11 @@ void RASocket::OnRead()
                     }
                 }
                 break;
-                ///<li> If the input is 'PASS <password>' (and the user already gave his username)
+                // If the input is 'PASS <password>' (and the user already gave his username)
             case LG:
                 if (!memcmp(buff,"PASS ",5))                 //got "PASS" cmd
                 {                                           //login+pass ok
-                    ///- If password is correct, increment the number of active administrators
+                    // If password is correct, increment the number of active administrators
                     std::string login = szLogin;
                     std::string pw = &buff[5];
 
@@ -187,7 +184,7 @@ void RASocket::OnRead()
                     }
                     else
                     {
-                        ///- Else deny access
+                        // Else deny access
                         Sendf("-Wrong pass.\r\n");
                         sLog.outRemote("User %s has failed to log in.\n",szLogin.c_str());
                         if (bSecure)
@@ -195,7 +192,7 @@ void RASocket::OnRead()
                     }
                 }
                 break;
-                ///<li> If user is logged, parse and execute the command
+                // If user is logged, parse and execute the command
             case OK:
                 if (strlen(buff))
                 {
@@ -208,13 +205,12 @@ void RASocket::OnRead()
                 else
                     Sendf("Oregon>");
                 break;
-                ///</ul>
         };
 
     }
 }
 
-/// Output function
+// Output function
 void RASocket::zprint(void* callbackArg, const char * szText )
 {
     if (!szText)

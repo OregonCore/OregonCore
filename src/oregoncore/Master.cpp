@@ -20,10 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/** \file
-    \ingroup Oregond
-*/
-
 #include <ace/OS_NS_signal.h>
 
 #include "WorldSocketMgr.h"
@@ -90,7 +86,7 @@ public:
             // possible freeze
             else if (getMSTimeDiff(w_lastchange,curtime) > _delaytime)
             {
-                sLog.outError("World Thread hangs, kicking out server!");
+                sLog.outError("World Thread is stuck.  Terminating server!");
                 *((uint32 volatile*)NULL) = 0;                       // bang crash
             }
         }
@@ -144,7 +140,7 @@ public:
             {
                 h.Add (&RAListenSocket);
 
-                sLog.outString ("Starting Remote access listner on port %d on %s", raport, stringip.c_str ());
+                sLog.outString ("Starting Remote access listener on port %d on %s", raport, stringip.c_str ());
             }
         }
 
@@ -179,7 +175,7 @@ Master::~Master()
 {
 }
 
-/// Main function
+// Main function
 int Master::Run()
 {
     sLog.outString( "%s (core-daemon)", _FULLVERSION );
@@ -196,7 +192,7 @@ int Master::Run()
     sLog.outString( "                          \\_/__/                 " );
     sLog.outString( " http://www.oregoncore.com                    \n " );
 
-    /// worldd PID file creation
+    // worldd PID file creation
     std::string pidfile = sConfig.GetStringDefault("PidFile", "");
     if (!pidfile.empty())
     {
@@ -210,17 +206,17 @@ int Master::Run()
         sLog.outString( "Daemon PID: %u\n", pid );
     }
 
-    ///- Start the databases
+    // Start the databases
     if (!_StartDB())
         return 1;
 
-    ///- Initialize the World
+    // Initialize the World
     sWorld.SetInitialWorldSettings();
 
-    ///- Catch termination signals
+    // Catch termination signals
     _HookSignals();
 
-    ///- Launch WorldRunnable thread
+    // Launch WorldRunnable thread
     ACE_Based::Thread world_thread(new WorldRunnable);
     world_thread.setPriority(ACE_Based::Highest);
 
@@ -237,13 +233,13 @@ int Master::Run()
     if (sConfig.GetBoolDefault("Console.Enable", true))
 #endif
     {
-        ///- Launch CliRunnable thread
+        // Launch CliRunnable thread
         cliThread = new ACE_Based::Thread(new CliRunnable);
     }
 
     ACE_Based::Thread rar_thread(new RARunnable);
 
-    ///- Handle affinity for multiple processors and process priority on Windows
+    // Handle affinity for multiple processors and process priority on Windows
     #ifdef _WIN32
     {
         HANDLE hProcess = GetCurrentProcess();
@@ -275,7 +271,6 @@ int Master::Run()
 
         bool Prio = sConfig.GetBoolDefault("ProcessPriority", false);
 
-//        if (Prio && (m_ServiceStatus == -1)/* need set to default process priority class in service mode*/)
         if (Prio)
         {
             if (SetPriorityClass(hProcess,HIGH_PRIORITY_CLASS))
@@ -287,7 +282,7 @@ int Master::Run()
     }
     #endif
 
-    ///- Start soap serving thread
+    // Start soap serving thread
     ACE_Based::Thread* soap_thread = NULL;
 
     if (sConfig.GetBoolDefault("SOAP.Enabled", false))
@@ -303,7 +298,7 @@ int Master::Run()
 
     uint32 socketSelecttime = sWorld.getConfig(CONFIG_SOCKET_SELECTTIME);
 
-    ///- Start up freeze catcher thread
+    // Start up freeze catcher thread
     ACE_Based::Thread* freeze_thread = NULL;
     if (uint32 freeze_delay = sConfig.GetIntDefault("MaxCoreStuckTime", 0))
     {
@@ -313,7 +308,7 @@ int Master::Run()
         freeze_thread->setPriority(ACE_Based::Highest);
     }
 
-    ///- Launch the world listener socket
+    // Launch the world listener socket
     port_t wsport = sWorld.getConfig (CONFIG_PORT_WORLD);
     std::string bind_ip = sConfig.GetStringDefault ("BindIP", "0.0.0.0");
 
@@ -326,14 +321,14 @@ int Master::Run()
 
     sWorldSocketMgr->Wait();
 
-    ///- Stop freeze protection before shutdown tasks
+    // Stop freeze protection before shutdown tasks
     if (freeze_thread)
     {
         freeze_thread->destroy();
         delete freeze_thread;
     }
 
-    ///- Stop soap thread
+    // Stop soap thread
     if (soap_thread)
     {
         soap_thread->wait();
@@ -341,10 +336,10 @@ int Master::Run()
         delete soap_thread;
     }
 
-    ///- Set server offline in realmlist
+    // Set server offline in realmlist
     LoginDatabase.PExecute("UPDATE realmlist SET realmflags = realmflags | %u WHERE id = '%d'", REALM_FLAG_OFFLINE, realmID);
 
-    ///- Remove signal handling before leaving
+    // Remove signal handling before leaving
     _UnhookSignals();
 
     // when the main thread closes the singletons get unloaded
@@ -352,10 +347,10 @@ int Master::Run()
     world_thread.wait();
     rar_thread.wait ();
 
-    ///- Clean account database before leaving
+    // Clean account database before leaving
     clearOnlineAccounts();
 
-    ///- Wait for delay threads to end
+    // Wait for delay threads to end
     CharacterDatabase.HaltDelayThread();
     WorldDatabase.HaltDelayThread();
     LoginDatabase.HaltDelayThread();
@@ -416,16 +411,16 @@ int Master::Run()
     // fixes a memory leak related to detaching threads from the module
     //UnloadScriptingModule();
 
-    ///- Exit the process with specified return value
+    // Exit the process with specified return value
     return World::GetExitCode();
 }
 
-/// Initialize connection to the databases
+// Initialize connection to the databases
 bool Master::_StartDB()
 {
     sLog.SetLogDB(false);
 
-    ///- Get world database info from configuration file
+    // Get world database info from configuration file
     std::string dbstring = sConfig.GetStringDefault("WorldDatabaseInfo", "");
     if (dbstring.empty())
     {
@@ -433,14 +428,14 @@ bool Master::_StartDB()
         return false;
     }
 
-    ///- Initialise the world database
+    // Initialise the world database
     if (!WorldDatabase.Initialize(dbstring.c_str()))
     {
         sLog.outError("Cannot connect to world database %s",dbstring.c_str());
         return false;
     }
 
-    ///- Get character database info from configuration file
+    // Get character database info from configuration file
     dbstring = sConfig.GetStringDefault("CharacterDatabaseInfo", "");
     if (dbstring.empty())
     {
@@ -448,14 +443,14 @@ bool Master::_StartDB()
         return false;
     }
 
-    ///- Initialise the Character database
+    // Initialise the Character database
     if (!CharacterDatabase.Initialize(dbstring.c_str()))
     {
         sLog.outError("Cannot connect to Character database %s",dbstring.c_str());
         return false;
     }
 
-    ///- Get login database info from configuration file
+    // Get login database info from configuration file
     dbstring = sConfig.GetStringDefault("LoginDatabaseInfo", "");
     if (dbstring.empty())
     {
@@ -463,14 +458,14 @@ bool Master::_StartDB()
         return false;
     }
 
-    ///- Initialise the login database
+    // Initialise the login database
     if (!LoginDatabase.Initialize(dbstring.c_str()))
     {
         sLog.outError("Cannot connect to login database %s",dbstring.c_str());
         return false;
     }
 
-    ///- Get the realm Id from the configuration file
+    // Get the realm Id from the configuration file
     realmID = sConfig.GetIntDefault("RealmID", 0);
     if (!realmID)
     {
@@ -479,15 +474,15 @@ bool Master::_StartDB()
     }
     sLog.outString("Realm running as realm ID %d", realmID);
 
-    ///- Initialize the DB logging system
+    // Initialize the DB logging system
     sLog.SetLogDBLater(sConfig.GetBoolDefault("EnableLogDB", false)); // set var to enable DB logging once startup finished.
     sLog.SetLogDB(false);
     sLog.SetRealmID(realmID);
 
-    ///- Clean the database before starting
+    // Clean the database before starting
     clearOnlineAccounts();
 
-    ///- Insert version info into DB
+    // Insert version info into DB
     WorldDatabase.PExecute("UPDATE version SET core_version = '%s', core_revision = '%s'", _FULLVERSION, _REVISION);
 
     sWorld.LoadDBVersion();
@@ -496,17 +491,17 @@ bool Master::_StartDB()
     return true;
 }
 
-/// Clear 'online' status for all accounts with characters in this realm
+// Clear 'online' status for all accounts with characters in this realm
 void Master::clearOnlineAccounts()
 {
     // Cleanup online status for characters hosted at current realm
-    /// \todo Only accounts with characters logged on *this* realm should have online status reset. Move the online column from 'account' to 'realmcharacters'?
+    // todo - Only accounts with characters logged on *this* realm should have online status reset. Move the online column from 'account' to 'realmcharacters'?
     LoginDatabase.PExecute("UPDATE account SET active_realm_id = 0 WHERE active_realm_id = '%d'", realmID);
 
     CharacterDatabase.Execute("UPDATE characters SET online = 0 WHERE online<>0");
 }
 
-/// Handle termination signals
+// Handle termination signals
 void Master::_OnSignal(int s)
 {
     switch (s)
@@ -525,7 +520,7 @@ void Master::_OnSignal(int s)
     signal(s, _OnSignal);
 }
 
-/// Define hook '_OnSignal' for all termination signals
+// Define hook '_OnSignal' for all termination signals
 void Master::_HookSignals()
 {
     signal(SIGINT, _OnSignal);
@@ -535,7 +530,7 @@ void Master::_HookSignals()
     #endif
 }
 
-/// Unhook the signals before leaving
+// Unhook the signals before leaving
 void Master::_UnhookSignals()
 {
     signal(SIGINT, 0);
@@ -544,3 +539,4 @@ void Master::_UnhookSignals()
     signal(SIGBREAK, 0);
     #endif
 }
+

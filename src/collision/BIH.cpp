@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -302,3 +304,4 @@ void BIH::BuildStats::printStats()
     printf("               N>4  %3d%%\n", 100 * numLeavesN[5] / numLeaves);
     printf("  * BVH2 nodes:     %d (%3d%%)\n", numBVH2, 100 * numBVH2 / (numNodes + numLeaves - 2 * numBVH2));
 }
+

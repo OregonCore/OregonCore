@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,10 +18,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/** \file
-  \ingroup realmd
-  */
-
 #ifndef _PATCHHANDLER_H_
 #define _PATCHHANDLER_H_
 
@@ -34,9 +32,7 @@
 #include <openssl/bn.h>
 #include <openssl/md5.h>
 
-/**
- * @brief Caches MD5 hash of client patches present on the server
- */
+// Caches MD5 hash of client patches present on the server
 class PatchCache
 {
     public:

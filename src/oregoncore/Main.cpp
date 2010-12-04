@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinitycore <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,9 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/// \addtogroup oregond Oregon Daemon
-/// @{
-/// \file
 #include "SystemConfig.h"
 
 #include "Common.h"
@@ -62,7 +61,7 @@ DatabaseType LoginDatabase;                                 ///< Accessor to the
 
 uint32 realmID;                                             ///< Id of the realm
 
-/// Print out the usage string for this program on the console.
+// Print out the usage string for this program on the console.
 void usage(const char *prog)
 {
     sLog.outString("Usage: \n %s [<options>]\n"
@@ -77,10 +76,10 @@ void usage(const char *prog)
         ,prog);
 }
 
-/// Launch the oregon server
+// Launch the oregon server
 extern int main(int argc, char **argv)
 {
-    ///- Command line parsing
+    // Command line parsing
     char const* cfg_file = _OREGON_CORE_CONFIG;
 
 #ifdef _WIN32
@@ -165,8 +164,8 @@ extern int main(int argc, char **argv)
 
     sLog.outDetail("Using ACE: %s", ACE_VERSION);
 
-    ///- and run the 'Master'
-    /// \todo Why do we need this 'Master'? Can't all of this be in the Main as for Realmd?
+    // and run the 'Master'
+    // todo - Why do we need this 'Master'? Can't all of this be in the Main as for Realmd?
     return sMaster.Run();
 
     // at sMaster return function exist with codes
@@ -175,4 +174,3 @@ extern int main(int argc, char **argv)
     // 2 - restart command used, this code can be used by restarter for restart OregonCore
 }
 
-/// @}

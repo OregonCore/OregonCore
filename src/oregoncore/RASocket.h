@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,10 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/// \addtogroup Oregond
-/// @{
-/// \file
-
 #ifndef _RASOCKET_H
 #define _RASOCKET_H
 
@@ -35,7 +33,7 @@ class ISocketHandler;
 
 typedef ACE_Atomic_Op<ACE_SYNCH_MUTEX, uint64> AtomicInt;
 
-/// Remote Administration socket
+// Remote Administration socket
 class RASocket: public TcpSocket
 {
     public:
@@ -54,8 +52,8 @@ class RASocket: public TcpSocket
         std::string szLogin;
         unsigned int iInputLength;
         bool bSecure;                                       //kick on wrong pass, non exist. user OR user with no priv
-        //will protect from DOS, bruteforce attacks
-        //some 'smart' protection must be added for more security
+        // will protect from DOS, bruteforce attacks
+        // some 'smart' protection must be added for more security
         uint8 iMinLevel;
         enum
         {
@@ -68,4 +66,4 @@ class RASocket: public TcpSocket
         static void commandFinished(void* callbackArg, bool success);
 };
 #endif
-/// @}
+

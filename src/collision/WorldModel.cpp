@@ -1,6 +1,9 @@
 /*
  * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ *
  * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
+ *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -27,7 +30,6 @@ template<> struct BoundsTrait<VMAP::GroupModel>
 {
     static void getBounds(const VMAP::GroupModel& obj, G3D::AABox& out) { out = obj.GetBound(); }
 };
-
 
 namespace VMAP
 {
@@ -98,8 +100,6 @@ namespace VMAP
         protected:
             const std::vector<Vector3>::const_iterator vertices;
     };
-
-    // ===================== WmoLiquid ==================================
 
     WmoLiquid::WmoLiquid(uint32 width, uint32 height, const Vector3 &corner, uint32 type):
         iTilesX(width), iTilesY(height), iCorner(corner), iType(type)
@@ -234,8 +234,6 @@ namespace VMAP
         out = liquid;
         return result;
     }
-
-    // ===================== GroupModel ==================================
 
     GroupModel::GroupModel(const GroupModel &other):
         iBound(other.iBound), iMogpFlags(other.iMogpFlags), iGroupWMOID(other.iGroupWMOID),
@@ -393,8 +391,6 @@ namespace VMAP
             return (1 << iLiquid->GetType());
         return 0;
     }
-
-    // ===================== WorldModel ==================================
 
     void WorldModel::setGroupModels(std::vector<GroupModel> &models)
     {
@@ -566,3 +562,4 @@ namespace VMAP
         return result;
     }
 }
+

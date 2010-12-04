@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -27,11 +29,10 @@
 
 namespace VMAP
 {
-    /**
+    /*
     This Class is used to convert raw vector data into balanced BSP-Trees.
     To start the conversion call convertWorld().
     */
-    //===============================================
 
     class ModelPosition
     {
@@ -59,7 +60,6 @@ namespace VMAP
     };
 
     typedef std::map<uint32, MapSpawns*> MapData;
-    //===============================================
 
     class TileAssembler
     {
@@ -87,3 +87,4 @@ namespace VMAP
 
 }                                                           // VMAP
 #endif                                                      /*_TILEASSEMBLER_H_*/
+

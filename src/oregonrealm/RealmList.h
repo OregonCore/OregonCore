@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,10 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
-/// \addtogroup realmd
-/// @{
-/// \file
 
 #ifndef _REALMLIST_H
 #define _REALMLIST_H
@@ -38,7 +36,7 @@ RealmBuildInfo const* FindBuildInfo(uint16 _build);
 
 typedef std::set<uint32> RealmBuilds;
 
-/// Storage object for a realm
+// Storage object for a realm
 struct Realm
 {
     std::string address;
@@ -52,7 +50,7 @@ struct Realm
     RealmBuildInfo realmBuildInfo;                          // build info for show version in list
 };
 
-/// Storage object for the list of realms on the server
+// Storage object for the list of realms on the server
 class RealmList
 {
     public:
@@ -82,4 +80,4 @@ class RealmList
 #define sRealmList RealmList::Instance()
 
 #endif
-/// @}
+

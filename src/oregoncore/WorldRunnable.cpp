@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,10 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/** \file
-    \ingroup Oregond
-*/
-
 #include "WorldSocketMgr.h"
 #include "Common.h"
 #include "World.h"
@@ -35,10 +33,10 @@
 
 #define WORLD_SLEEP_CONST 50
 
-/// Heartbeat for the World
+// Heartbeat for the World
 void WorldRunnable::run()
 {
-    ///- Init new SQL thread for the world database
+    // Init new SQL thread for the world database
     WorldDatabase.ThreadStart();                                // let thread do safe mySQL requests (one connection call enough)
     sWorld.InitResultQueue();
 
@@ -47,7 +45,7 @@ void WorldRunnable::run()
 
     uint32 prevSleepTime = 0;                               // used for balanced full tick time length near WORLD_SLEEP_CONST
 
-    ///- While we have not World::m_stopEvent, update the world
+    // While we have not World::m_stopEvent, update the world
     while (!World::IsStopped())
     {
         ++World::m_worldLoopCounter;
@@ -81,7 +79,7 @@ void WorldRunnable::run()
 
     MapManager::Instance().UnloadAll();                     // unload all grids (including locked in memory)
 
-    ///- End the database thread
+    // End the database thread
     WorldDatabase.ThreadEnd();                                  // free mySQL thread resources
 }
 

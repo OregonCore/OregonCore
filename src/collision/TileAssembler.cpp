@@ -1,6 +1,9 @@
 /*
  * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ *
  * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
+ *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -51,8 +54,6 @@ namespace VMAP
         out = iRotation * out;
         return(out);
     }
-
-    //=================================================================
 
     TileAssembler::TileAssembler(const std::string& pSrcDirName, const std::string& pDestDirName)
     {
@@ -105,7 +106,7 @@ namespace VMAP
             BIH pTree;
             pTree.build(mapSpawns, BoundsTrait<ModelSpawn*>::getBounds);
 
-            // ===> possibly move this code to StaticMapTree class
+            // possibly move this code to StaticMapTree class
             std::map<uint32, uint32> modelNodeIdx;
             for (uint32 i=0; i<mapSpawns.size(); ++i)
                 modelNodeIdx.insert(pair<uint32, uint32>(mapSpawns[i]->ID, i));
@@ -139,8 +140,6 @@ namespace VMAP
             }
 
             fclose(mapfile);
-
-            // <====
 
             // write map tile files, similar to ADT files, only with extra BSP tree node info
             TileMap &tileEntries = map_iter->second->TileEntries;
@@ -293,13 +292,13 @@ namespace VMAP
             READ_OR_RETURN(&blocksize, sizeof(int));
             fseek(rf, blocksize, SEEK_CUR);
 
-            // ---- indexes
+            // indexes
             READ_OR_RETURN(&blockId, 4);
             CMP_OR_RETURN(blockId, "INDX");
             READ_OR_RETURN(&blocksize, sizeof(int));
             fseek(rf, blocksize, SEEK_CUR);
 
-            // ---- vectors
+            // vectors
             READ_OR_RETURN(&blockId, 4);
             CMP_OR_RETURN(blockId, "VERT");
             READ_OR_RETURN(&blocksize, sizeof(int));
@@ -346,7 +345,7 @@ namespace VMAP
         float pos_z;
         short type;
     };
-    //=================================================================
+
     bool TileAssembler::convertRawFile(const std::string& pModelFilename)
     {
         bool success = true;
@@ -420,7 +419,7 @@ namespace VMAP
                 READ_OR_RETURN(&indexes, sizeof(uint32));
             }
 
-            // ---- indexes
+            // indexes
             READ_OR_RETURN(&blockId, 4);
             CMP_OR_RETURN(blockId, "INDX");
             READ_OR_RETURN(&blocksize, sizeof(int));
@@ -437,7 +436,7 @@ namespace VMAP
                 delete[] indexarray;
             }
 
-            // ---- vectors
+            // vectors
             READ_OR_RETURN(&blockId, 4);
             CMP_OR_RETURN(blockId, "VERT");
             READ_OR_RETURN(&blocksize, sizeof(int));
@@ -454,7 +453,7 @@ namespace VMAP
                 }
                 delete[] vectorarray;
             }
-            // ----- liquid
+            // liquid
             WmoLiquid *liquid = 0;
             if (liquidflags& 1)
             {
@@ -494,3 +493,4 @@ namespace VMAP
         return success;
     }
 }
+

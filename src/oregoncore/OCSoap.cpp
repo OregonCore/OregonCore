@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -117,7 +119,7 @@ int ns1__executeCommand(soap* soap, char* command, char** result)
     }
 
     if (!command || !*command)
-        return soap_sender_fault(soap, "Command mustn't be empty", "The supplied command was an empty string");
+        return soap_sender_fault(soap, "Command must not be empty", "The supplied command was an empty string");
 
     sLog.outDebug("OCSoap: got command '%s'", command);
     SOAPCommand connection;
