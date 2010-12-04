@@ -406,7 +406,7 @@ void Guild::SetLeader(uint64 guid)
     m_LeaderGuid = guid;
     ChangeRank(guid, GR_GUILDMASTER);
 
-    CharacterDatabase.PExecute("UPDATE guild SET m_LeaderGuid='%u' WHERE guildid='%u'", GUID_LOPART(guid), m_Id);
+    CharacterDatabase.PExecute("UPDATE guild SET leaderguid='%u' WHERE guildid='%u'", GUID_LOPART(guid), m_Id);
 }
 
 void Guild::DelMember(uint64 guid, bool isDisbanding)
