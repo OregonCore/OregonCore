@@ -1889,6 +1889,33 @@ void WorldObject::MovePosition(Position &pos, float dist, float angle)
     pos.m_orientation = m_orientation;
 }
 
+void WorldObject::DestroyForNearbyPlayers()
+{
+    if (!IsInWorld())
+        return;
+
+    std::list<Player*> targets;
+    Oregon::AnyPlayerInObjectRangeCheck check(this, GetMap()->GetVisibilityDistance());
+    Oregon::PlayerListSearcher<Oregon::AnyPlayerInObjectRangeCheck> searcher(this, targets, check);
+    VisitNearbyWorldObject(GetMap()->GetVisibilityDistance(), searcher);
+    for (std::list<Player*>::const_iterator iter = targets.begin(); iter != targets.end(); ++iter)
+    {
+        Player *plr = (*iter);
+
+        if (plr == this)
+            continue;
+
+        if (!plr->HaveAtClient(this))
+            continue;
+
+        if (isType(TYPEMASK_UNIT) && ((Unit*)this)->GetCharmerGUID() == plr->GetGUID()) // TODO: this is for puppet
+            continue;
+
+        DestroyForPlayer(plr);
+        plr->m_clientGUIDs.erase(GetGUID());
+    }
+}
+
 void WorldObject::UpdateObjectVisibility(bool /*forced*/)
 {
     //updates object's visibility for nearby players

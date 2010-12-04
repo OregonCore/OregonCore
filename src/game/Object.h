@@ -599,8 +599,9 @@ class WorldObject : public Object, public WorldLocation
         Creature*   FindNearestCreature(uint32 entry, float range, bool alive = true);
         GameObject* FindNearestGameObject(uint32 entry, float range);
 
+        void DestroyForNearbyPlayers();
         virtual void UpdateObjectVisibility(bool forced = true);
-        void BuildUpdate(UpdateDataMapType& );
+        void BuildUpdate(UpdateDataMapType&);
 
         //relocation and visibility system functions
         void AddToNotify(uint16 f) { m_notifyflags |= f;}

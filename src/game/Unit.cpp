@@ -8606,24 +8606,6 @@ bool Unit::canDetectStealthOf(Unit const* target, float distance) const
     return distance < visibleDistance;
 }
 
-void Unit::DestroyForNearbyPlayers()
-{
-    if (!IsInWorld())
-        return;
-
-    std::list<Unit*> targets;
-    Oregon::AnyUnitInObjectRangeCheck check(this, GetMap()->GetVisibilityDistance());
-    Oregon::UnitListSearcher<Oregon::AnyUnitInObjectRangeCheck> searcher(targets, check);
-    VisitNearbyWorldObject(GetMap()->GetVisibilityDistance(), searcher);
-    for (std::list<Unit*>::iterator iter = targets.begin(); iter != targets.end(); ++iter)
-        if (*iter != this && (*iter)->GetTypeId() == TYPEID_PLAYER
-            && ((*iter)->ToPlayer())->HaveAtClient(this))
-        {
-            DestroyForPlayer((*iter)->ToPlayer());
-            ((*iter)->ToPlayer())->m_clientGUIDs.erase(GetGUID());
-        }
-}
-
 void Unit::SetVisibility(UnitVisibility x)
 {
     m_Visibility = x;
