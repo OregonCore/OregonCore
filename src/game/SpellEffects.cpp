@@ -4036,19 +4036,21 @@ void Spell::EffectSummonPet(uint32 i)
             if (OldSummon->isDead())
                 return;
 
-            OldSummon->GetMap()->Remove(OldSummon->ToCreature(),false);
+            ASSERT(OldSummon->GetMap() == owner->GetMap());
+
+            //OldSummon->GetMap()->Remove(OldSummon->ToCreature(),false);
 
             float px, py, pz;
             owner->GetClosePoint(px, py, pz, OldSummon->GetObjectSize());
 
-            OldSummon->Relocate(px, py, pz, OldSummon->GetOrientation());
-            OldSummon->SetMap(owner->GetMap());
-            owner->GetMap()->Add(OldSummon->ToCreature());
+            OldSummon->NearTeleportTo(px, py, pz, OldSummon->GetOrientation());
+            //OldSummon->Relocate(px, py, pz, OldSummon->GetOrientation());
+            //OldSummon->SetMap(owner->GetMap());
+            //owner->GetMap()->Add(OldSummon->ToCreature());
 
             if (owner->GetTypeId() == TYPEID_PLAYER && OldSummon->isControlled())
-            {
                 owner->ToPlayer()->PetSpellInitialize();
-            }
+
             return;
         }
 
