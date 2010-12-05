@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -21,8 +23,7 @@
 #ifndef OREGON_NGRID_H
 #define OREGON_NGRID_H
 
-/** NGrid is nothing more than a wrapper of the Grid with an NxN cells
- */
+// NGrid is nothing more than a wrapper of the Grid with an NxN cells
 
 #include "GameSystem/Grid.h"
 #include "GameSystem/GridReference.h"
@@ -186,3 +187,4 @@ class NGrid
         bool i_GridObjectDataLoaded;
 };
 #endif
+

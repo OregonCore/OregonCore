@@ -1,6 +1,9 @@
 /*
- * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
+ *
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -46,7 +49,6 @@ public:
         std::string message;
     };
 
-    //
     class NotFound: public Exception
     {
     public:
@@ -109,17 +111,17 @@ public:
     public:
         Iterator(DBCFile &file, unsigned char *offset):
             record(file, offset) {}
-        /// Advance (prefix only)
+        // Advance (prefix only)
         Iterator & operator++() {
             record.offset += record.file.recordSize;
             return *this;
         }
-        /// Return address of current instance
+        // Return address of current instance
         Record const & operator*() const { return record; }
         const Record* operator->() const {
             return &record;
         }
-        /// Comparison
+        // Comparison
         bool operator==(const Iterator &b) const
         {
             return record.offset == b.record.offset;
@@ -134,11 +136,11 @@ public:
 
     // Get record by id
     Record getRecord(size_t id);
-    /// Get begin iterator over records
+    // Get begin iterator over records
     Iterator begin();
-    /// Get begin iterator over records
+    // Get begin iterator over records
     Iterator end();
-    /// Trivial
+    // Trivial
     size_t getRecordCount() const { return recordCount;}
     size_t getFieldCount() const { return fieldCount; }
 
@@ -153,3 +155,4 @@ private:
 };
 
 #endif
+

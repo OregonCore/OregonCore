@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -33,10 +35,11 @@
 #include "GameSystem/GridRefManager.h"
 
 /*
- * @class ContainerMapList is a mulit-type container for map elements
+ * ContainerMapList is a mulit-type container for map elements
  * By itself its meaningless but collaborate along with TypeContainers,
  * it become the most powerfully container in the whole system.
  */
+
 template<class OBJECT> struct ContainerMapList
 {
     GridRefManager<OBJECT> _element;
@@ -55,7 +58,7 @@ template<class H, class T> struct ContainerMapList<TypeList<H, T> >
 #include "TypeContainerFunctions.h"
 
 /*
- * @class TypeMapContainer contains a fixed number of types and is
+ * TypeMapContainer contains a fixed number of types and is
  * determined at compile time.  This is probably the most complicated
  * class and do its simplest thing, that is, holds objects
  * of different types.
@@ -67,14 +70,14 @@ class TypeMapContainer
     public:
         template<class SPECIFIC_TYPE> size_t Count() const { return Oregon::Count(i_elements, (SPECIFIC_TYPE*)NULL); }
 
-        /// inserts a specific object into the container
+        // inserts a specific object into the container
         template<class SPECIFIC_TYPE> bool insert(SPECIFIC_TYPE *obj)
         {
             SPECIFIC_TYPE* t = Oregon::Insert(i_elements, obj);
             return (t != NULL);
         }
 
-        ///  Removes the object from the container, and returns the removed object
+        //  Removes the object from the container, and returns the removed object
         template<class SPECIFIC_TYPE> bool remove(SPECIFIC_TYPE* obj)
         {
             SPECIFIC_TYPE* t = Oregon::Remove(i_elements, obj);
@@ -88,3 +91,4 @@ class TypeMapContainer
         ContainerMapList<OBJECT_TYPES> i_elements;
 };
 #endif
+

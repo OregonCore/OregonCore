@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -21,7 +23,7 @@
 #ifndef OREGON_CALLBACK_H
 #define OREGON_CALLBACK_H
 
-/// ------------ BASE CLASSES ------------
+// BASE CLASSES
 
 namespace Oregon
 {
@@ -110,7 +112,7 @@ namespace Oregon
                 : m_object(cb.m_object), m_method(cb.m_method) {}
     };
 
-    /// ---- Statics ----
+    // STATICS
 
     template < typename ParamType1 = void, typename ParamType2 = void, typename ParamType3 = void, typename ParamType4 = void >
     class _SCallback
@@ -193,7 +195,7 @@ namespace Oregon
     };
 }
 
-/// --------- GENERIC CALLBACKS ----------
+// GENERIC CALLBACKS
 
 namespace Oregon
 {
@@ -267,7 +269,7 @@ namespace Oregon
     };
 }
 
-/// ---------- QUERY CALLBACKS -----------
+// QUERY CALLBACKS
 
 #include "QueryResult.h"
 class QueryResult;
@@ -336,7 +338,7 @@ namespace Oregon
                 : _IQueryCallback< QC0 >(QC0(object, method, result)) {}
     };
 
-    /// ---- Statics ----
+    // STATICS
 
     template < typename ParamType1 = void, typename ParamType2 = void, typename ParamType3 = void >
     class SQueryCallback :

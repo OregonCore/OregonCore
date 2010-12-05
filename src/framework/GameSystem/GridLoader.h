@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -21,8 +23,7 @@
 #ifndef OREGON_GRIDLOADER_H
 #define OREGON_GRIDLOADER_H
 
-/**
-  @class GridLoader
+/*
   The GridLoader is working in conjuction with the Grid and responsible
   for loading and unloading object-types (one or more) when objects
   enters a grid.  Unloading is scheduled and might be canceled if
@@ -46,8 +47,7 @@ class GridLoader
 {
     public:
 
-        /** Loads the grid
-         */
+        // Loads the grid
         template<class LOADER>
             void Load(Grid<ACTIVE_OBJECT,WORLD_OBJECT_TYPES, GRID_OBJECT_TYPES> &grid, LOADER &loader)
         {
@@ -56,8 +56,7 @@ class GridLoader
             grid.UnlockGrid();
         }
 
-        /** Stop the grid
-         */
+        // Stop the grid
         template<class STOPER>
             void Stop(Grid<ACTIVE_OBJECT,WORLD_OBJECT_TYPES, GRID_OBJECT_TYPES> &grid, STOPER &stoper)
         {
@@ -65,8 +64,8 @@ class GridLoader
             stoper.Stop(grid);
             grid.UnlockGrid();
         }
-        /** Unloads the grid
-         */
+
+        // Unloads the grid
         template<class UNLOADER>
             void Unload(Grid<ACTIVE_OBJECT,WORLD_OBJECT_TYPES, GRID_OBJECT_TYPES> &grid, UNLOADER &unloader)
         {

@@ -1,10 +1,30 @@
+/*
+ * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
+ *
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
 
 #include "TileAssembler.h"
 
-//=======================================================
 // remove last return or LF and tailing SPACE
 // remove all char after a #
 
@@ -28,8 +48,7 @@ void chompAndTrim(std::string& str)
     }
 }
 
-//=======================================================
-/**
+/*
 This callback method is called for each model found in the dir file.
 return true if it should be included in the vmap
 */
@@ -48,8 +67,7 @@ bool modelNameFilter(char *pName)
     return true;
 }
 
-//=======================================================
-/**
+/*
 File contains map names that should be split into tiles
 A '#' at the beginning of a line defines a comment
 */
@@ -75,7 +93,7 @@ A '#' at the beginning of a line defines a comment
     }
     return(result);
 } */
-//=======================================================
+
 int main(int argc, char* argv[])
 {
     if (argc != 3 && argc != 4)
@@ -118,3 +136,4 @@ int main(int argc, char* argv[])
     printf("Ok, all done\n");
     return 0;
 }
+

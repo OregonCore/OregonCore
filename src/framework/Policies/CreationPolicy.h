@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -26,9 +28,7 @@
 
 namespace Oregon
 {
-    /**
-     * OperatorNew policy creates an object on the heap using new.
-     */
+    // OperatorNew policy creates an object on the heap using new.
     template <class T>
         class OperatorNew
     {
@@ -37,7 +37,7 @@ namespace Oregon
             static void Destroy(T *obj) { delete obj; }
     };
 
-    /**
+    /*
      * LocalStaticCreation policy creates an object on the stack
      * the first time call Create.
      */
@@ -67,7 +67,7 @@ namespace Oregon
             static void Destroy(T *obj) { obj->~T(); }
     };
 
-    /**
+    /*
      * CreateUsingMalloc by pass the memory manger.
      */
     template<class T>
@@ -88,7 +88,7 @@ namespace Oregon
             }
     };
 
-    /**
+    /*
      * CreateOnCallBack creates the object base on the call back.
      */
     template<class T, class CALL_BACK>

@@ -1,3 +1,24 @@
+/*
+ * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
+ *
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #define _CRT_SECURE_NO_DEPRECATE
 #include <cstdio>
 #include <iostream>
@@ -22,19 +43,15 @@
 
 #include <map>
 
-//From Extractor
+// From Extractor
 #include "adtfile.h"
 #include "wdtfile.h"
 #include "dbcfile.h"
 #include "wmo.h"
 #include "mpq_libmpq04.h"
 
-//------------------------------------------------------------------------------
 // Defines
-
 #define MPQ_BLOCK_SIZE 0x1000
-
-//-----------------------------------------------------------------------------
 
 extern ArchiveSet gOpenArchives;
 
@@ -53,7 +70,6 @@ bool hasInputPathParam = false;
 bool preciseVectorData = false;
 
 // Constants
-
 //static const char * szWorkDirMaps = ".\\Maps";
 const char * szWorkDirWmo = "./Buildings";
 
@@ -421,14 +437,12 @@ bool processArgv(int argc, char ** argv, const char *versionString)
     return result;
 }
 
-//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 // Main
 //
 // The program must be run with two command line arguments
 //
 // Arg1 - The source MPQ name (for testing reading and file find)
 // Arg2 - Listfile name
-//
 
 int main(int argc, char ** argv)
 {
@@ -456,7 +470,7 @@ int main(int argc, char ** argv)
     }
 
     printf("Extract %s. Beginning work ....\n",versionString);
-    //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
     // Create the working directory
     if (mkdir(szWorkDirWmo
 #ifdef _XOPEN_UNIX
@@ -486,7 +500,6 @@ int main(int argc, char ** argv)
     if (success)
         success = ExtractWmo();
 
-    //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     //map.dbc
     if (success)
     {
@@ -524,3 +537,4 @@ int main(int argc, char ** argv)
     delete [] LiqType;
     return 0;
 }
+

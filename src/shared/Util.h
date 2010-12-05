@@ -1,21 +1,22 @@
 /*
- * Copyright (C) 2005-2008 MaNGOS <http://www.mangosproject.org/>
+ * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
  *
- * Copyright (C) 2008 Oregon <http://www.oregoncore.com/>
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef _UTIL_H
@@ -42,14 +43,14 @@ inline uint32 secsToTimeBitFields(time_t secs)
     return (lt->tm_year - 100) << 24 | lt->tm_mon  << 20 | (lt->tm_mday - 1) << 14 | lt->tm_wday << 11 | lt->tm_hour << 6 | lt->tm_min;
 }
 
-/* Return a random number in the range min..max; (max-min) must be smaller than 32768. */
+// Return a random number in the range min..max; (max-min) must be smaller than 32768.
 int32 irand(int32 min, int32 max);
 
 /* Return a random number in the range min..max (inclusive). For reliable results, the difference
 * between max and min should be less than RAND32_MAX. */
 uint32 urand(uint32 min, uint32 max);
 
-/* Return a random number in the range 0 .. RAND32_MAX. */
+// Return a random number in the range 0 .. RAND32_MAX.
 int32 rand32();
 
 /* Return a random double from 0.0 to 1.0 (exclusive). Floats support only 7 valid decimal digits.
@@ -62,13 +63,13 @@ double rand_norm(void);
  * With an FPU, there is usually no difference in performance between float and double. */
 double rand_chance(void);
 
-/* Return true if a random roll fits in the specified chance (range 0-100). */
+// Return true if a random roll fits in the specified chance (range 0-100).
 inline bool roll_chance_f(float chance)
 {
     return chance > rand_chance();
 }
 
-/* Return true if a random roll fits in the specified chance (range 0-100). */
+// Return true if a random roll fits in the specified chance (range 0-100).
 inline bool roll_chance_i(int chance)
 {
     return chance > irand(0, 99);

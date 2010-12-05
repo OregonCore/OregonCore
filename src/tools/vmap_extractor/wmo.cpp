@@ -1,3 +1,23 @@
+/*
+ * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
+ *
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "vmapexport.h"
 #include "wmo.h"
@@ -312,8 +332,8 @@ int WMOGroup::ConvertToVMAPGroupWmo(FILE *output, WMORoot *rootWMO, bool pPrecis
         fwrite(MobaEx,4,k,output);
         delete [] MobaEx;
 
-        //-------INDX------------------------------------
-        //-------MOPY--------
+        // INDX
+        // MOPY
         MoviEx = new uint16[nTriangles*3]; // "worst case" size...
         int *IndexRenum = new int[nVertices];
         memset(IndexRenum, 0xFF, nVertices*sizeof(int));
@@ -369,7 +389,7 @@ int WMOGroup::ConvertToVMAPGroupWmo(FILE *output, WMORoot *rootWMO, bool pPrecis
         delete [] IndexRenum;
     }
 
-    //------LIQU------------------------
+    // LIQU
     if (LiquEx_size != 0)
     {
         int LIQU_h[] = {0x5551494C, sizeof(WMOLiquidHeader) + LiquEx_size + hlq->xtiles*hlq->ytiles};// "LIQU"
@@ -433,7 +453,7 @@ WMOInstance::WMOInstance(MPQFile &f,const char* WmoInstName, uint32 mapID, uint3
     f.read(&adtId,2);
     f.read(&trash,2);
 
-    //-----------add_in _dir_file----------------
+    // add_in _dir_file
 
     char tempname[512];
     sprintf(tempname, "%s/%s", szWorkDirWmo, WmoInstName);
@@ -497,3 +517,4 @@ WMOInstance::WMOInstance(MPQFile &f,const char* WmoInstName, uint32 mapID, uint3
 
     // fclose(dirfile);
 }
+

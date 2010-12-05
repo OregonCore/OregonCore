@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2009 MaNGOS <http://getmangos.com/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -230,3 +232,4 @@ void Thread::Sleep(unsigned long msecs)
 {
     ACE_OS::sleep(ACE_Time_Value(0, 1000 * msecs));
 }
+

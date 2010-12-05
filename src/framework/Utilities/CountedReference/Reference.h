@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -21,8 +23,7 @@
 #ifndef  OREGON_REFERENCE_H
 #define  OREGON_REFERENCE_H
 
-/**
- * Referencer<T>
+/*
  * Referencer is an object that holds a reference holder that  hold a reference
  * counted object.  When an object's reference count drop to zero, it removes
  * the object.  This is a non intrusive mechanism and any object at any point
@@ -48,16 +49,16 @@ class Referencer
     typedef ReferenceHolder<T, THREADING_MODEL> ReferenceeHolder;
     public:
 
-        /// Constructs a referencer.
+        // Constructs a referencer.
         Referencer(T *ref = NULL);
 
-        /// Copy constructor
+        // Copy constructor
         Referencer(const Referencer &obj) : i_holder(NULL) { *this = obj; }
 
-        /// Destructor
+        // Destructor
         ~Referencer();
 
-        /// Referencee accessor
+        // Referencee accessor
         T* referencee(void) { return (i_holder == NULL ? NULL : i_holder->i_referencee); }
         const T* referencee(void) const { return (i_holder == NULL ? NULL : i_holder->i_referencee); }
 
@@ -66,19 +67,19 @@ class Referencer
         operator T&(void) { return _referencee(); }
         operator const T&(void) const { return *const_cast<Referencer *>(this)->_referencee(); }
 
-        /// cast operators
+        // cast operators
         T* operator*() { return (i_holder == NULL ? NULL : i_holder->i_referencee); }
         T const * operator*() const { return (i_holder == NULL ? NULL : i_holder->i_referencee); }
 
-        /// overload operators
+        // overload operators
         T* operator->() { return (i_holder == NULL ? NULL : i_holder->i_referencee); }
         const T * operator->() const { return (i_holder == NULL ? NULL : i_holder->i_referencee); }
 
-        /// operator =
+        // operator =
         Referencer& operator=(const Referencer &obj);
         Referencer& operator=(T *);
 
-        /// returns true if i_referencee is null
+        // returns true if i_referencee is null
         bool isNull(void) const { return i_holder == NULL; }
 
     private:

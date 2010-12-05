@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -21,10 +23,10 @@
 #ifndef OREGON_REFERENCEHOLDER_H
 #define OREGON_REFERENCEHOLDER_H
 
-/** ReferenceHolder holds the actualy referenced obejct as well the refence
-    count.  The ReferenecHolder implements as a policy base object and
-    will decided by the Reference class to be consnsitent.
- */
+/* ReferenceHolder holds the actualy referenced obejct as well the refence
+   count.  The ReferenecHolder implements as a policy base object and
+   will decided by the Reference class to be consnsitent.
+*/
 
 template
 <

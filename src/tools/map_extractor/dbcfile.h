@@ -1,3 +1,24 @@
+/*
+ * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
+ *
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #ifndef DBCFILE_H
 #define DBCFILE_H
 #include <cassert>
@@ -65,24 +86,24 @@ public:
         friend class DBCFile;
         friend class DBCFile::Iterator;
     };
-    /** Iterator that iterates over records
-    */
+
+    // Iterator that iterates over records
     class Iterator
     {
     public:
         Iterator(DBCFile &file, unsigned char *offset):
             record(file, offset) {}
-        /// Advance (prefix only)
+        // Advance (prefix only)
         Iterator & operator++() {
             record.offset += record.file.recordSize;
             return *this;
         }
-        /// Return address of current instance
+        // Return address of current instance
         Record const & operator*() const { return record; }
         const Record* operator->() const {
             return &record;
         }
-        /// Comparison
+        // Comparison
         bool operator==(const Iterator &b) const
         {
             return record.offset == b.record.offset;
@@ -97,11 +118,11 @@ public:
 
     // Get record by id
     Record getRecord(size_t id);
-    /// Get begin iterator over records
+    // Get begin iterator over records
     Iterator begin();
-    /// Get begin iterator over records
+    // Get begin iterator over records
     Iterator end();
-    /// Trivial
+    // Trivial
     size_t getRecordCount() const { return recordCount;}
     size_t getFieldCount() const { return fieldCount; }
     size_t getMaxId();
@@ -116,3 +137,4 @@ private:
 };
 
 #endif
+

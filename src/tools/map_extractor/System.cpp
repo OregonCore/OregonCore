@@ -1,3 +1,24 @@
+/*
+ * Copyright (C) 2005-2010 MaNGOS <http://getmangos.com/>
+ *
+ * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
+ *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #define _CRT_SECURE_NO_DEPRECATE
 
 #include <stdio.h>
@@ -48,9 +69,7 @@ char output_path[128] = ".";
 char input_path[128] = ".";
 uint32 maxAreaId = 0;
 
-//**************************************************
 // Extractor options
-//**************************************************
 enum Extract
 {
     EXTRACT_MAP = 1,
@@ -230,9 +249,7 @@ void ReadLiquidTypeTableDBC()
     printf("Done! (%u LiqTypes loaded)\n", LiqType_count);
 }
 
-//
 // Adt file convertor function and data
-//
 
 // Map file format data
 #define MAP_MAGIC             'SPAM'
@@ -308,6 +325,7 @@ float selectUInt16StepStore(float maxDiff)
 {
     return 65535 / maxDiff;
 }
+
 // Temporary grid data store
 uint16 area_flags[ADT_CELLS_PER_GRID][ADT_CELLS_PER_GRID];
 
@@ -363,9 +381,7 @@ bool ConvertADT(char *filename, char *filename2, int cell_y, int cell_x)
             area_flags[i][j] = 0xffff;
         }
     }
-    //============================================
     // Try pack area data
-    //============================================
     bool fullAreaData = false;
     uint32 areaflag = area_flags[0][0];
     for (int y=0;y<ADT_CELLS_PER_GRID;y++)
@@ -397,9 +413,7 @@ bool ConvertADT(char *filename, char *filename2, int cell_y, int cell_x)
         areaHeader.gridArea = (uint16)areaflag;
     }
 
-    //
     // Get Height map from grid
-    //
     for (int i=0;i<ADT_CELLS_PER_GRID;i++)
     {
         for (int j=0;j<ADT_CELLS_PER_GRID;j++)
@@ -468,9 +482,8 @@ bool ConvertADT(char *filename, char *filename2, int cell_y, int cell_x)
             }
         }
     }
-    //============================================
+
     // Try pack height data
-    //============================================
     float maxHeight = -20000;
     float minHeight =  20000;
     for (int y=0; y<ADT_GRID_SIZE; y++)
@@ -695,9 +708,7 @@ bool ConvertADT(char *filename, char *filename2, int cell_y, int cell_x)
         }
     }
 
-    //============================================
     // Pack liquid data
-    //============================================
     uint8 type = liquid_type[0][0];
     bool fullType = false;
     for (int y=0;y<ADT_CELLS_PER_GRID;y++)
@@ -1030,3 +1041,4 @@ int main(int argc, char * arg[])
 
     return 0;
 }
+

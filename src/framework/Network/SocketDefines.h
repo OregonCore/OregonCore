@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,8 +25,7 @@
 
 #ifdef WIN32
 
-/* Windows socket definitions
- */
+// Windows socket definitions
 #define FD_SETSIZE 1024
 #include <winsock2.h>
 #include <Ws2tcpip.h>
@@ -34,8 +35,7 @@ typedef fd_set SelectSet;
 
 #else
 
-/* The unix socket definitions
- */
+// The unix socket definitions
 #include <sys/socket.h>
 #include <netinet/in.h>
 #ifdef __APPLE_CC__
