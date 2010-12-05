@@ -3592,38 +3592,23 @@ void Spell::EffectSummonWild(uint32 i)
         }
     }
 
-    // select center of summon position
-    WorldLocation center = m_targets.m_dstPos;
-
     float radius = GetSpellRadius(m_spellInfo,i,false);
 
     int32 amount = damage > 0 ? damage : 1;
 
     for (int32 count = 0; count < amount; ++count)
     {
-        float px, py, pz;
-        // If dest location if present
-        if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
-        {
-            // Summon 1 unit in dest location
-            if (count == 0)
-                m_targets.m_dstPos.GetPosition(px, py, pz);
-            // Summon in random point all other units if location present
-            else
-                m_caster->GetRandomPoint(center, radius, px, py, pz);
-        }
-        // Summon if dest location not present near caster
-        else
-            m_caster->GetClosePoint(px, py, pz, 3.0f);
+        Position pos;
+        GetSummonPosition(pos, radius, count);
 
         int32 duration = GetSpellDuration(m_spellInfo);
 
         TempSummonType summonType = (duration == 0) ? TEMPSUMMON_DEAD_DESPAWN : TEMPSUMMON_TIMED_DESPAWN;
 
         if (m_originalCaster)
-            m_originalCaster->SummonCreature(creature_entry,px,py,pz,m_caster->GetOrientation(),summonType,duration);
+            m_originalCaster->SummonCreature(creature_entry,pos,summonType,duration);
         else
-            m_caster->SummonCreature(creature_entry,px,py,pz,m_caster->GetOrientation(),summonType,duration);
+            m_caster->SummonCreature(creature_entry,pos,summonType,duration);
     }
 }
 
@@ -5367,10 +5352,12 @@ void Spell::EffectSummonTotem(uint32 i)
 
     float angle = slot < MAX_TOTEM ? M_PI/MAX_TOTEM - (slot*2*M_PI/MAX_TOTEM) : 0;
 
-    float x,y,z;
+    Position pos;
+    float x, y, z;
 
     //totem size is 0, take care.
-    m_caster->GetClosePoint(x,y,z,0.0f,2.0f,angle);
+    GetSummonPosition(pos);
+    pos.GetPosition(x, y, z);
 
     if (sWorld.getConfig(CONFIG_VMAP_TOTEM))
     {
@@ -5378,7 +5365,7 @@ void Spell::EffectSummonTotem(uint32 i)
         if (vmgr->isHeightCalcEnabled() && vmgr->isLineOfSightCalcEnabled())
         {
             float cx, cy, cz;
-            m_caster->GetPosition(cx,cy,cz);
+            m_caster->GetPosition(cx, cy, cz);
 
             //TODO: sometimes the HitPos fails getting LOS of the caster/totem, but almost allways works and do it quickly.
             //      maybe vmaps files needs a more detail level?
@@ -5874,17 +5861,12 @@ void Spell::EffectSummonCritter(uint32 i)
     if (!pet_entry)
         return;
 
-    float x, y, z;
-    // If dest location if present
-    if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
-        m_targets.m_dstPos.GetPosition(x, y, z);
-    // Summon if dest location not present near caster
-    else
-        m_caster->GetClosePoint(x, y, z, m_caster->GetObjectSize());
+    Position pos;
+    GetSummonPosition(pos);
 
     int32 duration = GetSpellDuration(m_spellInfo);
     TempSummonType summonType = (duration == 0) ? TEMPSUMMON_DEAD_DESPAWN : TEMPSUMMON_TIMED_DESPAWN;
-    TempSummon *critter = m_caster->SummonCreature(pet_entry, x, y, z, m_caster->GetOrientation(), summonType, duration);
+    TempSummon *critter = m_caster->SummonCreature(pet_entry, pos, summonType, duration);
     if (!critter)
         return;
 
@@ -6322,11 +6304,12 @@ void Spell::EffectSkill(uint32 /*i*/)
 
 void Spell::EffectSummonDemon(uint32 i)
 {
-    float px = m_targets.m_dstPos.GetPositionX();
-    float py = m_targets.m_dstPos.GetPositionY();
-    float pz = m_targets.m_dstPos.GetPositionZ();
+    float radius = GetSpellRadiusForFriend(sSpellRadiusStore.LookupEntry(m_spellInfo->EffectRadiusIndex[i]));
 
-    Creature* Charmed = m_caster->SummonCreature(m_spellInfo->EffectMiscValue[i], px, py, pz, m_caster->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,3600000);
+    Position pos;
+    GetSummonPosition(pos, radius);
+
+    Creature* Charmed = m_caster->SummonCreature(m_spellInfo->EffectMiscValue[i], pos, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 3600000);
     if (!Charmed)
         return;
 
@@ -6545,6 +6528,26 @@ void Spell::EffectSummonPossessed(uint32 i)
 
     pet->SetUInt32Value(UNIT_CREATED_BY_SPELL, m_spellInfo->Id);
     pet->SetCharmedBy(m_caster, CHARM_TYPE_POSSESS);
+}
+
+void Spell::GetSummonPosition(Position &pos, float radius, uint32 count)
+{
+    if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
+    {
+        // Summon 1 unit in dest location
+        if (count == 0)
+            pos.Relocate(m_targets.m_dstPos);
+        // Summon in random point all other units if location present
+        else
+            m_caster->GetRandomPoint(m_targets.m_dstPos, radius, pos);
+    }
+    // Summon if dest location not present near caster
+    else
+    {
+        float x, y, z;
+        m_caster->GetClosePoint(x,y,z,3.0f);
+        pos.Relocate(x, y, z);
+    }
 }
 
 void Spell::EffectRedirectThreat(uint32 /*i*/)

@@ -471,6 +471,12 @@ class WorldObject : public Object, public WorldLocation
         void UpdateGroundPositionZ(float x, float y, float &z) const;
 
         void GetRandomPoint(const Position &srcPos, float distance, float &rand_x, float &rand_y, float &rand_z) const;
+        void GetRandomPoint(const Position &srcPos, float distance, Position &pos) const
+        {
+            float x, y, z;
+            GetRandomPoint(srcPos, distance, x, y, z);
+            pos.Relocate(x, y, z, GetOrientation());
+        }
 
         uint32 GetInstanceId() const { return m_InstanceId; }
 
@@ -585,8 +591,8 @@ class WorldObject : public Object, public WorldLocation
 
         void SetZoneScript();
 
-        TempSummon* SummonCreature(uint32 id, const Position &pos, TempSummonType spwtype, uint32 despwtime);
-        TempSummon* SummonCreature(uint32 id, float x, float y, float z, float ang, TempSummonType spwtype, uint32 despwtime)
+        TempSummon* SummonCreature(uint32 id, const Position &pos, TempSummonType spwtype = TEMPSUMMON_MANUAL_DESPAWN, uint32 despwtime = 0);
+        TempSummon* SummonCreature(uint32 id, float x, float y, float z, float ang, TempSummonType spwtype = TEMPSUMMON_MANUAL_DESPAWN, uint32 despwtime = 0)
         {
             if (!x && !y && !z)
             {
