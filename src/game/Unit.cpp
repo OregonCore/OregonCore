@@ -52,6 +52,7 @@
 #include "PetAI.h"
 #include "PassiveAI.h"
 #include "Traveller.h"
+#include "TemporarySummon.h"
 #include "ScriptMgr.h"
 
 #include <math.h>
@@ -4066,14 +4067,13 @@ void Unit::RemoveAura(AuraMap::iterator &i, AuraRemoveMode mode)
             {
                 for (int i = 0; i < 3; ++i)
                 {
-                    if (AurSpellInfo->Effect[i] == SPELL_EFFECT_SUMMON &&
-                        (AurSpellInfo->EffectMiscValueB[i] == SUMMON_TYPE_POSESSED ||
-                         AurSpellInfo->EffectMiscValueB[i] == SUMMON_TYPE_POSESSED2 ||
-                         AurSpellInfo->EffectMiscValueB[i] == SUMMON_TYPE_POSESSED3))
-                    {
-                        caster->ToPlayer()->StopCastingCharm();
-                        break;
-                    }
+                    if (AurSpellInfo->Effect[i] == SPELL_EFFECT_SUMMON)
+                        if (SummonPropertiesEntry const *SummonProperties = sSummonPropertiesStore.LookupEntry(AurSpellInfo->EffectMiscValueB[i]))
+                            if (SummonProperties->Category == SUMMON_CATEGORY_POSSESSED)
+                            {
+                                ((Player*)caster)->StopCastingCharm();
+                                break;
+                            }
                 }
             }
         }
@@ -6996,8 +6996,8 @@ void Unit::UnsummonAllTotems()
             continue;
 
         Creature *OldTotem = GetMap()->GetCreature(m_TotemSlot[i]);
-        if (OldTotem && OldTotem->isTotem())
-            ((Totem*)OldTotem)->UnSummon();
+        if (OldTotem && OldTotem->isSummon())
+            ((TempSummon*)OldTotem)->UnSummon();
     }
 }
 
@@ -9722,6 +9722,7 @@ void Unit::RemoveFromWorld()
     // cleanup
     if (IsInWorld())
     {
+        UnsummonAllTotems();
         RemoveCharmAuras();
         RemoveBindSightAuras();
         RemoveNotOwnSingleTargetAuras();

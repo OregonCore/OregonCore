@@ -419,6 +419,7 @@ class Creature : public Unit, public GridObject<Creature>
         void GetRespawnCoord(float &x, float &y, float &z, float* ori = NULL, float* dist =NULL) const;
         uint32 GetEquipmentId() const { return m_equipmentId; }
 
+        bool isSummon() const { return m_isSummon; }
         bool isPet() const { return m_isPet; }
         void SetCorpseDelay(uint32 delay) { m_corpseDelay = delay; }
         bool isTotem() const { return m_isTotem; }
@@ -661,6 +662,7 @@ class Creature : public Unit, public GridObject<Creature>
         float m_respawnradius;
 
         uint8 m_emoteState;
+        bool m_isSummon;
         bool m_isPet;                                       // set only in Pet::Pet
         bool m_isTotem;                                     // set only in Totem::Totem
         ReactStates m_reactState;                           // for AI, not charmInfo

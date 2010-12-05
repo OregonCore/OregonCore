@@ -80,6 +80,7 @@ class Player;
 class UpdateMask;
 class InstanceData;
 class GameObject;
+class TempSummon;
 class CreatureAI;
 class ZoneScript;
 class Unit;
@@ -584,8 +585,8 @@ class WorldObject : public Object, public WorldLocation
 
         void SetZoneScript();
 
-        Creature* SummonCreature(uint32 id, const Position &pos, TempSummonType spwtype, uint32 despwtime);
-        Creature* SummonCreature(uint32 id, float x, float y, float z, float ang, TempSummonType spwtype, uint32 despwtime)
+        TempSummon* SummonCreature(uint32 id, const Position &pos, TempSummonType spwtype, uint32 despwtime);
+        TempSummon* SummonCreature(uint32 id, float x, float y, float z, float ang, TempSummonType spwtype, uint32 despwtime)
         {
             if (!x && !y && !z)
             {

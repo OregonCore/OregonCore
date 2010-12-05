@@ -3988,11 +3988,24 @@ uint8 Spell::CanCast(bool strict)
             {
                 switch(m_spellInfo->EffectMiscValueB[i])
                 {
-                    case SUMMON_TYPE_POSESSED:
-                    case SUMMON_TYPE_POSESSED2:
-                    case SUMMON_TYPE_POSESSED3:
                     case SUMMON_TYPE_DEMON:
                     case SUMMON_TYPE_SUMMON:
+                    {
+                        if (m_caster->GetPetGUID())
+                            return SPELL_FAILED_ALREADY_HAVE_SUMMON;
+
+                        if (m_caster->GetCharmGUID())
+                            return SPELL_FAILED_ALREADY_HAVE_CHARM;
+                        break;
+                    }
+                }
+
+                SummonPropertiesEntry const *SummonProperties = sSummonPropertiesStore.LookupEntry(m_spellInfo->EffectMiscValueB[i]);
+                if (!SummonProperties)
+                    break;
+                switch(SummonProperties->Category)
+                {
+                    case SUMMON_CATEGORY_POSSESSED:
                     {
                         if (m_caster->GetPetGUID())
                             return SPELL_FAILED_ALREADY_HAVE_SUMMON;

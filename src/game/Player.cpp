@@ -450,8 +450,6 @@ Player::Player (WorldSession *session): Unit()
     //Default movement to run mode
     m_unit_movement_flags = 0;
 
-    m_miniPet = 0;
-
     m_seer = this;
 
     m_contestedPvPTimer = 0;
@@ -1363,7 +1361,6 @@ void Player::setDeathState(DeathState s)
         RemovePet(NULL, PET_SAVE_NOT_IN_SLOT, true);
 
         // remove uncontrolled pets
-        RemoveMiniPet();
         RemoveGuardians();
 
         // save value before aura remove in Unit::setDeathState
@@ -1892,8 +1889,6 @@ void Player::RemoveFromWorld()
         // Release charmed creatures, unsummon totems and remove pets/guardians
         StopCastingCharm();
         StopCastingBindSight();
-        UnsummonAllTotems();
-        RemoveMiniPet();
         RemoveGuardians();
         sOutdoorPvPMgr.HandlePlayerLeaveZone(this, m_zoneUpdateId);
     }
@@ -17034,9 +17029,6 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
     // only if current pet in slot
     switch(pet->getPetType())
     {
-        case MINI_PET:
-            m_miniPet = 0;
-            break;
         case GUARDIAN_PET:
             m_guardianPets.erase(pet->GetGUID());
             break;
@@ -17080,22 +17072,6 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
         if (GetGroup())
             SetGroupUpdateFlag(GROUP_UPDATE_PET);
     }
-}
-
-void Player::RemoveMiniPet()
-{
-    if (Pet* pet = GetMiniPet())
-    {
-        pet->Remove(PET_SAVE_AS_DELETED);
-        m_miniPet = 0;
-    }
-}
-
-Pet* Player::GetMiniPet()
-{
-    if (!m_miniPet)
-        return NULL;
-    return ObjectAccessor::GetPet(*this, m_miniPet);
 }
 
 void Player::RemoveGuardians()

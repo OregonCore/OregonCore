@@ -87,9 +87,9 @@ Pet::Pet(PetType type) : Creature()
     // pets always have a charminfo, even if they are not actually charmed
     CharmInfo* charmInfo = InitCharmInfo();
 
-    if (type == MINI_PET || type == POSSESSED_PET)                                    // always passive
+    if (type == POSSESSED_PET)                              // always passive
         SetReactState(REACT_PASSIVE);
-    else if (type == GUARDIAN_PET)                           // always aggressive
+    else if (type == GUARDIAN_PET)                          // always aggressive
         SetReactState(REACT_AGGRESSIVE);
 
     m_spells.clear();
@@ -953,11 +953,6 @@ bool Pet::CreateBaseAtCreature(Creature* creature)
         return false;
     }
 
-    if (cinfo->type == CREATURE_TYPE_CRITTER)
-    {
-        setPetType(MINI_PET);
-        return true;
-    }
     SetDisplayId(creature->GetDisplayId());
     SetNativeDisplayId(creature->GetNativeDisplayId());
     SetMaxPower(POWER_HAPPINESS, GetCreatePowers(POWER_HAPPINESS));
@@ -1757,9 +1752,6 @@ bool Pet::Create(uint32 guidlow, Map *map, uint32 Entry, uint32 pet_number)
 
     SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE);
     SetByteValue(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY | UNIT_BYTE2_FLAG_AURAS | UNIT_BYTE2_FLAG_UNK5);
-
-    if (getPetType() == MINI_PET)                            // always non-attackable
-        SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
     InitPetAuras(Entry);
 

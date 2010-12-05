@@ -1621,9 +1621,9 @@ void WorldObject::AddObjectToRemoveList()
     map->AddObjectToRemoveList(this);
 }
 
-Creature* WorldObject::SummonCreature(uint32 id, const Position &pos, TempSummonType spwtype,uint32 despwtime)
+TempSummon* WorldObject::SummonCreature(uint32 id, const Position &pos, TempSummonType spwtype,uint32 despwtime)
 {
-    TemporarySummon* pCreature = new TemporarySummon(GetGUID());
+    TempSummon* pCreature = new TempSummon(GetGUID());
 
     uint32 team = 0;
     if (GetTypeId() == TYPEID_PLAYER)

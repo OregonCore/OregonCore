@@ -958,9 +958,6 @@ class Player : public Unit, public GridObject<Player>
 
         Pet* SummonPet(uint32 entry, float x, float y, float z, float ang, PetType petType, uint32 despwtime);
         void RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent = false);
-        void RemoveMiniPet();
-        Pet* GetMiniPet();
-        void SetMiniPet(Pet* pet) { m_miniPet = pet->GetGUID(); }
         void RemoveGuardians();
         bool HasGuardianWithEntry(uint32 entry);
         void AddGuardian(Pet* pet) { m_guardianPets.insert(pet->GetGUID()); }
@@ -2304,7 +2301,6 @@ class Player : public Unit, public GridObject<Player>
         uint32 m_groupUpdateMask;
         uint64 m_auraUpdateMask;
 
-        uint64 m_miniPet;
         GuardianPetList m_guardianPets;
 
         // Player summoning

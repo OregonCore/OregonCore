@@ -922,7 +922,7 @@ enum ReactiveType
 };
 
 #define MAX_REACTIVE 6
-#define MAX_TOTEM 4
+#define MAX_TOTEM 6
 
 // delay time next attack to prevent client attack animation problems
 #define ATTACK_DISPLAY_DELAY 200

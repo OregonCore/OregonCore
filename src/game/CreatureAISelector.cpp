@@ -41,7 +41,7 @@ namespace FactorySelector
         CreatureAIRegistry &ai_registry(CreatureAIRepository::Instance());
 
         if (creature->isPet())
-          ai_factory = ai_registry.GetRegistryItem("PetAI");
+            ai_factory = ai_registry.GetRegistryItem("PetAI");
 
         //scriptname in db
         // Allow scripting AI for normal creatures and not controlled pets (guardians and mini-pets)
@@ -65,6 +65,8 @@ namespace FactorySelector
                 ai_factory = ai_registry.GetRegistryItem("PetAI");
             else if (creature->isTotem())
                 ai_factory = ai_registry.GetRegistryItem("TotemAI");
+            else if (creature->isSummon() && ((TempSummon*)creature)->m_properties && ((TempSummon*)creature)->m_properties->Type == SUMMON_TYPE_MINIPET)
+                ai_factory = ai_registry.GetRegistryItem("CritterAI");
             else if (creature->isTrigger())
             {
                 if (creature->m_spells[0])

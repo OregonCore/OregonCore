@@ -21,18 +21,18 @@
  */
 
 #include "TemporarySummon.h"
-#include "WorldPacket.h"
-#include "MapManager.h"
 #include "Log.h"
 #include "ObjectAccessor.h"
 #include "CreatureAI.h"
 
-TemporarySummon::TemporarySummon(uint64 summoner) :
+TempSummon::TempSummon(uint64 summoner) :
 Creature(), m_type(TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN), m_timer(0), m_lifetime(0), m_summoner(summoner)
+, m_properties(NULL)
 {
+    m_isSummon = true;
 }
 
-void TemporarySummon::Update(uint32 diff)
+void TempSummon::Update(uint32 diff)
 {
     if (m_deathState == DEAD)
     {
@@ -161,27 +161,61 @@ void TemporarySummon::Update(uint32 diff)
     Creature::Update(diff);
 }
 
-void TemporarySummon::Summon(TempSummonType type, uint32 lifetime)
+void TempSummon::Summon(TempSummonType type, uint32 lifetime)
 {
     m_type = type;
     m_timer = lifetime;
     m_lifetime = lifetime;
 
     GetMap()->Add(ToCreature());
+
+    AIM_Initialize();
 }
 
-void TemporarySummon::UnSummon()
+void TempSummon::UnSummon()
 {
     AddObjectToRemoveList();
 
-    Unit* sum = m_summoner ? ObjectAccessor::GetUnit(*this, m_summoner) : NULL;
-    if (sum  && sum->GetTypeId() == TYPEID_UNIT && sum->ToCreature()->IsAIEnabled)
+    Unit* owner = GetSummoner();
+    if (owner)
     {
-        sum->ToCreature()->AI()->SummonedCreatureDespawn(this);
+        if (owner->GetTypeId() == TYPEID_UNIT && ((Creature*)owner)->IsAIEnabled)
+            ((Creature*)owner)->AI()->SummonedCreatureDespawn(this);
+        if (uint32 slot = m_properties->Slot)
+        {
+            --slot;
+            owner->m_TotemSlot[slot] = 0;
+        }
     }
 }
 
-void TemporarySummon::SaveToDB()
+void TempSummon::SetSummonProperties(SummonPropertiesEntry const *properties)
+{
+    if(!properties)
+        return;
+
+    m_properties = properties;
+
+    if(uint32 slot = m_properties->Slot)
+    {
+        --slot;
+        Unit* owner = GetSummoner();
+        if(owner)
+        {
+            if(owner->m_TotemSlot[slot] && owner->m_TotemSlot[slot] != GetGUID())
+            {
+                Creature *OldTotem = ObjectAccessor::GetCreature(*this, owner->m_TotemSlot[slot]);
+                if(OldTotem && OldTotem->isSummon())
+                    ((TempSummon*)OldTotem)->UnSummon();
+            }
+            owner->m_TotemSlot[slot] = GetGUID();
+        }
+    }
+
+    AIM_Initialize();
+}
+
+void TempSummon::SaveToDB()
 {
 }
 
