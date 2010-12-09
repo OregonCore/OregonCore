@@ -431,7 +431,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     //---- anti-cheat features -->>>
     bool check_passed = true;
 
-    if (World::GetEnableMvAnticheat() && updateOrientationOnly)
+    if (World::GetEnableMvAnticheat() && updateOrientationOnly && GetPlayer()->m_anti_transportGUID == 0)
     {
         if ((abs(GetPlayer()->GetPositionX() - movementInfo.GetPos()->GetPositionX()) > 0.1f) ||
             (abs(GetPlayer()->GetPositionY() - movementInfo.GetPos()->GetPositionY()) > 0.1f) ||
