@@ -1,22 +1,22 @@
 /*
-* Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
-*
-* Copyright (C) 2008-2009 Trinity <http://www.trinitycore.org/>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+ *
+ * Copyright (C) 2008-2009 Trinity <http://www.trinitycore.org/>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #include "Common.h"
 #include "Database/DatabaseEnv.h"
@@ -1226,7 +1226,7 @@ bool ChatHandler::HandleReloadLocalesQuestCommand(const char* /*arg*/)
 
 bool ChatHandler::HandleReloadAuctionsCommand(const char *args)
 {
-    ///- Reload dynamic data tables from the database
+    // Reload dynamic data tables from the database
     sLog.outString("Re-Loading Auctions...");
     auctionmgr.LoadAuctionItems();
     auctionmgr.LoadAuctions();
@@ -1305,11 +1305,11 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
         }
 
         targetAccountId = accmgr.GetId(arg1);
-        /// m_session == NULL only for console
+        // m_session == NULL only for console
         uint32 plSecurity = m_session ? m_session->GetSecurity() : SEC_CONSOLE;
 
-        /// can set security level only for target with less security and to less security that we have
-        /// This is also reject self apply in fact
+        // can set security level only for target with less security and to less security that we have
+        // This is also reject self apply in fact
         targetSecurity = accmgr.GetSecurity(targetAccountId);
         if (targetSecurity >= plSecurity || gm >= plSecurity)
         {
@@ -1324,13 +1324,13 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
     }
 }
 
-/// Set password for account
+// Set password for account
 bool ChatHandler::HandleAccountSetPasswordCommand(const char *args)
 {
     if (!*args)
         return false;
 
-    ///- Get the command line arguments
+    // Get the command line arguments
     char *szAccount = strtok ((char*)args," ");
     char *szPassword1 =  strtok (NULL," ");
     char *szPassword2 =  strtok (NULL," ");
@@ -1356,11 +1356,11 @@ bool ChatHandler::HandleAccountSetPasswordCommand(const char *args)
 
     uint32 targetSecurity = accmgr.GetSecurity(targetAccountId);
 
-    /// m_session == NULL only for console
+    // m_session == NULL only for console
     uint32 plSecurity = m_session ? m_session->GetSecurity() : SEC_CONSOLE;
 
-    /// can set password only for target with less security
-    /// This is also reject self apply in fact
+    // can set password only for target with less security
+    // This is also reject self apply in fact
     if (targetSecurity >= plSecurity)
     {
         SendSysMessage (LANG_YOURS_SECURITY_IS_LOW);
@@ -5208,7 +5208,7 @@ bool ChatHandler::HandleServerShutDownCommand(const char *args)
 
     int32 time = atoi (time_str);
 
-    ///- Prevent interpret wrong arg value as 0 secs shutdown time
+    // Prevent interpret wrong arg value as 0 secs shutdown time
     if (time == 0 && (time_str[0] != '0' || time_str[1] != '\0') || time < 0)
         return false;
 
@@ -5243,7 +5243,7 @@ bool ChatHandler::HandleServerRestartCommand(const char *args)
 
     int32 time = atoi (time_str);
 
-    ///- Prevent interpret wrong arg value as 0 secs shutdown time
+    // Prevent interpret wrong arg value as 0 secs shutdown time
     if (time == 0 && (time_str[0] != '0' || time_str[1] != '\0') || time < 0)
         return false;
 
@@ -5278,7 +5278,7 @@ bool ChatHandler::HandleServerIdleRestartCommand(const char *args)
 
     int32 time = atoi (time_str);
 
-    ///- Prevent interpret wrong arg value as 0 secs shutdown time
+    // Prevent interpret wrong arg value as 0 secs shutdown time
     if (time == 0 && (time_str[0] != '0' || time_str[1] != '\0') || time < 0)
         return false;
 
@@ -5313,7 +5313,7 @@ bool ChatHandler::HandleServerIdleShutDownCommand(const char *args)
 
     int32 time = atoi (time_str);
 
-    ///- Prevent interpret wrong arg value as 0 secs shutdown time
+    // Prevent interpret wrong arg value as 0 secs shutdown time
     if (time == 0 && (time_str[0] != '0' || time_str[1] != '\0') || time < 0)
         return false;
 
@@ -6719,10 +6719,10 @@ bool ChatHandler::HandleInstanceSaveDataCommand(const char * /*args*/)
     return true;
 }
 
-/// Display the list of GMs
+// Display the list of GMs
 bool ChatHandler::HandleGMListFullCommand(const char* /*args*/)
 {
-    ///- Get the accounts with GM Level >0
+    // Get the accounts with GM Level >0
     QueryResult_AutoPtr result = LoginDatabase.Query("SELECT username,gmlevel FROM account WHERE gmlevel > 0");
     if (result)
     {
@@ -6731,7 +6731,7 @@ bool ChatHandler::HandleGMListFullCommand(const char* /*args*/)
         SendSysMessage(LANG_GMLIST_HEADER);
         SendSysMessage(" ======================== ");
 
-        ///- Circle through them. Display username and GM level
+        // Circle through them. Display username and GM level
         do
         {
             Field *fields = result->Fetch();
@@ -6745,7 +6745,7 @@ bool ChatHandler::HandleGMListFullCommand(const char* /*args*/)
     return true;
 }
 
-/// Define the 'Message of the day' for the realm
+// Define the 'Message of the day' for the realm
 bool ChatHandler::HandleServerSetMotdCommand(const char *args)
 {
     sWorld.SetMotd(args);
@@ -6753,10 +6753,10 @@ bool ChatHandler::HandleServerSetMotdCommand(const char *args)
     return true;
 }
 
-/// Set/Unset the expansion level for an account
+// Set/Unset the expansion level for an account
 bool ChatHandler::HandleAccountSetAddonCommand(const char *args)
 {
-    ///- Get the command line arguments
+    // Get the command line arguments
     char *szAcc = strtok((char*)args," ");
     char *szExp = strtok(NULL," ");
 
@@ -6778,7 +6778,7 @@ bool ChatHandler::HandleAccountSetAddonCommand(const char *args)
     }
     else
     {
-        ///- Convert Account name to Upper Format
+        // Convert Account name to Upper Format
         account_name = szAcc;
         if (!AccountMgr::normalizeString(account_name))
         {
@@ -6953,13 +6953,13 @@ bool ChatHandler::HandleSendItemsCommand(const char *args)
     return true;
 }
 
-///Send money by mail
+// Send money by mail
 bool ChatHandler::HandleSendMoneyCommand(const char *args)
 {
     if (!*args)
         return false;
 
-    /// format: name "subject text" "mail text" money
+    // format: name "subject text" "mail text" money
 
     char* pName = strtok((char*)args, " ");
     if (!pName)
@@ -7043,10 +7043,10 @@ bool ChatHandler::HandleSendMoneyCommand(const char *args)
     return true;
 }
 
-/// Send a message to a player in game
+// Send a message to a player in game
 bool ChatHandler::HandleSendMessageCommand(const char *args)
 {
-    ///- Get the command line arguments
+    // Get the command line arguments
     char* name_str = strtok((char*)args, " ");
     char* msg_str = strtok(NULL, "");
 
@@ -7058,7 +7058,7 @@ bool ChatHandler::HandleSendMessageCommand(const char *args)
     if (!normalizePlayerName(name))
         return false;
 
-    ///- Find the player and check that he is not logging out.
+    // Find the player and check that he is not logging out.
     Player *rPlayer = objmgr.GetPlayer(name.c_str());
     if (!rPlayer)
     {
@@ -7074,8 +7074,8 @@ bool ChatHandler::HandleSendMessageCommand(const char *args)
         return false;
     }
 
-    ///- Send the message
-    //Use SendAreaTriggerMessage for fastest delivery.
+    // Send the message
+    // Use SendAreaTriggerMessage for fastest delivery.
     rPlayer->GetSession()->SendAreaTriggerMessage("%s", msg_str);
     rPlayer->GetSession()->SendAreaTriggerMessage("|cffff0000[Message from administrator]:|r");
 
@@ -7430,3 +7430,4 @@ bool ChatHandler::HandleUnbindSightCommand(const char * /*args*/)
     m_session->GetPlayer()->StopCastingBindSight();
     return true;
 }
+

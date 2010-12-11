@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -55,7 +57,7 @@ Corpse::~Corpse()
 
 void Corpse::AddToWorld()
 {
-    ///- Register the corpse for guid lookup
+    // Register the corpse for guid lookup
     if (!IsInWorld())
         ObjectAccessor::Instance().AddObject(this);
 
@@ -64,7 +66,7 @@ void Corpse::AddToWorld()
 
 void Corpse::RemoveFromWorld()
 {
-    ///- Remove the corpse from the accessor
+    // Remove the corpse from the accessor
     if (IsInWorld())
         ObjectAccessor::Instance().RemoveObject(this);
 
@@ -162,7 +164,7 @@ bool Corpse::LoadFromDB(uint32 guid, Field *fields)
 
     if (!LoadValues(fields[5].GetString()))
     {
-        sLog.outError("Corpse #%d have broken data in data field. Can't be loaded.",guid);
+        sLog.outError("Corpse #%d has invalid data in data field.  Not loaded.",guid);
         return false;
     }
 
@@ -171,7 +173,7 @@ bool Corpse::LoadFromDB(uint32 guid, Field *fields)
 
     if (m_type >= MAX_CORPSE_TYPE)
     {
-        sLog.outError("Corpse (guidlow %d, owner %d) have wrong corpse type, not load.",GetGUIDLow(),GUID_LOPART(GetOwnerGUID()));
+        sLog.outError("Corpse (guidlow %d, owner %d) has wrong corpse type.  Not loaded.",GetGUIDLow(),GUID_LOPART(GetOwnerGUID()));
         return false;
     }
 

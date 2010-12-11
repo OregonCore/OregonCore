@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008-2009 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -56,12 +58,12 @@ struct AuctionEntry
     uint32 item_guidlow;
     uint32 item_template;
     uint32 owner;
-    uint32 startbid;                                        //maybe useless
+    uint32 startbid;                                        // maybe useless
     uint32 bid;
     uint32 buyout;
     time_t expire_time;
     uint32 bidder;
-    uint32 deposit;                                         //deposit can be calculated only when creating auction
+    uint32 deposit;                                         // deposit can be calculated only when creating auction
     AuctionHouseEntry const* auctionHouseEntry;             // in AuctionHouse.dbc
 
     // helpers
@@ -74,7 +76,7 @@ struct AuctionEntry
     void SaveToDB() const;
 };
 
-//this class is used as auctionhouse instance
+// this class is used as auctionhouse instance
 class AuctionHouseObject
 {
   public:
@@ -140,7 +142,7 @@ class AuctionHouseMgr
         return NULL;
     }
 
-    //auction messages
+    // auction messages
     void SendAuctionWonMail(AuctionEntry * auction);
     void SendAuctionSalePendingMail(AuctionEntry * auction);
     void SendAuctionSuccessfulMail(AuctionEntry * auction);
@@ -149,7 +151,7 @@ class AuctionHouseMgr
     static AuctionHouseEntry const* GetAuctionHouseEntry(uint32 factionTemplateId);
 
   public:
-    //load first auction items, because of check if item exists, when loading
+    // load first auction items, because of check if item exists, when loading
     void LoadAuctionItems();
     void LoadAuctions();
 
@@ -169,3 +171,4 @@ class AuctionHouseMgr
 #define auctionmgr Oregon::Singleton<AuctionHouseMgr>::Instance()
 
 #endif
+

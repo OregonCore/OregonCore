@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -490,7 +492,7 @@ void BattleGroundQueue::Update(uint32 bgTypeId, uint32 queue_id, uint8 arenatype
     if (queue_id >= MAX_BATTLEGROUND_QUEUES)
     {
         //this is error, that caused crashes (not in , but now it shouldn't)
-        sLog.outError("BattleGroundQueue::Update() called for non existing queue type - this can cause crash, pls report problem, if this is the last line of error log before crash");
+        sLog.outError("BattleGroundQueue::Update() called for invalid queue type - this can cause crash, pls report problem, if this is the last line of error log before crash");
         return;
     }
 
@@ -1521,7 +1523,7 @@ void BattleGroundMgr::CreateInitialBattleGrounds()
         }
         else
         {
-            sLog.outErrorDb("Table battleground_template for id %u have non-existed WorldSafeLocs.dbc id %u in field AllianceStartLoc. BG not created.",bgTypeID,start1);
+            sLog.outErrorDb("Table battleground_template for id %u has invalid WorldSafeLocs.dbc id %u in field AllianceStartLoc. BG not created.",bgTypeID,start1);
             continue;
         }
 
@@ -1544,7 +1546,7 @@ void BattleGroundMgr::CreateInitialBattleGrounds()
         }
         else
         {
-            sLog.outErrorDb("Table battleground_template for id %u have non-existed WorldSafeLocs.dbc id %u in field HordeStartLoc. BG not created.",bgTypeID,start2);
+            sLog.outErrorDb("Table battleground_template for id %u has invalid WorldSafeLocs.dbc id %u in field HordeStartLoc. BG not created.",bgTypeID,start2);
             continue;
         }
 
@@ -1810,3 +1812,4 @@ void BattleGroundMgr::SetHolidayWeekends(uint32 mask)
         }
     }
 }
+

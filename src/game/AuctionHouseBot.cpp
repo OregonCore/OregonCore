@@ -1850,3 +1850,4 @@ void AuctionHouseBot::LoadValues(AHBConfig *config)
     }
     if (debug_Out) sLog.outString("End Settings for %s Auctionhouses:", CharacterDatabase.PQuery("SELECT name FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID())->Fetch()->GetString());
 }
+

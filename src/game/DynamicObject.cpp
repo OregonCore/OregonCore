@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -45,7 +47,7 @@ DynamicObject::DynamicObject() : WorldObject()
 
 void DynamicObject::AddToWorld()
 {
-    ///- Register the dynamicObject for guid lookup
+    // Register the dynamicObject for guid lookup
     if (!IsInWorld())
     {
         ObjectAccessor::Instance().AddObject(this);
@@ -55,7 +57,7 @@ void DynamicObject::AddToWorld()
 
 void DynamicObject::RemoveFromWorld()
 {
-    ///- Remove the dynamicObject from the accessor
+    // Remove the dynamicObject from the accessor
     if (IsInWorld())
     {
         if (m_isWorldObject)
@@ -177,3 +179,4 @@ bool DynamicObject::isVisibleForInState(Player const* u, bool inVisibleList) con
     return IsInWorld() && u->IsInWorld()
         && (IsWithinDistInMap(u->m_seer, World::GetMaxVisibleDistanceForObject() + (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), false));
 }
+

@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2005-2008 MaNGOS <http://getmangos.com/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -110,7 +112,7 @@ bool ArenaTeam::AddMember(const uint64& playerGuid)
     }
     else
     {
-        //                                                     0     1
+        //                                                            0     1
         QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT name, class FROM characters WHERE guid='%u'", GUID_LOPART(playerGuid));
         if (!result)
             return false;
@@ -196,7 +198,7 @@ bool ArenaTeam::LoadArenaTeamFromDB(uint32 ArenaTeamId)
 
 void ArenaTeam::LoadStatsFromDB(uint32 ArenaTeamId)
 {
-    //                                                     0      1     2    3      4     5
+    //                                                            0      1     2    3      4     5
     QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT rating,games,wins,played,wins2,rank FROM arena_team_stats WHERE arenateamid = '%u'", ArenaTeamId);
 
     if (!result)
@@ -214,7 +216,7 @@ void ArenaTeam::LoadStatsFromDB(uint32 ArenaTeamId)
 
 void ArenaTeam::LoadMembersFromDB(uint32 ArenaTeamId)
 {
-    //                                                           0                1           2         3             4        5        6    7
+    //                                                            0           1           2         3             4        5        6    7
     QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT member.guid,played_week,wons_week,played_season,wons_season,personal_rating,name,class "
                                                    "FROM arena_team_member member "
                                                    "INNER JOIN characters chars on member.guid = chars.guid "
@@ -300,7 +302,7 @@ void ArenaTeam::Disband(WorldSession *session)
 
     CharacterDatabase.BeginTransaction();
     CharacterDatabase.PExecute("DELETE FROM arena_team WHERE arenateamid = '%u'", m_TeamId);
-    CharacterDatabase.PExecute("DELETE FROM arena_team_member WHERE arenateamid = '%u'", m_TeamId); //< this should be alredy done by calling DelMember(memberGuids[j]); for each member
+    CharacterDatabase.PExecute("DELETE FROM arena_team_member WHERE arenateamid = '%u'", m_TeamId); // this should be alredy done by calling DelMember(memberGuids[j]); for each member
     CharacterDatabase.PExecute("DELETE FROM arena_team_stats WHERE arenateamid = '%u'", m_TeamId);
     CharacterDatabase.CommitTransaction();
     objmgr.RemoveArenaTeam(m_TeamId);
@@ -568,7 +570,7 @@ int32 ArenaTeam::WonAgainst(uint32 againstRating)
 int32 ArenaTeam::LostAgainst(uint32 againstRating)
 {
     // called when the team has lost
-    //'chance' calculation - to loose to the opponent
+    // 'chance' calculation - to loose to the opponent
     float chance = GetChanceAgainst(m_stats.rating, againstRating);
     // calculate the rating modification (ELO system with k=32)
     int32 mod = (int32)ceil(32.0f * (0.0f - chance));
@@ -667,7 +669,7 @@ void ArenaTeam::UpdateArenaPointsHelper(std::map<uint32, uint32>& PlayerPoints)
         std::map<uint32, uint32>::iterator plr_itr = PlayerPoints.find(GUID_LOPART(itr->guid));
         if (plr_itr != PlayerPoints.end())
         {
-            //check if there is already more points
+            // check if there is already more points
             if (plr_itr->second < points_to_add)
                 PlayerPoints[GUID_LOPART(itr->guid)] = points_to_add;
         }
@@ -708,3 +710,4 @@ bool ArenaTeam::IsFighting() const
                 return true;
     return false;
 }
+

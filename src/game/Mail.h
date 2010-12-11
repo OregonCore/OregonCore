@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,6 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
+
 #ifndef OREGON_MAIL_H
 #define OREGON_MAIL_H
 
@@ -42,12 +45,12 @@ enum MailMessageType
 
 enum MailCheckMask
 {
-    MAIL_CHECK_MASK_NONE        = 0x00,                     /// Nothing.
-    MAIL_CHECK_MASK_READ        = 0x01,                     /// This mail was read.
-    MAIL_CHECK_MASK_RETURNED    = 0x02,                     /// This mail was returned. No allow return mail.
-    MAIL_CHECK_MASK_COPIED      = 0x04,                     /// This mail was copied. No allow make item copy from mail text.
-    MAIL_CHECK_MASK_COD_PAYMENT = 0x08,                     /// This mail is payable on delivery.
-    MAIL_CHECK_MASK_HAS_BODY    = 0x10,                     /// This mail has body text.
+    MAIL_CHECK_MASK_NONE        = 0x00,                     // Nothing.
+    MAIL_CHECK_MASK_READ        = 0x01,                     // This mail was read.
+    MAIL_CHECK_MASK_RETURNED    = 0x02,                     // This mail was returned. No allow return mail.
+    MAIL_CHECK_MASK_COPIED      = 0x04,                     // This mail was copied. No allow make item copy from mail text.
+    MAIL_CHECK_MASK_COD_PAYMENT = 0x08,                     // This mail is payable on delivery.
+    MAIL_CHECK_MASK_HAS_BODY    = 0x10,                     // This mail has body text.
 };
 
 // gathered from Stationery.dbc

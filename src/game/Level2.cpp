@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -2105,7 +2107,7 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
     return true;
 }
 
-/////WAYPOINT COMMANDS
+// WAYPOINT COMMANDS
 
 bool ChatHandler::HandleWpAddCommand(const char* args)
 {
@@ -2142,8 +2144,8 @@ bool ChatHandler::HandleWpAddCommand(const char* args)
 
     if (!pathid)
     {
-        sLog.outDebug("DEBUG: HandleWpAddCommand - Current creature haven't loaded path.");
-        PSendSysMessage("%s%s|r", "|cffff33ff", "Current creature haven't loaded path.");
+        sLog.outDebug("DEBUG: HandleWpAddCommand - Current creature has no loaded path.");
+        PSendSysMessage("%s%s|r", "|cffff33ff", "Current creature has no loaded path.");
         return true;
     }
 
@@ -2263,7 +2265,7 @@ bool ChatHandler::HandleWpUnLoadPathCommand(const char * /*args*/)
             target->Say("Path unloaded.",0,0);
             return true;
         }
-        PSendSysMessage("%s%s|r", "|cffff33ff", "Target have no loaded path.");
+        PSendSysMessage("%s%s|r", "|cffff33ff", "Target has no loaded path.");
     }
     return true;
 }
@@ -2297,7 +2299,7 @@ bool ChatHandler::HandleWpEventCommand(const char* args)
                 PSendSysMessage("%s%s%u|r", "|cff00ff00", "Wp Event: New waypoint event added: ", id);
             }
             else
-                PSendSysMessage("|cff00ff00Wp Event: You have choosed an existing waypoint script guid: %u|r", id);
+                PSendSysMessage("|cff00ff00Wp Event: You have chosen an existing waypoint script guid: %u|r", id);
         }
         else
         {
@@ -2365,7 +2367,7 @@ bool ChatHandler::HandleWpEventCommand(const char* args)
            PSendSysMessage("%s%s%u|r","|cff00ff00","Wp Event: Waypoint script removed: ", id);
         }
         else
-            PSendSysMessage("|cffff33ffWp Event: ERROR: you have selected a non existing script: %u|r", id);
+            PSendSysMessage("|cffff33ffWp Event: ERROR: you have selected an invalid script: %u|r", id);
 
         return true;
     }
@@ -2429,7 +2431,7 @@ bool ChatHandler::HandleWpEventCommand(const char* args)
 
             if (!result)
             {
-                SendSysMessage("|cffff33ffERROR: You have selected an non existing waypoint script guid.|r");
+                SendSysMessage("|cffff33ffERROR: You have selected an invalid waypoint script guid.|r");
                 return true;
             }
 
@@ -3004,7 +3006,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
     return true;
 }
 
-//////////// WAYPOINT COMMANDS //
+// WAYPOINT COMMANDS
 
 //rename characters
 bool ChatHandler::HandleCharacterRenameCommand(const char* args)
@@ -3681,7 +3683,7 @@ bool ChatHandler::LookupPlayerSearchCommand(QueryResult_AutoPtr result, int32 li
     return true;
 }
 
-/// Triggering corpses expire check in world
+// Triggering corpses expire check in world
 bool ChatHandler::HandleServerCorpsesCommand(const char* /*args*/)
 {
     CorpsesErase();
@@ -4332,3 +4334,4 @@ bool ChatHandler::HandleTitlesCurrentCommand(const char* args)
 
     return true;
 }
+

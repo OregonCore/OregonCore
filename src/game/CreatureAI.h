@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008-2009 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -87,7 +89,7 @@ class CreatureAI : public UnitAI
 
         virtual ~CreatureAI() {}
 
-        /// == Reactions At =================================
+        // == Reactions At =================================
 
         // Called if IsVisible(Unit *who) is true at each *who move, reaction at visibility zone enter
         void MoveInLineOfSight_Safe(Unit *who);
@@ -143,7 +145,7 @@ class CreatureAI : public UnitAI
         // Called at text emote receive from player
         virtual void ReceiveEmote(Player* /*pPlayer*/, uint32 /*text_emote*/) {}
 
-        /// == Triggered Actions Requested ==================
+        // == Triggered Actions Requested ==================
 
         // Called when creature attack expected (if creature can and no have current victim)
         // Note: for reaction at hostile action must be called AttackedBy function.
@@ -152,7 +154,7 @@ class CreatureAI : public UnitAI
         // Called at World update tick
         //virtual void UpdateAI(const uint32 /*diff*/) {}
 
-        /// == State checks =================================
+        // == State checks =================================
 
         // Is unit visible for MoveInLineOfSight
         //virtual bool IsVisible(Unit *) const { return false; }
@@ -160,7 +162,7 @@ class CreatureAI : public UnitAI
         // Called when victim entered water and creature can not enter water
         //virtual bool canReachByRangeAttack(Unit*) { return false; }
 
-        /// == Fields =======================================
+        // == Fields =======================================
 
         // Pointer to controlled by AI creature
         //Creature* const me;
@@ -187,3 +189,4 @@ enum Permitions
 };
 
 #endif
+

@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon  <https://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -1046,3 +1048,4 @@ void WorldSession::HandleSummonResponseOpcode(WorldPacket& recv_data)
 
     GetPlayer()->SummonIfPossible(agree);
 }
+

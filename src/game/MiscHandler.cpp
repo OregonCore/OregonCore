@@ -950,7 +950,7 @@ void WorldSession::HandleMoveTimeSkippedOpcode(WorldPacket & recv_data)
         recv_data >> time_skipped;
         DEBUG_LOG("WORLD: CMSG_MOVE_TIME_SKIPPED");
 
-        /// TODO
+        // TODO
         must be need use in Oregon
         We substract server Lags to move time (AntiLags)
         for exmaple
@@ -1318,7 +1318,7 @@ void WorldSession::HandleFarSightOpcode(WorldPacket & recv_data)
             if (WorldObject *target = _player->GetViewpoint())
                 _player->SetSeer(target);
             else
-                sLog.outError("Player %s requests non-existing seer", _player->GetName());
+                sLog.outError("Player %s requests invalid seer", _player->GetName());
             break;
         default:
             DEBUG_LOG("Unhandled mode in CMSG_FAR_SIGHT: %u", apply);
@@ -1461,3 +1461,4 @@ void WorldSession::HandleSetTaxiBenchmarkOpcode(WorldPacket & recv_data)
 
     DEBUG_LOG("Client used \"/timetest %d\" command", mode);
 }
+

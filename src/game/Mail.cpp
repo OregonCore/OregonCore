@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,15 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
-
-/**
- * @addtogroup mailing
- * @{
- *
- * @file Mail.cpp
- * This file contains the the code needed for MaNGOS to handle mails.
- *
  */
 
 #include "Mail.h"
@@ -111,7 +104,7 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data)
 
     if (!rc)
     {
-        sLog.outDetail("Player %u is sending mail to %s (GUID: not existed!) with subject %s and body %s includes %u items, %u copper and %u COD copper with unk1 = %u, unk2 = %u",
+        sLog.outDetail("Player %u is sending mail to invalid player %s (no GUID) with subject %s and body %s includes %u items, %u copper and %u COD copper with unk1 = %u, unk2 = %u",
             pl->GetGUIDLow(), receiver.c_str(), subject.c_str(), body.c_str(), items_count, money, COD, unk1, unk2);
         pl->SendMailResult(0, MAIL_SEND, MAIL_ERR_RECIPIENT_NOT_FOUND);
         return;
@@ -663,7 +656,7 @@ void WorldSession::HandleItemTextQuery(WorldPacket & recv_data)
 
     recv_data >> itemTextId >> mailId >> unk;
 
-    ///TODO: some check needed, if player has item with guid mailId, or has mail with id mailId
+    // TODO: some check needed, if player has item with guid mailId, or has mail with id mailId
 
     sLog.outDebug("CMSG_ITEM_TEXT_QUERY itemguid: %u, mailId: %u, unk: %u", itemTextId, mailId, unk);
 
@@ -817,7 +810,7 @@ MailSender::MailSender(Object* sender, MailStationery stationery ) : m_stationer
         default:
             m_messageType = MAIL_NORMAL;
             m_senderId = 0;                                 // will show mail from not existed player
-            sLog.outError( "MailSender::MailSender - Mail have unexpected sender typeid (%u)", sender->GetTypeId());
+            sLog.outError( "MailSender::MailSender - Mail has unexpected sender typeid (%u)", sender->GetTypeId());
             break;
     }
 }
@@ -1107,3 +1100,4 @@ void WorldSession::SendExternalMails()
         }
     sLog.outDebug("External Mail - All Mails Sent...");
 }
+

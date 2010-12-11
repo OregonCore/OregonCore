@@ -1221,3 +1221,4 @@ public:
 #define auctionbot Oregon::Singleton<AuctionHouseBot>::Instance()
 
 #endif
+
