@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,10 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
-/** \file
-    \ingroup world
-*/
 
 #include "Common.h"
 #include "Database/DatabaseEnv.h"
@@ -100,7 +98,7 @@ struct ScriptAction
     ScriptInfo const* script;                               // pointer to static script data
 };
 
-/// World constructor
+// World constructor
 World::World()
 {
     m_playerLimit = 0;
@@ -122,10 +120,10 @@ World::World()
     m_updateTimeCount = 0;
 }
 
-/// World destructor
+// World destructor
 World::~World()
 {
-    ///- Empty the kicked session set
+    // Empty the kicked session set
     while (!m_sessions.empty())
     {
         // not remove from queue, prevent loading new sessions
@@ -133,7 +131,7 @@ World::~World()
         m_sessions.erase(m_sessions.begin());
     }
 
-    ///- Empty the WeatherMap
+    // Empty the WeatherMap
     for (WeatherMap::iterator itr = m_weathers.begin(); itr != m_weathers.end(); ++itr)
         delete itr->second;
 
@@ -150,10 +148,10 @@ World::~World()
     //TODO free addSessQueue
 }
 
-/// Find a player in a specified zone
+// Find a player in a specified zone
 Player* World::FindPlayerInZone(uint32 zone)
 {
-    ///- circle through active sessions and return the first player found in the zone
+    // circle through active sessions and return the first player found in the zone
     SessionMap::iterator itr;
     for (itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
     {
@@ -171,7 +169,7 @@ Player* World::FindPlayerInZone(uint32 zone)
     return NULL;
 }
 
-/// Find a session by its id
+// Find a session by its id
 WorldSession* World::FindSession(uint32 id) const
 {
     SessionMap::const_iterator itr = m_sessions.find(id);
@@ -182,10 +180,10 @@ WorldSession* World::FindSession(uint32 id) const
         return NULL;
 }
 
-/// Remove a given session
+// Remove a given session
 bool World::RemoveSession(uint32 id)
 {
-    ///- Find the session, kick the user, but we can't delete session at this moment to prevent iterator invalidation
+    // Find the session, kick the user, but we can't delete session at this moment to prevent iterator invalidation
     SessionMap::iterator itr = m_sessions.find(id);
 
     if (itr != m_sessions.end() && itr->second)
@@ -210,8 +208,8 @@ World::AddSession_ (WorldSession* s)
 
     //NOTE - Still there is race condition in WorldSession* being used in the Sockets
 
-    ///- kick already loaded player with same account (if any) and remove session
-    ///- if player is in loading and want to load again, return
+    // kick already loaded player with same account (if any) and remove session
+    // if player is in loading and want to load again, return
     if (!RemoveSession (s->GetAccountId ()))
     {
         s->KickPlayer ();
@@ -377,7 +375,7 @@ bool World::RemoveQueuedPlayer(WorldSession* sess)
     return found;
 }
 
-/// Find a Weather object by the given zoneid
+// Find a Weather object by the given zoneid
 Weather* World::FindWeather(uint32 id) const
 {
     WeatherMap::const_iterator itr = m_weathers.find(id);
@@ -388,7 +386,7 @@ Weather* World::FindWeather(uint32 id) const
         return 0;
 }
 
-/// Remove a Weather object for the given zoneid
+// Remove a Weather object for the given zoneid
 void World::RemoveWeather(uint32 id)
 {
     // not called at the moment. Kept for completeness
@@ -401,7 +399,7 @@ void World::RemoveWeather(uint32 id)
     }
 }
 
-/// Add a Weather object to the list
+// Add a Weather object to the list
 Weather* World::AddWeather(uint32 zone_id)
 {
     WeatherZoneChances const* weatherChances = objmgr.GetWeatherChances(zone_id);
@@ -417,7 +415,7 @@ Weather* World::AddWeather(uint32 zone_id)
     return w;
 }
 
-/// Initialize config values
+// Initialize config values
 void World::LoadConfigSettings(bool reload)
 {
     if (reload)
@@ -429,17 +427,17 @@ void World::LoadConfigSettings(bool reload)
         }
     }
 
-    ///- Read the player limit and the Message of the day from the config file
+    // Read the player limit and the Message of the day from the config file
     SetPlayerLimit(sConfig.GetIntDefault("PlayerLimit", DEFAULT_PLAYER_LIMIT), true);
     SetMotd(sConfig.GetStringDefault("Motd", "Welcome to a Oregon Core Server."));
 
-    ///- Get string for new logins (newly created characters)
+    // Get string for new logins (newly created characters)
     SetNewCharString(sConfig.GetStringDefault("PlayerStart.String", ""));
 
-    ///- Send server info on login?
+    // Send server info on login?
     m_configs[CONFIG_ENABLE_SINFO_LOGIN] = sConfig.GetIntDefault("Server.LoginInfo", 0);
 
-    ///- Read all rates from the config file
+    // Read all rates from the config file
     rate_values[RATE_HEALTH]      = sConfig.GetFloatDefault("Rate.Health", 1);
     if (rate_values[RATE_HEALTH] < 0)
     {
@@ -574,7 +572,7 @@ void World::LoadConfigSettings(bool reload)
         sLog.outError("Anticheat.Movement.MaxMovementAlarms (%d) must be <=100. Using 100 instead.", m_MaxMovementAlarms);
         m_MaxMovementAlarms = 100;
     }
-    ///- Read other configuration items from the config file
+    // Read other configuration items from the config file
 
     m_configs[CONFIG_COMPRESSION] = sConfig.GetIntDefault("Compression", 1);
     if (m_configs[CONFIG_COMPRESSION] < 1 || m_configs[CONFIG_COMPRESSION] > 9)
@@ -626,7 +624,7 @@ void World::LoadConfigSettings(bool reload)
         m_configs[CONFIG_SOCKET_SELECTTIME] = sConfig.GetIntDefault("SocketSelectTime", DEFAULT_SOCKET_SELECT_TIME);
 
     m_configs[CONFIG_GROUP_XP_DISTANCE] = sConfig.GetIntDefault("MaxGroupXPDistance", 74);
-    /// \todo Add MonsterSight and GuarderSight (with meaning) in Oregond.conf or put them as define
+    // todo Add MonsterSight and GuarderSight (with meaning) in Oregond.conf or put them as define
     m_configs[CONFIG_SIGHT_MONSTER] = sConfig.GetIntDefault("MonsterSight", 50);
     m_configs[CONFIG_SIGHT_GUARDER] = sConfig.GetIntDefault("GuarderSight", 50);
 
@@ -1043,7 +1041,7 @@ void World::LoadConfigSettings(bool reload)
     m_visibility_notify_periodInInstances = sConfig.GetIntDefault("Visibility.Notify.Period.InInstances",   DEFAULT_VISIBILITY_NOTIFY_PERIOD);
     m_visibility_notify_periodInBGArenas = sConfig.GetIntDefault("Visibility.Notify.Period.InBGArenas",    DEFAULT_VISIBILITY_NOTIFY_PERIOD);
 
-    ///- Read the "Data" directory from the config file
+    // Read the "Data" directory from the config file
     std::string dataPath = sConfig.GetStringDefault("DataDir","./");
     if (dataPath.at(dataPath.length()-1) != '/' && dataPath.at(dataPath.length()-1) != '\\')
         dataPath.append("/");
@@ -1124,19 +1122,19 @@ void World::LoadConfigSettings(bool reload)
     m_configs[CONFIG_CHATLOG_BGROUND] = sConfig.GetBoolDefault("ChatLogs.BattleGround", false);
 }
 
-/// Initialize the World
+// Initialize the World
 void World::SetInitialWorldSettings()
 {
-    ///- Initialize the random number generator
+    // Initialize the random number generator
     srand((unsigned int)time(NULL));
 
-    ///- Initialize config settings
+    // Initialize config settings
     LoadConfigSettings();
 
-    ///- Init highest guids before any table loading to prevent using not initialized guids in some code.
+    // Init highest guids before any table loading to prevent using not initialized guids in some code.
     objmgr.SetHighestGuids();
 
-    ///- Check the existence of the map files for all races' startup areas.
+    // Check the existence of the map files for all races' startup areas.
     if (!MapManager::ExistMapAndVMap(0,-6240.32f, 331.033f)
         ||!MapManager::ExistMapAndVMap(0,-8949.95f,-132.493f)
         ||!MapManager::ExistMapAndVMap(1,-618.518f,-4251.67f)
@@ -1150,13 +1148,13 @@ void World::SetInitialWorldSettings()
         exit(1);
     }
 
-    ///- Loading strings. Getting no records means core load has to be canceled because no error message can be output.
+    // Loading strings. Getting no records means core load has to be canceled because no error message can be output.
     sLog.outString();
     sLog.outString("Loading Oregon strings...");
     if (!objmgr.LoadOregonStrings())
         exit(1);                                            // Error message displayed in function already
 
-    ///- Update the realm entry in the database with the realm type from the config file
+    // Update the realm entry in the database with the realm type from the config file
     //No SQL injection as values are treated as integers
 
     // not send custom type REALM_FFA_PVP to realm list
@@ -1164,10 +1162,10 @@ void World::SetInitialWorldSettings()
     uint32 realm_zone = getConfig(CONFIG_REALM_ZONE);
     LoginDatabase.PExecute("UPDATE realmlist SET icon = %u, timezone = %u WHERE id = '%d'", server_type, realm_zone, realmID);
 
-    ///- Remove the bones after a restart
+    // Remove the bones after a restart
     CharacterDatabase.Execute("DELETE FROM corpse WHERE corpse_type = '0'");
 
-    ///- Load the DBC files
+    // Load the DBC files
     sLog.outString("Initialize data stores...");
     LoadDBCStores(m_dataPath);
     DetectDBCLang();
@@ -1181,7 +1179,7 @@ void World::SetInitialWorldSettings()
     sLog.outString("Loading SkillLineAbilityMultiMap Data...");
     spellmgr.LoadSkillLineAbilityMap();
 
-    ///- Clean up and pack instances
+    // Clean up and pack instances
     sLog.outString("Cleaning up instances...");
     sInstanceSaveManager.CleanupInstances();                // must be called before `creature_respawn`/`gameobject_respawn` tables
 
@@ -1362,7 +1360,7 @@ void World::SetInitialWorldSettings()
     sLog.outString("Loading Skill Fishing base level requirements...");
     objmgr.LoadFishingBaseSkillLevel();
 
-    ///- Load dynamic data tables from the database
+    // Load dynamic data tables from the database
     sLog.outString("Loading Item Auctions...");
     auctionmgr.LoadAuctionItems();
     sLog.outString("Loading Auctions...");
@@ -1416,11 +1414,11 @@ void World::SetInitialWorldSettings()
     sLog.outString("Loading GM tickets...");
     ticketmgr.LoadGMTickets();
 
-    ///- Handle outdated emails (delete/return)
+    // Handle outdated emails (delete/return)
     sLog.outString("Returning old mails...");
     objmgr.ReturnOrDeleteOldMails(false);
 
-    ///- Load and initialize scripts
+    // Load and initialize scripts
     sLog.outString("Loading Scripts...");
     sLog.outString();
     objmgr.LoadQuestStartScripts();                         // must be after load Creature/Gameobject(Template/Data) and QuestTemplate
@@ -1447,7 +1445,7 @@ void World::SetInitialWorldSettings()
     sLog.outString("Initializing Scripts...");
     sScriptMgr.ScriptsInit();
 
-    ///- Initialize game time and timers
+    // Initialize game time and timers
     sLog.outDebug("DEBUG:: Initialize game time and timers");
     m_gameTime = time(NULL);
     m_startTime=m_gameTime;
@@ -1486,11 +1484,11 @@ void World::SetInitialWorldSettings()
     mail_timer_expires = ((DAY * IN_MILLISECONDS) / (m_timers[WUPDATE_AUCTIONS].GetInterval()));
     sLog.outDebug("Mail timer set to: %u, mail return is called every %u minutes", mail_timer, mail_timer_expires);
 
-    ///- Initilize static helper structures
+    // Initilize static helper structures
     AIRegistry::Initialize();
     Player::InitVisibleBits();
 
-    ///- Initialize MapManager
+    // Initialize MapManager
     sLog.outString("Starting Map System");
     MapManager::Instance().Initialize();
 
@@ -1498,12 +1496,12 @@ void World::SetInitialWorldSettings()
     uint32 nextGameEvent = gameeventmgr.Initialize();
     m_timers[WUPDATE_EVENTS].SetInterval(nextGameEvent);    //depend on next event
 
-    ///- Initialize Battlegrounds
+    // Initialize Battlegrounds
     sLog.outString("Starting BattleGround System");
     sBattleGroundMgr.CreateInitialBattleGrounds();
     sBattleGroundMgr.InitAutomaticArenaPointDistribution();
 
-    ///- Initialize outdoor pvp
+    // Initialize outdoor pvp
     sLog.outString("Starting Outdoor PvP System");
     sOutdoorPvPMgr.InitOutdoorPvP();
 
@@ -1609,7 +1607,7 @@ void World::RecordTimeDiff(const char *text, ...)
     m_currentTime = thisTime;
 }
 
-/// Update the World !
+// Update the World !
 void World::Update(time_t diff)
 {
     m_updateTime = uint32(diff);
@@ -1628,7 +1626,7 @@ void World::Update(time_t diff)
         }
     }
 
-    ///- Update the different timers
+    // Update the different timers
     for (int i = 0; i < WUPDATE_COUNT; ++i)
     {
         if (m_timers[i].GetCurrent() >= 0)
@@ -1637,17 +1635,17 @@ void World::Update(time_t diff)
             m_timers[i].SetCurrent(0);
     }
 
-    ///- Update the game time and check for shutdown time
+    // Update the game time and check for shutdown time
     _UpdateGameTime();
 
-    /// Handle daily quests reset time
+    // Handle daily quests reset time
     if (m_gameTime > m_NextDailyQuestReset)
     {
         ResetDailyQuests();
         m_NextDailyQuestReset += DAY;
     }
 
-    /// Handle external mail
+    // Handle external mail
     if (m_configs[CONFIG_EXTERNAL_MAIL] != 0)
     {
         extmail_timer.Update(diff);
@@ -1658,13 +1656,13 @@ void World::Update(time_t diff)
         }
     }
 
-    /// <ul><li> Handle auctions when the timer has passed
+    // Handle auctions when the timer has passed
     if (m_timers[WUPDATE_AUCTIONS].Passed())
     {
         auctionbot.Update();
         m_timers[WUPDATE_AUCTIONS].Reset();
 
-        ///- Update mails (return old mails with item, or delete them)
+        // Update mails (return old mails with item, or delete them)
         //(tested... works on win)
         if (++mail_timer > mail_timer_expires)
         {
@@ -1672,28 +1670,28 @@ void World::Update(time_t diff)
             objmgr.ReturnOrDeleteOldMails(true);
         }
 
-        ///- Handle expired auctions
+        // Handle expired auctions
         auctionmgr.Update();
     }
 
-    /// <li> Handle session updates when the timer has passed
+    // Handle session updates when the timer has passed
     RecordTimeDiff(NULL);
     UpdateSessions(diff);
     RecordTimeDiff("UpdateSessions");
 
-    /// <li> Handle weather updates when the timer has passed
+    // Handle weather updates when the timer has passed
     if (m_timers[WUPDATE_WEATHERS].Passed())
     {
         m_timers[WUPDATE_WEATHERS].Reset();
 
-        ///- Send an update signal to Weather objects
+        // Send an update signal to Weather objects
         WeatherMap::iterator itr, next;
         for (itr = m_weathers.begin(); itr != m_weathers.end(); itr = next)
         {
             next = itr;
             ++next;
 
-            ///- and remove Weather objects for zones with no player
+            // and remove Weather objects for zones with no player
                                                             //As interval > WorldTick
             if (!itr->second->Update(m_timers[WUPDATE_WEATHERS].GetInterval()))
             {
@@ -1703,7 +1701,7 @@ void World::Update(time_t diff)
         }
     }
 
-    /// <li> Update uptime table
+    // Update uptime table
     if (m_timers[WUPDATE_UPTIME].Passed())
     {
         uint32 tmpDiff = (m_gameTime - m_startTime);
@@ -1713,7 +1711,7 @@ void World::Update(time_t diff)
         WorldDatabase.PExecute("UPDATE uptime SET uptime = %d, maxplayers = %d WHERE starttime = " UI64FMTD, tmpDiff, maxClientsNum, uint64(m_startTime));
     }
 
-    /// <li> Clean logs table
+    // Clean logs table
     if (sWorld.getConfig(CONFIG_LOGDB_CLEARTIME) > 0) // if not enabled, ignore the timer
     {
         if (m_timers[WUPDATE_CLEANDB].Passed())
@@ -1724,11 +1722,11 @@ void World::Update(time_t diff)
         }
     }
 
-    /// <li> Handle all other objects
-    ///- Update objects when the timer has passed (maps, transport, creatures,...)
+    // Handle all other objects
+    // Update objects when the timer has passed (maps, transport, creatures,...)
     MapManager::Instance().Update(diff);                // As interval = 0
 
-    ///- Process necessary scripts
+    // Process necessary scripts
     if (!m_scriptSchedule.empty())
     {
         RecordTimeDiff(NULL);
@@ -1745,7 +1743,7 @@ void World::Update(time_t diff)
     UpdateResultQueue();
     RecordTimeDiff("UpdateResultQueue");
 
-    ///- Erase corpses once every 20 minutes
+    // Erase corpses once every 20 minutes
     if (m_timers[WUPDATE_CORPSES].Passed())
     {
         m_timers[WUPDATE_CORPSES].Reset();
@@ -1753,7 +1751,7 @@ void World::Update(time_t diff)
         CorpsesErase();
     }
 
-    ///- Process Game events when necessary
+    // Process Game events when necessary
     if (m_timers[WUPDATE_EVENTS].Passed())
     {
         m_timers[WUPDATE_EVENTS].Reset();                   // to give time for Update() to be processed
@@ -1777,10 +1775,10 @@ void World::ForceGameEventUpdate()
     m_timers[WUPDATE_EVENTS].Reset();
 }
 
-/// Put scripts in the execution queue
+// Put scripts in the execution queue
 void World::ScriptsStart(ScriptMapMap const& scripts, uint32 id, Object* source, Object* target, bool start)
 {
-    ///- Find the script map
+    // Find the script map
     ScriptMapMap::const_iterator s = scripts.find(id);
     if (s == scripts.end())
         return;
@@ -1790,7 +1788,7 @@ void World::ScriptsStart(ScriptMapMap const& scripts, uint32 id, Object* source,
     uint64 targetGUID = target ? target->GetGUID() : (uint64)0;
     uint64 ownerGUID  = (source->GetTypeId() == TYPEID_ITEM) ? ((Item*)source)->GetOwnerGUID() : (uint64)0;
 
-    ///- Schedule script execution for all scripts in the script map
+    // Schedule script execution for all scripts in the script map
     ScriptMap const *s2 = &(s->second);
     bool immedScript = false;
     for (ScriptMap::const_iterator iter = s2->begin(); iter != s2->end(); ++iter)
@@ -1805,7 +1803,7 @@ void World::ScriptsStart(ScriptMapMap const& scripts, uint32 id, Object* source,
         if (iter->first == 0)
             immedScript = true;
     }
-    ///- If one of the effects should be immediate, launch the script execution
+    // If one of the effects should be immediate, launch the script execution
     if (start && immedScript)
         ScriptsProcess();
 }
@@ -1827,18 +1825,18 @@ void World::ScriptCommandStart(ScriptInfo const& script, uint32 delay, Object* s
     sa.script = &script;
     m_scriptSchedule.insert(std::pair<time_t, ScriptAction>(m_gameTime + delay, sa));
 
-    ///- If effects should be immediate, launch the script execution
+    // If effects should be immediate, launch the script execution
     if (delay == 0)
         ScriptsProcess();
 }
 
-/// Process queued scripts
+// Process queued scripts
 void World::ScriptsProcess()
 {
     if (m_scriptSchedule.empty())
         return;
 
-    ///- Process overdue queued scripts
+    // Process overdue queued scripts
     std::multimap<time_t, ScriptAction>::iterator iter = m_scriptSchedule.begin();
                                                             // ok as multimap is a *sorted* associative container
     while (!m_scriptSchedule.empty() && (iter->first <= m_gameTime))
@@ -2429,7 +2427,7 @@ void World::ScriptsProcess()
             {
                 if (!source)
                 {
-                    sLog.outError("SCRIPT_COMMAND_START_MOVE is tried to apply to NON-existing unit.");
+                    sLog.outError("SCRIPT_COMMAND_START_MOVE initiated for invalid unit (unit not found).");
                     break;
                 }
 
@@ -2441,7 +2439,7 @@ void World::ScriptsProcess()
 
                 if (!sWaypointMgr->GetPath(step.script->datalong))
                 {
-                    sLog.outError("SCRIPT_COMMAND_START_MOVE source mover has an invallid path, skipping.", step.script->datalong2);
+                    sLog.outError("SCRIPT_COMMAND_START_MOVE source mover has an invalid path, skipping.", step.script->datalong2);
                     break;
                 }
 
@@ -2453,7 +2451,7 @@ void World::ScriptsProcess()
             {
                 if (!step.script->datalong || !step.script->datalong2)
                 {
-                    sLog.outError("SCRIPT_COMMAND_CALLSCRIPT calls invallid db_script_id or lowguid not present: skipping.");
+                    sLog.outError("SCRIPT_COMMAND_CALLSCRIPT calls invalid db_script_id or lowguid not present: skipping.");
                     break;
                 }
                 //our target
@@ -2553,7 +2551,7 @@ void World::ScriptsProcess()
     return;
 }
 
-/// Send a packet to all players (except self if mentioned)
+// Send a packet to all players (except self if mentioned)
 void World::SendGlobalMessage(WorldPacket *packet, WorldSession *self, uint32 team)
 {
     SessionMap::iterator itr;
@@ -2570,7 +2568,7 @@ void World::SendGlobalMessage(WorldPacket *packet, WorldSession *self, uint32 te
     }
 }
 
-/// Send a packet to all GMs (except self if mentioned)
+// Send a packet to all GMs (except self if mentioned)
 void World::SendGlobalGMMessage(WorldPacket *packet, WorldSession *self, uint32 team)
 {
     SessionMap::iterator itr;
@@ -2588,7 +2586,7 @@ void World::SendGlobalGMMessage(WorldPacket *packet, WorldSession *self, uint32 
     }
 }
 
-/// Send a System Message to all players (except self if mentioned)
+// Send a System Message to all players (except self if mentioned)
 void World::SendWorldText(int32 string_id, ...)
 {
     std::vector<std::vector<WorldPacket*> > data_cache;     // 0 = default, i => i-1 locale index
@@ -2696,7 +2694,7 @@ void World::SendGMText(int32 string_id, ...)
             delete data_cache[i][j];
 }
 
-/// Send a System Message to all players (except self if mentioned)
+// Send a System Message to all players (except self if mentioned)
 void World::SendGlobalText(const char* text, WorldSession *self)
 {
     WorldPacket data;
@@ -2714,7 +2712,7 @@ void World::SendGlobalText(const char* text, WorldSession *self)
     free(buf);
 }
 
-/// Send a packet to all players (or players selected team) in the zone (except self if mentioned)
+// Send a packet to all players (or players selected team) in the zone (except self if mentioned)
 void World::SendZoneMessage(uint32 zone, WorldPacket *packet, WorldSession *self, uint32 team)
 {
     SessionMap::iterator itr;
@@ -2732,7 +2730,7 @@ void World::SendZoneMessage(uint32 zone, WorldPacket *packet, WorldSession *self
     }
 }
 
-/// Send a System Message to all players in the zone (except self if mentioned)
+// Send a System Message to all players in the zone (except self if mentioned)
 void World::SendZoneText(uint32 zone, const char* text, WorldSession *self, uint32 team)
 {
     WorldPacket data;
@@ -2740,7 +2738,7 @@ void World::SendZoneText(uint32 zone, const char* text, WorldSession *self, uint
     SendZoneMessage(zone, &data, self,team);
 }
 
-/// Kick (and save) all players
+// Kick (and save) all players
 void World::KickAll()
 {
     m_QueuedPlayer.clear();                                 // prevent send queue update packet and login queued sessions
@@ -2750,7 +2748,7 @@ void World::KickAll()
         itr->second->KickPlayer();
 }
 
-/// Kick (and save) all players with security level less `sec`
+// Kick (and save) all players with security level less `sec`
 void World::KickAllLess(AccountTypes sec)
 {
     // session not removed at kick and will removed in next update tick
@@ -2759,7 +2757,7 @@ void World::KickAllLess(AccountTypes sec)
             itr->second->KickPlayer();
 }
 
-/// Kick (and save) the designated player
+// Kick (and save) the designated player
 bool World::KickPlayer(const std::string& playerName)
 {
     SessionMap::iterator itr;
@@ -2784,7 +2782,7 @@ bool World::KickPlayer(const std::string& playerName)
     return false;
 }
 
-/// Ban an account or ban an IP address, duration will be parsed using TimeStringToSecs if it is positive, otherwise permban
+// Ban an account or ban an IP address, duration will be parsed using TimeStringToSecs if it is positive, otherwise permban
 BanReturn World::BanAccount(BanMode mode, std::string nameOrIP, std::string duration, std::string reason, std::string author)
 {
     LoginDatabase.escape_string(nameOrIP);
@@ -2795,7 +2793,7 @@ BanReturn World::BanAccount(BanMode mode, std::string nameOrIP, std::string dura
     uint32 duration_secs = TimeStringToSecs(duration);
     QueryResult_AutoPtr resultAccounts = QueryResult_AutoPtr(NULL);                     //used for kicking
 
-    ///- Update the database with ban information
+    // Update the database with ban information
     switch(mode)
     {
         case BAN_IP:
@@ -2823,7 +2821,7 @@ BanReturn World::BanAccount(BanMode mode, std::string nameOrIP, std::string dura
             return BAN_NOTFOUND;                            // Nobody to ban
     }
 
-    ///- Disconnect all affected players (for IP it can be several)
+    // Disconnect all affected players (for IP it can be several)
     do
     {
         Field* fieldsAccount = resultAccounts->Fetch();
@@ -2845,7 +2843,7 @@ BanReturn World::BanAccount(BanMode mode, std::string nameOrIP, std::string dura
     return BAN_SUCCESS;
 }
 
-/// Remove a ban from an account or IP address
+// Remove a ban from an account or IP address
 bool World::RemoveBanAccount(BanMode mode, std::string nameOrIP)
 {
     if (mode == BAN_IP)
@@ -2870,18 +2868,18 @@ bool World::RemoveBanAccount(BanMode mode, std::string nameOrIP)
     return true;
 }
 
-/// Update the game time
+// Update the game time
 void World::_UpdateGameTime()
 {
-    ///- update the time
+    // update the time
     time_t thisTime = time(NULL);
     uint32 elapsed = uint32(thisTime - m_gameTime);
     m_gameTime = thisTime;
 
-    ///- if there is a shutdown timer
+    // if there is a shutdown timer
     if (!m_stopEvent && m_ShutdownTimer > 0 && elapsed > 0)
     {
-        ///- ... and it is overdue, stop the world (set m_stopEvent)
+        // ... and it is overdue, stop the world (set m_stopEvent)
         if (m_ShutdownTimer <= elapsed)
         {
             if (!(m_ShutdownMask & SHUTDOWN_MASK_IDLE) || GetActiveAndQueuedSessionCount() == 0)
@@ -2889,7 +2887,7 @@ void World::_UpdateGameTime()
             else
                 m_ShutdownTimer = 1;                        // minimum timer value to wait idle state
         }
-        ///- ... else decrease it and if necessary display a shutdown countdown to the users
+        // ... else decrease it and if necessary display a shutdown countdown to the users
         else
         {
             m_ShutdownTimer -= elapsed;
@@ -2899,7 +2897,7 @@ void World::_UpdateGameTime()
     }
 }
 
-/// Shutdown the server
+// Shutdown the server
 void World::ShutdownServ(uint32 time, uint32 options, uint8 exitcode)
 {
     // ignore if server shutdown at next tick
@@ -2909,7 +2907,7 @@ void World::ShutdownServ(uint32 time, uint32 options, uint8 exitcode)
     m_ShutdownMask = options;
     m_ExitCode = exitcode;
 
-    ///- If the shutdown time is 0, set m_stopEvent (except if shutdown is 'idle' with remaining sessions)
+    // If the shutdown time is 0, set m_stopEvent (except if shutdown is 'idle' with remaining sessions)
     if (time == 0)
     {
         if (!(options & SHUTDOWN_MASK_IDLE) || GetActiveAndQueuedSessionCount() == 0)
@@ -2917,7 +2915,7 @@ void World::ShutdownServ(uint32 time, uint32 options, uint8 exitcode)
         else
             m_ShutdownTimer = 1;                            //So that the session count is re-evaluated at next world tick
     }
-    ///- Else set the shutdown timer and warn users
+    // Else set the shutdown timer and warn users
     else
     {
         m_ShutdownTimer = time;
@@ -2925,14 +2923,14 @@ void World::ShutdownServ(uint32 time, uint32 options, uint8 exitcode)
     }
 }
 
-/// Display a shutdown message to the user(s)
+// Display a shutdown message to the user(s)
 void World::ShutdownMsg(bool show, Player* player)
 {
     // not show messages for idle shutdown mode
     if (m_ShutdownMask & SHUTDOWN_MASK_IDLE)
         return;
 
-    ///- Display a message every 12 hours, hours, 5 minutes, minute, 5 seconds and finally seconds
+    // Display a message every 12 hours, hours, 5 minutes, minute, 5 seconds and finally seconds
     if (show ||
         (m_ShutdownTimer < 10) ||
                                                             // < 30 sec; every 5 sec
@@ -2955,7 +2953,7 @@ void World::ShutdownMsg(bool show, Player* player)
     }
 }
 
-/// Cancel a planned server shutdown
+// Cancel a planned server shutdown
 void World::ShutdownCancel()
 {
     // nothing cancel or too later
@@ -2972,7 +2970,7 @@ void World::ShutdownCancel()
     DEBUG_LOG("Server %s cancelled.",(m_ShutdownMask & SHUTDOWN_MASK_RESTART ? "restart" : "shutdown"));
 }
 
-/// Send a server message to the user(s)
+// Send a server message to the user(s)
 void World::SendServerMessage(ServerMessageType type, const char *text, Player* player)
 {
     WorldPacket data(SMSG_SERVER_MESSAGE, 50);              // guess size
@@ -2988,12 +2986,12 @@ void World::SendServerMessage(ServerMessageType type, const char *text, Player* 
 
 void World::UpdateSessions(time_t diff)
 {
-    ///- Add new sessions
+    // Add new sessions
     WorldSession* sess;
     while (addSessQueue.next(sess))
         AddSession_ (sess);
 
-    ///- Then send an update signal to remaining ones
+    // Then send an update signal to remaining ones
     for (SessionMap::iterator itr = m_sessions.begin(), next; itr != m_sessions.end(); itr = next)
     {
         next = itr;
@@ -3002,7 +3000,7 @@ void World::UpdateSessions(time_t diff)
         if (!itr->second)
             continue;
 
-        ///- and remove not active sessions from the list
+        // and remove not active sessions from the list
         if (!itr->second->Update(diff))                      // As interval = 0
         {
             if (!RemoveQueuedPlayer(itr->second) && itr->second && getConfig(CONFIG_INTERVAL_DISCONNECT_TOLERANCE))
@@ -3142,3 +3140,4 @@ void World::LoadDBVersion()
     else
         m_DBVersion = "unknown world database";
 }
+

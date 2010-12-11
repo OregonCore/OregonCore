@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,10 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/** \file
-    \ingroup world
-*/
-
 #include "Weather.h"
 #include "WorldPacket.h"
 #include "WorldSession.h"
@@ -31,7 +29,7 @@
 #include "ObjectMgr.h"
 #include "Util.h"
 
-/// Create the Weather object
+// Create the Weather object
 Weather::Weather(uint32 zone, WeatherZoneChances const* weatherChances) : m_zone(zone), m_weatherChances(weatherChances)
 {
     m_timer.SetInterval(sWorld.getConfig(CONFIG_INTERVAL_CHANGEWEATHER));
@@ -41,21 +39,21 @@ Weather::Weather(uint32 zone, WeatherZoneChances const* weatherChances) : m_zone
     sLog.outDetail("WORLD: Starting weather system for zone %u (change every %u minutes).", m_zone, (uint32)(m_timer.GetInterval() / (1000*MINUTE)));
 }
 
-/// Launch a weather update
+// Launch a weather update
 bool Weather::Update(time_t diff)
 {
     if (m_timer.GetCurrent()>=0)
         m_timer.Update(diff);
     else m_timer.SetCurrent(0);
 
-    ///- If the timer has passed, ReGenerate the weather
+    // If the timer has passed, ReGenerate the weather
     if (m_timer.Passed())
     {
         m_timer.Reset();
         // update only if Regenerate has changed the weather
         if (ReGenerate())
         {
-            ///- Weather will be removed if not updated (no players in zone anymore)
+            // Weather will be removed if not updated (no players in zone anymore)
             if (!UpdateWeather())
                 return false;
         }
@@ -63,7 +61,7 @@ bool Weather::Update(time_t diff)
     return true;
 }
 
-/// Calculate the new weather
+// Calculate the new weather
 bool Weather::ReGenerate()
 {
     if (!m_weatherChances)
@@ -73,11 +71,11 @@ bool Weather::ReGenerate()
         return false;
     }
 
-    /// Weather statistics:
-    ///- 30% - no change
-    ///- 30% - weather gets better (if not fine) or change weather type
-    ///- 30% - weather worsens (if not fine)
-    ///- 10% - radical change (if not fine)
+    // Weather statistics:
+    // 30% - no change
+    // 30% - weather gets better (if not fine) or change weather type
+    // 30% - weather worsens (if not fine)
+    // 10% - radical change (if not fine)
     uint32 u = urand(0, 99);
 
     if (u < 30)
@@ -117,10 +115,10 @@ bool Weather::ReGenerate()
 
     if (m_type != WEATHER_TYPE_FINE)
     {
-        /// Radical change:
-        ///- if light -> heavy
-        ///- if medium -> change weather type
-        ///- if heavy -> 50% light, 50% change weather type
+        // Radical change:
+        // if light -> heavy
+        // if medium -> change weather type
+        // if heavy -> 50% light, 50% change weather type
 
         if (m_grade < 0.33333334f)
         {
@@ -159,11 +157,11 @@ bool Weather::ReGenerate()
     else
         m_type = WEATHER_TYPE_FINE;
 
-    /// New weather statistics (if not fine):
-    ///- 85% light
-    ///- 7% medium
-    ///- 7% heavy
-    /// If fine 100% sun (no fog)
+    // New weather statistics (if not fine):
+    // 85% light
+    // 7% medium
+    // 7% heavy
+    // If fine 100% sun (no fog)
 
     if (m_type == WEATHER_TYPE_FINE)
     {
@@ -203,14 +201,14 @@ void Weather::SendFineWeatherUpdateToPlayer(Player *player)
     player->GetSession()->SendPacket(&data);
 }
 
-/// Send the new weather to all players in the zone
+// Send the new weather to all players in the zone
 bool Weather::UpdateWeather()
 {
     Player* player = sWorld.FindPlayerInZone(m_zone);
     if (!player)
         return false;
 
-    ///- Send the weather packet to all players in this zone
+    // Send the weather packet to all players in this zone
     if (m_grade >= 1)
         m_grade = 0.9999f;
     else if (m_grade < 0)
@@ -222,7 +220,7 @@ bool Weather::UpdateWeather()
     data << uint32(state) << (float)m_grade << uint8(0);
     player->SendMessageToSet(&data, true);
 
-    ///- Log the event
+    // Log the event
     char const* wthstr;
     switch(state)
     {
@@ -269,7 +267,7 @@ bool Weather::UpdateWeather()
     return true;
 }
 
-/// Set the weather
+// Set the weather
 void Weather::SetWeather(WeatherType type, float grade)
 {
     if (m_type == type && m_grade == grade)
@@ -280,7 +278,7 @@ void Weather::SetWeather(WeatherType type, float grade)
     UpdateWeather();
 }
 
-/// Get the sound number associated with the current weather
+// Get the sound number associated with the current weather
 WeatherState Weather::GetWeatherState() const
 {
     if (m_grade<0.27f)

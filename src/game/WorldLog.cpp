@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,10 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-
-/** \file
-    \ingroup u2w
-*/
 
 #include "WorldLog.h"
 #include "Policies/SingletonImp.h"
@@ -43,7 +41,7 @@ WorldLog::~WorldLog()
     i_file = NULL;
 }
 
-/// Open the log file (if specified so in the configuration file)
+// Open the log file (if specified so in the configuration file)
 void WorldLog::Initialize()
 {
     std::string logsDir = sConfig.GetStringDefault("LogsDir","");

@@ -117,7 +117,7 @@ Pet::~Pet()
 
 void Pet::AddToWorld()
 {
-    ///- Register the pet for guid lookup
+    // Register the pet for guid lookup
     if (!IsInWorld())
     {
         ObjectAccessor::Instance().AddObject(this);
@@ -138,10 +138,10 @@ void Pet::AddToWorld()
 
 void Pet::RemoveFromWorld()
 {
-    ///- Remove the pet from the accessor
+    // Remove the pet from the accessor
     if (IsInWorld())
     {
-        ///- Don't call the function for Creature, normal mobs + totems go in a different storage
+        // Don't call the function for Creature, normal mobs + totems go in a different storage
         Unit::RemoveFromWorld();
         ObjectAccessor::Instance().RemoveObject(this);
     }
@@ -255,7 +255,7 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
             setPowerType(POWER_FOCUS);
             break;
         default:
-            sLog.outError("Pet have incorrect type (%u) for pet loading.",getPetType());
+            sLog.outError("Pet has incorrect type (%u) for pet loading.",getPetType());
     }
     InitStatsForLevel(petlevel);
     SetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP, time(NULL));
@@ -1198,7 +1198,7 @@ bool Pet::InitStatsForLevel(uint32 petlevel)
             }
             break;
         default:
-            sLog.outError("Pet have incorrect type (%u) for levelup.", getPetType());
+            sLog.outError("Pet has incorrect type (%u) for levelup.", getPetType());
             break;
     }
 
@@ -1271,7 +1271,7 @@ void Pet::_LoadSpellCooldowns()
 
             if (!sSpellStore.LookupEntry(spell_id))
             {
-                sLog.outError("Pet %u have unknown spell %u in pet_spell_cooldown, skipping.",m_charmInfo->GetPetNumber(),spell_id);
+                sLog.outError("Pet %u has unknown spell %u in pet_spell_cooldown, skipping.",m_charmInfo->GetPetNumber(),spell_id);
                 continue;
             }
 
@@ -1406,7 +1406,7 @@ void Pet::_LoadAuras(uint32 timediff)
             else
                 remaincharges = -1;
 
-            /// do not load single target auras (unless they were cast by the player)
+            // do not load single target auras (unless they were cast by the player)
             if (caster_guid != GetGUID() && IsSingleTargetSpell(spellproto))
                 continue;
 
@@ -1443,7 +1443,7 @@ void Pet::_SaveAuras()
             // save previous spellEffectPair to db
             itr2--;
             SpellEntry const *spellInfo = itr2->second->GetSpellProto();
-            /// do not save single target auras (unless they were cast by the player)
+            // do not save single target auras (unless they were cast by the player)
             if (!(itr2->second->GetCasterGUID() != GetGUID() && IsSingleTargetSpell(spellInfo)))
             {
                 if (!itr2->second->IsPassive())
@@ -1486,11 +1486,11 @@ bool Pet::addSpell(uint16 spell_id, uint16 active, PetSpellState state, PetSpell
         // do pet spell book cleanup
         if (state == PETSPELL_UNCHANGED)                     // spell load case
         {
-            sLog.outError("Pet::addSpell: Non-existed in SpellStore spell #%u request, deleting for all pets in pet_spell.",spell_id);
+            sLog.outError("Pet::addSpell: Invalid SpellStore spell #%u request, deleting for all pets in pet_spell.",spell_id);
             CharacterDatabase.PExecute("DELETE FROM pet_spell WHERE spell = '%u'",spell_id);
         }
         else
-            sLog.outError("Pet::addSpell: Non-existed in SpellStore spell #%u request.",spell_id);
+            sLog.outError("Pet::addSpell: Invalid SpellStore spell #%u request.",spell_id);
 
         return false;
     }

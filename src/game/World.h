@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,10 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
-/// \addtogroup world The World
-/// @{
-/// \file
 
 #ifndef __WORLD_H
 #define __WORLD_H
@@ -69,7 +67,7 @@ enum ShutdownExitCode
     RESTART_EXIT_CODE  = 2,
 };
 
-/// Timers for different object refresh rates
+// Timers for different object refresh rates
 enum WorldTimers
 {
     WUPDATE_OBJECTS     = 0,
@@ -83,7 +81,7 @@ enum WorldTimers
     WUPDATE_COUNT       = 8
 };
 
-/// Configuration elements
+// Configuration elements
 enum WorldConfigs
 {
     CONFIG_COMPRESSION = 0,
@@ -246,7 +244,7 @@ enum WorldConfigs
     CONFIG_VALUE_COUNT
 };
 
-/// Server rates
+// Server rates
 enum Rates
 {
     RATE_HEALTH = 0,
@@ -308,7 +306,7 @@ enum Rates
     MAX_RATES
 };
 
-/// Type of server
+// Type of server
 enum RealmType
 {
     REALM_TYPE_NORMAL = 0,
@@ -375,7 +373,7 @@ enum RealmZone
 #define SCRIPT_COMMAND_PLAYSOUND            18              // datalong soundid, datalong2 play only self
 #define SCRIPT_COMMAND_KILL                 19              // datalong removecorpse
 
-/// Storage class for commands issued for delayed execution
+// Storage class for commands issued for delayed execution
 struct CliCommandHolder
 {
     typedef void Print(void*, const char*);
@@ -397,7 +395,7 @@ struct CliCommandHolder
     ~CliCommandHolder() { delete[] m_command; }
 };
 
-/// The World
+// The World
 class World
 {
     public:
@@ -409,12 +407,12 @@ class World
         WorldSession* FindSession(uint32 id) const;
         void AddSession(WorldSession *s);
         bool RemoveSession(uint32 id);
-        /// Get the number of current active sessions
+        // Get the number of current active sessions
         void UpdateMaxSessionCounters();
         uint32 GetActiveAndQueuedSessionCount() const { return m_sessions.size(); }
         uint32 GetActiveSessionCount() const { return m_sessions.size() - m_QueuedPlayer.size(); }
         uint32 GetQueuedSessionCount() const { return m_QueuedPlayer.size(); }
-        /// Get the maximum number of parallel sessions on the server since last reboot
+        // Get the maximum number of parallel sessions on the server since last reboot
         uint32 GetMaxQueuedSessionCount() const { return m_maxQueuedSessionCount; }
         uint32 GetMaxActiveSessionCount() const { return m_maxActiveSessionCount; }
         Player* FindPlayerInZone(uint32 zone);
@@ -423,12 +421,12 @@ class World
         Weather* AddWeather(uint32 zone_id);
         void RemoveWeather(uint32 zone_id);
 
-        /// Get the active session server limit (or security level limitations)
+        // Get the active session server limit (or security level limitations)
         uint32 GetPlayerAmountLimit() const { return m_playerLimit >= 0 ? m_playerLimit : 0; }
         AccountTypes GetPlayerSecurityLimit() const { return m_allowedSecurityLevel < 0 ? SEC_PLAYER : m_allowedSecurityLevel; }
         void SetPlayerSecurityLimit(AccountTypes sec) { m_allowedSecurityLevel = (sec < SEC_PLAYER ? SEC_PLAYER : sec); }
 
-        /// Set the active session server limit (or security level limitation)
+        // Set the active session server limit (or security level limitation)
         void SetPlayerLimit(int32 limit, bool needUpdate = false);
 
         //player Queue
@@ -439,38 +437,38 @@ class World
         bool HasRecentlyDisconnected(WorldSession*);
         uint32 GetQueueSize() const { return m_QueuedPlayer.size(); }
 
-        /// \todo Actions on m_allowMovement still to be implemented
-        /// Is movement allowed?
+        // todo Actions on m_allowMovement still to be implemented
+        // Is movement allowed?
         bool getAllowMovement() const { return m_allowMovement; }
-        /// Allow/Disallow object movements
+        // Allow/Disallow object movements
         void SetAllowMovement(bool allow) { m_allowMovement = allow; }
 
-        /// Set a new Message of the Day
+        // Set a new Message of the Day
         void SetMotd(std::string motd) { m_motd = motd; }
-        /// Get the current Message of the Day
+        // Get the current Message of the Day
         const char* GetMotd() const { return m_motd.c_str(); }
 
-        /// Set the string for new characters (first login)
+        // Set the string for new characters (first login)
         void SetNewCharString(std::string str) { m_newCharString = str; }
-        /// Get the string for new characters (first login)
+        // Get the string for new characters (first login)
         const std::string& GetNewCharString() const { return m_newCharString; }
 
         uint32 GetDefaultDbcLocale() const { return m_defaultDbcLocale; }
 
-        /// Get the path where data (dbc, maps) are stored on disk
+        // Get the path where data (dbc, maps) are stored on disk
         std::string GetDataPath() const { return m_dataPath; }
 
-        /// When server started?
+        // When server started?
         time_t const& GetStartTime() const { return m_startTime; }
-        /// What time is it?
+        // What time is it?
         time_t const& GetGameTime() const { return m_gameTime; }
-        /// Uptime (in secs)
+        // Uptime (in secs)
         uint32 GetUptime() const { return uint32(m_gameTime - m_startTime); }
-        /// Update time
+        // Update time
         uint32 GetUpdateTime() const { return m_updateTime; }
         void SetRecordDiffInterval(int32 t) { if (t >= 0) m_configs[CONFIG_INTERVAL_LOG_UPDATE] = (uint32)t; }
 
-        /// Get the maximum skill level a player can reach
+        // Get the maximum skill level a player can reach
         uint16 GetConfigMaxSkillValue() const
         {
             uint32 lvl = getConfig(CONFIG_MAX_PLAYER_LEVEL);
@@ -489,7 +487,7 @@ class World
         void SendZoneText(uint32 zone, const char *text, WorldSession *self = 0, uint32 team = 0);
         void SendServerMessage(ServerMessageType type, const char *text = "", Player* player = NULL);
 
-        /// Are we in the middle of a shutdown?
+        // Are we in the middle of a shutdown?
         bool IsShutdowning() const { return m_ShutdownTimer > 0; }
         void ShutdownServ(uint32 time, uint32 options, uint8 exitcode);
         void ShutdownCancel();
@@ -501,19 +499,19 @@ class World
         void Update(time_t diff);
 
         void UpdateSessions(time_t diff);
-        /// Set a server rate (see #Rates)
+        // Set a server rate (see #Rates)
         void setRate(Rates rate,float value) { rate_values[rate]=value; }
-        /// Get a server rate (see #Rates)
+        // Get a server rate (see #Rates)
         float getRate(Rates rate) const { return rate_values[rate]; }
 
-        /// Set a server configuration element (see #WorldConfigs)
+        // Set a server configuration element (see #WorldConfigs)
         void setConfig(uint32 index,uint32 value)
         {
             if (index<CONFIG_VALUE_COUNT)
                 m_configs[index]=value;
         }
 
-        /// Get a server configuration element (see #WorldConfigs)
+        // Get a server configuration element (see #WorldConfigs)
         uint32 getConfig(uint32 index) const
         {
             if (index<CONFIG_VALUE_COUNT)
@@ -522,7 +520,7 @@ class World
                 return 0;
         }
 
-        /// Are we on a "Player versus Player" server?
+        // Are we on a "Player versus Player" server?
         bool IsPvPRealm() { return (getConfig(CONFIG_GAME_TYPE) == REALM_TYPE_PVP || getConfig(CONFIG_GAME_TYPE) == REALM_TYPE_RPPVP || getConfig(CONFIG_GAME_TYPE) == REALM_TYPE_FFA_PVP); }
         bool IsFFAPvPRealm() { return getConfig(CONFIG_GAME_TYPE) == REALM_TYPE_FFA_PVP; }
 
@@ -672,5 +670,4 @@ extern uint32 realmID;
 
 #define sWorld Oregon::Singleton<World>::Instance()
 #endif
-/// @}
 

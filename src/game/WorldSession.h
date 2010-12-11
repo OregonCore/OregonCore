@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,10 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-
-/// \addtogroup u2w
-/// @{
-/// \file
 
 #ifndef __WORLDSESSION_H
 #define __WORLDSESSION_H
@@ -67,7 +65,7 @@ enum PartyResult
     PARTY_RESULT_INVITE_RESTRICTED    = 13
 };
 
-/// Player session in the World
+// Player session in the World
 class WorldSession
 {
     friend class CharacterHandler;
@@ -98,19 +96,19 @@ class WorldSession
         void SetPlayer(Player *plr) { _player = plr; }
         uint8 Expansion() const { return m_expansion; }
 
-        /// Session in auth.queue currently
+        // Session in auth.queue currently
         void SetInQueue(bool state) { m_inQueue = state; }
 
-        /// Is the user engaged in a log out process?
+        // Is the user engaged in a log out process?
         bool isLogingOut() const { return _logoutTime || m_playerLogout; }
 
-        /// Engage the logout process for the user
+        // Engage the logout process for the user
         void LogoutRequest(time_t requestTime)
         {
             _logoutTime = requestTime;
         }
 
-        /// Is logout cooldown expired?
+        // Is logout cooldown expired?
         bool ShouldLogOut(time_t currTime) const
         {
             return (_logoutTime > 0 && currTime >= _logoutTime + 20);
@@ -122,7 +120,7 @@ class WorldSession
         void QueuePacket(WorldPacket* new_packet);
         bool Update(uint32 diff);
 
-        /// Handle the authentication waiting queue (to be completed)
+        // Handle the authentication waiting queue (to be completed)
         void SendAuthWaitQue(uint32 position);
 
         //void SendTestCreatureQueryOpcode(uint32 entry, uint64 guid, uint32 testvalue);
@@ -659,5 +657,4 @@ class WorldSession
         ACE_Based::LockedQueue<WorldPacket*,ACE_Thread_Mutex> _recvQueue;
 };
 #endif
-/// @}
 

@@ -1,9 +1,11 @@
-/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/*
+ * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
  * Copyright (C) 2010 Oregoncore <http://www.oregoncore.com/>
  *
  * This program is free software licensed under GPL version 2
- * Please see the included DOCS/LICENSE.TXT for more information */
+ * Please see the included DOCS/LICENSE.TXT for more information
+ */
 
 /* ScriptData
 SDName: Npc_EscortAI
@@ -238,7 +240,7 @@ void npc_escortAI::UpdateAI(const uint32 uiDiff)
 
                         m_uiWPWaitTimer = 0;
 
-                        debug_log("OSCR: EscortAI are returning home to spawn location: %u, %f, %f, %f", POINT_HOME, fRetX, fRetY, fRetZ);
+                        debug_log("OSCR: EscortAI returning home to spawn location: %u, %f, %f, %f", POINT_HOME, fRetX, fRetY, fRetZ);
                         return;
                     }
 
@@ -507,3 +509,4 @@ void npc_escortAI::SetEscortPaused(bool bPaused)
     else
         RemoveEscortState(STATE_ESCORT_PAUSED);
 }
+

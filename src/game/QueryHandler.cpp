@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -138,7 +140,7 @@ void WorldSession::HandleQueryTimeOpcode(WorldPacket & /*recv_data*/)
     SendPacket(&data);
 }
 
-/// Only _static_ data send in this packet !!!
+// Only _static_ data send in this packet !!!
 void WorldSession::HandleCreatureQueryOpcode(WorldPacket & recv_data)
 {
     uint32 entry;
@@ -201,7 +203,7 @@ void WorldSession::HandleCreatureQueryOpcode(WorldPacket & recv_data)
     }
 }
 
-/// Only _static_ data send in this packet !!!
+// Only _static_ data send in this packet !!!
 void WorldSession::HandleGameObjectQueryOpcode(WorldPacket & recv_data)
 {
     uint32 entryID;
@@ -437,3 +439,4 @@ void WorldSession::HandlePageQueryOpcode(WorldPacket & recv_data)
         sLog.outDebug("WORLD: Sent SMSG_PAGE_TEXT_QUERY_RESPONSE");
     }
 }
+

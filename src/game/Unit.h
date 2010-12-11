@@ -552,7 +552,7 @@ enum UnitFlags2
     UNIT_FLAG2_FORCE_MOVE     = 0x00000040
 };
 
-/// Non Player Character flags
+// Non Player Character flags
 enum NPCFlags
 {
     UNIT_NPC_FLAG_NONE                  = 0x00000000,
@@ -1585,14 +1585,14 @@ class Unit : public WorldObject
         void RemoveComboPointHolder(uint32 lowguid) { m_ComboPointHolders.erase(lowguid); }
         void ClearComboPointHolders();
 
-        ///----------Pet responses methods-----------------
+        //----------Pet responses methods-----------------
         void SendPetCastFail(uint32 spellid, uint8 msg);
         void SendPetActionFeedback (uint8 msg);
         void SendPetTalk (uint32 pettalk);
         void SendPetSpellCooldown (uint32 spellid, time_t cooltime);
         void SendPetClearCooldown (uint32 spellid);
         void SendPetAIReaction(uint64 guid);
-        ///----------End of Pet responses methods----------
+        //----------End of Pet responses methods----------
 
         void propagateSpeedChange() { GetMotionMaster()->propagateSpeedChange(); }
 
@@ -1724,3 +1724,4 @@ namespace Oregon
 }
 
 #endif
+

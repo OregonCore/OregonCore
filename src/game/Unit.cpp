@@ -1346,7 +1346,7 @@ void Unit::DealSpellDamage(SpellNonMeleeDamage *damageInfo, bool durabilityLoss)
     SpellEntry const *spellProto = sSpellStore.LookupEntry(damageInfo->SpellID);
     if (spellProto == NULL)
     {
-        DEBUG_LOG("Unit::DealSpellDamage have wrong damageInfo->SpellID: %u", damageInfo->SpellID);
+        DEBUG_LOG("Unit::DealSpellDamage has invalid damageInfo->SpellID: %u", damageInfo->SpellID);
         return;
     }
 
@@ -4503,7 +4503,7 @@ bool Unit::HandleHasteAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
 
     if (!triggerEntry)
     {
-        sLog.outError("Unit::HandleHasteAuraProc: Spell %u have not existed triggered spell %u",hasteSpell->Id,triggered_spell_id);
+        sLog.outError("Unit::HandleHasteAuraProc: Spell %u has invalid triggered spell %u",hasteSpell->Id,triggered_spell_id);
         return false;
     }
 
@@ -5521,7 +5521,7 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                     SpellEntry const* windfurySpellEntry = sSpellStore.LookupEntry(spellId);
                     if (!windfurySpellEntry)
                     {
-                        sLog.outError("Unit::HandleDummyAuraProc: non existed spell id: %u (Windfury)",spellId);
+                        sLog.outError("Unit::HandleDummyAuraProc: invalid spell id: %u (Windfury)",spellId);
                         return false;
                     }
 
@@ -5704,7 +5704,7 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
 
     if (!triggerEntry)
     {
-        sLog.outError("Unit::HandleDummyAuraProc: Spell %u have not existed triggered spell %u",dummySpell->Id,triggered_spell_id);
+        sLog.outError("Unit::HandleDummyAuraProc: Spell %u has invalid triggered spell %u",dummySpell->Id,triggered_spell_id);
         return false;
     }
 
@@ -6100,7 +6100,7 @@ bool Unit::HandleProcTriggerSpell(Unit *pVictim, uint32 damage, Aura* triggeredB
     if (triggerEntry == NULL)
     {
         // Not cast unknown spell
-        // sLog.outError("Unit::HandleProcTriggerSpell: Spell %u have 0 in EffectTriggered[%d], not handled custom case?",auraSpellInfo->Id,triggeredByAura->GetEffIndex());
+        // sLog.outError("Unit::HandleProcTriggerSpell: Spell %u has 0 in EffectTriggered[%d], unhandled custom case?",auraSpellInfo->Id,triggeredByAura->GetEffIndex());
         return false;
     }
 
@@ -6405,9 +6405,9 @@ FactionTemplateEntry const* Unit::getFactionTemplateEntry() const
         if (GetGUID() != guid)
         {
             if (GetTypeId() == TYPEID_PLAYER)
-                sLog.outError("Player %s have invalid faction (faction template id) #%u", ToPlayer()->GetName(), getFaction());
+                sLog.outError("Player %s has invalid faction (faction template id) #%u", ToPlayer()->GetName(), getFaction());
             else
-                sLog.outError("Creature (template id: %u) have invalid faction (faction template id) #%u", ToCreature()->GetCreatureInfo()->Entry, getFaction());
+                sLog.outError("Creature (template id: %u) has invalid faction (faction template id) #%u", ToCreature()->GetCreatureInfo()->Entry, getFaction());
 
             guid = GetGUID();
         }
@@ -9309,7 +9309,7 @@ bool Unit::HandleStatModifier(UnitMods unitMod, UnitModifierType modifierType, f
 {
     if (unitMod >= UNIT_MOD_END || modifierType >= MODIFIER_TYPE_END)
     {
-        sLog.outError("ERROR in HandleStatModifier(): non existed UnitMods or wrong UnitModifierType!");
+        sLog.outError("ERROR in HandleStatModifier(): Invalid UnitMods or invalid UnitModifierType!");
         return false;
     }
 
@@ -9379,7 +9379,7 @@ float Unit::GetModifierValue(UnitMods unitMod, UnitModifierType modifierType) co
 {
     if (unitMod >= UNIT_MOD_END || modifierType >= MODIFIER_TYPE_END)
     {
-        sLog.outError("trial to access non existed modifier value from UnitMods!");
+        sLog.outError("GetModifierValue: Invalid modifier value from UnitMods!");
         return 0.0f;
     }
 
@@ -9409,7 +9409,7 @@ float Unit::GetTotalAuraModValue(UnitMods unitMod) const
 {
     if (unitMod >= UNIT_MOD_END)
     {
-        sLog.outError("trial to access non existed UnitMods in GetTotalAuraModValue()!");
+        sLog.outError("Invalid UnitMods in GetTotalAuraModValue()!");
         return 0.0f;
     }
 
@@ -10024,18 +10024,18 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit * pTarget, uint32 procFlag,
                 }
             }
 
-            /// this is aura triggering code call
+            // this is aura triggering code call
             Aura* triggeredByAura = i->triggeredByAura;
 
-            /// save charges existence before processing to prevent crash at access to deleted triggered aura after
-            /// used in speedup code check before check aura existance.
+            // save charges existence before processing to prevent crash at access to deleted triggered aura after
+            // used in speedup code check before check aura existance.
             bool triggeredByAuraWithCharges =  triggeredByAura->m_procCharges > 0;
 
-            /// success in event proccesing
-            /// used in speedup code check before check aura existance.
+            // success in event proccesing
+            // used in speedup code check before check aura existance.
             bool casted = false;
 
-            /// process triggered code
+            // process triggered code
             switch(*aur)
             {
                 case SPELL_AURA_PROC_TRIGGER_SPELL:
@@ -10099,10 +10099,10 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit * pTarget, uint32 procFlag,
                 }
             }
 
-            /// Update charge (aura can be removed by triggers)
+            // Update charge (aura can be removed by triggers)
             if (casted && triggeredByAuraWithCharges)
             {
-                /// need re-found aura (can be dropped by triggers)
+                // need re-found aura (can be dropped by triggers)
                 AuraMap::const_iterator lower = GetAuras().lower_bound(i->triggeredByAura_SpellPair);
                 AuraMap::const_iterator upper = GetAuras().upper_bound(i->triggeredByAura_SpellPair);
                 for (AuraMap::const_iterator itr = lower; itr != upper; ++itr)
@@ -10119,7 +10119,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit * pTarget, uint32 procFlag,
             }
         }
 
-        /// Safely remove auras with zero charges
+        // Safely remove auras with zero charges
         for (AuraList::const_iterator i = auras.begin(), next; i != auras.end(); i = next)
         {
             next = i; ++next;
@@ -10525,7 +10525,7 @@ Player* Unit::GetSpellModOwner() const
     return NULL;
 }
 
-///----------Pet responses methods-----------------
+//----------Pet responses methods-----------------
 void Unit::SendPetCastFail(uint32 spellid, uint8 msg)
 {
     Unit *owner = GetCharmerOrOwner();
@@ -10599,7 +10599,7 @@ void Unit::SendPetAIReaction(uint64 guid)
     owner->ToPlayer()->GetSession()->SendPacket(&data);
 }
 
-///----------End of Pet responses methods----------
+//----------End of Pet responses methods----------
 
 void Unit::StopMoving()
 {
@@ -11999,3 +11999,4 @@ bool CharmInfo::IsReturning()
 {
     return m_isReturning;
 }
+

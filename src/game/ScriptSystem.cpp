@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2008-2009 OREGON <http://www.oregoncore.com/>
+ * Copyright (C) 2008-2009 MaNGOS <http://getmangos.com/>
  *
- * Thanks to the original authors: MaNGOS <http://getmangos.com/>
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -246,3 +246,4 @@ void SystemMgr::LoadScriptWaypoints()
         outstring_log(">> Loaded 0 Script Waypoints. DB table script_waypoint is empty.");
     }
 }
+

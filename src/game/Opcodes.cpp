@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,14 +20,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/** \file
-    \ingroup u2w
-*/
-
 #include "Opcodes.h"
 #include "WorldSession.h"
 
-/// Correspondence between opcodes and their names
+// Correspondence between opcodes and their names
 OpcodeHandler opcodeTable[NUM_MSG_TYPES] =
 {
     /*0x000*/ { "MSG_NULL_ACTION",                  STATUS_NEVER,    &WorldSession::Handle_NULL                     },
@@ -1089,3 +1087,4 @@ OpcodeHandler opcodeTable[NUM_MSG_TYPES] =
     /*0x422*/ { "SMSG_SPLINE_MOVE_UNSET_FLYING",    STATUS_NEVER,    &WorldSession::Handle_ServerSide               },
     /*0x423*/ { "SMSG_SUMMON_CANCEL",               STATUS_NEVER,    &WorldSession::Handle_ServerSide               },
 };
+

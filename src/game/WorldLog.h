@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,10 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/// \addtogroup u2w
-/// @{
-/// \file
-
 #ifndef OREGON_WORLDLOG_H
 #define OREGON_WORLDLOG_H
 
@@ -31,7 +29,7 @@
 
 #include <stdarg.h>
 
-/// %Log packets to a file
+// Log packets to a file
 class WorldLog : public Oregon::Singleton<WorldLog, Oregon::ClassLevelLockable<WorldLog, ACE_Thread_Mutex> >
 {
     friend class Oregon::OperatorNew<WorldLog>;
@@ -40,14 +38,14 @@ class WorldLog : public Oregon::Singleton<WorldLog, Oregon::ClassLevelLockable<W
     WorldLog& operator=(const WorldLog &);
     typedef Oregon::ClassLevelLockable<WorldLog, ACE_Thread_Mutex>::Lock Guard;
 
-    /// Close the file in destructor
+    // Close the file in destructor
     ~WorldLog();
 
     public:
         void Initialize();
-        /// Is the world logger active?
+        // Is the world logger active?
         bool LogWorld(void) const { return (i_file != NULL); }
-        /// %Log to the file
+        // Log to the file
         void outLog(char const *fmt, ...);
         void outTimestampLog(char const *fmt, ...);
 
@@ -59,5 +57,4 @@ class WorldLog : public Oregon::Singleton<WorldLog, Oregon::ClassLevelLockable<W
 
 #define sWorldLog WorldLog::Instance()
 #endif
-/// @}
 

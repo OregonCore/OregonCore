@@ -1,6 +1,11 @@
-/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/*
+ * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software licensed under GPL version 2
- * Please see the included DOCS/LICENSE.TXT for more information */
+ * Please see the included DOCS/LICENSE.TXT for more information
+ */
 
 #ifndef SC_FOLLOWERAI_H
 #define SC_FOLLOWERAI_H
@@ -65,3 +70,4 @@ class FollowerAI : public ScriptedAI
 };
 
 #endif
+

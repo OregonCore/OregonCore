@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -82,13 +84,13 @@ void LoadSkillDiscoveryTable()
                 SpellEntry const* spellEntry = sSpellStore.LookupEntry(reqSkillOrSpell);
                 if (!spellEntry)
                 {
-                    sLog.outErrorDb("Spell (ID: %u) have not existed spell (ID: %i) in reqSpell field in skill_discovery_template table",spellId,reqSkillOrSpell);
+                    sLog.outErrorDb("Spell (ID: %u) has invalid spell (ID: %i) in reqSpell field in skill_discovery_template table",spellId,reqSkillOrSpell);
                     continue;
                 }
 
                 if (spellEntry->Mechanic != MECHANIC_DISCOVERY)
                 {
-                    sLog.outErrorDb("Spell (ID: %u) not have have MECHANIC_DISCOVERY (28) value in Mechanic field in spell.dbc but listed in skill_discovery_template table",spellId);
+                    sLog.outErrorDb("Spell (ID: %u) does not have MECHANIC_DISCOVERY (28) value in Mechanic field in spell.dbc but listed in skill_discovery_template table",spellId);
                     continue;
                 }
 
@@ -112,7 +114,7 @@ void LoadSkillDiscoveryTable()
             }
             else
             {
-                sLog.outErrorDb("Spell (ID: %u) have negative value in reqSpell field in skill_discovery_template table",spellId);
+                sLog.outErrorDb("Spell (ID: %u) has negative value in reqSpell field in skill_discovery_template table",spellId);
                 continue;
             }
             ++count;
@@ -121,7 +123,7 @@ void LoadSkillDiscoveryTable()
         sLog.outString();
         sLog.outString(">> Loaded %u skill discovery definitions", count);
         if (!ssNonDiscoverableEntries.str().empty())
-            sLog.outErrorDb("Some items can't be successfully discovered: have in chance field value < 0.000001 in skill_discovery_template DB table . List:\n%s",ssNonDiscoverableEntries.str().c_str());
+            sLog.outErrorDb("Some items can't be successfully discovered: has chance field value < 0.000001 in skill_discovery_template DB table . List:\n%s",ssNonDiscoverableEntries.str().c_str());
     }
     else
     {

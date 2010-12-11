@@ -3,6 +3,8 @@
  *
  * Copyright (C) 2008-2009 Trinity <http://www.trinitycore.org/>
  *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -265,7 +267,7 @@ ObjectGridUnloader::Visit(GridRefManager<T> &m)
         // if option set then object already saved at this moment
         if (!sWorld.getConfig(CONFIG_SAVE_RESPAWN_TIME_IMMEDIATELY))
             obj->SaveRespawnTime();
-        ///- object will get delinked from the manager when deleted
+        // object will get delinked from the manager when deleted
         delete obj;
     }
 }
@@ -322,3 +324,4 @@ template void ObjectGridUnloader::Visit(CorpseMapType &);
 template void ObjectGridCleaner::Visit<GameObject>(GameObjectMapType &);
 template void ObjectGridCleaner::Visit<DynamicObject>(DynamicObjectMapType &);
 template void ObjectGridCleaner::Visit<Corpse>(CorpseMapType &);
+

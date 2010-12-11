@@ -1,6 +1,11 @@
-/* Copyright (C) 2006 - 2008 OregonScript <https://scriptdev2.svn.sourceforge.net/>
+/*
+ * Copyright (C) 2006-2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ *
+ * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software licensed under GPL version 2
- * Please see the included DOCS/LICENSE.TXT for more information */
+ * Please see the included DOCS/LICENSE.TXT for more information
+ */
 
 #include "ScriptPCH.h"
 #include "Config/Config.h"
@@ -214,7 +219,7 @@ void Script::RegisterSelf()
     else
     {
         if (Name.find("example") == std::string::npos)
-            error_db_log("OregonScript: RegisterSelf, but script named %s does not have ScriptName assigned in database.",(this)->Name.c_str());
+            error_db_log("OSCR: RegisterSelf, but script named %s does not have ScriptName assigned in database.",(this)->Name.c_str());
         delete this;
     }
 }
