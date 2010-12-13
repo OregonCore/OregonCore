@@ -958,6 +958,7 @@ void World::LoadConfigSettings(bool reload)
     m_configs[CONFIG_BATTLEGROUND_CAST_DESERTER]                = sConfig.GetBoolDefault("Battleground.CastDeserter", true);
     m_configs[CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ENABLE]       = sConfig.GetBoolDefault("Battleground.QueueAnnouncer.Enable", false);
     m_configs[CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_PLAYERONLY]   = sConfig.GetBoolDefault("Battleground.QueueAnnouncer.PlayerOnly", false);
+    m_configs[CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ONSTART]      = sConfig.GetBoolDefault("Battleground.QueueAnnouncer.OnStart", false);
     m_configs[CONFIG_BATTLEGROUND_PREMATURE_REWARD]             = sConfig.GetBoolDefault("Battleground.PrematureReward", true);
     m_configs[CONFIG_BATTLEGROUND_PREMATURE_FINISH_TIMER]       = sConfig.GetIntDefault("BattleGround.PrematureFinishTimer", 5 * MINUTE * IN_MILLISECONDS);
     m_configs[CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE]             = sConfig.GetBoolDefault("Battleground.LeaveWrathMode", false);

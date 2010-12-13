@@ -486,6 +486,7 @@ class BattleGround
         void PlayerRelogin(uint64 guid);
 
         void SetDeleteThis() {m_SetDeleteThis = true;}
+        void Announce();
 
     protected:
         //this method is called, when BG cannot spawn its own spirit guide, or something is wrong, It correctly ends BattleGround

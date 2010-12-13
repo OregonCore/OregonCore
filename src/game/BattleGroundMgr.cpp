@@ -176,6 +176,56 @@ void BattleGroundQueue::AddPlayer(Player *plr, GroupQueueInfo *ginfo)
 
     // add the pinfo to ginfo's list
     ginfo->Players[plr->GetGUID()]  = &info;
+    
+    if(sWorld.getConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ENABLE))
+    {
+        //announce only once in a time
+        if(!sWorld.getConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_PLAYERONLY) && m_QueuedPlayers[queue_id].size() % 5 != 0) return;
+        BattleGround * bg = sBattleGroundMgr.GetBattleGroundTemplate(ginfo->BgTypeId);
+        if (!bg) return;
+
+        char const* bgName = bg->GetName();
+
+        uint32 q_min_level = Player::GetMinLevelForBattleGroundQueueId(queue_id);
+        uint32 q_max_level = Player::GetMaxLevelForBattleGroundQueueId(queue_id);
+
+        // replace hardcoded max level by player max level for nice output
+        if(q_max_level > sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL))
+            q_max_level = sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL);
+
+        int32 MinPlayers = bg->GetMinPlayersPerTeam();
+        int32 MaxPlayers = bg->GetMaxPlayersPerTeam();
+
+        uint32 qHorde = 0;
+        uint32 qAlliance = 0;
+
+        for(std::map<uint64, PlayerQueueInfo>::iterator itr = m_QueuedPlayers[queue_id].begin(); itr != m_QueuedPlayers[queue_id].end(); ++itr)
+        {
+            Player *_player = objmgr.GetPlayer((uint64)itr->first);
+            if (_player)
+            {
+                if(_player->GetTeam() == ALLIANCE)
+                    qAlliance++;
+                else
+                    qHorde++;
+            }
+        }
+
+        // Show queue status to player only (when joining queue)
+        if(sWorld.getConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_PLAYERONLY))
+        {
+            uint32 needAlliance = (MinPlayers < qAlliance) ? 0 : MinPlayers - qAlliance;
+            uint32 needHorde = (MinPlayers < qHorde) ? 0 : MinPlayers - qHorde;
+            ChatHandler(plr).PSendSysMessage(LANG_BG_QUEUE_ANNOUNCE_SELF,
+                bgName, q_min_level, q_max_level, qAlliance, needAlliance, qHorde, needHorde);
+        }
+        // System message
+        else
+        {
+            sWorld.SendWorldText(LANG_BG_QUEUE_ANNOUNCE_WORLD,
+                bgName, q_min_level, q_max_level, qAlliance, MaxPlayers, qHorde, MaxPlayers);
+        }
+    }
 }
 
 void BattleGroundQueue::RemovePlayer(uint64 guid, bool decreaseInvitedCount)

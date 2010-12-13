@@ -393,8 +393,13 @@ void BattleGroundAV::Update(time_t diff)
             m_Events |= 0x10;
 
             SendMessageToAll(GetOregonString(LANG_BG_AV_HAS_BEGUN));
+
             PlaySoundToAll(SOUND_BG_START);
+            if (sWorld.getConfig(CONFIG_BG_START_MUSIC))
+                PlaySoundToAll(SOUND_BG_START_L70ETC); //MUSIC
+
             SetStatus(STATUS_IN_PROGRESS);
+            BattleGround::Announce();
 
             sLog.outDebug("BattleGroundAV:: start spawning mine stuff");
             for (uint16 i= BG_AV_OBJECT_MINE_SUPPLY_N_MIN; i<=BG_AV_OBJECT_MINE_SUPPLY_N_MAX;i++)

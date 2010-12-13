@@ -3,7 +3,7 @@
 ###############################################
 
 [worldserver]
-ConfVersion=2010112001
+ConfVersion=2010121301
 
 # Note to devs, line breaks should be at column 80
 ###############################################################################
@@ -1444,6 +1444,11 @@ Death.Bones.BattlegroundOrArena = 1
 #
 #    Battleground.QueueAnnouncer.PlayerOnly
 #        Enable queue announcer posting to chat
+#        Default: 0 (disable)
+#                 1 (enable)
+#
+#    Battleground.QueueAnnouncer.OnStart
+#        Enable queue announcer posting to chat at BG start
 #        Default: 0 (disable)
 #                 1 (enable)
 #

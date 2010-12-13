@@ -652,8 +652,9 @@ enum OregonStrings
     LANG_YOUR_ARENA_LEVEL_REQ_ERROR     = 713,
 //                                      = 714, not used
     LANG_YOUR_BG_LEVEL_REQ_ERROR        = 715,
-//                                      = 716-719, not used
-
+//                                      = 716, not used
+    LANG_BG_QUEUE_ANNOUNCE_START        = 717,
+//                                      = 718-719, not used
     LANG_BG_GROUP_TOO_LARGE             = 720,              // "Your group is too large for this battleground. Please regroup to join."
     LANG_ARENA_GROUP_TOO_LARGE          = 721,              // "Your group is too large for this arena. Please regroup to join."
     LANG_ARENA_YOUR_TEAM_ONLY           = 722,              // "Your group has members not in your arena team. Please regroup to join."
