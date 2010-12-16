@@ -2077,11 +2077,13 @@ void Spell::EffectTeleportUnits(uint32 i)
 
     // Init dest coordinates
     uint32 mapid = m_targets.m_dstPos.GetMapId();
-    if (mapid == MAPID_INVALID) mapid = unitTarget->GetMapId();
-    float x, y, z;
-    m_targets.m_dstPos.GetPosition(x, y, z);
-    float orientation = m_targets.getUnitTarget() ? m_targets.getUnitTarget()->GetOrientation() : unitTarget->GetOrientation();
-    DEBUG_LOG("Spell::EffectTeleportUnits - teleport unit to %u %f %f %f\n", mapid, x, y, z);
+    if (mapid == MAPID_INVALID)
+        mapid = unitTarget->GetMapId();
+    float x, y, z, orientation;
+    m_targets.m_dstPos.GetPosition(x, y, z, orientation);
+    if (!orientation && m_targets.getUnitTarget())
+        orientation = m_targets.getUnitTarget()->GetOrientation();
+    DEBUG_LOG("Spell::EffectTeleportUnits - teleport unit to %u %f %f %f %f\n", mapid, x, y, z, orientation);
 
     if (mapid == unitTarget->GetMapId())
         unitTarget->NearTeleportTo(x, y, z, orientation, unitTarget == m_caster);
@@ -2094,7 +2096,7 @@ void Spell::EffectTeleportUnits(uint32 i)
         // Dimensional Ripper - Everlook
         case 23442:
         {
-          int32 r = irand(0, 119);
+            int32 r = irand(0, 119);
             if (r >= 70)                                  // 7/12 success
             {
                 if (r < 100)                              // 4/12 evil twin
@@ -2109,7 +2111,7 @@ void Spell::EffectTeleportUnits(uint32 i)
         {
             if (roll_chance_i(50))                        // 50% success
             {
-              int32 rand_eff = urand(1,7);
+                int32 rand_eff = urand(1,7);
                 switch (rand_eff)
                 {
                     case 1:
@@ -2154,7 +2156,7 @@ void Spell::EffectTeleportUnits(uint32 i)
         {
             if (roll_chance_i(50))                        // 50% success
             {
-              int32 rand_eff = urand(1,4);
+                int32 rand_eff = urand(1,4);
                 switch (rand_eff)
                 {
                     case 1:

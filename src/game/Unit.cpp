@@ -1176,7 +1176,7 @@ void Unit::CastSpell(float x, float y, float z, uint32 spellId, bool triggered, 
     Spell *spell = new Spell(this, spellInfo, triggered, originalCaster);
 
     SpellCastTargets targets;
-    targets.setDst(x, y, z);
+    targets.setDst(x, y, z, GetOrientation());
     spell->m_CastItem = castItem;
     spell->prepare(&targets, triggeredByAura);
 }

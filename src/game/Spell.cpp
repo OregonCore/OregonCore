@@ -110,9 +110,9 @@ void SpellCastTargets::setSrc(Position *pos)
     }
 }
 
-void SpellCastTargets::setDst(float x, float y, float z, uint32 mapId)
+void SpellCastTargets::setDst(float x, float y, float z, float orientation, uint32 mapId)
 {
-    m_dstPos.Relocate(x, y, z);
+    m_dstPos.Relocate(x, y, z, orientation);
     m_targetMask |= TARGET_FLAG_DEST_LOCATION;
     if (mapId != MAPID_INVALID)
         m_dstPos.m_mapId = mapId;
@@ -1500,7 +1500,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                     float dis = rand_norm() * (max_dis - min_dis) + min_dis;
                     float x, y, z;
                     m_caster->GetClosePoint(x, y, z, DEFAULT_WORLD_OBJECT_SIZE, dis);
-                    m_targets.setDst(x, y, z);
+                    m_targets.setDst(x, y, z, m_caster->GetOrientation());
                     break;
                 }
                 case TARGET_UNIT_MASTER:
@@ -1746,16 +1746,16 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                         if (m_spellInfo->Effect[0] == SPELL_EFFECT_TELEPORT_UNITS
                             || m_spellInfo->Effect[1] == SPELL_EFFECT_TELEPORT_UNITS
                             || m_spellInfo->Effect[2] == SPELL_EFFECT_TELEPORT_UNITS)
-                            m_targets.setDst(st->target_X, st->target_Y, st->target_Z, (int32)st->target_mapId);
+                            m_targets.setDst(st->target_X, st->target_Y, st->target_Z, st->target_Orientation, (int32)st->target_mapId);
                         else if (st->target_mapId == m_caster->GetMapId())
-                            m_targets.setDst(st->target_X, st->target_Y, st->target_Z);
+                            m_targets.setDst(st->target_X, st->target_Y, st->target_Z, st->target_Orientation);
                     }
                     else
                         sLog.outError("SPELL: unknown target coordinates for spell ID %u\n", m_spellInfo->Id);
                     break;
                 case TARGET_DST_HOME:
                     if (m_caster->GetTypeId() == TYPEID_PLAYER)
-                        m_targets.setDst(m_caster->ToPlayer()->m_homebindX,m_caster->ToPlayer()->m_homebindY,m_caster->ToPlayer()->m_homebindZ, m_caster->ToPlayer()->m_homebindMapId);
+                        m_targets.setDst(m_caster->ToPlayer()->m_homebindX, m_caster->ToPlayer()->m_homebindY, m_caster->ToPlayer()->m_homebindZ, m_caster->ToPlayer()->GetOrientation(), m_caster->ToPlayer()->m_homebindMapId);
                     break;
                 case TARGET_DST_NEARBY_ENTRY:
                 {
