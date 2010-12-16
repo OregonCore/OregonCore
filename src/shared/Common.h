@@ -73,7 +73,7 @@
 #   pragma warning(disable:4311)                            // 'variable' : pointer truncation from 'type' to 'type'
 #   pragma warning(disable:4355)                            // 'this' : used in base member initializer list
 #   pragma warning(disable:4800)                            // 'type' : forcing value to bool 'true' or 'false' (performance warning)
-#   pragma warning(disable:4522)                            //warning when class has 2 constructors
+#   pragma warning(disable:4522)                            // warning when class has 2 constructors
 #endif                                                      // __SHOW_STUPID_WARNINGS__
 #endif                                                      // __GNUC__
 
