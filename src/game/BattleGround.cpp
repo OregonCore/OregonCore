@@ -1661,9 +1661,8 @@ void BattleGround::Announce()
 		for (std::map<uint64, BattleGroundPlayer>::iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
 		{
 			Player *plr = objmgr.GetPlayer(itr->first);
-			if (plr) {
+			if (plr)
 				queue_id = plr->GetBattleGroundQueueIdFromLevel();
-			}
 		}
 
 		char const* bgName = GetName();
