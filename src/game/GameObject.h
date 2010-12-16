@@ -658,6 +658,7 @@ class GameObject : public WorldObject, public GridObject<GameObject>
                                                             // For traps this: spell casting cooldown, for doors/buttons: reset time.
         std::list<uint32> m_SkillupList;
 
+        Player* m_ritualOwner;                              // used for GAMEOBJECT_TYPE_SUMMONING_RITUAL where GO is not summoned (no owner)
         std::set<uint32> m_unique_users;
         uint32 m_usetimes;
 
