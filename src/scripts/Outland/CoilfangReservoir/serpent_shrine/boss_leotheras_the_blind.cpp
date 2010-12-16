@@ -683,7 +683,7 @@ struct mob_greyheart_spellbinderAI : public ScriptedAI
 
     void CastChanneling()
     {
-        if (!me->isInCombat() && !me->m_currentSpells[CURRENT_CHANNELED_SPELL])
+        if (!me->isInCombat() && !me->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
         {
             if (leotherasGUID)
             {
@@ -742,7 +742,7 @@ struct mob_greyheart_spellbinderAI : public ScriptedAI
                 {
                     bool isCasting = false;
                     for (uint8 i = 0; i < CURRENT_MAX_SPELL; ++i)
-                        if (i_pl->m_currentSpells[i])
+                        if (i_pl->GetCurrentSpell(i))
                             isCasting = true;
 
                     if (isCasting)

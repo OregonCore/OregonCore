@@ -263,11 +263,7 @@ void GameObject::Update(uint32 diff)
                             Unit* caster = GetOwner();
                             if (caster && caster->GetTypeId() == TYPEID_PLAYER)
                             {
-                                if (caster->m_currentSpells[CURRENT_CHANNELED_SPELL])
-                                {
-                                    caster->m_currentSpells[CURRENT_CHANNELED_SPELL]->SendChannelUpdate(0);
-                                    caster->m_currentSpells[CURRENT_CHANNELED_SPELL]->finish(false);
-                                }
+                                caster->FinishSpell(CURRENT_CHANNELED_SPELL);
 
                                 WorldPacket data(SMSG_FISH_NOT_HOOKED,0);
                                 caster->ToPlayer()->GetSession()->SendPacket(&data);
@@ -1151,11 +1147,7 @@ void GameObject::Use(Unit* user)
                 }
             }
 
-            if (player->m_currentSpells[CURRENT_CHANNELED_SPELL])
-            {
-                player->m_currentSpells[CURRENT_CHANNELED_SPELL]->SendChannelUpdate(0);
-                player->m_currentSpells[CURRENT_CHANNELED_SPELL]->finish();
-            }
+            player->FinishSpell(CURRENT_CHANNELED_SPELL);
             return;
         }
 
@@ -1186,14 +1178,13 @@ void GameObject::Use(Unit* user)
             // in case summoning ritual caster is GO creator
             spellCaster = caster;
 
-            if (!caster->m_currentSpells[CURRENT_CHANNELED_SPELL])
+            if (!caster->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
                 return;
 
             spellId = info->summoningRitual.spellId;
 
             // finish spell
-            caster->m_currentSpells[CURRENT_CHANNELED_SPELL]->SendChannelUpdate(0);
-            caster->m_currentSpells[CURRENT_CHANNELED_SPELL]->finish();
+            player->FinishSpell(CURRENT_CHANNELED_SPELL);
 
             // can be deleted now
             SetLootState(GO_JUST_DEACTIVATED);

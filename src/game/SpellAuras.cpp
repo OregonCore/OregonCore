@@ -3179,10 +3179,10 @@ void Aura::HandleFeignDeath(bool apply, bool Real)
 
             for (uint32 i = CURRENT_FIRST_NON_MELEE_SPELL; i < CURRENT_MAX_SPELL; i++)
             {
-                if ((*iter)->m_currentSpells[i]
-                && (*iter)->m_currentSpells[i]->m_targets.getUnitTargetGUID() == m_target->GetGUID())
+                if ((*iter)->GetCurrentSpell(i)
+                && (*iter)->GetCurrentSpell(i)->m_targets.getUnitTargetGUID() == m_target->GetGUID())
                 {
-                    (*iter)->InterruptSpell(i, false);
+                    (*iter)->InterruptSpell(CurrentSpellTypes(i), false);
                 }
             }
         }
@@ -3198,8 +3198,8 @@ void Aura::HandleFeignDeath(bool apply, bool Real)
         m_target->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_UNATTACKABLE);
 
         // prevent interrupt message
-        if (m_caster_guid == m_target->GetGUID() && m_target->m_currentSpells[CURRENT_GENERIC_SPELL])
-            m_target->m_currentSpells[CURRENT_GENERIC_SPELL]->finish();
+        if (m_caster_guid == m_target->GetGUID() && m_target->GetCurrentSpell(CURRENT_GENERIC_SPELL))
+            m_target->GetCurrentSpell(CURRENT_GENERIC_SPELL)->finish();
         m_target->InterruptNonMeleeSpells(true);
         m_target->getHostileRefManager().deleteReferences();
     }
@@ -3445,19 +3445,15 @@ void Aura::HandleAuraModSilence(bool apply, bool Real)
     {
         m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SILENCED);
         // Stop cast only spells vs PreventionType == SPELL_PREVENTION_TYPE_SILENCE
-        for (uint32 i = CURRENT_MELEE_SPELL; i < CURRENT_MAX_SPELL;i++)
-        {
-            Spell* currentSpell = m_target->m_currentSpells[i];
-            if (currentSpell && currentSpell->m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE)
-            {
-                uint32 state = currentSpell->getState();
-                // Stop spells on prepare or casting state
-                if (state == SPELL_STATE_PREPARING || state == SPELL_STATE_CASTING)
+        for (uint32 i = CURRENT_MELEE_SPELL; i < CURRENT_MAX_SPELL; ++i)
+            if (Spell* spell = m_target->GetCurrentSpell(i) )
+                if (spell->m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE)
                 {
-                    currentSpell->cancel();
+                    uint32 state = spell->getState();
+                    // Stop spells on prepare or casting state
+                    if (state == SPELL_STATE_PREPARING || state == SPELL_STATE_CASTING)
+                        spell->cancel();
                 }
-            }
-        }
 
         switch (GetId())
         {
@@ -5882,14 +5878,10 @@ void Aura::PeriodicTick()
             int32 new_damage = pCaster->DealDamage(target, pdamage, &cleanDamage, DOT, GetSpellSchoolMask(spellProto), spellProto, false);
 
             if (!target->isAlive() && pCaster->IsNonMeleeSpellCasted(false))
-            {
-                for (uint32 i = CURRENT_FIRST_NON_MELEE_SPELL; i < CURRENT_MAX_SPELL; i++)
-                {
-                    if (pCaster->m_currentSpells[i] && pCaster->m_currentSpells[i]->m_spellInfo->Id == spellProto->Id)
-                        pCaster->m_currentSpells[i]->cancel();
-                }
-            }
-
+                for (uint32 i = CURRENT_FIRST_NON_MELEE_SPELL; i < CURRENT_MAX_SPELL; ++i)
+                    if (Spell* spell = pCaster->GetCurrentSpell(i))
+                        if (spell->m_spellInfo->Id == spellProto->Id)
+                            spell->cancel();
 
             if (Player *modOwner = pCaster->GetSpellModOwner())
                 modOwner->ApplySpellMod(spellProto->Id, SPELLMOD_MULTIPLE_VALUE, multiplier);
@@ -5964,15 +5956,8 @@ void Aura::PeriodicTick()
                     pCaster->RemoveAurasDueToSpell(GetId());
 
                     // finish current generic/channeling spells, don't affect autorepeat
-                    if (pCaster->m_currentSpells[CURRENT_GENERIC_SPELL])
-                    {
-                        pCaster->m_currentSpells[CURRENT_GENERIC_SPELL]->finish();
-                    }
-                    if (pCaster->m_currentSpells[CURRENT_CHANNELED_SPELL])
-                    {
-                        pCaster->m_currentSpells[CURRENT_CHANNELED_SPELL]->SendChannelUpdate(0);
-                        pCaster->m_currentSpells[CURRENT_CHANNELED_SPELL]->finish();
-                    }
+                    pCaster->FinishSpell(CURRENT_GENERIC_SPELL);
+                    pCaster->FinishSpell(CURRENT_CHANNELED_SPELL);
                 }
                 else
                 {

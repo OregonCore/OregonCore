@@ -354,7 +354,7 @@ void WorldSession::HandleCancelAuraOpcode(WorldPacket& recvPacket)
     // channeled spell case (it currently casted then)
     if (IsChanneledSpell(spellInfo))
     {
-        if (Spell* spell = _player->m_currentSpells[CURRENT_CHANNELED_SPELL])
+        if (Spell* spell = _player->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
         {
             if (spell->m_spellInfo->Id == spellId)
             {

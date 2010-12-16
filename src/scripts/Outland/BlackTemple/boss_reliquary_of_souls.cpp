@@ -467,11 +467,11 @@ struct boss_essence_of_desireAI : public ScriptedAI
 
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {
-        if (me->m_currentSpells[CURRENT_GENERIC_SPELL])
+        if (me->GetCurrentSpell(CURRENT_GENERIC_SPELL))
             for (uint8 i = 0; i < 3; ++i)
                 if (spell->Effect[i] == SPELL_EFFECT_INTERRUPT_CAST)
-                    if (me->m_currentSpells[CURRENT_GENERIC_SPELL]->m_spellInfo->Id == SPELL_SOUL_SHOCK
-                        || me->m_currentSpells[CURRENT_GENERIC_SPELL]->m_spellInfo->Id == SPELL_DEADEN)
+                    if (me->GetCurrentSpell(CURRENT_GENERIC_SPELL)->m_spellInfo->Id == SPELL_SOUL_SHOCK
+                        || me->GetCurrentSpell(CURRENT_GENERIC_SPELL)->m_spellInfo->Id == SPELL_DEADEN)
                         me->InterruptSpell(CURRENT_GENERIC_SPELL, false);
     }
 
