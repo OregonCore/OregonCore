@@ -1295,6 +1295,15 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
             return false;
         }
 
+        // Check for username not exist
+        targetAccountId = accmgr.GetId(targetAccountName);
+        if (!targetAccountId)
+        {
+            PSendSysMessage(LANG_ACCOUNT_NOT_EXIST,targetAccountName.c_str());
+            SetSentErrorMessage(true);
+            return false;
+        }
+
         // Check for invalid specified GM level.
         gm = atoi(arg2);
         if ((gm < SEC_PLAYER || gm > SEC_ADMINISTRATOR))
