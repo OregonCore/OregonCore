@@ -392,15 +392,15 @@ CreatureAI* GetAI_npc_magwinAI(Creature* pCreature)
 ## npc_geezle
 ######*/
 
-#define GEEZLE_SAY_1    -1000259
-#define SPARK_SAY_2     -1000260
-#define SPARK_SAY_3     -1000261
-#define GEEZLE_SAY_4    -1000262
-#define SPARK_SAY_5     -1000263
-#define SPARK_SAY_6     -1000264
-#define GEEZLE_SAY_7    -1000265
+#define GEEZLE_SAY_1    -1000728
+#define SPARK_SAY_2     -1000729
+#define SPARK_SAY_3     -1000730
+#define GEEZLE_SAY_4    -1000731
+#define SPARK_SAY_5     -1000732
+#define SPARK_SAY_6     -1000733
+#define GEEZLE_SAY_7    -1000734
 
-#define EMOTE_SPARK     -1000266
+#define EMOTE_SPARK     -1000735
 
 #define MOB_SPARK       17243
 #define GO_NAGA_FLAG    181694
