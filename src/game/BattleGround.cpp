@@ -1534,7 +1534,7 @@ void BattleGround::SendMessageToAll(int32 entry, ChatMsg type, Player const* sou
 void BattleGround::PSendMessageToAll(int32 entry, ChatMsg type, Player const* source, ...)
 {
     va_list ap;
-    va_start(ap, type);
+    va_start(ap, source);
 
     Oregon::BattleGroundChatBuilder bg_builder(type, entry, source, &ap);
     Oregon::LocalizedPacketDo<Oregon::BattleGroundChatBuilder> bg_do(bg_builder);
