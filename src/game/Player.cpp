@@ -14817,8 +14817,8 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
         }
     }
 
-    // if the player is in an instance and it has been reset in the meantime teleport him to the entrance
-    if (instanceId && !sInstanceSaveManager.GetInstanceSave(instanceId))
+    // if the player is in an instance (not a bg) and it has been reset in the meantime teleport him to the entrance
+    if (instanceId && !m_bgData.bgInstanceID && !sInstanceSaveManager.GetInstanceSave(instanceId))
     {
         AreaTrigger const* at = objmgr.GetMapEntranceTrigger(mapId);
         if (at)
@@ -14827,6 +14827,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
         {
             sLog.outError("Player %s(GUID: %u) logged in to a reset instance (map: %u) and there is no area-trigger leading to this map. Thus he can't be ported back to the entrance. This _might_ be an exploit attempt.", GetName(), GetGUIDLow(), mapId);
             RelocateToHomebind();
+            map = MapManager::Instance().CreateMap(mapId, this, instanceId);
         }
     }
 
