@@ -25,7 +25,6 @@
 #include "BattleGround.h"
 #include "BattleGroundAB.h"
 #include "Creature.h"
-#include "Chat.h"
 #include "ObjectMgr.h"
 #include "MapManager.h"
 #include "Language.h"
@@ -97,19 +96,19 @@ void BattleGroundAB::Update(time_t diff)
         else if (GetStartDelayTime() <= START_DELAY1 && !(m_Events & 0x04))
         {
             m_Events |= 0x04;
-            SendMessageToAll(GetOregonString(LANG_BG_AB_START_ONE_MINUTE));
+            SendMessageToAll(LANG_BG_AB_START_ONE_MINUTE, CHAT_MSG_BG_SYSTEM_NEUTRAL);
         }
         // After 1,5 minute, warning is signalled
         else if (GetStartDelayTime() <= START_DELAY2 && !(m_Events & 0x08))
         {
             m_Events |= 0x08;
-            SendMessageToAll(GetOregonString(LANG_BG_AB_START_HALF_MINUTE));
+            SendMessageToAll(LANG_BG_AB_START_HALF_MINUTE, CHAT_MSG_BG_SYSTEM_NEUTRAL);
         }
         // After 2 minutes, gates OPEN ! x)
         else if (GetStartDelayTime() < 0 && !(m_Events & 0x10))
         {
             m_Events |= 0x10;
-            SendMessageToAll(GetOregonString(LANG_BG_AB_HAS_BEGUN));
+            SendMessageToAll(LANG_BG_AB_HAS_BEGUN, CHAT_MSG_BG_SYSTEM_NEUTRAL);
 
             // spawn neutral banners
             for (int banner = BG_AB_OBJECT_BANNER_NEUTRAL, i = 0; i < 5; banner += 8, ++i)
@@ -173,13 +172,17 @@ void BattleGroundAB::Update(time_t diff)
                     _SendNodeUpdate(node);
                     _NodeOccupied(node,(teamIndex == 0) ? ALLIANCE:HORDE);
                     // Message to chatlog
-                    char buf[256];
-                    uint8 type = (teamIndex == 0) ? CHAT_MSG_BG_SYSTEM_ALLIANCE : CHAT_MSG_BG_SYSTEM_HORDE;
-                    sprintf(buf, GetOregonString(LANG_BG_AB_NODE_TAKEN), (teamIndex == 0) ? GetOregonString(LANG_BG_AB_ALLY) : GetOregonString(LANG_BG_AB_HORDE), _GetNodeName(node));
-                    WorldPacket data;
-                    ChatHandler::FillMessageData(&data, NULL, type, LANG_UNIVERSAL, NULL, 0, buf, NULL);
-                    SendPacketToAll(&data);
-                    PlaySoundToAll((teamIndex == 0) ? BG_AB_SOUND_NODE_CAPTURED_ALLIANCE : BG_AB_SOUND_NODE_CAPTURED_HORDE);
+
+                    if (teamIndex == 0)
+                    {
+                        SendMessage2ToAll(LANG_BG_AB_NODE_TAKEN, CHAT_MSG_BG_SYSTEM_ALLIANCE, NULL, LANG_BG_AB_ALLY, _GetNodeNameId(node));
+                        PlaySoundToAll(BG_AB_SOUND_NODE_CAPTURED_ALLIANCE);
+                    }
+                    else
+                    {
+                        SendMessage2ToAll(LANG_BG_AB_NODE_TAKEN, CHAT_MSG_BG_SYSTEM_HORDE, NULL, LANG_BG_AB_HORDE, _GetNodeNameId(node));
+                        PlaySoundToAll(BG_AB_SOUND_NODE_CAPTURED_HORDE);
+                    }
                 }
             }
 
@@ -215,9 +218,9 @@ void BattleGroundAB::Update(time_t diff)
                 if (!m_IsInformedNearVictory && m_TeamScores[team] > 1800)
                 {
                     if (team == BG_TEAM_ALLIANCE)
-                        SendMessageToAll(GetOregonString(LANG_BG_AB_A_NEAR_VICTORY));
+                        SendMessageToAll(LANG_BG_AB_A_NEAR_VICTORY, CHAT_MSG_BG_SYSTEM_NEUTRAL);
                     else
-                        SendMessageToAll(GetOregonString(LANG_BG_AB_H_NEAR_VICTORY));
+                        SendMessageToAll(LANG_BG_AB_H_NEAR_VICTORY, CHAT_MSG_BG_SYSTEM_NEUTRAL);
                     PlaySoundToAll(BG_AB_SOUND_NEAR_VICTORY);
                     m_IsInformedNearVictory = true;
                 }
@@ -323,24 +326,19 @@ void BattleGroundAB::_DelBanner(uint8 node, uint8 type, uint8 teamIndex)
     SpawnBGObject(obj, RESPAWN_ONE_DAY);
 }
 
-const char* BattleGroundAB::_GetNodeName(uint8 node)
+int32 BattleGroundAB::_GetNodeNameId(uint8 node)
 {
     switch (node)
     {
-        case BG_AB_NODE_STABLES:
-            return GetOregonString(LANG_BG_AB_NODE_STABLES);
-        case BG_AB_NODE_BLACKSMITH:
-            return GetOregonString(LANG_BG_AB_NODE_BLACKSMITH);
-        case BG_AB_NODE_FARM:
-            return GetOregonString(LANG_BG_AB_NODE_FARM);
-        case BG_AB_NODE_LUMBER_MILL:
-            return GetOregonString(LANG_BG_AB_NODE_LUMBER_MILL);
-        case BG_AB_NODE_GOLD_MINE:
-            return GetOregonString(LANG_BG_AB_NODE_GOLD_MINE);
+        case BG_AB_NODE_STABLES:    return LANG_BG_AB_NODE_STABLES;
+        case BG_AB_NODE_BLACKSMITH: return LANG_BG_AB_NODE_BLACKSMITH;
+        case BG_AB_NODE_FARM:       return LANG_BG_AB_NODE_FARM;
+        case BG_AB_NODE_LUMBER_MILL:return LANG_BG_AB_NODE_LUMBER_MILL;
+        case BG_AB_NODE_GOLD_MINE:  return LANG_BG_AB_NODE_GOLD_MINE;
         default:
             ASSERT(0);
     }
-    return "";
+    return 0;
 }
 
 void BattleGroundAB::FillInitialWorldStates(WorldPacket& data)
@@ -472,10 +470,6 @@ void BattleGroundAB::EventPlayerClickedOnFlag(Player *source, GameObject* /*targ
 
     uint8 teamIndex = GetTeamIndexByTeamId(source->GetTeam());
 
-    // Message to chatlog
-    char buf[256];
-    uint8 type = (teamIndex == 0) ? CHAT_MSG_BG_SYSTEM_ALLIANCE : CHAT_MSG_BG_SYSTEM_HORDE;
-
     // Check if player really could use this banner, not cheated
     if (!(m_Nodes[node] == 0 || teamIndex == m_Nodes[node] % 2))
         return;
@@ -494,7 +488,12 @@ void BattleGroundAB::EventPlayerClickedOnFlag(Player *source, GameObject* /*targ
         _CreateBanner(node, BG_AB_NODE_TYPE_CONTESTED, teamIndex, true);
         _SendNodeUpdate(node);
         m_NodeTimers[node] = BG_AB_FLAG_CAPTURING_TIME;
-        sprintf(buf, GetOregonString(LANG_BG_AB_NODE_CLAIMED), _GetNodeName(node), (teamIndex == 0) ? GetOregonString(LANG_BG_AB_ALLY) : GetOregonString(LANG_BG_AB_HORDE));
+
+        if (teamIndex == 0)
+            SendMessage2ToAll(LANG_BG_AB_NODE_CLAIMED, CHAT_MSG_BG_SYSTEM_ALLIANCE, source, _GetNodeNameId(node), LANG_BG_AB_ALLY);
+        else
+            SendMessage2ToAll(LANG_BG_AB_NODE_CLAIMED, CHAT_MSG_BG_SYSTEM_HORDE, source, _GetNodeNameId(node), LANG_BG_AB_HORDE);
+
         sound = BG_AB_SOUND_NODE_CLAIMED;
     }
     // If node is contested
@@ -512,7 +511,11 @@ void BattleGroundAB::EventPlayerClickedOnFlag(Player *source, GameObject* /*targ
             _CreateBanner(node, BG_AB_NODE_TYPE_CONTESTED, teamIndex, true);
             _SendNodeUpdate(node);
             m_NodeTimers[node] = BG_AB_FLAG_CAPTURING_TIME;
-            sprintf(buf, GetOregonString(LANG_BG_AB_NODE_ASSAULTED), _GetNodeName(node));
+
+            if (teamIndex == 0)
+                SendMessage2ToAll(LANG_BG_AB_NODE_ASSAULTED, CHAT_MSG_BG_SYSTEM_ALLIANCE, source, _GetNodeNameId(node));
+            else
+                SendMessage2ToAll(LANG_BG_AB_NODE_ASSAULTED, CHAT_MSG_BG_SYSTEM_HORDE, source, _GetNodeNameId(node));
         }
         // If contested, change back to occupied
         else
@@ -527,7 +530,11 @@ void BattleGroundAB::EventPlayerClickedOnFlag(Player *source, GameObject* /*targ
             _SendNodeUpdate(node);
             m_NodeTimers[node] = 0;
             _NodeOccupied(node,(teamIndex == 0) ? ALLIANCE:HORDE);
-            sprintf(buf, GetOregonString(LANG_BG_AB_NODE_DEFENDED), _GetNodeName(node));
+
+            if (teamIndex == 0)
+                SendMessage2ToAll(LANG_BG_AB_NODE_DEFENDED, CHAT_MSG_BG_SYSTEM_ALLIANCE, source, _GetNodeNameId(node));
+            else
+                SendMessage2ToAll(LANG_BG_AB_NODE_DEFENDED, CHAT_MSG_BG_SYSTEM_HORDE, source, _GetNodeNameId(node));
         }
         sound = (teamIndex == 0) ? BG_AB_SOUND_NODE_ASSAULTED_ALLIANCE : BG_AB_SOUND_NODE_ASSAULTED_HORDE;
     }
@@ -544,18 +551,22 @@ void BattleGroundAB::EventPlayerClickedOnFlag(Player *source, GameObject* /*targ
         _SendNodeUpdate(node);
         _NodeDeOccupied(node);
         m_NodeTimers[node] = BG_AB_FLAG_CAPTURING_TIME;
-        sprintf(buf, GetOregonString(LANG_BG_AB_NODE_ASSAULTED), _GetNodeName(node));
+
+        if (teamIndex == 0)
+            SendMessage2ToAll(LANG_BG_AB_NODE_ASSAULTED, CHAT_MSG_BG_SYSTEM_ALLIANCE, source, _GetNodeNameId(node));
+        else
+            SendMessage2ToAll(LANG_BG_AB_NODE_ASSAULTED, CHAT_MSG_BG_SYSTEM_HORDE, source, _GetNodeNameId(node));
+
         sound = (teamIndex == 0) ? BG_AB_SOUND_NODE_ASSAULTED_ALLIANCE : BG_AB_SOUND_NODE_ASSAULTED_HORDE;
     }
-    WorldPacket data;
-    ChatHandler::FillMessageData(&data, source->GetSession(), type, LANG_UNIVERSAL, NULL, source->GetGUID(), buf, NULL);
-    SendPacketToAll(&data);
+
     // If node is occupied again, send "X has taken the Y" msg.
     if (m_Nodes[node] >= BG_AB_NODE_TYPE_OCCUPIED)
     {
-        sprintf(buf, GetOregonString(LANG_BG_AB_NODE_TAKEN), (teamIndex == 0) ? GetOregonString(LANG_BG_AB_ALLY) : GetOregonString(LANG_BG_AB_HORDE), _GetNodeName(node));
-        ChatHandler::FillMessageData(&data, NULL, type, LANG_UNIVERSAL, NULL, 0, buf, NULL);
-        SendPacketToAll(&data);
+        if (teamIndex == 0)
+            SendMessage2ToAll(LANG_BG_AB_NODE_TAKEN, CHAT_MSG_BG_SYSTEM_ALLIANCE, NULL, LANG_BG_AB_ALLY, _GetNodeNameId(node));
+        else
+            SendMessage2ToAll(LANG_BG_AB_NODE_TAKEN, CHAT_MSG_BG_SYSTEM_HORDE, NULL, LANG_BG_AB_HORDE, _GetNodeNameId(node));
     }
     PlaySoundToAll(sound);
 }

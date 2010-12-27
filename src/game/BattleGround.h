@@ -388,6 +388,10 @@ class BattleGround
         void SendPacketToTeam(uint32 TeamID, WorldPacket *packet, Player *sender = NULL, bool self = true);
         void SendPacketToAll(WorldPacket *packet);
         void YellToAll(Creature* creature, const char* text, uint32 language);
+
+        template<class Do>
+        void BroadcastWorker(Do& _do);
+
         void PlaySoundToTeam(uint32 SoundID, uint32 TeamID);
         void PlaySoundToAll(uint32 SoundID);
         void CastSpellOnTeam(uint32 SpellID, uint32 TeamID);
@@ -401,9 +405,11 @@ class BattleGround
         void EndBattleGround(uint32 winner);
         void BlockMovement(Player *plr);
 
-        void SendMessageToAll(char const* text);
-        void SendMessageToAll(int32 entry);
-        void PSendMessageToAll(int32 entry, ...  );
+        void SendMessageToAll(int32 entry, ChatMsg type, Player const* source = NULL);
+        void PSendMessageToAll(int32 entry, ChatMsg type, Player const* source, ...);
+
+        // specialized version with 2 string id args
+        void SendMessage2ToAll(int32 entry, ChatMsg type, Player const* source, int32 strId1 = 0, int32 strId2 = 0);
 
         /* Raid Group */
         Group *GetBgRaid(uint32 TeamID) const { return TeamID == ALLIANCE ? m_BgRaids[BG_TEAM_ALLIANCE] : m_BgRaids[BG_TEAM_HORDE]; }

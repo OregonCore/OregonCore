@@ -24,7 +24,6 @@
 #include "BattleGround.h"
 #include "BattleGroundAV.h"
 #include "Creature.h"
-#include "Chat.h"
 #include "Object.h"
 #include "ObjectMgr.h"
 #include "ObjectAccessor.h"
@@ -242,7 +241,7 @@ void BattleGroundAV::UpdateScore(uint16 team, int16 points)
         }
         else if (!m_IsInformedNearVictory[teamindex] && m_Team_Scores[teamindex] < BG_AV_SCORE_NEAR_LOSE)
         {
-            SendMessageToAll(GetOregonString((teamindex == BG_TEAM_HORDE) ? LANG_BG_AV_H_NEAR_LOSE: LANG_BG_AV_A_NEAR_LOSE));
+            SendMessageToAll((teamindex == BG_TEAM_HORDE) ? LANG_BG_AV_H_NEAR_LOSE : LANG_BG_AV_A_NEAR_LOSE, (teamindex == BG_TEAM_HORDE) ? CHAT_MSG_BG_SYSTEM_HORDE : CHAT_MSG_BG_SYSTEM_ALLIANCE);
             PlaySoundToAll(BG_AV_SOUND_NEAR_LOSE);
             m_IsInformedNearVictory[teamindex] = true;
         }
@@ -376,13 +375,13 @@ void BattleGroundAV::Update(time_t diff)
         else if (GetStartDelayTime() <= START_DELAY1 && !(m_Events & 0x04))
         {
             m_Events |= 0x04;
-            SendMessageToAll(GetOregonString(LANG_BG_AV_START_ONE_MINUTE));
+            SendMessageToAll(LANG_BG_AV_START_ONE_MINUTE, CHAT_MSG_BG_SYSTEM_NEUTRAL);
         }
         // After 1,5 minute, warning is signalled
         else if (GetStartDelayTime() <= START_DELAY2 && !(m_Events & 0x08))
         {
             m_Events |= 0x08;
-            SendMessageToAll(GetOregonString(LANG_BG_AV_START_HALF_MINUTE));
+            SendMessageToAll(LANG_BG_AV_START_HALF_MINUTE, CHAT_MSG_BG_SYSTEM_NEUTRAL);
         }
         // After 2 minutes, gates OPEN ! x)
         else if (GetStartDelayTime() <= 0 && !(m_Events & 0x10))
@@ -392,7 +391,7 @@ void BattleGroundAV::Update(time_t diff)
 
             m_Events |= 0x10;
 
-            SendMessageToAll(GetOregonString(LANG_BG_AV_HAS_BEGUN));
+            SendMessageToAll(LANG_BG_AV_HAS_BEGUN, CHAT_MSG_BG_SYSTEM_NEUTRAL);
 
             PlaySoundToAll(SOUND_BG_START);
             if (sWorld.getConfig(CONFIG_BG_START_MUSIC))

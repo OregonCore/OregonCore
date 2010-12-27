@@ -31,6 +31,97 @@
 #include "ArenaTeam.h"
 #include "World.h"
 #include "Util.h"
+#include "GridNotifiersImpl.h"
+
+namespace Oregon
+{
+    class BattleGroundChatBuilder
+    {
+        public:
+            BattleGroundChatBuilder(ChatMsg msgtype, int32 textId, Player const* source, va_list* args = NULL)
+                : i_msgtype(msgtype), i_textId(textId), i_source(source), i_args(args) {}
+            void operator()(WorldPacket& data, int32 loc_idx)
+            {
+                char const* text = objmgr.GetOregonString(i_textId, loc_idx);
+
+                if(i_args)
+                {
+                    // we need copy va_list before use or original va_list will corrupted
+                    va_list ap;
+                    va_copy(ap,*i_args);
+
+                    char str [2048];
+                    vsnprintf(str, 2048, text, ap );
+                    va_end(ap);
+
+                    do_helper(data, &str[0]);
+                }
+                else
+                    do_helper(data, text);
+            }
+        private:
+            void do_helper(WorldPacket& data, char const* text)
+            {
+                uint64 target_guid = i_source ? i_source ->GetGUID() : 0;
+
+                data << uint8(i_msgtype);
+                data << uint32(LANG_UNIVERSAL);
+                data << uint64(target_guid);                // there 0 for BG messages
+                data << uint32(0);                          // can be chat msg group or something
+                data << uint64(target_guid);
+                data << uint32(strlen(text)+1);
+                data << text;
+                data << uint8(i_source ? i_source->chatTag() : uint8(0));
+            }
+
+            ChatMsg i_msgtype;
+            int32 i_textId;
+            Player const* i_source;
+            va_list* i_args;
+    };
+
+    class BattleGround2ChatBuilder
+    {
+        public:
+            BattleGround2ChatBuilder(ChatMsg msgtype, int32 textId, Player const* source, int32 arg1, int32 arg2)
+                : i_msgtype(msgtype), i_textId(textId), i_source(source), i_arg1(arg1), i_arg2(arg2) {}
+            void operator()(WorldPacket& data, int32 loc_idx)
+            {
+                char const* text = objmgr.GetOregonString(i_textId, loc_idx);
+                char const* arg1str = i_arg1 ? objmgr.GetOregonString(i_arg1, loc_idx) : "";
+                char const* arg2str = i_arg2 ? objmgr.GetOregonString(i_arg2, loc_idx) : "";
+
+                char str [2048];
+                snprintf(str, 2048, text, arg1str, arg2str );
+
+                uint64 target_guid = i_source ? i_source ->GetGUID() : 0;
+
+                data << uint8(i_msgtype);
+                data << uint32(LANG_UNIVERSAL);
+                data << uint64(target_guid);                // there 0 for BG messages
+                data << uint32(0);                          // can be chat msg group or something
+                data << uint64(target_guid);
+                data << uint32(strlen(str)+1);
+                data << str;
+                data << uint8(i_source ? i_source->chatTag() : uint8(0));
+            }
+        private:
+
+            ChatMsg i_msgtype;
+            int32 i_textId;
+            Player const* i_source;
+            int32 i_arg1;
+            int32 i_arg2;
+    };
+}                                                           // namespace Oregon
+
+template<class Do>
+void BattleGround::BroadcastWorker(Do& _do)
+{
+    for (std::map<uint64, BattleGroundPlayer>::iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
+        if (Player *plr = ObjectAccessor::FindPlayer(MAKE_NEW_GUID(itr->first, 0, HIGHGUID_PLAYER)))
+            _do(plr);
+}
 
 BattleGround::BattleGround()
 {
@@ -469,15 +560,11 @@ void BattleGround::EndBattleGround(uint32 winner)
     uint32 loser_rating = 0;
     uint32 winner_rating = 0;
     WorldPacket data;
-    Player *Source = NULL;
-    const char *winmsg = "";
+    int32 winmsg_id = 0;
 
     if (winner == ALLIANCE)
     {
-        if (isBattleGround())
-            winmsg = GetOregonString(LANG_BG_A_WINS);
-        else
-            winmsg = GetOregonString(LANG_ARENA_GOLD_WINS);
+        winmsg_id = isBattleGround() ? LANG_BG_A_WINS : LANG_ARENA_GOLD_WINS;
 
         PlaySoundToAll(SOUND_ALLIANCE_WINS);                // alliance wins sound
 
@@ -485,10 +572,7 @@ void BattleGround::EndBattleGround(uint32 winner)
     }
     else if (winner == HORDE)
     {
-        if (isBattleGround())
-            winmsg = GetOregonString(LANG_BG_H_WINS);
-        else
-            winmsg = GetOregonString(LANG_ARENA_GREEN_WINS);
+        winmsg_id = isBattleGround() ? LANG_BG_H_WINS : LANG_ARENA_GREEN_WINS;
 
         PlaySoundToAll(SOUND_HORDE_WINS);                   // horde wins sound
 
@@ -643,11 +727,8 @@ void BattleGround::EndBattleGround(uint32 winner)
     // inform invited players about the removal
     sBattleGroundMgr.m_BattleGroundQueues[sBattleGroundMgr.BGQueueTypeId(GetTypeID(), GetArenaType())].BGEndedRemoveInvites(this);
 
-    if (Source)
-    {
-        ChatHandler(Source).FillMessageData(&data, CHAT_MSG_BG_SYSTEM_NEUTRAL, LANG_UNIVERSAL, Source->GetGUID(), winmsg);
-        SendPacketToAll(&data);
-    }
+    if (winmsg_id)
+        SendMessageToAll(winmsg_id, CHAT_MSG_BG_SYSTEM_NEUTRAL);
 }
 
 uint32 BattleGround::GetBattlemasterEntry() const
@@ -1443,30 +1524,30 @@ bool BattleGround::AddSpiritGuide(uint32 type, float x, float y, float z, float 
     return true;
 }
 
-void BattleGround::SendMessageToAll(char const* text)
+void BattleGround::SendMessageToAll(int32 entry, ChatMsg type, Player const* source)
 {
-    WorldPacket data;
-    ChatHandler::FillMessageData(&data, NULL, CHAT_MSG_BG_SYSTEM_NEUTRAL, LANG_UNIVERSAL, NULL, 0, text, NULL);
-    SendPacketToAll(&data);
+    Oregon::BattleGroundChatBuilder bg_builder(type, entry, source);
+    Oregon::LocalizedPacketDo<Oregon::BattleGroundChatBuilder> bg_do(bg_builder);
+    BroadcastWorker(bg_do);
 }
 
-void BattleGround::SendMessageToAll(int32 entry)
+void BattleGround::PSendMessageToAll(int32 entry, ChatMsg type, Player const* source, ...)
 {
-    char const* text = GetOregonString(entry);
-    WorldPacket data;
-    ChatHandler::FillMessageData(&data, NULL, CHAT_MSG_BG_SYSTEM_NEUTRAL, LANG_UNIVERSAL, NULL, 0, text, NULL);
-    SendPacketToAll(&data);
-}
-
-void BattleGround::PSendMessageToAll(int32 entry, ...)
-{
-    const char *format = GetOregonString(entry);
     va_list ap;
-    char str [2048];
-    va_start(ap, entry);
-    vsnprintf(str,2048,format, ap );
+    va_start(ap, type);
+
+    Oregon::BattleGroundChatBuilder bg_builder(type, entry, source, &ap);
+    Oregon::LocalizedPacketDo<Oregon::BattleGroundChatBuilder> bg_do(bg_builder);
+    BroadcastWorker(bg_do);
+
     va_end(ap);
-    SendMessageToAll(str);
+}
+
+void BattleGround::SendMessage2ToAll(int32 entry, ChatMsg type, Player const* source, int32 arg1, int32 arg2)
+{
+    Oregon::BattleGround2ChatBuilder bg_builder(type, entry, source, arg1, arg2);
+    Oregon::LocalizedPacketDo<Oregon::BattleGround2ChatBuilder> bg_do(bg_builder);
+    BroadcastWorker(bg_do);
 }
 
 void BattleGround::EndNow()

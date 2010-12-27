@@ -64,19 +64,19 @@ void BattleGroundBE::Update(time_t diff)
                 SpawnBGObject(i, RESPAWN_ONE_DAY);
 
             SetStartDelayTime(START_DELAY1);
-            SendMessageToAll(LANG_ARENA_ONE_MINUTE);
+            SendMessageToAll(LANG_ARENA_ONE_MINUTE, CHAT_MSG_BG_SYSTEM_NEUTRAL);
         }
         // After 30 seconds, warning is signalled
         else if (GetStartDelayTime() <= START_DELAY2 && !(m_Events & 0x04))
         {
             m_Events |= 0x04;
-            SendMessageToAll(LANG_ARENA_THIRTY_SECONDS);
+            SendMessageToAll(LANG_ARENA_THIRTY_SECONDS, CHAT_MSG_BG_SYSTEM_NEUTRAL);
         }
         // After 15 seconds, warning is signalled
         else if (GetStartDelayTime() <= START_DELAY3 && !(m_Events & 0x08))
         {
             m_Events |= 0x08;
-            SendMessageToAll(LANG_ARENA_FIFTEEN_SECONDS);
+            SendMessageToAll(LANG_ARENA_FIFTEEN_SECONDS, CHAT_MSG_BG_SYSTEM_NEUTRAL);
         }
         // delay expired (1 minute)
         else if (GetStartDelayTime() <= 0 && !(m_Events & 0x10))
@@ -89,7 +89,7 @@ void BattleGroundBE::Update(time_t diff)
             for (uint32 i = BG_BE_OBJECT_BUFF_1; i <= BG_BE_OBJECT_BUFF_2; i++)
                 SpawnBGObject(i, 60);
 
-            SendMessageToAll(LANG_ARENA_HAS_BEGUN);
+            SendMessageToAll(LANG_ARENA_HAS_BEGUN, CHAT_MSG_BG_SYSTEM_NEUTRAL);
             SetStatus(STATUS_IN_PROGRESS);
             SetStartDelayTime(0);
 
