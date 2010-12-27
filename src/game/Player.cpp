@@ -1603,9 +1603,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         return false;                                       // normal client can't teleport to this map...
     }
     else
-    {
-        sLog.outDebug("Player %s will teleported to map %u", GetName(), mapid);
-    }
+        sLog.outDebug("Player %s is being teleported to map %u", GetName(), mapid);
 
     // if we were on a transport, leave
     if (!(options & TELE_TO_NOT_LEAVE_TRANSPORT) && m_transport)
@@ -1773,10 +1771,11 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
                 }
                 GetSession()->SendPacket(&data);
                 SendSavedInstances();
-
-                // remove from old map now
-                if (oldmap) oldmap->Remove(this, false);
             }
+
+            // remove from old map now
+            if (oldmap)
+                oldmap->Remove(this, false);
 
             // new final coordinates
             float final_x = x;
