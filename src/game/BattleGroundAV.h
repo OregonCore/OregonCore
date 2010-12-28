@@ -281,8 +281,6 @@ enum BG_AV_ObjectTypes
     BG_AV_OBJECT_MAX                          = 237
 };
 
-
-
 enum BG_AV_OBJECTS
 {
     AV_OPLACE_FIRSTAID_STATION          = 0,
@@ -505,7 +503,6 @@ const float BG_AV_DoorPositons[2][4] = {
     {780.487f, -493.024f, 99.9553f, 3.0976f},   //alliance
     {-1375.193f, -538.981f, 55.2824f, 0.72178f} //horde
 };
-
 
 //creaturestuff starts here
 //is related to BG_AV_CreaturePos
@@ -910,9 +907,7 @@ const float BG_AV_CreaturePos[AV_CPLACE_MAX][4] = {
     {-848.902f,-92.931f,68.6325f,3.33350},
     //herald
     {-48.459f,-288.802f,55.47f,1.0}
-
 };
-
 
 enum BG_AV_CreatureIds
 {
@@ -1307,7 +1302,6 @@ enum BG_AV_WorldStates
     AV_FROSTWOLFHUT_H_C             = 1330,
     AV_FROSTWOLFHUT_H_A             = 1332, //over ac
 
-
 //Towers
     //Alliance
     //Dunbaldar South Bunker
@@ -1373,7 +1367,6 @@ const uint32 BG_AV_MineWorldStates[2][3] = {
     {1358, 1360,1359},
     {1355, 1357,1356}
 };
-
 
 //alliance_control alliance_assault h_control h_assault
 const uint32 BG_AV_NodeWorldStates[16][4] = {
@@ -1538,7 +1531,6 @@ class BattleGroundAV : public BattleGround
         uint32 m_Mine_PrevOwner[BG_AV_MAX_MINES];           // only for worldstates needed
         int32 m_Mine_Timer; //ticks for both teams
         uint32 m_Mine_Reclaim_Timer[BG_AV_MAX_MINES];
-       // [x][y] x=team y=questcounter
         uint32 m_CaptainBuffTimer[BG_TEAMS_COUNT];
         bool m_CaptainAlive[BG_TEAMS_COUNT];
 
