@@ -182,6 +182,16 @@ BattleGround::BattleGround()
     m_PrematureCountDown = 0;
 
     m_HonorMode = BG_NORMAL;
+
+    m_StartDelayTimes[BG_STARTING_EVENT_FIRST]  = BG_START_DELAY_2M;
+    m_StartDelayTimes[BG_STARTING_EVENT_SECOND] = BG_START_DELAY_1M;
+    m_StartDelayTimes[BG_STARTING_EVENT_THIRD]  = BG_START_DELAY_30S;
+    m_StartDelayTimes[BG_STARTING_EVENT_FOURTH] = BG_START_DELAY_NONE;
+    //we must set to some default existing values
+    m_StartMessageIds[BG_STARTING_EVENT_FIRST]  = LANG_BG_WS_START_TWO_MINUTES;
+    m_StartMessageIds[BG_STARTING_EVENT_SECOND] = LANG_BG_WS_START_ONE_MINUTE;
+    m_StartMessageIds[BG_STARTING_EVENT_THIRD]  = LANG_BG_WS_START_HALF_MINUTE;
+    m_StartMessageIds[BG_STARTING_EVENT_FOURTH] = LANG_BG_WS_HAS_BEGUN;
 }
 
 BattleGround::~BattleGround()
@@ -276,6 +286,11 @@ void BattleGround::Update(time_t diff)
         }
     }
 
+    //TODO: move this system to spell system and ressurect players correclt there!
+    /*********************************************************/
+    /***        BATTLEGROUND RESSURECTION SYSTEM           ***/
+    /*********************************************************/
+
     m_LastResurrectTime += diff;
     if (m_LastResurrectTime >= RESURRECTION_INTERVAL)
     {
@@ -363,6 +378,83 @@ void BattleGround::Update(time_t diff)
     }
     else if (m_PrematureCountDown)
         m_PrematureCountDown = false;
+
+    /*********************************************************/
+    /***           BATTLEGROUND STARTING SYSTEM            ***/
+    /*********************************************************/
+
+    if (GetStatus() == STATUS_WAIT_JOIN && GetPlayersSize())
+    {
+        ModifyStartDelayTime(diff);
+
+        if (!(m_Events & BG_STARTING_EVENT_1))
+        {
+            m_Events |= BG_STARTING_EVENT_1;
+
+            // setup here, only when at least one player has ported to the map
+            if (!SetupBattleGround())
+            {
+                EndNow();
+                return;
+            }
+
+            StartingEventCloseDoors();
+            SetStartDelayTime(m_StartDelayTimes[BG_STARTING_EVENT_FIRST]);
+            //first start warning - 2 or 1 minute
+            SendMessageToAll(m_StartMessageIds[BG_STARTING_EVENT_FIRST], CHAT_MSG_BG_SYSTEM_NEUTRAL);
+        }
+        // After 1 minute or 30 seconds, warning is signalled
+        else if (GetStartDelayTime() <= m_StartDelayTimes[BG_STARTING_EVENT_SECOND] && !(m_Events & BG_STARTING_EVENT_2))
+        {
+            m_Events |= BG_STARTING_EVENT_2;
+            SendMessageToAll(m_StartMessageIds[BG_STARTING_EVENT_SECOND], CHAT_MSG_BG_SYSTEM_NEUTRAL);
+        }
+        // After 30 or 15 seconds, warning is signalled
+        else if (GetStartDelayTime() <= m_StartDelayTimes[BG_STARTING_EVENT_THIRD] && !(m_Events & BG_STARTING_EVENT_3))
+        {
+            m_Events |= BG_STARTING_EVENT_3;
+            SendMessageToAll(m_StartMessageIds[BG_STARTING_EVENT_THIRD], CHAT_MSG_BG_SYSTEM_NEUTRAL);
+        }
+        // delay expired (after 2 or 1 minute)
+        else if (GetStartDelayTime() <= 0 && !(m_Events & BG_STARTING_EVENT_4))
+        {
+            m_Events |= BG_STARTING_EVENT_4;
+
+            StartingEventOpenDoors();
+
+            SendMessageToAll(m_StartMessageIds[BG_STARTING_EVENT_FOURTH], CHAT_MSG_BG_SYSTEM_NEUTRAL);
+            SetStatus(STATUS_IN_PROGRESS);
+            SetStartDelayTime(m_StartDelayTimes[BG_STARTING_EVENT_FOURTH]);
+
+            //remove preparation
+            if (isArena())
+            {
+                for (BattleGroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
+                    if (Player *plr = objmgr.GetPlayer(itr->first))
+                        plr->RemoveAurasDueToSpell(SPELL_ARENA_PREPARATION);
+
+                if (!GetPlayersCountByTeam(ALLIANCE) && GetPlayersCountByTeam(HORDE))
+                    EndBattleGround(HORDE);
+                else if (GetPlayersCountByTeam(ALLIANCE) && !GetPlayersCountByTeam(HORDE))
+                    EndBattleGround(ALLIANCE);
+            }
+            else
+            {
+                PlaySoundToAll(SOUND_BG_START);
+
+                for (BattleGroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
+                    if (Player* plr = objmgr.GetPlayer(itr->first))
+                        plr->RemoveAurasDueToSpell(SPELL_PREPARATION);
+
+                //Announce BG starting
+                Announce();
+            }
+        }
+    }
+
+    /*********************************************************/
+    /***           BATTLEGROUND ENDING SYSTEM              ***/
+    /*********************************************************/
 
     if (GetStatus() == STATUS_WAIT_LEAVE)
     {

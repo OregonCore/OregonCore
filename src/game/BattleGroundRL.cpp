@@ -32,6 +32,16 @@
 BattleGroundRL::BattleGroundRL()
 {
     m_BgObjects.resize(BG_RL_OBJECT_MAX);
+
+    m_StartDelayTimes[BG_STARTING_EVENT_FIRST]  = BG_START_DELAY_1M;
+    m_StartDelayTimes[BG_STARTING_EVENT_SECOND] = BG_START_DELAY_30S;
+    m_StartDelayTimes[BG_STARTING_EVENT_THIRD]  = BG_START_DELAY_15S;
+    m_StartDelayTimes[BG_STARTING_EVENT_FOURTH] = BG_START_DELAY_NONE;
+    //we must set messageIds
+    m_StartMessageIds[BG_STARTING_EVENT_FIRST]  = LANG_ARENA_ONE_MINUTE;
+    m_StartMessageIds[BG_STARTING_EVENT_SECOND] = LANG_ARENA_THIRTY_SECONDS;
+    m_StartMessageIds[BG_STARTING_EVENT_THIRD]  = LANG_ARENA_FIFTEEN_SECONDS;
+    m_StartMessageIds[BG_STARTING_EVENT_FOURTH] = LANG_ARENA_HAS_BEGUN;
 }
 
 BattleGroundRL::~BattleGroundRL()
@@ -42,70 +52,21 @@ BattleGroundRL::~BattleGroundRL()
 void BattleGroundRL::Update(time_t diff)
 {
     BattleGround::Update(diff);
+}
 
-    if (GetStatus() == STATUS_WAIT_JOIN && GetPlayersSize())
-    {
-        ModifyStartDelayTime(diff);
+void BattleGroundRL::StartingEventCloseDoors()
+{
+    for (uint32 i = BG_RL_OBJECT_DOOR_1; i <= BG_RL_OBJECT_DOOR_2; i++)
+        SpawnBGObject(i, RESPAWN_IMMEDIATELY);
+}
 
-        if (!(m_Events & 0x01))
-        {
-            m_Events |= 0x01;
+void BattleGroundRL::StartingEventOpenDoors()
+{
+    for (uint32 i = BG_RL_OBJECT_DOOR_1; i <= BG_RL_OBJECT_DOOR_2; i++)
+        DoorOpen(i);
 
-            // setup here, only when at least one player has ported to the map
-            if (!SetupBattleGround())
-            {
-                EndNow();
-                return;
-            }
-
-            for (uint32 i = BG_RL_OBJECT_DOOR_1; i <= BG_RL_OBJECT_DOOR_2; i++)
-                SpawnBGObject(i, RESPAWN_IMMEDIATELY);
-
-            SetStartDelayTime(START_DELAY1);
-            SendMessageToAll(LANG_ARENA_ONE_MINUTE, CHAT_MSG_BG_SYSTEM_NEUTRAL);
-        }
-        // After 30 seconds, warning is signalled
-        else if (GetStartDelayTime() <= START_DELAY2 && !(m_Events & 0x04))
-        {
-            m_Events |= 0x04;
-            SendMessageToAll(LANG_ARENA_THIRTY_SECONDS, CHAT_MSG_BG_SYSTEM_NEUTRAL);
-        }
-        // After 15 seconds, warning is signalled
-        else if (GetStartDelayTime() <= START_DELAY3 && !(m_Events & 0x08))
-        {
-            m_Events |= 0x08;
-            SendMessageToAll(LANG_ARENA_FIFTEEN_SECONDS, CHAT_MSG_BG_SYSTEM_NEUTRAL);
-        }
-        // delay expired (1 minute)
-        else if (GetStartDelayTime() <= 0 && !(m_Events & 0x10))
-        {
-            m_Events |= 0x10;
-
-            for (uint32 i = BG_RL_OBJECT_DOOR_1; i <= BG_RL_OBJECT_DOOR_2; i++)
-                DoorOpen(i);
-
-            for (uint32 i = BG_RL_OBJECT_BUFF_1; i <= BG_RL_OBJECT_BUFF_2; i++)
-                SpawnBGObject(i, 60);
-
-            SendMessageToAll(LANG_ARENA_HAS_BEGUN, CHAT_MSG_BG_SYSTEM_NEUTRAL);
-            SetStatus(STATUS_IN_PROGRESS);
-            SetStartDelayTime(0);
-
-            for (BattleGroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
-                if (Player *plr = objmgr.GetPlayer(itr->first))
-                    plr->RemoveAurasDueToSpell(SPELL_ARENA_PREPARATION);
-
-            if (!GetPlayersCountByTeam(ALLIANCE) && GetPlayersCountByTeam(HORDE))
-                EndBattleGround(HORDE);
-            else if (GetPlayersCountByTeam(ALLIANCE) && !GetPlayersCountByTeam(HORDE))
-                EndBattleGround(ALLIANCE);
-        }
-    }
-
-    /*if (GetStatus() == STATUS_IN_PROGRESS)
-    {
-        // update something
-    }*/
+    for (uint32 i = BG_RL_OBJECT_BUFF_1; i <= BG_RL_OBJECT_BUFF_2; i++)
+        SpawnBGObject(i, 60);
 }
 
 void BattleGroundRL::AddPlayer(Player *plr)
