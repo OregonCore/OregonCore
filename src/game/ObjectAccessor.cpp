@@ -154,6 +154,11 @@ Player* ObjectAccessor::FindPlayer(uint64 guid)
     return GetObjectInWorld(guid, (Player*)NULL);
 }
 
+Unit* ObjectAccessor::FindUnit(uint64 guid)
+{
+    return GetObjectInWorld(guid, (Unit*)NULL);
+}
+
 Player* ObjectAccessor::FindPlayerByName(const char* name)
 {
     Guard guard(*HashMapHolder<Player>::GetLock());
