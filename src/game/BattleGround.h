@@ -517,6 +517,10 @@ class BattleGround
         void PlayerRelogin(uint64 guid);
 
         void SetDeleteThis() {m_SetDeleteThis = true;}
+
+        /* virtual score-array - get's used in bg-subclasses */
+        int32 m_TeamScores[BG_TEAMS_COUNT];
+
         void Announce();
 
     protected:

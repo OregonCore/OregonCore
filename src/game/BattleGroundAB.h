@@ -281,7 +281,6 @@ class BattleGroundAB : public BattleGround
         uint8             m_prevNodes[BG_AB_NODES_MAX];
         BG_AB_BannerTimer m_BannerTimers[BG_AB_NODES_MAX];
         int32             m_NodeTimers[BG_AB_NODES_MAX];
-        uint32            m_TeamScores[2];
         uint32            m_lastTick[2];
         uint32            m_HonorScoreTics[2];
         uint32            m_ReputationScoreTics[2];
