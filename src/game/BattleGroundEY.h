@@ -75,11 +75,12 @@ enum BG_EY_ProgressBarConsts
 enum BG_EY_Sounds
 {
     //strange ids, but sure about them
-    BG_EY_SOUND_FLAG_PICKED_UP_ALLIANCE   = 8212,
-    BG_EY_SOUND_FLAG_CAPTURED_HORDE       = 8213,
-    BG_EY_SOUND_FLAG_PICKED_UP_HORDE      = 8174,
-    BG_EY_SOUND_FLAG_CAPTURED_ALLIANCE    = 8173,
-    BG_EY_SOUND_FLAG_RESET                = 8192
+    BG_EY_SOUND_FLAG_PICKED_UP_ALLIANCE = 8212,
+    BG_EY_SOUND_FLAG_CAPTURED_HORDE     = 8213,
+    BG_EY_SOUND_FLAG_PICKED_UP_HORDE    = 8174,
+    BG_EY_SOUND_FLAG_CAPTURED_ALLIANCE  = 8173,
+    BG_EY_SOUND_FLAG_RESET              = 8192,
+    BG_EY_SOUND_NEAR_VICTORY            = 8456
 };
 
 enum BG_EY_Spells
@@ -90,18 +91,18 @@ enum BG_EY_Spells
 
 enum EYBattleGroundObjectEntry
 {
-    BG_OBJECT_A_DOOR_EY_ENTRY         = 184719,             //Alliance door
-    BG_OBJECT_H_DOOR_EY_ENTRY         = 184720,             //Horde door
-    BG_OBJECT_FLAG1_EY_ENTRY          = 184493,             //Netherstorm flag (generic)
-    BG_OBJECT_FLAG2_EY_ENTRY          = 184141,             //Netherstorm flag (flagstand)
-    BG_OBJECT_FLAG3_EY_ENTRY          = 184142,             //Netherstorm flag (flagdrop)
-    BG_OBJECT_A_BANNER_EY_ENTRY       = 184381,             //Visual Banner (Alliance)
-    BG_OBJECT_H_BANNER_EY_ENTRY       = 184380,             //Visual Banner (Horde)
-    BG_OBJECT_N_BANNER_EY_ENTRY       = 184382,             //Visual Banner (Neutral)
-    BG_OBJECT_BE_TOWER_CAP_EY_ENTRY   = 184080,             //BE Tower Cap Pt
-    BG_OBJECT_FR_TOWER_CAP_EY_ENTRY   = 184081,             //Fel Reaver Cap Pt
-    BG_OBJECT_HU_TOWER_CAP_EY_ENTRY   = 184082,             //Human Tower Cap Pt
-    BG_OBJECT_DR_TOWER_CAP_EY_ENTRY   = 184083              //Draenei Tower Cap Pt
+    BG_OBJECT_A_DOOR_EY_ENTRY           = 184719,           //Alliance door
+    BG_OBJECT_H_DOOR_EY_ENTRY           = 184720,           //Horde door
+    BG_OBJECT_FLAG1_EY_ENTRY            = 184493,           //Netherstorm flag (generic)
+    BG_OBJECT_FLAG2_EY_ENTRY            = 184141,           //Netherstorm flag (flagstand)
+    BG_OBJECT_FLAG3_EY_ENTRY            = 184142,           //Netherstorm flag (flagdrop)
+    BG_OBJECT_A_BANNER_EY_ENTRY         = 184381,           //Visual Banner (Alliance)
+    BG_OBJECT_H_BANNER_EY_ENTRY         = 184380,           //Visual Banner (Horde)
+    BG_OBJECT_N_BANNER_EY_ENTRY         = 184382,           //Visual Banner (Neutral)
+    BG_OBJECT_BE_TOWER_CAP_EY_ENTRY     = 184080,           //BE Tower Cap Pt
+    BG_OBJECT_FR_TOWER_CAP_EY_ENTRY     = 184081,           //Fel Reaver Cap Pt
+    BG_OBJECT_HU_TOWER_CAP_EY_ENTRY     = 184082,           //Human Tower Cap Pt
+    BG_OBJECT_DR_TOWER_CAP_EY_ENTRY     = 184083            //Draenei Tower Cap Pt
 };
 
 enum EYBattleGroundPointsTrigger
@@ -128,18 +129,18 @@ enum EYBattleGroundGaveyards
 
 enum EYBattleGroundPoints
 {
-    FEL_REAVER     = 0,
+    FEL_REAVER      = 0,
     BLOOD_ELF       = 1,
     DRAENEI_RUINS   = 2,
     MAGE_TOWER      = 3,
 
-    EY_PLAYERS_OUT_OF_POINTS = 4,
+    EY_PLAYERS_OUT_OF_POINTS  = 4,
     EY_POINTS_MAX             = 4
 };
 
 enum EYBattleGroundCreaturesTypes
 {
-    EY_SPIRIT_FEL_REAVER      = 0,
+    EY_SPIRIT_FEL_REAVER       = 0,
     EY_SPIRIT_BLOOD_ELF        = 1,
     EY_SPIRIT_DRAENEI_RUINS    = 2,
     EY_SPIRIT_MAGE_TOWER       = 3,
@@ -153,9 +154,9 @@ enum EYBattleGroundObjectTypes
 {
     BG_EY_OBJECT_DOOR_A                         = 0,
     BG_EY_OBJECT_DOOR_H                         = 1,
-    BG_EY_OBJECT_A_BANNER_FEL_REAVER_CENTER    = 2,
-    BG_EY_OBJECT_A_BANNER_FEL_REAVER_LEFT      = 3,
-    BG_EY_OBJECT_A_BANNER_FEL_REAVER_RIGHT     = 4,
+    BG_EY_OBJECT_A_BANNER_FEL_REAVER_CENTER     = 2,
+    BG_EY_OBJECT_A_BANNER_FEL_REAVER_LEFT       = 3,
+    BG_EY_OBJECT_A_BANNER_FEL_REAVER_RIGHT      = 4,
     BG_EY_OBJECT_A_BANNER_BLOOD_ELF_CENTER      = 5,
     BG_EY_OBJECT_A_BANNER_BLOOD_ELF_LEFT        = 6,
     BG_EY_OBJECT_A_BANNER_BLOOD_ELF_RIGHT       = 7,
@@ -165,9 +166,9 @@ enum EYBattleGroundObjectTypes
     BG_EY_OBJECT_A_BANNER_MAGE_TOWER_CENTER     = 11,
     BG_EY_OBJECT_A_BANNER_MAGE_TOWER_LEFT       = 12,
     BG_EY_OBJECT_A_BANNER_MAGE_TOWER_RIGHT      = 13,
-    BG_EY_OBJECT_H_BANNER_FEL_REAVER_CENTER    = 14,
-    BG_EY_OBJECT_H_BANNER_FEL_REAVER_LEFT      = 15,
-    BG_EY_OBJECT_H_BANNER_FEL_REAVER_RIGHT     = 16,
+    BG_EY_OBJECT_H_BANNER_FEL_REAVER_CENTER     = 14,
+    BG_EY_OBJECT_H_BANNER_FEL_REAVER_LEFT       = 15,
+    BG_EY_OBJECT_H_BANNER_FEL_REAVER_RIGHT      = 16,
     BG_EY_OBJECT_H_BANNER_BLOOD_ELF_CENTER      = 17,
     BG_EY_OBJECT_H_BANNER_BLOOD_ELF_LEFT        = 18,
     BG_EY_OBJECT_H_BANNER_BLOOD_ELF_RIGHT       = 19,
@@ -177,9 +178,9 @@ enum EYBattleGroundObjectTypes
     BG_EY_OBJECT_H_BANNER_MAGE_TOWER_CENTER     = 23,
     BG_EY_OBJECT_H_BANNER_MAGE_TOWER_LEFT       = 24,
     BG_EY_OBJECT_H_BANNER_MAGE_TOWER_RIGHT      = 25,
-    BG_EY_OBJECT_N_BANNER_FEL_REAVER_CENTER    = 26,
-    BG_EY_OBJECT_N_BANNER_FEL_REAVER_LEFT      = 27,
-    BG_EY_OBJECT_N_BANNER_FEL_REAVER_RIGHT     = 28,
+    BG_EY_OBJECT_N_BANNER_FEL_REAVER_CENTER     = 26,
+    BG_EY_OBJECT_N_BANNER_FEL_REAVER_LEFT       = 27,
+    BG_EY_OBJECT_N_BANNER_FEL_REAVER_RIGHT      = 28,
     BG_EY_OBJECT_N_BANNER_BLOOD_ELF_CENTER      = 29,
     BG_EY_OBJECT_N_BANNER_BLOOD_ELF_LEFT        = 30,
     BG_EY_OBJECT_N_BANNER_BLOOD_ELF_RIGHT       = 31,
@@ -189,12 +190,12 @@ enum EYBattleGroundObjectTypes
     BG_EY_OBJECT_N_BANNER_MAGE_TOWER_CENTER     = 35,
     BG_EY_OBJECT_N_BANNER_MAGE_TOWER_LEFT       = 36,
     BG_EY_OBJECT_N_BANNER_MAGE_TOWER_RIGHT      = 37,
-    BG_EY_OBJECT_TOWER_CAP_FEL_REAVER          = 38,
+    BG_EY_OBJECT_TOWER_CAP_FEL_REAVER           = 38,
     BG_EY_OBJECT_TOWER_CAP_BLOOD_ELF            = 39,
     BG_EY_OBJECT_TOWER_CAP_DRAENEI_RUINS        = 40,
     BG_EY_OBJECT_TOWER_CAP_MAGE_TOWER           = 41,
     BG_EY_OBJECT_FLAG_NETHERSTORM               = 42,
-    BG_EY_OBJECT_FLAG_FEL_REAVER               = 43,
+    BG_EY_OBJECT_FLAG_FEL_REAVER                = 43,
     BG_EY_OBJECT_FLAG_BLOOD_ELF                 = 44,
     BG_EY_OBJECT_FLAG_DRAENEI_RUINS             = 45,
     BG_EY_OBJECT_FLAG_MAGE_TOWER                = 46,
@@ -241,23 +242,32 @@ struct BattleGroundEYPointIconsStruct
 struct BattleGroundEYLoosingPointStruct
 {
     BattleGroundEYLoosingPointStruct(uint32 _SpawnNeutralObjectType, uint32 _DespawnObjectTypeAlliance, uint32 _MessageIdAlliance, uint32 _DespawnObjectTypeHorde, uint32 _MessageIdHorde)
-        : SpawnNeutralObjectType(_SpawnNeutralObjectType), DespawnObjectTypeAlliance(_DespawnObjectTypeAlliance), MessageIdAlliance(_MessageIdAlliance), DespawnObjectTypeHorde(_DespawnObjectTypeHorde), MessageIdHorde(_MessageIdHorde) {}
+        : SpawnNeutralObjectType(_SpawnNeutralObjectType),
+        DespawnObjectTypeAlliance(_DespawnObjectTypeAlliance), MessageIdAlliance(_MessageIdAlliance),
+        DespawnObjectTypeHorde(_DespawnObjectTypeHorde), MessageIdHorde(_MessageIdHorde)
+    {}
+
     uint32 SpawnNeutralObjectType;
     uint32 DespawnObjectTypeAlliance;
+    uint32 MessageIdAlliance;
     uint32 DespawnObjectTypeHorde;
     uint32 MessageIdHorde;
-    uint32 MessageIdAlliance;
 };
 
 struct BattleGroundEYCapturingPointStruct
 {
     BattleGroundEYCapturingPointStruct(uint32 _DespawnNeutralObjectType, uint32 _SpawnObjectTypeAlliance, uint32 _MessageIdAlliance, uint32 _SpawnObjectTypeHorde, uint32 _MessageIdHorde, uint32 _GraveYardId)
-        : DespawnNeutralObjectType(_DespawnNeutralObjectType), SpawnObjectTypeAlliance(_SpawnObjectTypeAlliance), MessageIdAlliance(_MessageIdAlliance), SpawnObjectTypeHorde(_SpawnObjectTypeHorde), MessageIdHorde(_MessageIdHorde), GraveYardId(_GraveYardId) {}
+        : DespawnNeutralObjectType(_DespawnNeutralObjectType),
+        SpawnObjectTypeAlliance(_SpawnObjectTypeAlliance), MessageIdAlliance(_MessageIdAlliance),
+        SpawnObjectTypeHorde(_SpawnObjectTypeHorde), MessageIdHorde(_MessageIdHorde),
+        GraveYardId(_GraveYardId)
+    {}
+
     uint32 DespawnNeutralObjectType;
     uint32 SpawnObjectTypeAlliance;
+    uint32 MessageIdAlliance;
     uint32 SpawnObjectTypeHorde;
     uint32 MessageIdHorde;
-    uint32 MessageIdAlliance;
     uint32 GraveYardId;
 };
 

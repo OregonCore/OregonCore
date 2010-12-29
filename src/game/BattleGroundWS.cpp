@@ -149,20 +149,20 @@ void BattleGroundWS::Update(time_t diff)
 
 void BattleGroundWS::StartingEventCloseDoors()
 {
-    for (uint32 i = BG_WS_OBJECT_DOOR_A_1; i <= BG_WS_OBJECT_DOOR_H_4; i++)
+    for (uint32 i = BG_WS_OBJECT_DOOR_A_1; i <= BG_WS_OBJECT_DOOR_H_4; ++i)
     {
         DoorClose(i);
         SpawnBGObject(i, RESPAWN_IMMEDIATELY);
     }
-    for (uint32 i = BG_WS_OBJECT_A_FLAG; i <= BG_WS_OBJECT_BERSERKBUFF_2; i++)
+    for (uint32 i = BG_WS_OBJECT_A_FLAG; i <= BG_WS_OBJECT_BERSERKBUFF_2; ++i)
         SpawnBGObject(i, RESPAWN_ONE_DAY);
 }
 
 void BattleGroundWS::StartingEventOpenDoors()
 {
-    for (uint32 i = BG_WS_OBJECT_DOOR_A_1; i <= BG_WS_OBJECT_DOOR_A_4; i++)
+    for (uint32 i = BG_WS_OBJECT_DOOR_A_1; i <= BG_WS_OBJECT_DOOR_A_4; ++i)
         DoorOpen(i);
-    for (uint32 i = BG_WS_OBJECT_DOOR_H_1; i <= BG_WS_OBJECT_DOOR_H_2; i++)
+    for (uint32 i = BG_WS_OBJECT_DOOR_H_1; i <= BG_WS_OBJECT_DOOR_H_2; ++i)
         DoorOpen(i);
 
     SpawnBGObject(BG_WS_OBJECT_DOOR_A_5, RESPAWN_ONE_DAY);
@@ -170,7 +170,7 @@ void BattleGroundWS::StartingEventOpenDoors()
     SpawnBGObject(BG_WS_OBJECT_DOOR_H_3, RESPAWN_ONE_DAY);
     SpawnBGObject(BG_WS_OBJECT_DOOR_H_4, RESPAWN_ONE_DAY);
 
-    for (uint32 i = BG_WS_OBJECT_A_FLAG; i <= BG_WS_OBJECT_BERSERKBUFF_2; i++)
+    for (uint32 i = BG_WS_OBJECT_A_FLAG; i <= BG_WS_OBJECT_BERSERKBUFF_2; ++i)
         SpawnBGObject(i, RESPAWN_IMMEDIATELY);
 }
 
@@ -296,7 +296,7 @@ void BattleGroundWS::EventPlayerCapturedFlag(Player *Source)
     UpdateFlagState(Source->GetTeam(), 1);                  // flag state none
     UpdateTeamScore(Source->GetTeam());
     // only flag capture should be updated
-    UpdatePlayerScore(Source, SCORE_FLAG_CAPTURES, 1);      // +1 flag captures...
+    UpdatePlayerScore(Source, SCORE_FLAG_CAPTURES, 1);      // +1 flag captures
 
     if (GetTeamScore(ALLIANCE) == BG_WS_MAX_TEAM_SCORE)
         winner = ALLIANCE;
@@ -412,7 +412,7 @@ void BattleGroundWS::EventPlayerClickedOnFlag(Player *Source, GameObject* target
         return;
 
     int32 message_id = 0;
-    ChatMsg type;
+    ChatMsg type = CHAT_MSG_BG_SYSTEM_NEUTRAL;
 
     //alliance flag picked up from base
     if (Source->GetTeam() == HORDE && GetFlagState(ALLIANCE) == BG_WS_FLAG_STATE_ON_BASE

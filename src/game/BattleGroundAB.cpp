@@ -64,7 +64,7 @@ void BattleGroundAB::Update(time_t diff)
 
     if (GetStatus() == STATUS_IN_PROGRESS)
     {
-        int team_points[2] = { 0, 0 };
+        int team_points[BG_TEAMS_COUNT] = { 0, 0 };
 
         for (int node = 0; node < BG_AB_NODES_MAX; ++node)
         {
@@ -129,7 +129,7 @@ void BattleGroundAB::Update(time_t diff)
             {
                 m_lastTick[team] -= BG_AB_TickIntervals[points];
                 m_TeamScores[team] += BG_AB_TickPoints[points];
-        m_score[team] = m_TeamScores[team];
+                m_score[team] = m_TeamScores[team];
                 m_HonorScoreTics[team] += BG_AB_TickPoints[points];
                 m_ReputationScoreTics[team] += BG_AB_TickPoints[points];
                 if (m_ReputationScoreTics[team] >= BG_AB_ReputationScoreTicks[m_HonorMode])
@@ -142,7 +142,7 @@ void BattleGroundAB::Update(time_t diff)
                     (team == BG_TEAM_ALLIANCE) ? RewardHonorToTeam(20, ALLIANCE) : RewardHonorToTeam(20, HORDE);
                     m_HonorScoreTics[team] -= BG_AB_HonorScoreTicks[m_HonorMode];
                 }
-                if (!m_IsInformedNearVictory && m_TeamScores[team] > 1800)
+                if (!m_IsInformedNearVictory && m_TeamScores[team] > BG_AB_WARNING_NEAR_VICTORY_SCORE)
                 {
                     if (team == BG_TEAM_ALLIANCE)
                         SendMessageToAll(LANG_BG_AB_A_NEAR_VICTORY, CHAT_MSG_BG_SYSTEM_NEUTRAL);
@@ -152,8 +152,8 @@ void BattleGroundAB::Update(time_t diff)
                     m_IsInformedNearVictory = true;
                 }
 
-                if (m_TeamScores[team] > 2000)
-                    m_TeamScores[team] = 2000;
+                if (m_TeamScores[team] > BG_AB_MAX_TEAM_SCORE)
+                    m_TeamScores[team] = BG_AB_MAX_TEAM_SCORE;
                 if (team == BG_TEAM_ALLIANCE)
                     UpdateWorldState(BG_AB_OP_RESOURCES_ALLY, m_TeamScores[team]);
                 if (team == BG_TEAM_HORDE)
@@ -162,9 +162,9 @@ void BattleGroundAB::Update(time_t diff)
         }
 
         // Test win condition
-        if (m_TeamScores[BG_TEAM_ALLIANCE] >= 2000)
+        if (m_TeamScores[BG_TEAM_ALLIANCE] >= BG_AB_MAX_TEAM_SCORE)
             EndBattleGround(ALLIANCE);
-        if (m_TeamScores[BG_TEAM_HORDE] >= 2000)
+        if (m_TeamScores[BG_TEAM_HORDE] >= BG_AB_MAX_TEAM_SCORE)
             EndBattleGround(HORDE);
     }
 }
@@ -471,7 +471,7 @@ void BattleGroundAB::EventPlayerClickedOnFlag(Player *source, GameObject* /*targ
             _SendNodeUpdate(node);
             m_NodeTimers[node] = BG_AB_FLAG_CAPTURING_TIME;
 
-            if (teamIndex == 0)
+            if (teamIndex == BG_TEAM_ALLIANCE)
                 SendMessage2ToAll(LANG_BG_AB_NODE_ASSAULTED, CHAT_MSG_BG_SYSTEM_ALLIANCE, source, _GetNodeNameId(node));
             else
                 SendMessage2ToAll(LANG_BG_AB_NODE_ASSAULTED, CHAT_MSG_BG_SYSTEM_HORDE, source, _GetNodeNameId(node));
@@ -488,14 +488,14 @@ void BattleGroundAB::EventPlayerClickedOnFlag(Player *source, GameObject* /*targ
             _CreateBanner(node, BG_AB_NODE_TYPE_OCCUPIED, teamIndex, true);
             _SendNodeUpdate(node);
             m_NodeTimers[node] = 0;
-            _NodeOccupied(node,(teamIndex == 0) ? ALLIANCE:HORDE);
+            _NodeOccupied(node,(teamIndex == BG_TEAM_ALLIANCE) ? ALLIANCE:HORDE);
 
-            if (teamIndex == 0)
+            if (teamIndex == BG_TEAM_ALLIANCE)
                 SendMessage2ToAll(LANG_BG_AB_NODE_DEFENDED, CHAT_MSG_BG_SYSTEM_ALLIANCE, source, _GetNodeNameId(node));
             else
                 SendMessage2ToAll(LANG_BG_AB_NODE_DEFENDED, CHAT_MSG_BG_SYSTEM_HORDE, source, _GetNodeNameId(node));
         }
-        sound = (teamIndex == 0) ? BG_AB_SOUND_NODE_ASSAULTED_ALLIANCE : BG_AB_SOUND_NODE_ASSAULTED_HORDE;
+        sound = (teamIndex == BG_TEAM_ALLIANCE) ? BG_AB_SOUND_NODE_ASSAULTED_ALLIANCE : BG_AB_SOUND_NODE_ASSAULTED_HORDE;
     }
     // If node is occupied, change to enemy-contested
     else
@@ -511,7 +511,7 @@ void BattleGroundAB::EventPlayerClickedOnFlag(Player *source, GameObject* /*targ
         _NodeDeOccupied(node);
         m_NodeTimers[node] = BG_AB_FLAG_CAPTURING_TIME;
 
-        if (teamIndex == 0)
+        if (teamIndex == BG_TEAM_ALLIANCE)
             SendMessage2ToAll(LANG_BG_AB_NODE_ASSAULTED, CHAT_MSG_BG_SYSTEM_ALLIANCE, source, _GetNodeNameId(node));
         else
             SendMessage2ToAll(LANG_BG_AB_NODE_ASSAULTED, CHAT_MSG_BG_SYSTEM_HORDE, source, _GetNodeNameId(node));
@@ -522,7 +522,7 @@ void BattleGroundAB::EventPlayerClickedOnFlag(Player *source, GameObject* /*targ
     // If node is occupied again, send "X has taken the Y" msg.
     if (m_Nodes[node] >= BG_AB_NODE_TYPE_OCCUPIED)
     {
-        if (teamIndex == 0)
+        if (teamIndex == BG_TEAM_ALLIANCE)
             SendMessage2ToAll(LANG_BG_AB_NODE_TAKEN, CHAT_MSG_BG_SYSTEM_ALLIANCE, NULL, LANG_BG_AB_ALLY, _GetNodeNameId(node));
         else
             SendMessage2ToAll(LANG_BG_AB_NODE_TAKEN, CHAT_MSG_BG_SYSTEM_HORDE, NULL, LANG_BG_AB_HORDE, _GetNodeNameId(node));
