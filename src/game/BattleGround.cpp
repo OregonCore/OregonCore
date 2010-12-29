@@ -44,7 +44,7 @@ namespace Oregon
             {
                 char const* text = objmgr.GetOregonString(i_textId, loc_idx);
 
-                if(i_args)
+                if (i_args)
                 {
                     // we need copy va_list before use or original va_list will corrupted
                     va_list ap;
@@ -286,11 +286,11 @@ void BattleGround::Update(time_t diff)
         }
     }
 
-    //TODO: move this system to spell system and ressurect players correclt there!
     /*********************************************************/
     /***        BATTLEGROUND RESSURECTION SYSTEM           ***/
     /*********************************************************/
 
+    //this should be handled by spell system
     m_LastResurrectTime += diff;
     if (m_LastResurrectTime >= RESURRECTION_INTERVAL)
     {
@@ -433,10 +433,7 @@ void BattleGround::Update(time_t diff)
                     if (Player *plr = objmgr.GetPlayer(itr->first))
                         plr->RemoveAurasDueToSpell(SPELL_ARENA_PREPARATION);
 
-                if (!GetPlayersCountByTeam(ALLIANCE) && GetPlayersCountByTeam(HORDE))
-                    EndBattleGround(HORDE);
-                else if (GetPlayersCountByTeam(ALLIANCE) && !GetPlayersCountByTeam(HORDE))
-                    EndBattleGround(ALLIANCE);
+                CheckArenaWinConditions();
             }
             else
             {
@@ -1092,7 +1089,7 @@ void BattleGround::Reset()
     m_Events = 0;
 
     if (m_InvitedAlliance > 0 || m_InvitedHorde > 0)
-        sLog.outError("BattleGround system ERROR: bad counter, m_InvitedAlliance: %d, m_InvitedHorde: %d", m_InvitedAlliance, m_InvitedHorde);
+        sLog.outError("BattleGround system: bad counter, m_InvitedAlliance: %d, m_InvitedHorde: %d", m_InvitedAlliance, m_InvitedHorde);
 
     m_InvitedAlliance = 0;
     m_InvitedHorde = 0;
@@ -1104,13 +1101,11 @@ void BattleGround::Reset()
         delete itr->second;
     m_PlayerScores.clear();
 
-    // reset BGSubclass
     ResetBGSubclass();
 }
 
 void BattleGround::StartBattleGround()
 {
-    // this method should spawn spirit guides and so on
     SetStartTime(0);
     SetLastResurrectTime(0);
     if (m_IsRated)
@@ -1193,6 +1188,19 @@ void BattleGround::AddPlayer(Player *plr)
 
     // Log
     sLog.outDetail("BATTLEGROUND: Player %s joined the battle.", plr->GetName());
+}
+
+// This method should be called when player logs out from running battleground
+void BattleGround::EventPlayerLoggedOut(Player* player)
+{
+    if (GetStatus() == STATUS_IN_PROGRESS)
+    {
+        if (isBattleGround())
+            EventPlayerDroppedFlag(player);
+    }
+
+    if (isArena())
+        player->LeaveBattleground();
 }
 
 /* This method should be called only once ... it adds pointer to queue */
@@ -1800,28 +1808,23 @@ void BattleGround::SetHoliday(bool is_holiday)
 
 int32 BattleGround::GetObjectType(uint64 guid)
 {
-    for (uint32 i = 0;i <= m_BgObjects.size(); i++)
+    for (uint32 i = 0; i <= m_BgObjects.size(); ++i)
         if (m_BgObjects[i] == guid)
             return i;
     sLog.outError("BattleGround: cheating? a player used a gameobject which isnt supposed to be a usable object!");
     return -1;
 }
 
-void BattleGround::HandleKillUnit(Creature *creature, Player *killer)
+void BattleGround::HandleKillUnit(Creature * /*creature*/, Player * /*killer*/)
 {
 }
 
-// This method should be called when player logs out from running battleground
-void BattleGround::EventPlayerLoggedOut(Player* player)
+void BattleGround::CheckArenaWinConditions()
 {
-    if (GetStatus() == STATUS_IN_PROGRESS)
-    {
-        if (isBattleGround())
-            EventPlayerDroppedFlag(player);
-    }
-
-    if (isArena())
-        player->LeaveBattleground();
+    if (!GetAlivePlayersCountByTeam(ALLIANCE) && GetPlayersCountByTeam(HORDE))
+        EndBattleGround(HORDE);
+    else if (GetPlayersCountByTeam(ALLIANCE) && !GetAlivePlayersCountByTeam(HORDE))
+        EndBattleGround(ALLIANCE);
 }
 
 WorldSafeLocsEntry const* BattleGround::GetClosestGraveYard(Player* player)
