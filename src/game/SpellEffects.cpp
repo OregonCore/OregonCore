@@ -263,26 +263,25 @@ void Spell::EffectInstaKill(uint32 /*i*/)
     {
         uint32 entry = unitTarget->GetEntry();
         uint32 spellID;
-        switch(entry)
+        switch (entry)
         {
-            case   416: spellID=18789; break;               //imp
-            case   417: spellID=18792; break;               //fellhunter
-            case  1860: spellID=18790; break;               //void
-            case  1863: spellID=18791; break;               //succubus
-            case 17252: spellID=35701; break;               //fellguard
+            case   416: spellID = 18789; break;               //imp
+            case   417: spellID = 18792; break;               //fellhunter
+            case  1860: spellID = 18790; break;               //void
+            case  1863: spellID = 18791; break;               //succubus
+            case 17252: spellID = 35701; break;               //fellguard
             default:
-                sLog.outError("EffectInstaKill: Unhandled creature entry (%u) case.",entry);
+                sLog.outError("EffectInstaKill: Unhandled creature entry (%u) case.", entry);
                 return;
         }
 
-        m_caster->CastSpell(m_caster,spellID,true);
+        m_caster->CastSpell(m_caster, spellID, true);
     }
 
     if (m_caster == unitTarget)                                // prevent interrupt message
         finish();
 
-    uint32 health = unitTarget->GetHealth();
-    m_caster->DealDamage(unitTarget, health, NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+    m_caster->DealDamage(unitTarget, unitTarget->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 }
 
 void Spell::EffectEnvironmentalDMG(uint32 i)
@@ -295,14 +294,14 @@ void Spell::EffectEnvironmentalDMG(uint32 i)
     // currently each enemy selected explicitly and self cast damage, we prevent apply self casted spell bonuses/etc
     damage = m_spellInfo->EffectBasePoints[i]+m_spellInfo->EffectBaseDice[i];
 
-    m_caster->CalcAbsorbResist(m_caster,GetSpellSchoolMask(m_spellInfo), SPELL_DIRECT_DAMAGE, damage, &absorb, &resist);
+    m_caster->CalcAbsorbResist(m_caster, GetSpellSchoolMask(m_spellInfo), SPELL_DIRECT_DAMAGE, damage, &absorb, &resist);
 
     m_caster->SendSpellNonMeleeDamageLog(m_caster, m_spellInfo->Id, damage, GetSpellSchoolMask(m_spellInfo), absorb, resist, false, 0, false);
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
-        m_caster->ToPlayer()->EnvironmentalDamage(DAMAGE_FIRE,damage);
+        m_caster->ToPlayer()->EnvironmentalDamage(DAMAGE_FIRE, damage);
 }
 
-void Spell::EffectSchoolDMG(uint32 effect_idx)
+void Spell::EffectSchoolDMG(uint32 /*effect_idx*/)
 {
 }
 
@@ -310,7 +309,7 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
 {
     if (unitTarget && unitTarget->isAlive())
     {
-        switch(m_spellInfo->SpellFamilyName)
+        switch (m_spellInfo->SpellFamilyName)
         {
             case SPELLFAMILY_GENERIC:
             {
@@ -324,7 +323,7 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
                 if (m_customAttr & SPELL_ATTR_CU_SHARE_DAMAGE)
                 {
                     uint32 count = 0;
-                    for (std::list<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin();ihit != m_UniqueTargetInfo.end();++ihit)
+                    for (std::list<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
                         if (ihit->effectMask & (1<<effect_idx))
                             ++count;
 
@@ -367,7 +366,7 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
                         float radius = GetSpellRadius(m_spellInfo,0,false);
                         if (!radius) return;
                         float distance = m_caster->GetDistance2d(unitTarget);
-                        damage = (distance > radius) ? 0 : (int32)(m_spellInfo->EffectBasePoints[0]*((radius - distance)/radius));
+                        damage = (distance > radius) ? 0 : int32(m_spellInfo->EffectBasePoints[0]*((radius - distance)/radius));
                         // Set the damage directly without spell bonus damage
                         m_damage += damage;
                         damage = 0;
@@ -394,9 +393,7 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
             {
                 // Bloodthirst
                 if (m_spellInfo->SpellFamilyFlags & 0x40000000000LL)
-                {
                     damage = uint32(damage * (m_caster->GetTotalAttackPowerValue(BASE_ATTACK)) / 100);
-                }
                 // Shield Slam
                 else if (m_spellInfo->SpellFamilyFlags & 0x100000000LL)
                     damage += int32(m_caster->GetShieldBlockValue());
@@ -592,7 +589,7 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
                         }
                     }
 
-                    //TODO: should this be put on taken but not done?
+                    // TODO: should this be put on taken but not done?
                     if (found)
                         damage += m_spellInfo->EffectBasePoints[1];
                 }
@@ -639,11 +636,11 @@ void Spell::EffectDummy(uint32 i)
     int32 bp = 0;
 
     // selection by spell family
-    switch(m_spellInfo->SpellFamilyName)
+    switch (m_spellInfo->SpellFamilyName)
     {
         case SPELLFAMILY_GENERIC:
         {
-            switch(m_spellInfo->Id)
+            switch (m_spellInfo->Id)
             {
                 // Wrath of the Astromancer
                 case 42784:
@@ -659,15 +656,12 @@ void Spell::EffectDummy(uint32 i)
                     SpellEntry const *spellInfo = sSpellStore.LookupEntry(42784);
 
                      // now deal the damage
-                    for (std::list<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin();ihit != m_UniqueTargetInfo.end();++ihit)
-                    {
+                    for (std::list<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
                         if (ihit->effectMask & (1<<i))
                         {
-                            Unit* casttarget = Unit::GetUnit((*unitTarget), ihit->targetGUID);
-                            if (casttarget)
+                            if (Unit* casttarget = Unit::GetUnit((*unitTarget), ihit->targetGUID))
                                 m_caster->DealDamage(casttarget, damage, NULL, SPELL_DIRECT_DAMAGE, SPELL_SCHOOL_MASK_ARCANE, spellInfo, false);
                         }
-                    }
                 }
                 // Encapsulate Voidwalker
                 case 29364:
@@ -776,9 +770,9 @@ void Spell::EffectDummy(uint32 i)
 
                     switch (m_spellInfo->Id)
                     {
-                        case 12850: damage *= 0.2f; break;
-                        case 12162: damage *= 0.4f; break;
-                        case 12868: damage *= 0.6f; break;
+                        case 12162: damage *= 0.2f; break; // Rank 1
+                        case 12850: damage *= 0.4f; break; // Rank 2
+                        case 12868: damage *= 0.6f; break; // Rank 3
                         default:
                             sLog.outError("Spell::EffectDummy: Spell %u not handled in DW",m_spellInfo->Id);
                             return;
@@ -819,7 +813,7 @@ void Spell::EffectDummy(uint32 i)
                     if (!m_triggeredByAuraSpell || !unitTarget)
                         return;
 
-                    switch(m_triggeredByAuraSpell->Id)
+                    switch (m_triggeredByAuraSpell->Id)
                     {
                         case 26467:                         // Persistent Shield
                             m_caster->CastCustomSpell(unitTarget, 26470, &damage, NULL, NULL, true);
@@ -865,7 +859,7 @@ void Spell::EffectDummy(uint32 i)
                         return;
 
                     uint32 spell_id = 0;
-                    switch(urand(1,3))
+                    switch (urand(1, 3))
                     {
                         case 1: spell_id = 16595; break;
                         case 2: spell_id = 16593; break;
@@ -893,7 +887,9 @@ void Spell::EffectDummy(uint32 i)
                     if (!itemTarget && m_caster->GetTypeId() != TYPEID_PLAYER)
                         return;
 
-                    uint32 spell_id = roll_chance_i(50) ? 17269 : 17270;
+                    uint32 spell_id = roll_chance_i(50)
+                        ? 17269                             // Create Resonating Skull
+                        : 17270;                            // Create Bone Dust
 
                     m_caster->CastSpell(m_caster, spell_id, true, NULL);
                     return;
@@ -5693,18 +5689,14 @@ void Spell::EffectAddExtraAttacks(uint32 /*i*/)
 
 void Spell::EffectParry(uint32 /*i*/)
 {
-    if (unitTarget->GetTypeId() == TYPEID_PLAYER)
-    {
+    if (unitTarget && unitTarget->GetTypeId() == TYPEID_PLAYER)
         unitTarget->ToPlayer()->SetCanParry(true);
-    }
 }
 
 void Spell::EffectBlock(uint32 /*i*/)
 {
-    if (unitTarget->GetTypeId() != TYPEID_PLAYER)
-        return;
-
-    unitTarget->ToPlayer()->SetCanBlock(true);
+    if (unitTarget && unitTarget->GetTypeId() == TYPEID_PLAYER)
+        unitTarget->ToPlayer()->SetCanBlock(true);
 }
 
 void Spell::EffectMomentMove(uint32 i)
@@ -5787,10 +5779,10 @@ void Spell::EffectQuestComplete(uint32 i)
     if (m_caster->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    Player *_player = m_caster->ToPlayer();
+    Player *pPlayer = m_caster->ToPlayer();
 
     uint32 quest_id = m_spellInfo->EffectMiscValue[i];
-    _player->AreaExploredOrEventHappens(quest_id);
+    pPlayer->AreaExploredOrEventHappens(quest_id);
 }
 
 void Spell::EffectSelfResurrect(uint32 i)
