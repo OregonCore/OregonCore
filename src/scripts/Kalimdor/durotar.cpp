@@ -54,6 +54,7 @@ struct npc_lazy_peonAI : public ScriptedAI
     void Reset ()
     {
         uiPlayerGUID = 0;
+        m_uiRebuffTimer = 0;
         work = false;
     }
 
