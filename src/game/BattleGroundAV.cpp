@@ -965,7 +965,7 @@ void BattleGroundAV::EventPlayerAssaultsPoint(Player* player, uint32 object)
                     if (!plr)
                         continue;
                     if (!ClosestGrave)
-                        ClosestGrave = GetClosestGraveYard(plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), team);
+                        ClosestGrave = GetClosestGraveYard(plr);
                     else
                         plr->TeleportTo(GetMapId(), ClosestGrave->x, ClosestGrave->y, ClosestGrave->z, plr->GetOrientation());
                 }
@@ -1088,33 +1088,34 @@ void BattleGroundAV::SendMineWorldStates(uint32 mine)
         UpdateWorldState(BG_AV_MineWorldStates[mine2][prevowner],0);
 }
 
-WorldSafeLocsEntry const* BattleGroundAV::GetClosestGraveYard(float x, float y, float z, uint32 team)
+WorldSafeLocsEntry const* BattleGroundAV::GetClosestGraveYard(Player* player)
 {
-    WorldSafeLocsEntry const* good_entry = NULL;
-    if (GetStatus() == STATUS_IN_PROGRESS)
-    {
-        // Is there any occupied node for this team?
-        float mindist = 9999999.0f;
-        for (uint8 i = BG_AV_NODES_FIRSTAID_STATION; i <= BG_AV_NODES_FROSTWOLF_HUT; ++i)
+    WorldSafeLocsEntry const* pGraveyard = NULL;
+    WorldSafeLocsEntry const* entry = NULL;
+    float dist = 0;
+    float minDist = 0;
+    float x, y;
+
+    player->GetPosition(x, y);
+
+    pGraveyard = sWorldSafeLocsStore.LookupEntry(BG_AV_GraveyardIds[GetTeamIndexByTeamId(player->GetTeam())+7]);
+    minDist = (pGraveyard->x - x)*(pGraveyard->x - x)+(pGraveyard->y - y)*(pGraveyard->y - y);
+
+    for (uint8 i = BG_AV_NODES_FIRSTAID_STATION; i <= BG_AV_NODES_FROSTWOLF_HUT; ++i)
+        if (m_Nodes[i].Owner == player->GetTeam() && m_Nodes[i].State == POINT_CONTROLLED)
         {
-            if (m_Nodes[i].Owner != team || m_Nodes[i].State != POINT_CONTROLLED)
-                continue;
-            WorldSafeLocsEntry const * entry = sWorldSafeLocsStore.LookupEntry( BG_AV_GraveyardIds[i] );
-            if (!entry)
-                continue;
-            float dist = (entry->x - x) * (entry->x - x) + (entry->y - y) * (entry->y - y);
-            if (mindist > dist)
+            entry = sWorldSafeLocsStore.LookupEntry(BG_AV_GraveyardIds[i]);
+            if (entry)
             {
-                mindist = dist;
-                good_entry = entry;
+                dist = (entry->x - x)*(entry->x - x)+(entry->y - y)*(entry->y - y);
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    pGraveyard = entry;
+                }
             }
         }
-    }
-    // If not, place ghost on starting location
-    if (!good_entry)
-        good_entry = sWorldSafeLocsStore.LookupEntry(BG_AV_GraveyardIds[GetTeamIndexByTeamId(team)+7]);
-
-    return good_entry;
+    return pGraveyard;
 }
 
 bool BattleGroundAV::SetupBattleGround()
