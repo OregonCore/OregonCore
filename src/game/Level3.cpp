@@ -4005,7 +4005,7 @@ bool ChatHandler::HandleReviveCommand(const char *args)
 
     if (player)
     {
-        player->ResurrectPlayer(0.5f);
+        player->ResurrectPlayer(player->GetSession()->GetSecurity() > SEC_PLAYER ? 1.0f : 0.5f);
         player->SpawnCorpseBones();
         player->SaveToDB();
     }
