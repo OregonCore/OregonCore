@@ -1824,30 +1824,31 @@ void BattleGround::EventPlayerLoggedOut(Player* player)
         player->LeaveBattleground();
 }
 
+WorldSafeLocsEntry const* BattleGround::GetClosestGraveYard(Player* player)
+{
+    return objmgr.GetClosestGraveYard(player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetMapId(), player->GetTeam());
+}
+
 void BattleGround::Announce()
 {
-	//send world message
-	if(sWorld.getConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ENABLE) && sWorld.getConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ONSTART))
-	{
-		uint32 queue_id = 0;
+    //send world message
+    if (sWorld.getConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ENABLE) && sWorld.getConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ONSTART))
+    {
+        uint32 queue_id = 0;
 
-		for (std::map<uint64, BattleGroundPlayer>::iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
-		{
-			Player *plr = objmgr.GetPlayer(itr->first);
-			if (plr)
-				queue_id = plr->GetBattleGroundQueueIdFromLevel();
-		}
+        for (std::map<uint64, BattleGroundPlayer>::iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
+            if (Player *plr = objmgr.GetPlayer(itr->first))
+                queue_id = plr->GetBattleGroundQueueIdFromLevel();
 
-		char const* bgName = GetName();
+        char const* bgName = GetName();
 
-		uint32 q_min_level = Player::GetMinLevelForBattleGroundQueueId(queue_id);
-		uint32 q_max_level = Player::GetMaxLevelForBattleGroundQueueId(queue_id);
+        uint32 q_min_level = Player::GetMinLevelForBattleGroundQueueId(queue_id);
+        uint32 q_max_level = Player::GetMaxLevelForBattleGroundQueueId(queue_id);
 
-		// replace hardcoded max level by player max level for nice output
-		if(q_max_level > sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL))
-			q_max_level = sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL);
+        // replace hardcoded max level by player max level for nice output
+        if (q_max_level > sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL))
+            q_max_level = sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL);
 
-		sWorld.SendWorldText(LANG_BG_QUEUE_ANNOUNCE_START,
-			bgName, q_min_level, q_max_level);
-	}
+        sWorld.SendWorldText(LANG_BG_QUEUE_ANNOUNCE_START, bgName, q_min_level, q_max_level);
+    }
 }
