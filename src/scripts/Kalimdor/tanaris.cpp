@@ -389,7 +389,7 @@ struct npc_OOX17AI : public npc_escortAI
                 me->SummonCreature(SPAWN_SECOND_2, -7515.07f, -4797.50f, 9.35f, 6.22f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
                 me->SummonCreature(SPAWN_SECOND_2, -7518.07f, -4792.50f, 9.35f, 6.22f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
                 DoScriptText(SAY_OOX_AMBUSH, me);
-                if (Unit* scoff = FindCreature(SPAWN_SECOND_2, 30, me))
+                if (Unit* scoff = me->FindNearestCreature(SPAWN_SECOND_2, 30))
                     DoScriptText(SAY_OOX17_AMBUSH_REPLY, scoff);
                 break;
 

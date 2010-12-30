@@ -1833,6 +1833,34 @@ GameObject* WorldObject::FindNearestGameObject(uint32 entry, float range)
     return go;
 }
 
+void WorldObject::GetGameObjectListWithEntryInGrid(std::list<GameObject*>& lList, uint32 uiEntry, float fMaxSearchRange)
+{
+    CellPair pair(Oregon::ComputeCellPair(this->GetPositionX(), this->GetPositionY()));
+    Cell cell(pair);
+    cell.data.Part.reserved = ALL_DISTRICT;
+    cell.SetNoCreate();
+
+    Oregon::AllGameObjectsWithEntryInRange check(this, uiEntry, fMaxSearchRange);
+    Oregon::GameObjectListSearcher<Oregon::AllGameObjectsWithEntryInRange> searcher(lList, check);
+    TypeContainerVisitor<Oregon::GameObjectListSearcher<Oregon::AllGameObjectsWithEntryInRange>, GridTypeMapContainer> visitor(searcher);
+
+    cell.Visit(pair, visitor, *(this->GetMap()));
+}
+
+void WorldObject::GetCreatureListWithEntryInGrid(std::list<Creature*>& lList, uint32 uiEntry, float fMaxSearchRange)
+{
+    CellPair pair(Oregon::ComputeCellPair(this->GetPositionX(), this->GetPositionY()));
+    Cell cell(pair);
+    cell.data.Part.reserved = ALL_DISTRICT;
+    cell.SetNoCreate();
+
+    Oregon::AllCreaturesOfEntryInRange check(this, uiEntry, fMaxSearchRange);
+    Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(lList, check);
+    TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> visitor(searcher);
+
+    cell.Visit(pair, visitor, *(this->GetMap()));
+}
+
 void WorldObject::GetNearPoint2D(float &x, float &y, float distance2d, float absAngle) const
 {
     x = GetPositionX() + (GetObjectSize() + distance2d) * cos(absAngle);

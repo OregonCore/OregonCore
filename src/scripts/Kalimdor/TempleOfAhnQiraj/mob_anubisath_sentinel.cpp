@@ -164,19 +164,13 @@ struct aqsentinelAI : public ScriptedAI
         }
     }
 
-    void AddSentinelsNear(Unit *nears)
+    void AddSentinelsNear(Unit * /*nears*/)
     {
-        CellPair p(Oregon::ComputeCellPair(nears->GetPositionX(), nears->GetPositionY()));
-        Cell cell(p);
-        cell.data.Part.reserved = ALL_DISTRICT;
-        cell.SetNoCreate();
-
         std::list<Creature*> assistList;
+        me->GetCreatureListWithEntryInGrid(assistList,15264,70.0f);
 
-        NearbyAQSentinel u_check(nears);
-        Oregon::CreatureListSearcher<NearbyAQSentinel> searcher(assistList, u_check);
-        TypeContainerVisitor<Oregon::CreatureListSearcher<NearbyAQSentinel>, GridTypeMapContainer >  grid_creature_searcher(searcher);
-        cell.Visit(p, grid_creature_searcher, *(nears->GetMap()));
+        if (assistList.empty())
+            return;
 
         for (std::list<Creature*>::iterator iter = assistList.begin(); iter != assistList.end(); ++iter)
             AddBuddyToList((*iter));

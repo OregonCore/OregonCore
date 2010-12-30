@@ -877,10 +877,10 @@ struct npc_bessyAI : public npc_escortAI
             case 12:
                 if (pPlayer)
                     pPlayer->GroupEventHappens(Q_ALMABTRIEB, me);
-                if (Unit* Thadell = FindCreature(N_THADELL, 30, me))
+                if (Unit* Thadell = me->FindNearestCreature(N_THADELL, 30))
                     DoScriptText(SAY_THADELL_1, me); break;
             case 13:
-                if (Unit* Thadell = FindCreature(N_THADELL, 30, me))
+                if (Unit* Thadell = me->FindNearestCreature(N_THADELL, 30))
                     DoScriptText(SAY_THADELL_2, me, pPlayer); break;
         }
     }

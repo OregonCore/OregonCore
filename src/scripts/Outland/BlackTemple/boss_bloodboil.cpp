@@ -64,16 +64,6 @@ EndScriptData */
 #define COORD_Z_HOME                64.0f
 
 //This is used to sort the players by distance in preparation for the Bloodboil cast.
-struct ObjectDistanceOrderReversed : public std::binary_function<const WorldObject, const WorldObject, bool>
-{
-    const Unit* m_pSource;
-    ObjectDistanceOrderReversed(const Unit* pSource) : m_pSource(pSource) {};
-
-    bool operator()(const WorldObject* pLeft, const WorldObject* pRight) const
-    {
-        return !m_pSource->GetDistanceOrder(pLeft, pRight);
-    }
-};
 
 struct boss_gurtogg_bloodboilAI : public ScriptedAI
 {
@@ -178,7 +168,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
         }
 
         //Sort the list of players
-        targets.sort(ObjectDistanceOrderReversed(me));
+        targets.sort(Oregon::ObjectDistanceOrderPred(me, false));
         //Resize so we only get top 5
         targets.resize(5);
 

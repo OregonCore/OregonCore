@@ -364,17 +364,8 @@ struct boss_shade_of_akamaAI : public ScriptedAI
 
     void FindChannelers()
     {
-        CellPair pair(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
-        Cell cell(pair);
-        cell.data.Part.reserved = ALL_DISTRICT;
-        cell.SetNoCreate();
-
         std::list<Creature*> ChannelerList;
-
-        Oregon::AllCreaturesOfEntryInRange check(me, CREATURE_CHANNELER, 50);
-        Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(ChannelerList, check);
-        TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> visitor(searcher);
-        cell.Visit(pair, visitor, *(me->GetMap()));
+        me->GetCreatureListWithEntryInGrid(ChannelerList,CREATURE_CHANNELER,50.0f);
 
         if (!ChannelerList.empty())
         {

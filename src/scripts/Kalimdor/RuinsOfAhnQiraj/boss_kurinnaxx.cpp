@@ -116,9 +116,7 @@ struct boss_kurinnaxxAI : public ScriptedAI
                 SANDTRAP_Timer = 5000;
             } else
             {
-                GameObject* trap = FindGameObject(180647,100,me);
-
-                if (trap)
+                if (GameObject* trap = me->FindNearestGameObject(180647, 100))
                 {
                     float x,y,z;
                     trap->GetPosition(x,y,z);

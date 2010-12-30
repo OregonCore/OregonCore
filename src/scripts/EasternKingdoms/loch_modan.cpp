@@ -126,7 +126,7 @@ struct npc_miranAI : public npc_escortAI
             DoScriptText(MIRAN_SAY_AMBUSH_ONE, me);
             me->SummonCreature(DARK_IRON_RAIDER, -5697.27f,-3736.36f,318.54f, 2.02f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 30000);
             me->SummonCreature(DARK_IRON_RAIDER, -5697.27f,-3736.36f,318.54f, 2.07f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 30000);
-            if (Unit* scoff = FindCreature(DARK_IRON_RAIDER, 30, me))
+            if (Unit* scoff = me->FindNearestCreature(DARK_IRON_RAIDER, 30))
                 DoScriptText(DARK_IRON_RAIDER_SAY_AMBUSH, scoff);
             DoScriptText(MIRAN_SAY_AMBUSH_TWO, me);
         break;

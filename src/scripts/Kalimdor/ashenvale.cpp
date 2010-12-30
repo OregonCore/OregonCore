@@ -382,7 +382,7 @@ struct npc_ruul_snowhoofAI : public npc_escortAI
         {
         case 0:    {
                 me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-                GameObject* Cage = FindGameObject(GO_CAGE, 20, me);
+                GameObject* Cage = me->FindNearestGameObject(GO_CAGE, 20);
                 if (Cage)
                     Cage->SetGoState(GO_STATE_ACTIVE);
                 break;}
@@ -409,7 +409,7 @@ struct npc_ruul_snowhoofAI : public npc_escortAI
 
     void Reset()
     {
-        GameObject* Cage = FindGameObject(GO_CAGE, 20, me);
+        GameObject* Cage = me->FindNearestGameObject(GO_CAGE, 20);
         if (Cage)
             Cage->SetGoState(GO_STATE_READY);
     }

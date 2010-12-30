@@ -601,6 +601,9 @@ class WorldObject : public Object, public WorldLocation
         Creature*   FindNearestCreature(uint32 entry, float range, bool alive = true);
         GameObject* FindNearestGameObject(uint32 entry, float range);
 
+        void GetGameObjectListWithEntryInGrid(std::list<GameObject*>& lList, uint32 uiEntry, float fMaxSearchRange);
+        void GetCreatureListWithEntryInGrid(std::list<Creature*>& lList, uint32 uiEntry, float fMaxSearchRange);
+
         void DestroyForNearbyPlayers();
         virtual void UpdateObjectVisibility(bool forced = true);
         void BuildUpdate(UpdateDataMapType&);
@@ -646,5 +649,23 @@ class WorldObject : public Object, public WorldLocation
         uint16 m_notifyflags;
         uint16 m_executed_notifies;
 };
+
+namespace Oregon
+{
+    // Binary predicate to sort WorldObjects based on the distance to a reference WorldObject
+    class ObjectDistanceOrderPred
+    {
+        public:
+            ObjectDistanceOrderPred(const WorldObject *pRefObj, bool ascending = true) : m_refObj(pRefObj), m_ascending(ascending) {}
+            bool operator()(const WorldObject *pLeft, const WorldObject *pRight) const
+            {
+                return m_ascending ? m_refObj->GetDistanceOrder(pLeft, pRight) : !m_refObj->GetDistanceOrder(pLeft, pRight);
+            }
+        private:
+            const WorldObject *m_refObj;
+            const bool m_ascending;
+    };
+}
+
 #endif
 

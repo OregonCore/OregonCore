@@ -584,14 +584,14 @@ struct npc_dirty_larryAI : public ScriptedAI
 
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         me->setFaction(1194);
-        Unit* Creepjack = FindCreature(NPC_CREEPJACK, 20, me);
+        Unit* Creepjack = me->FindNearestCreature(NPC_CREEPJACK, 20);
         if (Creepjack)
         {
             CAST_CRE(Creepjack)->AI()->EnterEvadeMode();
             Creepjack->setFaction(1194);
             Creepjack->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
-        Unit* Malone = FindCreature(NPC_MALONE, 20, me);
+        Unit* Malone = me->FindNearestCreature(NPC_MALONE, 20);
         if (Malone)
         {
             CAST_CRE(Malone)->AI()->EnterEvadeMode();
@@ -602,23 +602,23 @@ struct npc_dirty_larryAI : public ScriptedAI
 
     uint32 NextStep(uint32 Step)
     {
-        Player* player = Unit::GetPlayer(*me, PlayerGUID);
+        Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID);
 
         switch(Step)
         {
-        case 0:{ me->SetInFront(player);
-            Unit* Creepjack = FindCreature(NPC_CREEPJACK, 20, me);
+        case 0:{ me->SetInFront(pPlayer);
+            Unit* Creepjack = me->FindNearestCreature(NPC_CREEPJACK, 20);
             if (Creepjack)
                 Creepjack->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-            Unit* Malone = FindCreature(NPC_MALONE, 20, me);
+            Unit* Malone = me->FindNearestCreature(NPC_MALONE, 20);
             if (Malone)
                 Malone->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
             me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP); }return 2000;
-        case 1: DoScriptText(SAY_1, me, player); return 3000;
-        case 2: DoScriptText(SAY_2, me, player); return 5000;
-        case 3: DoScriptText(SAY_3, me, player); return 2000;
-        case 4: DoScriptText(SAY_4, me, player); return 2000;
-        case 5: DoScriptText(SAY_5, me, player); return 2000;
+        case 1: DoScriptText(SAY_1, me, pPlayer); return 3000;
+        case 2: DoScriptText(SAY_2, me, pPlayer); return 5000;
+        case 3: DoScriptText(SAY_3, me, pPlayer); return 2000;
+        case 4: DoScriptText(SAY_4, me, pPlayer); return 2000;
+        case 5: DoScriptText(SAY_5, me, pPlayer); return 2000;
         case 6: Attack = true; return 2000;
         default: return 0;
         }
@@ -636,36 +636,36 @@ struct npc_dirty_larryAI : public ScriptedAI
 
         if (Attack)
         {
-            Player* player = Unit::GetPlayer(*me, PlayerGUID);
+            Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID);
             me->setFaction(14);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            if (player)
+            if (pPlayer)
             {
-            Unit* Creepjack = FindCreature(NPC_CREEPJACK, 20, me);
+            Unit* Creepjack = me->FindNearestCreature(NPC_CREEPJACK, 20);
             if (Creepjack)
             {
-                Creepjack->Attack(player, true);
+                Creepjack->Attack(pPlayer, true);
                 Creepjack->setFaction(14);
-                Creepjack->GetMotionMaster()->MoveChase(player);
+                Creepjack->GetMotionMaster()->MoveChase(pPlayer);
                 Creepjack->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             }
-            Unit* Malone = FindCreature(NPC_MALONE, 20, me);
+            Unit* Malone = me->FindNearestCreature(NPC_MALONE, 20);
             if (Malone)
             {
-                Malone->Attack(player, true);
+                Malone->Attack(pPlayer, true);
                 Malone->setFaction(14);
-                Malone->GetMotionMaster()->MoveChase(player);
+                Malone->GetMotionMaster()->MoveChase(pPlayer);
                 Malone->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             }
-                DoStartMovement(player);
-                AttackStart(player);
+                DoStartMovement(pPlayer);
+                AttackStart(pPlayer);
             }
             Attack = false;
         }
 
         if ((me->GetHealth()*100)/me->GetMaxHealth() < 1 && !Done)
         {
-            Unit* Creepjack = FindCreature(NPC_CREEPJACK, 20, me);
+            Unit* Creepjack = me->FindNearestCreature(NPC_CREEPJACK, 20);
             if (Creepjack)
             {
                 CAST_CRE(Creepjack)->AI()->EnterEvadeMode();
@@ -673,7 +673,7 @@ struct npc_dirty_larryAI : public ScriptedAI
                 Creepjack->GetMotionMaster()->MoveTargetedHome();
                 Creepjack->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             }
-            Unit* Malone = FindCreature(NPC_MALONE, 20, me);
+            Unit* Malone = me->FindNearestCreature(NPC_MALONE, 20);
             if (Malone)
             {
                 CAST_CRE(Malone)->AI()->EnterEvadeMode();

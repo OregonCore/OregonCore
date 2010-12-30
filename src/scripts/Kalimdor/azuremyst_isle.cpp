@@ -411,8 +411,6 @@ struct npc_geezleAI : public ScriptedAI
 {
     npc_geezleAI(Creature *c) : ScriptedAI(c) {}
 
-    std::list<GameObject*> FlagList;
-
     uint64 SparkGUID;
 
     uint32 Step;
@@ -486,17 +484,9 @@ struct npc_geezleAI : public ScriptedAI
 
     void DespawnNagaFlag(bool despawn)
     {
-        CellPair pair(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
-        Cell cell(pair);
-        cell.data.Part.reserved = ALL_DISTRICT;
-        cell.SetNoCreate();
+        std::list<GameObject*> FlagList;
+        me->GetGameObjectListWithEntryInGrid(FlagList,GO_NAGA_FLAG, 100.0f);
 
-        Oregon::AllGameObjectsWithEntryInGrid go_check(GO_NAGA_FLAG);
-        Oregon::GameObjectListSearcher<Oregon::AllGameObjectsWithEntryInGrid> go_search(FlagList, go_check);
-        TypeContainerVisitor <Oregon::GameObjectListSearcher<Oregon::AllGameObjectsWithEntryInGrid>, GridTypeMapContainer> go_visit(go_search);
-        cell.Visit(pair, go_visit, *(me->GetMap()));
-
-        Player* player = NULL;
         if (!FlagList.empty())
         {
             for (std::list<GameObject*>::iterator itr = FlagList.begin(); itr != FlagList.end(); ++itr)

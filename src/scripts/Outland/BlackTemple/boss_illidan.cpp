@@ -1687,27 +1687,15 @@ struct cage_trap_triggerAI : public ScriptedAI
     }
 };
 
-bool GOHello_cage_trap(Player* plr, GameObject* go)
+bool GOHello_cage_trap(Player* pPlayer, GameObject* pGo)
 {
     float x, y, z;
-    plr->GetPosition(x, y, z);
+    pPlayer->GetPosition(x, y, z);
 
-    Creature* trigger = NULL;
-
-    CellPair pair(Oregon::ComputeCellPair(x, y));
-    Cell cell(pair);
-    cell.data.Part.reserved = ALL_DISTRICT;
-    cell.SetNoCreate();
-
-    // Grid search for nearest live creature of entry 23304 within 10 yards
-    Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck check(*plr, 23304, true, 10);
-    Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(trigger, check);
-    TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> cSearcher(searcher);
-    cell.Visit(pair, cSearcher, *(plr->GetMap()));
-
-    if (trigger)
-        ((cage_trap_triggerAI*)trigger->AI())->Active = true;
-    go->SetGoState(GO_STATE_ACTIVE);
+    // Grid search for nearest live Creature of entry 23304 within 10 yards
+    if (Creature* pTrigger = pGo->FindNearestCreature(23304, 10.0f))
+        CAST_AI(cage_trap_triggerAI, pTrigger->AI())->Active = true;
+    pGo->SetGoState(GO_STATE_ACTIVE);
     return true;
 }
 

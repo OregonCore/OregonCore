@@ -280,21 +280,20 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
         if (summoned)
         {
             Creature *Nazan = Unit::GetCreature(*me, NazanGUID);
-            Creature *Vazruden = Unit::GetCreature(*me, VazrudenGUID);
-            if (Nazan || (Nazan = (Creature *)FindCreature(ENTRY_NAZAN, 5000, me)))
+            if (!Nazan)
+                Nazan = me->FindNearestCreature(ENTRY_NAZAN, 5000);
+            if (Nazan)
             {
-                Nazan->SetLootRecipient(NULL);
-                Nazan->SetVisibility(VISIBILITY_OFF);
-                Nazan->DealDamage(Nazan, Nazan->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-                Nazan->RemoveCorpse();
+                Nazan->DisappearAndDie();
                 NazanGUID = 0;
             }
-            if (Vazruden || (Vazruden = (Creature *)FindCreature(ENTRY_VAZRUDEN, 5000, me)))
+
+            Creature *Vazruden = Unit::GetCreature(*me, VazrudenGUID);
+            if (!Vazruden)
+                Vazruden = me->FindNearestCreature(ENTRY_VAZRUDEN, 5000);
+            if (Vazruden)
             {
-                Vazruden->SetLootRecipient(NULL);
-                Vazruden->SetVisibility(VISIBILITY_OFF);
-                Vazruden->DealDamage(Vazruden, Vazruden->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-                Vazruden->RemoveCorpse();
+                Vazruden->DisappearAndDie();
                 VazrudenGUID = 0;
             }
             summoned = false;
@@ -423,8 +422,8 @@ struct mob_hellfire_sentryAI : public ScriptedAI
 
     void JustDied(Unit* who)
     {
-        if (Creature *herald = (Creature *)FindCreature(ENTRY_VAZRUDEN_HERALD,150, me))
-            ((boss_vazruden_the_heraldAI *)herald->AI())->SentryDownBy(who);
+        if (Creature *herald = me->FindNearestCreature(ENTRY_VAZRUDEN_HERALD,150))
+            CAST_AI(boss_vazruden_the_heraldAI, herald->AI())->SentryDownBy(who);
     }
 
     void UpdateAI(const uint32 diff)

@@ -310,18 +310,6 @@ struct mob_doomfire_targettingAI : public ScriptedAI
    For Doomfire, we summon a mob (Doomfire Targetting) that summons another mob (Doomfire every second)
    Doomfire Targetting 'stalks' players whilst Doomfire damages player that are within range. */
 
-// This is used to sort by distance in order to see who is the closest target, when checking for Finger of Death
-struct TargetDistanceOrder : public std::binary_function<const Unit, const Unit, bool>
-{
-    const Unit* MainTarget;
-    TargetDistanceOrder(const Unit *target) : MainTarget(target) {};
-    // functor for operator "<"
-    bool operator()(const Unit* _Left, const Unit* _Right) const
-    {
-        return (MainTarget->GetDistance(_Left) < MainTarget->GetDistance(_Right));
-    }
-};
-
 struct boss_archimondeAI : public hyjal_trashAI
 {
     boss_archimondeAI(Creature *c) : hyjal_trashAI(c)
@@ -451,7 +439,7 @@ struct boss_archimondeAI : public hyjal_trashAI
         if (targets.empty())
             return false;
 
-        targets.sort(TargetDistanceOrder(me));
+        targets.sort(Oregon::ObjectDistanceOrderPred(me));
         Unit *pTarget = targets.front();
         if (pTarget)
         {

@@ -272,14 +272,14 @@ struct mob_ethereal_beaconAI : public ScriptedAI
     void EnterCombat(Unit *who)
     {
         // Send Shaffar to fight
-        Unit* Shaffar = FindCreature(ENTRY_SHAFFAR, 100, me);
+        Creature* Shaffar = me->FindNearestCreature(ENTRY_SHAFFAR, 100);
         if (!Shaffar || Shaffar->isDead())
         {
             KillSelf();
             return;
         }
         if (!Shaffar->isInCombat())
-            CAST_CRE(Shaffar)->AI()->AttackStart(who);
+            Shaffar->AI()->AttackStart(who);
     }
 
     void JustSummoned(Creature *summoned)
@@ -289,8 +289,7 @@ struct mob_ethereal_beaconAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        Unit *Shaffar = FindCreature(ENTRY_SHAFFAR, 100, me);
-        if (Shaffar)
+        if (Creature* Shaffar = me->FindNearestCreature(ENTRY_SHAFFAR, 100))
             ((boss_nexusprince_shaffarAI*)(CAST_CRE(Shaffar)->AI()))->RemoveBeaconFromList(me);
     }
 
@@ -301,7 +300,7 @@ struct mob_ethereal_beaconAI : public ScriptedAI
 
         if (Check_Timer <= diff)
         {
-            Unit *Shaffar = FindCreature(ENTRY_SHAFFAR, 100, me);
+            Creature *Shaffar = me->FindNearestCreature(ENTRY_SHAFFAR, 100);
             if (!Shaffar || Shaffar->isDead() || !Shaffar->isInCombat())
             {
                 KillSelf();

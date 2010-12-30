@@ -303,18 +303,6 @@ struct boss_reliquary_of_soulsAI : public ScriptedAI
     }
 };
 
-//This is used to sort the players by distance in preparation for the Fixate cast.
-struct TargetDistanceOrder : public std::binary_function<const Unit, const Unit, bool>
-{
-    const Unit* MainTarget;
-    TargetDistanceOrder(const Unit *target) : MainTarget(target) {};
-    // functor for operator "<"
-    bool operator()(const Unit* _Left, const Unit* _Right) const
-    {
-        return (MainTarget->GetDistance(_Left) < MainTarget->GetDistance(_Right));
-    }
-};
-
 struct boss_essence_of_sufferingAI : public ScriptedAI
 {
     boss_essence_of_sufferingAI(Creature *c) : ScriptedAI(c) {}
@@ -378,7 +366,7 @@ struct boss_essence_of_sufferingAI : public ScriptedAI
         }
         if (targets.empty())
             return; // No targets added for some reason. No point continuing.
-        targets.sort(TargetDistanceOrder(me)); // Sort players by distance.
+        targets.sort(Oregon::ObjectDistanceOrderPred(me)); // Sort players by distance.
         targets.resize(1); // Only need closest target.
         Unit *pTarget = targets.front(); // Get the first target.
         if (pTarget)

@@ -511,28 +511,6 @@ void ScriptedAI::DoTeleportAll(float fX, float fY, float fZ, float fO)
                 i_pl->TeleportTo(me->GetMapId(), fX, fY, fZ, fO, TELE_TO_NOT_LEAVE_COMBAT);
 }
 
-Unit* FindCreature(uint32 entry, float range, Unit* Finder)
-{
-    if (!Finder)
-        return NULL;
-    Creature* target = NULL;
-    Oregon::AllCreaturesOfEntryInRange check(Finder, entry, range);
-    Oregon::CreatureSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(target, check);
-    Finder->VisitNearbyObject(range, searcher);
-    return target;
-}
-
-GameObject* FindGameObject(uint32 entry, float range, Unit* Finder)
-{
-    if (!Finder)
-        return NULL;
-    GameObject* target = NULL;
-    Oregon::AllGameObjectsWithEntryInGrid go_check(entry);
-    Oregon::GameObjectSearcher<Oregon::AllGameObjectsWithEntryInGrid> searcher(target, go_check);
-    Finder->VisitNearbyGridObject(range, searcher);
-    return target;
-}
-
 Unit* ScriptedAI::DoSelectLowestHpFriendly(float fRange, uint32 uiMinHPDiff)
 {
     Unit* pUnit = NULL;
@@ -565,8 +543,6 @@ Player* ScriptedAI::GetPlayerAtMinimumRange(float fMinimumRange)
 {
     Player* pPlayer = NULL;
 
-    //NO IMPLEMENTED IN TC1 YET...
-    /*
     CellPair pair(Oregon::ComputeCellPair(me->GetPositionX(), me->GetPositionY()));
     Cell cell(pair);
     cell.data.Part.reserved = ALL_DISTRICT;
@@ -575,8 +551,8 @@ Player* ScriptedAI::GetPlayerAtMinimumRange(float fMinimumRange)
     Oregon::PlayerAtMinimumRangeAway check(me, fMinimumRange);
     Oregon::PlayerSearcher<Oregon::PlayerAtMinimumRangeAway> searcher(pPlayer, check);
     TypeContainerVisitor<Oregon::PlayerSearcher<Oregon::PlayerAtMinimumRangeAway>, GridTypeMapContainer> visitor(searcher);
+
     cell.Visit(pair, visitor, *(me->GetMap()));
-    */
 
     return pPlayer;
 }

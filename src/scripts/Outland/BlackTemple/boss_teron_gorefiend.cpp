@@ -103,18 +103,6 @@ struct mob_doom_blossomAI : public ScriptedAI
     void SetTeronGUID(uint64 guid){ TeronGUID = guid; }
 };
 
-//This is used to sort the players by distance for Constructs to see who to cast Atrophy on
-struct TargetDistanceOrder : public std::binary_function<const Unit, const Unit, bool>
-{
-    const Unit* MainTarget;
-    TargetDistanceOrder(const Unit *target) : MainTarget(target) {};
-    // functor for operator "<"
-    bool operator()(const Unit* _Left, const Unit* _Right) const
-    {
-        return (MainTarget->GetDistance(_Left) < MainTarget->GetDistance(_Right));
-    }
-};
-
 struct mob_shadowy_constructAI : public ScriptedAI
 {
     mob_shadowy_constructAI(Creature* c) : ScriptedAI(c) {}
@@ -165,7 +153,7 @@ struct mob_shadowy_constructAI : public ScriptedAI
             if (pUnit && pUnit->isAlive())
                 targets.push_back(pUnit);
         }
-        targets.sort(TargetDistanceOrder(me));
+        targets.sort(Oregon::ObjectDistanceOrderPred(me));
         Unit *pTarget = targets.front();
         if (pTarget && me->IsWithinDistInMap(pTarget, me->GetAttackDistance(pTarget)))
         {

@@ -41,12 +41,6 @@ class SummonList : public std::list<uint64>
         Creature *me;
 };
 
-//Get a single creature of given entry
-Unit* FindCreature(uint32 entry, float range, Unit* Finder);
-
-//Get a single gameobject of given entry
-GameObject* FindGameObject(uint32 entry, float range, Unit* Finder);
-
 struct ScriptedAI : public CreatureAI
 {
     explicit ScriptedAI(Creature* pCreature);
