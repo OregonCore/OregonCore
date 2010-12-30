@@ -29,6 +29,12 @@
 #include "Config/Config.h"
 #include <map>
 
+enum GMTicketOpenedByGMStatus
+{
+    GMTICKET_OPENEDBYGM_STATUS_NOT_OPENED = 0,      // ticket has never been opened by a gm
+    GMTICKET_OPENEDBYGM_STATUS_OPENED = 1,          // ticket has been opened by a gm
+};
+
 struct GM_Ticket
 {
     uint64 guid;
@@ -44,6 +50,8 @@ struct GM_Ticket
     uint64 closed;
     uint64 assignedToGM;
     std::string comment;
+    bool escalated;
+    bool viewed;
 };
 
 // Map Typedef
@@ -62,6 +70,7 @@ class TicketMgr
         void DeleteAllRemovedGMTickets();
         void DeleteGMTicketPermanently(uint64 ticketGuid);
         void LoadGMTickets();
+        void LoadGMSurveys();
         void RemoveGMTicketByPlayer(uint64 playerGuid, uint64 GMguid);
         void RemoveGMTicket(uint64 ticketGuid, uint64 GMguid);
         void UpdateGMTicket(GM_Ticket *ticket);
@@ -72,10 +81,15 @@ class TicketMgr
         GM_Ticket* GetGMTicket(uint64 ticketGuid);
         GM_Ticket* GetGMTicketByPlayer(uint64 playerGuid);
         GM_Ticket* GetGMTicketByName(const char *name);
+        uint64 GetNextSurveyID()
+        {
+            return ++m_GMSurveyID;
+        }
 
 
     protected:
         uint64 m_ticketid;
+        uint64 m_GMSurveyID;
 };
 
 #endif

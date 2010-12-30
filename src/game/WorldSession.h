@@ -265,13 +265,13 @@ class WorldSession
         void HandleLogoutCancelOpcode(WorldPacket& recvPacket);
 
         // GM Ticket opcodes
-         void HandleGMTicketCreateOpcode(WorldPacket& recvPacket);
-         void HandleGMTicketUpdateOpcode(WorldPacket& recvPacket);
-         void HandleGMTicketDeleteOpcode(WorldPacket& recvPacket);
-         void HandleGMTicketGetTicketOpcode(WorldPacket& recvPacket);
-         void HandleGMTicketSystemStatusOpcode(WorldPacket& recvPacket);
+        void HandleGMTicketCreateOpcode(WorldPacket& recvPacket);
+        void HandleGMTicketUpdateOpcode(WorldPacket& recvPacket);
+        void HandleGMTicketDeleteOpcode(WorldPacket& recvPacket);
+        void HandleGMTicketGetTicketOpcode(WorldPacket& recvPacket);
+        void HandleGMTicketSystemStatusOpcode(WorldPacket& recvPacket);
 
-        //void HandleGMSurveySubmit(WorldPacket& recvPacket);
+        void HandleGMSurveySubmit(WorldPacket& recvPacket);
 
         void HandleTogglePvP(WorldPacket& recvPacket);
 

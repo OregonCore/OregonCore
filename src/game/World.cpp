@@ -806,6 +806,8 @@ void World::LoadConfigSettings(bool reload)
         m_configs[CONFIG_START_GM_LEVEL] = MAX_LEVEL;
     }
 
+    m_configs[CONFIG_CHANCE_OF_GM_SURVEY] = sConfig.GetFloatDefault("GM.TicketSystem.ChanceOfGMSurvey", 0.0f);
+
     m_configs[CONFIG_GROUP_VISIBILITY] = sConfig.GetIntDefault("Visibility.GroupMode", 1);
 
     m_configs[CONFIG_MAIL_DELIVERY_DELAY] = sConfig.GetIntDefault("MailDeliveryDelay", HOUR);
@@ -1414,6 +1416,9 @@ void World::SetInitialWorldSettings()
 
     sLog.outString("Loading GM tickets...");
     ticketmgr.LoadGMTickets();
+
+    sLog.outString("Loading GM surveys...");
+    ticketmgr.LoadGMSurveys();
 
     // Handle outdated emails (delete/return)
     sLog.outString("Returning old mails...");

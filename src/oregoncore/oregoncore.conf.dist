@@ -1154,6 +1154,12 @@ Channel.SilentlyGMJoin = 0
 #        Are players allowed to add GMs to their friend list
 #        Default: 0 (false)
 #                 1 (true)
+#
+#    GM.TicketSystem.ChanceOfGMSurvey
+#        Chance of sending a GM survey with every ticket completion.
+#        Default: 0 (disables surveys)
+#                 1-100 (% of chance)
+#
 ###############################################################################
 
 GM.LoginState     = 2
@@ -1167,6 +1173,7 @@ GM.LogTrade       = 1
 GM.StartLevel     = 70
 GM.AllowInvite    = 0
 GM.AllowFriend    = 0
+GM.TicketSystem.ChanceOfGMSurvey = 0
 
 ###############################################################################
 # VISIBILITY AND RADIUSES

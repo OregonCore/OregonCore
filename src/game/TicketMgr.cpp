@@ -107,7 +107,7 @@ void TicketMgr::LoadGMTickets()
     // Delete all out of object holder
     GM_TicketList.clear();
 
-    QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT guid, playerGuid, name, message, createtime, map, posX, posY, posZ, timestamp, closed, assignedto, comment FROM gm_tickets");
+    QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT guid, playerGuid, name, message, createtime, map, posX, posY, posZ, timestamp, closed, assignedto, comment, escalated, viewed FROM gm_tickets");
     GM_Ticket *ticket;
 
     if (!result)
@@ -136,12 +136,29 @@ void TicketMgr::LoadGMTickets()
         ticket->closed = fields[10].GetUInt64();
         ticket->assignedToGM = fields[11].GetUInt64();
         ticket->comment = fields[12].GetString();
+        ticket->escalated = fields[13].GetUInt64();
+        ticket->viewed = fields[14].GetBool();
 
         AddGMTicket(ticket, true);
 
     } while (result->NextRow());
 
     sWorld.SendGMText(LANG_COMMAND_TICKETRELOAD, result->GetRowCount());
+}
+
+void TicketMgr::LoadGMSurveys()
+{
+    // we don't actually load anything into memory here as there's no reason to
+    QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT MAX(surveyid) FROM gm_surveys");
+    if (result)
+    {
+        Field *fields = result->Fetch();
+        m_GMSurveyID = fields[0].GetUInt64();
+    }
+    else
+        m_GMSurveyID = 0;
+
+    sLog.outString(">> Loaded GM Survey count from database.");
 }
 
 void TicketMgr::RemoveGMTicket(uint64 ticketGuid, uint64 GMguid)
@@ -176,7 +193,7 @@ void TicketMgr::SaveGMTicket(GM_Ticket* ticket)
     std::string msg = ticket->message;
     CharacterDatabase.escape_string(msg);
     std::stringstream ss;
-    ss << "REPLACE INTO gm_tickets (guid, playerGuid, name, message, createtime, map, posX, posY, posZ, timestamp, closed, assignedto, comment) VALUES('";
+    ss << "REPLACE INTO gm_tickets (guid, playerGuid, name, message, createtime, map, posX, posY, posZ, timestamp, closed, assignedto, comment, escalated, viewed) VALUES('";
     ss << ticket->guid << "', '";
     ss << ticket->playerGuid << "', '";
     ss << ticket->name << "', '";
@@ -189,7 +206,9 @@ void TicketMgr::SaveGMTicket(GM_Ticket* ticket)
     ss << ticket->timestamp << "', '";
     ss << ticket->closed << "', '";
     ss << ticket->assignedToGM << "', '";
-    ss << ticket->comment << "');";
+    ss << ticket->comment << "', '";
+    ss << ticket->escalated << "', '";
+    ss << (ticket->viewed ? 1 : 0) << "');";
     CharacterDatabase.BeginTransaction();
     CharacterDatabase.Execute(ss.str().c_str());
     CharacterDatabase.CommitTransaction();

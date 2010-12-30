@@ -68,6 +68,8 @@ void WorldSession::HandleGMTicketCreateOpcode(WorldPacket & recv_data)
     ticket->closed = 0;
     ticket->assignedToGM = 0;
     ticket->comment = "";
+    ticket->escalated = false;
+    ticket->viewed = false;
 
     // remove ticket by player, shouldn't happen
     ticketmgr.RemoveGMTicketByPlayer(GetPlayer()->GetGUID(), GetPlayer()->GetGUID());
@@ -167,9 +169,67 @@ void WorldSession::HandleGMTicketGetTicketOpcode(WorldPacket & /*recv_data*/)
     // Send current Ticket
     data << uint32(6); // unk ?
     data << ticket->message.c_str();
+    data << uint8(0x7); // ticket category
+    data << float(0); // tickets in queue?
+    data << float(0); // if > "tickets in queue" then "We are currently experiencing a high volume of petitions."
+    data << float(ticket->viewed ? GMTICKET_OPENEDBYGM_STATUS_NOT_OPENED : GMTICKET_OPENEDBYGM_STATUS_OPENED); // 0 - "Your ticket will be serviced soon", 1 - "Wait time currently unavailable"
+    if (ticket->escalated)
+    {
+        data << uint8(2); // if == 2 and next field == 1 then "Your ticket has been escalated"
+        data << uint8(1); // const
+    }
+    else
+    {
+        data << uint8(0); // ticket is not assigned
+        data << uint8(0);
+    }
 
     SendPacket(&data);
 
+}
+
+void WorldSession::HandleGMSurveySubmit(WorldPacket& recv_data)
+{
+    uint64 nextSurveyID = ticketmgr.GetNextSurveyID();
+    uint32 x;
+    recv_data >> x; // answer range? (6 = 0-5?)
+
+    // TODO: columns for "playerguid" "playername" and possibly "gm" after `surveyid` but how do we retrieve after ticket deletion?
+    // first we must get in basic template so each answer can be inserted to the same field since they are not handled all at once
+    CharacterDatabase.PExecute("INSERT INTO gm_surveys (surveyid) VALUES ('%i')",nextSurveyID);
+
+    uint8 result[10];
+    memset(result, 0, sizeof(result));
+    for (int i = 0; i < 10; ++i)
+    {
+        uint32 questionID;
+        recv_data >> questionID; // GMSurveyQuestions.dbc
+        if (!questionID)
+            break;
+
+        uint8 value;
+        std::string unk_text;
+        recv_data >> value; // answer
+        recv_data >> unk_text; // always empty
+
+        result[i] = value;
+        // if anyone has a better programming method be my guest. this is the only way I see to prevent multiple rows
+        if (questionID == 28)
+        CharacterDatabase.PExecute("UPDATE gm_surveys SET AppropriateAnswer = '%i' WHERE surveyid = %i;",value,nextSurveyID);
+        if (questionID == 29)
+        CharacterDatabase.PExecute("UPDATE gm_surveys SET Understandability = '%i' WHERE surveyid = %i;",value,nextSurveyID);
+        if (questionID == 30)
+        CharacterDatabase.PExecute("UPDATE gm_surveys SET GMRating = '%i' WHERE surveyid = %i;",value,nextSurveyID);
+        if (questionID == 31)
+        CharacterDatabase.PExecute("UPDATE gm_surveys SET ResponseTime = '%i' WHERE surveyid = %i;",value,nextSurveyID);
+        if (questionID == 32)
+        CharacterDatabase.PExecute("UPDATE gm_surveys SET OverallGMExperience = '%i' WHERE surveyid = %i;",value,nextSurveyID);
+    }
+
+    std::string comment;
+    recv_data >> comment; // additional comment
+    CharacterDatabase.escape_string(comment);
+    CharacterDatabase.PExecute("UPDATE gm_surveys SET comment = '%s' WHERE surveyid = %i;",comment.c_str(),nextSurveyID);
 }
 
 void WorldSession::HandleGMTicketSystemStatusOpcode(WorldPacket & /*recv_data*/)

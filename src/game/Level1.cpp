@@ -372,6 +372,17 @@ bool ChatHandler::HandleGMTicketGetByIdCommand(const char* args)
         return true;
     }
 
+    ticket->viewed = true;
+    Player *plr = objmgr.GetPlayer(ticket->playerGuid);
+    if (plr && plr->IsInWorld())
+    {
+        // tell server to update display of ticket status
+        WorldPacket data(SMSG_GM_TICKET_STATUS_UPDATE, 4);
+        data << uint32(1);
+        plr->GetSession()->SendPacket(&data);
+    }
+    ticketmgr.SaveGMTicket(ticket); // update database
+
     std::string gmname;
     std::stringstream ss;
     ss << PGetParseString(LANG_COMMAND_TICKETLISTGUID, ticket->guid);
@@ -402,6 +413,17 @@ bool ChatHandler::HandleGMTicketGetByNameCommand(const char* args)
         SendSysMessage(LANG_COMMAND_TICKETNOTEXIST);
         return true;
     }
+
+    ticket->viewed = true;
+    Player *plr = objmgr.GetPlayer(ticket->playerGuid);
+    if (plr && plr->IsInWorld())
+    {
+        // tell server to update display of ticket status
+        WorldPacket data(SMSG_GM_TICKET_STATUS_UPDATE, 4);
+        data << uint32(1);
+        plr->GetSession()->SendPacket(&data);
+    }
+    ticketmgr.SaveGMTicket(ticket); // update database
 
     std::string gmname;
     std::stringstream ss;
@@ -450,10 +472,21 @@ bool ChatHandler::HandleGMTicketCloseByIdCommand(const char* args)
     if (!plr || !plr->IsInWorld())
         return true;
 
-    // send abandon ticket
-    WorldPacket data(SMSG_GMTICKET_DELETETICKET, 4);
-    data << uint32(9);
-    plr->GetSession()->SendPacket(&data);
+    if ((float)rand_chance() < sWorld.getConfig(CONFIG_CHANCE_OF_GM_SURVEY))
+    {
+        // send survey
+        WorldPacket data(SMSG_GM_TICKET_STATUS_UPDATE, 4);
+        data << uint32(3); // 3 displays survey
+        plr->GetSession()->SendPacket(&data);
+    }
+    else
+    {
+        // send abandon ticket
+        WorldPacket data(SMSG_GMTICKET_DELETETICKET, 4);
+        data << uint32(9);
+        plr->GetSession()->SendPacket(&data);
+    }
+
     return true;
 }
 
@@ -505,6 +538,16 @@ bool ChatHandler::HandleGMTicketAssignToCommand(const char* args)
         return true;
     }
 
+    ticket->escalated = true;
+    Player *plr = objmgr.GetPlayer(ticket->playerGuid);
+    if (plr && plr->IsInWorld())
+    {
+        // tell server to update display of ticket status
+        WorldPacket data(SMSG_GM_TICKET_STATUS_UPDATE, 4);
+        data << uint32(1);
+        plr->GetSession()->SendPacket(&data);
+    }
+
     ticket->assignedToGM = tarGUID;
     ticketmgr.UpdateGMTicket(ticket);
     std::stringstream ss;
@@ -550,6 +593,17 @@ bool ChatHandler::HandleGMTicketUnAssignCommand(const char* args)
     ss << PGetParseString(LANG_COMMAND_TICKETLISTASSIGNEDTO, gmname.c_str());
     ss << PGetParseString(LANG_COMMAND_TICKETLISTUNASSIGNED, cplr->GetName());
     SendGlobalGMSysMessage(ss.str().c_str());
+
+    ticket->escalated = false;
+    Player *player = objmgr.GetPlayer(ticket->playerGuid);
+    if (player && player->IsInWorld())
+    {
+        // tell server to update display of ticket status
+        WorldPacket data(SMSG_GM_TICKET_STATUS_UPDATE, 4);
+        data << uint32(1);
+        player->GetSession()->SendPacket(&data);
+    }
+
     ticket->assignedToGM = 0;
     ticketmgr.UpdateGMTicket(ticket);
     return true;
