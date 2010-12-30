@@ -35,7 +35,7 @@ struct boss_rage_winterchillAI : public hyjal_trashAI
     boss_rage_winterchillAI(Creature *c) : hyjal_trashAI(c)
     {
         pInstance = c->GetInstanceData();
-        go = false;
+        pGo = false;
         pos = 0;
     }
 
@@ -43,7 +43,7 @@ struct boss_rage_winterchillAI : public hyjal_trashAI
     uint32 DecayTimer;
     uint32 NovaTimer;
     uint32 IceboltTimer;
-    bool go;
+    bool pGo;
     uint32 pos;
 
     void Reset()
@@ -58,25 +58,25 @@ struct boss_rage_winterchillAI : public hyjal_trashAI
             pInstance->SetData(DATA_RAGEWINTERCHILLEVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         if (pInstance && IsEvent)
             pInstance->SetData(DATA_RAGEWINTERCHILLEVENT, IN_PROGRESS);
         DoPlaySoundToSet(me, SOUND_ONAGGRO);
-        DoYell(SAY_ONAGGRO, LANG_UNIVERSAL, NULL);
+        me->MonsterYell(SAY_ONAGGRO, LANG_UNIVERSAL, 0);
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
-        switch(rand()%2)
+        switch (urand(0,1))
         {
             case 0:
                 DoPlaySoundToSet(me, SOUND_ONSLAY1);
-                DoYell(SAY_ONSLAY1, LANG_UNIVERSAL, NULL);
+                me->MonsterYell(SAY_ONSLAY1, LANG_UNIVERSAL, NULL);
                 break;
             case 1:
                 DoPlaySoundToSet(me, SOUND_ONSLAY2);
-                DoYell(SAY_ONSLAY2, LANG_UNIVERSAL, NULL);
+                me->MonsterYell(SAY_ONSLAY2, LANG_UNIVERSAL, NULL);
                 break;
         }
     }
@@ -98,7 +98,7 @@ struct boss_rage_winterchillAI : public hyjal_trashAI
         if (pInstance && IsEvent)
             pInstance->SetData(DATA_RAGEWINTERCHILLEVENT, DONE);
         DoPlaySoundToSet(me, SOUND_ONDEATH);
-        DoYell(SAY_ONDEATH, LANG_UNIVERSAL, NULL);
+        me->MonsterYell(SAY_ONDEATH, LANG_UNIVERSAL, NULL);
     }
 
     void UpdateAI(const uint32 diff)
@@ -107,9 +107,9 @@ struct boss_rage_winterchillAI : public hyjal_trashAI
         {
             //Must update npc_escortAI
             npc_escortAI::UpdateAI(diff);
-            if (!go)
+            if (!pGo)
             {
-                go = true;
+                pGo = true;
                 if (pInstance)
                 {
                     AddWaypoint(0, 4896.08f,    -1576.35f,    1333.65f);
@@ -139,15 +139,15 @@ struct boss_rage_winterchillAI : public hyjal_trashAI
         {
             DoCast(me->getVictim(), SPELL_DEATH_AND_DECAY);
             DecayTimer = 60000+rand()%20000;
-            switch(rand()%2)
+            switch (urand(0,1))
             {
                 case 0:
                     DoPlaySoundToSet(me, SOUND_DECAY1);
-                    DoYell(SAY_DECAY1, LANG_UNIVERSAL, NULL);
+                    me->MonsterYell(SAY_DECAY1, LANG_UNIVERSAL, NULL);
                     break;
                 case 1:
                     DoPlaySoundToSet(me, SOUND_DECAY2);
-                    DoYell(SAY_DECAY2, LANG_UNIVERSAL, NULL);
+                    me->MonsterYell(SAY_DECAY2, LANG_UNIVERSAL, NULL);
                     break;
             }
         } else DecayTimer -= diff;
@@ -155,15 +155,15 @@ struct boss_rage_winterchillAI : public hyjal_trashAI
         {
             DoCast(me->getVictim(), SPELL_FROST_NOVA);
             NovaTimer = 30000+rand()%15000;
-            switch(rand()%2)
+            switch (urand(0,1))
             {
                 case 0:
                     DoPlaySoundToSet(me, SOUND_NOVA1);
-                    DoYell(SAY_NOVA1, LANG_UNIVERSAL, NULL);
+                    me->MonsterYell(SAY_NOVA1, LANG_UNIVERSAL, NULL);
                     break;
                 case 1:
                     DoPlaySoundToSet(me, SOUND_NOVA2);
-                    DoYell(SAY_NOVA2, LANG_UNIVERSAL, NULL);
+                    me->MonsterYell(SAY_NOVA2, LANG_UNIVERSAL, NULL);
                     break;
             }
         } else NovaTimer -= diff;

@@ -92,9 +92,9 @@ struct mob_ancient_wispAI : public ScriptedAI
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
-    void EnterCombat(Unit* who) {}
+    void EnterCombat(Unit* /*who*/) {}
 
-    void DamageTaken(Unit* done_by, uint32 &damage) { damage = 0; }
+    void DamageTaken(Unit* /*done_by*/, uint32 &damage) { damage = 0; }
 
     void UpdateAI(const uint32 diff)
     {
@@ -244,9 +244,9 @@ struct mob_doomfire_targettingAI : public ScriptedAI
         me->AddThreat(who, 0.0f);
     }
 
-    void EnterCombat(Unit* who) {}
+    void EnterCombat(Unit* /*who*/) {}
 
-    void DamageTaken(Unit *done_by, uint32 &damage) { damage = 0; }
+    void DamageTaken(Unit * /*done_by*/, uint32 &damage) { damage = 0; }
 
     void UpdateAI(const uint32 diff)
     {
@@ -376,7 +376,7 @@ struct boss_archimondeAI : public hyjal_trashAI
         IsChanneling = false;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         me->InterruptSpell(CURRENT_CHANNELED_SPELL);
         DoScriptText(SAY_AGGRO, me);
@@ -386,14 +386,9 @@ struct boss_archimondeAI : public hyjal_trashAI
             pInstance->SetData(DATA_ARCHIMONDEEVENT, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * victim)
     {
-        switch(rand()%2)
-        {
-        case 0: DoScriptText(SAY_SLAY1, me); break;
-        case 1: DoScriptText(SAY_SLAY2, me); break;
-        case 2: DoScriptText(SAY_SLAY3, me); break;
-        }
+        DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2,SAY_SLAY3), me);
 
         if (victim && (victim->GetTypeId() == TYPEID_PLAYER))
             GainSoulCharge(CAST_PLR(victim));
@@ -420,7 +415,7 @@ struct boss_archimondeAI : public hyjal_trashAI
                 break;
         }
 
-        SoulChargeTimer = 2000 + rand()%28000;
+        SoulChargeTimer = urand(2000,30000);
         ++SoulChargeCount;
     }
 
@@ -501,7 +496,7 @@ struct boss_archimondeAI : public hyjal_trashAI
         uint32 chargeSpell = 0;
         uint32 unleashSpell = 0;
 
-        switch(rand()%3)
+        switch (urand(0,2))
         {
             case 0:
                 chargeSpell = SPELL_SOUL_CHARGE_RED;
@@ -526,7 +521,7 @@ struct boss_archimondeAI : public hyjal_trashAI
         }
 
         if (HasCast)
-            SoulChargeTimer = 2000 + rand()%28000;
+            SoulChargeTimer = urand(2000,30000);
     }
 
     void UpdateAI(const uint32 diff)
@@ -660,18 +655,18 @@ struct boss_archimondeAI : public hyjal_trashAI
         if (GripOfTheLegionTimer <= diff)
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_GRIP_OF_THE_LEGION);
-            GripOfTheLegionTimer = 5000 + rand()%20000;
+            GripOfTheLegionTimer = urand(5000,25000);
         } else GripOfTheLegionTimer -= diff;
 
         if (AirBurstTimer <= diff)
         {
-            if (rand()%2 == 0)
+            if (urand(0,1))
                 DoScriptText(SAY_AIR_BURST1, me);
             else
                 DoScriptText(SAY_AIR_BURST2, me);
 
             DoCast(SelectUnit(SELECT_TARGET_RANDOM, 1), SPELL_AIR_BURST);//not on tank
-            AirBurstTimer = 25000 + rand()%15000;
+            AirBurstTimer = urand(25000,40000);
         } else AirBurstTimer -= diff;
 
         if (FearTimer <= diff)
@@ -699,7 +694,7 @@ struct boss_archimondeAI : public hyjal_trashAI
 
         DoMeleeAttackIfReady();
     }
-    void WaypointReached(uint32 i){}
+    void WaypointReached(uint32 /*i*/){}
 };
 
 CreatureAI* GetAI_boss_archimonde(Creature* pCreature)

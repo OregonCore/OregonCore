@@ -37,7 +37,7 @@ EndScriptData */
 
 struct instance_mount_hyjal : public ScriptedInstance
 {
-    instance_mount_hyjal(Map *map) : ScriptedInstance(map) {Initialize();};
+    instance_mount_hyjal(Map* pMap) : ScriptedInstance(pMap) {Initialize();};
 
     uint64 RageWinterchill;
     uint64 Anetheron;
@@ -58,6 +58,9 @@ struct instance_mount_hyjal : public ScriptedInstance
     bool ArchiYell;
 
     uint32 RaidDamage;
+
+    #define YELL_EFFORTS        "All of your efforts have been in vain, for the draining of the World Tree has already begun. Soon the heart of your world will beat no more."
+    #define YELL_EFFORTS_NAME   "Archimonde"
 
     void Initialize()
     {
@@ -171,11 +174,11 @@ struct instance_mount_hyjal : public ScriptedInstance
                         {
                             Creature* pUnit = pCreature->SummonCreature(21987,pCreature->GetPositionX(),pCreature->GetPositionY(),pCreature->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN,10000);
 
-                            Map *map = pCreature->GetMap();
-                            if (map->IsDungeon() && pUnit)
+                            Map* pMap = pCreature->GetMap();
+                            if (pMap->IsDungeon() && pUnit)
                             {
                                 pUnit->SetVisibility(VISIBILITY_OFF);
-                                Map::PlayerList const &PlayerList = map->GetPlayers();
+                                Map::PlayerList const &PlayerList = pMap->GetPlayers();
                                 if (PlayerList.isEmpty())
                                      return;
 
@@ -184,7 +187,7 @@ struct instance_mount_hyjal : public ScriptedInstance
                                      if (i->getSource())
                                      {
                                         WorldPacket data(SMSG_MESSAGECHAT, 200);
-                                        pUnit->BuildMonsterChat(&data,CHAT_MSG_MONSTER_YELL,"All of your efforts have been in vain, for the draining of the World Tree has already begun. Soon the heart of your world will beat no more.",0,"Archimonde",i->getSource()->GetGUID());
+                                        pUnit->BuildMonsterChat(&data,CHAT_MSG_MONSTER_YELL,YELL_EFFORTS,0,YELL_EFFORTS_NAME,i->getSource()->GetGUID());
                                         i->getSource()->GetSession()->SendPacket(&data);
 
                                         WorldPacket data2(SMSG_PLAY_SOUND, 4);
@@ -298,9 +301,9 @@ struct instance_mount_hyjal : public ScriptedInstance
     }
 };
 
-InstanceData* GetInstanceData_instance_mount_hyjal(Map* map)
+InstanceData* GetInstanceData_instance_mount_hyjal(Map* pMap)
 {
-    return new instance_mount_hyjal(map);
+    return new instance_mount_hyjal(pMap);
 }
 
 void AddSC_instance_mount_hyjal()

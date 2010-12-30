@@ -29,7 +29,7 @@ struct boss_kazrogalAI : public hyjal_trashAI
     boss_kazrogalAI(Creature *c) : hyjal_trashAI(c)
     {
         pInstance = c->GetInstanceData();
-        go = false;
+        pGo = false;
         pos = 0;
         SpellEntry *TempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_MARK);
         if (TempSpell && TempSpell->EffectImplicitTargetA[0] != 1)
@@ -43,7 +43,7 @@ struct boss_kazrogalAI : public hyjal_trashAI
     uint32 WarStompTimer;
     uint32 MarkTimer;
     uint32 MarkTimerBase;
-    bool go;
+    bool pGo;
     uint32 pos;
 
     void Reset()
@@ -58,29 +58,29 @@ struct boss_kazrogalAI : public hyjal_trashAI
             pInstance->SetData(DATA_KAZROGALEVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         if (pInstance && IsEvent)
             pInstance->SetData(DATA_KAZROGALEVENT, IN_PROGRESS);
         DoPlaySoundToSet(me, SOUND_ONAGGRO);
-        DoYell(SAY_ONAGGRO, LANG_UNIVERSAL, NULL);
+        me->MonsterYell(SAY_ONAGGRO, LANG_UNIVERSAL, NULL);
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
-        switch(rand()%3)
+        switch (urand(0,2))
         {
             case 0:
                 DoPlaySoundToSet(me, SOUND_ONSLAY1);
-                DoYell(SAY_ONSLAY1, LANG_UNIVERSAL, NULL);
+                me->MonsterYell(SAY_ONSLAY1, LANG_UNIVERSAL, NULL);
                 break;
             case 1:
                 DoPlaySoundToSet(me, SOUND_ONSLAY2);
-                DoYell(SAY_ONSLAY2, LANG_UNIVERSAL, NULL);
+                me->MonsterYell(SAY_ONSLAY2, LANG_UNIVERSAL, NULL);
                 break;
             case 2:
                 DoPlaySoundToSet(me, SOUND_ONSLAY3);
-                DoYell(SAY_ONSLAY3, LANG_UNIVERSAL, NULL);
+                me->MonsterYell(SAY_ONSLAY3, LANG_UNIVERSAL, NULL);
                 break;
         }
     }
@@ -110,9 +110,9 @@ struct boss_kazrogalAI : public hyjal_trashAI
         {
             //Must update npc_escortAI
             npc_escortAI::UpdateAI(diff);
-            if (!go)
+            if (!pGo)
             {
-                go = true;
+                pGo = true;
                 if (pInstance)
                 {
                     AddWaypoint(0, 5492.91f,    -2404.61f,    1462.63f);
@@ -165,15 +165,15 @@ struct boss_kazrogalAI : public hyjal_trashAI
             if (MarkTimerBase < 5500)
                 MarkTimerBase = 5500;
             MarkTimer = MarkTimerBase;
-            switch(rand()%3)
+            switch (urand(0,2))
             {
                 case 0:
                     DoPlaySoundToSet(me, SOUND_MARK1);
-                    DoYell(SAY_MARK1, LANG_UNIVERSAL, NULL);
+                    me->MonsterYell(SAY_MARK1, LANG_UNIVERSAL, NULL);
                     break;
                 case 1:
                     DoPlaySoundToSet(me, SOUND_MARK2);
-                    DoYell(SAY_MARK2, LANG_UNIVERSAL, NULL);
+                    me->MonsterYell(SAY_MARK2, LANG_UNIVERSAL, NULL);
                     break;
             }
         } else MarkTimer -= diff;

@@ -32,7 +32,7 @@ struct boss_azgalorAI : public hyjal_trashAI
     boss_azgalorAI(Creature *c) : hyjal_trashAI(c)
     {
         pInstance = c->GetInstanceData();
-        go = false;
+        pGo = false;
         pos = 0;
         SpellEntry *TempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_HOWL_OF_AZGALOR);
         if (TempSpell)
@@ -46,7 +46,7 @@ struct boss_azgalorAI : public hyjal_trashAI
     uint32 EnrageTimer;
     bool enraged;
 
-    bool go;
+    bool pGo;
     uint32 pos;
 
     void Reset()
@@ -63,29 +63,29 @@ struct boss_azgalorAI : public hyjal_trashAI
             pInstance->SetData(DATA_AZGALOREVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         if (pInstance && IsEvent)
             pInstance->SetData(DATA_AZGALOREVENT, IN_PROGRESS);
         DoPlaySoundToSet(me, SOUND_ONAGGRO);
-        DoYell(SAY_ONAGGRO, LANG_UNIVERSAL, NULL);
+        me->MonsterYell(SAY_ONAGGRO, LANG_UNIVERSAL, NULL);
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
-        switch(rand()%3)
+        switch (urand(0,2))
         {
             case 0:
                 DoPlaySoundToSet(me, SOUND_ONSLAY1);
-                DoYell(SAY_ONSLAY1, LANG_UNIVERSAL, NULL);
+                me->MonsterYell(SAY_ONSLAY1, LANG_UNIVERSAL, NULL);
                 break;
             case 1:
                 DoPlaySoundToSet(me, SOUND_ONSLAY2);
-                DoYell(SAY_ONSLAY2, LANG_UNIVERSAL, NULL);
+                me->MonsterYell(SAY_ONSLAY2, LANG_UNIVERSAL, NULL);
                 break;
             case 2:
                 DoPlaySoundToSet(me, SOUND_ONSLAY3);
-                DoYell(SAY_ONSLAY3, LANG_UNIVERSAL, NULL);
+                me->MonsterYell(SAY_ONSLAY3, LANG_UNIVERSAL, NULL);
                 break;
         }
     }
@@ -115,9 +115,9 @@ struct boss_azgalorAI : public hyjal_trashAI
         {
             //Must update npc_escortAI
             npc_escortAI::UpdateAI(diff);
-            if (!go)
+            if (!pGo)
             {
-                go = true;
+                pGo = true;
                 if (pInstance)
                 {
                     AddWaypoint(0, 5492.91f,    -2404.61f,    1462.63f);
@@ -206,32 +206,29 @@ struct mob_lesser_doomguardAI : public hyjal_trashAI
         CheckTimer = 5000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
-
     }
 
-    void WaypointReached(uint32 i)
+    void WaypointReached(uint32 /*i*/)
     {
-
     }
 
     void MoveInLineOfSight(Unit *who)
     {
-        if (me->GetDistance(who) <= 50 && !me->isInCombat() && me->IsHostileTo(who))
+        if (me->IsWithinDist(who, 50) && !me->isInCombat() && me->IsHostileTo(who))
         {
             me->AddThreat(who,0.0f);
             me->Attack(who,false);
         }
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit * /*victim*/)
     {
-
     }
 
     void UpdateAI(const uint32 diff)
@@ -263,7 +260,7 @@ struct mob_lesser_doomguardAI : public hyjal_trashAI
 
         if (CrippleTimer <= diff)
         {
-            DoCast(SelectTarget(SELECT_TARGET_RANDOM,0,100,true), SPELL_CRIPPLE);
+            DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true), SPELL_CRIPPLE);
             CrippleTimer = 25000+rand()%5000;
         } else CrippleTimer -= diff;
 
