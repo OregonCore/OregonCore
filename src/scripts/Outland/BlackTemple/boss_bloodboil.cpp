@@ -138,7 +138,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
         me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, false);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         DoZoneInCombat();
         DoScriptText(SAY_AGGRO, me);
@@ -146,16 +146,12 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
             pInstance->SetData(DATA_GURTOGGBLOODBOILEVENT, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
-        switch(rand()%2)
-        {
-        case 0: DoScriptText(SAY_SLAY1, me); break;
-        case 1: DoScriptText(SAY_SLAY2, me); break;
-        }
+        DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2), me);
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit * /*victim*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_GURTOGGBLOODBOILEVENT, DONE);
@@ -289,7 +285,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
         {
             if (Phase1)
             {
-                Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0,100,true);
+                Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if (pTarget && pTarget->isAlive())
                 {
                     Phase1 = false;
@@ -313,11 +309,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
                     //Cast this without triggered so that it appears in combat logs and shows visual.
                     DoCast(me, SPELL_FEL_RAGE_SELF);
 
-                    switch(rand()%2)
-                    {
-                    case 0: DoScriptText(SAY_SPECIAL1, me); break;
-                    case 1: DoScriptText(SAY_SPECIAL2, me); break;
-                    }
+                    DoScriptText(RAND(SAY_SPECIAL1,SAY_SPECIAL2), me);
 
                     FelGeyserTimer = 1000;
                     PhaseChangeTimer = 30000;

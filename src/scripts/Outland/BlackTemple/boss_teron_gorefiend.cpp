@@ -64,9 +64,9 @@ struct mob_doom_blossomAI : public ScriptedAI
         TeronGUID = 0;
     }
 
-    void EnterCombat(Unit *who) { }
-    void AttackStart(Unit* who) { }
-    void MoveInLineOfSight(Unit* who) { }
+    void EnterCombat(Unit * /*who*/) { }
+    void AttackStart(Unit* /*who*/) {}
+    void MoveInLineOfSight(Unit* /*who*/) {}
 
     void Despawn()
     {
@@ -134,7 +134,7 @@ struct mob_shadowy_constructAI : public ScriptedAI
         CheckTeronTimer = 5000;
     }
 
-    void EnterCombat(Unit* who) { }
+    void EnterCombat(Unit* /*who*/) {}
 
     void MoveInLineOfSight(Unit *who)
     {
@@ -237,7 +237,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
         Intro = false;
     }
 
-    void EnterCombat(Unit *who) {}
+    void EnterCombat(Unit * /*who*/) {}
 
     void MoveInLineOfSight(Unit *who)
     {
@@ -270,16 +270,12 @@ struct boss_teron_gorefiendAI : public ScriptedAI
         }
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
-        switch(rand()%2)
-        {
-        case 0: DoScriptText(SAY_SLAY1, me); break;
-        case 1: DoScriptText(SAY_SLAY2, me); break;
-        }
+        DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2), me);
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit * /*victim*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_TERONGOREFIENDEVENT, DONE);
@@ -290,7 +286,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
     float CalculateRandomLocation(float Loc, uint32 radius)
     {
         float coord = Loc;
-        switch(rand()%2)
+        switch (urand(0,1))
         {
             case 0:
                 coord += rand()%radius;
@@ -308,7 +304,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
 
         std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
         std::list<HostileReference*>::iterator i = m_threatlist.begin();
-        for (i = m_threatlist.begin(); i != m_threatlist.end(); i++)
+        for (i = m_threatlist.begin(); i != m_threatlist.end(); ++i)
         {
             Unit* pUnit = Unit::GetUnit((*me), (*i)->getUnitGuid());
             if (pUnit && pUnit->isAlive())
@@ -352,7 +348,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
                 {
                     Construct->CastSpell(Construct, SPELL_PASSIVE_SHADOWFORM, true);
                     SetThreatList(Construct);               // Use same function as Doom Blossom to set Threat List.
-                    ((mob_shadowy_constructAI*)Construct->AI())->GhostGUID = GhostGUID;
+                    CAST_AI(mob_shadowy_constructAI, Construct->AI())->GhostGUID = GhostGUID;
                     Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
                     if (!pTarget)                             // someone's trying to solo.
                         pTarget = me->getVictim();
@@ -430,8 +426,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
                     DoomBlossom->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     DoomBlossom->setFaction(me->getFaction());
                     DoomBlossom->AddThreat(pTarget, 1.0f);
-                    ((mob_doom_blossomAI*)DoomBlossom->AI())->SetTeronGUID(me->GetGUID());
-                    //((mob_doom_blossomAI*)DoomBlossom->AI())->InCombat = true;
+                    CAST_AI(mob_doom_blossomAI, DoomBlossom->AI())->SetTeronGUID(me->GetGUID());
                     pTarget->CombatStart(DoomBlossom);
                     SetThreatList(DoomBlossom);
                     SummonDoomBlossomTimer = 35000;
@@ -447,11 +442,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
 
             if (pTarget)
             {
-                switch(rand()%2)
-                {
-                case 0: DoScriptText(SAY_SPECIAL1, me); break;
-                case 1: DoScriptText(SAY_SPECIAL2, me); break;
-                }
+                DoScriptText(RAND(SAY_SPECIAL1,SAY_SPECIAL2), me);
                 DoCast(pTarget, SPELL_INCINERATE);
                 IncinerateTimer = 20000 + rand()%31 * 1000;
             }
@@ -484,11 +475,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
 
         if (RandomYellTimer <= diff)
         {
-            switch(rand()%2)
-            {
-            case 0: DoScriptText(SAY_SPELL1, me); break;
-            case 1: DoScriptText(SAY_SPELL2, me); break;
-            }
+            DoScriptText(RAND(SAY_SPELL1,SAY_SPELL2), me);
             RandomYellTimer = 50000 + rand()%51 * 1000;
         } else RandomYellTimer -= diff;
 

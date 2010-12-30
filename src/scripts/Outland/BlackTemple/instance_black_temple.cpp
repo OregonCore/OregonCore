@@ -40,7 +40,7 @@ EndScriptData */
 
 struct instance_black_temple : public ScriptedInstance
 {
-    instance_black_temple(Map *map) : ScriptedInstance(map) {Initialize();};
+    instance_black_temple(Map* pMap) : ScriptedInstance(pMap) {Initialize();};
 
     uint64 Najentus;
     uint64 Akama;                                           // This is the Akama that starts the Illidan encounter.
@@ -353,9 +353,9 @@ struct instance_black_temple : public ScriptedInstance
     }
 };
 
-InstanceData* GetInstanceData_instance_black_temple(Map* map)
+InstanceData* GetInstanceData_instance_black_temple(Map* pMap)
 {
-    return new instance_black_temple(map);
+    return new instance_black_temple(pMap);
 }
 
 void AddSC_instance_black_temple()

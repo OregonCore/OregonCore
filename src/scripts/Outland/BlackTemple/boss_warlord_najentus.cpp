@@ -24,29 +24,33 @@ EndScriptData */
 #include "ScriptPCH.h"
 #include "black_temple.h"
 
-#define SAY_AGGRO                       -1564000
-#define SAY_NEEDLE1                     -1564001
-#define SAY_NEEDLE2                     -1564002
-#define SAY_SLAY1                       -1564003
-#define SAY_SLAY2                       -1564004
-#define SAY_SPECIAL1                    -1564005
-#define SAY_SPECIAL2                    -1564006
-#define SAY_ENRAGE1                     -1564007            //is this text actually in use?
-#define SAY_ENRAGE2                     -1564008
-#define SAY_DEATH                       -1564009
+enum eEnums
+{
+    SAY_AGGRO                       = -1564000,
+    SAY_NEEDLE1                     = -1564001,
+    SAY_NEEDLE2                     = -1564002,
+    SAY_SLAY1                       = -1564003,
+    SAY_SLAY2                       = -1564004,
+    SAY_SPECIAL1                    = -1564005,
+    SAY_SPECIAL2                    = -1564006,
+    SAY_ENRAGE1                     = -1564007,           //is this text actually in use?
+    SAY_ENRAGE2                     = -1564008,
+    SAY_DEATH                       = -1564009,
 
-//Spells
-#define SPELL_NEEDLE_SPINE              39992
-#define SPELL_NEEDLE_SPINE_DMG          39835
-#define SPELL_NEEDLE_SPINE_AOE          39968
-#define SPELL_TIDAL_BURST               39878
-#define SPELL_TIDAL_SHIELD              39872
-#define SPELL_IMPALING_SPINE            39837
-#define SPELL_CREATE_NAJENTUS_SPINE     39956
-#define SPELL_HURL_SPINE                39948
-#define SPELL_BERSERK                   45078
+    //Spells
+    SPELL_NEEDLE_SPINE              = 39992,
+    SPELL_TIDAL_BURST               = 39878,
+    SPELL_TIDAL_SHIELD              = 39872,
+    SPELL_IMPALING_SPINE            = 39837,
+    SPELL_CREATE_NAJENTUS_SPINE     = 39956,
+    SPELL_HURL_SPINE                = 39948,
+    SPELL_BERSERK                   = 45078,
+    SPELL_NEEDLE_SPINE_DMG          = 39835,
+    SPELL_NEEDLE_SPINE_AOE          = 39968,
 
-#define GOBJECT_SPINE                  185584
+    GOBJECT_SPINE                   = 185584
+
+};
 
 struct boss_najentusAI : public ScriptedAI
 {
@@ -81,16 +85,12 @@ struct boss_najentusAI : public ScriptedAI
         DeleteSpine();
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
-        switch(rand()%2)
-        {
-        case 0: DoScriptText(SAY_SLAY1, me); break;
-        case 1: DoScriptText(SAY_SLAY2, me); break;
-        }
+        DoScriptText(rand()%2 ? SAY_SLAY1 : SAY_SLAY2, me);
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit * /*victim*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_HIGHWARLORDNAJENTUSEVENT, DONE);
@@ -107,12 +107,12 @@ struct boss_najentusAI : public ScriptedAI
         return true;
     }
 
-    void SpellHit(Unit *caster, const SpellEntry *spell)
+    void SpellHit(Unit * /*caster*/, const SpellEntry *spell)
     {
         if (spell->Id == SPELL_HURL_SPINE && me->HasAura(SPELL_TIDAL_SHIELD, 0))
         {
             me->RemoveAurasDueToSpell(SPELL_TIDAL_SHIELD);
-            me->CastSpell(me, SPELL_TIDAL_BURST, true);
+            DoCast(me, SPELL_TIDAL_BURST, true);
             ResetTimer();
         }
     }
@@ -127,7 +127,7 @@ struct boss_najentusAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_HIGHWARLORDNAJENTUSEVENT, IN_PROGRESS);
@@ -239,16 +239,14 @@ struct boss_najentusAI : public ScriptedAI
     }
 };
 
-bool GOHello_go_najentus_spine(Player *player, GameObject* _GO)
+bool GOHello_go_najentus_spine(Player* pPlayer, GameObject* pGo)
 {
-    if (ScriptedInstance* pInstance = _GO->GetInstanceData())
-        if (Creature* Najentus = Unit::GetCreature(*_GO, pInstance->GetData64(DATA_HIGHWARLORDNAJENTUS)))
-            if (((boss_najentusAI*)Najentus->AI())->RemoveImpalingSpine())
+    if (ScriptedInstance* pInstance = pGo->GetInstanceData())
+        if (Creature* Najentus = Unit::GetCreature(*pGo, pInstance->GetData64(DATA_HIGHWARLORDNAJENTUS)))
+            if (CAST_AI(boss_najentusAI, Najentus->AI())->RemoveImpalingSpine())
             {
-                player->CastSpell(player, SPELL_CREATE_NAJENTUS_SPINE, true);
-                //_GO->SetLootState(GO_NOT_READY);
-                //_GO->SetRespawnTime(0);
-                _GO->AddObjectToRemoveList();
+                pPlayer->CastSpell(pPlayer, SPELL_CREATE_NAJENTUS_SPINE, true);
+                pGo->AddObjectToRemoveList();
             }
     return true;
 }

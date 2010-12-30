@@ -141,7 +141,7 @@ struct mob_blood_elf_council_voice_triggerAI : public ScriptedAI
     // finds and stores the GUIDs for each Council member using instance data system.
     void LoadCouncilGUIDs()
     {
-        if (ScriptedInstance* pInstance = (me->GetInstanceData()))
+        if (ScriptedInstance* pInstance = me->GetInstanceData())
         {
             Council[0] = pInstance->GetData64(DATA_GATHIOSTHESHATTERER);
             Council[1] = pInstance->GetData64(DATA_VERASDARKSHADOW);
@@ -150,10 +150,10 @@ struct mob_blood_elf_council_voice_triggerAI : public ScriptedAI
         } else error_log(ERROR_INST_DATA);
     }
 
-    void EnterCombat(Unit* who) {}
+    void EnterCombat(Unit* /*who*/) {}
 
-    void AttackStart(Unit* who) {}
-    void MoveInLineOfSight(Unit* who) {}
+    void AttackStart(Unit* /*who*/) {}
+    void MoveInLineOfSight(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -249,13 +249,14 @@ struct mob_illidari_councilAI : public ScriptedAI
         me->SetDisplayId(11686);
     }
 
-    void EnterCombat(Unit *who) {}
-    void AttackStart(Unit* who) {}
-    void MoveInLineOfSight(Unit* who) {}
+    void EnterCombat(Unit * /*who*/) {}
+    void AttackStart(Unit* /*who*/) {}
+    void MoveInLineOfSight(Unit* /*who*/) {}
 
     void StartEvent(Unit *pTarget)
     {
-        if (!pInstance) return;
+        if (!pInstance)
+            return;
 
         if (pTarget && pTarget->isAlive())
         {
@@ -267,8 +268,8 @@ struct mob_illidari_councilAI : public ScriptedAI
             // Start the event for the Voice Trigger
             if (Creature* VoiceTrigger = (Unit::GetCreature(*me, pInstance->GetData64(DATA_BLOOD_ELF_COUNCIL_VOICE))))
             {
-                ((mob_blood_elf_council_voice_triggerAI*)VoiceTrigger->AI())->LoadCouncilGUIDs();
-                ((mob_blood_elf_council_voice_triggerAI*)VoiceTrigger->AI())->EventStarted = true;
+                CAST_AI(mob_blood_elf_council_voice_triggerAI, VoiceTrigger->AI())->LoadCouncilGUIDs();
+                CAST_AI(mob_blood_elf_council_voice_triggerAI, VoiceTrigger->AI())->EventStarted = true;
             }
 
             for (uint8 i = 0; i < 4; ++i)
@@ -372,7 +373,7 @@ struct boss_illidari_councilAI : public ScriptedAI
         {
             Creature* Controller = (Unit::GetCreature(*me, pInstance->GetData64(DATA_ILLIDARICOUNCIL)));
             if (Controller)
-                ((mob_illidari_councilAI*)Controller->AI())->StartEvent(who);
+                CAST_AI(mob_illidari_councilAI, Controller->AI())->StartEvent(who);
         }
         else
         {
@@ -474,12 +475,12 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
         JudgeTimer = 45000;
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
         DoScriptText(SAY_GATH_SLAY, me);
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit * /*victim*/)
     {
         DoScriptText(SAY_GATH_DEATH, me);
     }
@@ -500,7 +501,7 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
     void CastAuraOnCouncil()
     {
         uint32 spellid = 0;
-        switch(rand()%2)
+        switch (urand(0,1))
         {
             case 0: spellid = SPELL_DEVOTION_AURA;   break;
             case 1: spellid = SPELL_CHROMATIC_AURA;  break;
@@ -567,7 +568,7 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
 
         if (HammerOfJusticeTimer <= diff)
         {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0,40,true))
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
             {
                 // is in ~10-40 yd range
                 if (me->GetDistance2d(pTarget) > 10)
@@ -623,12 +624,12 @@ struct boss_high_nethermancer_zerevorAI : public boss_illidari_councilAI
         ArcaneExplosionTimer = 14000;
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
         DoScriptText(SAY_ZERE_SLAY, me);
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit * /*victim*/)
     {
         DoScriptText(SAY_ZERE_DEATH, me);
     }
@@ -714,12 +715,12 @@ struct boss_lady_malandeAI : public boss_illidari_councilAI
         ReflectiveShieldTimer = 15000;
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
         DoScriptText(SAY_MALA_SLAY, me);
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit * /*victim*/)
     {
         DoScriptText(SAY_MALA_DEATH, me);
     }
@@ -801,12 +802,12 @@ struct boss_veras_darkshadowAI : public boss_illidari_councilAI
         }
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
         DoScriptText(SAY_VERA_SLAY, me);
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit * /*victim*/)
     {
         DoScriptText(SAY_VERA_DEATH, me);
     }

@@ -65,13 +65,13 @@ struct Locations
 
 static Locations TeleportPoint[]=
 {
-    {959, 212, 195},
-    {932, 231, 195},
-    {958, 254, 195},
-    {946, 201, 195},
-    {944, 149, 198},
-    {930, 284, 195},
-    {965, 278, 198}
+    {959.996f, 212.576f, 193.843f},
+    {932.537f, 231.813f, 193.838f},
+    {958.675f, 254.767f, 193.822f},
+    {946.955f, 201.316f, 192.535f},
+    {944.294f, 149.676f, 197.551f},
+    {930.548f, 284.888f, 193.367f},
+    {965.997f, 278.398f, 195.777f}
 };
 
 struct boss_shahrazAI : public ScriptedAI
@@ -101,7 +101,7 @@ struct boss_shahrazAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(DATA_MOTHERSHAHRAZEVENT, NOT_STARTED);
 
-        for (uint8 i = 0; i<3; i++)
+        for (uint8 i = 0; i<3; ++i)
             TargetGUID[i] = 0;
 
         BeamTimer = 5000; // Timers may be incorrect
@@ -117,7 +117,7 @@ struct boss_shahrazAI : public ScriptedAI
         Enraged = false;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_MOTHERSHAHRAZEVENT, IN_PROGRESS);
@@ -128,16 +128,12 @@ struct boss_shahrazAI : public ScriptedAI
         DoCast(me,SPELL_SABER_LASH_TRIGGER,true);
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
-        switch(rand()%2)
-        {
-        case 0: DoScriptText(SAY_SLAY1, me); break;
-        case 1: DoScriptText(SAY_SLAY2, me); break;
-        }
+        DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2), me);
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit * /*victim*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_MOTHERSHAHRAZEVENT, DONE);
@@ -151,9 +147,9 @@ struct boss_shahrazAI : public ScriptedAI
         float X = TeleportPoint[random].x;
         float Y = TeleportPoint[random].y;
         float Z = TeleportPoint[random].z;
-        for (uint8 i = 0; i < 3; i++)
+        for (uint8 i = 0; i < 3; ++i)
         {
-            Unit* pUnit = SelectTarget(SELECT_TARGET_RANDOM, 1,300,true);
+            Unit* pUnit = SelectUnit(SELECT_TARGET_RANDOM, 1);
             if (pUnit && pUnit->isAlive() && (pUnit->GetTypeId() == TYPEID_PLAYER) && !pUnit->HasAura(SPELL_SABER_LASH_IMM,0))
             {
                 TargetGUID[i] = pUnit->GetGUID();
@@ -215,11 +211,7 @@ struct boss_shahrazAI : public ScriptedAI
         {
             TeleportPlayers();
 
-            switch(rand()%2)
-            {
-            case 0: DoScriptText(SAY_SPELL2, me); break;
-            case 1: DoScriptText(SAY_SPELL3, me); break;
-            }
+            DoScriptText(RAND(SAY_SPELL2,SAY_SPELL3), me);
             FatalAttractionExplodeTimer = 2000;
             FatalAttractionTimer = 30000;
         } else FatalAttractionTimer -= diff;
@@ -327,12 +319,7 @@ struct boss_shahrazAI : public ScriptedAI
         //Random taunts
         if (RandomYellTimer <= diff)
         {
-            switch(rand()%3)
-            {
-            case 0: DoScriptText(SAY_TAUNT1, me); break;
-            case 1: DoScriptText(SAY_TAUNT2, me); break;
-            case 2: DoScriptText(SAY_TAUNT3, me); break;
-            }
+            DoScriptText(RAND(SAY_TAUNT1,SAY_TAUNT2,SAY_TAUNT3), me);
             RandomYellTimer = 60000 + rand()%91 * 1000;
         } else RandomYellTimer -= diff;
 
