@@ -338,7 +338,7 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
         return false;
 
     //Process actions
-    for (uint32 j = 0; j < MAX_ACTIONS; j++)
+    for (uint8 j = 0; j < MAX_ACTIONS; ++j)
         ProcessAction(pHolder.Event.action[j], rnd, pHolder.Event.event_id, pActionInvoker);
 
     return true;
@@ -359,7 +359,7 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
                 temp = action.text.TextId[rand()%3];
             else if (action.text.TextId[1] && urand(0,1))
                 temp = action.text.TextId[1];
-             else
+            else
                 temp = action.text.TextId[0];
 
             if (temp)
@@ -654,10 +654,10 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
             Phase = GetRandActionParam(rnd, action.random_phase.phase1, action.random_phase.phase2, action.random_phase.phase3);
             break;
         case ACTION_T_RANDOM_PHASE_RANGE:
-            if (action.random_phase_range.phaseMax > action.random_phase_range.phaseMin)
-                Phase = action.random_phase_range.phaseMin + (rnd % (action.random_phase_range.phaseMax - action.random_phase_range.phaseMin));
+            if (action.random_phase_range.phaseMin <= action.random_phase_range.phaseMax)
+                Phase = urand(action.random_phase_range.phaseMin, action.random_phase_range.phaseMax);
             else
-                sLog.outErrorDb("CreatureEventAI: ACTION_T_RANDOM_PHASE_RANGE cannot have Param2 <= Param1. Divide by Zero. Event = %d. CreatureEntry = %d", EventId, me->GetEntry());
+                sLog.outErrorDb("CreatureEventAI: ACTION_T_RANDOM_PHASE_RANGE cannot have Param2 < Param1. Event = %d. CreatureEntry = %d", EventId, me->GetEntry());
             break;
         case ACTION_T_SUMMON_ID:
         {
@@ -1081,37 +1081,6 @@ void CreatureEventAI::UpdateAI(const uint32 diff)
         DoMeleeAttackIfReady();
 }
 
-inline Unit* CreatureEventAI::SelectUnit(AttackingTarget target, uint32 position)
-{
-    //ThreatList m_threatlist;
-    std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
-    std::list<HostileReference*>::iterator i = m_threatlist.begin();
-    std::list<HostileReference*>::reverse_iterator r = m_threatlist.rbegin();
-
-    if (position >= m_threatlist.size() || !m_threatlist.size())
-        return NULL;
-
-    switch (target)
-    {
-        case ATTACKING_TARGET_RANDOM:
-        {
-            advance (i , position +  (rand() % (m_threatlist.size() - position)));
-            return Unit::GetUnit(*me,(*i)->getUnitGuid());
-        }
-        case ATTACKING_TARGET_TOPAGGRO:
-        {
-            advance (i , position);
-            return Unit::GetUnit(*me,(*i)->getUnitGuid());
-        }
-        case ATTACKING_TARGET_BOTTOMAGGRO:
-        {
-            advance (r , position);
-            return Unit::GetUnit(*me,(*r)->getUnitGuid());
-        }
-    }
-    return NULL;
-}
-
 inline uint32 CreatureEventAI::GetRandActionParam(uint32 rnd, uint32 param1, uint32 param2, uint32 param3)
 {
     switch (rnd % 3)
@@ -1143,13 +1112,13 @@ inline Unit* CreatureEventAI::GetTargetByType(uint32 Target, Unit* pActionInvoke
         case TARGET_T_HOSTILE:
             return me->getVictim();
         case TARGET_T_HOSTILE_SECOND_AGGRO:
-            return SelectUnit(ATTACKING_TARGET_TOPAGGRO,1);
+            return SelectTarget(SELECT_TARGET_TOPAGGRO,1);
         case TARGET_T_HOSTILE_LAST_AGGRO:
-            return SelectUnit(ATTACKING_TARGET_BOTTOMAGGRO,0);
+            return SelectTarget(SELECT_TARGET_BOTTOMAGGRO,0);
         case TARGET_T_HOSTILE_RANDOM:
-            return SelectUnit(ATTACKING_TARGET_RANDOM,0);
+            return SelectTarget(SELECT_TARGET_RANDOM,0);
         case TARGET_T_HOSTILE_RANDOM_NOT_TOP:
-            return SelectUnit(ATTACKING_TARGET_RANDOM,1);
+            return SelectTarget(SELECT_TARGET_RANDOM,1);
         case TARGET_T_ACTION_INVOKER:
             return pActionInvoker;
         default:

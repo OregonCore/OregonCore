@@ -210,9 +210,10 @@ Unit* ScriptedAI::SelectUnit(SelectAggroTarget pTarget, uint32 uiPosition)
         advance (ritr , uiPosition);
         return Unit::GetUnit((*me),(*ritr)->getUnitGuid());
         break;
-    }
 
-    return NULL;
+    default:
+        return UnitAI::SelectTarget(pTarget, uiPosition);
+    }
 }
 
 SpellEntry const* ScriptedAI::SelectSpell(Unit* pTarget, int32 uiSchool, int32 uiMechanic, SelectTargetType selectTargets, uint32 uiPowerCostMin, uint32 uiPowerCostMax, float fRangeMin, float fRangeMax, SelectEffect selectEffects)
