@@ -1886,6 +1886,35 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 (-1585028,'Do not... get too comfortable.',12420,1,0,'kaelthas MT SAY_RECAST_GRAVITY'),
 (-1585029,'My demise accomplishes nothing! The Master will have you! You will drown in your own blood! This world shall burn! Aaaghh!',12421,1,0,'kaelthas MT SAY_DEATH');
 
+-- -1 810 000 ALTERAC VALLEY
+INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`comment`) VALUES
+(-1810000,'Stormpike filth! In my keep?! Slay them all!',0,1,0,'DREKTHAR_YELL_AGGRO'),
+(-1810001,'You seek to draw the General of the Frostwolf legion out from his fortress? PREPOSTEROUS!',0,1,0,'DREKTHAR_YELL_EVADE'),
+(-1810002,'Stormpike weaklings, face me in my fortress - if you dare!',0,1,0,'DREKTHAR_YELL_RESPAWN'),
+(-1810003,'Your attacks are slowed by the cold, I think!',0,1,0,'DREKTHAR_YELL_RANDOM1'),
+(-1810004,'Today, you will meet your ancestors!',0,1,0,'DREKTHAR_YELL_RANDOM2'),
+(-1810005,'If you will not leave Alterac Valley on your own, then the Frostwolves will force you out!',0,1,0,'DREKTHAR_YELL_RANDOM3'),
+(-1810006,'You cannot defeat the Frostwolf clan!',0,1,0,'DREKTHAR_YELL_RANDOM4'),
+(-1810007,'You are no match for the strength of the Horde!',0,1,0,'DREKTHAR_YELL_RANDOM5'),
+
+(-1810008,'Soldiers of Stormpike, your General is under attack! I require aid! Come! Come! Slay these mangy Frostwolf dogs.',0,1,0,'VANNDAR_YELL_AGGRO'),
+(-1810009,'You''ll never get me out of me bunker, heathens!',0,1,0,'VANNDAR_YELL_EVADE'),
+(-1810010,'Take no prisoners! Drive these heathens from our lands!',0,1,0,'VANNDAR_YELL_RESPAWN1'),
+(-1810011,'I will tell you this much...Alterac Valley will be ours.',0,1,0,'VANNDAR_YELL_RESPAWN2'),
+(-1810012,'Why don''t ya try again without yer cheap tactics, pansies! Or are you too chicken?',0,1,0,'VANNDAR_YELL_RANDOM1'),
+(-1810013,'Your attacks are weak! Go practice on some rabbits and come back when you''re stronger.',0,1,0,'VANNDAR_YELL_RANDOM2'),
+(-1810014,'We will not be swayed from our mission!',0,1,0,'VANNDAR_YELL_RANDOM3'),
+(-1810015,'It''ll take more than you rabble to bring me down!',0,1,0,'VANNDAR_YELL_RANDOM4'),
+(-1810016,'We, the Alliance, will prevail!',0,1,0,'VANNDAR_YELL_RANDOM5'),
+(-1810017,'The Stormpike clan bows to no one, especially the horde!',0,1,0,'VANNDAR_YELL_RANDOM6'),
+(-1810018,'Is that the best you can do?',0,1,0,'VANNDAR_YELL_RANDOM7'),
+
+(-1810019,'Begone, uncouth scum! The Alliance shall prevail in Alterac Valley!',0,1,0,'BALINDA_YELL_AGGRO'),
+(-1810020,'Filthy Frostwolf cowards! If you want a fight, you''ll have to come to me!',0,1,0,'BALINDA_YELL_EVADE'),
+
+(-1810021,'Die! Your kind has no place in Alterac Valley!',0,1,0,'GALVANGAR_YELL_AGGRO'),
+(-1810022,'I''ll never fall for that, fool! If you want a battle it will be on my terms and in my lair!',0,1,0,'GALVANGAR_YELL_EVADE');
+
 -- 
 -- Below just for beautiful view in table, run at own desire
 -- 

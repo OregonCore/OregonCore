@@ -17,43 +17,45 @@
 /* ScriptData
 SDName: Boss_Balinda
 SD%Complete:
-SDComment: Timers should be adjusted
+SDComment:
 EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define YELL_AGGRO                        -2100019
-#define YELL_EVADE                    -2100020
+enum Spells
+{
+    SPELL_ARCANE_EXPLOSION                        = 46608,
+    SPELL_CONE_OF_COLD                            = 38384,
+    SPELL_FIREBALL                                = 46988,
+    SPELL_FROSTBOLT                               = 46987
+};
 
-#define SPELL_ARCANE_EXPLOSION        46608
-#define SPELL_CONE_OF_COLD                38384
-#define SPELL_FIREBALL                        46988
-#define SPELL_FROSTBOLT                        46987
-#define SPELL_WATER_ELEMENTAL        45067
-
+enum Yells
+{
+    YELL_AGGRO                                    = -1810019,
+    YELL_EVADE                                    = -1810020
+};
 
 struct boss_balindaAI : public ScriptedAI
 {
     boss_balindaAI(Creature *c) : ScriptedAI(c) {}
 
-
-    uint32 ArcaneExplosionTimer;
-    uint32 ConeofcoldTimer;
-    uint32 FireboltTimer;
-    uint32 FrostboltTimer;
-    uint32 ResetTimer;
-
+    uint32 uiArcaneExplosionTimer;
+    uint32 uiConeOfColdTimer;
+    uint32 uiFireBoltTimer;
+    uint32 uiFrostboltTimer;
+    uint32 uiResetTimer;
 
     void Reset()
     {
-            ArcaneExplosionTimer        = (10+rand()%5)*1000;
-            ConeofcoldTimer            = 8000;
-        FireboltTimer            = 1000;
-        FrostboltTimer            = 4000;
-        ResetTimer            = 5000;
+        uiArcaneExplosionTimer      = urand(5*IN_MILLISECONDS,15*IN_MILLISECONDS);
+        uiConeOfColdTimer           = 8*IN_MILLISECONDS;
+        uiFireBoltTimer             = 1*IN_MILLISECONDS;
+        uiFrostboltTimer            = 4*IN_MILLISECONDS;
+        uiResetTimer                = 5*IN_MILLISECONDS;
     }
 
-    void Aggro(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         DoScriptText(YELL_AGGRO, me);
     }
@@ -72,43 +74,41 @@ struct boss_balindaAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (ArcaneExplosionTimer <= diff)
+        if (uiArcaneExplosionTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_ARCANE_EXPLOSION);
-            ArcaneExplosionTimer =  (10+rand()%5)*1000;
-        } else ArcaneExplosionTimer -= diff;
+            uiArcaneExplosionTimer =  urand(5*IN_MILLISECONDS,15*IN_MILLISECONDS);
+        } else uiArcaneExplosionTimer -= diff;
 
-        if (ConeofcoldTimer <= diff)
+        if (uiConeOfColdTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_CONE_OF_COLD);
-            ConeofcoldTimer = (10+rand()%10)*1000;
-        } else ConeofcoldTimer -= diff;
+            uiConeOfColdTimer = urand(10*IN_MILLISECONDS,20*IN_MILLISECONDS);
+        } else uiConeOfColdTimer -= diff;
 
-        if (FireboltTimer <= diff)
+        if (uiFireBoltTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_FIREBALL);
-            FireboltTimer = (5+rand()%4)*1000;
-        } else FireboltTimer -= diff;
+            uiFireBoltTimer = urand(5*IN_MILLISECONDS,9*IN_MILLISECONDS);
+        } else uiFireBoltTimer -= diff;
 
-        if (FrostboltTimer <= diff)
+        if (uiFrostboltTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_FROSTBOLT);
-            FrostboltTimer = (4+rand()%8)*1000;
-        } else FrostboltTimer -= diff;
+            uiFrostboltTimer = urand(4*IN_MILLISECONDS,12*IN_MILLISECONDS);
+        } else uiFrostboltTimer -= diff;
 
 
-    // check if creature is not outside of building
-        if (ResetTimer <= diff)
+        // check if creature is not outside of building
+        if (uiResetTimer <= diff)
         {
-            float x, y, z;
-            me->GetPosition(x, y, z);
-            if (x > -6)
-        {
-            DoScriptText(YELL_EVADE, me);
-                    EnterEvadeMode();
-        }
-            ResetTimer = 5000;
-        } else ResetTimer -= diff;
+            if (me->GetDistance2d(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY()) > 50)
+            {
+                EnterEvadeMode();
+                DoScriptText(YELL_EVADE, me);
+            }
+            uiResetTimer = 5*IN_MILLISECONDS;
+        } else uiResetTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

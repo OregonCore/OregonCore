@@ -31,13 +31,11 @@ void AddSC_npcs_special();
 void AddSC_npc_taxi();
 
 //eastern kingdoms
-//Alterac Valley
+void AddSC_alterac_valley();                 //Alterac Valley
 void AddSC_boss_balinda();
 void AddSC_boss_drekthar();
 void AddSC_boss_galvangar();
 void AddSC_boss_vanndar();
-void AddSC_AV_Marshals();
-void AddSC_AV_Warmasters();
 void AddSC_blackrock_depths();               //Blackrock Depths
 void AddSC_boss_ambassador_flamelash();
 void AddSC_boss_anubshiah();
@@ -397,13 +395,12 @@ void AddScripts()
     AddSC_npcs_special();
     AddSC_npc_taxi();
 
-    //Alterac Valley
+    //eastern kingdoms
+    AddSC_alterac_valley();                 //Alterac Valley
     AddSC_boss_balinda();
     AddSC_boss_drekthar();
     AddSC_boss_galvangar();
-    AddSC_AV_Marshals();
     AddSC_boss_vanndar();
-    AddSC_AV_Warmasters();
     AddSC_blackrock_depths();               //Blackrock Depths
     AddSC_boss_ambassador_flamelash();
     AddSC_boss_anubshiah();
@@ -441,8 +438,8 @@ void AddScripts()
     AddSC_boss_mr_smite();
     AddSC_deadmines();                      //Deadmines
     AddSC_instance_deadmines();
-    AddSC_instance_gnomeregan();            //Gnomeregan
-    AddSC_gnomeregan();
+    AddSC_gnomeregan();                     //Gnomeregan
+    AddSC_instance_gnomeregan();
     AddSC_boss_attumen();                   //Karazhan
     AddSC_boss_curator();
     AddSC_boss_maiden_of_virtue();

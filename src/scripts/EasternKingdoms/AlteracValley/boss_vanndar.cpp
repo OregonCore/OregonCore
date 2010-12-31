@@ -17,53 +17,55 @@
 /* ScriptData
 SDName: Boss_Vanndar
 SD%Complete:
-SDComment: Some spells listed on wowwiki but doesn't exist on wowhead
+SDComment:
 EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define YELL_AGGRO                  -2100008
+enum Yells
+{
+    YELL_AGGRO                                    = -1810008,
+    YELL_EVADE                                    = -1810009,
+    YELL_RESPAWN1                                 = -1810010,
+    YELL_RESPAWN2                                 = -1810011,
+    YELL_RANDOM1                                  = -1810012,
+    YELL_RANDOM2                                  = -1810013,
+    YELL_RANDOM3                                  = -1810014,
+    YELL_RANDOM4                                  = -1810015,
+    YELL_RANDOM5                                  = -1810016,
+    YELL_RANDOM6                                  = -1810017,
+    YELL_RANDOM7                                  = -1810018
+};
 
-#define YELL_EVADE                  -2100009
-#define YELL_RESPAWN1            -2100010
-#define YELL_RESPAWN2               -2100011
-
-#define YELL_RANDOM1            -2100012
-#define YELL_RANDOM2            -2100013
-#define YELL_RANDOM3            -2100014
-#define YELL_RANDOM4            -2100015
-#define YELL_RANDOM5            -2100016
-#define YELL_RANDOM6            -2100017
-#define YELL_RANDOM7            -2100018
-
-
-#define SPELL_AVATAR                19135
-#define SPELL_THUNDERCLAP        15588
-#define SPELL_STORMBOLT             20685 // not sure
-
+enum Spells
+{
+    SPELL_AVATAR                                  = 19135,
+    SPELL_THUNDERCLAP                             = 15588,
+    SPELL_STORMBOLT                               = 20685 // not sure
+};
 
 struct boss_vanndarAI : public ScriptedAI
 {
     boss_vanndarAI(Creature *c) : ScriptedAI(c) {}
 
 
-    uint32 AvatarTimer;
-    uint32 ThunderclapTimer;
-    uint32 StormboltTimer;
-    uint32 ResetTimer;
-    uint32 YellTimer;
+    uint32 uiAvatarTimer;
+    uint32 uiThunderclapTimer;
+    uint32 uiStormboltTimer;
+    uint32 uiResetTimer;
+    uint32 uiYellTimer;
 
 
     void Reset()
     {
-            AvatarTimer            = 3000;
-            ThunderclapTimer        = 4000;
-        StormboltTimer            = 6000;
-        ResetTimer            = 5000;
-        YellTimer                = (20+rand()%10)*1000; //20 to 30 seconds
+        uiAvatarTimer = 3*IN_MILLISECONDS;
+        uiThunderclapTimer = 4*IN_MILLISECONDS;
+        uiStormboltTimer = 6*IN_MILLISECONDS;
+        uiResetTimer = 5*IN_MILLISECONDS;
+        uiYellTimer = urand(20*IN_MILLISECONDS,30*IN_MILLISECONDS);
     }
 
-    void Aggro(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         DoScriptText(YELL_AGGRO, me);
     }
@@ -71,66 +73,48 @@ struct boss_vanndarAI : public ScriptedAI
     void JustRespawned()
     {
         Reset();
-    switch(rand()%1)
-            {
-                case 0: DoScriptText(YELL_RESPAWN1, me); break;
-                case 1: DoScriptText(YELL_RESPAWN2, me); break;
-            }
+        DoScriptText(RAND(YELL_RESPAWN1,YELL_RESPAWN2), me);
     }
-
-    void KilledUnit(Unit* victim){}
-
-    void JustDied(Unit* Killer){}
 
     void UpdateAI(const uint32 diff)
     {
         if (!UpdateVictim())
             return;
 
-        if (AvatarTimer <= diff)
+        if (uiAvatarTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_AVATAR);
-            AvatarTimer =  (15+rand()%5)*1000;
-        } else AvatarTimer -= diff;
+            uiAvatarTimer =  urand(15*IN_MILLISECONDS,20*IN_MILLISECONDS);
+        } else uiAvatarTimer -= diff;
 
-        if (ThunderclapTimer <= diff)
+        if (uiThunderclapTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_THUNDERCLAP);
-            ThunderclapTimer = (5+rand()%10)*1000;
-        } else ThunderclapTimer -= diff;
+            uiThunderclapTimer = urand(5*IN_MILLISECONDS,15*IN_MILLISECONDS);
+        } else uiThunderclapTimer -= diff;
 
-        if (StormboltTimer <= diff)
+        if (uiStormboltTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_STORMBOLT);
-            StormboltTimer = (10+rand()%15)*1000;
-        } else StormboltTimer -= diff;
+            uiStormboltTimer = urand(10*IN_MILLISECONDS,25*IN_MILLISECONDS);
+        } else uiStormboltTimer -= diff;
 
-        if (YellTimer <= diff) {
-            switch(rand()%6)
-            {
-                case 0: DoScriptText(YELL_RANDOM1, me); break;
-                case 1: DoScriptText(YELL_RANDOM2, me); break;
-                case 2: DoScriptText(YELL_RANDOM3, me); break;
-                case 3: DoScriptText(YELL_RANDOM4, me); break;
-                case 4: DoScriptText(YELL_RANDOM5, me); break;
-                case 5: DoScriptText(YELL_RANDOM6, me); break;
-                case 6: DoScriptText(YELL_RANDOM7, me); break;
-            }
-        YellTimer = (20+rand()%10)*1000; //20 to 30 seconds
-        } else YellTimer -= diff;
+        if (uiYellTimer <= diff)
+        {
+            DoScriptText(RAND(YELL_RANDOM1,YELL_RANDOM2,YELL_RANDOM3,YELL_RANDOM4,YELL_RANDOM5,YELL_RANDOM6,YELL_RANDOM7), me);
+            uiYellTimer = urand(20*IN_MILLISECONDS,30*IN_MILLISECONDS); //20 to 30 seconds
+        } else uiYellTimer -= diff;
 
         // check if creature is not outside of building
-        if (ResetTimer <= diff)
+        if (uiResetTimer <= diff)
         {
-            float x, y, z;
-            me->GetPosition(x, y, z);
-            if (x < 678)
-        {
-            DoScriptText(YELL_EVADE, me);
+            if (me->GetDistance2d(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY()) > 50)
+            {
                 EnterEvadeMode();
-        }
-            ResetTimer = 5000;
-        } else ResetTimer -= diff;
+                DoScriptText(YELL_EVADE, me);
+            }
+            uiResetTimer = 5*IN_MILLISECONDS;
+        } else uiResetTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

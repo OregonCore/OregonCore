@@ -17,45 +17,50 @@
 /* ScriptData
 SDName: Boss_Galvangar
 SD%Complete:
-SDComment: timers should be adjusted
+SDComment:
 EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define YELL_AGGRO                 -2100021
-#define YELL_EVADE                 -2100022
+enum Spells
+{
+    SPELL_CLEAVE                                  = 15284,
+    SPELL_FRIGHTENING_SHOUT                       = 19134,
+    SPELL_WHIRLWIND1                              = 15589,
+    SPELL_WHIRLWIND2                              = 13736,
+    SPELL_MORTAL_STRIKE                           = 16856
+};
 
-#define SPELL_CLEAVE               15284
-#define SPELL_FRIGHTENING_SHOUT    19134
-#define SPELL_WHIRLWIND1           15589
-#define SPELL_WHIRLWIND2           13736
-#define SPELL_MORTAL_STRIKE        16856
-
+enum Yells
+{
+    YELL_AGGRO                                    = -1810021,
+    YELL_EVADE                                    = -1810022
+};
 
 struct boss_galvangarAI : public ScriptedAI
 {
     boss_galvangarAI(Creature *c) : ScriptedAI(c) {}
 
 
-    uint32 CleaveTimer;
-    uint32 FrighteningShoutTimer;
-    uint32 Whirlwind1Timer;
-    uint32 Whirlwind2Timer;
-    uint32 MortalStrikeTimer;
-    uint32 ResetTimer;
+    uint32 uiCleaveTimer;
+    uint32 uiFrighteningShoutTimer;
+    uint32 uiWhirlwind1Timer;
+    uint32 uiWhirlwind2Timer;
+    uint32 uiMortalStrikeTimer;
+    uint32 uiResetTimer;
 
 
     void Reset()
     {
-            CleaveTimer            = (1+rand()%10)*1000;
-            FrighteningShoutTimer        = (2+rand()%18)*1000;
-        Whirlwind1Timer            = (1+rand()%12)*1000;
-        Whirlwind2Timer            = (5+rand()%15)*1000;
-        MortalStrikeTimer        = (5+rand()%20)*1000;
-        ResetTimer            = 5000;
+        uiCleaveTimer                     = urand(1*IN_MILLISECONDS,9*IN_MILLISECONDS);
+        uiFrighteningShoutTimer           = urand(2*IN_MILLISECONDS,19*IN_MILLISECONDS);
+        uiWhirlwind1Timer                 = urand(1*IN_MILLISECONDS,13*IN_MILLISECONDS);
+        uiWhirlwind2Timer                 = urand(5*IN_MILLISECONDS,20*IN_MILLISECONDS);
+        uiMortalStrikeTimer               = urand(5*IN_MILLISECONDS,20*IN_MILLISECONDS);
+        uiResetTimer                      = 5*IN_MILLISECONDS;
     }
 
-    void Aggro(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         DoScriptText(YELL_AGGRO, me);
     }
@@ -65,57 +70,51 @@ struct boss_galvangarAI : public ScriptedAI
         Reset();
     }
 
-    void KilledUnit(Unit* victim){}
-
-    void JustDied(Unit* Killer){}
-
     void UpdateAI(const uint32 diff)
     {
         if (!UpdateVictim())
             return;
 
-        if (CleaveTimer <= diff)
+        if (uiCleaveTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_CLEAVE);
-            CleaveTimer =  (10+rand()%6)*1000;
-        } else CleaveTimer -= diff;
+            uiCleaveTimer =  urand(10*IN_MILLISECONDS,16*IN_MILLISECONDS);
+        } else uiCleaveTimer -= diff;
 
-        if (FrighteningShoutTimer <= diff)
+        if (uiFrighteningShoutTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_FRIGHTENING_SHOUT);
-            FrighteningShoutTimer = (10+rand()%5)*1000;
-        } else FrighteningShoutTimer -= diff;
+            uiFrighteningShoutTimer = urand(10*IN_MILLISECONDS,15*IN_MILLISECONDS);
+        } else uiFrighteningShoutTimer -= diff;
 
-        if (Whirlwind1Timer <= diff)
+        if (uiWhirlwind1Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_WHIRLWIND1);
-            Whirlwind1Timer = (6+rand()%14)*1000;
-        } else Whirlwind1Timer -= diff;
+            uiWhirlwind1Timer = urand(6*IN_MILLISECONDS,10*IN_MILLISECONDS);
+        } else uiWhirlwind1Timer -= diff;
 
-        if (Whirlwind2Timer <= diff)
+        if (uiWhirlwind2Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_WHIRLWIND2);
-            Whirlwind2Timer = (10+rand()%15)*1000;
-        } else Whirlwind2Timer -= diff;
+            uiWhirlwind2Timer = urand(10*IN_MILLISECONDS,25*IN_MILLISECONDS);
+        } else uiWhirlwind2Timer -= diff;
 
-        if (MortalStrikeTimer <= diff)
+        if (uiMortalStrikeTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_MORTAL_STRIKE);
-            MortalStrikeTimer = (10+rand()%20)*1000;
-        } else MortalStrikeTimer -= diff;
+            uiMortalStrikeTimer = urand(10*IN_MILLISECONDS,30*IN_MILLISECONDS);
+        } else uiMortalStrikeTimer -= diff;
 
         // check if creature is not outside of building
-        if (ResetTimer <= diff)
+        if (uiResetTimer <= diff)
         {
-            float x, y, z;
-            me->GetPosition(x, y, z);
-            if (x > -504)
-        {
+            if (me->GetDistance2d(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY()) > 50)
+            {
+                EnterEvadeMode();
                 DoScriptText(YELL_EVADE, me);
-                    EnterEvadeMode();
-        }
-            ResetTimer = 5000;
-        } else ResetTimer -= diff;
+            }
+            uiResetTimer = 5*IN_MILLISECONDS;
+        } else uiResetTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
