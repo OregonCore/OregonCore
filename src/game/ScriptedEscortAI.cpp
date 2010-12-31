@@ -240,7 +240,7 @@ void npc_escortAI::UpdateAI(const uint32 uiDiff)
 
                         m_uiWPWaitTimer = 0;
 
-                        debug_log("OSCR: EscortAI returning home to spawn location: %u, %f, %f, %f", POINT_HOME, fRetX, fRetY, fRetZ);
+                        debug_log("OSCR: EscortAI are returning home to spawn location: %u, %f, %f, %f", POINT_HOME, fRetX, fRetY, fRetZ);
                         return;
                     }
 
@@ -437,7 +437,7 @@ void npc_escortAI::Start(bool bIsActiveAttacker, bool bRun, uint64 uiPlayerGUID,
 {
     if (me->getVictim())
     {
-        error_log("OSCR ERROR: EscortAI attempt to Start while in combat.");
+        error_log("OSCR ERROR: EscortAI attempt to Start while in combat. Scriptname: %s, creature entry: %u", me->GetScriptName().c_str(), me->GetEntry());
         return;
     }
 

@@ -679,20 +679,21 @@ void LoadOverridenSQLData()
             goInfo->trap.radius = 50;
 }
 
-Creature* GetClosestCreatureWithEntry(WorldObject* pSource, uint32 Entry, float MaxSearchRange)
+// SD2 grid searchers.
+Creature *GetClosestCreatureWithEntry(WorldObject *pSource, uint32 uiEntry, float fMaxSearchRange, bool bAlive)
 {
-    Creature* pCreature = NULL;
-
-    CellPair pair(Oregon::ComputeCellPair(pSource->GetPositionX(), pSource->GetPositionY()));
-    Cell cell(pair);
-    cell.data.Part.reserved = ALL_DISTRICT;
-    cell.SetNoCreate();
-
-    Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*pSource, Entry, true, MaxSearchRange);
-    Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(pCreature, creature_check);
-    TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> creature_searcher(searcher);
-    cell.Visit(pair, creature_searcher,*(pSource->GetMap()));
-
-    return pCreature;
+    return pSource->FindNearestCreature(uiEntry, fMaxSearchRange, bAlive);
+}
+GameObject *GetClosestGameObjectWithEntry(WorldObject *pSource, uint32 uiEntry, float fMaxSearchRange)
+{
+    return pSource->FindNearestGameObject(uiEntry, fMaxSearchRange);
+}
+void GetCreatureListWithEntryInGrid(std::list<Creature*>& lList, WorldObject *pSource, uint32 uiEntry, float fMaxSearchRange)
+{
+    return pSource->GetCreatureListWithEntryInGrid(lList, uiEntry, fMaxSearchRange);
+}
+void GetGameObjectListWithEntryInGrid(std::list<GameObject*>& lList, WorldObject *pSource, uint32 uiEntry, float fMaxSearchRange)
+{
+    return pSource->GetGameObjectListWithEntryInGrid(lList, uiEntry, fMaxSearchRange);
 }
 

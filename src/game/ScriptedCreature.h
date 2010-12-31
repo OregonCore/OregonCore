@@ -211,9 +211,11 @@ struct BossAI : public ScriptedAI
         void _JustDied();
 };
 
-// SD2 grid searchers
-//return closest creature alive in grid, with range from pSource
-Creature *GetClosestCreatureWithEntry(WorldObject *pSource, uint32 Entry, float MaxSearchRange);
+// SD2 grid searchers.
+Creature *GetClosestCreatureWithEntry(WorldObject *pSource, uint32 uiEntry, float fMaxSearchRange, bool bAlive = true);
+GameObject *GetClosestGameObjectWithEntry(WorldObject *pSource, uint32 uiEntry, float fMaxSearchRange);
+void GetCreatureListWithEntryInGrid(std::list<Creature*>& lList, WorldObject* pSource, uint32 uiEntry, float fMaxSearchRange);
+void GetGameObjectListWithEntryInGrid(std::list<GameObject*>& lList, WorldObject* pSource, uint32 uiEntry, float fMaxSearchRange);
 
 #endif
 
