@@ -185,6 +185,20 @@ bool AccountMgr::GetName(uint32 acc_id, std::string &name)
     return false;
 }
 
+uint32 AccountMgr::GetCharactersCount(uint32 acc_id)
+{
+    // check character count
+    QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT COUNT(guid) FROM characters WHERE account = '%d'", acc_id);
+    if (result)
+    {
+        Field *fields=result->Fetch();
+        uint32 charcount = fields[0].GetUInt32();
+        return charcount;
+    }
+    else
+        return 0;
+}
+
 bool AccountMgr::CheckPassword(uint32 accid, std::string passwd)
 {
     normalizeString(passwd);

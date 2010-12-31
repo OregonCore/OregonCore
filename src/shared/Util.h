@@ -188,6 +188,15 @@ inline bool isNumericOrSpace(wchar_t wchar)
     return isNumeric(wchar) || wchar == L' ';
 }
 
+inline bool isNumeric(char const* str)
+{
+    for (char const* c = str; *c; ++c)
+        if (!isNumeric(*c))
+            return false;
+
+    return true;
+}
+
 inline bool isBasicLatinString(std::wstring wstr, bool numericOrSpace)
 {
     for (size_t i = 0; i < wstr.size(); ++i)

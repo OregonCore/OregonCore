@@ -78,7 +78,8 @@ enum WorldTimers
     WUPDATE_CORPSES     = 5,
     WUPDATE_EVENTS      = 6,
     WUPDATE_CLEANDB     = 7,
-    WUPDATE_COUNT       = 8
+    WUPDATE_DELETECHARS = 8,
+    WUPDATE_COUNT       = 9
 };
 
 // Configuration elements
@@ -243,6 +244,9 @@ enum WorldConfigs
     CONFIG_VMAP_INDOOR_CHECK,
     CONFIG_DUEL_MOD,
     CONFIG_DUEL_CD_RESET,
+    CONFIG_CHARDELETE_KEEP_DAYS,
+    CONFIG_CHARDELETE_METHOD,
+    CONFIG_CHARDELETE_MIN_LEVEL,
     CONFIG_VALUE_COUNT
 };
 
