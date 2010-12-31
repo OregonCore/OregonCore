@@ -338,7 +338,7 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
             summoned->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
             summoned->SetSpeed(MOVE_FLIGHT, 2.5f);
             if (victim)
-                ((ScriptedAI*)summoned->AI())->AttackStart(victim,false);
+                AttackStartNoMove(victim);
         }
         else if (victim)
             summoned->AI()->AttackStart(victim);
@@ -348,7 +348,7 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
     {
         if (sentryDown)
         {
-            AttackStart(killer, false);
+            AttackStartNoMove(killer);
             sentryDown = false;
         }
         else

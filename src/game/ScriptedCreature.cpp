@@ -93,29 +93,6 @@ void ScriptedAI::AttackStartNoMove(Unit* pWho)
         DoStartNoMovement(pWho);
 }
 
-void ScriptedAI::AttackStart(Unit* pWho)
-{
-    if (!pWho)
-        return;
-
-    if (me->Attack(pWho, true))
-    {
-        DoStartMovement(pWho);
-    }
-}
-
-void ScriptedAI::AttackStart(Unit* pWho, bool melee)
-{
-    if (!pWho)
-        return;
-
-    if (!melee)
-        AttackStartNoMove(pWho);
-    else
-        AttackStart(pWho);
-
-}
-
 void ScriptedAI::UpdateAI(const uint32 /*uiDiff*/)
 {
     //Check if we have a current target

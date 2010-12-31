@@ -122,7 +122,7 @@ struct boss_alarAI : public ScriptedAI
         me->setActive(false);
     }
 
-    void Aggro(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_ALAREVENT, IN_PROGRESS);
@@ -406,9 +406,9 @@ struct boss_alarAI : public ScriptedAI
                 if (pTarget)
                 {
                     if (Phase1)
-                        ScriptedAI::AttackStart(pTarget, false);
+                        AttackStartNoMove(pTarget);
                     else
-                        ScriptedAI::AttackStart(pTarget, true);
+                        ScriptedAI::AttackStart(pTarget);
                 }
                 else
                 {
@@ -490,10 +490,10 @@ struct mob_flame_patch_alarAI : public ScriptedAI
 {
     mob_flame_patch_alarAI(Creature *c) : ScriptedAI(c) {}
     void Reset() {}
-    void Aggro(Unit *who) {}
-    void AttackStart(Unit* who) {}
-    void MoveInLineOfSight(Unit* who) {}
-    void UpdateAI(const uint32 diff) {}
+    void EnterCombat(Unit * /*who*/) {}
+    void AttackStart(Unit* /*who*/) {}
+    void MoveInLineOfSight(Unit* /*who*/) {}
+    void UpdateAI(const uint32 /*diff*/) {}
 };
 
 CreatureAI* GetAI_mob_flame_patch_alar(Creature* pCreature)
