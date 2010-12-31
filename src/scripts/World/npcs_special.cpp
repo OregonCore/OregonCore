@@ -824,7 +824,7 @@ struct npc_guardianAI : public ScriptedAI
 
     void EnterCombat(Unit * /*who*/)
     {
-        DoYell(SAY_AGGRO,LANG_UNIVERSAL,NULL);
+        me->MonsterYell(SAY_AGGRO, LANG_UNIVERSAL, 0);
     }
 
     void UpdateAI(const uint32 /*diff*/)

@@ -23,6 +23,9 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
+#define EMOTE_GENERIC_FRENZY_KILL   -1000001
+#define EMOTE_GENERIC_BERSERK       -1000004
+
 #define SPELL_FRENZY 26051
 #define SPELL_BERSERK 26068
 #define SPELL_POISONBOLT 26052
@@ -71,6 +74,7 @@ struct boss_huhuranAI : public ScriptedAI
         if (!Frenzy && Frenzy_Timer <= diff)
         {
             DoCast(me, SPELL_FRENZY);
+            DoScriptText(EMOTE_GENERIC_FRENZY_KILL, me);
             Frenzy = true;
             PoisonBolt_Timer = 3000;
             Frenzy_Timer = 25000 + rand()%10000;
@@ -119,7 +123,7 @@ struct boss_huhuranAI : public ScriptedAI
         if (!Berserk && me->GetHealth()*100 / me->GetMaxHealth() < 31)
         {
             me->InterruptNonMeleeSpells(false);
-            DoTextEmote("is going berserk", NULL);
+            DoScriptText(EMOTE_GENERIC_BERSERK, me);
             DoCast(me, SPELL_BERSERK);
             Berserk = true;
         }

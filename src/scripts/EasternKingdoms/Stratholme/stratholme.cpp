@@ -74,10 +74,10 @@ bool GOHello_go_gauntlet_gate(Player* pPlayer, GameObject* pGo)
 ######*/
 
 //Possibly more of these quotes around.
-#define SAY_ZAPPED0 "Thanks to Egan"
-#define SAY_ZAPPED1 "Rivendare must die"
-#define SAY_ZAPPED2 "Who you gonna call?"
-#define SAY_ZAPPED3 "Don't cross those beams!"
+#define SAY_ZAPPED0 -1329000
+#define SAY_ZAPPED1 -1329001
+#define SAY_ZAPPED2 -1329002
+#define SAY_ZAPPED3 -1329003
 
 struct mob_freed_soulAI : public ScriptedAI
 {
@@ -85,13 +85,7 @@ struct mob_freed_soulAI : public ScriptedAI
 
     void Reset()
     {
-        switch (rand()%4)
-        {
-            case 0: DoSay(SAY_ZAPPED0,LANG_UNIVERSAL,NULL); break;
-            case 1: DoSay(SAY_ZAPPED1,LANG_UNIVERSAL,NULL); break;
-            case 2: DoSay(SAY_ZAPPED2,LANG_UNIVERSAL,NULL); break;
-            case 3: DoSay(SAY_ZAPPED3,LANG_UNIVERSAL,NULL); break;
-        }
+        DoScriptText(RAND(SAY_ZAPPED0,SAY_ZAPPED1,SAY_ZAPPED2,SAY_ZAPPED3), me);
     }
 
     void EnterCombat(Unit* /*who*/) {}

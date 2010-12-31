@@ -107,7 +107,7 @@ struct npc_testAI : public npc_escortAI
                 {
                     Unit *pTemp = Unit::GetUnit(*me, GetPlayerForEscort()->GetGUID());
                     if (pTemp)
-                        DoWhisper(WHISPER_TOO_FAR, pTemp);
+                        me->MonsterWhisper(WHISPER_TOO_FAR, pTemp->GetGUID());
                 }
                 else me->Say(SAY_DIE1, LANG_UNIVERSAL, GetPlayerForEscort()->GetGUID());
             }

@@ -218,7 +218,7 @@ struct boss_zuljinAI : public ScriptedAI
 
         DoZoneInCombat();
 
-        DoYell(YELL_INTRO,LANG_UNIVERSAL,NULL);
+        me->MonsterYell(YELL_INTRO,LANG_UNIVERSAL,NULL);
         DoPlaySoundToSet(me, SOUND_INTRO);
         SpawnAdds();
         EnterPhase(0);
@@ -229,16 +229,16 @@ struct boss_zuljinAI : public ScriptedAI
         if (Intro_Timer)
             return;
 
-        switch(rand()%2)
+        switch (urand(0,1))
         {
-        case 0:
-            DoYell(YELL_KILL_ONE, LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(me, SOUND_KILL_ONE);
-            break;
-        case 1:
-            DoYell(YELL_KILL_TWO, LANG_UNIVERSAL, NULL);
-            DoPlaySoundToSet(me, SOUND_KILL_TWO);
-            break;
+            case 0:
+                me->MonsterYell(YELL_KILL_ONE, LANG_UNIVERSAL, NULL);
+                DoPlaySoundToSet(me, SOUND_KILL_ONE);
+                break;
+            case 1:
+                me->MonsterYell(YELL_KILL_TWO, LANG_UNIVERSAL, NULL);
+                DoPlaySoundToSet(me, SOUND_KILL_TWO);
+                break;
         }
     }
 
@@ -247,7 +247,7 @@ struct boss_zuljinAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(DATA_ZULJINEVENT, DONE);
 
-        DoYell(YELL_DEATH, LANG_UNIVERSAL, NULL);
+        me->MonsterYell(YELL_DEATH, LANG_UNIVERSAL, NULL);
         DoPlaySoundToSet(me, SOUND_DEATH);
         Summons.DespawnEntry(CREATURE_COLUMN_OF_FIRE);
 
@@ -343,7 +343,7 @@ struct boss_zuljinAI : public ScriptedAI
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
             me->RemoveAurasDueToSpell(Transform[Phase].unaura);
             DoCast(me, Transform[Phase].spell);
-            DoYell(Transform[Phase].text, LANG_UNIVERSAL, NULL);
+            me->MonsterYell(Transform[Phase].text, LANG_UNIVERSAL, NULL);
             DoPlaySoundToSet(me, Transform[Phase].sound);
             if (Phase > 0)
             {
@@ -399,7 +399,7 @@ struct boss_zuljinAI : public ScriptedAI
         if (Berserk_Timer <= diff)
         {
             me->CastSpell(me, SPELL_BERSERK, true);
-            DoYell(YELL_BERSERK, LANG_UNIVERSAL, NULL);
+            me->MonsterYell(YELL_BERSERK, LANG_UNIVERSAL, NULL);
             DoPlaySoundToSet(me, SOUND_BERSERK);
             Berserk_Timer = 60000;
         } else Berserk_Timer -= diff;
@@ -411,7 +411,7 @@ struct boss_zuljinAI : public ScriptedAI
             {
                 if (Intro_Timer <= diff)
                 {
-                    DoYell(YELL_AGGRO, LANG_UNIVERSAL, NULL);
+                    me->MonsterYell(YELL_AGGRO, LANG_UNIVERSAL, NULL);
                     DoPlaySoundToSet(me, SOUND_AGGRO);
                     Intro_Timer = 0;
                 } else Intro_Timer -= diff;

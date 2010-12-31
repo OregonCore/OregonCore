@@ -122,18 +122,6 @@ struct ScriptedAI : public CreatureAI
     //Cast spell by spell info
     void DoCastSpell(Unit* pTarget, SpellEntry const* pSpellInfo, bool bTriggered = false);
 
-    //Creature say
-    void DoSay(const char* text, uint32 language, Unit* target, bool SayEmote = false);
-
-    //Creature Yell
-    void DoYell(const char* text, uint32 language, Unit* target);
-
-    //Creature Text emote, optional bool for boss emote text
-    void DoTextEmote(const char* text, Unit* target, bool IsBossEmote = false);
-
-    //Creature whisper, optional bool for boss whisper
-    void DoWhisper(const char* text, Unit* reciever, bool IsBossWhisper = false);
-
     //Plays a sound to all nearby players
     void DoPlaySoundToSet(WorldObject* pSource, uint32 sound);
 

@@ -188,12 +188,7 @@ struct boss_fathomlord_karathressAI : public ScriptedAI
 
     void KilledUnit(Unit * /*victim*/)
     {
-        switch(rand()%3)
-        {
-            case 0: DoScriptText(SAY_SLAY1, me); break;
-            case 1: DoScriptText(SAY_SLAY2, me); break;
-            case 2: DoScriptText(SAY_SLAY3, me); break;
-        }
+        DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2,SAY_SLAY3), me);
     }
 
     void JustDied(Unit * /*killer*/)
@@ -285,7 +280,7 @@ struct boss_fathomlord_karathressAI : public ScriptedAI
             if (continueTriggering)
             {
                 DoCast(me, SPELL_BLESSING_OF_THE_TIDES);
-                DoYell(SAY_GAIN_BLESSING_OF_TIDES, LANG_UNIVERSAL, NULL);
+                me->MonsterYell(SAY_GAIN_BLESSING_OF_TIDES, LANG_UNIVERSAL, NULL);
                 DoPlaySoundToSet(me, SOUND_GAIN_BLESSING_OF_TIDES);
             }
         }

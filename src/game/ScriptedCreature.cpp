@@ -162,37 +162,6 @@ void ScriptedAI::DoCastSpell(Unit* pTarget, SpellEntry const* pSpellInfo, bool b
     me->CastSpell(pTarget, pSpellInfo, bTriggered);
 }
 
-void ScriptedAI::DoSay(const char* text, uint32 language, Unit* target, bool SayEmote)
-{
-    if (target)
-    {
-        me->Say(text, language, target->GetGUID());
-        if (SayEmote)
-            me->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
-    }
-    else me->Say(text, language, 0);
-}
-
-void ScriptedAI::DoYell(const char* text, uint32 language, Unit* target)
-{
-    if (target) me->Yell(text, language, target->GetGUID());
-    else me->Yell(text, language, 0);
-}
-
-void ScriptedAI::DoTextEmote(const char* text, Unit* target, bool IsBossEmote)
-{
-    if (target) me->TextEmote(text, target->GetGUID(), IsBossEmote);
-    else me->TextEmote(text, 0, IsBossEmote);
-}
-
-void ScriptedAI::DoWhisper(const char* text, Unit* reciever, bool IsBossWhisper)
-{
-    if (!reciever || reciever->GetTypeId() != TYPEID_PLAYER)
-        return;
-
-    me->Whisper(text, reciever->GetGUID(), IsBossWhisper);
-}
-
 void ScriptedAI::DoPlaySoundToSet(WorldObject* pSource, uint32 uiSoundId)
 {
     if (!pSource)

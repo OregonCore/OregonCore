@@ -24,9 +24,14 @@ EndScriptData */
 #include "ScriptPCH.h"
 #include "scholomance.h"
 
-#define SPELL_REND              18106
-#define SPELL_CLEAVE            15584
-#define SPELL_FRENZY            28371
+enum eEnums
+{
+    EMOTE_GENERIC_FRENZY_KILL   = -1000001,
+
+    SPELL_REND                  = 18106,
+    SPELL_CLEAVE                = 15584,
+    SPELL_FRENZY                = 28371
+};
 
 struct boss_theolenkrastinovAI : public ScriptedAI
 {
@@ -45,7 +50,7 @@ struct boss_theolenkrastinovAI : public ScriptedAI
 
     void JustDied(Unit *killer)
     {
-        ScriptedInstance *pInstance = (me->GetInstanceData()) ? (me->GetInstanceData()) : NULL;
+        ScriptedInstance* pInstance = me->GetInstanceData();
         if (pInstance)
         {
             pInstance->SetData(DATA_DOCTORTHEOLENKRASTINOV_DEATH, 0);
@@ -53,10 +58,6 @@ struct boss_theolenkrastinovAI : public ScriptedAI
             if (pInstance->GetData(DATA_CANSPAWNGANDLING))
                 me->SummonCreature(1853, 180.73f, -9.43856f, 75.507f, 1.61399f, TEMPSUMMON_DEAD_DESPAWN, 0);
         }
-    }
-
-    void EnterCombat(Unit *who)
-    {
     }
 
     void UpdateAI(const uint32 diff)
@@ -83,8 +84,8 @@ struct boss_theolenkrastinovAI : public ScriptedAI
         {
             if (Frenzy_Timer <= diff)
             {
-                DoCast(me,SPELL_FRENZY);
-                DoTextEmote("goes into a killing frenzy!",NULL);
+                DoCast(me, SPELL_FRENZY);
+                DoScriptText(EMOTE_GENERIC_FRENZY_KILL, me);
 
                 Frenzy_Timer = 8000;
             } else Frenzy_Timer -= diff;
@@ -93,6 +94,7 @@ struct boss_theolenkrastinovAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
+
 CreatureAI* GetAI_boss_theolenkrastinov(Creature* pCreature)
 {
     return new boss_theolenkrastinovAI (pCreature);

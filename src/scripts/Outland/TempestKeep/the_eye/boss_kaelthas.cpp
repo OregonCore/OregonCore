@@ -392,7 +392,6 @@ struct boss_kaelthasAI : public ScriptedAI
         if (!AdvisorGuid[0] || !AdvisorGuid[1] || !AdvisorGuid[2] || !AdvisorGuid[3])
         {
             error_log("OSCR: Kael'Thas One or more advisors missing, Skipping Phases 1-3");
-            DoYell("OSCR: Kael'Thas One or more advisors missing, Skipping Phases 1-3", LANG_UNIVERSAL, NULL);
 
             DoScriptText(SAY_PHASE4_INTRO2, me);
             Phase = 4;
@@ -402,11 +401,9 @@ struct boss_kaelthasAI : public ScriptedAI
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
-            Unit *pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            if (pTarget)
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 AttackStart(pTarget);
-            }
+        }
         else
         {
             PrepareAdvisors();

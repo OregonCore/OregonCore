@@ -88,7 +88,7 @@ struct boss_vexallusAI : public ScriptedAI
 
     void JustDied(Unit *victim)
     {
-        DoYell(SAY_DEATH, LANG_UNIVERSAL, NULL);
+        me->MonsterYell(SAY_DEATH, LANG_UNIVERSAL, NULL);
         if (pInstance)
         {
             pInstance->SetData(DATA_VEXALLUS_EVENT, DONE);

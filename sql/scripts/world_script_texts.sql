@@ -3,14 +3,14 @@
 -- valid entries for table are between -1000000 and -1999999
 -- 
 
-TRUNCATE `script_texts`;
-
 -- 
 -- -1 000 000 First 100 entries are reserved for special use, do not add regular text here.
 -- 
-
+DELETE FROM `script_texts` WHERE entry BETWEEN -1999925 AND -1000000;
 INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`emote`,`comment`) VALUES
-(-1000000,'<OregonScript Text Entry Missing!>',0,0,0,0,'DEFAULT_TEXT');
+(-1000000,'<OregonScript Text Entry Missing!>',0,0,0,0,'DEFAULT_TEXT'),
+(-1000001,'%s goes into a killing frenzy!',0,2,0,0,'EMOTE_GENERIC_FRENZY_KILL'),
+(-1000004,'goes into a berserker rage!',0,2,0,0,'EMOTE_GENERIC_BERSERK');
 
 -- 
 -- Normal text entries. Say/Yell/Whisper/Emote for any regular world object.
@@ -155,7 +155,7 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 (-1000207,'You have my blessing',0,0,0,0,'ashyen_and_keleth SAY_REWARD_BLESS'),
 
 (-1000208,'No one challanges the Wastewander nomads - not even robotic chickens! ATTACK!',0,0,0,0,'oox SAY_OOX17_AMBUSH_REPLY'),
-   
+
 (-1000209,'Very well. Let\'s see what you have to show me, $N.',0,0,1,0,'anvilward SAY_ANVIL1'),
 (-1000210,'What manner of trick is this, $R? If you seek to ambush me, I warn you I will not go down quietly!',0,0,1,0,'anvilward SAY_ANVIL2'),
 
@@ -916,6 +916,11 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 (-1309023,'Minions of Hakkar, hear your God. The sanctity of this temple has been compromised. Invaders encroach upon holy ground! The Altar of Blood must be protected. Kill them all!',0,1,0,'hakkar SAY_PROTECT_ALTAR');
 
 -- -1 329 000 STRATHOLME
+INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`comment`) VALUES
+(-1329000,'Thanks to Egan',0,0,0,'freed_soul SAY_ZAPPED0'),
+(-1329001,'Rivendare must die',0,0,0,'freed_soul SAY_ZAPPED1'),
+(-1329002,'Who you gonna call?',0,0,0,'freed_soul SAY_ZAPPED2'),
+(-1329003,'Don''t cross those beams!',0,0,0,'freed_soul SAY_ZAPPED3');
 
 -- -1 349 000 MARAUDON
 
@@ -1210,7 +1215,13 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 (-1540038,'That\'s because I do all the hard work!',10321,1,0,'omrogg KillingDelay_1'),
 (-1540039,'This all...your fault!',10311,1,0,'omrogg YELL_DIE_L'),
 (-1540040,'I...hate...you...',10322,1,0,'omrogg YELL_DIE_R'),
-(-1540041,'enrages',0,2,0,'omrogg EMOTE_ENRAGE');
+(-1540041,'enrages',0,2,0,'omrogg EMOTE_ENRAGE'),
+(-1540042,'Ours is the true Horde! The only Horde!',10323,1,0,'kargath SAY_AGGRO1'),
+(-1540043,'I''ll carve the meat from your bones!',10324,1,0,'kargath SAY_AGGRO2'),
+(-1540044,'I am called Bladefist for a reason, as you will see!',10325,1,0,'kargath SAY_AGGRO3'),
+(-1540045,'For the real Horde!',10326,1,0,'kargath SAY_SLAY1'),
+(-1540046,'I am the only Warchief!',10327,1,0,'kargath SAY_SLAY2'),
+(-1540047,'The true Horde... will.. prevail...',10328,1,0,'kargath SAY_DEATH');
 
 -- -1 542 000 BLOOD FURNACE
 INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`comment`) VALUES

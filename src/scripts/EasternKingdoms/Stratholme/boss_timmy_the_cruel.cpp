@@ -40,11 +40,11 @@ struct boss_timmy_the_cruelAI : public ScriptedAI
         HasYelled = false;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         if (!HasYelled)
         {
-            DoYell(SAY_SPAWN,LANG_UNIVERSAL,NULL);
+            me->MonsterYell(SAY_SPAWN,LANG_UNIVERSAL,NULL);
             HasYelled = true;
         }
     }
@@ -59,7 +59,7 @@ struct boss_timmy_the_cruelAI : public ScriptedAI
         if (RavenousClaw_Timer <= diff)
         {
             //Cast
-            DoCast(me->getVictim(),SPELL_RAVENOUSCLAW);
+            DoCast(me->getVictim(), SPELL_RAVENOUSCLAW);
             //15 seconds until we should cast this again
             RavenousClaw_Timer = 15000;
         } else RavenousClaw_Timer -= diff;

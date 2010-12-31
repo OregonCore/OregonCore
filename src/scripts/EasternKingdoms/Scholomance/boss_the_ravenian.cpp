@@ -50,9 +50,9 @@ struct boss_theravenianAI : public ScriptedAI
         HasYelled = false;
     }
 
-    void JustDied(Unit *killer)
+    void JustDied(Unit * /*killer*/)
     {
-        ScriptedInstance *pInstance = (me->GetInstanceData()) ? (me->GetInstanceData()) : NULL;
+        ScriptedInstance *pInstance = me->GetInstanceData();
         if (pInstance)
         {
             pInstance->SetData(DATA_THERAVENIAN_DEATH, 0);
@@ -62,9 +62,9 @@ struct boss_theravenianAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
-        DoYell(SAY_AGGRO1, LANG_UNIVERSAL, NULL);
+        me->MonsterYell(SAY_AGGRO1, LANG_UNIVERSAL, NULL);
     }
 
     void UpdateAI(const uint32 diff)
@@ -75,34 +75,35 @@ struct boss_theravenianAI : public ScriptedAI
         //Trample_Timer
         if (Trample_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_TRAMPLE);
+            DoCast(me->getVictim(), SPELL_TRAMPLE);
             Trample_Timer = 10000;
         } else Trample_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CLEAVE);
+            DoCast(me->getVictim(), SPELL_CLEAVE);
             Cleave_Timer = 7000;
         } else Cleave_Timer -= diff;
 
         //SunderingCleave_Timer
         if (SunderingCleave_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SUNDERINCLEAVE);
+            DoCast(me->getVictim(), SPELL_SUNDERINCLEAVE);
             SunderingCleave_Timer = 20000;
         } else SunderingCleave_Timer -= diff;
 
         //KnockAway_Timer
         if (KnockAway_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_KNOCKAWAY);
+            DoCast(me->getVictim(), SPELL_KNOCKAWAY);
             KnockAway_Timer = 12000;
         } else KnockAway_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
 };
+
 CreatureAI* GetAI_boss_theravenian(Creature* pCreature)
 {
     return new boss_theravenianAI (pCreature);

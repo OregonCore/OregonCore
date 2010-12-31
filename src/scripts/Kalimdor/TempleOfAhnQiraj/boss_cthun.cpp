@@ -1248,16 +1248,12 @@ void flesh_tentacleAI::UpdateAI(const uint32 diff)
 void flesh_tentacleAI::JustDied(Unit* killer)
 {
     if (!Parent)
-    {
-        DoYell("Error: No Parent variable", LANG_UNIVERSAL, NULL);
         return;
-    }
 
     Creature* Cthun = Unit::GetCreature(*me, Parent);
 
     if (Cthun)
         ((cthunAI*)(Cthun->AI()))->FleshTentcleKilled();
-    else DoYell("Error: No Cthun", LANG_UNIVERSAL, NULL);
 }
 
 //GetAIs

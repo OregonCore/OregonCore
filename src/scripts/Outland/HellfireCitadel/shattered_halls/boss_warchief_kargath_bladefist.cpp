@@ -1,5 +1,38 @@
-/* Copyright (C) 2008 - 2009 BroodWyrm */
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+/* ScriptData
+SDName: Boss_Warchief_Kargath_Bladefist
+SD%Complete: 90
+SDComment:
+SDCategory: Hellfire Citadel, Shattered Halls
+EndScriptData */
+
+/* ContentData
+boss_warchief_kargath_bladefist
+EndContentData */
+
 #include "ScriptPCH.h"
+
+#define SAY_AGGRO1                      -1540042
+#define SAY_AGGRO2                      -1540043
+#define SAY_AGGRO3                      -1540044
+#define SAY_SLAY1                       -1540045
+#define SAY_SLAY2                       -1540046
+#define SAY_DEATH                       -1540047
 
 #define SPELL_BLADE_DANCE               30739
 #define H_SPELL_CHARGE                  25821
@@ -14,19 +47,6 @@
 float AssassEntrance[3] = {275.136f,-84.29f,2.3f}; // y +-8
 float AssassExit[3] = {184.233f,-84.29f,2.3f}; // y +-8
 float AddsEntrance[3] = {306.036f,-84.29f,1.93f};
-
-#define SOUND_AGGRO1                    10323
-#define SAY_AGGRO1                      "Ours is the true Horde! The only Horde!"
-#define SOUND_AGGRO2                    10324
-#define SAY_AGGRO2                      "I'll carve the meat from your bones!"
-#define SOUND_AGGRO3                    10325
-#define SAY_AGGRO3                      "I am called Bladefist for a reason, as you will see!"
-#define SOUND_SLAY1                     10326
-#define SAY_SLAY1                       "For the real Horde!"
-#define SOUND_SLAY2                     10327
-#define SAY_SLAY2                       "I am the only Warchief!"
-#define SOUND_DEATH                     10328
-#define SAY_DEATH                       "The true Horde... will.. prevail.."
 
 struct boss_warchief_kargath_bladefistAI : public ScriptedAI
 {
@@ -73,23 +93,9 @@ struct boss_warchief_kargath_bladefistAI : public ScriptedAI
         resetcheck_timer = 5000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
-        switch (rand()%3)
-        {
-        case 0:
-            DoPlaySoundToSet(me,SOUND_AGGRO1);
-            DoYell(SAY_AGGRO1,LANG_UNIVERSAL,NULL);
-            break;
-        case 1:
-            DoPlaySoundToSet(me,SOUND_AGGRO2);
-            DoYell(SAY_AGGRO2,LANG_UNIVERSAL,NULL);
-            break;
-        case 2:
-            DoPlaySoundToSet(me,SOUND_AGGRO3);
-            DoYell(SAY_AGGRO3,LANG_UNIVERSAL,NULL);
-            break;
-        }
+        DoScriptText(RAND(SAY_AGGRO1,SAY_AGGRO2,SAY_AGGRO3), me);
     }
 
     void JustSummoned(Creature *summoned)
@@ -108,28 +114,17 @@ struct boss_warchief_kargath_bladefistAI : public ScriptedAI
         }
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit* victim)
     {
         if (victim->GetTypeId() == TYPEID_PLAYER)
         {
-            switch(rand()%2)
-            {
-            case 0:
-                DoPlaySoundToSet(me, SOUND_SLAY1);
-                DoYell(SAY_SLAY1,LANG_UNIVERSAL,NULL);
-                break;
-            case 1:
-                DoPlaySoundToSet(me, SOUND_SLAY2);
-                DoYell(SAY_SLAY2,LANG_UNIVERSAL,NULL);
-                break;
-            }
+            DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2), me);
         }
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
-        DoPlaySoundToSet(me, SOUND_DEATH);
-        DoYell(SAY_DEATH,LANG_UNIVERSAL,NULL);
+        DoScriptText(SAY_DEATH, me);
         removeAdds();
     }
 

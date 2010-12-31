@@ -23,9 +23,14 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define SPELL_FIRESHIELD        19626
-#define SPELL_BLASTWAVE         13021
-#define SPELL_FRENZY            28371
+enum eEnums
+{
+    EMOTE_GENERIC_FRENZY_KILL   = -1000001,
+
+    SPELL_BLASTWAVE              = 13021,
+    SPELL_FIRESHIELD             = 19626,
+    SPELL_FRENZY                 = 28371
+};
 
 struct boss_vectusAI : public ScriptedAI
 {
@@ -40,10 +45,6 @@ struct boss_vectusAI : public ScriptedAI
         FireShield_Timer = 2000;
         BlastWave_Timer = 14000;
         Frenzy_Timer = 0;
-    }
-
-    void EnterCombat(Unit *who)
-    {
     }
 
     void UpdateAI(const uint32 diff)
@@ -70,8 +71,8 @@ struct boss_vectusAI : public ScriptedAI
         {
             if (Frenzy_Timer <= diff)
             {
-                DoCast(me,SPELL_FRENZY);
-                DoTextEmote("goes into a killing frenzy!",NULL);
+                DoCast(me, SPELL_FRENZY);
+                DoScriptText(EMOTE_GENERIC_FRENZY_KILL, me);
 
                 Frenzy_Timer = 24000;
             } else Frenzy_Timer -= diff;
@@ -80,6 +81,7 @@ struct boss_vectusAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
+
 CreatureAI* GetAI_boss_vectus(Creature* pCreature)
 {
     return new boss_vectusAI (pCreature);

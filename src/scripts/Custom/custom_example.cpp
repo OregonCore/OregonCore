@@ -94,7 +94,7 @@ struct custom_exampleAI : public ScriptedAI
     void EnterCombat(Unit *who)
     {
         //Say some stuff
-        DoSay(SAY_AGGRO,LANG_UNIVERSAL,NULL);
+        me->MonsterSay(SAY_AGGRO,LANG_UNIVERSAL,NULL);
         DoPlaySoundToSet(me,8280);
     }
 
@@ -112,27 +112,27 @@ struct custom_exampleAI : public ScriptedAI
                 switch (rand()%5)
                 {
                     case 0:
-                        DoYell(SAY_RANDOM_0,LANG_UNIVERSAL,NULL);
+                        me->MonsterYell(SAY_RANDOM_0,LANG_UNIVERSAL,NULL);
                         DoPlaySoundToSet(me,8831);  //8831 is the index of the sound we are playing. You find these numbers in SoundEntries.dbc
                         break;
 
                     case 1:
-                        DoYell(SAY_RANDOM_1,LANG_UNIVERSAL,NULL);
+                        me->MonsterYell(SAY_RANDOM_1,LANG_UNIVERSAL,NULL);
                         DoPlaySoundToSet(me,8818);
                         break;
 
                     case 2:
-                        DoYell(SAY_RANDOM_2,LANG_UNIVERSAL,NULL);
+                        me->MonsterYell(SAY_RANDOM_2,LANG_UNIVERSAL,NULL);
                         DoPlaySoundToSet(me,8041);
                         break;
 
                     case 3:
-                        DoYell(SAY_RANDOM_3,LANG_UNIVERSAL,NULL);
+                        me->MonsterYell(SAY_RANDOM_3,LANG_UNIVERSAL,NULL);
                         DoPlaySoundToSet(me,8581);
                         break;
 
                     case 4:
-                        DoYell(SAY_RANDOM_4,LANG_UNIVERSAL,NULL);
+                        me->MonsterYell(SAY_RANDOM_4,LANG_UNIVERSAL,NULL);
                         DoPlaySoundToSet(me,8791);
                         break;
                 }
@@ -189,7 +189,7 @@ struct custom_exampleAI : public ScriptedAI
         {
             //Say our line then cast uber death spell
             DoPlaySoundToSet(me,8588);
-            DoYell(SAY_BESERK,LANG_UNIVERSAL,me->getVictim());
+            me->MonsterYell(SAY_BESERK,LANG_UNIVERSAL,me->getVictim()->GetGUID());
             DoCast(me->getVictim(),SPELL_BESERK);
 
             //Cast our beserk spell agian in 12 seconds if we didn't kill everyone
@@ -202,7 +202,7 @@ struct custom_exampleAI : public ScriptedAI
         {
             //Go to next phase
             Phase++;
-            DoYell(SAY_PHASE,LANG_UNIVERSAL,NULL);
+            me->MonsterYell(SAY_PHASE,LANG_UNIVERSAL,NULL);
             DoCast(me,SPELL_ENRAGE);
         } else Phase_Timer -= diff;
 
@@ -215,10 +215,10 @@ struct custom_exampleAI : public ScriptedAI
         me->HandleEmoteCommand(emote);
 
         if (emote == TEXTEMOTE_DANCE)
-            ((custom_exampleAI*)me->AI())->DoSay(SAY_DANCE, LANG_UNIVERSAL, NULL);
+            me->MonsterSay(SAY_DANCE, LANG_UNIVERSAL, NULL);
 
         if (emote == TEXTEMOTE_SALUTE)
-            ((custom_exampleAI*)me->AI())->DoSay(SAY_SALUTE, LANG_UNIVERSAL, NULL);
+            me->MonsterSay(SAY_SALUTE, LANG_UNIVERSAL, NULL);
     }
 };
 
