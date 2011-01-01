@@ -184,7 +184,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
     // resummon pet
     if (GetPlayer()->m_temporaryUnsummonedPetNumber)
     {
-        Pet* NewPet = new Pet;
+        Pet* NewPet = new Pet(GetPlayer());
         if (!NewPet->LoadPetFromDB(GetPlayer(), 0, GetPlayer()->m_temporaryUnsummonedPetNumber, true))
             delete NewPet;
 
@@ -215,7 +215,7 @@ void WorldSession::HandleMoveTeleportAck(WorldPacket& recv_data)
         return;
 
     //reset falltimer at teleport
-    GetPlayer()->m_anti_justteleported = true;
+    plMover->m_anti_justteleported = true;
 
     plMover->SetSemaphoreTeleportNear(false);
 
@@ -238,17 +238,17 @@ void WorldSession::HandleMoveTeleportAck(WorldPacket& recv_data)
     }
 
     // resummon pet
-    if (GetPlayer()->m_temporaryUnsummonedPetNumber)
+    if (plMover->m_temporaryUnsummonedPetNumber)
     {
-        Pet* NewPet = new Pet;
-        if (!NewPet->LoadPetFromDB(GetPlayer(), 0, GetPlayer()->m_temporaryUnsummonedPetNumber, true))
+        Pet* NewPet = new Pet(plMover);
+        if (!NewPet->LoadPetFromDB(plMover, 0, plMover->m_temporaryUnsummonedPetNumber, true))
             delete NewPet;
 
-        GetPlayer()->m_temporaryUnsummonedPetNumber = 0;
+        plMover->m_temporaryUnsummonedPetNumber = 0;
     }
 
     //lets process all delayed operations on successful teleport
-    GetPlayer()->ProcessDelayedOperations();
+    plMover->ProcessDelayedOperations();
 }
 
 void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)

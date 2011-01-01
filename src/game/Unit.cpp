@@ -6920,7 +6920,7 @@ Pet* Unit::GetPet() const
             return pet;
 
         sLog.outError("Unit::GetPet: Pet %u not exist.",GUID_LOPART(pet_guid));
-        const_cast<Unit*>(this)->SetPet(NULL, false);
+        const_cast<Unit*>(this)->SetUInt64Value(UNIT_FIELD_SUMMON, 0);
     }
 
     return NULL;
@@ -6934,7 +6934,7 @@ Unit* Unit::GetCharm() const
             return pet;
 
         sLog.outError("Unit::GetCharm: Charmed creature %u not exist.",GUID_LOPART(charm_guid));
-        const_cast<Unit*>(this)->SetCharm(NULL, false);
+        const_cast<Unit*>(this)->SetUInt64Value(UNIT_FIELD_CHARM, 0);
     }
 
     return NULL;
@@ -7126,9 +7126,9 @@ uint32 Unit::SpellDamageBonus(Unit *pVictim, SpellEntry const *spellProto, uint3
     {
         // Pets just add their bonus damage to their spell damage
         // note that their spell damage is just gain of their own auras
-        if (ToCreature()->isPet() && spellProto->DmgClass == SPELL_DAMAGE_CLASS_MAGIC)
+        if (ToCreature()->HasSummonMask(SUMMON_MASK_GUARDIAN) && spellProto->DmgClass == SPELL_DAMAGE_CLASS_MAGIC)
         {
-            BonusDamage = ((Pet*)this)->GetBonusDamage();
+            BonusDamage = ((Guardian*)this)->GetBonusDamage();
         }
         // For totems get damage bonus from owner (statue isn't totem in fact)
         else if (ToCreature()->isTotem() && ((Totem*)this)->GetTotemType() != TOTEM_STATUE)
@@ -8339,7 +8339,7 @@ void Unit::Unmount()
     {
         if (ToPlayer()->GetTemporaryUnsummonedPetNumber())
         {
-            Pet* NewPet = new Pet;
+            Pet* NewPet = new Pet(ToPlayer());
             if (!NewPet->LoadPetFromDB(this, 0, ToPlayer()->GetTemporaryUnsummonedPetNumber(), true))
                 delete NewPet;
             ToPlayer()->SetTemporaryUnsummonedPetNumber(0);
@@ -11122,7 +11122,10 @@ void Unit::RemovePetAura(PetAura const* petSpell)
 
 Pet* Unit::CreateTamedPetFrom(Creature* creatureTarget,uint32 spell_id)
 {
-    Pet* pet = new Pet(HUNTER_PET);
+    if (GetTypeId()!=TYPEID_PLAYER)
+        return NULL;
+
+    Pet* pet = new Pet(ToPlayer(), HUNTER_PET);
 
     if (!pet->CreateBaseAtCreature(creatureTarget))
     {

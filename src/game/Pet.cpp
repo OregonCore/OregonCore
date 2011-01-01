@@ -64,28 +64,21 @@ uint32 const LevelStartLoyalty[6] =
     17500,
 };
 
-Pet::Pet(PetType type) : Creature()
+Pet::Pet(Player *owner, PetType type) : Guardian(NULL, owner),
+m_petType(type), m_removed(false), m_happinessTimer(7500), m_duration(0),
+m_resetTalentsCost(0), m_resetTalentsTime(0),
+m_declinedname(NULL)
 {
     m_summonMask |= SUMMON_MASK_PET;
     m_name = "Pet";
-    m_petType = type;
 
-    m_removed = false;
     m_regenTimer = 4000;
-    m_happinessTimer = 7500;
     m_loyaltyTimer = 12000;
-    m_duration = 0;
-    m_bonusdamage = 0;
 
     m_loyaltyPoints = 0;
     m_TrainingPoints = 0;
-    m_resetTalentsCost = 0;
-    m_resetTalentsTime = 0;
 
     m_auraUpdateMask = 0;
-
-    // pets always have a charminfo, even if they are not actually charmed
-    InitCharmInfo();
 
     if (type == POSSESSED_PET)                              // always passive
         SetReactState(REACT_PASSIVE);
@@ -95,7 +88,6 @@ Pet::Pet(PetType type) : Creature()
     m_CreatureSpellCooldowns.clear();
     m_CreatureCategoryCooldowns.clear();
     m_autospells.clear();
-    m_declinedname = NULL;
 
     m_isWorldObject = true;
 }
@@ -220,8 +212,6 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
     else
         m_charmInfo->SetPetNumber(pet_number, false);
 
-    owner->SetPet(this, true);
-
     SetDisplayId(fields[3].GetUInt32());
     SetNativeDisplayId(fields[3].GetUInt32());
     uint32 petlevel=fields[4].GetUInt32();
@@ -259,6 +249,10 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
         default:
             sLog.outError("Pet has incorrect type (%u) for pet loading.",getPetType());
     }
+
+    owner->SetPet(this, true);
+    map->Add(ToCreature());
+
     InitStatsForLevel(petlevel);
     SetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP, time(NULL));
     SetUInt32Value(UNIT_FIELD_PETEXPERIENCE, fields[5].GetUInt32());
@@ -350,8 +344,6 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
             SetPower(POWER_MANA, savedmana > GetMaxPower(POWER_MANA) ? GetMaxPower(POWER_MANA) : savedmana);
         }
     }
-
-    map->Add(ToCreature());
 
     // Spells should be loaded after pet is added to map, because in CanCast is check on it
     _LoadSpells();
@@ -982,21 +974,25 @@ bool Pet::CreateBaseAtCreature(Creature* creature)
     return true;
 }
 
-bool Pet::InitStatsForLevel(uint32 petlevel)
+bool Guardian::InitStatsForLevel(uint32 petlevel)
 {
     CreatureInfo const *cinfo = GetCreatureInfo();
     ASSERT(cinfo);
 
-    Unit* owner = GetOwner();
-    if (!owner)
+    SetLevel(petlevel);
+
+    PetType petType = MAX_PET_TYPE;
+    if (HasSummonMask(SUMMON_MASK_PET) && m_owner->GetTypeId() == TYPEID_PLAYER)
     {
-        sLog.outError("attempt to summon pet (Entry %u) without owner! Attempt terminated.", cinfo->Entry);
-        return false;
+        if (m_owner->getClass() == CLASS_WARLOCK)
+            petType = SUMMON_PET;
+        else if (m_owner->getClass() == CLASS_HUNTER)
+            petType = HUNTER_PET;
+        else
+            sLog.outError("Unknown type pet %u is summoned by player class %u", GetEntry(), m_owner->getClass());
     }
 
-    uint32 creature_ID = (getPetType() == HUNTER_PET) ? 1 : cinfo->Entry;
-
-    SetLevel(petlevel);
+    uint32 creature_ID = (petType == HUNTER_PET) ? 1 : cinfo->Entry;
 
     SetMeleeDamageSchool(SpellSchools(cinfo->dmgschool));
 
@@ -1009,7 +1005,7 @@ bool Pet::InitStatsForLevel(uint32 petlevel)
     SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0);
 
     CreatureFamilyEntry const* cFamily = sCreatureFamilyStore.LookupEntry(cinfo->family);
-    if (cFamily && cFamily->minScale > 0.0f && getPetType() == HUNTER_PET)
+    if (cFamily && cFamily->minScale > 0.0f && petType == HUNTER_PET)
     {
         float scale;
         if (getLevel() >= cFamily->maxScaleLevel)
@@ -1025,7 +1021,7 @@ bool Pet::InitStatsForLevel(uint32 petlevel)
 
     int32 createResistance[MAX_SPELL_SCHOOL] = {0,0,0,0,0,0,0};
 
-    if (cinfo && getPetType() != HUNTER_PET)
+    if (cinfo && petType != HUNTER_PET)
     {
         createResistance[SPELL_SCHOOL_HOLY]   = cinfo->resistance1;
         createResistance[SPELL_SCHOOL_FIRE]   = cinfo->resistance2;
@@ -1035,39 +1031,16 @@ bool Pet::InitStatsForLevel(uint32 petlevel)
         createResistance[SPELL_SCHOOL_ARCANE] = cinfo->resistance6;
     }
 
-    switch(getPetType())
+    switch(petType)
     {
         case SUMMON_PET:
         {
-            if (owner->GetTypeId() == TYPEID_PLAYER)
-            {
-                switch(owner->getClass())
-                {
-                    case CLASS_WARLOCK:
-                    {
-
-                        //the damage bonus used for pets is either fire or shadow damage, whatever is higher
-                        uint32 fire  = owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_FIRE);
-                        uint32 shadow = owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_SHADOW);
-                        uint32 val  = (fire > shadow) ? fire : shadow;
-
-                        SetBonusDamage(int32 (val * 0.15f));
-                        //bonusAP += val * 0.57;
-                        break;
-                    }
-                    case CLASS_MAGE:
-                    {
-                                                            //40% damage bonus of mage's frost damage
-                        float val = owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_FROST) * 0.4;
-                        if (val < 0)
-                            val = 0;
-                        SetBonusDamage(int32(val));
-                        break;
-                    }
-                    default:
-                        break;
-                }
-            }
+            //the damage bonus used for pets is either fire or shadow damage, whatever is higher
+            uint32 fire  = m_owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_FIRE);
+            uint32 shadow = m_owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_SHADOW);
+            uint32 val  = (fire > shadow) ? fire : shadow;
+            SetBonusDamage(int32 (val * 0.15f));
+            //bonusAP += val * 0.57;
 
             SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(petlevel - (petlevel / 4)));
             SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(petlevel + (petlevel / 4)));
@@ -1144,7 +1117,57 @@ bool Pet::InitStatsForLevel(uint32 petlevel)
             break;
         }
         default:
-            sLog.outError("Pet has incorrect type (%u) for levelup.", getPetType());
+            switch(GetEntry())
+            {
+                case 510: // mage Water Elemental
+                {
+                    //40% damage bonus of mage's frost damage
+                    float val = m_owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_FROST) * 0.4;
+                    if (val < 0)
+                        val = 0;
+                    SetBonusDamage(int32(val));
+                    break;
+                }
+                case 1964: //force of nature
+                    SetCreateHealth(30 + 30*petlevel);
+                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(petlevel * 2.5f - (petlevel / 2)));
+                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(petlevel * 2.5f + (petlevel / 2)));
+                    break;
+                case 15352: //earth elemental 36213
+                    SetCreateHealth(100 + 120*petlevel);
+                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(petlevel - (petlevel / 4)));
+                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(petlevel + (petlevel / 4)));
+                    break;
+                case 15438: //fire elemental
+                    SetCreateHealth(40*petlevel);
+                    SetCreateMana(28 + 10*petlevel);
+                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(petlevel * 4 - petlevel));
+                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(petlevel * 4 + petlevel));
+                    break;
+                case 19833: //Snake Trap - Venomous Snake
+                    SetCreateHealth(uint32(107 * (petlevel - 40) * 0.025f));
+                    SetCreateMana(0);
+                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float((petlevel / 2) - 25));
+                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float((petlevel / 2) - 18));
+                    break;
+                case 19921: //Snake Trap - Viper
+                    SetCreateHealth(uint32(107 * (petlevel - 40) * 0.025f));
+                    SetCreateMana(0);
+                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(petlevel / 2 - 10));
+                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(petlevel / 2));
+                    break;
+                default:
+                    SetCreateMana(28 + 10*petlevel);
+                    SetCreateHealth(28 + 30*petlevel);
+                    // FIXME: this is wrong formula, possible each guardian pet have own damage formula
+                    //these formula may not be correct; however, it is designed to be close to what it should be
+                    //this makes dps 0.5 of pets level
+                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(petlevel - (petlevel / 4)));
+                    //damage range is then petlevel / 2
+                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(petlevel + (petlevel / 4)));
+                    break;
+            }
+            //sLog.outError("Pet has incorrect type (%u) for levelup.", petType);
             break;
     }
 

@@ -15545,7 +15545,7 @@ void Player::LoadPet()
     // just not added to the map
     if (IsInWorld())
     {
-        Pet *pet = new Pet;
+        Pet *pet = new Pet(this);
         if (!pet->LoadPetFromDB(this,0,0,true))
             delete pet;
     }
@@ -17023,16 +17023,6 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
     if (!pet || pet->GetOwnerGUID() != GetGUID())
         return;
 
-    // only if current pet in slot
-    switch(pet->getPetType())
-    {
-        case POSSESSED_PET:
-            pet->RemoveCharmedBy(NULL);
-        default:
-            SetPet(pet, false);
-            break;
-    }
-
     pet->CombatStop();
 
     if (returnreagent)
@@ -17050,6 +17040,16 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
     }
 
     pet->SavePetToDB(mode);
+
+    // only if current pet in slot
+    switch(pet->getPetType())
+    {
+        case POSSESSED_PET:
+            pet->RemoveCharmedBy(NULL);
+        default:
+            SetPet(pet, false);
+            break;
+    }
 
     pet->AddObjectToRemoveList();
     pet->m_removed = true;
