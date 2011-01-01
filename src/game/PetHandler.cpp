@@ -56,7 +56,7 @@ void WorldSession::HandlePetAction(WorldPacket & recv_data)
         return;
     }
 
-    if (pet != GetPlayer()->GetPet() && pet != GetPlayer()->GetCharm())
+    if (pet != GetPlayer()->GetFirstControlled())
     {
         sLog.outError("HandlePetAction.Pet %u isn't pet of player %s.", uint32(GUID_LOPART(guid1)), GetPlayer()->GetName());
         return;
@@ -381,14 +381,8 @@ void WorldSession::HandlePetSetAction(WorldPacket & recv_data)
 
     recv_data >> petguid;
 
-    // FIXME: charmed case
-    //Pet* pet = ObjectAccessor::Instance().GetPet(petguid);
-    if (ObjectAccessor::FindPlayer(petguid))
-        return;
-
-    Creature* pet = ObjectAccessor::GetCreatureOrPet(*_player, petguid);
-
-    if (!pet || (pet != _player->GetPet() && pet != _player->GetCharm()))
+    Unit* pet = ObjectAccessor::GetUnit(*_player, petguid);
+    if (!pet || pet != _player->GetFirstControlled())
     {
         sLog.outError("HandlePetSetAction: Unknown pet or pet owner.");
         return;
