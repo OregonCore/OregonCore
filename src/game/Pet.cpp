@@ -219,7 +219,9 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
         m_charmInfo->SetPetNumber(pet_number, true);
     else
         m_charmInfo->SetPetNumber(pet_number, false);
-    SetUInt64Value(UNIT_FIELD_SUMMONEDBY, owner->GetGUID());
+
+    owner->SetPet(this, true);
+
     SetDisplayId(fields[3].GetUInt32());
     SetNativeDisplayId(fields[3].GetUInt32());
     uint32 petlevel=fields[4].GetUInt32();
@@ -355,8 +357,6 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
     _LoadSpells();
     _LoadSpellCooldowns();
 
-
-    owner->SetPet(this, true);                                  // in DB stored only full controlled creature
     sLog.outDebug("New Pet has guid %u", GetGUIDLow());
 
     if (owner->GetTypeId() == TYPEID_PLAYER)
