@@ -181,6 +181,10 @@ void TempSummon::UnSummon()
     {
         if (owner->GetTypeId() == TYPEID_UNIT && ((Creature*)owner)->IsAIEnabled)
             ((Creature*)owner)->AI()->SummonedCreatureDespawn(this);
+
+        if (!m_properties)
+            return;
+
         if (uint32 slot = m_properties->Slot)
         {
             --slot;
