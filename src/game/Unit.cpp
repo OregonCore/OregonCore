@@ -6942,7 +6942,6 @@ Unit* Unit::GetCharm() const
 
 void Unit::SetPet(Creature* pet, bool apply)
 {
-    sLog.outError("before %u", GetPetGUID());
     if (apply)
     {
         if (!GetPetGUID())
@@ -6964,7 +6963,6 @@ void Unit::SetPet(Creature* pet, bool apply)
             }
         }
     }
-    sLog.outError("after %u", GetPetGUID());
 }
 
 void Unit::SetCharm(Unit* charm, bool apply)
@@ -9805,8 +9803,10 @@ void Unit::RemoveFromWorld()
         RemoveAllDynObjects();
 
         // if it has charmer or owner, it must be in someone's controllist and server will crash
-        ASSERT(!GetCharmerGUID());
-        ASSERT(!GetOwnerGUID());
+        /*if (GetCharmerGUID())
+            sLog.outError("Unit %u has charmer guid when removed from world", GetEntry());
+        if (GetOwnerGUID());
+            sLog.outError("Unit %u has owner guid when removed from world", GetEntry());*/
 
         WorldObject::RemoveFromWorld();
     }
