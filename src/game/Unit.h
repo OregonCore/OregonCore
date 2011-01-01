@@ -943,7 +943,7 @@ enum ReactiveType
 
 struct SpellProcEventEntry;                                 // used only privately
 
-typedef std::set<uint64> GuardianList;
+typedef std::set<Unit*> ControlList;
 
 class Unit : public WorldObject
 {
@@ -1284,12 +1284,13 @@ class Unit : public WorldObject
         }
         Player* GetCharmerOrOwnerPlayerOrPlayerItself() const;
 
-        void SetPet(Pet* pet);
-        void SetCharm(Unit* pet);
+        void SetPet(Creature* target, bool apply);
+        void SetCharm(Unit* target, bool apply);
         void SetCharmedBy(Unit* charmer, CharmType type);
         void RemoveCharmedBy(Unit* charmer);
         void RestoreFaction();
 
+        ControlList m_Controlled;
         Unit* GetFirstControlled() const;
         void RemoveAllControlled();
 
@@ -1398,10 +1399,6 @@ class Unit : public WorldObject
         uint64 m_ObjectSlot[4];
         uint32 m_detectInvisibilityMask;
         uint32 m_invisibilityMask;
-
-        GuardianList m_Guardians;
-        void RemoveGuardians();
-        void AddGuardian(Unit* pet) { m_Guardians.insert(pet->GetGUID()); }
 
         uint32 m_ShapeShiftFormSpellId;
         ShapeshiftForm m_form;

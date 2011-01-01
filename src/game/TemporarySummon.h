@@ -33,7 +33,8 @@ class TempSummon : public Creature
         virtual ~TempSummon(){};
         void Update(uint32 time);
         virtual void InitSummon(uint32 lifetime);
-        virtual void UnSummon();
+        void UnSummon();
+        void RemoveFromWorld();
         void SetTempSummonType(TempSummonType type);
         void SaveToDB();
         Unit* GetSummoner() const { return m_summonerGUID ? ObjectAccessor::GetUnit(*this, m_summonerGUID) : NULL; }
@@ -52,7 +53,7 @@ class Guardian : public TempSummon
         Guardian(SummonPropertiesEntry const *properties, Unit *owner);
         bool Create(uint32 guidlow, Map *map, uint32 Entry, uint32 pet_number);
         void InitSummon(uint32 duration);
-        void UnSummon();
+        void RemoveFromWorld();
         void InitStatsForLevel(uint32 level);
     protected:
         Unit *m_owner;

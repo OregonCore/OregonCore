@@ -14648,7 +14648,6 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     //Need to call it to initialize m_team (m_team can be calculated from race)
     //Other way is to saves m_team into characters table.
     setFactionForRace(getRace());
-    SetCharm(NULL);
 
     // load home bind and check in same time class/race pair, it used later for restore broken positions
     if (!_LoadHomeBind(holder->GetResult(PLAYER_LOGIN_QUERY_LOADHOMEBIND)))
@@ -14977,8 +14976,8 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 
     // clear charm/summon related fields
     SetUInt64Value(UNIT_FIELD_CHARM, 0);
+    SetUInt64Value(UNIT_FIELD_SUMMON, 0);
     SetUInt64Value(PLAYER_FARSIGHT, 0);
-    SetPet(NULL);
     SetOwnerGUID(NULL);
     SetCreatorGUID(NULL);
 
@@ -17026,12 +17025,9 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
     switch(pet->getPetType())
     {
         case POSSESSED_PET:
-            m_Guardians.erase(pet->GetGUID());
             pet->RemoveCharmedBy(NULL);
-            break;
         default:
-            if (GetPetGUID() == pet->GetGUID())
-                SetPet(NULL);
+            SetPet(pet, false);
             break;
     }
 
@@ -17265,7 +17261,7 @@ void Player::PossessSpellInitialize()
 
 void Player::CharmSpellInitialize()
 {
-    Unit* charm = GetCharm();
+    Unit* charm = GetFirstControlled();
     if (!charm)
         return;
 

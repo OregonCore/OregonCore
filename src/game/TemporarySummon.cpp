@@ -201,14 +201,22 @@ void TempSummon::SetTempSummonType(TempSummonType type)
 void TempSummon::UnSummon()
 {
     Unit* owner = GetSummoner();
-    if (owner)
-    {
-        if (owner->GetTypeId() == TYPEID_UNIT && ((Creature*)owner)->IsAIEnabled)
-            ((Creature*)owner)->AI()->SummonedCreatureDespawn(this);
+    if (owner && owner->GetTypeId() == TYPEID_UNIT && owner->ToCreature()->IsAIEnabled)
+        owner->ToCreature()->AI()->SummonedCreatureDespawn(this);
 
-        if (m_Properties)
+    AddObjectToRemoveList();
+}
+
+void TempSummon::RemoveFromWorld()
+{
+    if (!IsInWorld())
+        return;
+
+    if (m_Properties)
+    {
+        if (uint32 slot = m_Properties->Slot)
         {
-            if (uint32 slot = m_Properties->Slot)
+            if (Unit* owner = GetSummoner())
             {
                 --slot;
                 if (owner->m_TotemSlot[slot] = GetGUID())
@@ -217,7 +225,7 @@ void TempSummon::UnSummon()
         }
     }
 
-    AddObjectToRemoveList();
+    Creature::RemoveFromWorld();
 }
 
 void TempSummon::SaveToDB()
@@ -231,42 +239,20 @@ Guardian::Guardian(SummonPropertiesEntry const *properties, Unit *owner) : TempS
     InitCharmInfo();
 }
 
-bool Guardian::Create(uint32 guidlow, Map *map, uint32 Entry, uint32 pet_number)
-{
-    SetMapId(map->GetId());
-    SetInstanceId(map->GetInstanceId());
-
-    Object::_Create(guidlow, pet_number, HIGHGUID_PET);
-
-    m_DBTableGuid = guidlow;
-    m_originalEntry = Entry;
-
-    if (!InitEntry(Entry))
-        return false;
-
-    SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE);
-
-    return true;
-}
-
 void Guardian::InitSummon(uint32 duration)
 {
     TempSummon::InitSummon(duration);
 
     SetReactState(REACT_AGGRESSIVE);
-    SetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP, 0);
 
     SetOwnerGUID(m_owner->GetGUID());
     SetCreatorGUID(m_owner->GetGUID());
-    SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, m_owner->getFaction());
-    m_owner->AddGuardian(this);
-    SetUInt32Value(UNIT_FIELD_BYTES_0, 2048);
+    setFaction(m_owner->getFaction());
+    m_owner->SetPet(this, true);
 
     if (m_owner->GetTypeId() == TYPEID_PLAYER)
     {
-        m_owner->SetUInt64Value(UNIT_FIELD_SUMMON, GetGUID());
         m_charmInfo->InitCharmCreateSpells();
-        //charmInfo->SetPetNumber(objmgr.GeneratePetNumber(), true);
         m_owner->ToPlayer()->CharmSpellInitialize();
     }
 }
@@ -318,9 +304,12 @@ void Guardian::InitStatsForLevel(uint32 petlevel)
     }
 }
 
-void Guardian::UnSummon()
+void Guardian::RemoveFromWorld()
 {
-    m_owner->m_Guardians.erase(GetGUID());
-    TempSummon::UnSummon();
+    if (!IsInWorld())
+        return;
+
+    m_owner->SetPet(this, false);
+    TempSummon::RemoveFromWorld();
 }
 

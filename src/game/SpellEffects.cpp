@@ -3886,7 +3886,7 @@ void Spell::EffectTameCreature(uint32 /*i*/)
     pet->SetUInt32Value(UNIT_FIELD_LEVEL,creatureTarget->getLevel());
 
     // caster have pet now
-    m_caster->SetPet(pet);
+    m_caster->SetPet(pet, false);
 
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
     {

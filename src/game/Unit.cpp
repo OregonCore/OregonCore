@@ -6797,13 +6797,9 @@ void Unit::CombatStop(bool cast)
 void Unit::CombatStopWithPets(bool cast)
 {
     CombatStop(cast);
-    if (Pet* pet = GetPet())
-        pet->CombatStop(cast);
-    if (Unit* charm = GetCharm())
-        charm->CombatStop(cast);
-    for (GuardianList::const_iterator itr = m_Guardians.begin(); itr != m_Guardians.end(); ++itr)
-        if (Unit* guardian = Unit::GetUnit(*this,*itr))
-            guardian->CombatStop(cast);
+
+    for (ControlList::const_iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)
+        (*itr)->CombatStop(cast);
 }
 
 bool Unit::isAttackingPlayer() const
@@ -6917,11 +6913,14 @@ Pet* Unit::GetPet() const
 {
     if (uint64 pet_guid = GetPetGUID())
     {
+        if (!IS_PET_GUID(pet_guid))
+            return NULL;
+
         if (Pet* pet = ObjectAccessor::GetPet(*this, pet_guid))
             return pet;
 
         sLog.outError("Unit::GetPet: Pet %u not exist.",GUID_LOPART(pet_guid));
-        const_cast<Unit*>(this)->SetPet(0);
+        const_cast<Unit*>(this)->SetPet(NULL, false);
     }
 
     return NULL;
@@ -6935,21 +6934,98 @@ Unit* Unit::GetCharm() const
             return pet;
 
         sLog.outError("Unit::GetCharm: Charmed creature %u not exist.",GUID_LOPART(charm_guid));
-        const_cast<Unit*>(this)->SetCharm(NULL);
+        const_cast<Unit*>(this)->SetCharm(NULL, false);
     }
 
     return NULL;
 }
 
-void Unit::SetPet(Pet* pet)
+void Unit::SetPet(Creature* pet, bool apply)
 {
-    SetUInt64Value(UNIT_FIELD_SUMMON, pet ? pet->GetGUID() : 0);
+    sLog.outError("before %u", GetPetGUID());
+    if (apply)
+    {
+        if (!GetPetGUID())
+            SetUInt64Value(UNIT_FIELD_SUMMON, pet->GetGUID());
+        m_Controlled.insert(pet);
+    }
+    else
+    {
+        SetUInt64Value(UNIT_FIELD_SUMMON, 0);
+        m_Controlled.erase(pet);
+
+        //Check if there is other pet (guardian actually)
+        for (ControlList::iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)
+        {
+            if ((*itr)->GetOwnerGUID() == GetGUID())
+            {
+                SetUInt64Value(UNIT_FIELD_SUMMON, (*itr)->GetGUID());
+                break;
+            }
+        }
+    }
+    sLog.outError("after %u", GetPetGUID());
 }
 
-void Unit::SetCharm(Unit* pet)
+void Unit::SetCharm(Unit* charm, bool apply)
 {
-    if (GetTypeId() == TYPEID_PLAYER)
-        SetUInt64Value(UNIT_FIELD_CHARM, pet ? pet->GetGUID() : 0);
+    if (apply)
+    {
+        if (GetTypeId() == TYPEID_PLAYER)
+        {
+            if (GetCharmGUID())
+                sLog.outError("Player %s is trying to charm unit %u, but he already has a charmed unit %u", GetName(), charm->GetEntry(), GetCharmGUID());
+            SetUInt64Value(UNIT_FIELD_CHARM, charm->GetGUID());
+        }
+        m_Controlled.insert(charm);
+    }
+    else
+    {
+        if (GetTypeId() == TYPEID_PLAYER)
+            SetUInt64Value(UNIT_FIELD_CHARM, 0);
+        m_Controlled.erase(charm);
+    }
+}
+
+Unit* Unit::GetFirstControlled() const
+{
+    Unit *unit = GetCharm();
+    if (!unit)
+    {
+        if (uint64 guid = GetPetGUID())
+            unit = ObjectAccessor::GetUnit(*this, guid);
+    }
+    return unit;
+}
+
+void Unit::RemoveAllControlled()
+{
+    while (!m_Controlled.empty())
+    {
+        Unit *target = *m_Controlled.begin();
+        m_Controlled.erase(m_Controlled.begin());
+        if (target->GetCharmerGUID() == GetGUID())
+        {
+            //TODO: possessed
+            target->RemoveCharmAuras();
+        }
+        else if (target->GetOwnerGUID() == GetGUID())
+        {
+            if (target->GetTypeId() == TYPEID_UNIT)
+            {
+                if (target->ToCreature()->HasSummonMask(SUMMON_MASK_SUMMON))
+                    ((TempSummon*)target)->UnSummon();
+            }
+        }
+        else
+        {
+            sLog.outError("Unit %u is trying to release unit %u which is neither charmed nor owned by it", GetEntry(), target->GetEntry());
+        }
+    }
+    if (GetPetGUID())
+        sLog.outError("Unit %u is not able to release its summon %u", GetEntry(), GetPetGUID());
+    if (GetCharmGUID())
+        sLog.outError("Unit %u is not able to release its charm %u", GetEntry(), GetCharmGUID());
 }
 
 void Unit::AddPlayerToVision(Player* plr)
@@ -8853,7 +8929,7 @@ void Unit::setDeathState(DeathState s)
     if (s == JUST_DIED)
     {
         UnsummonAllTotems();
-        RemoveGuardians();
+        RemoveAllControlled();
         RemoveAllAurasOnDeath();
 
         ModifyAuraState(AURA_STATE_HEALTHLESS_20_PERCENT, false);
@@ -9720,13 +9796,17 @@ void Unit::RemoveFromWorld()
     if (IsInWorld())
     {
         UnsummonAllTotems();
-        RemoveGuardians();
+        RemoveAllControlled();
         RemoveCharmAuras();
         RemoveBindSightAuras();
         RemoveNotOwnSingleTargetAuras();
 
         RemoveAllGameObjects();
         RemoveAllDynObjects();
+
+        // if it has charmer or owner, it must be in someone's controllist and server will crash
+        ASSERT(!GetCharmerGUID());
+        ASSERT(!GetOwnerGUID());
 
         WorldObject::RemoveFromWorld();
     }
@@ -11633,8 +11713,8 @@ void Unit::SetCharmedBy(Unit* charmer, CharmType type)
 
     // Set charmed
     setFaction(charmer->getFaction());
-    charmer->SetCharm(this);
     SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE);
+    charmer->SetCharm(this, true);
 
     if (GetTypeId() == TYPEID_UNIT)
     {
@@ -11751,7 +11831,7 @@ void Unit::RemoveCharmedBy(Unit *charmer)
 
     ASSERT(type != CHARM_TYPE_POSSESS || charmer->GetTypeId() == TYPEID_PLAYER);
 
-    charmer->SetCharm(0);
+    charmer->SetCharm(this, false);
 
     if (charmer->GetTypeId() == TYPEID_PLAYER)
     {
@@ -11791,23 +11871,6 @@ void Unit::RemoveCharmedBy(Unit *charmer)
         charmer->ToPlayer()->SendRemoveControlBar();
     else if (GetTypeId() == TYPEID_PLAYER || GetTypeId() == TYPEID_UNIT && !ToCreature()->isPet())
         DeleteCharmInfo();
-}
-
-void Unit::RemoveGuardians()
-{
-    while (!m_Guardians.empty())
-    {
-        uint64 guid = *m_Guardians.begin();
-        if (Unit* guardian = ObjectAccessor::GetUnit(*this, guid))
-        {
-            if (guardian->GetTypeId() == TYPEID_UNIT)
-            {
-                if (((Creature*)guardian)->isSummon())
-                    ((TempSummon*)guardian)->UnSummon();
-            }
-        }
-        m_Guardians.erase(guid);
-    }
 }
 
 void Unit::RestoreFaction()
