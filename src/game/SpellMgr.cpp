@@ -306,6 +306,18 @@ bool IsPassiveSpell(SpellEntry const * spellInfo)
     return false;
 }
 
+bool IsAutocastableSpell(uint32 spellId)
+{
+    SpellEntry const *spellInfo = sSpellStore.LookupEntry(spellId);
+    if (!spellInfo)
+        return false;
+    if (spellInfo->Attributes & SPELL_ATTR_PASSIVE)
+        return false;
+    if (spellInfo->AttributesEx & SPELL_ATTR_EX_UNAUTOCASTABLE_BY_PET)
+        return false;
+    return true;
+}
+
 uint32 CalculatePowerCost(SpellEntry const * spellInfo, Unit const * caster, SpellSchoolMask schoolMask)
 {
     // Spell drain all exist power on cast (Only paladin lay of Hands)
