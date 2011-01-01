@@ -4082,6 +4082,42 @@ uint8 Spell::CanCast(bool strict)
                     return SPELL_FAILED_BAD_TARGETS;
                 break;
             }
+            case SPELL_EFFECT_ENERGIZE:
+            {
+                // Consume Magic
+                if (m_spellInfo->Id == 32676)
+                {
+                    if (m_caster->GetTypeId() != TYPEID_PLAYER)
+                        return SPELL_FAILED_UNKNOWN;
+
+                    std::vector<uint32> priest_buffs;
+                    priest_buffs.clear();
+                    Unit::AuraMap& Auras = m_caster->GetAuras();
+                    for (Unit::AuraMap::iterator i = Auras.begin(); i != Auras.end();  ++i)
+                    {
+                        // get only priests auras
+                        SpellEntry const *spellInfo = i->second->GetSpellProto();
+                        if (spellInfo->SpellFamilyName != SPELLFAMILY_PRIEST)
+                            continue;
+                        // do not select passive auras
+                        if (i->second->IsPassive())
+                            continue;
+                        // only beneficial effects count
+                        if (!IsPositiveSpell(spellInfo->Id))
+                            continue;
+                        priest_buffs.push_back(spellInfo->Id);
+                    }
+                    if (!priest_buffs.empty())
+                    {
+                        // remove random aura from caster
+                        uint32 rand_buff = urand(0, priest_buffs.size()-1);
+                        m_caster->RemoveAurasDueToSpell(priest_buffs[rand_buff]);
+                    }
+                    else    // if nothing to dispell, send error and break a spell
+                        return SPELL_FAILED_NOTHING_TO_DISPEL;
+                }
+                break;
+            }
             default:break;
         }
     }
