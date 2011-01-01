@@ -787,7 +787,7 @@ void WorldSession::HandlePossessedMovement(WorldPacket& recv_data, MovementInfo&
     // Remove possession if possessed unit enters a transport
     if (movementInfo.HasMovementFlag(MOVEFLAG_ONTRANSPORT))
     {
-        GetPlayer()->Uncharm();
+        //GetPlayer()->Uncharm(); //TODO: Backport mover code
         return;
     }
 
@@ -822,7 +822,7 @@ void WorldSession::HandlePossessedMovement(WorldPacket& recv_data, MovementInfo&
 
         if (movementInfo.GetPos()->GetPositionZ() < -500.0f)
         {
-            GetPlayer()->Uncharm();
+            //GetPlayer()->Uncharm(); //TODO: Backport mover code
             plr->HandleFallUnderMap();
         }
     }

@@ -271,8 +271,6 @@ typedef std::map<RepListID,FactionState> FactionStateList;
 
 typedef std::map<uint32,ReputationRank> ForcedReactions;
 
-typedef std::set<uint64> GuardianPetList;
-
 struct EnchantDuration
 {
     EnchantDuration() : item(NULL), slot(MAX_ENCHANTMENT_SLOT), leftduration(0) {};
@@ -958,11 +956,6 @@ class Player : public Unit, public GridObject<Player>
 
         Pet* SummonPet(uint32 entry, float x, float y, float z, float ang, PetType petType, uint32 despwtime);
         void RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent = false);
-        void RemoveGuardians();
-        bool HasGuardianWithEntry(uint32 entry);
-        void AddGuardian(Pet* pet) { m_guardianPets.insert(pet->GetGUID()); }
-        GuardianPetList const& GetGuardians() const { return m_guardianPets; }
-        void Uncharm();
 
         void Say(const std::string& text, const uint32 language);
         void Yell(const std::string& text, const uint32 language);
@@ -1958,7 +1951,7 @@ class Player : public Unit, public GridObject<Player>
         void SetSeer(WorldObject *target) { m_seer = target; }
         void SetViewpoint(WorldObject *target, bool apply);
         WorldObject* GetViewpoint() const;
-        void StopCastingCharm() { Uncharm(); }
+        void StopCastingCharm();
         void StopCastingBindSight();
 
         // Transports
@@ -2300,8 +2293,6 @@ class Player : public Unit, public GridObject<Player>
         Group *m_groupInvite;
         uint32 m_groupUpdateMask;
         uint64 m_auraUpdateMask;
-
-        GuardianPetList m_guardianPets;
 
         // Player summoning
         time_t m_summon_expire;

@@ -66,7 +66,7 @@ uint32 const LevelStartLoyalty[6] =
 
 Pet::Pet(PetType type) : Creature()
 {
-    m_isPet = true;
+    m_summonMask |= SUMMON_MASK_PET;
     m_name = "Pet";
     m_petType = type;
 
@@ -85,12 +85,10 @@ Pet::Pet(PetType type) : Creature()
     m_auraUpdateMask = 0;
 
     // pets always have a charminfo, even if they are not actually charmed
-    CharmInfo* charmInfo = InitCharmInfo();
+    InitCharmInfo();
 
     if (type == POSSESSED_PET)                              // always passive
         SetReactState(REACT_PASSIVE);
-    else if (type == GUARDIAN_PET)                          // always aggressive
-        SetReactState(REACT_AGGRESSIVE);
 
     m_spells.clear();
     m_Auras.clear();
@@ -98,7 +96,6 @@ Pet::Pet(PetType type) : Creature()
     m_CreatureCategoryCooldowns.clear();
     m_autospells.clear();
     m_declinedname = NULL;
-    //m_isActive = true;
 
     m_isWorldObject = true;
 }
@@ -1145,53 +1142,6 @@ bool Pet::InitStatsForLevel(uint32 petlevel)
             }
             break;
         }
-        case GUARDIAN_PET:
-            SetUInt32Value(UNIT_FIELD_PETEXPERIENCE, 0);
-            SetUInt32Value(UNIT_FIELD_PETNEXTLEVELEXP, 1000);
-
-            switch(GetEntry())
-            {
-                case 1964: //force of nature
-                    SetCreateHealth(30 + 30*petlevel);
-                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(petlevel * 2.5f - (petlevel / 2)));
-                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(petlevel * 2.5f + (petlevel / 2)));
-                    break;
-                case 15352: //earth elemental 36213
-                    SetCreateHealth(100 + 120*petlevel);
-                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(petlevel - (petlevel / 4)));
-                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(petlevel + (petlevel / 4)));
-                    break;
-                case 15438: //fire elemental
-                    SetCreateHealth(40*petlevel);
-                    SetCreateMana(28 + 10*petlevel);
-                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(petlevel * 4 - petlevel));
-                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(petlevel * 4 + petlevel));
-                    break;
-                case 19833: //Snake Trap - Venomous Snake
-                    SetCreateHealth(uint32(107 * (petlevel - 40) * 0.025f));
-                    SetCreateMana(0);
-                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float((petlevel / 2) - 25));
-                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float((petlevel / 2) - 18));
-                    break;
-                case 19921: //Snake Trap - Viper
-                    SetCreateHealth(uint32(107 * (petlevel - 40) * 0.025f));
-                    SetCreateMana(0);
-                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(petlevel / 2 - 10));
-                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(petlevel / 2));
-                    break;
-                default:
-                    SetCreateMana(28 + 10*petlevel);
-                    SetCreateHealth(28 + 30*petlevel);
-
-                    // FIXME: this is wrong formula, possible each guardian pet have own damage formula
-                    //these formula may not be correct; however, it is designed to be close to what it should be
-                    //this makes dps 0.5 of pets level
-                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(petlevel - (petlevel / 4)));
-                    //damage range is then petlevel / 2
-                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(petlevel + (petlevel / 4)));
-                    break;
-            }
-            break;
         default:
             sLog.outError("Pet has incorrect type (%u) for levelup.", getPetType());
             break;

@@ -851,6 +851,16 @@ enum CharmType
     CHARM_TYPE_POSSESS,
 };
 
+enum ActionBarIndex
+{
+    ACTION_BAR_INDEX_START = 0,
+    ACTION_BAR_INDEX_PET_SPELL_START = 3,
+    ACTION_BAR_INDEX_PET_SPELL_END = 7,
+    ACTION_BAR_INDEX_END = 10,
+};
+
+#define MAX_UNIT_ACTION_BAR_INDEX (ACTION_BAR_INDEX_END-ACTION_BAR_INDEX_START)
+
 struct CharmInfo
 {
     public:
@@ -930,6 +940,8 @@ enum ReactiveType
 #define MAX_PLAYER_STEALTH_DETECT_RANGE 45.0f               // max distance for detection targets by player
 
 struct SpellProcEventEntry;                                 // used only privately
+
+typedef std::set<uint64> GuardianList;
 
 class Unit : public WorldObject
 {
@@ -1384,6 +1396,10 @@ class Unit : public WorldObject
         uint64 m_ObjectSlot[4];
         uint32 m_detectInvisibilityMask;
         uint32 m_invisibilityMask;
+
+        GuardianList m_Guardians;
+        void RemoveGuardians();
+        void AddGuardian(Unit* pet) { m_Guardians.insert(pet->GetGUID()); }
 
         uint32 m_ShapeShiftFormSpellId;
         ShapeshiftForm m_form;

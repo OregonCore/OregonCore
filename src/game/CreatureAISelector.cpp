@@ -65,8 +65,15 @@ namespace FactorySelector
                 ai_factory = ai_registry.GetRegistryItem("PetAI");
             else if (creature->isTotem())
                 ai_factory = ai_registry.GetRegistryItem("TotemAI");
-            else if (creature->isSummon() && ((TempSummon*)creature)->m_properties && ((TempSummon*)creature)->m_properties->Type == SUMMON_TYPE_MINIPET)
-                ai_factory = ai_registry.GetRegistryItem("CritterAI");
+            else if(creature->isSummon() && ((TempSummon*)creature)->m_Properties)
+            {
+                if(((TempSummon*)creature)->m_Properties->Category == SUMMON_CATEGORY_GUARDIAN
+                    || ((TempSummon*)creature)->m_Properties->Type == SUMMON_TYPE_GUARDIAN
+                    || ((TempSummon*)creature)->m_Properties->Type == SUMMON_TYPE_MINION)
+                    ai_factory = ai_registry.GetRegistryItem("PetAI");
+                else if(((TempSummon*)creature)->m_Properties->Type == SUMMON_TYPE_MINIPET)
+                    ai_factory = ai_registry.GetRegistryItem("CritterAI");
+            }
             else if (creature->isTrigger())
             {
                 if (creature->m_spells[0])

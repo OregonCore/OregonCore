@@ -280,9 +280,7 @@ class Spell
         void EffectDualWield(uint32 i);
         void EffectPickPocket(uint32 i);
         void EffectAddFarsight(uint32 i);
-        void EffectSummonPossessed(uint32 i);
         void EffectSummonWild(uint32 i);
-        void EffectSummonGuardian(uint32 i);
         void EffectHealMechanical(uint32 i);
         void EffectTeleUnitsFaceCaster(uint32 i);
         void EffectLearnSkill(uint32 i);
@@ -308,7 +306,6 @@ class Spell
         void EffectStuck(uint32 i);
         void EffectSummonPlayer(uint32 i);
         void EffectActivateObject(uint32 i);
-        void EffectSummonTotem(uint32 i);
         void EffectEnchantHeldItem(uint32 i);
         void EffectSummonObject(uint32 i);
         void EffectResurrect(uint32 i);
@@ -590,6 +587,9 @@ class Spell
         void SpellDamageHeal(uint32 i);
 
         void GetSummonPosition(Position &pos, float radius = 0.0f, uint32 count = 0);
+        void SummonTotem    (uint32 entry, SummonPropertiesEntry const *properties);
+        void SummonGuardian (uint32 entry, SummonPropertiesEntry const *properties);
+        void SummonPossessed(uint32 entry, SummonPropertiesEntry const *properties);
         // -------------------------------------------
 
         //List For Triggered Spells

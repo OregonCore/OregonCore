@@ -46,8 +46,10 @@ class InstanceData;
 class Group;
 class InstanceSave;
 class WorldObject;
+class TempSummon;
 class Player;
 class CreatureGroup;
+struct Position;
 class BattleGround;
 
 //******************************************
@@ -417,6 +419,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         double rand_chance()                    { return mtRand.randExc(100.0); }
 #endif
 
+        TempSummon *SummonCreature(uint32 entry, const Position &pos, SummonPropertiesEntry const *properties = NULL, uint32 duration = 0, Unit *summoner = NULL);
         Creature* GetCreature(uint64 guid);
         GameObject* GetGameObject(uint64 guid);
         DynamicObject* GetDynamicObject(uint64 guid);

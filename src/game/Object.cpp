@@ -46,6 +46,7 @@
 #include "GridNotifiersImpl.h"
 
 #include "TemporarySummon.h"
+#include "Totem.h"
 #include "OutdoorPvPMgr.h"
 
 uint32 GuidHigh2TypeId(uint32 guid_hi)
@@ -1621,22 +1622,97 @@ void WorldObject::AddObjectToRemoveList()
     map->AddObjectToRemoveList(this);
 }
 
-TempSummon* WorldObject::SummonCreature(uint32 id, const Position &pos, TempSummonType spwtype,uint32 despwtime)
+TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropertiesEntry const *properties, uint32 duration, Unit *summoner)
 {
-    TempSummon* pCreature = new TempSummon(GetGUID());
-
-    uint32 team = 0;
-    if (GetTypeId() == TYPEID_PLAYER)
-        team = ToPlayer()->GetTeam();
-
-    if (!pCreature->Create(objmgr.GenerateLowGuid(HIGHGUID_UNIT), GetMap(), id, team, pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation()))
+    uint32 mask = SUMMON_MASK_SUMMON;
+    if (properties)
     {
-        delete pCreature;
+        if (properties->Category == SUMMON_CATEGORY_GUARDIAN
+            || properties->Type == SUMMON_TYPE_GUARDIAN
+            || properties->Type == SUMMON_TYPE_MINION)
+            mask = SUMMON_MASK_GUARDIAN;
+        else if(properties->Type == SUMMON_TYPE_TOTEM)
+            mask = SUMMON_MASK_TOTEM;
+    }
+
+    TempSummon *summon = NULL;
+    bool ok = true;
+    uint32 team = 0;
+    if (summoner && summoner->GetTypeId() == TYPEID_PLAYER)
+        team = summoner->ToPlayer()->GetTeam();
+
+    switch(mask)
+    {
+        case SUMMON_MASK_SUMMON:
+            summon = new TempSummon(properties, summoner);
+            ok = summon->Create(objmgr.GenerateLowGuid(HIGHGUID_UNIT), this, entry, team, pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation());
+            break;
+        case SUMMON_MASK_GUARDIAN:
+            summon = new Guardian(properties, summoner);
+            team = objmgr.GeneratePetNumber();
+            ok = summon->Create(objmgr.GenerateLowGuid(HIGHGUID_UNIT), this, entry, team, pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation());
+            // this enables pet details window (Shift+P)
+            summon->GetCharmInfo()->SetPetNumber(team, false);
+            break;
+        case SUMMON_MASK_TOTEM:
+            summon = new Totem(properties, summoner);
+            ok = summon->Create(objmgr.GenerateLowGuid(HIGHGUID_UNIT), this, entry, team, pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation());
+            break;
+        default:
+            return NULL;
+    }
+    if (!ok)
+    {
+        delete summon;
         return NULL;
     }
 
+    summon->InitSummon(duration);
+
+    Add((Creature*)summon);
+
+    return summon;
+}
+
+TempSummon* WorldObject::SummonCreature(uint32 entry, const Position &pos, TempSummonType spwtype, uint32 duration)
+{
+    if (Map *map = FindMap())
+    {
+        if (TempSummon *summon = map->SummonCreature(entry, pos, NULL, duration, isType(TYPEMASK_UNIT) ? (Unit*)this : NULL))
+        {
+            summon->SetHomePosition(pos);
+            summon->InitSummon(duration);
+            summon->SetTempSummonType(spwtype);
+
+            if (GetTypeId() == TYPEID_UNIT && ToCreature()->IsAIEnabled)
+                ToCreature()->AI()->JustSummoned(summon);
+
+            if (summon->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_TRIGGER && summon->m_spells[0])
+            {
+                if (GetTypeId() == TYPEID_UNIT || GetTypeId() == TYPEID_PLAYER)
+                    summon->setFaction(((Unit*)this)->getFaction());
+                summon->CastSpell(summon, summon->m_spells[0], false, 0, 0, GetGUID());
+            }
+
+            return summon;
+        }
+    }
+
+    return NULL;
+    /* ORIGINAL CODE COMMENTED OUT because we already backported the "position as a class" commit and therefore I had to change the code
+    if (!IsInWorld())
+        return NULL;
+
+    if (x == 0.0f && y == 0.0f && z == 0.0f)
+        GetClosePoint(x, y, z, GetObjectSize());
+
+    TempSummon *pCreature = GetMap()->SummonCreature(entry, x, y, z, ang, NULL, duration, GetTypeId() == TYPEID_UNIT ? (Unit*)this : NULL);
+    if (!pCreature)
+        return NULL;
+
     pCreature->SetHomePosition(pos);
-    pCreature->Summon(spwtype, despwtime);
+    pCreature->InitSummon(duration);
+    pCreature->SetTempSummonType(spwtype);
 
     if (GetTypeId() == TYPEID_UNIT && ToCreature()->IsAIEnabled)
         ToCreature()->AI()->JustSummoned(pCreature);
@@ -1648,8 +1724,7 @@ TempSummon* WorldObject::SummonCreature(uint32 id, const Position &pos, TempSumm
         pCreature->CastSpell(pCreature, pCreature->m_spells[0], false, 0, 0, GetGUID());
     }
 
-    //return the creature therewith the summoner has access to it
-    return pCreature;
+    return pCreature;*/
 }
 
 void WorldObject::SetZoneScript()
@@ -1728,7 +1803,6 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
 
     switch(petType)
     {
-        case GUARDIAN_PET:
         case POSSESSED_PET:
             pet->SetUInt32Value(UNIT_FIELD_FLAGS,0);
             AddGuardian(pet);

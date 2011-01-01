@@ -1360,9 +1360,6 @@ void Player::setDeathState(DeathState s)
         //FIXME: is pet dismissed at dying or releasing spirit? if second, add setDeathState(DEAD) to HandleRepopRequestOpcode and define pet unsummon here with (s == DEAD)
         RemovePet(NULL, PET_SAVE_NOT_IN_SLOT, true);
 
-        // remove uncontrolled pets
-        RemoveGuardians();
-
         // save value before aura remove in Unit::setDeathState
         ressSpellId = GetUInt32Value(PLAYER_SELF_RES_SPELL);
 
@@ -1889,7 +1886,6 @@ void Player::RemoveFromWorld()
         // Release charmed creatures, unsummon totems and remove pets/guardians
         StopCastingCharm();
         StopCastingBindSight();
-        RemoveGuardians();
         sOutdoorPvPMgr.HandlePlayerLeaveZone(this, m_zoneUpdateId);
     }
 
@@ -17029,11 +17025,8 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
     // only if current pet in slot
     switch(pet->getPetType())
     {
-        case GUARDIAN_PET:
-            m_guardianPets.erase(pet->GetGUID());
-            break;
         case POSSESSED_PET:
-            m_guardianPets.erase(pet->GetGUID());
+            m_Guardians.erase(pet->GetGUID());
             pet->RemoveCharmedBy(NULL);
             break;
         default:
@@ -17074,30 +17067,7 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
     }
 }
 
-void Player::RemoveGuardians()
-{
-    while (!m_guardianPets.empty())
-    {
-        uint64 guid = *m_guardianPets.begin();
-        if (Pet* pet = ObjectAccessor::GetPet(*this, guid))
-            pet->Remove(PET_SAVE_AS_DELETED);
-
-        m_guardianPets.erase(guid);
-    }
-}
-
-bool Player::HasGuardianWithEntry(uint32 entry)
-{
-    // pet guid middle part is entry (and creature also)
-    // and in guardian list must be guardians with same entry _always_
-    for (GuardianPetList::const_iterator itr = m_guardianPets.begin(); itr != m_guardianPets.end(); ++itr)
-        if (GUID_ENPART(*itr) == entry)
-            return true;
-
-    return false;
-}
-
-void Player::Uncharm()
+void Player::StopCastingCharm()
 {
     Unit* charm = GetCharm();
     if (!charm)
@@ -17281,24 +17251,16 @@ void Player::PossessSpellInitialize()
         return;
     }
 
-    uint8 addlist = 0;
-    WorldPacket data(SMSG_PET_SPELLS, 16+40+1+4*addlist+25);// first line + actionbar + spellcount + spells + last adds
+    WorldPacket data(SMSG_PET_SPELLS, 8+4+4+4*MAX_UNIT_ACTION_BAR_INDEX+1+1);
+    data << uint64(charm->GetGUID());
+    data << uint32(0);
+    data << uint32(0);
 
-                                                            //16
-    data << (uint64)charm->GetGUID() << uint32(0x00000000) << uint8(0) << uint8(0) << uint16(0);
-
-    for (uint32 i = 0; i < 10; i++)                          //40
-    {
+    for (uint32 i = 0; i < MAX_UNIT_ACTION_BAR_INDEX; i++)
         data << uint16(charmInfo->GetActionBarEntry(i)->SpellOrAction) << uint16(charmInfo->GetActionBarEntry(i)->Type);
-    }
 
-    data << uint8(addlist);                                 //1
-
-    uint8 count = 3;
-    data << count;
-    data << uint32(0x6010) << uint64(0);                    // if count = 1, 2 or 3
-    data << uint32(0x8e8c) << uint64(0);                    // if count = 3
-    data << uint32(0x8e8b) << uint64(0);                    // if count = 3
+    data << uint8(0);                                       // spells count
+    data << uint8(0);                                       // cooldowns count
 
     GetSession()->SendPacket(&data);
 }
@@ -17329,23 +17291,19 @@ void Player::CharmSpellInitialize()
         }
     }
 
-    WorldPacket data(SMSG_PET_SPELLS, 16+40+1+4*addlist+25);// first line + actionbar + spellcount + spells + last adds
-
-    data << (uint64)charm->GetGUID() << uint32(0x00000000);
+    WorldPacket data(SMSG_PET_SPELLS, 8+4+1+1+2+4*MAX_UNIT_ACTION_BAR_INDEX+1+4*addlist+1);
+    data << uint64(charm->GetGUID());
+    data << uint32(0);
 
     if (charm->GetTypeId() != TYPEID_PLAYER)
-        data << uint8(charm->ToCreature()->GetReactState()) << uint8(charmInfo->GetCommandState());
+        data << uint8(charm->ToCreature()->GetReactState()) << uint8(charmInfo->GetCommandState()) << uint16(0);
     else
-        data << uint8(0) << uint8(0);
+        data << uint8(0) << uint8(0) << uint16(0);
 
-    data << uint16(0);
-
-    for (uint32 i = 0; i < 10; i++)                          //40
-    {
+    for (uint32 i = 0; i < MAX_UNIT_ACTION_BAR_INDEX; i++)
         data << uint16(charmInfo->GetActionBarEntry(i)->SpellOrAction) << uint16(charmInfo->GetActionBarEntry(i)->Type);
-    }
 
-    data << uint8(addlist);                                 //1
+    data << uint8(addlist);
 
     if (addlist)
     {
@@ -17360,11 +17318,7 @@ void Player::CharmSpellInitialize()
         }
     }
 
-    uint8 count = 3;
-    data << count;
-    data << uint32(0x6010) << uint64(0);                    // if count = 1, 2 or 3
-    data << uint32(0x8e8c) << uint64(0);                    // if count = 3
-    data << uint32(0x8e8b) << uint64(0);                    // if count = 3
+    data << uint8(0);                                       // cooldowns count
 
     GetSession()->SendPacket(&data);
 }
