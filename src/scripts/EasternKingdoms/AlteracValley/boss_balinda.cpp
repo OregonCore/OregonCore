@@ -36,15 +36,66 @@ enum Yells
     YELL_EVADE                                    = -1810020
 };
 
+enum Creatures
+{
+    NPC_WATER_ELEMENTAL                           = 25040
+};
+
+enum WaterElementalSpells
+{
+    SPELL_WATERBOLT                               = 46983
+};
+
+struct mob_water_elementalAI : public ScriptedAI
+{
+    mob_water_elementalAI(Creature *c) : ScriptedAI(c) {}
+
+    uint32 uiWaterBoltTimer;
+    uint64 uiBalindaGUID;
+    uint32 uiResetTimer;
+
+    void Reset()
+    {
+        uiWaterBoltTimer            = 3*IN_MILLISECONDS;
+        uiResetTimer                = 5*IN_MILLISECONDS;
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (!UpdateVictim())
+            return;
+
+        if (uiWaterBoltTimer <= diff)
+        {
+            DoCast(me->getVictim(), SPELL_WATERBOLT);
+            uiWaterBoltTimer = 5*IN_MILLISECONDS;
+        } else uiWaterBoltTimer -= diff;
+
+        // check if creature is not outside of building
+        if (uiResetTimer <= diff)
+        {
+            if (Creature *pBalinda = Unit::GetCreature(*me, uiBalindaGUID))
+                if (me->GetDistance2d(pBalinda->GetHomePosition().GetPositionX(), pBalinda->GetHomePosition().GetPositionY()) > 50)
+                    EnterEvadeMode();
+                uiResetTimer = 5*IN_MILLISECONDS;
+        } else uiResetTimer -= diff;
+
+        DoMeleeAttackIfReady();
+    }
+};
+
 struct boss_balindaAI : public ScriptedAI
 {
-    boss_balindaAI(Creature *c) : ScriptedAI(c) {}
+    boss_balindaAI(Creature *c) : ScriptedAI(c), Summons(me) {}
 
     uint32 uiArcaneExplosionTimer;
     uint32 uiConeOfColdTimer;
     uint32 uiFireBoltTimer;
     uint32 uiFrostboltTimer;
     uint32 uiResetTimer;
+    uint32 uiWaterElementalTimer;
+
+    SummonList Summons;
 
     void Reset()
     {
@@ -53,6 +104,9 @@ struct boss_balindaAI : public ScriptedAI
         uiFireBoltTimer             = 1*IN_MILLISECONDS;
         uiFrostboltTimer            = 4*IN_MILLISECONDS;
         uiResetTimer                = 5*IN_MILLISECONDS;
+        uiWaterElementalTimer       = 0;
+
+        Summons.DespawnAll();
     }
 
     void EnterCombat(Unit * /*who*/)
@@ -65,14 +119,30 @@ struct boss_balindaAI : public ScriptedAI
         Reset();
     }
 
-    void KilledUnit(Unit* victim){}
+    void JustSummoned(Creature* summoned)
+    {
+        ((mob_water_elementalAI*)summoned->AI())->uiBalindaGUID = me->GetGUID();
+        summoned->AI()->AttackStart(SelectTarget(SELECT_TARGET_RANDOM,0, 50, true));
+        summoned->setFaction(me->getFaction());
+        Summons.Summon(summoned);
+    }
 
-    void JustDied(Unit* Killer){}
+    void JustDied(Unit* /*Killer*/)
+    {
+        Summons.DespawnAll();
+    }
 
     void UpdateAI(const uint32 diff)
     {
         if (!UpdateVictim())
             return;
+
+        if (uiWaterElementalTimer <= diff)
+        {
+            if (Summons.empty())
+                me->SummonCreature(NPC_WATER_ELEMENTAL, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45*IN_MILLISECONDS);
+            uiWaterElementalTimer = 50*IN_MILLISECONDS;
+        } else uiWaterElementalTimer -= diff;
 
         if (uiArcaneExplosionTimer <= diff)
         {
@@ -119,6 +189,11 @@ CreatureAI* GetAI_boss_balinda(Creature* pCreature)
     return new boss_balindaAI (pCreature);
 }
 
+CreatureAI* GetAI_mob_water_elemental(Creature *_Creature)
+{
+    return new mob_water_elementalAI (_Creature);
+}
+
 void AddSC_boss_balinda()
 {
     Script *newscript;
@@ -126,4 +201,9 @@ void AddSC_boss_balinda()
     newscript->Name = "boss_balinda";
     newscript->GetAI = &GetAI_boss_balinda;
     newscript->RegisterSelf();
-}
+
+    newscript = new Script;
+    newscript->Name = "mob_water_elemental";
+    newscript->GetAI = &GetAI_mob_water_elemental;
+    newscript->RegisterSelf();
+};
