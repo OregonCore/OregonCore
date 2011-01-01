@@ -6944,8 +6944,7 @@ void Unit::SetPet(Creature* pet, bool apply)
 {
     if (apply)
     {
-        if (!GetPetGUID())
-            SetUInt64Value(UNIT_FIELD_SUMMON, pet->GetGUID());
+        SetUInt64Value(UNIT_FIELD_SUMMON, pet->GetGUID());
         m_Controlled.insert(pet);
     }
     else
@@ -6971,16 +6970,26 @@ void Unit::SetCharm(Unit* charm, bool apply)
     {
         if (GetTypeId() == TYPEID_PLAYER)
         {
-            if (GetCharmGUID())
-                sLog.outError("Player %s is trying to charm unit %u, but he already has a charmed unit %u", GetName(), charm->GetEntry(), GetCharmGUID());
-            SetUInt64Value(UNIT_FIELD_CHARM, charm->GetGUID());
+            if (!AddUInt64Value(UNIT_FIELD_CHARM, charm->GetGUID()))
+                sLog.outCrash("Player %s is trying to charm unit %u, but it already has a charmed unit %u", GetName(), charm->GetEntry(), GetCharmGUID());
         }
+
+        if (!charm->AddUInt64Value(UNIT_FIELD_CHARMEDBY, GetGUID()))
+            sLog.outCrash("Unit %u is being charmed, but it already has a charmer %u", charm->GetEntry(), charm->GetCharmerGUID());
+
         m_Controlled.insert(charm);
     }
     else
     {
         if (GetTypeId() == TYPEID_PLAYER)
-            SetUInt64Value(UNIT_FIELD_CHARM, 0);
+        {
+            if (!RemoveUInt64Value(UNIT_FIELD_CHARM, charm->GetGUID()))
+                sLog.outCrash("Player %s is trying to uncharm unit %u, but it has another charmed unit %u", GetName(), charm->GetEntry(), GetCharmGUID());
+        }
+
+        if (!charm->RemoveUInt64Value(UNIT_FIELD_CHARMEDBY, GetGUID()))
+            sLog.outCrash("Unit %u is being uncharmed, but it has another charmer %u", charm->GetEntry(), charm->GetCharmerGUID());
+
         m_Controlled.erase(charm);
     }
 }
@@ -7021,9 +7030,9 @@ void Unit::RemoveAllControlled()
         }
     }
     if (GetPetGUID())
-        sLog.outError("Unit %u is not able to release its summon %u", GetEntry(), GetPetGUID());
+        sLog.outCrash("Unit %u is not able to release its summon %u", GetEntry(), GetPetGUID());
     if (GetCharmGUID())
-        sLog.outError("Unit %u is not able to release its charm %u", GetEntry(), GetCharmGUID());
+        sLog.outCrash("Unit %u is not able to release its charm %u", GetEntry(), GetCharmGUID());
 }
 
 void Unit::AddPlayerToVision(Player* plr)

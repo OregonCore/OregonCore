@@ -104,6 +104,9 @@ Pet::~Pet()
 {
     if (m_uint32Values)                                      // only for fully created Object
     {
+        if (Unit* owner = GetOwner())
+            owner->SetPet(this, false);
+
         for (PetSpellMap::iterator i = m_spells.begin(); i != m_spells.end(); ++i)
             delete i->second;
         ObjectAccessor::Instance().RemoveObject(this);
@@ -130,7 +133,7 @@ void Pet::AddToWorld()
         this->GetCharmInfo()->SetIsAtStay(false);
         this->GetCharmInfo()->SetIsFollowing(false);
         this->GetCharmInfo()->SetIsReturning(false);
-     }
+    }
 }
 
 void Pet::RemoveFromWorld()
