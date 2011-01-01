@@ -17203,10 +17203,8 @@ void Player::PetSpellInitialize()
                                                         //16
     data << (uint64)pet->GetGUID() << uint32(0x00000000) << uint8(pet->GetReactState()) << uint8(charmInfo->GetCommandState()) << uint16(0);
 
-    for (uint32 i = 0; i < 10; i++)                      //40
-    {
+    for (uint32 i = 0; i < MAX_UNIT_ACTION_BAR_INDEX; i++)
         data << uint16(charmInfo->GetActionBarEntry(i)->SpellOrAction) << uint16(charmInfo->GetActionBarEntry(i)->Type);
-    }
 
     data << uint8(addlist);                             //1
 
@@ -17307,7 +17305,7 @@ void Player::CharmSpellInitialize()
 
     if (addlist)
     {
-        for (uint32 i = 0; i < CREATURE_MAX_SPELLS; ++i)
+        for (uint32 i = 0; i < MAX_SPELL_CHARM; ++i)
         {
             CharmSpellEntry *cspell = charmInfo->GetCharmSpell(i);
             if (cspell->spellId)

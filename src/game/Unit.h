@@ -238,6 +238,8 @@ enum UnitRename
 };
 
 #define CREATURE_MAX_SPELLS     4
+#define MAX_SPELL_CHARM         4
+#define MAX_SPELL_POSSESS       8
 
 enum Swing
 {
@@ -1392,7 +1394,7 @@ class Unit : public WorldObject
         int32 GetCurrentSpellCastTime(uint32 spell_id) const;
 
         uint32 m_addDmgOnce;
-        uint64 m_TotemSlot[MAX_TOTEM];
+        uint64 m_TotemSlot[MAX_SUMMON_SLOT];
         uint64 m_ObjectSlot[4];
         uint32 m_detectInvisibilityMask;
         uint32 m_invisibilityMask;
