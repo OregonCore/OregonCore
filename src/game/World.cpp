@@ -624,6 +624,7 @@ void World::LoadConfigSettings(bool reload)
         m_configs[CONFIG_SOCKET_SELECTTIME] = sConfig.GetIntDefault("SocketSelectTime", DEFAULT_SOCKET_SELECT_TIME);
 
     m_configs[CONFIG_SOCKET_TIMEOUTTIME] = sConfig.GetIntDefault("SocketTimeOutTime", 900000);
+    m_configs[CONFIG_SESSION_ADD_DELAY] = sConfig.GetIntDefault("SessionAddDelay", 10000);
 
     m_configs[CONFIG_GROUP_XP_DISTANCE] = sConfig.GetIntDefault("MaxGroupXPDistance", 74);
     // todo Add MonsterSight and GuarderSight (with meaning) in Oregond.conf or put them as define
