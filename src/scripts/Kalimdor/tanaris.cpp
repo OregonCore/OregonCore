@@ -356,8 +356,8 @@ enum e00X17
     SAY_OOX_AGGRO1          = -1000288,
     SAY_OOX_AGGRO2          = -1000289,
     SAY_OOX_AMBUSH          = -1000290,
+    SAY_OOX17_AMBUSH_REPLY  = -1000291,
     SAY_OOX_END             = -1000292,
-    SAY_OOX17_AMBUSH_REPLY  = -1000208,
 
     Q_OOX17                 = 648,
     SPAWN_FIRST             = 7803,
