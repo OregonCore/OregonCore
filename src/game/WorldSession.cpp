@@ -45,12 +45,14 @@ WorldSession::WorldSession(uint32 id, WorldSocket *sock, uint32 sec, uint8 expan
 LookingForGroup_auto_join(false), LookingForGroup_auto_add(false), m_muteTime(mute_time),
 _player(NULL), m_Socket(sock),_security(sec), _accountId(id), m_expansion(expansion),
 m_sessionDbcLocale(sWorld.GetAvailableDbcLocale(locale)), m_sessionDbLocaleIndex(objmgr.GetIndexForLocale(locale)),
-_logoutTime(0), m_inQueue(false), m_playerLoading(false), m_playerLogout(false), m_playerRecentlyLogout(false), m_playerSave(false), m_latency(0)
+_logoutTime(0), m_inQueue(false), m_playerLoading(false), m_playerLogout(false), m_playerRecentlyLogout(false), m_playerSave(false),
+m_latency(0), m_timeOutTime(0)
 {
     if (sock)
     {
         m_Address = sock->GetRemoteAddress();
         sock->AddReference();
+        ResetTimeOutTime();
         LoginDatabase.PExecute("UPDATE account SET active_realm_id = %d WHERE id = %u;", realmID, GetAccountId());
     }
 }
@@ -162,8 +164,16 @@ void WorldSession::LogUnprocessedTail(WorldPacket *packet)
 }
 
 // Update the WorldSession (triggered by World update)
-bool WorldSession::Update(uint32 /*diff*/)
+bool WorldSession::Update(uint32 diff)
 {
+    /// Update Timeout timer.
+    UpdateTimeOutTime(diff);
+
+    ///- Before we process anything:    
+    /// If necessary, kick the player from the character select screen
+    if (IsConnectionIdle())
+        m_Socket->CloseSocket();
+
     // Retrieve packets from the receive queue and call the appropriate handlers
     // not proccess packets if socket already closed
     WorldPacket* packet;
@@ -242,17 +252,17 @@ bool WorldSession::Update(uint32 /*diff*/)
         delete packet;
     }
 
+    ///- If necessary, log the player out
+    time_t currTime = time(NULL);
+    if (ShouldLogOut(currTime) && !m_playerLoading)
+        LogoutPlayer(true);
+
     // Cleanup socket pointer if need
     if (m_Socket && m_Socket->IsClosed())
     {
         m_Socket->RemoveReference();
         m_Socket = NULL;
     }
-
-    // If necessary, log the player out
-    time_t currTime = time(NULL);
-    if (!m_Socket || (ShouldLogOut(currTime) && !m_playerLoading))
-        LogoutPlayer(true);
 
     if (!m_Socket)
         return false;                                       //Will remove this session from the world session map
@@ -400,7 +410,6 @@ void WorldSession::LogoutPlayer(bool Save)
 
         // Broadcast a logout message to the player's friends
         sSocialMgr.SendFriendStatus(_player, FRIEND_OFFLINE, _player->GetGUIDLow(), true);
-
         sSocialMgr.RemovePlayerSocial (_player->GetGUIDLow ());
 
         // Remove the player from the world
@@ -538,7 +547,7 @@ void WorldSession::SendAuthWaitQue(uint32 position)
     {
         WorldPacket packet(SMSG_AUTH_RESPONSE, 5);
         packet << uint8(AUTH_WAIT_QUEUE);
-        packet << uint32 (position);
+        packet << uint32(position);
         SendPacket(&packet);
     }
 }

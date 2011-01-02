@@ -615,6 +615,10 @@ int WorldSocket::ProcessIncoming (WorldPacket* new_pct)
 
                 if (m_Session != NULL)
                 {
+                    // Our Idle timer will reset on any non PING opcodes.
+                    // Catches people idling on the login screen and any lingering ingame connections.
+                    m_Session->ResetTimeOutTime();
+
                     // OK ,give the packet to WorldSession
                     aptr.release();
                     // WARNINIG here we call it with locks held.
