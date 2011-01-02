@@ -256,7 +256,7 @@ Unit::Unit()
     m_addDmgOnce = 0;
 
     for (uint8 i = 0; i < MAX_SUMMON_SLOT; ++i)
-        m_TotemSlot[i]  = 0;
+        m_SummonSlot[i] = 0;
 
     m_ObjectSlot[0] = m_ObjectSlot[1] = m_ObjectSlot[2] = m_ObjectSlot[3] = 0;
 
@@ -5080,7 +5080,7 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                 // Pet Healing (Corruptor Raiment or Rift Stalker Armor)
                 case 37381:
                 {
-                    target = GetPet();
+                    target = GetGuardianPet();
                     if (!target)
                         return false;
 
@@ -6807,18 +6807,14 @@ bool Unit::isAttackingPlayer() const
     if (hasUnitState(UNIT_STAT_ATTACK_PLAYER))
         return true;
 
-    Pet* pet = GetPet();
-    if (pet && pet->isAttackingPlayer())
-        return true;
-
-    Unit* charmed = GetCharm();
-    if (charmed && charmed->isAttackingPlayer())
-        return true;
+    for (ControlList::const_iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)
+        if ((*itr)->isAttackingPlayer())
+            return true;
 
     for (uint8 i = 0; i < MAX_SUMMON_SLOT; ++i)
-        if (m_TotemSlot[i])
-            if (Creature *totem = GetMap()->GetCreature(m_TotemSlot[i]))
-                if (totem->isAttackingPlayer())
+        if (m_SummonSlot[i])
+            if (Creature *summon = GetMap()->GetCreature(m_SummonSlot[i]))
+                if (summon->isAttackingPlayer())
                     return true;
 
     return false;
@@ -6909,18 +6905,16 @@ Player* Unit::GetCharmerOrOwnerPlayerOrPlayerItself() const
     return GetTypeId() == TYPEID_PLAYER ? (Player*)this : NULL;
 }
 
-Pet* Unit::GetPet() const
+Guardian* Unit::GetGuardianPet() const
 {
     if (uint64 pet_guid = GetPetGUID())
     {
-        if (!IS_PET_GUID(pet_guid))
-            return NULL;
+        if (Creature* pet = ObjectAccessor::GetCreatureOrPet(*this, pet_guid))
+            if (pet->HasSummonMask(SUMMON_MASK_GUARDIAN))
+                return (Guardian*)pet;
 
-        if (Pet* pet = ObjectAccessor::GetPet(*this, pet_guid))
-            return pet;
-
-        sLog.outError("Unit::GetPet: Pet %u not exist.",GUID_LOPART(pet_guid));
-        const_cast<Unit*>(this)->SetUInt64Value(UNIT_FIELD_SUMMON, 0);
+        sLog.outError("Unit::GetGuardianPet: Pet %u not exist.",GUID_LOPART(pet_guid));
+        const_cast<Unit*>(this)->SetPetGUID(0);
     }
 
     return NULL;
@@ -6940,37 +6934,85 @@ Unit* Unit::GetCharm() const
     return NULL;
 }
 
-void Unit::SetPet(Creature* pet, bool apply)
+void Unit::SetGuardian(Guardian* guardian, bool apply)
 {
+    sLog.outDebug("SetGuardian %u for %u, apply %u", guardian->GetEntry(), GetEntry(), apply);
+
     if (apply)
     {
-        if (!pet->AddUInt64Value(UNIT_FIELD_SUMMONEDBY, GetGUID()))
+        if (!guardian->AddUInt64Value(UNIT_FIELD_SUMMONEDBY, GetGUID()))
         {
-            sLog.outCrash("Pet %u is summoned by %u but it already has a owner", pet->GetEntry(), GetEntry());
+            sLog.outCrash("Guardian %u is summoned by %u but it already has a owner", guardian->GetEntry(), GetEntry());
             return;
         }
-        SetUInt64Value(UNIT_FIELD_SUMMON, pet->GetGUID());
-        m_Controlled.insert(pet);
+        m_Controlled.insert(guardian);
+
+        if (guardian->isPet() || guardian->m_Properties && guardian->m_Properties->Category == SUMMON_CATEGORY_PET)
+        {
+            if (Guardian* oldPet = GetGuardianPet())
+            {
+                if (oldPet != guardian && (oldPet->isPet() || guardian->isPet() || oldPet->GetEntry() != guardian->GetEntry()))
+                {
+                    // remove existing guardian pet
+                    if (oldPet->isPet())
+                        ((Pet*)oldPet)->Remove(PET_SAVE_AS_CURRENT);
+                    else
+                        oldPet->UnSummon();
+                    SetPetGUID(guardian->GetGUID());
+                    SetGuardianGUID(0);
+                }
+            }
+            else
+            {
+                SetPetGUID(guardian->GetGUID());
+                SetGuardianGUID(0);
+            }
+        }
+
+        if (AddUInt64Value(UNIT_FIELD_SUMMON, guardian->GetGUID()))
+        {
+            if (GetTypeId() == TYPEID_PLAYER)
+            {
+                if (guardian->isPet())
+                    ((Player*)this)->PetSpellInitialize();
+                else
+                    ((Player*)this)->CharmSpellInitialize();
+            }
+        }
     }
     else
     {
-        if (!pet->RemoveUInt64Value(UNIT_FIELD_SUMMONEDBY, GetGUID()))
+        if (!guardian->RemoveUInt64Value(UNIT_FIELD_SUMMONEDBY, GetGUID()))
         {
-            sLog.outCrash("Pet %u is unsummoned by %u but it has another owner", pet->GetEntry(), GetEntry());
+            sLog.outCrash("Pet %u is unsummoned by %u but it has another owner", guardian->GetEntry(), GetEntry());
             return;
         }
-        m_Controlled.erase(pet);
 
-        if (RemoveUInt64Value(UNIT_FIELD_SUMMON, pet->GetGUID()))
+        m_Controlled.erase(guardian);
+
+        if (guardian->isPet() || guardian->m_Properties && guardian->m_Properties->Category == SUMMON_CATEGORY_PET)
         {
-            //Check if there is other pet (guardian actually)
+            if (GetPetGUID() == guardian->GetGUID())
+                SetPetGUID(0);
+        }
+
+        if (RemoveUInt64Value(UNIT_FIELD_SUMMON, guardian->GetGUID()))
+        {
+            //Check if there is another guardian
             for (ControlList::iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)
             {
-                if ((*itr)->GetOwnerGUID() == GetGUID())
+                assert((*itr)->GetOwnerGUID() == GetGUID());
+                if (AddUInt64Value(UNIT_FIELD_SUMMON, (*itr)->GetGUID()))
                 {
-                    SetUInt64Value(UNIT_FIELD_SUMMON, (*itr)->GetGUID());
-                    break;
+                    if (GetTypeId() == TYPEID_PLAYER)
+                    {
+                        if (guardian->isPet())
+                            ToPlayer()->PetSpellInitialize();
+                        else
+                            ToPlayer()->CharmSpellInitialize();
+                    }
                 }
+                break;
             }
         }
     }
@@ -7011,7 +7053,7 @@ Unit* Unit::GetFirstControlled() const
     Unit *unit = GetCharm();
     if (!unit)
     {
-        if (uint64 guid = GetPetGUID())
+        if (uint64 guid = GetUInt64Value(UNIT_FIELD_SUMMON))
             unit = ObjectAccessor::GetUnit(*this, guid);
     }
     return unit;
@@ -7028,20 +7070,19 @@ void Unit::RemoveAllControlled()
             //TODO: possessed
             target->RemoveCharmAuras();
         }
-        else if (target->GetOwnerGUID() == GetGUID())
+        else if(target->GetOwnerGUID() == GetGUID()
+            && target->GetTypeId() == TYPEID_UNIT
+            && ((Creature*)target)->HasSummonMask(SUMMON_MASK_SUMMON))
         {
-            if (target->GetTypeId() == TYPEID_UNIT)
-            {
-                if (target->ToCreature()->HasSummonMask(SUMMON_MASK_SUMMON))
-                    ((TempSummon*)target)->UnSummon();
-            }
+            if (!((TempSummon*)target)->isPet())
+                ((TempSummon*)target)->UnSummon();
         }
         else
         {
             sLog.outError("Unit %u is trying to release unit %u which is neither charmed nor owned by it", GetEntry(), target->GetEntry());
         }
     }
-    if (GetPetGUID())
+    if (GetPetGUID() != GetUInt64Value(UNIT_FIELD_SUMMON))
         sLog.outCrash("Unit %u is not able to release its summon %u", GetEntry(), GetPetGUID());
     if (GetCharmGUID())
         sLog.outCrash("Unit %u is not able to release its charm %u", GetEntry(), GetCharmGUID());
@@ -7083,10 +7124,10 @@ void Unit::UnsummonAllTotems()
 {
     for (int8 i = 0; i < MAX_SUMMON_SLOT; ++i)
     {
-        if (!m_TotemSlot[i])
+        if (!m_SummonSlot[i])
             continue;
 
-        Creature *OldTotem = GetMap()->GetCreature(m_TotemSlot[i]);
+        Creature *OldTotem = GetMap()->GetCreature(m_SummonSlot[i]);
         if (OldTotem && OldTotem->isSummon())
             ((TempSummon*)OldTotem)->UnSummon();
     }
@@ -8300,7 +8341,7 @@ void Unit::Mount(uint32 mount)
     // unsummon pet
     if (GetTypeId() == TYPEID_PLAYER)
     {
-        Pet* pet = GetPet();
+        Pet* pet = ToPlayer()->GetPet();
         if (pet)
         {
             BattleGround *bg = ToPlayer()->GetBattleGround();
@@ -8345,7 +8386,7 @@ void Unit::Unmount()
             ToPlayer()->SetTemporaryUnsummonedPetNumber(0);
         }
         else
-           if (Pet *pPet = GetPet())
+           if (Guardian *pPet = GetGuardianPet())
                if (pPet->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED) && !pPet->hasUnitState(UNIT_STAT_STUNNED))
                    pPet->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
     }
@@ -8882,6 +8923,11 @@ void Unit::SetSpeed(UnitMoveType mtype, float rate, bool forced)
         // register forced speed changes for WorldSession::HandleForceSpeedChangeAck
         // and do it only for real sent packets and use run for run/mounted as client expected
         ++ToPlayer()->m_forced_speed_changes[mtype];
+
+        if (!isInCombat())
+            if (Pet* pet = ToPlayer()->GetPet())
+                pet->SetSpeed(mtype, m_speed_rate[mtype], forced);
+
         switch(mtype)
         {
             case MOVE_WALK:
@@ -8919,9 +8965,6 @@ void Unit::SetSpeed(UnitMoveType mtype, float rate, bool forced)
         data << float(GetSpeed(mtype));
         SendMessageToSet(&data, true);
     }
-    if (GetPetGUID() && !isInCombat())
-        if (Pet* pet = GetPet())
-            pet->SetSpeed(mtype, m_speed_rate[mtype], forced);
 }
 
 void Unit::SetHover(bool on)
@@ -9823,11 +9866,8 @@ void Unit::RemoveFromWorld()
         RemoveAllGameObjects();
         RemoveAllDynObjects();
 
-        // if it has charmer or owner, it must be in someone's controllist and server will crash
-        /*if (GetCharmerGUID())
-            sLog.outError("Unit %u has charmer guid when removed from world", GetEntry());
-        if (GetOwnerGUID());
-            sLog.outError("Unit %u has owner guid when removed from world", GetEntry());*/
+        if (GetCharmerGUID())
+            sLog.outCrash("Unit %u has charmer guid when removed from world", GetEntry());
 
         WorldObject::RemoveFromWorld();
     }
@@ -11108,15 +11148,21 @@ void Unit::SetContestedPvP(Player *attackedPlayer)
 
 void Unit::AddPetAura(PetAura const* petSpell)
 {
+    if (GetTypeId() != TYPEID_PLAYER)
+        return;
+
     m_petAuras.insert(petSpell);
-    if (Pet* pet = GetPet())
+    if (Pet* pet = ToPlayer()->GetPet())
         pet->CastPetAura(petSpell);
 }
 
 void Unit::RemovePetAura(PetAura const* petSpell)
 {
+    if (GetTypeId() != TYPEID_PLAYER)
+        return;
+
     m_petAuras.erase(petSpell);
-    if (Pet* pet = GetPet())
+    if (Pet* pet = ToPlayer()->GetPet())
         pet->RemoveAurasDueToSpell(petSpell->GetAura(pet->GetEntry()));
 }
 
@@ -11415,7 +11461,7 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
         // Call KilledUnit for creatures
         if (GetTypeId() == TYPEID_UNIT && ToCreature()->IsAIEnabled)
             ToCreature()->AI()->KilledUnit(pVictim);
-        else if (Pet *pPet = GetPet())
+        else if (Guardian *pPet = GetGuardianPet())
             pPet->AI()->KilledUnit(pVictim);
 
         // last damage from non duel opponent or opponent controlled creature
@@ -11440,7 +11486,7 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
         // Call KilledUnit for creatures, this needs to be called after the lootable flag is set
         if (GetTypeId() == TYPEID_UNIT && ToCreature()->IsAIEnabled)
             ToCreature()->AI()->KilledUnit(pVictim);
-        else if (Pet *pPet = GetPet())
+        else if (Guardian *pPet = GetGuardianPet())
             pPet->AI()->KilledUnit(pVictim);
 
         // Call creature just died function
@@ -11990,7 +12036,7 @@ void Unit::GetPartyMember(std::list<Unit*> &TagUnitMap, float radius)
                 if (Target->isAlive() && IsWithinDistInMap(Target, radius))
                     TagUnitMap.push_back(Target);
 
-                if (Pet* pet = Target->GetPet())
+                if (Guardian* pet = Target->GetGuardianPet())
                     if (pet->isAlive() &&  IsWithinDistInMap(pet, radius))
                         TagUnitMap.push_back(pet);
             }
@@ -12000,7 +12046,7 @@ void Unit::GetPartyMember(std::list<Unit*> &TagUnitMap, float radius)
     {
         if (owner->isAlive() && (owner == this || IsWithinDistInMap(owner, radius)))
             TagUnitMap.push_back(owner);
-        if (Pet* pet = owner->GetPet())
+        if (Guardian* pet = owner->GetGuardianPet())
             if (pet->isAlive() && (pet == this && IsWithinDistInMap(pet, radius)))
                 TagUnitMap.push_back(pet);
     }

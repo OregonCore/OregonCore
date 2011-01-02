@@ -510,7 +510,7 @@ void Spell::FillTargetMap()
                     AddUnitTarget(m_caster, i);
                     break;
                 case SPELL_EFFECT_LEARN_PET_SPELL:
-                    if (Pet* pet = m_caster->GetPet())
+                    if (Guardian* pet = m_caster->GetGuardianPet())
                         AddUnitTarget(pet, i);
                     break;
                 /*case SPELL_EFFECT_ENCHANT_ITEM:
@@ -1511,7 +1511,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                         AddUnitTarget(owner, i);
                     break;
                 case TARGET_UNIT_PET:
-                    if (Pet* pet = m_caster->GetPet())
+                    if (Guardian* pet = m_caster->GetGuardianPet())
                         AddUnitTarget(pet, i);
                     break;
                 case TARGET_UNIT_PARTY_CASTER:
@@ -3422,7 +3422,7 @@ uint8 Spell::CanCast(bool strict)
         {
             if (m_spellInfo->EffectImplicitTargetA[j] == TARGET_UNIT_PET)
             {
-                target = m_caster->GetPet();
+                target = m_caster->GetGuardianPet();
                 if (!target)
                 {
                     if (m_triggeredByAuraSpell)              // not report pet not existence for triggered spells
@@ -3717,10 +3717,13 @@ uint8 Spell::CanCast(bool strict)
             }
             case SPELL_EFFECT_LEARN_SPELL:
             {
+                if (m_caster->GetTypeId() != TYPEID_PLAYER)
+                    return SPELL_FAILED_BAD_TARGETS;
+
                 if (m_spellInfo->EffectImplicitTargetA[i] != TARGET_UNIT_PET)
                     break;
 
-                Pet* pet = m_caster->GetPet();
+                Pet* pet = m_caster->ToPlayer()->GetPet();
 
                 if (!pet)
                     return SPELL_FAILED_NO_PET;
@@ -3743,8 +3746,10 @@ uint8 Spell::CanCast(bool strict)
             }
             case SPELL_EFFECT_LEARN_PET_SPELL:
             {
-                Pet* pet = m_caster->GetPet();
+                if (m_caster->GetTypeId() != TYPEID_PLAYER)
+                    return SPELL_FAILED_BAD_TARGETS;
 
+                Pet* pet = m_caster->ToPlayer()->GetPet();
                 if (!pet)
                     return SPELL_FAILED_NO_PET;
 
@@ -3769,7 +3774,7 @@ uint8 Spell::CanCast(bool strict)
                 if (m_caster->GetTypeId() != TYPEID_PLAYER || !m_targets.getItemTarget())
                     return SPELL_FAILED_BAD_TARGETS;
 
-                Pet* pet = m_caster->GetPet();
+                Pet* pet = m_caster->ToPlayer()->GetPet();
 
                 if (!pet)
                     return SPELL_FAILED_NO_PET;
@@ -3972,7 +3977,7 @@ uint8 Spell::CanCast(bool strict)
             }
             case SPELL_EFFECT_SUMMON_DEAD_PET:
             {
-                Creature *pet = m_caster->GetPet();
+                Creature *pet = m_caster->GetGuardianPet();
                 if (!pet)
                     return SPELL_FAILED_NO_PET;
 
@@ -4038,7 +4043,7 @@ uint8 Spell::CanCast(bool strict)
                     if (m_caster->GetTypeId() == TYPEID_PLAYER && m_caster->getClass() == CLASS_WARLOCK)
                     {
                         if (strict)                         //starting cast, trigger pet stun (cast by pet so it doesn't attack player)
-                            if (Pet* pet = m_caster->GetPet())
+                            if (Pet* pet = m_caster->ToPlayer()->GetPet())
                                 pet->CastSpell(pet, 32752, true, NULL, NULL, pet->GetGUID());
                     }
                     else

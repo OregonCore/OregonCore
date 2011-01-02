@@ -235,7 +235,10 @@ class Pet : public Guardian
         DeclinedName const* GetDeclinedNames() const { return m_declinedname; }
 
         bool    m_removed;                                  // prevent overwrite pet state in DB at next Pet::Update if pet already removed(saved)
+
+        Player *GetOwner() { return m_owner; }
     protected:
+        Player *m_owner;
         uint32  m_regenTimer;
         uint32  m_happinessTimer;
         uint32  m_loyaltyTimer;

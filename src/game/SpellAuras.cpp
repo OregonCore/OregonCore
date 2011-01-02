@@ -1892,9 +1892,9 @@ void Aura::TriggerSpell()
                     case 38443:
                     {
                         bool all = true;
-                        for (int i = 0; i < MAX_TOTEM; ++i)
+                        for (int i = SUMMON_SLOT_TOTEM; i < MAX_TOTEM_SLOT; ++i)
                         {
-                            if (!caster->m_TotemSlot[i])
+                            if (!caster->m_SummonSlot[i])
                             {
                                 all = false;
                                 break;
@@ -2385,7 +2385,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
             {
                 if (apply)
                 {
-                    uint64 guid = caster->m_TotemSlot[3];
+                    uint64 guid = caster->m_SummonSlot[3];
                     if (guid)
                     {
                         Creature *totem = caster->GetMap()->GetCreature(guid);
@@ -3096,7 +3096,7 @@ void Aura::HandleModPossessPet(bool apply, bool Real)
 
     if (apply)
     {
-        if (caster->GetPet() != m_target)
+        if (caster->GetGuardianPet() != m_target)
             return;
 
         m_target->SetCharmedBy(caster, CHARM_TYPE_POSSESS);
@@ -5075,7 +5075,7 @@ void Aura::HandleModDamageDone(bool apply, bool Real)
                     m_target->ApplyModUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_NEG+i,GetModifierValue(),apply);
             }
         }
-        Pet* pet = m_target->GetPet();
+        Pet* pet = m_target->ToPlayer()->GetPet();
         if (pet)
             pet->UpdateAttackPowerAndDamage();
     }

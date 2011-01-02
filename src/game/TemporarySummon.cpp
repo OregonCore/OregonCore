@@ -184,16 +184,15 @@ void TempSummon::InitSummon(uint32 duration)
     Unit* owner = GetSummoner();
     if (uint32 slot = m_Properties->Slot)
     {
-        --slot;
         if (owner)
         {
-            if (owner->m_TotemSlot[slot] && owner->m_TotemSlot[slot] != GetGUID())
+            if (owner->m_SummonSlot[slot] && owner->m_SummonSlot[slot] != GetGUID())
             {
-                Creature *OldTotem = ObjectAccessor::GetCreature(*this, owner->m_TotemSlot[slot]);
+                Creature *OldTotem = ObjectAccessor::GetCreature(*this, owner->m_SummonSlot[slot]);
                 if (OldTotem && OldTotem->isSummon())
                     ((TempSummon*)OldTotem)->UnSummon();
             }
-            owner->m_TotemSlot[slot] = GetGUID();
+            owner->m_SummonSlot[slot] = GetGUID();
         }
     }
 
@@ -208,6 +207,8 @@ void TempSummon::SetTempSummonType(TempSummonType type)
 
 void TempSummon::UnSummon()
 {
+    ASSERT(!isPet());
+
     Unit* owner = GetSummoner();
     if (owner && owner->GetTypeId() == TYPEID_UNIT && owner->ToCreature()->IsAIEnabled)
         owner->ToCreature()->AI()->SummonedCreatureDespawn(this);
@@ -226,12 +227,14 @@ void TempSummon::RemoveFromWorld()
         {
             if (Unit* owner = GetSummoner())
             {
-                --slot;
-                if (owner->m_TotemSlot[slot] = GetGUID())
-                    owner->m_TotemSlot[slot] = 0;
+                if (owner->m_SummonSlot[slot] = GetGUID())
+                    owner->m_SummonSlot[slot] = 0;
             }
         }
     }
+
+    if (GetOwnerGUID())
+        sLog.outError("Unit %u has owner guid when removed from world", GetEntry());
 
     Creature::RemoveFromWorld();
 }
@@ -255,13 +258,14 @@ void Guardian::InitSummon(uint32 duration)
 
     SetCreatorGUID(m_owner->GetGUID());
     setFaction(m_owner->getFaction());
-    m_owner->SetPet(this, true);
 
     if (m_owner->GetTypeId() == TYPEID_PLAYER)
     {
         m_charmInfo->InitCharmCreateSpells();
-        m_owner->ToPlayer()->CharmSpellInitialize();
+        //m_owner->ToPlayer()->CharmSpellInitialize();
     }
+
+    m_owner->SetGuardian(this, true);
 }
 
 void Guardian::RemoveFromWorld()
@@ -269,7 +273,7 @@ void Guardian::RemoveFromWorld()
     if (!IsInWorld())
         return;
 
-    m_owner->SetPet(this, false);
+    m_owner->SetGuardian(this, false);
     TempSummon::RemoveFromWorld();
 }
 

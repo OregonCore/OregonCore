@@ -67,7 +67,7 @@ uint32 const LevelStartLoyalty[6] =
 Pet::Pet(Player *owner, PetType type) : Guardian(NULL, owner),
 m_petType(type), m_removed(false), m_happinessTimer(7500), m_duration(0),
 m_resetTalentsCost(0), m_resetTalentsTime(0),
-m_declinedname(NULL)
+m_declinedname(NULL), m_owner(owner)
 {
     m_summonMask |= SUMMON_MASK_PET;
     m_name = "Pet";
@@ -218,6 +218,9 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
     SetUInt32Value(UNIT_NPC_FLAGS , 0);
     SetName(fields[11].GetString());
 
+    map->Add(ToCreature());
+    owner->SetGuardian(this, true);
+
     switch(getPetType())
     {
 
@@ -249,9 +252,6 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
         default:
             sLog.outError("Pet has incorrect type (%u) for pet loading.",getPetType());
     }
-
-    owner->SetPet(this, true);
-    map->Add(ToCreature());
 
     InitStatsForLevel(petlevel);
     SetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP, time(NULL));
@@ -315,19 +315,6 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
 
     //load spells/cooldowns/auras
     SetCanModifyStats(true);
-    _LoadAuras(timediff);
-
-    //init AB
-    if (is_temporary_summoned)
-    {
-        // Temporary summoned pets always have initial spell list at load
-        InitPetCreateSpells();
-    }
-    else
-    {
-        LearnPetPassives();
-        CastPetAuras(current);
-    }
 
     if (getPetType() == SUMMON_PET && !current)              //all (?) summon pets come with full health when called, but not when they are current
     {
@@ -346,8 +333,11 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
     }
 
     // Spells should be loaded after pet is added to map, because in CanCast is check on it
+    _LoadAuras(timediff);
     _LoadSpells();
     _LoadSpellCooldowns();
+    LearnPetPassives();
+    CastPetAuras(current);
 
     sLog.outDebug("New Pet has guid %u", GetGUIDLow());
 
@@ -550,9 +540,10 @@ void Pet::Update(uint32 diff)
         case ALIVE:
         {
             // unsummon pet that lost owner
-            Unit* owner = GetOwner();
+            Player* owner = GetOwner();
             if (!owner || (!IsWithinDistInMap(owner, OWNER_MAX_DISTANCE) && !isPossessed()) || isControlled() && !owner->GetPetGUID())
             {
+                sLog.outError("Pet %u is not pet of owner %u, removed", GetEntry(), m_owner->GetName());
                 Remove(PET_SAVE_NOT_IN_SLOT, true);
                 return;
             }
@@ -842,21 +833,7 @@ int32 Pet::GetDispTP()
 
 void Pet::Remove(PetSaveMode mode, bool returnreagent)
 {
-    Unit* owner = GetOwner();
-
-    if (owner)
-    {
-        if (owner->GetTypeId() == TYPEID_PLAYER)
-        {
-            owner->ToPlayer()->RemovePet(this,mode,returnreagent);
-            return;
-        }
-
-        owner->SetPet(this, false);
-    }
-
-    AddObjectToRemoveList();
-    m_removed = true;
+    m_owner->RemovePet(this, mode, returnreagent);
 }
 
 void Pet::GivePetXP(uint32 xp)
