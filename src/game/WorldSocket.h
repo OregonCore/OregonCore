@@ -69,7 +69,7 @@ typedef ACE_Svc_Handler<ACE_SOCK_STREAM, ACE_NULL_SYNCH> WorldHandler;
  * sending packets from "producer" threads is minimal,
  * and doing a lot of writes with small size is tolerated.
  *
- * The calls to Update () method are managed by WorldSocketMgr
+ * The calls to Update() method are managed by WorldSocketMgr
  * and ReactorRunnable.
  *
  * For input ,the class uses one 1024 bytes buffer on stack
