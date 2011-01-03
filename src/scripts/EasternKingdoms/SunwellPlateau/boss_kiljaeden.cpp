@@ -378,6 +378,11 @@ bool GOHello_go_orb_of_the_blue_flight(Player *plr, GameObject* go)
         go->SummonCreature(CREATURE_POWER_OF_THE_BLUE_DRAGONFLIGHT, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN, 121000);
         plr->CastSpell(plr, SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT, true);
         go->SetUInt32Value(GAMEOBJECT_FACTION, 0);
+        if (!pInstance)
+        {
+            go->Refresh();
+            return true;
+        }
         Unit* Kalec = CAST_CRE(Unit::GetUnit(*plr, pInstance->GetData64(DATA_KALECGOS_KJ)));
         //Kalec->RemoveDynObject(SPELL_RING_OF_BLUE_FLAMES);
         go->GetPosition(x,y,z);
@@ -417,7 +422,8 @@ struct mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
 
     void InitializeAI()
     {
-        KalecKJ = Unit::GetCreature((*me), pInstance->GetData64(DATA_KALECGOS_KJ));
+        if (pInstance)
+            KalecKJ = Unit::GetCreature(*me, pInstance->GetData64(DATA_KALECGOS_KJ));
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         me->addUnitState(UNIT_STAT_STUNNED);
@@ -546,7 +552,8 @@ struct boss_kiljaedenAI : public Scripted_NoMovementAI
         IsWaiting     = false;
         OrbActivated  = false;
 
-        Kalec = CAST_CRE(Unit::GetUnit(*me, pInstance->GetData64(DATA_KALECGOS_KJ)));
+        if (pInstance)
+            Kalec = CAST_CRE(Unit::GetUnit(*me, pInstance->GetData64(DATA_KALECGOS_KJ)));
         ChangeTimers(false, 0);
     }
 
@@ -608,10 +615,8 @@ struct boss_kiljaedenAI : public Scripted_NoMovementAI
 
         // Reset the controller
         if (pInstance)
-        {
             if (Creature* pControl = Unit::GetCreature(*me, pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)))
                 ((Scripted_NoMovementAI*)pControl->AI())->Reset();
-        }
     }
 
     void EnterCombat(Unit* who)
@@ -831,8 +836,9 @@ struct boss_kiljaedenAI : public Scripted_NoMovementAI
             if (Phase == PHASE_ARMAGEDDON && HealthBelowPct(25))
             {
                 Phase = PHASE_SACRIFICE;
-                Creature* Anveena = (Creature*)(Unit::GetUnit((*me), pInstance->GetData64(DATA_ANVEENA)));
-                if (Anveena)Anveena->CastSpell(me, SPELL_SACRIFICE_OF_ANVEENA, false);
+                if (pInstance)
+                    if (Creature* Anveena = Unit::GetCreature(*me, pInstance->GetData64(DATA_ANVEENA)))
+                        Anveena->CastSpell(me, SPELL_SACRIFICE_OF_ANVEENA, false);
                 OrbActivated = false;
                 ChangeTimers(true, 10000);// He shouldn't cast spells for ~10 seconds after Anveena's sacrifice. This will be done within Anveena's script
             }
