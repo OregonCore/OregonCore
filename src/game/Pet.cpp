@@ -1662,6 +1662,8 @@ void Pet::ToggleAutocast(uint32 spellid, bool apply)
         return;
 
     PetSpellMap::const_iterator itr = m_spells.find((uint16)spellid);
+    if (itr == m_spells.end())
+        return;
 
     int i;
 
