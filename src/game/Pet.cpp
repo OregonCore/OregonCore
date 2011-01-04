@@ -101,7 +101,6 @@ Pet::~Pet()
 
         for (PetSpellMap::iterator i = m_spells.begin(); i != m_spells.end(); ++i)
             delete i->second;
-        ObjectAccessor::Instance().RemoveObject(this);
     }
 
     delete m_declinedname;

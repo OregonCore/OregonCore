@@ -1666,18 +1666,7 @@ TempSummon* WorldObject::SummonCreature(uint32 entry, const Position &pos, TempS
         if (TempSummon *summon = map->SummonCreature(entry, pos, NULL, duration, isType(TYPEMASK_UNIT) ? (Unit*)this : NULL))
         {
             summon->SetHomePosition(pos);
-            summon->InitSummon(duration);
             summon->SetTempSummonType(spwtype);
-
-            if (GetTypeId() == TYPEID_UNIT && ToCreature()->IsAIEnabled)
-                ToCreature()->AI()->JustSummoned(summon);
-
-            if (summon->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_TRIGGER && summon->m_spells[0])
-            {
-                if (GetTypeId() == TYPEID_UNIT || GetTypeId() == TYPEID_PLAYER)
-                    summon->setFaction(((Unit*)this)->getFaction());
-                summon->CastSpell(summon, summon->m_spells[0], false, 0, 0, GetGUID());
-            }
 
             return summon;
         }
