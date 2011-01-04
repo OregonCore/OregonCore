@@ -217,9 +217,6 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
     SetUInt32Value(UNIT_NPC_FLAGS , 0);
     SetName(fields[11].GetString());
 
-    map->Add(ToCreature());
-    owner->SetGuardian(this, true);
-
     switch(getPetType())
     {
 
@@ -252,7 +249,6 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
             sLog.outError("Pet has incorrect type (%u) for pet loading.",getPetType());
     }
 
-    InitStatsForLevel(petlevel);
     SetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP, time(NULL));
     SetUInt32Value(UNIT_FIELD_PETEXPERIENCE, fields[5].GetUInt32());
     SetUInt64Value(UNIT_FIELD_CREATEDBY, owner->GetGUID());
@@ -260,8 +256,10 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
     SetReactState(ReactStates(fields[6].GetUInt8()));
     m_loyaltyPoints = fields[7].GetInt32();
 
-    uint32 savedhealth = fields[13].GetUInt32();
-    uint32 savedmana = fields[14].GetUInt32();
+    map->Add(ToCreature());
+    owner->SetGuardian(this, true);
+
+    InitStatsForLevel(petlevel);
 
     // set current pet as current
     if (fields[10].GetUInt32() != 0)
@@ -309,12 +307,11 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
         }
     }
 
-    // since last save (in seconds)
-    uint32 timediff = (time(NULL) - fields[18].GetUInt32());
-
     //load spells/cooldowns/auras
     SetCanModifyStats(true);
 
+    uint32 savedhealth = fields[13].GetUInt32();
+    uint32 savedmana = fields[14].GetUInt32();
     if (getPetType() == SUMMON_PET && !current)              //all (?) summon pets come with full health when called, but not when they are current
     {
         SetHealth(GetMaxHealth());
@@ -332,6 +329,8 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
     }
 
     // Spells should be loaded after pet is added to map, because in CanCast is check on it
+    // since last save (in seconds)
+    uint32 timediff = (time(NULL) - fields[18].GetUInt32());
     _LoadAuras(timediff);
     _LoadSpells();
     _LoadSpellCooldowns();
