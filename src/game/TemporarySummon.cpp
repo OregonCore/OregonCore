@@ -170,6 +170,8 @@ void TempSummon::Update(uint32 diff)
 
 void TempSummon::InitSummon(uint32 duration)
 {
+    ASSERT(!isPet());
+
     m_timer = duration;
     m_lifetime = duration;
 
