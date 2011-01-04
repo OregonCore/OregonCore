@@ -184,6 +184,18 @@ void TempSummon::InitSummon(uint32 duration)
         return;
 
     Unit* owner = GetSummoner();
+    if (owner)
+    {
+        if (owner->GetTypeId() == TYPEID_UNIT && owner->ToCreature()->IsAIEnabled)
+            owner->ToCreature()->AI()->JustSummoned(this);
+
+        if (GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_TRIGGER && m_spells[0])
+        {
+            setFaction(owner->getFaction());
+            CastSpell(this, m_spells[0], false, 0, 0, m_summonerGUID);
+        }
+    }
+
     if (uint32 slot = m_Properties->Slot)
     {
         if (owner)
@@ -195,18 +207,6 @@ void TempSummon::InitSummon(uint32 duration)
                     ((TempSummon*)OldTotem)->UnSummon();
             }
             owner->m_SummonSlot[slot] = GetGUID();
-        }
-    }
-
-    if (owner)
-    {
-        if (owner->GetTypeId() == TYPEID_UNIT && owner->ToCreature()->IsAIEnabled)
-            owner->ToCreature()->AI()->JustSummoned(this);
-
-        if (GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_TRIGGER && m_spells[0])
-        {
-            setFaction(owner->getFaction());
-            CastSpell(this, m_spells[0], false, 0, 0, m_summonerGUID);
         }
     }
 
