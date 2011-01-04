@@ -948,12 +948,11 @@ enum ReactiveType
 
 struct SpellProcEventEntry;                                 // used only privately
 
-typedef std::set<Unit*> ControlList;
-
 class Unit : public WorldObject
 {
     public:
         typedef std::set<Unit*> AttackerSet;
+        typedef std::set<Unit*> ControlList;
         typedef std::pair<uint32, uint8> spellEffectPair;
         typedef std::multimap< spellEffectPair, Aura*> AuraMap;
         typedef std::list<Aura *> AuraList;
