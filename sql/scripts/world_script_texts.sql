@@ -1,20 +1,20 @@
--- 
--- oregonscript_script_texts.sql Contains data for table `script_texts` mainly used in C++ parts.
+--
+-- world_script_texts.sql Contains data for table `script_texts` mainly used in C++ parts.
 -- valid entries for table are between -1000000 and -1999999
--- 
+--
 
--- 
+--
 -- -1 000 000 First 100 entries are reserved for special use, do not add regular text here.
--- 
+--
 DELETE FROM `script_texts` WHERE entry BETWEEN -1999925 AND -1000000;
 INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,`emote`,`comment`) VALUES
 (-1000000,'<OregonScript Text Entry Missing!>',0,0,0,0,'DEFAULT_TEXT'),
 (-1000001,'%s goes into a killing frenzy!',0,2,0,0,'EMOTE_GENERIC_FRENZY_KILL'),
 (-1000004,'goes into a berserker rage!',0,2,0,0,'EMOTE_GENERIC_BERSERK'),
 
--- 
+--
 -- Normal text entries. Say/Yell/Whisper/Emote for any regular world object.
--- 
+--
 
 -- -1 000 100 GENERAL MAPS (not typical instance maps)
 (-1000100,'Come, little ones. Face me!',0,1,0,0,'azuregos SAY_TELEPORT'),
@@ -41,10 +41,10 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 (-1000121,'Falcon Watch, at last! Now, where''s my... Oh no! My pack, it''s missing! Where has -',0,0,1,0,'wounded elf SAY_ELF_COMPLETE'),
 (-1000122,'You won''t keep me from getting to Falcon Watch!',0,0,1,0,'wounded elf SAY_ELF_AGGRO'),
 (-1000123,'Ready when you are, $c.',0,0,0,15,'big will SAY_BIG_WILL_READY'),
-(-1000124,'The Affray has begun. $n, get ready to fight!',0,0,0,0,'twiggy SAY_TWIGGY_FLATHEAD_BEGIN'),
-(-1000125,'You! Enter the fray!',0,0,0,0,'twiggy SAY_TWIGGY_FLATHEAD_FRAY'),
-(-1000126,'Challenger is down!',0,0,0,0,'twiggy SAY_TWIGGY_FLATHEAD_DOWN'),
-(-1000127,'The Affray is over.',0,0,0,0,'twiggy SAY_TWIGGY_FLATHEAD_OVER'),
+(-1000124,'The Affray has begun. $n, get ready to fight!',0,0,0,0,'twiggy SAY_TWIGGY_BEGIN'),
+(-1000125,'You! Enter the fray!',0,0,0,0,'twiggy SAY_TWIGGY_FRAY'),
+(-1000126,'Challenger is down!',0,0,0,0,'twiggy SAY_TWIGGY_DOWN'),
+(-1000127,'The Affray is over.',0,0,0,0,'twiggy SAY_TWIGGY_OVER'),
 (-1000128,'We need you to send reinforcements to Manaforge Duro, Ardonis. This is not a request, it''s an order.',0,0,0,0,'dawnforge SAY_COMMANDER_DAWNFORGE_1'),
 (-1000129,'You cannot be serious! We are severely understaffed and can barely keep this manaforge functional!',0,0,0,0,'dawnforge SAY_ARCANIST_ARDONIS_1'),
 (-1000130,'You will do as ordered. Manaforge Duro has come under heavy attack by mana creatures and the situation is out of control. Failure to comply will not be tolerated!',0,0,0,0,'dawnforge SAY_COMMANDER_DAWNFORGE_2'),
@@ -1091,7 +1091,7 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 (-1540012,'I''m already bored.',10271,1,0,0,'nethekurse SAY_AGGRO_1'),
 (-1540013,'Come on! ... Show me a real fight.',10272,1,0,0,'nethekurse SAY_AGGRO_2'),
 (-1540014,'I had more fun torturing the peons.',10273,1,0,0,'nethekurse SAY_AGGRO_3'),
-(-1540015,'You Loose.',10274,1,0,0,'nethekurse SAY_SLAY_1'),
+(-1540015,'You Lose.',10274,1,0,0,'nethekurse SAY_SLAY_1'),
 (-1540016,'Ohh! Just die.',10275,1,0,0,'nethekurse SAY_SLAY_2'),
 (-1540017,'What a ... a shame.',10276,1,0,0,'nethekurse SAY_DIE'),
 (-1540018,'Smash!',10306,1,0,0,'omrogg GoCombat_1'),
