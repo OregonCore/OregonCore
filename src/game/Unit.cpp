@@ -9735,6 +9735,9 @@ void Unit::RemoveFromWorld()
 
 void Unit::CleanupsBeforeDelete()
 {
+    // This needs to be before RemoveFromWorld to make GetCaster() return a valid pointer on aura removal
+    InterruptNonMeleeSpells(true);
+
     if (IsInWorld())
         RemoveFromWorld();
 
@@ -9743,7 +9746,6 @@ void Unit::CleanupsBeforeDelete()
     //A unit may be in removelist and not in world, but it is still in grid
     //and may have some references during delete
     RemoveAllAuras();
-    InterruptNonMeleeSpells(true);
     m_Events.KillAllEvents(false);                      // non-delatable (currently casted spells) will not deleted now but it will deleted at call in Map::RemoveAllObjectsInRemoveList
     CombatStop();
     ClearComboPointHolders();
