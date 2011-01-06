@@ -624,6 +624,27 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
                 }
                 break;
             }
+            case SPELLFAMILY_SHAMAN:
+            {
+                // Lightning Bolt & Chain Lightning
+                if (m_spellInfo->SpellFamilyFlags & 0x0003LL)
+                {
+                    Unit::AuraList const& auras = GetAurasByType(SPELL_AURA_OVERRIDE_CLASS_SCRIPTS);
+                    for (Unit::AuraList::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
+                    {
+                        switch ((*itr)->GetId())
+                        {
+                            case 28857:
+                            case 34230:
+                            case 41040:
+                                damage += (*itr)->GetModifierValue();
+                                itr = auras.end();
+                                break;
+                        }
+                    }
+                }
+                break;
+            }
         }
 
         if (m_originalCaster && damage > 0)
