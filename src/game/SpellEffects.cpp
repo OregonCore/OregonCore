@@ -629,7 +629,7 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
                 // Lightning Bolt & Chain Lightning
                 if (m_spellInfo->SpellFamilyFlags & 0x0003LL)
                 {
-                    Unit::AuraList const& auras = GetAurasByType(SPELL_AURA_OVERRIDE_CLASS_SCRIPTS);
+                    Unit::AuraList const& auras = unitTarget->GetAurasByType(SPELL_AURA_OVERRIDE_CLASS_SCRIPTS);
                     for (Unit::AuraList::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
                     {
                         switch ((*itr)->GetId())
@@ -4452,7 +4452,7 @@ void Spell::EffectHealMaxHealth(uint32 /*i*/)
     if (!unitTarget->isAlive())
         return;
 
-    if (unitTarget->GetMaxNegativeAuraModifier(SPELL_AURA_MOD_HEALING_PCT) =< -100)
+    if (unitTarget->GetMaxNegativeAuraModifier(SPELL_AURA_MOD_HEALING_PCT) <= -100)
         return;
 
     uint32 addhealth = unitTarget->GetMaxHealth() - unitTarget->GetHealth();
