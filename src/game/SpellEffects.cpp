@@ -4448,7 +4448,11 @@ void Spell::EffectHealMaxHealth(uint32 /*i*/)
 {
     if (!unitTarget)
         return;
+
     if (!unitTarget->isAlive())
+        return;
+
+    if (unitTarget->GetMaxNegativeAuraModifier(SPELL_AURA_MOD_HEALING_PCT) =< -100)
         return;
 
     uint32 addhealth = unitTarget->GetMaxHealth() - unitTarget->GetHealth();
@@ -6604,4 +6608,3 @@ void Spell::EffectRedirectThreat(uint32 /*i*/)
     if (unitTarget)
         m_caster->SetReducedThreatPercent(100, unitTarget->GetGUID());
 }
-
