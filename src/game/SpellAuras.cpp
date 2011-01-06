@@ -3482,7 +3482,7 @@ void Aura::HandleAuraModSilence(bool apply, bool Real)
                     return;
 
                 // Search Mana Tap auras on caster
-                Aura * dummy = m_target->GetDummyAura(28734);
+                Aura * dummy = caster->GetDummyAura(28734);
                 if (dummy)
                 {
                     int32 bp = dummy->GetStackAmount() * 10;
