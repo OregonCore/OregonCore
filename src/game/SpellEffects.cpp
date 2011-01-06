@@ -608,8 +608,14 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
                     uint32 stacks = 0;
                     Unit::AuraList const& auras = unitTarget->GetAurasByType(SPELL_AURA_PERIODIC_DAMAGE);
                     for (Unit::AuraList::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
+                    {
                         if ((*itr)->GetId() == 31803 && (*itr)->GetCasterGUID() == m_caster->GetGUID())
-                            ++stacks;
+                        {
+                           stacks = (*itr)->GetStackAmount();
+                           break;
+                        }
+                    }
+
                     if (!stacks)
                         //No damage if the target isn't affected by this
                         damage = -1;
