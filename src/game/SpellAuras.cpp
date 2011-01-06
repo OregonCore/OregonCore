@@ -5573,8 +5573,8 @@ void Aura::HandleSchoolAbsorb(bool apply, bool Real)
                     if (m_spellProto->SpellFamilyFlags == 0x00)
                     {
                         //shadow ward
-                        //+10% from +spd bonus
-                        DoneActualBenefit = caster->SpellBaseDamageBonus(GetSpellSchoolMask(m_spellProto)) * 0.1f;
+                        //+30% from +spd bonus
+                        DoneActualBenefit = caster->SpellBaseDamageBonus(GetSpellSchoolMask(m_spellProto)) * 0.3f;
                         break;
                     }
                     break;
