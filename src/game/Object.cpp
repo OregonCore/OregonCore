@@ -1656,8 +1656,9 @@ TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropert
         return NULL;
     }
 
+    summon->InitStats(duration);
     Add(summon->ToCreature());
-    summon->InitSummon(duration);
+    summon->InitSummon();
 
     return summon;
 }
@@ -1770,8 +1771,6 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
     // this enables pet details window (Shift+P)
     pet->GetCharmInfo()->SetPetNumber(pet_number, false);
 
-    map->Add(pet->ToCreature());
-
     pet->setPowerType(POWER_MANA);
     pet->SetUInt32Value(UNIT_NPC_FLAGS , 0);
     pet->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
@@ -1790,6 +1789,17 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
             pet->SetUInt32Value(UNIT_FIELD_PETNEXTLEVELEXP, 1000);
             pet->SetHealth(pet->GetMaxHealth());
             pet->SetPower(POWER_MANA, pet->GetMaxPower(POWER_MANA));
+            break;
+    }
+
+    map->Add(pet->ToCreature());
+
+    switch(petType)
+    {
+        case POSSESSED_PET:
+            pet->SetCharmedBy(this, CHARM_TYPE_POSSESS);
+            break;
+        case SUMMON_PET:
             pet->InitPetCreateSpells();
             pet->SavePetToDB(PET_SAVE_AS_CURRENT);
             PetSpellInitialize();

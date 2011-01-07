@@ -6994,24 +6994,7 @@ void Unit::SetMinion(Minion *minion, bool apply)
             }
         }
 
-        // Check priority.
-        if (Minion *oldMinion = GetFirstMinion())
-        {
-            if (minion->HasSummonMask(SUMMON_MASK_GUARDIAN)
-                && !oldMinion->HasSummonMask(SUMMON_MASK_GUARDIAN))
-                SetMinionGUID(0);
-        }
-
-        if (AddUInt64Value(UNIT_FIELD_SUMMON, minion->GetGUID()))
-        {
-            if (GetTypeId() == TYPEID_PLAYER && !GetCharmGUID() && minion->HasSummonMask(SUMMON_MASK_GUARDIAN))
-            {
-                if (minion->isPet())
-                    ((Player*)this)->PetSpellInitialize();
-                else
-                    ((Player*)this)->CharmSpellInitialize();
-            }
-        }
+        AddUInt64Value(UNIT_FIELD_SUMMON, minion->GetGUID());
     }
     else
     {
@@ -7039,6 +7022,10 @@ void Unit::SetMinion(Minion *minion, bool apply)
 
                 ASSERT((*itr)->GetOwnerGUID() == GetGUID());
                 ASSERT((*itr)->GetTypeId() == TYPEID_UNIT);
+
+                if (!(*itr)->ToCreature()->HasSummonMask(SUMMON_MASK_GUARDIAN))
+                    continue;
+
                 if (AddUInt64Value(UNIT_FIELD_SUMMON, (*itr)->GetGUID()))
                 {
                     //show another pet bar if there is no charm bar

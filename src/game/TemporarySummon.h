@@ -31,7 +31,8 @@ class TempSummon : public Creature
         explicit TempSummon(SummonPropertiesEntry const *properties, Unit *owner);
         virtual ~TempSummon(){};
         void Update(uint32 time);
-        virtual void InitSummon(uint32 lifetime);
+        virtual void InitStats(uint32 lifetime);
+        virtual void InitSummon();
         void UnSummon();
         void RemoveFromWorld();
         void SetTempSummonType(TempSummonType type);
@@ -50,7 +51,8 @@ class Minion : public TempSummon
 {
     public:
         Minion(SummonPropertiesEntry const *properties, Unit *owner);
-        void InitSummon(uint32 duration);
+        void InitStats(uint32 duration);
+        void InitSummon();
         void RemoveFromWorld();
         Unit *GetOwner() { return m_owner; }
     protected:
@@ -61,7 +63,7 @@ class Guardian : public Minion
 {
     public:
         Guardian(SummonPropertiesEntry const *properties, Unit *owner);
-        void InitSummon(uint32 duration);
+        void InitStats(uint32 duration);
         bool InitStatsForLevel(uint32 level);
 
         int32 GetBonusDamage() { return m_bonusdamage; }

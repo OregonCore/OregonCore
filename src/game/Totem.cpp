@@ -55,9 +55,9 @@ void Totem::Update(uint32 time)
     Creature::Update(time);
 }
 
-void Totem::InitSummon(uint32 duration)
+void Totem::InitStats(uint32 duration)
 {
-    Minion::InitSummon(duration);
+    Minion::InitStats(duration);
 
     CreatureInfo const *cinfo = GetCreatureInfo();
     if (m_owner->GetTypeId() == TYPEID_PLAYER && cinfo)
@@ -83,13 +83,6 @@ void Totem::InitSummon(uint32 duration)
             sLog.outErrorDb("Totem::Summon: Missing modelid information for entry %u, team %u, totem will use default values.",GetEntry(),m_owner->ToPlayer()->GetTeam());
     }
 
-    WorldPacket data(SMSG_GAMEOBJECT_SPAWN_ANIM_OBSOLETE, 8);
-    data << GetGUID();
-    SendMessageToSet(&data,true);
-
-    if (m_type == TOTEM_PASSIVE)
-        CastSpell(this, GetSpell(), true);
-
     if (GetEntry() == SENTRY_TOTEM_ENTRY)
         SetReactState(REACT_AGGRESSIVE);
 
@@ -105,6 +98,16 @@ void Totem::InitSummon(uint32 duration)
         if (GetSpellCastTime(totemSpell))
             m_type = TOTEM_ACTIVE;
     }
+}
+
+void Totem::InitSummon()
+{
+    WorldPacket data(SMSG_GAMEOBJECT_SPAWN_ANIM_OBSOLETE, 8);
+    data << GetGUID();
+    SendMessageToSet(&data, true);
+
+    if (m_type == TOTEM_PASSIVE)
+        CastSpell(this, GetSpell(), true);
 }
 
 void Totem::UnSummon()

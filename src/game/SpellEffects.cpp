@@ -3347,7 +3347,7 @@ void Spell::EffectSummonType(uint32 i)
                 return;
 
             pet->SetUInt32Value(UNIT_CREATED_BY_SPELL, m_spellInfo->Id);
-            pet->SetCharmedBy(m_caster, CHARM_TYPE_POSSESS);
+            //pet->SetCharmedBy(m_caster, CHARM_TYPE_POSSESS);
             break;
         }
     }
