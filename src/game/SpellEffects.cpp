@@ -5618,7 +5618,7 @@ void Spell::EffectSummonCritter(uint32 i)
     if (!critter)
         return;
 
-    critter->SetOwnerGUID(m_caster->GetGUID());
+    critter->SetOwner(m_caster, true);
     critter->SetCreatorGUID(m_caster->GetGUID());
     critter->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE,m_caster->getFaction());
     critter->SetUInt32Value(UNIT_CREATED_BY_SPELL, m_spellInfo->Id);
@@ -6320,7 +6320,7 @@ void Spell::SummonTotem(uint32 entry, SummonPropertiesEntry const *properties)
     if (slot >= SUMMON_SLOT_TOTEM && slot < MAX_TOTEM_SLOT)
         m_caster->m_SummonSlot[slot] = pTotem->GetGUID();
 
-    pTotem->SetOwner(m_caster->GetGUID());
+    pTotem->SetOwner(m_caster);
     pTotem->SetTypeBySummonSpell(m_spellInfo);              // must be after Create call where m_spells initialized
 
     int32 duration=GetSpellDuration(m_spellInfo);

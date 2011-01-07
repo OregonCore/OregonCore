@@ -230,6 +230,7 @@ Unit::Unit()
 : WorldObject(), i_motionMaster(this), m_ThreatManager(this), m_HostileRefManager(this)
 , IsAIEnabled(false), NeedChangeAI(false)
 , i_AI(NULL), i_disabledAI(NULL), m_removedAurasCount(0), m_procDeep(0)
+, m_ControlledByPlayer(false)
 {
     m_objectType |= TYPEMASK_UNIT;
     m_objectTypeId = TYPEID_UNIT;
@@ -1649,7 +1650,7 @@ void Unit::DealMeleeDamage(CalcDamageInfo *damageInfo, bool durabilityLoss)
 
     // If this is a creature and it attacks from behind it has a probability to daze it's victim
     if ((damageInfo->hitOutCome == MELEE_HIT_CRIT || damageInfo->hitOutCome == MELEE_HIT_CRUSHING || damageInfo->hitOutCome == MELEE_HIT_NORMAL || damageInfo->hitOutCome == MELEE_HIT_GLANCING) &&
-        GetTypeId() != TYPEID_PLAYER && !ToCreature()->GetCharmerOrOwnerGUID() && !pVictim->HasInArc(M_PI, this)
+        GetTypeId() != TYPEID_PLAYER && !ToCreature()->IsControlledByPlayer() && !pVictim->HasInArc(M_PI, this)
         && (pVictim->GetTypeId() == TYPEID_PLAYER || !pVictim->ToCreature()->isWorldBoss()))
     {
         // -probability is between 0% and 40%
@@ -2228,10 +2229,11 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst (const Unit *pVictim, WeaponAttack
         }
     }
 
-    if (GetTypeId() != TYPEID_PLAYER && !(ToCreature()->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_NO_CRUSH) && !ToCreature()->isPet() && !SpellCasted /*Only autoattack can be crushing blow*/)
+    // mobs can only score crushing blows with autoattack
+    if (!SpellCasted && !IsControlledByPlayer() &&
+        !(GetTypeId() == TYPEID_UNIT && ToCreature()->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_NO_CRUSH))
     {
-        // mobs can score crushing blows if they're 3 or more levels above victim
-        // or when their weapon skill is 15 or more above victim's defense skill
+        // when their weapon skill is 15 or more above victim's defense skill
         tmp = victimDefenseSkill;
         int32 tmpmax = victimMaxSkillValueForLevel;
         // having defense above your maximum (from items, talents etc.) has no effect
@@ -6727,7 +6729,7 @@ bool Unit::Attack(Unit *victim, bool meleeAttack)
     m_attacking = victim;
     m_attacking->_addAttacker(this);
 
-    if (GetTypeId() == TYPEID_UNIT)
+    if (GetTypeId() == TYPEID_UNIT && !IsControlledByPlayer())
     {
         // should not let player enter combat by right clicking target
         SetInCombatWith(victim);
@@ -6940,11 +6942,9 @@ void Unit::SetGuardian(Guardian* guardian, bool apply)
 
     if (apply)
     {
-        if (!guardian->AddUInt64Value(UNIT_FIELD_SUMMONEDBY, GetGUID()))
-        {
-            sLog.outCrash("Guardian %u is summoned by %u but it already has a owner", guardian->GetEntry(), GetEntry());
+        if (!guardian->SetOwner(this, true))
             return;
-        }
+
         m_Controlled.insert(guardian);
 
         if (guardian->isPet() || guardian->m_Properties && guardian->m_Properties->Category == SUMMON_CATEGORY_PET)
@@ -6982,11 +6982,8 @@ void Unit::SetGuardian(Guardian* guardian, bool apply)
     }
     else
     {
-        if (!guardian->RemoveUInt64Value(UNIT_FIELD_SUMMONEDBY, GetGUID()))
-        {
-            sLog.outCrash("Pet %u is unsummoned by %u but it has another owner", guardian->GetEntry(), GetEntry());
+        if (!guardian->SetOwner(this, false))
             return;
-        }
 
         m_Controlled.erase(guardian);
 
@@ -7026,7 +7023,11 @@ void Unit::SetCharm(Unit* charm, bool apply)
         {
             if (!AddUInt64Value(UNIT_FIELD_CHARM, charm->GetGUID()))
                 sLog.outCrash("Player %s is trying to charm unit %u, but it already has a charmed unit %u", GetName(), charm->GetEntry(), GetCharmGUID());
+
+            charm->m_ControlledByPlayer = true;
         }
+        else
+            charm->m_ControlledByPlayer = false;
 
         if (!charm->AddUInt64Value(UNIT_FIELD_CHARMEDBY, GetGUID()))
             sLog.outCrash("Unit %u is being charmed, but it already has a charmer %u", charm->GetEntry(), charm->GetCharmerGUID());
@@ -7040,6 +7041,11 @@ void Unit::SetCharm(Unit* charm, bool apply)
             if (!RemoveUInt64Value(UNIT_FIELD_CHARM, charm->GetGUID()))
                 sLog.outCrash("Player %s is trying to uncharm unit %u, but it has another charmed unit %u", GetName(), charm->GetEntry(), GetCharmGUID());
         }
+
+        if (charm->GetTypeId() == TYPEID_PLAYER || IS_PLAYER_GUID(charm->GetOwnerGUID()))
+            charm->m_ControlledByPlayer = true;
+        else
+            charm->m_ControlledByPlayer = false;
 
         if (!charm->RemoveUInt64Value(UNIT_FIELD_CHARMEDBY, GetGUID()))
             sLog.outCrash("Unit %u is being uncharmed, but it has another charmer %u", charm->GetEntry(), charm->GetCharmerGUID());

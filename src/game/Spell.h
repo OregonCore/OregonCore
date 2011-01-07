@@ -663,7 +663,7 @@ namespace Oregon
 
                         Unit* check = i_caster->GetCharmerOrOwnerOrSelf();
 
-                        if (check->GetTypeId() == TYPEID_PLAYER)
+                        if (check->IsControlledByPlayer())
                         {
                             if (check->IsFriendlyTo(itr->getSource()))
                                 continue;
