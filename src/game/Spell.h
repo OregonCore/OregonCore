@@ -586,9 +586,7 @@ class Spell
         void SpellDamageHeal(uint32 i);
 
         void GetSummonPosition(Position &pos, float radius = 0.0f, uint32 count = 0);
-        void SummonTotem    (uint32 entry, SummonPropertiesEntry const *properties);
         void SummonGuardian (uint32 entry, SummonPropertiesEntry const *properties);
-        void SummonPossessed(uint32 entry, SummonPropertiesEntry const *properties);
         // -------------------------------------------
 
         //List For Triggered Spells

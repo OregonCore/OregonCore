@@ -56,8 +56,12 @@ void Totem::Update(uint32 time)
     Creature::Update(time);
 }
 
-void Totem::Summon(Unit* owner)
+void Totem::InitSummon(uint32 duration)
 {
+    Unit *owner = GetOwner();
+    if (!owner)
+        return;
+
     CreatureInfo const *cinfo = GetCreatureInfo();
     if (owner->GetTypeId() == TYPEID_PLAYER && cinfo)
     {
@@ -82,23 +86,32 @@ void Totem::Summon(Unit* owner)
             sLog.outErrorDb("Totem::Summon: Missing modelid information for entry %u, team %u, totem will use default values.",GetEntry(),owner->ToPlayer()->GetTeam());
     }
 
-    // Only add if a display exists.
-    //SetInstanceId(owner->GetInstanceId());
-    owner->GetMap()->Add(ToCreature());
-
     WorldPacket data(SMSG_GAMEOBJECT_SPAWN_ANIM_OBSOLETE, 8);
     data << GetGUID();
     SendMessageToSet(&data,true);
 
-    switch(m_type)
-    {
-        case TOTEM_PASSIVE: CastSpell(this, GetSpell(), true); break;
-        case TOTEM_STATUE:  CastSpell(GetOwner(), GetSpell(), true); break;
-        default: break;
-    }
+    if (m_type == TOTEM_PASSIVE)
+        CastSpell(this, GetSpell(), true);
 
     if (GetEntry() == SENTRY_TOTEM_ENTRY)
         SetReactState(REACT_AGGRESSIVE);
+
+    m_duration = duration;
+
+    SetCreatorGUID(owner->GetGUID());
+    setFaction(owner->getFaction());
+    SetLevel(owner->getLevel());
+
+    // Get spell casted by totem
+    SpellEntry const * totemSpell = sSpellStore.LookupEntry(GetSpell());
+    if (totemSpell)
+    {
+        // If spell have cast time -> so its active totem
+        if (GetSpellCastTime(totemSpell))
+            m_type = TOTEM_ACTIVE;
+    }
+
+    TempSummon::InitSummon(duration);
 }
 
 void Totem::UnSummon()
@@ -143,34 +156,12 @@ void Totem::UnSummon()
     AddObjectToRemoveList();
 }
 
-void Totem::SetOwner(Unit *owner)
-{
-    SetCreatorGUID(owner->GetGUID());
-    TempSummon::SetOwner(owner, true);
-    setFaction(owner->getFaction());
-    SetLevel(owner->getLevel());
-}
-
 Unit *Totem::GetOwner()
 {
     uint64 ownerid = GetOwnerGUID();
     if (!ownerid)
         return NULL;
     return ObjectAccessor::GetUnit(*this, ownerid);
-}
-
-void Totem::SetTypeBySummonSpell(SpellEntry const * spellProto)
-{
-    // Get spell casted by totem
-    SpellEntry const * totemSpell = sSpellStore.LookupEntry(GetSpell());
-    if (totemSpell)
-    {
-        // If spell have cast time -> so its active totem
-        if (GetSpellCastTime(totemSpell))
-            m_type = TOTEM_ACTIVE;
-    }
-    if (spellProto->SpellIconID == 2056)
-        m_type = TOTEM_STATUE;                              //Jewelery statue
 }
 
 bool Totem::IsImmunedToSpell(SpellEntry const* spellInfo, bool useCharges)

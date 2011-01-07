@@ -4032,7 +4032,7 @@ void Unit::RemoveAura(AuraMap::iterator &i, AuraRemoveMode mode)
     Aur->SetRemoveMode(mode);
 
     // Statue unsummoned at aura remove
-    Totem* statue = NULL;
+    //Totem* statue = NULL;
     bool channeled = false;
     if (Aur->GetAuraDuration() && !Aur->IsPersistent() && IsChanneledSpell(AurSpellInfo))
     {
@@ -4060,8 +4060,8 @@ void Unit::RemoveAura(AuraMap::iterator &i, AuraRemoveMode mode)
                     }
                 }
 
-                if (caster->GetTypeId() == TYPEID_UNIT && caster->ToCreature()->isTotem() && ((Totem*)caster)->GetTotemType() == TOTEM_STATUE)
-                    statue = ((Totem*)caster);
+                //if (caster->GetTypeId() == TYPEID_UNIT && caster->ToCreature()->isTotem() && ((Totem*)caster)->GetTotemType() == TOTEM_STATUE)
+                //    statue = ((Totem*)caster);
             }
 
             // Unsummon summon as possessed creatures on spell cancel
@@ -4128,8 +4128,8 @@ void Unit::RemoveAura(AuraMap::iterator &i, AuraRemoveMode mode)
         }
     }
 
-    if (statue)
-        statue->UnSummon();
+    //if (statue)
+    //    statue->UnSummon();
 
     i = m_Auras.begin();
 }
@@ -7178,7 +7178,7 @@ uint32 Unit::SpellDamageBonus(Unit *pVictim, SpellEntry const *spellProto, uint3
             BonusDamage = ((Guardian*)this)->GetBonusDamage();
         }
         // For totems get damage bonus from owner (statue isn't totem in fact)
-        else if (ToCreature()->isTotem() && ((Totem*)this)->GetTotemType() != TOTEM_STATUE)
+        else if (ToCreature()->isTotem())
         {
             if (Unit* owner = GetOwner())
                 return owner->SpellDamageBonus(pVictim, spellProto, pdamage, damagetype);
@@ -7770,7 +7770,7 @@ uint32 Unit::SpellCriticalBonus(SpellEntry const *spellProto, uint32 damage, Uni
 uint32 Unit::SpellHealingBonus(SpellEntry const *spellProto, uint32 healamount, DamageEffectType damagetype, Unit *pVictim)
 {
     // For totems get healing bonus from owner (statue isn't totem in fact)
-    if (GetTypeId() == TYPEID_UNIT && ToCreature()->isTotem() && ((Totem*)this)->GetTotemType() != TOTEM_STATUE)
+    if (GetTypeId() == TYPEID_UNIT && ToCreature()->isTotem())
         if (Unit* owner = GetOwner())
             return owner->SpellHealingBonus(spellProto, healamount, damagetype, pVictim);
 
