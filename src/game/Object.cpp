@@ -1631,8 +1631,10 @@ TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropert
             || properties->Type == SUMMON_TYPE_GUARDIAN
             || properties->Type == SUMMON_TYPE_MINION)
             mask = SUMMON_MASK_GUARDIAN;
-        else if(properties->Type == SUMMON_TYPE_TOTEM)
+        else if (properties->Type == SUMMON_TYPE_TOTEM)
             mask = SUMMON_MASK_TOTEM;
+        else if (properties->Type == SUMMON_TYPE_MINIPET)
+            mask = SUMMON_MASK_MINION;
     }
 
     uint32 team = 0;
@@ -1645,6 +1647,7 @@ TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropert
         case SUMMON_MASK_SUMMON:    summon = new TempSummon (properties, summoner);  break;
         case SUMMON_MASK_GUARDIAN:  summon = new Guardian   (properties, summoner);  break;
         case SUMMON_MASK_TOTEM:     summon = new Totem      (properties, summoner);  break;
+        case SUMMON_MASK_MINION:    summon = new Minion     (properties, summoner);  break;
         default:    return NULL;
     }
     if (!summon->Create(objmgr.GenerateLowGuid(HIGHGUID_UNIT), this, entry, team, pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation()))
@@ -1774,7 +1777,7 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
     pet->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
     pet->InitStatsForLevel(getLevel());
 
-    SetGuardian(pet, true);
+    SetMinion(pet, true);
 
     switch(petType)
     {

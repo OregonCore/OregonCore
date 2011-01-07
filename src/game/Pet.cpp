@@ -257,7 +257,7 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
     m_loyaltyPoints = fields[7].GetInt32();
 
     map->Add(ToCreature());
-    owner->SetGuardian(this, true);
+    owner->SetMinion(this, true);
 
     InitStatsForLevel(petlevel);
 

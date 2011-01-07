@@ -29,7 +29,7 @@
 #include "ObjectMgr.h"
 #include "SpellMgr.h"
 
-Totem::Totem(SummonPropertiesEntry const *properties, Unit *owner) : TempSummon(properties, owner)
+Totem::Totem(SummonPropertiesEntry const *properties, Unit *owner) : Minion(properties, owner)
 {
     m_summonMask |= SUMMON_MASK_TOTEM;
     m_duration = 0;
@@ -38,8 +38,7 @@ Totem::Totem(SummonPropertiesEntry const *properties, Unit *owner) : TempSummon(
 
 void Totem::Update(uint32 time)
 {
-    Unit *owner = GetOwner();
-    if (!owner || !owner->isAlive() || !this->isAlive())
+    if (!m_owner->isAlive() || !isAlive())
     {
         UnSummon();                                         // remove self
         return;
@@ -58,15 +57,13 @@ void Totem::Update(uint32 time)
 
 void Totem::InitSummon(uint32 duration)
 {
-    Unit *owner = GetOwner();
-    if (!owner)
-        return;
+    Minion::InitSummon(duration);
 
     CreatureInfo const *cinfo = GetCreatureInfo();
-    if (owner->GetTypeId() == TYPEID_PLAYER && cinfo)
+    if (m_owner->GetTypeId() == TYPEID_PLAYER && cinfo)
     {
         uint32 modelid = 0;
-        if (owner->ToPlayer()->GetTeam() == HORDE)
+        if (m_owner->ToPlayer()->GetTeam() == HORDE)
         {
             if (cinfo->Modelid_H1)
                 modelid = cinfo->Modelid_H1;
@@ -83,7 +80,7 @@ void Totem::InitSummon(uint32 duration)
         if (modelid)
             SetDisplayId(modelid);
         else
-            sLog.outErrorDb("Totem::Summon: Missing modelid information for entry %u, team %u, totem will use default values.",GetEntry(),owner->ToPlayer()->GetTeam());
+            sLog.outErrorDb("Totem::Summon: Missing modelid information for entry %u, team %u, totem will use default values.",GetEntry(),m_owner->ToPlayer()->GetTeam());
     }
 
     WorldPacket data(SMSG_GAMEOBJECT_SPAWN_ANIM_OBSOLETE, 8);
@@ -98,9 +95,7 @@ void Totem::InitSummon(uint32 duration)
 
     m_duration = duration;
 
-    SetCreatorGUID(owner->GetGUID());
-    setFaction(owner->getFaction());
-    SetLevel(owner->getLevel());
+    SetLevel(m_owner->getLevel());
 
     // Get spell casted by totem
     SpellEntry const * totemSpell = sSpellStore.LookupEntry(GetSpell());
@@ -110,8 +105,6 @@ void Totem::InitSummon(uint32 duration)
         if (GetSpellCastTime(totemSpell))
             m_type = TOTEM_ACTIVE;
     }
-
-    TempSummon::InitSummon(duration);
 }
 
 void Totem::UnSummon()
@@ -154,14 +147,6 @@ void Totem::UnSummon()
     }
 
     AddObjectToRemoveList();
-}
-
-Unit *Totem::GetOwner()
-{
-    uint64 ownerid = GetOwnerGUID();
-    if (!ownerid)
-        return NULL;
-    return ObjectAccessor::GetUnit(*this, ownerid);
 }
 
 bool Totem::IsImmunedToSpell(SpellEntry const* spellInfo, bool useCharges)

@@ -6907,6 +6907,21 @@ Player* Unit::GetCharmerOrOwnerPlayerOrPlayerItself() const
     return GetTypeId() == TYPEID_PLAYER ? (Player*)this : NULL;
 }
 
+Minion *Unit::GetFirstMinion() const
+{
+    if (uint64 pet_guid = GetMinionGUID())
+    {
+        if (Creature* pet = ObjectAccessor::GetCreatureOrPet(*this, pet_guid))
+            if (pet->HasSummonMask(SUMMON_MASK_MINION))
+                return (Minion*)pet;
+
+        sLog.outError("Unit::GetFirstMinion: Minion %u not exist.",GUID_LOPART(pet_guid));
+        const_cast<Unit*>(this)->SetMinionGUID(0);
+    }
+
+    return NULL;
+}
+
 Guardian* Unit::GetGuardianPet() const
 {
     if (uint64 pet_guid = GetPetGUID())
@@ -6915,7 +6930,7 @@ Guardian* Unit::GetGuardianPet() const
             if (pet->HasSummonMask(SUMMON_MASK_GUARDIAN))
                 return (Guardian*)pet;
 
-        sLog.outError("Unit::GetGuardianPet: Pet %u not exist.",GUID_LOPART(pet_guid));
+        sLog.outError("Unit::GetGuardianPet: Guardian %u not exist.",GUID_LOPART(pet_guid));
         const_cast<Unit*>(this)->SetPetGUID(0);
     }
 
@@ -6936,44 +6951,53 @@ Unit* Unit::GetCharm() const
     return NULL;
 }
 
-void Unit::SetGuardian(Guardian* guardian, bool apply)
+void Unit::SetMinion(Minion *minion, bool apply)
 {
-    sLog.outDebug("SetGuardian %u for %u, apply %u", guardian->GetEntry(), GetEntry(), apply);
+    sLog.outDebug("SetMinion %u for %u, apply %u", minion->GetEntry(), GetEntry(), apply);
 
     if (apply)
     {
-        if (!guardian->SetOwner(this, true))
+        if (!minion->SetOwner(this, true))
             return;
 
-        m_Controlled.insert(guardian);
+        m_Controlled.insert(minion);
 
-        if (guardian->isPet() || guardian->m_Properties && guardian->m_Properties->Category == SUMMON_CATEGORY_PET)
+        // Can only have one pet. If a new one is summoned, dismiss the old one.
+        if (minion->isPet() || minion->m_Properties && minion->m_Properties->Category == SUMMON_CATEGORY_PET)
         {
             if (Guardian* oldPet = GetGuardianPet())
             {
-                if (oldPet != guardian && (oldPet->isPet() || guardian->isPet() || oldPet->GetEntry() != guardian->GetEntry()))
+                if (oldPet != minion && (oldPet->isPet() || minion->isPet() || oldPet->GetEntry() != minion->GetEntry()))
                 {
-                    // remove existing guardian pet
+                    // remove existing minion pet
                     if (oldPet->isPet())
                         ((Pet*)oldPet)->Remove(PET_SAVE_AS_CURRENT);
                     else
                         oldPet->UnSummon();
-                    SetPetGUID(guardian->GetGUID());
-                    SetGuardianGUID(0);
+                    SetPetGUID(minion->GetGUID());
+                    SetMinionGUID(0);
                 }
             }
             else
             {
-                SetPetGUID(guardian->GetGUID());
-                SetGuardianGUID(0);
+                SetPetGUID(minion->GetGUID());
+                SetMinionGUID(0);
             }
         }
 
-        if (AddUInt64Value(UNIT_FIELD_SUMMON, guardian->GetGUID()))
+        // Check priority.
+        if (Minion *oldMinion = GetFirstMinion())
         {
-            if (GetTypeId() == TYPEID_PLAYER)
+            if (minion->HasSummonMask(SUMMON_MASK_GUARDIAN)
+                && !oldMinion->HasSummonMask(SUMMON_MASK_GUARDIAN))
+                SetMinionGUID(0);
+        }
+
+        if (AddUInt64Value(UNIT_FIELD_SUMMON, minion->GetGUID()))
+        {
+            if (GetTypeId() == TYPEID_PLAYER && !GetCharmGUID() && minion->HasSummonMask(SUMMON_MASK_GUARDIAN))
             {
-                if (guardian->isPet())
+                if (minion->isPet())
                     ((Player*)this)->PetSpellInitialize();
                 else
                     ((Player*)this)->CharmSpellInitialize();
@@ -6982,20 +7006,20 @@ void Unit::SetGuardian(Guardian* guardian, bool apply)
     }
     else
     {
-        if (!guardian->SetOwner(this, false))
+        if (!minion->SetOwner(this, false))
             return;
 
-        m_Controlled.erase(guardian);
+        m_Controlled.erase(minion);
 
-        if (guardian->isPet() || guardian->m_Properties && guardian->m_Properties->Category == SUMMON_CATEGORY_PET)
+        if (minion->isPet() || minion->m_Properties && minion->m_Properties->Category == SUMMON_CATEGORY_PET)
         {
-            if (GetPetGUID() == guardian->GetGUID())
+            if (GetPetGUID() == minion->GetGUID())
                 SetPetGUID(0);
         }
 
-        if (RemoveUInt64Value(UNIT_FIELD_SUMMON, guardian->GetGUID()))
+        if (RemoveUInt64Value(UNIT_FIELD_SUMMON, minion->GetGUID()))
         {
-            //Check if there is another guardian
+            //Check if there is another minion
             for (ControlList::iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)
             {
                 assert((*itr)->GetOwnerGUID() == GetGUID());
@@ -7003,7 +7027,7 @@ void Unit::SetGuardian(Guardian* guardian, bool apply)
                 {
                     if (GetTypeId() == TYPEID_PLAYER)
                     {
-                        if (guardian->isPet())
+                        if (minion->isPet())
                             ToPlayer()->PetSpellInitialize();
                         else
                             ToPlayer()->CharmSpellInitialize();

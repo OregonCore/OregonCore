@@ -17070,7 +17070,7 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
         case POSSESSED_PET:
             pet->RemoveCharmedBy(NULL);
         default:
-            SetGuardian(pet, false);
+            SetMinion(pet, false);
             break;
     }
 

@@ -3276,8 +3276,6 @@ void Spell::EffectSummonType(uint32 i)
                     if (!summon || !summon->isTotem())
                         return;
 
-                    summon->SetOwner(m_originalCaster, true);
-
                     if (damage)                                             // if not spell info, DB values used
                     {
                         summon->SetMaxHealth(damage);
@@ -3300,19 +3298,14 @@ void Spell::EffectSummonType(uint32 i)
                 case SUMMON_TYPE_MINIPET:
                 {
                     summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster);
-                    if (!summon)
+                    if (!summon || !summon->HasSummonMask(SUMMON_MASK_MINION))
                         return;
-
-                    summon->SetOwner(m_originalCaster, true);
-                    summon->SetCreatorGUID(m_originalCaster->GetGUID());
-                    summon->setFaction(m_originalCaster->getFaction());
 
                     //summon->InitPetCreateSpells();                         // e.g. disgusting oozeling has a create spell as summon...
                     summon->SetMaxHealth(1);
                     summon->SetHealth(1);
                     summon->SetLevel(1);
 
-                    summon->SetReactState(REACT_PASSIVE);
                     summon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
                     //summon->GetMotionMaster()->MoveTargetedHome();
@@ -3900,7 +3893,7 @@ void Spell::EffectTameCreature(uint32 /*i*/)
     pet->SetUInt32Value(UNIT_FIELD_LEVEL,creatureTarget->getLevel());
 
     // caster have pet now
-    m_caster->SetGuardian(pet, true);
+    m_caster->SetMinion(pet, true);
 
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
     {
