@@ -262,13 +262,6 @@ Minion::Minion(SummonPropertiesEntry const *properties, Unit *owner) : TempSummo
 {
     ASSERT(m_owner);
     m_summonMask |= SUMMON_MASK_MINION;
-    SetUInt64Value(UNIT_FIELD_SUMMONEDBY, m_owner->GetGUID());
-
-    if (m_owner->GetTypeId() == TYPEID_PLAYER)
-    {
-        m_ControlledByPlayer = true;
-        SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE);
-    }
 }
 
 void Minion::InitSummon(uint32 duration)
