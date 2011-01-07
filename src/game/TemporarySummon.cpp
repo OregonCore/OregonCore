@@ -41,6 +41,8 @@ Unit* TempSummon::GetSummoner() const
 
 void TempSummon::Update(uint32 diff)
 {
+    Creature::Update(diff);
+
     if (m_deathState == DEAD)
     {
         UnSummon();
@@ -164,8 +166,6 @@ void TempSummon::Update(uint32 diff)
             sLog.outError("Temporary summoned creature (entry: %u) has unknown type %u. ",GetEntry(),m_type);
             break;
     }
-
-    Creature::Update(diff);
 }
 
 void TempSummon::InitStats(uint32 duration)
