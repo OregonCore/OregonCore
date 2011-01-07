@@ -3286,13 +3286,8 @@ void Spell::HandleEffects(Unit *pUnitTarget,Item *pItemTarget,GameObject *pGOTar
     gameObjTarget = pGOTarget;
 
     uint8 eff = m_spellInfo->Effect[i];
-    uint32 mechanic = m_spellInfo->EffectMechanic[i];
 
     DEBUG_LOG("Spell: Effect : %u", eff);
-
-    //Simply return. Do not display "immune" in red text on client
-    if (unitTarget && unitTarget->IsImmunedToSpellEffect(eff, mechanic))
-        return;
 
     //we do not need DamageMultiplier here.
     damage = CalculateDamage(i, NULL);
