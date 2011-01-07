@@ -11858,7 +11858,7 @@ void Unit::SetCharmedBy(Unit* charmer, CharmType type)
             case CHARM_TYPE_POSSESS:
                 addUnitState(UNIT_STAT_POSSESSED);
                 SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
-                AddPlayerToVision(charmer->ToPlayer());
+                charmer->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
                 charmer->ToPlayer()->SetClientControl(this, 1);
                 charmer->ToPlayer()->SetViewpoint(this, true);
                 charmer->ToPlayer()->PossessSpellInitialize();
@@ -11923,6 +11923,7 @@ void Unit::RemoveCharmedBy(Unit *charmer)
             RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE);
 
         ToCreature()->AI()->OnCharmed(false);
+
         if (isAlive() && ToCreature()->IsAIEnabled)
         {
             if (charmer && !IsFriendlyTo(charmer))
@@ -11950,9 +11951,8 @@ void Unit::RemoveCharmedBy(Unit *charmer)
         switch (type)
         {
             case CHARM_TYPE_POSSESS:
-                RemovePlayerFromVision(charmer->ToPlayer());
-                ((Player*)charmer)->SetClientControl(charmer, 1);
-                ((Player*)charmer)->SetViewpoint(this, false);
+                charmer->ToPlayer()->SetClientControl(charmer, 1);
+                charmer->ToPlayer()->SetViewpoint(this, false);
                 charmer->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
                 break;
             case CHARM_TYPE_CHARM:
@@ -11979,9 +11979,10 @@ void Unit::RemoveCharmedBy(Unit *charmer)
         }
     }
 
-    if (charmer->GetTypeId() == TYPEID_PLAYER && type == CHARM_TYPE_POSSESS)
+    //a guardian should always have charminfo
+    if (charmer->GetTypeId() == TYPEID_PLAYER && this != charmer->GetFirstControlled())
         charmer->ToPlayer()->SendRemoveControlBar();
-    else if (GetTypeId() == TYPEID_PLAYER || GetTypeId() == TYPEID_UNIT && !ToCreature()->isPet())
+    else if (GetTypeId() == TYPEID_PLAYER || GetTypeId() == TYPEID_UNIT && !ToCreature()->isGuardian())
         DeleteCharmInfo();
 }
 

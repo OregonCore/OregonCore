@@ -432,6 +432,7 @@ class Creature : public Unit, public GridObject<Creature>
 
         uint32 HasSummonMask(uint32 mask) const { return mask & m_summonMask; }
         bool isSummon() const   { return m_summonMask & SUMMON_MASK_SUMMON; }
+        bool isGuardian() const { return m_summonMask & SUMMON_MASK_GUARDIAN; }
         bool isPet() const      { return m_summonMask & SUMMON_MASK_PET; }
         bool isTotem() const    { return m_summonMask & SUMMON_MASK_TOTEM; }
         void SetCorpseDelay(uint32 delay) { m_corpseDelay = delay; }
