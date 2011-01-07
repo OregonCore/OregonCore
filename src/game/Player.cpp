@@ -17062,17 +17062,18 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
         }
     }
 
-    pet->SavePetToDB(mode);
-
     // only if current pet in slot
     switch(pet->getPetType())
     {
         case POSSESSED_PET:
             pet->RemoveCharmedBy(NULL);
+            break;
         default:
-            SetMinion(pet, false);
+            pet->SavePetToDB(mode);
             break;
     }
+
+    SetMinion(pet, false);
 
     pet->AddObjectToRemoveList();
     pet->m_removed = true;
