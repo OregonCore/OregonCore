@@ -39,8 +39,6 @@ class TempSummon : public Creature
         Unit* GetSummoner() const;
 
         SummonPropertiesEntry const *m_Properties;
-
-        bool SetOwner(Unit *owner, bool apply);
     private:
         TempSummonType m_type;
         uint32 m_timer;
@@ -56,7 +54,7 @@ class Minion : public TempSummon
         void RemoveFromWorld();
         Unit *GetOwner() { return m_owner; }
     protected:
-        Unit *m_owner;
+        Unit * const m_owner;
 };
 
 class Guardian : public Minion
