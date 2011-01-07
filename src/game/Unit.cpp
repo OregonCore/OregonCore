@@ -7022,12 +7022,17 @@ void Unit::SetMinion(Minion *minion, bool apply)
             //Check if there is another minion
             for (ControlList::iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)
             {
-                assert((*itr)->GetOwnerGUID() == GetGUID());
+                if (GetCharmGUID() == (*itr)->GetGUID())
+                    continue;
+
+                ASSERT((*itr)->GetOwnerGUID() == GetGUID());
+                ASSERT((*itr)->GetTypeId() == TYPEID_UNIT);
                 if (AddUInt64Value(UNIT_FIELD_SUMMON, (*itr)->GetGUID()))
                 {
-                    if (GetTypeId() == TYPEID_PLAYER)
+                    //show another pet bar if there is no charm bar
+                    if (GetTypeId() == TYPEID_PLAYER && !GetCharmGUID() && (*itr)->ToCreature()->HasSummonMask(SUMMON_MASK_GUARDIAN))
                     {
-                        if (minion->isPet())
+                        if ((*itr)->ToCreature()->isPet())
                             ToPlayer()->PetSpellInitialize();
                         else
                             ToPlayer()->CharmSpellInitialize();
