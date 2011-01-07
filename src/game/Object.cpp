@@ -1633,6 +1633,8 @@ TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropert
             mask = SUMMON_MASK_GUARDIAN;
         else if (properties->Type == SUMMON_TYPE_TOTEM)
             mask = SUMMON_MASK_TOTEM;
+        else if (properties->Category == SUMMON_CATEGORY_PUPPET)
+            mask = SUMMON_MASK_PUPPET;
         else if (properties->Type == SUMMON_TYPE_MINIPET)
             mask = SUMMON_MASK_MINION;
     }
@@ -1646,6 +1648,7 @@ TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropert
     {
         case SUMMON_MASK_SUMMON:    summon = new TempSummon (properties, summoner);  break;
         case SUMMON_MASK_GUARDIAN:  summon = new Guardian   (properties, summoner);  break;
+        case SUMMON_MASK_PUPPET:    summon = new Puppet     (properties, summoner);  break;
         case SUMMON_MASK_TOTEM:     summon = new Totem      (properties, summoner);  break;
         case SUMMON_MASK_MINION:    summon = new Minion     (properties, summoner);  break;
         default:    return NULL;
@@ -1780,9 +1783,6 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
 
     switch(petType)
     {
-        case POSSESSED_PET:
-            pet->SetUInt32Value(UNIT_FIELD_FLAGS,0);
-            break;
         case SUMMON_PET:
             pet->SetUInt32Value(UNIT_FIELD_BYTES_0, 2048);
             pet->SetUInt32Value(UNIT_FIELD_PETEXPERIENCE, 0);
@@ -1796,9 +1796,6 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
 
     switch(petType)
     {
-        case POSSESSED_PET:
-            pet->SetCharmedBy(this, CHARM_TYPE_POSSESS);
-            break;
         case SUMMON_PET:
             pet->InitPetCreateSpells();
             pet->SavePetToDB(PET_SAVE_AS_CURRENT);

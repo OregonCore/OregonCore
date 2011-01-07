@@ -80,9 +80,6 @@ m_declinedname(NULL), m_owner(owner)
 
     m_auraUpdateMask = 0;
 
-    if (type == POSSESSED_PET)                              // always passive
-        SetReactState(REACT_PASSIVE);
-
     m_spells.clear();
     m_Auras.clear();
     m_CreatureSpellCooldowns.clear();

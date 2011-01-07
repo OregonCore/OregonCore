@@ -3332,24 +3332,9 @@ void Spell::EffectSummonType(uint32 i)
         case SUMMON_CATEGORY_PET:
             SummonGuardian(entry, properties);
             break;
-        case SUMMON_CATEGORY_POSSESSED:
-        {
-            if (m_caster->GetTypeId() != TYPEID_PLAYER)
-                return;
-
-            float x, y, z;
-            m_caster->GetClosePoint(x, y, z, DEFAULT_WORLD_OBJECT_SIZE);
-
-            int32 duration = GetSpellDuration(m_spellInfo);
-
-            Pet* pet = m_caster->ToPlayer()->SummonPet(entry, x, y, z, m_caster->GetOrientation(), POSSESSED_PET, duration);
-            if (!pet)
-                return;
-
-            pet->SetUInt32Value(UNIT_CREATED_BY_SPELL, m_spellInfo->Id);
-            //pet->SetCharmedBy(m_caster, CHARM_TYPE_POSSESS);
+        case SUMMON_CATEGORY_PUPPET:
+            summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster);
             break;
-        }
     }
 }
 

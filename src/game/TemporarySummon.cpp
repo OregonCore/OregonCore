@@ -318,3 +318,43 @@ void Guardian::InitStats(uint32 duration)
     SetReactState(REACT_AGGRESSIVE);
 }
 
+Puppet::Puppet(SummonPropertiesEntry const *properties, Unit *owner) : Minion(properties, owner)
+{
+    ASSERT(owner->GetTypeId() == TYPEID_PLAYER);
+    m_owner = owner->ToPlayer();
+    m_summonMask |= SUMMON_MASK_PUPPET;
+    InitCharmInfo();
+}
+
+void Puppet::InitStats(uint32 duration)
+{
+    Minion::InitStats(duration);
+
+    m_charmInfo->InitPossessCreateSpells();
+    SetReactState(REACT_PASSIVE);
+}
+
+void Puppet::InitSummon()
+{
+    Minion::InitSummon();
+    SetCharmedBy(m_owner, CHARM_TYPE_POSSESS);
+}
+
+void Puppet::Update(uint32 time)
+{
+    Minion::Update(time);
+    //check if caster is channelling?
+    //if (IsInWorld())
+    //{
+    //}
+}
+
+void Puppet::RemoveFromWorld()
+{
+    if (!IsInWorld())
+        return;
+
+    RemoveCharmedBy(NULL);
+    Minion::RemoveFromWorld();
+}
+

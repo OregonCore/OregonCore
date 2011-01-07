@@ -4066,18 +4066,11 @@ void Unit::RemoveAura(AuraMap::iterator &i, AuraRemoveMode mode)
 
             // Unsummon summon as possessed creatures on spell cancel
             if (caster->GetTypeId() == TYPEID_PLAYER)
-            {
-                for (int i = 0; i < 3; ++i)
-                {
-                    if (AurSpellInfo->Effect[i] == SPELL_EFFECT_SUMMON)
-                        if (SummonPropertiesEntry const *SummonProperties = sSummonPropertiesStore.LookupEntry(AurSpellInfo->EffectMiscValueB[i]))
-                            if (SummonProperties->Category == SUMMON_CATEGORY_POSSESSED)
-                            {
-                                ((Player*)caster)->StopCastingCharm();
-                                break;
-                            }
-                }
-            }
+                if (Unit *charm = caster->GetCharm())
+                    if (charm->GetTypeId() == TYPEID_UNIT
+                        && charm->ToCreature()->HasSummonMask(SUMMON_MASK_PUPPET)
+                        && charm->GetUInt32Value(UNIT_CREATED_BY_SPELL) == AurSpellInfo->Id)
+                        ((Puppet*)charm)->UnSummon();
         }
     }
 
@@ -6994,7 +6987,8 @@ void Unit::SetMinion(Minion *minion, bool apply)
             }
         }
 
-        AddUInt64Value(UNIT_FIELD_SUMMON, minion->GetGUID());
+        if (minion->HasSummonMask(SUMMON_MASK_GUARDIAN))
+            AddUInt64Value(UNIT_FIELD_SUMMON, minion->GetGUID());
     }
     else
     {
@@ -7078,7 +7072,8 @@ void Unit::SetCharm(Unit* charm, bool apply)
         if (!charm->RemoveUInt64Value(UNIT_FIELD_CHARMEDBY, GetGUID()))
             sLog.outCrash("Unit %u is being uncharmed, but it has another charmer %u", charm->GetEntry(), charm->GetCharmerGUID());
 
-        m_Controlled.erase(charm);
+        if (!charm->GetOwnerGUID() == GetGUID())
+            m_Controlled.erase(charm);
     }
 }
 
