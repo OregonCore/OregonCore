@@ -83,13 +83,6 @@ void Totem::InitStats(uint32 duration)
             sLog.outErrorDb("Totem::Summon: Missing modelid information for entry %u, team %u, totem will use default values.",GetEntry(),m_owner->ToPlayer()->GetTeam());
     }
 
-    if (GetEntry() == SENTRY_TOTEM_ENTRY)
-        SetReactState(REACT_AGGRESSIVE);
-
-    m_duration = duration;
-
-    SetLevel(m_owner->getLevel());
-
     // Get spell casted by totem
     SpellEntry const * totemSpell = sSpellStore.LookupEntry(GetSpell());
     if (totemSpell)
@@ -98,6 +91,13 @@ void Totem::InitStats(uint32 duration)
         if (GetSpellCastTime(totemSpell))
             m_type = TOTEM_ACTIVE;
     }
+
+    if (GetEntry() == SENTRY_TOTEM_ENTRY)
+        SetReactState(REACT_AGGRESSIVE);
+
+    m_duration = duration;
+
+    SetLevel(m_owner->getLevel());
 }
 
 void Totem::InitSummon()
