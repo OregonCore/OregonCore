@@ -7005,6 +7005,18 @@ void Unit::SetMinion(Minion *minion, bool apply)
             if (GetPetGUID() == minion->GetGUID())
                 SetPetGUID(0);
         }
+        else if (minion->isTotem())
+        {
+            // All summoned by totem minions must disappear when it is removed.
+            if (const SpellEntry* spInfo = sSpellStore.LookupEntry(((Totem*)minion)->GetSpell()))
+                for (int i = 0; i < MAX_SPELL_EFFECTS; ++i)
+                {
+                    if (spInfo->Effect[i] != SPELL_EFFECT_SUMMON)
+                        continue;
+
+                    this->RemoveAllMinionsByEntry(spInfo->EffectMiscValue[i]);
+                }
+        }
 
         if (RemoveUInt64Value(UNIT_FIELD_SUMMON, minion->GetGUID()))
         {
@@ -7036,6 +7048,19 @@ void Unit::SetMinion(Minion *minion, bool apply)
                 break;
             }
         }
+    }
+}
+
+void Unit::RemoveAllMinionsByEntry(uint32 entry)
+{
+    for (Unit::ControlList::iterator itr = m_Controlled.begin(); itr != m_Controlled.end();)
+    {
+        Unit *unit = *itr;
+        ++itr;
+        if (unit->GetEntry() == entry && unit->GetTypeId() == TYPEID_UNIT
+            && unit->ToCreature()->isSummon()) // minion, actually
+            ((TempSummon*)unit)->UnSummon();
+        // i think this is safe because i have never heard that a despawned minion will trigger a same minion
     }
 }
 

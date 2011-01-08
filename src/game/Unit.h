@@ -1294,6 +1294,7 @@ class Unit : public WorldObject
         Player* GetCharmerOrOwnerPlayerOrPlayerItself() const;
 
         void SetMinion(Minion *minion, bool apply);
+        void RemoveAllMinionsByEntry(uint32 entry);
         void SetCharm(Unit* target, bool apply);
         void SetCharmedBy(Unit* charmer, CharmType type);
         void RemoveCharmedBy(Unit* charmer);
