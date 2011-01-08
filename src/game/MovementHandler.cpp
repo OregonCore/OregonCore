@@ -536,7 +536,8 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
             GetPlayer()->m_anti_justjumped = 0;
 
         // Anti-Speedhack
-        if ((real_delta > allowed_delta) && (delta_z < (GetPlayer()->m_anti_last_vspeed * time_delta) || delta_z < 1))
+        // Disabled to revert: if ((real_delta > allowed_delta) && (delta_z < (GetPlayer()->m_anti_last_vspeed * time_delta) || delta_z < 1))
+        if ((real_delta > allowed_delta) && (delta_z < 1))
         {
             #ifdef MOVEMENT_ANTICHEAT_DEBUG
             sLog.outError("Movement anticheat: %s is speed exception. real_delta=%f, allowed_delta=%f, delta_z=%f, last_vspeed=%f", GetPlayer()->GetName(), real_delta, allowed_delta, delta_z, GetPlayer()->m_anti_last_vspeed * time_delta);
@@ -546,7 +547,8 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         }
 
         // Anti-Teleport
-        if ((real_delta > allowed_delta) && (real_delta > (time_delta * 100)))
+        // Disabled to revert: if ((real_delta > allowed_delta) && (real_delta > (time_delta * 100)))
+        if ((real_delta > 4900.0f) && !(real_delta < allowed_delta))
         {
             #ifdef MOVEMENT_ANTICHEAT_DEBUG
             sLog.outError("Movement anticheat: %s is teleport exception. real_delta=%f, allowed_delta=%f, min_delta=%f ", GetPlayer()->GetName(), real_delta, allowed_delta, time_delta * 100);
@@ -555,22 +557,23 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
             check_passed = false;
         }
 
+        if (movementInfo.time > GetPlayer()->m_anti_lastspeed_changetime)
+        {
+            GetPlayer()->m_anti_last_hspeed = current_speed; // store current speed
+            GetPlayer()->m_anti_last_vspeed = -3.2f; // original value: -2.3f
+            GetPlayer()->m_anti_lastspeed_changetime = 0;
+        }
+
         // Anti-Wallhack
         // Known issues: jump+up, and walking up with low delta_z (one and only way to make it right is to calculate the delta_z of the terrain)
-        if (!GetPlayer()->m_anti_isjumping && (tg_z > 1.6f) && (delta_z < (GetPlayer()->m_anti_last_vspeed * time_delta)))
+        // Disabled to revert: if (!GetPlayer()->m_anti_isjumping && (tg_z > 1.6f) && (delta_z < (GetPlayer()->m_anti_last_vspeed * time_delta)))
+        if (!GetPlayer()->m_anti_isjumping && (tg_z > 1.56f) && (delta_z < GetPlayer()->m_anti_last_vspeed))
         {
             #ifdef MOVEMENT_ANTICHEAT_DEBUG
             sLog.outError("Movement anticheat: %s is a wall-climb cheater. tg_z=%f, delta_z=%f, last_vspeed=%f", GetPlayer()->GetName(), tg_z, delta_z, GetPlayer()->m_anti_last_vspeed * time_delta);
             #endif
             GetPlayer()->m_anti_lastcheat = "Wall-climbing Hack";
             check_passed = false;
-        }
-
-        if (movementInfo.time > GetPlayer()->m_anti_lastspeed_changetime)
-        {
-            GetPlayer()->m_anti_last_hspeed = current_speed; // store current speed
-            GetPlayer()->m_anti_last_vspeed = -2.3f;
-            GetPlayer()->m_anti_lastspeed_changetime = 0;
         }
 
         // Anti-Flyhack
@@ -699,32 +702,18 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     /* process position-change */
     if (check_passed || GetPlayer()->isGameMaster() || forcemovement)
     {
+        recv_data.put<uint32>(5, getMSTime());                  // offset flags(4) + unk(1)
+        WorldPacket data(opcode, (GetPlayer()->GetPackGUID().size() + recv_data.size()));
+        data << GetPlayer()->GetPackGUID();
+        data.append(recv_data.contents(), recv_data.size());
+        GetPlayer()->SendMessageToSet(&data, false);
+
         if (updateOrientationOnly)
-        {
-            /*
-            WorldPacket data;
-            GetPlayer()->BuildHeartBeatMsg(&data);
-            GetPlayer()->SendMessageToSet(&data, true);
-            */
-
-            recv_data.put<uint32>(5, getMSTime());                  // offset flags(4) + unk(1)
-            WorldPacket data(opcode, (GetPlayer()->GetPackGUID().size() + recv_data.size()));
-            data << GetPlayer()->GetPackGUID();
-            data.append(recv_data.contents(), recv_data.size());
-            GetPlayer()->SendMessageToSet(&data, false);
-
             GetPlayer()->SetPosition(GetPlayer()->GetPositionX(), GetPlayer()->GetPositionY(), GetPlayer()->GetPositionZ(), movementInfo.GetPos()->GetOrientation());
-        }
         else
-        {
-            recv_data.put<uint32>(5, getMSTime());                  // offset flags(4) + unk(1)
-            WorldPacket data(opcode, (GetPlayer()->GetPackGUID().size() + recv_data.size()));
-            data << GetPlayer()->GetPackGUID();
-            data.append(recv_data.contents(), recv_data.size());
-            GetPlayer()->SendMessageToSet(&data, false);
             GetPlayer()->SetPosition(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation());
-        }
 
+        GetPlayer()->SetPosition(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation());
         GetPlayer()->m_movementInfo = movementInfo;
 
         if (opcode == MSG_MOVE_FALL_LAND || GetPlayer()->m_lastFallTime > movementInfo.GetFallTime() || GetPlayer()->m_lastFallZ < movementInfo.GetPos()->GetPositionZ())
@@ -756,10 +745,13 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     {
         GetPlayer()->m_anti_alarmcount++;
         WorldPacket data;
-        if (useFallingFlag)
+        // Temporary disabled maybee cause fall dmg on dismount in air
+        /* if (useFallingFlag)
             GetPlayer()->SetUnitMovementFlags(MOVEFLAG_FALLING);
-        else
+        else 
             GetPlayer()->SetUnitMovementFlags(MOVEFLAG_NONE);
+        */
+        GetPlayer()->SetUnitMovementFlags(MOVEFLAG_NONE);
         GetPlayer()->BuildTeleportAckMsg(&data, GetPlayer()->GetPositionX(), GetPlayer()->GetPositionY(), GetPlayer()->GetPositionZ(), GetPlayer()->GetOrientation());
         GetPlayer()->GetSession()->SendPacket(&data);
         GetPlayer()->BuildHeartBeatMsg(&data);

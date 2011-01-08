@@ -20155,6 +20155,9 @@ void Player::HandleFallDamage(MovementInfo& movementInfo)
     // Removed for Anticheat Fall DMG
     if (!World::GetEnableMvAnticheat() && movementInfo.GetFallTime() < 1500)
         return;
+    else
+        if (movementInfo.GetFallTime() > 400 && movementInfo.GetFallTime() < 1500) // lower falltime then 400 = cheat
+            return;
 
     // calculate total z distance of the fall
     float z_diff = m_lastFallZ - movementInfo.GetPos()->GetPositionZ();
