@@ -7105,8 +7105,7 @@ void Unit::RemoveAllControlled()
             && target->GetTypeId() == TYPEID_UNIT
             && ((Creature*)target)->HasSummonMask(SUMMON_MASK_SUMMON))
         {
-            if (!((TempSummon*)target)->isPet())
-                ((TempSummon*)target)->UnSummon();
+            ((TempSummon*)target)->UnSummon();
         }
         else
         {
