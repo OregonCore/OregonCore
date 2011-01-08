@@ -3231,7 +3231,7 @@ void Spell::EffectSummonType(uint32 i)
         modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_DURATION, duration);
 
     Position pos;
-    GetSummonPosition(pos);
+    GetSummonPosition(i, pos);
 
     /*//totem must be at same Z in case swimming caster and etc.
         if( fabs( z - m_caster->GetPositionZ() ) > 5 )
@@ -3263,7 +3263,7 @@ void Spell::EffectSummonType(uint32 i)
                 case SUMMON_TYPE_PET:
                 case SUMMON_TYPE_GUARDIAN:
                 case SUMMON_TYPE_MINION:
-                    SummonGuardian(entry, properties);
+                    SummonGuardian(i, entry, properties);
                     break;
                 case SUMMON_TYPE_TOTEM:
                 {
@@ -3318,19 +3318,18 @@ void Spell::EffectSummonType(uint32 i)
 
                     for (int32 count = 0; count < amount; ++count)
                     {
-                        Position ppos;
-                        GetSummonPosition(ppos, radius, count);
+                        GetSummonPosition(i, pos, radius, count);
 
                         TempSummonType summonType = (duration == 0) ? TEMPSUMMON_DEAD_DESPAWN : TEMPSUMMON_TIMED_DESPAWN;
 
-                        m_originalCaster->SummonCreature(entry, ppos, summonType, duration);
+                        m_originalCaster->SummonCreature(entry, pos, summonType, duration);
                     }
                     break;
                 }
             }
             break;
         case SUMMON_CATEGORY_PET:
-            SummonGuardian(entry, properties);
+            SummonGuardian(i, entry, properties);
             break;
         case SUMMON_CATEGORY_PUPPET:
             summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster);
@@ -3899,7 +3898,7 @@ void Spell::EffectSummonPet(uint32 i)
     {
         SummonPropertiesEntry const *properties = sSummonPropertiesStore.LookupEntry(67);
         if (properties)
-            SummonGuardian(petentry, properties);
+            SummonGuardian(i, petentry, properties);
         return;
     }
 
@@ -6054,32 +6053,6 @@ void Spell::EffectSkill(uint32 /*i*/)
     DEBUG_LOG("WORLD: SkillEFFECT");
 }
 
-void Spell::EffectSummonDemon(uint32 i)
-{
-    float radius = GetSpellRadiusForFriend(sSpellRadiusStore.LookupEntry(m_spellInfo->EffectRadiusIndex[i]));
-
-    Position pos;
-    GetSummonPosition(pos, radius);
-
-    Creature* Charmed = m_caster->SummonCreature(m_spellInfo->EffectMiscValue[i], pos, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 3600000);
-    if (!Charmed)
-        return;
-
-    // might not always work correctly, maybe the creature that dies from CoD casts the effect on itself and is therefore the caster?
-    Charmed->SetLevel(m_caster->getLevel());
-
-    // TODO: Add damage/mana/hp according to level
-
-    if (m_spellInfo->EffectMiscValue[i] == 89)              // Inferno summon
-    {
-        // Enslave demon effect, without mana cost and cooldown
-        m_caster->CastSpell(Charmed, 20882, true);          // FIXME: enslave does not scale with level, level 62+ minions cannot be enslaved
-
-        // Inferno effect
-        Charmed->CastSpell(Charmed, 22703, true, 0);
-    }
-}
-
 /* There is currently no need for this effect. We handle it in BattleGround.cpp
    If we would handle the resurrection here, the spiritguide would instantly disappear as the
    player revives, and so we wouldn't see the spirit heal visual effect on the npc.
@@ -6258,7 +6231,7 @@ void Spell::EffectBind(uint32 i)
     player->SendDirectMessage(&data);
 }
 
-void Spell::SummonGuardian(uint32 entry, SummonPropertiesEntry const *properties)
+void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const *properties)
 {
     Unit *caster = m_originalCaster;
     if (caster && caster->GetTypeId() == TYPEID_UNIT && caster->ToCreature()->isTotem())
@@ -6293,7 +6266,7 @@ void Spell::SummonGuardian(uint32 entry, SummonPropertiesEntry const *properties
     for (int32 count = 0; count < amount; ++count)
     {
         Position pos;
-        GetSummonPosition(pos, radius, count);
+        GetSummonPosition(i, pos, radius, count);
 
         TempSummon *summon = map->SummonCreature(entry, pos, properties, duration, caster);
         if (!summon)
@@ -6307,8 +6280,10 @@ void Spell::SummonGuardian(uint32 entry, SummonPropertiesEntry const *properties
     }
 }
 
-void Spell::GetSummonPosition(Position &pos, float radius, uint32 count)
+void Spell::GetSummonPosition(uint32 i, Position &pos, float radius, uint32 count)
 {
+    pos.SetOrientation(m_caster->GetOrientation());
+
     if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
     {
         // Summon 1 unit in dest location
@@ -6316,7 +6291,23 @@ void Spell::GetSummonPosition(Position &pos, float radius, uint32 count)
             pos.Relocate(m_targets.m_dstPos);
         // Summon in random point all other units if location present
         else
-            m_caster->GetRandomPoint(m_targets.m_dstPos, radius, pos);
+        {
+            //This is a workaround. Do not have time to write much about it
+            switch (m_spellInfo->EffectImplicitTargetA[i])
+            {
+                case TARGET_MINION:
+                case TARGET_DEST_CASTER_RANDOM:
+                    m_caster->GetNearPosition(pos, radius * rand_norm(), rand_norm()*2*M_PI);
+                    break;
+                case TARGET_DEST_DEST_RANDOM:
+                case TARGET_DEST_TARGET_RANDOM:
+                    m_caster->GetRandomPoint(m_targets.m_dstPos, radius, pos);
+                    break;
+                default:
+                    pos.Relocate(m_targets.m_dstPos);
+                    break;
+            }
+        }
     }
     // Summon if dest location not present near caster
     else

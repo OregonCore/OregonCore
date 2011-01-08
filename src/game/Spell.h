@@ -336,7 +336,6 @@ class Spell
         void EffectAddExtraAttacks(uint32 i);
         void EffectSpiritHeal(uint32 i);
         void EffectSkinPlayerCorpse(uint32 i);
-        void EffectSummonDemon(uint32 i);
         void EffectStealBeneficialBuff(uint32 i);
         void EffectUnlearnSpecialization(uint32 i);
         void EffectHealPct(uint32 i);
@@ -584,8 +583,8 @@ class Spell
         void SpellDamageWeaponDmg(uint32 i);
         void SpellDamageHeal(uint32 i);
 
-        void GetSummonPosition(Position &pos, float radius = 0.0f, uint32 count = 0);
-        void SummonGuardian (uint32 entry, SummonPropertiesEntry const *properties);
+        void GetSummonPosition(uint32 i, Position &pos, float radius = 0.0f, uint32 count = 0);
+        void SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const *properties);
         // -------------------------------------------
 
         //List For Triggered Spells
