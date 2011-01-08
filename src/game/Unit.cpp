@@ -8514,9 +8514,6 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
             if (m_currentSpells[CURRENT_GENERIC_SPELL]->m_spellInfo->Attributes & SPELL_ATTR_CANT_USED_IN_COMBAT)
                 InterruptSpell(CURRENT_GENERIC_SPELL);
         }
-
-        if (!isCharmed())
-            return;
     }
     else
     {
@@ -8525,8 +8522,8 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
             GetMotionMaster()->GetCurrentMovementGeneratorType() == POINT_MOTION_TYPE)
             ToCreature()->SetHomePosition(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
 
-         if (enemy)
-         {
+        if (enemy)
+        {
             if (IsAIEnabled && ToCreature()->AI())
                 ToCreature()->AI()->EnterCombat(enemy);
 
@@ -8544,7 +8541,11 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
         }
     }
 
-    SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PET_IN_COMBAT);
+    for (Unit::ControlList::iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)
+    {
+        (*itr)->SetInCombatState(PvP, enemy);
+        (*itr)->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PET_IN_COMBAT);
+    }
 }
 
 void Unit::ClearInCombat()
