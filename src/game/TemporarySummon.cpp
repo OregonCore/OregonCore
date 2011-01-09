@@ -279,16 +279,6 @@ void Minion::InitStats(uint32 duration)
     m_owner->SetMinion(this, true);
 }
 
-void Minion::InitSummon()
-{
-    TempSummon::InitSummon();
-
-    if (m_owner->GetTypeId() == TYPEID_PLAYER
-        && m_owner->GetMinionGUID() == GetGUID()
-        && !m_owner->GetCharmGUID())
-        m_owner->ToPlayer()->CharmSpellInitialize();    
-}
-
 void Minion::RemoveFromWorld()
 {
     if (!IsInWorld())
@@ -315,6 +305,16 @@ void Guardian::InitStats(uint32 duration)
         m_charmInfo->InitCharmCreateSpells();
 
     SetReactState(REACT_AGGRESSIVE);
+}
+
+void Guardian::InitSummon()
+{
+    TempSummon::InitSummon();
+
+    if (m_owner->GetTypeId() == TYPEID_PLAYER
+        && m_owner->GetMinionGUID() == GetGUID()
+        && !m_owner->GetCharmGUID())
+        m_owner->ToPlayer()->CharmSpellInitialize();
 }
 
 Puppet::Puppet(SummonPropertiesEntry const *properties, Unit *owner) : Minion(properties, owner)

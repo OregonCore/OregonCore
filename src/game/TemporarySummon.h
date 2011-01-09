@@ -52,7 +52,6 @@ class Minion : public TempSummon
     public:
         Minion(SummonPropertiesEntry const *properties, Unit *owner);
         void InitStats(uint32 duration);
-        void InitSummon();
         void RemoveFromWorld();
         Unit *GetOwner() { return m_owner; }
     protected:
@@ -65,6 +64,7 @@ class Guardian : public Minion
         Guardian(SummonPropertiesEntry const *properties, Unit *owner);
         void InitStats(uint32 duration);
         bool InitStatsForLevel(uint32 level);
+        void InitSummon();
 
         int32 GetBonusDamage() { return m_bonusdamage; }
         void SetBonusDamage(int32 damage) { m_bonusdamage = damage; }

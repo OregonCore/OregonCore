@@ -7124,11 +7124,8 @@ void Unit::RemoveAllControlled()
         Unit *target = *m_Controlled.begin();
         m_Controlled.erase(m_Controlled.begin());
         if (target->GetCharmerGUID() == GetGUID())
-        {
-            //TODO: possessed
             target->RemoveCharmAuras();
-        }
-        else if(target->GetOwnerGUID() == GetGUID()
+        else if (target->GetOwnerGUID() == GetGUID()
             && target->GetTypeId() == TYPEID_UNIT
             && ((Creature*)target)->HasSummonMask(SUMMON_MASK_SUMMON))
         {
@@ -7179,14 +7176,14 @@ void Unit::RemoveCharmAuras()
 
 void Unit::UnsummonAllTotems()
 {
-    for (int8 i = 0; i < MAX_SUMMON_SLOT; ++i)
+    for (uint8 i = 0; i < MAX_SUMMON_SLOT; ++i)
     {
         if (!m_SummonSlot[i])
             continue;
 
-        Creature *OldTotem = GetMap()->GetCreature(m_SummonSlot[i]);
-        if (OldTotem && OldTotem->isSummon())
-            ((TempSummon*)OldTotem)->UnSummon();
+        if (Creature *OldTotem = GetMap()->GetCreature(m_SummonSlot[i]))
+            if (OldTotem->isSummon())
+                ((TempSummon*)OldTotem)->UnSummon();
     }
 }
 
@@ -11965,7 +11962,7 @@ void Unit::RemoveCharmedBy(Unit *charmer)
         }
     }
     else
-        ((Player*)this)->SetClientControl(this, 1);
+        ToPlayer()->SetClientControl(this, 1);
 
     // If charmer still exists
     if (!charmer)

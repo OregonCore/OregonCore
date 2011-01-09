@@ -1627,16 +1627,25 @@ TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropert
     uint32 mask = SUMMON_MASK_SUMMON;
     if (properties)
     {
-        if (properties->Category == SUMMON_CATEGORY_PET
-            || properties->Type == SUMMON_TYPE_GUARDIAN
-            || properties->Type == SUMMON_TYPE_MINION)
-            mask = SUMMON_MASK_GUARDIAN;
-        else if (properties->Type == SUMMON_TYPE_TOTEM)
-            mask = SUMMON_MASK_TOTEM;
-        else if (properties->Category == SUMMON_CATEGORY_PUPPET)
-            mask = SUMMON_MASK_PUPPET;
-        else if (properties->Type == SUMMON_TYPE_MINIPET)
-            mask = SUMMON_MASK_MINION;
+        switch(properties->Category)
+        {
+            case SUMMON_CATEGORY_PET:       mask = SUMMON_MASK_GUARDIAN;  break;
+            case SUMMON_CATEGORY_PUPPET:    mask = SUMMON_MASK_PUPPET;    break;
+            default:
+                switch(properties->Type)
+                {
+                    case SUMMON_TYPE_MINION:
+                    case SUMMON_TYPE_GUARDIAN:
+                        mask = SUMMON_MASK_GUARDIAN;  break;
+                    case SUMMON_TYPE_TOTEM:
+                        mask = SUMMON_MASK_TOTEM;     break;
+                    case SUMMON_TYPE_MINIPET:
+                        mask = SUMMON_MASK_MINION;    break;
+                    default:
+                        break;
+                }
+                break;
+        }
     }
 
     uint32 team = 0;
@@ -1653,6 +1662,7 @@ TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropert
         case SUMMON_MASK_MINION:    summon = new Minion     (properties, summoner);  break;
         default:    return NULL;
     }
+
     if (!summon->Create(objmgr.GenerateLowGuid(HIGHGUID_UNIT), this, entry, team, pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation()))
     {
         delete summon;
@@ -1680,32 +1690,6 @@ TempSummon* WorldObject::SummonCreature(uint32 entry, const Position &pos, TempS
     }
 
     return NULL;
-    /* ORIGINAL CODE COMMENTED OUT because we already backported the "position as a class" commit and therefore I had to change the code
-    if (!IsInWorld())
-        return NULL;
-
-    if (x == 0.0f && y == 0.0f && z == 0.0f)
-        GetClosePoint(x, y, z, GetObjectSize());
-
-    TempSummon *pCreature = GetMap()->SummonCreature(entry, x, y, z, ang, NULL, duration, GetTypeId() == TYPEID_UNIT ? (Unit*)this : NULL);
-    if (!pCreature)
-        return NULL;
-
-    pCreature->SetHomePosition(pos);
-    pCreature->InitSummon(duration);
-    pCreature->SetTempSummonType(spwtype);
-
-    if (GetTypeId() == TYPEID_UNIT && ToCreature()->IsAIEnabled)
-        ToCreature()->AI()->JustSummoned(pCreature);
-
-    if (pCreature->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_TRIGGER && pCreature->m_spells[0])
-    {
-        if (GetTypeId() == TYPEID_UNIT || GetTypeId() == TYPEID_PLAYER)
-            pCreature->setFaction(((Unit*)this)->getFaction());
-        pCreature->CastSpell(pCreature, pCreature->m_spells[0], false, 0, 0, GetGUID());
-    }
-
-    return pCreature;*/
 }
 
 void WorldObject::SetZoneScript()

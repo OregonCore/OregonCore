@@ -3234,31 +3234,29 @@ void Spell::EffectSummonType(uint32 i)
     GetSummonPosition(i, pos);
 
     /*//totem must be at same Z in case swimming caster and etc.
-        if( fabs( z - m_caster->GetPositionZ() ) > 5 )
+        if (fabs(z - m_caster->GetPositionZ()) > 5)
             z = m_caster->GetPositionZ();
 
     uint32 level = m_caster->getLevel();
 
     // level of creature summoned using engineering item based at engineering skill level
-    if(m_caster->GetTypeId()==TYPEID_PLAYER && m_CastItem)
+    if (m_caster->GetTypeId() == TYPEID_PLAYER && m_CastItem)
     {
         ItemPrototype const *proto = m_CastItem->GetProto();
-        if(proto && proto->RequiredSkill == SKILL_ENGINERING)
+        if (proto && proto->RequiredSkill == SKILL_ENGINERING)
         {
-            uint16 skill202 = ((Player*)m_caster)->GetSkillValue(SKILL_ENGINERING);
-            if(skill202)
-            {
+            uint16 skill202 = m_caster->ToPlayer()->GetSkillValue(SKILL_ENGINERING);
+            if (skill202)
                 level = skill202/5;
-            }
         }
     }*/
 
     TempSummon *summon = NULL;
 
-    switch(properties->Category)
+    switch (properties->Category)
     {
         default:
-            switch(properties->Type)
+            switch (properties->Type)
             {
                 case SUMMON_TYPE_PET:
                 case SUMMON_TYPE_GUARDIAN:
@@ -3307,7 +3305,7 @@ void Spell::EffectSummonType(uint32 i)
 
                     std::string name = m_originalCaster->GetName();
                     name.append(petTypeSuffix[3]);
-                    summon->SetName( name );
+                    summon->SetName(name);
                     break;
                 }
                 default:
@@ -3316,7 +3314,7 @@ void Spell::EffectSummonType(uint32 i)
 
                     int32 amount = damage > 0 ? damage : 1;
 
-                    for (int32 count = 0; count < amount; ++count)
+                    for (uint32 count = 0; count < amount; ++count)
                     {
                         GetSummonPosition(i, pos, radius, count);
 

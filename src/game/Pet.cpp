@@ -948,10 +948,12 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
 
     SetLevel(petlevel);
 
+    //Determine pet type
     PetType petType = MAX_PET_TYPE;
-    if (HasSummonMask(SUMMON_MASK_PET) && m_owner->GetTypeId() == TYPEID_PLAYER)
+    if (isPet() && m_owner->GetTypeId() == TYPEID_PLAYER)
     {
-        if (m_owner->getClass() == CLASS_WARLOCK)
+        if (m_owner->getClass() == CLASS_WARLOCK
+            || m_owner->getClass() == CLASS_SHAMAN)        // Fire Elemental
             petType = SUMMON_PET;
         else if (m_owner->getClass() == CLASS_HUNTER)
             petType = HUNTER_PET;
