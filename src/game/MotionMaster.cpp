@@ -206,14 +206,7 @@ MotionMaster::MoveTargetedHome()
 
     Clear(false);
 
-    if (Unit *target = i_owner->GetCharmerOrOwner())
-    {
-        DEBUG_LOG("Pet or controlled unit (Entry: %u GUID: %u) targeting home",
-            i_owner->GetEntry(), i_owner->GetGUIDLow());
-
-        MoveFollow(i_owner, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE, MOTION_SLOT_IDLE);
-    }
-    else if (i_owner->GetTypeId() == TYPEID_UNIT)
+    if (i_owner->GetTypeId() == TYPEID_UNIT)
     {
         DEBUG_LOG("Creature (Entry: %u GUID: %u) targeted home", i_owner->GetEntry(), i_owner->GetGUIDLow());
         Mutate(new HomeMovementGenerator<Creature>(), MOTION_SLOT_ACTIVE);

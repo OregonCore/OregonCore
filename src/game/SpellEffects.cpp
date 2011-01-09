@@ -3301,7 +3301,7 @@ void Spell::EffectSummonType(uint32 i)
 
                     summon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
-                    //summon->GetMotionMaster()->MoveTargetedHome();
+                    summon->AI()->EnterEvadeMode();
 
                     std::string name = m_originalCaster->GetName();
                     name.append(petTypeSuffix[3]);
@@ -6275,6 +6275,8 @@ void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const *
 
         summon->SetUInt32Value(UNIT_CREATED_BY_SPELL, m_spellInfo->Id);
         summon->SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_PVP_ATTACKABLE);
+
+        summon->AI()->EnterEvadeMode();
     }
 }
 
