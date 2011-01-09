@@ -11949,17 +11949,10 @@ void Unit::RemoveCharmedBy(Unit *charmer)
             RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE);
 
         ToCreature()->AI()->OnCharmed(false);
+        ToCreature()->AIM_Initialize();
 
-        if (isAlive() && ToCreature()->IsAIEnabled)
-        {
-            if (charmer && !IsFriendlyTo(charmer))
-            {
-                ToCreature()->AddThreat(charmer, 10000.0f);
-                ToCreature()->AI()->AttackStart(charmer);
-            }
-            else
-                ToCreature()->AI()->EnterEvadeMode();
-        }
+        if (ToCreature()->AI() && charmer && charmer->isAlive())
+            ToCreature()->AI()->AttackStart(charmer);
     }
     else
         ToPlayer()->SetClientControl(this, 1);
