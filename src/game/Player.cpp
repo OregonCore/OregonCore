@@ -18562,7 +18562,7 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
     // Arena visibility before arena start
     if (InArena() && GetBattleGround() && GetBattleGround()->GetStatus() == STATUS_WAIT_JOIN)
         if (const Player* target = u->GetCharmerOrOwnerPlayerOrPlayerItself())
-            return GetBGTeam() == target->GetBGTeam();
+            return GetBGTeam() == target->GetBGTeam() && target->isGMVisible();
 
     // player visible for other player if not logout and at same transport
     // including case when player is out of world
