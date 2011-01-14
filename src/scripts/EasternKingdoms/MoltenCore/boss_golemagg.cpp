@@ -24,17 +24,15 @@ EndScriptData */
 #include "ScriptPCH.h"
 #include "molten_core.h"
 
-#define EMOTE_AEGIS                     -1409002
-
 #define SPELL_MAGMASPLASH               13879
 #define SPELL_PYROBLAST                 20228
 #define SPELL_EARTHQUAKE                19798
 #define SPELL_ENRAGE                    19953
 #define SPELL_BUFF                      20553
 
-//-- CoreRager Spells --
+// Core Rager
+#define EMOTE_LOWHP                     -1409002
 #define SPELL_MANGLE                    19820
-#define SPELL_AEGIS                     20620               //This is self casted whenever we are below 50%
 
 struct boss_golemaggAI : public ScriptedAI
 {
@@ -63,10 +61,10 @@ struct boss_golemaggAI : public ScriptedAI
     {
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         if (pInstance)
-            pInstance->SetData(DATA_GOLEMAGG_DEATH, 0);
+            pInstance->SetData(DATA_GOLEMAGG, 0);
     }
 
     void UpdateAI(const uint32 diff)
@@ -147,11 +145,18 @@ struct mob_core_ragerAI : public ScriptedAI
             Mangle_Timer = 10000;
         } else Mangle_Timer -= diff;
 
-        //Cast AEGIS
-        if (me->GetHealth()*100 / me->GetMaxHealth() < 50)
+        //Don't die
+        Unit *pGolemagg = Unit::GetUnit((*me), pInstance->GetData64(DATA_GOLEMAGG));
+        if (pInstance)
         {
-            DoCast(me,SPELL_AEGIS);
-            DoScriptText(EMOTE_AEGIS, me);
+            if (pGolemagg->isAlive())
+            {
+                if (me->GetHealth()*100 / me->GetMaxHealth() < 50)
+                {
+                    DoScriptText(EMOTE_LOWHP, me);
+                    me->SetHealth(me->GetMaxHealth());
+                }
+            }
         }
 
         //Check_Timer
