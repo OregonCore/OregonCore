@@ -336,9 +336,8 @@ struct boss_fathomguard_sharkkisAI : public ScriptedAI
             Creature *Karathress = NULL;
             Karathress = Unit::GetCreature((*me), pInstance->GetData64(DATA_KARATHRESS));
 
-            if (Karathress)
+            if (Karathress && !me->isAlive())
                 CAST_AI(boss_fathomlord_karathressAI, Karathress->AI())->EventSharkkisDeath();
-                    CAST_AI(boss_fathomlord_karathressAI, Karathress->AI())->EventSharkkisDeath();
         }
     }
 
@@ -465,9 +464,8 @@ struct boss_fathomguard_tidalvessAI : public ScriptedAI
             Creature *Karathress = NULL;
             Karathress = Unit::GetCreature((*me), pInstance->GetData64(DATA_KARATHRESS));
 
-            if (Karathress)
-                if (!me->isAlive() && Karathress)
-                    CAST_AI(boss_fathomlord_karathressAI, Karathress->AI())->EventTidalvessDeath();
+            if (Karathress && !me->isAlive())
+                CAST_AI(boss_fathomlord_karathressAI, Karathress->AI())->EventTidalvessDeath();
         }
     }
 
@@ -580,9 +578,8 @@ struct boss_fathomguard_caribdisAI : public ScriptedAI
             Creature *Karathress = NULL;
             Karathress = Unit::GetCreature((*me), pInstance->GetData64(DATA_KARATHRESS));
 
-            if (Karathress)
-                if (!me->isAlive() && Karathress)
-                    CAST_AI(boss_fathomlord_karathressAI, Karathress->AI())->EventCaribdisDeath();
+            if (Karathress && !me->isAlive())
+                CAST_AI(boss_fathomlord_karathressAI, Karathress->AI())->EventCaribdisDeath();
         }
     }
 

@@ -70,6 +70,8 @@ m_resetTalentsCost(0), m_resetTalentsTime(0),
 m_declinedname(NULL), m_owner(owner)
 {
     m_summonMask |= SUMMON_MASK_PET;
+    if (type == HUNTER_PET)
+        m_summonMask |= SUMMON_MASK_HUNTER_PET;
     m_name = "Pet";
 
     m_regenTimer = 4000;
@@ -956,7 +958,10 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
             || m_owner->getClass() == CLASS_SHAMAN)        // Fire Elemental
             petType = SUMMON_PET;
         else if (m_owner->getClass() == CLASS_HUNTER)
+        {
             petType = HUNTER_PET;
+            m_summonMask |= SUMMON_MASK_HUNTER_PET;
+        }
         else
             sLog.outError("Unknown type pet %u is summoned by player class %u", GetEntry(), m_owner->getClass());
     }

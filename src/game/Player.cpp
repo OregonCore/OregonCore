@@ -1936,7 +1936,7 @@ void Player::RewardRage(uint32 damage, uint32 weaponSpeedHitFactor, bool attacke
 
         // Berserker Rage effect
         if (HasAura(18499,0))
-            addRage *= 1.3;
+            addRage *= 2.0;
     }
 
     addRage *= sWorld.getRate(RATE_POWER_RAGE_INCOME);
@@ -7282,17 +7282,16 @@ void Player::CastItemCombatSpell(Unit *target, WeaponAttackType attType, uint32 
                         }
                         if (slot != i)
                             continue;
+                        
                         // Check if item is useable (forms or disarm)
                         if (attType == BASE_ATTACK)
                         {
                             if (!IsUseEquippedWeapon(true))
                                 continue;
                         }
-                        else
-                        {
-                            if (IsInFeralForm())
-                                continue;
-                        }
+                        
+                        if (IsInFeralForm())
+                            continue;
                     }
                     CastItemCombatSpell(target, attType, procVictim, procEx, item, proto, spellInfo);
                 }
@@ -18505,7 +18504,7 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
     // Arena visibility before arena start
     if (InArena() && GetBattleGround() && GetBattleGround()->GetStatus() == STATUS_WAIT_JOIN)
         if (const Player* target = u->GetCharmerOrOwnerPlayerOrPlayerItself())
-            return GetBGTeam() == target->GetBGTeam();
+            return GetBGTeam() == target->GetBGTeam() && target->isGMVisible();
 
     // player visible for other player if not logout and at same transport
     // including case when player is out of world
@@ -20103,6 +20102,9 @@ void Player::HandleFallDamage(MovementInfo& movementInfo)
     // Removed for Anticheat Fall DMG
     if (!World::GetEnableMvAnticheat() && movementInfo.GetFallTime() < 1500)
         return;
+    else
+        if (movementInfo.GetFallTime() > 400 && movementInfo.GetFallTime() < 1500) // lower falltime then 400 = cheat
+            return;
 
     // calculate total z distance of the fall
     float z_diff = m_lastFallZ - movementInfo.GetPos()->GetPositionZ();

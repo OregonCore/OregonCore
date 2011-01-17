@@ -2764,8 +2764,9 @@ uint32 Unit::GetDefenseSkillValue(Unit const* target) const
 
 float Unit::GetUnitDodgeChance() const
 {
-    if (hasUnitState(UNIT_STAT_LOST_CONTROL))
+    if (IsNonMeleeSpellCasted(false) || hasUnitState(UNIT_STAT_LOST_CONTROL))
         return 0.0f;
+
     if (GetTypeId() == TYPEID_PLAYER)
         return GetFloatValue(PLAYER_DODGE_PERCENTAGE);
     else
@@ -7221,9 +7222,12 @@ uint32 Unit::SpellDamageBonus(Unit *pVictim, SpellEntry const *spellProto, uint3
     {
         // Pets just add their bonus damage to their spell damage
         // note that their spell damage is just gain of their own auras
-        if (ToCreature()->HasSummonMask(SUMMON_MASK_GUARDIAN) && spellProto->DmgClass == SPELL_DAMAGE_CLASS_MAGIC)
+        if (ToCreature()->HasSummonMask(SUMMON_MASK_GUARDIAN))
         {
-            BonusDamage = ((Guardian*)this)->GetBonusDamage();
+            if (spellProto->DmgClass == SPELL_DAMAGE_CLASS_MAGIC)
+                BonusDamage = ((Guardian*)this)->isHunterPet() ? ((Guardian*)this)->GetBonusDamage()*0.33 : ((Guardian*)this)->GetBonusDamage();
+            else if (spellProto->DmgClass == SPELL_DAMAGE_CLASS_MELEE && ((Guardian*)this)->isHunterPet())
+                BonusDamage = ((Guardian*)this)->GetTotalAttackPowerValue(BASE_ATTACK)*0.07;
         }
         // For totems get damage bonus from owner (statue isn't totem in fact)
         else if (ToCreature()->isTotem())
@@ -7472,17 +7476,17 @@ uint32 Unit::SpellDamageBonus(Unit *pVictim, SpellEntry const *spellProto, uint3
             {
                 CastingTime = 6300;
             }
-            // Corruption 93%
+            // Corruption 93.6%
             else if ((spellProto->SpellFamilyFlags & 0x2LL) && spellProto->SpellIconID == 313)
             {
-                DotFactor = 0.93f;
+                DotFactor = 0.936f;
             }
             break;
         case SPELLFAMILY_PALADIN:
-            // Consecration - 95% of Holy Damage
+            // Consecration - 95.24% of Holy Damage
             if ((spellProto->SpellFamilyFlags & 0x20LL) && spellProto->SpellIconID == 51)
             {
-                DotFactor = 0.95f;
+                DotFactor = 0.9524f;
                 CastingTime = 3500;
             }
             // Seal of Righteousness - 10.2%/9.8% (based on weapon type) of Holy Damage, multiplied by weapon speed
@@ -7570,10 +7574,10 @@ uint32 Unit::SpellDamageBonus(Unit *pVictim, SpellEntry const *spellProto, uint3
             {
                 CastingTime = 0;
             }
-            // Holy Nova - 14%
+            // Holy Nova - 16%
             else if ((spellProto->SpellFamilyFlags & 0x400000LL) && spellProto->SpellIconID == 1874)
             {
-                CastingTime = 500;
+                CastingTime = 560;
             }
             break;
         case SPELLFAMILY_DRUID:

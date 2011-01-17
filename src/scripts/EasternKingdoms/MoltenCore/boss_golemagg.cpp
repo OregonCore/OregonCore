@@ -17,24 +17,25 @@
 /* ScriptData
 SDName: Boss_Golemagg
 SD%Complete: 90
-SDComment:
+SDComment: Timers need to be confirmed, Golemagg's Trust need to be checked
 SDCategory: Molten Core
 EndScriptData */
 
 #include "ScriptPCH.h"
 #include "molten_core.h"
 
-#define EMOTE_AEGIS                     -1409002
+enum eEnums
+{
+    SPELL_MAGMASPLASH       = 13879,
+    SPELL_PYROBLAST         = 20228,
+    SPELL_EARTHQUAKE        = 19798,
+    SPELL_ENRAGE            = 19953,
+    SPELL_GOLEMAGG_TRUST    = 20553,
 
-#define SPELL_MAGMASPLASH               13879
-#define SPELL_PYROBLAST                 20228
-#define SPELL_EARTHQUAKE                19798
-#define SPELL_ENRAGE                    19953
-#define SPELL_BUFF                      20553
-
-//-- CoreRager Spells --
-#define SPELL_MANGLE                    19820
-#define SPELL_AEGIS                     20620               //This is self casted whenever we are below 50%
+    // Core Rager
+    EMOTE_LOWHP             = -1409002,
+    SPELL_MANGLE            = 19820
+};
 
 struct boss_golemaggAI : public ScriptedAI
 {
@@ -42,28 +43,25 @@ struct boss_golemaggAI : public ScriptedAI
     {
         pInstance = c->GetInstanceData();
     }
+
     ScriptedInstance *pInstance;
 
-    uint32 Pyroblast_Timer;
-    uint32 EarthQuake_Timer;
-    uint32 Enrage_Timer;
-    uint32 Buff_Timer;
+    uint32 uiPyroblastTimer;
+    uint32 uiEarthquakeTimer;
+    uint32 uiBuffTimer;
+    bool bEnraged;
 
     void Reset()
     {
-        Pyroblast_Timer = 7000;                             //These times are probably wrong
-        EarthQuake_Timer = 3000;
-        Buff_Timer = 2500;
-        Enrage_Timer = 0;
+        uiPyroblastTimer = 7*IN_MILLISECONDS;                           //These times are probably wrong
+        uiEarthquakeTimer = 3*IN_MILLISECONDS;
+        uiBuffTimer = 2500;
+        bEnraged = false;
 
-        me->CastSpell(me,SPELL_MAGMASPLASH,true);
+        DoCast(me, SPELL_MAGMASPLASH, true);
     }
 
-    void EnterCombat(Unit *who)
-    {
-    }
-
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*pKiller*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_GOLEMAGG_DEATH, 0);
@@ -74,41 +72,46 @@ struct boss_golemaggAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        //Pyroblast_Timer
-        if (Pyroblast_Timer <= diff)
+        //Pyroblast
+        if (uiPyroblastTimer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,SPELL_PYROBLAST);
 
-            Pyroblast_Timer = 7000;
-        } else Pyroblast_Timer -= diff;
+                uiPyroblastTimer = 7*IN_MILLISECONDS;
+        }
+        else
+            uiPyroblastTimer -= diff;
 
-        //Enrage_Timer
-        if (me->GetHealth()*100 / me->GetMaxHealth() < 11)
+        // Enrage
+        if (!bEnraged && me->GetHealth()*100 / me->GetMaxHealth() < 10)
         {
-            if (Enrage_Timer <= diff)
-            {
-                DoCast(me,SPELL_ENRAGE);
-                Enrage_Timer = 62000;
-            } else Enrage_Timer -= diff;
+            DoCast(me, SPELL_ENRAGE);
+            bEnraged = true;
         }
 
-        //EarthQuake_Timer
-        if (me->GetHealth()*100 / me->GetMaxHealth() < 11)
+        // Earthquake
+        if (bEnraged)
         {
-            if (EarthQuake_Timer <= diff)
+            if (uiEarthquakeTimer <= diff)
             {
                 DoCast(me->getVictim(),SPELL_EARTHQUAKE);
-                EarthQuake_Timer = 3000;
-            } else EarthQuake_Timer -= diff;
+                uiEarthquakeTimer = 3*IN_MILLISECONDS;
+            }
+            else
+                uiEarthquakeTimer -= diff;
         }
 
-        //Casting Buff for Coreragers. Spell is not working right. Players get the buff...
-        //        if (Buff_Timer <= diff)
-        //        {
-        //            DoCast(me, SPELL_BUFF);
-        //            Buff_Timer = 2500;
-        //        } else Buff_Timer -= diff;
+        /*
+        // Golemagg's Trust
+        if (uiBuffTimer <= diff)
+        {
+            DoCast(me, SPELL_GOLEMAGG_TRUST);
+            uiBuffTimer = 2500;
+        }
+        else
+            uiBuffTimer -= diff;
+        */
 
         DoMeleeAttackIfReady();
     }
@@ -121,18 +124,33 @@ struct mob_core_ragerAI : public ScriptedAI
         pInstance = c->GetInstanceData();
     }
 
-    uint32 Mangle_Timer;
-    uint32 Check_Timer;
     ScriptedInstance *pInstance;
+
+    uint32 uiMangleTimer;
 
     void Reset()
     {
-        Mangle_Timer = 7000;                                //These times are probably wrong
-        Check_Timer = 1000;
+        uiMangleTimer = 7*IN_MILLISECONDS;                           //These times are probably wrong
     }
 
-    void EnterCombat(Unit *who)
+    void DamageTaken(Unit* /*pDoneBy*/, uint32& uiDamage)
     {
+        if (me->GetHealth()*100 / me->GetMaxHealth() < 50)
+        {
+            if (pInstance)
+            {
+                if (Unit *pGolemagg = Unit::GetUnit(*me, pInstance->GetData64(DATA_GOLEMAGG)))
+                {
+                    if (pGolemagg->isAlive())
+                    {
+                        DoScriptText(EMOTE_LOWHP, me);
+                        me->SetHealth(me->GetMaxHealth());
+                    }
+                    else
+                        uiDamage = me->GetHealth();
+                }
+            }
+        }
     }
 
     void UpdateAI(const uint32 diff)
@@ -140,34 +158,14 @@ struct mob_core_ragerAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        //Mangle_Timer
-        if (Mangle_Timer <= diff)
+        // Mangle
+        if (uiMangleTimer <= diff)
         {
             DoCast(me->getVictim(),SPELL_MANGLE);
-            Mangle_Timer = 10000;
-        } else Mangle_Timer -= diff;
-
-        //Cast AEGIS
-        if (me->GetHealth()*100 / me->GetMaxHealth() < 50)
-        {
-            DoCast(me,SPELL_AEGIS);
-            DoScriptText(EMOTE_AEGIS, me);
+            uiMangleTimer = 10*IN_MILLISECONDS;
         }
-
-        //Check_Timer
-        if (Check_Timer <= diff)
-        {
-            if (pInstance)
-            {
-                Unit *pGolemagg = Unit::GetUnit((*me), pInstance->GetData64(DATA_GOLEMAGG));
-                if (!pGolemagg || !pGolemagg->isAlive())
-                {
-                    me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, true);
-                }
-            }
-
-            Check_Timer = 1000;
-        } else Check_Timer -= diff;
+        else
+            uiMangleTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

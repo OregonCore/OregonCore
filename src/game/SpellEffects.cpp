@@ -608,13 +608,40 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
                     uint32 stacks = 0;
                     Unit::AuraList const& auras = unitTarget->GetAurasByType(SPELL_AURA_PERIODIC_DAMAGE);
                     for (Unit::AuraList::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
+                    {
                         if ((*itr)->GetId() == 31803 && (*itr)->GetCasterGUID() == m_caster->GetGUID())
-                            ++stacks;
+                        {
+                           stacks = (*itr)->GetStackAmount();
+                           break;
+                        }
+                    }
+
                     if (!stacks)
                         //No damage if the target isn't affected by this
                         damage = -1;
                     else
                         damage *= stacks;
+                }
+                break;
+            }
+            case SPELLFAMILY_SHAMAN:
+            {
+                // Lightning Bolt & Chain Lightning
+                if (m_spellInfo->SpellFamilyFlags & 0x0003LL)
+                {
+                    Unit::AuraList const& auras = unitTarget->GetAurasByType(SPELL_AURA_OVERRIDE_CLASS_SCRIPTS);
+                    for (Unit::AuraList::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
+                    {
+                        switch ((*itr)->GetId())
+                        {
+                            case 28857:
+                            case 34230:
+                            case 41040:
+                                damage += (*itr)->GetModifierValue();
+                                itr = auras.end();
+                                break;
+                        }
+                    }
                 }
                 break;
             }
@@ -4292,7 +4319,11 @@ void Spell::EffectHealMaxHealth(uint32 /*i*/)
 {
     if (!unitTarget)
         return;
+
     if (!unitTarget->isAlive())
+        return;
+
+    if (unitTarget->GetMaxNegativeAuraModifier(SPELL_AURA_MOD_HEALING_PCT) <= -100)
         return;
 
     uint32 addhealth = unitTarget->GetMaxHealth() - unitTarget->GetHealth();
@@ -6323,4 +6354,3 @@ void Spell::EffectRedirectThreat(uint32 /*i*/)
     if (unitTarget)
         m_caster->SetReducedThreatPercent(100, unitTarget->GetGUID());
 }
-

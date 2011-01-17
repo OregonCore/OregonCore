@@ -524,7 +524,8 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
                 plMover->m_anti_justjumped = 0;
 
             // Anti-Speedhack
-            if ((real_delta > allowed_delta) && (delta_z < (plMover->m_anti_last_vspeed * time_delta) || delta_z < 1))
+            // Disabled to revert: if ((real_delta > allowed_delta) && (delta_z < (plMover->m_anti_last_vspeed * time_delta) || delta_z < 1))
+            if ((real_delta > allowed_delta) && (delta_z < 1))
             {
                 #ifdef MOVEMENT_ANTICHEAT_DEBUG
                 sLog.outError("Movement anticheat: %s is speed exception. real_delta=%f, allowed_delta=%f, delta_z=%f, last_vspeed=%f", plMover->GetName(), real_delta, allowed_delta, delta_z, plMover->m_anti_last_vspeed * time_delta);
@@ -534,7 +535,8 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
             }
 
             // Anti-Teleport
-            if ((real_delta > allowed_delta) && (real_delta > (time_delta * 100)))
+            // Disabled to revert: if ((real_delta > allowed_delta) && (real_delta > (time_delta * 100)))
+            if ((real_delta > 4900.0f) && !(real_delta < allowed_delta))
             {
                 #ifdef MOVEMENT_ANTICHEAT_DEBUG
                 sLog.outError("Movement anticheat: %s is teleport exception. real_delta=%f, allowed_delta=%f, min_delta=%f ", plMover->GetName(), real_delta, allowed_delta, time_delta * 100);
@@ -543,22 +545,23 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
                 check_passed = false;
             }
 
+            if (movementInfo.time > plMover->m_anti_lastspeed_changetime)
+            {
+                plMover->m_anti_last_hspeed = current_speed; // store current speed
+                plMover->m_anti_last_vspeed = -3.2f; // original value: -2.3f
+                plMover->m_anti_lastspeed_changetime = 0;
+            }
+
             // Anti-Wallhack
             // Known issues: jump+up, and walking up with low delta_z (one and only way to make it right is to calculate the delta_z of the terrain)
-            if (!plMover->m_anti_isjumping && (tg_z > 1.6f) && (delta_z < (plMover->m_anti_last_vspeed * time_delta)))
+            // Disabled to revert: if (!plMover->m_anti_isjumping && (tg_z > 1.6f) && (delta_z < (plMover->m_anti_last_vspeed * time_delta)))
+            if (!plMover->m_anti_isjumping && (tg_z > 1.56f) && (delta_z < plMover->m_anti_last_vspeed))
             {
                 #ifdef MOVEMENT_ANTICHEAT_DEBUG
                 sLog.outError("Movement anticheat: %s is a wall-climb cheater. tg_z=%f, delta_z=%f, last_vspeed=%f", plMover->GetName(), tg_z, delta_z, plMover->m_anti_last_vspeed * time_delta);
                 #endif
                 plMover->m_anti_lastcheat = "Wall-climbing Hack";
                 check_passed = false;
-            }
-
-            if (movementInfo.time > plMover->m_anti_lastspeed_changetime)
-            {
-                plMover->m_anti_last_hspeed = current_speed; // store current speed
-                plMover->m_anti_last_vspeed = -2.3f;
-                plMover->m_anti_lastspeed_changetime = 0;
             }
 
             // Anti-Flyhack
@@ -685,17 +688,17 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         }
     }
 
-    /* process position-change */
-    recv_data.put<uint32>(5, getMSTime());                  // offset flags(4) + unk(1)
-    WorldPacket data(opcode, mover->GetPackGUID().size() + recv_data.size());
-    data << mover->GetPackGUID();
-    data.append(recv_data.contents(), recv_data.size());
-    mover->SendMessageToSet(&data, false);
-
     if (plMover)                                            // nothing is charmed, or player charmed
     {
         if (check_passed || plMover->isGameMaster() || forcemovement)
         {
+            /* process position-change */
+            recv_data.put<uint32>(5, getMSTime());                  // offset flags(4) + unk(1)
+            WorldPacket data(opcode, mover->GetPackGUID().size() + recv_data.size());
+            data << mover->GetPackGUID();
+            data.append(recv_data.contents(), recv_data.size());
+            mover->SendMessageToSet(&data, false);
+
             if (updateOrientationOnly)
                 plMover->SetPosition(plMover->GetPositionX(), plMover->GetPositionY(), plMover->GetPositionZ(), movementInfo.GetPos()->GetOrientation());
             else
@@ -732,10 +735,13 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         {
             plMover->m_anti_alarmcount++;
             WorldPacket data;
-            if (useFallingFlag)
+            // Temporary disabled maybee cause fall dmg on dismount in air
+            /* if (useFallingFlag)
                 plMover->SetUnitMovementFlags(MOVEFLAG_FALLING);
             else
                 plMover->SetUnitMovementFlags(MOVEFLAG_NONE);
+            */
+            plMover->SetUnitMovementFlags(MOVEFLAG_NONE);
             plMover->BuildTeleportAckMsg(&data, plMover->GetPositionX(), plMover->GetPositionY(), plMover->GetPositionZ(), plMover->GetOrientation());
             plMover->GetSession()->SendPacket(&data);
             plMover->BuildHeartBeatMsg(&data);

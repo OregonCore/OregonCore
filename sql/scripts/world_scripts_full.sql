@@ -42,7 +42,15 @@ UPDATE `gameobject_template` SET `scriptname`='go_sacred_fire_of_life' WHERE `en
 UPDATE `gameobject_template` SET `scriptname`='go_skull_pile' WHERE `entry`=185913;
 UPDATE `gameobject_template` SET `ScriptName`='go_iruxos' WHERE `entry`=176581;
 UPDATE `gameobject_template` SET `ScriptName`='go_veil_skith_cage' WHERE `entry` IN (185202,185203,185204,185205);
-
+UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_stasis' WHERE `entry` BETWEEN 185465 AND 185467;
+UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_stasis' WHERE `entry`=184595;
+UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_stasis' WHERE `entry` BETWEEN 185461 AND 185464;
+UPDATE `gameobject_template` SET `ScriptName`='go_resonite_cask' WHERE entry=178145;
+UPDATE `gameobject_template` SET `ScriptName`='go_shrine_of_the_birds' WHERE `entry` IN (185547,185553,185551);
+UPDATE `gameobject_template` SET `ScriptName`='go_matrix_punchograph' WHERE `entry` IN (142345,142475,142476,142696);
+UPDATE `gameobject_template` SET `ScriptName`='go_hive_pod' WHERE `entry`=178553;
+UPDATE `gameobject_template` SET `ScriptName` = 'go_soulwell' WHERE `entry` IN (181621,193169);
+UPDATE `gameobject_template` SET `ScriptName`='go_blood_filled_orb' WHERE `entry`=182024;
 
 /* GUARD */
 UPDATE `creature_template` SET `ScriptName`='guard_azuremyst' WHERE `entry`=18038;
@@ -307,6 +315,8 @@ UPDATE `creature_template` SET `ScriptName`='npc_saikkal_the_elder' WHERE `entry
 UPDATE `creature_template` SET `ScriptName`='npc_skyguard_handler_deesak' WHERE `entry`=23415;
 UPDATE `creature_template` SET `ScriptName`='npc_ogre_brute' WHERE `entry`=19995;
 UPDATE `creature_template` SET `ScriptName`='npc_bloodmaul_brutebane' WHERE `entry`=21241;
+UPDATE `gameobject_template` SET `ScriptName`='go_fel_crystalforge' WHERE `entry`=185919;
+UPDATE `gameobject_template` SET `ScriptName`='go_bashir_crystalforge' WHERE `entry`=185921;
 
 /* BLASTED LANDS */
 UPDATE `creature_template` SET `ScriptName`='npc_deathly_usher' WHERE `entry`=8816;
@@ -1104,6 +1114,8 @@ UPDATE `creature_template` SET `ScriptName`='npc_cooshcoosh' WHERE `entry`=18586
 UPDATE `creature_template` SET `ScriptName`='npc_elder_kuruti' WHERE `entry`=18197;
 UPDATE `creature_template` SET `ScriptName`='npc_mortog_steamhead' WHERE `entry`=23373;
 UPDATE `creature_template` SET `ScriptName`='npc_kayra_longmane' WHERE `entry`=17969;
+UPDATE `gameobject_template` SET `ScriptName`='go_southfury_moonstone' WHERE `entry`=185566;
+UPDATE `creature_template` SET `ScriptName`='npc_timothy_daniels' WHERE `entry`=18019;
 
 /* ZUL'AMAN */
 UPDATE `instance_template` SET `script`='instance_zulaman' WHERE `map`=568;
