@@ -4494,7 +4494,7 @@ bool Unit::HandleHasteAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                 case 33735:
                 {
                     target = SelectNearbyTarget();
-                    if (!target)
+                    if (!target || target == pVictim)
                         return false;
                     basepoints0 = damage;
                     triggered_spell_id = 22482;
