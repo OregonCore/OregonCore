@@ -388,7 +388,7 @@ bool AuthSocket::_HandleLogonChallenge()
                 if ( strcmp((*result)[3].GetString(),get_remote_address().c_str()) )
                 {
                     DEBUG_LOG("[AuthChallenge] Account IP differs");
-                    pkt << (uint8) WOW_FAIL_SUSPENDED;
+                    pkt << (uint8) WOW_FAIL_LOCKED_ENFORCED;
                     locked=true;
                 }
                 else
