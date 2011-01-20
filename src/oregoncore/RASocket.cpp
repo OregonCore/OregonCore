@@ -118,7 +118,7 @@ void RASocket::OnRead()
                 {
                     szLogin=&buff[5];
 
-                    // Get the gmlevel and password from the account table
+                    // Get the password from the account table
                     std::string login = szLogin;
 
                     // Convert Account name to Upper Format
@@ -127,7 +127,7 @@ void RASocket::OnRead()
                     // Escape the Login to allow quotes in names
                     LoginDatabase.escape_string(login);
 
-                    QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT gmlevel FROM account WHERE username = '%s'",login.c_str());
+                    QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT aa.gmlevel FROM account_access aa, account a WHERE a.username = '%s' AND aa.id = a.id",login.c_str());
 
                     // If the user is not found, deny access
                     if (!result)

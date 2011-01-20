@@ -701,15 +701,14 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
 
     QueryResult_AutoPtr result = LoginDatabase.PQuery ("SELECT "
                                 "id, "                      //0
-                                "gmlevel, "                 //1
-                                "sessionkey, "              //2
-                                "last_ip, "                 //3
-                                "locked, "                  //4
-                                "v, "                       //5
-                                "s, "                       //6
-                                "expansion, "               //7
-                                "mutetime, "                //8
-                                "locale "                   //9
+                                "sessionkey, "              //1
+                                "last_ip, "                 //2
+                                "locked, "                  //3
+                                "v, "                       //4
+                                "s, "                       //5
+                                "expansion, "               //6
+                                "mutetime, "                //7
+                                "locale "                   //8
                                 "FROM account "
                                 "WHERE username = '%s'",
                                 safe_account.c_str ());
@@ -728,17 +727,17 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
 
     Field* fields = result->Fetch ();
 
-    uint8 expansion = fields[7].GetUInt8();
+    uint8 expansion = fields[6].GetUInt8();
     uint32 world_expansion = sWorld.getConfig(CONFIG_EXPANSION);
     if (expansion > world_expansion)
         expansion = world_expansion;
-    //expansion = ((sWorld.getConfig(CONFIG_EXPANSION) > fields[7].GetUInt8()) ? fields[7].GetUInt8() : sWorld.getConfig(CONFIG_EXPANSION));
+    //expansion = ((sWorld.getConfig(CONFIG_EXPANSION) > fields[6].GetUInt8()) ? fields[6].GetUInt8() : sWorld.getConfig(CONFIG_EXPANSION));
 
     N.SetHexStr ("894B645E89E1535BBDAD5B8B290650530801B18EBFBF5E8FAB3C82872A3E9BB7");
     g.SetDword (7);
 
-    v.SetHexStr(fields[5].GetString());
-    s.SetHexStr (fields[6].GetString ());
+    v.SetHexStr(fields[4].GetString());
+    s.SetHexStr (fields[5].GetString ());
 
     const char* sStr = s.AsHexStr ();                       //Must be freed by OPENSSL_free()
     const char* vStr = v.AsHexStr ();                       //Must be freed by OPENSSL_free()
@@ -751,9 +750,9 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     OPENSSL_free ((void*) vStr);
 
     // Re-check ip locking (same check as in realmd).
-    if (fields[4].GetUInt8 () == 1) // if ip is locked
+    if (fields[3].GetUInt8 () == 1) // if ip is locked
     {
-        if (strcmp (fields[3].GetString (), GetRemoteAddress ().c_str ()))
+        if (strcmp (fields[2].GetString (), GetRemoteAddress ().c_str ()))
         {
             packet.Initialize (SMSG_AUTH_RESPONSE, 1);
             packet << uint8 (AUTH_FAILED);
@@ -765,14 +764,31 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     }
 
     id = fields[0].GetUInt32 ();
-    security = fields[1].GetUInt16 ();
-    K.SetHexStr (fields[2].GetString ());
+    K.SetHexStr (fields[1].GetString ());
 
-    time_t mutetime = time_t (fields[8].GetUInt64 ());
+    time_t mutetime = time_t (fields[7].GetUInt64 ());
 
-    locale = LocaleConstant (fields[9].GetUInt8 ());
+    locale = LocaleConstant (fields[8].GetUInt8 ());
     if (locale >= MAX_LOCALE)
         locale = LOCALE_enUS;
+
+        // Checks gmlevel per Realm
+        result = 
+        LoginDatabase.PQuery ("SELECT "
+                              "RealmID, "            //0
+                              "gmlevel "             //1
+                              "FROM account_access "
+                              "WHERE id = '%d'"
+                              " AND (RealmID = '%d'"
+                              " OR RealmID = '-1')",
+                              id, realmID);
+    if (!result)
+        security = 0;
+    else
+    {
+        fields = result->Fetch ();
+        security = fields[1].GetInt32();
+    }
 
     // Re-check account ban (same check as in realmd)
     QueryResult_AutoPtr banresult = LoginDatabase.PQuery ("SELECT "

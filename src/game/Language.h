@@ -918,6 +918,8 @@ enum OregonStrings
     LANG_NO_ENTER_CHAMPIONS_HALL        = 10057,
 
     // Use for custom patches             11000-11999
+    //LANG_AUTO_BROADCAST               = 11000, // Disabled for whenever it's added back in
+    LANG_INVALID_REALMID                = 11001,
 
     // NOT RESERVED IDS                   12000-1999999999
     // `db_script_string` table index     2000000000-2000009999 (MIN_DB_SCRIPT_STRING_ID-MAX_DB_SCRIPT_STRING_ID)

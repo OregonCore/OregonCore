@@ -1245,13 +1245,15 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
     uint32 gm = 0;
     char* arg1 = strtok((char*)args, " ");
     char* arg2 = strtok(NULL, " ");
+    char* arg3 = strtok(NULL, " ");
 
-    if (getSelectedPlayer() && arg1 && !arg2)
+    if (getSelectedPlayer() && arg1 && !arg3)
     {
         targetAccountId = getSelectedPlayer()->GetSession()->GetAccountId();
         accmgr.GetName(targetAccountId, targetAccountName);
         Player* targetPlayer = getSelectedPlayer();
         gm = atoi(arg1);
+        uint32 gmRealmID = arg2 ? atoi(arg2) : realmID;
 
         // Check for invalid specified GM level.
         if ((gm < SEC_PLAYER || gm > SEC_ADMINISTRATOR))
@@ -1263,7 +1265,9 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
 
         // Check if targets GM level and specified GM level is not higher than current gm level
         targetSecurity = targetPlayer->GetSession()->GetSecurity();
-        if (targetSecurity >= m_session->GetSecurity() || gm >= m_session->GetSecurity())
+        if (targetSecurity >= m_session->GetSecurity() ||
+            gm >= m_session->GetSecurity()             ||
+            (gmRealmID != realmID && m_session->GetSecurity() < SEC_CONSOLE))
         {
             SendSysMessage(LANG_YOURS_SECURITY_IS_LOW);
             SetSentErrorMessage(true);
@@ -1274,13 +1278,25 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
         if (m_session->GetPlayer() != targetPlayer)
         {
             PSendSysMessage(LANG_YOU_CHANGE_SECURITY, targetAccountName.c_str(), gm);
-        }else{
+        }
+        else
+        {
             PSendSysMessage(LANG_YOURS_SECURITY_CHANGED, m_session->GetPlayer()->GetName(), gm);
         }
 
-        LoginDatabase.PExecute("UPDATE account SET gmlevel = '%d' WHERE id = '%u'", gm, targetAccountId);
-        return true;
-    }else
+        // If gmRealmID is -1, delete all values for the account id, else, insert values for the specific realmID
+        if (gmRealmID == -1)
+        {
+            LoginDatabase.PExecute("DELETE FROM account_access WHERE id = '%u'", targetAccountId);
+            LoginDatabase.PExecute("INSERT INTO account_access VALUES ('%u', '%d', -1)", targetAccountId, gm);
+        }
+        else
+        {
+            LoginDatabase.PExecute("DELETE FROM account_access WHERE id = '%u' AND RealmID = '%d'", targetAccountId, realmID);
+            LoginDatabase.PExecute("INSERT INTO account_access VALUES ('%u','%d','%d')", targetAccountId, gm, realmID);
+        }        return true;
+    }
+    else
     {
         // Check for second parameter
         if (!arg2)
@@ -1313,6 +1329,15 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
             return false;
         }
 
+        uint32 gmRealmID = arg3 ? atoi(arg3) : realmID;
+        // Check if provided realmID is not current realmID, or isn't -1
+        if (gmRealmID != realmID && gmRealmID != -1)
+        {
+            SendSysMessage(LANG_INVALID_REALMID);
+            SetSentErrorMessage(true);
+            return false;
+        }
+
         targetAccountId = accmgr.GetId(arg1);
         // m_session == NULL only for console
         uint32 plSecurity = m_session ? m_session->GetSecurity() : SEC_CONSOLE;
@@ -1328,8 +1353,17 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
         }
 
         PSendSysMessage(LANG_YOU_CHANGE_SECURITY, targetAccountName.c_str(), gm);
-        LoginDatabase.PExecute("UPDATE account SET gmlevel = '%d' WHERE id = '%u'", gm, targetAccountId);
-        return true;
+        // If gmRealmID is -1, delete all values for the account id, else, insert values for the specific realmID
+        if (gmRealmID == -1)
+        {
+            LoginDatabase.PExecute("DELETE FROM account_access WHERE id = '%u'", targetAccountId);
+            LoginDatabase.PExecute("INSERT INTO account_access VALUES ('%u', '%d', -1)", targetAccountId, gm);
+        }
+        else
+        {
+            LoginDatabase.PExecute("DELETE FROM account_access WHERE id = '%u' AND RealmID = '%d'", targetAccountId, realmID);
+            LoginDatabase.PExecute("INSERT INTO account_access VALUES ('%u','%d','%d')", targetAccountId, gm, realmID);
+        }        return true;
     }
 }
 
@@ -6733,7 +6767,7 @@ bool ChatHandler::HandleInstanceSaveDataCommand(const char * /*args*/)
 bool ChatHandler::HandleGMListFullCommand(const char* /*args*/)
 {
     // Get the accounts with GM Level >0
-    QueryResult_AutoPtr result = LoginDatabase.Query("SELECT username,gmlevel FROM account WHERE gmlevel > 0");
+    QueryResult_AutoPtr result = LoginDatabase.Query("SELECT a.username,aa.gmlevel FROM account a, account_access aa WHERE a.id=aa.id AND aa.gmlevel > 0");
     if (result)
     {
         SendSysMessage(LANG_GMLIST);

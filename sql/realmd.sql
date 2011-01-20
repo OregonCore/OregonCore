@@ -15,6 +15,27 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+-- 
+-- Table structure for table `account_access`
+-- 
+
+DROP TABLE IF EXISTS `account_access`;
+CREATE TABLE `account_access` (
+  `id` int(11) unsigned NOT NULL,
+  `gmlevel` tinyint(3) unsigned NOT NULL,
+  `RealmID` int(11) NOT NULL default '-1',
+  PRIMARY KEY  (`id`,`RealmID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+
+-- 
+-- Dumping data for table `account_access`
+-- 
+
+LOCK TABLES `account_access` WRITE;
+/*!40000 ALTER TABLE `account_access` DISABLE KEYS */;
+/*!40000 ALTER TABLE `account_access` ENABLE KEYS */;
+UNLOCK TABLES;
+
 --
 -- Table structure for table `account`
 --
@@ -24,7 +45,6 @@ CREATE TABLE `account` (
   `id` bigint(20) unsigned NOT NULL auto_increment COMMENT 'Identifier',
   `username` varchar(32) NOT NULL,
   `sha_pass_hash` varchar(40) NOT NULL default '',
-  `gmlevel` tinyint(3) unsigned NOT NULL default '0',
   `sessionkey` longtext,
   `v` longtext,
   `s` longtext,
@@ -39,8 +59,7 @@ CREATE TABLE `account` (
   `mutetime` bigint(40) unsigned NOT NULL default '0',
   `locale` tinyint(3) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `idx_username` (`username`),
-  KEY `idx_gmlevel` (`gmlevel`)
+  UNIQUE KEY `idx_username` (`username`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Account System';
 
 --
