@@ -8828,6 +8828,10 @@ bool Unit::canDetectStealthOf(Unit const* target, float distance) const
 void Unit::SetVisibility(UnitVisibility x)
 {
     m_Visibility = x;
+
+    if (m_Visibility == VISIBILITY_GROUP_STEALTH)
+        DestroyForNearbyPlayers();
+
     UpdateObjectVisibility();
 }
 
