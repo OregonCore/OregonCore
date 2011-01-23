@@ -888,7 +888,7 @@ void Spell::EffectDummy(uint32 i)
                          unitTarget = m_caster;
                     }
 
-                    m_caster->CastSpell(m_caster, spell_id, true, NULL);
+                    m_caster->CastSpell(unitTarget, spell_id, true, NULL);
                     return;
                 }
                 case 14185:                                 // Preparation Rogue
