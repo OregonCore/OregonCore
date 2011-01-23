@@ -11466,17 +11466,19 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
 
     // find player: owner of controlled `this` or `this` itself maybe
     Player *player = GetCharmerOrOwnerPlayerOrPlayerItself();
+    Creature *creature = pVictim->ToCreature();
 
     bool bRewardIsAllowed = true;
-    if (pVictim->GetTypeId() == TYPEID_UNIT)
+    if (creature)
     {
-        bRewardIsAllowed = pVictim->ToCreature()->IsDamageEnoughForLootingAndReward();
+        bRewardIsAllowed = creature->IsDamageEnoughForLootingAndReward();
         if (!bRewardIsAllowed)
-            pVictim->ToCreature()->SetLootRecipient(NULL);
+            creature->SetLootRecipient(NULL);
     }
 
-    if (bRewardIsAllowed && pVictim->GetTypeId() == TYPEID_UNIT && pVictim->ToCreature()->GetLootRecipient())
-        player = pVictim->ToCreature()->GetLootRecipient();
+    if (bRewardIsAllowed && creature && creature->GetLootRecipient())
+        player = creature->GetLootRecipient();
+
     // Reward player, his pets, and group/raid members
     // call kill spell proc event (before real die and combat stop to triggering auras removed at death/combat stop)
     if (bRewardIsAllowed && player && player != pVictim)
@@ -11551,12 +11553,11 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
     else                                                // creature died
     {
         DEBUG_LOG("DealDamageNotPlayer");
-        Creature *cVictim = pVictim->ToCreature();
 
-        if (!cVictim->isPet())
+        if (!creature->isPet())
         {
-            cVictim->DeleteThreatList();
-            cVictim->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+            creature->DeleteThreatList();
+            creature->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
         }
 
         // Call KilledUnit for creatures, this needs to be called after the lootable flag is set
@@ -11566,13 +11567,13 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
             pPet->AI()->KilledUnit(pVictim);
 
         // Call creature just died function
-        if (cVictim->IsAIEnabled)
-            cVictim->AI()->JustDied(this);
+        if (creature->IsAIEnabled)
+            creature->AI()->JustDied(this);
 
         // Dungeon specific stuff, only applies to players killing creatures
-        if (cVictim->GetInstanceId())
+        if (creature->GetInstanceId())
         {
-            Map *m = cVictim->GetMap();
+            Map *m = creature->GetMap();
             Player *creditedPlayer = GetCharmerOrOwnerPlayerOrPlayerItself();
             // TODO: do instance binding anyway if the charmer/owner is offline
 
@@ -11580,15 +11581,15 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
             {
                 if (m->IsRaid() || m->IsHeroic())
                 {
-                    if (cVictim->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_INSTANCE_BIND)
+                    if (creature->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_INSTANCE_BIND)
                         ((InstanceMap *)m)->PermBindAllPlayers(creditedPlayer);
                 }
                 else
                 {
                     // the reset time is set but not added to the scheduler
                     // until the players leave the instance
-                    time_t resettime = cVictim->GetRespawnTimeEx() + 2 * HOUR;
-                    if (InstanceSave *save = sInstanceSaveManager.GetInstanceSave(cVictim->GetInstanceId()))
+                    time_t resettime = creature->GetRespawnTimeEx() + 2 * HOUR;
+                    if (InstanceSave *save = sInstanceSaveManager.GetInstanceSave(creature->GetInstanceId()))
                         if (save->GetResetTime() < resettime) save->SetResetTime(resettime);
                 }
             }
