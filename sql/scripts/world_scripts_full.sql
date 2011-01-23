@@ -16,6 +16,7 @@ UPDATE `gameobject_template` SET `ScriptName`='go_eastern_crystal_pylon' WHERE `
 UPDATE `gameobject_template` SET `ScriptName`='go_barov_journal' WHERE `entry`=180794;
 UPDATE `gameobject_template` SET `ScriptName`='go_field_repair_bot_74A' WHERE `entry`=179552;
 UPDATE `gameobject_template` SET `ScriptName`='go_orb_of_command' WHERE `entry`=179879;
+UPDATE `gameobject_template` SET `ScriptName`='go_resonite_cask' WHERE entry=178145;
 UPDATE `gameobject_template` SET `ScriptName`='go_tablet_of_madness' WHERE `entry`=180368;
 UPDATE `gameobject_template` SET `ScriptName`='go_tablet_of_the_seven' WHERE `entry`=169294;
 UPDATE `gameobject_template` SET `ScriptName`='go_manticron_cube' WHERE `entry`=181713;
@@ -23,34 +24,16 @@ UPDATE `gameobject_template` SET `ScriptName`='go_mausoleum_trigger' WHERE `entr
 UPDATE `gameobject_template` SET `ScriptName`='go_mausoleum_door' WHERE `entry`=176594;
 UPDATE `gameobject_template` SET `ScriptName`='go_crystal_prison' WHERE `entry`=185126;
 UPDATE `gameobject_template` SET `ScriptName`='go_jump_a_tron' WHERE `entry`=183146;
-UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_prison' WHERE `entry`=184421;
-UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_prison' WHERE `entry`=184418 LIMIT 1;
-UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_prison' WHERE `entry`=184419 LIMIT 1;
-UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_prison' WHERE `entry`=184420 LIMIT 1;
-UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_prison' WHERE `entry`=184421 LIMIT 1;
-UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_prison' WHERE `entry`=184422 LIMIT 1;
-UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_prison' WHERE `entry`=184423 LIMIT 1;
-UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_prison' WHERE `entry`=184424 LIMIT 1;
-UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_prison' WHERE `entry`=184425 LIMIT 1;
-UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_prison' WHERE `entry`=184426 LIMIT 1;
-UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_prison' WHERE `entry`=184427 LIMIT 1;
-UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_prison' WHERE `entry`=184428 LIMIT 1;
-UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_prison' WHERE `entry`=184429 LIMIT 1;
-UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_prison' WHERE `entry`=184430 LIMIT 1;
-UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_prison' WHERE `entry`=184431 LIMIT 1;
-UPDATE `gameobject_template` SET `scriptname`='go_sacred_fire_of_life' WHERE `entry`=175944;
-UPDATE `gameobject_template` SET `scriptname`='go_skull_pile' WHERE `entry`=185913;
-UPDATE `gameobject_template` SET `ScriptName`='go_iruxos' WHERE `entry`=176581;
+UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_prison' WHERE `entry` BETWEEN 184418 AND 184431;
 UPDATE `gameobject_template` SET `ScriptName`='go_veil_skith_cage' WHERE `entry` IN (185202,185203,185204,185205);
 UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_stasis' WHERE `entry` BETWEEN 185465 AND 185467;
 UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_stasis' WHERE `entry`=184595;
 UPDATE `gameobject_template` SET `ScriptName`='go_ethereum_stasis' WHERE `entry` BETWEEN 185461 AND 185464;
-UPDATE `gameobject_template` SET `ScriptName`='go_resonite_cask' WHERE entry=178145;
+UPDATE `gameobject_template` SET `ScriptName`='go_sacred_fire_of_life' WHERE `entry`=175944;
+UPDATE `gameobject_template` SET `ScriptName`='go_skull_pile' WHERE `entry`=185913;
 UPDATE `gameobject_template` SET `ScriptName`='go_shrine_of_the_birds' WHERE `entry` IN (185547,185553,185551);
 UPDATE `gameobject_template` SET `ScriptName`='go_matrix_punchograph' WHERE `entry` IN (142345,142475,142476,142696);
-UPDATE `gameobject_template` SET `ScriptName`='go_hive_pod' WHERE `entry`=178553;
-UPDATE `gameobject_template` SET `ScriptName` = 'go_soulwell' WHERE `entry` IN (181621,193169);
-UPDATE `gameobject_template` SET `ScriptName`='go_blood_filled_orb' WHERE `entry`=182024;
+UPDATE `gameobject_template` SET `ScriptName`='go_soulwell' WHERE `entry` IN (181621,193169);
 
 /* GUARD */
 UPDATE `creature_template` SET `ScriptName`='guard_azuremyst' WHERE `entry`=18038;
@@ -101,7 +84,7 @@ UPDATE `item_template` SET `ScriptName`='item_voodoo_charm' WHERE `entry`=8149;
 UPDATE `item_template` SET `ScriptName`='item_vorenthals_presence' WHERE `entry`=30259;
 UPDATE `item_template` SET `ScriptName`='item_yehkinyas_bramble' WHERE `entry`=10699;
 UPDATE `item_template` SET `ScriptName`='item_zezzaks_shard' WHERE `entry`=31463;
-UPDATE `item_template` SET `ScriptName`="item_only_for_flight" WHERE `entry` IN (34475, 34489, 24538);
+UPDATE `item_template` SET `ScriptName`='item_only_for_flight' WHERE `entry` IN (34475,34489,24538);
 
 /* NPC (usually creatures to be found in more than one specific zone) */
 UPDATE `creature_template` SET `ScriptName`='npc_chicken_cluck' WHERE `entry`=620;
@@ -190,7 +173,6 @@ UPDATE `creature_template` SET `ScriptName`='mob_depth_charge' WHERE `entry`=230
 /* AZUREMYST ISLE */
 UPDATE `creature_template` SET `ScriptName`='npc_engineer_spark_overgrind' WHERE `entry`=17243;
 UPDATE `creature_template` SET `ScriptName`='npc_injured_draenei' WHERE `entry`=16971;
-UPDATE `creature_template` SET `ScriptName`='npc_susurrus' WHERE `entry`=17435;
 UPDATE `creature_template` SET `ScriptName`='npc_magwin' WHERE `entry`=17312;
 UPDATE `creature_template` SET `ScriptName`='npc_geezle' WHERE `entry`=17318;
 UPDATE `creature_template` SET `ScriptName`='mob_nestlewood_owlkin' WHERE `entry`=16518;
@@ -312,11 +294,10 @@ UPDATE `creature_template` SET `ScriptName`='mobs_nether_drake' WHERE `entry` IN
 UPDATE `creature_template` SET `ScriptName`='npc_daranelle' WHERE `entry`=21469;
 UPDATE `creature_template` SET `ScriptName`='npc_overseer_nuaar' WHERE `entry`=21981;
 UPDATE `creature_template` SET `ScriptName`='npc_saikkal_the_elder' WHERE `entry`=22932;
-UPDATE `creature_template` SET `ScriptName`='npc_skyguard_handler_deesak' WHERE `entry`=23415;
-UPDATE `creature_template` SET `ScriptName`='npc_ogre_brute' WHERE `entry`=19995;
-UPDATE `creature_template` SET `ScriptName`='npc_bloodmaul_brutebane' WHERE `entry`=21241;
 UPDATE `gameobject_template` SET `ScriptName`='go_fel_crystalforge' WHERE `entry`=185919;
 UPDATE `gameobject_template` SET `ScriptName`='go_bashir_crystalforge' WHERE `entry`=185921;
+UPDATE `creature_template` SET `ScriptName`='npc_ogre_brute' WHERE `entry`=19995;
+UPDATE `creature_template` SET `ScriptName`='npc_bloodmaul_brutebane' WHERE `entry`=21241;
 
 /* BLASTED LANDS */
 UPDATE `creature_template` SET `ScriptName`='npc_deathly_usher' WHERE `entry`=8816;
@@ -364,7 +345,6 @@ UPDATE `instance_template` SET `script`='instance_old_hillsbrad' WHERE `map`=560
 UPDATE `creature_template` SET `ScriptName`='boss_lieutenant_drake' WHERE `entry`=17848;
 UPDATE `creature_template` SET `ScriptName`='boss_epoch_hunter' WHERE `entry`=18096;
 UPDATE `creature_template` SET `ScriptName`='boss_captain_skarloc' WHERE `entry`=17862;
-UPDATE `creature_template` SET `ScriptName`='npc_brazen' WHERE `entry`=18725;
 UPDATE `creature_template` SET `ScriptName`='npc_erozion' WHERE `entry`=18723;
 UPDATE `creature_template` SET `ScriptName`='npc_taretha' WHERE `entry`=18887;
 UPDATE `creature_template` SET `ScriptName`='npc_thrall_old_hillsbrad' WHERE `entry`=17876;
@@ -444,10 +424,8 @@ UPDATE `gameobject_template` SET `ScriptName`='go_main_chambers_access_panel' WH
 
 /* DESOLACE */
 UPDATE `creature_template` SET `ScriptName`='npc_dalinda' WHERE `entry`='5644';
-UPDATE `creature_template` SET `ScriptName`='npc_aged_dying_ancient_kodo' WHERE `entry`='4700';
-UPDATE `creature_template` SET `ScriptName`='npc_aged_dying_ancient_kodo' WHERE `entry`='4701';
-UPDATE `creature_template` SET `ScriptName`='npc_aged_dying_ancient_kodo' WHERE `entry`='4702';
-UPDATE `creature_template` SET `ScriptName`='npc_aged_dying_ancient_kodo' WHERE `entry`='11627';
+UPDATE `creature_template` SET `ScriptName`='npc_aged_dying_ancient_kodo' WHERE `entry` IN (4700,4701,4702,11627);
+UPDATE `gameobject_template` SET `ScriptName`='go_iruxos' WHERE `entry`=176581;
 UPDATE `creature_template` SET `ScriptName`='npc_melizza_brimbuzzle' WHERE `entry`='12277';
 
 /* DIRE MAUL */
@@ -474,7 +452,6 @@ UPDATE `creature_template` SET `ScriptName`='npc_private_hendel' WHERE `entry`=4
 UPDATE `creature_template` SET `ScriptName`='npc_ogron' WHERE `entry`='4983';
 UPDATE `creature_template` SET `ScriptName`='npc_morokk' WHERE `entry`='4500';
 UPDATE `creature_template` SET `ScriptName`='npc_zelfrax' WHERE `entry`=23864;
-UPDATE `creature_template` SET `ScriptName`='npc_cassa_crimsonwing' WHERE `entry`=23704;
 UPDATE `creature_template` SET `ScriptName`='npc_stinky' WHERE `entry`=4880;
 
 /* EASTERN PLAGUELANDS */
@@ -564,9 +541,6 @@ UPDATE `creature_template` SET `ScriptName`='mob_abyssal' WHERE `entry`=17454;
 
 /* HELLFIRE PENINSULA */
 UPDATE `creature_template` SET `ScriptName`='boss_doomlord_kazzak' WHERE `entry`=18728;
-UPDATE `creature_template` SET `ScriptName`='npc_wing_commander_brack' WHERE `entry`=19401;
-UPDATE `creature_template` SET `ScriptName`='npc_wing_commander_dabiree' WHERE `entry`=19409;
-UPDATE `creature_template` SET `ScriptName`='npc_gryphoneer_windbellow' WHERE `entry`=20235;
 UPDATE `creature_template` SET `ScriptName`='npc_wounded_blood_elf' WHERE `entry`=16993;
 UPDATE `creature_template` SET `ScriptName`='npc_naladu' WHERE `entry`=19361;
 UPDATE `creature_template` SET `ScriptName`='npc_tracy_proudwell' WHERE `entry`=18266;
@@ -587,9 +561,7 @@ UPDATE `creature_template` SET `ScriptName`='npc_rinji' WHERE `entry`=7780;
 UPDATE `creature_template` SET `ScriptName`='npc_royal_historian_archesonus' WHERE `entry`=8879;
 
 /* ISLE OF QUEL'DANAS */
-UPDATE `creature_template` SET `ScriptName`='npc_ayren_cloudbreaker' WHERE `entry`=25059;
 UPDATE `creature_template` SET `ScriptName`='npc_converted_sentry' WHERE `entry`=24981;
-UPDATE `creature_template` SET `ScriptName`='npc_unrestrained_dragonhawk' WHERE `entry`=25236;
 UPDATE `creature_template` SET `ScriptName`='npc_greengill_slave' WHERE `entry`=25084;
 
 /* KARAZHAN */
@@ -734,9 +706,7 @@ UPDATE `creature_template` SET `ScriptName`='boss_kelthuzad' WHERE `entry`=15990
 /* NETHERSTORM */
 UPDATE `gameobject_template` SET `ScriptName`='go_manaforge_control_console' WHERE `entry` IN (183770,183956,184311,184312);
 UPDATE `creature_template` SET `ScriptName`='npc_manaforge_control_console' WHERE `entry` IN (20209,20417,20418,20440);
-UPDATE `creature_template` SET `ScriptName`='npc_protectorate_nether_drake' WHERE `entry`=20903;
-UPDATE `creature_template` SET `ScriptName`='npc_veronia' WHERE `entry`=20162;
-UPDATE `creature_template` SET `ScriptName`='mob_phase_hunter' WHERE `entry` =18879;
+UPDATE `creature_template` SET `ScriptName`='mob_phase_hunter' WHERE `entry`=18879;
 UPDATE `creature_template` SET `ScriptName`='npc_professor_dabiri' WHERE `entry`=20907;
 UPDATE `creature_template` SET `ScriptName`='npc_bessy' WHERE `entry`=20415;
 UPDATE `creature_template` SET `ScriptName`='npc_commander_dawnforge' WHERE `entry`=19831;
@@ -751,6 +721,7 @@ UPDATE `creature_template` SET `ScriptName`='npc_shenthul' WHERE `entry`=3401;
 UPDATE `creature_template` SET `ScriptName`='npc_thrall_warchief' WHERE `entry`=4949;
 
 /* RAGEFIRE CHASM */
+UPDATE `gameobject_template` SET `ScriptName`='go_blood_filled_orb' WHERE `entry`=182024;
 
 /* RAZORFEN DOWNS */
 UPDATE `creature_template` SET `ScriptName`='boss_amnennar_the_coldbringer' WHERE `entry`=7358;
@@ -849,10 +820,11 @@ UPDATE `creature_template` SET `ScriptName`='npc_khadgar' WHERE `entry`=18166;
 UPDATE `creature_template` SET `ScriptName`='npcs_rutgar_and_frankal' WHERE `entry` IN (15170,15171);
 UPDATE `creature_template` SET `ScriptName`='npc_highlord_demitrian' WHERE `entry`=14347;
 UPDATE `gameobject_template` SET `ScriptName`='go_gauntlet_gate' WHERE `entry`=175357;
-UPDATE `creature_template` SET `ScriptName` = "mob_qiraj_war_spawn" WHERE `entry` IN (15414,15422,15423,15424);
-UPDATE `creature_template` SET `ScriptName` = "npc_anachronos_quest_trigger" WHERE `entry` = 15454;
-UPDATE `creature_template` SET `ScriptName` = "npc_anachronos_the_ancient" WHERE `entry` = 15381;
-UPDATE `gameobject_template` SET `ScriptName` = "go_crystalline_tear" WHERE `entry` = 180633;
+UPDATE `gameobject_template` SET `ScriptName`='go_crystalline_tear' WHERE `entry`=180633;
+UPDATE `creature_template` SET `ScriptName`='mob_qiraj_war_spawn' WHERE `entry` IN (15414,15422,15423,15424);
+UPDATE `creature_template` SET `ScriptName`='npc_anachronos_the_ancient' WHERE `entry`=15381;
+UPDATE `creature_template` SET `ScriptName`='npc_anachronos_quest_trigger' WHERE `entry`=15454;
+UPDATE `gameobject_template` SET `ScriptName`='go_hive_pod' WHERE `entry`=178553;
 
 /* SILVERMOON */
 UPDATE `creature_template` SET `ScriptName`='npc_blood_knight_stillblade' WHERE `entry`=17768;
@@ -1034,7 +1006,6 @@ UPDATE `creature_template` SET `ScriptName`='mob_infested_root_walker' WHERE `en
 UPDATE `creature_template` SET `ScriptName`='mob_netherweb_victim' WHERE `entry`=22355;
 UPDATE `creature_template` SET `ScriptName`='mob_rotting_forest_rager' WHERE `entry`=22307;
 UPDATE `creature_template` SET `ScriptName`='npc_floon' WHERE `entry`=18588;
-UPDATE `creature_template` SET `ScriptName`='npc_skyguard_handler_irena' WHERE `entry`=23413;
 UPDATE `creature_template` SET `ScriptName`='npc_isla_starmane' WHERE `entry`=18760;
 UPDATE `creature_template` SET `ScriptName`='mob_unkor_the_ruthless' WHERE `entry`=18262;
 UPDATE `creature_template` SET `ScriptName`='npc_letoll' WHERE `entry`=22458;
