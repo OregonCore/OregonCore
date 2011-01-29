@@ -12704,6 +12704,8 @@ INSERT INTO `spell_linked_spell` (`spell_trigger`, `spell_effect`, `type`, `comm
 ( 26327, 44429, 0, 'Red Firework Cluster - questcredit'),
 ( 26325, 44429, 0, 'Green Firework Cluster - questcredit'),
 ( 26304, 44429, 0, 'Blue Firework Cluster - questcredit'),
+( 40214, 40216, 2, 'Dragonmaw Illusion'),
+( 40214, 42016, 2, 'Dragonmaw Illusion'),
 -- Creature
 ( 36574, 36650, 0, 'Apply Phase Slip Vulnerability'),
 -- instance
