@@ -12697,6 +12697,13 @@ INSERT INTO `spell_linked_spell` (`spell_trigger`, `spell_effect`, `type`, `comm
 (-24132, 24134, 0, 'Wyvern Sting'),
 (-24133, 24135, 0, 'Wyvern Sting'),
 (-27068, 27069, 0, 'Wyvern Sting'),
+-- Quest
+( 26286, 44430, 0, 'Small Red Rocket - questcredit'),
+( 26292, 44430, 0, 'Small Green Rocket - questcredit'),
+( 26291, 44430, 0, 'Small Blue Rocket - questcredit'),
+( 26327, 44429, 0, 'Red Firework Cluster - questcredit'),
+( 26325, 44429, 0, 'Green Firework Cluster - questcredit'),
+( 26304, 44429, 0, 'Blue Firework Cluster - questcredit'),
 -- Creature
 ( 36574, 36650, 0, 'Apply Phase Slip Vulnerability'),
 -- instance
