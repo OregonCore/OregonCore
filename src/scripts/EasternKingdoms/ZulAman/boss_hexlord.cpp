@@ -384,7 +384,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
                 SpiritBolts_Timer = 13000;  // cast drain power first
             else
             {
-                me->CastSpell(me, SPELL_SPIRIT_BOLTS, false);
+                me->CastSpell(me, SPELL_SPIRIT_BOLTS, true);
                 me->MonsterYell(YELL_SPIRIT_BOLTS, LANG_UNIVERSAL, NULL);
                 DoPlaySoundToSet(me, SOUND_YELL_SPIRIT_BOLTS);
                 SpiritBolts_Timer = 40000;
