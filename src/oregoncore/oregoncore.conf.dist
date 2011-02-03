@@ -3,7 +3,7 @@
 ###############################################
 
 [worldserver]
-ConfVersion=2011010201
+ConfVersion=2011020301
 
 # Note to devs, line breaks should be at column 80
 ###############################################################################
@@ -155,15 +155,8 @@ EAIErrorLevel = 2
 #    vmap.enableLOS
 #    vmap.enableHeight
 #        Enable/Disable VMmap support for line of sight and height calculation
-#        Default: 0 (disable)
-#                 1 (enable)
-#
-#    vmap.ignoreMapIds
-#        Map id that will be ignored by VMaps
-#         List of ids with delimiter ','
-#         If more then one id is defined and spaces are included, the string
-#         has to be enclosed by "
-#        Example: "369,0,1,530"
+#                 0 (disable)
+#        Default: 1 (enable)
 #
 #    vmap.ignoreSpellIds
 #        These spells are ignored for LoS calculation
@@ -171,18 +164,18 @@ EAIErrorLevel = 2
 #
 #    vmap.petLOS
 #        Check LOS for pets, to avoid them going through walls etc.
-#        Default: 0 (disable, less CPU usage)
-#                 1 (enable, each pet attack command will check for LOS)
+#                 0 (disable, somewhat less CPU usage)
+#        Default: 1 (enable, each pet attack command will check for LOS)
 #
 #    vmap.totem
 #        Use VMAP for totem summon place calculation
 #        Default: 0 (disable, less CPU usage)
 #                 1 (enable, each totem created check LOS)
-#    
+#
 #    vmap.enableIndoorCheck
-#        Enable/Disable VMap based indoor check to remove outdoor-only auras
-#         (mounts etc.)
-#        Default: 0 (disabled)
+#        Enable/Disable VMap based indoor check to remove outdoor-only auras (mounts etc.)
+#                 0 (disabled, somewhat less CPU usage)
+#        Default: 1 (enabled)
 #
 #    DetectPosCollision
 #        Check final move position, summon position, etc for visible collision
@@ -246,13 +239,12 @@ MapUpdateInterval = 100
 ChangeWeatherInterval = 600000
 PlayerSaveInterval = 900000
 DisconnectToleranceInterval = 0
-vmap.enableLOS = 0
-vmap.enableHeight = 0
-vmap.ignoreMapIds = ""
+vmap.enableLOS = 1
+vmap.enableHeight = 1
 vmap.ignoreSpellIds = "7720"
-vmap.petLOS = 0
+vmap.petLOS = 1
 vmap.totem = 0
-vmap.enableIndoorCheck = 0
+vmap.enableIndoorCheck = 1
 DetectPosCollision = 1
 TargetPosRecalculateRange = 1.5
 UpdateUptimeInterval = 10
