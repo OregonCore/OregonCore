@@ -1716,8 +1716,13 @@ float Map::GetHeight(float x, float y, float z, bool pUseVmaps, float maxSearchD
     }
 }
 
-inline bool IsOutdoorWMO(uint32 mogpFlags, int32 /*adtId*/, int32 /*rootId*/, int32 /*groupId*/, WMOAreaTableEntry const* wmoEntry, AreaTableEntry const* atEntry)
+inline bool IsOutdoorWMO(uint32 mogpFlags, int32 /*adtId*/, int32 /*rootId*/, int32 /*groupId*/, WMOAreaTableEntry const* /*wmoEntry*/, AreaTableEntry const* /*atEntry*/)
 {
+    /* pre-3.x areas:
+      a) not have AREA_FLAG_OUTSIDE and AREA_FLAG_INSIDE
+      b) wmoEntry->Flags always == 0
+      But possible use better check mask for mogpFlags
+
     bool outdoor = true;
 
     if (wmoEntry && atEntry)
@@ -1738,6 +1743,9 @@ inline bool IsOutdoorWMO(uint32 mogpFlags, int32 /*adtId*/, int32 /*rootId*/, in
             outdoor = false;
     }
     return outdoor;
+    */
+
+    return mogpFlags & 0x8008;
 }
 
 bool Map::IsOutdoors(float x, float y, float z) const
