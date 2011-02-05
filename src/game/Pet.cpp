@@ -259,10 +259,26 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petentry, uint32 petnumber, bool c
     SetReactState(ReactStates(fields[6].GetUInt8()));
     m_loyaltyPoints = fields[7].GetInt32();
 
-    owner->SetMinion(this, true);
-    map->Add(ToCreature());
-
+    SetCanModifyStats(true);
     InitStatsForLevel(petlevel);
+
+    if (getPetType() == SUMMON_PET && !current)              //all (?) summon pets come with full health when called, but not when they are current
+    {
+        SetHealth(GetMaxHealth());
+        SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
+    }
+    else
+    {
+        uint32 savedhealth = fields[13].GetUInt32();
+        uint32 savedmana = fields[14].GetUInt32();
+        if (!savedhealth && getPetType() == HUNTER_PET)
+            setDeathState(JUST_DIED);
+        else
+        {
+            SetHealth(savedhealth > GetMaxHealth() ? GetMaxHealth() : (!savedhealth ? 1 : savedhealth));
+            SetPower(POWER_MANA, savedmana > GetMaxPower(POWER_MANA) ? GetMaxPower(POWER_MANA) : savedmana);
+        }
+    }
 
     // set current pet as current
     if (fields[10].GetUInt32() != 0)
@@ -288,11 +304,8 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petentry, uint32 petnumber, bool c
             m_charmInfo->GetActionBarEntry(index)->Type = atol((*iter).c_str());
             ++iter;
             m_charmInfo->GetActionBarEntry(index)->SpellOrAction = atol((*iter).c_str());
-
-            // patch for old data where some spells have ACT_DECIDE but should have ACT_CAST
-            // so overwrite old state
-            SpellEntry const *spellInfo = sSpellStore.LookupEntry(m_charmInfo->GetActionBarEntry(index)->SpellOrAction);
-            if (spellInfo && spellInfo->AttributesEx & SPELL_ATTR_EX_UNAUTOCASTABLE_BY_PET) m_charmInfo->GetActionBarEntry(index)->Type = ACT_CAST;
+            if (m_charmInfo->GetActionBarEntry(index)->Type == ACT_ENABLED && !IsAutocastableSpell(m_charmInfo->GetActionBarEntry(index)->SpellOrAction))
+                m_charmInfo->GetActionBarEntry(index)->Type = ACT_PASSIVE;
         }
 
         //init teach spells
@@ -310,35 +323,19 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petentry, uint32 petnumber, bool c
         }
     }
 
-    //load spells/cooldowns/auras
-    SetCanModifyStats(true);
+    owner->SetMinion(this, true);
+    map->Add(ToCreature());
 
-    uint32 savedhealth = fields[13].GetUInt32();
-    uint32 savedmana = fields[14].GetUInt32();
-    if (getPetType() == SUMMON_PET && !current)              //all (?) summon pets come with full health when called, but not when they are current
-    {
-        SetHealth(GetMaxHealth());
-        SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
-    }
-    else
-    {
-        if (!savedhealth && getPetType() == HUNTER_PET)
-            setDeathState(JUST_DIED);
-        else
-        {
-            SetHealth(savedhealth > GetMaxHealth() ? GetMaxHealth() : (!savedhealth ? 1 : savedhealth));
-            SetPower(POWER_MANA, savedmana > GetMaxPower(POWER_MANA) ? GetMaxPower(POWER_MANA) : savedmana);
-        }
-    }
-
-    // Spells should be loaded after pet is added to map, because in CanCast is check on it
-    // since last save (in seconds)
     uint32 timediff = (time(NULL) - fields[18].GetUInt32());
     _LoadAuras(timediff);
-    _LoadSpells();
-    _LoadSpellCooldowns();
-    LearnPetPassives();
-    CastPetAuras(current);
+
+    if (!is_temporary_summoned)
+    {
+        _LoadSpells();
+        _LoadSpellCooldowns();
+        LearnPetPassives();
+        CastPetAuras(current);
+    }
 
     sLog.outDebug("New Pet has guid %u", GetGUIDLow());
 
@@ -1439,10 +1436,6 @@ bool Pet::addSpell(uint16 spell_id, uint16 active, PetSpellState state, PetSpell
         return false;
     }
 
-    // same spells don't have autocast option
-    if (spellInfo->AttributesEx & SPELL_ATTR_EX_UNAUTOCASTABLE_BY_PET)
-        active = ACT_CAST;
-
     PetSpellMap::iterator itr = m_spells.find(spell_id);
     if (itr != m_spells.end())
     {
@@ -1474,12 +1467,12 @@ bool Pet::addSpell(uint16 spell_id, uint16 active, PetSpellState state, PetSpell
     newspell->state = state;
     newspell->type = type;
 
-    if (active == ACT_DECIDE)                                //active was not used before, so we save it's autocast/passive state here
+    if (active == ACT_DECIDE)                               // active was not used before, so we save it's autocast/passive state here
     {
-        if (IsPassiveSpell(spell_id))
-            newspell->active = ACT_PASSIVE;
-        else
+        if (IsAutocastableSpell(spell_id))
             newspell->active = ACT_DISABLED;
+        else
+            newspell->active = ACT_PASSIVE;
     }
     else
         newspell->active = active;
@@ -1656,7 +1649,7 @@ uint32 Pet::resetTalentsCost() const
 
 void Pet::ToggleAutocast(uint32 spellid, bool apply)
 {
-    if (IsPassiveSpell(spellid))
+    if (!IsAutocastableSpell(spellid))
         return;
 
     PetSpellMap::const_iterator itr = m_spells.find((uint16)spellid);

@@ -4251,28 +4251,25 @@ int16 Spell::PetCanCast(Unit* target)
     if (m_caster->isInCombat() && IsNonCombatSpell(m_spellInfo))
         return SPELL_FAILED_AFFECTING_COMBAT;
 
-    if (m_caster->GetTypeId() == TYPEID_UNIT && (m_caster->ToCreature()->isPet() || m_caster->isCharmed()))
-    {
                                                             //dead owner (pets still alive when owners ressed?)
-        if (m_caster->GetCharmerOrOwner() && !m_caster->GetCharmerOrOwner()->isAlive())
-            return SPELL_FAILED_CASTER_DEAD;
+        if (Unit *owner = m_caster->GetCharmerOrOwner())
+            if (!owner->isAlive())
+                return SPELL_FAILED_CASTER_DEAD;
 
         if (!target && m_targets.getUnitTarget())
             target = m_targets.getUnitTarget();
 
-        bool need = false;
-        for (uint32 i = 0;i<3;i++)
+        for (uint32 i = 0; i < 3; ++i)
         {
-            if (m_spellInfo->EffectImplicitTargetA[i] == TARGET_UNIT_TARGET_ENEMY || m_spellInfo->EffectImplicitTargetA[i] == TARGET_UNIT_TARGET_ALLY || m_spellInfo->EffectImplicitTargetA[i] == TARGET_UNIT_TARGET_ANY || m_spellInfo->EffectImplicitTargetA[i] == TARGET_UNIT_TARGET_PARTY || m_spellInfo->EffectImplicitTargetA[i] == TARGET_DST_TARGET_ENEMY)
+            if (spellmgr.SpellTargetType[m_spellInfo->EffectImplicitTargetA[i]] == TARGET_TYPE_UNIT_TARGET
+                || spellmgr.SpellTargetType[m_spellInfo->EffectImplicitTargetA[i]] == TARGET_TYPE_DEST_TARGET)
             {
-                need = true;
                 if (!target)
                     return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
+                m_targets.setUnitTarget(target);
                 break;
             }
         }
-        if (need)
-            m_targets.setUnitTarget(target);
 
         Unit* _target = m_targets.getUnitTarget();
 
@@ -4287,7 +4284,6 @@ int16 Spell::PetCanCast(Unit* target)
                                                             //cooldown
         if (m_caster->ToCreature()->HasSpellCooldown(m_spellInfo->Id))
             return SPELL_FAILED_NOT_READY;
-    }
 
     uint16 result = CanCast(true);
     if (result != 0)
