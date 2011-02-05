@@ -310,7 +310,7 @@ void Guardian::InitStats(uint32 duration)
 
     InitStatsForLevel(m_owner->getLevel());
 
-    if (m_owner->GetTypeId() == TYPEID_PLAYER)
+    if (m_owner->GetTypeId() == TYPEID_PLAYER && HasSummonMask(SUMMON_MASK_CONTROLABLE_GUARDIAN))
         m_charmInfo->InitCharmCreateSpells();
 
     SetReactState(REACT_AGGRESSIVE);
