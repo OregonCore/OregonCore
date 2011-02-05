@@ -17299,11 +17299,10 @@ void Player::CharmSpellInitialize()
     uint8 addlist = 0;
     if (charm->GetTypeId() != TYPEID_PLAYER)
     {
-        CreatureInfo const *cinfo = charm->ToCreature()->GetCreatureInfo();
-
-        if (cinfo && cinfo->type == CREATURE_TYPE_DEMON && getClass() == CLASS_WARLOCK)
+        //CreatureInfo const *cinfo = charm->ToCreature()->GetCreatureInfo();
+        //if (cinfo && cinfo->type == CREATURE_TYPE_DEMON && getClass() == CLASS_WARLOCK)
         {
-            for (uint32 i = 0; i < CREATURE_MAX_SPELLS; ++i)
+            for (uint32 i = 0; i < MAX_SPELL_CHARM; ++i)
                 if (charmInfo->GetCharmSpell(i)->spellId)
                     ++addlist;
         }

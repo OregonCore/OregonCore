@@ -178,8 +178,6 @@ void TempSummon::InitStats(uint32 duration)
     if (m_type == TEMPSUMMON_MANUAL_DESPAWN)
         m_type = (duration == 0) ? TEMPSUMMON_DEAD_DESPAWN : TEMPSUMMON_TIMED_DESPAWN;
 
-    AIM_Initialize();
-
     Unit *owner = GetSummoner();
 
     if (owner && isTrigger() && m_spells[0])

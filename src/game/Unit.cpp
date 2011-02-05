@@ -7038,7 +7038,7 @@ void Unit::SetMinion(Minion *minion, bool apply)
                 if (AddUInt64Value(UNIT_FIELD_SUMMON, (*itr)->GetGUID()))
                 {
                     //show another pet bar if there is no charm bar
-                    if (GetTypeId() == TYPEID_PLAYER && !GetCharmGUID() && (*itr)->ToCreature()->HasSummonMask(SUMMON_MASK_GUARDIAN))
+                    if (GetTypeId() == TYPEID_PLAYER && !GetCharmGUID())
                     {
                         if ((*itr)->ToCreature()->isPet())
                             ToPlayer()->PetSpellInitialize();
