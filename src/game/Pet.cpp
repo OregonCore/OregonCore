@@ -144,7 +144,7 @@ void Pet::RemoveFromWorld()
     }
 }
 
-bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool current)
+bool Pet::LoadPetFromDB(Player* owner, uint32 petentry, uint32 petnumber, bool current)
 {
     uint32 ownerid = owner->GetGUIDLow();
 
@@ -212,20 +212,17 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
         map->Add(ToCreature());
         return true;
     }
-    if (getPetType() == HUNTER_PET || (getPetType() == SUMMON_PET && cinfo->type == CREATURE_TYPE_DEMON && owner->getClass() == CLASS_WARLOCK))
-        m_charmInfo->SetPetNumber(pet_number, true);
-    else
-        m_charmInfo->SetPetNumber(pet_number, false);
+
+    m_charmInfo->SetPetNumber(pet_number, IsPermanentPetFor(owner));
 
     SetDisplayId(fields[3].GetUInt32());
     SetNativeDisplayId(fields[3].GetUInt32());
-    uint32 petlevel=fields[4].GetUInt32();
-    SetUInt32Value(UNIT_NPC_FLAGS , 0);
+    uint32 petlevel = fields[4].GetUInt32();
+    SetUInt32Value(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_NONE);
     SetName(fields[11].GetString());
 
-    switch(getPetType())
+    switch (getPetType())
     {
-
         case SUMMON_PET:
             petlevel=owner->getLevel();
 
@@ -345,14 +342,12 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
 
     sLog.outDebug("New Pet has guid %u", GetGUIDLow());
 
-    if (owner->GetTypeId() == TYPEID_PLAYER)
-    {
-        owner->ToPlayer()->PetSpellInitialize();
-        if (owner->ToPlayer()->GetGroup())
-            owner->ToPlayer()->SetGroupUpdateFlag(GROUP_UPDATE_PET);
-    }
+    owner->PetSpellInitialize();
 
-    if (owner->GetTypeId() == TYPEID_PLAYER && getPetType() == HUNTER_PET)
+    if (owner->GetGroup())
+        owner->SetGroupUpdateFlag(GROUP_UPDATE_PET);
+
+    if (getPetType() == HUNTER_PET)
     {
         result = CharacterDatabase.PQuery("SELECT genitive, dative, accusative, instrumental, prepositional FROM character_pet_declinedname WHERE owner = '%u' AND id = '%u'", owner->GetGUIDLow(), GetCharmInfo()->GetPetNumber());
 
@@ -362,8 +357,7 @@ bool Pet::LoadPetFromDB(Unit* owner, uint32 petentry, uint32 petnumber, bool cur
 
             m_declinedname = new DeclinedName;
             Field *fields = result->Fetch();
-            for (int i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
-
+            for (uint8 i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
                 m_declinedname->name[i] = fields[i].GetCppString();
         }
     }
@@ -1694,6 +1688,25 @@ void Pet::ToggleAutocast(uint32 spellid, bool apply)
     }
 }
 
+bool Pet::IsPermanentPetFor(Player* owner)
+{
+    switch (getPetType())
+    {
+        case SUMMON_PET:
+            switch (owner->getClass())
+            {
+                case CLASS_WARLOCK:
+                    return GetCreatureInfo()->type == CREATURE_TYPE_DEMON;
+                default:
+                    return false;
+            }
+        case HUNTER_PET:
+            return true;
+        default:
+            return false;
+    }
+}
+
 bool Pet::Create(uint32 guidlow, Map *map, uint32 Entry, uint32 pet_number)
 {
     ASSERT(map);
@@ -1882,10 +1895,10 @@ void Pet::LearnPetPassives()
 void Pet::CastPetAuras(bool current)
 {
     Unit* owner = GetOwner();
-    if (!owner)
+    if (!owner || owner->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    if (getPetType() != HUNTER_PET && (getPetType() != SUMMON_PET || owner->getClass() != CLASS_WARLOCK))
+    if (!IsPermanentPetFor(owner->ToPlayer()))
         return;
 
     for (PetAuraSet::iterator itr = owner->m_petAuras.begin(); itr != owner->m_petAuras.end();)

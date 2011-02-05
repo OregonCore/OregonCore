@@ -8453,7 +8453,7 @@ void Unit::Unmount()
         if (ToPlayer()->GetTemporaryUnsummonedPetNumber())
         {
             Pet* NewPet = new Pet(ToPlayer());
-            if (!NewPet->LoadPetFromDB(this, 0, ToPlayer()->GetTemporaryUnsummonedPetNumber(), true))
+            if (!NewPet->LoadPetFromDB(ToPlayer(), 0, ToPlayer()->GetTemporaryUnsummonedPetNumber(), true))
                 delete NewPet;
             ToPlayer()->SetTemporaryUnsummonedPetNumber(0);
         }

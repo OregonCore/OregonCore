@@ -17192,37 +17192,28 @@ void Player::PetSpellInitialize()
     if (!pet)
         return;
 
-    uint8 addlist = 0;
-
     DEBUG_LOG("Pet Spells Groups");
-
-    CreatureInfo const *cinfo = pet->GetCreatureInfo();
-
-    if (pet->isControlled() && (pet->getPetType() == HUNTER_PET || cinfo && cinfo->type == CREATURE_TYPE_DEMON && getClass() == CLASS_WARLOCK))
-    {
-        for (PetSpellMap::iterator itr = pet->m_spells.begin();itr != pet->m_spells.end();++itr)
-        {
-            if (itr->second->state == PETSPELL_REMOVED)
-                continue;
-            ++addlist;
-        }
-    }
-
-    // first line + actionbar + spellcount + spells + last adds
-    WorldPacket data(SMSG_PET_SPELLS, 16+40+1+4*addlist+25);
 
     CharmInfo *charmInfo = pet->GetCharmInfo();
 
-                                                        //16
-    data << (uint64)pet->GetGUID() << uint32(0x00000000) << uint8(pet->GetReactState()) << uint8(charmInfo->GetCommandState()) << uint16(0);
+    WorldPacket data(SMSG_PET_SPELLS, 8+4+1+1+2+4*MAX_UNIT_ACTION_BAR_INDEX+1+1);
+    data << (uint64)pet->GetGUID();
+    data << uint32(0);
+    data << uint8(pet->GetReactState()) << uint8(charmInfo->GetCommandState()) << uint16(0);
 
+    // action bar loop
     for (uint32 i = 0; i < MAX_UNIT_ACTION_BAR_INDEX; i++)
         data << uint16(charmInfo->GetActionBarEntry(i)->SpellOrAction) << uint16(charmInfo->GetActionBarEntry(i)->Type);
 
-    data << uint8(addlist);                             //1
+    size_t spellsCountPos = data.wpos();
 
-    if (addlist && pet->isControlled())
+    // spells count
+    uint8 addlist = 0;
+    data << uint8(addlist);                                 // placeholder
+
+    if (pet->IsPermanentPetFor(this))
     {
+        // spells loop
         for (PetSpellMap::iterator itr = pet->m_spells.begin(); itr != pet->m_spells.end(); ++itr)
         {
             if (itr->second->state == PETSPELL_REMOVED)
@@ -17230,20 +17221,36 @@ void Player::PetSpellInitialize()
 
             data << uint16(itr->first);
             data << uint16(itr->second->active);        // pet spell active state isn't boolean
+            ++addlist;
         }
     }
 
-    //data << uint8(0x01) << uint32(0x6010) << uint32(0x01) << uint32(0x05) << uint16(0x00);    //15
-    uint8 count = 3;                                    //1+8+8+8=25
+    data.put<uint8>(spellsCountPos, addlist);
 
-    // if count = 0, then end of packet...
-    data << count;
-    // uint32 value is spell id...
-    // uint64 value is constant 0, unknown...
-    data << uint32(0x6010) << uint64(0);                // if count = 1, 2 or 3
-    //data << uint32(0x5fd1) << uint64(0);  // if count = 2
-    data << uint32(0x8e8c) << uint64(0);                // if count = 3
-    data << uint32(0x8e8b) << uint64(0);                // if count = 3
+    uint8 cooldownsCount = pet->m_CreatureSpellCooldowns.size() + pet->m_CreatureCategoryCooldowns.size();
+    data << uint8(cooldownsCount);
+
+    time_t curTime = time(NULL);
+
+    for (CreatureSpellCooldowns::const_iterator itr = pet->m_CreatureSpellCooldowns.begin(); itr != pet->m_CreatureSpellCooldowns.end(); ++itr)
+    {
+        time_t cooldown = (itr->second > curTime) ? (itr->second - curTime) * IN_MILLISECONDS : 0;
+
+        data << uint16(itr->first);                         // spellid
+        data << uint16(0);                                  // spell category?
+        data << uint32(cooldown);                           // cooldown
+        data << uint32(0);                                  // category cooldown
+    }
+
+    for (CreatureSpellCooldowns::const_iterator itr = pet->m_CreatureCategoryCooldowns.begin(); itr != pet->m_CreatureCategoryCooldowns.end(); ++itr)
+    {
+        time_t cooldown = (itr->second > curTime) ? (itr->second - curTime) * IN_MILLISECONDS : 0;
+
+        data << uint16(itr->first);                         // spellid
+        data << uint16(0);                                  // spell category?
+        data << uint32(0);                                  // cooldown
+        data << uint32(cooldown);                           // category cooldown
+    }
 
     GetSession()->SendPacket(&data);
 }
