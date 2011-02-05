@@ -6988,7 +6988,7 @@ void Unit::SetMinion(Minion *minion, bool apply)
             }
         }
 
-        if (minion->HasSummonMask(SUMMON_MASK_GUARDIAN))
+        if (minion->HasSummonMask(SUMMON_MASK_CONTROLABLE_GUARDIAN))
             AddUInt64Value(UNIT_FIELD_SUMMON, minion->GetGUID());
     }
     else
@@ -7032,7 +7032,7 @@ void Unit::SetMinion(Minion *minion, bool apply)
                 ASSERT((*itr)->GetOwnerGUID() == GetGUID());
                 ASSERT((*itr)->GetTypeId() == TYPEID_UNIT);
 
-                if (!(*itr)->ToCreature()->HasSummonMask(SUMMON_MASK_GUARDIAN))
+                if (!(*itr)->ToCreature()->HasSummonMask(SUMMON_MASK_CONTROLABLE_GUARDIAN))
                     continue;
 
                 if (AddUInt64Value(UNIT_FIELD_SUMMON, (*itr)->GetGUID()))
@@ -9111,8 +9111,8 @@ bool Unit::CanHaveThreatList() const
     if (ToCreature()->isTotem())
         return false;
 
-    // pets can not have a threat list, unless they are controlled by a creature
-    if (ToCreature()->isPet() && IS_PLAYER_GUID(((Pet*)this)->GetOwnerGUID()))
+    // summons can not have a threat list, unless they are controlled by a creature
+    if (ToCreature()->HasSummonMask(SUMMON_MASK_MINION | SUMMON_MASK_GUARDIAN | SUMMON_MASK_CONTROLABLE_GUARDIAN) && IS_PLAYER_GUID(((Pet*)this)->GetOwnerGUID()))
         return false;
 
     return true;

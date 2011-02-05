@@ -54,6 +54,7 @@ class Minion : public TempSummon
         void InitStats(uint32 duration);
         void RemoveFromWorld();
         Unit *GetOwner() { return m_owner; }
+        bool IsGuardianPet() const;
     protected:
         Unit * const m_owner;
 };

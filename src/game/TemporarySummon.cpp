@@ -288,11 +288,20 @@ void Minion::RemoveFromWorld()
     TempSummon::RemoveFromWorld();
 }
 
+bool Minion::IsGuardianPet() const
+{
+    return isPet() || m_Properties && m_Properties->Category == SUMMON_CATEGORY_PET;
+}
+
 Guardian::Guardian(SummonPropertiesEntry const *properties, Unit *owner) : Minion(properties, owner)
 , m_bonusdamage(0)
 {
     m_summonMask |= SUMMON_MASK_GUARDIAN;
-    InitCharmInfo();
+    if (properties && properties->Type == SUMMON_TYPE_PET)
+    {
+        m_summonMask |= SUMMON_MASK_CONTROLABLE_GUARDIAN;
+        InitCharmInfo();
+    }
 }
 
 void Guardian::InitStats(uint32 duration)
