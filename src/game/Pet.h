@@ -126,8 +126,6 @@ extern const uint32 LevelStartLoyalty[6];
 
 #define ACTIVE_SPELLS_MAX           4
 
-#define OWNER_MAX_DISTANCE 100
-
 class Pet : public Guardian
 {
     public:
