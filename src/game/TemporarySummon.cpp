@@ -180,12 +180,22 @@ void TempSummon::InitStats(uint32 duration)
 
     AIM_Initialize();
 
+    Unit *owner = GetSummoner();
+
+    if (owner && isTrigger() && m_spells[0])
+    {
+        setFaction(owner->getFaction());
+        SetLevel(owner->getLevel());
+        if (owner->GetTypeId() == TYPEID_PLAYER)
+            m_ControlledByPlayer = true;
+    }
+
     if (!m_Properties)
         return;
 
-    if (uint32 slot = m_Properties->Slot)
+    if (owner)
     {
-        if (Unit *owner = GetSummoner())
+        if (uint32 slot = m_Properties->Slot)
         {
             if (owner->m_SummonSlot[slot] && owner->m_SummonSlot[slot] != GetGUID())
             {
@@ -208,13 +218,6 @@ void TempSummon::InitSummon()
     {
         if (owner->GetTypeId() == TYPEID_UNIT && owner->ToCreature()->IsAIEnabled)
             owner->ToCreature()->AI()->JustSummoned(this);
-
-        if (GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_TRIGGER && m_spells[0])
-        {
-            setFaction(owner->getFaction());
-            SetLevel(owner->getLevel());
-            CastSpell(this, m_spells[0], false, 0, 0, m_summonerGUID);
-        }
     }
 }
 
