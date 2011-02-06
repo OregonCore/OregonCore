@@ -636,14 +636,10 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
                     Unit::AuraList const& auras = unitTarget->GetAurasByType(SPELL_AURA_OVERRIDE_CLASS_SCRIPTS);
                     for (Unit::AuraList::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
                     {
-                        switch ((*itr)->GetId())
+                        if ((*itr)->GetId() == 28857 || (*itr)->GetId() == 34230 || (*itr)->GetId() == 41040)
                         {
-                            case 28857:
-                            case 34230:
-                            case 41040:
-                                damage += (*itr)->GetModifierValue();
-                                itr = auras.end();
-                                break;
+                            damage += (*itr)->GetModifierValue();
+                            break;
                         }
                     }
                 }
