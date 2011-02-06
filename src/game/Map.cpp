@@ -1721,7 +1721,6 @@ inline bool IsOutdoorWMO(uint32 mogpFlags, int32 /*adtId*/, int32 /*rootId*/, in
     /* pre-3.x areas:
       a) not have AREA_FLAG_OUTSIDE and AREA_FLAG_INSIDE
       b) wmoEntry->Flags always == 0
-      But possible use better check mask for mogpFlags
 
     bool outdoor = true;
 
@@ -1745,7 +1744,7 @@ inline bool IsOutdoorWMO(uint32 mogpFlags, int32 /*adtId*/, int32 /*rootId*/, in
     return outdoor;
     */
 
-    return mogpFlags & 0x8008;
+    return mogpFlags & 0x8000;
 }
 
 bool Map::IsOutdoors(float x, float y, float z) const
@@ -1758,12 +1757,13 @@ bool Map::IsOutdoors(float x, float y, float z) const
         return true;
 
     AreaTableEntry const* atEntry = 0;
-    WMOAreaTableEntry const* wmoEntry= GetWMOAreaTableEntryByTripple(rootId, adtId, groupId);
+    WMOAreaTableEntry const* wmoEntry = 0;
+    /*WMOAreaTableEntry const* wmoEntry = GetWMOAreaTableEntryByTripple(rootId, adtId, groupId);
     if (wmoEntry)
     {
         DEBUG_LOG("Got WMOAreaTableEntry! flag %u, areaid %u", wmoEntry->Flags, wmoEntry->areaId);
         atEntry = GetAreaEntryByAreaID(wmoEntry->areaId);
-    }
+    }*/
     return IsOutdoorWMO(mogpFlags, adtId, rootId, groupId, wmoEntry, atEntry);
 }
 
