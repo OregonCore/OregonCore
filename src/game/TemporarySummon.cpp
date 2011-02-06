@@ -218,6 +218,8 @@ void TempSummon::InitSummon()
     {
         if (owner->GetTypeId() == TYPEID_UNIT && owner->ToCreature()->IsAIEnabled)
             owner->ToCreature()->AI()->JustSummoned(this);
+        if (IsAIEnabled)
+            AI()->IsSummonedBy(owner);
     }
 }
 

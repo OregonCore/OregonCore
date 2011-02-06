@@ -39,7 +39,7 @@ void PossessedAI::AttackStart(Unit *target)
     me->Attack(target, true);
 }
 
-void PossessedAI::UpdateAI(const uint32 diff)
+void PossessedAI::UpdateAI(const uint32 /*diff*/)
 {
     if (me->getVictim())
     {
@@ -50,7 +50,7 @@ void PossessedAI::UpdateAI(const uint32 diff)
     }
 }
 
-void PossessedAI::JustDied(Unit *u)
+void PossessedAI::JustDied(Unit * /*u*/)
 {
     // We died while possessed, disable our loot
     me->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
@@ -63,7 +63,7 @@ void PossessedAI::KilledUnit(Unit* victim)
         victim->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
 }
 
-void CritterAI::DamageTaken(Unit *done_by, uint32 &)
+void CritterAI::DamageTaken(Unit * /*done_by*/, uint32 &)
 {
     if (!me->hasUnitState(UNIT_STAT_FLEEING))
         me->SetControlled(true, UNIT_STAT_FLEEING);
