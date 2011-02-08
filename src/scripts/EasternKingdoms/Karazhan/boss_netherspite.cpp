@@ -90,7 +90,7 @@ struct boss_netherspiteAI : public ScriptedAI
     uint64 BeamerGUID[3]; // guid's of auxiliary beaming portals
     uint64 BeamTarget[3]; // guid's of portals' current targets
 
-    bool IsBetween(WorldObject* u1, WorldObject* pTarget, WorldObject* u2) // the in-line checker
+    bool IsBetween(WorldObject* u1, WorldObject *pTarget, WorldObject* u2) // the in-line checker
     {
         if (!u1 || !u2 || !pTarget)
             return false;
@@ -104,7 +104,7 @@ struct boss_netherspiteAI : public ScriptedAI
         yh = pTarget->GetPositionY();
 
         // check if target is between (not checking distance from the beam yet)
-        if (dist(xn,yn,xh,yh)>=dist(xn,yn,xp,yp) || dist(xp,yp,xh,yh)>=dist(xn,yn,xp,yp))
+        if (dist(xn,yn,xh,yh) >= dist(xn,yn,xp,yp) || dist(xp,yp,xh,yh) >= dist(xn,yn,xp,yp))
             return false;
         // check  distance from the beam
         return (abs((xn-xp)*yh+(yp-yn)*xh-xn*yp+xp*yn)/dist(xn,yn,xp,yp) < 1.5f);
@@ -147,17 +147,9 @@ struct boss_netherspiteAI : public ScriptedAI
         for (int i=0; i<3; ++i)
         {
             if (Creature *portal = Unit::GetCreature(*me, PortalGUID[i]))
-            {
-                portal->SetVisibility(VISIBILITY_OFF);
-                portal->DealDamage(portal, portal->GetMaxHealth());
-                portal->RemoveFromWorld();
-            }
+                portal->DisappearAndDie();
             if (Creature *portal = Unit::GetCreature(*me, BeamerGUID[i]))
-            {
-                portal->SetVisibility(VISIBILITY_OFF);
-                portal->DealDamage(portal, portal->GetMaxHealth());
-                portal->RemoveFromWorld();
-            }
+                portal->DisappearAndDie();
             PortalGUID[i] = 0;
             BeamTarget[i] = 0;
         }
@@ -204,9 +196,7 @@ struct boss_netherspiteAI : public ScriptedAI
                     if (Creature *beamer = Unit::GetCreature(*portal, BeamerGUID[j]))
                     {
                         beamer->CastSpell(pTarget, PortalBeam[j], false);
-                        beamer->SetVisibility(VISIBILITY_OFF);
-                        beamer->DealDamage(beamer, beamer->GetMaxHealth());
-                        beamer->RemoveFromWorld();
+                        beamer->DisappearAndDie();
                         BeamerGUID[j] = 0;
                     }
                     // create new one and start beaming on the target
@@ -238,8 +228,8 @@ struct boss_netherspiteAI : public ScriptedAI
     {
         me->RemoveAurasDueToSpell(SPELL_EMPOWERMENT);
         me->RemoveAurasDueToSpell(SPELL_NETHERBURN_AURA);
-        DoCast(me,SPELL_BANISH_VISUAL,true);
-        DoCast(me,SPELL_BANISH_ROOT,true);
+        DoCast(me, SPELL_BANISH_VISUAL, true);
+        DoCast(me, SPELL_BANISH_ROOT, true);
         DestroyPortals();
         PhaseTimer = 30000;
         PortalPhase = false;
@@ -251,7 +241,7 @@ struct boss_netherspiteAI : public ScriptedAI
 
     void HandleDoors(bool open) // Massive Door switcher
     {
-        if (GameObject *Door = GameObject::GetGameObject((*me),pInstance ? pInstance->GetData64(DATA_GAMEOBJECT_MASSIVE_DOOR) : 0))
+        if (GameObject *Door = GameObject::GetGameObject(*me, pInstance ? pInstance->GetData64(DATA_GO_MASSIVE_DOOR) : 0))
             Door->SetGoState(open ? GO_STATE_ACTIVE : GO_STATE_READY);
     }
 
@@ -319,8 +309,8 @@ struct boss_netherspiteAI : public ScriptedAI
             if (NetherbreathTimer <= diff)
             {
                 if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,40,true))
-                    DoCast(pTarget,SPELL_NETHERBREATH);
-                NetherbreathTimer = 5000+rand()%2000;
+                    DoCast(pTarget, SPELL_NETHERBREATH);
+                NetherbreathTimer = urand(5000,7000);
             } else NetherbreathTimer -= diff;
 
             if (PhaseTimer <= diff)
@@ -337,9 +327,9 @@ struct boss_netherspiteAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_netherspite(Creature* pCreature)
+CreatureAI* GetAI_boss_netherspite(Creature *pCreature)
 {
-    return new boss_netherspiteAI (pCreature);
+    return new boss_netherspiteAI(pCreature);
 }
 
 void AddSC_boss_netherspite()

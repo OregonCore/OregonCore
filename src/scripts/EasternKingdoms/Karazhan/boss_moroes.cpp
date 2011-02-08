@@ -62,7 +62,7 @@ struct boss_moroesAI : public ScriptedAI
 {
     boss_moroesAI(Creature *c) : ScriptedAI(c)
     {
-        for (int i = 0; i < 4; i++)
+        for (uint8 i = 0; i < 4; ++i)
         {
             AddId[i] = 0;
         }
@@ -100,18 +100,18 @@ struct boss_moroesAI : public ScriptedAI
         }
 
         if (pInstance)
-            pInstance->SetData(DATA_MOROES_EVENT, NOT_STARTED);
+            pInstance->SetData(TYPE_MOROES, NOT_STARTED);
     }
 
     void StartEvent()
     {
         if (pInstance)
-            pInstance->SetData(DATA_MOROES_EVENT, IN_PROGRESS);
+            pInstance->SetData(TYPE_MOROES, IN_PROGRESS);
 
         DoZoneInCombat();
     }
 
-    void EnterCombat(Unit* who)
+    void EnterCombat(Unit* /*who*/)
     {
         StartEvent();
 
@@ -120,22 +120,17 @@ struct boss_moroesAI : public ScriptedAI
         DoZoneInCombat();
     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit* /*victim*/)
     {
-        switch (rand()%3)
-        {
-        case 0: DoScriptText(SAY_KILL_1, me); break;
-        case 1: DoScriptText(SAY_KILL_2, me); break;
-        case 2: DoScriptText(SAY_KILL_3, me); break;
-        }
+        DoScriptText(RAND(SAY_KILL_1,SAY_KILL_2,SAY_KILL_3), me);
     }
 
-    void JustDied(Unit* victim)
+    void JustDied(Unit* /*victim*/)
     {
         DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
-            pInstance->SetData(DATA_MOROES_EVENT, DONE);
+            pInstance->SetData(TYPE_MOROES, DONE);
 
         DeSpawnAdds();
 
@@ -164,7 +159,6 @@ struct boss_moroesAI : public ScriptedAI
             Creature *pCreature = NULL;
             std::vector<uint32> AddList;
 
-
             for (uint8 i = 0; i < 6; ++i)
                 AddList.push_back(Adds[i]);
 
@@ -172,7 +166,7 @@ struct boss_moroesAI : public ScriptedAI
                 AddList.erase((AddList.begin())+(rand()%AddList.size()));
 
             uint8 i = 0;
-            for (std::vector<uint32>::iterator itr = AddList.begin(); itr != AddList.end(); ++itr)
+            for (std::vector<uint32>::const_iterator itr = AddList.begin(); itr != AddList.end(); ++itr)
             {
                 uint32 entry = *itr;
 
@@ -186,7 +180,7 @@ struct boss_moroesAI : public ScriptedAI
             }
         } else
         {
-            for (int i = 0; i < 4; i++)
+            for (uint8 i = 0; i < 4; ++i)
             {
                 Creature *pCreature = me->SummonCreature(AddId[i], Locations[i][0], Locations[i][1], POS_Z, Locations[i][2], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
                 if (pCreature)
@@ -199,7 +193,7 @@ struct boss_moroesAI : public ScriptedAI
 
     bool isAddlistEmpty()
     {
-        for (int i = 0; i < 4; i++)
+        for (uint8 i = 0; i < 4; ++i)
         {
             if (AddId[i] == 0)
                 return true;
@@ -216,12 +210,7 @@ struct boss_moroesAI : public ScriptedAI
             {
                 Temp = Creature::GetCreature((*me),AddGUID[i]);
                 if (Temp && Temp->isAlive())
-                {
-                    (*Temp).GetMotionMaster()->Clear(true);
-                    Temp->DealDamage(Temp, Temp->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-                    Temp->RemoveCorpse();
-                }
-
+                    Temp->DisappearAndDie();
             }
         }
     }
@@ -249,7 +238,7 @@ struct boss_moroesAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (pInstance && !pInstance->GetData(DATA_MOROES_EVENT))
+        if (pInstance && !pInstance->GetData(TYPE_MOROES))
         {
             EnterEvadeMode();
             return;
@@ -268,7 +257,7 @@ struct boss_moroesAI : public ScriptedAI
                 Creature* Temp = NULL;
                 if (AddGUID[i])
                 {
-                    Temp = Creature::GetCreature((*me),AddGUID[i]);
+                    Temp = Unit::GetCreature((*me),AddGUID[i]);
                     if (Temp && Temp->isAlive())
                         if (!Temp->getVictim())
                             Temp->AI()->AttackStart(me->getVictim());
@@ -310,14 +299,10 @@ struct boss_moroesAI : public ScriptedAI
         {
             if (Wait_Timer <= diff)
             {
-                switch(rand()%2)
-                {
-                    case 0: DoScriptText(SAY_SPECIAL_1, me); break;
-                    case 1: DoScriptText(SAY_SPECIAL_2, me); break;
-                }
+                DoScriptText(RAND(SAY_SPECIAL_1,SAY_SPECIAL_2), me);
 
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                   pTarget->CastSpell(pTarget, SPELL_GARROTE,true);
+                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                    pTarget->CastSpell(pTarget, SPELL_GARROTE,true);
 
                 InVanish = false;
             } else Wait_Timer -= diff;
@@ -333,7 +318,6 @@ struct boss_moroes_guestAI : public ScriptedAI
     ScriptedInstance* pInstance;
 
     uint64 GuestGUID[4];
-    Unit *pTarget;
 
     boss_moroes_guestAI(Creature* c) : ScriptedAI(c)
     {
@@ -346,32 +330,30 @@ struct boss_moroes_guestAI : public ScriptedAI
     void Reset()
     {
         if (pInstance)
-            pInstance->SetData(DATA_MOROES_EVENT, NOT_STARTED);
+            pInstance->SetData(TYPE_MOROES, NOT_STARTED);
     }
-
-    void EnterCombat(Unit* who) {}
 
     void AcquireGUID()
     {
         if (!pInstance)
             return;
 
-        GuestGUID[0] = pInstance->GetData64(DATA_MOROES);
-        Creature* Moroes = Creature::GetCreature((*me), GuestGUID[0]);
+        uint64 MoroesGUID = pInstance->GetData64(DATA_MOROES);
+        Creature* Moroes = (Unit::GetCreature((*me), MoroesGUID));
         if (Moroes)
         {
-            for (uint8 i = 0; i < 3; ++i)
+            for (uint8 i = 0; i < 4; ++i)
             {
-                uint64 GUID = ((boss_moroesAI*)Moroes->AI())->AddGUID[i];
-                if (GUID && GUID != me->GetGUID())
-                    GuestGUID[i+1] = GUID;
+                uint64 GUID = CAST_AI(boss_moroesAI, Moroes->AI())->AddGUID[i];
+                if (GUID)
+                    GuestGUID[i] = GUID;
             }
         }
     }
 
-    Unit* SelectTarget()
+    Unit* SelectGuestTarget()
     {
-        uint64 TempGUID = GuestGUID[rand()%5];
+        uint64 TempGUID = GuestGUID[rand()%4];
         if (TempGUID)
         {
             Unit* pUnit = Unit::GetUnit((*me), TempGUID);
@@ -382,9 +364,9 @@ struct boss_moroes_guestAI : public ScriptedAI
         return me;
     }
 
-    void UpdateAI(const uint32 diff)
+    void UpdateAI(const uint32 /*diff*/)
     {
-        if (pInstance && !pInstance->GetData(DATA_MOROES_EVENT))
+        if (pInstance && !pInstance->GetData(TYPE_MOROES))
             EnterEvadeMode();
 
         DoMeleeAttackIfReady();
@@ -411,7 +393,7 @@ struct boss_baroness_dorothea_millstipeAI : public boss_moroes_guestAI
         MindFlay_Timer = 1000;
         ShadowWordPain_Timer = 6000;
 
-        DoCast(me,SPELL_SHADOWFORM, true);
+        DoCast(me, SPELL_SHADOWFORM, true);
 
         boss_moroes_guestAI::Reset();
     }
@@ -425,24 +407,23 @@ struct boss_baroness_dorothea_millstipeAI : public boss_moroes_guestAI
 
         if (MindFlay_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_MINDFLY);
-            MindFlay_Timer = 12000;                         //3sec channeled
+            DoCast(me->getVictim(), SPELL_MINDFLY);
+            MindFlay_Timer = 12000;                         // 3 sec channeled
         } else MindFlay_Timer -= diff;
 
         if (ManaBurn_Timer <= diff)
         {
-            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            if (pTarget && (pTarget->getPowerType() == POWER_MANA))
-                DoCast(pTarget,SPELL_MANABURN);
-            ManaBurn_Timer = 5000;                          //3 sec cast
+            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                if (pTarget->getPowerType() == POWER_MANA)
+                    DoCast(pTarget, SPELL_MANABURN);
+            ManaBurn_Timer = 5000;                          // 3 sec cast
         } else ManaBurn_Timer -= diff;
 
         if (ShadowWordPain_Timer <= diff)
         {
-            Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            if (pTarget)
+            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
             {
-                DoCast(pTarget,SPELL_SWPAIN);
+                DoCast(pTarget, SPELL_SWPAIN);
                 ShadowWordPain_Timer = 7000;
             }
         } else ShadowWordPain_Timer -= diff;
@@ -480,20 +461,20 @@ struct boss_baron_rafe_dreugerAI : public boss_moroes_guestAI
 
         if (SealOfCommand_Timer <= diff)
         {
-            DoCast(me,SPELL_SEALOFCOMMAND);
+            DoCast(me, SPELL_SEALOFCOMMAND);
             SealOfCommand_Timer = 32000;
             JudgementOfCommand_Timer = 29000;
         } else SealOfCommand_Timer -= diff;
 
         if (JudgementOfCommand_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_JUDGEMENTOFCOMMAND);
+            DoCast(me->getVictim(), SPELL_JUDGEMENTOFCOMMAND);
             JudgementOfCommand_Timer = SealOfCommand_Timer + 29000;
         } else JudgementOfCommand_Timer -= diff;
 
         if (HammerOfJustice_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_HAMMEROFJUSTICE);
+            DoCast(me->getVictim(), SPELL_HAMMEROFJUSTICE);
             HammerOfJustice_Timer = 12000;
         } else HammerOfJustice_Timer -= diff;
     }
@@ -535,32 +516,28 @@ struct boss_lady_catriona_von_indiAI : public boss_moroes_guestAI
 
         if (PowerWordShield_Timer <= diff)
         {
-            DoCast(me,SPELL_PWSHIELD);
+            DoCast(me, SPELL_PWSHIELD);
             PowerWordShield_Timer = 15000;
         } else PowerWordShield_Timer -= diff;
 
         if (GreaterHeal_Timer <= diff)
         {
-            pTarget = SelectTarget();
+            Unit *pTarget = SelectGuestTarget();
+
             DoCast(pTarget, SPELL_GREATERHEAL);
             GreaterHeal_Timer = 17000;
         } else GreaterHeal_Timer -= diff;
 
         if (HolyFire_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_HOLYFIRE);
+            DoCast(me->getVictim(), SPELL_HOLYFIRE);
             HolyFire_Timer = 22000;
         } else HolyFire_Timer -= diff;
 
         if (DispelMagic_Timer <= diff)
         {
-            if (rand()%2)
-            {
-                pTarget = SelectTarget();
+            if (Unit *pTarget = RAND(SelectGuestTarget(), SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true)))
                 DoCast(pTarget, SPELL_DISPELMAGIC);
-            }
-            else
-                DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_DISPELMAGIC);
 
             DispelMagic_Timer = 25000;
         } else DispelMagic_Timer -= diff;
@@ -603,20 +580,22 @@ struct boss_lady_keira_berrybuckAI : public boss_moroes_guestAI
 
         if (DivineShield_Timer <= diff)
         {
-            DoCast(me,SPELL_DIVINESHIELD);
+            DoCast(me, SPELL_DIVINESHIELD);
             DivineShield_Timer = 31000;
         } else DivineShield_Timer -= diff;
 
         if (HolyLight_Timer <= diff)
         {
-            pTarget = SelectTarget();
+            Unit *pTarget = SelectGuestTarget();
+
             DoCast(pTarget, SPELL_HOLYLIGHT);
             HolyLight_Timer = 10000;
         } else HolyLight_Timer -= diff;
 
         if (GreaterBless_Timer <= diff)
         {
-            pTarget = SelectTarget();
+            Unit *pTarget = SelectGuestTarget();
+
             DoCast(pTarget, SPELL_GREATERBLESSOFMIGHT);
 
             GreaterBless_Timer = 50000;
@@ -624,7 +603,8 @@ struct boss_lady_keira_berrybuckAI : public boss_moroes_guestAI
 
         if (Cleanse_Timer <= diff)
         {
-            pTarget = SelectTarget();
+            Unit *pTarget = SelectGuestTarget();
+
             DoCast(pTarget, SPELL_CLEANSE);
 
             Cleanse_Timer = 10000;
@@ -663,7 +643,7 @@ struct boss_lord_robin_darisAI : public boss_moroes_guestAI
 
         if (Hamstring_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_HAMSTRING);
+            DoCast(me->getVictim(), SPELL_HAMSTRING);
             Hamstring_Timer = 12000;
         } else Hamstring_Timer -= diff;
 
@@ -675,7 +655,7 @@ struct boss_lord_robin_darisAI : public boss_moroes_guestAI
 
         if (WhirlWind_Timer <= diff)
         {
-            DoCast(me,SPELL_WHIRLWIND);
+            DoCast(me, SPELL_WHIRLWIND);
             WhirlWind_Timer = 21000;
         } else WhirlWind_Timer -= diff;
     }
@@ -715,25 +695,25 @@ struct boss_lord_crispin_ferenceAI : public boss_moroes_guestAI
 
         if (Disarm_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_DISARM);
+            DoCast(me->getVictim(), SPELL_DISARM);
             Disarm_Timer = 12000;
         } else Disarm_Timer -= diff;
 
         if (HeroicStrike_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_HEROICSTRIKE);
+            DoCast(me->getVictim(), SPELL_HEROICSTRIKE);
             HeroicStrike_Timer = 10000;
         } else HeroicStrike_Timer -= diff;
 
         if (ShieldBash_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SHIELDBASH);
+            DoCast(me->getVictim(), SPELL_SHIELDBASH);
             ShieldBash_Timer = 13000;
         } else ShieldBash_Timer -= diff;
 
         if (ShieldWall_Timer <= diff)
         {
-            DoCast(me,SPELL_SHIELDWALL);
+            DoCast(me, SPELL_SHIELDWALL);
             ShieldWall_Timer = 21000;
         } else ShieldWall_Timer -= diff;
     }

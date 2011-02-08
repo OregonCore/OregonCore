@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Boss_Curator
 SD%Complete: 100
-SDComment: Evocation may cause client crash (Core related)
+SDComment:
 SDCategory: Karazhan
 EndScriptData */
 
@@ -34,10 +34,6 @@ EndScriptData */
 
 //Flare spell info
 #define SPELL_ASTRAL_FLARE_PASSIVE      30234               //Visual effect + Flare damage
-#define SPELL_ASTRAL_FLARE_NE           30236
-#define SPELL_ASTRAL_FLARE_NW           30239
-#define SPELL_ASTRAL_FLARE_SE           30240
-#define SPELL_ASTRAL_FLARE_SW           30241
 
 //Curator spell info
 #define SPELL_HATEFUL_BOLT              30383
@@ -63,23 +59,21 @@ struct boss_curatorAI : public ScriptedAI
         BerserkTimer = 720000;                              //12 minutes
         Enraged = false;
         Evocating = false;
+
+        me->ApplySpellImmune(0, IMMUNITY_DAMAGE, SPELL_SCHOOL_MASK_ARCANE, true);
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
-        switch(rand()%2)
-        {
-        case 0: DoScriptText(SAY_KILL1, me); break;
-        case 1: DoScriptText(SAY_KILL2, me); break;
-        }
+        DoScriptText(RAND(SAY_KILL1,SAY_KILL2), me);
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit * /*victim*/)
     {
         DoScriptText(SAY_DEATH, me);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
     }
@@ -89,18 +83,38 @@ struct boss_curatorAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Evocating && !me->HasAura(SPELL_EVOCATION, 0))
-            Evocating = false;
-
-        if (me->GetPower(POWER_MANA) <= 1000 && !Evocating)
+        //always decrease BerserkTimer
+        if (BerserkTimer <= diff)
         {
-            DoScriptText(SAY_EVOCATE, me);
-            me->InterruptNonMeleeSpells(false);
-            DoCast(me, SPELL_EVOCATION);
-            Evocating = true;
+            //if evocate, then break evocate
+            if (Evocating)
+            {
+                if (me->HasAura(SPELL_EVOCATION, 0))
+                    me->RemoveAurasDueToSpell(SPELL_EVOCATION);
+
+                Evocating = false;
+            }
+
+            //may not be correct SAY (generic hard enrage)
+            DoScriptText(SAY_ENRAGE, me);
+
+            me->InterruptNonMeleeSpells(true);
+            DoCast(me, SPELL_BERSERK);
+
+            //don't know if he's supposed to do summon/evocate after hard enrage (probably not)
+            Enraged = true;
+        } else BerserkTimer -= diff;
+
+        if (Evocating)
+        {
+            //not supposed to do anything while evocate
+            if (me->HasAura(SPELL_EVOCATION, 0))
+                return;
+            else
+                Evocating = false;
         }
 
-        if (!Enraged && !Evocating)
+        if (!Enraged)
         {
             if (AddTimer <= diff)
             {
@@ -115,28 +129,35 @@ struct boss_curatorAI : public ScriptedAI
                     AstralFlare->AI()->AttackStart(pTarget);
                 }
 
-                //Reduce Mana by 10%
-                int32 mana = (int32)(0.1f*(me->GetMaxPower(POWER_MANA)));
-                me->ModifyPower(POWER_MANA, -mana);
-                switch(rand()%4)
+                //Reduce Mana by 10% of max health
+                if (int32 mana = me->GetMaxPower(POWER_MANA))
                 {
-                    case 0: DoScriptText(SAY_SUMMON1, me);break;
-                    case 1: DoScriptText(SAY_SUMMON2, me);break;
+                    mana /= 10;
+                    me->ModifyPower(POWER_MANA, -mana);
+
+                    //if this get's us below 10%, then we evocate (the 10th should be summoned now)
+                    if (me->GetPower(POWER_MANA)*100 / me->GetMaxPower(POWER_MANA) < 10)
+                    {
+                        DoScriptText(SAY_EVOCATE, me);
+                        me->InterruptNonMeleeSpells(false);
+                        DoCast(me, SPELL_EVOCATION);
+                        Evocating = true;
+                        //no AddTimer cooldown, this will make first flare appear instantly after evocate end, like expected
+                        return;
+                    }
+                    else
+                    {
+                        if (urand(0,1) == 0)
+                        {
+                            DoScriptText(RAND(SAY_SUMMON1,SAY_SUMMON2), me);
+                        }
+                    }
                 }
+
                 AddTimer = 10000;
             } else AddTimer -= diff;
 
-            if (HatefulBoltTimer <= diff)
-            {
-                Unit *pTarget = NULL;
-                pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
-                if (pTarget)
-                    DoCast(pTarget, SPELL_HATEFUL_BOLT);
-
-                HatefulBoltTimer = 15000;
-            } else HatefulBoltTimer -= diff;
-
-            if (me->GetHealth()*100 / me->GetMaxHealth() < 15)
+            if (me->GetHealth()*100 / me->GetMaxHealth() <= 15)
             {
                 Enraged = true;
                 DoCast(me, SPELL_ENRAGE);
@@ -144,11 +165,17 @@ struct boss_curatorAI : public ScriptedAI
             }
         }
 
-        if (BerserkTimer <= diff)
+        if (HatefulBoltTimer <= diff)
         {
-            DoCast(me, SPELL_BERSERK);
-            DoScriptText(SAY_ENRAGE, me);
-        } else BerserkTimer -= diff;
+            if (Enraged)
+                HatefulBoltTimer = 7000;
+            else
+                HatefulBoltTimer = 15000;
+
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, 1))
+                DoCast(pTarget, SPELL_HATEFUL_BOLT);
+
+        } else HatefulBoltTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

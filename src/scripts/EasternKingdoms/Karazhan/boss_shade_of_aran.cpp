@@ -140,49 +140,35 @@ struct boss_aranAI : public ScriptedAI
         if (pInstance)
         {
             // Not in progress
-            pInstance->SetData(DATA_SHADEOFARAN_EVENT, NOT_STARTED);
-
-            if (GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
-                Door->SetGoState(GO_STATE_ACTIVE);
+            pInstance->SetData(TYPE_ARAN, NOT_STARTED);
+            pInstance->HandleGameObject(pInstance->GetData64(DATA_GO_LIBRARY_DOOR), true);
         }
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit * /*victim*/)
     {
-        switch(rand()%2)
-        {
-        case 0: DoScriptText(SAY_KILL1, me); break;
-        case 1: DoScriptText(SAY_KILL2, me); break;
-        }
+        DoScriptText(RAND(SAY_KILL1,SAY_KILL2), me);
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit * /*victim*/)
     {
         DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
         {
-            pInstance->SetData(DATA_SHADEOFARAN_EVENT, DONE);
-
-            if (GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
-                Door->SetGoState(GO_STATE_ACTIVE);
+            pInstance->SetData(TYPE_ARAN, DONE);
+            pInstance->HandleGameObject(pInstance->GetData64(DATA_GO_LIBRARY_DOOR), true);
         }
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
-        switch(rand()%3)
-        {
-        case 0: DoScriptText(SAY_AGGRO1, me); break;
-        case 1: DoScriptText(SAY_AGGRO2, me); break;
-        case 2: DoScriptText(SAY_AGGRO3, me); break;
-        }
+        DoScriptText(RAND(SAY_AGGRO1,SAY_AGGRO2,SAY_AGGRO3), me);
 
         if (pInstance)
         {
-            pInstance->SetData(DATA_SHADEOFARAN_EVENT, IN_PROGRESS);
-            if (GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
-                Door->SetGoState(GO_STATE_READY);
+            pInstance->SetData(TYPE_ARAN, IN_PROGRESS);
+            pInstance->HandleGameObject(pInstance->GetData64(DATA_GO_LIBRARY_DOOR), false);
         }
     }
 
@@ -195,7 +181,7 @@ struct boss_aranAI : public ScriptedAI
             return;
 
         //store the threat list in a different container
-        for (std::list<HostileReference *>::iterator itr = t_list.begin(); itr != t_list.end(); ++itr)
+        for (std::list<HostileReference *>::const_iterator itr = t_list.begin(); itr!= t_list.end(); ++itr)
         {
             Unit *pTarget = Unit::GetUnit(*me, (*itr)->getUnitGuid());
             //only on alive players
@@ -208,15 +194,15 @@ struct boss_aranAI : public ScriptedAI
             targets.erase(targets.begin()+rand()%targets.size());
 
         uint32 i = 0;
-        for (std::vector<Unit*>::iterator itr = targets.begin(); itr != targets.end(); ++itr)
+        for (std::vector<Unit*>::const_iterator itr = targets.begin(); itr!= targets.end(); ++itr)
         {
             if (*itr)
             {
                 FlameWreathTarget[i] = (*itr)->GetGUID();
                 FWTargPosX[i] = (*itr)->GetPositionX();
                 FWTargPosY[i] = (*itr)->GetPositionY();
-                me->CastSpell((*itr), SPELL_FLAME_WREATH, true);
-                i++;
+                DoCast((*itr), SPELL_FLAME_WREATH, true);
+                ++i;
             }
         }
     }
@@ -232,8 +218,7 @@ struct boss_aranAI : public ScriptedAI
             {
                 if (pInstance)
                 {
-                    if (GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
-                        Door->SetGoState(GO_STATE_READY);
+                    pInstance->HandleGameObject(pInstance->GetData64(DATA_GO_LIBRARY_DOOR), false);
                     CloseDoorTimer = 0;
                 }
             } else CloseDoorTimer -= diff;
@@ -270,11 +255,10 @@ struct boss_aranAI : public ScriptedAI
 
             if (!DrinkInturrupted)
             {
-                me->CastSpell(me, SPELL_MASS_POLY, true);
-                me->CastSpell(me, SPELL_CONJURE, false);
-                me->CastSpell(me, SPELL_DRINK, false);
-                                                            //Sitting down
-                me->SetUInt32Value(UNIT_FIELD_BYTES_1, 1);
+                DoCast(me, SPELL_MASS_POLY, true);
+                DoCast(me, SPELL_CONJURE, false);
+                DoCast(me, SPELL_DRINK, false);
+                me->SetStandState(UNIT_STAND_STATE_SIT);
                 DrinkInturruptTimer = 10000;
             }
         }
@@ -284,9 +268,9 @@ struct boss_aranAI : public ScriptedAI
         {
             Drinking = false;
             me->RemoveAurasDueToSpell(SPELL_DRINK);
-            me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
+            me->SetStandState(UNIT_STAND_STATE_STAND);
             me->SetPower(POWER_MANA, me->GetMaxPower(POWER_MANA)-32000);
-            me->CastSpell(me, SPELL_POTION, false);
+            DoCast(me, SPELL_POTION, false);
         }
 
         //Drink Inturrupt Timer
@@ -295,9 +279,9 @@ struct boss_aranAI : public ScriptedAI
                 DrinkInturruptTimer -= diff;
         else
         {
-            me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-            me->CastSpell(me, SPELL_POTION, true);
-            me->CastSpell(me, SPELL_AOE_PYROBLAST, false);
+            me->SetStandState(UNIT_STAND_STATE_STAND);
+            DoCast(me, SPELL_POTION, true);
+            DoCast(me, SPELL_AOE_PYROBLAST, false);
             DrinkInturrupted = true;
             Drinking = false;
         }
@@ -311,8 +295,7 @@ struct boss_aranAI : public ScriptedAI
         {
             if (!me->IsNonMeleeSpellCasted(false))
             {
-                Unit *pTarget = NULL;
-                pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
                 if (!pTarget)
                     return;
 
@@ -323,17 +306,17 @@ struct boss_aranAI : public ScriptedAI
                 if (!ArcaneCooldown)
                 {
                     Spells[AvailableSpells] = SPELL_ARCMISSLE;
-                    AvailableSpells++;
+                    ++AvailableSpells;
                 }
                 if (!FireCooldown)
                 {
                     Spells[AvailableSpells] = SPELL_FIREBALL;
-                    AvailableSpells++;
+                    ++AvailableSpells;
                 }
                 if (!FrostCooldown)
                 {
                     Spells[AvailableSpells] = SPELL_FROSTBOLT;
-                    AvailableSpells++;
+                    ++AvailableSpells;
                 }
 
                 //If no available spells wait 1 second and try again
@@ -348,18 +331,17 @@ struct boss_aranAI : public ScriptedAI
 
         if (SecondarySpellTimer <= diff)
         {
-            switch (rand()%2)
+            switch (urand(0,1))
             {
-
                 case 0:
                     DoCast(me, SPELL_AOE_CS);
                     break;
                 case 1:
-                    if (Unit* pUnit = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                        DoCast(pUnit, SPELL_CHAINSOFICE);
+                    if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                        DoCast(pTarget, SPELL_CHAINSOFICE);
                     break;
             }
-            SecondarySpellTimer = 5000 + (rand()%15000);
+            SecondarySpellTimer = urand(5000,20000);
         } else SecondarySpellTimer -= diff;
 
         if (SuperCastTimer <= diff)
@@ -382,28 +364,21 @@ struct boss_aranAI : public ScriptedAI
                     break;
             }
 
-            LastSuperSpell = Available[rand()%2];
+            LastSuperSpell = Available[urand(0,1)];
 
             switch (LastSuperSpell)
             {
                 case SUPER_AE:
+                    DoScriptText(RAND(SAY_EXPLOSION1,SAY_EXPLOSION2), me);
 
-                    if (rand()%2)
-                        DoScriptText(SAY_EXPLOSION1, me);
-                    else
-                        DoScriptText(SAY_EXPLOSION2, me);
-
-                    me->CastSpell(me, SPELL_BLINK_CENTER, true);
-                    me->CastSpell(me, SPELL_PLAYERPULL, true);
-                    me->CastSpell(me, SPELL_MASSSLOW, true);
-                    me->CastSpell(me, SPELL_AEXPLOSION, false);
+                    DoCast(me, SPELL_BLINK_CENTER, true);
+                    DoCast(me, SPELL_PLAYERPULL, true);
+                    DoCast(me, SPELL_MASSSLOW, true);
+                    DoCast(me, SPELL_AEXPLOSION, false);
                     break;
 
                 case SUPER_FLAME:
-                    if (rand()%2)
-                        DoScriptText(SAY_FLAMEWREATH1, me);
-                    else
-                        DoScriptText(SAY_FLAMEWREATH2, me);
+                    DoScriptText(RAND(SAY_FLAMEWREATH1,SAY_FLAMEWREATH2), me);
 
                     FlameWreathTimer = 20000;
                     FlameWreathCheckTime = 500;
@@ -416,33 +391,26 @@ struct boss_aranAI : public ScriptedAI
                     break;
 
                 case SUPER_BLIZZARD:
+                    DoScriptText(RAND(SAY_BLIZZARD1,SAY_BLIZZARD2), me);
 
-                    if (rand()%2)
-                        DoScriptText(SAY_BLIZZARD1, me);
-                    else
-                        DoScriptText(SAY_BLIZZARD2, me);
-
-                    Creature* Spawn = NULL;
-                    Spawn = DoSpawnCreature(CREATURE_ARAN_BLIZZARD, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 25000);
-                    if (Spawn)
+                    if (Creature* pSpawn = me->SummonCreature(CREATURE_ARAN_BLIZZARD, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 25000))
                     {
-                        Spawn->setFaction(me->getFaction());
-                        Spawn->CastSpell(Spawn, SPELL_CIRCULAR_BLIZZARD, false);
+                        pSpawn->setFaction(me->getFaction());
+                        pSpawn->CastSpell(pSpawn, SPELL_CIRCULAR_BLIZZARD, false);
                     }
                     break;
             }
 
-            SuperCastTimer = 35000 + (rand()%5000);
+            SuperCastTimer = urand(35000,40000);
         } else SuperCastTimer -= diff;
 
         if (!ElementalsSpawned && me->GetHealth()*100 / me->GetMaxHealth() < 40)
         {
             ElementalsSpawned = true;
 
-            for (uint32 i = 0; i < 4; i++)
+            for (uint32 i = 0; i < 4; ++i)
             {
-                Creature* pUnit = DoSpawnCreature(CREATURE_WATER_ELEMENTAL, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 90000);
-                if (pUnit)
+                if (Creature* pUnit = me->SummonCreature(CREATURE_WATER_ELEMENTAL, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 90000))
                 {
                     pUnit->Attack(me->getVictim(), true);
                     pUnit->setFaction(me->getFaction());
@@ -454,10 +422,9 @@ struct boss_aranAI : public ScriptedAI
 
         if (BerserkTimer <= diff)
         {
-            for (uint32 i = 0; i < 5; i++)
+            for (uint32 i = 0; i < 5; ++i)
             {
-                Creature* pUnit = DoSpawnCreature(CREATURE_SHADOW_OF_ARAN, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
-                if (pUnit)
+                if (Creature* pUnit = me->SummonCreature(CREATURE_SHADOW_OF_ARAN, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
                 {
                     pUnit->Attack(me->getVictim(), true);
                     pUnit->setFaction(me->getFaction());
@@ -478,13 +445,13 @@ struct boss_aranAI : public ScriptedAI
 
             if (FlameWreathCheckTime <= diff)
             {
-                for (uint32 i = 0; i < 3; i++)
+                for (uint8 i = 0; i < 3; ++i)
                 {
                     if (!FlameWreathTarget[i])
                         continue;
 
                     Unit* pUnit = Unit::GetUnit(*me, FlameWreathTarget[i]);
-                    if (pUnit && pUnit->GetDistance2d(FWTargPosX[i], FWTargPosY[i]) > 3)
+                    if (pUnit && !pUnit->IsWithinDist2d(FWTargPosX[i], FWTargPosY[i], 3))
                     {
                         pUnit->CastSpell(pUnit, 20476, true, 0, 0, me->GetGUID());
                         pUnit->CastSpell(pUnit, 11027, true);
@@ -499,13 +466,13 @@ struct boss_aranAI : public ScriptedAI
             DoMeleeAttackIfReady();
     }
 
-    void DamageTaken(Unit* pAttacker, uint32 &damage)
+    void DamageTaken(Unit* /*pAttacker*/, uint32 &damage)
     {
         if (!DrinkInturrupted && Drinking && damage)
             DrinkInturrupted = true;
     }
 
-    void SpellHit(Unit* pAttacker, const SpellEntry* Spell)
+    void SpellHit(Unit* /*pAttacker*/, const SpellEntry* Spell)
     {
         //We only care about inturrupt effects and only if they are durring a spell currently being casted
         if ((Spell->Effect[0] != SPELL_EFFECT_INTERRUPT_CAST &&
@@ -539,7 +506,7 @@ struct water_elementalAI : public ScriptedAI
         CastTimer = 2000 + (rand()%3000);
     }
 
-    void EnterCombat(Unit* who) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -549,7 +516,7 @@ struct water_elementalAI : public ScriptedAI
         if (CastTimer <= diff)
         {
             DoCast(me->getVictim(), SPELL_WATERBOLT);
-            CastTimer = 2000 + (rand()%3000);
+            CastTimer = urand(2000,5000);
         } else CastTimer -= diff;
     }
 };

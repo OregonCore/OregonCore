@@ -173,7 +173,7 @@ struct npc_barnesAI : public npc_escortAI
         if (!pInstance)
             return;
 
-        pInstance->SetData(DATA_OPERA_EVENT, IN_PROGRESS);
+        pInstance->SetData(TYPE_OPERA, IN_PROGRESS);
 
         //resets count for this event, in case earlier failed
         if (m_uiEventId == EVENT_OZ)
@@ -193,7 +193,7 @@ struct npc_barnesAI : public npc_escortAI
         {
             case 0:
                 DoCast(me, SPELL_TUXEDO, false);
-                pInstance->DoUseDoorOrButton(pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORLEFT));
+                pInstance->DoUseDoorOrButton(pInstance->GetData64(DATA_GO_STAGEDOORLEFT));
                 break;
             case 2:
                 TalkCount = 0;
@@ -209,27 +209,25 @@ struct npc_barnesAI : public npc_escortAI
                 }
                 switch(m_uiEventId)
                 {
-                case EVENT_OZ:
-                    for (int i = 0; i<5; i++)
-                        me->SummonGameObject(GameObjects_OZ[i][0],GameObjects_OZ[i][1],GameObjects_OZ[i][2],GameObjects_OZ[i][3],4.63f,0,0,0.73f,-0.68f,60000);
-                    break;
-
-                case EVENT_HOOD:
-                    for (int i = 0; i<5; i++)
-                        me->SummonGameObject(GameObjects_Wolf[i][0],GameObjects_Wolf[i][1],GameObjects_Wolf[i][2],GameObjects_Wolf[i][3],4.63f,0,0,0.73f,-0.68f,60000);
-                    break;
-
-                case EVENT_RAJ:
-                    for (int i = 0; i<1; i++)
-                        me->SummonGameObject(GameObjects_RomeJulia[i][0],GameObjects_RomeJulia[i][1],GameObjects_RomeJulia[i][2],GameObjects_RomeJulia[i][3],4.63f,0,0,0.73f,-0.68f,60000);
-                    break;
+                    case EVENT_OZ:
+                        for (int i = 0; i<5; i++)
+                            me->SummonGameObject(GameObjects_OZ[i][0],GameObjects_OZ[i][1],GameObjects_OZ[i][2],GameObjects_OZ[i][3],4.63f,0,0,0.73f,-0.68f,60000);
+                        break;
+                    case EVENT_HOOD:
+                        for (int i = 0; i<5; i++)
+                            me->SummonGameObject(GameObjects_Wolf[i][0],GameObjects_Wolf[i][1],GameObjects_Wolf[i][2],GameObjects_Wolf[i][3],4.63f,0,0,0.73f,-0.68f,60000);
+                        break;
+                    case EVENT_RAJ:
+                        for (int i = 0; i<1; i++)
+                            me->SummonGameObject(GameObjects_RomeJulia[i][0],GameObjects_RomeJulia[i][1],GameObjects_RomeJulia[i][2],GameObjects_RomeJulia[i][3],4.63f,0,0,0.73f,-0.68f,60000);
+                        break;
                 }
                 break;
             case 5:
-                pInstance->DoUseDoorOrButton(pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORLEFT));
+                pInstance->DoUseDoorOrButton(pInstance->GetData64(DATA_GO_STAGEDOORLEFT));
                 PerformanceReady = true;
                 PrepareEncounter();
-                pInstance->DoUseDoorOrButton(pInstance->GetData64(DATA_GAMEOBJECT_CURTAINS));
+                pInstance->DoUseDoorOrButton(pInstance->GetData64(DATA_GO_CURTAINS));
                 break;
         }
     }
@@ -323,9 +321,7 @@ struct npc_barnesAI : public npc_escortAI
 
                 Talk(TalkCount);
                 ++TalkCount;
-            }
-            else
-                TalkTimer -= diff;
+            } else TalkTimer -= diff;
         }
 
         if (PerformanceReady)
@@ -335,7 +331,8 @@ struct npc_barnesAI : public npc_escortAI
                 if (WipeTimer <= diff)
                 {
                     Map* pMap = me->GetMap();
-                    if (!pMap->IsDungeon()) return;
+                    if (!pMap->IsDungeon())
+                        return;
 
                     Map::PlayerList const &PlayerList = pMap->GetPlayers();
                     if (PlayerList.isEmpty())
@@ -373,18 +370,18 @@ CreatureAI* GetAI_npc_barnesAI(Creature* pCreature)
 
 bool GossipHello_npc_barnes(Player* pPlayer, Creature* pCreature)
 {
-    if (ScriptedInstance* pInstance = (pCreature->GetInstanceData()))
+    if (ScriptedInstance* pInstance = pCreature->GetInstanceData())
     {
         // Check for death of Moroes and if opera event is not done already
-        if (pInstance->GetData(DATA_MOROES_EVENT) == DONE && pInstance->GetData(DATA_OPERA_EVENT) != DONE)
+        if (pInstance->GetData(TYPE_MOROES) == DONE && pInstance->GetData(TYPE_OPERA) != DONE)
         {
             pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, OZ_GOSSIP1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
             if (pPlayer->isGameMaster())
             {
-                pPlayer->ADD_GOSSIP_ITEM(0, OZ_GM_GOSSIP1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-                pPlayer->ADD_GOSSIP_ITEM(0, OZ_GM_GOSSIP2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
-                pPlayer->ADD_GOSSIP_ITEM(0, OZ_GM_GOSSIP3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_DOT, OZ_GM_GOSSIP1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_DOT, OZ_GM_GOSSIP2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_DOT, OZ_GM_GOSSIP3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
             }
 
             if (npc_barnesAI* pBarnesAI = CAST_AI(npc_barnesAI,pCreature->AI()))
@@ -403,7 +400,7 @@ bool GossipHello_npc_barnes(Player* pPlayer, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_barnes(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+bool GossipSelect_npc_barnes(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
     npc_barnesAI* pBarnesAI = CAST_AI(npc_barnesAI, pCreature->AI());
 
@@ -441,27 +438,32 @@ bool GossipSelect_npc_barnes(Player* pPlayer, Creature* pCreature, uint32 uiSend
 # npc_berthold
 ####*/
 
-#define SPELL_TELEPORT           39567
-
-#define GOSSIP_ITEM_TELEPORT     "Teleport me to the Guardian's Library"
-
-bool GossipHello_npc_berthold(Player* player, Creature* pCreature)
+enum eBerthold
 {
-    ScriptedInstance* pInstance = (pCreature->GetInstanceData());
-     // Check if Shade of Aran is dead or not
-    if (pInstance && (pInstance->GetData(DATA_SHADEOFARAN_EVENT) == DONE))
-        player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_TELEPORT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+    SPELL_TELEPORT           = 39567
+};
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
+#define GOSSIP_ITEM_TELEPORT    "Teleport me to the Guardian's Library"
+
+bool GossipHello_npc_berthold(Player* pPlayer, Creature* pCreature)
+{
+    if (ScriptedInstance* pInstance = pCreature->GetInstanceData())
+    {
+        // Check if Shade of Aran event is done
+        if (pInstance->GetData(TYPE_ARAN) == DONE)
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TELEPORT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+    }
+
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_berthold(Player* player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_berthold(Player* pPlayer, Creature* /*pCreature*/, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (action == GOSSIP_ACTION_INFO_DEF + 1)
-        player->CastSpell(player, SPELL_TELEPORT, true);
+    if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
+        pPlayer->CastSpell(pPlayer, SPELL_TELEPORT, true);
 
-    player->CLOSE_GOSSIP_MENU();
+    pPlayer->CLOSE_GOSSIP_MENU();
     return true;
 }
 
@@ -521,7 +523,7 @@ struct npc_image_of_medivhAI : public ScriptedAI
             me->RemoveCorpse();
         }
     }
-    void EnterCombat(Unit* who){}
+    void EnterCombat(Unit* /*who*/) {}
 
     void MovementInform(uint32 type, uint32 id)
     {
@@ -550,34 +552,33 @@ struct npc_image_of_medivhAI : public ScriptedAI
         YellTimer = 10000;
     }
 
-
     uint32 NextStep(uint32 Step)
     {
         Unit* arca = Unit::GetUnit((*me),ArcanagosGUID);
-        Map *map = me->GetMap();
+        Map* pMap = me->GetMap();
         switch(Step)
         {
         case 0: return 9999999;
         case 1:
-            me->Yell(SAY_DIALOG_MEDIVH_1,LANG_UNIVERSAL,NULL);
+            me->MonsterYell(SAY_DIALOG_MEDIVH_1,LANG_UNIVERSAL,NULL);
             return 10000;
         case 2:
             if (arca)
-                CAST_CRE(arca)->Yell(SAY_DIALOG_ARCANAGOS_2,LANG_UNIVERSAL,NULL);
+                CAST_CRE(arca)->MonsterYell(SAY_DIALOG_ARCANAGOS_2,LANG_UNIVERSAL,NULL);
             return 20000;
         case 3:
-            me->Yell(SAY_DIALOG_MEDIVH_3,LANG_UNIVERSAL,NULL);
+            me->MonsterYell(SAY_DIALOG_MEDIVH_3,LANG_UNIVERSAL,NULL);
             return 10000;
         case 4:
             if (arca)
-                CAST_CRE(arca)->Yell(SAY_DIALOG_ARCANAGOS_4, LANG_UNIVERSAL, NULL);
+                CAST_CRE(arca)->MonsterYell(SAY_DIALOG_ARCANAGOS_4, LANG_UNIVERSAL, NULL);
             return 20000;
         case 5:
-            me->Yell(SAY_DIALOG_MEDIVH_5, LANG_UNIVERSAL, NULL);
+            me->MonsterYell(SAY_DIALOG_MEDIVH_5, LANG_UNIVERSAL, NULL);
             return 20000;
         case 6:
             if (arca)
-                CAST_CRE(arca)->Yell(SAY_DIALOG_ARCANAGOS_6, LANG_UNIVERSAL, NULL);
+                CAST_CRE(arca)->MonsterYell(SAY_DIALOG_ARCANAGOS_6, LANG_UNIVERSAL, NULL);
             return 10000;
         case 7:
             FireArcanagosTimer = 500;
@@ -587,15 +588,15 @@ struct npc_image_of_medivhAI : public ScriptedAI
             DoCast(me, SPELL_MANA_SHIELD);
             return 10000;
         case 9:
-            me->TextEmote(EMOTE_DIALOG_MEDIVH_7, 0, false);
+            me->MonsterTextEmote(EMOTE_DIALOG_MEDIVH_7, 0, false);
             return 10000;
         case 10:
             if (arca)
-                me->CastSpell(arca, SPELL_CONFLAGRATION_BLAST, false);
+                DoCast(arca, SPELL_CONFLAGRATION_BLAST, false);
             return 1000;
         case 11:
             if (arca)
-                CAST_CRE(arca)->Yell(SAY_DIALOG_ARCANAGOS_8, LANG_UNIVERSAL, NULL);
+                CAST_CRE(arca)->MonsterYell(SAY_DIALOG_ARCANAGOS_8, LANG_UNIVERSAL, NULL);
             return 5000;
         case 12:
             arca->GetMotionMaster()->MovePoint(0, -11010.82f,-1761.18f, 156.47f);
@@ -604,15 +605,15 @@ struct npc_image_of_medivhAI : public ScriptedAI
             arca->SetSpeed(MOVE_FLIGHT, 2.0f);
             return 10000;
         case 13:
-            me->Yell(SAY_DIALOG_MEDIVH_9, LANG_UNIVERSAL, NULL);
+            me->MonsterYell(SAY_DIALOG_MEDIVH_9, LANG_UNIVERSAL, NULL);
             return 10000;
         case 14:
             me->SetVisibility(VISIBILITY_OFF);
             me->ClearInCombat();
 
-            if (map->IsDungeon())
+            if (pMap->IsDungeon())
             {
-                InstanceMap::PlayerList const &PlayerList = ((InstanceMap*)map)->GetPlayers();
+                InstanceMap::PlayerList const &PlayerList = pMap->GetPlayers();
                 for (InstanceMap::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                 {
                     if (i->getSource()->isAlive())
@@ -637,9 +638,7 @@ struct npc_image_of_medivhAI : public ScriptedAI
         if (YellTimer <= diff)
         {
             if (EventStarted)
-            {
                 YellTimer = NextStep(Step++);
-            }
         } else YellTimer -= diff;
 
         if (Step >= 7 && Step <= 12)
@@ -659,7 +658,6 @@ struct npc_image_of_medivhAI : public ScriptedAI
                     DoCast(arca, SPELL_FIRE_BALL);
                 FireMedivhTimer = 5000;
             } else FireMedivhTimer -= diff;
-
         }
     }
 };
@@ -667,47 +665,6 @@ struct npc_image_of_medivhAI : public ScriptedAI
 CreatureAI* GetAI_npc_image_of_medivh(Creature* pCreature)
 {
     return new npc_image_of_medivhAI(pCreature);
-}
-
-#define SPELL_OATCH_OF_FEALTY 29546
-#define SPELL_BLEED 29578
-
-struct npc_Spectral_Retainer : public ScriptedAI
-{
-    npc_Spectral_Retainer(Creature* c) : ScriptedAI(c)
-    {
-        pInstance = ((ScriptedInstance*)c->GetInstanceData());
-    }
-
-    ScriptedInstance *pInstance;
-
-    uint32 Oatchtimer;
-    uint32 Bleedtimer;
-
-    void Aggro(Unit* who) {}
-    void Reset()
-    {
-        Oatchtimer  = 15;
-        Bleedtimer = 10;
-    }
-    void Update(uint32 diff)
-    {
-        if (!UpdateVictim())
-            return;
-
-        if (Bleedtimer < diff)
-        {
-            if (me->getVictim())
-                me->CastSpell(me->getVictim(),SPELL_BLEED,false);
-            Bleedtimer = 10;
-        }
-        else Bleedtimer -= diff;
-    }
-};
-
-CreatureAI* GetAI_npc_Spectral_Retainer(Creature *_Creature)
-{
-    return new npc_Spectral_Retainer(_Creature);
 }
 
 void AddSC_karazhan()
@@ -730,11 +687,6 @@ void AddSC_karazhan()
     newscript = new Script;
     newscript->Name = "npc_image_of_medivh";
     newscript->GetAI = &GetAI_npc_image_of_medivh;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "npc_Spectral Retainer";
-    newscript->GetAI = &GetAI_npc_Spectral_Retainer;
     newscript->RegisterSelf();
 }
 

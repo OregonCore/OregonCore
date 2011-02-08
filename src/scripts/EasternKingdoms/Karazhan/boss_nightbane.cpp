@@ -99,7 +99,7 @@ struct boss_nightbaneAI : public ScriptedAI
         {
             bool isCorrectSpawned = true;
 
-            if (pInstance->GetData(DATA_NIGHTBANE_EVENT) != DONE)
+            if (pInstance->GetData(TYPE_NIGHTBANE) != DONE)
             {
                 uint64 NightbaneGUID = 0;
                 NightbaneGUID = pInstance->GetData64(DATA_NIGHTBANE);
@@ -127,7 +127,7 @@ struct boss_nightbaneAI : public ScriptedAI
             {
                 (*me).GetMotionMaster()->Clear(false);
                 isReseted = true;
-                pInstance->SetData(DATA_NIGHTBANE_EVENT,NOT_STARTED);
+                pInstance->SetData(TYPE_NIGHTBANE, NOT_STARTED);
                 me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 me->RemoveCorpse();
                 return;
@@ -168,16 +168,17 @@ struct boss_nightbaneAI : public ScriptedAI
 
     void HandleTerraceDoors(bool open)
     {
-        if (GameObject *Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_MASTERS_TERRACE_DOOR_1)))
-            Door->SetGoState(open ? GO_STATE_ACTIVE : GO_STATE_READY);
-        if (GameObject *Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_MASTERS_TERRACE_DOOR_2)))
-            Door->SetGoState(open ? GO_STATE_ACTIVE : GO_STATE_READY);
+        if (pInstance)
+        {
+            pInstance->HandleGameObject(pInstance->GetData64(DATA_MASTERS_TERRACE_DOOR_1), open);
+            pInstance->HandleGameObject(pInstance->GetData64(DATA_MASTERS_TERRACE_DOOR_2), open);
+        }
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         if (pInstance)
-            pInstance->SetData(DATA_NIGHTBANE_EVENT, IN_PROGRESS);
+            pInstance->SetData(TYPE_NIGHTBANE, IN_PROGRESS);
 
         HandleTerraceDoors(false);
         me->MonsterYell(YELL_AGGRO, LANG_UNIVERSAL, NULL);
@@ -192,11 +193,11 @@ struct boss_nightbaneAI : public ScriptedAI
                 AttackStartNoMove(who);
     }
 
-    void JustDied(Unit* killer)
+    void JustDied(Unit* /*killer*/)
     {
         if (!isReseted)
             if (pInstance)
-                pInstance->SetData(DATA_NIGHTBANE_EVENT, DONE);
+                pInstance->SetData(TYPE_NIGHTBANE, DONE);
 
         HandleTerraceDoors(true);
     }
@@ -277,10 +278,11 @@ struct boss_nightbaneAI : public ScriptedAI
         me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
         (*me).GetMotionMaster()->Clear(false);
         (*me).GetMotionMaster()->MovePoint(0,IntroWay[2][0],IntroWay[2][1],IntroWay[2][2]);
+
         Flying = true;
 
-        FlyTimer = 45000+rand()%15000; //timer wrong between 45 and 60 seconds
-        FlyCount++;
+        FlyTimer = urand(45000,60000); //timer wrong between 45 and 60 seconds
+        ++FlyCount;
 
         RainofBonesTimer = 5000; //timer wrong (maybe)
         RainBones = false;
@@ -341,36 +343,36 @@ struct boss_nightbaneAI : public ScriptedAI
 
             if (BellowingRoarTimer <= diff)
             {
-                DoCast(me->getVictim(),SPELL_BELLOWING_ROAR);
-                BellowingRoarTimer = 30000+rand()%10000 ; //Timer
+                DoCast(me->getVictim(), SPELL_BELLOWING_ROAR);
+                BellowingRoarTimer = urand(30000,40000);
             } else BellowingRoarTimer -= diff;
 
             if (SmolderingBreathTimer <= diff)
             {
-                DoCast(me->getVictim(),SPELL_SMOLDERING_BREATH);
-                SmolderingBreathTimer = 20000;//timer
+                DoCast(me->getVictim(), SPELL_SMOLDERING_BREATH);
+                SmolderingBreathTimer = 20000;
             } else SmolderingBreathTimer -= diff;
 
             if (CharredEarthTimer <= diff)
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
-                    DoCast(pTarget,SPELL_CHARRED_EARTH);
-                CharredEarthTimer = 20000; //timer
+                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                    DoCast(pTarget, SPELL_CHARRED_EARTH);
+                CharredEarthTimer = 20000;
             } else CharredEarthTimer -= diff;
 
             if (TailSweepTimer <= diff)
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                     if (!me->HasInArc(M_PI, pTarget))
-                        DoCast(pTarget,SPELL_TAIL_SWEEP);
-                TailSweepTimer = 15000;//timer
+                        DoCast(pTarget, SPELL_TAIL_SWEEP);
+                TailSweepTimer = 15000;
             } else TailSweepTimer -= diff;
 
             if (SearingCindersTimer <= diff)
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    DoCast(pTarget,SPELL_SEARING_CINDERS);
-                SearingCindersTimer = 10000; //timer
+                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                    DoCast(pTarget, SPELL_SEARING_CINDERS);
+                SearingCindersTimer = 10000;
             } else SearingCindersTimer -= diff;
 
             uint32 Prozent;
@@ -403,16 +405,16 @@ struct boss_nightbaneAI : public ScriptedAI
                         Skeletons = true;
                     }
 
-                    DoCast(me->getVictim(),SPELL_RAIN_OF_BONES);
+                    DoCast(me->getVictim(), SPELL_RAIN_OF_BONES);
                     RainBones = true;
                     SmokingBlastTimer = 20000;
                 } else RainofBonesTimer -= diff;
 
                 if (DistractingAshTimer <= diff)
                 {
-                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                        DoCast(pTarget,SPELL_DISTRACTING_ASH);
-                    DistractingAshTimer = 2000;//timer wrong
+                    if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                        DoCast(pTarget, SPELL_DISTRACTING_ASH);
+                    DistractingAshTimer = 2000; //timer wrong
                 } else DistractingAshTimer -= diff;
             }
 
@@ -420,8 +422,8 @@ struct boss_nightbaneAI : public ScriptedAI
             {
                 if (SmokingBlastTimer <= diff)
                  {
-                    DoCast(me->getVictim(),SPELL_SMOKING_BLAST);
-                    SmokingBlastTimer = 1500 ; //timer wrong
+                    DoCast(me->getVictim(), SPELL_SMOKING_BLAST);
+                    SmokingBlastTimer = 1500; //timer wrong
                  } else SmokingBlastTimer -= diff;
             }
 
@@ -435,10 +437,10 @@ struct boss_nightbaneAI : public ScriptedAI
                     if (Player* i_pl = i->getSource())
                         if (i_pl->isAlive() && !me->IsWithinDistInMap(i_pl,80))
                         {
-                            DoCast(i_pl,SPELL_FIREBALL_BARRAGE);
+                            DoCast(i_pl, SPELL_FIREBALL_BARRAGE);
                         }
                 }
-                FireballBarrageTimer = 2000; //Timer fehlen noch
+                FireballBarrageTimer = 20000;
             } else FireballBarrageTimer -= diff;
 
             if (FlyTimer <= diff) //landing
@@ -449,7 +451,6 @@ struct boss_nightbaneAI : public ScriptedAI
                 me->GetMotionMaster()->MovePoint(3,IntroWay[3][0],IntroWay[3][1],IntroWay[3][2]);
 
                 Flying = true;
-
             } else FlyTimer -= diff;
         }
     }
