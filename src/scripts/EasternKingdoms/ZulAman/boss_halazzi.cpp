@@ -114,7 +114,7 @@ struct boss_halazziAI : public ScriptedAI
         EnterPhase(PHASE_LYNX);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_HALAZZIEVENT, IN_PROGRESS);
@@ -132,7 +132,7 @@ struct boss_halazziAI : public ScriptedAI
             LynxGUID = summon->GetGUID();
     }
 
-    void DamageTaken(Unit *done_by, uint32 &damage)
+    void DamageTaken(Unit * /*done_by*/, uint32 &damage)
     {
         if (damage >= me->GetHealth() && Phase != PHASE_ENRAGE)
             damage = 0;
@@ -157,15 +157,12 @@ struct boss_halazziAI : public ScriptedAI
         case PHASE_ENRAGE:
             if (Phase == PHASE_MERGE)
             {
-                me->CastSpell(me, SPELL_TRANSFORM_MERGE, true);
+                DoCast(me, SPELL_TRANSFORM_MERGE, true);
                 me->Attack(me->getVictim(), true);
                 me->GetMotionMaster()->MoveChase(me->getVictim());
             }
-            if (Unit *Lynx = Unit::GetUnit(*me, LynxGUID))
-            {
-                Lynx->SetVisibility(VISIBILITY_OFF);
-                Lynx->setDeathState(JUST_DIED);
-            }
+            if (Creature *Lynx = Unit::GetCreature(*me, LynxGUID))
+                Lynx->DisappearAndDie();
             me->SetMaxHealth(600000);
             me->SetHealth(600000 - 150000 * TransformCount);
             FrenzyTimer = 16000;
@@ -176,7 +173,7 @@ struct boss_halazziAI : public ScriptedAI
         case PHASE_SPLIT:
             me->MonsterYell(YELL_SPLIT, LANG_UNIVERSAL, NULL);
             DoPlaySoundToSet(me, SOUND_SPLIT);
-            me->CastSpell(me, SPELL_TRANSFORM_SPLIT, true);
+            DoCast(me, SPELL_TRANSFORM_SPLIT, true);
             break;
         case PHASE_HUMAN:
             //DoCast(me, SPELL_SUMMON_LYNX, true);
@@ -187,17 +184,18 @@ struct boss_halazziAI : public ScriptedAI
             TotemTimer = 12000;
             break;
         case PHASE_MERGE:
-            if (Unit *Lynx = Unit::GetUnit(*me, LynxGUID))
+            if (Unit *pLynx = Unit::GetUnit(*me, LynxGUID))
             {
                 me->MonsterYell(YELL_MERGE, LANG_UNIVERSAL, NULL);
                 DoPlaySoundToSet(me, SOUND_MERGE);
-                Lynx->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                Lynx->GetMotionMaster()->Clear();
-                Lynx->GetMotionMaster()->MoveFollow(me, 0, 0);
+                pLynx->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                pLynx->GetMotionMaster()->Clear();
+                pLynx->GetMotionMaster()->MoveFollow(me, 0, 0);
                 me->GetMotionMaster()->Clear();
-                me->GetMotionMaster()->MoveFollow(Lynx, 0, 0);
-                TransformCount++;
-            }break;
+                me->GetMotionMaster()->MoveFollow(pLynx, 0, 0);
+                ++TransformCount;
+            }
+            break;
         default:
             break;
         }
@@ -227,15 +225,14 @@ struct boss_halazziAI : public ScriptedAI
                         me->MonsterYell(YELL_SABER_ONE, LANG_UNIVERSAL, NULL);
                         DoPlaySoundToSet(me, SOUND_SABER_ONE);
                         break;
-
                     case 1:
                         me->MonsterYell(YELL_SABER_TWO, LANG_UNIVERSAL, NULL);
                         DoPlaySoundToSet(me, SOUND_SABER_TWO);
                         break;
                 }
                 // A tank with more than 490 defense skills should receive no critical hit
-                //me->CastSpell(me, 41296, true);
-                me->CastSpell(me->getVictim(), SPELL_SABER_LASH, true);
+                //DoCast(me, 41296, true);
+                DoCast(me->getVictim(), SPELL_SABER_LASH, true);
                 //me->RemoveAurasDueToSpell(41296);
                 SaberlashTimer = 30000;
             } else SaberlashTimer -= diff;
@@ -243,7 +240,7 @@ struct boss_halazziAI : public ScriptedAI
             if (FrenzyTimer <= diff)
             {
                 DoCast(me, SPELL_FRENZY);
-                FrenzyTimer = (10+rand()%5)*1000;
+                FrenzyTimer = urand(10000,15000);
             } else FrenzyTimer -= diff;
 
             if (Phase == PHASE_LYNX)
@@ -268,9 +265,9 @@ struct boss_halazziAI : public ScriptedAI
                 if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 {
                     if (pTarget->IsNonMeleeSpellCasted(false))
-                        DoCast(pTarget,SPELL_EARTHSHOCK);
+                        DoCast(pTarget, SPELL_EARTHSHOCK);
                     else
-                        DoCast(pTarget,SPELL_FLAMESHOCK);
+                        DoCast(pTarget, SPELL_FLAMESHOCK);
                     ShockTimer = 10000 + rand()%5000;
                 }
             } else ShockTimer -= diff;
@@ -314,7 +311,7 @@ struct boss_halazziAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit* /*victim*/)
     {
         switch (urand(0,1))
         {
@@ -330,7 +327,7 @@ struct boss_halazziAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_HALAZZIEVENT, DONE);
@@ -351,11 +348,11 @@ struct boss_spiritlynxAI : public ScriptedAI
 
     void Reset()
     {
-        FrenzyTimer = (30+rand()%20)*1000;  //frenzy every 30-50 seconds
+        FrenzyTimer = urand(30000,50000);  //frenzy every 30-50 seconds
         shredder_timer = 4000;
     }
 
-    void DamageTaken(Unit *done_by, uint32 &damage)
+    void DamageTaken(Unit * /*done_by*/, uint32 &damage)
     {
         if (damage >= me->GetHealth())
             damage = 0;
@@ -367,7 +364,7 @@ struct boss_spiritlynxAI : public ScriptedAI
             ScriptedAI::AttackStart(who);
     }
 
-    void EnterCombat(Unit *who) {/*DoZoneInCombat();*/}
+    void EnterCombat(Unit * /*who*/) {/*DoZoneInCombat();*/}
 
     void UpdateAI(const uint32 diff)
     {
@@ -377,7 +374,7 @@ struct boss_spiritlynxAI : public ScriptedAI
         if (FrenzyTimer <= diff)
         {
             DoCast(me, SPELL_LYNX_FRENZY);
-            FrenzyTimer = (30+rand()%20)*1000;
+            FrenzyTimer = urand(30000,50000);  //frenzy every 30-50 seconds
         } else FrenzyTimer -= diff;
 
         if (shredder_timer <= diff)

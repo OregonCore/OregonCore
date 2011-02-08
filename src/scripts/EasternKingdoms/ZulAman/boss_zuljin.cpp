@@ -98,7 +98,6 @@ EndScriptData */
 
 #define SPELL_BERSERK 45078
 
-
 #define PHASE_BEAR 0
 #define PHASE_EAGLE 1
 #define PHASE_LYNX 2
@@ -211,7 +210,7 @@ struct boss_zuljinAI : public ScriptedAI
         me->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_ZULJINEVENT, IN_PROGRESS);
@@ -224,7 +223,7 @@ struct boss_zuljinAI : public ScriptedAI
         EnterPhase(0);
     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit* /*victim*/)
     {
         if (Intro_Timer)
             return;
@@ -242,7 +241,7 @@ struct boss_zuljinAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_ZULJINEVENT, DONE);
@@ -275,7 +274,7 @@ struct boss_zuljinAI : public ScriptedAI
                     me->AttackerStateUpdate(me->getVictim());
                     if (me->getVictim() && health == me->getVictim()->GetHealth())
                     {
-                        me->CastSpell(me->getVictim(), SPELL_OVERPOWER, false);
+                        DoCast(me->getVictim(), SPELL_OVERPOWER, false);
                         Overpower_Timer = 5000;
                     }
                 } else me->AttackerStateUpdate(me->getVictim());
@@ -287,7 +286,7 @@ struct boss_zuljinAI : public ScriptedAI
     void SpawnAdds()
     {
         Creature *pCreature = NULL;
-        for (uint8 i = 0; i < 4; i++)
+        for (uint8 i = 0; i < 4; ++i)
         {
             pCreature = me->SummonCreature(SpiritInfo[i].entry, SpiritInfo[i].x, SpiritInfo[i].y, SpiritInfo[i].z, SpiritInfo[i].orient, TEMPSUMMON_DEAD_DESPAWN, 0);
             if (pCreature)
@@ -303,7 +302,7 @@ struct boss_zuljinAI : public ScriptedAI
 
     void DespawnAdds()
     {
-        for (uint8 i = 0; i < 4; i++)
+        for (uint8 i = 0; i < 4; ++i)
         {
             Unit* Temp = NULL;
             if (SpiritGUID[i])
@@ -355,8 +354,8 @@ struct boss_zuljinAI : public ScriptedAI
             if (NextPhase == 2)
             {
                 me->GetMotionMaster()->Clear();
-                me->CastSpell(me, SPELL_ENERGY_STORM, true); // enemy aura
-                for (uint8 i = 0; i < 4; i++)
+                DoCast(me, SPELL_ENERGY_STORM, true); // enemy aura
+                for (uint8 i = 0; i < 4; ++i)
                 {
                     Creature* Vortex = DoSpawnCreature(CREATURE_FEATHER_VORTEX, 0, 0, 0, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
                     if (Vortex)
@@ -398,7 +397,7 @@ struct boss_zuljinAI : public ScriptedAI
 
         if (Berserk_Timer <= diff)
         {
-            me->CastSpell(me, SPELL_BERSERK, true);
+            DoCast(me, SPELL_BERSERK, true);
             me->MonsterYell(YELL_BERSERK, LANG_UNIVERSAL, NULL);
             DoPlaySoundToSet(me, SOUND_BERSERK);
             Berserk_Timer = 60000;
@@ -425,8 +424,8 @@ struct boss_zuljinAI : public ScriptedAI
 
             if (Grievous_Throw_Timer <= diff)
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    me->CastSpell(pTarget, SPELL_GRIEVOUS_THROW, false);
+                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                    DoCast(pTarget, SPELL_GRIEVOUS_THROW, false);
                 Grievous_Throw_Timer = 10000;
             } else Grievous_Throw_Timer -= diff;
             break;
@@ -475,8 +474,8 @@ struct boss_zuljinAI : public ScriptedAI
                             AttackStart(pTarget);
                             if (me->IsWithinMeleeRange(pTarget))
                             {
-                                me->CastSpell(pTarget, SPELL_CLAW_RAGE_DAMAGE, true);
-                                Claw_Counter++;
+                                DoCast(pTarget, SPELL_CLAW_RAGE_DAMAGE, true);
+                                ++Claw_Counter;
                                 if (Claw_Counter == 12)
                                 {
                                     Claw_Rage_Timer = 15000 + rand()%5000;
@@ -491,7 +490,7 @@ struct boss_zuljinAI : public ScriptedAI
                         }
                         else
                         {
-                            EnterEvadeMode(); // if (target)
+                            EnterEvadeMode(); // if (pTarget)
                             return;
                         }
                     } else Claw_Loop_Timer -= diff;
@@ -523,8 +522,8 @@ struct boss_zuljinAI : public ScriptedAI
                     {
                         if (me->IsWithinMeleeRange(pTarget))
                         {
-                            me->CastSpell(pTarget, SPELL_LYNX_RUSH_DAMAGE, true);
-                            Claw_Counter++;
+                            DoCast(pTarget, SPELL_LYNX_RUSH_DAMAGE, true);
+                            ++Claw_Counter;
                             if (Claw_Counter == 9)
                             {
                                 Lynx_Rush_Timer = 15000 + rand()%5000;
@@ -538,7 +537,7 @@ struct boss_zuljinAI : public ScriptedAI
                     }
                     else
                     {
-                        EnterEvadeMode(); // if (target)
+                        EnterEvadeMode(); // if (pTarget)
                         return;
                     }
                 } //if (TankGUID)
@@ -600,7 +599,7 @@ struct feather_vortexAI : public ScriptedAI
         {
             if (spell->Id == SPELL_ZAP_INFORM)
             {
-                me->CastSpell(caster, SPELL_ZAP_DAMAGE, true);
+                DoCast(caster, SPELL_ZAP_DAMAGE, true);
                 PlayerList.push_back(CAST_PLR(caster));
             }
         }

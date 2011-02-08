@@ -45,9 +45,9 @@ struct npc_forest_frogAI : public ScriptedAI
 
     ScriptedInstance *pInstance;
 
-    void Reset() { }
+    void Reset() {}
 
-    void EnterCombat(Unit *who) { }
+    void EnterCombat(Unit * /*who*/) {}
 
     void DoSpawnRandom()
     {
@@ -86,7 +86,7 @@ struct npc_forest_frogAI : public ScriptedAI
         if (spell->Id == SPELL_REMOVE_AMANI_CURSE && caster->GetTypeId() == TYPEID_PLAYER && me->GetEntry() == ENTRY_FOREST_FROG)
         {
             //increase or decrease chance of mojo?
-            if (rand()%99 == 50) DoCast(caster,SPELL_PUSH_MOJO,true);
+            if (rand()%99 == 50) DoCast(caster, SPELL_PUSH_MOJO, true);
             else DoSpawnRandom();
         }
     }
@@ -111,35 +111,36 @@ struct npc_zulaman_hostageAI : public ScriptedAI
     bool IsLoot;
     uint64 PlayerGUID;
     void Reset() {}
-    void EnterCombat(Unit *who) {}
-    void JustDied(Unit *)
+    void EnterCombat(Unit * /*who*/) {}
+    void JustDied(Unit* /*who*/)
     {
-        Player* player = Unit::GetPlayer(*me, PlayerGUID);
-        if (player) player->SendLoot(me->GetGUID(), LOOT_CORPSE);
+        Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID);
+        if (pPlayer) pPlayer->SendLoot(me->GetGUID(), LOOT_CORPSE);
     }
-    void UpdateAI(const uint32 diff)
+    void UpdateAI(const uint32 /*diff*/)
     {
-        if (IsLoot) me->CastSpell(me, 7, false);
+        if (IsLoot)
+            DoCast(me, 7, false);
     }
 };
 
-bool GossipHello_npc_zulaman_hostage(Player* player, Creature* pCreature)
+bool GossipHello_npc_zulaman_hostage(Player* pPlayer, Creature* pCreature)
 {
-    player->ADD_GOSSIP_ITEM(0, GOSSIP_HOSTAGE1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HOSTAGE1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_zulaman_hostage(Player* player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_zulaman_hostage(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (action == GOSSIP_ACTION_INFO_DEF + 1)
-        player->CLOSE_GOSSIP_MENU();
+    if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
+        pPlayer->CLOSE_GOSSIP_MENU();
 
     if (!pCreature->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP))
         return true;
     pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
-    ScriptedInstance* pInstance = (pCreature->GetInstanceData());
+    ScriptedInstance* pInstance = pCreature->GetInstanceData();
     if (pInstance)
     {
         //uint8 progress = pInstance->GetData(DATA_CHESTLOOTED);
@@ -158,8 +159,8 @@ bool GossipSelect_npc_zulaman_hostage(Player* player, Creature* pCreature, uint3
         /*Creature* summon = pCreature->SummonCreature(HostageInfo[progress], x-2, y, z, 0, TEMPSUMMON_DEAD_DESPAWN, 0);
         if (summon)
         {
-            ((npc_zulaman_hostageAI*)summon->AI())->PlayerGUID = player->GetGUID();
-            ((npc_zulaman_hostageAI*)summon->AI())->IsLoot = true;
+            CAST_AI(npc_zulaman_hostageAI, summon->AI())->PlayerGUID = pPlayer->GetGUID();
+            CAST_AI(npc_zulaman_hostageAI, summon->AI())->IsLoot = true;
             summon->SetDisplayId(10056);
             summon->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             summon->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);

@@ -36,7 +36,7 @@ EndScriptData */
 // But we cannot add loots to gameobject, so we have to use the fixed loot_template
 struct SHostageInfo
 {
-    uint32 npc, go;
+    uint32 npc, pGo;
     float x, y, z, o;
 };
 
@@ -51,7 +51,7 @@ static SHostageInfo HostageInfo[] =
 
 struct instance_zulaman : public ScriptedInstance
 {
-    instance_zulaman(Map *map) : ScriptedInstance(map) {Initialize();};
+    instance_zulaman(Map* pMap) : ScriptedInstance(pMap) {Initialize();};
 
     uint64 HarkorsSatchelGUID;
     uint64 TanzarsTrunkGUID;
@@ -80,21 +80,21 @@ struct instance_zulaman : public ScriptedInstance
         AshlisBagGUID = 0;
         KrazsPackageGUID = 0;
 
-        uint64 HexLordGateGUID = 0;
-        uint64 ZulJinGateGUID = 0;
-        uint64 AkilzonDoorGUID = 0;
-        uint64 HalazziDoorEntryGUID = 0;
-        uint64 HalazziDoorExitGUID = 0;
-        uint64 ZulJinDoorGUID = 0;
+        HexLordGateGUID = 0;
+        ZulJinGateGUID = 0;
+        AkilzonDoorGUID = 0;
+        HalazziDoorEntryGUID = 0;
+        HalazziDoorExitGUID = 0;
+        ZulJinDoorGUID = 0;
 
         QuestTimer = 0;
         QuestMinute = 21;
         BossKilled = 0;
         ChestLooted = 0;
 
-        for (uint8 i = 0; i < ENCOUNTERS; i++)
+        for (uint8 i = 0; i < ENCOUNTERS; ++i)
             Encounters[i] = NOT_STARTED;
-        for (uint8 i = 0; i < RAND_VENDOR; i++)
+        for (uint8 i = 0; i < RAND_VENDOR; ++i)
             RandVendor[i] = NOT_STARTED;
     }
 
@@ -119,35 +119,35 @@ struct instance_zulaman : public ScriptedInstance
         }
     }
 
-    void OnObjectCreate(GameObject *go)
+    void OnObjectCreate(GameObject *pGo)
     {
-        switch(go->GetEntry())
+        switch(pGo->GetEntry())
         {
             case 186303:
-                HalazziDoorExitGUID = go->GetGUID();
+                HalazziDoorExitGUID = pGo->GetGUID();
                 if (BossKilled >= 4)
                     OpenDoor(HalazziDoorExitGUID, true);
                 break;
             case 186304:
-                HalazziDoorEntryGUID  = go->GetGUID();
+                HalazziDoorEntryGUID  = pGo->GetGUID();
                 break;
             case 186305:
-                HexLordGateGUID = go->GetGUID();
-                //if (BossKilled >= 4) HandleGameObject(NULL, true, go);
+                HexLordGateGUID = pGo->GetGUID();
+                //if (BossKilled >= 4) HandleGameObject(NULL, true, pGo);
                 if (BossKilled >= 4)
                     OpenDoor(HexLordGateGUID, true);
                 break;
             case 186306:
-                ZulJinGateGUID  = go->GetGUID();
+                ZulJinGateGUID  = pGo->GetGUID();
                 if (BossKilled >= 5)
                     OpenDoor(ZulJinGateGUID, true);
                 break;
-            case 186858: AkilzonDoorGUID = go->GetGUID(); break;
-            case 186859: ZulJinDoorGUID  = go->GetGUID(); break;
-            case 187021: HarkorsSatchelGUID  = go->GetGUID(); break;
-            case 186648: TanzarsTrunkGUID = go->GetGUID(); break;
-            case 186672: AshlisBagGUID = go->GetGUID(); break;
-            case 186667: KrazsPackageGUID  = go->GetGUID(); break;
+            case 186858: AkilzonDoorGUID = pGo->GetGUID(); break;
+            case 186859: ZulJinDoorGUID  = pGo->GetGUID(); break;
+            case 187021: HarkorsSatchelGUID  = pGo->GetGUID(); break;
+            case 186648: TanzarsTrunkGUID = pGo->GetGUID(); break;
+            case 186672: AshlisBagGUID = pGo->GetGUID(); break;
+            case 186667: KrazsPackageGUID  = pGo->GetGUID(); break;
             default: break;
         }
         CheckInstanceStatus();
@@ -283,7 +283,7 @@ struct instance_zulaman : public ScriptedInstance
             OpenDoor(ZulJinDoorGUID, data != IN_PROGRESS);
             break;
         case DATA_CHESTLOOTED:
-            ChestLooted++;
+            ++ChestLooted;
             SaveToDB();
             break;
         case TYPE_RAND_VENDOR_1:
@@ -296,7 +296,7 @@ struct instance_zulaman : public ScriptedInstance
 
         if (data == DONE)
         {
-            BossKilled++;
+            ++BossKilled;
             if (QuestMinute && BossKilled >= 4)
             {
                 QuestMinute = 0;
@@ -344,9 +344,9 @@ struct instance_zulaman : public ScriptedInstance
     }
 };
 
-InstanceData* GetInstanceData_instance_zulaman(Map* map)
+InstanceData* GetInstanceData_instance_zulaman(Map* pMap)
 {
-    return new instance_zulaman(map);
+    return new instance_zulaman(pMap);
 }
 
 void AddSC_instance_zulaman()
