@@ -517,7 +517,7 @@ bool ChatHandler::HandleGMTicketAssignToCommand(const char* args)
 
     uint64 tarGUID = objmgr.GetPlayerGUIDByName(targm.c_str());
     uint64 accid = objmgr.GetPlayerAccountIdByGUID(tarGUID);
-    QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT gmlevel RealmID FROM account_access WHERE id = '%u'", accid);
+    QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT gmlevel, RealmID FROM account_access WHERE id = '%u'", accid);
 
     Field * fields = result->Fetch();
     uint32 gmlevel = fields[0].GetUInt32();
