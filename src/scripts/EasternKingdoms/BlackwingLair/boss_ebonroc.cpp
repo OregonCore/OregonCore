@@ -45,7 +45,7 @@ struct boss_ebonrocAI : public ScriptedAI
         Heal_Timer = 1000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         DoZoneInCombat();
     }
@@ -58,30 +58,30 @@ struct boss_ebonrocAI : public ScriptedAI
         //Shadowflame Timer
         if (ShadowFlame_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SHADOWFLAME);
-            ShadowFlame_Timer = 12000 + rand()%3000;
+            DoCast(me->getVictim(), SPELL_SHADOWFLAME);
+            ShadowFlame_Timer = urand(12000,15000);
         } else ShadowFlame_Timer -= diff;
 
         //Wing Buffet Timer
         if (WingBuffet_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_WINGBUFFET);
+            DoCast(me->getVictim(), SPELL_WINGBUFFET);
             WingBuffet_Timer = 25000;
         } else WingBuffet_Timer -= diff;
 
         //Shadow of Ebonroc Timer
         if (ShadowOfEbonroc_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SHADOWOFEBONROC);
-            ShadowOfEbonroc_Timer = 25000 + rand()%10000;
+            DoCast(me->getVictim(), SPELL_SHADOWOFEBONROC);
+            ShadowOfEbonroc_Timer = urand(25000,350000);
         } else ShadowOfEbonroc_Timer -= diff;
 
-        if (me->getVictim()->HasAura(SPELL_SHADOWOFEBONROC,0))
+        if (me->getVictim()->HasAura(SPELL_SHADOWOFEBONROC, 0))
         {
             if (Heal_Timer <= diff)
             {
                 DoCast(me, SPELL_HEAL);
-                Heal_Timer = 1000 + rand()%2000;
+                Heal_Timer = urand(1000,3000);
             } else Heal_Timer -= diff;
         }
 

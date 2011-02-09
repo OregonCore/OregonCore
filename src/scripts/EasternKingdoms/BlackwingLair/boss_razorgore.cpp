@@ -55,12 +55,12 @@ struct boss_razorgoreAI : public ScriptedAI
         me->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         DoZoneInCombat();
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_DEATH, me);
     }
@@ -73,28 +73,28 @@ struct boss_razorgoreAI : public ScriptedAI
         //Cleave_Timer
         if (Cleave_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CLEAVE);
-            Cleave_Timer = 7000 + rand()%3000;
+            DoCast(me->getVictim(), SPELL_CLEAVE);
+            Cleave_Timer = urand(7000,10000);
         } else Cleave_Timer -= diff;
 
         //WarStomp_Timer
         if (WarStomp_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_WARSTOMP);
-            WarStomp_Timer = 15000 + rand()%10000;
+            DoCast(me->getVictim(), SPELL_WARSTOMP);
+            WarStomp_Timer = urand(15000,25000);
         } else WarStomp_Timer -= diff;
 
         //FireballVolley_Timer
         if (FireballVolley_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_FIREBALLVOLLEY);
-            FireballVolley_Timer = 12000 + rand()%3000;
+            DoCast(me->getVictim(), SPELL_FIREBALLVOLLEY);
+            FireballVolley_Timer = urand(12000,15000);
         } else FireballVolley_Timer -= diff;
 
         //Conflagration_Timer
         if (Conflagration_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CONFLAGRATION);
+            DoCast(me->getVictim(), SPELL_CONFLAGRATION);
             //We will remove this threat reduction and add an aura check.
 
             //if (DoGetThreat(me->getVictim()))
@@ -104,13 +104,9 @@ struct boss_razorgoreAI : public ScriptedAI
         } else Conflagration_Timer -= diff;
 
         // Aura Check. If the gamer is affected by confliguration we attack a random gamer.
-        if (me->getVictim()->HasAura(SPELL_CONFLAGRATION,0))
-        {
-            Unit *pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
-            if (pTarget)
+        if (me->getVictim() && me->getVictim()->HasAura(SPELL_CONFLAGRATION, 0))
+            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true))
                 me->TauntApply(pTarget);
-        }
 
         DoMeleeAttackIfReady();
     }

@@ -39,7 +39,6 @@ struct boss_broodlordAI : public ScriptedAI
     uint32 BlastWave_Timer;
     uint32 MortalStrike_Timer;
     uint32 KnockBack_Timer;
-    uint32 LeashCheck_Timer;
 
     void Reset()
     {
@@ -47,13 +46,12 @@ struct boss_broodlordAI : public ScriptedAI
         BlastWave_Timer = 12000;
         MortalStrike_Timer = 20000;
         KnockBack_Timer = 30000;
-        LeashCheck_Timer = 2000;
 
         me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
         me->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
         DoZoneInCombat();
@@ -64,51 +62,39 @@ struct boss_broodlordAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        //LeashCheck_Timer
-        if (LeashCheck_Timer <= diff)
-        {
-            float rx,ry,rz;
-            me->GetRespawnCoord(rx, ry, rz);
-            float spawndist = me->GetDistance(rx,ry,rz);
-            if (spawndist > 250)
-            {
-                DoScriptText(SAY_LEASH, me);
-                EnterEvadeMode();
-                return;
-            }
-            LeashCheck_Timer = 2000;
-        } else LeashCheck_Timer -= diff;
-
         //Cleave_Timer
         if (Cleave_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CLEAVE);
+            DoCast(me->getVictim(), SPELL_CLEAVE);
             Cleave_Timer = 7000;
         } else Cleave_Timer -= diff;
 
         // BlastWave
         if (BlastWave_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_BLASTWAVE);
-            BlastWave_Timer = 8000 + rand()%8000;
+            DoCast(me->getVictim(), SPELL_BLASTWAVE);
+            BlastWave_Timer = urand(8000,16000);
         } else BlastWave_Timer -= diff;
 
         //MortalStrike_Timer
         if (MortalStrike_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_MORTALSTRIKE);
-            MortalStrike_Timer = 25000 + rand()%10000;
+            DoCast(me->getVictim(), SPELL_MORTALSTRIKE);
+            MortalStrike_Timer = urand(25000,35000);
         } else MortalStrike_Timer -= diff;
 
         if (KnockBack_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_KNOCKBACK);
+            DoCast(me->getVictim(), SPELL_KNOCKBACK);
             //Drop 50% aggro
             if (DoGetThreat(me->getVictim()))
                 DoModifyThreatPercent(me->getVictim(),-50);
 
-            KnockBack_Timer = 15000 + rand()%15000;
+            KnockBack_Timer = urand(15000,30000);
         } else KnockBack_Timer -= diff;
+
+        if (EnterEvadeIfOutOfCombatArea(diff))
+            DoScriptText(SAY_LEASH, me);
 
         DoMeleeAttackIfReady();
     }

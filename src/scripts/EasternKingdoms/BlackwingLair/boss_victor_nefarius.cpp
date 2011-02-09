@@ -72,8 +72,7 @@ struct boss_victor_nefariusAI : public ScriptedAI
     boss_victor_nefariusAI(Creature *c) : ScriptedAI(c)
     {
         NefarianGUID = 0;
-        srand(time(NULL));
-        switch (rand()%20)
+        switch (urand(0,19))
         {
             case 0:
                 DrakType1 = CREATURE_BRONZE_DRAKANOID;
@@ -184,13 +183,13 @@ struct boss_victor_nefariusAI : public ScriptedAI
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
-    void BeginEvent(Player* pTarget)
+    void BeginEvent(Player *pTarget)
     {
         DoScriptText(SAY_GAMESBEGIN_2, me);
 
         //Oregon::Singleton<MapManager>::Instance().GetMap(me->GetMapId(), me)->GetPlayers().begin();
         /*
-        list <Player*>::iterator i = MapManager::Instance().GetMap(me->GetMapId(), me)->GetPlayers().begin();
+        list <Player*>::const_iterator i = MapManager::Instance().GetMap(me->GetMapId(), me)->GetPlayers().begin();
 
         for (i = MapManager::Instance().GetMap(me->GetMapId(), me)->GetPlayers().begin(); i != MapManager::Instance().GetMap(me->GetMapId(), me)->GetPlayers().end(); ++i)
         {
@@ -203,7 +202,7 @@ struct boss_victor_nefariusAI : public ScriptedAI
         AttackStart(pTarget);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -214,7 +213,7 @@ struct boss_victor_nefariusAI : public ScriptedAI
         if (who && who->GetTypeId() == TYPEID_PLAYER && me->IsHostileTo(who))
         {
             //Add them to our threat list
-            me->AddThreat(who,0.0f);
+            me->AddThreat(who, 0.0f);
         }
     }
 
@@ -229,21 +228,17 @@ struct boss_victor_nefariusAI : public ScriptedAI
             //ShadowBoltTimer
             if (ShadowBoltTimer <= diff)
             {
-                Unit *pTarget = NULL;
-                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-                if (pTarget)
-                    DoCast(pTarget,SPELL_SHADOWBOLT);
+                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                    DoCast(pTarget, SPELL_SHADOWBOLT);
 
-                ShadowBoltTimer = 3000 + (rand()%7000);
+                ShadowBoltTimer = urand(3000,10000);
             } else ShadowBoltTimer -= diff;
 
             //FearTimer
             if (FearTimer <= diff)
             {
-                Unit *pTarget = NULL;
-                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-                if (pTarget)
-                    DoCast(pTarget,SPELL_FEAR);
+                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                    DoCast(pTarget, SPELL_FEAR);
 
                 FearTimer = 10000 + (rand()%10000);
             } else FearTimer -= diff;
@@ -257,15 +252,16 @@ struct boss_victor_nefariusAI : public ScriptedAI
                 Unit *pTarget = NULL;
 
                 //1 in 3 chance it will be a chromatic
-                if (rand()%3 == 0)
+                if (urand(0,2) == 0)
                     CreatureID = CREATURE_CHROMATIC_DRAKANOID;
-                else CreatureID = DrakType1;
+                else
+                    CreatureID = DrakType1;
 
-                SpawnedAdds++;
+                ++SpawnedAdds;
 
-                //Spawn creature and force it to start attacking a random target
+                //Spawn Creature and force it to start attacking a random target
                 Spawned = me->SummonCreature(CreatureID,ADD_X1,ADD_Y1,ADD_Z1,5.000f,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,5000);
-                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
                 if (pTarget && Spawned)
                 {
                     Spawned->AI()->AttackStart(pTarget);
@@ -273,16 +269,15 @@ struct boss_victor_nefariusAI : public ScriptedAI
                 }
 
                 //1 in 3 chance it will be a chromatic
-                if (rand()%3 == 0)
+                if (urand(0,2) == 0)
                     CreatureID = CREATURE_CHROMATIC_DRAKANOID;
-                else CreatureID = DrakType2;
+                else
+                    CreatureID = DrakType2;
 
-                SpawnedAdds++;
+                ++SpawnedAdds;
 
-                pTarget = NULL;
-                Spawned = NULL;
                 Spawned = me->SummonCreature(CreatureID,ADD_X2,ADD_Y2,ADD_Z2,5.000f,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,5000);
-                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
                 if (pTarget && Spawned)
                 {
                     Spawned->AI()->AttackStart(pTarget);
@@ -299,20 +294,18 @@ struct boss_victor_nefariusAI : public ScriptedAI
                     me->InterruptNonMeleeSpells(false);
 
                     //Root self
-                    DoCast(me,33356);
+                    DoCast(me, 33356);
 
                     //Make super invis
-                    DoCast(me,8149);
+                    DoCast(me, 8149);
 
                     //Teleport self to a hiding spot (this causes errors in the Oregon log but no real issues)
                     DoTeleportTo(HIDE_X,HIDE_Y,HIDE_Z);
                     me->addUnitState(UNIT_STAT_FLEEING);
 
                     //Spawn nef and have him attack a random target
-                    Creature* Nefarian = NULL;
-                    Nefarian = me->SummonCreature(CREATURE_NEFARIAN,NEF_X,NEF_Y,NEF_Z,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,120000);
-                    pTarget = NULL;
-                    pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+                    Creature* Nefarian = me->SummonCreature(CREATURE_NEFARIAN,NEF_X,NEF_Y,NEF_Z,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,120000);
+                    pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
                     if (pTarget && Nefarian)
                     {
                         Nefarian->AI()->AttackStart(pTarget);
@@ -329,15 +322,14 @@ struct boss_victor_nefariusAI : public ScriptedAI
         {
             if (NefCheckTime <= diff)
             {
-                Unit* Nefarian = NULL;
-                Nefarian = Unit::GetUnit((*me),NefarianGUID);
+                Unit* Nefarian = Unit::GetCreature((*me),NefarianGUID);
 
                 //If nef is dead then we die to so the players get out of combat
                 //and cannot repeat the event
                 if (!Nefarian || !Nefarian->isAlive())
                 {
                     NefarianGUID = 0;
-                    me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                    me->ForcedDespawn();
                 }
 
                 NefCheckTime = 2000;
@@ -351,29 +343,29 @@ CreatureAI* GetAI_boss_victor_nefarius(Creature* pCreature)
     return new boss_victor_nefariusAI (pCreature);
 }
 
-bool GossipHello_boss_victor_nefarius(Player *player, Creature* pCreature)
+bool GossipHello_boss_victor_nefarius(Player* pPlayer, Creature* pCreature)
 {
-    player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_1 , GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-    player->SEND_GOSSIP_MENU(7134,pCreature->GetGUID());
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_1 , GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    pPlayer->SEND_GOSSIP_MENU(7134, pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_boss_victor_nefarius(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_boss_victor_nefarius(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    switch (action)
+    switch (uiAction)
     {
         case GOSSIP_ACTION_INFO_DEF+1:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            player->SEND_GOSSIP_MENU(7198, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+            pPlayer->SEND_GOSSIP_MENU(7198, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
-            player->ADD_GOSSIP_ITEM(0, GOSSIP_ITEM_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-            player->SEND_GOSSIP_MENU(7199, pCreature->GetGUID());
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
+            pPlayer->SEND_GOSSIP_MENU(7199, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+3:
-            player->CLOSE_GOSSIP_MENU();
+            pPlayer->CLOSE_GOSSIP_MENU();
             DoScriptText(SAY_GAMESBEGIN_1, pCreature);
-            ((boss_victor_nefariusAI*)pCreature->AI())->BeginEvent(player);
+            CAST_AI(boss_victor_nefariusAI, pCreature->AI())->BeginEvent(pPlayer);
             break;
     }
     return true;
