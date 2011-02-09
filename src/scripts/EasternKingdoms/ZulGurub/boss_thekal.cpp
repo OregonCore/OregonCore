@@ -87,21 +87,24 @@ struct boss_thekalAI : public ScriptedAI
         Enraged = false;
         PhaseTwo = false;
         WasDead = false;
-
-        if (pInstance)
-            pInstance->SetData(DATA_THEKAL_ALIVE, 0);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_DEATH, me);
         if (pInstance)
-            pInstance->SetData(DATA_THEKAL_DEATH, 0);
+            pInstance->SetData(TYPE_THEKAL, DONE);
+    }
+
+    void JustReachedHome()
+    {
+        if (pInstance)
+            pInstance->SetData(TYPE_THEKAL, NOT_STARTED);
     }
 
     void UpdateAI(const uint32 diff)
@@ -114,20 +117,21 @@ struct boss_thekalAI : public ScriptedAI
             {
                 if (pInstance)
                 {
-                    if (pInstance->GetData(DATA_LORKHANISDEAD))
+                    if (pInstance->GetData(TYPE_LORKHAN) == SPECIAL)
                     {
                         //Resurrect LorKhan
-                        Unit *pLorKhan = Unit::GetUnit((*me), pInstance->GetData64(DATA_LORKHAN));
-                        if (pLorKhan)
+                        if (Unit *pLorKhan = Unit::GetUnit((*me), pInstance->GetData64(DATA_LORKHAN)))
                         {
                             pLorKhan->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                             pLorKhan->setFaction(14);
                             pLorKhan->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                             pLorKhan->SetHealth(int(pLorKhan->GetMaxHealth()*1.0f));
+
+                            pInstance->SetData(TYPE_LORKHAN, DONE);
                         }
                     }
 
-                    if (pInstance->GetData(DATA_ZATHISDEAD))
+                    if (pInstance->GetData(TYPE_ZATH) == SPECIAL)
                     {
                         //Resurrect Zath
                         Unit *pZath = Unit::GetUnit((*me), pInstance->GetData64(DATA_ZATH));
@@ -137,6 +141,8 @@ struct boss_thekalAI : public ScriptedAI
                             pZath->setFaction(14);
                             pZath->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                             pZath->SetHealth(int(pZath->GetMaxHealth()*1.0f));
+
+                            pInstance->SetData(TYPE_ZATH, DONE);
                         }
                     }
                 }
@@ -146,13 +152,13 @@ struct boss_thekalAI : public ScriptedAI
 
             if (!PhaseTwo && MortalCleave_Timer <= diff)
             {
-                DoCast(me->getVictim(),SPELL_MORTALCLEAVE);
+                DoCast(me->getVictim(), SPELL_MORTALCLEAVE);
                 MortalCleave_Timer = 15000 + rand()%5000;
             } else MortalCleave_Timer -= diff;
 
             if (!PhaseTwo && Silence_Timer <= diff)
             {
-                DoCast(me->getVictim(),SPELL_SILENCE);
+                DoCast(me->getVictim(), SPELL_SILENCE);
                 Silence_Timer = 20000 + rand()%5000;
             } else Silence_Timer -= diff;
 
@@ -163,7 +169,7 @@ struct boss_thekalAI : public ScriptedAI
                 me->AttackStop();
 
                 if (pInstance)
-                    pInstance->SetData(DATA_THEKALFAKE_DEATH, 0);
+                    pInstance->SetData(TYPE_THEKAL, SPECIAL);
 
                 WasDead=true;
             }
@@ -173,7 +179,7 @@ struct boss_thekalAI : public ScriptedAI
             {
                 if (Resurrect_Timer <= diff)
                 {
-                    DoCast(me,SPELL_TIGER_FORM);
+                    DoCast(me, SPELL_TIGER_FORM);
                     me->SetFloatValue(OBJECT_FIELD_SCALE_X, 2.0f);
                     me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -198,7 +204,7 @@ struct boss_thekalAI : public ScriptedAI
                 {
                     if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                     {
-                        DoCast(pTarget,SPELL_CHARGE);
+                        DoCast(pTarget, SPELL_CHARGE);
                         DoResetThreat();
                         AttackStart(pTarget);
                     }
@@ -208,19 +214,19 @@ struct boss_thekalAI : public ScriptedAI
 
                 if (Frenzy_Timer <= diff)
                 {
-                    DoCast(me,SPELL_FRENZY);
+                    DoCast(me, SPELL_FRENZY);
                     Frenzy_Timer = 30000;
                 } else Frenzy_Timer -= diff;
 
                 if (ForcePunch_Timer <= diff)
                 {
-                    DoCast(me->getVictim(),SPELL_SILENCE);
+                    DoCast(me->getVictim(), SPELL_SILENCE);
                     ForcePunch_Timer = 16000 + rand()%5000;
                 } else ForcePunch_Timer -= diff;
 
                 if (SummonTigers_Timer <= diff)
                 {
-                    DoCast(me->getVictim(),SPELL_SUMMONTIGERS);
+                    DoCast(me->getVictim(), SPELL_SUMMONTIGERS);
                     SummonTigers_Timer = 10000 + rand()%4000;
                 } else SummonTigers_Timer -= diff;
 
@@ -265,13 +271,13 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
         FakeDeath = false;
 
         if (pInstance)
-            pInstance->SetData(DATA_LORKHAN_ALIVE, 0);
+            pInstance->SetData(TYPE_LORKHAN, NOT_STARTED);
 
         me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -283,14 +289,14 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
         //Shield_Timer
         if (Shield_Timer <= diff)
         {
-            DoCast(me,SPELL_SHIELD);
+            DoCast(me, SPELL_SHIELD);
             Shield_Timer = 61000;
         } else Shield_Timer -= diff;
 
         //BloodLust_Timer
         if (BloodLust_Timer <= diff)
         {
-            DoCast(me,SPELL_BLOODLUST);
+            DoCast(me, SPELL_BLOODLUST);
             BloodLust_Timer = 20000+rand()%8000;
         } else BloodLust_Timer -= diff;
 
@@ -305,7 +311,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
                 if (!pThekal || !pZath)
                     return;
 
-                switch(rand()%2)
+                switch (urand(0,1))
                 {
                     case 0:
                         if (me->IsWithinMeleeRange(pThekal))
@@ -324,7 +330,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
         //Disarm_Timer
         if (Disarm_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_DISARM);
+            DoCast(me->getVictim(), SPELL_DISARM);
             Disarm_Timer = 15000+rand()%10000;
         } else Disarm_Timer -= diff;
 
@@ -333,11 +339,10 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
         {
             if (pInstance)
             {
-                if (pInstance->GetData(DATA_THEKALISFAKEDEAD))
+                if (pInstance->GetData(TYPE_THEKAL) == SPECIAL)
                 {
                     //Resurrect Thekal
-                    Unit *pThekal = Unit::GetUnit((*me), pInstance->GetData64(DATA_THEKAL));
-                    if (pThekal)
+                    if (Unit *pThekal = Unit::GetUnit((*me), pInstance->GetData64(DATA_THEKAL)))
                     {
                         pThekal->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                         pThekal->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -346,11 +351,10 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
                     }
                 }
 
-                if (pInstance->GetData(DATA_ZATHISDEAD))
+                if (pInstance->GetData(TYPE_ZATH) == SPECIAL)
                 {
                     //Resurrect Zath
-                    Unit *pZath = Unit::GetUnit((*me), pInstance->GetData64(DATA_ZATH));
-                    if (pZath)
+                    if (Unit *pZath = Unit::GetUnit((*me), pInstance->GetData64(DATA_ZATH)))
                     {
                         pZath->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                         pZath->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -371,7 +375,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
             me->AttackStop();
 
             if (pInstance)
-                pInstance->SetData(DATA_LORKHAN_DEATH, 0);
+                pInstance->SetData(TYPE_LORKHAN, SPECIAL);
 
             FakeDeath = true;
         }
@@ -411,13 +415,13 @@ struct mob_zealot_zathAI : public ScriptedAI
         FakeDeath = false;
 
         if (pInstance)
-            pInstance->SetData(DATA_ZATH_ALIVE, 0);
+            pInstance->SetData(TYPE_ZATH, NOT_STARTED);
 
         me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -429,21 +433,21 @@ struct mob_zealot_zathAI : public ScriptedAI
         //SweepingStrikes_Timer
         if (SweepingStrikes_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SWEEPINGSTRIKES);
+            DoCast(me->getVictim(), SPELL_SWEEPINGSTRIKES);
             SweepingStrikes_Timer = 22000+rand()%4000;
         } else SweepingStrikes_Timer -= diff;
 
         //SinisterStrike_Timer
         if (SinisterStrike_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SINISTERSTRIKE);
+            DoCast(me->getVictim(), SPELL_SINISTERSTRIKE);
             SinisterStrike_Timer = 8000+rand()%8000;
         } else SinisterStrike_Timer -= diff;
 
         //Gouge_Timer
         if (Gouge_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_GOUGE);
+            DoCast(me->getVictim(), SPELL_GOUGE);
 
             if (DoGetThreat(me->getVictim()))
                 DoModifyThreatPercent(me->getVictim(),-100);
@@ -454,14 +458,14 @@ struct mob_zealot_zathAI : public ScriptedAI
         //Kick_Timer
         if (Kick_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_KICK);
+            DoCast(me->getVictim(), SPELL_KICK);
             Kick_Timer = 15000+rand()%10000;
         } else Kick_Timer -= diff;
 
         //Blind_Timer
         if (Blind_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_BLIND);
+            DoCast(me->getVictim(), SPELL_BLIND);
             Blind_Timer = 10000+rand()%10000;
         } else Blind_Timer -= diff;
 
@@ -470,11 +474,10 @@ struct mob_zealot_zathAI : public ScriptedAI
         {
             if (pInstance)
             {
-                if (pInstance->GetData(DATA_LORKHANISDEAD))
+                if (pInstance->GetData(TYPE_LORKHAN) == SPECIAL)
                 {
                     //Resurrect LorKhan
-                    Unit *pLorKhan = Unit::GetUnit((*me), pInstance->GetData64(DATA_LORKHAN));
-                    if (pLorKhan)
+                    if (Unit *pLorKhan = Unit::GetUnit((*me), pInstance->GetData64(DATA_LORKHAN)))
                     {
                         pLorKhan->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                         pLorKhan->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -483,11 +486,10 @@ struct mob_zealot_zathAI : public ScriptedAI
                     }
                 }
 
-                if (pInstance->GetData(DATA_THEKALISFAKEDEAD))
+                if (pInstance->GetData(TYPE_THEKAL) == SPECIAL)
                 {
                     //Resurrect Thekal
-                    Unit *pThekal = Unit::GetUnit((*me), pInstance->GetData64(DATA_THEKAL));
-                    if (pThekal)
+                    if (Unit *pThekal = Unit::GetUnit((*me), pInstance->GetData64(DATA_THEKAL)))
                     {
                         pThekal->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                         pThekal->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -508,7 +510,7 @@ struct mob_zealot_zathAI : public ScriptedAI
             me->AttackStop();
 
             if (pInstance)
-                pInstance->SetData(DATA_ZATH_DEATH, 0);
+                pInstance->SetData(TYPE_ZATH, SPECIAL);
 
             FakeDeath = true;
         }

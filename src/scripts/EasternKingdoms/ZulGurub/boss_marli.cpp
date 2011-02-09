@@ -68,7 +68,6 @@ struct boss_marliAI : public ScriptedAI
     uint32 Transform_Timer;
     uint32 TransformBack_Timer;
 
-    Creature *Spider;
     bool Spawned;
     bool PhaseTwo;
 
@@ -91,16 +90,16 @@ struct boss_marliAI : public ScriptedAI
         me->ApplySpellImmune(1, IMMUNITY_EFFECT, SPELL_EFFECT_ATTACK_ME, true);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_DEATH, me);
         if (pInstance)
-            pInstance->SetData(DATA_MARLI_DEATH, 0);
+            pInstance->SetData(TYPE_MARLI, DONE);
     }
 
     void UpdateAI(const uint32 diff)
@@ -143,6 +142,8 @@ struct boss_marliAI : public ScriptedAI
                 if (!pTarget)
                     return;
 
+                Creature *Spider = NULL;
+
                 Spider = me->SummonCreature(15041, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
                 if (Spider)
                     Spider->AI()->AttackStart(pTarget);
@@ -167,7 +168,7 @@ struct boss_marliAI : public ScriptedAI
                 if (!pTarget)
                     return;
 
-                Spider = me->SummonCreature(15041, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
+                Creature *Spider = me->SummonCreature(15041, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
                 if (Spider)
                     Spider->AI()->AttackStart(pTarget);
                 SpawnSpider_Timer = 12000 + rand()%5000;
@@ -176,7 +177,7 @@ struct boss_marliAI : public ScriptedAI
                 SpawnSpider_Timer -= diff;
 
             if (!PhaseTwo && Transform_Timer <= diff)
-            {   
+            {
                 me->InterruptNonMeleeSpells(false);
                 DoScriptText(SAY_TRANSFORM, me);
                 DoCast(me, SPELL_SPIDER_FORM);
@@ -200,11 +201,10 @@ struct boss_marliAI : public ScriptedAI
                     int i = 0;
                     while (i < 3)                           // max 3 tries to get a random target with power_mana
                     {
-                        ++i;                                // not aggro leader
-                        pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
-                        if (pTarget)
-                            if (pTarget->getPowerType() == POWER_MANA)
-                                i = 3;
+                        ++i;
+                        pTarget = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true);  // not aggro leader
+                        if (pTarget && pTarget->getPowerType() == POWER_MANA)
+                            i = 3;
                     }
                     if (pTarget)
                     {
@@ -265,7 +265,7 @@ struct mob_spawn_of_marliAI : public ScriptedAI
         Growth_Level = 1;  // increases each time Grow_Timer is called to increase scale & damage.
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
        Growth_Level = 1;
     }

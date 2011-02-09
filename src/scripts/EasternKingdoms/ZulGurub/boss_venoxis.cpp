@@ -82,15 +82,15 @@ struct boss_venoxisAI : public ScriptedAI
         InBerserk= false;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_DEATH, me);
         if (pInstance)
-            pInstance->SetData(DATA_VENOXIS_DEATH, 0);
+            pInstance->SetData(TYPE_VENOXIS, DONE);
     }
 
     void UpdateAI(const uint32 diff)
@@ -127,11 +127,11 @@ struct boss_venoxisAI : public ScriptedAI
                 if (HolyNova_Timer <= diff)
                 {
                     TargetInRange = 0;
-                    for (int i = 0; i < 10; i++)
+                    for (uint8 i = 0; i < 10; ++i)
                     {
                         if (Unit *pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, i))
                             if (me->IsWithinMeleeRange(pTarget))
-                                TargetInRange++;
+                                ++TargetInRange;
                     }
 
                     if (TargetInRange > 1)
@@ -205,6 +205,7 @@ struct boss_venoxisAI : public ScriptedAI
             DoMeleeAttackIfReady();
     }
 };
+
 CreatureAI* GetAI_boss_venoxis(Creature* pCreature)
 {
     return new boss_venoxisAI (pCreature);

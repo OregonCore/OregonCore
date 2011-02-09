@@ -41,22 +41,13 @@ EndScriptData */
 
 struct boss_jindoAI : public ScriptedAI
 {
-    boss_jindoAI(Creature *c) : ScriptedAI(c)
-    {
-        pInstance = c->GetInstanceData();
-    }
-
-    ScriptedInstance *pInstance;
+    boss_jindoAI(Creature *c) : ScriptedAI(c) {}
 
     uint32 BrainWashTotem_Timer;
     uint32 HealingWard_Timer;
     uint32 Hex_Timer;
     uint32 Delusions_Timer;
     uint32 Teleport_Timer;
-
-    Creature *Shade;
-    Creature *Skeletons;
-    Creature *HealingWard;
 
     void Reset()
     {
@@ -67,7 +58,7 @@ struct boss_jindoAI : public ScriptedAI
         Teleport_Timer = 5000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
     }
@@ -88,7 +79,7 @@ struct boss_jindoAI : public ScriptedAI
         if (HealingWard_Timer <= diff)
         {
             //DoCast(me, SPELL_POWERFULLHEALINGWARD);
-            HealingWard = me->SummonCreature(14987, me->GetPositionX()+3, me->GetPositionY()-2, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,30000);
+            me->SummonCreature(14987, me->GetPositionX()+3, me->GetPositionY()-2, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,30000);
             HealingWard_Timer = 14000 + rand()%6000;
         } else HealingWard_Timer -= diff;
 
@@ -110,7 +101,7 @@ struct boss_jindoAI : public ScriptedAI
             {
                 DoCast(pTarget, SPELL_DELUSIONSOFJINDO);
 
-                Shade = me->SummonCreature(14986, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
+                Creature *Shade = me->SummonCreature(14986, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
                 if (Shade)
                     Shade->AI()->AttackStart(pTarget);
             }
@@ -130,6 +121,7 @@ struct boss_jindoAI : public ScriptedAI
                 if (DoGetThreat(me->getVictim()))
                     DoModifyThreatPercent(pTarget,-100);
 
+                Creature *Skeletons;
                 Skeletons = me->SummonCreature(14826, pTarget->GetPositionX()+2, pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
                 if (Skeletons)
                     Skeletons->AI()->AttackStart(pTarget);
@@ -171,7 +163,7 @@ struct mob_healing_wardAI : public ScriptedAI
 {
     mob_healing_wardAI(Creature *c) : ScriptedAI(c)
     {
-         pInstance = c->GetInstanceData();
+        pInstance = c->GetInstanceData();
     }
 
     uint32 Heal_Timer;
@@ -183,7 +175,7 @@ struct mob_healing_wardAI : public ScriptedAI
         Heal_Timer = 2000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -208,24 +200,17 @@ struct mob_healing_wardAI : public ScriptedAI
 //Shade of Jindo
 struct mob_shade_of_jindoAI : public ScriptedAI
 {
-    mob_shade_of_jindoAI(Creature *c) : ScriptedAI(c)
-    {
-        pInstance = c->GetInstanceData();
-    }
+    mob_shade_of_jindoAI(Creature *c) : ScriptedAI(c) {}
 
     uint32 ShadowShock_Timer;
-
-    ScriptedInstance *pInstance;
 
     void Reset()
     {
         ShadowShock_Timer = 1000;
-        me->CastSpell(me, SPELL_INVISIBLE,true);
+        DoCast(me, SPELL_INVISIBLE, true);
     }
 
-    void EnterCombat(Unit *who)
-    {
-    }
+    void EnterCombat(Unit * /*who*/){}
 
     void UpdateAI (const uint32 diff)
     {

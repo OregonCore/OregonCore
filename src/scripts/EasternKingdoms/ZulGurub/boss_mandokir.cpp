@@ -123,9 +123,9 @@ struct boss_mandokirAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
-     DoScriptText(SAY_AGGRO, me);
+        DoScriptText(SAY_AGGRO, me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -159,11 +159,11 @@ struct boss_mandokirAI : public ScriptedAI
                     {
                         if (me->IsWithinMeleeRange(pUnit))
                         {
-                            DoCast(pUnit,24316);
+                            DoCast(pUnit, 24316);
                         }
                         else
                         {
-                            DoCast(pUnit,SPELL_CHARGE);
+                            DoCast(pUnit, SPELL_CHARGE);
                             //me->SendMonsterMove(pUnit->GetPositionX(), pUnit->GetPositionY(), pUnit->GetPositionZ(), 0, true,1);
                             AttackStart(pUnit);
                         }
@@ -202,14 +202,14 @@ struct boss_mandokirAI : public ScriptedAI
                 //Cleave
                 if (Cleave_Timer <= diff)
                 {
-                    DoCast(me->getVictim(),SPELL_CLEAVE);
+                    DoCast(me->getVictim(), SPELL_CLEAVE);
                     Cleave_Timer = 7000;
                 } else Cleave_Timer -= diff;
 
                 //Whirlwind
                 if (Whirlwind_Timer <= diff)
                 {
-                    DoCast(me,SPELL_WHIRLWIND);
+                    DoCast(me, SPELL_WHIRLWIND);
                     Whirlwind_Timer = 18000;
                 } else Whirlwind_Timer -= diff;
 
@@ -218,16 +218,16 @@ struct boss_mandokirAI : public ScriptedAI
                 {
                     TargetInRange = 0;
 
-                    std::list<HostileReference*>::iterator i = me->getThreatManager().getThreatList().begin();
+                    std::list<HostileReference*>::const_iterator i = me->getThreatManager().getThreatList().begin();
                     for (; i != me->getThreatManager().getThreatList().end(); ++i)
                     {
                         Unit* pUnit = Unit::GetUnit(*me, (*i)->getUnitGuid());
                         if (pUnit && me->IsWithinMeleeRange(pUnit))
-                            TargetInRange++;
+                            ++TargetInRange;
                     }
 
                     if (TargetInRange > 3)
-                        DoCast(me->getVictim(),SPELL_FEAR);
+                        DoCast(me->getVictim(), SPELL_FEAR);
 
                     Fear_Timer = 4000;
                 } else Fear_Timer -=diff;
@@ -237,7 +237,7 @@ struct boss_mandokirAI : public ScriptedAI
                 {
                     if (MortalStrike_Timer <= diff)
                     {
-                        DoCast(me->getVictim(),SPELL_MORTAL_STRIKE);
+                        DoCast(me->getVictim(), SPELL_MORTAL_STRIKE);
                         MortalStrike_Timer = 15000;
                     } else MortalStrike_Timer -= diff;
                 }
@@ -247,7 +247,7 @@ struct boss_mandokirAI : public ScriptedAI
             {
                 if (pInstance)
                 {
-                    if (pInstance->GetData(DATA_OHGANISDEAD))
+                    if (pInstance->GetData(TYPE_OHGAN) == DONE)
                     {
                         if (!RaptorDead)
                         {
@@ -281,12 +281,12 @@ struct mob_ohganAI : public ScriptedAI
         SunderArmor_Timer = 5000;
     }
 
-    void EnterCombat(Unit *who) {}
+    void EnterCombat(Unit * /*who*/) {}
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         if (pInstance)
-            pInstance->SetData(DATA_OHGAN_DEATH, 0);
+            pInstance->SetData(TYPE_OHGAN, DONE);
     }
 
     void UpdateAI (const uint32 diff)

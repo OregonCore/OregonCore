@@ -24,176 +24,240 @@ EndScriptData */
 #include "ScriptPCH.h"
 #include "zulgurub.h"
 
-#define SAY_AGGRO                   -1309011
-#define SAY_FEAST_PANTHER           -1309012
-#define SAY_DEATH                   -1309013
+bool GOHello_go_gong_of_bethekk(Player* /*pPlayer*/, GameObject* pGo)
+{
+    if (ScriptedInstance* pInstance = pGo->GetInstanceData())
+    {
+        if (pInstance->GetData(TYPE_ARLOKK) == DONE || pInstance->GetData(TYPE_ARLOKK) == IN_PROGRESS)
+            return true;
 
-#define SPELL_SHADOWWORDPAIN       23952
-#define SPELL_GOUGE                24698
-#define SPELL_MARK                 24210
-#define SPELL_CLEAVE               26350                    //Perhaps not right. Not a red aura...
-#define SPELL_PANTHER_TRANSFORM    24190
+        pInstance->SetData(TYPE_ARLOKK, IN_PROGRESS);
+        return true;
+    }
+
+    return true;
+}
+
+enum eEnums
+{
+    SAY_AGGRO                   = -1309011,
+    SAY_FEAST_PANTHER           = -1309012,
+    SAY_DEATH                   = -1309013,
+
+    SPELL_SHADOWWORDPAIN        = 23952,
+    SPELL_GOUGE                 = 24698,
+    SPELL_MARK                  = 24210,
+    SPELL_CLEAVE                = 26350,                    //Perhaps not right. Not a red aura...
+    SPELL_PANTHER_TRANSFORM     = 24190,
+
+    MODEL_ID_NORMAL             = 15218,
+    MODEL_ID_PANTHER            = 15215,
+    MODEL_ID_BLANK              = 11686,
+
+    NPC_ZULIAN_PROWLER          = 15101
+};
 
 struct boss_arlokkAI : public ScriptedAI
 {
-    boss_arlokkAI(Creature *c) : ScriptedAI(c)
+    boss_arlokkAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        pInstance = c->GetInstanceData();
+        pInstance = pCreature->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
 
-    uint32 ShadowWordPain_Timer;
-    uint32 Gouge_Timer;
-    uint32 Mark_Timer;
-    uint32 Cleave_Timer;
-    uint32 Vanish_Timer;
-    uint32 Summon_Timer;
-    uint32 Visible_Timer;
+    uint32 m_uiShadowWordPain_Timer;
+    uint32 m_uiGouge_Timer;
+    uint32 m_uiMark_Timer;
+    uint32 m_uiCleave_Timer;
+    uint32 m_uiVanish_Timer;
+    uint32 m_uiVisible_Timer;
 
-    Unit* markedTarget;
-    Creature *Panther;
-    uint32 Counter;
+    uint32 m_uiSummon_Timer;
+    uint32 m_uiSummonCount;
 
-    bool PhaseTwo;
-    bool VanishedOnce;
+    Unit* m_pMarkedTarget;
+    uint64 MarkedTargetGUID;
+
+    bool m_bIsPhaseTwo;
+    bool m_bIsVanished;
 
     void Reset()
     {
-        ShadowWordPain_Timer = 8000;
-        Gouge_Timer = 14000;
-        Mark_Timer = 35000;
-        Cleave_Timer = 4000;
-        Vanish_Timer = 60000;
-        Summon_Timer = 5000;
-        Visible_Timer = 6000;
+        m_uiShadowWordPain_Timer = 8000;
+        m_uiGouge_Timer = 14000;
+        m_uiMark_Timer = 35000;
+        m_uiCleave_Timer = 4000;
+        m_uiVanish_Timer = 60000;
+        m_uiVisible_Timer = 6000;
 
-        Counter = 0;
+        m_uiSummon_Timer = 5000;
+        m_uiSummonCount = 0;
 
-        markedTarget = NULL;
-        PhaseTwo = false;
-        VanishedOnce = false;
+        m_bIsPhaseTwo = false;
+        m_bIsVanished = false;
 
-        me->SetUInt32Value(UNIT_FIELD_DISPLAYID,15218);
+        MarkedTargetGUID = 0;
+
+        me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_ID_NORMAL);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*pWho*/)
     {
         DoScriptText(SAY_AGGRO, me);
     }
 
-    void JustDied(Unit* Killer)
+    void JustReachedHome()
+    {
+        if (pInstance)
+            pInstance->SetData(TYPE_ARLOKK, NOT_STARTED);
+
+        //we should be summoned, so despawn
+        me->ForcedDespawn();
+    }
+
+    void JustDied(Unit* /*pKiller*/)
     {
         DoScriptText(SAY_DEATH, me);
-        me->SetUInt32Value(UNIT_FIELD_DISPLAYID,15218);
+
+        me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_ID_NORMAL);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
         if (pInstance)
-            pInstance->SetData(DATA_ARLOKK_DEATH, 0);
+            pInstance->SetData(TYPE_ARLOKK, DONE);
     }
 
-    void UpdateAI(const uint32 diff)
+    void DoSummonPhanters()
+    {
+        if (Unit *pMarkedTarget = Unit::GetUnit(*me, MarkedTargetGUID))
+            DoScriptText(SAY_FEAST_PANTHER, me, pMarkedTarget);
+
+        me->SummonCreature(NPC_ZULIAN_PROWLER, -11532.7998, -1649.6734, 41.4800, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
+        me->SummonCreature(NPC_ZULIAN_PROWLER, -11532.9970, -1606.4840, 41.2979, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
+    }
+
+    void JustSummoned(Creature* pSummoned)
+    {
+        if (Unit *pMarkedTarget = Unit::GetUnit(*me, MarkedTargetGUID))
+            pSummoned->AI()->AttackStart(pMarkedTarget);
+
+        ++m_uiSummonCount;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
     {
         if (!UpdateVictim())
             return;
 
-        if (me->getVictim() && me->isAlive())
+        if (!m_bIsPhaseTwo)
         {
-            if (!PhaseTwo && ShadowWordPain_Timer <= diff)
+            if (m_uiShadowWordPain_Timer <= uiDiff)
             {
-                DoCast(me->getVictim(),SPELL_SHADOWWORDPAIN);
-                ShadowWordPain_Timer = 15000;
-            } else ShadowWordPain_Timer -= diff;
-
-            if (!PhaseTwo && Mark_Timer <= diff)
-            {
-                markedTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-
-                DoCast(markedTarget,SPELL_MARK);
-                Mark_Timer = 15000;
-            } else Mark_Timer -= diff;
-
-            if (Summon_Timer <= diff && Counter < 31)
-            {
-                Unit *pTarget = NULL;
-                pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-
-                Panther = me->SummonCreature(15101,-11532.79980f,-1649.6734f,41.4800f,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
-
-                if (markedTarget && Panther)
-                {
-                    DoScriptText(SAY_FEAST_PANTHER, me, markedTarget);
-                    Panther ->AI()->AttackStart(markedTarget);
-                } else if (Panther && pTarget) Panther ->AI()->AttackStart(pTarget);
-
-                Panther = me->SummonCreature(15101,-11532.9970f,-1606.4840f,41.2979f,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
-
-                if (markedTarget && Panther)
-                    Panther ->AI()->AttackStart(markedTarget);
-                else if (Panther && pTarget)
-                     Panther ->AI()->AttackStart(pTarget);
-
-                Counter++;
-                Summon_Timer = 5000;
-            } else Summon_Timer -= diff;
-
-            if (Vanish_Timer <= diff)
-            {
-                //Invisble Model
-                me->SetUInt32Value(UNIT_FIELD_DISPLAYID,11686);
-                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                //me->CombatStop();
-                DoResetThreat();
-                VanishedOnce = true;
-                Vanish_Timer = 45000;
-                Visible_Timer = 6000;
-            } else Vanish_Timer -= diff;
-
-            if (VanishedOnce)
-            {
-                if (Visible_Timer <= diff)
-                {
-                    Unit *pTarget = NULL;
-                    pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-                    //The Panther Model
-                    me->SetUInt32Value(UNIT_FIELD_DISPLAYID,15215);
-                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-
-                    const CreatureInfo *cinfo = me->GetCreatureInfo();
-                    me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg +((cinfo->mindmg/100) * 35)));
-                    me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg/100) * 35)));
-                    me->UpdateDamagePhysical(BASE_ATTACK);
-                    if (pTarget)
-                        AttackStart(pTarget);
-                    //The Panther Model
-                    me->SetUInt32Value(UNIT_FIELD_DISPLAYID,15215);
-                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                    PhaseTwo = true;
-                } else Visible_Timer -= diff;
+                DoCast(me->getVictim(), SPELL_SHADOWWORDPAIN);
+                m_uiShadowWordPain_Timer = 15000;
             }
+            else
+                m_uiShadowWordPain_Timer -= uiDiff;
 
+            if (m_uiMark_Timer <= uiDiff)
+            {
+                Unit *pMarkedTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+
+                if (pMarkedTarget)
+                {
+                    DoCast(pMarkedTarget, SPELL_MARK);
+                    MarkedTargetGUID = pMarkedTarget->GetGUID();
+                }
+                else
+                    error_log("OSCR: boss_arlokk could not accuire pMarkedTarget.");
+
+                m_uiMark_Timer = 15000;
+            }
+            else
+                m_uiMark_Timer -= uiDiff;
+        }
+        else
+        {
             //Cleave_Timer
-            if (PhaseTwo && Cleave_Timer <= diff)
+            if (m_uiCleave_Timer <= uiDiff)
             {
                 DoCast(me->getVictim(), SPELL_CLEAVE);
-                Cleave_Timer = 16000;
-            }Cleave_Timer -=diff;
+                m_uiCleave_Timer = 16000;
+            }
+            else
+                m_uiCleave_Timer -= uiDiff;
 
             //Gouge_Timer
-            if (PhaseTwo && Gouge_Timer <= diff)
+            if (m_uiGouge_Timer <= uiDiff)
             {
                 DoCast(me->getVictim(), SPELL_GOUGE);
+
+
                 if (DoGetThreat(me->getVictim()))
                     DoModifyThreatPercent(me->getVictim(),-80);
 
-                Gouge_Timer = 17000+rand()%10000;
-            } else Gouge_Timer -= diff;
-
-            DoMeleeAttackIfReady();
+                m_uiGouge_Timer = 17000+rand()%10000;
+            }
+            else
+                m_uiGouge_Timer -= uiDiff;
         }
+
+        if (m_uiSummonCount <= 30)
+        {
+            if (m_uiSummon_Timer <= uiDiff)
+            {
+                DoSummonPhanters();
+                m_uiSummon_Timer = 5000;
+            }
+            else
+                m_uiSummon_Timer -= uiDiff;
+        }
+
+        if (m_uiVanish_Timer <= uiDiff)
+        {
+            //Invisble Model
+            me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_ID_BLANK);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+
+            me->AttackStop();
+            DoResetThreat();
+
+            m_bIsVanished = true;
+
+            m_uiVanish_Timer = 45000;
+            m_uiVisible_Timer = 6000;
+        }
+        else
+            m_uiVanish_Timer -= uiDiff;
+
+        if (m_bIsVanished)
+        {
+            if (m_uiVisible_Timer <= uiDiff)
+            {
+                //The Panther Model
+                me->SetUInt32Value(UNIT_FIELD_DISPLAYID,MODEL_ID_PANTHER);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+
+                const CreatureInfo *cinfo = me->GetCreatureInfo();
+                me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg +((cinfo->mindmg/100) * 35)));
+                me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg/100) * 35)));
+                me->UpdateDamagePhysical(BASE_ATTACK);
+
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                    AttackStart(pTarget);
+
+                m_bIsPhaseTwo = true;
+                m_bIsVanished = false;
+            }
+            else
+                m_uiVisible_Timer -= uiDiff;
+        }
+        else
+            DoMeleeAttackIfReady();
     }
 };
+
 CreatureAI* GetAI_boss_arlokk(Creature* pCreature)
 {
     return new boss_arlokkAI (pCreature);
@@ -202,6 +266,12 @@ CreatureAI* GetAI_boss_arlokk(Creature* pCreature)
 void AddSC_boss_arlokk()
 {
     Script *newscript;
+
+    newscript = new Script;
+    newscript->Name = "go_gong_of_bethekk";
+    newscript->pGOHello = &GOHello_go_gong_of_bethekk;
+    newscript->RegisterSelf();
+
     newscript = new Script;
     newscript->Name = "boss_arlokk";
     newscript->GetAI = &GetAI_boss_arlokk;

@@ -85,18 +85,18 @@ struct boss_jeklikAI : public ScriptedAI
         PhaseTwo = false;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
         DoCast(me, SPELL_BAT_FORM);
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
-            pInstance->SetData(DATA_JEKLIK_DEATH, 0);
+            pInstance->SetData(TYPE_JEKLIK, DONE);
     }
 
     void UpdateAI(const uint32 diff)
@@ -200,7 +200,7 @@ struct boss_jeklikAI : public ScriptedAI
                     if (GreaterHeal_Timer <= diff)
                     {
                         me->InterruptNonMeleeSpells(false);
-                        DoCast(me,SPELL_GREATERHEAL);
+                        DoCast(me, SPELL_GREATERHEAL);
                         GreaterHeal_Timer = 25000 + rand()%10000;
                     }
 
@@ -255,7 +255,7 @@ struct mob_batriderAI : public ScriptedAI
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);    // not attackable so will despawn at Despawn_Timer
     }
 
-    void EnterCombat(Unit *who) {}
+    void EnterCombat(Unit * /*who*/) {}
 
     void UpdateAI (const uint32 diff)
     {
@@ -279,8 +279,12 @@ struct mob_batriderAI : public ScriptedAI
         {
             if (pInstance)
             {
+                if (pInstance->GetData(TYPE_JEKLIK) == DONE)
+                {
                     me->setDeathState(JUST_DIED);
                     me->RemoveCorpse();
+                    return;
+                }
             }
 
             Despawn_Timer = 5000;    // given enough time to throw bomb then despawn

@@ -23,7 +23,7 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-#define SPELL_FROSTBREATH            21099
+#define SPELL_FROSTBREATH            16099
 #define SPELL_MASSIVEGEYSER          22421                  //Not working. Cause its a summon...
 #define SPELL_SLAM                   24326
 
@@ -41,7 +41,7 @@ struct boss_gahzrankaAI : public ScriptedAI
         Slam_Timer = 17000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -54,14 +54,14 @@ struct boss_gahzrankaAI : public ScriptedAI
         //Frostbreath_Timer
         if (Frostbreath_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_FROSTBREATH);
+            DoCast(me->getVictim(), SPELL_FROSTBREATH);
             Frostbreath_Timer = 7000 + rand()%4000;
         } else Frostbreath_Timer -= diff;
 
         //MassiveGeyser_Timer
         if (MassiveGeyser_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_MASSIVEGEYSER);
+            DoCast(me->getVictim(), SPELL_MASSIVEGEYSER);
             DoResetThreat();
 
             MassiveGeyser_Timer = 22000 + rand()%10000;
@@ -70,7 +70,7 @@ struct boss_gahzrankaAI : public ScriptedAI
         //Slam_Timer
         if (Slam_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SLAM);
+            DoCast(me->getVictim(), SPELL_SLAM);
             Slam_Timer = 12000 + rand()%8000;
         } else Slam_Timer -= diff;
 

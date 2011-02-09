@@ -24,8 +24,8 @@ EndScriptData */
 #include "ScriptPCH.h"
 #include "zulgurub.h"
 
-#define SPELL_AMBUSH         24337
-#define SPELL_THOUSANDBLADES 24649
+#define SPELL_AMBUSH            24337
+#define SPELL_THOUSANDBLADES    24649
 
 struct boss_renatakiAI : public ScriptedAI
 {
@@ -52,7 +52,7 @@ struct boss_renatakiAI : public ScriptedAI
         Ambushed = false;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -65,11 +65,13 @@ struct boss_renatakiAI : public ScriptedAI
         if (Invisible_Timer <= diff)
         {
             me->InterruptSpell(CURRENT_GENERIC_SPELL);
+
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
-            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO , 218171138);
-            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO  + 1, 3);
+            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, 218171138);
+            me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO + 1, 3);
+            me->SetUInt32Value(UNIT_FIELD_DISPLAYID, 11686);
+
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID,11686);
             Invisible = true;
 
             Invisible_Timer = 15000 + rand()%15000;
@@ -84,7 +86,7 @@ struct boss_renatakiAI : public ScriptedAI
                 if (pTarget)
                 {
                     DoTeleportTo(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
-                    DoCast(pTarget,SPELL_AMBUSH);
+                    DoCast(pTarget, SPELL_AMBUSH);
                 }
 
                 Ambushed = true;
@@ -97,11 +99,12 @@ struct boss_renatakiAI : public ScriptedAI
             if (Visible_Timer <= diff)
             {
                 me->InterruptSpell(CURRENT_GENERIC_SPELL);
-                me->SetUInt32Value(UNIT_FIELD_DISPLAYID,15268);
-                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+
+                me->SetUInt32Value(UNIT_FIELD_DISPLAYID, 15268);
                 me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 31818);
-                me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO , 218171138);
-                me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO  + 1, 3);
+                me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, 218171138);
+                me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO + 1, 3);
+
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 Invisible = false;
 
