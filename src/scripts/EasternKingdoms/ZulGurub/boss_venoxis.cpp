@@ -1,4 +1,7 @@
 /* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ *
+ * Copyright (C) 2011 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -24,18 +27,24 @@ EndScriptData */
 #include "ScriptPCH.h"
 #include "zulgurub.h"
 
-#define SAY_TRANSFORM       -1309000
-#define SAY_DEATH           -1309001
+enum Texts
+{
+    SAY_TRANSFORM   =   -1309000,
+    SAY_DEATH       =   -1309001
+};
 
-#define SPELL_HOLY_FIRE     23860
-#define SPELL_HOLY_WRATH    28883                           //Not sure if this or 23979
-#define SPELL_VENOMSPIT     23862
-#define SPELL_HOLY_NOVA     23858
-#define SPELL_POISON_CLOUD  23861
-#define SPELL_SNAKE_FORM    23849
-#define SPELL_RENEW         23895
-#define SPELL_BERSERK       23537
-#define SPELL_DISPELL       23859
+enum Spells
+{
+    SPELL_HOLY_FIRE    = 23860,
+    SPELL_HOLY_WRATH   = 23979,
+    SPELL_VENOMSPIT    = 23862,
+    SPELL_HOLY_NOVA    = 23858,
+    SPELL_POISON_CLOUD = 23861,
+    SPELL_SNAKE_FORM   = 23849,
+    SPELL_RENEW        = 23895,
+    SPELL_BERSERK      = 23537,
+    SPELL_DISPELL      = 23859
+};
 
 struct boss_venoxisAI : public ScriptedAI
 {
@@ -89,39 +98,45 @@ struct boss_venoxisAI : public ScriptedAI
           if (!UpdateVictim())
             return;
 
-            if ((me->GetHealth()*100 / me->GetMaxHealth() > 50))
+            if ((me->GetHealth() * 100 / me->GetMaxHealth() > 50))
             {
                 if (Dispell_Timer <= diff)
                 {
                     DoCast(me, SPELL_DISPELL);
                     Dispell_Timer = 15000 + rand()%15000;
-                } else Dispell_Timer -= diff;
+                }
+                else
+                    Dispell_Timer -= diff;
 
                 if (Renew_Timer <= diff)
                 {
                     DoCast(me, SPELL_RENEW);
                     Renew_Timer = 20000 + rand()%10000;
-                } else Renew_Timer -= diff;
+                }
+                else
+                    Renew_Timer -= diff;
 
                 if (HolyWrath_Timer <= diff)
                 {
                     DoCast(me->getVictim(), SPELL_HOLY_WRATH);
                     HolyWrath_Timer = 15000 + rand()%10000;
-                } else HolyWrath_Timer -= diff;
+                }
+                else
+                    HolyWrath_Timer -= diff;
 
                 if (HolyNova_Timer <= diff)
                 {
                     TargetInRange = 0;
-                    for (int i=0; i<10; i++)
+                    for (int i = 0; i < 10; i++)
                     {
-                        if (Unit *pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO,i))
+                        if (Unit *pTarget = SelectUnit(SELECT_TARGET_TOPAGGRO, i))
                             if (me->IsWithinMeleeRange(pTarget))
                                 TargetInRange++;
                     }
 
                     if (TargetInRange > 1)
                     {
-                        DoCast(me->getVictim(),SPELL_HOLY_NOVA);
+                        DoCast(me->getVictim(), SPELL_HOLY_NOVA);
                         HolyNova_Timer = 1000;
                     }
                     else
@@ -129,15 +144,19 @@ struct boss_venoxisAI : public ScriptedAI
                         HolyNova_Timer = 2000;
                     }
 
-                } else HolyNova_Timer -= diff;
+                }
+                else
+                    HolyNova_Timer -= diff;
 
                 if (HolyFire_Timer <= diff && TargetInRange < 3)
                 {
-                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                         DoCast(pTarget, SPELL_HOLY_FIRE);
 
                     HolyFire_Timer = 8000;
-                } else HolyFire_Timer -= diff;
+                }
+                else
+                    HolyFire_Timer -= diff;
             }
             else
             {
@@ -145,11 +164,11 @@ struct boss_venoxisAI : public ScriptedAI
                 {
                     DoScriptText(SAY_TRANSFORM, me);
                     me->InterruptNonMeleeSpells(false);
-                    DoCast(me,SPELL_SNAKE_FORM);
+                    DoCast(me, SPELL_SNAKE_FORM);
                     me->SetFloatValue(OBJECT_FIELD_SCALE_X, 2.0f);
                     const CreatureInfo *cinfo = me->GetCreatureInfo();
-                    me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg +((cinfo->mindmg/100) * 25)));
-                    me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg/100) * 25)));
+                    me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 25)));
+                    me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 25)));
                     me->UpdateDamagePhysical(BASE_ATTACK);
                     DoResetThreat();
                     PhaseTwo = true;
@@ -159,17 +178,21 @@ struct boss_venoxisAI : public ScriptedAI
                 {
                     DoCast(me->getVictim(), SPELL_POISON_CLOUD);
                     PoisonCloud_Timer = 15000;
-                }PoisonCloud_Timer -=diff;
+                }
+
+                PoisonCloud_Timer -=diff;
 
                 if (PhaseTwo && VenomSpit_Timer <= diff)
                 {
-                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                    if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                         DoCast(pTarget, SPELL_VENOMSPIT);
 
                     VenomSpit_Timer = 15000 + rand()%5000;
-                } else VenomSpit_Timer -= diff;
+                }
+                else
+                    VenomSpit_Timer -= diff;
 
-                if (PhaseTwo && (me->GetHealth()*100 / me->GetMaxHealth() < 11))
+                if (PhaseTwo && (me->GetHealth() * 100 / me->GetMaxHealth() < 11))
                 {
                     if (!InBerserk)
                     {
@@ -180,7 +203,6 @@ struct boss_venoxisAI : public ScriptedAI
                 }
             }
             DoMeleeAttackIfReady();
-
     }
 };
 CreatureAI* GetAI_boss_venoxis(Creature* pCreature)
