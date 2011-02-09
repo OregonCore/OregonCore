@@ -49,7 +49,7 @@ struct boss_garrAI : public ScriptedAI
         CheckAdds_Timer = 2000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -61,14 +61,14 @@ struct boss_garrAI : public ScriptedAI
         //AntiMagicPulse_Timer
         if (AntiMagicPulse_Timer <= diff)
         {
-            DoCast(me,SPELL_ANTIMAGICPULSE);
+            DoCast(me, SPELL_ANTIMAGICPULSE);
             AntiMagicPulse_Timer = 10000 + rand()%5000;
         } else AntiMagicPulse_Timer -= diff;
 
         //MagmaShackles_Timer
         if (MagmaShackles_Timer <= diff)
         {
-            DoCast(me,SPELL_MAGMASHACKLES);
+            DoCast(me, SPELL_MAGMASHACKLES);
             MagmaShackles_Timer = 8000 + rand()%4000;
         } else MagmaShackles_Timer -= diff;
 
@@ -87,7 +87,7 @@ struct mob_fireswornAI : public ScriptedAI
         Immolate_Timer = 4000;                              //These times are probably wrong
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -100,15 +100,15 @@ struct mob_fireswornAI : public ScriptedAI
         if (Immolate_Timer <= diff)
         {
              if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_IMMOLATE);
+                DoCast(pTarget, SPELL_IMMOLATE);
 
-            Immolate_Timer = 5000 + rand()%5000;
+            Immolate_Timer = urand(5000,10000);
         } else Immolate_Timer -= diff;
 
         //Cast Erruption and let them die
         if (me->GetHealth() <= me->GetMaxHealth() * 0.10f)
         {
-            DoCast(me->getVictim(),SPELL_ERUPTION);
+            DoCast(me->getVictim(), SPELL_ERUPTION);
             me->setDeathState(JUST_DIED);
             me->RemoveCorpse();
         }

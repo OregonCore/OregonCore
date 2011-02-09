@@ -53,12 +53,7 @@ EndScriptData */
 
 struct boss_majordomoAI : public ScriptedAI
 {
-    boss_majordomoAI(Creature *c) : ScriptedAI(c)
-    {
-        pInstance = c->GetInstanceData();
-    }
-
-    ScriptedInstance* pInstance;
+    boss_majordomoAI(Creature *c) : ScriptedAI(c) {}
 
     uint32 MagicReflection_Timer;
     uint32 DamageReflection_Timer;
@@ -71,7 +66,7 @@ struct boss_majordomoAI : public ScriptedAI
         Blastwave_Timer = 10000;
     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit* /*victim*/)
     {
         if (rand()%5)
             return;
@@ -79,7 +74,7 @@ struct boss_majordomoAI : public ScriptedAI
         DoScriptText(SAY_SLAY, me);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
     }
@@ -92,7 +87,7 @@ struct boss_majordomoAI : public ScriptedAI
         //Cast Ageis if less than 50% hp
         if (me->GetHealth()*100 / me->GetMaxHealth() < 50)
         {
-            DoCast(me,SPELL_AEGIS);
+            DoCast(me, SPELL_AEGIS);
         }
 
         //MagicReflection_Timer
@@ -116,7 +111,7 @@ struct boss_majordomoAI : public ScriptedAI
         //Blastwave_Timer
         if (Blastwave_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_BLASTWAVE);
+            DoCast(me->getVictim(), SPELL_BLASTWAVE);
             Blastwave_Timer = 10000;
         } else Blastwave_Timer -= diff;
 

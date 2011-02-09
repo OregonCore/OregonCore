@@ -42,7 +42,7 @@ struct boss_gehennasAI : public ScriptedAI
         GehennasCurse_Timer = 12000;
     }
 
-    void EnterCombat(Unit *who) { }
+    void EnterCombat(Unit * /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -52,25 +52,26 @@ struct boss_gehennasAI : public ScriptedAI
         //ShadowBolt_Timer
         if (ShadowBolt_Timer <= diff)
         {
-            if (Unit* bTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
-                DoCast(bTarget,SPELL_SHADOWBOLT);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
+                DoCast(pTarget, SPELL_SHADOWBOLT);
+
             ShadowBolt_Timer = 7000;
         } else ShadowBolt_Timer -= diff;
 
         //RainOfFire_Timer
         if (RainOfFire_Timer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_RAINOFFIRE);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_RAINOFFIRE);
 
-            RainOfFire_Timer = 4000 + rand()%8000;
+            RainOfFire_Timer = urand(4000,12000);
         } else RainOfFire_Timer -= diff;
 
         //GehennasCurse_Timer
         if (GehennasCurse_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_GEHENNASCURSE);
-            GehennasCurse_Timer = 22000 + rand()%8000;
+            DoCast(me->getVictim(), SPELL_GEHENNASCURSE);
+            GehennasCurse_Timer = urand(22000,30000);
         } else GehennasCurse_Timer -= diff;
 
         DoMeleeAttackIfReady();
