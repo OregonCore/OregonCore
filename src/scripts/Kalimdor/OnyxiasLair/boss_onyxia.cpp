@@ -97,9 +97,6 @@ struct boss_onyxiaAI : public ScriptedAI
         FireballTimer = 18000;
 
         InitialSpawn = true;
-
-        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-        me->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
     }
 
     void EnterCombat(Unit* who)

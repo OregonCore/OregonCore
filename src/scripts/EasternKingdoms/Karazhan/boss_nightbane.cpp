@@ -156,9 +156,6 @@ struct boss_nightbaneAI : public ScriptedAI
 
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
-                me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, false);
-                me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, false);
-
                 HandleTerraceDoors(true);
                 Flying = false;
                 Movement = false;

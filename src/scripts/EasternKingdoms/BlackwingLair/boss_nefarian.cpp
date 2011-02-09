@@ -83,9 +83,6 @@ struct boss_nefarianAI : public ScriptedAI
         Phase3 = false;
 
         DespawnTimer = 5000;
-
-        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-        me->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
     }
 
     void KilledUnit(Unit* Victim)

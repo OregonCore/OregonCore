@@ -72,9 +72,6 @@ struct boss_vaelAI : public ScriptedAI
         TailSwipe_Timer = 20000;
         HasYelled = false;
         DoingSpeech = false;
-
-        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-        me->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
     }
 
     void BeginSpeech(Unit *pTarget)

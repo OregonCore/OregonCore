@@ -85,9 +85,6 @@ struct boss_marliAI : public ScriptedAI
 
         Spawned = false;
         PhaseTwo = false;
-
-        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-        me->ApplySpellImmune(1, IMMUNITY_EFFECT, SPELL_EFFECT_ATTACK_ME, true);
     }
 
     void EnterCombat(Unit * /*who*/)

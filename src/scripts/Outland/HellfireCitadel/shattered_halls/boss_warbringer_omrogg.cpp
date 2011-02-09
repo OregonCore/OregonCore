@@ -156,9 +156,6 @@ struct boss_warbringer_omroggAI : public ScriptedAI
 
     void Reset()
     {
-        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-        me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
-
         LeftHead = 0;
         RightHead = 0;
 

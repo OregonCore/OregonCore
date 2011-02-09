@@ -53,9 +53,6 @@ struct boss_temporusAI : public ScriptedAI
 
     void Reset()
     {
-        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-        me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
-
         Haste_Timer = 20000;
         SpellReflection_Timer = 40000;
     }

@@ -231,8 +231,6 @@ struct aqsentinelAI : public ScriptedAI
         }
         ClearBudyList();
         gatherOthersWhenAggro = true;
-        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, false);
-        me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_ATTACK_ME, false);
     }
 
     void GainSentinelAbility(uint32 id)
@@ -244,11 +242,6 @@ struct aqsentinelAI : public ScriptedAI
                 continue;
             SentinelAbilityAura *a = new SentinelAbilityAura(this, (SpellEntry *)spell, id, i);
             me->AddAura(a);
-        }
-        if (id == SPELL_KNOCK_BUFF)
-        {
-            me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-            me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_ATTACK_ME, true);
         }
     }
 
