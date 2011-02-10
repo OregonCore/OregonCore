@@ -38,6 +38,7 @@ EndContentData */
 
 #include "ScriptPCH.h"
 #include "ScriptedEscortAI.h"
+#include "ObjectMgr.h"
 
 /*########
 # npc_chicken_cluck
