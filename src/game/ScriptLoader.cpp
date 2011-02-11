@@ -193,7 +193,7 @@ void AddSC_boss_renataki();
 void AddSC_boss_wushoolay();
 void AddSC_instance_zulgurub();
 
-void AddSC_alterac_mountains();
+//void AddSC_alterac_mountains();
 void AddSC_arathi_highlands();
 void AddSC_blasted_lands();
 void AddSC_boss_kruul();
@@ -558,7 +558,7 @@ void AddScripts()
     AddSC_boss_wushoolay();
     AddSC_instance_zulgurub();
 
-    AddSC_alterac_mountains();
+    //AddSC_alterac_mountains();
     AddSC_arathi_highlands();
     AddSC_blasted_lands();
     AddSC_boss_kruul();
