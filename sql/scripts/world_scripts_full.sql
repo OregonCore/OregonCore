@@ -1,10 +1,13 @@
-/*  */
-
 -- Cleanup first
 UPDATE `instance_template` SET `Script`='';
 UPDATE `item_template` SET `ScriptName`='';
 UPDATE `creature_template` SET `ScriptName`='';
 UPDATE `gameobject_template` SET `ScriptName`='';
+
+/* AREA TRIGGERS */
+DELETE FROM `areatrigger_scripts` WHERE `entry` IN (3066);
+INSERT INTO `areatrigger_scripts` (`entry`,`ScriptName`) VALUES 
+(3066,'at_ravenholdt');
 
 /* WORLD BOSS */
 UPDATE `creature_template` SET `ScriptName`='boss_ysondre' WHERE `entry`=14887;
@@ -64,11 +67,6 @@ UPDATE `creature_template` SET `ScriptName`='guard_exodar' WHERE `entry`=16733;
 UPDATE `creature_template` SET `ScriptName`='guard_shattrath' WHERE `entry`=19687;
 UPDATE `creature_template` SET `ScriptName`='guard_shattrath_aldor' WHERE `entry`=18549;
 UPDATE `creature_template` SET `ScriptName`='guard_shattrath_scryer' WHERE `entry`=18568;
-UPDATE `creature_template` SET `ScriptName`='npc_garments_of_quests' WHERE `entry`=12423;
-UPDATE `creature_template` SET `ScriptName`='npc_garments_of_quests' WHERE `entry`=12427;
-UPDATE `creature_template` SET `ScriptName`='npc_garments_of_quests' WHERE `entry`=12428;
-UPDATE `creature_template` SET `ScriptName`='npc_garments_of_quests' WHERE `entry`=12429;
-UPDATE `creature_template` SET `ScriptName`='npc_garments_of_quests' WHERE `entry`=12430;
 
 
 /* ITEM */
@@ -97,6 +95,7 @@ UPDATE `item_template` SET `ScriptName`='item_only_for_flight' WHERE `entry` IN 
 UPDATE `creature_template` SET `ScriptName`='npc_lunaclaw_spirit' WHERE `entry`=12144;
 UPDATE `creature_template` SET `ScriptName`='npc_chicken_cluck' WHERE `entry`=620;
 UPDATE `creature_template` SET `ScriptName`='npc_dancing_flames' WHERE `entry`=25305;
+UPDATE `creature_template` SET `ScriptName`='npc_garments_of_quests' WHERE `entry` IN (12429,12423,12427,12430,12428);
 UPDATE `creature_template` SET `ScriptName`='npc_guardian' WHERE `entry`=5764;
 UPDATE `creature_template` SET `ScriptName`='npc_mount_vendor' WHERE `entry` IN (384,1261,1460,2357,3362,3685,4730,4731,4885,7952,7955,16264,17584);
 UPDATE `creature_template` SET `ScriptName`='npc_doctor' WHERE `entry` IN (12939,12920);
@@ -120,7 +119,6 @@ UPDATE `creature_template` SET `Scriptname`='npc_innkeeper' WHERE `npcflag`& 655
 /* */
 
 /* ALTERAC MOUNTAINS */
-UPDATE `creature_template` SET `ScriptName`='npc_ravenholdt' WHERE `entry`=13936;
 
 /* ALTERAC VALLEY */
 

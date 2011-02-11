@@ -23,6 +23,7 @@ EndScriptData */
 
 /* ContentData
 at_legion_teleporter            4560 Teleporter TO Invasion Point: Cataclysm
+at_ravenholdt
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -61,6 +62,20 @@ bool AreaTrigger_at_legion_teleporter(Player *pPlayer, const AreaTriggerEntry * 
     return false;
 }
 
+enum eRavenholdt
+{
+    QUEST_MANOR_RAVENHOLDT  = 6681,
+    NPC_RAVENHOLDT          = 13936
+};
+
+bool AreaTrigger_at_ravenholdt(Player* pPlayer, const AreaTriggerEntry* /*pAt*/)
+{
+    if (pPlayer->GetQuestStatus(QUEST_MANOR_RAVENHOLDT) == QUEST_STATUS_INCOMPLETE)
+        pPlayer->KilledMonster(NPC_RAVENHOLDT, 0);
+
+    return false;
+}
+
 void AddSC_areatrigger_scripts()
 {
     Script* newscript;
@@ -68,5 +83,10 @@ void AddSC_areatrigger_scripts()
     newscript = new Script;
     newscript->Name = "at_legion_teleporter";
     newscript->pAreaTrigger = &AreaTrigger_at_legion_teleporter;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "at_ravenholdt";
+    newscript->pAreaTrigger = &AreaTrigger_at_ravenholdt;
     newscript->RegisterSelf();
 }

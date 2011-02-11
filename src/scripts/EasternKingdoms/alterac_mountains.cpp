@@ -18,48 +18,17 @@
 
 /* ScriptData
 SDName: Alterac_Mountains
-SD%Complete: 100
-SDComment: Quest support: 6681
+SD%Complete: 0
+SDComment: Placeholder
 SDCategory: Alterac Mountains
 EndScriptData */
 
 /* ContentData
-npc_ravenholdt
 EndContentData */
 
 #include "ScriptPCH.h"
 
-/*######
-## npc_ravenholdt
-######*/
-
-struct npc_ravenholdtAI : public ScriptedAI
-{
-    npc_ravenholdtAI(Creature *c) : ScriptedAI(c) {}
-
-    void Reset() { }
-
-    void MoveInLineOfSight(Unit *who)
-    {
-        if (who->GetTypeId() == TYPEID_PLAYER)
-            if (CAST_PLR(who)->GetQuestStatus(6681) == QUEST_STATUS_INCOMPLETE)
-                CAST_PLR(who)->KilledMonster(me->GetEntry(),me->GetGUID());
-    }
-
-    void Aggro(Unit* who) { }
-};
-
-CreatureAI* GetAI_npc_ravenholdt(Creature* pCreature)
-{
-    return new npc_ravenholdtAI (pCreature);
-}
-
-void AddSC_alterac_mountains()
+/*void AddSC_alterac_mountains()
 {
     Script *newscript;
-
-    newscript = new Script;
-    newscript->Name = "npc_ravenholdt";
-    newscript->GetAI = &GetAI_npc_ravenholdt;
-    newscript->RegisterSelf();
-}
+}*/
