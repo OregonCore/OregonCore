@@ -23,209 +23,152 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
-enum eYsonde
+enum eEnums
 {
     SAY_AGGRO               = -1000360,
     SAY_SUMMONDRUIDS        = -1000361,
 
-    SPELL_SLEEP                = 24777,
-    SPELL_NOXIOUSBREATH        = 24818,
-    SPELL_TAILSWEEP            = 15847,
-    //SPELL_MARKOFNATURE       = 25040,                   // Not working
-    SPELL_LIGHTNINGWAVE        = 24819,
-    SPELL_SUMMONDRUIDS         = 24795,
+    SPELL_SLEEP             = 24777,
+    SPELL_NOXIOUSBREATH     = 24818,
+    SPELL_TAILSWEEP         = 15847,
+    //SPELL_MARKOFNATURE   = 25040,                        // Not working
+    SPELL_LIGHTNINGWAVE     = 24819,
+    SPELL_SUMMONDRUIDS      = 24795,
 
     //druid spells
-    SPELL_MOONFIRE             = 21669
+    SPELL_MOONFIRE          = 21669
 };
 
 // Ysondre script
 struct boss_ysondreAI : public ScriptedAI
 {
-    boss_ysondreAI(Creature *c) : ScriptedAI(c) {}
+    boss_ysondreAI(Creature* pCreature) : ScriptedAI(pCreature) {}
 
-    uint32 Sleep_Timer;
-    uint32 NoxiousBreath_Timer;
-    uint32 TailSweep_Timer;
-    //uint32 MarkOfNature_Timer;
-    uint32 LightningWave_Timer;
-    uint32 SummonDruids1_Timer;
-    uint32 SummonDruids2_Timer;
-    uint32 SummonDruids3_Timer;
-    int Rand;
-    int RandX;
-    int RandY;
-    Creature* Summoned;
+    uint32 m_uiSleep_Timer;
+    uint32 m_uiNoxiousBreath_Timer;
+    uint32 m_uiTailSweep_Timer;
+    //uint32 m_uiMarkOfNature_Timer;
+    uint32 m_uiLightningWave_Timer;
+    uint32 m_uiSummonDruidModifier;
 
     void Reset()
     {
-        Sleep_Timer = 15000 + rand()%5000;
-        NoxiousBreath_Timer = 8000;
-        TailSweep_Timer = 4000;
-        //MarkOfNature_Timer = 45000;
-        LightningWave_Timer = 12000;
-        SummonDruids1_Timer = 0;
-        SummonDruids2_Timer = 0;
-        SummonDruids3_Timer = 0;
+        m_uiSleep_Timer = 15000 + rand()%5000;
+        m_uiNoxiousBreath_Timer = 8000;
+        m_uiTailSweep_Timer = 4000;
+        //m_uiMarkOfNature_Timer = 45000;
+        m_uiLightningWave_Timer = 12000;
+        m_uiSummonDruidModifier = 0;
     }
 
-    void Aggro(Unit *who)
+    void EnterCombat(Unit* /*pWho*/)
     {
         DoScriptText(SAY_AGGRO, me);
     }
 
-    void SummonDruids(Unit* victim)
+    void JustSummoned(Creature* pSummoned)
     {
-        if (!victim)
-            return;
-
-        Rand = rand()%10;
-        switch (rand()%2)
-        {
-            case 0: RandX = 0 - Rand; break;
-            case 1: RandX = 0 + Rand; break;
-        }
-        Rand = 0;
-        Rand = rand()%10;
-        switch (rand()%2)
-        {
-            case 0: RandY = 0 - Rand; break;
-            case 1: RandY = 0 + Rand; break;
-        }
-        Rand = 0;
-        Summoned = DoSpawnCreature(15260, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 300000);
-        if (Summoned)
-            ((CreatureAI*)Summoned->AI())->AttackStart(victim);
+        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            pSummoned->AI()->AttackStart(pTarget);
     }
 
-    void UpdateAI(const uint32 diff)
+    void UpdateAI(const uint32 uiDiff)
     {
         if (!UpdateVictim())
             return;
 
         //Sleep_Timer
-        if (Sleep_Timer <= diff)
+        if (m_uiSleep_Timer <= uiDiff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_SLEEP);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_SLEEP);
 
-            Sleep_Timer = 8000 + rand()%7000;
-        } else Sleep_Timer -= diff;
+            m_uiSleep_Timer = 8000 + rand()%7000;
+        }
+        else
+            m_uiSleep_Timer -= uiDiff;
 
         //NoxiousBreath_Timer
-        if (NoxiousBreath_Timer <= diff)
+        if (m_uiNoxiousBreath_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(),SPELL_NOXIOUSBREATH);
-            NoxiousBreath_Timer = 14000 + rand()%6000;
-        } else NoxiousBreath_Timer -= diff;
+            DoCast(me->getVictim(), SPELL_NOXIOUSBREATH);
+            m_uiNoxiousBreath_Timer = 14000 + rand()%6000;
+        }
+        else
+            m_uiNoxiousBreath_Timer -= uiDiff;
 
         //Tailsweep every 2 seconds
-        if (TailSweep_Timer <= diff)
+        if (m_uiTailSweep_Timer <= uiDiff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_TAILSWEEP);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_TAILSWEEP);
 
-            TailSweep_Timer = 2000;
-        } else TailSweep_Timer -= diff;
+            m_uiTailSweep_Timer = 2000;
+        }
+        else
+            m_uiTailSweep_Timer -= uiDiff;
 
         //MarkOfNature_Timer
-        //if (MarkOfNature_Timer <= diff)
+        //if (m_uiMarkOfNature_Timer <= uiDiff)
         //{
-        //    DoCast(me->getVictim(),SPELL_MARKOFNATURE);
-        //    MarkOfNature_Timer = 45000;
-        //} else MarkOfNature_Timer -= diff;
+        //    DoCast(me->getVictim(), SPELL_MARKOFNATURE);
+        //    m_uiMarkOfNature_Timer = 45000;
+        //}
+        //else
+        //    m_uiMarkOfNature_Timer -= uiDiff;
 
         //LightningWave_Timer
-        if (LightningWave_Timer <= diff)
+        if (m_uiLightningWave_Timer <= uiDiff)
         {
             //Cast LIGHTNINGWAVE on a Random target
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_LIGHTNINGWAVE);
+            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_LIGHTNINGWAVE);
 
-            LightningWave_Timer = 7000 + rand()%5000;
-        } else LightningWave_Timer -= diff;
+            m_uiLightningWave_Timer = 7000 + rand()%5000;
+        }
+        else
+            m_uiLightningWave_Timer -= uiDiff;
 
         //Summon Druids
-        if ((int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 75)
+        if ((me->GetHealth()*100 / me->GetMaxHealth()) <= (100-(25*m_uiSummonDruidModifier)))
         {
-            if (SummonDruids1_Timer <= diff)
-            {
-                DoScriptText(SAY_SUMMONDRUIDS, me);
-                // summon 10 druids
-                Unit *pTarget = NULL;
-                for (int i = 0; i < 10;i++)
-                {
-                    pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-                    SummonDruids(pTarget);
-                }
+            DoScriptText(SAY_SUMMONDRUIDS, me);
 
-                SummonDruids1_Timer = 60000;
-            } else SummonDruids1_Timer -= diff;
+            for (int i = 0; i < 10; ++i)
+                DoCast(me, SPELL_SUMMONDRUIDS, true);
+
+            ++m_uiSummonDruidModifier;
         }
 
-        //Summon Druids
-        if ((int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 50)
-        {
-            if (SummonDruids2_Timer <= diff)
-            {
-                // summon 10 druids
-                Unit *pTarget = NULL;
-                for (int i = 0; i < 10;i++)
-                {
-                    pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-                    SummonDruids(pTarget);
-                }
-
-                SummonDruids2_Timer = 60000;
-            } else SummonDruids2_Timer -= diff;
-        }
-
-        //Summon Druids
-        if ((int) (me->GetHealth()*100 / me->GetMaxHealth() +0.5) == 25)
-        {
-            if (SummonDruids3_Timer <= diff)
-            {
-                // summon 10 druids
-                Unit *pTarget = NULL;
-                for (int i = 0; i < 10;i++)
-                {
-                    pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-                    SummonDruids(pTarget);
-                }
-
-                SummonDruids3_Timer = 60000;
-            } else SummonDruids3_Timer -= diff;
-        }
         DoMeleeAttackIfReady();
     }
 };
+
 // Summoned druid script
 struct mob_dementeddruidsAI : public ScriptedAI
 {
     mob_dementeddruidsAI(Creature *c) : ScriptedAI(c) {}
 
-    uint32 MoonFire_Timer;
+    uint32 m_uiMoonFire_Timer;
 
     void Reset()
     {
-        MoonFire_Timer = 3000;
+        m_uiMoonFire_Timer = 3000;
     }
 
-    void Aggro(Unit *who)
-    {
-    }
-
-    void UpdateAI(const uint32 diff)
+    void UpdateAI(const uint32 uiDiff)
     {
         if (!UpdateVictim())
             return;
 
         //MoonFire_Timer
-        if (MoonFire_Timer <= diff)
+        if (m_uiMoonFire_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(),SPELL_MOONFIRE);
-            MoonFire_Timer = 5000;
-        } else MoonFire_Timer -= diff;
+            DoCast(me->getVictim(), SPELL_MOONFIRE);
+            m_uiMoonFire_Timer = 5000;
+        }
+        else
+            m_uiMoonFire_Timer -= uiDiff;
 
         DoMeleeAttackIfReady();
     }
