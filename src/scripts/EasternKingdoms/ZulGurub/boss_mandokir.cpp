@@ -102,7 +102,7 @@ struct boss_mandokirAI : public ScriptedAI
     uint32 MortalStrike_Timer;
     uint32 Check_Timer;
     uint32 Charge_Timer;
-
+    uint32 Move_Timer;
 
     float Threat_Count;
     bool  Threat_stored;
@@ -126,10 +126,7 @@ struct boss_mandokirAI : public ScriptedAI
 
     uint32 Spirit_Number; 
 
-    uint32 Move_Timer;
-
     std::vector<Spirit_Resurrection> Resurrection;
-    std::vector<std::vector<Spirit_Resurrection>::iterator> eraseUnit;
 
     void Reset()
     {
@@ -163,13 +160,11 @@ struct boss_mandokirAI : public ScriptedAI
         for (i = 0; i < 15; ++i)
         {
             if (CHAINED_SPIRIT_SUMMONS[i])
-            CHAINED_SPIRIT_SUMMONS[i]->RemoveFromWorld();
+                CHAINED_SPIRIT_SUMMONS[i]->RemoveFromWorld();
         }
 
         Resurrection.clear();
-        eraseUnit.clear();
         Spirit_Number = 0;
-
     }
 
     void JustDied(Unit* Killer)
@@ -179,7 +174,7 @@ struct boss_mandokirAI : public ScriptedAI
         for (i = 0; i < 15; ++i)
         {
             if (CHAINED_SPIRIT_SUMMONS[i])
-            CHAINED_SPIRIT_SUMMONS[i]->RemoveFromWorld();
+                CHAINED_SPIRIT_SUMMONS[i]->RemoveFromWorld();
         }
     }
 
@@ -195,8 +190,7 @@ struct boss_mandokirAI : public ScriptedAI
 
                 if (pInstance)
                 {
-                    uint64 JindoGUID = pInstance->GetData64(DATA_JINDO);
-                    if (JindoGUID)
+                    if (uint64 JindoGUID = pInstance->GetData64(DATA_JINDO))
                     {
                         if (Unit* jTemp = Unit::GetUnit(*me, JindoGUID))
                         {
@@ -205,8 +199,8 @@ struct boss_mandokirAI : public ScriptedAI
                         }
                     }
                 }
-            DoCast(me, SPELL_LEVEL_UP, true);
-            KillCount = 0;
+                DoCast(me, SPELL_LEVEL_UP, true);
+                KillCount = 0;
             }
 
             if (Spirit_Number < 15)
@@ -253,21 +247,14 @@ struct boss_mandokirAI : public ScriptedAI
             // Random Charge
             if (Charge_Timer <= diff)
             {
-                uint32 i = 0;
-                Unit* pTarget;
-                do
+                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 {
-                    pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                    ++i;
+                    if (DoGetThreat(me->getVictim()))
+                        DoModifyThreatPercent(me->getVictim(), -50);
+
+                    DoCast(pTarget, SPELL_CHARGE);
+                    AttackStart(pTarget);
                 }
-                while (!(pTarget->GetTypeId() == TYPEID_PLAYER) || (i < 15));
-
-                if (DoGetThreat(me->getVictim()))
-                    DoModifyThreatPercent(me->getVictim(), -50);
-
-                DoCast(pTarget, SPELL_CHARGE);
-                AttackStart(pTarget);
-
                 Charge_Timer = 20000;
             }
             else
@@ -275,7 +262,8 @@ struct boss_mandokirAI : public ScriptedAI
 
             if (Move_Timer <= diff)
             {
-                   for (std::vector<Spirit_Resurrection>::iterator itr = Resurrection.begin(); itr != Resurrection.end(); ++itr)
+                std::vector<std::vector<Spirit_Resurrection>::iterator> eraseUnit;
+                for (std::vector<Spirit_Resurrection>::iterator itr = Resurrection.begin(); itr != Resurrection.end(); ++itr)
                 {
                     if (!itr->isBeingRezzed)
                     {
@@ -283,27 +271,25 @@ struct boss_mandokirAI : public ScriptedAI
                         itr->isBeingRezzed = true; 
                     }
 
-                    if (itr->isBeingRezzed)
+                    if (CHAINED_SPIRIT_SUMMONS[itr->Spirit]->IsWithinDist3d(itr->pUnit->GetPositionX(), itr->pUnit->GetPositionY(), itr->pUnit->GetPositionZ(), 10.0f))
                     {
-                        if (CHAINED_SPIRIT_SUMMONS[itr->Spirit]->IsWithinDist3d(itr->pUnit->GetPositionX(), itr->pUnit->GetPositionY(), itr->pUnit->GetPositionZ(), 10.0f))
-                        {
-                            CHAINED_SPIRIT_SUMMONS[itr->Spirit]->StopMoving();
+                        CHAINED_SPIRIT_SUMMONS[itr->Spirit]->StopMoving();
 
-                            CHAINED_SPIRIT_SUMMONS[itr->Spirit]->MonsterWhisper(SAY_REVIVE, itr->pUnit->GetGUID());
+                        CHAINED_SPIRIT_SUMMONS[itr->Spirit]->MonsterWhisper(SAY_REVIVE, itr->pUnit->GetGUID());
 
-                            Player* pPlayer = Player::GetPlayer(*me, itr->pUnit->GetGUID());
-                            //DoCast(pPlayer, SPELL_REVIVE);   // core not supporting npc resurrection requests? use other method:
-                            me->getVictim()->CastSpell(itr->pUnit, SPELL_REVIVE, false, 0, 0, me->getVictim()->GetGUID());  // not great method, but no other way currently
+                        Player* pPlayer = Player::GetPlayer(*me, itr->pUnit->GetGUID());
+                        //DoCast(pPlayer, SPELL_REVIVE);   // core not supporting npc resurrection requests? use other method:
+                        me->getVictim()->CastSpell(itr->pUnit, SPELL_REVIVE, false, 0, 0, me->getVictim()->GetGUID());  // not great method, but no other way currently
 
-                            CHAINED_SPIRIT_SUMMONS[itr->Spirit]->RemoveFromWorld();
-                            eraseUnit.push_back(itr);
-                        }
+                        CHAINED_SPIRIT_SUMMONS[itr->Spirit]->RemoveFromWorld();
+                        eraseUnit.push_back(itr);
                     }
                 }
                 Move_Timer = 3000;
 
                 for (std::vector<std::vector<Spirit_Resurrection>::iterator>::iterator itr = eraseUnit.begin(); itr != eraseUnit.end(); ++itr)
-                Resurrection.erase(*itr);
+                    Resurrection.erase(*itr);
+
                 eraseUnit.clear();
             }
             else
@@ -314,7 +300,7 @@ struct boss_mandokirAI : public ScriptedAI
                 if (GazeTarget)
                 {
                     Unit* pUnit = Unit::GetUnit(*me, GazeTarget);
-                    if ((pUnit) && (pUnit->isInCombat()) && (DoGetThreat(pUnit) > Threat_Count))
+                    if (pUnit && pUnit->isInCombat() && DoGetThreat(pUnit) > Threat_Count)
                     {
                         DoCast(pUnit, SPELL_CHARGE_GAZE);
                         AttackStart(pUnit);
@@ -327,18 +313,9 @@ struct boss_mandokirAI : public ScriptedAI
             else
                 Gaze_Timer -= diff;
 
-            if ((Gaze_Timer < 8000) && !someGazed)       // 8 second(cast time + expire time) before the check for the gaze effect Mandokir will cast gaze debuff on a random target
+            if (Gaze_Timer < 8000 && !someGazed)            // 8 second(cast time + expire time) before the check for the gaze effect Mandokir will cast gaze debuff on a random target
             {
-                uint32 i = 0;
-                Unit* pTarget;
-                do
-                {
-                    pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                    ++i;
-                }
-                while (!(pTarget->GetTypeId() == TYPEID_PLAYER) || ( i < 15));   // 15 should be enough out of a 20-man raid to select a player instead of totem
-
-                if (pTarget)  // did we find a player?
+                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 {
                     DoScriptText(SAY_GAZE, me, pTarget);
                     DoCast(pTarget, SPELL_GAZE);
@@ -357,11 +334,11 @@ struct boss_mandokirAI : public ScriptedAI
                 Threat_stored = true;
             }
 
-            if ((Gaze_Timer < 1000) && endGaze)               // 1 second before the debuff expires, check whether the GazeTarget is in LoS
+            if (Gaze_Timer < 1000 && endGaze)               // 1 second before the debuff expires, check whether the GazeTarget is in LoS
             {
                 Unit* pSight = Unit::GetUnit(*me, GazeTarget);
                 Player* pPlayer = Player::GetPlayer(*me, pSight->GetGUID());
-                if (pSight && !(me->IsWithinLOSInMap(pSight)))  // Is the target in our LOS? If not, teleport to me:
+                if (pSight && !me->IsWithinLOSInMap(pSight))  // Is the target in our LOS? If not, teleport to me:
                     pPlayer->TeleportTo(pPlayer->GetMapId(), me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation());
 
                 endGaze = false;
@@ -422,6 +399,7 @@ struct boss_mandokirAI : public ScriptedAI
                 else
                     MortalStrike_Timer -= diff;
             }
+
             // Checking if Ohgan is dead. If yes Mandokir will enrage.
             if (Check_Timer <= diff)
             {

@@ -811,6 +811,7 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`sound`,`type`,`language`,
 (-1309021,'Fleeing will do you no good, mortals!',0,1,0,0,'hakkar SAY_FLEEING'),
 (-1309022,'You dare set foot upon Hakkari holy ground? Minions of Hakkar, destroy the infidels!',0,1,0,0,'hakkar SAY_MINION_DESTROY'),
 (-1309023,'Minions of Hakkar, hear your God. The sanctity of this temple has been compromised. Invaders encroach upon holy ground! The Altar of Blood must be protected. Kill them all!',0,1,0,0,'hakkar SAY_PROTECT_ALTAR'),
+(-1309024,'I am released through you! Avenge me!',0,1,0,0,'mandokir SAY_REVIVE'),
 
 -- -1 329 000 STRATHOLME
 (-1329000,'Thanks to Egan',0,0,0,0,'freed_soul SAY_ZAPPED0'),
