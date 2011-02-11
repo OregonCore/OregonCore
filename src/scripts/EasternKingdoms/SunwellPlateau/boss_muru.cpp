@@ -581,7 +581,7 @@ struct npc_blackholeAI : public ScriptedAI
                     me->RemoveAura(SPELL_BLACKHOLE_GROW, 1);
                     break;
                 case 3:
-                    SpellTimer = 400+rand()%500;
+                    SpellTimer = urand(400,900);
                     NeedForAHack = 1;
                     if (Unit* Temp = me->getVictim())
                     {

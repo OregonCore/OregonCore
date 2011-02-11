@@ -69,10 +69,10 @@ struct boss_brutallusAI : public ScriptedAI
     boss_brutallusAI(Creature *c) : ScriptedAI(c)
     {
         pInstance = c->GetInstanceData();
+        Intro = true;
     }
 
     ScriptedInstance* pInstance;
-    Unit* Madrigosa;
 
     uint32 SlashTimer;
     uint32 BurnTimer;
@@ -100,21 +100,8 @@ struct boss_brutallusAI : public ScriptedAI
 
         IsIntro = false;
         Enraged = false;
-        Intro = true; //for debug
 
-        me->CastSpell(me, SPELL_DUAL_WIELD, true);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        Madrigosa = Unit::GetUnit(*me, pInstance->GetData64(DATA_MADRIGOSA));
-        //Creature* boss = Unit::GetCreature((*me),AzgalorGUID);
-        if (!Madrigosa) error_log("Madrigosa ist nicht zu finden");
-
-        if (Intro && Madrigosa){
-            if (!Madrigosa->isAlive())
-                EndIntro();
-            else error_log("Madrigosa is Tod");
-        }
-        else
-            EndIntro();
+        DoCast(me, SPELL_DUAL_WIELD, true);
 
         if (pInstance)
             pInstance->SetData(DATA_BRUTALLUS_EVENT, NOT_STARTED);
@@ -130,12 +117,7 @@ struct boss_brutallusAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch(rand()%3)
-        {
-            case 0: DoScriptText(YELL_KILL1, me); break;
-            case 1: DoScriptText(YELL_KILL2, me); break;
-            case 2: DoScriptText(YELL_KILL3, me); break;
-        }
+        DoScriptText(RAND(YELL_KILL1,YELL_KILL2,YELL_KILL3), me);
     }
 
     void JustDied(Unit* /*Killer*/)
@@ -151,15 +133,33 @@ struct boss_brutallusAI : public ScriptedAI
         }
     }
 
-    void StartIntro()
+    void EnterEvadeMode()
     {
         if (!Intro)
+            ScriptedAI::EnterEvadeMode();
+    }
+
+    void StartIntro()
+    {
+        if (!Intro || IsIntro)
             return;
         error_log("Start Intro");
-        if (Madrigosa){
-            Madrigosa->setDeathState(ALIVE);
+        Creature *Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0);
+        if (Madrigosa)
+        {
+            Madrigosa->Respawn();
             Madrigosa->setActive(true);
             IsIntro = true;
+            Madrigosa->SetMaxHealth(me->GetMaxHealth());
+            Madrigosa->SetHealth(me->GetMaxHealth());
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->Attack(Madrigosa, true);
+            Madrigosa->Attack(me, true);
+        }else
+        {
+            //Madrigosa not found, end intro
+            error_log("Madrigosa was not found");
+            EndIntro();
         }
     }
 
@@ -171,12 +171,20 @@ struct boss_brutallusAI : public ScriptedAI
         error_log("End Intro");
     }
 
+    void AttackStart(Unit* pWho)
+    {
+        if (!pWho || Intro || IsIntro)
+            return;
+        ScriptedAI::AttackStart(pWho);
+    }
+
     void DoIntro()
     {
+        Creature *Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0);
         if (!Madrigosa)
             return;
 
-        switch(IntroPhase)
+        switch (IntroPhase)
         {
             case 0:
                 DoScriptText(YELL_MADR_ICE_BARRIER, Madrigosa);
@@ -198,6 +206,8 @@ struct boss_brutallusAI : public ScriptedAI
             case 3:
                 DoCast(me, SPELL_INTRO_FROST_BLAST);
                 Madrigosa->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+                me->AttackStop();
+                Madrigosa->AttackStop();
                 IntroFrostBoltTimer = 3000;
                 IntroPhaseTimer = 28000;
                 ++IntroPhase;
@@ -215,23 +225,22 @@ struct boss_brutallusAI : public ScriptedAI
                 ++IntroPhase;
                 break;
             case 6:
-                me->SetSpeed(MOVE_RUN, 4.0f, true);
                 DoScriptText(YELL_INTRO_CHARGE, me);
                 IntroPhaseTimer = 5000;
                 ++IntroPhase;
                 break;
             case 7:
-                me->DealDamage(Madrigosa, Madrigosa->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, true);
+                me->Kill(Madrigosa);
                 DoScriptText(YELL_MADR_DEATH, Madrigosa);
                 me->SetHealth(me->GetMaxHealth());
                 me->AttackStop();
-                me->SetSpeed(MOVE_RUN, 1.0f, true);
                 IntroPhaseTimer = 4000;
                 ++IntroPhase;
                 break;
             case 8:
                 DoScriptText(YELL_INTRO_KILL_MADRIGOSA, me);
                 me->SetOrientation(0.14f);
+                me->StopMoving();
                 Madrigosa->setDeathState(CORPSE);
                 IntroPhaseTimer = 8000;
                 ++IntroPhase;
@@ -249,15 +258,19 @@ struct boss_brutallusAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit *who)
     {
+        if (!who->isTargetableForAttack() || !me->IsHostileTo(who))
+            return;
         if (pInstance && Intro)
             pInstance->SetData(DATA_BRUTALLUS_EVENT, SPECIAL);
+
+        if (Intro && !IsIntro)
+            StartIntro();
+        if (!Intro)
+            ScriptedAI::MoveInLineOfSight(who);
     }
 
     void UpdateAI(const uint32 diff)
     {
-        if (Intro && !IsIntro)
-            StartIntro();
-
         if (IsIntro)
         {
             if (IntroPhaseTimer <= diff)
@@ -268,12 +281,16 @@ struct boss_brutallusAI : public ScriptedAI
             {
                 if (IntroFrostBoltTimer <= diff)
                 {
-                    if (Madrigosa){
-                        Madrigosa->CastSpell(me, SPELL_INTRO_FROSTBOLT, false);
+                    if (Creature *Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
+                    {
+                        Madrigosa->CastSpell(me, SPELL_INTRO_FROSTBOLT, true);
                         IntroFrostBoltTimer = 2000;
                     }
                 } else IntroFrostBoltTimer -= diff;
             }
+            if (!UpdateVictim())
+                return;
+            DoMeleeAttackIfReady();
         }
 
         if (!UpdateVictim() || IsIntro)
@@ -287,21 +304,22 @@ struct boss_brutallusAI : public ScriptedAI
 
         if (StompTimer <= diff)
         {
-            switch(rand()%3)
-            {
-                case 0: DoScriptText(YELL_LOVE1, me); break;
-                case 1: DoScriptText(YELL_LOVE2, me); break;
-                case 2: DoScriptText(YELL_LOVE3, me); break;
-            }
+            DoScriptText(RAND(YELL_LOVE1,YELL_LOVE2,YELL_LOVE3), me);
             DoCast(me->getVictim(), SPELL_STOMP);
             StompTimer = 30000;
         } else StompTimer -= diff;
 
         if (BurnTimer <= diff)
         {
-            if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                pTarget->CastSpell(pTarget, SPELL_BURN, true);
-            BurnTimer = 60000;
+            std::list<Unit*> pTargets;
+            SelectTargetList(pTargets, 10, SELECT_TARGET_RANDOM, 100, true);
+            for (std::list<Unit*>::const_iterator i = pTargets.begin(); i != pTargets.end(); ++i)
+                if (!(*i)->HasAura(SPELL_BURN, 0))
+                {
+                    (*i)->CastSpell((*i), SPELL_BURN, true);
+                    break;
+                }
+            BurnTimer = urand(60000,180000);
         } else BurnTimer -= diff;
 
         if (BerserkTimer <= diff && !Enraged)

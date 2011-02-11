@@ -176,11 +176,7 @@ struct boss_felmystAI : public ScriptedAI
 
     void KilledUnit(Unit* /*victim*/)
     {
-        switch(rand()%2)
-        {
-        case 0: DoScriptText(YELL_KILL1, me); break;
-        case 1: DoScriptText(YELL_KILL2, me); break;
-        }
+        DoScriptText(RAND(YELL_KILL1,YELL_KILL2), me);
     }
 
     void JustRespawned()
@@ -251,10 +247,10 @@ struct boss_felmystAI : public ScriptedAI
             me->SetUnitMovementFlags(MOVEFLAG_NONE);
             me->SetSpeed(MOVE_RUN, 2.0f);
 
-            events.ScheduleEvent(EVENT_CLEAVE, 5000 + rand()%5 * 1000);
-            events.ScheduleEvent(EVENT_CORROSION, 10000 + rand()%10 * 1000);
-            events.ScheduleEvent(EVENT_GAS_NOVA, 15000 + rand()%5 * 1000);
-            events.ScheduleEvent(EVENT_ENCAPSULATE, 20000 + rand()%5 * 1000);
+            events.ScheduleEvent(EVENT_CLEAVE, urand(5000, 10000));
+            events.ScheduleEvent(EVENT_CORROSION, urand(10000, 20000));
+            events.ScheduleEvent(EVENT_GAS_NOVA, urand(15000, 20000));
+            events.ScheduleEvent(EVENT_ENCAPSULATE, urand(20000, 25000));
             events.ScheduleEvent(EVENT_FLIGHT, 60000);
             break;
         case PHASE_FLIGHT:
@@ -427,20 +423,20 @@ struct boss_felmystAI : public ScriptedAI
                     break;
                 case EVENT_CLEAVE:
                     DoCast(me->getVictim(), SPELL_CLEAVE, false);
-                    events.ScheduleEvent(EVENT_CLEAVE, 5000 + rand()%5 * 1000);
+                    events.ScheduleEvent(EVENT_CLEAVE, urand(5000,10000));
                     break;
                 case EVENT_CORROSION:
                     DoCast(me->getVictim(), SPELL_CORROSION, false);
-                    events.ScheduleEvent(EVENT_CORROSION, 20000 + rand()%10 * 1000);
+                    events.ScheduleEvent(EVENT_CORROSION, urand(20000,30000));
                     break;
                 case EVENT_GAS_NOVA:
                     DoCast(me, SPELL_GAS_NOVA, false);
-                    events.ScheduleEvent(EVENT_GAS_NOVA, 20000 + rand()%5 * 1000);
+                    events.ScheduleEvent(EVENT_GAS_NOVA, urand(20000,25000));
                     break;
                 case EVENT_ENCAPSULATE:
                     if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true))
                         DoCast(pTarget, SPELL_ENCAPSULATE_CHANNEL, false);
-                    events.ScheduleEvent(EVENT_ENCAPSULATE, 25000 + rand()%5 * 1000);
+                    events.ScheduleEvent(EVENT_ENCAPSULATE, urand(25000,30000));
                     break;
                 case EVENT_FLIGHT:
                     EnterPhase(PHASE_FLIGHT);
