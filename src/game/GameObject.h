@@ -472,6 +472,8 @@ class GameObject : public WorldObject, public GridObject<GameObject>
 
         uint32 GetDBTableGUIDLow() const { return m_DBTableGuid; }
 
+        void UpdateRotationFields(float rotation2 = 0.0f, float rotation3 = 0.0f);
+
         void Say(const char* text, uint32 language, uint64 TargetGuid) { MonsterSay(text,language,TargetGuid); }
         void Yell(const char* text, uint32 language, uint64 TargetGuid) { MonsterYell(text,language,TargetGuid); }
         void TextEmote(const char* text, uint64 TargetGuid) { MonsterTextEmote(text,TargetGuid); }

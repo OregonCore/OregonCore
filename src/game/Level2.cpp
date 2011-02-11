@@ -693,13 +693,7 @@ bool ChatHandler::HandleTurnObjectCommand(const char* args)
     }
 
     obj->Relocate(obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), o);
-
-    float rot2 = sin(o/2);
-    float rot3 = cos(o/2);
-    obj->SetFloatValue(GAMEOBJECT_FACING, o);
-    obj->SetFloatValue(GAMEOBJECT_ROTATION+2, rot2);
-    obj->SetFloatValue(GAMEOBJECT_ROTATION+3, rot3);
-
+    obj->UpdateRotationFields();
     obj->DestroyForNearbyPlayers();
     obj->UpdateObjectVisibility();
 
@@ -816,13 +810,10 @@ bool ChatHandler::HandleGameObjectCommand(const char* args)
     float o = float(chr->GetOrientation());
     Map *map = chr->GetMap();
 
-    float rot2 = sin(o/2);
-    float rot3 = cos(o/2);
-
     GameObject* pGameObj = new GameObject;
     uint32 db_lowGUID = objmgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT);
 
-    if (!pGameObj->Create(db_lowGUID, gInfo->id, map, x, y, z, o, 0, 0, rot2, rot3, 0, GO_STATE_READY))
+    if (!pGameObj->Create(db_lowGUID, gInfo->id, map, x, y, z, o, 0.0f, 0.0f, 0.0f, 0.0f, 0, GO_STATE_READY))
     {
         delete pGameObj;
         return false;
