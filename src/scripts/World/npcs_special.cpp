@@ -38,7 +38,6 @@ EndContentData */
 
 #include "ScriptPCH.h"
 #include "ScriptedEscortAI.h"
-#include "ObjectMgr.h"
 
 /*########
 # npc_chicken_cluck
@@ -217,18 +216,17 @@ CreatureAI* GetAI_npc_dancing_flames(Creature* pCreature)
 ## Triage quest
 ######*/
 
-enum
+enum eDoctor
 {
     SAY_DOC1         = -1000201,
     SAY_DOC2         = -1000202,
     SAY_DOC3         = -1000203,
 
+    DOCTOR_ALLIANCE  = 12939,
+    DOCTOR_HORDE     = 12920,
+    ALLIANCE_COORDS  = 7,
+    HORDE_COORDS     = 6
 };
-
-#define DOCTOR_ALLIANCE     12939
-#define DOCTOR_HORDE        12920
-#define ALLIANCE_COORDS     7
-#define HORDE_COORDS        6
 
 struct Location
 {
