@@ -6239,6 +6239,12 @@ bool Unit::HandleProcTriggerSpell(Unit *pVictim, uint32 damage, Aura* triggeredB
             trigger_spell_id = 30824;
             break;
         }
+        // Hunter: Expose Weakness
+        case 34501:
+        {
+            basepoints0 = int32(GetStat(STAT_AGILITY) *0.25);
+            break;
+        }
         // Enlightenment (trigger only from mana cost spells)
         case 35095:
         {
