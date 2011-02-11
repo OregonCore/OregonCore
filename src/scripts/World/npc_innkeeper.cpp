@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Npc_Innkeeper
 SD%Complete: 50
-SDComment: This script are currently not in use. EventSystem cannot be used on Windows build of SD2
+SDComment:
 SDCategory: NPCs
 EndScriptData */
 
@@ -38,17 +38,17 @@ bool isEventActive()
     return isGameEventActive(HALLOWEEN_EVENTID);
 }
 
-bool GossipHello_npc_innkeeper(Player *player, Creature* pCreature)
+bool GossipHello_npc_innkeeper(Player *pPlayer, Creature *pCreature)
 {
 
-    player->TalkedToCreature(pCreature->GetEntry(),pCreature->GetGUID());
+    pPlayer->TalkedToCreature(pCreature->GetEntry(),pCreature->GetGUID());
 
-    player->PrepareGossipMenu(pCreature,0); //send innkeeper menu too
+    pPlayer->PrepareGossipMenu(pCreature,0); //send innkeeper menu too
 
-    if (isEventActive()&& !player->GetAura(SPELL_TRICK_OR_TREATED,0))
+    if (isEventActive()&& !pPlayer->HasAura(SPELL_TRICK_OR_TREATED, 0))
     {
         char* localizedEntry;
-        switch (player->GetSession()->GetSessionDbLocaleIndex())
+        switch (pPlayer->GetSession()->GetSessionDbLocaleIndex())
         {
             case 0:
                 localizedEntry=LOCALE_TRICK_OR_TREAT_0;
@@ -66,25 +66,21 @@ bool GossipHello_npc_innkeeper(Player *player, Creature* pCreature)
                 localizedEntry=LOCALE_TRICK_OR_TREAT_0;
         }
 
-        player->ADD_GOSSIP_ITEM(0, localizedEntry, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+HALLOWEEN_EVENTID);
+        pPlayer->ADD_GOSSIP_ITEM(0, localizedEntry, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+HALLOWEEN_EVENTID);
     }
 
-    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
     return true;
 }
 
-bool GossipSelect_npc_innkeeper(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_innkeeper(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
 {
-    if (action == GOSSIP_ACTION_INFO_DEF+HALLOWEEN_EVENTID && isEventActive() && !player->GetAura(SPELL_TRICK_OR_TREATED,0))
+    if (uiAction == GOSSIP_ACTION_INFO_DEF+HALLOWEEN_EVENTID && isEventActive() && !pPlayer->HasAura(SPELL_TRICK_OR_TREATED, 0))
     {
-        player->CLOSE_GOSSIP_MENU();
-        player->CastSpell(player, SPELL_TRICK_OR_TREATED, true);
+        pPlayer->CastSpell(pPlayer, SPELL_TRICK_OR_TREATED, true);
 
-        // either trick or treat, 50% chance
-        if (rand()%2)
-        {
-            player->CastSpell(player, SPELL_TREAT, true);
-        }
+        if (urand(0, 1))
+            pPlayer->CastSpell(pPlayer, SPELL_TREAT, true);
         else
         {
             int32 trickspell=0;
@@ -118,24 +114,23 @@ bool GossipSelect_npc_innkeeper(Player *player, Creature* pCreature, uint32 send
                     trickspell=24723;                       // skeleton costume
                     break;
             }
-            player->CastSpell(player, trickspell, true);
+            pPlayer->CastSpell(pPlayer, trickspell, true);
         }
-        return true;                                        // prevent OREGON core handling
+        pPlayer->CLOSE_GOSSIP_MENU();
+        return true;
     }
     //Trininty Gossip core handling dont work...
-    else if (action == GOSSIP_OPTION_VENDOR)
+    else if (uiAction == GOSSIP_OPTION_VENDOR)
     {
-        player->SEND_VENDORLIST(pCreature->GetGUID());
-    return true;
+        pPlayer->SEND_VENDORLIST(pCreature->GetGUID());
     }
-    else if (action == GOSSIP_OPTION_INNKEEPER)
+    else if (uiAction == GOSSIP_OPTION_INNKEEPER)
     {
-        player->PlayerTalkClass->CloseGossip();
-        player->SetBindPoint(pCreature->GetGUID());
-    return true;
+        pPlayer->PlayerTalkClass->CloseGossip();
+        pPlayer->SetBindPoint(pCreature->GetGUID());
     }
 
-    return false;  // no player selection
+    return true;
 }
 
 void AddSC_npc_innkeeper()

@@ -70,30 +70,30 @@ bool ItemUse_item_area_52_special(Player *player, Item* _Item, SpellCastTargets 
 # item_only_for_flight
 #####*/
 
-bool ItemUse_item_only_for_flight(Player *player, Item* _Item, SpellCastTargets const& targets)
+bool ItemUse_item_only_for_flight(Player* pPlayer, Item* pItem, SpellCastTargets const& /*targets*/)
 {
-    uint32 itemId = _Item->GetEntry();
+    uint32 itemId = pItem->GetEntry();
     bool disabled = false;
 
     //for special scripts
     switch(itemId)
     {
        case 24538:
-            if (player->GetAreaId() != 3628)
+            if (pPlayer->GetAreaId() != 3628)
                 disabled = true;
                 break;
        case 34489:
-            if (player->GetZoneId() != 4080)
+            if (pPlayer->GetZoneId() != 4080)
                 disabled = true;
                 break;
     }
 
     // allow use in flight only
-    if (player->isInFlight() && !disabled)
+    if (pPlayer->isInFlight() && !disabled)
         return false;
 
     // error
-    player->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW,_Item,NULL);
+    pPlayer->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW,pItem,NULL);
     return true;
 }
 
@@ -135,30 +135,29 @@ bool ItemUse_item_blackwhelp_net(Player *player, Item* _Item, SpellCastTargets c
 
 //This is just a hack and should be removed from here.
 //Creature/Item are in fact created before spell are sucessfully casted, without any checks at all to ensure proper/expected behavior.
-bool ItemUse_item_draenei_fishing_net(Player *player, Item* _Item, SpellCastTargets const& targets)
+bool ItemUse_item_draenei_fishing_net(Player* pPlayer, Item* /*pItem*/, SpellCastTargets const& /*targets*/)
 {
     //if (targets.getGOTarget() && targets.getGOTarget()->GetTypeId() == TYPEID_GAMEOBJECT &&
     //targets.getGOTarget()->GetGOInfo()->type == GAMEOBJECT_TYPE_SPELL_FOCUS && targets.getGOTarget()->GetEntry() == 181616)
     //{
-    if (player->GetQuestStatus(9452) == QUEST_STATUS_INCOMPLETE)
+    if (pPlayer->GetQuestStatus(9452) == QUEST_STATUS_INCOMPLETE)
     {
-        if (rand()%100 < 35)
+        if (urand(0,99) < 35)
         {
-            Creature *Murloc = player->SummonCreature(17102,player->GetPositionX() ,player->GetPositionY()+20, player->GetPositionZ(), 0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,10000);
+            Creature *Murloc = pPlayer->SummonCreature(17102, pPlayer->GetPositionX(), pPlayer->GetPositionY()+20, pPlayer->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
             if (Murloc)
-                Murloc->AI()->AttackStart(player);
+                Murloc->AI()->AttackStart(pPlayer);
         }
         else
         {
             ItemPosCountVec dest;
-            uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 23614, 1);
+            uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 23614, 1);
             if (msg == EQUIP_ERR_OK)
             {
-                Item* item = player->StoreNewItem(dest,23614,true);
-                if (item)
-                    player->SendNewItem(item,1,false,true);
+                if (Item* item = pPlayer->StoreNewItem(dest,23614,true))
+                    pPlayer->SendNewItem(item,1,false,true);
             } else
-            player->SendEquipError(msg,NULL,NULL);
+                pPlayer->SendEquipError(msg,NULL,NULL);
         }
     }
     //}
@@ -183,15 +182,15 @@ bool ItemUse_item_disciplinary_rod(Player *player, Item* _Item, SpellCastTargets
 # item_nether_wraith_beacon
 #####*/
 
-bool ItemUse_item_nether_wraith_beacon(Player *player, Item* _Item, SpellCastTargets const& targets)
+bool ItemUse_item_nether_wraith_beacon(Player* pPlayer, Item* /*pItem*/, SpellCastTargets const& /*targets*/)
 {
-    if (player->GetQuestStatus(10832) == QUEST_STATUS_INCOMPLETE)
+    if (pPlayer->GetQuestStatus(10832) == QUEST_STATUS_INCOMPLETE)
     {
         Creature *Nether;
-        Nether = player->SummonCreature(22408,player->GetPositionX() ,player->GetPositionY()+20, player->GetPositionZ(), 0,TEMPSUMMON_TIMED_DESPAWN,180000);
-        Nether = player->SummonCreature(22408,player->GetPositionX() ,player->GetPositionY()-20, player->GetPositionZ(), 0,TEMPSUMMON_TIMED_DESPAWN,180000);
+        Nether = pPlayer->SummonCreature(22408, pPlayer->GetPositionX(), pPlayer->GetPositionY()+20, pPlayer->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 180000);
+        Nether = pPlayer->SummonCreature(22408, pPlayer->GetPositionX(), pPlayer->GetPositionY()-20, pPlayer->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 180000);
         if (Nether)
-            ((CreatureAI*)Nether->AI())->AttackStart(player);
+            Nether->AI()->AttackStart(pPlayer);
     }
     return false;
 }
@@ -200,19 +199,19 @@ bool ItemUse_item_nether_wraith_beacon(Player *player, Item* _Item, SpellCastTar
 # item_flying_machine
 #####*/
 
-bool ItemUse_item_flying_machine(Player *player, Item* _Item, SpellCastTargets const& targets)
+bool ItemUse_item_flying_machine(Player* pPlayer, Item* pItem, SpellCastTargets const& /*targets*/)
 {
-    uint32 itemId = _Item->GetEntry();
+    uint32 itemId = pItem->GetEntry();
     if (itemId == 34060)
-        if (player->GetBaseSkillValue(SKILL_RIDING) >= 225)
+        if (pPlayer->GetBaseSkillValue(SKILL_RIDING) >= 225)
             return false;
 
     if (itemId == 34061)
-        if (player->GetBaseSkillValue(SKILL_RIDING) == 300)
+        if (pPlayer->GetBaseSkillValue(SKILL_RIDING) == 300)
             return false;
 
     debug_log("OSCR: Player attempt to use item %u, but did not meet riding requirement",itemId);
-    player->SendEquipError(EQUIP_ERR_ERR_CANT_EQUIP_SKILL,_Item,NULL);
+    pPlayer->SendEquipError(EQUIP_ERR_ERR_CANT_EQUIP_SKILL,pItem,NULL);
     return true;
 }
 
@@ -220,13 +219,13 @@ bool ItemUse_item_flying_machine(Player *player, Item* _Item, SpellCastTargets c
 # item_gor_dreks_ointment
 #####*/
 
-bool ItemUse_item_gor_dreks_ointment(Player *player, Item* _Item, SpellCastTargets const& targets)
+bool ItemUse_item_gor_dreks_ointment(Player *pPlayer, Item *pItem, SpellCastTargets const& targets)
 {
     if (targets.getUnitTarget() && targets.getUnitTarget()->GetTypeId() == TYPEID_UNIT &&
-        targets.getUnitTarget()->GetEntry() == 20748 && !targets.getUnitTarget()->HasAura(32578,0))
+        targets.getUnitTarget()->GetEntry() == 20748 && !targets.getUnitTarget()->HasAura(32578, 0))
         return false;
 
-    player->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW,_Item,NULL);
+    pPlayer->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW,pItem,NULL);
     return true;
 }
 

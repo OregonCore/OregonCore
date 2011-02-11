@@ -2481,18 +2481,18 @@ struct guard_shattrath_aldorAI : public guardAI
 
     uint32 Exile_Timer;
     uint32 Banish_Timer;
-    uint64 playerGUID;
+    uint64 PlayerGUID;
     bool CanTeleport;
 
     void Reset()
     {
         Banish_Timer = 5000;
         Exile_Timer = 8500;
-        playerGUID = 0;
+        PlayerGUID = 0;
         CanTeleport = false;
     }
 
-    void Aggro(Unit *who) {}
+    void EnterCombat(Unit * /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -2503,12 +2503,12 @@ struct guard_shattrath_aldorAI : public guardAI
         {
             if (Exile_Timer <= diff)
             {
-                if (Unit* temp = Unit::GetUnit(*me,playerGUID))
+                if (Unit* temp = Unit::GetUnit(*me,PlayerGUID))
                 {
                     temp->CastSpell(temp,SPELL_EXILE,true);
                     temp->CastSpell(temp,SPELL_BANISH_TELEPORT,true);
                 }
-                playerGUID = 0;
+                PlayerGUID = 0;
                 Exile_Timer = 8500;
                 CanTeleport = false;
             } else Exile_Timer -= diff;
@@ -2520,8 +2520,8 @@ struct guard_shattrath_aldorAI : public guardAI
             {
                 DoCast(temp, SPELL_BANISHED_SHATTRATH_A);
                 Banish_Timer = 9000;
-                playerGUID = temp->GetGUID();
-                if (playerGUID)
+                PlayerGUID = temp->GetGUID();
+                if (PlayerGUID)
                     CanTeleport = true;
             }
         } else Banish_Timer -= diff;
@@ -2677,18 +2677,18 @@ struct guard_shattrath_scryerAI : public guardAI
 
     uint32 Exile_Timer;
     uint32 Banish_Timer;
-    uint64 playerGUID;
+    uint64 PlayerGUID;
     bool CanTeleport;
 
     void Reset()
     {
         Banish_Timer = 5000;
         Exile_Timer = 8500;
-        playerGUID = 0;
+        PlayerGUID = 0;
         CanTeleport = false;
     }
 
-    void Aggro(Unit *who) {}
+    void EnterCombat(Unit * /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -2699,12 +2699,12 @@ struct guard_shattrath_scryerAI : public guardAI
         {
             if (Exile_Timer <= diff)
             {
-                if (Unit* temp = Unit::GetUnit(*me,playerGUID))
+                if (Unit* temp = Unit::GetUnit(*me,PlayerGUID))
                 {
                     temp->CastSpell(temp,SPELL_EXILE,true);
                     temp->CastSpell(temp,SPELL_BANISH_TELEPORT,true);
                 }
-                playerGUID = 0;
+                PlayerGUID = 0;
                 Exile_Timer = 8500;
                 CanTeleport = false;
             } else Exile_Timer -= diff;
@@ -2714,10 +2714,10 @@ struct guard_shattrath_scryerAI : public guardAI
             Unit* temp = me->getVictim();
             if (temp && temp->GetTypeId() == TYPEID_PLAYER)
             {
-                DoCast(temp,SPELL_BANISHED_SHATTRATH_S);
+                DoCast(temp, SPELL_BANISHED_SHATTRATH_S);
                 Banish_Timer = 9000;
-                playerGUID = temp->GetGUID();
-                if (playerGUID)
+                PlayerGUID = temp->GetGUID();
+                if (PlayerGUID)
                     CanTeleport = true;
             }
         } else Banish_Timer -= diff;
