@@ -381,6 +381,9 @@ UPDATE `creature_template` SET `ScriptName`='mob_steamrigger_mechanic' WHERE `en
 /* SERPENTSHRINE CAVERN */
 UPDATE `instance_template` SET `script`='instance_serpent_shrine' WHERE `map`=548;
 UPDATE `creature_template` SET `ScriptName`='boss_hydross_the_unstable' WHERE `entry`=21216;
+UPDATE `gameobject_template` SET `ScriptName`='go_bridge_console' WHERE `entry`=184568;
+INSERT IGNORE INTO `areatrigger_scripts` VALUES (4591,'at_coilfang_waterfall');
+
 /* Leotheras the Blind event */
 UPDATE `creature_template` SET `ScriptName`='boss_leotheras_the_blind' WHERE `entry`=21215;
 UPDATE `creature_template` SET `ScriptName`='boss_leotheras_the_blind_demonform' WHERE `entry`=21845;
