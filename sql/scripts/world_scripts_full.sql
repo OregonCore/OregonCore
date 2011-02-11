@@ -94,6 +94,7 @@ UPDATE `item_template` SET `ScriptName`='item_zezzaks_shard' WHERE `entry`=31463
 UPDATE `item_template` SET `ScriptName`='item_only_for_flight' WHERE `entry` IN (34475,34489,24538);
 
 /* NPC (usually creatures to be found in more than one specific zone) */
+UPDATE `creature_template` SET `ScriptName`='npc_lunaclaw_spirit' WHERE `entry`=12144;
 UPDATE `creature_template` SET `ScriptName`='npc_chicken_cluck' WHERE `entry`=620;
 UPDATE `creature_template` SET `ScriptName`='npc_dancing_flames' WHERE `entry`=25305;
 UPDATE `creature_template` SET `ScriptName`='npc_guardian' WHERE `entry`=5764;

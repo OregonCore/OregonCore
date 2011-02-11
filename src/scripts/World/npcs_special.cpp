@@ -24,12 +24,13 @@ EndScriptData
 */
 
 /* ContentData
+npc_lunaclaw_spirit      80%    support for quests 6001/6002 (Body and Heart)
 npc_chicken_cluck       100%    support for quest 3861 (Cluck!)
 npc_dancing_flames      100%    midsummer event NPC
 npc_guardian            100%    guardianAI used to prevent players from accessing off-limits areas. Not in use by SD2
+npc_garments_of_quests   80%    NPC's related to all Garments of-quests 5621, 5624, 5625, 5648, 5650
 npc_injured_patient     100%    patients for triage-quests (6622 and 6624)
 npc_doctor              100%    Gustaf Vanhowzen and Gregory Victor, quest 6622 and 6624 (Triage)
-npc_garments_of_quests   80%    NPC's related to all Garments of-quests 5621, 5624, 5625, 5648, 5650
 npc_mount_vendor        100%    Regular mount vendors all over the world. Display gossip if player doesn't meet the requirements to buy
 npc_rogue_trainer        80%    Scripted trainers, so they are able to offer item 17126 for class quest 6681
 npc_sayge               100%    Darkmoon event fortune teller, buff player based on answers given
@@ -38,6 +39,40 @@ EndContentData */
 
 #include "ScriptPCH.h"
 #include "ScriptedEscortAI.h"
+
+/*######
+## npc_lunaclaw_spirit
+######*/
+
+enum eLunaclaw
+{
+    QUEST_BODY_HEART_A      = 6001,
+    QUEST_BODY_HEART_H      = 6002,
+
+    TEXT_ID_DEFAULT         = 4714,
+    TEXT_ID_PROGRESS        = 4715
+};
+
+#define GOSSIP_ITEM_GRANT   "You have thought well, spirit. I ask you to grant me the strength of your body and the strength of your heart."
+
+bool GossipHello_npc_lunaclaw_spirit(Player *pPlayer, Creature *pCreature)
+{
+    if (pPlayer->GetQuestStatus(QUEST_BODY_HEART_A) == QUEST_STATUS_INCOMPLETE || pPlayer->GetQuestStatus(QUEST_BODY_HEART_H) == QUEST_STATUS_INCOMPLETE)
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_GRANT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+
+    pPlayer->SEND_GOSSIP_MENU(TEXT_ID_DEFAULT, pCreature->GetGUID());
+    return true;
+}
+
+bool GossipSelect_npc_lunaclaw_spirit(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
+{
+    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+    {
+        pPlayer->SEND_GOSSIP_MENU(TEXT_ID_PROGRESS, pCreature->GetGUID());
+        pPlayer->AreaExploredOrEventHappens(pPlayer->GetTeam() == ALLIANCE ? QUEST_BODY_HEART_A : QUEST_BODY_HEART_H);
+    }
+    return true;
+}
 
 /*########
 # npc_chicken_cluck
@@ -1449,6 +1484,12 @@ CreatureAI* GetAI_mob_mojo(Creature* pCreature)
 void AddSC_npcs_special()
 {
     Script *newscript;
+
+    newscript = new Script;
+    newscript->Name = "npc_lunaclaw_spirit";
+    newscript->pGossipHello =  &GossipHello_npc_lunaclaw_spirit;
+    newscript->pGossipSelect = &GossipSelect_npc_lunaclaw_spirit;
+    newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_chicken_cluck";
