@@ -35,14 +35,6 @@ struct boss_kormokAI : public ScriptedAI
     uint32 Minion_Timer;
     uint32 Mage_Timer;
     bool Mages;
-    int Rand1;
-    int Rand1X;
-    int Rand1Y;
-    int Rand2;
-    int Rand2X;
-    int Rand2Y;
-    Creature* SummonedMinions;
-    Creature* SummonedMages;
 
     void Reset()
     {
@@ -53,50 +45,20 @@ struct boss_kormokAI : public ScriptedAI
         Mages = false;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
-    void SummonMinion(Unit* victim)
+    void SummonMinions(Unit* victim)
     {
-        Rand1 = rand()%8;
-        switch (rand()%2)
-        {
-            case 0: Rand1X = 0 - Rand1; break;
-            case 1: Rand1X = 0 + Rand1; break;
-        }
-        Rand1 = 0;
-        Rand1 = rand()%8;
-        switch (rand()%2)
-        {
-            case 0: Rand1Y = 0 - Rand1; break;
-            case 1: Rand1Y = 0 + Rand1; break;
-        }
-        Rand1 = 0;
-        SummonedMinions = DoSpawnCreature(16119, Rand1X, Rand1Y, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000);
-        if (SummonedMinions)
-            ((CreatureAI*)SummonedMinions->AI())->AttackStart(victim);
+        if (Creature *SummonedMinion = DoSpawnCreature(16119, irand(-7,7), irand(-7,7), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000))
+            SummonedMinion->AI()->AttackStart(victim);
     }
 
     void SummonMages(Unit* victim)
     {
-        Rand2 = rand()%10;
-        switch (rand()%2)
-        {
-            case 0: Rand2X = 0 - Rand2; break;
-            case 1: Rand2X = 0 + Rand2; break;
-        }
-        Rand2 = 0;
-        Rand2 = rand()%10;
-        switch (rand()%2)
-        {
-            case 0: Rand2Y = 0 - Rand2; break;
-            case 1: Rand2Y = 0 + Rand2; break;
-        }
-        Rand2 = 0;
-        SummonedMages = DoSpawnCreature(16120, Rand2X, Rand2Y, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000);
-        if (SummonedMages)
-            ((CreatureAI*)SummonedMages->AI())->AttackStart(victim);
+        if (Creature *SummonedMage = DoSpawnCreature(16120, irand(-9,9), irand(-9,9), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000))
+            SummonedMage->AI()->AttackStart(victim);
     }
 
     void UpdateAI(const uint32 diff)
@@ -107,14 +69,14 @@ struct boss_kormokAI : public ScriptedAI
         //ShadowVolley_Timer
         if (ShadowVolley_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SHADOWBOLTVOLLEY);
+            DoCast(me->getVictim(), SPELL_SHADOWBOLTVOLLEY);
             ShadowVolley_Timer = 15000;
         } else ShadowVolley_Timer -= diff;
 
         //BoneShield_Timer
         if (BoneShield_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_BONESHIELD);
+            DoCast(me->getVictim(), SPELL_BONESHIELD);
             BoneShield_Timer = 45000;
         } else BoneShield_Timer -= diff;
 
@@ -122,10 +84,10 @@ struct boss_kormokAI : public ScriptedAI
         if (Minion_Timer <= diff)
         {
             //Cast
-            SummonMinion(me->getVictim());
-            SummonMinion(me->getVictim());
-            SummonMinion(me->getVictim());
-            SummonMinion(me->getVictim());
+            SummonMinions(me->getVictim());
+            SummonMinions(me->getVictim());
+            SummonMinions(me->getVictim());
+            SummonMinions(me->getVictim());
 
             Minion_Timer = 12000;
         } else Minion_Timer -= diff;

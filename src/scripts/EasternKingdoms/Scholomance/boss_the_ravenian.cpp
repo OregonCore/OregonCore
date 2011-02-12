@@ -29,8 +29,6 @@ EndScriptData */
 #define SPELL_SUNDERINCLEAVE    25174
 #define SPELL_KNOCKAWAY         10101
 
-#define SAY_AGGRO1              "Mine! Mine! Mine! Gizlock is the ruler of this domain! You shall never reveal my presence!"
-
 struct boss_theravenianAI : public ScriptedAI
 {
     boss_theravenianAI(Creature *c) : ScriptedAI(c) {}
@@ -57,14 +55,13 @@ struct boss_theravenianAI : public ScriptedAI
         {
             pInstance->SetData(DATA_THERAVENIAN_DEATH, 0);
 
-            if (pInstance->GetData(DATA_CANSPAWNGANDLING))
+            if (pInstance->GetData(TYPE_GANDLING) == IN_PROGRESS)
                 me->SummonCreature(1853, 180.73f, -9.43856f, 75.507f, 1.61399f, TEMPSUMMON_DEAD_DESPAWN, 0);
         }
     }
 
     void EnterCombat(Unit * /*who*/)
     {
-        me->MonsterYell(SAY_AGGRO1, LANG_UNIVERSAL, NULL);
     }
 
     void UpdateAI(const uint32 diff)

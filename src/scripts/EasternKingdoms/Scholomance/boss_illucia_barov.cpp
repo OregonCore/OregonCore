@@ -46,19 +46,19 @@ struct boss_illuciabarovAI : public ScriptedAI
         Fear_Timer = 30000;
     }
 
-    void JustDied(Unit *killer)
+    void JustDied(Unit * /*killer*/)
     {
-        ScriptedInstance *pInstance = (me->GetInstanceData()) ? (me->GetInstanceData()) : NULL;
+        ScriptedInstance *pInstance = me->GetInstanceData();
         if (pInstance)
         {
             pInstance->SetData(DATA_LADYILLUCIABAROV_DEATH, 0);
 
-            if (pInstance->GetData(DATA_CANSPAWNGANDLING))
+            if (pInstance->GetData(TYPE_GANDLING) == IN_PROGRESS)
                 me->SummonCreature(1853, 180.73f, -9.43856f, 75.507f, 1.61399f, TEMPSUMMON_DEAD_DESPAWN, 0);
         }
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -70,7 +70,7 @@ struct boss_illuciabarovAI : public ScriptedAI
         //CurseOfAgony_Timer
         if (CurseOfAgony_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CURSEOFAGONY);
+            DoCast(me->getVictim(), SPELL_CURSEOFAGONY);
             CurseOfAgony_Timer = 30000;
         } else CurseOfAgony_Timer -= diff;
 
@@ -79,7 +79,7 @@ struct boss_illuciabarovAI : public ScriptedAI
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (pTarget) DoCast(pTarget,SPELL_SHADOWSHOCK);
+            if (pTarget) DoCast(pTarget, SPELL_SHADOWSHOCK);
 
             ShadowShock_Timer = 12000;
         } else ShadowShock_Timer -= diff;
@@ -87,14 +87,14 @@ struct boss_illuciabarovAI : public ScriptedAI
         //Silence_Timer
         if (Silence_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SILENCE);
+            DoCast(me->getVictim(), SPELL_SILENCE);
             Silence_Timer = 14000;
         } else Silence_Timer -= diff;
 
         //Fear_Timer
         if (Fear_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_FEAR);
+            DoCast(me->getVictim(), SPELL_FEAR);
             Fear_Timer = 30000;
         } else Fear_Timer -= diff;
 

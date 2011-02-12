@@ -28,67 +28,73 @@ enum eEnums
 {
     EMOTE_GENERIC_FRENZY_KILL   = -1000001,
 
-    SPELL_REND                  = 18106,
-    SPELL_CLEAVE                = 15584,
-    SPELL_FRENZY                = 28371
+    SPELL_REND                  = 16509,
+    SPELL_BACKHAND              = 18103,
+    SPELL_FRENZY                = 8269
 };
 
 struct boss_theolenkrastinovAI : public ScriptedAI
 {
     boss_theolenkrastinovAI(Creature *c) : ScriptedAI(c) {}
 
-    uint32 Rend_Timer;
-    uint32 Cleave_Timer;
-    uint32 Frenzy_Timer;
+    uint32 m_uiRend_Timer;
+    uint32 m_uiBackhand_Timer;
+    uint32 m_uiFrenzy_Timer;
 
     void Reset()
     {
-        Rend_Timer = 8000;
-        Cleave_Timer = 9000;
-        Frenzy_Timer =0;
+        m_uiRend_Timer = 8000;
+        m_uiBackhand_Timer = 9000;
+        m_uiFrenzy_Timer = 1000;
     }
 
-    void JustDied(Unit *killer)
+    void JustDied(Unit* /*pKiller*/)
     {
         ScriptedInstance* pInstance = me->GetInstanceData();
         if (pInstance)
         {
             pInstance->SetData(DATA_DOCTORTHEOLENKRASTINOV_DEATH, 0);
 
-            if (pInstance->GetData(DATA_CANSPAWNGANDLING))
+            if (pInstance->GetData(TYPE_GANDLING) == IN_PROGRESS)
                 me->SummonCreature(1853, 180.73f, -9.43856f, 75.507f, 1.61399f, TEMPSUMMON_DEAD_DESPAWN, 0);
         }
     }
 
-    void UpdateAI(const uint32 diff)
+    void UpdateAI(const uint32 uiDiff)
     {
         if (!UpdateVictim())
             return;
 
         //Rend_Timer
-        if (Rend_Timer <= diff)
+        if (m_uiRend_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(),SPELL_REND);
-            Rend_Timer = 10000;
-        } else Rend_Timer -= diff;
+            DoCast(me->getVictim(), SPELL_REND);
+            m_uiRend_Timer = 10000;
+        }
+        else
+            m_uiRend_Timer -= uiDiff;
 
-        //Cleave_Timer
-        if (Cleave_Timer <= diff)
+        //Backhand_Timer
+        if (m_uiBackhand_Timer <= uiDiff)
         {
-            DoCast(me->getVictim(),SPELL_CLEAVE);
-            Cleave_Timer = 10000;
-        } else Cleave_Timer -= diff;
+            DoCast(me->getVictim(), SPELL_BACKHAND);
+            m_uiBackhand_Timer = 10000;
+        }
+        else
+            m_uiBackhand_Timer -= uiDiff;
 
         //Frenzy_Timer
         if (me->GetHealth()*100 / me->GetMaxHealth() < 26)
         {
-            if (Frenzy_Timer <= diff)
+            if (m_uiFrenzy_Timer <= uiDiff)
             {
                 DoCast(me, SPELL_FRENZY);
                 DoScriptText(EMOTE_GENERIC_FRENZY_KILL, me);
 
-                Frenzy_Timer = 8000;
-            } else Frenzy_Timer -= diff;
+                m_uiFrenzy_Timer = 120000;
+            }
+            else
+                m_uiFrenzy_Timer -= uiDiff;
         }
 
         DoMeleeAttackIfReady();

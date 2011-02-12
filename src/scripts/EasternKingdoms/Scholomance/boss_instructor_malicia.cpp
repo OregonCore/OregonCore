@@ -53,19 +53,19 @@ struct boss_instructormaliciaAI : public ScriptedAI
         TouchCounter = 0;
     }
 
-    void JustDied(Unit *killer)
+    void JustDied(Unit * /*killer*/)
     {
-        ScriptedInstance *pInstance = (me->GetInstanceData()) ? (me->GetInstanceData()) : NULL;
+        ScriptedInstance *pInstance = me->GetInstanceData();
         if (pInstance)
         {
             pInstance->SetData(DATA_INSTRUCTORMALICIA_DEATH, 0);
 
-            if (pInstance->GetData(DATA_CANSPAWNGANDLING))
+            if (pInstance->GetData(TYPE_GANDLING) == IN_PROGRESS)
                 me->SummonCreature(1853, 180.73f, -9.43856f, 75.507f, 1.61399f, TEMPSUMMON_DEAD_DESPAWN, 0);
         }
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -77,7 +77,7 @@ struct boss_instructormaliciaAI : public ScriptedAI
         //CallOfGraves_Timer
         if (CallOfGraves_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CALLOFGRAVES);
+            DoCast(me->getVictim(), SPELL_CALLOFGRAVES);
             CallOfGraves_Timer = 65000;
         } else CallOfGraves_Timer -= diff;
 
@@ -86,7 +86,7 @@ struct boss_instructormaliciaAI : public ScriptedAI
         {
             Unit *pTarget = NULL;
             pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (pTarget) DoCast(pTarget,SPELL_CORRUPTION);
+            if (pTarget) DoCast(pTarget, SPELL_CORRUPTION);
 
             Corruption_Timer = 24000;
         } else Corruption_Timer -= diff;
@@ -101,13 +101,13 @@ struct boss_instructormaliciaAI : public ScriptedAI
         //FlashHeal_Timer
         if (FlashHeal_Timer <= diff)
         {
-            DoCast(me,SPELL_FLASHHEAL);
+            DoCast(me, SPELL_FLASHHEAL);
 
             //5 Flashheals will be casted
             if (FlashCounter < 2)
             {
                 FlashHeal_Timer = 5000;
-                FlashCounter++;
+                ++FlashCounter;
             }
             else
             {
@@ -119,13 +119,13 @@ struct boss_instructormaliciaAI : public ScriptedAI
         //HealingTouch_Timer
         if (HealingTouch_Timer <= diff)
         {
-            DoCast(me,SPELL_HEALINGTOUCH);
+            DoCast(me, SPELL_HEALINGTOUCH);
 
             //3 Healingtouchs will be casted
             if (HealingTouch_Timer < 2)
             {
                 HealingTouch_Timer = 5500;
-                TouchCounter++;
+                ++TouchCounter;
             }
             else
             {

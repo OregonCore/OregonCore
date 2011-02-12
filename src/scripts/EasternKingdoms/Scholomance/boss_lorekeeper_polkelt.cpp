@@ -46,19 +46,19 @@ struct boss_lorekeeperpolkeltAI : public ScriptedAI
         NoxiousCatalyst_Timer = 35000;
     }
 
-    void JustDied(Unit *killer)
+    void JustDied(Unit * /*killer*/)
     {
-        ScriptedInstance *pInstance = (me->GetInstanceData()) ? (me->GetInstanceData()) : NULL;
+        ScriptedInstance *pInstance = me->GetInstanceData();
         if (pInstance)
         {
             pInstance->SetData(DATA_LOREKEEPERPOLKELT_DEATH, 0);
 
-            if (pInstance->GetData(DATA_CANSPAWNGANDLING))
+            if (pInstance->GetData(TYPE_GANDLING) == IN_PROGRESS)
                 me->SummonCreature(1853, 180.73f, -9.43856f, 75.507f, 1.61399f, TEMPSUMMON_DEAD_DESPAWN, 0);
         }
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -70,28 +70,28 @@ struct boss_lorekeeperpolkeltAI : public ScriptedAI
         //VolatileInfection_Timer
         if (VolatileInfection_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_VOLATILEINFECTION);
+            DoCast(me->getVictim(), SPELL_VOLATILEINFECTION);
             VolatileInfection_Timer = 32000;
         } else VolatileInfection_Timer -= diff;
 
         //Darkplague_Timer
         if (Darkplague_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_DARKPLAGUE);
+            DoCast(me->getVictim(), SPELL_DARKPLAGUE);
             Darkplague_Timer = 8000;
         } else Darkplague_Timer -= diff;
 
         //CorrosiveAcid_Timer
         if (CorrosiveAcid_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CORROSIVEACID);
+            DoCast(me->getVictim(), SPELL_CORROSIVEACID);
             CorrosiveAcid_Timer = 25000;
         } else CorrosiveAcid_Timer -= diff;
 
         //NoxiousCatalyst_Timer
         if (NoxiousCatalyst_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_NOXIOUSCATALYST);
+            DoCast(me->getVictim(), SPELL_NOXIOUSCATALYST);
             NoxiousCatalyst_Timer = 38000;
         } else NoxiousCatalyst_Timer -= diff;
 

@@ -38,10 +38,6 @@ struct boss_jandicebarovAI : public ScriptedAI
     //uint32 Illusioncounter;
     uint32 Invisible_Timer;
     bool Invisible;
-    int Rand;
-    int RandX;
-    int RandY;
-    Creature* Summoned;
 
     void Reset()
     {
@@ -51,29 +47,14 @@ struct boss_jandicebarovAI : public ScriptedAI
         Invisible = false;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
     void SummonIllusions(Unit* victim)
     {
-        Rand = rand()%10;
-        switch (rand()%2)
-        {
-        case 0: RandX = 0 - Rand; break;
-        case 1: RandX = 0 + Rand; break;
-        }
-        Rand = 0;
-        Rand = rand()%10;
-        switch (rand()%2)
-        {
-        case 0: RandY = 0 - Rand; break;
-        case 1: RandY = 0 + Rand; break;
-        }
-        Rand = 0;
-        Summoned = DoSpawnCreature(11439, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
-        if (Summoned)
-            ((CreatureAI*)Summoned->AI())->AttackStart(victim);
+        if (Creature *Illusion = DoSpawnCreature(11439, irand(-9,9), irand(-9,9), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000))
+            Illusion->AI()->AttackStart(victim);
     }
 
     void UpdateAI(const uint32 diff)
@@ -100,7 +81,7 @@ struct boss_jandicebarovAI : public ScriptedAI
         if (CurseOfBlood_Timer <= diff)
         {
             //Cast
-            DoCast(me->getVictim(),SPELL_CURSEOFBLOOD);
+            DoCast(me->getVictim(), SPELL_CURSEOFBLOOD);
 
             //45 seconds
             CurseOfBlood_Timer = 30000;
@@ -119,7 +100,7 @@ struct boss_jandicebarovAI : public ScriptedAI
 
             //Summon 10 Illusions attacking random gamers
             Unit *pTarget = NULL;
-            for (int i = 0; i < 10;i++)
+            for (uint8 i = 0; i < 10; ++i)
             {
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
                 if (pTarget)
@@ -132,23 +113,22 @@ struct boss_jandicebarovAI : public ScriptedAI
             Illusion_Timer = 25000;
         } else Illusion_Timer -= diff;
 
-
         //            //Illusion_Timer
         //            if (Illusion_Timer <= diff)
         //            {
         //                  //Cast
-        //                DoCast(me->getVictim(),SPELL_ILLUSION);
+        //                DoCast(me->getVictim(), SPELL_ILLUSION);
         //
         //                  //3 Illusion will be summoned
         //                  if (Illusioncounter < 3)
         //                  {
         //                    Illusion_Timer = 500;
-        //                    Illusioncounter++;
+        //                    ++Illusioncounter;
         //                  }
         //                  else {
         //                      //15 seconds until we should cast this again
         //                      Illusion_Timer = 15000;
-        //                      Illusioncounter=0;
+        //                      Illusioncounter = 0;
         //                  }
         //
         //            } else Illusion_Timer -= diff;
@@ -171,7 +151,7 @@ struct mob_illusionofjandicebarovAI : public ScriptedAI
         me->ApplySpellImmune(0, IMMUNITY_DAMAGE, SPELL_SCHOOL_MASK_MAGIC, true);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -185,7 +165,7 @@ struct mob_illusionofjandicebarovAI : public ScriptedAI
         if (Cleave_Timer <= diff)
         {
             //Cast
-            DoCast(me->getVictim(),SPELL_CLEAVE);
+            DoCast(me->getVictim(), SPELL_CLEAVE);
 
             //5-8 seconds
             Cleave_Timer = 5000 + rand()%3000;
@@ -194,7 +174,6 @@ struct mob_illusionofjandicebarovAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
-
 
 CreatureAI* GetAI_boss_jandicebarov(Creature* pCreature)
 {
@@ -205,7 +184,6 @@ CreatureAI* GetAI_mob_illusionofjandicebarov(Creature* pCreature)
 {
     return new mob_illusionofjandicebarovAI (pCreature);
 }
-
 
 void AddSC_boss_jandicebarov()
 {
