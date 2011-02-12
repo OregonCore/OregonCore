@@ -56,9 +56,9 @@ struct boss_magistrate_barthilasAI : public ScriptedAI
         AngerCount = 0;
 
         if (me->isAlive())
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_NORMAL);
+            me->SetDisplayId(MODEL_NORMAL);
         else
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_HUMAN);
+            me->SetDisplayId(MODEL_HUMAN);
     }
 
     void MoveInLineOfSight(Unit *who)
@@ -70,7 +70,7 @@ struct boss_magistrate_barthilasAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_HUMAN);
+        me->SetDisplayId(MODEL_HUMAN);
     }
 
     void EnterCombat(Unit *who)

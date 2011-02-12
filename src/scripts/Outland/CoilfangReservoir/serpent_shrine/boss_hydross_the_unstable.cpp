@@ -115,7 +115,7 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
         me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
         me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, false);
 
-        me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_CLEAN);
+        me->SetDisplayId(MODEL_CLEAN);
 
         if (pInstance)
             pInstance->SetData(DATA_HYDROSSTHEUNSTABLEEVENT, NOT_STARTED);
@@ -271,7 +271,7 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
                 if (me->GetDistance2d(HYDROSS_X, HYDROSS_Y) < SWITCH_RADIUS)
                 {
                     // switch to clean form
-                    me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_CLEAN);
+                    me->SetDisplayId(MODEL_CLEAN);
                     CorruptedForm = false;
                     MarkOfHydross_Count = 0;
 
@@ -338,7 +338,7 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
                 if (me->GetDistance2d(HYDROSS_X, HYDROSS_Y) >= SWITCH_RADIUS)
                 {
                     // switch to corrupted form
-                    me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_CORRUPT);
+                    me->SetDisplayId(MODEL_CORRUPT);
                     MarkOfCorruption_Count = 0;
                     CorruptedForm = true;
 

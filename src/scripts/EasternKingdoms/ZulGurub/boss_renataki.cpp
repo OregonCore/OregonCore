@@ -69,7 +69,7 @@ struct boss_renatakiAI : public ScriptedAI
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, 218171138);
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO + 1, 3);
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID, 11686);
+            me->SetDisplayId(11686);
 
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             Invisible = true;
@@ -100,7 +100,7 @@ struct boss_renatakiAI : public ScriptedAI
             {
                 me->InterruptSpell(CURRENT_GENERIC_SPELL);
 
-                me->SetUInt32Value(UNIT_FIELD_DISPLAYID, 15268);
+                me->SetDisplayId(15268);
                 me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 31818);
                 me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, 218171138);
                 me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO + 1, 3);

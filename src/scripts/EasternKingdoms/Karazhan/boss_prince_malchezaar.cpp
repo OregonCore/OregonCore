@@ -139,7 +139,7 @@ struct netherspite_infernalAI : public ScriptedAI
     {
         if (spell->Id == SPELL_INFERNAL_RELAY)
         {
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID, me->GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID));
+            me->SetDisplayId(me->GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID));
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             HellfireTimer = 4000;
             CleanupTimer = 170000;

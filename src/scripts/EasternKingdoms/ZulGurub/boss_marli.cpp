@@ -228,7 +228,7 @@ struct boss_marliAI : public ScriptedAI
 
                 if (TransformBack_Timer <= diff)
                 {
-                    me->SetUInt32Value(UNIT_FIELD_DISPLAYID, 15220);
+                    me->SetDisplayId(15220);
                     const CreatureInfo *cinfo = me->GetCreatureInfo();
                     me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg + ((cinfo->mindmg / 100) * 1)));
                     me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg + ((cinfo->maxdmg / 100) * 1)));

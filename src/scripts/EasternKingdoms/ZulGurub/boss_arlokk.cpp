@@ -99,7 +99,7 @@ struct boss_arlokkAI : public ScriptedAI
 
         MarkedTargetGUID = 0;
 
-        me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_ID_NORMAL);
+        me->SetDisplayId(MODEL_ID_NORMAL);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
@@ -121,7 +121,7 @@ struct boss_arlokkAI : public ScriptedAI
     {
         DoScriptText(SAY_DEATH, me);
 
-        me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_ID_NORMAL);
+        me->SetDisplayId(MODEL_ID_NORMAL);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
         if (pInstance)
@@ -217,7 +217,7 @@ struct boss_arlokkAI : public ScriptedAI
         if (m_uiVanish_Timer <= uiDiff)
         {
             //Invisble Model
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_ID_BLANK);
+            me->SetDisplayId(MODEL_ID_BLANK);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
             me->AttackStop();
@@ -236,7 +236,7 @@ struct boss_arlokkAI : public ScriptedAI
             if (m_uiVisible_Timer <= uiDiff)
             {
                 //The Panther Model
-                me->SetUInt32Value(UNIT_FIELD_DISPLAYID,MODEL_ID_PANTHER);
+                me->SetDisplayId(MODEL_ID_PANTHER);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
                 const CreatureInfo *cinfo = me->GetCreatureInfo();

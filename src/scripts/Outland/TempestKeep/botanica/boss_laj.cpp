@@ -55,7 +55,7 @@ struct boss_lajAI : public ScriptedAI
 
     void Reset()
     {
-        me->SetUInt32Value(UNIT_FIELD_DISPLAYID,MODEL_DEFAULT);
+        me->SetDisplayId(MODEL_DEFAULT);
         me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, true);
         me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, false);
         me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, false);
@@ -74,7 +74,7 @@ struct boss_lajAI : public ScriptedAI
         switch(rand()%5)
         {
             case 0:
-                me->SetUInt32Value(UNIT_FIELD_DISPLAYID,MODEL_DEFAULT);
+                me->SetDisplayId(MODEL_DEFAULT);
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, true);
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, false);
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, false);
@@ -82,7 +82,7 @@ struct boss_lajAI : public ScriptedAI
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, false);
                 break;
             case 1:
-                me->SetUInt32Value(UNIT_FIELD_DISPLAYID,MODEL_ARCANE);
+                me->SetDisplayId(MODEL_ARCANE);
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, false);
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, true);
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, false);
@@ -90,7 +90,7 @@ struct boss_lajAI : public ScriptedAI
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, false);
                 break;
             case 2:
-                me->SetUInt32Value(UNIT_FIELD_DISPLAYID,MODEL_FIRE);
+                me->SetDisplayId(MODEL_FIRE);
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, false);
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, false);
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
@@ -98,7 +98,7 @@ struct boss_lajAI : public ScriptedAI
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, false);
                 break;
             case 3:
-                me->SetUInt32Value(UNIT_FIELD_DISPLAYID,MODEL_FROST);
+                me->SetDisplayId(MODEL_FROST);
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, false);
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, false);
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, false);
@@ -106,7 +106,7 @@ struct boss_lajAI : public ScriptedAI
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, false);
                 break;
             case 4:
-                me->SetUInt32Value(UNIT_FIELD_DISPLAYID,MODEL_NATURE);
+                me->SetDisplayId(MODEL_NATURE);
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_SHADOW, false);
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, false);
                 me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, false);

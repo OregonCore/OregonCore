@@ -83,7 +83,7 @@ struct boss_jandicebarovAI : public ScriptedAI
             //Become visible again
             me->setFaction(14);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID,11073);     //Jandice Model
+            me->SetDisplayId(11073);     //Jandice Model
             Invisible = false;
         } else if (Invisible)
         {
@@ -114,7 +114,7 @@ struct boss_jandicebarovAI : public ScriptedAI
             me->InterruptNonMeleeSpells(false);
             me->setFaction(35);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID,11686);  // Invisible Model
+            me->SetDisplayId(11686);  // Invisible Model
             DoModifyThreatPercent(me->getVictim(),-99);
 
             //Summon 10 Illusions attacking random gamers

@@ -112,7 +112,7 @@ struct boss_dathrohan_balnazzarAI : public ScriptedAI
         //        MindControl_Timer = 10000;
         Transformed = false;
 
-        me->SetUInt32Value(UNIT_FIELD_DISPLAYID, 10545);
+        me->SetDisplayId(10545);
         me->SetFloatValue(OBJECT_FIELD_SCALE_X, 1.00f);
 
     }
@@ -207,7 +207,7 @@ struct boss_dathrohan_balnazzarAI : public ScriptedAI
             {
                 //Cast
                 DoCast(me,SPELL_BALNAZZARTRANSFORM); //restore hp, mana and stun
-                me->SetUInt32Value(UNIT_FIELD_DISPLAYID,10691); //then change disaply id
+                me->SetDisplayId(10691); //then change disaply id
                 me->SetFloatValue(OBJECT_FIELD_SCALE_X, 3.00f); //then, change size
                 Transformed = true;
             }

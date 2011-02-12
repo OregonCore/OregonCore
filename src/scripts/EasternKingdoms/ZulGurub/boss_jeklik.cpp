@@ -223,7 +223,7 @@ struct boss_jeklikAI : public ScriptedAI
                 }
                 else
                 {
-                    me->SetUInt32Value(UNIT_FIELD_DISPLAYID,15219);
+                    me->SetDisplayId(15219);
                     DoResetThreat();
                     PhaseTwo = true;
                 }

@@ -381,7 +381,7 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, 0);
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO+2, 0);
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO+3, 0);
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID, THRALL_MODEL_UNEQUIPPED);
+            me->SetDisplayId(THRALL_MODEL_UNEQUIPPED);
         }
         if (HasEscortState(STATE_ESCORT_ESCORTING))
         {

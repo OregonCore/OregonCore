@@ -650,7 +650,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
             DoCast(me, DemonTransformation[TransformCount].aura, true);
 
         if (DemonTransformation[TransformCount].displayid)
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID, DemonTransformation[TransformCount].displayid); // It's morphin time!
+            me->SetDisplayId(DemonTransformation[TransformCount].displayid); // It's morphin time!
 
         if (DemonTransformation[TransformCount].equip)
         {
@@ -1813,7 +1813,7 @@ struct blade_of_azzinothAI : public NullCreatureAI
     void SpellHit(Unit * /*caster*/, const SpellEntry *spell)
     {
         if (spell->Id == SPELL_THROW_GLAIVE2 || spell->Id == SPELL_THROW_GLAIVE)
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID, 21431);//appear when hit by Illidan's glaive
+            me->SetDisplayId(21431);//appear when hit by Illidan's glaive
     }
 };
 
@@ -1856,7 +1856,7 @@ void boss_illidan_stormrageAI::Reset()
     FlightCount = 0;
     TransformCount = 0;
 
-    me->SetUInt32Value(UNIT_FIELD_DISPLAYID, 21135);
+    me->SetDisplayId(21135);
     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
     me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);

@@ -63,7 +63,7 @@ struct boss_noxxionAI : public ScriptedAI
             me->setFaction(14);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             //Noxxion model
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID,11172);
+            me->SetDisplayId(11172);
             Invisible = false;
             //me->m_canMove = true;
         } else if (Invisible)
@@ -100,7 +100,7 @@ struct boss_noxxionAI : public ScriptedAI
             me->setFaction(35);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             // Invisible Model
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID,11686);
+            me->SetDisplayId(11686);
             SummonAdds(me->getVictim());
             SummonAdds(me->getVictim());
             SummonAdds(me->getVictim());

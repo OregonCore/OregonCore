@@ -193,7 +193,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
         EnrageUsed = false;
         InnerDemon_Count = 0;
         me->SetSpeed(MOVE_RUN, 2.0f, true);
-        me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_NIGHTELF);
+        me->SetDisplayId(MODEL_NIGHTELF);
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY  , 0);
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, 0);
         me->CastSpell(me, SPELL_DUAL_WIELD, true);
@@ -270,7 +270,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
             me->ApplySpellImmune(AURA_BANISH, IMMUNITY_MECHANIC, MECHANIC_BANISH, true);
 
             // changing model to bloodelf
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_NIGHTELF);
+            me->SetDisplayId(MODEL_NIGHTELF);
 
             // and reseting equipment
             me->LoadEquipment(me->GetEquipmentId());
@@ -292,7 +292,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
             DoCast(me, AURA_BANISH);
 
             // changing model
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_DEMON);
+            me->SetDisplayId(MODEL_DEMON);
 
             // and removing weapons
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY  , 0);
@@ -455,7 +455,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
                 {
                     //switch to demon form
                     me->RemoveAurasDueToSpell(SPELL_WHIRLWIND,0);
-                    me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_DEMON);
+                    me->SetDisplayId(MODEL_DEMON);
                     DoScriptText(SAY_SWITCH_TO_DEMON, me);
                     me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY  , 0);
                     me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, 0);
@@ -532,7 +532,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
             if (SwitchToHuman_Timer <= diff)
             {
                 //switch to nightelf form
-                me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_NIGHTELF);
+                me->SetDisplayId(MODEL_NIGHTELF);
                 me->LoadEquipment(me->GetEquipmentId());
 
                 CastConsumingMadness();
@@ -563,7 +563,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
             DemonForm = false;
 
             DoScriptText(SAY_FINAL_FORM, me);
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_NIGHTELF);
+            me->SetDisplayId(MODEL_NIGHTELF);
             me->LoadEquipment(me->GetEquipmentId());
         }
     }
