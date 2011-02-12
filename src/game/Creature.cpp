@@ -166,8 +166,8 @@ m_meleeDamageSchoolMask(SPELL_SCHOOL_MASK_NORMAL),m_creatureInfo(NULL), m_DBTabl
     m_CreatureSpellCooldowns.clear();
     m_CreatureCategoryCooldowns.clear();
     m_GlobalCooldown = 0;
-    m_unit_movement_flags = MOVEFLAG_WALK_MODE;
     DisableReputationGain = false;
+    //m_unit_movement_flags = MOVEFLAG_WALK_MODE;
 
     m_SightDistance = sWorld.getConfig(CONFIG_SIGHT_MONSTER);
     m_CombatDistance = MELEE_RANGE;
@@ -452,6 +452,13 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData *data)
         ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
     }
 
+    // TODO: In fact monster move flags should be set - not movement flags.
+    if (cInfo->InhabitType & INHABIT_AIR)
+        AddUnitMovementFlag(MOVEFLAG_FLYING | MOVEFLAG_FLYING2);
+
+    if (cInfo->InhabitType & INHABIT_WATER)
+        AddUnitMovementFlag(MOVEFLAG_SWIMMING);
+
     return true;
 }
 
@@ -712,7 +719,21 @@ bool Creature::Create(uint32 guidlow, Map *map, uint32 Entry, uint32 team, float
                 break;
         }
         LoadCreaturesAddon();
+
+        if (GetCreatureInfo()->InhabitType & INHABIT_AIR)
+        {
+            if (GetDefaultMovementType() == IDLE_MOTION_TYPE)
+                AddUnitMovementFlag(MOVEFLAG_FLYING);
+            else
+                SetFlying(true);
+        }
+
+        if (GetCreatureInfo()->InhabitType & INHABIT_WATER)
+        {
+            AddUnitMovementFlag(MOVEFLAG_SWIMMING);
+        }
     }
+
     return bResult;
 }
 
@@ -838,7 +859,7 @@ bool Creature::isCanTrainingAndResetTalentsOf(Player* pPlayer) const
         && pPlayer->getClass() == GetCreatureInfo()->classNum;
 }
 
-void Creature::AI_SendMoveToPacket(float x, float y, float z, uint32 time, uint32 MovementFlags, uint8 type)
+void Creature::AI_SendMoveToPacket(float x, float y, float z, uint32 time, uint32 /*MovementFlags*/, uint8 /*type*/)
 {
     /*    uint32 timeElap = getMSTime();
         if ((timeElap - m_startMove) < m_moveTime)
@@ -1375,8 +1396,12 @@ void Creature::setDeathState(DeathState s)
         ResetPlayerDamageReq();
         Unit::setDeathState(ALIVE);
         CreatureInfo const *cinfo = GetCreatureInfo();
-        RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
+        RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
         AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
+        if (GetCreatureInfo()->InhabitType & INHABIT_AIR)
+            AddUnitMovementFlag(MOVEFLAG_FLYING | MOVEFLAG_FLYING2);
+        if (GetCreatureInfo()->InhabitType & INHABIT_WATER)
+            AddUnitMovementFlag(MOVEFLAG_SWIMMING);
         SetUInt32Value(UNIT_NPC_FLAGS, cinfo->npcflag);
         clearUnitState(UNIT_STAT_ALL_STATE);
         i_motionMaster.Initialize();
