@@ -347,7 +347,7 @@ struct boss_malchezaarAI : public ScriptedAI
 
         if (Infernal)
         {
-            Infernal->SetUInt32Value(UNIT_FIELD_DISPLAYID, INFERNAL_MODEL_INVISIBLE);
+            Infernal->SetDisplayId(INFERNAL_MODEL_INVISIBLE);
             Infernal->setFaction(me->getFaction());
             if (point)
                 CAST_AI(netherspite_infernalAI, Infernal->AI())->point=point;

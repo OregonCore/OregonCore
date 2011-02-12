@@ -560,7 +560,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
                 {
                     GlaiveGUID[i] = Glaive->GetGUID();
                     Glaive->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                    Glaive->SetUInt32Value(UNIT_FIELD_DISPLAYID, 11686);
+                    Glaive->SetDisplayId(11686);
                     Glaive->setFaction(me->getFaction());
                     DoCast(Glaive, SPELL_THROW_GLAIVE2);
                 }
@@ -577,7 +577,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
                 {
                     GlaiveGUID[i] = Glaive->GetGUID();
                     Glaive->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                    Glaive->SetUInt32Value(UNIT_FIELD_DISPLAYID, 11686);
+                    Glaive->SetDisplayId(11686);
                     Glaive->setFaction(me->getFaction());
                     DoCast(Glaive, SPELL_THROW_GLAIVE, true);
                 }
@@ -605,7 +605,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
                     if (Glaive)
                     {
                         Glaive->CastSpell(me, SPELL_GLAIVE_RETURNS, false); // Make it look like the Glaive flies back up to us
-                        Glaive->SetUInt32Value(UNIT_FIELD_DISPLAYID, 11686); // disappear but not die for now
+                        Glaive->SetDisplayId(11686); // disappear but not die for now
                     }
                 }
             }
@@ -1119,7 +1119,7 @@ struct npc_akama_illidanAI : public ScriptedAI
         if (Creature* Channel = me->SummonCreature(ILLIDAN_DOOR_TRIGGER, x, y, z+5, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 360000))
         {
             ChannelGUID = Channel->GetGUID();
-            Channel->SetUInt32Value(UNIT_FIELD_DISPLAYID, 11686); // Invisible but spell visuals can still be seen.
+            Channel->SetDisplayId(11686); // Invisible but spell visuals can still be seen.
             DoCast(Channel, SPELL_AKAMA_DOOR_FAIL);
         }
 

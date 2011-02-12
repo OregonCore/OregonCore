@@ -539,7 +539,7 @@ struct boss_archimondeAI : public hyjal_trashAI
                     if (Nordrassil)
                     {
                         Nordrassil->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                        Nordrassil->SetUInt32Value(UNIT_FIELD_DISPLAYID, 11686);
+                        Nordrassil->SetDisplayId(11686);
                         DoCast(Nordrassil, SPELL_DRAIN_WORLD_TREE);
                         IsChanneling = true;
                     }
@@ -548,7 +548,7 @@ struct boss_archimondeAI : public hyjal_trashAI
                 if (Nordrassil)
                 {
                     Nordrassil->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                    Nordrassil->SetUInt32Value(UNIT_FIELD_DISPLAYID, 11686);
+                    Nordrassil->SetDisplayId(11686);
                     Nordrassil->CastSpell(me, SPELL_DRAIN_WORLD_TREE_2, true);
                     DrainNordrassilTimer = 1000;
                 }

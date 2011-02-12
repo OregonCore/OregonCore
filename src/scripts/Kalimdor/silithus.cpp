@@ -960,7 +960,7 @@ struct npc_anachronos_quest_triggerAI : public ScriptedAI
             {
                 Spawn->LoadCreaturesAddon();
                 if (Spawn->GetGUID() == 15423)
-                    Spawn->SetUInt32Value(UNIT_FIELD_DISPLAYID,15427+rand()%4);
+                    Spawn->SetDisplayId(15427+rand()%4);
                 if (i >= 30) WaveCount = 1;
                 if (i >= 33) WaveCount = 2;
                 if (i >= 45) WaveCount = 3;
@@ -1090,7 +1090,7 @@ bool OnQuestAccept(Player* plr, GameObject* go, Quest const* quest)
             {
                 Merithra->SetUInt32Value(UNIT_NPC_FLAGS, 0);
                 Merithra->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
-                Merithra->SetUInt32Value(UNIT_FIELD_DISPLAYID,15420);
+                Merithra->SetDisplayId(15420);
                 Merithra->setFaction(35);
             }
 
@@ -1098,7 +1098,7 @@ bool OnQuestAccept(Player* plr, GameObject* go, Quest const* quest)
             {
                 Caelestrasz->SetUInt32Value(UNIT_NPC_FLAGS, 0);
                 Caelestrasz->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
-                Caelestrasz->SetUInt32Value(UNIT_FIELD_DISPLAYID,15419);
+                Caelestrasz->SetDisplayId(15419);
                 Caelestrasz->setFaction(35);
             }
 
@@ -1106,7 +1106,7 @@ bool OnQuestAccept(Player* plr, GameObject* go, Quest const* quest)
             {
                 Arygos->SetUInt32Value(UNIT_NPC_FLAGS, 0);
                 Arygos->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
-                Arygos->SetUInt32Value(UNIT_FIELD_DISPLAYID,15418);
+                Arygos->SetDisplayId(15418);
                 Arygos->setFaction(35);
             }
 

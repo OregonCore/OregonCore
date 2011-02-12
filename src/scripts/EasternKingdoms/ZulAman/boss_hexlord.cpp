@@ -399,7 +399,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
             }
             else
             {
-                trigger->SetUInt32Value(UNIT_FIELD_DISPLAYID, 11686);
+                trigger->SetDisplayId(11686);
                 trigger->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 trigger->CastSpell(pTarget, SPELL_SIPHON_SOUL, true);
                 trigger->GetMotionMaster()->MoveChase(me);

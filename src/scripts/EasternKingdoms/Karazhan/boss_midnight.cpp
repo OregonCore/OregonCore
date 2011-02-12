@@ -103,7 +103,7 @@ struct boss_midnightAI : public ScriptedAI
                     me->GetMotionMaster()->MoveIdle();
                     if (Unit *pAttumen = Unit::GetUnit(*me, Attumen))
                     {
-                        pAttumen->SetUInt32Value(UNIT_FIELD_DISPLAYID, MOUNTED_DISPLAYID);
+                        pAttumen->SetDisplayId(MOUNTED_DISPLAYID);
                         pAttumen->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         if (pAttumen->getVictim())
                         {
