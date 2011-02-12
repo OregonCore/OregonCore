@@ -589,12 +589,9 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
     {
         pCurrChar->setCinematic(1);
 
-        ChrRacesEntry const* rEntry = sChrRacesStore.LookupEntry(pCurrChar->getRace());
-        if (rEntry)
+        if (ChrRacesEntry const* rEntry = sChrRacesStore.LookupEntry(pCurrChar->getRace()))
         {
-            data.Initialize(SMSG_TRIGGER_CINEMATIC,4);
-            data << uint32(rEntry->startmovie);
-            SendPacket(&data);
+            pCurrChar->SendCinematicStart(rEntry->startmovie);
 
             // send new char string if not empty
             if (!sWorld.GetNewCharString().empty())

@@ -1066,11 +1066,8 @@ void GameObject::Use(Unit* user)
             Player* player = user->ToPlayer();
 
             if (info->camera.cinematicId)
-            {
-                WorldPacket data(SMSG_TRIGGER_CINEMATIC, 4);
-                data << info->camera.cinematicId;
-                player->GetSession()->SendPacket(&data);
-            }
+                player->SendCinematicStart(info->camera.cinematicId);
+
             return;
         }
         //fishing bobber

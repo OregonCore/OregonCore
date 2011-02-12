@@ -1428,7 +1428,7 @@ class Player : public Unit, public GridObject<Player>
             m_resurrectZ = Z;
             m_resurrectHealth = health;
             m_resurrectMana = mana;
-        };
+        }
         void clearResurrectRequestData() { setResurrectRequestData(0,0,0.0f,0.0f,0.0f,0,0); }
         bool isRessurectRequestedBy(uint64 guid) const { return m_resurrectGUID == guid; }
         bool isRessurectRequested() const { return m_resurrectGUID != 0; }
@@ -2027,6 +2027,7 @@ class Player : public Unit, public GridObject<Player>
         uint32 GetOldPetSpell() const { return m_oldpetspell; }
         void SetOldPetSpell(uint32 petspell) { m_oldpetspell = petspell; }
 
+        void SendCinematicStart(uint32 CinematicSequenceId);
 
         /*********************************************************/
         /***                 INSTANCE SYSTEM                   ***/

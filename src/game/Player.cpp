@@ -5621,6 +5621,13 @@ void Player::SendDirectMessage(WorldPacket *data)
         m_session->SendPacket(data);
 }
 
+void Player::SendCinematicStart(uint32 CinematicSequenceId)
+{
+    WorldPacket data(SMSG_TRIGGER_CINEMATIC, 4);
+    data << uint32(CinematicSequenceId);
+    SendDirectMessage(&data);
+}
+
 void Player::CheckAreaExploreAndOutdoor()
 {
     if (!isAlive())
