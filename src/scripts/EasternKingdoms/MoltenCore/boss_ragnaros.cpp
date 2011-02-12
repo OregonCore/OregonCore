@@ -83,12 +83,9 @@ EndScriptData */
 #define ADD_8Z -229.683182f
 #define ADD_8O 4.693108f
 
-struct boss_ragnarosAI : public ScriptedAI
+struct boss_ragnarosAI : public Scripted_NoMovementAI
 {
-    boss_ragnarosAI(Creature *c) : ScriptedAI(c)
-    {
-        SetCombatMovement(false);
-    }
+    boss_ragnarosAI(Creature *c) : Scripted_NoMovementAI(c) {}
 
     uint32 WrathOfRagnaros_Timer;
     uint32 HandOfRagnaros_Timer;
