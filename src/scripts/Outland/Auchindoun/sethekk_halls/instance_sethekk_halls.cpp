@@ -37,14 +37,10 @@ struct instance_sethekk_halls : public ScriptedInstance
         IkissDoor = NULL;
     }
 
-    void OnObjectCreate(GameObject *go)
+    void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(go->GetEntry())
-        {
-            case IKISS_DOOR:
-                IkissDoor = go;
-                break;
-        }
+        if (pGo->GetEntry() == IKISS_DOOR)
+            IkissDoor = pGo;
     }
 
     void SetData(uint32 type, uint32 data)

@@ -69,21 +69,21 @@ struct instance_shadow_labyrinth : public ScriptedInstance
         return false;
     }
 
-    void OnObjectCreate(GameObject *go)
+    void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(go->GetEntry())
+        switch(pGo->GetEntry())
         {
-        case REFECTORY_DOOR: RefectoryDoorGUID = go->GetGUID(); break;
-        case SCREAMING_HALL_DOOR: ScreamingHallDoorGUID = go->GetGUID(); break;
+        case REFECTORY_DOOR: RefectoryDoorGUID = pGo->GetGUID(); break;
+        case SCREAMING_HALL_DOOR: ScreamingHallDoorGUID = pGo->GetGUID(); break;
         }
     }
 
-    void OnCreatureCreate(Creature *creature, uint32 creature_entry)
+    void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(creature_entry)
+        switch(pCreature->GetEntry())
         {
             case 18732:
-                GrandmasterVorpil = creature->GetGUID();
+                GrandmasterVorpil = pCreature->GetGUID();
                 break;
             case 18796:
                 ++FelOverseerCount;

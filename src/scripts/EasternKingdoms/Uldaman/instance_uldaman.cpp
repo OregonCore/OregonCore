@@ -387,9 +387,9 @@ struct instance_uldaman : public ScriptedInstance
         }
     }
 
-    void OnCreatureCreate(Creature* pCreature, uint32 creature_entry)
+    void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch (creature_entry) {
+        switch (pCreature->GetEntry()) {
             case 4857:    // Stone Keeper
                 SetFrozenState (pCreature);
                 stoneKeeper.push_back(pCreature->GetGUID());

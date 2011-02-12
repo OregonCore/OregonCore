@@ -71,27 +71,27 @@ struct instance_gruuls_lair : public ScriptedInstance
         return false;
     }
 
-    void OnCreatureCreate(Creature *creature, uint32 creature_entry)
+    void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(creature_entry)
+        switch(pCreature->GetEntry())
         {
-            case 18835: KigglerTheCrazed = creature->GetGUID(); break;
-            case 18836: BlindeyeTheSeer = creature->GetGUID();  break;
-            case 18834: OlmTheSummoner = creature->GetGUID();   break;
-            case 18832: KroshFirehand = creature->GetGUID();    break;
-            case 18831: Maulgar = creature->GetGUID();          break;
+            case 18835: KigglerTheCrazed = pCreature->GetGUID(); break;
+            case 18836: BlindeyeTheSeer = pCreature->GetGUID();  break;
+            case 18834: OlmTheSummoner = pCreature->GetGUID();   break;
+            case 18832: KroshFirehand = pCreature->GetGUID();    break;
+            case 18831: Maulgar = pCreature->GetGUID();          break;
         }
     }
 
-    void OnObjectCreate(GameObject* go)
+    void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(go->GetEntry())
+        switch(pGo->GetEntry())
         {
             case 184468:
-                MaulgarDoor = go->GetGUID();
-                if (Encounters[0] == DONE) HandleGameObject(NULL, true, go);
+                MaulgarDoor = pGo->GetGUID();
+                if (Encounters[0] == DONE) HandleGameObject(NULL, true, pGo);
                 break;
-            case 184662: GruulDoor = go->GetGUID(); break;
+            case 184662: GruulDoor = pGo->GetGUID(); break;
         }
     }
 

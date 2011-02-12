@@ -53,9 +53,9 @@ struct instance_zulgurub : public ScriptedInstance
         return false;
     }
 
-    void OnCreatureCreate(Creature* pCreature, uint32 creature_entry)
+    void OnCreatureCreate(Creature* pCreature)
     {
-        switch (creature_entry)
+        switch(pCreature->GetEntry())
         {
             case 11347: m_uiLorKhanGUID = pCreature->GetGUID(); break;
             case 11348: m_uiZathGUID = pCreature->GetGUID(); break;

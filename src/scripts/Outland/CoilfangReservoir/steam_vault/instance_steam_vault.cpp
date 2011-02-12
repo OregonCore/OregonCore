@@ -105,23 +105,23 @@ struct instance_steam_vault : public ScriptedInstance
         return NULL;
     }
 
-    void OnCreatureCreate(Creature *creature, uint32 creature_entry)
+    void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-          switch(creature->GetEntry())
+        switch(pCreature->GetEntry())
         {
-          case 17797: ThespiaGUID = creature->GetGUID(); break;
-          case 17796: MekgineerGUID = creature->GetGUID(); break;
-          case 17798: KalithreshGUID = creature->GetGUID(); break;
+            case 17797: ThespiaGUID = pCreature->GetGUID(); break;
+            case 17796: MekgineerGUID = pCreature->GetGUID(); break;
+            case 17798: KalithreshGUID = pCreature->GetGUID(); break;
         }
     }
 
-    void OnObjectCreate(GameObject *go)
+    void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(go->GetEntry())
+        switch(pGo->GetEntry())
         {
-        case MAIN_CHAMBERS_DOOR: MainChambersDoor = go->GetGUID(); break;
-        case ACCESS_PANEL_HYDRO: AccessPanelHydro = go->GetGUID(); break;
-        case ACCESS_PANEL_MEK:   AccessPanelMek = go->GetGUID(); break;
+            case MAIN_CHAMBERS_DOOR: MainChambersDoor = pGo->GetGUID(); break;
+            case ACCESS_PANEL_HYDRO: AccessPanelHydro = pGo->GetGUID(); break;
+            case ACCESS_PANEL_MEK:   AccessPanelMek = pGo->GetGUID(); break;
         }
     }
 

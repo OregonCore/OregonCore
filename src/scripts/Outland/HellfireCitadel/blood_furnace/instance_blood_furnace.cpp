@@ -42,12 +42,12 @@ struct instance_blood_furnace : public ScriptedInstance
         Sewer2GUID = 0;
     }
 
-    void OnObjectCreate(GameObject *go)
+    void OnGameObjectCreate(GameObject* pGo, bool add)
     {
-        switch(go->GetEntry())
+        switch(pGo->GetEntry())
         {
-            case ENTRY_SEWER1: Sewer1GUID = go->GetGUID(); break;
-            case ENTRY_SEWER2: Sewer2GUID = go->GetGUID(); break;
+            case ENTRY_SEWER1: Sewer1GUID = pGo->GetGUID(); break;
+            case ENTRY_SEWER2: Sewer2GUID = pGo->GetGUID(); break;
         }
     }
 

@@ -45,19 +45,19 @@ struct instance_shattered_halls : public ScriptedInstance
             Encounter[i] = NOT_STARTED;
     }
 
-    void OnObjectCreate(GameObject *go)
+    void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(go->GetEntry())
+        switch(pGo->GetEntry())
         {
-            case DOOR_NETHEKURSE: nethekurseDoorGUID = go->GetGUID(); break;
+            case DOOR_NETHEKURSE: nethekurseDoorGUID = pGo->GetGUID(); break;
         }
     }
 
-    void OnCreatureCreate(Creature *creature, uint32 creature_entry)
+    void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(creature_entry)
+        switch(pCreature->GetEntry())
         {
-            case 16807: nethekurseGUID = creature->GetGUID(); break;
+            case 16807: nethekurseGUID = pCreature->GetGUID(); break;
         }
     }
 

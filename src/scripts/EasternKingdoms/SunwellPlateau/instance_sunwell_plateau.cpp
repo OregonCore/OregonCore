@@ -114,9 +114,9 @@ struct instance_sunwell_plateau : public ScriptedInstance
         return NULL;
     }
 
-    void OnCreatureCreate(Creature* pCreature, uint32 entry)
+    void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(entry)
+        switch(pCreature->GetEntry())
         {
             case 24850: Kalecgos_Dragon     = pCreature->GetGUID(); break;
             case 24891: Kalecgos_Human      = pCreature->GetGUID(); break;
@@ -134,7 +134,7 @@ struct instance_sunwell_plateau : public ScriptedInstance
         }
     }
 
-    void OnObjectCreate(GameObject* pGo)
+    void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
         switch(pGo->GetEntry())
         {

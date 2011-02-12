@@ -106,9 +106,9 @@ struct instance_zulaman : public ScriptedInstance
         return false;
     }
 
-    void OnCreatureCreate(Creature *creature, uint32 creature_entry)
+    void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(creature_entry)
+        switch(pCreature->GetEntry())
         {
         case 23578://janalai
         case 23863://zuljin
@@ -119,7 +119,7 @@ struct instance_zulaman : public ScriptedInstance
         }
     }
 
-    void OnObjectCreate(GameObject *pGo)
+    void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
         switch(pGo->GetEntry())
         {

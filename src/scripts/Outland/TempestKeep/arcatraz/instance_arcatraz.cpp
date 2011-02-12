@@ -91,26 +91,26 @@ struct instance_arcatraz : public ScriptedInstance
         return false;
     }
 
-    void OnObjectCreate(GameObject *go)
+    void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(go->GetEntry())
+        switch(pGo->GetEntry())
         {
-            case CONTAINMENT_CORE_SECURITY_FIELD_ALPHA: Containment_Core_Security_Field_Alpha = go; break;
-            case CONTAINMENT_CORE_SECURITY_FIELD_BETA:  Containment_Core_Security_Field_Beta =  go; break;
-            case SEAL_SPHERE: GoSphereGUID = go->GetGUID(); break;
-            case POD_ALPHA: Pod_Alpha = go; break;
-            case POD_BETA:  Pod_Beta =  go; break;
-            case POD_DELTA: Pod_Delta = go; break;
-            case POD_GAMMA: Pod_Gamma = go; break;
-            case POD_OMEGA: Pod_Omega = go; break;
-            //case WARDENS_SHIELD: Wardens_Shield = go; break;
+            case CONTAINMENT_CORE_SECURITY_FIELD_ALPHA: Containment_Core_Security_Field_Alpha = pGo; break;
+            case CONTAINMENT_CORE_SECURITY_FIELD_BETA:  Containment_Core_Security_Field_Beta =  pGo; break;
+            case POD_ALPHA: Pod_Alpha = pGo; break;
+            case POD_BETA:  Pod_Beta =  pGo; break;
+            case POD_DELTA: Pod_Delta = pGo; break;
+            case POD_GAMMA: Pod_Gamma = pGo; break;
+            case POD_OMEGA: Pod_Omega = pGo; break;
+            case SEAL_SPHERE: GoSphereGUID = pGo->GetGUID(); break;
+            //case WARDENS_SHIELD: Wardens_Shield = pGo; break;
         }
     }
 
-    void OnCreatureCreate(Creature *creature, uint32 creature_entry)
+    void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        if (creature->GetEntry() == MELLICHAR)
-            MellicharGUID = creature->GetGUID();
+        if (pCreature->GetEntry() == MELLICHAR)
+            MellicharGUID = pCreature->GetGUID();
     }
 
     void SetData(uint32 type, uint32 data)

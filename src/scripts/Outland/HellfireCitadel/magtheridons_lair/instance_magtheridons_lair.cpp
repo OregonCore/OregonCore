@@ -71,28 +71,28 @@ struct instance_magtheridons_lair : public ScriptedInstance
         return false;
     }
 
-    void OnCreatureCreate(Creature *creature, uint32 creature_entry)
+    void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        switch(creature->GetEntry())
+        switch(pCreature->GetEntry())
         {
         case 17257:
-            MagtheridonGUID = creature->GetGUID();
+            MagtheridonGUID = pCreature->GetGUID();
             break;
         case 17256:
-            ChannelerGUID.insert(creature->GetGUID());
+            ChannelerGUID.insert(pCreature->GetGUID());
             break;
         }
     }
 
-    void OnObjectCreate(GameObject *go)
+    void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch(go->GetEntry())
+        switch(pGo->GetEntry())
         {
         case 181713:
-            go->SetUInt32Value(GAMEOBJECT_FLAGS, 0);
+            pGo->SetUInt32Value(GAMEOBJECT_FLAGS, 0);
             break;
         case 183847:
-            DoorGUID = go->GetGUID();
+            DoorGUID = pGo->GetGUID();
             break;
         case 184653: // hall
         case 184634: // six columns
@@ -101,7 +101,7 @@ struct instance_magtheridons_lair : public ScriptedInstance
         case 184637:
         case 184638:
         case 184639:
-            ColumnGUID.insert(go->GetGUID());
+            ColumnGUID.insert(pGo->GetGUID());
             break;
         }
     }
