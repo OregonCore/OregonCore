@@ -1128,7 +1128,7 @@ struct mob_frost_wyrmAI : public hyjal_trashAI
         me->GetPosition(x,y,z);
         z = me->GetMap()->GetHeight(x, y, z);
         me->GetMotionMaster()->MovePoint(0,x,y,z);
-        me->Relocate(x,y,z,0);
+        me->GetMap()->CreatureRelocation(me,x,y,z,0.0f);
     }
 
     void EnterCombat(Unit* /*who*/) {}
@@ -1240,7 +1240,7 @@ struct mob_gargoyleAI : public hyjal_trashAI
         me->GetPosition(x,y,z);
         z = me->GetMap()->GetHeight(x, y, z);
         me->GetMotionMaster()->MovePoint(0,x,y,z);
-        me->Relocate(x,y,z,0);
+        me->GetMap()->CreatureRelocation(me,x,y,z,0.0f);
         hyjal_trashAI::JustDied(victim);
     }
 

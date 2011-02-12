@@ -86,7 +86,7 @@ struct npc_daphne_stilwellAI : public npc_escortAI
         {
             case 4:
                 SetEquipmentSlots(false, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE, EQUIP_ID_RIFLE);
-                me->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_RANGED);
+                me->SetSheath(SHEATH_STATE_RANGED);
                 me->HandleEmoteCommand(EMOTE_STATE_USESTANDING_NOSHEATHE);
                 break;
             case 7:
@@ -95,14 +95,14 @@ struct npc_daphne_stilwellAI : public npc_escortAI
                 me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.237, 1568.307, 54.620, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
                 break;
             case 8:
-                me->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_RANGED);
+                me->SetSheath(SHEATH_STATE_RANGED);
                 me->SummonCreature(NPC_DEFIAS_RAIDER, -11450.836, 1569.755, 54.267, 4.230, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
                 me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.697, 1569.124, 54.421, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
                 me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.237, 1568.307, 54.620, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
                 me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.037, 1570.213, 54.961, 4.283, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
                 break;
             case 9:
-                me->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_RANGED);
+                me->SetSheath(SHEATH_STATE_RANGED);
                 me->SummonCreature(NPC_DEFIAS_RAIDER, -11450.836, 1569.755, 54.267, 4.230, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
                 me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.697, 1569.124, 54.421, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
                 me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.237, 1568.307, 54.620, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
@@ -117,7 +117,7 @@ struct npc_daphne_stilwellAI : public npc_escortAI
                 break;
             case 13:
                 SetEquipmentSlots(true);
-                me->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_UNARMED);
+                me->SetSheath(SHEATH_STATE_UNARMED);
                 me->HandleEmoteCommand(EMOTE_STATE_USESTANDING_NOSHEATHE);
                 break;
             case 17:

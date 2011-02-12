@@ -8558,7 +8558,7 @@ void Player::SetVirtualItemSlot(uint8 i, Item* item)
     }
 }
 
-void Player::SetSheath(uint32 sheathed)
+void Player::SetSheath(SheathState sheathed)
 {
     switch (sheathed)
     {
@@ -8584,7 +8584,7 @@ void Player::SetSheath(uint32 sheathed)
             SetVirtualItemSlot(2,NULL);
             break;
     }
-    SetByteValue(UNIT_FIELD_BYTES_2, 0, sheathed);          // this must visualize Sheath changing for other players...
+    Unit::SetSheath(sheathed);                              // this must visualize Sheath changing for other players...
 }
 
 uint8 Player::FindEquipSlot(ItemPrototype const* proto, uint32 slot, bool swap) const

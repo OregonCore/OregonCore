@@ -492,7 +492,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
                 me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 45479);
             else
                 me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, 45481);
-            me->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE);
+            me->SetSheath(SHEATH_STATE_MELEE);
         }
     }
 
@@ -632,7 +632,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
         case 10://attack
             DoResetThreat();
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE + UNIT_FLAG_NOT_SELECTABLE);
-            me->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE);
+            me->SetSheath(SHEATH_STATE_MELEE);
             EnterPhase(PHASE_NORMAL_2);
             break;
         default:
@@ -657,7 +657,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
             // Requip warglaives if needed
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 45479);
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, 45481);
-            me->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE);
+            me->SetSheath(SHEATH_STATE_MELEE);
         }
         else
         {
@@ -1924,7 +1924,7 @@ void boss_illidan_stormrageAI::HandleTalkSequence()
     case 8:
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 45479); // Equip our warglaives!
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, 45481);
-        me->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE);
+        me->SetSheath(SHEATH_STATE_MELEE);
         me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
         break;
     case 9:
@@ -1974,7 +1974,7 @@ void boss_illidan_stormrageAI::HandleTalkSequence()
                 x += 10; y += 10;
                 Akama->GetMotionMaster()->Clear(false);
                 //Akama->GetMotionMaster()->MoveIdle();
-                Akama->Relocate(x, y, z);
+                Akama->GetMap()->CreatureRelocation(me, x, y, z, 0.0f);
                 Akama->SendMonsterMove(x, y, z, 0);//Illidan must not die until Akama arrives.
                 Akama->GetMotionMaster()->MoveChase(me);
             }

@@ -285,7 +285,7 @@ struct boss_grandmaster_vorpilAI : public ScriptedAI
                     if (i_pl->isAlive() && !i_pl->HasAura(SPELL_BANISH,0))
                         i_pl->TeleportTo(me->GetMapId(), VorpilPosition[0],VorpilPosition[1],VorpilPosition[2], 0, TELE_TO_NOT_LEAVE_COMBAT);
 
-            me->Relocate(VorpilPosition[0],VorpilPosition[1],VorpilPosition[2]);
+            me->GetMap()->CreatureRelocation(me,VorpilPosition[0],VorpilPosition[1],VorpilPosition[2],0.0f);
             DoCast(me,SPELL_DRAW_SHADOWS,true);
 
             DoCast(me,HeroicMode?H_SPELL_RAIN_OF_FIRE:SPELL_RAIN_OF_FIRE);

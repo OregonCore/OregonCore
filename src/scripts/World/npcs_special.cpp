@@ -193,7 +193,7 @@ struct npc_dancing_flamesAI : public ScriptedAI
         DoCast(me, SPELL_FIERY_AURA, false);
         float x, y, z;
         me->GetPosition(x,y,z);
-        me->Relocate(x,y,z + 0.94f);
+        me->GetMap()->CreatureRelocation(me,x,y,z + 0.94f,0.0f);
         me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
         me->HandleEmoteCommand(EMOTE_ONESHOT_DANCE);
         WorldPacket data;                       //send update position to client

@@ -77,7 +77,7 @@ void WorldSession::HandleSetSheathedOpcode(WorldPacket & recv_data)
         return;
     }
 
-    GetPlayer()->SetSheath(sheathed);
+    GetPlayer()->SetSheath(SheathState(sheathed));
 }
 
 void WorldSession::SendAttackStop(Unit const* enemy)

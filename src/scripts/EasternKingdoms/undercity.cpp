@@ -84,7 +84,7 @@ struct npc_lady_sylvanas_windrunnerAI : public ScriptedAI
             if (Unit *pTarget = Unit::GetUnit(*summoned,targetGUID))
             {
                 pTarget->SendMonsterMove(pTarget->GetPositionX(), pTarget->GetPositionY(), me->GetPositionZ()+15.0f,0);
-                pTarget->Relocate(pTarget->GetPositionX(), pTarget->GetPositionY(), me->GetPositionZ()+15.0f);
+                pTarget->GetMap()->CreatureRelocation(me, pTarget->GetPositionX(), pTarget->GetPositionY(), me->GetPositionZ()+15.0f, 0.0f);
                 summoned->CastSpell(pTarget, SPELL_RIBBON_OF_SOULS, false);
             }
 

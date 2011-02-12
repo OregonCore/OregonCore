@@ -164,15 +164,15 @@ struct boss_skeramAI : public ScriptedAI
             switch(rand()%3)
             {
                 case 0:
-                    me->Relocate(-8340.782227f,2083.814453f,125.648788f,0);
+                    me->GetMap()->CreatureRelocation(me, -8340.782227f,2083.814453f,125.648788f,0.0f);
                     DoResetThreat();
                     break;
                 case 1:
-                    me->Relocate(-8341.546875f,2118.504639f,133.058151f,0);
+                    me->GetMap()->CreatureRelocation(me, -8341.546875f,2118.504639f,133.058151f,0.0f);
                     DoResetThreat();
                     break;
                 case 2:
-                    me->Relocate(-8318.822266f,2058.231201f,133.058151f,0);
+                    me->GetMap()->CreatureRelocation(me, -8318.822266f,2058.231201f,133.058151f,0.0f);
                     DoResetThreat();
                     break;
             }
@@ -263,7 +263,7 @@ struct boss_skeramAI : public ScriptedAI
         me->RemoveAllAuras();
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->SetVisibility(VISIBILITY_OFF);
-        me->Relocate(bossc->x, bossc->y, bossc->z, bossc->r);
+        me->GetMap()->CreatureRelocation(me, bossc->x, bossc->y, bossc->z, bossc->r);
         Invisible = true;
         DoResetThreat();
         DoStopAttack();

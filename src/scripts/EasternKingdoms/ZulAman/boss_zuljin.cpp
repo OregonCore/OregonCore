@@ -207,7 +207,7 @@ struct boss_zuljinAI : public ScriptedAI
 
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 47174);
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, 218172674);
-        me->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE);
+        me->SetSheath(SHEATH_STATE_MELEE);
     }
 
     void EnterCombat(Unit * /*who*/)

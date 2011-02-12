@@ -240,7 +240,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
 
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 46916);
         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, 50268674);
-        me->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE);
+        me->SetSheath(SHEATH_STATE_MELEE);
     }
 
     void EnterCombat(Unit* /*who*/)
@@ -325,7 +325,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
             else
             {
                 pCreature->AI()->EnterEvadeMode();
-                pCreature->Relocate(Pos_X[i], POS_Y, POS_Z, ORIENT);
+                pCreature->GetMap()->CreatureRelocation(me, Pos_X[i], POS_Y, POS_Z, ORIENT);
                 pCreature->StopMoving();
             }
         }

@@ -266,7 +266,7 @@ struct boss_alarAI : public ScriptedAI
                             float dist = me->GetDistance(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
                             if (dist < 5.0f) dist = 5.0f;
                             WaitTimer = 1000 + floor(dist / 80 * 1000.0f);
-                            me->Relocate(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
+                            me->GetMap()->CreatureRelocation(me, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(),0.0f);
                             me->StopMoving();
                             WaitEvent = WE_LAND;
                         }
