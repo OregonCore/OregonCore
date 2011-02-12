@@ -40,12 +40,12 @@ struct boss_mothersmolderwebAI : public ScriptedAI
         MothersMilk_Timer = 10000;
     }
 
-    void EnterCombat(Unit *who) { }
+    void EnterCombat(Unit * /*who*/) {}
 
-    void DamageTaken(Unit *done_by, uint32 &damage)
+    void DamageTaken(Unit * /*done_by*/, uint32 &damage)
     {
         if (me->GetHealth() <= damage)
-            me->CastSpell(me,SPELL_SUMMON_SPIRE_SPIDERLING,true);
+            DoCast(me, SPELL_SUMMON_SPIRE_SPIDERLING, true);
     }
 
     void UpdateAI(const uint32 diff)
@@ -57,15 +57,15 @@ struct boss_mothersmolderwebAI : public ScriptedAI
         //Crystalize_Timer
         if (Crystalize_Timer <= diff)
         {
-            DoCast(me,SPELL_CRYSTALIZE);
+            DoCast(me, SPELL_CRYSTALIZE);
             Crystalize_Timer = 15000;
         } else Crystalize_Timer -= diff;
 
         //MothersMilk_Timer
         if (MothersMilk_Timer <= diff)
         {
-            DoCast(me,SPELL_MOTHERSMILK);
-            MothersMilk_Timer = 5000+rand()%7500;
+            DoCast(me, SPELL_MOTHERSMILK);
+            MothersMilk_Timer = urand(5000,12500);
         } else MothersMilk_Timer -= diff;
 
         DoMeleeAttackIfReady();

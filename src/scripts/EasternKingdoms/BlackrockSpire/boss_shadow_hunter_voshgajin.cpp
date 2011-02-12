@@ -41,12 +41,10 @@ struct boss_shadowvoshAI : public ScriptedAI
         Hex_Timer = 8000;
         Cleave_Timer = 14000;
 
-        //me->CastSpell(me,SPELL_ICEARMOR,true);
+        //DoCast(me, SPELL_ICEARMOR, true);
     }
 
-    void EnterCombat(Unit *who)
-    {
-    }
+    void EnterCombat(Unit * /*who*/){}
 
     void UpdateAI(const uint32 diff)
     {
@@ -57,23 +55,22 @@ struct boss_shadowvoshAI : public ScriptedAI
         //CurseOfBlood_Timer
         if (CurseOfBlood_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CURSEOFBLOOD);
+            DoCast(me->getVictim(), SPELL_CURSEOFBLOOD);
             CurseOfBlood_Timer = 45000;
         } else CurseOfBlood_Timer -= diff;
 
         //Hex_Timer
         if (Hex_Timer <= diff)
         {
-            Unit *pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (pTarget) DoCast(pTarget,SPELL_HEX);
+            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                DoCast(pTarget, SPELL_HEX);
             Hex_Timer = 15000;
         } else Hex_Timer -= diff;
 
         //Cleave_Timer
         if (Cleave_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CLEAVE);
+            DoCast(me->getVictim(), SPELL_CLEAVE);
             Cleave_Timer = 7000;
         } else Cleave_Timer -= diff;
 

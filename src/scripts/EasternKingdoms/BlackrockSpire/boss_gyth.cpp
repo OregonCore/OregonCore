@@ -46,7 +46,6 @@ struct boss_gythAI : public ScriptedAI
     bool SummonedRend;
     bool bAggro;
     bool RootSelf;
-    Creature *SummonedCreature;
 
     void Reset()
     {
@@ -72,11 +71,11 @@ struct boss_gythAI : public ScriptedAI
             Line2Count = 2;
 
         //Invisible for event start
-        me->SetUInt32Value(UNIT_FIELD_DISPLAYID, 11686);
+        me->SetDisplayId(11686);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -112,7 +111,7 @@ struct boss_gythAI : public ScriptedAI
             {
                 bAggro = true;
                 // Visible now!
-                me->SetUInt32Value(UNIT_FIELD_DISPLAYID, 9723);
+                me->SetDisplayId(9723);
                 me->setFaction(14);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             } else Aggro_Timer -= diff;
@@ -168,7 +167,7 @@ struct boss_gythAI : public ScriptedAI
             // Flamebreath_Timer
             if (Flamebreath_Timer <= diff)
             {
-                DoCast(me->getVictim(),SPELL_FLAMEBREATH);
+                DoCast(me->getVictim(), SPELL_FLAMEBREATH);
                 Flamebreath_Timer = 10500;
             } else Flamebreath_Timer -= diff;
 
@@ -180,7 +179,7 @@ struct boss_gythAI : public ScriptedAI
                 //Inturrupt any spell casting
                 me->InterruptNonMeleeSpells(false);
                 //Gyth model
-                me->SetUInt32Value(UNIT_FIELD_DISPLAYID, 9806);
+                me->SetDisplayId(9806);
                 me->SummonCreature(10429, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 900000);
                 SummonedRend = true;
             }

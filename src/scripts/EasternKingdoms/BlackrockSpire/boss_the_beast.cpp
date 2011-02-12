@@ -42,7 +42,7 @@ struct boss_thebeastAI : public ScriptedAI
         TerrifyingRoar_Timer = 23000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -55,23 +55,22 @@ struct boss_thebeastAI : public ScriptedAI
         //Flamebreak_Timer
         if (Flamebreak_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_FLAMEBREAK);
+            DoCast(me->getVictim(), SPELL_FLAMEBREAK);
             Flamebreak_Timer = 10000;
         } else Flamebreak_Timer -= diff;
 
         //Immolate_Timer
         if (Immolate_Timer <= diff)
         {
-            Unit *pTarget = NULL;
-            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-            if (pTarget) DoCast(pTarget,SPELL_IMMOLATE);
+            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                DoCast(pTarget, SPELL_IMMOLATE);
             Immolate_Timer = 8000;
         } else Immolate_Timer -= diff;
 
         //TerrifyingRoar_Timer
         if (TerrifyingRoar_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_TERRIFYINGROAR);
+            DoCast(me->getVictim(), SPELL_TERRIFYINGROAR);
             TerrifyingRoar_Timer = 20000;
         } else TerrifyingRoar_Timer -= diff;
 

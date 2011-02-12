@@ -46,7 +46,7 @@ struct boss_halyconAI : public ScriptedAI
         Summoned = false;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -59,14 +59,14 @@ struct boss_halyconAI : public ScriptedAI
         //CrowdPummel_Timer
         if (CrowdPummel_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CROWDPUMMEL);
+            DoCast(me->getVictim(), SPELL_CROWDPUMMEL);
             CrowdPummel_Timer = 14000;
         } else CrowdPummel_Timer -= diff;
 
         //MightyBlow_Timer
         if (MightyBlow_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_MIGHTYBLOW);
+            DoCast(me->getVictim(), SPELL_MIGHTYBLOW);
             MightyBlow_Timer = 10000;
         } else MightyBlow_Timer -= diff;
 

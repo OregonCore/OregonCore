@@ -43,7 +43,7 @@ struct boss_quatermasterzigrisAI : public ScriptedAI
         //HelingPotion_Timer = 25000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -56,14 +56,14 @@ struct boss_quatermasterzigrisAI : public ScriptedAI
         //Shoot_Timer
         if (Shoot_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_SHOOT);
+            DoCast(me->getVictim(), SPELL_SHOOT);
             Shoot_Timer = 500;
         } else Shoot_Timer -= diff;
 
         //StunBomb_Timer
         if (StunBomb_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_STUNBOMB);
+            DoCast(me->getVictim(), SPELL_STUNBOMB);
             StunBomb_Timer = 14000;
         } else StunBomb_Timer -= diff;
 
