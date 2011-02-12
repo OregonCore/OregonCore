@@ -34,12 +34,7 @@ EndScriptData */
 
 struct boss_magistrate_barthilasAI : public ScriptedAI
 {
-    boss_magistrate_barthilasAI(Creature *c) : ScriptedAI(c)
-    {
-        pInstance = me->GetInstanceData();
-    }
-
-    ScriptedInstance* pInstance;
+    boss_magistrate_barthilasAI(Creature *c) : ScriptedAI(c) {}
 
     uint32 DrainingBlow_Timer;
     uint32 CrowdPummel_Timer;
@@ -68,12 +63,12 @@ struct boss_magistrate_barthilasAI : public ScriptedAI
         ScriptedAI::MoveInLineOfSight(who);
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         me->SetDisplayId(MODEL_HUMAN);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
@@ -90,27 +85,27 @@ struct boss_magistrate_barthilasAI : public ScriptedAI
                 return;
 
             ++AngerCount;
-            me->CastSpell(me,SPELL_FURIOUS_ANGER,false);
+            DoCast(me, SPELL_FURIOUS_ANGER, false);
         } else FuriousAnger_Timer -= diff;
 
         //DrainingBlow
         if (DrainingBlow_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_DRAININGBLOW);
+            DoCast(me->getVictim(), SPELL_DRAININGBLOW);
             DrainingBlow_Timer = 15000;
         } else DrainingBlow_Timer -= diff;
 
         //CrowdPummel
         if (CrowdPummel_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CROWDPUMMEL);
+            DoCast(me->getVictim(), SPELL_CROWDPUMMEL);
             CrowdPummel_Timer = 15000;
         } else CrowdPummel_Timer -= diff;
 
         //MightyBlow
         if (MightyBlow_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_MIGHTYBLOW);
+            DoCast(me->getVictim(), SPELL_MIGHTYBLOW);
             MightyBlow_Timer = 20000;
         } else MightyBlow_Timer -= diff;
 

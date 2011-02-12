@@ -91,7 +91,7 @@ struct boss_cannon_master_willeyAI : public ScriptedAI
         SummonRifleman_Timer = 15000;
     }
 
-    void JustDied(Unit* Victim)
+    void JustDied(Unit* /*Victim*/)
     {
         me->SummonCreature(11054,ADD_1X,ADD_1Y,ADD_1Z,ADD_1O,TEMPSUMMON_TIMED_DESPAWN,240000);
         me->SummonCreature(11054,ADD_2X,ADD_2Y,ADD_2Z,ADD_2O,TEMPSUMMON_TIMED_DESPAWN,240000);
@@ -102,10 +102,9 @@ struct boss_cannon_master_willeyAI : public ScriptedAI
         me->SummonCreature(11054,ADD_9X,ADD_9Y,ADD_9Z,ADD_9O,TEMPSUMMON_TIMED_DESPAWN,240000);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
-
 
     void UpdateAI(const uint32 diff)
     {
@@ -119,7 +118,7 @@ struct boss_cannon_master_willeyAI : public ScriptedAI
             //Cast
             if (rand()%100 < 90) //90% chance to cast
             {
-                DoCast(me->getVictim(),SPELL_PUMMEL);
+                DoCast(me->getVictim(), SPELL_PUMMEL);
             }
             //12 seconds until we should cast this again
             Pummel_Timer = 12000;
@@ -131,7 +130,7 @@ struct boss_cannon_master_willeyAI : public ScriptedAI
             //Cast
             if (rand()%100 < 80) //80% chance to cast
             {
-                DoCast(me->getVictim(),SPELL_KNOCKAWAY);
+                DoCast(me->getVictim(), SPELL_KNOCKAWAY);
             }
             //14 seconds until we should cast this again
             KnockAway_Timer = 14000;
@@ -141,7 +140,7 @@ struct boss_cannon_master_willeyAI : public ScriptedAI
         if (Shoot_Timer <= diff)
         {
             //Cast
-            DoCast(me->getVictim(),SPELL_SHOOT);
+            DoCast(me->getVictim(), SPELL_SHOOT);
             //1 seconds until we should cast this again
             Shoot_Timer = 1000;
         } else Shoot_Timer -= diff;

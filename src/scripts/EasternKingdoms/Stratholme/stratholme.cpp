@@ -153,7 +153,10 @@ struct mob_restless_soulAI : public ScriptedAI
             if (Die_Timer <= diff)
             {
                 if (Unit* pTemp = Unit::GetUnit(*me,Tagger))
-                    pTemp->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                {
+                    CAST_PLR(pTemp)->KilledMonster(ENTRY_RESTLESS, me->GetGUID());
+                    me->Kill(me);
+                }
             } else Die_Timer -= diff;
         }
     }
@@ -213,9 +216,8 @@ struct mobs_spectral_ghostly_citizenAI : public ScriptedAI
         if (Tagged)
         {
             if (Die_Timer <= diff)
-            {
-                me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-            } else Die_Timer -= diff;
+                me->Kill(me);
+            else Die_Timer -= diff;
         }
 
         if (!UpdateVictim())

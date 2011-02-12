@@ -51,11 +51,11 @@ struct boss_baroness_anastariAI : public ScriptedAI
         //Possess_Timer = 35000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
-     void JustDied(Unit* Killer)
+     void JustDied(Unit* /*Killer*/)
      {
          if (pInstance)
              pInstance->SetData(TYPE_BARONESS,IN_PROGRESS);
@@ -70,7 +70,7 @@ struct boss_baroness_anastariAI : public ScriptedAI
         if (BansheeWail_Timer <= diff)
         {
             if (rand()%100 < 95)
-                DoCast(me->getVictim(),SPELL_BANSHEEWAIL);
+                DoCast(me->getVictim(), SPELL_BANSHEEWAIL);
             //4 seconds until we should cast this again
             BansheeWail_Timer = 4000;
         } else BansheeWail_Timer -= diff;
@@ -79,7 +79,7 @@ struct boss_baroness_anastariAI : public ScriptedAI
         if (BansheeCurse_Timer <= diff)
         {
             if (rand()%100 < 75)
-                DoCast(me->getVictim(),SPELL_BANSHEECURSE);
+                DoCast(me->getVictim(), SPELL_BANSHEECURSE);
             //18 seconds until we should cast this again
             BansheeCurse_Timer = 18000;
         } else BansheeCurse_Timer -= diff;
@@ -88,7 +88,7 @@ struct boss_baroness_anastariAI : public ScriptedAI
         if (Silence_Timer <= diff)
         {
             if (rand()%100 < 80)
-                DoCast(me->getVictim(),SPELL_SILENCE);
+                DoCast(me->getVictim(), SPELL_SILENCE);
             //13 seconds until we should cast this again
             Silence_Timer = 13000;
         } else Silence_Timer -= diff;
@@ -101,7 +101,7 @@ struct boss_baroness_anastariAI : public ScriptedAI
         {
         Unit *pTarget = NULL;
         pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-        if (pTarget)DoCast(pTarget,SPELL_POSSESS);
+        if (pTarget)DoCast(pTarget, SPELL_POSSESS);
         }
         //50 seconds until we should cast this again
         Possess_Timer = 50000;

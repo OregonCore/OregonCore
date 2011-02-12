@@ -89,7 +89,6 @@ struct boss_baron_rivendareAI : public ScriptedAI
     uint32 MortalStrike_Timer;
     //    uint32 RaiseDead_Timer;
     uint32 SummonSkeletons_Timer;
-    Creature *Summoned;
 
     void Reset()
     {
@@ -98,21 +97,24 @@ struct boss_baron_rivendareAI : public ScriptedAI
         MortalStrike_Timer = 12000;
         //        RaiseDead_Timer = 30000;
         SummonSkeletons_Timer = 34000;
+        if (pInstance && pInstance->GetData(TYPE_RAMSTEIN) == DONE)
+            pInstance->SetData(TYPE_BARON,NOT_STARTED);
     }
 
-    void EnterCombat(Unit *who)
+    void AttackStart(Unit* who)
     {
-        if (pInstance)
+        if (pInstance)//can't use entercombat(), boss' dmg aura sets near players in combat, before entering the room's door
             pInstance->SetData(TYPE_BARON,IN_PROGRESS);
+        ScriptedAI::AttackStart(who);
     }
 
     void JustSummoned(Creature* summoned)
     {
         if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-             summoned->AI()->AttackStart(pTarget);
+            summoned->AI()->AttackStart(pTarget);
     }
 
-     void JustDied(Unit* Killer)
+     void JustDied(Unit* /*Killer*/)
      {
          if (pInstance)
              pInstance->SetData(TYPE_BARON,DONE);
@@ -127,7 +129,7 @@ struct boss_baron_rivendareAI : public ScriptedAI
         if (ShadowBolt_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(me->getVictim(),SPELL_SHADOWBOLT);
+                DoCast(me->getVictim(), SPELL_SHADOWBOLT);
 
             ShadowBolt_Timer = 10000;
         } else ShadowBolt_Timer -= diff;
@@ -135,7 +137,7 @@ struct boss_baron_rivendareAI : public ScriptedAI
         //Cleave
         if (Cleave_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CLEAVE);
+            DoCast(me->getVictim(), SPELL_CLEAVE);
             //13 seconds until we should cast this again
             Cleave_Timer = 7000 + (rand()%10000);
         } else Cleave_Timer -= diff;
@@ -143,14 +145,14 @@ struct boss_baron_rivendareAI : public ScriptedAI
         //MortalStrike
         if (MortalStrike_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_MORTALSTRIKE);
+            DoCast(me->getVictim(), SPELL_MORTALSTRIKE);
             MortalStrike_Timer = 10000 + (rand()%15000);
         } else MortalStrike_Timer -= diff;
 
         //RaiseDead
         //            if (RaiseDead_Timer <= diff)
         //          {
-        //      DoCast(me,SPELL_RAISEDEAD);
+        //      DoCast(me, SPELL_RAISEDEAD);
         //                RaiseDead_Timer = 45000;
         //            } else RaiseDead_Timer -= diff;
 

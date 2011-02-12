@@ -40,50 +40,32 @@ struct boss_nerubenkanAI : public ScriptedAI
 
     uint32 EncasingWebs_Timer;
     uint32 PierceArmor_Timer;
-   uint32 CryptScarabs_Timer;
+    uint32 CryptScarabs_Timer;
     uint32 RaiseUndeadScarab_Timer;
-    int Rand;
-    int RandX;
-    int RandY;
-    Creature* Summoned;
 
     void Reset()
     {
-       CryptScarabs_Timer = 3000;
+        CryptScarabs_Timer = 3000;
         EncasingWebs_Timer = 7000;
         PierceArmor_Timer = 19000;
         RaiseUndeadScarab_Timer = 3000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         if (pInstance)
             pInstance->SetData(TYPE_NERUB,IN_PROGRESS);
     }
 
-    void RaiseUndeadScarab(Unit* victim)
+    void RaiseUndeadScarab(Unit* pVictim)
     {
-        Rand = rand()%10;
-        switch (rand()%2)
-        {
-        case 0: RandX = 0 - Rand; break;
-        case 1: RandX = 0 + Rand; break;
-        }
-        Rand = 0;
-        Rand = rand()%10;
-        switch (rand()%2)
-        {
-        case 0: RandY = 0 - Rand; break;
-        case 1: RandY = 0 + Rand; break;
-        }
-        Rand = 0;
-        Summoned = DoSpawnCreature(10876, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 180000);
-        if (Summoned)
-            ((CreatureAI*)Summoned->AI())->AttackStart(victim);
+        if (Creature* pUndeadScarab = DoSpawnCreature(10876, irand(-9,9), irand(-9,9), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 180000))
+            if (pUndeadScarab->AI())
+                pUndeadScarab->AI()->AttackStart(pVictim);
     }
 
     void UpdateAI(const uint32 diff)
@@ -94,22 +76,22 @@ struct boss_nerubenkanAI : public ScriptedAI
         //EncasingWebs
         if (EncasingWebs_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_ENCASINGWEBS);
+            DoCast(me->getVictim(), SPELL_ENCASINGWEBS);
             EncasingWebs_Timer = 30000;
         } else EncasingWebs_Timer -= diff;
 
         //PierceArmor
         if (PierceArmor_Timer <= diff)
         {
-            if (rand()%100 < 75)
-                DoCast(me->getVictim(),SPELL_PIERCEARMOR);
+            if (urand(0,3) < 2)
+                DoCast(me->getVictim(), SPELL_PIERCEARMOR);
             PierceArmor_Timer = 35000;
         } else PierceArmor_Timer -= diff;
 
         //CryptScarabs_Timer
         if (CryptScarabs_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_CRYPT_SCARABS);
+            DoCast(me->getVictim(), SPELL_CRYPT_SCARABS);
             CryptScarabs_Timer = 20000;
         } else CryptScarabs_Timer -= diff;
 

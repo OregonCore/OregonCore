@@ -47,14 +47,17 @@ struct boss_ramstein_the_gorgerAI : public ScriptedAI
         Knockout_Timer = 12000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit * /*who*/)
     {
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
-        for (uint8 i = 0; i < 30; i++)
-            me->SummonCreature(C_MINDLESS_UNDEAD,3969.35f,-3391.87f,119.11f,5.91f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,1800000);
+        for (uint8 i = 0; i < 30; ++i)
+        {
+            if (Creature* mob = me->SummonCreature(C_MINDLESS_UNDEAD,3969.35+irand(-10,10),-3391.87+irand(-10,10),119.11,5.91,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,1800000))
+                mob->AI()->AttackStart(me->SelectNearestTarget(500));
+        }
 
         if (pInstance)
             pInstance->SetData(TYPE_RAMSTEIN,DONE);
@@ -69,14 +72,14 @@ struct boss_ramstein_the_gorgerAI : public ScriptedAI
         //Trample
         if (Trample_Timer <= diff)
         {
-            DoCast(me,SPELL_TRAMPLE);
+            DoCast(me, SPELL_TRAMPLE);
             Trample_Timer = 7000;
         } else Trample_Timer -= diff;
 
         //Knockout
         if (Knockout_Timer <= diff)
         {
-            DoCast(me->getVictim(),SPELL_KNOCKOUT);
+            DoCast(me->getVictim(), SPELL_KNOCKOUT);
             Knockout_Timer = 10000;
         } else Knockout_Timer -= diff;
 
