@@ -26,6 +26,7 @@ EndScriptData */
 /* ContentData
 npc_astor_hadren
 npc_deathstalker_erland
+pyrewood_ambush
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -292,7 +293,7 @@ struct pyrewood_ambushAI : public ScriptedAI
         {
             case 0:
                 if (WaitTimer == WAIT_SECS)
-                    me->Say(NPCSAY_INIT, LANG_UNIVERSAL, 0); //no blizzlike
+                    me->MonsterSay(NPCSAY_INIT, LANG_UNIVERSAL, 0); //no blizzlike
 
                 if (WaitTimer <= diff)
                 {
@@ -322,7 +323,7 @@ struct pyrewood_ambushAI : public ScriptedAI
                 {
                     if (Player *pPlayer = Unit::GetPlayer(*me, PlayerGUID))
                     {
-                        me->Say(NPCSAY_END, LANG_UNIVERSAL, 0); //no blizzlike
+                        me->MonsterSay(NPCSAY_END, LANG_UNIVERSAL, 0); //not blizzlike
                         pPlayer->GroupEventHappens(QUEST_PYREWOOD_AMBUSH, me);
                     }
                 }

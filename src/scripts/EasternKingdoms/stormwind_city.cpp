@@ -779,7 +779,6 @@ struct npc_tyrion_spybotAI : public npc_escortAI
             return;
 
         DoMeleeAttackIfReady();
-
     }
 };
 

@@ -477,10 +477,8 @@ void npc_secondTrialAI::JustDied(Unit* Killer)
                         pGroupGuy->CompleteQuest(QUEST_SECOND_TRIAL);
                 }
             }
-            else {
-               if (CAST_PLR(Killer)->GetQuestStatus(QUEST_SECOND_TRIAL) == QUEST_STATUS_INCOMPLETE)
-                   CAST_PLR(Killer)->CompleteQuest(QUEST_SECOND_TRIAL);
-            }
+            else if (CAST_PLR(Killer)->GetQuestStatus(QUEST_SECOND_TRIAL) == QUEST_STATUS_INCOMPLETE)
+                CAST_PLR(Killer)->CompleteQuest(QUEST_SECOND_TRIAL);
         }
     }
 }
@@ -515,19 +513,8 @@ CreatureAI* GetAI_npc_secondTrial(Creature* pCreature)
 bool GOHello_go_second_trial(Player* /*pPlayer*/, GameObject* pGO)
 {
     // find spawn :: master_kelerun_bloodmourn
-    CellPair p(Oregon::ComputeCellPair(pGO->GetPositionX(), pGO->GetPositionY()));
-    Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
-    cell.SetNoCreate();
-
-    Creature* event_controller = NULL;
-    Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck u_check(*pGO, MASTER_KELERUN_BLOODMOURN, true, 30);
-    Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(event_controller, u_check);
-    TypeContainerVisitor<Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer >  grid_unit_searcher(searcher);
-    cell.Visit(p, grid_unit_searcher, *(pGO->GetMap()));
-
-    if (event_controller)
-       ((master_kelerun_bloodmournAI*)event_controller->AI())->StartEvent();
+    if (Creature *pCreature = pGO->FindNearestCreature(MASTER_KELERUN_BLOODMOURN, 30.0f))
+       CAST_AI(master_kelerun_bloodmournAI, pCreature->AI())->StartEvent();
 
     return true;
 }
@@ -658,8 +645,6 @@ struct npc_infused_crystalAI : public Scripted_NoMovementAI
         PlayerGUID = 0;
         WaveTimer = 0;
     }
-
-    void EnterCombat(Unit* who){}
 
     void MoveInLineOfSight(Unit* who)
     {

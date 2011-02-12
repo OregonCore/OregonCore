@@ -68,23 +68,7 @@ struct boss_kruulAI : public ScriptedAI
 
     void SummonHounds(Unit* pVictim)
     {
-        int RandX;
-        int RandY;
-        int Rand = rand()%10;
-        switch (rand()%2)
-        {
-            case 0: RandX = 0 - Rand; break;
-            case 1: RandX = 0 + Rand; break;
-        }
-        Rand = 0;
-        Rand = rand()%10;
-        switch (rand()%2)
-        {
-            case 0: RandY = 0 - Rand; break;
-            case 1: RandY = 0 + Rand; break;
-        }
-        Rand = 0;
-        if (Creature *Hound = DoSpawnCreature(19207, float(RandX), float(RandY), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 300000))
+        if (Creature *Hound = DoSpawnCreature(19207, irand(-9,9), irand(-9,9), 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 300000))
             Hound->AI()->AttackStart(pVictim);
     }
 

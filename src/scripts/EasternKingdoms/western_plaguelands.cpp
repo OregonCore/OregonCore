@@ -25,7 +25,10 @@ EndScriptData */
 
 /* ContentData
 npcs_dithers_and_arbington
+npc_myranda_the_hag
 npc_the_scourge_cauldron
+npc_andorhal_tower
+npc_anchorite_truuen
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -33,10 +36,6 @@ EndContentData */
 
 /*######
 ## npcs_dithers_and_arbington
-## npc_the_scourge_cauldron
-## npc_myranda_the_hag
-## npcs_andorhal_tower
-## npc_anchorite_truuen
 ######*/
 
 #define GOSSIP_HDA1 "What does the Felstone Field Cauldron need?"
@@ -128,7 +127,7 @@ bool GossipHello_npc_myranda_the_hag(Player* pPlayer, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_myranda_the_hag(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+bool GossipSelect_npc_myranda_the_hag(Player* pPlayer, Creature* /*pCreature*/, uint32 /*uiSender*/, uint32 uiAction)
 {
     if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
     {
@@ -173,7 +172,7 @@ struct npc_the_scourge_cauldronAI : public ScriptedAI
                     if (CAST_PLR(who)->GetQuestStatus(5216) == QUEST_STATUS_INCOMPLETE ||
                         CAST_PLR(who)->GetQuestStatus(5229) == QUEST_STATUS_INCOMPLETE)
                     {
-                        DoSpawnCreature(11075,0,0,0,me->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,600000);
+                        me->SummonCreature(11075, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
                         DoDie();
                     }
                     break;
@@ -181,7 +180,7 @@ struct npc_the_scourge_cauldronAI : public ScriptedAI
                     if (CAST_PLR(who)->GetQuestStatus(5219) == QUEST_STATUS_INCOMPLETE ||
                         CAST_PLR(who)->GetQuestStatus(5231) == QUEST_STATUS_INCOMPLETE)
                     {
-                        DoSpawnCreature(11077,0,0,0,me->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,600000);
+                        me->SummonCreature(11077, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
                         DoDie();
                     }
                     break;
@@ -189,7 +188,7 @@ struct npc_the_scourge_cauldronAI : public ScriptedAI
                     if (CAST_PLR(who)->GetQuestStatus(5225) == QUEST_STATUS_INCOMPLETE ||
                         CAST_PLR(who)->GetQuestStatus(5235) == QUEST_STATUS_INCOMPLETE)
                     {
-                        DoSpawnCreature(11078,0,0,0,me->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,600000);
+                        me->SummonCreature(11078, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,600000);
                         DoDie();
                     }
                     break;
@@ -197,7 +196,7 @@ struct npc_the_scourge_cauldronAI : public ScriptedAI
                     if (CAST_PLR(who)->GetQuestStatus(5222) == QUEST_STATUS_INCOMPLETE ||
                         CAST_PLR(who)->GetQuestStatus(5233) == QUEST_STATUS_INCOMPLETE)
                     {
-                        DoSpawnCreature(11076,0,0,0,me->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,600000);
+                        me->SummonCreature(11076, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,600000);
                         DoDie();
                     }
                     break;
@@ -210,9 +209,9 @@ CreatureAI* GetAI_npc_the_scourge_cauldron(Creature* pCreature)
     return new npc_the_scourge_cauldronAI (pCreature);
 }
 
-/*##########
-#npcs_andorhal_tower
-##########*/
+/*######
+##    npcs_andorhal_tower
+######*/
 
 enum eAndorhalTower
 {
@@ -230,7 +229,6 @@ struct npc_andorhal_towerAI : public Scripted_NoMovementAI
 
         if (me->FindNearestGameObject(GO_BEACON_TORCH, 10.0f))
             CAST_PLR(pWho)->KilledMonster(me->GetEntry(), me->GetGUID());
-
     }
 };
 

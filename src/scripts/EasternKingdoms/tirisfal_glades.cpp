@@ -94,7 +94,7 @@ struct npc_calvin_montagueAI : public ScriptedAI
     {
         if (m_uiPhase)
         {
-            if (m_uiPhaseTimer < uiDiff)
+            if (m_uiPhaseTimer <= uiDiff)
                 m_uiPhaseTimer = 7500;
             else
             {
@@ -112,7 +112,7 @@ struct npc_calvin_montagueAI : public ScriptedAI
                     if (Player* pPlayer = Unit::GetPlayer(*me, m_uiPlayerGUID))
                         pPlayer->AreaExploredOrEventHappens(QUEST_590);
 
-                    me->CastSpell(me,SPELL_CALVIN_DRINK,true);
+                    DoCast(me, SPELL_DRINK, true);
                     ++m_uiPhase;
                     break;
                 case 3:
