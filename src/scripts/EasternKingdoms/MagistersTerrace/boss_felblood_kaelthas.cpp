@@ -196,7 +196,7 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
     {
         float x = KaelLocations[0][0];
         float y = KaelLocations[0][1];
-        me->Relocate(x, y, LOCATION_Z, 0);
+        me->GetMap()->CreatureRelocation(me, x, y, LOCATION_Z, 0.0f);
         std::list<HostileReference*>::const_iterator i = me->getThreatManager().getThreatList().begin();
         for (i = me->getThreatManager().getThreatList().begin(); i!= me->getThreatManager().getThreatList().end(); ++i)
         {
@@ -275,6 +275,8 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
                 {
                     if (PyroblastTimer <= diff)
                     {
+                        me->InterruptSpell(CURRENT_CHANNELED_SPELL);
+                        me->InterruptSpell(CURRENT_GENERIC_SPELL);
                         DoCast(me, SPELL_SHOCK_BARRIER, true);
                         DoCast(me->getVictim(), SPELL_PYROBLAST);
                         PyroblastTimer = 60000;
@@ -284,7 +286,7 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
                 if (FireballTimer <= diff)
                 {
                     DoCast(me->getVictim(), Heroic ? SPELL_FIREBALL_HEROIC : SPELL_FIREBALL_NORMAL);
-                    FireballTimer = 2000 + rand()%4000;
+                    FireballTimer = urand(2000,6000);
                 } else FireballTimer -= diff;
 
                 if (PhoenixTimer <= diff)
@@ -292,7 +294,7 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
 
                     Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,1);
 
-                    uint32 random = rand()%2 + 1;
+                    uint8 random = urand(1,2);
                     float x = KaelLocations[random][0];
                     float y = KaelLocations[random][1];
 
@@ -313,10 +315,12 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
                 {
                     if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                     {
+                        me->InterruptSpell(CURRENT_CHANNELED_SPELL);
+                        me->InterruptSpell(CURRENT_GENERIC_SPELL);
                         DoCast(pTarget, SPELL_FLAMESTRIKE3, true);
                         DoScriptText(SAY_FLAMESTRIKE, me);
                     }
-                    FlameStrikeTimer = 15000 + rand()%10000;
+                    FlameStrikeTimer = urand(15000,25000);
                 } else FlameStrikeTimer -= diff;
 
                 // Below 50%
@@ -387,7 +391,7 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
                                 Creature* Orb = DoSpawnCreature(CREATURE_ARCANE_SPHERE, 5, 5, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
                                 if (Orb && pTarget)
                                 {
-                                    //SetThreatList(Orb);
+                                    Orb->SetSpeed(MOVE_RUN, 0.5f);
                                     Orb->AddThreat(pTarget, 1000000.0f);
                                     Orb->AI()->AttackStart(pTarget);
                                 }
@@ -440,7 +444,7 @@ struct mob_felkael_flamestrikeAI : public ScriptedAI
         if (FlameStrikeTimer <= diff)
         {
             DoCast(me, Heroic ? SPELL_FLAMESTRIKE1_HEROIC : SPELL_FLAMESTRIKE1_NORMAL, true);
-            me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+            me->Kill(me);
         } else FlameStrikeTimer -= diff;
     }
 };
@@ -464,7 +468,7 @@ struct mob_felkael_phoenixAI : public ScriptedAI
         me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
         DoCast(me, SPELL_PHOENIX_BURN, true);
         BurnTimer = 2000;
-        Death_Timer = 2700;
+        Death_Timer = 3000;
         Rebirth = false;
         FakeDeath = false;
     }
@@ -508,7 +512,7 @@ struct mob_felkael_phoenixAI : public ScriptedAI
 
     void JustDied(Unit* /*slayer*/)
     {
-        DoSpawnCreature(CREATURE_PHOENIX_EGG, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45000);
+        me->SummonCreature(CREATURE_PHOENIX_EGG, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45000);
     }
 
     void UpdateAI(const uint32 diff)
@@ -527,9 +531,8 @@ struct mob_felkael_phoenixAI : public ScriptedAI
 
                 if (Death_Timer <= diff)
                 {
-                    DoSpawnCreature(CREATURE_PHOENIX_EGG, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45000);
-                    me->setDeathState(JUST_DIED);
-                    me->RemoveCorpse();
+                    me->SummonCreature(CREATURE_PHOENIX_EGG, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45000);
+                    me->DisappearAndDie();
                     Rebirth = false;
                 } else Death_Timer -= diff;
             }
@@ -568,15 +571,15 @@ struct mob_felkael_phoenix_eggAI : public ScriptedAI
     {
         if (HatchTimer <= diff)
         {
-            DoSpawnCreature(CREATURE_PHOENIX, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
-            me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+            me->SummonCreature(CREATURE_PHOENIX, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
+            me->Kill(me);
         } else HatchTimer -= diff;
     }
 };
 
 struct mob_arcane_sphereAI : public ScriptedAI
 {
-    mob_arcane_sphereAI(Creature *c) : ScriptedAI(c) {}
+    mob_arcane_sphereAI(Creature *c) : ScriptedAI(c) { Reset(); }
 
     uint32 DespawnTimer;
     uint32 ChangeTargetTimer;
@@ -584,7 +587,7 @@ struct mob_arcane_sphereAI : public ScriptedAI
     void Reset()
     {
         DespawnTimer = 30000;
-        ChangeTargetTimer = 6000 + rand()%6000;
+        ChangeTargetTimer = urand(6000,12000);
 
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
@@ -597,7 +600,7 @@ struct mob_arcane_sphereAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (DespawnTimer <= diff)
-            me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+            me->Kill(me);
         else
             DespawnTimer -= diff;
 
@@ -614,7 +617,7 @@ struct mob_arcane_sphereAI : public ScriptedAI
                 AttackStart(pTarget);
             }
 
-            ChangeTargetTimer = 5000 + rand()%10000;
+            ChangeTargetTimer = urand(5000,15000);
         } else ChangeTargetTimer -= diff;
     }
 };

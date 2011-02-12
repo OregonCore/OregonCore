@@ -32,7 +32,7 @@ EndScriptData */
 #define SAY_DEATH                       -1585005
 #define EMOTE_CRYSTAL                   -1585006
 
-//Crystal efect spells
+//Crystal effect spells
 #define SPELL_FEL_CRYSTAL_COSMETIC      44374
 #define SPELL_FEL_CRYSTAL_DUMMY         44329
 #define SPELL_FEL_CRYSTAL_VISUAL        44355
@@ -78,7 +78,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
     uint32 DrainManaTimer;
     uint32 FelExplosionTimer;
     uint32 DrainCrystalTimer;
-    uint32 CheckTimer;
+    uint32 EmpowerTimer;
 
     bool IsDraining;
     bool DrainingCrystal;
@@ -90,27 +90,25 @@ struct boss_selin_fireheartAI : public ScriptedAI
         if (pInstance)
         {
             //for (uint8 i = 0; i < CRYSTALS_NUMBER; ++i)
-            for (std::list<uint64>::iterator itr = Crystals.begin(); itr != Crystals.end(); ++itr)
+            for (std::list<uint64>::const_iterator itr = Crystals.begin(); itr != Crystals.end(); ++itr)
             {
                 //Unit* pUnit = Unit::GetUnit(*me, FelCrystals[i]);
                 Unit* pUnit = Unit::GetUnit(*me, *itr);
                 if (pUnit)
                 {
                     if (!pUnit->isAlive())
-                        CAST_CRE(pUnit)->Respawn();      // Let MaNGOS handle setting death state, etc.
+                        CAST_CRE(pUnit)->Respawn();      // Let the core handle setting death state, etc.
 
                     // Only need to set unselectable flag. You can't attack unselectable units so non_attackable flag is not necessary here.
                     pUnit->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 }
             }
-            GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR));
-            if (Door)
-                Door->SetGoState(GO_STATE_ACTIVE);                        // Open the big encounter door. Close it in Aggro and open it only in JustDied(and here)
+
+            pInstance->HandleGameObject(pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR), true);
+            // Open the big encounter door. Close it in Aggro and open it only in JustDied(and here)
                                                             // Small door opened after event are expected to be closed by default
             // Set Inst data for encounter
-            if (me->isDead())
-                pInstance->SetData(DATA_SELIN_EVENT, DONE);
-            else pInstance->SetData(DATA_SELIN_EVENT, NOT_STARTED);
+            pInstance->SetData(DATA_SELIN_EVENT, NOT_STARTED);
         } else error_log(ERROR_INST_DATA);
 
         DrainLifeTimer = 3000 + rand()%4000;
@@ -118,7 +116,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
         FelExplosionTimer = 2100;
         DrainCrystalTimer = 10000 + rand()%5000;
         DrainCrystalTimer = 20000 + rand()%5000;
-        CheckTimer = 1000;
+        EmpowerTimer = 10000;
 
         IsDraining = false;
         DrainingCrystal = false;
@@ -130,21 +128,21 @@ struct boss_selin_fireheartAI : public ScriptedAI
         if (Crystals.empty())
             return;
 
-        float ShortestDistance = 0;
+        //float ShortestDistance = 0;
         CrystalGUID = 0;
         Unit* pCrystal = NULL;
         Unit* CrystalChosen = NULL;
         //for (uint8 i =  0; i < CRYSTALS_NUMBER; ++i)
-        for (std::list<uint64>::iterator itr = Crystals.begin(); itr != Crystals.end(); ++itr)
+        for (std::list<uint64>::const_iterator itr = Crystals.begin(); itr != Crystals.end(); ++itr)
         {
             pCrystal = NULL;
             //pCrystal = Unit::GetUnit(*me, FelCrystals[i]);
             pCrystal = Unit::GetUnit(*me, *itr);
             if (pCrystal && pCrystal->isAlive())
             {
-                if (!ShortestDistance || (ShortestDistance > me->GetDistance2d(pCrystal)))
+                // select nearest
+                if (!CrystalChosen || me->GetDistanceOrder(pCrystal, CrystalChosen, false))
                 {
-                    ShortestDistance = me->GetDistance2d(pCrystal);
                     CrystalGUID = pCrystal->GetGUID();
                     CrystalChosen = pCrystal;               // Store a copy of pCrystal so we don't need to recreate a pointer to closest crystal for the movement and yell.
                 }
@@ -172,35 +170,27 @@ struct boss_selin_fireheartAI : public ScriptedAI
             return;
 
         //for (uint8 i = 0; i < CRYSTALS_NUMBER; ++i)
-        for (std::list<uint64>::iterator itr = Crystals.begin(); itr != Crystals.end(); ++itr)
+        for (std::list<uint64>::const_iterator itr = Crystals.begin(); itr != Crystals.end(); ++itr)
         {
             //Creature* pCrystal = (Unit::GetCreature(*me, FelCrystals[i]));
-            Creature* pCrystal = (Unit::GetCreature(*me, *itr));
+            Creature* pCrystal = Unit::GetCreature(*me, *itr);
             if (pCrystal && pCrystal->isAlive())
-                pCrystal->DealDamage(pCrystal, pCrystal->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                pCrystal->Kill(pCrystal);
         }
     }
 
-    void EnterCombat(Unit* who)
+    void EnterCombat(Unit* /*who*/)
     {
-        me->SetPower(POWER_MANA, 0);
         DoScriptText(SAY_AGGRO, me);
 
         if (pInstance)
-        {
-            GameObject* EncounterDoor = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR));
-            if (EncounterDoor)
-                EncounterDoor->SetGoState(GO_STATE_READY);               //Close the encounter door, open it in JustDied/Reset
-        }
-    }
+            pInstance->HandleGameObject(pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR), false);
+            //Close the encounter door, open it in JustDied/Reset
+     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit* /*victim*/)
     {
-        switch(rand()%2)
-        {
-        case 0: DoScriptText(SAY_KILL_1, me); break;
-        case 1: DoScriptText(SAY_KILL_2, me); break;
-        }
+        DoScriptText(RAND(SAY_KILL_1,SAY_KILL_2), me);
     }
 
     void MovementInform(uint32 type, uint32 id)
@@ -225,7 +215,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit* killer)
+    void JustDied(Unit* /*killer*/)
     {
         DoScriptText(SAY_DEATH, me);
 
@@ -233,15 +223,9 @@ struct boss_selin_fireheartAI : public ScriptedAI
             return;
 
         pInstance->SetData(DATA_SELIN_EVENT, DONE);         // Encounter complete!
-
-        GameObject* EncounterDoor = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR));
-        if (EncounterDoor)
-            EncounterDoor->SetGoState(GO_STATE_ACTIVE);                   // Open the encounter door
-
-        GameObject* ContinueDoor = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_SELIN_DOOR));
-        if (ContinueDoor)
-            ContinueDoor->SetGoState(GO_STATE_ACTIVE);                    // Open the door leading further in
-
+        pInstance->HandleGameObject(pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR), true);                  // Open the encounter door
+        pInstance->HandleGameObject(pInstance->GetData64(DATA_SELIN_DOOR), true);                 // Open the door leading further in
+        ShatterRemainingCrystals();
     }
 
     void UpdateAI(const uint32 diff)
@@ -265,7 +249,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
                 {
                     if (DrainManaTimer <= diff)
                     {
-                        DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_DRAIN_MANA);
+                        DoCast(SelectUnit(SELECT_TARGET_RANDOM, 1), SPELL_DRAIN_MANA);
                         DrainManaTimer = 10000;
                     } else DrainManaTimer -= diff;
                 }
@@ -287,8 +271,10 @@ struct boss_selin_fireheartAI : public ScriptedAI
                 if (DrainCrystalTimer <= diff)
                 {
                     SelectNearestCrystal();
-                    if (Heroic)   DrainCrystalTimer = 10000 + rand()%5000;
-                    else         DrainCrystalTimer = 20000 + rand()%5000;
+                    if (Heroic)
+                        DrainCrystalTimer = 10000 + rand()%5000;
+                    else
+                        DrainCrystalTimer = 20000 + rand()%5000;
                 } else DrainCrystalTimer -= diff;
             }
 
@@ -296,34 +282,26 @@ struct boss_selin_fireheartAI : public ScriptedAI
         {
             if (IsDraining)
             {
-                if (CheckTimer <= diff)
+                if (EmpowerTimer <= diff)
                 {
+                    IsDraining = false;
+                    DrainingCrystal = false;
+
+                    DoScriptText(SAY_EMPOWERED, me);
+
                     Unit* CrystalChosen = Unit::GetUnit(*me, CrystalGUID);
-                    if (CrystalChosen)
-                    {
-                        if (CrystalChosen->GetUInt32Value(UNIT_CHANNEL_SPELL) == SPELL_MANA_RAGE)
-                        {
-                            me->StopMoving();
-                        } else{
-                            IsDraining = false;
-                            DrainingCrystal = false;
+                    if (CrystalChosen && CrystalChosen->isAlive())
+                        // Use Deal Damage to kill it, not setDeathState.
+                        CrystalChosen->Kill(CrystalChosen);
 
-                            DoScriptText(SAY_EMPOWERED, me);
+                    CrystalGUID = 0;
 
-                            Unit* CrystalChosen = Unit::GetUnit(*me, CrystalGUID);
-                            if (CrystalChosen && CrystalChosen->isAlive())
-                                // Use Deal Damage to kill it, not setDeathState.
-                                CrystalChosen->DealDamage(CrystalChosen, CrystalChosen->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-                            CrystalGUID = 0;
-
-                            me->GetMotionMaster()->Clear();
-                            me->GetMotionMaster()->MoveChase(me->getVictim());
-                        }
-                    }
-                    CheckTimer = 1000;
-                } else CheckTimer -= diff;
+                    me->GetMotionMaster()->Clear();
+                    me->GetMotionMaster()->MoveChase(me->getVictim());
+                } else EmpowerTimer -= diff;
             }
         }
+
         DoMeleeAttackIfReady();                             // No need to check if we are draining crystal here, as the spell has a stun.
     }
 };
@@ -338,25 +316,24 @@ struct mob_fel_crystalAI : public ScriptedAI
     mob_fel_crystalAI(Creature *c) : ScriptedAI(c) {}
 
     void Reset() {}
-    void EnterCombat(Unit* who) {}
-    void AttackStart(Unit* who) {}
-    void MoveInLineOfSight(Unit* who) {}
-    void UpdateAI(const uint32 diff) {}
+    void EnterCombat(Unit* /*who*/) {}
+    void AttackStart(Unit* /*who*/) {}
+    void MoveInLineOfSight(Unit* /*who*/) {}
+    void UpdateAI(const uint32 /*diff*/) {}
 
-    void JustDied(Unit* killer)
+    void JustDied(Unit* /*killer*/)
     {
-        me->RemoveAurasDueToSpell(SPELL_MANA_RAGE);
-        if (ScriptedInstance* pInstance = (me->GetInstanceData()))
+        if (ScriptedInstance* pInstance = me->GetInstanceData())
         {
             Creature* Selin = (Unit::GetCreature(*me, pInstance->GetData64(DATA_SELIN)));
             if (Selin && Selin->isAlive())
             {
-                if (((boss_selin_fireheartAI*)Selin->AI())->CrystalGUID == me->GetGUID())
+                if (CAST_AI(boss_selin_fireheartAI, Selin->AI())->CrystalGUID == me->GetGUID())
                 {
-                    // Set this to false if we are the creature that Selin is draining so his AI flows properly
-                    ((boss_selin_fireheartAI*)Selin->AI())->DrainingCrystal = false;
-                    ((boss_selin_fireheartAI*)Selin->AI())->IsDraining = false;
-                    Selin->RemoveAurasDueToSpell(SPELL_MANA_RAGE);
+                    // Set this to false if we are the Creature that Selin is draining so his AI flows properly
+                    CAST_AI(boss_selin_fireheartAI, Selin->AI())->DrainingCrystal = false;
+                    CAST_AI(boss_selin_fireheartAI, Selin->AI())->IsDraining = false;
+                    CAST_AI(boss_selin_fireheartAI, Selin->AI())->EmpowerTimer = 10000;
                     if (Selin->getVictim())
                     {
                         Selin->AI()->AttackStart(Selin->getVictim());

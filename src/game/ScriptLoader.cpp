@@ -92,6 +92,7 @@ void AddSC_boss_selin_fireheart();
 void AddSC_boss_vexallus();
 void AddSC_boss_priestess_delrissa();
 void AddSC_instance_magisters_terrace();
+void AddSC_magisters_terrace();
 void AddSC_boss_lucifron();                  //Molten core
 void AddSC_boss_magmadar();
 void AddSC_boss_gehennas();
@@ -457,6 +458,7 @@ void AddScripts()
     AddSC_boss_vexallus();
     AddSC_boss_priestess_delrissa();
     AddSC_instance_magisters_terrace();
+    AddSC_magisters_terrace();
     AddSC_boss_lucifron();                  //Molten core
     AddSC_boss_magmadar();
     AddSC_boss_gehennas();
