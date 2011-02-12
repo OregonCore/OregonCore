@@ -130,7 +130,7 @@ struct npc_barnesAI : public npc_escortAI
         RaidWiped = false;
         m_uiEventId = 0;
         pInstance = c->GetInstanceData();
-        SpellEntry *TempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(29683);
+        SpellEntry *TempSpell = GET_SPELL(29683);
         TempSpell->Effect[2] = 27;
         TempSpell->EffectBaseDice[2] = 1;
         TempSpell->EffectDieSides[2] = 1;

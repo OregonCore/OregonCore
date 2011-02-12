@@ -176,13 +176,13 @@ struct boss_magtheridonAI : public ScriptedAI
 
         // target 7, random target with certain entry spell, need core fix
         SpellEntry *TempSpell;
-        TempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_BLAZE_TARGET);
+        TempSpell = GET_SPELL(SPELL_BLAZE_TARGET);
         if (TempSpell && TempSpell->EffectImplicitTargetA[0] != 6)
         {
             TempSpell->EffectImplicitTargetA[0] = 6;
             TempSpell->EffectImplicitTargetB[0] = 0;
         }
-        TempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_QUAKE_TRIGGER);
+        TempSpell = GET_SPELL(SPELL_QUAKE_TRIGGER);
         if (TempSpell && TempSpell->EffectTriggerSpell[0] != SPELL_QUAKE_KNOCKBACK)
         {
             TempSpell->EffectTriggerSpell[0] = SPELL_QUAKE_KNOCKBACK;

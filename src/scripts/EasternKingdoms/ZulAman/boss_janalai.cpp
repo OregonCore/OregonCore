@@ -106,7 +106,7 @@ struct boss_janalaiAI : public ScriptedAI
     {
         pInstance =c->GetInstanceData();
 
-        SpellEntry *TempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_HATCH_EGG);
+        SpellEntry *TempSpell = GET_SPELL(SPELL_HATCH_EGG);
         if (TempSpell && TempSpell->EffectImplicitTargetA[0] != 1)
         {
             TempSpell->EffectImplicitTargetA[0] = 1;

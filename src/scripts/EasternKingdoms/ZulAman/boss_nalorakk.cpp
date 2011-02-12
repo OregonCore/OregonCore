@@ -97,7 +97,7 @@ struct boss_nalorakkAI : public ScriptedAI
         pInstance = c->GetInstanceData();
 
         // hack mangle as it affects Nalorakk instead of victim
-        SpellEntry *TempSpell1 = (SpellEntry*)GetSpellStore()->LookupEntry(42389);
+        SpellEntry *TempSpell1 = GET_SPELL(42389);
         if (TempSpell1)
         {
             TempSpell1->EffectImplicitTargetA[1] = TARGET_UNIT_TARGET_ENEMY;

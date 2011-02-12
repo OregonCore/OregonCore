@@ -232,7 +232,7 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
 
             DoScriptText(SAY_NOVA, me);
 
-            if (SpellEntry *nova = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_BURNING_NOVA))
+            if (SpellEntry *nova = GET_SPELL(SPELL_BURNING_NOVA))
             {
                 for (uint32 i = 0; i < 3; ++i)
                     if (nova->Effect[i] == SPELL_EFFECT_APPLY_AURA)
