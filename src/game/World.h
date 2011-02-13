@@ -378,7 +378,7 @@ enum RealmZone
 #define SCRIPT_COMMAND_ACTIVATE_OBJECT      13              // source = unit, target=GO
 #define SCRIPT_COMMAND_REMOVE_AURA          14              // source (datalong2 != 0) or target (datalong == 0) unit, datalong = spell_id
 #define SCRIPT_COMMAND_CAST_SPELL           15              // source (datalong2 != 0) or target (datalong == 0) unit, datalong = spell_id
-#define SCRIPT_COMMAND_PLAY_SOUND           16              // datalong soundid, datalong2 play only self
+#define SCRIPT_COMMAND_PLAY_SOUND           16              // source = any object, target=any/player, datalong (sound_id), datalong2 (bitmask: 0/1=anyone/target, 0/2=with distance dependent, so 1|2 = 3 is target with distance dependent)
 
 #define SCRIPT_COMMAND_LOAD_PATH            20              // source = unit, path = datalong, repeatable datalong2
 #define SCRIPT_COMMAND_CALLSCRIPT_TO_UNIT   21              // datalong scriptid, lowguid datalong2, dataint table
@@ -388,6 +388,7 @@ enum RealmZone
 #define SCRIPT_COMMAND_ORIENTATION          30              // o = orientation
 #define SCRIPT_COMMAND_EQUIP                31              // datalong = equipment id
 #define SCRIPT_COMMAND_MODEL                32              // datalong = model id
+#define SCRIPT_COMMAND_CLOSE_GOSSIP         33              // close gossip window -- no values
 
 // Storage class for commands issued for delayed execution
 struct CliCommandHolder

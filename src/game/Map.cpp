@@ -3699,6 +3699,26 @@ void Map::ScriptsProcess()
                 cSource->SetDisplayId(step.script->datalong);
                 break;
             }
+
+            case SCRIPT_COMMAND_CLOSE_GOSSIP:
+            {
+                if (!source)
+                {
+                    sLog.outError("SCRIPT_COMMAND_CLOSE_GOSSIP (script id: %u) for null source", step.script->id);
+                    break;
+                }
+
+                Player *pSource = source->ToPlayer();
+                if (!pSource)
+                {
+                    sLog.outError("SCRIPT_COMMAND_CLOSE_GOSSIP (script id: %u) for non-player source.", step.script->id);
+                    break;
+                }
+
+                pSource->PlayerTalkClass->CloseGossip();
+                break;
+            }
+
             default:
                 sLog.outError("Unknown script command %u called.", step.script->command);
                 break;
