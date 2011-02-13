@@ -28,17 +28,10 @@ EndScriptData */
 #define SAY_STAL_SLAY           -1533024
 #define SAY_STAL_DEATH          -1533025
 
-#define SPELL_POWERSURGE        28134
-
 //Feugen
 #define SAY_FEUG_AGGRO          -1533026
 #define SAY_FEUG_SLAY           -1533027
 #define SAY_FEUG_DEATH          -1533028
-
-#define SPELL_MANABURN          28135
-
-//both
-#define SPELL_WARSTOMP          28125
 
 //Thaddus
 #define SAY_GREET               -1533029
@@ -53,19 +46,80 @@ EndScriptData */
 #define SAY_SCREAM3             -1533038
 #define SAY_SCREAM4             -1533039
 
-#define SPELL_BALL_LIGHTNING                28299
 
-#define SPELL_CHARGE_POSITIVE_DMGBUFF       29659
-#define SPELL_CHARGE_POSITIVE_NEARDMG       28059
+#define GO_TESLA_COIL1    181477
+#define GO_TESLA_COIL2    181478    //those 2 are not spawned
 
-#define SPELL_CHARGE_NEGATIVE_DMGBUFF       29660
-#define SPELL_CHARGE_NEGATIVE_NEARDMG       28084
+enum eSpells
+{
+    // Fuegen
+    FEUG_TESLA_PASSIVE            = 28109,
+    SPELL_MANABURN                = 28135,
 
-#define SPELL_CHAIN_LIGHTNING               28167
-#define H_SPELL_CHAIN_LIGHTNING             54531
+    // Stalagg
+    STAL_TESLA_PASSIVE            = 28097,
+    SPELL_POWERSURGE              = 28134,
 
-#define SPELL_BESERK                        26662
+    // shared
+    SPELL_WARSTOMP                = 28125,
+    SPELL_MAGNETIC_PULL           = 28337,
 
- //generic
-#define C_TESLA_COIL                        16218           //the coils (emotes "Tesla Coil overloads!")
+    // Thaddius
+    SPELL_SELF_STUN               = 28160,
+    SPELL_BALL_LIGHTNING          = 28299,
+    SPELL_CHARGE_POSITIVE_DMGBUFF = 29659,
+    SPELL_CHARGE_POSITIVE_NEARDMG = 28059,
+    SPELL_CHARGE_NEGATIVE_DMGBUFF = 29660,
+    SPELL_CHARGE_NEGATIVE_NEARDMG = 28084,
+    SPELL_CHAIN_LIGHTNING         = 28167,
+    SPELL_BESERK                  = 26662
 
+};
+
+struct boss_fuegenAI : public BossAI
+{
+    boss_fuegenAI(Creature *c): BossAI(c){}
+
+    void Reset() {}
+
+    void UpdateAI(uint32 diff)
+    {
+        if (!UpdateVictim())
+            return;
+
+        //CastNextSpellIfAnyAndReady();
+        DoMeleeAttackIfReady();
+    }
+};
+
+struct boss_stalaggAI : public BossAI
+{
+    boss_stalaggAI(Creature *c) : BossAI(c) {}
+
+    void Reset() {}
+
+    void UpdateAI(uint32 diff)
+    {
+        if (!UpdateVictim())
+            return;
+
+        //CastNextSpellIfAnyAndReady();
+        DoMeleeAttackIfReady();
+    }
+};
+
+struct TRINITY_DLL_DECL boss_thaddiusAI : public BossAI
+{
+    boss_thaddiusAI(Creature *c) : BossAI(c) {}
+
+    void Reset() {}
+
+    void UpdateAI(uint32 diff)
+    {
+        if (!UpdateVictim())
+            return;
+
+        //CastNextSpellIfAnyAndReady();
+        DoMeleeAttackIfReady();
+    }
+};
