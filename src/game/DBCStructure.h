@@ -139,7 +139,6 @@ struct ChrClassesEntry
                                                             // 1-2, unused
     uint32  powerType;                                      // 3
                                                             // 4, unused
-    //char*       name[16];                                 // 5-20 unused
     char*   name[16];                                       // 5-20 unused
                                                             // 21 string flag, unused
     //char*       nameFemale[16];                           // 21-36 unused, if different from base (male) case
@@ -162,7 +161,7 @@ struct ChrRacesEntry
                                                             // 6-7 unused
     uint32      TeamID;                                     // 8 (7-Alliance 1-Horde)
                                                             // 9-12 unused
-    uint32      startmovie;                                 // 13 id from CinematicCamera.dbc
+    uint32      CinematicSequence;                          // 13 id from CinematicCamera.dbc
     char*       name[16];                                   // 14-29 used for DBC language detection/selection
                                                             // 30 string flags, unused
     //char*       nameFemale[16];                           // 31-46, if different from base (male) case
@@ -171,6 +170,27 @@ struct ChrRacesEntry
                                                             // 64 string flags, unused
                                                             // 65-67 unused
     uint32      addon;                                      // 68 (0 - original race, 1 - tbc addon, ...)
+};
+
+/* not used
+struct CinematicCameraEntry
+{
+    uint32      id;                                         // 0 index
+    char*       filename;                                   // 1
+    uint32      soundid;                                    // 2 in SoundEntries.dbc or 0
+    float       start_x;                                    // 3
+    float       start_y;                                    // 4
+    float       start_z;                                    // 5
+    float       unk6;                                       // 6 speed?
+};
+*/
+
+struct CinematicSequencesEntry
+{
+    uint32      Id;                                         // 0 index
+    //uint32      unk1;                                     // 1 always 0
+    //uint32      cinematicCamera;                          // 2 id in CinematicCamera.dbc
+                                                            // 3-9 always 0
 };
 
 struct CreatureDisplayInfoEntry

@@ -591,7 +591,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder * holder)
 
         if (ChrRacesEntry const* rEntry = sChrRacesStore.LookupEntry(pCurrChar->getRace()))
         {
-            pCurrChar->SendCinematicStart(rEntry->startmovie);
+            pCurrChar->SendCinematicStart(rEntry->CinematicSequence);
 
             // send new char string if not empty
             if (!sWorld.GetNewCharString().empty())

@@ -762,6 +762,10 @@ enum OregonStrings
     // Room for more level 3              1122-1198 not used
     LANG_NPCINFO_LINKGUID               = 1199,
 
+    // Debug commands
+    LANG_CINEMATIC_NOT_EXIST            = 1200,
+    // Room for more debug                1201-1299 not used
+
     // AV
     LANG_BG_AV_ALLY                     = 1300,
     LANG_BG_AV_HORDE                    = 1301,
