@@ -3535,7 +3535,42 @@ void Map::ScriptsProcess()
                 uSource->SendMovementFlagUpdate();
                 break;
             }
+            case SCRIPT_COMMAND_EQUIP:
+            {
+                if (!source)
+                {
+                    sLog.outError("SCRIPT_COMMAND_EQUIP (script id: %u) call for NULL source.", step.script->id);
+                    break;
+                }
 
+                Creature* cSource = source->ToCreature();
+                if (!cSource)
+                {
+                    sLog.outError("SCRIPT_COMMAND_EQUIP (script id: %u) call, source is non-creature.", step.script->id);
+                    break;
+                }
+                
+                cSource->LoadEquipment(step.script->datalong);
+                break;
+            }
+            case SCRIPT_COMMAND_MODEL:
+            {
+                if (!source)
+                {
+                    sLog.outError("SCRIPT_COMMAND_EQUIP (script id: %u) call for NULL source.", step.script->id);
+                    break;
+                }
+
+                Creature* cSource = source->ToCreature();
+                if (!cSource)
+                {
+                    sLog.outError("SCRIPT_COMMAND_EQUIP (script id: %u) call, source is non-creature.", step.script->id);
+                    break;
+                }
+
+                cSource->SetDisplayId(step.script->datalong);
+                break;
+            }
             default:
                 sLog.outError("Unknown script command %u called.", step.script->command);
                 break;

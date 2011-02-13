@@ -385,6 +385,9 @@ enum RealmZone
 
 //Oregon only
 #define SCRIPT_COMMAND_ORIENTATION          30              // o = orientation
+#define SCRIPT_COMMAND_EQUIP                31              // datalong = equipment id
+#define SCRIPT_COMMAND_MODEL                32              // datalong = model id
+
 // Storage class for commands issued for delayed execution
 struct CliCommandHolder
 {
