@@ -27,6 +27,7 @@
 #include "Timer.h"
 #include "Policies/Singleton.h"
 #include "SharedDefines.h"
+#include "ace/Atomic_Op.h"
 #include "QueryResult.h"
 
 #include <map>
@@ -538,9 +539,10 @@ class World
         BanReturn BanAccount(BanMode mode, std::string nameOrIP, std::string duration, std::string reason, std::string author);
         bool RemoveBanAccount(BanMode mode, std::string nameOrIP);
 
-        void ScriptsStart(std::map<uint32, std::multimap<uint32, ScriptInfo> > const& scripts, uint32 id, Object* source, Object* target, bool start = true);
-        void ScriptCommandStart(ScriptInfo const& script, uint32 delay, Object* source, Object* target);
-        bool IsScriptScheduled() const { return !m_scriptSchedule.empty(); }
+        uint32 IncreaseScheduledScriptsCount() { return (uint32)++m_scheduledScripts; }
+        uint32 DecreaseScheduledScriptCount() { return (uint32)--m_scheduledScripts; }
+        uint32 DecreaseScheduledScriptCount(size_t count) { return (uint32)(m_scheduledScripts -= count); }
+        bool IsScriptScheduled() const { return m_scheduledScripts > 0; }
 
         bool IsAllowedMap(uint32 mapid) { return m_forbiddenMapIds.count(mapid) == 0 ;}
 
@@ -589,7 +591,6 @@ class World
         void RecordTimeDiff(const char * text, ...);
     protected:
         void _UpdateGameTime();
-        void ScriptsProcess();
         // callback for UpdateRealmCharacters
         void _UpdateRealmCharCount(QueryResult_AutoPtr resultCharCount, uint32 accountId);
 
@@ -600,6 +601,9 @@ class World
         static uint8 m_ExitCode;
         uint32 m_ShutdownTimer;
         uint32 m_ShutdownMask;
+
+        //atomic op counter for active scripts amount
+        ACE_Atomic_Op<ACE_Thread_Mutex, long> m_scheduledScripts;
 
         time_t m_startTime;
         time_t m_gameTime;
@@ -619,8 +623,6 @@ class World
         DisconnectMap m_disconnects;
         uint32 m_maxActiveSessionCount;
         uint32 m_maxQueuedSessionCount;
-
-        std::multimap<time_t, ScriptAction> m_scriptSchedule;
 
         std::string m_newCharString;
 

@@ -12667,9 +12667,9 @@ void Player::OnGossipSelect(WorldObject* pSource, uint32 gossipListId, uint32 me
             if (pMenuData.m_gAction_script)
             {
                 if (pSource->GetTypeId() == TYPEID_GAMEOBJECT)
-                    sWorld.ScriptsStart(sGossipScripts, pMenuData.m_gAction_script, this, pSource);
+                    GetMap()->ScriptsStart(sGossipScripts, pMenuData.m_gAction_script, this, pSource);
                 else if (pSource->GetTypeId() == TYPEID_UNIT)
-                    sWorld.ScriptsStart(sGossipScripts, pMenuData.m_gAction_script, pSource, this);
+                    GetMap()->ScriptsStart(sGossipScripts, pMenuData.m_gAction_script, pSource, this);
             }
             break;
         }
@@ -13236,7 +13236,7 @@ void Player::AddQuest(Quest const *pQuest, Object *questGiver)
 
     //starting initial quest script
     if (questGiver && pQuest->GetQuestStartScript() != 0)
-        sWorld.ScriptsStart(sQuestStartScripts, pQuest->GetQuestStartScript(), questGiver, this);
+        GetMap()->ScriptsStart(sQuestStartScripts, pQuest->GetQuestStartScript(), questGiver, this);
 
     UpdateForQuestsGO();
 }
@@ -14344,7 +14344,7 @@ void Player::SendQuestReward(Quest const *pQuest, uint32 XP, Object * questGiver
     GetSession()->SendPacket(&data);
 
     if (pQuest->GetQuestCompleteScript() != 0)
-        sWorld.ScriptsStart(sQuestEndScripts, pQuest->GetQuestCompleteScript(), questGiver, this);
+        GetMap()->ScriptsStart(sQuestEndScripts, pQuest->GetQuestCompleteScript(), questGiver, this);
 }
 
 void Player::SendQuestFailed(uint32 quest_id)
