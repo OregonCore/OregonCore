@@ -383,6 +383,8 @@ enum RealmZone
 #define SCRIPT_COMMAND_PLAYSOUND            18              // datalong soundid, datalong2 play only self
 #define SCRIPT_COMMAND_KILL                 19              // datalong removecorpse
 
+//Oregon only
+#define SCRIPT_COMMAND_ORIENTATION          30              // o = orientation
 // Storage class for commands issued for delayed execution
 struct CliCommandHolder
 {

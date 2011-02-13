@@ -3510,6 +3510,32 @@ void Map::ScriptsProcess()
                 break;
             }
 
+            case SCRIPT_COMMAND_ORIENTATION:
+            {
+                if (!source || !source->isType(TYPEMASK_UNIT))
+                {
+                    sLog.outError("SCRIPT_COMMAND_ORIENTATION (script id: %u) call for NULL or non-unit source.", step.script->id);
+                    break;
+                }
+
+                Unit* uSource = (Unit*)source;
+
+                if (!step.script->datalong)
+                    uSource->SetOrientation(step.script->o);
+                else
+                {
+                    if (!target || !target->isType(TYPEMASK_UNIT))
+                    {
+                        sLog.outError("SCRIPT_COMMAND_ORIENTATION (script id: %u) call for NULL or non-unit target.", step.script->id);
+                        break;
+                    }
+                    uSource->SetInFront((Unit*)target);
+                }
+
+                uSource->SendMovementFlagUpdate();
+                break;
+            }
+
             default:
                 sLog.outError("Unknown script command %u called.", step.script->command);
                 break;
