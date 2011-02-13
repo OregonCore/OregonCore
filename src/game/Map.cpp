@@ -3021,6 +3021,32 @@ void Map::ScriptsProcess()
                 break;
             }
 
+            case SCRIPT_COMMAND_KILL_CREDIT:
+            {
+                // accept player in any one from target/source arg
+                if (!target && !source)
+                {
+                    sLog.outError("SCRIPT_COMMAND_KILL_CREDIT (script id: %u) call for NULL object.", step.script->id);
+                    break;
+                }
+
+                Player* pSource = target->ToPlayer() != NULL ? target->ToPlayer() : source->ToPlayer();
+                // must be only Player
+                if (!pSource)
+                {
+                    sLog.outError("SCRIPT_COMMAND_KILL_CREDIT (script id: %u) call for non-player (TypeIdSource: %u)(TypeIdTarget: %u), skipping.",
+                    step.script->id, source ? source->GetTypeId() : 0, target ? target->GetTypeId() : 0);
+                    break;
+                }
+
+                if (step.script->datalong2)
+                    pSource->RewardPlayerAndGroupAtEvent(step.script->datalong, pSource);
+                else
+                    pSource->KilledMonsterCredit(step.script->datalong, 0);
+
+                break;
+            }
+
             case SCRIPT_COMMAND_TEMP_SUMMON_CREATURE:
             {
                 if (!step.script->datalong)                  // creature not specified
