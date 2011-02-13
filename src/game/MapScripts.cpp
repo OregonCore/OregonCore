@@ -389,7 +389,7 @@ void Map::ScriptsProcess()
                     {
                         uint64 targetGUID = target ? target->GetGUID() : 0;
                         uint32 loc_idx = pSource->GetSession()->GetSessionDbLocaleIndex();
-                        const std::string text(objmgr.GetOregonString(step.script->Talk.TextID, loc_idx));
+                        std::string text(objmgr.GetOregonString(step.script->Talk.TextID, loc_idx));
 
                         switch (step.script->Talk.ChatType)
                         {
@@ -752,8 +752,8 @@ void Map::ScriptsProcess()
                     break;
                 }
 
-                bool triggered = (step.script->CastSpell.Flags != 4) ? 
-                    step.script->CastSpell.CreatureEntry & SF_CASTSPELL_TRIGGERED : 
+                bool triggered = (step.script->CastSpell.Flags != 4) ?
+                    step.script->CastSpell.CreatureEntry & SF_CASTSPELL_TRIGGERED :
                     step.script->CastSpell.CreatureEntry < 0;
                 uSource->CastSpell(uTarget, step.script->CastSpell.SpellID, triggered);
                 break;
@@ -827,7 +827,7 @@ void Map::ScriptsProcess()
                     break;
                 }
 
-                Creature* cTarget;
+                Creature* cTarget = NULL;
                 if (source) //using grid searcher
                 {
                     WorldObject* wSource = dynamic_cast <WorldObject*> (source);
