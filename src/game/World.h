@@ -39,7 +39,6 @@ class WorldPacket;
 class WorldSession;
 class Player;
 class Weather;
-struct ScriptAction;
 struct ScriptInfo;
 class SqlResultQueue;
 class QueryResult;

@@ -55,6 +55,14 @@ struct ScriptAction;
 struct Position;
 class BattleGround;
 
+struct ScriptAction
+{
+    uint64 sourceGUID;
+    uint64 targetGUID;
+    uint64 ownerGUID;                                       // owner of source if source is item
+    ScriptInfo const* script;                               // pointer to static script data
+};
+
 //******************************************
 // Map file format defines
 //******************************************
