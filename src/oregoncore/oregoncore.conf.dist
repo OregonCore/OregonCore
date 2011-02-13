@@ -2004,25 +2004,3 @@ MinRecordUpdateTimeDiff = 100
 PlayerStart.String = ""
 DuelMod.Enable = 0
 DuelMod.Cooldowns = 0
-
-###############################################################################
-# MOVEMENT ANTICHEAT
-#
-#    Anticheat.Movement.Enable
-#        Enable Movement Anticheat
-#        Default: 0 (Disabled)
-#                 1 - Enabled
-#
-#    Anticheat.Movement.TeleportToPlaneAlarms
-#        Maximum alarms before player will be kicked
-#         (default 50, allowed 20 - 100)
-#
-#    Anticheat.Movement.MaxMovementAlarms
-#        Maximum alarms without valid movement before player will be kicked
-#         (default 50, allowed 20 - 100)
-#
-###############################################################################
-
-Anticheat.Movement.Enable = 0
-Anticheat.Movement.TeleportToPlaneAlarms = 50
-Anticheat.Movement.MaxMovementAlarms = 50

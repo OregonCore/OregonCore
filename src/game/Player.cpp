@@ -388,29 +388,6 @@ Player::Player (WorldSession *session): Unit()
     rest_type=REST_TYPE_NO;
     ////////////////////Rest System/////////////////////
 
-    // movement anticheat
-    m_anti_lastmovetime = 0;          //last movement time
-    m_anti_transportGUID = 0;         //current transport GUID
-    m_anti_last_hspeed = 7.0f;        //horizontal speed, default RUN speed
-    m_anti_lastspeed_changetime = 0;  //last speed change time
-    m_anti_last_vspeed = -2.3f;       //vertical speed, default max jump height
-    m_anti_beginfalltime = 0;         //alternative falling begin time
-    m_anti_justteleported = false;    //seted when player was teleported
-    m_anti_teletoplane_count = 0;     //Teleport To Plane alarm counter
-    m_anti_alarmcount = 0;            //alarm counter
-    m_anti_flymounted = false;        // seted when player is mounted on flymount
-    m_anti_wasflymounted = false;     // seted when player was mounted on flymount
-    m_anti_ontaxipath = false;        // seted when player is on a taxi fight
-    m_anti_isjumping = false;         // seted when player is in jump phase
-    m_anti_isknockedback = false;     // seted when player is knocked back
-
-    m_anti_justjumped = 0;            // jump already began, anti-air jump check
-    m_anti_alarmcount = 0;            // alarm counter
-    m_anti_lastcheat.empty();         // stores last cheat as string
-    m_anti_jumpbase = 0;              // Anti-Gravitation
-
-    /////////////////////////////////
-
     m_mailsLoaded = false;
     m_mailsUpdated = false;
     unReadMails = 0;
@@ -20133,16 +20110,12 @@ bool ItemPosCount::isContainedIn(ItemPosCountVec const& vec) const
 
 void Player::HandleFallDamage(MovementInfo& movementInfo)
 {
-    // Removed for Anticheat Fall DMG
-    if (!World::GetEnableMvAnticheat() && movementInfo.GetFallTime() < 1500)
+    if (movementInfo.GetFallTime() < 1500)
         return;
-    else
-        if (movementInfo.GetFallTime() > 400 && movementInfo.GetFallTime() < 1500) // lower falltime then 400 = cheat
-            return;
 
     // calculate total z distance of the fall
     float z_diff = m_lastFallZ - movementInfo.GetPos()->GetPositionZ();
-    DEBUG_LOG("zDiff=%f, FallTime=%u", z_diff, movementInfo.GetFallTime());
+    DEBUG_LOG("zDiff = %f", z_diff);
 
     //Players with low fall distance, Feather Fall or physical immunity (charges used) are ignored
     // 14.57 can be calculated by resolving damageperc formular below to 0
