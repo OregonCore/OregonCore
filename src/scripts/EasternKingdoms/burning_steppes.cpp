@@ -33,7 +33,7 @@ EndContentData */
 ## npc_ragged_john
 ######*/
 
-#define GOSSIP_HELLO    "Official buisness, John. I need some information about Marsha Windsor. Tell me about the last time you saw him."
+#define GOSSIP_HELLO    "Official business, John. I need some information about Marshal Windsor. Tell me about the last time you saw him."
 #define GOSSIP_SELECT1  "So what did you do?"
 #define GOSSIP_SELECT2  "Start making sense, dwarf. I don't want to have anything to do with your cracker, your pappy, or any sort of 'discreditin'."
 #define GOSSIP_SELECT3  "Ironfoe?"
