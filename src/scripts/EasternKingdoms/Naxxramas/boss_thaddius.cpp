@@ -50,6 +50,15 @@ EndScriptData */
 #define GO_TESLA_COIL1    181477
 #define GO_TESLA_COIL2    181478    //those 2 are not spawned
 
+// later move it to define file
+enum eEncounters
+{
+    EVENT_FUEGEN   = 0,
+    EVENT_STALAG   = 1,
+    EVENT_THADDIUS = 2
+    // rest later
+};
+
 enum eSpells
 {
     // Fuegen
@@ -78,7 +87,7 @@ enum eSpells
 
 struct boss_fuegenAI : public BossAI
 {
-    boss_fuegenAI(Creature *c): BossAI(c){}
+    boss_fuegenAI(Creature *c): BossAI(c, EVENT_FUEGEN){}
 
     void Reset() {}
 
@@ -86,6 +95,15 @@ struct boss_fuegenAI : public BossAI
     {
         if (!UpdateVictim())
             return;
+
+        events.Update(diff);
+        while (uint32 eventId = events.ExecuteEvent())
+        {
+            switch(eventId)
+            {
+                default: break;
+            }
+        }
 
         //CastNextSpellIfAnyAndReady();
         DoMeleeAttackIfReady();
@@ -94,7 +112,7 @@ struct boss_fuegenAI : public BossAI
 
 struct boss_stalaggAI : public BossAI
 {
-    boss_stalaggAI(Creature *c) : BossAI(c) {}
+    boss_stalaggAI(Creature *c) : BossAI(c, EVENT_STALAG) {}
 
     void Reset() {}
 
@@ -102,15 +120,24 @@ struct boss_stalaggAI : public BossAI
     {
         if (!UpdateVictim())
             return;
+
+        events.Update(diff);
+        while (uint32 eventId = events.ExecuteEvent())
+        {
+            switch(eventId)
+            {
+                default: break;
+            }
+        }
 
         //CastNextSpellIfAnyAndReady();
         DoMeleeAttackIfReady();
     }
 };
 
-struct TRINITY_DLL_DECL boss_thaddiusAI : public BossAI
+struct boss_thaddiusAI : public BossAI
 {
-    boss_thaddiusAI(Creature *c) : BossAI(c) {}
+    boss_thaddiusAI(Creature *c) : BossAI(c, EVENT_THADDIUS) {}
 
     void Reset() {}
 
@@ -118,6 +145,15 @@ struct TRINITY_DLL_DECL boss_thaddiusAI : public BossAI
     {
         if (!UpdateVictim())
             return;
+
+        events.Update(diff);
+        while (uint32 eventId = events.ExecuteEvent())
+        {
+            switch(eventId)
+            {
+                default: break;
+            }
+        }
 
         //CastNextSpellIfAnyAndReady();
         DoMeleeAttackIfReady();
