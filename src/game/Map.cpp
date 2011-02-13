@@ -2929,36 +2929,56 @@ void Map::ScriptsProcess()
             }
 
             case SCRIPT_COMMAND_EMOTE:
+            {
                 if (!source)
                 {
-                    sLog.outError("SCRIPT_COMMAND_EMOTE (script id: %u) call for NULL creature.", step.script->id);
+                    sLog.outError("SCRIPT_COMMAND_EMOTE (script id: %u) call for NULL source.", step.script->id);
                     break;
                 }
 
-                if (source->GetTypeId() != TYPEID_UNIT)
+                Creature* cSource = NULL;
+                cSource = source->ToCreature() != NULL ? source->ToCreature() : target->ToCreature();
+
+                if (!cSource)
                 {
-                    sLog.outError("SCRIPT_COMMAND_EMOTE (script id: %u) call for non-creature (TypeId: %u, Entry: %u, GUID: %u), skipping.",
-                    step.script->id, source->GetTypeId(),source->GetEntry(),source->GetGUIDLow());
+                    sLog.outError("SCRIPT_COMMAND_TALK (script id: %u) call for non supported source (TypeId: %u, Entry: %u, GUID: %u), skipping.",
+                    step.script->id, source->GetTypeId(), source->GetEntry(), source->GetGUIDLow());
                     break;
                 }
 
-                source->ToCreature()->HandleEmoteCommand(step.script->datalong);
+                if (step.script->datalong2)
+                    cSource->SetUInt32Value(UNIT_NPC_EMOTESTATE, step.script->datalong);
+                else
+                    cSource->HandleEmoteCommand(step.script->datalong);
                 break;
+            }
+
             case SCRIPT_COMMAND_FIELD_SET:
+            {
                 if (!source)
                 {
-                    sLog.outError("SCRIPT_COMMAND_FIELD_SET (script id: %u) call for NULL object.", step.script->id);
+                    sLog.outError("SCRIPT_COMMAND_FIELD_SET (script id: %u) call for NULL source.", step.script->id);
                     break;
                 }
-                if (step.script->datalong <= OBJECT_FIELD_ENTRY || step.script->datalong >= source->GetValuesCount())
+                
+                Creature* cSource = source->ToCreature() != NULL ? source->ToCreature() : target->ToCreature();
+                if (!cSource)
+                {
+                    sLog.outError("SCRIPT_COMMAND_FIELD_SET (script id: %u) call for non-creature source.", step.script->id);
+                    break;
+                }
+
+                if (step.script->datalong <= OBJECT_FIELD_ENTRY || step.script->datalong >= cSource->GetValuesCount())
                 {
                     sLog.outError("SCRIPT_COMMAND_FIELD_SET (script id: %u) call for wrong field %u (max count: %u) in object (TypeId: %u, Entry: %u, GUID: %u).",
                     step.script->id, step.script->datalong,source->GetValuesCount(),source->GetTypeId(),source->GetEntry(),source->GetGUIDLow());
                     break;
                 }
 
-                source->SetUInt32Value(step.script->datalong, step.script->datalong2);
+                cSource->SetUInt32Value(step.script->datalong, step.script->datalong2);
                 break;
+            }
+
             case SCRIPT_COMMAND_MOVE_TO:
             {
                 if (!source)
@@ -2967,7 +2987,7 @@ void Map::ScriptsProcess()
                     break;
                 }
 
-                Creature* cSource = source->ToCreature();
+                Creature* cSource = source->ToCreature() != NULL ? source->ToCreature() : target->ToCreature();
                 if (!cSource)
                 {
                     sLog.outError("SCRIPT_COMMAND_MOVE_TO (script id: %u) call for non-creature (TypeId: %u, Entry: %u, GUID: %u), skipping.",
@@ -2979,36 +2999,58 @@ void Map::ScriptsProcess()
                 cSource->GetMap()->CreatureRelocation(cSource, step.script->x, step.script->y, step.script->z, 0);
                 break;
             }
+
             case SCRIPT_COMMAND_FLAG_SET:
+            {
                 if (!source)
                 {
                     sLog.outError("SCRIPT_COMMAND_FLAG_SET (script id: %u) call for NULL object.", step.script->id);
                     break;
                 }
-                if (step.script->datalong <= OBJECT_FIELD_ENTRY || step.script->datalong >= source->GetValuesCount())
+
+                Creature* cSource = source->ToCreature() != NULL ? source->ToCreature() : target->ToCreature();
+                if (!cSource)
+                {
+                    sLog.outError("SCRIPT_COMMAND_FLAG_SET (script id: %u) call for non-creature source.", step.script->id);
+                    break; 
+                }                
+
+                if (step.script->datalong <= OBJECT_FIELD_ENTRY || step.script->datalong >= cSource->GetValuesCount())
                 {
                     sLog.outError("SCRIPT_COMMAND_FLAG_SET (script id: %u) call for wrong field %u (max count: %u) in object (TypeId: %u, Entry: %u, GUID: %u).",
                     step.script->id, step.script->datalong,source->GetValuesCount(),source->GetTypeId(),source->GetEntry(),source->GetGUIDLow());
                     break;
                 }
 
-                source->SetFlag(step.script->datalong, step.script->datalong2);
+                cSource->SetFlag(step.script->datalong, step.script->datalong2);
                 break;
+            }
+
             case SCRIPT_COMMAND_FLAG_REMOVE:
+            {
                 if (!source)
                 {
                     sLog.outError("SCRIPT_COMMAND_FLAG_REMOVE (script id: %u) call for NULL object.", step.script->id);
                     break;
                 }
-                if (step.script->datalong <= OBJECT_FIELD_ENTRY || step.script->datalong >= source->GetValuesCount())
+                
+                Creature* cSource = source->ToCreature() != NULL ? source->ToCreature() : target->ToCreature();
+                if (!cSource)
+                {
+                    sLog.outError("SCRIPT_COMMAND_FLAG_REMOVE (script id: %u) call for non-creature source.", step.script->id);
+                    break; 
+                } 
+                
+                if (step.script->datalong <= OBJECT_FIELD_ENTRY || step.script->datalong >= cSource->GetValuesCount())
                 {
                     sLog.outError("SCRIPT_COMMAND_FLAG_REMOVE (script id: %u) call for wrong field %u (max count: %u) in object (TypeId: %u, Entry: %u, GUID: %u).",
                     step.script->id, step.script->datalong,source->GetValuesCount(),source->GetTypeId(),source->GetEntry(),source->GetGUIDLow());
                     break;
                 }
 
-                source->RemoveFlag(step.script->datalong, step.script->datalong2);
+                cSource->RemoveFlag(step.script->datalong, step.script->datalong2);
                 break;
+            }
 
             case SCRIPT_COMMAND_TELEPORT_TO:
             {
@@ -3306,7 +3348,8 @@ void Map::ScriptsProcess()
                 WorldObject* worldObject;
                 Player* pTarget;
 
-                if (pTarget = target->ToPlayer())
+                pTarget = target->ToPlayer();
+                if (pTarget)
                 {
                     if (source->GetTypeId() != TYPEID_UNIT && source->GetTypeId() != TYPEID_GAMEOBJECT && source->GetTypeId() != TYPEID_PLAYER)
                     {
@@ -3326,7 +3369,8 @@ void Map::ScriptsProcess()
                         break;
                     }
 
-                    if (!source->ToPlayer())
+                    pTarget = source->ToPlayer();
+                    if (!pTarget)
                     {
                         sLog.outError("SCRIPT_COMMAND_QUEST_EXPLORED (script id %u) call for non-player (TypeId: %u), skipping.", step.script->id, source->GetTypeId());
                         break;
