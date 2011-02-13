@@ -23,6 +23,15 @@ EndScriptData */
 
 #include "ScriptPCH.h"
 
+// move it later to header file used by whole instance
+enum eEncounters
+{
+    EVENT_FUEGEN   = 0,
+    EVENT_STALAGG  = 1,
+    EVENT_THADDIUS = 2
+    // rest later
+};
+
 //Stalagg
 #define SAY_STAL_AGGRO          -1533023
 #define SAY_STAL_SLAY           -1533024
@@ -46,50 +55,66 @@ EndScriptData */
 #define SAY_SCREAM3             -1533038
 #define SAY_SCREAM4             -1533039
 
-
 #define GO_TESLA_COIL1    181477
 #define GO_TESLA_COIL2    181478    //those 2 are not spawned
-
-// later move it to define file
-enum eEncounters
-{
-    EVENT_FUEGEN   = 0,
-    EVENT_STALAG   = 1,
-    EVENT_THADDIUS = 2
-    // rest later
-};
 
 enum eSpells
 {
     // Fuegen
     FEUG_TESLA_PASSIVE            = 28109,
-    SPELL_MANABURN                = 28135,
+    SPELL_MANA_BURN               = 28135,
 
     // Stalagg
     STAL_TESLA_PASSIVE            = 28097,
-    SPELL_POWERSURGE              = 28134,
+    SPELL_POWER_SURGE             = 28134,
 
     // shared
-    SPELL_WARSTOMP                = 28125,
-    SPELL_MAGNETIC_PULL           = 28337,
+    SPELL_WAR_STOMP               = 28125,
+    SPELL_MAGNETIC_PULL           = 28338, // scripteffect to script
 
     // Thaddius
     SPELL_SELF_STUN               = 28160,
     SPELL_BALL_LIGHTNING          = 28299,
-    SPELL_CHARGE_POSITIVE_DMGBUFF = 29659,
-    SPELL_CHARGE_POSITIVE_NEARDMG = 28059,
-    SPELL_CHARGE_NEGATIVE_DMGBUFF = 29660,
-    SPELL_CHARGE_NEGATIVE_NEARDMG = 28084,
-    SPELL_CHAIN_LIGHTNING         = 28167,
-    SPELL_BESERK                  = 26662
+    SPELL_POLARITY_SHIFT          = 28089, // dummy to script
 
+    SPELL_CHAIN_LIGHTNING         = 28167,
+    SPELL_BERSERK                 = 26662
+};
+
+enum eEvents
+{
+    // 1st phase shared
+    EVENT_CHECK_COIL     = 1,
+    EVENT_WAR_STOMP      = 2,
+    EVENT_PULL_TANK      = 3,
+
+    // Fuegen
+    EVENT_MANA_BURN      = 4,
+
+    // Stalagg
+    EVENT_POWER_SURGE    = 5,
+
+    // Thaddius
+    EVENT_POLARITY_SHIFT = 6,
+    EVENT_BERSERK        = 7
 };
 
 struct boss_fuegenAI : public BossAI
 {
     boss_fuegenAI(Creature *c): BossAI(c, EVENT_FUEGEN){}
 
-    void Reset() {}
+    void Reset()
+    {
+        //ClearCastQueue();
+
+        // proper timers
+        events.ScheduleEvent(EVENT_CHECK_COIL, 2000);
+        events.ScheduleEvent(EVENT_PULL_TANK, 20500);
+
+        // guessed timers, to FIX
+        events.ScheduleEvent(EVENT_MANA_BURN, 10000);
+        events.ScheduleEvent(EVENT_WAR_STOMP, 30000);
+    }
 
     void UpdateAI(uint32 diff)
     {
@@ -97,10 +122,35 @@ struct boss_fuegenAI : public BossAI
             return;
 
         events.Update(diff);
-        while (uint32 eventId = events.ExecuteEvent())
+        while(uint32 eventId = events.ExecuteEvent())
         {
             switch(eventId)
             {
+                case EVENT_CHECK_COIL:
+                {
+                    events.ScheduleEvent(EVENT_CHECK_COIL, 2000);
+                    break;
+                }
+                case EVENT_MANA_BURN:
+                {
+                    //AddAOESpellToCast(SPELL_MANA_BURN);
+                    events.ScheduleEvent(EVENT_MANA_BURN, 10000); // guessed timer
+                    break;
+                }
+                case EVENT_WAR_STOMP:
+                {
+                    //AddAOESpellToCast(SPELL_WAR_STOMP);
+                    events.ScheduleEvent(EVENT_WAR_STOMP, 15000); // guessed timer
+                    break;
+                }
+                case EVENT_PULL_TANK:
+                {
+                    Unit *pStalagg = NULL;
+                    // Select Stalaggs as target, rest will be handled in scripteffect
+                    //AddSpellToCast(pStalagg, SPELL_MAGNETIC_PULL);
+                    events.ScheduleEvent(EVENT_PULL_TANK, 20500);
+                    break;
+                }
                 default: break;
             }
         }
@@ -112,9 +162,20 @@ struct boss_fuegenAI : public BossAI
 
 struct boss_stalaggAI : public BossAI
 {
-    boss_stalaggAI(Creature *c) : BossAI(c, EVENT_STALAG) {}
+    boss_stalaggAI(Creature *c) : BossAI(c, EVENT_STALAGG) {}
 
-    void Reset() {}
+    void Reset()
+    {
+        //ClearCastQueue();
+
+        // proper timers
+        events.ScheduleEvent(EVENT_CHECK_COIL, 2000);
+        events.ScheduleEvent(EVENT_PULL_TANK, 20500);
+
+        // guessed timers, to FIX
+        events.ScheduleEvent(EVENT_POWER_SURGE, 10000);
+        events.ScheduleEvent(EVENT_WAR_STOMP, 30000);
+    }
 
     void UpdateAI(uint32 diff)
     {
@@ -122,10 +183,35 @@ struct boss_stalaggAI : public BossAI
             return;
 
         events.Update(diff);
-        while (uint32 eventId = events.ExecuteEvent())
+        while(uint32 eventId = events.ExecuteEvent())
         {
             switch(eventId)
             {
+                case EVENT_CHECK_COIL:
+                {
+                    events.ScheduleEvent(EVENT_CHECK_COIL, 2000);
+                    break;
+                }
+                case EVENT_POWER_SURGE:
+                {
+                    //AddSpellToCast(me, SPELL_POWER_SURGE);
+                    events.ScheduleEvent(EVENT_POWER_SURGE, 20000); // guessed timer
+                    break;
+                }
+                case EVENT_WAR_STOMP:
+                {
+                    //AddSpellToCast(me, SPELL_WAR_STOMP);
+                    events.ScheduleEvent(EVENT_WAR_STOMP, 15000); // guessed timer
+                    break;
+                }
+                case EVENT_PULL_TANK:
+                {
+                    Unit *pFuegen = NULL;
+                    // Select Fuegens as target, rest will be handled in scripteffect
+                    //AddSpellToCast(pFuegen, SPELL_MAGNETIC_PULL);
+                    events.ScheduleEvent(EVENT_PULL_TANK, 20500);
+                    break;
+                }
                 default: break;
             }
         }
@@ -139,7 +225,13 @@ struct boss_thaddiusAI : public BossAI
 {
     boss_thaddiusAI(Creature *c) : BossAI(c, EVENT_THADDIUS) {}
 
-    void Reset() {}
+    void Reset()
+    {
+        //ClearCastQueue();
+
+        events.ScheduleEvent(EVENT_POLARITY_SHIFT, 30000);
+        events.ScheduleEvent(EVENT_BERSERK, 300000);
+    }
 
     void UpdateAI(uint32 diff)
     {
@@ -147,10 +239,21 @@ struct boss_thaddiusAI : public BossAI
             return;
 
         events.Update(diff);
-        while (uint32 eventId = events.ExecuteEvent())
+        while(uint32 eventId = events.ExecuteEvent())
         {
             switch(eventId)
             {
+                case EVENT_POLARITY_SHIFT:
+                {
+                    //AddAOESpellToCast(SPELL_POLARITY_SHIFT);
+                    events.ScheduleEvent(EVENT_POLARITY_SHIFT, 30000);
+                    break;
+                }
+                case EVENT_BERSERK:
+                {
+                    //AddSpellToCast(me, SPELL_BERSERK);
+                    break;
+                }
                 default: break;
             }
         }
