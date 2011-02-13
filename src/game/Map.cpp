@@ -3432,6 +3432,49 @@ void Map::ScriptsProcess()
                 break;
             }
 
+            case SCRIPT_COMMAND_PLAY_SOUND:
+            {
+                if (!source)
+                {
+                    sLog.outError("SCRIPT_COMMAND_PLAY_SOUND (script id: %u) call for NULL creature.", step.script->id);
+                    break;
+                }
+
+                WorldObject* pSource = dynamic_cast<WorldObject*>(source);
+                if (!pSource)
+                {
+                    sLog.outError("SCRIPT_COMMAND_PLAY_SOUND (script id: %u) call for non-world object (TypeId: %u, Entry: %u, GUID: %u), skipping.",
+                    step.script->id, source->GetTypeId(),source->GetEntry(),source->GetGUIDLow());
+                    break;
+                }
+
+                // bitmask: 0/1=anyone/target, 0/2=with distance dependent
+                Player* pTarget;
+                if (step.script->datalong2 & 1)
+                {
+                    if (!target)
+                    {
+                        sLog.outError("SCRIPT_COMMAND_PLAY_SOUND (script id: %u) in targeted mode call for NULL target.", step.script->id);
+                        break;
+                    }
+
+                    pTarget = target->ToPlayer();
+                    if (!pTarget)
+                    {
+                        sLog.outError("SCRIPT_COMMAND_PLAY_SOUND (script id: %u) in targeted mode call for non-player (TypeId: %u, Entry: %u, GUID: %u), skipping.",
+                        step.script->id, target->GetTypeId(),target->GetEntry(),target->GetGUIDLow());
+                        break;
+                    }
+                }
+
+                // bitmask: 0/1=anyone/target, 0/2=with distance dependent
+                if (step.script->datalong2 & 2)
+                    pSource->PlayDistanceSound(step.script->datalong, pTarget);
+                else
+                    pSource->PlayDirectSound(step.script->datalong, pTarget);
+                break;
+            }
+
             case SCRIPT_COMMAND_LOAD_PATH:
             {
                 if (!source)
@@ -3524,15 +3567,6 @@ void Map::ScriptsProcess()
                 uint32 script_id = step.script->datalong2;
                 //insert script into schedule but do not start it
                 ScriptsStart(*datamap, script_id, cTarget, NULL/*, false*/);
-                break;
-            }
-
-            case SCRIPT_COMMAND_PLAYSOUND:
-            {
-                if (!source)
-                    break;
-                //datalong sound_id, datalong2 onlyself
-                ((WorldObject*)source)->SendPlaySound(step.script->datalong, step.script->datalong2);
                 break;
             }
 

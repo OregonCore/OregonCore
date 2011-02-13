@@ -1578,8 +1578,6 @@ class Player : public Unit, public GridObject<Player>
         void SendDelayResponse(const uint32);
         void SendLogXPGain(uint32 GivenXP,Unit* victim,uint32 RestXP);
 
-        //Low Level Packets
-        void PlaySound(uint32 Sound, bool OnlySelf);
         //notifiers
         void SendAttackSwingCantAttack();
         void SendAttackSwingCancelAttack();
