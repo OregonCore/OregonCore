@@ -27,6 +27,7 @@ EndScriptData */
 npc_neeru_fireblade     npc_text + gossip options text missing
 npc_shenthul
 npc_thrall_warchief
+npc_eitrigg
 EndContentData */
 
 #include "ScriptPCH.h"
