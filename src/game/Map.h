@@ -508,6 +508,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         //visibility calculations. Highly optimized for massive calculations
         void ProcessRelocationNotifies(const uint32 &diff);
 
+        bool i_scriptLock;
         std::set<WorldObject *> i_objectsToRemove;
         std::map<WorldObject*, bool> i_objectsToSwitch;
         std::set<WorldObject*> i_worldObjects;

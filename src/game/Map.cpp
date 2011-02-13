@@ -208,7 +208,8 @@ Map::Map(uint32 id, time_t expiry, uint32 InstanceId, uint8 SpawnMode, Map* _par
 i_mapEntry (sMapStore.LookupEntry(id)), i_spawnMode(SpawnMode), i_InstanceId(InstanceId),
 m_unloadTimer(0), m_VisibleDistance(DEFAULT_VISIBILITY_DISTANCE),
 m_VisibilityNotifyPeriod(DEFAULT_VISIBILITY_NOTIFY_PERIOD),
-m_activeNonPlayersIter(m_activeNonPlayers.end()), i_gridExpiry(expiry)
+m_activeNonPlayersIter(m_activeNonPlayers.end()), i_gridExpiry(expiry),
+i_scriptLock(false)
 {
     m_parentMap = (_parent ? _parent : this);
 
@@ -672,7 +673,9 @@ void Map::Update(const uint32 &t_diff)
     // Process necessary scripts
     if (!m_scriptSchedule.empty())
     {
+        i_scriptLock = true;
         ScriptsProcess();
+        i_scriptLock = false;
     }
 
     MoveAllCreaturesInMoveList();
@@ -2742,8 +2745,12 @@ void Map::ScriptsStart(ScriptMapMap const& scripts, uint32 id, Object* source, O
         sWorld.IncreaseScheduledScriptsCount();
     }
     // If one of the effects should be immediate, launch the script execution
-    if (/*start &&*/ immedScript)
+    if (/*start &&*/ immedScript && !i_scriptLock)
+    {
+        i_scriptLock = true;
         ScriptsProcess();
+        i_scriptLock = false;
+    }
 }
 
 void Map::ScriptCommandStart(ScriptInfo const& script, uint32 delay, Object* source, Object* target)
@@ -2766,8 +2773,12 @@ void Map::ScriptCommandStart(ScriptInfo const& script, uint32 delay, Object* sou
     sWorld.IncreaseScheduledScriptsCount();
 
     // If effects should be immediate, launch the script execution
-    if (delay == 0)
+    if (delay == 0 && !i_scriptLock)
+    {
+        i_scriptLock = true;
         ScriptsProcess();
+        i_scriptLock = false;
+    }
 }
 
 // Process queued scripts
