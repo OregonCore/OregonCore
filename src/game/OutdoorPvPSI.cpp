@@ -109,7 +109,7 @@ bool OutdoorPvPSI::HandleAreaTrigger(Player *plr, uint32 trigger)
             // add 20 cenarion circle repu
             plr->ModifyFactionReputation(609,20);
             // complete quest
-            plr->KilledMonster(SI_TURNIN_QUEST_CM_A,0);
+            plr->KilledMonsterCredit(SI_TURNIN_QUEST_CM_A,0);
         }
         return true;
     case SI_AREATRIGGER_H:
@@ -134,7 +134,7 @@ bool OutdoorPvPSI::HandleAreaTrigger(Player *plr, uint32 trigger)
             // add 20 cenarion circle repu
             plr->ModifyFactionReputation(609,20);
             // complete quest
-            plr->KilledMonster(SI_TURNIN_QUEST_CM_H,0);
+            plr->KilledMonsterCredit(SI_TURNIN_QUEST_CM_H,0);
         }
         return true;
     }

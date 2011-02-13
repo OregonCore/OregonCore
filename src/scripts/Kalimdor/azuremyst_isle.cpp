@@ -697,7 +697,7 @@ bool go_bristlelimb_cage(Player* pPlayer, GameObject* pGo)
         {
             DoScriptText(RAND(CAPITIVE_SAY_1, CAPITIVE_SAY_2, CAPITIVE_SAY_3), pCreature, pPlayer);
             pCreature->GetMotionMaster()->MoveFleeing(pPlayer, 3500);
-            pPlayer->KilledMonster(pCreature->GetEntry(), pCreature->GetGUID());
+            pPlayer->KilledMonsterCredit(pCreature->GetEntry(), pCreature->GetGUID());
             CAST_AI(npc_stillpine_capitiveAI, pCreature->AI())->FleeTimer = 3500;
             return false;
         }

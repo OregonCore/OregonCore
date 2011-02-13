@@ -134,7 +134,7 @@ struct mob_mature_netherwing_drakeAI : public ScriptedAI
                 Player* plr = Unit::GetPlayer(*me, PlayerGUID);
                 if (plr && plr->GetQuestStatus(10804) == QUEST_STATUS_INCOMPLETE)
                 {
-                    plr->KilledMonster(22131, me->GetGUID());
+                    plr->KilledMonsterCredit(22131, me->GetGUID());
                     Evade = true;
                     PlayerGUID = 0;
                 }
@@ -268,7 +268,7 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
                     Player* plr = Unit::GetPlayer(*me, PlayerGUID);
                     if (plr && plr->GetQuestStatus(10854) == QUEST_STATUS_INCOMPLETE)
                     {
-                        plr->KilledMonster(22316, me->GetGUID());
+                        plr->KilledMonsterCredit(22316, me->GetGUID());
                         /*
                         float x,y,z;
                         me->GetPosition(x,y,z);
@@ -363,7 +363,7 @@ struct mob_dragonmaw_peonAI : public ScriptedAI
             {
                 Player* plr = Unit::GetPlayer(*me, PlayerGUID);
                 if (plr && plr->GetQuestStatus(11020) == QUEST_STATUS_INCOMPLETE)
-                    plr->KilledMonster(23209, me->GetGUID());
+                    plr->KilledMonsterCredit(23209, me->GetGUID());
             }
             PoisonTimer = 0;
             me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -1545,13 +1545,13 @@ bool GOQuestAccept_GO_crystal_prison(Player* pPlayer, GameObject* pGo, Quest con
 #define ENTRY_ENRAGED_AIRY_SOUL 21116
 #define ENTRY_ENRAGED_WATERY_SOUL 21109  // wrong model
 
-/* SPELL KILLCREDIT - not working!?! - using KilledMonster */
+/* SPELL KILLCREDIT - not working!?! - using KilledMonsterCredit */
 #define SPELL_EARTHEN_SOUL_CAPTURED_CREDIT 36108
 #define SPELL_FIERY_SOUL_CAPTURED_CREDIT 36117
 #define SPELL_AIRY_SOUL_CAPTURED_CREDIT 36182
 #define SPELL_WATERY_SOUL_CAPTURED_CREDIT 36171
 
-/* KilledMonster Workaround */
+/* KilledMonsterCredit Workaround */
 #define CREDIT_FIRE 21094
 #define CREDIT_WATER 21095
 #define CREDIT_AIR 21096
@@ -1622,7 +1622,7 @@ struct npc_enraged_spiritAI : public ScriptedAI
                  Player* Owner = (Player*)totemOspirits->GetOwner();
                  if (Owner)
                      // DoCast(Owner, credit); -- not working!
-                     Owner->KilledMonster(credit, Summoned->GetGUID());
+                     Owner->KilledMonsterCredit(credit, Summoned->GetGUID());
                  DoCast(totemOspirits,SPELL_SOUL_CAPTURED);
              }
         }

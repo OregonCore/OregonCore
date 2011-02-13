@@ -534,6 +534,18 @@ void ObjectMgr::LoadCreatureTemplates()
             const_cast<CreatureInfo*>(cInfo)->Modelid_H2 = 0;
         }
 
+        for (int k = 0; k < MAX_KILL_CREDIT; ++k)
+        {
+            if (cInfo->KillCredit[k])
+            {
+                if (!GetCreatureTemplate(cInfo->KillCredit[k]))
+                {
+                    sLog.outErrorDb("Creature (Entry: %u) has not existed creature entry in `KillCredit%d` (%u)",cInfo->Entry,k+1,cInfo->KillCredit[k]);
+                    const_cast<CreatureInfo*>(cInfo)->KillCredit[k] = 0;
+                }
+            }
+        }
+
         if (cInfo->dmgschool >= MAX_SPELL_SCHOOL)
         {
             sLog.outErrorDb("Creature (Entry: %u) has invalid spell school value (%u) in dmgschool",cInfo->Entry,cInfo->dmgschool);

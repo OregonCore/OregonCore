@@ -154,7 +154,7 @@ struct mob_restless_soulAI : public ScriptedAI
             {
                 if (Unit* pTemp = Unit::GetUnit(*me,Tagger))
                 {
-                    CAST_PLR(pTemp)->KilledMonster(ENTRY_RESTLESS, me->GetGUID());
+                    CAST_PLR(pTemp)->KilledMonsterCredit(ENTRY_RESTLESS, me->GetGUID());
                     me->Kill(me);
                 }
             } else Die_Timer -= diff;

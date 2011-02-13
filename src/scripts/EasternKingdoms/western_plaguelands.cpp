@@ -228,7 +228,7 @@ struct npc_andorhal_towerAI : public Scripted_NoMovementAI
             return;
 
         if (me->FindNearestGameObject(GO_BEACON_TORCH, 10.0f))
-            CAST_PLR(pWho)->KilledMonster(me->GetEntry(), me->GetGUID());
+            CAST_PLR(pWho)->KilledMonsterCredit(me->GetEntry(), me->GetGUID());
     }
 };
 

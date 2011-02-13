@@ -879,6 +879,8 @@ DROP TABLE IF EXISTS `creature_template`;
 CREATE TABLE `creature_template` (
   `entry` mediumint(8) unsigned NOT NULL default '0',
   `heroic_entry` mediumint(8) unsigned NOT NULL default '0',
+  `KillCredit1` int(11) unsigned NOT NULL DEFAULT '0',
+  `KillCredit2` int(11) unsigned NOT NULL DEFAULT '0',
   `modelid_A` mediumint(8) unsigned NOT NULL default '0',
   `modelid_A2` mediumint(8) unsigned NOT NULL default '0',
   `modelid_H` mediumint(8) unsigned NOT NULL default '0',

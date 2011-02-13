@@ -53,7 +53,7 @@ struct mobs_bladespire_ogreAI : public ScriptedAI
     void JustDied(Unit* Killer)
     {
         if (Killer->GetTypeId() == TYPEID_PLAYER)
-            CAST_PLR(Killer)->KilledMonster(19995, me->GetGUID());
+            CAST_PLR(Killer)->KilledMonsterCredit(19995, me->GetGUID());
     }
 };
 CreatureAI* GetAI_mobs_bladespire_ogre(Creature* pCreature)
@@ -286,7 +286,7 @@ struct npc_daranelleAI : public ScriptedAI
             {
                 DoScriptText(SAY_DARANELLE, me, who);
                 //TODO: Move the below to updateAI and run if this statement == true
-                CAST_PLR(who)->KilledMonster(21511, me->GetGUID());
+                CAST_PLR(who)->KilledMonsterCredit(21511, me->GetGUID());
                 CAST_PLR(who)->RemoveAurasDueToSpell(36904);
             }
         }
@@ -432,7 +432,7 @@ struct npc_ogre_bruteAI : public ScriptedAI
                 me->SetReactState(REACT_AGGRESSIVE);
                 me->GetMotionMaster()->MoveTargetedHome();
                 if (Creature* pCredit = me->FindNearestCreature(NPC_QUEST_CREDIT, 50, true))
-                    pPlayer->KilledMonster(NPC_QUEST_CREDIT, pCredit->GetGUID());
+                    pPlayer->KilledMonsterCredit(NPC_QUEST_CREDIT, pCredit->GetGUID());
             }
         }
     }

@@ -708,7 +708,7 @@ struct npc_creditmarker_visit_with_ancestorsAI : public ScriptedAI
                 {
                     // 18840: Sunspring, 18841: Laughing, 18842: Garadar, 18843: Bleeding
                     if (!CAST_PLR(who)->GetReqKillOrCastCurrentCount(10085, creditMarkerId))
-                        CAST_PLR(who)->KilledMonster(creditMarkerId, me->GetGUID());
+                        CAST_PLR(who)->KilledMonsterCredit(creditMarkerId, me->GetGUID());
                 }
             }
         }

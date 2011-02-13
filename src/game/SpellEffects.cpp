@@ -1329,7 +1329,7 @@ void Spell::EffectDummy(uint32 i)
                         return;
 
                     pCreature->SetHealth(health);
-                    m_caster->ToPlayer()->KilledMonster(16992,pCreature->GetGUID());
+                    m_caster->ToPlayer()->KilledMonsterCredit(16992, pCreature->GetGUID());
 
                     if (pCreature->IsAIEnabled)
                         pCreature->AI()->AttackStart(m_caster);
@@ -6245,7 +6245,7 @@ void Spell::EffectKillCredit(uint32 i)
     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    unitTarget->ToPlayer()->KilledMonster(m_spellInfo->EffectMiscValue[i], 0);
+    unitTarget->ToPlayer()->KilledMonsterCredit(m_spellInfo->EffectMiscValue[i], 0);
 }
 
 void Spell::EffectQuestFail(uint32 i)

@@ -178,7 +178,7 @@ bool GossipSelect_npc_deserter_agitator(Player* pPlayer, Creature* pCreature, ui
             pCreature->AI()->AttackStart(pPlayer);
             break;
         case 1:
-            pPlayer->KilledMonster(NPC_THERAMORE_DESERTER, 0);
+            pPlayer->KilledMonsterCredit(NPC_THERAMORE_DESERTER, 0);
             pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
             pCreature->SetSpeed(MOVE_RUN, pCreature->GetSpeedRate(MOVE_RUN), true);
             pCreature->setFaction(35);
@@ -280,7 +280,7 @@ bool GossipSelect_npc_theramore_guard(Player* pPlayer, Creature* pCreature, uint
     if (uiAction == GOSSIP_SENDER_INFO)
     {
         pPlayer->CLOSE_GOSSIP_MENU();
-        pPlayer->KilledMonster(NPC_THERAMORE_GUARD, 0);
+        pPlayer->KilledMonsterCredit(NPC_THERAMORE_GUARD, 0);
         DoScriptText(SAY_QUEST1, pCreature);
         pCreature->CastSpell(pCreature, SPELL_DOCTORED_LEAFLET, false);
         pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);

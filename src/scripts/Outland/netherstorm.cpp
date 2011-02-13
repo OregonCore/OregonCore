@@ -262,7 +262,7 @@ struct npc_manaforge_control_consoleAI : public ScriptedAI
                     {
                         Player* player = Unit::GetPlayer(*me, someplayer);
                         if (player)
-                           player->KilledMonster(me->GetEntry(),me->GetGUID());
+                           player->KilledMonsterCredit(me->GetEntry(),me->GetGUID());
                         DoCast(me,SPELL_DISABLE_VISUAL);
                     }
                     if (goConsole)

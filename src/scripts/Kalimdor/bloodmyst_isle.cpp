@@ -58,7 +58,7 @@ struct mob_webbed_creatureAI : public ScriptedAI
             case 0:
                 spawnCreatureID = 17681;
                 if (Killer->GetTypeId() == TYPEID_PLAYER)
-                    CAST_PLR(Killer)->KilledMonster(spawnCreatureID, me->GetGUID());
+                    CAST_PLR(Killer)->KilledMonsterCredit(spawnCreatureID, me->GetGUID());
                 break;
             case 1:
             case 2:

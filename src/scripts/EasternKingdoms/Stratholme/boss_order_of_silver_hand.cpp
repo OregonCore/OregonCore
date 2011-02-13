@@ -108,7 +108,7 @@ struct boss_silver_hand_bossesAI : public ScriptedAI
                     break;
             }
             if (pInstance->GetData(TYPE_SH_QUEST) && Killer->GetTypeId() == TYPEID_PLAYER)
-                CAST_PLR(Killer)->KilledMonster(SH_QUEST_CREDIT,me->GetGUID());
+                CAST_PLR(Killer)->KilledMonsterCredit(SH_QUEST_CREDIT,me->GetGUID());
         }
     }
 

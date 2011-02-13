@@ -137,11 +137,13 @@ enum SummonMask
 #pragma pack(push,1)
 #endif
 
+#define MAX_KILL_CREDIT 2
 // from `creature_template` table
 struct CreatureInfo
 {
     uint32  Entry;
     uint32  HeroicEntry;
+    uint32  KillCredit[MAX_KILL_CREDIT];
     uint32  Modelid_A1;
     uint32  Modelid_A2;
     uint32  Modelid_H1;
