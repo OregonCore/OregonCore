@@ -1329,7 +1329,7 @@ void Spell::EffectDummy(uint32 i)
                         return;
 
                     pCreature->SetHealth(health);
-                    m_caster->ToPlayer()->RewardPlayerAndGroupAtEvent(16992, pCreature->GetGUID());
+                    m_caster->ToPlayer()->RewardPlayerAndGroupAtEvent(16992, pCreature);
 
                     if (pCreature->IsAIEnabled)
                         pCreature->AI()->AttackStart(m_caster);
