@@ -3788,6 +3788,21 @@ void ObjectMgr::LoadScripts(ScriptMapMap& scripts, char const* tablename)
             }
 
             case SCRIPT_COMMAND_REMOVE_AURA:
+            {
+                if (!sSpellStore.LookupEntry(tmp.datalong))
+                {
+                    sLog.outErrorDb("Table `%s` using non-existent spell (id: %u) in SCRIPT_COMMAND_REMOVE_AURA for script id %u",
+                        tablename,tmp.datalong,tmp.id);
+                    continue;
+                }
+                if (tmp.datalong2 & ~0x1)                    // 1 bits (0,1)
+                {
+                    sLog.outErrorDb("Table `%s` using unknown flags in datalong2 (%u) in SCRIPT_COMMAND_REMOVE_AURA for script id %u",
+                        tablename,tmp.datalong2,tmp.id);
+                    continue;
+                }
+                break;
+            }
             case SCRIPT_COMMAND_CAST_SPELL:
             {
                 if (!sSpellStore.LookupEntry(tmp.datalong))
@@ -3812,6 +3827,23 @@ void ObjectMgr::LoadScripts(ScriptMapMap& scripts, char const* tablename)
                 {
                     sLog.outErrorDb("Table `%s` using invalid creature entry in dataint (%u) in SCRIPT_COMMAND_CAST_SPELL for script id %u",
                         tablename,tmp.dataint,tmp.id);
+                    continue;
+                }
+                break;
+            }
+
+            case SCRIPT_COMMAND_CREATE_ITEM:
+            {
+                if (!GetItemPrototype(tmp.datalong))
+                {
+                    sLog.outErrorDb("Table `%s` has nonexistent item (entry: %u) in SCRIPT_COMMAND_CREATE_ITEM for script id %u",
+                    tablename, tmp.datalong, tmp.id);
+                    continue;
+                }
+                if (!tmp.datalong2)
+                {
+                    sLog.outErrorDb("Table `%s` SCRIPT_COMMAND_CREATE_ITEM but amount is %u for script id %u",
+                    tablename, tmp.datalong2, tmp.id);
                     continue;
                 }
                 break;
