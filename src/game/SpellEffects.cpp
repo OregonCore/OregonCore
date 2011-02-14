@@ -696,37 +696,6 @@ void Spell::EffectDummy(uint32 i)
                                 m_caster->DealDamage(casttarget, damage, NULL, SPELL_DIRECT_DAMAGE, SPELL_SCHOOL_MASK_ARCANE, spellInfo, false);
                         }
                 }
-                // Encapsulate Voidwalker
-                case 29364:
-                {
-                    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_UNIT || unitTarget->ToCreature()->isPet()) return;
-
-                    Creature* creatureTarget = unitTarget->ToCreature();
-                    GameObject* pGameObj = new GameObject;
-
-                    if (!creatureTarget || !pGameObj) return;
-
-                    if (!pGameObj->Create(objmgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), 181574, creatureTarget->GetMap(),
-                        creatureTarget->GetPositionX(), creatureTarget->GetPositionY(), creatureTarget->GetPositionZ(),
-                        creatureTarget->GetOrientation(), 0.0f, 0.0f, 0.0f, 0.0f, 100, GO_STATE_READY))
-                    {
-                        delete pGameObj;
-                        return;
-                    }
-
-                    pGameObj->SetRespawnTime(0);
-                    pGameObj->SetOwnerGUID(m_caster->GetGUID());
-                    //pGameObj->SetUInt32Value(GAMEOBJECT_LEVEL, m_caster->getLevel());
-                    pGameObj->SetSpellId(m_spellInfo->Id);
-
-                    creatureTarget->GetMap()->Add(pGameObj);
-
-                    WorldPacket data(SMSG_GAMEOBJECT_SPAWN_ANIM_OBSOLETE, 8);
-                    data << uint64(pGameObj->GetGUID());
-                    m_caster->SendMessageToSet(&data,true);
-
-                    return;
-                }
                 // Demon Broiled Surprise
                 case 43723:
                 {
