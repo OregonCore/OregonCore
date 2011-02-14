@@ -44,7 +44,7 @@ class SummonList : public std::list<uint64>
 struct ScriptedAI : public CreatureAI
 {
     explicit ScriptedAI(Creature* pCreature);
-    ~ScriptedAI() {}
+    virtual ~ScriptedAI() {}
 
     //*************
     //CreatureAI Functions
@@ -188,11 +188,12 @@ struct Scripted_NoMovementAI : public ScriptedAI
 struct BossAI : public ScriptedAI
 {
     BossAI(Creature *c, uint32 id);
+    virtual ~BossAI() {}
 
-    uint32 bossId;
+    const uint32 bossId;
     EventMap events;
     SummonList summons;
-    InstanceData *instance;
+    InstanceData * const instance;
 
     void JustSummoned(Creature *summon);
     void SummonedCreatureDespawn(Creature *summon);
@@ -202,11 +203,13 @@ struct BossAI : public ScriptedAI
     void Reset() { _Reset(); }
     void EnterCombat(Unit * /*who*/) { _EnterCombat(); }
     void JustDied(Unit * /*killer*/) { _JustDied(); }
+    void JustReachedHome() { me->setActive(false); }
 
     protected:
         void _Reset();
         void _EnterCombat();
         void _JustDied();
+        void _JustReachedHome() { me->setActive(false); }
 };
 
 // SD2 grid searchers.

@@ -150,10 +150,7 @@ void ScriptedAI::DoPlaySoundToSet(WorldObject* pSource, uint32 uiSoundId)
         return;
     }
 
-    WorldPacket data(4);
-    data.SetOpcode(SMSG_PLAY_SOUND);
-    data << uint32(uiSoundId);
-    pSource->SendMessageToSet(&data,false);
+    pSource->PlayDirectSound(uiSoundId);
 }
 
 Creature* ScriptedAI::DoSpawnCreature(uint32 uiId, float fX, float fY, float fZ, float fAngle, uint32 uiType, uint32 uiDespawntime)
@@ -429,8 +426,7 @@ void ScriptedAI::DoTeleportTo(float fX, float fY, float fZ, uint32 uiTime)
 
 void ScriptedAI::DoTeleportTo(const float fPos[4])
 {
-    me->Relocate(fPos[0], fPos[1], fPos[2], fPos[3]);
-    me->SendMonsterMove(fPos[0], fPos[1], fPos[2], fPos[3], 0);
+    me->NearTeleportTo(fPos[0], fPos[1], fPos[2], fPos[3]);
 }
 
 void ScriptedAI::DoTeleportPlayer(Unit* pUnit, float fX, float fY, float fZ, float fO)
@@ -541,7 +537,7 @@ enum eNPCs
 // It is assumed the information is found elswehere and can be handled by the core. So far no luck finding such information/way to extract it.
 bool ScriptedAI::EnterEvadeIfOutOfCombatArea(const uint32 uiDiff)
 {
-    if (m_uiEvadeCheckCooldown < uiDiff)
+    if (m_uiEvadeCheckCooldown <= uiDiff)
         m_uiEvadeCheckCooldown = 2500;
     else
     {
@@ -623,6 +619,7 @@ void BossAI::_JustDied()
 
 void BossAI::_EnterCombat()
 {
+    me->setActive(true);
     DoZoneInCombat();
     if (instance)
         instance->SetBossState(bossId, IN_PROGRESS);
@@ -631,7 +628,8 @@ void BossAI::_EnterCombat()
 void BossAI::JustSummoned(Creature *summon)
 {
     summons.Summon(summon);
-    DoZoneInCombat(summon);
+    if (me->isInCombat())
+        DoZoneInCombat(summon);
 }
 
 void BossAI::SummonedCreatureDespawn(Creature *summon)
@@ -646,12 +644,14 @@ void LoadOverridenSQLData()
     GameObjectInfo *goInfo;
 
     // Sunwell Plateau : Kalecgos : Spectral Rift
-    if (goInfo = GOBJECT(187055))
+    goInfo = GOBJECT(187055);
+    if (goInfo)
         if (goInfo->type == GAMEOBJECT_TYPE_GOOBER)
             goInfo->goober.lockId = 57; // need LOCKTYPE_QUICK_OPEN
 
     // Naxxramas : Sapphiron Birth
-    if (goInfo = GOBJECT(181356))
+    goInfo = GOBJECT(181356);
+    if (goInfo)
         if (goInfo->type == GAMEOBJECT_TYPE_TRAP)
             goInfo->trap.radius = 50;
 }
