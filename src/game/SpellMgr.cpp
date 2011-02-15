@@ -43,25 +43,15 @@ SpellMgr::SpellMgr()
             case SPELL_EFFECT_PERSISTENT_AREA_AURA: //27
             case SPELL_EFFECT_SUMMON:               //28
             case SPELL_EFFECT_TRIGGER_MISSILE:      //32
-            case SPELL_EFFECT_SUMMON_WILD:          //41
-            case SPELL_EFFECT_SUMMON_GUARDIAN:      //42
             case SPELL_EFFECT_TRANS_DOOR:           //50 summon object
             case SPELL_EFFECT_SUMMON_PET:           //56
             case SPELL_EFFECT_ADD_FARSIGHT:         //72
-            case SPELL_EFFECT_SUMMON_POSSESSED:     //73
-            case SPELL_EFFECT_SUMMON_TOTEM:         //74
             case SPELL_EFFECT_SUMMON_OBJECT_WILD:   //76
-            case SPELL_EFFECT_SUMMON_TOTEM_SLOT1:   //87
-            case SPELL_EFFECT_SUMMON_TOTEM_SLOT2:   //88
-            case SPELL_EFFECT_SUMMON_TOTEM_SLOT3:   //89
-            case SPELL_EFFECT_SUMMON_TOTEM_SLOT4:   //90
-            case SPELL_EFFECT_SUMMON_CRITTER:       //97
             case SPELL_EFFECT_SUMMON_OBJECT_SLOT1:  //104
             case SPELL_EFFECT_SUMMON_OBJECT_SLOT2:  //105
             case SPELL_EFFECT_SUMMON_OBJECT_SLOT3:  //106
             case SPELL_EFFECT_SUMMON_OBJECT_SLOT4:  //107
             case SPELL_EFFECT_SUMMON_DEAD_PET:      //109
-            case SPELL_EFFECT_SUMMON_DEMON:         //112
             case SPELL_EFFECT_TRIGGER_SPELL_2:      //151 ritual of summon
                 EffectTargetType[i] = SPELL_REQUIRE_DEST;
                 break;
@@ -329,7 +319,7 @@ uint32 CalculatePowerCost(SpellEntry const * spellInfo, Unit const * caster, Spe
         // Else drain all power
         if (spellInfo->powerType < MAX_POWERS)
             return caster->GetPower(Powers(spellInfo->powerType));
-        sLog.outError("Spell::CalculateManaCost: Unknown power type '%d' in spell %d", spellInfo->powerType, spellInfo->Id);
+        sLog.outError("CalculateManaCost: Unknown power type '%d' in spell %d", spellInfo->powerType, spellInfo->Id);
         return 0;
     }
 
@@ -351,11 +341,10 @@ uint32 CalculatePowerCost(SpellEntry const * spellInfo, Unit const * caster, Spe
             case POWER_FOCUS:
             case POWER_ENERGY:
             case POWER_HAPPINESS:
-                //            case POWER_RUNES:
                 powerCost += spellInfo->ManaCostPercentage * caster->GetMaxPower(Powers(spellInfo->powerType)) / 100;
-            break;
+                break;
             default:
-                sLog.outError("Spell::CalculateManaCost: Unknown power type '%d' in spell %d", spellInfo->powerType, spellInfo->Id);
+                sLog.outError("CalculateManaCost: Unknown power type '%d' in spell %d", spellInfo->powerType, spellInfo->Id);
                 return 0;
         }
     }
@@ -417,7 +406,7 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
     {
         case SPELLFAMILY_GENERIC:
         {
-            //food/drink
+            // Food / Drinks (mostly)
             if (spellInfo->AuraInterruptFlags & AURA_INTERRUPT_FLAG_NOT_SEATED)
             {
                 for (int i = 0; i < 3; i++)
@@ -545,14 +534,14 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
         {
             switch(spellInfo->EffectApplyAuraName[i])
             {
-                case SPELL_AURA_TRACK_CREATURES:
-                case SPELL_AURA_TRACK_RESOURCES:
-                case SPELL_AURA_TRACK_STEALTHED:
-                    return SPELL_TRACKER;
                 case SPELL_AURA_MOD_CHARM:
                 case SPELL_AURA_MOD_POSSESS_PET:
                 case SPELL_AURA_MOD_POSSESS:
                     return SPELL_CHARM;
+                case SPELL_AURA_TRACK_CREATURES:
+                case SPELL_AURA_TRACK_RESOURCES:
+                case SPELL_AURA_TRACK_STEALTHED:
+                    return SPELL_TRACKER;
             }
         }
     }
@@ -642,6 +631,7 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
     SpellEntry const *spellproto = sSpellStore.LookupEntry(spellId);
     if (!spellproto)
         return false;
+
     // talents
     if (IsPassiveSpell(spellId) && GetTalentSpellCost(spellId))
         return true;
@@ -1184,11 +1174,8 @@ void SpellMgr::LoadSpellProcEvents()
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT entry, SchoolMask, SpellFamilyName, SpellFamilyMask, procFlags, procEx, ppmRate, CustomChance, Cooldown FROM spell_proc_event");
     if (!result)
     {
-
         barGoLink bar(1);
-
         bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u spell proc event conditions", count);
         return;

@@ -1782,7 +1782,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                 break;
             }
 
-            switch(cur)
+            switch (cur)
             {
                 case TARGET_UNIT_CHANNEL:
                     if (Unit* target = m_originalCaster->GetCurrentSpell(CURRENT_CHANNELED_SPELL)->m_targets.getUnitTarget())
@@ -1802,7 +1802,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
 
         default:
         {
-            switch(cur)
+            switch (cur)
             {
                 case TARGET_GAMEOBJECT:
                 case TARGET_OBJECT_USE:
@@ -1849,7 +1849,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
 
             std::list<Unit*> unitList;
 
-            switch(cur)
+            switch (cur)
             {
                 case TARGET_UNIT_NEARBY_ENEMY:
                 case TARGET_UNIT_TARGET_ENEMY:
@@ -1980,7 +1980,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
             for (std::list<Unit*>::iterator itr = unitList.begin(); itr != unitList.end(); ++itr)
                 AddUnitTarget(*itr, i);
         }
-    } // Chain or Area
+    }
 }
 
 void Spell::prepare(SpellCastTargets * targets, Aura* triggeredByAura)
@@ -2959,27 +2959,15 @@ void Spell::SendLogExecute()
                     data << uint32(m_spellInfo->EffectItemType[0]);
                     break;
                 case SPELL_EFFECT_SUMMON:
-                case SPELL_EFFECT_SUMMON_WILD:
-                case SPELL_EFFECT_SUMMON_GUARDIAN:
                 case SPELL_EFFECT_TRANS_DOOR:
                 case SPELL_EFFECT_SUMMON_PET:
-                case SPELL_EFFECT_SUMMON_POSSESSED:
-                case SPELL_EFFECT_SUMMON_TOTEM:
                 case SPELL_EFFECT_SUMMON_OBJECT_WILD:
                 case SPELL_EFFECT_CREATE_HOUSE:
                 case SPELL_EFFECT_DUEL:
-                case SPELL_EFFECT_SUMMON_TOTEM_SLOT1:
-                case SPELL_EFFECT_SUMMON_TOTEM_SLOT2:
-                case SPELL_EFFECT_SUMMON_TOTEM_SLOT3:
-                case SPELL_EFFECT_SUMMON_TOTEM_SLOT4:
-                case SPELL_EFFECT_SUMMON_PHANTASM:
-                case SPELL_EFFECT_SUMMON_CRITTER:
                 case SPELL_EFFECT_SUMMON_OBJECT_SLOT1:
                 case SPELL_EFFECT_SUMMON_OBJECT_SLOT2:
                 case SPELL_EFFECT_SUMMON_OBJECT_SLOT3:
                 case SPELL_EFFECT_SUMMON_OBJECT_SLOT4:
-                case SPELL_EFFECT_SUMMON_DEMON:
-                case SPELL_EFFECT_150:
                     if (Unit *unit = m_targets.getUnitTarget())
                         data << unit->GetPackGUID();
                     else if (m_targets.getItemTargetGUID())
@@ -3415,7 +3403,7 @@ uint8 Spell::CanCast(bool strict)
         }
 
         // check pet presents
-        for (int j=0;j<3;j++)
+        for (int j = 0; j < 3; ++j)
         {
             if (m_spellInfo->EffectImplicitTargetA[j] == TARGET_UNIT_PET)
             {
@@ -3485,10 +3473,9 @@ uint8 Spell::CanCast(bool strict)
 
         // check if target is in combat
         if (target != m_caster && (m_spellInfo->AttributesEx & SPELL_ATTR_EX_NOT_IN_COMBAT_TARGET) && target->isInCombat())
-        {
             return SPELL_FAILED_TARGET_AFFECTING_COMBAT;
-        }
     }
+
     // Spell casted only on battleground
     if ((m_spellInfo->AttributesEx3 & SPELL_ATTR_EX3_BATTLEGROUND) &&  m_caster->GetTypeId() == TYPEID_PLAYER)
         if (!m_caster->ToPlayer()->InBattleGround())
@@ -3814,22 +3801,20 @@ uint8 Spell::CanCast(bool strict)
 
                 Creature* creature = m_targets.getUnitTarget()->ToCreature();
                 if (creature->GetCreatureType() != CREATURE_TYPE_CRITTER && (!creature->lootForBody || !creature->loot.empty()))
-                {
                     return SPELL_FAILED_TARGET_NOT_LOOTED;
-                }
 
                 uint32 skill = creature->GetCreatureInfo()->GetRequiredLootSkill();
 
                 int32 skillValue = m_caster->ToPlayer()->GetSkillValue(skill);
                 int32 TargetLevel = m_targets.getUnitTarget()->getLevel();
-                int32 ReqValue = (skillValue < 100 ? (TargetLevel-10)*10 : TargetLevel*5);
+                int32 ReqValue = (skillValue < 100 ? (TargetLevel-10) * 10 : TargetLevel * 5);
                 if (ReqValue > skillValue)
                     return SPELL_FAILED_LOW_CASTLEVEL;
 
                 // chance for fail at orange skinning attempt
                 if ((m_selfContainer && (*m_selfContainer) == this) &&
                     skillValue < sWorld.GetConfigMaxSkillValue() &&
-                    (ReqValue < 0 ? 0 : ReqValue) > irand(skillValue-25, skillValue+37))
+                    (ReqValue < 0 ? 0 : ReqValue) > irand(skillValue - 25, skillValue + 37))
                     return SPELL_FAILED_TRY_AGAIN;
 
                 break;
@@ -3983,9 +3968,7 @@ uint8 Spell::CanCast(bool strict)
 
                 break;
             }
-            // This is generic summon effect now and don't make this check for summon types similar
-            // SPELL_EFFECT_SUMMON_CRITTER, SPELL_EFFECT_SUMMON_WILD or SPELL_EFFECT_SUMMON_GUARDIAN.
-            // These won't show up in m_caster->GetPetGUID()
+            // This is generic summon effect
             case SPELL_EFFECT_SUMMON:
             {
                 SummonPropertiesEntry const *SummonProperties = sSummonPropertiesStore.LookupEntry(m_spellInfo->EffectMiscValueB[i]);
@@ -4001,20 +3984,6 @@ uint8 Spell::CanCast(bool strict)
                             return SPELL_FAILED_ALREADY_HAVE_CHARM;
                         break;
                 }
-                break;
-            }
-            // Don't make this check for SPELL_EFFECT_SUMMON_CRITTER, SPELL_EFFECT_SUMMON_WILD or SPELL_EFFECT_SUMMON_GUARDIAN.
-            // These won't show up in m_caster->GetPetGUID()
-            case SPELL_EFFECT_SUMMON_POSSESSED:
-            case SPELL_EFFECT_SUMMON_PHANTASM:
-            case SPELL_EFFECT_SUMMON_DEMON:
-            {
-                if (m_caster->GetPetGUID())
-                    return SPELL_FAILED_ALREADY_HAVE_SUMMON;
-
-                if (m_caster->GetCharmGUID())
-                    return SPELL_FAILED_ALREADY_HAVE_CHARM;
-
                 break;
             }
             case SPELL_EFFECT_SUMMON_PET:
@@ -5312,7 +5281,7 @@ bool SpellEvent::IsDeletable() const
 
 bool Spell::IsValidSingleTargetEffect(Unit const* target, Targets type) const
 {
-    switch(type)
+    switch (type)
     {
         case TARGET_UNIT_TARGET_ENEMY:
             return !m_caster->IsFriendlyTo(target);
