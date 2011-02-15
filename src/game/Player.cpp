@@ -14617,12 +14617,18 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     bytes0 |= fields[6].GetUInt8() << 16;                   // gender
     SetUInt32Value(UNIT_FIELD_BYTES_0, bytes0);
     SetUInt32Value(UNIT_FIELD_LEVEL, fields[7].GetUInt8());
-    SetUInt32Value(PLAYER_XP, fields[8].GetUInt32());
+
+    uint32 money = fields[9].GetUInt32();
+    if (money > MAX_MONEY_AMOUNT)
+        money = MAX_MONEY_AMOUNT;
+    SetMoney(money);
+
     SetUInt32Value(PLAYER_FIELD_COINAGE, fields[9].GetUInt32());
     SetUInt32Value(PLAYER_BYTES, fields[10].GetUInt32());
     SetUInt32Value(PLAYER_BYTES_2, fields[11].GetUInt32());
-    SetUInt32Value(PLAYER_BYTES_3, (GetUInt32Value(PLAYER_BYTES_3) & ~1) | fields[6].GetUInt8());
+    SetUInt32Value(PLAYER_BYTES_3, (fields[50].GetUInt16() & 0xFFFE) | fields[6].GetUInt8());
     SetUInt32Value(PLAYER_FLAGS, fields[12].GetUInt32());
+    SetUInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX, fields[49].GetUInt32());
 
     // cleanup inventory related item value fields (its will be filled correctly in _LoadInventory)
     for (uint8 slot = EQUIPMENT_SLOT_START; slot < EQUIPMENT_SLOT_END; ++slot)
@@ -14633,10 +14639,6 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
         delete m_items[slot];
         m_items[slot] = NULL;
     }
-
-    // update money limits
-    if (GetMoney() > MAX_MONEY_AMOUNT)
-        SetMoney(MAX_MONEY_AMOUNT);
 
     DEBUG_LOG("Load Basic value of player %s is: ", m_name.c_str());
     outDebugValues();
@@ -14665,7 +14667,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 
     _LoadArenaTeamInfo(holder->GetResult(PLAYER_LOGIN_QUERY_LOADARENAINFO));
 
-    uint32 arena_currency = GetUInt32Value(PLAYER_FIELD_ARENA_CURRENCY) + fields[40].GetUInt32();
+    uint32 arena_currency = fields[40].GetUInt32();
     if (arena_currency > sWorld.getConfig(CONFIG_MAX_ARENA_POINTS))
         arena_currency = sWorld.getConfig(CONFIG_MAX_ARENA_POINTS);
 
@@ -14686,6 +14688,13 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
         for (int j = 0; j < ARENA_TEAM_END; ++j)
             SetArenaTeamInfoField(arena_slot, ArenaTeamInfoType(j), 0);
     }
+
+    SetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY, fields[42].GetUInt32());
+    SetUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION, fields[43].GetUInt32());
+    SetUInt32Value(PLAYER_FIELD_YESTERDAY_CONTRIBUTION, fields[44].GetUInt32());
+    SetUInt32Value(PLAYER_FIELD_LIFETIME_HONORABLE_KILLS, fields[45].GetUInt32());
+    SetUInt16Value(PLAYER_FIELD_KILLS, 0, fields[46].GetUInt16());
+    SetUInt16Value(PLAYER_FIELD_KILLS, 1, fields[47].GetUInt16());
 
     _LoadBoundInstances(holder->GetResult(PLAYER_LOGIN_QUERY_LOADBOUNDINSTANCES));
     _LoadBGData(holder->GetResult(PLAYER_LOGIN_QUERY_LOADBGDATA));
@@ -15008,12 +15017,6 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     SetUInt64Value(PLAYER_DUEL_ARBITER, 0);
     SetUInt32Value(PLAYER_DUEL_TEAM, 0);
 
-    // remember loaded power/health values to restore after stats initialization and modifier applying
-    uint32 savedHealth = GetHealth();
-    uint32 savedPower[MAX_POWERS];
-    for (uint32 i = 0; i < MAX_POWERS; ++i)
-        savedPower[i] = GetPower(Powers(i));
-
     // reset stats before loading any modifiers
     InitStatsForLevel();
     InitTaxiNodesForLevel();
@@ -15058,9 +15061,11 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 
     // check PLAYER_CHOSEN_TITLE compatibility with PLAYER__FIELD_KNOWN_TITLES
     // note: PLAYER__FIELD_KNOWN_TITLES updated at quest status loaded
-    if (uint32 curTitle = GetUInt32Value(PLAYER_CHOSEN_TITLE))
-        if (!HasTitle(curTitle))
-            SetUInt32Value(PLAYER_CHOSEN_TITLE, 0);
+    uint32 curTitle = fields[10].GetUInt32();
+    if (curTitle && !HasTitle(curTitle))
+        curTitle = 0;
+
+    SetUInt32Value(PLAYER_CHOSEN_TITLE, curTitle);
 
     // has to be called after last Relocate() in Player::LoadFromDB
     SetFallInformation(0, GetPositionZ());
@@ -15077,9 +15082,13 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     UpdateAllStats();
 
     // restore remembered power/health values (but not more max values)
+    uint32 savedHealth = fields[51].GetUInt32();
     SetHealth(savedHealth > GetMaxHealth() ? GetMaxHealth() : savedHealth);
     for (uint8 i = 0; i < MAX_POWERS; ++i)
-        SetPower(Powers(i),savedPower[i] > GetMaxPower(Powers(i)) ? GetMaxPower(Powers(i)) : savedPower[i]);
+    {
+        uint32 savedPower = fields[52+i].GetUInt32();
+        SetPower(Powers(i),savedPower > GetMaxPower(Powers(i)) ? GetMaxPower(Powers(i)) : savedPower);
+    }
 
     DEBUG_LOG("The value of player %s after load item and aura is: ", m_name.c_str());
     outDebugValues();
@@ -16209,7 +16218,9 @@ void Player::SaveToDB()
         "taximask, online, cinematic, "
         "totaltime, leveltime, rest_bonus, logout_time, is_logout_resting, resettalents_cost, resettalents_time, "
         "trans_x, trans_y, trans_z, trans_o, transguid, extra_flags, stable_slots, at_login, zone, "
-        "death_expire_time, taxi_path, arena_pending_points, latency) VALUES ("
+        "death_expire_time, taxi_path, arenaPoints, totalHonorPoints, todayHonorPoints, yesterdayHonorPoints, "
+        "totalKills, todayKills, yesterdayKills, chosenTitle, watchedFaction, drunk, health, "
+        "powerMana, powerRage, powerFocus, powerEnergy, powerHappiness, latency) VALUES ("
         << GetGUIDLow() << ", "
         << GetSession()->GetAccountId() << ", '"
         << sql_name << "', "
@@ -16289,7 +16300,33 @@ void Player::SaveToDB()
     ss << (uint64)m_deathExpireTime << ", '";
 
     ss << m_taxi.SaveTaxiDestinationsToString() << "', ";
-    ss << "'0', '";                                         // arena_pending_points
+
+    ss << GetArenaPoints() << ", ";
+
+    ss << GetHonorPoints() << ", ";
+
+    ss << GetUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION) << ", ";
+
+    ss << GetUInt32Value(PLAYER_FIELD_YESTERDAY_CONTRIBUTION) << ", ";
+
+    ss << GetUInt32Value(PLAYER_FIELD_LIFETIME_HONORABLE_KILLS) << ", ";
+
+    ss << GetUInt16Value(PLAYER_FIELD_KILLS, 0) << ", ";
+
+    ss << GetUInt16Value(PLAYER_FIELD_KILLS, 1) << ", ";
+
+    ss << GetUInt32Value(PLAYER_CHOSEN_TITLE) << ", ";
+
+    ss << GetUInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX) << ", ";
+
+    ss << (uint16)(GetUInt32Value(PLAYER_BYTES_3) & 0xFFFE) << ", ";
+
+    ss << GetHealth();
+
+    for (uint32 i = 0; i < MAX_POWERS; ++i)
+        ss << ", " << GetPower(Powers(i));
+    ss << ", '";
+
     ss << GetSession()->GetLatency();
     ss << "')";
 
