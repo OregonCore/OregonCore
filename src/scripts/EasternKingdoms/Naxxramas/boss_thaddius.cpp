@@ -101,7 +101,7 @@ enum eEvents
 
 struct boss_thaddiusAI : public BossAI
 {
-    boss_thaddiusAI(Creature *c) : BossAI(c, EVENT_THADDIUS)
+    boss_thaddiusAI(Creature *c) : BossAI(c, EVENT_THADDIUS) {}
 
     void Reset()
     {
@@ -143,7 +143,7 @@ struct boss_thaddiusAI : public BossAI
 
 struct boss_stalaggAI : public BossAI
 {
-    boss_stalaggAI(Creature *c) : BossAI(c, EVENT_STALAGG)
+    boss_stalaggAI(Creature *c) : BossAI(c, EVENT_STALAGG) {}
 
     void Reset()
     {
@@ -204,7 +204,7 @@ struct boss_stalaggAI : public BossAI
 
 struct boss_fuegenAI : public BossAI
 {
-    boss_fuegenAI(Creature *c): BossAI(c, EVENT_FUEGEN)
+    boss_fuegenAI(Creature *c): BossAI(c, EVENT_FUEGEN) {}
 
     void Reset()
     {
