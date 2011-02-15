@@ -616,8 +616,6 @@ bool IsPositiveTarget(uint32 targetA, uint32 targetB)
         case TARGET_DST_TARGET_ENEMY:
         case TARGET_UNIT_CHANNEL:
             return false;
-        case TARGET_SRC_CASTER:
-            return (targetB == TARGET_UNIT_AREA_PARTY_SRC || targetB == TARGET_UNIT_AREA_ALLY_SRC);
         default:
             break;
     }
