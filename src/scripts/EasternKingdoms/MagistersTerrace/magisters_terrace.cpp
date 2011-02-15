@@ -73,31 +73,6 @@ struct npc_kalecgosAI : public ScriptedAI
             m_uiTransformTimer = MINUTE*IN_MILLISECONDS;
     }
 
-    // some targeting issues with the spell, so use this workaround as temporary solution
-    void DoWorkaroundForQuestCredit()
-    {
-        Map* pMap = me->GetMap();
-
-        if (!pMap || pMap->IsHeroic())
-            return;
-
-        Map::PlayerList const &lList = pMap->GetPlayers();
-
-        if (lList.isEmpty())
-            return;
-
-        SpellEntry const* pSpell = GetSpellStore()->LookupEntry(SPELL_ORB_KILL_CREDIT);
-
-        for (Map::PlayerList::const_iterator i = lList.begin(); i != lList.end(); ++i)
-        {
-            if (Player* pPlayer = i->getSource())
-            {
-                if (pSpell && pSpell->EffectMiscValue[0])
-                    pPlayer->KilledMonsterCredit(pSpell->EffectMiscValue[0], 0);
-            }
-        }
-    }
-
     void UpdateAI(const uint32 uiDiff)
     {
         if (m_uiTransformTimer)
@@ -105,7 +80,6 @@ struct npc_kalecgosAI : public ScriptedAI
             if (m_uiTransformTimer <= uiDiff)
             {
                 DoCast(me, SPELL_ORB_KILL_CREDIT, false);
-                DoWorkaroundForQuestCredit();
 
                 // Transform and update entry, now ready for quest/read gossip
                 DoCast(me, SPELL_TRANSFORM_TO_KAEL, false);
