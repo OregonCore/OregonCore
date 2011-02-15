@@ -29,18 +29,15 @@ void OCSoapRunnable::run()
     pool.activate (THR_NEW_LWP | THR_JOINABLE, POOL_SIZE);
 
     struct soap soap;
-    int m, s;
     soap_init(&soap);
     soap_set_imode(&soap, SOAP_C_UTFSTRING);
     soap_set_omode(&soap, SOAP_C_UTFSTRING);
-    m = soap_bind(&soap, m_host.c_str(), m_port, 100);
 
     // check every 3 seconds if world ended
     soap.accept_timeout = 3;
-
     soap.recv_timeout = 5;
     soap.send_timeout = 5;
-    if (m < 0)
+    if (soap_bind(&soap, m_host.c_str(), m_port, 100) < 0)
     {
         sLog.outError("OCSoap: couldn't bind to %s:%d", m_host.c_str(), m_port);
         exit(-1);
@@ -50,23 +47,19 @@ void OCSoapRunnable::run()
 
     while(!World::IsStopped())
     {
-        s = soap_accept(&soap);
-
-        if (s < 0)
-        {
-            // ran into an accept timeout
-            continue;
-        }
+        if (!soap_valid_socket(soap_accept(&soap)))
+            continue;   // ran into an accept timeout
 
         sLog.outDebug("OCSoap: accepted connection from IP=%d.%d.%d.%d", (int)(soap.ip>>24)&0xFF, (int)(soap.ip>>16)&0xFF, (int)(soap.ip>>8)&0xFF, (int)soap.ip&0xFF);
         struct soap* thread_soap = soap_copy(&soap);// make a safe copy
 
         ACE_Message_Block *mb = new ACE_Message_Block(sizeof(struct soap*));
-        ACE_OS::memcpy (mb->wr_ptr (), &thread_soap, sizeof(struct soap*));
+        ACE_OS::memcpy (mb->wr_ptr(), &thread_soap, sizeof(struct soap*));
         pool.putq(mb);
     }
-    pool.msg_queue ()->deactivate ();
-    pool.wait ();
+
+    pool.msg_queue()->deactivate();
+    pool.wait();
 
     soap_done(&soap);
 }
@@ -77,7 +70,7 @@ void SOAPWorkingThread::process_message (ACE_Message_Block *mb)
 
     struct soap* soap;
     ACE_OS::memcpy (&soap, mb->rd_ptr (), sizeof(struct soap*));
-    mb->release ();
+    mb->release();
 
     soap_serve(soap);
     soap_destroy(soap); // dealloc C++ data
