@@ -4753,6 +4753,20 @@ void Spell::EffectScriptEffect(uint32 effIndex)
                     }
                     break;
                 }
+                // Plant Warmaul Ogre Banner
+                case 32307:
+                {
+                    Player *p_caster = dynamic_cast<Player*>(m_caster);
+                    if (!p_caster)
+                        break;
+                    p_caster->RewardPlayerAndGroupAtEvent(18388, unitTarget);
+                    Creature *cTarget = dynamic_cast<Creature*>(unitTarget);
+                    if (!cTarget)
+                        break;
+                    cTarget->setDeathState(CORPSE);
+                    cTarget->RemoveCorpse();
+                    break;
+                }
                 // Gruul's shatter
                 case 33654:
                 {
