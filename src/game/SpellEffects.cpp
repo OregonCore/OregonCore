@@ -4476,537 +4476,565 @@ void Spell::EffectScriptEffect(uint32 effIndex)
 {
     // TODO: we must implement hunter pet summon at login there (spell 6962)
 
-    // by spell id
-    switch(m_spellInfo->Id)
+    switch(m_spellInfo->SpellFamilyName)
     {
-        // PX-238 Winter Wondervolt TRAP
-        case 26275:
+        case SPELLFAMILY_GENERIC:
         {
-            if (unitTarget->HasAura(26272,0)
-             || unitTarget->HasAura(26157,0)
-             || unitTarget->HasAura(26273,0)
-             || unitTarget->HasAura(26274,0))
-                return;
-
-            uint32 iTmpSpellId;
-
-            switch(urand(0,3))
-            {
-                case 0:
-                    iTmpSpellId = 26272;
-                    break;
-                case 1:
-                    iTmpSpellId = 26157;
-                    break;
-                case 2:
-                    iTmpSpellId = 26273;
-                    break;
-                case 3:
-                    iTmpSpellId = 26274;
-                    break;
-            }
-
-            unitTarget->CastSpell(unitTarget, iTmpSpellId, true);
-
-            return;
-        }
-
-        // Bending Shinbone
-        case 8856:
-        {
-            if (!itemTarget && m_caster->GetTypeId() != TYPEID_PLAYER)
-                return;
-
-            uint32 spell_id = 0;
-            switch(urand(1,5))
-            {
-                case 1:  spell_id = 8854; break;
-                default: spell_id = 8855; break;
-            }
-
-            m_caster->CastSpell(m_caster,spell_id,true,NULL);
-            return;
-        }
-
-        // Healthstone creating spells
-        case  6201:
-        case  6202:
-        case  5699:
-        case 11729:
-        case 11730:
-        case 27230:
-        {
-            uint32 itemtype;
-            uint32 rank = 0;
-            Unit::AuraList const& mDummyAuras = unitTarget->GetAurasByType(SPELL_AURA_DUMMY);
-            for (Unit::AuraList::const_iterator i = mDummyAuras.begin();i != mDummyAuras.end(); ++i)
-            {
-                if ((*i)->GetId() == 18692)
-                {
-                    rank = 1;
-                    break;
-                }
-                else if ((*i)->GetId() == 18693)
-                {
-                    rank = 2;
-                    break;
-                }
-            }
-
-            static uint32 const itypes[6][3] = {
-                { 5512,19004,19005},                        // Minor Healthstone
-                { 5511,19006,19007},                        // Lesser Healthstone
-                { 5509,19008,19009},                        // Healthstone
-                { 5510,19010,19011},                        // Greater Healthstone
-                { 9421,19012,19013},                        // Major Healthstone
-                {22103,22104,22105}                         // Master Healthstone
-            };
-
             switch(m_spellInfo->Id)
             {
-                case  6201: itemtype=itypes[0][rank];break; // Minor Healthstone
-                case  6202: itemtype=itypes[1][rank];break; // Lesser Healthstone
-                case  5699: itemtype=itypes[2][rank];break; // Healthstone
-                case 11729: itemtype=itypes[3][rank];break; // Greater Healthstone
-                case 11730: itemtype=itypes[4][rank];break; // Major Healthstone
-                case 27230: itemtype=itypes[5][rank];break; // Master Healthstone
-                default:
-                    return;
-            }
-            DoCreateItem(effIndex, itemtype);
-            return;
-        }
-        // Brittle Armor - need remove one 24575 Brittle Armor aura
-        case 24590:
-            unitTarget->RemoveSingleAuraFromStack(24575, 0);
-            unitTarget->RemoveSingleAuraFromStack(24575, 1);
-            return;
-        // Mercurial Shield - need remove one 26464 Mercurial Shield aura
-        case 26465:
-            unitTarget->RemoveSingleAuraFromStack(26464, 0);
-            return;
-        // Orb teleport spells
-        case 25140:
-        case 25143:
-        case 25650:
-        case 25652:
-        case 29128:
-        case 29129:
-        case 35376:
-        case 35727:
-        {
-            if (!unitTarget)
-                return;
-
-            uint32 spellid;
-            switch(m_spellInfo->Id)
-            {
-                case 25140: spellid =  32571; break;
-                case 25143: spellid =  32572; break;
-                case 25650: spellid =  30140; break;
-                case 25652: spellid =  30141; break;
-                case 29128: spellid =  32568; break;
-                case 29129: spellid =  32569; break;
-                case 35376: spellid =  25649; break;
-                case 35727: spellid =  35730; break;
-                default:
-                    return;
-            }
-
-            unitTarget->CastSpell(unitTarget,spellid,false);
-            return;
-        }
-
-        // Shadow Flame (All script effects, not just end ones to prevent player from dodging the last triggered spell)
-        case 22539:
-        case 22972:
-        case 22975:
-        case 22976:
-        case 22977:
-        case 22978:
-        case 22979:
-        case 22980:
-        case 22981:
-        case 22982:
-        case 22983:
-        case 22984:
-        case 22985:
-        {
-            if (!unitTarget || !unitTarget->isAlive())
-                return;
-
-            // Onyxia Scale Cloak
-            if (unitTarget->GetDummyAura(22683))
-                return;
-
-            // Shadow Flame
-            m_caster->CastSpell(unitTarget, 22682, true);
-            return;
-        }
-        break;
-        // Hallowed Wand
-        // Random Costume
-        case 24720:
-        {
-            if (!unitTarget || !unitTarget->isAlive())
-                return;
-
-            uint32 spellId;
-            switch((uint32)rand32()%7)
-            {
-            case 0: spellId = 24717; break; // Pirate Costume
-            case 1: spellId = 24741; break; // Wisp Costume
-            case 2: spellId = 24724; break; // Skeleton Costume
-            case 3: spellId = 24719; break; // Leper Gnome Costume
-            case 4: spellId = 24718; break; // Ninja Costume
-            case 5: spellId = 24737; break; // Ghost Costume
-            case 6: spellId = 24733; break; // Bat Costume
-            }
-            m_caster->CastSpell(unitTarget, spellId, true);
-        }
-        break;
-        // Pirate Costume
-        case 24717:
-        {
-            if (!unitTarget || !unitTarget->isAlive())
-                return;
-
-            if (unitTarget->getGender() == GENDER_MALE)
-                m_caster->CastSpell(unitTarget,24708,true);
-            else
-                m_caster->CastSpell(unitTarget,24709,true);
-        }
-        break;
-        // Ninja Costume
-        case 24718:
-        {
-            if (!unitTarget || !unitTarget->isAlive())
-                return;
-
-            if (unitTarget->getGender() == GENDER_MALE)
-                m_caster->CastSpell(unitTarget,24711,true);
-            else
-                m_caster->CastSpell(unitTarget,24710,true);
-        }
-        break;
-        // Leper Gnome Costume
-        case 24719:
-        {
-            if (!unitTarget || !unitTarget->isAlive())
-                return;
-
-            if (unitTarget->getGender() == GENDER_MALE)
-                m_caster->CastSpell(unitTarget,24712,true);
-            else
-                m_caster->CastSpell(unitTarget,24713,true);
-        }
-        break;
-        // Ghost Costume
-        case 24737:
-        {
-            if (!unitTarget || !unitTarget->isAlive())
-                return;
-
-            if (unitTarget->getGender() == GENDER_MALE)
-                m_caster->CastSpell(unitTarget,24735,true);
-            else
-                m_caster->CastSpell(unitTarget,24736,true);
-        }
-        break;
-        // Mistletoe
-        case 26218:
-        {
-            if (!unitTarget || !unitTarget->isAlive())
-                return;
-
-            switch((uint32)rand32()%3)
-            {
-            case 0: m_caster->CastSpell(unitTarget, 26207, true); break;
-            case 1: m_caster->CastSpell(unitTarget, 26206, true); break;
-            case 2: m_caster->CastSpell(unitTarget, 45036, true); break;
-            }
-
-            break;
-        }
-        // Summon Black Qiraji Battle Tank
-        case 26656:
-        {
-            if (!unitTarget)
-                return;
-
-            // Prevent stacking of mounts
-            unitTarget->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
-
-            // Two separate mounts depending on area id (allows use both in and out of specific instance)
-            if (unitTarget->GetAreaId() == 3428)
-                unitTarget->CastSpell(unitTarget, 25863, false);
-            else
-                unitTarget->CastSpell(unitTarget, 26655, false);
-            break;
-        }
-        // Piccolo of the Flaming Fire
-        case 17512:
-        {
-            if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
-                return;
-            unitTarget->HandleEmoteCommand(EMOTE_STATE_DANCE);
-            break;
-        }
-        // Netherbloom
-        case 28702:
-        {
-            if (!unitTarget)
-                return;
-            // 25% chance of casting a random buff
-            if (roll_chance_i(75))
-                return;
-
-            // triggered spells are 28703 to 28707
-            // Note: some sources say, that there was the possibility of
-            //       receiving a debuff. However, this seems to be removed by a patch.
-            const uint32 spellid = 28703;
-
-            // don't overwrite an existing aura
-            for (uint8 i=0; i<5; i++)
-                if (unitTarget->HasAura(spellid+i, 0))
-                    return;
-            unitTarget->CastSpell(unitTarget, spellid+urand(0, 4), true);
-            break;
-        }
-
-        // Nightmare Vine
-        case 28720:
-        {
-            if (!unitTarget)
-                return;
-            // 25% chance of casting Nightmare Pollen
-            if (roll_chance_i(75))
-                return;
-            unitTarget->CastSpell(unitTarget, 28721, true);
-            break;
-        }
-
-        // Mirren's Drinking Hat
-        case 29830:
-        {
-            uint32 item = 0;
-            switch (urand(1,6))
-            {
-                case 1: case 2: case 3: item = 23584; break;// Loch Modan Lager
-                case 4: case 5:         item = 23585; break;// Stouthammer Lite
-                case 6:                 item = 23586; break;// Aerie Peak Pale Ale
-            }
-            if (item)
-                DoCreateItem(effIndex,item);
-            break;
-        }
-        // Improved Sprint
-        case 30918:
-        {
-            // Removes snares and roots.
-            uint32 mechanic_mask = (1<<MECHANIC_ROOT) | (1<<MECHANIC_SNARE);
-            Unit::AuraMap& Auras = unitTarget->GetAuras();
-            for (Unit::AuraMap::iterator iter = Auras.begin(), next; iter != Auras.end(); iter = next)
-            {
-                next = iter;
-                ++next;
-                Aura *aur = iter->second;
-                if (!aur->IsPositive())             //only remove negative spells
+                // Improved Mana Gems (Serpent-Coil Braid)
+                case 5497:
                 {
-                    // check for mechanic mask
-                    if (GetSpellMechanicMask(aur->GetSpellProto(), aur->GetEffIndex()) & mechanic_mask)
+                    if (!unitTarget)
+                        return;
+
+                    // Mana Surge
+                    m_caster->CastSpell(m_caster, 37445, true);
+                    return;
+                }
+                // Bending Shinbone
+                case 8856:
+                {
+                    if (!itemTarget && m_caster->GetTypeId() != TYPEID_PLAYER)
+                        return;
+
+                    uint32 spell_id = 0;
+                    switch(urand(1, 5))
                     {
-                        unitTarget->RemoveAurasDueToSpell(aur->GetId());
-                        if (Auras.empty())
+                        case 1:  spell_id = 8854; break;
+                        default: spell_id = 8855; break;
+                    }
+
+                    m_caster->CastSpell(m_caster,spell_id,true,NULL);
+                    return;
+                }
+                // Piccolo of the Flaming Fire
+                case 17512:
+                {
+                    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
+                        return;
+                    unitTarget->HandleEmoteCommand(EMOTE_STATE_DANCE);
+                    return;
+                }
+                // Brittle Armor - need remove one 24575 Brittle Armor aura
+                case 24590:
+                    unitTarget->RemoveSingleAuraFromStack(24575, 0);
+                    unitTarget->RemoveSingleAuraFromStack(24575, 1);
+                    return;
+                // Pirate Costume
+                case 24717:
+                {
+                    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
+                        return;
+
+                    // Pirate Costume (male or female)
+                    m_caster->CastSpell(unitTarget, unitTarget->getGender() == GENDER_MALE ? 24708 : 24709, true);
+                    return;
+                }
+                // Ninja Costume
+                case 24718:
+                {
+                    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
+                        return;
+
+                    // Ninja Costume (male or female)
+                    m_caster->CastSpell(unitTarget, unitTarget->getGender() == GENDER_MALE ? 24711 : 24710, true);
+                    return;
+                }
+                // Leper Gnome Costume
+                case 24719:
+                {
+                    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
+                        return;
+
+                    // Leper Gnome Costume (male or female)
+                    m_caster->CastSpell(unitTarget, unitTarget->getGender() == GENDER_MALE ? 24712 : 24713, true);
+                    return;
+                }
+                // Random Costume
+                case 24720:
+                {
+                    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
+                        return;
+
+                    uint32 spellId = 0;
+
+                    switch(urand(0, 6))
+                    {
+                        case 0:
+                            spellId = unitTarget->getGender() == GENDER_MALE ? 24708 : 24709;
                             break;
-                        else
-                            next = Auras.begin();
+                        case 1:
+                            spellId = unitTarget->getGender() == GENDER_MALE ? 24711 : 24710;
+                            break;
+                        case 2:
+                            spellId = unitTarget->getGender() == GENDER_MALE ? 24712 : 24713;
+                            break;
+                        case 3:
+                            spellId = 24723;
+                            break;
+                        case 4:
+                            spellId = 24732;
+                            break;
+                        case 5:
+                            spellId = unitTarget->getGender() == GENDER_MALE ? 24735 : 24736;
+                            break;
+                        case 6:
+                            spellId = 24740;
+                            break;
                     }
-                }
-            }
-            break;
-        }
-        // Gruul's shatter
-        case 33654:
-        {
-            if (!unitTarget)
-                return;
 
-            //Remove Stoned
-            if (unitTarget->HasAura(33652,0))
-                unitTarget->RemoveAurasDueToSpell(33652);
-
-            // Only player cast this
-            if (unitTarget->GetTypeId() != TYPEID_PLAYER)
-                return;
-
-            unitTarget->CastSpell(unitTarget,33671,true,0,0,m_caster->GetGUID());
-            break;
-        }
-        // Goblin Weather Machine
-        case 46203:
-        {
-            if (!unitTarget)
-                return;
-
-            uint32 spellId;
-            switch((uint32)rand32()%4)
-            {
-                case 0:
-                    spellId=46740;
-                    break;
-                case 1:
-                    spellId=46739;
-                    break;
-                case 2:
-                    spellId=46738;
-                    break;
-                case 3:
-                    spellId=46736;
-                    break;
-            }
-            unitTarget->CastSpell(unitTarget, spellId, true);
-            break;
-        }
-        case 48025:                                     // Headless Horseman's Mount
-        {
-                if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
+                    m_caster->CastSpell(unitTarget, spellId, true);
                     return;
-
-                if (GetVirtualMapForMapAndZone(unitTarget->GetMapId(),unitTarget->GetZoneId()) != 530)
+                }
+                // Ghost Costume
+                case 24737:
                 {
-                    switch(unitTarget->ToPlayer()->GetBaseSkillValue(762))
+                    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
+                        return;
+
+                    // Ghost Costume (male or female)
+                    m_caster->CastSpell(unitTarget, unitTarget->getGender() == GENDER_MALE ? 24735 : 24736, true);
+                    return;
+                }
+                // PX-238 Winter Wondervolt TRAP
+                case 26275:
+                {
+                    uint32 spells[4] = { 26272, 26157, 26273, 26274 };
+
+                    // check presence
+                    for (uint8 j = 0; j < 4; ++j)
+                        if (unitTarget->HasAura(spells[j],0))
+                            return;
+
+                    // select spell
+                    uint32 iTmpSpellId = spells[urand(0,3)];
+
+                    // cast
+                    unitTarget->CastSpell(unitTarget, iTmpSpellId, true);
+                    return;
+                }
+                // Mercurial Shield - need remove one 26464 Mercurial Shield aura
+                case 26465:
+                    unitTarget->RemoveSingleAuraFromStack(26464, 0);
+                    return;
+                // Orb teleport spells
+                case 25140:
+                case 25143:
+                case 25650:
+                case 25652:
+                case 29128:
+                case 29129:
+                case 35376:
+                case 35727:
+                {
+                    if (!unitTarget)
+                        return;
+
+                    uint32 spellid;
+                    switch(m_spellInfo->Id)
                     {
-                    case 75: unitTarget->CastSpell(unitTarget, 51621, true); break;;
-                    case 150: case 225: case 300: unitTarget->CastSpell(unitTarget, 48024, true); break;
-                    default: break;
+                        case 25140: spellid =  32571; break;
+                        case 25143: spellid =  32572; break;
+                        case 25650: spellid =  30140; break;
+                        case 25652: spellid =  30141; break;
+                        case 29128: spellid =  32568; break;
+                        case 29129: spellid =  32569; break;
+                        case 35376: spellid =  25649; break;
+                        case 35727: spellid =  35730; break;
+                        default:
+                            return;
                     }
-                }else
+
+                    unitTarget->CastSpell(unitTarget,spellid,false);
+                    return;
+                }
+                // Shadow Flame (All script effects, not just end ones to prevent player from dodging the last triggered spell)
+                case 22539:
+                case 22972:
+                case 22975:
+                case 22976:
+                case 22977:
+                case 22978:
+                case 22979:
+                case 22980:
+                case 22981:
+                case 22982:
+                case 22983:
+                case 22984:
+                case 22985:
                 {
-                    switch(unitTarget->ToPlayer()->GetBaseSkillValue(762))
+                    if (!unitTarget || !unitTarget->isAlive())
+                        return;
+
+                    // Onyxia Scale Cloak
+                    if (unitTarget->GetDummyAura(22683))
+                        return;
+
+                    // Shadow Flame
+                    m_caster->CastSpell(unitTarget, 22682, true);
+                    return;
+                }
+                // Mistletoe
+                case 26218:
+                {
+                    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
+                        return;
+
+                    switch(urand(0,2))
                     {
-                    case 75: unitTarget->CastSpell(unitTarget, 51621, true); break;;
-                    case 150: unitTarget->CastSpell(unitTarget, 48024, true); break;
-                    case 225: unitTarget->CastSpell(unitTarget, 51617, true); break;
-                    case 300: unitTarget->CastSpell(unitTarget, 48023, true); break;
-                    default: break;
+                        case 0: m_caster->CastSpell(unitTarget, 26207, true); break;
+                        case 1: m_caster->CastSpell(unitTarget, 26206, true); break;
+                        case 2: m_caster->CastSpell(unitTarget, 45036, true); break;
                     }
-                }
-                break;
-        }
-        case 47977:                                     // Magic Broom
-        {
-            if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
-                return;
 
-            if (GetVirtualMapForMapAndZone(unitTarget->GetMapId(),unitTarget->GetZoneId()) != 530)
-            {
-                switch(unitTarget->ToPlayer()->GetBaseSkillValue(762))
+                    return;
+                }
+                // Summon Black Qiraji Battle Tank
+                case 26656:
                 {
-                case 75: unitTarget->CastSpell(unitTarget, 42681, true); break;;
-                case 150: case 225: case 300: unitTarget->CastSpell(unitTarget, 42683, true); break;
-                default: break;
+                    if (!unitTarget)
+                        return;
+
+                    // Prevent stacking of mounts
+                    unitTarget->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
+
+                    // Two separate mounts depending on area id (allows use both in and out of specific instance)
+                    if (unitTarget->GetAreaId() == 3428)
+                        unitTarget->CastSpell(unitTarget, 25863, false);
+                    else
+                        unitTarget->CastSpell(unitTarget, 26655, false);
+
+                    return;
                 }
-            }
-            else
-            {
-                switch(unitTarget->ToPlayer()->GetBaseSkillValue(762))
+                // Mirren's Drinking Hat
+                case 29830:
                 {
-                case 75: unitTarget->CastSpell(unitTarget, 42681, true); break;;
-                case 150: unitTarget->CastSpell(unitTarget, 42684, true); break;
-                case 225: unitTarget->CastSpell(unitTarget, 42673, true); break;
-                case 300: unitTarget->CastSpell(unitTarget, 42679, true); break;
-                default: break;
+                    uint32 item = 0;
+                    switch (urand(1, 6))
+                    {
+                        case 1:
+                        case 2:
+                        case 3:
+                            item = 23584; break;            // Loch Modan Lager
+                        case 4:
+                        case 5:
+                            item = 23585; break;            // Stouthammer Lite
+                        case 6:
+                            item = 23586; break;            // Aerie Peak Pale Ale
+                    }
+                    if (item)
+                        DoCreateItem(effIndex,item);
+                    break;
                 }
-            }
-            break;
-        }
-    }
-
-    if (!unitTarget || !unitTarget->isAlive()) // can we remove this check?
-    {
-        sLog.outError("Spell %u in EffectScriptEffect does not have unitTarget", m_spellInfo->Id);
-        return;
-    }
-
-    switch(m_spellInfo->Id)
-    {
-        // Dreaming Glory
-        case 28698: unitTarget->CastSpell(unitTarget, 28694, true); break;
-        // Needle Spine
-        //case 39835: unitTarget->CastSpell(unitTarget, 39968, true); break;
-        // Draw Soul
-        case 40904: unitTarget->CastSpell(m_caster, 40903, true); break;
-        // Flame Crash
-        //case 41126: unitTarget->CastSpell(unitTarget, 41131, true); break;
-        case 41931:
-        {
-            int bag=19;
-            int slot=0;
-            Item* item = NULL;
-
-            while (bag < 256)
-            {
-                item = m_caster->ToPlayer()->GetItemByPos(bag,slot);
-                if (item && item->GetEntry() == 38587) break;
-                slot++;
-                if (slot == 39)
+                // Improved Sprint
+                case 30918:
                 {
-                    slot = 0;
-                    bag++;
+                    // Removes snares and roots.
+                    uint32 mechanic_mask = (1<<MECHANIC_ROOT) | (1<<MECHANIC_SNARE);
+                    Unit::AuraMap& Auras = unitTarget->GetAuras();
+                    for (Unit::AuraMap::iterator iter = Auras.begin(), next; iter != Auras.end(); iter = next)
+                    {
+                        next = iter;
+                        ++next;
+                        Aura *aur = iter->second;
+                        if (!aur->IsPositive())             //only remove negative spells
+                        {
+                            // check for mechanic mask
+                            if (GetSpellMechanicMask(aur->GetSpellProto(), aur->GetEffIndex()) & mechanic_mask)
+                            {
+                                unitTarget->RemoveAurasDueToSpell(aur->GetId());
+                                if (Auras.empty())
+                                    break;
+                                else
+                                    next = Auras.begin();
+                            }
+                        }
+                    }
+                    break;
+                }
+                // Gruul's shatter
+                case 33654:
+                {
+                    if (!unitTarget)
+                        return;
+
+                    //Remove Stoned
+                    if (unitTarget->HasAura(33652,0))
+                        unitTarget->RemoveAurasDueToSpell(33652);
+
+                    // Only player cast this
+                    if (unitTarget->GetTypeId() != TYPEID_PLAYER)
+                        return;
+
+                    unitTarget->CastSpell(unitTarget,33671,true,0,0,m_caster->GetGUID());
+                    break;
+                }
+                /*// Needle Spine
+                case 39835:
+                {
+                    if (!unitTarget)
+                        return;
+
+                    unitTarget->CastSpell(unitTarget, 39968, true);
+                    break;
+                }*/
+                /*// Flame Crash
+                case 41126:
+                {
+                    if (!unitTarget)
+                        return;
+
+                    unitTarget->CastSpell(unitTarget, 41131, true);
+                    break;
+                }*/
+                // Draw Soul
+                case 40904:
+                {
+                    if (!unitTarget)
+                        return;
+
+                    unitTarget->CastSpell(m_caster, 40903, true);
+                    break;
+                }
+                case 48025:                                     // Headless Horseman's Mount
+                {
+                    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
+                        return;
+
+                    // Triggered spell id dependent on riding skill and zone
+                    bool canFly = true;
+                    uint32 v_map = GetVirtualMapForMapAndZone(unitTarget->GetMapId(), unitTarget->GetZoneId());
+                    if (v_map != 530)
+                        canFly = false;
+
+                    switch(unitTarget->ToPlayer()->GetBaseSkillValue(SKILL_RIDING))
+                    {
+                        case 75: unitTarget->CastSpell(unitTarget, 51621, true); break;;
+                        case 150: unitTarget->CastSpell(unitTarget, 48024, true); break;
+                        case 225:
+                        {
+                            if (canFly)
+                                unitTarget->CastSpell(unitTarget, 51617, true);
+                            else
+                                unitTarget->CastSpell(unitTarget, 48024, true);
+                            break;
+                        }
+                        case 300:
+                        {
+                            if (canFly)
+                                unitTarget->CastSpell(unitTarget, 48023, true);
+                            else
+                                unitTarget->CastSpell(unitTarget, 48024, true);
+                            break;
+                        }
+                    }
+                    return;
+                }
+                case 47977:                                     // Magic Broom
+                {
+                    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
+                        return;
+                    // Triggered spell id dependent on riding skill and zone
+                    bool canFly = true;
+                    uint32 v_map = GetVirtualMapForMapAndZone(unitTarget->GetMapId(), unitTarget->GetZoneId());
+                    if (v_map != 530)
+                        canFly = false;
+
+                    switch(unitTarget->ToPlayer()->GetBaseSkillValue(SKILL_RIDING))
+                    {
+                        case 75: unitTarget->CastSpell(unitTarget, 42680, true); break;
+                        case 150: unitTarget->CastSpell(unitTarget, 42683, true); break;
+                        case 225:
+                        {
+                            if (canFly)
+                                unitTarget->CastSpell(unitTarget, 42667, true);
+                            else
+                                unitTarget->CastSpell(unitTarget, 42683, true);
+                            break;
+                        }
+                        case 300:
+                        {
+                            if (canFly)
+                                unitTarget->CastSpell(unitTarget, 42668, true);
+                            else
+                                unitTarget->CastSpell(unitTarget, 42683, true);
+                            break;
+                        }
+                    }
+                    return;
+                }
+                // Mug Transformation
+                case 41931:
+                {
+                    if (m_caster->GetTypeId() != TYPEID_PLAYER)
+                        return;
+
+                    uint8 bag = 19;
+                    uint8 slot = 0;
+                    Item *item = NULL;
+
+                    while (bag < 256)
+                    {
+                        item = m_caster->ToPlayer()->GetItemByPos(bag, slot);
+                        if (item && item->GetEntry() == 38587) break;
+                        ++slot;
+                        if (slot == 39)
+                        {
+                            slot = 0;
+                            ++bag;
+                        }
+                    }
+                    if (bag < 256)
+                    {
+                        if (m_caster->ToPlayer()->GetItemByPos(bag,slot)->GetCount() == 1) m_caster->ToPlayer()->RemoveItem(bag,slot,true);
+                        else m_caster->ToPlayer()->GetItemByPos(bag,slot)->SetCount(m_caster->ToPlayer()->GetItemByPos(bag,slot)->GetCount()-1);
+                        // Spell 42518 (Braufest - Gratisprobe des Braufest herstellen)
+                        m_caster->CastSpell(m_caster, 42518, true);
+                        return;
+                    }
+                    break;
+                }
+                // Force Cast - Portal Effect: Sunwell Isle
+                case 44876:
+                {
+                    if (!unitTarget)
+                        return;
+
+                    unitTarget->CastSpell(unitTarget, 44870, true);
+                    break;
+                }
+                // Brutallus - Burn
+                case 45141:
+                case 45151:
+                {
+                    //Workaround for Range ... should be global for every ScriptEffect
+                    //float radius = GetSpellRadius(sSpellRadiusStore.LookupEntry(m_spellInfo->EffectRadiusIndex[effIndex]));
+                    float radius = GetSpellRadius(m_spellInfo, effIndex, false);
+                    if (unitTarget && unitTarget->GetTypeId() == TYPEID_PLAYER && unitTarget->GetDistance(m_caster) <= radius && !unitTarget->HasAura(46394,0) && unitTarget != m_caster)
+                        unitTarget->CastSpell(unitTarget, 46394, true);
+
+                    break;
+                }
+                // spell of Brutallus - Stomp
+                case 45185:
+                {
+                    if (!unitTarget)
+                        return;
+
+                    if (unitTarget->HasAura(46394, 0))
+                        unitTarget->RemoveAurasDueToSpell(46394);
+                    break;
+                }
+                // Negative Energy
+                case 46289:
+                {
+                    if (!unitTarget)
+                        return;
+
+                    m_caster->CastSpell(unitTarget, 46285, true);
+                    break;
+                }
+                // Goblin Weather Machine
+                case 46203:
+                {
+                    if (!unitTarget)
+                        return;
+
+                    uint32 spellId = 0;
+                    switch(rand() % 4)
+                    {
+                        case 0: spellId = 46740; break;
+                        case 1: spellId = 46739; break;
+                        case 2: spellId = 46738; break;
+                        case 3: spellId = 46736; break;
+                    }
+                    unitTarget->CastSpell(unitTarget, spellId, true);
+                    break;
+                }
+                // 5,000 Gold
+                case 46642:
+                {
+                    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
+                        return;
+
+                    unitTarget->ToPlayer()->ModifyMoney(5000 * GOLD);
+
+                    break;
                 }
             }
-            if (bag < 256)
+            break;
+        }
+        case SPELLFAMILY_WARLOCK:
+        {
+            switch(m_spellInfo->Id)
             {
-                if (m_caster->ToPlayer()->GetItemByPos(bag,slot)->GetCount() == 1) m_caster->ToPlayer()->RemoveItem(bag,slot,true);
-                else m_caster->ToPlayer()->GetItemByPos(bag,slot)->SetCount(m_caster->ToPlayer()->GetItemByPos(bag,slot)->GetCount()-1);
-                // Spell 42518 (Braufest - Gratisprobe des Braufest herstellen)
-                m_caster->CastSpell(m_caster,42518,true);
-                return;
+                // Healthstone creating spells
+                case  6201:
+                case  6202:
+                case  5699:
+                case 11729:
+                case 11730:
+                case 27230:
+                {
+                    uint32 itemtype;
+                    uint32 rank = 0;
+
+                    // Improved Healthstone
+                    Unit::AuraList const& mDummyAuras = unitTarget->GetAurasByType(SPELL_AURA_DUMMY);
+                    for (Unit::AuraList::const_iterator i = mDummyAuras.begin();i != mDummyAuras.end(); ++i)
+                    {
+                        if ((*i)->GetId() == 18692)
+                        {
+                            rank = 1;
+                            break;
+                        }
+                        else if ((*i)->GetId() == 18693)
+                        {
+                            rank = 2;
+                            break;
+                        }
+                    }
+
+                    static uint32 const itypes[6][3] = {
+                        { 5512, 19004, 19005},              // Minor Healthstone
+                        { 5511, 19006, 19007},              // Lesser Healthstone
+                        { 5509, 19008, 19009},              // Healthstone
+                        { 5510, 19010, 19011},              // Greater Healthstone
+                        { 9421, 19012, 19013},              // Major Healthstone
+                        {22103, 22104, 22105}               // Master Healthstone
+                    };
+
+                    switch(m_spellInfo->Id)
+                    {
+                        case  6201:
+                            itemtype=itypes[0][rank];break; // Minor Healthstone
+                        case  6202:
+                            itemtype=itypes[1][rank];break; // Lesser Healthstone
+                        case  5699:
+                            itemtype=itypes[2][rank];break; // Healthstone
+                        case 11729:
+                            itemtype=itypes[3][rank];break; // Greater Healthstone
+                        case 11730:
+                            itemtype=itypes[4][rank];break; // Major Healthstone
+                        case 27230:
+                            itemtype=itypes[5][rank];break; // Master Healthstone
+                        default:
+                            return;
+                    }
+                    DoCreateItem(effIndex, itemtype);
+                    return;
+                }
             }
-        }
-        // Force Cast - Portal Effect: Sunwell Isle
-        case 44876: unitTarget->CastSpell(unitTarget, 44870, true); break;
-        //Brutallus - Burn
-        case 45141: case 45151:
-        {
-            //Workaround for Range ... should be global for every ScriptEffect
-            //float radius = GetSpellRadius(sSpellRadiusStore.LookupEntry(m_spellInfo->EffectRadiusIndex[effIndex]));
-            float radius = GetSpellRadius(m_spellInfo, effIndex, false);
-            if (unitTarget && unitTarget->GetTypeId() == TYPEID_PLAYER && unitTarget->GetDistance(m_caster) <= radius && !unitTarget->HasAura(46394,0) && unitTarget != m_caster)
-                unitTarget->CastSpell(unitTarget,46394,true);
-
             break;
         }
-        // spell of Brutallus - Stomp
-        case 45185:
+        case SPELLFAMILY_PALADIN:
         {
-            if (unitTarget->HasAura(46394, 0)) // spell of Brutallus - Burn
-                unitTarget->RemoveAurasDueToSpell(46394);
-            break;
-        }
-        // Negative Energy
-        case 46289: m_caster->CastSpell(unitTarget, 46285, true); break;
-        //5,000 Gold
-        case 46642:
-        {
-            if (unitTarget->GetTypeId() == TYPEID_PLAYER)
-                unitTarget->ToPlayer()->ModifyMoney(50000000);
-            break;
-        }
-        // Improved Mana Gems (Serpent-Coil Braid)
-        case 5497:
-             m_caster->CastSpell(m_caster, 37445, true); // Mana Surge
-            break;
-    }
-
-    if (m_spellInfo->SpellFamilyName == SPELLFAMILY_PALADIN)
-    {
-        switch(m_spellInfo->SpellFamilyFlags)
-        {
-            // Judgement
-            case 0x800000:
+            // Judgement (seal trigger)
+            if (m_spellInfo->SpellFamilyFlags == 0x800000LL)
             {
+                if (!unitTarget || !unitTarget->isAlive())
+                    return;
                 uint32 spellId2 = 0;
 
                 // all seals have aura dummy
@@ -5049,10 +5077,56 @@ void Spell::EffectScriptEffect(uint32 effIndex)
 
                     break;
                 }
-
-                m_caster->CastSpell(unitTarget,spellId2,true);
+                m_caster->CastSpell(unitTarget, spellId2, true);
                 return;
             }
+        }
+        case SPELLFAMILY_POTION:
+        {
+            switch(m_spellInfo->Id)
+            {
+                // Dreaming Glory
+                case 28698:
+                {
+                    if (!unitTarget)
+                        return;
+                    unitTarget->CastSpell(unitTarget, 28694, true);
+                    break;
+                }
+                // Netherbloom
+                case 28702:
+                {
+                    if (!unitTarget)
+                        return;
+                    // 25% chance of casting a random buff
+                    if (roll_chance_i(75))
+                        return;
+
+                    // triggered spells are 28703 to 28707
+                    // Note: some sources say, that there was the possibility of
+                    //       receiving a debuff. However, this seems to be removed by a patch.
+                    const uint32 spellid = 28703;
+
+                    // don't overwrite an existing aura
+                    for (uint8 i = 0; i < 5; ++i)
+                        if (unitTarget->HasAura(spellid + i, 0))
+                            return;
+                    unitTarget->CastSpell(unitTarget, spellid+urand(0, 4), true);
+                    break;
+                }
+                // Nightmare Vine
+                case 28720:
+                {
+                    if (!unitTarget)
+                        return;
+                    // 25% chance of casting Nightmare Pollen
+                    if (roll_chance_i(75))
+                        return;
+                    unitTarget->CastSpell(unitTarget, 28721, true);
+                    break;
+                }
+            }
+            break;
         }
     }
 
