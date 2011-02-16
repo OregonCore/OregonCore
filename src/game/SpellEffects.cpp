@@ -4793,6 +4793,11 @@ void Spell::EffectScriptEffect(uint32 effIndex)
                     unitTarget->CastSpell(unitTarget, 39968, true);
                     break;
                 }*/
+                // Tidal Surge
+                case 38358:
+                    if (unitTarget)
+                        m_caster->CastSpell(unitTarget, 38353, true);
+                    return;
                 /*// Flame Crash
                 case 41126:
                 {
