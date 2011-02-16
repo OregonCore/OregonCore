@@ -65,6 +65,18 @@ enum Summons
     CHAINED_SPIRIT          = 15117
 };
 
+// Spirit Resurrection
+struct Spirit_Resurrection
+{
+	Unit* pUnit;
+	int Spirit;
+    bool isBeingRezzed;
+};
+
+uint32 Spirit_Number; 
+
+std::vector<Spirit_Resurrection> Resurrection;
+
 Unit* CHAINED_SPIRIT_SUMMONS [15];
 
 float CHAINED_SPIRIT_LOC [15][4] =
@@ -116,17 +128,6 @@ struct boss_mandokirAI : public ScriptedAI
 
     uint64 GazeTarget;
 
-    // Spirit Resurrection
-    struct Spirit_Resurrection
-    {
-        Unit* pUnit;
-        int Spirit;
-        bool isBeingRezzed;
-    };
-
-    uint32 Spirit_Number; 
-
-    std::vector<Spirit_Resurrection> Resurrection;
 
     void Reset()
     {
@@ -236,7 +237,7 @@ struct boss_mandokirAI : public ScriptedAI
                 me->Unmount();
 
                 // And summon his raptor
-                me->SummonCreature(OHGAN, me->getVictim()->GetPositionX(), me->getVictim()->GetPositionY(), me->getVictim()->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
+                me->SummonCreature(OHGAN, me->getVictim()->GetPositionX(), me->getVictim()->GetPositionY(), me->getVictim()->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 CombatStart = true;
 
                 uint32 i;
@@ -445,6 +446,28 @@ struct mob_ohganAI : public ScriptedAI
         Execute_Timer = 1000;
     }
 
+    
+    void KilledUnit(Unit* victim)
+    {
+        if (victim->GetTypeId() == TYPEID_PLAYER)
+        {
+            if (Spirit_Number < 15)
+            {
+                Spirit_Resurrection Temp;
+            
+                Temp.isBeingRezzed = false;
+                Temp.pUnit = victim;
+                Temp.Spirit = Spirit_Number;
+            
+                Resurrection.push_back(Temp);
+
+                ++Spirit_Number;
+            }
+        }
+    }
+    
+    
+    
     void EnterCombat(Unit * /*who*/) {}
 
     void JustDied(Unit* /*Killer*/)
