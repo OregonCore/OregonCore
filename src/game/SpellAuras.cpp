@@ -1470,9 +1470,7 @@ void Aura::TriggerSpell()
                                 else
                                     player->SendEquipError(msg, NULL, NULL);
                             }
-                            creature->setDeathState(JUST_DIED);
-                            creature->RemoveCorpse();
-                            creature->SetHealth(0);         // just for nice GM-mode view
+                            creature->ForcedDespawn();
                         }
                         return;
                         break;
@@ -1631,9 +1629,7 @@ void Aura::TriggerSpell()
 
                         Creature* creatureTarget = m_target->ToCreature();
 
-                        creatureTarget->setDeathState(JUST_DIED);
-                        creatureTarget->RemoveCorpse();
-                        creatureTarget->SetHealth(0);       // just for nice GM-mode view
+                        creatureTarget->ForcedDespawn();
                         return;
                     }
 //                    // Magic Sucker Device timer

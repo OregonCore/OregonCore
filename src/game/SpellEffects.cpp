@@ -679,7 +679,7 @@ void Spell::EffectDummy(uint32 i)
                 case 42784:
                 {
                     uint32 count = 0;
-                    for (std::list<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin();ihit != m_UniqueTargetInfo.end();++ihit)
+                    for (std::list<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
                         if (ihit->effectMask & (1<<i))
                             ++count;
 
@@ -794,6 +794,18 @@ void Spell::EffectDummy(uint32 i)
                     m_caster->CastSpell(unitTarget,spell_id,true,NULL);
                     return;
                 }
+                case 13280:                                 // Gnomish Death Ray
+                {
+                    if (!unitTarget)
+                        return;
+
+                    if (urand(0, 99) < 15)
+                        m_caster->CastSpell(m_caster, 13493, true, NULL);    // failure
+                    else
+                        m_caster->CastSpell(unitTarget, 13279, true, NULL);
+
+                    return;
+                }
                 case 13567:                                 // Dummy Trigger
                 {
                     // can be used for different aura triggering, so select by aura
@@ -874,10 +886,7 @@ void Spell::EffectDummy(uint32 i)
                     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_UNIT)
                         return;
 
-                    Creature* creatureTarget = unitTarget->ToCreature();
-                    creatureTarget->setDeathState(JUST_DIED);
-                    creatureTarget->RemoveCorpse();
-                    creatureTarget->SetHealth(0);           // just for nice GM-mode view
+                    unitTarget->ToCreature()->ForcedDespawn();
                     return;
                 }
                 case 16589:                                 // Noggenfogger Elixir
@@ -934,15 +943,12 @@ void Spell::EffectDummy(uint32 i)
                         return;
 
                     Creature* creatureTarget = unitTarget->ToCreature();
-                    if (creatureTarget->isPet())
-                        return;
-
-                    creatureTarget->setDeathState(JUST_DIED);
-                    creatureTarget->RemoveCorpse();
-                    creatureTarget->SetHealth(0);                   // just for nice GM-mode view
 
                     GameObject* Crystal_Prison = m_caster->SummonGameObject(179644, creatureTarget->GetPositionX(), creatureTarget->GetPositionY(), creatureTarget->GetPositionZ(), creatureTarget->GetOrientation(), 0, 0, 0, 0, creatureTarget->GetRespawnTime()-time(NULL));
-                    DEBUG_LOG("SummonGameObject at SpellEfects.cpp EffectDummy for Spell 23019\n");
+                    sLog.outDebug("SummonGameObject at SpellEfects.cpp EffectDummy for Spell 23019");
+
+                    creatureTarget->ForcedDespawn();
+
                     WorldPacket data(SMSG_GAMEOBJECT_SPAWN_ANIM_OBSOLETE, 8);
                     data << uint64(Crystal_Prison->GetGUID());
                     m_caster->SendMessageToSet(&data, true);
@@ -1003,7 +1009,7 @@ void Spell::EffectDummy(uint32 i)
                     return;
                 }
                 case 23645:                                 // Hourglass Sand
-                    m_caster->RemoveAurasDueToSpell(23170);
+                    m_caster->RemoveAurasDueToSpell(23170); // Brood Affliction: Bronze
                     return;
                 case 23725:                                 // Gift of Life (warrior bwl trinket)
                     m_caster->CastSpell(m_caster, 23782, true);
@@ -1049,14 +1055,19 @@ void Spell::EffectDummy(uint32 i)
 
                     //5 different spells used depending on mounted speed and if mount can fly or not
                     if (flyspeed >= 4.1f)
+                        // Flying Reindeer
                         m_caster->CastSpell(m_caster, 44827, true); //310% flying Reindeer
                     else if (flyspeed >= 3.8f)
+                        // Flying Reindeer
                         m_caster->CastSpell(m_caster, 44825, true); //280% flying Reindeer
                     else if (flyspeed >= 1.6f)
+                        // Flying Reindeer
                         m_caster->CastSpell(m_caster, 44824, true); //60% flying Reindeer
                     else if (speed >= 2.0f)
+                        // Reindeer
                         m_caster->CastSpell(m_caster, 25859, true); //100% ground Reindeer
                     else
+                        // Reindeer
                         m_caster->CastSpell(m_caster, 25858, true); //60% ground Reindeer
 
                     return;
@@ -1237,11 +1248,7 @@ void Spell::EffectDummy(uint32 i)
                     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_UNIT)
                         return;
 
-                    Creature* creatureTarget = unitTarget->ToCreature();
-
-                    creatureTarget->setDeathState(JUST_DIED);
-                    creatureTarget->RemoveCorpse();
-                    creatureTarget->SetHealth(0);           // just for nice GM-mode view
+                    unitTarget->ToCreature()->ForcedDespawn();
 
                     //cast spell Raptor Capture Credit
                     m_caster->CastSpell(m_caster, 42337, true, NULL);
@@ -1279,30 +1286,15 @@ void Spell::EffectDummy(uint32 i)
                 }
                 case 34665:                                 //Administer Antidote
                 {
-                    if (!unitTarget || m_caster->GetTypeId() != TYPEID_PLAYER)
+                    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_UNIT
+                        || unitTarget->GetEntry() != 16880 || unitTarget->ToCreature()->isPet())
                         return;
 
-                    TempSummon* tempSummon = dynamic_cast<TempSummon*>(unitTarget);
-                    if (!tempSummon)
-                        return;
+                    unitTarget->ToCreature()->UpdateEntry(16992);
+                    m_caster->ToPlayer()->RewardPlayerAndGroupAtEvent(16992, unitTarget);
 
-                    uint32 health = tempSummon->GetHealth();
-
-                    float x = tempSummon->GetPositionX();
-                    float y = tempSummon->GetPositionY();
-                    float z = tempSummon->GetPositionZ();
-                    float o = tempSummon->GetOrientation();
-                    tempSummon->UnSummon();
-
-                    Creature* pCreature = m_caster->SummonCreature(16992, x, y, z, o,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,180000);
-                    if (!pCreature)
-                        return;
-
-                    pCreature->SetHealth(health);
-                    m_caster->ToPlayer()->RewardPlayerAndGroupAtEvent(16992, pCreature);
-
-                    if (pCreature->IsAIEnabled)
-                        pCreature->AI()->AttackStart(m_caster);
+                    if (unitTarget->IsAIEnabled)
+                        unitTarget->ToCreature()->AI()->AttackStart(m_caster);
 
                     return;
                 }
@@ -3893,10 +3885,8 @@ void Spell::EffectTameCreature(uint32 /*i*/)
     if (!pet)                                               // in very specific state like near world end/etc.
         return;
 
-    // kill original creature
-    creatureTarget->setDeathState(JUST_DIED);
-    creatureTarget->RemoveCorpse();
-    creatureTarget->SetHealth(0);                       // just for nice GM-mode view
+    // "kill" original creature
+    creatureTarget->ForcedDespawn();
 
     // prepare visual effect for levelup
     pet->SetUInt32Value(UNIT_FIELD_LEVEL,creatureTarget->getLevel()-1);
