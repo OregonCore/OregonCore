@@ -262,3 +262,17 @@ struct boss_fuegenAI : public BossAI
         DoMeleeAttackIfReady();
     }
 };
+
+/*
+28089 just sample, move it to scripteffec or effectdummy later ;]
+
+    if (unitTarget->GetTypeId() == TYPEID_PLAYER)
+    {
+        // those spells have 1 min duration so they need be removed to prevent stack of both types 
+        unitTarget->RemoveAurasDueToSpell(28059);
+        unitTarget->RemoveAurasDueToSpell(28084);
+
+        // Apply positive or negative charge
+        m_caster->CastSpell(unitTarget, RAND(28059, 28084), true);
+    }
+*/
