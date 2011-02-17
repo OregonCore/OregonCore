@@ -14617,13 +14617,13 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     bytes0 |= fields[6].GetUInt8() << 16;                   // gender
     SetUInt32Value(UNIT_FIELD_BYTES_0, bytes0);
     SetUInt32Value(UNIT_FIELD_LEVEL, fields[7].GetUInt8());
+    SetUInt32Value(PLAYER_XP, fields[8].GetUInt32());
 
     uint32 money = fields[9].GetUInt32();
     if (money > MAX_MONEY_AMOUNT)
         money = MAX_MONEY_AMOUNT;
     SetMoney(money);
 
-    SetUInt32Value(PLAYER_FIELD_COINAGE, fields[9].GetUInt32());
     SetUInt32Value(PLAYER_BYTES, fields[10].GetUInt32());
     SetUInt32Value(PLAYER_BYTES_2, fields[11].GetUInt32());
     SetUInt32Value(PLAYER_BYTES_3, (fields[50].GetUInt16() & 0xFFFE) | fields[6].GetUInt8());

@@ -77,7 +77,6 @@ bool LoginQueryHolder::Initialize()
         "trans_o, transguid, extra_flags, stable_slots, at_login, zone, "
         "online, death_expire_time, taxi_path, dungeon_difficulty, "
         "arenaPoints, instance_id, totalHonorPoints, todayHonorPoints, "
-        "arenaPoints, instance_id, totalHonorPoints, todayHonorPoints, "
         "yesterdayHonorPoints, totalKills, todayKills, yesterdayKills, "
         "chosenTitle, watchedFaction, drunk, health, "
         "powerMana, powerRage, powerFocus, powerEnergy, powerHappiness "
