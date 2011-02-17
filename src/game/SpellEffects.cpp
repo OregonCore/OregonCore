@@ -3246,10 +3246,11 @@ void Spell::EffectSummonType(uint32 i)
     if (!entry)
         return;
 
-    SummonPropertiesEntry const *properties = sSummonPropertiesStore.LookupEntry(m_spellInfo->EffectMiscValueB[i]);
+    uint32 prop_id = m_spellInfo->EffectMiscValueB[i];
+    SummonPropertiesEntry const *properties = sSummonPropertiesStore.LookupEntry(prop_id);
     if (!properties)
     {
-        sLog.outError("EffectSummonType: Unhandled summon type %u", m_spellInfo->EffectMiscValueB[i]);
+        sLog.outError("EffectSummonType: Unhandled summon type %u", prop_id);
         return;
     }
 
@@ -3340,17 +3341,32 @@ void Spell::EffectSummonType(uint32 i)
                 }
                 default:
                 {
-                    float radius = GetSpellRadius(m_spellInfo, i, false);
-
-                    int32 amount = damage > 0 ? damage : 1;
-
-                    for (uint32 count = 0; count < amount; ++count)
+                    // those are classical totems - effectbasepoints is their hp and not summon ammount!
+                    //SUMMON_TYPE_TOTEM = 121: 23035, battlestands
+                    if (prop_id == 121)
                     {
-                        GetSummonPosition(i, pos, radius, count);
+                        summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster);
 
-                        TempSummonType summonType = (duration == 0) ? TEMPSUMMON_DEAD_DESPAWN : TEMPSUMMON_TIMED_DESPAWN;
+                        if (damage)                                             // if not spell info, DB values used
+                        {
+                            summon->SetMaxHealth(damage);
+                            summon->SetHealth(damage);
+                        }
+                    }
+                    else
+                    {
+                        float radius = GetSpellRadius(m_spellInfo, i, false);
 
-                        m_originalCaster->SummonCreature(entry, pos, summonType, duration);
+                        int32 amount = damage > 0 ? damage : 1;
+
+                        for (uint32 count = 0; count < amount; ++count)
+                        {
+                            GetSummonPosition(i, pos, radius, count);
+
+                            TempSummonType summonType = (duration == 0) ? TEMPSUMMON_DEAD_DESPAWN : TEMPSUMMON_TIMED_DESPAWN;
+
+                            m_originalCaster->SummonCreature(entry, pos, summonType, duration);
+                        }
                     }
                     break;
                 }
