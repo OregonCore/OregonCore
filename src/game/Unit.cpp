@@ -9055,14 +9055,14 @@ void Unit::setDeathState(DeathState s)
 
         if (IsNonMeleeSpellCasted(false))
             InterruptNonMeleeSpells(false);
+
+        UnsummonAllTotems();
+        RemoveAllControlled();
+        RemoveAllAurasOnDeath();
     }
 
     if (s == JUST_DIED)
     {
-        UnsummonAllTotems();
-        RemoveAllControlled();
-        RemoveAllAurasOnDeath();
-
         ModifyAuraState(AURA_STATE_HEALTHLESS_20_PERCENT, false);
         ModifyAuraState(AURA_STATE_HEALTHLESS_35_PERCENT, false);
         // remove aurastates allowing special moves
