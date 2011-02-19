@@ -219,9 +219,11 @@ struct PlayerInfo
 
 struct PvPInfo
 {
-    PvPInfo() : inHostileArea(false), endTimer(0) {}
+    PvPInfo() : inHostileArea(false), inNoPvPArea(false), inFFAPvPArea(false), endTimer(0) {}
 
     bool inHostileArea;
+    bool inNoPvPArea;
+    bool inFFAPvPArea;
     time_t endTimer;
 };
 
@@ -1450,7 +1452,14 @@ class Player : public Unit, public GridObject<Player>
         void SendInitialActionButtons();
 
         PvPInfo pvpInfo;
-        void UpdatePvP(bool state, bool ovrride=false);
+        void UpdatePvPState(bool onlyFFA = false);
+        void SetPvP(bool state)
+        {
+            Unit::SetPvP(state);
+            for (ControlList::iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)
+                (*itr)->SetPvP(state);
+        }
+        void UpdatePvP(bool state, bool override=false);
         bool IsFFAPvP() const { return HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_FFA_PVP); }
         void SetFFAPvP(bool state);
 
@@ -1713,7 +1722,6 @@ class Player : public Unit, public GridObject<Player>
         /*********************************************************/
         /***                  PVP SYSTEM                       ***/
         /*********************************************************/
-        void UpdateArenaFields();
         void UpdateHonorFields();
         bool RewardHonor(Unit *pVictim, uint32 groupsize, float honor = -1, bool pvptoken = false);
         uint32 GetHonorPoints() { return GetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY); }
