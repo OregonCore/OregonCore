@@ -280,7 +280,8 @@ struct boss_mandokirAI : public ScriptedAI
 
                         Player* pPlayer = Player::GetPlayer(*me, itr->pUnit->GetGUID());
                         //DoCast(pPlayer, SPELL_REVIVE);   // core not supporting npc resurrection requests? use other method:
-                        me->getVictim()->CastSpell(itr->pUnit, SPELL_REVIVE, false, 0, 0, me->getVictim()->GetGUID());  // not great method, but no other way currently
+                        if (me->getVictim())
+                            me->getVictim()->CastSpell(itr->pUnit, SPELL_REVIVE, false, 0, 0, me->getVictim()->GetGUID());  // not great method, but no other way currently
 
                         CHAINED_SPIRIT_SUMMONS[itr->Spirit]->RemoveFromWorld();
                         eraseUnit.push_back(itr);
