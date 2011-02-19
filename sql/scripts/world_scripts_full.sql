@@ -1151,5 +1151,6 @@ UPDATE `creature_template` SET `ScriptName`='mob_spawn_of_marli' WHERE `entry`=1
 UPDATE `creature_template` SET `ScriptName`='mob_batrider' WHERE `entry`=14965;
 UPDATE `creature_template` SET `ScriptName`='mob_shade_of_jindo' WHERE `entry`=14986;
 UPDATE `creature_template` SET `ScriptName`='mob_ohgan' WHERE `entry`=14988;
+UPDATE `creature_template` SET `ScriptName`='mob_prowler' WHERE `entry`=15101;
 
 /* EOF */
