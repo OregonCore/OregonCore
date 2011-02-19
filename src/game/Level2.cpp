@@ -1995,6 +1995,8 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
     uint32 total_player_time = 0;
     uint32 level = 0;
     uint32 latency = 0;
+    uint8 race;
+    uint8 Class;
 
     // get additional information from Player object
     if (target)
@@ -2006,11 +2008,13 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
         total_player_time = target->GetTotalPlayedTime();
         level = target->getLevel();
         latency = target->GetSession()->GetLatency();
+        race = target->getRace();
+        Class = target->getClass();
     }
     // get additional information from DB
     else
     {
-        QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT totaltime, level, money, account FROM characters WHERE guid = '%u'", GUID_LOPART(targetGUID));
+        QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT totaltime, level, money, account, race, class FROM characters WHERE guid = '%u'", GUID_LOPART(targetGUID));
         if (!result)
         {
             SendSysMessage(LANG_PLAYER_NOT_FOUND);
@@ -2022,14 +2026,17 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
         level = fields[1].GetUInt32();
         money = fields[2].GetUInt32();
         accId = fields[3].GetUInt32();
+        race = fields[4].GetUInt8();
+        Class = fields[5].GetUInt8();
     }
 
     std::string username = GetOregonString(LANG_ERROR);
+    std::string email = GetOregonString(LANG_ERROR);
     std::string last_ip = GetOregonString(LANG_ERROR);
     uint32 security = 0;
     std::string last_login = GetOregonString(LANG_ERROR);
 
-    QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT a.username,aa.gmlevel,a.last_ip,a.last_login "
+    QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT a.username,aa.gmlevel,a.email,a.last_ip,a.last_login "
                                                       "FROM account a "
                                                       "LEFT JOIN account_access aa "
                                                       "ON (a.id = aa.id) "
@@ -2039,11 +2046,15 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
         Field* fields = result->Fetch();
         username = fields[0].GetCppString();
         security = fields[1].GetUInt32();
+        email = fields[2].GetCppString();
+
+        if (email.empty())
+            email = "-";
 
         if (!m_session || m_session->GetSecurity() >= security)
         {
-            last_ip = fields[2].GetCppString();
-            last_login = fields[3].GetCppString();
+            last_ip = fields[3].GetCppString();
+            last_login = fields[4].GetCppString();
         }
         else
         {
@@ -2052,13 +2063,40 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
         }
     }
 
-    PSendSysMessage(LANG_PINFO_ACCOUNT, (target?"":GetOregonString(LANG_OFFLINE)), name.c_str(), GUID_LOPART(targetGUID), username.c_str(), accId, security, last_ip.c_str(), last_login.c_str(), latency);
+    PSendSysMessage(LANG_PINFO_ACCOUNT, (target?"":GetOregonString(LANG_OFFLINE)), name.c_str(), GUID_LOPART(targetGUID), username.c_str(), accId, email.c_str(), security, last_ip.c_str(), last_login.c_str(), latency);
+
+    std::string race_s, Class_s;
+    switch(race)
+    {
+        case RACE_HUMAN:            race_s = "Human";       break;
+        case RACE_ORC:              race_s = "Orc";         break;
+        case RACE_DWARF:            race_s = "Dwarf";       break;
+        case RACE_NIGHTELF:         race_s = "Night Elf";   break;
+        case RACE_UNDEAD_PLAYER:    race_s = "Undead";      break;
+        case RACE_TAUREN:           race_s = "Tauren";      break;
+        case RACE_GNOME:            race_s = "Gnome";       break;
+        case RACE_TROLL:            race_s = "Troll";       break;
+        case RACE_BLOODELF:         race_s = "Blood Elf";   break;
+        case RACE_DRAENEI:          race_s = "Draenei";     break;
+    }
+    switch(Class)
+    {
+        case CLASS_WARRIOR:         Class_s = "Warrior";        break;
+        case CLASS_PALADIN:         Class_s = "Paladin";        break;
+        case CLASS_HUNTER:          Class_s = "Hunter";         break;
+        case CLASS_ROGUE:           Class_s = "Rogue";          break;
+        case CLASS_PRIEST:          Class_s = "Priest";         break;
+        case CLASS_SHAMAN:          Class_s = "Shaman";         break;
+        case CLASS_MAGE:            Class_s = "Mage";           break;
+        case CLASS_WARLOCK:         Class_s = "Warlock";        break;
+        case CLASS_DRUID:           Class_s = "Druid";          break;
+    }
 
     std::string timeStr = secsToTimeString(total_player_time,true,true);
     uint32 gold = money /GOLD;
     uint32 silv = (money % GOLD) / SILVER;
     uint32 copp = (money % GOLD) % SILVER;
-    PSendSysMessage(LANG_PINFO_LEVEL,  timeStr.c_str(), level, gold,silv,copp);
+    PSendSysMessage(LANG_PINFO_LEVEL, race_s.c_str(), Class_s.c_str(), timeStr.c_str(), level, gold, silv, copp);
 
     if (py && strncmp(py, "rep", 3) == 0)
     {
