@@ -7699,16 +7699,8 @@ int32 Unit::SpellBaseDamageBonusForVictim(SpellSchoolMask schoolMask, Unit *pVic
     // ..taken
     AuraList const& mDamageTaken = pVictim->GetAurasByType(SPELL_AURA_MOD_DAMAGE_TAKEN);
     for (AuraList::const_iterator i = mDamageTaken.begin();i != mDamageTaken.end(); ++i)
-    {
         if (((*i)->GetModifier()->m_miscvalue & schoolMask) != 0)
             TakenAdvertisedBenefit += (*i)->GetModifierValue();
-
-            if ((*i)->GetId() == 34123)
-             {
-                 if ((*i)->GetCaster()->GetTypeId() == TYPEID_PLAYER)
-                 TakenAdvertisedBenefit += int32(0.25f * ((Player*)(*i)->GetCaster())->GetStat(STAT_SPIRIT));
-             }
-      }
 
     return TakenAdvertisedBenefit;
 }
@@ -8067,15 +8059,8 @@ int32 Unit::SpellBaseHealingBonusForVictim(SpellSchoolMask schoolMask, Unit *pVi
     int32 AdvertisedBenefit = 0;
     AuraList const& mDamageTaken = pVictim->GetAurasByType(SPELL_AURA_MOD_HEALING);
     for (AuraList::const_iterator i = mDamageTaken.begin();i != mDamageTaken.end(); ++i)
-    {
         if (((*i)->GetModifier()->m_miscvalue & schoolMask) != 0)
             AdvertisedBenefit += (*i)->GetModifierValue();
-        if ((*i)->GetId() == 34123)
-        {
-            if ((*i)->GetCaster()->GetTypeId() == TYPEID_PLAYER)
-            AdvertisedBenefit += int32(0.25f * ((Player*)(*i)->GetCaster())->GetStat(STAT_SPIRIT)) ;
-        }
-    }
     return AdvertisedBenefit;
 }
 
