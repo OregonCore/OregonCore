@@ -540,7 +540,7 @@ bool ChatHandler::HandleGMTicketAssignToCommand(const char* args)
         return true;
     }
 
-    /*ticket->escalated = true;
+    ticket->escalated = true;
     Player *plr = objmgr.GetPlayer(ticket->playerGuid);
     if (plr && plr->IsInWorld())
     {
@@ -548,7 +548,7 @@ bool ChatHandler::HandleGMTicketAssignToCommand(const char* args)
         WorldPacket data(SMSG_GM_TICKET_STATUS_UPDATE, 4);
         data << uint32(1);
         plr->GetSession()->SendPacket(&data);
-    }*/
+    }
 
     ticket->assignedToGM = tarGUID;
     ticketmgr.UpdateGMTicket(ticket);
