@@ -215,15 +215,15 @@ void WorldSession::HandleGMSurveySubmit(WorldPacket& recv_data)
         result[i] = value;
         // if anyone has a better programming method be my guest. this is the only way I see to prevent multiple rows
         if (questionID == 28)
-        CharacterDatabase.PExecute("UPDATE gm_surveys SET AppropriateAnswer = '%i' WHERE surveyid = %i;",value,nextSurveyID);
+            CharacterDatabase.PExecute("UPDATE gm_surveys SET AppropriateAnswer = '%i' WHERE surveyid = %i;",value,nextSurveyID);
         if (questionID == 29)
-        CharacterDatabase.PExecute("UPDATE gm_surveys SET Understandability = '%i' WHERE surveyid = %i;",value,nextSurveyID);
+            CharacterDatabase.PExecute("UPDATE gm_surveys SET Understandability = '%i' WHERE surveyid = %i;",value,nextSurveyID);
         if (questionID == 30)
-        CharacterDatabase.PExecute("UPDATE gm_surveys SET GMRating = '%i' WHERE surveyid = %i;",value,nextSurveyID);
+            CharacterDatabase.PExecute("UPDATE gm_surveys SET GMRating = '%i' WHERE surveyid = %i;",value,nextSurveyID);
         if (questionID == 31)
-        CharacterDatabase.PExecute("UPDATE gm_surveys SET ResponseTime = '%i' WHERE surveyid = %i;",value,nextSurveyID);
+            CharacterDatabase.PExecute("UPDATE gm_surveys SET ResponseTime = '%i' WHERE surveyid = %i;",value,nextSurveyID);
         if (questionID == 32)
-        CharacterDatabase.PExecute("UPDATE gm_surveys SET OverallGMExperience = '%i' WHERE surveyid = %i;",value,nextSurveyID);
+            CharacterDatabase.PExecute("UPDATE gm_surveys SET OverallGMExperience = '%i' WHERE surveyid = %i;",value,nextSurveyID);
     }
 
     std::string comment;
