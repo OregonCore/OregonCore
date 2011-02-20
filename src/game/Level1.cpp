@@ -27,6 +27,7 @@
 #include "World.h"
 #include "ObjectMgr.h"
 #include "Player.h"
+#include "AccountMgr.h"
 #include "Opcodes.h"
 #include "Chat.h"
 #include "Log.h"
@@ -517,13 +518,9 @@ bool ChatHandler::HandleGMTicketAssignToCommand(const char* args)
 
     uint64 tarGUID = objmgr.GetPlayerGUIDByName(targm.c_str());
     uint64 accid = objmgr.GetPlayerAccountIdByGUID(tarGUID);
-    QueryResult_AutoPtr result = LoginDatabase.PQuery("SELECT gmlevel, RealmID FROM account_access WHERE id = '%u'", accid);
+    uint32 gmlevel = accmgr.GetSecurity(accid, realmID);
 
-    Field * fields = result->Fetch();
-    uint32 gmlevel = fields[0].GetUInt32();
-    uint32 SecurityRealmID = fields[1].GetUInt32();
-
-    if (!tarGUID|| !result || gmlevel < SEC_MODERATOR || (SecurityRealmID != realmID && SecurityRealmID != -1))
+    if (!tarGUID || gmlevel == SEC_PLAYER)
     {
         SendSysMessage(LANG_COMMAND_TICKETASSIGNERROR_A);
         return true;
