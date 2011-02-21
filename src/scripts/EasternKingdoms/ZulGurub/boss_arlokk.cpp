@@ -87,11 +87,9 @@ struct boss_arlokkAI : public ScriptedAI
     uint32 m_uiRavage_Timer;
 
     uint32 m_uiSummon_Timer;
-    
 
     bool m_bIsPhaseTwo;
     bool m_bIsVanished;
-
 
     void Reset()
     {
@@ -150,7 +148,6 @@ struct boss_arlokkAI : public ScriptedAI
 
         me->SummonCreature(NPC_ZULIAN_PROWLER, -11532.7998, -1649.6734, 41.4800, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
         me->SummonCreature(NPC_ZULIAN_PROWLER, -11532.9970, -1606.4840, 41.2979, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
-
     }
 
     void JustSummoned(Creature* pSummoned)
@@ -159,8 +156,8 @@ struct boss_arlokkAI : public ScriptedAI
             pSummoned->AI()->AttackStart(pMarkedTarget);
         else
         {
-            Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true);
-            pSummoned->AI()->AttackStart(pTarget);
+            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                pSummoned->AI()->AttackStart(pTarget);
         }    
 
         ++m_uiSummonCount;
@@ -173,7 +170,6 @@ struct boss_arlokkAI : public ScriptedAI
 
         if (!m_bIsPhaseTwo)
         {
-                       
             if (m_uiShadowWordPain_Timer <= uiDiff)
             {
                 DoCast(me->getVictim(), SPELL_SHADOWWORDPAIN);
@@ -198,11 +194,9 @@ struct boss_arlokkAI : public ScriptedAI
             }
             else
                 m_uiMark_Timer -= uiDiff;
-
         }
         else
         {
-           
             // Thrash Timer
             if (m_uiThrash_Timer <= uiDiff)
             {
@@ -363,7 +357,6 @@ CreatureAI* GetAI_mob_prowler(Creature* pCreature)
 {
     return new mob_prowlerAI (pCreature);
 }
-
 
 void AddSC_boss_arlokk()
 {
