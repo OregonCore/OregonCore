@@ -507,7 +507,7 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
         return false;
     }
 
-    for (int i = 0; i < PLAYER_SLOTS_COUNT; i++)
+    for (uint8 i = 0; i < PLAYER_SLOTS_COUNT; i++)
         m_items[i] = NULL;
 
     Relocate(info->positionX,info->positionY,info->positionZ, info->orientation);
@@ -569,7 +569,7 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
     SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);               // fix cast time showed in spell tooltip on client
 
                                                             // -1 is default value
-    SetUInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX, uint32(-1));
+    SetInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX, uint32(-1));
 
     SetUInt32Value(PLAYER_BYTES, (skin | (face << 8) | (hairStyle << 16) | (hairColor << 24)));
     SetUInt32Value(PLAYER_BYTES_2, (facialHair | (0x00 << 8) | (0x00 << 16) | (0x02 << 24)));
@@ -581,17 +581,23 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
 
     SetUInt64Value(PLAYER__FIELD_KNOWN_TITLES, 0);        // 0=disabled
     SetUInt32Value(PLAYER_CHOSEN_TITLE, 0);
+
     SetUInt32Value(PLAYER_FIELD_KILLS, 0);
     SetUInt32Value(PLAYER_FIELD_LIFETIME_HONORABLE_KILLS, 0);
     SetUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION, 0);
     SetUInt32Value(PLAYER_FIELD_YESTERDAY_CONTRIBUTION, 0);
 
     // set starting level
-    if (GetSession()->GetSecurity() >= SEC_MODERATOR)
-        SetUInt32Value (UNIT_FIELD_LEVEL, sWorld.getConfig(CONFIG_START_GM_LEVEL));
-    else
-        SetUInt32Value (UNIT_FIELD_LEVEL, sWorld.getConfig(CONFIG_START_PLAYER_LEVEL));
+    uint32 start_level = sWorld.getConfig(CONFIG_START_PLAYER_LEVEL);
 
+    if (GetSession()->GetSecurity() >= SEC_MODERATOR)
+    {
+        uint32 gm_level = sWorld.getConfig(CONFIG_START_GM_LEVEL);
+        if (gm_level > start_level)
+            start_level = gm_level;
+    }
+
+    SetUInt32Value(UNIT_FIELD_LEVEL, start_level);
     SetUInt32Value (PLAYER_FIELD_COINAGE, sWorld.getConfig(CONFIG_START_PLAYER_MONEY));
     SetUInt32Value (PLAYER_FIELD_HONOR_CURRENCY, sWorld.getConfig(CONFIG_START_HONOR_POINTS));
     SetUInt32Value (PLAYER_FIELD_ARENA_CURRENCY, sWorld.getConfig(CONFIG_START_ARENA_POINTS));
@@ -14570,11 +14576,21 @@ float Player::GetFloatValueFromDB(uint16 index, uint64 guid)
 
 bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 {
+    //                                                       0     1        2     3     4     5      6       7      8   9      10           11            12
+    //QueryResult *result = CharacterDatabase.PQuery("SELECT guid, account, data, name, race, class, gender, level, xp, money, playerBytes, playerBytes2, playerFlags,"
+    // 12          13          14          15   16           17        18         19         20         21          22           23                 24
+    //"position_x, position_y, position_z, map, orientation, taximask, cinematic, totaltime, leveltime, rest_bonus, logout_time, is_logout_resting, resettalents_cost,"
+    // 25                 26       27       28       29       30         31           32            33        34    35      36                 37         38
+    //"resettalents_time, trans_x, trans_y, trans_z, trans_o, transguid, extra_flags, stable_slots, at_login, zone, online, death_expire_time, taxi_path, dungeon_difficulty,"
+    // 39           40                41                42                    43          44          45              46           47               48              49
+    //"arenaPoints, totalHonorPoints, todayHonorPoints, yesterdayHonorPoints, totalKills, todayKills, yesterdayKills, chosenTitle, knownCurrencies, watchedFaction, drunk,"
+    // 50      51         52         53          54           55             56
+    //"health, powerMana, powerRage, powerFocus, powerEnergy, powerHapiness, instance_id FROM characters WHERE guid = '%u'", guid);
     QueryResult_AutoPtr result = holder->GetResult(PLAYER_LOGIN_QUERY_LOADFROM);
 
     if (!result)
     {
-        sLog.outError("Player (GUID: %u) not found in table characters, can't load. ",guid);
+        sLog.outError("Player (GUID: %u) not found in table `characters`, can't load. ",guid);
         return false;
     }
 
@@ -14616,6 +14632,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     bytes0 |= fields[5].GetUInt8() << 8;                    // class
     bytes0 |= fields[6].GetUInt8() << 16;                   // gender
     SetUInt32Value(UNIT_FIELD_BYTES_0, bytes0);
+
     SetUInt32Value(UNIT_FIELD_LEVEL, fields[7].GetUInt8());
     SetUInt32Value(PLAYER_XP, fields[8].GetUInt32());
 
@@ -14626,9 +14643,9 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 
     SetUInt32Value(PLAYER_BYTES, fields[10].GetUInt32());
     SetUInt32Value(PLAYER_BYTES_2, fields[11].GetUInt32());
-    SetUInt32Value(PLAYER_BYTES_3, (fields[50].GetUInt16() & 0xFFFE) | fields[6].GetUInt8());
+    SetUInt32Value(PLAYER_BYTES_3, (fields[49].GetUInt16() & 0xFFFE) | fields[6].GetUInt8());
     SetUInt32Value(PLAYER_FLAGS, fields[12].GetUInt32());
-    SetUInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX, fields[49].GetUInt32());
+    SetInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX, fields[48].GetUInt32());
 
     // cleanup inventory related item value fields (its will be filled correctly in _LoadInventory)
     for (uint8 slot = EQUIPMENT_SLOT_START; slot < EQUIPMENT_SLOT_END; ++slot)
@@ -14657,7 +14674,8 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     uint32 transGUID = fields[31].GetUInt32();
     Relocate(fields[13].GetFloat(),fields[14].GetFloat(),fields[15].GetFloat(),fields[17].GetFloat());
     uint32 mapId = fields[16].GetUInt32();
-    uint32 instanceId = fields[41].GetFloat();
+    uint32 instanceId = fields[56].GetFloat();
+
     SetDifficulty(fields[39].GetUInt32());                  // may be changed in _LoadGroup
     std::string taxi_nodes = fields[38].GetCppString();
 
@@ -14689,10 +14707,10 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
             SetArenaTeamInfoField(arena_slot, ArenaTeamInfoType(j), 0);
     }
 
-    SetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY, fields[42].GetUInt32());
-    SetUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION, fields[43].GetUInt32());
-    SetUInt32Value(PLAYER_FIELD_YESTERDAY_CONTRIBUTION, fields[44].GetUInt32());
-    SetUInt32Value(PLAYER_FIELD_LIFETIME_HONORABLE_KILLS, fields[45].GetUInt32());
+    SetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY, fields[41].GetUInt32());
+    SetUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION, fields[42].GetUInt32());
+    SetUInt32Value(PLAYER_FIELD_YESTERDAY_CONTRIBUTION, fields[43].GetUInt32());
+    SetUInt32Value(PLAYER_FIELD_LIFETIME_HONORABLE_KILLS, fields[44].GetUInt32());
     SetUInt16Value(PLAYER_FIELD_KILLS, 0, fields[46].GetUInt16());
     SetUInt16Value(PLAYER_FIELD_KILLS, 1, fields[47].GetUInt16());
 
@@ -15061,7 +15079,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 
     // check PLAYER_CHOSEN_TITLE compatibility with PLAYER__FIELD_KNOWN_TITLES
     // note: PLAYER__FIELD_KNOWN_TITLES updated at quest status loaded
-    uint32 curTitle = fields[10].GetUInt32();
+    uint32 curTitle = fields[47].GetUInt32();
     if (curTitle && !HasTitle(curTitle))
         curTitle = 0;
 
@@ -15082,11 +15100,11 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     UpdateAllStats();
 
     // restore remembered power/health values (but not more max values)
-    uint32 savedHealth = fields[51].GetUInt32();
+    uint32 savedHealth = fields[50].GetUInt32();
     SetHealth(savedHealth > GetMaxHealth() ? GetMaxHealth() : savedHealth);
     for (uint8 i = 0; i < MAX_POWERS; ++i)
     {
-        uint32 savedPower = fields[52+i].GetUInt32();
+        uint32 savedPower = fields[51+i].GetUInt32();
         SetPower(Powers(i),savedPower > GetMaxPower(Powers(i)) ? GetMaxPower(Powers(i)) : savedPower);
     }
 

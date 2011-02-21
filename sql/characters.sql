@@ -278,7 +278,7 @@ CREATE TABLE `characters` (
   `todayKills` smallint(5) unsigned NOT NULL default'0',
   `yesterdayKills` smallint(5) unsigned NOT NULL default'0',
   `chosenTitle` int(10) unsigned NOT NULL default'0',
-  `watchedFaction` bigint(20) unsigned NOT NULL default'0',
+  `watchedFaction` int(10) unsigned NOT NULL default'0',
   `drunk` smallint(5) unsigned NOT NULL default'0',
   `health` int(10)  unsigned NOT NULL default'0',
   `powerMana` int(10) unsigned NOT NULL default'0',

@@ -76,10 +76,10 @@ bool LoginQueryHolder::Initialize()
         "resettalents_cost, resettalents_time, trans_x, trans_y, trans_z, "
         "trans_o, transguid, extra_flags, stable_slots, at_login, zone, "
         "online, death_expire_time, taxi_path, dungeon_difficulty, "
-        "arenaPoints, instance_id, totalHonorPoints, todayHonorPoints, "
+        "arenaPoints, totalHonorPoints, todayHonorPoints, "
         "yesterdayHonorPoints, totalKills, todayKills, yesterdayKills, "
         "chosenTitle, watchedFaction, drunk, health, "
-        "powerMana, powerRage, powerFocus, powerEnergy, powerHappiness "
+        "powerMana, powerRage, powerFocus, powerEnergy, powerHappiness, instance_id "
         "FROM characters WHERE guid = '%u'", GUID_LOPART(m_guid));
     res &= SetPQuery(PLAYER_LOGIN_QUERY_LOADGROUP,           "SELECT leaderGuid FROM group_member WHERE memberGuid ='%u'", GUID_LOPART(m_guid));
     res &= SetPQuery(PLAYER_LOGIN_QUERY_LOADBOUNDINSTANCES,  "SELECT id, permanent, map, difficulty, resettime FROM character_instance LEFT JOIN instance ON instance = id WHERE guid = '%u'", GUID_LOPART(m_guid));
