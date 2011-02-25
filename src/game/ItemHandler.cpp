@@ -836,6 +836,16 @@ void WorldSession::HandleBuyBankSlotOpcode(WorldPacket& recvPacket)
     uint64 guid;
     recvPacket >> guid;
 
+    // cheating protection
+    /* not critical if "cheated", and check skip allow by slots in bank windows open by .bank command.
+    Creature *pCreature = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_BANKER);
+    if (!pCreature)
+    {
+        sLog.outDebug("WORLD: HandleBuyBankSlotOpcode - Unit (GUID: %u) not found or you can't interact with him.", uint32(GUID_LOPART(guid)));
+        return;
+    }
+    */
+
     uint32 slot = _player->GetByteValue(PLAYER_BYTES_2, 2);
     // next slot
     ++slot;

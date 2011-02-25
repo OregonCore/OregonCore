@@ -655,13 +655,6 @@ class ObjectMgr
         }
         bool IsTavernAreaTrigger(uint32 Trigger_ID) const { return mTavernAreaTriggerSet.count(Trigger_ID) != 0; }
         bool IsGameObjectForQuests(uint32 entry) const { return mGameObjectForQuestSet.count(entry) != 0; }
-        bool IsGuildVaultGameObject(Player *player, uint64 guid) const
-        {
-            if (GameObject *go = player->GetMap()->GetGameObject(guid))
-                if (go->GetGoType() == GAMEOBJECT_TYPE_GUILD_BANK)
-                    return true;
-            return false;
-        }
 
         uint32 GetBattleMasterBG(uint32 entry) const
         {
