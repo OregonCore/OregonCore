@@ -268,7 +268,7 @@ struct boss_fuegenAI : public BossAI
 
     if (unitTarget->GetTypeId() == TYPEID_PLAYER)
     {
-        // those spells have 1 min duration so they need be removed to prevent stack of both types 
+        // those spells have 1 min duration so they need be removed to prevent stack of both types
         unitTarget->RemoveAurasDueToSpell(28059);
         unitTarget->RemoveAurasDueToSpell(28084);
 

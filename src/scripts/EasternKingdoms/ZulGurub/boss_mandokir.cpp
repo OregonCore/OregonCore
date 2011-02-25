@@ -73,7 +73,7 @@ struct Spirit_Resurrection
     bool isBeingRezzed;
 };
 
-uint32 Spirit_Number; 
+uint32 Spirit_Number;
 
 std::vector<Spirit_Resurrection> Resurrection;
 
@@ -207,11 +207,11 @@ struct boss_mandokirAI : public ScriptedAI
             if (Spirit_Number < 15)
             {
                 Spirit_Resurrection Temp;
-            
+
                 Temp.isBeingRezzed = false;
                 Temp.pUnit = victim;
                 Temp.Spirit = Spirit_Number;
-            
+
                 Resurrection.push_back(Temp);
 
                 ++Spirit_Number;
@@ -269,7 +269,7 @@ struct boss_mandokirAI : public ScriptedAI
                     if (!itr->isBeingRezzed)
                     {
                         CHAINED_SPIRIT_SUMMONS[itr->Spirit]->GetMotionMaster()->MovePoint(itr->pUnit->GetMapId(), itr->pUnit->GetPositionX(), itr->pUnit->GetPositionY(), itr->pUnit->GetPositionZ());
-                        itr->isBeingRezzed = true; 
+                        itr->isBeingRezzed = true;
                     }
 
                     if (CHAINED_SPIRIT_SUMMONS[itr->Spirit]->IsWithinDist3d(itr->pUnit->GetPositionX(), itr->pUnit->GetPositionY(), itr->pUnit->GetPositionZ(), 10.0f))
@@ -447,7 +447,6 @@ struct mob_ohganAI : public ScriptedAI
         Execute_Timer = 1000;
     }
 
-    
     void KilledUnit(Unit* victim)
     {
         if (victim->GetTypeId() == TYPEID_PLAYER)
@@ -455,20 +454,18 @@ struct mob_ohganAI : public ScriptedAI
             if (Spirit_Number < 15)
             {
                 Spirit_Resurrection Temp;
-            
+
                 Temp.isBeingRezzed = false;
                 Temp.pUnit = victim;
                 Temp.Spirit = Spirit_Number;
-            
+
                 Resurrection.push_back(Temp);
 
                 ++Spirit_Number;
             }
         }
     }
-    
-    
-    
+
     void EnterCombat(Unit * /*who*/) {}
 
     void JustDied(Unit* /*Killer*/)

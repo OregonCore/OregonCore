@@ -839,16 +839,16 @@ void Spell::EffectDummy(uint32 i)
                     return;
                 }
                 case 14537:                                 // Six Demon Bag
-                { 
+                {
                     if (!unitTarget || !unitTarget->isAlive())
-                        return; 
+                        return;
 
-                    uint32 ClearSpellId[6] = 
-                    { 
-                        15662,   // Fireball  
-                        11538,   // Frostball  
-                        21179,   // Chain Lightning  
-                        14621,   // Polymorph  
+                    uint32 ClearSpellId[6] =
+                    {
+                        15662,   // Fireball
+                        11538,   // Frostball
+                        21179,   // Chain Lightning
+                        14621,   // Polymorph
                         25189,   // Enveloping Winds
                         14642    // Summon Felhund minion
                     };
@@ -866,7 +866,7 @@ void Spell::EffectDummy(uint32 i)
                         spell_id = ClearSpellId[3];
                         if (urand(0, 100) <= 30)        // 30% chance to self-cast
                             unitTarget = m_caster;
-                    } 
+                    }
                     else if (rand >=80 && rand < 95)    // Enveloping Winds (15% chance)
                          spell_id = ClearSpellId[4];
                     else                                // Summon Felhund minion (5% chance)

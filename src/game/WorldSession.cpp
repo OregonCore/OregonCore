@@ -169,7 +169,7 @@ bool WorldSession::Update(uint32 diff)
     /// Update Timeout timer.
     UpdateTimeOutTime(diff);
 
-    ///- Before we process anything:    
+    ///- Before we process anything:
     /// If necessary, kick the player from the character select screen
     if (IsConnectionIdle())
         m_Socket->CloseSocket();

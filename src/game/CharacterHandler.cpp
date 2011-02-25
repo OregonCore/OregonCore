@@ -68,7 +68,7 @@ bool LoginQueryHolder::Initialize()
 
     // NOTE: all fields in `characters` must be read to prevent lost character data at next save in case wrong DB structure.
     // !!! NOTE: including unused `zone`,`online`
-    res &= SetPQuery(PLAYER_LOGIN_QUERY_LOADFROM,            
+    res &= SetPQuery(PLAYER_LOGIN_QUERY_LOADFROM,
         "SELECT guid, account, data, name, race, class, gender, level, xp, "
         "money, playerBytes, playerBytes2, playerFlags, position_x, "
         "position_y, position_z, map, orientation, taximask, cinematic, "

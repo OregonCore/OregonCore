@@ -158,7 +158,7 @@ struct boss_arlokkAI : public ScriptedAI
         {
             if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 pSummoned->AI()->AttackStart(pTarget);
-        }    
+        }
 
         ++m_uiSummonCount;
     }
@@ -204,8 +204,8 @@ struct boss_arlokkAI : public ScriptedAI
                 m_uiThrash_Timer = urand(5000, 9000);
             }
             else
-                m_uiThrash_Timer -= uiDiff;      
-            
+                m_uiThrash_Timer -= uiDiff;
+
            // Ravage Timer
            if (m_uiRavage_Timer <= uiDiff)
             {
@@ -213,8 +213,8 @@ struct boss_arlokkAI : public ScriptedAI
                 m_uiRavage_Timer = 16000;
             }
             else
-                m_uiRavage_Timer -= uiDiff;            
-            
+                m_uiRavage_Timer -= uiDiff;
+
             // Whirlwind_Timer
             if (m_uiWhirlwind_Timer <= uiDiff)
             {
@@ -228,7 +228,6 @@ struct boss_arlokkAI : public ScriptedAI
             if (m_uiGouge_Timer <= uiDiff)
             {
                 DoCast(me->getVictim(), SPELL_GOUGE);
-
 
                 if (DoGetThreat(me->getVictim()))
                     DoModifyThreatPercent(me->getVictim(), -80);
@@ -300,17 +299,15 @@ struct boss_arlokkAI : public ScriptedAI
 
 struct mob_prowlerAI : public ScriptedAI
 {
-    
     uint32 m_uiThrash_Timer;
     uint32 m_uiUpdateTarget_Timer;
-    
+
     mob_prowlerAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = pCreature->GetInstanceData();
     }
 
     ScriptedInstance *pInstance;
-
 
     void Reset()
     {
@@ -322,7 +319,7 @@ struct mob_prowlerAI : public ScriptedAI
     {
         --m_uiSummonCount;
     }
-    
+
     void UpdateAI(const uint32 uiDiff)
     {
         if (m_uiUpdateTarget_Timer <= uiDiff)
@@ -336,7 +333,6 @@ struct mob_prowlerAI : public ScriptedAI
         else
             m_uiUpdateTarget_Timer -= uiDiff;
 
-        
         if (m_uiThrash_Timer <= uiDiff)
         {
             DoCast(me, SPELL_THRASH);
@@ -344,7 +340,6 @@ struct mob_prowlerAI : public ScriptedAI
         }
         else
             m_uiThrash_Timer -= uiDiff;
-            
     }
 };
 

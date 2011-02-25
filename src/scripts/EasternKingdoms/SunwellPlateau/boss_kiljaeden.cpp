@@ -221,11 +221,11 @@ static Speech Speeches[]=
     //Kil Phase 2 -> Phase 3
     {SAY_KALECGOS_AWAKEN,       DATA_KALECGOS_KJ,   10000},
     {SAY_ANVEENA_IMPRISONED,    DATA_ANVEENA,       5000},
-    {SAY_KJ_PHASE3,             DATA_KILJAEDEN,     5000}, 
+    {SAY_KJ_PHASE3,             DATA_KILJAEDEN,     5000},
     //Kil Phase 3 -> Phase 4
     {SAY_KALECGOS_LETGO,        DATA_KALECGOS_KJ,   10000},
     {SAY_ANVEENA_LOST,          DATA_ANVEENA,       8000},
-    {SAY_KJ_PHASE4,             DATA_KILJAEDEN,     7000}, 
+    {SAY_KJ_PHASE4,             DATA_KILJAEDEN,     7000},
     //Kil Phase 4 -> Phase 5
     {SAY_KALECGOS_FOCUS,        DATA_KALECGOS_KJ,   4000},
     {SAY_ANVEENA_KALEC,         DATA_ANVEENA,       11000},
@@ -234,7 +234,7 @@ static Speech Speeches[]=
     {SAY_KJ_PHASE5,             DATA_KILJAEDEN,     5500},
 
     // use in End sequence?
-    {SAY_KALECGOS_GOODBYE,      DATA_KALECGOS_KJ,   12000},   
+    {SAY_KALECGOS_GOODBYE,      DATA_KALECGOS_KJ,   12000},
 };
 
 //AI for Kalecgos
@@ -258,7 +258,7 @@ struct boss_kalecgos_kjAI : public ScriptedAI
         me->setActive(true);
 
         for (uint8 i = 0; i < 4; ++i)
-            if (GameObject* pOrb = GetOrb(i)) 
+            if (GameObject* pOrb = GetOrb(i))
                 pOrb->SetGoType(GAMEOBJECT_TYPE_BUTTON);
     }
 
@@ -286,7 +286,7 @@ struct boss_kalecgos_kjAI : public ScriptedAI
     {
         me->RemoveDynObject(SPELL_RING_OF_BLUE_FLAMES);
         for (uint8 i = 0; i < 4; ++i)
-            if (GameObject* pOrb = GetOrb(i)) 
+            if (GameObject* pOrb = GetOrb(i))
                 pOrb->SetUInt32Value(GAMEOBJECT_FACTION, 0);
     }
 
@@ -367,7 +367,7 @@ bool GOHello_go_orb_of_the_blue_flight(Player* pPlayer, GameObject* pGo)
     {
         ScriptedInstance* pInstance = pGo->GetInstanceData();
         pPlayer->SummonCreature(CREATURE_POWER_OF_THE_BLUE_DRAGONFLIGHT, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN, 121000);
-        pPlayer->CastSpell(pPlayer, SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT, false);   
+        pPlayer->CastSpell(pPlayer, SPELL_VENGEANCE_OF_THE_BLUE_FLIGHT, false);
         pGo->SetUInt32Value(GAMEOBJECT_FACTION, 0);
 
         if (Creature* pKalec = Unit::GetCreature(*pPlayer, pInstance->GetData64(DATA_KALECGOS_KJ)))
@@ -664,7 +664,7 @@ struct boss_kiljaedenAI : public Scripted_NoMovementAI
             {
                 switch(t)
                 {
-                    case TIMER_SPEECH: 
+                    case TIMER_SPEECH:
                         if (SpeechBegins)
                         {
                             SpeechBegins=false;
@@ -703,7 +703,7 @@ struct boss_kiljaedenAI : public Scripted_NoMovementAI
                     case TIMER_SOUL_FLAY:
                         if (!me->IsNonMeleeSpellCasted(false))
                         {
-                            DoCast(me->getVictim(), SPELL_SOUL_FLAY_SLOW, false); 
+                            DoCast(me->getVictim(), SPELL_SOUL_FLAY_SLOW, false);
                             DoCast(me->getVictim(), SPELL_SOUL_FLAY, false);
                             Timer[TIMER_SOUL_FLAY] = 3500;
                         }
@@ -754,7 +754,7 @@ struct boss_kiljaedenAI : public Scripted_NoMovementAI
                         if (!me->IsNonMeleeSpellCasted(false))
                         {
                             CastSinisterReflection();
-                            DoCastAOE(SPELL_SHADOW_SPIKE, false); 
+                            DoCastAOE(SPELL_SHADOW_SPIKE, false);
                             ChangeTimers(true, 30000);
                             Timer[TIMER_SHADOW_SPIKE] = 0;
                             TimerIsDeactivated[TIMER_SPEECH] = false;

@@ -114,7 +114,7 @@ struct boss_marliAI : public ScriptedAI
             }
             else
                 DrainLife_Timer -= diff;
-                
+
             if (PoisonVolley_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_POISONVOLLEY);
@@ -266,7 +266,7 @@ struct mob_spawn_of_marliAI : public ScriptedAI
     {
        Growth_Level = 1;
     }
-    
+
     void JustDied(Unit* Killer)
     {
         me->SetFloatValue(OBJECT_FIELD_SCALE_X, 1.0f);

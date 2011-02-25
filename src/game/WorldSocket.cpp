@@ -773,7 +773,7 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
         locale = LOCALE_enUS;
 
         // Checks gmlevel per Realm
-        result = 
+        result =
         LoginDatabase.PQuery ("SELECT "
                               "RealmID, "            //0
                               "gmlevel "             //1
@@ -870,7 +870,7 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     m_Crypt.SetKey(&K);
     m_Crypt.Init();
 
-    // Sleep this Network thread for 
+    // Sleep this Network thread for
     uint32 sleepTime = sWorld.getConfig(CONFIG_SESSION_ADD_DELAY);
     ACE_OS::sleep(ACE_Time_Value (0, sleepTime));
 

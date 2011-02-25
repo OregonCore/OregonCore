@@ -270,7 +270,7 @@ struct mob_batriderAI : public ScriptedAI
                 DoCast(pTarget, SPELL_BOMB);
                 Bomb_Timer = 2500;
             }
-        } 
+        }
         else
             Bomb_Timer -= diff;
 

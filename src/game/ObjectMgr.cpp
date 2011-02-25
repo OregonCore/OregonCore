@@ -126,7 +126,7 @@ std::string GetScriptCommandName(ScriptCommands command)
         case SCRIPT_COMMAND_EQUIP: res = "SCRIPT_COMMAND_EQUIP"; break;
         case SCRIPT_COMMAND_MODEL: res = "SCRIPT_COMMAND_MODEL"; break;
         case SCRIPT_COMMAND_CLOSE_GOSSIP: res = "SCRIPT_COMMAND_CLOSE_GOSSIP"; break;
-        default: 
+        default:
         {
             char sz[32];
             sprintf(sz, "Unknown command: %u", command);
