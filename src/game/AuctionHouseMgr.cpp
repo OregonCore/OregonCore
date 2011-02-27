@@ -35,8 +35,11 @@
 #include "Language.h"
 #include "Log.h"
 #include "ProgressBar.h"
+#include <vector>
 
 INSTANTIATE_SINGLETON_1(AuctionHouseMgr);
+
+using namespace std;
 
 AuctionHouseMgr::AuctionHouseMgr()
 {
@@ -169,7 +172,6 @@ void AuctionHouseMgr::SendAuctionWonMail(AuctionEntry *auction)
         // set owner to bidder (to prevent delete item with sender char deleting)
         // owner in data will set at mail receive and item extracting
         CharacterDatabase.PExecute("UPDATE item_instance SET owner_guid = '%u' WHERE guid='%u'",auction->bidder,pItem->GetGUIDLow());
-        CharacterDatabase.CommitTransaction();
 
         if (bidder)
             bidder->GetSession()->SendAuctionBidderNotification(auction->GetHouseId(), auction->Id, bidder_guid, 0, 0, auction->item_template);
@@ -518,61 +520,68 @@ void AuctionHouseObject::Update()
     if (AuctionsMap.empty())
         return;
 
-    // reset next if at end of map
-    if (next == AuctionsMap.end())
-        next = AuctionsMap.begin();
+    QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT id FROM auctionhouse WHERE time <= %u ORDER BY TIME ASC", (uint32)curTime+60);
 
-    ASSERT(next != AuctionsMap.end());
+    if (!result)
+        return;
 
-    uint32 loopBreaker = 0;
+    if (result->GetRowCount() == 0)
+        return;
 
-    // Initialize itr with next. next is stored for future calls to Update() after
-    // 50 items are checked
-    for (AuctionEntryMap::const_iterator itr = next; itr != AuctionsMap.end(); itr = next)
+    vector<uint32> expiredAuctions;
+
+    do
     {
-        next = itr;
-        ++next;
-        if (curTime > (itr->second->expire_time))
-        {
-            // Either cancel the auction if there was no bidder
-            if (itr->second->bidder == 0)
-            {
-                auctionmgr.SendAuctionExpiredMail(itr->second);
-            }
-            // Or perform the transaction
-            else
-            {
-                // we should send an "item sold" message if the seller is online
-                // we send the item to the winner
-                // we send the money to the seller
-                auctionmgr.SendAuctionSuccessfulMail(itr->second);
-                auctionmgr.SendAuctionWonMail(itr->second);
-            }
+        uint32 tmpdata = result->Fetch()->GetUInt32();
+        expiredAuctions.push_back(tmpdata);
+    } while (result->NextRow());
 
-            // In any case clear the auction
-            itr->second->DeleteFromDB();
-            uint32 item_template = itr->second->item_template;
-            auctionmgr.RemoveAItem(itr->second->item_guidlow);
-            RemoveAuction(itr->second, item_template);
+    while (!expiredAuctions.empty())
+    {
+        vector<uint32>::iterator iter = expiredAuctions.begin();
+
+        // from auctionhousehandler.cpp, creates auction pointer & player pointer
+        AuctionEntry* auction = GetAuction(*iter);
+
+        // Erase the auction from the vector.
+        expiredAuctions.erase(iter);
+
+        if (!auction)
+            continue;
+
+        ///- Either cancel the auction if there was no bidder
+        if (auction->bidder == 0)
+            auctionmgr.SendAuctionExpiredMail(auction);
+        ///- Or perform the transaction
+        else
+        {
+            //we should send an "item sold" message if the seller is online
+            //we send the item to the winner
+            //we send the money to the seller
+            auctionmgr.SendAuctionSuccessfulMail(auction);
+            auctionmgr.SendAuctionWonMail(auction);
         }
 
-        // only check 50 items per update to not peg the CPU
-        ++loopBreaker;
-
-        if (loopBreaker > 50)
-            break;
+        ///- In any case clear the auction
+        CharacterDatabase.BeginTransaction();
+        auction->DeleteFromDB();
+        uint32 item_template = auction->item_template;
+        auctionmgr.RemoveAItem(auction->item_guidlow);
+        RemoveAuction(auction, item_template);
+        CharacterDatabase.CommitTransaction();
     }
 }
 
 void AuctionHouseObject::BuildListBidderItems(WorldPacket& data, Player* player, uint32& count, uint32& totalcount)
 {
-    for (AuctionEntryMap::const_iterator itr = AuctionsMap.begin();itr != AuctionsMap.end();++itr)
+    for (AuctionEntryMap::const_iterator itr = AuctionsMap.begin(); itr != AuctionsMap.end(); ++itr)
     {
         AuctionEntry *Aentry = itr->second;
         if (Aentry && Aentry->bidder == player->GetGUIDLow())
         {
             if (itr->second->BuildAuctionInfo(data))
                 ++count;
+
             ++totalcount;
         }
     }
