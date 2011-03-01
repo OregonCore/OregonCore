@@ -32,7 +32,6 @@
 #include "mpq_libmpq04.h"
 
 using namespace std;
-extern uint16 *LiqType;
 
 WMORoot::WMORoot(std::string &filename) : filename(filename)
 {
@@ -395,21 +394,25 @@ int WMOGroup::ConvertToVMAPGroupWmo(FILE *output, WMORoot *rootWMO, bool pPrecis
         int LIQU_h[] = {0x5551494C, sizeof(WMOLiquidHeader) + LiquEx_size + hlq->xtiles*hlq->ytiles};// "LIQU"
         fwrite(LIQU_h, 4, 2, output);
 
-        // according to WoW.Dev Wiki:
-        uint32 liquidEntry;
-        if (rootWMO->liquidType & 4)
-            liquidEntry = liquidType;
-        else if (liquidType == 15)
-            liquidEntry = 1; // first entry, generic "Water"
-        else
-            liquidEntry = liquidType + 1;
-        // overwrite material type in header...
-        hlq->type = LiqType[liquidEntry];
-
         /* std::ofstream llog("Buildings/liquid.log", ios_base::out | ios_base::app);
         llog << filename;
-        llog << ":\nliquidEntry: " << liquidEntry << " type: " << hlq->type << " (root:" << rootWMO->liquidType << " group:" << liquidType << ")\n";
+        llog << ":\ntype: " << hlq->type << " (root:" << rootWMO->liquidType << " group:" << liquidType << ")\n";
         llog.close(); */
+
+        switch (hlq->type)
+        {
+            case 4:                 // lava
+            case 3:                 // lava (Ragefire)
+            case 12:                // lava (Molten Core)
+                hlq->type = 2;
+                break;
+            case 8:                 // slime
+                hlq->type = 3;
+                break;
+            default:
+                hlq->type = 0;      // water
+                break;
+        }
 
         fwrite(hlq, sizeof(WMOLiquidHeader), 1, output);
         // only need height values, the other values are unknown anyway
