@@ -399,20 +399,7 @@ int WMOGroup::ConvertToVMAPGroupWmo(FILE *output, WMORoot *rootWMO, bool pPrecis
         llog << ":\ntype: " << hlq->type << " (root:" << rootWMO->liquidType << " group:" << liquidType << ")\n";
         llog.close(); */
 
-        switch (hlq->type)
-        {
-            case 4:                 // lava
-            case 3:                 // lava (Ragefire)
-            case 12:                // lava (Molten Core)
-                hlq->type = 2;
-                break;
-            case 8:                 // slime
-                hlq->type = 3;
-                break;
-            default:
-                hlq->type = 0;      // water
-                break;
-        }
+        hlq->type = ConvertLiquidType(hlq->type, filename);
 
         fwrite(hlq, sizeof(WMOLiquidHeader), 1, output);
         // only need height values, the other values are unknown anyway
@@ -423,6 +410,24 @@ int WMOGroup::ConvertToVMAPGroupWmo(FILE *output, WMORoot *rootWMO, bool pPrecis
     }
 
     return nColTriangles;
+}
+
+int WMOGroup::ConvertLiquidType(int hlqLiquid, std::string &filename)
+{
+    if (hlqLiquid == 4)                                             // lava in Blackrock Mountain, Blackrock Depths, Blackrock Spire and Old Ironforge
+        return 2;
+
+    filename = filename.substr(0, filename.find_last_of("\\"));     // trim filename
+    filename = filename.substr(filename.find_last_of("\\") + 1);    // trim everything except current wmo path part
+
+    if (hlqLiquid == 3 && filename == "AZ_Blackrock")               // lava in Molten Cire
+        return 2;
+    else if (filename == "KL_OrgrimmarLavaDungeon")                 // lava in Ragefire Chasm
+        return 2;
+    else if (hlqLiquid == 8 && filename == "LD_Stratholme")         // slime in Naxxramas
+        return 3;
+    else
+        return 0;
 }
 
 WMOGroup::~WMOGroup()
