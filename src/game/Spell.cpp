@@ -707,17 +707,21 @@ void Spell::AddUnitTarget(Unit* pVictim, uint32 effIndex)
     if (!CheckTarget(pVictim, effIndex))
         return;
 
+    // Check for effect immune skip if immuned
+    bool immuned = pVictim->IsImmunedToSpellEffect(m_spellInfo, effIndex);
+
     uint64 targetGUID = pVictim->GetGUID();
 
     // Lookup target in already in list
-    for (std::list<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin();ihit != m_UniqueTargetInfo.end();++ihit)
+    for (std::list<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
     {
         if (ihit->deleted)
             continue;
 
         if (targetGUID == ihit->targetGUID)                 // Found in list
         {
-            ihit->effectMask |= 1<<effIndex;                // Add only effect mask
+            if (!immuned)
+                ihit->effectMask |= 1 << effIndex;          // Add only effect mask if not immuned
             return;
         }
     }
@@ -727,7 +731,7 @@ void Spell::AddUnitTarget(Unit* pVictim, uint32 effIndex)
     // Get spell hit result on target
     TargetInfo target;
     target.targetGUID = targetGUID;                         // Store target GUID
-    target.effectMask = 1<<effIndex;                        // Store index of effect
+    target.effectMask = immuned ? 0 : 1 << effIndex;        // Store index of effect if not immuned
     target.processed  = false;                              // Effects not apply on target
     target.damage     = 0;
     target.crit       = false;
