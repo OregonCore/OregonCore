@@ -1715,7 +1715,7 @@ void Unit::DealMeleeDamage(CalcDamageInfo *damageInfo, bool durabilityLoss)
                //CalcAbsorbResist(pVictim, SpellSchools(spellProto->School), SPELL_DIRECT_DAMAGE, damage, &absorb, &resist);
                //damage-=absorb + resist;
 
-               WorldPacket data(SMSG_SPELLDAMAGESHIELD,(8+8+4+4));
+               WorldPacket data(SMSG_SPELLDAMAGESHIELD,(8+8+4+4+4));
                data << uint64(pVictim->GetGUID());
                data << uint64(GetGUID());
                data << uint32(spellProto->Id);
