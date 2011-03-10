@@ -64,15 +64,23 @@ void SummonList::DespawnEntry(uint32 entry)
 
 void SummonList::DespawnAll()
 {
-    for (iterator i = begin(); i != end(); ++i)
+    while (!empty())
     {
-        if (Creature *summon = Unit::GetCreature(*me, *i))
+        Creature *summon = Unit::GetCreature(*me, *begin());
+        if (!summon)
+            erase(begin());
+        else
         {
-            summon->setDeathState(JUST_DIED);
-            summon->RemoveCorpse();
+            erase(begin());
+            if (summon->isSummon())
+            {
+                summon->DestroyForNearbyPlayers();
+                CAST_SUM(summon)->UnSummon();
+            }
+            else
+                summon->DisappearAndDie();
         }
     }
-    clear();
 }
 
 ScriptedAI::ScriptedAI(Creature* pCreature) : CreatureAI(pCreature),
