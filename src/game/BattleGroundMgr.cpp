@@ -1249,18 +1249,8 @@ void BattleGroundMgr::BuildPvpLogDataPacket(WorldPacket *data, BattleGround *bg)
             uint32 team = bg->GetPlayerTeam(itr2->first);
             if (!team && plr)
                 team = plr->GetTeam();
-            // that part probably wrong
-            if (plr)
-            {
-                if (team == HORDE)
-                    *data << uint8(0);
-                else if (team == ALLIANCE)
-                {
-                    *data << uint8(1);
-                }
-                else
-                    *data << uint8(0);
-            }
+            if ((bg->GetWinner() == 0 && team == ALLIANCE) || (bg->GetWinner() == 1 && team == HORDE))
+                *data << uint8(1);
             else
                 *data << uint8(0);
         }
