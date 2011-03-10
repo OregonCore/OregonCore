@@ -1822,8 +1822,6 @@ void boss_illidan_stormrageAI::Reset()
     if (pInstance)
         pInstance->SetData(DATA_ILLIDANSTORMRAGEEVENT, NOT_STARTED);
 
-    AkamaGUID = pInstance->GetData64(DATA_AKAMA);
-
     if (AkamaGUID)
     {
         if (GETCRE(Akama, AkamaGUID))
