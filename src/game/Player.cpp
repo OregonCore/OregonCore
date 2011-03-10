@@ -20453,9 +20453,10 @@ void Player::AddGlobalCooldown(SpellEntry const *spellInfo, Spell const *spell)
 
     if (cdTime > 1500)
         cdTime = 1500;
+    else if (cdTime < 1000)
+        cdTime = 1000;
 
-    if (cdTime > 0)
-        m_globalCooldowns[spellInfo->StartRecoveryCategory] = cdTime;
+    m_globalCooldowns[spellInfo->StartRecoveryCategory] = cdTime;
 }
 
 bool Player::HasGlobalCooldown(SpellEntry const *spellInfo) const
