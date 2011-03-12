@@ -1583,12 +1583,19 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
     else
         sLog.outDebug("Player %s is being teleported to map %u", GetName(), mapid);
 
-    // if we were on a transport, leave
-    if (!(options & TELE_TO_NOT_LEAVE_TRANSPORT) && m_transport)
+    // reset movement flags at teleport, because player will continue move with these flags after teleport
+    SetUnitMovementFlags(0);
+
+    if (m_transport)
     {
-        m_transport->RemovePassenger(this);
-        m_transport = NULL;
-        m_movementInfo.ClearTransportData();
+        if (options & TELE_TO_NOT_LEAVE_TRANSPORT)
+            AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
+        else
+        {
+            m_transport->RemovePassenger(this);
+            m_transport = NULL;
+            m_movementInfo.ClearTransportData();
+        }
     }
 
     // The player was ported to another map and looses the duel immediately.
@@ -1596,9 +1603,6 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
     // ObjectAccessor won't find the flag.
     if (duel && GetMapId() != mapid && GetMap()->GetGameObject(GetUInt64Value(PLAYER_DUEL_ARBITER)))
         DuelComplete(DUEL_FLED);
-
-    // reset movement flags at teleport, because player will continue move with these flags after teleport
-    SetUnitMovementFlags(0);
 
     if (GetMapId() == mapid && !m_transport)
     {
@@ -19029,10 +19033,6 @@ void Player::SendInitialPacketsBeforeAddToMap()
     data << uint32(secsToTimeBitFields(sWorld.GetGameTime()));
     data << (float)0.01666667f;                             // game speed
     GetSession()->SendPacket(&data);
-
-    // set fly flag if in fly form or taxi flight to prevent visually drop at ground in showup moment
-    if (HasAuraType(SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED) || isInFlight())
-        AddUnitMovementFlag(MOVEFLAG_FLYING2);
 }
 
 void Player::SendInitialPacketsAfterAddToMap()
