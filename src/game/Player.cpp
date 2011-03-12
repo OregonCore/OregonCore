@@ -18593,8 +18593,8 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
         return false;
 
     // forbidden to seen (at GM respawn command)
-    if (u->GetVisibility() == VISIBILITY_RESPAWN)
-        return false;
+    //if (u->GetVisibility() == VISIBILITY_RESPAWN)
+    //    return false;
 
     Map& _map = *u->GetMap();
     // Grid dead/alive checks
