@@ -11720,7 +11720,7 @@ void Unit::SetStunned(bool apply)
         if (GetTypeId() != TYPEID_PLAYER)
             ToCreature()->StopMoving();
         else
-            SetUnitMovementFlags(0);    //Clear movement flags
+            SetStandState(UNIT_STAND_STATE_STAND);
 
         WorldPacket data(SMSG_FORCE_MOVE_ROOT, 8);
         data << GetPackGUID();
