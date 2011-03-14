@@ -145,7 +145,8 @@ namespace Oregon
             if (plr == i_source || team && plr->GetTeam() != team)
                 return;
 
-            plr->GetSession()->SendPacket(i_message);
+            if (WorldSession* session = plr->GetSession())
+                session->SendPacket(i_message);
         }
     };
 
