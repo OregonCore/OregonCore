@@ -2324,6 +2324,12 @@ void Spell::handle_immediate()
         int32 duration = GetSpellDuration(m_spellInfo);
         if (duration)
         {
+            if (m_targets.getUnitTarget())
+            {
+                DiminishingGroup DRgroup = GetDiminishingReturnsGroupForSpell(m_spellInfo, false);
+                m_targets.getUnitTarget()->ApplyDiminishingToDuration(DRgroup, duration, m_caster, m_targets.getUnitTarget()->GetDiminishing(DRgroup));
+            }
+
             //apply haste mods
             m_caster->ModSpellCastTime(m_spellInfo, duration, this);
             // Apply duration mod
