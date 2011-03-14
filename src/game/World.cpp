@@ -50,7 +50,6 @@
 #include "AuctionHouseBot.h"
 #include "WaypointMovementGenerator.h"
 #include "VMapFactory.h"
-#include "GlobalEvents.h"
 #include "GameEventMgr.h"
 #include "PoolHandler.h"
 #include "Database/DatabaseImpl.h"
@@ -1139,8 +1138,8 @@ void World::SetInitialWorldSettings()
     uint32 realm_zone = getConfig(CONFIG_REALM_ZONE);
     LoginDatabase.PExecute("UPDATE realmlist SET icon = %u, timezone = %u WHERE id = '%d'", server_type, realm_zone, realmID);
 
-    // Remove the bones after a restart
-    CharacterDatabase.Execute("DELETE FROM corpse WHERE corpse_type = '0'");
+    // Remove the bones (they should not exist in DB though) and old corpses after a restart
+    CharacterDatabase.PExecute("DELETE FROM corpse WHERE corpse_type = '0' OR time < (UNIX_TIMESTAMP()-'%u')", 3 * DAY);
 
     // Load the DBC files
     sLog.outString("Initialize data stores...");
@@ -1732,8 +1731,7 @@ void World::Update(time_t diff)
     if (m_timers[WUPDATE_CORPSES].Passed())
     {
         m_timers[WUPDATE_CORPSES].Reset();
-
-        CorpsesErase();
+        ObjectAccessor::Instance().RemoveOldCorpses();
     }
 
     // Process Game events when necessary
