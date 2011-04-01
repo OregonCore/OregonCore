@@ -1706,35 +1706,18 @@ float Map::GetHeight(float x, float y, float z, bool pUseVmaps, float maxSearchD
     }
 }
 
-inline bool IsOutdoorWMO(uint32 mogpFlags, int32 /*adtId*/, int32 /*rootId*/, int32 /*groupId*/, WMOAreaTableEntry const* /*wmoEntry*/, AreaTableEntry const* /*atEntry*/)
+inline bool IsOutdoorWMO(uint32 mogpFlags, uint32 mapId)
 {
-    /* pre-3.x areas:
-      a) not have AREA_FLAG_OUTSIDE and AREA_FLAG_INSIDE
-      b) wmoEntry->Flags always == 0
+    // if this flag is set we are outdoors and can mount up
+    if (mogpFlags & 0x8000)
+        return true;
 
-    bool outdoor = true;
+    // if flag 0x800 is set and we are in non-flyable areas we cannot mount up even if we are physically outdoors
+    if (mapId != 530 && mogpFlags & 0x800)
+        return false;
 
-    if (wmoEntry && atEntry)
-    {
-        if (atEntry->flags & AREA_FLAG_OUTSIDE)
-            return true;
-        if (atEntry->flags & AREA_FLAG_INSIDE)
-            return false;
-    }
-
-    outdoor = mogpFlags&0x8;
-
-    if (wmoEntry)
-    {
-        if (wmoEntry->Flags & 4)
-            return true;
-        if ((wmoEntry->Flags & 2)!=0)
-            outdoor = false;
-    }
-    return outdoor;
-    */
-
-    return mogpFlags & 0x8000;
+    // if this flag is set we are physically outdoors, mounting up is allowed if previous check failed
+    return mogpFlags & 0x8;
 }
 
 bool Map::IsOutdoors(float x, float y, float z) const
@@ -1746,15 +1729,7 @@ bool Map::IsOutdoors(float x, float y, float z) const
     if (!GetAreaInfo(x, y, z, mogpFlags, adtId, rootId, groupId))
         return true;
 
-    AreaTableEntry const* atEntry = 0;
-    WMOAreaTableEntry const* wmoEntry = 0;
-    /*WMOAreaTableEntry const* wmoEntry = GetWMOAreaTableEntryByTripple(rootId, adtId, groupId);
-    if (wmoEntry)
-    {
-        DEBUG_LOG("Got WMOAreaTableEntry! flag %u, areaid %u", wmoEntry->Flags, wmoEntry->areaId);
-        atEntry = GetAreaEntryByAreaID(wmoEntry->areaId);
-    }*/
-    return IsOutdoorWMO(mogpFlags, adtId, rootId, groupId, wmoEntry, atEntry);
+    return IsOutdoorWMO(mogpFlags, i_mapEntry->MapID);
 }
 
 bool Map::GetAreaInfo(float x, float y, float z, uint32 &flags, int32 &adtId, int32 &rootId, int32 &groupId) const
@@ -1807,7 +1782,7 @@ uint16 Map::GetAreaFlag(float x, float y, float z, bool *isOutdoors) const
     if (isOutdoors)
     {
         if (haveAreaInfo)
-            *isOutdoors = IsOutdoorWMO(mogpFlags, adtId, rootId, groupId, wmoEntry, atEntry);
+            *isOutdoors = IsOutdoorWMO(mogpFlags, i_mapEntry->MapID);
         else
             *isOutdoors = true;
     }
