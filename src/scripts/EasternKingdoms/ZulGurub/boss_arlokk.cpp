@@ -28,20 +28,6 @@ EndScriptData */
 #include "zulgurub.h"
 
 
-bool GOHello_go_gong_of_bethekk(Player* /*pPlayer*/, GameObject* pGo)
-{
-    if (ScriptedInstance* pInstance = pGo->GetInstanceData())
-    {
-        if (pInstance->GetData(TYPE_ARLOKK) == DONE || pInstance->GetData(TYPE_ARLOKK) == IN_PROGRESS)
-            return true;
-
-        pInstance->SetData(TYPE_ARLOKK, IN_PROGRESS);
-        return true;
-    }
-
-    return true;
-}
-
 uint64 MarkedTargetGUID;
 uint32 m_uiSummonCount;
 
@@ -356,11 +342,6 @@ CreatureAI* GetAI_mob_prowler(Creature* pCreature)
 void AddSC_boss_arlokk()
 {
     Script *newscript;
-
-    newscript = new Script;
-    newscript->Name = "go_gong_of_bethekk";
-    newscript->pGOHello = &GOHello_go_gong_of_bethekk;
-    newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "boss_arlokk";
