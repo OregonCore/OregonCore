@@ -63,6 +63,7 @@
 #include "Transports.h"
 #include "CreatureEventAIMgr.h"
 #include "ScriptMgr.h"
+#include "ProgressBar.h"
 
 INSTANTIATE_SINGLETON_1(World);
 
@@ -1072,6 +1073,9 @@ void World::LoadConfigSettings(bool reload)
     m_configs[CONFIG_NUMTHREADS] = sConfig.GetIntDefault("MapUpdate.Threads",1);
     m_configs[CONFIG_DUEL_MOD] = sConfig.GetBoolDefault("DuelMod.Enable", false);
     m_configs[CONFIG_DUEL_CD_RESET] = sConfig.GetBoolDefault("DuelMod.Cooldowns", false);
+    m_configs[CONFIG_AUTOBROADCAST_TIMER] = sConfig.GetIntDefault("AutoBroadcast.Timer", 60000);
+    m_configs[CONFIG_AUTOBROADCAST_ENABLED] = sConfig.GetIntDefault("AutoBroadcast.On", 0);
+    m_configs[CONFIG_AUTOBROADCAST_CENTER] = sConfig.GetIntDefault("AutoBroadcast.Center", 0);
 
     std::string forbiddenmaps = sConfig.GetStringDefault("ForbiddenMaps", "");
     char * forbiddenMaps = new char[forbiddenmaps.length() + 1];
@@ -1398,6 +1402,9 @@ void World::SetInitialWorldSettings()
     sLog.outString("Returning old mails...");
     objmgr.ReturnOrDeleteOldMails(false);
 
+    sLog.outString("Loading Autobroadcasts...");
+    LoadAutobroadcasts();
+
     // Load and initialize scripts
     sLog.outString("Loading Scripts...");
     sLog.outString();
@@ -1441,6 +1448,7 @@ void World::SetInitialWorldSettings()
     WorldDatabase.PExecute("INSERT INTO uptime (startstring, starttime, uptime) VALUES('%s', " UI64FMTD ", 0)",
         isoDate, uint64(m_startTime));
 
+    m_timers[WUPDATE_AUTOBROADCAST].SetInterval(m_configs[CONFIG_AUTOBROADCAST_TIMER]);
     m_timers[WUPDATE_OBJECTS].SetInterval(IN_MILLISECONDS/2);
     m_timers[WUPDATE_SESSIONS].SetInterval(0);
     m_timers[WUPDATE_WEATHERS].SetInterval(IN_MILLISECONDS);
@@ -1592,6 +1600,40 @@ void World::RecordTimeDiff(const char *text, ...)
     m_currentTime = thisTime;
 }
 
+void World::LoadAutobroadcasts()
+{
+    m_Autobroadcasts.clear();
+
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT text FROM autobroadcast");
+
+    if (!result)
+    {
+        barGoLink bar(1);
+        bar.step();
+
+        sLog.outString();
+        sLog.outString(">> Loaded 0 autobroadcasts definitions");
+        return;
+    }
+
+    barGoLink bar(result->GetRowCount());
+    uint32 count = 0;
+
+    do
+    {
+        bar.step();
+        Field *fields = result->Fetch();
+        std::string message = fields[0].GetCppString();
+        m_Autobroadcasts.push_back(message);
+        ++count;
+    }
+
+    while (result->NextRow());
+
+    sLog.outString();
+    sLog.outString( ">> Loaded %u autobroadcasts definitions", count);
+}
+
 // Update the World !
 void World::Update(time_t diff)
 {
@@ -1710,6 +1752,15 @@ void World::Update(time_t diff)
     // Handle all other objects
     // Update objects when the timer has passed (maps, transport, creatures,...)
     MapManager::Instance().Update(diff);                // As interval = 0
+
+    if (m_configs[CONFIG_AUTOBROADCAST_ENABLED])
+    {
+       if (m_timers[WUPDATE_AUTOBROADCAST].Passed())
+       {
+          m_timers[WUPDATE_AUTOBROADCAST].Reset();
+          SendAutoBroadcast();
+       }
+    }
 
     sBattleGroundMgr.Update(diff);
     RecordTimeDiff("UpdateBattleGroundMgr");
@@ -2238,6 +2289,41 @@ void World::ProcessCliCommands()
 
         delete command;
     }
+}
+
+void World::SendAutoBroadcast()
+{
+    if (m_Autobroadcasts.empty())
+        return;
+
+    std::string msg;
+
+    std::list<std::string>::const_iterator itr = m_Autobroadcasts.begin();
+    std::advance(itr, rand() % m_Autobroadcasts.size());
+    msg = *itr;
+
+    uint32 abcenter = sConfig.GetIntDefault("AutoBroadcast.Center", 0);
+
+    if (abcenter == 0)
+        sWorld.SendWorldText(LANG_AUTO_BROADCAST, msg.c_str());
+
+    else if (abcenter == 1)
+    {
+        WorldPacket data(SMSG_NOTIFICATION, (msg.size()+1));
+        data << msg;
+        sWorld.SendGlobalMessage(&data);
+    }
+
+    else if (abcenter == 2)
+    {
+        sWorld.SendWorldText(LANG_AUTO_BROADCAST, msg.c_str());
+
+        WorldPacket data(SMSG_NOTIFICATION, (msg.size()+1));
+        data << msg;
+        sWorld.SendGlobalMessage(&data);
+    }
+
+    sLog.outString("AutoBroadcast: '%s'", msg.c_str());
 }
 
 void World::InitResultQueue()

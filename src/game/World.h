@@ -79,7 +79,8 @@ enum WorldTimers
     WUPDATE_EVENTS      = 6,
     WUPDATE_CLEANDB     = 7,
     WUPDATE_DELETECHARS = 8,
-    WUPDATE_COUNT       = 9
+    WUPDATE_AUTOBROADCAST = 9,
+    WUPDATE_COUNT       = 10
 };
 
 // Configuration elements
@@ -250,6 +251,9 @@ enum WorldConfigs
     CONFIG_CHARDELETE_KEEP_DAYS,
     CONFIG_CHARDELETE_METHOD,
     CONFIG_CHARDELETE_MIN_LEVEL,
+    CONFIG_AUTOBROADCAST_TIMER,
+    CONFIG_AUTOBROADCAST_ENABLED,
+    CONFIG_AUTOBROADCAST_CENTER,
     CONFIG_VALUE_COUNT
 };
 
@@ -429,6 +433,7 @@ class World
 
         WorldSession* FindSession(uint32 id) const;
         void AddSession(WorldSession *s);
+        void SendAutoBroadcast();
         bool RemoveSession(uint32 id);
         // Get the number of current active sessions
         void UpdateMaxSessionCounters();
@@ -597,6 +602,7 @@ class World
         char const* GetScriptsVersion() { return m_ScriptsVersion.c_str(); }
 
         void RecordTimeDiff(const char * text, ...);
+        void LoadAutobroadcasts();
     protected:
         void _UpdateGameTime();
         // callback for UpdateRealmCharacters
@@ -677,6 +683,8 @@ class World
         //used versions
         std::string m_DBVersion;
         std::string m_ScriptsVersion;
+
+        std::list<std::string> m_Autobroadcasts;
 };
 
 extern uint32 realmID;
