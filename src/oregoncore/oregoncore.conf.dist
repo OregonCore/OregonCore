@@ -362,6 +362,11 @@ MapUpdate.Threads = 1
 #        Log file of arena fights and arena team creations
 #        Default: "" - do not create arena log file
 #
+#   ArenaLogExtendedInfo
+#        Extended Info Log file of arena fights and arena team creations
+#        Default: 0 - extended arena logs off
+#                 1 - extended arena logs on
+#
 #    LogColors
 #        Color for messages (format "normal basic detail debug")
 #        Default: "" - no colors
@@ -487,6 +492,7 @@ GmLogTimestamp = 0
 GmLogPerAccount = 0
 RaLogFile = "ra_commands.log"
 ArenaLogFile = ""
+ArenaLogExtendedInfo = 0
 LogColors = ""
 EnableLogDB = 0
 DBLogLevel = 2
