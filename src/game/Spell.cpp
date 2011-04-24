@@ -4548,8 +4548,15 @@ uint8 Spell::CheckRange(bool strict)
         if (dist < min_range)
             return SPELL_FAILED_TOO_CLOSE;
     }
+	if (m_spellInfo->Id == 33395) // Elemental Frost Bolt.
+	{
+        if (m_caster->IsWithinMeleeRange(target))                   // Check if to close first.
+            return SPELL_FAILED_TOO_CLOSE;
+        else if (!m_caster->IsWithinCombatRange(target, max_range)) // Check if target it to far.
+            return SPELL_FAILED_OUT_OF_RANGE;              
+	}
 
-    return 0;                                               // ok
+	return 0; 
 }
 
 uint8 Spell::CheckPower()
