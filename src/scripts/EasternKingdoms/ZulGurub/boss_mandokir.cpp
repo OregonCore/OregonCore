@@ -19,8 +19,8 @@
 
 /* ScriptData
 SDName: Boss_Mandokir
-SD%Complete: 100
-SDComment: Core related resurrection issue, see comment. Random charge timer might be inaccurate.
+SD%Complete: 90
+SDComment: Ohgan function needs improvements.
 SDCategory: Zul'Gurub
 EndScriptData */
 
@@ -33,14 +33,12 @@ enum Texts
     SAY_DING_KILL       =   -1309016,
     SAY_GRATS_JINDO     =   -1309017,
     SAY_GAZE            =   -1309018,
-    SAY_GAZE_WHISPER    =   -1309019,
-    SAY_REVIVE          =   -1309024
+    SAY_GAZE_WHISPER    =   -1309019
 };
 
 enum Spells
 {
-    SPELL_CHARGE          = 24408,
-    SPELL_CHARGE_GAZE     = 24315,
+    SPELL_CHARGE          = 24315,
     SPELL_CLEAVE          = 20691,
     SPELL_FEAR            = 29321,
     SPELL_WHIRLWIND       = 24236,
@@ -51,51 +49,12 @@ enum Spells
     SPELL_MOUNT           = 23243,
 
     // Ohgan's Spells
-    SPELL_SUNDERARMOR     = 24317,
-    SPELL_THRASH          = 3391,
-    SPELL_EXECUTE         = 7160,
-
-    // Chained Spirit's Spell
-    SPELL_REVIVE          = 24341
+    SPELL_SUNDERARMOR     = 24317
 };
 
 enum Summons
 {
-    OHGAN                   = 14988,
-    CHAINED_SPIRIT          = 15117
-};
-
-// Spirit Resurrection
-struct Spirit_Resurrection
-{
-	Unit* pUnit;
-	int Spirit;
-    bool isBeingRezzed;
-};
-
-uint32 Spirit_Number;
-
-std::vector<Spirit_Resurrection> Resurrection;
-
-Unit* CHAINED_SPIRIT_SUMMONS [15];
-
-float CHAINED_SPIRIT_LOC [15][4] =
-{
-    {-12272.1f, -1942.250f, 135.231f, 0.56704f},
-    {-12277.2f, -1935.940f, 136.778f, 0.26859f},
-    {-12282.2f, -1920.320f, 131.593f, 6.03892f},
-    {-12283.4f, -1928.490f, 135.307f, 0.09580f},
-    {-12246.1f, -1893.090f, 134.157f, 4.84119f},
-    {-12254.5f, -1895.100f, 133.670f, 4.79799f},
-    {-12262.5f, -1899.160f, 131.824f, 5.24567f},
-    {-12263.5f, -1945.960f, 132.431f, 0.64166f},
-    {-12258.0f, -1951.820f, 131.170f, 0.77125f},
-    {-12250.6f, -1958.700f, 132.913f, 0.85371f},
-    {-12241.2f, -1966.670f, 134.090f, 1.17652f},
-    {-12232.5f, -1972.890f, 132.928f, 1.10191f},
-    {-12220.4f, -1973.710f, 132.390f, 1.52367f},
-    {-12209.5f, -1973.580f, 132.171f, 1.78677f},
-    {-12197.1f, -1974.770f, 131.102f, 1.45926f}
+    OHGAN                 = 14988
 };
 
 struct boss_mandokirAI : public ScriptedAI
@@ -113,11 +72,9 @@ struct boss_mandokirAI : public ScriptedAI
     uint32 Fear_Timer;
     uint32 MortalStrike_Timer;
     uint32 Check_Timer;
-    uint32 Charge_Timer;
-    uint32 Move_Timer;
-
-    float Threat_Count;
-    bool  Threat_stored;
+    float targetX;
+    float targetY;
+    float targetZ;
 
     ScriptedInstance *pInstance;
 
@@ -128,7 +85,6 @@ struct boss_mandokirAI : public ScriptedAI
 
     uint64 GazeTarget;
 
-
     void Reset()
     {
         KillCount = 0;
@@ -138,11 +94,10 @@ struct boss_mandokirAI : public ScriptedAI
         Fear_Timer = 1000;
         MortalStrike_Timer = 1000;
         Check_Timer = 1000;
-        Charge_Timer = 20000;            // correct cooldown is unknown, based on information
 
-        Threat_Count = 0;
-        Threat_stored = false;
-
+        targetX = 0.0f;
+        targetY = 0.0f;
+        targetZ = 0.0f;
         TargetInRange = 0;
 
         GazeTarget = 0;
@@ -153,30 +108,6 @@ struct boss_mandokirAI : public ScriptedAI
         CombatStart = false;
 
         DoCast(me, SPELL_MOUNT);
-
-        Move_Timer = 3000;
-
-        // remove all the Chained Spirits
-        uint32 i;
-        for (i = 0; i < 15; ++i)
-        {
-            if (CHAINED_SPIRIT_SUMMONS[i])
-                CHAINED_SPIRIT_SUMMONS[i]->RemoveFromWorld();
-        }
-
-        Resurrection.clear();
-        Spirit_Number = 0;
-    }
-
-    void JustDied(Unit* Killer)
-    {
-        // remove all the Chained Spirits
-        uint32 i;
-        for (i = 0; i < 15; ++i)
-        {
-            if (CHAINED_SPIRIT_SUMMONS[i])
-                CHAINED_SPIRIT_SUMMONS[i]->RemoveFromWorld();
-        }
     }
 
     void KilledUnit(Unit* victim)
@@ -203,19 +134,6 @@ struct boss_mandokirAI : public ScriptedAI
                 DoCast(me, SPELL_LEVEL_UP, true);
                 KillCount = 0;
             }
-
-            if (Spirit_Number < 15)
-            {
-                Spirit_Resurrection Temp;
-
-                Temp.isBeingRezzed = false;
-                Temp.pUnit = victim;
-                Temp.Spirit = Spirit_Number;
-
-                Resurrection.push_back(Temp);
-
-                ++Spirit_Number;
-            }
         }
     }
 
@@ -239,74 +157,30 @@ struct boss_mandokirAI : public ScriptedAI
                 // And summon his raptor
                 me->SummonCreature(OHGAN, me->getVictim()->GetPositionX(), me->getVictim()->GetPositionY(), me->getVictim()->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 CombatStart = true;
-
-                uint32 i;
-                for (i = 0; i < 15; ++i)
-                    CHAINED_SPIRIT_SUMMONS[i] = me->SummonCreature(CHAINED_SPIRIT, CHAINED_SPIRIT_LOC[i][0], CHAINED_SPIRIT_LOC[i][1], CHAINED_SPIRIT_LOC[i][2], CHAINED_SPIRIT_LOC[i][3], TEMPSUMMON_CORPSE_TIMED_DESPAWN , 5000);
             }
-
-            // Random Charge
-            if (Charge_Timer <= diff)
-            {
-                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
-                {
-                    if (DoGetThreat(me->getVictim()))
-                        DoModifyThreatPercent(me->getVictim(), -50);
-
-                    DoCast(pTarget, SPELL_CHARGE);
-                    AttackStart(pTarget);
-                }
-                Charge_Timer = 20000;
-            }
-            else
-                Charge_Timer -= diff;
-
-            if (Move_Timer <= diff)
-            {
-                std::vector<std::vector<Spirit_Resurrection>::iterator> eraseUnit;
-                for (std::vector<Spirit_Resurrection>::iterator itr = Resurrection.begin(); itr != Resurrection.end(); ++itr)
-                {
-                    if (!itr->isBeingRezzed)
-                    {
-                        CHAINED_SPIRIT_SUMMONS[itr->Spirit]->GetMotionMaster()->MovePoint(itr->pUnit->GetMapId(), itr->pUnit->GetPositionX(), itr->pUnit->GetPositionY(), itr->pUnit->GetPositionZ());
-                        itr->isBeingRezzed = true;
-                    }
-
-                    if (CHAINED_SPIRIT_SUMMONS[itr->Spirit]->IsWithinDist3d(itr->pUnit->GetPositionX(), itr->pUnit->GetPositionY(), itr->pUnit->GetPositionZ(), 10.0f))
-                    {
-                        CHAINED_SPIRIT_SUMMONS[itr->Spirit]->StopMoving();
-
-                        CHAINED_SPIRIT_SUMMONS[itr->Spirit]->MonsterWhisper(SAY_REVIVE, itr->pUnit->GetGUID());
-
-                        Player* pPlayer = Player::GetPlayer(*me, itr->pUnit->GetGUID());
-                        //DoCast(pPlayer, SPELL_REVIVE);   // core not supporting npc resurrection requests? use other method:
-                        if (me->getVictim())
-                            me->getVictim()->CastSpell(itr->pUnit, SPELL_REVIVE, false, 0, 0, me->getVictim()->GetGUID());  // not great method, but no other way currently
-
-                        CHAINED_SPIRIT_SUMMONS[itr->Spirit]->RemoveFromWorld();
-                        eraseUnit.push_back(itr);
-                    }
-                }
-                Move_Timer = 3000;
-
-                for (std::vector<std::vector<Spirit_Resurrection>::iterator>::iterator itr = eraseUnit.begin(); itr != eraseUnit.end(); ++itr)
-                    Resurrection.erase(*itr);
-
-                eraseUnit.clear();
-            }
-            else
-                Move_Timer -= diff;
 
             if (Gaze_Timer <= diff)                         // Every 20 seconds Mandokir will check this
             {
                 if (GazeTarget)
                 {
                     Unit* pUnit = Unit::GetUnit(*me, GazeTarget);
-                    if (pUnit && pUnit->isInCombat() && DoGetThreat(pUnit) > Threat_Count)
+
+                    if (pUnit && (
+                        targetX != pUnit->GetPositionX() ||
+                        targetY != pUnit->GetPositionY() ||
+                        targetZ != pUnit->GetPositionZ() ||
+                        pUnit->isInCombat()))
                     {
-                        DoCast(pUnit, SPELL_CHARGE_GAZE);
-                        AttackStart(pUnit);
-                        Threat_Count = 0.0f;
+                        if (me->IsWithinMeleeRange(pUnit))
+                        {
+                            DoCast(pUnit, 24316);
+                        }
+                        else
+                        {
+                            DoCast(pUnit, SPELL_CHARGE);
+                            //me->SendMonsterMove(pUnit->GetPositionX(), pUnit->GetPositionY(), pUnit->GetPositionZ(), 0, true,1);
+                            AttackStart(pUnit);
+                        }
                     }
                 }
                 someGazed = false;
@@ -325,24 +199,18 @@ struct boss_mandokirAI : public ScriptedAI
                     GazeTarget = pTarget->GetGUID();
                     someGazed = true;
                     endGaze = true;
-                    Threat_stored = false;
                 }
-            }
-
-            if (Gaze_Timer < 6000 && !Threat_stored)
-            {
-                Unit* pThreat = Unit::GetUnit(*me, GazeTarget);
-                Threat_Count = DoGetThreat(pThreat);                // store threat when you're gazed
-                Threat_stored = true;
             }
 
             if (Gaze_Timer < 1000 && endGaze)               // 1 second before the debuff expires, check whether the GazeTarget is in LoS
             {
-                Unit* pSight = Unit::GetUnit(*me, GazeTarget);
-                Player* pPlayer = Player::GetPlayer(*me, pSight->GetGUID());
-                if (pSight && !me->IsWithinLOSInMap(pSight))  // Is the target in our LOS? If not, teleport to me:
-                    pPlayer->TeleportTo(pPlayer->GetMapId(), me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation());
-
+                Unit* pUnit = Unit::GetUnit(*me, GazeTarget);
+                if (pUnit)
+                {
+                    targetX = pUnit->GetPositionX();
+                    targetY = pUnit->GetPositionY();
+                    targetZ = pUnit->GetPositionZ();
+                }
                 endGaze = false;
             }
 
@@ -398,8 +266,6 @@ struct boss_mandokirAI : public ScriptedAI
                     else
                         MortalStrike_Timer -= diff;
                 }
-                else
-                    MortalStrike_Timer -= diff;
             }
 
             // Checking if Ohgan is dead. If yes Mandokir will enrage.
@@ -436,34 +302,11 @@ struct mob_ohganAI : public ScriptedAI
     }
 
     uint32 SunderArmor_Timer;
-    uint32 Thrash_Timer;
-    uint32 Execute_Timer;
     ScriptedInstance *pInstance;
 
     void Reset()
     {
         SunderArmor_Timer = 5000;
-        Thrash_Timer = urand(5000, 9000);
-        Execute_Timer = 1000;
-    }
-
-    void KilledUnit(Unit* victim)
-    {
-        if (victim->GetTypeId() == TYPEID_PLAYER)
-        {
-            if (Spirit_Number < 15)
-            {
-                Spirit_Resurrection Temp;
-
-                Temp.isBeingRezzed = false;
-                Temp.pUnit = victim;
-                Temp.Spirit = Spirit_Number;
-
-                Resurrection.push_back(Temp);
-
-                ++Spirit_Number;
-            }
-        }
     }
 
     void EnterCombat(Unit * /*who*/) {}
@@ -488,29 +331,6 @@ struct mob_ohganAI : public ScriptedAI
         }
         else
             SunderArmor_Timer -= diff;
-
-        // Thrash_Timer
-        if (Thrash_Timer <= diff)
-        {
-            DoCast(me, SPELL_THRASH);
-            Thrash_Timer = urand(5000, 9000);
-        }
-        else
-            Thrash_Timer -= diff;
-
-        // Execute_Timer
-        if (me->getVictim()->GetHealth() <= me->getVictim()->GetMaxHealth() * 0.2f)  // check health first
-        {
-            if (Execute_Timer <= diff)
-            {
-                DoCast(me->getVictim(), SPELL_EXECUTE);
-                Execute_Timer = 10000;
-            }
-            else
-                Execute_Timer -= diff;
-        }
-        else
-            Execute_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

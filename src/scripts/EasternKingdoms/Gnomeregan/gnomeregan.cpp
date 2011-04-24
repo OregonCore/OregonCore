@@ -544,14 +544,11 @@ struct boss_grubbisAI : public ScriptedAI
 
     void SetDataSummoner()
     {
-        /*if (!me->isSummon())
+        if (!me->isSummon())
             return;
 
         if (Unit* pSummon = CAST_SUM(me)->GetSummoner())
-            CAST_CRE(pSummon)->AI()->SetData(2,1);*/
-
-        if (Creature* pSummoner = me->FindNearestCreature(7998, 30))
-            CAST_AI(npc_blastmaster_emi_shortfuseAI, pSummoner->AI())->SetData(2,1);
+            CAST_CRE(pSummon)->AI()->SetData(2,1);
     }
 
     void UpdateAI(const uint32 /*diff*/)
@@ -564,14 +561,11 @@ struct boss_grubbisAI : public ScriptedAI
 
     void JustDied(Unit* /*pKiller*/)
     {
-        /*if (!me->isSummon())
+        if (!me->isSummon())
             return;
 
         if (Unit* pSummon = CAST_SUM(me)->GetSummoner())
-            CAST_CRE(pSummon)->AI()->SetData(2,2);*/
-
-        if (Creature* pSummoner = me->FindNearestCreature(7998, 30))
-            CAST_AI(npc_blastmaster_emi_shortfuseAI, pSummoner->AI())->SetData(2,2);
+            CAST_CRE(pSummon)->AI()->SetData(2,2);
     }
 };
 

@@ -558,6 +558,7 @@ bool ChatHandler::HandleReloadAllCommand(const char*)
     HandleReloadReservedNameCommand("");
     HandleReloadOregonStringCommand("");
     HandleReloadGameTeleCommand("");
+    HandleReloadAutobroadcastCommand("");
     return true;
 }
 
@@ -685,7 +686,15 @@ bool ChatHandler::HandleReloadAccessRequirementCommand(const char*)
     objmgr.LoadAccessRequirements();
     SendGlobalGMSysMessage("DB table access_requirement reloaded.");
      return true;
- }
+}
+
+bool ChatHandler::HandleReloadAutobroadcastCommand(const char*)
+{
+    sLog.outString("Re-Loading Autobroadcast...");
+    sWorld.LoadAutobroadcasts();
+    SendGlobalGMSysMessage("DB table autobroadcast reloaded.");
+    return true;
+}
 
 bool ChatHandler::HandleReloadCommandCommand(const char*)
 {

@@ -965,9 +965,7 @@ void Player::HandleDrowning(uint32 time_diff)
                 uint32 damage = urand(600, 700);
                 if (m_MirrorTimerFlags&UNDERWATER_INLAVA)
                     EnvironmentalDamage(DAMAGE_LAVA, damage);
-                // need to skip Slime damage in Undercity,
-                // maybe someone can find better way to handle environmental damage
-                else if (m_zoneUpdateId != 1497)
+                else
                     EnvironmentalDamage(DAMAGE_SLIME, damage);
             }
         }
@@ -1585,12 +1583,19 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
     else
         sLog.outDebug("Player %s is being teleported to map %u", GetName(), mapid);
 
-    // if we were on a transport, leave
-    if (!(options & TELE_TO_NOT_LEAVE_TRANSPORT) && m_transport)
+    // reset movement flags at teleport, because player will continue move with these flags after teleport
+    SetUnitMovementFlags(0);
+
+    if (m_transport)
     {
-        m_transport->RemovePassenger(this);
-        m_transport = NULL;
-        m_movementInfo.ClearTransportData();
+        if (options & TELE_TO_NOT_LEAVE_TRANSPORT)
+            AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT);
+        else
+        {
+            m_transport->RemovePassenger(this);
+            m_transport = NULL;
+            m_movementInfo.ClearTransportData();
+        }
     }
 
     // The player was ported to another map and looses the duel immediately.
@@ -1598,9 +1603,6 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
     // ObjectAccessor won't find the flag.
     if (duel && GetMapId() != mapid && GetMap()->GetGameObject(GetUInt64Value(PLAYER_DUEL_ARBITER)))
         DuelComplete(DUEL_FLED);
-
-    // reset movement flags at teleport, because player will continue move with these flags after teleport
-    SetUnitMovementFlags(0);
 
     if (GetMapId() == mapid && !m_transport)
     {
@@ -4200,10 +4202,8 @@ void Player::CreateCorpse()
         }
     }
 
-    // we don't SaveToDB for players in battlegrounds so don't do it for corpses either
-    const MapEntry *entry = sMapStore.LookupEntry(corpse->GetMapId());
-    ASSERT(entry);
-    if (entry->map_type != MAP_BATTLEGROUND)
+    // we do not need to save corpses for BG/arenas
+    if (!GetMap()->IsBattleGroundOrArena())
         corpse->SaveToDB();
 
     // register for player, but not show
@@ -16624,7 +16624,7 @@ void Player::_SaveQuestStatus()
         switch (i->second.uState)
         {
             case QUEST_NEW:
-                CharacterDatabase.PExecute("REPLACE INTO character_queststatus (guid,quest,status,rewarded,explored,timer,mobcount1,mobcount2,mobcount3,mobcount4,itemcount1,itemcount2,itemcount3,itemcount4) "
+                CharacterDatabase.PExecute("INSERT INTO character_queststatus (guid,quest,status,rewarded,explored,timer,mobcount1,mobcount2,mobcount3,mobcount4,itemcount1,itemcount2,itemcount3,itemcount4) "
                     "VALUES ('%u', '%u', '%u', '%u', '%u', '" UI64FMTD "', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u')",
                     GetGUIDLow(), i->first, i->second.m_status, i->second.m_rewarded, i->second.m_explored, uint64(i->second.m_timer / IN_MILLISECONDS + sWorld.GetGameTime()), i->second.m_creatureOrGOcount[0], i->second.m_creatureOrGOcount[1], i->second.m_creatureOrGOcount[2], i->second.m_creatureOrGOcount[3], i->second.m_itemcount[0], i->second.m_itemcount[1], i->second.m_itemcount[2], i->second.m_itemcount[3]);
                 break;
@@ -18595,8 +18595,8 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
         return false;
 
     // forbidden to seen (at GM respawn command)
-    if (u->GetVisibility() == VISIBILITY_RESPAWN)
-        return false;
+    //if (u->GetVisibility() == VISIBILITY_RESPAWN)
+    //    return false;
 
     Map& _map = *u->GetMap();
     // Grid dead/alive checks
@@ -19031,10 +19031,6 @@ void Player::SendInitialPacketsBeforeAddToMap()
     data << uint32(secsToTimeBitFields(sWorld.GetGameTime()));
     data << (float)0.01666667f;                             // game speed
     GetSession()->SendPacket(&data);
-
-    // set fly flag if in fly form or taxi flight to prevent visually drop at ground in showup moment
-    if (HasAuraType(SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED) || isInFlight())
-        AddUnitMovementFlag(MOVEFLAG_FLYING2);
 }
 
 void Player::SendInitialPacketsAfterAddToMap()
@@ -20479,17 +20475,13 @@ void Player::RemoveGlobalCooldown(SpellEntry const *spellInfo)
 
 void Player::BuildTeleportAckMsg(WorldPacket *data, float x, float y, float z, float ang) const
 {
+    MovementInfo mi = m_movementInfo;
+    mi.ChangePosition(x, y, z, ang);
+
     data->Initialize(MSG_MOVE_TELEPORT_ACK, 41);
     *data << GetPackGUID();
     *data << uint32(0);                                     // this value increments every time
-    *data << uint32(GetUnitMovementFlags());                // movement flags
-    *data << uint8(0);                                      // 2.3.0
-    *data << uint32(getMSTime());                           // time
-    *data << x;
-    *data << y;
-    *data << z;
-    *data << ang;
-    *data << uint32(0);
+    *data << mi;
 }
 
 void Player::ResetTimeSync()

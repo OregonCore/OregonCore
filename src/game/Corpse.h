@@ -92,6 +92,8 @@ class Corpse : public WorldObject, public GridObject<Corpse>
         void TextEmote(int32 textId, uint64 TargetGuid) { MonsterTextEmote(textId,TargetGuid); }
         void Whisper(int32 textId,uint64 receiver) { MonsterWhisper(textId,receiver); }
 
+        bool IsExpired(time_t t) const;
+
     private:
         CorpseType m_type;
         time_t m_time;

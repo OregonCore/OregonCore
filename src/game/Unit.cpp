@@ -1715,11 +1715,12 @@ void Unit::DealMeleeDamage(CalcDamageInfo *damageInfo, bool durabilityLoss)
                //CalcAbsorbResist(pVictim, SpellSchools(spellProto->School), SPELL_DIRECT_DAMAGE, damage, &absorb, &resist);
                //damage-=absorb + resist;
 
-               WorldPacket data(SMSG_SPELLDAMAGESHIELD,(8+8+4+4));
+               WorldPacket data(SMSG_SPELLDAMAGESHIELD,(8+8+4+4+4));
                data << uint64(pVictim->GetGUID());
                data << uint64(GetGUID());
+               data << uint32(spellProto->Id);
+               data << uint32(damage);                  // Damage
                data << uint32(spellProto->SchoolMask);
-               data << uint32(damage);
                pVictim->SendMessageToSet(&data, true);
 
                pVictim->DealDamage(this, damage, 0, SPELL_DIRECT_DAMAGE, GetSpellSchoolMask(spellProto), spellProto, true);
@@ -11721,7 +11722,7 @@ void Unit::SetStunned(bool apply)
         if (GetTypeId() != TYPEID_PLAYER)
             ToCreature()->StopMoving();
         else
-            SetUnitMovementFlags(0);    //Clear movement flags
+            SetStandState(UNIT_STAND_STATE_STAND);
 
         WorldPacket data(SMSG_FORCE_MOVE_ROOT, 8);
         data << GetPackGUID();
@@ -11757,8 +11758,6 @@ void Unit::SetRooted(bool apply)
 
         if (GetTypeId() == TYPEID_PLAYER)
         {
-            SetUnitMovementFlags(0);
-
             WorldPacket data(SMSG_FORCE_MOVE_ROOT, 10);
             data << GetPackGUID();
             data << (uint32)2;

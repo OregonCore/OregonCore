@@ -362,6 +362,11 @@ MapUpdate.Threads = 1
 #        Log file of arena fights and arena team creations
 #        Default: "" - do not create arena log file
 #
+#   ArenaLogExtendedInfo
+#        Extended Info Log file of arena fights and arena team creations
+#        Default: 0 - extended arena logs off
+#                 1 - extended arena logs on
+#
 #    LogColors
 #        Color for messages (format "normal basic detail debug")
 #        Default: "" - no colors
@@ -487,6 +492,7 @@ GmLogTimestamp = 0
 GmLogPerAccount = 0
 RaLogFile = "ra_commands.log"
 ArenaLogFile = ""
+ArenaLogExtendedInfo = 0
 LogColors = ""
 EnableLogDB = 0
 DBLogLevel = 2
@@ -2004,3 +2010,26 @@ MinRecordUpdateTimeDiff = 100
 PlayerStart.String = ""
 DuelMod.Enable = 0
 DuelMod.Cooldowns = 0
+
+###############################################################################
+# AUTO BROADCAST
+#
+#    AutoBroadcast.On
+#        Enable auto broadcast
+#        Default: 0 - off
+#                 1 - on
+#
+#    AutoBroadcast.Center
+#        Display method
+#        Default: 0 - announce
+#                 1 - notify
+#                 2 - both
+#
+#    AutoBroadcast.Timer
+#        Timer for auto broadcast (in milliseconds)
+#
+###############################################################################
+
+AutoBroadcast.On = 0
+AutoBroadcast.Center = 0
+AutoBroadcast.Timer = 60000

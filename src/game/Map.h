@@ -380,8 +380,6 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         void AddObjectToSwitchList(WorldObject *obj, bool on);
         virtual void DelayedUpdate(const uint32 diff);
 
-        virtual bool RemoveBones(uint64 guid, float x, float y);
-
         void UpdateObjectVisibility(WorldObject* obj, Cell cell, CellPair cellpair);
         void UpdateObjectsVisibilityFor(Player* player, Cell cell, CellPair cellpair);
 

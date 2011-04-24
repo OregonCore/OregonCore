@@ -403,6 +403,8 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                         sLog.outErrorDb("CreatureEventAI:  Creature %u is using event(%u) with param2 < param1 (RepeatMax < RepeatMin). Event will never repeat.", temp.creature_id, i);
                     break;
                 case EVENT_T_SUMMONED_UNIT:
+                case EVENT_T_SUMMONED_JUST_DIED:
+                case EVENT_T_SUMMONED_JUST_DESPAWN:
                     if (!sCreatureStorage.LookupEntry<CreatureInfo>(temp.summon_unit.creatureId))
                         sLog.outErrorDb("CreatureEventAI:  Creature %u is using event(%u) with invalid creature template id (%u) in param1, skipped.", temp.creature_id, i, temp.summon_unit.creatureId);
                     if (temp.summon_unit.repeatMax < temp.summon_unit.repeatMin)
@@ -454,6 +456,8 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
 
                 case EVENT_T_BUFFED:
                 case EVENT_T_TARGET_BUFFED:
+                case EVENT_T_MISSING_AURA:
+                case EVENT_T_TARGET_MISSING_AURA:
                 {
                     SpellEntry const* pSpell = sSpellStore.LookupEntry(temp.buffed.spellId);
                     if (!pSpell)

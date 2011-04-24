@@ -922,7 +922,7 @@ enum OregonStrings
     LANG_NO_ENTER_CHAMPIONS_HALL        = 10057,
 
     // Use for custom patches             11000-11999
-    //LANG_AUTO_BROADCAST               = 11000, // Disabled for whenever it's added back in
+    LANG_AUTO_BROADCAST                 = 11000,
     LANG_INVALID_REALMID                = 11001,
 
     // NOT RESERVED IDS                   12000-1999999999
