@@ -69,7 +69,7 @@ bool LoginQueryHolder::Initialize()
     // NOTE: all fields in `characters` must be read to prevent lost character data at next save in case wrong DB structure.
     // !!! NOTE: including unused `zone`,`online`
     res &= SetPQuery(PLAYER_LOGIN_QUERY_LOADFROM,
-        "SELECT guid, account, data, name, race, class, gender, level, xp, "
+        "SELECT guid, account, name, race, class, gender, level, xp, "
         "money, playerBytes, playerBytes2, playerFlags, position_x, "
         "position_y, position_z, map, orientation, taximask, cinematic, "
         "totaltime, leveltime, rest_bonus, logout_time, is_logout_resting, "
@@ -79,7 +79,8 @@ bool LoginQueryHolder::Initialize()
         "arenaPoints, totalHonorPoints, todayHonorPoints, "
         "yesterdayHonorPoints, totalKills, todayKills, yesterdayKills, "
         "chosenTitle, watchedFaction, drunk, health, "
-        "powerMana, powerRage, powerFocus, powerEnergy, powerHappiness, instance_id "
+        "powerMana, powerRage, powerFocus, powerEnergy, powerHappiness, instance_id, "
+        "exploredZones, equipmentCache, ammoId, knownTitles, actionBars "
         "FROM characters WHERE guid = '%u'", GUID_LOPART(m_guid));
     res &= SetPQuery(PLAYER_LOGIN_QUERY_LOADGROUP,           "SELECT leaderGuid FROM group_member WHERE memberGuid ='%u'", GUID_LOPART(m_guid));
     res &= SetPQuery(PLAYER_LOGIN_QUERY_LOADBOUNDINSTANCES,  "SELECT id, permanent, map, difficulty, resettime FROM character_instance LEFT JOIN instance ON instance = id WHERE guid = '%u'", GUID_LOPART(m_guid));
@@ -102,6 +103,7 @@ bool LoginQueryHolder::Initialize()
     res &= SetPQuery(PLAYER_LOGIN_QUERY_LOADGUILD,           "SELECT guildid,rank FROM guild_member WHERE guid = '%u'", GUID_LOPART(m_guid));
     res &= SetPQuery(PLAYER_LOGIN_QUERY_LOADARENAINFO,       "SELECT arenateamid, played_week, played_season, personal_rating FROM arena_team_member WHERE guid='%u'", GUID_LOPART(m_guid));
     res &= SetPQuery(PLAYER_LOGIN_QUERY_LOADBGDATA,          "SELECT instance_id, team, join_x, join_y, join_z, join_o, join_map, taxi_start, taxi_end, mount_spell FROM character_battleground_data WHERE guid = '%u'", GUID_LOPART(m_guid));
+    res &= SetPQuery(PLAYER_LOGIN_QUERY_LOADSKILLS,          "SELECT skill, value, max FROM character_skills WHERE guid = '%u'", GUID_LOPART(m_guid));
 
     return res;
 }
@@ -168,7 +170,7 @@ void WorldSession::HandleCharEnumOpcode(WorldPacket & /*recv_data*/)
     //   8                9               10                     11                     12                     13                    14
         "characters.zone, characters.map, characters.position_x, characters.position_y, characters.position_z, guild_member.guildid, characters.playerFlags, "
     //  15                    16                   17                     18                   19
-        "characters.at_login, character_pet.entry, character_pet.modelid, character_pet.level, characters.data "
+        "characters.at_login, character_pet.entry, character_pet.modelid, character_pet.level, characters.equipmentCache "
         "FROM characters LEFT JOIN character_pet ON characters.guid=character_pet.owner AND character_pet.slot='0' "
         "LEFT JOIN guild_member ON characters.guid = guild_member.guid "
         "WHERE characters.account = '%u' ORDER BY characters.guid"
@@ -179,7 +181,7 @@ void WorldSession::HandleCharEnumOpcode(WorldPacket & /*recv_data*/)
     //   8                9               10                     11                     12                     13                    14
         "characters.zone, characters.map, characters.position_x, characters.position_y, characters.position_z, guild_member.guildid, characters.playerFlags, "
     //  15                    16                   17                     18                   19               20
-        "characters.at_login, character_pet.entry, character_pet.modelid, character_pet.level, characters.data, character_declinedname.genitive "
+        "characters.at_login, character_pet.entry, character_pet.modelid, character_pet.level, characters.equipmentCache, character_declinedname.genitive "
         "FROM characters LEFT JOIN character_pet ON characters.guid = character_pet.owner AND character_pet.slot='0' "
         "LEFT JOIN character_declinedname ON characters.guid = character_declinedname.guid "
         "LEFT JOIN guild_member ON characters.guid = guild_member.guid "

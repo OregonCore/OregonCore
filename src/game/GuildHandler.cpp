@@ -945,7 +945,7 @@ void WorldSession::HandleGuildBankDeposit(WorldPacket & recv_data)
 
     pGuild->SetBankMoney(pGuild->GetGuildBankMoney()+money);
     GetPlayer()->ModifyMoney(-int(money));
-    GetPlayer()->SaveDataFieldToDB();                       //contains money
+    GetPlayer()->SaveGoldToDB();                       // contains money
 
     CharacterDatabase.CommitTransaction();
 

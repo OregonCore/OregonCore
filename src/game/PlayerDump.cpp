@@ -29,7 +29,7 @@
 #include "AccountMgr.h"
 
 // Character Dump tables
-#define DUMP_TABLE_COUNT 18
+#define DUMP_TABLE_COUNT 19
 
 struct DumpTable
 {
@@ -47,6 +47,7 @@ static DumpTable dumpTables[DUMP_TABLE_COUNT] =
     { "character_action",         DTT_CHAR_TABLE },
     { "character_aura",           DTT_CHAR_TABLE },
     { "character_homebind",       DTT_CHAR_TABLE },
+    { "character_skills",         DTT_CHAR_TABLE },
     { "character_inventory",      DTT_INVENTORY  },
     { "mail",                     DTT_MAIL       },
     { "mail_items",               DTT_MAIL_ITEM  },

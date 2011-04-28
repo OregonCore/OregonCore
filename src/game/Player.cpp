@@ -250,6 +250,15 @@ uint32 PlayerTaxi::GetCurrentTaxiPath() const
     return path;
 }
 
+std::ostringstream& operator<< (std::ostringstream& ss, PlayerTaxi const& taxi)
+{
+    ss << "'";
+    for (uint8 i = 0; i < TaxiMaskSize; ++i)
+        ss << taxi.m_taximask[i] << " ";
+    ss << "'";
+    return ss;
+}
+
 //== Player ====================================================
 
 const int32 Player::ReputationRank_Length[MAX_REPUTATION_RANK] = {36000, 3000, 3000, 3000, 6000, 12000, 21000, 1000};
@@ -1458,7 +1467,7 @@ bool Player::BuildEnumData(QueryResult_AutoPtr result, WorldPacket * p_data)
 
     for (uint8 slot = 0; slot < EQUIPMENT_SLOT_END; ++slot)
     {
-        uint32 visualbase = PLAYER_VISIBLE_ITEM_1_0 + (slot * MAX_VISIBLE_ITEM_OFFSET);
+        uint32 visualbase = slot * 2;                       // entry, perm ench., temp ench.
         uint32 item_id = GetUInt32ValueFromArray(data, visualbase);
         const ItemPrototype * proto = objmgr.GetItemPrototype(item_id);
         if (!proto)
@@ -1471,9 +1480,11 @@ bool Player::BuildEnumData(QueryResult_AutoPtr result, WorldPacket * p_data)
 
         SpellItemEnchantmentEntry const *enchant = NULL;
 
+        uint32 enchants = GetUInt32ValueFromArray(data, visualbase + 1);
         for (uint8 enchantSlot = PERM_ENCHANTMENT_SLOT; enchantSlot <= TEMP_ENCHANTMENT_SLOT; ++enchantSlot)
         {
-            uint32 enchantId = GetUInt32ValueFromArray(data, visualbase+1+enchantSlot);
+            // values stored in 2 uint16
+            uint32 enchantId = 0x0000FFFF & (enchants >> enchantSlot*16);
             if (!enchantId)
                 continue;
 
@@ -3910,6 +3921,7 @@ void Player::DeleteFromDB(uint64 playerguid, uint32 accountId, bool updateRealmC
             CharacterDatabase.PExecute("DELETE FROM character_pet_declinedname WHERE owner = '%u'",guid);
             CharacterDatabase.PExecute("DELETE FROM guild_eventlog WHERE PlayerGuid1 = '%u' OR PlayerGuid2 = '%u'",guid, guid);
             CharacterDatabase.PExecute("DELETE FROM guild_bank_eventlog WHERE PlayerGuid = '%u'",guid);
+            CharacterDatabase.PExecute("DELETE FROM character_skills WHERE guid = '%u'",guid);
 
             CharacterDatabase.CommitTransaction();
             break;
@@ -4945,15 +4957,12 @@ bool Player::UpdateSkill(uint32 skill_id, uint32 step)
     if (skill_id == SKILL_FIST_WEAPONS)
         skill_id = SKILL_UNARMED;
 
-    uint16 i=0;
-    for (; i < PLAYER_MAX_SKILLS; i++)
-        if ((GetUInt32Value(PLAYER_SKILL_INDEX(i)) & 0x0000FFFF) == skill_id)
-            break;
-
-    if (i>=PLAYER_MAX_SKILLS)
+    SkillStatusMap::iterator itr = mSkillStatus.find(skill_id);
+    if(itr == mSkillStatus.end() || itr->second.uState == SKILL_DELETED)
         return false;
 
-    uint32 data = GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i));
+    uint32 valueIndex = PLAYER_SKILL_VALUE_INDEX(itr->second.pos);
+    uint32 data = GetUInt32Value(valueIndex);
     uint32 value = SKILL_VALUE(data);
     uint32 max = SKILL_MAX(data);
 
@@ -4966,7 +4975,9 @@ bool Player::UpdateSkill(uint32 skill_id, uint32 step)
         if (new_value > max)
             new_value = max;
 
-        SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i),MAKE_SKILL_VALUE(new_value,max));
+        SetUInt32Value(valueIndex,MAKE_SKILL_VALUE(new_value,max));
+        if(itr->second.uState != SKILL_NEW)
+            itr->second.uState = SKILL_CHANGED;
         return true;
     }
 
@@ -5069,13 +5080,13 @@ bool Player::UpdateSkillPro(uint16 SkillId, int32 Chance, uint32 step)
         return false;
     }
 
-    uint16 i=0;
-    for (; i < PLAYER_MAX_SKILLS; i++)
-        if (SKILL_VALUE(GetUInt32Value(PLAYER_SKILL_INDEX(i))) == SkillId) break;
-    if (i >= PLAYER_MAX_SKILLS)
+    SkillStatusMap::iterator itr = mSkillStatus.find(SkillId);
+    if(itr == mSkillStatus.end() || itr->second.uState == SKILL_DELETED)
         return false;
 
-    uint32 data = GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i));
+    uint32 valueIndex = PLAYER_SKILL_VALUE_INDEX(itr->second.pos);
+
+    uint32 data = GetUInt32Value(valueIndex);
     uint16 SkillValue = SKILL_VALUE(data);
     uint16 MaxValue   = SKILL_MAX(data);
 
@@ -5090,7 +5101,9 @@ bool Player::UpdateSkillPro(uint16 SkillId, int32 Chance, uint32 step)
         if (new_value > MaxValue)
             new_value = MaxValue;
 
-        SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i),MAKE_SKILL_VALUE(new_value,MaxValue));
+        SetUInt32Value(valueIndex,MAKE_SKILL_VALUE(new_value,MaxValue));
+        if(itr->second.uState != SKILL_NEW)
+            itr->second.uState = SKILL_CHANGED;
         DEBUG_LOG("Player::UpdateSkillPro Chance=%3.1f%% taken", Chance/10.0);
         return true;
     }
@@ -5193,19 +5206,20 @@ void Player::UpdateCombatSkills(Unit *pVictim, WeaponAttackType attType, MeleeHi
 
 void Player::ModifySkillBonus(uint32 skillid,int32 val, bool talent)
 {
-    for (uint16 i=0; i < PLAYER_MAX_SKILLS; i++)
-        if ((GetUInt32Value(PLAYER_SKILL_INDEX(i)) & 0x0000FFFF) == skillid)
-    {
-        uint32 bonus_val = GetUInt32Value(PLAYER_SKILL_BONUS_INDEX(i));
-        int16 temp_bonus = SKILL_TEMP_BONUS(bonus_val);
-        int16 perm_bonus = SKILL_PERM_BONUS(bonus_val);
-
-        if (talent)                                          // permanent bonus stored in high part
-            SetUInt32Value(PLAYER_SKILL_BONUS_INDEX(i),MAKE_SKILL_BONUS(temp_bonus,perm_bonus+val));
-        else                                                // temporary/item bonus stored in low part
-            SetUInt32Value(PLAYER_SKILL_BONUS_INDEX(i),MAKE_SKILL_BONUS(temp_bonus+val,perm_bonus));
+    SkillStatusMap::const_iterator itr = mSkillStatus.find(skillid);
+    if(itr == mSkillStatus.end() || itr->second.uState == SKILL_DELETED)
         return;
-    }
+
+    uint32 bonusIndex = PLAYER_SKILL_BONUS_INDEX(itr->second.pos);
+
+    uint32 bonus_val = GetUInt32Value(bonusIndex);
+    int16 temp_bonus = SKILL_TEMP_BONUS(bonus_val);
+    int16 perm_bonus = SKILL_PERM_BONUS(bonus_val);
+
+    if(talent)                                          // permanent bonus stored in high part
+        SetUInt32Value(bonusIndex,MAKE_SKILL_BONUS(temp_bonus,perm_bonus+val));
+    else                                                // temporary/item bonus stored in low part
+        SetUInt32Value(bonusIndex,MAKE_SKILL_BONUS(temp_bonus+val,perm_bonus));
 }
 
 void Player::UpdateSkillsForLevel()
@@ -5215,11 +5229,12 @@ void Player::UpdateSkillsForLevel()
 
     bool alwaysMaxSkill = sWorld.getConfig(CONFIG_ALWAYS_MAX_SKILL_FOR_LEVEL);
 
-    for (uint16 i=0; i < PLAYER_MAX_SKILLS; i++)
-        if (GetUInt32Value(PLAYER_SKILL_INDEX(i)))
+    for(SkillStatusMap::iterator itr = mSkillStatus.begin(); itr != mSkillStatus.end(); ++itr)
     {
-        uint32 pskill = GetUInt32Value(PLAYER_SKILL_INDEX(i)) & 0x0000FFFF;
+        if(itr->second.uState == SKILL_DELETED)
+            continue;
 
+        uint32 pskill = itr->first;
         SkillLineEntry const *pSkill = sSkillLineStore.LookupEntry(pskill);
         if (!pSkill)
             continue;
@@ -5227,38 +5242,51 @@ void Player::UpdateSkillsForLevel()
         if (GetSkillRangeType(pSkill,false) != SKILL_RANGE_LEVEL)
             continue;
 
-        uint32 data = GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i));
+        uint32 valueIndex = PLAYER_SKILL_VALUE_INDEX(itr->second.pos);
+        uint32 data = GetUInt32Value(valueIndex);
         uint32 max = SKILL_MAX(data);
         uint32 val = SKILL_VALUE(data);
 
         // update only level dependent max skill values
         if (max != 1)
         {
-            // miximize skill always
+            // maximize skill always
             if (alwaysMaxSkill)
-                SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i),MAKE_SKILL_VALUE(maxSkill,maxSkill));
-            // update max skill value if current max skill not maximized
-            else if (max != maxconfskill)
-                SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i),MAKE_SKILL_VALUE(val,maxSkill));
+            {
+                SetUInt32Value(valueIndex, MAKE_SKILL_VALUE(maxSkill,maxSkill));
+                if(itr->second.uState != SKILL_NEW)
+                    itr->second.uState = SKILL_CHANGED;
+            }
+            else if(max != maxconfskill) 
+            {
+                SetUInt32Value(valueIndex, MAKE_SKILL_VALUE(val,maxSkill));
+                if(itr->second.uState != SKILL_NEW)
+                    itr->second.uState = SKILL_CHANGED;
+            }
         }
     }
 }
 
 void Player::UpdateSkillsToMaxSkillsForLevel()
 {
-    for (uint16 i=0; i < PLAYER_MAX_SKILLS; i++)
-        if (GetUInt32Value(PLAYER_SKILL_INDEX(i)))
+    for(SkillStatusMap::iterator itr = mSkillStatus.begin(); itr != mSkillStatus.end(); ++itr)
     {
-        uint32 pskill = GetUInt32Value(PLAYER_SKILL_INDEX(i)) & 0x0000FFFF;
+        if(itr->second.uState == SKILL_DELETED)
+            continue;
+
+        uint32 pskill = itr->first;
         if (IsProfessionSkill(pskill) || pskill == SKILL_RIDING)
             continue;
-        uint32 data = GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i));
-
+        uint32 valueIndex = PLAYER_SKILL_VALUE_INDEX(itr->second.pos);
+        uint32 data = GetUInt32Value(valueIndex);
         uint32 max = SKILL_MAX(data);
 
         if (max > 1)
-            SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i),MAKE_SKILL_VALUE(max,max));
-
+        {
+            SetUInt32Value(valueIndex,MAKE_SKILL_VALUE(max,max));
+            if(itr->second.uState != SKILL_NEW)
+                itr->second.uState = SKILL_CHANGED;
+        }
         if (pskill == SKILL_DEFENSE)
             UpdateDefenseBonusesMod();
     }
@@ -5271,20 +5299,29 @@ void Player::SetSkill(uint32 id, uint16 currVal, uint16 maxVal)
     if (!id)
         return;
 
-    uint16 i=0;
-    for (; i < PLAYER_MAX_SKILLS; i++)
-        if ((GetUInt32Value(PLAYER_SKILL_INDEX(i)) & 0x0000FFFF) == id) break;
+    SkillStatusMap::iterator itr = mSkillStatus.find(id);
 
-    if (i<PLAYER_MAX_SKILLS)                                 //has skill
+    //has skill
+    if(itr != mSkillStatus.end() && itr->second.uState != SKILL_DELETED)
     {
         if (currVal)
-            SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i),MAKE_SKILL_VALUE(currVal,maxVal));
+        {
+            SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(itr->second.pos),MAKE_SKILL_VALUE(currVal,maxVal));
+            if(itr->second.uState != SKILL_NEW)
+                itr->second.uState = SKILL_CHANGED;
+        }
         else                                                //remove
         {
             // clear skill fields
-            SetUInt32Value(PLAYER_SKILL_INDEX(i),0);
-            SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i),0);
-            SetUInt32Value(PLAYER_SKILL_BONUS_INDEX(i),0);
+            SetUInt32Value(PLAYER_SKILL_INDEX(itr->second.pos),0);
+            SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(itr->second.pos),0);
+            SetUInt32Value(PLAYER_SKILL_BONUS_INDEX(itr->second.pos),0);
+
+            // mark as deleted or simply remove from map if not saved yet
+            if(itr->second.uState != SKILL_NEW)
+                itr->second.uState = SKILL_DELETED;
+            else
+                mSkillStatus.erase(itr);
 
             // remove spells that depend on this skill when removing the skill
             for (PlayerSpellMap::const_iterator itr = m_spells.begin(), next = m_spells.begin(); itr != m_spells.end(); itr = next)
@@ -5311,7 +5348,7 @@ void Player::SetSkill(uint32 id, uint16 currVal, uint16 maxVal)
     }
     else if (currVal)                                        //add
     {
-        for (i=0; i < PLAYER_MAX_SKILLS; i++)
+        for (int i=0; i < PLAYER_MAX_SKILLS; i++)
             if (!GetUInt32Value(PLAYER_SKILL_INDEX(i)))
         {
             SkillLineEntry const *pSkill = sSkillLineStore.LookupEntry(id);
@@ -5326,6 +5363,15 @@ void Player::SetSkill(uint32 id, uint16 currVal, uint16 maxVal)
             else
                 SetUInt32Value(PLAYER_SKILL_INDEX(i), MAKE_PAIR32(id,0));
             SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i),MAKE_SKILL_VALUE(currVal,maxVal));
+
+            // insert new entry or update if not deleted old entry yet
+            if(itr != mSkillStatus.end())
+            {
+                itr->second.pos = i;
+                itr->second.uState = SKILL_CHANGED;
+            }
+            else
+                mSkillStatus.insert(SkillStatusMap::value_type(id, SkillStatusData(i, SKILL_NEW)));
 
             // apply skill bonuses
             SetUInt32Value(PLAYER_SKILL_BONUS_INDEX(i),0);
@@ -5351,17 +5397,11 @@ void Player::SetSkill(uint32 id, uint16 currVal, uint16 maxVal)
 
 bool Player::HasSkill(uint32 skill) const
 {
-    if (!skill)
+    if(!skill)
         return false;
 
-    for (uint16 i=0; i < PLAYER_MAX_SKILLS; i++)
-    {
-        if ((GetUInt32Value(PLAYER_SKILL_INDEX(i)) & 0x0000FFFF) == skill)
-        {
-            return true;
-        }
-    }
-    return false;
+    SkillStatusMap::const_iterator itr = mSkillStatus.find(skill);
+    return (itr != mSkillStatus.end() && itr->second.uState != SKILL_DELETED);
 }
 
 uint16 Player::GetSkillValue(uint32 skill) const
@@ -5369,19 +5409,16 @@ uint16 Player::GetSkillValue(uint32 skill) const
     if (!skill)
         return 0;
 
-    for (uint16 i=0; i < PLAYER_MAX_SKILLS; i++)
-    {
-        if ((GetUInt32Value(PLAYER_SKILL_INDEX(i)) & 0x0000FFFF) == skill)
-        {
-            uint32 bonus = GetUInt32Value(PLAYER_SKILL_BONUS_INDEX(i));
+    SkillStatusMap::const_iterator itr = mSkillStatus.find(skill);
+    if(itr == mSkillStatus.end() || itr->second.uState == SKILL_DELETED)
+        return 0;
 
-            int32 result = int32(SKILL_VALUE(GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i))));
-            result += SKILL_TEMP_BONUS(bonus);
-            result += SKILL_PERM_BONUS(bonus);
-            return result < 0 ? 0 : result;
-        }
-    }
-    return 0;
+    uint32 bonus = GetUInt32Value(PLAYER_SKILL_BONUS_INDEX(itr->second.pos));
+
+    int32 result = int32(SKILL_VALUE(GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(itr->second.pos))));
+    result += SKILL_TEMP_BONUS(bonus);
+    result += SKILL_PERM_BONUS(bonus);
+    return result < 0 ? 0 : result;
 }
 
 uint16 Player::GetMaxSkillValue(uint32 skill) const
@@ -5389,51 +5426,42 @@ uint16 Player::GetMaxSkillValue(uint32 skill) const
     if (!skill)
         return 0;
 
-    for (uint16 i=0; i < PLAYER_MAX_SKILLS; i++)
-    {
-        if ((GetUInt32Value(PLAYER_SKILL_INDEX(i)) & 0x0000FFFF) == skill)
-        {
-            uint32 bonus = GetUInt32Value(PLAYER_SKILL_BONUS_INDEX(i));
+    SkillStatusMap::const_iterator itr = mSkillStatus.find(skill);
+    if(itr == mSkillStatus.end() || itr->second.uState == SKILL_DELETED)
+        return 0;
 
-            int32 result = int32(SKILL_MAX(GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i))));
-            result += SKILL_TEMP_BONUS(bonus);
-            result += SKILL_PERM_BONUS(bonus);
-            return result < 0 ? 0 : result;
-        }
-    }
-    return 0;
+    uint32 bonus = GetUInt32Value(PLAYER_SKILL_BONUS_INDEX(itr->second.pos));
+
+    int32 result = int32(SKILL_MAX(GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(itr->second.pos))));
+    result += SKILL_TEMP_BONUS(bonus);
+    result += SKILL_PERM_BONUS(bonus);
+    return result < 0 ? 0 : result;
 }
 
 uint16 Player::GetPureMaxSkillValue(uint32 skill) const
 {
-    if (!skill)
+    if(!skill)
         return 0;
 
-    for (uint16 i=0; i < PLAYER_MAX_SKILLS; i++)
-    {
-        if ((GetUInt32Value(PLAYER_SKILL_INDEX(i)) & 0x0000FFFF) == skill)
-        {
-            return SKILL_MAX(GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i)));
-        }
-    }
-    return 0;
+    SkillStatusMap::const_iterator itr = mSkillStatus.find(skill);
+    if(itr == mSkillStatus.end() || itr->second.uState == SKILL_DELETED)
+        return 0;
+
+    return SKILL_MAX(GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(itr->second.pos)));
 }
 
 uint16 Player::GetBaseSkillValue(uint32 skill) const
 {
-    if (!skill)
+    if(!skill)
         return 0;
 
-    for (uint16 i=0; i < PLAYER_MAX_SKILLS; i++)
-    {
-        if ((GetUInt32Value(PLAYER_SKILL_INDEX(i)) & 0x0000FFFF) == skill)
-        {
-            int32 result = int32(SKILL_VALUE(GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i))));
-            result +=  SKILL_PERM_BONUS(GetUInt32Value(PLAYER_SKILL_BONUS_INDEX(i)));
-            return result < 0 ? 0 : result;
-        }
-    }
-    return 0;
+    SkillStatusMap::const_iterator itr = mSkillStatus.find(skill);
+    if(itr == mSkillStatus.end() || itr->second.uState == SKILL_DELETED)
+        return 0;
+
+    int32 result = int32(SKILL_VALUE(GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(itr->second.pos))));
+    result +=  SKILL_PERM_BONUS(GetUInt32Value(PLAYER_SKILL_BONUS_INDEX(itr->second.pos)));
+    return result < 0 ? 0 : result;
 }
 
 uint16 Player::GetPureSkillValue(uint32 skill) const
@@ -5441,14 +5469,11 @@ uint16 Player::GetPureSkillValue(uint32 skill) const
     if (!skill)
         return 0;
 
-    for (uint16 i=0; i < PLAYER_MAX_SKILLS; i++)
-    {
-        if ((GetUInt32Value(PLAYER_SKILL_INDEX(i)) & 0x0000FFFF) == skill)
-        {
-            return SKILL_VALUE(GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i)));
-        }
-    }
-    return 0;
+    SkillStatusMap::const_iterator itr = mSkillStatus.find(skill);
+    if(itr == mSkillStatus.end() || itr->second.uState == SKILL_DELETED)
+        return 0;
+
+    return SKILL_VALUE(GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(itr->second.pos)));
 }
 
 int16 Player::GetSkillTempBonusValue(uint32 skill) const
@@ -5456,15 +5481,11 @@ int16 Player::GetSkillTempBonusValue(uint32 skill) const
     if (!skill)
         return 0;
 
-    for (int i = 0; i < PLAYER_MAX_SKILLS; i++)
-    {
-        if ((GetUInt32Value(PLAYER_SKILL_INDEX(i)) & 0x0000FFFF) == skill)
-        {
-            return SKILL_TEMP_BONUS(GetUInt32Value(PLAYER_SKILL_BONUS_INDEX(i)));
-        }
-    }
+    SkillStatusMap::const_iterator itr = mSkillStatus.find(skill);
+    if(itr == mSkillStatus.end() || itr->second.uState == SKILL_DELETED)
+        return 0;
 
-    return 0;
+return SKILL_TEMP_BONUS(GetUInt32Value(PLAYER_SKILL_BONUS_INDEX(itr->second.pos)));
 }
 
 void Player::SendInitialActionButtons()
@@ -5662,9 +5683,9 @@ void Player::CheckAreaExploreAndOutdoor()
         return;
     int offset = areaFlag / 32;
 
-    if (offset >= 128)
+    if (offset >= PLAYER_EXPLORED_ZONES_SIZE)
     {
-        sLog.outError("Wrong area flag %u in map data for (X: %f Y: %f) point to field PLAYER_EXPLORED_ZONES_1 + %u (%u must be < 64).",areaFlag,GetPositionX(),GetPositionY(),offset,offset);
+        sLog.outError("Wrong area flag %u in map data for (X: %f Y: %f) point to field PLAYER_EXPLORED_ZONES_1 + %u ( %u must be < %u ).",areaFlag,GetPositionX(),GetPositionY(),offset,offset, PLAYER_EXPLORED_ZONES_SIZE);
         return;
     }
 
@@ -14534,19 +14555,6 @@ bool Player::LoadPositionFromDB(uint32& mapid, float& x,float& y,float& z,float&
     return true;
 }
 
-bool Player::LoadValuesArrayFromDB(Tokens& data, uint64 guid)
-{
-    QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT data FROM characters WHERE guid='%u'",GUID_LOPART(guid));
-    if (!result)
-        return false;
-
-    Field *fields = result->Fetch();
-
-    data = StrSplit(fields[0].GetCppString(), " ");
-
-    return true;
-}
-
 uint32 Player::GetUInt32ValueFromArray(Tokens const& data, uint16 index)
 {
     if (index >= data.size())
@@ -14564,36 +14572,35 @@ float Player::GetFloatValueFromArray(Tokens const& data, uint16 index)
     return result;
 }
 
-uint32 Player::GetUInt32ValueFromDB(uint16 index, uint64 guid)
+void Player::_LoadIntoDataField(const char* data, uint32 startOffset, uint32 count)
 {
-    Tokens data;
-    if (!LoadValuesArrayFromDB(data,guid))
-        return 0;
+    if(!data)
+        return;
 
-    return GetUInt32ValueFromArray(data,index);
-}
+    Tokens tokens = StrSplit(data, " ");
 
-float Player::GetFloatValueFromDB(uint16 index, uint64 guid)
-{
-    float result;
-    uint32 temp = Player::GetUInt32ValueFromDB(index, guid);
-    memcpy(&result, &temp, sizeof(result));
-
-    return result;
+    if (tokens.size() != count)
+        return;
+    Tokens::iterator iter;
+    uint32 index;
+    for (iter = tokens.begin(), index = 0; index < count; ++iter, ++index)
+    {
+        m_uint32Values[startOffset + index] = atol((*iter).c_str());
+    }
 }
 
 bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 {
-    //                                                       0     1        2     3     4     5      6       7      8   9      10           11            12
-    //QueryResult *result = CharacterDatabase.PQuery("SELECT guid, account, data, name, race, class, gender, level, xp, money, playerBytes, playerBytes2, playerFlags,"
+    //                                                       0     1        2     3     4        5      6    7      8     9           10              11
+    //QueryResult *result = CharacterDatabase.PQuery("SELECT guid, account, name, race, class, gender, level, xp, money, playerBytes, playerBytes2, playerFlags,"
     // 12          13          14          15   16           17        18         19         20         21          22           23                 24
     //"position_x, position_y, position_z, map, orientation, taximask, cinematic, totaltime, leveltime, rest_bonus, logout_time, is_logout_resting, resettalents_cost,"
     // 25                 26       27       28       29       30         31           32            33        34    35      36                 37         38
     //"resettalents_time, trans_x, trans_y, trans_z, trans_o, transguid, extra_flags, stable_slots, at_login, zone, online, death_expire_time, taxi_path, dungeon_difficulty,"
-    // 39           40                41                42                    43          44          45              46           47               48              49
-    //"arenaPoints, totalHonorPoints, todayHonorPoints, yesterdayHonorPoints, totalKills, todayKills, yesterdayKills, chosenTitle, knownCurrencies, watchedFaction, drunk,"
-    // 50      51         52         53          54           55             56
-    //"health, powerMana, powerRage, powerFocus, powerEnergy, powerHapiness, instance_id FROM characters WHERE guid = '%u'", guid);
+    // 39          40                41                42                    43          44          45              46           47               48
+    //"arenaPoints, totalHonorPoints, todayHonorPoints, yesterdayHonorPoints, totalKills, todayKills, yesterdayKills, chosenTitle, watchedFaction, drunk,"
+    // 49      50         51         52          53           54             55           56             57              58      59           60
+    //"health, powerMana, powerRage, powerFocus, powerEnergy, powerHapiness, instance_id, exploredZones, equipmentCache, ammoId, knownTitles, actionBars FROM characters WHERE guid = '%u'", guid);
     QueryResult_AutoPtr result = holder->GetResult(PLAYER_LOGIN_QUERY_LOADFROM);
 
     if (!result)
@@ -14616,7 +14623,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 
     Object::_Create(guid, 0, HIGHGUID_PLAYER);
 
-    m_name = fields[3].GetCppString();
+    m_name = fields[2].GetCppString();
 
     // check name limitations
     if (!ObjectMgr::IsValidName(m_name) || GetSession()->GetSecurity() == SEC_PLAYER && objmgr.IsReservedName(m_name))
@@ -14625,36 +14632,38 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
         return false;
     }
 
-    if (!LoadValues(fields[2].GetString()))
-    {
-        sLog.outError("Player #%d has invalid data in data field. Not loaded.",GUID_LOPART(guid));
-        return false;
-    }
-
     // overwrite possible wrong/corrupted guid
     SetUInt64Value(OBJECT_FIELD_GUID, MAKE_NEW_GUID(guid, 0, HIGHGUID_PLAYER));
 
     // overwrite some data fields
     uint32 bytes0 = GetUInt32Value(UNIT_FIELD_BYTES_0) & 0xFF000000;
-    bytes0 |= fields[4].GetUInt8();                         // race
-    bytes0 |= fields[5].GetUInt8() << 8;                    // class
-    bytes0 |= fields[6].GetUInt8() << 16;                   // gender
+    bytes0 |= fields[3].GetUInt8();                         // race
+    bytes0 |= fields[4].GetUInt8() << 8;                    // class
+    bytes0 |= fields[5].GetUInt8() << 16;                   // gender
     SetUInt32Value(UNIT_FIELD_BYTES_0, bytes0);
 
-    SetUInt32Value(UNIT_FIELD_LEVEL, fields[7].GetUInt8());
-    SetUInt32Value(PLAYER_XP, fields[8].GetUInt32());
+    SetUInt32Value(UNIT_FIELD_LEVEL, fields[6].GetUInt8());
+    SetUInt32Value(PLAYER_XP, fields[7].GetUInt32());
 
-    uint32 money = fields[9].GetUInt32();
+    _LoadIntoDataField(fields[56].GetString(), PLAYER_EXPLORED_ZONES_1, PLAYER_EXPLORED_ZONES_SIZE);
+    _LoadIntoDataField(fields[59].GetString(), PLAYER__FIELD_KNOWN_TITLES, 2);
+
+    InitDisplayIds();
+
+    uint32 money = fields[8].GetUInt32();
     if (money > MAX_MONEY_AMOUNT)
         money = MAX_MONEY_AMOUNT;
     SetMoney(money);
 
-    SetUInt32Value(PLAYER_BYTES, fields[10].GetUInt32());
-    SetUInt32Value(PLAYER_BYTES_2, fields[11].GetUInt32());
-    SetUInt32Value(PLAYER_BYTES_3, (fields[49].GetUInt16() & 0xFFFE) | fields[6].GetUInt8());
-    SetUInt32Value(PLAYER_FLAGS, fields[12].GetUInt32());
-    SetInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX, fields[48].GetUInt32());
+    SetUInt32Value(PLAYER_BYTES, fields[9].GetUInt32());
+    SetUInt32Value(PLAYER_BYTES_2, fields[10].GetUInt32());
+    SetUInt32Value(PLAYER_BYTES_3, (fields[48].GetUInt16() & 0xFFFE) | fields[5].GetUInt8());
+    SetUInt32Value(PLAYER_FLAGS, fields[11].GetUInt32());
+    SetInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX, fields[47].GetUInt32());
 
+    SetUInt32Value(PLAYER_AMMO_ID, fields[58].GetUInt32());
+
+    SetByteValue(PLAYER_FIELD_BYTES, 2, fields[60].GetUInt8());
     // cleanup inventory related item value fields (its will be filled correctly in _LoadInventory)
     for (uint8 slot = EQUIPMENT_SLOT_START; slot < EQUIPMENT_SLOT_END; ++slot)
     {
@@ -14679,13 +14688,13 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     InitPrimaryProfessions();                               // to max set before any spell loaded
 
     // init saved position, and fix it later if problematic
-    uint32 transGUID = fields[31].GetUInt32();
-    Relocate(fields[13].GetFloat(),fields[14].GetFloat(),fields[15].GetFloat(),fields[17].GetFloat());
-    uint32 mapId = fields[16].GetUInt32();
-    uint32 instanceId = fields[56].GetFloat();
+    uint32 transGUID = fields[30].GetUInt32();
+    Relocate(fields[12].GetFloat(),fields[13].GetFloat(),fields[14].GetFloat(),fields[16].GetFloat());
+    uint32 mapId = fields[15].GetUInt32();
+    uint32 instanceId = fields[55].GetFloat();
 
-    SetDifficulty(fields[39].GetUInt32());                  // may be changed in _LoadGroup
-    std::string taxi_nodes = fields[38].GetCppString();
+    SetDifficulty(fields[38].GetUInt32());                  // may be changed in _LoadGroup
+    std::string taxi_nodes = fields[37].GetCppString();
 
 #define RelocateToHomebind() { mapId = m_homebindMapId; instanceId = 0; Relocate(m_homebindX, m_homebindY, m_homebindZ); if (!sWorld.getConfig(CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE)) { m_movementInfo.ClearTransportData(); transGUID = 0; } }
 
@@ -14693,7 +14702,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 
     _LoadArenaTeamInfo(holder->GetResult(PLAYER_LOGIN_QUERY_LOADARENAINFO));
 
-    uint32 arena_currency = fields[40].GetUInt32();
+    uint32 arena_currency = fields[39].GetUInt32();
     if (arena_currency > sWorld.getConfig(CONFIG_MAX_ARENA_POINTS))
         arena_currency = sWorld.getConfig(CONFIG_MAX_ARENA_POINTS);
 
@@ -14715,12 +14724,12 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
             SetArenaTeamInfoField(arena_slot, ArenaTeamInfoType(j), 0);
     }
 
-    SetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY, fields[41].GetUInt32());
-    SetUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION, fields[42].GetUInt32());
-    SetUInt32Value(PLAYER_FIELD_YESTERDAY_CONTRIBUTION, fields[43].GetUInt32());
-    SetUInt32Value(PLAYER_FIELD_LIFETIME_HONORABLE_KILLS, fields[44].GetUInt32());
-    SetUInt16Value(PLAYER_FIELD_KILLS, 0, fields[46].GetUInt16());
-    SetUInt16Value(PLAYER_FIELD_KILLS, 1, fields[47].GetUInt16());
+    SetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY, fields[40].GetUInt32());
+    SetUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION, fields[41].GetUInt32());
+    SetUInt32Value(PLAYER_FIELD_YESTERDAY_CONTRIBUTION, fields[42].GetUInt32());
+    SetUInt32Value(PLAYER_FIELD_LIFETIME_HONORABLE_KILLS, fields[43].GetUInt32());
+    SetUInt16Value(PLAYER_FIELD_KILLS, 0, fields[44].GetUInt16());
+    SetUInt16Value(PLAYER_FIELD_KILLS, 1, fields[45].GetUInt16());
 
     _LoadBoundInstances(holder->GetResult(PLAYER_LOGIN_QUERY_LOADBOUNDINSTANCES));
     _LoadBGData(holder->GetResult(PLAYER_LOGIN_QUERY_LOADBGDATA));
@@ -14779,7 +14788,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
         // There are no transports on instances
         instanceId = 0;
 
-        m_movementInfo.SetTransportData(transGUID, fields[27].GetFloat(), fields[28].GetFloat(), fields[29].GetFloat(), fields[30].GetFloat(), 0);
+        m_movementInfo.SetTransportData(transGUID, fields[26].GetFloat(), fields[27].GetFloat(), fields[28].GetFloat(), fields[29].GetFloat(), 0);
 
         if (!Oregon::IsValidMapCoord(
             GetPositionX() + m_movementInfo.GetTransportPos()->GetPositionX(), GetPositionY() + m_movementInfo.GetTransportPos()->GetPositionY(),
@@ -14936,7 +14945,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     SaveRecallPosition();
 
     time_t now = time(NULL);
-    time_t logoutTime = time_t(fields[23].GetUInt64());
+    time_t logoutTime = time_t(fields[22].GetUInt64());
 
     // since last logout (in seconds)
     uint64 time_diff = uint64(now - logoutTime);
@@ -14951,27 +14960,12 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     uint16 newDrunkenValue = uint16(soberFactor*(GetUInt32Value(PLAYER_BYTES_3) & 0xFFFE));
     SetDrunkValue(newDrunkenValue);
 
-    m_rest_bonus = fields[22].GetFloat();
-    //speed collect rest bonus in offline, in logout, far from tavern, city (section/in hour)
-    float bubble0 = 0.031;
-    //speed collect rest bonus in offline, in logout, in tavern, city (section/in hour)
-    float bubble1 = 0.125;
+    m_cinematic = fields[18].GetUInt32();
+    m_Played_time[PLAYED_TIME_TOTAL]= fields[19].GetUInt32();
+    m_Played_time[PLAYED_TIME_LEVEL]= fields[20].GetUInt32();
 
-    if ((int32)fields[16].GetUInt32() > 0)
-    {
-        float bubble = fields[24].GetUInt32() > 0
-            ? bubble1*sWorld.getRate(RATE_REST_OFFLINE_IN_TAVERN_OR_CITY)
-            : bubble0*sWorld.getRate(RATE_REST_OFFLINE_IN_WILDERNESS);
-
-        SetRestBonus(GetRestBonus()+ time_diff*((float)GetUInt32Value(PLAYER_NEXT_LEVEL_XP)/72000)*bubble);
-    }
-
-    m_cinematic = fields[19].GetUInt32();
-    m_Played_time[PLAYED_TIME_TOTAL]= fields[20].GetUInt32();
-    m_Played_time[PLAYED_TIME_LEVEL]= fields[21].GetUInt32();
-
-    m_resetTalentsCost = fields[25].GetUInt32();
-    m_resetTalentsTime = time_t(fields[26].GetUInt64());
+    m_resetTalentsCost = fields[24].GetUInt32();
+    m_resetTalentsTime = time_t(fields[25].GetUInt64());
 
     // reserve some flags
     uint32 old_safe_flags = GetUInt32Value(PLAYER_FLAGS) & (PLAYER_FLAGS_HIDE_CLOAK | PLAYER_FLAGS_HIDE_HELM);
@@ -14979,25 +14973,25 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     if (HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_GM))
         SetUInt32Value(PLAYER_FLAGS, 0 | old_safe_flags);
 
-    m_taxi.LoadTaxiMask(fields[18].GetString());            // must be before InitTaxiNodesForLevel
+    m_taxi.LoadTaxiMask(fields[17].GetString());            // must be before InitTaxiNodesForLevel
 
-    uint32 extraflags = fields[32].GetUInt32();
+    uint32 extraflags = fields[31].GetUInt32();
 
-    m_stableSlots = fields[33].GetUInt32();
+    m_stableSlots = fields[32].GetUInt32();
     if (m_stableSlots > 2)
     {
         sLog.outError("Player can have not more 2 stable slots, but has %u in DB.",uint32(m_stableSlots));
         m_stableSlots = 2;
     }
 
-    m_atLoginFlags = fields[34].GetUInt32();
+    m_atLoginFlags = fields[33].GetUInt32();
 
     // Honor system
     // Update Honor kills data
     m_lastHonorUpdateTime = logoutTime;
     UpdateHonorFields();
 
-    m_deathExpireTime = (time_t)fields[37].GetUInt64();
+    m_deathExpireTime = (time_t)fields[36].GetUInt64();
     if (m_deathExpireTime > now+MAX_DEATH_COUNT*DEATH_EXPIRE_STEP)
         m_deathExpireTime = now+MAX_DEATH_COUNT*DEATH_EXPIRE_STEP-1;
 
@@ -15017,24 +15011,10 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     SetUInt32Value(PLAYER_TRACK_CREATURES, 0);
     SetUInt32Value(PLAYER_TRACK_RESOURCES, 0);
 
-    // reset skill modifiers and set correct unlearn flags
-    for (uint32 i = 0; i < PLAYER_MAX_SKILLS; i++)
-    {
-        SetUInt32Value(PLAYER_SKILL_BONUS_INDEX(i),0);
-
-        // set correct unlearn bit
-        uint32 id = GetUInt32Value(PLAYER_SKILL_INDEX(i)) & 0x0000FFFF;
-        if (!id) continue;
-
-        SkillLineEntry const *pSkill = sSkillLineStore.LookupEntry(id);
-        if (!pSkill) continue;
-
-        // enable unlearn button for primary professions only
-        if (pSkill->categoryId == SKILL_CATEGORY_PROFESSION)
-            SetUInt32Value(PLAYER_SKILL_INDEX(i), MAKE_PAIR32(id,1));
-        else
-            SetUInt32Value(PLAYER_SKILL_INDEX(i), MAKE_PAIR32(id,0));
-    }
+    // cleanup aura list explicitly before skill load wher some spells can be applied
+    m_Auras.clear();
+    for (int i = 0; i < TOTAL_AURAS; i++)
+        m_modAuras[i].clear();
 
     // make sure the unit is considered out of combat for proper loading
     ClearInCombat();
@@ -15046,6 +15026,25 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     // reset stats before loading any modifiers
     InitStatsForLevel();
     InitTaxiNodesForLevel();
+
+    // rest bonus can only be calculated after InitStatsForLevel()
+    m_rest_bonus = fields[21].GetFloat();
+
+    if (time_diff > 0)
+    {
+        //speed collect rest bonus in offline, in logout, far from tavern, city (section/in hour)
+        float bubble0 = 0.031f;
+        //speed collect rest bonus in offline, in logout, in tavern, city (section/in hour)
+        float bubble1 = 0.125f;
+        float bubble = fields[23].GetUInt32() > 0
+            ? bubble1*sWorld.getRate(RATE_REST_OFFLINE_IN_TAVERN_OR_CITY)
+            : bubble0*sWorld.getRate(RATE_REST_OFFLINE_IN_WILDERNESS);	
+
+        SetRestBonus(GetRestBonus()+ time_diff*((float)GetUInt32Value(PLAYER_NEXT_LEVEL_XP)/72000)*bubble);
+    }
+
+    // load skills after InitStatsForLevel because it triggering aura apply also
+    _LoadSkills(holder->GetResult(PLAYER_LOGIN_QUERY_LOADSKILLS));
 
     // apply original stats mods before spell loading or item equipment that call before equip _RemoveStatsMods()
 
@@ -15062,7 +15061,6 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 
     // after spell load
     InitTalentForLevel();
-    learnSkillRewardedSpells();
 
     // after spell load, learn rewarded spell if need also
     _LoadQuestStatus(holder->GetResult(PLAYER_LOGIN_QUERY_LOADQUESTSTATUS));
@@ -15087,7 +15085,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 
     // check PLAYER_CHOSEN_TITLE compatibility with PLAYER__FIELD_KNOWN_TITLES
     // note: PLAYER__FIELD_KNOWN_TITLES updated at quest status loaded
-    uint32 curTitle = fields[47].GetUInt32();
+    uint32 curTitle = fields[46].GetUInt32();
     if (curTitle && !HasTitle(curTitle))
         curTitle = 0;
 
@@ -15108,11 +15106,11 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     UpdateAllStats();
 
     // restore remembered power/health values (but not more max values)
-    uint32 savedHealth = fields[50].GetUInt32();
+    uint32 savedHealth = fields[49].GetUInt32();
     SetHealth(savedHealth > GetMaxHealth() ? GetMaxHealth() : savedHealth);
     for (uint8 i = 0; i < MAX_POWERS; ++i)
     {
-        uint32 savedPower = fields[51+i].GetUInt32();
+        uint32 savedPower = fields[50+i].GetUInt32();
         SetPower(Powers(i),savedPower > GetMaxPower(Powers(i)) ? GetMaxPower(Powers(i)) : savedPower);
     }
 
@@ -15219,9 +15217,10 @@ void Player::_LoadActions(QueryResult_AutoPtr result)
 
 void Player::_LoadAuras(QueryResult_AutoPtr result, uint32 timediff)
 {
+/* -- some spells casted before aura load, for example in LoadSkills, aura list explcitly cleaned early
     m_Auras.clear();
     for (int i = 0; i < TOTAL_AURAS; i++)
-        m_modAuras[i].clear();
+        m_modAuras[i].clear();*/
 
     // all aura related fields
     for (int i = UNIT_FIELD_AURA; i <= UNIT_FIELD_AURASTATE; ++i)
@@ -15785,7 +15784,6 @@ void Player::_LoadSpells(QueryResult_AutoPtr result)
 {
     for (PlayerSpellMap::iterator itr = m_spells.begin(); itr != m_spells.end(); ++itr)
         delete itr->second;
-    m_spells.clear();
 
     //QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT spell,active,disabled FROM character_spell WHERE guid = '%u'",GetGUIDLow());
 
@@ -16240,13 +16238,13 @@ void Player::SaveToDB()
 
     std::ostringstream ss;
     ss << "REPLACE INTO characters (guid,account,name,race,class,gender,level,xp,money,playerBytes,playerBytes2,playerFlags,"
-        "map, instance_id, dungeon_difficulty, position_x, position_y, position_z, orientation, data, "
+        "map, instance_id, dungeon_difficulty, position_x, position_y, position_z, orientation, "
         "taximask, online, cinematic, "
         "totaltime, leveltime, rest_bonus, logout_time, is_logout_resting, resettalents_cost, resettalents_time, "
         "trans_x, trans_y, trans_z, trans_o, transguid, extra_flags, stable_slots, at_login, zone, "
         "death_expire_time, taxi_path, arenaPoints, totalHonorPoints, todayHonorPoints, yesterdayHonorPoints, "
         "totalKills, todayKills, yesterdayKills, chosenTitle, watchedFaction, drunk, health, "
-        "powerMana, powerRage, powerFocus, powerEnergy, powerHappiness, latency) VALUES ("
+        "powerMana, powerRage, powerFocus, powerEnergy, powerHappiness, exploredZones, equipmentCache, ammoId, knownTitles, actionBars, latency) VALUES ("
         << GetGUIDLow() << ", "
         << GetSession()->GetAccountId() << ", '"
         << sql_name << "', "
@@ -16268,7 +16266,7 @@ void Player::SaveToDB()
         << finiteAlways(GetPositionX()) << ", "
         << finiteAlways(GetPositionY()) << ", "
         << finiteAlways(GetPositionZ()) << ", "
-        << finiteAlways(GetOrientation()) << ", '";
+        << finiteAlways(GetOrientation()) << ", ";
     }
     else
     {
@@ -16278,19 +16276,11 @@ void Player::SaveToDB()
         << finiteAlways(GetTeleportDest().GetPositionX()) << ", "
         << finiteAlways(GetTeleportDest().GetPositionY()) << ", "
         << finiteAlways(GetTeleportDest().GetPositionZ()) << ", "
-        << finiteAlways(GetTeleportDest().GetOrientation()) << ", '";
+        << finiteAlways(GetTeleportDest().GetOrientation()) << ", ";
     }
 
-    uint16 i;
-    for (i = 0; i < m_valuesCount; ++i)
-        ss << GetUInt32Value(i) << " ";
+    ss << m_taxi << ", ";
 
-    ss << "', '";
-
-    for (i = 0; i < 8; i++)
-        ss << m_taxi.GetTaximask(i) << " ";
-
-    ss << "', ";
     ss << (IsInWorld() ? 1 : 0) << ", ";
 
     ss << m_cinematic << ", ";
@@ -16351,6 +16341,31 @@ void Player::SaveToDB()
 
     for (uint32 i = 0; i < MAX_POWERS; ++i)
         ss << ", " << GetPower(Powers(i));
+
+    ss << ", '";
+    for(uint32 i = 0; i < PLAYER_EXPLORED_ZONES_SIZE; ++i )
+    {
+        ss << GetUInt32Value(PLAYER_EXPLORED_ZONES_1 + i) << " ";
+    }
+
+    ss << "', '";
+    for(uint32 i = 0; i < EQUIPMENT_SLOT_END; ++i )     // item id, ench (perm/temp)
+    {
+        ss << GetUInt32Value(PLAYER_VISIBLE_ITEM_1_0 + i * MAX_VISIBLE_ITEM_OFFSET) << " ";
+
+        uint32 ench1 = GetUInt32Value(PLAYER_VISIBLE_ITEM_1_0 + i * MAX_VISIBLE_ITEM_OFFSET + 1 + PERM_ENCHANTMENT_SLOT);
+        uint32 ench2 = GetUInt32Value(PLAYER_VISIBLE_ITEM_1_0 + i * MAX_VISIBLE_ITEM_OFFSET + 1 + TEMP_ENCHANTMENT_SLOT);
+        ss << uint32(MAKE_PAIR32(ench1,ench2)) << " ";
+    }
+
+    ss << "',";
+    ss << GetUInt32Value(PLAYER_AMMO_ID) << ", '";
+    for(uint32 i = 0; i < 2; ++i )
+    {
+        ss << GetUInt32Value(PLAYER__FIELD_KNOWN_TITLES + i) << " ";
+    }
+    ss << "',";
+    ss << uint32(GetByteValue(PLAYER_FIELD_BYTES, 2));
     ss << ", '";
 
     ss << GetSession()->GetLatency();
@@ -16372,6 +16387,7 @@ void Player::SaveToDB()
     _SaveSpellCooldowns();
     _SaveActions();
     _SaveAuras();
+    _SaveSkills();
     _SaveReputation();
 
     CharacterDatabase.CommitTransaction();
@@ -16669,6 +16685,45 @@ void Player::_SaveReputation()
     }
 }
 
+void Player::_SaveSkills()
+{
+    // we don't need transactions here.
+    for( SkillStatusMap::iterator itr = mSkillStatus.begin(); itr != mSkillStatus.end(); )
+    {
+        if(itr->second.uState == SKILL_UNCHANGED)
+        {
+            ++itr;
+            continue;
+        }
+
+        if(itr->second.uState == SKILL_DELETED)
+        {
+            CharacterDatabase.PExecute("DELETE FROM character_skills WHERE guid = '%u' AND skill = '%u' ", GetGUIDLow(), itr->first );
+            mSkillStatus.erase(itr++);
+            continue;
+        }
+
+        uint32 valueData = GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(itr->second.pos));
+        uint16 value = SKILL_VALUE(valueData);
+        uint16 max = SKILL_MAX(valueData);
+
+        switch (itr->second.uState)
+        {
+            case SKILL_NEW:
+                CharacterDatabase.PExecute("INSERT INTO character_skills (guid, skill, value, max) VALUES ('%u', '%u', '%u', '%u')",
+                    GetGUIDLow(), itr->first, value, max);
+                break;
+            case SKILL_CHANGED:
+                CharacterDatabase.PExecute("UPDATE character_skills SET value = '%u',max = '%u'WHERE guid = '%u' AND skill = '%u' ",
+                    value, max, GetGUIDLow(), itr->first );
+                break;
+        };
+        itr->second.uState = SKILL_UNCHANGED;
+
+        ++itr;
+    }
+}
+
 void Player::_SaveSpells()
 {
     for (PlayerSpellMap::const_iterator itr = m_spells.begin(), next = m_spells.begin(); itr != m_spells.end(); itr = next)
@@ -16791,34 +16846,6 @@ void Player::SavePositionInDB(uint32 mapid, float x,float y,float z,float o,uint
     CharacterDatabase.Execute(ss.str().c_str());
 }
 
-void Player::SaveDataFieldToDB()
-{
-    std::ostringstream ss;
-    ss<<"UPDATE characters SET data='";
-
-    for (uint16 i = 0; i < m_valuesCount; i++)
-    {
-        ss << GetUInt32Value(i) << " ";
-    }
-    ss<<"' WHERE guid='"<< GUID_LOPART(GetGUIDLow()) <<"'";
-
-    CharacterDatabase.Execute(ss.str().c_str());
-}
-
-bool Player::SaveValuesArrayInDB(Tokens const& tokens, uint64 guid)
-{
-    std::ostringstream ss2;
-    ss2<<"UPDATE characters SET data='";
-    int i=0;
-    for (Tokens::const_iterator iter = tokens.begin(); iter != tokens.end(); ++iter, ++i)
-    {
-        ss2<<tokens[i]<<" ";
-    }
-    ss2<<"' WHERE guid='"<< GUID_LOPART(guid) <<"'";
-
-    return CharacterDatabase.Execute(ss2.str().c_str());
-}
-
 void Player::SetUInt32ValueInArray(Tokens& tokens,uint16 index, uint32 value)
 {
     char buf[11];
@@ -16828,29 +16855,6 @@ void Player::SetUInt32ValueInArray(Tokens& tokens,uint16 index, uint32 value)
         return;
 
     tokens[index] = buf;
-}
-
-void Player::SetUInt32ValueInDB(uint16 index, uint32 value, uint64 guid)
-{
-    Tokens tokens;
-    if (!LoadValuesArrayFromDB(tokens,guid))
-        return;
-
-    if (index >= tokens.size())
-        return;
-
-    char buf[11];
-    snprintf(buf,11,"%u",value);
-    tokens[index] = buf;
-
-    SaveValuesArrayInDB(tokens,guid);
-}
-
-void Player::SetFloatValueInDB(uint16 index, float value, uint64 guid)
-{
-    uint32 temp;
-    memcpy(&temp, &value, sizeof(value));
-    Player::SetUInt32ValueInDB(index, temp, guid);
 }
 
 void Player::SendAttackSwingNotStanding()
@@ -17941,6 +17945,32 @@ void Player::InitDataForForm(bool reapplyMods)
 
     UpdateAttackPowerAndDamage();
     UpdateAttackPowerAndDamage(true);
+}
+
+void Player::InitDisplayIds()
+{
+    PlayerInfo const *info = objmgr.GetPlayerInfo(getRace(), getClass());
+    if(!info)
+    {
+        sLog.outError("Player %u has incorrect race/class pair. Can't init display ids.", GetGUIDLow());
+        return;
+    }
+
+    uint8 gender = getGender();
+    switch(gender)
+    {
+        case GENDER_FEMALE:
+            SetDisplayId(info->displayId_f );
+            SetNativeDisplayId(info->displayId_f );
+            break;
+        case GENDER_MALE:
+            SetDisplayId(info->displayId_m );
+            SetNativeDisplayId(info->displayId_m );
+            break;
+        default:
+            sLog.outError("Invalid gender %u for player",gender);
+            return;
+    }
 }
 
 // Return true is the bought item has a max count to force refresh of window by caller
@@ -19321,19 +19351,6 @@ void Player::learnSkillRewardedSpells(uint32 skill_id)
     }
 }
 
-void Player::learnSkillRewardedSpells()
-{
-    for (uint16 i=0; i < PLAYER_MAX_SKILLS; i++)
-    {
-        if (!GetUInt32Value(PLAYER_SKILL_INDEX(i)))
-            continue;
-
-        uint32 pskill = GetUInt32Value(PLAYER_SKILL_INDEX(i)) & 0x0000FFFF;
-
-        learnSkillRewardedSpells(pskill);
-    }
-}
-
 void Player::SendAuraDurationsForTarget(Unit* target)
 {
     for (Unit::AuraMap::const_iterator itr = target->GetAuras().begin(); itr != target->GetAuras().end(); ++itr)
@@ -19343,6 +19360,80 @@ void Player::SendAuraDurationsForTarget(Unit* target)
             continue;
 
         aura->SendAuraDurationForCaster(this);
+    }
+}
+
+void Player::_LoadSkills(QueryResult_AutoPtr result)
+{
+    //                                                           0      1      2
+    // SetPQuery(PLAYER_LOGIN_QUERY_LOADSKILLS,          "SELECT skill, value, max FROM character_skills WHERE guid = '%u'", GUID_LOPART(m_guid));
+
+    uint32 count = 0;
+    if (result)
+    {
+        do
+        {
+            Field *fields = result->Fetch();
+
+            uint16 skill    = fields[0].GetUInt16();
+            uint16 value    = fields[1].GetUInt16();
+            uint16 max      = fields[2].GetUInt16();
+
+            SkillLineEntry const *pSkill = sSkillLineStore.LookupEntry(skill);
+            if(!pSkill)
+            {
+                sLog.outError("Character %u has skill %u that does not exist.", GetGUIDLow(), skill);
+                continue;
+            }
+
+            // set fixed skill ranges
+            switch(GetSkillRangeType(pSkill,false))
+            {
+                case SKILL_RANGE_LANGUAGE:                      // 300..300
+                    value = max = 300;
+                    break;
+                case SKILL_RANGE_MONO:                          // 1..1, grey monolite bar
+                    value = max = 1;
+                    break;
+                default:
+                    break;
+            }
+
+            if(value == 0)
+            {
+                sLog.outError("Character %u has skill %u with value 0. Will be deleted.", GetGUIDLow(), skill);
+                CharacterDatabase.PExecute("DELETE FROM character_skills WHERE guid = '%u' AND skill = '%u' ", GetGUIDLow(), skill );
+                continue;
+            }
+
+            // enable unlearn button for primary professions only
+            if (pSkill->categoryId == SKILL_CATEGORY_PROFESSION)
+                SetUInt32Value(PLAYER_SKILL_INDEX(count), MAKE_PAIR32(skill,1));
+            else
+                SetUInt32Value(PLAYER_SKILL_INDEX(count), MAKE_PAIR32(skill,0));
+
+            SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(count),MAKE_SKILL_VALUE(value, max));
+            SetUInt32Value(PLAYER_SKILL_BONUS_INDEX(count),0);
+
+            mSkillStatus.insert(SkillStatusMap::value_type(skill, SkillStatusData(count, SKILL_UNCHANGED)));
+
+            learnSkillRewardedSpells(skill);
+
+            ++count;
+
+            if(count >= PLAYER_MAX_SKILLS)                      // client limit
+            {
+                sLog.outError("Character %u has more than %u skills.", GetGUIDLow(), PLAYER_MAX_SKILLS);
+                break;
+            }
+        } while (result->NextRow());
+    }
+
+    for (; count < PLAYER_MAX_SKILLS; ++count)
+    {
+        SetUInt32Value(PLAYER_SKILL_INDEX(count), 0);
+        SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(count),0);
+        SetUInt32Value(PLAYER_SKILL_BONUS_INDEX(count),0);
     }
 }
 

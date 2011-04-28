@@ -55,8 +55,9 @@ class OutdoorPvP;
 
 typedef std::deque<Mail*> PlayerMails;
 
-#define PLAYER_MAX_SKILLS       127
-#define PLAYER_MAX_DAILY_QUESTS 25
+#define PLAYER_MAX_SKILLS           127
+#define PLAYER_MAX_DAILY_QUESTS     25
+#define PLAYER_EXPLORED_ZONES_SIZE  128
 
 // Note: SPELLMOD_* values is aura types in fact
 enum SpellModType
@@ -514,6 +515,25 @@ enum QuestSlotStateMask
     QUEST_STATE_FAIL     = 0x0002
 };
 
+enum SkillUpdateState
+{
+    SKILL_UNCHANGED     = 0,
+    SKILL_CHANGED       = 1,
+    SKILL_NEW           = 2,
+    SKILL_DELETED       = 3
+};
+
+struct SkillStatusData
+{
+    SkillStatusData(uint8 _pos, SkillUpdateState _uState) : pos(_pos), uState(_uState)
+    {
+    }
+    uint8 pos;
+    SkillUpdateState uState;
+};
+
+typedef UNORDERED_MAP<uint32, SkillStatusData> SkillStatusMap;
+
 class Quest;
 class Spell;
 class Item;
@@ -707,6 +727,7 @@ enum PlayerLoginQueryIndex
     PLAYER_LOGIN_QUERY_LOADGUILD                = 17,
     PLAYER_LOGIN_QUERY_LOADARENAINFO            = 18,
     PLAYER_LOGIN_QUERY_LOADBGDATA               = 19,
+    PLAYER_LOGIN_QUERY_LOADSKILLS               = 20,
 
     MAX_PLAYER_LOGIN_QUERY
 };
@@ -802,10 +823,13 @@ class PlayerTaxi
             return GetTaxiDestination();
         }
         bool empty() const { return m_TaxiDestinations.empty(); }
+        friend std::ostringstream& operator<< (std::ostringstream& ss, PlayerTaxi const& taxi);
     private:
         TaxiMask m_taximask;
         std::deque<uint32> m_TaxiDestinations;
 };
+
+std::ostringstream& operator<< (std::ostringstream& ss, PlayerTaxi const& taxi);
 
 class Player;
 
@@ -921,6 +945,7 @@ class Player : public Unit, public GridObject<Player>
         void GiveXP(uint32 xp, Unit* victim);
         void GiveLevel(uint32 level);
         void InitStatsForLevel(bool reapplyMods = false);
+        void InitDisplayIds();
 
         // Played Time Stuff
         time_t m_logintime;
@@ -1226,11 +1251,8 @@ class Player : public Unit, public GridObject<Player>
 
         bool LoadFromDB(uint32 guid, SqlQueryHolder *holder);
         void Initialize(uint32 guid);
-        static bool   LoadValuesArrayFromDB(Tokens& data,uint64 guid);
         static uint32 GetUInt32ValueFromArray(Tokens const& data, uint16 index);
         static float  GetFloatValueFromArray(Tokens const& data, uint16 index);
-        static uint32 GetUInt32ValueFromDB(uint16 index, uint64 guid);
-        static float  GetFloatValueFromDB(uint16 index, uint64 guid);
         static uint32 GetZoneIdFromDB(uint64 guid);
         static uint32 GetLevelFromDB(uint64 guid);
         static bool   LoadPositionFromDB(uint32& mapid, float& x,float& y,float& z,float& o, bool& in_flight, uint64 guid);
@@ -1242,12 +1264,8 @@ class Player : public Unit, public GridObject<Player>
         void SaveToDB();
         void SaveInventoryAndGoldToDB();                    // fast save function for item/money cheating preventing
         void SaveGoldToDB();
-        void SaveDataFieldToDB();
-        static bool SaveValuesArrayInDB(Tokens const& data,uint64 guid);
         static void SetUInt32ValueInArray(Tokens& data,uint16 index, uint32 value);
         static void SetFloatValueInArray(Tokens& data,uint16 index, float value);
-        static void SetUInt32ValueInDB(uint16 index, uint32 value, uint64 guid);
-        static void SetFloatValueInDB(uint16 index, float value, uint64 guid);
         static void SavePositionInDB(uint32 mapid, float x,float y,float z,float o,uint32 zone,uint64 guid);
 
         static void DeleteFromDB(uint64 playerguid, uint32 accountId, bool updateRealmChars = true, bool deleteFinally = false);
@@ -1659,7 +1677,6 @@ class Player : public Unit, public GridObject<Player>
         int16 GetSkillTempBonusValue(uint32 skill) const;
         bool HasSkill(uint32 skill) const;
         void learnSkillRewardedSpells(uint32 id);
-        void learnSkillRewardedSpells();
 
         WorldLocation& GetTeleportDest() { return m_teleport_dest; }
         bool IsBeingTeleported() const { return mSemaphoreTeleport_Near || mSemaphoreTeleport_Far; }
@@ -2136,6 +2153,7 @@ class Player : public Unit, public GridObject<Player>
         void _LoadQuestStatus(QueryResult_AutoPtr result);
         void _LoadDailyQuestStatus(QueryResult_AutoPtr result);
         void _LoadGroup(QueryResult_AutoPtr result);
+        void _LoadSkills(QueryResult_AutoPtr result);
         void _LoadReputation(QueryResult_AutoPtr result);
         void _LoadSpells(QueryResult_AutoPtr result);
         void _LoadTutorials(QueryResult_AutoPtr result);
@@ -2144,6 +2162,7 @@ class Player : public Unit, public GridObject<Player>
         void _LoadDeclinedNames(QueryResult_AutoPtr result);
         void _LoadArenaTeamInfo(QueryResult_AutoPtr result);
         void _LoadBGData(QueryResult_AutoPtr result);
+        void _LoadIntoDataField(const char* data, uint32 startOffset, uint32 count);
 
         /*********************************************************/
         /***                   SAVE SYSTEM                     ***/
@@ -2155,6 +2174,7 @@ class Player : public Unit, public GridObject<Player>
         void _SaveMail();
         void _SaveQuestStatus();
         void _SaveDailyQuestStatus();
+        void _SaveSkills();
         void _SaveReputation();
         void _SaveSpells();
         void _SaveTutorials();
@@ -2202,6 +2222,8 @@ class Player : public Unit, public GridObject<Player>
         int8 m_comboPoints;
 
         QuestStatusMap mQuestStatus;
+
+        SkillStatusMap mSkillStatus;
 
         uint32 m_GuildIdInvited;
         uint32 m_ArenaTeamIdInvited;

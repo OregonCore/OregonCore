@@ -4343,7 +4343,7 @@ bool ChatHandler::HandleExploreCheatCommand(const char *args)
             ChatHandler(chr).PSendSysMessage(LANG_YOURS_EXPLORE_SET_NOTHING,GetName());
     }
 
-    for (uint8 i=0; i<128; ++i)
+    for (uint8 i=0; i<PLAYER_EXPLORED_ZONES_SIZE; ++i)
     {
         if (flag != 0)
         {
@@ -4474,7 +4474,7 @@ bool ChatHandler::HandleLevelUpCommand(const char *args)
 
     ASSERT(chr || chr_guid);
 
-    int32 oldlevel = chr ? chr->getLevel() : Player::GetUInt32ValueFromDB(UNIT_FIELD_LEVEL,chr_guid);
+    int32 oldlevel = chr ? chr->getLevel() : Player::GetLevelFromDB(chr_guid);
     int32 newlevel = oldlevel + addlevel;
 
     if (newlevel < 1)
@@ -4527,7 +4527,7 @@ bool ChatHandler::HandleShowAreaCommand(const char *args)
     int offset = area / 32;
     uint32 val = (uint32)(1 << (area % 32));
 
-    if (offset >= 128)
+    if (offset >= PLAYER_EXPLORED_ZONES_SIZE)
     {
         SendSysMessage(LANG_BAD_VALUE);
         SetSentErrorMessage(true);
@@ -4559,7 +4559,7 @@ bool ChatHandler::HandleHideAreaCommand(const char *args)
     int offset = area / 32;
     uint32 val = (uint32)(1 << (area % 32));
 
-    if (offset >= 128)
+    if (offset >= PLAYER_EXPLORED_ZONES_SIZE)
     {
         SendSysMessage(LANG_BAD_VALUE);
         SetSentErrorMessage(true);
