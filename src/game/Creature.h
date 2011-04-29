@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
- * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2011 Oregon <http://www.oregoncore.com/>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -288,6 +288,7 @@ struct CreatureDataAddon
     uint32 bytes2;
     uint32 emote;
     uint32 move_flags;
+    uint32 isActive;
     CreatureDataAddonAura const* auras;                     // loaded as char* "spell1 eff1 spell2 eff2 ... "
 };
 

@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2008 Trinity <http://www.trinitycore.org/>
  *
- * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2011 Oregon <http://www.oregoncore.com/>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1874,6 +1874,9 @@ bool Creature::LoadCreaturesAddon(bool reload)
     //Load Path
     if (cainfo->path_id != 0)
         m_path_id = cainfo->path_id;
+
+    if (cainfo->isActive) 
+        setActive(true);
 
     if (cainfo->auras)
     {
