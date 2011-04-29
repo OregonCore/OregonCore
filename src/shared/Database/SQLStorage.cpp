@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
  *
- * Copyright (C) 2010 Oregon <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2011 Oregon <http://www.oregoncore.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -26,9 +26,9 @@ extern Database WorldDatabase;
 
 const char CreatureInfosrcfmt[]="iiiiiiiisssiiiiiiiiiiiffiffiiiiiiiiiiiffiiiiiiiiiiiiiiiiiiisiilliiis";
 const char CreatureInfodstfmt[]="iiiiiiiisssiiiiiiiiiiiffiffiiiiiiiiiiiffiiiiiiiiiiiiiiiiiiisiilliiii";
-const char CreatureDataAddonInfofmt[]="iiiiiiiis";
+const char CreatureDataAddonInfofmt[]="iiiiiiiiis";
 const char CreatureModelfmt[]="iffbi";
-const char CreatureInfoAddonInfofmt[]="iiiiiiiis";
+const char CreatureInfoAddonInfofmt[]="iiiiiiiiis";
 const char EquipmentInfofmt[]="iiiiiiiiii";
 const char GameObjectInfosrcfmt[]="iiissiifiiiiiiiiiiiiiiiiiiiiiiiis";
 const char GameObjectInfodstfmt[]="iiissiifiiiiiiiiiiiiiiiiiiiiiiiii";
