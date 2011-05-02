@@ -1024,7 +1024,7 @@ void MailDraft::SendMailTo(MailReceiver const& receiver, MailSender const& sende
     for (MailItemMap::const_iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
     {
         Item* item = mailItemIter->second;
-        CharacterDatabase.PExecute("INSERT INTO mail_items (mail_id,item_guid,item_template,receiver) VALUES ('%u', '%u', '%u','%u')", mailId, item->GetGUIDLow(), item->GetEntry(), receiver.GetPlayerGUIDLow());
+        CharacterDatabase.PExecute("INSERT INTO mail_items (mail_id,item_guid,receiver) VALUES ('%u', '%u', '%u')", mailId, item->GetGUIDLow(), receiver.GetPlayerGUIDLow());
     }
     CharacterDatabase.CommitTransaction();
 

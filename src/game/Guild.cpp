@@ -1153,18 +1153,18 @@ void Guild::LoadGuildBankFromDB()
     } while (result->NextRow());
 
     // data needs to be at first place for Item::LoadFromDB
-    //                                        0     1      2       3          4
-    result = CharacterDatabase.PQuery("SELECT data, TabId, SlotId, item_guid, item_entry FROM guild_bank_item JOIN item_instance ON item_guid = guid WHERE guildid='%u' ORDER BY TabId", m_Id);
+    //                                                  0                1      2         3        4      5             6                 7           8       9         10     11      12         13
+    result = CharacterDatabase.PQuery("SELECT creatorGuid, giftCreatorGuid, count, duration, charges, flags, enchantments, randomPropertyId, durability, textId, itemEntry, TabId, SlotId, item_guid FROM guild_bank_item JOIN item_instance ON item_guid = guid WHERE guildid='%u' ORDER BY TabId", m_Id);
     if (!result)
         return;
 
     do
     {
         Field *fields = result->Fetch();
-        uint8 TabId = fields[1].GetUInt8();
-        uint8 SlotId = fields[2].GetUInt8();
-        uint32 ItemGuid = fields[3].GetUInt32();
-        uint32 ItemEntry = fields[4].GetUInt32();
+        uint8 TabId = fields[11].GetUInt8();
+        uint8 SlotId = fields[12].GetUInt8();
+        uint32 ItemGuid = fields[13].GetUInt32();
+        uint32 ItemEntry = fields[10].GetUInt32();
 
         if (TabId >= purchased_tabs || TabId >= GUILD_BANK_MAX_TABS)
         {
@@ -1595,11 +1595,11 @@ void Guild::RenumBankLogs()
     LogMaxGuid = fields[1].GetUInt32()+1;
 }
 
-bool Guild::AddGBankItemToDB(uint32 GuildId, uint32 BankTab , uint32 BankTabSlot , uint32 GUIDLow, uint32 Entry)
+bool Guild::AddGBankItemToDB(uint32 GuildId, uint32 BankTab , uint32 BankTabSlot , uint32 GUIDLow)
 {
     CharacterDatabase.PExecute("DELETE FROM guild_bank_item WHERE guildid = '%u' AND TabId = '%u'AND SlotId = '%u'", GuildId, BankTab, BankTabSlot);
-    CharacterDatabase.PExecute("INSERT INTO guild_bank_item (guildid,TabId,SlotId,item_guid,item_entry) "
-        "VALUES ('%u', '%u', '%u', '%u', '%u')", GuildId, BankTab, BankTabSlot, GUIDLow, Entry);
+    CharacterDatabase.PExecute("INSERT INTO guild_bank_item (guildid,TabId,SlotId,item_guid) "
+        "VALUES ('%u', '%u', '%u', '%u')", GuildId, BankTab, BankTabSlot, GUIDLow);
     return true;
 }
 
@@ -1680,7 +1680,7 @@ Item* Guild::_StoreItem(uint8 tab, uint8 slot, Item *pItem, uint32 count, bool c
 
         pItem->SetUInt64Value(ITEM_FIELD_CONTAINED, 0);
         pItem->SetUInt64Value(ITEM_FIELD_OWNER, 0);
-        AddGBankItemToDB(GetId(), tab, slot, pItem->GetGUIDLow(), pItem->GetEntry());
+        AddGBankItemToDB(GetId(), tab, slot, pItem->GetGUIDLow());
         pItem->FSetState(ITEM_NEW);
         pItem->SaveToDB();                                  // not in inventory and can be save standalone
 

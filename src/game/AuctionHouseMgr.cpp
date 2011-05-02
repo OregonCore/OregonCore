@@ -279,7 +279,8 @@ void AuctionHouseMgr::SendAuctionExpiredMail(AuctionEntry * auction)
 void AuctionHouseMgr::LoadAuctionItems()
 {
     // data needs to be at first place for Item::LoadFromDB
-    QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT data,itemguid,item_template FROM auctionhouse JOIN item_instance ON itemguid = guid");
+    //                                                                     0                1      2         3        4      5             6                 7           8       9         10        11
+    QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT creatorGuid, giftCreatorGuid, count, duration, charges, flags, enchantments, randomPropertyId, durability, textId, itemEntry, itemguid FROM auctionhouse JOIN item_instance ON itemguid = guid");
 
     if (!result)
     {
@@ -300,8 +301,8 @@ void AuctionHouseMgr::LoadAuctionItems()
         bar.step();
 
         fields = result->Fetch();
-        uint32 item_guid        = fields[1].GetUInt32();
-        uint32 item_template    = fields[2].GetUInt32();
+        uint32 item_guid        = fields[11].GetUInt32();
+        uint32 item_template    = fields[10].GetUInt32();
 
         ItemPrototype const *proto = objmgr.GetItemPrototype(item_template);
 
@@ -352,7 +353,7 @@ void AuctionHouseMgr::LoadAuctions()
         return;
     }
 
-    result = CharacterDatabase.Query("SELECT id,auctioneerguid,itemguid,item_template,itemowner,buyoutprice,time,buyguid,lastbid,startbid,deposit FROM auctionhouse");
+    result = CharacterDatabase.Query("SELECT id,auctioneerguid,itemguid,itemEntry,itemowner,buyoutprice,time,buyguid,lastbid,startbid,deposit FROM auctionhouse JOIN item_instance ON itemguid = guid");
     if (!result)
     {
         barGoLink bar(1);
@@ -720,8 +721,8 @@ void AuctionEntry::DeleteFromDB() const
 void AuctionEntry::SaveToDB() const
 {
     // No SQL injection (no strings)
-    CharacterDatabase.PExecute("INSERT INTO auctionhouse (id,auctioneerguid,itemguid,item_template,itemowner,buyoutprice,time,buyguid,lastbid,startbid,deposit) "
-        "VALUES ('%u', '%u', '%u', '%u', '%u', '%u', '" UI64FMTD "', '%u', '%u', '%u', '%u')",
-        Id, auctioneer, item_guidlow, item_template, owner, buyout, (uint64)expire_time, bidder, bid, startbid, deposit);
+    CharacterDatabase.PExecute("INSERT INTO auctionhouse (id,auctioneerguid,itemguid,itemowner,buyoutprice,time,buyguid,lastbid,startbid,deposit) "
+        "VALUES ('%u', '%u', '%u', '%u', '%u', '" UI64FMTD "', '%u', '%u', '%u', '%u')",
+        Id, auctioneer, item_guidlow, owner, buyout, (uint64)expire_time, bidder, bid, startbid, deposit);
 }
 

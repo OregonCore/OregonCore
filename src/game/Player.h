@@ -2162,7 +2162,6 @@ class Player : public Unit, public GridObject<Player>
         void _LoadDeclinedNames(QueryResult_AutoPtr result);
         void _LoadArenaTeamInfo(QueryResult_AutoPtr result);
         void _LoadBGData(QueryResult_AutoPtr result);
-        void _LoadIntoDataField(const char* data, uint32 startOffset, uint32 count);
 
         /*********************************************************/
         /***                   SAVE SYSTEM                     ***/

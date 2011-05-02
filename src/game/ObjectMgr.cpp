@@ -4502,7 +4502,7 @@ void ObjectMgr::ReturnOrDeleteOldMails(bool serverUp)
         //delete or return mail:
         if (has_items)
         {
-            QueryResult_AutoPtr resultItems = CharacterDatabase.PQuery("SELECT item_guid,item_template FROM mail_items WHERE mail_id='%u'", m->messageID);
+            QueryResult_AutoPtr resultItems = CharacterDatabase.PQuery("SELECT item_guid,itemEntry FROM mail_items JOIN item_instance ON item_guid = guid WHERE mail_id='%u'", m->messageID);
             if (resultItems)
             {
                 do

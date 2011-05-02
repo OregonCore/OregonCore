@@ -414,7 +414,7 @@ class Guild
         void   DisplayGuildBankLogs(WorldSession *session, uint8 TabId);
         void   LogBankEvent(uint8 LogEntry, uint8 TabId, uint32 PlayerGuidLow, uint32 ItemOrMoney, uint8 ItemStackCount=0, uint8 DestTabId=0);
         void   RenumBankLogs();
-        bool   AddGBankItemToDB(uint32 GuildId, uint32 BankTab , uint32 BankTabSlot , uint32 GUIDLow, uint32 Entry);
+        bool   AddGBankItemToDB(uint32 GuildId, uint32 BankTab , uint32 BankTabSlot , uint32 GUIDLow);
 
     protected:
         void AddRank(const std::string& name,uint32 rights,uint32 money);
