@@ -103,7 +103,7 @@ InstanceSave* InstanceSaveManager::AddInstanceSave(uint32 mapId, uint32 instance
     {
         // initialize reset time
         // for normal instances if no creatures are killed the instance will reset in two hours
-        if (entry->map_type == MAP_RAID || difficulty == DIFFICULTY_HEROIC)
+        if (entry->IsRaid() || difficulty == DIFFICULTY_HEROIC)
             resetTime = GetResetTimeFor(mapId);
         else
         {
@@ -190,7 +190,7 @@ time_t InstanceSave::GetResetTimeForDB()
 {
     // only save the reset time for normal instances
     const MapEntry *entry = sMapStore.LookupEntry(GetMapId());
-    if (!entry || entry->map_type == MAP_RAID || GetDifficulty() == DIFFICULTY_HEROIC)
+    if (!entry || entry->IsRaid() || GetDifficulty() == DIFFICULTY_HEROIC)
         return 0;
     else
         return GetResetTime();
