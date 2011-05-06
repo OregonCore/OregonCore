@@ -115,6 +115,9 @@ bool Bag::LoadFromDB(uint32 guid, uint64 owner_guid, QueryResult_AutoPtr result)
     if (!Item::LoadFromDB(guid, owner_guid, result))
         return false;
 
+    ItemPrototype const* itemProto = GetProto(); // checked in Item::LoadFromDB
+    SetUInt32Value(CONTAINER_FIELD_NUM_SLOTS, itemProto->ContainerSlots);
+
     // cleanup bag content related item value fields (its will be filled correctly from `character_inventory`)
     for (uint8 i = 0; i < MAX_BAG_SIZE; ++i)
     {
