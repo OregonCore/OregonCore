@@ -298,7 +298,7 @@ void Item::SaveToDB()
         case ITEM_NEW:
         {
             std::ostringstream ss;
-            ss << "REPLACE INTO item_instance (guid,owner_guid,itemEntry,creatorGuid,giftCreatorGuid,count,duration,charges,flags,enchantments,randomPropertyId,durability,textId) VALUES (";
+            ss << "REPLACE INTO item_instance (guid,itemEntry,owner_guid,creatorGuid,giftCreatorGuid,count,duration,charges,flags,enchantments,randomPropertyId,durability,textId) VALUES (";
             ss << guid << ",";
             ss << entry << ",";
             ss << GUID_LOPART(GetOwnerGUID()) << ",";
