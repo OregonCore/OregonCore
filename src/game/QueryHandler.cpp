@@ -92,7 +92,7 @@ void WorldSession::SendNameQueryOpcodeFromDBCallBack(QueryResult_AutoPtr result,
     std::string name = fields[1].GetCppString();
     uint8 pRace = 0, pGender = 0, pClass = 0;
     if(name == "")
-        name         = session->GetMangosString(LANG_NON_EXIST_CHARACTER);
+        name         = session->GetOregonString(LANG_NON_EXIST_CHARACTER);
     else
     {
         pRace        = fields[2].GetUInt8();
@@ -101,7 +101,7 @@ void WorldSession::SendNameQueryOpcodeFromDBCallBack(QueryResult_AutoPtr result,
     }
                                                             // guess size
     WorldPacket data( SMSG_NAME_QUERY_RESPONSE, (8+1+4+4+4+10) );
-    data << ObjectGuid(HIGHGUID_PLAYER, guid);
+    data << MAKE_NEW_GUID(guid, 0, HIGHGUID_PLAYER);
     data << name;
     data << uint8(0);                                       // realm name for cross realm BG usage
     data << uint32(pRace);                                  // race
