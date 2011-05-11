@@ -231,7 +231,6 @@ DROP TABLE IF EXISTS `characters`;
 CREATE TABLE `characters` (
   `guid` int(11) unsigned NOT NULL default '0' COMMENT 'Global Unique Identifier',
   `account` int(11) unsigned NOT NULL default '0' COMMENT 'Account Identifier',
-  `data` longtext,
   `name` varchar(12) NOT NULL default '',
   `race` tinyint(3) unsigned NOT NULL default '0',
   `class` tinyint(3) unsigned NOT NULL default '0',
@@ -286,6 +285,11 @@ CREATE TABLE `characters` (
   `powerFocus` int(10) unsigned NOT NULL default'0',
   `powerEnergy` int(10) unsigned NOT NULL default'0',
   `powerHappiness` int(10) unsigned NOT NULL default'0',
+  `exploredZones` longtext,
+  `equipmentCache` longtext,
+  `ammoId` int(10) unsigned NOT NULL default '0',
+  `knownTitles` longtext,
+  `actionBars` tinyint(3) unsigned NOT NULL default '0',    
   `deleteInfos_Account` int(11) UNSIGNED default NULL,
   `deleteInfos_Name` varchar(12) default NULL,
   `deleteDate` bigint(20) default NULL,
@@ -645,6 +649,27 @@ LOCK TABLES `character_reputation` WRITE;
 /*!40000 ALTER TABLE `character_reputation` ENABLE KEYS */;
 UNLOCK TABLES;
 
+-- ----------------------------
+-- Table structure for `character_skills`
+-- ----------------------------
+DROP TABLE IF EXISTS `character_skills`;
+CREATE TABLE `character_skills` (
+  `guid` int(11) unsigned NOT NULL COMMENT 'Global Unique Identifier',
+  `skill` mediumint(9) unsigned NOT NULL,
+  `value` mediumint(9) unsigned NOT NULL,
+  `max` mediumint(9) unsigned NOT NULL,
+  PRIMARY KEY (`guid`,`skill`)
+) ENGINE=InnoDB default CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Player System';
+
+--
+-- Dumping data for table `character_skills`
+--
+
+LOCK TABLES `character_skills` WRITE;
+/*!40000 ALTER TABLE `character_skills` DISABLE KEYS */;
+/*!40000 ALTER TABLE `character_skills` ENABLE KEYS */;
+UNLOCK TABLES;
+
 --
 -- Table structure for table `character_social`
 --
@@ -774,6 +799,25 @@ CREATE TABLE `corpse` (
 LOCK TABLES `corpse` WRITE;
 /*!40000 ALTER TABLE `corpse` DISABLE KEYS */;
 /*!40000 ALTER TABLE `corpse` ENABLE KEYS */;
+UNLOCK TABLES;
+
+-- ----------------------------
+-- Table structure for `data_backup`
+-- ----------------------------
+DROP TABLE IF EXISTS `data_backup`;
+CREATE TABLE `data_backup` (
+  `guid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT 'Global Unique Identifier',
+  `data` longtext,
+  PRIMARY KEY (`guid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `data_backup`
+--
+
+LOCK TABLES `data_backup` WRITE;
+/*!40000 ALTER TABLE `data_backup` DISABLE KEYS */;
+/*!40000 ALTER TABLE `data_backup` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1223,6 +1267,17 @@ DROP TABLE IF EXISTS `item_instance`;
 CREATE TABLE `item_instance` (
   `guid` int(11) unsigned NOT NULL default '0',
   `owner_guid` int(11) unsigned NOT NULL default '0',
+  `itemEntry` int(10) unsigned NOT NULL default '0',
+  `creatorGuid` int(10) unsigned NOT NULL default '0',
+  `giftCreatorGuid` int(10) unsigned NOT NULL default '0',
+  `count` int(10) unsigned NOT NULL default '1',
+  `duration` int(10) unsigned NOT NULL,
+  `charges` text NOT NULL,
+  `flags` int(10) unsigned NOT NULL default '0',
+  `enchantments` text NOT NULL,
+  `randomPropertyId` int(11) NOT NULL default '0',
+  `durability` int(10) unsigned NOT NULL default '0',
+  `textId` int(10) unsigned NOT NULL default '0',
   `data` longtext,
   PRIMARY KEY  (`guid`),
   KEY `idx_owner_guid` (`owner_guid`)
