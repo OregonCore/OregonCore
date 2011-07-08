@@ -7301,7 +7301,7 @@ void ObjectMgr::LoadGossipMenu()
         bar.step();
 
         sLog.outString();
-        sLog.outErrorDb(">> Loaded gossip_menu, table is empty!");
+        sLog.outDebug(">> Loaded gossip_menu, table is empty!");
         return;
     }
 
