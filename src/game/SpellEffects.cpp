@@ -1897,7 +1897,14 @@ void Spell::EffectTriggerRitualOfSummoning(uint32 i)
 
     finish();
 
-    m_caster->CastSpell(unitTarget,spellInfo,false);
+    Spell *spell = new Spell(m_caster, spellInfo, true);
+    SpellCastTargets targets;
+    targets.setUnitTarget(unitTarget);
+    spell->prepare(&targets);
+
+    m_caster->SetCurrentCastedSpell(spell);
+    Spell* curr_spell = m_caster->GetCurrentSpell(spell->GetCurrentContainer());
+    spell->m_selfContainer = &curr_spell;
 }
 
 void Spell::EffectForceCast(uint32 i)
