@@ -282,7 +282,10 @@ void BattleGround::Update(time_t diff)
             itr->second.LastOnlineTime += diff;
 
             if (plr)
+            {
                 itr->second.LastOnlineTime = 0;                 // update last online time
+                plr->UpdatePvP(true, true);                     // force all players PvP on
+            }
             else
                 if (itr->second.LastOnlineTime >= MAX_OFFLINE_TIME)
                     m_RemovedPlayers[itr->first] = 1;           // add to remove list (BG)
