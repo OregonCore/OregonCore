@@ -18577,8 +18577,8 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
     if (m_mover == u || this == u)
         return true;
 
-    //Gamemaster should always see the players
-    if(isGameMaster())
+    // Game masters should always see the players
+    if (isGameMaster())
         return true;
 
     // Arena visibility before arena start
