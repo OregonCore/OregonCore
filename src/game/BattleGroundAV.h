@@ -1023,7 +1023,7 @@ const uint32 BG_AV_CreatureInfo[AV_NPC_INFO_MAX][4] = {
     {13097,67,54,55}, //surveypr
     {13089,67,54,55}, //guard
     {13088,67,58,58},
-    {14848,67,58,58} //Herald
+    {11997,67,58,58} //Herald
 
 };
 
