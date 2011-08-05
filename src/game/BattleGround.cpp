@@ -284,7 +284,8 @@ void BattleGround::Update(time_t diff)
             if (plr)
             {
                 itr->second.LastOnlineTime = 0;                 // update last online time
-                plr->UpdatePvP(true, true);                     // force all players PvP on
+                if (!plr->IsPvP())                              // force all players PvP on
+                    plr->UpdatePvP(true, true);
             }
             else
                 if (itr->second.LastOnlineTime >= MAX_OFFLINE_TIME)
