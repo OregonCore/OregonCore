@@ -86,8 +86,11 @@ struct instance_shadow_labyrinth : public ScriptedInstance
                 GrandmasterVorpil = pCreature->GetGUID();
                 break;
             case 18796:
-                ++FelOverseerCount;
-                debug_log("OSCR: Shadow Labyrinth: counting %u Fel Overseers.",FelOverseerCount);
+                if (pCreature->isAlive())
+                {
+                    ++FelOverseerCount;
+                    debug_log("OSCR: Shadow Labyrinth: counting %u Fel Overseers.",FelOverseerCount);
+                }
                 break;
         }
     }
@@ -159,8 +162,6 @@ struct instance_shadow_labyrinth : public ScriptedInstance
             if (type == TYPE_OVERSEER && FelOverseerCount != 0)
                 return;
 
-
-
             SaveToDB();
             OUT_SAVE_INST_DATA_COMPLETE;
         }
@@ -231,12 +232,38 @@ InstanceData* GetInstanceData_instance_shadow_labyrinth(Map* map)
     return new instance_shadow_labyrinth(map);
 }
 
+// ToDo Move creature_fel_overseerAI to a seperate file
+struct mob_fel_overseerAI : public ScriptedAI
+{
+    mob_fel_overseerAI(Creature *c) : ScriptedAI(c) 
+    {
+        pInstance = c->GetInstanceData();
+    }
+
+    ScriptedInstance* pInstance;
+
+    void JustDied(Unit* killer)
+    {
+        pInstance->SetData(TYPE_OVERSEER, DONE);
+    }
+};
+
+CreatureAI* GetAI_mob_fel_overseer(Creature* pCreature)
+{
+    return new mob_fel_overseerAI (pCreature);
+}
+
 void AddSC_instance_shadow_labyrinth()
 {
     Script *newscript;
     newscript = new Script;
     newscript->Name = "instance_shadow_labyrinth";
     newscript->GetInstanceData = &GetInstanceData_instance_shadow_labyrinth;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_fel_overseer";
+    newscript->GetAI = &GetAI_mob_fel_overseer;
     newscript->RegisterSelf();
 }
 

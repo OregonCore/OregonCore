@@ -169,6 +169,7 @@ UPDATE `creature_template` SET `ScriptName`='boss_grandmaster_vorpil' WHERE `ent
 UPDATE `creature_template` SET `ScriptName`='boss_blackheart_the_inciter' WHERE `entry`=18667;
 UPDATE `creature_template` SET `ScriptName`='boss_ambassador_hellmaw' WHERE `entry`=18731;
 UPDATE `creature_template` SET `ScriptName`='mob_voidtraveler' WHERE `entry`=19226;
+UPDATE `creature_template` SET `ScriptName`='mob_fel_overseer' WHERE `entry`=18796;
 
 /* AZSHARA */
 UPDATE `creature_template` SET `ScriptName`='mobs_spitelashes' WHERE `entry` IN (6190,6193,6194,6195,6196,7885,7886,12204,12205);
