@@ -3327,6 +3327,8 @@ void Spell::EffectSummonType(uint32 i)
                     if (!summon || !summon->isTotem())
                         return;
 
+                    summon->SetUInt32Value(UNIT_CREATED_BY_SPELL, m_spellInfo->Id);
+
                     if (damage)                                             // if not spell info, DB values used
                     {
                         summon->SetMaxHealth(damage);
