@@ -331,7 +331,6 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         WorldPacket data(opcode, mover->GetPackGUID().size() + recv_data.size());
         data << mover->GetPackGUID();
         data.append(recv_data.contents(), recv_data.size());
-        mover->SendMessageToSet(&data, false);
         if(plMover->isCharmed())
             plMover->GetCharmer()->SendMessageToSet(&data, false);
         else
