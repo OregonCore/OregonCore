@@ -6239,6 +6239,9 @@ bool Unit::HandleProcTriggerSpell(Unit *pVictim, uint32 damage, Aura* triggeredB
             if (!pVictim || pVictim == this)
                 return false;
 
+            if(procSpell->Id == 26679)
+                return false;
+
             // Need add combopoint AFTER finish movie (or they dropped in finish phase)
             break;
         }
