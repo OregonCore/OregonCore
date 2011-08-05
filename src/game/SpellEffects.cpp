@@ -6455,7 +6455,28 @@ void Spell::GetSummonPosition(uint32 i, Position &pos, float radius, uint32 coun
     {
         // Summon 1 unit in dest location
         if (count == 0)
-            pos.Relocate(m_targets.m_dstPos);
+        {
+            bool found = false;
+            float cur_radius = 3.0f;
+
+            while (cur_radius > 0.0f && !found)
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    m_caster->GetRandomPoint(m_targets.m_dstPos, cur_radius, pos);
+                    if (m_caster->IsWithinLOS(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ()))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                cur_radius -= 1.5f;
+            }
+
+            if (!found)
+                pos.Relocate(m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ(), m_caster->GetOrientation());
+
+        }
         // Summon in random point all other units if location present
         else
         {
