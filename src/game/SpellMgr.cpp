@@ -654,6 +654,7 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
         case 34700:                                         // Allergic Reaction
         case 31719:                                         // Suspension
         case 43501:                                         // Siphon Soul (Hexlord Spell)
+        case 30457:                                         // Complete vulnerability
             return false;
     }
 
