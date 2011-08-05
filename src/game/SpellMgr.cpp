@@ -2487,8 +2487,22 @@ void SpellMgr::LoadSpellCustomAttr()
         case 24905: // Moonkin form -> elune's touch
             spellInfo->EffectImplicitTargetA[2] = TARGET_UNIT_CASTER;
             break;
+        case 7922:                        // Charge stun
+        case 25274:                       // Intercept stun
+        case 2094:                        // Blind
+            spellInfo->speed = 590.0f;    // Minor delay
+            break;
+        case 1833:                        // Cheap Shot
+            spellInfo->speed = 1230.0f;   // Tiny delay
+            break;
+        case 26679:                       // Deadly Throw
+            spellInfo->speed = 0;         // Instant
+            break;
         case 41013:     // Parasitic Shadowfiend Passive
             spellInfo->EffectApplyAuraName[0] = 4; // proc debuff, and summon infinite fiends
+            break;
+        case 1543: // Flare
+            spellInfo->speed = 0;
             break;
         case 27892:     // To Anchor 1
         case 27928:     // To Anchor 1
