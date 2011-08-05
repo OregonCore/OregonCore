@@ -659,8 +659,17 @@ namespace Oregon
                     {
                         if (itr->getSource()->GetTypeId() == TYPEID_UNIT && ((Creature*)itr->getSource())->isTotem())
                             continue;
-                        if (!itr->getSource()->isAttackableByAOE())
-                            continue;
+
+                        if (i_caster->GetCreatureType() == CREATURE_TYPE_TOTEM)
+                        {
+                            if (!itr->getSource()->isAttackableByAOE(i_pos->GetPositionX(), i_pos->GetPositionY(), i_pos->GetPositionZ(), true))
+                                continue;
+                        }
+                        else
+                        {
+                            if (!itr->getSource()->isAttackableByAOE())
+                                continue;
+                        }
 
                         Unit* check = i_caster->GetCharmerOrOwnerOrSelf();
 

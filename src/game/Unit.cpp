@@ -8676,7 +8676,7 @@ bool Unit::canAttack(Unit const* target, bool force) const
     return true;
 }
 
-bool Unit::isAttackableByAOE() const
+bool Unit::isAttackableByAOE(float x, float y, float z, bool LosCheck) const
 {
     if (!isAlive())
         return false;
@@ -8687,6 +8687,10 @@ bool Unit::isAttackableByAOE() const
 
     if (GetTypeId() == TYPEID_PLAYER && ToPlayer()->isGameMaster())
         return false;
+
+    if (LosCheck)
+        if (!IsWithinLOS(x, y, z))
+            return false;
 
     return !isInFlight();
 }

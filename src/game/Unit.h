@@ -1211,7 +1211,7 @@ class Unit : public WorldObject
         bool isFrozen() const;
 
         bool isTargetableForAttack() const;
-        bool isAttackableByAOE() const;
+        bool isAttackableByAOE(float x = 0, float y = 0, float z = 0, bool LosCheck = false) const;
         bool canAttack(Unit const* target, bool force = true) const;
         virtual bool IsInWater() const;
         virtual bool IsUnderWater() const;
