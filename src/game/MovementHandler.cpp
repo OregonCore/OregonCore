@@ -332,6 +332,10 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         data << mover->GetPackGUID();
         data.append(recv_data.contents(), recv_data.size());
         mover->SendMessageToSet(&data, false);
+        if(plMover->isCharmed())
+            plMover->GetCharmer()->SendMessageToSet(&data, false);
+        else
+            mover->SendMessageToSet(&data, false);
 
         plMover->m_movementInfo = movementInfo;
         plMover->SetPosition(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation());
