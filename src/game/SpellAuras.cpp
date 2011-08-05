@@ -2611,6 +2611,10 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
             m_target->RemoveAurasDueToSpell(m_target->m_ShapeShiftFormSpellId,this);
 
         m_target->SetByteValue(UNIT_FIELD_BYTES_2, 3, form);
+        // force update as too quick shapeshifting and back
+        // causes the value to stay the same serverside
+        // causes issues clientside (player gets stuck)
+        m_target->ForceValuesUpdateAtIndex(UNIT_FIELD_BYTES_2);
 
         if (modelid > 0)
             m_target->SetDisplayId(modelid);
