@@ -4582,6 +4582,14 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                         return false;
 
                     target = SelectNearbyTarget();
+
+                    if (procSpell && procSpell->SpellFamilyFlags == 536870912 && procSpell->SpellIconID == 1648)        // Prevent Execute proc on targets with > 20% health
+                        if (target && target->GetHealth() > target->GetMaxHealth()*0.2)
+                                return false;
+
+                    if (procSpell && procSpell->SpellIconID == 83)      // Prevent Whirlwind proc 4 times. It should proc 1 time.
+                        cooldown = 1;
+
                     if (!target)
                         return false;
 
