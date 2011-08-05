@@ -455,6 +455,9 @@ void WorldSession::HandlePlayerLoginOpcode(WorldPacket & recv_data)
 
     recv_data >> playerGuid;
 
+    if (!CharacterDatabase.PQuery("SELECT 1 FROM characters WHERE guid='%d' AND account='%d'", GUID_LOPART(playerGuid), GetAccountId()))
+        KickPlayer();
+
     LoginQueryHolder *holder = new LoginQueryHolder(GetAccountId(), playerGuid);
     if (!holder->Initialize())
     {
