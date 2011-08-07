@@ -1063,9 +1063,9 @@ void BattleGround::RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPac
 
     Group *group = NULL;
 
-    if(GetBgRaid(ALLIANCE) && GetBgRaid(ALLIANCE)->IsMember(guid))
+    if (GetBgRaid(ALLIANCE) && GetBgRaid(ALLIANCE)->IsMember(guid))
         group = GetBgRaid(ALLIANCE);
-    else if(GetBgRaid(HORDE) && GetBgRaid(HORDE)->IsMember(guid))
+    else if (GetBgRaid(HORDE) && GetBgRaid(HORDE)->IsMember(guid))
         group = GetBgRaid(HORDE);
 
     if (group)

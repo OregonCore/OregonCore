@@ -795,7 +795,7 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
                         case SPELLMOD_COST:                 // dependent from bas point sign (negative -> positive)
                             if (spellproto->EffectBasePoints[effIndex]+int32(spellproto->EffectBaseDice[effIndex]) > 0)
                             {
-                                if (spellproto->Id == 12042)    //Arcane Power is a positive spell
+                                if (spellproto->Id == 12042)    // Arcane Power is a positive spell
                                     return true;
 
                                 return false;
