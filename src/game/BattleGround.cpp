@@ -1153,6 +1153,8 @@ void BattleGround::AddPlayer(Player *plr)
     SendPacketToTeam(team, &data, plr, false);
 
     plr->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
+    plr->CombatStop();
+    plr->getHostileRefManager().deleteReferences();
 
     // add arena specific auras
     if (isArena())
