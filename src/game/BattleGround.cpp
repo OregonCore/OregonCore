@@ -1045,6 +1045,17 @@ void BattleGround::RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPac
             if (GetQueueType() < MAX_BATTLEGROUND_QUEUES)
                 sBattleGroundMgr.m_BattleGroundQueues[bgQueueTypeId].Update(bgTypeId, GetQueueType());
 
+            Group * group = plr->GetGroup();
+            // remove from raid group if exist
+            if (group && group == GetBgRaid(team))
+            {
+                if (!group->RemoveMember(guid, 0))               // group was disbanded
+                {
+                    SetBgRaid(team, NULL);
+                    delete group;
+                }
+            }
+
             // Let others know
             sBattleGroundMgr.BuildPlayerLeftBattleGroundPacket(&data, plr);
             SendPacketToTeam(team, &data, plr, false);
@@ -1059,22 +1070,6 @@ void BattleGround::RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPac
             plr->TeleportToBGEntryPoint();
 
         sLog.outDetail("BATTLEGROUND: Removed player %s from BattleGround.", plr->GetName());
-    }
-
-    Group *group = NULL;
-
-    if (GetBgRaid(ALLIANCE) && GetBgRaid(ALLIANCE)->IsMember(guid))
-        group = GetBgRaid(ALLIANCE);
-    else if (GetBgRaid(HORDE) && GetBgRaid(HORDE)->IsMember(guid))
-        group = GetBgRaid(HORDE);
-
-    if (group)
-    {
-        if (!group->RemoveMember(guid, 0))               // group was disbanded
-        {
-            SetBgRaid(team, NULL);
-            delete group;
-        }
     }
 
     if (!GetPlayersSize() && !GetInvitedCount(HORDE) && !GetInvitedCount(ALLIANCE))
