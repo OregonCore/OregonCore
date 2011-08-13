@@ -1900,7 +1900,7 @@ void Pet::CastPetAuras(bool current)
 
 void Pet::CastPetAura(PetAura const* aura)
 {
-    uint16 auraId = aura->GetAura(GetEntry());
+    uint32 auraId = aura->GetAura(GetEntry());
     if (!auraId)
         return;
 

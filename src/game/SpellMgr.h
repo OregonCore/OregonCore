@@ -678,20 +678,20 @@ class PetAura
             auras.clear();
         }
 
-        PetAura(uint16 petEntry, uint16 aura, bool _removeOnChangePet, int _damage) :
+        PetAura(uint32 petEntry, uint32 aura, bool _removeOnChangePet, int _damage) :
         removeOnChangePet(_removeOnChangePet), damage(_damage)
         {
             auras[petEntry] = aura;
         }
 
-        uint16 GetAura(uint16 petEntry) const
+        uint32 GetAura(uint32 petEntry) const
         {
-            std::map<uint16, uint16>::const_iterator itr = auras.find(petEntry);
+            std::map<uint32, uint32>::const_iterator itr = auras.find(petEntry);
             if (itr != auras.end())
                 return itr->second;
             else
             {
-                std::map<uint16, uint16>::const_iterator itr = auras.find(0);
+                std::map<uint32, uint32>::const_iterator itr = auras.find(0);
                 if (itr != auras.end())
                     return itr->second;
                 else
@@ -699,7 +699,7 @@ class PetAura
             }
         }
 
-        void AddAura(uint16 petEntry, uint16 aura)
+        void AddAura(uint32 petEntry, uint32 aura)
         {
             auras[petEntry] = aura;
         }
@@ -715,11 +715,11 @@ class PetAura
         }
 
     private:
-        std::map<uint16, uint16> auras;
+        std::map<uint32, uint32> auras;
         bool removeOnChangePet;
         int32 damage;
 };
-typedef std::map<uint16, PetAura> SpellPetAuraMap;
+typedef std::map<uint32, PetAura> SpellPetAuraMap;
 
 // Spell rank chain  (accessed using SpellMgr functions)
 struct SpellChainNode
@@ -1025,7 +1025,7 @@ class SpellMgr
             return mSkillLineAbilityMap.upper_bound(spell_id);
         }
 
-        PetAura const* GetPetAura(uint16 spell_id)
+        PetAura const* GetPetAura(uint32 spell_id)
         {
             SpellPetAuraMap::const_iterator itr = mSpellPetAuraMap.find(spell_id);
             if (itr != mSpellPetAuraMap.end())
