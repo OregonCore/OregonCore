@@ -1,5 +1,4 @@
 # output generic information about the core and buildtype chosen
-
 message("")
 message("* OregonCore revision    : ${rev_id_str} (${rev_hash_str})")
 if( UNIX )
@@ -48,6 +47,13 @@ if( USE_SCRIPTPCH )
   message("* Build scripts w/PCH    : Yes (default)")
 else()
   message("* Build scripts w/PCH    : No")
+endif()
+
+if( USE_SFMT )
+  message("* Use SFMT for RNG       : Yes")
+  add_definitions(-DUSE_SFMT_FOR_RNG)
+else()
+  message("* Use SFMT for RNG       : No  (default)")
 endif()
 
 if( WITH_WARNINGS )

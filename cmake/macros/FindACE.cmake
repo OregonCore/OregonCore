@@ -23,6 +23,7 @@ if ( UNIX )
       /usr/local/include/ace
       $ENV{ACE_ROOT}
       $ENV{ACE_ROOT}/include
+      ${CMAKE_SOURCE_DIR}/externals/ace
   DOC
     "Specify include-directories that might contain ace.h here."
   )
