@@ -36,16 +36,9 @@
 #include "Database/DatabaseEnv.h"
 #include "DBCStores.h"
 #include "CliRunnable.h"
-#include "RASocket.h"
+#include "RARunnable.h"
 #include "Util.h"
 #include "OCSoap.h"
-
-#include "sockets/TcpSocket.h"
-#include "sockets/Utility.h"
-#include "sockets/Parse.h"
-#include "sockets/Socket.h"
-#include "sockets/SocketHandler.h"
-#include "sockets/ListenSocket.h"
 
 #ifdef _WIN32
 #include "ServiceWin32.h"
@@ -91,79 +84,6 @@ public:
             }
         }
         sLog.outString("Anti-freeze thread exiting without problems.");
-    }
-};
-
-class RARunnable : public ACE_Based::Runnable
-{
-public:
-    uint32 numLoops, loopCounter;
-
-    RARunnable ()
-    {
-        uint32 socketSelecttime = sWorld.getConfig (CONFIG_SOCKET_SELECTTIME);
-        numLoops = (sConfig.GetIntDefault ("MaxPingTime", 30) * (MINUTE * 1000000 / socketSelecttime));
-        loopCounter = 0;
-    }
-
-    void checkping ()
-    {
-        // ping if need
-        if ((++loopCounter) == numLoops)
-        {
-            loopCounter = 0;
-            sLog.outDetail ("Ping MySQL to keep connection alive");
-            WorldDatabase.Query ("SELECT 1 FROM command LIMIT 1");
-            LoginDatabase.Query ("SELECT 1 FROM realmlist LIMIT 1");
-            CharacterDatabase.Query ("SELECT 1 FROM bugreport LIMIT 1");
-        }
-    }
-
-    void run ()
-    {
-        SocketHandler h;
-
-        // Launch the RA listener socket
-        ListenSocket<RASocket> RAListenSocket (h);
-        bool usera = sConfig.GetBoolDefault ("Ra.Enable", false);
-
-        if (usera)
-        {
-            port_t raport = sConfig.GetIntDefault ("Ra.Port", 3443);
-            std::string stringip = sConfig.GetStringDefault ("Ra.IP", "0.0.0.0");
-            ipaddr_t raip;
-            if (!Utility::u2ip (stringip, raip))
-                sLog.outError ("Oregon RA can not bind to ip %s", stringip.c_str ());
-            else if (RAListenSocket.Bind (raip, raport))
-                sLog.outError ("Oregon RA can not bind to port %d on %s", raport, stringip.c_str ());
-            else
-            {
-                h.Add (&RAListenSocket);
-
-                sLog.outString ("Starting Remote access listener on port %d on %s", raport, stringip.c_str ());
-            }
-        }
-
-        // Socket Select time is in microseconds , not miliseconds!!
-        uint32 socketSelecttime = sWorld.getConfig (CONFIG_SOCKET_SELECTTIME);
-
-        // if use ra spend time waiting for io, if not use ra ,just sleep
-        if (usera)
-        {
-            while (!World::IsStopped())
-            {
-                h.Select (0, socketSelecttime);
-                checkping ();
-            }
-        }
-        else
-        {
-            while (!World::IsStopped())
-            {
-                ACE_Based::Thread::Sleep(static_cast<unsigned long> (socketSelecttime / 1000));
-                checkping ();
-            }
-        }
     }
 };
 
@@ -309,7 +229,7 @@ int Master::Run()
     }
 
     // Launch the world listener socket
-    port_t wsport = sWorld.getConfig (CONFIG_PORT_WORLD);
+    uint16 wsport = sWorld.getConfig(CONFIG_PORT_WORLD);
     std::string bind_ip = sConfig.GetStringDefault ("BindIP", "0.0.0.0");
 
     if (sWorldSocketMgr->StartNetwork (wsport, bind_ip.c_str ()) == -1)

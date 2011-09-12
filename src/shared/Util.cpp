@@ -21,14 +21,14 @@
 
 #include "Util.h"
 
-#include "sockets/socket_include.h"
-#include "utf8cpp/utf8.h"
+#include "utf8.h"
 #ifdef USE_SFMT_FOR_RNG
 #include "SFMT.h"
 #else
 #include "MersenneTwister.h"
 #endif  // USE_SFMT
 #include <ace/TSS_T.h>
+#include <ace/INET_Addr.h>
 
 #ifdef USE_SFMT_FOR_RNG
 typedef ACE_TSS<SFMTRand> SFMTRandTSS;
@@ -455,4 +455,23 @@ bool Utf8FitTo(const std::string& str, std::wstring search)
         return false;
 
     return true;
+}
+
+void hexEncodeByteArray(uint8* bytes, uint32 arrayLen, std::string& result)
+{
+    std::ostringstream ss;
+    for (uint32 i=0; i<arrayLen; ++i)
+    {
+        for (uint8 j=0; j<2; ++j)
+        {
+            unsigned char nibble = 0x0F & (bytes[i]>>((1-j)*4));
+            char encodedNibble;
+            if(nibble < 0x0A)
+                encodedNibble = '0'+nibble;
+            else
+                encodedNibble = 'A'+nibble-0x0A;
+            ss << encodedNibble;
+        }
+    }
+    result = ss.str();
 }
