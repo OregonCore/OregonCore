@@ -37,7 +37,7 @@
 #include "UpdateData.h"
 #include "LootMgr.h"
 #include "Chat.h"
-#include <zlib/zlib.h>
+#include "zlib.h"
 #include "MapManager.h"
 #include "ObjectAccessor.h"
 #include "Object.h"
