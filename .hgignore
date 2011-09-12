@@ -5,3 +5,6 @@ build/
 *.orig
 *.rej
 *.kdev*
+*.bak
+*.patch
+*.diff
