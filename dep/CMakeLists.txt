@@ -35,7 +35,9 @@ endif()
 
 add_subdirectory(g3dlite)
 
-add_subdirectory(gsoap)
+if(SERVERS)
+  add_subdirectory(gsoap)
+endif()
 
 if(TOOLS)
   add_subdirectory(libmpq)
