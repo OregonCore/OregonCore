@@ -35,7 +35,6 @@
 #include "SharedDefines.h"
 #include "GameSystem/GridRefManager.h"
 #include "MapRefManager.h"
-#include "mersennetwister/MersenneTwister.h"
 
 #include <bitset>
 #include <list>
@@ -422,15 +421,6 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         CreatureGroupHolderType CreatureGroupHolder;
 
         void UpdateIteratorBack(Player *player);
-
-#ifdef MAP_BASED_RAND_GEN
-        MTRand mtRand;
-        int32 irand(int32 min, int32 max)       { return int32 (mtRand.randInt(max - min)) + min; }
-        uint32 urand(uint32 min, uint32 max)    { return mtRand.randInt(max - min) + min; }
-        int32 rand32()                          { return mtRand.randInt(); }
-        double rand_norm()                      { return mtRand.randExc(); }
-        double rand_chance()                    { return mtRand.randExc(100.0); }
-#endif
 
         TempSummon *SummonCreature(uint32 entry, const Position &pos, SummonPropertiesEntry const *properties = NULL, uint32 duration = 0, Unit *summoner = NULL);
         Creature* GetCreature(uint64 guid);
