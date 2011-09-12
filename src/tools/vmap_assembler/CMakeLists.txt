@@ -10,7 +10,7 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 include_directories(
-  ${CMAKE_SOURCE_DIR}/dep/include/g3dlite
+  ${CMAKE_SOURCE_DIR}/dep/g3dlite/include
   ${CMAKE_SOURCE_DIR}/src/shared
   ${CMAKE_SOURCE_DIR}/src/collision
   ${CMAKE_SOURCE_DIR}/src/framework
@@ -28,7 +28,7 @@ endif()
 
 target_link_libraries(vmap_assembler
   collision
-  g3dlite
+  g3dlib
   ${ZLIB_LIBRARIES}
 )
 
