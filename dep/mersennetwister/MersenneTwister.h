@@ -60,7 +60,7 @@
 // Not thread safe (unless auto-initialization is avoided and each thread has
 // its own MTRand object)
 
-#include "Define.h"
+#include "Platform/Define.h"
 
 #include <limits.h>
 #include <time.h>
