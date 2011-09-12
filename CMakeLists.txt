@@ -70,6 +70,3 @@ add_subdirectory(dep)
 
 # add core sources
 add_subdirectory(src)
-
-# add sql-files
-add_subdirectory(sql)
