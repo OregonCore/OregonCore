@@ -147,7 +147,7 @@ struct boss_hakkarAI : public ScriptedAI
         {
             if (pInstance)
             {
-                if (pInstance->GetData(TYPE_JEKLIK) == DONE)
+                if (pInstance->GetData(TYPE_JEKLIK) != DONE)
                 {
                     if (AspectOfJeklik_Timer <= diff)
                     {
@@ -164,7 +164,7 @@ struct boss_hakkarAI : public ScriptedAI
         {
             if (pInstance)
             {
-                if (pInstance->GetData(TYPE_VENOXIS) == DONE)
+                if (pInstance->GetData(TYPE_VENOXIS) != DONE)
                 {
                     if (AspectOfVenoxis_Timer <= diff)
                     {
@@ -181,7 +181,7 @@ struct boss_hakkarAI : public ScriptedAI
         {
             if (pInstance)
             {
-                if (pInstance->GetData(TYPE_MARLI) == DONE)
+                if (pInstance->GetData(TYPE_MARLI) != DONE)
                 {
                     if (AspectOfMarli_Timer <= diff)
                     {
@@ -199,7 +199,7 @@ struct boss_hakkarAI : public ScriptedAI
         {
             if (pInstance)
             {
-                if (pInstance->GetData(TYPE_THEKAL) == DONE)
+                if (pInstance->GetData(TYPE_THEKAL) != DONE)
                 {
                     if (AspectOfThekal_Timer <= diff)
                     {
@@ -216,7 +216,7 @@ struct boss_hakkarAI : public ScriptedAI
         {
             if (pInstance)
             {
-                if (pInstance->GetData(TYPE_ARLOKK) == DONE)
+                if (pInstance->GetData(TYPE_ARLOKK) != DONE)
                 {
                     if (AspectOfArlokk_Timer <= diff)
                     {
