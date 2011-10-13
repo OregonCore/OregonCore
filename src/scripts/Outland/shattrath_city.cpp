@@ -249,47 +249,39 @@ bool GossipSelect_npc_zephyr(Player *player, Creature* pCreature, uint32 sender,
 
 /*######
 ## npc_khadgars_servant
-######*/
+######Z*/
 
 enum eServant
 {
     SAY_KHAD_START          = -1000489,
     SAY_KHAD_SERV_0         = -1000234,
-
     SAY_KHAD_SERV_1         = -1000235,
     SAY_KHAD_SERV_2         = -1000236,
     SAY_KHAD_SERV_3         = -1000237,
     SAY_KHAD_SERV_4         = -1000238,
-
     SAY_KHAD_SERV_5         = -1000239,
     SAY_KHAD_SERV_6         = -1000240,
     SAY_KHAD_SERV_7         = -1000241,
-
     SAY_KHAD_SERV_8         = -1000242,
     SAY_KHAD_SERV_9         = -1000243,
     SAY_KHAD_SERV_10        = -1000244,
     SAY_KHAD_SERV_11        = -1000245,
-
     SAY_KHAD_SERV_12        = -1000246,
     SAY_KHAD_SERV_13        = -1000247,
-
     SAY_KHAD_SERV_14        = -1000248,
     SAY_KHAD_SERV_15        = -1000249,
     SAY_KHAD_SERV_16        = -1000250,
     SAY_KHAD_SERV_17        = -1000251,
-
     SAY_KHAD_SERV_18        = -1000252,
     SAY_KHAD_SERV_19        = -1000253,
     SAY_KHAD_SERV_20        = -1000254,
     SAY_KHAD_SERV_21        = -1000255,
-
     SAY_KHAD_INJURED        = -1000490,
     SAY_KHAD_MIND_YOU       = -1000491,
     SAY_KHAD_MIND_ALWAYS    = -1000492,
     SAY_KHAD_ALDOR_GREET    = -1000493,
     SAY_KHAD_SCRYER_GREET   = -1000494,
     SAY_KHAD_HAGGARD        = -1000495,
-
     NPC_KHADGAR             = 18166,
     NPC_SHANIR              = 18597,
     NPC_IZZARD              = 18622,
@@ -297,22 +289,12 @@ enum eServant
     NPC_ANCHORITE           = 19142,
     NPC_ARCANIST            = 18547,
     NPC_HAGGARD             = 19684,
-
     QUEST_CITY_LIGHT        = 10211
 };
 
 struct npc_khadgars_servantAI : public npc_escortAI
 {
-    npc_khadgars_servantAI(Creature* pCreature) : npc_escortAI(pCreature)
-    {
-        if (pCreature->GetOwner() && pCreature->GetOwner()->GetTypeId() == TYPEID_PLAYER)
-            Start(false, false, pCreature->GetOwner()->GetGUID());
-        else
-            error_log("SD2: npc_khadgars_servant can not obtain owner or owner is not a player.");
-
-        Reset();
-    }
-
+    npc_khadgars_servantAI(Creature* pCreature) : npc_escortAI(pCreature) {}
 
     uint32 m_uiPointId;
     uint32 m_uiTalkTimer;
@@ -321,6 +303,7 @@ struct npc_khadgars_servantAI : public npc_escortAI
 
     void Reset()
     {
+		me->GetMotionMaster()->MovePoint(0, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ());
         m_uiTalkTimer = 2500;
         m_uiTalkCount = 0;
         m_uiPointId = 0;
@@ -348,6 +331,21 @@ struct npc_khadgars_servantAI : public npc_escortAI
                         DoScriptText(SAY_KHAD_SCRYER_GREET, pWho, pPlayer);
                     m_uiRandomTalkCooldown = 7500;
                     break;
+            }
+        }
+
+		if (HasEscortState(STATE_ESCORT_ESCORTING))
+            return;
+
+        if (pWho->GetTypeId() == TYPEID_PLAYER)
+        {
+            if (CAST_PLR(pWho)->GetQuestStatus(10211) == QUEST_STATUS_INCOMPLETE)
+            {
+                float Radius = 10.0f;
+                if (me->IsWithinDistInMap(pWho, Radius))
+                {
+                    Start(false, false, pWho->GetGUID());
+                }
             }
         }
     }
