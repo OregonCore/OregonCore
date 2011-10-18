@@ -303,7 +303,7 @@ struct npc_khadgars_servantAI : public npc_escortAI
 
     void Reset()
     {
-		me->GetMotionMaster()->MovePoint(0, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ());
+        me->GetMotionMaster()->MovePoint(0, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ());
         m_uiTalkTimer = 2500;
         m_uiTalkCount = 0;
         m_uiPointId = 0;
@@ -334,7 +334,7 @@ struct npc_khadgars_servantAI : public npc_escortAI
             }
         }
 
-		if (HasEscortState(STATE_ESCORT_ESCORTING))
+        if (HasEscortState(STATE_ESCORT_ESCORTING))
             return;
 
         if (pWho->GetTypeId() == TYPEID_PLAYER)
