@@ -2761,6 +2761,8 @@ bool IsSpellAllowedInLocation(SpellEntry const *spellInfo,uint32 map_id,uint32 z
 
             return false;
         }
+        case 32307:                                         // Warmaul Ogre Banner
+            return area_id == 3610;
         case 32724:                                         // Gold Team (Alliance)
         case 32725:                                         // Green Team (Alliance)
         case 32727:                                         // Arena Preparation
