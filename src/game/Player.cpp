@@ -5296,7 +5296,11 @@ void Player::SetSkill(uint32 id, uint16 currVal, uint16 maxVal)
     if (itr != mSkillStatus.end() && itr->second.uState != SKILL_DELETED)
     {
         if (currVal)
-            SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(itr->second.pos),MAKE_SKILL_VALUE(currVal,maxVal));
+        {
+            SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(itr->second.pos), MAKE_SKILL_VALUE(currVal, maxVal));
+            if (itr->second.uState != SKILL_NEW)
+                itr->second.uState = SKILL_CHANGED;
+        }
         else                                                //remove
         {
             // clear skill fields
@@ -15213,7 +15217,7 @@ void Player::_LoadActions(QueryResult_AutoPtr result)
 
 void Player::_LoadAuras(QueryResult_AutoPtr result, uint32 timediff)
 {
-    m_Auras.clear();
+    //m_Auras.clear();
     for (int i = 0; i < TOTAL_AURAS; i++)
         m_modAuras[i].clear();
 
@@ -15774,15 +15778,6 @@ void Player::_LoadReputation(QueryResult_AutoPtr result)
         while (result->NextRow());
     }
 }
-
-/*void Player::learnSpellHighRank(uint32 spellid)
-{
-    learnSpell(spellid);
-
-    SpellChainMapNext const& nextMap = sSpellMgr.GetSpellChainNext();
-    for(SpellChainMapNext::const_iterator itr = nextMap.lower_bound(spellid); itr != nextMap.upper_bound(spellid); ++itr)
-        learnSpellHighRank(itr->second);
-}*/
 
 void Player::_LoadSkills(QueryResult_AutoPtr result)
 {
