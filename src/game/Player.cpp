@@ -5340,20 +5340,22 @@ void Player::SetSkill(uint32 id, uint16 currVal, uint16 maxVal)
     else if (currVal)                                        //add
     {
         for (int i = 0; i < PLAYER_MAX_SKILLS; ++i)
-            if (!GetUInt32Value(PLAYER_SKILL_INDEX(i)))
         {
-            SkillLineEntry const *pSkill = sSkillLineStore.LookupEntry(id);
-            if (!pSkill)
+            if (!GetUInt32Value(PLAYER_SKILL_INDEX(i)))
             {
-                sLog.outError("Skill not found in SkillLineStore: skill #%u", id);
-                return;
-            }
-            // enable unlearn button for primary professions only
-            if (pSkill->categoryId == SKILL_CATEGORY_PROFESSION)
-                SetUInt32Value(PLAYER_SKILL_INDEX(i), MAKE_PAIR32(id,1));
-            else
-                SetUInt32Value(PLAYER_SKILL_INDEX(i), MAKE_PAIR32(id,0));
-            SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i),MAKE_SKILL_VALUE(currVal,maxVal));
+                SkillLineEntry const *pSkill = sSkillLineStore.LookupEntry(id);
+                if (!pSkill)
+                {
+                    sLog.outError("Skill not found in SkillLineStore: skill #%u", id);
+                    return;
+                }
+                // enable unlearn button for primary professions only
+                if (pSkill->categoryId == SKILL_CATEGORY_PROFESSION)
+                    SetUInt32Value(PLAYER_SKILL_INDEX(i), MAKE_PAIR32(id,1));
+                else
+                    SetUInt32Value(PLAYER_SKILL_INDEX(i), MAKE_PAIR32(id,0));
+
+                SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(i),MAKE_SKILL_VALUE(currVal,maxVal));
 
                 // insert new entry or update if not deleted old entry yet
                 if (itr != mSkillStatus.end())
@@ -5364,24 +5366,25 @@ void Player::SetSkill(uint32 id, uint16 currVal, uint16 maxVal)
                 else
                     mSkillStatus.insert(SkillStatusMap::value_type(id, SkillStatusData(i, SKILL_NEW)));
 
-            // apply skill bonuses
-            SetUInt32Value(PLAYER_SKILL_BONUS_INDEX(i),0);
+                // apply skill bonuses
+                SetUInt32Value(PLAYER_SKILL_BONUS_INDEX(i),0);
 
-            // temporary bonuses
-            AuraList const& mModSkill = GetAurasByType(SPELL_AURA_MOD_SKILL);
-            for (AuraList::const_iterator i = mModSkill.begin(); i != mModSkill.end(); ++i)
-                if ((*i)->GetModifier()->m_miscvalue == int32(id))
-                    (*i)->ApplyModifier(true);
+                // temporary bonuses
+                AuraList const& mModSkill = GetAurasByType(SPELL_AURA_MOD_SKILL);
+                for (AuraList::const_iterator i = mModSkill.begin(); i != mModSkill.end(); ++i)
+                    if ((*i)->GetModifier()->m_miscvalue == int32(id))
+                        (*i)->ApplyModifier(true);
 
-            // permanent bonuses
-            AuraList const& mModSkillTalent = GetAurasByType(SPELL_AURA_MOD_SKILL_TALENT);
-            for (AuraList::const_iterator i = mModSkillTalent.begin(); i != mModSkillTalent.end(); ++i)
-                if ((*i)->GetModifier()->m_miscvalue == int32(id))
-                    (*i)->ApplyModifier(true);
+                // permanent bonuses
+                AuraList const& mModSkillTalent = GetAurasByType(SPELL_AURA_MOD_SKILL_TALENT);
+                for (AuraList::const_iterator i = mModSkillTalent.begin(); i != mModSkillTalent.end(); ++i)
+                    if ((*i)->GetModifier()->m_miscvalue == int32(id))
+                        (*i)->ApplyModifier(true);
 
-            // Learn all spells for skill
-            learnSkillRewardedSpells(id);
-            return;
+                // Learn all spells for skill
+                learnSkillRewardedSpells(id);
+                return;
+            }
         }
     }
 }
@@ -15029,8 +15032,11 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     SetUInt32Value(PLAYER_TRACK_CREATURES, 0);
     SetUInt32Value(PLAYER_TRACK_RESOURCES, 0);
 
-    // cleanup aura list explicitly before skill load wher some spells can be applied
+    // cleanup aura list explicitly before skill load where some spells can be applied
     RemoveAllAuras();
+
+    // load skills must be called here 
+    _LoadSkills(holder->GetResult(PLAYER_LOGIN_QUERY_LOADSKILLS));
 
     // make sure the unit is considered out of combat for proper loading
     ClearInCombat();
@@ -15042,9 +15048,6 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     // reset stats before loading any modifiers
     InitStatsForLevel();
     InitTaxiNodesForLevel();
-
-    // load skills after InitStatsForLevel because it triggering aura apply also
-    _LoadSkills(holder->GetResult(PLAYER_LOGIN_QUERY_LOADSKILLS));
 
     // apply original stats mods before spell loading or item equipment that call before equip _RemoveStatsMods()
 
@@ -15061,6 +15064,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 
     // after spell load
     InitTalentForLevel();
+    learnSkillRewardedSpells();
 
     // after spell load, learn rewarded spell if need also
     _LoadQuestStatus(holder->GetResult(PLAYER_LOGIN_QUERY_LOADQUESTSTATUS));
@@ -15828,7 +15832,7 @@ void Player::_LoadSkills(QueryResult_AutoPtr result)
 
             mSkillStatus.insert(SkillStatusMap::value_type(skill, SkillStatusData(count, SKILL_UNCHANGED)));
 
-            learnSkillRewardedSpells(skill);
+            //learnSkillRewardedSpells(skill);
 
             ++count;
 
@@ -19441,6 +19445,29 @@ void Player::SendAuraDurationsForTarget(Unit* target)
 
         aura->SendAuraDurationForCaster(this);
     }
+}
+
+void Player::learnSkillRewardedSpells()
+{
+    for (SkillStatusMap::iterator itr = mSkillStatus.begin(); itr != mSkillStatus.end();)
+    {
+        if (itr->second.uState == SKILL_DELETED)
+            continue;
+
+        learnSkillRewardedSpells(itr->first);
+
+        ++itr;
+    }
+
+    /*for (uint16 i=0; i < PLAYER_MAX_SKILLS; i++)
+    {
+        if (!GetUInt32Value(PLAYER_SKILL_INDEX(i)))
+            continue;
+
+        uint32 pskill = GetUInt32Value(PLAYER_SKILL_INDEX(i)) & 0x0000FFFF;
+
+        learnSkillRewardedSpells(pskill);
+    }*/
 }
 
 void Player::SetDailyQuestStatus(uint32 quest_id)
