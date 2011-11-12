@@ -488,6 +488,9 @@ void BattleGround::SendPacketToAll(WorldPacket *packet)
 {
     for (std::map<uint64, BattleGroundPlayer>::iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
     {
+        if (itr->second.LastOnlineTime)
+            continue;
+
         Player *plr = objmgr.GetPlayer(itr->first);
         if (plr)
             plr->GetSession()->SendPacket(packet);
@@ -500,6 +503,9 @@ void BattleGround::SendPacketToTeam(uint32 TeamID, WorldPacket *packet, Player *
 {
     for (std::map<uint64, BattleGroundPlayer>::iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
     {
+        if (itr->second.LastOnlineTime)
+            continue;
+
         Player *plr = objmgr.GetPlayer(itr->first);
 
         if (!plr)
@@ -532,6 +538,9 @@ void BattleGround::PlaySoundToTeam(uint32 SoundID, uint32 TeamID)
 
     for (std::map<uint64, BattleGroundPlayer>::iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
     {
+        if (itr->second.LastOnlineTime)
+            continue;
+
         Player *plr = objmgr.GetPlayer(itr->first);
 
         if (!plr)
@@ -555,6 +564,9 @@ void BattleGround::CastSpellOnTeam(uint32 SpellID, uint32 TeamID)
 {
     for (std::map<uint64, BattleGroundPlayer>::iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
     {
+        if (itr->second.LastOnlineTime)
+            continue;
+
         Player *plr = objmgr.GetPlayer(itr->first);
 
         if (!plr)
@@ -575,6 +587,9 @@ void BattleGround::YellToAll(Creature* creature, const char* text, uint32 langua
 {
     for (std::map<uint64, BattleGroundPlayer>::iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
     {
+        if (itr->second.LastOnlineTime)
+            continue;
+
         WorldPacket data(SMSG_MESSAGECHAT, 200);
         Player *plr = objmgr.GetPlayer(itr->first);
         if (!plr)
@@ -592,6 +607,9 @@ void BattleGround::RewardHonorToTeam(uint32 Honor, uint32 TeamID)
 {
     for (std::map<uint64, BattleGroundPlayer>::iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
     {
+        if (itr->second.LastOnlineTime)
+            continue;
+
         Player *plr = objmgr.GetPlayer(itr->first);
 
         if (!plr)
@@ -617,6 +635,9 @@ void BattleGround::RewardReputationToTeam(uint32 faction_id, uint32 Reputation, 
 
     for (std::map<uint64, BattleGroundPlayer>::iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
     {
+        if (itr->second.LastOnlineTime)
+            continue;
+
         Player *plr = objmgr.GetPlayer(itr->first);
 
         if (!plr)
@@ -993,13 +1014,10 @@ void BattleGround::RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPac
     }
 
     RemovePlayer(plr, guid);                                // BG subclass specific code
-    DecreaseInvitedCount(team);
 
-    if (plr)
+    if (participant)
     {
-        plr->ClearAfkReports();
-
-        if (participant) // if the player was a match participant, remove auras, calc rating, update queue
+        if (plr)
         {
             if (!team) team = plr->GetTeam();
 
@@ -1023,7 +1041,7 @@ void BattleGround::RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPac
 
                 if (isRated() && GetStatus() == STATUS_IN_PROGRESS)
                 {
-                    //left a rated match while the encounter was in progress, consider as loser
+                    // left a rated match while the encounter was in progress, consider as loser
                     ArenaTeam * winner_arena_team = objmgr.GetArenaTeamById(GetArenaTeamIdForTeam(GetOtherTeam(team)));
                     ArenaTeam * loser_arena_team = objmgr.GetArenaTeamById(GetArenaTeamIdForTeam(team));
                     if (winner_arena_team && loser_arena_team)
@@ -1040,27 +1058,43 @@ void BattleGround::RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPac
 
             // this call is important, because player, when joins to battleground, this method is not called, so it must be called when leaving bg
             plr->RemoveBattleGroundQueueId(bgQueueTypeId);
-
-            //we should update battleground queue, but only if bg isn't ending
-            if (GetQueueType() < MAX_BATTLEGROUND_QUEUES)
-                sBattleGroundMgr.m_BattleGroundQueues[bgQueueTypeId].Update(bgTypeId, GetQueueType());
-
-            Group * group = plr->GetGroup();
-            // remove from raid group if exist
-            if (group && group == GetBgRaid(team))
+        }
+        else
+        {
+            if (isRated() && GetStatus() == STATUS_IN_PROGRESS)
             {
-                if (!group->RemoveMember(guid, 0))               // group was disbanded
-                {
-                    SetBgRaid(team, NULL);
-                    delete group;
-                }
+                // left a rated match while the encounter was in progress, consider as loser
+                ArenaTeam * others_arena_team = objmgr.GetArenaTeamById(GetArenaTeamIdForTeam(GetOtherTeam(team)));
+                ArenaTeam * players_arena_team = objmgr.GetArenaTeamById(GetArenaTeamIdForTeam(team));
+                if (others_arena_team && players_arena_team)
+                    players_arena_team->OfflineMemberLost(guid, others_arena_team->GetRating());
             }
-
-            // Let others know
-            sBattleGroundMgr.BuildPlayerLeftBattleGroundPacket(&data, plr);
-            SendPacketToTeam(team, &data, plr, false);
         }
 
+        // remove from raid group if player is member
+        if (Group *group = GetBgRaid(team))
+        {
+            if (!group->RemoveMember(guid, 0))                      // group was disbanded
+            {
+                SetBgRaid(team, NULL);
+                delete group;
+            }
+        }
+        DecreaseInvitedCount(team);
+        // we should update battleground queue, but only if bg isn't ending
+        if (isBattleGround() && GetStatus() < STATUS_WAIT_LEAVE)
+        {
+            // a player has left the battleground, so there are free slots -> add to queue
+            AddToBGFreeSlotQueue();
+        }
+        // Let others know
+        WorldPacket data;
+        sBattleGroundMgr.BuildPlayerLeftBattleGroundPacket(&data, guid);
+        SendPacketToTeam(team, &data, plr, false);
+    }
+
+    if(plr)
+    {
         // Do next only if found in battleground
         plr->SetBattleGroundId(0);                          // We're not in BG.
         // reset destination bg team
@@ -1080,9 +1114,6 @@ void BattleGround::RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPac
         // return to prevent addition to freeslotqueue
         return;
     }
-
-    // a player exited the battleground, so there are free slots. add to queue
-    this->AddToBGFreeSlotQueue();
 }
 
 // this method is called when no players remains in battleground
@@ -1233,7 +1264,7 @@ void BattleGround::RemoveFromBGFreeSlotQueue()
     // set to be able to re-add if needed
     m_InBGFreeSlotQueue = false;
     // uncomment this code when battlegrounds will work like instances
-    for (std::deque<BattleGround*>::iterator itr = sBattleGroundMgr.BGFreeSlotQueue[m_TypeID].begin(); itr != sBattleGroundMgr.BGFreeSlotQueue[m_TypeID].end(); ++itr)
+    for (std::list<BattleGround*>::iterator itr = sBattleGroundMgr.BGFreeSlotQueue[m_TypeID].begin(); itr != sBattleGroundMgr.BGFreeSlotQueue[m_TypeID].end(); ++itr)
     {
         if ((*itr)->GetInstanceID() == m_InstanceID)
         {

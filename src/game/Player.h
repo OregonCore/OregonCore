@@ -2100,6 +2100,14 @@ class Player : public Unit, public GridObject<Player>
         Player* GetNextRandomRaidMember(float radius);
         PartyResult CanUninviteFromGroup() const;
 
+        // BattleGround Group System
+        void SetBattleGroundRaid(Group *group, int8 subgroup = -1);
+        void RemoveFromBattleGroundRaid();
+        Group * GetOriginalGroup() { return m_originalGroup.getTarget(); }
+        GroupReference& GetOriginalGroupRef() { return m_originalGroup; }
+        uint8 GetOriginalSubGroup() const { return m_originalGroup.getSubGroup(); }
+        void SetOriginalGroup(Group *group, int8 subgroup = -1);
+
         MapReference &GetMapRef() { return m_mapRef; }
 
         // Set map to player and add reference
@@ -2312,6 +2320,7 @@ class Player : public Unit, public GridObject<Player>
 
         // Groups
         GroupReference m_group;
+        GroupReference m_originalGroup;
         Group *m_groupInvite;
         uint32 m_groupUpdateMask;
         uint64 m_auraUpdateMask;

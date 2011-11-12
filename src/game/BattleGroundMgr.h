@@ -32,7 +32,7 @@ class BattleGround;
 //so i propose to change this type to array 1..MAX_BATTLEGROUND_TYPES of sets or maps..
 typedef std::map<uint32, BattleGround*> BattleGroundSet;
 //typedef std::map<uint32, BattleGroundQueue*> BattleGroundQueueSet;
-typedef std::deque<BattleGround*> BGFreeSlotQueueType;
+typedef std::list<BattleGround*> BGFreeSlotQueueType;
 
 #define MAX_BATTLEGROUND_QUEUES 7                           // for level ranges 10-19, 20-29, 30-39, 40-49, 50-59, 60-69, 70+
 
@@ -176,7 +176,7 @@ class BattleGroundMgr
 
         /* Packet Building */
         void BuildPlayerJoinedBattleGroundPacket(WorldPacket *data, Player *plr);
-        void BuildPlayerLeftBattleGroundPacket(WorldPacket *data, Player *plr);
+        void BuildPlayerLeftBattleGroundPacket(WorldPacket *data, const uint64& guid);
         void BuildBattleGroundListPacket(WorldPacket *data, uint64 guid, Player *plr, uint32 bgTypeId);
         void BuildGroupJoinedBattlegroundPacket(WorldPacket *data, uint32 bgTypeId);
         void BuildUpdateWorldStatePacket(WorldPacket *data, uint32 field, uint32 value);
@@ -204,7 +204,7 @@ class BattleGroundMgr
         };
 
         BattleGround * GetBattleGroundTemplate(uint32 bgTypeId);
-        BattleGround * CreateNewBattleGround(uint32 bgTypeId);
+        BattleGround * CreateNewBattleGround(uint32 bgTypeId, uint8 arenaType, bool isRated);
 
         uint32 CreateBattleGround(uint32 bgTypeId, uint32 MinPlayersPerTeam, uint32 MaxPlayersPerTeam, uint32 LevelMin, uint32 LevelMax, char* BattleGroundName, uint32 MapID, float Team1StartLocX, float Team1StartLocY, float Team1StartLocZ, float Team1StartLocO, float Team2StartLocX, float Team2StartLocY, float Team2StartLocZ, float Team2StartLocO);
 

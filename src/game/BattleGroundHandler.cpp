@@ -468,7 +468,6 @@ void WorldSession::HandleBattleGroundPlayerPortOpcode(WorldPacket &recv_data)
                     _player->GetMotionMaster()->MovementExpired();
                     _player->CleanupAfterTaxiFlight();
                 }
-                _player->RemoveFromGroup();
                 queueSlot = _player->GetBattleGroundQueueIndex(bgQueueTypeId);
                 sBattleGroundMgr.BuildBattleGroundStatusPacket(&data, bg, _player->GetTeam(), queueSlot, STATUS_IN_PROGRESS, 0, bg->GetStartTime());
                 _player->GetSession()->SendPacket(&data);

@@ -61,12 +61,6 @@ void WorldSession::HandleGroupInviteOpcode(WorldPacket & recv_data)
     std::string membername;
     recv_data >> membername;
 
-    if (_player->InBattleGround())
-    {
-        SendPartyResult(PARTY_OP_INVITE, membername, PARTY_RESULT_INVITE_RESTRICTED);
-        return;
-    }
-
     // attempt add selected player
 
     // cheating
@@ -115,14 +109,20 @@ void WorldSession::HandleGroupInviteOpcode(WorldPacket & recv_data)
         return;
     }
 
+    Group *group = GetPlayer()->GetGroup();
+    if (group && group->isBGGroup())
+        group = GetPlayer()->GetOriginalGroup();
+
+    Group *group2 = player->GetGroup();
+    if (group2 && group2->isBGGroup())
+        group2 = player->GetOriginalGroup();
+
     // player already in another group or invited
-    if (player->GetGroup() || player->GetGroupInvite())
+    if (group2 || player->GetGroupInvite())
     {
         SendPartyResult(PARTY_OP_INVITE, membername, PARTY_RESULT_ALREADY_IN_GROUP);
         return;
     }
-
-    Group *group = GetPlayer()->GetGroup();
 
     if (group)
     {
@@ -201,12 +201,6 @@ void WorldSession::HandleGroupAcceptOpcode(WorldPacket & /*recv_data*/)
 
     Player* leader = objmgr.GetPlayer(group->GetLeaderGUID());
 
-    if (leader && leader->InBattleGround())
-    {
-        SendPartyResult(PARTY_OP_INVITE, "", PARTY_RESULT_INVITE_RESTRICTED);
-        return;
-    }
-
     // forming a new group, create it
     if (!group->IsCreated())
     {
@@ -216,13 +210,9 @@ void WorldSession::HandleGroupAcceptOpcode(WorldPacket & /*recv_data*/)
         objmgr.AddGroup(group);
     }
 
-    // everything's fine, do it
+    // everything's fine, do it, PLAYER'S GROUP IS SET IN ADDMEMBER!!!
     if (!group->AddMember(GetPlayer()->GetGUID(), GetPlayer()->GetName()))
         return;
-
-    uint8 subgroup = group->GetMemberGroup(GetPlayer()->GetGUID());
-
-    GetPlayer()->SetGroup(group, subgroup);
 
     group->BroadcastGroupUpdate();
 }
@@ -431,7 +421,7 @@ void WorldSession::HandleMinimapPingOpcode(WorldPacket& recv_data)
     data << GetPlayer()->GetGUID();
     data << x;
     data << y;
-    GetPlayer()->GetGroup()->BroadcastPacket(&data, -1, GetPlayer()->GetGUID());
+    GetPlayer()->GetGroup()->BroadcastPacket(&data, true, -1, GetPlayer()->GetGUID());
 }
 
 void WorldSession::HandleRandomRollOpcode(WorldPacket& recv_data)
@@ -456,7 +446,7 @@ void WorldSession::HandleRandomRollOpcode(WorldPacket& recv_data)
     data << roll;
     data << GetPlayer()->GetGUID();
     if (GetPlayer()->GetGroup())
-        GetPlayer()->GetGroup()->BroadcastPacket(&data);
+        GetPlayer()->GetGroup()->BroadcastPacket(&data, false);
     else
         SendPacket(&data);
 }
@@ -598,7 +588,7 @@ void WorldSession::HandleRaidReadyCheckOpcode(WorldPacket & recv_data)
         // everything's fine, do it
         WorldPacket data(MSG_RAID_READY_CHECK, 8);
         data << GetPlayer()->GetGUID();
-        group->BroadcastPacket(&data, -1);
+        group->BroadcastPacket(&data, false, -1);
 
         group->OfflineReadyCheck();
     }
