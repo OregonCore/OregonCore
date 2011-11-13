@@ -1680,7 +1680,19 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
             }
 
             Position pos;
-            m_caster->GetNearPosition(pos, dist, angle);
+   		    switch (cur)
+ 		    {
+ 		    case TARGET_DEST_CASTER_FRONT_LEAP:
+ 		    case TARGET_DEST_CASTER_FRONT_LEFT:
+ 		    case TARGET_DEST_CASTER_BACK_LEFT:
+ 		    case TARGET_DEST_CASTER_BACK_RIGHT:
+ 		    case TARGET_DEST_CASTER_FRONT_RIGHT:
+			 	    m_caster->GetFirstCollisionPosition(pos, dist, angle);
+			 	    break;
+		    default:
+				    m_caster->GetNearPosition(pos, dist, angle);
+				    break;
+		    }
             m_targets.setDst(&pos); // also flag
             break;
         }
@@ -1723,7 +1735,25 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
             }
 
             Position pos;
-            target->GetNearPosition(pos, dist, angle);
+			switch (cur)
+			{
+			case TARGET_DEST_TARGET_FRONT:
+			case TARGET_DEST_TARGET_BACK:
+			case TARGET_DEST_CASTER_BACK_LEFT:
+			case TARGET_DEST_TARGET_LEFT:
+			case TARGET_DEST_TARGET_FRONT_LEFT:
+			case TARGET_DEST_TARGET_BACK_LEFT:
+			case TARGET_DEST_TARGET_BACK_RIGHT:
+			case TARGET_DEST_TARGET_FRONT_RIGHT:
+					{
+					target->GetContactPoint(m_caster, pos.m_positionX, pos.m_positionY, pos.m_positionZ, dist);
+					target->GetFirstCollisionPosition(pos, dist, angle);
+					}
+					break;
+			default:
+					target->GetNearPosition(pos, dist, angle);
+					break;
+			}
             m_targets.setDst(&pos);
             break;
         }
