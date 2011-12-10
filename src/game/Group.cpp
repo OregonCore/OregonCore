@@ -1270,7 +1270,7 @@ void Group::ChangeMembersGroup(const uint64 &guid, const uint8 &group)
         return;
     Player *player = objmgr.GetPlayer(guid);
 
-    if (!player)
+    if (player)
     {
         uint8 prevSubGroup = player->GetSubGroup();
         if (player->GetGroup() == this)
