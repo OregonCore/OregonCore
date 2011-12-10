@@ -316,7 +316,7 @@ PlayerSocial *SocialMgr::LoadFromDB(QueryResult_AutoPtr result, uint32 guid)
         social->m_playerSocialMap[friend_guid] = FriendInfo(flags, note);
 
         // client limit
-        if (social->m_playerSocialMap.size() >= 50)
+        if (social->m_playerSocialMap.size() >= (SOCIALMGR_FRIEND_LIMIT + SOCIALMGR_IGNORE_LIMIT))
             break;
     }
     while (result->NextRow());
