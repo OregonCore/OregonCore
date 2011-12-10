@@ -30,6 +30,9 @@
 
 class Item;
 
+#define GUILD_RANKS_MIN_COUNT   5
+#define GUILD_RANKS_MAX_COUNT   10
+
 enum GuildDefaultRanks
 {
     GR_GUILDMASTER  = 0,
@@ -271,6 +274,7 @@ class Guild
         ~Guild();
 
         bool Create(Player* leader, std::string gname);
+        void CreateDefaultGuildRanks(int locale_idx);
         void Disband();
 
         typedef std::map<uint32, MemberSlot> MemberList;
@@ -307,9 +311,10 @@ class Guild
         uint32 GetMemberSize() const { return members.size(); }
         uint32 GetAccountsNumber() const { return m_accountsNumber; }
 
-        bool LoadGuildFromDB(uint32 GuildId);
-        bool LoadRanksFromDB(uint32 GuildId);
-        bool LoadMembersFromDB(uint32 GuildId);
+        bool LoadGuildFromDB(QueryResult_AutoPtr guildDataResult);
+        bool CheckGuildStructure();
+        bool LoadRanksFromDB(QueryResult_AutoPtr guildRanksResult);
+        bool LoadMembersFromDB(QueryResult_AutoPtr guildMembersResult);
 
         bool FillPlayerData(uint64 guid, MemberSlot* memslot);
         void LoadPlayerStatsByGuid(uint64 guid);
@@ -385,9 +390,9 @@ class Guild
         void   SetGuildBankTabText(uint8 TabId, std::string text);
         void   SendGuildBankTabText(WorldSession *session, uint8 TabId);
         void   SetGuildBankTabInfo(uint8 TabId, std::string m_Name, std::string icon);
+        const  uint8  GetPurchasedTabs() const { return m_PurchasedTabs; }
         void   CreateBankRightForTab(uint32 rankid, uint8 TabId);
         const  GuildBankTab *GetBankTab(uint8 index) { if (index >= m_TabListMap.size()) return NULL; return m_TabListMap[index]; }
-        const  uint8 GetPurchasedTabs() const { return purchased_tabs; }
         uint32 GetBankRights(uint32 rankId, uint8 TabId) const;
         bool   IsMemberHaveRights(uint32 LowGuid, uint8 TabId,uint32 rights) const;
         bool   CanMemberViewTab(uint32 LowGuid, uint8 TabId) const;
@@ -409,7 +414,7 @@ class Guild
         uint32 GetBankMoneyPerDay(uint32 rankId);
         uint32 GetBankSlotPerDay(uint32 rankId, uint8 TabId);
         // rights per day
-        void   LoadBankRightsFromDB(uint32 GuildId);
+        bool   LoadBankRightsFromDB(QueryResult_AutoPtr guildBankTabRightsResult);
         // logs
         void   LoadGuildBankEventLogFromDB();
         void   UnloadGuildBankEventLog();
@@ -451,11 +456,15 @@ class Guild
         GuildBankEventLog m_GuildBankEventLog_Money;
         GuildBankEventLog m_GuildBankEventLog_Item[GUILD_BANK_MAX_TABS];
 
+        uint32 m_GuildEventLogNextGuid;
+        uint32 m_GuildBankEventLogNextGuid_Money;
+        uint32 m_GuildBankEventLogNextGuid_Item[GUILD_BANK_MAX_TABS];
+
         bool m_bankloaded;
         bool m_eventlogloaded;
         uint32 m_onlinemembers;
         uint64 m_GuildBankMoney;
-        uint8 purchased_tabs;
+        uint8 m_PurchasedTabs;
 
         uint32 LogMaxGuid;
         uint32 GuildEventlogMaxGuid;
