@@ -5450,7 +5450,7 @@ uint16 Player::GetBaseSkillValue(uint32 skill) const
         return 0;
 
     SkillStatusMap::const_iterator itr = mSkillStatus.find(skill);
-    if(itr == mSkillStatus.end() || itr->second.uState == SKILL_DELETED)
+    if (itr == mSkillStatus.end() || itr->second.uState == SKILL_DELETED)
         return 0;
 
     int32 result = int32(SKILL_VALUE(GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(itr->second.pos))));
@@ -14886,7 +14886,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
         RelocateToHomebind();
     }
 
-    // fix crash (because of if(Map *map = _FindMap(instanceId)) in MapInstanced::CreateInstance)
+    // fix crash (because of if (Map *map = _FindMap(instanceId)) in MapInstanced::CreateInstance)
     if (instanceId)
         if (InstanceSave * save = GetInstanceSave(mapId))
             if (save->GetInstanceId() != instanceId)

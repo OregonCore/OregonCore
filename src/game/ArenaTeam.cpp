@@ -199,7 +199,7 @@ bool ArenaTeam::LoadMembersFromDB(QueryResult_AutoPtr arenaTeamMembersResult)
         // prevent crash if db records are broken, when all members in result are already processed and current team hasn't got any members
         if (!fields)
             break;
-		uint32 arenaTeamId        = fields[0].GetUInt32();
+        uint32 arenaTeamId        = fields[0].GetUInt32();
         if (arenaTeamId < m_TeamId)
         {
             // there is in table arena_team_member record which doesn't have arenateamid in arena_team table, report error

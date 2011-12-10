@@ -773,10 +773,10 @@ uint32 Unit::DealDamage(Unit *pVictim, uint32 damage, CleanDamage const* cleanDa
     if (damage || (cleanDamage && cleanDamage->damage))
     {
         if (spellProto)
-    	{
+        {
             if (!(spellProto->AttributesEx4 & SPELL_ATTR_EX4_DAMAGE_DOESNT_BREAK_AURAS))
                 pVictim->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_DAMAGE, spellProto->Id);
-    	}
+        }
         else
             pVictim->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_DAMAGE, 0);
 
@@ -7067,7 +7067,7 @@ void Unit::SetMinion(Minion *minion, bool apply)
             for (ControlList::iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)
             {
                 // do not use this check, creature do not have charm guid
-                //if(GetCharmGUID() == (*itr)->GetGUID())
+                //if (GetCharmGUID() == (*itr)->GetGUID())
                 if (GetGUID() == (*itr)->GetCharmerGUID())
                     continue;
 
@@ -8202,7 +8202,7 @@ bool Unit::IsImmunedToSpellEffect(SpellEntry const* spellInfo, uint32 index) con
     {
         SpellImmuneList const& list = m_spellImmune[IMMUNITY_STATE];
         for(SpellImmuneList::const_iterator itr = list.begin(); itr != list.end(); ++itr)
-            if(itr->type == aura)
+            if (itr->type == aura)
                 return true;
     }
 

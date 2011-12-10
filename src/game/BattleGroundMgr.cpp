@@ -177,10 +177,10 @@ void BattleGroundQueue::AddPlayer(Player *plr, GroupQueueInfo *ginfo)
     // add the pinfo to ginfo's list
     ginfo->Players[plr->GetGUID()]  = &info;
 
-    if(sWorld.getConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ENABLE))
+    if (sWorld.getConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ENABLE))
     {
         //announce only once in a time
-        if(!sWorld.getConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_PLAYERONLY) && m_QueuedPlayers[queue_id].size() % 5 != 0) return;
+        if (!sWorld.getConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_PLAYERONLY) && m_QueuedPlayers[queue_id].size() % 5 != 0) return;
         BattleGround * bg = sBattleGroundMgr.GetBattleGroundTemplate(ginfo->BgTypeId);
         if (!bg) return;
 
@@ -190,7 +190,7 @@ void BattleGroundQueue::AddPlayer(Player *plr, GroupQueueInfo *ginfo)
         uint32 q_max_level = Player::GetMaxLevelForBattleGroundQueueId(queue_id);
 
         // replace hardcoded max level by player max level for nice output
-        if(q_max_level > sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL))
+        if (q_max_level > sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL))
             q_max_level = sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL);
 
         int32 MinPlayers = bg->GetMinPlayersPerTeam();
@@ -204,7 +204,7 @@ void BattleGroundQueue::AddPlayer(Player *plr, GroupQueueInfo *ginfo)
             Player *_player = objmgr.GetPlayer((uint64)itr->first);
             if (_player)
             {
-                if(_player->GetTeam() == ALLIANCE)
+                if (_player->GetTeam() == ALLIANCE)
                     qAlliance++;
                 else
                     qHorde++;
@@ -212,7 +212,7 @@ void BattleGroundQueue::AddPlayer(Player *plr, GroupQueueInfo *ginfo)
         }
 
         // Show queue status to player only (when joining queue)
-        if(sWorld.getConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_PLAYERONLY))
+        if (sWorld.getConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_PLAYERONLY))
         {
             uint32 needAlliance = (MinPlayers < qAlliance) ? 0 : MinPlayers - qAlliance;
             uint32 needHorde = (MinPlayers < qHorde) ? 0 : MinPlayers - qHorde;

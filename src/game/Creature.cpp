@@ -240,8 +240,8 @@ void Creature::RemoveCorpse(bool setSpawnTime)
     UpdateObjectVisibility();
     loot.clear();
     // Should get removed later, just keep "compatibility" with scripts
-	if(setSpawnTime)
-		m_respawnTime = time(NULL) + m_respawnDelay;
+    if (setSpawnTime)
+        m_respawnTime = time(NULL) + m_respawnDelay;
 
     float x,y,z,o;
     GetRespawnCoord(x, y, z, &o);
@@ -1354,7 +1354,7 @@ void Creature::setDeathState(DeathState s)
     if ((s == JUST_DIED && !m_isDeadByDefault)||(s == JUST_ALIVED && m_isDeadByDefault))
     {
         m_corpseRemoveTime = time(NULL) + m_corpseDelay;
-		m_respawnTime = time(NULL) + m_respawnDelay + m_corpseDelay;
+        m_respawnTime = time(NULL) + m_respawnDelay + m_corpseDelay;
 
         // always save boss respawn time at death to prevent crash cheating
         if (sWorld.getConfig(CONFIG_SAVE_RESPAWN_TIME_IMMEDIATELY) || isWorldBoss())
@@ -1798,7 +1798,7 @@ void Creature::SaveRespawnTime()
     if (isPet() || !m_DBTableGuid || m_creatureData && !m_creatureData->dbData)
         return;
 
-	objmgr.SaveCreatureRespawnTime(m_DBTableGuid,GetInstanceId(),m_respawnTime);
+    objmgr.SaveCreatureRespawnTime(m_DBTableGuid,GetInstanceId(),m_respawnTime);
 }
 
 bool Creature::IsOutOfThreatArea(Unit* pVictim) const
@@ -2049,10 +2049,10 @@ void Creature::AllLootRemovedFromCorpse()
     if (!HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE))
     {
         time_t now = time(NULL);
-		if(m_corpseRemoveTime <= now)
-			return;
+        if (m_corpseRemoveTime <= now)
+            return;
 
-		float decayRate;
+        float decayRate;
         CreatureInfo const *cinfo = GetCreatureInfo();
 
         // corpse was not skinnable -> apply corpse looted timer

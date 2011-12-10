@@ -1680,19 +1680,19 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
             }
 
             Position pos;
-   		    switch (cur)
- 		    {
- 		    case TARGET_DEST_CASTER_FRONT_LEAP:
- 		    case TARGET_DEST_CASTER_FRONT_LEFT:
- 		    case TARGET_DEST_CASTER_BACK_LEFT:
- 		    case TARGET_DEST_CASTER_BACK_RIGHT:
- 		    case TARGET_DEST_CASTER_FRONT_RIGHT:
-			 	    m_caster->GetFirstCollisionPosition(pos, dist, angle);
-			 	    break;
-		    default:
-				    m_caster->GetNearPosition(pos, dist, angle);
-				    break;
-		    }
+               switch (cur)
+             {
+             case TARGET_DEST_CASTER_FRONT_LEAP:
+             case TARGET_DEST_CASTER_FRONT_LEFT:
+             case TARGET_DEST_CASTER_BACK_LEFT:
+             case TARGET_DEST_CASTER_BACK_RIGHT:
+             case TARGET_DEST_CASTER_FRONT_RIGHT:
+                     m_caster->GetFirstCollisionPosition(pos, dist, angle);
+                     break;
+            default:
+                    m_caster->GetNearPosition(pos, dist, angle);
+                    break;
+            }
             m_targets.setDst(&pos); // also flag
             break;
         }
@@ -1735,25 +1735,25 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
             }
 
             Position pos;
-			switch (cur)
-			{
-			case TARGET_DEST_TARGET_FRONT:
-			case TARGET_DEST_TARGET_BACK:
-			case TARGET_DEST_CASTER_BACK_LEFT:
-			case TARGET_DEST_TARGET_LEFT:
-			case TARGET_DEST_TARGET_FRONT_LEFT:
-			case TARGET_DEST_TARGET_BACK_LEFT:
-			case TARGET_DEST_TARGET_BACK_RIGHT:
-			case TARGET_DEST_TARGET_FRONT_RIGHT:
-					{
-					target->GetContactPoint(m_caster, pos.m_positionX, pos.m_positionY, pos.m_positionZ, dist);
-					target->GetFirstCollisionPosition(pos, dist, angle);
-					}
-					break;
-			default:
-					target->GetNearPosition(pos, dist, angle);
-					break;
-			}
+            switch (cur)
+            {
+            case TARGET_DEST_TARGET_FRONT:
+            case TARGET_DEST_TARGET_BACK:
+            case TARGET_DEST_CASTER_BACK_LEFT:
+            case TARGET_DEST_TARGET_LEFT:
+            case TARGET_DEST_TARGET_FRONT_LEFT:
+            case TARGET_DEST_TARGET_BACK_LEFT:
+            case TARGET_DEST_TARGET_BACK_RIGHT:
+            case TARGET_DEST_TARGET_FRONT_RIGHT:
+                    {
+                    target->GetContactPoint(m_caster, pos.m_positionX, pos.m_positionY, pos.m_positionZ, dist);
+                    target->GetFirstCollisionPosition(pos, dist, angle);
+                    }
+                    break;
+            default:
+                    target->GetNearPosition(pos, dist, angle);
+                    break;
+            }
             m_targets.setDst(&pos);
             break;
         }
@@ -2170,7 +2170,7 @@ void Spell::cancel()
         {
             for (std::list<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin();ihit != m_UniqueTargetInfo.end();++ihit)
             {
-                if(ihit->deleted)
+                if (ihit->deleted)
                     continue;
 
                 if (ihit->missCondition == SPELL_MISS_NONE)
@@ -4588,13 +4588,13 @@ uint8 Spell::CheckRange(bool strict)
         if (dist < min_range)
             return SPELL_FAILED_TOO_CLOSE;
     }
-	if (m_spellInfo->Id == 33395) // Elemental Frost Bolt.
-	{
+    if (m_spellInfo->Id == 33395) // Elemental Frost Bolt.
+    {
         if (!m_caster->IsWithinCombatRange(target, max_range)) // Check if target it to far.
             return SPELL_FAILED_OUT_OF_RANGE;              
-	}
+    }
 
-	return 0; 
+    return 0; 
 }
 
 uint8 Spell::CheckPower()

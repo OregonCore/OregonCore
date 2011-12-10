@@ -1093,7 +1093,7 @@ void BattleGround::RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPac
         SendPacketToTeam(team, &data, plr, false);
     }
 
-    if(plr)
+    if (plr)
     {
         // Do next only if found in battleground
         plr->SetBattleGroundId(0);                          // We're not in BG.

@@ -2617,7 +2617,7 @@ void ObjectMgr::LoadGuilds()
             !newGuild->LoadBankRightsFromDB(guildBankTabRightsResult) ||
             !newGuild->CheckGuildStructure()
             )
-		{
+        {
             newGuild->Disband();
             delete newGuild;
             continue;

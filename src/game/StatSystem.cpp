@@ -403,7 +403,7 @@ void Player::CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, fl
         weapon_maxdamage += GetAmmoDPS() * att_speed;
     }
 
-    if(attType == BASE_ATTACK)
+    if (attType == BASE_ATTACK)
     {
         int32 speed_mod = GetTotalAuraModifier(SPELL_AURA_MOD_ATTACKSPEED);
         base_pct *= 100.0f/(100.0f+float(speed_mod/2));
