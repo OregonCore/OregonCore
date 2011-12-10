@@ -43,6 +43,7 @@ Guild::Guild()
     m_BorderStyle = 0;
     m_BorderColor = 0;
     m_BackgroundColor = 0;
+    m_accountsNumber = 0;
 
     m_CreatedYear = 0;
     m_CreatedMonth = 0;
@@ -147,6 +148,9 @@ bool Guild::AddMember(uint64 plGuid, uint32 plRank)
         pl->SetRank(newmember.RankId);
         pl->SetGuildIdInvited(0);
     }
+
+    UpdateAccountsNumber();
+
     return true;
 }
 
@@ -321,7 +325,7 @@ bool Guild::LoadMembersFromDB(uint32 GuildId)
             newmember.BankResetTimeTab[i] = fields[6+(2*i)].GetUInt32();
             newmember.BankRemSlotsTab[i]  = fields[7+(2*i)].GetUInt32();
         }
-        newmember.LogoutTime           = fields[18].GetUInt64();
+        newmember.LogoutTime            = fields[18].GetUInt64();
         members[GUID_LOPART(guid)]      = newmember;
 
     }while (result->NextRow());
@@ -329,11 +333,14 @@ bool Guild::LoadMembersFromDB(uint32 GuildId)
     if (members.empty())
         return false;
 
+    UpdateAccountsNumber();
+
     return true;
 }
 
 bool Guild::FillPlayerData(uint64 guid, MemberSlot* memslot)
 {
+    int32 accountId;
     std::string plName;
     uint32 plLevel;
     uint32 plClass;
@@ -342,6 +349,7 @@ bool Guild::FillPlayerData(uint64 guid, MemberSlot* memslot)
     Player* pl = objmgr.GetPlayer(guid);
     if (pl)
     {
+        accountId = pl->GetSession()->GetAccountId();
         plName  = pl->GetName();
         plLevel = pl->getLevel();
         plClass = pl->getClass();
@@ -773,6 +781,20 @@ void Guild::UpdateLogoutTime(uint64 guid)
         UnloadGuildBank();
         UnloadGuildEventlog();
     }
+}
+
+/**
+ * Updates the number of accounts that are in the guild
+ * A player may have many characters in the guild, but with the same account
+ */
+void Guild::UpdateAccountsNumber()
+{
+    // We use a set to be sure each element will be unique
+    std::set<uint32> accountsIdSet;
+    for (MemberList::const_iterator itr = members.begin(); itr != members.end(); ++itr)
+        accountsIdSet.insert(itr->second.accountId);
+
+    m_accountsNumber = accountsIdSet.size();
 }
 
 // *************************************************

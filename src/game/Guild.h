@@ -231,6 +231,7 @@ typedef std::vector<GuildItemPosCount> GuildItemPosCountVec;
 
 struct MemberSlot
 {
+    int32 accountId;
     std::string Name;
     uint32 RankId;
     uint8 Level;
@@ -304,6 +305,7 @@ class Guild
         void SetEmblem(uint32 m_EmblemStyle, uint32 m_EmblemColor, uint32 m_BorderStyle, uint32 m_BorderColor, uint32 m_BackgroundColor);
 
         uint32 GetMemberSize() const { return members.size(); }
+        uint32 GetAccountsNumber() const { return m_accountsNumber; }
 
         bool LoadGuildFromDB(uint32 GuildId);
         bool LoadRanksFromDB(uint32 GuildId);
@@ -433,6 +435,7 @@ class Guild
         uint32 m_BorderStyle;
         uint32 m_BorderColor;
         uint32 m_BackgroundColor;
+        uint32 m_accountsNumber;
 
         RankList m_Ranks;
 
@@ -457,6 +460,7 @@ class Guild
         uint32 LogMaxGuid;
         uint32 GuildEventlogMaxGuid;
     private:
+        void UpdateAccountsNumber();
         // internal common parts for CanStore/StoreItem functions
         void AppendDisplayGuildBankSlot(WorldPacket& data, GuildBankTab const *tab, int32 slot);
         uint8 _CanStoreItem_InSpecificSlot(uint8 tab, uint8 slot, GuildItemPosCountVec& dest, uint32& count, bool swap, Item *pSrcItem) const;
