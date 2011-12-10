@@ -38,27 +38,27 @@ enum Spells
     // High Priest Thekal - Humanoid
     SPELL_MORTALCLEAVE      =   22859,
     SPELL_RESURRECT         =   24173,
-    SPELL_SILENCE           =   23207,
+    SPELL_SILENCE           =   22666,
 
     // High Priest Thekal - Tiger
-    SPELL_FRENZY            =   23342,
+    SPELL_FRENZY            =   8269,
     SPELL_FORCEPUNCH        =   24189,
-    SPELL_CHARGE            =   24408,
-    SPELL_ENRAGE            =   23537,
+    SPELL_CHARGE            =   24193,
+    SPELL_ENRAGE            =   8269,
     SPELL_SUMMONTIGERS      =   24183,
     SPELL_TIGER_FORM        =   24169,
                           
 
     // Zealot Lor'Khan Spells
-    SPELL_SHIELD            =   25020,
+    SPELL_SHIELD            =   20545,
     SPELL_BLOODLUST         =   24185,
     SPELL_GREATERHEAL       =   24208,
-    SPELL_DISARM            =   22691,
+    SPELL_DISARM            =   6713,
 
     // Zealot Zath Spells
     SPELL_SWEEPINGSTRIKES   =   18765,
-    SPELL_SINISTERSTRIKE    =   15667,
-    SPELL_GOUGE             =   24698,
+    SPELL_SINISTERSTRIKE    =   15581,
+    SPELL_GOUGE             =   12540,
     SPELL_KICK              =   15614,
     SPELL_BLIND             =   21060
 };

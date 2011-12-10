@@ -38,12 +38,12 @@ enum Texts
 
 enum Spells
 {
-    SPELL_CHARGE          = 24315,
-    SPELL_CLEAVE          = 20691,
+    SPELL_CHARGE          = 24408,
+    SPELL_CLEAVE          = 7160,
     SPELL_FEAR            = 29321,
-    SPELL_WHIRLWIND       = 24236,
-    SPELL_MORTAL_STRIKE   = 24573,
-    SPELL_ENRAGE          = 23537,
+    SPELL_WHIRLWIND       = 15589,
+    SPELL_MORTAL_STRIKE   = 16856,
+    SPELL_ENRAGE          = 24318,
     SPELL_GAZE            = 24314,
     SPELL_LEVEL_UP        = 24312,
     SPELL_MOUNT           = 23243,
