@@ -324,21 +324,20 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     }
 
     /* process position-change */
+    recv_data.put<uint32>(5, getMSTime());                  // offset flags(4) + unk(1)
+    WorldPacket data(opcode, mover->GetPackGUID().size() + recv_data.size());
+    data << mover->GetPackGUID();
+    data.append(recv_data.contents(), recv_data.size());
+    if (mover->isCharmed() && mover->GetCharmer())
+        mover->GetCharmer()->SendMessageToSet(&data, false);
+    else
+        mover->SendMessageToSet(&data, false);
+
+    mover->m_movementInfo = movementInfo;
+    mover->SetPosition(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation());
 
     if (plMover)                                            // nothing is charmed, or player charmed
     {
-        recv_data.put<uint32>(5, getMSTime());                  // offset flags(4) + unk(1)
-        WorldPacket data(opcode, mover->GetPackGUID().size() + recv_data.size());
-        data << mover->GetPackGUID();
-        data.append(recv_data.contents(), recv_data.size());
-        if (plMover->isCharmed())
-            plMover->GetCharmer()->SendMessageToSet(&data, false);
-        else
-            mover->SendMessageToSet(&data, false);
-
-        plMover->m_movementInfo = movementInfo;
-        plMover->SetPosition(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation());
-
         if (opcode == MSG_MOVE_FALL_LAND || plMover->m_lastFallTime > movementInfo.GetFallTime() || plMover->m_lastFallZ < movementInfo.GetPos()->GetPositionZ())
             plMover->SetFallInformation(movementInfo.GetFallTime(), movementInfo.GetPos()->GetPositionZ());
 
@@ -349,8 +348,6 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         if (movementInfo.GetPos()->GetPositionZ() < -500.0f)
             plMover->HandleFallUnderMap();
     }
-    else                                                    // creature charmed
-        mover->GetMap()->CreatureRelocation(mover->ToCreature(), movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ(), movementInfo.GetPos()->GetOrientation());
 }
 
 void WorldSession::HandleForceSpeedChangeAck(WorldPacket &recv_data)

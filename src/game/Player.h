@@ -1625,7 +1625,7 @@ class Player : public Unit, public GridObject<Player>
         void SendResetInstanceFailed(uint32 reason, uint32 MapId);
         void SendResetFailedNotify(uint32 mapid);
 
-        bool SetPosition(float x, float y, float z, float orientation, bool teleport = false);
+        virtual bool SetPosition(float x, float y, float z, float orientation, bool teleport = false);
         bool SetPosition(const Position &pos, bool teleport = false) { return SetPosition(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation(), teleport); }
 
         void UpdateUnderwaterState(Map * m, float x, float y, float z);
@@ -1955,7 +1955,6 @@ class Player : public Unit, public GridObject<Player>
         /*********************************************************/
         /***                 VARIOUS SYSTEMS                   ***/
         /*********************************************************/
-        MovementInfo m_movementInfo;
         uint32 m_lastFallTime;
         float  m_lastFallZ;
         Unit *m_mover;

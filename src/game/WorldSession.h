@@ -41,7 +41,6 @@ class WorldSocket;
 class QueryResult;
 class LoginQueryHolder;
 class CharacterHandler;
-class MovementInfo;
 
 struct OpcodeHandler;
 

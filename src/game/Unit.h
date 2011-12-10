@@ -588,130 +588,6 @@ enum NPCFlags
     UNIT_NPC_FLAG_OUTDOORPVP            = 0x20000000,       // custom flag for outdoor pvp creatures
 };
 
-enum MovementFlags
-{
-    MOVEFLAG_NONE               = 0x00000000,
-    MOVEFLAG_FORWARD            = 0x00000001,
-    MOVEFLAG_BACKWARD           = 0x00000002,
-    MOVEFLAG_STRAFE_LEFT        = 0x00000004,
-    MOVEFLAG_STRAFE_RIGHT       = 0x00000008,
-    MOVEFLAG_TURN_LEFT          = 0x00000010,
-    MOVEFLAG_TURN_RIGHT         = 0x00000020,
-    MOVEFLAG_PITCH_UP           = 0x00000040,
-    MOVEFLAG_PITCH_DOWN         = 0x00000080,
-    MOVEFLAG_WALK_MODE          = 0x00000100,               // Walking
-    MOVEFLAG_ONTRANSPORT        = 0x00000200,               // Used for flying on some creatures
-    MOVEFLAG_LEVITATING         = 0x00000400,
-    MOVEFLAG_ROOT               = 0x00000800,
-    MOVEFLAG_FALLING            = 0x00001000,
-    MOVEFLAG_FALLINGFAR         = 0x00004000,
-    MOVEFLAG_SWIMMING           = 0x00200000,               // appears with fly flag also
-    MOVEFLAG_ASCENDING          = 0x00400000,               // swim up also
-    MOVEFLAG_CAN_FLY            = 0x00800000,
-    MOVEFLAG_FLYING             = 0x01000000,
-    MOVEFLAG_FLYING2            = 0x02000000,               // Actual flying mode
-    MOVEFLAG_SPLINE_ELEVATION   = 0x04000000,               // used for flight paths
-    MOVEFLAG_SPLINE_ENABLED     = 0x08000000,               // used for flight paths
-    MOVEFLAG_WATERWALKING       = 0x10000000,               // prevent unit from falling through water
-    MOVEFLAG_SAFE_FALL          = 0x20000000,               // Feather Fall (spell)
-    MOVEFLAG_HOVER              = 0x40000000,
-
-    MOVEFLAG_MOVING         =
-        MOVEFLAG_FORWARD |MOVEFLAG_BACKWARD  |MOVEFLAG_STRAFE_LEFT |MOVEFLAG_STRAFE_RIGHT|
-        MOVEFLAG_PITCH_UP|MOVEFLAG_PITCH_DOWN|MOVEFLAG_ROOT        |
-        MOVEFLAG_FALLING |MOVEFLAG_FALLINGFAR|MOVEFLAG_ASCENDING   |
-        MOVEFLAG_FLYING2 |MOVEFLAG_SPLINE_ELEVATION,
-    MOVEFLAG_TURNING        =
-        MOVEFLAG_TURN_LEFT | MOVEFLAG_TURN_RIGHT,
-};
-
-// used in SMSG_MONSTER_MOVE
-// only some values known as correct for 2.4.3
-enum SplineFlags
-{
-    SPLINEFLAG_NONE           = 0x00000000,
-    SPLINEFLAG_JUMP           = 0x00000008,
-    SPLINEFLAG_WALKMODE       = 0x00000100,
-    SPLINEFLAG_FLYING         = 0x00000200,
-};
-
-class MovementInfo
-{
-    public:
-        MovementInfo() : moveFlags(MOVEFLAG_NONE), moveFlags2(0), time(0), t_guid(0),
-            t_time(0), s_pitch(0.0f), fallTime(0), j_velocity(0.0f), j_sinAngle(0.0f),
-            j_cosAngle(0.0f), j_xyspeed(0.0f), u_unk1(0.0f) {}
-
-        // Read/Write methods
-        void Read(ByteBuffer &data);
-        void Write(ByteBuffer &data) const;
-
-        // Movement flags manipulations
-        void AddMovementFlag(MovementFlags f) { moveFlags |= f; }
-        void RemoveMovementFlag(MovementFlags f) { moveFlags &= ~f; }
-        bool HasMovementFlag(MovementFlags f) const { return moveFlags & f; }
-        MovementFlags GetMovementFlags() const { return MovementFlags(moveFlags); }
-        void SetMovementFlags(MovementFlags f) { moveFlags = f; }
-
-        // Position manipulations
-        Position const *GetPos() const { return &pos; }
-        void SetTransportData(uint64 guid, float x, float y, float z, float o, uint32 time)
-        {
-            t_guid = guid;
-            t_pos.m_positionX = x;
-            t_pos.m_positionY = y;
-            t_pos.m_positionZ = z;
-            t_pos.m_orientation = o;
-            t_time = time;
-        }
-        void ClearTransportData()
-        {
-            t_guid = 0;
-            t_pos.m_positionX = 0.0f;
-            t_pos.m_positionY = 0.0f;
-            t_pos.m_positionZ = 0.0f;
-            t_pos.m_orientation = 0.0f;
-            t_time = 0;
-        }
-        uint64 const& GetTransportGuid() const { return t_guid; }
-        Position const *GetTransportPos() const { return &t_pos; }
-        uint32 GetTransportTime() const { return t_time; }
-        uint32 GetFallTime() const { return fallTime; }
-        void ChangePosition(float x, float y, float z, float o) { pos.m_positionX = x; pos.m_positionY = y; pos.m_positionZ = z; pos.m_orientation = o; }
-        void UpdateTime(uint32 _time) { time = _time; }
-
-    //private:
-        // common
-        uint32  moveFlags;                                  // see enum MovementFlags
-        uint8   moveFlags2;
-        uint32  time;
-        Position pos;
-        // transport
-        uint64  t_guid;
-        Position t_pos;
-        uint32  t_time;
-        // swimming and unknown
-        float   s_pitch;
-        // last fall time
-        uint32  fallTime;
-        // jumping
-        float   j_velocity, j_sinAngle, j_cosAngle, j_xyspeed;
-        // spline
-        float   u_unk1;
-};
-
-inline ByteBuffer& operator<< (ByteBuffer& buf, MovementInfo const& mi)
-{
-    mi.Write(buf);
-    return buf;
-}
-
-inline ByteBuffer& operator>> (ByteBuffer& buf, MovementInfo& mi)
-{
-    mi.Read(buf);
-    return buf;
-}
-
 enum DiminishingLevels
 {
     DIMINISHING_LEVEL_1             = 0,
@@ -1237,6 +1113,9 @@ class Unit : public WorldObject
         void SendSpellNonMeleeDamageLog(SpellNonMeleeDamage *log);
         void SendSpellNonMeleeDamageLog(Unit *target,uint32 SpellID,uint32 Damage, SpellSchoolMask damageSchoolMask,uint32 AbsorbedDamage, uint32 Resist,bool PhysicalDamage, uint32 Blocked, bool CriticalHit = false);
         void SendSpellMiss(Unit *target, uint32 spellID, SpellMissInfo missInfo);
+
+        virtual bool SetPosition(float x, float y, float z, float orientation, bool teleport = false);
+        bool SetPosition(const Position &pos, bool teleport = false) { return SetPosition(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation(), teleport); }
 
         void NearTeleportTo(float x, float y, float z, float orientation, bool casting = false);
 
