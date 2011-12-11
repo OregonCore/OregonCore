@@ -1,4 +1,6 @@
 /* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * Copyright (C) 2010-2011 Oregon <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,8 +18,8 @@
 
 /* ScriptData
 SDName: Nagrand
-SD%Complete: 90
-SDComment: Quest support: 9849, 9918, 9874, 9991, 10107, 10108, 10044, 10172, 10646, 10085, 10987, 9868. TextId's unknown for altruis_the_sufferer and greatmother_geyah (npc_text)
+SD%Complete: 95
+SDComment: Quest support: 9849, 9918, 9874, 9991, 10107, 10108, 10044, 10172, 10646, 10085, 10987, 9868, 9948. TextId's unknown for altruis_the_sufferer and greatmother_geyah (npc_text)
 SDCategory: Nagrand
 EndScriptData */
 
@@ -31,6 +33,8 @@ npc_lantresor_of_the_blade
 npc_maghar_captive
 npc_creditmarker_visit_with_ancestors
 mob_sparrowhawk
+go_maghar_prison
+npc_maghar_prisoner
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -822,9 +826,232 @@ CreatureAI* GetAI_mob_sparrowhawk(Creature* pCreature)
     return new mob_sparrowhawkAI (pCreature);
 }
 
-/*####
-#
-####*/
+/*#####
+## go_maghar_prison & npc_maghar_prisoner
+#####*/
+
+enum
+{
+    QUEST_SURVIVORS       = 9948,
+    NPC_MPRISONER         = 18428,
+
+    SAY_MAG_PRISONER1     = -1900148,
+    SAY_MAG_PRISONER2     = -1900149,
+    SAY_MAG_PRISONER3     = -1900150,
+    SAY_MAG_PRISONER4     = -1900151,
+    SAYT_MAG_PRISONER1    = -1900152,
+    SAYT_MAG_PRISONER2    = -1900153,
+    SAYT_MAG_PRISONER3    = -1900154,
+    SAYT_MAG_PRISONER4    = -1900155
+};
+
+struct npc_maghar_prisonerAI : public npc_escortAI
+{
+    npc_maghar_prisonerAI(Creature *pCreature) : npc_escortAI(pCreature) {}
+
+    uint64 uiPlayerGUID;
+
+    void Reset()
+    {
+        uiPlayerGUID = 0;
+    }
+
+    void MoveInLineOfSight(Unit* pWho)
+    {
+        if (pWho->GetTypeId() == TYPEID_PLAYER && ((Player *)pWho)->GetReputationRank(941) >= REP_FRIENDLY && me->IsWithinDistInMap(((Player *)pWho), 20))
+        {
+            if (uiPlayerGUID == pWho->GetGUID())
+            {
+                return;
+            }
+            else uiPlayerGUID = 0;
+
+            switch (urand(0,3))
+            {
+                case 0:
+                    DoScriptText(SAY_MAG_PRISONER1, me);
+                    break;
+                case 1:
+                    DoScriptText(SAY_MAG_PRISONER2, me);
+                    break;
+                case 2:
+                    DoScriptText(SAY_MAG_PRISONER3, me);
+                    break;
+                case 3:
+                    DoScriptText(SAY_MAG_PRISONER4, me);
+                    break;
+            }
+            uiPlayerGUID = pWho->GetGUID();
+        }
+    }
+
+    uint32 WaypointID()
+    {
+        switch (me->GetGUIDLow())
+        {
+            case 65828:
+                return 1;
+                break;
+            case 65826:
+                return 1;
+                break;
+            case 65827:
+                return 1;
+                break;
+            case 65825:
+                return 1;
+                break;
+            case 65829:
+                return 1;
+                break;
+            case 65823:
+                return 2;
+                break;
+            case 65824:
+                return 2;
+                break;
+            case 65821:
+                return 2;
+                break;
+            case 65815:
+                return 2;
+                break;
+            case 65814:
+                return 3;
+                break;
+            case 65813:
+                return 4;
+                break;
+            case 65819:
+                return 5;
+                break;
+            case 65820:
+                return 5;
+                break;
+            case 65817:
+                return 6;
+                break;
+            case 65822:
+                return 6;
+                break;
+            case 65816:
+                return 6;
+                break;
+            case 65831:
+                return 7;
+                break;
+            case 65832:
+                return 7;
+                break;
+            case 65830:
+                return 7;
+                break;
+            case 65818:
+                return 8;
+                break;
+            default:
+                return 1;
+                break;
+        }
+    }
+
+    void StartRun(Player* pPlayer)
+    {
+        switch (WaypointID())
+        {
+            case 1:
+                AddWaypoint(0, -1076.000f, 8945.270f, 101.891f);
+                AddWaypoint(1, -1087.469f, 8894.919f, 102.183f);
+                Start(false, false, pPlayer->GetGUID());
+                break;
+            case 2:
+                AddWaypoint(0, -782.796f, 8875.171f, 181.745f);
+                AddWaypoint(1, -821.331f, 8913.110f, 171.417f);
+                Start(false, false, pPlayer->GetGUID());
+                break;
+            case 3:
+                AddWaypoint(0, -670.298f, 8810.587f, 196.057f);
+                AddWaypoint(1, -717.270f, 8806.274f, 184.591f);
+                Start(false, false, pPlayer->GetGUID());
+                break;
+            case 4:
+                AddWaypoint(0, -710.969f, 8763.471f, 186.513f);
+                AddWaypoint(1, -782.685f, 8874.755f, 181.740f);
+                Start(false, false, pPlayer->GetGUID());
+                break;
+            case 5:
+                AddWaypoint(0, -865.144f, 8713.610f, 248.041f);
+                AddWaypoint(1, -880.415f, 8743.203f, 233.202f);
+                Start(false, false, pPlayer->GetGUID());
+                break;
+            case 6:
+                AddWaypoint(0, -847.285f, 8722.406f, 177.255f);
+                AddWaypoint(1, -810.138f, 8731.109f, 178.226f);
+                Start(false, false, pPlayer->GetGUID());
+                break;
+            case 7:
+                AddWaypoint(0, -897.005f, 8689.280f, 170.527f);
+                AddWaypoint(1, -844.252f, 8721.320f, 177.257f);
+                Start(false, false, pPlayer->GetGUID());
+                break;
+            case 8:
+                AddWaypoint(0, -838.047f, 8691.124f, 180.549f);
+                AddWaypoint(1, -821.200f, 8712.569f, 182.702f);
+                Start(false, false, pPlayer->GetGUID());
+                break;
+        }
+        return;
+    }
+
+    void WaypointReached(uint32 uiPointId)
+    {
+        switch (uiPointId)
+        {
+            case 0:
+                SetRun();
+                break;
+            case 1:
+                me->ForcedDespawn();
+                break;
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_maghar_prisoner(Creature* pCreature)
+{
+    return new npc_maghar_prisonerAI(pCreature);
+}
+
+bool GOHello_maghar_prison(Player* pPlayer, GameObject* pGo)
+{
+    if (pPlayer->GetQuestStatus(QUEST_SURVIVORS) == QUEST_STATUS_INCOMPLETE)
+    {
+        if (Creature* pPrisoner = pGo->FindNearestCreature( NPC_MPRISONER, 5, true))
+        {
+            pPlayer->KilledMonsterCredit(NPC_MPRISONER, pPrisoner->GetGUID());
+
+            switch (urand(0,3))
+            {
+                case 0:
+                    DoScriptText(SAYT_MAG_PRISONER1, pPrisoner, pPlayer);
+                    break;
+                case 1:
+                    DoScriptText(SAYT_MAG_PRISONER2, pPrisoner, pPlayer);
+                    break;
+                case 2:
+                    DoScriptText(SAYT_MAG_PRISONER3, pPrisoner, pPlayer);
+                    break;
+                case 3:
+                    DoScriptText(SAYT_MAG_PRISONER4, pPrisoner, pPlayer);
+                    break;
+            }
+
+            if (npc_maghar_prisonerAI* pEscortAI = CAST_AI(npc_maghar_prisonerAI, pPrisoner->AI()))
+                pEscortAI->StartRun(pPlayer);
+        }
+    }
+    return false;
+};
 
 void AddSC_nagrand()
 {
@@ -880,6 +1107,16 @@ void AddSC_nagrand()
     newscript = new Script;
     newscript->Name = "mob_sparrowhawk";
     newscript->GetAI = &GetAI_mob_sparrowhawk;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_maghar_prison";
+    newscript->pGOHello =  &GOHello_maghar_prison;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_maghar_prisoner";
+    newscript->GetAI = &GetAI_npc_maghar_prisoner;
     newscript->RegisterSelf();
 }
 

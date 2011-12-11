@@ -249,7 +249,7 @@ bool GossipSelect_npc_zephyr(Player *player, Creature* pCreature, uint32 sender,
 
 /*######
 ## npc_khadgars_servant
-######Z*/
+######*/
 
 enum eServant
 {

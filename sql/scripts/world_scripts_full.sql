@@ -683,6 +683,8 @@ UPDATE `creature_template` SET `ScriptName`='npc_lantresor_of_the_blade' WHERE `
 UPDATE `creature_template` SET `ScriptName`='npc_maghar_captive' WHERE `entry`=18210;
 UPDATE `creature_template` SET `ScriptName`='npc_creditmarker_visit_with_ancestors' WHERE `entry` IN (18840,18841,18842,18843);
 UPDATE `creature_template` SET `ScriptName`='mob_sparrowhawk' WHERE `entry`=22979;
+UPDATE `creature_template` SET `ScriptName` = 'npc_maghar_prisoner' WHERE `entry` = '18428';
+UPDATE `gameobject_template` SET `ScriptName`='go_maghar_prison' WHERE `entry` IN (182487,182504,182484,182486,182488,182494,182491,182489,182493,182496,182495,182490,182503,182498,182500,182502,182501,182499,182497,182492);
 
 /* NAXXRAMAS */
 UPDATE `instance_template` SET `script`='instance_naxxramas' WHERE `map`=533;
