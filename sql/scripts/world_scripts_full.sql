@@ -687,6 +687,8 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_maghar_prisoner' WHERE `entry
 UPDATE `gameobject_template` SET `ScriptName`='go_maghar_prison' WHERE `entry` IN (182487,182504,182484,182486,182488,182494,182491,182489,182493,182496,182495,182490,182503,182498,182500,182502,182501,182499,182497,182492);
 UPDATE `creature_template` SET `ScriptName` = 'npc_corki1' WHERE `entry` = '18445';
 UPDATE `gameobject_template` SET `ScriptName` = 'go_corkis_prison1' WHERE `entry` = '182349';
+UPDATE `creature_template` SET `ScriptName` = 'npc_corki2' WHERE `entry` = '20812';
+UPDATE `gameobject_template` SET `ScriptName` = 'go_corkis_prison2' WHERE `entry` = '182350';
 
 /* NAXXRAMAS */
 UPDATE `instance_template` SET `script`='instance_naxxramas' WHERE `map`=533;
