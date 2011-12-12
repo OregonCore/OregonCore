@@ -18,8 +18,8 @@
 
 /* ScriptData
 SDName: Nagrand
-SD%Complete: 95
-SDComment: Quest support: 9849, 9918, 9874, 9991, 10107, 10108, 10044, 10172, 10646, 10085, 10987, 9868, 9948, 9923, 9924, 9955. TextId's unknown for altruis_the_sufferer and greatmother_geyah (npc_text)
+SD%Complete: 99
+SDComment: Quest support: 9849, 9918, 9874, 9991, 10107, 10108, 10044, 10172, 10646, 10085, 10987, 9868, 9948, 9923, 9924, 9955, 9879. TextId's unknown for altruis_the_sufferer and greatmother_geyah (npc_text)
 SDCategory: Nagrand
 EndScriptData */
 
@@ -41,6 +41,7 @@ go_corkis_prison2
 npc_corki2
 go_corkis_prison3
 npc_corki3
+npc_kurenai_captive
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -1242,7 +1243,7 @@ bool GOHello_corkis_prison2(Player* pPlayer, GameObject* pGo)
 
 /*#####
 ## go_corkis_prison3 & npc_corki3
-#####Z*/
+#####*/
 
 enum
 {
@@ -1325,6 +1326,156 @@ bool GOHello_corkis_prison3(Player* pPlayer, GameObject* pGo)
     }
     return false;	
 };
+
+/*#####
+## npc_kurenai_captive
+#####*/
+
+enum
+{
+    SAY_KUR_START            = -1000482,
+    SAY_KUR_NO_ESCAPE        = -1000483,
+    SAY_KUR_MORE             = -1000484,
+    SAY_KUR_MORE_REPLY       = -1000485,
+    SAY_KUR_LIGHTNING        = -1000486,
+    SAY_KUR_SHOCK            = -1000487,
+    SAY_KUR_COMPLETE         = -1900132,
+
+    MAGIC_CHAIN_LIGHTNING    = 16006,
+    MAGIC_EARTHBIND_TOTEM    = 15786,
+    MAGIC_FROST_SHOCK        = 12548,
+    MAGIC_HEALING_WAVE       = 12491,
+
+    QUEST_TOTEM_KARDASH_A    = 9879,
+    MURK_RAIDER              = 18203,
+    MURK_BRUTE               = 18211,
+    MURK_SCAVENGER           = 18207,
+    MURK_PUTRIFIER           = 18202
+};
+
+static float m_afAmbushC[]= {-1531.204712, 8456.174805, -4.102};
+static float m_afAmbushD[]= {-1442.524780, 8500.364258, 6.381};
+
+struct npc_kurenai_captiveAI : public npc_escortAI
+{
+    npc_kurenai_captiveAI(Creature* pCreature) : npc_escortAI(pCreature) { Reset(); }
+
+    uint32 m_uiChainLightningTimer;
+    uint32 m_uiHealTimer;
+    uint32 m_uiFrostShockTimer;
+
+    void Reset()
+    {
+        m_uiChainLightningTimer = 1000;
+        m_uiHealTimer = 0;
+        m_uiFrostShockTimer = 6000;
+    }
+
+    void EnterCombat(Unit* /*pWho*/)
+    {
+        DoCast(me, MAGIC_EARTHBIND_TOTEM, false);
+    }
+
+    void WaypointReached(uint32 uiPointId)
+    {
+        switch(uiPointId)
+        {
+            case 7:DoScriptText(SAY_KUR_MORE, me);
+                   if (Creature* pTemp = me->SummonCreature(MURK_PUTRIFIER, m_afAmbushD[0], m_afAmbushD[1], m_afAmbushD[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000))
+                       DoScriptText(SAY_KUR_MORE_REPLY, pTemp);
+                       me->SummonCreature(MURK_PUTRIFIER, m_afAmbushD[0]-2.5f, m_afAmbushD[1]-2.5f, m_afAmbushD[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+                       me->SummonCreature(MURK_SCAVENGER, m_afAmbushD[0]+2.5f, m_afAmbushD[1]+2.5f, m_afAmbushD[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+                       me->SummonCreature(MURK_SCAVENGER, m_afAmbushD[0]+2.5f, m_afAmbushD[1]-2.5f, m_afAmbushD[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+                       break;
+            case 16:DoScriptText(SAY_KUR_COMPLETE, me);
+                    if (Player* pPlayer = GetPlayerForEscort())
+                        pPlayer->GroupEventHappens(QUEST_TOTEM_KARDASH_A, me);
+                        SetRun();break;
+        }
+    }
+
+    void JustSummoned(Creature* pSummoned)
+    {
+        if (pSummoned->GetEntry() == MURK_BRUTE)
+            DoScriptText(SAY_KUR_NO_ESCAPE, pSummoned);
+
+            if (pSummoned->isTotem())
+                return;
+
+            pSummoned->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+            pSummoned->GetMotionMaster()->MovePoint(0, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ());
+            pSummoned->AI()->AttackStart(me);
+    }
+
+    void SpellHitTarget(Unit* /*pTarget*/, const SpellEntry* pSpell)
+    {
+        if (pSpell->Id == MAGIC_CHAIN_LIGHTNING)
+        {
+            if (rand()%10)
+                return;
+
+            DoScriptText(SAY_KUR_LIGHTNING, me);
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        npc_escortAI::UpdateAI(uiDiff);
+
+        if (!me->getVictim())
+           return;
+
+        if (m_uiChainLightningTimer <= uiDiff)
+        {
+            DoCast(me->getVictim(), MAGIC_CHAIN_LIGHTNING);
+            m_uiChainLightningTimer = urand(7000, 14000);
+        }
+        else m_uiChainLightningTimer -= uiDiff;
+
+        if (me->GetHealth()*100 < me->GetMaxHealth()*30)
+        {
+            if (m_uiHealTimer <= uiDiff)
+            {
+                DoCast(me, MAGIC_HEALING_WAVE);
+                m_uiHealTimer = 5000;
+            }
+        else m_uiHealTimer -= uiDiff;
+        }
+
+        if (m_uiFrostShockTimer <= uiDiff)
+        {
+            DoCast(me->getVictim(), MAGIC_FROST_SHOCK);
+            m_uiFrostShockTimer = urand(7500, 15000);
+        }
+        else m_uiFrostShockTimer -= uiDiff;
+    }
+};
+
+
+CreatureAI* GetAI_npc_kurenai_captive(Creature* pCreature)
+{
+    return new npc_kurenai_captiveAI(pCreature);
+}
+
+bool QuestAccept_npc_kurenai_captive(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
+{
+    if (pQuest->GetQuestId() == QUEST_TOTEM_KARDASH_A)
+    {
+        if (npc_kurenai_captiveAI* pEscortAI = dynamic_cast<npc_kurenai_captiveAI*>(pCreature->AI()))
+        {
+            pCreature->SetStandState(UNIT_STAND_STATE_STAND);
+            pCreature->setFaction(231);
+
+            pEscortAI->Start(true, false, pPlayer->GetGUID(), pQuest);
+            DoScriptText(SAY_KUR_START, pCreature);
+
+            pCreature->SummonCreature(MURK_RAIDER, m_afAmbushC[0]+2.5f, m_afAmbushC[1]-2.5f, m_afAmbushC[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+            pCreature->SummonCreature(MURK_PUTRIFIER, m_afAmbushC[0]-2.5f, m_afAmbushC[1]+2.5f, m_afAmbushC[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+            pCreature->SummonCreature(MURK_BRUTE, m_afAmbushC[0], m_afAmbushC[1], m_afAmbushC[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
+        }
+    }
+    return true;
+}
 
 void AddSC_nagrand()
 {
@@ -1420,6 +1571,12 @@ void AddSC_nagrand()
     newscript = new Script;
     newscript->Name = "npc_corki3";
     newscript->GetAI = &GetAI_npc_corki3;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_kurenai_captive";
+    newscript->GetAI = &GetAI_npc_kurenai_captive;
+    newscript->pQuestAccept = &QuestAccept_npc_kurenai_captive;
     newscript->RegisterSelf();
 }
 

@@ -691,6 +691,7 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_corki2' WHERE `entry` = '2081
 UPDATE `gameobject_template` SET `ScriptName` = 'go_corkis_prison2' WHERE `entry` = '182350';
 UPDATE `creature_template` SET `ScriptName` = 'npc_corki3' WHERE `entry` = '18369';
 UPDATE `gameobject_template` SET `ScriptName` = 'go_corkis_prison3' WHERE `entry` = '182521';
+UPDATE `creature_template` SET `ScriptName` = 'npc_kurenai_captive' WHERE `entry` = '18209';
 
 /* NAXXRAMAS */
 UPDATE `instance_template` SET `script`='instance_naxxramas' WHERE `map`=533;
