@@ -19,7 +19,7 @@
 /* ScriptData
 SDName: Nagrand
 SD%Complete: 95
-SDComment: Quest support: 9849, 9918, 9874, 9991, 10107, 10108, 10044, 10172, 10646, 10085, 10987, 9868, 9948. TextId's unknown for altruis_the_sufferer and greatmother_geyah (npc_text)
+SDComment: Quest support: 9849, 9918, 9874, 9991, 10107, 10108, 10044, 10172, 10646, 10085, 10987, 9868, 9948, 9923. TextId's unknown for altruis_the_sufferer and greatmother_geyah (npc_text)
 SDCategory: Nagrand
 EndScriptData */
 
@@ -35,6 +35,8 @@ npc_creditmarker_visit_with_ancestors
 mob_sparrowhawk
 go_maghar_prison
 npc_maghar_prisoner
+go_corkis_prison1
+npc_corki1
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -1053,6 +1055,101 @@ bool GOHello_maghar_prison(Player* pPlayer, GameObject* pGo)
     return false;
 };
 
+/*#####
+## go_corkis_prison1 & npc_corki1
+#####*/
+
+enum
+{
+    QUEST_HELP    = 9923,
+    NPC_CORKI1    = 18445,
+
+    SAY_THANKS    = -1900133,
+    SAY_KORKI2    = -1900134,
+    SAY_KORKI3    = -1900135,
+    SAY_KORKI4    = -1900136,
+    SAY_KORKI5    = -1900137,
+    SAY_KORKI6    = -1900138
+};
+
+struct npc_corki1AI : public npc_escortAI
+{
+    npc_corki1AI(Creature *pCreature) : npc_escortAI(pCreature) {}
+
+    uint64 uiPlayerGUID;
+
+    void Reset()
+    {
+        uiPlayerGUID = 0;
+    }
+
+    void WaypointReached(uint32 uiPointId)
+    {
+        switch(uiPointId)
+        {
+            case 0:
+                SetRun();
+                break;
+            case 3:
+                me->ForcedDespawn();
+        }
+    }
+
+    void MoveInLineOfSight(Unit* pWho)
+    {
+        if (pWho->GetTypeId() == TYPEID_PLAYER && ((Player *)pWho)->GetReputationRank(978) >= REP_FRIENDLY && me->IsWithinDistInMap(((Player *)pWho), 20))
+        {
+           
+            if (uiPlayerGUID == pWho->GetGUID())
+            {
+                return;
+            }
+            else uiPlayerGUID = 0;
+
+            switch (urand(0,4))
+            {
+                case 0:
+                    DoScriptText(SAY_KORKI2, me);
+                    break;
+                case 1: 
+                    DoScriptText(SAY_KORKI3, me);
+                    break;
+                case 2:
+                    DoScriptText(SAY_KORKI4, me);
+                    break;
+                case 3:
+                    DoScriptText(SAY_KORKI5, me);
+                    break;
+                case 4:
+                    DoScriptText(SAY_KORKI6, me);
+                    break;
+            }
+
+            uiPlayerGUID = pWho->GetGUID();
+           
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_corki1(Creature* pCreature)
+{
+    return new npc_corki1AI(pCreature);
+}
+
+bool GOHello_corkis_prison1(Player* pPlayer, GameObject* pGo)
+{
+    if (pPlayer->GetQuestStatus(QUEST_HELP) == QUEST_STATUS_INCOMPLETE)
+    {
+        if (Creature* pCor1 = pGo->FindNearestCreature( NPC_CORKI1, 5, true))
+        {
+            pPlayer->KilledMonsterCredit(NPC_CORKI1, pCor1->GetGUID());
+            DoScriptText(SAY_THANKS, pCor1, pPlayer);
+            ((npc_corki1AI*)pCor1->AI())->Start(false, false, pPlayer->GetGUID());
+        }
+    }
+    return false;
+};
+
 void AddSC_nagrand()
 {
     Script *newscript;
@@ -1117,6 +1214,16 @@ void AddSC_nagrand()
     newscript = new Script;
     newscript->Name = "npc_maghar_prisoner";
     newscript->GetAI = &GetAI_npc_maghar_prisoner;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_corkis_prison1";
+    newscript->pGOHello =  &GOHello_corkis_prison1;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_corki1";
+    newscript->GetAI = &GetAI_npc_corki1;
     newscript->RegisterSelf();
 }
 
