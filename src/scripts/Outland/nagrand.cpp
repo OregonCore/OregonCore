@@ -19,7 +19,7 @@
 /* ScriptData
 SDName: Nagrand
 SD%Complete: 95
-SDComment: Quest support: 9849, 9918, 9874, 9991, 10107, 10108, 10044, 10172, 10646, 10085, 10987, 9868, 9948, 9923, 9924. TextId's unknown for altruis_the_sufferer and greatmother_geyah (npc_text)
+SDComment: Quest support: 9849, 9918, 9874, 9991, 10107, 10108, 10044, 10172, 10646, 10085, 10987, 9868, 9948, 9923, 9924, 9955. TextId's unknown for altruis_the_sufferer and greatmother_geyah (npc_text)
 SDCategory: Nagrand
 EndScriptData */
 
@@ -39,6 +39,8 @@ go_corkis_prison1
 npc_corki1
 go_corkis_prison2
 npc_corki2
+go_corkis_prison3
+npc_corki3
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -1101,7 +1103,6 @@ struct npc_corki1AI : public npc_escortAI
     {
         if (pWho->GetTypeId() == TYPEID_PLAYER && ((Player *)pWho)->GetReputationRank(978) >= REP_FRIENDLY && me->IsWithinDistInMap(((Player *)pWho), 20))
         {
-           
             if (uiPlayerGUID == pWho->GetGUID())
             {
                 return;
@@ -1128,7 +1129,6 @@ struct npc_corki1AI : public npc_escortAI
             }
 
             uiPlayerGUID = pWho->GetGUID();
-           
         }
     }
 };
@@ -1217,7 +1217,6 @@ struct npc_corki2AI : public npc_escortAI
             }
 
             uiPlayerGUID = pWho->GetGUID();
-            
         }
     }
 };
@@ -1236,6 +1235,92 @@ bool GOHello_corkis_prison2(Player* pPlayer, GameObject* pGo)
             pPlayer->KilledMonsterCredit(NPC_CORKI2, pCor2->GetGUID());
             DoScriptText(SAY_THANKS1, pCor2, pPlayer);
             ((npc_corki2AI*)pCor2->AI())->Start(false, false, pPlayer->GetGUID());
+        }
+    }
+    return false;	
+};
+
+/*#####
+## go_corkis_prison3 & npc_corki3
+#####Z*/
+
+enum
+{
+    QUEST_HELP2    = 9955,
+    NPC_CORKI3     = 18369,
+};
+
+struct npc_corki3AI : public npc_escortAI
+{
+    npc_corki3AI(Creature *pCreature) : npc_escortAI(pCreature) {}
+
+    uint64 uiPlayerGUID;
+
+    void Reset() 
+    {
+        uiPlayerGUID = 0;
+    }
+
+    void WaypointReached(uint32 uiPointId)
+    {
+        switch(uiPointId)
+        {
+            case 0:
+                SetRun();
+                break;
+            case 2:
+                me->ForcedDespawn();
+        }
+    }
+
+    void MoveInLineOfSight(Unit* pWho)
+    {
+        if (pWho->GetTypeId() == TYPEID_PLAYER && ((Player *)pWho)->GetReputationRank(978) >= REP_FRIENDLY && me->IsWithinDistInMap(((Player *)pWho), 20))
+        { 
+            if (uiPlayerGUID == pWho->GetGUID())
+            {
+                return;
+            }
+            else uiPlayerGUID = 0;
+          
+            switch (urand(0,4))
+            {
+                case 0:
+                    DoScriptText(SAY_KORKI2, me);
+                    break;
+                case 1: 
+                    DoScriptText(SAY_KORKI3, me);
+                    break;
+                case 2:
+                    DoScriptText(SAY_KORKI4, me); 
+                    break;
+                case 3: 
+                    DoScriptText(SAY_KORKI5, me); 
+                    break;
+                case 4: 
+                    DoScriptText(SAY_KORKI6, me); 
+                    break;
+            }
+
+            uiPlayerGUID = pWho->GetGUID();
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_corki3(Creature* pCreature)
+{
+    return new npc_corki3AI(pCreature);
+}
+
+bool GOHello_corkis_prison3(Player* pPlayer, GameObject* pGo)
+{
+    if (pPlayer->GetQuestStatus(QUEST_HELP2) == QUEST_STATUS_INCOMPLETE)
+    {
+        if (Creature* pCor3 = pGo->FindNearestCreature( NPC_CORKI3, 5, true))
+        {
+            pPlayer->KilledMonsterCredit(NPC_CORKI3, pCor3->GetGUID());
+            DoScriptText(SAY_THANKS, pCor3, pPlayer);
+            ((npc_corki3AI*)pCor3->AI())->Start(false, false, pPlayer->GetGUID());
         }
     }
     return false;	
@@ -1325,6 +1410,16 @@ void AddSC_nagrand()
     newscript = new Script;
     newscript->Name = "npc_corki2";
     newscript->GetAI = &GetAI_npc_corki2;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_corkis_prison3";
+    newscript->pGOHello =  &GOHello_corkis_prison3;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_corki3";
+    newscript->GetAI = &GetAI_npc_corki3;
     newscript->RegisterSelf();
 }
 
