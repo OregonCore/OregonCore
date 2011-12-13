@@ -553,6 +553,8 @@ UPDATE `creature_template` SET `ScriptName`='npc_tracy_proudwell' WHERE `entry`=
 UPDATE `creature_template` SET `ScriptName`='npc_trollbane' WHERE `entry`=16819;
 UPDATE `creature_template` SET `ScriptName`='npc_ancestral_wolf' WHERE `entry`=17077;
 UPDATE `creature_template` SET `ScriptName`='npc_fel_guard_hound' WHERE `entry`=21847;
+UPDATE `creature_template` SET `ScriptName` = 'npc_anchorite_relic_bunny' WHERE `entry` = '22444';
+UPDATE `creature_template` SET `ScriptName` = 'npc_hand_berserker' WHERE `entry` = '16878';
 
 /* HILLSBRAD FOOTHILLS */
 

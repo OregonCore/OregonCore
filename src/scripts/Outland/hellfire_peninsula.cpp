@@ -1,4 +1,6 @@
 /* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * Copyright (C) 2010-2011 OregonCore <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,17 +18,25 @@
 
 /* ScriptData
 SDName: Hellfire_Peninsula
-SD%Complete: 100
- SDComment: Quest support: 9375, 9418, 10129, 10146, 10162, 10163, 10340, 10346, 10347, 10382 (Special flight paths)
+SD%Complete: 95
+ SDComment: Quest support: 9375, 9418, 10129, 10146, 10162, 10163, 10340, 10346, 10347, 10382 (Special flight paths), 10909.
 SDCategory: Hellfire Peninsula
 EndScriptData */
 
 /* ContentData
 npc_aeranas
+npc_ancestral_wolf
 go_haaleshi_altar
+npc_naladu
+npc_tracy_proudwell
+npc_trollbane
+npc_fel_guard_hound
 npc_wing_commander_dabiree
+npc_gryphoneer_leafbeard
 npc_wing_commander_brack
 npc_wounded_blood_elf
+npc_hand_berserker
+npc_anchorite_relic_bunny
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -593,6 +603,134 @@ bool QuestAccept_npc_wounded_blood_elf(Player* pPlayer, Creature* pCreature, Que
     return true;
 }
 
+/*######
+## npc_hand_berserker
+######*/
+
+enum
+{
+    SPELL_SOUL_BURDEN       = 38879,
+    SPELL_ENRAGE            = 8599,
+    SPELL_SUMMON_SPIRIT     = 39206,
+    SPELL_CHARGE            = 35570,
+
+    NPC_BUNNY               = 22444,
+    NPC_FEL_SPIRIT          = 22454,
+    SAY_SP                  = -1900130
+};
+
+struct npc_hand_berserkerAI : public ScriptedAI
+{
+    npc_hand_berserkerAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+    void Reset() {}
+
+    void AttackStart(Unit *pWho)
+    {
+        DoMeleeAttackIfReady();
+        ScriptedAI::AttackStart(pWho);
+    }
+
+    void EnterCombat(Unit* pWho)
+    {
+        if (rand()%60)
+        {
+            DoCast(pWho, SPELL_CHARGE);
+        }
+    }   
+
+    void DamageTaken(Unit* pDoneby, uint32 & Damage)
+    {
+        if (me->HasAura(SPELL_ENRAGE, 0))
+            return;
+
+        if (pDoneby->GetTypeId() == TYPEID_PLAYER && (me->GetHealth()*100 - Damage) / me->GetMaxHealth() < 30)
+        {
+            DoCast(SPELL_ENRAGE);
+        }
+    }
+
+    void JustDied(Unit* pWho)
+    {
+        if (Creature* Bunny = me->FindNearestCreature(NPC_BUNNY, 17.5f))
+        {
+            me->CastSpell(Bunny, SPELL_SOUL_BURDEN, false);
+            Bunny->CastSpell(Bunny, SPELL_SUMMON_SPIRIT, false);
+        }
+        else return;
+
+        if (Creature* Spirit = me->FindNearestCreature(NPC_FEL_SPIRIT, 18.5f))
+        {
+            DoScriptText(SAY_SP, Spirit);
+            Spirit->AI()->AttackStart(pWho);
+        }
+        else return;
+    }
+};
+
+CreatureAI* GetAI_npc_hand_berserker(Creature* pCreature)
+{
+    return new npc_hand_berserkerAI(pCreature);
+}
+
+/*######
+## npc_anchorite_relic_bunny
+######*/
+
+enum
+{
+    NPC_HAND_BERSERKER      = 16878,
+    SPELL_CHANNELS          = 39184,
+    GO_RELIC                = 185298      
+};
+
+struct npc_anchorite_relic_bunnyAI : public ScriptedAI
+{
+    npc_anchorite_relic_bunnyAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+    uint32 uiChTimer;
+    uint32 uiEndTimer;
+
+    void Reset()
+    {
+        uiChTimer = 5000;
+        uiEndTimer = 60000;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (uiEndTimer <= uiDiff)
+        {
+            if (GameObject* pRelic = me->FindNearestGameObject(GO_RELIC, 5.0f))
+            {
+                pRelic->RemoveFromWorld();
+                me->setDeathState(CORPSE);
+            }
+            else return;
+
+            uiEndTimer = 60000;
+        }
+        else uiEndTimer -= uiDiff;
+
+        if (uiChTimer <= uiDiff)
+        {
+            if (Creature* pBer = me->FindNearestCreature(NPC_HAND_BERSERKER, 17.5f, true))
+            {
+                DoCast(pBer, SPELL_CHANNELS);
+            }
+            else me->InterruptNonMeleeSpells(false);
+
+            uiChTimer = 5000;
+        }
+        else uiChTimer -= uiDiff;
+    }
+};
+
+CreatureAI* GetAI_npc_anchorite_relic_bunny(Creature* pCreature)
+{
+    return new npc_anchorite_relic_bunnyAI(pCreature);
+}
+
 void AddSC_hellfire_peninsula()
 {
     Script *newscript;
@@ -653,5 +791,15 @@ void AddSC_hellfire_peninsula()
     newscript->Name = "npc_wounded_blood_elf";
     newscript->GetAI = &GetAI_npc_wounded_blood_elf;
     newscript->pQuestAccept = &QuestAccept_npc_wounded_blood_elf;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_hand_berserker";
+    newscript->GetAI = &GetAI_npc_hand_berserker;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_anchorite_relic_bunny";
+    newscript->GetAI = &GetAI_npc_anchorite_relic_bunny;
     newscript->RegisterSelf();
 }
