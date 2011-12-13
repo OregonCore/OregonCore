@@ -555,6 +555,9 @@ UPDATE `creature_template` SET `ScriptName`='npc_ancestral_wolf' WHERE `entry`=1
 UPDATE `creature_template` SET `ScriptName`='npc_fel_guard_hound' WHERE `entry`=21847;
 UPDATE `creature_template` SET `ScriptName` = 'npc_anchorite_relic_bunny' WHERE `entry` = '22444';
 UPDATE `creature_template` SET `ScriptName` = 'npc_hand_berserker' WHERE `entry` = '16878';
+UPDATE `creature_template` SET `ScriptName` = 'npc_anchorite_barada' WHERE entry = '22431';
+UPDATE `creature_template` SET `ScriptName` = 'npc_darkness_released' WHERE entry = '22507';
+UPDATE `creature_template` SET `ScriptName` = 'npc_foul_purge' WHERE entry = '22506';
 
 /* HILLSBRAD FOOTHILLS */
 
