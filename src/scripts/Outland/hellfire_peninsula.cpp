@@ -138,45 +138,28 @@ CreatureAI* GetAI_npc_aeranas(Creature* pCreature)
 ## npc_ancestral_wolf
 ######*/
 
-enum eAncestralWolf
+enum
 {
-    EMOTE_WOLF_LIFT_HEAD            = -1000496,
-    EMOTE_WOLF_HOWL                 = -1000497,
-    SAY_WOLF_WELCOME                = -1000498,
+    EMOTE_WOLF_LIFT_HEAD         = -1000496,
+    EMOTE_WOLF_HOWL              = -1000497,
+    SAY_WOLF_WELCOME             = -1000498,
 
-    SPELL_ANCESTRAL_WOLF_BUFF       = 29981,
+    SPELL_ANCESTRAL_WOLF_BUFF    = 29981,
 
-    NPC_RYGA                        = 17123
+    NPC_RYGA                     = 17123
 };
 
 struct npc_ancestral_wolfAI : public npc_escortAI
 {
-    npc_ancestral_wolfAI(Creature* pCreature) : npc_escortAI(pCreature)
-    {
-        if (pCreature->GetOwner() && pCreature->GetOwner()->GetTypeId() == TYPEID_PLAYER)
-            Start(false, false, pCreature->GetOwner()->GetGUID());
-        else
-            sLog.outError("TRINITY: npc_ancestral_wolf can not obtain owner or owner is not a player.");
-
-        pCreature->SetSpeed(MOVE_WALK, 1.5f);
-        Reset();
-    }
-
-    Unit* pRyga;
+    npc_ancestral_wolfAI(Creature* pCreature) : npc_escortAI(pCreature)  {}
 
     void Reset()
     {
-        pRyga = NULL;
-        DoCast(me, SPELL_ANCESTRAL_WOLF_BUFF, true);
+        me->GetMotionMaster()->MovePoint(0, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ());
     }
 
-    void MoveInLineOfSight(Unit* pWho)
-    {
-        if (!pRyga && pWho->GetTypeId() == TYPEID_UNIT && pWho->GetEntry() == NPC_RYGA && me->IsWithinDistInMap(pWho, 15.0f))
-            pRyga = pWho;
-
-        npc_escortAI::MoveInLineOfSight(pWho);
-    }
+    void AttackedBy(Unit* pWho) {}
+    void AttackStart(Unit* pWho) {}
 
     void WaypointReached(uint32 uiPointId)
     {
@@ -184,14 +167,40 @@ struct npc_ancestral_wolfAI : public npc_escortAI
         {
             case 0:
                 DoScriptText(EMOTE_WOLF_LIFT_HEAD, me);
+                DoCast(me, SPELL_ANCESTRAL_WOLF_BUFF, true);
                 break;
             case 2:
                 DoScriptText(EMOTE_WOLF_HOWL, me);
                 break;
-            case 50:
-                if (pRyga && pRyga->isAlive() && !pRyga->isInCombat())
-                    DoScriptText(SAY_WOLF_WELCOME, pRyga);
+            case 5:
+                SetRun();
                 break;
+            case 15:
+                SetRun(false);
+                break;
+            case 23:
+                SetRun();
+                break;
+            case 42:
+                SetRun(false);
+                DoCast(me, SPELL_ANCESTRAL_WOLF_BUFF, true);
+                break;
+            case 50:
+                if (Creature* pRyga = me->FindNearestCreature(NPC_RYGA, 15.0f))
+                    if (pRyga && pRyga->isAlive() && !pRyga->isInCombat())
+                        DoScriptText(SAY_WOLF_WELCOME, pRyga);
+                        break;
+        }
+    }
+
+    void MoveInLineOfSight(Unit* pWho)
+    {
+        if (HasEscortState(STATE_ESCORT_ESCORTING))
+            return;
+
+        if (pWho->GetTypeId() == TYPEID_PLAYER)
+        {
+            Start(false, false, pWho->GetGUID());
         }
     }
 };
