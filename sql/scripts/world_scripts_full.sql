@@ -560,6 +560,8 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_darkness_released' WHERE entr
 UPDATE `creature_template` SET `ScriptName` = 'npc_foul_purge' WHERE entry = '22506';
 UPDATE `creature_template` SET `ScriptName` = 'npc_sedai_quest_credit_marker' WHERE entry = '17413';
 UPDATE `creature_template` SET `ScriptName` = 'npc_vindicator_sedai' WHERE entry = '17404';
+UPDATE `creature_template` SET `ScriptName` = 'npc_demoniac_scryer' WHERE entry = '22258';
+UPDATE `creature_template` SET `ScriptName` = 'npc_magic_sucker_device_spawner' WHERE entry = '22260';
 
 /* HILLSBRAD FOOTHILLS */
 
