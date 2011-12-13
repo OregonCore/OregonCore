@@ -118,12 +118,27 @@ void Corpse::SaveToDB()
     DeleteFromDB();
 
     std::ostringstream ss;
-    ss  << "INSERT INTO corpse (guid,player,position_x,position_y,position_z,orientation,zone,map,data,time,corpse_type,instance) VALUES ("
-        << GetGUIDLow() << ", " << GUID_LOPART(GetOwnerGUID()) << ", " << GetPositionX() << ", " << GetPositionY() << ", " << GetPositionZ() << ", "
-        << GetOrientation() << ", "  << GetZoneId() << ", "  << GetMapId() << ", '";
-    for (uint16 i = 0; i < m_valuesCount; ++i)
-        ss << GetUInt32Value(i) << " ";
-    ss << "'," << uint64(m_time) <<", " << uint32(GetType()) << ", " << int(GetInstanceId()) << ")";
+    ss  << "INSERT INTO corpse (guid,player,position_x,position_y,position_z,orientation,zone,map,displayId,itemCache,bytes1,bytes2,guild,flags,dynFlags,time,corpse_type,instance) VALUES ("
+        << GetGUIDLow() << ", "
+        << GUID_LOPART(GetOwnerGUID()) << ", "
+        << GetPositionX() << ", "
+        << GetPositionY() << ", "
+        << GetPositionZ() << ", "
+        << GetOrientation() << ", "
+        << GetZoneId() << ", "
+        << GetMapId() << ", "
+        << GetUInt32Value(CORPSE_FIELD_DISPLAY_ID) << ", '";
+    for (uint16 i = 0; i < EQUIPMENT_SLOT_END; ++i)
+        ss << GetUInt32Value(CORPSE_FIELD_ITEM+i) << " ";
+    ss  << "', "
+        << GetUInt32Value(CORPSE_FIELD_BYTES_1) << ", "
+        << GetUInt32Value(CORPSE_FIELD_BYTES_2) << ", "
+        << GetUInt32Value(CORPSE_FIELD_GUILD) << ", "
+        << GetUInt32Value(CORPSE_FIELD_FLAGS) << ", "
+        << GetUInt32Value(CORPSE_FIELD_DYNAMIC_FLAGS) << ", "
+        << uint64(m_time) << ", "
+        << uint32(GetType()) << ", "
+        << int(GetInstanceId()) << ")";
     CharacterDatabase.Execute(ss.str().c_str());
     CharacterDatabase.CommitTransaction();
 }
@@ -154,22 +169,28 @@ void Corpse::DeleteFromDB()
 
 bool Corpse::LoadFromDB(uint32 guid, Field *fields)
 {
-    //                                          0          1          2          3           4   5    6    7           8
-    //result = CharacterDatabase.PQuery("SELECT position_x,position_y,position_z,orientation,map,data,time,corpse_type,instance FROM corpse WHERE guid = '%u'",guid);
+    //       0           1           2           3            4    5          6          7       8       9      10     11        12    13           14        15    16
+    //SELECT position_x, position_y, position_z, orientation, map, displayId, itemCache, bytes1, bytes2, guild, flags, dynFlags, time, corpse_type, instance, guid, player FROM corpse WHERE corpse_type <> 0
     float positionX = fields[0].GetFloat();
     float positionY = fields[1].GetFloat();
     float positionZ = fields[2].GetFloat();
     float ort       = fields[3].GetFloat();
     uint32 mapid    = fields[4].GetUInt32();
 
-    if (!LoadValues(fields[5].GetString()))
-    {
-        sLog.outError("Corpse #%d has invalid data in data field.  Not loaded.",guid);
-        return false;
-    }
+    // Initialize the datastores for this object
+    WorldObject::_Create(guid, HIGHGUID_CORPSE);
 
-    m_time = time_t(fields[6].GetUInt64());
-    m_type = CorpseType(fields[7].GetUInt32());
+    SetUInt32Value(CORPSE_FIELD_DISPLAY_ID, fields[5].GetUInt32());
+    _LoadIntoDataField(fields[6].GetString(), CORPSE_FIELD_ITEM, EQUIPMENT_SLOT_END);
+    SetUInt32Value(CORPSE_FIELD_BYTES_1, fields[7].GetUInt32());
+    SetUInt32Value(CORPSE_FIELD_BYTES_2, fields[8].GetUInt32());
+    SetUInt32Value(CORPSE_FIELD_GUILD, fields[9].GetUInt32());
+    SetUInt32Value(CORPSE_FIELD_FLAGS, fields[10].GetUInt32());
+    SetUInt32Value(CORPSE_FIELD_DYNAMIC_FLAGS, fields[11].GetUInt32());
+    SetUInt64Value(CORPSE_FIELD_OWNER, MAKE_NEW_GUID(fields[16].GetUInt32(), 0, HIGHGUID_PLAYER));
+
+    m_time = time_t(fields[12].GetUInt64());
+    m_type = CorpseType(fields[13].GetUInt32());
 
     if (m_type >= MAX_CORPSE_TYPE)
     {
@@ -180,10 +201,7 @@ bool Corpse::LoadFromDB(uint32 guid, Field *fields)
     if (m_type != CORPSE_BONES)
         m_isWorldObject = true;
 
-    uint32 instanceid  = fields[8].GetUInt32();
-
-    // overwrite possible wrong/corrupted guid
-    SetUInt64Value(OBJECT_FIELD_GUID, MAKE_NEW_GUID(guid, 0, HIGHGUID_CORPSE));
+    uint32 instanceid  = fields[14].GetUInt32();
 
     // place
     SetLocationInstanceId(instanceid);
