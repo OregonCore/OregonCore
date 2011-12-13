@@ -558,6 +558,8 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_hand_berserker' WHERE `entry`
 UPDATE `creature_template` SET `ScriptName` = 'npc_anchorite_barada' WHERE entry = '22431';
 UPDATE `creature_template` SET `ScriptName` = 'npc_darkness_released' WHERE entry = '22507';
 UPDATE `creature_template` SET `ScriptName` = 'npc_foul_purge' WHERE entry = '22506';
+UPDATE `creature_template` SET `ScriptName` = 'npc_sedai_quest_credit_marker' WHERE entry = '17413';
+UPDATE `creature_template` SET `ScriptName` = 'npc_vindicator_sedai' WHERE entry = '17404';
 
 /* HILLSBRAD FOOTHILLS */
 
