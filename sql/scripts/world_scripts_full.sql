@@ -829,6 +829,7 @@ UPDATE `creature_template` SET `ScriptName`='npc_earthmender_wilda' WHERE `entry
 UPDATE `creature_template` SET `ScriptName`='npc_enraged_spirit' WHERE `entry` IN (21050,21061,21060,21059);
 UPDATE `creature_template` SET `ScriptName`='mob_dragonmaw_peon' WHERE `entry`=22252;
 UPDATE `creature_template` SET `ScriptName`='npc_karynaku' WHERE `entry`=22112;
+UPDATE `creature_template` SET `ScriptName` = 'npc_jovaan' WHERE `entry` = '21633';
 
 /* SHATTRATH */
 UPDATE `creature_template` SET `ScriptName`='npc_raliq_the_drunk' WHERE `entry`=18585;
