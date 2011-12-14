@@ -11,3 +11,5 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`content_loc1`,`content_lo
  (-1900145,'Yes?',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,0,'SAY_WARBRINGER3'),
  (-1900146,'What\'s in the crate?',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,0,'SAY_JOVAAN4'),
  (-1900147,'Crate? I didn\'t send you a crate, Jovaan. Don\'t you have more important things to worry about? Go see to them!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,0,'SAY_WARBRINGER4');
+
+UPDATE `creature_template` SET `ScriptName` = 'npc_zeppit' WHERE `entry` = '22484';

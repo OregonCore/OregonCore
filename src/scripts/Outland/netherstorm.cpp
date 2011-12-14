@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * Copyright (C) 2010-2011 Oregon <http://www.oregoncore.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -18,8 +19,8 @@
 
 /* ScriptData
 SDName: Netherstorm
-SD%Complete: 75
-SDComment: Quest support: 10337, 10438, 10652 (special flight paths), 10299,10321,10322,10323,10329,10330,10338,10365(Shutting Down Manaforge), 10198, 10191
+SD%Complete: 90
+SDComment: Quest support: 10337, 10438, 10652 (special flight paths), 10299,10321,10322,10323,10329,10330,10338,10365(Shutting Down Manaforge), 10198, 10191, 10924.
 SDCategory: Netherstorm
 EndScriptData */
 
@@ -27,8 +28,12 @@ EndScriptData */
 npc_manaforge_control_console
 go_manaforge_control_console
 npc_commander_dawnforge
+at_commander_dawnforge
+npc_professor_dabiri
+mob_phase_hunter
 npc_bessy
 npc_maxx_a_million
+npc_zeppit
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -1008,6 +1013,56 @@ bool QuestAccept_npc_maxx_a_million_escort(Player* pPlayer, Creature* pCreature,
     return true;
 }
 
+/*######
+## npc_zeppit
+######*/
+
+enum
+{
+    EMOTE_GATHER_BLOOD         = -1000625,
+
+    NPC_WARP_CHASER            = 18884,
+    SPELL_GATHER_WARP_BLOOD    = 39244,
+    QUEST_BLOODY               = 10924
+};
+
+struct npc_zeppitAI : public ScriptedAI
+{
+    npc_zeppitAI(Creature *pCreature) : ScriptedAI(pCreature) {}
+
+    uint32 uiCheckTimer;
+    uint64 uiWarpGUID;
+
+    void Reset() 
+    {
+        uiCheckTimer = 8000;
+        uiWarpGUID = 0;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (uiCheckTimer <= uiDiff)
+        {
+            if (Creature* pWarp = me->FindNearestCreature(NPC_WARP_CHASER, 9.0f, false))
+            {
+                if (pWarp->GetGUID() != uiWarpGUID && CAST_PLR(me->GetOwner())->GetQuestStatus(QUEST_BLOODY) == QUEST_STATUS_INCOMPLETE)
+                {
+                    uiWarpGUID = pWarp->GetGUID();
+                    DoScriptText(EMOTE_GATHER_BLOOD, me);
+                    me->CastSpell(me->GetOwner(), SPELL_GATHER_WARP_BLOOD, false);
+                }
+            }
+            uiCheckTimer = 8000;
+        }
+        else uiCheckTimer -= uiDiff;
+    }
+};
+
+CreatureAI* GetAI_npc_zeppit(Creature* pCreature)
+{
+    return new npc_zeppitAI (pCreature);
+}
+
 void AddSC_netherstorm()
 {
     Script *newscript;
@@ -1054,6 +1109,11 @@ void AddSC_netherstorm()
     newscript->Name = "npc_maxx_a_million_escort";
     newscript->GetAI = &GetAI_npc_maxx_a_million_escort;
     newscript->pQuestAccept = &QuestAccept_npc_maxx_a_million_escort;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_zeppit";
+    newscript->GetAI = &GetAI_npc_zeppit;
     newscript->RegisterSelf();
 }
 
