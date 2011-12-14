@@ -13,3 +13,15 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`content_loc1`,`content_lo
  (-1900147,'Crate? I didn\'t send you a crate, Jovaan. Don\'t you have more important things to worry about? Go see to them!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,0,'SAY_WARBRINGER4');
 
 UPDATE `creature_template` SET `ScriptName` = 'npc_zeppit' WHERE `entry` = '22484';
+
+DELETE FROM `creature` WHERE `guid` = '70248';
+DELETE FROM `creature` WHERE `guid` = '70249';
+DELETE FROM `creature` WHERE `guid` = '70250';
+DELETE FROM `creature` WHERE `guid` = '70251';
+DELETE FROM `creature` WHERE `guid` = '70252';
+DELETE FROM `creature` WHERE `guid` = '70253';
+DELETE FROM `creature` WHERE `guid` = '70254';
+UPDATE `creature_template` SET `unit_flags` = '4' WHERE entry = '20284';
+UPDATE `creature_template` SET `flags_extra` = '2' WHERE entry = '19692';
+UPDATE `creature_template` SET `ScriptName` = 'npc_dr_boom' WHERE `entry` = '20284';
+UPDATE `creature_template` SET `ScriptName` = 'npc_boom_bot' WHERE `entry` = '19692';

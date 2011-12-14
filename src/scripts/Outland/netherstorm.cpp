@@ -20,7 +20,7 @@
 /* ScriptData
 SDName: Netherstorm
 SD%Complete: 90
-SDComment: Quest support: 10337, 10438, 10652 (special flight paths), 10299,10321,10322,10323,10329,10330,10338,10365(Shutting Down Manaforge), 10198, 10191, 10924.
+SDComment: Quest support: 10337, 10438, 10652 (special flight paths), 10299,10321,10322,10323,10329,10330,10338,10365(Shutting Down Manaforge), 10198, 10191, 10924, 10221.
 SDCategory: Netherstorm
 EndScriptData */
 
@@ -34,6 +34,8 @@ mob_phase_hunter
 npc_bessy
 npc_maxx_a_million
 npc_zeppit
+npc_dr_boom
+npc_boom_bot
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -1063,6 +1065,141 @@ CreatureAI* GetAI_npc_zeppit(Creature* pCreature)
     return new npc_zeppitAI (pCreature);
 }
 
+/*######
+## npc_dr_boom
+######*/
+
+enum
+{
+    THROW_DYNAMITE    = 35276,
+    BOOM_BOT          = 19692,
+    BOOM_BOT_TARGET   = 20392
+};
+
+struct npc_dr_boomAI : public ScriptedAI
+{
+    npc_dr_boomAI(Creature *pCeature) : ScriptedAI(pCeature) {}
+
+    std::vector<uint64> targetGUID;
+
+    uint32 SummonTimer;
+ 
+    void Reset()
+    {
+        SummonTimer = 1500;
+ 
+        std::list<Creature*> targets;
+        me->GetCreatureListWithEntryInGrid(targets, BOOM_BOT_TARGET, 30.0f);
+ 
+        targetGUID.clear();
+ 
+        for (std::list<Creature*>::iterator it = targets.begin(); it != targets.end(); it++)
+            targetGUID.push_back((*it)->GetGUID());
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (SummonTimer <= uiDiff)
+        {
+            if (targetGUID.size())
+            {
+                if (Unit* target = Unit::GetUnit(*me, targetGUID[rand()%targetGUID.size()]))
+                {
+                    if (Unit* bot = DoSpawnCreature(BOOM_BOT, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 20000))
+                        bot->GetMotionMaster()->MovePoint(0, target->GetPositionX(), target->GetPositionY(), target->GetPositionZ());
+                }
+            }
+ 
+            SummonTimer = 1500;
+        }
+        else SummonTimer -= uiDiff;
+
+        if (!UpdateVictim())
+            return;
+ 
+        if (!me->IsWithinDistInMap(me->getVictim(), 30.0f))
+        {
+            EnterEvadeMode();
+            return;
+        }
+ 
+        if (me->isAttackReady() && me->IsWithinDistInMap(me->getVictim(), 13.0f))
+        {
+            DoCast(me->getVictim(), THROW_DYNAMITE, true);
+            me->resetAttackTimer();
+        }
+    }
+
+};
+
+CreatureAI* GetAI_npc_dr_boom(Creature* pCreature)
+{
+    return new npc_dr_boomAI (pCreature);
+}
+
+/*######
+## npc_boom_bot
+######*/
+
+#define    SPELL_BOOM    35132                         
+
+struct npc_boom_botAI : public ScriptedAI
+{
+    npc_boom_botAI(Creature *pCreature) : ScriptedAI(pCreature) {}
+
+    bool Boom;
+
+    uint32 BoomTimer;
+
+    void Reset()
+    {
+        Boom = false;
+        BoomTimer = 800;
+        me->SetUnitMovementFlags(MOVEFLAG_WALK_MODE);
+    }
+ 
+    void AttackedBy(Unit* pWho) {}
+    void AttackStart(Unit* pWho) {}
+ 
+    void MovementInform(uint32 type, uint32 id)
+    {
+        if (type != POINT_MOTION_TYPE)
+            return;
+ 
+        DoCast(SPELL_BOOM);
+        Boom = true;
+    }
+ 
+    void MoveInLineOfSight(Unit *pWho)
+    {
+        if (!pWho->isCharmedOwnedByPlayerOrPlayer())
+            return;
+ 
+        if (me->IsWithinDistInMap(pWho, 4.0f, false))
+        {
+            DoCast(SPELL_BOOM);
+            Boom = true;
+        }
+    }
+ 
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (Boom)
+        {
+            if (BoomTimer <= uiDiff)
+            {
+                me->setDeathState(CORPSE);
+            }
+            else BoomTimer -= uiDiff;
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_boom_bot(Creature* pCreature)
+{
+    return new npc_boom_botAI (pCreature);
+}
+
 void AddSC_netherstorm()
 {
     Script *newscript;
@@ -1114,6 +1251,16 @@ void AddSC_netherstorm()
     newscript = new Script;
     newscript->Name = "npc_zeppit";
     newscript->GetAI = &GetAI_npc_zeppit;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_dr_boom";
+    newscript->GetAI = &GetAI_npc_dr_boom;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_boom_bot";
+    newscript->GetAI = &GetAI_npc_boom_bot;
     newscript->RegisterSelf();
 }
 

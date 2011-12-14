@@ -735,6 +735,8 @@ UPDATE `creature_template` SET `ScriptName`='npc_bessy' WHERE `entry`=20415;
 UPDATE `creature_template` SET `ScriptName`='npc_commander_dawnforge' WHERE `entry`=19831;
 UPDATE `creature_template` SET `ScriptName`='npc_maxx_a_million_escort', `MovementType`=2 WHERE `entry`=19589;
 UPDATE `creature_template` SET `ScriptName` = 'npc_zeppit' WHERE `entry` = '22484';
+UPDATE `creature_template` SET `ScriptName` = 'npc_dr_boom' WHERE `entry` = '20284';
+UPDATE `creature_template` SET `ScriptName` = 'npc_boom_bot' WHERE `entry` = '19692';
 
 /* ONYXIA'S LAIR */
 UPDATE `creature_template` SET `ScriptName`='boss_onyxia' WHERE `entry`=10184;
