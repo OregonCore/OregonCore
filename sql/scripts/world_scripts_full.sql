@@ -737,6 +737,7 @@ UPDATE `creature_template` SET `ScriptName`='npc_maxx_a_million_escort', `Moveme
 UPDATE `creature_template` SET `ScriptName` = 'npc_zeppit' WHERE `entry` = '22484';
 UPDATE `creature_template` SET `ScriptName` = 'npc_dr_boom' WHERE `entry` = '20284';
 UPDATE `creature_template` SET `ScriptName` = 'npc_boom_bot' WHERE `entry` = '19692';
+UPDATE `creature_template` SET `ScriptName` = 'npc_drijya' WHERE `entry` = '20281';
 
 /* ONYXIA'S LAIR */
 UPDATE `creature_template` SET `ScriptName`='boss_onyxia' WHERE `entry`=10184;

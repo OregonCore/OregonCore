@@ -20,7 +20,7 @@
 /* ScriptData
 SDName: Netherstorm
 SD%Complete: 90
-SDComment: Quest support: 10337, 10438, 10652 (special flight paths), 10299,10321,10322,10323,10329,10330,10338,10365(Shutting Down Manaforge), 10198, 10191, 10924, 10221.
+SDComment: Quest support: 10337, 10438, 10652 (special flight paths), 10299,10321,10322,10323,10329,10330,10338,10365(Shutting Down Manaforge), 10198, 10191, 10924, 10221, 10310.
 SDCategory: Netherstorm
 EndScriptData */
 
@@ -36,6 +36,7 @@ npc_maxx_a_million
 npc_zeppit
 npc_dr_boom
 npc_boom_bot
+npc_drijya
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -1200,6 +1201,257 @@ CreatureAI* GetAI_npc_boom_bot(Creature* pCreature)
     return new npc_boom_botAI (pCreature);
 }
 
+/*######
+## npc_drijya
+######*/
+
+enum
+{
+    SAY_DR_START           = -1900156,
+    SAY_DR_1               = -1900157,
+    SAY_DR_2               = -1900158,
+    SAY_DR_3               = -1900159,
+    SAY_DR_4               = -1900160,
+    SAY_DR_5               = -1900161,
+    SAY_DR_6               = -1900162,
+    SAY_DR_7               = -1900163,
+    SAY_DR_COMPLETE        = -1900164,
+
+    QUEST_WARP_GATE        = 10310,
+
+    MAX_TROOPER            = 9,
+    MAX_IMP                = 6,
+
+    NPC_EXPLODE_TRIGGER    = 20296,
+    NPC_IMP                = 20399,
+    NPC_TROOPER            = 20402,
+    NPC_DESTROYER          = 20403,
+
+    GO_SMOKE               = 185318,
+    GO_FIRE                = 185317,
+    GO_BIG_FIRE            = 185319
+};
+
+struct npc_drijyaAI : public npc_escortAI
+{
+    npc_drijyaAI(Creature* pCreature) : npc_escortAI(pCreature) {}
+
+    bool Destroy;
+    bool SummonImp;
+    bool SummonTrooper;
+    bool SummonDestroyer;
+
+    uint32 Count;
+    uint32 SpawnTimer;
+    uint32 StartSpawnTimer;
+    uint32 DestroyingTimer;
+
+    void Reset()
+    {
+        Destroy = false;
+        SummonImp = false;
+        SummonTrooper = false;
+        SummonDestroyer = false;
+        Count = 0;
+        SpawnTimer = 3500;
+        StartSpawnTimer = 15000;
+        DestroyingTimer = 60000;
+    }
+
+    void AttackedBy(Unit* pWho) {}
+    void AttackStart(Unit* pWho) {}
+
+    void SpawnImp()
+    {
+        ++Count;
+        me->SummonCreature(NPC_IMP, 3025.752f, 2715.122, 113.758, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
+    }
+
+    void SpawnTrooper()
+    {
+        ++Count;
+        me->SummonCreature(NPC_TROOPER, 3025.752f, 2715.122, 113.758, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
+    }
+
+    void SpawnDestroyer()
+    {
+        me->SummonCreature(NPC_DESTROYER, 3019.741f, 2720.757, 115.189, 2.5f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
+    }
+
+    void JustSummoned(Creature* pSummoned)
+    {
+        if (pSummoned->GetEntry() == NPC_IMP)
+        {
+            if (Player* pPlayer = GetPlayerForEscort())
+                pSummoned->AI()->AttackStart(pPlayer); 
+        }
+        if (pSummoned->GetEntry() == NPC_TROOPER)
+        {
+            if(Player* pPlayer = GetPlayerForEscort())
+                pSummoned->AI()->AttackStart(pPlayer);
+        }
+        else
+        {
+            if (pSummoned->GetEntry() == NPC_DESTROYER)
+            {
+                if (Player* pPlayer = GetPlayerForEscort())
+                    pSummoned->AI()->AttackStart(pPlayer);
+            }
+        }
+     }
+
+    void WaypointReached(uint32 uiPointId)
+    {
+        switch(uiPointId)
+        {
+            case 0:
+                DoScriptText(SAY_DR_START, me);
+                SetRun();
+                break;
+            case 1:
+                DoScriptText(SAY_DR_1, me);
+                break;
+            case 5:
+                DoScriptText(SAY_DR_2, me);
+                break;
+            case 7:
+                SetEscortPaused(true);
+                Destroy = true;
+                SummonImp = true;
+                break;
+            case 8:
+                me->SummonGameObject(GO_SMOKE, 3049.354f, 2726.431f, 113.922f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 215);
+                DoScriptText(SAY_DR_4, me);
+                break;
+            case 12:
+                SetEscortPaused(true);
+                Destroy = true;
+                SummonTrooper = true;
+                break;
+            case 13:
+                me->SummonGameObject(GO_SMOKE, 3020.842f, 2697.501f, 113.368f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 140);
+                DoScriptText(SAY_DR_5, me);
+                break;
+            case 17:
+                SetEscortPaused(true);
+                Destroy = true;
+                SummonDestroyer = true;
+                break;
+            case 18:
+                DoScriptText(SAY_DR_6, me);
+                if (Creature* pTrigger = me->FindNearestCreature(NPC_EXPLODE_TRIGGER, 20.0f))
+                {
+                    pTrigger->CastSpell(pTrigger, SPELL_BOOM , false);
+                }
+                me->SummonGameObject(GO_SMOKE, 3008.503f, 2729.432f, 114.350f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 60);
+                me->SummonGameObject(GO_FIRE, 3026.163f, 2723.538f, 113.681f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 60);
+                me->SummonGameObject(GO_BIG_FIRE, 3021.556f, 2718.887f, 115.055f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 60);
+                break;
+            case 19:
+                DoScriptText(SAY_DR_7, me);
+                break;
+            case 22:
+                SetRun(false);
+                break;
+            case 26:
+                if (Player* pPlayer = GetPlayerForEscort())
+                {
+                    DoScriptText(SAY_DR_COMPLETE, me, pPlayer);
+                    pPlayer->GroupEventHappens(QUEST_WARP_GATE, me);
+                }
+                break;
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        npc_escortAI::UpdateAI(uiDiff);
+
+        if (SummonImp)
+        {
+            if (StartSpawnTimer <= uiDiff) 
+            {
+                if (SpawnTimer <= uiDiff)
+                {
+                    if (Count >= MAX_IMP)
+                    {
+                        DoScriptText(SAY_DR_3, me);
+                        SummonImp = false;
+                        StartSpawnTimer = 15000;
+                    }
+                    SpawnTimer = 3500;
+                    SpawnImp();
+                }
+                else SpawnTimer -= uiDiff;
+            }
+            else StartSpawnTimer -= uiDiff;
+        }
+
+        if (SummonTrooper)
+        {
+            if (StartSpawnTimer <= uiDiff)
+            {
+                if (SpawnTimer <= uiDiff)
+                {
+                    if (Count >= MAX_TROOPER)
+                    {
+                        SummonTrooper = false;
+                        StartSpawnTimer = 15000;
+                    }
+                     SpawnTimer = 3500;
+                     SpawnTrooper();
+                }
+                else SpawnTimer -= uiDiff;
+            }
+            else StartSpawnTimer -= uiDiff;
+        }
+
+        if (SummonDestroyer)
+        {
+            if (StartSpawnTimer <= uiDiff)
+            {
+                SpawnDestroyer();
+                SummonDestroyer = false;
+                StartSpawnTimer = 15000;
+            }
+            else StartSpawnTimer -= uiDiff;
+        }
+
+        if (Destroy)
+        {
+            if (DestroyingTimer <= uiDiff)
+            {
+                SetEscortPaused(false);
+                Destroy = false;
+                DestroyingTimer = 60000;
+            }
+            else DestroyingTimer -= uiDiff;
+
+            me->HandleEmoteCommand(173);
+        }
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_drijya(Creature* pCreature)
+{
+    return new npc_drijyaAI(pCreature);
+}
+
+bool QuestAccept_npc_drijya(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
+{
+    if (pQuest->GetQuestId() == QUEST_WARP_GATE)
+    {
+        if (npc_drijyaAI* pEscortAI = dynamic_cast<npc_drijyaAI*>(pCreature->AI()))
+        {
+            pCreature->setFaction(113);
+            pEscortAI->Start(true, false, pPlayer->GetGUID(), pQuest);
+        }
+    }
+    return true;
+}
+
 void AddSC_netherstorm()
 {
     Script *newscript;
@@ -1261,6 +1513,12 @@ void AddSC_netherstorm()
     newscript = new Script;
     newscript->Name = "npc_boom_bot";
     newscript->GetAI = &GetAI_npc_boom_bot;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_drijya";
+    newscript->GetAI = &GetAI_npc_drijya;
+    newscript->pQuestAccept = &QuestAccept_npc_drijya;
     newscript->RegisterSelf();
 }
 
