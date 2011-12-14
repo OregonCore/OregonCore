@@ -17,12 +17,11 @@
 /* ScriptData
 SDName: Blades_Edge_Mountains
 SD%Complete: 90
-SDComment: Quest support: 10503, 10504, 10556, 10609, 10682, 10980, 10512. Ogri'la->Skettis Flight. (npc_daranelle needs bit more work before consider complete)
+SDComment: Quest support: 10556, 10609, 10682, 10980, 10512. Ogri'la->Skettis Flight. (npc_daranelle needs bit more work before consider complete)
 SDCategory: Blade's Edge Mountains
 EndScriptData */
 
 /* ContentData
-mobs_bladespire_ogre
 mobs_nether_drake
 npc_daranelle
 npc_overseer_nuaar
@@ -36,30 +35,6 @@ EndContentData */
 /*######
 ## mobs_bladespire_ogre
 ######*/
-
-//TODO: add support for quest 10512 + creature abilities
-struct mobs_bladespire_ogreAI : public ScriptedAI
-{
-    mobs_bladespire_ogreAI(Creature *c) : ScriptedAI(c) {}
-
-    void Reset()
-    {
-    }
-
-    void EnterCombat(Unit* who)
-    {
-    }
-
-    void JustDied(Unit* Killer)
-    {
-        if (Killer->GetTypeId() == TYPEID_PLAYER)
-            CAST_PLR(Killer)->KilledMonsterCredit(19995, me->GetGUID());
-    }
-};
-CreatureAI* GetAI_mobs_bladespire_ogre(Creature* pCreature)
-{
-    return new mobs_bladespire_ogreAI (pCreature);
-}
 
 /*######
 ## mobs_nether_drake
@@ -453,11 +428,6 @@ CreatureAI* GetAI_npc_ogre_brute(Creature* pCreature)
 void AddSC_blades_edge_mountains()
 {
     Script *newscript;
-
-    newscript = new Script;
-    newscript->Name = "mobs_bladespire_ogre";
-    newscript->GetAI = &GetAI_mobs_bladespire_ogre;
-    newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "mobs_nether_drake";
