@@ -367,6 +367,7 @@ bool Guild::LoadMembersFromDB(QueryResult_AutoPtr guildMembersResult)
         newmember.Class                 = fields[21].GetUInt8();
         newmember.ZoneId                = fields[22].GetUInt32();
         newmember.LogoutTime            = fields[23].GetUInt64();
+        newmember.accountId             = fields[24].GetUInt32();
 
         //this code will remove unexisting character guids from guild
         if (newmember.Level < 1 || newmember.Level > STRONG_MAX_LEVEL) // can be at broken `data` field
@@ -420,7 +421,7 @@ bool Guild::FillPlayerData(uint64 guid, MemberSlot* memslot)
     }
     else
     {
-        QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT name,level,zone,class FROM characters WHERE guid = '%u'", GUID_LOPART(guid));
+        QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT name,level,zone,class,account FROM characters WHERE guid = '%u'", GUID_LOPART(guid));
         if (!result)
             return false;                                   // player doesn't exist
 
@@ -430,6 +431,7 @@ bool Guild::FillPlayerData(uint64 guid, MemberSlot* memslot)
         plLevel = fields[1].GetUInt32();
         plZone = fields[2].GetUInt32();
         plClass = fields[3].GetUInt32();
+        accountId = fields[4].GetUInt32();
 
         if (plLevel<1||plLevel>STRONG_MAX_LEVEL)             // can be at broken `data` field
         {
@@ -452,6 +454,7 @@ bool Guild::FillPlayerData(uint64 guid, MemberSlot* memslot)
         }
     }
 
+    memslot->accountId = accountId;
     memslot->Name = plName;
     memslot->Level = plLevel;
     memslot->Class = plClass;
