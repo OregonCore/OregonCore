@@ -33,10 +33,6 @@ EndContentData */
 #include "ScriptPCH.h"
 
 /*######
-## mobs_bladespire_ogre
-######*/
-
-/*######
 ## mobs_nether_drake
 ######*/
 

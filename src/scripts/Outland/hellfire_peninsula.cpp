@@ -19,7 +19,7 @@
 /* ScriptData
 SDName: Hellfire_Peninsula
 SD%Complete: 98
- SDComment: Quest support: 9375, 9418, 10129, 10146, 10162, 10163, 10340, 10346, 10347, 10382 (Special flight paths), 9410, 10909, 10935, 9545, 10838.
+ SDComment: Quest support: 9375, 9418, 10129, 10146, 10162, 10163, 10340, 10346, 10347, 10382 (Special flight paths), 9410, 10909, 10935, 9545, 10838, 11516.
 SDCategory: Hellfire Peninsula
 EndScriptData */
 
@@ -44,6 +44,7 @@ npc_sedai_quest_credit_marker
 npc_vindicator_sedai
 npc_demoniac_scryer
 npc_magic_sucker_device_spawner
+npc_living_flare
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -1537,6 +1538,75 @@ CreatureAI* GetAI_npc_magic_sucker_device_spawner(Creature* pCreature)
     return new npc_magic_sucker_device_spawnerAI(pCreature);
 }
 
+/*######
+## npc_living_flare
+######*/
+
+enum
+{
+    SPELL_COSMETIC             = 44880,
+    SPELL_UNSTABLE_COSMETIC    = 46196,
+    SPELL_ABSORBED             = 44944,
+
+    NPC_FEL_SPARK              = 22323,
+    NPC_TRIGGER                = 24959,
+
+    GO_FIRE                    = 185319
+};
+
+struct npc_living_flareAI : public ScriptedAI
+{
+    npc_living_flareAI(Creature* pCreature) : ScriptedAI(pCreature) {}
+
+    uint32 uiCheckTimer;
+    uint64 uiSparkGUID;
+    uint32 Count;
+
+    void Reset()
+    {
+        DoCast(SPELL_COSMETIC);
+        uiCheckTimer = 8000;
+        uiSparkGUID = 0;
+        Count = 0;
+    }
+
+    void AttackedBy(Unit* pWho) {}
+    void AttackStart(Unit* pWho) {}
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (uiCheckTimer <= uiDiff)
+        {
+            if (Creature* pSpark = me->FindNearestCreature(NPC_FEL_SPARK, 10.0f, false))
+            {
+                if (pSpark->GetGUID() != uiSparkGUID && CAST_PLR(me->GetOwner())->GetQuestStatus(11516) == QUEST_STATUS_INCOMPLETE)
+                {
+                    if (Count <= 7)
+                    {
+                        ++Count;
+                        DoCast(SPELL_ABSORBED);
+                        uiSparkGUID = pSpark->GetGUID();
+                    }
+                    else DoCast(SPELL_UNSTABLE_COSMETIC);
+                }
+            }
+
+            if (Creature* pTrigger = me->FindNearestCreature(NPC_TRIGGER, 8.0f, true))
+            {
+                pTrigger->SummonGameObject(GO_FIRE, pTrigger->GetPositionX(), pTrigger->GetPositionY(), pTrigger->GetPositionZ(), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 60);
+                CAST_PLR(me->GetOwner())->AreaExploredOrEventHappens(11516);
+                me->setDeathState(CORPSE);
+            }
+        }
+        else uiCheckTimer -= uiDiff;
+    }
+};
+
+CreatureAI* GetAI_npc_living_flare(Creature* pCreature)
+{
+    return new npc_living_flareAI(pCreature);
+}
+
 void AddSC_hellfire_peninsula()
 {
     Script *newscript;
@@ -1646,5 +1716,10 @@ void AddSC_hellfire_peninsula()
     newscript = new Script;
     newscript->Name = "npc_magic_sucker_device_spawner";
     newscript->GetAI = &GetAI_npc_magic_sucker_device_spawner;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_living_flare";
+    newscript->GetAI = &GetAI_npc_living_flare;
     newscript->RegisterSelf();
 }
