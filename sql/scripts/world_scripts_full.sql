@@ -562,6 +562,7 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_vindicator_sedai' WHERE entry
 UPDATE `creature_template` SET `ScriptName` = 'npc_demoniac_scryer' WHERE entry = '22258';
 UPDATE `creature_template` SET `ScriptName` = 'npc_magic_sucker_device_spawner' WHERE entry = '22260';
 UPDATE `creature_template` SET `ScriptName` = 'npc_living_flare' WHERE `entry` = '24916';
+UPDATE `creature_template` SET `ScriptName` = 'npc_pathaleon_image' WHERE `entry` = '21504';
 
 /* HILLSBRAD FOOTHILLS */
 
