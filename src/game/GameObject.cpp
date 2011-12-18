@@ -1074,6 +1074,9 @@ void GameObject::Use(Unit* user)
             if (info->camera.eventID)
                 GetMap()->ScriptsStart(sEventScripts, info->camera.eventID, player, this);
 
+            if (GetEntry() == 187578)
+                SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_IN_USE);
+
             return;
         }
         //fishing bobber
