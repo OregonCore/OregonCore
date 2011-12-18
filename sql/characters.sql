@@ -781,7 +781,7 @@ CREATE TABLE `corpse` (
   `zone` int(11) unsigned NOT NULL default '38' COMMENT 'Zone Identifier',
   `map` int(11) unsigned NOT NULL default '0' COMMENT 'Map Identifier',
   `displayId` int(10) unsigned NOT NULL default '0',
-  `itemCache` text NOT NULL AFTER `displayId`,
+  `itemCache` text NOT NULL,
   `bytes1` int(10) unsigned NOT NULL default '0',
   `bytes2` int(10) unsigned NOT NULL default '0',
   `guild` int(10) unsigned NOT NULL default '0',
