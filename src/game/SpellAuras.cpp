@@ -2099,6 +2099,24 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                 }
                 return;
             }
+            case 39238:                                     // Fumping
+            {
+                if (!m_target)
+                    return;
+
+                if (Unit* caster = GetCaster())
+                {
+                    if(urand(0,1) == 0)
+                        caster->SummonCreature(22482, m_target->GetPositionX(), m_target->GetPositionY(), m_target->GetPositionZ(), m_target->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
+                    else
+                    {
+                        caster->SummonCreature(22483, m_target->GetPositionX(), m_target->GetPositionY(), m_target->GetPositionZ(), m_target->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
+                        caster->SummonCreature(22483, m_target->GetPositionX(), m_target->GetPositionY(), m_target->GetPositionZ(), m_target->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
+                        caster->SummonCreature(22483, m_target->GetPositionX(), m_target->GetPositionY(), m_target->GetPositionZ(), m_target->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
+                    }
+                }
+                return;
+            }
         }
 
         // Earth Shield
