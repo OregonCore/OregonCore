@@ -12,3 +12,5 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`content_loc1`,`content_lo
  (-1900166,'Do you like what we\'ve done here? Perhaps we will drop these crystals from the sky all over Outland.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,0,'PATHALEON2'),
  (-1900167,'I grow bored with your attempt to heal the land and quell the energies summoning and driving the colossi mad. Goliathon, King of the Colossi, Prince Kael\'thas and I demand that you defend the crystal!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,0,'PATHALEON3'),
  (-1900168,'We will meet again soon.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,0,'PATHALEON4');
+
+UPDATE `item_template` SET `spellcharges_1` = '1' WHERE `entry` = '29478';
