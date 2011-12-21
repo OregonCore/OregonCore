@@ -1,4 +1,6 @@
 /* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * Copyright (C) 2010-2011 OregonCore <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,12 +18,13 @@
 
 /* ScriptData
 SDName: Boss_The_Maker
-SD%Complete: 80
-SDComment: Mind control no support
+SD%Complete: 99
+SDComment:
 SDCategory: Hellfire Citadel, Blood Furnace
 EndScriptData */
 
 #include "ScriptPCH.h"
+#include "blood_furnace.h"
 
 #define SAY_AGGRO_1                 -1542009
 #define SAY_AGGRO_2                 -1542010
@@ -30,26 +33,29 @@ EndScriptData */
 #define SAY_KILL_2                  -1542013
 #define SAY_DIE                     -1542014
 
-#define SPELL_ACID_SPRAY            38153                   // heroic 38973 ??? 38153
 #define SPELL_EXPLODING_BREAKER     30925
-#define SPELL_KNOCKDOWN             20276
-#define SPELL_DOMINATION            25772                   // ???
+#define SPELL_EXPLODING_BREAKER_H   40059
+#define SPELL_DOMINATION            30923
 
 struct boss_the_makerAI : public ScriptedAI
 {
-    boss_the_makerAI(Creature *c) : ScriptedAI(c) {}
+    boss_the_makerAI(Creature *c) : ScriptedAI(c) 
+	{
+            pInstance = c->GetInstanceData();
+            HeroicMode = me->GetMap()->IsHeroic();
+	}
 
-    uint32 AcidSpray_Timer;
+    ScriptedInstance* pInstance;
+
     uint32 ExplodingBreaker_Timer;
     uint32 Domination_Timer;
-    uint32 Knockdown_Timer;
 
     void Reset()
     {
-        AcidSpray_Timer = 15000;
-        ExplodingBreaker_Timer = 6000;
-        Domination_Timer = 120000;
-        Knockdown_Timer    = 10000;
+        ExplodingBreaker_Timer = 9000;
+        Domination_Timer = 60000;
+        if (pInstance)
+            pInstance->SetData(DATA_MAKEREVENT, NOT_STARTED);
     }
 
     void EnterCombat(Unit *who)
@@ -60,6 +66,9 @@ struct boss_the_makerAI : public ScriptedAI
             case 1: DoScriptText(SAY_AGGRO_2, me); break;
             case 2: DoScriptText(SAY_AGGRO_3, me); break;
         }
+
+        if (pInstance)
+            pInstance->SetData(DATA_MAKEREVENT, IN_PROGRESS);
     }
 
     void KilledUnit(Unit* victim)
@@ -74,6 +83,9 @@ struct boss_the_makerAI : public ScriptedAI
     void JustDied(Unit* Killer)
     {
         DoScriptText(SAY_DIE, me);
+
+        if (pInstance)
+            pInstance->SetData(DATA_MAKEREVENT, DONE);
     }
 
     void UpdateAI(const uint32 diff)
@@ -81,36 +93,22 @@ struct boss_the_makerAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (AcidSpray_Timer <= diff)
-        {
-            DoCast(me->getVictim(),SPELL_ACID_SPRAY);
-            AcidSpray_Timer = 15000+rand()%8000;
-        } else AcidSpray_Timer -=diff;
-
         if (ExplodingBreaker_Timer <= diff)
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,SPELL_EXPLODING_BREAKER);
-            ExplodingBreaker_Timer = 4000+rand()%8000;
-        } else ExplodingBreaker_Timer -=diff;
+                DoCast(pTarget,HeroicMode ? SPELL_EXPLODING_BREAKER_H : SPELL_EXPLODING_BREAKER);
+                ExplodingBreaker_Timer = 9000+rand()%2000;
+        }
+        else ExplodingBreaker_Timer -=diff;
 
-        /* // Disabled until Core Support for mind control
-        if (domination_timer_timer <= diff)
+        if (Domination_Timer <= diff)
         {
-        Unit *pTarget;
-        pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
-
-        DoCast(pTarget,SPELL_DOMINATION);
-
-        domination_timer = 120000;
-        } else domination_timer -=diff;
-        */
-
-        if (Knockdown_Timer <= diff)
-        {
-            DoCast(me->getVictim(),SPELL_KNOCKDOWN);
-            Knockdown_Timer = 4000+rand()%8000;
-        } else Knockdown_Timer -=diff;
+            Unit *pTarget;
+            pTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
+            DoCast(pTarget,SPELL_DOMINATION);
+            Domination_Timer = 60000;
+        }
+        else Domination_Timer -=diff;
 
         DoMeleeAttackIfReady();
     }

@@ -515,6 +515,9 @@ UPDATE `creature_template` SET `ScriptName`='boss_broggok' WHERE `entry`=17380;
 UPDATE `creature_template` SET `ScriptName`='boss_kelidan_the_breaker' WHERE `entry`=17377;
 UPDATE `creature_template` SET `ScriptName`='mob_broggok_poisoncloud' WHERE `entry`=17662;
 UPDATE `creature_template` SET `ScriptName`='mob_shadowmoon_channeler' WHERE `entry`=17653;
+UPDATE `gameobject_template` SET `ScriptName` = 'go_prison_cell_lever' WHERE `entry` = '181982';
+UPDATE `creature_template` SET `ScriptName` = 'mob_nascent_orc' WHERE `entry` = '17398';
+
 
 /* HELLFIRE RAMPARTS */
 /* Vazruden, Omor the Unscarred, Watchkeeper Gargolmar */

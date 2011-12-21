@@ -1,4 +1,6 @@
 /* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * Copyright (C) 2010-2011 OregonCore <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +18,7 @@
 
 /* ScriptData
 SDName: Boss_Kelidan_The_Breaker
-SD%Complete: 100
+SD%Complete: 99
 SDComment:
 SDCategory: Hellfire Citadel, Blood Furnace
 EndScriptData */
@@ -98,6 +100,8 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
         Firenova = false;
         addYell = false;
         SummonChannelers();
+        if (pInstance)
+            pInstance->SetData(DATA_KELIDANEVENT, NOT_STARTED);
     }
 
     void EnterCombat(Unit *who)
@@ -106,6 +110,8 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
         if (me->IsNonMeleeSpellCasted(false))
             me->InterruptNonMeleeSpells(true);
         DoStartMovement(who);
+        if (pInstance)
+            pInstance->SetData(DATA_KELIDANEVENT, IN_PROGRESS);
     }
 
     void KilledUnit(Unit* victim)
