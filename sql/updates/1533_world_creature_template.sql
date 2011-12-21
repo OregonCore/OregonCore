@@ -38,6 +38,9 @@ UPDATE `creature_template` SET `ScriptName` = 'mob_broggok_poisoncloud' WHERE `e
 UPDATE `creature_template` SET `unit_flags` = '131072' WHERE `entry` = '17662';
 UPDATE `creature_template` SET `flags_extra` = '128' WHERE entry = '17662';
 
+UPDATE `creature_template` SET `flags_extra` = '2' WHERE entry = '17377';
+UPDATE `creature_template` SET `flags_extra` = '2' WHERE entry = '18607';
+
 DELETE FROM `creature` WHERE `guid` = '85721';
 DELETE FROM `creature` WHERE `guid` = '85725';
 DELETE FROM `creature` WHERE `guid` = '85724';

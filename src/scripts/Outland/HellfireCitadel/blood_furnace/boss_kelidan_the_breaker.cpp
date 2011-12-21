@@ -100,6 +100,7 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
         Firenova = false;
         addYell = false;
         SummonChannelers();
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         if (pInstance)
             pInstance->SetData(DATA_KELIDANEVENT, NOT_STARTED);
     }
@@ -156,6 +157,7 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
         }
 
         if (killer)
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             me->AI()->AttackStart(killer);
     }
 

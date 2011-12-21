@@ -116,8 +116,7 @@ struct boss_broggokAI : public ScriptedAI
 
         if (PoisonBolt_Timer <= diff)
         {
-            DoCast(me->getVictim(),HeroicMode ? SPELL_SLIME_SPRAY_H : SPELL_POISON_BOLT);
-            DoCast(me->getVictim(),SPELL_POISON_BOLT);
+            DoCast(me->getVictim(),HeroicMode ? SPELL_POISON_BOLT_H : SPELL_POISON_BOLT);
             PoisonBolt_Timer = 4000+rand()%8000;
         } else PoisonBolt_Timer -=diff;
 
