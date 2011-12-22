@@ -157,8 +157,10 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
         }
 
         if (killer)
+        {
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             me->AI()->AttackStart(killer);
+        }
     }
 
     uint64 GetChanneled(Creature *channeler1)
