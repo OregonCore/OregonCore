@@ -43,6 +43,7 @@ struct boss_broggokAI : public ScriptedAI
 	}
 
     ScriptedInstance* pInstance;
+    bool HeroicMode;
 
     uint32 AcidSpray_Timer;
     uint32 PoisonSpawn_Timer;
@@ -183,11 +184,6 @@ struct mob_nascent_orcAI : public ScriptedAI
         me->CombatStop(true);
         me->GetMotionMaster()->MoveTargetedHome();
         Reset();
-    }
-
-   void JustDied(Unit* Killer)
-    {
-        me->ForcedDespawn();
     }
 
     void UpdateAI(const uint32 diff)

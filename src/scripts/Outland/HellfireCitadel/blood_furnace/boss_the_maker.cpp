@@ -46,6 +46,7 @@ struct boss_the_makerAI : public ScriptedAI
 	}
 
     ScriptedInstance* pInstance;
+    bool HeroicMode;
 
     uint32 ExplodingBreaker_Timer;
     uint32 Domination_Timer;
@@ -97,7 +98,7 @@ struct boss_the_makerAI : public ScriptedAI
         {
             if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 DoCast(pTarget,HeroicMode ? SPELL_EXPLODING_BREAKER_H : SPELL_EXPLODING_BREAKER);
-                ExplodingBreaker_Timer = 9000+rand()%2000;
+            ExplodingBreaker_Timer = 9000+rand()%2000;
         }
         else ExplodingBreaker_Timer -=diff;
 
