@@ -27,6 +27,7 @@ boss_blood_guard_porung
 EndContentData */
 
 #include "ScriptPCH.h"
+#include "shattered_halls.h"
 
 #define SPELL_CLEAVE    15496
 
@@ -83,7 +84,7 @@ CreatureAI* GetAI_boss_blood_guard_porungAI(Creature* pCreature)
     return new boss_blood_guard_porungAI (pCreature);
 }
 
-void AddSC_boss_broggok()
+void AddSC_boss_blood_guard_porung()
 {
     Script *newscript;
     newscript = new Script;
