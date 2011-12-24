@@ -537,6 +537,7 @@ UPDATE `creature_template` SET `ScriptName`='mob_fel_orc_convert' WHERE `entry`=
 UPDATE `creature_template` SET `ScriptName`='mob_lesser_shadow_fissure' WHERE `entry`=17471;
 UPDATE `creature_template` SET `ScriptName`='mob_omrogg_heads' WHERE `entry` IN (19523,19524);
 UPDATE `instance_template` SET `script`='instance_shattered_halls' WHERE `map`=540;
+UPDATE `creature_template` SET `ScriptName` = 'boss_blood_guard_porung' WHERE `entry` = '20923';
 
 /* MAGTHERIDON'S LAIR */
 UPDATE `instance_template` SET `script`='instance_magtheridons_lair' WHERE `map`=544;

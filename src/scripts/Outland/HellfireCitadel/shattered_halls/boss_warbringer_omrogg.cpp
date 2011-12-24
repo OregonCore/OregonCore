@@ -1,4 +1,6 @@
 /* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * Copyright (C) 2010-2011 OregonCore <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +18,7 @@
 
 /* ScriptData
 SDName: Boss_Warbringer_Omrogg
-SD%Complete: 85
+SD%Complete: 99
 SDComment: Heroic enabled. Spell timing may need additional tweaks
 SDCategory: Hellfire Citadel, Shattered Halls
 EndScriptData */
@@ -173,7 +175,7 @@ struct boss_warbringer_omroggAI : public ScriptedAI
         ResetThreat_Timer = 30000;
 
         if (pInstance)
-            pInstance->SetData(TYPE_OMROGG, NOT_STARTED);   //End boss can use this later. O'mrogg must be defeated(DONE) or he will come to aid.
+            pInstance->SetData(TYPE_WARBRINGER, NOT_STARTED);
     }
 
     void DoYellForThreat()
@@ -213,7 +215,7 @@ struct boss_warbringer_omroggAI : public ScriptedAI
         }
 
         if (pInstance)
-            pInstance->SetData(TYPE_OMROGG, IN_PROGRESS);
+            pInstance->SetData(TYPE_WARBRINGER, IN_PROGRESS);
     }
 
     void JustSummoned(Creature *summoned)
@@ -274,7 +276,7 @@ struct boss_warbringer_omroggAI : public ScriptedAI
         }
 
         if (pInstance)
-            pInstance->SetData(TYPE_OMROGG, DONE);
+            pInstance->SetData(TYPE_WARBRINGER, DONE);
     }
 
     void UpdateAI(const uint32 diff)

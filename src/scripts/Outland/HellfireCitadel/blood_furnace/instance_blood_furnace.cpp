@@ -227,8 +227,8 @@ struct instance_blood_furnace : public ScriptedInstance
                     HandleGameObject(Sewer1GUID, true);
                     HandleGameObject(Sewer2GUID, true);
                 }
-                if (Encounter[3] != DONE)
-                    Encounter[3] = data;
+                if (Encounter[2] != DONE)
+                    Encounter[2] = data;
                 break;
         }
 
@@ -390,10 +390,11 @@ struct instance_blood_furnace : public ScriptedInstance
                 {
                     if (GameObject* pDoor = instance->GetGameObject(BroggokEvent[i].CellGuid))
                     {
-                        if (pOrc->IsWithinDistInMap(pDoor, 15.0f))
+                        if (pOrc->IsWithinDistInMap(pDoor, 8.0f))
                         {
                             BroggokEvent[i].SortedOrcGuids.insert(pOrc->GetGUID());
                             if (!pOrc->isAlive())
+                            pOrc->ForcedDespawn();
                             pOrc->Respawn();
                             break;
                         }

@@ -1,4 +1,6 @@
 /* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * Copyright (C) 2010-2011 OregonCore <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,8 +18,8 @@
 
 /* ScriptData
 SDName: Boss_Grand_Warlock_Nethekurse
-SD%Complete: 75
-SDComment: encounter not fully completed. missing part where boss kill minions.
+SD%Complete: 99
+SDComment:
 SDCategory: Hellfire Citadel, Shattered Halls
 EndScriptData */
 
@@ -61,9 +63,12 @@ static Say PeonDies[]=
 #define SAY_SLAY_2          -1540016
 #define SAY_DIE             -1540017
 
+#define NPC_FEL_ORC                 17083
+
 #define SPELL_DEATH_COIL            30500
-#define SPELL_DARK_SPIN             30502                   // core bug spell attack caster :D
-#define SPELL_SHADOW_FISSURE        30496                   // Summon the ShadowFissure NPC
+#define SPELL_DARK_SPIN             30502
+#define SPELL_SHADOW_FISSURE        30496
+#define SPELL_SHADOW_SEAR           30735
 
 #define SPELL_SHADOW_CLEAVE         30495
 #define H_SPELL_SHADOW_SLAM         35953
@@ -71,7 +76,6 @@ static Say PeonDies[]=
 #define SPELL_HEMORRHAGE            30478
 
 #define SPELL_CONSUMPTION           30497
-#define SPELL_TEMPORARY_VISUAL      39312                   // this is wrong, a temporary solution. spell consumption already has the purple visual, but doesn't display as it should
 
 struct boss_grand_warlock_nethekurseAI : public ScriptedAI
 {
@@ -88,8 +92,10 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
     bool IsIntroEvent;
     bool IsMainEvent;
     bool SpinOnce;
-    //bool HasTaunted;
     bool Phase;
+
+    std::vector<uint64> OrcGUID;
+    std::list<Creature*> orcs;
 
     uint32 PeonEngagedCount;
     uint32 PeonKilledCount;
@@ -106,7 +112,6 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
         IsIntroEvent = false;
         IntroOnce = false;
         IsMainEvent = false;
-        //HasTaunted = false;
         SpinOnce = false;
         Phase = false;
 
@@ -117,6 +122,14 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
         DeathCoil_Timer = 20000;
         ShadowFissure_Timer = 8000;
         Cleave_Timer = 5000;
+
+        me->GetCreatureListWithEntryInGrid(orcs, 17083, 40.0f);
+        OrcGUID.clear();
+        for (std::list<Creature*>::iterator itr = orcs.begin(); itr != orcs.end(); itr++)
+            OrcGUID.push_back((*itr)->GetGUID());
+
+        if (pInstance)
+            pInstance->SetData(TYPE_NETHEKURSE, NOT_STARTED);
     }
 
     void DoYellForPeonEnterCombat()
@@ -144,7 +157,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
         }
     }
 
-    void DoTauntPeons()
+    void DoKillPeons()
     {
         switch(rand()%3)
         {
@@ -153,7 +166,18 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
             case 2: DoScriptText(SAY_TAUNT_3, me); break;
         }
 
-        //TODO: kill the peons first
+        for (std::vector<uint64>::const_iterator itr = OrcGUID.begin(); itr != OrcGUID.end(); ++itr)
+        {
+            if (Creature* pOrc = Creature::GetCreature(*me, *itr))
+            {
+                if (pOrc->isAlive())
+                {
+                    DoCast(pOrc,SPELL_SHADOW_SEAR);
+                    pOrc->DealDamage(pOrc, pOrc->GetHealth(), 0, DIRECT_DAMAGE);
+                }
+            }
+        }
+
         IsIntroEvent = false;
         PeonEngagedCount = 4;
         PeonKilledCount = 4;
@@ -179,7 +203,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
     {
         if (!me->getVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor (me))
         {
-            if (!IntroOnce && me->IsWithinDistInMap(who, 75))
+            if (!IntroOnce && me->IsWithinDistInMap(who, 40))
             {
                 DoScriptText(SAY_INTRO, me);
                 IntroOnce = true;
@@ -199,6 +223,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
             if (me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who))
             {
                 //who->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
+                me->InterruptNonMeleeSpells(false);
                 AttackStart(who);
             }
         }
@@ -230,6 +255,39 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
         }
     }
 
+    void EnterEvadeMode()
+    {
+        me->RemoveAllAuras();
+        me->DeleteThreatList();
+        me->CombatStop(true);
+        Reset();
+
+        if (!me->isAlive())
+            return;    
+
+        if (pInstance)
+        {
+            pInstance->SetData(TYPE_NETHEKURSE, FAIL);
+            float fRespX, fRespY, fRespZ;
+            me->GetRespawnCoord(fRespX, fRespY, fRespZ);
+            me->GetMotionMaster()->MovePoint(0, fRespX, fRespY, fRespZ);
+        }
+        else
+            me->GetMotionMaster()->MoveTargetedHome();
+
+        for (std::vector<uint64>::const_iterator itr = OrcGUID.begin(); itr != OrcGUID.end(); ++itr)
+        {
+            if (Creature* pOrc = Creature::GetCreature(*me, *itr))
+            {
+                if (!pOrc->isAlive())
+                {
+                    pOrc->ForcedDespawn();
+                    pOrc->Respawn();
+                }
+            }
+        }
+    }
+
     void JustDied(Unit* Killer)
     {
         DoScriptText(SAY_DIE, me);
@@ -238,11 +296,18 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
             return;
 
         pInstance->SetData(TYPE_NETHEKURSE,DONE);
+    }
 
-        if (pInstance->GetData64(DATA_NETHEKURSE_DOOR))
+    void MovementInform(uint32 uiMotionType, uint32 uiPointId)
+    {
+        if (uiMotionType == POINT_MOTION_TYPE)
         {
-            if (GameObject *Door = GameObject::GetGameObject(*me,pInstance->GetData64(DATA_NETHEKURSE_DOOR)))
-                Door->SetGoState(GO_STATE_ACTIVE);
+            for (std::vector<uint64>::const_iterator itr = OrcGUID.begin(); itr != OrcGUID.end(); ++itr)
+            {
+                if (Creature* pOrc = Creature::GetCreature(*me, *itr))
+                    me->SetFacingToObject(pOrc);
+
+            }
         }
     }
 
@@ -257,7 +322,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
             {
                 if (IntroEvent_Timer <= diff)
                 {
-                    DoTauntPeons();
+                    DoKillPeons();
                 } else IntroEvent_Timer -= diff;
             }
         }
@@ -281,6 +346,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
                 DoCast(me->getVictim(),(HeroicMode ? H_SPELL_SHADOW_SLAM : SPELL_SHADOW_CLEAVE));
                 Cleave_Timer = 6000+rand()%2500;
             } else Cleave_Timer -= diff;
+			
         }
         else
         {
@@ -396,8 +462,6 @@ struct mob_lesser_shadow_fissureAI : public ScriptedAI
     {
         if (!Start)
         {
-            //triggered spell of consumption does not properly show it's SpellVisual, hack it a bit
-            me->CastSpell(me,SPELL_TEMPORARY_VISUAL,true);
             me->CastSpell(me,SPELL_CONSUMPTION,false);
             Start = true;
         }
