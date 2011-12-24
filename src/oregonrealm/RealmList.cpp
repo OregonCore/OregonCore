@@ -22,10 +22,7 @@
 #include "RealmList.h"
 #include "AuthCodes.h"
 #include "Util.h"                                           // for Tokens typedef
-#include "Policies/SingletonImp.h"
 #include "Database/DatabaseEnv.h"
-
-INSTANTIATE_SINGLETON_1( RealmList );
 
 extern DatabaseType LoginDatabase;
 
@@ -60,14 +57,8 @@ RealmBuildInfo const* FindBuildInfo(uint16 _build)
     return NULL;
 }
 
-RealmList::RealmList( ) : m_UpdateInterval(0), m_NextUpdateTime(time(NULL))
+RealmList::RealmList() : m_UpdateInterval(0), m_NextUpdateTime(time(NULL))
 {
-}
-
-RealmList& sRealmList
-{
-    static RealmList realmlist;
-    return realmlist;
 }
 
 // Load the realm list from the database

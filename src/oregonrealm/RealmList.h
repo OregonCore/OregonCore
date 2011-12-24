@@ -21,6 +21,8 @@
 #ifndef _REALMLIST_H
 #define _REALMLIST_H
 
+#include <ace/Singleton.h>
+#include <ace/Null_Mutex.h>
 #include "Common.h"
 
 struct RealmBuildInfo
@@ -54,9 +56,10 @@ struct Realm
 class RealmList
 {
     public:
-        typedef std::map<std::string, Realm> RealmMap;
+        // Null_Mutex is safe because the singleton initialized before the acceptor initialized(another place where the singleton called)
+        static RealmList* instance() { return ACE_Singleton<RealmList, ACE_Null_Mutex>::instance(); }
 
-        static RealmList& Instance();
+        typedef std::map<std::string, Realm> RealmMap;
 
         RealmList();
         ~RealmList() {}
@@ -77,7 +80,7 @@ class RealmList
         time_t   m_NextUpdateTime;
 };
 
-#define sRealmList RealmList::Instance()
+#define sRealmList RealmList::instance()
 
 #endif
 
