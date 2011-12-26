@@ -14601,13 +14601,13 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 {
     //                                                       0     1        2     3     4     5      6       7      8   9      10           11            12
     //QueryResult *result = CharacterDatabase.PQuery("SELECT guid, account, data, name, race, class, gender, level, xp, money, playerBytes, playerBytes2, playerFlags,"
-    // 12          13          14          15   16           17        18         19         20         21          22           23                 24
+    // 13          14          15          16   17           18        19         20         21         22          23           24                 25
     //"position_x, position_y, position_z, map, orientation, taximask, cinematic, totaltime, leveltime, rest_bonus, logout_time, is_logout_resting, resettalents_cost,"
-    // 25                 26       27       28       29       30         31           32            33        34    35      36                 37         38
+    // 26                 27       28       29       30       31         32           33            34        35    36      37                 38         39
     //"resettalents_time, trans_x, trans_y, trans_z, trans_o, transguid, extra_flags, stable_slots, at_login, zone, online, death_expire_time, taxi_path, dungeon_difficulty,"
-    // 39           40                41                42                    43          44          45              46           47               48              49
+    // 40           41                42                43                    44          45          46              47           48               49              50
     //"arenaPoints, totalHonorPoints, todayHonorPoints, yesterdayHonorPoints, totalKills, todayKills, yesterdayKills, chosenTitle, knownCurrencies, watchedFaction, drunk,"
-    // 50      51         52         53          54           55             56
+    // 51      52         53         54          55           56             57
     //"health, powerMana, powerRage, powerFocus, powerEnergy, powerHapiness, instance_id FROM characters WHERE guid = '%u'", guid);
     QueryResult_AutoPtr result = holder->GetResult(PLAYER_LOGIN_QUERY_LOADFROM);
 
@@ -14668,7 +14668,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     SetUInt32Value(PLAYER_BYTES_2, fields[11].GetUInt32());
     SetUInt32Value(PLAYER_BYTES_3, (fields[49].GetUInt16() & 0xFFFE) | fields[6].GetUInt8());
     SetUInt32Value(PLAYER_FLAGS, fields[12].GetUInt32());
-    SetInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX, fields[48].GetUInt32());
+    SetInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX, fields[49].GetUInt32());
 
     // cleanup inventory related item value fields (its will be filled correctly in _LoadInventory)
     for (uint8 slot = EQUIPMENT_SLOT_START; slot < EQUIPMENT_SLOT_END; ++slot)
@@ -14734,8 +14734,8 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     SetUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION, fields[42].GetUInt32());
     SetUInt32Value(PLAYER_FIELD_YESTERDAY_CONTRIBUTION, fields[43].GetUInt32());
     SetUInt32Value(PLAYER_FIELD_LIFETIME_HONORABLE_KILLS, fields[44].GetUInt32());
-    SetUInt16Value(PLAYER_FIELD_KILLS, 0, fields[46].GetUInt16());
-    SetUInt16Value(PLAYER_FIELD_KILLS, 1, fields[47].GetUInt16());
+    SetUInt16Value(PLAYER_FIELD_KILLS, 0, fields[45].GetUInt16());
+    SetUInt16Value(PLAYER_FIELD_KILLS, 1, fields[46].GetUInt16());
 
     _LoadBoundInstances(holder->GetResult(PLAYER_LOGIN_QUERY_LOADBOUNDINSTANCES));
     _LoadBGData(holder->GetResult(PLAYER_LOGIN_QUERY_LOADBGDATA));
