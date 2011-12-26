@@ -1,4 +1,6 @@
 /* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * Copyright (C) 2010-2011 OregonCore <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,12 +18,13 @@
 
 /* ScriptData
 SDName: Boss_Omar_The_Unscarred
-SD%Complete: 90
-SDComment: Temporary solution for orbital/shadow whip-ability. Needs more core support before making it more proper.
+SD%Complete: 99
+SDComment:
 SDCategory: Hellfire Citadel, Hellfire Ramparts
 EndScriptData */
 
 #include "ScriptPCH.h"
+#include "hellfire_ramparts.h"
 
 #define SAY_AGGRO_1                 -1543009
 #define SAY_AGGRO_2                 -1543010
@@ -45,9 +48,11 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
 {
     boss_omor_the_unscarredAI(Creature *c) : Scripted_NoMovementAI(c)
     {
+        pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
     }
 
+    ScriptedInstance* pInstance;
     bool HeroicMode;
 
     uint32 OrbitalStrike_Timer;
@@ -56,7 +61,6 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
     uint32 DemonicShield_Timer;
     uint32 Shadowbolt_Timer;
     uint32 Summon_Timer;
-    uint32 SummonedCount;
     uint64 playerGUID;
     bool CanPullBack;
 
@@ -66,13 +70,15 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
 
         OrbitalStrike_Timer = 25000;
         ShadowWhip_Timer = 2000;
-        Aura_Timer = 10000;
+        Aura_Timer = 12300;
         DemonicShield_Timer = 1000;
-        Shadowbolt_Timer = 2000;
-        Summon_Timer = 10000;
-        SummonedCount = 0;
+        Shadowbolt_Timer = 6600;
+        Summon_Timer = 19600;
         playerGUID = 0;
         CanPullBack = false;
+
+        if (pInstance)
+            pInstance->SetData(DATA_OMOR, NOT_STARTED);
     }
 
     void EnterCombat(Unit *who)
@@ -83,6 +89,9 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
             case 1: DoScriptText(SAY_AGGRO_2, me); break;
             case 2: DoScriptText(SAY_AGGRO_3, me); break;
         }
+
+        if (pInstance)
+            pInstance->SetData(DATA_OMOR, IN_PROGRESS);
     }
 
     void KilledUnit(Unit* victim)
@@ -99,13 +108,14 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
 
         if (Unit* random = SelectUnit(SELECT_TARGET_RANDOM,0))
             summoned->AI()->AttackStart(random);
-
-        ++SummonedCount;
     }
 
     void JustDied(Unit* Killer)
     {
         DoScriptText(SAY_DIE, me);
+
+        if (pInstance)
+            pInstance->SetData(DATA_OMOR, DONE);
     }
 
     void UpdateAI(const uint32 diff)
@@ -113,16 +123,12 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
         if (!UpdateVictim())
             return;
 
-        //only two may be wrong, perhaps increase timer and spawn periodically instead.
-        if (SummonedCount < 2)
+        if (Summon_Timer <= diff)
         {
-            if (Summon_Timer <= diff)
-            {
-                me->InterruptNonMeleeSpells(false);
-                DoCast(me,SPELL_SUMMON_FIENDISH_HOUND);
-                Summon_Timer = 15000+rand()%15000;
-            } else Summon_Timer -= diff;
-        }
+            me->InterruptNonMeleeSpells(false);
+            DoCast(me,SPELL_SUMMON_FIENDISH_HOUND);
+            Summon_Timer = 24100+rand()%2800;
+        } else Summon_Timer -= diff;
 
         if (CanPullBack)
         {
@@ -136,11 +142,16 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
                         me->InterruptNonMeleeSpells(false);
                         DoCast(temp,SPELL_SHADOW_WHIP);
                     }
+                    else 
+                        if (!temp->HasUnitMovementFlag(MOVEFLAG_FALLING))
+                        {
+                            playerGUID = 0;
+                            CanPullBack = false;
+                        }
                 }
-                playerGUID = 0;
                 ShadowWhip_Timer = 2000;
-                CanPullBack = false;
             } else ShadowWhip_Timer -= diff;
+
         }
         else if (OrbitalStrike_Timer <= diff)
         {
@@ -151,12 +162,16 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
 
             if (temp && temp->GetTypeId() == TYPEID_PLAYER)
             {
+                me->InterruptNonMeleeSpells(false);
                 DoCast(temp,SPELL_ORBITAL_STRIKE);
                 OrbitalStrike_Timer = 14000+rand()%2000;
                 playerGUID = temp->GetGUID();
 
                 if (playerGUID)
+                {
                     CanPullBack = true;
+                    ShadowWhip_Timer = 2500;
+                }
             }
         } else OrbitalStrike_Timer -= diff;
 
@@ -188,7 +203,7 @@ struct boss_omor_the_unscarredAI : public Scripted_NoMovementAI
                     pTarget = me->getVictim();
 
                 DoCast(pTarget,HeroicMode ? H_SPELL_SHADOW_BOLT : SPELL_SHADOW_BOLT);
-                Shadowbolt_Timer = 4000+rand()%2500;
+                Shadowbolt_Timer = 4000+rand()%3100;
             }
         } else Shadowbolt_Timer -= diff;
 

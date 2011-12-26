@@ -1,4 +1,6 @@
 /* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * Copyright (C) 2010-2011 OregonCore <http://www.oregoncore.com/>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,12 +18,13 @@
 
 /* ScriptData
 Name: Boss_Vazruden_the_Herald
-%Complete: 90
+%Complete: 99
 Comment:
 Category: Hellfire Citadel, Hellfire Ramparts
 EndScriptData */
 
 #include "ScriptPCH.h"
+#include "hellfire_ramparts.h"
 
 #define SPELL_FIREBALL              (HeroicMode?36920:34653)
 #define SPELL_CONE_OF_FIRE          (HeroicMode?36921:30926)
@@ -61,10 +64,13 @@ struct boss_nazanAI : public ScriptedAI
 {
     boss_nazanAI(Creature *c) : ScriptedAI(c)
     {
+        pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
         VazrudenGUID = 0;
         flight = true;
     }
+
+    ScriptedInstance* pInstance;
 
     uint32 Fireball_Timer;
     uint32 ConeOfFire_Timer;
@@ -175,8 +181,11 @@ struct boss_vazrudenAI : public ScriptedAI
 {
     boss_vazrudenAI(Creature *c) : ScriptedAI(c)
     {
+        pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
     }
+
+    ScriptedInstance* pInstance;
 
     uint32 Revenge_Timer;
     bool HeroicMode;
@@ -254,8 +263,14 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
         sentryDown = false;
         NazanGUID = 0;
         VazrudenGUID = 0;
+        pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
     }
+
+    ScriptedInstance* pInstance;
+
+    std::vector<uint64> OrcGUID;
+    std::list<Creature*> orcs;
 
     uint32 phase;
     uint32 waypoint;
@@ -268,11 +283,19 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
 
     void Reset()
     {
+        me->GetCreatureListWithEntryInGrid(orcs, 17517, 70.0f);
+        OrcGUID.clear();
+        for (std::list<Creature*>::iterator itr = orcs.begin(); itr != orcs.end(); itr++)
+            OrcGUID.push_back((*itr)->GetGUID());
+
         phase = 0;
         waypoint = 0;
         check = 0;
         UnsummonAdds();
         me->GetMotionMaster()->MovePath(PATH_ENTRY, true);
+
+        if (pInstance)
+            pInstance->SetData(DATA_VAZRUDEN, NOT_STARTED);
     }
 
     void UnsummonAdds()
@@ -299,6 +322,18 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
             summoned = false;
             me->clearUnitState(UNIT_STAT_ROOT);
             me->SetVisibility(VISIBILITY_ON);
+
+            for (std::vector<uint64>::const_iterator itr = OrcGUID.begin(); itr != OrcGUID.end(); ++itr)
+            {
+                if (Creature* pOrc = Creature::GetCreature(*me, *itr))
+                {
+                    if (!pOrc->isAlive())
+                    {
+                        pOrc->ForcedDespawn();
+                        pOrc->Respawn();
+                    }
+                }
+            }
         }
     }
 
@@ -311,7 +346,7 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
                 VazrudenGUID = Vazruden->GetGUID();
             Creature* Nazan = me->SummonCreature(ENTRY_NAZAN,VazrudenMiddle[0],VazrudenMiddle[1],VazrudenMiddle[2],0,TEMPSUMMON_CORPSE_TIMED_DESPAWN,6000000);
             if (Nazan)
-                NazanGUID = Nazan->GetGUID();
+                NazanGUID = Nazan->GetGUID();	    
             summoned = true;
             me->SetVisibility(VISIBILITY_OFF);
             me->addUnitState(UNIT_STAT_ROOT);
@@ -325,6 +360,9 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
             phase = 1;
             check = 0;
             DoScriptText(SAY_INTRO, me);
+
+            if (pInstance)
+                pInstance->SetData(DATA_VAZRUDEN, IN_PROGRESS);
         }
     }
 
@@ -338,7 +376,7 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
             summoned->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
             summoned->SetSpeed(MOVE_FLIGHT, 2.5f);
             if (victim)
-                AttackStartNoMove(victim);
+                summoned->AI()->AttackStart(victim);
         }
         else if (victim)
             summoned->AI()->AttackStart(victim);
@@ -390,7 +428,7 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
                         return;
                     else
                     {
-                        UnsummonAdds();
+                        Reset();
                         EnterEvadeMode();
                         return;
                     }
@@ -399,6 +437,8 @@ struct boss_vazruden_the_heraldAI : public ScriptedAI
                     me->SummonGameObject(ENTRY_REINFORCED_FEL_IRON_CHEST,VazrudenMiddle[0],VazrudenMiddle[1],VazrudenMiddle[2],0,0,0,0,0,0);
                     me->SetLootRecipient(NULL);
                     me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                    if (pInstance)
+                        pInstance->SetData(DATA_VAZRUDEN, DONE);
                 }
                 check = 2000;
             } else check -= diff;

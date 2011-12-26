@@ -521,6 +521,7 @@ UPDATE `creature_template` SET `ScriptName` = 'mob_nascent_orc' WHERE `entry` = 
 
 /* HELLFIRE RAMPARTS */
 /* Vazruden, Omor the Unscarred, Watchkeeper Gargolmar */
+UPDATE `instance_template` SET `script`='instance_ramparts' WHERE `map`=543;
 UPDATE `creature_template` SET `ScriptName`='boss_omor_the_unscarred' WHERE `entry`=17308;
 UPDATE `creature_template` SET `ScriptName`='boss_watchkeeper_gargolmar' WHERE `entry`=17306;
 UPDATE `creature_template` SET `ScriptName`='boss_vazruden_the_herald' WHERE `entry`=17307;

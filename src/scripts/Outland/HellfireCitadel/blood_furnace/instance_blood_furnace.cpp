@@ -51,7 +51,7 @@ EndScriptData */
 
 struct instance_blood_furnace : public ScriptedInstance
 {
-    instance_blood_furnace(Map *map) : ScriptedInstance(map){Initialize();};
+    instance_blood_furnace(Map *map) : ScriptedInstance(map){Initialize();}
 
     struct BroggokEventInfo
     {
@@ -198,8 +198,10 @@ struct instance_blood_furnace : public ScriptedInstance
                                 if (Creature* pOrc = instance->GetCreature(*itr))
                                 {
                                     if (!pOrc->isAlive())
+                                    {
                                         pOrc->Respawn();
                                         BroggokEventPhase = 0;
+                                    }
                                 }
                             }
 
@@ -394,8 +396,10 @@ struct instance_blood_furnace : public ScriptedInstance
                         {
                             BroggokEvent[i].SortedOrcGuids.insert(pOrc->GetGUID());
                             if (!pOrc->isAlive())
-                            pOrc->ForcedDespawn();
-                            pOrc->Respawn();
+                            {
+                                pOrc->ForcedDespawn();
+                                pOrc->Respawn();
+                            }
                             break;
                         }
                     }
