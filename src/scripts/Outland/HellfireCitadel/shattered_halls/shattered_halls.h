@@ -14,5 +14,7 @@
 #define DATA_WARBRINGER         5
 #define DATA_KARGATH            6
 
+#define TYPE_EXECUTION          7
+
 #endif
 
