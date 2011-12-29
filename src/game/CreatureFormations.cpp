@@ -93,7 +93,7 @@ void CreatureFormationManager::LoadCreatureFormations()
     }
 
     //Check if formations without member exist
-    result = WorldDatabase.Query("SELECT COUNT(formationId) FROM creature_formations WHERE formationId NOT IN (SELECT formationId FROM creature_formation_data");
+    result = WorldDatabase.Query("SELECT COUNT(formationId) FROM creature_formations WHERE formationId NOT IN (SELECT formationId FROM creature_formation_data)");
 
     if (result)
     {
@@ -101,7 +101,7 @@ void CreatureFormationManager::LoadCreatureFormations()
     }
 
     //Check if member without formation exist
-    result = WorldDatabase.Query("SELECT COUNT(formationId) FROM creature_formation_data WHERE formationId NOT IN (SELECT formationId FROM creature_formations");
+    result = WorldDatabase.Query("SELECT COUNT(formationId) FROM creature_formation_data WHERE formationId NOT IN (SELECT formationId FROM creature_formations)");
 
     if (result)
     {
