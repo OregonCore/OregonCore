@@ -68,6 +68,8 @@ class ChatHandler
         virtual const char *GetOregonString(int32 entry) const;
         virtual void SendSysMessage(const char *str);
 
+        char* extractQuotedArg(char* args);
+
         void SendSysMessage(int32     entry);
         void PSendSysMessage(const char *format, ...) ATTR_PRINTF(2,3);
         void PSendSysMessage(int32     entry, ...);
@@ -224,6 +226,7 @@ class ChatHandler
         bool HandleNpcYellCommand(const char* args);
         bool HandleNpcSetDeathStateCommand(const char* args);
         bool HandleNpcAddFormationCommand(const char* args);
+        bool HandleNpcAddGroupCommand(const char* args);
         bool HandleNpcSetLinkCommand(const char* args);
 
         //----------------------------------------------------------

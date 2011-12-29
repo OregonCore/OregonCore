@@ -59,6 +59,7 @@
 #include "TicketMgr.h"
 #include "Util.h"
 #include "Language.h"
+#include "CreatureFormations.h"
 #include "CreatureGroups.h"
 #include "Transports.h"
 #include "CreatureEventAIMgr.h"
@@ -1391,6 +1392,9 @@ void World::SetInitialWorldSettings()
 
     sLog.outString("Loading Creature Formations...");
     formation_mgr.LoadCreatureFormations();
+
+    sLog.outString("Loading Creature Groups...");
+    group_mgr.LoadCreatureGroups();
 
     sLog.outString("Loading GM tickets...");
     ticketmgr.LoadGMTickets();

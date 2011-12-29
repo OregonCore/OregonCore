@@ -25,6 +25,7 @@
 #include "Creature.h"
 #include "DestinationHolderImp.h"
 #include "CreatureAI.h"
+#include "CreatureFormations.h"
 #include "Player.h"
 
 template<class T>
@@ -101,6 +102,10 @@ void WaypointMovementGenerator<Creature>::Initialize(Creature &u)
         InitTraveller(u, *node);
         i_destinationHolder.SetDestination(traveller, node->x, node->y, node->z);
         i_nextMoveTime.Reset(i_destinationHolder.GetTotalTravelTime());
+
+        //Call for creature formation update
+        if (u.GetFormation() && u.GetFormation()->getLeader() == &u)
+            u.GetFormation()->LeaderMoveTo(node->x, node->y, node->z);
     }
     else
         node = NULL;
@@ -171,6 +176,10 @@ bool WaypointMovementGenerator<Creature>::Update(Creature &unit, const uint32 &d
             InitTraveller(unit, *node);
             i_destinationHolder.SetDestination(traveller, node->x, node->y, node->z);
             i_nextMoveTime.Reset(i_destinationHolder.GetTotalTravelTime());
+
+            //Call for creature formation update
+            if (unit.GetFormation() && unit.GetFormation()->getLeader() == &unit)
+                unit.GetFormation()->LeaderMoveTo(node->x, node->y, node->z);
         }
         else
         {

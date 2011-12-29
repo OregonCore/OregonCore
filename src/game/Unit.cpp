@@ -48,6 +48,7 @@
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"
 #include "Path.h"
+#include "CreatureFormations.h"
 #include "CreatureGroups.h"
 #include "PetAI.h"
 #include "PassiveAI.h"
@@ -8609,6 +8610,9 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
 
             if (ToCreature()->GetFormation())
                 ToCreature()->GetFormation()->MemberAttackStart((Creature*)this, enemy);
+
+            if (ToCreature()->GetGroup())
+                ToCreature()->GetGroup()->MemberAttackStart((Creature*)this, enemy);
 
             RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
         }

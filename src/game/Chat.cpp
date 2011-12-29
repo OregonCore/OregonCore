@@ -490,6 +490,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { "setdeathstate",  SEC_GAMEMASTER,     false, &ChatHandler::HandleNpcSetDeathStateCommand,    "", NULL },
         { "addtemp",        SEC_GAMEMASTER,     false, &ChatHandler::HandleTempAddSpwCommand,          "", NULL },
         { "addformation",   SEC_MODERATOR,      false, &ChatHandler::HandleNpcAddFormationCommand,     "", NULL },
+        { "addgroup",       SEC_MODERATOR,      false, &ChatHandler::HandleNpcAddGroupCommand,         "", NULL },
         { "setlink",        SEC_MODERATOR,      false, &ChatHandler::HandleNpcSetLinkCommand,          "", NULL },
 
         //{ TODO: fix or remove this commands
@@ -1812,6 +1813,22 @@ GameTele const* ChatHandler::extractGameTeleFromLink(char* text)
             return objmgr.GetGameTele(id);
 
     return objmgr.GetGameTele(cId);
+}
+
+char* ChatHandler::extractQuotedArg(char* args)
+{
+    if (!*args)
+        return NULL;
+
+    if (*args == '"')
+        return strtok(args+1, "\"");
+    else
+    {
+        char* space = strtok(args, "\"");
+        if (!space)
+            return false;
+        return strtok(NULL, "\"");
+    }
 }
 
 const char *ChatHandler::GetName() const

@@ -49,6 +49,7 @@
 #include "CellImpl.h"
 #include "OutdoorPvPMgr.h"
 #include "GameEventMgr.h"
+#include "CreatureFormations.h"
 #include "CreatureGroups.h"
 // apply implementation of the singletons
 #include "Policies/SingletonImp.h"
@@ -157,6 +158,7 @@ m_regenHealth(true), m_AI_locked(false), m_isDeadByDefault(false),
 m_meleeDamageSchoolMask(SPELL_SCHOOL_MASK_NORMAL),m_creatureInfo(NULL), m_DBTableGuid(0), m_formation(NULL), m_PlayerDamageReq(0), m_summonMask(SUMMON_MASK_NONE)
 , m_AlreadySearchedAssistance(false)
 , m_creatureData(NULL)
+, m_group(NULL)
 {
     m_valuesCount = UNIT_END;
 
@@ -191,6 +193,7 @@ void Creature::AddToWorld()
         ObjectAccessor::Instance().AddObject(this);
         Unit::AddToWorld();
         SearchFormation();
+        SearchGroup();
         AIM_Initialize();
     }
 }
@@ -202,7 +205,7 @@ void Creature::RemoveFromWorld()
         if (m_zoneScript)
             m_zoneScript->OnCreatureCreate(this, false);
         if (m_formation)
-            formation_mgr.RemoveCreatureFromGroup(m_formation, this);
+            formation_mgr.RemoveCreatureFromFormation(m_formation, this);
         Unit::RemoveFromWorld();
         ObjectAccessor::Instance().RemoveObject(this);
     }
@@ -225,9 +228,23 @@ void Creature::SearchFormation()
     if (!lowguid)
         return;
 
-    CreatureGroupInfoType::iterator frmdata = CreatureGroupMap.find(lowguid);
-    if (frmdata != CreatureGroupMap.end())
-        formation_mgr.AddCreatureToGroup(frmdata->second->leaderGUID, this);
+    CreatureFormationDataType::iterator frmdata = CreatureFormationDataMap.find(lowguid);
+    if (frmdata != CreatureFormationDataMap.end())
+        formation_mgr.AddCreatureToFormation(frmdata->second->formationId, this);
+}
+
+void Creature::SearchGroup()
+{
+    if (isPet())
+        return;
+
+    uint32 lowguid = GetDBTableGUIDLow();
+    if (!lowguid)
+        return;
+
+    CreatureGroupDataType::iterator grpdata = CreatureGroupDataMap.find(lowguid);
+    if (grpdata != CreatureGroupDataMap.end()) 
+        group_mgr.AddCreatureToGroup(grpdata->second, this);
 }
 
 void Creature::RemoveCorpse(bool setSpawnTime)
@@ -507,6 +524,12 @@ void Creature::Update(uint32 diff)
         {
             if (m_isDeadByDefault)
                 break;
+
+            if (GetGroup() && GetGroup()->IsAllowedToRespawn(this))
+            {
+                Respawn();
+                break;
+            }
 
             if (m_corpseRemoveTime <= time(NULL))
             {
@@ -1364,7 +1387,7 @@ void Creature::setDeathState(DeathState s)
 
         //Dismiss group if is leader
         if (m_formation && m_formation->getLeader() == this)
-            m_formation->FormationReset(true);
+            m_formation->Reset(true);
 
         if (m_zoneScript)
             m_zoneScript->OnCreatureDeath(this);
