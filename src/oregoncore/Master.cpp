@@ -45,7 +45,7 @@
 extern int m_ServiceStatus;
 #endif
 
-INSTANTIATE_SINGLETON_1( Master );
+INSTANTIATE_SINGLETON_1(Master);
 
 volatile uint32 Master::m_masterLoopCounter = 0;
 
@@ -98,19 +98,19 @@ Master::~Master()
 // Main function
 int Master::Run()
 {
-    sLog.outString( "%s (core-daemon)", _FULLVERSION );
-    sLog.outString( "<Ctrl-C> to stop.\n" );
+    sLog.outString("%s (core-daemon)", _FULLVERSION);
+    sLog.outString("<Ctrl-C> to stop.\n");
 
-    sLog.outString( "  _____                                          " );
-    sLog.outString( " /\\  __`\\                                        " );
-    sLog.outString( " \\ \\ \\/\\ \\  _ __   __     __     ___    ___      " );
-    sLog.outString( "  \\ \\ \\ \\ \\/\\`'__\\'__`\\ /'_ `\\  / __`\\/' _ `\\    " );
-    sLog.outString( "   \\ \\ \\_\\ \\ \\ \\/\\  __//\\ \\L\\ \\/\\ \\L\\ \\\\ \\/\\ \\   " );
-    sLog.outString( "    \\ \\_____\\ \\_\\ \\____\\ \\____ \\ \\____/ \\_\\ \\_\\  " );
-    sLog.outString( "     \\/_____/\\/_/\\/____/\\/___L\\ \\/___/ \\/_/\\/_/  " );
-    sLog.outString( "                          /\\____/                " );
-    sLog.outString( "                          \\_/__/                 " );
-    sLog.outString( " http://www.oregoncore.com                    \n " );
+    sLog.outString("  _____                                          ");
+    sLog.outString(" /\\  __`\\                                        ");
+    sLog.outString(" \\ \\ \\/\\ \\  _ __   __     __     ___    ___      ");
+    sLog.outString("  \\ \\ \\ \\ \\/\\`'__\\'__`\\ /'_ `\\  / __`\\/' _ `\\    ");
+    sLog.outString("   \\ \\ \\_\\ \\ \\ \\/\\  __//\\ \\L\\ \\/\\ \\L\\ \\\\ \\/\\ \\   ");
+    sLog.outString("    \\ \\_____\\ \\_\\ \\____\\ \\____ \\ \\____/ \\_\\ \\_\\  ");
+    sLog.outString("     \\/_____/\\/_/\\/____/\\/___L\\ \\/___/ \\/_/\\/_/  ");
+    sLog.outString("                          /\\____/                ");
+    sLog.outString("                          \\_/__/                 ");
+    sLog.outString(" http://www.oregoncore.com                    \n ");
 
     // worldd PID file creation
     std::string pidfile = sConfig.GetStringDefault("PidFile", "");
@@ -119,11 +119,11 @@ int Master::Run()
         uint32 pid = CreatePIDFile(pidfile);
         if (!pid)
         {
-            sLog.outError( "Cannot create PID file %s.\n", pidfile.c_str() );
+            sLog.outError("Cannot create PID file %s.\n", pidfile.c_str());
             return 1;
         }
 
-        sLog.outString( "Daemon PID: %u\n", pid );
+        sLog.outString("Daemon PID: %u\n", pid);
     }
 
     // Start the databases
@@ -174,7 +174,7 @@ int Master::Run()
             {
                 ULONG_PTR curAff = Aff & appAff;            // remove non accessible processors
 
-                if (!curAff )
+                if (!curAff)
                 {
                     sLog.outError("Processors marked in UseProcessors bitmask (hex) %x not accessible for OregonCore. Accessible processors bitmask (hex): %x",Aff,appAff);
                 }
@@ -234,7 +234,7 @@ int Master::Run()
 
     if (sWorldSocketMgr->StartNetwork (wsport, bind_ip.c_str ()) == -1)
     {
-        sLog.outError ("Failed to start network");
+        sLog.outError("Failed to start network");
         World::StopNow(ERROR_EXIT_CODE);
         // go down and shutdown the server
     }
@@ -275,7 +275,7 @@ int Master::Run()
     WorldDatabase.HaltDelayThread();
     LoginDatabase.HaltDelayThread();
 
-    sLog.outString( "Halting process..." );
+    sLog.outString("Halting process...");
 
     if (cliThread)
     {
