@@ -53,6 +53,7 @@
 #include "InstanceSaveMgr.h"
 #include "InstanceData.h"
 #include "AuctionHouseBot.h"
+#include "CreatureEventAIMgr.h"
 
 bool ChatHandler::HandleAHBotOptionsCommand(const char *args)
 {
@@ -1061,6 +1062,31 @@ bool ChatHandler::HandleReloadEventScriptsCommand(const char* arg)
     if (*arg != 'a')
         SendGlobalGMSysMessage("DB table event_scripts reloaded.");
 
+    return true;
+}
+
+bool ChatHandler::HandleReloadEventAITextsCommand(const char* /*args*/)
+{
+
+    sLog.outString("Re-Loading Texts from `creature_ai_texts`...");
+    CreatureEAI_Mgr.LoadCreatureEventAI_Texts(true);
+    SendGlobalSysMessage("DB table `creature_ai_texts` reloaded.");
+    return true;
+}
+
+bool ChatHandler::HandleReloadEventAISummonsCommand(const char* /*args*/)
+{
+    sLog.outString("Re-Loading Summons from `creature_ai_summons`...");
+    CreatureEAI_Mgr.LoadCreatureEventAI_Summons(true);
+    SendGlobalSysMessage("DB table `creature_ai_summons` reloaded.");
+    return true;
+}
+
+bool ChatHandler::HandleReloadEventAIScriptsCommand(const char* /*args*/)
+{
+    sLog.outString("Re-Loading Scripts from `creature_ai_scripts`...");
+    CreatureEAI_Mgr.LoadCreatureEventAI_Scripts();
+    SendGlobalSysMessage("DB table `creature_ai_scripts` reloaded.");
     return true;
 }
 
