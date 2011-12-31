@@ -9164,7 +9164,7 @@ bool Unit::CanHaveThreatList() const
         return false;
 
     // only alive units can have threat list
-    if (!isAlive())
+    if (!isAlive() || isDying())
         return false;
 
     // totems can not have threat list
