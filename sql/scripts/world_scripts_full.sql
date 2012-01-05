@@ -161,6 +161,9 @@ UPDATE `creature_template` SET `ScriptName`='mob_syth_frost' WHERE `entry`=19204
 UPDATE `creature_template` SET `ScriptName`='mob_syth_shadow' WHERE `entry`=19206;
 UPDATE `creature_template` SET `ScriptName`='boss_talon_king_ikiss' WHERE `entry`=18473;
 UPDATE `creature_template` SET `ScriptName`='boss_darkweaver_syth' WHERE `entry`=18472;
+UPDATE `creature_template` SET `ScriptName` = 'boss_anzu' WHERE `entry` = '23035';
+UPDATE `creature_template` SET `ScriptName` = 'npc_lakka' WHERE `entry` = '18956';
+UPDATE `gameobject_template` SET `ScriptName` = 'go_lakka_cage' WHERE `entry` = '183051';
 
 /* SHADOW LABYRINTH */
 UPDATE `instance_template` SET `script`='instance_shadow_labyrinth' WHERE `map`=555;

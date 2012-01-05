@@ -300,6 +300,7 @@ void AddSC_boss_nexusprince_shaffar();       //Auchindoun Mana Tombs
 void AddSC_boss_pandemonius();
 void AddSC_boss_darkweaver_syth();           //Auchindoun Sekketh Halls
 void AddSC_boss_talon_king_ikiss();
+void AddSC_boss_anzu();
 void AddSC_instance_sethekk_halls();
 void AddSC_instance_shadow_labyrinth();      //Auchindoun Shadow Labyrinth
 void AddSC_boss_ambassador_hellmaw();
@@ -334,6 +335,7 @@ void AddSC_boss_gruul();                     //Gruul's Lair
 void AddSC_boss_high_king_maulgar();
 void AddSC_instance_gruuls_lair();
 void AddSC_boss_broggok();                   //HC Blood Furnace
+void AddSC_boss_blood_guard_porung();
 void AddSC_boss_kelidan_the_breaker();
 void AddSC_boss_the_maker();
 void AddSC_instance_blood_furnace();
@@ -344,6 +346,7 @@ void AddSC_boss_warbringer_omrogg();
 void AddSC_boss_warchief_kargath_bladefist();
 void AddSC_instance_shattered_halls();
 void AddSC_boss_watchkeeper_gargolmar();     //HC Ramparts
+void AddSC_instance_ramparts();
 void AddSC_boss_omor_the_unscarred();
 void AddSC_boss_vazruden_the_herald();
 void AddSC_arcatraz();                       //TK Arcatraz
@@ -664,6 +667,7 @@ void AddScripts()
     AddSC_boss_pandemonius();
     AddSC_boss_darkweaver_syth();           //Auchindoun Sekketh Halls
     AddSC_boss_talon_king_ikiss();
+    AddSC_boss_anzu();
     AddSC_instance_sethekk_halls();
     AddSC_instance_shadow_labyrinth();      //Auchindoun Shadow Labyrinth
     AddSC_boss_ambassador_hellmaw();
@@ -698,6 +702,7 @@ void AddScripts()
     AddSC_boss_high_king_maulgar();
     AddSC_instance_gruuls_lair();
     AddSC_boss_broggok();                   //HC Blood Furnace
+    AddSC_boss_blood_guard_porung();
     AddSC_boss_kelidan_the_breaker();
     AddSC_boss_the_maker();
     AddSC_instance_blood_furnace();
@@ -708,6 +713,7 @@ void AddScripts()
     AddSC_boss_warchief_kargath_bladefist();
     AddSC_instance_shattered_halls();
     AddSC_boss_watchkeeper_gargolmar();     //HC Ramparts
+    AddSC_instance_ramparts();
     AddSC_boss_omor_the_unscarred();
     AddSC_boss_vazruden_the_herald();
     AddSC_arcatraz();                       //TK Arcatraz
