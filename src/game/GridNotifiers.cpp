@@ -257,6 +257,9 @@ void DynamicObjectUpdater::VisitHelper(Unit* target)
     if (!i_dynobject.IsWithinDistInMap(target, i_dynobject.GetRadius()))
         return;
 
+    if (!i_dynobject.IsWithinLOSInMap(target))
+        return;
+
     //Check targets for not_selectable unit flag and remove
     if (target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE))
         return;
