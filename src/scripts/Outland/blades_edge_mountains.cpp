@@ -421,6 +421,37 @@ CreatureAI* GetAI_npc_ogre_brute(Creature* pCreature)
     return new npc_ogre_bruteAI(pCreature);
 }
 
+/*#########
+# go_thunderspike
+# UPDATE `gameobject_template` SET `ScriptName` = "go_thunderspike" WHERE `entry` = 184729;
+#########*/
+
+#define Q_THE_THUNDERSPIKE 10526
+#define GOR_GRIMGUT_ENTRY  21319
+
+bool GOUse_go_thunderspike(Player *player, GameObject* _GO)
+{
+    if (player->GetQuestStatus(Q_THE_THUNDERSPIKE) == QUEST_STATUS_INCOMPLETE)
+    {
+        // to prevent spawn spam :)
+        if (Creature *pGor = GetClosestCreatureWithEntry(player, GOR_GRIMGUT_ENTRY, 50.0f, true))
+        {
+            if (!pGor->getVictim())
+                pGor->AI()->AttackStart(player);
+
+            return false;
+        }
+        
+        Position dest;
+        //player->GetValidPointInAngle(dest, 5.0f, frand(0.0f, 2*M_PI), true);
+        player->GetPosition(dest);
+        if (Creature* pGor = player->SummonCreature(GOR_GRIMGUT_ENTRY, dest.x, dest.y, dest.z, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000))
+            pGor->AI()->AttackStart(player);
+    }
+
+    return false;
+}
+
 void AddSC_blades_edge_mountains()
 {
     Script *newscript;
@@ -455,6 +486,11 @@ void AddSC_blades_edge_mountains()
     newscript = new Script;
     newscript->Name = "npc_ogre_brute";
     newscript->GetAI = &GetAI_npc_ogre_brute;
+    newscript->RegisterSelf();
+    
+    newscript = new Script;
+    newscript->Name = "go_thunderspike";
+    newscript->pGOUse = &GOUse_go_thunderspike;
     newscript->RegisterSelf();
 }
 
