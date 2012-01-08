@@ -1637,7 +1637,7 @@ void WorldObject::AddObjectToRemoveList()
     map->AddObjectToRemoveList(this);
 }
 
-TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropertiesEntry const *properties, uint32 duration, Unit *summoner)
+TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropertiesEntry const *properties, uint32 duration, Unit *summoner, SpellEntry const* spellInfo)
 {
     uint32 mask = SUMMON_MASK_SUMMON;
     if (properties)
@@ -1685,6 +1685,23 @@ TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropert
     }
 
     summon->InitStats(duration);
+
+    if (mask == SUMMON_MASK_TOTEM && spellInfo)
+    {
+        if (Player *pPlayer = summoner->ToPlayer())
+        {
+            if (properties->Slot >= SUMMON_SLOT_TOTEM && properties->Slot < MAX_TOTEM_SLOT)
+            {
+                WorldPacket data(SMSG_TOTEM_CREATED, 1+8+4+4);
+                data << uint8(properties->Slot-1);
+                data << uint64(pPlayer->GetGUID());
+                data << uint32(duration);
+                data << uint32(spellInfo->Id);
+                pPlayer->SendDirectMessage(&data);
+            }
+        }
+    }
+
     Add(summon->ToCreature());
     summon->InitSummon();
 

@@ -3334,18 +3334,6 @@ void Spell::EffectSummonType(uint32 i)
                         summon->SetMaxHealth(damage);
                         summon->SetHealth(damage);
                     }
-
-                    if (m_originalCaster->GetTypeId() == TYPEID_PLAYER
-                        && properties->Slot >= SUMMON_SLOT_TOTEM
-                        && properties->Slot < MAX_TOTEM_SLOT)
-                    {
-                        WorldPacket data(SMSG_TOTEM_CREATED, 1+8+4+4);
-                        data << uint8(properties->Slot-1);
-                        data << uint64(m_originalCaster->GetGUID());
-                        data << uint32(duration);
-                        data << uint32(m_spellInfo->Id);
-                        m_originalCaster->ToPlayer()->SendDirectMessage(&data);
-                    }
                     break;
                 }
                 case SUMMON_TYPE_MINIPET:
