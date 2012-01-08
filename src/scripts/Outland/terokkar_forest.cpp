@@ -795,18 +795,7 @@ struct npc_letollAI : public npc_escortAI
 
         m_lResearchersList.clear();
 
-        float x, y, z;
-        me->GetPosition(x, y, z);
-
-        CellPair pair(Oregon::ComputeCellPair(x, y));
-        Cell cell(pair);
-        cell.data.Part.reserved = ALL_DISTRICT;
-        cell.SetNoCreate();
-
-        Oregon::AllCreaturesOfEntryInRange check(me, NPC_RESEARCHER, 25);
-        Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(m_lResearchersList, check);
-        TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> cSearcher(searcher);
-        cell.Visit(pair, cSearcher, *(me->GetMap()));
+        me->GetCreatureListWithEntryInGrid(m_lResearchersList, NPC_RESEARCHER, 25.0f);
 
         if (!m_lResearchersList.empty())
             SetFormation();
@@ -817,6 +806,11 @@ struct npc_letollAI : public npc_escortAI
         switch(uiPointId)
         {
             case 0:
+                JustStartedEscort();
+                for (std::list<Creature*>::iterator itr = m_lResearchersList.begin(); itr != m_lResearchersList.end(); ++itr)
+                {
+                    (*itr)->SetUnitMovementFlags(MOVEFLAG_WALK_MODE);
+                }
                 if (Player* pPlayer = GetPlayerForEscort())
                     DoScriptText(SAY_LE_KEEP_SAFE, me, pPlayer);
                 break;
@@ -832,6 +826,10 @@ struct npc_letollAI : public npc_escortAI
                 break;
             case 13:
                 SetRun();
+                for (std::list<Creature*>::iterator itr = m_lResearchersList.begin(); itr != m_lResearchersList.end(); ++itr)
+                {
+                    (*itr)->SetUnitMovementFlags(MOVEFLAG_NONE);
+                }
                 break;
         }
     }
