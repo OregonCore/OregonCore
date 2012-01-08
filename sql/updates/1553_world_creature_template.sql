@@ -19,6 +19,7 @@ DELETE FROM creature WHERE id = '18956';
 DELETE FROM gameobject WHERE guid = '222304';
 INSERT INTO `gameobject` (`guid`, `id`, `map`, `spawnMask`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`) VALUES
 ('222304', 183051, 556, 3, -158.003, 158.826, 0.0105987, 5.39804, 0, 0, 0.428266, -0.903653, 25, 0, 1);
+UPDATE `gameobject_template` SET `faction` = '0' WHERE `entry` = '183051';
 UPDATE `creature_template` SET `npcflag` = '0' WHERE `entry` = '18956';
 UPDATE `creature_template` SET `MovementType`='1' WHERE `entry`='18956';
 UPDATE creature_template SET KillCredit1 = '18472' WHERE entry = '20690';

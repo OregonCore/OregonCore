@@ -1,4 +1,4 @@
-/* Copyright (C) 2010-2011 OregonCore <http://www.oregoncore.com/>
+/* Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,8 @@ struct boss_anzuAI : public ScriptedAI
     {
         pInstance = c->GetInstanceData();
         HeroicMode = me->GetMap()->IsHeroic();
+        DoScriptText(SAY_INTRO1, me);
+        DoScriptText(SAY_INTRO2, me);
     }
 
     ScriptedInstance* pInstance;
@@ -69,8 +71,6 @@ struct boss_anzuAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(DATA_ANZUEVENT, NOT_STARTED);
 
-        DoScriptText(SAY_INTRO1, me);
-        DoScriptText(SAY_INTRO2, me);
         Cyclone_Timer = 10000;
         Rip_Timer = 8000;
         Paralyzing_Timer = 1000;

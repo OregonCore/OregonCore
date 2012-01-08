@@ -2519,6 +2519,12 @@ void SpellMgr::LoadSpellCustomAttr()
             spellInfo->AttributesEx3 |= SPELL_ATTR_EX3_NO_INITIAL_AGGRO; // slice and dice no longer gives combat or remove stealth
             spellInfo->AttributesEx |= SPELL_ATTR_EX_NOT_BREAK_STEALTH;
             break;
+        case 29200: // Purify Helboar Meat
+            spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_CASTER;
+            break;
+        case 35460: // Fury of the Dreghood Elders
+            spellInfo->EffectImplicitTargetA[1] = TARGET_TYPE_UNIT_TARGET;
+            break;
         default:
             break;
         }
