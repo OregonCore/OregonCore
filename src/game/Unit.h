@@ -224,7 +224,7 @@ enum UnitBytes2_Flags
     UNIT_BYTE2_FLAG_UNK2        = 0x04,
     UNIT_BYTE2_FLAG_SANCTUARY   = 0x08,
     UNIT_BYTE2_FLAG_AURAS       = 0x10,                     // show possitive auras as positive, and allow its dispel
-    UNIT_BYTE2_FLAG_UNK5        = 0x20,
+    UNIT_BYTE2_FLAG_UNK5        = 0x20,                     // show negative auras as positive, disallowing dispel
     UNIT_BYTE2_FLAG_UNK6        = 0x40,
     UNIT_BYTE2_FLAG_UNK7        = 0x80
 };
