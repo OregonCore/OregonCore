@@ -162,6 +162,10 @@ void Player::UpdateArmor()
 
     value *= GetModifierValue(unitMod, TOTAL_PCT);
 
+    // Druid Enrage armor reduction
+    if (HasAura(5229,0))
+        value -= (m_form == FORM_DIREBEAR) ? 0.16*value : 0.27*value;
+
     SetArmor(int32(value));
 
     Pet *pet = GetPet();
