@@ -268,6 +268,7 @@ Minion::Minion(SummonPropertiesEntry const *properties, Unit *owner) : TempSummo
 {
     ASSERT(m_owner);
     m_summonMask |= SUMMON_MASK_MINION;
+    m_followAngle = PET_FOLLOW_ANGLE;
 }
 
 void Minion::InitStats(uint32 duration)
@@ -332,7 +333,7 @@ void Guardian::InitSummon()
 Puppet::Puppet(SummonPropertiesEntry const *properties, Unit *owner) : Minion(properties, owner)
 {
     ASSERT(owner->GetTypeId() == TYPEID_PLAYER);
-    m_owner = owner->ToPlayer();
+    m_owner = (Player*)owner;
     m_summonMask |= SUMMON_MASK_PUPPET;
 }
 

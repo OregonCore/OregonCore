@@ -943,8 +943,8 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
     PetType petType = MAX_PET_TYPE;
     if (isPet() && m_owner->GetTypeId() == TYPEID_PLAYER)
     {
-        if (m_owner->getClass() == CLASS_WARLOCK
-            || m_owner->getClass() == CLASS_SHAMAN)        // Fire Elemental
+        if ((m_owner->getClass() == CLASS_WARLOCK)
+            || (m_owner->getClass() == CLASS_SHAMAN))        // Fire Elemental
             petType = SUMMON_PET;
         else if (m_owner->getClass() == CLASS_HUNTER)
         {
@@ -965,7 +965,7 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
     SetAttackTime(OFF_ATTACK, BASE_ATTACK_TIME);
     SetAttackTime(RANGED_ATTACK, BASE_ATTACK_TIME);
 
-    SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0);
+    SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);
 
     //scale
     CreatureFamilyEntry const* cFamily = sCreatureFamilyStore.LookupEntry(cinfo->family);
@@ -977,7 +977,7 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
         else if (getLevel() <= cFamily->minScaleLevel)
             scale = cFamily->minScale;
         else
-            scale = cFamily->minScale + float(getLevel() - cFamily->minScaleLevel) / (float)cFamily->maxScaleLevel * (cFamily->maxScale - cFamily->minScale);
+            scale = cFamily->minScale + float(getLevel() - cFamily->minScaleLevel) / cFamily->maxScaleLevel * (cFamily->maxScale - cFamily->minScale);
 
         SetFloatValue(OBJECT_FIELD_SCALE_X, scale);
     }
@@ -1091,6 +1091,19 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
                     }
                     SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(petlevel * 4 - petlevel));
                     SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(petlevel * 4 + petlevel));
+                    break;
+                }
+                case 19668: // Shadowfiend
+                {
+                    if (!pInfo)
+                    {
+                        SetCreateMana(28 + 10*petlevel);
+                        SetCreateHealth(28 + 30*petlevel);
+                    }
+                    int32 bonus_dmg = (int32(m_owner->SpellBaseDamageBonus(SPELL_SCHOOL_MASK_SHADOW)* 0.3f));
+                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float((petlevel * 4 - petlevel) + bonus_dmg));
+                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float((petlevel * 4 + petlevel) + bonus_dmg));
+
                     break;
                 }
                 case 19833: //Snake Trap - Venomous Snake

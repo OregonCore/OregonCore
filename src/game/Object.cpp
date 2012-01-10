@@ -1642,24 +1642,40 @@ TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropert
     uint32 mask = SUMMON_MASK_SUMMON;
     if (properties)
     {
-        switch(properties->Category)
+        switch (properties->Category)
         {
-            case SUMMON_CATEGORY_PET:       mask = SUMMON_MASK_GUARDIAN;  break;
-            case SUMMON_CATEGORY_PUPPET:    mask = SUMMON_MASK_PUPPET;    break;
-            default:
-                switch(properties->Type)
+            case SUMMON_CATEGORY_PET:
+                mask = SUMMON_MASK_GUARDIAN;
+                break;
+            case SUMMON_CATEGORY_PUPPET:
+                mask = SUMMON_MASK_PUPPET;
+                break;
+            case SUMMON_CATEGORY_WILD:
+            case SUMMON_CATEGORY_ALLY:
+            case SUMMON_CATEGORY_UNK:
+            {
+                switch (properties->Type)
                 {
-                    case SUMMON_TYPE_MINION:
-                    case SUMMON_TYPE_GUARDIAN:
-                        mask = SUMMON_MASK_GUARDIAN;  break;
-                    case SUMMON_TYPE_TOTEM:
-                        mask = SUMMON_MASK_TOTEM;     break;
-                    case SUMMON_TYPE_MINIPET:
-                        mask = SUMMON_MASK_MINION;    break;
-                    default:
-                        break;
+                case SUMMON_TYPE_MINION:
+                case SUMMON_TYPE_GUARDIAN:
+                case SUMMON_TYPE_GUARDIAN2:
+                    mask = SUMMON_MASK_GUARDIAN;
+                    break;
+                case SUMMON_TYPE_TOTEM:
+                    mask = SUMMON_MASK_TOTEM;
+                    break;
+                case SUMMON_TYPE_MINIPET:
+                    mask = SUMMON_MASK_MINION;
+                    break;
+                default:
+                    if (properties->Flags & 512)
+                        mask = SUMMON_MASK_GUARDIAN;
+                    break;
                 }
                 break;
+            }
+            default:
+                return NULL;
         }
     }
 
@@ -1667,15 +1683,26 @@ TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropert
     if (summoner && summoner->GetTypeId() == TYPEID_PLAYER)
         team = summoner->ToPlayer()->GetTeam();
 
-    TempSummon *summon = NULL;
-    switch(mask)
+    TempSummon* summon = NULL;
+    switch (mask)
     {
-        case SUMMON_MASK_SUMMON:    summon = new TempSummon (properties, summoner);  break;
-        case SUMMON_MASK_GUARDIAN:  summon = new Guardian   (properties, summoner);  break;
-        case SUMMON_MASK_PUPPET:    summon = new Puppet     (properties, summoner);  break;
-        case SUMMON_MASK_TOTEM:     summon = new Totem      (properties, summoner);  break;
-        case SUMMON_MASK_MINION:    summon = new Minion     (properties, summoner);  break;
-        default:    return NULL;
+        case SUMMON_MASK_SUMMON:
+            summon = new TempSummon(properties, summoner);
+            break;
+        case SUMMON_MASK_GUARDIAN:
+            summon = new Guardian(properties, summoner);
+            break;
+        case SUMMON_MASK_PUPPET:
+            summon = new Puppet(properties, summoner);
+            break;
+        case SUMMON_MASK_TOTEM:
+            summon = new Totem(properties, summoner);
+            break;
+        case SUMMON_MASK_MINION:
+            summon = new Minion(properties, summoner);
+            break;
+        default:
+            return NULL;
     }
 
     if (!summon->Create(objmgr.GenerateLowGuid(HIGHGUID_UNIT), this, entry, team, pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation()))
@@ -1683,8 +1710,6 @@ TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropert
         delete summon;
         return NULL;
     }
-
-    summon->InitStats(duration);
 
     if (mask == SUMMON_MASK_TOTEM && spellInfo)
     {
@@ -1702,6 +1727,9 @@ TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropert
         }
     }
 
+    summon->SetHomePosition(pos);
+
+    summon->InitStats(duration);
     Add(summon->ToCreature());
     summon->InitSummon();
 
@@ -1714,9 +1742,7 @@ TempSummon* WorldObject::SummonCreature(uint32 entry, const Position &pos, TempS
     {
         if (TempSummon *summon = map->SummonCreature(entry, pos, NULL, duration, isType(TYPEMASK_UNIT) ? (Unit*)this : NULL))
         {
-            summon->SetHomePosition(pos);
             summon->SetTempSummonType(spwtype);
-
             return summon;
         }
     }

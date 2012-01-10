@@ -125,9 +125,9 @@ enum SummonMask
     SUMMON_MASK_GUARDIAN              = 0x00000004,
     SUMMON_MASK_TOTEM                 = 0x00000008,
     SUMMON_MASK_PET                   = 0x00000010,
-    SUMMON_MASK_PUPPET                = 0x00000040,
-    SUMMON_MASK_HUNTER_PET            = 0x00000080,
-    SUMMON_MASK_CONTROLABLE_GUARDIAN  = 0x00000100,
+    SUMMON_MASK_PUPPET                = 0x00000020,
+    SUMMON_MASK_HUNTER_PET            = 0x00000040,
+    SUMMON_MASK_CONTROLABLE_GUARDIAN  = 0x00000080,
 };
 
 // GCC have alternative #pragma pack(N) syntax and old gcc version not support pack(push,N), also any gcc version not support it at some platform
