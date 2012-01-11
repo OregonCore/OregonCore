@@ -23,10 +23,8 @@
 #ifndef _AUCTION_HOUSE_MGR_H
 #define _AUCTION_HOUSE_MGR_H
 
-#include "Policies/Singleton.h"
-
+#include "ace/Singleton.h"
 #include "SharedDefines.h"
-
 #include "AuctionHouseBot.h"
 
 class Item;
@@ -168,7 +166,7 @@ class AuctionHouseMgr
     ItemMap mAitems;
 };
 
-#define auctionmgr Oregon::Singleton<AuctionHouseMgr>::Instance()
+#define sAuctionMgr ACE_Singleton<AuctionHouseMgr, ACE_Null_Mutex>::instance()
 
 #endif
 

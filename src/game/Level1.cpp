@@ -518,7 +518,7 @@ bool ChatHandler::HandleGMTicketAssignToCommand(const char* args)
 
     uint64 tarGUID = objmgr.GetPlayerGUIDByName(targm.c_str());
     uint64 accid = objmgr.GetPlayerAccountIdByGUID(tarGUID);
-    uint32 gmlevel = accmgr.GetSecurity(accid, realmID);
+    uint32 gmlevel = sAccountMgr->GetSecurity(accid, realmID);
 
     if (!tarGUID || gmlevel == SEC_PLAYER)
     {

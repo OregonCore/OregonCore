@@ -26,7 +26,7 @@
 #include <string>
 
 #include "Common.h"
-#include "Policies/Singleton.h"
+#include "ace/Singleton.h"
 
 enum AccountOpResult
 {
@@ -62,6 +62,6 @@ class AccountMgr
         static bool normalizeString(std::string& utf8str);
 };
 
-#define accmgr Oregon::Singleton<AccountMgr>::Instance()
+#define sAccountMgr ACE_Singleton<AccountMgr, ACE_Null_Mutex>::instance()
 #endif
 

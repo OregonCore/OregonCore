@@ -1263,8 +1263,8 @@ bool ChatHandler::HandleReloadAuctionsCommand(const char *args)
 {
     // Reload dynamic data tables from the database
     sLog.outString("Re-Loading Auctions...");
-    auctionmgr.LoadAuctionItems();
-    auctionmgr.LoadAuctions();
+    sAuctionMgr->LoadAuctionItems();
+    sAuctionMgr->LoadAuctions();
     SendGlobalGMSysMessage("Auctions reloaded.");
     return true;
 }
@@ -1285,7 +1285,7 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
     if (getSelectedPlayer() && arg1 && !arg3)
     {
         targetAccountId = getSelectedPlayer()->GetSession()->GetAccountId();
-        accmgr.GetName(targetAccountId, targetAccountName);
+        sAccountMgr->GetName(targetAccountId, targetAccountName);
         Player* targetPlayer = getSelectedPlayer();
         gm = atoi(arg1);
         uint32 gmRealmID = arg2 ? atoi(arg2) : realmID;
@@ -1347,7 +1347,7 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
         }
 
         // Check for username not exist
-        targetAccountId = accmgr.GetId(targetAccountName);
+        targetAccountId = sAccountMgr->GetId(targetAccountName);
         if (!targetAccountId)
         {
             PSendSysMessage(LANG_ACCOUNT_NOT_EXIST,targetAccountName.c_str());
@@ -1373,13 +1373,13 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
             return false;
         }
 
-        targetAccountId = accmgr.GetId(arg1);
+        targetAccountId = sAccountMgr->GetId(arg1);
         // m_session == NULL only for console
         uint32 plSecurity = m_session ? m_session->GetSecurity() : SEC_CONSOLE;
 
         // can set security level only for target with less security and to less security that we have
         // This is also reject self apply in fact
-        targetSecurity = accmgr.GetSecurity(targetAccountId);
+        targetSecurity = sAccountMgr->GetSecurity(targetAccountId);
         if (targetSecurity >= plSecurity || gm >= plSecurity)
         {
             SendSysMessage(LANG_YOURS_SECURITY_IS_LOW);
@@ -1424,7 +1424,7 @@ bool ChatHandler::HandleAccountSetPasswordCommand(const char *args)
         return false;
     }
 
-    uint32 targetAccountId = accmgr.GetId(account_name);
+    uint32 targetAccountId = sAccountMgr->GetId(account_name);
     if (!targetAccountId)
     {
         PSendSysMessage(LANG_ACCOUNT_NOT_EXIST,account_name.c_str());
@@ -1432,7 +1432,7 @@ bool ChatHandler::HandleAccountSetPasswordCommand(const char *args)
         return false;
     }
 
-    uint32 targetSecurity = accmgr.GetSecurity(targetAccountId);
+    uint32 targetSecurity = sAccountMgr->GetSecurity(targetAccountId);
 
     // m_session == NULL only for console
     uint32 plSecurity = m_session ? m_session->GetSecurity() : SEC_CONSOLE;
@@ -1453,7 +1453,7 @@ bool ChatHandler::HandleAccountSetPasswordCommand(const char *args)
         return false;
     }
 
-    AccountOpResult result = accmgr.ChangePassword(targetAccountId, szPassword1);
+    AccountOpResult result = sAccountMgr->ChangePassword(targetAccountId, szPassword1);
 
     switch (result)
     {
@@ -5776,7 +5776,7 @@ bool ChatHandler::HandleBanInfoAccountCommand(const char *args)
         return false;
     }
 
-    uint32 accountid = accmgr.GetId(account_name);
+    uint32 accountid = sAccountMgr->GetId(account_name);
     if (!accountid)
     {
         PSendSysMessage(LANG_ACCOUNT_NOT_EXIST,account_name.c_str());
@@ -5812,7 +5812,7 @@ bool ChatHandler::HandleBanInfoCharacterCommand(const char *args)
     }
 
     std::string accountname;
-    if (!accmgr.GetName(accountid,accountname))
+    if (!sAccountMgr->GetName(accountid,accountname))
     {
         PSendSysMessage(LANG_BANINFO_NOCHARACTER);
         return true;
@@ -5969,7 +5969,7 @@ bool ChatHandler::HandleBanListHelper(QueryResult_AutoPtr result)
                 account_name = fields[1].GetCppString();
             // "character" case, name need extract from another DB
             else
-                accmgr.GetName (account_id,account_name);
+                sAccountMgr->GetName (account_id,account_name);
 
             // No SQL injection. id is uint32.
             QueryResult_AutoPtr banInfo = LoginDatabase.PQuery("SELECT bandate,unbandate,bannedby,banreason FROM account_banned WHERE id = %u ORDER BY unbandate", account_id);
@@ -6158,7 +6158,7 @@ bool ChatHandler::HandleLoadPDumpCommand(const char *args)
         return false;
     }
 
-    uint32 account_id = accmgr.GetId(account_name);
+    uint32 account_id = sAccountMgr->GetId(account_name);
     if (!account_id)
     {
         account_id = atoi(account);                             // use original string
@@ -6170,7 +6170,7 @@ bool ChatHandler::HandleLoadPDumpCommand(const char *args)
         }
     }
 
-    if (!accmgr.GetName(account_id,account_name))
+    if (!sAccountMgr->GetName(account_id,account_name))
     {
         PSendSysMessage(LANG_ACCOUNT_NOT_EXIST,account_name.c_str());
         SetSentErrorMessage(true);
@@ -6853,7 +6853,7 @@ bool ChatHandler::HandleAccountSetAddonCommand(const char *args)
             return false;
 
         account_id = player->GetSession()->GetAccountId();
-        accmgr.GetName(account_id,account_name);
+        sAccountMgr->GetName(account_id,account_name);
         szExp = szAcc;
     }
     else
@@ -6867,7 +6867,7 @@ bool ChatHandler::HandleAccountSetAddonCommand(const char *args)
             return false;
         }
 
-        account_id = accmgr.GetId(account_name);
+        account_id = sAccountMgr->GetId(account_name);
         if (!account_id)
         {
             PSendSysMessage(LANG_ACCOUNT_NOT_EXIST,account_name.c_str());

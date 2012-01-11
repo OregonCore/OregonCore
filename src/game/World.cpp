@@ -1344,9 +1344,9 @@ void World::SetInitialWorldSettings()
 
     // Load dynamic data tables from the database
     sLog.outString("Loading Item Auctions...");
-    auctionmgr.LoadAuctionItems();
+    sAuctionMgr->LoadAuctionItems();
     sLog.outString("Loading Auctions...");
-    auctionmgr.LoadAuctions();
+    sAuctionMgr->LoadAuctions();
 
     sLog.outString("Loading Guilds...");
     objmgr.LoadGuilds();
@@ -1702,7 +1702,7 @@ void World::Update(time_t diff)
         }
 
         // Handle expired auctions
-        auctionmgr.Update();
+        sAuctionMgr->Update();
     }
 
     // Handle session updates when the timer has passed
@@ -2118,7 +2118,7 @@ bool World::RemoveBanAccount(BanMode mode, std::string nameOrIP)
     {
         uint32 account = 0;
         if (mode == BAN_ACCOUNT)
-            account = accmgr.GetId (nameOrIP);
+            account = sAccountMgr->GetId (nameOrIP);
         else if (mode == BAN_CHARACTER)
             account = objmgr.GetPlayerAccountIdByPlayerName (nameOrIP);
 
