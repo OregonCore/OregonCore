@@ -294,7 +294,7 @@ void Minion::RemoveFromWorld()
 
 bool Minion::IsGuardianPet() const
 {
-    return isPet() || m_Properties && m_Properties->Category == SUMMON_CATEGORY_PET;
+    return isPet() || (m_Properties && m_Properties->Category == SUMMON_CATEGORY_PET);
 }
 
 Guardian::Guardian(SummonPropertiesEntry const *properties, Unit *owner) : Minion(properties, owner)
@@ -333,7 +333,7 @@ void Guardian::InitSummon()
 Puppet::Puppet(SummonPropertiesEntry const *properties, Unit *owner) : Minion(properties, owner)
 {
     ASSERT(owner->GetTypeId() == TYPEID_PLAYER);
-    m_owner = (Player*)owner;
+    m_owner = owner->ToPlayer();
     m_summonMask |= SUMMON_MASK_PUPPET;
 }
 

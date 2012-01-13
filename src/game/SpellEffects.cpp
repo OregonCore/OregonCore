@@ -3297,7 +3297,6 @@ void Spell::EffectSummonType(uint32 i)
     {
         case SUMMON_CATEGORY_WILD:
         case SUMMON_CATEGORY_ALLY:
-        case SUMMON_CATEGORY_UNK:
             if (properties->Flags & 512)
             {
                 SummonGuardian(i, entry, properties);
@@ -6379,7 +6378,7 @@ void Spell::EffectBind(uint32 i)
 
 void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const *properties)
 {
-    Unit* caster = m_originalCaster;
+    Unit *caster = m_originalCaster;
     if (caster && caster->GetTypeId() == TYPEID_UNIT && caster->ToCreature()->isTotem())
         caster = caster->GetOwner();
     if (!caster)
@@ -6412,18 +6411,18 @@ void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const *
             amount = 1;
             break;
     }
-    if (Player* modOwner = m_originalCaster->GetSpellModOwner())
+    if (Player *modOwner = m_originalCaster->GetSpellModOwner())
         modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_DURATION, duration);
 
     //TempSummonType summonType = (duration == 0) ? TEMPSUMMON_DEAD_DESPAWN : TEMPSUMMON_TIMED_DESPAWN;
-    Map* map = caster->GetMap();
+    Map *map = caster->GetMap();
 
     for (uint32 count = 0; count < amount; ++count)
     {
         Position pos;
         GetSummonPosition(i, pos, radius, count);
 
-        TempSummon* summon = map->SummonCreature(entry, pos, properties, duration, caster);
+        TempSummon *summon = map->SummonCreature(entry, pos, properties, duration, caster);
         if (!summon)
             return;
         if (summon->HasSummonMask(SUMMON_MASK_GUARDIAN))

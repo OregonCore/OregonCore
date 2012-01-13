@@ -1652,7 +1652,6 @@ TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropert
                 break;
             case SUMMON_CATEGORY_WILD:
             case SUMMON_CATEGORY_ALLY:
-            case SUMMON_CATEGORY_UNK:
             {
                 switch (properties->Type)
                 {
@@ -1683,7 +1682,7 @@ TempSummon *Map::SummonCreature(uint32 entry, const Position &pos, SummonPropert
     if (summoner && summoner->GetTypeId() == TYPEID_PLAYER)
         team = summoner->ToPlayer()->GetTeam();
 
-    TempSummon* summon = NULL;
+    TempSummon *summon = NULL;
     switch (mask)
     {
         case SUMMON_MASK_SUMMON:
