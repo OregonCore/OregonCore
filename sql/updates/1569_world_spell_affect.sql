@@ -1,0 +1,6 @@
+DELETE FROM spell_affect WHERE entry IN(28332,11189,13043,11094);
+INSERT INTO spell_affect VALUES
+(28332, 1, 524544),
+(11189, 1, 524544),
+(13043, 0, 8),
+(11094, 0, 8);

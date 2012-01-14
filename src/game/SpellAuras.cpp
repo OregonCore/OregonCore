@@ -130,7 +130,7 @@ pAuraHandler AuraHandler[TOTAL_AURAS]=
     &Aura::HandleModSpellCritChanceShool,                   // 71 SPELL_AURA_MOD_SPELL_CRIT_CHANCE_SCHOOL
     &Aura::HandleModPowerCostPCT,                           // 72 SPELL_AURA_MOD_POWER_COST_SCHOOL_PCT
     &Aura::HandleModPowerCost,                              // 73 SPELL_AURA_MOD_POWER_COST_SCHOOL
-    &Aura::HandleNoImmediateEffect,                         // 74 SPELL_AURA_REFLECT_SPELLS_SCHOOL  implemented in Unit::SpellHitResult
+    &Aura::HandleAuraReflectSpellSchool,                    // 74 SPELL_AURA_REFLECT_SPELLS_SCHOOL  implemented in Unit::SpellHitResult
     &Aura::HandleNoImmediateEffect,                         // 75 SPELL_AURA_MOD_LANGUAGE
     &Aura::HandleFarSight,                                  // 76 SPELL_AURA_FAR_SIGHT
     &Aura::HandleModMechanicImmunity,                       // 77 SPELL_AURA_MECHANIC_IMMUNITY
@@ -6547,6 +6547,19 @@ void Aura::HandleArenaPreparation(bool apply, bool Real)
         m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PREPARATION);
 }
 
+void Aura::HandleAuraReflectSpellSchool(bool apply, bool real)
+{
+    if (!real || !apply)
+        return;
+
+    Unit::AuraList const& DummyAuras = m_target->GetAurasByType(SPELL_AURA_DUMMY);
+    for (Unit::AuraList::const_iterator i = DummyAuras.begin(); i != DummyAuras.end(); ++i)
+    {
+        if (spellmgr.IsAffectedBySpell(GetSpellProto(), (*i)->GetId(), GetEffIndex(), GetSpellProto()->SpellFamilyFlags))
+            GetModifier()->m_amount += (*i)->GetModifierValue();
+    }
+}
+
 void Aura::UnregisterSingleCastAura()
 {
     if (IsSingleTarget())
@@ -6563,4 +6576,3 @@ void Aura::UnregisterSingleCastAura()
         m_isSingleTargetAura = false;
     }
 }
-
