@@ -6275,7 +6275,10 @@ bool Unit::HandleProcTriggerSpell(Unit *pVictim, uint32 damage, Aura* triggeredB
         case 34501:
         {
             basepoints0 = int32(GetStat(STAT_AGILITY) *0.25);
-            break;
+            int32 basepoints1 = int32(GetStat(STAT_AGILITY) *0.25);
+
+            CastCustomSpell(pVictim,trigger_spell_id,&basepoints0,&basepoints1,NULL,true,castItem,triggeredByAura);
+            return true;
         }
         // Enlightenment (trigger only from mana cost spells)
         case 35095:
