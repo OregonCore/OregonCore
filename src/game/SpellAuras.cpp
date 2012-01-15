@@ -6552,11 +6552,17 @@ void Aura::HandleAuraReflectSpellSchool(bool apply, bool real)
     if (!real || !apply)
         return;
 
-    Unit::AuraList const& DummyAuras = m_target->GetAurasByType(SPELL_AURA_DUMMY);
-    for (Unit::AuraList::const_iterator i = DummyAuras.begin(); i != DummyAuras.end(); ++i)
+    if (Player *pTarget = m_target->ToPlayer())
     {
-        if (spellmgr.IsAffectedBySpell(GetSpellProto(), (*i)->GetId(), GetEffIndex(), GetSpellProto()->SpellFamilyFlags))
-            GetModifier()->m_amount += (*i)->GetModifierValue();
+        if (GetSpellProto()->SpellFamilyName == SPELLFAMILY_MAGE)
+        {
+            // Fire Ward
+            if (GetSpellProto()->SpellFamilyFlags & 0x8)
+                GetModifier()->m_amount += pTarget->HasSpell(11094) ? 10.0f : pTarget->HasSpell(13043) ? 20.0f : 0.0f;
+            // Frost Ward
+            else if (GetSpellProto()->SpellFamilyFlags & 0x80100)
+                GetModifier()->m_amount += pTarget->HasSpell(11189) ? 10.0f : pTarget->HasSpell(28332) ? 20.0f : 0.0f;
+        }
     }
 }
 
