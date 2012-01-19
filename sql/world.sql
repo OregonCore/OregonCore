@@ -13716,6 +13716,32 @@ LOCK TABLES `version` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `warden_data_result`
+--
+
+DROP TABLE IF EXISTS `warden_data_result`;
+CREATE TABLE `warden_data_result` (
+  `id` int(4) NOT NULL auto_increment,
+  `check` int(3) default NULL,
+  `data` tinytext,
+  `str` tinytext,
+  `address` int(8) default NULL,
+  `length` int(2) default NULL,
+  `result` tinytext,
+  `comment` text,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `warden_data_result`
+--
+
+LOCK TABLES `warden_data_result` WRITE;
+/*!40000 ALTER TABLE `warden_data_result` DISABLE KEYS */;
+/*!40000 ALTER TABLE `warden_data_result` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `waypoint_data`
 --
 

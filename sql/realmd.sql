@@ -58,6 +58,7 @@ CREATE TABLE `account` (
   `expansion` tinyint(3) unsigned NOT NULL default '0',
   `mutetime` bigint(40) unsigned NOT NULL default '0',
   `locale` tinyint(3) unsigned NOT NULL default '0',
+  `os` varchar(4) NOT NULL default '',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `idx_username` (`username`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Account System';

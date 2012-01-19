@@ -19,34 +19,37 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _AUTH_HMAC_H
-#define _AUTH_HMAC_H
-
-#include "Common.h"
-#include <openssl/hmac.h>
+#include "Auth/SARC4.h"
 #include <openssl/sha.h>
 
-class BigNumber;
-
-#define SEED_KEY_SIZE 16
-
-class HmacHash
+SARC4::SARC4(uint8 len)
 {
-    public:
-        HmacHash();
-        HmacHash(uint32 len, uint8 *seed);
-        ~HmacHash();
-        void UpdateBigNumber(BigNumber *bn);
-        void UpdateData(const uint8 *data, int length);
-        void UpdateData(const std::string &str);
-        void Initialize();
-        void Finalize();
-        uint8 *GetDigest() { return m_digest; };
-        int GetLength() { return SHA_DIGEST_LENGTH; };
-    private:
-        HMAC_CTX m_ctx;
-        uint8 m_key[SEED_KEY_SIZE];
-        uint8 m_digest[SHA_DIGEST_LENGTH];
-};
-#endif
+    EVP_CIPHER_CTX_init(&m_ctx);
+    EVP_EncryptInit_ex(&m_ctx, EVP_rc4(), NULL, NULL, NULL);
+    EVP_CIPHER_CTX_set_key_length(&m_ctx, len);
+}
 
+SARC4::SARC4(uint8 *seed, uint8 len)
+{
+    EVP_CIPHER_CTX_init(&m_ctx);
+    EVP_EncryptInit_ex(&m_ctx, EVP_rc4(), NULL, NULL, NULL);
+    EVP_CIPHER_CTX_set_key_length(&m_ctx, len);
+    EVP_EncryptInit_ex(&m_ctx, NULL, NULL, seed, NULL);
+}
+
+SARC4::~SARC4()
+{
+    EVP_CIPHER_CTX_cleanup(&m_ctx);
+}
+
+void SARC4::Init(uint8 *seed)
+{
+    EVP_EncryptInit_ex(&m_ctx, NULL, NULL, seed, NULL);
+}
+
+void SARC4::UpdateData(int len, uint8 *data)
+{
+    int outlen = 0;
+    EVP_EncryptUpdate(&m_ctx, data, &outlen, data, len);
+    EVP_EncryptFinal_ex(&m_ctx, data, &outlen);
+}

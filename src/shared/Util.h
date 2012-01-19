@@ -296,6 +296,7 @@ bool utf8ToConsole(const std::string& utf8str, std::string& conStr);
 bool consoleToUtf8(const std::string& conStr,std::string& utf8str);
 bool Utf8FitTo(const std::string& str, std::wstring search);
 void hexEncodeByteArray(uint8* bytes, uint32 arrayLen, std::string& result);
+std::string ByteArrayToHexStr(uint8* bytes, uint32 length);
 
 #if PLATFORM == PLATFORM_WINDOWS
 #define UTF8PRINTF(OUT,FRM,RESERR)                      \
