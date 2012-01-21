@@ -63,15 +63,15 @@ void WardenMac::Init(WorldSession *pClient, BigNumber *K)
     iCrypto.Init(InputKey);
     oCrypto.Init(OutputKey);
     sLog.outDebug("Server side warden for client %u initializing...", pClient->GetAccountId());
-    sLog.outDebug("  C->S Key: %s", ByteArrayToHexStr(InputKey, 16));
-    sLog.outDebug("  S->C Key: %s", ByteArrayToHexStr(OutputKey, 16));
-    sLog.outDebug("  Seed: %s", ByteArrayToHexStr(Seed, 16));
+    sLog.outDebug("  C->S Key: %s", ByteArrayToHexStr(InputKey, 16).c_str());
+    sLog.outDebug("  S->C Key: %s", ByteArrayToHexStr(OutputKey, 16).c_str());
+    sLog.outDebug("  Seed: %s", ByteArrayToHexStr(Seed, 16).c_str());
     sLog.outDebug("Loading Module...");
 
     Module = GetModuleForClient(Client);
 
-    sLog.outDebug("  Module Key: %s", ByteArrayToHexStr(Module->Key, 16));
-    sLog.outDebug("  Module ID: %s", ByteArrayToHexStr(Module->ID, 16));
+    sLog.outDebug("  Module Key: %s", ByteArrayToHexStr(Module->Key, 16).c_str());
+    sLog.outDebug("  Module ID: %s", ByteArrayToHexStr(Module->ID, 16).c_str());
     RequestModule();
 }
 
