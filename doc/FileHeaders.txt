@@ -5,12 +5,12 @@ It makes it "prettier" as it's applied to any of the sourcefiles
 (or at least keeping in the same style licensewise).
 But remember we don't change the header of files in the /dep folder.
 
-Header for Core Files:
+Header for Core Files (even possible without MaNGOS or/and Trinity):
 --- SNIP ---
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.org/>
+ * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2012 MaNGOS <http://www.mangosproject.org/>
+ * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -30,9 +30,9 @@ Header for Core Files:
 Header for Script Files:
 --- SNIP ---
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.org/>
+ * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2006-2012 ScriptDev2 <http://scriptdev2.svn.sourceforge.net/>
+ * Copyright (C) 2006-2012 ScriptDev2 <http://www.scriptdev2.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -47,6 +47,20 @@ Header for Script Files:
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+--- SNIP ---
+
+Header for CMake Files:
+--- SNIP ---
+# Copyright (C) 2008-2012 OregonCore <http://www.oregoncore.com/>
+# Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
+#
+# This file is free software; as a special exception the author gives
+# unlimited permission to copy and/or distribute it, with or without
+# modifications, as long as this notice is preserved.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 --- SNIP ---
 
 Please note that if several parties are involved in the creation of a file, you
