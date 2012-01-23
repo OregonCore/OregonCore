@@ -69,6 +69,7 @@ endif()
 
 if( WITH_WARNINGS )
   message("* Show all warnings      : Yes")
+  add_definitions(-D__SHOW_STUPID_WARNINGS__)
 else()
   message("* Show compile-warnings  : No  (default)")
 endif()
