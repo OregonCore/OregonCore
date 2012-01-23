@@ -35,7 +35,7 @@
 // Format is YYYYMMDDRR where RR is the change in the conf file
 // for that day.
 #ifndef _OREGON_CORE_CONFVER
-# define _OREGON_CORE_CONFVER 2011091401
+# define _OREGON_CORE_CONFVER 2012012301
 #endif //_OREGON_CORE_CONFVER
 
 #ifdef _WIN32
