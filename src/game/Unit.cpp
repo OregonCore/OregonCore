@@ -6763,7 +6763,7 @@ bool Unit::Attack(Unit *victim, bool meleeAttack)
     m_attacking = victim;
     m_attacking->_addAttacker(this);
 
-    if (GetTypeId() == TYPEID_UNIT && !IsControlledByPlayer())
+    if (GetTypeId() == TYPEID_UNIT && !ToCreature()->isPet())
     {
         // should not let player enter combat by right clicking target
         SetInCombatWith(victim);
