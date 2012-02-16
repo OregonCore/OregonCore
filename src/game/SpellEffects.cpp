@@ -104,7 +104,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS]=
     &Spell::EffectUnused,                                   // 39 SPELL_EFFECT_LANGUAGE
     &Spell::EffectDualWield,                                // 40 SPELL_EFFECT_DUAL_WIELD
     &Spell::EffectUnused,                                   // 41 SPELL_EFFECT_41 (old SPELL_EFFECT_SUMMON_WILD)
-    &Spell::EffectUnused,                                   // 42 SPELL_EFFECT_42 (old SPELL_EFFECT_SUMMON_GUARDIAN)
+    &Spell::SummonClassPet,                                 // 42 SPELL_EFFECT_SUMMON_CLASS_PET
     &Spell::EffectTeleUnitsFaceCaster,                      // 43 SPELL_EFFECT_TELEPORT_UNITS_FACE_CASTER
     &Spell::EffectLearnSkill,                               // 44 SPELL_EFFECT_SKILL_STEP
     &Spell::EffectAddHonor,                                 // 45 SPELL_EFFECT_ADD_HONOR                honor/pvp related
@@ -3365,7 +3365,7 @@ void Spell::EffectSummonType(uint32 i)
             }
             break;
         case SUMMON_CATEGORY_PET:
-            SummonGuardian(i, entry, properties);
+            SummonClassPet(i);
             break;
         case SUMMON_CATEGORY_PUPPET:
             summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster);
@@ -4003,6 +4003,115 @@ void Spell::EffectSummonPet(uint32 i)
     std::string new_name=objmgr.GeneratePetName(petentry);
     if (!new_name.empty())
         pet->SetName(new_name);
+}
+
+void Spell::SummonClassPet(uint32 i)
+{
+    uint32 pet_entry = m_spellInfo->EffectMiscValue[i];
+    if (!pet_entry)
+        return;
+
+    Player *caster = NULL;
+    if (m_originalCaster)
+    {
+        if (m_originalCaster->GetTypeId() == TYPEID_PLAYER)
+            caster = m_originalCaster->ToPlayer();
+        else if (m_originalCaster->ToCreature()->isTotem())
+            caster = m_originalCaster->GetCharmerOrOwnerPlayerOrPlayerItself();
+    }
+
+    uint32 petentry = m_spellInfo->EffectMiscValue[i];
+
+    if (!caster)
+    {
+        SummonPropertiesEntry const *properties = sSummonPropertiesStore.LookupEntry(67);
+        if (properties)
+            SummonGuardian(i, petentry, properties);
+        return;
+    }
+
+    // set timer for unsummon
+    int32 duration = GetSpellDuration(m_spellInfo);
+
+    Pet *OldSummon = caster->GetPet();
+
+    // if pet requested type already exist
+    if (OldSummon)
+    {
+        if (petentry == 0 || OldSummon->GetEntry() == petentry)
+        {
+            // pet in corpse state can't be summoned
+            if (OldSummon->isDead())
+                return;
+
+            ASSERT(OldSummon->GetMap() == caster->GetMap());
+
+            float px, py, pz;
+            caster->GetClosePoint(px, py, pz, OldSummon->GetObjectSize());
+
+            OldSummon->NearTeleportTo(px, py, pz, OldSummon->GetOrientation());
+
+            if (caster->GetTypeId() == TYPEID_PLAYER && OldSummon->isControlled())
+                caster->ToPlayer()->PetSpellInitialize();
+
+            return;
+        }
+
+        if (caster->GetTypeId() == TYPEID_PLAYER)
+            caster->ToPlayer()->RemovePet(OldSummon, PET_SAVE_AS_DELETED, false);
+        else
+            return;
+    }
+
+    // in another case summon new
+    uint32 level = caster->getLevel();
+
+    // level of pet summoned using engineering item based at engineering skill level
+    if (m_CastItem)
+    {
+        ItemPrototype const *proto = m_CastItem->GetProto();
+        if (proto && proto->RequiredSkill == SKILL_ENGINERING)
+        {
+            uint16 skill202 = caster->GetSkillValue(SKILL_ENGINERING);
+            if (skill202)
+            {
+                level = skill202 / 5;
+            }
+        }
+    }
+
+    // select center of summon position
+    WorldLocation center = m_targets.m_dstPos;
+
+    float radius = GetSpellRadius(m_spellInfo,i,false);
+
+    int32 amount = damage > 0 ? damage : 1;
+
+    for (int32 count = 0; count < amount; ++count)
+    {
+        float px, py, pz;
+        // If dest location if present
+        if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
+        {
+            // Summon 1 unit in dest location
+            if (count == 0)
+                m_targets.m_dstPos.GetPosition(px, py, pz);
+            // Summon in random point all other units if location present
+            else
+                m_caster->GetRandomPoint(center, radius, px, py, pz);
+        }
+        // Summon if dest location not present near caster
+        else
+            m_caster->GetClosePoint(px,py,pz,m_caster->GetObjectSize());
+
+        Pet *pet = caster->SummonPet(m_spellInfo->EffectMiscValue[i], px, py, pz, m_caster->GetOrientation(), CLASS_PET, duration);
+        if (!pet)
+            return;
+
+        pet->SetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP,0);
+        pet->SetUInt32Value(UNIT_CREATED_BY_SPELL, m_spellInfo->Id);
+        pet->SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_PVP_ATTACKABLE);
+    }
 }
 
 void Spell::EffectLearnPetSpell(uint32 i)

@@ -1821,6 +1821,7 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
 
     switch(petType)
     {
+        case CLASS_PET:
         case SUMMON_PET:
             pet->SetUInt32Value(UNIT_FIELD_BYTES_0, 2048);
             pet->SetUInt32Value(UNIT_FIELD_PETEXPERIENCE, 0);
@@ -1835,6 +1836,7 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
 
     switch(petType)
     {
+        case CLASS_PET:
         case SUMMON_PET:
             pet->InitPetCreateSpells();
             pet->SavePetToDB(PET_SAVE_AS_CURRENT);

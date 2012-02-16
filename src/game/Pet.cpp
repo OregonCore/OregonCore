@@ -76,6 +76,9 @@ m_declinedname(NULL), m_owner(owner)
         InitCharmInfo();
     }
 
+    if (type == CLASS_PET)
+        SetReactState(REACT_AGGRESSIVE);
+
     m_name = "Pet";
 
     m_regenTimer = 4000;
@@ -941,7 +944,9 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
     if (isPet() && m_owner->GetTypeId() == TYPEID_PLAYER)
     {
         if ((m_owner->getClass() == CLASS_WARLOCK)
-            || (m_owner->getClass() == CLASS_SHAMAN))        // Fire Elemental
+            || (m_owner->getClass() == CLASS_SHAMAN)         // Fire Elemental
+            || (m_owner->getClass() == CLASS_MAGE)           // Water Elemental
+            || (m_owner->getClass() == CLASS_PRIEST))        // Shadowfiend
             petType = SUMMON_PET;
         else if (m_owner->getClass() == CLASS_HUNTER)
         {
@@ -1025,12 +1030,35 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
     {
         case SUMMON_PET:
         {
-            //the damage bonus used for pets is either fire or shadow damage, whatever is higher
-            uint32 fire  = m_owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_FIRE);
-            uint32 shadow = m_owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_SHADOW);
-            uint32 val  = (fire > shadow) ? fire : shadow;
-            SetBonusDamage(int32 (val * 0.15f));
-            //bonusAP += val * 0.57;
+            if (m_owner->GetTypeId() == TYPEID_PLAYER)
+            {
+                switch(m_owner->getClass())
+                {
+                    case CLASS_WARLOCK:
+                    {
+
+                        //the damage bonus used for pets is either fire or shadow damage, whatever is higher
+                        uint32 fire  = m_owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_FIRE);
+                        uint32 shadow = m_owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_SHADOW);
+                        uint32 val  = (fire > shadow) ? fire : shadow;
+
+                        SetBonusDamage(int32 (val * 0.15f));
+                        //bonusAP += val * 0.57;
+                        break;
+                    }
+                    case CLASS_MAGE:
+                    {
+                        //40% damage bonus of mage's frost damage
+                        float val = m_owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_FROST) * 0.4;
+                        if (val < 0)
+                            val = 0;
+                        SetBonusDamage(int32(val));
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
 
             SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(petlevel - (petlevel / 4)));
             SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(petlevel + (petlevel / 4)));
@@ -1054,15 +1082,6 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
         {
             switch (GetEntry())
             {
-                case 510: // mage Water Elemental
-                {
-                    //40% damage bonus of mage's frost damage
-                    float val = m_owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_FROST) * 0.4;
-                    if (val < 0)
-                        val = 0;
-                    SetBonusDamage(int32(val));
-                    break;
-                }
                 case 1964: //force of nature
                 {
                     if (!pInfo)
@@ -1578,6 +1597,9 @@ void Pet::InitPetCreateSpells()
 
             addSpell(petspellid);
 
+            if (petspellid)
+                ToggleAutocast(petspellid, true);
+            
             SkillLineAbilityMap::const_iterator lower = spellmgr.GetBeginSkillLineAbilityMap(learn_spellproto->EffectTriggerSpell[0]);
             SkillLineAbilityMap::const_iterator upper = spellmgr.GetEndSkillLineAbilityMap(learn_spellproto->EffectTriggerSpell[0]);
 
@@ -1639,7 +1661,7 @@ uint32 Pet::resetTalentsCost() const
 void Pet::ToggleAutocast(uint32 spellid, bool apply)
 {
     if (!IsAutocastableSpell(spellid))
-        return;
+        return; 
 
     PetSpellMap::iterator itr = m_spells.find(spellid);
     if (itr == m_spells.end())
