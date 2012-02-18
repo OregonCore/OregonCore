@@ -1299,7 +1299,8 @@ DROP TABLE IF EXISTS `game_event_creature`;
 CREATE TABLE `game_event_creature` (
   `guid` int(10) unsigned NOT NULL,
   `event` smallint(6) NOT NULL default '0' COMMENT 'Put negatives values to remove during event',
-  PRIMARY KEY  (`guid`,`event`)
+  PRIMARY KEY  (`guid`,`event`),
+  KEY `idx_guid` (`guid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -1340,7 +1341,8 @@ DROP TABLE IF EXISTS `game_event_gameobject`;
 CREATE TABLE `game_event_gameobject` (
   `guid` int(10) unsigned NOT NULL,
   `event` smallint(6) NOT NULL default '0' COMMENT 'Put negatives values to remove during event',
-  PRIMARY KEY  (`guid`,`event`)
+  PRIMARY KEY  (`guid`,`event`),
+  KEY `idx_guid` (`guid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
