@@ -3340,7 +3340,7 @@ void Spell::EffectSummonType(uint32 i)
 
                     uint32 amount = damage > 0 ? damage : 1;
                     if (m_spellInfo->Id == 18662 || // Curse of Doom
-                        properties->Id == 2081)     // Mechanical Dragonling, Arcanite Dragonling, Mithril Dragonling.
+                        properties->Id == 2081 || m_spellInfo->Id == 43302)     // Mechanical Dragonling, Arcanite Dragonling, Mithril Dragonling, Halazzi's Lighting Totem
                         amount = 1;
 
                     TempSummonType summonType = (duration == 0) ? TEMPSUMMON_DEAD_DESPAWN : TEMPSUMMON_TIMED_DESPAWN;
