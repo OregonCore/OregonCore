@@ -1,1 +1,0 @@
-UPDATE `creature_template` SET `ScriptName`='mob_fel_overseer' WHERE `entry`=18796;

@@ -1,1 +1,0 @@
-ALTER TABLE `transport_events` ADD PRIMARY KEY (`entry`,`waypoint_id`,`event_id`);

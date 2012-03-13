@@ -1,3 +1,0 @@
-UPDATE `quest_template` SET `ReqSpellCast1` = '18362' WHERE `entry` = '5561';
-DELETE FROM `npc_text` WHERE `ID`=21000;
-INSERT INTO `npc_text` VALUES ('21000', 'Why is it that small creatures such as goblins are always fascinated with larger creatures?', null, '0', '0', '0', '0', '0', '0', '0', '0', null, null, '0', '0', '0', '0', '0', '0', '0', '0', null, null, '0', '0', '0', '0', '0', '0', '0', '0', null, null, '0', '0', '0', '0', '0', '0', '0', '0', null, null, '0', '0', '0', '0', '0', '0', '0', '0', null, null, '0', '0', '0', '0', '0', '0', '0', '0', null, null, '0', '0', '0', '0', '0', '0', '0', '0', null, null, '0', '0', '0', '0', '0', '0', '0', '0');

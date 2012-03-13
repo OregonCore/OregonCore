@@ -1,2 +1,0 @@
-ALTER IGNORE TABLE `realmlist` MODIFY COLUMN `realmbuilds` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '8606';
-ALTER IGNORE TABLE `realmlist` DROP COLUMN `gamebuild`;

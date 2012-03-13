@@ -1,3 +1,7 @@
+----------------------------------------
+-- Script to cleanup doublicate Items --
+----------------------------------------
+
 DROP TABLE IF EXISTS item_test;
 CREATE TABLE item_test
 SELECT w.`item_guid`,w.`source`,w.`count` FROM
