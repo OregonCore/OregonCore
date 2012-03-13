@@ -1,0 +1,1 @@
+UPDATE `access_requirement` SET `quest_done`= 0 WHERE `id`='22';
