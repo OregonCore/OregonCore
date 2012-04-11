@@ -21,6 +21,9 @@
 #define _FORMATIONS_H
 
 #include "Common.h"
+#include <ace/Basic_Types.h>
+#include <ace/Singleton.h>
+#include <ace/Thread_Mutex.h>
 
 class CreatureFormation;
 

@@ -22,6 +22,8 @@
 #include "Creature.h"
 #include "World.h"
 #include "SpellMgr.h"
+#include "MapRefManager.h"
+#include "Player.h"
 
 //Disable CreatureAI when charmed
 void CreatureAI::OnCharmed(bool /*apply*/)
