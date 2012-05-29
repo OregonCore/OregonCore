@@ -1,6 +1,6 @@
----------------------------------------------------
+-- --------------------------------------------- --
 -- Oregon Script to Create MySQL User and Tables --
----------------------------------------------------
+-- --------------------------------------------- --
 
 GRANT USAGE ON * . * TO 'oregon'@'localhost' IDENTIFIED BY 'oregon' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 ;
 
