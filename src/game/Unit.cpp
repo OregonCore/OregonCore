@@ -2541,7 +2541,7 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit *pVictim, SpellEntry const *spell, 
         return SPELL_MISS_NONE;
 
     // Check for attack from behind
-    if (!pVictim->HasInArc(M_PI,this))
+    if (!pVictim->HasInArc(M_PI,this) || pVictim->hasUnitState(UNIT_STAT_STUNNED))
     {
         // Can`t dodge from behind in PvP (but its possible in PvE)
         if (pVictim->GetTypeId() == TYPEID_PLAYER)
