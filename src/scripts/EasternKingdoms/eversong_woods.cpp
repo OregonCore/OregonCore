@@ -715,6 +715,25 @@ CreatureAI* GetAI_npc_infused_crystalAI(Creature* pCreature)
     return new npc_infused_crystalAI (pCreature);
 }
 
+struct npc_eversong_rangerAI : public ScriptedAI
+{
+    npc_eversong_rangerAI(Creature *c) : ScriptedAI(c) {}
+
+	void Reset() { }
+
+    void SpellHit(Unit* pHitter, const SpellEntry* pSpell)
+        {
+            if(pSpell->Id == 1243 || pSpell->Id == 1244 || pSpell->Id == 1245)
+            {
+                if(pHitter->GetTypeId() == TYPEID_PLAYER)
+                {
+                    Player* pPlayer = pHitter->ToPlayer();
+                    if(pPlayer && pPlayer->GetQuestStatus(9489) == QUEST_STATUS_INCOMPLETE)
+                        pPlayer->KilledMonsterCredit(15938, 0);
+                }
+            }
+        }
+};
 void AddSC_eversong_woods()
 {
     Script *newscript;
@@ -756,6 +775,11 @@ void AddSC_eversong_woods()
 
     newscript = new Script;
     newscript->Name = "npc_infused_crystal";
+    newscript->GetAI = &GetAI_npc_infused_crystalAI;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_eversong_ranger";
     newscript->GetAI = &GetAI_npc_infused_crystalAI;
     newscript->RegisterSelf();
 }
