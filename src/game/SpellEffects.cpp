@@ -5867,6 +5867,8 @@ void Spell::EffectSkinning(uint32 /*i*/)
 
     m_caster->ToPlayer()->SendLoot(creature->GetGUID(),LOOT_SKINNING);
     creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
+	creature->RemoveUnitMovementFlag(MOVEFLAG_FLYING | MOVEFLAG_FLYING2);
+
 
     int32 reqValue = targetLevel < 10 ? 0 : targetLevel < 20 ? (targetLevel-10)*10 : targetLevel*5;
 
