@@ -33,9 +33,9 @@ add_executable(map_extractor
 )
 
 target_link_libraries(map_extractor
+  mpq
   ${BZIP2_LIBRARIES}
   ${ZLIB_LIBRARIES}
-  mpq
 )
 
 add_dependencies(map_extractor mpq)

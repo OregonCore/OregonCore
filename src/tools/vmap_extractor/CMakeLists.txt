@@ -34,9 +34,9 @@ endif()
 add_executable(vmap_extractor ${sources})
 
 target_link_libraries(vmap_extractor
+  mpq
   ${BZIP2_LIBRARIES}
   ${ZLIB_LIBRARIES}
-  mpq
 )
 
 add_dependencies(vmap_extractor mpq)
