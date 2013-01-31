@@ -425,7 +425,10 @@ void WorldSession::HandleCancelAutoRepeatSpellOpcode(WorldPacket& /*recvPacket*/
 // todo Complete HandleCancelChanneling function
 void WorldSession::HandleCancelChanneling(WorldPacket & recv_data)
 {
-    recv_data.read_skip<uint32>();                          // spellid, not used
+    uint32 spellId;
+
+    recv_data >> spellId;
+    _player->InterruptNonMeleeSpells(false, spellId, false);
 }
 
 void WorldSession::HandleTotemDestroy(WorldPacket& recvPacket)
