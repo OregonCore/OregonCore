@@ -11606,11 +11606,11 @@ void Player::SwapItem(uint16 src, uint16 dst)
     // Check bag swap with item exchange (one from empty in not bag possition (equipped (not possible in fact) or store)
     if (pSrcItem->IsBag() && pDstItem->IsBag())
     {
-		if(GetTrader())
-		{
-			SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW, pDstItem, pSrcItem);
-			return;
-		}
+        if(GetTrader())
+        {
+            SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW, pDstItem, pSrcItem);
+            return;
+        }
 
         Bag* emptyBag = NULL;
         Bag* fullBag = NULL;
