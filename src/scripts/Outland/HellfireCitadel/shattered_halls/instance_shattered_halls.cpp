@@ -227,7 +227,7 @@ struct instance_shattered_halls : public ScriptedInstance
                     if (Player* pPlayer = GetPlayerInMap())
                     {
                         for (uint8 i = 2; i < 5; ++i)
-                            Creature* pVictim = pPlayer->SummonCreature(uiTeam == ALLIANCE ? aSoldiersLocs[i].uiAllianceEntry : aSoldiersLocs[i].uiHordeEntry, aSoldiersLocs[i].m_fX, aSoldiersLocs[i].m_fY, aSoldiersLocs[i].m_fZ, aSoldiersLocs[i].m_fO, TEMPSUMMON_DEAD_DESPAWN, 0);
+                            /*Creature* pVictim = */pPlayer->SummonCreature(uiTeam == ALLIANCE ? aSoldiersLocs[i].uiAllianceEntry : aSoldiersLocs[i].uiHordeEntry, aSoldiersLocs[i].m_fX, aSoldiersLocs[i].m_fY, aSoldiersLocs[i].m_fZ, aSoldiersLocs[i].m_fO, TEMPSUMMON_DEAD_DESPAWN, 0);
 
                         if (Creature* pExecutioner = pPlayer->SummonCreature(NPC_EXECUTIONER, afExecutionerLoc[0], afExecutionerLoc[1], afExecutionerLoc[2], afExecutionerLoc[3], TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 80*MINUTE*IN_MILLISECONDS))
                             pExecutioner->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);

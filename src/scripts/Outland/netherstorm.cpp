@@ -93,7 +93,7 @@ struct npc_manaforge_control_consoleAI : public ScriptedAI
         Wave = false;
         someplayer = 0;
         goConsole = 0;
-        Creature* add = NULL;
+        add = NULL;
     }
 
     void EnterCombat(Unit *who) { return; }
@@ -885,10 +885,10 @@ struct npc_bessyAI : public npc_escortAI
             case 12:
                 if (pPlayer)
                     pPlayer->GroupEventHappens(Q_ALMABTRIEB, me);
-                if (Unit* Thadell = me->FindNearestCreature(N_THADELL, 30))
+                if (/*Unit* Thadell = */me->FindNearestCreature(N_THADELL, 30))
                     DoScriptText(SAY_THADELL_1, me); break;
             case 13:
-                if (Unit* Thadell = me->FindNearestCreature(N_THADELL, 30))
+                if (/*Unit* Thadell = */me->FindNearestCreature(N_THADELL, 30))
                     DoScriptText(SAY_THADELL_2, me, pPlayer); break;
         }
     }

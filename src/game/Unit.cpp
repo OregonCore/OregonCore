@@ -2005,7 +2005,7 @@ void Unit::CalcAbsorbResist(Unit *pVictim, SpellSchoolMask schoolMask, DamageEff
         for (AuraList::const_iterator i = vSplitDamagePct.begin(), next; i != vSplitDamagePct.end() && RemainingDamage >= 0; i = next)
         {
             next = i; ++next;
-            int32 *p_absorbAmount = &(*i)->GetModifier()->m_amount;
+            //int32 *p_absorbAmount = &(*i)->GetModifier()->m_amount;
 
             // check damage school mask
             if (((*i)->GetModifier()->m_miscvalue & schoolMask) == 0)
@@ -3835,7 +3835,7 @@ void Unit::RemoveAurasDueToSpellBySteal(uint32 spellId, uint64 casterGUID, Unit 
         Aura *aur = iter->second;
         if (aur->GetId() == spellId && aur->GetCasterGUID() == casterGUID)
         {
-            int32 basePoints = aur->GetBasePoints();
+            //int32 basePoints = aur->GetBasePoints();
             // construct the new aura for the attacker
             Aura * new_aur = CreateAura(aur->GetSpellProto(), aur->GetEffIndex(), NULL/*&basePoints*/, stealer);
             if (!new_aur)
@@ -4052,7 +4052,6 @@ void Unit::RemoveAura(AuraMap::iterator &i, AuraRemoveMode mode)
 
     // Statue unsummoned at aura remove
     //Totem* statue = NULL;
-    bool channeled = false;
     if (Aur->GetAuraDuration() && !Aur->IsPersistent() && IsChanneledSpell(AurSpellInfo))
     {
         if (!caster)                                         // can be already located for IsSingleTargetSpell case
@@ -10655,7 +10654,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit * pTarget, uint32 procFlag,
         Aura *triggeredByAura = i->triggeredByAura;
         Modifier *auraModifier = triggeredByAura->GetModifier();
         SpellEntry const *spellInfo = triggeredByAura->GetSpellProto();
-        uint32 effIndex = triggeredByAura->GetEffIndex();
+        //uint32 effIndex = triggeredByAura->GetEffIndex();
         bool useCharges = triggeredByAura->m_procCharges > 0;
         // For players set spell cooldown if need
         uint32 cooldown = 0;

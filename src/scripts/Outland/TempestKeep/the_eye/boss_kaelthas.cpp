@@ -314,7 +314,7 @@ struct boss_kaelthasAI : public ScriptedAI
 
     void DeleteLegs()
     {
-        InstanceMap::PlayerList const &playerliste = ((InstanceMap*)me->GetMap())->GetPlayers();
+        //InstanceMap::PlayerList const &playerliste = ((InstanceMap*)me->GetMap())->GetPlayers();
         InstanceMap::PlayerList::const_iterator it;
 
         Map::PlayerList const &PlayerList = ((InstanceMap*)me->GetMap())->GetPlayers();
@@ -1512,7 +1512,7 @@ struct mob_phoenix_egg_tkAI : public ScriptedAI
         {
             if (!summoned)
             {
-                Creature* Phoenix = me->SummonCreature(PHOENIX,me->GetPositionX(),me->GetPositionY(),me->GetPositionZ(),me->GetOrientation(),TEMPSUMMON_CORPSE_DESPAWN,5000);
+                /*Creature* Phoenix = */me->SummonCreature(PHOENIX,me->GetPositionX(),me->GetPositionY(),me->GetPositionZ(),me->GetOrientation(),TEMPSUMMON_CORPSE_DESPAWN,5000);
                 summoned = true;
             }
             me->DealDamage(me, me->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);

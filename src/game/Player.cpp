@@ -4640,8 +4640,6 @@ float Player::GetTotalBaseModValue(BaseModGroup modGroup) const
 
 uint32 Player::GetShieldBlockValue() const
 {
-    BaseModGroup modGroup = SHIELD_BLOCK_VALUE;
-
     float value = (m_auraBaseMod[SHIELD_BLOCK_VALUE][FLAT_MOD] + GetStat(STAT_STRENGTH) * 0.05f - 1)*m_auraBaseMod[SHIELD_BLOCK_VALUE][PCT_MOD];
 
     value = (value < 0) ? 0 : value;
@@ -6333,7 +6331,6 @@ bool Player::RewardHonor(Unit *uVictim, uint32 groupsize, float honor, bool pvpt
 
     uint64 victim_guid = 0;
     uint32 victim_rank = 0;
-    time_t now = time(NULL);
 
     // need call before fields update to have chance move yesterday data to appropriate fields before today data change.
     UpdateHonorFields();
@@ -16308,8 +16305,6 @@ void Player::SaveToDB()
     SetByteValue(UNIT_FIELD_BYTES_1, 3, 0);                 // stand flags?
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
     SetDisplayId(GetNativeDisplayId());
-
-    bool inworld = IsInWorld();
 
     std::string sql_name = m_name;
     CharacterDatabase.escape_string(sql_name);

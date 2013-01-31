@@ -779,7 +779,6 @@ LootStoreItem const * LootTemplate::LootGroup::Roll() const
             if (ExplicitlyChanced[i].chance>=100.f)
                 return &ExplicitlyChanced[i];
 
-            ItemPrototype const *pProto = objmgr.GetItemPrototype(ExplicitlyChanced[i].itemid);
             Roll -= ExplicitlyChanced[i].chance;
             if (Roll < 0)
                 return &ExplicitlyChanced[i];

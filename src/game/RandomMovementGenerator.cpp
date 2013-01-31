@@ -52,8 +52,8 @@ RandomMovementGenerator<Creature>::_setRandomLocation(Creature &creature)
     Map const* map = creature.GetBaseMap();
 
     // For 2D/3D system selection
-    bool is_land_ok  = creature.canWalk();
-    bool is_water_ok = creature.canSwim();
+    //bool is_land_ok  = creature.canWalk();
+    //bool is_water_ok = creature.canSwim();
     bool is_air_ok   = creature.canFly();
 
     const float angle = rand_norm()*(M_PI*2);

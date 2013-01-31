@@ -2868,7 +2868,7 @@ void Spell::SendSpellStart()
     if (IsRangedSpell())
         castFlags |= CAST_FLAG_AMMO;
 
-    Unit *target = m_targets.getUnitTarget() ? m_targets.getUnitTarget() : m_caster;
+    //Unit *target = m_targets.getUnitTarget() ? m_targets.getUnitTarget() : m_caster;
 
     WorldPacket data(SMSG_SPELL_START, (8+8+4+4+2));
     if (m_CastItem)
@@ -2897,7 +2897,7 @@ void Spell::SendSpellGo()
 
     DEBUG_LOG("Sending SMSG_SPELL_GO id=%u", m_spellInfo->Id);
 
-    Unit *target = m_targets.getUnitTarget() ? m_targets.getUnitTarget() : m_caster;
+    //Unit *target = m_targets.getUnitTarget() ? m_targets.getUnitTarget() : m_caster;
 
     uint32 castFlags = CAST_FLAG_UNKNOWN3;
 
@@ -5276,7 +5276,7 @@ void Spell::HandleHitTriggerAura()
                     target = hitTarget;
                     m_targets.setUnitTarget(target);
                     AddUnitTarget(target, 0);
-                    uint64 targetGUID = target->GetGUID();
+                    //uint64 targetGUID = target->GetGUID();
                     return;
                 }
             }

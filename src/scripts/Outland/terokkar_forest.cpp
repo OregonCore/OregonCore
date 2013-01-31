@@ -1226,7 +1226,7 @@ struct npc_skyguard_prisonerAI : public npc_escortAI
 
     void WaypointReached(uint32 uiPointId)
     {
-        if (Player* pPlayer = GetPlayerForEscort())
+        if (/*Player* pPlayer = */GetPlayerForEscort())
         {
             switch (uiPointId)
             {

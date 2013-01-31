@@ -190,7 +190,7 @@ struct boss_stalaggAI : public BossAI
                 }
                 case EVENT_PULL_TANK:
                 {
-                    Unit *pFuegen = NULL;
+                    //Unit *pFuegen = NULL;
                     // Select Fuegens as target, rest will be handled in scripteffect
                     //AddSpellToCast(pFuegen, SPELL_MAGNETIC_PULL);
                     events.ScheduleEvent(EVENT_PULL_TANK, 20500);
@@ -251,7 +251,7 @@ struct boss_fuegenAI : public BossAI
                 }
                 case EVENT_PULL_TANK:
                 {
-                    Unit *pStalagg = NULL;
+                    //Unit *pStalagg = NULL;
                     // Select Stalaggs as target, rest will be handled in scripteffect
                     //AddSpellToCast(pStalagg, SPELL_MAGNETIC_PULL);
                     events.ScheduleEvent(EVENT_PULL_TANK, 20500);

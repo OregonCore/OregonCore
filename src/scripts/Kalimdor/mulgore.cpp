@@ -137,7 +137,7 @@ struct npc_kyle_the_frenziedAI : public ScriptedAI
                 switch(m_uiEventPhase)
                 {
                     case 1:
-                        if (Player* pPlayer = Unit::GetPlayer(*me, m_uiPlayerGUID))
+                        if (/*Player* pPlayer = */Unit::GetPlayer(*me, m_uiPlayerGUID))
                         {
                             if (GameObject* pGo = GameObject::GetGameObject(*me, SPELL_LUNCH))
                             {

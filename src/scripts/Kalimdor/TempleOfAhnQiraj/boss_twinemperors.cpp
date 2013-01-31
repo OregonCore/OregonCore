@@ -178,8 +178,8 @@ struct boss_twinemperorsAI : public ScriptedAI
         #define HEAL_BROTHER_AMOUNT 30000.0f
         uint32 largerAmount = (uint32)((HEAL_BROTHER_AMOUNT * mult) - HEAL_BROTHER_AMOUNT);
 
-        uint32 myh = me->GetHealth();
-        uint32 hish = pOtherBoss->GetHealth();
+        //uint32 myh = me->GetHealth();
+        //uint32 hish = pOtherBoss->GetHealth();
         if (mytotal > histotal)
         {
             uint32 h = me->GetHealth()+largerAmount;

@@ -301,7 +301,7 @@ struct npc_melizza_brimbuzzleAI : public npc_escortAI
                 {
                     m_uiPostEventTimer = 3000;
 
-                    if (Unit* pPlayer = GetPlayerForEscort())
+                    if (/*Unit* pPlayer = */GetPlayerForEscort())
                     {
                         switch(m_uiPostEventCount)
                         {

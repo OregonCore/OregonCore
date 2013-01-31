@@ -824,7 +824,7 @@ struct boss_veras_darkshadowAI : public boss_illidari_councilAI
         {
             if (VanishTimer <= diff)
             {
-                if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                if (/*Unit *pTarget = */SelectUnit(SELECT_TARGET_RANDOM, 0))
                 {
                     DoCast(me,SPELL_DEADLY_POISON_TRIGGER,true);
                     DoCast(me,SPELL_VANISH,false);

@@ -108,7 +108,7 @@ struct boss_nightbaneAI : public ScriptedAI
                 NightbaneGUID = pInstance->GetData64(DATA_NIGHTBANE);
 
                 if (NightbaneGUID)
-                    if (Creature* Nightbane = Creature::GetCreature((*me),NightbaneGUID))
+                    if (/*Creature* Nightbane = */Creature::GetCreature((*me),NightbaneGUID))
                         isCorrectSpawned = false;
             }
             else

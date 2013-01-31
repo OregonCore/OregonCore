@@ -157,7 +157,7 @@ struct boss_najentusAI : public ScriptedAI
 
     void DeleteSpine()
     {
-        InstanceMap::PlayerList const &playerliste = ((InstanceMap*)me->GetMap())->GetPlayers();
+        //InstanceMap::PlayerList const &playerliste = ((InstanceMap*)me->GetMap())->GetPlayers();
         InstanceMap::PlayerList::const_iterator it;
 
         Map::PlayerList const &PlayerList = ((InstanceMap*)me->GetMap())->GetPlayers();

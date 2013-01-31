@@ -40,7 +40,7 @@ struct Location
 {
     float x, y, o, z;
 };
-
+/*
 static Location ChannelerLocations[]=
 {
     {463.161285f, 401.219757f, 3.141592f},
@@ -50,7 +50,7 @@ static Location ChannelerLocations[]=
     {446.012421f, 411.211853f, 5.210546f},
     {457.377625f, 411.211853f, 4.177494f}
 };
-
+*/
 static Location SpawnLocations[]=
 {
     {498.652740f, 461.728119f, 0},

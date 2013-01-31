@@ -204,8 +204,6 @@ void WardenWin::RequestData()
 
     ServerTicks = getMSTime();
 
-    uint32 maxid = WardenDataStorage.InternalDataID;
-
     uint32 id;
     uint8 type;
     WardenData *wd;

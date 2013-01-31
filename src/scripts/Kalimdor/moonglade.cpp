@@ -822,7 +822,7 @@ struct npc_remulosAI : public npc_escortAI
             break;
         case 26:
             SetEscortPaused(true);
-            if (Creature* pEranikus = Unit::GetCreature(*me, EranikusGUID))
+            if (/*Creature* pEranikus = */Unit::GetCreature(*me, EranikusGUID))
             {
                 me->SetOrientation(1.46);
                 me->SendMovementFlagUpdate();
@@ -1205,7 +1205,6 @@ public:
                     for (std::set<Unit*>::const_iterator itr = me->getAttackers().begin(); itr != me->getAttackers().end(); ++itr)
                     {
                         float collision = (float)urand(-8, 8);
-                        uint32 r = urand(0, 1) ? 1 : 0;
                         if ((*itr))
                             (*itr)->RemoveAllAuras();
 
@@ -1235,7 +1234,6 @@ public:
                     for (int i = 0; i < NPC_PRIESTESS_OF_THE_MOON_COUNT    ; i++)
                     {
                         float collision = (float)urand(-4, 4);
-                        uint32 r = urand(0, 1) ? 1 : 0;
                         if (Creature* pPristess = me->SummonCreature(NPC_PRIESTESS_OF_THE_MOON, 7927.01f + collision, -2573.36f + collision, 489.652f + collision, 2.81f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 20000))
                         {
                             PriestessOfTheMoonList.push_back(pPristess->GetGUID());

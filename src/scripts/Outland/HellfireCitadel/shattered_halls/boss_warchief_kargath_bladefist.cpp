@@ -266,7 +266,6 @@ struct boss_warchief_kargath_bladefistAI : public ScriptedAI
 
             if (Summon_Assistant_Timer <= diff)
             {
-                Unit *pTarget = NULL;
                 Creature* Summoned;
 
                 for (uint32 i = 0; i < summoned; i++)

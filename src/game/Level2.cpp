@@ -3563,8 +3563,6 @@ bool ChatHandler::HandleLearnAllRecipesCommand(const char* args)
     if (!Utf8toWStr(args,wnamepart))
         return false;
 
-    uint32 counter = 0;                                     // Counter for figure out that we found smth.
-
     // converting string that we try to find to lower case
     wstrToLower(wnamepart);
 

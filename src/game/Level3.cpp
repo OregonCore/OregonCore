@@ -7105,7 +7105,7 @@ bool ChatHandler::HandleSendMoneyCommand(const char *args)
         return false;
     }
 
-    uint32 mailId = objmgr.GenerateMailID();
+    objmgr.GenerateMailID();
 
     // from console show not existed sender
     MailSender sender(MAIL_NORMAL,m_session ? m_session->GetPlayer()->GetGUIDLow() : 0, MAIL_STATIONERY_GM);
