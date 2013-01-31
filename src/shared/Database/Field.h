@@ -53,17 +53,8 @@ class Field
         uint16 GetUInt16() const { return mValue ? static_cast<uint16>(atol(mValue)) : uint16(0); }
         int16 GetInt16() const { return mValue ? static_cast<int16>(atol(mValue)) : int16(0); }
         uint32 GetUInt32() const { return mValue ? static_cast<uint32>(atol(mValue)) : uint32(0); }
-        uint64 GetUInt64() const
-        {
-            if (mValue)
-            {
-                uint64 value;
-                sscanf(mValue,UI64FMTD,&value);
-                return value;
-            }
-            else
-                return 0;
-        }
+        uint64 GetUInt64() const { return mValue ? strtoull(mValue, NULL, 10) : uint64(0); }
+		int64 GetInt64() const { return mValue ? strtoll(mValue, NULL, 10) : int64(0); }
 
         void SetType(enum DataTypes type) { mType = type; }
 
