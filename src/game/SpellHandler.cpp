@@ -422,7 +422,6 @@ void WorldSession::HandleCancelAutoRepeatSpellOpcode(WorldPacket& /*recvPacket*/
     _player->InterruptSpell(CURRENT_AUTOREPEAT_SPELL);
 }
 
-// todo Complete HandleCancelChanneling function
 void WorldSession::HandleCancelChanneling(WorldPacket & recv_data)
 {
     uint32 spellId;
