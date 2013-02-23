@@ -134,6 +134,8 @@
 #define atoll __atoi64
 #define vsnprintf _vsnprintf
 #define finite(X) _finite(X)
+#define strtoull _strtoui64
+#define strtoll _strtoi64
 
 #else
 
