@@ -1280,6 +1280,66 @@ CreatureAI* GetAI_npc_winter_reveler(Creature* pCreature)
     return new npc_winter_revelerAI(pCreature);
 }
 
+/************************************************************/
+
+struct npc_force_of_nature_treantsAI : public ScriptedAI {
+
+    npc_force_of_nature_treantsAI(Creature* c) : ScriptedAI(c) {}
+    
+    Unit* Owner;
+    
+    void Reset() {
+        Owner = me->GetOwner();
+        if(!Owner)
+            return;
+        
+        Unit* target = Owner->getAttackerForHelper();
+        if(target)
+        {
+            me->SetInCombatWith(target);
+            me->Attack(target, true);
+            me->GetMotionMaster()->Clear();
+            me->GetMotionMaster()->MoveChase(target, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
+        }
+    }
+    
+    void UpdateAI(const uint32 diff) {
+        
+        if(!Owner)
+            return;
+            
+        if (!me->getVictim())
+        {
+
+            Unit* target = Owner->getAttackerForHelper();
+            if (target)
+            {
+                me->SetInCombatWith(target);
+                me->Attack(target, true);
+                me->GetMotionMaster()->Clear();
+                me->GetMotionMaster()->MoveChase(target, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
+                return;
+            }
+
+        }
+
+        //Follow if not in combat
+        if (!me->hasUnitState(UNIT_STAT_FOLLOW) && !me->isInCombat())
+        {
+            me->GetMotionMaster()->Clear();
+            me->GetMotionMaster()->MoveFollow(Owner,PET_FOLLOW_DIST,PET_FOLLOW_ANGLE);
+        }
+        
+        DoMeleeAttackIfReady();
+    }
+
+};
+
+CreatureAI* GetAI_npc_force_of_nature_treants(Creature* pCreature)
+{
+    return new npc_force_of_nature_treantsAI(pCreature);
+}
+
 /*####
 ## npc_snake_trap_serpents
 ####*/
@@ -1562,6 +1622,11 @@ void AddSC_npcs_special()
     newscript = new Script;
     newscript->Name = "npc_brewfest_reveler";
     newscript->GetAI = &GetAI_npc_winter_reveler;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_force_of_nature_treants";
+    newscript->GetAI = &GetAI_npc_force_of_nature_treants;
     newscript->RegisterSelf();
 
     newscript = new Script;
