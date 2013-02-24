@@ -26,17 +26,18 @@ EndScriptData
 */
 
 /* ContentData
-npc_lunaclaw_spirit      80%    support for quests 6001/6002 (Body and Heart)
-npc_chicken_cluck       100%    support for quest 3861 (Cluck!)
-npc_dancing_flames      100%    midsummer event NPC
-npc_guardian            100%    guardianAI used to prevent players from accessing off-limits areas. Not in use by SD2
-npc_garments_of_quests   80%    NPC's related to all Garments of-quests 5621, 5624, 5625, 5648, 5650
-npc_injured_patient     100%    patients for triage-quests (6622 and 6624)
-npc_doctor              100%    Gustaf Vanhowzen and Gregory Victor, quest 6622 and 6624 (Triage)
-npc_mount_vendor        100%    Regular mount vendors all over the world. Display gossip if player doesn't meet the requirements to buy
-npc_rogue_trainer        80%    Scripted trainers, so they are able to offer item 17126 for class quest 6681
-npc_sayge               100%    Darkmoon event fortune teller, buff player based on answers given
-npc_snake_trap_serpents  80%    AI for snakes that summoned by Snake Trap
+npc_lunaclaw_spirit          80%    support for quests 6001/6002 (Body and Heart)
+npc_chicken_cluck           100%    support for quest 3861 (Cluck!)
+npc_dancing_flames          100%    midsummer event NPC
+npc_guardian                100%    guardianAI used to prevent players from accessing off-limits areas. Not in use by SD2
+npc_garments_of_quests       80%    NPC's related to all Garments of-quests 5621, 5624, 5625, 5648, 5650
+npc_injured_patient         100%    patients for triage-quests (6622 and 6624)
+npc_doctor                  100%    Gustaf Vanhowzen and Gregory Victor, quest 6622 and 6624 (Triage)
+npc_mount_vendor            100%    Regular mount vendors all over the world. Display gossip if player doesn't meet the requirements to buy
+npc_rogue_trainer            80%    Scripted trainers, so they are able to offer item 17126 for class quest 6681
+npc_sayge                   100%    Darkmoon event fortune teller, buff player based on answers given
+npc_snake_trap_serpents     100%    AI for snakes that summoned by Snake Trap
+npc_force_of_nature_treants 100%    AI for force of nature (druid spell)
 EndContentData */
 
 #include "ScriptPCH.h"
@@ -1293,13 +1294,10 @@ struct npc_force_of_nature_treantsAI : public ScriptedAI {
         if(!Owner)
             return;
         
-        Unit* target = Owner->getAttackerForHelper();
-        if(target)
+        if(Unit* target = Owner->getAttackerForHelper())
         {
             me->SetInCombatWith(target);
-            me->Attack(target, true);
-            me->GetMotionMaster()->Clear();
-            me->GetMotionMaster()->MoveChase(target, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
+            AttackStart(target);
         }
     }
     
@@ -1310,24 +1308,15 @@ struct npc_force_of_nature_treantsAI : public ScriptedAI {
             
         if (!me->getVictim())
         {
-
-            Unit* target = Owner->getAttackerForHelper();
-            if (target)
+            if (Unit* target = Owner->getAttackerForHelper())
             {
-                me->SetInCombatWith(target);
-                me->Attack(target, true);
-                me->GetMotionMaster()->Clear();
-                me->GetMotionMaster()->MoveChase(target, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
-                return;
+                AttackStart(target);
             }
-
-        }
-
-        //Follow if not in combat
-        if (!me->hasUnitState(UNIT_STAT_FOLLOW) && !me->isInCombat())
-        {
-            me->GetMotionMaster()->Clear();
-            me->GetMotionMaster()->MoveFollow(Owner,PET_FOLLOW_DIST,PET_FOLLOW_ANGLE);
+            else if (!me->hasUnitState(UNIT_STAT_FOLLOW))
+            {
+                me->GetMotionMaster()->Clear();
+                me->GetMotionMaster()->MoveFollow(Owner,PET_FOLLOW_DIST,PET_FOLLOW_ANGLE);
+            }
         }
         
         DoMeleeAttackIfReady();
@@ -1355,9 +1344,9 @@ CreatureAI* GetAI_npc_force_of_nature_treants(Creature* pCreature)
 
 struct npc_snake_trap_serpentsAI : public ScriptedAI
 {
-    npc_snake_trap_serpentsAI(Creature *c) : ScriptedAI(c) {}
+    npc_snake_trap_serpentsAI(Creature *c) : ScriptedAI(c), SpellTimer(0) {}
 
-    uint32 SpellTimer;
+    int32 SpellTimer;
     Unit *Owner;
     bool IsViper;
 
@@ -1367,7 +1356,7 @@ struct npc_snake_trap_serpentsAI : public ScriptedAI
     {
         Owner = me->GetOwner();
 
-        if (!me->isPet() || !Owner)
+        if (!Owner)
             return;
 
         CreatureInfo const *Info = me->GetCreatureInfo();
@@ -1381,54 +1370,30 @@ struct npc_snake_trap_serpentsAI : public ScriptedAI
         uint32 delta = (rand() % 7) * 100;
         me->SetStatFloatValue(UNIT_FIELD_BASEATTACKTIME, Info->baseattacktime + delta);
         me->SetStatFloatValue(UNIT_FIELD_RANGED_ATTACK_POWER , Info->attackpower);
-    }
 
-    //Redefined for random target selection:
-    void MoveInLineOfSight(Unit *who)
-    {
-        if (!me->isPet() || !Owner)
-            return;
-
-        if (!me->getVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor (me) && Owner->IsHostileTo(who))//don't attack not-pvp-flaged
+        if (Unit* attacker = Owner->getAttackerForHelper())
         {
-            if (me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
-                return;
-
-            float attackRadius = me->GetAttackDistance(who);
-            if (me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who))
-            {
-                if (!(rand() % 5))
-                {
-                    me->setAttackTimer(BASE_ATTACK, (rand() % 10) * 100);
-                    SpellTimer = (rand() % 10) * 100;
-                    AttackStart(who);
-                }
-            }
-        }
+            me->SetInCombatWith(attacker);
+            AttackStart(attacker);
+        }   
     }
 
     void UpdateAI(const uint32 diff)
     {
-        if (!me->isPet() || !Owner)
+        if (!Owner)
             return;
 
-        //Follow if not in combat
-        if (!me->hasUnitState(UNIT_STAT_FOLLOW)&& !me->isInCombat())
-        {
-            me->GetMotionMaster()->Clear();
-            me->GetMotionMaster()->MoveFollow(Owner,PET_FOLLOW_DIST,PET_FOLLOW_ANGLE);
-        }
-
-        //No victim -> get new from owner (need this because MoveInLineOfSight won't work while following -> corebug)
         if (!me->getVictim())
         {
-            if (me->isInCombat())
-                DoStopAttack();
-
             if (Owner->getAttackerForHelper())
+            {
                 AttackStart(Owner->getAttackerForHelper());
-
-            return;
+            }
+            else if (!me->hasUnitState(UNIT_STAT_FOLLOW))
+            {
+                me->GetMotionMaster()->Clear();
+                me->GetMotionMaster()->MoveFollow(Owner,PET_FOLLOW_DIST,PET_FOLLOW_ANGLE);
+            }
         }
 
         if (SpellTimer <= diff)
@@ -1455,8 +1420,9 @@ struct npc_snake_trap_serpentsAI : public ScriptedAI
                 SpellTimer = VENOMOUS_SNAKE_TIMER + (rand() %5)*100;
             }
         } else SpellTimer -= diff;
+        
         DoMeleeAttackIfReady();
-    }
+     }
 };
 
 CreatureAI* GetAI_npc_snake_trap_serpents(Creature* pCreature)
