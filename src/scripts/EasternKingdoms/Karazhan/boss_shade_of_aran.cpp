@@ -278,8 +278,10 @@ struct boss_aranAI : public ScriptedAI
 
         //Drink Inturrupt Timer
         if (Drinking && !DrinkInturrupted)
+        {
             if (DrinkInturruptTimer >= diff)
                 DrinkInturruptTimer -= diff;
+        }
         else
         {
             me->SetStandState(UNIT_STAND_STATE_STAND);

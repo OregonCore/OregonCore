@@ -85,7 +85,7 @@ struct mob_mature_netherwing_drakeAI : public ScriptedAI
         CastTimer = 5000;
     }
 
-    void EnterCombat(Unit* who) { }
+    void EnterCombat(Unit*) { }
 
     void MoveInLineOfSight(Unit* who)
     {
@@ -127,30 +127,34 @@ struct mob_mature_netherwing_drakeAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (IsEating)
-            if (EatTimer <= diff)
         {
-            IsEating = false;
-            DoCast(me, SPELL_JUST_EATEN);
-            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_NONE);
-            DoScriptText(SAY_JUST_EATEN, me);
-            if (PlayerGUID)
+            if (EatTimer <= diff)
             {
-                Player* plr = Unit::GetPlayer(*me, PlayerGUID);
-                if (plr && plr->GetQuestStatus(10804) == QUEST_STATUS_INCOMPLETE)
+                IsEating = false;
+                DoCast(me, SPELL_JUST_EATEN);
+                me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_NONE);
+                DoScriptText(SAY_JUST_EATEN, me);
+                if (PlayerGUID)
                 {
-                    plr->KilledMonsterCredit(22131, me->GetGUID());
-                    Evade = true;
-                    PlayerGUID = 0;
+                    Player* plr = Unit::GetPlayer(*me, PlayerGUID);
+                    if (plr && plr->GetQuestStatus(10804) == QUEST_STATUS_INCOMPLETE)
+                    {
+                        plr->KilledMonsterCredit(22131, me->GetGUID());
+                        Evade = true;
+                        PlayerGUID = 0;
+                    }
                 }
-            }
-        } else EatTimer -= diff;
+            } else EatTimer -= diff;
+        }
 
         if (Evade)
+        {
             if (ResetTimer <= diff)
             {
                 EnterEvadeMode();
                 return;
             } else ResetTimer -= diff;
+        }
 
         if (!UpdateVictim())
             return;
@@ -208,7 +212,7 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
         me->SetVisibility(VISIBILITY_ON);
     }
 
-    void EnterCombat(Unit* who) { }
+    void EnterCombat(Unit*) { }
 
     void SpellHit(Unit* caster, const SpellEntry* spell)
     {
@@ -264,37 +268,39 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
         if (!UpdateVictim())
         {
             if (Tapped)
-                if (FlyTimer <= diff)
             {
-                Tapped = false;
-                if (PlayerGUID)
+                if (FlyTimer <= diff)
                 {
-                    Player* plr = Unit::GetPlayer(*me, PlayerGUID);
-                    if (plr && plr->GetQuestStatus(10854) == QUEST_STATUS_INCOMPLETE)
+                    Tapped = false;
+                    if (PlayerGUID)
                     {
-                        plr->KilledMonsterCredit(22316, me->GetGUID());
-                        /*
-                        float x,y,z;
-                        me->GetPosition(x,y,z);
-
-                        float dx,dy,dz;
-                        me->GetRandomPoint(x, y, z, 20, dx, dy, dz);
-                        dz += 20; // so it's in the air, not ground*/
-
-                        Position pos;
-                        if (Unit* EscapeDummy = me->FindNearestCreature(CREATURE_ESCAPE_DUMMY, 30))
-                            EscapeDummy->GetPosition(&pos);
-                        else
+                        Player* plr = Unit::GetPlayer(*me, PlayerGUID);
+                        if (plr && plr->GetQuestStatus(10854) == QUEST_STATUS_INCOMPLETE)
                         {
-                            me->GetRandomNearPosition(pos, 20);
-                            pos.m_positionZ += 25;
-                        }
+                            plr->KilledMonsterCredit(22316, me->GetGUID());
+                            /*
+                            float x,y,z;
+                            me->GetPosition(x,y,z);
 
-                        me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
-                        me->GetMotionMaster()->MovePoint(1, pos);
+                            float dx,dy,dz;
+                            me->GetRandomPoint(x, y, z, 20, dx, dy, dz);
+                            dz += 20; // so it's in the air, not ground*/
+
+                            Position pos;
+                            if (Unit* EscapeDummy = me->FindNearestCreature(CREATURE_ESCAPE_DUMMY, 30))
+                                EscapeDummy->GetPosition(&pos);
+                            else
+                            {
+                                me->GetRandomNearPosition(pos, 20);
+                                pos.m_positionZ += 25;
+                            }
+
+                            me->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+                            me->GetMotionMaster()->MovePoint(1, pos);
+                        }
                     }
-                }
-            } else FlyTimer -= diff;
+                } else FlyTimer -= diff;
+            }
             return;
         }
 
@@ -326,7 +332,7 @@ struct mob_dragonmaw_peonAI : public ScriptedAI
         PoisonTimer = 0;
     }
 
-    void EnterCombat(Unit* who) { }
+    void EnterCombat(Unit*) { }
 
     void SpellHit(Unit* caster, const SpellEntry* spell)
     {
@@ -361,17 +367,19 @@ struct mob_dragonmaw_peonAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (PoisonTimer)
-            if (PoisonTimer <= diff)
         {
-            if (PlayerGUID)
+            if (PoisonTimer <= diff)
             {
-                Player* plr = Unit::GetPlayer(*me, PlayerGUID);
-                if (plr && plr->GetQuestStatus(11020) == QUEST_STATUS_INCOMPLETE)
-                    plr->KilledMonsterCredit(23209, me->GetGUID());
-            }
-            PoisonTimer = 0;
-            me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-        } else PoisonTimer -= diff;
+                if (PlayerGUID)
+                {
+                    Player* plr = Unit::GetPlayer(*me, PlayerGUID);
+                    if (plr && plr->GetQuestStatus(11020) == QUEST_STATUS_INCOMPLETE)
+                        plr->KilledMonsterCredit(23209, me->GetGUID());
+                }
+                PoisonTimer = 0;
+                me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+            } else PoisonTimer -= diff;
+        }
     }
 };
 
@@ -394,7 +402,7 @@ bool GossipHello_npc_drake_dealer_hurlunk(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_drake_dealer_hurlunk(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_drake_dealer_hurlunk(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_TRADE)
         player->SEND_VENDORLIST(pCreature->GetGUID());
@@ -421,12 +429,12 @@ bool GossipHello_npcs_flanis_swiftwing_and_kagrosh(Player *player, Creature* pCr
     return true;
 }
 
-bool GossipSelect_npcs_flanis_swiftwing_and_kagrosh(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npcs_flanis_swiftwing_and_kagrosh(Player *player, Creature* /*pCreature*/, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
         ItemPosCountVec dest;
-        uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 30658, 1, false);
+        uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 30658, 1, NULL);
         if (msg == EQUIP_ERR_OK)
         {
             player->StoreNewItem(dest, 30658, 1, true);
@@ -436,7 +444,7 @@ bool GossipSelect_npcs_flanis_swiftwing_and_kagrosh(Player *player, Creature* pC
     if (action == GOSSIP_ACTION_INFO_DEF+2)
     {
         ItemPosCountVec dest;
-        uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 30659, 1, false);
+        uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 30659, 1, NULL);
         if (msg == EQUIP_ERR_OK)
         {
             player->StoreNewItem(dest, 30659, 1, true);
@@ -468,7 +476,7 @@ bool GossipHello_npc_murkblood_overseer(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_murkblood_overseer(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_murkblood_overseer(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     switch (action)
     {
@@ -529,7 +537,7 @@ bool GossipHello_npc_neltharaku(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_neltharaku(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_neltharaku(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     switch (action)
     {
@@ -582,7 +590,7 @@ bool GossipHello_npc_oronok_tornheart(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_oronok_tornheart(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_oronok_tornheart(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     switch (action)
     {
@@ -625,7 +633,7 @@ bool GossipSelect_npc_oronok_tornheart(Player *player, Creature* pCreature, uint
 # npc_karynaku
 ####*/
 
-bool QuestAccept_npc_karynaku(Player* player, Creature* creature, Quest const* quest)
+bool QuestAccept_npc_karynaku(Player* player, Creature* /*creature*/, Quest const* quest)
 {
     if (quest->GetQuestId() == 10870)                        // Ally of the Netherwing
     {
@@ -698,7 +706,7 @@ struct npc_overlord_morghorAI : public ScriptedAI
         Event = false;
     }
 
-    void EnterCombat(Unit* who){}
+    void EnterCombat(Unit* /*who*/){}
 
     void StartEvent()
     {
@@ -988,7 +996,7 @@ struct npc_earthmender_wildaAI : public npc_escortAI
            else error_log("OSCR ERROR: Coilskar Assassin couldn't be summmoned");
        }
 
-       void JustDied(Unit* killer)
+       void JustDied(Unit* /*killer*/)
        {
            if (!Completed)
            {
@@ -1400,7 +1408,7 @@ struct npc_lord_illidan_stormrageAI : public Scripted_NoMovementAI
         }
     }
 
-    void SummonedCreatureDespawn(Creature* pCreature)
+    void SummonedCreatureDespawn(Creature* /*pCreature*/)
     {
         // decrement mob count
         --m_uiMobCount;
@@ -1513,7 +1521,7 @@ CreatureAI* GetAI_npc_lord_illidan_stormrage(Creature* (pCreature))
 /*#####
 # go_crystal_prison : GameObject that begins the event and hands out quest
 ######*/
-bool GOQuestAccept_GO_crystal_prison(Player* pPlayer, GameObject* pGo, Quest const* pQuest)
+bool GOQuestAccept_GO_crystal_prison(Player* pPlayer, GameObject* /*pGo*/, Quest const* pQuest)
 {
     if (pQuest->GetQuestId() == QUEST_BATTLE_OF_THE_CRIMSON_WATCH )
         if (Creature* pLordIllidan = GetClosestCreatureWithEntry(pPlayer, NPC_LORD_ILLIDAN, 50.0))
@@ -1574,9 +1582,9 @@ struct npc_enraged_spiritAI : public ScriptedAI
 
     void Reset()   { }
 
-    void EnterCombat(Unit *who){}
+    void EnterCombat(Unit* /*who*/){}
 
-    void JustDied(Unit* killer)
+    void JustDied(Unit* /*killer*/)
     {
         // always spawn spirit on death
         // if totem around

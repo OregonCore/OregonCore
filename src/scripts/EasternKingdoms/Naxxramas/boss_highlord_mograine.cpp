@@ -82,15 +82,15 @@ struct boss_highlord_mograineAI : public ScriptedAI
             switch(rand()%3)
             {
                 case 0:
-                    me->MonsterYell(SAY_AGGRO1,LANG_UNIVERSAL,NULL);
+                    me->MonsterYell(SAY_AGGRO1,LANG_UNIVERSAL,0);
                     DoPlaySoundToSet(me,SOUND_AGGRO1);
                     break;
                 case 1:
-                    me->MonsterYell(SAY_AGGRO2,LANG_UNIVERSAL,NULL);
+                    me->MonsterYell(SAY_AGGRO2,LANG_UNIVERSAL,0);
                     DoPlaySoundToSet(me,SOUND_AGGRO2);
                     break;
                 case 2:
-                    me->MonsterYell(SAY_AGGRO3,LANG_UNIVERSAL,NULL);
+                    me->MonsterYell(SAY_AGGRO3,LANG_UNIVERSAL,0);
                     DoPlaySoundToSet(me,SOUND_AGGRO3);
                     break;
             }
@@ -102,23 +102,23 @@ struct boss_highlord_mograineAI : public ScriptedAI
         switch(rand()%2)
         {
             case 0:
-                me->MonsterYell(SAY_SLAY1,LANG_UNIVERSAL,NULL);
+                me->MonsterYell(SAY_SLAY1,LANG_UNIVERSAL,0);
                 DoPlaySoundToSet(me,SOUND_SLAY1);
                 break;
             case 1:
-                me->MonsterYell(SAY_SLAY2,LANG_UNIVERSAL,NULL);
+                me->MonsterYell(SAY_SLAY2,LANG_UNIVERSAL,0);
                 DoPlaySoundToSet(me,SOUND_SLAY2);
                 break;
         }
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit*)
     {
-        me->MonsterYell(SAY_DEATH,LANG_UNIVERSAL,NULL);
+        me->MonsterYell(SAY_DEATH,LANG_UNIVERSAL,0);
         DoPlaySoundToSet(me, SOUND_DEATH);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit*)
     {
         InitialYell();
     }

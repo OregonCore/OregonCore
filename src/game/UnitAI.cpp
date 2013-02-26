@@ -195,7 +195,7 @@ void UnitAI::SelectTargetList(std::list<Unit*> &targetList, uint32 num, SelectAg
         targetList.resize(num);
 }
 
-float UnitAI::DoGetSpellMaxRange(uint32 spellId, bool positive)
+float UnitAI::DoGetSpellMaxRange(uint32 spellId, bool /*positive*/)
 {
     return GetSpellMaxRange(spellId);
 }

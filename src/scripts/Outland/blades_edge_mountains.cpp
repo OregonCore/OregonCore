@@ -88,7 +88,7 @@ struct mobs_nether_drakeAI : public ScriptedAI
         IntangiblePresence_Timer = 15000;
     }
 
-    void EnterCombat(Unit* who) { }
+    void EnterCombat(Unit* /*who*/) { }
 
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {
@@ -248,7 +248,7 @@ struct npc_daranelleAI : public ScriptedAI
     {
     }
 
-    void EnterCombat(Unit* who)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
@@ -290,7 +290,7 @@ bool GossipHello_npc_overseer_nuaar(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_overseer_nuaar(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_overseer_nuaar(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
@@ -317,7 +317,7 @@ bool GossipHello_npc_saikkal_the_elder(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_saikkal_the_elder(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_saikkal_the_elder(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     switch (action)
     {
@@ -432,7 +432,7 @@ CreatureAI* GetAI_npc_ogre_brute(Creature* pCreature)
 #define Q_THE_THUNDERSPIKE 10526
 #define GOR_GRIMGUT_ENTRY  21319
 
-bool GOUse_go_thunderspike(Player *player, GameObject* _GO)
+bool GOUse_go_thunderspike(Player *player, GameObject* /*_GO*/)
 {
     if (player->GetQuestStatus(Q_THE_THUNDERSPIKE) == QUEST_STATUS_INCOMPLETE)
     {

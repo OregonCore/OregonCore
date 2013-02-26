@@ -283,7 +283,7 @@ struct boss_fathomlord_karathressAI : public ScriptedAI
             if (continueTriggering)
             {
                 DoCast(me, SPELL_BLESSING_OF_THE_TIDES);
-                me->MonsterYell(SAY_GAIN_BLESSING_OF_TIDES, LANG_UNIVERSAL, NULL);
+                me->MonsterYell(SAY_GAIN_BLESSING_OF_TIDES, LANG_UNIVERSAL, 0);
                 DoPlaySoundToSet(me, SOUND_GAIN_BLESSING_OF_TIDES);
             }
         }
@@ -408,8 +408,8 @@ struct boss_fathomguard_sharkkisAI : public ScriptedAI
         {
             pet = true;
             //uint32 spell_id;
-            uint32 pet_id;
-            switch(rand()%2)
+            uint32 pet_id = rand()%2;
+            switch(pet_id)
             {
             case 0:
                 //spell_id = SPELL_SUMMON_FATHOM_LURKER;

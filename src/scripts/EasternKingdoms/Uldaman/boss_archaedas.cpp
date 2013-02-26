@@ -106,7 +106,7 @@ struct boss_archaedasAI : public ScriptedAI
     {
         // Being woken up from the altar, start the awaken sequence
         if (spell == GetSpellStore()->LookupEntry(SPELL_ARCHAEDAS_AWAKEN)) {
-            me->MonsterYell(SAY_AGGRO,LANG_UNIVERSAL,NULL);
+            me->MonsterYell(SAY_AGGRO,LANG_UNIVERSAL,0);
             DoPlaySoundToSet(me,SOUND_AGGRO);
             Awaken_Timer = 4000;
             wakingUp = true;
@@ -115,7 +115,7 @@ struct boss_archaedasAI : public ScriptedAI
 
     void KilledUnit(Unit * /*victim*/)
     {
-        me->MonsterYell(SAY_KILL,LANG_UNIVERSAL, NULL);
+        me->MonsterYell(SAY_KILL,LANG_UNIVERSAL, 0);
         DoPlaySoundToSet(me, SOUND_KILL);
     }
 
@@ -152,7 +152,7 @@ struct boss_archaedasAI : public ScriptedAI
             ActivateMinion(pInstance->GetData64(8),true);   // EarthenGuardian4
             ActivateMinion(pInstance->GetData64(9),true);   // EarthenGuardian5
             ActivateMinion(pInstance->GetData64(10),false); // EarthenGuardian6
-            me->MonsterYell(SAY_SUMMON,LANG_UNIVERSAL, NULL);
+            me->MonsterYell(SAY_SUMMON,LANG_UNIVERSAL, 0);
             DoPlaySoundToSet(me, SOUND_SUMMON);
             guardiansAwake = true;
         }
@@ -163,7 +163,7 @@ struct boss_archaedasAI : public ScriptedAI
             ActivateMinion(pInstance->GetData64(2),true);    // VaultWalker2
             ActivateMinion(pInstance->GetData64(3),true);    // VaultWalker3
             ActivateMinion(pInstance->GetData64(4),false);    // VaultWalker4
-            me->MonsterYell(SAY_SUMMON2, LANG_UNIVERSAL, NULL);
+            me->MonsterYell(SAY_SUMMON2, LANG_UNIVERSAL, 0);
             DoPlaySoundToSet(me, SOUND_SUMMON2);
             vaultWalkersAwake = true;
         }
@@ -319,7 +319,7 @@ bool GOHello_go_altar_of_archaedas(Player *player, GameObject* go)
     // Check to make sure at least three people are still casting
     uint32 count=0;
     Unit *pTarget;
-    for (uint32 x=0; x<=5; x++) {
+    for (uint32 x=0; x<5; x++) {
         pTarget = Unit::GetUnit(*player, altarOfArchaedasCount[x]);
         if (!pTarget) continue;
         if (pTarget->IsNonMeleeSpellCasted(true)) count++;

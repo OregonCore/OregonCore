@@ -66,7 +66,7 @@ struct boss_the_black_stalkerAI : public ScriptedAI
         Striders.clear();
     }
 
-    void EnterCombat(Unit *who) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void JustSummoned(Creature *summon)
     {
@@ -81,7 +81,7 @@ struct boss_the_black_stalkerAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit *who)
+    void JustDied(Unit* /*who*/)
     {
         for (std::list<uint64>::iterator i = Striders.begin(); i != Striders.end(); ++i)
             if (Creature *strider = Unit::GetCreature(*me, *i))

@@ -364,8 +364,8 @@ namespace VMAP
                     // update tree
                     uint32 referencedVal;
 
-                    fread(&referencedVal, sizeof(uint32), 1, tf);
-                    if (!iLoadedSpawns.count(referencedVal))
+                    if (!fread(&referencedVal, sizeof(uint32), 1, tf) ||
+                        !iLoadedSpawns.count(referencedVal))
                     {
 #ifdef VMAP_DEBUG
                         if (referencedVal > iNTreeValues)
@@ -432,8 +432,8 @@ namespace VMAP
                         // update tree
                         uint32 referencedNode;
 
-                        fread(&referencedNode, sizeof(uint32), 1, tf);
-                        if (!iLoadedSpawns.count(referencedNode))
+                        if (!fread(&referencedNode, sizeof(uint32), 1, tf) ||
+                            iLoadedSpawns.count(referencedNode))
                         {
                             ERROR_LOG("Trying to unload non-referenced model '%s' (ID:%u)", spawn.name.c_str(), spawn.ID);
                         }

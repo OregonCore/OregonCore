@@ -55,7 +55,7 @@ bool GossipSelect_npc_blood_knight_dawnstar(Player* pPlayer, Creature* /*pCreatu
     if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
     {
         ItemPosCountVec dest;
-        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 24226, 1, false);
+        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 24226, 1, 0);
         if (msg == EQUIP_ERR_OK)
         {
             pPlayer->StoreNewItem(dest, 24226, 1, true);
@@ -123,7 +123,7 @@ bool GossipSelect_npc_rathis_tomber(Player* pPlayer, Creature* pCreature, uint32
 ## go_gilded_brazier (Paladin First Trail quest (9678))
 #####*/
 
-bool GOHello_gilded_brazier(Player *player, GameObject* _GO)
+bool GOHello_gilded_brazier(Player *player, GameObject* /*_GO*/)
 {
     if (player->GetQuestStatus(9678) == QUEST_STATUS_INCOMPLETE)
     {

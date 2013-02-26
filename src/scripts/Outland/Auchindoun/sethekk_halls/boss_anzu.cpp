@@ -83,13 +83,13 @@ struct boss_anzuAI : public ScriptedAI
         SummonedCount = 5;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit *)
     {
         if (pInstance)
             pInstance->SetData(DATA_ANZUEVENT, IN_PROGRESS);        
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit*)
     {
         if (pInstance)
             pInstance->SetData(DATA_ANZUEVENT, DONE);
@@ -111,10 +111,9 @@ struct boss_anzuAI : public ScriptedAI
             DoCast(me, SPELL_BANISH);
             DoScriptText(SAY_HELP, me);
             Paralyzing = true;
-            Creature* Summoned;
             for (uint32 i = 0; i < SummonedCount; i++)
             {
-                Summoned = me->SummonCreature(NPC_BROOD,me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,25000);
+                me->SummonCreature(NPC_BROOD,me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,25000);
             }
             Summon1 = true;
         }
@@ -124,10 +123,9 @@ struct boss_anzuAI : public ScriptedAI
             DoCast(me, SPELL_BANISH);
             DoScriptText(SAY_HELP, me);
             Paralyzing = true;
-            Creature* Summoned;
             for (uint32 i = 0; i < SummonedCount; i++)
             {
-                Summoned = me->SummonCreature(NPC_BROOD,me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,25000);
+                me->SummonCreature(NPC_BROOD,me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,25000);
             }
             Summon2 = true;
         }

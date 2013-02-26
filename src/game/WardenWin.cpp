@@ -78,7 +78,7 @@ void WardenWin::Init(WorldSession *pClient, BigNumber *K)
     RequestModule();
 }
 
-ClientWardenModule *WardenWin::GetModuleForClient(WorldSession *session)
+ClientWardenModule *WardenWin::GetModuleForClient(WorldSession* /*session*/)
 {
     ClientWardenModule *mod = new ClientWardenModule;
 
@@ -210,7 +210,7 @@ void WardenWin::RequestData()
 
     SendDataId.clear();
 
-    for (int i = 0; i < sWorld.getConfig(CONFIG_WARDEN_NUM_CHECKS); ++i)                             // for now include 3 MEM_CHECK's
+    for (uint32 i = 0; i < sWorld.getConfig(CONFIG_WARDEN_NUM_CHECKS); ++i)                             // for now include 3 MEM_CHECK's
     {   
         if (MemCheck.empty())
             break;
@@ -322,7 +322,7 @@ void WardenWin::RequestData()
     stream << "Sent check id's: ";
     for (std::vector<uint32>::iterator itr = SendDataId.begin(); itr != SendDataId.end(); ++itr)
         stream << *itr << " ";
-    sLog.outDebug(stream.str().c_str());
+    sLog.outDebug("%s", stream.str().c_str());
 }
 
 void WardenWin::HandleData(ByteBuffer &buff)

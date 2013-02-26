@@ -169,6 +169,8 @@ inline float finiteAlways(float f) { return finite(f) ? f : 0.0f; }
 #define PAIR32_HIPART(x)   (uint16)((uint32(x) >> 16) & 0x0000FFFF)
 #define PAIR32_LOPART(x)   (uint16)(uint32(x)         & 0x0000FFFF)
 
+#define UNUSED(x) (void)(x)
+
 enum TimeConstants
 {
     MINUTE = 60,

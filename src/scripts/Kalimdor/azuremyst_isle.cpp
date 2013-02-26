@@ -89,7 +89,7 @@ struct npc_draenei_survivorAI : public ScriptedAI
         me->SetUInt32Value(UNIT_FIELD_BYTES_1, 3);
     }
 
-    void EnterCombat(Unit *who) {}
+    void EnterCombat(Unit*) {}
 
     void MoveInLineOfSight(Unit *who)                       //MoveInLineOfSight is called if creature could see you, updated all 100 ms
     {
@@ -231,7 +231,7 @@ struct npc_engineer_spark_overgrindAI : public ScriptedAI
         me->setFaction(875);
     }
 
-    void EnterCombat(Unit *who) { }
+    void EnterCombat(Unit*) { }
 
     void UpdateAI(const uint32 diff)
     {
@@ -272,7 +272,7 @@ bool GossipHello_npc_engineer_spark_overgrind(Player *player, Creature* pCreatur
     return true;
 }
 
-bool GossipSelect_npc_engineer_spark_overgrind(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_engineer_spark_overgrind(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF)
     {
@@ -540,7 +540,7 @@ struct mob_nestlewood_owlkinAI : public ScriptedAI
         Hitted = false;
     }
 
-    void EnterCombat(Unit *who){}
+    void EnterCombat(Unit* /*who*/){}
 
     void SpellHit(Unit* caster, const SpellEntry* spell)
     {

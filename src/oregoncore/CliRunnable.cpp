@@ -48,7 +48,7 @@ char * command_finder(const char* text, int state)
         len = strlen(text);
     }
 
-    while(ret = cmd[idx].Name)
+    while((ret = cmd[idx].Name))
     {
         if (!cmd[idx].AllowConsole)
         {
@@ -67,7 +67,7 @@ char * command_finder(const char* text, int state)
     return ((char*)NULL);
 }
 
-char ** cli_completion(const char * text, int start, int end)
+char ** cli_completion(const char * text, int start, int /*end*/)
 {
     char ** matches;
     matches = (char**)NULL;
@@ -80,7 +80,7 @@ char ** cli_completion(const char * text, int start, int end)
 }
 #endif
 
-void utf8print(void* arg, const char* str)
+void utf8print(void* /*arg*/, const char* str)
 {
 #if PLATFORM == PLATFORM_WINDOWS
     wchar_t wtemp_buf[6000];
@@ -92,11 +92,11 @@ void utf8print(void* arg, const char* str)
     CharToOemBuffW(&wtemp_buf[0],&temp_buf[0],wtemp_len+1);
     printf(temp_buf);
 #else
-    printf(str);
+    printf("%s", str);
 #endif
 }
 
-void commandFinished(void*, bool sucess)
+void commandFinished(void*, bool /*success*/)
 {
     printf("Oregon>");
     fflush(stdout);
@@ -182,7 +182,7 @@ bool ChatHandler::GetDeletedCharacterInfoList(DeletedInfoList& foundList, std::s
     {
         // search by GUID
         if (isNumeric(searchString.c_str()))
-            resultChar = CharacterDatabase.PQuery("SELECT guid, deleteInfos_Name, deleteInfos_Account, deleteDate FROM characters WHERE deleteDate IS NOT NULL AND guid = %u", uint64(atoi(searchString.c_str())));
+            resultChar = CharacterDatabase.PQuery("SELECT guid, deleteInfos_Name, deleteInfos_Account, deleteDate FROM characters WHERE deleteDate IS NOT NULL AND guid = %llu", uint64(atoi(searchString.c_str())));
         // search by name
         else
         {

@@ -203,7 +203,7 @@ struct advisorbase_ai : public ScriptedAI
         }
     }
 
-    void Revive(Unit *pTarget)
+    void Revive(Unit* /*pTarget*/)
     {
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->SetHealth(me->GetMaxHealth());
@@ -446,7 +446,7 @@ struct boss_kaelthasAI : public ScriptedAI
 
     void SummonedCreatureDespawn(Creature *summon) {summons.Despawn(summon);}
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -470,7 +470,7 @@ struct boss_kaelthasAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
         if (pInstance && !pInstance->GetData(DATA_KAELTHASEVENT) && !Phase)
             StartEvent();
@@ -710,14 +710,16 @@ struct boss_kaelthasAI : public ScriptedAI
                 }
 
                 if (PhaseSubphase == 2)
-                    if (Phase_Timer <= diff)
                 {
-                    DoScriptText(SAY_PHASE3_ADVANCE, me);
-                    pInstance->SetData(DATA_KAELTHASEVENT, 3);
-                    Phase = 3;
-                    PhaseSubphase = 0;
-                } else Phase_Timer -= diff;
-                 //missing Resetcheck
+                    if (Phase_Timer <= diff)
+                    {
+                        DoScriptText(SAY_PHASE3_ADVANCE, me);
+                        pInstance->SetData(DATA_KAELTHASEVENT, 3);
+                        Phase = 3;
+                        PhaseSubphase = 0;
+                    } else Phase_Timer -= diff;
+                    //FIXME: missing Resetcheck
+                }
             }break;
 
             case 3:
@@ -1048,7 +1050,7 @@ struct boss_thaladred_the_darkenerAI : public advisorbase_ai
         advisorbase_ai::Reset();
     }
 
-    void JustDied(Unit* pKiller)
+    void JustDied(Unit* /*pKiller*/)
     {
         DoScriptText(SAY_THALADRED_DEATH, me);
     }
@@ -1123,7 +1125,7 @@ struct boss_lord_sanguinarAI : public advisorbase_ai
         advisorbase_ai::Reset();
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_SANGUINAR_DEATH, me);
     }
@@ -1184,7 +1186,7 @@ struct boss_grand_astromancer_capernianAI : public advisorbase_ai
         advisorbase_ai::Reset();
     }
 
-    void JustDied(Unit* pKiller)
+    void JustDied(Unit* /*pKiller*/)
     {
         DoScriptText(SAY_CAPERNIAN_DEATH, me);
     }
@@ -1301,7 +1303,7 @@ struct boss_master_engineer_telonicusAI : public advisorbase_ai
         advisorbase_ai::Reset();
     }
 
-    void JustDied(Unit* pKiller)
+    void JustDied(Unit* /*pKiller*/)
     {
          DoScriptText(SAY_TELONICUS_DEATH, me);
     }
@@ -1368,11 +1370,11 @@ struct mob_kael_flamestrikeAI : public ScriptedAI
         me->setFaction(14);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 
-    void MoveInLineOfSight(Unit *who)
+    void MoveInLineOfSight(Unit* /*who*/)
     {
     }
 
@@ -1411,7 +1413,7 @@ struct mob_phoenix_tkAI : public ScriptedAI
     uint32 Cycle_Timer;
     bool egg;
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit* /*victim*/)
     {
         if (egg)
         {
@@ -1434,9 +1436,9 @@ struct mob_phoenix_tkAI : public ScriptedAI
         me->CastSpell(me,SPELL_BURN,true);
     }
 
-    void EnterCombat(Unit *who) { }
+    void EnterCombat(Unit* /*who*/) { }
 
-    void DamageTaken(Unit* pKiller, uint32 &damage)
+    void DamageTaken(Unit* /*pKiller*/, uint32& /*damage*/)
     {
 
     }
@@ -1485,7 +1487,7 @@ struct mob_phoenix_egg_tkAI : public ScriptedAI
     }
 
     //ignore any
-    void MoveInLineOfSight(Unit* who) { return; }
+    void MoveInLineOfSight(Unit* /*who*/) { return; }
 
     void AttackStart(Unit* who)
     {
@@ -1498,7 +1500,7 @@ struct mob_phoenix_egg_tkAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit *who) { }
+    void EnterCombat(Unit* /*who*/) { }
 
     void JustSummoned(Creature* summoned)
     {

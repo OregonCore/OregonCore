@@ -598,9 +598,9 @@ struct DiminishingReturn
     DiminishingReturn(DiminishingGroup group, uint32 t, uint32 count) : DRGroup(group), hitTime(t), hitCount(count), stack(0) {}
 
     DiminishingGroup        DRGroup:16;
-    uint16                  stack:16;
     uint32                  hitTime;
     uint32                  hitCount;
+    uint16                  stack:16;
 };
 
 enum MeleeHitOutcome
@@ -644,7 +644,7 @@ struct CalcDamageInfo
 // Spell damage info structure based on structure sending in SMSG_SPELLNONMELEEDAMAGELOG opcode
 struct SpellNonMeleeDamage{
  SpellNonMeleeDamage(Unit *_attacker, Unit *_target, uint32 _SpellID, uint32 _schoolMask) :
-    attacker(_attacker), target(_target), SpellID(_SpellID), damage(0), schoolMask(_schoolMask),
+    target(_target), attacker(_attacker), SpellID(_SpellID), damage(0), schoolMask(_schoolMask),
     absorb(0), resist(0), physicalLog(false), unused(false), blocked(0), HitInfo(0), cleanDamage(0) {}
  Unit   *target;
  Unit   *attacker;

@@ -370,7 +370,8 @@ void WorldSession::HandleForceSpeedChangeAck(WorldPacket &recv_data)
 
     // client ACK send one packet for mounted/run case and need skip all except last from its
     // in other cases anti-cheat check can be fail in false case
-    UnitMoveType move_type;
+
+ // UnitMoveType move_type;
     UnitMoveType force_move_type;
 
     //static char const* move_type_name[MAX_MOVE_TYPE] = {"Walk", "Run", "RunBack", "Swim", "SwimBack", "TurnRate", "Flight", "FlightBack"};
@@ -378,14 +379,14 @@ void WorldSession::HandleForceSpeedChangeAck(WorldPacket &recv_data)
     uint16 opcode = recv_data.GetOpcode();
     switch(opcode)
     {
-        case CMSG_FORCE_WALK_SPEED_CHANGE_ACK:          move_type = MOVE_WALK;          force_move_type = MOVE_WALK;        break;
-        case CMSG_FORCE_RUN_SPEED_CHANGE_ACK:           move_type = MOVE_RUN;           force_move_type = MOVE_RUN;         break;
-        case CMSG_FORCE_RUN_BACK_SPEED_CHANGE_ACK:      move_type = MOVE_RUN_BACK;      force_move_type = MOVE_RUN_BACK;    break;
-        case CMSG_FORCE_SWIM_SPEED_CHANGE_ACK:          move_type = MOVE_SWIM;          force_move_type = MOVE_SWIM;        break;
-        case CMSG_FORCE_SWIM_BACK_SPEED_CHANGE_ACK:     move_type = MOVE_SWIM_BACK;     force_move_type = MOVE_SWIM_BACK;   break;
-        case CMSG_FORCE_TURN_RATE_CHANGE_ACK:           move_type = MOVE_TURN_RATE;     force_move_type = MOVE_TURN_RATE;   break;
-        case CMSG_FORCE_FLIGHT_SPEED_CHANGE_ACK:        move_type = MOVE_FLIGHT;        force_move_type = MOVE_FLIGHT;      break;
-        case CMSG_FORCE_FLIGHT_BACK_SPEED_CHANGE_ACK:   move_type = MOVE_FLIGHT_BACK;   force_move_type = MOVE_FLIGHT_BACK; break;
+        case CMSG_FORCE_WALK_SPEED_CHANGE_ACK:          /*move_type = MOVE_WALK;       */   force_move_type = MOVE_WALK;        break;
+        case CMSG_FORCE_RUN_SPEED_CHANGE_ACK:           /*move_type = MOVE_RUN;        */   force_move_type = MOVE_RUN;         break;
+        case CMSG_FORCE_RUN_BACK_SPEED_CHANGE_ACK:      /*move_type = MOVE_RUN_BACK;   */   force_move_type = MOVE_RUN_BACK;    break;
+        case CMSG_FORCE_SWIM_SPEED_CHANGE_ACK:          /*move_type = MOVE_SWIM;       */   force_move_type = MOVE_SWIM;        break;
+        case CMSG_FORCE_SWIM_BACK_SPEED_CHANGE_ACK:     /*move_type = MOVE_SWIM_BACK;  */   force_move_type = MOVE_SWIM_BACK;   break;
+        case CMSG_FORCE_TURN_RATE_CHANGE_ACK:           /*move_type = MOVE_TURN_RATE;  */   force_move_type = MOVE_TURN_RATE;   break;
+        case CMSG_FORCE_FLIGHT_SPEED_CHANGE_ACK:        /*move_type = MOVE_FLIGHT;     */   force_move_type = MOVE_FLIGHT;      break;
+        case CMSG_FORCE_FLIGHT_BACK_SPEED_CHANGE_ACK:   /*move_type = MOVE_FLIGHT_BACK;*/   force_move_type = MOVE_FLIGHT_BACK; break;
         default:
             sLog.outError("WorldSession::HandleForceSpeedChangeAck: Unknown move type opcode: %u", opcode);
             return;
@@ -409,8 +410,10 @@ void WorldSession::HandleSetActiveMoverOpcode(WorldPacket &recv_data)
     recv_data >> guid;
 
     if (GetPlayer()->IsInWorld())
+    {
         if (Unit *mover = ObjectAccessor::GetUnit(*GetPlayer(), guid))
             GetPlayer()->SetMover(mover);
+    }
     else
     {
         sLog.outError("HandleSetActiveMoverOpcode: incorrect mover guid: mover is " UI64FMTD " and should be " UI64FMTD, guid, _player->m_mover->GetGUID());

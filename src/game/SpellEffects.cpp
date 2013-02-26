@@ -447,7 +447,7 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
                 if (m_spellInfo->SpellFamilyFlags & 0x0000000200000000LL)
                 {
                     int32 back_damage = int32(m_caster->SpellDamageBonus(unitTarget, m_spellInfo, (uint32)damage, SPELL_DIRECT_DAMAGE));
-                    if (back_damage < unitTarget->GetHealth())
+                    if (back_damage < int64(unitTarget->GetHealth()))
                         m_caster->CastCustomSpell(m_caster, 32409, &back_damage, 0, 0, true);
                 }
                 break;
@@ -852,7 +852,7 @@ void Spell::EffectDummy(uint32 i)
 
                     uint32 rand = urand(0, 100);
 
-                    if (rand >= 0 && rand < 25)         // Fireball (25% chance)
+                    if (rand < 25)                      // Fireball (25% chance)
                         spell_id = ClearSpellId[0];
                     else if (rand >= 25 && rand < 50)   // Frostball (25% chance)
                         spell_id = ClearSpellId[1];
@@ -1984,7 +1984,7 @@ void Spell::EffectTriggerSpell(uint32 i)
             if (!spell)
                 return;
 
-            for (int i=0; i < spell->StackAmount; ++i)
+            for (uint32 i=0; i < spell->StackAmount; ++i)
                 m_caster->CastSpell(unitTarget,spell->Id, true, m_CastItem, NULL, m_originalCasterGUID);
             return;
         }
@@ -1995,7 +1995,7 @@ void Spell::EffectTriggerSpell(uint32 i)
             if (!spell)
                 return;
 
-            for (int i=0; i < spell->StackAmount; ++i)
+            for (uint32 i=0; i < spell->StackAmount; ++i)
                 m_caster->CastSpell(unitTarget,spell->Id, true, m_CastItem, NULL, m_originalCasterGUID);
             return;
         }
@@ -2122,7 +2122,7 @@ void Spell::EffectTriggerMissileSpell(uint32 effect_idx)
     spell->prepare(&targets, NULL);
 }
 
-void Spell::EffectTeleportUnits(uint32 i)
+void Spell::EffectTeleportUnits(uint32 /*i*/)
 {
     if (!unitTarget || unitTarget->isInFlight())
         return;
@@ -2409,7 +2409,7 @@ void Spell::EffectSendEvent(uint32 EffectIndex)
                         bg->EventPlayerClickedOnFlag((Player*)m_caster, gameObjTarget);
                     sLog.outDebug("Send Event Horde Flag Picked Up");
                     break;
-                    /* not used :
+                    not used :
                     case 23334:                                 // Drop Horde Flag
                         if (bg->GetTypeID() == BATTLEGROUND_WS)
                             bg->EventPlayerDroppedFlag((Player*)m_caster);
@@ -2422,7 +2422,7 @@ void Spell::EffectSendEvent(uint32 EffectIndex)
                         bg->EventPlayerClickedOnFlag((Player*)m_caster, gameObjTarget);
                     sLog.outDebug("Send Event Alliance Flag Picked Up");
                     break;
-                    /* not used :
+                    not used :
                     case 23336:                                 // Drop Alliance Flag
                         if (bg->GetTypeID() == BATTLEGROUND_WS)
                             bg->EventPlayerDroppedFlag((Player*)m_caster);
@@ -2478,7 +2478,7 @@ void Spell::EffectPowerBurn(uint32 i)
     if (powertype == POWER_MANA && unitTarget->GetTypeId() == TYPEID_PLAYER)
         power -= unitTarget->ToPlayer()->GetSpellCritDamageReduction(power);
 
-    int32 new_damage = (curPower < power) ? curPower : power;
+    int32 new_damage = (curPower < int32(power)) ? curPower : int32(power);
 
     unitTarget->ModifyPower(powertype, -new_damage);
     float multiplier = m_spellInfo->EffectMultipleValue[i];
@@ -2636,7 +2636,7 @@ void Spell::EffectHealthLeech(uint32 i)
     int32 new_damage = int32(damage*multiplier);
     uint32 curHealth = unitTarget->GetHealth();
     new_damage = m_caster->SpellNonMeleeDamageLog(unitTarget, m_spellInfo->Id, new_damage, m_IsTriggeredSpell, true);
-    if (curHealth < new_damage)
+    if (int64(curHealth) < new_damage)
         new_damage = curHealth;
 
     if (m_caster->isAlive())
@@ -2652,7 +2652,7 @@ void Spell::EffectHealthLeech(uint32 i)
 //    m_damage+=new_damage;
 }
 
-void Spell::DoCreateItem(uint32 i, uint32 itemtype)
+void Spell::DoCreateItem(uint32 /*i*/, uint32 itemtype)
 {
     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -3001,8 +3001,8 @@ void Spell::EffectOpenLock(uint32 /*i*/)
     {
         GameObjectInfo const* goInfo = gameObjTarget->GetGOInfo();
         // Arathi Basin banner opening !
-        if (goInfo->type == GAMEOBJECT_TYPE_BUTTON && goInfo->button.noDamageImmune ||
-            goInfo->type == GAMEOBJECT_TYPE_GOOBER && goInfo->goober.losOK)
+        if ((goInfo->type == GAMEOBJECT_TYPE_BUTTON && goInfo->button.noDamageImmune) ||
+            (goInfo->type == GAMEOBJECT_TYPE_GOOBER && goInfo->goober.losOK))
         {
             //CanUseBattleGroundObject() already called in CanCast()
             // in battleground check
@@ -3443,7 +3443,7 @@ void Spell::EffectDispel(uint32 i)
                     continue;
             }
             // Add every aura stack to dispel list
-            for (uint32 stack_amount = 0; stack_amount < aur->GetStackAmount(); ++stack_amount)
+            for (int stack_amount = 0; stack_amount < aur->GetStackAmount(); ++stack_amount)
                 dispel_list.push_back(aur);
         }
     }
@@ -4063,6 +4063,7 @@ void Spell::SummonClassPet(uint32 i)
             return;
     }
 
+    /*
     // in another case summon new
     uint32 level = caster->getLevel();
 
@@ -4079,6 +4080,7 @@ void Spell::SummonClassPet(uint32 i)
             }
         }
     }
+    */
 
     // select center of summon position
     WorldLocation center = m_targets.m_dstPos;
@@ -4181,7 +4183,7 @@ void Spell::SpellDamageWeaponDmg(uint32 i)
     // multiple weapon dmg effect workaround
     // execute only the last weapon damage
     // and handle all effects at once
-    for (int j = 0; j < 3; j++)
+    for (uint32 j = 0; j < 3; j++)
     {
         switch (m_spellInfo->Effect[j])
         {
@@ -4487,8 +4489,8 @@ void Spell::EffectInterruptCast(uint32 /*i*/)
             SpellEntry const* curSpellInfo = spell->m_spellInfo;
             // check if we can interrupt spell
             if ((spell->getState() == SPELL_STATE_CASTING
-                || spell->getState() == SPELL_STATE_PREPARING && spell->GetCastTime() > 0.0f)
-                && curSpellInfo->InterruptFlags & SPELL_INTERRUPT_FLAG_INTERRUPT && curSpellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE)
+                || (spell->getState() == SPELL_STATE_PREPARING && spell->GetCastTime() > 0.0f))
+                && (curSpellInfo->InterruptFlags & SPELL_INTERRUPT_FLAG_INTERRUPT && curSpellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE))
             {
                 if (m_originalCaster)
                 {
@@ -5014,7 +5016,7 @@ void Spell::EffectScriptEffect(uint32 effIndex)
                     uint8 slot = 0;
                     Item *item = NULL;
 
-                    while (bag < 256)
+                    while (bag != 0)
                     {
                         item = m_caster->ToPlayer()->GetItemByPos(bag, slot);
                         if (item && item->GetEntry() == 38587) break;
@@ -5025,7 +5027,7 @@ void Spell::EffectScriptEffect(uint32 effIndex)
                             ++bag;
                         }
                     }
-                    if (bag < 256)
+                    if (bag != 0)
                     {
                         if (m_caster->ToPlayer()->GetItemByPos(bag,slot)->GetCount() == 1) m_caster->ToPlayer()->RemoveItem(bag,slot,true);
                         else m_caster->ToPlayer()->GetItemByPos(bag,slot)->SetCount(m_caster->ToPlayer()->GetItemByPos(bag,slot)->GetCount()-1);
@@ -5764,9 +5766,8 @@ void Spell::EffectMomentMove(uint32 i)
     }
 
     float step = dist/10.0f;
-
     int j = 0;
-    for (j; j < 10; j++)
+    for (; j < 10; j++)
     {
         // do not allow too big z changes
         if (fabs(z - destz) > 6)
@@ -6450,7 +6451,7 @@ void Spell::EffectQuestFail(uint32 i)
     unitTarget->ToPlayer()->FailQuest(m_spellInfo->EffectMiscValue[i]);
 }
 
-void Spell::EffectBind(uint32 i)
+void Spell::EffectBind(uint32 /*i*/)
 {
     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
         return;

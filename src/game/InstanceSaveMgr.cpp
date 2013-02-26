@@ -436,7 +436,7 @@ void InstanceSaveManager::LoadResetTimes()
 
         // schedule the reset times
         for (ResetTimeMapType::iterator itr = InstResetTime.begin(); itr != InstResetTime.end(); ++itr)
-            if (itr->second.second > now)
+            if (itr->second.second > uint32(now))
                 ScheduleReset(true, itr->second.second, InstResetEvent(0, itr->second.first, itr->first));
     }
 

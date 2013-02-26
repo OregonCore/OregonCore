@@ -318,7 +318,7 @@ bool AuthSocket::_HandleLogonChallenge()
 
     recv((char *)&buf[0], 4);
 
-    EndianConvert(*((uint16*)(buf[0])));
+    EndianConvert(*((uint16*)(&buf[0])));
     uint16 remaining = ((sAuthLogonChallenge_C *)&buf[0])->size;
     DEBUG_LOG("[AuthChallenge] got header, body is %#04x bytes", remaining);
 
@@ -337,11 +337,11 @@ bool AuthSocket::_HandleLogonChallenge()
 
     // BigEndian code, nop in little endian case
     // size already converted
-    EndianConvert(*((uint32*)(&ch->gamename[0])));
+    EndianConvert(ch->gamename[0]);
     EndianConvert(ch->build);
-    EndianConvert(*((uint32*)(&ch->platform[0])));
-    EndianConvert(*((uint32*)(&ch->os[0])));
-    EndianConvert(*((uint32*)(&ch->country[0])));
+    EndianConvert(ch->platform[0]);
+    EndianConvert(ch->os[0]);
+    EndianConvert(ch->country[0]);
     EndianConvert(ch->timezone_bias);
     EndianConvert(ch->ip);
 
@@ -748,7 +748,7 @@ bool AuthSocket::_HandleReconnectChallenge()
 
     recv((char *)&buf[0], 4);
 
-    EndianConvert(*((uint16*)(buf[0])));
+    EndianConvert(*((uint16*)(&buf[0])));
     uint16 remaining = ((sAuthLogonChallenge_C *)&buf[0])->size;
     DEBUG_LOG("[ReconnectChallenge] got header, body is %#04x bytes", remaining);
 

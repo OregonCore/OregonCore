@@ -92,7 +92,7 @@ struct instance_gruuls_lair : public ScriptedInstance
         {
             case 184468:
                 MaulgarDoor = pGo->GetGUID();
-                if (Encounters[0] == DONE) HandleGameObject(NULL, true, pGo);
+                if (Encounters[0] == DONE) HandleGameObject(0, true, pGo);
                 break;
             case 184662: GruulDoor = pGo->GetGUID(); break;
         }

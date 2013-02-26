@@ -47,7 +47,7 @@ struct mob_treantAI  : public ScriptedAI
         check_Timer = 0;
     }
 
-    void EnterCombat(Unit *who) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void MoveInLineOfSight(Unit*) {}
 
@@ -133,12 +133,12 @@ struct boss_warp_splinterAI : public ScriptedAI
         me->SetSpeed(MOVE_RUN, 0.7f, true);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit* /*victim*/)
     {
         switch(rand()%2)
         {
@@ -147,7 +147,7 @@ struct boss_warp_splinterAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_DEATH, me);
     }

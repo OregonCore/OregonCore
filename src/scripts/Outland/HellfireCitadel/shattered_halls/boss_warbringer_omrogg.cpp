@@ -106,7 +106,7 @@ struct mob_omrogg_headsAI : public ScriptedAI
     uint32 Death_Timer;
 
     void Reset() {}
-    void EnterCombat(Unit* who) { }
+    void EnterCombat(Unit* /*who*/) { }
 
     void DoDeathYell()
     {
@@ -200,7 +200,7 @@ struct boss_warbringer_omroggAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
         DoSpawnCreature(ENTRY_LEFT_HEAD,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN,1800000);
         DoSpawnCreature(ENTRY_RIGHT_HEAD,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN,1800000);
@@ -232,7 +232,7 @@ struct boss_warbringer_omroggAI : public ScriptedAI
         summoned->SetVisibility(VISIBILITY_OFF);
     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit* /*victim*/)
     {
         if (LeftHead && RightHead)
         {
@@ -261,7 +261,7 @@ struct boss_warbringer_omroggAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         if (LeftHead && RightHead)
         {

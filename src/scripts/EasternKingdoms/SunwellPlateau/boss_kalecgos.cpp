@@ -599,7 +599,7 @@ struct boss_sathrovarrAI : public ScriptedAI
                 }
                 else
                 {
-                    me->MonsterTextEmote(EMOTE_UNABLE_TO_FIND, NULL);
+                    me->MonsterTextEmote(EMOTE_UNABLE_TO_FIND, 0);
                     EnterEvadeMode();
                     return;
                 }
@@ -740,7 +740,7 @@ struct boss_kalecAI : public ScriptedAI
 
 bool GOkalecgos_teleporter(Player* pPlayer, GameObject* pGo)
 {
-    uint32 SpectralPlayers = 0;
+    int32 SpectralPlayers = 0;
     Map* pMap = pGo->GetMap();
     if (!pMap->IsDungeon()) return true;
     Map::PlayerList const &PlayerList = pMap->GetPlayers();

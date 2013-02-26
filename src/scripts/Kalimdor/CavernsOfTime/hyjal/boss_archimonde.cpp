@@ -151,9 +151,9 @@ struct mob_doomfireAI : public ScriptedAI
         TargetGUID = 0;
     }
 
-    void DamageTaken(Unit *done_by, uint32 &damage) { damage = 0; }
+    void DamageTaken(Unit* /*done_by*/, uint32 &damage) { damage = 0; }
 
-    void EnterCombat(Unit* who) { }
+    void EnterCombat(Unit* /*who*/) { }
 
     void MoveInLineOfSight(Unit* who)
     {

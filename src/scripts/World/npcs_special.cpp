@@ -1301,7 +1301,7 @@ struct npc_force_of_nature_treantsAI : public ScriptedAI {
         }
     }
     
-    void UpdateAI(const uint32 diff) {
+    void UpdateAI(const uint32 /*diff*/) {
         
         if(!Owner)
             return;
@@ -1346,7 +1346,7 @@ struct npc_snake_trap_serpentsAI : public ScriptedAI
 {
     npc_snake_trap_serpentsAI(Creature *c) : ScriptedAI(c), SpellTimer(0) {}
 
-    int32 SpellTimer;
+    uint32 SpellTimer;
     Unit *Owner;
     bool IsViper;
 

@@ -409,6 +409,7 @@ void GameObject::Update(uint32 diff)
                             lootingGroupLeaderGUID = 0;
                         }
                     }
+                default:
                     break;
             }
             break;
@@ -591,7 +592,7 @@ void GameObject::SaveToDB(uint32 mapid, uint8 spawnMask)
 
     WorldDatabase.BeginTransaction();
     WorldDatabase.PExecuteLog("DELETE FROM gameobject WHERE guid = '%u'", m_DBTableGuid);
-    WorldDatabase.PExecuteLog(ss.str().c_str());
+    WorldDatabase.PExecuteLog("%s", ss.str().c_str());
     WorldDatabase.CommitTransaction();
 }
 
@@ -1406,7 +1407,7 @@ const char* GameObject::GetNameForLocaleIdx(int32 loc_idx) const
 {
     if (loc_idx >= 0)
         if (GameObjectLocale const *cl = objmgr.GetGameObjectLocale(GetEntry()))
-            if (cl->Name.size() > loc_idx && !cl->Name[loc_idx].empty())
+            if (cl->Name.size() > uint32(loc_idx) && !cl->Name[loc_idx].empty())
                 return cl->Name[loc_idx].c_str();
 
     return GetName();

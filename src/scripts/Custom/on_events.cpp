@@ -21,19 +21,19 @@
 #include <cstring>
 
 //This function is called when the player logs in (every login)
-void OnLogin(Player *pPlayer)
+void OnLogin(Player* /*pPlayer*/)
 {
 
 }
 
 //This function is called when the player logs out
-void OnLogout(Player *pPlayer)
+void OnLogout(Player* /*pPlayer*/)
 {
 
 }
 
 //This function is called when the player kills another player
-void OnPVPKill(Player *killer, Player *killed)
+void OnPVPKill(Player* /*killer*/, Player* /*killed*/)
 {
 
 }

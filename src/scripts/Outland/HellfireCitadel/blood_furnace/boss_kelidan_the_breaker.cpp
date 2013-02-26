@@ -116,7 +116,7 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
             pInstance->SetData(DATA_KELIDANEVENT, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit* /*victim*/)
     {
         if (rand()%2)
             return;
@@ -167,7 +167,7 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
     uint64 GetChanneled(Creature *channeler1)
     {
         SummonChannelers();
-        if (!channeler1) return NULL;
+        if (!channeler1) return 0;
         int i;
         for (i=0; i<5; ++i)
         {
@@ -192,7 +192,7 @@ struct boss_kelidan_the_breakerAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_DIE, me);
        if (pInstance)

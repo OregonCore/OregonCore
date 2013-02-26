@@ -40,15 +40,14 @@ WardenBase::~WardenBase()
     delete[] Module->CompressedData;
     delete Module;
     Module = NULL;
-    m_initialized = false;
 }
 
-void WardenBase::Init(WorldSession *pClient, BigNumber *K)
+void WardenBase::Init(WorldSession* /*pClient*/, BigNumber* /*K*/)
 {
     ASSERT(false);
 }
 
-ClientWardenModule *WardenBase::GetModuleForClient(WorldSession *session)
+ClientWardenModule *WardenBase::GetModuleForClient(WorldSession* /*session*/)
 {
     ASSERT(false);
     return NULL;
@@ -64,7 +63,7 @@ void WardenBase::RequestHash()
     ASSERT(false);
 }
 
-void WardenBase::HandleHashResult(ByteBuffer &buff)
+void WardenBase::HandleHashResult(ByteBuffer& /*buff*/)
 {
     ASSERT(false);
 }
@@ -74,7 +73,7 @@ void WardenBase::RequestData()
     ASSERT(false);
 }
 
-void WardenBase::HandleData(ByteBuffer &buff)
+void WardenBase::HandleData(ByteBuffer& /*buff*/)
 {
     ASSERT(false);
 }

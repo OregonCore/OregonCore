@@ -341,7 +341,7 @@ bool World::RemoveQueuedPlayer(WorldSession* sess)
         --sessions;
 
     // accept first in queue
-    if ((!m_playerLimit || sessions < m_playerLimit) && !m_QueuedPlayer.empty())
+    if ((!m_playerLimit || sessions < uint32(m_playerLimit)) && !m_QueuedPlayer.empty())
     {
         WorldSession* pop_sess = m_QueuedPlayer.front();
         pop_sess->SetInQueue(false);
@@ -580,7 +580,7 @@ void World::LoadConfigSettings(bool reload)
     {
         uint32 val = sConfig.GetIntDefault("SocketSelectTime", DEFAULT_SOCKET_SELECT_TIME);
         if (val != m_configs[CONFIG_SOCKET_SELECTTIME])
-            sLog.outError("SocketSelectTime option can't be changed at Oregond.conf reload, using current value (%u).",m_configs[DEFAULT_SOCKET_SELECT_TIME]);
+            sLog.outError("SocketSelectTime option can't be changed at Oregond.conf reload, using current value (%u).",m_configs[CONFIG_SOCKET_SELECTTIME]);
     }
     else
         m_configs[CONFIG_SOCKET_SELECTTIME] = sConfig.GetIntDefault("SocketSelectTime", DEFAULT_SOCKET_SELECT_TIME);
@@ -819,40 +819,10 @@ void World::LoadConfigSettings(bool reload)
     m_configs[CONFIG_SKILL_PROSPECTING] = sConfig.GetBoolDefault("SkillChance.Prospecting",false);
 
     m_configs[CONFIG_SKILL_GAIN_CRAFTING]  = sConfig.GetIntDefault("SkillGain.Crafting", 1);
-    if (m_configs[CONFIG_SKILL_GAIN_CRAFTING] < 0)
-    {
-        sLog.outError("SkillGain.Crafting (%i) can't be negative. Set to 1.",m_configs[CONFIG_SKILL_GAIN_CRAFTING]);
-        m_configs[CONFIG_SKILL_GAIN_CRAFTING] = 1;
-    }
-
     m_configs[CONFIG_SKILL_GAIN_DEFENSE]  = sConfig.GetIntDefault("SkillGain.Defense", 1);
-    if (m_configs[CONFIG_SKILL_GAIN_DEFENSE] < 0)
-    {
-        sLog.outError("SkillGain.Defense (%i) can't be negative. Set to 1.",m_configs[CONFIG_SKILL_GAIN_DEFENSE]);
-        m_configs[CONFIG_SKILL_GAIN_DEFENSE] = 1;
-    }
-
     m_configs[CONFIG_SKILL_GAIN_GATHERING]  = sConfig.GetIntDefault("SkillGain.Gathering", 1);
-    if (m_configs[CONFIG_SKILL_GAIN_GATHERING] < 0)
-    {
-        sLog.outError("SkillGain.Gathering (%i) can't be negative. Set to 1.",m_configs[CONFIG_SKILL_GAIN_GATHERING]);
-        m_configs[CONFIG_SKILL_GAIN_GATHERING] = 1;
-    }
-
     m_configs[CONFIG_SKILL_GAIN_WEAPON]  = sConfig.GetIntDefault("SkillGain.Weapon", 1);
-    if (m_configs[CONFIG_SKILL_GAIN_WEAPON] < 0)
-    {
-        sLog.outError("SkillGain.Weapon (%i) can't be negative. Set to 1.",m_configs[CONFIG_SKILL_GAIN_WEAPON]);
-        m_configs[CONFIG_SKILL_GAIN_WEAPON] = 1;
-    }
-
     m_configs[CONFIG_MAX_OVERSPEED_PINGS] = sConfig.GetIntDefault("MaxOverspeedPings",2);
-    if (m_configs[CONFIG_MAX_OVERSPEED_PINGS] != 0 && m_configs[CONFIG_MAX_OVERSPEED_PINGS] < 2)
-    {
-        sLog.outError("MaxOverspeedPings (%i) must be in range 2..infinity (or 0 to disable check). Set to 2.",m_configs[CONFIG_MAX_OVERSPEED_PINGS]);
-        m_configs[CONFIG_MAX_OVERSPEED_PINGS] = 2;
-    }
-
     m_configs[CONFIG_SAVE_RESPAWN_TIME_IMMEDIATELY] = sConfig.GetBoolDefault("SaveRespawnTimeImmediately",true);
     m_configs[CONFIG_WEATHER] = sConfig.GetBoolDefault("ActivateWeather",true);
 
@@ -1054,8 +1024,6 @@ void World::LoadConfigSettings(bool reload)
     m_configs[CONFIG_BG_START_MUSIC] = sConfig.GetBoolDefault("MusicInBattleground", false);
     m_configs[CONFIG_START_ALL_SPELLS] = sConfig.GetBoolDefault("PlayerStart.AllSpells", false);
     m_configs[CONFIG_HONOR_AFTER_DUEL] = sConfig.GetIntDefault("HonorPointsAfterDuel", 0);
-    if (m_configs[CONFIG_HONOR_AFTER_DUEL] < 0)
-        m_configs[CONFIG_HONOR_AFTER_DUEL]= 0;
     m_configs[CONFIG_START_ALL_EXPLORED] = sConfig.GetBoolDefault("PlayerStart.MapsExplored", false);
     m_configs[CONFIG_START_ALL_REP] = sConfig.GetBoolDefault("PlayerStart.AllReputation", false);
     m_configs[CONFIG_ALWAYS_MAXSKILL] = sConfig.GetBoolDefault("AlwaysMaxWeaponSkill", false);
@@ -1063,8 +1031,6 @@ void World::LoadConfigSettings(bool reload)
     m_configs[CONFIG_PVP_TOKEN_MAP_TYPE] = sConfig.GetIntDefault("PvPToken.MapAllowType", 4);
     m_configs[CONFIG_PVP_TOKEN_ID] = sConfig.GetIntDefault("PvPToken.ItemID", 29434);
     m_configs[CONFIG_PVP_TOKEN_COUNT] = sConfig.GetIntDefault("PvPToken.ItemCount", 1);
-    if (m_configs[CONFIG_PVP_TOKEN_COUNT] < 1)
-        m_configs[CONFIG_PVP_TOKEN_COUNT] = 1;
     m_configs[CONFIG_NO_RESET_TALENT_COST] = sConfig.GetBoolDefault("NoResetTalentsCost", false);
     m_configs[CONFIG_SHOW_KICK_IN_WORLD] = sConfig.GetBoolDefault("ShowKickInWorld", false);
     m_configs[CONFIG_INTERVAL_LOG_UPDATE] = sConfig.GetIntDefault("RecordUpdateTimeDiffInterval", 60000);
@@ -1122,14 +1088,14 @@ void World::SetInitialWorldSettings()
     objmgr.SetHighestGuids();
 
     // Check the existence of the map files for all races' startup areas.
-    if (!MapManager::ExistMapAndVMap(0,-6240.32f, 331.033f)
+    if ((!MapManager::ExistMapAndVMap(0,-6240.32f, 331.033f)
         ||!MapManager::ExistMapAndVMap(0,-8949.95f,-132.493f)
         ||!MapManager::ExistMapAndVMap(1,-618.518f,-4251.67f)
         ||!MapManager::ExistMapAndVMap(0, 1676.35f, 1677.45f)
         ||!MapManager::ExistMapAndVMap(1, 10311.3f, 832.463f)
         ||!MapManager::ExistMapAndVMap(1,-2917.58f,-257.98f)
-        ||m_configs[CONFIG_EXPANSION] && (
-        !MapManager::ExistMapAndVMap(530,10349.6f,-6357.29f) || !MapManager::ExistMapAndVMap(530,-3961.64f,-13931.2f)))
+        ||m_configs[CONFIG_EXPANSION]) &&
+        (!MapManager::ExistMapAndVMap(530,10349.6f,-6357.29f) || !MapManager::ExistMapAndVMap(530,-3961.64f,-13931.2f)))
     {
         sLog.outError("Correct *.map files not found in path '%smaps' or *.vmtree/*.vmtile files in '%svmaps'. Please place *.map/*.vmtree/*.vmtile files in appropriate directories or correct the DataDir value in the oregoncore.conf file.",m_dataPath.c_str(),m_dataPath.c_str());
         exit(1);
@@ -1145,7 +1111,7 @@ void World::SetInitialWorldSettings()
     //No SQL injection as values are treated as integers
 
     // not send custom type REALM_FFA_PVP to realm list
-    uint32 server_type = IsFFAPvPRealm() ? REALM_TYPE_PVP : getConfig(CONFIG_GAME_TYPE);
+    uint32 server_type = IsFFAPvPRealm() ? uint32(REALM_TYPE_PVP) : getConfig(CONFIG_GAME_TYPE);
     uint32 realm_zone = getConfig(CONFIG_REALM_ZONE);
     LoginDatabase.PExecute("UPDATE realmlist SET icon = %u, timezone = %u WHERE id = '%d'", server_type, realm_zone, realmID);
 
@@ -1902,13 +1868,13 @@ void World::SendWorldText(int32 string_id, ...)
         else
             data_list = &data_cache[cache_idx];
 
-        for (int i = 0; i < data_list->size(); ++i)
+        for (uint32 i = 0; i < data_list->size(); ++i)
             itr->second->SendPacket((*data_list)[i]);
     }
 
     // free memory
-    for (int i = 0; i < data_cache.size(); ++i)
-        for (int j = 0; j < data_cache[i].size(); ++j)
+    for (uint32 i = 0; i < data_cache.size(); ++i)
+        for (uint32 j = 0; j < data_cache[i].size(); ++j)
             delete data_cache[i][j];
 }
 
@@ -1955,14 +1921,14 @@ void World::SendGMText(int32 string_id, ...)
         else
             data_list = &data_cache[cache_idx];
 
-        for (int i = 0; i < data_list->size(); ++i)
+        for (uint32 i = 0; i < data_list->size(); ++i)
             if (itr->second->GetSecurity() > SEC_PLAYER)
             itr->second->SendPacket((*data_list)[i]);
     }
 
     // free memory
-    for (int i = 0; i < data_cache.size(); ++i)
-        for (int j = 0; j < data_cache[i].size(); ++j)
+    for (uint32 i = 0; i < data_cache.size(); ++i)
+        for (uint32 j = 0; j < data_cache[i].size(); ++j)
             delete data_cache[i][j];
 }
 
@@ -2424,7 +2390,7 @@ void World::ResetDailyQuests()
             itr->second->GetPlayer()->ResetDailyQuestStatus();
 }
 
-void World::SetPlayerLimit(int32 limit, bool needUpdate)
+void World::SetPlayerLimit(int32 limit, bool /*needUpdate*/)
 {
     m_playerLimit = limit;
 }

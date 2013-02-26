@@ -38,7 +38,7 @@ void AggressorAI::UpdateAI(const uint32 /*diff*/)
 }
 
 // some day we will delete these useless things
-int CombatAI::Permissible(const Creature *creature)
+int CombatAI::Permissible(const Creature* /*creature*/)
 {
     return PERMIT_BASE_NO;
 }

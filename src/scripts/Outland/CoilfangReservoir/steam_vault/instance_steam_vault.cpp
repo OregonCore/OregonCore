@@ -39,7 +39,7 @@ EndScriptData */
 3 - Warlord Kalithresh Event
 */
 
-bool GOHello_go_main_chambers_access_panel(Player *player, GameObject* _GO)
+bool GOHello_go_main_chambers_access_panel(Player* /*player*/, GameObject* _GO)
 {
     ScriptedInstance* pInstance = _GO->GetInstanceData();
 

@@ -44,23 +44,23 @@ class UnitAI
         Unit * const me;
     public:
         explicit UnitAI(Unit *u) : me(u) {}
-        virtual bool CanAIAttack(const Unit *who) const { return true; }
+        virtual bool CanAIAttack(const Unit* /*who*/) const { return true; }
         virtual void AttackStart(Unit *);
-        virtual void UpdateAI(const uint32 diff) = 0;
+        virtual void UpdateAI(const uint32 /*diff*/) = 0;
 
         virtual void InitializeAI() { if (!me->isDead()) Reset(); }
 
         virtual void Reset() {};
 
         // Called when unit is charmed
-        virtual void OnCharmed(bool apply) = 0;
+        virtual void OnCharmed(bool /*apply*/) = 0;
 
         // Pass parameters between AI
-        virtual void DoAction(const int32 param = 0) {}
-        virtual uint32 GetData(uint32 id = 0) { return 0; }
-        virtual void SetData(uint32 id, uint32 value) {}
-        virtual void SetGUID(const uint64 &guid, int32 id = 0) {}
-        virtual uint64 GetGUID(int32 id = 0) { return 0; }
+        virtual void DoAction(const int32 param = 0) { UNUSED(param); }
+        virtual uint32 GetData(uint32 id = 0) { UNUSED(id); return 0; }
+        virtual void SetData(uint32 /*id*/, uint32 /*value*/) {}
+        virtual void SetGUID(const uint64& /*guid*/, int32 id = 0) { UNUSED(id); }
+        virtual uint64 GetGUID(int32 id = 0) { UNUSED(id); return 0; }
 
         Unit* SelectTarget(SelectAggroTarget target, uint32 position = 0, float dist = 0, bool playerOnly = false, int32 aura = 0);
         void SelectTargetList(std::list<Unit*> &targetList, uint32 num, SelectAggroTarget target, float dist = 0, bool playerOnly = false, int32 aura = 0);

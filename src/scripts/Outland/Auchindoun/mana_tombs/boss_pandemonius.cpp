@@ -61,12 +61,12 @@ struct boss_pandemoniusAI : public ScriptedAI
         VoidBlast_Counter = 0;
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit*)
     {
         DoScriptText(SAY_DEATH, me);
     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit*)
     {
         switch(rand()%2)
         {
@@ -75,7 +75,7 @@ struct boss_pandemoniusAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit *)
     {
         switch(rand()%3)
         {

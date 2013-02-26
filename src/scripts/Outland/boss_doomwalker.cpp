@@ -69,7 +69,7 @@ struct boss_doomwalkerAI : public ScriptedAI
         InEnrage = false;
     }
 
-    void KilledUnit(Unit* Victim)
+    void KilledUnit(Unit* /*Victim*/)
     {
         if (rand()%5)
             return;
@@ -84,12 +84,12 @@ struct boss_doomwalkerAI : public ScriptedAI
         DoCast(me->getVictim(), SPELL_MARK_DEATH);
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_DEATH, me);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
     }

@@ -295,21 +295,21 @@ void WorldSession::SendPetitionQueryOpcode(uint64 petitionguid)
     uint64 ownerguid = 0;
     uint32 type;
     std::string name = "NO_NAME_FOR_GUID";
-    uint8 signs = 0;
+ // uint8 signs = 0;
 
     QueryResult_AutoPtr result = CharacterDatabase.PQuery(
         "SELECT ownerguid, name, "
-        "  (SELECT COUNT(playerguid) FROM petition_sign WHERE petition_sign.petitionguid = '%u') AS signs, "
+ //     "  (SELECT COUNT(playerguid) FROM petition_sign WHERE petition_sign.petitionguid = '%u') AS signs, "
         "  type "
-        "FROM petition WHERE petitionguid = '%u'", GUID_LOPART(petitionguid), GUID_LOPART(petitionguid));
+        "FROM petition WHERE petitionguid = '%u'", /*GUID_LOPART(petitionguid),*/ GUID_LOPART(petitionguid));
 
     if (result)
     {
         Field* fields = result->Fetch();
         ownerguid = MAKE_NEW_GUID(fields[0].GetUInt32(), 0, HIGHGUID_PLAYER);
         name      = fields[1].GetCppString();
-        signs     = fields[2].GetUInt8();
-        type      = fields[3].GetUInt32();
+ //     signs     = fields[2].GetUInt8();
+        type      = fields[2].GetUInt32();
     }
     else
     {

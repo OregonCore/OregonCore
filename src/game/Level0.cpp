@@ -50,7 +50,7 @@ bool ChatHandler::HandleHelpCommand(const char* args)
     return true;
 }
 
-bool ChatHandler::HandleCommandsCommand(const char* args)
+bool ChatHandler::HandleCommandsCommand(const char* /*args*/)
 {
     ShowHelpForCommand(getCommandTable(), "");
     return true;
@@ -146,7 +146,7 @@ bool ChatHandler::HandleSaveCommand(const char* /*args*/)
 
     // save or plan save after 20 sec (logout delay) if current next save time more this value and _not_ output any messages to prevent cheat planning
     uint32 save_interval = sWorld.getConfig(CONFIG_INTERVAL_SAVE);
-    if (save_interval == 0 || save_interval > 20*IN_MILLISECONDS && player->GetSaveTimer() <= save_interval - 20*IN_MILLISECONDS)
+    if (save_interval == 0 || (save_interval > 20*IN_MILLISECONDS && player->GetSaveTimer() <= save_interval - 20*IN_MILLISECONDS))
         player->SaveToDB();
 
     return true;

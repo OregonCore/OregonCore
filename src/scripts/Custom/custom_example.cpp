@@ -92,10 +92,10 @@ struct custom_exampleAI : public ScriptedAI
 
     //*** HANDLED FUNCTION ***
     //Attack Start is called whenever someone hits us.
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
         //Say some stuff
-        me->MonsterSay(SAY_AGGRO,LANG_UNIVERSAL,NULL);
+        me->MonsterSay(SAY_AGGRO,LANG_UNIVERSAL,0);
         DoPlaySoundToSet(me,8280);
     }
 
@@ -113,27 +113,27 @@ struct custom_exampleAI : public ScriptedAI
                 switch (rand()%5)
                 {
                     case 0:
-                        me->MonsterYell(SAY_RANDOM_0,LANG_UNIVERSAL,NULL);
+                        me->MonsterYell(SAY_RANDOM_0,LANG_UNIVERSAL,0);
                         DoPlaySoundToSet(me,8831);  //8831 is the index of the sound we are playing. You find these numbers in SoundEntries.dbc
                         break;
 
                     case 1:
-                        me->MonsterYell(SAY_RANDOM_1,LANG_UNIVERSAL,NULL);
+                        me->MonsterYell(SAY_RANDOM_1,LANG_UNIVERSAL,0);
                         DoPlaySoundToSet(me,8818);
                         break;
 
                     case 2:
-                        me->MonsterYell(SAY_RANDOM_2,LANG_UNIVERSAL,NULL);
+                        me->MonsterYell(SAY_RANDOM_2,LANG_UNIVERSAL,0);
                         DoPlaySoundToSet(me,8041);
                         break;
 
                     case 3:
-                        me->MonsterYell(SAY_RANDOM_3,LANG_UNIVERSAL,NULL);
+                        me->MonsterYell(SAY_RANDOM_3,LANG_UNIVERSAL,0);
                         DoPlaySoundToSet(me,8581);
                         break;
 
                     case 4:
-                        me->MonsterYell(SAY_RANDOM_4,LANG_UNIVERSAL,NULL);
+                        me->MonsterYell(SAY_RANDOM_4,LANG_UNIVERSAL,0);
                         DoPlaySoundToSet(me,8791);
                         break;
                 }
@@ -176,50 +176,56 @@ struct custom_exampleAI : public ScriptedAI
 
         //Spell 3 timer
         if (Phase > 1)
-            if (Spell_3_Timer <= diff)
         {
-            //Cast spell one on our current target.
-            DoCast(me->getVictim(),SPELL_THREE);
+            if (Spell_3_Timer <= diff)
+            {
+                //Cast spell one on our current target.
+                DoCast(me->getVictim(),SPELL_THREE);
 
-            Spell_3_Timer = 19000;
-        } else Spell_3_Timer -= diff;
+                Spell_3_Timer = 19000;
+            } else Spell_3_Timer -= diff;
+        }
 
         //Beserk timer
         if (Phase > 1)
-            if (Beserk_Timer <= diff)
         {
-            //Say our line then cast uber death spell
-            DoPlaySoundToSet(me,8588);
-            me->MonsterYell(SAY_BESERK,LANG_UNIVERSAL,me->getVictim()->GetGUID());
-            DoCast(me->getVictim(),SPELL_BESERK);
+            if (Beserk_Timer <= diff)
+            {
+                //Say our line then cast uber death spell
+                DoPlaySoundToSet(me,8588);
+                me->MonsterYell(SAY_BESERK,LANG_UNIVERSAL,me->getVictim()->GetGUID());
+                DoCast(me->getVictim(),SPELL_BESERK);
 
-            //Cast our beserk spell agian in 12 seconds if we didn't kill everyone
-            Beserk_Timer = 12000;
-        } else Beserk_Timer -= diff;
+                //Cast our beserk spell agian in 12 seconds if we didn't kill everyone
+                Beserk_Timer = 12000;
+            } else Beserk_Timer -= diff;
+        }
 
         //Phase timer
         if (Phase == 1)
-            if (Phase_Timer <= diff)
         {
-            //Go to next phase
-            Phase++;
-            me->MonsterYell(SAY_PHASE,LANG_UNIVERSAL,NULL);
-            DoCast(me,SPELL_ENRAGE);
-        } else Phase_Timer -= diff;
+            if (Phase_Timer <= diff)
+            {
+                //Go to next phase
+                Phase++;
+                me->MonsterYell(SAY_PHASE,LANG_UNIVERSAL,0);
+                DoCast(me,SPELL_ENRAGE);
+            } else Phase_Timer -= diff;
+        }
 
         DoMeleeAttackIfReady();
     }
 
     //Our Recive emote function
-    void ReceiveEmote(Player* pPlayer, uint32 emote)
+    void ReceiveEmote(Player* /*pPlayer*/, uint32 emote)
     {
         me->HandleEmoteCommand(emote);
 
         if (emote == TEXTEMOTE_DANCE)
-            me->MonsterSay(SAY_DANCE, LANG_UNIVERSAL, NULL);
+            me->MonsterSay(SAY_DANCE, LANG_UNIVERSAL, 0);
 
         if (emote == TEXTEMOTE_SALUTE)
-            me->MonsterSay(SAY_SALUTE, LANG_UNIVERSAL, NULL);
+            me->MonsterSay(SAY_SALUTE, LANG_UNIVERSAL, 0);
     }
 };
 

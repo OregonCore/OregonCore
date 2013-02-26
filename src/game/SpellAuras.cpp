@@ -318,12 +318,12 @@ pAuraHandler AuraHandler[TOTAL_AURAS]=
 };
 
 Aura::Aura(SpellEntry const* spellproto, uint32 eff, int32 *currentBasePoints, Unit *target, Unit *caster, Item* castItem) :
-m_procCharges(0), m_stackAmount(1), m_isRemoved(false), m_spellmod(NULL), m_effIndex(eff), m_caster_guid(0), m_target(target),
-m_timeCla(1000), m_castItemGuid(castItem?castItem->GetGUID():0), m_auraSlot(MAX_AURAS),
+m_procCharges(0), m_spellmod(NULL), m_effIndex(eff), m_caster_guid(0), m_target(target), m_tickNumber(0),
+m_timeCla(1000), m_castItemGuid(castItem?castItem->GetGUID():0), m_removeMode(AURA_REMOVE_BY_DEFAULT), m_auraSlot(MAX_AURAS),
 m_positive(false), m_permanent(false), m_isPeriodic(false), m_isAreaAura(false),
-m_isPersistent(false), m_removeMode(AURA_REMOVE_BY_DEFAULT), m_isRemovedOnShapeLost(true), m_in_use(false),
+m_isPersistent(false), m_isRemovedOnShapeLost(true), m_isRemoved(false), m_in_use(false),
 m_periodicTimer(0), m_amplitude(0), m_PeriodicEventId(0), m_AuraDRGroup(DIMINISHING_NONE)
-,m_tickNumber(0)
+,m_stackAmount(1)
 {
     ASSERT(target);
 
@@ -391,7 +391,7 @@ m_periodicTimer(0), m_amplitude(0), m_PeriodicEventId(0), m_AuraDRGroup(DIMINISH
         }
     }
 
-    if (m_maxduration == -1 || m_isPassive && m_spellProto->DurationIndex == 0)
+    if (m_maxduration == -1 || (m_isPassive && m_spellProto->DurationIndex == 0))
         m_permanent = true;
 
     Player* modOwner = caster ? caster->GetSpellModOwner() : NULL;
@@ -896,18 +896,15 @@ void Aura::_AddAura()
     {
         case SPELL_AURA_OBS_MOD_HEALTH:
         case SPELL_AURA_OBS_MOD_MANA:
-        {
             m_periodicTimer = m_amplitude;//m_modifier.periodictime;
-        }
-        break;
+            break;
         case SPELL_AURA_MOD_REGEN:
         case SPELL_AURA_MOD_POWER_REGEN:
         case SPELL_AURA_MOD_MANA_REGEN_FROM_STAT:
-        {
             m_amplitude = 5000;
             m_periodicTimer = m_amplitude;
-        }
             break;
+        default:break;
     }
 
     // register aura
@@ -2231,7 +2228,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                     const SpellEntry *spell = sSpellStore.LookupEntry(spellId);
                     if (!spell)
                         return;
-                    for (int i=0; i < spell->StackAmount; ++i)
+                    for (uint32 i=0; i < spell->StackAmount; ++i)
                         caster->CastSpell(m_target, spell->Id, true, NULL, NULL, GetCasterGUID());
                     return;
                 }
@@ -2247,7 +2244,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                     const SpellEntry *spell = sSpellStore.LookupEntry(spellId);
                     if (!spell)
                         return;
-                    for (int i=0; i < spell->StackAmount; ++i)
+                    for (uint32 i=0; i < spell->StackAmount; ++i)
                         caster->CastSpell(m_target, spell->Id, true, NULL, NULL, GetCasterGUID());
                     return;
                 }
@@ -2524,7 +2521,7 @@ void Aura::HandleAuraHover(bool apply, bool Real)
     m_target->SendMessageToSet(&data, true);
 }
 
-void Aura::HandleWaterBreathing(bool apply, bool Real)
+void Aura::HandleWaterBreathing(bool /*apply*/, bool /*Real*/)
 {
     // update timers in client
     if (m_target->GetTypeId() == TYPEID_PLAYER && m_target->IsInWorld())
@@ -2995,7 +2992,7 @@ void Aura::HandleForceReaction(bool apply, bool Real)
     player->SendDirectMessage(&data);
 }
 
-void Aura::HandleAuraModSkill(bool apply, bool Real)
+void Aura::HandleAuraModSkill(bool apply, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -3029,7 +3026,7 @@ void Aura::HandleChannelDeathItem(bool apply, bool Real)
         // Soul Shard only from non-grey units
         if (spellInfo->EffectItemType[m_effIndex] == 6265 &&
             (victim->getLevel() <= Oregon::XP::GetGrayLevel(caster->getLevel()) ||
-             victim->GetTypeId() == TYPEID_UNIT && !caster->ToPlayer()->isAllowedToLoot(victim->ToCreature())))
+            (victim->GetTypeId() == TYPEID_UNIT && !caster->ToPlayer()->isAllowedToLoot(victim->ToCreature()))))
             return;
         ItemPosCountVec dest;
         uint8 msg = caster->ToPlayer()->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, spellInfo->EffectItemType[m_effIndex], 1);
@@ -3044,7 +3041,7 @@ void Aura::HandleChannelDeathItem(bool apply, bool Real)
     }
 }
 
-void Aura::HandleBindSight(bool apply, bool Real)
+void Aura::HandleBindSight(bool apply, bool /*Real*/)
 {
     Unit* caster = GetCaster();
     if (!caster || caster->GetTypeId() != TYPEID_PLAYER)
@@ -3053,7 +3050,8 @@ void Aura::HandleBindSight(bool apply, bool Real)
     caster->ToPlayer()->SetViewpoint(m_target, (apply));
 }
 
-void Aura::HandleFarSight(bool apply, bool Real)
+//TODO: complete
+void Aura::HandleFarSight(bool /*apply*/, bool /*Real*/)
 {
     /*Unit* caster = GetCaster();
     if (!caster || caster->GetTypeId() != TYPEID_PLAYER)
@@ -3062,7 +3060,7 @@ void Aura::HandleFarSight(bool apply, bool Real)
     caster->ToPlayer()->SetFarSight(apply ? m_target->GetGUID() : NULL);*/
 }
 
-void Aura::HandleAuraTrackCreatures(bool apply, bool Real)
+void Aura::HandleAuraTrackCreatures(bool apply, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -3072,7 +3070,7 @@ void Aura::HandleAuraTrackCreatures(bool apply, bool Real)
     m_target->SetUInt32Value(PLAYER_TRACK_CREATURES, apply ? ((uint32)1)<<(m_modifier.m_miscvalue-1) : 0);
 }
 
-void Aura::HandleAuraTrackResources(bool apply, bool Real)
+void Aura::HandleAuraTrackResources(bool apply, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -3082,7 +3080,7 @@ void Aura::HandleAuraTrackResources(bool apply, bool Real)
     m_target->SetUInt32Value(PLAYER_TRACK_RESOURCES, apply ? ((uint32)1)<<(m_modifier.m_miscvalue-1): 0);
 }
 
-void Aura::HandleAuraTrackStealthed(bool apply, bool Real)
+void Aura::HandleAuraTrackStealthed(bool apply, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -3093,7 +3091,7 @@ void Aura::HandleAuraTrackStealthed(bool apply, bool Real)
     m_target->ApplyModFlag(PLAYER_FIELD_BYTES,PLAYER_FIELD_BYTE_TRACK_STEALTHED,apply);
 }
 
-void Aura::HandleAuraModScale(bool apply, bool Real)
+void Aura::HandleAuraModScale(bool apply, bool /*Real*/)
 {
     m_target->ApplyPercentModFloatValue(OBJECT_FIELD_SCALE_X,GetModifierValue(),apply);
 }
@@ -3112,7 +3110,7 @@ void Aura::HandleModPossess(bool apply, bool Real)
 
     if (apply)
     {
-        if (m_target->getLevel() > m_modifier.m_amount)
+        if (int32(m_target->getLevel()) > m_modifier.m_amount)
             return;
 
         m_target->SetCharmedBy(caster, CHARM_TYPE_POSSESS);
@@ -3706,7 +3704,7 @@ void Aura::HandleAuraModUseNormalSpeed(bool /*apply*/, bool Real)
 /***                     IMMUNITY                      ***/
 /*********************************************************/
 
-void Aura::HandleModMechanicImmunity(bool apply, bool Real)
+void Aura::HandleModMechanicImmunity(bool apply, bool /*Real*/)
 {
     uint32 mechanic = 1 << m_modifier.m_miscvalue;
 
@@ -3794,7 +3792,7 @@ void Aura::HandleModMechanicImmunity(bool apply, bool Real)
     }
 }
 
-void Aura::HandleAuraModEffectImmunity(bool apply, bool Real)
+void Aura::HandleAuraModEffectImmunity(bool apply, bool /*Real*/)
 {
     if (!apply)
     {
@@ -3900,7 +3898,7 @@ void Aura::HandleAuraModSchoolImmunity(bool apply, bool Real)
     }
 }
 
-void Aura::HandleAuraModDmgImmunity(bool apply, bool Real)
+void Aura::HandleAuraModDmgImmunity(bool apply, bool /*Real*/)
 {
     m_target->ApplySpellImmune(GetId(),IMMUNITY_DAMAGE,m_modifier.m_miscvalue,apply);
 }
@@ -3961,7 +3959,7 @@ void Aura::HandleAuraProcTriggerSpell(bool apply, bool Real)
     }
 }
 
-void Aura::HandleAuraModStalked(bool apply, bool Real)
+void Aura::HandleAuraModStalked(bool apply, bool /*Real*/)
 {
     // used by spells: Hunter's Mark, Mind Vision, Syndicate Tracker (MURP) DND
     if (apply)
@@ -3974,7 +3972,7 @@ void Aura::HandleAuraModStalked(bool apply, bool Real)
 /***                   PERIODIC                        ***/
 /*********************************************************/
 
-void Aura::HandlePeriodicTriggerSpell(bool apply, bool Real)
+void Aura::HandlePeriodicTriggerSpell(bool apply, bool /*Real*/)
 {
     if (m_periodicTimer <= 0)
         m_periodicTimer += m_amplitude;
@@ -3995,7 +3993,7 @@ void Aura::HandlePeriodicTriggerSpell(bool apply, bool Real)
     }
 }
 
-void Aura::HandlePeriodicTriggerSpellWithValue(bool apply, bool Real)
+void Aura::HandlePeriodicTriggerSpellWithValue(bool apply, bool /*Real*/)
 {
     if (m_periodicTimer <= 0)
         m_periodicTimer += m_modifier.periodictime;
@@ -4505,7 +4503,7 @@ void Aura::HandleModSpellDamagePercentFromAttackPower(bool /*apply*/, bool /*Rea
     m_target->ToPlayer()->UpdateSpellDamageAndHealingBonus();
 }
 
-void Aura::HandleModSpellHealingPercentFromAttackPower(bool /*apply*/, bool Real)
+void Aura::HandleModSpellHealingPercentFromAttackPower(bool /*apply*/, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -4721,7 +4719,7 @@ void Aura::HandleModManaRegen(bool /*apply*/, bool Real)
     m_target->ToPlayer()->UpdateManaRegen();
 }
 
-void Aura::HandleComprehendLanguage(bool apply, bool Real)
+void Aura::HandleComprehendLanguage(bool apply, bool /*Real*/)
 {
     if (apply)
         m_target->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_COMPREHEND_LANG);
@@ -4749,7 +4747,7 @@ void Aura::HandleAuraModIncreaseHealth(bool apply, bool Real)
     }
 }
 
-void  Aura::HandleAuraModIncreaseMaxHealth(bool apply, bool Real)
+void  Aura::HandleAuraModIncreaseMaxHealth(bool apply, bool /*Real*/)
 {
     uint32 oldhealth = m_target->GetHealth();
     double healthPercentage = (double)oldhealth / (double)m_target->GetMaxHealth();
@@ -5348,7 +5346,7 @@ void Aura::HandleShapeshiftBoosts(bool apply)
     }
 }
 
-void Aura::HandleAuraEmpathy(bool apply, bool Real)
+void Aura::HandleAuraEmpathy(bool apply, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_UNIT)
         return;
@@ -5366,7 +5364,7 @@ void Aura::HandleAuraUntrackable(bool apply, bool /*Real*/)
         m_target->RemoveByteFlag(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_UNTRACKABLE);
 }
 
-void Aura::HandleAuraModPacify(bool apply, bool Real)
+void Aura::HandleAuraModPacify(bool apply, bool /*Real*/)
 {
     if (m_target->GetTypeId() != TYPEID_PLAYER)
         return;
@@ -5558,12 +5556,12 @@ void Aura::CleanupTriggeredSpells()
     // needed for spell 43680, maybe others
     // TODO: is there a spell flag, which can solve this in a more sophisticated way?
     if (m_spellProto->EffectApplyAuraName[GetEffIndex()] == SPELL_AURA_PERIODIC_TRIGGER_SPELL &&
-            GetSpellDuration(m_spellProto) == m_spellProto->EffectAmplitude[GetEffIndex()])
+        uint32(GetSpellDuration(m_spellProto)) == m_spellProto->EffectAmplitude[GetEffIndex()])
         return;
     m_target->RemoveAurasDueToSpell(tSpellId);
 }
 
-void Aura::HandleAuraPowerBurn(bool apply, bool Real)
+void Aura::HandleAuraPowerBurn(bool apply, bool /*Real*/)
 {
     if (m_periodicTimer <= 0)
         m_periodicTimer += m_modifier.periodictime;

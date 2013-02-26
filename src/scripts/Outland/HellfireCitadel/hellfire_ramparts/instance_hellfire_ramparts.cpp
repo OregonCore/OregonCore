@@ -50,9 +50,9 @@ struct instance_ramparts : public ScriptedInstance
         return false;
     }
 
-    void OnCreatureCreate(Creature* pCreature, bool /*add*/) { }
+    void OnCreatureCreate(Creature* /*pCreature*/, bool /*add*/) { }
 
-    void OnGameObjectCreate(GameObject* pGo, bool add) { }
+    void OnGameObjectCreate(GameObject* /*pGo*/, bool /*add*/) { }
 
     Player* GetPlayerInMap()
     {
@@ -107,7 +107,7 @@ struct instance_ramparts : public ScriptedInstance
         return false;
     }
 
-    uint64 GetData64(uint32 identifier)
+    uint64 GetData64(uint32 /*identifier*/)
     {
         return 0;
     }

@@ -855,6 +855,7 @@ bool IsSingleTargetSpell(SpellEntry const *spellInfo)
     {
         case SPELL_JUDGEMENT:
             return true;
+        default:break;
     }
 
     // single target triggered spell.
@@ -883,6 +884,7 @@ bool IsSingleTargetSpells(SpellEntry const *spellInfo1, SpellEntry const *spellI
         case SPELL_MAGE_POLYMORPH:
             if (GetSpellSpecific(spellInfo2->Id) == spec1)
                 return true;
+        default:
             break;
     }
 
@@ -1072,10 +1074,10 @@ void SpellMgr::LoadSpellAffects()
             continue;
         }
 
-        if (spellInfo->Effect[effectId] != SPELL_EFFECT_APPLY_AURA ||
-            spellInfo->EffectApplyAuraName[effectId] != SPELL_AURA_ADD_FLAT_MODIFIER &&
-            spellInfo->EffectApplyAuraName[effectId] != SPELL_AURA_ADD_PCT_MODIFIER  &&
-            spellInfo->EffectApplyAuraName[effectId] != SPELL_AURA_ADD_TARGET_TRIGGER)
+        if ((spellInfo->Effect[effectId]              != SPELL_EFFECT_APPLY_AURA) ||
+            (spellInfo->EffectApplyAuraName[effectId] != SPELL_AURA_ADD_FLAT_MODIFIER &&
+             spellInfo->EffectApplyAuraName[effectId] != SPELL_AURA_ADD_PCT_MODIFIER  &&
+             spellInfo->EffectApplyAuraName[effectId] != SPELL_AURA_ADD_TARGET_TRIGGER))
         {
             sLog.outErrorDb("Spell %u listed in spell_affect does not have SPELL_AURA_ADD_FLAT_MODIFIER (%u) or SPELL_AURA_ADD_PCT_MODIFIER (%u) or SPELL_AURA_ADD_TARGET_TRIGGER (%u) for effect index (%u)", entry,SPELL_AURA_ADD_FLAT_MODIFIER,SPELL_AURA_ADD_PCT_MODIFIER,SPELL_AURA_ADD_TARGET_TRIGGER,effectId);
             continue;
@@ -1720,7 +1722,7 @@ void SpellMgr::LoadSpellRequired()
 
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT spell_id, req_spell from spell_required");
 
-    if (result == NULL)
+    if (!result)
     {
         barGoLink bar(1);
         bar.step();
@@ -2473,7 +2475,7 @@ void SpellMgr::LoadSpellCustomAttr()
             break;
         case 32727: // Arena Preparation - remove invisibility aura
         case 44949: // Whirlwind's offhand attack - TODO: remove this (50% weapon damage effect)
-            spellInfo->Effect[1] = NULL;
+            spellInfo->Effect[1] = 0;
             break;
         case 12723: // Sweeping Strikes proc
             mSpellCustomAttr[i] |= SPELL_ATTR_CU_IGNORE_ARMOR;
@@ -2972,6 +2974,7 @@ bool IsDiminishingReturnsGroupDurationLimited(DiminishingGroup group)
         case DIMINISHING_BANISH:
         case DIMINISHING_LIMITONLY:
             return true;
+        default:break;
     }
     return false;
 }
@@ -2999,6 +3002,7 @@ DiminishingReturnsType GetDiminishingReturnsGroupType(DiminishingGroup group)
         case DIMINISHING_KNOCKOUT:
         case DIMINISHING_UNSTABLE_AFFLICTION:
             return DRTYPE_PLAYER;
+        default:break;
     }
 
     return DRTYPE_NONE;

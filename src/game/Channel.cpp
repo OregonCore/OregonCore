@@ -23,7 +23,7 @@
 #include "World.h"
 
 Channel::Channel(const std::string& name, uint32 channel_id)
- : m_name(name), m_announce(true), m_moderate(false), m_channelId(channel_id), m_ownerGUID(0), m_password(""), m_flags(0)
+ : m_name(name), m_announce(true), m_moderate(false), m_password(""), m_flags(0), m_channelId(channel_id), m_ownerGUID(0)
 {
     // set special flags if built-in channel
     ChatChannelsEntry const* ch = GetChannelEntryFor(channel_id);
@@ -457,7 +457,7 @@ void Channel::List(Player* player)
 
             // PLAYER can't see MODERATOR, GAME MASTER, ADMINISTRATOR characters
             // MODERATOR, GAME MASTER, ADMINISTRATOR can see all
-            if (plr && (plr->GetSession()->GetSecurity() == SEC_PLAYER || gmInWhoList && plr->IsVisibleGloballyFor(player)))
+            if (plr && (plr->GetSession()->GetSecurity() == SEC_PLAYER || (gmInWhoList && plr->IsVisibleGloballyFor(player))))
             {
                 data << uint64(i->first);
                 data << uint8(i->second.flags);             // flags seems to be changed...

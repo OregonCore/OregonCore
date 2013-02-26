@@ -61,7 +61,7 @@ struct instance_sethekk_halls : public ScriptedInstance
 
     void Initialize()
     {
-        IkissDoorGUID = NULL;
+        IkissDoorGUID = 0;
         SummonLakka = false;
 
         for (uint8 i = 0; i < ENCOUNTERS; i++)

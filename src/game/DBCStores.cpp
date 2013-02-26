@@ -42,9 +42,9 @@ struct WMOAreaTableTripple
     }
 
     // ordered by entropy; that way memcmp will have a minimal medium runtime
-    int32 groupId;
     int32 rootId;
     int32 adtId;
+    int32 groupId;
 };
 
 typedef std::map<WMOAreaTableTripple, WMOAreaTableEntry const *> WMOAreaInfoByTripple;
@@ -157,7 +157,7 @@ typedef std::list<std::string> StoreProblemList;
 
 bool IsAcceptableClientBuild(uint32 build)
 {
-    int accepted_versions[] = EXPECTED_OREGONCORE_CLIENT_BUILD;
+    uint32 accepted_versions[] = EXPECTED_OREGONCORE_CLIENT_BUILD;
     for (int i = 0; accepted_versions[i]; ++i)
         if (build == accepted_versions[i])
             return true;

@@ -2105,7 +2105,7 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
             return false;
         }
 
-        char* FactionName;
+        const char* FactionName;
         for (FactionStateList::const_iterator itr = target->m_factions.begin(); itr != target->m_factions.end(); ++itr)
         {
             FactionEntry const *factionEntry = sFactionStore.LookupEntry(itr->second.ID);
@@ -2877,7 +2877,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
                 return false;
             }
 
-            sLog.outDebug("DEBUG: UPDATE waypoint_data SET wpguid = '%u");
+            sLog.outDebug("DEBUG: UPDATE waypoint_data SET wpguid = '%u'", wpCreature->GetGUIDLow());
             // set "wpguid" column to the visual waypoint
             WorldDatabase.PExecuteLog("UPDATE waypoint_data SET wpguid = '%u' WHERE id = '%u' and point = '%u'", wpCreature->GetGUIDLow(), pathid, point);
 
@@ -3121,8 +3121,8 @@ bool ChatHandler::HandleLookupFactionCommand(const char* args)
                 if (repItr != target->m_factions.end())
                     repState = &repItr->second;
             }
-
-            int loc = m_session ? m_session->GetSessionDbcLocale() : sWorld.GetDefaultDbcLocale();
+            
+            int loc = m_session ? int(m_session->GetSessionDbcLocale()) : sWorld.GetDefaultDbcLocale();
             std::string name = factionEntry->name[loc];
             if (name.empty())
                 continue;
@@ -3395,7 +3395,7 @@ bool ChatHandler::HandleEventStartCommand(const char* args)
 
     GameEventMgr::GameEventDataMap const& events = gameeventmgr.GetEventMap();
 
-    if (event_id < 1 || event_id >=events.size())
+    if (event_id < 1 || uint32(event_id) >=events.size())
     {
         SendSysMessage(LANG_EVENT_NOT_EXIST);
         SetSentErrorMessage(true);
@@ -3436,7 +3436,7 @@ bool ChatHandler::HandleEventStopCommand(const char* args)
 
     GameEventMgr::GameEventDataMap const& events = gameeventmgr.GetEventMap();
 
-    if (event_id < 1 || event_id >=events.size())
+    if (event_id < 1 || uint32(event_id) >=events.size())
     {
         SendSysMessage(LANG_EVENT_NOT_EXIST);
         SetSentErrorMessage(true);
@@ -3975,7 +3975,7 @@ bool ChatHandler::HandleTempGameObjectCommand(const char* args)
     Player *chr = m_session->GetPlayer();
 
     char* spawntime = strtok(NULL, " ");
-    uint32 spawntm;
+    uint32 spawntm = 0;
 
     if (spawntime)
         spawntm = atoi((char*)spawntime);
@@ -4008,7 +4008,7 @@ bool ChatHandler::HandleNpcAddFormationCommand(const char* args)
     uint32 leaderGUID = (uint32) atoi(ldrGUID);
         
     char* cmt = strtok(NULL, "");
-    char* commentText = "";
+    const char* commentText = "";
 
     if (cmt)
         commentText = extractQuotedArg(cmt);
@@ -4127,7 +4127,7 @@ bool ChatHandler::HandleNpcAddGroupCommand(const char* args)
     uint32 leaderGUID = (uint32) atoi(ldrGUID);
     
     char* cmt = strtok(NULL, "");
-    char* commentText = "";
+    const char* commentText = "";
 
     if (cmt)
         commentText = extractQuotedArg(cmt);
@@ -4230,7 +4230,7 @@ bool ChatHandler::HandleNpcSetLinkCommand(const char* args)
 
     if (!pCreature->GetDBTableGUIDLow())
     {
-        PSendSysMessage("Selected creature isn't in creature table", pCreature->GetGUIDLow());
+        PSendSysMessage("Selected creature (GUID: %u) isn't in creature table", pCreature->GetGUIDLow());
         SetSentErrorMessage(true);
         return false;
     }
@@ -4451,7 +4451,7 @@ bool ChatHandler::HandleTitlesSetMaskCommand(const char* args)
     return true;
 }
 
-bool ChatHandler::HandleCharacterTitlesCommand(const char* args)
+bool ChatHandler::HandleCharacterTitlesCommand(const char* /*args*/)
 {
 
     Player * target = getSelectedPlayer();

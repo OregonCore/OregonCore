@@ -72,9 +72,9 @@ class MapUpdateRequest : public ACE_Method_Request
 };
 
 MapUpdater::MapUpdater() :
-m_mutex(),
-m_condition(m_mutex),
 m_executor(),
+m_condition(m_mutex),
+m_mutex(),
 pedning_requests(0)
 {
     return;

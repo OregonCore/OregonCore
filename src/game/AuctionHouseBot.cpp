@@ -385,7 +385,7 @@ void AuctionHouseBot::addNewAuctions(Player *AHBplayer, AHBConfig *config)
                 break;
             }
 
-            if ((prototype->Quality >= 0) && (prototype->Quality <= AHB_MAX_QUALITY))
+            if (prototype->Quality <= AHB_MAX_QUALITY)
             {
                 if (config->GetMaxStack(prototype->Quality) > 1 && item->GetMaxStackCount() > 1)
                     stackCount = urand(1, minValue(item->GetMaxStackCount(), config->GetMaxStack(prototype->Quality)));
@@ -572,7 +572,7 @@ void AuctionHouseBot::addNewAuctionBuyerBotBid(Player *AHBplayer, AHBConfig *con
         {
         case 0:
             {
-                if ((prototype->Quality >= 0) && (prototype->Quality <= AHB_MAX_QUALITY))
+                if ((prototype->Quality <= AHB_MAX_QUALITY))
                 {
                     if (currentprice < prototype->SellPrice * pItem->GetCount() * config->GetBuyerPrice(prototype->Quality))
                         bidMax = prototype->SellPrice * pItem->GetCount() * config->GetBuyerPrice(prototype->Quality);
@@ -587,7 +587,7 @@ void AuctionHouseBot::addNewAuctionBuyerBotBid(Player *AHBplayer, AHBConfig *con
             }
         case 1:
             {
-                if ((prototype->Quality >= 0) && (prototype->Quality <= AHB_MAX_QUALITY))
+                if ((prototype->Quality <= AHB_MAX_QUALITY))
                 {
                     if (currentprice < prototype->BuyPrice * pItem->GetCount() * config->GetBuyerPrice(prototype->Quality))
                         bidMax = prototype->BuyPrice * pItem->GetCount() * config->GetBuyerPrice(prototype->Quality);
@@ -640,10 +640,10 @@ void AuctionHouseBot::addNewAuctionBuyerBotBid(Player *AHBplayer, AHBConfig *con
             sLog.outString("AHBuyer: Current Bid: %u", currentprice);
             sLog.outString("AHBuyer: Buyout: %u", auction->buyout);
             sLog.outString("AHBuyer: Deposit: %u", auction->deposit);
-            sLog.outString("AHBuyer: Expire Time: %u", auction->expire_time);
+            sLog.outString("AHBuyer: Expire Time: %u", uint32(auction->expire_time));
             sLog.outString("AHBuyer: Bid Rate: %f", bidrate);
-            sLog.outString("AHBuyer: Bid Max: %f", bidMax);
-            sLog.outString("AHBuyer: Bid Value: %f", bidvalue);
+            sLog.outString("AHBuyer: Bid Max: %Lf", bidMax);
+            sLog.outString("AHBuyer: Bid Value: %Lf", bidvalue);
             sLog.outString("AHBuyer: Bid Price: %u", bidprice);
             sLog.outString("AHBuyer: Item GUID: %u", auction->item_guidlow);
             sLog.outString("AHBuyer: Item Template: %u", auction->item_template);
@@ -843,7 +843,7 @@ void AuctionHouseBot::Initialize()
         QueryResult_AutoPtr results = QueryResult_AutoPtr(NULL);
         char npcQuery[] = "SELECT distinct item FROM npc_vendor";
         results = WorldDatabase.Query(npcQuery);
-        if (results != NULL)
+        if (results)
         {
             do
             {
@@ -868,7 +868,7 @@ void AuctionHouseBot::Initialize()
             "SELECT item FROM skinning_loot_template";
 
         results = WorldDatabase.Query(lootQuery);
-        if (results != NULL)
+        if (results)
         {
             do
             {
@@ -928,7 +928,7 @@ void AuctionHouseBot::Initialize()
                 break;
             }
 
-            if ((prototype->Quality < 0) || (prototype->Quality > 6))
+            if (prototype->Quality > 6)
                 continue;
 
             if ((Vendor_Items == 0) && !(prototype->Class == ITEM_CLASS_TRADE_GOODS))

@@ -197,7 +197,7 @@ float ethereum_NPC[2][7] =
  {22810,22811,22812,22813,22814,22815,0}      // fiendly npc (need script in acid ? only to cast spell reputation reward)
 };
 
-bool GOHello_go_ethereum_prison(Player *pPlayer, GameObject *pGO)
+bool GOHello_go_ethereum_prison(Player* /*pPlayer*/, GameObject *pGO)
 {
     pGO->SetGoState(GO_STATE_ACTIVE);
     switch(rand()%2)

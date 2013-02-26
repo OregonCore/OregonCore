@@ -107,7 +107,7 @@ struct boss_twinemperorsAI : public ScriptedAI
         }
     }
 
-    void DamageTaken(Unit *done_by, uint32 &damage)
+    void DamageTaken(Unit* /*done_by*/, uint32 &damage)
     {
         Unit *pOtherBoss = GetOtherBoss();
         if (pOtherBoss)
@@ -124,7 +124,7 @@ struct boss_twinemperorsAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         Creature *pOtherBoss = GetOtherBoss();
         if (pOtherBoss)
@@ -138,7 +138,7 @@ struct boss_twinemperorsAI : public ScriptedAI
             DoPlaySoundToSet(me, IAmVeklor() ? SOUND_VL_DEATH : SOUND_VN_DEATH);
     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoPlaySoundToSet(me, IAmVeklor() ? SOUND_VL_KILL : SOUND_VN_KILL);
     }

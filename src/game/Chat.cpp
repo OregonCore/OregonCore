@@ -706,8 +706,8 @@ ChatCommand * ChatHandler::getCommandTable()
                         for (uint32 j = 0; ptable[j].Name != NULL; j++)
                         {
                             // first case for "" named subcommand
-                            if (ptable[j].Name[0] == '\0' && name == commandTable[i].Name ||
-                                name == fmtstring("%s %s", commandTable[i].Name, ptable[j].Name))
+                            if ((ptable[j].Name[0] == '\0' && name == commandTable[i].Name) ||
+                                (name == fmtstring("%s %s", commandTable[i].Name, ptable[j].Name)))
                             {
                                 ptable[j].SecurityLevel = (uint16)fields[1].GetUInt16();
                                 ptable[j].Help = fields[2].GetCppString();
@@ -1001,11 +1001,11 @@ valid examples:
     std::istringstream reader(message);
     char buffer[256];
 
-    uint32 color;
+    uint32 color = 0;
 
     ItemPrototype const* linkedItem;
     Quest const* linkedQuest;
-    SpellEntry const *linkedSpell;
+    SpellEntry const *linkedSpell = NULL;
 
     while (!reader.eof())
     {
@@ -1133,7 +1133,7 @@ valid examples:
                     char c = reader.peek();
 
                     // ignore enchants etc.
-                    while (c >='0' && c <='9' || c == ':')
+                    while ((c >='0' && c <='9') || c == ':')
                     {
                         reader.ignore(1);
                         c = reader.peek();

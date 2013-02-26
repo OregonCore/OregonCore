@@ -81,7 +81,7 @@ struct mob_aquementasAI : public ScriptedAI
             !CAST_PLR(receiver)->HasItemCount(11522,1,true))
         {
             ItemPosCountVec dest;
-            uint8 msg = CAST_PLR(receiver)->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 11522, 1, false);
+            uint8 msg = CAST_PLR(receiver)->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 11522, 1, 0);
             if (msg == EQUIP_ERR_OK)
                 CAST_PLR(receiver)->StoreNewItem(dest, 11522, 1, true);
         }
@@ -456,7 +456,7 @@ CreatureAI* GetAI_npc_OOX17(Creature* pCreature)
 #define PATH_ENTRY_4       2093
 #define PATH_ENTRY_5       2094
 
-bool GOHello_go_landmark_treasure(Player *player, GameObject* _GO)
+bool GOHello_go_landmark_treasure(Player *player, GameObject* /*_GO*/)
 {
     if (player->GetQuestStatus(QUEST_CUERGOS_GOLD) != QUEST_STATUS_INCOMPLETE)
         return false;

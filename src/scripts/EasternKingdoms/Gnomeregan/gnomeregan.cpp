@@ -154,11 +154,11 @@ struct npc_blastmaster_emi_shortfuseAI : public npc_escortAI
        {
             if (pInstance)
                 if (GameObject* pGo = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GO_CAVE_IN_RIGHT)))
-                    pInstance->HandleGameObject(NULL,false,pGo);
+                    pInstance->HandleGameObject(0LL,false,pGo);
        }else
             if (pInstance)
                 if (GameObject* pGo = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GO_CAVE_IN_LEFT)))
-                    pInstance->HandleGameObject(NULL,false,pGo);
+                    pInstance->HandleGameObject(0LL,false,pGo);
     }
 
     void SetInFace(bool bBool)
@@ -181,10 +181,10 @@ struct npc_blastmaster_emi_shortfuseAI : public npc_escortAI
             return;
 
         if (GameObject* pGo = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GO_CAVE_IN_RIGHT)))
-            pInstance->HandleGameObject(NULL,false,pGo);
+            pInstance->HandleGameObject(0LL,false,pGo);
 
         if (GameObject* pGo = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GO_CAVE_IN_LEFT)))
-            pInstance->HandleGameObject(NULL,false,pGo);
+            pInstance->HandleGameObject(0LL,false,pGo);
 
         if (!GoSummonList.empty())
             for (std::list<uint64>::const_iterator itr = GoSummonList.begin(); itr != GoSummonList.end(); ++itr)
@@ -410,7 +410,7 @@ struct npc_blastmaster_emi_shortfuseAI : public npc_escortAI
                         Summon(1);
                         if (pInstance)
                             if (GameObject* pGo = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GO_CAVE_IN_RIGHT)))
-                                pInstance->HandleGameObject(NULL,true,pGo);
+                                pInstance->HandleGameObject(0LL,true,pGo);
                         NextStep(3000,true);
                         break;
                     case 7:
@@ -456,7 +456,7 @@ struct npc_blastmaster_emi_shortfuseAI : public npc_escortAI
                         SetInFace(false);
                         if (pInstance)
                             if (GameObject* pGo = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GO_CAVE_IN_LEFT)))
-                                pInstance->HandleGameObject(NULL,true,pGo);
+                                pInstance->HandleGameObject(0LL,true,pGo);
                         NextStep(2000,true);
                         break;
                     case 17:

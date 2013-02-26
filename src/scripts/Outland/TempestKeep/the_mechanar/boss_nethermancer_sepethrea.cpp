@@ -84,7 +84,7 @@ struct boss_nethermancer_sepethreaAI : public ScriptedAI
         DoScriptText(SAY_SUMMON, me);
     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit* /*victim*/)
     {
         switch(rand()%2)
         {
@@ -93,7 +93,7 @@ struct boss_nethermancer_sepethreaAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_DEATH, me);
 
@@ -193,7 +193,7 @@ struct mob_ragin_flamesAI : public ScriptedAI
         me->SetSpeed(MOVE_RUN, HeroicMode ? 0.7f : 0.5f);
     }
 
-    void EnterCombat(Unit* who)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 

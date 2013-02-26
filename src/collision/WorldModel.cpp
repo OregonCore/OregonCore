@@ -147,11 +147,11 @@ namespace VMAP
     bool WmoLiquid::GetLiquidHeight(const Vector3 &pos, float &liqHeight) const
     {
         float tx_f = (pos.x - iCorner.x)/LIQUID_TILE_SIZE;
-        uint32 tx = uint32(tx_f);
-        if (tx<0 || tx >= iTilesX) return false;
+        int32 tx = int32(tx_f);
+        if (tx<0 || tx >= int32(iTilesX)) return false;
         float ty_f = (pos.y - iCorner.y)/LIQUID_TILE_SIZE;
-        uint32 ty = uint32(ty_f);
-        if (ty<0 || ty >= iTilesY) return false;
+        int32 ty = int32(ty_f);
+        if (ty<0 || ty >= int32(iTilesY)) return false;
 
         // check if tile shall be used for liquid level
         // checking for 0x08 *might* be enough, but disabled tiles always are 0x?F:
@@ -341,7 +341,7 @@ namespace VMAP
     {
         GModelRayCallback(const std::vector<MeshTriangle> &tris, const std::vector<Vector3> &vert):
             vertices(vert.begin()), triangles(tris.begin()), hit(false) {}
-        bool operator()(const G3D::Ray& ray, uint32 entry, float& distance, bool pStopAtFirstHit)
+        bool operator()(const G3D::Ray& ray, uint32 entry, float& distance, bool /*pStopAtFirstHit*/)
         {
             bool result = IntersectTriangle(triangles[entry], vertices, ray, distance);
             if (result)  hit=true;

@@ -498,8 +498,7 @@ struct boss_lady_vashjAI : public ScriptedAI
             //EnchantedElemental_Timer
             if (EnchantedElemental_Timer <= diff)
             {
-                Creature *Elemental;
-                Elemental = me->SummonCreature(ENCHANTED_ELEMENTAL, ElementPos[EnchantedElemental_Pos][0], ElementPos[EnchantedElemental_Pos][1], ElementPos[EnchantedElemental_Pos][2], ElementPos[EnchantedElemental_Pos][3], TEMPSUMMON_CORPSE_DESPAWN, 0);
+                me->SummonCreature(ENCHANTED_ELEMENTAL, ElementPos[EnchantedElemental_Pos][0], ElementPos[EnchantedElemental_Pos][1], ElementPos[EnchantedElemental_Pos][2], ElementPos[EnchantedElemental_Pos][3], TEMPSUMMON_CORPSE_DESPAWN, 0);
 
                 if (EnchantedElemental_Pos == 7)
                     EnchantedElemental_Pos = 0;
@@ -512,9 +511,8 @@ struct boss_lady_vashjAI : public ScriptedAI
             //TaintedElemental_Timer
             if (TaintedElemental_Timer <= diff)
             {
-                Creature *Tain_Elemental;
                 uint32 pos = rand()%8;
-                Tain_Elemental = me->SummonCreature(TAINTED_ELEMENTAL, ElementPos[pos][0], ElementPos[pos][1], ElementPos[pos][2], ElementPos[pos][3], TEMPSUMMON_DEAD_DESPAWN, 0);
+                me->SummonCreature(TAINTED_ELEMENTAL, ElementPos[pos][0], ElementPos[pos][1], ElementPos[pos][2], ElementPos[pos][3], TEMPSUMMON_DEAD_DESPAWN, 0);
 
                 TaintedElemental_Timer = 120000;
             } else TaintedElemental_Timer -= diff;
@@ -886,7 +884,7 @@ struct mob_coilfang_striderAI : public ScriptedAI
         Blast_Timer = 8000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit *)
     {
         DoCast(me,SPELL_PANIC,true);
     }

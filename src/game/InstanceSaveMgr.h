@@ -102,13 +102,13 @@ class InstanceSave
         /* the only reason the instSave-object links are kept is because
            the object-instSave links need to be broken at reset time
            TODO: maybe it's enough to just store the number of players/groups */
-        PlayerListType m_playerList;
-        GroupListType m_groupList;
-        time_t m_resetTime;
-        uint32 m_instanceid;
         uint16 m_mapid;
+        uint32 m_instanceid;
+        time_t m_resetTime;
         uint8 m_difficulty;
         bool m_canReset;
+        PlayerListType m_playerList;
+        GroupListType m_groupList;
 };
 
 class InstanceSaveManager : public Oregon::Singleton<InstanceSaveManager, Oregon::ClassLevelLockable<InstanceSaveManager, ACE_Thread_Mutex> >

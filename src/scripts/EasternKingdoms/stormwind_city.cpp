@@ -88,7 +88,7 @@ struct npc_bartlebyAI : public ScriptedAI
         PlayerGUID = 0;
     }
 
-    void JustDied(Unit *who)
+    void JustDied(Unit *)
     {
         me->setFaction(11);
     }
@@ -580,7 +580,7 @@ struct npc_marzon_silent_bladeAI : public ScriptedAI
         me->RestoreFaction();
     }
 
-    void EnterCombat(Unit* pWho)
+    void EnterCombat(Unit*)
     {
         DoScriptText(SAY_MARZON_2, me);
     }

@@ -68,9 +68,9 @@ struct mob_naga_distillerAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit *who) { }
+    void EnterCombat(Unit* /*who*/) { }
 
-    void StartRageGen(Unit *caster)
+    void StartRageGen(Unit* /*caster*/)
     {
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -81,7 +81,7 @@ struct mob_naga_distillerAI : public ScriptedAI
             pInstance->SetData(TYPE_DISTILLER,IN_PROGRESS);
     }
 
-    void DamageTaken(Unit *done_by, uint32 &damage)
+    void DamageTaken(Unit* /*done_by*/, uint32 &damage)
     {
         if (me->GetHealth() <= damage)
             if (pInstance)
@@ -114,7 +114,7 @@ struct boss_warlord_kalithreshAI : public ScriptedAI
             pInstance->SetData(TYPE_WARLORD_KALITHRESH, NOT_STARTED);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
         switch(rand()%3)
         {
@@ -127,7 +127,7 @@ struct boss_warlord_kalithreshAI : public ScriptedAI
             pInstance->SetData(TYPE_WARLORD_KALITHRESH, IN_PROGRESS);
     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit* /*victim*/)
     {
         switch(rand()%2)
         {
@@ -153,16 +153,16 @@ struct boss_warlord_kalithreshAI : public ScriptedAI
         return pCreature;
     }
 
-    void SpellHit(Unit *caster, const SpellEntry *spell)
+    void SpellHit(Unit* /*caster*/, const SpellEntry *spell)
     {
-        //hack :(
+        //FIXME: hack :(
         if (spell->Id == SPELL_WARLORDS_RAGE_PROC)
             if (pInstance)
                 if (pInstance->GetData(TYPE_DISTILLER) == DONE)
                     me->RemoveAurasDueToSpell(SPELL_WARLORDS_RAGE_PROC);
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_DEATH, me);
 

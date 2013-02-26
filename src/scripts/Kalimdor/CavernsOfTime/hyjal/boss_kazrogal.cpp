@@ -81,7 +81,7 @@ struct boss_kazrogalAI : public hyjal_trashAI
         if (pInstance && IsEvent)
             pInstance->SetData(DATA_KAZROGALEVENT, IN_PROGRESS);
         DoPlaySoundToSet(me, SOUND_ONAGGRO);
-        me->MonsterYell(SAY_ONAGGRO, LANG_UNIVERSAL, NULL);
+        me->MonsterYell(SAY_ONAGGRO, LANG_UNIVERSAL, 0);
     }
 
     void KilledUnit(Unit * /*victim*/)
@@ -90,15 +90,15 @@ struct boss_kazrogalAI : public hyjal_trashAI
         {
             case 0:
                 DoPlaySoundToSet(me, SOUND_ONSLAY1);
-                me->MonsterYell(SAY_ONSLAY1, LANG_UNIVERSAL, NULL);
+                me->MonsterYell(SAY_ONSLAY1, LANG_UNIVERSAL, 0);
                 break;
             case 1:
                 DoPlaySoundToSet(me, SOUND_ONSLAY2);
-                me->MonsterYell(SAY_ONSLAY2, LANG_UNIVERSAL, NULL);
+                me->MonsterYell(SAY_ONSLAY2, LANG_UNIVERSAL, 0);
                 break;
             case 2:
                 DoPlaySoundToSet(me, SOUND_ONSLAY3);
-                me->MonsterYell(SAY_ONSLAY3, LANG_UNIVERSAL, NULL);
+                me->MonsterYell(SAY_ONSLAY3, LANG_UNIVERSAL, 0);
                 break;
         }
     }
@@ -187,11 +187,11 @@ struct boss_kazrogalAI : public hyjal_trashAI
             {
                 case 0:
                     DoPlaySoundToSet(me, SOUND_MARK1);
-                    me->MonsterYell(SAY_MARK1, LANG_UNIVERSAL, NULL);
+                    me->MonsterYell(SAY_MARK1, LANG_UNIVERSAL, 0);
                     break;
                 case 1:
                     DoPlaySoundToSet(me, SOUND_MARK2);
-                    me->MonsterYell(SAY_MARK2, LANG_UNIVERSAL, NULL);
+                    me->MonsterYell(SAY_MARK2, LANG_UNIVERSAL, 0);
                     break;
             }
         } else MarkTimer -= diff;
