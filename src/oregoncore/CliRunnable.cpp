@@ -683,6 +683,9 @@ void CliRunnable::run()
     if (sConfig.GetBoolDefault("BeepAtStart", true))
         printf("\a");                                       // \a = Alert
 
+    #if PLATFORM == PLATFORM_WINDOWS
+    char commnadbuf[256];
+    #endif
     // print this here the first time
     // later it will be printed after command queue updates
     printf("Oregon>");
