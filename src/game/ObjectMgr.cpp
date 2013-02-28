@@ -405,7 +405,7 @@ void ObjectMgr::LoadCreatureLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.Name.size() <= uint32(idx))
+                    if (data.Name.size() <= idx)
                         data.Name.resize(idx+1);
 
                     data.Name[idx] = str;
@@ -417,7 +417,7 @@ void ObjectMgr::LoadCreatureLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.SubName.size() <= uint32(idx))
+                    if (data.SubName.size() <= idx)
                         data.SubName.resize(idx+1);
 
                     data.SubName[idx] = str;
@@ -472,7 +472,7 @@ void ObjectMgr::LoadGossipMenuItemsLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.OptionText.size() <= uint32(idx))
+                    if (data.OptionText.size() <= idx)
                         data.OptionText.resize(idx+1);
 
                     data.OptionText[idx] = str;
@@ -484,7 +484,7 @@ void ObjectMgr::LoadGossipMenuItemsLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.BoxText.size() <= uint32(idx))
+                    if (data.BoxText.size() <= idx)
                         data.BoxText.resize(idx+1);
 
                     data.BoxText[idx] = str;
@@ -500,7 +500,7 @@ void ObjectMgr::LoadGossipMenuItemsLocales()
 struct SQLCreatureLoader : public SQLStorageLoaderBase<SQLCreatureLoader>
 {
     template<class D>
-    void convert_from_str(uint32 /*field_pos*/, char *src, D &dst)
+    void convert_from_str(uint32 field_pos, char *src, D &dst)
     {
         dst = D(objmgr.GetScriptId(src));
     }
@@ -529,7 +529,7 @@ void ObjectMgr::LoadCreatureTemplates()
             CreatureInfo const* heroicInfo = GetCreatureTemplate(cInfo->HeroicEntry);
             if (!heroicInfo)
             {
-                sLog.outErrorDb("Creature (Entry: %u) has heroic_entry=%u but does not exist.",cInfo->Entry,cInfo->HeroicEntry);
+                sLog.outErrorDb("Creature (Entry: %u) has heroic_entry=%u but creature entry %u does not exist.",cInfo->HeroicEntry,cInfo->HeroicEntry);
                 continue;
             }
 
@@ -541,13 +541,13 @@ void ObjectMgr::LoadCreatureTemplates()
 
             if (heroicEntries.find(cInfo->HeroicEntry) != heroicEntries.end())
             {
-                sLog.outErrorDb("Creature (Entry: %i) already listed as heroic for another entry.",cInfo->HeroicEntry);
+                sLog.outErrorDb("Creature (Entry: %u) already listed as heroic for another entry.",cInfo->HeroicEntry);
                 continue;
             }
 
             if (hasHeroicEntries.find(cInfo->HeroicEntry) != hasHeroicEntries.end())
             {
-                sLog.outErrorDb("Creature (Entry: %u) has heroic_entry=%i but creature entry %i also has heroic entry.",i,cInfo->HeroicEntry,cInfo->Entry);
+                sLog.outErrorDb("Creature (Entry: %u) has heroic_entry=%u but creature entry %u also has heroic entry.",i,cInfo->HeroicEntry,cInfo->HeroicEntry);
                 continue;
             }
 
@@ -723,7 +723,7 @@ void ObjectMgr::ConvertCreatureAddonAuras(CreatureDataAddon* addon, char const* 
     const_cast<CreatureDataAddonAura*&>(addon->auras) = new CreatureDataAddonAura[val.size()/2+1];
 
     uint32 i=0;
-    for (uint32 j=0;j<val.size()/2;++j)
+    for (int j=0;j<val.size()/2;++j)
     {
         CreatureDataAddonAura& cAura = const_cast<CreatureDataAddonAura&>(addon->auras[i]);
         cAura.spell_id = (uint32)val[2*j+0];
@@ -1033,7 +1033,7 @@ void ObjectMgr::LoadCreatures()
 
         if (heroicCreatures.find(data.id) != heroicCreatures.end())
         {
-            sLog.outErrorDb("Table creature has creature (GUID: %u) that is listed as heroic template in creature_template_substitution (id: %u), skipped.",guid,data.id);
+            sLog.outErrorDb("Table creature has creature (GUID: %u) that is listed as heroic template in creature_template_substitution, skipped.",guid,data.id);
             continue;
         }
 
@@ -1532,7 +1532,7 @@ void ObjectMgr::LoadItemLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.Name.size() <= uint32(idx))
+                    if (data.Name.size() <= idx)
                         data.Name.resize(idx+1);
 
                     data.Name[idx] = str;
@@ -1545,7 +1545,7 @@ void ObjectMgr::LoadItemLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.Description.size() <= uint32(idx))
+                    if (data.Description.size() <= idx)
                         data.Description.resize(idx+1);
 
                     data.Description[idx] = str;
@@ -1561,7 +1561,7 @@ void ObjectMgr::LoadItemLocales()
 struct SQLItemLoader : public SQLStorageLoaderBase<SQLItemLoader>
 {
     template<class D>
-    void convert_from_str(uint32 /*field_pos*/, char *src, D &dst)
+    void convert_from_str(uint32 field_pos, char *src, D &dst)
     {
         dst = D(objmgr.GetScriptId(src));
     }
@@ -2870,7 +2870,7 @@ void ObjectMgr::LoadQuests()
     //   120            121
         "StartScript, CompleteScript"
         " FROM quest_template");
-    if (result)
+    if (result == NULL)
     {
         barGoLink bar(1);
         bar.step();
@@ -3238,7 +3238,7 @@ void ObjectMgr::LoadQuests()
                     bool found = false;
                     for (int k = 0; k < 3; ++k)
                     {
-                        if ((spellInfo->Effect[k] == SPELL_EFFECT_QUEST_COMPLETE && uint32(spellInfo->EffectMiscValue[k]) == qinfo->QuestId) ||
+                        if (spellInfo->Effect[k] == SPELL_EFFECT_QUEST_COMPLETE && uint32(spellInfo->EffectMiscValue[k]) == qinfo->QuestId ||
                             spellInfo->Effect[k] == SPELL_EFFECT_SEND_EVENT)
                         {
                             found = true;
@@ -3559,7 +3559,7 @@ void ObjectMgr::LoadQuestLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.Title.size() <= uint32(idx))
+                    if (data.Title.size() <= idx)
                         data.Title.resize(idx+1);
 
                     data.Title[idx] = str;
@@ -3571,7 +3571,7 @@ void ObjectMgr::LoadQuestLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.Details.size() <= uint32(idx))
+                    if (data.Details.size() <= idx)
                         data.Details.resize(idx+1);
 
                     data.Details[idx] = str;
@@ -3583,7 +3583,7 @@ void ObjectMgr::LoadQuestLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.Objectives.size() <= uint32(idx))
+                    if (data.Objectives.size() <= idx)
                         data.Objectives.resize(idx+1);
 
                     data.Objectives[idx] = str;
@@ -3595,7 +3595,7 @@ void ObjectMgr::LoadQuestLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.OfferRewardText.size() <= uint32(idx))
+                    if (data.OfferRewardText.size() <= idx)
                         data.OfferRewardText.resize(idx+1);
 
                     data.OfferRewardText[idx] = str;
@@ -3607,7 +3607,7 @@ void ObjectMgr::LoadQuestLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.RequestItemsText.size() <= uint32(idx))
+                    if (data.RequestItemsText.size() <= idx)
                         data.RequestItemsText.resize(idx+1);
 
                     data.RequestItemsText[idx] = str;
@@ -3619,7 +3619,7 @@ void ObjectMgr::LoadQuestLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.EndText.size() <= uint32(idx))
+                    if (data.EndText.size() <= idx)
                         data.EndText.resize(idx+1);
 
                     data.EndText[idx] = str;
@@ -3633,7 +3633,7 @@ void ObjectMgr::LoadQuestLocales()
                     int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                     if (idx >= 0)
                     {
-                        if (data.ObjectiveText[k].size() <= uint32(idx))
+                        if (data.ObjectiveText[k].size() <= idx)
                             data.ObjectiveText[k].resize(idx+1);
 
                         data.ObjectiveText[k][idx] = str;
@@ -4249,7 +4249,7 @@ void ObjectMgr::LoadPageTexts()
                     ss << *itr << " ";
                 ss << "create(s) a circular reference, which can cause the server to freeze. Changing Next_Page of page "
                     << pageItr->Page_ID <<" to 0";
-                sLog.outErrorDb("%s", ss.str().c_str());
+                sLog.outErrorDb(ss.str().c_str());
                 const_cast<PageText*>(pageItr)->Next_Page = 0;
                 break;
             }
@@ -4294,7 +4294,7 @@ void ObjectMgr::LoadPageTextLocales()
             int idx = GetOrNewIndexForLocale(LocaleConstant(i));
             if (idx >= 0)
             {
-                if (data.Text.size() <= uint32(idx))
+                if (data.Text.size() <= idx)
                     data.Text.resize(idx+1);
 
                 data.Text[idx] = str;
@@ -4310,7 +4310,7 @@ void ObjectMgr::LoadPageTextLocales()
 struct SQLInstanceLoader : public SQLStorageLoaderBase<SQLInstanceLoader>
 {
     template<class D>
-    void convert_from_str(uint32 /*field_pos*/, char *src, D &dst)
+    void convert_from_str(uint32 field_pos, char *src, D &dst)
     {
         dst = D(objmgr.GetScriptId(src));
     }
@@ -4483,7 +4483,7 @@ void ObjectMgr::LoadNpcTextLocales()
                     int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                     if (idx >= 0)
                     {
-                        if (data.Text_0[j].size() <= uint32(idx))
+                        if (data.Text_0[j].size() <= idx)
                             data.Text_0[j].resize(idx+1);
 
                         data.Text_0[j][idx] = str0;
@@ -4495,7 +4495,7 @@ void ObjectMgr::LoadNpcTextLocales()
                     int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                     if (idx >= 0)
                     {
-                        if (data.Text_1[j].size() <= uint32(idx))
+                        if (data.Text_1[j].size() <= idx)
                             data.Text_1[j].resize(idx+1);
 
                         data.Text_1[j][idx] = str1;
@@ -4966,7 +4966,7 @@ WorldSafeLocsEntry const *ObjectMgr::GetClosestGraveYard(float x, float y, float
 
     // at entrance map for corpse map
     bool foundEntr = false;
-    float distEntr = 0;
+    float distEntr;
     WorldSafeLocsEntry const* entryEntr = NULL;
 
     // some where other
@@ -4994,8 +4994,8 @@ WorldSafeLocsEntry const *ObjectMgr::GetClosestGraveYard(float x, float y, float
         if (MapId != entry->map_id)
         {
             // if find graveyard at different map from where entrance placed (or no entrance data), use any first
-            if (!mapEntry || mapEntry->entrance_map < 0 || uint32(mapEntry->entrance_map) != entry->map_id ||
-                (mapEntry->entrance_x == 0 && mapEntry->entrance_y == 0))
+            if (!mapEntry || mapEntry->entrance_map < 0 || mapEntry->entrance_map != entry->map_id ||
+                mapEntry->entrance_x == 0 && mapEntry->entrance_y == 0)
             {
                 // not have any corrdinates for check distance anyway
                 entryFar = entry;
@@ -5319,7 +5319,7 @@ AreaTrigger const* ObjectMgr::GetGoBackTrigger(uint32 Map) const
     if (!mapEntry) return NULL;
     for (AreaTriggerMap::const_iterator itr = mAreaTriggers.begin(); itr != mAreaTriggers.end(); ++itr)
     {
-        if (itr->second.target_mapId == uint32(mapEntry->entrance_map))
+        if (itr->second.target_mapId == mapEntry->entrance_map)
         {
             AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(itr->first);
             if (atEntry && atEntry->mapid == Map)
@@ -5562,7 +5562,7 @@ void ObjectMgr::LoadGameObjectLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.Name.size() <= uint32(idx))
+                    if (data.Name.size() <= idx)
                         data.Name.resize(idx+1);
 
                     data.Name[idx] = str;
@@ -5578,7 +5578,7 @@ void ObjectMgr::LoadGameObjectLocales()
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
                 if (idx >= 0)
                 {
-                    if (data.CastBarCaption.size() <= uint32(idx))
+                    if (data.CastBarCaption.size() <= idx)
                         data.CastBarCaption.resize(idx+1);
 
                     data.CastBarCaption[idx] = str;
@@ -6050,19 +6050,19 @@ void ObjectMgr::LoadWeatherZoneChances()
             if (wzc.data[season].rainChance > 100)
             {
                 wzc.data[season].rainChance = 25;
-                sLog.outErrorDb("Weather for zone %u season %u has wrong rain chance > 100%%",zone_id,season);
+                sLog.outErrorDb("Weather for zone %u season %u has wrong rain chance > 100%",zone_id,season);
             }
 
             if (wzc.data[season].snowChance > 100)
             {
                 wzc.data[season].snowChance = 25;
-                sLog.outErrorDb("Weather for zone %u season %u has wrong snow chance > 100%%",zone_id,season);
+                sLog.outErrorDb("Weather for zone %u season %u has wrong snow chance > 100%",zone_id,season);
             }
 
             if (wzc.data[season].stormChance > 100)
             {
                 wzc.data[season].stormChance = 25;
-                sLog.outErrorDb("Weather for zone %u season %u has wrong storm chance > 100%%",zone_id,season);
+                sLog.outErrorDb("Weather for zone %u season %u has wrong storm chance > 100%",zone_id,season);
             }
         }
 
@@ -6415,7 +6415,7 @@ int ObjectMgr::GetIndexForLocale(LocaleConstant loc)
 
 LocaleConstant ObjectMgr::GetLocaleForIndex(int i)
 {
-    if (i<0 || uint32(i)>=m_LocalForIndex.size())
+    if (i<0 || i>=m_LocalForIndex.size())
         return LOCALE_enUS;
 
     return m_LocalForIndex[i];
@@ -6548,7 +6548,7 @@ bool ObjectMgr::LoadOregonStrings(DatabaseType& db, char const* table, int32 min
     // cleanup affected map part for reloading case
     for (OregonStringLocaleMap::iterator itr = mOregonStringLocaleMap.begin(); itr != mOregonStringLocaleMap.end();)
     {
-        if (itr->first >= uint32(start_value) && itr->first < uint32(end_value))
+        if (itr->first >= start_value && itr->first < end_value)
             mOregonStringLocaleMap.erase(itr++);
         else
             ++itr;
@@ -6615,7 +6615,7 @@ bool ObjectMgr::LoadOregonStrings(DatabaseType& db, char const* table, int32 min
                 if (idx >= 0)
                 {
                     // 0 -> default, idx in to idx+1
-                    if (data.Content.size() <= uint32(idx+1))
+                    if (data.Content.size() <= idx+1)
                         data.Content.resize(idx+2);
 
                     data.Content[idx+1] = str;
@@ -6639,7 +6639,7 @@ const char *ObjectMgr::GetOregonString(int32 entry, int locale_idx) const
     // Content[0] always exist if exist OregonStringLocale
     if (OregonStringLocale const *msl = GetOregonStringLocale(entry))
     {
-        if (msl->Content.size() > uint32(locale_idx+1) && !msl->Content[locale_idx+1].empty())
+        if (msl->Content.size() > locale_idx+1 && !msl->Content[locale_idx+1].empty())
             return msl->Content[locale_idx+1].c_str();
         else
             return msl->Content[0].c_str();
@@ -6983,7 +6983,6 @@ bool PlayerCondition::IsValid(ConditionType condition, uint32 value1, uint32 val
             break;
         }
         case CONDITION_INSTANCE_DATA:
-        default:
             //TODO: need some check
             break;
     }
@@ -7811,6 +7810,6 @@ void ObjectMgr::LoadTransportEvents()
     }
     while (result->NextRow());
 
-    sLog.outString("\n>> Loaded %llu transport events \n", result->GetRowCount());
+    sLog.outString("\n>> Loaded %u transport events \n", result->GetRowCount());
 }
 
