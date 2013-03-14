@@ -5757,7 +5757,16 @@ void Aura::PeriodicTick()
             DEBUG_LOG("PeriodicTick: %u (TypeId: %u) attacked %u (TypeId: %u) for %u dmg inflicted by %u abs is %u",
                 GUID_LOPART(GetCasterGUID()), GuidHigh2TypeId(GUID_HIPART(GetCasterGUID())), m_target->GetGUIDLow(), m_target->GetTypeId(), pdamage, GetId(),absorb);
 
-            WorldPacket data(SMSG_PERIODICAURALOG, (21+16));// we guess size
+            Unit* target = m_target;                        // aura can be deleted in DealDamage
+            SpellEntry const* spellProto = GetSpellProto();
+
+            // Set trigger flag
+            uint32 procAttacker = PROC_FLAG_ON_DO_PERIODIC;
+            uint32 procVictim   = PROC_FLAG_ON_TAKE_PERIODIC;
+            uint32 procEx = PROC_EX_INTERNAL_DOT | PROC_EX_NORMAL_HIT;
+            pdamage = (pdamage <= absorb+resist) ? 0 : (pdamage-absorb-resist);
+			
+			WorldPacket data(SMSG_PERIODICAURALOG, (21+16));// we guess size
             data << m_target->GetPackGUID();
             data.appendPackGUID(GetCasterGUID());
             data << uint32(GetId());
@@ -5769,14 +5778,6 @@ void Aura::PeriodicTick()
             data << (uint32)resist;
             m_target->SendMessageToSet(&data,true);
 
-            Unit* target = m_target;                        // aura can be deleted in DealDamage
-            SpellEntry const* spellProto = GetSpellProto();
-
-            // Set trigger flag
-            uint32 procAttacker = PROC_FLAG_ON_DO_PERIODIC;
-            uint32 procVictim   = PROC_FLAG_ON_TAKE_PERIODIC;
-            uint32 procEx = PROC_EX_INTERNAL_DOT | PROC_EX_NORMAL_HIT;
-            pdamage = (pdamage <= absorb+resist) ? 0 : (pdamage-absorb-resist);
             if (pdamage)
                 procVictim|=PROC_FLAG_TAKEN_ANY_DAMAGE;
             pCaster->ProcDamageAndSpell(target, procAttacker, procVictim, procEx, pdamage, BASE_ATTACK, spellProto);
