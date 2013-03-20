@@ -165,6 +165,10 @@ void WorldSession::LogUnprocessedTail(WorldPacket *packet)
         packet->rpos(),packet->wpos());
 }
 
+#if COMPILER == COMPILER_GNU
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
+
 // Update the WorldSession (triggered by World update)
 bool WorldSession::Update(uint32 diff)
 {
@@ -175,10 +179,6 @@ bool WorldSession::Update(uint32 diff)
     /// If necessary, kick the player from the character select screen
     if (IsConnectionIdle())
         m_Socket->CloseSocket();
-
-    #if COMPILER == COMPILER_GNU
-    #pragma GCC diagnostic ignored "-Wuninitialized"
-    #endif
 
     // Retrieve packets from the receive queue and call the appropriate handlers
     // not proccess packets if socket already closed
@@ -257,10 +257,6 @@ bool WorldSession::Update(uint32 diff)
 
         delete packet;
     }
-    
-    #if COMPILER == COMPILER_GNU
-    #pragma GCC diagnostic warning "-Wuninitialized"
-    #endif
 
     if (m_Socket && !m_Socket->IsClosed() && m_Warden)
         m_Warden->Update();
@@ -282,6 +278,10 @@ bool WorldSession::Update(uint32 diff)
 
     return true;
 }
+
+#if COMPILER == COMPILER_GNU
+#pragma GCC diagnostic warning "-Wuninitialized"
+#endif
 
 // Log the player out
 void WorldSession::LogoutPlayer(bool Save)
