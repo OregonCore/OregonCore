@@ -296,12 +296,12 @@ struct instance_blood_furnace : public ScriptedInstance
         OUT_LOAD_INST_DATA_COMPLETE;
     }
 
+#if COMPILER == COMPILER_GNU
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
+
     void DoNextBroggokEventPhase()
     {
-        #if COMPILER == COMPILER_GNU
-        #pragma GCC diagnostic ignored "-Wuninitialized"
-        #endif
-
         float dx, dy;
         GetMovementDistanceForIndex(BroggokEventPhase, dx, dy);
 
@@ -335,11 +335,11 @@ struct instance_blood_furnace : public ScriptedInstance
         }
         BroggokEventTimer = 30000;
         ++BroggokEventPhase;
-
-        #if COMPILER == COMPILER_GNU
-        #pragma GCC diagnostic warning "-Wuninitialized"
-        #endif
     }
+
+#if COMPILER == COMPILER_GNU
+#pragma GCC diagnostic warning "-Wuninitialized"
+#endif
 
     void Update(uint32 diff)
     {
