@@ -684,7 +684,7 @@ void CliRunnable::run()
         printf("\a");                                       // \a = Alert
 
     #if PLATFORM == PLATFORM_WINDOWS
-    char commnandbuf[256];
+    char commandbuf[256];
     #endif
     // print this here the first time
     // later it will be printed after command queue updates
