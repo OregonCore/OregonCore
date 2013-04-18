@@ -1165,9 +1165,9 @@ void WorldSession::HandleSocketOpcode(WorldPacket& recv_data)
     {
         // tried to put gem in socket where no socket exists / tried to put normal gem in meta socket
         // tried to put meta gem in normal socket
-        if ((GemProps[i] && (!itemTarget->GetProto()->Socket[i].Color)) ||
+        if (GemProps[i] && ((!itemTarget->GetProto()->Socket[i].Color) ||
             (itemTarget->GetProto()->Socket[i].Color == SOCKET_COLOR_META && GemProps[i]->color != SOCKET_COLOR_META) ||
-            (itemTarget->GetProto()->Socket[i].Color != SOCKET_COLOR_META && GemProps[i]->color == SOCKET_COLOR_META))
+            (itemTarget->GetProto()->Socket[i].Color != SOCKET_COLOR_META && GemProps[i]->color == SOCKET_COLOR_META)))
             return;
     }
 
