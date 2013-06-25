@@ -6004,8 +6004,18 @@ void Aura::PeriodicTick()
 
             uint32 pdamage;
 
-            if (m_modifier.m_auraname == SPELL_AURA_OBS_MOD_HEALTH)
-                pdamage = uint32(m_target->GetMaxHealth() * amount / 100);
+           if (m_modifier.m_auraname == SPELL_AURA_OBS_MOD_HEALTH)
+           {
+                   float heal = float(uint32(m_target->GetMaxHealth() * amount / 100));
+
+                   // Only reduce auras with SPELL_AURA_OBS_MOD_HEALTH, don't increase them
+                   float minval = pCaster->GetMaxNegativeAuraModifier(SPELL_AURA_MOD_HEALING_PCT);
+                   if (minval)
+                           heal *= (100.0f + minval) / 100.0f;
+
+                   if (heal < 0) heal = 0;
+                   pdamage = heal;
+           }
             else
                 pdamage = pCaster->SpellHealingBonus(GetSpellProto(), amount, DOT, m_target);
 
