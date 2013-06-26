@@ -428,7 +428,9 @@ void GameObject::Update(uint32 diff)
                     for (; it != end; ++it)
                     {
                         if (Unit* owner = Unit::GetUnit(*this, uint64(*it)))
+						{
                             owner->CastSpell(owner, spellId, false);
+						}
                     }
 
                     m_unique_users.clear();
@@ -442,7 +444,10 @@ void GameObject::Update(uint32 diff)
                 SetRespawnTime(0);
                 Delete();
                 return;
-            }
+			} else {
+				SetRespawnTime(GetRespawnDelay());
+				DestroyForNearbyPlayers();
+			}
 
             //burning flags in some battlegrounds, if you find better condition, just add it
             if (GetGoAnimProgress() > 0)
@@ -621,6 +626,8 @@ bool GameObject::LoadFromDB(uint32 guid, Map *map)
     float rotation2 = data->rotation2;
     float rotation3 = data->rotation3;
 
+	uint32 spawnTime = data->spawntimesecs;
+
     uint32 animprogress = data->animprogress;
     GOState go_state = data->go_state;
     uint32 artKit = data->artKit;
@@ -635,11 +642,11 @@ bool GameObject::LoadFromDB(uint32 guid, Map *map)
     {
         m_spawnedByDefault = true;
 
-        if (!GetDespawnPossibility())
+        if (!GetDespawnPossibility() && !GetGOInfo()->IsDespawnAtAction())
         {
             SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
-            m_respawnDelayTime = 0;
-            m_respawnTime = 0;
+			m_respawnDelayTime = 0;
+			m_respawnTime = 0;
         }
         else
         {

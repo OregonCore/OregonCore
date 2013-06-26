@@ -365,6 +365,17 @@ struct GameObjectInfo
     };
     uint32 ScriptId;
 
+	// helpers
+    bool IsDespawnAtAction() const
+    {
+        switch (type)
+        {
+            case GAMEOBJECT_TYPE_CHEST: return chest.consumable;
+            case GAMEOBJECT_TYPE_GOOBER: return goober.consumable;
+            default: return false;
+        }
+	}
+
     uint32 GetCharges() const                               // despawn at uses amount
     {
         switch(type)
