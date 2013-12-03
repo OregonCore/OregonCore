@@ -20368,9 +20368,30 @@ void Player::UpdateAreaDependentAuras(uint32 newArea)
     {
         // use m_zoneUpdateId for speed: UpdateArea called from UpdateZone or instead UpdateZone in both cases m_zoneUpdateId up-to-date
         if (!IsSpellAllowedInLocation(iter->second->GetSpellProto(),GetMapId(),m_zoneUpdateId,newArea))
-            RemoveAura(iter);
+        {
+            for (uint8 i = 0; i < 3; ++i)
+            {
+                if (iter->second->GetSpellProto()->Effect[i] == SPELL_EFFECT_TRIGGER_SPELL && HasAura(iter->second->GetSpellProto()->EffectTriggerSpell[i],0))
+                    RemoveAurasDueToSpell(iter->second->GetSpellProto()->EffectTriggerSpell[i]);
+            }
+            if (spellmgr.GetSpellElixirMask(iter->second->GetSpellProto()->Id) & ELIXIR_SHATTRATH_MASK)        // for shattrath flasks we want only to remove it's triggered effect, not flask itself.
+                iter++;
+            else
+                RemoveAura(iter);
+        }
         else
+        {
+            // reapply bonus for shattrath flask if we are back in allowed location
+            if (spellmgr.GetSpellElixirMask(iter->second->GetSpellProto()->Id) & ELIXIR_SHATTRATH_MASK)
+            {
+                if (iter->second->GetSpellProto()->Effect[1] == SPELL_EFFECT_TRIGGER_SPELL &&  // always true for shattrath flasks, check it anyway
+                        !HasAura(iter->second->GetSpellProto()->EffectTriggerSpell[1],0))
+                {
+                    CastSpell(this, iter->second->GetSpellProto()->EffectTriggerSpell[1], true);
+                }
+            }
             ++iter;
+        }
     }
 
     // unmount if enter in this subzone
