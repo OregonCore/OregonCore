@@ -44,7 +44,7 @@ bool GOHello_go_barrel_old_hillsbrad(Player *, GameObject* _GO)
 
     pInstance->SetData(TYPE_BARREL_DIVERSION, IN_PROGRESS);
 
-    return false;
+    return true;
 }
 
 /*######

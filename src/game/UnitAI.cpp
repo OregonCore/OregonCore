@@ -184,7 +184,7 @@ void UnitAI::SelectTargetList(std::list<Unit*> &targetList, uint32 num, SelectAg
 
     if (targetType == SELECT_TARGET_RANDOM)
     {
-        while (num > targetList.size())
+        while (num < targetList.size())
         {
             std::list<Unit*>::iterator itr = targetList.begin();
             advance(itr, urand(0, targetList.size()-1));

@@ -3857,7 +3857,8 @@ void Unit::RemoveAurasDueToSpellBySteal(uint32 spellId, uint64 casterGUID, Unit 
             const int32 max_dur = 2*MINUTE*IN_MILLISECONDS;
             new_aur->SetAuraMaxDuration(max_dur > dur ? dur : max_dur);
             new_aur->SetAuraDuration(max_dur > dur ? dur : max_dur);
-
+            new_aur->SetAuraProcCharges(aur->m_procCharges);
+            
             // Unregister _before_ adding to stealer
             aur->UnregisterSingleCastAura();
             // strange but intended behaviour: Stolen single target auras won't be treated as single targeted
@@ -3865,14 +3866,14 @@ void Unit::RemoveAurasDueToSpellBySteal(uint32 spellId, uint64 casterGUID, Unit 
             // add the new aura to stealer
             stealer->AddAura(new_aur);
             // Remove aura as dispel
-           if (iter->second->GetStackAmount() > 1)
+            if (aur->GetStackAmount() > 1)
             {
                 // reapply modifier with reduced stack amount
-                iter->second->ApplyModifier(false, true);
-                iter->second->SetStackAmount(iter->second->GetStackAmount() - 1);
-                iter->second->ApplyModifier(true, true);
+                aur->ApplyModifier(false, true);
+                aur->SetStackAmount(aur->GetStackAmount() - 1);
+                aur->ApplyModifier(true, true);
 
-                iter->second->UpdateSlotCounterAndDuration();
+                aur->UpdateSlotCounterAndDuration();
                 ++iter;
             }
             else
