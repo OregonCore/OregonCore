@@ -2475,6 +2475,11 @@ void Spell::_handle_immediate_phase()
         if (m_spellInfo->Effect[j] == 0)
             continue;
 
+        // Remove the key from player's inventory here to make sure that
+        // locked chests open and display loot properly.
+        if(m_spellInfo->Effect[j] == SPELL_EFFECT_OPEN_LOCK_ITEM)
+           TakeCastItem();
+
         // apply Send Event effect to ground in case empty target lists
         if (m_spellInfo->Effect[j] == SPELL_EFFECT_SEND_EVENT && !HaveTargetsForEffect(j))
         {
