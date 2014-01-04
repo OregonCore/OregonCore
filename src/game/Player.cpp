@@ -15264,6 +15264,17 @@ void Player::_LoadAuras(QueryResult_AutoPtr result, uint32 timediff)
                 sLog.outError("Invalid effect index (spellid %u, effindex %u), ignore.",spellid,effindex);
                 continue;
             }
+            
+            // Prevent wrong value of remaining time to be loaded from the database
+            // This could be a possible exploit, so it's important to check this
+            if (remaintime > maxduration)
+            {
+                sLog.outError("Player::_LoadAuras: Aura's remaining time exceeds maximum duration time.\n"
+                    "(caster: %llu, Aura: %u, remainTime: %u, maxDuration: %u)", 
+                    caster_guid, spellproto->Id, remaintime, maxduration);				
+			    
+                remaintime = maxduration;
+            }
 
             // negative effects should continue counting down after logout
             if (remaintime != -1 && !IsPositiveEffect(spellid, effindex))
@@ -16521,26 +16532,34 @@ void Player::_SaveAuras()
             AuraMap::const_iterator itr2 = itr;
             // save previous spellEffectPair to db
             itr2--;
-            SpellEntry const *spellInfo = itr2->second->GetSpellProto();
+
+            Aura* aura = itr2->second;
+            SpellEntry const *spellInfo = aura->GetSpellProto();
 
             //skip all auras from spells that are passive or need a shapeshift
-            if (!(itr2->second->IsPassive() || itr2->second->IsRemovedOnShapeLost()))
+            if (!(aura->IsPassive() || aura->IsRemovedOnShapeLost()))
             {
                 //do not save single target auras (unless they were cast by the player)
-                if (!(itr2->second->GetCasterGUID() != GetGUID() && IsSingleTargetSpell(spellInfo)))
+                if (!(aura->GetCasterGUID() != GetGUID() && IsSingleTargetSpell(spellInfo)))
                 {
                     uint8 i;
                     // or apply at cast SPELL_AURA_MOD_SHAPESHIFT or SPELL_AURA_MOD_STEALTH auras
                     for (i = 0; i < 3; i++)
+					{
                         if (spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_SHAPESHIFT ||
-                        spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_STEALTH)
+                            spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_STEALTH)
                             break;
+					}
+                    // Prevent wrong value of remaining time to be saved to the database
+                    // If the value is invalid it will pop an error during the next loading
+                    if (aura->GetAuraDuration() > aura->GetAuraMaxDuration())
+                        aura->SetAuraDuration(aura->GetAuraMaxDuration());
 
                     if (i == 3)
                     {
                         CharacterDatabase.PExecute("INSERT INTO character_aura (guid,caster_guid,spell,effect_index,stackcount,amount,maxduration,remaintime,remaincharges) "
-                            "VALUES ('%u', '" UI64FMTD "' ,'%u', '%u', '%u', '%d', '%d', '%d', '%d')",
-                            GetGUIDLow(), itr2->second->GetCasterGUID(), (uint32)itr2->second->GetId(), (uint32)itr2->second->GetEffIndex(), (uint32)itr2->second->GetStackAmount(), itr2->second->GetModifier()->m_amount,int(itr2->second->GetAuraMaxDuration()),int(itr2->second->GetAuraDuration()),int(itr2->second->m_procCharges));
+                            "VALUES ('%u', '" UI64FMTD "' ,'%u', '%u', '%u', '%d', '%d', '%d', '%d')", GetGUIDLow(), aura->GetCasterGUID(), (uint32)aura->GetId(),
+                            (uint32)aura->GetEffIndex(), (uint32)aura->GetStackAmount(), aura->GetModifier()->m_amount,int(aura->GetAuraMaxDuration()),int(aura->GetAuraDuration()),int(aura->m_procCharges));
                     }
                 }
             }
