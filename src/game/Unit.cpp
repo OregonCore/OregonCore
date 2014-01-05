@@ -6485,6 +6485,11 @@ bool Unit::IsHostileTo(Unit const* unit) const
     if (unit->GetTypeId() == TYPEID_PLAYER && unit->ToPlayer()->isGameMaster())
         return false;
 
+    // Spells cast on death that require an enemy target will find none, because the caster is not in combat anymore.  
+    // To fix this, all units that were recently in combat with the caster will be perceived hostile towards him.
+    if (!isAlive() && m_ThreatManager.wasUnitThreat(unit))
+        return true;
+
     // always hostile to enemy
     if (getVictim() == unit || unit->getVictim() == this)
         return true;
@@ -6593,6 +6598,11 @@ bool Unit::IsFriendlyTo(Unit const* unit) const
     // always friendly to GM in GM mode
     if (unit->GetTypeId() == TYPEID_PLAYER && unit->ToPlayer()->isGameMaster())
         return true;
+
+    // Spells cast on death that require an enemy target will find none, because the caster is not in combat anymore.  
+    // To fix this, all units that were recently in combat with the caster will be perceived hostile towards him.
+    if (!isAlive() && m_ThreatManager.wasUnitThreat(unit))
+		return false;
 
     // always non-friendly to enemy
     if (getVictim() == unit || unit->getVictim() == this)
@@ -8615,6 +8625,9 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
 
         if (enemy)
         {
+            // Store the new target in unit memory container.
+            m_ThreatManager.pushThreatInMemory(enemy);
+
             if (IsAIEnabled && ToCreature()->AI())
                 ToCreature()->AI()->EnterCombat(enemy);
 

@@ -248,6 +248,11 @@ void Creature::RemoveCorpse(bool setSpawnTime)
     setDeathState(DEAD);
     UpdateObjectVisibility();
     loot.clear();
+
+    // Unit will forget everyone who has ever attacked it
+    if (Unit* creature_unit = Unit::GetUnit(*this, GetGUID()))
+        creature_unit->clearPastEnemyList();
+
     // Should get removed later, just keep "compatibility" with scripts
     if (setSpawnTime)
         m_respawnTime = time(NULL) + m_respawnDelay;

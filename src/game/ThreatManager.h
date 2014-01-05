@@ -132,6 +132,7 @@ class ThreatContainer
 {
     private:
         std::list<HostileReference*> iThreatList;
+        std::vector<Unit*> iPastEnemyList;       
         bool iDirty;
     protected:
         friend class ThreatManager;
@@ -181,6 +182,15 @@ class ThreatManager
         void modifyThreatPercent(Unit *pVictim, int32 pPercent);
 
         float getThreat(Unit *pVictim, bool pAlsoSearchOfflineList = false);
+ 
+        //-----------------------------------------------------
+
+        bool wasUnitThreat(Unit const* unit) const;
+        void pushThreatInMemory(Unit* unit);
+
+        void clearPastEnemyList() { iThreatContainer.iPastEnemyList.clear(); }
+
+        //-----------------------------------------------------
 
         bool isThreatListEmpty() { return iThreatContainer.empty();}
 

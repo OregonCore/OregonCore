@@ -1532,6 +1532,10 @@ class Unit : public WorldObject
         bool IsAIEnabled, NeedChangeAI;
 
         bool m_ControlledByPlayer;
+
+        // Unit will forget everyone who has ever attacked it
+        void clearPastEnemyList() { m_ThreatManager.clearPastEnemyList(); }
+
     protected:
         explicit Unit ();
 
