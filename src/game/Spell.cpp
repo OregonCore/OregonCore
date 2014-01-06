@@ -2210,14 +2210,13 @@ void Spell::cast(bool skipCheck)
     // update pointers base at GUIDs to prevent access to non-existed already object
     UpdatePointers();
 
-    if (Unit *pTarget = m_targets.getUnitTarget())
-        if (pTarget->isAlive() && (pTarget->HasAuraType(SPELL_AURA_MOD_STEALTH) || pTarget->HasAuraType(SPELL_AURA_MOD_INVISIBILITY)) && !pTarget->IsFriendlyTo(m_caster) && !pTarget->isVisibleForOrDetect(m_caster, true))
-        {
-            SendCastResult(SPELL_FAILED_BAD_TARGETS);
-            finish(false);
-            return;
-        }
-
+    Unit *pTarget = m_targets.getUnitTarget();
+    if (pTarget && pTarget->isAlive() && (pTarget->HasAuraType(SPELL_AURA_MOD_STEALTH) || pTarget->HasAuraType(SPELL_AURA_MOD_INVISIBILITY)) && !pTarget->IsFriendlyTo(m_caster) && !pTarget->isVisibleForOrDetect(m_caster, true))
+    {    
+        SendCastResult(SPELL_FAILED_BAD_TARGETS);
+        finish(false);
+        return;
+    }
     SetExecutedCurrently(true);
     uint8 castResult = 0;
 
@@ -2757,6 +2756,9 @@ void Spell::finish(bool ok)
         //restore spell mods
         if (m_caster->GetTypeId() == TYPEID_PLAYER)
             m_caster->ToPlayer()->RestoreSpellMods(this);
+  
+        // spell has failed so the combat is no longer being initiated
+        m_caster->setInitiatingCombat(false);
         return;
     }
     // other code related only to successfully finished spells
@@ -3498,6 +3500,18 @@ uint8 Spell::CanCast(bool strict)
 
     Unit *target = m_targets.getUnitTarget();
 
+    // While the combat is still being initiated, we should make sure that the
+    // player does not cast any spells that should not be used in combat
+    if (m_caster->isInitiatingCombat())
+    {
+        // Spells that should not be used in combat will have one of these flags:  
+        if ((m_spellInfo->Attributes & SPELL_ATTR_CANT_USED_IN_COMBAT) ||
+            (m_spellInfo->AuraInterruptFlags & AURA_INTERRUPT_FLAG_ATTACK))
+        { 
+            m_caster->ToPlayer()->GetSession()->SendNotification("Can't cast that spell in combat!");
+            return SPELL_FAILED_DONT_REPORT;
+        }
+    }
     if (target)
     {
         // target state requirements (not allowed state), apply to self also

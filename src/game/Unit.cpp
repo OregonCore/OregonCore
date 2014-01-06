@@ -301,6 +301,8 @@ Unit::Unit()
     m_modSpellHitChance = 0.0f;
     m_baseSpellCritChance = 5;
 
+    m_initiatingCombat = false;
+
     m_CombatTimer = 0;
     m_lastManaUse = 0;
 
@@ -1090,6 +1092,11 @@ void Unit::CastSpell(Unit* Victim,SpellEntry const *spellInfo, bool triggered, I
         originalCaster = triggeredByAura->GetCasterGUID();
 
     Spell *spell = new Spell(this, spellInfo, triggered, originalCaster);
+   
+    // When casting a combat spell the unit has to be flagged as initiating combat
+    // Check for self-cast case here for this may have been called by a command
+    if (Victim && spell->GetCaster() != Victim && !IsNonCombatSpell(spellInfo))
+        spell->GetCaster()->setInitiatingCombat(true);
 
     spell->m_CastItem = castItem;
     spell->prepare(&targets, triggeredByAura);
@@ -8606,8 +8613,10 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
     if (isInCombat())
         return;
 
+    // Combat is no longer in initiation phase, and now the unit is in combat
     SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
-
+    setInitiatingCombat(false); 
+    
     if (GetTypeId() == TYPEID_PLAYER)
     {
         if (m_currentSpells[CURRENT_GENERIC_SPELL] && m_currentSpells[CURRENT_GENERIC_SPELL]->getState() != SPELL_STATE_FINISHED)

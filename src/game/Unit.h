@@ -1059,10 +1059,14 @@ class Unit : public WorldObject
         bool isGuard() const  { return HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GUARD); }
 
         bool isInFlight()  const { return hasUnitState(UNIT_STAT_IN_FLIGHT); }
-
+        
+        // Is the unit casting a combat spell? 
+        bool isInitiatingCombat() const { return m_initiatingCombat; }
         bool isInCombat()  const { return HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT); }
         void CombatStart(Unit* target, bool initialAggro = true);
         void SetInCombatState(bool PvP, Unit* enemy = NULL);
+        void setInitiatingCombat(bool flag) { m_initiatingCombat = flag; }
+
         void SetInCombatWith(Unit* enemy);
         void ClearInCombat();
         uint32 GetCombatTimer() const { return m_CombatTimer; }
@@ -1546,6 +1550,9 @@ class Unit : public WorldObject
 
         void _UpdateAutoRepeatSpell();
         bool m_AutoRepeatFirstCast;
+
+        // Unit is initiating combat by casting a spell at a target
+        bool m_initiatingCombat;
 
         uint32 m_attackTimer[MAX_ATTACK];
 
