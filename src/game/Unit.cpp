@@ -3151,7 +3151,7 @@ void Unit::InterruptSpell(CurrentSpellTypes spellType, bool withDelayed, bool wi
         }
 
         if (spell->getState() != SPELL_STATE_FINISHED)
-            spell->cancel();
+            spell->cancel(false);
         spell->SetReferencedFromCurrent(false);
     }
 }
