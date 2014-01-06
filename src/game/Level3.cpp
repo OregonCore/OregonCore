@@ -6091,9 +6091,13 @@ bool ChatHandler::HandleRespawnCommand(const char* /*args*/)
             SetSentErrorMessage(true);
             return false;
         }
-
-        if (target->isDead())
-            target->ToCreature()->Respawn();
+        else if (!target->isDead())
+        {
+            SendSysMessage(LANG_CREATURE_NOT_DEAD);
+            SetSentErrorMessage(true);
+            return false;
+        }
+        target->ToCreature()->Respawn();
         return true;
     }
 

@@ -1428,6 +1428,9 @@ void Creature::setDeathState(DeathState s)
         i_motionMaster.Initialize();
         SetMeleeDamageSchool(SpellSchools(cinfo->dmgschool));
         LoadCreaturesAddon(true);
+
+        // Prevents the creature from re-spawning at the location of it's death
+        GetMap()->CreatureRespawnRelocation(this);
     }
 }
 

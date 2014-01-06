@@ -756,7 +756,10 @@ enum OregonStrings
     LANG_MUST_MALE_OR_FEMALE            = 1119,
     LANG_YOU_CHANGE_GENDER              = 1120,
     LANG_YOUR_GENDER_CHANGED            = 1121,
-    // Room for more level 3              1122-1198 not used
+    // Room for more level 3              1123-1198 not used
+
+    LANG_CREATURE_NOT_DEAD              = 1122,
+
     LANG_NPCINFO_LINKGUID               = 1199,
 
     // Debug commands
