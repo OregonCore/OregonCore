@@ -3459,64 +3459,41 @@ bool Unit::AddAura(Aura *Aur)
     SpellEntry const* aurSpellInfo = Aur->GetSpellProto();
 
     spellEffectPair spair = spellEffectPair(Aur->GetId(), Aur->GetEffIndex());
+    bool stackModified = false;  
 
-    bool stackModified=false;
-    // passive and persistent auras can stack with themselves any number of times
+    // Handle aura stacking down below...
     if (!Aur->IsPassive() && !Aur->IsPersistent())
     {
         for (AuraMap::iterator i2 = m_Auras.lower_bound(spair); i2 != m_Auras.upper_bound(spair);)
         {
             Aura* aur2 = i2->second;
-            if (aur2->GetCasterGUID() == Aur->GetCasterGUID())
-            {
-                if (!stackModified)
-                {
-                    // replace aura if next will > spell StackAmount
-                    if (aurSpellInfo->StackAmount)
-                    {
-                        // prevent adding stack more than once
-                        stackModified=true;
-                        Aur->SetStackAmount(aur2->GetStackAmount());
-                        if (uint32(Aur->GetStackAmount()) < aurSpellInfo->StackAmount)
-                            Aur->SetStackAmount(Aur->GetStackAmount()+1);
-                    }
+            if (aur2 && !stackModified && aur2->GetId() == Aur->GetId() && aurSpellInfo->StackAmount)
+             if (uint32(aur2->GetStackAmount()) < aurSpellInfo->StackAmount)
+             {
+                 // Allow mongoose procs from different weapon stacks
+                 if (Aur->GetId() == 28093 || Aur->GetId() == 20007 && Aur->GetCastItemGUID() != i2->second->GetCastItemGUID())
+                 { i2++; continue; }
+				 
+                 // Increment aura's stack, one stack per one call
+                 Aur->SetStackAmount(aur2->GetStackAmount()+1);
+                 stackModified = true;
 
-                    // Allow mongoose procs from different weapon stacks
-                    if (Aur->GetId() == 28093 || Aur->GetId() == 20007)
-                    {
-                        if (Aur->GetCastItemGUID() != i2->second->GetCastItemGUID())
-                        {
-                            i2++;
-                            continue;
-                        }
-                    }
-
-                    RemoveAura(i2,AURA_REMOVE_BY_STACK);
-                    i2 = m_Auras.lower_bound(spair);
-                    continue;
-                }
-            }
-            switch(aurSpellInfo->EffectApplyAuraName[Aur->GetEffIndex()])
-            {
-                // DOT or HOT from different casters will stack
-                case SPELL_AURA_PERIODIC_DAMAGE:
-                case SPELL_AURA_PERIODIC_HEAL:
-                case SPELL_AURA_PERIODIC_TRIGGER_SPELL:
-                case SPELL_AURA_PERIODIC_ENERGIZE:
-                case SPELL_AURA_PERIODIC_MANA_LEECH:
-                case SPELL_AURA_PERIODIC_LEECH:
-                case SPELL_AURA_POWER_BURN_MANA:
-                case SPELL_AURA_OBS_MOD_MANA:
-                case SPELL_AURA_OBS_MOD_HEALTH:
-                    ++i2;
-                    continue;
-            }
-            RemoveAura(i2,AURA_REMOVE_BY_STACK);
-            i2=m_Auras.lower_bound(spair);
-            continue;
+                 // Existing aura will be replaced with the newly created one 
+                 RemoveAura(i2,AURA_REMOVE_BY_STACK);
+                 i2 = m_Auras.lower_bound(spair);
+                 continue;
+             }
+             // Do not let the stack size exceed the maximum stack limit
+             // Insteed of adding a new stack, just reset the duration time
+             else 
+             { 
+                 aur2->SetAuraDuration(aur2->GetAuraMaxDuration());
+                 aur2->UpdateAuraDuration();
+                 delete Aur; return false; 
+             }
+             ++i2;
         }
     }
-
     // passive auras stack with all (except passive spell proc auras)
     if ((!Aur->IsPassive() || !IsPassiveStackableSpell(Aur->GetId())) &&
         !(Aur->GetId() == 20584 || Aur->GetId() == 8326))
