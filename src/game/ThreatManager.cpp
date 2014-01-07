@@ -441,8 +441,8 @@ bool ThreatManager::wasUnitThreat(Unit const* unit) const
     {
         std::vector<Unit*>::const_iterator it = iThreatContainer.iPastEnemyList.begin();
         for (;it != iThreatContainer.iPastEnemyList.end(); ++it)
-          if (*it && unit->GetGUIDLow() == (*it)->GetGUIDLow())
-              return true;
+         if ((*it) && unit == (*it)) 
+             return true;
     }
     return false;
 }

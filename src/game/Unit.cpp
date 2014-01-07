@@ -6608,8 +6608,8 @@ bool Unit::IsFriendlyTo(Unit const* unit) const
 
     // Spells cast on death that require an enemy target will find none, because the caster is not in combat anymore.  
     // To fix this, all units that were recently in combat with the caster will be perceived hostile towards him.
-    if (!isAlive() && m_ThreatManager.wasUnitThreat(unit))
-		return false;
+    if (!isAlive() && unit->IsInWorld() && unit->isAlive() && m_ThreatManager.wasUnitThreat(unit))
+        return false;
 
     // always non-friendly to enemy
     if (getVictim() == unit || unit->getVictim() == this)
