@@ -3503,16 +3503,16 @@ uint8 Spell::CanCast(bool strict)
     Unit *target = m_targets.getUnitTarget();
 
     // While the combat is still being initiated, we should make sure that the
-    // player does not cast any spells that should not be used in combat
+    // unit does not cast any spells that should not be used in combat
     if (m_caster->isInitiatingCombat())
     {
-        // Spells that should not be used in combat will have one of these flags:  
-        if ((m_spellInfo->Attributes & SPELL_ATTR_CANT_USED_IN_COMBAT) ||
-            (m_spellInfo->AuraInterruptFlags & AURA_INTERRUPT_FLAG_ATTACK))
-        { 
-            m_caster->ToPlayer()->GetSession()->SendNotification("Can't cast that spell in combat!");
-            return SPELL_FAILED_DONT_REPORT;
-        }
+        // Spells that should not be used in combat:  
+        if (m_spellInfo->Attributes & SPELL_ATTR_CANT_USED_IN_COMBAT) 
+            return SPELL_FAILED_AFFECTING_COMBAT;
+
+        // Auras that should not be used in combat:
+        if (m_spellInfo->AuraInterruptFlags & AURA_INTERRUPT_FLAG_ATTACK)
+            return SPELL_FAILED_INTERRUPTED_COMBAT;
     }
     if (target)
     {
