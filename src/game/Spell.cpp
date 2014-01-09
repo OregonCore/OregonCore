@@ -953,19 +953,16 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
         }
         else
             procEx |= PROC_EX_NORMAL_HIT;
-
-        caster->SendHealSpellLog(unitTarget, m_spellInfo->Id, addhealth, crit);
-
+        
         // Do triggers for unit (reflect triggers passed on hit phase for correct drop charge)
         if (missInfo != SPELL_MISS_REFLECT)
             caster->ProcDamageAndSpell(unitTarget, procAttacker, procVictim, procEx, addhealth, m_attackType, m_spellInfo, m_canTrigger);
 
-        int32 gain = unitTarget->ModifyHealth(int32(addhealth));
-
-        unitTarget->getHostileRefManager().threatAssist(caster, float(gain) * 0.5f, m_spellInfo);
+        uint32 gain = caster->HealTargetUnit(unitTarget, m_spellInfo, addhealth, crit);
+        
         if (caster->GetTypeId() == TYPEID_PLAYER)
-            if (BattleGround *bg = caster->ToPlayer()->GetBattleGround())
-                bg->UpdatePlayerScore(caster->ToPlayer(), SCORE_HEALING_DONE, gain);
+         if (BattleGround *bg = caster->ToPlayer()->GetBattleGround())
+             bg->UpdatePlayerScore(caster->ToPlayer(), SCORE_HEALING_DONE, gain);
     }
     // Do damage and triggers
     else if (m_damage > 0)
@@ -2775,10 +2772,7 @@ void Spell::finish(bool ok)
 
     // Heal caster for all health leech from all targets
     if (m_healthLeech)
-    {
-        m_caster->ModifyHealth(m_healthLeech);
-        m_caster->SendHealSpellLog(m_caster, m_spellInfo->Id, uint32(m_healthLeech));
-    }
+        m_caster->HealTargetUnit(m_caster, m_spellInfo, m_healthLeech);
 
     if (IsMeleeAttackResetSpell())
     {

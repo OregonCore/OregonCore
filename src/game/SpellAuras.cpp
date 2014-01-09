@@ -1304,14 +1304,10 @@ void Aura::TriggerSpell()
                     case 23493:
                     {
                         int32 heal = caster->GetMaxHealth() / 10;
-                        caster->ModifyHealth(heal);
-                        caster->SendHealSpellLog(caster, 23493, heal);
-
-                        int32 mana = caster->GetMaxPower(POWER_MANA);
-                        if (mana)
+                        caster->HealTargetUnit(caster, auraSpellInfo, heal);
+                        if (int32 mana = caster->GetMaxPower(POWER_MANA))
                         {
-                            mana /= 10;
-                            caster->ModifyPower(POWER_MANA, mana);
+                            mana /= 10; caster->ModifyPower(POWER_MANA, mana);
                             caster->SendEnergizeSpellLog(caster, 23493, mana, POWER_MANA);
                         }
                         break;
@@ -4637,14 +4633,14 @@ void Aura::HandleModRegen(bool apply, bool /*Real*/)        // eating
         if (m_periodicTimer <= 0)
         {
             m_periodicTimer += 5000;
-            int32 gain = m_target->ModifyHealth(GetModifierValue());
-            Unit *caster = GetCaster();
-            if (caster)
+            
+            if (Unit *caster = GetCaster())
             {
-                SpellEntry const *spellProto = GetSpellProto();
-                if (spellProto)
-                    m_target->getHostileRefManager().threatAssist(caster, float(gain) * 0.5f, spellProto);
+                // It's unclear why eating would cause threat, but I've routed it through here never the less
+                if (SpellEntry const *spellProto = GetSpellProto())
+                    caster->HealTargetUnit(m_target, spellProto, GetModifierValue(), false, false);
             }
+            else m_target->ModifyHealth(GetModifierValue());
         }
     }
 
@@ -5916,11 +5912,7 @@ void Aura::PeriodicTick()
                 modOwner->ApplySpellMod(spellProto->Id, SPELLMOD_MULTIPLE_VALUE, multiplier);
 
             uint32 heal = pCaster->SpellHealingBonus(spellProto, uint32(new_damage * multiplier), DOT, pCaster);
-
-            int32 gain = pCaster->ModifyHealth(heal);
-            pCaster->getHostileRefManager().threatAssist(pCaster, gain * 0.5f, spellProto);
-
-            pCaster->SendHealSpellLog(pCaster, spellProto->Id, heal);
+            uint32 gain = pCaster->HealTargetUnit(pCaster, spellProto, heal);
             break;
         }
         case SPELL_AURA_PERIODIC_HEAL:
@@ -5931,7 +5923,7 @@ void Aura::PeriodicTick()
                 return;
 
             // heal for caster damage (must be alive)
-            if (m_target != pCaster && GetSpellProto()->SpellVisual == 163 && !pCaster->isAlive())
+            if (!pCaster->isAlive() || (m_target != pCaster && GetSpellProto()->SpellVisual == 163))
                 return;
 
             // ignore non positive values (can be result apply spellmods to aura damage
@@ -5946,21 +5938,22 @@ void Aura::PeriodicTick()
 
             pdamage *= GetStackAmount();
 
-            //pdamage = pCaster->SpellHealingBonus(GetSpellProto(), pdamage, DOT, m_target);
-
             sLog.outDetail("PeriodicTick: %u (TypeId: %u) heal of %u (TypeId: %u) for %u health inflicted by %u",
                 GUID_LOPART(GetCasterGUID()), GuidHigh2TypeId(GUID_HIPART(GetCasterGUID())), m_target->GetGUIDLow(), m_target->GetTypeId(), pdamage, GetId());
 
-            WorldPacket data(SMSG_PERIODICAURALOG, (21+16));// we guess size
-            data << m_target->GetPackGUID();
-            data.appendPackGUID(GetCasterGUID());
-            data << uint32(GetId());
-            data << uint32(1);
-            data << uint32(m_modifier.m_auraname);
-            data << (uint32)pdamage;
-            m_target->SendMessageToSet(&data,true);
-
-            int32 gain = m_target->ModifyHealth(pdamage);
+            // Send log to client only if there the player has been healed
+            if (m_target->GetHealth() < m_target->GetMaxHealth())
+            {
+                WorldPacket data(SMSG_PERIODICAURALOG, (21+16));// we guess size
+                data << m_target->GetPackGUID();
+                data.appendPackGUID(GetCasterGUID());
+                data << uint32(GetId());
+                data << uint32(1);
+                data << uint32(m_modifier.m_auraname);
+                data << (uint32)pdamage;
+                m_target->SendMessageToSet(&data,true);
+            }
+            uint32 gain = pCaster->HealTargetUnit(m_target, GetSpellProto(), pdamage, false, false);
 
             // add HoTs to amount healed in bgs
             if (pCaster->GetTypeId() == TYPEID_PLAYER)
@@ -5969,8 +5962,6 @@ void Aura::PeriodicTick()
 
             //Do check before because m_modifier.auraName can be invalidate by DealDamage.
             bool procSpell = (m_modifier.m_auraname == SPELL_AURA_PERIODIC_HEAL && m_target != pCaster);
-
-            m_target->getHostileRefManager().threatAssist(pCaster, float(gain) * 0.5f, GetSpellProto());
 
             Unit* target = m_target;                        // aura can be deleted in DealDamage
             SpellEntry const* spellProto = GetSpellProto();
