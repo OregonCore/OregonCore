@@ -7462,6 +7462,9 @@ uint32 Unit::SpellDamageBonus(Unit *pVictim, SpellEntry const *spellProto, uint3
             {
                 CastingTime = 3.5;
             }
+            // This will disable the spell power coefficient for other generic family spells
+            else CastingTime = 0;
+
         case SPELLFAMILY_MAGE:
             // Ignite - do not modify, it is (8*Rank)% damage of procing Spell
             if (spellProto->Id == 12654)
@@ -8035,6 +8038,8 @@ uint32 Unit::SpellHealingBonus(SpellEntry const *spellProto, uint32 healamount, 
             case SPELLFAMILY_WARRIOR:
             case SPELLFAMILY_ROGUE:
             case SPELLFAMILY_HUNTER:
+            case SPELLFAMILY_POTION:
+            case SPELLFAMILY_GENERIC:
                 CastingTime = 0;
                 break;
         }
