@@ -7907,14 +7907,12 @@ uint32 Unit::SpellHealingBonus(SpellEntry const *spellProto, uint32 healamount, 
     if (maxval)
         TotalHealPct *= (100.0f + maxval) / 100.0f;
 
-    // These Spells are doing fixed amount of healing (TODO found less hack-like check)
-    if (spellProto->Id == 15290 || spellProto->Id == 39373 ||
-        spellProto->Id == 33778 || spellProto->Id == 379   ||
-        spellProto->Id == 38395 || spellProto->Id == 40972 ||
-        spellProto->Id == 22845 || spellProto->Id == 33504 ||
-        spellProto->Id == 34299 || spellProto->Id == 27813 ||
-        spellProto->Id == 27817 || spellProto->Id == 27818 ||
-        spellProto->Id == 5707)
+    const uint32 spellId = spellProto->Id;
+
+    // These Spells are doing fixed amount of healing (TODO find a less hack-like check)
+    // Generic family spells are not handled here, these are exceptions to the rule
+    if (spellId == 33778 || spellId == 379 || spellId == 38395 || spellId == 34299 ||  // Lifebloom (rank 1), Earth Shield, Siphon Essence, Flame Quills
+        spellId == 27813 || spellId == 27817 || spellId == 27818)                      // Blessed Recovery (rank 1, rank 2 & rank 3)
         return healamount*TotalHealPct;
 
     int32 AdvertisedBenefit = SpellBaseHealingBonus(GetSpellSchoolMask(spellProto));
