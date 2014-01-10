@@ -2179,11 +2179,17 @@ void Spell::cancel(bool sendInterrupt)
 
             m_caster->RemoveAurasByCasterSpell(m_spellInfo->Id, m_caster->GetGUID());
             SendChannelUpdate(0);
-            SendInterrupted(0);
-            if (sendInterrupt) 
-                SendCastResult(SPELL_FAILED_INTERRUPTED);
-        } break;
 
+            // Do not send interrupt for channeling spells to avoid a visual bug
+            // that happens when a caster recasts the spell before the channeling ended
+            if (!IsChanneledSpell(m_spellInfo))
+            {
+                SendInterrupted(0);
+                if (sendInterrupt) 
+                    SendCastResult(SPELL_FAILED_INTERRUPTED);
+            }
+        } 
+        break;
         default:
         {
         } break;
@@ -2677,6 +2683,16 @@ void Spell::update(uint32 difftime)
                     SendChannelUpdate(0);
                     finish();
                 }
+                // Check if the caster has the target in his front 120 degree field of view
+                // Channeling will be interrupted if the caster is no longer facing target
+                else if (Unit* target = m_targets.getUnitTarget())
+                if (IsChanneledSpell(m_spellInfo) && !m_caster->HasInArc(M_PI, target))
+                {
+                    SendChannelUpdate(0);
+                    SendInterrupted(2);
+                    finish(false); 
+                    return;
+                }
 
                 if (difftime >= m_timer)
                     m_timer = 0;
@@ -2756,8 +2772,11 @@ void Spell::finish(bool ok)
         if (m_caster->GetTypeId() == TYPEID_PLAYER)
             m_caster->ToPlayer()->RestoreSpellMods(this);
   
-        // spell has failed so the combat is no longer being initiated
-        m_caster->setInitiatingCombat(false);
+        // Spell has failed so the combat is no longer being initiated
+        // Do this only if the unit is initiating combat
+        if (m_caster->isInitiatingCombat())
+            m_caster->setInitiatingCombat(false);
+
         return;
     }
     // other code related only to successfully finished spells
@@ -3132,9 +3151,6 @@ void Spell::SendChannelUpdate(uint32 time)
         m_caster->SetUInt32Value(UNIT_CHANNEL_SPELL, 0);
     }
 
-    if (m_caster->GetTypeId() != TYPEID_PLAYER)
-        return;
-
     WorldPacket data(MSG_CHANNEL_UPDATE, 8+4);
     data << m_caster->GetPackGUID();
     data << uint32(time);
@@ -3446,6 +3462,18 @@ uint8 Spell::CanCast(bool strict)
        // else
             return SPELL_FAILED_NOT_READY;
     }
+    // While the combat is still being initiated, we should make sure that the
+    // unit does not cast any spells that should not be used in combat
+    if (m_caster->isInitiatingCombat())
+    {
+        // Auras that should not be used in combat:
+        if (m_spellInfo->AuraInterruptFlags & AURA_INTERRUPT_FLAG_ATTACK)
+            return SPELL_FAILED_INTERRUPTED_COMBAT;
+
+        // Spells that should not be used in combat:  
+        if (m_spellInfo->Attributes & SPELL_ATTR_CANT_USED_IN_COMBAT) 
+            return SPELL_FAILED_AFFECTING_COMBAT;
+    }
 
     // only allow triggered spells if at an ended battleground
     if (!m_IsTriggeredSpell && m_caster->GetTypeId() == TYPEID_PLAYER)
@@ -3496,18 +3524,6 @@ uint8 Spell::CanCast(bool strict)
 
     Unit *target = m_targets.getUnitTarget();
 
-    // While the combat is still being initiated, we should make sure that the
-    // unit does not cast any spells that should not be used in combat
-    if (m_caster->isInitiatingCombat())
-    {
-        // Spells that should not be used in combat:  
-        if (m_spellInfo->Attributes & SPELL_ATTR_CANT_USED_IN_COMBAT) 
-            return SPELL_FAILED_AFFECTING_COMBAT;
-
-        // Auras that should not be used in combat:
-        if (m_spellInfo->AuraInterruptFlags & AURA_INTERRUPT_FLAG_ATTACK)
-            return SPELL_FAILED_INTERRUPTED_COMBAT;
-    }
     if (target)
     {
         // target state requirements (not allowed state), apply to self also
