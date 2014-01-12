@@ -479,11 +479,15 @@ void Pet::setDeathState(DeathState s)                       // overwrite virtual
     {
         if (getPetType() == HUNTER_PET)
         {
+            // Pet has just died, update it's status
+            if (Player *owner = GetOwner())
+                owner->SetPetStatus(PET_STATUS_DEAD); 
+
             // pet corpse non lootable and non skinnable
             SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0x00);
             RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
 
-            //lose happiness when died and not in BG/Arena
+            // lose happiness when died and not in BG/Arena
             MapEntry const* mapEntry = sMapStore.LookupEntry(GetMapId());
             if (!mapEntry || !mapEntry->IsBattleGroundOrArena())
                 ModifyPower(POWER_HAPPINESS, -HAPPINESS_LEVEL_SIZE);
@@ -1163,7 +1167,7 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
 
 bool Pet::HaveInDiet(ItemPrototype const* item) const
 {
-    if (!item->FoodType)
+    if (!item || !item->FoodType)
         return false;
 
     CreatureInfo const* cInfo = GetCreatureInfo();

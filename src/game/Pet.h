@@ -43,6 +43,17 @@ enum PetSaveMode
     PET_SAVE_NOT_IN_SLOT      = 3
 };
 
+// Every pet has to have a designated status at all times
+// The status is stored in 'Player.h'
+enum PetStatus
+{
+    PET_STATUS_NONE                  = 0,   // No pet available
+    PET_STATUS_CURRENT               = 1,   // Pet is currently active and alive
+    PET_STATUS_DEAD                  = 2,   // Pet is dead, but active in the world
+    PET_STATUS_DISMISSED             = 3,   // Pet has been dismissed
+    PET_STATUS_DEAD_AND_REMOVED      = 4    // Pet is dead and it's corpse removed from the world
+};
+
 enum HappinessState
 {
     UNHAPPY = 1,

@@ -4118,14 +4118,30 @@ uint8 Spell::CanCast(bool strict)
 
                 break;
             }
+            // Bring the pet back to the land of the living
             case SPELL_EFFECT_SUMMON_DEAD_PET:
             {
                 Creature *pet = m_caster->GetGuardianPet();
-                if (!pet)
+                if (pet && pet->isAlive())
+                    return SPELL_FAILED_ALREADY_HAVE_SUMMON;
+
+                // Do not revive dismissed pets, they are not dead
+                if (m_caster->isPlayer() && m_caster->ToPlayer()->isPetDismissed())
+                    return SPELL_FAILED_TARGET_NOT_DEAD;
+
+                // Attempting to revive a non existing pet?
+                if (m_caster->isPlayer() && !m_caster->ToPlayer()->doesOwnPet())
                     return SPELL_FAILED_NO_PET;
 
-                if (pet->isAlive())
-                    return SPELL_FAILED_ALREADY_HAVE_SUMMON;
+                break;
+            }
+            // Called when we start channeling 'Dismiss pet' spell
+            case SPELL_EFFECT_DISMISS_PET:
+            {
+                // Don't start dismissing the pet if it's dead!
+                Pet* pet = m_caster->ToPlayer()->GetPet();     
+                if (!pet || !pet->isAlive())
+                    return SPELL_FAILED_TARGETS_DEAD;
 
                 break;
             }
@@ -4149,13 +4165,24 @@ uint8 Spell::CanCast(bool strict)
             }
             case SPELL_EFFECT_SUMMON_PET:
             {
-                if (m_caster->GetPetGUID())                  //let warlock do a replacement summon
+                // Check these things only for player hunters
+                if (m_caster->isPlayer() && m_caster->getClass() == CLASS_HUNTER)
+                { 
+                    // Player should not be able to call the pet if he doesn't own one...
+                    if (!m_caster->ToPlayer()->doesOwnPet())
+                        return SPELL_FAILED_NO_PET;
+
+                    // ... or the pet is dead ...
+                    if (m_caster->ToPlayer()->isPetDeadAndRemoved())
+                        return SPELL_FAILED_TARGETS_DEAD;
+                }
+                if (m_caster->GetPetGUID())  //let warlock do a replacement summon
                 {
-                    if (m_caster->GetTypeId() == TYPEID_PLAYER && m_caster->getClass() == CLASS_WARLOCK)
+                    if (m_caster->isPlayer() && m_caster->getClass() == CLASS_WARLOCK)
                     {
-                        if (strict)                         //starting cast, trigger pet stun (cast by pet so it doesn't attack player)
-                            if (Pet* pet = m_caster->ToPlayer()->GetPet())
-                                pet->CastSpell(pet, 32752, true, NULL, NULL, pet->GetGUID());
+                        //starting cast, trigger pet stun (cast by pet so it doesn't attack player)
+                        if (Pet* pet = m_caster->ToPlayer()->GetPet())
+                         if (strict) pet->CastSpell(pet, 32752, true, NULL, NULL, pet->GetGUID());
                     }
                     else
                         return SPELL_FAILED_ALREADY_HAVE_SUMMON;

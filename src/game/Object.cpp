@@ -1763,6 +1763,7 @@ void WorldObject::SetZoneScript()
 Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetType petType, uint32 duration)
 {
     Pet* pet = new Pet(this, petType);
+    SetPetStatus(PET_STATUS_CURRENT);
 
     if (petType == SUMMON_PET && pet->LoadPetFromDB(this, entry))
     {

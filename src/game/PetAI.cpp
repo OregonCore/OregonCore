@@ -70,6 +70,10 @@ void PetAI::_stopAttack()
     }
 
     me->AttackStop();
+
+    me->InterruptNonMeleeSpells(false);          // Interrupt any current spells being casted
+    me->SendMeleeAttackStop(me->getVictim());    // Should stop pet's attack button from flashing
+
     me->GetCharmInfo()->SetIsCommandAttack(false);
     HandleReturnMovement();
 }
@@ -84,8 +88,8 @@ void PetAI::UpdateAI(const uint32 diff)
     else
         m_updateAlliesTimer -= diff;
 
-    // me->getVictim() can't be used for check in case stop fighting, me->getVictim() clear at Unit death etc.
-    if (me->getVictim())
+    // Must also check if victim is alive 
+    if (me->getVictim() && me->getVictim()->isAlive())
     {
         if (_needToStop())
         {
@@ -98,16 +102,19 @@ void PetAI::UpdateAI(const uint32 diff)
     }
     else if (owner && me->GetCharmInfo()) //no victim
     {
-        Unit *nextTarget = SelectNextTarget();
-
-        if (nextTarget)
+        if (Unit *nextTarget = SelectNextTarget())
             AttackStart(nextTarget);
         else
+        {
+            // Cancels the attack command so the pet stops chasing the 
+            // target it is attacking, and returns the pet to his owner
+            me->GetCharmInfo()->SetIsCommandAttack(false);
             HandleReturnMovement();
+        }
     }
     else if (owner && !me->hasUnitState(UNIT_STAT_FOLLOW)) // no charm info and no victim
         me->GetMotionMaster()->MoveFollow(owner,PET_FOLLOW_DIST, me->GetFollowAngle());
-
+ 
     if (!me->GetCharmInfo())
         return;
 
@@ -275,14 +282,17 @@ void PetAI::KilledUnit(Unit *victim)
     // Can't use _stopAttack() because that activates movement handlers and ignores
     // next target selection
     me->AttackStop();
-    me->GetCharmInfo()->SetIsCommandAttack(false);
+    me->InterruptNonMeleeSpells(false);
 
-    Unit *nextTarget = SelectNextTarget();
-
-    if (nextTarget)
+    if (Unit *nextTarget = SelectNextTarget())
         AttackStart(nextTarget);
     else
-        HandleReturnMovement(); // Return
+    { 
+        // Cancels the attack command so the pet stops chasing the 
+        // target it is attacking, and returns the pet to his owner
+        me->GetCharmInfo()->SetIsCommandAttack(false);
+        HandleReturnMovement();
+    }
 }
 
 void PetAI::AttackStart(Unit *target)

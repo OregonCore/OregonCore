@@ -200,7 +200,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS]=
     &Spell::EffectNULL,                                     //135 SPELL_EFFECT_CALL_PET
     &Spell::EffectHealPct,                                  //136 SPELL_EFFECT_HEAL_PCT
     &Spell::EffectEnergisePct,                              //137 SPELL_EFFECT_ENERGIZE_PCT
-    &Spell::EffectNULL,                                     //138 SPELL_EFFECT_138                      Leap
+    &Spell::EffectNULL,                                     //138 SPELL_EFFECT_LEAP_BACK                
     &Spell::EffectUnused,                                   //139 SPELL_EFFECT_CLEAR_QUEST              (misc - is quest ID), unused
     &Spell::EffectForceCast,                                //140 SPELL_EFFECT_FORCE_CAST
     &Spell::EffectNULL,                                     //141 SPELL_EFFECT_141                      damage and reduce speed?
@@ -208,7 +208,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS]=
     &Spell::EffectApplyAreaAura,                            //143 SPELL_EFFECT_APPLY_AREA_AURA_OWNER
     &Spell::EffectKnockBack,                                //144 SPELL_EFFECT_KNOCK_BACK_2             Spectral Blast
     &Spell::EffectPlayerPull,                               //145 SPELL_EFFECT_145                      Black Hole Effect
-    &Spell::EffectUnused,                                   //146 SPELL_EFFECT_146                      unused
+    &Spell::EffectUnused,                                   //146 SPELL_EFFECT_ACTIVATE_RUNE            unused
     &Spell::EffectQuestFail,                                //147 SPELL_EFFECT_QUEST_FAIL               quest fail
     &Spell::EffectUnused,                                   //148 SPELL_EFFECT_148                      unused
     &Spell::EffectNULL,                                     //149 SPELL_EFFECT_149                      swoop
@@ -6033,30 +6033,51 @@ void Spell::EffectDispelMechanic(uint32 i)
 
 void Spell::EffectSummonDeadPet(uint32 /*i*/)
 {
-    if (m_caster->GetTypeId() != TYPEID_PLAYER)
+    if (!m_caster->isPlayer())
         return;
+
     Player *_player = m_caster->ToPlayer();
     Pet *pet = _player->GetPet();
-    if (!pet)
-        return;
-    if (pet->isAlive())
-        return;
-    if (damage < 0)
+
+    // Only dead pets should be revived
+    if (pet && pet->isAlive())
         return;
 
-    float x,y,z;
-    _player->GetPosition(x, y, z);
-    _player->GetMap()->CreatureRelocation(pet, x, y, z, _player->GetOrientation());
+    // Don't revive the pet if it doesn't exist, or has been dismissed
+    if (!m_caster->ToPlayer()->doesOwnPet() || m_caster->ToPlayer()->isPetDismissed())
+        return;
+ 
+	float px, py, pz;
 
+	// If the pet was not found in the world we have to summon it,
+	// add it to the world and relocate for everything to work
+	if (!pet)
+	{
+        _player->GetClosePoint(px, py, pz, _player->GetObjectSize(), PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);   
+        _player->SummonPet(0, px, py, pz, _player->GetOrientation(), SUMMON_PET, 0);
+
+        // Make sure the pet has been summoned and exists in the world
+        if (Pet *currentPet = _player->GetPet())
+        {
+            pet = currentPet; pet->AddToWorld();
+            pet->Relocate(px, py, pz, _player->GetOrientation());
+        }
+        else return; // Something has gone wrong and the pet was not summoned
+	}
+    else
+    {
+        _player->GetPosition(px, py, pz);
+        _player->GetMap()->CreatureRelocation(pet, px, py, pz, _player->GetOrientation());
+    }
+    
     pet->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
     pet->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
     pet->setDeathState(ALIVE);
     pet->clearUnitState(UNIT_STAT_ALL_STATE);
     pet->SetHealth(uint32(pet->GetMaxHealth()*(float(damage)/100)));
 
-    //pet->AIM_Initialize();
-    // _player->PetSpellInitialize(); -- action bar not removed at death and not required send at revive
     pet->SavePetToDB(PET_SAVE_AS_CURRENT);
+    pet->SendUpdateToPlayer(_player);
 }
 
 void Spell::EffectDestroyAllTotems(uint32 /*i*/)
