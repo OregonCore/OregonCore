@@ -8773,8 +8773,8 @@ uint32 Unit::HealTargetUnit(Unit* target, SpellEntry const *spellInfo, uint32 he
     // This should have already been checked, but just in case...
     if (target && spellInfo && heal != 0)
     {	
-        sLog.outDebug("DEBUG: HealTargetUnit(caster %u, target %u, spell %u, healing %u, log %s)",
-            target->GetGUIDLow(), spellInfo->Id, heal, (sendLog) ? "TRUE" : "FALSE");
+        sLog.outDebug("DEBUG: HealTargetUnit(caster: %u, target: %u, spell: %u, healing: %u, log: %s)",
+            GetGUIDLow(), target->GetGUIDLow(), spellInfo->Id, heal, (sendLog) ? "TRUE" : "FALSE");
 
         // Amount of health points the target was healed 
         if (uint32 gain = target->ModifyHealth(int32(heal)))
@@ -8783,7 +8783,7 @@ uint32 Unit::HealTargetUnit(Unit* target, SpellEntry const *spellInfo, uint32 he
             if (sendLog) SendHealSpellLog(target, spellInfo->Id, heal, crit);
 
             // Increase threat for caster if the target is being healed in combat
-            if (target != this && target->isInCombat())
+            if (target->isInCombat())
                 target->getHostileRefManager().threatAssist(this, float(gain) * 0.5f, spellInfo);
 	    
             return gain;
