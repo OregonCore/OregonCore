@@ -1066,7 +1066,7 @@ class Unit : public WorldObject
 
         bool isInFlight()  const { return hasUnitState(UNIT_STAT_IN_FLIGHT); }
         
-        // Is the unit casting a combat spell? 
+        // Is the unit casting, or has recently casted a combat spell but not in combat yet? 
         bool isInitiatingCombat() const { return m_initiatingCombat; }
         bool isInCombat()  const { return HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT); }
         void CombatStart(Unit* target, bool initialAggro = true);
