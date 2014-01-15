@@ -3467,31 +3467,32 @@ bool Unit::AddAura(Aura *Aur)
         for (AuraMap::iterator i2 = m_Auras.lower_bound(spair); i2 != m_Auras.upper_bound(spair);)
         {
             Aura* aur2 = i2->second;
-            if (aur2 && !stackModified && aur2->GetId() == Aur->GetId() && aurSpellInfo->StackAmount)
-             if (uint32(aur2->GetStackAmount()) < aurSpellInfo->StackAmount)
-             {
-                 // Allow mongoose procs from different weapon stacks
-                 if (Aur->GetId() == 28093 || Aur->GetId() == 20007 && Aur->GetCastItemGUID() != i2->second->GetCastItemGUID())
-                 { i2++; continue; }
-				 
-                 // Increment aura's stack, one stack per one call
-                 Aur->SetStackAmount(aur2->GetStackAmount()+1);
-                 stackModified = true;
+            if (aur2 && !stackModified && aur2->GetId() == Aur->GetId())
+            {
+                // Non stackable and capped auras do not allow stacking
+                if (!(aurSpellInfo->StackAmount && uint32(aur2->GetStackAmount()) < aurSpellInfo->StackAmount))
+                {
+                    // Do not let the stack size exceed the maximum stack limit
+                    // Instead of adding a new stack, just reset the duration time
+                    aur2->SetAuraDuration(aur2->GetAuraMaxDuration());
+                    aur2->UpdateAuraDuration();
+                    delete Aur; return false; 
+                }
 
-                 // Existing aura will be replaced with the newly created one 
-                 RemoveAura(i2,AURA_REMOVE_BY_STACK);
-                 i2 = m_Auras.lower_bound(spair);
-                 continue;
-             }
-             // Do not let the stack size exceed the maximum stack limit
-             // Insteed of adding a new stack, just reset the duration time
-             else 
-             { 
-                 aur2->SetAuraDuration(aur2->GetAuraMaxDuration());
-                 aur2->UpdateAuraDuration();
-                 delete Aur; return false; 
-             }
-             ++i2;
+                // Allow mongoose procs from different weapon stacks
+                if (Aur->GetId() == 28093 || Aur->GetId() == 20007 && Aur->GetCastItemGUID() != i2->second->GetCastItemGUID())
+                { i2++; continue; }
+				 
+                // Increment aura's stack, one stack per one call
+                Aur->SetStackAmount(aur2->GetStackAmount()+1);
+                stackModified = true;
+
+                // Existing aura will be replaced with the newly created one 
+                RemoveAura(i2,AURA_REMOVE_BY_STACK);
+                i2 = m_Auras.lower_bound(spair);
+                continue;
+            }
+            ++i2;
         }
     }
     // passive auras stack with all (except passive spell proc auras)

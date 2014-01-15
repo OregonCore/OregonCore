@@ -175,7 +175,7 @@ class BIH
                 while (true)
                 {
                     // Check for element existence before accessing position
-                    if (tree.size() < 1 || node >= tree.size()) 
+                    if (tree.size() < 1 || uint32(node) >= tree.size()) 
                         break;
 
                     uint32 tn = tree[node];
