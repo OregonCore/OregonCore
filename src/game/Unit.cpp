@@ -4918,6 +4918,25 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                 triggered_spell_id = 29077;
                 break;
             }
+            // Arcane Potency
+            if (dummySpell->SpellIconID == 2120)
+            {
+                if (!procSpell)
+                    return false;
+					
+                target = this;
+
+                switch (dummySpell->Id)
+                {
+                    case 31571: triggered_spell_id = 33421; break;
+                    case 31572: triggered_spell_id = 33713; break;
+                    case 31573: triggered_spell_id = 33714; break;
+                    default:
+                        sLog.outError("Unit::HandleDummyAuraProc: non handled spell id: %u",dummySpell->Id);
+                        return false;
+                }
+                break;
+            }
             // Incanter's Regalia set (add trigger chance to Mana Shield)
             if (dummySpell->SpellFamilyFlags & 0x0000000000008000LL)
             {
