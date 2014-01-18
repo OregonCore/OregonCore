@@ -3467,31 +3467,32 @@ bool Unit::AddAura(Aura *Aur)
         for (AuraMap::iterator i2 = m_Auras.lower_bound(spair); i2 != m_Auras.upper_bound(spair);)
         {
             Aura* aur2 = i2->second;
-            if (aur2 && !stackModified && aur2->GetId() == Aur->GetId() && aurSpellInfo->StackAmount)
-             if (uint32(aur2->GetStackAmount()) < aurSpellInfo->StackAmount)
-             {
-                 // Allow mongoose procs from different weapon stacks
-                 if (Aur->GetId() == 28093 || Aur->GetId() == 20007 && Aur->GetCastItemGUID() != i2->second->GetCastItemGUID())
-                 { i2++; continue; }
-				 
-                 // Increment aura's stack, one stack per one call
-                 Aur->SetStackAmount(aur2->GetStackAmount()+1);
-                 stackModified = true;
+            if (aur2 && !stackModified && aur2->GetId() == Aur->GetId())
+            {
+                // Non stackable and capped auras do not allow stacking
+                if (!(aurSpellInfo->StackAmount && uint32(aur2->GetStackAmount()) < aurSpellInfo->StackAmount))
+                {
+                    // Do not let the stack size exceed the maximum stack limit
+                    // Instead of adding a new stack, just reset the duration time
+                    aur2->SetAuraDuration(aur2->GetAuraMaxDuration());
+                    aur2->UpdateAuraDuration();
+                    delete Aur; return false; 
+                }
 
-                 // Existing aura will be replaced with the newly created one 
-                 RemoveAura(i2,AURA_REMOVE_BY_STACK);
-                 i2 = m_Auras.lower_bound(spair);
-                 continue;
-             }
-             // Do not let the stack size exceed the maximum stack limit
-             // Insteed of adding a new stack, just reset the duration time
-             else 
-             { 
-                 aur2->SetAuraDuration(aur2->GetAuraMaxDuration());
-                 aur2->UpdateAuraDuration();
-                 delete Aur; return false; 
-             }
-             ++i2;
+                // Allow mongoose procs from different weapon stacks
+                if (Aur->GetId() == 28093 || Aur->GetId() == 20007 && Aur->GetCastItemGUID() != i2->second->GetCastItemGUID())
+                { i2++; continue; }
+				 
+                // Increment aura's stack, one stack per one call
+                Aur->SetStackAmount(aur2->GetStackAmount()+1);
+                stackModified = true;
+
+                // Existing aura will be replaced with the newly created one 
+                RemoveAura(i2,AURA_REMOVE_BY_STACK);
+                i2 = m_Auras.lower_bound(spair);
+                continue;
+            }
+            ++i2;
         }
     }
     // passive auras stack with all (except passive spell proc auras)
@@ -8773,8 +8774,8 @@ uint32 Unit::HealTargetUnit(Unit* target, SpellEntry const *spellInfo, uint32 he
     // This should have already been checked, but just in case...
     if (target && spellInfo && heal != 0)
     {	
-        sLog.outDebug("DEBUG: HealTargetUnit(caster %u, target %u, spell %u, healing %u, log %s)",
-            target->GetGUIDLow(), spellInfo->Id, heal, (sendLog) ? "TRUE" : "FALSE");
+        sLog.outDebug("DEBUG: HealTargetUnit(caster: %u, target: %u, spell: %u, healing: %u, log: %s)",
+            GetGUIDLow(), target->GetGUIDLow(), spellInfo->Id, heal, (sendLog) ? "TRUE" : "FALSE");
 
         // Amount of health points the target was healed 
         if (uint32 gain = target->ModifyHealth(int32(heal)))
@@ -8783,7 +8784,7 @@ uint32 Unit::HealTargetUnit(Unit* target, SpellEntry const *spellInfo, uint32 he
             if (sendLog) SendHealSpellLog(target, spellInfo->Id, heal, crit);
 
             // Increase threat for caster if the target is being healed in combat
-            if (target != this && target->isInCombat())
+            if (target->isInCombat())
                 target->getHostileRefManager().threatAssist(this, float(gain) * 0.5f, spellInfo);
 	    
             return gain;

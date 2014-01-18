@@ -174,6 +174,10 @@ class BIH
             while (true) {
                 while (true)
                 {
+                    // Check for element existence before accessing position
+                    if (tree.size() < 1 || uint32(node) >= tree.size()) 
+                        break;
+
                     uint32 tn = tree[node];
                     uint32 axis = (tn & (3 << 30)) >> 30;
                     bool BVH2 = tn & (1 << 29);
