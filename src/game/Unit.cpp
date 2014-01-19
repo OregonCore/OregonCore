@@ -3149,9 +3149,9 @@ void Unit::InterruptSpell(CurrentSpellTypes spellType, bool withDelayed, bool wi
             if (GetTypeId() == TYPEID_PLAYER)
                 ToPlayer()->SendAutoRepeatCancel();
         }
-
         if (spell->getState() != SPELL_STATE_FINISHED)
-            spell->cancel(false);
+            spell->cancel(true);
+
         spell->SetReferencedFromCurrent(false);
     }
 }
