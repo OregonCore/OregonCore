@@ -3467,31 +3467,32 @@ bool Unit::AddAura(Aura *Aur)
         for (AuraMap::iterator i2 = m_Auras.lower_bound(spair); i2 != m_Auras.upper_bound(spair);)
         {
             Aura* aur2 = i2->second;
-            if (aur2 && !stackModified && aur2->GetId() == Aur->GetId() && aurSpellInfo->StackAmount)
-             if (uint32(aur2->GetStackAmount()) < aurSpellInfo->StackAmount)
-             {
-                 // Allow mongoose procs from different weapon stacks
-                 if (Aur->GetId() == 28093 || Aur->GetId() == 20007 && Aur->GetCastItemGUID() != i2->second->GetCastItemGUID())
-                 { i2++; continue; }
-				 
-                 // Increment aura's stack, one stack per one call
-                 Aur->SetStackAmount(aur2->GetStackAmount()+1);
-                 stackModified = true;
+            if (aur2 && !stackModified && aur2->GetId() == Aur->GetId())
+            {
+                // Non stackable and capped auras do not allow stacking
+                if (!(aurSpellInfo->StackAmount && uint32(aur2->GetStackAmount()) < aurSpellInfo->StackAmount))
+                {
+                    // Do not let the stack size exceed the maximum stack limit
+                    // Instead of adding a new stack, just reset the duration time
+                    aur2->SetAuraDuration(aur2->GetAuraMaxDuration());
+                    aur2->UpdateAuraDuration();
+                    delete Aur; return false; 
+                }
 
-                 // Existing aura will be replaced with the newly created one 
-                 RemoveAura(i2,AURA_REMOVE_BY_STACK);
-                 i2 = m_Auras.lower_bound(spair);
-                 continue;
-             }
-             // Do not let the stack size exceed the maximum stack limit
-             // Insteed of adding a new stack, just reset the duration time
-             else 
-             { 
-                 aur2->SetAuraDuration(aur2->GetAuraMaxDuration());
-                 aur2->UpdateAuraDuration();
-                 delete Aur; return false; 
-             }
-             ++i2;
+                // Allow mongoose procs from different weapon stacks
+                if (Aur->GetId() == 28093 || Aur->GetId() == 20007 && Aur->GetCastItemGUID() != i2->second->GetCastItemGUID())
+                { i2++; continue; }
+				 
+                // Increment aura's stack, one stack per one call
+                Aur->SetStackAmount(aur2->GetStackAmount()+1);
+                stackModified = true;
+
+                // Existing aura will be replaced with the newly created one 
+                RemoveAura(i2,AURA_REMOVE_BY_STACK);
+                i2 = m_Auras.lower_bound(spair);
+                continue;
+            }
+            ++i2;
         }
     }
     // passive auras stack with all (except passive spell proc auras)
@@ -3605,12 +3606,10 @@ void Unit::RemoveRankAurasDueToSpell(uint32 spellId)
 
 bool Unit::RemoveNoStackAurasDueToAura(Aura *Aur)
 {
-    if (!Aur)
-        return false;
+    if (!Aur) return false;
 
     SpellEntry const* spellProto = Aur->GetSpellProto();
-    if (!spellProto)
-        return false;
+    if (!spellProto) return false;
 
     uint32 spellId = Aur->GetId();
     uint32 effIndex = Aur->GetEffIndex();
@@ -3618,14 +3617,11 @@ bool Unit::RemoveNoStackAurasDueToAura(Aura *Aur)
     AuraMap::iterator i,next;
     for (i = m_Auras.begin(); i != m_Auras.end(); i = next)
     {
-        next = i;
-        ++next;
+        next = i; ++next;
         if (!(*i).second) continue;
 
         SpellEntry const* i_spellProto = (*i).second->GetSpellProto();
-
-        if (!i_spellProto)
-            continue;
+        if (!i_spellProto) continue;
 
         uint32 i_spellId = i_spellProto->Id;
 
@@ -3634,73 +3630,59 @@ bool Unit::RemoveNoStackAurasDueToAura(Aura *Aur)
 
         if (IsPassiveSpell(i_spellId))
         {
-            if (IsPassiveStackableSpell(i_spellId))
-                continue;
-
             // passive non-stackable spells not stackable only with another rank of same spell
-            if (!spellmgr.IsRankSpellDueToSpell(spellProto, i_spellId))
+            if (IsPassiveStackableSpell(i_spellId) || !spellmgr.IsRankSpellDueToSpell(spellProto, i_spellId))
                 continue;
         }
-
         uint32 i_effIndex = (*i).second->GetEffIndex();
 
         bool is_triggered_by_spell = false;
         // prevent triggered aura of removing aura that triggered it
         for (int j = 0; j < 3; ++j)
+        {
             if (i_spellProto->EffectTriggerSpell[j] == spellProto->Id)
-                is_triggered_by_spell = true;
+            { is_triggered_by_spell = true; break; }
+        }
         if (is_triggered_by_spell) continue;
 
         for (int j = 0; j < 3; ++j)
         {
             // prevent remove dummy triggered spells at next effect aura add
-            switch(spellProto->Effect[j])                   // main spell auras added added after triggered spell
-            {
-                case SPELL_EFFECT_DUMMY:
-                    switch(spellId)
-                    {
-                        case 5420: if (i_spellId == 34123) is_triggered_by_spell = true; break;
-                    }
-                    break;
-            }
+            if (spellProto->Effect[j] == SPELL_EFFECT_DUMMY && spellId == 5420 && i_spellId == 34123)
+                is_triggered_by_spell = true;
 
-            if (is_triggered_by_spell)
-                break;
-
+            // main aura added before triggered spell
             // prevent remove form main spell by triggered passive spells
-            switch(i_spellProto->EffectApplyAuraName[j])    // main aura added before triggered spell
+            else if (i_spellProto->EffectApplyAuraName[j] == SPELL_AURA_MOD_SHAPESHIFT)
             {
-                case SPELL_AURA_MOD_SHAPESHIFT:
-                    switch(i_spellId)
-                    {
-                        case 24858: if (spellId == 24905)                  is_triggered_by_spell = true; break;
-                        case 33891: if (spellId == 5420 || spellId == 34123) is_triggered_by_spell = true; break;
-                        case 34551: if (spellId == 22688)                  is_triggered_by_spell = true; break;
-                    }
-                    break;
-            }
-        }
+                if ((i_spellId == 24858 && spellId == 24905) || (i_spellId == 34551 && spellId == 22688))
+                    is_triggered_by_spell = true;
 
+                else if (i_spellId == 33891 && (spellId == 5420 || spellId == 34123))
+                    is_triggered_by_spell = true;
+            }
+            else continue;
+            break;
+        }
         if (!is_triggered_by_spell)
         {
             bool sameCaster = Aur->GetCasterGUID() == (*i).second->GetCasterGUID();
-            if (spellmgr.IsNoStackSpellDueToSpell(spellId, i_spellId, sameCaster))
+            
+            if (!spellmgr.IsNoStackSpellDueToSpell(spellId, i_spellId, sameCaster))
+                continue;
+
+            //some spells should be not removed by lower rank of them (totem, paladin aura)
+            if (!sameCaster && spellProto->DurationIndex == 21 && spellmgr.IsRankSpellDueToSpell(spellProto, i_spellId))
+             if (spellProto->Effect[effIndex] == SPELL_EFFECT_APPLY_AREA_AURA_PARTY)
+              if (CompareAuraRanks(spellId, effIndex, i_spellId, i_effIndex) < 0)
+                  return false;
+
+            // Its a parent aura (create this aura in ApplyModifier)
+            if ((*i).second->IsInUse())
             {
-                //some spells should be not removed by lower rank of them (totem, paladin aura)
-                if (!sameCaster
-                    &&(spellProto->Effect[effIndex] == SPELL_EFFECT_APPLY_AREA_AURA_PARTY)
-                    &&(spellProto->DurationIndex == 21)
-                    &&(spellmgr.IsRankSpellDueToSpell(spellProto, i_spellId))
-                    &&(CompareAuraRanks(spellId, effIndex, i_spellId, i_effIndex) < 0))
-                    return false;
-
-                // Its a parent aura (create this aura in ApplyModifier)
-                if ((*i).second->IsInUse())
-                {
-                    sLog.outError("Aura (Spell %u Effect %u) is in process but attempt removed at aura (Spell %u Effect %u) adding, need add stack rule for Unit::RemoveNoStackAurasDueToAura", i->second->GetId(), i->second->GetEffIndex(),Aur->GetId(), Aur->GetEffIndex());
-                    continue;
-                }
-
+                sLog.outError("Aura (Spell %u Effect %u) is in process but attempt removed at aura (Spell %u Effect %u) adding, need add stack rule for Unit::RemoveNoStackAurasDueToAura", i->second->GetId(), i->second->GetEffIndex(),Aur->GetId(), Aur->GetEffIndex());
+                continue;
+            }
             uint64 caster = (*i).second->GetCasterGUID();
             // Remove all auras by aura caster
             for (uint8 a=0;a<3;++a)
@@ -3713,16 +3695,11 @@ bool Unit::RemoveNoStackAurasDueToAura(Aura *Aur)
                         RemoveAura(iter, AURA_REMOVE_BY_STACK);
                         iter = m_Auras.lower_bound(spair);
                     }
-                    else
-                        ++iter;
-                }
-            }
-
-                if (m_Auras.empty())
-                    break;
-                else
-                    next =  m_Auras.begin();
-            }
+                    else ++iter;
+                }     
+            }            
+            if (m_Auras.empty()) break;
+            else next = m_Auras.begin();           
         }
     }
     return true;
@@ -4916,6 +4893,25 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
 
                 target = this;
                 triggered_spell_id = 29077;
+                break;
+            }
+            // Arcane Potency
+            if (dummySpell->SpellIconID == 2120)
+            {
+                if (!procSpell)
+                    return false;
+					
+                target = this;
+
+                switch (dummySpell->Id)
+                {
+                    case 31571: triggered_spell_id = 33421; break;
+                    case 31572: triggered_spell_id = 33713; break;
+                    case 31573: triggered_spell_id = 33714; break;
+                    default:
+                        sLog.outError("Unit::HandleDummyAuraProc: non handled spell id: %u",dummySpell->Id);
+                        return false;
+                }
                 break;
             }
             // Incanter's Regalia set (add trigger chance to Mana Shield)
@@ -8597,7 +8593,7 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
     if (isInCombat())
         return;
 
-    // Combat is no longer in initiation phase, and now the unit is in combat
+    // Combat is no longer in initiation phase
     SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
     setInitiatingCombat(false); 
     
@@ -8773,8 +8769,8 @@ uint32 Unit::HealTargetUnit(Unit* target, SpellEntry const *spellInfo, uint32 he
     // This should have already been checked, but just in case...
     if (target && spellInfo && heal != 0)
     {	
-        sLog.outDebug("DEBUG: HealTargetUnit(caster %u, target %u, spell %u, healing %u, log %s)",
-            target->GetGUIDLow(), spellInfo->Id, heal, (sendLog) ? "TRUE" : "FALSE");
+        sLog.outDebug("DEBUG: HealTargetUnit(caster: %u, target: %u, spell: %u, healing: %u, log: %s)",
+            GetGUIDLow(), target->GetGUIDLow(), spellInfo->Id, heal, (sendLog) ? "TRUE" : "FALSE");
 
         // Amount of health points the target was healed 
         if (uint32 gain = target->ModifyHealth(int32(heal)))
@@ -8783,7 +8779,7 @@ uint32 Unit::HealTargetUnit(Unit* target, SpellEntry const *spellInfo, uint32 he
             if (sendLog) SendHealSpellLog(target, spellInfo->Id, heal, crit);
 
             // Increase threat for caster if the target is being healed in combat
-            if (target != this && target->isInCombat())
+            if (target->isInCombat())
                 target->getHostileRefManager().threatAssist(this, float(gain) * 0.5f, spellInfo);
 	    
             return gain;

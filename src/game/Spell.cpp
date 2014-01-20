@@ -2260,6 +2260,9 @@ void Spell::cast(bool skipCheck)
             return;
         }
     }
+    // Check if some auras need to be interrupted when casting combat auto-repeating spells
+    if (IsAutoRepeat() && !IsNonCombatSpell(m_spellInfo))
+        m_caster->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_ATTACK);
 
     FillTargetMap();
 
@@ -3461,18 +3464,6 @@ uint8 Spell::CanCast(bool strict)
        //     return SPELL_FAILED_DONT_REPORT;
        // else
             return SPELL_FAILED_NOT_READY;
-    }
-    // While the combat is still being initiated, we should make sure that the
-    // unit does not cast any spells that should not be used in combat
-    if (m_caster->isInitiatingCombat())
-    {
-        // Auras that should not be used in combat:
-        if (m_spellInfo->AuraInterruptFlags & AURA_INTERRUPT_FLAG_ATTACK)
-            return SPELL_FAILED_INTERRUPTED_COMBAT;
-
-        // Spells that should not be used in combat:  
-        if (m_spellInfo->Attributes & SPELL_ATTR_CANT_USED_IN_COMBAT) 
-            return SPELL_FAILED_AFFECTING_COMBAT;
     }
 
     // only allow triggered spells if at an ended battleground
