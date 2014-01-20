@@ -3842,7 +3842,8 @@ bool ChatHandler::HandleGuildDeleteCommand(const char *args)
     if (!targetGuild)
         return false;
 
-    targetGuild->Disband ();
+    targetGuild->Disband();
+	delete targetGuild;
 
     return true;
 }

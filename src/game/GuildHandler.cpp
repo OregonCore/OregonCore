@@ -371,24 +371,26 @@ void WorldSession::HandleGuildLeaveOpcode(WorldPacket& /*recvPacket*/)
 {
     std::string plName;
     Guild *guild;
-
-    //sLog.outDebug("WORLD: Received CMSG_GUILD_LEAVE");
+	bool disband = false;
 
     guild = objmgr.GetGuildById(_player->GetGuildId());
+
+	// Check that the guild exists
+	// before going any further.
     if (!guild)
     {
         SendGuildCommandResult(GUILD_CREATE_S, "", ERR_GUILD_PLAYER_NOT_IN_GUILD);
         return;
     }
+	// Leader cannot leave if he is not the last member
     if (_player->GetGUID() == guild->GetLeader() && guild->GetMemberSize() > 1)
-    {
+	{
         SendGuildCommandResult(GUILD_QUIT_S, "", ERR_GUILD_LEADER_LEAVE);
         return;
-    }
-
-    if (_player->GetGUID() == guild->GetLeader())
-    {
+	} else {
+		// Guild is disbanded if leader leaves.
         guild->Disband();
+		disband = true;
         return;
     }
 
@@ -404,17 +406,15 @@ void WorldSession::HandleGuildLeaveOpcode(WorldPacket& /*recvPacket*/)
     data << plName;
     guild->BroadcastPacket(&data);
 
-    //sLog.outDebug("WORLD: Sent (SMSG_GUILD_EVENT)");
-
     SendGuildCommandResult(GUILD_QUIT_S, guild->GetName(), ERR_PLAYER_NO_MORE_IN_GUILD);
+
+	if (disband)
+		delete this;
 }
 
 void WorldSession::HandleGuildDisbandOpcode(WorldPacket& /*recvPacket*/)
 {
-    std::string name;
     Guild *guild;
-
-    //sLog.outDebug("WORLD: Received CMSG_GUILD_DISBAND");
 
     guild = objmgr.GetGuildById(GetPlayer()->GetGuildId());
     if (!guild)
@@ -430,7 +430,7 @@ void WorldSession::HandleGuildDisbandOpcode(WorldPacket& /*recvPacket*/)
 
     guild->Disband();
 
-    //sLog.outDebug("WORLD: Guild Sucefully Disbanded");
+    delete this;
 }
 
 void WorldSession::HandleGuildLeaderOpcode(WorldPacket& recvPacket)

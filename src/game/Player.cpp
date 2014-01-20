@@ -3750,7 +3750,7 @@ void Player::DeleteFromDB(uint64 playerguid, uint32 accountId, bool updateRealmC
     // remove from guild
     if (uint32 guildId = GetGuildIdFromDB(playerguid))
         if (Guild* guild = objmgr.GetGuildById(guildId))
-            guild->DelMember(guid);
+            guild->DelMember(guid, false);
 
     // remove from arena teams
     uint32 at_id = GetArenaTeamIdFromDB(playerguid,ARENA_TEAM_2v2);

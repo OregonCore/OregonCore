@@ -506,6 +506,7 @@ void Guild::DelMember(uint64 guid, bool isDisbanding)
         if (!best)
         {
             Disband();
+			delete this;
             return;
         }
 
