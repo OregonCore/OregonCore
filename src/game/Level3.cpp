@@ -3954,6 +3954,18 @@ bool ChatHandler::HandleDieCommand(const char* /*args*/)
     return true;
 }
 
+// Kills the unit and grants the corpse ownership rights to the command caller
+bool ChatHandler::HandleKillCommand(const char* /*args*/)
+{
+    if (Unit* target = getSelectedUnit())
+    {
+        // Converts the targets health points value from integer to string data format
+        std::string damage = static_cast<std::ostringstream*>(&(std::ostringstream() << int(target->GetHealth())))->str();
+        return HandleDamageCommand(damage.c_str());
+    }
+    else return false;
+}
+
 bool ChatHandler::HandleDamageCommand(const char * args)
 {
     if (!*args)
