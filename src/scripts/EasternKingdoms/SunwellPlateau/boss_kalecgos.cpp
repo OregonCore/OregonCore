@@ -599,7 +599,7 @@ struct boss_sathrovarrAI : public ScriptedAI
                 }
                 else
                 {
-                    me->MonsterTextEmote(EMOTE_UNABLE_TO_FIND, NULL);
+                    me->MonsterTextEmote(EMOTE_UNABLE_TO_FIND, 0);
                     EnterEvadeMode();
                     return;
                 }

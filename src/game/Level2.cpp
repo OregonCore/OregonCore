@@ -2105,7 +2105,7 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
             return false;
         }
 
-        char* FactionName;
+        const char* FactionName;
         for (FactionStateList::const_iterator itr = target->m_factions.begin(); itr != target->m_factions.end(); ++itr)
         {
             FactionEntry const *factionEntry = sFactionStore.LookupEntry(itr->second.ID);
@@ -4007,8 +4007,8 @@ bool ChatHandler::HandleNpcAddFormationCommand(const char* args)
 
     uint32 leaderGUID = (uint32) atoi(ldrGUID);
         
-    char* cmt = strtok(NULL, "");
-    char* commentText = "";
+          char* cmt = strtok(NULL, "");
+    const char* commentText = "";
 
     if (cmt)
         commentText = extractQuotedArg(cmt);
@@ -4126,8 +4126,8 @@ bool ChatHandler::HandleNpcAddGroupCommand(const char* args)
 
     uint32 leaderGUID = (uint32) atoi(ldrGUID);
     
-    char* cmt = strtok(NULL, "");
-    char* commentText = "";
+          char* cmt = strtok(NULL, "");
+    const char* commentText = "";
 
     if (cmt)
         commentText = extractQuotedArg(cmt);

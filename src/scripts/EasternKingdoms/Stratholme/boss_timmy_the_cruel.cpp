@@ -47,7 +47,7 @@ struct boss_timmy_the_cruelAI : public ScriptedAI
     {
         if (!HasYelled)
         {
-            me->MonsterYell(SAY_SPAWN,LANG_UNIVERSAL,NULL);
+            me->MonsterYell(SAY_SPAWN,LANG_UNIVERSAL,0);
             HasYelled = true;
         }
     }

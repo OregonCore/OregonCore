@@ -106,17 +106,17 @@ struct instance_shadowfang_keep : public ScriptedInstance
             case GO_COURTYARD_DOOR:
                 DoorCourtyardGUID = pGo->GetGUID();
                 if (m_auiEncounter[0] == DONE)
-                    HandleGameObject(NULL, true, pGo);
+                    HandleGameObject(0, true, pGo);
                 break;
             case GO_SORCERER_DOOR:
                 DoorSorcererGUID = pGo->GetGUID();
                 if (m_auiEncounter[2] == DONE)
-                    HandleGameObject(NULL, true, pGo);
+                    HandleGameObject(0, true, pGo);
                 break;
             case GO_ARUGAL_DOOR:
                 DoorArugalGUID = pGo->GetGUID();
                 if (m_auiEncounter[3] == DONE)
-                    HandleGameObject(NULL, true, pGo);
+                    HandleGameObject(0, true, pGo);
                 break;
         }
     }

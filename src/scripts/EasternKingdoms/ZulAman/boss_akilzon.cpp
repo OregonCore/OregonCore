@@ -117,7 +117,7 @@ struct boss_akilzonAI : public ScriptedAI
 
     void EnterCombat(Unit * /*who*/)
     {
-        me->MonsterYell(SAY_ONAGGRO, LANG_UNIVERSAL, NULL);
+        me->MonsterYell(SAY_ONAGGRO, LANG_UNIVERSAL, 0);
         DoPlaySoundToSet(me, SOUND_ONAGGRO);
         DoZoneInCombat();
         if (pInstance)
@@ -126,7 +126,7 @@ struct boss_akilzonAI : public ScriptedAI
 
     void JustDied(Unit* /*Killer*/)
     {
-        me->MonsterYell(SAY_ONDEATH,LANG_UNIVERSAL,NULL);
+        me->MonsterYell(SAY_ONDEATH,LANG_UNIVERSAL,0);
         DoPlaySoundToSet(me, SOUND_ONDEATH);
         if (pInstance)
             pInstance->SetData(DATA_AKILZONEVENT, DONE);
@@ -138,11 +138,11 @@ struct boss_akilzonAI : public ScriptedAI
         switch (urand(0,1))
         {
             case 0:
-                me->MonsterYell(SAY_ONSLAY1, LANG_UNIVERSAL, NULL);
+                me->MonsterYell(SAY_ONSLAY1, LANG_UNIVERSAL, 0);
                 DoPlaySoundToSet(me, SOUND_ONSLAY1);
                 break;
             case 1:
-                me->MonsterYell(SAY_ONSLAY2, LANG_UNIVERSAL, NULL);
+                me->MonsterYell(SAY_ONSLAY2, LANG_UNIVERSAL, 0);
                 DoPlaySoundToSet(me, SOUND_ONSLAY2);
                 break;
         }
@@ -266,7 +266,7 @@ struct boss_akilzonAI : public ScriptedAI
 
         if (Enrage_Timer <= diff)
         {
-            me->MonsterYell(SAY_ONENRAGE, LANG_UNIVERSAL, NULL);
+            me->MonsterYell(SAY_ONENRAGE, LANG_UNIVERSAL, 0);
             DoPlaySoundToSet(me, SOUND_ONENRAGE);
             DoCast(me, SPELL_BERSERK, true);
             Enrage_Timer = 600000;
@@ -340,7 +340,7 @@ struct boss_akilzonAI : public ScriptedAI
 
         if (SummonEagles_Timer <= diff)
         {
-            me->MonsterYell(SAY_ONSUMMON, LANG_UNIVERSAL, NULL);
+            me->MonsterYell(SAY_ONSUMMON, LANG_UNIVERSAL, 0);
             DoPlaySoundToSet(me, SOUND_ONSUMMON);
 
             float x, y, z;

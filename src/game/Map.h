@@ -63,11 +63,11 @@ struct ScriptAction
 //******************************************
 // Map file format defines
 //******************************************
-#define MAP_MAGIC             'SPAM'
-#define MAP_VERSION_MAGIC     '5.0w'
-#define MAP_AREA_MAGIC        'AERA'
-#define MAP_HEIGHT_MAGIC      'TGHM'
-#define MAP_LIQUID_MAGIC      'QILM'
+#define MAP_MAGIC             0x08048510 // SPAM
+#define MAP_VERSION_MAGIC     0x08048518 // 5.0w
+#define MAP_AREA_MAGIC        0x08048520 // AERA
+#define MAP_HEIGHT_MAGIC      0x08048525 // TGHM
+#define MAP_LIQUID_MAGIC      0x0804852A // QILM
 
 struct map_fileheader
 {

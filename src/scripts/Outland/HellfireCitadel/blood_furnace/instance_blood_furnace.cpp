@@ -298,7 +298,7 @@ struct instance_blood_furnace : public ScriptedInstance
 
     void DoNextBroggokEventPhase()
     {
-        float dx, dy;
+        float dx = .0f, dy = .0f;
         GetMovementDistanceForIndex(BroggokEventPhase, dx, dy);
 
         if (BroggokEventPhase >= MAX_ORC_WAVES)

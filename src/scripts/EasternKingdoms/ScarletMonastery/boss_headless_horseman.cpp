@@ -311,7 +311,7 @@ struct mob_headAI : public ScriptedAI
                 Creature *speaker = DoSpawnCreature(HELPER,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN,1000);
                 if (speaker)
                     speaker->CastSpell(speaker,SPELL_HEAD_SPEAKS,false);
-                me->MonsterTextEmote(EMOTE_LAUGHS,NULL);
+                me->MonsterTextEmote(EMOTE_LAUGHS,0);
             } else laugh -= diff;
         }
         else
@@ -674,7 +674,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
             if (laugh <= diff)
             {
                 laugh = urand(11000,22000);
-                me->MonsterTextEmote(EMOTE_LAUGHS,NULL);
+                me->MonsterTextEmote(EMOTE_LAUGHS,0);
                 DoPlaySoundToSet(me, RandomLaugh[rand()%3]);
             } else laugh -= diff;
 

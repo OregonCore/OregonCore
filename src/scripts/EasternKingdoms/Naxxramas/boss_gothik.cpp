@@ -33,7 +33,7 @@ EndScriptData */
 
 //Gothik
 #define SPELL_HARVESTSOUL           28679
-#define SPELL_SHADOWBOLT            29317
+#define SPELL_GOTHIK_SHADOWBOLT     29317
 #define H_SPELL_SHADOWBOLT          56405
 //Unrelenting Trainee
 #define SPELL_EAGLECLAW             30285

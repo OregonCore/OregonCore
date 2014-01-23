@@ -242,7 +242,7 @@ static EventIllidan MaxTimer[]=
 struct Yells
 {
     uint32 sound;
-    char* text;
+    const char* text;
     uint32 pCreature, timer, emote;
     bool Talk;
 };
@@ -762,7 +762,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
             case EVENT_TAUNT:
                 {
                     uint32 random = rand()%4;
-                    char* yell = RandomTaunts[random].text;
+                    const char* yell = RandomTaunts[random].text;
                     uint32 soundid = RandomTaunts[random].sound;
                     if (yell)
                         me->MonsterYell(yell, LANG_UNIVERSAL, 0);
@@ -1562,7 +1562,7 @@ struct boss_maievAI : public ScriptedAI
             case EVENT_MAIEV_TAUNT:
                 {
                     uint32 random = rand()%4;
-                    char* text = MaievTaunts[random].text;
+                    const char* text = MaievTaunts[random].text;
                     uint32 sound = MaievTaunts[random].sound;
                     me->MonsterYell(text, LANG_UNIVERSAL, 0);
                     DoPlaySoundToSet(me, sound);

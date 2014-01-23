@@ -55,7 +55,7 @@ bool GossipSelect_npc_blood_knight_dawnstar(Player* pPlayer, Creature* /*pCreatu
     if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
     {
         ItemPosCountVec dest;
-        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 24226, 1, false);
+        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 24226, 1, NULL);
         if (msg == EQUIP_ERR_OK)
         {
             pPlayer->StoreNewItem(dest, 24226, 1, true);

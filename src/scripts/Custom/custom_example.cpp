@@ -95,7 +95,7 @@ struct custom_exampleAI : public ScriptedAI
     void EnterCombat(Unit *who)
     {
         //Say some stuff
-        me->MonsterSay(SAY_AGGRO,LANG_UNIVERSAL,NULL);
+        me->MonsterSay(SAY_AGGRO,LANG_UNIVERSAL,0);
         DoPlaySoundToSet(me,8280);
     }
 
@@ -113,27 +113,27 @@ struct custom_exampleAI : public ScriptedAI
                 switch (rand()%5)
                 {
                     case 0:
-                        me->MonsterYell(SAY_RANDOM_0,LANG_UNIVERSAL,NULL);
+                        me->MonsterYell(SAY_RANDOM_0,LANG_UNIVERSAL,0);
                         DoPlaySoundToSet(me,8831);  //8831 is the index of the sound we are playing. You find these numbers in SoundEntries.dbc
                         break;
 
                     case 1:
-                        me->MonsterYell(SAY_RANDOM_1,LANG_UNIVERSAL,NULL);
+                        me->MonsterYell(SAY_RANDOM_1,LANG_UNIVERSAL,0);
                         DoPlaySoundToSet(me,8818);
                         break;
 
                     case 2:
-                        me->MonsterYell(SAY_RANDOM_2,LANG_UNIVERSAL,NULL);
+                        me->MonsterYell(SAY_RANDOM_2,LANG_UNIVERSAL,0);
                         DoPlaySoundToSet(me,8041);
                         break;
 
                     case 3:
-                        me->MonsterYell(SAY_RANDOM_3,LANG_UNIVERSAL,NULL);
+                        me->MonsterYell(SAY_RANDOM_3,LANG_UNIVERSAL,0);
                         DoPlaySoundToSet(me,8581);
                         break;
 
                     case 4:
-                        me->MonsterYell(SAY_RANDOM_4,LANG_UNIVERSAL,NULL);
+                        me->MonsterYell(SAY_RANDOM_4,LANG_UNIVERSAL,0);
                         DoPlaySoundToSet(me,8791);
                         break;
                 }
@@ -203,7 +203,7 @@ struct custom_exampleAI : public ScriptedAI
         {
             //Go to next phase
             Phase++;
-            me->MonsterYell(SAY_PHASE,LANG_UNIVERSAL,NULL);
+            me->MonsterYell(SAY_PHASE,LANG_UNIVERSAL,0);
             DoCast(me,SPELL_ENRAGE);
         } else Phase_Timer -= diff;
 
@@ -216,10 +216,10 @@ struct custom_exampleAI : public ScriptedAI
         me->HandleEmoteCommand(emote);
 
         if (emote == TEXTEMOTE_DANCE)
-            me->MonsterSay(SAY_DANCE, LANG_UNIVERSAL, NULL);
+            me->MonsterSay(SAY_DANCE, LANG_UNIVERSAL, 0);
 
         if (emote == TEXTEMOTE_SALUTE)
-            me->MonsterSay(SAY_SALUTE, LANG_UNIVERSAL, NULL);
+            me->MonsterSay(SAY_SALUTE, LANG_UNIVERSAL, 0);
     }
 };
 

@@ -1720,7 +1720,7 @@ void SpellMgr::LoadSpellRequired()
 
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT spell_id, req_spell from spell_required");
 
-    if (result == NULL)
+    if (!result)
     {
         barGoLink bar(1);
         bar.step();
@@ -2473,7 +2473,7 @@ void SpellMgr::LoadSpellCustomAttr()
             break;
         case 32727: // Arena Preparation - remove invisibility aura
         case 44949: // Whirlwind's offhand attack - TODO: remove this (50% weapon damage effect)
-            spellInfo->Effect[1] = NULL;
+            spellInfo->Effect[1] = 0;
             break;
         case 12723: // Sweeping Strikes proc
             mSpellCustomAttr[i] |= SPELL_ATTR_CU_IGNORE_ARMOR;

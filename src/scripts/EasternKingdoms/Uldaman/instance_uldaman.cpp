@@ -102,14 +102,14 @@ struct instance_uldaman : public ScriptedInstance
                 altarOfTheKeeperTempleDoor = pGo->GetGUID();
 
                 if (Encounters[0] == DONE)
-                    HandleGameObject(NULL,true,pGo);
+                    HandleGameObject(0,true,pGo);
                 break;
 
             case ARCHAEDAS_TEMPLE_DOOR:
                 archaedasTempleDoor = pGo->GetGUID();
 
                 if (Encounters[0] == DONE)
-                    HandleGameObject(NULL,true,pGo);
+                    HandleGameObject(0,true,pGo);
                 break;
 
             case ANCIENT_VAULT_DOOR:
@@ -118,21 +118,21 @@ struct instance_uldaman : public ScriptedInstance
                 ancientVaultDoor = pGo->GetGUID();
 
                 if (Encounters[1] == DONE)
-                    HandleGameObject(NULL,true,pGo);
+                    HandleGameObject(0,true,pGo);
                 break;
 
             case IRONAYA_SEAL_DOOR:
                 ironayaSealDoor = pGo->GetGUID();
 
                 if (Encounters[2] == DONE)
-                    HandleGameObject(NULL,true,pGo);
+                    HandleGameObject(0,true,pGo);
                 break;
 
             case KEYSTONE_GO:
                 keystoneGUID = pGo->GetGUID();
                 if (Encounters[2] == DONE)
                 {
-                    HandleGameObject(NULL,true,pGo);
+                    HandleGameObject(0,true,pGo);
                     pGo->SetUInt32Value(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
                 }
                 break;
@@ -154,7 +154,7 @@ struct instance_uldaman : public ScriptedInstance
         if (!pGo)
             return;
 
-        HandleGameObject(NULL,open,pGo);
+        HandleGameObject(0,open,pGo);
     }
 
     void BlockGO(uint64 guid)

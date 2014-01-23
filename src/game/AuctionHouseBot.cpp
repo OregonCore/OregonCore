@@ -843,7 +843,7 @@ void AuctionHouseBot::Initialize()
         QueryResult_AutoPtr results = QueryResult_AutoPtr(NULL);
         char npcQuery[] = "SELECT distinct item FROM npc_vendor";
         results = WorldDatabase.Query(npcQuery);
-        if (results != NULL)
+        if (results)
         {
             do
             {
@@ -868,7 +868,7 @@ void AuctionHouseBot::Initialize()
             "SELECT item FROM skinning_loot_template";
 
         results = WorldDatabase.Query(lootQuery);
-        if (results != NULL)
+        if (results)
         {
             do
             {

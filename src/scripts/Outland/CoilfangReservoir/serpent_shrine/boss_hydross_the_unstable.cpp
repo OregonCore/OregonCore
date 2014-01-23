@@ -304,7 +304,7 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
             {
                 if (MarkOfHydross_Count <= 5)
                 {
-                    uint32 mark_spell = NULL;
+                    uint32 mark_spell = 0;
 
                     switch(MarkOfHydross_Count)
                     {

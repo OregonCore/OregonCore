@@ -50,7 +50,7 @@ bool GossipHello_npc_innkeeper(Player *pPlayer, Creature *pCreature)
 
     if (isEventActive()&& !pPlayer->HasAura(SPELL_TRICK_OR_TREATED, 0))
     {
-        char* localizedEntry;
+        const char* localizedEntry;
         switch (pPlayer->GetSession()->GetSessionDbLocaleIndex())
         {
             case 0:

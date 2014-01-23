@@ -91,15 +91,15 @@ struct boss_loathebAI : public ScriptedAI
         switch (rand()%3)
         {
             case 0:
-                me->MonsterYell(SAY_AGGRO1,LANG_UNIVERSAL,NULL);
+                me->MonsterYell(SAY_AGGRO1,LANG_UNIVERSAL,0);
                 DoPlaySoundToSet(me,SOUND_AGGRO1);
                 break;
             case 1:
-                me->MonsterYell(SAY_AGGRO2,LANG_UNIVERSAL,NULL);
+                me->MonsterYell(SAY_AGGRO2,LANG_UNIVERSAL,0);
                 DoPlaySoundToSet(me,SOUND_AGGRO2);
                 break;
             case 2:
-                me->MonsterYell(SAY_AGGRO3,LANG_UNIVERSAL,NULL);
+                me->MonsterYell(SAY_AGGRO3,LANG_UNIVERSAL,0);
                 DoPlaySoundToSet(me,SOUND_AGGRO3);
                 break;
         }
@@ -110,27 +110,27 @@ struct boss_loathebAI : public ScriptedAI
         switch (rand()%6)
         {
             case 0:
-                me->MonsterYell(SAY_SLAY1,LANG_UNIVERSAL,NULL);
+                me->MonsterYell(SAY_SLAY1,LANG_UNIVERSAL,0);
                 DoPlaySoundToSet(me,SOUND_SLAY1);
                 break;
             case 1:
-                me->MonsterYell(SAY_SLAY2,LANG_UNIVERSAL,NULL);
+                me->MonsterYell(SAY_SLAY2,LANG_UNIVERSAL,0);
                 DoPlaySoundToSet(me,SOUND_SLAY2);
                 break;
             case 2:
-                me->MonsterYell(SAY_SLAY3,LANG_UNIVERSAL,NULL);
+                me->MonsterYell(SAY_SLAY3,LANG_UNIVERSAL,0);
                 DoPlaySoundToSet(me,SOUND_SLAY3);
                 break;
             case 3:
-                me->MonsterYell(SAY_SLAY4,LANG_UNIVERSAL,NULL);
+                me->MonsterYell(SAY_SLAY4,LANG_UNIVERSAL,0);
                 DoPlaySoundToSet(me,SOUND_SLAY4);
                 break;
             case 4:
-                me->MonsterYell(SAY_SLAY5,LANG_UNIVERSAL,NULL);
+                me->MonsterYell(SAY_SLAY5,LANG_UNIVERSAL,0);
                 DoPlaySoundToSet(me,SOUND_SLAY5);
                 break;
             case 5:
-                me->MonsterYell(SAY_SLAY6,LANG_UNIVERSAL,NULL);
+                me->MonsterYell(SAY_SLAY6,LANG_UNIVERSAL,0);
                 DoPlaySoundToSet(me,SOUND_SLAY6);
                 break;
         }
@@ -138,7 +138,7 @@ struct boss_loathebAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        me->MonsterYell(SAY_DEATH,LANG_UNIVERSAL,NULL);
+        me->MonsterYell(SAY_DEATH,LANG_UNIVERSAL,0);
         DoPlaySoundToSet(me,SOUND_DEATH);
     }
 
