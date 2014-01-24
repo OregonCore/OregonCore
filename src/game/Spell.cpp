@@ -2098,7 +2098,7 @@ void Spell::prepare(SpellCastTargets * targets, Aura* triggeredByAura)
     uint8 result = CanCast(true);
     if (result != 0 && !IsAutoRepeat())                      //always cast autorepeat dummy for triggering
     {
-        if (triggeredByAura)
+        if (triggeredByAura && !IsPassiveSpell(m_spellInfo))
         {
             SendChannelUpdate(0);
             triggeredByAura->SetAuraDuration(0);

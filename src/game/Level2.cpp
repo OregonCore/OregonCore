@@ -4007,7 +4007,7 @@ bool ChatHandler::HandleNpcAddFormationCommand(const char* args)
 
     uint32 leaderGUID = (uint32) atoi(ldrGUID);
         
-    char* cmt = strtok(NULL, "");
+          char* cmt = strtok(NULL, "");
     const char* commentText = "";
 
     if (cmt)
@@ -4126,7 +4126,7 @@ bool ChatHandler::HandleNpcAddGroupCommand(const char* args)
 
     uint32 leaderGUID = (uint32) atoi(ldrGUID);
     
-    char* cmt = strtok(NULL, "");
+          char* cmt = strtok(NULL, "");
     const char* commentText = "";
 
     if (cmt)

@@ -69,7 +69,5 @@ class CreatureGroup
         bool IsAllowedToRespawn(Creature *member);
 };
 
-#define formation_mgr Oregon::Singleton<CreatureGroupManager>::Instance()
-
 #endif
 

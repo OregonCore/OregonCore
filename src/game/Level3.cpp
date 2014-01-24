@@ -130,7 +130,7 @@ bool ChatHandler::HandleAHBotOptionsCommand(const char *args)
             PSendSysMessage("Syntax is: ahbotoptions mintime $ahMapID (2, 6 or 7) $mintime");
             return false;
         }
-        auctionbot.Commands(3, ahMapID, NULL, param1);
+        auctionbot.Commands(3, ahMapID, 0, param1);
         */
     }
     else if (strncmp(opt,"maxtime",l) == 0)
@@ -144,7 +144,7 @@ bool ChatHandler::HandleAHBotOptionsCommand(const char *args)
             PSendSysMessage("Syntax is: ahbotoptions maxtime $ahMapID (2, 6 or 7) $maxtime");
             return false;
         }
-        auctionbot.Commands(4, ahMapID, NULL, param1);
+        auctionbot.Commands(4, ahMapID, 0, param1);
         */
     }
     else if (strncmp(opt,"percentages",l) == 0)

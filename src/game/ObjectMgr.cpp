@@ -2870,7 +2870,7 @@ void ObjectMgr::LoadQuests()
     //   120            121
         "StartScript, CompleteScript"
         " FROM quest_template");
-    if (result == NULL)
+    if (!result)
     {
         barGoLink bar(1);
         bar.step();
@@ -4249,7 +4249,7 @@ void ObjectMgr::LoadPageTexts()
                     ss << *itr << " ";
                 ss << "create(s) a circular reference, which can cause the server to freeze. Changing Next_Page of page "
                     << pageItr->Page_ID <<" to 0";
-                sLog.outErrorDb(ss.str().c_str());
+                sLog.outErrorDb("%s", ss.str().c_str());
                 const_cast<PageText*>(pageItr)->Next_Page = 0;
                 break;
             }
@@ -7087,7 +7087,7 @@ GameTele const* ObjectMgr::GetGameTele(const std::string& name) const
     // explicit name case
     std::wstring wname;
     if (!Utf8toWStr(name,wname))
-        return false;
+        return NULL;
 
     // converting string that we try to find to lower case
     wstrToLower(wname);

@@ -81,7 +81,7 @@ struct mob_aquementasAI : public ScriptedAI
             !CAST_PLR(receiver)->HasItemCount(11522,1,true))
         {
             ItemPosCountVec dest;
-            uint8 msg = CAST_PLR(receiver)->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 11522, 1, 0);
+            uint8 msg = CAST_PLR(receiver)->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 11522, 1, NULL);
             if (msg == EQUIP_ERR_OK)
                 CAST_PLR(receiver)->StoreNewItem(dest, 11522, 1, true);
         }

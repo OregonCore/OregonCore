@@ -83,12 +83,12 @@ struct instance_gnomeregan : public ScriptedInstance
             case GO_CAVE_IN_LEFT:
                 uiCaveInLeftGUID = pGo->GetGUID();
                 if (m_auiEncounter[0] == DONE || m_auiEncounter[0] == NOT_STARTED)
-                    HandleGameObject(0LL,false,pGo);
+                    HandleGameObject(0,false,pGo);
                 break;
             case GO_CAVE_IN_RIGHT:
                 uiCaveInRightGUID = pGo->GetGUID();
                 if (m_auiEncounter[0] == DONE || m_auiEncounter[0] == NOT_STARTED)
-                    HandleGameObject(0LL,false,pGo);
+                    HandleGameObject(0,false,pGo);
                 break;
         }
     }

@@ -2348,6 +2348,7 @@ class Player : public Unit, public GridObject<Player>
         uint8 m_MirrorTimerFlags;
         uint8 m_MirrorTimerFlagsLast;
         bool m_isInWater;
+        bool m_wasOutdoors;
 
         void SetCanDelayTeleport(bool setting) { m_bCanDelayTeleport = setting; }
         bool IsHasDelayedTeleport() const

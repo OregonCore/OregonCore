@@ -218,7 +218,7 @@ bool GossipSelect_npc_elder_kuruti(Player *player, Creature* pCreature, uint32 /
             if (!player->HasItemCount(24573,1))
             {
                 ItemPosCountVec dest;
-                uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 24573, 1, 0);
+                uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 24573, 1, NULL);
                 if (msg == EQUIP_ERR_OK)
                 {
                     player->StoreNewItem(dest, 24573, true);

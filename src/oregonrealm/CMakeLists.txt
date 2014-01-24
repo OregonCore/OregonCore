@@ -47,7 +47,7 @@ if( NOT WIN32 )
 endif()
 
 if( UNIX )
-  set(authserver_LINK_FLAGS "-pthread ${oregon-realm_LINK_FLAGS}")
+  set(oregon-realm_LINK_FLAGS "-pthread ${oregon-realm_LINK_FLAGS}")
 endif()
 
 if( CMAKE_SYSTEM_NAME MATCHES "Darwin" )
