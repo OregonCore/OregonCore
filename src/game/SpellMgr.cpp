@@ -667,6 +667,7 @@ bool IsPositiveEffect(uint32 spellId, uint32 effIndex)
         case SPELL_EFFECT_SKILL_STEP:
         case SPELL_EFFECT_HEAL_PCT:
         case SPELL_EFFECT_ENERGIZE_PCT:
+		case SPELL_EFFECT_QUEST_COMPLETE:
             return true;
 
             // non-positive aura use
