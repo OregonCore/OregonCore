@@ -343,6 +343,7 @@ Player::Player (WorldSession *session): Unit()
     m_MirrorTimerFlagsLast = UNDERWATER_NONE;
 
     m_isInWater = false;
+    m_wasOutdoors = false;
     m_drunkTimer = 0;
     m_drunk = 0;
     m_restTime = 0;
@@ -5664,8 +5665,29 @@ void Player::CheckAreaExploreAndOutdoor()
     bool isOutdoor;
     uint16 areaFlag = GetBaseMap()->GetAreaFlag(GetPositionX(),GetPositionY(),GetPositionZ(), &isOutdoor);
 
-    if (sWorld.getConfig(CONFIG_VMAP_INDOOR_CHECK) && !isOutdoor && !isGameMaster())
-        RemoveAurasWithAttribute(SPELL_ATTR_OUTDOORS_ONLY);
+    if (sWorld.getConfig(CONFIG_VMAP_INDOOR_CHECK))
+    {
+        if (!isOutdoor && !isGameMaster())
+            RemoveAurasWithAttribute(SPELL_ATTR_OUTDOORS_ONLY);
+
+        /* Process passive spells which 'works only while outdoors';
+           when we enter indoor, the above line will take care of that,
+           however we need to reset back if we enter outdoors again */
+        if (!m_wasOutdoors && isOutdoor)
+        {
+            for (PlayerSpellMap::const_iterator it = m_spells.begin(); it != m_spells.end(); it++)
+            {
+                SpellEntry const* spellInfo = sSpellStore.LookupEntry(it->first);
+                if (spellInfo->Attributes & SPELL_ATTR_OUTDOORS_ONLY && m_form == (1 << (m_form-1)))
+                {
+                    sLog.outString("Reseting outdoor aura: %u", spellInfo->Id);
+                    CastSpell(this, spellInfo, true);
+                }
+            }
+        }
+
+        m_wasOutdoors = isOutdoor;
+    }
 
     if (areaFlag==0xffff)
         return;
