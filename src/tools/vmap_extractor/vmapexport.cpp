@@ -453,7 +453,7 @@ int main(int argc, char ** argv)
 
     // Create the working directory
     if (mkdir(szWorkDirWmo
-#ifdef _XOPEN_UNIX
+#if defined(_XOPEN_UNIX) || defined(unix)
                     , 0711
 #endif
                     ))
