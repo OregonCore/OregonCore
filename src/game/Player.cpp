@@ -5681,9 +5681,9 @@ void Player::CheckAreaExploreAndOutdoor()
             for (PlayerSpellMap::const_iterator it = m_spells.begin(); it != m_spells.end(); it++)
             {
                 SpellEntry const* spellInfo = sSpellStore.LookupEntry(it->first);
-                if (spellInfo->Attributes & SPELL_ATTR_OUTDOORS_ONLY && m_form == (1 << (m_form-1)))
+                if (spellInfo->Attributes & SPELL_ATTR_OUTDOORS_ONLY && spellInfo->Stances == (1 << (m_form-1)))
                 {
-                    sLog.outString("Reseting outdoor aura: %u", spellInfo->Id);
+                    sLog.outDetail("Reseting outdoor aura: %u", spellInfo->Id);
                     CastSpell(this, spellInfo, true);
                 }
             }
