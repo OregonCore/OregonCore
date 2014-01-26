@@ -2608,6 +2608,9 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
             else
                 modelid = 21244;
             break;
+        case FORM_MASTER_ANGLER:
+            modelid = 15234;
+            break;
         case FORM_AMBIENT:
         case FORM_SHADOW:
         case FORM_STEALTH:
