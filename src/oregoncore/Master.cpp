@@ -40,6 +40,8 @@
 #ifdef _WIN32
 #include "ServiceWin32.h"
 extern int m_ServiceStatus;
+#else
+#include <readline/readline.h>
 #endif
 
 INSTANTIATE_SINGLETON_1(Master);
@@ -318,6 +320,11 @@ int Master::Run()
         #else
 
         cliThread->destroy();
+        /* Without these two lines,
+           terminal will be screwed up and
+           unusable if restart was issued */
+        rl_free_line_state();
+        rl_cleanup_after_signal();
 
         #endif
 
@@ -424,7 +431,7 @@ void Master::_OnSignal(int s)
     switch (s)
     {
         case SIGINT:
-            World::StopNow(RESTART_EXIT_CODE);
+            World::StopNow(SHUTDOWN_EXIT_CODE);
             break;
         case SIGTERM:
         #ifdef _WIN32
