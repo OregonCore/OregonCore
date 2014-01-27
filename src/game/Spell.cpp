@@ -267,6 +267,7 @@ Spell::Spell(Unit* Caster, SpellEntry const *info, bool triggered, uint64 origin
     m_triggeringContainer = triggeringContainer;
     m_referencedFromCurrentSpell = false;
     m_executedCurrently = false;
+    m_needComboPoints = NeedsComboPoints(m_spellInfo);
     m_delayStart = 0;
     m_delayAtDamageCount = 0;
     m_destroyed = false;
@@ -941,6 +942,11 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
         if (target->reflectResult == SPELL_MISS_NONE)       // If reflected spell hit caster -> do all effect on him
             DoSpellHitOnUnit(m_caster, mask);
     }
+
+    // Do not take combo points on dodge and miss
+    if (m_needComboPoints && m_targets.getUnitTargetGUID() == target->targetGUID)
+        if (missInfo != SPELL_MISS_NONE)
+            m_needComboPoints = false;
 
     // All calculated do it!
     // Do healing and triggers
@@ -2134,6 +2140,10 @@ void Spell::prepare(SpellCastTargets * targets, Aura* triggeredByAura)
     // Prepare data for triggers
     prepareDataForTriggerSystem();
 
+    // Set combo point requirement
+    if (m_IsTriggeredSpell || m_CastItem || m_caster->GetTypeId()!=TYPEID_PLAYER)
+        m_needComboPoints = false;
+
     // calculate cast time (calculated after first CanCast check to prevent charge counting for first CanCast fail)
     m_casttime = GetSpellCastTime(m_spellInfo, this);
 
@@ -2553,6 +2563,10 @@ void Spell::_handle_immediate_phase()
 
 void Spell::_handle_finish_phase()
 {
+    // Take for real after all targets are processed
+    if (m_needComboPoints)
+        ((Player*)m_caster)->ClearComboPoints();
+
     // spell log
     if (m_needSpellLog)
         SendLogExecute();
@@ -3346,8 +3360,6 @@ void Spell::TakePower()
                         break;
                     }
                 }
-        if (hit && NeedsComboPoints(m_spellInfo))
-            m_caster->ToPlayer()->ClearComboPoints();
     }
 
     if (!m_powerCost)
