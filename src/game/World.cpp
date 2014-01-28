@@ -2155,7 +2155,10 @@ void World::_UpdateGameTime()
         if (m_ShutdownTimer <= elapsed)
         {
             if (!(m_ShutdownMask & SHUTDOWN_MASK_IDLE) || GetActiveAndQueuedSessionCount() == 0)
+            {
+                ObjectAccessor::Instance().SaveAllPlayers();
                 m_stopEvent = true;                         // exist code already set
+            }
             else
                 m_ShutdownTimer = 1;                        // minimum timer value to wait idle state
         }
