@@ -190,6 +190,7 @@ void CreatureGroupManager::LoadCreatureGroups()
         if (guidSet.find(memberGUID) == guidSet.end())
         {
             sLog.outErrorDb("creature_group_data table member guid %u incorrect (not exist)", memberGUID);
+            delete group_member;
             continue;
         }
 
