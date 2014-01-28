@@ -2052,6 +2052,14 @@ class Player : public Unit, public GridObject<Player>
         uint32 GetOldPetSpell() const { return m_oldpetspell; }
         void SetOldPetSpell(uint32 petspell) { m_oldpetspell = petspell; }
 
+        // Handle pet status here
+        PetStatus GetPetStatus() const { return m_petStatus; }
+        void SetPetStatus(PetStatus status) { m_petStatus = status; }
+
+        bool isPetDeadAndRemoved() const { return (m_petStatus == PET_STATUS_DEAD_AND_REMOVED); }
+        bool isPetDismissed() const { return (m_petStatus == PET_STATUS_DISMISSED); }
+        bool doesOwnPet() const { return (m_petStatus != PET_STATUS_NONE); }
+
         void SendCinematicStart(uint32 CinematicSequenceId);
 
         /*********************************************************/
@@ -2389,6 +2397,9 @@ class Player : public Unit, public GridObject<Player>
         // Temporary removed pet cache
         uint32 m_temporaryUnsummonedPetNumber;
         uint32 m_oldpetspell;
+
+        // Status of your currently controlled pet
+        PetStatus m_petStatus;
 };
 
 void AddItemsSetItem(Player*player,Item *item);

@@ -44,7 +44,7 @@ struct mobs_mana_tappedAI : public ScriptedAI
 
     void Reset() { }
 
-    void EnterCombat(Unit *who) { }
+    void EnterCombat(Unit *) { }
 
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {
@@ -258,6 +258,7 @@ struct npc_secondTrialAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (questPhase == 1)
+        {
             if (timer <= diff)
             {
                 me->SetUInt32Value(UNIT_FIELD_BYTES_1, UNIT_STAND_STATE_STAND);
@@ -272,13 +273,16 @@ struct npc_secondTrialAI : public ScriptedAI
             }
             else
                 timer -= diff;
+        }
 
         if (!UpdateVictim())
           return;
 
         // healer
         if (spellFlashLight)
+        {
             if (me->GetHealth()*100 / me->GetMaxHealth() < 70)
+            {
                 if (timerFlashLight <= diff)
                 {
                     DoCast(me, SPELL_FLASH_OF_LIGHT);
@@ -286,8 +290,11 @@ struct npc_secondTrialAI : public ScriptedAI
                 }
                 else
                     timerFlashLight -= diff;
+            }
+        }
 
         if (spellJustice)
+        {
             if (timerJustice <= diff)
             {
                 DoCast(me, SPELL_SEAL_OF_JUSTICE);
@@ -295,8 +302,10 @@ struct npc_secondTrialAI : public ScriptedAI
             }
             else
                 timerJustice -= diff;
+        }
 
         if (spellJudLight)
+        {
             if (timerJudLight <= diff)
             {
                 DoCast(me, SPELL_JUDGEMENT_OF_LIGHT);
@@ -304,17 +313,20 @@ struct npc_secondTrialAI : public ScriptedAI
             }
             else
                 timerJudLight -= diff;
+        }
 
-          if (spellCommand)
-              if (timerCommand <= diff)
-              {
-                  DoCast(me, TIMER_SEAL_OF_COMMAND);
-                  timerCommand = TIMER_SEAL_OF_COMMAND + rand()%TIMER_SEAL_OF_COMMAND;
-              }
-              else
-                  timerCommand -= diff;
+        if (spellCommand)
+        {
+            if (timerCommand <= diff)
+            {
+                DoCast(me, TIMER_SEAL_OF_COMMAND);
+                timerCommand = TIMER_SEAL_OF_COMMAND + rand()%TIMER_SEAL_OF_COMMAND;
+            }
+            else
+                timerCommand -= diff;
+        }
 
-          DoMeleeAttackIfReady();
+        DoMeleeAttackIfReady();
     }
 
     void Activate(uint64 summonerguid);

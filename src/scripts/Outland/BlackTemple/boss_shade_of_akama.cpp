@@ -53,8 +53,8 @@ static Location ChannelerLocations[]=
 */
 static Location SpawnLocations[]=
 {
-    {498.652740f, 461.728119f, 0},
-    {498.505003f, 339.619324f, 0}
+    {498.652740f, 461.728119f, 0, 0 },
+    {498.505003f, 339.619324f, 0, 0 }
 };
 
 static Location AkamaWP[]=
@@ -119,10 +119,10 @@ struct mob_ashtongue_channelerAI : public ScriptedAI
         me->setActive(true);
     }
     void JustDied(Unit* killer);
-    void EnterCombat(Unit* who) {}
-    void AttackStart(Unit* who) {}
-    void MoveInLineOfSight(Unit* who) {}
-    void UpdateAI(const uint32 diff) {}
+    void EnterCombat(Unit* /*who*/) {}
+    void AttackStart(Unit* /*who*/) {}
+    void MoveInLineOfSight(Unit* /*who*/) {}
+    void UpdateAI(const uint32 /*diff*/) {}
 };
 
 struct mob_ashtongue_sorcererAI : public ScriptedAI
@@ -296,7 +296,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit* who) { }
+    void EnterCombat(Unit* /*who*/) { }
 
     void AttackStart(Unit* who)
     {
@@ -317,7 +317,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
         if (guid)
         {
             if (Sorcerers.empty())
-                error_log("SD2 ERROR: Shade of Akama - attempt to remove guid %u from Sorcerers list but list is already empty", guid);
+                error_log("SD2 ERROR: Shade of Akama - attempt to remove guid %llu from Sorcerers list but list is already empty", guid);
             else  Sorcerers.remove(guid);
         }
     }
@@ -376,7 +376,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
             {
                 CAST_AI(mob_ashtongue_channelerAI, (*itr)->AI())->ShadeGUID = me->GetGUID();
                 Channelers.push_back((*itr)->GetGUID());
-                debug_log("OSCR: Shade of Akama Grid Search found channeler %u. Adding to list", (*itr)->GetGUID());
+                debug_log("OSCR: Shade of Akama Grid Search found channeler %llu. Adding to list", (*itr)->GetGUID());
             }
         }
         else error_log("SD2 ERROR: Grid Search was unable to find any channelers. Shade of Akama encounter will be buggy");
@@ -528,7 +528,7 @@ struct npc_akamaAI : public ScriptedAI
         ShadeHasDied = false;
         StartCombat = false;
         pInstance = c->GetInstanceData();
-        ShadeGUID = pInstance ? pInstance->GetData64(DATA_SHADEOFAKAMA) : NOT_STARTED;
+        ShadeGUID = pInstance ? pInstance->GetData64(DATA_SHADEOFAKAMA) : uint64(NOT_STARTED);
         me->setActive(true);
         EventBegun = false;
         CastSoulRetrieveTimer = 0;
@@ -751,6 +751,7 @@ struct npc_akamaAI : public ScriptedAI
         }
 
         if (SoulRetrieveTimer)
+        {
             if (SoulRetrieveTimer <= diff)
             {
                 switch(EndingTalkCount)
@@ -806,6 +807,7 @@ struct npc_akamaAI : public ScriptedAI
                     break;
                 }
             } else SoulRetrieveTimer -= diff;
+        }
 
         if (!UpdateVictim())
             return;

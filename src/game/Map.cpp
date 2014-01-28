@@ -1759,7 +1759,7 @@ uint16 Map::GetAreaFlag(float x, float y, float z, bool *isOutdoors) const
     if (GetAreaInfo(x, y, z, mogpFlags, adtId, rootId, groupId))
     {
         haveAreaInfo = true;
-        if (wmoEntry = GetWMOAreaTableEntryByTripple(rootId, adtId, groupId))
+        if ((wmoEntry = GetWMOAreaTableEntryByTripple(rootId, adtId, groupId)))
             atEntry = GetAreaEntryByAreaID(wmoEntry->areaId);
     }
 
@@ -2468,7 +2468,7 @@ void InstanceMap::CreateInstanceData(bool load)
         {
             Field* fields = result->Fetch();
             const char* data = fields[0].GetString();
-            if (data && data != "")
+            if (data && *data)
             {
                 sLog.outDebug("Loading instance data for %s with id %u", objmgr.GetScriptName(i_script_id), i_InstanceId);
                 i_data->Load(data);
@@ -2553,7 +2553,7 @@ void InstanceMap::PermBindAllPlayers(Player *player)
 time_t InstanceMap::GetResetTime()
 {
     InstanceSave *save = sInstanceSaveManager.GetInstanceSave(GetInstanceId());
-    return save ? save->GetDifficulty() : DIFFICULTY_NORMAL;
+    return save ? save->GetDifficulty() : time_t(DIFFICULTY_NORMAL);
 }
 
 void InstanceMap::UnloadAll()

@@ -407,10 +407,14 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
             if (spellInfo->AuraInterruptFlags & AURA_INTERRUPT_FLAG_NOT_SEATED)
             {
                 for (int i = 0; i < 3; i++)
+                {
                     if (spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_POWER_REGEN)
                         return SPELL_DRINK;
-                    else if (spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_REGEN)
+					
+                    if (spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_REGEN ||
+                        spellInfo->EffectApplyAuraName[i] == SPELL_AURA_OBS_MOD_HEALTH)
                         return SPELL_FOOD;
+                }
             }
             // this may be a hack
             else if ((spellInfo->AttributesEx2 & SPELL_ATTR_EX2_FOOD)
@@ -855,6 +859,7 @@ bool IsSingleTargetSpell(SpellEntry const *spellInfo)
     {
         case SPELL_JUDGEMENT:
             return true;
+        default:break;
     }
 
     // single target triggered spell.
@@ -883,6 +888,7 @@ bool IsSingleTargetSpells(SpellEntry const *spellInfo1, SpellEntry const *spellI
         case SPELL_MAGE_POLYMORPH:
             if (GetSpellSpecific(spellInfo2->Id) == spec1)
                 return true;
+        default:
             break;
     }
 
@@ -1072,10 +1078,10 @@ void SpellMgr::LoadSpellAffects()
             continue;
         }
 
-        if (spellInfo->Effect[effectId] != SPELL_EFFECT_APPLY_AURA ||
-            spellInfo->EffectApplyAuraName[effectId] != SPELL_AURA_ADD_FLAT_MODIFIER &&
-            spellInfo->EffectApplyAuraName[effectId] != SPELL_AURA_ADD_PCT_MODIFIER  &&
-            spellInfo->EffectApplyAuraName[effectId] != SPELL_AURA_ADD_TARGET_TRIGGER)
+        if ((spellInfo->Effect[effectId]              != SPELL_EFFECT_APPLY_AURA) ||
+            (spellInfo->EffectApplyAuraName[effectId] != SPELL_AURA_ADD_FLAT_MODIFIER &&
+             spellInfo->EffectApplyAuraName[effectId] != SPELL_AURA_ADD_PCT_MODIFIER  &&
+             spellInfo->EffectApplyAuraName[effectId] != SPELL_AURA_ADD_TARGET_TRIGGER))
         {
             sLog.outErrorDb("Spell %u listed in spell_affect does not have SPELL_AURA_ADD_FLAT_MODIFIER (%u) or SPELL_AURA_ADD_PCT_MODIFIER (%u) or SPELL_AURA_ADD_TARGET_TRIGGER (%u) for effect index (%u)", entry,SPELL_AURA_ADD_FLAT_MODIFIER,SPELL_AURA_ADD_PCT_MODIFIER,SPELL_AURA_ADD_TARGET_TRIGGER,effectId);
             continue;
@@ -2351,10 +2357,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     mSpellCustomAttr[i] |= SPELL_ATTR_CU_AURA_HOT;
                     break;
                 case SPELL_AURA_MOD_ROOT:
-                    mSpellCustomAttr[i] |= SPELL_ATTR_CU_AURA_CC;
-                    mSpellCustomAttr[i] |= SPELL_ATTR_CU_MOVEMENT_IMPAIR;
-                    break;
-                case SPELL_AURA_MOD_DECREASE_SPEED:
+                case SPELL_AURA_MOD_DECREASE_SPEED:                  
                     mSpellCustomAttr[i] |= SPELL_ATTR_CU_MOVEMENT_IMPAIR;
                     break;
                 default:
@@ -2972,6 +2975,7 @@ bool IsDiminishingReturnsGroupDurationLimited(DiminishingGroup group)
         case DIMINISHING_BANISH:
         case DIMINISHING_LIMITONLY:
             return true;
+        default:break;
     }
     return false;
 }
@@ -2999,6 +3003,7 @@ DiminishingReturnsType GetDiminishingReturnsGroupType(DiminishingGroup group)
         case DIMINISHING_KNOCKOUT:
         case DIMINISHING_UNSTABLE_AFFLICTION:
             return DRTYPE_PLAYER;
+        default:break;
     }
 
     return DRTYPE_NONE;

@@ -86,7 +86,7 @@ namespace Oregon
         CellPair &p;
         const float i_radius;
         DelayedUnitRelocation(Cell &c, CellPair &pair, Map &map, float radius) :
-            cell(c), p(pair), i_map(map), i_radius(radius) {}
+            i_map(map), cell(c), p(pair), i_radius(radius) {}
         template<class T> void Visit(GridRefManager<T> &) {}
         void Visit(CreatureMapType &);
         void Visit(PlayerMapType   &);
@@ -139,7 +139,7 @@ namespace Oregon
         void SendPacket(Player* plr)
         {
             // never send packet to self
-            if (plr == i_source || team && plr->GetTeam() != team)
+            if (plr == i_source || (team && plr->GetTeam() != team))
                 return;
 
             if (WorldSession* session = plr->GetSession())
@@ -1045,7 +1045,7 @@ namespace Oregon
 
             ~LocalizedPacketDo()
             {
-                for (int i = 0; i < i_data_cache.size(); ++i)
+                for (uint32 i = 0; i < i_data_cache.size(); ++i)
                     delete i_data_cache[i];
             }
             void operator()(Player* p);

@@ -72,7 +72,7 @@ void WardenMac::Init(WorldSession *pClient, BigNumber *K)
     RequestModule();
 }
 
-ClientWardenModule *WardenMac::GetModuleForClient(WorldSession *session)
+ClientWardenModule *WardenMac::GetModuleForClient(WorldSession* /*session*/)
 {
     ClientWardenModule *mod = new ClientWardenModule;
 

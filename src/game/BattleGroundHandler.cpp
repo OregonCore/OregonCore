@@ -671,7 +671,7 @@ void WorldSession::HandleBattleGroundArenaJoin(WorldPacket & recv_data)
     uint8 arenaslot;                                        // 2v2, 3v3 or 5v5
     uint8 asGroup;                                          // asGroup
     uint8 isRated;                                          // isRated
-    Group * grp;
+    Group * grp = NULL;
 
     recv_data >> guid >> arenaslot >> asGroup >> isRated;
 

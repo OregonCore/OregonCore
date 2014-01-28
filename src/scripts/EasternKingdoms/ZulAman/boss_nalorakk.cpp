@@ -344,12 +344,14 @@ struct boss_nalorakkAI : public ScriptedAI
         if (waitTimer)
         {
             if (inMove)
+            {
                 if (waitTimer <= diff)
                 {
                     (*me).GetMotionMaster()->MovementExpired();
                     (*me).GetMotionMaster()->MovePoint(MovePhase,NalorakkWay[MovePhase][0],NalorakkWay[MovePhase][1],NalorakkWay[MovePhase][2]);
                     waitTimer = 0;
                 } else waitTimer -= diff;
+            }
         }
 
         if (!UpdateVictim())

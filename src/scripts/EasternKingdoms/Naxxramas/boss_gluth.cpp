@@ -89,7 +89,7 @@ struct boss_gluthAI : public ScriptedAI
         Summon_Timer = 10000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 

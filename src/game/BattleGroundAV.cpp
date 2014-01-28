@@ -44,7 +44,7 @@ BattleGroundAV::~BattleGroundAV()
 {
 }
 
-const uint16 BattleGroundAV::GetBonusHonor(uint8 kills) //TODO: move this function to Battleground.cpp (needs to find a way to get m_MaxLevel)
+uint16 BattleGroundAV::GetBonusHonor(uint8 kills) //TODO: move this function to Battleground.cpp (needs to find a way to get m_MaxLevel)
 {
     return Oregon::Honor::hk_honor_at_level(m_MaxLevel, kills);
 }
@@ -249,7 +249,7 @@ void BattleGroundAV::UpdateScore(uint16 team, int16 points)
     }
 }
 
-Creature* BattleGroundAV::AddAVCreature(uint16 cinfoid, uint16 type)
+Creature* BattleGroundAV::AddAVCreature(uint32 cinfoid, uint32 type)
 {
     uint32 level;
     bool isStatic = false;
@@ -273,10 +273,10 @@ Creature* BattleGroundAV::AddAVCreature(uint16 cinfoid, uint16 type)
     if (creature->GetEntry() == BG_AV_CreatureInfo[AV_NPC_A_CAPTAIN][0] || creature->GetEntry() == BG_AV_CreatureInfo[AV_NPC_H_CAPTAIN][0])
         creature->SetRespawnDelay(RESPAWN_ONE_DAY); // TODO: look if this can be done by database + also add this for the wingcommanders
 
-    if ((isStatic && cinfoid >= 10 && cinfoid <= 14) || (!isStatic && ((cinfoid >= AV_NPC_A_GRAVEDEFENSE0 && cinfoid <= AV_NPC_A_GRAVEDEFENSE3) ||
+    if ((isStatic && cinfoid >= 10 && cinfoid <= 14) || (!isStatic && ((/*cinfoid >= AV_NPC_A_GRAVEDEFENSE0 && */cinfoid <= AV_NPC_A_GRAVEDEFENSE3) ||
         (cinfoid >= AV_NPC_H_GRAVEDEFENSE0 && cinfoid <= AV_NPC_H_GRAVEDEFENSE3))))
     {
-        if (!isStatic && ((cinfoid >= AV_NPC_A_GRAVEDEFENSE0 && cinfoid <= AV_NPC_A_GRAVEDEFENSE3)
+        if (!isStatic && ((/*cinfoid >= AV_NPC_A_GRAVEDEFENSE0 &&*/ cinfoid <= AV_NPC_A_GRAVEDEFENSE3)
             || (cinfoid >= AV_NPC_H_GRAVEDEFENSE0 && cinfoid <= AV_NPC_H_GRAVEDEFENSE3)))
         {
             CreatureData &data = objmgr.NewOrExistCreatureData(creature->GetDBTableGUIDLow());
@@ -307,7 +307,7 @@ void BattleGroundAV::Update(time_t diff)
         {
             if (!m_CaptainAlive[i])
                 continue;
-            if (m_CaptainBuffTimer[i] > diff)
+            if (m_CaptainBuffTimer[i] > uint32(diff))
                 m_CaptainBuffTimer[i] -= diff;
             else
             {
@@ -337,7 +337,7 @@ void BattleGroundAV::Update(time_t diff)
                 if (m_Mine_Timer <= 0)
                     UpdateScore(m_Mine_Owner[mine],1);
 
-                if (m_Mine_Reclaim_Timer[mine] > diff)
+                if (m_Mine_Reclaim_Timer[mine] > uint32(diff))
                     m_Mine_Reclaim_Timer[mine] -= diff;
                 else
                     ChangeMineOwner(mine, BG_AV_NEUTRAL_TEAM);
@@ -722,7 +722,7 @@ void BattleGroundAV::DePopulateNode(BG_AV_Nodes node)
         DelCreature(node);
 }
 
-const BG_AV_Nodes BattleGroundAV::GetNodeThroughObject(uint32 object)
+BG_AV_Nodes BattleGroundAV::GetNodeThroughObject(uint32 object)
 {
     sLog.outDebug("bg_AV getnodethroughobject %i",object);
     if (object <= BG_AV_OBJECT_FLAG_A_STONEHEART_BUNKER)
@@ -744,7 +744,7 @@ const BG_AV_Nodes BattleGroundAV::GetNodeThroughObject(uint32 object)
     return BG_AV_Nodes(0);
 }
 
-const uint32 BattleGroundAV::GetObjectThroughNode(BG_AV_Nodes node)
+uint32 BattleGroundAV::GetObjectThroughNode(BG_AV_Nodes node)
 { //this function is the counterpart to GetNodeThroughObject()
     sLog.outDebug("bg_AV GetObjectThroughNode %i",node);
     if (m_Nodes[node].Owner == ALLIANCE)
@@ -763,8 +763,10 @@ const uint32 BattleGroundAV::GetObjectThroughNode(BG_AV_Nodes node)
     else if (m_Nodes[node].Owner == HORDE)
     {
         if (m_Nodes[node].State == POINT_ASSAULTED)
+        {
             if (node <= BG_AV_NODES_STONEHEART_BUNKER)
                 return node+22;
+        }
         else if (m_Nodes[node].State == POINT_CONTROLLED)
         {
             if (node <= BG_AV_NODES_FROSTWOLF_HUT)
@@ -1026,7 +1028,7 @@ void BattleGroundAV::FillInitialWorldStates(WorldPacket& data)
     SendMineWorldStates(BG_AV_SOUTH_MINE);
 }
 
-const uint8 BattleGroundAV::GetWorldStateType(uint8 state, uint16 team) //this is used for node worldstates and returns values which fit good into the worldstatesarray
+uint8 BattleGroundAV::GetWorldStateType(uint8 state, uint16 team) //this is used for node worldstates and returns values which fit good into the worldstatesarray
 {
     //neutral stuff cant get handled (currently its only snowfall)
     ASSERT(team != BG_AV_NEUTRAL_TEAM);

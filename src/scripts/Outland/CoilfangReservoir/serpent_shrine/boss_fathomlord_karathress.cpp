@@ -408,8 +408,8 @@ struct boss_fathomguard_sharkkisAI : public ScriptedAI
         {
             pet = true;
             //uint32 spell_id;
-            uint32 pet_id;
-            switch(rand()%2)
+            uint32 pet_id = rand()%2;
+            switch(pet_id)
             {
             case 0:
                 //spell_id = SPELL_SUMMON_FATHOM_LURKER;

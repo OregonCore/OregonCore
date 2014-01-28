@@ -169,7 +169,7 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
         }
     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit*)
     {
         switch(rand()%2)
         {
@@ -178,7 +178,7 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit*)
     {
         DoScriptText(SAY_DEAD, me);
     }
@@ -290,7 +290,7 @@ struct mob_ethereal_beaconAI : public ScriptedAI
         summoned->AI()->AttackStart(me->getVictim());
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit*)
     {
         if (Creature* Shaffar = me->FindNearestCreature(ENTRY_SHAFFAR, 100))
             ((boss_nexusprince_shaffarAI*)(CAST_CRE(Shaffar)->AI()))->RemoveBeaconFromList(me);
@@ -354,7 +354,7 @@ struct mob_ethereal_apprenticeAI : public ScriptedAI
         isFireboltTurn = true;
     }
 
-    void EnterCombat(Unit* who) {}
+    void EnterCombat(Unit*) {}
 
     void UpdateAI(const uint32 diff)
     {

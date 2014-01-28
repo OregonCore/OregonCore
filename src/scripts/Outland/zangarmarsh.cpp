@@ -58,7 +58,7 @@ bool GossipHello_npcs_ashyen_and_keleth(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npcs_ashyen_and_keleth(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npcs_ashyen_and_keleth(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {
@@ -86,6 +86,7 @@ bool GossipSelect_npcs_ashyen_and_keleth(Player *player, Creature* pCreature, ui
                     pCreature->CastSpell(player, 31815, true);
                     DoScriptText(GOSSIP_REWARD_BLESS, pCreature);
                     break;
+                default:break;
             }
         }
 
@@ -109,6 +110,7 @@ bool GossipSelect_npcs_ashyen_and_keleth(Player *player, Creature* pCreature, ui
                     pCreature->CastSpell(player, 31814, true);
                     DoScriptText(GOSSIP_REWARD_BLESS, pCreature);
                     break;
+                default:break;
             }
         }
         player->CLOSE_GOSSIP_MENU();
@@ -140,7 +142,7 @@ struct npc_cooshcooshAI : public ScriptedAI
         me->setFaction(FACTION_FRIENDLY_CO);
     }
 
-    void EnterCombat(Unit *who) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -170,7 +172,7 @@ bool GossipHello_npc_cooshcoosh(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_cooshcoosh(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_cooshcoosh(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF)
     {
@@ -199,7 +201,7 @@ bool GossipHello_npc_elder_kuruti(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_elder_kuruti(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_elder_kuruti(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     switch (action)
     {
@@ -245,7 +247,7 @@ bool GossipHello_npc_mortog_steamhead(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_mortog_steamhead(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_mortog_steamhead(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_TRADE)
     {

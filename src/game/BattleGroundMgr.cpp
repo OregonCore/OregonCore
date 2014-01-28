@@ -190,8 +190,8 @@ void BattleGroundQueue::AddPlayer(Player *plr, GroupQueueInfo *ginfo)
         if (q_max_level > sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL))
             q_max_level = sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL);
 
-        int32 MinPlayers = bg->GetMinPlayersPerTeam();
-        int32 MaxPlayers = bg->GetMaxPlayersPerTeam();
+        uint32 MinPlayers = bg->GetMinPlayersPerTeam();
+        uint32 MaxPlayers = bg->GetMaxPlayersPerTeam();
 
         uint32 qHorde = 0;
         uint32 qAlliance = 0;
@@ -809,18 +809,15 @@ void BattleGroundQueue::Update(uint32 bgTypeId, uint32 queue_id, uint8 arenatype
             (bOneSideAllyTeam1 && bOneSideAllyTeam2))
         {
             // which side has enough players?
-            uint32 side = 0;
             SelectionPoolBuildMode mode1, mode2;
             // find out what pools are we using
             if (bOneSideAllyTeam1 && bOneSideAllyTeam2)
             {
-                side = ALLIANCE;
                 mode1 = ONESIDE_ALLIANCE_TEAM1;
                 mode2 = ONESIDE_ALLIANCE_TEAM2;
             }
             else
             {
-                side = HORDE;
                 mode1 = ONESIDE_HORDE_TEAM1;
                 mode2 = ONESIDE_HORDE_TEAM2;
             }
@@ -864,13 +861,6 @@ void BattleGroundQueue::Update(uint32 bgTypeId, uint32 queue_id, uint8 arenatype
                     break;
                 }
             }
-
-            // assigned team of the other group
-            uint32 other_side;
-            if (side == ALLIANCE)
-                other_side = HORDE;
-            else
-                other_side = ALLIANCE;
 
             bg2->SetQueueType(queue_id);
 
@@ -1053,7 +1043,7 @@ void BattleGroundMgr::Update(time_t diff)
     if (m_MaxRatingDifference)
     {
         // it's time to force update
-        if (m_NextRatingDiscardUpdate < diff)
+        if (m_NextRatingDiscardUpdate < int32(diff))
         {
             // forced update for level 70 rated arenas
             m_BattleGroundQueues[BATTLEGROUND_QUEUE_2v2].Update(BATTLEGROUND_AA,6,ARENA_TYPE_2v2,true,0);
@@ -1066,9 +1056,9 @@ void BattleGroundMgr::Update(time_t diff)
     }
     if (m_AutoDistributePoints)
     {
-        if (m_AutoDistributionTimeChecker < diff)
+        if (m_AutoDistributionTimeChecker < int32(diff))
         {
-            if (time(NULL) > m_NextAutoDistributionTime)
+            if (uint32(time(NULL)) > m_NextAutoDistributionTime)
             {
                 DistributeArenaPoints();
                 m_NextAutoDistributionTime = time(NULL) + BATTLEGROUND_ARENA_POINT_DISTRIBUTION_DAY * sWorld.getConfig(CONFIG_ARENA_AUTO_DISTRIBUTE_INTERVAL_DAYS);
@@ -1081,7 +1071,7 @@ void BattleGroundMgr::Update(time_t diff)
     }
 }
 
-void BattleGroundMgr::BuildBattleGroundStatusPacket(WorldPacket *data, BattleGround *bg, uint32 team, uint8 QueueSlot, uint8 StatusID, uint32 Time1, uint32 Time2, uint32 arenatype, uint8 israted)
+void BattleGroundMgr::BuildBattleGroundStatusPacket(WorldPacket *data, BattleGround *bg, uint32 /*team*/, uint8 QueueSlot, uint8 StatusID, uint32 Time1, uint32 Time2, uint32 arenatype, uint8 israted)
 {
     // we can be in 3 queues in same time...
     if (StatusID == 0)

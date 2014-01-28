@@ -212,9 +212,6 @@ int Master::Run()
         soap_thread = new ACE_Based::Thread(runnable);
     }
 
-    uint32 realCurrTime, realPrevTime;
-    realCurrTime = realPrevTime = getMSTime();
-
     //uint32 socketSelecttime = sWorld.getConfig(CONFIG_SOCKET_SELECTTIME);
 
     // Start up freeze catcher thread

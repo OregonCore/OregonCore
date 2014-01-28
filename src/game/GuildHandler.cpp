@@ -1019,8 +1019,8 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
     uint64 GoGuid;
     uint8 BankToBank;
 
-    uint8 BankTab, BankTabSlot, AutoStore, AutoStoreCount, PlayerSlot, PlayerBag, SplitedAmount = 0;
-    uint8 BankTabDst, BankTabSlotDst, unk2, ToChar = 1;
+    uint8 BankTab, BankTabSlot, AutoStore = 0, AutoStoreCount, PlayerSlot = 0, PlayerBag = 0, SplitedAmount = 0;
+    uint8 BankTabDst = 0, BankTabSlotDst = 0, unk2, ToChar = 1;
     uint32 ItemEntry, unk1;
     recv_data >> GoGuid >> BankToBank;
     if (BankToBank)

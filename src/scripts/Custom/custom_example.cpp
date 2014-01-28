@@ -92,7 +92,7 @@ struct custom_exampleAI : public ScriptedAI
 
     //*** HANDLED FUNCTION ***
     //Attack Start is called whenever someone hits us.
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
         //Say some stuff
         me->MonsterSay(SAY_AGGRO,LANG_UNIVERSAL,0);
@@ -176,42 +176,48 @@ struct custom_exampleAI : public ScriptedAI
 
         //Spell 3 timer
         if (Phase > 1)
-            if (Spell_3_Timer <= diff)
         {
-            //Cast spell one on our current target.
-            DoCast(me->getVictim(),SPELL_THREE);
+            if (Spell_3_Timer <= diff)
+            {
+                //Cast spell one on our current target.
+                DoCast(me->getVictim(),SPELL_THREE);
 
-            Spell_3_Timer = 19000;
-        } else Spell_3_Timer -= diff;
+                Spell_3_Timer = 19000;
+            } else Spell_3_Timer -= diff;
+        }
 
         //Beserk timer
         if (Phase > 1)
-            if (Beserk_Timer <= diff)
         {
-            //Say our line then cast uber death spell
-            DoPlaySoundToSet(me,8588);
-            me->MonsterYell(SAY_BESERK,LANG_UNIVERSAL,me->getVictim()->GetGUID());
-            DoCast(me->getVictim(),SPELL_BESERK);
+            if (Beserk_Timer <= diff)
+            {
+                //Say our line then cast uber death spell
+                DoPlaySoundToSet(me,8588);
+                me->MonsterYell(SAY_BESERK,LANG_UNIVERSAL,me->getVictim()->GetGUID());
+                DoCast(me->getVictim(),SPELL_BESERK);
 
-            //Cast our beserk spell agian in 12 seconds if we didn't kill everyone
-            Beserk_Timer = 12000;
-        } else Beserk_Timer -= diff;
+                //Cast our beserk spell agian in 12 seconds if we didn't kill everyone
+                Beserk_Timer = 12000;
+            } else Beserk_Timer -= diff;
+        }
 
         //Phase timer
         if (Phase == 1)
-            if (Phase_Timer <= diff)
         {
-            //Go to next phase
-            Phase++;
-            me->MonsterYell(SAY_PHASE,LANG_UNIVERSAL,0);
-            DoCast(me,SPELL_ENRAGE);
-        } else Phase_Timer -= diff;
+            if (Phase_Timer <= diff)
+            {
+                //Go to next phase
+                Phase++;
+                me->MonsterYell(SAY_PHASE,LANG_UNIVERSAL,0);
+                DoCast(me,SPELL_ENRAGE);
+            } else Phase_Timer -= diff;
+        }
 
         DoMeleeAttackIfReady();
     }
 
     //Our Recive emote function
-    void ReceiveEmote(Player* pPlayer, uint32 emote)
+    void ReceiveEmote(Player* /*pPlayer*/, uint32 emote)
     {
         me->HandleEmoteCommand(emote);
 

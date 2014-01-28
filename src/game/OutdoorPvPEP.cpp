@@ -125,7 +125,7 @@ void OutdoorPvPEP::HandlePlayerLeaveZone(Player * plr, uint32 zone)
 bool OutdoorPvPEP::Update(uint32 diff)
 {
     bool changed = false;
-    if (changed = OutdoorPvP::Update(diff))
+    if ((changed = OutdoorPvP::Update(diff)))
     {
         for (uint8 i = 0; i < OutdoorPvPEPTeamsBuffNum; ++i)
         {
@@ -357,6 +357,7 @@ void OPvPCapturePointEP::UpdateTowerEvents()
         case EP_TOWER_PLAGUEWOOD:
             SummonFlightMaster(team);
             break;
+        default:break;
         }
     }
     else if (m_OldState == OBJECTIVESTATE_ALLIANCE || m_OldState == OBJECTIVESTATE_HORDE)
@@ -375,6 +376,7 @@ void OPvPCapturePointEP::UpdateTowerEvents()
         case EP_TOWER_PLAGUEWOOD:
             UnsummonFlightMaster();
             break;
+        default:break;
         }
     }
 }

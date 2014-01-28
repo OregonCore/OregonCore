@@ -283,7 +283,7 @@ static Yells RandomTaunts[]=
 
 static Yells MaievTaunts[]=
 {
-    {11493, "That is for Naisha!", MAIEV_SHADOWSONG, 0, false},
+    {11493, "That is for Naisha!", MAIEV_SHADOWSONG, 0, 0, false},
     {11494, "Bleed as I have bled!", MAIEV_SHADOWSONG, 0, 0, false},
     {11495, "There shall be no prison for you this time!", MAIEV_SHADOWSONG, 0, 0, false},
     {11500, "Meet your end, demon!", MAIEV_SHADOWSONG, 0, 0, false}
@@ -703,12 +703,14 @@ struct boss_illidan_stormrageAI : public ScriptedAI
         for (uint32 i = 1; i <= MaxTimer[Phase]; ++i)
         {
             if (Timer[i]) // Event is enabled
+            {
                 if (Timer[i] <= diff)
                 {
                     if (!Event) // No event with higher priority
                         Event = (EventIllidan)i;
                 }
                 else Timer[i] -= diff;
+            }
         }
 
         switch(Phase)
@@ -742,12 +744,14 @@ struct boss_illidan_stormrageAI : public ScriptedAI
             if (Event == EVENT_TRANSFORM_SEQUENCE)
                 HandleTransformSequence();
             break;
+        default:
+            break;
         }
 
         if (me->IsNonMeleeSpellCasted(false))
             return;
 
-        if (Phase == PHASE_NORMAL || Phase == PHASE_NORMAL_2 || Phase == PHASE_NORMAL_MAIEV && !me->HasAura(SPELL_CAGED, 0))
+        if (Phase == PHASE_NORMAL || Phase == PHASE_NORMAL_2 || (Phase == PHASE_NORMAL_MAIEV && !me->HasAura(SPELL_CAGED, 0)))
         {
             switch(Event)
             {
@@ -1232,7 +1236,9 @@ struct npc_akama_illidanAI : public ScriptedAI
 
     void HandleChannelSequence()
     {
-        Unit* Channel = NULL, *Spirit[2];
+        Unit* Channel = NULL;
+        Unit* Spirit[2] = {NULL};
+
         if (ChannelCount <= 5)
         {
             Channel = Unit::GetUnit((*me), ChannelGUID);
@@ -1676,6 +1682,7 @@ struct cage_trap_triggerAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (DespawnTimer)
+        {
             if (DespawnTimer <= diff)
                 me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             else DespawnTimer -= diff;
@@ -1687,6 +1694,7 @@ struct cage_trap_triggerAI : public ScriptedAI
             //        //TODO: Find proper spells and properly apply 'caged' Illidan effect
             //    }
             //}
+        }
     }
 };
 

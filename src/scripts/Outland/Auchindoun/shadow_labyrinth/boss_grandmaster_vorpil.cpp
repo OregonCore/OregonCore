@@ -88,7 +88,7 @@ struct mob_voidtravelerAI : public ScriptedAI
         sacrificed = false;
     }
 
-    void EnterCombat(Unit *who){}
+    void EnterCombat(Unit *){}
 
     void UpdateAI(const uint32 diff)
     {
@@ -215,7 +215,7 @@ struct boss_grandmaster_vorpilAI : public ScriptedAI
             ((mob_voidtravelerAI*)summoned->AI())->Vorpil = me;
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit *)
     {
         switch(rand()%2)
         {
@@ -224,7 +224,7 @@ struct boss_grandmaster_vorpilAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit *)
     {
         DoScriptText(SAY_DEATH, me);
         destroyPortals();
@@ -233,7 +233,7 @@ struct boss_grandmaster_vorpilAI : public ScriptedAI
             pInstance->SetData(DATA_GRANDMASTERVORPILEVENT, DONE);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit *)
     {
         switch(rand()%3)
         {

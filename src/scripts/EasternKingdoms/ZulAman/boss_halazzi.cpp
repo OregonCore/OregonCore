@@ -247,12 +247,14 @@ struct boss_halazziAI : public ScriptedAI
             } else FrenzyTimer -= diff;
 
             if (Phase == PHASE_LYNX)
+            {
                 if (CheckTimer <= diff)
                 {
                     if (me->GetHealth() * 4 < me->GetMaxHealth() * (3 - TransformCount))
                         EnterPhase(PHASE_SPLIT);
                     CheckTimer = 1000;
                 } else CheckTimer -= diff;
+            }
         }
 
         if (Phase == PHASE_HUMAN || Phase == PHASE_ENRAGE)
@@ -276,6 +278,7 @@ struct boss_halazziAI : public ScriptedAI
             } else ShockTimer -= diff;
 
             if (Phase == PHASE_HUMAN)
+            {
                 if (CheckTimer <= diff)
                 {
                     if (((me->GetHealth()*100) / me->GetMaxHealth() <= 20)/*me->GetHealth() * 10 < me->GetMaxHealth()*/)
@@ -288,6 +291,7 @@ struct boss_halazziAI : public ScriptedAI
                     }
                     CheckTimer = 1000;
                 } else CheckTimer -= diff;
+            }
         }
 
         if (Phase == PHASE_MERGE)

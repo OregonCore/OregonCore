@@ -420,17 +420,17 @@ bool GossipSelect_npc_barnes(Player* pPlayer, Creature* pCreature, uint32 /*uiSe
         case GOSSIP_ACTION_INFO_DEF+3:
             pPlayer->CLOSE_GOSSIP_MENU();
             pBarnesAI->m_uiEventId = EVENT_OZ;
-            outstring_log("OSCR: player (GUID %i) manually set Opera event to EVENT_OZ",pPlayer->GetGUID());
+            outstring_log("OSCR: player (GUID %llu) manually set Opera event to EVENT_OZ",pPlayer->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+4:
             pPlayer->CLOSE_GOSSIP_MENU();
             pBarnesAI->m_uiEventId = EVENT_HOOD;
-            outstring_log("OSCR: player (GUID %i) manually set Opera event to EVENT_HOOD",pPlayer->GetGUID());
+            outstring_log("OSCR: player (GUID %llu) manually set Opera event to EVENT_HOOD",pPlayer->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+5:
             pPlayer->CLOSE_GOSSIP_MENU();
             pBarnesAI->m_uiEventId = EVENT_RAJ;
-            outstring_log("OSCR: player (GUID %i) manually set Opera event to EVENT_RAJ",pPlayer->GetGUID());
+            outstring_log("OSCR: player (GUID %llu) manually set Opera event to EVENT_RAJ",pPlayer->GetGUID());
             break;
     }
 

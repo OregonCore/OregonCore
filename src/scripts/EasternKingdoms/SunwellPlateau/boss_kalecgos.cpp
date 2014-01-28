@@ -740,7 +740,7 @@ struct boss_kalecAI : public ScriptedAI
 
 bool GOkalecgos_teleporter(Player* pPlayer, GameObject* pGo)
 {
-    uint32 SpectralPlayers = 0;
+    int32 SpectralPlayers = 0;
     Map* pMap = pGo->GetMap();
     if (!pMap->IsDungeon()) return true;
     Map::PlayerList const &PlayerList = pMap->GetPlayers();

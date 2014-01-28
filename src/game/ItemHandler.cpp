@@ -1152,7 +1152,7 @@ void WorldSession::HandleSocketOpcode(WorldPacket& recv_data)
         return;
 
     //this slot is excepted when applying / removing meta gem bonus
-    uint8 slot = itemTarget->IsEquipped() ? itemTarget->GetSlot() : NULL_SLOT;
+    uint8 slot = itemTarget->IsEquipped() ? itemTarget->GetSlot() : uint8(NULL_SLOT);
 
     for (int i = 0; i < 3; i++)
         Gems[i] = guids[i + 1] ? _player->GetItemByGuid(guids[i + 1]) : NULL;
@@ -1165,9 +1165,9 @@ void WorldSession::HandleSocketOpcode(WorldPacket& recv_data)
     {
         // tried to put gem in socket where no socket exists / tried to put normal gem in meta socket
         // tried to put meta gem in normal socket
-        if (GemProps[i] && (!itemTarget->GetProto()->Socket[i].Color ||
-            itemTarget->GetProto()->Socket[i].Color == SOCKET_COLOR_META && GemProps[i]->color != SOCKET_COLOR_META ||
-            itemTarget->GetProto()->Socket[i].Color != SOCKET_COLOR_META && GemProps[i]->color == SOCKET_COLOR_META))
+        if (GemProps[i] && ((!itemTarget->GetProto()->Socket[i].Color) ||
+            (itemTarget->GetProto()->Socket[i].Color == SOCKET_COLOR_META && GemProps[i]->color != SOCKET_COLOR_META) ||
+            (itemTarget->GetProto()->Socket[i].Color != SOCKET_COLOR_META && GemProps[i]->color == SOCKET_COLOR_META)))
             return;
     }
 

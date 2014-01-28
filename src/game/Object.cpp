@@ -1104,14 +1104,17 @@ bool Position::HasInLine(const Unit * const target, float distance, float width)
 }
 
 WorldObject::WorldObject()
-    : WorldLocation(), m_InstanceId(0), m_currMap(NULL)
-    , m_zoneScript(NULL)
-    , m_isActive(false), m_isWorldObject(false)
+    : WorldLocation()
+    , m_groupLootTimer(0)
+    , lootingGroupLeaderGUID(0)
+    , m_isWorldObject(false)
     , m_name("")
+    , m_isActive(false)
+    , m_zoneScript(NULL)
+    , m_currMap(NULL)
+    , m_InstanceId(0)
     , m_notifyflags(0), m_executed_notifies(0)
 {
-    m_groupLootTimer    = 0;
-    lootingGroupLeaderGUID = 0;
 }
 
 void WorldObject::SetWorldObject(bool on)
@@ -1760,6 +1763,7 @@ void WorldObject::SetZoneScript()
 Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetType petType, uint32 duration)
 {
     Pet* pet = new Pet(this, petType);
+    SetPetStatus(PET_STATUS_CURRENT);
 
     if (petType == SUMMON_PET && pet->LoadPetFromDB(this, entry))
     {
@@ -1829,6 +1833,7 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
             pet->SetHealth(pet->GetMaxHealth());
             pet->SetPower(POWER_MANA, pet->GetMaxPower(POWER_MANA));
             pet->SetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP, time(NULL));
+        default:
             break;
     }
 
@@ -1841,6 +1846,7 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
             pet->InitPetCreateSpells();
             pet->SavePetToDB(PET_SAVE_AS_CURRENT);
             PetSpellInitialize();
+        default:
             break;
     }
 
@@ -2011,8 +2017,7 @@ void WorldObject::MovePositionToFirstCollision(Position &pos, float dist, float 
 
         float step = dist/10.0f;
 
-        int j = 0;
-        for (j; j < 10; j++)
+        for (int j = 0; j < 10; j++)
         {
         // do not allow too big z changes
         if (fabs(pos.m_positionZ - destz) > 6)

@@ -319,7 +319,7 @@ bool GOHello_go_altar_of_archaedas(Player *player, GameObject* go)
     // Check to make sure at least three people are still casting
     uint32 count=0;
     Unit *pTarget;
-    for (uint32 x=0; x<=5; x++) {
+    for (uint32 x=0; x<5; x++) {
         pTarget = Unit::GetUnit(*player, altarOfArchaedasCount[x]);
         if (!pTarget) continue;
         if (pTarget->IsNonMeleeSpellCasted(true)) count++;

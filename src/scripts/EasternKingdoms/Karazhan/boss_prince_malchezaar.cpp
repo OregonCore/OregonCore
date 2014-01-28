@@ -104,9 +104,9 @@ struct netherspite_infernalAI : public ScriptedAI
     netherspite_infernalAI(Creature *c) : ScriptedAI(c) ,
         malchezaar(0), HellfireTimer(0), CleanupTimer(0), point(NULL) {}
 
+    uint32 malchezaar;
     uint32 HellfireTimer;
     uint32 CleanupTimer;
-    uint32 malchezaar;
     InfernalPoint *point;
 
     void Reset() {}
@@ -116,19 +116,22 @@ struct netherspite_infernalAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (HellfireTimer)
-            if (HellfireTimer <= diff)
         {
-            DoCast(me, SPELL_HELLFIRE);
-            HellfireTimer = 0;
+            if (HellfireTimer <= diff)
+            {
+                DoCast(me, SPELL_HELLFIRE);
+                HellfireTimer = 0;
+            } else HellfireTimer -= diff;
         }
-        else HellfireTimer -= diff;
 
         if (CleanupTimer)
-            if (CleanupTimer <= diff)
         {
-            Cleanup();
-            CleanupTimer = 0;
-        } else CleanupTimer -= diff;
+            if (CleanupTimer <= diff)
+            {
+                Cleanup();
+                CleanupTimer = 0;
+            } else CleanupTimer -= diff;
+        }
     }
 
     void KilledUnit(Unit *who)

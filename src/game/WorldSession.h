@@ -203,10 +203,10 @@ class WorldSession
         void SetLatency(uint32 latency) { m_latency = latency; }
         uint32 getDialogStatus(Player *pPlayer, Object* questgiver, uint32 defstatus);
 
-        time_t m_timeOutTime;
+        uint32 m_timeOutTime;
         void UpdateTimeOutTime(uint32 diff)
         {
-            if (diff > m_timeOutTime)
+            if (diff >= m_timeOutTime)
                 m_timeOutTime = 0;
             else
                 m_timeOutTime -= diff;
@@ -667,7 +667,6 @@ class WorldSession
         // Warden
         WardenBase *m_Warden;
 
-        time_t _logoutTime;
         bool m_inQueue;                                     // session wait in auth.queue
         bool m_playerLoading;                               // code processed in LoginPlayer
         bool m_playerLogout;                                // code processed in LogoutPlayer
@@ -675,6 +674,7 @@ class WorldSession
         bool m_playerSave;
         LocaleConstant m_sessionDbcLocale;
         int m_sessionDbLocaleIndex;
+        time_t _logoutTime;
         uint32 m_latency;
 
         ACE_Based::LockedQueue<WorldPacket*,ACE_Thread_Mutex> _recvQueue;

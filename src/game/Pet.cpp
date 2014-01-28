@@ -62,9 +62,9 @@ uint32 const LevelStartLoyalty[6] =
 };
 
 Pet::Pet(Player *owner, PetType type) : Guardian(NULL, owner),
-m_petType(type), m_removed(false), m_happinessTimer(7500), m_duration(0),
 m_resetTalentsCost(0), m_resetTalentsTime(0),
-m_declinedname(NULL), m_owner(owner)
+m_removed(false), m_owner(owner), m_happinessTimer(7500),
+m_petType(type), m_duration(0), m_declinedname(NULL)
 {
     m_summonMask |= SUMMON_MASK_PET;
     if (type == HUNTER_PET)
@@ -392,10 +392,6 @@ void Pet::SavePetToDB(PetSaveMode mode)
         case PET_SAVE_IN_STABLE_SLOT_2:
         case PET_SAVE_NOT_IN_SLOT:
         {
-            uint32 loyalty =1;
-            if (getPetType() != HUNTER_PET)
-                loyalty = GetLoyaltyLevel();
-
             uint32 owner = GUID_LOPART(GetOwnerGUID());
             std::string name = m_name;
             CharacterDatabase.escape_string(name);
@@ -483,11 +479,15 @@ void Pet::setDeathState(DeathState s)                       // overwrite virtual
     {
         if (getPetType() == HUNTER_PET)
         {
+            // Pet has just died, update it's status
+            if (Player *owner = GetOwner())
+                owner->SetPetStatus(PET_STATUS_DEAD); 
+
             // pet corpse non lootable and non skinnable
             SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0x00);
             RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
 
-            //lose happiness when died and not in BG/Arena
+            // lose happiness when died and not in BG/Arena
             MapEntry const* mapEntry = sMapStore.LookupEntry(GetMapId());
             if (!mapEntry || !mapEntry->IsBattleGroundOrArena())
                 ModifyPower(POWER_HAPPINESS, -HAPPINESS_LEVEL_SIZE);
@@ -511,7 +511,7 @@ void Pet::Update(uint32 diff)
     {
         case CORPSE:
         {
-            if (getPetType() != HUNTER_PET || m_corpseRemoveTime <= time(NULL))
+            if (getPetType() != HUNTER_PET || m_corpseRemoveTime <= uint32(time(NULL)))
             {
                 Remove(PET_SAVE_NOT_IN_SLOT);               //hunters' pets never get removed because of death, NEVER!
                 return;
@@ -522,9 +522,9 @@ void Pet::Update(uint32 diff)
         {
             // unsummon pet that lost owner
             Player* owner = GetOwner();
-            if (!owner || (!IsWithinDistInMap(owner, GetMap()->GetVisibilityDistance()) && !isPossessed()) || isControlled() && !owner->GetPetGUID())
+            if (!owner || (!IsWithinDistInMap(owner, GetMap()->GetVisibilityDistance()) && !isPossessed()) || (isControlled() && !owner->GetPetGUID()))
             {
-                sLog.outError("Pet %u is not pet of owner %u, removed", GetEntry(), m_owner->GetName());
+                sLog.outError("Pet %u is not pet of owner %u, removed", GetEntry(), m_owner->GetGUIDLow());
                 Remove(PET_SAVE_NOT_IN_SLOT, true);
                 return;
             }
@@ -540,7 +540,7 @@ void Pet::Update(uint32 diff)
 
             if (m_duration > 0)
             {
-                if (m_duration > diff)
+                if (m_duration > int32(diff))
                     m_duration -= diff;
                 else
                 {
@@ -1167,7 +1167,7 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
 
 bool Pet::HaveInDiet(ItemPrototype const* item) const
 {
-    if (!item->FoodType)
+    if (!item || !item->FoodType)
         return false;
 
     CreatureInfo const* cInfo = GetCreatureInfo();
@@ -1365,7 +1365,7 @@ void Pet::_LoadAuras(uint32 timediff)
             // prevent wrong values of remaincharges
             if (spellproto->procCharges)
             {
-                if (remaincharges <= 0 || remaincharges > spellproto->procCharges)
+                if (remaincharges <= 0 || uint32(remaincharges) > spellproto->procCharges)
                     remaincharges = spellproto->procCharges;
             }
             else

@@ -60,6 +60,7 @@ struct generic_creatureAI : public ScriptedAI
 
         //Buff timer (only buff when we are alive and not in combat
         if (!me->isInCombat() && me->isAlive())
+        {
             if (BuffTimer <= diff)
             {
                 //Find a spell that targets friendly and applies an aura (these are generally buffs)
@@ -78,7 +79,7 @@ struct generic_creatureAI : public ScriptedAI
                 }//Try agian in 30 seconds
                 else BuffTimer = 30000;
             } else BuffTimer -= diff;
-
+        }
         //Return since we have no target
         if (!UpdateVictim())
             return;

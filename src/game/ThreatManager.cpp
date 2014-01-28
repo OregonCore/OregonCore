@@ -32,7 +32,7 @@
 //==============================================================
 
 // The pHatingUnit is not used yet
-float ThreatCalcHelper::calcThreat(Unit* pHatedUnit, Unit* pHatingUnit, float pThreat, SpellSchoolMask schoolMask, SpellEntry const *pThreatSpell)
+float ThreatCalcHelper::calcThreat(Unit* pHatedUnit, Unit* /*pHatingUnit*/, float pThreat, SpellSchoolMask schoolMask, SpellEntry const *pThreatSpell)
 {
     if (pThreatSpell)
     {
@@ -310,8 +310,8 @@ HostileReference* ThreatContainer::selectNextVictim(Creature* pAttacker, Hostile
                     break;
                 }
 
-                if (currentRef->getThreat() > 1.3f * pCurrentVictim->getThreat() ||
-                    currentRef->getThreat() > 1.1f * pCurrentVictim->getThreat() && pAttacker->IsWithinMeleeRange(target))
+                if ( currentRef->getThreat() > 1.3f * pCurrentVictim->getThreat() ||
+                    (currentRef->getThreat() > 1.1f * pCurrentVictim->getThreat() && pAttacker->IsWithinMeleeRange(target)))
                 {                                           //implement 110% threat rule for targets in melee range
                     found = true;                           //and 130% rule for targets in ranged distances
                     break;                                  //for selecting alive targets
@@ -430,6 +430,29 @@ float ThreatManager::getThreat(Unit *pVictim, bool pAlsoSearchOfflineList)
     if (ref)
         threat = ref->getThreat();
     return threat;
+}
+
+//============================================================
+
+// Check if the unit was a threat before (is registered in pastThreatList)
+bool ThreatManager::wasUnitThreat(Unit const* unit) const
+{
+    if (unit && !iThreatContainer.iPastEnemyList.empty())
+    {
+        std::vector<Unit*>::const_iterator it = iThreatContainer.iPastEnemyList.begin();
+        for (;it != iThreatContainer.iPastEnemyList.end(); ++it)
+         if ((*it) && unit == (*it)) 
+             return true;
+    }
+    return false;
+}
+
+// Push new threat in pastEnemyList
+void ThreatManager::pushThreatInMemory(Unit *unit)
+{
+    // Add the entry only if no duplicate found
+    if (!wasUnitThreat(unit))
+        iThreatContainer.iPastEnemyList.push_back(unit);
 }
 
 //============================================================

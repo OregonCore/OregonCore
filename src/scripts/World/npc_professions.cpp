@@ -408,7 +408,7 @@ void SendActionMenu_npc_prof_alchemy(Player* pPlayer, Creature* pCreature, uint3
             break;
             //Learn Alchemy
         case GOSSIP_ACTION_INFO_DEF + 1:
-            if (!pPlayer->HasSpell(S_TRANSMUTE) && pPlayer->GetMoney() >= DoLearnCost(pPlayer))
+            if (!pPlayer->HasSpell(S_TRANSMUTE) && pPlayer->GetMoney() >= uint32(DoLearnCost(pPlayer)))
             {
                 pPlayer->CastSpell(pPlayer, S_LEARN_TRANSMUTE, true);
                 pPlayer->ModifyMoney(-DoLearnCost(pPlayer));
@@ -417,7 +417,7 @@ void SendActionMenu_npc_prof_alchemy(Player* pPlayer, Creature* pCreature, uint3
             pPlayer->CLOSE_GOSSIP_MENU();
             break;
         case GOSSIP_ACTION_INFO_DEF + 2:
-            if (!pPlayer->HasSpell(S_ELIXIR) && pPlayer->GetMoney() >= DoLearnCost(pPlayer))
+            if (!pPlayer->HasSpell(S_ELIXIR) && pPlayer->GetMoney() >= uint32(DoLearnCost(pPlayer)))
             {
                 pPlayer->CastSpell(pPlayer, S_LEARN_ELIXIR, true);
                 pPlayer->ModifyMoney(-DoLearnCost(pPlayer));
@@ -426,7 +426,7 @@ void SendActionMenu_npc_prof_alchemy(Player* pPlayer, Creature* pCreature, uint3
             pPlayer->CLOSE_GOSSIP_MENU();
             break;
         case GOSSIP_ACTION_INFO_DEF + 3:
-            if (!pPlayer->HasSpell(S_POTION) && pPlayer->GetMoney() >= DoLearnCost(pPlayer))
+            if (!pPlayer->HasSpell(S_POTION) && pPlayer->GetMoney() >= uint32(DoLearnCost(pPlayer)))
             {
                 pPlayer->CastSpell(pPlayer, S_LEARN_POTION, true);
                 pPlayer->ModifyMoney(-DoLearnCost(pPlayer));
@@ -436,7 +436,7 @@ void SendActionMenu_npc_prof_alchemy(Player* pPlayer, Creature* pCreature, uint3
             break;
             //Unlearn Alchemy
         case GOSSIP_ACTION_INFO_DEF + 4:
-            if (pPlayer->GetMoney() >= DoHighUnlearnCost(pPlayer))
+            if (pPlayer->GetMoney() >= uint32(DoHighUnlearnCost(pPlayer)))
             {
                 pCreature->CastSpell(pPlayer, S_UNLEARN_TRANSMUTE, true);
                 pPlayer->ModifyMoney(-DoHighUnlearnCost(pPlayer));
@@ -445,7 +445,7 @@ void SendActionMenu_npc_prof_alchemy(Player* pPlayer, Creature* pCreature, uint3
             pPlayer->CLOSE_GOSSIP_MENU();
             break;
         case GOSSIP_ACTION_INFO_DEF + 5:
-            if (pPlayer->GetMoney() >= DoHighUnlearnCost(pPlayer))
+            if (pPlayer->GetMoney() >= uint32(DoHighUnlearnCost(pPlayer)))
             {
                 pCreature->CastSpell(pPlayer, S_UNLEARN_ELIXIR, true);
                 pPlayer->ModifyMoney(-DoHighUnlearnCost(pPlayer));
@@ -454,7 +454,7 @@ void SendActionMenu_npc_prof_alchemy(Player* pPlayer, Creature* pCreature, uint3
             pPlayer->CLOSE_GOSSIP_MENU();
             break;
         case GOSSIP_ACTION_INFO_DEF + 6:
-            if (pPlayer->GetMoney() >= DoHighUnlearnCost(pPlayer))
+            if (pPlayer->GetMoney() >= uint32(DoHighUnlearnCost(pPlayer)))
             {
                 pCreature->CastSpell(pPlayer, S_UNLEARN_POTION, true);
                 pPlayer->ModifyMoney(-DoHighUnlearnCost(pPlayer));
@@ -640,7 +640,7 @@ void SendActionMenu_npc_prof_blacksmith(Player* pPlayer, Creature* pCreature, ui
             }
             else if (EquippedOk(pPlayer,S_UNLEARN_WEAPON))
             {
-                if (pPlayer->GetMoney() >= DoLowUnlearnCost(pPlayer))
+                if (pPlayer->GetMoney() >= uint32(DoLowUnlearnCost(pPlayer)))
                 {
                     pPlayer->CastSpell(pPlayer, S_UNLEARN_WEAPON, true);
                     ProfessionUnlearnSpells(pPlayer, S_UNLEARN_WEAPON);
@@ -659,7 +659,7 @@ void SendActionMenu_npc_prof_blacksmith(Player* pPlayer, Creature* pCreature, ui
         case GOSSIP_ACTION_INFO_DEF + 4:
             if (EquippedOk(pPlayer,S_UNLEARN_ARMOR))
             {
-                if (pPlayer->GetMoney() >= DoLowUnlearnCost(pPlayer))
+                if (pPlayer->GetMoney() >= uint32(DoLowUnlearnCost(pPlayer)))
                 {
                     pPlayer->CastSpell(pPlayer, S_UNLEARN_ARMOR, true);
                     ProfessionUnlearnSpells(pPlayer, S_UNLEARN_ARMOR);
@@ -688,7 +688,7 @@ void SendActionMenu_npc_prof_blacksmith(Player* pPlayer, Creature* pCreature, ui
         case GOSSIP_ACTION_INFO_DEF + 8:
             if (EquippedOk(pPlayer,S_UNLEARN_HAMMER))
             {
-                if (pPlayer->GetMoney() >= DoMedUnlearnCost(pPlayer))
+                if (pPlayer->GetMoney() >= uint32(DoMedUnlearnCost(pPlayer)))
                 {
                     pPlayer->CastSpell(pPlayer, S_UNLEARN_HAMMER, true);
                     ProfessionUnlearnSpells(pPlayer, S_UNLEARN_HAMMER);
@@ -702,7 +702,7 @@ void SendActionMenu_npc_prof_blacksmith(Player* pPlayer, Creature* pCreature, ui
         case GOSSIP_ACTION_INFO_DEF + 9:
             if (EquippedOk(pPlayer,S_UNLEARN_AXE))
             {
-                if (pPlayer->GetMoney() >= DoMedUnlearnCost(pPlayer))
+                if (pPlayer->GetMoney() >= uint32(DoMedUnlearnCost(pPlayer)))
                 {
                     pPlayer->CastSpell(pPlayer, S_UNLEARN_AXE, true);
                     ProfessionUnlearnSpells(pPlayer, S_UNLEARN_AXE);
@@ -716,7 +716,7 @@ void SendActionMenu_npc_prof_blacksmith(Player* pPlayer, Creature* pCreature, ui
         case GOSSIP_ACTION_INFO_DEF + 10:
             if (EquippedOk(pPlayer,S_UNLEARN_SWORD))
             {
-                if (pPlayer->GetMoney() >= DoMedUnlearnCost(pPlayer))
+                if (pPlayer->GetMoney() >= uint32(DoMedUnlearnCost(pPlayer)))
                 {
                     pPlayer->CastSpell(pPlayer, S_UNLEARN_SWORD, true);
                     ProfessionUnlearnSpells(pPlayer, S_UNLEARN_SWORD);
@@ -869,7 +869,7 @@ void SendActionMenu_npc_prof_leather(Player* pPlayer, Creature* pCreature, uint3
         case GOSSIP_ACTION_INFO_DEF + 1:
             if (EquippedOk(pPlayer,S_UNLEARN_DRAGON))
             {
-                if (pPlayer->GetMoney() >= DoMedUnlearnCost(pPlayer))
+                if (pPlayer->GetMoney() >= uint32(DoMedUnlearnCost(pPlayer)))
                 {
                     pPlayer->CastSpell(pPlayer, S_UNLEARN_DRAGON, true);
                     ProfessionUnlearnSpells(pPlayer, S_UNLEARN_DRAGON);
@@ -883,7 +883,7 @@ void SendActionMenu_npc_prof_leather(Player* pPlayer, Creature* pCreature, uint3
         case GOSSIP_ACTION_INFO_DEF + 2:
             if (EquippedOk(pPlayer,S_UNLEARN_ELEMENTAL))
             {
-                if (pPlayer->GetMoney() >= DoMedUnlearnCost(pPlayer))
+                if (pPlayer->GetMoney() >= uint32(DoMedUnlearnCost(pPlayer)))
                 {
                     pPlayer->CastSpell(pPlayer, S_UNLEARN_ELEMENTAL, true);
                     ProfessionUnlearnSpells(pPlayer, S_UNLEARN_ELEMENTAL);
@@ -897,7 +897,7 @@ void SendActionMenu_npc_prof_leather(Player* pPlayer, Creature* pCreature, uint3
         case GOSSIP_ACTION_INFO_DEF + 3:
             if (EquippedOk(pPlayer,S_UNLEARN_TRIBAL))
             {
-                if (pPlayer->GetMoney() >= DoMedUnlearnCost(pPlayer))
+                if (pPlayer->GetMoney() >= uint32(DoMedUnlearnCost(pPlayer)))
                 {
                     pPlayer->CastSpell(pPlayer, S_UNLEARN_TRIBAL, true);
                     ProfessionUnlearnSpells(pPlayer, S_UNLEARN_TRIBAL);
@@ -1017,7 +1017,7 @@ void SendActionMenu_npc_prof_tailor(Player* pPlayer, Creature* pCreature, uint32
             break;
             //Learn Tailor
         case GOSSIP_ACTION_INFO_DEF + 1:
-            if (!pPlayer->HasSpell(S_SPELLFIRE) && pPlayer->GetMoney() >= DoLearnCost(pPlayer))
+            if (!pPlayer->HasSpell(S_SPELLFIRE) && pPlayer->GetMoney() >= uint32(DoLearnCost(pPlayer)))
             {
                 pPlayer->CastSpell(pPlayer, S_LEARN_SPELLFIRE, true);
                 pPlayer->ModifyMoney(-DoLearnCost(pPlayer));
@@ -1026,7 +1026,7 @@ void SendActionMenu_npc_prof_tailor(Player* pPlayer, Creature* pCreature, uint32
             pPlayer->CLOSE_GOSSIP_MENU();
             break;
         case GOSSIP_ACTION_INFO_DEF + 2:
-            if (!pPlayer->HasSpell(S_MOONCLOTH) && pPlayer->GetMoney() >= DoLearnCost(pPlayer))
+            if (!pPlayer->HasSpell(S_MOONCLOTH) && pPlayer->GetMoney() >= uint32(DoLearnCost(pPlayer)))
             {
                 pPlayer->CastSpell(pPlayer, S_LEARN_MOONCLOTH, true);
                 pPlayer->ModifyMoney(-DoLearnCost(pPlayer));
@@ -1035,7 +1035,7 @@ void SendActionMenu_npc_prof_tailor(Player* pPlayer, Creature* pCreature, uint32
             pPlayer->CLOSE_GOSSIP_MENU();
             break;
         case GOSSIP_ACTION_INFO_DEF + 3:
-            if (!pPlayer->HasSpell(S_SHADOWEAVE) && pPlayer->GetMoney() >= DoLearnCost(pPlayer))
+            if (!pPlayer->HasSpell(S_SHADOWEAVE) && pPlayer->GetMoney() >= uint32(DoLearnCost(pPlayer)))
             {
                 pPlayer->CastSpell(pPlayer, S_LEARN_SHADOWEAVE, true);
                 pPlayer->ModifyMoney(-DoLearnCost(pPlayer));
@@ -1047,7 +1047,7 @@ void SendActionMenu_npc_prof_tailor(Player* pPlayer, Creature* pCreature, uint32
         case GOSSIP_ACTION_INFO_DEF + 4:
             if (EquippedOk(pPlayer,S_UNLEARN_SPELLFIRE))
             {
-                if (pPlayer->GetMoney() >= DoHighUnlearnCost(pPlayer))
+                if (pPlayer->GetMoney() >= uint32(DoHighUnlearnCost(pPlayer)))
                 {
                     pPlayer->CastSpell(pPlayer, S_UNLEARN_SPELLFIRE, true);
                     ProfessionUnlearnSpells(pPlayer, S_UNLEARN_SPELLFIRE);
@@ -1061,7 +1061,7 @@ void SendActionMenu_npc_prof_tailor(Player* pPlayer, Creature* pCreature, uint32
         case GOSSIP_ACTION_INFO_DEF + 5:
             if (EquippedOk(pPlayer,S_UNLEARN_MOONCLOTH))
             {
-                if (pPlayer->GetMoney() >= DoHighUnlearnCost(pPlayer))
+                if (pPlayer->GetMoney() >= uint32(DoHighUnlearnCost(pPlayer)))
                 {
                     pPlayer->CastSpell(pPlayer, S_UNLEARN_MOONCLOTH, true);
                     ProfessionUnlearnSpells(pPlayer, S_UNLEARN_MOONCLOTH);
@@ -1075,7 +1075,7 @@ void SendActionMenu_npc_prof_tailor(Player* pPlayer, Creature* pCreature, uint32
         case GOSSIP_ACTION_INFO_DEF + 6:
             if (EquippedOk(pPlayer,S_UNLEARN_SHADOWEAVE))
             {
-                if (pPlayer->GetMoney() >= DoHighUnlearnCost(pPlayer))
+                if (pPlayer->GetMoney() >= uint32(DoHighUnlearnCost(pPlayer)))
                 {
                     pPlayer->CastSpell(pPlayer, S_UNLEARN_SHADOWEAVE, true);
                     ProfessionUnlearnSpells(pPlayer, S_UNLEARN_SHADOWEAVE);

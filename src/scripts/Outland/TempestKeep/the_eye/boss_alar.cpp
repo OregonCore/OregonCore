@@ -135,7 +135,7 @@ struct boss_alarAI : public ScriptedAI
         me->setActive(true);
     }
 
-    void JustDied(Unit *victim)
+    void JustDied(Unit* /*victim*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_ALAREVENT, DONE);
@@ -148,9 +148,9 @@ struct boss_alarAI : public ScriptedAI
                 summon->AI()->AttackStart(pTarget);
     }
 
-    void MoveInLineOfSight(Unit *who) {}
+    void MoveInLineOfSight(Unit* /*who*/) {}
 
-    void DamageTaken(Unit* pKiller, uint32 &damage)
+    void DamageTaken(Unit* /*pKiller*/, uint32 &damage)
     {
         if (damage >= me->GetHealth() && Phase1)
         {
@@ -182,7 +182,7 @@ struct boss_alarAI : public ScriptedAI
         }
     }
 
-    void MovementInform(uint32 type, uint32 id)
+    void MovementInform(uint32 type, uint32 /*id*/)
     {
         if (type == POINT_MOTION_TYPE)
         {
@@ -441,7 +441,7 @@ struct mob_ember_of_alarAI : public ScriptedAI
     bool toDie;
 
     void Reset() {toDie = false;}
-    void Aggro(Unit *who) {DoZoneInCombat();}
+    void Aggro(Unit* /*who*/) {DoZoneInCombat();}
     void EnterEvadeMode() {me->setDeathState(JUST_DIED);}
 
     void DamageTaken(Unit* pKiller, uint32 &damage)
@@ -468,7 +468,7 @@ struct mob_ember_of_alarAI : public ScriptedAI
         }
     }
 
-    void UpdateAI(const uint32 diff)
+    void UpdateAI(const uint32 /*diff*/)
     {
         if (!UpdateVictim())
             return;

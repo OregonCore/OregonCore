@@ -86,7 +86,7 @@ struct boss_loathebAI : public ScriptedAI
         Summon_Timer = 8000;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
         switch (rand()%3)
         {
@@ -105,7 +105,7 @@ struct boss_loathebAI : public ScriptedAI
         }
     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit* /*victim*/)
     {
         switch (rand()%6)
         {
@@ -136,7 +136,7 @@ struct boss_loathebAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         me->MonsterYell(SAY_DEATH,LANG_UNIVERSAL,0);
         DoPlaySoundToSet(me,SOUND_DEATH);

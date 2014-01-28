@@ -122,7 +122,7 @@ struct npc_medivh_bmAI : public ScriptedAI
         }
     }
 
-    void AttackStart(Unit *who)
+    void AttackStart(Unit*)
     {
         //if (pInstance && pInstance->GetData(TYPE_MEDIVH) == IN_PROGRESS)
         //return;
@@ -130,9 +130,9 @@ struct npc_medivh_bmAI : public ScriptedAI
         //ScriptedAI::AttackStart(who);
     }
 
-    void EnterCombat(Unit *who) {}
+    void EnterCombat(Unit*) {}
 
-    void SpellHit(Unit* caster, const SpellEntry* spell)
+    void SpellHit(Unit* /*caster*/, const SpellEntry* spell)
     {
         if (SpellCorrupt_Timer)
             return;
@@ -234,9 +234,9 @@ struct Wave
 
 static Wave PortalWaves[]=
 {
-    {C_ASSAS, C_WHELP, C_CHRON, 0},
-    {C_EXECU, C_CHRON, C_WHELP, C_ASSAS},
-    {C_EXECU, C_VANQU, C_CHRON, C_ASSAS}
+    {{C_ASSAS, C_WHELP, C_CHRON, 0}},
+    {{C_EXECU, C_CHRON, C_WHELP, C_ASSAS}},
+    {{C_EXECU, C_VANQU, C_CHRON, C_ASSAS}}
 };
 
 struct npc_time_riftAI : public ScriptedAI
@@ -271,7 +271,7 @@ struct npc_time_riftAI : public ScriptedAI
         else mWaveId = 1;
 
     }
-    void EnterCombat(Unit *who) {}
+    void EnterCombat(Unit*) {}
 
     void DoSummonAtRift(uint32 creature_entry)
     {
@@ -369,7 +369,7 @@ bool GossipHello_npc_saat(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_saat(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_saat(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF+1)
     {

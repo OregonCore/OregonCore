@@ -58,6 +58,10 @@ class CreatureFormationManager
         void LoadCreatureFormations();
 };
 
+#ifdef formation_mgr
+#undef formation_mgr
+#endif
+
 #define formation_mgr (*ACE_Singleton<CreatureFormationManager, ACE_Null_Mutex>::instance())
 
 typedef UNORDERED_MAP<uint32/*formationId*/, FormationInfo*>   CreatureFormationInfoType;

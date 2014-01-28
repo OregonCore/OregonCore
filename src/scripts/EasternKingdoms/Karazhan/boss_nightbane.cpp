@@ -187,10 +187,12 @@ struct boss_nightbaneAI : public ScriptedAI
     void AttackStart(Unit* who)
     {
         if (!Intro && !Flying)
+        {
             if (Phase == 1)
                 ScriptedAI::AttackStart(who);
             else
                 AttackStartNoMove(who);
+        }
     }
 
     void JustDied(Unit* /*killer*/)
@@ -205,11 +207,15 @@ struct boss_nightbaneAI : public ScriptedAI
     void MoveInLineOfSight(Unit *who)
     {
         if (!Intro && !Flying)
+        {
             if (!me->getVictim() && me->canStartAttack(who))
+            {
                 if (Phase == 1)
                     ScriptedAI::AttackStart(who);
                 else
                     AttackStartNoMove(who);
+            }
+        }
     }
 
     void MovementInform(uint32 type, uint32 id)
@@ -290,7 +296,9 @@ struct boss_nightbaneAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (WaitTimer)
+        if (!WaitTimer)
+            return;
+
         if (WaitTimer <= diff)
         {
             if (Intro)

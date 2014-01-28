@@ -169,7 +169,7 @@ bool ChatHandler::HandleAHBotOptionsCommand(const char *args)
             PSendSysMessage("1 GreyTradeGoods 2 WhiteTradeGoods 3 GreenTradeGoods 4 BlueTradeGoods 5 PurpleTradeGoods");
             PSendSysMessage("6 OrangeTradeGoods 7 YellowTradeGoods 8 GreyItems 9 WhiteItems 10 GreenItems 11 BlueItems");
             PSendSysMessage("12 PurpleItems 13 OrangeItems 14 YellowItems");
-            PSendSysMessage("The total must add up to 100%");
+            PSendSysMessage("The total must add up to 100%%");
             return false;
         }
         uint32 greytg = (uint32) strtoul(param1, NULL, 0);
@@ -193,7 +193,7 @@ bool ChatHandler::HandleAHBotOptionsCommand(const char *args)
             PSendSysMessage("1 GreyTradeGoods 2 WhiteTradeGoods 3 GreenTradeGoods 4 BlueTradeGoods 5 PurpleTradeGoods");
             PSendSysMessage("6 OrangeTradeGoods 7 YellowTradeGoods 8 GreyItems 9 WhiteItems 10 GreenItems 11 BlueItems");
             PSendSysMessage("12 PurpleItems 13 OrangeItems 14 YellowItems");
-            PSendSysMessage("The total must add up to 100%");
+            PSendSysMessage("The total must add up to 100%%");
             return false;
         }
         char param[100];
@@ -420,7 +420,7 @@ bool ChatHandler::HandleAHBotOptionsCommand(const char *args)
             PSendSysMessage("Syntax is: ahbotoptions maxstack $ahMapID (2, 6 or 7) $color (grey, white, green, blue, purple, orange or yellow) $value");
             return false;
         }
-        uint32 maxStack = (uint32) strtoul(param2, NULL, 0);
+        int32 maxStack = (uint32) strtol(param2, NULL, 0);
         if (maxStack < 0)
         {
             PSendSysMessage("maxstack can't be a negative number.");
@@ -711,7 +711,7 @@ bool ChatHandler::HandleReloadCreatureQuestRelationsCommand(const char*)
     return true;
 }
 
-bool ChatHandler::HandleReloadCreatureLinkedRespawnCommand(const char *args)
+bool ChatHandler::HandleReloadCreatureLinkedRespawnCommand(const char* /*args*/)
 {
     sLog.outString("Loading Linked Respawns... (creature_linked_respawn)");
     objmgr.LoadCreatureLinkedRespawn();
@@ -1169,7 +1169,7 @@ bool ChatHandler::HandleReloadSpellScriptsCommand(const char* arg)
     return true;
 }
 
-bool ChatHandler::HandleReloadDbScriptStringCommand(const char* arg)
+bool ChatHandler::HandleReloadDbScriptStringCommand(const char* /*arg*/)
 {
     sLog.outString("Re-Loading Script strings from db_script_string...");
     objmgr.LoadDbScriptStrings();
@@ -1258,7 +1258,7 @@ bool ChatHandler::HandleReloadLocalesQuestCommand(const char* /*arg*/)
     return true;
 }
 
-bool ChatHandler::HandleReloadAuctionsCommand(const char *args)
+bool ChatHandler::HandleReloadAuctionsCommand(const char* /*args*/)
 {
     // Reload dynamic data tables from the database
     sLog.outString("Re-Loading Auctions...");
@@ -1276,7 +1276,7 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
     std::string targetAccountName;
     uint32 targetAccountId = 0;
     uint32 targetSecurity = 0;
-    uint32 gm = 0;
+    int32 gm = 0;
     char* arg1 = strtok((char*)args, " ");
     char* arg2 = strtok(NULL, " ");
     char* arg3 = strtok(NULL, " ");
@@ -1290,7 +1290,7 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
         uint32 gmRealmID = arg2 ? atoi(arg2) : realmID;
 
         // Check for invalid specified GM level.
-        if ((gm < SEC_PLAYER || gm > SEC_ADMINISTRATOR))
+        if (gm < SEC_PLAYER || gm > SEC_ADMINISTRATOR)
         {
             SendSysMessage(LANG_BAD_VALUE);
             SetSentErrorMessage(true);
@@ -1300,7 +1300,7 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
         // Check if targets GM level and specified GM level is not higher than current gm level
         targetSecurity = targetPlayer->GetSession()->GetSecurity();
         if (targetSecurity >= m_session->GetSecurity() ||
-            gm >= m_session->GetSecurity()             ||
+            uint32(gm) >= m_session->GetSecurity()             ||
             (gmRealmID != realmID && m_session->GetSecurity() < SEC_CONSOLE))
         {
             SendSysMessage(LANG_YOURS_SECURITY_IS_LOW);
@@ -1319,7 +1319,7 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
         }
 
         // If gmRealmID is -1, delete all values for the account id, else, insert values for the specific realmID
-        if (gmRealmID == -1)
+        if (gmRealmID == uint32(-1))
         {
             LoginDatabase.PExecute("DELETE FROM account_access WHERE id = '%u'", targetAccountId);
             LoginDatabase.PExecute("INSERT INTO account_access VALUES ('%u', '%d', -1)", targetAccountId, gm);
@@ -1328,7 +1328,8 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
         {
             LoginDatabase.PExecute("DELETE FROM account_access WHERE id = '%u' AND RealmID = '%d'", targetAccountId, realmID);
             LoginDatabase.PExecute("INSERT INTO account_access VALUES ('%u','%d','%d')", targetAccountId, gm, realmID);
-        }        return true;
+        }
+        return true;
     }
     else
     {
@@ -1356,7 +1357,7 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
 
         // Check for invalid specified GM level.
         gm = atoi(arg2);
-        if ((gm < SEC_PLAYER || gm > SEC_ADMINISTRATOR))
+        if (gm < SEC_PLAYER || gm > SEC_ADMINISTRATOR)
         {
             SendSysMessage(LANG_BAD_VALUE);
             SetSentErrorMessage(true);
@@ -1365,7 +1366,7 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
 
         uint32 gmRealmID = arg3 ? atoi(arg3) : realmID;
         // Check if provided realmID is not current realmID, or isn't -1
-        if (gmRealmID != realmID && gmRealmID != -1)
+        if (gmRealmID != realmID && gmRealmID != uint32(-1))
         {
             SendSysMessage(LANG_INVALID_REALMID);
             SetSentErrorMessage(true);
@@ -1374,12 +1375,12 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
 
         targetAccountId = sAccountMgr->GetId(arg1);
         // m_session == NULL only for console
-        uint32 plSecurity = m_session ? m_session->GetSecurity() : SEC_CONSOLE;
+        uint32 plSecurity = m_session ? m_session->GetSecurity() : uint32(SEC_CONSOLE);
 
         // can set security level only for target with less security and to less security that we have
         // This is also reject self apply in fact
         targetSecurity = sAccountMgr->GetSecurity(targetAccountId);
-        if (targetSecurity >= plSecurity || gm >= plSecurity)
+        if (targetSecurity >= plSecurity || uint32(gm) >= plSecurity)
         {
             SendSysMessage(LANG_YOURS_SECURITY_IS_LOW);
             SetSentErrorMessage(true);
@@ -1388,7 +1389,7 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
 
         PSendSysMessage(LANG_YOU_CHANGE_SECURITY, targetAccountName.c_str(), gm);
         // If gmRealmID is -1, delete all values for the account id, else, insert values for the specific realmID
-        if (gmRealmID == -1)
+        if (gmRealmID == uint32(-1))
         {
             LoginDatabase.PExecute("DELETE FROM account_access WHERE id = '%u'", targetAccountId);
             LoginDatabase.PExecute("INSERT INTO account_access VALUES ('%u', '%d', -1)", targetAccountId, gm);
@@ -1434,7 +1435,7 @@ bool ChatHandler::HandleAccountSetPasswordCommand(const char *args)
     uint32 targetSecurity = sAccountMgr->GetSecurity(targetAccountId);
 
     // m_session == NULL only for console
-    uint32 plSecurity = m_session ? m_session->GetSecurity() : SEC_CONSOLE;
+    uint32 plSecurity = m_session ? m_session->GetSecurity() : uint32(SEC_CONSOLE);
 
     // can set password only for target with less security
     // This is also reject self apply in fact
@@ -3126,7 +3127,7 @@ bool ChatHandler::HandleLookupItemCommand(const char *args)
             ItemLocale const *il = objmgr.GetItemLocale(pProto->ItemId);
             if (il)
             {
-                if (il->Name.size() > loc_idx && !il->Name[loc_idx].empty())
+                if (il->Name.size() > uint32(loc_idx) && !il->Name[loc_idx].empty())
                 {
                     std::string name = il->Name[loc_idx];
 
@@ -3190,7 +3191,7 @@ bool ChatHandler::HandleLookupItemSetCommand(const char *args)
         ItemSetEntry const *set = sItemSetStore.LookupEntry(id);
         if (set)
         {
-            int loc = m_session ? m_session->GetSessionDbcLocale() : sWorld.GetDefaultDbcLocale();
+            int loc = m_session ? int(m_session->GetSessionDbcLocale()) : sWorld.GetDefaultDbcLocale();
             std::string name = set->name[loc];
             if (name.empty())
                 continue;
@@ -3255,7 +3256,7 @@ bool ChatHandler::HandleLookupSkillCommand(const char *args)
         SkillLineEntry const *skillInfo = sSkillLineStore.LookupEntry(id);
         if (skillInfo)
         {
-            int loc = m_session ? m_session->GetSessionDbcLocale() : sWorld.GetDefaultDbcLocale();
+            int loc = m_session ? int(m_session->GetSessionDbcLocale()) : sWorld.GetDefaultDbcLocale();
             std::string name = skillInfo->name[loc];
             if (name.empty())
                 continue;
@@ -3324,7 +3325,7 @@ bool ChatHandler::HandleLookupSpellCommand(const char *args)
         SpellEntry const *spellInfo = sSpellStore.LookupEntry(id);
         if (spellInfo)
         {
-            int loc = m_session ? m_session->GetSessionDbcLocale() : sWorld.GetDefaultDbcLocale();
+            int loc = m_session ? int(m_session->GetSessionDbcLocale()) : sWorld.GetDefaultDbcLocale();
             std::string name = spellInfo->SpellName[loc];
             if (name.empty())
                 continue;
@@ -3430,7 +3431,7 @@ bool ChatHandler::HandleLookupQuestCommand(const char *args)
             QuestLocale const *il = objmgr.GetQuestLocale(qinfo->GetQuestId());
             if (il)
             {
-                if (il->Title.size() > loc_idx && !il->Title[loc_idx].empty())
+                if (il->Title.size() > uint32(loc_idx) && !il->Title[loc_idx].empty())
                 {
                     std::string title = il->Title[loc_idx];
 
@@ -3534,7 +3535,7 @@ bool ChatHandler::HandleLookupCreatureCommand(const char *args)
             CreatureLocale const *cl = objmgr.GetCreatureLocale (id);
             if (cl)
             {
-                if (cl->Name.size() > loc_idx && !cl->Name[loc_idx].empty ())
+                if (cl->Name.size() > uint32(loc_idx) && !cl->Name[loc_idx].empty ())
                 {
                     std::string name = cl->Name[loc_idx];
 
@@ -3604,7 +3605,7 @@ bool ChatHandler::HandleLookupObjectCommand(const char *args)
             GameObjectLocale const *gl = objmgr.GetGameObjectLocale(id);
             if (gl)
             {
-                if (gl->Name.size() > loc_idx && !gl->Name[loc_idx].empty())
+                if (gl->Name.size() > uint32(loc_idx) && !gl->Name[loc_idx].empty())
                 {
                     std::string name = gl->Name[loc_idx];
 
@@ -3731,7 +3732,7 @@ bool ChatHandler::HandleGuildInviteCommand(const char *args)
         plGuid = objmgr.GetPlayerGUIDByName (plName.c_str ());
 
     if (!plGuid)
-        false;
+        return false;
 
     // player's guild membership checked in AddMember before add
     if (!targetGuild->AddMember (plGuid,targetGuild->GetLowestRank ()))
@@ -3953,6 +3954,18 @@ bool ChatHandler::HandleDieCommand(const char* /*args*/)
     return true;
 }
 
+// Kills the unit and grants the corpse ownership rights to the command caller
+bool ChatHandler::HandleKillCommand(const char* /*args*/)
+{
+    if (Unit* target = getSelectedUnit())
+    {
+        // Converts the targets health points value from integer to string data format
+        std::string damage = static_cast<std::ostringstream*>(&(std::ostringstream() << int(target->GetHealth())))->str();
+        return HandleDamageCommand(damage.c_str());
+    }
+    else return false;
+}
+
 bool ChatHandler::HandleDamageCommand(const char * args)
 {
     if (!*args)
@@ -4007,7 +4020,7 @@ bool ChatHandler::HandleDamageCommand(const char * args)
 
         m_session->GetPlayer()->CalcAbsorbResist(target,schoolmask, SPELL_DIRECT_DAMAGE, damage, &absorb, &resist);
 
-        if (damage <= absorb + resist)
+        if (damage <= int32(absorb + resist))
             return true;
 
         damage -= absorb + resist;
@@ -4526,7 +4539,7 @@ bool ChatHandler::HandleLevelUpCommand(const char *args)
     else
     {
         // update level and XP at level, all other will be updated at loading
-        CharacterDatabase.PExecute("UPDATE characters SET level = '%u', xp = 0 WHERE guid = '%u'", newlevel, chr_guid);
+        CharacterDatabase.PExecute("UPDATE characters SET level = '%u', xp = 0 WHERE guid = '%llu'", newlevel, chr_guid);
     }
 
     if (m_session->GetPlayer() != chr)                       // including chr == NULL
@@ -5287,7 +5300,7 @@ bool ChatHandler::HandleServerShutDownCommand(const char *args)
     int32 time = atoi (time_str);
 
     // Prevent interpret wrong arg value as 0 secs shutdown time
-    if (time == 0 && (time_str[0] != '0' || time_str[1] != '\0') || time < 0)
+    if ((time == 0 && (time_str[0] != '0' || time_str[1] != '\0')) || time < 0)
         return false;
 
     if (exitcode_str)
@@ -5322,7 +5335,7 @@ bool ChatHandler::HandleServerRestartCommand(const char *args)
     int32 time = atoi (time_str);
 
     // Prevent interpret wrong arg value as 0 secs shutdown time
-    if (time == 0 && (time_str[0] != '0' || time_str[1] != '\0') || time < 0)
+    if ((time == 0 && (time_str[0] != '0' || time_str[1] != '\0')) || time < 0)
         return false;
 
     if (exitcode_str)
@@ -5357,7 +5370,7 @@ bool ChatHandler::HandleServerIdleRestartCommand(const char *args)
     int32 time = atoi (time_str);
 
     // Prevent interpret wrong arg value as 0 secs shutdown time
-    if (time == 0 && (time_str[0] != '0' || time_str[1] != '\0') || time < 0)
+    if ((time == 0 && (time_str[0] != '0' || time_str[1] != '\0')) || time < 0)
         return false;
 
     if (exitcode_str)
@@ -5392,7 +5405,7 @@ bool ChatHandler::HandleServerIdleShutDownCommand(const char *args)
     int32 time = atoi (time_str);
 
     // Prevent interpret wrong arg value as 0 secs shutdown time
-    if (time == 0 && (time_str[0] != '0' || time_str[1] != '\0') || time < 0)
+    if ((time == 0 && (time_str[0] != '0' || time_str[1] != '\0')) || time < 0)
         return false;
 
     if (exitcode_str)
@@ -5570,7 +5583,7 @@ bool ChatHandler::HandleCompleteQuest(const char *args)
     // All creature/GO slain/casted (not required, but otherwise it will display "Creature slain 0/10")
     for (uint8 i = 0; i < QUEST_OBJECTIVES_COUNT; ++i)
     {
-        uint32 creature = pQuest->ReqCreatureOrGOId[i];
+        int32 creature = pQuest->ReqCreatureOrGOId[i];
         uint32 creaturecount = pQuest->ReqCreatureOrGOCount[i];
 
         if (uint32 spell_id = pQuest->ReqSpell[i])
@@ -6090,9 +6103,13 @@ bool ChatHandler::HandleRespawnCommand(const char* /*args*/)
             SetSentErrorMessage(true);
             return false;
         }
-
-        if (target->isDead())
-            target->ToCreature()->Respawn();
+        else if (!target->isDead())
+        {
+            SendSysMessage(LANG_CREATURE_NOT_DEAD);
+            SetSentErrorMessage(true);
+            return false;
+        }
+        target->ToCreature()->Respawn();
         return true;
     }
 
@@ -6969,7 +6986,7 @@ bool ChatHandler::HandleSendItemsCommand(const char *args)
         }
 
         uint32 item_count = itemCountStr ? atoi(itemCountStr) : 1;
-        if (item_count < 1 || item_proto->MaxCount && item_count > item_proto->MaxCount)
+        if (item_count < 1 || (item_proto->MaxCount && item_count > item_proto->MaxCount))
         {
             PSendSysMessage(LANG_COMMAND_INVALID_ITEM_COUNT, item_count,item_id);
             SetSentErrorMessage(true);
@@ -7389,7 +7406,7 @@ bool ChatHandler::HandleUnFreezeCommand(const char *args)
             Field *fields=result->Fetch();
             uint64 pguid = fields[0].GetUInt64();
 
-            CharacterDatabase.PQuery("DELETE FROM character_aura WHERE character_aura.spell = 9454 AND character_aura.guid = '%u'",pguid);
+            CharacterDatabase.PQuery("DELETE FROM character_aura WHERE character_aura.spell = 9454 AND character_aura.guid = '%llu'",pguid);
             PSendSysMessage(LANG_COMMAND_UNFREEZE,name.c_str());
             return true;
         }

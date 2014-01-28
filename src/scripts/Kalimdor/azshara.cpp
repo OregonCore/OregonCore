@@ -292,11 +292,13 @@ struct mob_rizzle_sprysprocketAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (Must_Die)
+        {
             if (Must_Die_Timer <= diff)
             {
                 Despawn();
                 return;
             } else Must_Die_Timer -= diff;
+        }
 
         if (!Escape)
         {
@@ -462,12 +464,13 @@ struct mob_depth_chargeAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
         if (we_must_die)
+        {
             if (must_die_timer <= diff)
             {
                 me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 me->RemoveCorpse();
             } else must_die_timer -= diff;
-        return;
+        }
     }
 
     void MoveInLineOfSight(Unit *who)

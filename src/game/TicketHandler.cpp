@@ -193,7 +193,7 @@ void WorldSession::HandleGMSurveySubmit(WorldPacket& recv_data)
 
     // TODO: columns for "playerguid" "playername" and possibly "gm" after `surveyid` but how do we retrieve after ticket deletion?
     // first we must get in basic template so each answer can be inserted to the same field since they are not handled all at once
-    CharacterDatabase.PExecute("INSERT INTO gm_surveys (surveyid) VALUES ('%i')",nextSurveyID);
+    CharacterDatabase.PExecute("INSERT INTO gm_surveys (surveyid) VALUES ('%llu')",nextSurveyID);
 
     uint8 result[10];
     memset(result, 0, sizeof(result));
@@ -212,21 +212,21 @@ void WorldSession::HandleGMSurveySubmit(WorldPacket& recv_data)
         result[i] = value;
         // if anyone has a better programming method be my guest. this is the only way I see to prevent multiple rows
         if (questionID == 28)
-            CharacterDatabase.PExecute("UPDATE gm_surveys SET AppropriateAnswer = '%i' WHERE surveyid = %i;",value,nextSurveyID);
+            CharacterDatabase.PExecute("UPDATE gm_surveys SET AppropriateAnswer = '%u' WHERE surveyid = %llu;",value,nextSurveyID);
         if (questionID == 29)
-            CharacterDatabase.PExecute("UPDATE gm_surveys SET Understandability = '%i' WHERE surveyid = %i;",value,nextSurveyID);
+            CharacterDatabase.PExecute("UPDATE gm_surveys SET Understandability = '%u' WHERE surveyid = %llu;",value,nextSurveyID);
         if (questionID == 30)
-            CharacterDatabase.PExecute("UPDATE gm_surveys SET GMRating = '%i' WHERE surveyid = %i;",value,nextSurveyID);
+            CharacterDatabase.PExecute("UPDATE gm_surveys SET GMRating = '%u' WHERE surveyid = %llu;",value,nextSurveyID);
         if (questionID == 31)
-            CharacterDatabase.PExecute("UPDATE gm_surveys SET ResponseTime = '%i' WHERE surveyid = %i;",value,nextSurveyID);
+            CharacterDatabase.PExecute("UPDATE gm_surveys SET ResponseTime = '%u' WHERE surveyid = %llu;",value,nextSurveyID);
         if (questionID == 32)
-            CharacterDatabase.PExecute("UPDATE gm_surveys SET OverallGMExperience = '%i' WHERE surveyid = %i;",value,nextSurveyID);
+            CharacterDatabase.PExecute("UPDATE gm_surveys SET OverallGMExperience = '%u' WHERE surveyid = %llu;",value,nextSurveyID);
     }
 
     std::string comment;
     recv_data >> comment; // additional comment
     CharacterDatabase.escape_string(comment);
-    CharacterDatabase.PExecute("UPDATE gm_surveys SET comment = '%s' WHERE surveyid = %i;",comment.c_str(),nextSurveyID);
+    CharacterDatabase.PExecute("UPDATE gm_surveys SET comment = '%s' WHERE surveyid = %llu;",comment.c_str(),nextSurveyID);
 }
 
 void WorldSession::HandleGMTicketSystemStatusOpcode(WorldPacket & /*recv_data*/)

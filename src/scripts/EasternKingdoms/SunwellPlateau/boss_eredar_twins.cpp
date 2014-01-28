@@ -114,6 +114,7 @@ struct boss_sacrolashAI : public ScriptedAI
         {
             Unit* Temp =  Unit::GetUnit((*me),pInstance->GetData64(DATA_ALYTHESS));
             if (Temp)
+            {
                 if (Temp->isDead())
                 {
                     CAST_CRE(Temp)->Respawn();
@@ -124,6 +125,7 @@ struct boss_sacrolashAI : public ScriptedAI
                         me->getThreatManager().addThreat(Temp->getVictim(),0.0f);
                     }
                 }
+            }
         }
 
         if (!me->isInCombat())
@@ -373,6 +375,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
         {
             Unit* Temp =  Unit::GetUnit((*me),pInstance->GetData64(DATA_SACROLASH));
             if (Temp)
+            {
                 if (Temp->isDead())
                 {
                     CAST_CRE(Temp)->Respawn();
@@ -383,6 +386,7 @@ struct boss_alythessAI : public Scripted_NoMovementAI
                         me->getThreatManager().addThreat(Temp->getVictim(),0.0f);
                     }
                 }
+            }
         }
 
         if (!me->isInCombat())

@@ -68,7 +68,7 @@ struct boss_murmurAI : public Scripted_NoMovementAI
         me->ResetPlayerDamageReq();
     }
 
-    void EnterCombat(Unit *who) { }
+    void EnterCombat(Unit *) { }
 
     // Sonic Boom instant damage (needs core fix instead of this)
     void SpellHitTarget(Unit *pTarget, const SpellEntry *spell)

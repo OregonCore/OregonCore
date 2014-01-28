@@ -45,7 +45,7 @@ EndScriptData */
 
 //Unrelenting Rider
 #define SPELL_UNHOLY_AURA           28340
-#define SPELL_SHADOWBOLT            19729                   //Search thru targets and find those who have the SHADOW_MARK to cast this on
+#define SPELL_SHADOWBOLT_RIDER      19729                   //Search thru targets and find those who have the SHADOW_MARK to cast this on
 
 //Spectral Trainee
 #define SPELL_ARCANE_EXPLOSION      27989

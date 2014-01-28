@@ -598,9 +598,9 @@ struct DiminishingReturn
     DiminishingReturn(DiminishingGroup group, uint32 t, uint32 count) : DRGroup(group), hitTime(t), hitCount(count), stack(0) {}
 
     DiminishingGroup        DRGroup:16;
-    uint16                  stack:16;
     uint32                  hitTime;
     uint32                  hitCount;
+    uint16                  stack:16;
 };
 
 enum MeleeHitOutcome
@@ -644,7 +644,7 @@ struct CalcDamageInfo
 // Spell damage info structure based on structure sending in SMSG_SPELLNONMELEEDAMAGELOG opcode
 struct SpellNonMeleeDamage{
  SpellNonMeleeDamage(Unit *_attacker, Unit *_target, uint32 _SpellID, uint32 _schoolMask) :
-    attacker(_attacker), target(_target), SpellID(_SpellID), damage(0), schoolMask(_schoolMask),
+    target(_target), attacker(_attacker), SpellID(_SpellID), damage(0), schoolMask(_schoolMask),
     absorb(0), resist(0), physicalLog(false), unused(false), blocked(0), HitInfo(0), cleanDamage(0) {}
  Unit   *target;
  Unit   *attacker;
@@ -932,11 +932,14 @@ class Unit : public WorldObject
         void SetMaxHealth(uint32 val);
         int32 ModifyHealth(int32 val);
 
+        // Modify target's health and send client log
+        uint32 HealTargetUnit(Unit* target, SpellEntry const *spellInfo, uint32 heal, bool crit = false, bool sendLog = true);
+
         Powers getPowerType() const { return Powers(GetByteValue(UNIT_FIELD_BYTES_0, 3)); }
         void setPowerType(Powers power);
-        uint32 GetPower(  Powers power) const { return GetUInt32Value(UNIT_FIELD_POWER1   +power); }
+        uint32 GetPower(Powers power) const { return GetUInt32Value(UNIT_FIELD_POWER1+power); }
         uint32 GetMaxPower(Powers power) const { return GetUInt32Value(UNIT_FIELD_MAXPOWER1+power); }
-        void SetPower(  Powers power, uint32 val);
+        void SetPower(Powers power, uint32 val);
         void SetMaxPower(Powers power, uint32 val);
         int32 ModifyPower(Powers power, int32 val);
         void ApplyPowerMod(Powers power, uint32 val, bool apply);
@@ -1058,11 +1061,18 @@ class Unit : public WorldObject
         //Need fix or use this
         bool isGuard() const  { return HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GUARD); }
 
-        bool isInFlight()  const { return hasUnitState(UNIT_STAT_IN_FLIGHT); }
+        // Is the unit a player?
+        bool isPlayer() const { return GetTypeId() == TYPEID_PLAYER; }
 
+        bool isInFlight()  const { return hasUnitState(UNIT_STAT_IN_FLIGHT); }
+        
+        // Is the unit casting, or has recently casted a combat spell but not in combat yet? 
+        bool isInitiatingCombat() const { return m_initiatingCombat; }
         bool isInCombat()  const { return HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT); }
         void CombatStart(Unit* target, bool initialAggro = true);
         void SetInCombatState(bool PvP, Unit* enemy = NULL);
+        void setInitiatingCombat(bool flag) { m_initiatingCombat = flag; }
+
         void SetInCombatWith(Unit* enemy);
         void ClearInCombat();
         uint32 GetCombatTimer() const { return m_CombatTimer; }
@@ -1532,6 +1542,10 @@ class Unit : public WorldObject
         bool IsAIEnabled, NeedChangeAI;
 
         bool m_ControlledByPlayer;
+
+        // Unit will forget everyone who has ever attacked it
+        void clearPastEnemyList() { m_ThreatManager.clearPastEnemyList(); }
+
     protected:
         explicit Unit ();
 
@@ -1542,6 +1556,9 @@ class Unit : public WorldObject
 
         void _UpdateAutoRepeatSpell();
         bool m_AutoRepeatFirstCast;
+
+        // Unit is initiating combat by casting a spell at a target
+        bool m_initiatingCombat;
 
         uint32 m_attackTimer[MAX_ATTACK];
 

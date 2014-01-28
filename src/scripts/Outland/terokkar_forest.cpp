@@ -158,7 +158,7 @@ struct mob_infested_root_walkerAI : public ScriptedAI
     mob_infested_root_walkerAI(Creature *c) : ScriptedAI(c) {}
 
     void Reset() { }
-    void EnterCombat(Unit *who) { }
+    void EnterCombat(Unit* /*who*/) { }
 
     void DamageTaken(Unit *done_by, uint32 &damage)
     {
@@ -183,7 +183,7 @@ struct mob_rotting_forest_ragerAI : public ScriptedAI
     mob_rotting_forest_ragerAI(Creature *c) : ScriptedAI(c) {}
 
     void Reset() { }
-    void EnterCombat(Unit *who) { }
+    void EnterCombat(Unit* /*who*/) { }
 
     void DamageTaken(Unit *done_by, uint32 &damage)
     {
@@ -215,8 +215,8 @@ struct mob_netherweb_victimAI : public ScriptedAI
     mob_netherweb_victimAI(Creature *c) : ScriptedAI(c) {}
 
     void Reset() { }
-    void EnterCombat(Unit *who) { }
-    void MoveInLineOfSight(Unit *who) { }
+    void EnterCombat(Unit* /*who*/) { }
+    void MoveInLineOfSight(Unit* /*who*/) { }
 
     void JustDied(Unit* Killer)
     {
@@ -278,7 +278,7 @@ struct npc_floonAI : public ScriptedAI
         me->setFaction(FACTION_FRIENDLY_FL);
     }
 
-    void EnterCombat(Unit *who) {}
+    void EnterCombat(Unit* /*who*/) {}
 
     void UpdateAI(const uint32 diff)
     {
@@ -320,7 +320,7 @@ bool GossipHello_npc_floon(Player *player, Creature* pCreature)
     return true;
 }
 
-bool GossipSelect_npc_floon(Player *player, Creature* pCreature, uint32 sender, uint32 action)
+bool GossipSelect_npc_floon(Player *player, Creature* pCreature, uint32 /*sender*/, uint32 action)
 {
     if (action == GOSSIP_ACTION_INFO_DEF)
     {
@@ -397,7 +397,7 @@ struct npc_isla_starmaneAI : public npc_escortAI
         me->RestoreFaction();
     }
 
-    void JustDied(Unit* killer)
+    void JustDied(Unit* /*killer*/)
     {
         if (Player* pPlayer = GetPlayerForEscort())
         {
@@ -446,7 +446,7 @@ bool GossipHello_go_skull_pile(Player *player, GameObject* _GO)
     return true;
 }
 
-void SendActionMenu_go_skull_pile(Player *player, GameObject* _GO, uint32 action)
+void SendActionMenu_go_skull_pile(Player *player, GameObject* /*_GO*/, uint32 action)
 {
     switch(action)
     {
@@ -690,7 +690,7 @@ bool GossipHello_npc_skyguard_handler_deesak(Player* pPlayer, Creature* pCreatur
     return true;
 }
 
-bool GossipSelect_npc_skyguard_handler_deesak(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+bool GossipSelect_npc_skyguard_handler_deesak(Player* pPlayer, Creature* /*pCreature*/, uint32 /*uiSender*/, uint32 uiAction)
 {
     if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
     {
@@ -1122,7 +1122,7 @@ struct npc_captive_child : public ScriptedAI
 
     void Reset() {}
 
-    void WaypointReached(uint32 uiPointId)
+    void WaypointReached(uint32 /*uiPointId*/)
     {
         // we only have one waypoint
         me->ForcedDespawn();

@@ -36,7 +36,7 @@ struct instance_mechanar : public ScriptedInstance
 
     uint32 Encounters[ENCOUNTERS];
 
-    void OnCreatureCreate (Creature *creature, uint32 creature_entry)
+    void OnCreatureCreate (Creature* /*creature*/, uint32 /*creature_entry*/)
     {
     }
 
@@ -65,7 +65,7 @@ struct instance_mechanar : public ScriptedInstance
         return false;
     }
 
-    uint64 GetData64 (uint32 identifier)
+    uint64 GetData64 (uint32 /*identifier*/)
     {
         return 0;
     }

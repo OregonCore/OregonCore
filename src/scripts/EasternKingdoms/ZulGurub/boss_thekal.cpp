@@ -225,6 +225,7 @@ struct boss_thekalAI : public ScriptedAI
 
             // Resurrecting
             if (LorkhanDead || ZathDead)
+            {
                 if (!IsResurrecting && (CheckDeath_Timer - 2000) <= diff)
                 {
                     if (ZathDead)
@@ -237,6 +238,7 @@ struct boss_thekalAI : public ScriptedAI
                 }
                 else
                     CheckDeath_Timer -= diff;
+            }
 
             // Mortal Cleave Timer
             if (MortalCleave_Timer <= diff)
@@ -390,6 +392,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
 
         // Resurrect
         if (ThekalDead || ZathDead)
+        {
             if (!IsResurrecting && (CheckDeath_Timer - 2000) <= diff)
             {
                 if (ZathDead)
@@ -403,6 +406,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
             else
             if (ThekalDead)
                 CheckDeath_Timer -= diff;
+        }
 
         // Shield Timer
         if (Shield_Timer <= diff)
@@ -559,6 +563,7 @@ struct mob_zealot_zathAI : public ScriptedAI
 
         // Resurrect
         if (ThekalDead || LorkhanDead)
+        {
             if (!IsResurrecting && (CheckDeath_Timer - 2000) <= diff)
             {
                 if (LorkhanDead)
@@ -572,6 +577,7 @@ struct mob_zealot_zathAI : public ScriptedAI
             else
             if (LorkhanDead && ThekalDead)
                 CheckDeath_Timer -= diff;
+        }
 
         // Sweeping Strikes Timer
         if (SweepingStrikes_Timer <= diff)

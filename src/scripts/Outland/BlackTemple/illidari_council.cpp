@@ -227,7 +227,7 @@ struct mob_illidari_councilAI : public ScriptedAI
         Creature* pMember = NULL;
         for (uint8 i = 0; i < 4; ++i)
         {
-            if (pMember = (Unit::GetCreature((*me), Council[i])))
+            if ((pMember = (Unit::GetCreature((*me), Council[i]))))
             {
                 if (!pMember->isAlive())
                 {

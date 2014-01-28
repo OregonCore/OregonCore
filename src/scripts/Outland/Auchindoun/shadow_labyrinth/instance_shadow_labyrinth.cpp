@@ -245,7 +245,7 @@ struct mob_fel_overseerAI : public ScriptedAI
 
     ScriptedInstance* pInstance;
 
-    void JustDied(Unit* killer)
+    void JustDied(Unit*)
     {
         pInstance->SetData(TYPE_OVERSEER, DONE);
     }

@@ -60,7 +60,7 @@ struct boss_broggokAI : public ScriptedAI
             pInstance->SetData(DATA_BROGGOKEVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
 
@@ -68,7 +68,7 @@ struct boss_broggokAI : public ScriptedAI
             pInstance->SetData(DATA_BROGGOKEVENT, IN_PROGRESS);
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
        if (pInstance)
            pInstance->SetData(DATA_BROGGOKEVENT, DONE);
@@ -96,7 +96,7 @@ struct boss_broggokAI : public ScriptedAI
             me->GetMotionMaster()->MoveTargetedHome();
     }
 
-    void MovementInform(uint32 uiMotionType, uint32 uiPointId)
+    void MovementInform(uint32 uiMotionType, uint32 /*uiPointId*/)
     {
         if (uiMotionType == POINT_MOTION_TYPE)
         {
@@ -165,7 +165,7 @@ struct mob_nascent_orcAI : public ScriptedAI
         Stomp_Timer = 5000+rand()%4000;
     }
 
-    void MovementInform(uint32 uiMotionType, uint32 uiPointId)
+    void MovementInform(uint32 uiMotionType, uint32 /*uiPointId*/)
     {
         if (uiMotionType == POINT_MOTION_TYPE)
         {
@@ -235,8 +235,8 @@ struct mob_broggok_poisoncloudAI : public ScriptedAI
         DoCast(me,HeroicMode ? SPELL_POISON_H : SPELL_POISON);
     }
 
-    void AttackedBy(Unit* who) {}
-    void AttackStart(Unit *who) {}
+    void AttackedBy(Unit* /*who*/) {}
+    void AttackStart(Unit* /*who*/) {}
 };
 
 CreatureAI* GetAI_mob_broggok_poisoncloud(Creature* pCreature)

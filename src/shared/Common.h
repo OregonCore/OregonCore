@@ -134,6 +134,8 @@
 #define atoll __atoi64
 #define vsnprintf _vsnprintf
 #define finite(X) _finite(X)
+#define strtoull _strtoui64
+#define strtoll _strtoi64
 
 #else
 
@@ -166,6 +168,8 @@ inline float finiteAlways(float f) { return finite(f) ? f : 0.0f; }
 #define MAKE_PAIR32(l, h)  uint32(uint16(l) | (uint32(h) << 16))
 #define PAIR32_HIPART(x)   (uint16)((uint32(x) >> 16) & 0x0000FFFF)
 #define PAIR32_LOPART(x)   (uint16)(uint32(x)         & 0x0000FFFF)
+
+#define UNUSED(x) (void)(x)
 
 enum TimeConstants
 {

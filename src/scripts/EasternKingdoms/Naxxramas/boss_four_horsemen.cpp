@@ -65,17 +65,17 @@ struct boss_lady_blaumeuxAI : public ScriptedAI
         ShieldWall2 = true;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_BLAU_AGGRO, me);
     }
 
-    void KilledUnit(Unit* Victim)
+    void KilledUnit(Unit* /*Victim*/)
     {
         DoScriptText(SAY_BLAU_SLAY, me);
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_BLAU_DEATH, me);
     }
@@ -152,7 +152,7 @@ struct boss_rivendare_naxxAI : public ScriptedAI
     {
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
         switch(rand()%3)
         {
@@ -162,7 +162,7 @@ struct boss_rivendare_naxxAI : public ScriptedAI
         }
     }
 
-    void KilledUnit(Unit* Victim)
+    void KilledUnit(Unit* /*Victim*/)
     {
         switch(rand()%2)
         {
@@ -171,12 +171,12 @@ struct boss_rivendare_naxxAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_RIVE_DEATH, me);
     }
 
-    void UpdateAI(const uint32 diff)
+    void UpdateAI(const uint32 /*diff*/)
     {
         if (!UpdateVictim())
             return;
@@ -221,17 +221,17 @@ struct boss_thane_korthazzAI : public ScriptedAI
         ShieldWall2 = true;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_KORT_AGGRO, me);
     }
 
-    void KilledUnit(Unit* Victim)
+    void KilledUnit(Unit* /*Victim*/)
     {
         DoScriptText(SAY_KORT_SLAY, me);
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_KORT_DEATH, me);
     }
@@ -316,17 +316,17 @@ struct boss_sir_zeliekAI : public ScriptedAI
         ShieldWall2 = true;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_ZELI_AGGRO, me);
     }
 
-    void KilledUnit(Unit* Victim)
+    void KilledUnit(Unit* /*Victim*/)
     {
         DoScriptText(SAY_ZELI_SLAY, me);
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_ZELI_DEATH, me);
     }

@@ -123,7 +123,7 @@ bool GossipSelect_npc_rathis_tomber(Player* pPlayer, Creature* pCreature, uint32
 ## go_gilded_brazier (Paladin First Trail quest (9678))
 #####*/
 
-bool GOHello_gilded_brazier(Player *player, GameObject* _GO)
+bool GOHello_gilded_brazier(Player *player, GameObject* /*_GO*/)
 {
     if (player->GetQuestStatus(9678) == QUEST_STATUS_INCOMPLETE)
     {

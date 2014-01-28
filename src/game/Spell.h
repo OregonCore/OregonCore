@@ -350,7 +350,7 @@ class Spell
         ~Spell();
 
         void prepare(SpellCastTargets * targets, Aura* triggeredByAura = NULL);
-        void cancel();
+        void cancel(bool sendInterrupt = true);
         void update(uint32 difftime);
         void cast(bool skipCheck = false);
         void finish(bool ok = true);
@@ -629,10 +629,9 @@ namespace Oregon
 
         SpellNotifierCreatureAndPlayer(Spell &spell, std::list<Unit*> &data, float radius, const uint32 &type,
             SpellTargets TargetType = SPELL_TARGETS_ENEMY, const Position *pos = NULL, uint32 entry = 0)
-            : i_data(&data), i_spell(spell), i_push_type(type), i_radius(radius), i_radiusSq(radius*radius)
-            , i_TargetType(TargetType), i_pos(pos), i_entry(entry)
+            : i_data(&data), i_spell(spell), i_push_type(type), i_radius(radius), i_radiusSq(radius*radius),
+              i_TargetType(TargetType), i_caster(spell.GetCaster()), i_entry(entry), i_pos(pos)
         {
-            i_caster = spell.GetCaster();
         }
 
         template<class T> inline void Visit(GridRefManager<T>  &m)

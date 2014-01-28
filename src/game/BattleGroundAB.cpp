@@ -68,7 +68,7 @@ void BattleGroundAB::Update(time_t diff)
             // 3 sec delay to spawn new banner instead previous despawned one
             if (m_BannerTimers[node].timer)
             {
-                if (m_BannerTimers[node].timer > diff)
+                if (m_BannerTimers[node].timer > int32(diff))
                     m_BannerTimers[node].timer -= diff;
                 else
                 {
@@ -80,7 +80,7 @@ void BattleGroundAB::Update(time_t diff)
             // 1-minute to occupy a node from contested state
             if (m_NodeTimers[node])
             {
-                if (m_NodeTimers[node] > diff)
+                if (m_NodeTimers[node] > int32(diff))
                     m_NodeTimers[node] -= diff;
                 else
                 {

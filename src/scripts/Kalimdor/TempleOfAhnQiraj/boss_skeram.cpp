@@ -100,7 +100,7 @@ struct boss_skeramAI : public ScriptedAI
             me->setDeathState(JUST_DIED);
     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit* /*victim*/)
     {
         switch(rand()%3)
         {
@@ -110,13 +110,13 @@ struct boss_skeramAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         if (!IsImage)
             DoScriptText(SAY_DEATH, me);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
         if (IsImage || Images75)
             return;

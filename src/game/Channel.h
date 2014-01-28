@@ -150,9 +150,9 @@ class Channel
     PlayerList  players;
     typedef     std::set<uint64> BannedList;
     BannedList  banned;
+    std::string m_name;
     bool        m_announce;
     bool        m_moderate;
-    std::string m_name;
     std::string m_password;
     uint8       m_flags;
     uint32      m_channelId;

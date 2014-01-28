@@ -279,12 +279,12 @@ struct boss_magtheridonAI : public ScriptedAI
         if (!ClickerNum) NeedCheckCube = false;
     }
 
-    void KilledUnit(Unit* victim)
+    void KilledUnit(Unit* /*victim*/)
     {
         DoScriptText(SAY_PLAYER_KILLED, me);
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* /*Killer*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_MAGTHERIDON_EVENT, DONE);
@@ -300,7 +300,7 @@ struct boss_magtheridonAI : public ScriptedAI
             ScriptedAI::AttackStart(who);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_MAGTHERIDON_EVENT, IN_PROGRESS);
@@ -442,7 +442,7 @@ struct mob_hellfire_channelerAI : public ScriptedAI
         me->CastSpell(me, SPELL_SHADOW_GRASP_C, false);
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
         if (pInstance)
             pInstance->SetData(DATA_CHANNELER_EVENT, IN_PROGRESS);

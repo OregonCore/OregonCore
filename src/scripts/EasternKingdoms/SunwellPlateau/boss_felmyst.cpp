@@ -262,6 +262,8 @@ struct boss_felmystAI : public ScriptedAI
             uiFlightCount = 0;
             uiBreathCount = 0;
             break;
+        case PHASE_NONE:
+            break;
         }
         phase = NextPhase;
     }

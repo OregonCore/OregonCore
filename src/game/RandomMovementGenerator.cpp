@@ -44,11 +44,10 @@ template<>
 void
 RandomMovementGenerator<Creature>::_setRandomLocation(Creature &creature)
 {
-    float X,Y,Z,z,nx,ny,nz,ori,dist;
+    float X,Y,Z,nx,ny,nz,ori,dist;
 
     creature.GetHomePosition(X, Y, Z, ori);
 
-    z = creature.GetPositionZ();
     Map const* map = creature.GetBaseMap();
 
     // For 2D/3D system selection
@@ -148,10 +147,10 @@ void RandomMovementGenerator<Creature>::Reset(Creature &creature)
 }
 
 template<>
-void RandomMovementGenerator<Creature>::Finalize(Creature &creature){}
+void RandomMovementGenerator<Creature>::Finalize(Creature& /*creature*/){}
 
 template<>
-bool RandomMovementGenerator<Creature>::Update(Creature &creature, const uint32 &diff)
+bool RandomMovementGenerator<Creature>::Update(Creature& creature, const uint32 &diff)
 {
     if (creature.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED | UNIT_STAT_DISTRACTED))
     {

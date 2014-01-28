@@ -35,17 +35,17 @@ enum ePoints
 
 npc_escortAI::npc_escortAI(Creature* pCreature) : ScriptedAI(pCreature),
     m_uiPlayerGUID(0),
-    MaxPlayerDistance(DEFAULT_MAX_PLAYER_DISTANCE),
-    m_uiPlayerCheckTimer(1000),
     m_uiWPWaitTimer(2500),
+    m_uiPlayerCheckTimer(1000),
     m_uiEscortState(STATE_ESCORT_NONE),
+    MaxPlayerDistance(DEFAULT_MAX_PLAYER_DISTANCE),
+    m_pQuestForEscort(NULL),
     m_bIsActiveAttacker(true),
     m_bIsRunning(false),
-    DespawnAtEnd(true),
-    DespawnAtFar(true),
-    m_pQuestForEscort(NULL),
     m_bCanInstantRespawn(false),
     m_bCanReturnToStart(false),
+    DespawnAtEnd(true),
+    DespawnAtFar(true),
     ScriptWP(false)
 {}
 
@@ -496,7 +496,7 @@ void npc_escortAI::Start(bool bIsActiveAttacker, bool bRun, uint64 uiPlayerGUID,
     //disable npcflags
     me->SetUInt32Value(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_NONE);
 
-    debug_log("OSCR: EscortAI started with %u waypoints. ActiveAttacker = %d, Run = %d, PlayerGUID = %u", WaypointList.size(), m_bIsActiveAttacker, m_bIsRunning, m_uiPlayerGUID);
+    debug_log("OSCR: EscortAI started with %u waypoints. ActiveAttacker = %d, Run = %d, PlayerGUID = %llu", WaypointList.size(), m_bIsActiveAttacker, m_bIsRunning, m_uiPlayerGUID);
 
     CurrentWP = WaypointList.begin();
 

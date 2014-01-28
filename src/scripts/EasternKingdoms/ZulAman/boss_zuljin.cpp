@@ -310,7 +310,7 @@ struct boss_zuljinAI : public ScriptedAI
             Unit* Temp = NULL;
             if (SpiritGUID[i])
             {
-                if (Temp = Unit::GetUnit(*me, SpiritGUID[i]))
+                if ((Temp = Unit::GetUnit(*me, SpiritGUID[i])))
                 {
                     Temp->SetVisibility(VISIBILITY_OFF);
                     Temp->setDeathState(DEAD);
@@ -594,7 +594,7 @@ struct feather_vortexAI : public ScriptedAI
 
     void Reset() {}
 
-    void EnterCombat(Unit *pTarget) {}
+    void EnterCombat(Unit* /*pTarget*/ ) {}
 
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {

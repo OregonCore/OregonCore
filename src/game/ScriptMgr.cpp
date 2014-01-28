@@ -73,16 +73,14 @@ void ScriptMgr::ScriptsInit()
     outstring_log(" | |__| | | |  __/ (_| | (_) | | | |____) | (__| |  | | |_) | |_ ");
     outstring_log("  \\____/|_|  \\___|\\__, |\\___/|_| |_|_____/ \\___|_|  |_| .__/ \\__|");
     outstring_log("                   __/ |                              | |        ");
-    outstring_log("                  |___/                               |_|  ");
-    outstring_log("");
+    outstring_log("                  |___/                               |_|  \n");
 
     //Load database (must be called after SD2Config.SetSource).
     LoadDatabase();
 
-    outstring_log("OSCR: Loading C++ scripts");
+    outstring_log("OSCR: Loading C++ scripts\n");
     barGoLink bar(1);
     bar.step();
-    outstring_log("");
 
     for (uint16 i =0; i<MAX_SCRIPTS; ++i)
         m_scripts[i]=NULL;

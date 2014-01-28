@@ -33,6 +33,9 @@ add_definitions(-D_BUILD_DIRECTIVE=\\"$(ConfigurationName)\\")
 # multithreaded compiling on VS
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 
+# Increases the 'Precompiled Header Memory Allocation Limit' to 150MB
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm200")
+
 # Define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES - eliminates the warning by changing the strcpy call to strcpy_s, which prevents buffer overruns
 add_definitions(-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES)
 message(STATUS "MSVC: Overloaded standard names")

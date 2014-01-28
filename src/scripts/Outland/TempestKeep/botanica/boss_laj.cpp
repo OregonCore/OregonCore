@@ -143,7 +143,7 @@ struct boss_lajAI : public ScriptedAI
         CanSummon = false;
     }
 
-    void EnterCombat(Unit *who)
+    void EnterCombat(Unit* /*who*/)
     {
     }
 

@@ -1092,7 +1092,7 @@ void WorldSession::SendExternalMails()
 
                 if (receiver != 0)
                 {
-                    sLog.outDebug("External Mail - Sending mail to %u, Item:%u", receiver_guid, ItemID);
+                    sLog.outDebug("External Mail - Sending mail to %llu, Item:%u", receiver_guid, ItemID);
                     uint32 itemTextId = !message.empty() ? objmgr.CreateItemText(message) : 0;
                     if (ItemID != 0)
                     {
