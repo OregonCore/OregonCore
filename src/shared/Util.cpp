@@ -455,11 +455,6 @@ bool Utf8FitTo(const std::string& str, std::wstring search)
     return true;
 }
 
-bool IsValidUTF8(const std::string& str)
-{
-    return utf8::is_valid(str.begin(), str.end());
-}
-
 void hexEncodeByteArray(uint8* bytes, uint32 arrayLen, std::string& result)
 {
     std::ostringstream ss;

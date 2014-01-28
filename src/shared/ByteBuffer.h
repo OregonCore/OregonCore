@@ -24,7 +24,6 @@
 #include "Errors.h"
 #include "Log.h"
 #include "Utilities/ByteConverter.h"
-#include "Util.h"
 
 class ByteBufferException
 {
@@ -238,21 +237,6 @@ class ByteBuffer
                     break;
                 value += c;
             }
-
-            /* Client should always send valid UTF-8 strings. */
-            if (!IsValidUTF8(value))
-            {
-                /* I'm not sure if invalid utf8 is so critical
-                   that we should kick user. Some buggy addons or a crafted
-                   client may still send invalid utf8 sequences:
-                   * This is an issue because client's builtin utf8
-                   decoder allows overlonged sequences and thus can bypass
-                   our checks such as link checking etc. and pass the malformed
-                   data to other clients. Who knows what it could do. */
-                sLog.outError("Invalid utf-8 string: %s", value.c_str());
-                throw ByteBufferException(false, _rpos, 0, value.size());
-            }
-
             return *this;
         }
 
