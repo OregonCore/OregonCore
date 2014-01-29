@@ -40,6 +40,7 @@
 
 #ifdef _WIN32
 #include "ServiceWin32.h"
+#include <process.h>
 char serviceName[] = "Oregond";
 char serviceLongName[] = "Oregon core service";
 char serviceDescription[] = "Massive Network Game Object Server";
@@ -163,8 +164,27 @@ extern int main(int argc, char **argv)
 
     // and run the 'Master'
     // todo - Why do we need this 'Master'? Can't all of this be in the Main as for Realmd?
-    return sMaster.Run();
+    int exitcode = sMaster.Run();
+    if (exitcode == 2)
+    {
+        #ifndef _WIN32
+        execv(argv[0], argv);
+        #else
+        /* On windows we have to quote first argument
+           because spawned process won't be able to restart */
+        std::string arg0;
+        arg0.append(1, '"');
+        arg0.append(argv[0]);
+        arg0.append(1, '"');
+       
+        char* path = argv[0];
+        argv[0] = const_cast<char*>(arg0.c_str());
+        _execv(path, argv);
+        #endif
 
+        sLog.outError("Couldn't restart server: %s", strerror(errno));
+    }
+    return exitcode;
     // at sMaster return function exist with codes
     // 0 - normal shutdown
     // 1 - shutdown at error
