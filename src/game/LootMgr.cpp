@@ -1049,7 +1049,7 @@ void LoadLootTemplates_Creature()
         {
             if (uint32 lootid = cInfo->lootid)
             {
-                if (!ids_set.count(lootid))
+                if (ids_set.find(lootid) == ids_set.end())
                     LootTemplates_Creature.ReportNotExistedId(lootid);
                 else
                     ids_setUsed.insert(lootid);
@@ -1075,7 +1075,7 @@ void LoadLootTemplates_Disenchant()
         {
             if (uint32 lootid = proto->DisenchantID)
             {
-                if (!ids_set.count(lootid))
+                if (ids_set.find(lootid) == ids_set.end())
                     LootTemplates_Disenchant.ReportNotExistedId(lootid);
                 else
                     ids_setUsed.insert(lootid);
@@ -1097,7 +1097,7 @@ void LoadLootTemplates_Fishing()
     for (uint32 i = 1; i < sAreaStore.GetNumRows(); ++i)
     {
         if (AreaTableEntry const* areaEntry = sAreaStore.LookupEntry(i))
-            if (ids_set.count(areaEntry->ID))
+            if (ids_set.find(areaEntry->ID) != ids_set.end())
                 ids_set.erase(areaEntry->ID);
     }
 
@@ -1117,7 +1117,7 @@ void LoadLootTemplates_Gameobject()
         {
             if (uint32 lootid = GameObject::GetLootId(gInfo))
             {
-                if (!ids_set.count(lootid))
+                if (ids_set.find(lootid) == ids_set.end())
                     LootTemplates_Gameobject.ReportNotExistedId(lootid);
                 else
                     ids_setUsed.insert(lootid);
@@ -1139,7 +1139,7 @@ void LoadLootTemplates_Item()
     // remove real entries and check existence loot
     for (uint32 i = 1; i < sItemStorage.MaxEntry; ++i)
         if (ItemPrototype const* proto = sItemStorage.LookupEntry<ItemPrototype>(i))
-            if (ids_set.count(proto->ItemId))
+            if (ids_set.find(proto->ItemId) != ids_set.end())
                 ids_set.erase(proto->ItemId);
 
     // output error for any still listed (not referenced from appropriate table) ids
@@ -1158,7 +1158,7 @@ void LoadLootTemplates_Pickpocketing()
         {
             if (uint32 lootid = cInfo->pickpocketLootId)
             {
-                if (!ids_set.count(lootid))
+                if (ids_set.find(lootid) == ids_set.end())
                     LootTemplates_Pickpocketing.ReportNotExistedId(lootid);
                 else
                     ids_setUsed.insert(lootid);
@@ -1180,7 +1180,7 @@ void LoadLootTemplates_Prospecting()
     // remove real entries and check existence loot
     for (uint32 i = 1; i < sItemStorage.MaxEntry; ++i)
         if (ItemPrototype const* proto = sItemStorage.LookupEntry<ItemPrototype>(i))
-            if (ids_set.count(proto->ItemId))
+            if (ids_set.find(proto->ItemId) != ids_set.end())
                 ids_set.erase(proto->ItemId);
 
     // output error for any still listed (not referenced from appropriate table) ids
@@ -1196,7 +1196,7 @@ void LoadLootTemplates_Mail()
     ObjectMgr::QuestMap const& questMap = objmgr.GetQuestTemplates();
     for (ObjectMgr::QuestMap::const_iterator itr = questMap.begin(); itr != questMap.end(); ++itr)
         if (uint32 mail_template_id = itr->second->GetRewMailTemplateId())
-            if (ids_set.count(mail_template_id))
+            if (ids_set.find(mail_template_id) != ids_set.end())
                 ids_set.erase(mail_template_id);
 
     // output error for any still listed (not referenced from appropriate table) ids
@@ -1215,7 +1215,7 @@ void LoadLootTemplates_Skinning()
         {
             if (uint32 lootid = cInfo->SkinLootId)
             {
-                if (!ids_set.count(lootid))
+                if (ids_set.find(lootid) == ids_set.end())
                     LootTemplates_Skinning.ReportNotExistedId(lootid);
                 else
                     ids_setUsed.insert(lootid);

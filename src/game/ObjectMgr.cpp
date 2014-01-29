@@ -7381,7 +7381,7 @@ void ObjectMgr::LoadTrainerSpell()
 
         if (!(cInfo->npcflag & UNIT_NPC_FLAG_TRAINER))
         {
-            if (skip_trainers.count(entry) == 0)
+            if (skip_trainers.find(entry) == skip_trainers.end())
             {
                 sLog.outErrorDb("Table npc_trainer has data for creature template (Entry: %u) without trainer flag, ignore", entry);
                 skip_trainers.insert(entry);
