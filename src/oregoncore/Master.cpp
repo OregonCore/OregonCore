@@ -40,8 +40,6 @@
 #ifdef _WIN32
 #include "ServiceWin32.h"
 extern int m_ServiceStatus;
-#else
-#include <readline/readline.h>
 #endif
 
 INSTANTIATE_SINGLETON_1(Master);
@@ -79,7 +77,7 @@ public:
             else if (getMSTimeDiff(w_lastchange,curtime) > _delaytime)
             {
                 sLog.outError("World Thread is stuck.  Terminating server!");
-                *((uint32 volatile*)NULL) = 0;                       // bang crash
+                abort();
             }
         }
         sLog.outString("Anti-freeze thread exiting without problems.");
@@ -240,23 +238,21 @@ int Master::Run()
     // Stop freeze protection before shutdown tasks
     if (freeze_thread)
     {
-        freeze_thread->destroy();
+        freeze_thread->interrupt();
+        freeze_thread->wait();
         delete freeze_thread;
     }
 
     // Stop soap thread
     if (soap_thread)
     {
+        soap_thread->interrupt();
         soap_thread->wait();
-        soap_thread->destroy();
         delete soap_thread;
     }
 
     // Set server offline in realmlist
     LoginDatabase.PExecute("UPDATE realmlist SET realmflags = realmflags | %u WHERE id = '%d'", REALM_FLAG_OFFLINE, realmID);
-
-    // Remove signal handling before leaving
-    _UnhookSignals();
 
     // when the main thread closes the singletons get unloaded
     // since worldrunnable uses them, it will crash if unloaded after master
@@ -316,17 +312,16 @@ int Master::Run()
 
         #else
 
-        cliThread->destroy();
-        /* Without these two lines,
-           terminal will be screwed up and
-           unusable if restart was issued */
-        rl_free_line_state();
-        rl_cleanup_after_signal();
+        cliThread->interrupt();
+        cliThread->wait();
 
         #endif
 
         delete cliThread;
     }
+
+    // Remove signal handling before leaving
+    _UnhookSignals();
 
     // for some unknown reason, unloading scripts here and not in worldrunnable
     // fixes a memory leak related to detaching threads from the module

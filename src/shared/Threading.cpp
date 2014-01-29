@@ -153,19 +153,13 @@ bool Thread::wait()
     return (_res == 0);
 }
 
-void Thread::destroy()
+void Thread::interrupt()
 {
     if (!m_iThreadId || !m_task)
         return;
 
-    if (ACE_Thread::kill(m_iThreadId, -1) != 0)
+    if (ACE_Thread::kill(m_iThreadId, SIGINT) != 0)
         return;
-
-    m_iThreadId = 0;
-    m_hThreadHandle = 0;
-
-    // reference set at ACE_Thread::spawn
-    m_task->decReference();
 }
 
 void Thread::suspend()

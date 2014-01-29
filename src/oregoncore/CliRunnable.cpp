@@ -678,6 +678,7 @@ void CliRunnable::run()
     // Display the list of available CLI functions then beep
     sLog.outString();
     #if PLATFORM != WINDOWS
+    rl_getc_function = getc;
     rl_attempted_completion_function = cli_completion;
     #endif
     if (sConfig.GetBoolDefault("BeepAtStart", true))
@@ -740,6 +741,11 @@ void CliRunnable::run()
             World::StopNow(SHUTDOWN_EXIT_CODE);
         }
     }
+
+    /* Without these two lines, terminal will be screwed up and
+       unusable if restart was issued */
+    rl_free_line_state();
+    rl_cleanup_after_signal();
 
     // End the database thread
     WorldDatabase.ThreadEnd();                                  // free mySQL thread resources
