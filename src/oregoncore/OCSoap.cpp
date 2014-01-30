@@ -39,7 +39,10 @@ void OCSoapRunnable::run()
     if (soap_bind(&soap, m_host.c_str(), m_port, 100) < 0)
     {
         sLog.outError("OCSoap: couldn't bind to %s:%d", m_host.c_str(), m_port);
-        exit(-1);
+        pool.msg_queue()->deactivate();
+        pool.wait();
+        soap_done(&soap);
+        return;
     }
 
     sLog.outString("OCSoap: bound to http://%s:%d", m_host.c_str(), m_port);
