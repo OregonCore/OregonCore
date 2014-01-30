@@ -222,6 +222,7 @@ bool ChatHandler::HandleGMmodeCommand(const char* args)
     {
         m_session->GetPlayer()->SetGameMaster(true);
         m_session->SendNotification(LANG_GM_ON);
+        m_session->GetPlayer()->UpdateTriggerVisibility();
         #ifdef _DEBUG_VMAPS
         VMAP::IVMapManager *vMapManager = VMAP::VMapFactory::createOrGetVMapManager();
         vMapManager->processCommand("stoplog");
@@ -233,6 +234,7 @@ bool ChatHandler::HandleGMmodeCommand(const char* args)
     {
         m_session->GetPlayer()->SetGameMaster(false);
         m_session->SendNotification(LANG_GM_OFF);
+        m_session->GetPlayer()->UpdateTriggerVisibility();
         #ifdef _DEBUG_VMAPS
         VMAP::IVMapManager *vMapManager = VMAP::VMapFactory::createOrGetVMapManager();
         vMapManager->processCommand("startlog");
