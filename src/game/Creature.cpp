@@ -1439,6 +1439,9 @@ void Creature::setDeathState(DeathState s)
         if (m_formation && m_formation->getLeader() == this)
             m_formation->Reset(true);
 
+        SetHealth(0);
+        SetPower(getPowerType(), 0);
+
         if (m_zoneScript)
             m_zoneScript->OnCreatureDeath(this);
 
@@ -1541,7 +1544,6 @@ void Creature::Respawn(bool force)
         if (m_isDeadByDefault)
         {
             setDeathState(JUST_DIED);
-            SetHealth(0);
             i_motionMaster.Clear();
             clearUnitState(UNIT_STAT_ALL_STATE);
             LoadCreaturesAddon(true);
