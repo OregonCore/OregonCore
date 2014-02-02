@@ -40,8 +40,6 @@
 #ifdef _WIN32
 #include "ServiceWin32.h"
 extern int m_ServiceStatus;
-#else
-#include <readline/readline.h>
 #endif
 
 INSTANTIATE_SINGLETON_1(Master);
@@ -65,9 +63,15 @@ public:
         w_loops = 0;
         m_lastchange = 0;
         w_lastchange = 0;
-        while (!World::IsStopped())
+        for (;;)
         {
             ACE_Based::Thread::Sleep(1000);
+            /* Windows' Sleep() returns void so
+               we cant be sure if Sleep() was interrupted
+               by shutdown. So check if world is running here.
+               Else this will detect false positive. */
+            if (World::IsStopped())
+                break;
             uint32 curtime = getMSTime();
             // normal work
             if (w_loops != World::m_worldLoopCounter)
@@ -134,10 +138,6 @@ int Master::Run()
 
     // Catch termination signals
     _HookSignals();
-
-    // Launch WorldRunnable thread
-    ACE_Based::Thread world_thread(new WorldRunnable);
-    world_thread.setPriority(ACE_Based::Highest);
 
     // set realmbuilds depend on OregonCore expected builds, and set server online
     std::string builds = AcceptableClientBuildsListStr();
@@ -233,14 +233,21 @@ int Master::Run()
         sLog.outError("Failed to start network");
         World::StopNow(ERROR_EXIT_CODE);
         // go down and shutdown the server
+        // give other threads a chance to start-up so we can shutdown them safely
+        ACE_Based::Thread::Sleep(1500);
     }
+
+    /* Run our World, we use main thread for this,
+       because it we need the highest priority possible */
+    WorldRunnable().run();
 
     sWorldSocketMgr->Wait();
 
     // Stop freeze protection before shutdown tasks
     if (freeze_thread)
     {
-        freeze_thread->destroy();
+        freeze_thread->interrupt();
+        freeze_thread->wait();
         delete freeze_thread;
     }
 
@@ -248,19 +255,14 @@ int Master::Run()
     if (soap_thread)
     {
         soap_thread->wait();
-        soap_thread->destroy();
         delete soap_thread;
     }
 
     // Set server offline in realmlist
     LoginDatabase.PExecute("UPDATE realmlist SET realmflags = realmflags | %u WHERE id = '%d'", REALM_FLAG_OFFLINE, realmID);
 
-    // Remove signal handling before leaving
-    _UnhookSignals();
-
     // when the main thread closes the singletons get unloaded
     // since worldrunnable uses them, it will crash if unloaded after master
-    world_thread.wait();
     rar_thread.wait ();
 
     // Clean account database before leaving
@@ -312,21 +314,18 @@ int Master::Run()
         DWORD numb;
         WriteConsoleInput(hStdIn, b, 4, &numb);
 
-        cliThread->wait();
-
         #else
 
-        cliThread->destroy();
-        /* Without these two lines,
-           terminal will be screwed up and
-           unusable if restart was issued */
-        rl_free_line_state();
-        rl_cleanup_after_signal();
+        cliThread->interrupt();
 
         #endif
 
+        cliThread->wait();
         delete cliThread;
     }
+
+    // Remove signal handling before leaving
+    _UnhookSignals();
 
     // for some unknown reason, unloading scripts here and not in worldrunnable
     // fixes a memory leak related to detaching threads from the module

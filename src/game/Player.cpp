@@ -14996,14 +14996,11 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     //speed collect rest bonus in offline, in logout, in tavern, city (section/in hour)
     float bubble1 = 0.125;
 
-    if ((int32)fields[16].GetUInt32() > 0)
-    {
-        float bubble = fields[24].GetUInt32() > 0
-            ? bubble1*sWorld.getRate(RATE_REST_OFFLINE_IN_TAVERN_OR_CITY)
-            : bubble0*sWorld.getRate(RATE_REST_OFFLINE_IN_WILDERNESS);
+    float bubble = fields[24].GetUInt32() > 0
+        ? bubble1*sWorld.getRate(RATE_REST_OFFLINE_IN_TAVERN_OR_CITY)
+        : bubble0*sWorld.getRate(RATE_REST_OFFLINE_IN_WILDERNESS);
 
-        SetRestBonus(GetRestBonus()+ time_diff*((float)GetUInt32Value(PLAYER_NEXT_LEVEL_XP)/72000)*bubble);
-    }
+    SetRestBonus((GetRestBonus() + time_diff * ((float) GetUInt32Value(PLAYER_NEXT_LEVEL_XP) / 72000)) * bubble);
 
     m_cinematic = fields[19].GetUInt32();
     m_Played_time[PLAYED_TIME_TOTAL]= fields[20].GetUInt32();
