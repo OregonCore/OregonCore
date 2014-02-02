@@ -173,6 +173,7 @@ extern int main(int argc, char **argv)
 
         int fd;
         #ifdef _WIN32
+        _CrtSetReportMode(_CRT_ASSERT, 0); // Disable complaining about passing invalid values to close()
         fd = _getmaxstdio();
         #elif defined(OPEN_MAX)
         fd = OPEN_MAX;

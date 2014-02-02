@@ -742,10 +742,12 @@ void CliRunnable::run()
         }
     }
 
+    #if PLATFORM != WINDOWS
     /* Without these two lines, terminal will be screwed up and
        unusable if restart was issued */
     rl_free_line_state();
     rl_cleanup_after_signal();
+    #endif
 
     // End the database thread
     WorldDatabase.ThreadEnd();                                  // free mySQL thread resources
