@@ -139,7 +139,7 @@ struct mob_mature_netherwing_drakeAI : public ScriptedAI
                     Player* plr = Unit::GetPlayer(*me, PlayerGUID);
                     if (plr && plr->GetQuestStatus(10804) == QUEST_STATUS_INCOMPLETE)
                     {
-                        plr->KilledMonsterCredit(22131, me->GetGUID());
+                        plr->KilledMonsterCredit(22131, 0);
                         Evade = true;
                         PlayerGUID = 0;
                     }
@@ -277,7 +277,7 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
                         Player* plr = Unit::GetPlayer(*me, PlayerGUID);
                         if (plr && plr->GetQuestStatus(10854) == QUEST_STATUS_INCOMPLETE)
                         {
-                            plr->KilledMonsterCredit(22316, me->GetGUID());
+                            plr->KilledMonsterCredit(22316, 0);
                             /*
                             float x,y,z;
                             me->GetPosition(x,y,z);
@@ -374,7 +374,7 @@ struct mob_dragonmaw_peonAI : public ScriptedAI
                 {
                     Player* plr = Unit::GetPlayer(*me, PlayerGUID);
                     if (plr && plr->GetQuestStatus(11020) == QUEST_STATUS_INCOMPLETE)
-                        plr->KilledMonsterCredit(23209, me->GetGUID());
+                        plr->KilledMonsterCredit(23209, 0);
                 }
                 PoisonTimer = 0;
                 me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -1634,7 +1634,7 @@ struct npc_enraged_spiritAI : public ScriptedAI
                  Player* Owner = (Player*)totemOspirits->GetOwner();
                  if (Owner)
                      // DoCast(Owner, credit); -- not working!
-                     Owner->KilledMonsterCredit(credit, Summoned->GetGUID());
+                     Owner->KilledMonsterCredit(credit, 0);
                  DoCast(totemOspirits,SPELL_SOUL_CAPTURED);
              }
         }
@@ -1730,7 +1730,7 @@ struct npc_jovaanAI : public ScriptedAI
             case 10:DoScriptText(SAY_JOVAAN4, me, 0);return 6800;
             case 11:DoScriptText(SAY_WARBRINGER4, pWarbringer, 0);return 6000;
             case 12:if (Player* pPlayer = Unit::GetPlayer(*me, uiPlayerGUID))
-                        {pPlayer->KilledMonsterCredit(NPC_WARBRINGER, pWarbringer->GetGUID());};return 2000;
+                        {pPlayer->KilledMonsterCredit(NPC_WARBRINGER, 0);};return 2000;
             case 13:Reset();
         default: return 0;
         }

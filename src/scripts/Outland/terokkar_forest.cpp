@@ -227,7 +227,7 @@ struct mob_netherweb_victimAI : public ScriptedAI
                 if (rand()%100 < 25)
                 {
                     DoSpawnCreature(QUEST_TARGET,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,60000);
-                    CAST_PLR(Killer)->KilledMonsterCredit(QUEST_TARGET, me->GetGUID());
+                    CAST_PLR(Killer)->KilledMonsterCredit(QUEST_TARGET, 0);
                 } else
                 DoSpawnCreature(netherwebVictims[rand()%6],0,0,0,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,60000);
 
@@ -1003,7 +1003,7 @@ struct npc_mana_bomb_exp_triggerAI : public ScriptedAI
 
         m_bIsActivated = true;
 
-        pPlayer->KilledMonsterCredit(NPC_MANA_BOMB_KILL_TRIGGER,me->GetGUID());
+        pPlayer->KilledMonsterCredit(NPC_MANA_BOMB_KILL_TRIGGER,0);
 
         pManaBomb = pGo;
     }
@@ -1099,7 +1099,7 @@ bool GOHello_veil_skith_cage(Player* pPlayer, GameObject* pGo)
     {
         if (Creature* pChild = pGo->FindNearestCreature( NPC_CAPTIVE_CHILD, 5, true))
         {
-            pPlayer->KilledMonsterCredit(NPC_CAPTIVE_CHILD, pChild->GetGUID());
+            pPlayer->KilledMonsterCredit(NPC_CAPTIVE_CHILD, 0);
 
             switch(urand(0,3))
             {
