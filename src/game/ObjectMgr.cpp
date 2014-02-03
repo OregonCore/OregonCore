@@ -6680,7 +6680,7 @@ void ObjectMgr::LoadGameObjectForQuests()
                 uint32 loot_id = GameObject::GetLootId(goInfo);
 
                 // find quest loot for GO
-                if (LootTemplates_Gameobject.HaveQuestLootFor(loot_id))
+                if (goInfo->chest.questId || LootTemplates_Gameobject.HaveQuestLootFor(loot_id))
                 {
                     mGameObjectForQuestSet.insert(go_entry);
                     ++count;
