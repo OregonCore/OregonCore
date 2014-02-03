@@ -1329,7 +1329,7 @@ bool Guild::MemberMoneyWithdraw(uint32 amount, uint32 LowGuid)
 
     SetBankMoney(GetGuildBankMoney()-amount);
 
-    if (MoneyWithDrawRight < WITHDRAW_MONEY_UNLIMITED)
+    if (MoneyWithDrawRight < uint32(WITHDRAW_MONEY_UNLIMITED))
     {
         MemberList::iterator itr = members.find(LowGuid);
         if (itr == members.end())
@@ -1360,7 +1360,7 @@ bool Guild::MemberItemWithdraw(uint8 TabId, uint32 LowGuid)
     if (SlotsWithDrawRight == 0)
         return false;
 
-    if (SlotsWithDrawRight < WITHDRAW_SLOT_UNLIMITED)
+    if (SlotsWithDrawRight < uint32(WITHDRAW_SLOT_UNLIMITED))
     {
         MemberList::iterator itr = members.find(LowGuid);
         if (itr == members.end())
