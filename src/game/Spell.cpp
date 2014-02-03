@@ -3513,7 +3513,7 @@ uint8 Spell::CanCast(bool strict)
             return SPELL_FAILED_MOVING;
     }
 
-    Unit *target = m_targets.getUnitTarget();
+    Unit* target = m_targets.getUnitTarget();
 
     if (target)
     {
@@ -4436,8 +4436,7 @@ int16 Spell::PetCanCast(Unit* target)
     uint16 result = CanCast(true);
     if (result != 0)
         return result;
-    else
-        return -1;                                          //this allows to check spell fail 0, in combat
+    return -1;                                          //this allows to check spell fail 0, in combat
 }
 
 uint8 Spell::CheckCasterAuras() const
@@ -4629,18 +4628,17 @@ uint8 Spell::CheckRange(bool /*strict*/)
             return SPELL_FAILED_UNIT_NOT_INFRONT;
     }
 
-    if (m_targets.m_targetMask == TARGET_FLAG_DEST_LOCATION && m_targets.m_dstPos.GetPositionX() != 0 && m_targets.m_dstPos.GetPositionY() != 0 && m_targets.m_dstPos.GetPositionZ() != 0)
+    if (m_targets.HasDst())
     {
-        float dist = m_caster->GetDistance(m_targets.m_dstPos);
+        /* 1.05225f is a magic constant obtainied by testing  how far
+           client display green / read area, to fit into this, we need this
+           magic numeric contant */
+        float dist = m_caster->GetDistance(m_targets.m_dstPos) * 1.05225f;
+        DEBUG_LOG("DIST : REAL: %f MAX: %f MIN: %f", dist, max_range, min_range);
         if (dist > max_range)
             return SPELL_FAILED_OUT_OF_RANGE;
         if (dist < min_range)
             return SPELL_FAILED_TOO_CLOSE;
-    }
-    if (m_spellInfo->Id == 33395) // Elemental Frost Bolt.
-    {
-        if (!m_caster->IsWithinCombatRange(target, max_range)) // Check if target it to far.
-            return SPELL_FAILED_OUT_OF_RANGE;              
     }
 
     return 0; 

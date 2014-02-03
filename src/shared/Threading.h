@@ -76,9 +76,9 @@ namespace ACE_Based
 
             bool start();
             bool wait();
-            void destroy();
 
             void suspend();
+            void interrupt();
             void resume();
 
             void setPriority(Priority type);

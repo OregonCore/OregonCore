@@ -167,6 +167,24 @@ extern int main(int argc, char **argv)
     int exitcode = sMaster.Run();
     if (exitcode == 2)
     {
+        /* We need to close all fds except the standard ones,
+           to avoid resoruce leaking. In the current status
+           this is the best way to do it. */
+
+        int fd;
+        #ifdef _WIN32
+        _CrtSetReportMode(_CRT_ASSERT, 0); // Disable complaining about passing invalid values to close()
+        fd = _getmaxstdio();
+        #elif defined(OPEN_MAX)
+        fd = OPEN_MAX;
+        #elif defined(NOFILE)
+        fd = NOFILE;
+        #else
+        fd = getdtablesize();
+        #endif
+        while (fd-->2)
+            close(fd);
+
         #ifndef _WIN32
         execv(argv[0], argv);
         #else
@@ -182,7 +200,8 @@ extern int main(int argc, char **argv)
         _execv(path, argv);
         #endif
 
-        sLog.outError("Couldn't restart server: %s", strerror(errno));
+        fprintf(stderr, "Couldn't restart server: %s", strerror(errno));
+        _exit(exitcode); // avoid crashes as we closed fds
     }
     return exitcode;
     // at sMaster return function exist with codes

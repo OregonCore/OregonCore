@@ -8,3 +8,5 @@ build/
 *.bak
 *.patch
 *.diff
+*~
+*.vim
