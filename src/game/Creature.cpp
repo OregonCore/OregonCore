@@ -1565,8 +1565,11 @@ void Creature::Respawn(bool force)
         else
             setDeathState(JUST_ALIVED);
 
+        GetMotionMaster()->InitDefault();
+
         //Call AI respawn virtual function
-        AI()->JustRespawned();
+        if(IsAIEnabled)
+            AI()->JustRespawned();
 
         uint16 poolid = poolhandler.IsPartOfAPool(GetGUIDLow(), GetTypeId());
         if (poolid)
