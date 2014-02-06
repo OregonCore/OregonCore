@@ -140,7 +140,10 @@ bool ChatHandler::HandleSaveCommand(const char* /*args*/)
     // save GM account without delay and output message (testing, etc)
     if (m_session->GetSecurity())
     {
-        player->SaveToDB();
+        if (Player *target = getSelectedPlayer())
+            target->SaveToDB();
+        else
+            player->SaveToDB();
         SendSysMessage(LANG_PLAYER_SAVED);
         return true;
     }
