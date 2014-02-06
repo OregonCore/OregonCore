@@ -119,6 +119,12 @@ class InstanceData : public ZoneScript
         Creature *GetCreature(uint64 guid) {return instance->GetCreature(guid);}
         GameObject *GetGameObject(uint64 guid) {return instance->GetGameObject(guid);}
 
+        //sends world state update to all players in instance
+        void DoUpdateWorldState(uint32 uiStateId, uint32 uiStateData);
+
+        // Cast spell on all players in instance
+        void DoCastSpellOnPlayers(uint32 spell);
+
         //Handle open / close objects
         //use HandleGameObject(NULL,boolen,GO); in OnObjectCreate in instance scripts
         //use HandleGameObject(GUID,boolen,NULL); in any other script

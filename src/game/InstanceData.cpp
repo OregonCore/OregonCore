@@ -250,3 +250,27 @@ void InstanceData::DoRespawnGameObject(uint64 uiGuid, uint32 uiTimeToDespawn)
     }
 }
 
+void InstanceData::DoUpdateWorldState(uint32 uiStateId, uint32 uiStateData)
+{
+    Map::PlayerList const& lPlayers = instance->GetPlayers();
+
+    if (!lPlayers.isEmpty())
+    {
+        for (Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+            if (Player *pPlayer = itr->getSource())
+                pPlayer->SendUpdateWorldState(uiStateId, uiStateData);
+    }
+    else
+        sLog.outDebug("OSCR: DoUpdateWorldState attempt send data but no players in map.");
+}
+
+// Cast spell on all players in instance
+void InstanceData::DoCastSpellOnPlayers(uint32 spell)
+{
+    Map::PlayerList const &PlayerList = instance->GetPlayers();
+
+    if (!PlayerList.isEmpty())
+        for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+            if (Player* player = i->getSource())
+                player->CastSpell(player, spell, true);
+}
