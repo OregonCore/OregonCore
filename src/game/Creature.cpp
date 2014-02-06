@@ -605,14 +605,12 @@ void Creature::Update(uint32 diff)
             if (m_regenTimer != 0)
                 break;
 
-            if (!isInCombat())
+            if (!IsInEvadeMode() && (!isInCombat() || IsPolymorphed())) // regenerate health if not in combat or if polymorphed
             {
                 if (HasFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_OTHER_TAGGER))
                     SetUInt32Value(UNIT_DYNAMIC_FLAGS, GetCreatureInfo()->dynamicflags);
                 RegenerateHealth();
             }
-            else if (IsPolymorphed())
-                    RegenerateHealth();
 
             RegenerateMana();
 
