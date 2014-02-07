@@ -1067,15 +1067,15 @@ bool GOHello_maghar_prison(Player* pPlayer, GameObject* pGo)
 
 enum
 {
-    QUEST_HELP    = 9923,
-    NPC_CORKI1    = 18445,
-
-    SAY_THANKS    = -1900133,
-    SAY_KORKI2    = -1900134,
-    SAY_KORKI3    = -1900135,
-    SAY_KORKI4    = -1900136,
-    SAY_KORKI5    = -1900137,
-    SAY_KORKI6    = -1900138
+    QUEST_HELP              = 9923,
+    NPC_CORKI1              = 18445,
+    NPC_CORKI_CREDIT_1      = 18369,
+    SAY_THANKS              = -1900133,
+    SAY_KORKI2              = -1900134,
+    SAY_KORKI3              = -1900135,
+    SAY_KORKI4              = -1900136,
+    SAY_KORKI5              = -1900137,
+    SAY_KORKI6              = -1900138
 };
 
 struct npc_corki1AI : public npc_escortAI
@@ -1146,7 +1146,7 @@ bool GOHello_corkis_prison1(Player* pPlayer, GameObject* pGo)
     {
         if (Creature* pCor1 = pGo->FindNearestCreature( NPC_CORKI1, 5, true))
         {
-            pPlayer->KilledMonsterCredit(NPC_CORKI1, pCor1->GetGUID());
+            pPlayer->KilledMonsterCredit(NPC_CORKI_CREDIT_1, 0);
             DoScriptText(SAY_THANKS, pCor1, pPlayer);
             ((npc_corki1AI*)pCor1->AI())->Start(false, false, pPlayer->GetGUID());
         }
@@ -1248,8 +1248,9 @@ bool GOHello_corkis_prison2(Player* pPlayer, GameObject* pGo)
 
 enum
 {
-    QUEST_HELP2    = 9955,
-    NPC_CORKI3     = 18369,
+    QUEST_HELP2         = 9955,
+    NPC_CORKI3          = 18369,
+    NPC_CORKI_CREDIT_3  = 18444,
 };
 
 struct npc_corki3AI : public npc_escortAI
@@ -1320,7 +1321,7 @@ bool GOHello_corkis_prison3(Player* pPlayer, GameObject* pGo)
     {
         if (Creature* pCor3 = pGo->FindNearestCreature( NPC_CORKI3, 5, true))
         {
-            pPlayer->KilledMonsterCredit(NPC_CORKI3, pCor3->GetGUID());
+            pPlayer->KilledMonsterCredit(NPC_CORKI_CREDIT_3, 0);
             DoScriptText(SAY_THANKS, pCor3, pPlayer);
             ((npc_corki3AI*)pCor3->AI())->Start(false, false, pPlayer->GetGUID());
         }
