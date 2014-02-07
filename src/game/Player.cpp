@@ -6860,7 +6860,9 @@ void Player::DuelComplete(DuelCompleteType type)
     WorldPacket data(SMSG_DUEL_COMPLETE, (1));
     data << (uint8)((type != DUEL_INTERUPTED) ? 1 : 0);
     GetSession()->SendPacket(&data);
-    duel->opponent->GetSession()->SendPacket(&data);
+
+    if (duel->opponent->GetSession())
+        duel->opponent->GetSession()->SendPacket(&data);
 
     if (type != DUEL_INTERUPTED)
     {
@@ -6871,21 +6873,31 @@ void Player::DuelComplete(DuelCompleteType type)
         SendMessageToSet(&data,true);
     }
 
-    // cool-down duel spell
-    /*data.Initialize(SMSG_SPELL_COOLDOWN, 17);
-
-    data<<GetGUID();
-    data<<uint8(0x0);
-
-    data<<(uint32)7266;
-    data<<uint32(0x0);
-    GetSession()->SendPacket(&data);
-    data.Initialize(SMSG_SPELL_COOLDOWN, 17);
-    data<<duel->opponent->GetGUID();
-    data<<uint8(0x0);
-    data<<(uint32)7266;
-    data<<uint32(0x0);
-    duel->opponent->GetSession()->SendPacket(&data);*/
+    switch(type)
+    {
+       case DUEL_FLED:
+             // if initiator and opponent are on the same team
+             // or initiator and opponent are not PvP enabled, forcibly stop attacking
+             if (duel->initiator->GetTeam() == duel->opponent->GetTeam())
+             {
+                 duel->initiator->AttackStop();
+                 duel->opponent->AttackStop();
+             }
+             else
+             {
+                 if (!duel->initiator->IsPvP())
+                     duel->initiator->AttackStop();
+                 if (!duel->opponent->IsPvP())
+                     duel->opponent->AttackStop();
+             }
+             break;
+        case DUEL_WON:
+            if (duel->opponent)
+                duel->opponent->HandleEmoteCommand(EMOTE_ONESHOT_CHEER);
+            break;
+        default:
+            break;
+    }
 
     //Remove Duel Flag object
     GameObject* obj = GetMap()->GetGameObject(GetUInt64Value(PLAYER_DUEL_ARBITER));
