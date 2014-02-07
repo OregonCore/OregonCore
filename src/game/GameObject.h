@@ -634,6 +634,16 @@ class GameObject : public WorldObject, public GridObject<GameObject>
             }
         }
 
+        uint32 GetCooldown() const                              // Cooldown preventing goober and traps to cast spell
+        {
+            switch (GetGoType())
+            {
+            case GAMEOBJECT_TYPE_TRAP:      return GetGOInfo()->trap.cooldown;
+            case GAMEOBJECT_TYPE_GOOBER:    return GetGOInfo()->goober.cooldown;
+            default: return 0;
+            }
+        }
+
         uint32 GetAutoCloseTime() const
         {
             uint32 autoCloseTime = 0;
