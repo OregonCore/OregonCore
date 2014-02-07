@@ -14816,7 +14816,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     uint32 instanceId = fields[56].GetFloat();
     m_GrantableLevels = fields[57].GetFloat();
 
-    SetDifficulty(fields[39].GetUInt32());                  // may be changed in _LoadGroup
+    SetDifficulty((DungeonDifficulties)fields[39].GetUInt8());                  // may be changed in _LoadGroup
     std::string taxi_nodes = fields[38].GetCppString();
 
 #define RelocateToHomebind() { mapId = m_homebindMapId; instanceId = 0; Relocate(m_homebindX, m_homebindY, m_homebindZ); if (!sWorld.getConfig(CONFIG_BATTLEGROUND_WRATH_LEAVE_MODE)) { m_movementInfo.ClearTransportData(); transGUID = 0; } }
@@ -16090,7 +16090,7 @@ void Player::_LoadBoundInstances(QueryResult_AutoPtr result)
             bool perm = fields[1].GetBool();
             uint32 mapId = fields[2].GetUInt32();
             uint32 instanceId = fields[0].GetUInt32();
-            uint8 difficulty = fields[3].GetUInt8();
+            DungeonDifficulties difficulty = (DungeonDifficulties)fields[3].GetUInt8();
             time_t resetTime = (time_t)fields[4].GetUInt64();
             // the resettime for normal instances is only saved when the InstanceSave is unloaded
             // so the value read from the DB may be wrong here but only if the InstanceSave is loaded

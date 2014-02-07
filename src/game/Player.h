@@ -1593,8 +1593,8 @@ class Player : public Unit, public GridObject<Player>
         void SetArenaTeamIdInvited(uint32 ArenaTeamId) { m_ArenaTeamIdInvited = ArenaTeamId; }
         uint32 GetArenaTeamIdInvited() { return m_ArenaTeamIdInvited; }
 
-        void SetDifficulty(uint32 dungeon_difficulty) { m_dungeonDifficulty = dungeon_difficulty; }
-        uint8 GetDifficulty() { return m_dungeonDifficulty; }
+        void SetDifficulty(DungeonDifficulties dungeon_difficulty) { m_dungeonDifficulty = dungeon_difficulty; }
+        DungeonDifficulties GetDifficulty() { return m_dungeonDifficulty; }
 
         bool UpdateSkill(uint32 skill_id, uint32 step);
         bool UpdateSkillPro(uint16 SkillId, int32 Chance, uint32 step);
@@ -2284,7 +2284,7 @@ class Player : public Unit, public GridObject<Player>
         uint32 m_nextSave;
         time_t m_speakTime;
         uint32 m_speakCount;
-        uint32 m_dungeonDifficulty;
+        DungeonDifficulties m_dungeonDifficulty;
 
         uint32 m_atLoginFlags;
 

@@ -77,7 +77,7 @@ InstanceSaveManager::~InstanceSaveManager()
 - adding instance into manager
 - called from InstanceMap::Add, _LoadBoundInstances, LoadGroups
 */
-InstanceSave* InstanceSaveManager::AddInstanceSave(uint32 mapId, uint32 instanceId, uint8 difficulty, time_t resetTime, bool canReset, bool load)
+InstanceSave* InstanceSaveManager::AddInstanceSave(uint32 mapId, uint32 instanceId, DungeonDifficulties difficulty, time_t resetTime, bool canReset, bool load)
 {
     if (InstanceSave *old_save = GetInstanceSave(instanceId))
         return old_save;
@@ -147,7 +147,7 @@ void InstanceSaveManager::RemoveInstanceSave(uint32 InstanceId)
     }
 }
 
-InstanceSave::InstanceSave(uint16 MapId, uint32 InstanceId, uint8 difficulty, time_t resetTime, bool canReset)
+InstanceSave::InstanceSave(uint16 MapId, uint32 InstanceId, DungeonDifficulties difficulty, time_t resetTime, bool canReset)
 : m_mapid(MapId), m_instanceid(InstanceId), m_resetTime(resetTime),
   m_difficulty(difficulty), m_canReset(canReset)
 {

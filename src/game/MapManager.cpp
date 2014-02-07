@@ -122,7 +122,7 @@ Map* MapManager::_createBaseMap(uint32 id)
         }
         else
         {
-            m = new Map(id, i_gridCleanUpDelay, 0, 0);
+            m = new Map(id, i_gridCleanUpDelay, 0, DIFFICULTY_NORMAL);
         }
         i_maps[id] = m;
     }

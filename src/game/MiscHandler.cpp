@@ -1374,10 +1374,12 @@ void WorldSession::HandleDungeonDifficultyOpcode(WorldPacket & recv_data)
     uint32 mode;
     recv_data >> mode;
 
-    if (mode == _player->GetDifficulty())
+    DungeonDifficulties difficulty = DungeonDifficulties(mode);
+
+    if (difficulty == _player->GetDifficulty())
         return;
 
-    if (mode > DIFFICULTY_HEROIC)
+    if (difficulty > DIFFICULTY_HEROIC)
     {
         DEBUG_LOG("WorldSession::HandleDungeonDifficultyOpcode: player %d sent an invalid instance mode %d!", _player->GetGUIDLow(), mode);
         return;
@@ -1402,13 +1404,13 @@ void WorldSession::HandleDungeonDifficultyOpcode(WorldPacket & recv_data)
             // the difficulty is set even if the instances can't be reset
             //_player->SendDungeonDifficulty(true);
             pGroup->ResetInstances(INSTANCE_RESET_CHANGE_DIFFICULTY, _player);
-            pGroup->SetDifficulty(mode);
+            pGroup->SetDifficulty(difficulty);
         }
     }
     else
     {
         _player->ResetInstances(INSTANCE_RESET_CHANGE_DIFFICULTY);
-        _player->SetDifficulty(mode);
+        _player->SetDifficulty(difficulty);
     }
 }
 

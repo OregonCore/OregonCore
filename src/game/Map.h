@@ -253,7 +253,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
 {
     friend class MapReference;
     public:
-        Map(uint32 id, time_t, uint32 InstanceId, uint8 SpawnMode, Map* _parent = NULL);
+        Map(uint32 id, time_t, uint32 InstanceId, DungeonDifficulties SpawnMode, Map* _parent = NULL);
         virtual ~Map();
 
         // currently unused for normal maps
@@ -361,7 +361,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         bool CheckGridIntegrity(Creature* c, bool moved) const;
 
         uint32 GetInstanceId() const { return i_InstanceId; }
-        uint8 GetSpawnMode() const { return (i_spawnMode); }
+        DungeonDifficulties GetSpawnMode() const { return (i_spawnMode); }
         virtual bool CanEnter(Player* /*player*/) { return true; }
         const char* GetMapName() const;
 
@@ -474,7 +474,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         typedef Oregon::ObjectLevelLockable<Map, ACE_Thread_Mutex>::Lock Guard;
 
         MapEntry const* i_mapEntry;
-        uint8 i_spawnMode;
+        DungeonDifficulties i_spawnMode;
         uint32 i_InstanceId;
         uint32 m_unloadTimer;
         float m_VisibleDistance;
@@ -565,7 +565,7 @@ enum InstanceResetMethod
 class InstanceMap : public Map
 {
     public:
-        InstanceMap(uint32 id, time_t, uint32 InstanceId, uint8 SpawnMode, Map* _parent);
+        InstanceMap(uint32 id, time_t, uint32 InstanceId, DungeonDifficulties SpawnMode, Map* _parent);
         ~InstanceMap();
         bool Add(Player *);
         void Remove(Player *, bool);
