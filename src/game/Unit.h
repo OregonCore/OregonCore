@@ -334,10 +334,12 @@ enum DamageTypeToSchool
 
 enum AuraRemoveMode
 {
-    AURA_REMOVE_BY_DEFAULT,
+    AURA_REMOVE_NONE = 0,
+    AURA_REMOVE_BY_DEFAULT = 1,
     AURA_REMOVE_BY_STACK,                                   // at replace by semillar aura
     AURA_REMOVE_BY_CANCEL,
     AURA_REMOVE_BY_DISPEL,
+    AURA_REMOVE_BY_EXPIRE,
     AURA_REMOVE_BY_DEATH
 };
 

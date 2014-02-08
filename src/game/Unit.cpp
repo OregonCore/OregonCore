@@ -3030,7 +3030,7 @@ void Unit::_UpdateSpells(uint32 time)
     for (AuraMap::iterator i = m_Auras.begin(); i != m_Auras.end();)
     {
         if (i->second->IsExpired())
-            RemoveAura(i);
+            RemoveAura(i, AURA_REMOVE_BY_EXPIRE);
         else
             ++i;
     }

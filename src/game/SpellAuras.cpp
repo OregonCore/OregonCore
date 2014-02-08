@@ -2200,6 +2200,15 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                     m_target->DealDamage(m_target, m_target->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 return;
             }
+            case 43681: // Inactive
+            {
+                if (!m_target || m_target->GetTypeId() != TYPEID_PLAYER || m_removeMode != AURA_REMOVE_BY_EXPIRE)
+                    return;
+               
+                if (m_target->GetMap()->IsBattleGround())
+                    m_target->ToPlayer()->LeaveBattleground();
+                break;
+            }
             case 46308:                                     // Burning Winds - casted only at creatures at spawn
             {
                 m_target->CastSpell(m_target,47287,true,NULL,this);
