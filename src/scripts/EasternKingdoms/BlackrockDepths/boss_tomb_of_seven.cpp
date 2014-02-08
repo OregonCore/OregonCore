@@ -70,7 +70,7 @@ bool GossipSelect_boss_gloomrel(Player* pPlayer, Creature* pCreature, uint32 /*u
             break;
         case GOSSIP_ACTION_INFO_DEF+11:
             pPlayer->CLOSE_GOSSIP_MENU();
-            pCreature->CastSpell(pPlayer, SPELL_LEARN_SMELT, false);
+            pPlayer->CastSpell(pPlayer, SPELL_LEARN_SMELT, false);
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
             pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TEACH_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 22);
