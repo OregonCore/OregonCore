@@ -1,12 +1,14 @@
 #include <limits.h>
 #include <strings.h>
 
-#define	JEMALLOC_VERSION "3.5.0-0-gcc47dde16203a6ae7eb685b53e1ae501f3869bc6"
-#define	JEMALLOC_VERSION_MAJOR 3
-#define	JEMALLOC_VERSION_MINOR 5
-#define	JEMALLOC_VERSION_BUGFIX 0
-#define	JEMALLOC_VERSION_NREV 0
-#define	JEMALLOC_VERSION_GID "cc47dde16203a6ae7eb685b53e1ae501f3869bc6"
+/* These are hard-typed because for some godforsaken reason on some systems
+   there's appended ascii 13 (\r) which cause compilation error */
+#define JEMALLOC_VERSION "3.5.0-0-gcc47dde16203a6ae7eb685b53e1ae501f3869bc6"
+#define JEMALLOC_VERSION_MAJOR 3
+#define JEMALLOC_VERSION_MINOR 5
+#define JEMALLOC_VERSION_BUGFIX 0
+#define JEMALLOC_VERSION_NREV 0
+#define JEMALLOC_VERSION_GID "cc47dde16203a6ae7eb685b53e1ae501f3869bc6"
 
 #  define MALLOCX_LG_ALIGN(la)	(la)
 #  if LG_SIZEOF_PTR == 2
