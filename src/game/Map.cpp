@@ -563,7 +563,7 @@ void Map::Update(const uint32 &t_diff)
     {
         Player* plr = m_mapRefIter->getSource();
 
-        if (!plr->IsInWorld())
+        if (!plr || !plr->IsInWorld())
             continue;
 
         CellPair standing_cell(Oregon::ComputeCellPair(plr->GetPositionX(), plr->GetPositionY()));
@@ -612,7 +612,7 @@ void Map::Update(const uint32 &t_diff)
             // step to next-next, and if we step to end() then newly added objects can wait next update.
             ++m_activeNonPlayersIter;
 
-            if (!obj->IsInWorld())
+            if (!obj || !obj->IsInWorld())
                 continue;
 
             CellPair standing_cell(Oregon::ComputeCellPair(obj->GetPositionX(), obj->GetPositionY()));
