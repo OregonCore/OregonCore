@@ -360,7 +360,7 @@ void GameObject::Update(uint32 diff)
 
                         m_cooldownTime = time(NULL) + (goInfo->trap.cooldown ? goInfo->trap.cooldown : uint32(4));
 
-                        if (owner)  // || goInfo->trap.charges == 1)
+                        if (goInfo->trap.type == 1)
                             SetLootState(GO_JUST_DEACTIVATED);
 
                         if (IsBattleGroundTrap && ok->GetTypeId() == TYPEID_PLAYER)
