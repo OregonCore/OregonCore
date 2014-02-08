@@ -321,7 +321,7 @@ struct npc_blastmaster_emi_shortfuseAI : public npc_escortAI
                 if (GameObject* pGo = me->SummonGameObject(183410, -533.140,-105.322,-156.016, 0, 0, 0, 0, 0, 1000))
                 {
                     GoSummonList.push_back(pGo->GetGUID());
-                    pGo->SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_UNK1); //We can't use it!
+                    pGo->SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_NOT_SELECTABLE); //We can't use it!
                 }
                 Summon(3);
                 break;
@@ -336,7 +336,7 @@ struct npc_blastmaster_emi_shortfuseAI : public npc_escortAI
                 if (GameObject* pGo = me->SummonGameObject(183410, -542.199,-96.854,-155.790, 0, 0, 0, 0, 0, 1000))
                 {
                     GoSummonList.push_back(pGo->GetGUID());
-                    pGo->SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_UNK1);
+                    pGo->SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_NOT_SELECTABLE);
                 }
                 break;
             case 5:
@@ -356,7 +356,7 @@ struct npc_blastmaster_emi_shortfuseAI : public npc_escortAI
                 if (GameObject* pGo = me->SummonGameObject(183410, -507.820,-103.333,-151.353, 0, 0, 0, 0, 0, 1000))
                 {
                     GoSummonList.push_back(pGo->GetGUID());
-                    pGo->SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_UNK1); //We can't use it!
+                    pGo->SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_NOT_SELECTABLE); //We can't use it!
                     Summon(6);
                 }
                 break;
@@ -364,7 +364,7 @@ struct npc_blastmaster_emi_shortfuseAI : public npc_escortAI
                 if (GameObject* pGo = me->SummonGameObject(183410, -511.829,-86.249,-151.431, 0, 0, 0, 0, 0, 1000))
                 {
                     GoSummonList.push_back(pGo->GetGUID());
-                    pGo->SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_UNK1); //We can't use it!
+                    pGo->SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_NOT_SELECTABLE); //We can't use it!
                 }
                 break;
             case 9:

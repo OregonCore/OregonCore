@@ -134,7 +134,7 @@ struct npc_muglashAI : public npc_escortAI
                 if (GameObject* pGo = me->FindNearestGameObject(GO_NAGA_BRAZIER, INTERACTION_DISTANCE*2))
                 {
                     //some kind of event flag? Update to player/group only?
-                    pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                    pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
                     SetEscortPaused(true);
                 }
                 break;
