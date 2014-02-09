@@ -3591,6 +3591,7 @@ void Spell::EffectDistract(uint32 /*i*/)
         unitTarget->SetOrientation(angle);
         unitTarget->StopMoving();
         unitTarget->GetMotionMaster()->MoveDistract(damage*IN_MILLISECONDS);
+        unitTarget->SendMovementFlagUpdate();
     }
 }
 
