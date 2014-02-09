@@ -1319,10 +1319,23 @@ bool Creature::canSeeOrDetect(Unit const* u, bool detect, bool /*inVisibleList*/
 
 bool Creature::canStartAttack(Unit const* who) const
 {
-    if (isCivilian()
-        || !who->isInAccessiblePlaceFor(this)
-        || (!canFly() && GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
-        || !IsWithinDistInMap(who, GetAttackDistance(who)))
+    if (isCivilian())
+        return false;
+
+    if (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE))
+        return false;
+
+    // Do not attack non-combat pets
+    if (who->GetTypeId() == TYPEID_UNIT && who->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET)
+        return false;
+
+    if (!canFly() && (GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE + m_CombatDistance))
+        return false;
+
+    if (!who->isInAccessiblePlaceFor(this))
+        return false;
+
+    if (!IsWithinDistInMap(who, GetAttackDistance(who))
         return false;
 
     if (!canAttack(who, false))
