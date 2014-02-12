@@ -2447,6 +2447,9 @@ void SpellMgr::LoadSpellCustomAttr()
         case 40834: // Agonizing Flames
             spellInfo->MaxAffectedTargets = 1;
             break;
+        case 36384: // Skartax Purple Beam
+            spellInfo->MaxAffectedTargets = 2;
+            break;
         case 41357: // L1 Acane Charge
         case 41376: // Spite
         case 39992: // Needle Spine
