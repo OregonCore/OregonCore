@@ -1427,7 +1427,8 @@ void GameObject::CastSpell(Unit* target, uint32 spell)
     else
     {
         trigger->setFaction(14);
-        trigger->CastSpell(target, spell, true, 0, 0, target ? target->GetGUID() : 0);
+        // Set owner guid for target if no owner available - needed by trigger auras
+        trigger->CastSpell(target ? target : trigger, spell, true, 0, 0, target ? target->GetGUID() : 0);
     }
 }
 
