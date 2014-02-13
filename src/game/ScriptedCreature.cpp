@@ -74,6 +74,9 @@ void SummonList::DespawnEntry(uint32 entry)
 
 void SummonList::DespawnAll()
 {
+    if (empty())
+        return;
+
     while (!empty())
     {
         Creature *summon = Unit::GetCreature(*me, *begin());
