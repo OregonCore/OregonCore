@@ -2460,7 +2460,7 @@ void Spell::EffectSendEvent(uint32 EffectIndex)
     else if (gameObjTarget)
         pTarget = gameObjTarget;
     else
-        pTarget = null;
+        pTarget = NULL;
 
     m_caster->GetMap()->ScriptsStart(sEventScripts, m_spellInfo->EffectMiscValue[EffectIndex], m_caster, pTarget);
 }
