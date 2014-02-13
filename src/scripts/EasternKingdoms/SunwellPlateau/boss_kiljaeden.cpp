@@ -195,7 +195,7 @@ enum KilJaedenTimers
 // Locations of the Hand of Deceiver adds
 Position DeceiverLocations[3]=
 {
-    {1682.045f, 631.299f, 27.593f, 0.0f}
+    {1682.045f, 631.299f, 27.593f, 0.0f},
     {1684.099f, 618.848f, 27.593f, 0.0f},
     {1694.170f, 612.272f, 27.593f, 0.0f},
 };
