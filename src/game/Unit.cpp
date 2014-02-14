@@ -2484,13 +2484,9 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit *pVictim, SpellEntry const *spell, 
     //We use SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY until right Attribute was found
     bool canMiss = !(spell->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY) && cMiss;
 
-    if (spell->AttributesEx & SPELL_ATTR_EX_CANT_AVOID) // overpower spells
-    {
-        // we still can miss
-        // none of these spells has CAN_BE_BLOCKED, so we dont need to set canBlock
-        canDodge = false;
-        canParry = false;
-    }
+    // Same spells cannot be parry/dodge
+    if (spell->Attributes & SPELL_ATTR_IMPOSSIBLE_DODGE_PARRY_BLOCK)
+        return SPELL_MISS_NONE;
 
     if (canMiss)
     {
@@ -2500,10 +2496,6 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit *pVictim, SpellEntry const *spell, 
         if (roll < tmp)
             return SPELL_MISS_MISS;
     }
-
-    // Same spells cannot be parry/dodge
-    if (spell->Attributes & SPELL_ATTR_IMPOSSIBLE_DODGE_PARRY_BLOCK)
-        return SPELL_MISS_NONE;
 
     // Chance resist mechanic
     int32 resist_chance = pVictim->GetMechanicResistChance(spell)*100;
@@ -2516,11 +2508,13 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit *pVictim, SpellEntry const *spell, 
         return SPELL_MISS_NONE;
 
     // Check for attack from behind
-    if (canDodge && !pVictim->HasInArc(M_PI,this))
+    if (!pVictim->HasInArc(M_PI,this))
     {
         // Can`t dodge from behind in PvP (but its possible in PvE)
         if (pVictim->GetTypeId() == TYPEID_PLAYER)
-            canDodge = false;
+            // we cant miss now
+            return SPELL_MISS_NONE;
+        
         // Can`t parry or block
         canParry = false;
         canBlock = false;
