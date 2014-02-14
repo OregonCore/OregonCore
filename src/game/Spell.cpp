@@ -161,9 +161,10 @@ void SpellCastTargets::Update(Unit* caster)
             m_itemTarget = caster->ToPlayer()->GetItemByGuid(m_itemTargetGUID.GetRawValue());
         else if (m_targetMask & TARGET_FLAG_TRADE_ITEM)
         {
+            // here it is not guid but slot. Also prevent hacking slots
             Player* pTrader = caster->ToPlayer()->GetTrader();
             if (pTrader && m_itemTargetGUID.GetRawValue() < TRADE_SLOT_COUNT)
-                m_itemTarget = pTrader->GetItemByPos(pTrader->GetItemPosByTradeSlot(m_itemTargetGUID.GetRawValue()));
+                m_itemTarget = pTrader->GetItemByTradeSlot(m_itemTargetGUID.GetRawValue());
         }
         if (m_itemTarget)
             m_itemTargetEntry = m_itemTarget->GetEntry();
