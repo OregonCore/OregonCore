@@ -3958,6 +3958,27 @@ void Unit::RemoveAurasDueToItemSpell(Item* castItem,uint32 spellId)
     }
 }
 
+void Unit::RemoveAurasByType(AuraType auraType, uint64 casterGUID, Aura * except, bool negative, bool positive)
+{
+    if (auraType >= TOTAL_AURAS)
+        return;
+
+    for (AuraList::iterator iter = m_modAuras[auraType].begin(); iter != m_modAuras[auraType].end();)
+    {
+        Aura * aura = *iter;
+
+        ++iter;
+        if (aura != except && (!casterGUID || aura->GetCasterGUID() == casterGUID)
+            && ((negative && !aura->IsPositive()) || (positive && aura->IsPositive())))
+        {
+            uint32 removedAuras = m_removedAurasCount;
+            RemoveAurasDueToSpell(aura->GetId());
+            if (m_removedAurasCount > removedAuras + 1)
+                iter = m_modAuras[auraType].begin();
+        }
+    }
+}
+
 void Unit::RemoveNotOwnSingleTargetAuras()
 {
     // single target auras from other casters
