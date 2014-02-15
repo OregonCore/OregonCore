@@ -6529,15 +6529,9 @@ void Aura::HandleArenaPreparation(bool apply, bool Real)
         return;
 
     if (apply)
-    {
         m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PREPARATION);
-        m_target->SetVisibility(UnitVisibility(m_target->GetVisibility() | VISIBILITY_GROUP_STEALTH));
-    }
     else
-    {
         m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PREPARATION);
-        m_target->SetVisibility(UnitVisibility(m_target->GetVisibility() & ~VISIBILITY_GROUP_STEALTH));
-    }
 }
 
 void Aura::HandleAuraReflectSpellSchool(bool apply, bool real)
