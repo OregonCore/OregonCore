@@ -586,10 +586,7 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer * data, UpdateMask 
                         }
                         else
                         {
-                            if (cinfo->Modelid_A1)
-                                *data << cinfo->Modelid_A1;
-                            else
-                                *data << 11686; // world invisible trigger's model
+                            *data << 11686; // world invisible trigger's model
                         }
                     }
                     else
