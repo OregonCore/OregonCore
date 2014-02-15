@@ -1335,7 +1335,7 @@ bool Creature::canStartAttack(Unit const* who) const
     if (!who->isInAccessiblePlaceFor(this))
         return false;
 
-    if (!IsWithinDistInMap(who, GetAttackDistance(who))
+    if (!IsWithinDistInMap(who, GetAttackDistance(who)))
         return false;
 
     if (!canAttack(who, false))
