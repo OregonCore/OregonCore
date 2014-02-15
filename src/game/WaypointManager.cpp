@@ -46,7 +46,7 @@ void WaypointStore::Load()
 
     records = (*result)[0].GetUInt32();
 
-    result = WorldDatabase.Query("SELECT id,point,position_x,position_y,position_z,move_flag,delay,action,action_chance FROM waypoint_data ORDER BY id, point");
+    result = WorldDatabase.Query("SELECT id,point,position_x,position_y,position_z,orientation,move_flag,delay,action,action_chance FROM waypoint_data ORDER BY id, point");
     if (!result)
     {
         sLog.outErrorDb("The table waypoint_data is empty or corrupted");
@@ -72,10 +72,11 @@ void WaypointStore::Load()
         if (last_id != id)
             path_data = new WaypointPath;
 
-        float x,y,z;
+        float x,y,z,o;
         x = fields[2].GetFloat();
         y = fields[3].GetFloat();
         z = fields[4].GetFloat();
+        o = fields[5].GetFloat();
 
         Oregon::NormalizeMapCoord(x);
         Oregon::NormalizeMapCoord(y);
@@ -84,10 +85,11 @@ void WaypointStore::Load()
         wp->x = x;
         wp->y = y;
         wp->z = z;
-        wp->run = fields[5].GetBool();
-        wp->delay = fields[6].GetUInt32();
-        wp->event_id = fields[7].GetUInt32();
-        wp->event_chance = fields[8].GetUInt8();
+        wp->orientation = o;
+        wp->run = fields[6].GetBool();
+        wp->delay = fields[7].GetUInt32();
+        wp->event_id = fields[8].GetUInt32();
+        wp->event_chance = fields[9].GetUInt8();
 
         path_data->push_back(wp);
 
@@ -109,7 +111,7 @@ void WaypointStore::UpdatePath(uint32 id)
 
     QueryResult_AutoPtr result;
 
-    result = WorldDatabase.PQuery("SELECT point,position_x,position_y,position_z,move_flag,delay,action,action_chance FROM waypoint_data WHERE id = %u ORDER BY point", id);
+    result = WorldDatabase.PQuery("SELECT point,position_x,position_y,position_z,orientation,move_flag,delay,action,action_chance FROM waypoint_data WHERE id = %u ORDER BY point", id);
 
     if (!result)
         return;
@@ -124,10 +126,11 @@ void WaypointStore::UpdatePath(uint32 id)
 
         WaypointData *wp = new WaypointData;
 
-        float x,y,z;
+        float x,y,z,o;
         x = fields[1].GetFloat();
         y = fields[2].GetFloat();
         z = fields[3].GetFloat();
+        o = fields[4].GetFloat();
 
         Oregon::NormalizeMapCoord(x);
         Oregon::NormalizeMapCoord(y);
@@ -136,10 +139,11 @@ void WaypointStore::UpdatePath(uint32 id)
         wp->x = x;
         wp->y = y;
         wp->z = z;
-        wp->run = fields[4].GetBool();
-        wp->delay = fields[5].GetUInt32();
-        wp->event_id = fields[6].GetUInt32();
-        wp->event_chance = fields[7].GetUInt8();
+        wp->orientation = o;
+        wp->run = fields[5].GetBool();
+        wp->delay = fields[6].GetUInt32();
+        wp->event_id = fields[7].GetUInt32();
+        wp->event_chance = fields[8].GetUInt8();
 
         path_data->push_back(wp);
 

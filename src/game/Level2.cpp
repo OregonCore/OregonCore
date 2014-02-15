@@ -2842,7 +2842,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
     {
         PSendSysMessage("|cff00ff00DEBUG: wp first, GUID: %u|r", pathid);
 
-        QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT position_x,position_y,position_z FROM waypoint_data WHERE point='1' AND id = '%u'",pathid);
+        QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT position_x,position_y,position_z,orientation FROM waypoint_data WHERE point='1' AND id = '%u'",pathid);
         if (!result)
         {
             PSendSysMessage(LANG_WAYPOINT_NOTFOUND, pathid);
@@ -2854,10 +2854,10 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         float x         = fields[0].GetFloat();
         float y         = fields[1].GetFloat();
         float z         = fields[2].GetFloat();
+        float o         = fields[3].GetFloat();
         uint32 id = VISUAL_WAYPOINT;
 
         Player *chr = m_session->GetPlayer();
-        float o = chr->GetOrientation();
         Map *map = chr->GetMap();
 
         Creature* pCreature = new Creature;
