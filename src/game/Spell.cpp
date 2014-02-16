@@ -954,13 +954,13 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
         }
         else
             procEx |= PROC_EX_NORMAL_HIT;
-        
+
         // Do triggers for unit (reflect triggers passed on hit phase for correct drop charge)
         if (missInfo != SPELL_MISS_REFLECT)
             caster->ProcDamageAndSpell(unitTarget, procAttacker, procVictim, procEx, addhealth, m_attackType, m_spellInfo, m_canTrigger);
 
         uint32 gain = caster->HealTargetUnit(unitTarget, m_spellInfo, addhealth, crit);
-        
+
         if (caster->GetTypeId() == TYPEID_PLAYER)
          if (BattleGround *bg = caster->ToPlayer()->GetBattleGround())
              bg->UpdatePlayerScore(caster->ToPlayer(), SCORE_HEALING_DONE, gain);
@@ -2186,10 +2186,10 @@ void Spell::cancel(bool sendInterrupt)
             if (!IsChanneledSpell(m_spellInfo))
             {
                 SendInterrupted(0);
-                if (sendInterrupt) 
+                if (sendInterrupt)
                     SendCastResult(SPELL_FAILED_INTERRUPTED);
             }
-        } 
+        }
         break;
         default:
         {
@@ -2218,7 +2218,7 @@ void Spell::cast(bool skipCheck)
 
     Unit *pTarget = m_targets.getUnitTarget();
     if (pTarget && pTarget->isAlive() && (pTarget->HasAuraType(SPELL_AURA_MOD_STEALTH) || pTarget->HasAuraType(SPELL_AURA_MOD_INVISIBILITY)) && !pTarget->IsFriendlyTo(m_caster) && !pTarget->isVisibleForOrDetect(m_caster, true))
-    {    
+    {
         SendCastResult(SPELL_FAILED_BAD_TARGETS);
         finish(false);
         return;
@@ -2249,6 +2249,8 @@ void Spell::cast(bool skipCheck)
         }
     }
 
+    FillTargetMap();
+
     // triggered cast called from Spell::prepare where it was already checked
     if (!skipCheck)
     {
@@ -2264,8 +2266,6 @@ void Spell::cast(bool skipCheck)
     // Check if some auras need to be interrupted when casting combat auto-repeating spells
     if (IsAutoRepeat() && !IsNonCombatSpell(m_spellInfo))
         m_caster->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_ATTACK);
-
-    FillTargetMap();
 
     if (m_spellState == SPELL_STATE_FINISHED)                // stop cast if spell marked as finish somewhere in Take*/FillTargetMap
     {
@@ -2775,7 +2775,7 @@ void Spell::finish(bool ok)
         //restore spell mods
         if (m_caster->GetTypeId() == TYPEID_PLAYER)
             m_caster->ToPlayer()->RestoreSpellMods(this);
-  
+
         // Spell has failed so the combat is no longer being initiated
         // Do this only if the unit is initiating combat
         if (m_caster->isInitiatingCombat())
@@ -4131,7 +4131,7 @@ uint8 Spell::CanCast(bool strict)
             case SPELL_EFFECT_DISMISS_PET:
             {
                 // Don't start dismissing the pet if it's dead!
-                Pet* pet = m_caster->ToPlayer()->GetPet();     
+                Pet* pet = m_caster->ToPlayer()->GetPet();
                 if (!pet || !pet->isAlive())
                     return SPELL_FAILED_TARGETS_DEAD;
 
@@ -4159,7 +4159,7 @@ uint8 Spell::CanCast(bool strict)
             {
                 // Check these things only for player hunters
                 if (m_caster->isPlayer() && m_caster->getClass() == CLASS_HUNTER)
-                { 
+                {
                     // Player should not be able to call the pet if he doesn't own one...
                     if (!m_caster->ToPlayer()->doesOwnPet())
                         return SPELL_FAILED_NO_PET;
@@ -4382,6 +4382,21 @@ uint8 Spell::CanCast(bool strict)
                 break;
             }
             default:
+
+                if (!m_targets.getUnitTarget())
+                    return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
+
+                if (!IsPositiveSpell(m_spellInfo->Id))
+                {
+                    if (m_targets.getUnitTarget() == m_caster && !IsPositiveSpell(m_spellInfo->Id))
+                        return SPELL_FAILED_BAD_TARGETS;
+
+                    if (m_caster->IsFriendlyTo(m_targets.getUnitTarget()))
+                        return SPELL_FAILED_TARGET_FRIENDLY;
+                }
+                else if (m_caster->IsFriendlyTo(m_targets.getUnitTarget()))
+                        return SPELL_FAILED_TARGET_ENEMY;
+
                 break;
         }
     }
@@ -4564,11 +4579,11 @@ bool Spell::CanAutoCast(Unit* target)
         }
     }
 
+    FillTargetMap();
     int16 result = PetCanCast(target);
 
     if (result == -1 || result == SPELL_FAILED_UNIT_NOT_INFRONT)
     {
-        FillTargetMap();
         //check if among target units, our WANTED target is as well (->only self cast spells return false)
         for (std::list<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin();ihit != m_UniqueTargetInfo.end();++ihit)
         {
@@ -4642,7 +4657,7 @@ uint8 Spell::CheckRange(bool /*strict*/)
             return SPELL_FAILED_TOO_CLOSE;
     }
 
-    return 0; 
+    return 0;
 }
 
 uint8 Spell::CheckPower()
