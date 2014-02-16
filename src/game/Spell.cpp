@@ -4381,7 +4381,7 @@ uint8 Spell::CanCast(bool strict)
 
                 break;
             }
-            default:
+            case SPELL_AURA_MOD_ROOT:
 
                 if (!m_targets.getUnitTarget())
                     return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
@@ -4394,7 +4394,7 @@ uint8 Spell::CanCast(bool strict)
                     if (m_caster->IsFriendlyTo(m_targets.getUnitTarget()))
                         return SPELL_FAILED_TARGET_FRIENDLY;
                 }
-                else if (m_caster->IsFriendlyTo(m_targets.getUnitTarget()))
+                else if (!m_caster->IsFriendlyTo(m_targets.getUnitTarget()))
                         return SPELL_FAILED_TARGET_ENEMY;
 
                 break;
