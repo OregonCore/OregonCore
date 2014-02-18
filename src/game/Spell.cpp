@@ -4383,6 +4383,9 @@ uint8 Spell::CanCast(bool strict)
             }
             case SPELL_AURA_MOD_ROOT:
 
+                if (IsAreaOfEffectSpell(m_spellInfo)) // frost nova, etc.
+                    break;
+
                 if (!m_targets.getUnitTarget())
                     return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
 
