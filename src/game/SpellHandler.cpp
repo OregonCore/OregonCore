@@ -276,6 +276,12 @@ void WorldSession::HandleGameObjectUseOpcode(WorldPacket & recv_data)
     if (!obj)
         return;
 
+    FactionTemplateEntry const* faction = sFactionTemplateStore.LookupEntry(obj->GetGOInfo()->faction);
+    if (!_player->isGameMaster() &&
+        !faction->IsFriendlyTo(*sFactionTemplateStore.LookupEntry(_player->getFaction())) &&
+        !faction->IsNeutralToAll())
+        return;
+
     if (sScriptMgr.GOHello(_player, obj))
         return;
 
