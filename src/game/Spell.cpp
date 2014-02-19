@@ -3651,6 +3651,9 @@ uint8 Spell::CanCast(bool strict)
             return SPELL_FAILED_NOT_MOUNTED;
     }
 
+    if (m_customAttr & SPELL_ATTR_CU_CAST_BY_ITEM_ONLY && !m_CastItem)
+        return SPELL_FAILED_SPELL_UNAVAILABLE;
+
     // always (except passive spells) check items (focus object can be required for any type casts)
     if (!IsPassiveSpell(m_spellInfo->Id))
         if (uint8 castResult = CheckItems())

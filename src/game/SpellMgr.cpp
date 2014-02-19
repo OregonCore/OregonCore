@@ -2516,6 +2516,13 @@ void SpellMgr::LoadSpellCustomAttr()
         case 35460: // Fury of the Dreghood Elders
             spellInfo->EffectImplicitTargetA[1] = TARGET_TYPE_UNIT_TARGET;
             break;
+        case 4073:  // Mechanical Dragonling
+        case 19804: // Arcanite Dragonling
+        case 12749: // Mithril Mechanical Dragonling
+        case 13258: // Summon Goblin Bomb
+        case 13166: // Battle Chicken
+            mSpellCustomAttr[i] |= SPELL_ATTR_CU_CAST_BY_ITEM_ONLY;
+            break;
         default:
             break;
         }
