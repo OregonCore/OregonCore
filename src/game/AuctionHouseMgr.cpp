@@ -701,10 +701,8 @@ uint32 AuctionEntry::GetAuctionCut() const
 // the sum of outbid is (1% from current bid)*5, if bid is very small, it is 1c
 uint32 AuctionEntry::GetAuctionOutBid() const
 {
-    uint32 outbid = (uint32)((double)bid / 100.0f) * 5;
-    if (!outbid)
-        outbid = 1;
-    return outbid;
+    uint32 outbid = CalculatePctN(bid, 5);
+    return outbid ? outbid : 1;
 }
 
 void AuctionEntry::DeleteFromDB() const
