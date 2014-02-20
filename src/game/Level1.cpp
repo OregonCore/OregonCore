@@ -1034,7 +1034,16 @@ bool ChatHandler::HandleGonameCommand(const char* args)
 
         // to point to see at target with same orientation
         float x,y,z;
-        target->GetContactPoint(_player,x,y,z);
+        target->GetPosition(x,y,z);
+
+        if (target->HasUnitMovementFlag(MOVEFLAG_FLYING))
+        {
+            WorldPacket data;
+            data.SetOpcode(SMSG_MOVE_SET_CAN_FLY);
+            data << target->GetPackGUID();
+            data << uint32(0);                                      // unknown
+            target->SendMessageToSet(&data, true);
+        }
 
         _player->TeleportTo(target->GetMapId(), x, y, z, _player->GetAngle(target), TELE_TO_GM_MODE);
 
