@@ -3475,10 +3475,11 @@ bool Unit::AddAura(Aura *Aur)
                 if (!(aurSpellInfo->StackAmount && uint32(aur2->GetStackAmount()) < aurSpellInfo->StackAmount))
                 {
                     // Do not let the stack size exceed the maximum stack limit
-                    // Instead of adding a new stack, just reset the duration time
-                    aur2->SetAuraDuration(aur2->GetAuraMaxDuration());
+                    // Instead of adding a new stack, just set the duration time
+                    // we need to use time from Aur because of diminishing effects
+                    aur2->SetAuraDuration(Aur->GetAuraMaxDuration());
                     aur2->UpdateAuraDuration();
-                    delete Aur; return false; 
+                    break;
                 }
 
                 // Allow mongoose procs from different weapon stacks
