@@ -2744,6 +2744,13 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
             default:
                 break;
         }
+
+        /* We need to re-apply any of transform auras:
+           Great example is OHF, when you are in cat form and unshapeshift,
+           you should be a human not your original model */
+        Unit::AuraList const& trans = m_target->GetAurasByType(SPELL_AURA_TRANSFORM);
+        for (Unit::AuraList::const_iterator i = trans.begin(); i != trans.end(); i++)
+            (*i)->ApplyModifier(true, true);
     }
 
     // adding/removing linked auras
@@ -2756,6 +2763,10 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
 
 void Aura::HandleAuraTransform(bool apply, bool Real)
 {
+    // Shapeshifts have higher priority than transforms
+    if (m_target->HasAuraType(SPELL_AURA_MOD_SHAPESHIFT))
+        return;
+
     if (apply)
     {
         // special case (spell specific functionality)
