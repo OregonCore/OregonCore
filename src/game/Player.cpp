@@ -15423,6 +15423,8 @@ void Player::_LoadInventory(QueryResult_AutoPtr result, uint32 timediff)
 
             bool success = true;
 
+            uint8 err = EQUIP_ERR_OK;
+            // Item is not in bag
             if (!bag_guid)
             {
                 // the item is not in a bag
@@ -15448,7 +15450,7 @@ void Player::_LoadInventory(QueryResult_AutoPtr result, uint32 timediff)
                 else if (IsBankPos(INVENTORY_SLOT_BAG_0, slot))
                 {
                     ItemPosCountVec dest;
-                    if (CanBankItem(INVENTORY_SLOT_BAG_0, slot, dest, item, false, false) == EQUIP_ERR_OK)
+                    if (CanBANkItem(INVENTORY_SLOT_BAG_0, slot, dest, item, false, false) == EQUIP_ERR_OK)
                         item = BankItem(dest, item, true);
                     else
                         success = false;
@@ -15467,7 +15469,12 @@ void Player::_LoadInventory(QueryResult_AutoPtr result, uint32 timediff)
                 // the item is in a bag, find the bag
                 std::map<uint64, Bag*>::iterator itr = bagMap.find(bag_guid);
                 if (itr != bagMap.end())
-                    itr->second->StoreItem(slot, item, true);
+                {
+                    ItemPosCountVec dest;
+                    err = CanStoreItem(itr->second->GetSlot(), slot, dest, item);
+                    if (err == EQUIP_ERR_OK)
+                        item = StoreItem(dest, item, true);
+                }
                 else
                     success = false;
             }
@@ -17143,7 +17150,11 @@ void Player::SendResetInstanceSuccess(uint32 MapId)
 
 void Player::SendResetInstanceFailed(uint32 reason, uint32 MapId)
 {
-    // TODO: find what other fail reasons there are besides players in the instance
+    /* Reasons for instance reset failure:
+    // 0: There are players inside the instance.
+    // 1: There are players offline in your party.
+    // 2>: There are players in your party attempting to zone into an instance.
+    */
     WorldPacket data(SMSG_INSTANCE_RESET_FAILED, 4);
     data << uint32(reason);
     data << uint32(MapId);
