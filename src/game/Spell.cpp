@@ -959,7 +959,13 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
         if (missInfo != SPELL_MISS_REFLECT)
             caster->ProcDamageAndSpell(unitTarget, procAttacker, procVictim, procEx, addhealth, m_attackType, m_spellInfo, m_canTrigger);
 
-        uint32 gain = caster->HealTargetUnit(unitTarget, m_spellInfo, addhealth, crit);
+        uint32 gain;
+        if (m_IsTriggeredSpell)
+            /* spells like earth  shield and prayer of mending
+               should give threat to the target they were casted on */
+            gain = unitTarget->HealTargetUnit(unitTarget, m_spellInfo, addhealth, crit);
+        else
+            gain = caster->HealTargetUnit(unitTarget, m_spellInfo, addhealth, crit);
 
         if (caster->GetTypeId() == TYPEID_PLAYER)
          if (BattleGround *bg = caster->ToPlayer()->GetBattleGround())
