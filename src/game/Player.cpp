@@ -15450,7 +15450,7 @@ void Player::_LoadInventory(QueryResult_AutoPtr result, uint32 timediff)
                 else if (IsBankPos(INVENTORY_SLOT_BAG_0, slot))
                 {
                     ItemPosCountVec dest;
-                    if (CanBANkItem(INVENTORY_SLOT_BAG_0, slot, dest, item, false, false) == EQUIP_ERR_OK)
+                    if (CanBankItem(INVENTORY_SLOT_BAG_0, slot, dest, item, false, false) == EQUIP_ERR_OK)
                         item = BankItem(dest, item, true);
                     else
                         success = false;
