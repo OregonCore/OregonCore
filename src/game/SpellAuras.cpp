@@ -4649,7 +4649,7 @@ void Aura::HandleModRegen(bool apply, bool /*Real*/)        // eating
             {
                 // It's unclear why eating would cause threat, but I've routed it through here never the less
                 if (SpellEntry const *spellProto = GetSpellProto())
-                    caster->HealTargetUnit(m_target, spellProto, GetModifierValue(), false, false);
+                    caster->HealTargetUnit(m_target, spellProto, GetModifierValue(), false);
             }
             else m_target->ModifyHealth(GetModifierValue());
         }
@@ -5952,19 +5952,16 @@ void Aura::PeriodicTick()
             sLog.outDetail("PeriodicTick: %u (TypeId: %u) heal of %u (TypeId: %u) for %u health inflicted by %u",
                 GUID_LOPART(GetCasterGUID()), GuidHigh2TypeId(GUID_HIPART(GetCasterGUID())), m_target->GetGUIDLow(), m_target->GetTypeId(), pdamage, GetId());
 
-            // Send log to client only if there the player has been healed
-            if (m_target->GetHealth() < m_target->GetMaxHealth())
-            {
-                WorldPacket data(SMSG_PERIODICAURALOG, (21+16));// we guess size
-                data << m_target->GetPackGUID();
-                data.appendPackGUID(GetCasterGUID());
-                data << uint32(GetId());
-                data << uint32(1);
-                data << uint32(m_modifier.m_auraname);
-                data << (uint32)pdamage;
-                m_target->SendMessageToSet(&data,true);
-            }
-            uint32 gain = pCaster->HealTargetUnit(m_target, GetSpellProto(), pdamage, false, false);
+            WorldPacket data(SMSG_PERIODICAURALOG, (21+16));// we guess size
+            data << m_target->GetPackGUID();
+            data.appendPackGUID(GetCasterGUID());
+            data << uint32(GetId());
+            data << uint32(1);
+            data << uint32(m_modifier.m_auraname);
+            data << (uint32)pdamage;
+            m_target->SendMessageToSet(&data,true);
+
+            uint32 gain = pCaster->HealTargetUnit(m_target, GetSpellProto(), pdamage, false);
 
             // add HoTs to amount healed in bgs
             if (pCaster->GetTypeId() == TYPEID_PLAYER)

@@ -933,7 +933,7 @@ class Unit : public WorldObject
         int32 ModifyHealth(int32 val);
 
         // Modify target's health and send client log
-        uint32 HealTargetUnit(Unit* target, SpellEntry const *spellInfo, uint32 heal, bool crit = false, bool sendLog = true);
+        uint32 HealTargetUnit(Unit* target, SpellEntry const *spellInfo, uint32 heal, bool crit = false);
 
         Powers getPowerType() const { return Powers(GetByteValue(UNIT_FIELD_BYTES_0, 3)); }
         void setPowerType(Powers power);

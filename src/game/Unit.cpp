@@ -7908,10 +7908,6 @@ uint32 Unit::SpellCriticalBonus(SpellEntry const *spellProto, uint32 damage, Uni
 
 uint32 Unit::SpellHealingBonus(SpellEntry const *spellProto, uint32 healamount, DamageEffectType damagetype, Unit *pVictim)
 {
-    // Do not waste your time if there is nothing to heal
-    if (pVictim->GetHealth() == pVictim->GetMaxHealth())
-        return 0;
-
     // For totems get healing bonus from owner (statue isn't totem in fact)
     if (GetTypeId() == TYPEID_UNIT && ToCreature()->isTotem())
         if (Unit* owner = GetOwner())
@@ -8788,19 +8784,18 @@ int32 Unit::ModifyHealth(int32 dVal)
 }
 
 // Modify target's health and send client log
-uint32 Unit::HealTargetUnit(Unit* target, SpellEntry const *spellInfo, uint32 heal, bool crit, bool sendLog)
+uint32 Unit::HealTargetUnit(Unit* target, SpellEntry const *spellInfo, uint32 heal, bool crit)
 {
     // This should have already been checked, but just in case...
     if (target && spellInfo && heal != 0)
     {	
-        sLog.outDebug("DEBUG: HealTargetUnit(caster: %u, target: %u, spell: %u, healing: %u, log: %s)",
-            GetGUIDLow(), target->GetGUIDLow(), spellInfo->Id, heal, (sendLog) ? "TRUE" : "FALSE");
+        sLog.outDebug("DEBUG: HealTargetUnit(caster: %u, target: %u, spell: %u, healing: %u)",
+            GetGUIDLow(), target->GetGUIDLow(), spellInfo->Id, heal);
 
         // Amount of health points the target was healed 
         if (uint32 gain = target->ModifyHealth(int32(heal)))
         {
-            // Send log only if the target has actually been healed
-            if (sendLog) SendHealSpellLog(target, spellInfo->Id, heal, crit);
+            SendHealSpellLog(target, spellInfo->Id, heal, crit);
 
             // Increase threat for caster if the target is being healed in combat
             if (target->isInCombat())

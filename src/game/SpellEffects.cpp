@@ -2648,7 +2648,7 @@ void Spell::EffectHealthLeech(uint32 i)
     if (m_caster->isAlive())
     {
         new_damage = m_caster->SpellHealingBonus(m_spellInfo, new_damage, HEAL, m_caster);
-        m_caster->HealTargetUnit(m_caster, m_spellInfo, uint32(new_damage), false, (m_caster->isPlayer()));
+        m_caster->HealTargetUnit(m_caster, m_spellInfo, uint32(new_damage), false);
     }
 //    m_healthLeech+=tmpvalue;
 //    m_damage+=new_damage;
