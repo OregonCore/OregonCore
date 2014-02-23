@@ -14926,50 +14926,56 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     // NOW player must have valid map
     // load the player's map here if it's not already loaded
     Map *map = MapManager::Instance().CreateMap(mapId, this, instanceId);
+    AreaTrigger const* areaTrigger = NULL;
+    bool check = false;
 
     if (!map)
     {
-        instanceId = 0;
-        AreaTrigger const* at = objmgr.GetGoBackTrigger(mapId);
-        if (at)
+        areaTrigger = objmgr.GetGoBackTrigger(mapId);
+        check = true;
+    }
+    else if (map->IsDungeon()) // if map is dungeon...
+    {
+        if (!((InstanceMap*)map)->CanEnter(this)) // ... and can't enter map, then look for entry point.
         {
-            sLog.outError("Player (guidlow %d) is teleported to gobacktrigger (Map: %u X: %f Y: %f Z: %f O: %f).",guid,mapId,GetPositionX(),GetPositionY(),GetPositionZ(),GetOrientation());
-            Relocate(at->target_X, at->target_Y, at->target_Z, GetOrientation());
-            mapId = at->target_mapId;
+            areaTrigger = objmgr.GetGoBackTrigger(mapId);
+            check = true;
         }
-        else
+        else if (instanceId && !sInstanceSaveManager.GetInstanceSave(instanceId)) // ... and instance is reseted then look for entrance.
         {
-            sLog.outError("Player (guidlow %d) is teleported to home (Map: %u X: %f Y: %f Z: %f O: %f).",guid,mapId,GetPositionX(),GetPositionY(),GetPositionZ(),GetOrientation());
-            RelocateToHomebind();
-        }
-
-        map = MapManager::Instance().CreateMap(mapId, this, 0);
-        if (!map)
-        {
-            PlayerInfo const *info = objmgr.GetPlayerInfo(getRace(), getClass());
-            mapId = info->mapId;
-            Relocate(info->positionX,info->positionY,info->positionZ,0.0f);
-            sLog.outError("ERROR: Player (guidlow %d) has invalid coordinates (X: %f Y: %f Z: %f O: %f). Teleport to default race/class locations.",guid,GetPositionX(),GetPositionY(),GetPositionZ(),GetOrientation());
-            map = MapManager::Instance().CreateMap(mapId, this, 0);
-            if (!map)
-            {
-                sLog.outError("Player (guidlow %d) has invalid default map coordinates (X: %f Y: %f Z: %f O: %f). or instance couldn't be created",guid,GetPositionX(),GetPositionY(),GetPositionZ(),GetOrientation());
-                return false;
-            }
+            areaTrigger = objmgr.GetMapEntranceTrigger(mapId);
+            check = true;
         }
     }
 
-    // if the player is in an instance (not a bg) and it has been reset in the meantime teleport him to the entrance
-    if (instanceId && !m_bgData.bgInstanceID && !sInstanceSaveManager.GetInstanceSave(instanceId))
+    if (check) // in case of special event when creating map...
     {
-        AreaTrigger const* at = objmgr.GetMapEntranceTrigger(mapId);
-        if (at)
-            Relocate(at->target_X, at->target_Y, at->target_Z, at->target_Orientation);
+        if (areaTrigger) // ... if we have an areatrigger, then relocate to new map/coordinates.
+        {
+            Relocate(areaTrigger->target_X, areaTrigger->target_Y, areaTrigger->target_Z, GetOrientation());
+            if (mapId != areaTrigger->target_mapId)
+            {
+                mapId = areaTrigger->target_mapId;
+                map = MapManager::Instance().CreateMap(mapId, this, 0);
+            }
+        }
         else
         {
-            sLog.outError("Player %s(GUID: %u) logged in to a reset instance (map: %u) and there is no area-trigger leading to this map. Thus he can't be ported back to the entrance. This _might_ be an exploit attempt.", GetName(), GetGUIDLow(), mapId);
-            RelocateToHomebind();
-            map = MapManager::Instance().CreateMap(mapId, this, instanceId);
+            sLog.outError("Player %s (guid: %d) Map: %u, X: %f, Y: %f, Z: %f, O: %f. Areatrigger not found.", m_name, guid, mapId, GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+            map = NULL;
+        }
+    }
+
+    if (!map)
+    {
+        PlayerInfo const* info = objmgr.GetPlayerInfo(getRace(), getClass());
+        mapId = info->mapId;
+        Relocate(info->positionX, info->positionY, info->positionZ, 0.0f);
+        map = MapManager::Instance().CreateMap(mapId, this, 0);
+        if (!map)
+        {
+            sLog.outError("Player %s (guid: %d) Map: %u, X: %f, Y: %f, Z: %f, O: %f. Invalid default map coordinates or instance couldn't be created.", m_name, guid, mapId, GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+            return false;
         }
     }
 
