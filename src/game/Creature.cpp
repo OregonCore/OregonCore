@@ -808,6 +808,13 @@ bool Creature::isCanTrainingOf(Player* pPlayer, bool msg) const
         case TRAINER_TYPE_MOUNTS:
             if (GetCreatureInfo()->race && pPlayer->getRace() != GetCreatureInfo()->race)
             {
+                // Allowed to train if exalted
+                if (FactionTemplateEntry const* faction_template = getFactionTemplateEntry())
+                {
+                    if (pPlayer->GetReputationRank(faction_template->faction) == REP_EXALTED)
+                        return true;
+                }
+
                 if (msg)
                 {
                     pPlayer->PlayerTalkClass->ClearMenus();
