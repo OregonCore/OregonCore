@@ -8983,7 +8983,7 @@ bool Unit::canDetectInvisibilityOf(Unit const* u) const
 
     if (uint32 mask = (m_detectInvisibilityMask & u->m_invisibilityMask))
     {
-        for (uint8 i = 0; i < 10; ++i)
+        for (uint8 i = 0; i < 32; ++i)
         {
             if (((1 << i) & mask) == 0)
                 continue;
