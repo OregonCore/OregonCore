@@ -49,7 +49,8 @@ void WorldSession::HandleBattleGroundHelloOpcode(WorldPacket & recv_data)
         return;
 
     // Stop the npc if moving
-    unit->StopMoving();
+    if(!unit->IsStopped())
+        unit->StopMoving();
 
     uint32 bgTypeId = objmgr.GetBattleMasterBG(unit->GetEntry());
 
