@@ -9333,6 +9333,10 @@ bool Unit::CanHaveThreatList() const
     if (ToCreature()->HasSummonMask(SUMMON_MASK_MINION | SUMMON_MASK_GUARDIAN | SUMMON_MASK_CONTROLABLE_GUARDIAN) && IS_PLAYER_GUID(((Pet*)this)->GetOwnerGUID()))
         return false;
 
+    // charmed units can not have a threat list if charmed by player
+    if (ToCreature()->isCharmed() && IS_PLAYER_GUID(ToCreature()->GetCharmerGUID()))
+        return false;
+
     return true;
 }
 
