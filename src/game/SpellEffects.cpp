@@ -3262,12 +3262,12 @@ void Spell::EffectProficiency(uint32 /*i*/)
     if (m_spellInfo->EquippedItemClass == 2 && !(p_target->GetWeaponProficiency() & subClassMask))
     {
         p_target->AddWeaponProficiency(subClassMask);
-        p_target->SendProficiency(uint8(0x02),p_target->GetWeaponProficiency());
+        p_target->SendProficiency(ITEM_CLASS_WEAPON,p_target->GetWeaponProficiency());
     }
     if (m_spellInfo->EquippedItemClass == 4 && !(p_target->GetArmorProficiency() & subClassMask))
     {
         p_target->AddArmorProficiency(subClassMask);
-        p_target->SendProficiency(uint8(0x04),p_target->GetArmorProficiency());
+        p_target->SendProficiency(ITEM_CLASS_ARMOR,p_target->GetArmorProficiency());
     }
 }
 
