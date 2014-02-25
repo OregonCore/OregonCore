@@ -2407,9 +2407,7 @@ void Spell::EffectPowerDrain(SpellEffIndex effIndex)
 
         int32 gain = int32(new_damage * manaMultiplier);
 
-        m_caster->ModifyPower(POWER_MANA,gain);
-        //send log
-        m_caster->SendEnergizeSpellLog(m_caster, m_spellInfo->Id,gain,POWER_MANA);
+        m_caster->EnergizeBySpell(m_caster, m_spellInfo->Id, gain, POWER_MANA);
     }
 }
 
@@ -6150,8 +6148,7 @@ void Spell::EffectDestroyAllTotems(SpellEffIndex /*effIndex*/)
         }
     }
 
-    int32 gain = m_caster->ModifyPower(POWER_MANA,int32(mana));
-    m_caster->SendEnergizeSpellLog(m_caster, m_spellInfo->Id, gain, POWER_MANA);
+    m_caster->EnergizeBySpell(m_caster, m_spellInfo->Id, int32(mana), POWER_MANA);
 }
 
 void Spell::EffectDurabilityDamage(SpellEffIndex effIndex)

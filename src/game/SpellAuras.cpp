@@ -1303,8 +1303,8 @@ void Aura::TriggerSpell()
                         caster->HealTargetUnit(caster, auraSpellInfo, heal);
                         if (int32 mana = caster->GetMaxPower(POWER_MANA))
                         {
-                            mana /= 10; caster->ModifyPower(POWER_MANA, mana);
-                            caster->SendEnergizeSpellLog(caster, 23493, mana, POWER_MANA);
+                            mana /= 10;
+                            caster->EnergizeBySpell(caster, 23493, mana, POWER_MANA);
                         }
                         break;
                     }
@@ -1369,8 +1369,7 @@ void Aura::TriggerSpell()
                     {
                         if (caster->GetPower(POWER_MANA) >= 10)
                         {
-                            caster->ModifyPower(POWER_MANA, -10);
-                            caster->SendEnergizeSpellLog(caster, 27746, -10, POWER_MANA);
+                            caster->EnergizeBySpell(caster, 27746, -10, POWER_MANA);
                         } else
                         {
                             caster->RemoveAurasDueToSpell(27746);
