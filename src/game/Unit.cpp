@@ -3479,6 +3479,11 @@ bool Unit::AddAura(Aura *Aur)
                     // we need to use time from Aur because of diminishing effects
                     aur2->SetAuraDuration(Aur->GetAuraMaxDuration());
                     aur2->UpdateAuraDuration();
+                    if (IsPositiveSpell(Aur->GetSpellProto()->Id))
+                    {
+                        delete Aur;
+                        return false;
+                    }
                     break;
                 }
 
