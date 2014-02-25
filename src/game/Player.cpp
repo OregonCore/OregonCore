@@ -20304,8 +20304,6 @@ void Player::ResurectUsingRequestData()
         return;
     }
 
-    ResurrectPlayer(0.0f,false);
-
     if (GetMaxHealth() > m_resurrectHealth)
         SetHealth(m_resurrectHealth);
     else
@@ -20323,6 +20321,9 @@ void Player::ResurectUsingRequestData()
     SpawnCorpseBones();
 
     TeleportTo(m_resurrectMap, m_resurrectX, m_resurrectY, m_resurrectZ, GetOrientation());
+
+    ResurrectPlayer(0.0f,false);
+
 }
 
 void Player::SetClientControl(Unit* target, uint8 allowMove)
