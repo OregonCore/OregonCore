@@ -959,7 +959,7 @@ namespace Oregon
             if (_reqAlive && !u->isAlive())
                 return false;
 
-            if (!_obj->IsWithinDistInMap(u, _range))
+            if (!i_obj->IsWithinDistInMap(u, i_range))
                 return false;
 
             return true;
