@@ -1086,7 +1086,7 @@ void Spell::DoSpellHitOnUnit(Unit *unit, const uint32 effectMask)
                 return;
             }
         }
-        if (!m_caster->IsFriendlyTo(unit))
+        if (m_caster->IsHostileTo(unit))
         {
             // reset damage to 0 if target has Invisibility or Vanish aura (_only_ vanish, not stealth) and isn't visible for caster
             bool isVisibleForHit = ((unit->HasAuraType(SPELL_AURA_MOD_INVISIBILITY) || unit->HasAuraTypeWithFamilyFlags(SPELL_AURA_MOD_STEALTH, SPELLFAMILY_ROGUE ,SPELLFAMILYFLAG_ROGUE_VANISH)) && !unit->isVisibleForOrDetect(m_caster, true)) ? false : true;
@@ -1103,7 +1103,7 @@ void Spell::DoSpellHitOnUnit(Unit *unit, const uint32 effectMask)
             if (m_customAttr & SPELL_ATTR_CU_AURA_CC)
                 unit->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_CC);
         }
-        else
+        else if (m_caster->IsFriendlyTo(unit))
         {
             // for delayed spells ignore negative spells (after duel end) for friendly targets
             // TODO: this cause soul transfer bugged
