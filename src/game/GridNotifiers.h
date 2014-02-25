@@ -953,17 +953,21 @@ namespace Oregon
     class AnyPlayerInObjectRangeCheck
     {
     public:
-        AnyPlayerInObjectRangeCheck(WorldObject const* obj, float range) : i_obj(obj), i_range(range) {}
+        AnyPlayerInObjectRangeCheck(WorldObject const* obj, float range, bool reqAlive = true) : i_obj(obj), i_range(range), _reqAlive(reqAlive) {}
         bool operator()(Player* u)
         {
-            if (u->isAlive() && i_obj->IsWithinDistInMap(u, i_range))
-                return true;
+            if (_reqAlive && !u->isAlive())
+                return false;
 
-            return false;
+            if (!_obj->IsWithinDistInMap(u, _range))
+                return false;
+
+            return true;
         }
     private:
         WorldObject const* i_obj;
         float i_range;
+        bool _reqAlive;
     };
 
     class AllFriendlyCreaturesInGrid
