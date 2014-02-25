@@ -20237,7 +20237,7 @@ void Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
             // normal creature (not pet/etc) can be only in !PvP case
             if (pVictim->GetTypeId() == TYPEID_UNIT)
                 if(CreatureInfo const* normalInfo = ObjectMgr::GetCreatureTemplate(pVictim->GetEntry()))
-                    KilledMonster(normalInfo, pVictim->GetObjectGuid());
+                    KilledMonster(normalInfo,pVictim->GetGUID());
         }
     }
 }
