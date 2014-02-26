@@ -660,7 +660,7 @@ void LoadOverridenSQLData()
     goInfo = GOBJECT(187055);
     if (goInfo)
         if (goInfo->type == GAMEOBJECT_TYPE_GOOBER)
-            goInfo->goober.lockId = 57; // need LOCKTYPE_QUICK_OPEN
+            goInfo->type = GAMEOBJECT_TYPE_SPELLCASTER;
 
     // Naxxramas : Sapphiron Birth
     goInfo = GOBJECT(181356);
