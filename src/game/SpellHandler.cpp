@@ -125,9 +125,6 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 
     recvPacket >> targets.ReadForCaster(pUser);
 
-    if (!targets.getUnitTarget())
-        targets.setUnitTarget(ObjectAccessor::GetUnit(*pUser, pUser->GetSelection()));
-
     //Note: If script stop casting it must send appropriate data to client to prevent stuck item in gray state.
     if (!sScriptMgr.ItemUse(pUser,pItem,targets))
     {

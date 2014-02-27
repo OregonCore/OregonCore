@@ -1557,8 +1557,18 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
             Unit *target = m_targets.getUnitTarget();
             if (!target)
             {
-                sLog.outError("SPELL: no unit target for spell ID %u", m_spellInfo->Id);
-                break;
+                if (Player* player = m_caster->ToPlayer())
+                    target = ObjectAccessor::GetUnit(*player, player->GetSelection());
+                else
+                    target = m_caster->getVictim();
+
+                if (target)
+                    m_targets.setUnitTarget(target);
+                else
+                {
+                    sLog.outError("SPELL: no unit target for spell ID %u", m_spellInfo->Id);
+                    break;
+                }
             }
 
             switch(cur)
@@ -1617,9 +1627,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
             else if (target->GetTypeId() == TYPEID_UNIT || target->GetTypeId() == TYPEID_PLAYER)
             {
                 pushType = PUSH_CHAIN;
-
-                if (!m_targets.getUnitTarget())
-                    m_targets.setUnitTarget((Unit*)target);
+                m_targets.setUnitTarget((Unit*)target);
             }
             else if (target->GetTypeId() == TYPEID_GAMEOBJECT)
                 AddGOTarget((GameObject*)target, i);
@@ -1868,6 +1876,13 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                 case TARGET_OBJECT_USE:
                     if (m_targets.getGOTarget())
                         AddGOTarget(m_targets.getGOTarget(), i);
+                    else
+                    {
+                        WorldObject* obj = SearchNearbyTarget(GetSpellMaxRange(m_spellInfo), SPELL_TARGETS_ENTRY);
+                        if (obj->GetTypeId() != TYPEID_GAMEOBJECT)
+                            break;
+                        AddGOTarget((GameObject*)obj, i);
+                    }
                     break;
                 case TARGET_GAMEOBJECT_ITEM:
                     if (m_targets.getGOTargetGUID())
@@ -3538,7 +3553,8 @@ uint8 Spell::CanCast(bool strict)
             if (target->isInFlight())
                 return SPELL_FAILED_BAD_TARGETS;
 
-            if (!m_IsTriggeredSpell && VMAP::VMapFactory::checkSpellForLoS(m_spellInfo->Id) && !m_caster->IsWithinLOSInMap(target))
+            bool isTrigger = (target->ToCreature() && target->ToCreature()->isTrigger());
+            if (!m_IsTriggeredSpell && !isTrigger && VMAP::VMapFactory::checkSpellForLoS(m_spellInfo->Id) && !m_caster->IsWithinLOSInMap(target))
                 return SPELL_FAILED_LINE_OF_SIGHT;
 
             // auto selection spell rank implemented in WorldSession::HandleCastSpellOpcode
