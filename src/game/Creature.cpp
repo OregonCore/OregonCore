@@ -1942,8 +1942,8 @@ bool Creature::LoadCreaturesAddon(bool reload)
     if (cainfo->bytes1 != 0)
         SetUInt32Value(UNIT_FIELD_BYTES_1, cainfo->bytes1);
 
-    if (cainfo->bytes2 != 0)
-        SetUInt32Value(UNIT_FIELD_BYTES_2, cainfo->bytes2);
+    // Sheath State
+    SetUInt32Value(UNIT_FIELD_BYTES_2, cainfo->bytes2);
 
     if (cainfo->emote != 0)
         SetUInt32Value(UNIT_NPC_EMOTESTATE, cainfo->emote);
