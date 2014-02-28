@@ -4929,9 +4929,9 @@ void Player::SetRegularAttackTime()
             ItemPrototype const *proto = tmpitem->GetProto();
             if (proto->Delay)
                 SetAttackTime(WeaponAttackType(i), proto->Delay);
-            else
-                SetAttackTime(WeaponAttackType(i), BASE_ATTACK_TIME);
         }
+        else
+            SetAttackTime(WeaponAttackType(i), BASE_ATTACK_TIME);
     }
 }
 
