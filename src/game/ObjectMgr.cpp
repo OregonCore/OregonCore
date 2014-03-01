@@ -980,7 +980,7 @@ void ObjectMgr::LoadCreatureLinkedRespawn()
         bar.step();
 
         sLog.outString();
-        //sLog.outErrorDb(">> Loaded 0 linked respawns. DB table creature_linked_respawn is empty.");
+        sLog.outErrorDb(">> Loaded 0 linked respawns. DB table creature_linked_respawn is empty.");
         return;
     }
 
