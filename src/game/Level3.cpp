@@ -1287,7 +1287,7 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(const char *args)
         sAccountMgr->GetName(targetAccountId, targetAccountName);
         Player* targetPlayer = getSelectedPlayer();
         gm = atoi(arg1);
-        uint32 gmRealmID = arg2 ? atoi(arg2) : realmID;
+        int32 gmRealmID = arg2 ? atoi(arg2) : realmID;
 
         // Check for invalid specified GM level.
         if (gm < SEC_PLAYER || gm > SEC_ADMINISTRATOR)

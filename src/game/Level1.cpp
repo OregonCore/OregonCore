@@ -1163,6 +1163,13 @@ bool ChatHandler::HandleModifyHPCommand(const char* args)
         return false;
     }
 
+    if (!target->isAlive())
+    {
+        SendSysMessage(LANG_NO_SELECTION);
+        SetSentErrorMessage(true);
+        return false;
+    }
+
     PSendSysMessage(LANG_YOU_CHANGE_HP, target->GetName(), hp, hpm);
     if (needReportToTarget(target))
         ChatHandler(target).PSendSysMessage(LANG_YOURS_HP_CHANGED, GetName(), hp, hpm);
