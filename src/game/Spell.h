@@ -21,6 +21,7 @@
 #define __SPELL_H
 
 #include "GridDefines.h"
+#include "SpellMgr.h"
 
 #define MAX_SPELL_ID    60000
 
@@ -210,9 +211,13 @@ struct SpellValue
         for (uint32 i = 0; i < 3; ++i)
             EffectBasePoints[i] = proto->EffectBasePoints[i];
         MaxAffectedTargets = proto->MaxAffectedTargets;
+        Duration = GetSpellDuration(proto);
+        CustomDuration = false;
     }
     int32     EffectBasePoints[3];
     uint32    MaxAffectedTargets;
+    uint32    Duration;
+    bool      CustomDuration;
 };
 
 enum SpellState

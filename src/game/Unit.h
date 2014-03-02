@@ -125,6 +125,7 @@ enum SpellValueMod
     SPELLVALUE_BASE_POINT1,
     SPELLVALUE_BASE_POINT2,
     SPELLVALUE_MAX_TARGETS,
+    SPELLVALUE_DURATION
 };
 
 typedef std::pair<SpellValueMod, int32>     CustomSpellValueMod;

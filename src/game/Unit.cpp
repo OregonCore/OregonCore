@@ -3668,6 +3668,7 @@ bool Unit::RemoveNoStackAurasDueToAura(Aura *Aur)
             else continue;
             break;
         }
+
         if (!is_triggered_by_spell)
         {
             bool sameCaster = Aur->GetCasterGUID() == (*i).second->GetCasterGUID();
@@ -6335,6 +6336,7 @@ bool Unit::HandleOverrideClassScriptAuraProc(Unit *pVictim, Aura *triggeredByAur
         ? ToPlayer()->GetItemByGuid(triggeredByAura->GetCastItemGUID()) : NULL;
 
     uint32 triggered_spell_id = 0;
+    CustomSpellValues values;
 
     switch(scriptId)
     {
@@ -6388,7 +6390,9 @@ bool Unit::HandleOverrideClassScriptAuraProc(Unit *pVictim, Aura *triggeredByAur
         case 4537:                                          // Dreamwalker Raiment 6 pieces bonus
             triggered_spell_id = 28750;                     // Blessing of the Claw
             break;
-        case 5497:                                          // Improved Mana Gem
+        case 5497:                                          // Improved Mana Gems
+            values.AddSpellMod(SPELLVALUE_DURATION, 15000);
+            triggered_spell_id = 42122; // "Increase Spell Dam 225"
             break;
     }
 
@@ -6408,7 +6412,7 @@ bool Unit::HandleOverrideClassScriptAuraProc(Unit *pVictim, Aura *triggeredByAur
     if (cooldown && GetTypeId() == TYPEID_PLAYER && ToPlayer()->HasSpellCooldown(triggered_spell_id))
         return false;
 
-    CastSpell(pVictim, triggered_spell_id, true, castItem, triggeredByAura);
+    CastCustomSpell(triggered_spell_id, values, pVictim, true, castItem, triggeredByAura);
 
     if (cooldown && GetTypeId() == TYPEID_PLAYER)
         ToPlayer()->AddSpellCooldown(triggered_spell_id,0,time(NULL) + cooldown);
@@ -10677,7 +10681,6 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit * pTarget, uint32 procFlag,
         bool active = (damage > 0) || (procExtra & PROC_EX_ABSORB && isVictim);
         if (!IsTriggeredAtSpellProcEvent(pTarget, itr->second, procSpell, procFlag, procExtra, attType, isVictim, active, spellProcEvent))
            continue;
-
         procTriggered.push_back(ProcTriggeredData(spellProcEvent, itr->second));
     }
     // Handle effects proceed this time

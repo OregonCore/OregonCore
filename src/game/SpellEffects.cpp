@@ -2260,12 +2260,12 @@ void Spell::EffectApplyAura(uint32 i)
     if (!caster)
         return;
 
-    DEBUG_LOG("Spell: Aura is: %u", m_spellInfo->EffectApplyAuraName[i]);
-
     Aura* Aur = CreateAura(m_spellInfo, i, &damage, unitTarget, caster, m_CastItem);
 
     // Now Reduce spell duration using data received at spell hit
     int32 duration = Aur->GetAuraMaxDuration();
+    if (m_spellValue->CustomDuration)
+        duration = m_spellValue->Duration;
     if (!IsPositiveSpell(m_spellInfo->Id))
     {
         unitTarget->ApplyDiminishingToDuration(m_diminishGroup,duration,caster,m_diminishLevel);
@@ -2277,7 +2277,7 @@ void Spell::EffectApplyAura(uint32 i)
         caster->ModSpellCastTime(m_spellInfo, duration, this);
 
     // if Aura removed and deleted, do not continue.
-    if (duration == 0 && !(Aur->IsPermanent()))
+    if (Aur->IsExpired())
     {
         delete Aur;
         return;

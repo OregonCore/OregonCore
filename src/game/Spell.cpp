@@ -525,15 +525,7 @@ void Spell::FillTargetMap()
                         AddItemTarget(m_targets.getItemTarget(), i);
                     break;*/
                 case SPELL_EFFECT_APPLY_AURA:
-                    switch(m_spellInfo->EffectApplyAuraName[i])
-                    {
-                        case SPELL_AURA_ADD_FLAT_MODIFIER:  // some spell mods auras have 0 target modes instead expected TARGET_UNIT_CASTER(1) (and present for other ranks for same spell for example)
-                        case SPELL_AURA_ADD_PCT_MODIFIER:
-                            AddUnitTarget(m_caster, i);
-                            break;
-                        default:                            // apply to target in other case
-                            break;
-                    }
+                    AddUnitTarget(m_caster, i);
                     break;
                 case SPELL_EFFECT_APPLY_AREA_AURA_PARTY:
                                                             // AreaAura
@@ -1213,7 +1205,7 @@ void Spell::DoSpellHitOnUnit(Unit *unit, const uint32 effectMask)
             m_originalCaster->ProcDamageAndSpell(unit, PROC_FLAG_HEAL, PROC_FLAG_NONE, 0, GetSpellSchoolMask(m_spellInfo), m_spellInfo);
         if (m_originalCaster != unit && (m_customAttr & SPELL_ATTR_CU_EFFECT_DAMAGE))
             m_originalCaster->ProcDamageAndSpell(unit, PROC_FLAG_HIT_SPELL, PROC_FLAG_STRUCK_SPELL, 0, GetSpellSchoolMask(m_spellInfo), m_spellInfo);
-    }*/
+    }*
 }
 
 void Spell::DoAllEffectOnTarget(GOTargetInfo *target)
@@ -2381,6 +2373,8 @@ void Spell::handle_immediate()
     if (IsChanneledSpell(m_spellInfo))
     {
         int32 duration = GetSpellDuration(m_spellInfo);
+        if (m_spellValue->CustomDuration)
+            duration = m_spellValue->Duration;
         if (duration)
         {
             if (m_targets.getUnitTarget())
@@ -5674,6 +5668,10 @@ void Spell::SetSpellValue(SpellValueMod mod, int32 value)
             break;
         case SPELLVALUE_MAX_TARGETS:
             m_spellValue->MaxAffectedTargets = (uint32)value;
+            break;
+        case SPELLVALUE_DURATION:
+            m_spellValue->Duration = (uint32) value;
+            m_spellValue->CustomDuration = true;
             break;
     }
 }
