@@ -3622,6 +3622,8 @@ SpellCastResult Spell::CheckCast(bool strict)
                     else
                         return SPELL_FAILED_NO_PET;
                 }
+                else if (!target->isAlive())
+                    return SPELL_FAILED_TARGETS_DEAD;
                 break;
             }
         }
