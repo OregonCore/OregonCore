@@ -956,6 +956,7 @@ enum SpellImmunity
 
 enum Targets
 {
+    TARGET_NONE                        = 0,
     TARGET_UNIT_CASTER                 = 1,
     TARGET_UNIT_NEARBY_ENEMY           = 2, // only one spell has that, but regardless, it's a target type after all
     TARGET_UNIT_NEARBY_ALLY            = 3,
