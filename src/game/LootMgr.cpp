@@ -971,7 +971,7 @@ bool LootTemplate::HasQuestDrop(LootTemplateMap const& store, uint8 groupId) con
 
     // Now processing groups
     for (LootGroups::const_iterator i = Groups.begin() ; i != Groups.end() ; ++i)
-        if (i->HasQuestDropForPlayer(player))
+        if (i->HasQuestDrop())
             return true;
 
     return false;
@@ -1004,7 +1004,7 @@ bool LootTemplate::HasQuestDropForPlayer(LootTemplateMap const& store, Player co
 
     // Now checking groups
     for (LootGroups::const_iterator i = Groups.begin(); i != Groups.end(); ++i)
-        if (i->HasQuestDrop())
+        if (i->HasQuestDropForPlayer(player))
             return true;
 
     return false;
