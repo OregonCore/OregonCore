@@ -6391,8 +6391,7 @@ bool Unit::HandleOverrideClassScriptAuraProc(Unit *pVictim, Aura *triggeredByAur
             triggered_spell_id = 28750;                     // Blessing of the Claw
             break;
         case 5497:                                          // Improved Mana Gems
-            values.AddSpellMod(SPELLVALUE_DURATION, 15000);
-            triggered_spell_id = 42122; // "Increase Spell Dam 225"
+            triggered_spell_id = 37445;                     // Mana Surge
             break;
     }
 
