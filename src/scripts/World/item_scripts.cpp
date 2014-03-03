@@ -110,7 +110,6 @@ bool ItemUse_item_attuned_crystal_cores(Player *player, Item* _Item, SpellCastTa
         targets.getUnitTarget()->GetEntry() == 24972 && targets.getUnitTarget()->isDead() &&
         (player->GetQuestStatus(11524) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(11525) == QUEST_STATUS_INCOMPLETE))
     {
-        CAST_CRE(targets.getUnitTarget())->RemoveCorpse();
         return false;
     }
 
