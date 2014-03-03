@@ -5390,10 +5390,18 @@ void Aura::HandleAuraModPacify(bool apply, bool /*Real*/)
         return;
 
     if (apply)
+    {
         m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED);
+        m_target->AttackStop();
+    }
     else
-        m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED);
+    {
+         // do not remove unit flag if there are more than this auraEffect of that kind on unit on unit
+         if (m_target->HasAuraType(SPELL_AURA_MOD_PACIFY) || m_target->HasAuraType(SPELL_AURA_MOD_PACIFY_SILENCE))
+             return;
 
+         m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED);
+    }
 
      if (m_spellProto->Id == 45839){
         if (apply){
