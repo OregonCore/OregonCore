@@ -10677,7 +10677,16 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit * pTarget, uint32 procFlag,
     for (AuraMap::const_iterator itr = GetAuras().begin(); itr != GetAuras().end(); ++itr)
     {
         SpellProcEventEntry const* spellProcEvent = NULL;
-        bool active = (damage > 0) || (procExtra & PROC_EX_ABSORB && isVictim);
+        bool active = damage || (procExtra & PROC_EX_BLOCK && isVictim);
+
+        SpellEntry const *spellproto = sSpellStore.LookupEntry(itr->second->GetId());
+
+        for (uint32 i = 0; i < 3; ++i)
+        {
+            if (spellproto->Effect[i] == SPELL_EFFECT_TRIGGER_SPELL)
+                active = true;
+        }
+
         if (!IsTriggeredAtSpellProcEvent(pTarget, itr->second, procSpell, procFlag, procExtra, attType, isVictim, active, spellProcEvent))
            continue;
         procTriggered.push_back(ProcTriggeredData(spellProcEvent, itr->second));
