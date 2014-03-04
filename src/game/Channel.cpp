@@ -322,7 +322,7 @@ void Channel::SetMode(uint64 p, const char *p2n, bool mod, bool set)
     else
     {
         Player *newp = objmgr.GetPlayer(p2n);
-        if (!newp)
+        if (!newp || !newp->isGMVisible())
         {
             WorldPacket data;
             MakePlayerNotFound(&data, p2n);
