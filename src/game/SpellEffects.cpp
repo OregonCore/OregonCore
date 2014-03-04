@@ -3309,6 +3309,22 @@ void Spell::EffectSummonType(uint32 i)
             }
             switch (properties->Type)
             {
+                case SUMMON_TYPE_NONE:
+                {
+                    if (prop_id == 121)
+                        {
+                            summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster);
+                            if (!summon || !summon->isTotem())
+                                return;
+
+                            if (damage)                                            // if not spell info, DB values used
+                            {
+                                summon->SetMaxHealth(damage);
+                                summon->SetHealth(damage);
+                            }
+                            break;
+                        }
+                }
                 case SUMMON_TYPE_PET:
                 case SUMMON_TYPE_GUARDIAN:
                 case SUMMON_TYPE_GUARDIAN2:
@@ -3348,7 +3364,7 @@ void Spell::EffectSummonType(uint32 i)
 
                     uint32 amount = damage > 0 ? damage : 1;
                     if (m_spellInfo->Id == 18662 || // Curse of Doom
-                        properties->Id == 2081 || m_spellInfo->Id == 43302)     // Mechanical Dragonling, Arcanite Dragonling, Mithril Dragonling, Halazzi's Lighting Totem
+                        properties->Id == 2081)     // Mechanical Dragonling, Arcanite Dragonling, Mithril Dragonling
                         amount = 1;
 
                     TempSummonType summonType = (duration == 0) ? TEMPSUMMON_DEAD_DESPAWN : TEMPSUMMON_TIMED_DESPAWN;
