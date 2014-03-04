@@ -1228,7 +1228,8 @@ void WorldSession::HandleWhoisOpcode(WorldPacket& recv_data)
 void WorldSession::HandleReportSpamOpcode(WorldPacket & recv_data)
 {
     DEBUG_LOG("WORLD: CMSG_REPORT_SPAM");
-    recv_data.hexlike();
+    if (sLog.IsOutDebug)
+        recv_data.hexlike();
 
     uint8 spam_type;                                        // 0 - mail, 1 - chat
     uint64 spammer_guid;

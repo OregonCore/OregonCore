@@ -424,9 +424,6 @@ class ByteBuffer
 
         void hexlike() const
         {
-            if (!sLog.IsOutDebug())                          // optimize disabled debug output
-                return;
-
             uint32 j = 1, k = 1;
             sLog.outDebug("STORAGE_SIZE: %lu", (unsigned long)size() );
 
