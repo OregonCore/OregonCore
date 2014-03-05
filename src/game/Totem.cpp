@@ -104,7 +104,15 @@ void Totem::InitSummon()
     SendMessageToSet(&data, true);
 
     if (m_type == TOTEM_PASSIVE)
-        CastSpell(this, GetSpell(), true);
+    {
+        if(SpellEntry const *spellInfo = sSpellStore.LookupEntry(GetSpell()))
+        {
+            if (spellInfo->Attributes & SPELL_ATTR_PASSIVE)
+                AddAura(spellInfo->Id, this);
+            else
+                CastSpell(this, GetSpell(), true);
+        }
+    }
 }
 
 void Totem::UnSummon()
