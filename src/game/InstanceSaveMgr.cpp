@@ -343,21 +343,19 @@ void InstanceSaveManager::CleanupInstances()
 void InstanceSaveManager::PackInstances()
 {
     // this routine renumbers player instance associations in such a way so they start from 1 and go up
-    // TODO: this can be done a LOT more efficiently
 
     // obtain set of all associations
-    std::set<uint32> InstanceSet;
+    std::vector<uint32> InstanceSet;
 
     // all valid ids are in the instance table
     // any associations to ids not in this table are assumed to be
     // cleaned already in CleanupInstances
-    QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT id FROM instance");
-    if (result)
+    if (QueryResult_AutoPtr result = CharacterDatabase.Query("SELECT id FROM instance ORDER BY id ASC"))
     {
         do
         {
             Field *fields = result->Fetch();
-            InstanceSet.insert(fields[0].GetUInt32());
+            InstanceSet.push_back(fields[0].GetUInt32());
         }
         while (result->NextRow());
     }
@@ -366,24 +364,46 @@ void InstanceSaveManager::PackInstances()
     bar.step();
 
     uint32 InstanceNumber = 1;
-    // we do assume std::set is sorted properly on integer value
-    for (std::set<uint32>::iterator i = InstanceSet.begin(); i != InstanceSet.end(); ++i)
+
+    WorldDatabase.Execute(    "PREPARE stmt0 FROM \"UPDATE creature_respawn   SET instance    = ? WHERE instance    = ?\"");
+    WorldDatabase.Execute(    "PREPARE stmt1 FROM \"UPDATE gameobject_respawn SET instance    = ? WHERE instance    = ?\"");
+    CharacterDatabase.Execute("PREPARE stmt2 FROM \"UPDATE characters         SET instance_id = ? WHERE instance_id = ?\"");
+    CharacterDatabase.Execute("PREPARE stmt3 FROM \"UPDATE corpse             SET instance    = ? WHERE instance    = ?\"");
+    CharacterDatabase.Execute("PREPARE stmt4 FROM \"UPDATE character_instance SET instance    = ? WHERE instance    = ?\"");
+    CharacterDatabase.Execute("PREPARE stmt5 FROM \"UPDATE instance           SET id          = ? WHERE instance_id = ?\"");
+    CharacterDatabase.Execute("PREPARE stmt6 FROM \"UPDATE group_instance     SET instance    = ? WHERE instance    = ?\"");
+
+    // we have got ids sorted properly
+    for (std::vector<uint32>::iterator i = InstanceSet.begin(); i != InstanceSet.end(); ++i)
     {
         if (*i != InstanceNumber)
         {
             // remap instance id
-            WorldDatabase.PExecute("UPDATE creature_respawn SET instance = '%u' WHERE instance = '%u'", InstanceNumber, *i);
-            WorldDatabase.PExecute("UPDATE gameobject_respawn SET instance = '%u' WHERE instance = '%u'", InstanceNumber, *i);
-            CharacterDatabase.PExecute("UPDATE characters SET instance_id = '%u' WHERE instance_id = '%u'", InstanceNumber, *i);
-            CharacterDatabase.PExecute("UPDATE corpse SET instance = '%u' WHERE instance = '%u'", InstanceNumber, *i);
-            CharacterDatabase.PExecute("UPDATE character_instance SET instance = '%u' WHERE instance = '%u'", InstanceNumber, *i);
-            CharacterDatabase.PExecute("UPDATE instance SET id = '%u' WHERE id = '%u'", InstanceNumber, *i);
-            CharacterDatabase.PExecute("UPDATE group_instance SET instance = '%u' WHERE instance = '%u'", InstanceNumber, *i);
+            WorldDatabase.PExecute(    "SET @i=%u", InstanceNumber);
+            WorldDatabase.PExecute(    "SET @j=%u", *i);
+            CharacterDatabase.PExecute("SET @i=%u", InstanceNumber);
+            CharacterDatabase.PExecute("SET @j=%u", *i);
+
+            WorldDatabase.Execute(    "EXECUTE stmt0 USING @i,@j");
+            WorldDatabase.Execute(    "EXECUTE stmt1 USING @i,@j");
+            CharacterDatabase.Execute("EXECUTE stmt2 USING @i,@j");
+            CharacterDatabase.Execute("EXECUTE stmt3 USING @i,@j");
+            CharacterDatabase.Execute("EXECUTE stmt4 USING @i,@j");
+            CharacterDatabase.Execute("EXECUTE stmt5 USING @i,@j");
+            CharacterDatabase.Execute("EXECUTE stmt6 USING @i,@j");
         }
 
         ++InstanceNumber;
         bar.step();
     }
+
+    WorldDatabase.Execute(    "DEALLOCATE PREPARE stmt0");
+    WorldDatabase.Execute(    "DEALLOCATE PREPARE stmt1");
+    CharacterDatabase.Execute("DEALLOCATE PREPARE stmt2");
+    CharacterDatabase.Execute("DEALLOCATE PREPARE stmt3");
+    CharacterDatabase.Execute("DEALLOCATE PREPARE stmt4");
+    CharacterDatabase.Execute("DEALLOCATE PREPARE stmt5");
+    CharacterDatabase.Execute("DEALLOCATE PREPARE stmt6");
 
     sLog.outString();
     sLog.outString(">> Instance numbers remapped, next instance id is %u", InstanceNumber);
