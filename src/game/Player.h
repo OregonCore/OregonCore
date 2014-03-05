@@ -1019,6 +1019,7 @@ class Player : public Unit, public GridObject<Player>
         bool HasBankBagSlot(uint8 slot) const;
         bool HasItemCount(uint32 item, uint32 count, bool inBankAlso = false) const;
         bool HasItemFitToSpellReqirements(SpellEntry const* spellInfo, Item const* ignoreItem = NULL);
+        bool CanCastNoReagents(SpellEntry const* spellInfo) const;
         Item* GetItemOrItemWithGemEquipped(uint32 item) const;
         uint8 CanTakeMoreSimilarItems(Item* pItem) const { return _CanTakeMoreSimilarItems(pItem->GetEntry(),pItem->GetCount(),pItem); }
         uint8 CanTakeMoreSimilarItems(uint32 entry, uint32 count) const { return _CanTakeMoreSimilarItems(entry,count,NULL); }
