@@ -14961,7 +14961,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
         }
         else
         {
-            sLog.outError("Player %s (guid: %d) Map: %u, X: %f, Y: %f, Z: %f, O: %f. Areatrigger not found.", m_name, guid, mapId, GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+            sLog.outError("Player %s (guid: %d) Map: %u, X: %f, Y: %f, Z: %f, O: %f. Areatrigger not found.", m_name.c_str(), guid, mapId, GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
             map = NULL;
         }
     }
@@ -14974,7 +14974,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
         map = MapManager::Instance().CreateMap(mapId, this, 0);
         if (!map)
         {
-            sLog.outError("Player %s (guid: %d) Map: %u, X: %f, Y: %f, Z: %f, O: %f. Invalid default map coordinates or instance couldn't be created.", m_name, guid, mapId, GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+            sLog.outError("Player %s (guid: %d) Map: %u, X: %f, Y: %f, Z: %f, O: %f. Invalid default map coordinates or instance couldn't be created.", m_name.c_str(), guid, mapId, GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
             return false;
         }
     }
