@@ -5540,7 +5540,7 @@ void Aura::HandleSpiritOfRedemption(bool apply, bool Real)
             m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); // should not be attackable
 
             // Apply root state
-             m_target->SetRooted(apply};
+             m_target->SetRooted(apply);
         }
 
         m_target->SetHealth(1);
@@ -5552,7 +5552,7 @@ void Aura::HandleSpiritOfRedemption(bool apply, bool Real)
         m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); // reactive attackable flag
 
         // Unapply root state
-        m_target->SetRooted(apply};
+        m_target->SetRooted(apply);
 
         m_target->setDeathState(JUST_DIED);
     }
