@@ -3309,22 +3309,6 @@ void Spell::EffectSummonType(uint32 i)
             }
             switch (properties->Type)
             {
-                case SUMMON_TYPE_NONE:
-                {
-                    if (prop_id == 121)
-                        {
-                            summon = m_caster->GetMap()->SummonCreature(entry, pos, properties, duration, m_originalCaster);
-                            if (!summon || !summon->isTotem())
-                                return;
-
-                            if (damage)                                            // if not spell info, DB values used
-                            {
-                                summon->SetMaxHealth(damage);
-                                summon->SetHealth(damage);
-                            }
-                            break;
-                        }
-                }
                 case SUMMON_TYPE_PET:
                 case SUMMON_TYPE_GUARDIAN:
                 case SUMMON_TYPE_GUARDIAN2:
@@ -3355,36 +3339,24 @@ void Spell::EffectSummonType(uint32 i)
 
                     summon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE | UNIT_FLAG_PASSIVE);
 
-                    summon->AI()->EnterEvadeMode();
+                    if (summon->AI())
+                        summon->AI()->EnterEvadeMode();
                     break;
                 }
                 default:
                 {
                     float radius = GetSpellRadius(m_spellInfo, i, false);
-
-                    uint32 amount = damage > 0 ? damage : 1;
-                    if (m_spellInfo->Id == 18662 || // Curse of Doom
-                        properties->Id == 2081)     // Mechanical Dragonling, Arcanite Dragonling, Mithril Dragonling
-                        amount = 1;
-
                     TempSummonType summonType = (duration == 0) ? TEMPSUMMON_DEAD_DESPAWN : TEMPSUMMON_TIMED_DESPAWN;
+                    summon = m_originalCaster->SummonCreature(entry, pos, summonType, duration);
+                    if (!summon)
+                        return;
 
-                    for (uint32 count = 0; count < amount; ++count)
-                    {
-                        GetSummonPosition(i, pos, radius, count);
+                    summon->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, m_originalCaster->GetGUID());
+                    summon->setFaction(m_originalCaster->getFaction());
+                    summon->SetLevel(m_originalCaster->getLevel());
 
-                        summon = m_originalCaster->SummonCreature(entry, pos, summonType, duration);
-                        if (!summon)
-                            continue;
-
-                        if (properties->Category == SUMMON_CATEGORY_ALLY)
-                        {
-                            summon->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, m_originalCaster->GetGUID());
-                            summon->setFaction(m_originalCaster->getFaction());
-                            summon->SetUInt32Value(UNIT_CREATED_BY_SPELL, m_spellInfo->Id);
-                        }
-                    }
-                    return;
+                    if (prop_id == 121) // Battle Standard
+                        summon->CastSpell(summon, 23036, true);
                 }
             }
             break;
