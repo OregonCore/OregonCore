@@ -370,7 +370,7 @@ void InstanceSaveManager::PackInstances()
     CharacterDatabase.Execute("PREPARE stmt2 FROM \"UPDATE characters         SET instance_id = ? WHERE instance_id = ?\"");
     CharacterDatabase.Execute("PREPARE stmt3 FROM \"UPDATE corpse             SET instance    = ? WHERE instance    = ?\"");
     CharacterDatabase.Execute("PREPARE stmt4 FROM \"UPDATE character_instance SET instance    = ? WHERE instance    = ?\"");
-    CharacterDatabase.Execute("PREPARE stmt5 FROM \"UPDATE instance           SET id          = ? WHERE instance_id = ?\"");
+    CharacterDatabase.Execute("PREPARE stmt5 FROM \"UPDATE instance           SET id          = ? WHERE id          = ?\"");
     CharacterDatabase.Execute("PREPARE stmt6 FROM \"UPDATE group_instance     SET instance    = ? WHERE instance    = ?\"");
 
     // we have got ids sorted properly
