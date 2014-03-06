@@ -11668,6 +11668,9 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
         }
     }
 
+    DEBUG_LOG("SET JUST_DIED");
+    pVictim->setDeathState(JUST_DIED);
+
     // 10% durability loss on death
     // clean InHateListOf
     if (pVictim->GetTypeId() == TYPEID_PLAYER)
