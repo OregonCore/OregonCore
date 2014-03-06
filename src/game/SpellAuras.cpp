@@ -5536,8 +5536,9 @@ void Aura::HandleSpiritOfRedemption(bool apply, bool Real)
             if (!m_target->IsStandState())
                 m_target->SetStandState(UNIT_STAND_STATE_STAND);
 
-            // Apply flag
+            // Apply flags
             m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); // should not be attackable
+            m_target->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD); // This is unfortunately here, but interrupts all attacks (Melee swings, wands etc.)
 
             // Apply root state
              m_target->SetRooted(apply);
@@ -5548,8 +5549,9 @@ void Aura::HandleSpiritOfRedemption(bool apply, bool Real)
     // die at aura end
     else
     {
-        // Unapply flag
+        // Unapply flags
         m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); // reactive attackable flag
+        m_target->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD); // Reactive auto attacks etc.
 
         // Unapply root state
         m_target->SetRooted(apply);
