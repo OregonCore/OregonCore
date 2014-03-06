@@ -5535,13 +5535,27 @@ void Aura::HandleSpiritOfRedemption(bool apply, bool Real)
             // set stand state (expected in this form)
             if (!m_target->IsStandState())
                 m_target->SetStandState(UNIT_STAND_STATE_STAND);
+
+            // Apply flag
+            m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); // should not be attackable
+
+            // Apply root state
+             m_target->SetRooted(apply};
         }
 
         m_target->SetHealth(1);
     }
     // die at aura end
     else
+    {
+        // Unapply flag
+        m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); // reactive attackable flag
+
+        // Unapply root state
+        m_target->SetRooted(apply};
+
         m_target->setDeathState(JUST_DIED);
+    }
 }
 
 void Aura::CleanupTriggeredSpells()
