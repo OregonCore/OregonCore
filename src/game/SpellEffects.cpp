@@ -6247,9 +6247,7 @@ void Spell::EffectTransmitted(uint32 effIndex)
     }
     // if gameobject is summoning object, it should be spawned right on caster's position
     else if (goinfo->type == GAMEOBJECT_TYPE_SUMMONING_RITUAL)
-    {
         m_caster->GetPosition(fx, fy, fz);
-    }
 
     GameObject* pGameObj = new GameObject;
 

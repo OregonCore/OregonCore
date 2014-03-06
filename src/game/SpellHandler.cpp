@@ -277,7 +277,8 @@ void WorldSession::HandleGameObjectUseOpcode(WorldPacket & recv_data)
     if (faction &&
         !_player->isGameMaster() &&
         !faction->IsFriendlyTo(*sFactionTemplateStore.LookupEntry(_player->getFaction())) &&
-        !faction->IsNeutralToAll())
+        !faction->IsNeutralToAll() &&
+        !obj->GetOwner())
         return;
 
     if (sScriptMgr.GOHello(_player, obj))
