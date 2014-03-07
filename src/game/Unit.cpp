@@ -9908,7 +9908,7 @@ void Unit::SetMaxHealth(uint32 val)
         }
     }
     
-    if (val) // prevent dividing by zero
+    if (healthPct) // prevent dividing by zero
         SetHealth(val * (float(GetHealth()) / healthPct));
     else
         SetHealth(0);
