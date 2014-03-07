@@ -11645,6 +11645,7 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
     ProcDamageAndSpell(pVictim, PROC_FLAG_KILL, PROC_FLAG_KILLED, PROC_EX_NONE, 0);
 
     // if talent known but not triggered (check priest class for speedup check)
+    bool SpiritOfRedemption = false;
     if (pVictim->GetTypeId() == TYPEID_PLAYER && pVictim->getClass() == CLASS_PRIEST)
     {
         AuraList const& vDummyAuras = pVictim->GetAurasByType(SPELL_AURA_DUMMY);
@@ -11663,14 +11664,18 @@ void Unit::Kill(Unit *pVictim, bool durabilityLoss)
 
                 // FORM_SPIRITOFREDEMPTION and related auras
                 pVictim->CastSpell(pVictim,27827,true,NULL,*itr);
+                SpiritOfRedemption = true;
                 break;
             }
         }
     }
 
+    if (!SpiritOfRedemption)
+    {
     DEBUG_LOG("SET JUST_DIED");
     pVictim->setDeathState(JUST_DIED);
-
+    }
+    
     // 10% durability loss on death
     // clean InHateListOf
     if (pVictim->GetTypeId() == TYPEID_PLAYER)
