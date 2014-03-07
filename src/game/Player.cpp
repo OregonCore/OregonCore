@@ -2150,13 +2150,6 @@ Creature* Player::GetNPCIfCanInteractWith(uint64 guid, uint32 npcflagmask)
     if (unit->IsHostileTo(this))
         return NULL;
 
-    // not unfriendly
-    if (FactionTemplateEntry const* factionTemplate = sFactionTemplateStore.LookupEntry(unit->getFaction()))
-        if (factionTemplate->faction)
-            if (FactionEntry const* faction = sFactionStore.LookupEntry(factionTemplate->faction))
-                if (faction->reputationListID >= 0 && GetReputationRank(faction) <= REP_UNFRIENDLY)
-                    return NULL;
-
     // not too far
     if (!unit->IsWithinDistInMap(this,INTERACTION_DISTANCE))
         return NULL;
@@ -15942,7 +15935,13 @@ void Player::_LoadReputation(QueryResult_AutoPtr result)
                 }
 
                 // set atWar for hostile
-                if (GetReputationRank(factionEntry) <= REP_HOSTILE)
+                ForcedReactions::const_iterator forceItr = m_forcedReactions.find(factionEntry->ID);
+                if (forceItr != m_forcedReactions.end())
+                {
+                    if (forceItr->second <= REP_HOSTILE)
+                        SetFactionAtWar(faction, true);
+                }
+                else if (GetReputationRank(factionEntry) <= REP_HOSTILE)
                     SetFactionAtWar(faction,true);
 
                 // reset changed flag if values similar to saved in DB
