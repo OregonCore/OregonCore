@@ -2573,7 +2573,7 @@ void Spell::SpellDamageHeal(uint32 /*i*/)
             int32 tickcount = 0;
             if (targetAura->GetSpellProto()->SpellFamilyName == SPELLFAMILY_DRUID)
             {
-                switch(targetAura->GetSpellProto()->SpellFamilyFlags)//TODO: proper spellfamily for 3.0.x
+                switch(targetAura->GetSpellProto()->SpellFamilyFlags)
                 {
                     case 0x10:  tickcount = 4;  break; // Rejuvenation
                     case 0x40:  tickcount = 6;  break; // Regrowth
