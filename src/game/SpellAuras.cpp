@@ -2768,14 +2768,9 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
         // special case (spell specific functionality)
         if (m_modifier.m_miscvalue == 0)
         {
-            // player applied only
-            if (m_target->GetTypeId() != TYPEID_PLAYER)
-                return;
-
             switch(GetId())
             {
-                // Orb of Deception
-                case 16739:
+                case 16739:                 // Orb of Deception
                 {
                     uint32 orb_model = m_target->GetNativeDisplayId();
                     switch(orb_model)
@@ -2882,34 +2877,31 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
         }
         else
         {
+            uint32 model_id;
+
             CreatureInfo const * ci = objmgr.GetCreatureTemplate(m_modifier.m_miscvalue);
             if (!ci)
             {
-                                                            //pig pink ^_^
-                m_target->SetDisplayId(16358);
+                model_id =16358;                             //pig pink ^_^
                 sLog.outError("Auras: unknown creature id = %d (only need its modelid) Form Spell Aura Transform in Spell ID = %d", m_modifier.m_miscvalue, GetId());
             }
             else
-            {
-                                                            // Will use the default model here
-                if (uint32 modelid = ci->GetRandomValidModelId())
-                    m_target->SetDisplayId(modelid);
+                model_id = ci->GetRandomValidModelId();
+
+                m_target->SetDisplayId(model_id);
 
                 // Dragonmaw Illusion (set mount model also)
                 if (GetId() == 42016 && m_target->GetMountID() && !m_target->GetAurasByType(SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED).empty())
-                    m_target->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID,16314);
+                    m_target->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 16314);
             }
+
+        // update active transform spell only not set or not overwriting negative by positive case
+        if (!m_target->getTransForm() || !IsPositiveSpell(GetId()) || IsPositiveSpell(m_target->getTransForm()))
             m_target->setTransForm(GetId());
-        }
 
         // polymorph case
         if (Real && m_target->GetTypeId() == TYPEID_PLAYER && m_target->IsPolymorphed())
         {
-            // for players, start regeneration after 1s (in polymorph fast regeneration case)
-            // only if caster is Player (after patch 2.4.2)
-            if (IS_PLAYER_GUID(GetCasterGUID()))
-                m_target->ToPlayer()->setRegenTimer(1000);
-
             //dismount polymorphed target (after patch 2.4.2)
             if (m_target->IsMounted())
                 m_target->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
@@ -2917,20 +2909,20 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
     }
     else
     {
-        // FG: workaround, fix extreme regeneration bug (orb of deception + polymorph)
         m_target->setTransForm(0);
+        m_target->SetDisplayId(m_target->GetNativeDisplayId());
 
+        // apply default equipment for creature case
+        if (m_target->GetTypeId() == TYPEID_UNIT)
+            ((Creature*)m_target)->LoadEquipment(((Creature*)m_target)->GetCreatureInfo()->equipmentId, true);
+
+        // re-apply some from still active with preference negative cases
         Unit::AuraList const& otherTransforms = m_target->GetAurasByType(SPELL_AURA_TRANSFORM);
-        if (otherTransforms.empty())
-        {
-            m_target->SetDisplayId(m_target->GetNativeDisplayId());
-            m_target->setTransForm(0);
-        }
-        else
+        if (!otherTransforms.empty())
         {
             // look for other transform auras
             Aura* handledAura = *otherTransforms.begin();
-            for (Unit::AuraList::const_iterator i = otherTransforms.begin();i != otherTransforms.end(); ++i)
+            for (Unit::AuraList::const_iterator i = otherTransforms.begin(); i != otherTransforms.end(); ++i)
             {
                 // negative auras are preferred
                 if (!IsPositiveSpell((*i)->GetSpellProto()->Id))
