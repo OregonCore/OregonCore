@@ -664,7 +664,7 @@ struct SpellEntry
     //uint32    RankFlags;                                  // 160
     //char*     Description[16];                            // 161-176 not used
     //uint32    DescriptionFlags;                           // 177     not used
-    //char*     ToolTip[16];                                // 178-193 not used
+    char*     ToolTip[16];                                  // 178-193
     //uint32    ToolTipFlags;                               // 194 not used
     uint32    ManaCostPercentage;                           // 195
     uint32    StartRecoveryCategory;                        // 196

@@ -2395,6 +2395,15 @@ void SpellMgr::LoadSpellCustomAttr()
             }
         }
 
+        for (uint32 j = 0; j < 16; j++)
+        {
+            if (spellInfo->ToolTip[j] && *spellInfo->ToolTip[j])
+            {
+                mSpellCustomAttr[i] |= SPELL_ATTR_CU_HAS_VISUAL_BUFF;
+                break;
+            }
+        }
+
         if (spellInfo->SpellVisual == 3879)
             mSpellCustomAttr[i] |= SPELL_ATTR_CU_CONE_BACK;
 
