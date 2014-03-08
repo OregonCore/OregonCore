@@ -2023,7 +2023,7 @@ enum PetDiet
     PET_DIET_RAW_FISH = 8
 };
 
-#define MAX_PET_DIET 9
+#define MAX_PET_DIET 5
 
 #define PET_FOLLOW_DIST  1
 #define PET_FOLLOW_ANGLE (M_PI/2)
