@@ -1079,65 +1079,6 @@ bool ChatHandler::HandleDelVendorItemCommand(const char* args)
     return true;
 }
 
-//add move for creature
-bool ChatHandler::HandleNpcAddMoveCommand(const char* args)
-{
-    if (!*args)
-        return false;
-
-    char* guid_str = strtok((char*)args, " ");
-    char* wait_str = strtok((char*)NULL, " ");
-
-    uint32 lowguid = atoi((char*)guid_str);
-
-    Creature* pCreature = NULL;
-
-    /* FIXME: impossible without entry
-    if (lowguid)
-        pCreature = ObjectAccessor::GetCreature(*m_session->GetPlayer(),MAKE_GUID(lowguid,HIGHGUID_UNIT));
-    */
-
-    // attempt check creature existence by DB data
-    if (!pCreature)
-    {
-        CreatureData const* data = objmgr.GetCreatureData(lowguid);
-        if (!data)
-        {
-            PSendSysMessage(LANG_COMMAND_CREATGUIDNOTFOUND, lowguid);
-            SetSentErrorMessage(true);
-            return false;
-        }
-    }
-    else
-    {
-        // obtain real GUID for DB operations
-        lowguid = pCreature->GetDBTableGUIDLow();
-    }
-
-    int wait = wait_str ? atoi(wait_str) : 0;
-
-    if (wait < 0)
-        wait = 0;
-
-    //Player* player = m_session->GetPlayer();
-
-    // update movement type
-    WorldDatabase.PExecuteLog("UPDATE creature SET MovementType = '%u' WHERE guid = '%u'", WAYPOINT_MOTION_TYPE,lowguid);
-    if (pCreature && pCreature->GetWaypointPath())
-    {
-        pCreature->SetDefaultMovementType(WAYPOINT_MOTION_TYPE);
-        pCreature->GetMotionMaster()->Initialize();
-        if (pCreature->isAlive())                            // dead creature will reset movement generator at respawn
-        {
-            pCreature->setDeathState(JUST_DIED);
-            pCreature->Respawn();
-        }
-        pCreature->SaveToDB();
-    }
-
-    return true;
-}
-
 //change level of creature or pet
 bool ChatHandler::HandleChangeLevelCommand(const char* args)
 {
