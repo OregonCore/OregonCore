@@ -9888,7 +9888,7 @@ void Unit::SetHealth(uint32 val)
 
 void Unit::SetMaxHealth(uint32 val)
 {
-    uint32 health = GetHealth();
+    float healthPct = GetMaxHealth();
     SetUInt32Value(UNIT_FIELD_MAXHEALTH, val);
 
     // group update
@@ -9907,9 +9907,11 @@ void Unit::SetMaxHealth(uint32 val)
                 owner->ToPlayer()->SetGroupUpdateFlag(GROUP_UPDATE_FLAG_PET_MAX_HP);
         }
     }
-
-    if (val < health)
-        SetHealth(val);
+    
+    if (healthPct) // prevent dividing by zero
+        SetHealth(val * (float(GetHealth()) / healthPct));
+    else
+        SetHealth(0);
 }
 
 void Unit::SetPower(Powers power, uint32 val)
