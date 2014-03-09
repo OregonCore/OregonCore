@@ -206,8 +206,7 @@ enum SpellFailedReason
     SPELL_FAILED_NOT_IN_BATTLEGROUND            = 0xA5,
     SPELL_FAILED_ONLY_IN_ARENA                  = 0xA6,
     SPELL_FAILED_TARGET_LOCKED_TO_RAID_INSTANCE = 0xA7,
-    SPELL_FAILED_UNKNOWN                        = 0xA8, // all nums from 0xA8 to 0xFF generate "Unknown Reason"
-    SPELL_FAILED_SUCCESS                        = 0xFF  // for internal use
+    SPELL_FAILED_UNKNOWN                        = 0xA8,
 };
 
 enum SpellFamilyNames
@@ -476,7 +475,7 @@ inline bool IsAutoRepeatRangedSpell(SpellEntry const* spellInfo)
     return (spellInfo->Attributes & SPELL_ATTR_RANGED) && (spellInfo->AttributesEx2 & SPELL_ATTR_EX2_AUTOREPEAT_FLAG);
 }
 
-SpellFailedReason GetErrorAtShapeshiftedCast (SpellEntry const *spellInfo, uint32 form);
+uint8 GetErrorAtShapeshiftedCast (SpellEntry const *spellInfo, uint32 form);
 
 inline bool IsChanneledSpell(SpellEntry const* spellInfo)
 {

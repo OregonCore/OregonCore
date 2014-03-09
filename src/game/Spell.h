@@ -363,8 +363,8 @@ class Spell
         void TakeReagents();
         void TakeCastItem();
         void TriggerSpell();
-        SpellFailedReason CanCast(bool strict);
-        SpellFailedReason PetCanCast(Unit* target);
+        uint8 CanCast(bool strict);
+        int16 PetCanCast(Unit* target);
         bool CanAutoCast(Unit* target);
 
         // handlers
@@ -374,10 +374,10 @@ class Spell
         void _handle_immediate_phase();
         void _handle_finish_phase();
 
-        SpellFailedReason CheckItems();
-        SpellFailedReason CheckRange(bool strict);
-        SpellFailedReason CheckPower();
-        SpellFailedReason CheckCasterAuras() const;
+        uint8 CheckItems();
+        uint8 CheckRange(bool strict);
+        uint8 CheckPower();
+        uint8 CheckCasterAuras() const;
 
         int32 CalculateDamage(uint8 i, Unit* target) { return m_caster->CalculateSpellDamage(m_spellInfo,i,m_currentBasePoints[i],target); }
 
@@ -391,9 +391,9 @@ class Spell
 
         void WriteSpellGoTargets(WorldPacket * data);
         void WriteAmmoToPacket(WorldPacket * data);
-        SpellFailedReason FillTargetMap();
+        void FillTargetMap();
 
-        SpellFailedReason SetTargetMap(uint32 i, uint32 cur);
+        void SetTargetMap(uint32 i, uint32 cur);
 
         Unit* SelectMagnetTarget();
         void HandleHitTriggerAura();
@@ -402,7 +402,7 @@ class Spell
         void CheckSrc() { if (!m_targets.HasSrc()) m_targets.setSrc(m_caster); }
         void CheckDst() { if (!m_targets.HasDst()) m_targets.setDst(m_caster); }
 
-        void SendCastResult(SpellFailedReason result);
+        void SendCastResult(uint8 result);
         void SendSpellStart();
         void SendSpellGo();
         void SendSpellCooldown();

@@ -906,13 +906,13 @@ bool IsAuraAddedBySpell(uint32 auraType, uint32 spellId)
     return false;
 }
 
-SpellFailedReason GetErrorAtShapeshiftedCast (SpellEntry const *spellInfo, uint32 form)
+uint8 GetErrorAtShapeshiftedCast (SpellEntry const *spellInfo, uint32 form)
 {
     // talents that learn spells can have stance requirements that need ignore
     // (this requirement only for client-side stance show in talent description)
     if (GetTalentSpellCost(spellInfo->Id) > 0 &&
         (spellInfo->Effect[0] == SPELL_EFFECT_LEARN_SPELL || spellInfo->Effect[1] == SPELL_EFFECT_LEARN_SPELL || spellInfo->Effect[2] == SPELL_EFFECT_LEARN_SPELL))
-        return SPELL_FAILED_SUCCESS;
+        return 0;
 
     uint32 stanceMask = (form ? 1 << (form - 1) : 0);
 
@@ -920,7 +920,7 @@ SpellFailedReason GetErrorAtShapeshiftedCast (SpellEntry const *spellInfo, uint3
         return SPELL_FAILED_NOT_SHAPESHIFT;
 
     if (stanceMask & spellInfo->Stances)                    // can explicitly be casted in this stance
-        return SPELL_FAILED_SUCCESS;
+        return 0;
 
     bool actAsShifted = false;
     if (form > 0)
@@ -929,7 +929,7 @@ SpellFailedReason GetErrorAtShapeshiftedCast (SpellEntry const *spellInfo, uint3
         if (!shapeInfo)
         {
             sLog.outError("GetErrorAtShapeshiftedCast: unknown shapeshift %u", form);
-            return SPELL_FAILED_SUCCESS;
+            return 0;
         }
         actAsShifted = !(shapeInfo->flags1 & 1);            // shapeshift acts as normal form for spells
     }
@@ -948,7 +948,7 @@ SpellFailedReason GetErrorAtShapeshiftedCast (SpellEntry const *spellInfo, uint3
             return SPELL_FAILED_ONLY_SHAPESHIFT;
     }
 
-    return SPELL_FAILED_SUCCESS;
+    return 0;
 }
 
 void SpellMgr::LoadSpellTargetPositions()
@@ -2531,12 +2531,6 @@ void SpellMgr::LoadSpellCustomAttr()
         case 13258: // Summon Goblin Bomb
         case 13166: // Battle Chicken
             mSpellCustomAttr[i] |= SPELL_ATTR_CU_CAST_BY_ITEM_ONLY;
-            break;
-        //case 13278: // Gnomish Death Ray (Item Spell)
-        //case 13280: // Gnomish Death Ray (Dummy)
-        case 13279: // Gnomish Death Ray (Dummy Target)
-            spellInfo->EffectImplicitTargetA[0] = TARGET_TYPE_UNIT_TARGET;
-            spellInfo->EffectImplicitTargetA[1] = TARGET_TYPE_UNIT_TARGET;
             break;
         default:
             break;
