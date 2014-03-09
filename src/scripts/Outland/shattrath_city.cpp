@@ -664,7 +664,7 @@ struct npc_dirty_larryAI : public ScriptedAI
             Attack = false;
         }
 
-        if ((me->GetHealth()*100)/me->GetMaxHealth() < 1 && !Done)
+        if ((me->GetHealth()*100)/me->GetMaxHealth() < 15 && !Done)
         {
             Unit* Creepjack = me->FindNearestCreature(NPC_CREEPJACK, 20);
             if (Creepjack)
