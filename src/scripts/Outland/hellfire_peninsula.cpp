@@ -1873,4 +1873,9 @@ void AddSC_hellfire_peninsula()
     newscript->Name = "npc_pathaleon_image";
     newscript->GetAI = &GetAI_npc_pathaleon_image;
     newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_fel_guard_hound";
+    newscript->GetAI = &GetAI_npc_fel_guard_hound;
+    newscript->RegisterSelf();
 }
