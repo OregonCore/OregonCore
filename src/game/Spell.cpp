@@ -2876,6 +2876,9 @@ void Spell::SendCastResult(uint8 result)
                     case 45373:                             // Bloodberry Elixir
                         data << uint32(4075);
                         break;
+                    case 32307:								// Warmaul Ogre Banner
+                        data << uint32(3637);
+                        break;
                     default:                                // default case
                         data << uint32(m_spellInfo->AreaId);
                         break;
