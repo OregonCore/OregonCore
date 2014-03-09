@@ -70,11 +70,11 @@ typedef intptr_t ssize_t;
 #  define JEMALLOC_N(n) jet_##n
 #  include "jemalloc/internal/public_namespace.h"
 #  define JEMALLOC_NO_RENAME
-#  include "../jemalloc.h"
+#  include "../jemalloc@install_suffix@.h"
 #  undef JEMALLOC_NO_RENAME
 #else
-#  define JEMALLOC_N(n) je_##n
-#  include "../jemalloc.h"
+#  define JEMALLOC_N(n) @private_namespace@##n
+#  include "../jemalloc@install_suffix@.h"
 #endif
 #include "jemalloc/internal/private_namespace.h"
 

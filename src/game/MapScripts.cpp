@@ -801,7 +801,8 @@ void Map::ScriptsProcess()
                 if (Creature* cSource = _GetScriptCreatureSourceOrTarget(source, target, step.script, true))
                     cSource->ForcedDespawn(step.script->DespawnSelf.DespawnDelay);
                 break;
-
+            case SCRIPT_COMMAND_DO_NOTHING:
+                break;
             case SCRIPT_COMMAND_LOAD_PATH:
                 // Source must be Unit.
                 if (Unit* pSource = _GetScriptUnit(source, true, step.script))

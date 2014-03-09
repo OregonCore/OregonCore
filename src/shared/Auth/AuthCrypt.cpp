@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -66,7 +66,7 @@ void AuthCrypt::SetKey(BigNumber *bn)
     GenerateKey(key, bn);
     _key.resize(SHA_DIGEST_LENGTH);
     std::copy(key, key + SHA_DIGEST_LENGTH, _key.begin());
-    delete key;
+    delete[] key;
 }
 
 AuthCrypt::~AuthCrypt()

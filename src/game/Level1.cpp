@@ -222,6 +222,7 @@ bool ChatHandler::HandleGMmodeCommand(const char* args)
     {
         m_session->GetPlayer()->SetGameMaster(true);
         m_session->SendNotification(LANG_GM_ON);
+        m_session->GetPlayer()->UpdateTriggerVisibility();
         #ifdef _DEBUG_VMAPS
         VMAP::IVMapManager *vMapManager = VMAP::VMapFactory::createOrGetVMapManager();
         vMapManager->processCommand("stoplog");
@@ -233,6 +234,7 @@ bool ChatHandler::HandleGMmodeCommand(const char* args)
     {
         m_session->GetPlayer()->SetGameMaster(false);
         m_session->SendNotification(LANG_GM_OFF);
+        m_session->GetPlayer()->UpdateTriggerVisibility();
         #ifdef _DEBUG_VMAPS
         VMAP::IVMapManager *vMapManager = VMAP::VMapFactory::createOrGetVMapManager();
         vMapManager->processCommand("startlog");
@@ -702,11 +704,16 @@ bool ChatHandler::HandleVisibleCommand(const char* args)
         return true;
     }
 
+    const uint32 VISUAL_AURA = 37800;
     std::string argstr = (char*)args;
+    Player* player = m_session->GetPlayer();
 
     if (argstr == "on")
     {
-        m_session->GetPlayer()->SetGMVisible(true);
+        if (player->HasAura(VISUAL_AURA, 0))
+            player->RemoveAurasDueToSpell(VISUAL_AURA);
+
+        player->SetGMVisible(true);
         m_session->SendNotification(LANG_INVISIBLE_VISIBLE);
         return true;
     }
@@ -715,6 +722,9 @@ bool ChatHandler::HandleVisibleCommand(const char* args)
     {
         m_session->SendNotification(LANG_INVISIBLE_INVISIBLE);
         m_session->GetPlayer()->SetGMVisible(false);
+
+        player->AddAura(VISUAL_AURA, player);
+
         return true;
     }
 
@@ -1032,7 +1042,16 @@ bool ChatHandler::HandleGonameCommand(const char* args)
 
         // to point to see at target with same orientation
         float x,y,z;
-        target->GetContactPoint(_player,x,y,z);
+        target->GetPosition(x,y,z);
+
+        if (target->HasUnitMovementFlag(MOVEFLAG_FLYING))
+        {
+            WorldPacket data;
+            data.SetOpcode(SMSG_MOVE_SET_CAN_FLY);
+            data << target->GetPackGUID();
+            data << uint32(0);                                      // unknown
+            target->SendMessageToSet(&data, true);
+        }
 
         _player->TeleportTo(target->GetMapId(), x, y, z, _player->GetAngle(target), TELE_TO_GM_MODE);
 
@@ -1140,6 +1159,13 @@ bool ChatHandler::HandleModifyHPCommand(const char* args)
     if (target == NULL)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    if (!target->isAlive())
+    {
+        SendSysMessage(LANG_NO_SELECTION);
         SetSentErrorMessage(true);
         return false;
     }

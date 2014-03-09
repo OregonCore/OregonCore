@@ -273,6 +273,14 @@ void WorldSession::HandleGameObjectUseOpcode(WorldPacket & recv_data)
     if (!obj)
         return;
 
+    FactionTemplateEntry const* faction = sFactionTemplateStore.LookupEntry(obj->GetGOInfo()->faction);
+    if (faction &&
+        !_player->isGameMaster() &&
+        !faction->IsFriendlyTo(*sFactionTemplateStore.LookupEntry(_player->getFaction())) &&
+        !faction->IsNeutralToAll() &&
+        !obj->GetOwner())
+        return;
+
     if (sScriptMgr.GOHello(_player, obj))
         return;
 
@@ -356,7 +364,7 @@ void WorldSession::HandleCancelAuraOpcode(WorldPacket& recvPacket)
         return;
 
     // not allow remove non positive spells and spells with attr SPELL_ATTR_CANT_CANCEL
-    if (!IsPositiveSpell(spellId) || (spellInfo->Attributes & SPELL_ATTR_CANT_CANCEL))
+    if (spellInfo->Attributes & SPELL_ATTR_CANT_CANCEL)
         return;
 
     // channeled spell case (it currently casted then)
@@ -373,6 +381,9 @@ void WorldSession::HandleCancelAuraOpcode(WorldPacket& recvPacket)
     }
 
     // non channeled case
+    if (!IsPositiveSpell(spellId))
+        return;
+
     _player->RemoveAurasDueToSpellByCancel(spellId);
 }
 

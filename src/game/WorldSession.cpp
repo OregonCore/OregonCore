@@ -163,6 +163,8 @@ void WorldSession::LogUnprocessedTail(WorldPacket *packet)
         LookupOpcodeName(packet->GetOpcode()),
         packet->GetOpcode(),
         packet->rpos(),packet->wpos());
+    sLog.outError("Dumping packet causing error:");
+    packet->hexlike();
 }
 
 #if COMPILER == COMPILER_GNU

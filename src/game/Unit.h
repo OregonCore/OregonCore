@@ -125,6 +125,7 @@ enum SpellValueMod
     SPELLVALUE_BASE_POINT1,
     SPELLVALUE_BASE_POINT2,
     SPELLVALUE_MAX_TARGETS,
+    SPELLVALUE_DURATION
 };
 
 typedef std::pair<SpellValueMod, int32>     CustomSpellValueMod;
@@ -933,7 +934,7 @@ class Unit : public WorldObject
         int32 ModifyHealth(int32 val);
 
         // Modify target's health and send client log
-        uint32 HealTargetUnit(Unit* target, SpellEntry const *spellInfo, uint32 heal, bool crit = false, bool sendLog = true);
+        uint32 HealTargetUnit(Unit* target, SpellEntry const *spellInfo, uint32 heal, bool crit = false);
 
         Powers getPowerType() const { return Powers(GetByteValue(UNIT_FIELD_BYTES_0, 3)); }
         void setPowerType(Powers power);
@@ -1231,6 +1232,7 @@ class Unit : public WorldObject
         Aura* GetAuraByCasterSpell(uint32 spellId, uint64 casterGUID);
         void RemoveAurasDueToSpellByDispel(uint32 spellId, uint64 casterGUID, Unit *dispeler);
         void RemoveAurasDueToSpellBySteal(uint32 spellId, uint64 casterGUID, Unit *stealer);
+        void RemoveAurasByType(AuraType auraType, uint64 casterGUID = 0, Aura * except = NULL, bool negative = true, bool positive = true);
         void RemoveAurasDueToSpellByCancel(uint32 spellId);
         void RemoveAurasAtChanneledTarget(SpellEntry const* spellInfo, Unit * caster);
         void RemoveNotOwnSingleTargetAuras();

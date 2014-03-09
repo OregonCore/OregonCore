@@ -4929,9 +4929,9 @@ void Player::SetRegularAttackTime()
             ItemPrototype const *proto = tmpitem->GetProto();
             if (proto->Delay)
                 SetAttackTime(WeaponAttackType(i), proto->Delay);
-            else
-                SetAttackTime(WeaponAttackType(i), BASE_ATTACK_TIME);
         }
+        else
+            SetAttackTime(WeaponAttackType(i), BASE_ATTACK_TIME);
     }
 }
 
@@ -6518,7 +6518,7 @@ void Player::ModifyHonorPoints(int32 value)
         SetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY, GetHonorPoints() < sWorld.getConfig(CONFIG_MAX_HONOR_POINTS) - value ? GetHonorPoints() + value : sWorld.getConfig(CONFIG_MAX_HONOR_POINTS));
 }
 
-void Player::ModifyArenaPoints(int32 value)
+void Player::ModifyArenaPoints(int32 value, bool update)
 {
     if (value < 0)
     {
@@ -6529,6 +6529,9 @@ void Player::ModifyArenaPoints(int32 value)
     }
     else
         SetUInt32Value(PLAYER_FIELD_ARENA_CURRENCY, GetArenaPoints() < sWorld.getConfig(CONFIG_MAX_ARENA_POINTS) - value ? GetArenaPoints() + value : sWorld.getConfig(CONFIG_MAX_ARENA_POINTS));
+
+    if(update)
+        CharacterDatabase.PExecute("UPDATE characters SET arenaPoints = arenaPoints + '%u' WHERE guid = '%u'",value,GetGUIDLow());
 }
 
 uint32 Player::GetGuildIdFromDB(uint64 guid)
@@ -6880,6 +6883,10 @@ void Player::_ApplyItemMods(Item *item, uint8 slot,bool apply)
     ItemPrototype const *proto = item->GetProto();
 
     if (!proto)
+        return;
+
+    // don't apply/remove mods if the weapon is disarmed
+    if (item->GetSlot() == EQUIPMENT_SLOT_MAINHAND && !IsUseEquippedWeapon(true))
         return;
 
     sLog.outDetail("applying mods for item %u ",item->GetGUIDLow());
@@ -11901,7 +11908,7 @@ void Player::ClearTrade()
     tradeGold = 0;
     acceptTrade = false;
     for (int i = 0; i < TRADE_SLOT_COUNT; i++)
-        tradeItems[i] = NULL_SLOT;
+        tradeItems[i] = 0;
 }
 
 void Player::TradeCancel(bool sendback)
@@ -14919,50 +14926,56 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     // NOW player must have valid map
     // load the player's map here if it's not already loaded
     Map *map = MapManager::Instance().CreateMap(mapId, this, instanceId);
+    AreaTrigger const* areaTrigger = NULL;
+    bool check = false;
 
     if (!map)
     {
-        instanceId = 0;
-        AreaTrigger const* at = objmgr.GetGoBackTrigger(mapId);
-        if (at)
+        areaTrigger = objmgr.GetGoBackTrigger(mapId);
+        check = true;
+    }
+    else if (map->IsDungeon()) // if map is dungeon...
+    {
+        if (!((InstanceMap*)map)->CanEnter(this)) // ... and can't enter map, then look for entry point.
         {
-            sLog.outError("Player (guidlow %d) is teleported to gobacktrigger (Map: %u X: %f Y: %f Z: %f O: %f).",guid,mapId,GetPositionX(),GetPositionY(),GetPositionZ(),GetOrientation());
-            Relocate(at->target_X, at->target_Y, at->target_Z, GetOrientation());
-            mapId = at->target_mapId;
+            areaTrigger = objmgr.GetGoBackTrigger(mapId);
+            check = true;
         }
-        else
+        else if (instanceId && !sInstanceSaveManager.GetInstanceSave(instanceId)) // ... and instance is reseted then look for entrance.
         {
-            sLog.outError("Player (guidlow %d) is teleported to home (Map: %u X: %f Y: %f Z: %f O: %f).",guid,mapId,GetPositionX(),GetPositionY(),GetPositionZ(),GetOrientation());
-            RelocateToHomebind();
-        }
-
-        map = MapManager::Instance().CreateMap(mapId, this, 0);
-        if (!map)
-        {
-            PlayerInfo const *info = objmgr.GetPlayerInfo(getRace(), getClass());
-            mapId = info->mapId;
-            Relocate(info->positionX,info->positionY,info->positionZ,0.0f);
-            sLog.outError("ERROR: Player (guidlow %d) has invalid coordinates (X: %f Y: %f Z: %f O: %f). Teleport to default race/class locations.",guid,GetPositionX(),GetPositionY(),GetPositionZ(),GetOrientation());
-            map = MapManager::Instance().CreateMap(mapId, this, 0);
-            if (!map)
-            {
-                sLog.outError("Player (guidlow %d) has invalid default map coordinates (X: %f Y: %f Z: %f O: %f). or instance couldn't be created",guid,GetPositionX(),GetPositionY(),GetPositionZ(),GetOrientation());
-                return false;
-            }
+            areaTrigger = objmgr.GetMapEntranceTrigger(mapId);
+            check = true;
         }
     }
 
-    // if the player is in an instance (not a bg) and it has been reset in the meantime teleport him to the entrance
-    if (instanceId && !m_bgData.bgInstanceID && !sInstanceSaveManager.GetInstanceSave(instanceId))
+    if (check) // in case of special event when creating map...
     {
-        AreaTrigger const* at = objmgr.GetMapEntranceTrigger(mapId);
-        if (at)
-            Relocate(at->target_X, at->target_Y, at->target_Z, at->target_Orientation);
+        if (areaTrigger) // ... if we have an areatrigger, then relocate to new map/coordinates.
+        {
+            Relocate(areaTrigger->target_X, areaTrigger->target_Y, areaTrigger->target_Z, GetOrientation());
+            if (mapId != areaTrigger->target_mapId)
+            {
+                mapId = areaTrigger->target_mapId;
+                map = MapManager::Instance().CreateMap(mapId, this, 0);
+            }
+        }
         else
         {
-            sLog.outError("Player %s(GUID: %u) logged in to a reset instance (map: %u) and there is no area-trigger leading to this map. Thus he can't be ported back to the entrance. This _might_ be an exploit attempt.", GetName(), GetGUIDLow(), mapId);
-            RelocateToHomebind();
-            map = MapManager::Instance().CreateMap(mapId, this, instanceId);
+            sLog.outError("Player %s (guid: %d) Map: %u, X: %f, Y: %f, Z: %f, O: %f. Areatrigger not found.", m_name.c_str(), guid, mapId, GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+            map = NULL;
+        }
+    }
+
+    if (!map)
+    {
+        PlayerInfo const* info = objmgr.GetPlayerInfo(getRace(), getClass());
+        mapId = info->mapId;
+        Relocate(info->positionX, info->positionY, info->positionZ, 0.0f);
+        map = MapManager::Instance().CreateMap(mapId, this, 0);
+        if (!map)
+        {
+            sLog.outError("Player %s (guid: %d) Map: %u, X: %f, Y: %f, Z: %f, O: %f. Invalid default map coordinates or instance couldn't be created.", m_name.c_str(), guid, mapId, GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+            return false;
         }
     }
 
@@ -15416,6 +15429,8 @@ void Player::_LoadInventory(QueryResult_AutoPtr result, uint32 timediff)
 
             bool success = true;
 
+            uint8 err = EQUIP_ERR_OK;
+            // Item is not in bag
             if (!bag_guid)
             {
                 // the item is not in a bag
@@ -15460,7 +15475,12 @@ void Player::_LoadInventory(QueryResult_AutoPtr result, uint32 timediff)
                 // the item is in a bag, find the bag
                 std::map<uint64, Bag*>::iterator itr = bagMap.find(bag_guid);
                 if (itr != bagMap.end())
-                    itr->second->StoreItem(slot, item, true);
+                {
+                    ItemPosCountVec dest;
+                    err = CanStoreItem(itr->second->GetSlot(), slot, dest, item);
+                    if (err == EQUIP_ERR_OK)
+                        item = StoreItem(dest, item, true);
+                }
                 else
                     success = false;
             }
@@ -17136,7 +17156,11 @@ void Player::SendResetInstanceSuccess(uint32 MapId)
 
 void Player::SendResetInstanceFailed(uint32 reason, uint32 MapId)
 {
-    // TODO: find what other fail reasons there are besides players in the instance
+    /* Reasons for instance reset failure:
+    // 0: There are players inside the instance.
+    // 1: There are players offline in your party.
+    // 2>: There are players in your party attempting to zone into an instance.
+    */
     WorldPacket data(SMSG_INSTANCE_RESET_FAILED, 4);
     data << uint32(reason);
     data << uint32(MapId);
@@ -17782,9 +17806,9 @@ void Player::SetRestBonus (float rest_bonus_new)
 
     // update data for client
     if (m_rest_bonus>10)
-        SetByteValue(PLAYER_BYTES_2, 3, 0x01);              // Set Reststate = Rested
+        SetByteValue(PLAYER_BYTES_2, 3, REST_STATE_RESTED);              // Set Reststate = Rested
     else if (m_rest_bonus <= 1)
-        SetByteValue(PLAYER_BYTES_2, 3, 0x02);              // Set Reststate = Normal
+        SetByteValue(PLAYER_BYTES_2, 3, REST_STATE_NORMAL);              // Set Reststate = Normal
 
     //RestTickUpdate
     SetUInt32Value(PLAYER_REST_STATE_EXPERIENCE, uint32(m_rest_bonus));
@@ -19029,6 +19053,28 @@ void Player::UpdateVisibilityOf(WorldObject* target)
     }
 }
 
+void Player::UpdateTriggerVisibility()
+{
+    if (m_clientGUIDs.empty())
+        return;
+
+    UpdateData udata;
+    WorldPacket packet;
+    for (ClientGUIDs::iterator itr=m_clientGUIDs.begin(); itr != m_clientGUIDs.end(); ++itr)
+    {
+        if (IS_CREATURE_GUID(*itr))
+        {
+            Creature *obj = IsInWorld() ? GetMap()->GetCreature(*itr) : NULL;
+            if (!obj || !obj->isTrigger())
+                continue;
+
+            obj->BuildCreateUpdateBlockForPlayer(&udata,this);
+        }
+    }
+    udata.BuildPacket(&packet);
+    GetSession()->SendPacket(&packet);
+}
+
 void Player::SendInitialVisiblePackets(Unit* target)
 {
     SendAuraDurationsForTarget(target);
@@ -19839,6 +19885,16 @@ bool Player::HasItemFitToSpellReqirements(SpellEntry const* spellInfo, Item cons
             sLog.outError("HasItemFitToSpellReqirements: Not handled spell requirement for item class %u",spellInfo->EquippedItemClass);
             break;
     }
+
+    return false;
+}
+
+bool Player::CanCastNoReagents(SpellEntry const* spellInfo) const
+{
+    // don't take reagents for spells with SPELL_ATTR_EX5_NO_REAGENT_WHILE_PREP
+    if (spellInfo->AttributesEx5 & SPELL_ATTR_EX5_NO_REAGENT_WHILE_PREP &&
+        HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PREPARATION))
+        return true;
 
     return false;
 }

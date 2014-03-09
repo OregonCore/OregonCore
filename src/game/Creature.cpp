@@ -361,8 +361,10 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData *data)
 
     m_regenHealth = cInfo->RegenHealth;
 
-    // creatures always have melee weapon ready if any
-    SetSheath(SHEATH_STATE_MELEE);
+    // creatures always have melee weapon ready if any unless specified otherwise
+    if (!GetCreatureAddon())
+        SetSheath(SHEATH_STATE_MELEE);
+
     SetByteValue(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_AURAS);
 
     SelectLevel(cInfo);
@@ -1060,6 +1062,7 @@ void Creature::SelectLevel(const CreatureInfo *cinfo)
     SetModifierValue(UNIT_MOD_ATTACK_POWER_RANGED, BASE_VALUE, level * 5);
     //SetModifierValue(UNIT_MOD_ATTACK_POWER, BASE_VALUE, cinfo->attackpower * damagemod);
     //SetModifierValue(UNIT_MOD_ATTACK_POWER_RANGED, BASE_VALUE, cinfo->rangedattackpower * damagemod);
+    UpdateAllStats();
 }
 
 float Creature::_GetHealthMod(int32 Rank)
@@ -1319,10 +1322,23 @@ bool Creature::canSeeOrDetect(Unit const* u, bool detect, bool /*inVisibleList*/
 
 bool Creature::canStartAttack(Unit const* who) const
 {
-    if (isCivilian()
-        || !who->isInAccessiblePlaceFor(this)
-        || (!canFly() && GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
-        || !IsWithinDistInMap(who, GetAttackDistance(who)))
+    if (isCivilian())
+        return false;
+
+    if (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE))
+        return false;
+
+    // Do not attack non-combat pets
+    if (who->GetTypeId() == TYPEID_UNIT && who->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET)
+        return false;
+
+    if (!canFly() && (GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE + m_CombatDistance))
+        return false;
+
+    if (!who->isInAccessiblePlaceFor(this))
+        return false;
+
+    if (!IsWithinDistInMap(who, GetAttackDistance(who)))
         return false;
 
     if (!canAttack(who, false))

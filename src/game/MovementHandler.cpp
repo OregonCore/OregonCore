@@ -273,6 +273,9 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
     //Save movement flags
     mover->SetUnitMovementFlags(movementInfo.GetMovementFlags());
 
+    if (mover->IsSitState() && movementInfo.GetMovementFlags() & (MOVEFLAG_MOVING | MOVEFLAG_TURNING))
+        mover->SetStandState(UNIT_STAND_STATE_STAND);
+
     /* handle special cases */
     if (movementInfo.HasMovementFlag(MOVEFLAG_ONTRANSPORT))
     {

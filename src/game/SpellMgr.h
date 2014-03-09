@@ -206,7 +206,8 @@ enum SpellFailedReason
     SPELL_FAILED_NOT_IN_BATTLEGROUND            = 0xA5,
     SPELL_FAILED_ONLY_IN_ARENA                  = 0xA6,
     SPELL_FAILED_TARGET_LOCKED_TO_RAID_INSTANCE = 0xA7,
-    SPELL_FAILED_UNKNOWN                        = 0xA8,
+    SPELL_FAILED_UNKNOWN                        = 0xA8, // all nums from 0xA8 to 0xFF generate "Unknown Reason"
+    SPELL_FAILED_SUCCESS                        = 0xFF  // for internal use
 };
 
 enum SpellFamilyNames
@@ -475,7 +476,7 @@ inline bool IsAutoRepeatRangedSpell(SpellEntry const* spellInfo)
     return (spellInfo->Attributes & SPELL_ATTR_RANGED) && (spellInfo->AttributesEx2 & SPELL_ATTR_EX2_AUTOREPEAT_FLAG);
 }
 
-uint8 GetErrorAtShapeshiftedCast (SpellEntry const *spellInfo, uint32 form);
+SpellFailedReason GetErrorAtShapeshiftedCast (SpellEntry const *spellInfo, uint32 form);
 
 inline bool IsChanneledSpell(SpellEntry const* spellInfo)
 {
@@ -788,6 +789,8 @@ inline bool IsProfessionSkill(uint32 skill)
 #define SPELL_ATTR_CU_LINK_REMOVE       0x00002000
 #define SPELL_ATTR_CU_MOVEMENT_IMPAIR   0x00004000
 #define SPELL_ATTR_CU_IGNORE_ARMOR      0x00008000
+#define SPELL_ATTR_CU_CAST_BY_ITEM_ONLY 0x00010000
+#define SPELL_ATTR_CU_HAS_VISUAL_BUFF   0x00020000
 
 
 typedef std::vector<uint32> SpellCustomAttribute;

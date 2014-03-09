@@ -190,6 +190,17 @@ bool changetokGuid(std::string &str, int n, std::map<uint32, uint32> &guidMap, u
     return changetoknth(str, n, chritem, false, nonzero);
 }
 
+void fixNULLfields(std::string &line)
+{
+    std::string nullString("'NULL'");
+    size_t pos = line.find(nullString);
+    while (pos != std::string::npos)
+    {
+        line.replace(pos, nullString.length(), "NULL");
+        pos = line.find(nullString);
+    }
+}
+
 std::string CreateDumpString(char const* tableName, QueryResult_AutoPtr result)
 {
     if (!tableName || !result) return "";
@@ -497,6 +508,14 @@ DumpReturn PlayerDumpReader::LoadDump(const std::string& file, uint32 account, s
                 else if (!changenth(line, 4, name.c_str()))
                     ROLLBACK(DUMP_FILE_BROKEN);
 
+                const char null[5] = "NULL";
+                if (!changenth(line, 58, null))
+                    ROLLBACK(DUMP_FILE_BROKEN);
+                if (!changenth(line, 59, null))
+                    ROLLBACK(DUMP_FILE_BROKEN);
+                if (!changenth(line, 60, null))
+                    ROLLBACK(DUMP_FILE_BROKEN);
+
                 break;
             }
             case DTT_INVENTORY:                             // character_inventory t.
@@ -602,6 +621,8 @@ DumpReturn PlayerDumpReader::LoadDump(const std::string& file, uint32 account, s
                 sLog.outError("Unknown dump table type: %u",type);
                 break;
         }
+
+        fixNULLfields(line);
 
         if (!CharacterDatabase.Execute(line.c_str()))
             ROLLBACK(DUMP_FILE_BROKEN);

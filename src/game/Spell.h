@@ -21,6 +21,7 @@
 #define __SPELL_H
 
 #include "GridDefines.h"
+#include "SpellMgr.h"
 
 #define MAX_SPELL_ID    60000
 
@@ -210,9 +211,13 @@ struct SpellValue
         for (uint32 i = 0; i < 3; ++i)
             EffectBasePoints[i] = proto->EffectBasePoints[i];
         MaxAffectedTargets = proto->MaxAffectedTargets;
+        Duration = GetSpellDuration(proto);
+        CustomDuration = false;
     }
     int32     EffectBasePoints[3];
     uint32    MaxAffectedTargets;
+    uint32    Duration;
+    bool      CustomDuration;
 };
 
 enum SpellState
@@ -358,8 +363,8 @@ class Spell
         void TakeReagents();
         void TakeCastItem();
         void TriggerSpell();
-        uint8 CanCast(bool strict);
-        int16 PetCanCast(Unit* target);
+        SpellFailedReason CanCast(bool strict);
+        SpellFailedReason PetCanCast(Unit* target);
         bool CanAutoCast(Unit* target);
 
         // handlers
@@ -369,10 +374,10 @@ class Spell
         void _handle_immediate_phase();
         void _handle_finish_phase();
 
-        uint8 CheckItems();
-        uint8 CheckRange(bool strict);
-        uint8 CheckPower();
-        uint8 CheckCasterAuras() const;
+        SpellFailedReason CheckItems();
+        SpellFailedReason CheckRange(bool strict);
+        SpellFailedReason CheckPower();
+        SpellFailedReason CheckCasterAuras() const;
 
         int32 CalculateDamage(uint8 i, Unit* target) { return m_caster->CalculateSpellDamage(m_spellInfo,i,m_currentBasePoints[i],target); }
 
@@ -386,9 +391,9 @@ class Spell
 
         void WriteSpellGoTargets(WorldPacket * data);
         void WriteAmmoToPacket(WorldPacket * data);
-        void FillTargetMap();
+        SpellFailedReason FillTargetMap();
 
-        void SetTargetMap(uint32 i, uint32 cur);
+        SpellFailedReason SetTargetMap(uint32 i, uint32 cur);
 
         Unit* SelectMagnetTarget();
         void HandleHitTriggerAura();
@@ -397,7 +402,7 @@ class Spell
         void CheckSrc() { if (!m_targets.HasSrc()) m_targets.setSrc(m_caster); }
         void CheckDst() { if (!m_targets.HasDst()) m_targets.setDst(m_caster); }
 
-        void SendCastResult(uint8 result);
+        void SendCastResult(SpellFailedReason result);
         void SendSpellStart();
         void SendSpellGo();
         void SendSpellCooldown();

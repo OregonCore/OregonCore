@@ -240,7 +240,7 @@ class Aura
         }
         time_t GetAuraApplyTime() { return m_applyTime; }
 
-        bool IsExpired() const { return !GetAuraDuration() && !(IsPermanent() || IsPassive()); }
+        bool IsExpired() const { return !GetAuraDuration() && !IsPermanent(); }
         void UpdateAuraDuration();
         void SendAuraDurationForCaster(Player* caster);
         void UpdateSlotCounterAndDuration();

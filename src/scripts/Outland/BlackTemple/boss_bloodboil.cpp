@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2006-2012 ScriptDev2 <http://www.scriptdev2.com/>
  *
@@ -270,7 +270,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
                 FelGeyserTimer = 30000;
             } else FelGeyserTimer -= diff;
 
-            if (me->getVictim()->IsImmunedToDamage(SPELL_SCHOOL_MASK_ALL,true))
+            if (me->getVictim() && me->getVictim()->IsImmunedToDamage(SPELL_SCHOOL_MASK_ALL,true))
                 me->getThreatManager().modifyThreatPercent(me->getVictim(),-100);
         }
 

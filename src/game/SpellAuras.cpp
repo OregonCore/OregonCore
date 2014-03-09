@@ -165,7 +165,7 @@ pAuraHandler AuraHandler[TOTAL_AURAS]=
     &Aura::HandleNoImmediateEffect,                         //109 SPELL_AURA_ADD_TARGET_TRIGGER
     &Aura::HandleModPowerRegenPCT,                          //110 SPELL_AURA_MOD_POWER_REGEN_PERCENT
     &Aura::HandleNoImmediateEffect,                         //111 SPELL_AURA_ADD_CASTER_HIT_TRIGGER implemented in Spell::HandleHitTriggerAura
-    &Aura::HandleNoImmediateEffect,                         //112 SPELL_AURA_OVERRIDE_CLASS_SCRIPTS
+    &Aura::HandleNoImmediateEffect,                         //112 SPELL_AURA_OVERRIDE_CLASS_SCRIPTS another Dummy spells
     &Aura::HandleNoImmediateEffect,                         //113 SPELL_AURA_MOD_RANGED_DAMAGE_TAKEN implemented in Unit::MeleeDamageBonus
     &Aura::HandleNoImmediateEffect,                         //114 SPELL_AURA_MOD_RANGED_DAMAGE_TAKEN_PCT implemented in Unit::MeleeDamageBonus
     &Aura::HandleNoImmediateEffect,                         //115 SPELL_AURA_MOD_HEALING                 implemented in Unit::SpellBaseHealingBonusForVictim
@@ -911,9 +911,8 @@ void Aura::_AddAura()
     if (getDiminishGroup() != DIMINISHING_NONE)
         m_target->ApplyDiminishingAura(getDiminishGroup(),true);
 
-    // passive auras (except totem auras) do not get placed in the slots
-    // area auras with SPELL_AURA_NONE are not shown on target
-    if ((!m_isPassive || (caster && caster->GetTypeId() == TYPEID_UNIT && caster->ToCreature()->isTotem())) &&
+    // Show the buff (if any) on the target
+    if (spellmgr.GetSpellCustomAttr(m_spellProto->Id) & SPELL_ATTR_CU_HAS_VISUAL_BUFF &&
         (m_spellProto->Effect[GetEffIndex()] != SPELL_EFFECT_APPLY_AREA_AURA_ENEMY || m_target != caster))
     {
         if (!secondaura)                                     // new slot need
@@ -1147,9 +1146,6 @@ void Aura::HandleAddModifier(bool apply, bool Real)
             case 22008:    // Netherwind Focus
             case 34754:    // Clearcasting
             case 34936:    // Backlash
-            case 48108:    // Hot Streak
-            case 54741:    // Firestarter
-            case 57761:    // Fireball!
 
                 m_procCharges = 1;
                 break;
@@ -2744,6 +2740,13 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
             default:
                 break;
         }
+
+        /* We need to re-apply any of transform auras:
+           Great example is OHF, when you are in cat form and unshapeshift,
+           you should be a human not your original model */
+        Unit::AuraList const& trans = m_target->GetAurasByType(SPELL_AURA_TRANSFORM);
+        for (Unit::AuraList::const_iterator i = trans.begin(); i != trans.end(); i++)
+            (*i)->ApplyModifier(true, true);
     }
 
     // adding/removing linked auras
@@ -2756,19 +2759,18 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
 
 void Aura::HandleAuraTransform(bool apply, bool Real)
 {
+    // Shapeshifts have higher priority than transforms
+    if (m_target->HasAuraType(SPELL_AURA_MOD_SHAPESHIFT))
+        return;
+
     if (apply)
     {
         // special case (spell specific functionality)
         if (m_modifier.m_miscvalue == 0)
         {
-            // player applied only
-            if (m_target->GetTypeId() != TYPEID_PLAYER)
-                return;
-
             switch(GetId())
             {
-                // Orb of Deception
-                case 16739:
+                case 16739:                 // Orb of Deception
                 {
                     uint32 orb_model = m_target->GetNativeDisplayId();
                     switch(orb_model)
@@ -2875,34 +2877,31 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
         }
         else
         {
+            uint32 model_id;
+
             CreatureInfo const * ci = objmgr.GetCreatureTemplate(m_modifier.m_miscvalue);
             if (!ci)
             {
-                                                            //pig pink ^_^
-                m_target->SetDisplayId(16358);
+                model_id =16358;                             //pig pink ^_^
                 sLog.outError("Auras: unknown creature id = %d (only need its modelid) Form Spell Aura Transform in Spell ID = %d", m_modifier.m_miscvalue, GetId());
             }
             else
-            {
-                                                            // Will use the default model here
-                if (uint32 modelid = ci->GetRandomValidModelId())
-                    m_target->SetDisplayId(modelid);
+                model_id = ci->GetRandomValidModelId();
+
+                m_target->SetDisplayId(model_id);
 
                 // Dragonmaw Illusion (set mount model also)
                 if (GetId() == 42016 && m_target->GetMountID() && !m_target->GetAurasByType(SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED).empty())
-                    m_target->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID,16314);
+                    m_target->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 16314);
             }
+
+        // update active transform spell only not set or not overwriting negative by positive case
+        if (!m_target->getTransForm() || !IsPositiveSpell(GetId()) || IsPositiveSpell(m_target->getTransForm()))
             m_target->setTransForm(GetId());
-        }
 
         // polymorph case
         if (Real && m_target->GetTypeId() == TYPEID_PLAYER && m_target->IsPolymorphed())
         {
-            // for players, start regeneration after 1s (in polymorph fast regeneration case)
-            // only if caster is Player (after patch 2.4.2)
-            if (IS_PLAYER_GUID(GetCasterGUID()))
-                m_target->ToPlayer()->setRegenTimer(1000);
-
             //dismount polymorphed target (after patch 2.4.2)
             if (m_target->IsMounted())
                 m_target->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
@@ -2910,20 +2909,20 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
     }
     else
     {
-        // FG: workaround, fix extreme regeneration bug (orb of deception + polymorph)
         m_target->setTransForm(0);
+        m_target->SetDisplayId(m_target->GetNativeDisplayId());
 
+        // apply default equipment for creature case
+        if (m_target->GetTypeId() == TYPEID_UNIT)
+            ((Creature*)m_target)->LoadEquipment(((Creature*)m_target)->GetCreatureInfo()->equipmentId, true);
+
+        // re-apply some from still active with preference negative cases
         Unit::AuraList const& otherTransforms = m_target->GetAurasByType(SPELL_AURA_TRANSFORM);
-        if (otherTransforms.empty())
-        {
-            m_target->SetDisplayId(m_target->GetNativeDisplayId());
-            m_target->setTransForm(0);
-        }
-        else
+        if (!otherTransforms.empty())
         {
             // look for other transform auras
             Aura* handledAura = *otherTransforms.begin();
-            for (Unit::AuraList::const_iterator i = otherTransforms.begin();i != otherTransforms.end(); ++i)
+            for (Unit::AuraList::const_iterator i = otherTransforms.begin(); i != otherTransforms.end(); ++i)
             {
                 // negative auras are preferred
                 if (!IsPositiveSpell((*i)->GetSpellProto()->Id))
@@ -4638,7 +4637,7 @@ void Aura::HandleModRegen(bool apply, bool /*Real*/)        // eating
             {
                 // It's unclear why eating would cause threat, but I've routed it through here never the less
                 if (SpellEntry const *spellProto = GetSpellProto())
-                    caster->HealTargetUnit(m_target, spellProto, GetModifierValue(), false, false);
+                    caster->HealTargetUnit(m_target, spellProto, GetModifierValue(), false);
             }
             else m_target->ModifyHealth(GetModifierValue());
         }
@@ -5187,7 +5186,7 @@ void Aura::HandleModPowerCostPCT(bool apply, bool Real)
     if (!Real)
         return;
 
-    float amount = GetModifierValue() /100.0f;
+    float amount = CalculatePctN(1.0f, GetModifierValue());
     for (int i = 0; i < MAX_SPELL_SCHOOL; ++i)
         if (m_modifier.m_miscvalue & (1<<i))
             m_target->ApplyModSignedFloatValue(UNIT_FIELD_POWER_COST_MULTIPLIER+i,amount,apply);
@@ -5527,13 +5526,29 @@ void Aura::HandleSpiritOfRedemption(bool apply, bool Real)
             // set stand state (expected in this form)
             if (!m_target->IsStandState())
                 m_target->SetStandState(UNIT_STAND_STATE_STAND);
+
+            // Apply flags
+            m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); // should not be attackable
+            m_target->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD); // This is unfortunately here, but interrupts all attacks (Melee swings, wands etc.)
+
+            // Apply root state
+             m_target->SetRooted(apply);
         }
 
         m_target->SetHealth(1);
     }
     // die at aura end
     else
+    {
+        // Unapply flags
+        m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); // reactive attackable flag
+        m_target->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD); // Reactive auto attacks etc.
+
+        // Unapply root state
+        m_target->SetRooted(apply);
+
         m_target->setDeathState(JUST_DIED);
+    }
 }
 
 void Aura::CleanupTriggeredSpells()
@@ -5923,7 +5938,7 @@ void Aura::PeriodicTick()
                 return;
 
             // heal for caster damage (must be alive)
-            if (!pCaster->isAlive() || (m_target != pCaster && GetSpellProto()->SpellVisual == 163))
+            if (m_target != pCaster && GetSpellProto()->SpellVisual == 163 && !pCaster->isAlive())
                 return;
 
             // ignore non positive values (can be result apply spellmods to aura damage
@@ -5941,19 +5956,16 @@ void Aura::PeriodicTick()
             sLog.outDetail("PeriodicTick: %u (TypeId: %u) heal of %u (TypeId: %u) for %u health inflicted by %u",
                 GUID_LOPART(GetCasterGUID()), GuidHigh2TypeId(GUID_HIPART(GetCasterGUID())), m_target->GetGUIDLow(), m_target->GetTypeId(), pdamage, GetId());
 
-            // Send log to client only if there the player has been healed
-            if (m_target->GetHealth() < m_target->GetMaxHealth())
-            {
-                WorldPacket data(SMSG_PERIODICAURALOG, (21+16));// we guess size
-                data << m_target->GetPackGUID();
-                data.appendPackGUID(GetCasterGUID());
-                data << uint32(GetId());
-                data << uint32(1);
-                data << uint32(m_modifier.m_auraname);
-                data << (uint32)pdamage;
-                m_target->SendMessageToSet(&data,true);
-            }
-            uint32 gain = pCaster->HealTargetUnit(m_target, GetSpellProto(), pdamage, false, false);
+            WorldPacket data(SMSG_PERIODICAURALOG, (21+16));// we guess size
+            data << m_target->GetPackGUID();
+            data.appendPackGUID(GetCasterGUID());
+            data << uint32(GetId());
+            data << uint32(1);
+            data << uint32(m_modifier.m_auraname);
+            data << (uint32)pdamage;
+            m_target->SendMessageToSet(&data,true);
+
+            uint32 gain = pCaster->HealTargetUnit(m_target, GetSpellProto(), pdamage, false);
 
             // add HoTs to amount healed in bgs
             if (pCaster->GetTypeId() == TYPEID_PLAYER)
@@ -6479,15 +6491,11 @@ void Aura::HandlePreventFleeing(bool apply, bool Real)
     if (!Real)
         return;
 
-    Unit::AuraList const& fearAuras = m_target->GetAurasByType(SPELL_AURA_MOD_FEAR);
-    if (!fearAuras.empty())
-    {
-        m_target->SetControlled(!apply, UNIT_STAT_FLEEING);
-        /*if (apply)
-            m_target->SetFeared(false, fearAuras.front()->GetCasterGUID());
-        else
-            m_target->SetFeared(true);*/
-    }
+    if (apply)
+        m_target->RemoveAurasByType(SPELL_AURA_MOD_FEAR);
+
+    m_target->ApplySpellImmune(GetSpellProto()->Id, IMMUNITY_MECHANIC, MECHANIC_FEAR,   apply); // fear
+    m_target->ApplySpellImmune(GetSpellProto()->Id, IMMUNITY_MECHANIC, MECHANIC_HORROR, apply); // horror effects
 }
 
 void Aura::HandleManaShield(bool apply, bool Real)
@@ -6529,15 +6537,9 @@ void Aura::HandleArenaPreparation(bool apply, bool Real)
         return;
 
     if (apply)
-    {
         m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PREPARATION);
-        m_target->SetVisibility(UnitVisibility(m_target->GetVisibility() | VISIBILITY_GROUP_STEALTH));
-    }
     else
-    {
         m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PREPARATION);
-        m_target->SetVisibility(UnitVisibility(m_target->GetVisibility() & ~VISIBILITY_GROUP_STEALTH));
-    }
 }
 
 void Aura::HandleAuraReflectSpellSchool(bool apply, bool real)

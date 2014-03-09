@@ -115,6 +115,7 @@ std::string GetScriptCommandName(ScriptCommands command)
         case SCRIPT_COMMAND_PLAY_SOUND: res = "SCRIPT_COMMAND_PLAY_SOUND"; break;
         case SCRIPT_COMMAND_CREATE_ITEM: res = "SCRIPT_COMMAND_CREATE_ITEM"; break;
         case SCRIPT_COMMAND_DESPAWN_SELF: res = "SCRIPT_COMMAND_DESPAWN_SELF"; break;
+        case SCRIPT_COMMAND_DO_NOTHING: res = "SCRIPT_COMMAND_DO_NOTHING"; break;
         case SCRIPT_COMMAND_LOAD_PATH: res = "SCRIPT_COMMAND_LOAD_PATH"; break;
         case SCRIPT_COMMAND_CALLSCRIPT_TO_UNIT: res = "SCRIPT_COMMAND_CALLSCRIPT_TO_UNIT"; break;
         case SCRIPT_COMMAND_KILL: res = "SCRIPT_COMMAND_KILL"; break;
@@ -677,6 +678,12 @@ void ObjectMgr::LoadCreatureTemplates()
             CreatureDisplayInfoEntry const* ScaleEntry = sCreatureDisplayInfoStore.LookupEntry(modelid);
             const_cast<CreatureInfo*>(cInfo)->scale = ScaleEntry ? ScaleEntry->scale : 1.0f;
         }
+
+        /* Allow triggers to fly - else client will force them to fall down.,
+           Many triggers are in the air and falling down means unaccurate spell visuals, etc.
+           We must prevent this and they are invisible to players anyway */
+        if (cInfo->flags_extra & CREATURE_FLAG_EXTRA_TRIGGER)
+            const_cast<CreatureInfo*>(cInfo)->InhabitType = INHABIT_AIR;
     }
 }
 

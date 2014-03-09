@@ -806,15 +806,18 @@ void Spell::EffectDummy(uint32 i)
                     m_caster->CastSpell(unitTarget,spell_id,true,NULL);
                     return;
                 }
-                case 13280:                                 // Gnomish Death Ray
+                case 13278:                                 // Gnomish Death Ray (First Dummy)
+                    m_caster->CastSpell(m_caster, 13493, true, NULL);
+                    break;
+                case 13280:                                 // Gnomish Death Ray (Second Dummy)
                 {
                     if (!unitTarget)
                         return;
 
-                    if (urand(0, 99) < 15)
-                        m_caster->CastSpell(m_caster, 13493, true, NULL);    // failure
+                    if (urand(0, 100) < 15)
+                        m_caster->CastSpell(m_caster, 13279, true, NULL); // fail - shitty gnomish technology
                     else
-                        m_caster->CastSpell(unitTarget, 13279, true, NULL);
+                        m_caster->CastSpell(unitTarget, 13279, true, NULL); // Boom!
 
                     return;
                 }
@@ -1310,8 +1313,15 @@ void Spell::EffectDummy(uint32 i)
 
                     return;
                 }
-                case 44997:                                 // Converting Sentry
+                case 44997: // Converting Sentry
                 {
+                    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_UNIT)
+                        return;
+
+                    Creature* creatureTarget = (Creature*)unitTarget;
+
+                    creatureTarget->ForcedDespawn();
+
                     //Converted Sentry Credit
                     m_caster->CastSpell(m_caster, 45009, true);
                     return;
@@ -2260,12 +2270,12 @@ void Spell::EffectApplyAura(uint32 i)
     if (!caster)
         return;
 
-    DEBUG_LOG("Spell: Aura is: %u", m_spellInfo->EffectApplyAuraName[i]);
-
     Aura* Aur = CreateAura(m_spellInfo, i, &damage, unitTarget, caster, m_CastItem);
 
     // Now Reduce spell duration using data received at spell hit
     int32 duration = Aur->GetAuraMaxDuration();
+    if (m_spellValue->CustomDuration)
+        duration = m_spellValue->Duration;
     if (!IsPositiveSpell(m_spellInfo->Id))
     {
         unitTarget->ApplyDiminishingToDuration(m_diminishGroup,duration,caster,m_diminishLevel);
@@ -2277,7 +2287,7 @@ void Spell::EffectApplyAura(uint32 i)
         caster->ModSpellCastTime(m_spellInfo, duration, this);
 
     // if Aura removed and deleted, do not continue.
-    if (duration == 0 && !(Aur->IsPermanent()))
+    if (Aur->IsExpired())
     {
         delete Aur;
         return;
@@ -2452,7 +2462,17 @@ void Spell::EffectSendEvent(uint32 EffectIndex)
     }
     sLog.outDebug("Spell ScriptStart %u for spellid %u in EffectSendEvent ", m_spellInfo->EffectMiscValue[EffectIndex], m_spellInfo->Id);
 
-    m_caster->GetMap()->ScriptsStart(sEventScripts, m_spellInfo->EffectMiscValue[EffectIndex], m_caster, focusObject);
+    Object *pTarget;
+    if (focusObject)
+        pTarget = focusObject;
+    else if (unitTarget)
+        pTarget = unitTarget;
+    else if (gameObjTarget)
+        pTarget = gameObjTarget;
+    else
+        pTarget = NULL;
+
+    m_caster->GetMap()->ScriptsStart(sEventScripts, m_spellInfo->EffectMiscValue[EffectIndex], m_caster, pTarget);
 }
 
 void Spell::EffectPowerBurn(uint32 i)
@@ -2556,7 +2576,7 @@ void Spell::SpellDamageHeal(uint32 /*i*/)
             int32 tickcount = 0;
             if (targetAura->GetSpellProto()->SpellFamilyName == SPELLFAMILY_DRUID)
             {
-                switch(targetAura->GetSpellProto()->SpellFamilyFlags)//TODO: proper spellfamily for 3.0.x
+                switch(targetAura->GetSpellProto()->SpellFamilyFlags)
                 {
                     case 0x10:  tickcount = 4;  break; // Rejuvenation
                     case 0x40:  tickcount = 6;  break; // Regrowth
@@ -2638,7 +2658,7 @@ void Spell::EffectHealthLeech(uint32 i)
     if (m_caster->isAlive())
     {
         new_damage = m_caster->SpellHealingBonus(m_spellInfo, new_damage, HEAL, m_caster);
-        m_caster->HealTargetUnit(m_caster, m_spellInfo, uint32(new_damage), false, (m_caster->isPlayer()));
+        m_caster->HealTargetUnit(m_caster, m_spellInfo, uint32(new_damage), false);
     }
 //    m_healthLeech+=tmpvalue;
 //    m_damage+=new_damage;
@@ -3322,36 +3342,24 @@ void Spell::EffectSummonType(uint32 i)
 
                     summon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE | UNIT_FLAG_PASSIVE);
 
-                    summon->AI()->EnterEvadeMode();
+                    if (summon->AI())
+                        summon->AI()->EnterEvadeMode();
                     break;
                 }
                 default:
                 {
                     float radius = GetSpellRadius(m_spellInfo, i, false);
-
-                    uint32 amount = damage > 0 ? damage : 1;
-                    if (m_spellInfo->Id == 18662 || // Curse of Doom
-                        properties->Id == 2081 || m_spellInfo->Id == 43302)     // Mechanical Dragonling, Arcanite Dragonling, Mithril Dragonling, Halazzi's Lighting Totem
-                        amount = 1;
-
                     TempSummonType summonType = (duration == 0) ? TEMPSUMMON_DEAD_DESPAWN : TEMPSUMMON_TIMED_DESPAWN;
+                    summon = m_originalCaster->SummonCreature(entry, pos, summonType, duration);
+                    if (!summon)
+                        return;
 
-                    for (uint32 count = 0; count < amount; ++count)
-                    {
-                        GetSummonPosition(i, pos, radius, count);
+                    summon->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, m_originalCaster->GetGUID());
+                    summon->setFaction(m_originalCaster->getFaction());
+                    summon->SetLevel(m_originalCaster->getLevel());
 
-                        summon = m_originalCaster->SummonCreature(entry, pos, summonType, duration);
-                        if (!summon)
-                            continue;
-
-                        if (properties->Category == SUMMON_CATEGORY_ALLY)
-                        {
-                            summon->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, m_originalCaster->GetGUID());
-                            summon->setFaction(m_originalCaster->getFaction());
-                            summon->SetUInt32Value(UNIT_CREATED_BY_SPELL, m_spellInfo->Id);
-                        }
-                    }
-                    return;
+                    if (prop_id == 121) // Battle Standard
+                        summon->CastSpell(summon, 23036, true);
                 }
             }
             break;
@@ -3581,6 +3589,7 @@ void Spell::EffectDistract(uint32 /*i*/)
         unitTarget->SetOrientation(angle);
         unitTarget->StopMoving();
         unitTarget->GetMotionMaster()->MoveDistract(damage*IN_MILLISECONDS);
+        unitTarget->SendMovementFlagUpdate();
     }
 }
 
@@ -6213,9 +6222,7 @@ void Spell::EffectTransmitted(uint32 effIndex)
     }
     // if gameobject is summoning object, it should be spawned right on caster's position
     else if (goinfo->type == GAMEOBJECT_TYPE_SUMMONING_RITUAL)
-    {
         m_caster->GetPosition(fx, fy, fz);
-    }
 
     GameObject* pGameObj = new GameObject;
 

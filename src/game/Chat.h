@@ -203,7 +203,6 @@ class ChatHandler
 
         //-----------------------Npc Commands-----------------------
         bool HandleNpcAddCommand(const char* args);
-        bool HandleNpcAddMoveCommand(const char* args);
         bool HandleNpcChangeEntryCommand(const char *args);
         bool HandleNpcDeleteCommand(const char* args);
         bool HandleNpcFactionIdCommand(const char* args);

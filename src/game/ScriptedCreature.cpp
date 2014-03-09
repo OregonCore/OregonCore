@@ -74,6 +74,9 @@ void SummonList::DespawnEntry(uint32 entry)
 
 void SummonList::DespawnAll()
 {
+    if (empty())
+        return;
+
     while (!empty())
     {
         Creature *summon = Unit::GetCreature(*me, *begin());
@@ -117,15 +120,7 @@ void ScriptedAI::UpdateAI(const uint32 /*uiDiff*/)
     if (!UpdateVictim())
         return;
 
-    if (me->isAttackReady())
-    {
-        //If we are within range melee the target
-        if (me->IsWithinMeleeRange(me->getVictim()))
-        {
-            me->AttackerStateUpdate(me->getVictim());
-            me->resetAttackTimer();
-        }
-    }
+    DoMeleeAttackIfReady();
 }
 
 void ScriptedAI::DoStartMovement(Unit* pVictim, float fDistance, float fAngle)
@@ -665,7 +660,7 @@ void LoadOverridenSQLData()
     goInfo = GOBJECT(187055);
     if (goInfo)
         if (goInfo->type == GAMEOBJECT_TYPE_GOOBER)
-            goInfo->goober.lockId = 57; // need LOCKTYPE_QUICK_OPEN
+            goInfo->type = GAMEOBJECT_TYPE_SPELLCASTER;
 
     // Naxxramas : Sapphiron Birth
     goInfo = GOBJECT(181356);

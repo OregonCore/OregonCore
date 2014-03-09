@@ -367,7 +367,7 @@ MessageDistDeliverer::Visit(DynamicObjectMapType &m)
         if (iter->getSource()->GetExactDistSq(i_source) > i_distSq)
             continue;
 
-        if (IS_PLAYER_GUID(iter->getSource()->GetCasterGUID()))
+        if (iter->getSource()->GetTypeId() == TYPEID_PLAYER)
         {
             // Send packet back to the caster if the caster has vision of dynamic object
             Player* caster = iter->getSource()->GetCaster()->ToPlayer();

@@ -773,6 +773,13 @@ enum CharDeleteMethod
                                                  // the name gets freed up and appears as deleted ingame
 };
 
+enum PlayerRestState
+{
+    REST_STATE_RESTED       = 0x01,
+    REST_STATE_NORMAL       = 0x02,
+    REST_STATE_RAF_LINKED   = 0x04               // Exact use unknown
+};
+
 class PlayerTaxi
 {
     public:
@@ -1012,6 +1019,7 @@ class Player : public Unit, public GridObject<Player>
         bool HasBankBagSlot(uint8 slot) const;
         bool HasItemCount(uint32 item, uint32 count, bool inBankAlso = false) const;
         bool HasItemFitToSpellReqirements(SpellEntry const* spellInfo, Item const* ignoreItem = NULL);
+        bool CanCastNoReagents(SpellEntry const* spellInfo) const;
         Item* GetItemOrItemWithGemEquipped(uint32 item) const;
         uint8 CanTakeMoreSimilarItems(Item* pItem) const { return _CanTakeMoreSimilarItems(pItem->GetEntry(),pItem->GetCount(),pItem); }
         uint8 CanTakeMoreSimilarItems(uint32 entry, uint32 count) const { return _CanTakeMoreSimilarItems(entry,count,NULL); }
@@ -1097,7 +1105,12 @@ class Player : public Unit, public GridObject<Player>
         Player* GetTrader() const { return pTrader; }
         void ClearTrade();
         void TradeCancel(bool sendback);
-        uint16 GetItemPosByTradeSlot(uint32 slot) const { return tradeItems[slot]; }
+        Item *GetItemByTradeSlot(uint8 slot) const
+        {
+            if (slot < TRADE_SLOT_COUNT && tradeItems[slot])
+                return GetItemByGuid(tradeItems[slot]);
+            return NULL;
+        }
 
         void UpdateEnchantTime(uint32 time);
         void UpdateItemDuration(uint32 time, bool realtimeonly=false);
@@ -1745,7 +1758,7 @@ class Player : public Unit, public GridObject<Player>
         uint32 GetHonorPoints() { return GetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY); }
         uint32 GetArenaPoints() { return GetUInt32Value(PLAYER_FIELD_ARENA_CURRENCY); }
         void ModifyHonorPoints(int32 value);
-        void ModifyArenaPoints(int32 value);
+        void ModifyArenaPoints(int32 value, bool update = true);
         uint32 GetMaxPersonalArenaRatingRequirement();
 
         //End of PvP System
@@ -2032,6 +2045,7 @@ class Player : public Unit, public GridObject<Player>
         void UpdateObjectVisibility(bool forced = true);
         void UpdateVisibilityForPlayer();
         void UpdateVisibilityOf(WorldObject* target);
+        void UpdateTriggerVisibility();
 
         template<class T>
             void UpdateVisibilityOf(T* target, UpdateData& data, std::set<Unit*>& visibleNow);
@@ -2271,7 +2285,7 @@ class Player : public Unit, public GridObject<Player>
 
         Player *pTrader;
         bool acceptTrade;
-        uint16 tradeItems[TRADE_SLOT_COUNT];
+        uint64 tradeItems[TRADE_SLOT_COUNT];
         uint32 tradeGold;
 
         time_t m_nextThinkTime;
