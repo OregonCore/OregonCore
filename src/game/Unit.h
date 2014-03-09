@@ -1303,6 +1303,7 @@ class Unit : public WorldObject
         uint32 m_invisibilityMask;
 
         uint32 m_ShapeShiftFormSpellId;
+        uint32 m_ShapeShiftModelId;
         ShapeshiftForm m_form;
         bool IsInFeralForm() const { return m_form == FORM_CAT || m_form == FORM_BEAR || m_form == FORM_DIREBEAR; }
         bool IsInTravelForm() const { return m_form == FORM_TRAVEL; }

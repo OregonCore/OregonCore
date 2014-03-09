@@ -2711,6 +2711,7 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
         }
 
         m_target->m_ShapeShiftFormSpellId = GetId();
+        m_target->m_ShapeShiftModelId     = modelid;
         m_target->m_form = form;
     }
     else
@@ -2759,12 +2760,12 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
 
 void Aura::HandleAuraTransform(bool apply, bool Real)
 {
-    // Shapeshifts (that change model) have higher priority than transforms
-    if (m_target->HasShapeshiftChangingModel() && apply)
-        return;
-
     if (apply)
     {
+        // Shapeshifts (that change model) have higher priority than transforms (if not negative)
+        if (m_target->HasShapeshiftChangingModel() && IsPositiveSpell(GetId()))
+            return;
+
         // special case (spell specific functionality)
         if (m_modifier.m_miscvalue == 0)
         {
@@ -2910,7 +2911,9 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
     else
     {
         m_target->setTransForm(0);
-        if (!m_target->HasShapeshiftChangingModel())
+        if (m_target->HasShapeshiftChangingModel())
+            m_target->SetDisplayId(m_target->m_ShapeShiftModelId);
+        else
             m_target->SetDisplayId(m_target->GetNativeDisplayId());
 
         // apply default equipment for creature case
