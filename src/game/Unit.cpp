@@ -11856,7 +11856,10 @@ void Unit::SetStunned(bool apply)
 
         // Creature specific
         if (GetTypeId() != TYPEID_PLAYER)
+        {
+            AddUnitMovementFlag(MOVEFLAG_ROOT);
             ToCreature()->StopMoving();
+        }
         else
             SetStandState(UNIT_STAND_STATE_STAND);
 
@@ -11864,6 +11867,9 @@ void Unit::SetStunned(bool apply)
         data << GetPackGUID();
         data << uint32(0);
         SendMessageToSet(&data,true);
+
+        if (GetTypeId() != TYPEID_PLAYER)
+            RemoveUnitMovementFlag(MOVEFLAG_ROOT);
     }
     else
     {
@@ -11900,7 +11906,10 @@ void Unit::SetRooted(bool apply)
             SendMessageToSet(&data,true);
         }
         else
+        {
+            AddUnitMovementFlag(MOVEFLAG_ROOT);
             ToCreature()->StopMoving();
+        }
     }
     else
     {
@@ -11914,6 +11923,10 @@ void Unit::SetRooted(bool apply)
                 data << GetPackGUID();
                 data << (uint32)2;
                 SendMessageToSet(&data,true);
+            }
+            else
+            {
+                RemoveUnitMovementFlag(MOVEFLAG_ROOT);
             }
         }
     }
