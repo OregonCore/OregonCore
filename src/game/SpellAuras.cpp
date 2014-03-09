@@ -2759,8 +2759,8 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
 
 void Aura::HandleAuraTransform(bool apply, bool Real)
 {
-    // Shapeshifts have higher priority than transforms
-    if (m_target->HasAuraType(SPELL_AURA_MOD_SHAPESHIFT))
+    // Shapeshifts (that change model) have higher priority than transforms
+    if (m_target->HasShapeshiftChangingModel() && apply)
         return;
 
     if (apply)
@@ -2910,7 +2910,8 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
     else
     {
         m_target->setTransForm(0);
-        m_target->SetDisplayId(m_target->GetNativeDisplayId());
+        if (!m_target->HasShapeshiftChangingModel())
+            m_target->SetDisplayId(m_target->GetNativeDisplayId());
 
         // apply default equipment for creature case
         if (m_target->GetTypeId() == TYPEID_UNIT)

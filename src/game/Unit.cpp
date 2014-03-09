@@ -12290,6 +12290,41 @@ void Unit::GetPartyMember(std::list<Unit*> &TagUnitMap, float radius)
     }
 }
 
+bool Unit::HasShapeshiftChangingModel() const
+{
+    AuraList const& auras = GetAurasByType(SPELL_AURA_MOD_SHAPESHIFT);
+    for (AuraList::const_iterator i = auras.begin(); i != auras.end(); i++)
+    {
+        switch ((*i)->GetModifier()->m_miscvalue)
+        {
+            case FORM_CAT:
+            case FORM_TREE:
+            case FORM_TRAVEL:
+            case FORM_AQUA:
+            case FORM_BEAR:
+            case FORM_DIREBEAR:
+            case FORM_MOONKIN:
+            case FORM_FLIGHT:
+            case FORM_FLIGHT_EPIC:
+            case FORM_SPIRITOFREDEMPTION:
+            case FORM_GHOSTWOLF:
+            case FORM_GHOUL:
+            case FORM_CREATURECAT:
+            case FORM_CREATUREBEAR:
+                return true;
+            case FORM_BATTLESTANCE:
+            case FORM_DEFENSIVESTANCE:
+            case FORM_BERSERKERSTANCE:
+            case FORM_AMBIENT:
+            case FORM_SHADOW:
+            case FORM_STEALTH:
+                return false;
+        }
+    }
+
+    return false;
+}
+
 void Unit::AddAura(uint32 spellId, Unit* target)
 {
     if (!target || !target->isAlive())
