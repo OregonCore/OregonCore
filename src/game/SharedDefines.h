@@ -41,19 +41,16 @@ enum Races
     RACE_TAUREN         = 6,
     RACE_GNOME          = 7,
     RACE_TROLL          = 8,
-    //RACE_GOBLIN         = 9,
+    RACE_GOBLIN         = 9,
     RACE_BLOODELF       = 10,
-    RACE_DRAENEI        = 11
-    //RACE_FEL_ORC        = 12,
-    //RACE_NAGA           = 13,
-    //RACE_BROKEN         = 14,
-    //RACE_SKELETON       = 15,
-    //RACE_VRYKUL         = 16,
-    //RACE_TUSKARR        = 17,
-    //RACE_FOREST_TROLL   = 18,
-    //RACE_TAUNKA         = 19,
-    //RACE_NORTHREND_SKELETON = 20,
-    //RACE_ICE_TROLL      = 21
+    RACE_DRAENEI        = 11,
+    RACE_FEL_ORC        = 12,
+    RACE_NAGA           = 13,
+    RACE_BROKEN         = 14,
+    RACE_SKELETON       = 15,
+    RACE_VRYKUL         = 16,
+    RACE_TUSKARR        = 17,
+    RACE_FOREST_TROLL   = 18
 };
 
 // max+1 for player race
@@ -77,7 +74,7 @@ enum Classes
     CLASS_SHAMAN        = 7,
     CLASS_MAGE          = 8,
     CLASS_WARLOCK       = 9,
-    //CLASS_UNK           = 10,
+    // 10 - not set
     CLASS_DRUID         = 11
 };
 
@@ -204,8 +201,164 @@ enum ItemQualities
 
 enum SpellCategory
 {
+    // Blizzard has gaps in categories
+    SPELL_CATEGORY_UNCATEGORIZED    = 0,
+    SPELL_CATEGORy_UNK1             = 1,
+    SPELL_CATEGORY_UNK2             = 2,
+    SPELL_CATEGORY_POWER            = 4,
     SPELL_CATEGORY_FOOD             = 11,
+    SPELL_CATEGORY_DEVOUR_MAGIC     = 12, // also Dark Restore
+    SPELL_CATEGORY_UNK18            = 18,
+    SPELL_CATEGORY_UNK19            = 19, // instant spells
+    SPELL_CATEGORY_UNK20            = 20,
+    SPELL_CATEGORY_UNK21            = 21,
+    SPELL_CATEGORY_UNK22            = 22,
+    SPELL_CATEGORY_UNK23            = 23,
+    SPELL_CATEGORY_PROX_BOMB        = 24,
+    SPELL_CATEGORY_UNK25            = 25,
+    SPELL_CATEGORY_REBIRTH          = 26,
+    SPELL_CATEGORY_UNK28            = 28,
+    SPELL_CATEGORY_UNK30            = 30,
+    SPELL_CATEGORY_UNK31            = 31,
+    SPELL_CATEGORY_UNK32            = 32,
+    SPELL_CATEGORY_UNK33            = 33,
+    SPELL_CATEOGRY_WEB_NET          = 34,
+    SPELL_CATEOGRY_UNK35            = 35,
+    SPELL_CATEOGRY_UNK36            = 36,
+    SPELL_CATEOGRY_UNK37            = 37,
+    SPELL_CATEOGRY_STEALTH          = 38,
+    SPELL_CATEGORY_UNK39            = 39,
+    SPELL_CATEGORY_UNK40            = 40,
+    SPELL_CATEGORY_UNK41            = 41,
+    SPELL_CATEGORY_UNK42            = 42,
+    SPELL_CATEGORY_SHOUT            = 43,
+    SPELL_CATEGORY_UNK44            = 44,
+    SPELL_CATEGORY_STONECLAW_TOTEM  = 45,
+    SPELL_CATEGORY_TRANQUILITY      = 46, // also Strider Presence
+    SPELL_CATEGORY_UNK47            = 47,
+    SPELL_CATEGORY_UNK49            = 49,
+    SPELL_CATEGORY_UNK50            = 50, // Breath ?
+    SPELL_CATEGORY_UNK51            = 51,
+    SPELL_CATEGORY_UNK52            = 52,
+    SPELL_CATEGORY_REFLECTION       = 54,
+    SPELL_CATEGORY_UNK55            = 55,
+    SPELL_CATEGORY_SHILED_WARD      = 56, // shields, wards
+    SPELL_CATEGORY_GROWL_FORTITUDE  = 57, // growl of fortitude
     SPELL_CATEGORY_DRINK            = 59,
+    SPELL_CATEGORY_RESTORE_ENERGY   = 60,
+    SPELL_CATEGORY_UNK62            = 62,
+    SPELL_CATEGORY_UNK63            = 63,
+    SPELL_CATEGORY_UNK65            = 65,
+    SPELL_CATEGORY_EVASION          = 66,
+    SPELL_CATEGORY_LASH_OF_PAIN     = 73,
+    SPELL_CATEGORY_DISHEARTENING    = 74,
+    SPELL_CATEGORY_THROW_SHOOT      = 76, // throw, shoot, shot bow
+    SPELL_CATEGORY_UNK79            = 79,
+    SPELL_CATEGORY_THREAT           = 82, // threat related spells, taunt, cower, feint
+    SPELL_CATEGORY_SUFFERING        = 84,
+    SPELL_CATEGORY_UNK85            = 85,
+    SPELL_CATEGORY_UNK87            = 87,
+    SPELL_CATEGORY_INTERRUPT_CAST   = 88, // pummel, kick, etc
+    SPELL_CATEGORY_UNK89            = 89,
+    SPELL_CATEGORY_POSSESS          = 93,
+    SPELL_CATEGORY_SUM_GHOST_SABER  = 94,
+    SPELL_CATEGORY_SOUL_CHARGE      = 95,
+    SPELL_CATEGORY_BULL_RUSH        = 96,
+    SPELL_CATEGORY_CAMPFIRE         = 97,
+    SPELL_CATEGORY_FREEZE           = 98,
+    SPELL_CATEGORY_UNK99            = 99,
+    SPELL_CATEGORY_FURY_OF_BOGLING  = 102,
+    SPELL_CATEGORY_DISARM           = 109,
+    SPELL_CATEGORY_UNK132           = 132,
+    SPELL_CATEGORY_UNK133           = 133,
+    SPELL_CATEGORY_FIRST_AID        = 150,
+    SPELL_CATEGORY_UNK190           = 190,
+    SPELL_CATEGORY_GROUNDING_TOTEM  = 230,
+    SPELL_CATEGORY_BLAST_WAVE       = 250,
+    SPELL_CATEGORY_KIDNEY_SHOT      = 270,
+    SPELL_CATEGORY_PYROBLAST        = 290, // also solarburn
+    SPELL_CATEGORY_TRANSMUTATIONS   = 310,
+    SPELL_CATEGORY_BLACK_QIRAJI_MNT = 330,
+    SPELL_CATEGORY_SHOOT_2          = 351, // Shoot, Shoot (TEST)
+    SPELL_CATEGORY_TRAP             = 411,
+    SPELL_CATEGORY_HOLY_NOVA        = 431,
+    SPELL_CATEGORY_HOLY_FIRE        = 451,
+    SPELL_CATEGORY_ICE_BARRIER      = 471,
+    SPELL_CATEGORY_ASTRAL_RECALL    = 511,
+    SPELL_CATEGORY_NATURES_GRASP    = 531,
+    SPELL_CATEGORY_HURRICANE        = 571,
+    SPELL_CATEGORY_MANA_TIDE_TOTEM  = 591,
+    SPELL_CATEGORY_SOUL_FIRE        = 631,
+    SPELL_CATEGORY_DEATH_COIL       = 633,
+    SPELL_CATEGORY_HOWL_OF_TERROR   = 634,
+    SPELL_CATEGORY_SHADOWBURN       = 651,
+    SPELL_CATEGORY_DESPERATE_PRAYER = 671,
+    SPELL_CATEGORY_CONFLAGRATE      = 672,
+    SPELL_CATEGORY_DEVOURING_PLAGUE = 691,
+    SPELL_CATEGORY_INFERNO          = 731,
+    SPELL_CATEGORY_SALT_SHAKER      = 791,
+    SPELL_CATEGORY_SHADOWMELD       = 871,
+    SPELL_CATEGORY_WHIRLWIND        = 891,
+    SPELL_CATEGORY_HOLY_SHOCK       = 892,
+    SPELL_CATEGORY_DISTRACTING_SHOT = 911,
+    SPELL_CATEGORY_HOLY_SHIELD      = 931, // also Black Temple Tan...
+    SPELL_CATEGORY_CONSECRATION     = 932,
+    SPELL_CATEGORY_PLANTING         = 951,
+    SPELL_CATEGORY_UNK971           = 971,
+    SPELL_CATEGORY_SNOWMASTER_9000  = 991,
+    SPELL_CATEGORY_FRENZIED_REGEN   = 1011,
+    SPELL_CATEGORY_UNK1071          = 1071,
+    SPELL_CATEGORY_RECALL           = 1091,
+    SPELL_CATEGORY_WYVERN_STRING    = 1111,
+    SPELL_CATEGORY_HAMMER_OF_WRATH  = 1131,
+    SPELL_CATEGORY_INTIMIDATION     = 1132,
+    SPELL_CATEGORY_FAERIE_FIRE_FERAL= 1133,
+    SPELL_CATEGORY_COUNTERATTACK    = 1135,
+    SPELL_CATEGORY_FIRECRACKERS     = 1137,
+    SPELL_CATEGORY_UNK1138          = 1138,
+    SPELL_CATEGORY_UNK1139          = 1139, // SUMMONS
+    SPELL_CATEGORY_WHIP_TERRORFIEND = 1140,
+    SPELL_CATEGORY_MANA_SURGE       = 1141,
+    SPELL_CATEOGRY_UNK1142          = 1143, // 2 SPELLS
+    SPELL_CATEGORY_FEEDBACK         = 1144,
+    SPELL_CATEGORY_LIGHTWELL        = 1145,
+    SPELL_CATEGORY_EXORCISE_ATIESH  = 1149,
+    SPELL_CATEGORY_PRESENCE_OF_MIND = 1151,
+    SPELL_CATEGORY_UNK1152          = 1152,
+    SPELL_CATEGORY_UNK1154          = 1154,
+    SPELL_CATEGORY_DMG_ABSORD       = 1155,
+    SPELL_CATEGORY_UNK1158          = 1158, // INTERCEPT, ETC
+    SPELL_CATEOGRY_UNK1159          = 1159,
+    SPELL_CATEGORY_CALL             = 1160,
+    SPELL_CATEGORY_REINCARNATION    = 1161,
+    SPELL_CATEGORY_UNK1162          = 1162,
+    SPELL_CATEGORY_MOVE             = 1163,
+    SPELL_CATEGORY_PAIN_SPIKE       = 1165,
+    SPELL_CATEGORY_UNK1167          = 1167,
+    SPELL_CATEGORY_SHADOW_WORD_DEATH= 1169,
+    SPELL_CATEOGRY_DROP_HEAVY_BOMB  = 1170,
+    SPELL_CATEGORY_KILL_COMMAND     = 1171,
+    SPELL_CATEOGRY_ARCANE_SHOT      = 1173,
+    SPELL_CATEGORY_JEWEL_SPHERE     = 1174,
+    SPELL_CATEGORY_VIPER_STING      = 1175,
+    SPELL_CATEGORY_HEARTHSTONE      = 1176,
+    SPELL_CATEGORY_UNK1177          = 1177,
+    SPELL_CATEGORY_CURSE_OF_DOOM    = 1179,
+    SPELL_CATEGORY_ROCKET_HELM_COOL = 1180,
+    SPELL_CATEGORY_PRAYER_OF_MENDING= 1181,
+    SPELL_CATEGORY_UNK1184          = 1184,
+    SPELL_CATEGORY_UNK1185          = 1185,
+    SPELL_CATEGORY_BLESSING_OF_SACR = 1186,
+    SPELL_CATEGORY_BLIND_DIRTY_TRICK= 1187,
+    SPELL_CATEGORY_CHASTISE         = 1188,
+    SPELL_CATEGORY_STARSHARDS       = 1192,
+    SPELL_CATEGORY_BLOODBERRY       = 1194,
+    SPELL_CATEGORY_EARTH_SHIELD     = 1195,
+    SPELL_CATEGORY_THROW_ME         = 1197,
+    SPELL_CATEGORY_TRANSMUTE_METALS = 1198,
+    SPELL_CATEGORY_TRANSMUTE_GEMS   = 1200,
+    SPELL_CATEGORY_ROCKET_BOOTS     = 1203,
+    SPELL_CATEGORY_MAX              = 1203
 };
 
 const uint32 ItemQualityColors[MAX_ITEM_QUALITY] = {
@@ -258,7 +411,7 @@ const uint32 ItemQualityColors[MAX_ITEM_QUALITY] = {
 #define SPELL_ATTR_EX_UNK0                        0x00000001            // 0 used in summoing / pet-reviving spells
 #define SPELL_ATTR_EX_DRAIN_ALL_POWER             0x00000002            // 1 use all power (Only paladin Lay of Hands and Bunyanize)
 #define SPELL_ATTR_EX_CHANNELED_1                 0x00000004            // 2 channeled 1
-#define SPELL_ATTR_EX_UNK3                        0x00000008            // 3
+#define SPELL_ATTR_EX_CANT_BE_REDIRECTED          0x00000008            // 3 guaranteed direct spells (no reflect, no intervene effects)
 #define SPELL_ATTR_EX_UNK4                        0x00000010            // 4
 #define SPELL_ATTR_EX_NOT_BREAK_STEALTH           0x00000020            // 5 Not break stealth
 #define SPELL_ATTR_EX_CHANNELED_2                 0x00000040            // 6 channeled 2
@@ -285,7 +438,7 @@ const uint32 ItemQualityColors[MAX_ITEM_QUALITY] = {
 #define SPELL_ATTR_EX_UNK27                       0x08000000            // 27
 #define SPELL_ATTR_EX_UNK28                       0x10000000            // 28
 #define SPELL_ATTR_EX_UNK29                       0x20000000            // 29
-#define SPELL_ATTR_EX_UNK30                  0x40000000            // 30 overpower
+#define SPELL_ATTR_EX_UNK30                       0x40000000            // 30 overpower
 #define SPELL_ATTR_EX_UNK31                       0x80000000            // 31
 
 #define SPELL_ATTR_EX2_UNK0                       0x00000001            // 0
@@ -577,8 +730,8 @@ enum SpellEffects
     SPELL_EFFECT_DISPEL                    = 38,
     SPELL_EFFECT_LANGUAGE                  = 39,
     SPELL_EFFECT_DUAL_WIELD                = 40,
-    SPELL_EFFECT_41                        = 41,            // old SPELL_EFFECT_SUMMON_WILD
-    SPELL_EFFECT_42                        = 42,            // old SPELL_EFFECT_SUMMON_GUARDIAN
+    SPELL_EFFECT_41                        = 41, // not set: old SPELL_EFFECT_SUMMON_WILD
+    SPELL_EFFECT_42                        = 42, // not set: old SPELL_EFFECT_SUMMON_GUARDIAN
     SPELL_EFFECT_TELEPORT_UNITS_FACE_CASTER= 43,
     SPELL_EFFECT_SKILL_STEP                = 44,
     SPELL_EFFECT_UNDEFINED_45              = 45,
@@ -609,8 +762,8 @@ enum SpellEffects
     SPELL_EFFECT_PULL                      = 70,
     SPELL_EFFECT_PICKPOCKET                = 71,
     SPELL_EFFECT_ADD_FARSIGHT              = 72,
-    SPELL_EFFECT_73                        = 73,            // old SPELL_EFFECT_SUMMON_POSSESSED
-    SPELL_EFFECT_74                        = 74,            // old SPELL_EFFECT_SUMMON_TOTEM
+    SPELL_EFFECT_73                        = 73, // not set: old SPELL_EFFECT_SUMMON_POSSESSED
+    SPELL_EFFECT_74                        = 74, // not set: old SPELL_EFFECT_SUMMON_TOTEM
     SPELL_EFFECT_HEAL_MECHANICAL           = 75,
     SPELL_EFFECT_SUMMON_OBJECT_WILD        = 76,
     SPELL_EFFECT_SCRIPT_EFFECT             = 77,
@@ -623,32 +776,32 @@ enum SpellEffects
     SPELL_EFFECT_STUCK                     = 84,
     SPELL_EFFECT_SUMMON_PLAYER             = 85,
     SPELL_EFFECT_ACTIVATE_OBJECT           = 86,
-    SPELL_EFFECT_87                        = 87,            // old SPELL_EFFECT_SUMMON_TOTEM_SLOT1
-    SPELL_EFFECT_88                        = 88,            // old SPELL_EFFECT_SUMMON_TOTEM_SLOT2
-    SPELL_EFFECT_89                        = 89,            // old SPELL_EFFECT_SUMMON_TOTEM_SLOT3
-    SPELL_EFFECT_90                        = 90,            // old SPELL_EFFECT_SUMMON_TOTEM_SLOT4
+    SPELL_EFFECT_87                        = 87, // not set: old SPELL_EFFECT_SUMMON_TOTEM_SLOT1
+    SPELL_EFFECT_88                        = 88, // not set: old SPELL_EFFECT_SUMMON_TOTEM_SLOT2
+    SPELL_EFFECT_89                        = 89, // not set: old SPELL_EFFECT_SUMMON_TOTEM_SLOT3
+    SPELL_EFFECT_90                        = 90, // not set: old SPELL_EFFECT_SUMMON_TOTEM_SLOT4
     SPELL_EFFECT_THREAT_ALL                = 91,
     SPELL_EFFECT_ENCHANT_HELD_ITEM         = 92,
-    SPELL_EFFECT_93                        = 93,            // old SPELL_EFFECT_SUMMON_PHANTASM
+    SPELL_EFFECT_93                        = 93, // not set: old SPELL_EFFECT_SUMMON_PHANTASM
     SPELL_EFFECT_SELF_RESURRECT            = 94,
     SPELL_EFFECT_SKINNING                  = 95,
     SPELL_EFFECT_CHARGE                    = 96,
-    SPELL_EFFECT_97                        = 97,            // old SPELL_EFFECT_SUMMON_CRITTER
+    SPELL_EFFECT_97                        = 97, // not set: old SPELL_EFFECT_SUMMON_CRITTER
     SPELL_EFFECT_KNOCK_BACK                = 98,
     SPELL_EFFECT_DISENCHANT                = 99,
     SPELL_EFFECT_INEBRIATE                 = 100,
     SPELL_EFFECT_FEED_PET                  = 101,
     SPELL_EFFECT_DISMISS_PET               = 102,
     SPELL_EFFECT_REPUTATION                = 103,
-    SPELL_EFFECT_SUMMON_OBJECT_SLOT1       = 104,
-    SPELL_EFFECT_SUMMON_OBJECT_SLOT2       = 105,
-    SPELL_EFFECT_SUMMON_OBJECT_SLOT3       = 106,
-    SPELL_EFFECT_SUMMON_OBJECT_SLOT4       = 107,
+    SPELL_EFFECT_SUMMON_OBJECT_SLOT1       = 104, // not set
+    SPELL_EFFECT_SUMMON_OBJECT_SLOT2       = 105, // not set
+    SPELL_EFFECT_SUMMON_OBJECT_SLOT3       = 106, // not set
+    SPELL_EFFECT_SUMMON_OBJECT_SLOT4       = 107, // not set
     SPELL_EFFECT_DISPEL_MECHANIC           = 108,
     SPELL_EFFECT_SUMMON_DEAD_PET           = 109,
     SPELL_EFFECT_DESTROY_ALL_TOTEMS        = 110,
     SPELL_EFFECT_DURABILITY_DAMAGE         = 111,
-    SPELL_EFFECT_112                       = 112,           // old SPELL_EFFECT_SUMMON_DEMON
+    SPELL_EFFECT_112                       = 112, // not set: old SPELL_EFFECT_SUMMON_DEMON
     SPELL_EFFECT_RESURRECT_NEW             = 113,
     SPELL_EFFECT_ATTACK_ME                 = 114,
     SPELL_EFFECT_DURABILITY_DAMAGE_PCT     = 115,
@@ -658,7 +811,7 @@ enum SpellEffects
     SPELL_EFFECT_APPLY_AREA_AURA_PET       = 119,
     SPELL_EFFECT_TELEPORT_GRAVEYARD        = 120,
     SPELL_EFFECT_NORMALIZED_WEAPON_DMG     = 121,
-    SPELL_EFFECT_122                       = 122,
+    SPELL_EFFECT_122                       = 122, // not set
     SPELL_EFFECT_SEND_TAXI                 = 123,
     SPELL_EFFECT_PLAYER_PULL               = 124,
     SPELL_EFFECT_MODIFY_THREAT_PERCENT     = 125,
@@ -677,18 +830,18 @@ enum SpellEffects
     SPELL_EFFECT_LEAP_BACK                 = 138,
     SPELL_EFFECT_CLEAR_QUEST               = 139,
     SPELL_EFFECT_FORCE_CAST                = 140,
-    SPELL_EFFECT_141                       = 141,
+    SPELL_EFFECT_141                       = 141, // one spell: bloodbolt
     SPELL_EFFECT_TRIGGER_SPELL_WITH_VALUE  = 142,
     SPELL_EFFECT_APPLY_AREA_AURA_OWNER     = 143,
     SPELL_EFFECT_KNOCK_BACK_2              = 144,
-    SPELL_EFFECT_145                       = 145,
-    SPELL_EFFECT_ACTIVATE_RUNE             = 146,
+    SPELL_EFFECT_145                       = 145, // one spell: black hole effect
+    SPELL_EFFECT_ACTIVATE_RUNE             = 146, // not set
     SPELL_EFFECT_QUEST_FAIL                = 147,
-    SPELL_EFFECT_148                       = 148,
+    SPELL_EFFECT_148                       = 148, // not set
     SPELL_EFFECT_149                       = 149,
-    SPELL_EFFECT_150                       = 150,
+    SPELL_EFFECT_150                       = 150, // not set
     SPELL_EFFECT_TRIGGER_SPELL_2           = 151,
-    SPELL_EFFECT_152                       = 152,
+    SPELL_EFFECT_152                       = 152, // one spell: Summon Friend
     SPELL_EFFECT_153                       = 153,
     TOTAL_SPELL_EFFECTS                    = 154
 };
