@@ -5477,7 +5477,15 @@ void Spell::EffectActivateObject(uint32 effect_idx)
 
     static ScriptInfo activateCommand = generateActivateCommand();
 
+    /* This is not always delay, need more reaseach on this */
     int32 delay_secs = m_spellInfo->EffectMiscValue[effect_idx];
+
+    if (gameObjTarget->GetGoType() == GAMEOBJECT_TYPE_DOOR ||
+        gameObjTarget->GetGoType() == GAMEOBJECT_TYPE_BUTTON)
+    {
+        gameObjTarget->UseDoorOrButton(delay_secs, false);
+        return;
+    }
 
     gameObjTarget->GetMap()->ScriptCommandStart(activateCommand, delay_secs, m_caster, gameObjTarget);
 }
