@@ -1542,6 +1542,7 @@ class Unit : public WorldObject
         virtual float GetFollowAngle() const { return PET_FOLLOW_ANGLE; }
 
         void SetFlying(bool apply);
+        void SetWalk(bool apply);
 
         bool IsAIEnabled, NeedChangeAI;
 

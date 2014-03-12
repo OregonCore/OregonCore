@@ -12372,6 +12372,14 @@ void Unit::SetFlying(bool apply)
     }
 }
 
+void Unit::SetWalk(bool apply)
+{
+    if (apply)
+        AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
+    else
+        RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
+}
+
 void Unit::UpdateObjectVisibility(bool forced)
 {
     if (!forced)
