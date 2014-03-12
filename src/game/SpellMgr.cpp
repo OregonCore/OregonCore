@@ -2533,6 +2533,10 @@ void SpellMgr::LoadSpellCustomAttr()
         case 13166: // Battle Chicken
             mSpellCustomAttr[i] |= SPELL_ATTR_CU_CAST_BY_ITEM_ONLY;
             break;
+        case 13279: // Gnomish Death Ray (Dummy Target)
+            spellInfo->EffectImplicitTargetA[0] = TARGET_TYPE_UNIT_TARGET;
+            spellInfo->EffectImplicitTargetA[1] = TARGET_TYPE_UNIT_TARGET;
+            break;
         default:
             break;
         }

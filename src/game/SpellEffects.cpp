@@ -806,15 +806,18 @@ void Spell::EffectDummy(uint32 i)
                     m_caster->CastSpell(unitTarget,spell_id,true,NULL);
                     return;
                 }
-                case 13280:                                 // Gnomish Death Ray
+                case 13278:                                 // Gnomish Death Ray (First Dummy)
+                    m_caster->CastSpell(m_caster, 13493, true, NULL);
+                    break;
+                case 13280:                                 // Gnomish Death Ray (Second Dummy)
                 {
                     if (!unitTarget)
                         return;
 
-                    if (urand(0, 99) < 15)
-                        m_caster->CastSpell(m_caster, 13493, true, NULL);    // failure
+                    if (urand(0, 100) < 15)
+                        m_caster->CastSpell(m_caster, 13279, true, NULL); // fail - shitty gnomish technology
                     else
-                        m_caster->CastSpell(unitTarget, 13279, true, NULL);
+                        m_caster->CastSpell(unitTarget, 13279, true, NULL); // Boom!
 
                     return;
                 }
