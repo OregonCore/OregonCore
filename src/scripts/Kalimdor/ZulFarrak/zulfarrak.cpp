@@ -231,7 +231,7 @@ struct npc_weegli_blastfuseAI : public ScriptedAI
                 /// @todo Spell needs proper implementation.
                  DoCastAOE(SPELL_BARREL_EXPLOSION, true);
                 /// @todo leave the area...
-                me->DespawnOrUnsummon();
+                me->DisappearAndDie();
             };
     }
 

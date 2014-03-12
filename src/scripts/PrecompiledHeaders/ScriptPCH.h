@@ -33,6 +33,7 @@
 #include "ScriptedInstance.h"
 #include "CombatAI.h"
 #include "PassiveAI.h"
+#include "ObjectAccessor.h"
 
 #ifdef WIN32
 #include <windows.h>
