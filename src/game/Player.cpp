@@ -17217,7 +17217,10 @@ void Player::SetFFAPvP(bool state)
     if (state)
         SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_FFA_PVP);
     else
+    {
         RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_FFA_PVP);
+        RemoveAllAttackers();               /// @todo: This is temporary and needs to be handled by the code that handles                                 
+    }                                       /// melee swings.
 }
 
 void Player::UpdateDuelFlag(time_t currTime)
