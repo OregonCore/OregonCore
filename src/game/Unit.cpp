@@ -8822,7 +8822,7 @@ int32 Unit::ModifyHealth(int32 dVal)
 uint32 Unit::HealTargetUnit(Unit* target, SpellEntry const *spellInfo, uint32 heal, bool crit)
 {
     // This should have already been checked, but just in case...
-    if (target && spellInfo && heal != 0)
+    if (target && spellInfo)
     {	
         sLog.outDebug("DEBUG: HealTargetUnit(caster: %u, target: %u, spell: %u, healing: %u)",
             GetGUIDLow(), target->GetGUIDLow(), spellInfo->Id, heal);
