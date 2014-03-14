@@ -317,16 +317,18 @@ bool LootItem::AllowedForPlayer(Player const * player) const
     if (!objmgr.IsPlayerMeetToCondition(player,conditionId))
         return false;
 
-    if (needs_quest)    // Items that require a quest to drop
-    {
-        // Checking quests for quest-only drop (check only quests requirements in this case)
-        if (!player->HasQuestForItem(itemid))
-            return false;
-    }
+     ItemPrototype const* pProto = objmgr.GetItemPrototype(itemid);
+     if (!pProto)
+         return false;
+
+     // not show loot for players without profession or those who already know the recipe
+     if ((pProto->Class == 9) && (!player->HasSkill(pProto->RequiredSkill) || player->HasSpell(pProto->Spells[1].SpellId)))
+         return false;
+
+    if (needs_quest && !player->HasQuestForItem(itemid))    // Items that require a quest to drop
+        return false;
     else
     {
-        // Get quest item and check if it starts a quest
-        ItemPrototype const *pProto = objmgr.GetItemPrototype(itemid);
         if (pProto && pProto->StartQuest)
         {
             // Not quest only drop (check quest starting items for already accepted non-repeatable quests)
