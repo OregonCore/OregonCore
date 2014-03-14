@@ -331,6 +331,7 @@ Spell::Spell(Unit* Caster, SpellEntry const *info, bool triggered, uint64 origin
     m_IsTriggeredSpell = triggered;
     //m_AreaAura = false;
     m_CastItem = NULL;
+    m_castItemGUID = 0;
 
     unitTarget = NULL;
     itemTarget = NULL;
