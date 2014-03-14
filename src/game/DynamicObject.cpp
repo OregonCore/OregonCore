@@ -87,7 +87,7 @@ bool DynamicObject::Create(uint32 guidlow, Unit *caster, uint32 spellId, uint32 
     WorldObject::_Create(guidlow, HIGHGUID_DYNAMICOBJECT);
 
     SetEntry(spellId);
-    SetFloatValue(OBJECT_FIELD_SCALE_X, 1);
+    SetObjectScale(1);
     SetUInt64Value(DYNAMICOBJECT_CASTER, caster->GetGUID());
 
     // The lower word of DYNAMICOBJECT_BYTES must be 0x0001. This value means that the visual radius will be overriden

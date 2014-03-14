@@ -2829,7 +2829,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
             if (target)
             {
                 wpCreature->SetDisplayId(target->GetDisplayId());
-                wpCreature->SetFloatValue(OBJECT_FIELD_SCALE_X, 0.5);
+                wpCreature->SetObjectScale(0.5);
             }
         }
         while (result->NextRow());
@@ -2875,7 +2875,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         if (target)
         {
             pCreature->SetDisplayId(target->GetDisplayId());
-            pCreature->SetFloatValue(OBJECT_FIELD_SCALE_X, 0.5);
+            pCreature->SetObjectScale(0.5);
         }
 
         return true;
@@ -2923,7 +2923,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         if (target)
         {
             pCreature->SetDisplayId(target->GetDisplayId());
-            pCreature->SetFloatValue(OBJECT_FIELD_SCALE_X, 0.5);
+            pCreature->SetObjectScale(0.5);
         }
 
         return true;

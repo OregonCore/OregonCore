@@ -337,7 +337,7 @@ bool Creature::InitEntry(uint32 Entry, uint32 team, const CreatureData *data)
     SetSpeed(MOVE_RUN,      cinfo->speed);
     SetSpeed(MOVE_SWIM,     cinfo->speed);
 
-    SetFloatValue(OBJECT_FIELD_SCALE_X, cinfo->scale);
+    SetObjectScale(cinfo->scale);
 
     // checked at loading
     m_defaultMovementType = MovementGeneratorType(cinfo->MovementType);

@@ -96,7 +96,7 @@ bool Corpse::Create(uint32 guidlow, Player *owner, uint32 /*mapid*/, float x, fl
 
     WorldObject::_Create(guidlow, HIGHGUID_CORPSE);
 
-    SetFloatValue(OBJECT_FIELD_SCALE_X, 1);
+    SetObjectScale(1);
     SetFloatValue(CORPSE_FIELD_POS_X, x);
     SetFloatValue(CORPSE_FIELD_POS_Y, y);
     SetFloatValue(CORPSE_FIELD_POS_Z, z);

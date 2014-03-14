@@ -113,7 +113,7 @@ struct boss_midnightAI : public ScriptedAI
                             pAttumen->GetMotionMaster()->MoveChase(pAttumen->getVictim());
                             pAttumen->SetUInt64Value(UNIT_FIELD_TARGET, pAttumen->getVictim()->GetGUID());
                         }
-                        pAttumen->SetFloatValue(OBJECT_FIELD_SCALE_X,1);
+                        pAttumen->SetObjectScale(1);
                         pAttumen->SetHealth(pAttumen->GetMaxHealth());
                     }
                 } else Mount_Timer -= diff;

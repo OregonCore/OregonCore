@@ -695,7 +695,7 @@ bool ChatHandler::HandleGMTicketReloadCommand(const char*)
     return true;
 }
 
-//Enable\Dissable Invisible mode
+//Enable\Disable Invisible mode
 bool ChatHandler::HandleVisibleCommand(const char* args)
 {
     if (!*args)
@@ -1729,7 +1729,7 @@ bool ChatHandler::HandleModifyScaleCommand(const char* args)
             ChatHandler(target->ToPlayer()).PSendSysMessage(LANG_YOURS_SIZE_CHANGED, GetName(), Scale);
     }
 
-    target->SetFloatValue(OBJECT_FIELD_SCALE_X, Scale);
+    target->SetObjectScale(Scale);
 
     return true;
 }

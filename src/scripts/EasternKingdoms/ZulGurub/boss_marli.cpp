@@ -269,7 +269,7 @@ struct mob_spawn_of_marliAI : public ScriptedAI
 
     void JustDied(Unit* /*Killer*/)
     {
-        me->SetFloatValue(OBJECT_FIELD_SCALE_X, 1.0f);
+        me->SetObjectScale(1.0f);
     }
 
     void UpdateAI (const uint32 diff)
@@ -285,7 +285,7 @@ struct mob_spawn_of_marliAI : public ScriptedAI
             me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->maxdmg * (1 + 0.1f * Growth_Level)));
             me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg * (1 + 0.1f * Growth_Level)));
             me->UpdateDamagePhysical(BASE_ATTACK);
-            me->SetFloatValue(OBJECT_FIELD_SCALE_X, 1.0f + Growth_Level * 0.1f);
+            me->SetObjectScale(1.0f + Growth_Level * 0.1f);
             Grow_Timer = 1000;
             ++Growth_Level;
         }
