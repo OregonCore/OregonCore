@@ -72,9 +72,8 @@ void CreatureFormationManager::RemoveCreatureFromFormation(CreatureFormation *fo
 
 void CreatureFormationManager::LoadCreatureFormations()
 {
-    //Clear existing map
-    CreatureFormationMap.clear();
-    CreatureFormationDataMap.clear();
+    // Clear existing map (we need to call delete)
+    UnloadCreatureFormations();
 
     //Check Integrity of the table creature_formations
     QueryResult_AutoPtr result = WorldDatabase.Query("SELECT MAX(formationId) FROM creature_formations");
@@ -178,7 +177,7 @@ void CreatureFormationManager::LoadCreatureFormations()
         {
             sLog.outErrorDb("creature_formations table leader guid %u incorrect (not exist)", formation_info->leaderGUID);
             delete formation_info;
-            return;
+            continue;
         }
 
         CreatureFormationMap[formationId] = formation_info;
@@ -212,6 +211,7 @@ void CreatureFormationManager::LoadCreatureFormations()
         if (guidSet.find(memberGUID) == guidSet.end())
         {
             sLog.outErrorDb("creature_formation_data table member guid %u incorrect (not exist)", memberGUID);
+            delete formation_data;
             continue;
         }
 
@@ -358,3 +358,19 @@ void CreatureFormation::LeaderMoveTo(float x, float y, float z)
         pCreature->SetHomePosition(dx, dy, dz, pathangle);
     }
 }
+
+void CreatureFormationManager::UnloadCreatureFormations()
+{
+    for (CreatureFormationInfoType::iterator it = CreatureFormationMap.begin(); it != CreatureFormationMap.end(); )
+    {
+        delete it->second;
+        it = CreatureFormationMap.erase(it);
+    }
+
+    for (CreatureFormationDataType::iterator it = CreatureFormationDataMap.begin(); it != CreatureFormationDataMap.end(); )
+    {
+        delete it->second;
+        it = CreatureFormationDataMap.erase(it);
+    }
+}
+
