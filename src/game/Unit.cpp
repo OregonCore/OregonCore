@@ -7945,13 +7945,46 @@ uint32 Unit::SpellHealingBonus(SpellEntry const *spellProto, uint32 healamount, 
         AuraList const& mDummyAuras = pVictim->GetAurasByType(SPELL_AURA_DUMMY);
         for (AuraList::const_iterator i = mDummyAuras.begin();i != mDummyAuras.end(); ++i)
         {
-            if ((*i)->GetSpellProto()->SpellVisual == 9180)
+            if ((*i)->GetSpellProto()->SpellVisual == 9180) // Blessing of Light
             {
                 // Flash of Light
                 if ((spellProto->SpellFamilyFlags & 0x0000000040000000LL) && (*i)->GetEffIndex() == 1)
                     AdvertisedBenefit += (*i)->GetModifier()->m_amount;
                 // Holy Light
                 else if ((spellProto->SpellFamilyFlags & 0x0000000080000000LL) && (*i)->GetEffIndex() == 0)
+                    AdvertisedBenefit += (*i)->GetModifier()->m_amount;
+            }
+            else if((*i)->GetSpellProto()->Id == 38320)	// Libram of Souls Redeemed
+            {
+                // Flash of Light
+                if ((spellProto->SpellFamilyFlags & UI64LIT(0x0000000040000000)) && (*i)->GetEffIndex() == 0)
+                    AdvertisedBenefit += (*i)->GetModifier()->m_amount/2;
+                // Holy Light
+                else if ((spellProto->SpellFamilyFlags & UI64LIT(0x0000000080000000)) && (*i)->GetEffIndex() == 0)
+                    AdvertisedBenefit += (*i)->GetModifier()->m_amount;
+            }
+            else if((*i)->GetSpellProto()->Id == 34231)	// Libram of the Lightbringer
+            {
+                // Holy Light
+                if ((spellProto->SpellFamilyFlags & UI64LIT(0x0000000080000000)) && (*i)->GetEffIndex() == 0)
+                    AdvertisedBenefit += (*i)->GetModifier()->m_amount;
+            }
+            else if((*i)->GetSpellProto()->Id == 28851)	// Libram of Light
+            {
+                // Flash of Light
+                if ((spellProto->SpellFamilyFlags & UI64LIT(0x0000000040000000)) && (*i)->GetEffIndex() == 0)
+                    AdvertisedBenefit += (*i)->GetModifier()->m_amount;
+            }
+            else if((*i)->GetSpellProto()->Id == 28853)	// Libram of Divinity
+            {
+                // Flash of Light
+                if ((spellProto->SpellFamilyFlags & UI64LIT(0x0000000040000000)) && (*i)->GetEffIndex() == 0)
+                    AdvertisedBenefit += (*i)->GetModifier()->m_amount;
+            }
+            else if((*i)->GetSpellProto()->Id == 32403)	// Blessed book of Nagrand
+            {
+                // Flash of Light
+                if ((spellProto->SpellFamilyFlags & UI64LIT(0x0000000040000000)) && (*i)->GetEffIndex() == 0)
                     AdvertisedBenefit += (*i)->GetModifier()->m_amount;
             }
         }
