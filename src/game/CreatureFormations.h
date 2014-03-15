@@ -56,6 +56,7 @@ class CreatureFormationManager
         void AddCreatureToFormation(uint32 formation_id, Creature *creature);
         void RemoveCreatureFromFormation(CreatureFormation *formation, Creature *creature);
         void LoadCreatureFormations();
+        void UnloadCreatureFormations();
 };
 
 #ifdef formation_mgr
