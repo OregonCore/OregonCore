@@ -147,10 +147,7 @@ Player* World::FindPlayerInZone(uint32 zone)
         if (!player)
             continue;
         if (player->IsInWorld() && player->GetZoneId() == zone)
-        {
-            // Used by the weather system. We return the player to broadcast the change weather message to him and all players in the zone.
             return player;
-        }
     }
     return NULL;
 }
@@ -1951,9 +1948,11 @@ void World::SendGlobalText(const char* text, WorldSession *self)
 }
 
 // Send a packet to all players (or players selected team) in the zone (except self if mentioned)
-void World::SendZoneMessage(uint32 zone, WorldPacket *packet, WorldSession *self, uint32 team)
+bool World::SendZoneMessage(uint32 zone, WorldPacket *packet, WorldSession *self, uint32 team)
 {
+    bool foundPlayerToSend = false;
     SessionMap::iterator itr;
+
     for (itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
     {
         if (itr->second &&
@@ -1964,8 +1963,11 @@ void World::SendZoneMessage(uint32 zone, WorldPacket *packet, WorldSession *self
             (team == 0 || itr->second->GetPlayer()->GetTeam() == team))
         {
             itr->second->SendPacket(packet);
+            foundPlayerToSend = true;
         }
     }
+
+    return foundPlayerToSend;
 }
 
 // Send a System Message to all players in the zone (except self if mentioned)

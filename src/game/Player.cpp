@@ -6657,14 +6657,9 @@ void Player::UpdateZone(uint32 newZone)
         Weather *wth = sWorld.FindWeather(zone->ID);
         if (wth)
             wth->SendWeatherUpdateToPlayer(this);
-        else
-        {
-            if (!sWorld.AddWeather(zone->ID))
-            {
-                // send fine weather packet to remove old zone's weather
-                Weather::SendFineWeatherUpdateToPlayer(this);
-            }
-        }
+        else if (!sWorld.AddWeather(zone->ID))
+            // send fine weather packet to remove old zone's weather
+            Weather::SendFineWeatherUpdateToPlayer(this);
     }
 
     // in PvP, any not controlled zone (except zone->team == 6, default case)
