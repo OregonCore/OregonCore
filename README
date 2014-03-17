@@ -1,12 +1,12 @@
 = Oregon Core -- General information =
 
-Copyright (C) Oregon Core (http://www.oregoncore.com)
+Copyright (C) Oregon Core (http://oregoncore.lunar.sk)
 
-Oregon Core is a World of Warcraft (THe Burning Crusade) game server emulator.
+Oregon Core is a World of Warcraft (The Burning Crusade) game server emulator.
 It is derived from Trinity Core, and is based on the code of that project.
 
 For further information on the Oregon Core project, please visit our
-project website at http://www.oregoncore.com.
+project website at http://oregoncore.lunar.sk/.
 
 SQL files to create the database can be found in the sql directory. Files
 to update your database from an older revision/version can be found in the
