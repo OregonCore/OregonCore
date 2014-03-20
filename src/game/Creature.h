@@ -240,6 +240,13 @@ struct GossipMenuItemsLocale
 struct EquipmentInfo
 {
     uint32  entry;
+    uint32  equipentry[3];
+};
+
+// depricated old way
+struct EquipmentInfoRaw
+{
+    uint32  entry;
     uint32  equipmodel[3];
     uint32  equipinfo[3];
     uint32  equipslot[3];
@@ -399,6 +406,26 @@ struct TrainerSpellData
     TrainerSpell const* Find(uint32 spell_id) const;
 };
 
+enum VirtualItemSlot
+{
+    VIRTUAL_ITEM_SLOT_0 = 0,
+    VIRTUAL_ITEM_SLOT_1 = 1,
+    VIRTUAL_ITEM_SLOT_2 = 2,
+};
+
+#define MAX_VIRTUAL_ITEM_SLOT 3
+
+enum VirtualItemInfoByteOffset
+{
+    VIRTUAL_ITEM_INFO_0_OFFSET_CLASS = 0,
+    VIRTUAL_ITEM_INFO_0_OFFSET_SUBCLASS = 1,
+    VIRTUAL_ITEM_INFO_0_OFFSET_UNK0 = 2,
+    VIRTUAL_ITEM_INFO_0_OFFSET_MATERIAL = 3,
+
+    VIRTUAL_ITEM_INFO_1_OFFSET_INVENTORYTYPE = 0,
+    VIRTUAL_ITEM_INFO_1_OFFSET_SHEATH = 1,
+};
+
 typedef std::list<GossipOption> GossipOptionList;
 
 typedef std::map<uint32,time_t> CreatureSpellCooldowns;
@@ -430,7 +457,10 @@ class Creature : public Unit, public GridObject<Creature>
 
         void Update(uint32 time);                         // overwrited Unit::Update
         void GetRespawnCoord(float &x, float &y, float &z, float* ori = NULL, float* dist =NULL) const;
+        
         uint32 GetEquipmentId() const { return m_equipmentId; }
+        void SetVirtualItem(VirtualItemSlot slot, uint32 item_id);
+        void SetVirtualItemRaw(VirtualItemSlot slot, uint32 display_id, uint32 info0, uint32 info1);
 
         uint32 HasSummonMask(uint32 mask) const { return mask & m_summonMask; }
         bool isSummon() const   { return m_summonMask & SUMMON_MASK_SUMMON; }
