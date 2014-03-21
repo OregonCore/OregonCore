@@ -2276,7 +2276,6 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                 }
                 return;
             }
-
             break;
         }
         case SPELLFAMILY_MAGE:
@@ -4741,6 +4740,7 @@ void Aura::HandleAuraModIncreaseHealth(bool apply, bool Real)
                 m_target->ModifyHealth(-m_modifier.m_amount);
             else
                 m_target->SetHealth(1);
+
             m_target->HandleStatModifier(UNIT_MOD_HEALTH, TOTAL_VALUE, float(GetModifierValue()), apply);
         }
     }

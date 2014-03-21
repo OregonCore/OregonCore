@@ -9892,6 +9892,8 @@ void Unit::SetHealth(uint32 val)
 {
     if (getDeathState() == JUST_DIED)
         val = 0;
+    else if (GetTypeId() == TYPEID_PLAYER && getDeathState() == DEAD)
+        val = 1;
     else
     {
         uint32 maxHealth = GetMaxHealth();
@@ -9921,6 +9923,9 @@ void Unit::SetHealth(uint32 val)
 
 void Unit::SetMaxHealth(uint32 val)
 {
+    if (!val)
+        val = 1;
+
     float healthPct = GetMaxHealth();
     SetUInt32Value(UNIT_FIELD_MAXHEALTH, val);
 
