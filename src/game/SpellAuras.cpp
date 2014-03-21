@@ -2276,6 +2276,19 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                 }
                 return;
             }
+
+            if (GetId() == 126 && caster) // Eye of Kilrogg (Temporarily UnSumoon Main Pet)
+            {
+                Player* player = caster->ToPlayer();
+                if (!player)
+                    return;
+
+                if (apply)
+                    player->TemporaryUnsummonPetIfAny();
+                else
+                    player->ResummonTemporaryUnsummonedPetIfAny();
+                return;
+            }
             break;
         }
         case SPELLFAMILY_MAGE:

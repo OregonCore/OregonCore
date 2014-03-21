@@ -2066,6 +2066,9 @@ class Player : public Unit, public GridObject<Player>
         uint32 GetOldPetSpell() const { return m_oldpetspell; }
         void SetOldPetSpell(uint32 petspell) { m_oldpetspell = petspell; }
 
+        void TemporaryUnsummonPetIfAny();
+        void ResummonTemporaryUnsummonedPetIfAny();
+
         // Handle pet status here
         PetStatus GetPetStatus() const { return m_petStatus; }
         void SetPetStatus(PetStatus status) { m_petStatus = status; }

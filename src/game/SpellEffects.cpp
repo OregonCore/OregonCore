@@ -3375,6 +3375,9 @@ void Spell::EffectSummonType(uint32 i)
                 faction = m_originalCaster->getFaction();
 
             summon->setFaction(faction);
+
+            if (prop_id == 65) // Eye of Kilrogg
+                summon->CastSpell(summon, 2585, true);
             break;
     }
 
@@ -6567,7 +6570,7 @@ void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const *
     for (uint32 count = 0; count < amount; ++count)
     {
         Position pos;
-        GetSummonPosition(i, pos, radius, count);
+        GetSummonPosition(i, pos, radius);
 
         TempSummon *summon = map->SummonCreature(entry, pos, properties, duration, caster);
         if (!summon)
@@ -6586,54 +6589,26 @@ void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const *
     }
 }
 
-void Spell::GetSummonPosition(uint32 i, Position &pos, float radius, uint32 count)
+void Spell::GetSummonPosition(uint32 i, Position &pos, float radius)
 {
     pos.SetOrientation(m_caster->GetOrientation());
 
     if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
     {
-        // Summon 1 unit in dest location
-        if (count == 0)
+        switch (m_spellInfo->EffectImplicitTargetA[i])
         {
-            bool found = false;
-            float cur_radius = 3.0f;
-
-            while (cur_radius > 0.0f && !found)
-            {
-                for (int i = 0; i < 10; i++)
-                {
-                    m_caster->GetRandomPoint(m_targets.m_dstPos, cur_radius, pos);
-                    if (m_caster->IsWithinLOS(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ()))
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-                cur_radius -= 1.5f;
-            }
-
-            if (!found)
-                pos.Relocate(m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ(), m_caster->GetOrientation());
-
-        }
-        // Summon in random point all other units if location present
-        else
-        {
-            //This is a workaround. Do not have time to write much about it
-            switch (m_spellInfo->EffectImplicitTargetA[i])
-            {
-                case TARGET_MINION:
-                case TARGET_DEST_CASTER_RANDOM:
-                    m_caster->GetNearPosition(pos, radius * rand_norm(), rand_norm()*2*M_PI);
-                    break;
-                case TARGET_DEST_DEST_RANDOM:
-                case TARGET_DEST_TARGET_RANDOM:
-                    m_caster->GetRandomPoint(m_targets.m_dstPos, radius, pos);
-                    break;
-                default:
-                    pos.Relocate(m_targets.m_dstPos);
-                    break;
-            }
+            case TARGET_MINION:
+            case TARGET_DEST_CASTER_RANDOM:
+                radius = std::max<float>(radius, m_caster->GetObjectSize());
+                m_caster->GetNearPosition(pos, radius * rand_norm(), rand_norm()*2*M_PI);
+                break;
+            case TARGET_DEST_DEST_RANDOM:
+            case TARGET_DEST_TARGET_RANDOM:
+                m_caster->GetRandomPoint(m_targets.m_dstPos, radius, pos);
+                break;
+            default:
+                pos.Relocate(m_targets.m_dstPos);
+                break;
         }
     }
     // Summon if dest location not present near caster

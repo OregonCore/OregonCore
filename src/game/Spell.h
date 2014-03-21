@@ -591,7 +591,7 @@ class Spell
         void SpellDamageWeaponDmg(uint32 i);
         void SpellDamageHeal(uint32 i);
 
-        void GetSummonPosition(uint32 i, Position &pos, float radius = 0.0f, uint32 count = 0);
+        void GetSummonPosition(uint32 i, Position &pos, float radius = 0.0f);
         void SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const *properties);
         // -------------------------------------------
 

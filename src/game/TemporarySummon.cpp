@@ -351,7 +351,10 @@ void Puppet::Update(uint32 time)
     Minion::Update(time);
     //check if caster is channelling?
     if (IsInWorld() && !isAlive())
+    {
         UnSummon();
+        m_owner->InterruptNonMeleeSpells(true, GetUInt32Value(UNIT_CREATED_BY_SPELL), false);
+    }
 }
 
 void Puppet::RemoveFromWorld()

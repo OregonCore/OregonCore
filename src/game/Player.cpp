@@ -1901,6 +1901,53 @@ void Player::RemoveFromWorld()
     }
 }
 
+void Player::TemporaryUnsummonPetIfAny()
+{
+    if (!IsInWorld() || !isAlive())
+        return;
+
+    Pet* pet = GetPet();
+    if (pet)
+    {
+        BattleGround *bg = GetBattleGround();
+        // don't unsummon pet in arena but SetFlag UNIT_FLAG_STUNNED to disable pet's interface
+        if (bg && bg->isArena())
+            pet->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
+        else
+        {
+            if (pet->isControlled())
+            {
+                SetTemporaryUnsummonedPetNumber(pet->GetCharmInfo()->GetPetNumber());
+                SetOldPetSpell(pet->GetUInt32Value(UNIT_CREATED_BY_SPELL));
+            }
+            RemovePet(NULL, PET_SAVE_NOT_IN_SLOT);
+            return;
+        }
+    }
+
+    SetTemporaryUnsummonedPetNumber(0);
+}
+
+void Player::ResummonTemporaryUnsummonedPetIfAny()
+{
+    if (!IsInWorld() || !isAlive())
+        return;
+
+    if (GetTemporaryUnsummonedPetNumber())
+    {
+        Pet* NewPet = new Pet(this);
+        if (!NewPet->LoadPetFromDB(this, 0, GetTemporaryUnsummonedPetNumber(), true))
+            delete NewPet;
+        SetTemporaryUnsummonedPetNumber(0);
+    }
+    else
+    {
+       if (Guardian *pPet = GetGuardianPet())
+           if (pPet->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED) && !pPet->hasUnitState(UNIT_STAT_STUNNED))
+               pPet->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
+    }
+}
+
 void Player::RewardRage(uint32 damage, uint32 weaponSpeedHitFactor, bool attacker)
 {
     float addRage;
@@ -17337,10 +17384,6 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
 
     if (pet->isControlled())
     {
-        WorldPacket data(SMSG_PET_SPELLS, 8);
-        data << uint64(0);
-        GetSession()->SendPacket(&data);
-
         if (GetGroup())
             SetGroupUpdateFlag(GROUP_UPDATE_PET);
     }
