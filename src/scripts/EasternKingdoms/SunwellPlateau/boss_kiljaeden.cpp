@@ -193,11 +193,11 @@ enum KilJaedenTimers
 };
 
 // Locations of the Hand of Deceiver adds
-Position DeceiverLocations[3]=
+float DeceiverLocations[3][3]=
 {
-    {1682.045f, 631.299f, 27.593f, 0.0f},
-    {1684.099f, 618.848f, 27.593f, 0.0f},
-    {1694.170f, 612.272f, 27.593f, 0.0f},
+    {1682.045, 631.299, 5.936},
+    {1684.099, 618.848, 0.589},
+    {1694.170, 612.272, 1.416},
 };
 
 // Locations, where Shield Orbs will spawn
@@ -415,10 +415,10 @@ struct mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
         if (Creature* pKalecKJ = Unit::GetCreature((*me), pInstance->GetData64(DATA_KALECGOS_KJ)))
             CAST_AI(boss_kalecgos_kjAI, pKalecKJ->AI())->ResetOrbs();
         deceiverDeathCount = 0;
-        bSummonedDeceivers = false;
         bKiljaedenDeath = false;
         uiRandomSayTimer = 30000;
         summons.DespawnAll();
+        bSummonedDeceivers = false;
     }
 
     void JustSummoned(Creature* summoned)
@@ -429,8 +429,11 @@ struct mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
                 summoned->CastSpell(summoned, SPELL_SHADOW_CHANNELING, false);
                 break;
             case CREATURE_ANVEENA:
+                summoned->setActive(true);
                 summoned->AddUnitMovementFlag(MOVEFLAG_ONTRANSPORT | MOVEFLAG_LEVITATING);
+                summoned->SetPosition(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ()+40, 0, true);
                 summoned->CastSpell(summoned, SPELL_ANVEENA_PRISON, true);
+                me->CastSpell(summoned, SPELL_ANVEENA_ENERGY_DRAIN, true);
                 summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 break;
             case CREATURE_KILJAEDEN:
@@ -453,10 +456,9 @@ struct mob_kiljaeden_controllerAI : public Scripted_NoMovementAI
         if (!bSummonedDeceivers)
         {
             for (uint8 i = 0; i < 3; ++i)
-                me->SummonCreature(CREATURE_HAND_OF_THE_DECEIVER, DeceiverLocations[i], TEMPSUMMON_DEAD_DESPAWN, 0);
+                me->SummonCreature(CREATURE_HAND_OF_THE_DECEIVER, DeceiverLocations[i][0], DeceiverLocations[i][1], FLOOR_Z, DeceiverLocations[i][2], TEMPSUMMON_DEAD_DESPAWN, 0);
 
             DoSpawnCreature(CREATURE_ANVEENA,  0, 0, 40, 0, TEMPSUMMON_DEAD_DESPAWN, 0);
-            DoCast(me, SPELL_ANVEENA_ENERGY_DRAIN);
             bSummonedDeceivers = true;
         }
 

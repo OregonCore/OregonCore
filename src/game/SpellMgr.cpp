@@ -2447,7 +2447,6 @@ void SpellMgr::LoadSpellCustomAttr()
         case 39992: // Needle Spine
         case 29576: // Multi-Shot
         case 37790: // Spread Shot
-        case 46771: // Flame Sear
         case 45248: // Shadow Blades
         case 41303: // Soul Drain
             spellInfo->MaxAffectedTargets = 3;
@@ -2461,6 +2460,7 @@ void SpellMgr::LoadSpellCustomAttr()
         case 46008: // Negative Energy
         case 45641: // Fire Bloom
         case 5484:  // Howl Of Terror
+        case 46771: // Flame Sear
             spellInfo->MaxAffectedTargets = 5;
             break;
         case 40827: // Sinful Beam

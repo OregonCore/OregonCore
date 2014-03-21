@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2006-2012 ScriptDev2 <http://www.scriptdev2.com/>
+ * Copyright (C) 2006-2014 ScriptDev2 <http://www.scriptdev2.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -19,16 +19,14 @@
 
 /* ScriptData
 SDName: Instance_Sunwell_Plateau
-SD%Complete: 25
+SD%Complete: 75
 SDComment: VERIFY SCRIPT
 SDCategory: Sunwell_Plateau
 EndScriptData */
 
 #include "ScriptPCH.h"
 #include "sunwell_plateau.h"
-
 #define MAX_ENCOUNTER 6
-
 /* Sunwell Plateau:
 0 - Kalecgos and Sathrovarr
 1 - Brutallus
@@ -37,18 +35,16 @@ EndScriptData */
 4 - M'uru
 5 - Kil'Jaeden
 */
-
 struct instance_sunwell_plateau : public ScriptedInstance
 {
     instance_sunwell_plateau(Map* pMap) : ScriptedInstance(pMap) {Initialize();};
-
     uint32 m_auiEncounter[MAX_ENCOUNTER];
-
     /** Creatures **/
     uint64 Kalecgos_Dragon;
     uint64 Kalecgos_Human;
     uint64 Sathrovarr;
     uint64 Brutallus;
+    uint64 BrutallusTrigger;
     uint64 Madrigosa;
     uint64 Felmyst;
     uint64 Alythess;
@@ -59,13 +55,13 @@ struct instance_sunwell_plateau : public ScriptedInstance
     uint64 Anveena;
     uint64 KalecgosKJ;
     uint32 SpectralPlayers;
-
     /** GameObjects **/
     uint64 ForceField;                                      // Kalecgos Encounter
     uint64 KalecgosWall[2];
+    uint64 IceBarrier;
     uint64 FireBarrier;                                     // Felmysts Encounter
     uint64 MurusGate[2];                                    // Murus Encounter
-
+    uint64 DragonOrb[3];                                    // Kil'Jaeden Encounter
     /*** Misc ***/
     uint32 SpectralRealmTimer;
     std::vector<uint64> SpectralRealmList;
@@ -73,12 +69,12 @@ struct instance_sunwell_plateau : public ScriptedInstance
     void Initialize()
     {
         memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
-
         /*** Creatures ***/
         Kalecgos_Dragon         = 0;
         Kalecgos_Human          = 0;
         Sathrovarr              = 0;
         Brutallus               = 0;
+        BrutallusTrigger        = 0;
         Madrigosa               = 0;
         Felmyst                 = 0;
         Alythess                = 0;
@@ -89,15 +85,18 @@ struct instance_sunwell_plateau : public ScriptedInstance
         Anveena                 = 0;
         KalecgosKJ              = 0;
         SpectralPlayers         = 0;
-
         /*** GameObjects ***/
         ForceField  = 0;
         FireBarrier = 0;
         MurusGate[0] = 0;
         MurusGate[1] = 0;
+        IceBarrier = 0;
         KalecgosWall[0] = 0;
         KalecgosWall[1] = 0;
-
+        DragonOrb[0] = 0;
+        DragonOrb[1] = 0;
+        DragonOrb[2] = 0;
+        DragonOrb[3] = 0;
         /*** Misc ***/
         SpectralRealmTimer = 5000;
     }
@@ -107,14 +106,12 @@ struct instance_sunwell_plateau : public ScriptedInstance
         for (uint8 i = 0; i < MAX_ENCOUNTER; ++i)
             if (m_auiEncounter[i] == IN_PROGRESS)
                 return true;
-
         return false;
     }
 
     Player* GetPlayerInMap()
     {
         Map::PlayerList const& players = instance->GetPlayers();
-
         if (!players.isEmpty())
         {
             for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
@@ -124,7 +121,6 @@ struct instance_sunwell_plateau : public ScriptedInstance
                         return plr;
             }
         }
-
         debug_log("OSCR: Instance Sunwell Plateau: GetPlayerInMap, but PlayerList is empty!");
         return NULL;
     }
@@ -137,7 +133,8 @@ struct instance_sunwell_plateau : public ScriptedInstance
             case 24891: Kalecgos_Human      = pCreature->GetGUID(); break;
             case 24892: Sathrovarr          = pCreature->GetGUID(); break;
             case 24882: Brutallus           = pCreature->GetGUID(); break;
-            case 24895: Madrigosa           = pCreature->GetGUID(); break;
+            case 19871: BrutallusTrigger   = pCreature->GetGUID(); break;
+            case 25160: Madrigosa           = pCreature->GetGUID(); break;
             case 25038: Felmyst             = pCreature->GetGUID(); break;
             case 25166: Alythess            = pCreature->GetGUID(); break;
             case 25165: Sacrolash           = pCreature->GetGUID(); break;
@@ -156,17 +153,34 @@ struct instance_sunwell_plateau : public ScriptedInstance
             case 188421: ForceField     = pGo->GetGUID(); break;
             case 188523: KalecgosWall[0] = pGo->GetGUID(); break;
             case 188524: KalecgosWall[0] = pGo->GetGUID(); break;
+            case 188119: IceBarrier = pGo->GetGUID(); break;
             case 188075:
                 if (m_auiEncounter[2] == DONE)
-                    HandleGameObject(0, true, pGo);
+                    HandleGameObject(NULL, true, pGo);
                 FireBarrier = pGo->GetGUID();
                 break;
             case 187990: MurusGate[0]   = pGo->GetGUID(); break;
             case 188118:
                 if (m_auiEncounter[4] == DONE)
-                    HandleGameObject(0, true, pGo);
+                    HandleGameObject(NULL, true, pGo);
                 MurusGate[1]= pGo->GetGUID();
                 break;
+            case 188415:
+                switch (pGo->GetDBTableGUIDLow())
+                {
+                    case 100000:
+                        DragonOrb[0] = pGo->GetGUID();
+                        break;
+                    case 100001:
+                        DragonOrb[1] = pGo->GetGUID();
+                        break;
+                    case 100002:
+                        DragonOrb[2] = pGo->GetGUID();
+                        break;
+                    case 100003:
+                        DragonOrb[3] = pGo->GetGUID();
+                        break;
+                }
         }
     }
 
@@ -188,6 +202,10 @@ struct instance_sunwell_plateau : public ScriptedInstance
     {
         switch(id)
         {
+            case DATA_ORB_OF_THE_BLUE_DRAGONFLIGHT_1: return DragonOrb[0];
+            case DATA_ORB_OF_THE_BLUE_DRAGONFLIGHT_2: return DragonOrb[1];
+            case DATA_ORB_OF_THE_BLUE_DRAGONFLIGHT_3: return DragonOrb[2];
+            case DATA_ORB_OF_THE_BLUE_DRAGONFLIGHT_4: return DragonOrb[3];
             case DATA_KALECGOS_DRAGON:      return Kalecgos_Dragon;
             case DATA_KALECGOS_HUMAN:       return Kalecgos_Human;
             case DATA_SATHROVARR:           return Sathrovarr;
@@ -230,11 +248,16 @@ struct instance_sunwell_plateau : public ScriptedInstance
                     m_auiEncounter[0] = data;
                 }
                 break;
-            case DATA_BRUTALLUS_EVENT:     m_auiEncounter[1] = data; break;
+            case DATA_BRUTALLUS_EVENT:
+                if (data == SPECIAL)
+                    DoUseDoorOrButton(IceBarrier,MINUTE);
+                m_auiEncounter[1] = data;
+                break;
             case DATA_FELMYST_EVENT:
                 if (data == DONE)
                     HandleGameObject(FireBarrier, true);
-                m_auiEncounter[2] = data; break;
+                m_auiEncounter[2] = data;
+                break;
             case DATA_EREDAR_TWINS_EVENT:  m_auiEncounter[3] = data; break;
             case DATA_MURU_EVENT:
                 switch(data)
@@ -255,7 +278,6 @@ struct instance_sunwell_plateau : public ScriptedInstance
                 m_auiEncounter[4] = data; break;
             case DATA_KILJAEDEN_EVENT:     m_auiEncounter[5] = data; break;
         }
-
         if (data == DONE)
             SaveToDB();
     }
@@ -283,7 +305,6 @@ struct instance_sunwell_plateau : public ScriptedInstance
             OUT_LOAD_INST_DATA_FAIL;
             return;
         }
-
         OUT_LOAD_INST_DATA(in);
         std::istringstream stream(in);
         stream >> m_auiEncounter[0] >> m_auiEncounter[1] >> m_auiEncounter[2] >> m_auiEncounter[3]
@@ -303,10 +324,8 @@ InstanceData* GetInstanceData_instance_sunwell_plateau(Map* pMap)
 void AddSC_instance_sunwell_plateau()
 {
     Script *newscript;
-
     newscript = new Script;
     newscript->Name = "instance_sunwell_plateau";
     newscript->GetInstanceData = &GetInstanceData_instance_sunwell_plateau;
     newscript->RegisterSelf();
 }
-
