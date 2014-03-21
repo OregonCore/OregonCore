@@ -2469,6 +2469,9 @@ void SpellMgr::LoadSpellCustomAttr()
         case 40861: // Wicked Beam
             spellInfo->MaxAffectedTargets = 10;
             break;
+        case 46841: // Escape to the Isle of Quel'Denas
+            spellInfo->EffectImplicitTargetB[0] = TARGET_UNIT_CASTER;
+            break;
         case 8122: case 8124: case 10888: case 10890: // Psychic Scream
         case 12494: // Frostbite
             spellInfo->Attributes |= SPELL_ATTR_BREAKABLE_BY_DAMAGE;
