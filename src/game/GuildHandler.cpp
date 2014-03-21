@@ -383,7 +383,7 @@ void WorldSession::HandleGuildLeaveOpcode(WorldPacket& /*recvPacket*/)
         return;
     }
 	// Leader cannot leave if he is not the last member
-    if (_player->GetGUID() == guild->GetLeader() && guild->GetMemberSize() > 1)
+    if (_player->GetGUID() == guild->GetLeader())
 	{
         if (guild->GetMemberSize() > 1)
             SendGuildCommandResult(GUILD_QUIT_S, "", ERR_GUILD_LEADER_LEAVE);
