@@ -2377,6 +2377,10 @@ void SpellMgr::LoadSpellCustomAttr()
                         spellInfo->Targets & (TARGET_FLAG_SOURCE_LOCATION|TARGET_FLAG_DEST_LOCATION))
                         spellInfo->Effect[j] = SPELL_EFFECT_TRIGGER_MISSILE;
                     break;
+                case SPELL_EFFECT_SELF_RESURRECT:
+                    // Self-Ressurect spells shouldn't be usable in arenas
+                    spellInfo->AttributesEx4 |= SPELL_ATTR_EX4_NOT_USABLE_IN_ARENA;
+                    break;
             }
         }
 
