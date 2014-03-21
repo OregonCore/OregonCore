@@ -474,7 +474,13 @@ struct MovementInfo
     float   u_unk1;
     MovementInfo() : moveFlags(MOVEFLAG_NONE), moveFlags2(0), time(0), t_guid(0),
         t_time(0), s_pitch(0.0f), fallTime(0), j_velocity(0.0f), j_sinAngle(0.0f),
-        j_cosAngle(0.0f), j_xyspeed(0.0f), u_unk1(0.0f) {}
+        j_cosAngle(0.0f), j_xyspeed(0.0f), u_unk1(0.0f)
+    {
+        t_pos.m_positionX   = .0f;
+        t_pos.m_positionY   = .0f;
+        t_pos.m_positionZ   = .0f;
+        t_pos.m_orientation = .0f;
+    }
 
     // Read/Write methods
     void Read(ByteBuffer &data);
