@@ -1377,6 +1377,9 @@ void World::SetInitialWorldSettings()
     sLog.outString("Loading Autobroadcasts...");
     LoadAutobroadcasts();
 
+    sLog.outString("Loading Ip2nation...");
+    LoadIp2nation();
+
     // Load and initialize scripts
     sLog.outString("Loading Scripts...");
     sLog.outString();
@@ -1608,6 +1611,24 @@ void World::LoadAutobroadcasts()
 
     sLog.outString();
     sLog.outString( ">> Loaded %u autobroadcasts definitions", count);
+}
+
+ 	
+void World::LoadIp2nation()
+{
+ 	uint32 oldMSTime = getMSTime();
+ 	
+ 	QueryResult_AutoPtr result = WorldDatabase.Query("SELECT count(c.code) FROM ip2nationCountries c, ip2nation i WHERE c.code = i.country");
+ 	uint32 count = 0;
+
+    if (result)
+    {
+        Field* fields = result->Fetch();
+	    count = fields[0].GetUInt32();
+	}
+
+ 	sLog.outString(">> Loaded %u ip2nation definitions", count);
+	sLog.outString();
 }
 
 // Update the World !
