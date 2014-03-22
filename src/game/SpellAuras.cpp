@@ -305,7 +305,7 @@ pAuraHandler AuraHandler[TOTAL_AURAS]=
     &Aura::HandleNULL,                                      //249
     &Aura::HandleAuraModIncreaseHealth,                     //250 SPELL_AURA_MOD_INCREASE_HEALTH_2
     &Aura::HandleNULL,                                      //251 SPELL_AURA_MOD_ENEMY_DODGE
-    &Aura::HandleUnused,                                    //252 unused
+    &Aura::HandleNoImmediateEffect,                         //252 SPELL_AURA_REUSED_BLESSED_LIFE
     &Aura::HandleUnused,                                    //253 unused
     &Aura::HandleUnused,                                    //254 unused
     &Aura::HandleUnused,                                    //255 unused

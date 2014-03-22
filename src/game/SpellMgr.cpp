@@ -2544,6 +2544,11 @@ void SpellMgr::LoadSpellCustomAttr()
             spellInfo->EffectImplicitTargetA[0] = TARGET_TYPE_UNIT_TARGET;
             spellInfo->EffectImplicitTargetA[1] = TARGET_TYPE_UNIT_TARGET;
             break;
+        case 31828: // Blessed Life (Rank 1)
+        case 31829: // Blessed Life (Rank 2)
+        case 31830: // Blessed Life (Rank 3)
+            spellInfo->EffectApplyAuraName[0] = SPELL_AURA_REUSED_BLESSED_LIFE;
+            break;
         default:
             break;
         }
