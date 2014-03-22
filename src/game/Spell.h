@@ -685,6 +685,14 @@ namespace Oregon
                             if (!check->IsHostileTo(itr->getSource()))
                                 continue;
                         }
+
+                        if( check->GetTypeId() == TYPEID_PLAYER &&              // Victim is Player
+                            itr->getSource()->GetTypeId() == TYPEID_PLAYER &&   // Source is Player
+                            !((Player*)check)->duel &&                          // Not in duel
+                            !((Player*)check)->InArena() &&                     // Not in arena
+                            !((Player*)check)->IsPvP())                         // PVP Deactivated (Not in BG by default)
+                            continue;
+
                     }break;
                     case SPELL_TARGETS_ENTRY:
                     {
