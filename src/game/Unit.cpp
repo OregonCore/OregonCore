@@ -746,9 +746,13 @@ uint32 Unit::DealDamage(Unit *pVictim, uint32 damage, CleanDamage const* cleanDa
     }
 
     // Paladin Blessed Life 4/7/10% chance to cause 50% dmg
-    if (const Aura* blessedLife = *pVictim->GetAurasByType(SPELL_AURA_REUSED_BLESSED_LIFE).begin())
-        if (urand(0, 100) <= blessedLife->GetSpellProto()->procChance)
+    AuraList const& blessedLife = pVictim->GetAurasByType(SPELL_AURA_REUSED_BLESSED_LIFE);
+    AuraList::const_iterator blessedAura = blessedLife.begin();
+    if (blessedAura != blessedLife.end() && *blessedAura)
+    {
+        if (urand(0, 100) <= (*blessedAura)->GetSpellProto()->procChance)
             damage /= 2;
+    }
 
     //Script Event damage taken
     if (pVictim->GetTypeId() == TYPEID_UNIT && (pVictim->ToCreature())->IsAIEnabled)
