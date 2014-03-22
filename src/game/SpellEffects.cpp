@@ -752,6 +752,19 @@ void Spell::EffectDummy(uint32 i)
                     unitTarget->ToCreature()->setDeathState(JUST_ALIVED);
                     return;
                 }
+                case 33655: // Q: Mission: Gateways Murketh and Shaadraz
+                {
+                    if (m_caster->GetTypeId() != TYPEID_PLAYER || !((Player*)m_caster)->IsFlying())
+                        return;
+					
+					Player *player = m_caster->ToPlayer();
+
+                    if (m_caster->GetDistance(-145.554f, 1511.28f, 34.3641f) < 25)
+                        player->KilledMonsterCredit(19291, 0);
+                    if (m_caster->GetDistance(-304.408f, 1524.45f, 37.9685f) < 25)
+                        player->KilledMonsterCredit(19292, 0);
+                    return;
+                }
                 case 12162:                                 // Deep wounds
                 case 12850:                                 // (now good common check for this spells)
                 case 12868:
