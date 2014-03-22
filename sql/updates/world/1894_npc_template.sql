@@ -1,0 +1,1 @@
+-- Hand of Deceiver Mana values grabbed from WoWHead.UPDATE creature_template SET minhealth = '144624' , maxhealth = '144624' , minmana = '165450' , maxmana = '165450' WHERE entry = '25588';
