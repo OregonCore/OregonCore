@@ -165,6 +165,8 @@ class Object
         uint32 GetGUIDMid() const { return GUID_ENPART(GetUInt64Value(0)); }
         uint32 GetGUIDHigh() const { return GUID_HIPART(GetUInt64Value(0)); }
         PackedGuid const& GetPackGUID() const { return m_PackGUID; }
+        ObjectGuid const& GetObjectGUID() const { return GetGuidValue(OBJECT_FIELD_GUID); }
+
         uint32 GetEntry() const { return GetUInt32Value(OBJECT_FIELD_ENTRY); }
         void SetEntry(uint32 entry) { SetUInt32Value(OBJECT_FIELD_ENTRY, entry); }
 
@@ -212,6 +214,8 @@ class Object
             ASSERT(offset < 4);
             return *(((uint8*)&m_uint32Values[ index ])+offset);
         }
+
+        ObjectGuid const& GetGuidValue(uint16 index) const { return *reinterpret_cast<ObjectGuid const*>(&GetUInt64Value(index)); }
 
         uint16 GetUInt16Value(uint16 index, uint8 offset) const
         {

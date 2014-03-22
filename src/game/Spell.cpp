@@ -3166,7 +3166,7 @@ void Spell::SendLogExecute()
 void Spell::SendInterrupted(uint8 result)
 {
     WorldPacket data(SMSG_SPELL_FAILURE, (8+4+1));
-    data << m_caster->GetPackGUID();
+    data << m_caster->GetObjectGUID();
     data << m_spellInfo->Id;
     data << result;
     m_caster->SendMessageToSet(&data, true);
