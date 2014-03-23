@@ -605,6 +605,7 @@ class World
 
         void RecordTimeDiff(const char * text, ...);
         void LoadAutobroadcasts();
+        void LoadIp2nation();
     protected:
         void _UpdateGameTime();
         // callback for UpdateRealmCharacters

@@ -459,8 +459,8 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
                 {
                     // converts each extra point of energy into ($f1+$AP/630) additional damage
                     float multiple = m_caster->GetTotalAttackPowerValue(BASE_ATTACK) / 630 + m_spellInfo->DmgMultiplier[effect_idx];
-                    damage += int32(m_caster->GetPower(POWER_ENERGY) * multiple);
-                    m_caster->SetPower(POWER_ENERGY,0);
+                    damage += int32((m_caster->GetPower(POWER_ENERGY) - GetPowerCost()) * multiple);
+                    m_caster->SetPower(POWER_ENERGY,GetPowerCost());
                 }
                 // Rake
                 else if (m_spellInfo->SpellFamilyFlags & 0x0000000000001000LL)
@@ -750,6 +750,19 @@ void Spell::EffectDummy(uint32 i)
                     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_UNIT)
                         return;
                     unitTarget->ToCreature()->setDeathState(JUST_ALIVED);
+                    return;
+                }
+                case 33655: // Q: Mission: Gateways Murketh and Shaadraz
+                {
+                    if (m_caster->GetTypeId() != TYPEID_PLAYER || !((Player*)m_caster)->IsFlying())
+                        return;
+					
+					Player *player = m_caster->ToPlayer();
+
+                    if (m_caster->GetDistance(-145.554f, 1511.28f, 34.3641f) < 25)
+                        player->KilledMonsterCredit(19291, 0);
+                    if (m_caster->GetDistance(-304.408f, 1524.45f, 37.9685f) < 25)
+                        player->KilledMonsterCredit(19292, 0);
                     return;
                 }
                 case 12162:                                 // Deep wounds

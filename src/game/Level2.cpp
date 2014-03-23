@@ -44,6 +44,7 @@
 #include <fstream>
 #include <map>
 #include "TicketMgr.h"
+#include "ace/INET_Addr.h"
 
 #include "TargetedMovementGenerator.h"                      // for HandleNpcUnFollowCommand
 
@@ -1993,6 +1994,20 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
         {
             last_ip = fields[3].GetCppString();
             last_login = fields[4].GetCppString();
+
+           uint32 ip = inet_addr(last_ip.c_str());
+#if OREGON_ENDIAN == BIGENDIAN
+            EndianConvertReverse(ip);
+#endif
+
+            if (QueryResult_AutoPtr result2 = WorldDatabase.PQuery("SELECT c.country FROM ip2nationCountries c, ip2nation i WHERE "
+                                                         "i.ip < %u AND c.code = i.country ORDER BY i.ip DESC LIMIT 0,1", ip))
+            {
+                Field* fields2 = result2->Fetch();
+                last_ip.append(" (");
+                last_ip.append(fields2[0].GetString());
+                last_ip.append(")");
+            }
         }
         else
         {
