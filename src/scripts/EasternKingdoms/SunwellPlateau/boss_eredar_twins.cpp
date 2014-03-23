@@ -299,7 +299,7 @@ struct boss_sacrolashAI : public ScriptedAI
             for (uint8 i = 0; i<3; ++i)
             {
                 pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                temp = DoSpawnCreature(MOB_SHADOW_IMAGE,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN,10000);
+                temp = DoSpawnCreature(MOB_SHADOW_IMAGE,0,0,0,0,TEMPSUMMON_TIMED_DESPAWN,10000);
                 if (temp && pTarget)
                 {
                     temp->AddThreat(pTarget,1000000);//don't change target(healers)
