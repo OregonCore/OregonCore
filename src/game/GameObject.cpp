@@ -1291,11 +1291,14 @@ void GameObject::Use(Unit* user)
 
             Player* player = user->ToPlayer();
 
-            if (player->CanUseBattleGroundObject())
+            if (player->CanUseBattleGroundObject(this))
             {
                 // in battleground check
                 BattleGround *bg = player->GetBattleGround();
                 if (!bg)
+
+                player->RemoveAurasByType(SPELL_AURA_MOD_STEALTH);
+                player->RemoveAurasByType(SPELL_AURA_MOD_INVISIBILITY);
                     return;
                 // BG flag click
                 // AB:
@@ -1316,11 +1319,14 @@ void GameObject::Use(Unit* user)
 
             Player* player = user->ToPlayer();
 
-            if (player->CanUseBattleGroundObject())
+            if (player->CanUseBattleGroundObject(this))
             {
                 // in battleground check
                 BattleGround *bg = player->GetBattleGround();
                 if (!bg)
+
+                player->RemoveAurasByType(SPELL_AURA_MOD_STEALTH);
+                player->RemoveAurasByType(SPELL_AURA_MOD_INVISIBILITY);
                     return;
                 // BG flag dropped
                 // WS:

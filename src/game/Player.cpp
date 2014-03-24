@@ -20665,18 +20665,13 @@ WorldObject* Player::GetViewpoint() const
     return NULL;
 }
 
-bool Player::CanUseBattleGroundObject()
+bool Player::CanUseBattleGroundObject(GameObject* gameobject)
 {
-    return (//InBattleGround() &&                         // in battleground - not need, check in other cases
-            //!IsMounted() &&                             // not mounted
-            //i'm not sure if these two are correct, because invisible players should get visible when they click on flag
-            !isTotalImmunity() &&                         // not totally immuned
-            !HasStealthAura() &&                          // not stealthed
-            !HasInvisibilityAura() &&                     // not invisible
-            !HasAura(SPELL_RECENTLY_DROPPED_FLAG, 0) &&   // can't pickup
-            //TODO player cannot use object when he is invulnerable (immune) - (ice block, divine shield, divine protection, divine intervention ...)
-            isAlive()                                     // live player
-    );
+    // Note: Mount, stealth and invisibility will be removed when used
+    return (!isTotalImmunity() &&                          // Damage immune
+            !HasAura(SPELL_RECENTLY_DROPPED_FLAG) &&       // Still has recently held flag debuff
+            isAlive()                                    // Alive
+            );
 }
 
 bool Player::CanCaptureTowerPoint()
@@ -20684,7 +20679,7 @@ bool Player::CanCaptureTowerPoint()
     return (!HasStealthAura() &&                           // not stealthed
             !HasInvisibilityAura() &&                      // not invisible
             isAlive()                                      // live player
-           );
+            );
 }
 
 bool Player::HasTitle(uint32 bitIndex)

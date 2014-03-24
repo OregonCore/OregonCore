@@ -1928,7 +1928,7 @@ class Player : public Unit, public GridObject<Player>
 
         bool GetBGAccessByLevel(uint32 bgTypeId) const;
         bool isTotalImmunity();
-        bool CanUseBattleGroundObject();
+        bool CanUseBattleGroundObject(GameObject* gameobject);
         bool CanCaptureTowerPoint();
 
         /*********************************************************/

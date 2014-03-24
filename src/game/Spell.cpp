@@ -3996,7 +3996,7 @@ uint8 Spell::CanCast(bool strict)
 
                 // In BattleGround players can use only flags and banners
                 if (m_caster->ToPlayer()->InBattleGround() &&
-                    !m_caster->ToPlayer()->CanUseBattleGroundObject())
+                    !m_caster->ToPlayer()->CanUseBattleGroundObject(m_targets.getGOTarget()))
                     return SPELL_FAILED_TRY_AGAIN;
 
                 // get the lock entry
