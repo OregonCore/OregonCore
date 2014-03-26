@@ -1296,10 +1296,10 @@ void GameObject::Use(Unit* user)
                 // in battleground check
                 BattleGround *bg = player->GetBattleGround();
                 if (!bg)
+                    return;
 
                 player->RemoveAurasByType(SPELL_AURA_MOD_STEALTH);
                 player->RemoveAurasByType(SPELL_AURA_MOD_INVISIBILITY);
-                    return;
                 // BG flag click
                 // AB:
                 // 15001
@@ -1324,10 +1324,10 @@ void GameObject::Use(Unit* user)
                 // in battleground check
                 BattleGround *bg = player->GetBattleGround();
                 if (!bg)
+                    return;
 
                 player->RemoveAurasByType(SPELL_AURA_MOD_STEALTH);
                 player->RemoveAurasByType(SPELL_AURA_MOD_INVISIBILITY);
-                    return;
                 // BG flag dropped
                 // WS:
                 // 179785 - Silverwing Flag
