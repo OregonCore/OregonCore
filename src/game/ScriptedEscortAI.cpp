@@ -46,7 +46,8 @@ npc_escortAI::npc_escortAI(Creature* pCreature) : ScriptedAI(pCreature),
     m_bCanReturnToStart(false),
     DespawnAtEnd(true),
     DespawnAtFar(true),
-    ScriptWP(false)
+    ScriptWP(false),
+    ClearWP(false)
 {}
 
 void npc_escortAI::AttackStart(Unit* pWho)
@@ -266,6 +267,12 @@ void npc_escortAI::UpdateAI(const uint32 uiDiff)
                 }
                 else
                 {
+                    if (ClearWP)
+                    {
+                        WaypointList.clear();
+                        RemoveEscortState(STATE_ESCORT_ESCORTING);
+                    }
+
                     debug_log("OSCR: EscortAI reached end of waypoints with Despawn off");
 
                     return;

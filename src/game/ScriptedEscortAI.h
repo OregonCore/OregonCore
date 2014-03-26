@@ -93,6 +93,7 @@ struct npc_escortAI : public ScriptedAI
 
         void SetDespawnAtEnd(bool despawn) { DespawnAtEnd = despawn; }
         void SetDespawnAtFar(bool despawn) { DespawnAtFar = despawn; }
+        void SetClearWaypoints(bool clear) { ClearWP = clear; }
         bool GetAttack() { return m_bIsActiveAttacker; }//used in EnterEvadeMode override
         void SetCanAttack(bool attack) { m_bIsActiveAttacker = attack; }
         uint64 GetEventStarterGUID() { return m_uiPlayerGUID; }
@@ -126,6 +127,7 @@ struct npc_escortAI : public ScriptedAI
         bool DespawnAtEnd;
         bool DespawnAtFar;
         bool ScriptWP;
+        bool ClearWP;
 };
 #endif
 
