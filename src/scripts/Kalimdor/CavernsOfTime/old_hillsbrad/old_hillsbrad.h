@@ -1,5 +1,7 @@
 /*
- * This file is part of the OregonCore Project. See AUTHORS file for Copyright information
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2006-2012 ScriptDev2 <http://www.scriptdev2.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -18,15 +20,19 @@
 #ifndef DEF_OLD_HILLSBRAD_H
 #define DEF_OLD_HILLSBRAD_H
 
-#define TYPE_BARREL_DIVERSION 1
-#define TYPE_THRALL_EVENT     2
-#define TYPE_THRALL_PART1     3
-#define TYPE_THRALL_PART2     4
-#define TYPE_THRALL_PART3     5
-#define TYPE_THRALL_PART4     6
-#define DATA_THRALL           7
-#define DATA_TARETHA          8
-#define DATA_EPOCH          9
-#define WORLD_STATE_OH        2436
+#define TYPE_BARREL_DIVERSION   1
+#define TYPE_THRALL_EVENT       2
+#define TYPE_THRALL_PART1       3
+#define TYPE_THRALL_PART2       4
+#define TYPE_THRALL_PART3       5
+#define TYPE_THRALL_PART4       6
+#define DATA_THRALL             7
+#define DATA_TARETHA            8
+#define DATA_EPOCH              9
+#define DATA_SKARLOC_DEATH      10
+#define DATA_DRAKE_DEATH        11
+#define DATA_EPOCH_DEATH        12
+#define DATA_SKARLOC_MOUNT		13
+#define WORLD_STATE_OH          2436
 #endif
 
