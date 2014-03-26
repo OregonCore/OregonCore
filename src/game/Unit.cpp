@@ -12497,6 +12497,19 @@ void Unit::SetWalk(bool apply)
         RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
 }
 
+void Unit::SetLevitate(bool apply)
+{
+    if (apply)
+        AddUnitMovementFlag(MOVEFLAG_LEVITATING);
+    else
+        RemoveUnitMovementFlag(MOVEFLAG_LEVITATING);
+
+    
+    WorldPacket data(apply ? SMSG_SPLINE_MOVE_SET_FLYING : SMSG_SPLINE_MOVE_UNSET_FLYING, 9);
+    data << GetPackGUID();
+    SendMessageToSet(&data, true);
+}
+
 void Unit::UpdateObjectVisibility(bool forced)
 {
     if (!forced)

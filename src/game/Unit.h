@@ -1571,6 +1571,7 @@ class Unit : public WorldObject
 
         void SetFlying(bool apply);
         void SetWalk(bool apply);
+        void SetLevitate(bool apply);
 
         bool IsAIEnabled, NeedChangeAI;
 
