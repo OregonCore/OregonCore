@@ -1391,23 +1391,41 @@ void GameObject::Use(Unit* user)
 
 void GameObject::CastSpell(Unit* target, uint32 spell)
 {
+    SpellEntry const *spellProto = sSpellStore.LookupEntry(spell);
+    if (!spellProto)
+        return;
+
+    bool self = false;
+    for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
+    {
+        if (spellProto->EffectImplicitTargetA[i] == TARGET_UNIT_CASTER)
+        {
+            self = true;
+            break;
+        }
+    }
+
+    if (self)
+    {
+        if (target)
+            target->CastSpell(target, spellProto, true);
+        return;
+    }
+
     //summon world trigger
     Creature *trigger = SummonTrigger(GetPositionX(), GetPositionY(), GetPositionZ(), 0, 1);
     if (!trigger) return;
 
-    trigger->SetVisibility(VISIBILITY_OFF); //should this be true?
     if (Unit *owner = GetOwner())
     {
         trigger->setFaction(owner->getFaction());
-        trigger->CastSpell(target, spell, true, 0, 0, owner->GetGUID());
+        trigger->CastSpell(target ? target : trigger, spell, true, 0, 0, owner->GetGUID());
     }
     else
     {
         trigger->setFaction(14);
         trigger->CastSpell(target, spell, true, 0, 0, target ? target->GetGUID() : 0);
     }
-    //trigger->setDeathState(JUST_DIED);
-    //trigger->RemoveCorpse();
 }
 
 // overwrite WorldObject function for proper name localization
