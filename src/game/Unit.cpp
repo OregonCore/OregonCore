@@ -4559,7 +4559,7 @@ bool Unit::HandleHasteAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
     return true;
 }
 
-bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAura, SpellEntry const * procSpell, uint32 /*procFlag*/, uint32 procEx, uint32 cooldown)
+bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAura, SpellEntry const * procSpell, uint32 procFlag, uint32 procEx, uint32 cooldown)
 {
     SpellEntry const *dummySpell = triggeredByAura->GetSpellProto();
     uint32 effIndex = triggeredByAura->GetEffIndex();
@@ -6300,11 +6300,29 @@ bool Unit::HandleProcTriggerSpell(Unit *pVictim, uint32 damage, Aura* triggeredB
             CastCustomSpell(pVictim,trigger_spell_id,&basepoints0,&basepoints1,NULL,true,castItem,triggeredByAura);
             return true;
         }
-        // Enlightenment (trigger only from mana cost spells)
-        case 35095:
+        case 12536:         // Clearcasting (trigger only from mana cost spells)
+        case 35095:         // Enlightenment (trigger only from mana cost spells)
         {
             if (!procSpell || procSpell->powerType != POWER_MANA || (procSpell->manaCost == 0 && procSpell->ManaCostPercentage == 0 && procSpell->manaCostPerlevel == 0))
                 return false;
+            break;
+        }
+        // Blackout
+        case 15269:
+        {
+            // Should not proc on self (Needs confirmation for SW:Death)
+            if (!pVictim || pVictim == this)
+                return false;
+
+            // Should not proc from periodic ticks of Shadow Word: Pain or Mind Flay. Only initial cast.
+            if (!procSpell || (procSpell->manaCost == 0 && procSpell->ManaCostPercentage == 0 && procSpell->manaCostPerlevel == 0))
+                return false;
+
+            // Should not proc from spells that don't deal damage.
+                            // Silence           // Mind Vision         // Mind Control
+			if (procSpell->Id == 15487 || procSpell->Id == 2096 || procSpell->Id == 605)
+				return false;
+
             break;
         }
     }
@@ -10771,7 +10789,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit * pTarget, uint32 procFlag,
         Aura *triggeredByAura = i->triggeredByAura;
         Modifier *auraModifier = triggeredByAura->GetModifier();
         SpellEntry const *spellInfo = triggeredByAura->GetSpellProto();
-        //uint32 effIndex = triggeredByAura->GetEffIndex();
+        uint32 effIndex = triggeredByAura->GetEffIndex();
         bool useCharges = triggeredByAura->m_procCharges > 0;
         // For players set spell cooldown if need
         uint32 cooldown = 0;
