@@ -9606,7 +9606,11 @@ void Unit::ApplyDiminishingToDuration(DiminishingGroup group, int32 &duration,Un
     if (duration == -1 || group == DIMINISHING_NONE)/*(caster->IsFriendlyTo(this) && caster != this)*/
         return;
 
-        // test pet/charm masters instead pets/charmedsz
+    // Creatures other then pets do not suffer from Diminishing Returns
+    if(caster->GetTypeId() == TYPEID_UNIT && !caster->GetOwner())
+        return;
+
+    // Test pet/charm masters instead pets/charmedsz
     Unit const* targetOwner = GetCharmerOrOwner();
     Unit const* casterOwner = caster->GetCharmerOrOwner();
 
