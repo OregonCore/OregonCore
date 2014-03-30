@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -161,7 +161,7 @@ bool Transport::Create(uint32 guidlow, uint32 mapid, float x, float y, float z, 
 
     m_goInfo = goinfo;
 
-    SetFloatValue(OBJECT_FIELD_SCALE_X, goinfo->size);
+    SetObjectScale(goinfo->size);
 
     SetUInt32Value(GAMEOBJECT_FACTION, goinfo->faction);
     SetUInt32Value(GAMEOBJECT_FLAGS, goinfo->flags);

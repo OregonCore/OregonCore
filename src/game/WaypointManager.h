@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -27,7 +27,7 @@
 struct WaypointData
 {
     uint32 id;
-    float x,y,z;
+    float x,y,z,orientation;
     bool run;
     uint32 delay;
     uint32 event_id;

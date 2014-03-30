@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -291,7 +291,7 @@ enum AuraType
     SPELL_AURA_249 = 249,
     SPELL_AURA_MOD_INCREASE_HEALTH_2 = 250,
     SPELL_AURA_MOD_ENEMY_DODGE = 251,
-    SPELL_AURA_252 = 252,
+    SPELL_AURA_REUSED_BLESSED_LIFE = 252,
     SPELL_AURA_253 = 253,
     SPELL_AURA_254 = 254,
     SPELL_AURA_255 = 255,

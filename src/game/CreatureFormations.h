@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -56,6 +56,7 @@ class CreatureFormationManager
         void AddCreatureToFormation(uint32 formation_id, Creature *creature);
         void RemoveCreatureFromFormation(CreatureFormation *formation, Creature *creature);
         void LoadCreatureFormations();
+        void UnloadCreatureFormations();
 };
 
 #ifdef formation_mgr

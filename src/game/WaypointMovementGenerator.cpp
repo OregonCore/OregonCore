@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -80,6 +80,9 @@ void WaypointMovementGenerator<Creature>::InitTraveller(Creature &unit, const Wa
     unit.SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
     unit.SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
 
+    // TODO: make this part of waypoint node, so that creature can walk when desired?
+    if (unit.canFly())
+        unit.SetByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02);
     unit.addUnitState(UNIT_STAT_ROAMING);
 }
 
@@ -194,7 +197,13 @@ bool WaypointMovementGenerator<Creature>::Update(Creature &unit, const uint32 &d
             MovementInform(unit);
             unit.UpdateWaypointID(i_currentNode);
             unit.clearUnitState(UNIT_STAT_ROAMING);
-            unit.Relocate(node->x, node->y, node->z);
+            if (node->orientation)
+            {
+                unit.Relocate(node->x, node->y, node->z, node->orientation);
+                unit.SetOrientation(node->orientation);
+            }
+            else
+                unit.Relocate(node->x, node->y, node->z);
         }
     }
     else

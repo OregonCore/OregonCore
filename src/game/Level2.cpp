@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -44,6 +44,7 @@
 #include <fstream>
 #include <map>
 #include "TicketMgr.h"
+#include "ace/INET_Addr.h"
 
 #include "TargetedMovementGenerator.h"                      // for HandleNpcUnFollowCommand
 
@@ -1993,6 +1994,20 @@ bool ChatHandler::HandlePInfoCommand(const char* args)
         {
             last_ip = fields[3].GetCppString();
             last_login = fields[4].GetCppString();
+
+           uint32 ip = inet_addr(last_ip.c_str());
+#if OREGON_ENDIAN == BIGENDIAN
+            EndianConvertReverse(ip);
+#endif
+
+            if (QueryResult_AutoPtr result2 = WorldDatabase.PQuery("SELECT c.country FROM ip2nationCountries c, ip2nation i WHERE "
+                                                         "i.ip < %u AND c.code = i.country ORDER BY i.ip DESC LIMIT 0,1", ip))
+            {
+                Field* fields2 = result2->Fetch();
+                last_ip.append(" (");
+                last_ip.append(fields2[0].GetString());
+                last_ip.append(")");
+            }
         }
         else
         {
@@ -2829,7 +2844,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
             if (target)
             {
                 wpCreature->SetDisplayId(target->GetDisplayId());
-                wpCreature->SetFloatValue(OBJECT_FIELD_SCALE_X, 0.5);
+                wpCreature->SetObjectScale(0.5);
             }
         }
         while (result->NextRow());
@@ -2842,7 +2857,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
     {
         PSendSysMessage("|cff00ff00DEBUG: wp first, GUID: %u|r", pathid);
 
-        QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT position_x,position_y,position_z FROM waypoint_data WHERE point='1' AND id = '%u'",pathid);
+        QueryResult_AutoPtr result = WorldDatabase.PQuery("SELECT position_x,position_y,position_z,orientation FROM waypoint_data WHERE point='1' AND id = '%u'",pathid);
         if (!result)
         {
             PSendSysMessage(LANG_WAYPOINT_NOTFOUND, pathid);
@@ -2854,10 +2869,10 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         float x         = fields[0].GetFloat();
         float y         = fields[1].GetFloat();
         float z         = fields[2].GetFloat();
+        float o         = fields[3].GetFloat();
         uint32 id = VISUAL_WAYPOINT;
 
         Player *chr = m_session->GetPlayer();
-        float o = chr->GetOrientation();
         Map *map = chr->GetMap();
 
         Creature* pCreature = new Creature;
@@ -2875,7 +2890,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         if (target)
         {
             pCreature->SetDisplayId(target->GetDisplayId());
-            pCreature->SetFloatValue(OBJECT_FIELD_SCALE_X, 0.5);
+            pCreature->SetObjectScale(0.5);
         }
 
         return true;
@@ -2923,7 +2938,7 @@ bool ChatHandler::HandleWpShowCommand(const char* args)
         if (target)
         {
             pCreature->SetDisplayId(target->GetDisplayId());
-            pCreature->SetFloatValue(OBJECT_FIELD_SCALE_X, 0.5);
+            pCreature->SetObjectScale(0.5);
         }
 
         return true;

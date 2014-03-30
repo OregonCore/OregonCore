@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -906,13 +906,13 @@ bool IsAuraAddedBySpell(uint32 auraType, uint32 spellId)
     return false;
 }
 
-SpellFailedReason GetErrorAtShapeshiftedCast (SpellEntry const *spellInfo, uint32 form)
+uint8 GetErrorAtShapeshiftedCast (SpellEntry const *spellInfo, uint32 form)
 {
     // talents that learn spells can have stance requirements that need ignore
     // (this requirement only for client-side stance show in talent description)
     if (GetTalentSpellCost(spellInfo->Id) > 0 &&
         (spellInfo->Effect[0] == SPELL_EFFECT_LEARN_SPELL || spellInfo->Effect[1] == SPELL_EFFECT_LEARN_SPELL || spellInfo->Effect[2] == SPELL_EFFECT_LEARN_SPELL))
-        return SPELL_FAILED_SUCCESS;
+        return 0;
 
     uint32 stanceMask = (form ? 1 << (form - 1) : 0);
 
@@ -920,7 +920,7 @@ SpellFailedReason GetErrorAtShapeshiftedCast (SpellEntry const *spellInfo, uint3
         return SPELL_FAILED_NOT_SHAPESHIFT;
 
     if (stanceMask & spellInfo->Stances)                    // can explicitly be casted in this stance
-        return SPELL_FAILED_SUCCESS;
+        return 0;
 
     bool actAsShifted = false;
     if (form > 0)
@@ -929,7 +929,7 @@ SpellFailedReason GetErrorAtShapeshiftedCast (SpellEntry const *spellInfo, uint3
         if (!shapeInfo)
         {
             sLog.outError("GetErrorAtShapeshiftedCast: unknown shapeshift %u", form);
-            return SPELL_FAILED_SUCCESS;
+            return 0;
         }
         actAsShifted = !(shapeInfo->flags1 & 1);            // shapeshift acts as normal form for spells
     }
@@ -948,7 +948,7 @@ SpellFailedReason GetErrorAtShapeshiftedCast (SpellEntry const *spellInfo, uint3
             return SPELL_FAILED_ONLY_SHAPESHIFT;
     }
 
-    return SPELL_FAILED_SUCCESS;
+    return 0;
 }
 
 void SpellMgr::LoadSpellTargetPositions()
@@ -2377,6 +2377,10 @@ void SpellMgr::LoadSpellCustomAttr()
                         spellInfo->Targets & (TARGET_FLAG_SOURCE_LOCATION|TARGET_FLAG_DEST_LOCATION))
                         spellInfo->Effect[j] = SPELL_EFFECT_TRIGGER_MISSILE;
                     break;
+                case SPELL_EFFECT_SELF_RESURRECT:
+                    // Self-Ressurect spells shouldn't be usable in arenas
+                    spellInfo->AttributesEx4 |= SPELL_ATTR_EX4_NOT_USABLE_IN_ARENA;
+                    break;
             }
         }
 
@@ -2447,7 +2451,6 @@ void SpellMgr::LoadSpellCustomAttr()
         case 39992: // Needle Spine
         case 29576: // Multi-Shot
         case 37790: // Spread Shot
-        case 46771: // Flame Sear
         case 45248: // Shadow Blades
         case 41303: // Soul Drain
             spellInfo->MaxAffectedTargets = 3;
@@ -2460,6 +2463,8 @@ void SpellMgr::LoadSpellCustomAttr()
         case 37676: // Insidious Whisper
         case 46008: // Negative Energy
         case 45641: // Fire Bloom
+        case 5484:  // Howl Of Terror
+        case 46771: // Flame Sear
             spellInfo->MaxAffectedTargets = 5;
             break;
         case 40827: // Sinful Beam
@@ -2467,6 +2472,9 @@ void SpellMgr::LoadSpellCustomAttr()
         case 40860: // Vile Beam
         case 40861: // Wicked Beam
             spellInfo->MaxAffectedTargets = 10;
+            break;
+        case 46841: // Escape to the Isle of Quel'Denas
+            spellInfo->EffectImplicitTargetB[0] = TARGET_UNIT_CASTER;
             break;
         case 8122: case 8124: case 10888: case 10890: // Psychic Scream
         case 12494: // Frostbite
@@ -2532,11 +2540,14 @@ void SpellMgr::LoadSpellCustomAttr()
         case 13166: // Battle Chicken
             mSpellCustomAttr[i] |= SPELL_ATTR_CU_CAST_BY_ITEM_ONLY;
             break;
-        //case 13278: // Gnomish Death Ray (Item Spell)
-        //case 13280: // Gnomish Death Ray (Dummy)
         case 13279: // Gnomish Death Ray (Dummy Target)
             spellInfo->EffectImplicitTargetA[0] = TARGET_TYPE_UNIT_TARGET;
             spellInfo->EffectImplicitTargetA[1] = TARGET_TYPE_UNIT_TARGET;
+            break;
+        case 31828: // Blessed Life (Rank 1)
+        case 31829: // Blessed Life (Rank 2)
+        case 31830: // Blessed Life (Rank 3)
+            spellInfo->EffectApplyAuraName[0] = SPELL_AURA_REUSED_BLESSED_LIFE;
             break;
         default:
             break;

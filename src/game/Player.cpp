@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -1901,6 +1901,53 @@ void Player::RemoveFromWorld()
     }
 }
 
+void Player::TemporaryUnsummonPetIfAny()
+{
+    if (!IsInWorld() || !isAlive())
+        return;
+
+    Pet* pet = GetPet();
+    if (pet)
+    {
+        BattleGround *bg = GetBattleGround();
+        // don't unsummon pet in arena but SetFlag UNIT_FLAG_STUNNED to disable pet's interface
+        if (bg && bg->isArena())
+            pet->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
+        else
+        {
+            if (pet->isControlled())
+            {
+                SetTemporaryUnsummonedPetNumber(pet->GetCharmInfo()->GetPetNumber());
+                SetOldPetSpell(pet->GetUInt32Value(UNIT_CREATED_BY_SPELL));
+            }
+            RemovePet(NULL, PET_SAVE_NOT_IN_SLOT);
+            return;
+        }
+    }
+
+    SetTemporaryUnsummonedPetNumber(0);
+}
+
+void Player::ResummonTemporaryUnsummonedPetIfAny()
+{
+    if (!IsInWorld() || !isAlive())
+        return;
+
+    if (GetTemporaryUnsummonedPetNumber())
+    {
+        Pet* NewPet = new Pet(this);
+        if (!NewPet->LoadPetFromDB(this, 0, GetTemporaryUnsummonedPetNumber(), true))
+            delete NewPet;
+        SetTemporaryUnsummonedPetNumber(0);
+    }
+    else
+    {
+       if (Guardian *pPet = GetGuardianPet())
+           if (pPet->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED) && !pPet->hasUnitState(UNIT_STAT_STUNNED))
+               pPet->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
+    }
+}
+
 void Player::RewardRage(uint32 damage, uint32 weaponSpeedHitFactor, bool attacker)
 {
     float addRage;
@@ -2474,7 +2521,7 @@ void Player::InitStatsForLevel(bool reapplyMods)
     SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);
 
     // reset size before reapply auras
-    SetFloatValue(OBJECT_FIELD_SCALE_X,1.0f);
+    SetObjectScale(1.0f);
 
     // save base values (bonuses already included in stored stats
     for (int i = STAT_STRENGTH; i < MAX_STATS; ++i)
@@ -3750,7 +3797,7 @@ void Player::DeleteFromDB(uint64 playerguid, uint32 accountId, bool updateRealmC
     // remove from guild
     if (uint32 guildId = GetGuildIdFromDB(playerguid))
         if (Guild* guild = objmgr.GetGuildById(guildId))
-            guild->DelMember(guid);
+            guild->DelMember(guid, false);
 
     // remove from arena teams
     uint32 at_id = GetArenaTeamIdFromDB(playerguid,ARENA_TEAM_2v2);
@@ -6657,14 +6704,9 @@ void Player::UpdateZone(uint32 newZone)
         Weather *wth = sWorld.FindWeather(zone->ID);
         if (wth)
             wth->SendWeatherUpdateToPlayer(this);
-        else
-        {
-            if (!sWorld.AddWeather(zone->ID))
-            {
-                // send fine weather packet to remove old zone's weather
-                Weather::SendFineWeatherUpdateToPlayer(this);
-            }
-        }
+        else if (!sWorld.AddWeather(zone->ID))
+            // send fine weather packet to remove old zone's weather
+            Weather::SendFineWeatherUpdateToPlayer(this);
     }
 
     // in PvP, any not controlled zone (except zone->team == 6, default case)
@@ -7807,7 +7849,7 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
         Creature *creature = GetMap()->GetCreature(guid);
 
         // must be in range and creature must be alive for pickpocket and must be dead for another loot
-        if (!creature || creature->isAlive() != (loot_type == LOOT_PICKPOCKETING) || !creature->IsWithinDistInMap(this,INTERACTION_DISTANCE))
+        if (!creature || !isAllowedToLoot(creature) || creature->isAlive() != (loot_type == LOOT_PICKPOCKETING) || !creature->IsWithinDistInMap(this,INTERACTION_DISTANCE))
         {
             SendLootRelease(guid);
             return;
@@ -10675,6 +10717,13 @@ Item* Player::_StoreItem(uint16 pos, Item *pItem, uint32 count, bool clone, bool
         AddEnchantmentDurations(pItem);
         AddItemDurations(pItem);
 
+        const ItemPrototype* proto = pItem->GetProto();
+        for (uint8 i = 0; i < 5; ++i)
+            if (proto->Spells[i].SpellTrigger == ITEM_SPELLTRIGGER_ON_NO_DELAY_USE && proto->Spells[i].SpellId > 0) // On obtain trigger
+                if (bag == INVENTORY_SLOT_BAG_0 || (bag >= INVENTORY_SLOT_BAG_START && bag < INVENTORY_SLOT_BAG_END))
+                    if (!HasAura(proto->Spells[i].SpellId))
+                        CastSpell(this, proto->Spells[i].SpellId, true, pItem);
+
         return pItem;
     }
     else
@@ -10708,6 +10757,13 @@ Item* Player::_StoreItem(uint16 pos, Item *pItem, uint32 count, bool clone, bool
         AddEnchantmentDurations(pItem2);
 
         pItem2->SetState(ITEM_CHANGED, this);
+
+        const ItemPrototype* proto = pItem2->GetProto();
+        for (uint8 i = 0; i < 5; ++i)
+            if (proto->Spells[i].SpellTrigger == ITEM_SPELLTRIGGER_ON_NO_DELAY_USE && proto->Spells[i].SpellId > 0) // On obtain trigger
+                if (bag == INVENTORY_SLOT_BAG_0 || (bag >= INVENTORY_SLOT_BAG_START && bag < INVENTORY_SLOT_BAG_END))
+                    if (!HasAura(proto->Spells[i].SpellId))
+                        CastSpell(this, proto->Spells[i].SpellId, true, pItem2);
 
         return pItem2;
     }
@@ -17208,7 +17264,10 @@ void Player::SetFFAPvP(bool state)
     if (state)
         SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_FFA_PVP);
     else
+    {
         RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_FFA_PVP);
+        RemoveAllAttackers();               /// @todo: This is temporary and needs to be handled by the code that handles                                 
+    }                                       /// melee swings.
 }
 
 void Player::UpdateDuelFlag(time_t currTime)
@@ -17325,10 +17384,6 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
 
     if (pet->isControlled())
     {
-        WorldPacket data(SMSG_PET_SPELLS, 8);
-        data << uint64(0);
-        GetSession()->SendPacket(&data);
-
         if (GetGroup())
             SetGroupUpdateFlag(GROUP_UPDATE_PET);
     }

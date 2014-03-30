@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -994,6 +994,7 @@ class Unit : public WorldObject
         uint32 GetMountID() const { return GetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID); }
         void Mount(uint32 mount);
         void Unmount();
+        bool HasShapeshiftChangingModel() const;
 
         uint16 GetMaxSkillValueForLevel(Unit const* target = NULL) const { return (target ? getLevelForTarget(target) : getLevel()) * 5; }
         void RemoveSpellbyDamageTaken(uint32 damage, uint32 spell);
@@ -1080,7 +1081,7 @@ class Unit : public WorldObject
 
         bool HasAuraType(AuraType auraType) const;
         bool HasAuraTypeWithFamilyFlags(AuraType auraType, uint32 familyName,  uint64 familyFlags) const;
-        bool HasAura(uint32 spellId, uint32 effIndex) const
+        bool HasAura(uint32 spellId, uint8 effIndex = 0) const
             { return m_Auras.find(spellEffectPair(spellId, effIndex)) != m_Auras.end(); }
 
         bool virtual HasSpell(uint32 /*spellID*/) const { return false; }
@@ -1302,6 +1303,7 @@ class Unit : public WorldObject
         uint32 m_invisibilityMask;
 
         uint32 m_ShapeShiftFormSpellId;
+        uint32 m_ShapeShiftModelId;
         ShapeshiftForm m_form;
         bool IsInFeralForm() const { return m_form == FORM_CAT || m_form == FORM_BEAR || m_form == FORM_DIREBEAR; }
         bool IsInTravelForm() const { return m_form == FORM_TRAVEL; }
@@ -1540,6 +1542,7 @@ class Unit : public WorldObject
         virtual float GetFollowAngle() const { return PET_FOLLOW_ANGLE; }
 
         void SetFlying(bool apply);
+        void SetWalk(bool apply);
 
         bool IsAIEnabled, NeedChangeAI;
 

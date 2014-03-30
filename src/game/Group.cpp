@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -1052,10 +1052,14 @@ bool Group::_addMember(const uint64 &guid, const char* name, bool isAssistant, u
         // if player is not in group, then call set group
         else
             player->SetGroup(this, group);
-        // if the same group invites the player back, cancel the homebind timer
-        InstanceGroupBind *bind = GetBoundInstance(player);
-        if (bind && bind->save->GetInstanceId() == player->GetInstanceId())
-            player->m_InstanceValid = true;
+
+        if (player->IsInWorld())
+        {
+            // if the same group invites the player back, cancel the homebind timer
+            InstanceGroupBind *bind = GetBoundInstance(player);
+            if (bind && bind->save->GetInstanceId() == player->GetInstanceId())
+                player->m_InstanceValid = true;
+        }
     }
 
     if (!isRaidGroup())                                      // reset targetIcons for non-raid-groups

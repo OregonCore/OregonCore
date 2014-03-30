@@ -717,6 +717,8 @@ void CliRunnable::run()
             {
                 #if PLATFORM == WINDOWS
                 printf("Oregon>");
+				#else
+				free(command_str);
                 #endif
                 continue;
             }
@@ -726,6 +728,8 @@ void CliRunnable::run()
             {
                 #if PLATFORM == WINDOWS
                 printf("Oregon>");
+				#else
+				free(command_str);
                 #endif
                 continue;
             }
@@ -733,6 +737,7 @@ void CliRunnable::run()
             sWorld.QueueCliCommand(new CliCommandHolder(NULL, command.c_str(), &utf8print, &commandFinished));
             #if PLATFORM != WINDOWS
             add_history(command.c_str());
+			free(command_str);
             #endif
 
         }

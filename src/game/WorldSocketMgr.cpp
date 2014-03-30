@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -157,7 +157,7 @@ class ReactorRunnable : protected ACE_Task_Base
             {
                 // dont be too smart to move this outside the loop
                 // the run_reactor_event_loop will modify interval
-                ACE_Time_Value interval (0, 10000);
+                ACE_Time_Value interval (0, 100000);
 
                 if (m_Reactor->run_reactor_event_loop (interval) == -1)
                     break;

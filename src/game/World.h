@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -513,7 +513,7 @@ class World
         void SendGMText(int32 string_id, ...);
         void SendGlobalMessage(WorldPacket *packet, WorldSession *self = 0, uint32 team = 0);
         void SendGlobalGMMessage(WorldPacket *packet, WorldSession *self = 0, uint32 team = 0);
-        void SendZoneMessage(uint32 zone, WorldPacket *packet, WorldSession *self = 0, uint32 team = 0);
+        bool SendZoneMessage(uint32 zone, WorldPacket *packet, WorldSession *self = 0, uint32 team = 0);
         void SendZoneText(uint32 zone, const char *text, WorldSession *self = 0, uint32 team = 0);
         void SendServerMessage(ServerMessageType type, const char *text = "", Player* player = NULL);
 
@@ -605,6 +605,7 @@ class World
 
         void RecordTimeDiff(const char * text, ...);
         void LoadAutobroadcasts();
+        void LoadIp2nation();
     protected:
         void _UpdateGameTime();
         // callback for UpdateRealmCharacters

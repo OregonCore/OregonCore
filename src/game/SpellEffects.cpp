@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -459,8 +459,8 @@ void Spell::SpellDamageSchoolDmg(uint32 effect_idx)
                 {
                     // converts each extra point of energy into ($f1+$AP/630) additional damage
                     float multiple = m_caster->GetTotalAttackPowerValue(BASE_ATTACK) / 630 + m_spellInfo->DmgMultiplier[effect_idx];
-                    damage += int32(m_caster->GetPower(POWER_ENERGY) * multiple);
-                    m_caster->SetPower(POWER_ENERGY,0);
+                    damage += int32((m_caster->GetPower(POWER_ENERGY) - GetPowerCost()) * multiple);
+                    m_caster->SetPower(POWER_ENERGY,GetPowerCost());
                 }
                 // Rake
                 else if (m_spellInfo->SpellFamilyFlags & 0x0000000000001000LL)
@@ -750,6 +750,19 @@ void Spell::EffectDummy(uint32 i)
                     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_UNIT)
                         return;
                     unitTarget->ToCreature()->setDeathState(JUST_ALIVED);
+                    return;
+                }
+                case 33655: // Q: Mission: Gateways Murketh and Shaadraz
+                {
+                    if (m_caster->GetTypeId() != TYPEID_PLAYER || !((Player*)m_caster)->IsFlying())
+                        return;
+					
+					Player *player = m_caster->ToPlayer();
+
+                    if (m_caster->GetDistance(-145.554f, 1511.28f, 34.3641f) < 25)
+                        player->KilledMonsterCredit(19291, 0);
+                    if (m_caster->GetDistance(-304.408f, 1524.45f, 37.9685f) < 25)
+                        player->KilledMonsterCredit(19292, 0);
                     return;
                 }
                 case 12162:                                 // Deep wounds
@@ -3375,6 +3388,9 @@ void Spell::EffectSummonType(uint32 i)
                 faction = m_originalCaster->getFaction();
 
             summon->setFaction(faction);
+
+            if (prop_id == 65) // Eye of Kilrogg
+                summon->CastSpell(summon, 2585, true);
             break;
     }
 
@@ -5480,7 +5496,15 @@ void Spell::EffectActivateObject(uint32 effect_idx)
 
     static ScriptInfo activateCommand = generateActivateCommand();
 
+    /* This is not always delay, need more reaseach on this */
     int32 delay_secs = m_spellInfo->EffectMiscValue[effect_idx];
+
+    if (gameObjTarget->GetGoType() == GAMEOBJECT_TYPE_DOOR ||
+        gameObjTarget->GetGoType() == GAMEOBJECT_TYPE_BUTTON)
+    {
+        gameObjTarget->UseDoorOrButton(delay_secs, false);
+        return;
+    }
 
     gameObjTarget->GetMap()->ScriptCommandStart(activateCommand, delay_secs, m_caster, gameObjTarget);
 }
@@ -6559,7 +6583,7 @@ void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const *
     for (uint32 count = 0; count < amount; ++count)
     {
         Position pos;
-        GetSummonPosition(i, pos, radius, count);
+        GetSummonPosition(i, pos, radius);
 
         TempSummon *summon = map->SummonCreature(entry, pos, properties, duration, caster);
         if (!summon)
@@ -6578,54 +6602,26 @@ void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const *
     }
 }
 
-void Spell::GetSummonPosition(uint32 i, Position &pos, float radius, uint32 count)
+void Spell::GetSummonPosition(uint32 i, Position &pos, float radius)
 {
     pos.SetOrientation(m_caster->GetOrientation());
 
     if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
     {
-        // Summon 1 unit in dest location
-        if (count == 0)
+        switch (m_spellInfo->EffectImplicitTargetA[i])
         {
-            bool found = false;
-            float cur_radius = 3.0f;
-
-            while (cur_radius > 0.0f && !found)
-            {
-                for (int i = 0; i < 10; i++)
-                {
-                    m_caster->GetRandomPoint(m_targets.m_dstPos, cur_radius, pos);
-                    if (m_caster->IsWithinLOS(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ()))
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-                cur_radius -= 1.5f;
-            }
-
-            if (!found)
-                pos.Relocate(m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ(), m_caster->GetOrientation());
-
-        }
-        // Summon in random point all other units if location present
-        else
-        {
-            //This is a workaround. Do not have time to write much about it
-            switch (m_spellInfo->EffectImplicitTargetA[i])
-            {
-                case TARGET_MINION:
-                case TARGET_DEST_CASTER_RANDOM:
-                    m_caster->GetNearPosition(pos, radius * rand_norm(), rand_norm()*2*M_PI);
-                    break;
-                case TARGET_DEST_DEST_RANDOM:
-                case TARGET_DEST_TARGET_RANDOM:
-                    m_caster->GetRandomPoint(m_targets.m_dstPos, radius, pos);
-                    break;
-                default:
-                    pos.Relocate(m_targets.m_dstPos);
-                    break;
-            }
+            case TARGET_MINION:
+            case TARGET_DEST_CASTER_RANDOM:
+                radius = std::max<float>(radius, m_caster->GetObjectSize());
+                m_caster->GetNearPosition(pos, radius * rand_norm(), rand_norm()*2*M_PI);
+                break;
+            case TARGET_DEST_DEST_RANDOM:
+            case TARGET_DEST_TARGET_RANDOM:
+                m_caster->GetRandomPoint(m_targets.m_dstPos, radius, pos);
+                break;
+            default:
+                pos.Relocate(m_targets.m_dstPos);
+                break;
         }
     }
     // Summon if dest location not present near caster

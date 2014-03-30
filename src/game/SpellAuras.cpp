@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -305,7 +305,7 @@ pAuraHandler AuraHandler[TOTAL_AURAS]=
     &Aura::HandleNULL,                                      //249
     &Aura::HandleAuraModIncreaseHealth,                     //250 SPELL_AURA_MOD_INCREASE_HEALTH_2
     &Aura::HandleNULL,                                      //251 SPELL_AURA_MOD_ENEMY_DODGE
-    &Aura::HandleUnused,                                    //252 unused
+    &Aura::HandleNoImmediateEffect,                         //252 SPELL_AURA_REUSED_BLESSED_LIFE
     &Aura::HandleUnused,                                    //253 unused
     &Aura::HandleUnused,                                    //254 unused
     &Aura::HandleUnused,                                    //255 unused
@@ -2277,6 +2277,18 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                 return;
             }
 
+            if (GetId() == 126 && caster) // Eye of Kilrogg (Temporarily UnSumoon Main Pet)
+            {
+                Player* player = caster->ToPlayer();
+                if (!player)
+                    return;
+
+                if (apply)
+                    player->TemporaryUnsummonPetIfAny();
+                else
+                    player->ResummonTemporaryUnsummonedPetIfAny();
+                return;
+            }
             break;
         }
         case SPELLFAMILY_MAGE:
@@ -2711,6 +2723,7 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
         }
 
         m_target->m_ShapeShiftFormSpellId = GetId();
+        m_target->m_ShapeShiftModelId     = modelid;
         m_target->m_form = form;
     }
     else
@@ -2759,12 +2772,12 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
 
 void Aura::HandleAuraTransform(bool apply, bool Real)
 {
-    // Shapeshifts have higher priority than transforms
-    if (m_target->HasAuraType(SPELL_AURA_MOD_SHAPESHIFT))
-        return;
-
     if (apply)
     {
+        // Shapeshifts (that change model) have higher priority than transforms (if not negative)
+        if (m_target->HasShapeshiftChangingModel() && IsPositiveSpell(GetId()))
+            return;
+
         // special case (spell specific functionality)
         if (m_modifier.m_miscvalue == 0)
         {
@@ -2910,7 +2923,10 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
     else
     {
         m_target->setTransForm(0);
-        m_target->SetDisplayId(m_target->GetNativeDisplayId());
+        if (m_target->HasShapeshiftChangingModel())
+            m_target->SetDisplayId(m_target->m_ShapeShiftModelId);
+        else
+            m_target->SetDisplayId(m_target->GetNativeDisplayId());
 
         // apply default equipment for creature case
         if (m_target->GetTypeId() == TYPEID_UNIT)
@@ -4737,6 +4753,7 @@ void Aura::HandleAuraModIncreaseHealth(bool apply, bool Real)
                 m_target->ModifyHealth(-m_modifier.m_amount);
             else
                 m_target->SetHealth(1);
+
             m_target->HandleStatModifier(UNIT_MOD_HEALTH, TOTAL_VALUE, float(GetModifierValue()), apply);
         }
     }

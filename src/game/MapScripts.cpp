@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -248,8 +248,8 @@ inline void Map::_ScriptProcessDoor(Object* source, Object* target, const Script
             GameObject *pDoor = _FindGameObject(wSource, guid);
             if (!pDoor)
                 sLog.outError("%s gameobject was not found (guid: %u).", scriptInfo->GetDebugInfo().c_str(), guid);
-            else if (pDoor->GetGoType() != GAMEOBJECT_TYPE_DOOR)
-                sLog.outError("%s gameobject is not a door (GoType: %u, Entry: %u, GUID: %u).",
+            else if (pDoor->GetGoType() != GAMEOBJECT_TYPE_DOOR && pDoor->GetGoType () != GAMEOBJECT_TYPE_BUTTON)
+                sLog.outError("%s gameobject is not a door (or button) (GoType: %u, Entry: %u, GUID: %u).",
                     scriptInfo->GetDebugInfo().c_str(), pDoor->GetGoType(), pDoor->GetEntry(), pDoor->GetGUIDLow());
             else if (bOpen == (pDoor->GetGoState() == GO_STATE_READY))
             {

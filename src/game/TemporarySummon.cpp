@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -351,7 +351,10 @@ void Puppet::Update(uint32 time)
     Minion::Update(time);
     //check if caster is channelling?
     if (IsInWorld() && !isAlive())
+    {
         UnSummon();
+        m_owner->InterruptNonMeleeSpells(true, GetUInt32Value(UNIT_CREATED_BY_SPELL), false);
+    }
 }
 
 void Puppet::RemoveFromWorld()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -82,7 +82,7 @@ void WorldSession::HandleAutostoreLootItemOpcode(WorldPacket & recv_data)
 
         bool ok_loot = pCreature && pCreature->isAlive() == (player->getClass() == CLASS_ROGUE && pCreature->lootForPickPocketed);
 
-        if (!ok_loot || !pCreature->IsWithinDistInMap(_player,INTERACTION_DISTANCE))
+        if (!ok_loot || !player->isAllowedToLoot(pCreature) || !pCreature->IsWithinDistInMap(_player,INTERACTION_DISTANCE))
         {
             player->SendLootRelease(lguid);
             return;
@@ -198,7 +198,7 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket & /*recv_data*/)
 
             bool ok_loot = pCreature && pCreature->isAlive() == (player->getClass() == CLASS_ROGUE && pCreature->lootForPickPocketed);
 
-            if (ok_loot && pCreature->IsWithinDistInMap(_player,INTERACTION_DISTANCE))
+            if (ok_loot && player->isAllowedToLoot(pCreature) && pCreature->IsWithinDistInMap(_player,INTERACTION_DISTANCE))
                 pLoot = &pCreature->loot ;
 
             break;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -337,7 +337,7 @@ bool Creature::InitEntry(uint32 Entry, uint32 team, const CreatureData *data)
     SetSpeed(MOVE_RUN,      cinfo->speed);
     SetSpeed(MOVE_SWIM,     cinfo->speed);
 
-    SetFloatValue(OBJECT_FIELD_SCALE_X, cinfo->scale);
+    SetObjectScale(cinfo->scale);
 
     // checked at loading
     m_defaultMovementType = MovementGeneratorType(cinfo->MovementType);
@@ -1224,17 +1224,51 @@ void Creature::LoadEquipment(uint32 equip_entry, bool force)
         return;
     }
 
-    EquipmentInfo const *einfo = objmgr.GetEquipmentInfo(equip_entry);
-    if (!einfo)
-        return;
-
-    m_equipmentId = equip_entry;
-    for (uint8 i = 0; i < 3; ++i)
+    if (EquipmentInfo const *einfo = objmgr.GetEquipmentInfo(equip_entry))
     {
-        SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY + i, einfo->equipmodel[i]);
-        SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO + (i * 2), einfo->equipinfo[i]);
-        SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO + (i * 2) + 1, einfo->equipslot[i]);
+        m_equipmentId = equip_entry;
+        for (uint8 i = 0; i < MAX_VIRTUAL_ITEM_SLOT; ++i)
+            SetVirtualItem(VirtualItemSlot(i), einfo->equipentry[i]);
     }
+    else if (EquipmentInfoRaw const *einfo = objmgr.GetEquipmentInfoRaw(equip_entry))
+    {
+        m_equipmentId = equip_entry;
+        for (uint8 i = 0; i < MAX_VIRTUAL_ITEM_SLOT; ++i)
+            SetVirtualItemRaw(VirtualItemSlot(i), einfo->equipmodel[i], einfo->equipinfo[i], einfo->equipslot[i]);
+    }
+}
+
+void Creature::SetVirtualItem(VirtualItemSlot slot, uint32 item_id)
+{
+    if (item_id == 0)
+    {
+        SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY + slot, 0);
+        SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO + (slot * 2) + 0, 0);
+        SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO + (slot * 2) + 1, 0);
+        return;
+    }
+
+    ItemPrototype const* proto = ObjectMgr::GetItemPrototype(item_id);
+    if (!proto)
+    {
+        sLog.outError("Not listed in 'item_template' item (ID:%u) used as virtual item for %i", item_id, GetGUID());
+        return;
+    }
+
+    SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY + slot, proto->DisplayInfoID);
+    SetByteValue(UNIT_VIRTUAL_ITEM_INFO + (slot * 2) + 0, VIRTUAL_ITEM_INFO_0_OFFSET_CLASS, proto->Class);
+    SetByteValue(UNIT_VIRTUAL_ITEM_INFO + (slot * 2) + 0, VIRTUAL_ITEM_INFO_0_OFFSET_SUBCLASS, proto->SubClass);
+    SetByteValue(UNIT_VIRTUAL_ITEM_INFO + (slot * 2) + 0, VIRTUAL_ITEM_INFO_0_OFFSET_UNK0, proto->SoundOverrideSubclass);
+    SetByteValue(UNIT_VIRTUAL_ITEM_INFO + (slot * 2) + 0, VIRTUAL_ITEM_INFO_0_OFFSET_MATERIAL, proto->Material);
+    SetByteValue(UNIT_VIRTUAL_ITEM_INFO + (slot * 2) + 1, VIRTUAL_ITEM_INFO_1_OFFSET_INVENTORYTYPE, proto->InventoryType);
+    SetByteValue(UNIT_VIRTUAL_ITEM_INFO + (slot * 2) + 1, VIRTUAL_ITEM_INFO_1_OFFSET_SHEATH, proto->Sheath);
+}
+
+void Creature::SetVirtualItemRaw(VirtualItemSlot slot, uint32 display_id, uint32 info0, uint32 info1)
+{
+    SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY + slot, display_id);
+    SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO + (slot * 2) + 0, info0);
+    SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO + (slot * 2) + 1, info1);
 }
 
 bool Creature::hasQuest(uint32 quest_id) const

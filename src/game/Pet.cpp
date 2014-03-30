@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -182,7 +182,7 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petentry, uint32 petnumber, bool c
         return false;
 
     float px, py, pz;
-    owner->GetClosePoint(px, py, pz, GetObjectSize(), PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
+    owner->GetClosePoint(px, py, pz, owner->GetObjectSize(), PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
 
     Relocate(px, py, pz, owner->GetOrientation());
 
@@ -981,7 +981,7 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
         else
             scale = cFamily->minScale + float(getLevel() - cFamily->minScaleLevel) / cFamily->maxScaleLevel * (cFamily->maxScale - cFamily->minScale);
 
-        SetFloatValue(OBJECT_FIELD_SCALE_X, scale);
+        SetObjectScale(scale);
     }
 
     //resistance

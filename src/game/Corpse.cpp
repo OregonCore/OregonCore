@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -96,7 +96,7 @@ bool Corpse::Create(uint32 guidlow, Player *owner, uint32 /*mapid*/, float x, fl
 
     WorldObject::_Create(guidlow, HIGHGUID_CORPSE);
 
-    SetFloatValue(OBJECT_FIELD_SCALE_X, 1);
+    SetObjectScale(1);
     SetFloatValue(CORPSE_FIELD_POS_X, x);
     SetFloatValue(CORPSE_FIELD_POS_Y, y);
     SetFloatValue(CORPSE_FIELD_POS_Z, z);

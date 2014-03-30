@@ -130,7 +130,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
         me->SetArmor(defaultarmor);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->SetVisibility(VISIBILITY_ON);
-        me->SetFloatValue(OBJECT_FIELD_SCALE_X, defaultsize);
+        me->SetObjectScale(defaultsize);
         me->SetDisplayId(MODEL_HUMAN);
 
         Summons.DespawnAll();
@@ -156,7 +156,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
 
     void JustDied(Unit* /*victim*/)
     {
-        me->SetFloatValue(OBJECT_FIELD_SCALE_X, defaultsize);
+        me->SetObjectScale(defaultsize);
         me->SetDisplayId(MODEL_HUMAN);
         DoScriptText(SAY_DEATH, me);
 
@@ -379,7 +379,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
             DoScriptText(SAY_VOIDB, me);
             me->SetArmor(WV_ARMOR);
             me->SetDisplayId(MODEL_VOIDWALKER);
-            me->SetFloatValue(OBJECT_FIELD_SCALE_X, defaultsize*2.5f);
+            me->SetObjectScale(defaultsize*2.5f);
         }
 
         DoMeleeAttackIfReady();

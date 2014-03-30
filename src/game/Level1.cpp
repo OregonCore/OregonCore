@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -695,7 +695,7 @@ bool ChatHandler::HandleGMTicketReloadCommand(const char*)
     return true;
 }
 
-//Enable\Dissable Invisible mode
+//Enable\Disable Invisible mode
 bool ChatHandler::HandleVisibleCommand(const char* args)
 {
     if (!*args)
@@ -1729,7 +1729,7 @@ bool ChatHandler::HandleModifyScaleCommand(const char* args)
             ChatHandler(target->ToPlayer()).PSendSysMessage(LANG_YOURS_SIZE_CHANGED, GetName(), Scale);
     }
 
-    target->SetFloatValue(OBJECT_FIELD_SCALE_X, Scale);
+    target->SetObjectScale(Scale);
 
     return true;
 }

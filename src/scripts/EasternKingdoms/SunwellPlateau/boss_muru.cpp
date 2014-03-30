@@ -29,54 +29,56 @@ SDComment: all sounds, black hole effect triggers to often (46228)
 // Muru & Entropius's spells
 enum Spells
 {
-    SPELL_ENRAGE                = 26662,
+    SPELL_ENRAGE                  = 26662,
 
     // Muru's spells
-    SPELL_NEGATIVE_ENERGY        = 46009, //(this trigger 46008)
+    SPELL_NEGATIVE_ENERGY         = 46009, //(this trigger 46008)
     SPELL_DARKNESS                = 45999,
     SPELL_OPEN_ALL_PORTALS        = 46177,
-    SPELL_OPEN_PORTAL            = 45977,
-    SPELL_OPEN_PORTAL_2            = 45976,
-    SPELL_SUMMON_BERSERKER        = 46037,
-    SPELL_SUMNON_FURY_MAGE        = 46038,
+    SPELL_OPEN_PORTAL             = 45977,
+    SPELL_OPEN_PORTAL_2           = 45976,
+    SPELL_SUMMON_BERSERKER_1      = 46037,
+    SPELL_SUMNON_FURY_MAGE_1      = 46038,
+    SPELL_SUMNON_FURY_MAGE_2      = 46039,
+    SPELL_SUMMON_BERSERKER_2      = 46040,
     SPELL_SUMMON_VOID_SENTINEL    = 45988,
     SPELL_SUMMON_ENTROPIUS        = 46217,
 
     // Entropius's spells
-    SPELL_DARKNESS_E            = 46269,
-    SPELL_BLACKHOLE             = 46282,
-    SPELL_NEGATIVE_ENERGY_E     = 46284,
-    SPELL_ENTROPIUS_SPAWN        = 46223,
+    SPELL_DARKNESS_E              = 46269,
+    SPELL_BLACKHOLE               = 46282,
+    SPELL_NEGATIVE_ENERGY_E       = 46284,
+    SPELL_ENTROPIUS_SPAWN         = 46223,
 
     // Shadowsword Berserker's spells
-    SPELL_FLURRY                = 46160,
-    SPELL_DUAL_WIELD            = 29651,
+    SPELL_FLURRY                  = 46160,
+    SPELL_DUAL_WIELD              = 29651,
 
     // Shadowsword Fury Mage's spells
-    SPELL_FEL_FIREBALL          = 46101,
-    SPELL_SPELL_FURY            = 46102,
+    SPELL_FEL_FIREBALL            = 46101,
+    SPELL_SPELL_FURY              = 46102,
 
     // Void Sentinel's spells
-    SPELL_SHADOW_PULSE          = 46087,
-    SPELL_VOID_BLAST            = 46161,
+    SPELL_SHADOW_PULSE            = 46087,
+    SPELL_VOID_BLAST              = 46161,
 
     // Void Spawn's spells
-    SPELL_SHADOW_BOLT_VOLLEY    = 46082,
+    SPELL_SHADOW_BOLT_VOLLEY      = 46082,
 
     //Dark Fiend Spells
-    SPELL_DARKFIEND_AOE            = 45944,
+    SPELL_DARKFIEND_AOE           = 45944,
     SPELL_DARKFIEND_VISUAL        = 45936,
-    SPELL_DARKFIEND_SKIN        = 45934,
+    SPELL_DARKFIEND_SKIN          = 45934,
 
     //Black Hole Spells
     SPELL_BLACKHOLE_SPAWN        = 46242,
-    SPELL_BLACKHOLE_GROW        = 46228
+    SPELL_BLACKHOLE_GROW         = 46228
 };
 
 enum BossTimers{
     TIMER_DARKNESS                = 0,
-    TIMER_HUMANOIDES            = 1,
-    TIMER_PHASE                    = 2,
+    TIMER_HUMANOIDES              = 1,
+    TIMER_PHASE                   = 2,
     TIMER_SENTINEL                = 3
 };
 
@@ -103,9 +105,9 @@ float Humanoides[6][5] =
 };
 
 uint32 EnrageTimer = 600000;
-struct boss_entropiusAI : public ScriptedAI
+struct boss_entropiusAI : public Scripted_NoMovementAI
 {
-    boss_entropiusAI(Creature *c) : ScriptedAI(c), Summons(me)
+    boss_entropiusAI(Creature *c) : Scripted_NoMovementAI(c), Summons(me)
     {
         pInstance = c->GetInstanceData();
     }
@@ -137,6 +139,9 @@ struct boss_entropiusAI : public ScriptedAI
 
     void JustSummoned(Creature* summoned)
     {
+        // Define these here, used multiple times.
+        float x,y,z,o;
+
         switch(summoned->GetEntry())
         {
             case CREATURE_DARK_FIENDS:
@@ -144,12 +149,11 @@ struct boss_entropiusAI : public ScriptedAI
                 break;
             case CREATURE_DARKNESS:
                 summoned->addUnitState(UNIT_STAT_STUNNED);
-                float x,y,z,o;
                 summoned->GetHomePosition(x,y,z,o);
                 me->SummonCreature(CREATURE_DARK_FIENDS, x,y,z,o, TEMPSUMMON_CORPSE_DESPAWN, 0);
                 break;
         }
-        summoned->AI()->AttackStart(SelectTarget(SELECT_TARGET_RANDOM,0, 50, true));
+        summoned->AI()->AttackStart(SelectTarget(SELECT_TARGET_RANDOM,0, 75, true));
         Summons.Summon(summoned);
     }
 
@@ -229,6 +233,18 @@ struct boss_muruAI : public Scripted_NoMovementAI
 
         if (pInstance)
             pInstance->SetData(DATA_MURU_EVENT, NOT_STARTED);
+    }
+
+    void SummonAdds()
+    {
+        for (uint8 i = 0; i < 2; ++i)
+        {
+            DoCast(SPELL_SUMMON_BERSERKER_1);
+            DoCast(SPELL_SUMMON_BERSERKER_2);
+        }
+
+        DoCast(SPELL_SUMNON_FURY_MAGE_1);
+        DoCast(SPELL_SUMNON_FURY_MAGE_2);
     }
 
     void EnterCombat(Unit * /*who*/)
@@ -322,6 +338,7 @@ struct boss_muruAI : public Scripted_NoMovementAI
                     case TIMER_HUMANOIDES:
                         for (uint8 i = 0; i < 6; ++i)
                             me->SummonCreature(Humanoides[i][0],Humanoides[i][1],Humanoides[i][2],Humanoides[i][3], Humanoides[i][4], TEMPSUMMON_CORPSE_DESPAWN, 0);
+                        //SummonAdds();
                         Timer[TIMER_HUMANOIDES] = 60000;
                         break;
                     case TIMER_PHASE:
@@ -331,7 +348,7 @@ struct boss_muruAI : public Scripted_NoMovementAI
                         Phase = 3;
                         return;
                     case TIMER_SENTINEL:
-                        DoCastAOE(SPELL_OPEN_PORTAL_2, false);
+                        DoCastAOE(SPELL_OPEN_PORTAL_2, true);
                         Timer[TIMER_SENTINEL] = 30000;
                         break;
                 }
@@ -487,7 +504,12 @@ CreatureAI* GetAI_npc_dark_fiend(Creature* pCreature)
 
 struct npc_void_sentinelAI : public ScriptedAI
 {
-    npc_void_sentinelAI(Creature *c) : ScriptedAI(c){}
+    npc_void_sentinelAI(Creature *c) : ScriptedAI(c)
+    {
+        pInstance = c->GetInstanceData();
+    }
+
+    ScriptedInstance* pInstance;
 
     uint32 PulseTimer;
     uint32 VoidBlastTimer;
@@ -500,6 +522,10 @@ struct npc_void_sentinelAI : public ScriptedAI
         float x,y,z,o;
         me->GetHomePosition(x,y,z,o);
         DoTeleportTo(x,y,71);
+
+        if (pInstance)
+            if (Player* Target = Unit::GetPlayer(*me, pInstance->GetData64(DATA_PLAYER_GUID)))
+                me->AI()->AttackStart(Target);
     }
 
     void JustDied(Unit* /*killer*/)

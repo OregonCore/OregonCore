@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -147,10 +147,7 @@ Player* World::FindPlayerInZone(uint32 zone)
         if (!player)
             continue;
         if (player->IsInWorld() && player->GetZoneId() == zone)
-        {
-            // Used by the weather system. We return the player to broadcast the change weather message to him and all players in the zone.
             return player;
-        }
     }
     return NULL;
 }
@@ -1380,6 +1377,9 @@ void World::SetInitialWorldSettings()
     sLog.outString("Loading Autobroadcasts...");
     LoadAutobroadcasts();
 
+    sLog.outString("Loading Ip2nation...");
+    LoadIp2nation();
+
     // Load and initialize scripts
     sLog.outString("Loading Scripts...");
     sLog.outString();
@@ -1611,6 +1611,24 @@ void World::LoadAutobroadcasts()
 
     sLog.outString();
     sLog.outString( ">> Loaded %u autobroadcasts definitions", count);
+}
+
+ 	
+void World::LoadIp2nation()
+{
+ 	uint32 oldMSTime = getMSTime();
+ 	
+ 	QueryResult_AutoPtr result = WorldDatabase.Query("SELECT count(c.code) FROM ip2nationCountries c, ip2nation i WHERE c.code = i.country");
+ 	uint32 count = 0;
+
+    if (result)
+    {
+        Field* fields = result->Fetch();
+	    count = fields[0].GetUInt32();
+	}
+
+ 	sLog.outString(">> Loaded %u ip2nation definitions", count);
+	sLog.outString();
 }
 
 // Update the World !
@@ -1951,9 +1969,11 @@ void World::SendGlobalText(const char* text, WorldSession *self)
 }
 
 // Send a packet to all players (or players selected team) in the zone (except self if mentioned)
-void World::SendZoneMessage(uint32 zone, WorldPacket *packet, WorldSession *self, uint32 team)
+bool World::SendZoneMessage(uint32 zone, WorldPacket *packet, WorldSession *self, uint32 team)
 {
+    bool foundPlayerToSend = false;
     SessionMap::iterator itr;
+
     for (itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
     {
         if (itr->second &&
@@ -1964,8 +1984,11 @@ void World::SendZoneMessage(uint32 zone, WorldPacket *packet, WorldSession *self
             (team == 0 || itr->second->GetPlayer()->GetTeam() == team))
         {
             itr->second->SendPacket(packet);
+            foundPlayerToSend = true;
         }
     }
+
+    return foundPlayerToSend;
 }
 
 // Send a System Message to all players in the zone (except self if mentioned)

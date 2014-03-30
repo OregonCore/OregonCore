@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -743,6 +743,15 @@ uint32 Unit::DealDamage(Unit *pVictim, uint32 damage, CleanDamage const* cleanDa
         const AreaTableEntry *area = GetAreaEntryByAreaID(pVictim->GetAreaId());
         if (area && area->flags & AREA_FLAG_SANCTUARY)       //sanctuary
             return 0;
+    }
+
+    // Paladin Blessed Life 4/7/10% chance to cause 50% dmg
+    AuraList const& blessedLife = pVictim->GetAurasByType(SPELL_AURA_REUSED_BLESSED_LIFE);
+    AuraList::const_iterator blessedAura = blessedLife.begin();
+    if (blessedAura != blessedLife.end() && *blessedAura)
+    {
+        if (urand(0, 100) <= (*blessedAura)->GetSpellProto()->procChance)
+            damage /= 2;
     }
 
     //Script Event damage taken
@@ -7945,13 +7954,46 @@ uint32 Unit::SpellHealingBonus(SpellEntry const *spellProto, uint32 healamount, 
         AuraList const& mDummyAuras = pVictim->GetAurasByType(SPELL_AURA_DUMMY);
         for (AuraList::const_iterator i = mDummyAuras.begin();i != mDummyAuras.end(); ++i)
         {
-            if ((*i)->GetSpellProto()->SpellVisual == 9180)
+            if ((*i)->GetSpellProto()->SpellVisual == 9180) // Blessing of Light
             {
                 // Flash of Light
                 if ((spellProto->SpellFamilyFlags & 0x0000000040000000LL) && (*i)->GetEffIndex() == 1)
                     AdvertisedBenefit += (*i)->GetModifier()->m_amount;
                 // Holy Light
                 else if ((spellProto->SpellFamilyFlags & 0x0000000080000000LL) && (*i)->GetEffIndex() == 0)
+                    AdvertisedBenefit += (*i)->GetModifier()->m_amount;
+            }
+            else if((*i)->GetSpellProto()->Id == 38320)	// Libram of Souls Redeemed
+            {
+                // Flash of Light
+                if ((spellProto->SpellFamilyFlags & UI64LIT(0x0000000040000000)) && (*i)->GetEffIndex() == 0)
+                    AdvertisedBenefit += (*i)->GetModifier()->m_amount/2;
+                // Holy Light
+                else if ((spellProto->SpellFamilyFlags & UI64LIT(0x0000000080000000)) && (*i)->GetEffIndex() == 0)
+                    AdvertisedBenefit += (*i)->GetModifier()->m_amount;
+            }
+            else if((*i)->GetSpellProto()->Id == 34231)	// Libram of the Lightbringer
+            {
+                // Holy Light
+                if ((spellProto->SpellFamilyFlags & UI64LIT(0x0000000080000000)) && (*i)->GetEffIndex() == 0)
+                    AdvertisedBenefit += (*i)->GetModifier()->m_amount;
+            }
+            else if((*i)->GetSpellProto()->Id == 28851)	// Libram of Light
+            {
+                // Flash of Light
+                if ((spellProto->SpellFamilyFlags & UI64LIT(0x0000000040000000)) && (*i)->GetEffIndex() == 0)
+                    AdvertisedBenefit += (*i)->GetModifier()->m_amount;
+            }
+            else if((*i)->GetSpellProto()->Id == 28853)	// Libram of Divinity
+            {
+                // Flash of Light
+                if ((spellProto->SpellFamilyFlags & UI64LIT(0x0000000040000000)) && (*i)->GetEffIndex() == 0)
+                    AdvertisedBenefit += (*i)->GetModifier()->m_amount;
+            }
+            else if((*i)->GetSpellProto()->Id == 32403)	// Blessed book of Nagrand
+            {
+                // Flash of Light
+                if ((spellProto->SpellFamilyFlags & UI64LIT(0x0000000040000000)) && (*i)->GetEffIndex() == 0)
                     AdvertisedBenefit += (*i)->GetModifier()->m_amount;
             }
         }
@@ -8789,7 +8831,7 @@ int32 Unit::ModifyHealth(int32 dVal)
 uint32 Unit::HealTargetUnit(Unit* target, SpellEntry const *spellInfo, uint32 heal, bool crit)
 {
     // This should have already been checked, but just in case...
-    if (target && spellInfo && heal != 0)
+    if (target && spellInfo)
     {	
         sLog.outDebug("DEBUG: HealTargetUnit(caster: %u, target: %u, spell: %u, healing: %u)",
             GetGUIDLow(), target->GetGUIDLow(), spellInfo->Id, heal);
@@ -9859,6 +9901,8 @@ void Unit::SetHealth(uint32 val)
 {
     if (getDeathState() == JUST_DIED)
         val = 0;
+    else if (GetTypeId() == TYPEID_PLAYER && getDeathState() == DEAD)
+        val = 1;
     else
     {
         uint32 maxHealth = GetMaxHealth();
@@ -9888,6 +9932,9 @@ void Unit::SetHealth(uint32 val)
 
 void Unit::SetMaxHealth(uint32 val)
 {
+    if (!val)
+        val = 1;
+
     float healthPct = GetMaxHealth();
     SetUInt32Value(UNIT_FIELD_MAXHEALTH, val);
 
@@ -12290,6 +12337,41 @@ void Unit::GetPartyMember(std::list<Unit*> &TagUnitMap, float radius)
     }
 }
 
+bool Unit::HasShapeshiftChangingModel() const
+{
+    AuraList const& auras = GetAurasByType(SPELL_AURA_MOD_SHAPESHIFT);
+    for (AuraList::const_iterator i = auras.begin(); i != auras.end(); i++)
+    {
+        switch ((*i)->GetModifier()->m_miscvalue)
+        {
+            case FORM_CAT:
+            case FORM_TREE:
+            case FORM_TRAVEL:
+            case FORM_AQUA:
+            case FORM_BEAR:
+            case FORM_DIREBEAR:
+            case FORM_MOONKIN:
+            case FORM_FLIGHT:
+            case FORM_FLIGHT_EPIC:
+            case FORM_SPIRITOFREDEMPTION:
+            case FORM_GHOSTWOLF:
+            case FORM_GHOUL:
+            case FORM_CREATURECAT:
+            case FORM_CREATUREBEAR:
+                return true;
+            case FORM_BATTLESTANCE:
+            case FORM_DEFENSIVESTANCE:
+            case FORM_BERSERKERSTANCE:
+            case FORM_AMBIENT:
+            case FORM_SHADOW:
+            case FORM_STEALTH:
+                return false;
+        }
+    }
+
+    return false;
+}
+
 void Unit::AddAura(uint32 spellId, Unit* target)
 {
     if (!target || !target->isAlive())
@@ -12335,6 +12417,14 @@ void Unit::SetFlying(bool apply)
         RemoveByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02);
         RemoveUnitMovementFlag(MOVEFLAG_FLYING | MOVEFLAG_FLYING2);
     }
+}
+
+void Unit::SetWalk(bool apply)
+{
+    if (apply)
+        AddUnitMovementFlag(MOVEFLAG_WALK_MODE);
+    else
+        RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
 }
 
 void Unit::UpdateObjectVisibility(bool forced)

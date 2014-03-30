@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -201,10 +201,6 @@ void Weather::SendFineWeatherUpdateToPlayer(Player *player)
 // Send the new weather to all players in the zone
 bool Weather::UpdateWeather()
 {
-    Player* player = sWorld.FindPlayerInZone(m_zone);
-    if (!player)
-        return false;
-
     // Send the weather packet to all players in this zone
     if (m_grade >= 1)
         m_grade = 0.9999f;
@@ -214,8 +210,13 @@ bool Weather::UpdateWeather()
     WeatherState state = GetWeatherState();
 
     WorldPacket data(SMSG_WEATHER, (4+4+4));
-    data << uint32(state) << (float)m_grade << uint8(0);
-    player->SendMessageToSet(&data, true);
+    data << uint32(state);
+    data << (float)m_grade;
+    data << uint8(0);
+
+    //- Returns false if there were no players found to update
+    if (!sWorld.SendZoneMessage(m_zone, &data))
+        return false;
 
     // Log the event
     char const* wthstr;

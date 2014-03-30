@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -167,6 +167,8 @@ class Object
         PackedGuid const& GetPackGUID() const { return m_PackGUID; }
         uint32 GetEntry() const { return GetUInt32Value(OBJECT_FIELD_ENTRY); }
         void SetEntry(uint32 entry) { SetUInt32Value(OBJECT_FIELD_ENTRY, entry); }
+
+        void SetObjectScale(float scale) { SetFloatValue(OBJECT_FIELD_SCALE_X, scale); }
 
         uint8 GetTypeId() const { return m_objectTypeId; }
         bool isType(uint16 mask) const { return (mask & m_objectType); }
@@ -472,7 +474,13 @@ struct MovementInfo
     float   u_unk1;
     MovementInfo() : moveFlags(MOVEFLAG_NONE), moveFlags2(0), time(0), t_guid(0),
         t_time(0), s_pitch(0.0f), fallTime(0), j_velocity(0.0f), j_sinAngle(0.0f),
-        j_cosAngle(0.0f), j_xyspeed(0.0f), u_unk1(0.0f) {}
+        j_cosAngle(0.0f), j_xyspeed(0.0f), u_unk1(0.0f)
+    {
+        t_pos.m_positionX   = .0f;
+        t_pos.m_positionY   = .0f;
+        t_pos.m_positionZ   = .0f;
+        t_pos.m_orientation = .0f;
+    }
 
     // Read/Write methods
     void Read(ByteBuffer &data);

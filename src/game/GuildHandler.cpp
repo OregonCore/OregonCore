@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -371,24 +371,28 @@ void WorldSession::HandleGuildLeaveOpcode(WorldPacket& /*recvPacket*/)
 {
     std::string plName;
     Guild *guild;
-
-    //sLog.outDebug("WORLD: Received CMSG_GUILD_LEAVE");
+	bool disband = false;
 
     guild = objmgr.GetGuildById(_player->GetGuildId());
+
+	// Check that the guild exists
+	// before going any further.
     if (!guild)
     {
         SendGuildCommandResult(GUILD_CREATE_S, "", ERR_GUILD_PLAYER_NOT_IN_GUILD);
         return;
     }
-    if (_player->GetGUID() == guild->GetLeader() && guild->GetMemberSize() > 1)
-    {
-        SendGuildCommandResult(GUILD_QUIT_S, "", ERR_GUILD_LEADER_LEAVE);
-        return;
-    }
-
+	// Leader cannot leave if he is not the last member
     if (_player->GetGUID() == guild->GetLeader())
-    {
-        guild->Disband();
+	{
+        if (guild->GetMemberSize() > 1)
+            SendGuildCommandResult(GUILD_QUIT_S, "", ERR_GUILD_LEADER_LEAVE);
+        else
+        {
+            // Guild is disbanded if leader leaves.
+            guild->Disband();
+            disband = true;
+        }
         return;
     }
 
@@ -404,17 +408,15 @@ void WorldSession::HandleGuildLeaveOpcode(WorldPacket& /*recvPacket*/)
     data << plName;
     guild->BroadcastPacket(&data);
 
-    //sLog.outDebug("WORLD: Sent (SMSG_GUILD_EVENT)");
-
     SendGuildCommandResult(GUILD_QUIT_S, guild->GetName(), ERR_PLAYER_NO_MORE_IN_GUILD);
+
+	if (disband)
+		delete this;
 }
 
 void WorldSession::HandleGuildDisbandOpcode(WorldPacket& /*recvPacket*/)
 {
-    std::string name;
     Guild *guild;
-
-    //sLog.outDebug("WORLD: Received CMSG_GUILD_DISBAND");
 
     guild = objmgr.GetGuildById(GetPlayer()->GetGuildId());
     if (!guild)
@@ -430,7 +432,7 @@ void WorldSession::HandleGuildDisbandOpcode(WorldPacket& /*recvPacket*/)
 
     guild->Disband();
 
-    //sLog.outDebug("WORLD: Guild Sucefully Disbanded");
+    delete this;
 }
 
 void WorldSession::HandleGuildLeaderOpcode(WorldPacket& recvPacket)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -466,9 +466,9 @@ void GameEventMgr::LoadFromDB()
 
             if (newModelEquipSet.equipment_id > 0)
             {
-                if (!objmgr.GetEquipmentInfo(newModelEquipSet.equipment_id))
+                if (!objmgr.GetEquipmentInfo(newModelEquipSet.equipment_id) && !objmgr.GetEquipmentInfoRaw(newModelEquipSet.equipment_id))
                 {
-                    sLog.outErrorDb("Table game_event_model_equip has creature (Guid: %u) with equipment_id %u not found in table creature_equip_template, set to no equipment.", guid, newModelEquipSet.equipment_id);
+                    sLog.outErrorDb("Table game_event_model_equip has creature (Guid: %u) with equipment_id %u not found in table creature_equip_template or creature_equip_template_raw, set to no equipment.", guid, newModelEquipSet.equipment_id);
                     continue;
                 }
             }

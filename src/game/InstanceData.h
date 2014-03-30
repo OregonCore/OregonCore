@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 OregonCore <http://www.oregoncore.com/>
+ * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
@@ -114,6 +114,10 @@ class InstanceData : public ZoneScript
 
         //Called when a player successfully enters the instance.
         virtual void OnPlayerEnter(Player *) {}
+
+        // Direct calls to Map functions.
+        Creature *GetCreature(uint64 guid) {return instance->GetCreature(guid);}
+        GameObject *GetGameObject(uint64 guid) {return instance->GetGameObject(guid);}
 
         //Handle open / close objects
         //use HandleGameObject(NULL,boolen,GO); in OnObjectCreate in instance scripts
