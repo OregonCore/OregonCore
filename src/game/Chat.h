@@ -502,6 +502,14 @@ class ChatHandler
         bool HandleTempGameObjectCommand(const char* args);
         bool HandleTempAddSpwCommand(const char* args);
 
+        // Refer-A-Friend
+        bool HandleRAFInfoCommand(const char* args);
+        bool HandleRAFLinkCommand(const char* args);
+        bool HandleRAFUnlinkCommand(const char* args);
+        bool HandleRAFSummonCommand(const char* args);
+        bool HandleRAFGrantLevelCommand(const char* args);
+        bool HandleRAFReloadCommand(const char* args);
+
         //! Development Commands
         bool HandleSetValue(const char* args);
         bool HandleGetValue(const char* args);
@@ -523,6 +531,7 @@ class ChatHandler
         bool HandleUnbindSightCommand(const char* args);
         bool HandleSetInstanceDataCommand(const char* args);
         bool HandleGetInstanceDataCommand(const char* args);
+        bool HandleDebugRAFError(const char* args);
 
         Player*   getSelectedPlayer();
         Creature* getSelectedCreature();

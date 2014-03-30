@@ -214,7 +214,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS]=
     &Spell::EffectNULL,                                     //149 SPELL_EFFECT_149                      swoop
     &Spell::EffectUnused,                                   //150 SPELL_EFFECT_150                      unused
     &Spell::EffectTriggerRitualOfSummoning,                 //151 SPELL_EFFECT_TRIGGER_SPELL_2
-    &Spell::EffectNULL,                                     //152 SPELL_EFFECT_152                      summon Refer-a-Friend
+    &Spell::EffectSummonFriend,                             //152 SPELL_EFFECT_SUMMON_FRIEND            summon Refer-a-Friend
     &Spell::EffectNULL,                                     //153 SPELL_EFFECT_CREATE_PET               misc value is creature entry
 };
 
@@ -6637,4 +6637,27 @@ void Spell::EffectRedirectThreat(uint32 /*i*/)
 {
     if (unitTarget)
         m_caster->SetReducedThreatPercent(100, unitTarget->GetGUID());
+}
+
+void Spell::EffectSummonFriend(uint32 /*i*/)
+{
+    if (!m_caster->ToPlayer())
+        return;
+
+    /* This is a workeround. Normally this should trigger EffectTriggerSpell[i],
+       but it won't work because we will lost unit target in UpdatePointes -> SpellCastTargets::Update */
+
+    if (Player* buddy = objmgr.GetRAFLinkedBuddyForPlayer(m_caster->ToPlayer()))
+    {
+        float x, y, z;
+        m_caster->GetClosePoint(x, y, z, buddy->GetObjectSize());
+
+        buddy->SetSummonPoint(m_caster->GetMapId(),x,y,z);
+
+        WorldPacket data(SMSG_SUMMON_REQUEST, 8+4+4);
+        data << uint64(m_caster->GetGUID());                     // summoner guid
+        data << uint32(m_caster->GetZoneId());                   // summoner zone
+        data << uint32(MAX_PLAYER_SUMMON_DELAY*IN_MILLISECONDS); // auto decline after msecs
+        buddy->GetSession()->SendPacket(&data);
+    }
 }

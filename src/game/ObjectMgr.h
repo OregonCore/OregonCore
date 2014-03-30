@@ -555,10 +555,29 @@ class ObjectMgr
 
         typedef std::vector<std::string> ScriptNameMap;
 
+        typedef UNORDERED_MAP<uint64, uint64> ReferFriendMap;
+
         UNORDERED_MAP<uint32, uint32> TransportEventMap;
 
         Player* GetPlayer(const char* name) const { return ObjectAccessor::Instance().FindPlayerByName(name);}
         Player* GetPlayer(uint64 guid) const { return ObjectAccessor::FindPlayer(guid); }
+
+        // Refer-a-Friend
+
+        // Gets RAFLinkStatus and puts the friend's acc into 'linked'
+        RAFLinkStatus GetRAFLinkStatus (uint64 account, uint64* linked = NULL) const;
+        RAFLinkStatus GetRAFLinkStatus (const Player* plr) const
+        {
+            return GetRAFLinkStatus(plr->GetSession()->GetAccountId());
+        }
+        RAFLinkStatus GetRAFLinkStatus (uint64 AccOne, uint64 AccTwo) const;
+        RAFLinkStatus GetRAFLinkStatus (const Player* plr1, const Player* plr2) const
+        {
+            return GetRAFLinkStatus(plr1->GetSession()->GetAccountId(), plr2->GetSession()->GetAccountId());
+        }
+        void LinkIntoRAF      (uint64 AccReferrer, uint64 AccReferred);
+        void UnlinkFromRAF    (uint64 account);
+        Player* GetRAFLinkedBuddyForPlayer(const Player* plr1) const;
 
         static GameObjectInfo const *GetGameObjectInfo(uint32 id) { return sGOStorage.LookupEntry<GameObjectInfo>(id); }
 
@@ -737,12 +756,13 @@ class ObjectMgr
         void LoadSpellScripts();
         void LoadGossipScripts();
         void LoadWaypointScripts();
+        void LoadReferredFriends();
 
         void LoadTransportEvents();
 
         bool LoadOregonStrings(DatabaseType& db, char const* table, int32 min_value, int32 max_value);
         bool LoadOregonStrings() { return LoadOregonStrings(WorldDatabase,"oregon_string",MIN_OREGON_STRING_ID,MAX_OREGON_STRING_ID); }
-    void LoadDbScriptStrings();
+        void LoadDbScriptStrings();
         void LoadPetCreateSpells();
         void LoadCreatureLocales();
         void LoadCreatureTemplates();
@@ -1096,6 +1116,9 @@ class ObjectMgr
         GameTeleMap         m_GameTeleMap;
 
         ScriptNameMap       m_scriptNames;
+
+        ReferFriendMap      m_referrerFriends;
+        ReferFriendMap      m_referredFriends;
 
         typedef             std::vector<LocaleConstant> LocalForIndex;
         LocalForIndex        m_LocalForIndex;

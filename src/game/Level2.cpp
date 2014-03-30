@@ -4490,3 +4490,65 @@ bool ChatHandler::HandleTitlesCurrentCommand(const char* args)
     return true;
 }
 
+bool ChatHandler::HandleRAFInfoCommand(const char* args)
+{
+    uint64 account = strtoull(args, NULL, 10);
+    if (!account)
+        return false;
+
+    uint64 linked;
+    switch (objmgr.GetRAFLinkStatus(account, &linked))
+    {
+        case RAF_LINK_NONE:
+            PSendSysMessage("Account %llu is not linked to any account.", account);
+            break;
+        case RAF_LINK_REFERRER:
+            PSendSysMessage("Account %llu is referrer account. (friend is: %llu)", account, linked);
+            break;
+        case RAF_LINK_REFERRED:
+            PSendSysMessage("Account %llu is referred account. (friend is: %llu)", account, linked);
+            if (Player* player = ObjectAccessor::Instance().FindPlayerByAccountId(account))
+                PSendSysMessage("Character %s has %.02f grantable levels", player->GetName(), player->GetGrantableLevels());
+            break;
+    }
+
+    return true;
+}
+
+bool ChatHandler::HandleRAFLinkCommand(const char* args)
+{
+    uint64 referrer = strtoull(args, NULL, 10);
+    if (!referrer)
+        return false;
+
+    args = strchr(args, ' ');
+    if (!args)
+        return false;
+
+    uint64 referred = strtoull(args, NULL, 10);
+    if (!referred)
+        return false;
+
+    if (objmgr.GetRAFLinkStatus(referrer) != RAF_LINK_NONE ||
+        objmgr.GetRAFLinkStatus(referred) != RAF_LINK_NONE)
+    {
+        PSendSysMessage("First or second account is already linked with an account.");
+        return true;
+    }
+
+    objmgr.LinkIntoRAF(referrer, referred);
+    PSendSysMessage("Accounts successfully linked.");
+    return true;
+}
+
+bool ChatHandler::HandleRAFUnlinkCommand(const char* args)
+{
+    uint64 acc = strtoull(args, NULL, 10);
+    if (!acc)
+        return false;
+
+    objmgr.UnlinkFromRAF(acc);
+    PSendSysMessage("Account was sucessfully unlinked");
+    return true;
+}
+

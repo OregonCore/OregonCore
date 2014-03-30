@@ -780,6 +780,30 @@ enum PlayerRestState
     REST_STATE_RAF_LINKED   = 0x04               // Exact use unknown
 };
 
+enum ReferFriendError
+{
+    RAF_ERR_OK                = 0x00,
+    RAF_ERR_BAD_REFERRER      = 0x01, // You were not referred by that player
+    RAF_ERR_LVL_TOO_HIGH      = 0x02, // That player's level is too high
+    RAF_ERR_NO_GRANTABLE_LVLS = 0x03, // You have not earned enough levels to grant any more levels
+    RAF_ERR_TOO_FAR_AWAY      = 0x04, // That player is too far away
+    RAF_ERR_OPPOSITE_FACTION  = 0x05, // No cannot grant level to a character of the opposite faction
+    RAF_ERR_NOT_RIGHT_NOW     = 0x06, // You cannot grant that player a level right now
+    RAF_ERR_ONLY_UNTIL_60     = 0x07, // You cannot grant levels to players level 60 or higher
+    RAF_ERR_NO_TARGET         = 0x08, // You have no target
+    RAF_ERR_NOT_IN_PARTY      = 0x09, // %s is not in your party
+    RAF_ERR_ONLY_UNTIL_60_2   = 0x0A, // You cannot summon players above level 60
+    RAF_ERR_SUMMON_NOT_READY  = 0x0B, // You can only summon your friend once per hour
+    RAF_ERR_BUDDY_OFFLINE     = 0x0C  // %s is offline and cannot be summoned
+};
+
+enum RAFLinkStatus
+{
+    RAF_LINK_NONE       = 0,
+    RAF_LINK_REFERRER   = 1,
+    RAF_LINK_REFERRED   = 2
+};
+
 class PlayerTaxi
 {
     public:
@@ -943,7 +967,7 @@ class Player : public Unit, public GridObject<Player>
         void SetPvPDeath(bool on) { if (on) m_ExtraFlags |= PLAYER_EXTRA_PVP_DEATH; else m_ExtraFlags &= ~PLAYER_EXTRA_PVP_DEATH; }
 
         void GiveXP(uint32 xp, Unit* victim);
-        void GiveLevel(uint32 level);
+        void GiveLevel(uint32 level, bool ignoreRAF = false);
         void InitStatsForLevel(bool reapplyMods = false);
 
         // Played Time Stuff
@@ -1088,6 +1112,7 @@ class Player : public Unit, public GridObject<Player>
         void SendEquipError(uint8 msg, Item* pItem, Item *pItem2);
         void SendBuyError(uint8 msg, Creature* pCreature, uint32 item, uint32 param);
         void SendSellError(uint8 msg, Creature* pCreature, uint64 guid, uint32 param);
+        void SendReferFriendError(ReferFriendError err, const char* name = 0);
         void AddWeaponProficiency(uint32 newflag) { m_WeaponProficiency |= newflag; }
         void AddArmorProficiency(uint32 newflag) { m_ArmorProficiency |= newflag; }
         uint32 GetWeaponProficiency() const { return m_WeaponProficiency; }
@@ -1126,6 +1151,17 @@ class Player : public Unit, public GridObject<Player>
         void SendItemDurations();
         void LoadCorpse();
         void LoadPet();
+
+        uint32 GetFullGrantableLevels() const { return uint32(m_GrantableLevels); }
+        float GetGrantableLevels() const { return m_GrantableLevels; }
+        void  SetGrantableLevels(float amount)
+        {
+            if (uint32(m_GrantableLevels = amount) > 0)
+                SetByteFlag(PLAYER_FIELD_BYTES, 1, 1);
+            else
+                RemoveByteFlag(PLAYER_FIELD_BYTES, 1, 1); 
+        }
+        float GetReferFriendXPMultiplier() const;
 
         uint32 m_stableSlots;
 
@@ -2364,6 +2400,7 @@ class Player : public Unit, public GridObject<Player>
         int32 m_MirrorTimer[MAX_TIMERS];
         uint8 m_MirrorTimerFlags;
         uint8 m_MirrorTimerFlagsLast;
+        float m_GrantableLevels;
         bool m_isInWater;
         bool m_wasOutdoors;
 
@@ -2410,6 +2447,7 @@ class Player : public Unit, public GridObject<Player>
         bool m_bHasBeenAliveAtDelayedTeleport;
 
         uint32 m_DetectInvTimer;
+        RAFLinkStatus m_rafLink;
 
         // Temporary removed pet cache
         uint32 m_temporaryUnsummonedPetNumber;

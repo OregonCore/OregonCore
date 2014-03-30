@@ -32,6 +32,7 @@
 #include "SystemConfig.h"
 #include "revision.h"
 #include "Util.h"
+#include "Spell.h"
 
 bool ChatHandler::HandleHelpCommand(const char* args)
 {
@@ -265,3 +266,32 @@ bool ChatHandler::HandleServerMotdCommand(const char* /*args*/)
     return true;
 }
 
+bool ChatHandler::HandleRAFSummonCommand(const char*)
+{
+    if (!m_session || !m_session->GetPlayer() || !m_session->GetPlayer()->IsInWorld())
+        return true;
+
+    m_session->GetPlayer()->CastSpell(m_session->GetPlayer(), SPELL_SUMMON_FRIEND, false);
+    return true;
+}
+
+bool ChatHandler::HandleRAFGrantLevelCommand(const char*)
+{
+    if (!m_session || !m_session->GetPlayer() || !m_session->GetPlayer()->IsInWorld())
+        return true;
+
+    Player* buddy = objmgr.GetRAFLinkedBuddyForPlayer(m_session->GetPlayer());
+    if (!buddy || !buddy->IsInWorld())
+    {
+        PSendSysMessage("Couldn't find you friend");
+        return true;
+    }
+
+    PackedGuid guid = buddy->GetPackGUID();
+
+    WorldPacket data(CMSG_GRANT_LEVEL, guid.size());
+    data << guid;
+    m_session->HandleGrantLevel(data);
+
+    return true;
+}

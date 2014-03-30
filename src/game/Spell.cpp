@@ -548,6 +548,21 @@ void Spell::FillTargetMap()
                         }
                     }
                     break;
+                case SPELL_EFFECT_SUMMON_FRIEND:
+                    if (!m_caster->ToPlayer())
+                        break;
+
+                    // Special message for this Spell (if not ready)
+                    if (m_caster->ToPlayer()->HasSpellCooldown(m_spellInfo->Id))
+                    {
+                        m_caster->ToPlayer()->SendReferFriendError(RAF_ERR_SUMMON_NOT_READY);
+                        finish(false);
+                        return;
+                    }
+
+                    if (objmgr.GetRAFLinkedBuddyForPlayer(m_caster->ToPlayer()))
+                        AddUnitTarget(m_caster, i);
+                    break;
                 default:
                     break;
             }
@@ -2104,6 +2119,8 @@ void Spell::prepare(SpellCastTargets * targets, Aura* triggeredByAura)
     // Fill cost data (not use power for item casts)
     m_powerCost = m_CastItem ? 0 : CalculatePowerCost(m_spellInfo, m_caster, m_spellSchoolMask);
 
+    FillTargetMap();
+
     uint8 result = CanCast(true);
     if (result != 0 && !IsAutoRepeat())                      //always cast autorepeat dummy for triggering
     {
@@ -2256,8 +2273,6 @@ void Spell::cast(bool skipCheck)
             return;
         }
     }
-
-    FillTargetMap();
 
     // triggered cast called from Spell::prepare where it was already checked
     if (!skipCheck)
@@ -4216,6 +4231,45 @@ uint8 Spell::CanCast(bool strict)
                     if (!instance)
                         return SPELL_FAILED_TARGET_NOT_IN_INSTANCE;
                     if (!target->Satisfy(objmgr.GetAccessRequirement(instance->access_id), m_caster->GetMapId()))
+                        return SPELL_FAILED_BAD_TARGETS;
+                }
+                break;
+            }
+            case SPELL_EFFECT_SUMMON_FRIEND:
+            {
+                if (!m_caster->ToPlayer())
+                    return SPELL_FAILED_BAD_TARGETS;
+
+                Player* buddy = objmgr.GetRAFLinkedBuddyForPlayer(m_caster->ToPlayer());
+
+                if (!buddy || !buddy->IsInWorld())
+                {
+                    m_caster->ToPlayer()->SendReferFriendError(RAF_ERR_NO_TARGET);
+                    return SPELL_FAILED_DONT_REPORT;
+                }
+
+                if (!buddy->isAlive())
+                    return SPELL_FAILED_TARGETS_DEAD;
+
+                if (!m_caster->ToPlayer()->IsInPartyWith(buddy))
+                {
+                    m_caster->ToPlayer()->SendReferFriendError(RAF_ERR_NOT_IN_PARTY, buddy->GetName());
+                    return SPELL_FAILED_DONT_REPORT;
+                }
+
+                if (buddy->getLevel() > sWorld.getConfig(CONFIG_RAF_LEVEL_LIMIT))
+                {
+                    m_caster->ToPlayer()->SendReferFriendError(RAF_ERR_ONLY_UNTIL_60_2);
+                    return SPELL_FAILED_DONT_REPORT;
+                }
+                
+                // check if our map is dungeon
+                if (sMapStore.LookupEntry(m_caster->GetMapId())->IsDungeon())
+                {
+                    InstanceTemplate const* instance = ObjectMgr::GetInstanceTemplate(m_caster->GetMapId());
+                    if (!instance)
+                        return SPELL_FAILED_TARGET_NOT_IN_INSTANCE;
+                    if (!buddy->Satisfy(objmgr.GetAccessRequirement(instance->access_id), m_caster->GetMapId()))
                         return SPELL_FAILED_BAD_TARGETS;
                 }
                 break;

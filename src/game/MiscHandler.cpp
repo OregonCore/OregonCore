@@ -1449,3 +1449,108 @@ void WorldSession::HandleSetTaxiBenchmarkOpcode(WorldPacket & recv_data)
     DEBUG_LOG("Client used \"/timetest %d\" command", mode);
 }
 
+
+void WorldSession::HandleSetGrantableLevels(WorldPacket& recv_data)
+{
+    DEBUG_LOG("WORLD: CMSG_SET_GRANTABLE_LEVELS");   
+}
+
+void WorldSession::HandleGrantLevel(WorldPacket& recv_data)
+{
+    DEBUG_LOG("WORLD: CMSG_GRANT_LEVEL");
+
+    uint64 guid = recv_data.readPackGUID();
+
+    Player* buddy = objmgr.GetPlayer(guid);
+    if (!buddy || !buddy->IsInWorld())
+    {
+        GetPlayer()->SendReferFriendError(RAF_ERR_NOT_RIGHT_NOW);
+        return;
+    }
+    else if (objmgr.GetRAFLinkStatus(GetPlayer(), buddy) != RAF_LINK_REFERRED)
+    {
+        GetPlayer()->SendReferFriendError(RAF_ERR_BAD_REFERRER);
+        return;
+    }
+    else if (buddy->getLevel() >= sWorld.getConfig(CONFIG_RAF_LEVEL_LIMIT))
+    {
+        GetPlayer()->SendReferFriendError(RAF_ERR_ONLY_UNTIL_60);
+        return;
+    }
+    else if (!buddy->IsInPartyWith(GetPlayer()))
+    {
+        GetPlayer()->SendReferFriendError(RAF_ERR_NOT_IN_PARTY, buddy->GetName());
+        return;
+    }
+    else if (buddy->GetDistance(GetPlayer()) > 90.f)
+    {
+        GetPlayer()->SendReferFriendError(RAF_ERR_TOO_FAR_AWAY);
+        return;
+    }
+    else if (GetPlayer()->getLevel() <= buddy->getLevel())
+    {
+        GetPlayer()->SendReferFriendError(RAF_ERR_LVL_TOO_HIGH);
+        return;
+    }
+
+    // We allow opposite faction grant levels, based on setting in configs,
+    // player cannot invite opposite faction so we just need to check for the same group
+
+    else if (GetPlayer()->GetFullGrantableLevels() == 0)
+    {
+        GetPlayer()->SendReferFriendError(RAF_ERR_NO_GRANTABLE_LVLS);
+        return;
+    }
+
+    WorldPacket packet(SMSG_PROPOSE_LEVEL_GRANT, 8);
+    packet << GetPlayer()->GetPackGUID();
+    buddy->GetSession()->SendPacket(&packet);
+}
+
+void WorldSession::HandleAcceptGrantLevel(WorldPacket& recv_data)
+{
+    DEBUG_LOG("WORLD: CMSG_ACCEPT_GRANT_LEVEL");
+
+    uint64 guid = recv_data.readPackGUID();
+
+    Player* buddy = objmgr.GetPlayer(guid);
+    if (!buddy || !buddy->IsInWorld())
+    {
+        GetPlayer()->SendReferFriendError(RAF_ERR_NOT_RIGHT_NOW);
+        return;
+    }
+    else if (objmgr.GetRAFLinkStatus(GetPlayer(), buddy) != RAF_LINK_REFERRER)
+        return;
+    else if (GetPlayer()->getLevel() >= sWorld.getConfig(CONFIG_RAF_LEVEL_LIMIT))
+        return;
+    else if (!buddy->IsInPartyWith(GetPlayer()))
+    {
+        GetPlayer()->SendReferFriendError(RAF_ERR_NOT_IN_PARTY, buddy->GetName());
+        return;
+    }
+    else if (buddy->GetDistance(GetPlayer()) > 90.f)
+    {
+        GetPlayer()->SendReferFriendError(RAF_ERR_TOO_FAR_AWAY);
+        return;
+    }
+    else if (GetPlayer()->getLevel() >= buddy->getLevel())
+        return;
+
+    // We allow opposite faction grant levels, based on setting in configs,
+    // player cannot invite opposite faction so we just need to check for the same group
+
+    else if (buddy->GetFullGrantableLevels() == 0)
+        return;
+
+    if (GetPlayer()->getLevel() >= sWorld.getConfig(CONFIG_MAX_PLAYER_LEVEL))
+        return;
+
+    buddy->SetGrantableLevels(buddy->GetFullGrantableLevels() - 1);
+    GetPlayer()->GiveLevel(GetPlayer()->getLevel() + 1.f, true);
+}
+
+void WorldSession::HandleReferAFriend(WorldPacket& recv_data)
+{
+    DEBUG_LOG("WORLD: CMSG_REFER_A_FRIEND");
+}
+

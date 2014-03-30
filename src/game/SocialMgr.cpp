@@ -141,7 +141,7 @@ void PlayerSocial::SendSocialList()
         data << itr->second.Note;                           // string note
         if (itr->second.Flags & SOCIAL_FLAG_FRIEND)          // if IsFriend()
         {
-            data << uint8(itr->second.Status);              // online/offline/etc?
+            data << uint8(SOCIAL_FLAG_MUTED);              // online/offline/etc?
             if (itr->second.Status)                          // if online
             {
                 data << uint32(itr->second.Area);           // player area

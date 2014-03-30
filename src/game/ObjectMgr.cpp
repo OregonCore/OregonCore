@@ -2738,6 +2738,141 @@ void ObjectMgr::LoadArenaTeams()
     sLog.outString(">> Loaded %u arenateam definitions", count);
 }
 
+void ObjectMgr::LoadReferredFriends()
+{
+    QueryResult_AutoPtr result = LoginDatabase.Query("SELECT id1, id2 FROM account_referred");
+    if (!result)
+    {
+        barGoLink bar(1);
+        bar.step();
+
+        sLog.outString();
+        sLog.outString(">> Loaded 0 Referred Friends");
+        return;
+    }
+
+    barGoLink bar(result->GetRowCount());
+    uint64 Id1;
+    uint64 Id2;
+    ReferFriendMap::const_iterator it;
+
+    do
+    {
+        bar.step();
+        Field* field = result->Fetch();
+        
+        Id1 = field[0].GetUInt64(); // referrer
+        Id2 = field[1].GetUInt64(); // referred
+
+        if ((it = m_referredFriends.find(Id2)) != m_referredFriends.end())
+        {
+            sLog.outErrorDb("RAF Conflict! Account %llu is already linked with %llu (attempt to double link with account %llu)", Id2, it->second, Id1);
+            continue;
+        }
+
+        // We use double link for fast checking
+        m_referrerFriends[Id1] = Id2;
+        m_referredFriends[Id2] = Id1;
+    }
+    while (result->NextRow());
+
+    sLog.outString();
+    sLog.outString(">> Loaded %llu Referred Friends", result->GetRowCount());
+}
+
+RAFLinkStatus ObjectMgr::GetRAFLinkStatus (uint64 account, uint64* linked) const
+{
+    RAFLinkStatus status = RAF_LINK_NONE;
+    ReferFriendMap::const_iterator i = m_referrerFriends.find(account);
+
+    if (i != m_referrerFriends.end())
+        status = RAF_LINK_REFERRER;
+    else
+    {
+        i = m_referredFriends.find(account);
+        if (i != m_referredFriends.end())
+            status = RAF_LINK_REFERRED;
+    }
+
+    if (linked)
+        *linked = i->second;
+
+    return status;
+}
+
+RAFLinkStatus ObjectMgr::GetRAFLinkStatus (uint64 AccOne, uint64 AccTwo) const
+{
+    ReferFriendMap::const_iterator i = m_referrerFriends.find(AccOne), j;
+    if (i != m_referrerFriends.end())
+    {
+        j = m_referredFriends.find(AccTwo);
+        if (j == m_referredFriends.end())
+            return RAF_LINK_NONE;
+
+        if (i->first  == j->second &&
+            i->second == j->first)
+            return RAF_LINK_REFERRER;
+
+        return RAF_LINK_NONE;
+    }
+
+    i = m_referredFriends.find(AccOne);
+    if (i != m_referredFriends.end())
+    {
+        j = m_referrerFriends.find(AccTwo);
+        if (j == m_referrerFriends.end())
+            return RAF_LINK_NONE;
+
+        if (i->first  == j->second &&
+            i->second == j->first)
+            return RAF_LINK_REFERRED;
+
+        // fall down
+    }
+
+    return RAF_LINK_NONE;
+}
+
+void ObjectMgr::LinkIntoRAF(uint64 AccOne, uint64 AccTwo)
+{
+    m_referrerFriends[AccOne] = AccTwo;
+    m_referredFriends[AccTwo] = AccOne;
+    LoginDatabase.PExecute("REPLACE INTO account_referred (id1, id2) VALUES (%llu, %llu)", AccOne, AccTwo);
+}
+
+void ObjectMgr::UnlinkFromRAF(uint64 AccOne)
+{
+    uint64 AccTwo;
+    switch (GetRAFLinkStatus(AccOne, &AccTwo))
+    {
+        case RAF_LINK_NONE:
+            return;
+        case RAF_LINK_REFERRER:
+            m_referrerFriends.erase(m_referrerFriends.find(AccOne));
+            m_referredFriends.erase(m_referredFriends.find(AccTwo));
+            LoginDatabase.PExecute("DELETE FROM account_referred WHERE id1 = %llu AND id2 = %llu", AccOne, AccTwo);
+            break;
+        case RAF_LINK_REFERRED:
+            m_referrerFriends.erase(m_referrerFriends.find(AccTwo));
+            m_referredFriends.erase(m_referredFriends.find(AccOne));
+            LoginDatabase.PExecute("DELETE FROM account_referred WHERE id1 = %llu AND id2 = %llu", AccTwo, AccOne);
+            break;
+    }
+}
+
+Player* ObjectMgr::GetRAFLinkedBuddyForPlayer(const Player* plr1) const
+{
+    ReferFriendMap::const_iterator it = m_referrerFriends.find(plr1->GetSession()->GetAccountId());
+    if (it == m_referrerFriends.end())
+    {
+        it = m_referredFriends.find(plr1->GetSession()->GetAccountId());
+        if (it == m_referredFriends.end())
+            return NULL;
+    }
+
+    return ObjectAccessor::Instance().FindPlayerByAccountId(it->second);
+}
+
 void ObjectMgr::LoadGroups()
 {
     // -- loading groups --

@@ -221,6 +221,7 @@ ChatCommand * ChatHandler::getCommandTable()
     {
         { "inarc",          SEC_ADMINISTRATOR,  false, &ChatHandler::HandleDebugInArcCommand,          "", NULL },
         { "spellfail",      SEC_ADMINISTRATOR,  false, &ChatHandler::HandleDebugSpellFailCommand,      "", NULL },
+        { "raferror",       SEC_ADMINISTRATOR,  false, &ChatHandler::HandleDebugRAFError,              "", NULL },
         { "setpoi",         SEC_ADMINISTRATOR,  false, &ChatHandler::HandleSetPoiCommand,              "", NULL },
         { "qpartymsg",      SEC_ADMINISTRATOR,  false, &ChatHandler::HandleSendQuestPartyMsgCommand,   "", NULL },
         { "qinvalidmsg",    SEC_ADMINISTRATOR,  false, &ChatHandler::HandleSendQuestInvalidMsgCommand, "", NULL },
@@ -349,6 +350,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { "auctions",                    SEC_ADMINISTRATOR, true,  &ChatHandler::HandleReloadAuctionsCommand,                "", NULL },
         { "waypoint_scripts",            SEC_ADMINISTRATOR, true,  &ChatHandler::HandleReloadWpScriptsCommand,               "", NULL },
         { "gm_tickets",                  SEC_ADMINISTRATOR, true,  &ChatHandler::HandleGMTicketReloadCommand,                "", NULL },
+        { "account_referred",            SEC_ADMINISTRATOR, true,  &ChatHandler::HandleRAFReloadCommand,                     "", NULL },
 
         { "",                            SEC_ADMINISTRATOR, true,  &ChatHandler::HandleReloadCommand,                        "", NULL },
         { NULL,                          0,                 false, NULL,                                                     "", NULL }
@@ -572,6 +574,16 @@ ChatCommand * ChatHandler::getCommandTable()
         { NULL,             0,                  false, NULL,                                                "", NULL }
     };
 
+    static ChatCommand referFriendCommandTable[] =
+    {
+        { "info",           SEC_GAMEMASTER,     true,  &ChatHandler::HandleRAFInfoCommand,                  "", NULL },
+        { "link",           SEC_GAMEMASTER,     true,  &ChatHandler::HandleRAFLinkCommand,                  "", NULL },
+        { "unlink",         SEC_GAMEMASTER,     true,  &ChatHandler::HandleRAFUnlinkCommand,                "", NULL },
+        { "summon",         SEC_PLAYER,         false, &ChatHandler::HandleRAFSummonCommand,                "", NULL },
+        { "grantlevel",     SEC_PLAYER,         false, &ChatHandler::HandleRAFGrantLevelCommand,            "", NULL },
+        { NULL,             0,                  false, NULL,                                                "", NULL }
+    };
+
     static ChatCommand commandTable[] =
     {
         { "account",        SEC_PLAYER,         true,  NULL,                                           "", accountCommandTable  },
@@ -678,6 +690,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { "unpossess",      SEC_ADMINISTRATOR,  false, &ChatHandler::HandleUnPossessCommand,           "", NULL },
         { "bindsight",      SEC_ADMINISTRATOR,  false, &ChatHandler::HandleBindSightCommand,           "", NULL },
         { "unbindsight",    SEC_ADMINISTRATOR,  false, &ChatHandler::HandleUnbindSightCommand,         "", NULL },
+        { "raf",            SEC_ADMINISTRATOR,  true,  NULL,                                           "", referFriendCommandTable },
 
         { NULL,             0,                  false, NULL,                                           "", NULL }
     };
