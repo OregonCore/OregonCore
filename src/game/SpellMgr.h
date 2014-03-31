@@ -1073,6 +1073,7 @@ class SpellMgr
         void LoadSkillLineAbilityMap();
         void LoadSpellPetAuras();
         void LoadSpellCustomAttr();
+        void LoadSpellCustomCooldowns();
         void LoadSpellLinked();
         void LoadSpellEnchantProcData();
 

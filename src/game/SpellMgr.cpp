@@ -2572,6 +2572,50 @@ void SpellMgr::LoadSpellCustomAttr()
     CreatureAI::FillAISpellInfo();
 }
 
+void SpellMgr::LoadSpellCustomCooldowns()
+{
+    uint32 count = 0;
+    SpellEntry *spellInfo;
+
+    //                                                       0              1
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT spellid, cooldown FROM spell_cooldown");
+    if (!result)
+    {
+        barGoLink bar(1);
+        bar.step();
+        sLog.outString();
+        sLog.outString(">> Loaded %u custom spell cooldowns", count);
+        return;
+    }
+
+    barGoLink bar(result->GetRowCount());
+
+    do
+    {
+        Field *fields = result->Fetch();
+
+        bar.step();
+
+        int32 spellid = fields[0].GetInt32();
+        uint32 cooldown = fields[1].GetUInt32();
+
+        spellInfo = (SpellEntry*)GetSpellStore()->LookupEntry(spellid);
+        if (!spellInfo)
+        {
+            sLog.outErrorDb("Spell %i listed in spell_cooldown does not exist", spellid);
+            continue;
+        }
+
+        if (spellid > 0 && cooldown > 0)
+            spellInfo->RecoveryTime = cooldown;
+
+        ++count;
+    } while (result->NextRow());
+
+    sLog.outString();
+    sLog.outString(">> Loaded %u custom spell cooldowns", count);
+}
+
 void SpellMgr::LoadSpellLinked()
 {
     mSpellLinkedMap.clear();    // need for reload case
