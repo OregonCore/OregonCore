@@ -141,7 +141,7 @@ void PlayerSocial::SendSocialList()
         data << itr->second.Note;                           // string note
         if (itr->second.Flags & SOCIAL_FLAG_FRIEND)          // if IsFriend()
         {
-            data << uint8(SOCIAL_FLAG_MUTED);              // online/offline/etc?
+            data << uint8(itr->second.Status);              // online/offline/etc?
             if (itr->second.Status)                          // if online
             {
                 data << uint32(itr->second.Area);           // player area
@@ -209,11 +209,17 @@ void SocialMgr::GetFriendInfo(Player *player, uint32 friendGUID, FriendInfo &fri
        ((pFriend->GetTeam() == team || allowTwoSideWhoList) &&
        (pFriend->GetSession()->GetSecurity() == SEC_PLAYER || (gmInWhoList && pFriend->IsVisibleGloballyFor(player))))))
     {
-        friendInfo.Status = FRIEND_STATUS_ONLINE;
-        if (pFriend->isAFK())
-            friendInfo.Status = FRIEND_STATUS_AFK;
-        if (pFriend->isDND())
-            friendInfo.Status = FRIEND_STATUS_DND;
+        friendInfo.Status = FriendStatus(friendInfo.Status | FRIEND_STATUS_ONLINE);
+
+        // AFK Status
+        pFriend->isAFK() ? friendInfo.Status = FriendStatus(friendInfo.Status | FRIEND_STATUS_AFK) : friendInfo.Status = FriendStatus(friendInfo.Status & ~FRIEND_STATUS_AFK);
+        
+        // DND Status
+        pFriend->isDND() ? friendInfo.Status = FriendStatus(friendInfo.Status | FRIEND_STATUS_DND) : friendInfo.Status = FriendStatus(friendInfo.Status & ~FRIEND_STATUS_DND);
+        
+        // RAF Status
+        objmgr.GetRAFLinkStatus(player, pFriend) ? friendInfo.Status = FriendStatus(friendInfo.Status | FRIEND_STATUS_RAF) : friendInfo.Status = FriendStatus(friendInfo.Status & ~FRIEND_STATUS_RAF);
+ 
         friendInfo.Area = pFriend->GetZoneId();
         friendInfo.Level = pFriend->getLevel();
         friendInfo.Class = pFriend->getClass();

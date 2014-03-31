@@ -12,7 +12,7 @@ replace into command (name, security, help) values
 ('raf',       2, '.raf - Refer-A-Friend Commands'),
 ('raf info',  2, CONCAT('Syntax: .raf info <account>',
                         '\n\n',
-                        'Displays Refer-a-Friend info for given account'),
+                        'Displays Refer-a-Friend info for given account')),
 ('raf link',  2, CONCAT('Syntax: .raf link <linkerAcc> <linkedAcc>',
                         '\n\n',
                         'Link two account with Refer-A-Friend.',
@@ -26,7 +26,7 @@ replace into command (name, security, help) values
                         'For example if Bob referred Suse, use .raf link Bob Suse')),
 ('raf unlink',2, CONCAT('Syntax: .raf unlink <linkerAcc> <linkedAcc>',
                         '\n\n',
-                        'Unlink two RaF-linked accounts. See .raf link for more details.'),
-('raf summon',0, CONCAT('Summons your Refer-A-Friend'),
+                        'Unlink two RaF-linked accounts. See .raf link for more details.')),
+('raf summon',0, CONCAT('Summons your Refer-A-Friend')),
 ('raf grantlevel', 0, CONCAT('Grants your referrer a level'));
 
