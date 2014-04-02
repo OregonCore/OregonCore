@@ -437,14 +437,10 @@ void GameObject::Update(uint32 diff)
                 //any return here in case battleground traps
             }
 
-            if (GetOwnerGUID())
+            if (GetSpellId() || GetOwnerGUID())
             {
-                if (Unit* owner = GetOwner())
-                {
-                    owner->RemoveGameObject(this, false);
-                    SetRespawnTime(0);
-                    Delete();
-                }
+                SetRespawnTime(0);
+                Delete();
                 return;
             }
 
