@@ -1942,6 +1942,15 @@ GameObject* WorldObject::FindNearestGameObject(uint32 entry, float range)
     return go;
 }
 
+GameObject* WorldObject::FindNearestChair(float range)
+{
+    GameObject *go = NULL;
+    Oregon::NearestGameObjectChair checker(*this, range);
+    Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectChair> searcher(go, checker);
+    VisitNearbyGridObject(range, searcher);
+    return go;
+}
+
 void WorldObject::GetGameObjectListWithEntryInGrid(std::list<GameObject*>& lList, uint32 uiEntry, float fMaxSearchRange)
 {
     CellPair pair(Oregon::ComputeCellPair(this->GetPositionX(), this->GetPositionY()));

@@ -552,6 +552,29 @@ namespace Oregon
             NearestGameObjectFishingHole(NearestGameObjectFishingHole const&);
     };
 
+    // Find the nearest chair and return true only if source object is in range of chair
+    class NearestGameObjectChair
+    {
+        public:
+            NearestGameObjectChair(WorldObject const& obj, float range) : i_obj(obj), i_range(range) {}
+            bool operator()(GameObject* go)
+            {
+                if (go->GetGOInfo()->type == GAMEOBJECT_TYPE_CHAIR && go->isSpawned() && i_obj.IsWithinDistInMap(go, i_range))
+                {
+                    i_range = i_obj.GetDistance(go);
+                    return true;
+                }
+                return false;
+            }
+            float GetLastRange() const { return i_range; }
+        private:
+            WorldObject const& i_obj;
+            float  i_range;
+
+            // prevent clone
+            NearestGameObjectChair(NearestGameObjectChair const&);
+    };
+
     // Success at unit in range, range update for next check (this can be use with GameobjectLastSearcher to find nearest GO)
     class NearestGameObjectEntryInObjectRangeCheck
     {
