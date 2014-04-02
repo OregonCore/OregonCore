@@ -1800,10 +1800,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                 case TARGET_DST_DB:
                     if (SpellTargetPosition const* st = spellmgr.GetSpellTargetPosition(m_spellInfo->Id))
                     {
-                        //TODO: fix this check
-                        if (m_spellInfo->Effect[0] == SPELL_EFFECT_TELEPORT_UNITS
-                            || m_spellInfo->Effect[1] == SPELL_EFFECT_TELEPORT_UNITS
-                            || m_spellInfo->Effect[2] == SPELL_EFFECT_TELEPORT_UNITS)
+                        if (IsSpellHaveEffect(m_spellInfo, SPELL_EFFECT_TELEPORT_UNITS))
                             m_targets.setDst(st->target_X, st->target_Y, st->target_Z, st->target_Orientation, (int32)st->target_mapId);
                         else if (st->target_mapId == m_caster->GetMapId())
                             m_targets.setDst(st->target_X, st->target_Y, st->target_Z, st->target_Orientation);
@@ -3542,7 +3539,7 @@ uint8 Spell::CanCast(bool strict)
                 return SPELL_FAILED_BAD_TARGETS;
 
             bool isTrigger = (target->ToCreature() && target->ToCreature()->isTrigger());
-            if (!m_IsTriggeredSpell && !isTrigger && VMAP::VMapFactory::checkSpellForLoS(m_spellInfo->Id) && !m_caster->IsWithinLOSInMap(target))
+            if (!m_IsTriggeredSpell && !isTrigger && !IsSpellIgnoringLOS(m_spellInfo) && !m_caster->IsWithinLOSInMap(target))
                 return SPELL_FAILED_LINE_OF_SIGHT;
 
             // auto selection spell rank implemented in WorldSession::HandleCastSpellOpcode
@@ -5260,7 +5257,7 @@ bool Spell::CheckTarget(Unit* target, uint32 eff)
     }
 
     //Do not check LOS for triggered spells
-    if (m_IsTriggeredSpell)
+    if (m_IsTriggeredSpell || IsSpellIgnoringLOS(m_spellInfo))
         return true;
 
     //Check targets for LOS visibility (except spells without range limitations)
