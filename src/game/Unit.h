@@ -897,7 +897,7 @@ class Unit : public WorldObject
 
         void CombatStop(bool cast = false);
         void CombatStopWithPets(bool cast = false);
-        Unit* SelectNearbyTarget(float dist = NOMINAL_MELEE_RANGE) const;
+        Unit* SelectNearbyTarget(Unit* exclude = NULL, float dist = NOMINAL_MELEE_RANGE) const;
         void SendMeleeAttackStop(Unit* victim);
         void SendMeleeAttackStart(Unit* pVictim);
 
