@@ -775,9 +775,11 @@ enum CharDeleteMethod
 
 enum PlayerRestState
 {
-    REST_STATE_RESTED       = 0x01,
-    REST_STATE_NORMAL       = 0x02,
-    REST_STATE_RAF_LINKED   = 0x04               // Exact use unknown
+    REST_STATE_RESTED       = 1, // 200% xp
+    REST_STATE_NORMAL       = 2, // 100% xp
+    REST_STATE_TIRED        = 4, //  50% xp
+    REST_STATE_EXHAUSTED    = 5, //  25% xp
+    REST_STATE_RAF_LINKED   = 6  // 200% xp
 };
 
 enum ReferFriendError
@@ -966,7 +968,7 @@ class Player : public Unit, public GridObject<Player>
         void SetGMVisible(bool on);
         void SetPvPDeath(bool on) { if (on) m_ExtraFlags |= PLAYER_EXTRA_PVP_DEATH; else m_ExtraFlags &= ~PLAYER_EXTRA_PVP_DEATH; }
 
-        void GiveXP(uint32 xp, Unit* victim);
+        void GiveXP(uint32 xp, Unit* victim, bool disableRafBonus = false);
         void GiveLevel(uint32 level, bool ignoreRAF = false);
         void InitStatsForLevel(bool reapplyMods = false);
 
@@ -1653,7 +1655,7 @@ class Player : public Unit, public GridObject<Player>
         void BuildCreateUpdateBlockForPlayer(UpdateData *data, Player *target) const;
         void DestroyForPlayer(Player *target) const;
         void SendDelayResponse(const uint32);
-        void SendLogXPGain(uint32 GivenXP,Unit* victim,uint32 RestXP);
+        void SendLogXPGain(uint32 GivenXP,Unit* victim,uint32 RestXP, bool RafBonus = false);
 
         //notifiers
         void SendAttackSwingCantAttack();
@@ -2177,6 +2179,8 @@ class Player : public Unit, public GridObject<Player>
         bool HasTitle(uint32 bitIndex);
         bool HasTitle(CharTitlesEntry const* title) { return HasTitle(title->bit_index); }
         void SetTitle(CharTitlesEntry const* title, bool lost = false);
+
+        RAFLinkStatus GetRAFStatus() const { return m_rafLink; }
 
     protected:
 

@@ -341,7 +341,7 @@ Player::Player (WorldSession *session): Unit()
 
     m_MirrorTimerFlags = UNDERWATER_NONE;
     m_MirrorTimerFlagsLast = UNDERWATER_NONE;
-    
+
     m_GrantableLevels = 0;
 
     m_isInWater = false;
@@ -2342,7 +2342,7 @@ void Player::RemoveFromGroup(Group* group, uint64 guid)
     }
 }
 
-void Player::SendLogXPGain(uint32 GivenXP, Unit* victim, uint32 RestXP)
+void Player::SendLogXPGain(uint32 GivenXP, Unit* victim, uint32 RestXP, bool RafBonus)
 {
     WorldPacket data(SMSG_LOG_XPGAIN, 21);
     data << uint64(victim ? victim->GetGUID() : 0);         // guid
@@ -2353,11 +2353,11 @@ void Player::SendLogXPGain(uint32 GivenXP, Unit* victim, uint32 RestXP)
         data << uint32(GivenXP);                            // experience without rested bonus
         data << float(1);                                   // 1 - none 0 - 100% group bonus output
     }
-    data << uint8(0);                                       // new 2.4.0
+    data << uint8(RafBonus);                                // whether is or not RAF bonus included
     GetSession()->SendPacket(&data);
 }
 
-void Player::GiveXP(uint32 xp, Unit* victim)
+void Player::GiveXP(uint32 xp, Unit* victim, bool disableRafBonus)
 {
     if (xp < 1)
         return;
@@ -2385,13 +2385,16 @@ void Player::GiveXP(uint32 xp, Unit* victim)
                 xp = uint32(xp*(1.0f + 5.0f / 100.0f));
         }
 
-    // Refer-A-Friend Bonus XP
     xp *= GetReferFriendXPMultiplier();
 
     // XP resting bonus for kill
     uint32 rested_bonus_xp = victim ? GetXPRestBonus(xp) : 0;
 
-    SendLogXPGain(xp,victim,rested_bonus_xp);
+    if (!rested_bonus_xp && !disableRafBonus)
+        // Refer-A-Friend Bonus XP (rest bonus doesnt count)
+        xp *= GetReferFriendXPMultiplier();
+
+    SendLogXPGain(xp, victim, rested_bonus_xp, m_rafLink);
 
     uint32 curXP = GetUInt32Value(PLAYER_XP);
     uint32 nextLvlXP = GetUInt32Value(PLAYER_NEXT_LEVEL_XP);
@@ -15149,7 +15152,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     // cleanup aura list explicitly before skill load where some spells can be applied
     RemoveAllAuras();
 
-    // load skills must be called here 
+    // load skills must be called here
     _LoadSkills(holder->GetResult(PLAYER_LOGIN_QUERY_LOADSKILLS));
 
     // make sure the unit is considered out of combat for proper loading
@@ -15391,15 +15394,15 @@ void Player::_LoadAuras(QueryResult_AutoPtr result, uint32 timediff)
                 sLog.outError("Invalid effect index (spellid %u, effindex %u), ignore.",spellid,effindex);
                 continue;
             }
-            
+
             // Prevent wrong value of remaining time to be loaded from the database
             // This could be a possible exploit, so it's important to check this
             if (remaintime > maxduration)
             {
                 sLog.outError("Player::_LoadAuras: Aura's remaining time exceeds maximum duration time.\n"
-                    "(caster: %llu, Aura: %u, remainTime: %u, maxDuration: %u)", 
-                    caster_guid, spellproto->Id, remaintime, maxduration);				
-			    
+                    "(caster: %llu, Aura: %u, remainTime: %u, maxDuration: %u)",
+                    caster_guid, spellproto->Id, remaintime, maxduration);
+
                 remaintime = maxduration;
             }
 
@@ -15733,7 +15736,7 @@ void Player::LoadPet()
             delete pet;
         }
         // Pet has been loaded from the database into the world
-        else SetPetStatus((pet->isAlive()) ? PET_STATUS_CURRENT : PET_STATUS_DEAD); 
+        else SetPetStatus((pet->isAlive()) ? PET_STATUS_CURRENT : PET_STATUS_DEAD);
     }
 }
 
@@ -17305,7 +17308,7 @@ void Player::SetFFAPvP(bool state)
     else
     {
         RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_FFA_PVP);
-        RemoveAllAttackers();               /// @todo: This is temporary and needs to be handled by the code that handles                                 
+        RemoveAllAttackers();               /// @todo: This is temporary and needs to be handled by the code that handles
     }                                       /// melee swings.
 }
 
@@ -17696,7 +17699,7 @@ void Player::SendRemoveControlBar()
 }
 
 
-float Player::GetReferFriendXPMultiplier() const
+inline float Player::GetReferFriendXPMultiplier() const
 {
     if (m_rafLink == RAF_LINK_NONE)
         return 1.f;
@@ -17704,9 +17707,6 @@ float Player::GetReferFriendXPMultiplier() const
     Player* buddy = objmgr.GetRAFLinkedBuddyForPlayer(this);
     if (!buddy || !buddy->IsInWorld() || !IsInPartyWith(buddy) || GetMap() != buddy->GetMap() || GetDistance(buddy) > 90.f)
         return 1.f;
-
-    if (m_rafLink == RAF_LINK_REFERRER)
-        return 1.5f;
 
     return sWorld.getConfig(RATE_RAF_BONUS_XP);
 }
@@ -17915,7 +17915,9 @@ void Player::SetRestBonus (float rest_bonus_new)
         m_rest_bonus = rest_bonus_new;
 
     // update data for client
-    if (m_rest_bonus>10)
+    if (m_rafLink)
+        SetByteValue(PLAYER_BYTES_2, 3, REST_STATE_RAF_LINKED);
+    else if (m_rest_bonus > 10)
         SetByteValue(PLAYER_BYTES_2, 3, REST_STATE_RESTED);              // Set Reststate = Rested
     else if (m_rest_bonus <= 1)
         SetByteValue(PLAYER_BYTES_2, 3, REST_STATE_NORMAL);              // Set Reststate = Normal
@@ -20157,9 +20159,13 @@ void Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
                     if (pGroupGuy->isAlive() && not_gray_member_with_max_level &&
                        pGroupGuy->getLevel() <= not_gray_member_with_max_level->getLevel())
                     {
-                        uint32 itr_xp = (member_with_max_level == not_gray_member_with_max_level) ? uint32(xp*rate) : uint32((xp*rate/2)+1);
+                        bool trivialTarget = (member_with_max_level != not_gray_member_with_max_level);
+                        uint32 itr_xp = uint32(xp*rate);
 
-                        pGroupGuy->GiveXP(itr_xp, pVictim);
+                        if (trivialTarget)
+                            itr_xp /= 2;
+
+                        pGroupGuy->GiveXP(itr_xp, pVictim, trivialTarget);
                         if (Pet* pet = pGroupGuy->GetPet())
                             pet->GivePetXP(itr_xp/2);
                     }
