@@ -2467,6 +2467,12 @@ void SpellMgr::LoadSpellCustomAttr()
         case 46771: // Flame Sear
             spellInfo->MaxAffectedTargets = 5;
             break;
+        case 15286: // Vampiric Embrace
+        case 34914: // Vampiric Touch
+            spellInfo->Attributes |= SPELL_ATTR_NOT_SHAPESHIFT;
+            spellInfo->AttributesEx2 |= SPELL_ATTR_EX2_NOT_NEED_SHAPESHIFT;
+            spellInfo->Stances = FORM_SHADOW;
+            break;
         case 40827: // Sinful Beam
         case 40859: // Sinister Beam
         case 40860: // Vile Beam
