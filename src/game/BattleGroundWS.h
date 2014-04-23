@@ -61,7 +61,9 @@ enum BG_WS_WorldStates
     BG_WS_FLAG_CAPTURES_HORDE     = 1582,
     BG_WS_FLAG_CAPTURES_MAX       = 1601,
     BG_WS_FLAG_STATE_HORDE        = 2338,
-    BG_WS_FLAG_STATE_ALLIANCE     = 2339
+    BG_WS_FLAG_STATE_ALLIANCE     = 2339,
+    BG_WS_STATE_TIMER             = 4248,
+    BG_WS_STATE_TIMER_ACTIVE      = 4247
 };
 
 enum BG_WS_ObjectTypes
@@ -187,6 +189,7 @@ class BattleGroundWS : public BattleGround
         virtual WorldSafeLocsEntry const* GetClosestGraveYard(Player* player);
 
         void UpdateFlagState(uint32 team, uint32 value);
+        void SetFirstFlagCapture(uint32 team) { m_FirstFlagCaptureTeam = team; }
         void UpdateTeamScore(uint32 team);
         void UpdatePlayerScore(Player *Source, uint32 type, uint32 value);
         void SetDroppedFlagGUID(uint64 guid, uint32 TeamID)  { m_DroppedFlagGUID[GetTeamIndexByTeamId(TeamID)] = guid;}
@@ -205,11 +208,13 @@ class BattleGroundWS : public BattleGround
         uint8 m_FlagState[2];                               // for checking flag state
         int32 m_FlagsTimer[2];
         int32 m_FlagsDropTimer[2];
+        uint32 m_FirstFlagCaptureTeam;                      // Winner is based on this if score is equal
 
         int32 m_FlagSpellForceTimer;
         int32 m_FlagSpellBrutalTimer;
         bool m_BothFlagsKept;
         uint8 m_FlagDebuffState;                            // 0 - no debuffs, 1 - focused assault, 2 - brutal assault
+        uint8 m_minutesElapsed;
 };
 #endif
 
