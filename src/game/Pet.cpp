@@ -1082,6 +1082,17 @@ bool Guardian::InitStatsForLevel(uint32 petlevel)
         {
             switch (GetEntry())
             {
+                      
+                case 510: // mage Water Elemental
+                {
+                    //30% damage bonus of mage's spell power
+                    float val = owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_DAMAGE_CLASS_MAGIC) * 0.3;
+                    if (val < 0)
+                        val = 0;
+                    SetBonusDamage(int32(val));
+                    ApplySpellImmune(NULL, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
+                    break;
+                }
                 case 1964: //force of nature
                 {
                     if (!pInfo)
