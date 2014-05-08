@@ -2359,9 +2359,6 @@ void Player::SendLogXPGain(uint32 GivenXP, Unit* victim, uint32 RestXP, bool Raf
 
 void Player::GiveXP(uint32 xp, Unit* victim, bool disableRafBonus)
 {
-    if (xp < 1)
-        return;
-
     if (!isAlive())
         return;
 
@@ -2385,16 +2382,17 @@ void Player::GiveXP(uint32 xp, Unit* victim, bool disableRafBonus)
                 xp = uint32(xp*(1.0f + 5.0f / 100.0f));
         }
 
-    xp *= GetReferFriendXPMultiplier();
+    uint32 rested_bonus_xp = 0;
+    float RafMultiplier = GetReferFriendXPMultiplier() - 1;
 
-    // XP resting bonus for kill
-    uint32 rested_bonus_xp = victim ? GetXPRestBonus(xp) : 0;
-
-    if (!rested_bonus_xp && !disableRafBonus)
+    if (!disableRafBonus && RafMultiplier)
         // Refer-A-Friend Bonus XP (rest bonus doesnt count)
-        xp *= GetReferFriendXPMultiplier();
+        rested_bonus_xp = xp * RafMultiplier;
+    else if (victim)
+        // XP resting bonus for kill
+        rested_bonus_xp = GetXPRestBonus(xp);
 
-    SendLogXPGain(xp, victim, rested_bonus_xp, m_rafLink);
+    SendLogXPGain(xp, victim, rested_bonus_xp, (bool)m_rafLink);
 
     uint32 curXP = GetUInt32Value(PLAYER_XP);
     uint32 nextLvlXP = GetUInt32Value(PLAYER_NEXT_LEVEL_XP);
@@ -17704,7 +17702,7 @@ inline float Player::GetReferFriendXPMultiplier() const
     if (!buddy || !buddy->IsInWorld() || !IsInPartyWith(buddy) || GetMap() != buddy->GetMap() || GetDistance(buddy) > 90.f)
         return 1.f;
 
-    return sWorld.getConfig(RATE_RAF_BONUS_XP);
+    return sWorld.getRate(RATE_RAF_BONUS_XP);
 }
 
 int32 Player::GetTotalFlatMods(uint32 spellId, SpellModOp op)
