@@ -600,6 +600,14 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer * data, UpdateMask 
                     else
                         *data << (m_uint32Values[ index ] & ~UNIT_DYNFLAG_OTHER_TAGGER);
                 }
+                // hide RAF menu to non-RAF linked friends
+                else if (index == UNIT_DYNAMIC_FLAGS && GetTypeId() == TYPEID_PLAYER)
+                {
+                    if (objmgr.GetRAFLinkStatus(target->ToPlayer(), this->ToPlayer()) != RAF_LINK_NONE)
+                        *data << (m_uint32Values[ index ]);
+                    else
+                        *data << (m_uint32Values[ index ] & ~UNIT_DYNFLAG_REFER_A_FRIEND);
+                }
                 // FG: pretend that OTHER players in own group are friendly ("blue")
                 else if (index == UNIT_FIELD_BYTES_2 || index == UNIT_FIELD_FACTIONTEMPLATE)
                 {

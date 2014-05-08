@@ -23,6 +23,15 @@
 #include "GridDefines.h"
 #include "SpellMgr.h"
 
+// Some Special Spells
+#define SPELL_LOGINEFFECT         836
+#define SPELL_OPEN_CHEST        11437
+#define SPELL_OPEN_SAFE         11535
+#define SPELL_OPEN_CAGE         11792
+#define SPELL_OPEN_BOOTY_CHEST   5107
+#define SPELL_OPEN_STRONGBOX     8517
+#define SPELL_SUMMON_FRIEND     45927
+
 #define MAX_SPELL_ID    60000
 
 class Unit;
@@ -320,6 +329,7 @@ class Spell
         void EffectKillCredit(uint32 i);
         void EffectQuestFail(uint32 i);
         void EffectRedirectThreat(uint32 i);
+        void EffectSummonFriend(uint32 i);
 
         Spell(Unit* Caster, SpellEntry const *info, bool triggered, uint64 originalCasterGUID = 0, Spell** triggeringContainer = NULL, bool skipCheck = false);
         ~Spell();

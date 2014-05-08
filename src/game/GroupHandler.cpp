@@ -641,10 +641,16 @@ void WorldSession::BuildPartyMemberStatsChangedPacket(Player *player, WorldPacke
     {
         if (player)
         {
+            uint16 flag;
             if (player->IsPvP())
-                *data << (uint16) (MEMBER_STATUS_ONLINE | MEMBER_STATUS_PVP);
+                flag = (uint16) MEMBER_STATUS_PVP;
             else
-                *data << (uint16) MEMBER_STATUS_ONLINE;
+                flag = (uint16) MEMBER_STATUS_ONLINE;
+
+            if (objmgr.GetRAFLinkStatus(_player, player) != RAF_LINK_NONE)
+                flag |= MEMBER_STATUS_RAF_BUDDY;
+
+            *data << flag;
         }
         else
             *data << (uint16) MEMBER_STATUS_OFFLINE;
@@ -803,9 +809,13 @@ void WorldSession::HandleRequestPartyMemberStatsOpcode(WorldPacket &recv_data)
     if (pet)
         mask1 = 0x7FFFFFFF;                                 // for hunters and other classes with pets
 
+    uint16 flag = MEMBER_STATUS_ONLINE;
+    if (objmgr.GetRAFLinkStatus(_player, player) != RAF_LINK_NONE)
+        flag |= MEMBER_STATUS_RAF_BUDDY;
+
     Powers powerType = player->getPowerType();
     data << (uint32) mask1;                                 // group update mask
-    data << (uint16) MEMBER_STATUS_ONLINE;                  // member's online status
+    data << (uint16) flag;                                  // member's online status
     data << (uint16) player->GetHealth();                   // GROUP_UPDATE_FLAG_CUR_HP
     data << (uint16) player->GetMaxHealth();                // GROUP_UPDATE_FLAG_MAX_HP
     data << (uint8)  powerType;                             // GROUP_UPDATE_FLAG_POWER_TYPE
@@ -863,6 +873,10 @@ void WorldSession::HandleRequestPartyMemberStatsOpcode(WorldPacket &recv_data)
     }
 
     SendPacket(&data);
+
+    WorldPacket packet;
+    BuildPartyMemberStatsChangedPacket(player, &packet);
+    SendPacket(&packet);
 }
 
 /*!*/void WorldSession::HandleRequestRaidInfoOpcode(WorldPacket & /*recv_data*/)

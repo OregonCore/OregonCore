@@ -342,6 +342,8 @@ Player::Player (WorldSession *session): Unit()
     m_MirrorTimerFlags = UNDERWATER_NONE;
     m_MirrorTimerFlagsLast = UNDERWATER_NONE;
 
+    m_GrantableLevels = 0;
+
     m_isInWater = false;
     m_wasOutdoors = false;
     m_drunkTimer = 0;
@@ -444,6 +446,9 @@ Player::Player (WorldSession *session): Unit()
 
 Player::~Player ()
 {
+    if (GetSession()->GetPlayer() != this)
+        return;
+
     CleanupsBeforeDelete();
 
     // it must be unloaded already in PlayerLogout and accessed only for loggined player
@@ -2337,7 +2342,7 @@ void Player::RemoveFromGroup(Group* group, uint64 guid)
     }
 }
 
-void Player::SendLogXPGain(uint32 GivenXP, Unit* victim, uint32 RestXP)
+void Player::SendLogXPGain(uint32 GivenXP, Unit* victim, uint32 RestXP, bool RafBonus)
 {
     WorldPacket data(SMSG_LOG_XPGAIN, 21);
     data << uint64(victim ? victim->GetGUID() : 0);         // guid
@@ -2348,11 +2353,11 @@ void Player::SendLogXPGain(uint32 GivenXP, Unit* victim, uint32 RestXP)
         data << uint32(GivenXP);                            // experience without rested bonus
         data << float(1);                                   // 1 - none 0 - 100% group bonus output
     }
-    data << uint8(0);                                       // new 2.4.0
+    data << uint8(RafBonus);                                // whether is or not RAF bonus included
     GetSession()->SendPacket(&data);
 }
 
-void Player::GiveXP(uint32 xp, Unit* victim)
+void Player::GiveXP(uint32 xp, Unit* victim, bool disableRafBonus)
 {
     if (xp < 1)
         return;
@@ -2380,11 +2385,16 @@ void Player::GiveXP(uint32 xp, Unit* victim)
                 xp = uint32(xp*(1.0f + 5.0f / 100.0f));
         }
 
+    xp *= GetReferFriendXPMultiplier();
 
     // XP resting bonus for kill
     uint32 rested_bonus_xp = victim ? GetXPRestBonus(xp) : 0;
 
-    SendLogXPGain(xp,victim,rested_bonus_xp);
+    if (!rested_bonus_xp && !disableRafBonus)
+        // Refer-A-Friend Bonus XP (rest bonus doesnt count)
+        xp *= GetReferFriendXPMultiplier();
+
+    SendLogXPGain(xp, victim, rested_bonus_xp, m_rafLink);
 
     uint32 curXP = GetUInt32Value(PLAYER_XP);
     uint32 nextLvlXP = GetUInt32Value(PLAYER_NEXT_LEVEL_XP);
@@ -2406,10 +2416,12 @@ void Player::GiveXP(uint32 xp, Unit* victim)
 
 // Update player to next level
 // Current player experience not update (must be update by caller)
-void Player::GiveLevel(uint32 level)
+void Player::GiveLevel(uint32 level, bool ignoreRAF)
 {
     if (level == getLevel())
         return;
+
+    int32 diff = level - getLevel();
 
     PlayerLevelInfo info;
     objmgr.GetPlayerLevelInfo(getRace(),getClass(),level,&info);
@@ -2469,6 +2481,10 @@ void Player::GiveLevel(uint32 level)
     Pet* pet = GetPet();
     if (pet && pet->getPetType() == SUMMON_PET)
         pet->GivePetLevel(level);
+
+    if (!ignoreRAF && objmgr.GetRAFLinkStatus(this) == RAF_LINK_REFERRED)
+        while (diff-->0)
+            SetGrantableLevels(GetGrantableLevels() + sWorld.getRate(RATE_RAF_GRANTABLE_LEVELS_PER_LEVEL));
 }
 
 void Player::InitTalentForLevel()
@@ -11955,6 +11971,15 @@ void Player::SendSellError(uint8 msg, Creature* pCreature, uint64 guid, uint32 p
     GetSession()->SendPacket(&data);
 }
 
+void Player::SendReferFriendError(ReferFriendError err, const char* name)
+{
+    WorldPacket data(SMSG_REFER_A_FRIEND_FAILURE, 4 + (name ? strlen(name)+1 : 0));
+    data << uint32(err);
+    if (name)
+        data << name;
+    GetSession()->SendPacket(&data);
+}
+
 void Player::ClearTrade()
 {
     tradeGold = 0;
@@ -14688,15 +14713,16 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     //"position_x, position_y, position_z, map, orientation, taximask, cinematic, totaltime, leveltime, rest_bonus, logout_time, is_logout_resting, resettalents_cost,"
     // 26                 27       28       29       30       31         32           33            34        35    36      37                 38         39
     //"resettalents_time, trans_x, trans_y, trans_z, trans_o, transguid, extra_flags, stable_slots, at_login, zone, online, death_expire_time, taxi_path, dungeon_difficulty,"
-    // 40           41                42                43                    44          45          46              47           48               49              50
-    //"arenaPoints, totalHonorPoints, todayHonorPoints, yesterdayHonorPoints, totalKills, todayKills, yesterdayKills, chosenTitle, knownCurrencies, watchedFaction, drunk,"
-    // 51      52         53         54          55           56             57
-    //"health, powerMana, powerRage, powerFocus, powerEnergy, powerHapiness, instance_id FROM characters WHERE guid = '%u'", guid);
+    // 40           41                42                43                    44          45          46              47           48               49
+    //"arenaPoints, totalHonorPoints, todayHonorPoints, yesterdayHonorPoints, totalKills, todayKills, yesterdayKills, chosenTitle, watchedFaction, drunk,"
+    // 50      51         52         53          54           55             56           57
+    //"health, powerMana, powerRage, powerFocus, powerEnergy, powerHapiness, instance_id, grantableLevels FROM characters WHERE guid = '%u'", guid);
     QueryResult_AutoPtr result = holder->GetResult(PLAYER_LOGIN_QUERY_LOADFROM);
 
     if (!result)
     {
-        sLog.outError("Player (GUID: %u) not found in table `characters`, can't load. ",guid);
+        sLog.outError("Can't load player (GUID: %u): its not found in table `characters`, or there "
+                      "was a recent update, please apply all updates from sql/updates/characters",  guid);
         return false;
     }
 
@@ -14781,6 +14807,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     Relocate(fields[13].GetFloat(),fields[14].GetFloat(),fields[15].GetFloat(),fields[17].GetFloat());
     uint32 mapId = fields[16].GetUInt32();
     uint32 instanceId = fields[56].GetFloat();
+    m_GrantableLevels = fields[57].GetFloat();
 
     SetDifficulty(fields[39].GetUInt32());                  // may be changed in _LoadGroup
     std::string taxi_nodes = fields[38].GetCppString();
@@ -15121,7 +15148,7 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
     // cleanup aura list explicitly before skill load where some spells can be applied
     RemoveAllAuras();
 
-    // load skills must be called here 
+    // load skills must be called here
     _LoadSkills(holder->GetResult(PLAYER_LOGIN_QUERY_LOADSKILLS));
 
     // make sure the unit is considered out of combat for proper loading
@@ -15257,6 +15284,19 @@ bool Player::LoadFromDB(uint32 guid, SqlQueryHolder *holder)
 
     _LoadDeclinedNames(holder->GetResult(PLAYER_LOGIN_QUERY_LOADDECLINEDNAMES));
 
+    if ((m_rafLink = objmgr.GetRAFLinkStatus(this)) != RAF_LINK_NONE)
+    {
+        SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_REFER_A_FRIEND);
+        learnSpell(SPELL_SUMMON_FRIEND);
+
+        SetGrantableLevels(m_GrantableLevels);
+    }
+
+    /* In case of recently RAF-unlinked acc we may
+       unlearn the SPELL_SUMMON_FRIEND, its not necessary
+       though because its unusable by the player anyway,
+       and also is not shown in the spellbook */
+
     return true;
 }
 
@@ -15350,15 +15390,15 @@ void Player::_LoadAuras(QueryResult_AutoPtr result, uint32 timediff)
                 sLog.outError("Invalid effect index (spellid %u, effindex %u), ignore.",spellid,effindex);
                 continue;
             }
-            
+
             // Prevent wrong value of remaining time to be loaded from the database
             // This could be a possible exploit, so it's important to check this
             if (remaintime > maxduration)
             {
                 sLog.outError("Player::_LoadAuras: Aura's remaining time exceeds maximum duration time.\n"
-                    "(caster: %llu, Aura: %u, remainTime: %u, maxDuration: %u)", 
-                    caster_guid, spellproto->Id, remaintime, maxduration);				
-			    
+                    "(caster: %llu, Aura: %u, remainTime: %u, maxDuration: %u)",
+                    caster_guid, spellproto->Id, remaintime, maxduration);
+
                 remaintime = maxduration;
             }
 
@@ -15692,7 +15732,7 @@ void Player::LoadPet()
             delete pet;
         }
         // Pet has been loaded from the database into the world
-        else SetPetStatus((pet->isAlive()) ? PET_STATUS_CURRENT : PET_STATUS_DEAD); 
+        else SetPetStatus((pet->isAlive()) ? PET_STATUS_CURRENT : PET_STATUS_DEAD);
     }
 }
 
@@ -16430,7 +16470,7 @@ void Player::SaveToDB()
         "totaltime, leveltime, rest_bonus, logout_time, is_logout_resting, resettalents_cost, resettalents_time, "
         "trans_x, trans_y, trans_z, trans_o, transguid, extra_flags, stable_slots, at_login, zone, "
         "death_expire_time, taxi_path, arenaPoints, totalHonorPoints, todayHonorPoints, yesterdayHonorPoints, "
-        "totalKills, todayKills, yesterdayKills, chosenTitle, watchedFaction, drunk, health, "
+        "totalKills, todayKills, yesterdayKills, chosenTitle, watchedFaction, drunk, grantableLevels, health, "
         "powerMana, powerRage, powerFocus, powerEnergy, powerHappiness, latency) VALUES ("
         << GetGUIDLow() << ", "
         << GetSession()->GetAccountId() << ", '"
@@ -16531,6 +16571,8 @@ void Player::SaveToDB()
     ss << GetUInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX) << ", ";
 
     ss << (uint16)(GetUInt32Value(PLAYER_BYTES_3) & 0xFFFE) << ", ";
+
+    ss << m_GrantableLevels << ", ";
 
     ss << GetHealth();
 
@@ -17262,7 +17304,7 @@ void Player::SetFFAPvP(bool state)
     else
     {
         RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_FFA_PVP);
-        RemoveAllAttackers();               /// @todo: This is temporary and needs to be handled by the code that handles                                 
+        RemoveAllAttackers();               /// @todo: This is temporary and needs to be handled by the code that handles
     }                                       /// melee swings.
 }
 
@@ -17652,6 +17694,19 @@ void Player::SendRemoveControlBar()
     GetSession()->SendPacket(&data);
 }
 
+
+inline float Player::GetReferFriendXPMultiplier() const
+{
+    if (m_rafLink == RAF_LINK_NONE)
+        return 1.f;
+
+    Player* buddy = objmgr.GetRAFLinkedBuddyForPlayer(this);
+    if (!buddy || !buddy->IsInWorld() || !IsInPartyWith(buddy) || GetMap() != buddy->GetMap() || GetDistance(buddy) > 90.f)
+        return 1.f;
+
+    return sWorld.getConfig(RATE_RAF_BONUS_XP);
+}
+
 int32 Player::GetTotalFlatMods(uint32 spellId, SpellModOp op)
 {
     SpellEntry const *spellInfo = sSpellStore.LookupEntry(spellId);
@@ -17856,7 +17911,9 @@ void Player::SetRestBonus (float rest_bonus_new)
         m_rest_bonus = rest_bonus_new;
 
     // update data for client
-    if (m_rest_bonus>10)
+    if (m_rafLink)
+        SetByteValue(PLAYER_BYTES_2, 3, REST_STATE_RAF_LINKED);
+    else if (m_rest_bonus > 10)
         SetByteValue(PLAYER_BYTES_2, 3, REST_STATE_RESTED);              // Set Reststate = Rested
     else if (m_rest_bonus <= 1)
         SetByteValue(PLAYER_BYTES_2, 3, REST_STATE_NORMAL);              // Set Reststate = Normal
@@ -20102,9 +20159,13 @@ void Player::RewardPlayerAndGroupAtKill(Unit* pVictim)
                     if (pGroupGuy->isAlive() && not_gray_member_with_max_level &&
                        pGroupGuy->getLevel() <= not_gray_member_with_max_level->getLevel())
                     {
-                        uint32 itr_xp = (member_with_max_level == not_gray_member_with_max_level) ? uint32(xp*rate) : uint32((xp*rate/2)+1);
+                        bool trivialTarget = (member_with_max_level != not_gray_member_with_max_level);
+                        uint32 itr_xp = uint32(xp*rate);
 
-                        pGroupGuy->GiveXP(itr_xp, pVictim);
+                        if (trivialTarget)
+                            itr_xp /= 2;
+
+                        pGroupGuy->GiveXP(itr_xp, pVictim, trivialTarget);
                         if (Pet* pet = pGroupGuy->GetPet())
                             pet->GivePetXP(itr_xp/2);
                     }

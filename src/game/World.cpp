@@ -491,6 +491,13 @@ void World::LoadConfigSettings(bool reload)
         sLog.outError("Rate.Talent (%f) must be > 0. Using 1 instead.",rate_values[RATE_TALENT]);
         rate_values[RATE_TALENT] = 1.0f;
     }
+    rate_values[RATE_RAF_BONUS_XP] = sConfig.GetIntDefault("RAF.GrantableLevelsPerLevel", 1);
+    if (rate_values[RATE_TALENT] < 0.0f)
+    {
+        sLog.outError("RAF.GrantableLevelsPerLevel (%u) must be > 0. Using 3 instead.",rate_values[RATE_RAF_BONUS_XP]);
+        rate_values[RATE_RAF_BONUS_XP] = 3;
+    }
+    rate_values[RATE_RAF_GRANTABLE_LEVELS_PER_LEVEL] = std::max<float>(0.f, sConfig.GetFloatDefault("RAF.GrantableLevelsPerLevel", .5f));
     rate_values[RATE_CORPSE_DECAY_LOOTED] = sConfig.GetFloatDefault("Rate.Corpse.Decay.Looted",0.5f);
 
     rate_values[RATE_TARGET_POS_RECALCULATION_RANGE] = sConfig.GetFloatDefault("TargetPosRecalculateRange",1.5f);
@@ -1070,6 +1077,9 @@ void World::LoadConfigSettings(bool reload)
     m_configs[CONFIG_WARDEN_NUM_CHECKS] = sConfig.GetIntDefault("Warden.NumChecks", 3);
     m_configs[CONFIG_WARDEN_CLIENT_CHECK_HOLDOFF] = sConfig.GetIntDefault("Warden.ClientCheckHoldOff", 30);
     m_configs[CONFIG_WARDEN_CLIENT_RESPONSE_DELAY] = sConfig.GetIntDefault("Warden.ClientResponseDelay", 15);
+
+    // Refer-A-Friend
+    m_configs[CONFIG_RAF_LEVEL_LIMIT] = sConfig.GetIntDefault("RAF.LevelLimit", 60);
 }
 
 // Initialize the World
@@ -1382,6 +1392,9 @@ void World::SetInitialWorldSettings()
 
     sLog.outString("Loading Ip2nation...");
     LoadIp2nation();
+
+    sLog.outString("Loading Refer-A-Friend...");
+    objmgr.LoadReferredFriends();
 
     // Load and initialize scripts
     sLog.outString("Loading Scripts...");

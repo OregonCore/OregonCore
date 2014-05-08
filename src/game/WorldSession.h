@@ -646,6 +646,12 @@ class WorldSession
         void HandleGuildBankBuyTab(WorldPacket& recv_data);
         void HandleGuildBankTabText(WorldPacket& recv_data);
         void HandleGuildBankSetTabText(WorldPacket& recv_data);
+
+        // Refer-a-Friend
+        void HandleSetGrantableLevels(WorldPacket& recv_data);
+        void HandleGrantLevel(WorldPacket& recv_data);
+        void HandleAcceptGrantLevel(WorldPacket& recv_data);
+        void HandleReferAFriend(WorldPacket& recv_data);
     private:
         // private trade methods
         void moveItems(Item* myItems[], Item* hisItems[]);

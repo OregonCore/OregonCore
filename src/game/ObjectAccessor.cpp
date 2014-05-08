@@ -167,6 +167,17 @@ Player* ObjectAccessor::FindPlayerByName(const char* name)
     return NULL;
 }
 
+Player* ObjectAccessor::FindPlayerByAccountId(uint64 Id)
+{
+    Guard guard(*HashMapHolder<Player>::GetLock());
+    HashMapHolder<Player>::MapType& m = HashMapHolder<Player>::GetContainer();
+    for (HashMapHolder<Player>::MapType::iterator iter = m.begin(); iter != m.end(); ++iter)
+        if (iter->second->IsInWorld() && iter->second->GetSession()->GetAccountId() == Id)
+            return iter->second;
+
+    return NULL;
+}
+
 void ObjectAccessor::SaveAllPlayers()
 {
     Guard guard(*HashMapHolder<Player>::GetLock());

@@ -178,6 +178,7 @@ class ObjectAccessor : public Oregon::Singleton<ObjectAccessor, Oregon::ClassLev
         static Player* FindPlayer(uint64);
         static Unit* FindUnit(uint64);
         Player* FindPlayerByName(const char* name);
+        Player* FindPlayerByAccountId(uint64 Id);
 
         // when using this, you must use the hashmapholder's lock
         HashMapHolder<Player>::MapType& GetPlayers()

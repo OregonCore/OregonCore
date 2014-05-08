@@ -533,6 +533,13 @@ bool ChatHandler::HandleAHBotOptionsCommand(const char *args)
 }
 
 //reload commands
+bool ChatHandler::HandleRAFReloadCommand(const char*)
+{
+    objmgr.LoadReferredFriends();
+    PSendSysMessage("RAF reloaded.");
+    return true;
+}
+
 bool ChatHandler::HandleReloadCommand(const char* arg)
 {
     // this is error catcher for wrong table name in .reload commands
@@ -4833,6 +4840,18 @@ bool ChatHandler::HandleSet32Bit(const char *args)
     m_session->GetPlayer()->SetUInt32Value(Opcode , 2^Value);
 
     PSendSysMessage(LANG_SET_32BIT_FIELD, Opcode,1);
+    return true;
+}
+
+bool ChatHandler::HandleDebugRAFError(const char* args)
+{
+    uint32 id = strtoul(args, NULL, 10);
+    if (!id || !m_session)
+        return false;
+
+    WorldPacket packet(SMSG_REFER_A_FRIEND_FAILURE, 4);
+    packet << id;
+    m_session->SendPacket(&packet);
     return true;
 }
 
