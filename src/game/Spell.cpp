@@ -2116,8 +2116,6 @@ void Spell::prepare(SpellCastTargets * targets, Aura* triggeredByAura)
     // Fill cost data (not use power for item casts)
     m_powerCost = m_CastItem ? 0 : CalculatePowerCost(m_spellInfo, m_caster, m_spellSchoolMask);
 
-    FillTargetMap();
-
     uint8 result = CanCast(true);
     if (result != 0 && !IsAutoRepeat())                      //always cast autorepeat dummy for triggering
     {
@@ -2270,6 +2268,8 @@ void Spell::cast(bool skipCheck)
             return;
         }
     }
+
+    FillTargetMap();
 
     // triggered cast called from Spell::prepare where it was already checked
     if (!skipCheck)
