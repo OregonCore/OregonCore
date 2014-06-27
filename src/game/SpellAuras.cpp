@@ -1613,9 +1613,8 @@ void Aura::TriggerSpell()
                                 Creature* bunny = caster->FindNearestCreature(22177, 10.0f, true);
                                 caster->CastSpell(bunny, 38530, true);
                                 caster->RemoveAura(38495,0);
-                             }
-                         }
-
+                            }
+                        }
                         return;
                     }
                     // Absorb Eye of Grillok (Zezzak's Shard)
