@@ -14,12 +14,12 @@ file(GLOB sources_localdir *.cpp *.h)
 set(oregon-core_SRCS
   ${oregon-core_SRCS}
   ${sources_localdir}
+  ${sources_Debugging}
 )
 
 if( WIN32 )
   set(oregon-core_SRCS
     ${oregon-core_SRCS}
-    ${sources_Debugging}
     OregonCore.rc
   )
 endif()
@@ -74,6 +74,10 @@ target_link_libraries(oregon-core
   ${ZLIB_LIBRARIES}
   ${OSX_LIBS}
 )
+
+if( UNIX )
+  target_link_libraries(oregon-core bfd dl iberty)
+endif()
 
 if( WIN32 )
   add_custom_command(TARGET oregon-core
