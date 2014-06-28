@@ -28,43 +28,54 @@ EndScriptData */
 #include "zulaman.h"
 //#include "spell.h"
 
-#define YELL_AGGRO "Get on your knees and bow to da fang and claw!"
-#define SOUND_AGGRO                    12020
-#define YELL_SABER_ONE "You gonna leave in pieces!"
-#define SOUND_SABER_ONE              12024
-#define YELL_SABER_TWO "Me gonna carve ya now!"
-#define SOUND_SABER_TWO              12023
-#define YELL_SPLIT "Me gonna carve ya now!"
-#define SOUND_SPLIT                    12021
-#define YELL_MERGE "Spirit, come back to me!"
-#define SOUND_MERGE                    12022
-#define YELL_KILL_ONE "You cant fight the power!"
-#define SOUND_KILL_ONE                12026
-#define YELL_KILL_TWO "You gonna fail!"
-#define SOUND_KILL_TWO                12027
-#define YELL_DEATH "Chaga... choka'jinn."
-#define SOUND_DEATH                    12028
-#define YELL_BERSERK "Whatch you be doing? Pissin' yourselves..."
-#define SOUND_BERSERK                12025
+enum //Sounds
+{
+    SOUND_AGGRO     = 12020,
+    SOUND_SABER_ONE = 12024,
+    SOUND_SABER_TWO = 12023,
+    SOUND_SPLIT     = 12021,
+    SOUND_MERGE     = 12022,
+    SOUND_KILL_ONE  = 12026,
+    SOUND_KILL_TWO  = 12027,
+    SOUND_DEATH     = 12028,
+    SOUND_BERSERK   = 12025
+};
 
-#define SPELL_DUAL_WIELD                29651
-#define SPELL_SABER_LASH                43267
-#define SPELL_FRENZY                    43139
-#define SPELL_FLAMESHOCK                43303
-#define SPELL_EARTHSHOCK                43305
-#define SPELL_TRANSFORM_SPLIT           43142
-#define SPELL_TRANSFORM_SPLIT2          43573
-#define SPELL_TRANSFORM_MERGE           43271
-#define SPELL_SUMMON_LYNX               43143
-#define SPELL_SUMMON_TOTEM              43302
-#define SPELL_BERSERK                   45078
+static const char YELL_AGGRO[]     = "Get on your knees and bow to da fang and claw!";
+static const char YELL_SABER_ONE[] = "You gonna leave in pieces!";
+static const char YELL_SABER_TWO[] = "Me gonna carve ya now!";
+static const char YELL_SPLIT[]     = "Me gonna carve ya now!";
+static const char YELL_MERGE[]     = "Spirit, come back to me!";
+static const char YELL_KILL_ONE[]  = "You cant fight the power!";
+static const char YELL_KILL_TWO[]  = "You gonna fail!";
+static const char YELL_DEATH[]     = "Chaga... choka'jinn.";
+static const char YELL_BERSERK[]   = "Whatch you be doing? Pissin' yourselves...";
 
-#define MOB_SPIRIT_LYNX                 24143
-#define SPELL_LYNX_FRENZY               43290
-#define SPELL_SHRED_ARMOR               43243
+enum //Spells
+{
+    SPELL_DUAL_WIELD       = 29651,
+    SPELL_SABER_LASH       = 43267,
+    SPELL_FRENZY           = 43139,
+    SPELL_FLAMESHOCK       = 43303,
+    SPELL_EARTHSHOCK       = 43305,
+    SPELL_TRANSFORM_SPLIT  = 43142,
+    SPELL_TRANSFORM_SPLIT2 = 43573,
+    SPELL_TRANSFORM_MERGE  = 43271,
+    SPELL_SUMMON_LYNX      = 43143,
+    SPELL_SUMMON_TOTEM     = 43302,
+    SPELL_BERSERK          = 45078,
 
-#define MOB_TOTEM                       24224
-#define SPELL_LIGHTNING                 43301
+    SPELL_LYNX_FRENZY      = 43290,
+    SPELL_SHRED_ARMOR      = 43243,
+
+    SPELL_LIGHTNING        = 43301
+};
+
+enum //Misc
+{
+    MOB_SPIRIT_LYNX        = 24143,
+    MOB_TOTEM              = 24224
+};
 
 enum PhaseHalazzi
 {
@@ -105,7 +116,7 @@ struct boss_halazziAI : public ScriptedAI
     void Reset()
     {
         if (pInstance)
-            pInstance->SetData(DATA_HALAZZIEVENT, NOT_STARTED);
+            pInstance->SetData(ENCOUNTER_HALAZZI, NOT_STARTED);
 
         TransformCount = 0;
         BerserkTimer = 600000;
@@ -120,7 +131,7 @@ struct boss_halazziAI : public ScriptedAI
     void EnterCombat(Unit * /*who*/)
     {
         if (pInstance)
-            pInstance->SetData(DATA_HALAZZIEVENT, IN_PROGRESS);
+            pInstance->SetData(ENCOUNTER_HALAZZI, IN_PROGRESS);
 
         me->MonsterYell(YELL_AGGRO, LANG_UNIVERSAL, 0);
         DoPlaySoundToSet(me, SOUND_AGGRO);
@@ -149,63 +160,64 @@ struct boss_halazziAI : public ScriptedAI
 
     void AttackStart(Unit *who)
     {
-        if (Phase != PHASE_MERGE) ScriptedAI::AttackStart(who);
+        if (Phase != PHASE_MERGE)
+            ScriptedAI::AttackStart(who);
     }
 
     void EnterPhase(PhaseHalazzi NextPhase)
     {
         switch(NextPhase)
         {
-        case PHASE_LYNX:
-        case PHASE_ENRAGE:
-            if (Phase == PHASE_MERGE)
-            {
-                DoCast(me, SPELL_TRANSFORM_MERGE, true);
-                me->Attack(me->getVictim(), true);
-                me->GetMotionMaster()->MoveChase(me->getVictim());
-            }
-            if (Creature *Lynx = Unit::GetCreature(*me, LynxGUID))
-                Lynx->DisappearAndDie();
-            me->SetMaxHealth(600000);
-            me->SetHealth(600000 - 150000 * TransformCount);
-            FrenzyTimer = 16000;
-            SaberlashTimer = 20000;
-            ShockTimer = 10000;
-            TotemTimer = 12000;
-            break;
-        case PHASE_SPLIT:
-            me->MonsterYell(YELL_SPLIT, LANG_UNIVERSAL, 0);
-            DoPlaySoundToSet(me, SOUND_SPLIT);
-            DoCast(me, SPELL_TRANSFORM_SPLIT, true);
-            break;
-        case PHASE_HUMAN:
-            //DoCast(me, SPELL_SUMMON_LYNX, true);
-            DoSpawnCreature(MOB_SPIRIT_LYNX, 5,5,0,0, TEMPSUMMON_CORPSE_DESPAWN, 0);
-            me->SetMaxHealth(400000);
-            me->SetHealth(400000);
-            ShockTimer = 10000;
-            TotemTimer = 12000;
-            break;
-        case PHASE_MERGE:
-            if (Unit *pLynx = Unit::GetUnit(*me, LynxGUID))
-            {
-                me->MonsterYell(YELL_MERGE, LANG_UNIVERSAL, 0);
-                DoPlaySoundToSet(me, SOUND_MERGE);
-                pLynx->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                pLynx->GetMotionMaster()->Clear();
-                pLynx->GetMotionMaster()->MoveFollow(me, 0, 0);
-                me->GetMotionMaster()->Clear();
-                me->GetMotionMaster()->MoveFollow(pLynx, 0, 0);
-                ++TransformCount;
-            }
-            break;
-        default:
-            break;
+            case PHASE_LYNX:
+            case PHASE_ENRAGE:
+                if (Phase == PHASE_MERGE)
+                {
+                    DoCast(me, SPELL_TRANSFORM_MERGE, true);
+                    me->Attack(me->getVictim(), true);
+                    me->GetMotionMaster()->MoveChase(me->getVictim());
+                }
+                if (Creature *Lynx = Unit::GetCreature(*me, LynxGUID))
+                    Lynx->DisappearAndDie();
+                me->SetMaxHealth(600000);
+                me->SetHealth(600000 - 150000 * TransformCount);
+                FrenzyTimer = 16000;
+                SaberlashTimer = 20000;
+                ShockTimer = 10000;
+                TotemTimer = 12000;
+                break;
+            case PHASE_SPLIT:
+                me->MonsterYell(YELL_SPLIT, LANG_UNIVERSAL, 0);
+                DoPlaySoundToSet(me, SOUND_SPLIT);
+                DoCast(me, SPELL_TRANSFORM_SPLIT, true);
+                break;
+            case PHASE_HUMAN:
+                //DoCast(me, SPELL_SUMMON_LYNX, true);
+                DoSpawnCreature(MOB_SPIRIT_LYNX, 5,5,0,0, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                me->SetMaxHealth(400000);
+                me->SetHealth(400000);
+                ShockTimer = 10000;
+                TotemTimer = 12000;
+                break;
+            case PHASE_MERGE:
+                if (Unit *pLynx = Unit::GetUnit(*me, LynxGUID))
+                {
+                    me->MonsterYell(YELL_MERGE, LANG_UNIVERSAL, 0);
+                    DoPlaySoundToSet(me, SOUND_MERGE);
+                    pLynx->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    pLynx->GetMotionMaster()->Clear();
+                    pLynx->GetMotionMaster()->MoveFollow(me, 0, 0);
+                    me->GetMotionMaster()->Clear();
+                    me->GetMotionMaster()->MoveFollow(pLynx, 0, 0);
+                    ++TransformCount;
+                }
+                break;
+            default:
+                break;
         }
         Phase = NextPhase;
     }
 
-     void UpdateAI(const uint32 diff)
+    void UpdateAI(const uint32 diff)
     {
         if (!UpdateVictim())
             return;
@@ -216,7 +228,9 @@ struct boss_halazziAI : public ScriptedAI
             DoPlaySoundToSet(me, SOUND_BERSERK);
             DoCast(me, SPELL_BERSERK, true);
             BerserkTimer = 60000;
-        } else BerserkTimer -= diff;
+        }
+        else
+            BerserkTimer -= diff;
 
         if (Phase == PHASE_LYNX || Phase == PHASE_ENRAGE)
         {
@@ -238,13 +252,17 @@ struct boss_halazziAI : public ScriptedAI
                 DoCast(me->getVictim(), SPELL_SABER_LASH, true);
                 //me->RemoveAurasDueToSpell(41296);
                 SaberlashTimer = 30000;
-            } else SaberlashTimer -= diff;
+            }
+            else
+                SaberlashTimer -= diff;
 
             if (FrenzyTimer <= diff)
             {
                 DoCast(me, SPELL_FRENZY);
                 FrenzyTimer = urand(10000,15000);
-            } else FrenzyTimer -= diff;
+            }
+            else
+                FrenzyTimer -= diff;
 
             if (Phase == PHASE_LYNX)
             {
@@ -253,7 +271,9 @@ struct boss_halazziAI : public ScriptedAI
                     if (me->GetHealth() * 4 < me->GetMaxHealth() * (3 - TransformCount))
                         EnterPhase(PHASE_SPLIT);
                     CheckTimer = 1000;
-                } else CheckTimer -= diff;
+                }
+                else
+                    CheckTimer -= diff;
             }
         }
 
@@ -263,7 +283,9 @@ struct boss_halazziAI : public ScriptedAI
             {
                 DoCast(me, SPELL_SUMMON_TOTEM);
                 TotemTimer = 20000;
-            } else TotemTimer -= diff;
+            }
+            else
+                TotemTimer -= diff;
 
             if (ShockTimer <= diff)
             {
@@ -275,7 +297,9 @@ struct boss_halazziAI : public ScriptedAI
                         DoCast(pTarget, SPELL_FLAMESHOCK);
                     ShockTimer = 10000 + rand()%5000;
                 }
-            } else ShockTimer -= diff;
+            }
+            else
+                ShockTimer -= diff;
 
             if (Phase == PHASE_HUMAN)
             {
@@ -290,7 +314,9 @@ struct boss_halazziAI : public ScriptedAI
                             EnterPhase(PHASE_MERGE);
                     }
                     CheckTimer = 1000;
-                } else CheckTimer -= diff;
+                }
+                else
+                    CheckTimer -= diff;
             }
         }
 
@@ -312,7 +338,9 @@ struct boss_halazziAI : public ScriptedAI
                     }
                 }
                 CheckTimer = 1000;
-            } else CheckTimer -= diff;
+            }
+            else
+                CheckTimer -= diff;
         }
 
         DoMeleeAttackIfReady();
@@ -337,7 +365,7 @@ struct boss_halazziAI : public ScriptedAI
     void JustDied(Unit* /*Killer*/)
     {
         if (pInstance)
-            pInstance->SetData(DATA_HALAZZIEVENT, DONE);
+            pInstance->SetData(ENCOUNTER_HALAZZI, DONE);
 
         me->MonsterYell(YELL_DEATH, LANG_UNIVERSAL, 0);
         DoPlaySoundToSet(me, SOUND_DEATH);
@@ -345,7 +373,6 @@ struct boss_halazziAI : public ScriptedAI
 };
 
 // Spirits Lynx AI
-
 struct boss_spiritlynxAI : public ScriptedAI
 {
     boss_spiritlynxAI(Creature *c) : ScriptedAI(c) {}
@@ -382,13 +409,17 @@ struct boss_spiritlynxAI : public ScriptedAI
         {
             DoCast(me, SPELL_LYNX_FRENZY);
             FrenzyTimer = urand(30000,50000);  //frenzy every 30-50 seconds
-        } else FrenzyTimer -= diff;
+        }
+        else
+            FrenzyTimer -= diff;
 
         if (shredder_timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_SHRED_ARMOR);
             shredder_timer = 4000;
-        } else shredder_timer -= diff;
+        }
+        else
+            shredder_timer -= diff;
 
         DoMeleeAttackIfReady();
     }

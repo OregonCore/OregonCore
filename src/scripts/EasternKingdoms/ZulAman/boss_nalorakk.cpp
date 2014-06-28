@@ -28,7 +28,7 @@ EndScriptData */
 #include "zulaman.h"
 #include "GridNotifiers.h"
 
-//Trash Waves
+// Trash Waves
 float NalorakkWay[8][3] =
 {
     { 18.569f, 1414.512f, 11.42f},// waypoint 1
@@ -41,55 +41,59 @@ float NalorakkWay[8][3] =
     {-80.072f, 1295.775f, 48.60f} // waypoint 4
 };
 
-#define YELL_NALORAKK_WAVE1     "Get da move on, guards! It be killin' time!"
-#define SOUND_NALORAKK_WAVE1    12066
-#define YELL_NALORAKK_WAVE2     "Guards, go already! Who you more afraid of, dem... or me?"
-#define SOUND_NALORAKK_WAVE2    12067
-#define YELL_NALORAKK_WAVE3     "Ride now! Ride out dere and bring me back some heads!"
-#define SOUND_NALORAKK_WAVE3    12068
-#define YELL_NALORAKK_WAVE4     "I be losin' me patience! Go on: make dem wish dey was never born!"
-#define SOUND_NALORAKK_WAVE4    12069
+enum // Sounds
+{
+    SOUND_NALORAKK_WAVE1 = 12066,
+    SOUND_NALORAKK_WAVE2 = 12067,
+    SOUND_NALORAKK_WAVE3 = 12068,
+    SOUND_NALORAKK_WAVE4 = 12069,
 
-//Unimplemented SoundIDs
-/*
-#define SOUND_NALORAKK_EVENT1   12078
-#define SOUND_NALORAKK_EVENT2   12079
-*/
+    SOUND_YELL_AGGRO     = 12070,
+    SOUND_YELL_KILL_ONE  = 12075,
+    SOUND_YELL_KILL_TWO  = 12076,
+    SOUND_YELL_DEATH     = 12077,
+    SOUND_YELL_BERSERK   = 12074,
 
-//General defines
-#define YELL_AGGRO              "You be dead soon enough!"
-#define SOUND_YELL_AGGRO        12070
-#define YELL_KILL_ONE           "Mua-ha-ha! Now whatchoo got to say?"
-#define SOUND_YELL_KILL_ONE     12075
-#define YELL_KILL_TWO           "Da Amani gonna rule again!"
-#define SOUND_YELL_KILL_TWO     12076
-#define YELL_DEATH              "I... be waitin' on da udda side...."
-#define SOUND_YELL_DEATH        12077
-#define YELL_BERSERK            "You had your chance, now it be too late!" //Never seen this being used, so just guessing from what I hear.
-#define SOUND_YELL_BERSERK      12074
+    SOUND_YELL_TOBEAR    = 12072,
+    SOUND_YELL_SURGE     = 12071,
+    SOUND_YELL_TOTROLL   = 12073,
 
-#define SPELL_BERSERK           45078
+    // UnImplemented SoundIDs
+    SOUND_NALORAKK_EVENT1 = 12078, // "What could be better than servin' da bear spirit for eternity? Come closer now. Bring your souls to me!"
+    SOUND_NALORAKK_EVENT2 = 12079  // "Don't be delayin' your fate. Come to me now. I make your sacrifice quick. "
+};
 
-//Defines for Troll form
-#define SPELL_BRUTALSWIPE       42384
-#define SPELL_MANGLE            42389
-#define SPELL_MANGLEEFFECT      44955
-#define SPELL_SURGE             42402
-#define SPELL_BEARFORM          42377
+static const char YELL_NALORAKK_WAVE1[] = "Get da move on, guards! It be killin' time!";
+static const char YELL_NALORAKK_WAVE2[] = "Guards, go already! Who you more afraid of, dem... or me?";
+static const char YELL_NALORAKK_WAVE3[] = "Ride now! Ride out dere and bring me back some heads!";
+static const char YELL_NALORAKK_WAVE4[] = "I be losin' me patience! Go on: make dem wish dey was never born!";
 
-#define YELL_SURGE              "I bring da pain!"
-#define SOUND_YELL_SURGE        12071
+static const char YELL_AGGRO[]          = "You be dead soon enough!";
+static const char YELL_KILL_ONE[]       = "Mua-ha-ha! Now whatchoo got to say?";
+static const char YELL_KILL_TWO[]       = "Da Amani gonna rule again!";
+static const char YELL_DEATH[]          = "I... be waitin' on da udda side....";
+static const char YELL_BERSERK[]        = "You had your chance, now it be too late!"; //Never seen this being used, so just guessing from what I hear.
 
-#define YELL_SHIFTEDTOTROLL     "Make way for Nalorakk!"
-#define SOUND_YELL_TOTROLL      12073
+static const char YELL_SURGE[]          = "I bring da pain!";
+static const char YELL_SHIFTEDTOTROLL[] = "Make way for Nalorakk!";
+static const char YELL_SHIFTEDTOBEAR[]  = "You call on da beast, you gonna get more dan you bargain for!";
 
-//Defines for Bear form
-#define SPELL_LACERATINGSLASH   42395
-#define SPELL_RENDFLESH         42397
-#define SPELL_DEAFENINGROAR     42398
+enum // Spells
+{
+    SPELL_BERSERK         = 45078,
 
-#define YELL_SHIFTEDTOBEAR      "You call on da beast, you gonna get more dan you bargain for!"
-#define SOUND_YELL_TOBEAR       12072
+    // Spells for Troll form
+    SPELL_BRUTALSWIPE     = 42384,
+    SPELL_MANGLE          = 42389,
+    SPELL_MANGLEEFFECT    = 44955,
+    SPELL_SURGE           = 42402,
+    SPELL_BEARFORM        = 42377,
+
+    // Spells for Bear form
+    SPELL_LACERATINGSLASH = 42395,
+    SPELL_RENDFLESH       = 42397,
+    SPELL_DEAFENINGROAR   = 42398
+};
 
 struct boss_nalorakkAI : public ScriptedAI
 {
@@ -98,14 +102,6 @@ struct boss_nalorakkAI : public ScriptedAI
         MoveEvent = true;
         MovePhase = 0;
         pInstance = c->GetInstanceData();
-
-        // hack mangle as it affects Nalorakk instead of victim
-        SpellEntry *TempSpell1 = GET_SPELL(42389);
-        if (TempSpell1)
-        {
-            TempSpell1->EffectImplicitTargetA[1] = TARGET_UNIT_TARGET_ENEMY;
-            TempSpell1->EffectImplicitTargetB[1] = 0;
-        }
     }
 
     ScriptedInstance *pInstance;
@@ -137,13 +133,14 @@ struct boss_nalorakkAI : public ScriptedAI
             waitTimer = 0;
             me->SetSpeed(MOVE_RUN,2);
             me->RemoveUnitMovementFlag(MOVEFLAG_WALK_MODE);
-        } else
+        }
+        else
         {
             (*me).GetMotionMaster()->MovePoint(0,NalorakkWay[7][0],NalorakkWay[7][1],NalorakkWay[7][2]);
         }
 
         if (pInstance)
-            pInstance->SetData(DATA_NALORAKKEVENT, NOT_STARTED);
+            pInstance->SetData(ENCOUNTER_NALORAKK, NOT_STARTED);
 
         Surge_Timer = 15000 + rand()%5000;
         BrutalSwipe_Timer = 7000 + rand()%5000;
@@ -268,7 +265,7 @@ struct boss_nalorakkAI : public ScriptedAI
     void EnterCombat(Unit * /*who*/)
     {
         if (pInstance)
-            pInstance->SetData(DATA_NALORAKKEVENT, IN_PROGRESS);
+            pInstance->SetData(ENCOUNTER_NALORAKK, IN_PROGRESS);
 
         me->MonsterYell(YELL_AGGRO, LANG_UNIVERSAL, 0);
         DoPlaySoundToSet(me, SOUND_YELL_AGGRO);
@@ -278,7 +275,7 @@ struct boss_nalorakkAI : public ScriptedAI
     void JustDied(Unit* /*Killer*/)
     {
         if (pInstance)
-            pInstance->SetData(DATA_NALORAKKEVENT, DONE);
+            pInstance->SetData(ENCOUNTER_NALORAKK, DONE);
 
         me->MonsterYell(YELL_DEATH,LANG_UNIVERSAL,0);
         DoPlaySoundToSet(me, SOUND_YELL_DEATH);
@@ -363,7 +360,9 @@ struct boss_nalorakkAI : public ScriptedAI
             me->MonsterYell(YELL_BERSERK, LANG_UNIVERSAL, 0);
             DoPlaySoundToSet(me, SOUND_YELL_BERSERK);
             Berserk_Timer = 600000;
-        } else Berserk_Timer -= diff;
+        }
+        else
+            Berserk_Timer -= diff;
 
         if (ShapeShift_Timer <= diff)
         {
@@ -391,7 +390,9 @@ struct boss_nalorakkAI : public ScriptedAI
                 ShapeShift_Timer = 20000 + rand()%5000; // dur 30s
                 inBearForm = true;
             }
-        } else ShapeShift_Timer -= diff;
+        }
+        else
+            ShapeShift_Timer -= diff;
 
         if (!inBearForm)
         {
@@ -399,7 +400,9 @@ struct boss_nalorakkAI : public ScriptedAI
             {
                 DoCast(me->getVictim(), SPELL_BRUTALSWIPE);
                 BrutalSwipe_Timer = 7000 + rand()%5000;
-            } else BrutalSwipe_Timer -= diff;
+            }
+            else
+                BrutalSwipe_Timer -= diff;
 
             if (Mangle_Timer <= diff)
             {
@@ -409,7 +412,9 @@ struct boss_nalorakkAI : public ScriptedAI
                     Mangle_Timer = 1000;
                 }
                 else Mangle_Timer = 10000 + rand()%5000;
-            } else Mangle_Timer -= diff;
+            }
+            else
+                Mangle_Timer -= diff;
 
             if (Surge_Timer <= diff)
             {
@@ -419,7 +424,9 @@ struct boss_nalorakkAI : public ScriptedAI
                 if (pTarget)
                     DoCast(pTarget, SPELL_SURGE);
                 Surge_Timer = 15000 + rand()%5000;
-            } else Surge_Timer -= diff;
+            }
+            else
+                Surge_Timer -= diff;
         }
         else
         {
@@ -427,19 +434,25 @@ struct boss_nalorakkAI : public ScriptedAI
             {
                 DoCast(me->getVictim(), SPELL_LACERATINGSLASH);
                 LaceratingSlash_Timer = 18000 + rand()%5000;
-            } else LaceratingSlash_Timer -= diff;
+            }
+            else
+                LaceratingSlash_Timer -= diff;
 
             if (RendFlesh_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_RENDFLESH);
                 RendFlesh_Timer = 5000 + rand()%5000;
-            } else RendFlesh_Timer -= diff;
+            }
+            else
+                RendFlesh_Timer -= diff;
 
             if (DeafeningRoar_Timer <= diff)
             {
                 DoCast(me->getVictim(), SPELL_DEAFENINGROAR);
                 DeafeningRoar_Timer = 15000 + rand()%5000;
-            } else DeafeningRoar_Timer -= diff;
+            }
+            else
+                DeafeningRoar_Timer -= diff;
         }
 
         DoMeleeAttackIfReady();

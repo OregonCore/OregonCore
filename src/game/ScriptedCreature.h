@@ -33,7 +33,20 @@
 #define CAST_PET(a)     (SCRIPT_CAST_TYPE<Pet*>(a))
 #define CAST_AI(a,b)    (SCRIPT_CAST_TYPE<a*>(b))
 
-#define GET_SPELL(a)    (const_cast<SpellEntry*>(GetSpellStore()->LookupEntry(a)))
+/* GET_SPELL is DEPRECATED and shouldn't be used anymore,
+   if you need to modify spell's data see SpellMgr::LoadSpellCustomAttr()
+   and modify it there. This function needs to be removed (TODO). */
+
+#if COMPILER == COMPILER_MICROSOFT
+__declspec(deprecated) inline SpellEntry* GET_SPELL(uint32 Id);
+#elif COMPILER == COMPILER_GNU
+inline SpellEntry* GET_SPELL(uint32 Id) __attribute__((deprecated));
+#endif
+
+inline SpellEntry* GET_SPELL(uint32 Id)
+{
+    return const_cast<SpellEntry*>(GetSpellStore()->LookupEntry(Id));
+}
 
 class ScriptedInstance;
 

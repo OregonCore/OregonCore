@@ -2555,6 +2555,10 @@ void SpellMgr::LoadSpellCustomAttr()
         case 31830: // Blessed Life (Rank 3)
             spellInfo->EffectApplyAuraName[0] = SPELL_AURA_REUSED_BLESSED_LIFE;
             break;
+        case 42389: // Nalorakk's Mangle
+            spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_TARGET_ENEMY;
+            spellInfo->EffectImplicitTargetB[1] = 0;
+            break;
         default:
             break;
         }
