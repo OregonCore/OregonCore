@@ -3507,7 +3507,9 @@ bool Unit::AddAura(Aura *Aur)
                     // Instead of adding a new stack, just set the duration time
                     // we need to use time from Aur because of diminishing effects
                     aur2->SetAuraDuration(Aur->GetAuraMaxDuration());
+                    aur2->SetAuraProcCharges(Aur->m_procCharges);
                     aur2->UpdateAuraDuration();
+                    aur2->UpdateAuraCharges();
                     delete Aur;
                     return false;
                 }
