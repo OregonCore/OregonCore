@@ -18892,7 +18892,12 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
 
     // Game masters should always see the players
     if (isGameMaster())
-        return true;
+    {
+        // but not higher GMs which are invisible
+        if (const Player* user = u->ToPlayer())
+            if (GetSession()->GetSecurity() >= user->GetSession()->GetSecurity())
+                return true;
+    }
 
     // Arena visibility before arena start
     if (InArena() && GetBattleGround() && GetBattleGround()->GetStatus() == STATUS_WAIT_JOIN)
