@@ -454,7 +454,10 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData *data)
 
     // trigger creature is always not selectable and can not be attacked
     if (isTrigger())
+    {
         SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        AddUnitMovementFlag(MOVEFLAG_LEVITATING);
+    }
 
     if (isTotem() || isTrigger()
         || GetCreatureType() == CREATURE_TYPE_CRITTER)
