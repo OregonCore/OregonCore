@@ -34,7 +34,7 @@ include_directories(
   ${OPENSSL_INCLUDE_DIR}
 )
 
-set(oregon-realm_LINK_FLAGS "")
+set(oregon-realm_LINK_FLAGS "-rdynamic")
 
 add_executable(oregon-realm
   ${oregon-realm_SRCS}

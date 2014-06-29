@@ -51,7 +51,7 @@ endif()
 add_dependencies(oregon-core revision.h)
 
 if( UNIX )
-  set(oregon-core_LINK_FLAGS "-pthread ${oregon-core_LINK_FLAGS}")
+  set(oregon-core_LINK_FLAGS "-pthread -rdynamic ${oregon-core_LINK_FLAGS}")
 endif()
 
 set_target_properties(oregon-core PROPERTIES LINK_FLAGS "${oregon-core_LINK_FLAGS}")
