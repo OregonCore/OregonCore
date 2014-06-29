@@ -2579,6 +2579,26 @@ void SpellMgr::LoadSpellCustomAttr()
                 break;
         }
     }
+
+    /* Fix some weird values in SpellItemEnchantment */
+    for (uint32 i = 0; i <= 3340; i++)
+    {
+        if (SpellItemEnchantmentEntry* ench = const_cast<SpellItemEnchantmentEntry*>(sSpellItemEnchantmentStore.LookupEntry(i)))
+        {
+            switch (ench->ID)
+            {
+                // Flametongue Weapon
+                case    5: ench->type[0] = ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL; ench->spellid[0] =  8026; break; // rank 1
+                case    4: ench->type[0] = ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL; ench->spellid[0] =  8028; break; // rank 2
+                case    3: ench->type[0] = ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL; ench->spellid[0] =  8029; break; // rank 3
+                case  523: ench->type[0] = ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL; ench->spellid[0] = 10445; break; // rank 4
+                case 1665: ench->type[0] = ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL; ench->spellid[0] = 16343; break; // rank 5
+                case 1666: ench->type[0] = ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL; ench->spellid[0] = 16344; break; // rank 6
+                case 2634: ench->type[0] = ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL; ench->spellid[0] = 25488; break; // rank 7
+            }
+        }
+    }
+
     CreatureAI::FillAISpellInfo();
 }
 

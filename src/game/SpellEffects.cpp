@@ -1783,8 +1783,8 @@ void Spell::EffectDummy(uint32 i)
             break;
         case SPELLFAMILY_SHAMAN:
 
-            // Flametongue Totem Proc
-            if (m_spellInfo->SpellFamilyFlags & 0x0000000400000000LL)
+            // Flametongue Totem & Weapon Proc
+            if (m_spellInfo->SpellFamilyFlags & 0x400200000LL)
             {
                 bp = m_caster->GetAttackTime(BASE_ATTACK) * (m_spellInfo->EffectBasePoints[0]+1) / 100000;
                 spell_id = 16368;
