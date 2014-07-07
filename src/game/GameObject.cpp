@@ -1111,8 +1111,9 @@ void GameObject::Use(Unit* user)
                         // prevent removing GO at spell cancel
                         player->RemoveGameObject(this,false);
                         SetOwnerGUID(player->GetGUID());
-
-                        //fish catched
+                        SetSpellId(0); // prevent removing unintended auras at Unit::RemoveGameObject
+                        
+                        //fish caught
                         player->UpdateFishingSkill();
 
                         GameObject* ok = LookupFishingHoleAround(DEFAULT_VISIBILITY_DISTANCE);
