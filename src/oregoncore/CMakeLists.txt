@@ -76,7 +76,11 @@ target_link_libraries(oregon-core
 )
 
 if( UNIX )
-  target_link_libraries(oregon-core bfd dl iberty)
+  target_link_libraries(oregon-core
+    ${BFD_LIBRARY}
+    dl
+    ${IBERTY_LIBRARY}
+  )
 endif()
 
 if( WIN32 )

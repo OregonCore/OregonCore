@@ -25,8 +25,8 @@
 // This is fix for libiberty because ACE has already declared it.
 #define HAVE_DECL_BASENAME 1
 
-#include <libiberty/libiberty.h>
-#include <libiberty/demangle.h>
+#include <libiberty.h>
+#include <demangle.h>
 #include <bfd.h>
 
 namespace UnixDebugger
@@ -47,9 +47,9 @@ namespace UnixDebugger
             const std::string& GetFile() const { return filename; }
             unsigned int GetLine() const { return line; }
         private:
-            bfd* abfd = 0;
-            asymbol **syms = 0;
-            asection *text = 0;
+            bfd* abfd;
+            asymbol **syms;
+            asection *text;
 
             std::string function;
             std::string filename;
