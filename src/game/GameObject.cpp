@@ -1334,6 +1334,8 @@ void GameObject::Use(Unit* user)
                 GameObjectInfo const* info = GetGOInfo();
                 if (info)
                 {
+                    user->InterruptNonMeleeSpells(true, 0, true);
+
                     switch(info->id)
                     {
                         case 179785:                        // Silverwing Flag
