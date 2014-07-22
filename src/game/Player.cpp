@@ -1692,6 +1692,10 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
 
             ResetContestedPvP();
 
+            // Remove fear and charm effects
+            RemoveSpellsCausingAura(SPELL_AURA_MOD_FEAR);
+            RemoveCharmAuras();
+
             // remove player from battleground on far teleport (when changing maps)
             if (BattleGround const* bg = GetBattleGround())
             {

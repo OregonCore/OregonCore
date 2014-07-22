@@ -4185,8 +4185,8 @@ void Unit::RemoveAllAuras()
 
 void Unit::RemoveArenaAuras(bool onleave)
 {
-    // in join, remove positive buffs, on end, remove negative
-    // used to remove positive visible auras in arenas
+    // in join, all positive buffs, on end, remove negative
+    // used to all positive visible auras in arenas
     for (AuraMap::iterator iter = m_Auras.begin(); iter != m_Auras.end();)
     {
         if (!(iter->second->GetSpellProto()->AttributesEx4 & (1<<21)) &&
@@ -4195,7 +4195,7 @@ void Unit::RemoveArenaAuras(bool onleave)
             (!(iter->second->GetSpellProto()->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY) ||
             !(iter->second->GetSpellProto()->Attributes & SPELL_ATTR_UNK8)) &&
                                                             // not unaffected by invulnerability auras or not having that unknown flag (that seemed the most probable)
-            (iter->second->IsPositive() ^ onleave))         // remove positive buffs on enter, negative buffs on leave
+            (!onleave || !iter->second->IsPositive()))      // remove all buffs on enter, negative buffs on leave
             RemoveAura(iter);
         else
             ++iter;
