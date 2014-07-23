@@ -4562,15 +4562,15 @@ uint8 Spell::CheckCasterAuras() const
     //Check whether the cast should be prevented by any state you might have.
     uint8 prevented_reason = 0;
     // Have to check if there is a stun aura. Otherwise will have problems with ghost aura apply while logging out
-    if (!(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_STUNNED) && m_caster->HasAuraType(SPELL_AURA_MOD_STUN))
+    if (m_caster->HasAuraType(SPELL_AURA_MOD_STUN))
         prevented_reason = SPELL_FAILED_STUNNED;
-    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_CONFUSED) && !(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_CONFUSED))
+    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_CONFUSED))
         prevented_reason = SPELL_FAILED_CONFUSED;
-    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING) && !(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_FEARED))
+    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING))
         prevented_reason = SPELL_FAILED_FLEEING;
-    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SILENCED) && m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE)
+    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SILENCED))
         prevented_reason = SPELL_FAILED_SILENCED;
-    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED) && m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_PACIFY)
+    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED))
         prevented_reason = SPELL_FAILED_PACIFIED;
 
     // Attr must make flag drop spell totally immune from all effects
@@ -4580,13 +4580,15 @@ uint8 Spell::CheckCasterAuras() const
         {
             //Checking auras is needed now, because you are prevented by some state but the spell grants immunity.
             Unit::AuraMap const& auras = m_caster->GetAuras();
+            bool trapped;
             for (Unit::AuraMap::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
             {
                 if (itr->second)
                 {
                     if (GetSpellMechanicMask(itr->second->GetSpellProto(), itr->second->GetEffIndex()) & mechanic_immune)
                         continue;
-                    if (GetSpellSchoolMask(itr->second->GetSpellProto()) & school_immune)
+                    if (GetSpellSchoolMask(itr->second->GetSpellProto()) & school_immune &&                                    // we match school mask and
+                        !(trapped = (itr->second->GetSpellProto()->AttributesEx & SPELL_ATTR_EX_UNAFFECTED_BY_SCHOOL_IMMUNE))) // the aura doesn't block us
                         continue;
                     if ((1<<(itr->second->GetSpellProto()->Dispel)) & dispel_immune)
                         continue;
@@ -4596,33 +4598,48 @@ uint8 Spell::CheckCasterAuras() const
                     switch(itr->second->GetModifier()->m_auraname)
                     {
                         case SPELL_AURA_MOD_STUN:
-                            if (!(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_STUNNED))
+                            if (trapped || !(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_STUNNED))
                                 return SPELL_FAILED_STUNNED;
-                            break;
                         case SPELL_AURA_MOD_CONFUSE:
-                            if (!(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_CONFUSED))
+                            if (trapped || !(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_CONFUSED))
                                 return SPELL_FAILED_CONFUSED;
-                            break;
                         case SPELL_AURA_MOD_FEAR:
-                            if (!(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_FEARED))
+                            if (trapped || !(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_FEARED))
                                 return SPELL_FAILED_FLEEING;
-                            break;
                         case SPELL_AURA_MOD_SILENCE:
                         case SPELL_AURA_MOD_PACIFY:
                         case SPELL_AURA_MOD_PACIFY_SILENCE:
-                            if (m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_PACIFY)
+                            if (trapped || m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_PACIFY)
                                 return SPELL_FAILED_PACIFIED;
                             else if (m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE)
                                 return SPELL_FAILED_SILENCED;
-                            break;
-                        default:break;
                     }
                 }
             }
         }
         //You are prevented from casting and the spell casted does not grant immunity. Return a failed error.
         else
+        {
+            switch (prevented_reason)
+            {
+                case SPELL_FAILED_STUNNED:
+                    if (m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_STUNNED)
+                        return 0; // can cast
+                case SPELL_FAILED_CONFUSED:
+                    if (m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_CONFUSED)
+                        return 0;
+                case SPELL_FAILED_FLEEING:
+                    if (m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_FEARED)
+                        return 0;
+                case SPELL_FAILED_SILENCED:
+                case SPELL_FAILED_PACIFIED:
+                    if (m_spellInfo->PreventionType != SPELL_PREVENTION_TYPE_SILENCE &&
+                        m_spellInfo->PreventionType != SPELL_PREVENTION_TYPE_PACIFY)
+                        return 0;
+            }
+
             return prevented_reason;
+        }
     }
     return 0;                                               // all ok
 }
