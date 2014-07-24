@@ -199,6 +199,7 @@ class WorldSession
 
         uint32 GetLatency() const { return m_latency; }
         void SetLatency(uint32 latency) { m_latency = latency; }
+        void ResetClientTimeDelay() { m_clientTimeDelay = 0; }
         uint32 getDialogStatus(Player *pPlayer, Object* questgiver, uint32 defstatus);
 
         uint32 m_timeOutTime;
@@ -680,6 +681,7 @@ class WorldSession
         int m_sessionDbLocaleIndex;
         time_t _logoutTime;
         uint32 m_latency;
+        uint32 m_clientTimeDelay;
 
         ACE_Based::LockedQueue<WorldPacket*,ACE_Thread_Mutex> _recvQueue;
 };

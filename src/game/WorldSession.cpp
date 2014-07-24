@@ -43,7 +43,7 @@ LookingForGroup_auto_join(false), LookingForGroup_auto_add(false), m_muteTime(mu
 _player(NULL), m_Socket(sock),_security(sec), _accountId(id), m_expansion(expansion), m_Warden(NULL),
 m_inQueue(false), m_playerLoading(false), m_playerLogout(false), m_playerRecentlyLogout(false), m_playerSave(false),
 m_sessionDbcLocale(sWorld.GetAvailableDbcLocale(locale)), m_sessionDbLocaleIndex(objmgr.GetIndexForLocale(locale)),
-_logoutTime(0), m_latency(0)
+_logoutTime(0), m_latency(0), m_clientTimeDelay(0)
 {
     if (sock)
     {

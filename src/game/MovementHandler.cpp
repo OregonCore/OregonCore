@@ -28,6 +28,8 @@
 #include "WaypointMovementGenerator.h"
 #include "InstanceSaveMgr.h"
 
+#define MOVEMENT_PACKET_TIME_DELAY 0
+
 void WorldSession::HandleMoveWorldportAckOpcode(WorldPacket & /*recv_data*/)
 {
     DEBUG_LOG("WORLD: got MSG_MOVE_WORLDPORT_ACK.");
@@ -321,8 +323,12 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
         plMover->SetInWater(!plMover->IsInWater() || plMover->GetBaseMap()->IsUnderWater(movementInfo.GetPos()->GetPositionX(), movementInfo.GetPos()->GetPositionY(), movementInfo.GetPos()->GetPositionZ()));
     }
 
+    uint32 mstime = getMSTime();
+    if (m_clientTimeDelay == 0)
+        m_clientTimeDelay = mstime - movementInfo.time;
+
     /* process position-change */
-    recv_data.put<uint32>(5, getMSTime());                  // offset flags(4) + unk(1)
+    recv_data.put<uint32>(5, movementInfo.time + m_clientTimeDelay + MOVEMENT_PACKET_TIME_DELAY);                  // offset flags(4) + unk(1)
     WorldPacket data(opcode, mover->GetPackGUID().size() + recv_data.size());
     data << mover->GetPackGUID();
     data.append(recv_data.contents(), recv_data.size());
