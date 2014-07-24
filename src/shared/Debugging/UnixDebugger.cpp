@@ -188,11 +188,11 @@ void WriteBacktrace(std::stringstream& ss)
         {
             if (*p == '(')
                  module.append(symbols[i] + 0, p - symbols[i]);
-             else if (*p == '+')
+             else if (*p == '+' && module.size())
                  func.append(symbols[i] + module.size() + 1, p - (symbols[i] + module.size() + 1));
              else if (*p == ')' && module.size())
                  offset.append(symbols[i] + module.size() + func.size() + 1, p - (symbols[i] + module.size() + func.size() + 1));
-             else if (*p == '[' && offset.size())
+             else if (*p == '[')
              {
                  addr = p + 1;
                  addr.resize(addr.size() - 1);
@@ -212,6 +212,8 @@ void WriteBacktrace(std::stringstream& ss)
         else
             atl = atlmIt->second;
 
+        bool resolved = atl->Resolve(addrl);
+
         if (func.size())
         {
             if (demangled = cplus_demangle(func.c_str(), DMGL_PARAMS | DMGL_ANSI))
@@ -219,7 +221,7 @@ void WriteBacktrace(std::stringstream& ss)
             // else func is a C symbol and it needs not to be demangled (or else cplus_demangle will yield NULL)
         }
         else
-            func = "??";
+            func = atl->GetFunction();
 
         /* We don't need to print frames after SignalHandler */
         if (!skip)
@@ -239,7 +241,7 @@ void WriteBacktrace(std::stringstream& ss)
         ss << '#' << (i-skip) << ' ' << addr << " in " << func << ' ' << offset << std::endl
            << "  from " << module << std::endl;
         
-        if (!atl->Resolve(addrl))
+        if (!resolved)
             continue;
 
         //const std::string& func = atl->GetFunction(); // not used
@@ -453,8 +455,15 @@ bool Resolver::Resolve(unsigned long address)
     
     bfd_find_nearest_line(abfd, text, syms, offset, &file, &func, &line);
     
-    function = func;
-    filename = file;
+    if (func)
+    {
+        if (char* demangled = cplus_demangle(func, DMGL_PARAMS | DMGL_ANSI))
+            func = demangled;
+        else
+            function = func; // doesn't need demangling
+    }
+    if (file)
+        filename = file;
     // line has been already written
 
     return true;

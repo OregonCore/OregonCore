@@ -105,6 +105,9 @@ Master::~Master()
 // Main function
 int Master::Run()
 {
+    // Catch termination signals
+    _HookSignals();
+
     sLog.outString("%s (core-daemon)", _FULLVERSION);
     sLog.outString("<Ctrl-C> to stop.\n");
 
@@ -140,8 +143,6 @@ int Master::Run()
     // Initialize the World
     sWorld.SetInitialWorldSettings();
 
-    // Catch termination signals
-    _HookSignals();
     // set realmbuilds depend on OregonCore expected builds, and set server online
     std::string builds = AcceptableClientBuildsListStr();
     LoginDatabase.escape_string(builds);
