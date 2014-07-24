@@ -8261,6 +8261,12 @@ bool Unit::IsImmunedToSpell(SpellEntry const* spellInfo, bool /*useCharges*/)
     if (spellInfo->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY)
         return false;
 
+     // Single spell immunity.
+    SpellImmuneList const& idList = m_spellImmune[IMMUNITY_ID];
+    for (SpellImmuneList::const_iterator itr = idList.begin(); itr != idList.end(); ++itr)
+        if (itr->type == spellInfo->Id)
+            return true;
+
     SpellImmuneList const& dispelList = m_spellImmune[IMMUNITY_DISPEL];
     for (SpellImmuneList::const_iterator itr = dispelList.begin(); itr != dispelList.end(); ++itr)
         if (itr->type == spellInfo->Dispel)
@@ -8282,16 +8288,17 @@ bool Unit::IsImmunedToSpell(SpellEntry const* spellInfo, bool /*useCharges*/)
         if (itr->type == spellInfo->Mechanic)
             return true;
 
-    SpellImmuneList const& idList = m_spellImmune[IMMUNITY_ID];
-    for (SpellImmuneList::const_iterator itr = idList.begin(); itr != idList.end(); ++itr)
-        if (itr->type == spellInfo->Id)
-            return true;
-
     return false;
 }
 
 bool Unit::IsImmunedToSpellEffect(SpellEntry const* spellInfo, uint32 index) const
 {
+    if (!spellInfo)
+        return false;
+
+    if (spellInfo->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY)
+        return false;
+
     //If m_immuneToEffect type contain this effect type, IMMUNE effect.
     uint32 effect = spellInfo->Effect[index];
     SpellImmuneList const& effectList = m_spellImmune[IMMUNITY_EFFECT];
