@@ -42,6 +42,10 @@
 extern int m_ServiceStatus;
 #endif
 
+#if PLATFORM == PLATFORM_UNIX
+#include "Debugging/UnixDebugger.h"
+#endif
+
 INSTANTIATE_SINGLETON_1(Master);
 
 volatile uint32 Master::m_masterLoopCounter = 0;
@@ -101,6 +105,9 @@ Master::~Master()
 // Main function
 int Master::Run()
 {
+    // Catch termination signals
+    _HookSignals();
+
     sLog.outString("%s (core-daemon)", _FULLVERSION);
     sLog.outString("<Ctrl-C> to stop.\n");
 
@@ -135,9 +142,6 @@ int Master::Run()
 
     // Initialize the World
     sWorld.SetInitialWorldSettings();
-
-    // Catch termination signals
-    _HookSignals();
 
     // set realmbuilds depend on OregonCore expected builds, and set server online
     std::string builds = AcceptableClientBuildsListStr();
@@ -447,6 +451,10 @@ void Master::_HookSignals()
     signal(SIGTERM, _OnSignal);
     #ifdef _WIN32
     signal(SIGBREAK, _OnSignal);
+    #endif
+
+    #if PLATFORM == PLATFORM_UNIX
+    UnixDebugger::RegisterDeadlySignalHandler();
     #endif
 }
 

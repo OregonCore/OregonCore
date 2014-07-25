@@ -164,6 +164,13 @@ bool MapManager::CanPlayerEnter(uint32 mapid, Player* player)
     if (!entry)
        return false;
 
+    if (!entry->IsDungeon())
+        return true;
+
+    InstanceTemplate const* instance = objmgr.GetInstanceTemplate(mapid);
+    if (!instance)
+        return false;
+
     const char *mapName = entry->name[player->GetSession()->GetSessionDbcLocale()];
 
     if (entry->IsDungeon())
@@ -225,11 +232,6 @@ bool MapManager::CanPlayerEnter(uint32 mapid, Player* player)
                 sLog.outDebug("Map::CanEnter - player '%s' is dead but doesn't have a corpse!", player->GetName());
             }
         }
-
-        // Requirements
-        InstanceTemplate const* instance = objmgr.GetInstanceTemplate(mapid);
-        if (!instance)
-            return false;
 
         return player->Satisfy(objmgr.GetAccessRequirement(instance->access_id), mapid, true);
     }

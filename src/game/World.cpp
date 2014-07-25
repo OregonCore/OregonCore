@@ -491,10 +491,10 @@ void World::LoadConfigSettings(bool reload)
         sLog.outError("Rate.Talent (%f) must be > 0. Using 1 instead.",rate_values[RATE_TALENT]);
         rate_values[RATE_TALENT] = 1.0f;
     }
-    rate_values[RATE_RAF_BONUS_XP] = sConfig.GetIntDefault("RAF.GrantableLevelsPerLevel", 1);
+    rate_values[RATE_RAF_BONUS_XP] = sConfig.GetIntDefault("RAF.BonusXPGain", 3);
     if (rate_values[RATE_TALENT] < 0.0f)
     {
-        sLog.outError("RAF.GrantableLevelsPerLevel (%u) must be > 0. Using 3 instead.",rate_values[RATE_RAF_BONUS_XP]);
+        sLog.outError("RAF.BonusXPGain (%u) must be > 0. Using 3 instead.",rate_values[RATE_RAF_BONUS_XP]);
         rate_values[RATE_RAF_BONUS_XP] = 3;
     }
     rate_values[RATE_RAF_GRANTABLE_LEVELS_PER_LEVEL] = std::max<float>(0.f, sConfig.GetFloatDefault("RAF.GrantableLevelsPerLevel", .5f));
@@ -1286,6 +1286,9 @@ void World::SetInitialWorldSettings()
 
     sLog.outString("Loading linked spells...");
     spellmgr.LoadSpellLinked();
+
+    sLog.outString("Loading custom spell cooldowns...");
+    spellmgr.LoadSpellCustomCooldowns();
 
     sLog.outString("Loading Player Create Data...");
     objmgr.LoadPlayerInfo();

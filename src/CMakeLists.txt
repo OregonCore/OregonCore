@@ -9,11 +9,20 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
+set(sources_Debugging "")
+
 if( SERVERS )
-  set(sources_Debugging
-    ${CMAKE_SOURCE_DIR}/src/shared/Debugging/WheatyExceptionReport.cpp
-    ${CMAKE_SOURCE_DIR}/src/shared/Debugging/WheatyExceptionReport.h
-  )
+  if (WIN32)
+      set(sources_Debugging
+        ${CMAKE_SOURCE_DIR}/src/shared/Debugging/WheatyExceptionReport.cpp
+        ${CMAKE_SOURCE_DIR}/src/shared/Debugging/WheatyExceptionReport.h
+      )
+  else(WIN32)
+    if (UNIX)
+        set(sources_Debugging ${CMAKE_SOURCE_DIR}/src/shared/Debugging/UnixDebugger.cpp)
+    endif (UNIX)
+  endif(WIN32)
+
   add_subdirectory(genrev)
   add_subdirectory(framework)
   add_subdirectory(shared)

@@ -20,7 +20,7 @@
 /* ScriptData
 SDName: boss_Akilzon
 SD%Complete: 75%
-SDComment: Missing timer for Call Lightning and Sound ID's
+SDComment: Check Working & Missing Event
 SQLUpdate:
 #Temporary fix for Soaring Eagles
 
@@ -30,35 +30,51 @@ EndScriptData */
 #include "zulaman.h"
 #include "Weather.h"
 
-#define SPELL_STATIC_DISRUPTION     44008 //original spellID 43622
-#define SPELL_STATIC_VISUAL         45265
-#define SPELL_CALL_LIGHTNING        43661 //Missing timer
-#define SPELL_GUST_OF_WIND          43621
-#define SPELL_ELECTRICAL_STORM      43648
-#define SPELL_BERSERK               45078
-#define SPELL_ELECTRICAL_DAMAGE     43657
-#define SPELL_ELECTRICAL_OVERLOAD   43658
-#define SPELL_EAGLE_SWOOP           44732
+enum //Spells
+{
+    SPELL_STATIC_DISRUPTION       = 44008, //original spellID 43622
+    SPELL_STATIC_VISUAL           = 45265,
+    SPELL_CALL_LIGHTNING          = 43661,
+    SPELL_GUST_OF_WIND            = 43621,
+    SPELL_ELECTRICAL_STORM        = 43648,
+    SPELL_ELECTRICAL_STORM_VISUAL = 44007,
+    SPELL_BERSERK                 = 45078,
+    SPELL_ELECTRICAL_DAMAGE       = 43657,
+    SPELL_ELECTRICAL_OVERLOAD     = 43658,
+    SPELL_EAGLE_SWOOP             = 44732
+};
 
-//"Your death gonna be quick, strangers. You shoulda never have come to this place..."
-#define SAY_ONAGGRO "I be da predator! You da prey..."
-#define SAY_ONDEATH "You can't... kill... me spirit!"
-#define SAY_ONSLAY1 "Ya got nothin'!"
-#define SAY_ONSLAY2 "Stop your cryin'!"
-#define SAY_ONSUMMON "Feed, me bruddahs!"
-#define SAY_ONENRAGE "All you be doing is wasting my time!"
-#define SOUND_ONAGGRO 12013
-#define SOUND_ONDEATH 12019
-#define SOUND_ONSLAY1 12017
-#define SOUND_ONSLAY2 12018
-#define SOUND_ONSUMMON 12014
-#define SOUND_ONENRAGE 12016
+static const char SAY_ONAGGRO[]   = "I be da predator! You da prey...";
+static const char SAY_ONSUMMON1[] = "Feed, me bruddahs!";
+static const char SAY_ONSUMMON2[] = "Come, and join me bruddah!";
+static const char SAY_ONENRAGE[]  = "All you be doing is wasting my time!";
+static const char SAY_ONSLAY1[]   = "Ya got nothin'!";
+static const char SAY_ONSLAY2[]   = "Stop your cryin'!";
+static const char SAY_ONDEATH[]   = "You can't... kill... me spirit!";
+static const char SAY_EVENT1[]    = "My eagles gonna bear your spirits to me! Your sacrifice is not gonna be in vain!";
+static const char SAY_EVENT2[]    = "Your death gonna be quick, strangers. You shoulda never have come to this place...";
 
-#define MOB_SOARING_EAGLE 24858
-#define SE_LOC_X_MAX 400
-#define SE_LOC_X_MIN 335
-#define SE_LOC_Y_MAX 1435
-#define SE_LOC_Y_MIN 1370
+enum //Sounds
+{
+    SOUND_ONAGGRO   = 12013,
+    SOUND_ONSUMMON1 = 12014,
+    SOUND_ONSUMMON2 = 12015,
+    SOUND_ONENRAGE  = 12016,
+    SOUND_ONSLAY1   = 12017,
+    SOUND_ONSLAY2   = 12018,
+    SOUND_ONDEATH   = 12019,
+    SOUND_EVENT1    = 12122,
+    SOUND_EVENT2    = 12123
+};
+
+enum //Misc
+{
+    MOB_SOARING_EAGLE = 24858,
+    SE_LOC_X_MAX      =   400,
+    SE_LOC_X_MIN      =   335,
+    SE_LOC_Y_MAX      =  1435,
+    SE_LOC_Y_MIN      =  1370
+};
 
 struct boss_akilzonAI : public ScriptedAI
 {
@@ -91,18 +107,19 @@ struct boss_akilzonAI : public ScriptedAI
     void Reset()
     {
         if (pInstance)
-            pInstance->SetData(DATA_AKILZONEVENT, NOT_STARTED);
+            pInstance->SetData(ENCOUNTER_AKILZON, NOT_STARTED);
 
-        StaticDisruption_Timer = urand(10000,20000); //10 to 20 seconds (bosskillers)
-        GustOfWind_Timer = urand(20000,30000); //20 to 30 seconds(bosskillers)
-        CallLighting_Timer = urand(10000,20000); //totaly random timer. can't find any info on this
-        ElectricalStorm_Timer = 60000; //60 seconds(bosskillers)
-        Enrage_Timer = 10*MINUTE*IN_MILLISECONDS; //10 minutes till enrage(bosskillers)
-        SummonEagles_Timer = 99999;
+        StaticDisruption_Timer = urand(10 * 1000, 20 * 1000); // 10 to 20 seconds (bosskillers)
+        GustOfWind_Timer       = urand(20 * 1000, 30 * 1000); // 20 to 30 seconds (bosskillers)
+        CallLighting_Timer     = urand(10 * 1000, 20 * 1000); // totaly random timer. can't find any info on this
+        ElectricalStorm_Timer  = 60 * 1000;                   // 60 seconds(bosskillers)
+        Enrage_Timer           = 10 * 60 * 1000;              // 10 minutes till enrage(bosskillers)
+        SummonEagles_Timer     = 99999;
 
-        TargetGUID = 0;
-        CloudGUID = 0;
+        TargetGUID  = 0;
+        CloudGUID   = 0;
         CycloneGUID = 0;
+
         DespawnSummons();
         for (uint8 i = 0; i < 8; ++i)
             BirdGUIDs[i] = 0;
@@ -120,16 +137,17 @@ struct boss_akilzonAI : public ScriptedAI
         me->MonsterYell(SAY_ONAGGRO, LANG_UNIVERSAL, 0);
         DoPlaySoundToSet(me, SOUND_ONAGGRO);
         DoZoneInCombat();
+
         if (pInstance)
-            pInstance->SetData(DATA_AKILZONEVENT, IN_PROGRESS);
+            pInstance->SetData(ENCOUNTER_AKILZON, IN_PROGRESS);
     }
 
     void JustDied(Unit* /*Killer*/)
     {
-        me->MonsterYell(SAY_ONDEATH,LANG_UNIVERSAL, 0);
+        me->MonsterYell(SAY_ONDEATH, LANG_UNIVERSAL, 0);
         DoPlaySoundToSet(me, SOUND_ONDEATH);
         if (pInstance)
-            pInstance->SetData(DATA_AKILZONEVENT, DONE);
+            pInstance->SetData(ENCOUNTER_AKILZON, DONE);
         DespawnSummons();
     }
 
@@ -269,8 +287,10 @@ struct boss_akilzonAI : public ScriptedAI
             me->MonsterYell(SAY_ONENRAGE, LANG_UNIVERSAL, 0);
             DoPlaySoundToSet(me, SOUND_ONENRAGE);
             DoCast(me, SPELL_BERSERK, true);
-            Enrage_Timer = 600000;
-        } else Enrage_Timer -= diff;
+            Enrage_Timer = (diff - Enrage_Timer) + 600000;
+        }
+        else
+            Enrage_Timer -= diff;
 
         if (StaticDisruption_Timer <= diff)
         {
@@ -279,25 +299,30 @@ struct boss_akilzonAI : public ScriptedAI
             TargetGUID = pTarget->GetGUID();
             DoCast(pTarget, SPELL_STATIC_DISRUPTION, false);
             me->SetInFront(me->getVictim());
-            StaticDisruption_Timer = (10+rand()%8)*1000; // < 20s
+            StaticDisruption_Timer = (diff - StaticDisruption_Timer) + (10+rand()%8)*1000; // < 20s
 
             /*if (float dist = me->IsWithinDist3d(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 5.0f) dist = 5.0f;
             SDisruptAOEVisual_Timer = 1000 + floor(dist / 30 * 1000.0f);*/
-        } else StaticDisruption_Timer -= diff;
+        }
+        else
+            StaticDisruption_Timer -= diff;
 
         if (GustOfWind_Timer <= diff)
         {
             Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
             if (!pTarget) pTarget = me->getVictim();
             DoCast(pTarget, SPELL_GUST_OF_WIND);
-            GustOfWind_Timer = (20+rand()%10)*1000; //20 to 30 seconds(bosskillers)
-        } else GustOfWind_Timer -= diff;
+            GustOfWind_Timer = (diff - GustOfWind_Timer) + (20+rand()%10)*1000; //20 to 30 seconds(bosskillers)
+        } else
+            GustOfWind_Timer -= diff;
 
         if (CallLighting_Timer <= diff)
         {
             DoCast(me->getVictim(), SPELL_CALL_LIGHTNING);
-            CallLighting_Timer = (12 + rand()%5)*1000; //totaly random timer. can't find any info on this
-        } else CallLighting_Timer -= diff;
+            CallLighting_Timer = (diff - CallLighting_Timer) + (12 + rand()%5)*1000; //totaly random timer. can't find any info on this
+        }
+        else
+            CallLighting_Timer -= diff;
 
         if (!isRaining && ElectricalStorm_Timer < 8000 + urand(0,5000))
         {
@@ -305,22 +330,21 @@ struct boss_akilzonAI : public ScriptedAI
             isRaining = true;
         }
 
-        if (ElectricalStorm_Timer <= diff) {
+        if (ElectricalStorm_Timer <= diff)
+        {
             Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 50, true);
             if (!pTarget)
             {
                 EnterEvadeMode();
                 return;
             }
-            pTarget->CastSpell(pTarget, 44007, true);//cloud visual
+            pTarget->CastSpell(pTarget, SPELL_ELECTRICAL_STORM_VISUAL, true);//cloud visual
             DoCast(pTarget, SPELL_ELECTRICAL_STORM, false);//storm cyclon + visual
+
             float x,y,z;
             pTarget->GetPosition(x,y,z);
-            if (pTarget)
-            {
-                pTarget->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
-                pTarget->SendMonsterMove(x,y,me->GetPositionZ()+15,0);
-            }
+            pTarget->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
+            pTarget->SendMonsterMove(x,y,me->GetPositionZ()+15,0);
             Unit *Cloud = me->SummonTrigger(x, y, me->GetPositionZ()+16, 0, 15000);
             if (Cloud)
             {
@@ -331,25 +355,34 @@ struct boss_akilzonAI : public ScriptedAI
                 Cloud->setFaction(35);
                 Cloud->SetMaxHealth(9999999);
                 Cloud->SetHealth(9999999);
-                Cloud->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                Cloud->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             }
-            ElectricalStorm_Timer = 60000; //60 seconds(bosskillers)
+            ElectricalStorm_Timer = (diff - ElectricalStorm_Timer) + 60000; //60 seconds (bosskillers)
             StormCount = 1;
             StormSequenceTimer = 0;
-        } else ElectricalStorm_Timer -= diff;
+        }
+        else
+            ElectricalStorm_Timer -= diff;
 
         if (SummonEagles_Timer <= diff)
         {
-            me->MonsterYell(SAY_ONSUMMON, LANG_UNIVERSAL, 0);
-            DoPlaySoundToSet(me, SOUND_ONSUMMON);
+            if (urand(0, 1))
+            {
+                me->MonsterYell(SAY_ONSUMMON2, LANG_UNIVERSAL, 0);
+                DoPlaySoundToSet(me, SOUND_ONSUMMON1);
+            }
+            else
+            {
+                me->MonsterYell(SAY_ONSUMMON2, LANG_UNIVERSAL, 0);
+                DoPlaySoundToSet(me, SOUND_ONSUMMON2);
+            }
 
             float x, y, z;
             me->GetPosition(x, y, z);
 
             for (uint8 i = 0; i < 8; ++i)
             {
-                Unit* bird = Unit::GetUnit(*me,BirdGUIDs[i]);
-                if (!bird) //they despawned on die
+                if (!Unit::GetUnit(*me,BirdGUIDs[i])) // they despawn on death
                 {
                     if (Unit *pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     {
@@ -359,8 +392,8 @@ struct boss_akilzonAI : public ScriptedAI
                         if (z > 95)
                             z = 95 - urand(0,5);
                     }
-                    Creature *pCreature = me->SummonCreature(MOB_SOARING_EAGLE, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
-                    if (pCreature)
+
+                    if (Creature *pCreature = me->SummonCreature(MOB_SOARING_EAGLE, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
                     {
                         pCreature->AddThreat(me->getVictim(), 1.0f);
                         pCreature->AI()->AttackStart(me->getVictim());
@@ -368,8 +401,10 @@ struct boss_akilzonAI : public ScriptedAI
                     }
                 }
             }
-            SummonEagles_Timer = 999999;
-        } else SummonEagles_Timer -= diff;
+            SummonEagles_Timer = (diff - SummonEagles_Timer) + 999999;
+        }
+        else
+            SummonEagles_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -391,9 +426,10 @@ struct mob_soaring_eagleAI : public ScriptedAI
         me->SetUnitMovementFlags(MOVEFLAG_LEVITATING);
     }
 
-    void EnterCombat(Unit * /*who*/) {DoZoneInCombat();}
-
-    void MoveInLineOfSight(Unit* /*who*/) {}
+    void EnterCombat(Unit * /*who*/)
+    {
+        DoZoneInCombat();
+    }
 
     void MovementInform(uint32, uint32)
     {

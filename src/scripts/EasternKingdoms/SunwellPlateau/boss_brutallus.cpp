@@ -137,11 +137,13 @@ struct boss_brutallusAI : public ScriptedAI
         if (pInstance)
         {
             pInstance->SetData(DATA_BRUTALLUS_EVENT, DONE);
-            Creature *Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0);
-            Madrigosa->CastSpell(Madrigosa, SPELL_SUMMON_FELBLAZE_VISUAL, true);
-            Madrigosa->CastSpell(Madrigosa, 45068, true);
-            Madrigosa->CastSpell(Madrigosa, SPELL_SUMMON_FELBLAZE, true);
-            Madrigosa->SetVisibility(VISIBILITY_OFF);
+            if (Creature* Madrigosa = Unit::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
+            {
+                Madrigosa->CastSpell(Madrigosa, SPELL_SUMMON_FELBLAZE_VISUAL, true);
+                Madrigosa->CastSpell(Madrigosa, 45068, true);
+                Madrigosa->CastSpell(Madrigosa, SPELL_SUMMON_FELBLAZE, true);
+                Madrigosa->SetVisibility(VISIBILITY_OFF);
+            }
         }
     }
  

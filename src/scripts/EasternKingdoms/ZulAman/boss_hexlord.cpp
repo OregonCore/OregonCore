@@ -27,83 +27,124 @@ EndScriptData */
 #include "ScriptPCH.h"
 #include "zulaman.h"
 
-#define YELL_AGGRO              "Da shadow gonna fall on you... "
-#define SOUND_YELL_AGGRO        12041
-#define YELL_SPIRIT_BOLTS       "Your soul gonna bleed!"
-#define SOUND_YELL_SPIRIT_BOLTS 12047
-#define YELL_DRAIN_POWER        "Darkness comin\' for you"
-#define SOUND_YELL_DRAIN_POWER  12046
-#define YELL_KILL_ONE           "Dis a nightmare ya don\' wake up from!"
-#define SOUND_YELL_KILL_ONE     12043
-#define YELL_KILL_TWO           "Azzaga choogo zinn!"
-#define SOUND_YELL_KILL_TWO     12044
-#define YELL_DEATH              "Dis not... da end of me..."
-#define SOUND_YELL_DEATH        12051
+enum //Sounds
+{
+    SOUND_YELL_AGGRO        = 12041,
+    SOUND_YELL_SPIRIT_BOLTS = 12047,
+    SOUND_YELL_DRAIN_POWER  = 12046,
+    SOUND_YELL_KILL_ONE     = 12043,
+    SOUND_YELL_KILL_TWO     = 12044,
+    SOUND_YELL_DEATH        = 12051
+};
 
-#define SPELL_SPIRIT_BOLTS      43383
-#define SPELL_DRAIN_POWER       44131
-#define SPELL_SIPHON_SOUL       43501
+static const char YELL_AGGRO[]        = "Da shadow gonna fall on you... ";
+static const char YELL_SPIRIT_BOLTS[] = "Your soul gonna bleed!";
+static const char YELL_DRAIN_POWER[]  = "Darkness comin\' for you";
+static const char YELL_KILL_ONE[]     = "Dis a nightmare ya don\' wake up from!";
+static const char YELL_KILL_TWO[]     = "Azzaga choogo zinn!";
+static const char YELL_DEATH[]        = "Dis not... da end of me...";
 
-#define MOB_TEMP_TRIGGER        23920
+enum //Misc
+{
+    MOB_TEMP_TRIGGER = 23920
+};
 
-//Defines for various powers he uses after using soul drain
+enum //Spells
+{
+    SPELL_SPIRIT_BOLTS      = 43383,
+    SPELL_DRAIN_POWER       = 44131,
+    SPELL_SIPHON_SOUL       = 43501,
 
-//Druid
-#define SPELL_DR_LIFEBLOOM      43421
-#define SPELL_DR_THORNS         43420
-#define SPELL_DR_MOONFIRE       43545
+    // Druid
+    SPELL_DR_LIFEBLOOM      = 43421,
+    SPELL_DR_THORNS         = 43420,
+    SPELL_DR_MOONFIRE       = 43545,
 
-//Hunter
-#define SPELL_HU_EXPLOSIVE_TRAP 43444
-#define SPELL_HU_FREEZING_TRAP  43447
-#define SPELL_HU_SNAKE_TRAP     43449
+    // Hunter
+    SPELL_HU_EXPLOSIVE_TRAP = 43444,
+    SPELL_HU_FREEZING_TRAP  = 43447,
+    SPELL_HU_SNAKE_TRAP     = 43449,
 
-//Mage
-#define SPELL_MG_FIREBALL       41383
-#define SPELL_MG_FROSTBOLT      43428
-#define SPELL_MG_FROST_NOVA     43426
-#define SPELL_MG_ICE_LANCE      43427
+    // Mage
+    SPELL_MG_FIREBALL       = 41383,
+    SPELL_MG_FROSTBOLT      = 43428,
+    SPELL_MG_FROST_NOVA     = 43426,
+    SPELL_MG_ICE_LANCE      = 43427,
 
-//Paladin
-#define SPELL_PA_CONSECRATION   43429
-#define SPELL_PA_HOLY_LIGHT     43451
-#define SPELL_PA_AVENGING_WRATH 43430
+    // Paladin
+    SPELL_PA_CONSECRATION   = 43429,
+    SPELL_PA_HOLY_LIGHT     = 43451,
+    SPELL_PA_AVENGING_WRATH = 43430,
 
-//Priest
-#define SPELL_PR_HEAL           41372
-#define SPELL_PR_MIND_CONTROL   43550
-#define SPELL_PR_MIND_BLAST     41374
-#define SPELL_PR_SW_DEATH       41375
-#define SPELL_PR_PSYCHIC_SCREAM 43432
-#define SPELL_PR_PAIN_SUPP      44416
+    // Priest
+    SPELL_PR_HEAL           = 41372,
+    SPELL_PR_MIND_CONTROL   = 43550,
+    SPELL_PR_MIND_BLAST     = 41374,
+    SPELL_PR_SW_DEATH       = 41375,
+    SPELL_PR_PSYCHIC_SCREAM = 43432,
+    SPELL_PR_PAIN_SUPP      = 44416,
 
-//Rogue
-#define SPELL_RO_BLIND          43433
-#define SPELL_RO_SLICE_DICE     43457
-#define SPELL_RO_WOUND_POISON   39665
+    // Rogue
+    SPELL_RO_BLIND          = 43433,
+    SPELL_RO_SLICE_DICE     = 43457,
+    SPELL_RO_WOUND_POISON   = 39665,
 
-//Shaman
-#define SPELL_SH_FIRE_NOVA      43436
-#define SPELL_SH_HEALING_WAVE   43548
-#define SPELL_SH_CHAIN_LIGHT    43435
+    // Shaman
+    SPELL_SH_FIRE_NOVA      = 43436,
+    SPELL_SH_HEALING_WAVE   = 43548,
+    SPELL_SH_CHAIN_LIGHT    = 43435,
 
-//Warlock
-#define SPELL_WL_CURSE_OF_DOOM  43439
-#define SPELL_WL_RAIN_OF_FIRE   43440
-#define SPELL_WL_UNSTABLE_AFFL  35183
+    // Warlock
+    SPELL_WL_CURSE_OF_DOOM  = 43439,
+    SPELL_WL_RAIN_OF_FIRE   = 43440,
+    SPELL_WL_UNSTABLE_AFFL  = 35183,
 
-//Warrior
-#define SPELL_WR_SPELL_REFLECT  43443
-#define SPELL_WR_WHIRLWIND      43442
-#define SPELL_WR_MORTAL_STRIKE  43441
+    // Warrior
+    SPELL_WR_SPELL_REFLECT  = 43443,
+    SPELL_WR_WHIRLWIND      = 43442,
+    SPELL_WR_MORTAL_STRIKE  = 43441,
 
-#define ORIENT                  1.5696f
-#define POS_Y                   921.2795f
-#define POS_Z                   33.8883f
+    // --- Mobs' Spells ---
 
-static float Pos_X[4] = {112.8827f, 107.8827f, 122.8827f, 127.8827f};
+    // Thurg
+    SPELL_BLOODLUST          = 43578,
+    SPELL_CLEAVE             = 15496,
 
-static uint32 AddEntryList[8]=
+    // Alyson Antille
+    SPELL_FLASH_HEAL         = 43575,
+    SPELL_DISPEL_MAGIC       = 43577,
+
+    // Gazakroth
+    SPELL_FIREBOLT           = 43584,
+
+    // Lord Raadan
+    SPELL_FLAME_BREATH       = 43582,
+    SPELL_THUNDERCLAP        = 43583,
+
+    // DarkHeart
+    SPELL_PSYCHIC_WAIL       = 43590,
+
+    // Slither
+    SPELL_VENOM_SPIT         = 43579,
+
+    // Fenstalker
+    SPELL_VOLATILE_INFECTION = 43586,
+
+    // Koragg
+    SPELL_COLD_STARE         = 43593,
+    SPELL_MIGHTY_BLOW        = 43592
+};
+
+static const float ORIENT =   1.5696f;
+static const float POS_Y  = 921.2795f;
+static const float POS_Z  =  33.8883f;
+
+static const float Pos_X[4] = { 112.8827f,
+                                107.8827f,
+                                122.8827f,
+                                127.8827f };
+
+static const uint32 AddEntryList[8]=
 {
     24240, //Alyson Antille
     24241, //Thurg
@@ -191,7 +232,7 @@ struct boss_hexlord_addAI : public ScriptedAI
 
     void UpdateAI(const uint32 /*diff*/)
     {
-        if (pInstance && pInstance->GetData(DATA_HEXLORDEVENT) != IN_PROGRESS)
+        if (pInstance && pInstance->GetData(ENCOUNTER_HEXLORD) != IN_PROGRESS)
         {
             EnterEvadeMode();
             return;
@@ -230,7 +271,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
     void Reset()
     {
         if (pInstance)
-            pInstance->SetData(DATA_HEXLORDEVENT, NOT_STARTED);
+            pInstance->SetData(ENCOUNTER_HEXLORD, NOT_STARTED);
 
         SpiritBolts_Timer = 20000;
         DrainPower_Timer = 60000;
@@ -249,7 +290,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
     void EnterCombat(Unit* /*who*/)
     {
         if (pInstance)
-            pInstance->SetData(DATA_HEXLORDEVENT, IN_PROGRESS);
+            pInstance->SetData(ENCOUNTER_HEXLORD, IN_PROGRESS);
 
         DoZoneInCombat();
         me->MonsterYell(YELL_AGGRO, LANG_UNIVERSAL, 0);
@@ -286,7 +327,7 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
     void JustDied(Unit* /*victim*/)
     {
         if (pInstance)
-            pInstance->SetData(DATA_HEXLORDEVENT, DONE);
+            pInstance->SetData(ENCOUNTER_HEXLORD, DONE);
 
         me->MonsterYell(YELL_DEATH, LANG_UNIVERSAL, 0);
         DoPlaySoundToSet(me, SOUND_YELL_DEATH);
@@ -469,9 +510,6 @@ struct boss_hex_lord_malacrassAI : public ScriptedAI
     }
 };
 
-#define SPELL_BLOODLUST       43578
-#define SPELL_CLEAVE          15496
-
 struct boss_thurgAI : public boss_hexlord_addAI
 {
 
@@ -513,9 +551,6 @@ struct boss_thurgAI : public boss_hexlord_addAI
         boss_hexlord_addAI::UpdateAI(diff);
     }
 };
-
-#define SPELL_FLASH_HEAL     43575
-#define SPELL_DISPEL_MAGIC   43577
 
 struct boss_alyson_antilleAI : public boss_hexlord_addAI
 {
@@ -599,8 +634,6 @@ struct boss_alyson_antilleAI : public boss_hexlord_addAI
     }
 };
 
-#define SPELL_FIREBOLT        43584
-
 struct boss_gazakrothAI : public boss_hexlord_addAI
 {
     boss_gazakrothAI(Creature *c) : boss_hexlord_addAI(c)  {}
@@ -643,9 +676,6 @@ struct boss_gazakrothAI : public boss_hexlord_addAI
     }
 };
 
-#define SPELL_FLAME_BREATH    43582
-#define SPELL_THUNDERCLAP     43583
-
 struct boss_lord_raadanAI : public boss_hexlord_addAI
 {
     boss_lord_raadanAI(Creature *c) : boss_hexlord_addAI(c)  {}
@@ -682,8 +712,6 @@ struct boss_lord_raadanAI : public boss_hexlord_addAI
     }
 };
 
-#define SPELL_PSYCHIC_WAIL   43590
-
 struct boss_darkheartAI : public boss_hexlord_addAI
 {
     boss_darkheartAI(Creature *c) : boss_hexlord_addAI(c)  {}
@@ -709,8 +737,6 @@ struct boss_darkheartAI : public boss_hexlord_addAI
         boss_hexlord_addAI::UpdateAI(diff);
     }
 };
-
-#define SPELL_VENOM_SPIT    43579
 
 struct boss_slitherAI : public boss_hexlord_addAI
 {
@@ -755,9 +781,6 @@ struct boss_slitherAI : public boss_hexlord_addAI
     }
 };
 
-//Fenstalker
-#define SPELL_VOLATILE_INFECTION 43586
-
 struct boss_fenstalkerAI : public boss_hexlord_addAI
 {
     boss_fenstalkerAI(Creature *c) : boss_hexlord_addAI(c) {}
@@ -785,10 +808,6 @@ struct boss_fenstalkerAI : public boss_hexlord_addAI
         boss_hexlord_addAI::UpdateAI(diff);
     }
 };
-
-//Koragg
-#define SPELL_COLD_STARE      43593
-#define SPELL_MIGHTY_BLOW     43592
 
 struct boss_koraggAI : public boss_hexlord_addAI
 {
@@ -869,6 +888,7 @@ CreatureAI* GetAI_boss_koragg(Creature* pCreature)
 {
     return new boss_koraggAI (pCreature);
 }
+
 void AddSC_boss_hex_lord_malacrass()
 {
     Script *newscript;

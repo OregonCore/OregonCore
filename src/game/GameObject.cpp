@@ -437,14 +437,10 @@ void GameObject::Update(uint32 diff)
                 //any return here in case battleground traps
             }
 
-            if (GetOwnerGUID())
+            if (GetSpellId() || GetOwnerGUID())
             {
-                if (Unit* owner = GetOwner())
-                {
-                    owner->RemoveGameObject(this, false);
-                    SetRespawnTime(0);
-                    Delete();
-                }
+                SetRespawnTime(0);
+                Delete();
                 return;
             }
 
@@ -1251,6 +1247,7 @@ void GameObject::Use(Unit* user)
                     return;
             }
 
+            user->RemoveAurasByType(SPELL_AURA_MOUNTED);
             spellId = info->spellcaster.spellId;
 
             AddUse();
@@ -1291,12 +1288,15 @@ void GameObject::Use(Unit* user)
 
             Player* player = user->ToPlayer();
 
-            if (player->CanUseBattleGroundObject())
+            if (player->CanUseBattleGroundObject(this))
             {
                 // in battleground check
                 BattleGround *bg = player->GetBattleGround();
                 if (!bg)
                     return;
+
+                player->RemoveAurasByType(SPELL_AURA_MOD_STEALTH);
+                player->RemoveAurasByType(SPELL_AURA_MOD_INVISIBILITY);
                 // BG flag click
                 // AB:
                 // 15001
@@ -1316,12 +1316,15 @@ void GameObject::Use(Unit* user)
 
             Player* player = user->ToPlayer();
 
-            if (player->CanUseBattleGroundObject())
+            if (player->CanUseBattleGroundObject(this))
             {
                 // in battleground check
                 BattleGround *bg = player->GetBattleGround();
                 if (!bg)
                     return;
+
+                player->RemoveAurasByType(SPELL_AURA_MOD_STEALTH);
+                player->RemoveAurasByType(SPELL_AURA_MOD_INVISIBILITY);
                 // BG flag dropped
                 // WS:
                 // 179785 - Silverwing Flag
@@ -1331,6 +1334,8 @@ void GameObject::Use(Unit* user)
                 GameObjectInfo const* info = GetGOInfo();
                 if (info)
                 {
+                    user->InterruptNonMeleeSpells(true, 0, true);
+
                     switch(info->id)
                     {
                         case 179785:                        // Silverwing Flag

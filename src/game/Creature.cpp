@@ -454,7 +454,10 @@ bool Creature::UpdateEntry(uint32 Entry, uint32 team, const CreatureData *data)
 
     // trigger creature is always not selectable and can not be attacked
     if (isTrigger())
+    {
         SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        AddUnitMovementFlag(MOVEFLAG_LEVITATING);
+    }
 
     if (isTotem() || isTrigger()
         || GetCreatureType() == CREATURE_TYPE_CRITTER)
@@ -2026,9 +2029,9 @@ void Creature::_AddCreatureSpellCooldown(uint32 spell_id, time_t end_time)
     m_CreatureSpellCooldowns[spell_id] = end_time;
 }
 
-void Creature::_AddCreatureCategoryCooldown(uint32 category, time_t apply_time)
+void Creature::_AddCreatureCategoryCooldown(uint32 category, time_t end_time)
 {
-    m_CreatureCategoryCooldowns[category] = apply_time;
+    m_CreatureCategoryCooldowns[category] = end_time;
 }
 
 void Creature::AddCreatureSpellCooldown(uint32 spellid)
@@ -2038,6 +2041,7 @@ void Creature::AddCreatureSpellCooldown(uint32 spellid)
         return;
 
     uint32 cooldown = GetSpellRecoveryTime(spellInfo);
+   
     if (cooldown)
         _AddCreatureSpellCooldown(spellid, time(NULL) + cooldown/IN_MILLISECONDS);
 
@@ -2045,6 +2049,19 @@ void Creature::AddCreatureSpellCooldown(uint32 spellid)
         _AddCreatureCategoryCooldown(spellInfo->Category, time(NULL));
 
     m_GlobalCooldown = spellInfo->StartRecoveryTime;
+
+    if(Unit* owner = GetCharmerOrOwner())
+        if (owner->GetTypeId() == TYPEID_PLAYER)
+        {
+            WorldPacket data(SMSG_SPELL_COOLDOWN, (4+8));
+            data << uint64(GetGUID());
+            data << uint8(0x0);                                     // flags (0x1, 0x2)
+            time_t curTime = time(NULL);
+            data << uint32(spellid);
+            data << uint32(cooldown);                               // in m.secs
+
+            owner->ToPlayer()->GetSession()->SendPacket(&data);
+        }
 }
 
 bool Creature::HasCategoryCooldown(uint32 spell_id) const
