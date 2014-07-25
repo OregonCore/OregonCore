@@ -29,6 +29,7 @@
 #include "Database/SQLStorage.h"
 
 #include "Utilities/UnorderedMap.h"
+#include "VMapFactory.h"
 #include <map>
 
 class Player;
@@ -321,6 +322,21 @@ inline uint32 GetSpellRangeType(SpellRangeEntry const *range) { return (range ? 
 inline uint32 GetSpellRecoveryTime(SpellEntry const *spellInfo) { return spellInfo->RecoveryTime > spellInfo->CategoryRecoveryTime ? spellInfo->RecoveryTime : spellInfo->CategoryRecoveryTime; }
 int32 GetSpellDuration(SpellEntry const *spellInfo);
 int32 GetSpellMaxDuration(SpellEntry const *spellInfo);
+
+inline bool IsSpellIgnoringLOS(SpellEntry const* spellInfo)
+{
+    if (spellInfo->AttributesEx2 & SPELL_ATTR_EX2_IGNORE_LOS)
+        return true;
+
+    if (!VMAP::VMapFactory::checkSpellForLoS(spellInfo->Id))
+        return true;
+
+    // Spells with area destinations also belong here
+    if (spellInfo->Targets & (TARGET_FLAG_SOURCE_LOCATION | TARGET_FLAG_DEST_LOCATION))
+        return true;
+
+    return false;
+}
 
 inline float GetSpellRadius(SpellEntry const *spellInfo, uint32 effectIdx, bool positive)
 {
@@ -1073,6 +1089,7 @@ class SpellMgr
         void LoadSkillLineAbilityMap();
         void LoadSpellPetAuras();
         void LoadSpellCustomAttr();
+        void LoadSpellCustomCooldowns();
         void LoadSpellLinked();
         void LoadSpellEnchantProcData();
 

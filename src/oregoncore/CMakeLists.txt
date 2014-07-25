@@ -14,12 +14,12 @@ file(GLOB sources_localdir *.cpp *.h)
 set(oregon-core_SRCS
   ${oregon-core_SRCS}
   ${sources_localdir}
+  ${sources_Debugging}
 )
 
 if( WIN32 )
   set(oregon-core_SRCS
     ${oregon-core_SRCS}
-    ${sources_Debugging}
     OregonCore.rc
   )
 endif()
@@ -51,7 +51,7 @@ endif()
 add_dependencies(oregon-core revision.h)
 
 if( UNIX )
-  set(oregon-core_LINK_FLAGS "-pthread ${oregon-core_LINK_FLAGS}")
+  set(oregon-core_LINK_FLAGS "-pthread -rdynamic ${oregon-core_LINK_FLAGS}")
 endif()
 
 set_target_properties(oregon-core PROPERTIES LINK_FLAGS "${oregon-core_LINK_FLAGS}")
@@ -74,6 +74,14 @@ target_link_libraries(oregon-core
   ${ZLIB_LIBRARIES}
   ${OSX_LIBS}
 )
+
+if( UNIX )
+  target_link_libraries(oregon-core
+    ${BFD_LIBRARY}
+    dl
+    ${IBERTY_LIBRARY}
+  )
+endif()
 
 if( WIN32 )
   add_custom_command(TARGET oregon-core

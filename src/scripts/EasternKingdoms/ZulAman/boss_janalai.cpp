@@ -41,7 +41,7 @@ enum eEnums
     SAY_EVENT_STRANGERS         = -1568008,
     SAY_EVENT_FRIENDS           = -1568009,
 
-// Jan'alai
+    // Jan'alai
     SPELL_FLAME_BREATH          = 43140,
     SPELL_FIRE_WALL             = 43113,
     SPELL_ENRAGE                = 44779,
@@ -50,22 +50,22 @@ enum eEnums
     SPELL_HATCH_ALL             = 43144,
     SPELL_BERSERK               = 45078,
 
-// -- Fire Bob Spells
+    // -- Fire Bob Spells
     SPELL_FIRE_BOMB_CHANNEL     = 42621, // last forever
     SPELL_FIRE_BOMB_THROW       = 42628, // throw visual
     SPELL_FIRE_BOMB_DUMMY       = 42629, // bomb visual
     SPELL_FIRE_BOMB_DAMAGE      = 42630,
 
-// --Summons
+    // --Summons
     MOB_AMANI_HATCHER           = 23818,
     MOB_HATCHLING               = 23598,   // 42493
     MOB_EGG                     = 23817,
     MOB_FIRE_BOMB               = 23920,
 
-// -- Hatcher Spells
+    // -- Hatcher Spells
     SPELL_HATCH_EGG             = 43734,   // 42471
 
-// -- Hatchling Spells
+    // -- Hatchling Spells
     SPELL_FLAMEBUFFET           = 43299
 };
 
@@ -138,7 +138,7 @@ struct boss_janalaiAI : public ScriptedAI
     void Reset()
     {
         if (pInstance)
-            pInstance->SetData(DATA_JANALAIEVENT, NOT_STARTED);
+            pInstance->SetData(ENCOUNTER_JANALAI, NOT_STARTED);
 
         FireBreathTimer = 8000;
         BombTimer = 30000;
@@ -165,7 +165,7 @@ struct boss_janalaiAI : public ScriptedAI
         DoScriptText(SAY_DEATH, me);
 
         if (pInstance)
-            pInstance->SetData(DATA_JANALAIEVENT, DONE);
+            pInstance->SetData(ENCOUNTER_JANALAI, DONE);
     }
 
     void KilledUnit(Unit* /*victim*/)
@@ -176,7 +176,7 @@ struct boss_janalaiAI : public ScriptedAI
     void EnterCombat(Unit * /*who*/)
     {
         if (pInstance)
-            pInstance->SetData(DATA_JANALAIEVENT, IN_PROGRESS);
+            pInstance->SetData(ENCOUNTER_JANALAI, IN_PROGRESS);
 
         DoScriptText(SAY_AGGRO, me);
         DoZoneInCombat();
@@ -208,7 +208,8 @@ struct boss_janalaiAI : public ScriptedAI
                     wall = me->SummonCreature(MOB_FIRE_BOMB, FireWallCoords[i][0],FireWallCoords[i][1]+5*(j-1),FireWallCoords[i][2],FireWallCoords[i][3],TEMPSUMMON_TIMED_DESPAWN,15000);
                 else
                     wall = me->SummonCreature(MOB_FIRE_BOMB, FireWallCoords[i][0]-2+4*j,FireWallCoords[i][1],FireWallCoords[i][2],FireWallCoords[i][3],TEMPSUMMON_TIMED_DESPAWN,15000);
-                if (wall) wall->CastSpell(wall, SPELL_FIRE_WALL, true);
+                if (wall)
+                    wall->CastSpell(wall, SPELL_FIRE_WALL, true);
             }
         }
     }
@@ -297,7 +298,9 @@ struct boss_janalaiAI : public ScriptedAI
             if (BombCount == 40)
             {
                 BombSequenceTimer = 5000;
-            } else BombSequenceTimer = 100;
+            }
+            else
+                BombSequenceTimer = 100;
         }
         else
         {
@@ -381,7 +384,9 @@ struct boss_janalaiAI : public ScriptedAI
                         DoTeleportPlayer(i_pl, JanalainPos[0][0]-5+rand()%10, JanalainPos[0][1]-5+rand()%10, JanalainPos[0][2], 0);
             //DoCast(Temp, SPELL_SUMMON_PLAYERS, true) // core bug, spell does not work if too far
             return;
-        } else BombTimer -= diff;
+        }
+        else
+            BombTimer -= diff;
 
         if (!noeggs)
         {
@@ -408,7 +413,9 @@ struct boss_janalaiAI : public ScriptedAI
                 }
                 else
                     noeggs = true;
-            } else HatcherTimer -= diff;
+            }
+            else
+                HatcherTimer -= diff;
         }
 
         if (ResetTimer <= diff)
@@ -421,7 +428,9 @@ struct boss_janalaiAI : public ScriptedAI
                 return;
             }
             ResetTimer = 5000;
-        } else ResetTimer -= diff;
+        }
+        else
+            ResetTimer -= diff;
 
         DoMeleeAttackIfReady();
 
@@ -437,7 +446,9 @@ struct boss_janalaiAI : public ScriptedAI
                 isFlameBreathing = true;
             }
             FireBreathTimer = 8000;
-        } else FireBreathTimer -= diff;
+        }
+        else
+            FireBreathTimer -= diff;
     }
 };
 
@@ -546,7 +557,7 @@ struct mob_amanishi_hatcherAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!pInstance || !(pInstance->GetData(DATA_JANALAIEVENT) == IN_PROGRESS))
+        if (!pInstance || !(pInstance->GetData(ENCOUNTER_JANALAI) == IN_PROGRESS))
         {
             me->DisappearAndDie();
             return;
@@ -582,7 +593,9 @@ struct mob_amanishi_hatcherAI : public ScriptedAI
                 else
                     me->DisappearAndDie();
 
-            } else WaitTimer -= diff;
+            }
+            else
+                WaitTimer -= diff;
         }
     }
 };
@@ -617,7 +630,7 @@ struct mob_hatchlingAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!pInstance || !(pInstance->GetData(DATA_JANALAIEVENT) == IN_PROGRESS))
+        if (!pInstance || !(pInstance->GetData(ENCOUNTER_JANALAI) == IN_PROGRESS))
         {
             me->DisappearAndDie();
             return;
@@ -630,7 +643,9 @@ struct mob_hatchlingAI : public ScriptedAI
         {
             DoCast(me->getVictim(), SPELL_FLAMEBUFFET, false);
             BuffetTimer = 10000;
-        } else BuffetTimer -= diff;
+        }
+        else
+            BuffetTimer -= diff;
 
         DoMeleeAttackIfReady();
     }

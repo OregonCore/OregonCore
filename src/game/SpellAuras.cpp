@@ -1606,7 +1606,15 @@ void Aura::TriggerSpell()
                     // Eye of Grillok
                     case 38495:
                     {
-                        m_target->CastSpell(m_target, 38530, true);
+                        if (m_target->FindNearestCreature(22177, 10.0f, true))
+                        {
+                            if (caster->GetTypeId() == TYPEID_PLAYER)
+                            {
+                                Creature* bunny = caster->FindNearestCreature(22177, 10.0f, true);
+                                caster->CastSpell(bunny, 38530, true);
+                                caster->RemoveAura(38495,0);
+                            }
+                        }
                         return;
                     }
                     // Absorb Eye of Grillok (Zezzak's Shard)

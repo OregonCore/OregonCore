@@ -1815,10 +1815,7 @@ void Spell::SetTargetMap(uint32 i, uint32 cur)
                 case TARGET_DST_DB:
                     if (SpellTargetPosition const* st = spellmgr.GetSpellTargetPosition(m_spellInfo->Id))
                     {
-                        //TODO: fix this check
-                        if (m_spellInfo->Effect[0] == SPELL_EFFECT_TELEPORT_UNITS
-                            || m_spellInfo->Effect[1] == SPELL_EFFECT_TELEPORT_UNITS
-                            || m_spellInfo->Effect[2] == SPELL_EFFECT_TELEPORT_UNITS)
+                        if (IsSpellHaveEffect(m_spellInfo, SPELL_EFFECT_TELEPORT_UNITS))
                             m_targets.setDst(st->target_X, st->target_Y, st->target_Z, st->target_Orientation, (int32)st->target_mapId);
                         else if (st->target_mapId == m_caster->GetMapId())
                             m_targets.setDst(st->target_X, st->target_Y, st->target_Z, st->target_Orientation);
@@ -2119,8 +2116,6 @@ void Spell::prepare(SpellCastTargets * targets, Aura* triggeredByAura)
     // Fill cost data (not use power for item casts)
     m_powerCost = m_CastItem ? 0 : CalculatePowerCost(m_spellInfo, m_caster, m_spellSchoolMask);
 
-    FillTargetMap();
-
     uint8 result = CanCast(true);
     if (result != 0 && !IsAutoRepeat())                      //always cast autorepeat dummy for triggering
     {
@@ -2155,6 +2150,8 @@ void Spell::prepare(SpellCastTargets * targets, Aura* triggeredByAura)
         m_caster->SetCurrentCastedSpell(this);
         SendSpellStart();
 
+        TriggerGlobalCooldown();
+
         if (m_caster->GetTypeId() == TYPEID_PLAYER)
             m_caster->ToPlayer()->AddGlobalCooldown(m_spellInfo,this);
 
@@ -2181,6 +2178,7 @@ void Spell::cancel(bool sendInterrupt)
     switch (oldState)
     {
         case SPELL_STATE_PREPARING:
+            CancelGlobalCooldown();
         case SPELL_STATE_DELAYED:
         {
             SendInterrupted(0);
@@ -2273,6 +2271,8 @@ void Spell::cast(bool skipCheck)
             return;
         }
     }
+
+    FillTargetMap();
 
     // triggered cast called from Spell::prepare where it was already checked
     if (!skipCheck)
@@ -3491,6 +3491,10 @@ uint8 Spell::CanCast(bool strict)
             return SPELL_FAILED_NOT_READY;
     }
 
+    // Check global cooldown
+    if (strict && !m_IsTriggeredSpell && HasGlobalCooldown())
+        return SPELL_FAILED_NOT_READY;
+
     // only allow triggered spells if at an ended battleground
     if (!m_IsTriggeredSpell && m_caster->GetTypeId() == TYPEID_PLAYER)
         if (BattleGround * bg = m_caster->ToPlayer()->GetBattleGround())
@@ -3557,7 +3561,7 @@ uint8 Spell::CanCast(bool strict)
                 return SPELL_FAILED_BAD_TARGETS;
 
             bool isTrigger = (target->ToCreature() && target->ToCreature()->isTrigger());
-            if (!m_IsTriggeredSpell && !isTrigger && VMAP::VMapFactory::checkSpellForLoS(m_spellInfo->Id) && !m_caster->IsWithinLOSInMap(target))
+            if (!m_IsTriggeredSpell && !isTrigger && !IsSpellIgnoringLOS(m_spellInfo) && !m_caster->IsWithinLOSInMap(target))
                 return SPELL_FAILED_LINE_OF_SIGHT;
 
             // auto selection spell rank implemented in WorldSession::HandleCastSpellOpcode
@@ -4011,7 +4015,7 @@ uint8 Spell::CanCast(bool strict)
 
                 // In BattleGround players can use only flags and banners
                 if (m_caster->ToPlayer()->InBattleGround() &&
-                    !m_caster->ToPlayer()->CanUseBattleGroundObject())
+                    !m_caster->ToPlayer()->CanUseBattleGroundObject(m_targets.getGOTarget()))
                     return SPELL_FAILED_TRY_AGAIN;
 
                 // get the lock entry
@@ -4558,15 +4562,15 @@ uint8 Spell::CheckCasterAuras() const
     //Check whether the cast should be prevented by any state you might have.
     uint8 prevented_reason = 0;
     // Have to check if there is a stun aura. Otherwise will have problems with ghost aura apply while logging out
-    if (!(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_STUNNED) && m_caster->HasAuraType(SPELL_AURA_MOD_STUN))
+    if (m_caster->HasAuraType(SPELL_AURA_MOD_STUN))
         prevented_reason = SPELL_FAILED_STUNNED;
-    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_CONFUSED) && !(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_CONFUSED))
+    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_CONFUSED))
         prevented_reason = SPELL_FAILED_CONFUSED;
-    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING) && !(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_FEARED))
+    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FLEEING))
         prevented_reason = SPELL_FAILED_FLEEING;
-    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SILENCED) && m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE)
+    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SILENCED))
         prevented_reason = SPELL_FAILED_SILENCED;
-    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED) && m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_PACIFY)
+    else if (m_caster->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED))
         prevented_reason = SPELL_FAILED_PACIFIED;
 
     // Attr must make flag drop spell totally immune from all effects
@@ -4576,13 +4580,15 @@ uint8 Spell::CheckCasterAuras() const
         {
             //Checking auras is needed now, because you are prevented by some state but the spell grants immunity.
             Unit::AuraMap const& auras = m_caster->GetAuras();
+            bool trapped;
             for (Unit::AuraMap::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
             {
                 if (itr->second)
                 {
                     if (GetSpellMechanicMask(itr->second->GetSpellProto(), itr->second->GetEffIndex()) & mechanic_immune)
                         continue;
-                    if (GetSpellSchoolMask(itr->second->GetSpellProto()) & school_immune)
+                    if (GetSpellSchoolMask(itr->second->GetSpellProto()) & school_immune &&                                    // we match school mask and
+                        !(trapped = (itr->second->GetSpellProto()->AttributesEx & SPELL_ATTR_EX_UNAFFECTED_BY_SCHOOL_IMMUNE))) // the aura doesn't block us
                         continue;
                     if ((1<<(itr->second->GetSpellProto()->Dispel)) & dispel_immune)
                         continue;
@@ -4592,33 +4598,48 @@ uint8 Spell::CheckCasterAuras() const
                     switch(itr->second->GetModifier()->m_auraname)
                     {
                         case SPELL_AURA_MOD_STUN:
-                            if (!(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_STUNNED))
+                            if (trapped || !(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_STUNNED))
                                 return SPELL_FAILED_STUNNED;
-                            break;
                         case SPELL_AURA_MOD_CONFUSE:
-                            if (!(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_CONFUSED))
+                            if (trapped || !(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_CONFUSED))
                                 return SPELL_FAILED_CONFUSED;
-                            break;
                         case SPELL_AURA_MOD_FEAR:
-                            if (!(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_FEARED))
+                            if (trapped || !(m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_FEARED))
                                 return SPELL_FAILED_FLEEING;
-                            break;
                         case SPELL_AURA_MOD_SILENCE:
                         case SPELL_AURA_MOD_PACIFY:
                         case SPELL_AURA_MOD_PACIFY_SILENCE:
-                            if (m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_PACIFY)
+                            if (trapped || m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_PACIFY)
                                 return SPELL_FAILED_PACIFIED;
                             else if (m_spellInfo->PreventionType == SPELL_PREVENTION_TYPE_SILENCE)
                                 return SPELL_FAILED_SILENCED;
-                            break;
-                        default:break;
                     }
                 }
             }
         }
         //You are prevented from casting and the spell casted does not grant immunity. Return a failed error.
         else
+        {
+            switch (prevented_reason)
+            {
+                case SPELL_FAILED_STUNNED:
+                    if (m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_STUNNED)
+                        return 0; // can cast
+                case SPELL_FAILED_CONFUSED:
+                    if (m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_CONFUSED)
+                        return 0;
+                case SPELL_FAILED_FLEEING:
+                    if (m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_FEARED)
+                        return 0;
+                case SPELL_FAILED_SILENCED:
+                case SPELL_FAILED_PACIFIED:
+                    if (m_spellInfo->PreventionType != SPELL_PREVENTION_TYPE_SILENCE &&
+                        m_spellInfo->PreventionType != SPELL_PREVENTION_TYPE_PACIFY)
+                        return 0;
+            }
+
             return prevented_reason;
+        }
     }
     return 0;                                               // all ok
 }
@@ -5314,7 +5335,7 @@ bool Spell::CheckTarget(Unit* target, uint32 eff)
     }
 
     //Do not check LOS for triggered spells
-    if (m_IsTriggeredSpell)
+    if (m_IsTriggeredSpell || IsSpellIgnoringLOS(m_spellInfo))
         return true;
 
     //Check targets for LOS visibility (except spells without range limitations)
@@ -5721,3 +5742,64 @@ void Spell::SetSpellValue(SpellValueMod mod, int32 value)
     }
 }
 
+enum eGCD {
+    MIN_GCD = 1000,
+    MAX_GCD = 1500
+};
+
+bool Spell::HasGlobalCooldown()
+{
+    // Only player or controlled units have global cooldown
+    if (m_caster->GetCharmInfo())
+        return m_caster->GetCharmInfo()->GetGlobalCooldownMgr().HasGlobalCooldown(m_spellInfo);
+    else if (m_caster->GetTypeId() == TYPEID_PLAYER)
+        return m_caster->ToPlayer()->GetGlobalCooldownMgr().HasGlobalCooldown(m_spellInfo);
+    else
+        return false;
+}
+
+void Spell::TriggerGlobalCooldown()
+{
+    int32 gcd = m_spellInfo->StartRecoveryTime;
+    if (!gcd)
+        return;
+
+    // Global cooldown can't leave range 1..1.5 secs
+    // There are some spells (mostly not casted directly by player) that have < 1 sec and > 1.5 sec global cooldowns
+    // but as tests show are not affected by any spell mods.
+    if (m_spellInfo->StartRecoveryTime >= MIN_GCD && m_spellInfo->StartRecoveryTime <= MAX_GCD)
+    {
+        // gcd modifier auras are applied only to own spells and only players have such mods
+        if (m_caster->GetTypeId() == TYPEID_PLAYER)
+            m_caster->ToPlayer()->ApplySpellMod(m_spellInfo->Id, SPELLMOD_GLOBAL_COOLDOWN, gcd, this);
+
+        // Apply haste rating
+        gcd = int32(float(gcd) * m_caster->GetFloatValue(UNIT_MOD_CAST_SPEED));
+        if (gcd < MIN_GCD)
+            gcd = MIN_GCD;
+        else if (gcd > MAX_GCD)
+            gcd = MAX_GCD;
+    }
+
+    // Only players or controlled units have global cooldown
+    if (m_caster->GetCharmInfo())
+        m_caster->GetCharmInfo()->GetGlobalCooldownMgr().AddGlobalCooldown(m_spellInfo, gcd);
+    else if (m_caster->GetTypeId() == TYPEID_PLAYER)
+        m_caster->ToPlayer()->GetGlobalCooldownMgr().AddGlobalCooldown(m_spellInfo, gcd);
+}
+
+void Spell::CancelGlobalCooldown()
+{
+    if (!m_spellInfo->StartRecoveryTime)
+        return;
+
+    // Cancel global cooldown when interrupting current cast
+    if (m_caster->GetCurrentSpell(CURRENT_GENERIC_SPELL) != this)
+        return;
+
+   // Only players or controlled units have global cooldown
+    if (m_caster->GetCharmInfo())
+        m_caster->GetCharmInfo()->GetGlobalCooldownMgr().CancelGlobalCooldown(m_spellInfo);
+    else if (m_caster->GetTypeId() == TYPEID_PLAYER)
+        m_caster->ToPlayer()->GetGlobalCooldownMgr().CancelGlobalCooldown(m_spellInfo);
+}

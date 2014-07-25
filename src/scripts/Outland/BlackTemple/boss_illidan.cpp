@@ -1103,6 +1103,7 @@ struct npc_akama_illidanAI : public ScriptedAI
             Illidan->RemoveAurasDueToSpell(SPELL_KNEEL);
             me->SetInFront(Illidan);
             Illidan->SetInFront(me);
+            me->SetFacingToObject(Illidan);
             me->GetMotionMaster()->MoveIdle();
             Illidan->GetMotionMaster()->MoveIdle();
             CAST_AI(boss_illidan_stormrageAI, Illidan->AI())->AkamaGUID = me->GetGUID();
@@ -1257,6 +1258,8 @@ struct npc_akama_illidanAI : public ScriptedAI
         case 1: // spirit appear
             Spirit[0]->SetVisibility(VISIBILITY_ON);
             Spirit[1]->SetVisibility(VISIBILITY_ON);
+            Spirit[0]->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+            Spirit[1]->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
             Timer = 2000;
             break;
         case 2: // spirit help

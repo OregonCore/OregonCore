@@ -323,6 +323,26 @@ Unit::Unit()
         m_reactiveTimer[i] = 0;
 }
 
+////////////////////////////////////////////////////////////
+// Methods of class GlobalCooldownMgr
+bool GlobalCooldownMgr::HasGlobalCooldown(SpellEntry const* spellInfo) const
+{
+    GlobalCooldownList::const_iterator itr = m_GlobalCooldowns.find(spellInfo->StartRecoveryCategory);
+    return itr != m_GlobalCooldowns.end() && itr->second.duration && getMSTimeDiff(itr->second.cast_time, getMSTime()) < itr->second.duration;
+}
+
+void GlobalCooldownMgr::AddGlobalCooldown(SpellEntry const* spellInfo, uint32 gcd)
+{
+    m_GlobalCooldowns[spellInfo->StartRecoveryCategory] = GlobalCooldown(gcd, getMSTime());
+}
+
+void GlobalCooldownMgr::CancelGlobalCooldown(SpellEntry const* spellInfo)
+{
+    m_GlobalCooldowns[spellInfo->StartRecoveryCategory].duration = 0;
+}
+
+////////////////////////////////////////////////////////////
+// Methods of class Unit
 Unit::~Unit()
 {
     // set current spells as deletable
@@ -3487,7 +3507,9 @@ bool Unit::AddAura(Aura *Aur)
                     // Instead of adding a new stack, just set the duration time
                     // we need to use time from Aur because of diminishing effects
                     aur2->SetAuraDuration(Aur->GetAuraMaxDuration());
+                    aur2->SetAuraProcCharges(Aur->m_procCharges);
                     aur2->UpdateAuraDuration();
+                    aur2->UpdateAuraCharges();
                     delete Aur;
                     return false;
                 }
@@ -4163,8 +4185,8 @@ void Unit::RemoveAllAuras()
 
 void Unit::RemoveArenaAuras(bool onleave)
 {
-    // in join, remove positive buffs, on end, remove negative
-    // used to remove positive visible auras in arenas
+    // in join, all positive buffs, on end, remove negative
+    // used to all positive visible auras in arenas
     for (AuraMap::iterator iter = m_Auras.begin(); iter != m_Auras.end();)
     {
         if (!(iter->second->GetSpellProto()->AttributesEx4 & (1<<21)) &&
@@ -4173,7 +4195,7 @@ void Unit::RemoveArenaAuras(bool onleave)
             (!(iter->second->GetSpellProto()->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY) ||
             !(iter->second->GetSpellProto()->Attributes & SPELL_ATTR_UNK8)) &&
                                                             // not unaffected by invulnerability auras or not having that unknown flag (that seemed the most probable)
-            (iter->second->IsPositive() ^ onleave))         // remove positive buffs on enter, negative buffs on leave
+            (!onleave || !iter->second->IsPositive()))      // remove all buffs on enter, negative buffs on leave
             RemoveAura(iter);
         else
             ++iter;
@@ -4517,8 +4539,8 @@ bool Unit::HandleHasteAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                 case 13877:
                 case 33735:
                 {
-                    target = SelectNearbyTarget();
-                    if (!target || target == pVictim)
+                    target = SelectNearbyTarget(pVictim);
+                    if (!target)
                         return false;
                     basepoints0 = damage;
                     triggered_spell_id = 22482;
@@ -4559,7 +4581,7 @@ bool Unit::HandleHasteAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
     return true;
 }
 
-bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAura, SpellEntry const * procSpell, uint32 /*procFlag*/, uint32 procEx, uint32 cooldown)
+bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAura, SpellEntry const * procSpell, uint32 procFlag, uint32 procEx, uint32 cooldown)
 {
     SpellEntry const *dummySpell = triggeredByAura->GetSpellProto();
     uint32 effIndex = triggeredByAura->GetEffIndex();
@@ -4603,7 +4625,9 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
                     if (procSpell && procSpell->Id == 12723)
                         return false;
 
-                    target = SelectNearbyTarget();
+                    target = SelectNearbyTarget(pVictim);
+                    if (!target)
+                        return false;
 
                     if (procSpell && procSpell->SpellFamilyFlags == 536870912 && procSpell->SpellIconID == 1648)        // Prevent Execute proc on targets with > 20% health
                         if (target && target->GetHealth() > target->GetMaxHealth()*0.2)
@@ -4611,9 +4635,6 @@ bool Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAu
 
                     if (procSpell && procSpell->SpellIconID == 83)      // Prevent Whirlwind proc 4 times. It should proc 1 time.
                         cooldown = 1;
-
-                    if (!target)
-                        return false;
 
                     triggered_spell_id = 12723;
                     basepoints0 = damage;
@@ -6300,11 +6321,29 @@ bool Unit::HandleProcTriggerSpell(Unit *pVictim, uint32 damage, Aura* triggeredB
             CastCustomSpell(pVictim,trigger_spell_id,&basepoints0,&basepoints1,NULL,true,castItem,triggeredByAura);
             return true;
         }
-        // Enlightenment (trigger only from mana cost spells)
-        case 35095:
+        case 12536:         // Clearcasting (trigger only from mana cost spells)
+        case 35095:         // Enlightenment (trigger only from mana cost spells)
         {
             if (!procSpell || procSpell->powerType != POWER_MANA || (procSpell->manaCost == 0 && procSpell->ManaCostPercentage == 0 && procSpell->manaCostPerlevel == 0))
                 return false;
+            break;
+        }
+        // Blackout
+        case 15269:
+        {
+            // Should not proc on self (Needs confirmation for SW:Death)
+            if (!pVictim || pVictim == this)
+                return false;
+
+            // Should not proc from periodic ticks of Shadow Word: Pain or Mind Flay. Only initial cast.
+            if (!procSpell || (procSpell->manaCost == 0 && procSpell->ManaCostPercentage == 0 && procSpell->manaCostPerlevel == 0))
+                return false;
+
+            // Should not proc from spells that don't deal damage.
+                            // Silence           // Mind Vision         // Mind Control
+			if (procSpell->Id == 15487 || procSpell->Id == 2096 || procSpell->Id == 605)
+				return false;
+
             break;
         }
     }
@@ -8222,6 +8261,12 @@ bool Unit::IsImmunedToSpell(SpellEntry const* spellInfo, bool /*useCharges*/)
     if (spellInfo->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY)
         return false;
 
+     // Single spell immunity.
+    SpellImmuneList const& idList = m_spellImmune[IMMUNITY_ID];
+    for (SpellImmuneList::const_iterator itr = idList.begin(); itr != idList.end(); ++itr)
+        if (itr->type == spellInfo->Id)
+            return true;
+
     SpellImmuneList const& dispelList = m_spellImmune[IMMUNITY_DISPEL];
     for (SpellImmuneList::const_iterator itr = dispelList.begin(); itr != dispelList.end(); ++itr)
         if (itr->type == spellInfo->Dispel)
@@ -8243,16 +8288,17 @@ bool Unit::IsImmunedToSpell(SpellEntry const* spellInfo, bool /*useCharges*/)
         if (itr->type == spellInfo->Mechanic)
             return true;
 
-    SpellImmuneList const& idList = m_spellImmune[IMMUNITY_ID];
-    for (SpellImmuneList::const_iterator itr = idList.begin(); itr != idList.end(); ++itr)
-        if (itr->type == spellInfo->Id)
-            return true;
-
     return false;
 }
 
 bool Unit::IsImmunedToSpellEffect(SpellEntry const* spellInfo, uint32 index) const
 {
+    if (!spellInfo)
+        return false;
+
+    if (spellInfo->Attributes & SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY)
+        return false;
+
     //If m_immuneToEffect type contain this effect type, IMMUNE effect.
     uint32 effect = spellInfo->Effect[index];
     SpellImmuneList const& effectList = m_spellImmune[IMMUNITY_EFFECT];
@@ -9588,7 +9634,11 @@ void Unit::ApplyDiminishingToDuration(DiminishingGroup group, int32 &duration,Un
     if (duration == -1 || group == DIMINISHING_NONE)/*(caster->IsFriendlyTo(this) && caster != this)*/
         return;
 
-        // test pet/charm masters instead pets/charmedsz
+    // Creatures other then pets do not suffer from Diminishing Returns
+    if(caster->GetTypeId() == TYPEID_UNIT && !caster->GetOwner())
+        return;
+
+    // Test pet/charm masters instead pets/charmedsz
     Unit const* targetOwner = GetCharmerOrOwner();
     Unit const* casterOwner = caster->GetCharmerOrOwner();
 
@@ -10771,7 +10821,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit * pTarget, uint32 procFlag,
         Aura *triggeredByAura = i->triggeredByAura;
         Modifier *auraModifier = triggeredByAura->GetModifier();
         SpellEntry const *spellInfo = triggeredByAura->GetSpellProto();
-        //uint32 effIndex = triggeredByAura->GetEffIndex();
+        uint32 effIndex = triggeredByAura->GetEffIndex();
         bool useCharges = triggeredByAura->m_procCharges > 0;
         // For players set spell cooldown if need
         uint32 cooldown = 0;
@@ -11158,7 +11208,7 @@ void Unit::UpdateReactives(uint32 p_time)
     }
 }
 
-Unit* Unit::SelectNearbyTarget(float dist) const
+Unit* Unit::SelectNearbyTarget(Unit* exclude, float dist) const
 {
     std::list<Unit *> targets;
     Oregon::AnyUnfriendlyUnitInObjectRangeCheck u_check(this, this, dist);
@@ -11168,6 +11218,9 @@ Unit* Unit::SelectNearbyTarget(float dist) const
     // remove current target
     if (getVictim())
         targets.remove(getVictim());
+
+    if (exclude)
+        targets.remove(exclude);
 
     // remove not LoS targets
     for (std::list<Unit *>::iterator tIter = targets.begin(); tIter != targets.end();)

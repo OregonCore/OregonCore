@@ -1692,6 +1692,10 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
 
             ResetContestedPvP();
 
+            // Remove fear and charm effects
+            RemoveSpellsCausingAura(SPELL_AURA_MOD_FEAR);
+            RemoveCharmAuras();
+
             // remove player from battleground on far teleport (when changing maps)
             if (BattleGround const* bg = GetBattleGround())
             {
@@ -2359,9 +2363,6 @@ void Player::SendLogXPGain(uint32 GivenXP, Unit* victim, uint32 RestXP, bool Raf
 
 void Player::GiveXP(uint32 xp, Unit* victim, bool disableRafBonus)
 {
-    if (xp < 1)
-        return;
-
     if (!isAlive())
         return;
 
@@ -2385,16 +2386,17 @@ void Player::GiveXP(uint32 xp, Unit* victim, bool disableRafBonus)
                 xp = uint32(xp*(1.0f + 5.0f / 100.0f));
         }
 
-    xp *= GetReferFriendXPMultiplier();
+    uint32 rested_bonus_xp = 0;
+    float RafMultiplier = GetReferFriendXPMultiplier() - 1;
 
-    // XP resting bonus for kill
-    uint32 rested_bonus_xp = victim ? GetXPRestBonus(xp) : 0;
-
-    if (!rested_bonus_xp && !disableRafBonus)
+    if (!disableRafBonus && RafMultiplier)
         // Refer-A-Friend Bonus XP (rest bonus doesnt count)
-        xp *= GetReferFriendXPMultiplier();
+        rested_bonus_xp = xp * RafMultiplier;
+    else if (victim)
+        // XP resting bonus for kill
+        rested_bonus_xp = GetXPRestBonus(xp);
 
-    SendLogXPGain(xp, victim, rested_bonus_xp, m_rafLink);
+    SendLogXPGain(xp, victim, rested_bonus_xp, (bool)m_rafLink);
 
     uint32 curXP = GetUInt32Value(PLAYER_XP);
     uint32 nextLvlXP = GetUInt32Value(PLAYER_NEXT_LEVEL_XP);
@@ -6941,10 +6943,6 @@ void Player::_ApplyItemMods(Item *item, uint8 slot,bool apply)
     ItemPrototype const *proto = item->GetProto();
 
     if (!proto)
-        return;
-
-    // don't apply/remove mods if the weapon is disarmed
-    if (item->GetSlot() == EQUIPMENT_SLOT_MAINHAND && !IsUseEquippedWeapon(true))
         return;
 
     sLog.outDetail("applying mods for item %u ",item->GetGUIDLow());
@@ -17708,7 +17706,7 @@ inline float Player::GetReferFriendXPMultiplier() const
     if (!buddy || !buddy->IsInWorld() || !IsInPartyWith(buddy) || GetMap() != buddy->GetMap() || GetDistance(buddy) > 90.f)
         return 1.f;
 
-    return sWorld.getConfig(RATE_RAF_BONUS_XP);
+    return sWorld.getRate(RATE_RAF_BONUS_XP);
 }
 
 int32 Player::GetTotalFlatMods(uint32 spellId, SpellModOp op)
@@ -18898,7 +18896,12 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
 
     // Game masters should always see the players
     if (isGameMaster())
-        return true;
+    {
+        // but not higher GMs which are invisible
+        if (const Player* user = u->ToPlayer())
+            if (GetSession()->GetSecurity() >= user->GetSession()->GetSecurity())
+                return true;
+    }
 
     // Arena visibility before arena start
     if (InArena() && GetBattleGround() && GetBattleGround()->GetStatus() == STATUS_WAIT_JOIN)
@@ -18981,7 +18984,6 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
                 else
                     return true;
             }
-            return false;
         }
     }
 
@@ -18995,6 +18997,10 @@ bool Player::canSeeOrDetect(Unit const* u, bool detect, bool inVisibleList, bool
             else
                 return true;
         }
+
+        // Invisibility detection
+        if (u->canDetectInvisibilityOf(m_mover))
+		    return true;
 
         // player see other player with stealth/invisibility only if he in same group or raid or same team (raid/team case dependent from conf setting)
         if (!m_mover->canDetectInvisibilityOf(u))
@@ -20726,18 +20732,13 @@ WorldObject* Player::GetViewpoint() const
     return NULL;
 }
 
-bool Player::CanUseBattleGroundObject()
+bool Player::CanUseBattleGroundObject(GameObject* gameobject)
 {
-    return (//InBattleGround() &&                         // in battleground - not need, check in other cases
-            //!IsMounted() &&                             // not mounted
-            //i'm not sure if these two are correct, because invisible players should get visible when they click on flag
-            !isTotalImmunity() &&                         // not totally immuned
-            !HasStealthAura() &&                          // not stealthed
-            !HasInvisibilityAura() &&                     // not invisible
-            !HasAura(SPELL_RECENTLY_DROPPED_FLAG, 0) &&   // can't pickup
-            //TODO player cannot use object when he is invulnerable (immune) - (ice block, divine shield, divine protection, divine intervention ...)
-            isAlive()                                     // live player
-    );
+    // Note: Mount, stealth and invisibility will be removed when used
+    return (!isTotalImmunity() &&                          // Damage immune
+            !HasAura(SPELL_RECENTLY_DROPPED_FLAG) &&       // Still has recently held flag debuff
+            isAlive()                                    // Alive
+            );
 }
 
 bool Player::CanCaptureTowerPoint()
@@ -20745,7 +20746,7 @@ bool Player::CanCaptureTowerPoint()
     return (!HasStealthAura() &&                           // not stealthed
             !HasInvisibilityAura() &&                      // not invisible
             isAlive()                                      // live player
-           );
+            );
 }
 
 bool Player::HasTitle(uint32 bitIndex)
@@ -20841,12 +20842,12 @@ void Player::UpdateCharmedAI()
     }
 }
 
-void Player::AddGlobalCooldown(SpellEntry const *spellInfo, Spell const *spell)
+void Player::AddGlobalCooldown(SpellEntry const *spellInfo, Spell *spell)
 {
     if (!spellInfo || !spellInfo->StartRecoveryTime)
         return;
 
-    uint32 cdTime = spellInfo->StartRecoveryTime;
+    float cdTime = float(spellInfo->StartRecoveryTime);
 
     if (!(spellInfo->Attributes & (SPELL_ATTR_UNK4|SPELL_ATTR_TRADESPELL)))
         cdTime *= GetFloatValue(UNIT_MOD_CAST_SPEED);
@@ -20856,8 +20857,10 @@ void Player::AddGlobalCooldown(SpellEntry const *spellInfo, Spell const *spell)
     if (cdTime > 1500)
         cdTime = 1500;
 
+    ApplySpellMod(spellInfo->Id, SPELLMOD_GLOBAL_COOLDOWN, cdTime, spell);
     if (cdTime > 0)
-        m_globalCooldowns[spellInfo->StartRecoveryCategory] = cdTime;
+        m_globalCooldowns[spellInfo->StartRecoveryCategory] = uint32(cdTime);
+
 }
 
 bool Player::HasGlobalCooldown(SpellEntry const *spellInfo) const

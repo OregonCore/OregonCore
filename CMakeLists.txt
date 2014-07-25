@@ -56,6 +56,7 @@ if( UNIX )
   find_package(Readline)
   find_package(ZLIB)
   find_package(BZip2)
+  find_package(Binutils)
 endif()
 
 # Find revision ID and hash of the sourcetree

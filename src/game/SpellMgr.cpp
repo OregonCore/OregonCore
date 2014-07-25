@@ -2467,6 +2467,12 @@ void SpellMgr::LoadSpellCustomAttr()
         case 46771: // Flame Sear
             spellInfo->MaxAffectedTargets = 5;
             break;
+        case 15286: // Vampiric Embrace
+        case 34914: // Vampiric Touch
+            spellInfo->Attributes |= SPELL_ATTR_NOT_SHAPESHIFT;
+            spellInfo->AttributesEx2 |= SPELL_ATTR_EX2_NOT_NEED_SHAPESHIFT;
+            spellInfo->Stances = FORM_SHADOW;
+            break;
         case 40827: // Sinful Beam
         case 40859: // Sinister Beam
         case 40860: // Vile Beam
@@ -2549,6 +2555,10 @@ void SpellMgr::LoadSpellCustomAttr()
         case 31830: // Blessed Life (Rank 3)
             spellInfo->EffectApplyAuraName[0] = SPELL_AURA_REUSED_BLESSED_LIFE;
             break;
+        case 42389: // Nalorakk's Mangle
+            spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_TARGET_ENEMY;
+            spellInfo->EffectImplicitTargetB[1] = 0;
+            break;
         default:
             break;
         }
@@ -2569,7 +2579,71 @@ void SpellMgr::LoadSpellCustomAttr()
                 break;
         }
     }
+
+    /* Fix some weird values in SpellItemEnchantment */
+    for (uint32 i = 0; i <= 3340; i++)
+    {
+        if (SpellItemEnchantmentEntry* ench = const_cast<SpellItemEnchantmentEntry*>(sSpellItemEnchantmentStore.LookupEntry(i)))
+        {
+            switch (ench->ID)
+            {
+                // Flametongue Weapon
+                case    5: ench->type[0] = ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL; ench->spellid[0] =  8026; break; // rank 1
+                case    4: ench->type[0] = ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL; ench->spellid[0] =  8028; break; // rank 2
+                case    3: ench->type[0] = ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL; ench->spellid[0] =  8029; break; // rank 3
+                case  523: ench->type[0] = ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL; ench->spellid[0] = 10445; break; // rank 4
+                case 1665: ench->type[0] = ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL; ench->spellid[0] = 16343; break; // rank 5
+                case 1666: ench->type[0] = ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL; ench->spellid[0] = 16344; break; // rank 6
+                case 2634: ench->type[0] = ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL; ench->spellid[0] = 25488; break; // rank 7
+            }
+        }
+    }
+
     CreatureAI::FillAISpellInfo();
+}
+
+void SpellMgr::LoadSpellCustomCooldowns()
+{
+    uint32 count = 0;
+    SpellEntry *spellInfo;
+
+    //                                                       0              1
+    QueryResult_AutoPtr result = WorldDatabase.Query("SELECT spellid, cooldown FROM spell_cooldown");
+    if (!result)
+    {
+        barGoLink bar(1);
+        bar.step();
+        sLog.outString();
+        sLog.outString(">> Loaded %u custom spell cooldowns", count);
+        return;
+    }
+
+    barGoLink bar(result->GetRowCount());
+
+    do
+    {
+        Field *fields = result->Fetch();
+
+        bar.step();
+
+        int32 spellid = fields[0].GetInt32();
+        uint32 cooldown = fields[1].GetUInt32();
+
+        spellInfo = (SpellEntry*)GetSpellStore()->LookupEntry(spellid);
+        if (!spellInfo)
+        {
+            sLog.outErrorDb("Spell %i listed in spell_cooldown does not exist", spellid);
+            continue;
+        }
+
+        if (spellid > 0 && cooldown > 0)
+            spellInfo->RecoveryTime = cooldown;
+
+        ++count;
+    } while (result->NextRow());
+
+    sLog.outString();
+    sLog.outString(">> Loaded %u custom spell cooldowns", count);
 }
 
 void SpellMgr::LoadSpellLinked()
