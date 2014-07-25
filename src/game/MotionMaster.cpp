@@ -282,18 +282,18 @@ MotionMaster::MoveFollow(Unit* target, float dist, float angle, MovementSlot slo
 }
 
 void
-MotionMaster::MovePoint(uint32 id, float x, float y, float z)
+MotionMaster::MovePoint(uint32 id, float x, float y, float z, bool usePathfinding)
 {
     if (i_owner->GetTypeId() == TYPEID_PLAYER)
     {
         DEBUG_LOG("Player (GUID: %u) targeted point (Id: %u X: %f Y: %f Z: %f)", i_owner->GetGUIDLow(), id, x, y, z);
-        Mutate(new PointMovementGenerator<Player>(id,x,y,z), MOTION_SLOT_ACTIVE);
+        Mutate(new PointMovementGenerator<Player>(id,x,y,z,usePathfinding), MOTION_SLOT_ACTIVE);
     }
     else
     {
         DEBUG_LOG("Creature (Entry: %u GUID: %u) targeted point (ID: %u X: %f Y: %f Z: %f)",
             i_owner->GetEntry(), i_owner->GetGUIDLow(), id, x, y, z);
-        Mutate(new PointMovementGenerator<Creature>(id,x,y,z), MOTION_SLOT_ACTIVE);
+        Mutate(new PointMovementGenerator<Creature>(id,x,y,z,usePathfinding), MOTION_SLOT_ACTIVE);
     }
 }
 
@@ -309,7 +309,7 @@ void MotionMaster::MoveJumpTo(float angle, float speedXY, float speedZ)
     MoveJump(x, y, z, speedXY, speedZ);
 }
 
-void MotionMaster::MoveJump(float x, float y, float z, float speedXY, float speedZ)
+void MotionMaster::MoveJump(float x, float y, float z, float speedXY, float speedZ, bool usePathfinding)
 {
     uint32 moveFlag = SPLINEFLAG_JUMP | SPLINEFLAG_WALKMODE;
     uint32 time = speedZ * 100;
@@ -319,20 +319,20 @@ void MotionMaster::MoveJump(float x, float y, float z, float speedXY, float spee
     if (i_owner->GetTypeId() == TYPEID_PLAYER)
     {
         DEBUG_LOG("Player (GUID: %u) jump to point (X: %f Y: %f Z: %f)", i_owner->GetGUIDLow(), x, y, z);
-        Mutate(new PointMovementGenerator<Player>(0,x,y,z), MOTION_SLOT_CONTROLLED);
+        Mutate(new PointMovementGenerator<Player>(0,x,y,z,usePathfinding), MOTION_SLOT_CONTROLLED);
     }
     else
     {
         DEBUG_LOG("Creature (Entry: %u GUID: %u) jump to point (X: %f Y: %f Z: %f)",
             i_owner->GetEntry(), i_owner->GetGUIDLow(), x, y, z);
-        Mutate(new PointMovementGenerator<Creature>(0,x,y,z), MOTION_SLOT_CONTROLLED);
+        Mutate(new PointMovementGenerator<Creature>(0,x,y,z,usePathfinding), MOTION_SLOT_CONTROLLED);
     }
 
     i_owner->SendMonsterMove(x, y, z, moveFlag, time, speedZ);
 }
 
 void
-MotionMaster::MoveCharge(float x, float y, float z, float speed, uint32 id)
+MotionMaster::MoveCharge(float x, float y, float z, float speed, uint32 id, bool usePathfinding)
 {
     if (Impl[MOTION_SLOT_CONTROLLED] && Impl[MOTION_SLOT_CONTROLLED]->GetMovementGeneratorType() != DISTRACT_MOTION_TYPE)
         return;
@@ -342,13 +342,13 @@ MotionMaster::MoveCharge(float x, float y, float z, float speed, uint32 id)
     if (i_owner->GetTypeId() == TYPEID_PLAYER)
     {
         DEBUG_LOG("Player (GUID: %u) charge point (X: %f Y: %f Z: %f)", i_owner->GetGUIDLow(), x, y, z);
-        Mutate(new PointMovementGenerator<Player>(id,x,y,z), MOTION_SLOT_CONTROLLED);
+        Mutate(new PointMovementGenerator<Player>(id,x,y,z,usePathfinding), MOTION_SLOT_CONTROLLED);
     }
     else
     {
         DEBUG_LOG("Creature (Entry: %u GUID: %u) charge point (X: %f Y: %f Z: %f)",
             i_owner->GetEntry(), i_owner->GetGUIDLow(), x, y, z);
-        Mutate(new PointMovementGenerator<Creature>(id,x,y,z), MOTION_SLOT_CONTROLLED);
+        Mutate(new PointMovementGenerator<Creature>(id,x,y,z,usePathfinding), MOTION_SLOT_CONTROLLED);
     }
 }
 
@@ -426,9 +426,17 @@ MotionMaster::MoveTaxiFlight(uint32 path, uint32 pathnode)
 {
     if (i_owner->GetTypeId() == TYPEID_PLAYER)
     {
-        DEBUG_LOG("Player (GUID: %u) taxi to (Path %u node %u)", i_owner->GetGUIDLow(), path, pathnode);
-        FlightPathMovementGenerator* mgen = new FlightPathMovementGenerator(path,pathnode);
-        Mutate(mgen, MOTION_SLOT_CONTROLLED);
+        if (path < sTaxiPathNodesByPath.size())
+        {
+            sLog.outDebug("%s taxi to (Path %u node %u)", i_owner->GetName(), path, pathnode);
+            FlightPathMovementGenerator* mgen = new FlightPathMovementGenerator(sTaxiPathNodesByPath[path],pathnode);
+            Mutate(mgen, MOTION_SLOT_CONTROLLED);
+        }
+        else
+        {
+            sLog.outError("%s attempt taxi to (not existed Path %u node %u)",
+            i_owner->GetName(), path, pathnode);
+        }
     }
     else
     {

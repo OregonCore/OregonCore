@@ -35,6 +35,7 @@
 
 #include <bitset>
 #include <list>
+#include <set>
 
 class Unit;
 class WorldPacket;
@@ -63,22 +64,25 @@ struct ScriptAction
 //******************************************
 // Map file format defines
 //******************************************
-#define MAP_MAGIC             0x5350414D // SPAM
-#define MAP_VERSION_MAGIC     0x352E3077 // 5.0w
-#define MAP_AREA_MAGIC        0x41455241 // AERA
-#define MAP_HEIGHT_MAGIC      0x5447484D // TGHM
-#define MAP_LIQUID_MAGIC      0x51494C4D // QILM
+static const uint32 MAP_MAGIC         = 0x5350414D; // SPAM
+static const uint32 MAP_VERSION_MAGIC = 0x362E3077; // 6.0w
+static const uint32 MAP_AREA_MAGIC    = 0x41455241; // AERA
+static const uint32 MAP_HEIGHT_MAGIC  = 0x5447484D; // TGHM
+static const uint32 MAP_LIQUID_MAGIC  = 0x51494C4D; // QILM
 
 struct map_fileheader
 {
     uint32 mapMagic;
     uint32 versionMagic;
+    uint32 buildMagic;
     uint32 areaMapOffset;
     uint32 areaMapSize;
     uint32 heightMapOffset;
     uint32 heightMapSize;
     uint32 liquidMapOffset;
     uint32 liquidMapSize;
+    uint32 holesOffset;
+    uint32 holesSize;
 };
 
 #define MAP_AREA_NO_AREA      0x0001
@@ -284,7 +288,7 @@ class Map : public GridRefManager<NGridType>, public Oregon::ObjectLevelLockable
         virtual void InitVisibilityDistance();
 
         void PlayerRelocation(Player *, float x, float y, float z, float orientation);
-        void CreatureRelocation(Creature *creature, float x, float y, float z, float ang);
+        void CreatureRelocation(Creature *creature, float x, float y, float z, float ang, bool respawnRelocationOnFail = true);
 
         template<class T, class CONTAINER> void Visit(const Cell& cell, TypeContainerVisitor<T, CONTAINER> &visitor);
 

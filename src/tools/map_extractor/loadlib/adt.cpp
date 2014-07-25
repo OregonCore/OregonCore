@@ -1,27 +1,23 @@
-/*
- * Copyright (C) 2010-2014 OregonCore <http://www.oregoncore.com/>
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation; either version 2 of the License, or (at your
- * option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
- * more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #define _CRT_SECURE_NO_DEPRECATE
 
 #include "adt.h"
 
+// Helper
+int holetab_h[4] = {0x1111, 0x2222, 0x4444, 0x8888};
+int holetab_v[4] = {0x000F, 0x00F0, 0x0F00, 0xF000};
+
+bool isHole(int holes, int i, int j)
+{
+    int testi = i / 2;
+    int testj = j / 4;
+    if(testi > 3) testi = 3;
+    if(testj > 3) testj = 3;
+    return (holes & holetab_h[testi] & holetab_v[testj]) != 0;
+}
+
+//
 // Adt file loader class
+//
 ADT_file::ADT_file()
 {
     a_grid = 0;
@@ -38,7 +34,9 @@ void ADT_file::free()
     FileLoader::free();
 }
 
+//
 // Adt file check function
+//
 bool ADT_file::prepareLoadedData()
 {
     // Check parent
@@ -131,4 +129,3 @@ bool adt_MCLQ::prepareLoadedData()
 
     return true;
 }
-

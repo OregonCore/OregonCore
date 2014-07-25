@@ -615,6 +615,10 @@ class WorldObject : public Object, public WorldLocation
             pos.Relocate(x, y, z, GetOrientation());
         }
 
+        float GetDistanceSqr(float x, float y, float z) const;
+        bool HasInArc(float arcangle, const Position *pos) const;
+        bool HasInArc(const float arcangle, const float x, const float y) const;
+
         uint32 GetInstanceId() const { return m_InstanceId; }
 
         uint32 GetZoneId() const;

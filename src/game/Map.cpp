@@ -30,6 +30,7 @@
 #include "ObjectAccessor.h"
 #include "MapManager.h"
 #include "ObjectMgr.h"
+#include "MoveMap.h"
 
 #define DEFAULT_GRID_EXPIRY     300
 #define MAX_GRID_LOAD_TIME      50
@@ -163,8 +164,14 @@ void Map::LoadMap(int gx,int gy, bool reload)
 void Map::LoadMapAndVMap(int gx,int gy)
 {
     LoadMap(gx,gy);
-    if (i_InstanceId == 0)
-        LoadVMap(gx, gy);                                   // Only load the data for the base map
+
+    if (i_InstanceId == 0) // Only load the data for the base map
+    {
+        LoadVMap(gx, gy);
+
+        // load navmesh
+        MMAP::MMapFactory::createOrGetMMapManager()->loadMap(GetId(), gx, gy);
+    }
 }
 
 void Map::InitStateMachine()
@@ -851,7 +858,7 @@ Map::PlayerRelocation(Player *player, float x, float y, float z, float orientati
 }
 
 void
-Map::CreatureRelocation(Creature *creature, float x, float y, float z, float ang)
+Map::CreatureRelocation(Creature *creature, float x, float y, float z, float ang, bool respawnRelocationOnFail)
 {
     ASSERT(CheckGridIntegrity(creature,false));
 
@@ -859,6 +866,9 @@ Map::CreatureRelocation(Creature *creature, float x, float y, float z, float ang
 
     CellPair new_val = Oregon::ComputeCellPair(x, y);
     Cell new_cell(new_val);
+
+    if (!respawnRelocationOnFail && !getNGrid(new_cell.GridX(), new_cell.GridY()))
+        return;
 
     // delay creature move for grid/cell to grid/cell moves
     if (old_cell.DiffCell(new_cell) || old_cell.DiffGrid(new_cell))
@@ -1074,6 +1084,7 @@ bool Map::UnloadGrid(const uint32 &x, const uint32 &y, bool unloadAll)
                 delete GridMaps[gx][gy];
             }
             VMAP::VMapFactory::createOrGetVMapManager()->unloadMap(GetId(), gx, gy);
+            MMAP::MMapFactory::createOrGetMMapManager()->unloadMap(GetId(), gx, gy);
         }
         else
             ((MapInstanced*)m_parentMap)->RemoveGridMapReference(GridPair(gx, gy));

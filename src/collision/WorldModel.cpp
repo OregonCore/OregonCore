@@ -147,11 +147,13 @@ namespace VMAP
     bool WmoLiquid::GetLiquidHeight(const Vector3 &pos, float &liqHeight) const
     {
         float tx_f = (pos.x - iCorner.x)/LIQUID_TILE_SIZE;
-        int32 tx = int32(tx_f);
-        if (tx<0 || tx >= int32(iTilesX)) return false;
+        uint32 tx = uint32(tx_f);
+        if (tx_f < 0.0f || tx >= iTilesX)
+            return false;
         float ty_f = (pos.y - iCorner.y)/LIQUID_TILE_SIZE;
-        int32 ty = int32(ty_f);
-        if (ty<0 || ty >= int32(iTilesY)) return false;
+        uint32 ty = uint32(ty_f);
+        if (ty_f < 0.0f || ty >= iTilesY)
+            return false;
 
         // check if tile shall be used for liquid level
         // checking for 0x08 *might* be enough, but disabled tiles always are 0x?F:

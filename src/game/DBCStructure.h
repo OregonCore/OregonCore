@@ -22,6 +22,7 @@
 
 #include "DBCEnums.h"
 #include "Platform/Define.h"
+#include "Path.h"
 
 #include <map>
 #include <set>
@@ -953,7 +954,16 @@ struct TaxiPathNode
     uint32    actionFlag;
     uint32    delay;
 };
-typedef std::vector<TaxiPathNode> TaxiPathNodeList;
+
+struct TaxiPathNodePtr
+{
+    TaxiPathNodePtr() : i_ptr(NULL) {}
+    TaxiPathNodePtr(TaxiPathNodeEntry const* ptr) : i_ptr(ptr) {}
+    TaxiPathNodeEntry const* i_ptr;
+    operator TaxiPathNodeEntry const& () const { return *i_ptr; }
+};
+
+typedef Path<TaxiPathNodePtr, TaxiPathNodeEntry const> TaxiPathNodeList;
 typedef std::vector<TaxiPathNodeList> TaxiPathNodesByPath;
 
 #define TaxiMaskSize 16
