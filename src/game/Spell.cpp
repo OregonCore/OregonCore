@@ -4585,6 +4585,8 @@ uint8 Spell::CheckCasterAuras() const
             {
                 if (itr->second)
                 {
+                    trapped = false;
+
                     if (GetSpellMechanicMask(itr->second->GetSpellProto(), itr->second->GetEffIndex()) & mechanic_immune)
                         continue;
                     if (GetSpellSchoolMask(itr->second->GetSpellProto()) & school_immune &&                                    // we match school mask and
@@ -4625,16 +4627,21 @@ uint8 Spell::CheckCasterAuras() const
                 case SPELL_FAILED_STUNNED:
                     if (m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_STUNNED)
                         return 0; // can cast
+                    break;
                 case SPELL_FAILED_CONFUSED:
                     if (m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_CONFUSED)
                         return 0;
+                    break;
                 case SPELL_FAILED_FLEEING:
                     if (m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_FEARED)
                         return 0;
+                    break;
                 case SPELL_FAILED_SILENCED:
+                    if (m_spellInfo->PreventionType != SPELL_PREVENTION_TYPE_SILENCE)
+                        return 0;
+                    break;
                 case SPELL_FAILED_PACIFIED:
-                    if (m_spellInfo->PreventionType != SPELL_PREVENTION_TYPE_SILENCE &&
-                        m_spellInfo->PreventionType != SPELL_PREVENTION_TYPE_PACIFY)
+                    if (m_spellInfo->PreventionType != SPELL_PREVENTION_TYPE_PACIFY)
                         return 0;
             }
 
