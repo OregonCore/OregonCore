@@ -289,6 +289,7 @@ Player::Player (WorldSession *session): Unit()
     m_zoneUpdateTimer = 0;
 
     m_areaUpdateId = 0;
+    m_team = 0;
 
     m_nextSave = sWorld.getConfig(CONFIG_INTERVAL_SAVE);
 
