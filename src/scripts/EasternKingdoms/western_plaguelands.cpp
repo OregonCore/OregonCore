@@ -116,7 +116,8 @@ bool GossipHello_npc_myranda_the_hag(Player* pPlayer, Creature* pCreature)
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
     if (pPlayer->GetQuestStatus(QUEST_SUBTERFUGE) == QUEST_STATUS_COMPLETE &&
-        !pPlayer->GetQuestRewardStatus(QUEST_IN_DREAMS) && !pPlayer->HasAura(SPELL_SCARLET_ILLUSION, 0))
+        pPlayer->GetQuestStatus(QUEST_IN_DREAMS) != QUEST_STATUS_COMPLETE &&
+        !pPlayer->HasAura(SPELL_SCARLET_ILLUSION, 0))
     {
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_ILLUSION, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
         pPlayer->SEND_GOSSIP_MENU(4773, pCreature->GetGUID());
