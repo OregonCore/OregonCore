@@ -626,7 +626,6 @@ void BattleGround::RewardHonorToTeam(uint32 Honor, uint32 TeamID)
 void BattleGround::RewardReputationToTeam(uint32 faction_id, uint32 Reputation, uint32 TeamID)
 {
     FactionEntry const* factionEntry = sFactionStore.LookupEntry(faction_id);
-
     if (!factionEntry)
         return;
 
@@ -647,7 +646,12 @@ void BattleGround::RewardReputationToTeam(uint32 faction_id, uint32 Reputation, 
         if (!team) team = plr->GetTeam();
 
         if (team == TeamID)
+        {
+            uint32 repGain = Reputation;
+            AddPctF(repGain, plr->GetTotalAuraModifier(SPELL_AURA_MOD_REPUTATION_GAIN));
+            AddPctF(repGain, plr->GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_FACTION_REPUTATION_GAIN, faction_id));
             plr->ModifyFactionReputation(factionEntry, Reputation);
+        }
     }
 }
 
