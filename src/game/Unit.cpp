@@ -2050,15 +2050,15 @@ void Unit::CalcAbsorbResist(Unit *pVictim, SpellSchoolMask schoolMask, DamageEff
             //int32 *p_absorbAmount = &(*i)->GetModifier()->m_amount;
 
             // check damage school mask
-            if (((*i)->GetModifier()->m_miscvalue & schoolMask) == 0)
+            if (!((*i)->GetModifier()->m_miscvalue & schoolMask))
                 continue;
 
-            // Damage can be splitted only if aura has an alive caster
+            // Damage can only be split if the aura has an alive caster linked
             Unit *caster = (*i)->GetCaster();
             if (!caster || caster == pVictim || !caster->IsInWorld() || !caster->isAlive())
                 continue;
-
-            int32 splitted = int32(RemainingDamage * (*i)->GetModifier()->m_amount / 100.0f);
+                                 
+            uint32 splitted = CalculatePctU(RemainingDamage * (*i)->GetModifier()->m_amount, 100);
 
             RemainingDamage -= splitted;
 
@@ -2066,6 +2066,8 @@ void Unit::CalcAbsorbResist(Unit *pVictim, SpellSchoolMask schoolMask, DamageEff
 
             CleanDamage cleanDamage = CleanDamage(splitted, BASE_ATTACK, MELEE_HIT_NORMAL);
             DealDamage(caster, splitted, &cleanDamage, DOT, schoolMask, (*i)->GetSpellProto(), false);
+            // break 'Fear' and similar auras
+            caster->ProcDamageAndSpellFor(true, this, PROC_FLAG_TAKEN_NEGATIVE_SPELL_HIT, PROC_EX_NORMAL_HIT, BASE_ATTACK, (*i)->GetSpellProto(), splitted);
         }
     }
 
