@@ -3915,6 +3915,12 @@ uint8 Spell::CanCast(bool strict)
 
                 break;
             }
+            case SPELL_EFFECT_TRIGGER_SPELL_2:          // Only Ritual of Summoning
+            {
+                if (m_caster->ToPlayer() && m_caster->ToPlayer()->GetBattleGround())
+                    return SPELL_FAILED_NOT_IN_BATTLEGROUND;
+                break;
+            }
             case SPELL_EFFECT_LEARN_PET_SPELL:
             {
                 if (m_caster->GetTypeId() != TYPEID_PLAYER)
