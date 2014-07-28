@@ -2181,6 +2181,8 @@ class Player : public Unit, public GridObject<Player>
         bool HasTitle(uint32 bitIndex);
         bool HasTitle(CharTitlesEntry const* title) { return HasTitle(title->bit_index); }
         void SetTitle(CharTitlesEntry const* title, bool lost = false);
+        
+        bool IsLoading() const;
 
         RAFLinkStatus GetRAFStatus() const { return m_rafLink; }
 

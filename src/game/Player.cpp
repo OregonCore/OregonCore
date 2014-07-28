@@ -20954,3 +20954,7 @@ void Player::SetMap(Map * map)
     m_mapRef.link(map, this);
 }
 
+bool Player::IsLoading() const
+{
+    return GetSession()->PlayerLoading();
+}
