@@ -62,6 +62,7 @@ bool handleArgs(int argc, char** argv,
                int &mapnum,
                int &tileX,
                int &tileY,
+               int &threads,
                float &maxAngle,
                bool &skipLiquid,
                bool &skipContinents,
@@ -199,6 +200,14 @@ bool handleArgs(int argc, char** argv,
 
             offMeshInputPath = param;
         }
+        else if (strcmp(argv[i], "--threads") == 0)
+        {
+            param = argv[++i];
+            threads = atoi(param);
+
+            if (threads <= 0)
+                threads = 1;
+        }
         else
         {
             int map = atoi(argv[i]);
@@ -225,6 +234,7 @@ int finish(const char* message, int returnValue)
 int main(int argc, char** argv)
 {
     int mapnum = -1;
+    int threads = 1;
     float maxAngle = 60.0f;
     int tileX = -1, tileY = -1;
     bool skipLiquid = false,
@@ -237,7 +247,7 @@ int main(int argc, char** argv)
     char* offMeshInputPath = NULL;
 
     bool validParam = handleArgs(argc, argv, mapnum,
-                                 tileX, tileY, maxAngle,
+                                 tileX, tileY, threads, maxAngle,
                                  skipLiquid, skipContinents, skipJunkMaps, skipBattlegrounds,
                                  debugOutput, silent, bigBaseUnit, offMeshInputPath);
 
@@ -267,7 +277,7 @@ int main(int argc, char** argv)
     else if (mapnum >= 0)
         builder.buildMap(uint32(mapnum));
     else
-        builder.buildAllMaps();
+        builder.buildAllMaps(threads);
 
     return silent ? 1 : finish("Movemap build is complete!", 1);
 }
