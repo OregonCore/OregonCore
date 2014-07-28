@@ -3561,8 +3561,16 @@ uint8 Spell::CanCast(bool strict)
                 return SPELL_FAILED_BAD_TARGETS;
 
             bool isTrigger = (target->ToCreature() && target->ToCreature()->isTrigger());
-            if (!m_IsTriggeredSpell && !isTrigger && !IsSpellIgnoringLOS(m_spellInfo) && !m_caster->IsWithinLOSInMap(target))
-                return SPELL_FAILED_LINE_OF_SIGHT;
+            if (!isTrigger)
+            {
+                WorldObject* losTarget = target;
+                if (m_IsTriggeredSpell && m_triggeredByAuraSpell)
+                    if (DynamicObject* dynObj = m_caster->GetDynObject((UINT32)m_triggeredByAuraSpell))
+                        losTarget = dynObj;
+
+            if (!(m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_IGNORE_LOS) && VMAP::VMapFactory::checkSpellForLoS(m_spellInfo->Id) && !m_caster->IsWithinLOSInMap(losTarget))
+                     return SPELL_FAILED_LINE_OF_SIGHT;
+            }
 
             // auto selection spell rank implemented in WorldSession::HandleCastSpellOpcode
             // this case can be triggered if rank not found (too low-level target for first rank)
