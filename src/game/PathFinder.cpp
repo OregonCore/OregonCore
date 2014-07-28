@@ -69,12 +69,16 @@ PathInfo::~PathInfo()
 
 bool PathInfo::Update(float destX, float destY, float destZ, bool forceDest)
 {
-    PathNode newDest(destX, destY, destZ);
-    PathNode oldDest = getEndPosition();
-    setEndPosition(newDest);
-
     float x, y, z;
     m_sourceUnit->GetPosition(x, y, z);
+
+    if (!Oregon::IsValidMapCoord(destX, destY, destZ) || !Oregon::IsValidMapCoord(x, y, z))
+        return false;
+
+    PathNode oldDest = getEndPosition();
+    PathNode newDest(destX, destY, destZ);
+    setEndPosition(newDest);
+
     PathNode newStart(x, y, z);
     PathNode oldStart = getStartPosition();
     setStartPosition(newStart);
@@ -95,26 +99,8 @@ bool PathInfo::Update(float destX, float destY, float destZ, bool forceDest)
 
     updateFilter();
 
-    // check if destination moved - if not we can optimize something here
-    // we are following old, precalculated path?
-    float dist = m_sourceUnit->GetObjectSize();
-    if (inRange(oldDest, newDest, dist, dist) && m_pathPoints.size() > 2)
-    {
-        // our target is not moving - we just coming closer
-        // we are moving on precalculated path - enjoy the ride
-        //DEBUG_FILTER_LOG(LOG_FILTER_PATHFINDING, "++ PathInfo::Update:: precalculated path\n");
-
-        m_pathPoints.crop(1, 0);
-        setNextPosition(m_pathPoints[1]);
-
-        return false;
-    }
-    else
-    {
-        // target moved, so we need to update the poly path
-        BuildPolyPath(newStart, newDest);
-        return true;
-    }
+    BuildPolyPath(newStart, newDest);
+    return true;
 }
 
 dtPolyRef PathInfo::getPathPolyByPosition(const dtPolyRef *polyPath, uint32 polyPathSize, const float* point, float *distance) const
@@ -140,7 +126,7 @@ dtPolyRef PathInfo::getPathPolyByPosition(const dtPolyRef *polyPath, uint32 poly
             minDist3d = dtVdistSqr(point, closestPoint);
         }
 
-        if(minDist2d < 1.0f) // shortcut out - close enough for us
+        if (minDist2d < 1.0f) // shortcut out - close enough for us
             break;
     }
 
@@ -202,8 +188,25 @@ void PathInfo::BuildPolyPath(const PathNode &startPos, const PathNode &endPos)
     {
         //DEBUG_FILTER_LOG(LOG_FILTER_PATHFINDING, "++ BuildPolyPath :: (startPoly == 0 || endPoly == 0)\n");
         BuildShortcut();
-        m_type = (m_sourceUnit->GetTypeId() == TYPEID_UNIT && ((Creature*)m_sourceUnit)->canFly())
-                    ? PathType(PATHFIND_NORMAL | PATHFIND_NOT_USING_PATH) : PATHFIND_NOPATH;
+        bool path = m_sourceUnit->GetTypeId() == TYPEID_UNIT && m_sourceUnit->ToCreature()->canFly();
+
+        bool waterPath = m_sourceUnit->GetTypeId() == TYPEID_UNIT && m_sourceUnit->ToCreature()->canSwim();
+        if (waterPath)
+        {
+            // Check both start and end points, if they're both in water, then we can *safely* let the creature move
+            for (uint32 i = 0; i < m_pathPoints.size(); ++i)
+            {
+                ZLiquidStatus status = m_sourceUnit->GetBaseMap()->getLiquidStatus(m_pathPoints[i].x, m_pathPoints[i].y, m_pathPoints[i].z, MAP_ALL_LIQUIDS, NULL);
+                // One of the points is not in the water, cancel movement.
+                if (status == LIQUID_MAP_NO_WATER)
+                {
+                    waterPath = false;
+                    break;
+                }
+            }
+        }
+
+        m_type = (path || waterPath) ? PathType(PATHFIND_NORMAL | PATHFIND_NOT_USING_PATH) : PATHFIND_NOPATH;
         return;
     }
 
@@ -548,7 +551,9 @@ void PathInfo::updateFilter()
 NavTerrain PathInfo::getNavTerrain(float x, float y, float z)
 {
     LiquidData data;
-    m_sourceUnit->GetMap()->getLiquidStatus(x, y, z, MAP_ALL_LIQUIDS, &data);
+    ZLiquidStatus liquidStatus = m_sourceUnit->GetMap()->getLiquidStatus(x, y, z, MAP_ALL_LIQUIDS, &data);
+    if (liquidStatus == LIQUID_MAP_NO_WATER)
+        return NAV_GROUND;
 
     switch (data.type)
     {
@@ -566,10 +571,17 @@ NavTerrain PathInfo::getNavTerrain(float x, float y, float z)
 
 bool PathInfo::HaveTile(const PathNode &p) const
 {
-    int tx, ty;
+    int tx = -1, ty = -1;
     float point[VERTEX_SIZE] = {p.y, p.z, p.x};
 
     m_navMesh->calcTileLoc(point, &tx, &ty);
+
+    /// Workaround
+    /// For some reason, often the tx and ty variables wont get a valid value
+    /// Use this check to prevent getting negative tile coords and crashing on getTileAt
+    if (tx < 0 || ty < 0)
+        return false;
+
     return (m_navMesh->getTileAt(tx, ty) != NULL);
 }
 

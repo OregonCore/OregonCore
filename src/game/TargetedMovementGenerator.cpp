@@ -47,6 +47,9 @@ bool TargetedMovementGenerator<T>::_setTargetLocation(T &owner)
     if (owner.hasUnitState(UNIT_STAT_ROOT | UNIT_STAT_STUNNED | UNIT_STAT_DISTRACTED))
         return false;
 
+    if (owner.GetTypeId() == TYPEID_UNIT && !i_target->isInAccessiblePlaceFor(owner.ToCreature()))
+        return false;
+
     float x, y, z;
     Traveller<T> traveller(owner);
     if (i_destinationHolder.HasDestination() && !m_pathPointsSent)
