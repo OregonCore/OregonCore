@@ -8699,6 +8699,9 @@ void Unit::SetInCombatWith(Unit* enemy)
 
 void Unit::CombatStart(Unit* target, bool initialAggro)
 {
+    if (target->ToCreature() && target->ToCreature()->IsInEvadeMode())
+        return;
+
     if (initialAggro)
     {
         if (!target->IsStandState()/* && !target->hasUnitState(UNIT_STAT_STUNNED)*/)
