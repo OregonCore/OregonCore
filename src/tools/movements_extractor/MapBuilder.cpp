@@ -140,7 +140,64 @@ namespace MMAP
     }
 
     /**************************************************************************/
-    void MapBuilder::buildAllMaps()
+#ifdef unix
+    void MapBuilder::buildAllMaps(int threads)
+    {
+        printf ("Using %i threads\n", threads);
+
+        TileList::iterator it = m_tiles.begin();
+        std::set<pid_t> pids;
+
+        int ImChild = false;
+        int limit = m_tiles.size() / threads;
+
+        if (threads--)
+        {
+            for (int i = 0; i < threads; i++)
+            {
+                if (pid_t pid = fork())
+                {
+                    if (pid == -1)
+                        printf("FAILED TO CREATE THREAD!\n");
+                    else
+                    {
+                        pids.insert(pid);
+                        std::advance(it, limit);
+                    }
+                }
+                else
+                {
+                    ImChild = true;
+                    fclose(stdin); // suppresses getchar()
+                    break;
+                }
+            }
+        }
+
+        for (int i = 0; (i < limit || !ImChild) && it != m_tiles.end(); i++, ++it)
+        {
+            uint32 mapID = (*it).first;
+            if (!shouldSkipMap(mapID))
+                buildMap(mapID);
+        }
+
+        if (!ImChild && threads++)
+        {
+            int i = 1, status;
+            for (std::set<pid_t>::iterator it = pids.begin(); it != pids.end(); it++)
+            {
+                printf("waiting for the other thread (%i/%i) to exit...", i + 1, threads);
+                printf("%s\n", *it == waitpid(*it, &status, 0) ? "OK" : "FAIL");
+
+                i++;
+            }
+
+            printf("Building Complete\n");
+        }
+    }
+//#elif _WIN32
+#else
+    void MapBuilder::buildAllMaps(int /*threads*/)
     {
         for (TileList::iterator it = m_tiles.begin(); it != m_tiles.end(); ++it)
         {
@@ -149,6 +206,7 @@ namespace MMAP
                 buildMap(mapID);
         }
     }
+#endif
 
     /**************************************************************************/
     void MapBuilder::getGridBounds(uint32 mapID, uint32 &minX, uint32 &minY, uint32 &maxX, uint32 &maxY)

@@ -27,12 +27,15 @@
 #include <string>
 #include <vector>
 #include <errno.h>
+#include <algorithm>
 
 #include "Platform/Define.h"
 
 #ifndef WIN32
     #include <stddef.h>
     #include <dirent.h>
+    #include <sys/types.h>
+    #include <sys/wait.h>
 #endif
 
 using namespace std;
