@@ -169,7 +169,7 @@ bool GossipHello_npc_screecher_spirit(Player* pPlayer, Creature* pCreature)
     pPlayer->TalkedToCreature(pCreature->GetEntry(), pCreature->GetGUID());
     pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
-    pCreature->DespawnOrUnsummon(3*IN_MILLISECONDS);
+    pCreature->ForcedDespawn(3*IN_MILLISECONDS);
     return true;
 }
 

@@ -3565,7 +3565,7 @@ uint8 Spell::CanCast(bool strict)
             {
                 WorldObject* losTarget = target;
                 if (m_IsTriggeredSpell && m_triggeredByAuraSpell)
-                    if (DynamicObject* dynObj = m_caster->GetDynObject((UINT32)m_triggeredByAuraSpell))
+                    if (DynamicObject* dynObj = m_caster->GetDynObject(m_triggeredByAuraSpell->Id))
                         losTarget = dynObj;
 
             if (!(m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_IGNORE_LOS) && VMAP::VMapFactory::checkSpellForLoS(m_spellInfo->Id) && !m_caster->IsWithinLOSInMap(losTarget))
