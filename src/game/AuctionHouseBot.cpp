@@ -138,14 +138,11 @@ void AuctionHouseBot::addNewAuctions(Player *AHBplayer, AHBConfig *config)
 
     AuctionHouseEntry const* ahEntry = sAuctionMgr->GetAuctionHouseEntry(config->GetAHFID());
     if (!ahEntry)
-    {
         return;
-    }
+
     AuctionHouseObject* auctionHouse = sAuctionMgr->GetAuctionsMap(config->GetAHFID());
     if (!auctionHouse)
-    {
         return;
-    }
 
     uint32 auctions = auctionHouse->Getcount();
 
@@ -351,6 +348,9 @@ void AuctionHouseBot::addNewAuctions(Player *AHBplayer, AHBConfig *config)
                 if (debug_Out) sLog.outError("AHSeller: Item::CreateItem() - ItemID is 0");
                 continue;
             }
+
+            if (config->IsIgnoringItem(itemID))
+                continue;
 
             ItemPrototype const* prototype = objmgr.GetItemPrototype(itemID);
             if (prototype == NULL)
@@ -1669,6 +1669,9 @@ void AuctionHouseBot::LoadValues(AHBConfig *config)
         uint32 purplei = CharacterDatabase.PQuery("SELECT percentpurpleitems FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID())->Fetch()->GetUInt32();
         uint32 orangei = CharacterDatabase.PQuery("SELECT percentorangeitems FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID())->Fetch()->GetUInt32();
         uint32 yellowi = CharacterDatabase.PQuery("SELECT percentyellowitems FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID())->Fetch()->GetUInt32();
+        std::string XcludeItemsIds;
+        if (QueryResult_AutoPtr result = CharacterDatabase.PQuery("SELECT exludeItemsIds FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID()))
+            XcludeItemsIds = result->Fetch()->GetString();
         config->SetPercentages(greytg, whitetg, greentg, bluetg, purpletg, orangetg, yellowtg, greyi, whitei, greeni, bluei, purplei, orangei, yellowi);
         //load min and max prices
         config->SetMinPrice(AHB_GREY, CharacterDatabase.PQuery("SELECT minpricegrey FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID())->Fetch()->GetUInt32());
@@ -1708,6 +1711,9 @@ void AuctionHouseBot::LoadValues(AHBConfig *config)
         config->SetMaxStack(AHB_PURPLE, CharacterDatabase.PQuery("SELECT maxstackpurple FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID())->Fetch()->GetUInt32());
         config->SetMaxStack(AHB_ORANGE, CharacterDatabase.PQuery("SELECT maxstackorange FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID())->Fetch()->GetUInt32());
         config->SetMaxStack(AHB_YELLOW, CharacterDatabase.PQuery("SELECT maxstackyellow FROM auctionhousebot WHERE auctionhouse = %u",config->GetAHID())->Fetch()->GetUInt32());
+        // ignore these items
+        config->IgnoreItemsIds(XcludeItemsIds);
+
         if (debug_Out)
         {
             sLog.outString("minItems                = %u", config->GetMinItems());
@@ -1761,6 +1767,7 @@ void AuctionHouseBot::LoadValues(AHBConfig *config)
             sLog.outString("maxStackPurple          = %u", config->GetMaxStack(AHB_PURPLE));
             sLog.outString("maxStackOrange          = %u", config->GetMaxStack(AHB_ORANGE));
             sLog.outString("maxStackYellow          = %u", config->GetMaxStack(AHB_YELLOW));
+            sLog.outString("exludeItems             = %s", XcludeItemsIds.c_str());
         }
         //AuctionHouseEntry const* ahEntry = sAuctionMgr->GetAuctionHouseEntry(config->GetAHFID());
         AuctionHouseObject* auctionHouse = sAuctionMgr->GetAuctionsMap(config->GetAHFID());

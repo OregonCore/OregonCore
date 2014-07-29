@@ -21,8 +21,10 @@
 #define AUCTION_HOUSE_BOT_H
 
 #include "World.h"
+#include "ObjectMgr.h"
 #include "Config/Config.h"
 #include "ItemPrototype.h"
+#include "Util.h"
 
 #define AHB_GREY        0
 #define AHB_WHITE       1
@@ -144,6 +146,8 @@ private:
     uint32 purpleItems;
     uint32 orangeItems;
     uint32 yellowItems;
+
+    std::set<uint32> ignoreItemsIds;
 
 public:
     AHBConfig(uint32 ahid)
@@ -1136,6 +1140,20 @@ public:
     uint32 GetBidsPerInterval()
     {
         return buyerBidsPerInterval;
+    }
+    void IgnoreItemsIds(const std::string& idsString)
+    {
+        const Tokens& ids = StrSplit(idsString, " ,");
+        ignoreItemsIds.clear();
+
+        for (Tokens::const_iterator it = ids.begin(); it != ids.end(); it++)
+            if (uint32 id = atoi(it->c_str()))
+                if (objmgr.GetItemPrototype(id))
+                    ignoreItemsIds.insert(id);
+    }
+    bool IsIgnoringItem(uint32 id) const
+    {
+        return ignoreItemsIds.find(id) != ignoreItemsIds.end();
     }
     ~AHBConfig()
     {
