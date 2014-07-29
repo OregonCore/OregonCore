@@ -7977,7 +7977,15 @@ uint32 Unit::SpellHealingBonus(SpellEntry const *spellProto, uint32 healamount, 
 
     const uint32 spellId = spellProto->Id;
 
-    // These Spells are doing fixed amount of healing (TODO find a less hack-like check)
+    // These spells are triggers, and should trigger with their full amount of healing.
+    // So, to prevent double dipping of reduced heals we need to remove these from effects of SPELL_AURA_MOD_HEALING_PCT.
+    // @todo: Find a less hacky method of handling these spells.
+    if ((spellProto->Id == 33763 && damagetype != DOT) ||                                                        // Lifeblooms Final Tick
+        (spellProto->SpellFamilyName == SPELLFAMILY_SHAMAN && spellProto->SpellFamilyFlags == 0x40000000000l) || // Earth Shield
+        spellProto->Id == 41635)                                                                                 // Prayer of Mending
+            TotalHealPct = 1.0f;
+
+    // These Spells are doing fixed amount of healing (@todo: find a less hack-like check)
     // Generic family spells are not handled here, these are exceptions to the rule
     if (spellId == 33778 || spellId == 379 || spellId == 38395 || spellId == 34299 ||  // Lifebloom (rank 1), Earth Shield, Siphon Essence, Flame Quills
         spellId == 27813 || spellId == 27817 || spellId == 27818)                      // Blessed Recovery (rank 1, rank 2 & rank 3)
