@@ -23,6 +23,17 @@
 #include "Platform/Define.h"
 #include <cassert>
 
+enum SpellEffIndex
+{
+    EFFECT_0 = 0,
+    EFFECT_1 = 1,
+    EFFECT_2 = 2
+};
+
+// used in script definitions
+#define EFFECT_FIRST_FOUND 254
+#define EFFECT_ALL 255
+
 enum Gender
 {
     GENDER_MALE                        = 0,

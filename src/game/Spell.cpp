@@ -2345,7 +2345,7 @@ void Spell::cast(bool skipCheck)
     }
 
     if (m_customAttr & SPELL_ATTR_CU_CHARGE)
-        EffectCharge(0);
+        EffectCharge((SpellEffIndex)0);
 
     // Okay, everything is prepared. Now we need to distinguish between immediate and evented delayed spells
     if ((m_spellInfo->speed > 0.0f && !IsChanneledSpell(m_spellInfo)) || m_spellInfo->Id == 14157)
@@ -3473,7 +3473,7 @@ void Spell::HandleEffects(Unit *pUnitTarget,Item *pItemTarget,GameObject *pGOTar
     if (eff<TOTAL_SPELL_EFFECTS)
     {
         //sLog.outDebug("WORLD: Spell FX %d < TOTAL_SPELL_EFFECTS ", eff);
-        (*this.*SpellEffects[eff])(i);
+        (*this.*SpellEffects[eff])((SpellEffIndex)i);
     }
     /*
     else
@@ -5760,16 +5760,16 @@ int32 Spell::CalculateDamageDone(Unit *unit, const uint32 effectMask, float *mul
             switch(m_spellInfo->Effect[i])
             {
                 case SPELL_EFFECT_SCHOOL_DAMAGE:
-                    SpellDamageSchoolDmg(i);
+                    SpellDamageSchoolDmg((SpellEffIndex)i);
                     break;
                 case SPELL_EFFECT_WEAPON_DAMAGE:
                 case SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL:
                 case SPELL_EFFECT_NORMALIZED_WEAPON_DMG:
                 case SPELL_EFFECT_WEAPON_PERCENT_DAMAGE:
-                    SpellDamageWeaponDmg(i);
+                    SpellDamageWeaponDmg((SpellEffIndex)i);
                     break;
                 case SPELL_EFFECT_HEAL:
-                    SpellDamageHeal(i);
+                    SpellDamageHeal((SpellEffIndex)i);
                     break;
             }
 
