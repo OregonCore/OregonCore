@@ -328,7 +328,7 @@ Spell::Spell(Unit* Caster, SpellEntry const *info, bool triggered, uint64 origin
 
     m_castPositionX = m_castPositionY = m_castPositionZ = 0;
     m_TriggerSpells.clear();
-    m_IsTriggeredSpell = triggered;
+    m_IsTriggeredSpell = bool(triggered || info->AttributesEx4 & SPELL_ATTR_EX4_TRIGGERED);
     //m_AreaAura = false;
     m_CastItem = NULL;
     m_castItemGUID = 0;
@@ -2081,7 +2081,7 @@ void Spell::prepare(SpellCastTargets * targets, Aura* triggeredByAura)
     m_caster->m_Events.AddEvent(Event, m_caster->m_Events.CalculateTime(1));
 
     //Prevent casting at cast another spell (ServerSide check)
-    if (m_caster->IsNonMeleeSpellCasted(false, true) && m_cast_count)
+    if (!m_IsTriggeredSpell && m_caster->IsNonMeleeSpellCasted(false, true, true) && m_cast_count)
     {
         SendCastResult(SPELL_FAILED_SPELL_IN_PROGRESS);
         finish(false);
@@ -2118,8 +2118,8 @@ void Spell::prepare(SpellCastTargets * targets, Aura* triggeredByAura)
     // Fill cost data (not use power for item casts)
     m_powerCost = m_CastItem ? 0 : CalculatePowerCost(m_spellInfo, m_caster, m_spellSchoolMask);
 
-    uint8 result = CanCast(true);
-    if (result != 0 && !IsAutoRepeat())                      //always cast autorepeat dummy for triggering
+    SpellCastResult result = CheckCast(true);
+    if (result != SPELL_CAST_OK && !IsAutoRepeat())                      //always cast autorepeat dummy for triggering
     {
         if (triggeredByAura && !IsPassiveSpell(m_spellInfo))
         {
@@ -2249,7 +2249,7 @@ void Spell::cast(bool skipCheck)
         return;
     }
     SetExecutedCurrently(true);
-    uint8 castResult = 0;
+    SpellCastResult castResult = SPELL_CAST_OK;
 
     // cancel at lost main target unit
     if (!m_targets.getUnitTarget() && m_targets.getUnitTargetGUID() && m_targets.getUnitTargetGUID() != m_caster->GetGUID())
@@ -2265,7 +2265,7 @@ void Spell::cast(bool skipCheck)
     if (!m_IsTriggeredSpell)
     {
         castResult = CheckPower();
-        if (castResult != 0)
+        if (castResult != SPELL_CAST_OK)
         {
             SendCastResult(castResult);
             finish(false);
@@ -2279,8 +2279,8 @@ void Spell::cast(bool skipCheck)
     // triggered cast called from Spell::prepare where it was already checked
     if (!skipCheck)
     {
-        castResult = CanCast(false);
-        if (castResult != 0)
+        castResult = CheckCast(false);
+        if (castResult != SPELL_CAST_OK)
         {
             SendCastResult(castResult);
             finish(false);
@@ -2843,8 +2843,11 @@ void Spell::finish(bool ok)
         m_caster->AttackStop();
 }
 
-void Spell::SendCastResult(uint8 result)
+void Spell::SendCastResult(SpellCastResult result)
 {
+    if(result == SPELL_CAST_OK)
+        return;
+
     if (m_caster->GetTypeId() != TYPEID_PLAYER)
         return;
 
@@ -3484,7 +3487,7 @@ void Spell::TriggerSpell()
     }
 }
 
-uint8 Spell::CanCast(bool strict)
+SpellCastResult Spell::CheckCast(bool strict)
 {
     // check cooldowns to prevent cheating
     if (!m_IsTriggeredSpell && m_caster->GetTypeId() == TYPEID_PLAYER && (m_caster->ToPlayer()->HasSpellCooldown(m_spellInfo->Id) || (strict && m_caster->ToPlayer()->HasGlobalCooldown(m_spellInfo))))
@@ -3524,7 +3527,8 @@ uint8 Spell::CanCast(bool strict)
     if (strict && !m_IsTriggeredSpell)
     {
         // Cannot be used in this stance/form
-        if (uint8 shapeError = GetErrorAtShapeshiftedCast(m_spellInfo, m_caster->m_form))
+        SpellCastResult shapeError = GetErrorAtShapeshiftedCast(m_spellInfo, m_caster->m_form);
+        if(shapeError != SPELL_CAST_OK)
             return shapeError;
 
         if ((m_spellInfo->Attributes & SPELL_ATTR_ONLY_STEALTHED) && !(m_caster->HasStealthAura()))
@@ -3696,10 +3700,21 @@ uint8 Spell::CanCast(bool strict)
     if (m_customAttr & SPELL_ATTR_CU_CAST_BY_ITEM_ONLY && !m_CastItem)
         return SPELL_FAILED_SPELL_UNAVAILABLE;
 
+    SpellCastResult castResult = SPELL_CAST_OK;
+
     // always (except passive spells) check items (focus object can be required for any type casts)
     if (!IsPassiveSpell(m_spellInfo->Id))
-        if (uint8 castResult = CheckItems())
+    {
+        castResult = CheckItems();
+        if(castResult != SPELL_CAST_OK)
             return castResult;
+    }
+
+    // Triggered spells also have range check
+    // TODO: determine if there is some flag to enable/disable the check
+    castResult = CheckRange(strict);
+    if (castResult != SPELL_CAST_OK)
+        return castResult;
 
     //ImpliciteTargetA-B = 38, If fact there is 0 Spell with  ImpliciteTargetB=38
     if (m_UniqueTargetInfo.empty())                          // skip second canCast apply (for delayed spells for example)
@@ -3836,13 +3851,18 @@ uint8 Spell::CanCast(bool strict)
 
     if (!m_IsTriggeredSpell)
     {
-        if (uint8 castResult = CheckRange(strict))
+        SpellCastResult castResult;
+
+        castResult = CheckRange(strict);
+        if (castResult != SPELL_CAST_OK)
             return castResult;
 
-        if (uint8 castResult = CheckPower())
+        castResult = CheckPower();
+        if (castResult != SPELL_CAST_OK)
             return castResult;
 
-        if (uint8 castResult = CheckCasterAuras())
+        castResult = CheckCasterAuras();
+        if (castResult != SPELL_CAST_OK)
             return castResult;
     }
 
@@ -3868,7 +3888,7 @@ uint8 Spell::CanCast(bool strict)
                     // spell different for friends and enemies
                     // hart version required facing
                     if (m_targets.getUnitTarget() && !m_caster->IsFriendlyTo(m_targets.getUnitTarget()) && !m_caster->HasInArc(M_PI, target))
-                        return SPELL_FAILED_UNIT_NOT_INFRONT;
+                        return !m_IsTriggeredSpell ? SPELL_FAILED_UNIT_NOT_INFRONT : SPELL_FAILED_DONT_REPORT;
                 }
                 else if (m_spellInfo->Id == 19938)          // Awaken Peon
                 {
@@ -4495,10 +4515,10 @@ uint8 Spell::CanCast(bool strict)
     }
 
     // all ok
-    return 0;
+    return SPELL_CAST_OK;
 }
 
-int16 Spell::PetCanCast(Unit* target)
+SpellCastResult Spell::CheckPetCast(Unit* target)
 {
     if (!m_caster->isAlive())
         return SPELL_FAILED_CASTER_DEAD;
@@ -4542,19 +4562,16 @@ int16 Spell::PetCanCast(Unit* target)
         if (m_caster->ToCreature()->HasSpellCooldown(m_spellInfo->Id))
             return SPELL_FAILED_NOT_READY;
 
-    uint16 result = CanCast(true);
-    if (result != 0)
-        return result;
-    return -1;                                          //this allows to check spell fail 0, in combat
+        return CheckCast(true);                                       //this allows to check spell fail 0, in combat
 }
 
-uint8 Spell::CheckCasterAuras() const
+SpellCastResult Spell::CheckCasterAuras() const
 {
     // Flag drop spells totally immuned to caster auras
     // FIXME: find more nice check for all totally immuned spells
     // AttributesEx3 & 0x10000000?
     if (m_spellInfo->Id == 23336 || m_spellInfo->Id == 23334 || m_spellInfo->Id == 34991)
-        return 0;
+        return SPELL_CAST_OK;
 
     uint8 school_immune = 0;
     uint32 mechanic_immune = 0;
@@ -4579,7 +4596,7 @@ uint8 Spell::CheckCasterAuras() const
     }
 
     //Check whether the cast should be prevented by any state you might have.
-    uint8 prevented_reason = 0;
+    SpellCastResult prevented_reason = SPELL_CAST_OK;
     // Have to check if there is a stun aura. Otherwise will have problems with ghost aura apply while logging out
     if (m_caster->HasAuraType(SPELL_AURA_MOD_STUN))
         prevented_reason = SPELL_FAILED_STUNNED;
@@ -4645,29 +4662,29 @@ uint8 Spell::CheckCasterAuras() const
             {
                 case SPELL_FAILED_STUNNED:
                     if (m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_STUNNED)
-                        return 0; // can cast
+                        return SPELL_CAST_OK; // can cast
                     break;
                 case SPELL_FAILED_CONFUSED:
                     if (m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_CONFUSED)
-                        return 0;
+                        return SPELL_CAST_OK;
                     break;
                 case SPELL_FAILED_FLEEING:
                     if (m_spellInfo->AttributesEx5 & SPELL_ATTR_EX5_USABLE_WHILE_FEARED)
-                        return 0;
+                        return SPELL_CAST_OK;
                     break;
                 case SPELL_FAILED_SILENCED:
                     if (m_spellInfo->PreventionType != SPELL_PREVENTION_TYPE_SILENCE)
-                        return 0;
+                        return SPELL_CAST_OK;
                     break;
                 case SPELL_FAILED_PACIFIED:
                     if (m_spellInfo->PreventionType != SPELL_PREVENTION_TYPE_PACIFY)
-                        return 0;
+                        return SPELL_CAST_OK;
             }
 
             return prevented_reason;
         }
     }
-    return 0;                                               // all ok
+    return SPELL_CAST_OK;                                               // all ok
 }
 
 bool Spell::CanAutoCast(Unit* target)
@@ -4697,9 +4714,9 @@ bool Spell::CanAutoCast(Unit* target)
     }
 
     FillTargetMap();
-    int16 result = PetCanCast(target);
+    SpellCastResult result = CheckPetCast(target);
 
-    if (result == -1 || result == SPELL_FAILED_UNIT_NOT_INFRONT)
+    if (result == SPELL_CAST_OK || result == SPELL_FAILED_UNIT_NOT_INFRONT)
     {
         //check if among target units, our WANTED target is as well (->only self cast spells return false)
         for (std::list<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin();ihit != m_UniqueTargetInfo.end();++ihit)
@@ -4714,28 +4731,48 @@ bool Spell::CanAutoCast(Unit* target)
     return false;                                           //target invalid
 }
 
-uint8 Spell::CheckRange(bool /*strict*/)
+SpellCastResult Spell::CheckRange(bool strict)
 {
-    //float range_mod;
+    Unit *target = m_targets.getUnitTarget();
 
-    // self cast doesn't need range checking -- also for Starshards fix
-    if (m_spellInfo->rangeIndex == 1) return 0;
+    // special range cases
+    switch(m_spellInfo->rangeIndex)
+    {
+        // self cast doesn't need range checking -- also for Starshards fix
+        // spells that can be cast anywhere also need no check
+        case SPELL_RANGE_IDX_SELF_ONLY:
+        case SPELL_RANGE_IDX_ANYWHERE:
+            return SPELL_CAST_OK;
+        // combat range spells are treated differently
+        case SPELL_RANGE_IDX_COMBAT:
+        {
+            if (target)
+            {
+                if (target == m_caster)
+                    return SPELL_CAST_OK;
 
-    // i do not know why we need this
-    /*if (strict)                                             //add radius of caster
-        range_mod = 1.25;
-    else                                                    //add radius of caster and ~5 yds "give"
-        range_mod = 6.25;*/
+                float range_mod = strict ? 0.0f : 5.0f;
+                float base = ATTACK_DISTANCE;
+                if (Player* modOwner = m_caster->GetSpellModOwner())
+                    range_mod += modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_RANGE, base, this);
+
+                // with additional 5 dist for non stricted case (some melee spells have delay in apply
+                return m_caster->IsWithinMeleeRange(target, range_mod) ? SPELL_CAST_OK : SPELL_FAILED_OUT_OF_RANGE;
+            }
+            break; // let continue in generic way for no target
+        }
+    }
+
+    //add radius of caster and ~5 yds "give" for non stricred (landing) check
+    float range_mod = strict ? 1.25f : 6.25;
 
     SpellRangeEntry const* srange = sSpellRangeStore.LookupEntry(m_spellInfo->rangeIndex);
-    float max_range = GetSpellMaxRange(srange); // + range_mod;
+    float max_range = GetSpellMaxRange(srange) + range_mod;
     float min_range = GetSpellMinRange(srange);
     uint32 range_type = GetSpellRangeType(srange);
 
     if (Player* modOwner = m_caster->GetSpellModOwner())
         modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_RANGE, max_range, this);
-
-    Unit *target = m_targets.getUnitTarget();
 
     if (target && target != m_caster)
     {
@@ -4743,22 +4780,22 @@ uint8 Spell::CheckRange(bool /*strict*/)
         {
             // Because of lag, we can not check too strictly here.
             if (!m_caster->IsWithinMeleeRange(target, max_range/* - 2*MIN_MELEE_REACH*/))
-                return SPELL_FAILED_OUT_OF_RANGE;
+                return !m_IsTriggeredSpell ? SPELL_FAILED_OUT_OF_RANGE : SPELL_FAILED_DONT_REPORT;
         }
         else if (!m_caster->IsWithinCombatRange(target, max_range))
-            return SPELL_FAILED_OUT_OF_RANGE;               //0x5A;
+            return !m_IsTriggeredSpell ? SPELL_FAILED_OUT_OF_RANGE : SPELL_FAILED_DONT_REPORT;
 
         if (range_type == SPELL_RANGE_RANGED)
         {
             if (m_caster->IsWithinMeleeRange(target))
-                return SPELL_FAILED_TOO_CLOSE;
+                return !m_IsTriggeredSpell ? SPELL_FAILED_TOO_CLOSE : SPELL_FAILED_DONT_REPORT;
         }
         else if (min_range && m_caster->IsWithinCombatRange(target, min_range)) // skip this check if min_range = 0
             return SPELL_FAILED_TOO_CLOSE;
 
         if (m_caster->GetTypeId() == TYPEID_PLAYER &&
             (m_spellInfo->FacingCasterFlags & SPELL_FACING_FLAG_INFRONT) && !m_caster->HasInArc(M_PI, target))
-            return SPELL_FAILED_UNIT_NOT_INFRONT;
+            return !m_IsTriggeredSpell ? SPELL_FAILED_UNIT_NOT_INFRONT : SPELL_FAILED_DONT_REPORT;
     }
 
     if (m_targets.HasDst())
@@ -4769,26 +4806,26 @@ uint8 Spell::CheckRange(bool /*strict*/)
         float dist = m_caster->GetDistance(m_targets.m_dstPos) * 1.05225f;
         DEBUG_LOG("DIST : REAL: %f MAX: %f MIN: %f", dist, max_range, min_range);
         if (dist > max_range)
-            return SPELL_FAILED_OUT_OF_RANGE;
+            return !m_IsTriggeredSpell ? SPELL_FAILED_OUT_OF_RANGE : SPELL_FAILED_DONT_REPORT;
         if (dist < min_range)
-            return SPELL_FAILED_TOO_CLOSE;
+            return !m_IsTriggeredSpell ? SPELL_FAILED_TOO_CLOSE : SPELL_FAILED_DONT_REPORT;
     }
 
-    return 0;
+    return SPELL_CAST_OK; 
 }
 
-uint8 Spell::CheckPower()
+SpellCastResult Spell::CheckPower()
 {
     // item cast not used power
     if (m_CastItem)
-        return 0;
+        return SPELL_CAST_OK;
 
     // health as power used - need check health amount
     if (m_spellInfo->powerType == POWER_HEALTH)
     {
         if (int32(m_caster->GetHealth()) <= m_powerCost)
             return SPELL_FAILED_CASTER_AURASTATE;
-        return 0;
+        return SPELL_CAST_OK;
     }
     // Check valid power type
     if (m_spellInfo->powerType >= MAX_POWERS)
@@ -4801,13 +4838,13 @@ uint8 Spell::CheckPower()
     if (int32(m_caster->GetPower(powerType)) < m_powerCost)
         return SPELL_FAILED_NO_POWER;
     else
-        return 0;
+        return SPELL_CAST_OK;
 }
 
-uint8 Spell::CheckItems()
+SpellCastResult Spell::CheckItems()
 {
     if (m_caster->GetTypeId() != TYPEID_PLAYER)
-        return 0;
+        return SPELL_CAST_OK;
 
     uint32 itemid, itemcount;
     Player* p_caster = m_caster->ToPlayer();
@@ -4837,11 +4874,11 @@ uint8 Spell::CheckItems()
                 }
             }
 
-            uint32 ItemClass = proto->Class;
-            if (ItemClass == ITEM_CLASS_CONSUMABLE && m_targets.getUnitTarget())
+            // Consumable cast item checks
+            if (proto->Class == ITEM_CLASS_CONSUMABLE && m_targets.getUnitTarget())
             {
                 // such items should only fail if there is no suitable effect at all - see Rejuvenation Potions for example
-                uint8 failReason = 0;
+                SpellCastResult failReason = SPELL_CAST_OK;
                 for (int i = 0; i < 3; i++)
                 {
                     // skip check, pet not required like checks, and for TARGET_UNIT_PET m_targets.getUnitTarget() is not the real target but the caster
@@ -4852,12 +4889,12 @@ uint8 Spell::CheckItems()
                     {
                         if (m_targets.getUnitTarget()->GetHealth() == m_targets.getUnitTarget()->GetMaxHealth())
                         {
-                            failReason = (uint8)SPELL_FAILED_ALREADY_AT_FULL_HEALTH;
+                            failReason = SPELL_FAILED_ALREADY_AT_FULL_HEALTH;
                             continue;
                         }
                         else
                         {
-                            failReason = 0;
+                            failReason = SPELL_CAST_OK;
                             break;
                         }
                     }
@@ -4867,24 +4904,24 @@ uint8 Spell::CheckItems()
                     {
                         if (m_spellInfo->EffectMiscValue[i] < 0 || m_spellInfo->EffectMiscValue[i] >= MAX_POWERS)
                         {
-                            failReason = (uint8)SPELL_FAILED_ALREADY_AT_FULL_POWER;
+                            failReason = SPELL_FAILED_ALREADY_AT_FULL_POWER;
                             continue;
                         }
 
                         Powers power = Powers(m_spellInfo->EffectMiscValue[i]);
                         if (m_targets.getUnitTarget()->GetPower(power) == m_targets.getUnitTarget()->GetMaxPower(power))
                         {
-                            failReason = (uint8)SPELL_FAILED_ALREADY_AT_FULL_POWER;
+                            failReason = SPELL_FAILED_ALREADY_AT_FULL_POWER;
                             continue;
                         }
                         else
                         {
-                            failReason = 0;
+                            failReason = SPELL_CAST_OK;
                             break;
                         }
                     }
                 }
-                if (failReason)
+                if (failReason != SPELL_CAST_OK)
                     return failReason;
             }
         }
@@ -4908,6 +4945,7 @@ uint8 Spell::CheckItems()
             return SPELL_FAILED_EQUIPPED_ITEM_CLASS;
     }
 
+    // Check spell focus object
     if (m_spellInfo->RequiresSpellFocus)
     {
         CellPair p(Oregon::ComputeCellPair(m_caster->GetPositionX(), m_caster->GetPositionY()));
@@ -4923,7 +4961,7 @@ uint8 Spell::CheckItems()
         cell.Visit(p, object_checker, map, *m_caster, map.GetVisibilityDistance());
 
         if (!ok)
-            return (uint8)SPELL_FAILED_REQUIRES_SPELL_FOCUS;
+            return SPELL_FAILED_REQUIRES_SPELL_FOCUS;
 
         focusObject = ok;                                   // game object found in range
     }
@@ -4956,10 +4994,11 @@ uint8 Spell::CheckItems()
                 }
             }
             if (!p_caster->HasItemCount(itemid,itemcount))
-                return (uint8)SPELL_FAILED_ITEM_NOT_READY;      //0x54
+                return SPELL_FAILED_ITEM_NOT_READY;      //0x54
         }
     }
 
+    // check totem-item requirements (items presence in inventory)
     uint32 totems = 2;
     for (int i=0;i<2;++i)
     {
@@ -4974,9 +5013,9 @@ uint8 Spell::CheckItems()
         totems -= 1;
     }
     if (totems != 0)
-        return (uint8)SPELL_FAILED_TOTEMS;                  //0x7C
+        return SPELL_FAILED_TOTEMS;                  //0x7C
 
-    //Check items for TotemCategory
+    //Check items for TotemCategory (items presence in inventory)
     uint32 TotemCategory = 2;
     for (int i=0;i<2;++i)
     {
@@ -4992,8 +5031,9 @@ uint8 Spell::CheckItems()
             TotemCategory -= 1;
     }
     if (TotemCategory != 0)
-        return (uint8)SPELL_FAILED_TOTEM_CATEGORY;          //0x7B
+        return SPELL_FAILED_TOTEM_CATEGORY;          //0x7B
 
+    // Special check for spell effects
     for (int i = 0; i < 3; i++)
     {
         switch (m_spellInfo->Effect[i])
@@ -5171,7 +5211,7 @@ uint8 Spell::CheckItems()
         }
     }
 
-    return uint8(0);
+    return SPELL_CAST_OK;
 }
 
 void Spell::Delayed() // only called in DealDamage()

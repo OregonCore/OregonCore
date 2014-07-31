@@ -260,7 +260,7 @@ void WorldSession::HandlePetActionHelper(Unit *pet, uint64 guid1, uint16 spellid
 
             Spell *spell = new Spell(pet, spellInfo, false);
 
-            int16 result = spell->PetCanCast(unit_target);
+            SpellCastResult result = spell->CheckPetCast(unit_target);
 
                                                             //auto turn to target unless possessed
             if (result == SPELL_FAILED_UNIT_NOT_INFRONT && !pet->isPossessed())
@@ -271,10 +271,10 @@ void WorldSession::HandlePetActionHelper(Unit *pet, uint64 guid1, uint16 spellid
                 if (Unit* powner = pet->GetCharmerOrOwner())
                     if (powner->GetTypeId() == TYPEID_PLAYER)
                         pet->SendUpdateToPlayer(powner->ToPlayer());
-                result = -1;
+                result = SPELL_CAST_OK;
             }
 
-            if (result == -1)
+            if (result == SPELL_CAST_OK)
             {
                 pet->ToCreature()->AddCreatureSpellCooldown(spellid);
                 if (pet->ToCreature()->isPet())
@@ -693,8 +693,8 @@ void WorldSession::HandlePetCastSpellOpcode(WorldPacket& recvPacket)
     Spell* spell = new Spell(caster, spellInfo, false);
     spell->m_targets = targets;
 
-    int16 result = spell->PetCanCast(NULL);
-    if (result == -1)
+    SpellCastResult result = spell->CheckPetCast(NULL);
+    if (result == SPELL_CAST_OK)
     {
         if (caster->GetTypeId() == TYPEID_UNIT)
         {
