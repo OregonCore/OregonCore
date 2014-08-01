@@ -3571,6 +3571,9 @@ SpellCastResult Spell::CheckCast(bool strict)
         if (m_spellInfo->TargetAuraStateNot && target->HasAuraState(AuraState(m_spellInfo->TargetAuraStateNot)))
             return SPELL_FAILED_TARGET_AURASTATE;
 
+        if (!m_IsTriggeredSpell && IsDeathOnlySpell(m_spellInfo) && target->isAlive())
+            return SPELL_FAILED_TARGET_NOT_DEAD;
+
         if (target != m_caster)
         {
             // target state requirements (apply to non-self only), to allow cast affects to self like Dirty Deeds

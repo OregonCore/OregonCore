@@ -52,6 +52,7 @@
 #include "Traveller.h"
 #include "TemporarySummon.h"
 #include "ScriptMgr.h"
+#include "Object.h"
 
 #include <math.h>
 
@@ -266,6 +267,7 @@ Unit::Unit()
     m_ObjectSlot[0] = m_ObjectSlot[1] = m_ObjectSlot[2] = m_ObjectSlot[3] = 0;
 
     m_AurasUpdateIterator = m_Auras.end();
+    m_AuraFlags = 0;
     m_Visibility = VISIBILITY_ON;
 
     m_interruptMask = 0;
@@ -395,7 +397,7 @@ void Unit::Update(uint32 p_time)
         {
             // m_CombatTimer set at aura start and it will be freeze until aura removing
             if (m_CombatTimer <= p_time)
-                ClearInCombat();
+                CombatStop();
             else
                 m_CombatTimer -= p_time;
         }
@@ -8795,10 +8797,20 @@ void Unit::ClearInCombat()
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PET_IN_COMBAT);
 }
 
-//TODO: remove this function
-bool Unit::isTargetableForAttack() const
+
+bool Unit::isTargetableForAttack(bool inverseAlive /*=false*/) const
 {
-    return isAttackableByAOE() && !hasUnitState(UNIT_STAT_DIED);
+     if (GetTypeId()==TYPEID_PLAYER && ((Player *)this)->isGameMaster())
+         return false;
+
+     if (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE))
+         return false;
+
+    // inversealive is needed for some spells which need to be casted at dead targets (aoe)
+    if (isAlive() == inverseAlive)
+         return false;
+
+    return IsInWorld() && !hasUnitState(UNIT_STAT_DIED) && !isInFlight();
 }
 
 bool Unit::canAttack(Unit const* target, bool force) const
@@ -8970,6 +8982,14 @@ bool Unit::isVisibleForOrDetect(Unit const* u, bool detect, bool inVisibleList, 
 bool Unit::canSeeOrDetect(Unit const* /*u*/, bool /*detect*/, bool /*inVisibleList*/, bool /*is3dDistance*/) const
 {
     return true;
+}
+/// returns true if creature can't be seen by alive units
+bool Unit::isInvisibleForAlive() const
+{
+    if (m_AuraFlags & UNIT_AURAFLAG_ALIVE_INVISIBLE)
+        return true;
+    // TODO: maybe spiritservices also have just an aura
+    return isSpiritService();
 }
 
 bool Unit::canDetectInvisibilityOf(Unit const* u) const
@@ -9165,10 +9185,6 @@ void Unit::SetSpeed(UnitMoveType mtype, float rate, bool forced)
 
     propagateSpeedChange();
 
-    // Send speed change packet only for player
-    if (GetTypeId() != TYPEID_PLAYER)
-        return;
-
     WorldPacket data;
     if (!forced)
     {
@@ -9217,9 +9233,12 @@ void Unit::SetSpeed(UnitMoveType mtype, float rate, bool forced)
     }
     else
     {
-        // register forced speed changes for WorldSession::HandleForceSpeedChangeAck
-        // and do it only for real sent packets and use run for run/mounted as client expected
-        ++ToPlayer()->m_forced_speed_changes[mtype];
+        if(GetTypeId() == TYPEID_PLAYER)
+        {
+            // register forced speed changes for WorldSession::HandleForceSpeedChangeAck
+            // and do it only for real sent packets and use run for run/mounted as client expected
+            ++((Player*)this)->m_forced_speed_changes[mtype];
+        }
 
         if (!isInCombat())
             if (Pet* pet = ToPlayer()->GetPet())

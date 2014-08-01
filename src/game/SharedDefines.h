@@ -497,7 +497,7 @@ const uint32 ItemQualityColors[MAX_ITEM_QUALITY] = {
 #define SPELL_ATTR_EX3_UNK9                       0x00000200            // 9
 #define SPELL_ATTR_EX3_MAIN_HAND                  0x00000400            // 10 Main hand weapon required
 #define SPELL_ATTR_EX3_BATTLEGROUND               0x00000800            // 11 Can casted only on battleground
-#define SPELL_ATTR_EX3_UNK12                      0x00001000            // 12 used by spirit heal, graveyard teleport test
+#define SPELL_ATTR_EX3_CAST_ON_DEAD               0x00001000            // 12 target is a dead player (not every spell has this flag)
 #define SPELL_ATTR_EX3_UNK13                      0x00002000            // 13 
 #define SPELL_ATTR_EX3_HONORLESS                  0x00004000            // 14 "Honorless Target" only this spells have this flag
 #define SPELL_ATTR_EX3_AUTO_SHOT                  0x00008000            // 15 Auto Shoot, Shoot, Throw,  - this is autoshot flag
@@ -1998,7 +1998,7 @@ enum CreatureFamily
 enum CreatureTypeFlags
 {
     CREATURE_TYPEFLAGS_TAMEABLE        = 0x00001,           //tameable by any hunter
-    CREATURE_TYPEFLAGS_UNK2            = 0x00002,           //? Related to spirits/ghosts in any form? Allow gossip interaction if player is also ghost? Visibility?
+    CREATURE_TYPEFLAGS_GHOST_VISIBLE   = 0x00002,         // Creatures which can _also_ be seen when player is a ghost
     CREATURE_TYPEFLAGS_UNK3            = 0x00004,
     CREATURE_TYPEFLAGS_UNK4            = 0x00008,
     CREATURE_TYPEFLAGS_UNK5            = 0x00010,

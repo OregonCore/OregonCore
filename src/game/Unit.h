@@ -500,13 +500,19 @@ enum DamageEffectType
     SELF_DAMAGE             = 5
 };
 
+/// internal used flags for marking special auras - for example some dummy-auras
+enum UnitAuraFlags
+{
+    UNIT_AURAFLAG_ALIVE_INVISIBLE   = 0x1,                  // aura which makes unit invisible for alive
+};
+
 enum UnitVisibility
 {
     VISIBILITY_OFF                = 0,                      // absolute, not detectable, GM-like, can see all other
     VISIBILITY_ON                 = 1,
     VISIBILITY_GROUP_STEALTH      = 2,                      // detect chance, seen and can see group members
-    //VISIBILITY_GROUP_INVISIBILITY = 3,                      // invisibility, can see and can be seen only another invisible unit or invisible detection unit, set only if not stealthed, and in checks not used (mask used instead)
-    //VISIBILITY_GROUP_NO_DETECT    = 4,                      // state just at stealth apply for update Grid state. Don't remove, otherwise stealth spells will break
+    VISIBILITY_GROUP_INVISIBILITY = 3,                      // invisibility, can see and can be seen only another invisible unit or invisible detection unit, set only if not stealthed, and in checks not used (mask used instead)
+    VISIBILITY_GROUP_NO_DETECT    = 4,                      // state just at stealth apply for update Grid state. Don't remove, otherwise stealth spells will break
     VISIBILITY_RESPAWN            = 5                       // special totally not detectable visibility for force delete object at respawn command
 };
 
@@ -1123,7 +1129,7 @@ class Unit : public WorldObject
 
         bool isFrozen() const;
 
-        bool isTargetableForAttack() const;
+        bool isTargetableForAttack(bool inversAlive = false) const;
         bool isAttackableByAOE(float x = 0, float y = 0, float z = 0, bool LosCheck = false) const;
         bool canAttack(Unit const* target, bool force = true) const;
         virtual bool IsInWater() const;
@@ -1395,6 +1401,7 @@ class Unit : public WorldObject
         bool isVisibleForInState(Player const* u, bool inVisibleList) const;
         // function for low level grid visibility checks in player/creature cases
         virtual bool IsVisibleInGridForPlayer(Player const* pl) const = 0;
+        bool isInvisibleForAlive() const;
 
         AuraList      & GetSingleCastAuras()       { return m_scAuras; }
         AuraList const& GetSingleCastAuras() const { return m_scAuras; }
@@ -1434,6 +1441,9 @@ class Unit : public WorldObject
         int32 GetMaxNegativeAuraModifierByMiscValue(AuraType auratype, int32 misc_value) const;
 
         Aura* GetDummyAura(uint32 spell_id) const;
+
+        uint32 m_AuraFlags;
+
         uint32 GetInterruptMask() const { return m_interruptMask; }
         void AddInterruptMask(uint32 mask) { m_interruptMask |= mask; }
         void UpdateInterruptMask();
