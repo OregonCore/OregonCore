@@ -2290,9 +2290,13 @@ bool InstanceMap::CanEnter(Player *player)
         return false;
     }
 
+    // allow GM's to enter
+    if (player->isGameMaster())
+        return Map::CanEnter(player);
+
     // cannot enter if the instance is full (player cap), GMs don't count
     InstanceTemplate const* iTemplate = objmgr.GetInstanceTemplate(GetId());
-    if (!player->isGameMaster() && GetPlayersCountExceptGMs() >= iTemplate->maxPlayers)
+    if (GetPlayersCountExceptGMs() >= iTemplate->maxPlayers)
     {
         sLog.outDetail("MAP: Instance '%u' of map '%s' cannot have more than '%u' players. Player '%s' rejected", GetInstanceId(), GetMapName(), iTemplate->maxPlayers, player->GetName());
         player->SendTransferAborted(GetId(), TRANSFER_ABORT_MAX_PLAYERS);

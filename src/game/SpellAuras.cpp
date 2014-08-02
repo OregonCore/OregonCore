@@ -3369,7 +3369,7 @@ void Aura::HandleModStealth(bool apply, bool Real)
             {
                 m_target->SetByteValue(UNIT_FIELD_BYTES_1, 2, 0x00);
                 if (m_target->GetTypeId() == TYPEID_PLAYER)
-                    m_target->RemoveFlag(PLAYER_FIELD_BYTES2, 0x2000);
+                    m_target->RemoveFlag(PLAYER_FIELD_BYTES2, PLAYER_FIELD_BYTE2_STEALTH);
 
                 // restore invisibility if any
                 if (m_target->HasAuraType(SPELL_AURA_MOD_INVISIBILITY))
