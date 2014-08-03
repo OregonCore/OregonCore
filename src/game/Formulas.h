@@ -79,7 +79,6 @@ namespace Oregon
 
         inline uint32 BaseGain(uint32 pl_level, uint32 mob_level, ContentLevels content)
         {
-            //@todo need modifier for CONTENT_71_80 different from CONTENT_61_70?
             const uint32 nBaseExp = content == CONTENT_1_60 ? 45 : 235;
             if (mob_level >= pl_level)
             {
