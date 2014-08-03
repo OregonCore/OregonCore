@@ -203,7 +203,7 @@ Cell::Visit(const CellPair& standing_cell, TypeContainerVisitor<T, CONTAINER> &v
     //if radius is known to reach cell area more than 4x4 then we should call optimized VisitCircle
     //currently this technique works with MAX_NUMBER_OF_CELLS 16 and higher, with lower values
     //there are nothing to optimize because SIZE_OF_GRID_CELL is too big...
-    if (((end_cell.x_coord - begin_cell.x_coord) > 4) && ((end_cell.y_coord - begin_cell.y_coord) > 4))
+    if ((end_cell.x_coord > (begin_cell.x_coord + 4)) && (end_cell.y_coord > (begin_cell.y_coord + 4)))
     {
         VisitCircle(visitor, m, begin_cell, end_cell);
         return;
