@@ -55,6 +55,11 @@ inline uint32 getMSTimeDiff(uint32 oldMSTime, uint32 newMSTime)
         return newMSTime - oldMSTime;
 }
 
+inline uint32 GetMSTimeDiffToNow(uint32 oldMSTime)
+{
+    return getMSTimeDiff(oldMSTime, getMSTime());
+}
+
 class IntervalTimer
 {
     public:
