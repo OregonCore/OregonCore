@@ -105,13 +105,13 @@ bool PathInfo::Update(float destX, float destY, float destZ, bool forceDest)
 
     // check if destination moved - if not we can optimize something here
     // we are following old, precalculated path?
-    float dist = m_sourceUnit->GetObjectSize();
+    float dist = m_sourceUnit->GetObjectBoundingRadius();
 
     if (inRange(oldDest, newDest, dist, dist) && m_pathPoints.size() > 2)
     {
         // our target is not moving - we just coming closer
         // we are moving on precalculated path - enjoy the ride
-        //DEBUG_FILTER_LOG(LOG_FILTER_PATHFINDING, "++ PathInfo::Update:: precalculated path\n");
+        sLog.outDebug("PathFinder::Update:: precalculated path\n");
 
         m_pathPoints.crop(1, 0);
         setNextPosition(m_pathPoints[1]);
@@ -206,6 +206,7 @@ void PathInfo::BuildPolyPath(const PathNode &startPos, const PathNode &endPos)
     {
         sLog.outDebug("BuildPolyPath :: (startPoly == 0 || endPoly == 0)\n");
         BuildShortcut();
+
         bool path = m_sourceUnit->GetTypeId() == TYPEID_UNIT && m_sourceUnit->ToCreature()->canFly();
 
         bool waterPath = m_sourceUnit->GetTypeId() == TYPEID_UNIT && m_sourceUnit->ToCreature()->canSwim();
@@ -280,7 +281,7 @@ void PathInfo::BuildPolyPath(const PathNode &startPos, const PathNode &endPos)
     // just need to move in straight line
     if (startPoly == endPoly)
     {
-        //DEBUG_FILTER_LOG(LOG_FILTER_PATHFINDING, "++ BuildPolyPath :: (startPoly == endPoly)\n");
+        sLog.outDebug("BuildPolyPath :: (startPoly == endPoly)\n");
 
         BuildShortcut();
 
