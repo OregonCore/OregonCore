@@ -197,14 +197,37 @@ namespace MMAP
     }
 //#elif _WIN32
 #else
-    void MapBuilder::buildAllMaps(int /*threads*/)
+    void MapBuilder::buildAllMaps(int threads)
     {
+        printf ("Using %i threads\n", threads);
+
+        std::vector<BuilderThread*> _threads;
+                
+        BuilderThreadPool* pool = threads > 0 ? new BuilderThreadPool() : NULL;
+
         for (TileList::iterator it = m_tiles.begin(); it != m_tiles.end(); ++it)
         {
-            uint32 mapID = (*it).first;
+            uint32 mapID = it->first;
             if (!shouldSkipMap(mapID))
-                buildMap(mapID);
+            {
+                if (threads > 0)
+                    pool->Enqueue(new MapBuildRequest(mapID));
+                else
+                    buildMap(mapID);
+            }
         }
+
+        for (int i = 0; i < threads; ++i)
+            _threads.push_back(new BuilderThread(this, pool->Queue()));
+
+        // Free memory
+        for (std::vector<BuilderThread*>::iterator _th = _threads.begin(); _th != _threads.end(); ++_th)
+       {
+            (*_th)->wait();
+            delete *_th;
+        }
+
+        delete pool;
     }
 #endif
 
@@ -255,7 +278,7 @@ namespace MMAP
         buildNavMesh(mapID, navMesh);
         if (!navMesh)
         {
-            printf("Failed creating navmesh!              \n");
+            printf("[Map %03i] Failed creating navmesh!\n", mapID);
             return;
         }
 
@@ -291,12 +314,12 @@ namespace MMAP
         buildNavMesh(mapID, navMesh);
         if (!navMesh)
         {
-            printf("Failed creating navmesh!              \n");
+            printf("[Map %03i] Failed creating navmesh!\n", mapID);
             return;
         }
 
         // now start building mmtiles for each tile
-        printf("We have %u tiles.                          \n", (unsigned int)tiles->size());
+        printf("[Map %03i] We have %u tiles.                          \n", mapID, (unsigned int)tiles->size())
         for (set<uint32>::iterator it = tiles->begin(); it != tiles->end(); ++it)
         {
             uint32 tileX, tileY;
@@ -312,13 +335,13 @@ namespace MMAP
 
         dtFreeNavMesh(navMesh);
 
-        printf("Complete!                               \n\n");
+        printf("[Map %03i] Complete!\n", mapID);
     }
 
     /**************************************************************************/
     void MapBuilder::buildTile(uint32 mapID, uint32 tileX, uint32 tileY, dtNavMesh* navMesh)
     {
-        printf("Building map %03u, tile [%02u,%02u]\n", mapID, tileX, tileY);
+        printf("[Map %03i] Building tile [%02u,%02u]\n", mapID, tileX, tileY);
 
         MeshData meshData;
 
@@ -405,10 +428,10 @@ namespace MMAP
         navMeshParams.maxPolys = maxPolysPerTile;
 
         navMesh = dtAllocNavMesh();
-        printf("Creating navMesh...                     \r");
+        printf("[Map %03i] Creating navMesh...\n", mapID);
         if (!navMesh->init(&navMeshParams))
         {
-            printf("Failed creating navmesh!                \n");
+            printf("[Map %03i] Failed creating navmesh!                \n", mapID);
             return;
         }
 
@@ -420,7 +443,7 @@ namespace MMAP
         {
             dtFreeNavMesh(navMesh);
             char message[1024];
-            sprintf(message, "Failed to open %s for writing!\n", fileName);
+            sprintf(message, "[Map %03i] Failed to open %s for writing!\n", mapID, fileName);
             perror(message);
             return;
         }
@@ -455,8 +478,8 @@ namespace MMAP
 
         // these are WORLD UNIT based metrics
         // this are basic unit dimentions
-        // value have to divide GRID_SIZE(533.33333f) ( aka: 0.5333, 0.2666, 0.3333, 0.1333, etc )
-        const static float BASE_UNIT_DIM = m_bigBaseUnit ? 0.533333f : 0.266666f;
+        // value have to divide GRID_SIZE(533.3333f) ( aka: 0.5333, 0.2666, 0.3333, 0.1333, etc )
+        const static float BASE_UNIT_DIM = m_bigBaseUnit ? 0.5333333f : 0.2666666f;
 
         // All are in UNIT metrics!
         const static int VERTEX_PER_MAP = int(GRID_SIZE/BASE_UNIT_DIM + 0.5f);
@@ -476,12 +499,12 @@ namespace MMAP
         config.tileSize = VERTEX_PER_TILE;
         config.walkableRadius = m_bigBaseUnit ? 1 : 2;
         config.borderSize = config.walkableRadius + 3;
-        config.maxEdgeLen = VERTEX_PER_TILE + 1;        //anything bigger than tileSize
-        config.walkableHeight = m_bigBaseUnit ? 3 : 6;
-        config.walkableClimb = m_bigBaseUnit ? 2 : 4;   // keep less than walkableHeight
+        config.maxEdgeLen = VERTEX_PER_TILE + 1;        // anything bigger than tileSize
+        config.walkableHeight = m_bigBaseUnit ? 2 : 4;
+        config.walkableClimb = m_bigBaseUnit ? 1 : 2;   // keep less than walkableHeight
         config.minRegionArea = rcSqr(60);
         config.mergeRegionArea = rcSqr(50);
-        config.maxSimplificationError = 2.0f;       // eliminates most jagged edges (tinny polygons)
+        config.maxSimplificationError = 1.8f;           // eliminates most jagged edges (tiny polygons)
         config.detailSampleDist = config.cs * 64;
         config.detailSampleMaxError = config.ch * 2;
 
@@ -602,14 +625,14 @@ namespace MMAP
         rcPolyMesh** pmmerge = new rcPolyMesh*[TILES_PER_MAP * TILES_PER_MAP];
         if (!pmmerge)
         {
-            printf("%s alloc pmmerge FIALED!          \r", tileString);
+            printf("%s alloc pmmerge FAILED!          \r", tileString);
             return;
         }
 
         rcPolyMeshDetail** dmmerge = new rcPolyMeshDetail*[TILES_PER_MAP * TILES_PER_MAP];
         if (!dmmerge)
         {
-            printf("%s alloc dmmerge FIALED!          \r", tileString);
+            printf("%s alloc dmmerge FAILED!          \r", tileString);
             return;
         }
 
@@ -631,7 +654,7 @@ namespace MMAP
         iv.polyMesh = rcAllocPolyMesh();
         if (!iv.polyMesh)
         {
-            printf("%s alloc iv.polyMesh FIALED!          \r", tileString);
+            printf("%s alloc iv.polyMesh FAILED!          \r", tileString);
             return;
         }
         rcMergePolyMeshes(m_rcContext, pmmerge, nmerge, *iv.polyMesh);
@@ -639,7 +662,7 @@ namespace MMAP
         iv.polyMeshDetail = rcAllocPolyMeshDetail();
         if (!iv.polyMeshDetail)
         {
-            printf("%s alloc m_dmesh FIALED!          \r", tileString);
+            printf("%s alloc m_dmesh FAILED!          \r", tileString);
             return;
         }
         rcMergePolyMeshDetails(m_rcContext, dmmerge, nmerge, *iv.polyMeshDetail);
@@ -647,16 +670,7 @@ namespace MMAP
         // free things up
         delete [] pmmerge;
         delete [] dmmerge;
-
         delete [] tiles;
-
-        // remove padding for extraction
-        for (int i = 0; i < iv.polyMesh->nverts; ++i)
-        {
-            unsigned short* v = &iv.polyMesh->verts[i*3];
-            v[0] -= (unsigned short)config.borderSize;
-            v[2] -= (unsigned short)config.borderSize;
-        }
 
         // set polygons as walkable
         // TODO: special flags for DYNAMIC polygons, ie surfaces that can be turned on and off
@@ -696,7 +710,8 @@ namespace MMAP
         rcVcopy(params.bmax, bmax);
         params.cs = config.cs;
         params.ch = config.ch;
-        params.tileSize = VERTEX_PER_MAP;
+        params.tileLayer = 0;
+        params.buildBvTree = true;
 
         // will hold final navmesh
         unsigned char* navData = NULL;
@@ -831,7 +846,6 @@ namespace MMAP
                 case 0:
                 case 1:
                 case 530:
-                case 571:
                     return true;
                 default:
                     break;
@@ -846,10 +860,6 @@ namespace MMAP
                 case 42:    // Colin.wdt
                 case 169:   // EmeraldDream.wdt (unused, and very large)
                 case 451:   // development.wdt
-                case 573:   // ExteriorTest.wdt
-                case 597:   // CraigTest.wdt
-                case 605:   // development_nonweighted.wdt
-                case 606:   // QA_DVD.wdt
                     return true;
                 default:
                     if (isTransportMap(mapID))
@@ -865,8 +875,6 @@ namespace MMAP
                 case 489:   // WSG
                 case 529:   // AB
                 case 566:   // EotS
-                case 607:   // SotA
-                case 628:   // IoC
                     return true;
                 default:
                     break;
@@ -889,26 +897,7 @@ namespace MMAP
             case 589:
             case 590:
             case 591:
-            case 592:
             case 593:
-            case 594:
-            case 596:
-            case 610:
-            case 612:
-            case 613:
-            case 614:
-            case 620:
-            case 621:
-            case 622:
-            case 623:
-            case 641:
-            case 642:
-            case 647:
-            case 672:
-            case 673:
-            case 712:
-            case 713:
-            case 718:
                 return true;
             default:
                 return false;

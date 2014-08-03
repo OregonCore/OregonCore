@@ -31,6 +31,9 @@
 
 #include "Recast.h"
 #include "DetourNavMesh.h"
+#include <ace/Task.h>
+#include <ace/Activation_Queue.h>
+#include <ace/Method_Request.h>
 
 using namespace std;
 using namespace VMAP;
@@ -60,7 +63,7 @@ namespace MMAP
     class MapBuilder
     {
         public:
-            MapBuilder(float maxWalkableAngle   = 60.f,
+            MapBuilder(float maxWalkableAngle   = 55.f,
                        bool skipLiquid          = false,
                        bool skipContinents      = false,
                        bool skipJunkMaps        = true,
